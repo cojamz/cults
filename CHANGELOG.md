@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.948 — 2026-11-01
+
+- A crowded swap (round III Demote) fits on its card: members show as names with prices, and after your pick only the members you can swap for are listed.
+
 ## v0.9.947 — 2026-11-01
 
 - A rival's hover card scrolls again when you roll the mouse wheel over their seat.
