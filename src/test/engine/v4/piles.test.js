@@ -55,14 +55,13 @@ describe('Piles: variant A (the grey core as piles)', () => {
     expect(tops(s)).not.toContain('benders.frontrunner');
     expect(s.supply['benders.frontrunner']).toHaveLength(0);
   });
-  it('a pile member cast out (Farewell, Estate Sale) leaves the game, so it can’t be bought back (Cory, Nov 1)', () => {
+  it('a pile member cast out goes back under its own pile and can be bought again, as the card says (Farewell question open)', () => {
     const s = scene('A', { round: 2, members: [['benders.squatter']] });
-    const ctx = contextFor(s), p = s.players[0], u = p.members[0], left = s.supply['benders.squatter'].length;
+    const ctx = contextFor(s), p = s.players[0], u = p.members[0];
     ctx.buryMember(p, u);
     expect(s.pile).not.toContain(u);
-    expect(s.supply['benders.squatter']).not.toContain(u);
-    expect(s.supply['benders.squatter']).toHaveLength(left);
-    expect(s.outOfGame).toEqual([u]);
+    expect(s.supply['benders.squatter']).toContain(u);
+    expect(tops(s).filter(d => d === 'benders.squatter')).toHaveLength(1);
   });
 });
 
