@@ -4,8 +4,8 @@ set -euo pipefail
 cd /home/user/patrons
 D=design/eval/balance-1.0; R=/mnt/project-files/balance-1.0/raw; T=/tmp/claude-0/gather
 rm -rf $T; mkdir -p $T $R/hard $R/veryhard
-git fetch -q origin claude/runner-hard-1 claude/project-thread-x1cltz claude/runner-normal-1
-for b in runner-hard-1 project-thread-x1cltz runner-normal-1; do git archive origin/claude/$b design/eval/balance-1.0/raw 2>/dev/null | tar -x -C $T || true; done
+for b in runner-hard-1 project-thread-x1cltz runner-normal-1 runner-vh-a runner-vh-b runner-vh-c; do git fetch -q origin claude/$b 2>/dev/null || true; done
+for b in runner-hard-1 project-thread-x1cltz runner-normal-1 runner-vh-a runner-vh-b runner-vh-c; do git archive origin/claude/$b design/eval/balance-1.0/raw 2>/dev/null | tar -x -C $T || true; done
 cp $T/design/eval/balance-1.0/raw/hard/* $R/hard/ 2>/dev/null || true
 cp $T/design/eval/balance-1.0/raw/veryhard/* $R/veryhard/ 2>/dev/null || true
 cp /home/user/vh-run/out/veryhard/* $R/veryhard/ 2>/dev/null || true
