@@ -194,6 +194,14 @@ export default {
         ], 'yellow.gobetween');
       },
     }),
+    // Cory, Nov 1 3:14pm: "I like tourists. maybe on recruit and round start?" Replaces Go-Between in the 10-card deck.
+    // Price 3 yellow + 4 any and worth 1 are the design thread's fill-ins
+    m('tourists', 'Tourists', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { now: true,
+      onRoundStart(ctx, owner) {
+        const k = held(ctx, owner).length;
+        if (k) { owner.bonus += k; ctx.log(`${owner.name}'s Tourists: +${k} follower${k === 1 ? '' : 's'}.`); }
+      },
+    }),
     // Cory, 2026-10-31: "make it 3 and add on recruit as well"
     m('tinker', 'Tinker', 3, 2, 'On Recruit: swap up to 3 of your resources one for one. Round Start: swap up to 3 of your resources one for one.', { now: true,
       onRoundStart(ctx, owner) { transmuteStep(ctx, owner, { who: 'Tinker', left: Math.min(3, total(ctx, owner)), done: 0 }); },

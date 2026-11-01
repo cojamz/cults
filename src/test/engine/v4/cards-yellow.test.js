@@ -141,6 +141,11 @@ describe('Yellow members', () => {
     const s = sc({ members: [['yellow.dyer']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
     expect(R(s).yellow).toBe(2);
   });
+  it('Tourists: round start, +1 follower per color you hold (Cory, Nov 1 3:14pm)', () => {
+    const s = sc({ members: [['yellow.tourists']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
+    expect(s.players[0].bonus).toBe(2);
+    expect(s.log).toContain("P1's Tourists: +2 followers.");
+  });
   it('Caravan: worth 3 followers; round start +1 of each color you hold', () => {
     const s = sc({ members: [['yellow.caravan']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
     expect(R(s)).toMatchObject({ gold: 2, red: 3, yellow: 0, green: 0 });

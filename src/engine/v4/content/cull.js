@@ -39,6 +39,7 @@ export const CUT10 = new Set([
   'market.restocker', 'market.plusone',
   'trading.undertaker',
   'yellow.tinker', 'yellow.matchmaker', 'yellow.spiceroute', 'yellow.leveler', 'yellow.bookcooker',
+  'yellow.gobetween', // Tourists takes its place (Cory, Nov 1 3:14pm)
   'benders.bigspender', 'benders.launderer', 'benders.cheerleader', 'benders.secondwind', 'benders.tiebreaker', // grey: Cory, Oct 31, keeps Scout and Old Maid, cuts Coach and Tiebreaker
 ]);
 
