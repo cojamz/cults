@@ -102,8 +102,8 @@ export function swapCrowdSave(extra = 7) {
 // Choices whose answers are combinations, picked in two steps on the board: Good Deed (a color × a rival), Trade
 // Seeds (a color you give × a color you get), Sweet Talk (a color × how many).
 export const COMBO_TABLE = ['silver', 'red', 'yellow', 'echo'];
-const COMBOS = { gooddeed: ['silver', 'alms'], seeds: ['yellow', 'transmute'], sweettalk: ['silver', 'tongue'] };
-export function comboSave(space = 'gooddeed') {
+const COMBOS = { seeds: ['yellow', 'transmute'], sweettalk: ['silver', 'tongue'] };
+export function comboSave(space = 'seeds') {
   const [qid, key] = COMBOS[space];
   const q = COMBO_TABLE.indexOf(qid), i = quadrant(qid).actions.findIndex(a => a.key === key), ring = quadrant(qid).actions[i].ring;
   for (let seed = 1; seed < 300; seed++) {
@@ -123,8 +123,8 @@ export function comboSave(space = 'gooddeed') {
 // A color of yours asked by a space (Goody Bags, Cheap Seats): answered on the card at the space (Cory, 2026-10-15:
 // choices come to where you act). P1 holds some of every color, so Cheap Seats offers all four.
 export const COLOR_TABLE = ['silver', 'gold', 'trading', 'red'];
-const COLOR_SPACES = { goody: ['silver', 'gift'], cheap: ['trading', 'buylow'] };
-export function colorSave(space = 'goody') {
+const COLOR_SPACES = { polish: ['silver', 'polish'] }; // Goody Bags and Cheap Seats left the wheel
+export function colorSave(space = 'polish') {
   const [qid, key] = COLOR_SPACES[space];
   const slot = slotOf(COLOR_TABLE, qid, key);
   for (let seed = 1; seed < 300; seed++) {
@@ -217,7 +217,7 @@ export function momentSave(name) {
     const s = at(BOARD_TABLE, 'buy', { round: 2, res: { green: 0, red: 0, blue: 0, magenta: 4 }, fresh: false });
     for (const pid of [1, 2, 3]) if (!s.players[pid].members.length) give(s, pid, ['red.host', 'red.bigfamily', 'thieves.crew'][pid - 1]);
     const uid = faceUp(s, 'thieves.doubleagent');
-    s.players[0].res = { green: 0, red: 0, blue: 0, magenta: 6 };
+    s.players[0].res = { green: 0, red: 0, blue: 0, magenta: 10 }; // Double Agent costs 8 since Oct 29
     resume(s);
     let t = applyMove(s, { player: 0, option: `card:${uid}` });
     if (t.pending && t.pending.kind === 'pay') t = applyMove(t, { player: 0, option: t.pending.options.find(o => o.kind === 'pay').id });

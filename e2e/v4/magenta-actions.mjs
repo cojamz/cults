@@ -49,7 +49,7 @@ function fixture(name) {
     // Host costs 5, the ceiling (Patriarch did until every member cost 1 more wild, Oct 27, now 6); the old <=4
     // ceiling would wrongly hide it.
     s.players[1].res.red = 0;
-    picks = [`card:${member}`, 'pay'];
+    picks = ['pay']; // one member at stake: no pick, straight to pay or let it go
   } else if (name === 'heist') {
     action = 'heist'; member = deal('thieves.crew', 1); picks = [`card:${member}`];
   } else throw Error(`Unknown scene ${name}`);
@@ -59,7 +59,9 @@ function fixture(name) {
   let expected = placed;
   for (const id of picks) expected = move(expected, id);
   assert(expected.pending?.kind === 'buy', `${name}: did not restore buying`);
-  assert(expected.players[0].res.magenta === 1, `${name}: each action gives exactly 1 inherent Magenta`);
+  // Help Yourself gives no magenta (Cory, 2026-10-29); every other action gives exactly 1
+  const inherent = action === 'pickpocket' ? 0 : 1;
+  assert(expected.players[0].res.magenta === inherent, `${name}: the action gives exactly ${inherent} inherent Magenta`);
   const own = expected.players[0], victim = expected.players[1];
   if (name === 'scaling-resume') {
     assert(own.res.gold === 3 && own.res.red === 2 && own.bonus === initial.players[0].bonus && victim.res.gold === 6 && victim.res.red === 2, 'Round III must steal 5 in their original colors and no followers');
@@ -129,6 +131,9 @@ try {
       };
       await press(t.action);
       await page.locator('.app.game:not([data-animating])').waitFor();
+      if (name === 'ransom') { // the holder answers first: hand the screen over
+        const handoff = page.locator('[data-handoff]'); if (await handoff.isVisible()) await handoff.click();
+      }
       await page.locator(`[data-option=${JSON.stringify(t.picks[0])}]:not([disabled])`).first().waitFor();
       await page.screenshot({ path: `${out}/${tag}-choice.png` });
       if (name.startsWith('half-')) {

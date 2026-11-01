@@ -1,4 +1,5 @@
-// Focused real clicks: Red swaps can involve two rivals or the shop; Green copying Promote asks afresh.
+// Focused real clicks: Red swaps can involve two rivals or the shop; Green copying Promote asks afresh (Echo copies
+// the rival's Promote just placed; Encore copied it until it became "Copy the On Recruit of a rival's member").
 import { chromium, devices } from 'playwright';
 import { mkdirSync } from 'node:fs';
 import { browserPath, launchBrowser } from './lib/browser.mjs';
@@ -42,16 +43,16 @@ function scenario(name) {
   if (name === 'copy-promote') {
     s = move(s, `slot:${slot('red', 'hireup')}`);
     s = pass(move(s, `trade:${uid(s, 'gold.prospector', 1)}:${uid(s, 'echo.muse', 'shop')}`));
-    action = 'encore';
+    action = 'echo';
   }
   s.build = stamp;
   const save = { config: { seats, speed: 'fast' }, state: s, undo: null, savedAt: Date.now() };
   let expected = move(s, `slot:${slot(name === 'copy-promote' ? 'echo' : 'red', action)}`);
   const picks = [];
   if (name === 'copy-promote') {
-    const copy = expected.pending.options.find(o => o.value === slot('red', 'hireup'));
-    if (!copy) throw new Error('Encore does not offer rival Promote');
-    picks.push(copy.id); expected = move(expected, copy.id);
+    // Echo copies the previous action outright; a pick shows only if the engine asks
+    const copy = expected.pending?.kind !== 'buy' && expected.pending.options.find(o => o.value === slot('red', 'hireup'));
+    if (copy) { picks.push(copy.id); expected = move(expected, copy.id); }
   }
   const a = uid(expected, 'red.recruiter', 0);
   const b = uid(expected, 'red.host', 'shop');
@@ -78,7 +79,7 @@ function tryoutScenario() {
   expected = move(expected, `card:${banker}`);
   if (expected.pending?.kind !== 'buy') throw new Error('tryout: did not return to buying');
   const me = expected.players[0], was = s.players[0];
-  if (me.res.red !== was.res.red + 2) throw new Error(`tryout: red ${was.res.red} -> ${me.res.red}`);
+  if (me.res.red !== was.res.red + 1) throw new Error(`tryout: red ${was.res.red} -> ${me.res.red}`);
   if (me.res.gold !== was.res.gold + 3) throw new Error(`tryout: gold ${was.res.gold} -> ${me.res.gold}`);
   if (!expected.shop.includes(banker) || me.members.includes(banker)) throw new Error('tryout: Banker left the shop');
   if (expected.recruits !== s.recruits || JSON.stringify(me.members) !== JSON.stringify(was.members)) throw new Error('tryout: counted as a recruit');
@@ -88,7 +89,7 @@ const comparable = s => ({ players: s.players.map(p => ({ members: p.members, re
 if (process.argv.includes('--fixtures-only')) {
   // (rival-swap went with Even Swap: Tryout took its space in the round I rework, Cory Oct 27)
   for (const name of ['promote', 'copy-promote']) { scenario(name); console.log(`${name}: fixture resolves to buying.`); }
-  tryoutScenario(); console.log('tryout: Banker offered, Stunt Double not; +2 red, +3 gold, Banker stays in the shop, no recruit.');
+  tryoutScenario(); console.log('tryout: Banker offered, Stunt Double not; +1 red, +3 gold, Banker stays in the shop, no recruit.');
   process.exit(0);
 }
 const browser = await launchBrowser({ executablePath: browserPath });
@@ -163,7 +164,7 @@ try {
       }, { want: comparable(test.expected), recruits: test.expected.recruits }, { timeout: 15000 });
       await page.locator('.app.game[data-phase="buy"]:not([data-animating])').waitFor({ timeout: 15000 });
       await page.screenshot({ path: `${out}/${tag}-tryout-settled.png` });
-      console.log(`${tag}: tryout; Banker offered (Stunt Double not), +2 red, Banker's +3 gold, Banker still in the shop, no recruit.`);
+      console.log(`${tag}: tryout; Banker offered (Stunt Double not), +1 red, Banker's +3 gold, Banker still in the shop, no recruit.`);
       if (errors.length) throw new Error(`${tag}: ${errors.join('; ')}`);
       await ctx.close();
     }

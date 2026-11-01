@@ -1,4 +1,5 @@
-// A real browser must re-choose after Encore copies Reprise, then return to buying.
+// A real browser must re-choose after Cover copies Reprise, then return to buying. (Encore copied actions until it
+// became "Copy the On Recruit of a rival's member"; Cover is the copy that can still land on Reprise.)
 // The same pending nested choice resumes after reload; desktop and phone use actual clicks/taps.
 import { chromium, devices } from 'playwright';
 import { mkdirSync } from 'node:fs';
@@ -33,12 +34,11 @@ function fixture() {
     s.players[pid].members.push(takeCard(s, id));
   }
   s.shop = s.pile.splice(0, 8);
-  s.queue = [1, 0, 0, 1, 0, 0].map(p => ({ t: 'turn', p }));
+  s.queue = [1, 0, 0, 0, 1].map(p => ({ t: 'turn', p }));
   s = resume(s);
   s = pass(move(s, `slot:${slot('echo', 'chant')}`));
   s = pass(move(s, `slot:${slot('gold', 'rush')}`));
   s = pass(move(s, `slot:${slot('gold', 'discount')}`));
-  s = pass(pick(move(s, `slot:${slot('echo', 'refrain')}`), slot('echo', 'chant')));
   s.build = stamp;
   return { config: { seats, speed: 'fast' }, state: s, undo: null, savedAt: Date.now() };
 }
@@ -54,7 +54,7 @@ try {
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
     const save = fixture();
-    let expected = move(save.state, `slot:${slot('echo', 'encore')}`);
+    let expected = move(save.state, `slot:${slot('echo', 'hum')}`);
     const first = expected.pending.options.find(o => o.value === slot('echo', 'refrain')).id;
     expected = move(expected, first);
     const second = expected.pending.options.find(o => o.value === slot('gold', 'rush')).id;
@@ -77,7 +77,7 @@ try {
       if (await confirm.isVisible()) await confirm.tap();
     };
     await open();
-    await press(`slot:${slot('echo', 'encore')}`);
+    await press(`slot:${slot('echo', 'hum')}`);
     // Touch placement can first open an action card with a confirmation button.
     const place = page.getByRole('button', { name: 'Place here', exact: true });
     if (await place.isVisible()) await place.click();
@@ -110,7 +110,7 @@ try {
     await page.locator('[data-option="pass"]:not([aria-disabled="true"])').first().waitFor();
     await page.screenshot({ path: `${out}/${tag}-settled.png` });
     if (errors.length) throw new Error(`${tag}: ${errors.join('; ')}`);
-    console.log(`${tag}: Encore → Reprise → own Golden Years; fresh choice, reload, exact gains, buying restored; no page errors.`);
+    console.log(`${tag}: Cover → Reprise → own Golden Years; fresh choice, reload, exact gains, buying restored; no page errors.`);
     await ctx.close();
   }
 } catch (error) {

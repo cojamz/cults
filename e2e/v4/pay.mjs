@@ -9,13 +9,8 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //  (p4) Wave-2 testers A#4, B#2: only one way to pay, but it gives up a lead you hold (3 gold leading Most gold, the
 //       price takes all 3): the sheet asks (with no lost-lead prose since Cory's #32, 2026-10-17), and Cancel goes back
 //       with nothing paid.
-//  (g1) Good Deed on the gift card (Cory, 2026-10-16: the two-step pick on the seats was "very bad/confusing"): a small
-//       card beside the space just taken, headed "A rival you pick gets 2" (the picked color's dot after it, once picked); the table's colors are its lit first row, the
-//       rivals' faces wait quiet under them (no chips, nothing lit on the seats); a color is plainly picked, a click on
-//       another switches it, then the faces light and a face click gives (the engine's id), the coins flying there.
-//  (g2) once a color is picked, the rivals' seats light too (the seat a button with the lit edge, its stack of the color
-//       lit), never your own; (g3) a seat click gives the face's answer.
-//  (c1) Goody Bags' color and (c2) Cheap Seats' "pay 1 for 1 follower" on the card at the space (Cory, 2026-10-15:
+//  ((g1)-(g3), Good Deed on the gift card, went with Good Deed in Silver's Oct 31 rework.)
+//  (c1) Polish's color (Goody Bags' until Silver's Oct 31 rework) and (c2) Cheap Seats' "pay 1 for 1 follower" on the card at the space (Cory, 2026-10-15:
 //       choices come to where you act), not on your seat's stacks: the engine's colors and ids, Cheap Seats' counts,
 //       "N left" and its Done/Trade nothing; a pick answers, Cheap Seats' card stays at the space until Done.
 //  (w1) Promote on the same card (Even Swap's until the round I rework): your members are the first row; one picked, the shop members it pairs with light
@@ -34,7 +29,7 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 import { createServer } from 'node:net';
-import { paySave, swapSave, swapCrowdSave, comboSave, momentSave, colorSave } from './lib/dialog-save.mjs';
+import { paySave, swapSave, swapCrowdSave, momentSave, colorSave } from './lib/dialog-save.mjs';
 import { stealSave } from './lib/steal-save.mjs';
 import { memberPrice, TIERS, cardDef } from '../../src/engine/v4/index.js';
 import { costParts } from '../../src/v4/format.js';
@@ -176,86 +171,7 @@ try {
     if (left !== 3) errors.push(`(p4) after Cancel P1 holds ${left} gold, want 3`);
     await ctx.close();
   }
-  // (g1) Good Deed: a color, then the rival who gets it, on the gift card beside the space
-  {
-    const save = comboSave('gooddeed');
-    const slot = save.state.players[0].lastSlot && save.state.players[0].lastSlot.key;
-    const { ctx, page } = await open('g1', save, '.lt-wheel .gift-card[data-gift="give"]');
-    // let the card settle beside the space (GameScreen places it after it renders)
-    await page.waitForTimeout(300);
-    const head = await page.$eval('.gift-card .gc-what', e => e.textContent.replace(/\s+/g, ' ').trim());
-    if (head !== 'A rival you pick gets 2') errors.push(`(g1) the card's heading reads "${head}"`);
-    const title = await page.$eval('.gift-card .gc-title', e => e.textContent.trim()).catch(() => '');
-    if (!/^good deed$/i.test(title)) errors.push(`(g1) the card names "${title}", not Good Deed`);
-    // beside the space just taken: the card's nearest edge within 40px of the space, never on the seats or in the header
-    const where = await page.evaluate(key => {
-      const c = document.querySelector('.gift-card').getBoundingClientRect();
-      const s = key && document.querySelector(`.lt-wheel [data-slot="${key}"]`);
-      const r = s && s.getBoundingClientRect();
-      const gap = r ? Math.max(0, r.left - c.right, c.left - r.right) + Math.max(0, r.top - c.bottom, c.top - r.bottom) : null;
-      return { gap, inWheel: !!document.querySelector('.lt-wheel > .gift-card'), placed: document.querySelector('.gift-card').classList.contains('at-space') };
-    }, slot);
-    if (!where.inWheel) errors.push('(g1) the gift card is not on the wheel');
-    if (!where.placed || where.gap == null || where.gap > 40) errors.push(`(g1) the gift card is not beside the space just taken (${slot}: ${where.gap == null ? 'not found' : `${Math.round(where.gap)}px away`})`);
-    // nothing picks on the seats, and no grid of combination chips
-    if (await page.$('.lt-seat .cs-stack.pick-on, .lt-seat .cs-pick-seat, .seat-pick.docked')) errors.push('(g1) the seats or the header still take the pick');
-    const chips = await page.$$eval('.pick-key, .prompt.choice .opts .btn', els => els.filter(e => e.getBoundingClientRect().width > 2).length);
-    if (chips) errors.push(`(g1) ${chips} chips show`);
-    const firstRow = await page.$$eval('.gift-card .gc-row[data-row="1"][data-live] .gc-dot:not([disabled])', els => els.map(e => e.dataset.res));
-    if (firstRow.join() !== save.state.resources.join()) errors.push(`(g1) the lit colors are ${firstRow.join(' ')}, want the table's ${save.state.resources.join(' ')}`);
-    const facesQuiet = await page.$$eval('.gift-card .gc-row[data-row="2"] .gc-face', els => els.map(e => [e.dataset.pid, e.disabled]));
-    if (facesQuiet.map(f => f[0]).sort().join() !== '1,2,3' || facesQuiet.some(f => !f[1])) errors.push(`(g1) before a color, the faces read ${JSON.stringify(facesQuiet)} (want P2–P4, waiting)`);
-    await page.screenshot({ path: `${SHOTS}/g1-step1.png` });
-    const box0 = await page.$eval('.gift-card', e => { const r = e.getBoundingClientRect(); return [r.width, r.height]; });
-    // a color is picked plainly, and a click on another switches it
-    await click(page, '.gift-card .gc-dot[data-res="yellow"]');
-    await page.waitForSelector('.gift-card .gc-dot.chosen[data-res="yellow"][aria-pressed="true"]', { timeout: 4000 }).catch(() => errors.push('(g1) the picked color does not show as picked'));
-    await click(page, '.gift-card .gc-dot[data-res="red"]');
-    await page.waitForSelector('.gift-card .gc-dot.chosen[data-res="red"]', { timeout: 4000 }).catch(() => errors.push('(g1) a click on another color does not switch the pick'));
-    if (await page.$$eval('.gift-card .gc-dot.chosen', els => els.length) !== 1) errors.push('(g1) more than one color shows as picked');
-    const head2 = await page.$eval('.gift-card .gc-what', e => e.textContent.replace(/\s+/g, ' ').trim());
-    // (the words fix: "A rival you pick gets 2" and the picked color's dot after it)
-    if (head2 !== 'A rival you pick gets 2' || !(await page.$('.gift-card .gc-what .pip[data-pip="red"]'))) errors.push(`(g1) after the color the heading reads "${head2}" (want "A rival you pick gets 2" and the red dot in it)`);
-    const faceRow = await page.$eval('.gift-card .gc-row[data-row="2"] > .gc-items', e => ({ more: e.dataset.more || null, over: e.scrollHeight - e.clientHeight }));
-    if (faceRow.more || faceRow.over > 1) errors.push(`(g1) the faces' row is cut and faded though nothing is hidden: ${JSON.stringify(faceRow)}`);
-    const faces = await page.$$eval('.gift-card .gc-row[data-row="2"][data-live] .gc-face:not([disabled])', els => els.map(e => [e.dataset.pid, e.dataset.option]));
-    if (faces.map(f => f[0]).sort().join() !== '1,2,3') errors.push(`(g1) lit faces after the color: ${faces.map(f => f[0]).join(' ')}`);
-    if (faces.some(([pid, id]) => id !== `give:${pid}:red`)) errors.push(`(g1) the faces answer ${faces.map(f => f[1]).join(' ')}, not the engine's give:<pid>:red`);
-    // (g2) the rivals' seats light too (Cory, 2026-10-15: choices on the board as well as the card): each rival's seat is
-    // the answer (its whole chair a button, wearing the lit edge), its red stack lit where the 2 land; never your own
-    // (the seat eases into its lit edge, box-shadow over about 0.3s: read it once that has finished)
-    await page.evaluate(() => Promise.all([...document.querySelectorAll('.lt > .lt-seat[data-pid]')].flatMap(e => e.getAnimations()).map(a => a.finished.catch(() => {}))));
-    const seatsLit = await page.evaluate(() => [...document.querySelectorAll('.lt > .lt-seat[data-pid]')].map(e => {
-      const cs = e.querySelector('.lt-cult-seat'), b = e.querySelector('.cs-pick-seat:not(.off)'), st = e.querySelector('.cs-stack.pick-on');
-      return { pid: e.dataset.pid, lit: !!cs && cs.classList.contains('pick-lit') && cs.classList.contains('pick-seat'), seat: b ? b.dataset.option : null,
-        stack: st ? `${st.dataset.res}:${st.dataset.option}` : null, ring: getComputedStyle(e).boxShadow };
-    }));
-    for (const x of seatsLit) {
-      if (x.pid === '0') { if (x.lit || x.seat || x.stack) errors.push(`(g2) your own seat lights for the gift: ${JSON.stringify(x)}`); continue; }
-      if (!x.lit || x.seat !== `give:${x.pid}:red`) errors.push(`(g2) P${Number(x.pid) + 1}'s seat is not the answer give:${x.pid}:red: ${JSON.stringify(x)}`);
-      if (x.stack !== `red:give:${x.pid}:red`) errors.push(`(g2) P${Number(x.pid) + 1}'s red stack is not lit where the gift lands: ${JSON.stringify(x)}`);
-      // the lit edge a takeable space wears (layout.css: a 2px lamp ring), not the seat's resting 1px hairline
-      const inset = Math.max(0, ...[...(x.ring || '').matchAll(/0px 0px 0px ([\d.]+)px inset/g)].map(m => Number(m[1])));
-      if (inset < 1.5) errors.push(`(g2) P${Number(x.pid) + 1}'s seat wears no lit ring: ${x.ring}`);
-    }
-    const box1 = await page.$eval('.gift-card', e => { const r = e.getBoundingClientRect(); return [r.width, r.height]; });
-    if (Math.abs(box1[0] - box0[0]) > 2 || Math.abs(box1[1] - box0[1]) > 2) errors.push(`(g1) the card changes size between steps (${box0.map(Math.round)} → ${box1.map(Math.round)})`);
-    await page.screenshot({ path: `${SHOTS}/g1-step2.png` });
-    const before = save.state.players[2].res.red;
-    await page.evaluate(() => { window.__flights = 0; const t = () => { for (const g of document.querySelectorAll('.pick-flight')) if (!g.dataset.seen) { g.dataset.seen = '1'; window.__flights++; } requestAnimationFrame(t); }; requestAnimationFrame(t); });
-    await click(page, '.gift-card .gc-face[data-pid="2"]');
-    await page.waitForFunction(m => Number(document.querySelector('.app.game').dataset.moves) > m, save.state.moves, { timeout: 6000 }).catch(() => errors.push('(g1) clicking the face gave nothing'));
-    const rec = await lastMove(page);
-    if (rec && rec !== 'give:2:red') errors.push(`(g1) recorded ${rec}, not give:2:red`);
-    if (!(await page.evaluate(() => window.__flights))) errors.push('(g1) no coins flew to the rival');
-    let got = NaN;
-    for (let k = 0; k < 30 && got !== before + 2; k++) { got = await page.$eval('.lt-seat[data-pid="2"] .cs-stack[data-res="red"] b', e => Number(e.textContent)).catch(() => NaN); await page.waitForTimeout(100); }
-    if (got !== before + 2) errors.push(`(g1) P3 holds ${got} red, want ${before + 2}`);
-    await chainDone(page);
-    if (await page.$('.gift-card')) errors.push('(g1) the gift card stays up after the gift has played');
-    await page.screenshot({ path: `${SHOTS}/g1-given.png` });
-    await ctx.close();
-  }
+  // ((g1) and (g2), Good Deed's gift card and lit seats, went with Good Deed: Silver's rework cut it, Cory Oct 31)
   // (w2) a crowded round-III Swap Sides: everything stays on the card
   {
     const save = swapCrowdSave();
@@ -324,32 +240,11 @@ try {
     if (strip && strip.clamped) errors.push(`(s0) ${strip.clamped} strip line(s) clamped with an ellipsis`);
     await ctx.close();
   }
-  // (g3) a click on a lit rival's seat gives, the same answer as their face on the card
-  {
-    const save = comboSave('gooddeed');
-    const { ctx, page } = await open('g3', save, '.lt-wheel .gift-card[data-gift="give"]');
-    await page.waitForTimeout(300);
-    await click(page, '.gift-card .gc-dot[data-res="red"]');
-    await page.waitForSelector('.lt-seat[data-pid="3"] .cs-pick-seat[data-option="give:3:red"]', { timeout: 4000 }).catch(() => errors.push('(g3) P4\'s seat never lit after the color'));
-    const before = save.state.players[3].res.red;
-    // the middle of the chair, away from its stacks: the whole seat answers
-    const b = await (await page.$('.lt-seat[data-pid="3"]')).boundingBox();
-    await page.mouse.click(b.x + b.width * 0.35, b.y + b.height * 0.7);
-    await page.waitForFunction(m => Number(document.querySelector('.app.game').dataset.moves) > m, save.state.moves, { timeout: 6000 }).catch(() => errors.push('(g3) clicking the seat gave nothing'));
-    const rec = await lastMove(page);
-    if (rec && rec !== 'give:3:red') errors.push(`(g3) the seat click recorded ${rec}, not give:3:red`);
-    let got = NaN;
-    for (let k = 0; k < 30 && got !== before + 2; k++) { got = await page.$eval('.lt-seat[data-pid="3"] .cs-stack[data-res="red"] b', e => Number(e.textContent)).catch(() => NaN); await page.waitForTimeout(100); }
-    if (got !== before + 2) errors.push(`(g3) P4 holds ${got} red, want ${before + 2}`);
-    await chainDone(page);
-    if (await page.$('.gift-card, .lt-seat .cs-pick-seat')) errors.push('(g3) the card or a lit seat stays up after the gift has played');
-    await page.screenshot({ path: `${SHOTS}/g3-seat-given.png` });
-    await ctx.close();
-  }
+  // ((g3) went with Good Deed: Silver's rework cut it, Cory Oct 31; no space gives a color to a rival you pick)
   // (c1) Goody Bags' color opens on the card at the space (Cory, 2026-10-15: choices come to where you act), never on
   // your seat's stacks ~500 px away: one row of the engine's colors, each the engine's own id. (c2, Cheap Seats' old
   // "pay 1 for 1 follower" card, went with that rule: Cheap Seats is now "+1 follower per 3 white you hold", no pick.)
-  for (const [tag, space] of [['c1', 'goody']]) {
+  for (const [tag, space] of [['c1', 'polish']]) {
     const save = colorSave(space);
     const st = save.state, slot = st.players[0].lastSlot && st.players[0].lastSlot.key;
     const { ctx, page } = await open(tag, save, '.lt-wheel .gift-card[data-gift="color"]');
@@ -373,9 +268,9 @@ try {
     const title = await page.$eval('.gift-card .gc-title', e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
     const head = await page.$eval('.gift-card .gc-what', e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
     await page.screenshot({ path: `${SHOTS}/${tag}-card.png` });
-    if (title !== 'Goody Bags' || head !== 'Which color?') errors.push(`(c1) the card reads "${title}" / "${head}"`);
+    if (title !== 'Polish' || head !== '+1 of which color?') errors.push(`(c1) the card reads "${title}" / "${head}"`);
     const sub = await page.$eval('.gift-card .gc-sub', e => e.textContent.trim()).catch(() => '');
-    if (!/You get 2, everyone else gets 1/.test(sub)) errors.push(`(c1) the line under the heading reads "${sub}"`);
+    if (!/\(4 to pick\)/.test(sub)) errors.push(`(c1) the line under the heading reads "${sub}"`);
     const pick = st.pending.options.find(o => o.id === 'color:red') || st.pending.options.find(o => o.target);
     const before = st.players[0].res[pick.value] || 0;
     await click(page, `.gift-card .gc-dot[data-option="${pick.id}"]`);
@@ -383,10 +278,12 @@ try {
     const rec = await lastMove(page);
     if (rec && rec !== pick.id) errors.push(`(c1) recorded ${rec}, not ${pick.id}`);
     let got = NaN;
-    for (let k = 0; k < 30 && got !== before + 2; k++) { got = await page.$eval(`.lt-seat[data-pid="0"] .cs-stack[data-res="${pick.value}"] b`, e => Number(e.textContent)).catch(() => NaN); await page.waitForTimeout(100); }
-    if (got !== before + 2) errors.push(`(c1) you hold ${got} ${pick.value}, want ${before + 2}`);
-    await chainDone(page);
-    if (await page.$('.gift-card[data-gift="color"]')) errors.push('(c1) the card stays up after the pick has played');
+    for (let k = 0; k < 30 && got !== before + 1; k++) { got = await page.$eval(`.lt-seat[data-pid="0"] .cs-stack[data-res="${pick.value}"] b`, e => Number(e.textContent)).catch(() => NaN); await page.waitForTimeout(100); }
+    if (got !== before + 1) errors.push(`(c1) you hold ${got} ${pick.value}, want ${before + 1}`);
+    // Polish asks four times: the card stays at the space and counts down
+    await page.waitForFunction(() => /\(3 to pick\)/.test(document.querySelector('.gift-card .gc-sub')?.textContent || ''), null, { timeout: 4000 }).catch(() => {});
+    const sub2 = await page.$eval('.gift-card .gc-sub', e => e.textContent.trim()).catch(() => '');
+    if (!/\(3 to pick\)/.test(sub2)) errors.push(`(c1) after one pick the line under the heading reads "${sub2}"`);
     await ctx.close();
   }
   // (w1) Promote (Even Swap until the round I rework, Cory Oct 27): yours, then the shop's, on the same card
