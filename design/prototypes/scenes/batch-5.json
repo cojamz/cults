@@ -54,9 +54,9 @@
  },
  {
   "id": "benders.scout",
-  "name": "Scout",
+  "name": "Scouts",
   "sphere": "colorless",
-  "n": 1,
+  "n": 2,
   "text": "Once per round: send any shop members to the bottom of the pile, then refill.",
   "oldPeople": [
    "tan"

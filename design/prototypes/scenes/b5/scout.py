@@ -1,5 +1,6 @@
 import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def scout():
@@ -7,6 +8,7 @@ def scout():
     pal = base(MED, 'grey', b='#cfe2e2', m='#a9c48e', M='#98b47e', l='#5f8a4e', L='#4e7640', g='#8fae6c',
                o='#c98a4a', O='#a86e36', h='#b8a57c', j='#958360', q='#2f3338', e='#9fb7c4', R='#c8463c',
                H='#2b1d17', z='#1a1210', n='#4b4f55')
+    pal.update({'d': LIGHT[0], 'D': LIGHT[1]})
     c.rect(0, 0, 63, 63, 'b')
 
     def hills(l):
@@ -54,9 +56,12 @@ def scout():
         f.recolor('S', 's', (cx - 1, 25, cx + 1, 27))
         f.hl(cx - 1, cx + 1, 29, 'k')
 
-    person(c, cx, 17, hs='crop', hk='H', hdk='z', mouth='none', brows='none',
-           shirt='1', sdk='2', sw=8, ww=7, th=13, pants='n', pdk='n', shoe='z', lh=8, front=front, hat=hat, DK=DK,
-           top=binos)
+    def _fig(c):
+        person(c, cx, 17, hs='crop', hk='H', hdk='z', mouth='none', brows='none',
+               shirt='1', sdk='2', sw=8, ww=7, th=13, pants='n', pdk='n', shoe='z', lh=8, front=front, hat=hat, DK=DK,
+               top=binos)
+    c.paste(solo(_fig, dx=14, dy=-2, keys={'s': 'd', 'S': 'D', 'H': 'L'}, mirror=True))
+    c.paste(solo(_fig, dx=-9, dy=0))
     return c.rows(), pal
 
 

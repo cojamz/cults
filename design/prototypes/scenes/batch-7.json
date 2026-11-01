@@ -259,7 +259,7 @@
   "id": "benders.frontrunner",
   "name": "Line Cutters",
   "sphere": "colorless",
-  "n": 2,
+  "n": 3,
   "text": "You go first every round.",
   "oldPeople": [
    "golden"

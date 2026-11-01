@@ -4,11 +4,11 @@ from _kit2 import *
 
 
 def art():
-    """Line Cutters count 2: a pair slipping in at the front of the queue, the line behind them grumbling."""
+    """Line Cutters count 3: a trio slipping in at the front of the queue, the line behind them grumbling."""
     c = C(N)
     pal = base_pal(p='#cfd4d6', P='#bfc4c6', f='#a9aeac', F='#969b99', m='#8d8a96', M='#77747f', o='#c9a24a', O='#9e7a30',
                    R='#c0624a', h='#2b1d18', H='#4a332a', j='#e2b44e', J='#b8862e', n='#3b3f45', N='#2b2e33', z='#1e1e22',
-                   a=LIGHT[0], A=LIGHT[1], d=MED[0], D=MED[1], **{'1': GREY[0], '2': GREY[1]})
+                   a=LIGHT[0], A=LIGHT[1], d=MED[0], D=MED[1], e=DEEP[0], E=DEEP[1], **{'1': GREY[0], '2': GREY[1]})
     c.rect(0, 0, 63, 63, 'p'); floor(c, 52, 'f', 'F')
 
     def door(l):                          # the doors everyone is queueing for, with a FIRST sign
@@ -22,6 +22,8 @@ def art():
     bg(c, line, None)
     DK = {'n': 'N'}
     lg = dict(pants='n', pdark='N', shoe='z', lh=8)
+    c.paste(solo(lambda cc: fig(cc, DK, 32, 12, 'e', 'E', hs='short', hk='h', hd='H', pose='down', size=14, mouth='smile',
+                                legs=lg), dx=22, dy=-3))
     c.paste(solo(lambda cc: fig(cc, DK, 32, 14, 'd', 'D', hs='crop', hk='h', hd='H', pose='point', size=14, mouth='smirk', legs=lg),
                  dx=12, dy=-1))
     c.paste(solo(lambda cc: fig(cc, DK, 32, 15, 'a', 'A', hs='bun', hk='j', hd='J', pose='hips', size=14, mouth='grin', side='R',
