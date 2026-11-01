@@ -14,6 +14,12 @@ const NO_OPTS = new Map();
 const NO_FLASH = new Set();
 // ?trace=1 only: one record per table step, kept on the page for the perf harness (design/eval/perf/turn-wait.md)
 const tracePace = r => { if (typeof window === 'undefined') return null; (window.__patronsPace || (window.__patronsPace = [])).push(r); return r; };
+/** Runs fn once the frame now being drawn has painted (a rAF, then a task); returns its cancel, for an effect's cleanup. */
+function afterPaint(fn) {
+  let t = null;
+  const r = requestAnimationFrame(() => { t = setTimeout(fn, 0); });
+  return () => { cancelAnimationFrame(r); clearTimeout(t); };
+}
 let userMove = false; // set while your own click is being submitted (useTable.show reads it)
 const NO_SLOTS = new Map();
 const NOOP = () => {};
@@ -1134,17 +1140,19 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // When a choice prompt goes away, keep focus on the table (the status line) rather than the page body: checked when the
   // step's kind changes, and only when focus is truly lost (perf, 2026-10-15: a focus() on every state forced a layout)
   const kindKey = pend ? `${pend.player}:${pend.kind}` : 'none';
-  useEffect(() => {
+  // (focus waits for the frame after the answer is painted: a focus() makes the browser lay out the whole table, and
+  // a click's effects now run before its paint, 15-30 ms of a pay or recruit click at 4x CPU; speed pass, Nov 1)
+  useEffect(() => afterPaint(() => {
     if (document.hasFocus && !document.hasFocus()) return;
     const a = document.activeElement;
     if ((!a || a === document.body) && root.current) {
       const pill = root.current.querySelector('[data-prompt]');
       if (pill) pill.focus({ preventScroll: true });
     }
-  }, [kindKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }), [kindKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Focus goes to the next sensible control when it becomes your move (not into the void).
-  useEffect(() => {
+  useEffect(() => afterPaint(() => {
     if (!mine || needHandoff || !root.current || (document.hasFocus && !document.hasFocus())) return;
     if (pend.kind !== 'place' && pend.kind !== 'buy') return; // choices and paying focus themselves
     const a = document.activeElement;
@@ -1154,7 +1162,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
       ? root.current.querySelector('.act.can') || root.current.querySelector('.slot.can')
       : root.current.querySelector('.card.can') || root.current.querySelector('.fb.can') || root.current.querySelector('.fbuy .pass[data-option]');
     if (pick) pick.focus({ preventScroll: true });
-  }, [pend, mine, needHandoff]);
+  }), [pend, mine, needHandoff]);
 
   // Hot-seat: a choice or payment that opens a turn takes the hand-over into its own header ("Ana's turn"),
   // instead of a hand-over screen and then the choice: one step, not two.

@@ -171,19 +171,35 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
   useLayoutEffect(() => {
     const row = rowRef.current;
     if (!fitKey || !row) return undefined;
+    // every card is written, then every card read, a pass at a time: at most three layouts for the row (read and
+    // write card by card made the browser lay the page out up to three times per card, 10-30 ms of a recruit click
+    // at 4x CPU; speed pass, Nov 1)
     const fit = () => {
+      const cards = [];
       for (const a of row.querySelectorAll('.lt-pick-ability')) {
         const card = a.closest('.lt-card'), ft = card && card.querySelector('.ft');
-        if (!ft) continue;
-        a.removeAttribute('data-fit');
-        const over = () => a.getBoundingClientRect().bottom > ft.getBoundingClientRect().top + 0.5 || ft.getBoundingClientRect().bottom > card.getBoundingClientRect().bottom + 0.5;
-        if (over()) a.setAttribute('data-fit', 'tight');
-        // still under the price (a long rule over a discounted price's two lines, "7" over "free"): the picture gives way
-        if (over()) a.setAttribute('data-fit', 'bare');
+        if (ft) cards.push({ a, card, ft });
       }
+      const over = ({ a, card, ft }) => a.getBoundingClientRect().bottom > ft.getBoundingClientRect().top + 0.5 || ft.getBoundingClientRect().bottom > card.getBoundingClientRect().bottom + 0.5;
+      for (const c of cards) c.a.removeAttribute('data-fit');
+      const tight = cards.filter(over);
+      for (const c of tight) c.a.setAttribute('data-fit', 'tight');
+      // still under the price (a long rule over a discounted price's two lines, "7" over "free"): the picture gives way
+      const bare = tight.filter(over);
+      for (const c of bare) c.a.setAttribute('data-fit', 'bare');
     };
+    // fit again only when the row's size changes (a ResizeObserver also reports once as it starts watching: at the
+    // size just fitted, that report is skipped)
+    let size = '';
+    const sizeOf = r => `${Math.round(r.width)}x${Math.round(r.height)}`;
     fit();
-    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(fit) : null;
+    { const cs = getComputedStyle(row); size = sizeOf({ width: row.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight), height: row.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) }); }
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(es => {
+      const now = es[0] ? sizeOf(es[0].contentRect) : '';
+      if (now && now === size) return;
+      size = now;
+      fit();
+    }) : null;
     ro?.observe(row);
     return () => ro?.disconnect();
   }, [fitKey]);

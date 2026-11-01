@@ -27,7 +27,8 @@ const [base, label] = pos;
 if (!base || !label) { console.error('usage: node scripts/v4-rig.mjs <url> <label> [--cpu=4] [--speed=relaxed] [--seed=N]'); process.exit(2); }
 const QUERY = String(flag('query', '') || ''); // extra page query, e.g. trace=1 (src/v4/perf.js: React commits per component → json react)
 const CPU = Number(flag('cpu', 4)), SPEED = String(flag('speed', 'relaxed')), SEED = Number(flag('seed', 20261028));
-const TRACE = !!flag('trace-clicks', false); // a Chrome trace per click: main-thread time by kind (style, layout, paint, script…) in slow ones
+const TRACE = !!flag('trace-clicks', false);
+const TRACE_MIN = Number(flag('trace-min', 150)); // --trace-min=ms: trace clicks at least this slow (default 150) // a Chrome trace per click: main-thread time by kind (style, layout, paint, script…) in slow ones
 const PROFILE = !!flag('profile-clicks', false);
 // --profile-clicks: CPU-profile every click; where the time goes in slow ones (use an unminified build)
 const FLIGHTS = !!flag('flights', false); // every flight watched: any taken off screen before it arrived (e2e/v4/lib/flightwatch.mjs)
@@ -84,7 +85,7 @@ const RECORDER = () => {
     F.armed = true;
     // the game's own click phases (GameScreen: pick, submitted, commit), ms after the press: window.__rigClicks → json clickPhases
     window.__cmLog = []; window.__cm = n => window.__cmLog.push([n, performance.now()]);
-    const resolve = v => { F.armed = false; if (v != null) (window.__rigClicks ||= []).push({ ms: v, what: document.querySelector('.app.game')?.dataset.phase, marks: window.__cmLog.map(([n, t]) => n + '+' + Math.round(t - t0)).join(' ') }); done(v); };
+    const resolve = v => { F.armed = false; if (v != null) (window.__rigClicks ||= []).push({ ms: v, t0, what: document.querySelector('.app.game')?.dataset.phase, marks: window.__cmLog.map(([n, t]) => n + '+' + Math.round(t - t0)).join(' ') }); done(v); };
     const look = () => {
       const g = document.querySelector('.app.game');
       return [g?.dataset.moves, !!document.querySelector('[data-next-round]'), [...document.querySelectorAll('[data-option]')].map(e => e.getAttribute('data-option')).sort().join(' '), !!document.querySelector('[data-place], .dialog.pay')].join('|');
@@ -138,7 +139,10 @@ const cdp = await ctx.newCDPSession(page);
 await cdp.send('Performance.enable');
 const throttle = r => cdp.send('Emulation.setCPUThrottlingRate', { rate: r });
 const metrics = async () => Object.fromEntries((await cdp.send('Performance.getMetrics')).metrics.map(m => [m.name, m.value]));
-const memory = async () => { await cdp.send('HeapProfiler.collectGarbage'); const c = await cdp.send('Memory.getDOMCounters'); const h = await cdp.send('Runtime.getHeapUsage'); return { nodes: c.nodes, listeners: c.jsEventListeners, heapMB: Math.round(h.usedSize / 1e5) / 10 }; };
+const memory = async () => { await cdp.send('HeapProfiler.collectGarbage'); const c = await cdp.send('Memory.getDOMCounters'); const h = await cdp.send('Runtime.getHeapUsage');
+  // elements in the document by tag.firstClass (what a reload rebuilds), beside the counters (which count detached nodes too)
+  const inDoc = await page.evaluate(() => { const m = {}; for (const e of document.getElementsByTagName('*')) { const k = e.tagName.toLowerCase() + '.' + String(typeof e.className === 'string' ? e.className : e.className?.baseVal || '').trim().split(/\s+/)[0]; m[k] = (m[k] || 0) + 1; } return m; }).catch(() => ({}));
+  return { nodes: c.nodes, listeners: c.jsEventListeners, heapMB: Math.round(h.usedSize / 1e5) / 10, elements: Object.values(inDoc).reduce((a, b) => a + b, 0), byClass: inDoc }; };
 // every element handle is let go each turn: a held handle pins its element, and a detached one its whole old tree
 // (memory.mjs read 27k nodes from that), which would read as the game's own leak
 let held = [];
@@ -174,16 +178,16 @@ async function idleSample(round) {
 // --profile-clicks: a CPU profile from just before each click to its answer; self time by function, summed over clicks
 // slower than 150 ms (profiling itself slows every click, so read the shares, not the ms)
 const prof = new Map(), profTotal = new Map(), profNative = new Map(); let profN = 0, m0 = null; const rend = { style: 0, styleN: 0, layout: 0, layoutN: 0, script: 0, task: 0 };
-const trace = new Map(); let traceN = 0; const slowest = []; // the slowest traced clicks, each as a timeline of tasks
+const trace = new Map(), forced = new Map(); let traceN = 0; const slowest = []; // the slowest traced clicks, each as a timeline of tasks
 const TRACE_NAMES = ['UpdateLayoutTree', 'Layout', 'PrePaint', 'Paint', 'Layerize', 'Commit', 'UpdateLayer', 'HitTest', 'FunctionCall', 'EventDispatch', 'TimerFire', 'FireAnimationFrame', 'RunMicrotasks', 'V8.GC_SCAVENGER', 'MajorGC', 'MinorGC', 'ScheduleStyleRecalculation', 'RunTask'];
-const traceStart = async () => { if (!TRACE) return; await cdp.send('Tracing.start', { categories: 'devtools.timeline,disabled-by-default-devtools.timeline,v8', transferMode: 'ReturnAsStream' }); };
+const traceStart = async () => { if (!TRACE) return; await cdp.send('Tracing.start', { categories: 'devtools.timeline,disabled-by-default-devtools.timeline,disabled-by-default-devtools.timeline.stack,v8', transferMode: 'ReturnAsStream' }); };
 const traceStop = async (what, ms) => {
   if (!TRACE) return;
   const done = new Promise(r => cdp.once('Tracing.tracingComplete', r));
   await cdp.send('Tracing.end'); const { stream } = await done;
   let txt = ''; for (;;) { const c = await cdp.send('IO.read', { handle: stream }); txt += c.base64Encoded ? Buffer.from(c.data, 'base64').toString() : c.data; if (c.eof) break; }
   await cdp.send('IO.close', { handle: stream });
-  if (ms == null || ms < 150) return;
+  if (ms == null || ms < TRACE_MIN) return;
   traceN++;
   const evs = JSON.parse(txt).traceEvents || JSON.parse(txt);
   const main = evs.find(e => e.name === 'thread_name' && e.args?.name === 'CrRendererMain');
@@ -201,6 +205,13 @@ const traceStop = async (what, ms) => {
     slowest.push({ what, ms, lines }); slowest.sort((a, b) => b.ms - a.ms); slowest.length = Math.min(slowest.length, 6);
   }
   for (const e of evs) {
+    // forced style and layout: who asked (the JS frame on top when the browser had to lay out at once)
+    if (main && e.pid === main.pid && e.tid === main.tid && (e.name === 'Layout' || e.name === 'UpdateLayoutTree') && e.ph === 'X') {
+      const st = e.args?.beginData?.stackTrace || e.args?.data?.stackTrace;
+      const f = st && st[0];
+      const k = `${e.name} ← ${f ? `${f.functionName || '(anon)'} ${(f.url || '').split('/').pop()}:${f.lineNumber}` : '(frame)'}`;
+      const x = forced.get(k) || { ms: 0, n: 0 }; x.ms += (e.dur || 0) / 1000; x.n++; forced.set(k, x);
+    }
     if (e.ph !== 'X' || !main || e.pid !== main.pid || e.tid !== main.tid || !TRACE_NAMES.includes(e.name)) continue;
     const t = trace.get(e.name) || { ms: 0, n: 0, kinds: new Set() };
     t.ms += (e.dur || 0) / 1000; t.n++; t.kinds.add(what); trace.set(e.name, t);
@@ -292,7 +303,7 @@ while (Date.now() - t0 < MAX_MIN * 60000) {
     lastRound = round;
     await sleep(1500);
     per(round).memory = await memory();
-    console.log(`round ${round}: ${JSON.stringify(per(round).memory)}`);
+    console.log(`round ${round}: ${JSON.stringify({ ...per(round).memory, byClass: undefined })}`);
   }
   const before = per(round).clicks.length;
   if (g.phase === 'place') {
@@ -339,7 +350,7 @@ const over = !!(await page.$('.results'));
 
 const extra = await page.evaluate(() => window.__rigExtra || null).catch(() => null); // a probe build's own readings
 const clickPhases = await page.evaluate(() => window.__rigClicks || []).catch(() => []);
-const react = await page.evaluate(() => window.__perf ? window.__perf.summary().react : null).catch(() => null); // ?trace=1 only
+const react = await page.evaluate(() => window.__perf ? { ...window.__perf.summary().react, commitsAll: (window.__perf.entries.commits || []).filter(c => (c.total || 0) > 3) } : null).catch(() => null); // ?trace=1 only
 const flights = FLIGHTS ? await page.evaluate(() => window.__flightWatch.report()).catch(() => null) : null;
 const F = await page.evaluate(() => ({ frames: window.__rig.frames, loaf: window.__rig.loaf, big: window.__rig.big || [] })).catch(() => ({ frames: [], loaf: [] }));
 // the leak control: a reload on the last round's turn (the game is saved locally), measured the same way
@@ -418,8 +429,10 @@ if (flights) L.push('', `Flights: ${flights.flights} flew, ${flights.landed} lan
 if (errors.length) L.push('', 'Errors:', ...errors.slice(0, 10).map(e => `- ${e}`));
 writeFileSync(`${OUT}/rig-${label}.md`, L.join('\n') + '\n');
 if (TRACE) {
-  const T = [`# Main thread in slow clicks: ${label}`, '', `${traceN} clicks over 150 ms, traced. Nested kinds overlap (a FunctionCall holds the style and layout it forces; RunTask holds everything).`, '', '| kind | ms | count | ms per click |', '|---|---|---|---|',
+  const T = [`# Main thread in slow clicks: ${label}`, '', `${traceN} clicks over ${TRACE_MIN} ms, traced. Nested kinds overlap (a FunctionCall holds the style and layout it forces; RunTask holds everything).`, '', '| kind | ms | count | ms per click |', '|---|---|---|---|',
     ...[...trace].sort((a, b) => b[1].ms - a[1].ms).map(([k, t]) => `| ${k} | ${Math.round(t.ms)} | ${t.n} | ${Math.round(t.ms / (traceN || 1))} |`)];
+  T.push('', '## Style and layout by who asked', '', 'A JS frame means it was forced mid-script; (frame) is the browser\'s own pass before paint.', '', '| ms | count | per click | kind ← asked by |', '|---|---|---|---|',
+    ...[...forced].sort((a, b) => b[1].ms - a[1].ms).slice(0, 30).map(([k, x]) => `| ${Math.round(x.ms)} | ${x.n} | ${(x.n / (traceN || 1)).toFixed(1)} | ${k} |`));
   for (const c of slowest) T.push('', `## ${c.what} ${c.ms} ms`, '', ...c.lines.map(l => `- ${l}`));
   writeFileSync(`${OUT}/rig-${label}-trace.md`, T.join('\n') + '\n');
 }
