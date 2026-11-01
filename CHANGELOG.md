@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.917 — 2026-11-01
+
+- Silver's new deck of 10 members: Smooth Talker, Philanthropists, Polisher, Collector, Debt Collector and High Society join Caterer, Toastmaster, Hanger-On and Debutante
+
 ## v0.9.916 — 2026-11-01
 
 - Walk-In and Recruit Twice no longer show a bold On Recruit; wheel faces print the catch: Walk-In '+1 red to all', Last Call 'then you go last'; the round-end note points at the I, II, III numbers; '1 member affordable'
