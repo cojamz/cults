@@ -137,3 +137,7 @@
 }
 .lt-cult-seat .cs-leader{position:relative}
 .lt-cult-seat .cs-leader > .cs-cloak-on{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+/* the Goes Last token (Cory, Nov 1 2:35pm): the holder's waiting minions sit on a purple pill with a moon */
+.lt-cult-seat .cs-golast{display:inline-flex;align-items:center;gap:3px;height:22px;padding:0 6px 0 5px;border-radius:11px;background:color-mix(in srgb,var(--purple) 70%,#1c140c);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--purple) 60%,#efe3c6),0 1px 0 rgba(0,0,0,.45)}
+.lt-cult-seat .cs-golast .cs-moon{margin-right:2px}
+.app.game.lt > .lt-seat .cs-minions:has(.cs-golast){height:22px}

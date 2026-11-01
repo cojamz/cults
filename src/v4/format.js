@@ -232,16 +232,20 @@ export function turnSequence(state) {
   const seq = [...r.done.map(pid => ({ pid, at: 'done' })), ...(r.current != null ? [{ pid: r.current, at: 'now' }] : []), ...r.next.map(pid => ({ pid, at: 'later' }))];
   // the round's order, with turns taken early (Crunch Time) moved up: they're the player's own turns, not extra ones
   const { order, early, src, late } = roundOrder(state);
-  // a Last Call caller's turns still to come go after everyone else's, as the engine runs them (core lastCallLast),
-  // so a rival's skipped turn that lands at the end still comes before them
-  // (read off the queue too: a screen mid-animation shows the caller's flag before its turn record has moved them)
-  const isLast = pid => state.players[pid].lastCall === state.round;
+  // the minions on the Goes Last token go after everyone else's, as the engine runs them (core lastCallLast), so a
+  // rival's skipped turn that lands at the end still comes before them
+  // (read off the queue too: a screen mid-animation shows the token before its turn record has moved them)
+  const holder = state.goesLast && state.goesLast.round === state.round ? state.goesLast.pid : null;
+  const onToken = t => t.token && t.p === holder && !t.now;
   const queued = (state.queue || []).slice(0, Math.max(0, (state.queue || []).findIndex(t => t.t === 'allPlaced'))).filter(t => t.t === 'turn');
-  if (queued.some(t => isLast(t.p)) && queued.findIndex(t => isLast(t.p)) > queued.findLastIndex(t => !isLast(t.p))) {
+  const tokenN = queued.filter(onToken).length;
+  if (tokenN && queued.findIndex(onToken) > queued.findLastIndex(t => !onToken(t))) {
     let k = 0;
     for (const t of seq) if (t.at !== 'later' && k < order.length && order[k] === t.pid) k++;
     const rest = order.slice(k).map((pid, i) => i + k);
-    const last = i => isLast(order[i]);
+    // the holder's last tokenN turns in the order are the ones on the token
+    const lateSet = new Set(rest.filter(i => order[i] === holder).slice(-tokenN));
+    const last = i => lateSet.has(i);
     const sorted = [...rest.filter(i => !last(i)), ...rest.filter(last)];
     const take = a => { const v = sorted.map(i => a[i]); v.forEach((x, i) => { a[k + i] = x; }); };
     [order, early, src, late].forEach(take);

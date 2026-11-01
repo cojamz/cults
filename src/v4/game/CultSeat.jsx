@@ -73,6 +73,12 @@ export default function CultSeat({ state, pid, me = null, mine = false, now = fa
   const placing = state.round >= 1 && !state.over;
   const placed = placing ? Math.max(0, (p.workers ?? left) - left) : 0;
   const outOf = placing && left === 0 && !now;
+  // the Goes Last token (Cory, Nov 1 2:35pm): its holder's waiting minions sit on it, in a purple pill with a moon
+  const holder = placing && state.goesLast && state.goesLast.round === state.round ? state.goesLast.pid : null;
+  const goLast = holder === pid && !state.over && !outOf;
+  const close = (state.queue || []).findIndex(t => t.t === 'allPlaced');
+  const onToken = goLast ? Math.min(left, (state.queue || []).slice(0, close < 0 ? undefined : close).filter(t => t.t === 'turn' && t.p === pid && t.token && !t.now).length) : 0;
+  const inHand = left - onToken;
   // who's winning lives here now (no score row): this chair's place, lit when it leads, the margin on hover
   const rank = seatRanks(state, me)[pid] || null;
   const bonus = pick && pick.bonus ? pick.bonus : null;
@@ -180,25 +186,33 @@ export default function CultSeat({ state, pid, me = null, mine = false, now = fa
             {turn && <Tip className={`cs-turn ${turn.kind}`} data-turn={turn.kind} data-turn-n={turn.n ?? undefined}
               label={turn.title} content={<div className="pop-card gloss"><b>Turn order</b><span>{turn.title}</span></div>}>{turn.say}</Tip>}
             {/* Last Call (or a copy of it): this seat places the rest after everyone else (Cory, 2026-10-28) */}
-            {!turn && !outOf && !state.over && p.lastCall === state.round && <small className="cs-done cs-last" data-last="1" title={`${p.name} goes last this round: their minions left place after everyone else is out`}>goes last</small>}
+            {!turn && goLast && <small className="cs-done cs-last" data-last="1" title={`${p.name} goes last this round: their minions left place after everyone else is out`}>goes last</small>}
           </span>
           {/* under the name (mockup A, Cory 2026-10-21): the round's minions as a short row, the ones still to place
               standing (each bobs on its own slow phase; a placement flies from here) and the placed ones faded; a rival
               out of minions says "done this round" */}
           <span className="cs-pips">
-            {!outOf && (
+            {(!outOf || goLast) && (
               <span className="cs-minions" data-left={left} data-n={left} title={`${left} minion${left === 1 ? '' : 's'} to place this round`}>
-                {Array.from({ length: left }, (_, k) => (
+                {Array.from({ length: inHand }, (_, k) => (
                   <i key={k} className="cs-min" data-minion={pid} data-k={k} style={{ '--ph': (((pid * 3 + k) * 0.618034) % 1).toFixed(3) }}>
                     <Minion color={playerColor(pid)} emoji={seatEmoji(state, pid)} size={mine ? 16 : 14} />
                   </i>
                 ))}
+                {goLast && <span className="cs-golast" data-golast={onToken} title={`${p.name} holds the Goes Last token: the ${onToken === 1 ? 'minion' : 'minions'} on it place after every hand is empty`}>
+                  <svg className="cs-moon" width="14" height="14" viewBox="0 0 7 7" shapeRendering="crispEdges" aria-hidden="true"><path d="M2 0h3v1H3v1H2v3h1v1h2v1H2V6H1V5H0V2h1V1h1z" fill="#efe3c6"/></svg>
+                  {Array.from({ length: onToken }, (_, k) => (
+                    <i key={`t${k}`} className="cs-min" data-minion={pid} data-k={inHand + k}>
+                      <Minion color={playerColor(pid)} emoji={seatEmoji(state, pid)} size={mine ? 16 : 14} />
+                    </i>
+                  ))}
+                </span>}
                 {Array.from({ length: placed }, (_, k) => (
                   <i key={`p${k}`} className="cs-min placed" aria-hidden="true"><Minion color={playerColor(pid)} emoji={seatEmoji(state, pid)} size={mine ? 16 : 14} /></i>
                 ))}
               </span>
             )}
-            {outOf && <span className="cs-minions out" data-left={0} data-n={0} />}
+            {outOf && !goLast && <span className="cs-minions out" data-left={0} data-n={0} />}
             {!turn && outOf && <small className="cs-done" data-done="1">done this round</small>}
           </span>
         </span>

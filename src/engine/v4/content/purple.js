@@ -114,14 +114,16 @@ export function extraTurns(ctx, p, n = 1, why = null) {
 }
 
 /** p is passed over on their next turn this round; that minion places once the snake carries on past everyone else. */
-function skipNext(ctx, p, why, by = p, quiet = false) {
+function skipNext(ctx, p, why, by = p, quiet = false, { token = false, last = false } = {}) {
   // Early Birds (Cory, 2026-10-22): "your turns cannot be skipped", your own Sleep In and Last Call too
-  const guard = ctx.membersOf(p).find(c => c.def.noSkip || (c.copy && c.copy.endsWith('.earlybird')));
-  if (guard) { if (!quiet) ctx.log(`${p.name}'s Early Birds: ${p.name}'s turn can't be skipped.`); return false; }
+  if (noSkip(ctx, p)) { if (!quiet) ctx.log(`${p.name}'s Early Birds: ${p.name}'s turn can't be skipped.`); return false; }
   const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn');
   const close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
+  const mine = t => t.t === 'turn' && t.p === p.id && !t.token && !(last && t.now);
   let i = end + 1;
-  while (i < stop && !(q[i].t === 'turn' && q[i].p === p.id)) i++;
+  // last: the hand empties at its last snake turn (Sleep In puts one minion on the Goes Last token)
+  if (last) { i = stop - 1; while (i > end && !mine(q[i])) i--; if (i <= end) i = stop; }
+  else while (i < stop && !mine(q[i])) i++;
   if (i >= stop) { ctx.log(`${by.name}'s ${why}: ${p === by ? 'no turn' : `${p.name} has no turn`} left to skip this round.`); return false; }
   // where that turn sat in the round's order, matched as the seats match it (as turnsNow does)
   const s = ctx.state, { order } = ctx.roundOrder();
@@ -129,10 +131,12 @@ function skipNext(ctx, p, why, by = p, quiet = false) {
   let j = 0;
   for (const t of seq) if (j < order.length && order[j] === t.pid) t.at = j++;
   const [task] = q.splice(i, 1);
-  // where the turn sat, a marker: the turn is really skipped when play reaches it (Gossip pays then)
-  q.splice(i, 0, { t: 'content', p: p.id, h: 'purple.skipped', data: { why } });
-  q.splice(stop, 0, task);
   const at = (seq.find(t => t.task === task) || {}).at;
+  if (token) task.token = true;
+  // where the turn sat, a marker: the turn is really skipped when play reaches it (Gossip pays then); a token's marker
+  // turns back into the turn if the token is taken first (the minion goes back to its owner's hand)
+  q.splice(i, 0, { t: 'content', p: p.id, h: 'purple.skipped', data: token ? { why, token: true, at } : { why } });
+  q.splice(stop, 0, task);
   // its new place: after every other turn of the round's order still to come
   if (at !== undefined && at !== order.length - 1) {
     if (!s.early || s.early.round !== s.round) s.early = { round: s.round, moves: [] };
@@ -141,6 +145,71 @@ function skipNext(ctx, p, why, by = p, quiet = false) {
   if (!quiet) ctx.log(`${by.name}'s ${why}: ${p.name} skips their next turn.`);
   return true;
 }
+const noSkip = (ctx, p) => ctx.membersOf(p).some(c => c.def.noSkip || (c.copy && c.copy.endsWith('.earlybird')));
+/** p's turns still to come this round (after the one now running), as queue indices. */
+const turnsAhead = (ctx, p) => {
+  const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');
+  const out = [];
+  for (let i = end + 1; i < (close < 0 ? q.length : close); i++) if (q[i].t === 'turn' && q[i].p === p.id) out.push(i);
+  return out;
+};
+/** Who holds the Goes Last token this round (Cory, Nov 1, 2:16pm and 2:35pm), or null. */
+export const tokenHolder = s => (s.goesLast && s.goesLast.round === s.round ? s.goesLast.pid : null);
+/**
+ * p takes the Goes Last token: "Its holder places the minions on it once every hand is empty. If someone takes it, the
+ * minions on it go back to their owner's hand." The old holder's minions rejoin the snake: each one still waiting on a
+ * passed turn takes that turn again, and any whose turn already went by places after the other hands (core lastCallLast
+ * keeps the new holder's minions on the token behind them).
+ */
+function takeToken(ctx, p, why) {
+  const s = ctx.state, was = tokenHolder(s);
+  s.goesLast = { round: s.round, pid: p.id };
+  if (was === null || was === p.id) { ctx.log(`${p.name}'s ${why}: ${p.name} takes the Goes Last token.`); return; }
+  const o = ctx.player(was), q = s.queue;
+  const close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
+  const on = q.slice(0, stop).filter(t => t.t === 'turn' && t.p === o.id && t.token);
+  on.forEach(t => { delete t.token; });
+  // a passed turn still to come is the minion's own turn again
+  for (const t of on) {
+    const m = q.findIndex(x => x.t === 'content' && x.h === 'purple.skipped' && x.p === o.id && x.data && x.data.token);
+    if (m < 0) break;
+    const at = q[m].data.at;
+    q.splice(q.indexOf(t), 1);
+    q.splice(q.findIndex(x => x.t === 'content' && x.h === 'purple.skipped' && x.p === o.id && x.data && x.data.token), 1, t);
+    if (s.early && s.early.round === s.round) {
+      const k = s.early.moves.findIndex(mv => mv.p === o.id && mv.late && mv.from === at);
+      if (k >= 0) s.early.moves.splice(k, 1);
+    }
+  }
+  ctx.log(`${p.name}'s ${why}: ${p.name} takes the Goes Last token from ${o.name}${on.length ? `, and ${o.name}'s ${on.length === 1 ? 'minion on it goes' : `${on.length} minions on it go`} back to their hand` : ''}.`);
+}
+/**
+ * p takes the Goes Last token and puts n of their minions still to place on it (Last Call: all; Sleep In: 1). Each one
+ * empties the hand a turn sooner, so p's turns that still have a rival's turn after them are passed (skip markers);
+ * the rest already come last and only join the token. Early Birds ("Your turns can't be skipped."): the space pays and
+ * nothing goes on the token, so the token stays where it is (decisions, Nov 1 2:21pm: take the payout without going last).
+ */
+function toToken(ctx, p, n, why) {
+  if (noSkip(ctx, p)) { ctx.log(`${p.name}'s Early Birds: ${p.name}'s turns can't be skipped, so ${p.name} doesn't go last.`); return 0; }
+  takeToken(ctx, p, why);
+  let put = 0;
+  // Last Call: the next turns are the ones passed while the rivals still place; Sleep In: the hand empties at the end
+  for (; put < n && waitsOnRival(ctx, p) && (n === 1 ? lastWaits(ctx, p) : true); put++) {
+    if (!skipNext(ctx, p, why, p, true, { token: true, last: n === 1 })) break;
+  }
+  // the rest: already after every rival's turn, they wait on the token too (nothing passes, so nothing pays)
+  const q = ctx.state.queue, rest = turnsAhead(ctx, p).map(i => q[i]).filter(t => !t.token && !t.now);
+  for (const t of rest.slice(-(n - put) || rest.length)) if (put < n) { t.token = true; put++; }
+  if (put) ctx.log(`${p.name}'s ${why}: ${put === 1 ? '1 minion waits' : `${put} minions wait`} on the Goes Last token.`);
+  return put;
+}
+/** p's last turn this round still has a rival's turn after it (Sleep In passes that one). */
+const lastWaits = (ctx, p) => {
+  const q = ctx.state.queue, ahead = turnsAhead(ctx, p).filter(i => !q[i].token && !q[i].now);
+  if (!ahead.length) return false;
+  const close = q.findIndex(t => t.t === 'allPlaced');
+  return q.slice(ahead[ahead.length - 1] + 1, close < 0 ? q.length : close).some(t => t.t === 'turn' && t.p !== p.id && !t.token);
+};
 /** The skip marker reached: p's turn is passed over now. Gossip (Cory, 2026-10-22: "+1 follower every time a players
  *  turn is skipped", anyone's, yours too; Oct 23: "should pay when turn is actually skipped"). */
 function skipped(ctx, p, value, data) {
@@ -261,10 +330,15 @@ export default {
       // "Gain 4 purple, skip next turn". You're passed over once; the snake carries on and you still place every minion.
       // Cory, 2026-10-25: +3 instead of +4 ("skip a turn is basically automatically giving 2 followers")
       // Cory, 2026-10-28: grows by round, "maybe more like 4/5/6", so a late skip is worth taking
-      key: 'skip', copyDoesIt: true, ring: 1, name: 'Sleep In', text: '+4 purple (+5 in round II, +6 in round III). Skip your next turn.',
-      byRound: { lines: ['+4 purple', '+5 purple', '+6 purple'], rest: 'Skip your next turn.' },
+      // Cory, Nov 1 2:35pm: the Goes Last token ("Let's just try it with the goes last token"): one minion waits on it,
+      // so your hand empties a turn early and that snake turn is passed (a skip, for Pocket Watch and Gossip)
+      key: 'skip', copyDoesIt: true, ring: 1, name: 'Sleep In', text: '+4 purple (+5 in round II, +6 in round III). Take the Goes Last token and put your next minion on it.',
+      byRound: { lines: ['+4 purple', '+5 purple', '+6 purple'], rest: 'Take the Goes Last token and put your next minion on it.' },
       estimate: ctx => ctx.state.round + 3,
-      resolve(ctx, p) { ctx.gain(p, P, ctx.state.round + 3, { fromAction: true }); skipNext(ctx, p, 'Sleep In'); },
+      resolve(ctx, p) {
+        ctx.gain(p, P, ctx.state.round + 3, { fromAction: true });
+        toToken(ctx, p, 1, 'Sleep In');
+      },
     },
     {
       // Cory, 2026-10-22: replaces Catch Up ("the skip should replace catch up"); "1 purple per round" so it isn't weak
@@ -304,7 +378,7 @@ export default {
       // Cory, 2026-10-22: a follower bonus for taking the rest of your turns last ("YES now you're cooking"), in his
       // words ("take the remainder of your turns when others are out of minions"), "let's just try it at 2 followers
       // per minion left". Replaces Rush Hour. Name is Claude's fill-in.
-      key: 'lastcall', copyDoesIt: true, ring: 2, name: 'Last Call', text: '+1 purple. +1 follower and +1 purple per minion you have left. Skip your turns until everyone else is out of minions.', // (Cory, Nov 1: "keep it one follower, and give purple per minion"; "also keep +1 purple up front")
+      key: 'lastcall', copyDoesIt: true, ring: 2, name: 'Last Call', text: '+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token and put your other minions on it.', // (Cory, Nov 1: "keep it one follower, and give purple per minion"; "also keep +1 purple up front")
       estimate: (ctx, p) => 1 + 2 * Math.max(0, p.left - 1),
       resolve(ctx, p) {
         ctx.gain(p, P, 1 + p.left, { fromAction: true });
@@ -314,15 +388,8 @@ export default {
         // places before you, as after your own earlier Last Call) there is nothing to wait for, so nothing is skipped and
         // Gossip and Pocket Watch pay nothing (balance-1.0 g8: a second copy of Last Call re-skipped turns already last,
         // paying both for skips that passed over no one)
-        let moved = 0, blocked = false;
-        for (let i = 0; i < k && waitsOnRival(ctx, p); i++) {
-          if (skipNext(ctx, p, 'Last Call', p, true)) moved++;
-          else { blocked = true; break; }
-        }
-        // the rest of the round too: a rival's turn that lands later still goes first (core lastCallLast)
-        // said plainly, here and on the seat (Cory, 2026-10-28: P4's Echo copied Last Call and its going last looked broken)
-        if (blocked && !moved) ctx.log(`${p.name}'s Early Birds: ${p.name}'s turns can't be skipped.`);
-        else if (k) { p.lastCall = ctx.state.round; ctx.log(`${p.name}'s Last Call: ${p.name} goes last this round.`); }
+        // every minion left goes on the Goes Last token (Cory, Nov 1 2:35pm)
+        toToken(ctx, p, k, 'Last Call');
       },
     },
     {
@@ -410,7 +477,8 @@ export default {
     // Relay's slot (Cory cut Relay, 2026-10-14). Member-value sim, handed over at round II: 6.9 followers, 53% win
     // (Normal bots, n=320), so 8+2 (design/eval/purple-members.md). At 4 players round I has no space to spare, so it
     // pays from round II. Fires once per round (owlRound), whether or not the board had room.
-    m('nightowl', 'Night Owls', 6, 1, 'Once per round: after you place your last minion, +1 minion, placed right away.', { f: 2, from: 2,
+    // Cory, Nov 1 2:35pm: the Goes Last token; the extra minion waits on it
+    m('nightowl', 'Night Owls', 6, 1, 'Once per round: after you place your last minion, take the Goes Last token with 1 more minion on it.', { f: 2, from: 2,
       // recruited after your last minion of the round (its buy step): it waits for next round, and says so
       onRecruited(ctx, owner, card) {
         if (owner.left !== 0 || ctx.state.round < 1) return;
@@ -421,7 +489,10 @@ export default {
       afterAction(ctx, owner, card) {
         if (owner.left !== 0 || card.owlRound === ctx.state.round) return;
         card.owlRound = ctx.state.round;
-        extraTurns(ctx, owner, 1, 'Night Owls');
+        if (!extraTurns(ctx, owner, 1, 'Night Owls')) return;
+        const q = ctx.state.queue, t = turnsAhead(ctx, owner).map(i => q[i]).pop();
+        takeToken(ctx, owner, 'Night Owls');
+        if (t) t.token = true;
       },
     }),
     m('patience', 'Timekeeper', 4, 2, 'Game end: +1 follower per 3 purple.', {

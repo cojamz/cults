@@ -69,11 +69,11 @@ const P = {
     planahead: (r, now) => (now == null ? { main: '+1 purple', second: 'per minion to place' } : { main: `+${now} purple`, second: '1 per minion left to place' }),
     // free since 2026-10-15 (Cory: no board action requires spending). A ring II verb can drop line 2: whole in line 1
     // line 1 alone must not read as a flat +2 (text review, 2026-10-23: line 2 drops on ring II)
-    lastcall: { verb: '+1 @f and +1 purple per minion left, then go last', note: '+1 purple' }, // 'skip till others are out' didn't fit line 2 and dropped (blind panel, Nov 1)
+    lastcall: { verb: '+1 @f and +1 purple per minion left, then go last', second: 'take the Goes Last token', note: '+1 purple' }, // 'skip till others are out' didn't fit line 2 and dropped (blind panel, Nov 1)
     // the center drops line 2, so it's whole in line 1. Your own next turns, moved up, not extra ones (Cory, 2026-10-15)
     // Cory, 2026-10-22: place on taken spaces for the rest of the round
     // Cory, 2026-10-22: the old game's "Gain 4 purple, skip next turn"
-    skip: r => ({ main: `+${r + 3} purple`, second: 'skip your next turn' }),
+    skip: r => ({ main: `+${r + 3} purple`, second: 'take the Goes Last token' }),
     holdup: r => ({ main: `+${r + 1} purple`, second: 'whoever is next skips, even you' }),
     // the center ring can drop line 2 (round III since Oct 22): line 1 says it whole
     // Cory, 2026-10-28: +5 purple and a minion this round

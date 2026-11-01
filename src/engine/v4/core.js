@@ -494,16 +494,17 @@ function advance(state) {
   state.pending = null;
 }
 
-/** Last Call (Purple): "Skip your turns until everyone else is out of minions" holds for the whole round, so a rival
- *  turn that lands behind the caller's later (a rival's own skip, Extra Shift's minion) still goes first (Cory's
- *  playtest, 2026-10-26: P2 took Last Call and kept placing). Two callers keep their order among themselves. */
+/** The Goes Last token (Purple; Cory, Nov 1 2:35pm): "Its holder places the minions on it once every hand is empty",
+ *  for the whole round, so a rival turn that lands behind them later (a rival's own skip, Extra Shift's minion) still
+ *  goes first (Cory's playtest, 2026-10-26: P2 took Last Call and kept placing). */
 function lastCallLast(state) {
-  if (!state.players.some(p => p.lastCall === state.round)) return;
+  const holder = state.goesLast && state.goesLast.round === state.round ? state.goesLast.pid : null;
+  if (holder === null) return;
   const q = state.queue, close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
   const at = [];
   for (let i = 0; i < stop; i++) if (q[i].t === 'turn') at.push(i);
   // a turn moved up to now (Right Away, Crunch Time, a copy of either) stays where it was put
-  const late = t => !t.now && state.players[t.p].lastCall === state.round;
+  const late = t => !t.now && t.token && t.p === holder;
   const turns = at.map(i => q[i]), sorted = [...turns.filter(t => !late(t)), ...turns.filter(late)];
   at.forEach((i, k) => { q[i] = sorted[k]; });
 }
