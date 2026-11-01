@@ -64,10 +64,21 @@ export function createGame({ seats, seed = 1, quadrants, rules = {} }) {
   const table = { ...DEFAULT_RULES, ...(FULL_DECK.tests ? { cull: false, artifacts: false, roundDecks: 0 } : {}), ...rules }; // tests: content/cull.js (artifacts too: a test asks for them)
   const artifactIds = new Set(table.artifacts ? quadrants.map(q => ARTIFACTS[q]).filter(Boolean) : []);
   const dealt = def => !(table.cull && (CUT.has(def.id) || (table.deck === 10 && CUT10.has(def.id)))) && !artifactIds.has(def.id) && !def.artifact && !def.retired; // the cull (content/cull.js); artifacts (an artifact-only card is never dealt)
-  for (const q of quadrants) for (const def of quadrant(q).members.filter(dealt))
+  // Piles (experiment, branch only; Cory, 2026-11-01): rules.piles = { defs: [member ids], copies: n, only: bool } deals
+  // each listed member as a face-up pile of n copies anyone can recruit from, Dominion-style. only: the piles are the
+  // whole market (no shuffled deck). See src/engine/v4/piles.js.
+  const pileDefs = table.piles ? new Set(table.piles.defs) : null;
+  const inDeck = def => dealt(def) && !(pileDefs && (pileDefs.has(def.id) || table.piles.only));
+  for (const q of quadrants) for (const def of quadrant(q).members.filter(inDeck))
     for (let k = 0; k < def.copies; k++) { cards[uid] = { uid, def: def.id }; uid++; }
-  if (table.guests) for (const def of guestMembers().filter(dealt))
+  if (table.guests) for (const def of guestMembers().filter(inDeck))
     for (let k = 0; k < def.copies; k++) { cards[uid] = { uid, def: def.id }; uid++; }
+  const supply = pileDefs ? {} : null;
+  if (pileDefs) for (const id of table.piles.defs) {
+    defById(id);
+    supply[id] = [];
+    for (let k = 0; k < (table.piles.copies || 4); k++) { cards[uid] = { uid, def: id }; supply[id].push(uid); uid++; }
+  }
   // each color's artifact is a card of its own, held by nobody until the starting pick
   const artifacts = {};
   if (table.artifacts) for (const q of quadrants) if (ARTIFACTS[q]) { cards[uid] = { uid, def: ARTIFACTS[q] }; artifacts[q] = uid; uid++; }
@@ -77,7 +88,8 @@ export function createGame({ seats, seed = 1, quadrants, rules = {} }) {
       id: i, name: s.name || `P${i + 1}`, kind: s.kind || 'human', ...(s.emoji ? { emoji: String(s.emoji) } : {}), // emoji: the player's pick (display only)
       res: { ...zero }, bonus: 0, contest: 0, bought: 0, members: [], discount: 0, left: 0, turnRecruits: 0, final: null,
     })),
-    cards, pile: Object.keys(cards).map(Number).filter(u => !Object.values(artifacts).includes(u)), shop: [], artifacts, waiting: {},
+    cards, pile: Object.keys(cards).map(Number).filter(u => !Object.values(artifacts).includes(u) && !(supply && supply[cards[u].def])), shop: [], artifacts, waiting: {},
+    ...(supply ? { supply } : {}),
     round: 0, slots: {}, squats: {}, order: [], turnIndex: 0, current: null,
     recruits: 0, stock: Object.fromEntries(TIERS.filter(t => t.limited).map(t => [t.key, t.stock(seats.length)])),
     // contests: each round's scoring as the engine decided it (see contestTable); turns: who has taken a turn this round
@@ -148,7 +160,8 @@ export function applyMove(prev, move, { effects = false } = {}) {
 // A card in the pile or the shop belongs to nobody, so it carries nothing from a member's life: every way back there
 // (release, bury, swaps, Tryout running a shop member's On Recruit in place) ends clean, checked once per move here.
 function wipeUnowned(state) {
-  for (const u of [...state.pile, ...state.shop]) {
+  if (state.supply) refillPiles(state);
+  for (const u of [...state.pile, ...state.shop, ...Object.values(state.supply || {}).flat()]) {
     const c = state.cards[u];
     if (Object.keys(c).length > 2) state.cards[u] = { uid: c.uid, def: c.def };
   }
@@ -1024,8 +1037,40 @@ export const roundWorkers = (state, p) => p.workers ?? WORKERS[Math.max(1, state
 // ---------- recruiting, buying, gaining ----------
 
 function refill(state) {
+  if (state.supply) return refillPiles(state);
   while (state.shop.length < shopSize(state) && state.pile.length) state.shop.push(state.pile.shift());
 }
+// ---------- piles (experiment: rules.piles) ----------
+const isPileCard = (state, uid) => !!state.supply && state.supply[state.cards[uid]?.def] !== undefined;
+/** A pile opens in the round its member would join the deck (round decks), so round I sees only round I piles. */
+export const pileOpen = (state, defId) => joinsRound(state, defById(defId)) <= Math.max(1, state.round);
+/** Piles: a pile member sent "to the bottom of the pile" (or into the deck between rounds) goes back to its own pile;
+ *  the shop row fills from the deck as usual, then every open pile shows its top copy after the row. */
+function refillPiles(state) {
+  const back = u => { const c = state.cards[u]; state.cards[u] = { uid: c.uid, def: c.def }; state.supply[c.def].push(u); };
+  for (const list of [state.pile, ...Object.values(state.waiting || {})])
+    for (let i = list.length - 1; i >= 0; i--) if (isPileCard(state, list[i])) back(list.splice(i, 1)[0]);
+  // one face-up copy per pile: an extra copy that landed in the shop (a swap) goes back under its pile
+  const seen = new Set();
+  for (let i = 0; i < state.shop.length; i++) {
+    const u = state.shop[i];
+    if (!isPileCard(state, u)) continue;
+    const d = state.cards[u].def;
+    if (seen.has(d) || !pileOpen(state, d)) { state.shop.splice(i--, 1); back(u); } else seen.add(d);
+  }
+  const row = state.shop.filter(u => !isPileCard(state, u));
+  while (row.length < shopSize(state) && state.pile.length) row.push(state.pile.shift());
+  const tops = [];
+  for (const d of Object.keys(state.supply)) {
+    if (!pileOpen(state, d)) continue;
+    const up = state.shop.find(u => state.cards[u].def === d);
+    if (up !== undefined) tops.push(up);
+    else if (state.supply[d].length) tops.push(state.supply[d].shift());
+  }
+  state.shop.splice(0, state.shop.length, ...row, ...tops);
+}
+/** Two copies of one member trading places changes nothing on the table, so it is never a swap (piles). */
+export const sameMember = (state, a, b) => a !== b && state.cards[a] && state.cards[b] && state.cards[a].def === state.cards[b].def;
 
 // how: a recruit priced by a space's own rule (Snap Up: { anyColors }, Half Price: { anyColors, half }), as memberPrice
 function recruit(state, p, uid, opts) {
@@ -1227,7 +1272,7 @@ function returnWorkers(state, uid, from) {
 
 /** Atomic exchange: both departures settle before either incoming member can trigger an effect. */
 function swapMembers(state, actor, aUid, bUid) {
-  if (aUid === bUid) return false;
+  if (aUid === bUid || sameMember(state, aUid, bUid)) return false;
   const locate = uid => {
     const owner = state.players.find(p => p.members.includes(uid));
     const list = owner ? owner.members : state.shop;
@@ -1773,6 +1818,7 @@ const CARD_KINDS = new Set(['card', 'member', 'trade']);
 function whereIs(state, uid) {
   if (state.shop.includes(uid)) return 'shop';
   if (state.pile.includes(uid)) return 'pile';
+  if (Object.values(state.supply || {}).some(w => w.includes(uid))) return 'supply';
   if (Object.values(state.waiting || {}).some(w => w.includes(uid))) return 'waiting';
   const o = state.players.find(q => q.members.includes(uid));
   if (!o) { const a = state.players.find(q => q.artifact === uid); if (a) return `a${a.id}`; }

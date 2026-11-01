@@ -202,7 +202,7 @@ function swapPairs(ctx, p, mode, excludeUid = null) {
   // should work with rivals. if their members are able to be swapped"); never two members of the same cult
   const second = mode === 'even' ? first : mode === 'promote' || mode === 'demote' ? [...shop, ...cult] : shop;
   const owner = c => ctx.ownerOf(c.uid);
-  for (const a of first) for (const b of second) if (a.uid !== b.uid && a.uid !== excludeUid && b.uid !== excludeUid && !(owner(b) && owner(b) === owner(a)) && (mode === 'even' ? cost(a) === cost(b)
+  for (const a of first) for (const b of second) if (a.uid !== b.uid && a.def.id !== b.def.id /* two copies of one member (piles): no swap */ && a.uid !== excludeUid && b.uid !== excludeUid && !(owner(b) && owner(b) === owner(a)) && (mode === 'even' ? cost(a) === cost(b)
     : mode === 'promote' ? cost(b) <= cost(a) + 2 : mode === 'rival' ? cost(b) >= cost(a) : cost(b) <= cost(a) && cost(b) >= cost(a) - 2)) out.push([a, b]);
   return out;
 }
