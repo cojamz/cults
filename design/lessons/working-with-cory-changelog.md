@@ -50,3 +50,4 @@ Why each rule in .claude/rules/working-with-cory.md exists, in Cory's words. Mov
 - 2026-11-01: Cory, after Promote/Demote were 'fixed' to own-member swaps from an expert-game report: "wait what? why'd you change that? they should be kept as is". Rule added: test findings that match a logged call go to him as a question.
 - 2026-11-01 · A rule that a test or bot report calls a bug, but which matches a logged call of Cory's, goes to Cory before it changes (Promote/Demote reverted, Nov 1).
 - 2026-11-01: Narrated bot game sample written as a story; Cory: "way too overwrought. reads like AI slop... just the facts of what's considered and done and the result, but in a readable way". Rule added under How messages read.
+- 2026-11-01 1:20pm: Reports and lists use plain game words with a real turn per finding; no test shorthand (Cory: "caught up in the own jargon of the test runs and the shorthand"). From the balance-1.0 list.
