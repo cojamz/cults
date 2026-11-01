@@ -1,0 +1,71 @@
+# The off-box browser verdict: the whole check:v4 gate (unit tests, build, every browser gate) on the game branch's tip,
+# every 4 hours, on GitHub's machine instead of a loaded 4-CPU cloud box. Why: 16 browser gates went red for days
+# without anyone noticing (Nov 1, 2026), because ships run unit tests only.
+# The result goes to the ci-verdicts branch (latest.json, history.jsonl); `node scripts/v4-verdict.mjs` reads it, and the
+# thread orientation and ship scripts print it. The job itself always ends green, so a red gate never sends an email:
+# the verdict is in the file, not the job's colour.
+# Scheduled workflows run from main: scripts/harness-sync-main.sh mirrors this file there from the game branch.
+name: v4 browser verdict
+
+on:
+  schedule:
+    - cron: '23 */4 * * *'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch or sha to check'
+        default: 'claude/gifted-newton-3lcy3i'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v4-verdict
+  cancel-in-progress: false
+
+jobs:
+  verdict:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || 'claude/gifted-newton-3lcy3i' }}
+          fetch-depth: 1
+      - name: Skip a tip that already has a verdict
+        id: skip
+        run: |
+          SHA=$(git rev-parse HEAD); echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          git fetch -q --depth 1 origin ci-verdicts 2>/dev/null || true
+          LAST=$(git show FETCH_HEAD:latest.json 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{process.stdout.write(JSON.parse(s).sha||"")}catch{}})' || true)
+          if [ "${{ github.event_name }}" = schedule ] && [ "$LAST" = "$SHA" ]; then echo "skip=1" >> "$GITHUB_OUTPUT"; echo "Already checked $SHA"; fi
+      - uses: actions/setup-node@v4
+        if: steps.skip.outputs.skip != '1'
+        with:
+          node-version: 22
+          cache: npm
+      - if: steps.skip.outputs.skip != '1'
+        run: npm ci
+      - if: steps.skip.outputs.skip != '1'
+        run: npx playwright install --with-deps chromium
+      - name: check:v4 verdict
+        if: steps.skip.outputs.skip != '1'
+        continue-on-error: true
+        run: npm run check:v4 -- --commit HEAD 2>&1 | tee check.log
+      - name: Record the verdict
+        if: steps.skip.outputs.skip != '1'
+        run: |
+          SHA=${{ steps.skip.outputs.sha }}
+          node scripts/v4-verdict.mjs record check.log "$SHA" "$RUNNER_TEMP/latest.json" | tee -a "$GITHUB_STEP_SUMMARY"
+          git config user.name 'v4 verdict'; git config user.email 'actions@users.noreply.github.com'
+          DIR="$RUNNER_TEMP/store"
+          if git ls-remote --exit-code origin ci-verdicts >/dev/null; then
+            git fetch -q --depth 1 origin ci-verdicts && git worktree add -q "$DIR" FETCH_HEAD
+          else
+            git worktree add -q --detach "$DIR" && git -C "$DIR" checkout -q --orphan ci-verdicts && git -C "$DIR" rm -rqf . || true
+          fi
+          cp "$RUNNER_TEMP/latest.json" "$DIR/latest.json"
+          node -e 'process.stdout.write(JSON.stringify(JSON.parse(require("fs").readFileSync(process.argv[1])))+"\n")' "$DIR/latest.json" >> "$DIR/history.jsonl"
+          git -C "$DIR" add latest.json history.jsonl
+          git -C "$DIR" commit -qm "Verdict ${SHA:0:7}"
+          for i in 1 2 3; do git -C "$DIR" push -q origin HEAD:ci-verdicts && break; sleep 5; git -C "$DIR" pull -q --rebase origin ci-verdicts || true; done
