@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.940 — 2026-11-01
+
+- Silver gets its tenth member, Gift Wrapper; Yellow gets Caravan, Tastemaker and Spice Route
+
 ## v0.9.939 — 2026-11-01
 
 - The rules page: a skip stays in its round and never carries into the next.
