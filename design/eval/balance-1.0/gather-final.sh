@@ -27,13 +27,13 @@ merge() { node -e '
 
 # Normal: runner 1 wrote whole files to final/; red tables from raw3/normal
 for S in 4 3 2; do
-  N=$(wc -l < $E/final/normal-${S}p.jsonl); DROP=$(node scripts/v4-balance-tables-with.mjs 1 $N $S red) merge $E/final/normal-${S}p.jsonl -- $E/raw3/normal/normal-${S}p-*.jsonl > $M/normal-${S}p.jsonl
+  N=$(wc -l < $E/final/normal-${S}p.jsonl); DROP=$(node scripts/v4-balance-tables-with.mjs 1 $N $S red) merge $E/final/normal-${S}p.jsonl -- $E/raw3/normal/normal-${S}p-*.jsonl $E/raw3/normal/normal-${S}p-*.part > $M/normal-${S}p.jsonl
   node scripts/v4-balance-report.mjs $M/normal-${S}p.jsonl --json=$D/report-normal-${S}p.json > $D/report-normal-${S}p.md
   echo "normal ${S}p: $(wc -l < $M/normal-${S}p.jsonl) games"
 done
 
 for L in hard veryhard; do
-  DROP=$(node scripts/v4-balance-tables-with.mjs 1 500 4 red) merge $E/raw2/$L/$L-4p-*.jsonl -- $E/raw3/$L/$L-4p-*.jsonl > $M/$L-4p.jsonl
+  DROP=$(node scripts/v4-balance-tables-with.mjs 1 500 4 red) merge $E/raw2/$L/$L-4p-*.jsonl -- $E/raw3/$L/$L-4p-*.jsonl $E/raw3/$L/$L-4p-*.part > $M/$L-4p.jsonl
   node scripts/v4-balance-report.mjs $M/$L-4p.jsonl --json=$D/report-$L-4p.json > $D/report-$L-4p.md
   # choices: every decision of a game re-run on the revert build replaces that game's old decisions
   DROP=$(node scripts/v4-balance-tables-with.mjs 1 500 4 red) KEY=choices merge $E/raw2/$L/*.choices -- $E/raw3/$L/*.choices > $M/$L.choices 2>/dev/null || true
