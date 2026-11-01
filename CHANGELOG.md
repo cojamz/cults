@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.961 — 2026-11-01
+
+- Cory's balance calls: Greatest Hits copies your members' On Recruits; Recruiter pays +2 red when a member leaves a rival's cult; Tryout +2 red; Money Changers +1 white whenever anyone buys followers; Recruit Twice +3 blue, Spree +5 blue; HR +2 per color, costs 10; Last Call +1 purple and +1 follower, +1 purple per minion left; Line Cutters (was Front-runner) worth 3; Scouts worth 2; Hangers-On, Debutantes, Smooth Talkers and Debt Collectors worth 2.
+
 ## v0.9.960 — 2026-11-01
 
 - Hangers-On, Debutantes, Smooth Talkers and Debt Collectors pictures show two people.
