@@ -10,6 +10,7 @@
 //   F-buy     buy steps that pass or can't afford anything (stuck feeling), and member vs follower-card buys by round
 //   S-lead    leader after each round: how often the round I / round II leader wins (runaway), last-after-II wins (comeback)
 //   S-close   final margin; share of games decided by 3 or fewer followers
+//   per space: taker's place in followers when placing (1 = leading; a comeback tool is taken from behind)
 //   per space: average gain and its spread by round (spread = the space reads the table; zero spread = a fixed number)
 import { writeFileSync } from 'node:fs';
 import { createGame, applyMove, followers, memberCount, allQuadrantIds, quadrant } from '../../../../src/engine/v4/index.js';
@@ -48,7 +49,8 @@ for (let g = first; g < first + (count || 1); g++) {
         const a = quadrant(s.quadrants[o.q]).actions[o.i];
         const n = pd.options.filter(x => x.kind === 'slot').length;
         T.placements++; T.open += n; if (n <= 2) T.forced++;
-        open = { pl, round: s.round, key: `${quadrant(s.quadrants[o.q]).name}: ${a.name}`, before: snap(s) };
+        const fs = s.players.map(p => followers(s, p)), rank = 1 + fs.filter(v => v > fs[pl]).length;
+        open = { pl, rank, round: s.round, key: `${quadrant(s.quadrants[o.q]).name}: ${a.name}`, before: snap(s) };
       }
       s = applyMove(s, m); continue;
     }
@@ -78,8 +80,8 @@ for (let g = first; g < first + (count || 1); g++) {
     const dead = gain <= 1 && !memberMove && !sting && !gift; // only the +1 every space gives, or less
     if (dead) { T.dead++; r.dead++; }
     if (sting) T.sting++; if (gift) T.gift++; if (sting || gift) r.touch++;
-    const sp = (T.spaces[open.key] ??= {}); const x = (sp[open.round] ??= { n: 0, sum: 0, sq: 0, dead: 0, touch: 0 });
-    x.n++; x.sum += gain; x.sq += gain * gain; if (dead) x.dead++; if (sting || gift) x.touch++;
+    const sp = (T.spaces[open.key] ??= {}); const x = (sp[open.round] ??= { n: 0, sum: 0, sq: 0, dead: 0, touch: 0, rank: 0 });
+    x.n++; x.rank += open.rank; x.sum += gain; x.sq += gain * gain; if (dead) x.dead++; if (sting || gift) x.touch++;
     open = null;
   }
 }
@@ -94,7 +96,7 @@ console.log(`Leads: round I leader wins ${pct(T.leadWins[0], T.games)}, round II
 console.log(`Finish: margin ${(T.margin / T.games).toFixed(1)}; within 3 followers ${pct(T.close, T.games)}; tied ${pct(T.ties, T.games)}.`);
 console.log('\nSpaces (gain per placement by round, ± spread; dead share; touched a rival):');
 for (const [k, rs] of Object.entries(T.spaces).sort()) {
-  const parts = Object.entries(rs).map(([r, x]) => { const m = x.sum / x.n, sd = Math.sqrt(Math.max(0, x.sq / x.n - m * m)); return `R${r} ${m.toFixed(1)}±${sd.toFixed(1)} (${x.n}${x.dead ? `, dead ${pct(x.dead, x.n)}` : ''}${x.touch ? `, touch ${pct(x.touch, x.n)}` : ''})`; });
+  const parts = Object.entries(rs).map(([r, x]) => { const m = x.sum / x.n, sd = Math.sqrt(Math.max(0, x.sq / x.n - m * m)); return `R${r} ${m.toFixed(1)}±${sd.toFixed(1)} (${x.n}, taker place ${(x.rank / x.n).toFixed(1)}${x.dead ? `, dead ${pct(x.dead, x.n)}` : ''}${x.touch ? `, touch ${pct(x.touch, x.n)}` : ''})`; });
   console.log(`  ${k}: ${parts.join(' · ')}`);
 }
 if (flags.json) writeFileSync(flags.json, JSON.stringify(T, null, 1));
