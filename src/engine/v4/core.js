@@ -1034,6 +1034,10 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
       const needS = Math.max(0, def0.s - p.discount - sumMemberFlag(state, p, 'costReduction'));
       const worth = q0 === 'gold' && sumMemberFlag(state, p, 'goldPaysDouble') > 0 ? 2 : 1;
       if ((spend[q0] || 0) * worth < needS) notes.push(`${flagName(state, p, 'anyColorPart')}: colored part in any colors`);
+    } else if (!how.anyColors && !how.half && q0 !== 'silver' && state.resources.includes(q0) && sumMemberFlag(state, p, 'silverPaysColor') > 0) {
+      // Smooth Talker: say so when silver paid some of the colored part
+      const needS = Math.max(0, def0.s - p.discount - sumMemberFlag(state, p, 'costReduction'));
+      if ((spend[q0] || 0) < needS && spend.silver > 0) notes.push(`${flagName(state, p, 'silverPaysColor')}: silver paid for ${q0}`);
     }
     if (notes.length) paid += `; ${notes.join(', ')}`;
     // a discount waits for a member that actually costs something

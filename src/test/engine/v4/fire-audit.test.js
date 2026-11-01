@@ -134,6 +134,7 @@ const ALLOW = {
   'yellow.tinker': 'its swaps log as "swapped 1 x for 1 y (Tinker)"; recruited once in the sample (cards-yellow: Tinker)',
   'yellow.matchmaker': 'pays only for a recruit in a new member color; its 2 owners in the Yellow 2.0 sample (Oct 31) recruited none (cards-yellow)',
   'silver.dowager': 'a plain worth-3 member the audit counts (cards-silver)',
+  'silver.smoothtalker': 'names itself only when silver pays a colored part the color itself couldn\'t; bot owners in the sample paid in color (cards-silver: Smooth Talker)',
   'purple.courier': 'pays only on two turns in a row (courier.test.js)',
   // bots almost never buy it at 12 (Hard bot read, Oct 24); recruited once in the Oct 25 sample
   'silver.grandhost': 'doubles silver from Silver spaces, rarely bought (cards-silver: Grand Host)',
