@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.913 — 2026-11-01
+
+- Members count as many members as they're worth in followers (Proselytizer 2, Trendsetter 3, Mob 5…)
+
 ## v0.9.912 — 2026-11-01
 
 - Classic is now Blue, Red, Yellow and Purple (3 players drop Purple, 2 drop Yellow too); Gold is off the table picker and the members page for now.
