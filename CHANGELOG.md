@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.1 — 2026-11-01
+
+- Artifacts are now colored cloaks: your leader wears its color and your player card is outlined in it, so everyone sees who each color's moves pay (Red Cloak, Blue Cloak and so on).
+
 ## v0.99.0 — 2026-11-01
 
 - 0.99: every color and both decks polished, with tonight's balance calls and card fixes; the whole game passes every check
