@@ -65,6 +65,20 @@ describe('Yellow members', () => {
     expect(named(s, 'Guest Book')).toHaveLength(1);
     expect(R(s).yellow - y0).toBe(2);
   });
+  it('Guest Book: Drifters pays once its color is chosen, only for a color you had no member of (Cory, Nov 1)', () => {
+    const run = (pick, members = [['red.intern']]) => {
+      let s = sc({ round: 3, res: [rich], members, shop: ['yellow.drifters'] });
+      const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
+      s.cards[art] = { uid: art, def: 'yellow.guestbook' }; s.players[0].artifact = art;
+      const y0 = R(s).yellow;
+      s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.drifters', 'shop')}`);
+      expect(named(s, 'Guest Book')).toHaveLength(0);
+      s = move(s, pick);
+      return { n: named(s, 'Guest Book').length, y: R(s).yellow - y0 };
+    };
+    expect(run('color:green')).toEqual({ n: 1, y: 2 });
+    expect(run('color:red')).toEqual({ n: 0, y: 0 });
+  });
   it('Customs: +1 yellow when a rival changes or steals your resources, named', () => {
     let s = take(sc({ res: [{}, { red: 2 }], members: [[], ['yellow.customs']] }), 'yellow.dilute');
     s = move(s, 'res:1:red'); s = move(s, 'color:gold'); s = move(s, 'done');

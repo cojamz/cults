@@ -19,6 +19,13 @@ const colorOf = (ctx, card) => { const r = ctx.quadrant(ctx.defOf(card).quadrant
 const eachColor = (ctx, p, n, opts) => { for (const c of colors(ctx)) ctx.gain(p, c, n, opts); };
 /** The table's colors p has at least one member of (Drifters counts as its chosen color). */
 const memberColors = (ctx, p) => ctx.state.quadrants.filter(q => ctx.countMembersOfColor(p, q) > 0);
+/** Guest Book: +2 yellow when member is the only member of its color in owner's cult. */
+function guestBook(ctx, owner, member) {
+  const def = ctx.defOf(member), q = member.asColor || def.quadrant;
+  if (!ctx.state.quadrants.includes(q) || ctx.countMembersOfColor(owner, q) > (def.n ?? 1)) return;
+  ctx.gain(owner, Y, 2);
+  ctx.log(`${owner.name}'s Guest Book: a new member color, +2 yellow.`);
+}
 const touchable = (ctx, p) => ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'res'));
 
 export default {
@@ -118,6 +125,8 @@ export default {
       const card = ctx.card(data.uid);
       card.asColor = q;
       ctx.log(`${p.name}'s Drifters count as a ${ctx.quadrant(q).name} member.`);
+      // Guest Book reads Drifters' color once it's chosen (Cory's playtest, Nov 1: recruiting Drifters never paid it)
+      if (p.artifact !== undefined && ctx.defOf(p.artifact).key === 'guestbook') guestBook(ctx, p, card);
     },
     level(ctx, p, b) {
       for (const o of touchable(ctx, p)) {
@@ -221,10 +230,9 @@ export default {
     m('guestbook', 'Guest Book', 0, 0, 'Whenever you recruit a member of a color none of your members have, +2 yellow.', { artifact: true,
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what.member || what.member.uid === card.uid) return;
-        const def = ctx.defOf(what.member), q = what.member.asColor || def.quadrant;
-        if (!ctx.state.quadrants.includes(q) || ctx.countMembersOfColor(owner, q) > (def.n ?? 1)) return;
-        ctx.gain(owner, Y, 2);
-        ctx.log(`${owner.name}'s Guest Book: a new member color, +2 yellow.`);
+        // Drifters has no color until its On Recruit pick lands: the pick checks Guest Book itself (drift)
+        if (ctx.defOf(what.member).key === 'drifters' && !what.member.asColor) return;
+        guestBook(ctx, owner, what.member);
       },
     }),
     // ---- out of the deck since Yellow 2.0 (cull.js); kept so old records still read ----

@@ -315,6 +315,8 @@ export function MemberCard({ state, uid, def: d0 = null, me = null, onFace = fal
       {ability ? <p className="mc-text">{(copied || d).from > 1 && <span className="mc-round-tag" data-round-tag="" title="Works from round II on">II+</span>}{(copied || d).activate && !/\bOn Use\b/.test(ability) && <span className="mc-use-tag" data-use-tag="">Use</span>}<RuleText def={copied || d} text={ability} round={state.round} lines /></p> : <p className="mc-text mc-none" data-no-ability="">No ability.</p>}
       {d.activate && where && !state.over && <small className="mc-live" data-use-how="">Once it’s yours, use it on your turn: it lights up in your seat.</small>}
       {!(owner && card && card.used) && poolNote(state, (copied || d).text) && <small className="mc-live" data-pool-out="">{poolNote(state, (copied || d).text)}</small>}
+      {/* Drifters' chosen color, said on its card (Cory's playtest, Nov 1: "no indication or reminder of which color i picked") */}
+      {card && card.asColor && state.quadrants.includes(card.asColor) && <small className="mc-live" data-counts-as={card.asColor}>Counts as a <MemberGlyph r={quadrant(card.asColor).resource} size={13} decorative /> <b>{quadrant(card.asColor).name}</b> member</small>}
       {copied && <small className="mc-live" data-copy-of="">Copy of <CardName state={state} def={copied} /></small>}
       {owner && card && card.used && !state.over && <small className="mc-live" data-member-used="">Used</small>}
       {/* the cost and nothing else about paying (Cory, 03:40: cut "You pay"); a discount on you says only why the face's

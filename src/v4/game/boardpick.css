@@ -152,3 +152,5 @@
 /* The optional keyboard destination list gives the action itself, not only its name. */
 .pick-keys .pick-key:has(.pick-action-rule){display:flex;flex-direction:column;align-items:flex-start;text-align:left;white-space:normal;max-width:260px;padding:8px 12px;border-radius:8px}
 .pick-action-rule{font-size:12px;line-height:1.4;font-weight:400;margin-top:3px}
+/* a stack you hold none of, offered by the pick (Drifters' color, Cory's playtest Nov 1: the empty ones looked unpickable): lit as strong as the rest */
+.app.game.lt > .lt-seat .cs-stack.zero.pick-on,.app.game .lt-cult-seat .cs-stack.zero.pick-on,.app.game.lt > .lt-seat .cs-stack.zero.pick-on .num,.app.game .lt-cult-seat .cs-stack.zero.pick-on .num{opacity:1}
