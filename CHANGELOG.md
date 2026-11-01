@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.954 — 2026-11-01
+
+- Balance: Grifter 8, Recluse 4, Big Tent 7, Caravan 9, Collector 5, HR 13; Deprogrammers worth 4; Caterer +2 silver, Money Changers +2 white.
+
 ## v0.9.953 — 2026-11-01
 
 - Long names on the top-of-the-pile cards break at a natural point (Trend-setters).
