@@ -96,7 +96,7 @@ const RECORDER = () => {
     addEventListener('pointerdown', down, { capture: true, once: true });
     const t1 = performance.now();
     const poll = () => {
-      if (t0 != null && look() !== before) { requestAnimationFrame(() => resolve(Math.round(performance.now() - t0))); return; }
+      if (t0 != null && look() !== before) { window.__cm && window.__cm('seen'); requestAnimationFrame(() => resolve(Math.round(performance.now() - t0))); return; }
       if (performance.now() - t1 > 4000) { (window.__rigClicks ||= []).push({ dead: true, t0, before, after: look(), phase: document.querySelector('.app.game')?.dataset.phase }); resolve(null); return; }
       requestAnimationFrame(poll);
     };
@@ -417,6 +417,13 @@ const L = [`# Perf rig: ${label}`, '', `${new Date().toISOString()} · ${base} �
   `Verdict: ${fails.length ? `FAIL (${fails.length})` : 'PASS'}`, ...fails.map(f => `- ${f}`), '',
   '## Per round', '', '| round | clicks p50/p95 ms | hovers p50/p95 ms | show frames p95 ms | hitch % | worst frame | long frames >100ms | idle busy % | idle style ms/3s | elements | listeners | heap MB |', '|---|---|---|---|---|---|---|---|---|---|---|---|'];
 for (const r of rounds) { const s = sum[r]; L.push(`| ${r} | ${v(s.clicks.p50)} / ${v(s.clicks.p95)} | ${v(s.hovers.p50)} / ${v(s.hovers.p95)} | ${v(s.frames.p95)} | ${s.frames.hitch} | ${v(s.frames.worst)} | ${s.loaf.over100} | ${v(s.idle.busyPct)} | ${v(s.idle.style)} | ${s.memory?.nodes ?? '–'} | ${s.memory?.listeners ?? '–'} | ${s.memory?.heapMB ?? '–'} |`); }
+{ // where a click's time goes, from the game's own marks (GameScreen: pick, submitted, commit, fx; the rig: seen)
+  const g = (e, n) => { const m = (e.marks || '').split(' ').find(x => x.startsWith(n + '+')); return m ? Number(m.split('+')[1]) : null; };
+  const rows = clickPhases.filter(e => !e.dead && g(e, 'commit') != null);
+  const q = (xs, p) => { xs = xs.filter(x => x != null && x >= 0).sort((a, b) => a - b); return xs.length ? xs[Math.min(xs.length - 1, Math.floor(p * xs.length))] : '–'; };
+  const parts = [['waiting for the browser', e => g(e, 'pick')], ['rules', e => g(e, 'submitted') - g(e, 'pick')], ['React render and layout effects', e => g(e, 'commit') - g(e, 'submitted')], ['effects', e => g(e, 'fx') - g(e, 'commit')], ['to the frame that shows it', e => g(e, 'seen') - Math.max(g(e, 'commit'), g(e, 'fx') ?? 0)], ['that frame painted (the rig\'s next frame)', e => e.ms - g(e, 'seen')]];
+  if (rows.length) L.push('', `Click phases (${rows.length} clicks that redrew the table, ms, median / p90): ` + parts.map(([k, f]) => `${k} ${q(rows.map(f), 0.5)} / ${q(rows.map(f), 0.9)}`).join(' · '));
+}
 if (unbroken) L.push('', `Leak control on the last turn: unbroken game ${unbroken.nodes} elements, ${unbroken.listeners} listeners, ${unbroken.heapMB} MB; after a reload ${reloaded.nodes}, ${reloaded.listeners}, ${reloaded.heapMB} MB.`);
 for (const r of rounds) {
   const s = sum[r];

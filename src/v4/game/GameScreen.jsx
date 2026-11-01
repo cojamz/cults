@@ -1573,6 +1573,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const stepRef = useRef('place');
   if (phase === 'place') stepRef.current = 'place'; else if (phase === 'buy' || phase === 'pay') stepRef.current = 'buy';
   const step = phase === 'choose' ? stepRef.current : phase === 'pay' ? 'buy' : phase;
+  useEffect(() => { if (globalThis.__cm) globalThis.__cm('fx'); }); // the rig's click phases: this commit's effects have run
   return (
     <div className={`app game lt${showChoice ? ' choosing' : ''}${buyingNow ? ' buying' : ''}${setupNow || setupHeld ? ' in-setup' : ''}`} ref={rootRef} data-member-pick={memberPicking || undefined} data-shop-details={shopDetails || undefined} data-phase={phase} data-seats={state.players.length} data-round={state.round} data-yours={yours ? '1' : '0'} data-moves={state.moves} data-presentation-moves={interactionState.moves} data-animating={physicalState !== interactionState || undefined} data-live-open={liveOpen} data-actor={pend ? pend.player : ''} data-bot={pend && state.players[pend.player].kind === 'bot' ? '1' : '0'}>
       <header className="bar lt-prompt" data-region="prompt">
