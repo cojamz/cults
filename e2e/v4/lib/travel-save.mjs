@@ -17,7 +17,7 @@ export const TRAVEL = {
   // a gift: Kickback's +1 gold to the rival you pick, from the space to their gold
   gift: { q: ['gold', 'red', 'blue', 'green'], hit: (s, mv, n) => /^Kickback: give/.test(prompt(s)) && (g => g && { from: g.from, to: g.to })(fx(n).find(e => e.type === 'gain' && e.to.pid !== 0)) },
   // a member taken: Poach, a rival's member to your crowd
-  member: { q: ['gold', 'thieves', 'red', 'purple'], hit: (s, mv, n) => /^Poach: take which/.test(prompt(s)) && (e => e && { from: { kind: 'crowd', pid: e.from.pid }, to: { kind: 'member', pid: 0, uid: e.what.uid } })(fx(n).find(e => e.type === 'member-move' && e.to.pid === 0)) },
+  member: { q: ['gold', 'thieves', 'red', 'purple'], hit: (s, mv, n) => /^Poach: (take|recruit) which/.test(prompt(s)) && (e => e && { from: { kind: 'crowd', pid: e.from.pid }, to: { kind: 'member', pid: 0, uid: e.what.uid } })(fx(n).find(e => e.type === 'member-move' && e.to.pid === 0)) },
   // a ransom paid: your resources to the rival who holds your member. The ransom's own gain, never a rival member's
   // bonus on the same move (Fence: "Whenever you steal, +1 magenta" gains first and flies from Fence, not your seat)
   ransom: { q: ['gold', 'thieves', 'red', 'purple'], force: 'pay', hit: (s, mv, n) => /^Shake Down: pay /.test(prompt(s)) && mv.option === 'pay' && (g => g && { from: { kind: 'seat', pid: 0 }, to: g.to })(fx(n).find(e => e.type === 'gain' && e.to.pid !== 0 && e.cause?.kind !== 'member')) },
@@ -51,7 +51,9 @@ export function travelSave(kind) {
       try { n = applyMove(s, mv, { effects: true }); } catch { break; }
       if (s.pending && s.pending.player === 0) {
         // a counted pick (Collect Debts, Help Yourself) is clicked pick by pick: start at the first one
-        if (s.pending.kind !== 'choose' || !turn.length || turn[turn.length - 1][0].pending.kind !== 'choose') turn.length = 0;
+        // (only picks of the same ask: a Demote swap just before Help Yourself's picks is its own move, not a pick)
+        const head = x => prompt(x).split(':')[0];
+        if (s.pending.kind !== 'choose' || !turn.length || turn[turn.length - 1][0].pending.kind !== 'choose' || head(turn[turn.length - 1][0]) !== head(s)) turn.length = 0;
         turn.push([s, mv]);
         const hit = sc.hit(s, mv, n);
         if (hit) {
