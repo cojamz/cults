@@ -28,7 +28,7 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 - Portraits: wider skin-tone variation across the scene set (Cory, Oct 29: "maybe need wider variations in skin tones but these are good for now"). Kit has 6 tones; add in-between tones and spread them.
 0. Confirm two browsers in one online room see each other's table-talk bubbles on the live build (v0.9.2 shipped it).
 0b. Known-red browser checks: hotseat and layout green Nov 1 (v0.9.900), travel t5 too. Left: shop-sizing at 1100x700 with details on, where the longest abilities (Trendsetter, Cutpurse, Restocker) push the price off the card; a taller shop there shrank the wheel past reading. Needs a narrow-laptop layout idea (ability scrolls, or a smaller step).
-0d. With details on at 1270x700, a 6-line ability over a discounted price ("7 → free" in round III, Anarchist) runs the price off the card's foot (seen in the Nov 1 hot-seat game). Same fitter as 0b.
+0d. Done v0.9.901: a long ability over a discounted price now drops the card's picture (laptop and desktop). Narrow laptops (1100) are still 0b.
 3. "Recruit" for members everywhere ("buy followers" stays): recheck buttons, prompts, toasts, log and rulebook since v0.8.31.
 4. Round-end and end-game screens: appear quickly, readable layout, hover for detail, no totals counting up for nothing.
 5. End-game scoring shows where every point comes from: each member pops "+x" for its people, then its granted followers (Cory, Oct 15).
