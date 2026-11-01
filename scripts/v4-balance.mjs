@@ -1,6 +1,6 @@
 // Balance batch: bots on random tables of the 2.0 colors, any seat count, optional price changes. One JSON line per game.
 // Usage: node scripts/v4-balance.mjs <firstGame> <count> <out.jsonl>
-//   DECK=10|15 (required: ask Cory which deck to balance on). SEATS=2|3|4 (default 4; one color per seat, as the game deals). LEVEL=normal|hard|easy (default normal).
+//   DECK=10|15 (required: ask Cory which deck to balance on). SEATS=2|3|4 (default 4; one color per seat, as the game deals). LEVEL=normal|hard|veryhard|easy (default normal).
 //   PRICE="cheerleader=0/5,echo.impostor=2/4" sets a member's price as colored/any (by key, id or name; prices only, never
 //   what a card does). A new price can move a card to another round's deck, as it would in the game (core.js memberRound).
 //   ONLY=red,echo,... sets the color pool (default: the 2.0 colors). MUST=thieves puts that color on every table.
@@ -29,7 +29,8 @@ for (const pair of (process.env.PRICE || '').split(',').filter(Boolean)) {
   prices[d.id] = { from: `${d.s}/${d.w}`, to: v };
   d.s = s; d.w = w;
 }
-const botOpts = level === 'hard' ? { level, maxMs: Infinity, ...(process.env.BUDGET ? { budget: Number(process.env.BUDGET) } : {}) } : { level };
+// Very Hard is uncapped too: its in-game 600 ms clock made each game depend on how busy the box was (Nov 1)
+const botOpts = level === 'hard' || level === 'veryhard' ? { level, maxMs: Infinity, ...(process.env.BUDGET ? { budget: Number(process.env.BUDGET) } : {}) } : { level };
 const name = d => { try { const x = defById(d); return `${x.name} (${d.split('.')[0]})`; } catch { return d; } };
 const cost = d => { try { const x = defById(d); return (x.s || 0) + (x.w || 0); } catch { return null; } };
 

@@ -15,6 +15,7 @@
 //   V4_CHECK_LOCKS  the lock directory (default /tmp/v4-check-slots)
 import { mkdirSync, rmdirSync, rmSync, readFileSync, writeFileSync, unlinkSync, statSync, readdirSync, existsSync, appendFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { hostname } from 'node:os';
 
 export const LOCK_DIR = process.env.V4_CHECK_LOCKS || '/tmp/v4-check-slots';
 export const SLOTS = Math.max(1, Number(process.env.V4_CHECK_SLOTS) || 3);
@@ -80,7 +81,12 @@ const DEFAULT_S = { verdict: 600, live: 600, fast: 240, quick: 120, full: 3600, 
 export function runHistory(limit = 200) {
   try { return readFileSync(RUNS, 'utf8').trim().split('\n').filter(Boolean).slice(-limit).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean); } catch { return []; }
 }
-export function recordRun(rec) { try { mkdirSync(LOCK_DIR, { recursive: true }); appendFileSync(RUNS, JSON.stringify(rec) + '\n'); } catch { /* history is best effort */ } }
+export function recordRun(rec) {
+  try { mkdirSync(LOCK_DIR, { recursive: true }); appendFileSync(RUNS, JSON.stringify(rec) + '\n'); } catch { /* history is best effort */ }
+  // every box's runs in one shared file too, so a red verdict on one thread's box is visible to the next (Nov 1)
+  try { if (existsSync(SHARED_RUNS_DIR)) appendFileSync(join(SHARED_RUNS_DIR, 'check-runs.jsonl'), JSON.stringify({ ...rec, box: hostname() }) + '\n'); } catch { /* best effort */ }
+}
+const SHARED_RUNS_DIR = '/mnt/project-files/harness';
 /** Typical seconds for a run of this kind: the median of the last 10 green ones, else a default. */
 export function typicalS(kind) {
   const xs = runHistory().filter(r => r.kind === kind && r.ok && r.totalS > 0).slice(-10).map(r => r.totalS).sort((a, b) => a - b);

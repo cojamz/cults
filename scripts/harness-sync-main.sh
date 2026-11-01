@@ -4,7 +4,7 @@
 # Usage: bash scripts/harness-sync-main.sh [commit]          standalone: commits and pushes to main
 #        bash scripts/harness-sync-main.sh --into <src> <wt>  used by v4-play.sh inside its main worktree
 set -euo pipefail
-PARTS=(CLAUDE.md AGENTS.md .claude/settings.json .claude/hooks .claude/rules .claude/skills .claude/agents .claude/output-styles)
+PARTS=(CLAUDE.md AGENTS.md .claude/settings.json .claude/hooks .claude/rules .claude/skills .claude/agents .claude/output-styles .github/workflows/v4-verdict.yml)  # the verdict workflow: GitHub runs schedules from main only
 
 mirror() { # $1 source tree, $2 main worktree
   local src=$1 wt=$2

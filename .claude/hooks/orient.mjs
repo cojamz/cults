@@ -19,6 +19,9 @@ out.push(`Branch ${branch} at ${head}. Live play link: ${live.version || '?'} fr
 if (live.version) for (const f of ['design/HANDOFF.md', 'design/in-flight.md']) {
   if (existsSync(f) && !readFileSync(f, 'utf8').includes(live.version)) out.push(`${f} doesn't name the live ${live.version}: bring it up to date before relying on it.`);
 }
+// the off-box browser verdict (Nov 1: 16 browser gates went red for days unnoticed; ships run unit tests only)
+const verdict = existsSync('scripts/v4-verdict.mjs') ? sh('node scripts/v4-verdict.mjs --short') : '';
+if (verdict) out.push(verdict);
 if (!sh('ls -d /opt/pw-browsers/firefox-* 2>/dev/null')) out.push('Firefox is not installed (Cory plays Firefox): tar -xzf /mnt/project-files/harness/browsers/firefox-1509.tgz -C /opt/pw-browsers');
 
 const harnessDiff = sh('git diff --stat origin/main HEAD -- CLAUDE.md AGENTS.md .claude/settings.json .claude/hooks .claude/rules .claude/skills .claude/agents .claude/output-styles | tail -1');

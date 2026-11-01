@@ -7,6 +7,9 @@ import { defById } from '../src/engine/v4/content/index.js';
 import { chooseBotMove, chooseFollowerBuyerMove } from '../src/engine/v4/bots.js';
 import { seededRandom } from '../src/engine/v4/rng.js';
 import { sphereVersion } from '../src/v4/tables.js';
+import { deckRules } from './lib/deck-choice.mjs';
+// Older twin of v4-balance.mjs (LEVEL=hard there does the same, any seat count): prefer that one. Both need DECK (Nov 1).
+const DECK_RULES = deckRules();
 
 const [first, count, out] = [Number(process.argv[2] || 1), Number(process.argv[3] || 1), process.argv[4] || 'hard-batch.jsonl'];
 // ONLY=red,echo,... sets the pool. Default: the 2.0 colors (src/v4/tables.js), Cory Oct 24.
@@ -18,13 +21,13 @@ for (let g = first; g < first + count; g++) {
   const must = process.env.MUST ? process.env.MUST.split(',') : [];
   const pool = all.filter(q => !must.includes(q)), quads = [...must];
   while (quads.length < 4) quads.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
-  let s = createGame({ seats: Array.from({ length: 4 }, () => ({ kind: 'bot' })), seed: g, quadrants: quads });
+  let s = createGame({ seats: Array.from({ length: 4 }, () => ({ kind: 'bot' })), seed: g, quadrants: quads, rules: DECK_RULES });
   const buyer = g % 5 === 0 ? g % 4 : -1;
   const places = s.players.map(() => ({})), seen = new Set();
   while (!s.over) {
     for (const uid of s.shop) seen.add(s.cards[uid].def);
     const pl = s.pending.player;
-    const m = pl === buyer ? chooseFollowerBuyerMove(s, rand) : chooseBotMove(s, rand, level === 'hard' ? { level, maxMs: Infinity } : { level });
+    const m = pl === buyer ? chooseFollowerBuyerMove(s, rand) : chooseBotMove(s, rand, level === 'hard' || level === 'veryhard' ? { level, maxMs: Infinity } : { level });
     if (typeof m.option === 'string' && /^(slot|squat):/.test(m.option)) {
       const [q, i] = m.option.split(':')[1].split('-').map(Number);
       const a = quadrant(s.quadrants[q]).actions[i];
@@ -36,7 +39,7 @@ for (let g = first; g < first + count; g++) {
   const top = Math.max(...s.players.map(p => followers(s, p)));
   const name = d => { try { const x = defById(d); return `${x.name} (${d.split('.')[0]})`; } catch { return d; } };
   const row = {
-    game: g, level, table: quads, buyer,
+    game: g, level, deck: DECK_RULES.deck || 15, table: quads, buyer,
     shop: [...seen].map(name),
     players: s.players.map(p => ({
       seat: p.id, followers: followers(s, p), win: followers(s, p) === top, members: p.members.map(u => name(s.cards[u].def)),

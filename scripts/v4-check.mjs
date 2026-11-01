@@ -221,10 +221,10 @@ if (wantE2E && existsSync(join(root, 'e2e/v4'))) {
 let knownRed = {};
 try { knownRed = JSON.parse(readFileSync(join(root, 'e2e/v4/known-red.json'), 'utf8')); } catch {}
 for (const r of results) {
-  const f = r.name.replace(/^e2e /, '').replace(/ \[\w+\]$/, ''); const k = knownRed[f];
+  const f = r.name.replace(/^e2e /, '').replace(/ \[\w+\]$/, ''); const k = f.startsWith('_') ? null : knownRed[f];
   if (!k || !r.name.startsWith('e2e ')) continue;
   if (r.ok) console.log(`\nNOW GREEN: ${f} passes; remove it from e2e/v4/known-red.json.`);
-  else { r.ok = true; r.knownRed = true; console.log(`\nKNOWN RED: ${f} was already red on live ${k.live} (since ${k.since}; owner ${k.owner}: ${k.why}). Not your change; not counted.`); }
+  else { r.ok = true; r.knownRed = true; console.log(`\nKNOWN RED: ${f} ${typeof k === 'string' ? k : `was already red on live ${k.live} (since ${k.since}; owner ${k.owner}: ${k.why})`}. Not your change; not counted.`); }
 }
 
 const u = await unit;

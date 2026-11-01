@@ -45,6 +45,8 @@ if(!notes.split('\n').some(line=>line.startsWith(`## ${VERSION} `)))throw new Er
 const previous=JSON.parse(readFileSync(previousPath,'utf8'));
 if(previous.version===VERSION && previous.commit!==sha)throw new Error(`${VERSION} is already published from another commit. Bump with npm run version:v4 before checking the next release.`);
 RELEASE_CHECK
+# The last off-box browser verdict, said out loud on every ship (it never blocks one): a red nobody owns goes to the coordinator.
+[ -f "$ROOT/scripts/v4-verdict.mjs" ] && node "$ROOT/scripts/v4-verdict.mjs" --short || true
 echo "Building checked commit $SHORT"
 ( cd "$TMP/source" && COMMIT_REF="$SHA" "$ROOT/node_modules/.bin/vite" build --base ./ --outDir "$TMP/play" )
 node --input-type=module - "$TMP/play/build.json" "$SHA" "$TMP/source/src/v4/version.js" <<'MANIFEST'
