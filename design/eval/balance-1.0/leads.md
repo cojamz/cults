@@ -1,0 +1,5 @@
+- g2 (Ava report): possible bug: Scouts doesn't trigger Bargain Bin or Patroness (Savings and Bury do), seen twice by Cal. Check engine.
+- Scouts bug confirmed in code: scoutDone never calls market.js toBottom; routed to coordinator 11:00am.
+- g3 (Dee): Recruiter didn't pay when Ava's Demote swapped a member out of Dee's cult. Check who held Recruiter and whether swaps count as 'leaves'.
+- Recruiter: onCultMove fires only cult→cult (core.js:1256); a rival's member swapped to the shop (Demote) or released doesn't pay, though the text says 'leaves a rival's cult'. Text vs behavior: Cory's call.
+- Promote/Demote bug: swapPairs lets a rival's member be the 'first' side, so rival-to-rival swaps and backwards cost windows (red.js:197). Routed to coordinator. Red results affected.
