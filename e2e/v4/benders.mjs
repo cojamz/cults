@@ -86,10 +86,13 @@ try {
 
     // (b1) squat: once per round, join a rival's space
     if (!seen.has('squat') && await page.$('.app.game .slot[data-option^="squat:"]')) {
+      // read the offer in one go: under load the table can redraw between two reads (the squat spaces went away
+      // between the check and the label, Nov 1); if it's gone, look again on the next pass
+      const offer = await page.$$eval('.slot[data-option^="squat:"]', els => ({ ids: els.map(e => e.getAttribute('data-option')), label: els[0] ? els[0].getAttribute('aria-label') : null }));
+      if (!offer.ids.length) { await page.waitForTimeout(100); continue; }
       seen.add('squat');
       await shot('b1-squat-offered');
-      const ids = await page.$$eval('.slot[data-option^="squat:"]', els => els.map(e => e.getAttribute('data-option')));
-      const label = await page.$eval('.slot[data-option^="squat:"]', e => e.getAttribute('aria-label'));
+      const { ids, label } = offer;
       if (!/you can join/.test(label)) errors.push(`(b1) a joinable space doesn't say so: "${label}"`);
       const key = ids[0].slice('squat:'.length);
       const before = await page.$eval('.app.game', e => e.dataset.moves);

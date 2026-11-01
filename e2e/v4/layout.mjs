@@ -169,6 +169,16 @@ for (const size of [{ width: 1270, height: 700 }, { width: 1100, height: 700 }])
       await page.click('[data-start]');
     }
     await page.waitForTimeout(700);
+    // under the full check's load the panel was still moving in at 700ms (read off the window once, Nov 1): wait until
+    // it has held still for a few frames before measuring
+    await page.waitForFunction(() => {
+      const el = document.querySelector('[data-art-draft].mine');
+      if (!el) return false;
+      const b = el.getBoundingClientRect(), k = `${Math.round(b.left)},${Math.round(b.top)},${Math.round(b.width)},${Math.round(b.height)}`;
+      const w = window.__l6;
+      if (!w || w.k !== k) { window.__l6 = { k, n: 1 }; return false; }
+      return ++w.n >= 4;
+    }, null, { timeout: 5000, polling: 'raf' }).catch(() => {});
     const order0 = await page.$$eval('.lt > .lt-seat[data-pid]', els => els.map(e => [Number(e.dataset.pid), Math.round(e.getBoundingClientRect().top)]).sort((x, y) => x[1] - y[1]).map(x => x[0]).join());
     const r = await page.evaluate(() => {
       const panel = document.querySelector('[data-art-draft].mine');
