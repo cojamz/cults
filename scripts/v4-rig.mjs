@@ -25,6 +25,7 @@ const pos = argv.filter(a => !a.startsWith('--'));
 const flag = (n, d) => { const a = argv.find(x => x === `--${n}` || x.startsWith(`--${n}=`)); if (!a) return d; return a.includes('=') ? a.slice(a.indexOf('=') + 1) : true; };
 const [base, label] = pos;
 if (!base || !label) { console.error('usage: node scripts/v4-rig.mjs <url> <label> [--cpu=4] [--speed=relaxed] [--seed=N]'); process.exit(2); }
+const QUERY = String(flag('query', '') || ''); // extra page query, e.g. trace=1 (src/v4/perf.js: React commits per component → json react)
 const CPU = Number(flag('cpu', 4)), SPEED = String(flag('speed', 'relaxed')), SEED = Number(flag('seed', 20261028));
 const TRACE = !!flag('trace-clicks', false); // a Chrome trace per click: main-thread time by kind (style, layout, paint, script…) in slow ones
 const PROFILE = !!flag('profile-clicks', false);
@@ -267,7 +268,7 @@ async function hover(sel, round) {
 }
 
 await throttle(CPU);
-await page.goto(`${base.replace(/\/$/, '')}/?intro=0&sound=off`);
+await page.goto(`${base.replace(/\/$/, '')}/?intro=0&sound=off${QUERY ? '&' + QUERY : ''}`);
 await page.click('[data-home="local"]');
 await page.waitForSelector('[data-start]');
 await page.click('[data-start]');
@@ -338,6 +339,7 @@ const over = !!(await page.$('.results'));
 
 const extra = await page.evaluate(() => window.__rigExtra || null).catch(() => null); // a probe build's own readings
 const clickPhases = await page.evaluate(() => window.__rigClicks || []).catch(() => []);
+const react = await page.evaluate(() => window.__perf ? window.__perf.summary().react : null).catch(() => null); // ?trace=1 only
 const flights = FLIGHTS ? await page.evaluate(() => window.__flightWatch.report()).catch(() => null) : null;
 const F = await page.evaluate(() => ({ frames: window.__rig.frames, loaf: window.__rig.loaf, big: window.__rig.big || [] })).catch(() => ({ frames: [], loaf: [] }));
 // the leak control: a reload on the last round's turn (the game is saved locally), measured the same way
@@ -431,6 +433,6 @@ if (PROFILE) {
     ...[...profNative].sort((a, b) => b[1] - a[1]).slice(0, 40).map(([k, ms]) => `| ${Math.round(ms)} | ${k.replace(/\|/g, '/')} |`));
   writeFileSync(`${OUT}/rig-${label}-clicks.md`, P.join('\n') + '\n');
 }
-writeFileSync(`${OUT}/rig-${label}.json`, JSON.stringify({ label, cpu: CPU, speed: SPEED, seed: SEED, bars: BARS, fails, sum, unbroken, reloaded, errors, path, extra, clickPhases, flights, odd: Object.fromEntries(rounds.map(r => [r, R[r].clicks.filter(c => c.why)])) }, null, 1));
+writeFileSync(`${OUT}/rig-${label}.json`, JSON.stringify({ label, cpu: CPU, speed: SPEED, seed: SEED, bars: BARS, fails, sum, unbroken, reloaded, errors, path, extra, clickPhases, react, flights, odd: Object.fromEntries(rounds.map(r => [r, R[r].clicks.filter(c => c.why)])) }, null, 1));
 console.log(L.slice(0, 12 + rounds.length + 3).join('\n'));
 process.exit(GATE && fails.length ? 1 : 0);
