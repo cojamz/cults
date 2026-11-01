@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.919 — 2026-11-01
+
+- Members that count as 2 or more have plural names: Proselytizers, Trendsetters, Night Owls, Heiresses, Alchemists…
+
 ## v0.9.918 — 2026-11-01
 
 - Out of Style says grey, not neutral, for grey members.
