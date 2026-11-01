@@ -1,0 +1,1052 @@
+{
+ "placements": 14590,
+ "forced": 604,
+ "open": 174530,
+ "dead": 518,
+ "sting": 2526,
+ "gift": 3956,
+ "byRound": {
+  "1": {
+   "n": 3600,
+   "gain": 10462,
+   "dead": 338,
+   "touch": 1094
+  },
+  "2": {
+   "n": 4803,
+   "gain": 23441,
+   "dead": 32,
+   "touch": 2005
+  },
+  "3": {
+   "n": 6187,
+   "gain": 33436,
+   "dead": 148,
+   "touch": 2392
+  }
+ },
+ "buys": {
+  "1": {
+   "steps": 3606,
+   "pass": 1416,
+   "member": 2034,
+   "tier": 150
+  },
+  "2": {
+   "steps": 5025,
+   "pass": 885,
+   "member": 3414,
+   "tier": 580
+  },
+  "3": {
+   "steps": 6832,
+   "pass": 323,
+   "member": 2760,
+   "tier": 3590
+  }
+ },
+ "games": 300,
+ "leadWins": [
+  113,
+  142
+ ],
+ "lastWins": 33,
+ "close": 78,
+ "margin": 3089,
+ "ties": 8,
+ "spaces": {
+  "Magenta: Help Yourself": {
+   "1": {
+    "n": 157,
+    "sum": 515,
+    "sq": 1721,
+    "dead": 0,
+    "touch": 157,
+    "rank": 174
+   },
+   "2": {
+    "n": 170,
+    "sum": 751,
+    "sq": 3379,
+    "dead": 0,
+    "touch": 170,
+    "rank": 476
+   },
+   "3": {
+    "n": 162,
+    "sum": 957,
+    "sq": 5975,
+    "dead": 0,
+    "touch": 162,
+    "rank": 441
+   }
+  },
+  "Green: Echo": {
+   "1": {
+    "n": 146,
+    "sum": 685,
+    "sq": 3361,
+    "dead": 0,
+    "touch": 115,
+    "rank": 216
+   },
+   "2": {
+    "n": 157,
+    "sum": 1064,
+    "sq": 7972,
+    "dead": 2,
+    "touch": 126,
+    "rank": 436
+   },
+   "3": {
+    "n": 147,
+    "sum": 1287,
+    "sq": 12371,
+    "dead": 0,
+    "touch": 129,
+    "rank": 427
+   }
+  },
+  "Green: Build Up": {
+   "1": {
+    "n": 146,
+    "sum": 438,
+    "sq": 1314,
+    "dead": 0,
+    "touch": 0,
+    "rank": 336
+   },
+   "2": {
+    "n": 135,
+    "sum": 540,
+    "sq": 2160,
+    "dead": 0,
+    "touch": 0,
+    "rank": 325
+   },
+   "3": {
+    "n": 137,
+    "sum": 685,
+    "sq": 3425,
+    "dead": 0,
+    "touch": 0,
+    "rank": 387
+   }
+  },
+  "Blue: Out of Style": {
+   "1": {
+    "n": 143,
+    "sum": 526,
+    "sq": 2010,
+    "dead": 0,
+    "touch": 111,
+    "rank": 294
+   },
+   "2": {
+    "n": 138,
+    "sum": 641,
+    "sq": 3065,
+    "dead": 0,
+    "touch": 81,
+    "rank": 374
+   },
+   "3": {
+    "n": 96,
+    "sum": 467,
+    "sq": 2375,
+    "dead": 0,
+    "touch": 60,
+    "rank": 275
+   }
+  },
+  "Purple: Sleep In": {
+   "1": {
+    "n": 143,
+    "sum": 572,
+    "sq": 2288,
+    "dead": 0,
+    "touch": 0,
+    "rank": 260
+   },
+   "2": {
+    "n": 154,
+    "sum": 770,
+    "sq": 3850,
+    "dead": 0,
+    "touch": 0,
+    "rank": 388
+   },
+   "3": {
+    "n": 138,
+    "sum": 828,
+    "sq": 4968,
+    "dead": 0,
+    "touch": 0,
+    "rank": 351
+   }
+  },
+  "Blue: Peek": {
+   "1": {
+    "n": 143,
+    "sum": 286,
+    "sq": 572,
+    "dead": 0,
+    "touch": 0,
+    "rank": 377
+   },
+   "2": {
+    "n": 136,
+    "sum": 544,
+    "sq": 2176,
+    "dead": 0,
+    "touch": 0,
+    "rank": 342
+   },
+   "3": {
+    "n": 129,
+    "sum": 774,
+    "sq": 4644,
+    "dead": 0,
+    "touch": 0,
+    "rank": 340
+   }
+  },
+  "Blue: Savings": {
+   "1": {
+    "n": 143,
+    "sum": 286,
+    "sq": 572,
+    "dead": 0,
+    "touch": 0,
+    "rank": 369
+   },
+   "2": {
+    "n": 52,
+    "sum": 156,
+    "sq": 468,
+    "dead": 0,
+    "touch": 0,
+    "rank": 135
+   },
+   "3": {
+    "n": 89,
+    "sum": 360,
+    "sq": 1472,
+    "dead": 0,
+    "touch": 0,
+    "rank": 261
+   }
+  },
+  "Green: Reprise": {
+   "1": {
+    "n": 146,
+    "sum": 795,
+    "sq": 4745,
+    "dead": 1,
+    "touch": 103,
+    "rank": 353
+   },
+   "2": {
+    "n": 156,
+    "sum": 1160,
+    "sq": 9582,
+    "dead": 0,
+    "touch": 128,
+    "rank": 391
+   },
+   "3": {
+    "n": 153,
+    "sum": 1370,
+    "sq": 13664,
+    "dead": 0,
+    "touch": 141,
+    "rank": 387
+   }
+  },
+  "Purple: Hold Up": {
+   "1": {
+    "n": 143,
+    "sum": 286,
+    "sq": 572,
+    "dead": 0,
+    "touch": 0,
+    "rank": 375
+   },
+   "2": {
+    "n": 126,
+    "sum": 382,
+    "sq": 1174,
+    "dead": 0,
+    "touch": 0,
+    "rank": 318
+   },
+   "3": {
+    "n": 122,
+    "sum": 488,
+    "sq": 1952,
+    "dead": 0,
+    "touch": 0,
+    "rank": 357
+   }
+  },
+  "Magenta: Stash": {
+   "1": {
+    "n": 157,
+    "sum": 471,
+    "sq": 1413,
+    "dead": 0,
+    "touch": 0,
+    "rank": 378
+   },
+   "2": {
+    "n": 155,
+    "sum": 620,
+    "sq": 2480,
+    "dead": 0,
+    "touch": 0,
+    "rank": 391
+   },
+   "3": {
+    "n": 155,
+    "sum": 775,
+    "sq": 3875,
+    "dead": 0,
+    "touch": 0,
+    "rank": 439
+   }
+  },
+  "Magenta: Lie Low": {
+   "1": {
+    "n": 157,
+    "sum": 400,
+    "sq": 1058,
+    "dead": 0,
+    "touch": 123,
+    "rank": 354
+   },
+   "2": {
+    "n": 77,
+    "sum": 207,
+    "sq": 585,
+    "dead": 0,
+    "touch": 69,
+    "rank": 214
+   },
+   "3": {
+    "n": 107,
+    "sum": 286,
+    "sq": 810,
+    "dead": 0,
+    "touch": 90,
+    "rank": 292
+   }
+  },
+  "Purple: Right Away": {
+   "1": {
+    "n": 143,
+    "sum": 143,
+    "sq": 143,
+    "dead": 143,
+    "touch": 0,
+    "rank": 406
+   },
+   "2": {
+    "n": 29,
+    "sum": 58,
+    "sq": 116,
+    "dead": 0,
+    "touch": 0,
+    "rank": 72
+   },
+   "3": {
+    "n": 104,
+    "sum": 312,
+    "sq": 936,
+    "dead": 0,
+    "touch": 0,
+    "rank": 311
+   }
+  },
+  "Blue: Bury": {
+   "2": {
+    "n": 149,
+    "sum": 864,
+    "sq": 5118,
+    "dead": 0,
+    "touch": 108,
+    "rank": 399
+   },
+   "3": {
+    "n": 129,
+    "sum": 795,
+    "sq": 5027,
+    "dead": 0,
+    "touch": 67,
+    "rank": 363
+   }
+  },
+  "Magenta: Shake Down": {
+   "2": {
+    "n": 158,
+    "sum": 740,
+    "sq": 3604,
+    "dead": 0,
+    "touch": 158,
+    "rank": 416
+   },
+   "3": {
+    "n": 148,
+    "sum": 689,
+    "sq": 3373,
+    "dead": 0,
+    "touch": 148,
+    "rank": 395
+   }
+  },
+  "Green: Cover": {
+   "2": {
+    "n": 147,
+    "sum": 1076,
+    "sq": 8222,
+    "dead": 0,
+    "touch": 119,
+    "rank": 366
+   },
+   "3": {
+    "n": 143,
+    "sum": 1243,
+    "sq": 12227,
+    "dead": 0,
+    "touch": 114,
+    "rank": 347
+   }
+  },
+  "Magenta: Crime Wave": {
+   "2": {
+    "n": 157,
+    "sum": 789,
+    "sq": 4255,
+    "dead": 0,
+    "touch": 157,
+    "rank": 414
+   },
+   "3": {
+    "n": 159,
+    "sum": 1076,
+    "sq": 7800,
+    "dead": 0,
+    "touch": 159,
+    "rank": 415
+   }
+  },
+  "Blue: Recruit Twice": {
+   "2": {
+    "n": 70,
+    "sum": 210,
+    "sq": 630,
+    "dead": 0,
+    "touch": 0,
+    "rank": 193
+   },
+   "3": {
+    "n": 142,
+    "sum": 426,
+    "sq": 1278,
+    "dead": 0,
+    "touch": 0,
+    "rank": 390
+   }
+  },
+  "Magenta: Poach": {
+   "3": {
+    "n": 177,
+    "sum": 1034,
+    "sq": 6790,
+    "dead": 0,
+    "touch": 177,
+    "rank": 502
+   }
+  },
+  "Purple: Last Call": {
+   "2": {
+    "n": 113,
+    "sum": 739,
+    "sq": 4969,
+    "dead": 0,
+    "touch": 0,
+    "rank": 299
+   },
+   "3": {
+    "n": 144,
+    "sum": 1162,
+    "sq": 9784,
+    "dead": 0,
+    "touch": 0,
+    "rank": 402
+   }
+  },
+  "Purple: Crowd In": {
+   "3": {
+    "n": 146,
+    "sum": 438,
+    "sq": 1314,
+    "dead": 0,
+    "touch": 0,
+    "rank": 363
+   }
+  },
+  "Blue: Spree": {
+   "3": {
+    "n": 149,
+    "sum": 745,
+    "sq": 3725,
+    "dead": 0,
+    "touch": 0,
+    "rank": 387
+   }
+  },
+  "Green: Encore": {
+   "2": {
+    "n": 135,
+    "sum": 608,
+    "sq": 3246,
+    "dead": 12,
+    "touch": 53,
+    "rank": 391
+   },
+   "3": {
+    "n": 119,
+    "sum": 549,
+    "sq": 2921,
+    "dead": 7,
+    "touch": 41,
+    "rank": 331
+   }
+  },
+  "Silver: Toast": {
+   "1": {
+    "n": 151,
+    "sum": 618,
+    "sq": 2680,
+    "dead": 0,
+    "touch": 151,
+    "rank": 373
+   },
+   "2": {
+    "n": 150,
+    "sum": 1042,
+    "sq": 7398,
+    "dead": 0,
+    "touch": 150,
+    "rank": 359
+   },
+   "3": {
+    "n": 146,
+    "sum": 1441,
+    "sq": 14385,
+    "dead": 0,
+    "touch": 146,
+    "rank": 384
+   }
+  },
+  "Silver: Polish": {
+   "1": {
+    "n": 151,
+    "sum": 272,
+    "sq": 518,
+    "dead": 32,
+    "touch": 0,
+    "rank": 447
+   },
+   "2": {
+    "n": 57,
+    "sum": 127,
+    "sq": 297,
+    "dead": 1,
+    "touch": 0,
+    "rank": 157
+   },
+   "3": {
+    "n": 86,
+    "sum": 183,
+    "sq": 423,
+    "dead": 10,
+    "touch": 0,
+    "rank": 267
+   }
+  },
+  "Silver: Party Gifts": {
+   "1": {
+    "n": 151,
+    "sum": 1035,
+    "sq": 7251,
+    "dead": 0,
+    "touch": 151,
+    "rank": 358
+   },
+   "2": {
+    "n": 118,
+    "sum": 841,
+    "sq": 6129,
+    "dead": 0,
+    "touch": 118,
+    "rank": 272
+   },
+   "3": {
+    "n": 147,
+    "sum": 1032,
+    "sq": 7416,
+    "dead": 0,
+    "touch": 147,
+    "rank": 357
+   }
+  },
+  "Silver: Sweet Talk": {
+   "2": {
+    "n": 150,
+    "sum": 472,
+    "sq": 1504,
+    "dead": 0,
+    "touch": 0,
+    "rank": 432
+   },
+   "3": {
+    "n": 139,
+    "sum": 452,
+    "sq": 1496,
+    "dead": 0,
+    "touch": 0,
+    "rank": 405
+   }
+  },
+  "Silver: Party Favors": {
+   "2": {
+    "n": 150,
+    "sum": 941,
+    "sq": 6059,
+    "dead": 0,
+    "touch": 150,
+    "rank": 377
+   },
+   "3": {
+    "n": 143,
+    "sum": 893,
+    "sq": 5751,
+    "dead": 0,
+    "touch": 143,
+    "rank": 377
+   }
+  },
+  "Silver: Largesse": {
+   "3": {
+    "n": 152,
+    "sum": 1649,
+    "sq": 18065,
+    "dead": 0,
+    "touch": 152,
+    "rank": 367
+   }
+  },
+  "Purple: Crunch Time": {
+   "2": {
+    "n": 31,
+    "sum": 70,
+    "sq": 188,
+    "dead": 0,
+    "touch": 0,
+    "rank": 78
+   },
+   "3": {
+    "n": 83,
+    "sum": 182,
+    "sq": 460,
+    "dead": 0,
+    "touch": 0,
+    "rank": 238
+   }
+  },
+  "Red: Walk-In": {
+   "1": {
+    "n": 154,
+    "sum": 552,
+    "sq": 2208,
+    "dead": 0,
+    "touch": 154,
+    "rank": 312
+   },
+   "2": {
+    "n": 161,
+    "sum": 858,
+    "sq": 5224,
+    "dead": 0,
+    "touch": 161,
+    "rank": 425
+   },
+   "3": {
+    "n": 149,
+    "sum": 824,
+    "sq": 5316,
+    "dead": 0,
+    "touch": 149,
+    "rank": 389
+   }
+  },
+  "Yellow: Harvest": {
+   "1": {
+    "n": 144,
+    "sum": 432,
+    "sq": 1296,
+    "dead": 0,
+    "touch": 0,
+    "rank": 191
+   },
+   "2": {
+    "n": 136,
+    "sum": 544,
+    "sq": 2176,
+    "dead": 0,
+    "touch": 0,
+    "rank": 338
+   },
+   "3": {
+    "n": 133,
+    "sum": 665,
+    "sq": 3325,
+    "dead": 0,
+    "touch": 0,
+    "rank": 356
+   }
+  },
+  "Yellow: Trade Seeds": {
+   "1": {
+    "n": 144,
+    "sum": 288,
+    "sq": 576,
+    "dead": 0,
+    "touch": 0,
+    "rank": 303
+   },
+   "2": {
+    "n": 47,
+    "sum": 94,
+    "sq": 188,
+    "dead": 0,
+    "touch": 0,
+    "rank": 138
+   },
+   "3": {
+    "n": 61,
+    "sum": 122,
+    "sq": 244,
+    "dead": 0,
+    "touch": 0,
+    "rank": 182
+   }
+  },
+  "Red: Tryout": {
+   "1": {
+    "n": 154,
+    "sum": 456,
+    "sq": 1546,
+    "dead": 0,
+    "touch": 27,
+    "rank": 296
+   },
+   "2": {
+    "n": 122,
+    "sum": 625,
+    "sq": 3611,
+    "dead": 0,
+    "touch": 49,
+    "rank": 333
+   },
+   "3": {
+    "n": 116,
+    "sum": 471,
+    "sq": 2437,
+    "dead": 0,
+    "touch": 29,
+    "rank": 316
+   }
+  },
+  "Yellow: Dilute": {
+   "1": {
+    "n": 144,
+    "sum": 288,
+    "sq": 576,
+    "dead": 0,
+    "touch": 2,
+    "rank": 377
+   },
+   "2": {
+    "n": 75,
+    "sum": 152,
+    "sq": 310,
+    "dead": 0,
+    "touch": 4,
+    "rank": 221
+   },
+   "3": {
+    "n": 110,
+    "sum": 224,
+    "sq": 460,
+    "dead": 0,
+    "touch": 7,
+    "rank": 334
+   }
+  },
+  "Red: Gather": {
+   "1": {
+    "n": 154,
+    "sum": 308,
+    "sq": 616,
+    "dead": 0,
+    "touch": 0,
+    "rank": 391
+   },
+   "2": {
+    "n": 101,
+    "sum": 303,
+    "sq": 909,
+    "dead": 0,
+    "touch": 0,
+    "rank": 273
+   },
+   "3": {
+    "n": 129,
+    "sum": 516,
+    "sq": 2064,
+    "dead": 0,
+    "touch": 0,
+    "rank": 364
+   }
+  },
+  "Yellow: Melting Pot": {
+   "2": {
+    "n": 147,
+    "sum": 782,
+    "sq": 4270,
+    "dead": 0,
+    "touch": 0,
+    "rank": 367
+   },
+   "3": {
+    "n": 141,
+    "sum": 782,
+    "sq": 4416,
+    "dead": 0,
+    "touch": 0,
+    "rank": 369
+   }
+  },
+  "Red: Promote": {
+   "2": {
+    "n": 168,
+    "sum": 970,
+    "sq": 6564,
+    "dead": 3,
+    "touch": 91,
+    "rank": 454
+   },
+   "3": {
+    "n": 157,
+    "sum": 952,
+    "sq": 6640,
+    "dead": 2,
+    "touch": 109,
+    "rank": 462
+   }
+  },
+  "Yellow: Big Dilute": {
+   "2": {
+    "n": 148,
+    "sum": 594,
+    "sq": 2386,
+    "dead": 0,
+    "touch": 7,
+    "rank": 430
+   },
+   "3": {
+    "n": 140,
+    "sum": 564,
+    "sq": 2276,
+    "dead": 0,
+    "touch": 9,
+    "rank": 406
+   }
+  },
+  "Red: Demote": {
+   "2": {
+    "n": 154,
+    "sum": 901,
+    "sq": 5805,
+    "dead": 2,
+    "touch": 106,
+    "rank": 421
+   },
+   "3": {
+    "n": 149,
+    "sum": 920,
+    "sq": 6210,
+    "dead": 0,
+    "touch": 119,
+    "rank": 442
+   }
+  },
+  "Red: Recruit a Member": {
+   "3": {
+    "n": 152,
+    "sum": 738,
+    "sq": 4498,
+    "dead": 0,
+    "touch": 63,
+    "rank": 405
+   }
+  },
+  "Yellow: Makeover": {
+   "3": {
+    "n": 82,
+    "sum": 328,
+    "sq": 1312,
+    "dead": 0,
+    "touch": 0,
+    "rank": 205
+   }
+  },
+  "White: Allowance": {
+   "1": {
+    "n": 162,
+    "sum": 324,
+    "sq": 648,
+    "dead": 0,
+    "touch": 0,
+    "rank": 374
+   },
+   "2": {
+    "n": 140,
+    "sum": 420,
+    "sq": 1260,
+    "dead": 0,
+    "touch": 0,
+    "rank": 392
+   },
+   "3": {
+    "n": 146,
+    "sum": 584,
+    "sq": 2336,
+    "dead": 0,
+    "touch": 0,
+    "rank": 393
+   }
+  },
+  "White: Splurge": {
+   "1": {
+    "n": 162,
+    "sum": 162,
+    "sq": 162,
+    "dead": 162,
+    "touch": 0,
+    "rank": 442
+   },
+   "2": {
+    "n": 10,
+    "sum": 10,
+    "sq": 10,
+    "dead": 10,
+    "touch": 0,
+    "rank": 17
+   },
+   "3": {
+    "n": 51,
+    "sum": 51,
+    "sq": 51,
+    "dead": 51,
+    "touch": 0,
+    "rank": 134
+   }
+  },
+  "White: Exchange": {
+   "1": {
+    "n": 162,
+    "sum": 324,
+    "sq": 648,
+    "dead": 0,
+    "touch": 0,
+    "rank": 440
+   },
+   "2": {
+    "n": 30,
+    "sum": 91,
+    "sq": 277,
+    "dead": 0,
+    "touch": 0,
+    "rank": 101
+   },
+   "3": {
+    "n": 118,
+    "sum": 496,
+    "sq": 2116,
+    "dead": 0,
+    "touch": 0,
+    "rank": 344
+   }
+  },
+  "White: Estate Sale": {
+   "2": {
+    "n": 166,
+    "sum": 911,
+    "sq": 5495,
+    "dead": 1,
+    "touch": 0,
+    "rank": 400
+   },
+   "3": {
+    "n": 158,
+    "sum": 1048,
+    "sq": 7184,
+    "dead": 0,
+    "touch": 0,
+    "rank": 399
+   }
+  },
+  "White: Farewell": {
+   "2": {
+    "n": 128,
+    "sum": 774,
+    "sq": 5074,
+    "dead": 1,
+    "touch": 0,
+    "rank": 327
+   },
+   "3": {
+    "n": 153,
+    "sum": 1028,
+    "sq": 7216,
+    "dead": 0,
+    "touch": 0,
+    "rank": 390
+   }
+  },
+  "White: Cash In": {
+   "3": {
+    "n": 88,
+    "sum": 110,
+    "sq": 166,
+    "dead": 69,
+    "touch": 0,
+    "rank": 260
+   }
+  },
+  "Green: Greatest Hits": {
+   "3": {
+    "n": 63,
+    "sum": 435,
+    "sq": 5701,
+    "dead": 9,
+    "touch": 31,
+    "rank": 198
+   }
+  }
+ },
+ "members": {}
+}
