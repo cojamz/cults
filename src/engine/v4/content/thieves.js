@@ -50,6 +50,9 @@ function commit(ctx, thief, victim, pick, reaction = false, fromAction = true, l
 // Automatic small steal used by members: from the victim's biggest pile, one at a time.
 function autoSteal(ctx, thief, victim, why, n = 1, reaction = false) {
   if (!victim || victim === thief) return 0;
+  // Desperado's +2 reaches these 1-resource steals too (Cory, Nov 1 3:11pm: "yes i think"), named in the log
+  const more = desperadoMore(ctx, thief);
+  if (more) { n += more; ctx.log(`${thief.name}'s ${why}: takes ${n}, not ${n - more} (${thief.name}'s Desperado: +${more}).`); }
   const pick = {};
   for (let k = 0; k < n; k++) {
     const top = piles(ctx, thief, victim, pick).sort((a, b) => b[1] - a[1])[0];
@@ -153,6 +156,7 @@ export function magentaOccupied(ctx, p) {
   const q = ctx.state.quadrants.indexOf('thieves');
   return Object.keys(ctx.state.slots).filter(k => k.startsWith(`${q}-`)).length;
 }
+const desperadoMore = (ctx, p) => ctx.membersOf(p).reduce((n, c) => n + (c.def.stealMoreIf ? c.def.stealMoreIf(ctx, p) : 0), 0);
 // Sticky Fingers and Desperado on a member's steal (spaces get them through ctx.stealCount)
 const stickyMore = (ctx, p) => ctx.membersOf(p).reduce((n, c) => n + (typeof c.def.stealMore === 'number' ? c.def.stealMore : 0) + (c.def.stealMoreIf ? c.def.stealMoreIf(ctx, p) : 0), 0);
 const memberHint = c => c.def.f * 1.5 + cost(c) + (c.def.vanilla || c.used ? 0 : 1);

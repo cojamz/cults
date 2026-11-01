@@ -258,6 +258,14 @@ describe('Magenta members', () => {
     expect(R(s, 1).magenta).toBe(0); // Twins costs 4
   });
 
+  it('Light Fingers with Desperado: its 1 takes 2 more while its owner has the fewest followers (Cory, Nov 1 3:11pm)', () => {
+    let s = table(Q, { res: [{ red: 10 }], bonus: [5, 0], members: [[], ['thieves.lightfingers', 'thieves.desperado']], shop: ROW });
+    s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'red.bigfamily', 'shop'));
+    s = s.pending?.kind === 'pay' ? move(s, s.pending.options[0].id) : s;
+    expect((R(s, 1).red || 0) + (R(s, 1).magenta || 0)).toBe(3);
+    expect(s.log).toContain("P2's Light Fingers: takes 3, not 1 (P2's Desperado: +2).");
+  });
+
   // Cory, 2026-10-28: a bigger Cutpurse
   it('Extortionist: at round start, take 2 from the rival holding the most (named)', () => {
     let s = roundStart({ n: 3, res: [{}, { gold: 2 }, { red: 4 }], members: [['thieves.extortionist']] });
