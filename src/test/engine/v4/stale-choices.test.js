@@ -96,16 +96,15 @@ describe('a queued choice never offers a card that moved', () => {
   });
 
   it('Promote drops a pair when its outgoing member changes cults', () => {
-    // your own member goes out (Nov 1): Intern up to the shop's Twins, then Intern moves to a rival before the choice
-    let s = table(['gold', 'red', 'market', 'echo'], { n: 3, round: 2, members: [['red.intern', 'red.volunteer'], ['red.bigfamily'], ['gold.taxman']], shop: ['red.twins'] });
+    let s = table(['gold', 'red', 'market', 'echo'], { n: 3, round: 2, members: [['red.twins'], ['red.bigfamily'], ['gold.taxman']], shop: ['red.volunteer'] });
     s = take(s, N('red', 'hireup'));
-    const outgoing = s.players[0].members.find(u => s.cards[u].def === 'red.intern');
-    const pair = s.pending.options.find(o => Array.isArray(o.value) && o.value[0] === outgoing);
+    const outgoing = s.players[1].members[0];
+    const pair = s.pending.options.find(o => o.value[0] === outgoing);
     expect(pair).toBeTruthy();
-    s.players[0].members = s.players[0].members.filter(u => u !== outgoing);
+    s.players[1].members = [];
     s.players[2].members.push(outgoing);
     s = resume(s);
-    expect((s.pending?.options || []).map(o => o.id)).not.toContain(pair.id);
+    expect(s.pending.options.map(o => o.id)).not.toContain(pair.id);
   });
 
 });
