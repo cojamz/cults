@@ -39,7 +39,8 @@ async function answer(page, held, { prefer, last, avoid, panelFirst, skip, domFa
   // the pay sheet holds the keyboard: Pay (the suggested way is already in the cost), else Enter
   const sheet = keep(await page.$('.dialog.pay'));
   if (sheet) {
-    const go = keep(await page.$('.dialog.pay [data-option]:not([data-option="back"]):not([disabled])'));
+    // the pay sheet's answer, else its main button (the rearranging card's Done carries no engine option of its own)
+    const go = keep(await page.$('.dialog.pay [data-option]:not([data-option="back"]):not([disabled])')) || keep(await page.$('.dialog.pay .pay-go:not([disabled])'));
     const id = go ? await go.getAttribute('data-option').catch(() => null) : null;
     if (go) { try { await go.click({ timeout }); return { id, kind: 'pay' }; } catch { /* covered: Enter below */ } }
     await sheet.press('Enter').catch(() => {});
