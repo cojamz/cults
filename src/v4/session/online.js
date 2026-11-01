@@ -17,7 +17,7 @@
 import { createTalkLog, cleanTalk, TALK_GAP_MS } from './talk.js';
 import { isLegal, askFor, chooseBotMove, setBotLevels, BOT_LEVELS, MAX_PLAYERS } from '../../engine/v4/index.js';
 import { seededRandom } from '../../engine/v4/rng.js';
-import { parseTable, fitTable, tableProblem } from '../tables.js';
+import { parseTable, fitTable, tableProblem, shopRule } from '../tables.js';
 import { randomFreeEmoji, settleEmojis } from '../emojiPick.js';
 import { createEmitter, randomId } from './emitter.js';
 import { moveProblem, normalizeMove } from './local.js';
@@ -144,6 +144,7 @@ function lobbyView(room, code, playerId, { awaySince = new Map(), subAfterMs = S
     roundDecks: room.roundDecks === 3 ? 3 : 2,
     deck: room.deck === 15 ? 15 : 10,
     swapCard: room.swapCard === true,
+    shop: room.shop === 'grey' || room.shop === 'all' ? room.shop : 'deck',
     players, seats: players.length, maxSeats: MAX_SEATS,
     canStart: isHost && status === 'lobby' && players.length >= MIN_SEATS, startHint,
     me: { playerId, seat: mine ? mine.seat : null }, isHost, subAfterMs,
@@ -568,6 +569,11 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
       await hostOnly('pick when round III members arrive');
       await transport.update(base, { roundDecks: n === 3 ? 3 : 2 });
     },
+    /** Host: the shop, as it is ('deck', the default), grey piles or all piles (rules.shop). */
+    async setShop(v) {
+      await hostOnly('pick the shop');
+      await transport.update(base, { shop: v === 'grey' || v === 'all' ? v : 'deck' });
+    },
     /** Host: the member deck, 10 per color (the default) or 15 (rules.deck). */
     async setDeck(n) {
       await hostOnly('pick the member deck');
@@ -594,7 +600,7 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
         const quadrants = fitTable({ mode: r.table ? r.tableMode || 'custom' : 'classic', quadrants: parseTable(r.table) || [] }, list.length).quadrants;
         tableWhy = tableProblem(quadrants, list.length);
         if (tableWhy) return undefined;
-        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, ...((r.roundDecks === 2 || r.roundDecks === 3 || r.deck !== 15 || r.swapCard === true) ? { rules: { ...(r.roundDecks === 2 || r.roundDecks === 3 ? { roundDecks: r.roundDecks } : {}), ...(r.deck !== 15 ? { deck: 10 } : {}), ...(r.swapCard === true ? { swapCard: true } : {}) } } : {}) });
+        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, ...((r.roundDecks === 2 || r.roundDecks === 3 || r.deck !== 15 || r.swapCard === true || r.shop === 'grey' || r.shop === 'all') ? { rules: { ...(r.roundDecks === 2 || r.roundDecks === 3 ? { roundDecks: r.roundDecks } : {}), ...(r.deck !== 15 ? { deck: 10 } : {}), ...(r.swapCard === true ? { swapCard: true } : {}), ...shopRule(r.shop) } } : {}) });
         setBotLevels(game, list.map(s => (s.kind === 'bot' ? s.bot : null))); // the level the host picked for each bot
         return {
           ...r, seats, seed, status: 'playing', startedAt: Date.now(), build: { ...BUILD },

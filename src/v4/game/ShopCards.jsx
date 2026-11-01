@@ -264,8 +264,10 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
           // a discount on you: the price you'd pay, the list price small and struck beside it (decisions.md, 2026-10-15)
           const paid = paidParts(state, viewer, uid, d);
           const fromPile = !state.shop.includes(uid);
+          // a pile (rules.shop grey or all): how many copies are left, this one included
+          const stack = state.supply && state.supply[d.id] && state.shop.includes(uid) ? state.supply[d.id].length + 1 : 0;
           const color = cardColor(state, d), ground = cardGround(state, d), sphere = sphereOf(state, d);
-          const sig = [d.id, d.name, d.f, d.n, d.text, optId ?? '', dim ? 1 : 0, looking ? 1 : 0, lit ? 1 : 0, short ? 1 : 0, buying || picking ? 1 : 0, JSON.stringify(parts), JSON.stringify(paid), fromPile ? 1 : 0, tray ? 1 : 0, detailed ? 1 : 0, state.round, color, ground, sphere].join('|');
+          const sig = [d.id, d.name, d.f, d.n, d.text, optId ?? '', dim ? 1 : 0, looking ? 1 : 0, lit ? 1 : 0, short ? 1 : 0, buying || picking ? 1 : 0, JSON.stringify(parts), JSON.stringify(paid), fromPile ? 1 : 0, stack, tray ? 1 : 0, detailed ? 1 : 0, state.round, color, ground, sphere].join('|');
           const had = built.current.get(uid);
           if (had && had.sig === sig) return <Kept key={uid} el={had.el} />;
           const el = (
@@ -291,6 +293,7 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
                 {/* no "need N" on the face (Cory: "the shouting 'need N' goes"): what you can't afford is the card fading */}
                 {/* works from round II on (Cory, 2026-10-22: "a better way to denote round II/round III only"): a corner tag, not words */}
                 {d.from > 1 && <span className="lt-round-tag" data-round-tag="" title="Works from round II on">II+</span>}
+                {stack > 0 && <span className="lt-stack num" data-stack={stack} title={`A pile: ${stack} cop${stack === 1 ? 'y' : 'ies'} left`}>×{stack}</span>}
                 {fromPile && !tray && <span className="need from-pile" title="From the top of the pile">pile</span>}
               </span>
               {/* a rule that grows by round reads by round, this round lit, as in every hover (RuleText; compact on the small card) */}
