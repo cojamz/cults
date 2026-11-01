@@ -1,6 +1,6 @@
 # The harness
 
-How Claude (and Codex, through AGENTS.md) works on Cults. Claude owns this file: when something works better, change it here and add a line to design/lessons/harness.md with the fix. History before Oct 20: design/archive/harness-history-to-2026-10-20.md.
+How Claude (and Codex, through AGENTS.md) works on Cults: the meta level, how we operate (threads, coordinator, decisions, rules, talking to Cory). Tests and scripts below serve that; they aren't the harness itself (Cory, Nov 1). Claude owns this file: when something works better, change it here and add a line to design/lessons/harness.md with the fix. History before Oct 20: design/archive/harness-history-to-2026-10-20.md.
 
 ## What runs by itself, and where
 Cory works in project chat threads. **There, none of the hooks below run, and skills and the output style don't load** (checked Oct 31). Only CLAUDE.md and the .claude/rules files without a `paths:` line load, from the branch the thread starts on (main's mirror), once, at start. So in a chat thread:

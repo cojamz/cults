@@ -17,6 +17,7 @@ Current rules only, short on purpose: every line here loads into every thread. W
 - Fixes and "X should be cheaper": go with your gut, log it in design/decisions.md as "(Claude, under Cory's go-with-your-gut)" with the why.
 - A picked mockup is ported from its own code and values; change only what he named. Visual work goes through a picky anti-slop critic each round; ship the best version of every piece.
 - "Laggy" means the page freezing (clicks ignored, then sputtering back). Measure freezes on a real game; show a before/after clip.
+- Work from his own words. A thread checks its goal against his message, not the coordinator's paraphrase; any scope the coordinator adds is a suggestion. "Harness" means how we operate (threads, coordinator, decisions, rules, talking to him), not tests or scripts (Cory, Nov 1).
 - Each thread stays in its lane: design questions outside its job go to the coordinator, never to Cory.
 
 ## How messages read
