@@ -1,15 +1,15 @@
 /* Piles (rules.shop grey or all; Cory, 2026-11-01). A pile is its top card with the copies under it showing as card edges
-   down and to the right, in the card's own color, the way the member deck shows its edges (2px a step): two edges for three
+   down and to the right, in the card's own color, the way the member deck shows its edges (3px a step): two edges for three
    or more left, one for two, none for the last. How many are left is plain ink at the end of the foot, never a badge.
    Outer shadows paint only outside the card, so the edges never cover its face; each state's own ring keeps its place. */
-.app.game.lt .lt-shop .lt-card.card.paper[data-stack-edges="1"]{--stack:2px 2px 0 0 color-mix(in srgb,var(--q) 70%,#1a120c)}
-.app.game.lt .lt-shop .lt-card.card.paper[data-stack-edges="2"]{--stack:2px 2px 0 0 color-mix(in srgb,var(--q) 70%,#1a120c),4px 4px 0 0 color-mix(in srgb,var(--q) 45%,#1a120c)}
+.app.game.lt .lt-shop .lt-card.card.paper[data-stack-edges="1"]{--stack:3px 3px 0 0 color-mix(in srgb,var(--q) 70%,#1a120c)}
+.app.game.lt .lt-shop .lt-card.card.paper[data-stack-edges="2"]{--stack:3px 3px 0 0 color-mix(in srgb,var(--q) 70%,#1a120c),6px 6px 0 0 color-mix(in srgb,var(--q) 45%,#1a120c)}
 .app.game.lt .lt-shop .lt-card.card.paper[data-stack-edges]:not([data-stack-edges="0"]):has(> .lt-hd){box-shadow:inset 0 0 0 2px var(--q),var(--stack),0 8px 18px -8px rgba(0,0,0,.8)}
 .app.game.lt .lt-shop .lt-card.card.paper.lit[data-stack-edges]:not([data-stack-edges="0"]):has(> .lt-hd){box-shadow:inset 0 0 0 2px var(--q),0 0 0 2px rgb(var(--lamp,255,206,140)),var(--stack),0 0 14px 1px rgba(var(--lamp,255,206,140),.45)}
 .app.game.lt .lt-shop .lt-card.card.paper.lit[data-stack-edges]:not([data-stack-edges="0"]):has(> .lt-hd):hover{box-shadow:inset 0 0 0 2px var(--q),0 0 0 2px #fffaf0,var(--stack),0 0 20px 3px rgba(var(--lamp,255,206,140),.6)}
 .app.game.lt .lt-shop .lt-card.card.paper[data-aim][data-stack-edges]:not([data-stack-edges="0"]):has(> .lt-hd){box-shadow:inset 0 0 0 2px #ffe0a1,0 0 0 1px #382516,var(--stack),0 0 24px rgba(255,224,161,.65)}
-/* room for the edges: a pile's card gives up 4px on its right and bottom inside its slot */
-.app.game.lt .lt-shop-cards .lt-cards > .lt-card.card[data-stack]{margin:0 4px 4px 0}
+/* room for the edges: a pile's card gives up 6px on its right and bottom inside its slot */
+.app.game.lt .lt-shop-cards .lt-cards > .lt-card.card[data-stack]{margin:0 6px 6px 0}
 
 .lt-shop-cards .lt-card .ft .lt-pile-left{flex:none;margin-left:auto;padding-left:4px;font-size:13px;line-height:16px;font-weight:700;color:var(--pl-ink-2,#6e5c49)}
 

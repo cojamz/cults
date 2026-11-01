@@ -61,7 +61,8 @@ const usesColors = id => {
 };
 
 /** Why a table can't be played, or '' when it can. `n`: the spheres it needs (the player count); without it, 2 to 4. */
-export function tableProblem(ids, n = null) {
+export function tableProblem(ids, n = null, shop = 'deck') {
+  if (shop === 'all' && Array.isArray(ids) && ids.includes(NO_PILES)) return `${sphereName(NO_PILES)} doesn't play with All piles.`;
   if (n != null && (!Array.isArray(ids) || ids.length !== n)) return `Pick ${n} spheres.`;
   if (!Array.isArray(ids) || ids.length < 2 || ids.length > MAX_PLAYERS) return `Pick 2 to ${MAX_PLAYERS} spheres.`;
   const known = new Set(allQuadrantIds());
@@ -104,7 +105,22 @@ export function randomTable(rand = Math.random, n = 4) {
  * the picker doesn't flicker as seats come and go. Custom keeps its first N and never adds: the person picks the rest.
  * Seats going 4 → 2 → 4 bring the same table back (the full pick stays in the stored table; this only reads it).
  */
-export function fitTable(table, players) {
+export function fitTable(table, players, shop = 'deck') {
+  const fit = fitSeats(table, players);
+  if (shop !== 'all' || fit.mode === 'custom' || !fit.quadrants.includes(NO_PILES)) return fit;
+  // All piles has no Blue (Cory, 2026-11-01: "the piles game shouldn't be able to use blue… none of the blue things make
+  // sense"): a classic or random table takes the next color that fits in its place; a custom one says so (tableProblem)
+  const n = fit.quadrants.length;
+  for (const id of [...CLASSIC, ...spheres()]) {
+    if (fit.quadrants.includes(id) || id === NO_PILES || quadrant(id).standIn) continue;
+    const next = fit.quadrants.map(q => (q === NO_PILES ? id : q));
+    if (!tableProblem(next, n, shop)) return { mode: fit.mode, quadrants: next };
+  }
+  return fit;
+}
+/** Blue's shop-flow spaces and members don't make sense with every member a pile. */
+export const NO_PILES = 'market';
+function fitSeats(table, players) {
   const n = sphereCount(players);
   const mode = table && table.mode ? table.mode : 'classic';
   const ids = table && Array.isArray(table.quadrants) ? table.quadrants.map(id => ALIAS[id] || id) : [];

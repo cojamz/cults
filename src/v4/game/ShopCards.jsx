@@ -55,7 +55,10 @@ export function sortShop(state, uids, by = 'cost') {
   });
   const byCost = (a, b) => a.cost - b.cost || a.q - b.q || a.d.name.localeCompare(b.d.name) || a.uid - b.uid;
   const byColor = (a, b) => a.q - b.q || a.cost - b.cost || a.d.name.localeCompare(b.d.name) || a.uid - b.uid;
-  return rows.sort(by === 'color' ? byColor : byCost).map(r => r.uid);
+  // grey piles: the piles sit together after the row, as their own group on a table, so they read as piles at a glance
+  // (Cory, Nov 1: "the grey piles mode doesnt seem to have grey piles?": sorted in among the row they looked like members)
+  const pile = r => (state.supply && state.supply[r.d.id] && !state.rules?.piles?.only ? 1 : 0);
+  return rows.sort((a, b) => pile(a) - pile(b) || (by === 'color' ? byColor : byCost)(a, b)).map(r => r.uid);
 }
 /**
  * The row as it stands (w2b #40: "the shop re-sorts after every recruit, so cards jump under the pointer"): within a

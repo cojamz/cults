@@ -597,8 +597,8 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
         const seats = {};
         list.forEach((s, i) => { seats[`s${i}`] = { kind: s.kind, name: s.name, ...(s.id ? { id: s.id } : {}), ...withEmoji(s.emoji), ...withBot(s.bot) }; });
         // one sphere per player (Cory, 2026-10-15): the room's table fitted to the seats that play
-        const quadrants = fitTable({ mode: r.table ? r.tableMode || 'custom' : 'classic', quadrants: parseTable(r.table) || [] }, list.length).quadrants;
-        tableWhy = tableProblem(quadrants, list.length);
+        const quadrants = fitTable({ mode: r.table ? r.tableMode || 'custom' : 'classic', quadrants: parseTable(r.table) || [] }, list.length, r.shop).quadrants;
+        tableWhy = tableProblem(quadrants, list.length, r.shop);
         if (tableWhy) return undefined;
         const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, ...((r.roundDecks === 2 || r.roundDecks === 3 || r.deck !== 15 || r.swapCard === true || r.shop === 'grey' || r.shop === 'all') ? { rules: { ...(r.roundDecks === 2 || r.roundDecks === 3 ? { roundDecks: r.roundDecks } : {}), ...(r.deck !== 15 ? { deck: 10 } : {}), ...(r.swapCard === true ? { swapCard: true } : {}), ...shopRule(r.shop) } } : {}) });
         setBotLevels(game, list.map(s => (s.kind === 'bot' ? s.bot : null))); // the level the host picked for each bot
