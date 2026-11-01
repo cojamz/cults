@@ -268,6 +268,7 @@ const market = {
       if (!ctx.swapMembers(p, a, b)) return;
       ctx.buryFromShop(a);
       ctx.log(`${p.name}'s Doormen: sends ${rival.name}'s ${sent} to the bottom of the pile and gives ${rival.name} ${given}.`);
+      ctx.memberBottomed();
     },
     windowShop(ctx, p, uid, data) {
       if (!ctx.state.shop.includes(uid)) return;
@@ -392,7 +393,7 @@ const market = {
     // (Claude's fill-in: he called bottom-of-pile payouts "too strong between rounds" on Oct 20).
     // Blue's artifact only, never dealt (Cory, 2026-10-24: "whenever shop members go to the bottom of the pile, gain 1
     // blue… one per batch"). Name is Claude's fill-in.
-    m('bargainbin', 'Bargain Bin', 0, 0, 'Whenever shop members go to the bottom of the pile, +1 blue.', { artifact: true, bottomBlue: true }),
+    m('bargainbin', 'Bargain Bin', 0, 0, 'Whenever members go to the bottom of the pile, +1 blue.', { artifact: true, bottomBlue: true }),
     m('patroness', 'Patroness', 5, 2, 'Whenever shop members go to the bottom of the pile, +1 follower.', { bottomFollowers: true }),
     m('blackmarket', 'Talent Scout', 2, 2, 'Once per game, on your turn: also look at the top 5 of the pile and recruit one at its cost.', {
       activate: 'game',

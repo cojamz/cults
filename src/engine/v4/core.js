@@ -891,7 +891,7 @@ function startRound(state, r) {
     refill(state);
     log(state, `The member market refreshes for round ${roman(r)}.`);
     // Bargain Bin counts the refresh: the old shop went to the bottom (Cory, Nov 1: "Yes, you count the refreshes")
-    if (old.length) { const ctx = ctxFor(state); for (const p of state.players) for (const c of ctx.abilitiesOf(p)) if (c.def.bottomBlue) ctx.asMember(p, c.def.name, () => { const got = ctx.gain(p, 'blue', 1); if (got) ctx.log(`${p.name}'s ${c.def.name}: +${got.n} ${got.color}.`); }, c.uid); }
+    if (old.length) bottomBlue(state);
   }
   state.slots = {};
   state.squats = {};
@@ -1601,6 +1601,12 @@ export function releaseRefund(state, uid) {
 }
 // The card goes to the bottom of the pile, wiped clean (a released Doppelganger forgets what it copied).
 // A refund in its own color is paid here; one in any colors is picked in the release task. Returns the refund.
+/** Bargain Bin (Blue's artifact): "Whenever members go to the bottom of the pile, +1 blue." Once per batch; from a
+ *  cult too since Cory, Nov 1 ("changes to B when any member goes to the bottom of the pile"). */
+function bottomBlue(state) {
+  const ctx = ctxFor(state);
+  for (const p of state.players) for (const c of ctx.abilitiesOf(p)) if (c.def.bottomBlue) ctx.asMember(p, c.def.name, () => { const got = ctx.gain(p, 'blue', 1); if (got) ctx.log(`${p.name}'s ${c.def.name}: +${got.n} ${got.color}.`); }, c.uid);
+}
 function release(state, p, uid) {
   return underCause({ kind: 'release', pid: p.id, uid }, () => releaseNow(state, p, uid));
 }
@@ -1610,6 +1616,7 @@ function releaseNow(state, p, uid) {
   p.members.splice(p.members.indexOf(uid), 1);
   state.cards[uid] = { uid, def: state.cards[uid].def };
   state.pile.push(uid);
+  bottomBlue(state);
   p.releasedRound = state.round;
   if (back.color) p.res[back.color] = (p.res[back.color] || 0) + back.n;
   log(state, `${p.name} released ${def.name} to the bottom of the pile, for ${back.label}.`);
@@ -1712,6 +1719,7 @@ function ctxFor(state) {
       log(state, `${p.name} sent ${def.name} to the bottom of the pile.`);
       // a member leaving its owner's cult: Recruiter hears a rival's cast-out (Cory, Nov 1: "Yes")
       cultMove(state, uid, p, null);
+      bottomBlue(state);
       // a shop short of its size (the pile ran out) takes it back up, as every other way to the bottom does
       refill(state);
       return c;
@@ -1723,6 +1731,8 @@ function ctxFor(state) {
       state.pile.push(uid);
       refill(state);
     },
+    /** a cult's member went to the bottom of the pile outside buryMember (Doormen): Bargain Bin pays */
+    memberBottomed: () => bottomBlue(state),
     swapMembers: (actor, a, b) => swapMembers(state, actor, a, b),
     canSwapMembers: owner => !sumMemberFlag(state, owner, 'blockMemberSwaps'),
     // Loyalists shields its owner's other members, never a Loyalists (a copy of it included): Cory, 2026-10-27.

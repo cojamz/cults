@@ -46,6 +46,20 @@ describe('Doormen', () => {
   });
 });
 
+describe('Bargain Bin', () => {
+  // Cory, Nov 1: "changes to B when any member goes to the bottom of the pile": a cult's member counts too
+  it('pays +1 blue when Doormen sends a rival member to the bottom', () => {
+    let s = table(Q, { members: [['market.doorman'], ['red.bigfamily']], shop: ['red.intern'], ...buy() });
+    const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
+    s.cards[art] = { uid: art, def: 'market.bargainbin' }; s.players[0].artifact = art;
+    const b0 = s.players[0].res.blue;
+    s = move(s, `use:${uidIn(s, 'market.doorman', 0)}`);
+    s = move(s, `trade:${uidIn(s, 'red.bigfamily', 1)}:${uidIn(s, 'red.intern', 'shop')}`);
+    expect(s.players[0].res.blue - b0).toBe(1);
+    expect(s.log.join('\n')).toMatch(/P1's Bargain Bin: \+1 blue/);
+  });
+});
+
 describe('bots and the swap card', () => {
   it('a Normal bot takes a free swap for a much better member when it can afford nothing', () => {
     const s = table(['red', 'gold', 'purple', 'echo'], { rules: { swapCard: true }, members: [['red.volunteer'], ['red.twins']], shop: [], ...buy() });
