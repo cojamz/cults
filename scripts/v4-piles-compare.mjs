@@ -1,5 +1,6 @@
 // Members-as-piles experiment (branch only): bots play the same seeds on the live rules and on a piles variant, and
 // each game records how much the players reached into each other's cults and piles.
+// CORE=squatter,anarchist,... swaps the grey core (by key) for a run.
 // Usage: VARIANT=live|A|B LEVEL=normal|hard|veryhard DECK=10 node scripts/v4-piles-compare.mjs <first> <count> <out.jsonl>
 // Tables: 4 seats, 4 of the 2.0 colors without Blue (variant B leaves Blue out, so every variant plays the same tables).
 // Per game, for every move made on someone's turn, what that player's move did to the others:
@@ -27,7 +28,8 @@ for (let g = first; g < first + count; g++) {
   const rand = seededRandom(g * 7717 + 3 + 4 * 101);
   const pool = [...colors], table = [];
   while (table.length < 4) table.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
-  const rules = { ...DECK, ...pileRules(variant, table, g, DECK.deck || 15) };
+  const core = process.env.CORE ? process.env.CORE.split(',').map(k => (k.includes('.') ? k : `benders.${k}`)) : undefined;
+  const rules = { ...DECK, ...pileRules(variant, table, g, DECK.deck || 15, core ? { core } : {}) };
   let s = createGame({ seats: Array.from({ length: 4 }, () => ({ kind: 'bot' })), seed: g, quadrants: table, rules });
   const hit = s.players.map(() => ({ resLost: 0, membersLost: 0, membersPushed: 0, followersLost: 0, crashes: 0, atLeader: 0, hitsOn: 0 }));
   const suffered = s.players.map(() => 0);
