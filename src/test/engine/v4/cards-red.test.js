@@ -87,6 +87,15 @@ describe('Red members', () => {
     expect(named(t, 'Recruiter')).toHaveLength(0);
   });
 
+  it('Recruiter: a rival’s member swapped into the shop pays +2 red (Cory, Nov 1)', () => {
+    let s = sceneQ({ round: 2, members: [['red.recruiter'], ['red.intern']], shop: ['red.volunteer'] });
+    s = take(s, 'red.hireup');
+    const swap = s.pending.options.find(o => o.id.startsWith(`trade:${uidOf(s, 'red.intern', 1)}:`));
+    s = settle(move(s, swap.id));
+    expect(R(s).red).toBe(3 + 2); // Promote's +3, Recruiter's +2
+    expect(named(s, 'Recruiter')).toEqual(["P1's Recruiter: +2 red."]);
+  });
+
   it('Pied Piper: the second recruit in one turn pays +2 red at once, named; Big Spender makes it two buys', () => {
     const restore = pinCosts({ 'red.intern': [0, 0], 'red.volunteer': [0, 0] });
     let s = sceneQ({ res: [rich], members: [['red.drive', 'benders.bigspender1']], shop: ['red.intern', 'red.volunteer'] });
