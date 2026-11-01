@@ -20,3 +20,7 @@ Every runner, reviewer and expert game adds here. Kinds: **BUG** (the game break
 | 14 | RULE | Party Crasher can join a taken Makeover on the last placement; Ben rearranged 19 resources and won all three round III contests (+30) | g10 (all 3 players) | as built; top feel note on the list |
 | 15 | RULE | Customs gives back 1 yellow per resource a rival changes, so Dilute and Big Dilute against a Customs owner pay the owner | g10 (Cal, Ben) | as built; feel note |
 | 16 | TOOL | Expert tool: game state file missing for two `wait` calls between rounds I and II, then back | g10 (Ben) | watch; check the save path if it repeats |
+| 17 | CHECK | Stash paid one magenta more than its printed amount every time (player's read; may be the color's +1 the space gives) | g9 (Ben) | needs an engine check |
+| 18 | WORDS | Lie Low didn't stop Red's swaps or Anarchist taking the Lie Low player's members; the whole table read it as blocking them (extends row 5) | g9 | for Cory |
+| 19 | CHECK | Final swap lists: Double Agent and Anarchist offered none of Dee's members (Bodyguards), Double Agent none of Ava's (Lie Low); both texts only say they stop stealing | g9 | engine check, then a wording question |
+| 20 | WORDS | Recruiter misread again: player expected +2 red when their member went to the shop (see row 3) | g9 (Ben) | for Cory with row 3 |
