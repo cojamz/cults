@@ -115,7 +115,7 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
   const from = g.kind === 'amount' ? (String(pend.prompt).match(/swap (\w+) for/i) || [])[1] : null;
   // the gift comes from the bank, never your own stack (blind testers read "Give 1 to a rival" as paying it, 2026-10-15)
   const head = g.kind === 'give' && g.chosen ? <>A rival you pick gets <b className="num">{g.n}</b><Pip color={g.chosen} /></>
-    : g.kind === 'share' ? <>Rivals gain up to <b className="num">{g.n}</b>{g.color ? <Pip color={g.color} /> : ' silver'}</>
+    : g.kind === 'share' ? <>Give rivals up to <b className="num">{g.n}</b>{g.color ? <Pip color={g.color} /> : ' silver'}</>
     : g.kind === 'gift' ? <>A rival you pick gets <b className="num">{g.n}</b>{g.color ? <Pip color={g.color} /> : null}</>
       : g.kind === 'colors' && g.chosen ? <>Swap <b className="num">1</b><Pip color={g.chosen} /> for another color</>
         : g.kind === 'amount' && from ? <>Swap {g.chosen ? 'your' : ''}<Pip color={from} /> for {g.chosen ? <Pip color={g.chosen} /> : 'another color'}</>
@@ -327,7 +327,7 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
   });
   const headOf = g.halfPile ? <>{g.head}</> : g.kind === 'steal' ? <>Take <b className="num">{g.n}</b>{g.color ? <Pip color={g.color} /> : null}</>
     : g.kind === 'move' ? <>{g.head}</> : g.kind === 'recruit' ? <>{g.head}</> : head;
-  const sub = g.kind === 'share' ? <>One per click. You get +{g.per} {g.per === 1 ? 'follower' : 'followers'} for each{g.total ? <>: <b className="num">+{g.total * g.per}</b> so far</> : null}.</>
+  const sub = g.kind === 'share' ? <>One per click, from the bank. +{g.per} {g.per === 1 ? 'follower' : 'followers'} per silver you give{g.total ? <>: <b className="num">+{g.total * g.per}</b> so far</> : null}.</>
     : g.kind === 'move' ? <>{g.from ? <>It’s on {g.from}. </> : null}{g.sub}</> : g.sub;
   const farBody = g.kind === 'steal' ? (
     <div className="gc-row" data-row="2" data-live="1">

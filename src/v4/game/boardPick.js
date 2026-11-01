@@ -115,7 +115,7 @@ export function giftPick(state, pend, first = null) {
     const total = Object.values(given).reduce((s, n) => s + n, 0);
     const color = state.resources.includes('silver') ? 'silver' : null;
     return { ...base, kind: 'share', n: share.max, color, chosen: color, per: share.per || 0, given, total, left: Math.max(0, share.max - total),
-      head: `Rivals gain up to ${share.max} silver`, firsts: [], seconds: players.map(o => ({ o, b: o.target.pid })), others: players.map(o => o.target.pid),
+      head: `Give rivals up to ${share.max} silver`, firsts: [], seconds: players.map(o => ({ o, b: o.target.pid })), others: players.map(o => o.target.pid),
       rest: pend.options.filter(o => !players.includes(o)) };
   }
   const far = farPick(state, pend, title, question, base);

@@ -72,7 +72,7 @@ describe('panel words (w3)', () => {
     // w4b #5: "A rival's member or its cost" read as "I choose": the rival pays or loses, in line 1
     // shortened to fit on phones (v0.8.8 Magenta, 68c9bf0f): line 1 still says the rival decides, pay or lose
     expect(panelText('thieves', { key: 'ransom' }, 2).verb).toMatch(/^Rival pays or loses a member costing 5 or less$/); // the limit too: line 2 dropped on ring III (text audit Nov 1)
-    expect(panelText('silver', { key: 'largesse' }, 3).verb).toMatch(/per silver rivals gain/);
+    expect(panelText('silver', { key: 'largesse' }, 3).verb).toMatch(/^Give rivals up to 10 silver$/); // Nov 1: "+N per silver" read as per silver you hold
   });
 
   it('says 1 of what, what a space costs, and whose cost (live panel r1)', () => {

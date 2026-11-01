@@ -85,10 +85,11 @@ const P = {
     // "others get 1" left "1 of what?" (live panel r1): silver
     toast: r => ({ main: `+${3 * r} silver`, second: `others get ${r} silver`, note: run(n => `+${3 * n}`) }),
     polish: { verb: '2 silver → 4 any', second: 'colors you choose' },
-    partygifts: { verb: '+2 @f per silver', second: 'rivals gain, up to 3', note: 'from the bank' },
+    // "+2 per silver" read as per silver you hold (Cory, Nov 1: "VERY misleading"): the giving leads
+    partygifts: { verb: 'Give rivals up to 3 silver', second: '+2 @f each', note: 'from the bank' },
     favors: { main: '+2 silver', second: 'each rival gives you 1', note: 'then gains 2 silver' },
     tongue: { main: '+3 silver', second: 'then turn silver into colors' },
-    largesse: { verb: '+1 @f per silver rivals gain', second: 'up to 10, from the bank' },
+    largesse: { verb: 'Give rivals up to 10 silver', second: '+1 @f each', note: 'from the bank' },
   },
   yellow: {
     // Yellow 2.0 (Oct 31): the wheel printed the old Harvest ("+1 yellow, +1 per other color you hold") and only the

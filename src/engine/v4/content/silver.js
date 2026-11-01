@@ -152,7 +152,7 @@ export const silverActions = [
     },
   },
   {
-    key: 'partygifts', ring: 1, name: 'Party Gifts', copyDoesIt: true, text: 'Rivals gain up to 3 silver, split as you choose. +2 followers for each.',
+    key: 'partygifts', ring: 1, name: 'Party Gifts', copyDoesIt: true, text: 'Give rivals up to 3 silver from the bank, split as you choose. +2 followers per silver you give.',
     estimate: ctx => 2 * 6 - spillCost(ctx, 1) * 3,
     resolve(ctx, p) { shareStep(ctx, p, { who: 'Party Gifts', max: 3, per: 2 }); },
   },
@@ -173,7 +173,7 @@ export const silverActions = [
     },
   },
   {
-    key: 'largesse', copyDoesIt: true, ring: 3, name: 'Largesse', text: 'Rivals gain up to 10 silver, split as you choose. +1 follower for each.',
+    key: 'largesse', copyDoesIt: true, ring: 3, name: 'Largesse', text: 'Give rivals up to 10 silver from the bank, split as you choose. +1 follower per silver you give.',
     estimate: ctx => 2 * 10 - spillCost(ctx, 1) * 10,
     resolve(ctx, p) { shareStep(ctx, p, { who: 'Largesse', max: 10, per: 1 }); },
   },
@@ -340,7 +340,7 @@ const silver = {
     m('dowager', 'Dowager', 2, 2, 'Worth 3 followers.', { f: 3 }),
     // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
     m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2 }), // worth 2 (Cory, Nov 1)
-    m('philanthropists', 'Philanthropists', 3, 2, 'On Recruit: rivals gain up to 4 silver, split as you choose. +1 follower for each.', {
+    m('philanthropists', 'Philanthropists', 3, 2, 'On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.', {
       onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropists', max: 4, per: 1 }); },
     }),
     m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', {

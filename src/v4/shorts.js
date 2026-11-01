@@ -28,7 +28,7 @@ const S = {
     hourly: r => `+${3 + r} purple`, catchup: '+1 purple, +1 per rival who placed more', windup: '+1 purple per minion you placed', planahead: '+1 purple per minion left', overtime: '1 extra turn', lastcall: '+1 follower and +1 purple per minion left, rest go last; +1 purple', skip: r => `+${r + 3} purple, skip your next turn`, holdup: r => `+${r + 1} purple, the next turn is skipped`, crowdin: '+3 purple, +1 minion this round', rally: '+2 purple, two turns after this one', again: r => `+${r} purple, another turn after this one`,
   },
   silver: {
-    toast: r => `+${3 * r} silver · others +${r} silver`, polish: '2 silver → 4 any', partygifts: '+2 followers per silver rivals gain', favors: '+2 silver · each rival gives 1', tongue: '+3 silver · turn into colors', largesse: '+1 follower per silver rivals gain',
+    toast: r => `+${3 * r} silver · others +${r} silver`, polish: '2 silver → 4 any', partygifts: 'give rivals up to 3 silver, +2 followers each', favors: '+2 silver · each rival gives 1', tongue: '+3 silver · turn into colors', largesse: 'give rivals up to 10 silver, +1 follower each',
   },
   yellow: {
     harvest: r => `+${r + 2} any, colors you choose`, bloom: r => `+${r} yellow · +1 of your fewest`, transmute: '+2 yellow · then swap up to 3', prism: '+1 each per 3 yellow', gather: '1 per member', flourish: '+1 each per set',
@@ -52,7 +52,7 @@ const PIPS = {
   gold: { steal: 'steal 3 gold', windfall: '+1 gold per member', strike: 'double gold' },
   red: { hireup: 'promote a member; +3 red', trade: 'demote a member; +3 red', take: 'recruit one costing 8 or less, free' },
   purple: { lastcall: '+1 follower, +1 purple per minion left; rest go last' },
-  silver: { partygifts: '+2 followers per silver rivals gain', largesse: '+1 follower per silver rivals gain' },
+  silver: { partygifts: 'give rivals up to 3 silver, +2 followers each', largesse: 'give rivals up to 10 silver, +1 follower each' },
   yellow: { gather: '+1 per member' },
   market: { clearance: 'recruit twice', pricecheck: 'bury for half its cost', spree: 'recruit 3 times' },
   thieves: { rob: 'steal half a one-color pile', ransom: 'rival pays or loses a member', heist: 'recruit a rival’s member' },
