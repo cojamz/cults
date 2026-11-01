@@ -24,7 +24,8 @@ describe('round decks', () => {
   });
   it('round I deals only round I members; the rest wait', () => {
     const s = start();
-    for (const u of [...s.pile, ...s.shop]) expect(cost(s, u)).toBeLessThanOrEqual(3);
+    // a member pinned to round I joins there whatever its price (Party Crasher at 5, Tourists, Customs: fill-ins, Nov 1)
+    for (const u of [...s.pile, ...s.shop]) expect(cost(s, u) <= 3 || memberRound(cardDef(s, u)) === 1, cardDef(s, u).name).toBe(true);
     expect(s.waiting[2].every(u => cost(s, u) === 4)).toBe(true);
     expect(s.waiting[3].every(u => cost(s, u) >= 5 || memberRound(cardDef(s, u)) === 3)).toBe(true);
   });
