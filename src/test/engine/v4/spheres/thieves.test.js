@@ -389,9 +389,13 @@ describe('Magenta members', () => {
 });
 
 describe(`Magenta on the table: ${GAMES} seeded bot games`, () => {
-  it(`${GAMES} games finish cleanly with every invariant`, () => {
+  // slices of 25 games, each its own test and time limit (Nov 1: a 100-game block ran past 10 minutes on GitHub's
+  // runner); the same seeds in the same order
+  for (let from = 1; from <= GAMES; from += 25) {
+    const to = Math.min(GAMES, from + 24);
+  it(`games finish cleanly with every invariant (games ${from}-${to})`, () => {
     restore(); restore = () => {};
-    for (let g = 1; g <= GAMES; g++) {
+    for (let g = from; g <= to; g++) {
       const rand = seededRandom(g * 31);
       let s = createGame({ seats: [0, 1, 2, 3].map(() => ({ kind: 'bot' })), seed: g, quadrants: QUADS });
       let guard = 0;
@@ -402,4 +406,5 @@ describe(`Magenta on the table: ${GAMES} seeded bot games`, () => {
       expect(s.over).toBe(true);
     }
   });
+  }
 });

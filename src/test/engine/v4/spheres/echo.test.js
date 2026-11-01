@@ -212,12 +212,16 @@ describe('Green table member boundaries', () => {
 });
 
 describe('Green on the table: ' + GAMES + ' seeded bot games', () => {
-  it('games finish cleanly with every invariant', () => {
+  // slices of 25 games, each its own test and time limit (Nov 1: a 100-game block ran past 10 minutes on GitHub's
+  // runner); the same seeds in the same order
+  for (let from = 1; from <= GAMES; from += 25) {
+    const to = Math.min(GAMES, from + 24);
+  it(`games finish cleanly with every invariant (games ${from}-${to})`, () => {
     // Real costs and the real twelve-member Green deck: deterministic full games, with choices bounded by move count.
     const previous = FULL_DECK.tests;
     FULL_DECK.tests = false;
     try {
-    for (let g = 1; g <= GAMES; g++) {
+    for (let g = from; g <= to; g++) {
       const rand = seededRandom(g * 31);
       const n = 2 + (g % 3);
       let s = createGame({ seats: Array.from({ length: n }, () => ({ kind: 'bot' })), seed: g, quadrants: QUADS });
@@ -230,4 +234,5 @@ describe('Green on the table: ' + GAMES + ' seeded bot games', () => {
     }
     } finally { FULL_DECK.tests = previous; }
   });
+  }
 });

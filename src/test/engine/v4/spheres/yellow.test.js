@@ -66,8 +66,12 @@ describe('Yellow scoring: most yellow, as every 2.0 color', () => {
 });
 
 describe(`Yellow table: ${GAMES} seeded bot games`, () => {
-  it('finish cleanly with every invariant holding', () => {
-    for (let seed = 1; seed <= GAMES; seed++) {
+  // slices of 25 games, each its own test and time limit (Nov 1: a 100-game block ran past 10 minutes on GitHub's
+  // runner); the same seeds in the same order
+  for (let from = 1; from <= GAMES; from += 25) {
+    const to = Math.min(GAMES, from + 24);
+  it(`finish cleanly with every invariant holding (games ${from}-${to})`, () => {
+    for (let seed = from; seed <= to; seed++) {
       const n = 2 + (seed % 3);
       const rand = seededRandom(seed * 31 + n);
       let s = createGame({ seats: Array.from({ length: n }, () => ({ kind: 'bot' })), seed, quadrants: Q });
@@ -83,4 +87,5 @@ describe(`Yellow table: ${GAMES} seeded bot games`, () => {
       expect(followers(s, s.players[s.ranking[0]])).toBeGreaterThan(1);
     }
   });
+  }
 });
