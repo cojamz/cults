@@ -45,3 +45,4 @@
 - 2:11pm: going-last tracking must work on a physical table, no digital-only fix. Screen thread proposes physical options (token or track) first.
 - 2:13pm: going last still confusing to track; go to first principles. Handed to the 'Show who goes last each round' thread (my Late token idea in going-last.md sent there). Next here: item 4.
 - 2:16pm: yes to a Goes Last token, part of the Purple set; colors can have their own pieces. Mob: worth 4, counts as 4.
+- 2:17pm: Tribute Band: maybe make it On Recruit. Risks sent (Tryout fires it from the shop, Encore and swaps repeat it); asked On Recruit [default] vs On Use at 14. Party Crasher price still open.
