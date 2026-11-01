@@ -25,7 +25,9 @@ for (const p of policies) stat[p.key] ??= { seats: 0, wins: 0, members: 0, left:
 
 for (let g = first; g < first + games; g++) {
   const rand = seededRandom(g * 7717 + 3);
-  let s = createGame({ seats: Array.from({ length: n }, () => ({ kind: 'bot' })), seed: g, ...(quads ? { quadrants: quads } : {}) });
+  // DECK=10 and SWAP=1 set the table (swap card setting: Cory, Nov 1)
+  const rules = { ...(process.env.DECK === '10' ? { deck: 10 } : {}), ...(process.env.SWAP === '1' ? { swapCard: true } : {}) };
+  let s = createGame({ seats: Array.from({ length: n }, () => ({ kind: 'bot' })), seed: g, rules, ...(quads ? { quadrants: quads } : {}) });
   // seat i plays policy (i + g) % n
   const seatPol = s.players.map((_, i) => policies[(i + g) % n]);
   while (!s.over) {
