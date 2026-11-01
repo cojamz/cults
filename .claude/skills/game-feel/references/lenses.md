@@ -43,6 +43,12 @@ Each lens: the question, why it matters in Cults specifically, how to measure it
 - Measure: report's small-cult share per seat count; probe's member vs follower-card buys by round (round III leaning to follower cards is expected; round II mostly packs means members are overpriced).
 - Bar: at least 20% at every seat count; in round II, member buys clearly ahead of follower cards.
 
+### S7. Shop dilution (added after use 1)
+- Question: how much of the shop row is cards nobody wants right now?
+- Why here: the row is the shared board for recruits (6/7/8 face up). Each dead card in it is a slot nobody can use; the 15-card deck had 23 rarely bought members against 14 on the 10-card deck, the clearest deck difference of the night.
+- Measure: lens.mjs DEAD and RARE lists per deck; count per color.
+- Bar: at most two RARE per color.
+
 ## Feel lenses
 
 ### F1. Tension: hold or spend
