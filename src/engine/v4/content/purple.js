@@ -413,12 +413,12 @@ export default {
     }),
     // Cory's Purple members (2026-10-22); names are Claude's fill-ins; prices are the pricing thread's educated guesses
     m('earlybird', 'Early Birds', 2, 0, 'Your turns can’t be skipped.', { f: 2, noSkip: true }), // (Cory, Oct 29, balance run: +1 follower)
-    m('bouncer', 'Bouncer', 1, 2, 'On Recruit: the next two rivals’ turns are skipped.', { f: 2,
+    m('bouncer', 'Bouncers', 1, 2, 'On Recruit: the next two rivals’ turns are skipped.', { f: 2,
       // the next two turns that belong to rivals; your own turn between them still happens (Cory's yes)
       onRecruited(ctx, owner) {
         const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');
         const who = q.slice(end + 1, close < 0 ? q.length : close).filter(x => x.t === 'turn' && x.p !== owner.id).slice(0, 2).map(x => x.p);
-        if (!who.length) { ctx.log(`${owner.name}'s Bouncer: no rival has a turn left to skip this round.`); return; }
+        if (!who.length) { ctx.log(`${owner.name}'s Bouncers: no rival has a turn left to skip this round.`); return; }
         // the second is the next rival turn after the first one moves to the end: skip in order
         let n = 0;
         while (n < 2) {
@@ -426,7 +426,7 @@ export default {
           const rest = q2.slice(e2 + 1, c2 < 0 ? q2.length : c2).filter(x => x.t === 'turn');
           const next = rest.slice(0, rest.length - n).find(x => x.p !== owner.id);
           if (!next) break;
-          skipNext(ctx, ctx.player(next.p), 'Bouncer', owner);
+          skipNext(ctx, ctx.player(next.p), 'Bouncers', owner);
           n++;
         }
       },

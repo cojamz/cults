@@ -168,7 +168,7 @@ describe('Blue members', () => {
     expect(R(rivalBuys([['market.onlooker']], 'market.recluse')).blue).toBe(2);
     expect(R(rivalBuys([['market.onlooker']], 'gold.tycoon')).blue).toBe(0);
   });
-  it('Connoisseur: whenever you recruit a blue member, +1 blue', () => {
+  it('Connoisseurs: whenever you recruit a blue member, +1 blue', () => {
     let s = take(scene({ round: 2, res: [{ gold: 9, blue: 1 }], members: [['market.connoisseur']], shop: ['market.recluse', ...SHOP.slice(0, 5)] }), 'market.clearance');
     s = move(s, card(s, 'market.recluse'));
     expect(R(s).gold).toBe(8); // the 1 blue held and Recruit Twice's 1 pay Recluse's blue part, 1 gold the rest
@@ -259,9 +259,9 @@ describe('Blue members', () => {
     expect(s.pending.kind).toBe('buy'); // then the buy step, fresh: used, so no second use
     expect(ids(s)).not.toContain(use);
   });
-  it('Snob: game end, +1 follower per blue member (itself included)', () => {
+  it('Snobs: game end, +1 follower per blue member (itself included)', () => {
     const s = scene({ members: [['market.snob', 'market.stylist', 'gold.midas', 'gold.tycoon', 'red.intern']], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.total).toBe(3); // Snob worth 2 counts as 2 blue members (Nov 1)
+    expect(s.players[0].final.total).toBe(3); // Snobs worth 2 counts as 2 blue members (Nov 1)
   });
   it('Recluse: game end, +2 followers per rival with more members', () => {
     const s = scene({ n: 3, members: [['market.recluse'], ['red.intern', 'red.drive'], ['red.twins']], queue: [{ t: 'finish' }] });

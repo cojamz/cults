@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Cory's Purple members (2026-10-22), through real moves: Early Birds, Bouncer, Gossip, Extra Shift, Closer, Hot Streak.
+// Cory's Purple members (2026-10-22), through real moves: Early Birds, Bouncers, Gossip, Extra Shift, Closer, Hot Streak.
 import { describe, it, expect } from 'vitest';
 import { followers } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';
@@ -23,10 +23,10 @@ describe('Purple members, Oct 22', () => {
     expect(s.players[0].bonus).toBe(2);
     expect(upcoming(s)).toEqual([1, 0, 1, 0]);
   });
-  it('Bouncer: when recruited, the next two rivals’ turns are skipped; your own between them still happens', () => {
+  it('Bouncers: when recruited, the next two rivals’ turns are skipped; your own between them still happens', () => {
     let s = sc({ n: 3, round: 2, res: [rich], shop: ['purple.bouncer'], queue: turns(0, 1, 0, 2, 1, 2) });
     s = take(s, 'gold.rush'); s = buy(s, 'purple.bouncer');
-    expect(linesNaming(s.log, 'Bouncer')).toEqual(["P1's Bouncer: P2 skips their next turn.", "P1's Bouncer: P3 skips their next turn."]);
+    expect(linesNaming(s.log, 'Bouncers')).toEqual(["P1's Bouncers: P2 skips their next turn.", "P1's Bouncers: P3 skips their next turn."]);
     expect(s.pending.player).toBe(0); // P1's own turn comes next, then the rest
     expect(upcoming(s)).toEqual([1, 2, 1, 2]);
   });

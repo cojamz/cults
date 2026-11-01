@@ -103,7 +103,7 @@ for (const [key, name, source] of [
 }
 // Purple's new members (Cory, 2026-10-22) reuse cut Purple portraits while names and artwork settle.
 for (const [key, name, source] of [
-  ['earlybird', 'Early Birds', 'bookkeeper'], ['bouncer', 'Bouncer', 'overseer'], ['gossip', 'Gossip', 'apprentice'],
+  ['earlybird', 'Early Birds', 'bookkeeper'], ['bouncer', 'Bouncers', 'overseer'], ['gossip', 'Gossip', 'apprentice'],
   ['extrashift', 'Extra Shift', 'errand'], ['closer', 'Closer', 'lamplighter'], ['streak', 'Hot Streak', 'taskmaster'],
 ]) {
   const art = BY_ID.get(`purple.${source}`);

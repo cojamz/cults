@@ -312,13 +312,13 @@ const market = {
         if (rec.uid !== card.uid && isBlue(ctx.defOf(rec))) ctx.gain(owner, B, 1);
       },
     }),
-    // Onlooker, Connoisseur, Curator, Auctioneer, Sommelier, Patroness and Snob counted members costing 8 or more until
+    // Onlooker, Connoisseurs, Curator, Auctioneer, Sommelier, Patroness and Snobs counted members costing 8 or more until
     // Cory cut that cutoff (2026-10-15); they count blue members now, which come about as often (Normal bots, Blue
     // tables: 23% of recruits are blue, 27% cost 8+). Onlooker pays 2, or Stylist (anyone, +1, for 4) would beat it.
     m('onlooker', 'Onlooker', 6, 4, 'Whenever a rival recruits a blue member, +2 blue.', {
       onAnyRecruit(ctx, owner, card, by, rec) { if (by !== owner && isBlue(ctx.defOf(rec))) ctx.gain(owner, B, 2); },
     }),
-    m('connoisseur', 'Connoisseur', 1, 2, 'Whenever you recruit a blue member, +1 blue.', { f: 2,
+    m('connoisseur', 'Connoisseurs', 1, 2, 'Whenever you recruit a blue member, +1 blue.', { f: 2,
       onAnyRecruit(ctx, owner, card, by, rec) { if (by === owner && rec.uid !== card.uid && isBlue(ctx.defOf(rec))) ctx.gain(owner, B, 1); },
     }),
     m('reseller', 'Reseller', 4, 2, 'Whenever you recruit, +1 of that member’s color.', {
@@ -371,7 +371,7 @@ const market = {
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && totalRes(owner) >= 8,
     }),
-    m('snob', 'Snob', 3, 2, 'Game End: +1 follower per blue member you have.', { f: 2,
+    m('snob', 'Snobs', 3, 2, 'Game End: +1 follower per blue member you have.', { f: 2,
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, Q),
     }),
     m('recluse', 'Recluse', 2, 2, 'Game End: +2 followers per rival with more members than you.', {
@@ -412,7 +412,7 @@ const market = {
     }),
     // Cory, Oct 21: "any time a player recruits more than once in a turn", swaps and takes included (they all reach
     // onAnyRecruit through memberAcquired)
-    m('doorman', 'Doorman', 1, 3, 'Whenever a rival recruits more than once in a turn (swaps count), +1 blue.', { f: 2,
+    m('doorman', 'Doormen', 1, 3, 'Whenever a rival recruits more than once in a turn (swaps count), +1 blue.', { f: 2,
       // every recruit (members, own red swaps, follower buys) reaches onRecruit (core.js recruited)
       onRecruit(ctx, owner, card, by) {
         if (by === owner) return;
@@ -420,7 +420,7 @@ const market = {
         const seen = card.doorSeen || (card.doorSeen = {});
         const n = seen[by.id]?.[0] === stamp ? seen[by.id][1] + 1 : 1;
         seen[by.id] = [stamp, n];
-        if (n === 2) { ctx.gain(owner, B, 1); ctx.log(`${owner.name}'s Doorman: +1 blue.`); }
+        if (n === 2) { ctx.gain(owner, B, 1); ctx.log(`${owner.name}'s Doormen: +1 blue.`); }
       },
     }),
     // Cory's, Oct 21: "one recruit, refresh the shop. all the members"; prices are sim starting points

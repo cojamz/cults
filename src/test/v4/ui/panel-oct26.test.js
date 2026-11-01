@@ -30,9 +30,9 @@ describe('your seat says what rivals took since your turn (panel Oct 26)', () =>
   it('one clause per rival, merged across their turns', () => {
     expect(lossWords([
       { actor: 3, lost: { res: { green: 1 }, f: 0, gone: [], came: [] } },
-      { actor: 1, lost: { res: {}, f: 0, gone: ['Busker'], came: ['Doorman'] } },
+      { actor: 1, lost: { res: {}, f: 0, gone: ['Busker'], came: ['Doormen'] } },
       { actor: 3, lost: { res: {}, f: 1, gone: [], came: [] } },
-    ], players)).toBe('P4 took 1 green 1 follower · P2 swapped your Busker for Doorman');
+    ], players)).toBe('P4 took 1 green 1 follower · P2 swapped your Busker for Doormen');
     expect(lossWords([{ actor: 2, lost: { res: { red: 2 }, f: 0, gone: ['Twins'], came: [] } }], players)).toBe('P3 took your Twins and 2 red');
     expect(lossWords([], players)).toBe('');
   });

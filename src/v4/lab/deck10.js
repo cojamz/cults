@@ -134,7 +134,7 @@ export const DECK10 = {
    "purple.earlybird": {
     "round": 1,
     "price": 3,
-    "why": "The counter to Bouncer, and a second cheap card."
+    "why": "The counter to Bouncers, and a second cheap card."
    },
    "purple.timekeepers": {
     "round": 1,
@@ -166,7 +166,7 @@ export const DECK10 = {
   }
  },
  "market": {
-  "head": "cut Restockers, Plus-Ones and Doorman's round I spot. Blue has only 4 round II members, so it runs 5 and 5, with Doorman up to 5 in round II.",
+  "head": "cut Restockers, Plus-Ones and Doormen's round I spot. Blue has only 4 round II members, so it runs 5 and 5, with Doormen up to 5 in round II.",
   "cards": {
    "market.regular": {
     "why": "Cheap."

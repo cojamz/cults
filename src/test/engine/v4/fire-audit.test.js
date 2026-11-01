@@ -86,7 +86,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
   // (Translator, like Wallflower, names itself only when its owner copies resources; held 3 games without a copy after
   // the +1 wild on every member, Oct 27, moved the games. cards-echo covers it.)
   const QUIET_RESTRICTIONS = new Set(['echo.agents', 'trading.cashier', 'echo.doppel', 'market.makeover', 'echo.wallflower', 'echo.translator',
-    'market.snob', // Snob pays only for blue members at game end; Shoplifter 7 and Heiresses 9 (Oct 30) moved the games so its owners had none. cards-market covers it
+    'market.snob', // Snobs pays only for blue members at game end; Shoplifter 7 and Heiresses 9 (Oct 30) moved the games so its owners had none. cards-market covers it
     'market.restocker']); // Restockers: bots held it in 4 seeded games without using it once Out of Style went back to per member (Oct 28); cards-member-structure covers it
   const TABLES = [
     ['thieves', 'market', 'trading', 'echo'], ['gold', 'thieves', 'trading', 'echo'], ['red', 'market', 'thieves', 'echo'],
@@ -109,7 +109,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'market.patroness', // under 3 holds when Extortionist at 6 (Oct 25) moved the games; cards-market (Patroness) covers it
       'market.stylist', 'echo.ensemble', 'echo.dejavu', 'market.auctioneer', 'echo.wallflower', // under 3 holds when +1 wild on every member and the round I rework (Oct 27-28) moved the games; cards-market and cards-echo cover them
       'market.sommelier', // cut from the deck; under 3 holds when neutral in Out of Style (Oct 28) moved the games; cards-market covers it
-      'market.connoisseur', // under 3 holds when Tiebreaker at 5 (Oct 28) moved the games; cards-market (Connoisseur) covers it
+      'market.connoisseur', // under 3 holds when Tiebreaker at 5 (Oct 28) moved the games; cards-market (Connoisseurs) covers it
       'market.restocker', // under 3 holds when Encore's On Recruit copy and Sleep In's growth (Oct 28) moved the games; cards-member-structure covers it
       'market.doorman', 'market.planner', // under 3 holds when Cory's 15 guests and Launderers' split (Oct 28) moved the games; cards-market covers them (Planner is cut)
       'thieves.shoplifter', 'echo.translator', // under 3 holds when Green grew to 16 (Oct 28) moved the games; recruit-definition (Shoplifter) and cards-echo (Translator, cut) cover them

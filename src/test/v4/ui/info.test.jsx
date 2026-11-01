@@ -73,7 +73,7 @@ describe('card names open the card everywhere', () => {
     expect(body.textContent).toContain(d.name);
   });
 
-  it('bonus lines name their members ("Snob +3")', () => {
+  it('bonus lines name their members ("Snobs +3")', () => {
     const { s } = marketState();
     const snob = quadrant('market').members.find(m => m.key === 'snob');
     const { container } = render(<NamedText state={s} text={`${snob.name} +3, ${snob.name} +1`} />);

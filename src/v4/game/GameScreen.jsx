@@ -625,7 +625,7 @@ function PromptActions({ optionFor, onPick, afterPurchase = false }) {
 
 /**
  * What rivals took from your seat since your last turn, one clause per rival, oldest first: "P4 took 1 green 1 follower
- * · P2 swapped your Busker for Doorman" (Rich turns the amounts into dots and the follower mark). '' when nothing.
+ * · P2 swapped your Busker for Doormen" (Rich turns the amounts into dots and the follower mark). '' when nothing.
  */
 export function lossWords(list, players) {
   const by = new Map();
