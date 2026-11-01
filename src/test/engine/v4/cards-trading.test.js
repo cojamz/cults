@@ -139,15 +139,17 @@ describe('White members', () => {
     expect(R(s).white).toBe(0);
   });
 
-  it('Raiders: steals 4 from the leader\'s bought or won followers and pays them 2 white (named)', () => {
-    const s = use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider']], shop: ROW, ...buy }), 'trading.raider');
+  it('Raiders: steals 4 from the chosen rival\'s bought or won followers and pays them 2 white (named)', () => {
+    let s = use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider']], shop: ROW, ...buy }), 'trading.raider');
+    expect(s.pending.options.map(o => o.id)).toEqual(['player:1', 'player:2']); // any rival (Cory, Nov 1: "Raiders shouldnt have to be from the leader")
+    s = move(s, 'player:1');
     expect([B(s, 0), B(s, 1), R(s, 0).white, R(s, 1).white]).toEqual([4, 1, 0, 2]);
     expect(followers(s, s.players[0])).toBe(1 + 2 + 4);
     expect(named(s, 'Raiders')).toEqual(["P1's Raiders stole 4 followers from P2 and paid 2 white."]);
   });
 
   it('Raiders counts as a steal for Fence (Cory, Nov 1: "Count raiders… that should count")', () => {
-    const s = use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider'], [], ['thieves.fence']], shop: ROW, ...buy }), 'trading.raider');
+    const s = move(use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider'], [], ['thieves.fence']], shop: ROW, ...buy }), 'trading.raider'), 'player:1');
     expect(R(s, 2).magenta).toBe(1);
     expect(named(s, 'Fence')).toHaveLength(1);
   });
@@ -160,10 +162,10 @@ describe('White members', () => {
     expect(named(s, 'Recruiter')).toHaveLength(1);
   });
 
-  it('Raiders can\'t steal from a leader with Bodyguards (Cory, Nov 1: Bodyguards and Lie Low block every steal)', () => {
+  it('Raiders can\'t steal from a rival with Bodyguards (Cory, Nov 1: Bodyguards and Lie Low block every steal)', () => {
     const s = use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider'], ['thieves.watchdog']], shop: ROW, ...buy }), 'trading.raider');
-    expect([B(s, 0), B(s, 1), R(s, 0).white]).toEqual([0, 5, 2]);
-    expect(s.log).toContain("P1's Raiders: the leader can’t be stolen from now.");
+    expect([B(s, 0), B(s, 1), B(s, 2), R(s, 0).white]).toEqual([2, 5, 0, 0]); // the only rival it can steal from: P3
+    expect(named(s, 'Raiders')).toEqual(["P1's Raiders stole 2 followers from P3 and paid 2 white."]);
   });
 
   it('Cashier: when recruited, all your white becomes followers (named)', () => {

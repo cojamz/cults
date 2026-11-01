@@ -141,6 +141,10 @@ const trading = {
   ],
 
   handlers: {
+    raiders(ctx, p, id) {
+      const t = raidTargets(ctx, p).find(o => o.id === id);
+      if (t && (p.res[W] || 0) >= 2) raidersSteal(ctx, p, t);
+    },
     exchange(ctx, p, value, data) {
       if (value === 'done') return;
       p.res[value] -= 1;
@@ -234,22 +238,18 @@ const trading = {
         if (by === owner && recruited.uid !== card.uid && ctx.defOf(recruited).quadrant !== 'trading') ctx.gain(owner, W, 1);
       },
     }),
-    m('raider', 'Raiders', 2, 2, /* Claude's fill-in price 4, was 5 (Cory, 2026-10-22: "probably too expensive") */ 'On Use, once per game: steal 4 followers from the leader. Pay them 2 white.', { n: 2, // 2 members (Cory, Oct 29: "choir and raiders can be more"; 2 is Claude's start)
+    m('raider', 'Raiders', 2, 2, /* Claude's fill-in price 4, was 5 (Cory, 2026-10-22: "probably too expensive") */ 'On Use, once per game: steal 4 followers from a rival. Pay them 2 white.', { n: 2, // 2 members (Cory, Oct 29: "choir and raiders can be more"; 2 is Claude's start)
       activate: 'game',
+      // any rival, the owner's pick (Cory, Nov 1: "Raiders shouldnt have to be from the leader")
       onActivate(ctx, owner, card) {
-        const t = raidTarget(ctx, owner, true);
-        const k = t ? Math.min(4, sellable(t)) : 0;
-        if (!k || (owner.res[W] || 0) < 2) { card.used = false; ctx.log(`${owner.name}'s Raiders: ${!k ? (raidTarget(ctx, owner) ? 'the leader can’t be stolen from now' : 'no leader to steal from') : 'needs 2 white'}.`); return; }
-        owner.res[W] -= 2; t.res[W] = (t.res[W] || 0) + 2;
-        t.bonus -= k; owner.bonus += k;
-        ctx.log(`${owner.name}'s Raiders stole ${plural(k, 'follower')} from ${t.name} and paid 2 white.`);
-        // a steal for Fence ("Whenever any player steals, +1 magenta."; Cory, Nov 1: "Count raiders… that should count")
-        const info = { thief: owner, victim: t, took: {}, n: k, followers: k, instance: ctx.stealInstance() };
-        for (const o of ctx.state.players) for (const c of ctx.abilitiesOf(o)) {
-          for (const d of [c.def, ...(c.copy ? [ctx.defOf({ def: c.copy })] : [])]) if (d.key === 'fence' && d.onSteal) ctx.asMember(o, d.name, () => d.onSteal(ctx, o, c, info), c.uid);
-        }
+        const ts = raidTargets(ctx, owner);
+        if (!ts.length || (owner.res[W] || 0) < 2) { card.used = false; ctx.log(`${owner.name}'s Raiders: ${!ts.length ? 'no rival has followers to steal' : 'needs 2 white'}.`); return; }
+        if (ts.length === 1) return raidersSteal(ctx, owner, ts[0]);
+        ctx.choose(owner, 'Raiders: steal 4 followers from which rival?', ts.map(t => ({
+          id: `player:${t.id}`, label: `${t.name} (${ctx.followers(t)} followers)`, kind: 'player', value: t.id, hint: ctx.followers(t),
+        })), 'trading.raiders');
       },
-      botActivate: (ctx, owner) => { const t = raidTarget(ctx, owner, true); return !!t && sellable(t) >= 3 && (owner.res[W] || 0) >= 2; },
+      botActivate: (ctx, owner) => { const t = raidTarget(ctx, owner, true); return !!t && sellable(t) >= 3 && (owner.res[W] || 0) >= 2; }, // bots still raid the leader
     }),
     // new (Claude's names from here down)
     m('cashier', 'Cashier', 2, 0, 'On Recruit: turn all your white into followers.', {
@@ -416,6 +416,19 @@ function raidTarget(ctx, p, guarded = false) {
   const top = Math.max(...ctx.state.players.map(o => ctx.followers(o)));
   if (ctx.followers(p) >= top) return null;
   return ctx.rivals(p).filter(o => ctx.followers(o) === top && (!guarded || ctx.canSteal(p, o))).sort((a, b) => b.bonus - a.bonus)[0];
+}
+/** Raiders: rivals with followers who can be stolen from (Bodyguards, Lie Low block it) */
+const raidTargets = (ctx, p) => ctx.rivals(p).filter(o => sellable(o) > 0 && ctx.canSteal(p, o));
+function raidersSteal(ctx, owner, t) {
+  const k = Math.min(4, sellable(t));
+  owner.res[W] -= 2; t.res[W] = (t.res[W] || 0) + 2;
+  t.bonus -= k; owner.bonus += k;
+  ctx.log(`${owner.name}'s Raiders stole ${plural(k, 'follower')} from ${t.name} and paid 2 white.`);
+  // a steal for Fence ("Whenever any player steals, +1 magenta."; Cory, Nov 1: "Count raiders… that should count")
+  const info = { thief: owner, victim: t, took: {}, n: k, followers: k, instance: ctx.stealInstance() };
+  for (const o of ctx.state.players) for (const c of ctx.abilitiesOf(o)) {
+    for (const d of [c.def, ...(c.copy ? [ctx.defOf({ def: c.copy })] : [])]) if (d.key === 'fence' && d.onSteal) ctx.asMember(o, d.name, () => d.onSteal(ctx, o, c, info), c.uid);
+  }
 }
 function raid(ctx, owner, t, k) {
   if (!(k > 0)) return;

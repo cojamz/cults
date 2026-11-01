@@ -227,10 +227,10 @@ describe('White members', () => {
     expect(R(s).white).toBe(0);
   });
 
-  it('Raider: once per game, steal up to 4 loose followers from the leader and pay them 2 white', () => {
+  it('Raider: once per game, steal up to 4 loose followers from a rival and pay them 2 white', () => {
     let s = scene({ n: 3, res: [{ white: 3 }], bonus: [0, 6, 2], members: [['trading.raider']], ...buyTurn });
     const u = uidOf(s, 'trading.raider', 0);
-    s = move(s, `use:${u}`);
+    s = move(move(s, `use:${u}`), 'player:1');
     expect([B(s, 0), B(s, 1), B(s, 2), R(s, 0).white, R(s, 1).white]).toEqual([4, 2, 2, 1, 2]);
     expect(ids(s)).not.toContain(`use:${u}`);
     s = scene({ res: [{ white: 2 }], bonus: [0, 3], members: [['trading.raider']], ...buyTurn });
@@ -238,12 +238,12 @@ describe('White members', () => {
     expect([B(s, 0), B(s, 1), R(s, 0).white, R(s, 1).white]).toEqual([3, 0, 0, 2]); // only 3 to steal
   });
 
-  it('Raider: not while you lead, and not without 2 white; the use is not spent', () => {
+  it('Raider: while you lead too (any rival, Cory Nov 1); not without 2 white, and then the use is not spent', () => {
     let s = scene({ res: [{ white: 5 }], bonus: [6, 4], members: [['trading.raider']], ...buyTurn });
     const u = uidOf(s, 'trading.raider', 0);
     s = move(s, `use:${u}`);
-    expect([B(s, 0), B(s, 1), R(s).white]).toEqual([6, 4, 5]);
-    expect(ids(s)).toContain(`use:${u}`);
+    expect([B(s, 0), B(s, 1), R(s).white]).toEqual([10, 0, 3]);
+    expect(ids(s)).not.toContain(`use:${u}`);
     s = scene({ res: [{ white: 1 }], bonus: [0, 4], members: [['trading.raider']], ...buyTurn });
     s = move(s, `use:${uidOf(s, 'trading.raider', 0)}`);
     expect([B(s, 1), R(s).white]).toEqual([4, 1]);
