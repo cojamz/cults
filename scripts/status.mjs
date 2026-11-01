@@ -22,7 +22,9 @@ for (let i = 0; i < rest.length; i++) {
   if (rest[i].startsWith('--')) args[rest[i].slice(2)] = rest[i + 1]?.startsWith('--') || rest[i + 1] === undefined ? true : rest[++i];
 }
 
-const session = process.env.CULTS_SESSION || 'local';
+// Chat threads set no CULTS_SESSION: every one of them wrote as "local" and overwrote one shared line, so the board
+// only ever showed the last thread to post (found Nov 1). Claude Code's own session id tells them apart.
+const session = process.env.CULTS_SESSION || process.env.CLAUDE_CODE_SESSION_ID || 'local';
 const sh = c => { try { return execSync(c, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { return ''; } };
 const eastern = d => new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' })
   .format(d).replace(' ', '').toLowerCase();
