@@ -46,8 +46,8 @@ const P = {
     evenswap: { verb: 'Use a shop member’s On Recruit', second: '+2 red', note: 'it stays in the shop' },
     turnout: r => ({ main: `+${r + 1} red`, second: `+${r} @f if you recruit a member` }), // Cory, Oct 31
     hire: { verb: 'Recruit the top of the deck', second: '+1 red to all' }, // the rivals' red sat in line 3, which drops on the outer ring (blind panel, Nov 1)
-    hireup: { verb: 'Promote a member +3 red', second: 'one costing up to 2 more' },
-    trade: { verb: 'Demote a member +3 red', second: 'one costing up to 2 less' },
+    hireup: { verb: 'Promote to one costing up to 2 more +3 red' },
+    trade: { verb: 'Demote to one costing up to 2 less +3 red' },
     take: { verb: 'Free member costing 8 or less', second: '+1 red' },
   },
   market: {
