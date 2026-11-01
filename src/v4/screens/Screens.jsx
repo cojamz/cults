@@ -328,10 +328,10 @@ export function LocalSetup({ initial, onStart, onBack }) {
   const filled = seats.filter(s => s.kind !== 'empty');
   // one sphere per player (Cory, 2026-10-15): the table follows the seats as they're filled or emptied
   const nSph = sphereCount(filled.length);
-  const fitted = fitTable(table, filled.length);
-  const tableOk = !tableProblem(fitted.quadrants, nSph);
+  const fitted = fitTable(table, filled.length, shop);
+  const tableOk = !tableProblem(fitted.quadrants, nSph, shop);
   const short = nSph - fitted.quadrants.length;
-  const startWhy = filled.length < 2 ? 'Needs at least 2 seats' : short > 0 ? `Pick ${short} more sphere${short === 1 ? '' : 's'}` : tableOk ? '' : tableProblem(fitted.quadrants, nSph);
+  const startWhy = filled.length < 2 ? 'Needs at least 2 seats' : short > 0 ? `Pick ${short} more sphere${short === 1 ? '' : 's'}` : tableOk ? '' : tableProblem(fitted.quadrants, nSph, shop);
   const set = (i, patch) => setSeats(settleEmojis(seats.map((s, k) => (k === i ? { ...s, ...patch } : s))));
   const pickEmoji = (i, id) => {
     const next = takeEmoji(seats, i, id);
@@ -412,7 +412,7 @@ export function Lobby({ lobby, myId, onLeave }) {
   const roomTable = view.table && view.table.quadrants ? view.table : { mode: 'classic', quadrants: [...CLASSIC] };
   // one sphere per player (Cory, 2026-10-15): everyone sees the room's table fitted to the seats taken now
   const nSph = sphereCount(players.length);
-  const shownTable = fitTable(isHost && draft ? draft : roomTable, players.length);
+  const shownTable = fitTable(isHost && draft ? draft : roomTable, players.length, view.shop);
   const pickTable = t => { setDraft(t); if (!tableProblem(t.quadrants) && lobby.setTable) act(() => lobby.setTable(t)); };
   // one emoji per table: another person's is dimmed; a bot's can be taken (the bot picks another)
   const held = kind => new Map(players.filter(p => p.id !== me && p.kind === kind && p.emoji).map(p => [p.emoji, p.name]));
