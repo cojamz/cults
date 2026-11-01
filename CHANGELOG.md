@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.971 — 2026-11-01
+
+- Recruiter pays when a rival casts out a member with Farewell or Estate Sale; Guest Book counts your first grey member as a new color; Customs pays once per change, not once per resource
+
 ## v0.9.970 — 2026-11-01
 
 - Bargain Bin pays +1 blue when the shop refreshes at the start of rounds II and III; Raiders' steal pays Fence
