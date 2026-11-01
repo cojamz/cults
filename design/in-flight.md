@@ -24,6 +24,8 @@ Parked
 - Yellow 2.0: built and bot-read Oct 31 (design/eval/balance-yellow-oct31). Branch only, not published. Next: Cory's calls on the reads (artifact, Makeover), an on-screen check of the new picks, then Gold.
 - Fuel spaces with flavor (thread "Give fuel spaces their color's flavor"): done. Live: Gather, Allowance and Stash in one shape (+2/3/4 of the color; this turn, if you recruit a member, +1/2/3 followers), v0.9.891/0.9.898; Savings +2/3/4 blue and may send a shop member to the bottom before you recruit (v0.9.894); Poach says "Recruit a rival's member you choose" (v0.9.896); Build Up stays +3/4/5. Magenta round I is parked (Stash to be cut, Lie Low maybe): ideas in design/notes/magenta-round-i-slow-pass-2026-10-31.md.
 
+Closed Nov 1 with nothing owed: Playtest games for bugs (13 games through the screen, every color but Gold, Silver and Yellow, both deck sizes; one bug, the cut "Since your last turn", fixed in v0.9.915; report design/eval/playtest-nov1/README.md; driver scripts/v4-playtest.mjs).
+
 Closed Oct 29 with nothing owed: Cross-check balance findings (11 price changes signed off, shipped in v0.9.850), Run expert AI games overnight (blocked), Rework members and actions by priority (all calls live in v0.9.836), Decide member and guest balance (guests final at 15), Fix the game freezing mid-play (v0.9.831), Make the members page a color explorer (live), Show every member for review (live), Rework round I actions (v0.9.821).
 
 Branches
