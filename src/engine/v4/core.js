@@ -3,7 +3,7 @@ import { plainCopy } from './copy.js';
 // Patrons v4 engine. Pure and deterministic: state in, move in, state out.
 // Everything runs through a task queue. When a task needs a decision, the engine stops and publishes
 // state.pending = { player, kind, prompt, options:[{ id, label, kind, ... }] }. A move is { player, option }.
-import { quadrant, defById, handlerById, defaultQuadrants, guestMembers, MAX_PLAYERS } from './content/index.js';
+import { quadrant, defById, handlerById, defaultQuadrants, guestMembers, MAX_PLAYERS, spacesOf } from './content/index.js';
 import { shuffleInPlace } from './rng.js';
 import { CUT, CUT10, FULL_DECK } from './content/cull.js';
 import { pileRules } from './piles.js';
@@ -66,7 +66,7 @@ export function createGame({ seats, seed = 1, quadrants, rules = {} }) {
   // The shop (Cory, 2026-11-01: "anything we update needs to go to all the different types of the game"): rules.shop is
   // 'deck' (the shop as it is: one shuffled deck, the default), 'grey' (the grey core as piles anyone can buy several
   // of; the rest of the shop as now) or 'all' (every member a pile, ten piles a game; the rest face down as the deck, no face-up row). piles.js builds it.
-  if (table.shop && table.shop !== 'deck' && !table.piles) Object.assign(table, pileRules(table.shop, quadrants, seed, table.deck === 10 ? 10 : 15, { seats: seats.length }));
+  if (table.shop && table.shop !== 'deck' && !table.piles) Object.assign(table, pileRules(table.shop, quadrants, seed, table.deck === 10 ? 10 : 15));
   const artifactIds = new Set(table.artifacts ? quadrants.map(q => ARTIFACTS[q]).filter(Boolean) : []);
   const dealt = def => !(table.cull && (CUT.has(def.id) || (table.deck === 10 && CUT10.has(def.id)))) && !artifactIds.has(def.id) && !def.artifact && !def.retired; // the cull (content/cull.js); artifacts (an artifact-only card is never dealt)
   // Piles (experiment, branch only; Cory, 2026-11-01): rules.piles = { defs: [member ids], copies: n, only: bool } deals
@@ -211,7 +211,8 @@ export const countMembersOfColor = (state, p, q, { wild = true } = {}) => p.memb
   return s + ((c.asColor || defById(c.def).quadrant) === q || every ? countOf(c) : 0);
 }, 0);
 export const cardDef = (state, uid) => defById(state.cards[uid].def);
-export function actionAt(state, q, i) { return quadrant(state.quadrants[q]).actions[i]; }
+export { spacesOf }; // content/index.js
+export function actionAt(state, q, i) { return spacesOf(state, state.quadrants[q])[i]; }
 /** A space is open from its ring's round on, and shuts after its lastRound if it has one (Overtime: rounds I–II only, Cory 2026-10-15). */
 export const spaceOpen = (a, round) => a.ring <= round && !(a.lastRound && round > a.lastRound);
 export function openSlots(state) {
@@ -1051,7 +1052,8 @@ function refill(state) {
 // ---------- piles (experiment: rules.piles) ----------
 const isPileCard = (state, uid) => !!state.supply && state.supply[state.cards[uid]?.def] !== undefined;
 /** A pile opens in the round its member would join the deck (round decks), so round I sees only round I piles. */
-export const pileOpen = (state, defId) => joinsRound(state, defById(defId)) <= Math.max(1, state.round);
+// every pile is open from round I (Cory, 2026-11-01: "with the piles, there should be no limit on when you can buy")
+export const pileOpen = () => true;
 /** Piles: a pile member sent "to the bottom of the pile" (or into the deck between rounds) goes back to its own pile;
  *  the shop row fills from the deck as usual, then every open pile shows its top copy after the row. */
 function refillPiles(state) {

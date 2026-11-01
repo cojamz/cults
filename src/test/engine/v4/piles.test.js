@@ -2,7 +2,7 @@
 // Members as piles (experiment, branch only; Cory, 2026-11-01): face-up piles of copies anyone can recruit from, and the
 // members that meet copies of themselves (two Line Cutters, two Party Crashers, two Old Maids on a swap, two Tiebreakers).
 import { describe, it, expect } from 'vitest';
-import { createGame, applyMove, resume, contextFor, contestTable } from '../../../engine/v4/core.js';
+import { createGame, applyMove, resume, contextFor, contestTable, actionAt, spacesOf } from '../../../engine/v4/core.js';
 import { GREY_CORE, pileRules, allPiles } from '../../../engine/v4/piles.js';
 import { chooseBotMove } from '../../../engine/v4/bots.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
@@ -37,10 +37,10 @@ describe('Piles: variant A (the grey core as piles)', () => {
     expect(greys.every(c => GREY_CORE.includes(c.def))).toBe(true);
     expect([...s.pile, ...s.shop].filter(u => !s.supply[defOf(s, u)]).every(u => !defOf(s, u).startsWith('benders.'))).toBe(true);
   });
-  it('round I shows the shop row plus the top copy of each round I pile; later piles open in their round', () => {
+  it('round I shows the shop row plus the top copy of every pile (Cory, Nov 1: "no limit on when you can buy")', () => {
     const s = game('A');
     expect(s.shop.length - tops(s).length).toBe(6);
-    expect(tops(s).sort()).toEqual(['benders.frontrunner', 'benders.squatter']);
+    expect(tops(s).sort()).toEqual([...GREY_CORE].sort());
   });
   it('recruiting a pile’s top copy turns up the next; an empty pile leaves the shop', () => {
     const s = scene('A', { round: 1 });
@@ -118,29 +118,36 @@ describe('Piles: members that meet copies of themselves', () => {
 });
 
 describe('Piles: variant B (all piles: ten piles, the rest face down as the deck)', () => {
-  it('ten piles: two from each color (one round I, one later) and two greys, one copy per player', () => {
+  it('ten piles: two from each color (one round I, one later) and two greys, ten copies each', () => {
     const r = allPiles(TABLE, 5);
     expect(r.defs).toHaveLength(10);
-    for (const q of TABLE) {
-      const mine = r.defs.filter(d => d.startsWith(`${q}.`));
-      expect(mine).toHaveLength(2);
-    }
+    for (const q of TABLE) expect(r.defs.filter(d => d.startsWith(`${q}.`))).toHaveLength(2);
     expect(r.defs.filter(d => d.startsWith('benders.'))).toHaveLength(2);
-    expect(r.copies).toBe(4);
-    expect(allPiles(TABLE.slice(0, 3), 5, { seats: 3 }).copies).toBe(3);
-    const two = allPiles(TABLE.slice(0, 2), 5, { seats: 2 });
+    expect(r.copies).toBe(10);
+    const two = allPiles(TABLE.slice(0, 2), 5);
     expect(two.defs.filter(d => d.startsWith('red.'))).toHaveLength(4);
     const s = game('B', { seed: 5 });
-    for (const d of r.defs) expect(copiesOf(s, d)).toBe(4);
+    for (const d of r.defs) expect(copiesOf(s, d)).toBe(10);
   });
-  it('round I opens a pile of every color; the shop is only the piles, the rest of the members wait face down', () => {
+  it('every pile is open from round I; the shop is only the piles, the rest of the members wait face down', () => {
     for (const seed of [1, 2, 3, 4, 5, 6]) {
       const s = game('B', { seed });
       expect(s.shop.every(u => s.supply[defOf(s, u)])).toBe(true);
-      for (const q of TABLE) expect(tops(s).some(d => d.startsWith(`${q}.`))).toBe(true);
+      expect(tops(s).sort()).toEqual([...s.rules.piles.defs].sort());
       expect(s.pile.length).toBeGreaterThan(0);
       expect(s.pile.every(u => !s.supply[defOf(s, u)])).toBe(true);
     }
+  });
+  it('Red\'s round I space is Open Door in all piles (recruit the cheapest, +1 red), Walk-In everywhere else', () => {
+    const s = game('B');
+    const q = s.quadrants.indexOf('red');
+    const i = spacesOf(s, 'red').findIndex(a => a.ring === 1 && a.name === 'Open Door');
+    expect(i).toBeGreaterThanOrEqual(0);
+    expect(actionAt(s, q, i).text).toBe('Recruit the cheapest member in the shop. +1 red.');
+    const plain = game('none');
+    expect(actionAt(plain, q, i).name).toBe('Walk-In');
+    const grey = game('A');
+    expect(actionAt(grey, q, i).name).toBe('Walk-In');
   });
   it('Walk-In recruits the top member of the face-down deck, and the shop stays only piles', () => {
     let s = scene('B', { round: 1 });

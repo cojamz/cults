@@ -4,7 +4,7 @@
 // { pid, res } one of their resource stacks (give: true for a gift), { res } your own stack of a color. Options are
 // read by their target only, never by their label. What has no place on the board (Pass, "All 3 as green", an amount)
 // stays a button by the caption, and every pick is also in a compact list for the keyboard.
-import { quadrant, defById, followers } from '../../engine/v4/index.js';
+import { quadrant, defById, followers, spacesOf } from '../../engine/v4/index.js';
 import { lastSpace } from './seats.js';
 
 /**
@@ -126,7 +126,7 @@ export function giftPick(state, pend, first = null) {
   // neutral (Out of Style, Cory 2026-10-28) is a color with no stack of yours: a gray dot in the same row
   const neutral = o => !o.target && o.kind === 'color' && o.value === 'neutral';
   const own = pend.options.filter(o => (o.target && o.target.res && o.target.pid == null && o.target.space == null && o.target.uid == null) || neutral(o));
-  const fromSpace = title && state.quadrants.some(q => quadrant(q).actions.some(a => a.name === title));
+  const fromSpace = title && state.quadrants.some(q => spacesOf(state, q).some(a => a.name === title));
   if (fromSpace && own.length >= 2 && own.length + pend.options.filter(o => !o.target && !neutral(o)).length === pend.options.length) {
     const left = (question.match(/\((\d+) left\)/) || [])[1];
     const ask = question.replace(/\s*\(\d+ left\)\s*/, ' ').trim();
@@ -177,7 +177,7 @@ function lastSpaceName(state, p) {
   const l = p && p.lastSlot;
   if (!l || typeof l.key !== 'string') return null;
   const [q, i] = l.key.split('-').map(Number);
-  try { const a = quadrant(state.quadrants[q]).actions[i]; return a ? a.name : null; } catch { return null; }
+  try { const a = spacesOf(state, state.quadrants[q])[i]; return a ? a.name : null; } catch { return null; }
 }
 const SHOP_HEADS = { 'Hand-pick': 'Take a member, free', 'Recruit a Member': 'Recruit a shop member, free', 'Open Door': 'Recruit the cheapest shop member, free', 'Bury': 'Send one to the bottom: half its cost in blue' };
 
@@ -387,7 +387,7 @@ export function pickName(state, o) {
 function ruleText(state, pk) {
   const last = lastSpace(state, pk.actor);
   if (!last || last.name !== pk.title) return '';
-  try { const a = quadrant(last.qid).actions.find(x => x.name === last.name); return a ? a.text : ''; } catch { return ''; }
+  try { const a = quadrant(last.qid).actions.flatMap(a => (a.piles ? [a, a.piles] : [a])).find(x => x.name === last.name); return a ? a.text : ''; } catch { return ''; }
 }
 
 /**

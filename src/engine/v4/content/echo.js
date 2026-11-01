@@ -14,7 +14,7 @@
 //   recruits with the space, kept per round on state (this round and last round, for the board's chips).
 // - Member defs keep quadrant 'echo' (core pays the colored part in quadrant('echo').resource = green), so
 //   color counts (Potluck, countMembersOfColor) see Green members.
-import { registerQuadrant, allQuadrantIds, quadrant, defById } from './index.js';
+import { registerQuadrant, allQuadrantIds, quadrant, defById, spacesOf } from './index.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const costOf = def => def.s + def.w;
@@ -109,7 +109,8 @@ function wrapHandler(q, k) {
   wrapped.__echo = true;
   q.handlers[k] = wrapped;
 }
-const actionOf = e => quadrant(e.color).actions[e.idx];
+// st: the table (all piles shows a space's piles version); without it, the printed space
+const actionOf = (e, st) => spacesOf(st, e.color)[e.idx];
 
 // ---------- reading and copying ----------
 const spaceTotal = e => Object.values(e.res).reduce((a, b) => a + b, 0);
@@ -117,7 +118,7 @@ const spaceTotal = e => Object.values(e.res).reduce((a, b) => a + b, 0);
 export function entryValue(ctx, e, p = null) {
   // Estimates never recurse through a copy action's estimate: cycles are choices, not infinite bot work.
   if (e.echo) return 2 + (e.color === 'echo' ? VARIANT.plus : 0);
-  if (e.redo) { const a = actionOf(e); return p && a.estimate ? a.estimate(ctx, p) : spaceTotal(e); }
+  if (e.redo) { const a = actionOf(e, ctx.state); return p && a.estimate ? a.estimate(ctx, p) : spaceTotal(e); }
   let v = spaceTotal(e) + e.discount * 0.9;
   const shop = ctx.shopCards();
   for (const c of e.members) {
@@ -151,7 +152,7 @@ function withPath(ctx, path, fn, origin = ledger(ctx.state).origin) {
 }
 /** The chip on a taken space: exactly what a copy gives. */
 export const describe = (ctx, e) => {
-  if (e.echo) return `${actionOf(e).text} Choose again.`;
+  if (e.echo) return `${actionOf(e, ctx?.state).text} Choose again.`;
   if (e.redo) return `do ${e.name} yourself`;
   const bits = Object.entries(e.res).map(([c, n]) => `+${n} ${c}`);
   if (e.discount) bits.push(`${e.discount} off`);
@@ -256,7 +257,7 @@ export const previousNow = (ctx, p) => {
 /** Cover's targets: open actions with no minion on them, not already in this copy chain. */
 function emptyTargets(ctx) {
   const st = ctx.state, path = pathNow(ctx), out = [];
-  st.quadrants.forEach((qid, q) => quadrant(qid).actions.forEach((a, i) => {
+  st.quadrants.forEach((qid, q) => spacesOf(st, qid).forEach((a, i) => {
     const key = `${q}-${i}`;
     if (a.ring <= st.round && !(a.lastRound && st.round > a.lastRound) && st.slots[key] === undefined && !path.includes(key)) out.push({ key, a, qid });
   }));
@@ -294,7 +295,7 @@ function copyResolved(ctx, p, e, { later, by, asker }) {
     // a space that took or traded: the copy does the action itself
     ctx.log(`${who} copies ${e.name}${taker !== p ? ` (${taker.name}'s)` : ''}: doing it again.`);
     heard(ctx, p, e, taker);
-    (actionOf(e).resolve.__orig || actionOf(e).resolve).call(actionOf(e), ctx, p);
+    (actionOf(e, ctx.state).resolve.__orig || actionOf(e, ctx.state).resolve).call(actionOf(e, ctx.state), ctx, p);
     return;
   }
   const mult = has(ctx, p, 'wallflower') ? 2 : 1;
