@@ -135,7 +135,7 @@ function skipNext(ctx, p, why, by = p, quiet = false, { token = false, last = fa
   if (token) task.token = true;
   // where the turn sat, a marker: the turn is really skipped when play reaches it (Gossip pays then); a token's marker
   // turns back into the turn if the token is taken first (the minion goes back to its owner's hand)
-  q.splice(i, 0, { t: 'content', p: p.id, h: 'purple.skipped', data: token ? { why, token: true, at } : { why } });
+  q.splice(i, 0, { t: 'content', p: p.id, h: 'purple.skipped', data: token ? { why, token: true, ...(at !== undefined ? { at } : {}) } : { why } });
   q.splice(stop, 0, task);
   // its new place: after every other turn of the round's order still to come
   if (at !== undefined && at !== order.length - 1) {

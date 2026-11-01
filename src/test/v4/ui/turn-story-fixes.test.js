@@ -49,26 +49,25 @@ describe('an extra turn names the card that gave it', () => {
       queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }], order: [0, 1] }, 1);
     d.take('purple.windup');
     d.on();
-    expect(d.s.log).toContain("P1's Night Owls: P1 gets 1 more minion, placed now.");
-    d.take('purple.lastcall');
-    d.on();
-    const [earn, extra] = d.t.stories;
-    expect(earn.lines).toContain('Night Owls: +1 minion, placed now');
-    expect(earn.lines).not.toContain('an extra turn');
-    expect(earn.short).toContain('Night Owls: +1 minion, placed now');
-    // the extra turn's own card leads with why it happened, and so does its line in the strip
-    expect(extra.head).toBe(`P1 took ${actionName('purple.lastcall')}`);
-    expect(extra.lines[0]).toBe('Night Owls: extra turn');
-    expect(extra.text.startsWith(`P1 took ${actionName('purple.lastcall')} · Night Owls: extra turn`)).toBe(true);
-    expect(extra.short.startsWith('Night Owls: extra turn')).toBe(true);
-    // and the live card as the extra turn is played
-    expect(lastLive(d).lines[0]).toBe('Night Owls: extra turn');
+    // since Nov 1 2:35pm the one more minion waits on the Goes Last token, so P2 places first
+    expect(d.s.log).toContain("P1's Night Owls: P1 takes the Goes Last token with 1 more minion on it.");
     // a turn in the round's order says nothing of the kind
-    const next = d.t.stories.length;
     expect(d.s.pending.player).toBe(1);
+    const next = d.t.stories.length;
     d.take(d.s.pending.options.find(o => o.kind === 'slot').label);
     d.on();
+    const [earn] = d.t.stories;
+    expect(earn.lines).toContain('Night Owls: +1 minion on the Goes Last token');
+    expect(earn.lines).not.toContain('an extra turn');
+    expect(earn.short).toContain('Night Owls: +1 minion on the Goes Last token');
     for (const st of d.t.stories.slice(next)) expect(st.text).not.toMatch(/extra turn/);
+    // the extra turn's own card leads with why it happened, and so does its line in the strip
+    expect(d.s.pending.player).toBe(0);
+    d.take('purple.lastcall');
+    d.on();
+    const extra = d.t.stories.at(-1);
+    expect(extra.head).toBe(`P1 took ${actionName('purple.lastcall')}`);
+    expect(extra.lines[0]).toBe('Night Owls: extra turn');
   });
 
   it('Go-Getter, used before the placement: its card leads the head and names the turn it gives', () => {

@@ -73,8 +73,10 @@ describe('audit', () => {
       let s = sc(QP, { round: 2, left: 1, slots: { '0-0': 0, '0-1': 0, '0-2': 0, '0-3': 0 }, members: [members], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
       s = take(s, 'purple.windup'); // 5 purple; 5th minion
       while (s.pending?.kind === 'buy') s = move(s, 'pass');
+      // Night Owls' 6th waits on the Goes Last token (Cory, Nov 1 2:35pm): P2 places first
+      if (s.pending?.player === 1) { s = move(s, s.pending.options.find(o => o.kind === 'slot').id); while (s.pending?.kind === 'buy' || s.pending?.kind === 'choose') s = move(s, s.pending.options.find(o => o.id === 'pass')?.id ?? s.pending.options[0].id); }
       s = move(s, s.pending.options.find(o => o.kind === 'slot').id); // Night Owls' 6th
-      while (s.pending?.kind === 'buy' && s.pending.player === 0) s = move(s, 'pass');
+      while (s.pending && s.pending.player === 0 && s.pending.kind !== 'place') s = move(s, s.pending.options.find(o => o.id === 'pass' || o.id === 'none')?.id ?? s.pending.options[0].id);
       return s.players[0].res.purple - 5;
     };
     expect(run(['purple.bookkeeper', 'purple.nightowl'])).toBe(3); // floor(6/2)

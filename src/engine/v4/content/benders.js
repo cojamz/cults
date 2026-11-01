@@ -153,7 +153,7 @@ const members = [
     onContestWin(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Cheerleader: +1 follower.`); },
   }),
   // Cory, 2026-10-28: Anarchist, 7, once per round (it stands in for Red's swaps)
-  m('anarchist', 'Anarchist', null, 0, 6, 'On Use, once per round: swap any 2 members, in any cult or the shop, that cost within 2 of each other.', {
+  m('anarchist', 'Anarchist', null, 0, 5, /* 6 with the +1 wild (Cory, Nov 1 3:03pm: "maybe we make it a touch cheaper? yes to 1"; was 7) */ 'On Use, once per round: swap any 2 members, in any cult or the shop, that cost within 2 of each other.', {
     activate: 'round',
     onRoundStart(ctx, owner, card) { card.used = false; },
     onActivate(ctx, owner, card) {
@@ -167,21 +167,6 @@ const members = [
       })).concat({ id: 'none', label: 'Don’t swap', kind: 'pass', value: null, hint: -99 }), 'benders.anarchy', { uid: card.uid });
     },
     botActivate: (ctx, p) => anarchyPairs(ctx, p).some(([a, b]) => gainFor(ctx, p, a, b) >= 2),
-  }),
-  // Cory, Nov 1 2:54-2:58pm: a simple member manipulation ("Let's definitely say yes to the headhunter that takes a
-  // member"); no cap, no replacement for the rival. A steal like Poach: Bodyguards and Lie Low block it, Fence pays.
-  // Name, price 8 (with the +1 wild) and worth 1 are Claude's fill-ins
-  m('kidnappers', 'Kidnappers', 'thieves', 0, 7, 'On Use, once per game: recruit a rival’s member.', {
-    activate: 'game',
-    onActivate(ctx, owner, card) {
-      const list = huntable(ctx, owner);
-      if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Kidnappers: no rival member to recruit.`); return; }
-      ctx.log(`${owner.name} uses Kidnappers.`);
-      ctx.choose(owner, 'Kidnappers: recruit which rival’s member?', list.map(([o, c]) => ({
-        id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name}`, kind: 'member', value: c.uid, hint: huntValue(c),
-      })), 'benders.kidnappers');
-    },
-    botActivate: (ctx, p) => ctx.state.round >= 2 && huntable(ctx, p).some(([, c]) => huntValue(c) >= 6),
   }),
   // Cory, 2026-10-28: Scout, 4, once per round (it stands in for Blue's shop work)
   m('scout', 'Scouts', null, 0, 2, 'On Use, once per round: send any shop members to the bottom of the pile, then refill.', { f: 2, n: 2, // worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
@@ -225,20 +210,7 @@ const members = [
   }),
 ];
 
-/** Kidnappers: every rival member it can recruit (a steal, so Bodyguards and Lie Low keep their owner's members). */
-function huntable(ctx, p) {
-  const out = [];
-  for (const o of ctx.rivals(p)) if (ctx.canSteal(p, o, 'member')) for (const c of ctx.membersOf(o)) out.push([o, c]);
-  return out;
-}
-const huntValue = c => (c.def.f || 1) * 1.5 + (c.def.s || 0) + (c.def.w || 0);
-
 export const handlers = {
-  kidnappers(ctx, p, uid) {
-    const v = ctx.ownerOf(uid), c = ctx.card(uid);
-    if (!v || v === p || !ctx.steal(p, v, { uid })) return;
-    ctx.log(`${p.name}'s Kidnappers recruits ${v.name}'s ${c.def.name}.`);
-  },
   pickColor(ctx, p, r, data) { // gainColorOf (color-of.js): Dabblers' owner picks its color
     if (!ctx.state.resources.includes(r)) return;
     ctx.gain(p, r, 1);

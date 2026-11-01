@@ -916,7 +916,7 @@ export function traceLine(line, players, resources) {
 }
 
 /** A turn card's line for a minion placed now: "+1 minion, placed now", or with the card that gave it ("Night Owls: +1 minion, placed now"). */
-const EXTRA_LINE = /^(?:[^:]+: )?\+\d+ minions?, placed now$/;
+const EXTRA_LINE = /^(?:[^:]+: )?(?:\+\d+ minions?, placed now|\+1 minion on the Goes Last token|took the Goes Last token)$/;
 
 /**
  * A steal that arrives in another color, told once (rule-style: "…, as magenta." once, at the end):
@@ -1028,6 +1028,9 @@ export function turnStory(start, end, actor, me = null, mid = null) {
       else if ((m = own.match(/^ pulled a heist: (.+)\.$/))) said.push(youName(`took ${m[1]}`));
       // the card that gave it, named (Cory: "Log did not indicate a Night Owls turn"): "Night Owls: an extra turn after this one"
       else if ((m = own.match(/^'s (.+?): .+? gets (1 more minion|(\d+) more minions), placed now\.$/))) said.push(`${m[1]}: +${m[3] || 1} minion${m[3] ? 's' : ''}, placed now`);
+      // the Goes Last token (Cory, Nov 1 2:35pm): who took it, and what waits on it
+      else if ((m = own.match(/^'s (.+?): .+? takes the Goes Last token with 1 more minion on it\b/))) said.push(`${m[1]}: +1 minion on the Goes Last token`);
+      else if ((m = own.match(/^'s (.+?): .+? (?:takes|keeps) the Goes Last token\b/))) said.push(`${m[1]}: took the Goes Last token`);
       else if ((m = own.match(/gets (1 more minion|(\d+) more minions), placed now\.$/))) said.push(`+${m[2] || 1} minion${m[2] ? 's' : ''}, placed now`);
       else if ((m = own.match(/^'s next member costs (\d+) less\.$/))) said.push(`next member costs ${m[1]} less`);
       else if ((m = own.match(/^ recruited (.+?)(?: from the pile with .+?)? \((.+)\)\.$/))) said.push(m[2] === 'free' ? `recruited ${m[1]} (free)` : `recruited ${m[1]} (paid ${m[2]})`);
