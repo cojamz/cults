@@ -182,7 +182,7 @@ const members = [
     onRecruited(ctx, owner) { startSteal(ctx, owner, 'Con Men', 5, { fromAction: false }); },
   }),
   // Cory, 2026-10-28: HR (Archivist), 9, worth 3 (so it counts as 3 members)
-  m('hr', 'HR', null, 0, 10, /* 10, counts as 4 (Cory, Oct 29: "bump HR to four members"; +1 price Claude's) */ 'Counts as 4 members. Game End: +3 followers per color you have 3 members of.', { f: 4, n: 4,
+  m('hr', 'HR', null, 0, 11, /* 10, counts as 4 (Cory, Oct 29: "bump HR to four members"; +1 price Claude's) */ 'Counts as 4 members. Game End: +3 followers per color you have 3 members of.', { f: 4, n: 4,
     // guests count as a color here, they just have no resource (Cory, 2026-10-30: "should they count for the purposes of HR? they should")
     onGameEnd: (ctx, owner) => 3 * [...ctx.state.quadrants, 'guest'].filter(q => ctx.countMembersOfColor(owner, q) >= 3).length,
   }),

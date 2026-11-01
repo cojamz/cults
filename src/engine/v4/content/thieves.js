@@ -361,7 +361,7 @@ const thieves = {
     m('accomplice', 'Accomplice', 1, 1, 'On Recruit: steal 3 resources.', {
       onRecruited(ctx, owner) { startSteal(ctx, owner, 'Accomplice', 3 + stickyMore(ctx, owner), { fromAction: false }); },
     }),
-    m('grifter', 'Grifter', 2, 3, /* 6 (Cory, Oct 30) */ 'On Recruit: steal 1 resource per 2 members you have.', {
+    m('grifter', 'Grifter', 2, 4, /* 6 (Cory, Oct 30) */ 'On Recruit: steal 1 resource per 2 members you have.', {
       // first sentence only (Cory, 2026-10-18): the picks split freely among rivals, like any steal
       onRecruited(ctx, owner) {
         const n = Math.floor(ctx.memberCount(owner) / 2);
