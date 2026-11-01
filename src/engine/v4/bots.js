@@ -158,7 +158,14 @@ function followUp(pend, rand, state) {
   // Red's swaps can be skipped ("Don't swap"); bots still swap, as before the skip existed
   const trades = pend.kind === 'choose' ? pend.options.filter(o => o.kind === 'trade') : [];
   if (state && trades.length && pend.options.every(o => o.kind === 'trade' || o.kind === 'pass')) {
-    return move(trades.length === 1 ? trades[0] : chooseSwap(state, { ...pend, options: trades }));
+    // never take back a member you swapped away: with only take-backs left, skip the swap (Promote and Demote swap only
+    // your own member since Nov 1, so a lone take-back is common)
+    const given = givenAway(state, pend.player);
+    const fresh = given.size ? trades.filter(o => { const u = swapSides(state, pend.player, o.value).in; return u === null || !given.has(cardDef(state, u).name); }) : trades;
+    const pass = pend.options.find(o => o.kind === 'pass');
+    if (!fresh.length && pass) return move(pass);
+    const pool = fresh.length ? fresh : trades;
+    return move(pool.length === 1 ? pool[0] : chooseSwap(state, { ...pend, options: pool }));
   }
   // a rival's member to take (Double Agent, Heist, Fixer…): rated on a copy, both sides, like a swap
   if (state && pend.kind === 'choose' && pend.options.length > 1 && pend.options.every(o => o.kind === 'member')) {
