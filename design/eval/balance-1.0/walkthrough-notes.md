@@ -40,3 +40,4 @@
 - 2:05pm, item 2 wording: Cory: reword swaps conceptually as "give a player a member and recruit one of theirs". Drafts sent for Promote, Demote, Double Agent; snag: Lie Low's "or recruit" would block swaps (asked: drop it, Poach still a steal [default]). Anarchist (swaps two others' members) keeps "swap".
 - 2:07pm: yes to Lie Low dropping "or recruit"; swap drafts stand. Next: item 3, Last Call.
 - 2:08pm, item 3: yes to both Night Owls (extra minion after everyone) and Sleep In (next turn moves to end of round); Last Call payout stays. Open: words, showing who's waiting, order when several wait.
+- 2:08pm: Night Owls needs a real reword; 3 options sent (default "Each round, once everyone is out of minions: +1 minion."). Still open: order when several wait (default: later waiter goes last).
