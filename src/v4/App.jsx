@@ -129,7 +129,7 @@ function App() {
     const seats = cfg.seats.filter(s => s.kind !== 'empty').map((s, i) => ({ name: s.name.trim() || `P${i + 1}`, kind: s.kind, ...(s.emoji ? { emoji: s.emoji } : {}) }));
     const botDelayMs = () => urlBotDelay() || BOT_DELAY[motionSpeed()] || 650;
     // one sphere per player (Cory, 2026-10-15): the table fitted to the seats that play
-    const fit = cfg.table || cfg.shop === 'all' ? fitTable(cfg.table || { mode: 'classic' }, seats.length, cfg.shop) : null;
+    const fit = cfg.table || cfg.shop === 'grey' || cfg.shop === 'all' ? fitTable(cfg.table || { mode: 'classic' }, seats.length, cfg.shop) : null;
     const quadrants = fit && !tableProblem(fit.quadrants, seats.length, cfg.shop) ? fit.quadrants : undefined;
     // this tab takes the one local save (any other tab holding a game lets go), then starts over in it
     claimLocal(); clearLocal(); clearLast(); setLast(null);

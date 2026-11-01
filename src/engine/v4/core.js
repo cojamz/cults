@@ -1773,8 +1773,10 @@ function ctxFor(state) {
       cardLeaves(state, p, uid);
       p.members.splice(p.members.indexOf(uid), 1);
       state.cards[uid] = { uid, def: state.cards[uid].def };
-      state.pile.push(uid);
-      log(state, `${p.name} sent ${def.name} to the bottom of the pile.`);
+      // a pile member cast out leaves the game, so it can't be bought back (Cory, Nov 1, piles)
+      const gone = isPileCard(state, uid);
+      if (gone) (state.outOfGame ||= []).push(uid); else state.pile.push(uid);
+      log(state, gone ? `${p.name} cast out ${def.name}; a pile member cast out leaves the game.` : `${p.name} sent ${def.name} to the bottom of the pile.`);
       // a member leaving its owner's cult: Recruiter hears a rival's cast-out (Cory, Nov 1: "Yes")
       cultMove(state, uid, p, null);
       bottomBlue(state);

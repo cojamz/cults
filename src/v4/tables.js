@@ -62,7 +62,7 @@ const usesColors = id => {
 
 /** Why a table can't be played, or '' when it can. `n`: the spheres it needs (the player count); without it, 2 to 4. */
 export function tableProblem(ids, n = null, shop = 'deck') {
-  if (shop === 'all' && Array.isArray(ids) && ids.includes(NO_PILES)) return `${sphereName(NO_PILES)} doesn't play with All piles.`;
+  if (piled(shop) && Array.isArray(ids) && ids.includes(NO_PILES)) return `${sphereName(NO_PILES)} doesn't play with piles.`;
   if (n != null && (!Array.isArray(ids) || ids.length !== n)) return `Pick ${n} spheres.`;
   if (!Array.isArray(ids) || ids.length < 2 || ids.length > MAX_PLAYERS) return `Pick 2 to ${MAX_PLAYERS} spheres.`;
   const known = new Set(allQuadrantIds());
@@ -107,8 +107,8 @@ export function randomTable(rand = Math.random, n = 4) {
  */
 export function fitTable(table, players, shop = 'deck') {
   const fit = fitSeats(table, players);
-  if (shop !== 'all' || fit.mode === 'custom' || !fit.quadrants.includes(NO_PILES)) return fit;
-  // All piles has no Blue (Cory, 2026-11-01: "the piles game shouldn't be able to use blue… none of the blue things make
+  if (!piled(shop) || fit.mode === 'custom' || !fit.quadrants.includes(NO_PILES)) return fit;
+  // Neither piles shop has Blue (Cory, 2026-11-01: "for piles, blue can't be in the game"; "the piles game shouldn't be able to use blue… none of the blue things make
   // sense"): a classic or random table takes the next color that fits in its place; a custom one says so (tableProblem)
   const n = fit.quadrants.length;
   for (const id of [...CLASSIC, ...spheres()]) {
@@ -120,6 +120,8 @@ export function fitTable(table, players, shop = 'deck') {
 }
 /** Blue's shop-flow spaces and members don't make sense with every member a pile. */
 export const NO_PILES = 'market';
+/** Grey piles and All piles: the shops without Blue. */
+export const piled = shop => shop === 'grey' || shop === 'all';
 function fitSeats(table, players) {
   const n = sphereCount(players);
   const mode = table && table.mode ? table.mode : 'classic';
@@ -139,5 +141,5 @@ function fitSeats(table, players) {
 
 /** The shop a setup picked (Cory, 2026-11-01): 'deck' (as it is, the default), 'grey' piles or 'all' piles, as the rule
  *  a new game takes (rules.shop); the default adds nothing, so a current-shop game is exactly what it was. */
-export const SHOP_OPTS = [['deck', 'Current', 'The shop as it is: one shuffled deck'], ['grey', 'Grey piles', 'Five grey members are piles out every game; buy as many copies as you like. The rest of the shop as now'], ['all', 'All piles', 'Ten piles a game, dealt at random; every member is a pile you can buy several of']];
+export const SHOP_OPTS = [['deck', 'Current', 'The shop as it is: one shuffled deck'], ['grey', 'Grey piles', 'Five grey members are piles out every game; buy as many copies as you like. The rest of the shop as now. No Blue'], ['all', 'All piles', 'Ten piles a game, dealt at random; every member is a pile you can buy several of. No Blue']];
 export const shopRule = v => (v === 'grey' || v === 'all' ? { shop: v } : {});

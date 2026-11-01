@@ -30,12 +30,13 @@ function takeCopy(s, def) {
 }
 
 describe('Piles: variant A (the grey core as piles)', () => {
-  it('deals each grey core member as a pile of 3 and no other grey', () => {
+  it('deals each grey core member as a pile of 10 (Cory, Nov 1); the other greys, Con Men among them, stay in the deck', () => {
     const s = game('A');
-    for (const d of GREY_CORE) expect(copiesOf(s, d)).toBe(3);
-    const greys = Object.values(s.cards).filter(c => c.def.startsWith('benders.'));
-    expect(greys.every(c => GREY_CORE.includes(c.def))).toBe(true);
-    expect([...s.pile, ...s.shop].filter(u => !s.supply[defOf(s, u)]).every(u => !defOf(s, u).startsWith('benders.'))).toBe(true);
+    expect(GREY_CORE).not.toContain('benders.conmen');
+    for (const d of GREY_CORE) expect(copiesOf(s, d)).toBe(10);
+    const deck = [...s.pile, ...s.shop, ...Object.values(s.waiting).flat()].filter(u => !s.supply[defOf(s, u)]).map(u => defOf(s, u));
+    expect(deck).toContain('benders.conmen');
+    expect(deck.some(d => GREY_CORE.includes(d))).toBe(false);
   });
   it('round I shows the shop row plus the top copy of every pile (Cory, Nov 1: "no limit on when you can buy")', () => {
     const s = game('A');
@@ -45,22 +46,23 @@ describe('Piles: variant A (the grey core as piles)', () => {
   it('recruiting a pile’s top copy turns up the next; an empty pile leaves the shop', () => {
     const s = scene('A', { round: 1 });
     const ctx = contextFor(s), p = s.players[0];
-    for (let k = 0; k < 3; k++) {
+    for (let k = 0; k < 10; k++) {
       const u = s.shop.find(x => defOf(s, x) === 'benders.frontrunner');
       expect(u).toBeDefined();
       ctx.recruit(p, u, { free: true });
     }
-    expect(p.members.filter(u => defOf(s, u) === 'benders.frontrunner')).toHaveLength(3);
+    expect(p.members.filter(u => defOf(s, u) === 'benders.frontrunner')).toHaveLength(10);
     expect(tops(s)).not.toContain('benders.frontrunner');
     expect(s.supply['benders.frontrunner']).toHaveLength(0);
   });
-  it('a copy sent to the bottom of the pile goes back to its own pile, and the pile still shows one top copy', () => {
+  it('a pile member cast out (Farewell, Estate Sale) leaves the game, so it can’t be bought back (Cory, Nov 1)', () => {
     const s = scene('A', { round: 2, members: [['benders.squatter']] });
-    const ctx = contextFor(s), p = s.players[0], u = p.members[0];
+    const ctx = contextFor(s), p = s.players[0], u = p.members[0], left = s.supply['benders.squatter'].length;
     ctx.buryMember(p, u);
     expect(s.pile).not.toContain(u);
-    expect(s.supply['benders.squatter']).toContain(u);
-    expect(tops(s).filter(d => d === 'benders.squatter')).toHaveLength(1);
+    expect(s.supply['benders.squatter']).not.toContain(u);
+    expect(s.supply['benders.squatter']).toHaveLength(left);
+    expect(s.outOfGame).toEqual([u]);
   });
 });
 
@@ -172,7 +174,7 @@ describe('Piles: whole games', () => {
       let n = 0;
       while (!s.over && n++ < 5000) {
         s = applyMove(s, chooseBotMove(s, rand, { level: 'normal' }));
-        const placed = [...s.pile, ...s.shop, ...Object.values(s.supply || {}).flat(), ...Object.values(s.waiting).flat(), ...s.players.flatMap(p => [...p.members, ...(p.artifact !== undefined && p.artifact !== null ? [p.artifact] : [])]), ...Object.values(s.artifacts).filter(u => !s.players.some(p => p.artifact === u))];
+        const placed = [...s.pile, ...s.shop, ...Object.values(s.supply || {}).flat(), ...Object.values(s.waiting).flat(), ...s.players.flatMap(p => [...p.members, ...(p.artifact !== undefined && p.artifact !== null ? [p.artifact] : [])]), ...Object.values(s.artifacts).filter(u => !s.players.some(p => p.artifact === u)), ...(s.outOfGame || [])];
         expect(new Set(placed).size).toBe(placed.length);
       }
       expect(s.over).toBe(true);

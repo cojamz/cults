@@ -10,7 +10,9 @@ import { ARTIFACTS, memberRound } from './core.js';
 import { seededRandom } from './rng.js';
 
 /** Variant A's grey core (Claude's pick from the 10-card grey deck, for Cory to confirm): the greys that reach rivals. */
-export const GREY_CORE = ['benders.squatter', 'benders.anarchist', 'benders.conmen', 'benders.saboteur', 'benders.frontrunner'];
+// Con Men is a normal shop member again (Cory, Nov 1: "i like con men, it doesn't have to be a pile"); Scouts takes its seat
+// (Claude's fill-in until Cory picks the fifth).
+export const GREY_CORE = ['benders.squatter', 'benders.anarchist', 'benders.saboteur', 'benders.frontrunner', 'benders.scout'];
 
 // the members a table deals on the 10 or 15 deck (as createGame's cull and artifacts do)
 function dealtDefs(qid, deck) {
@@ -19,7 +21,8 @@ function dealtDefs(qid, deck) {
 }
 
 /** Variant A: the grey deck leaves the shuffle; the grey core is out every game as piles. */
-export function greyPiles({ copies = 3, core = GREY_CORE } = {}) {
+// 10 copies, like All piles (Cory, Nov 1: "they should have 10 like all piles")
+export function greyPiles({ copies = 10, core = GREY_CORE } = {}) {
   return { defs: [...core], copies, only: false };
 }
 
@@ -51,7 +54,8 @@ export function allPiles(quadrants, seed, { deck = 10, copies = 10, colored = 8,
 /** The rules a table adds for a shop type: 'grey' (A: grey core as piles, the other greys out) or 'all' (B: all piles; the rest face down as the deck). */
 export const SHOP_TYPES = ['deck', 'grey', 'all'];
 export function pileRules(variant, quadrants, seed, deck = 10, { core = GREY_CORE } = {}) {
-  if (variant === 'A' || variant === 'grey') return { guests: false, piles: greyPiles({ core }) };
+  // the greys that aren't piles stay in the shuffled deck, as today (Cory: "the rest of the shop is members")
+  if (variant === 'A' || variant === 'grey') return { piles: greyPiles({ core }) };
   if (variant === 'B' || variant === 'all') return { piles: allPiles(quadrants, seed, { deck, core }) };
   return {};
 }
