@@ -1020,8 +1020,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     if (prev.players && next.players && prev.players.some((p, i) => p.members.some(u => !next.players[i].members.includes(u)))) chipSnap.current = snapshotChips(root.current);
     // an artifact picked flies from its row in the wheel's list, which goes as it's taken: measured now
     if (prev.pending?.kind === 'setup' && prev.artifacts && Object.keys(prev.artifacts).length) artSnap.current = snapshotArtifacts(root.current);
-    if (prev.shop && next.shop && prev.shop.some(u => !next.shop.includes(u))) {
-      const snap = snapshotShop(root.current);
+    const leaving = prev.shop && next.shop ? prev.shop.filter(u => !next.shop.includes(u)) : [];
+    if (leaving.length) {
+      const snap = snapshotShop(root.current, new Set(leaving));
       if (snap.size) shopSnap.current = snap;
     }
   };
@@ -1235,8 +1236,8 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     // placement keeps the space's card, which shows what you just took
     if (!String(optionId).startsWith('slot:')) hover.close();
     busyNow.current = true;
-    // the shop as you see it right now (a row you may have scrolled, on a phone): a recruit flies from where you saw it
-    { const snap = snapshotShop(root.current); if (snap.size) shopSnap.current = snap; }
+    // (the shop as you see it is measured as the step is shown, beforeShow: the table still stands as you saw it then, so
+    // measuring every card here as well was the same picture twice, ~10 ms of the click at 4x CPU)
     if (errorOn.current) setError('');
     const token = ++sendToken.current;
     let sent;

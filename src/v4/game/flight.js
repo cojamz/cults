@@ -39,7 +39,10 @@ const SHOP_CARDS = '.lt-shop .card[data-uid], .shop .card[data-uid]';
 // the flying copy is a picture of the card, not a control: no button, no option id, not focusable
 const inert = html => html.replace(/^<button/, '<div').replace(/<\/button>$/, '</div>').replace(/ data-option="[^"]*"/g, '').replace(/ type="button"/g, '').replace(/ tabindex="[^"]*"/g, '') ;
 
-export function snapshotShop(root) {
+// `htmlFor`: the uids whose picture is needed (the cards about to leave the shop); the rest keep only where they stood,
+// which is all a card that stays needs (slideShop). Copying every card's markup on every step was ~10 ms of a click at 4x
+// CPU (click speed pass, Nov 1). Without it, every card's picture is kept.
+export function snapshotShop(root, htmlFor = null) {
   const snap = new Map();
   if (!root) return snap;
   // the visible copy of each card wins (the compact row hides under the buy view)
@@ -48,10 +51,14 @@ export function snapshotShop(root) {
     if (!r.width || el.closest('[aria-hidden="true"]')) return;
     // the card's own styles hang off its shop panel (compact or full): keep that context, so the flying copy
     // is the same picture at the same size, never reflowed text
-    const panel = el.closest('.shop-panel');
-    const ctx = panel ? panel.className.replace(/[^\w\s-]/g, '') : 'shop-panel';
-    const html = `<div class="${ctx} ghost-ctx"><div class="shop ghost-ctx">${inert(el.outerHTML)}</div></div>`;
-    snap.set(Number(el.dataset.uid), { html, index, full: !!el.closest('.buy-view'), rect: { left: r.left, top: r.top, width: r.width, height: r.height } });
+    const uid = Number(el.dataset.uid);
+    let html = null;
+    if (!htmlFor || htmlFor.has(uid)) {
+      const panel = el.closest('.shop-panel');
+      const ctx = panel ? panel.className.replace(/[^\w\s-]/g, '') : 'shop-panel';
+      html = `<div class="${ctx} ghost-ctx"><div class="shop ghost-ctx">${inert(el.outerHTML)}</div></div>`;
+    }
+    snap.set(uid, { html, index, full: !!el.closest('.buy-view'), rect: { left: r.left, top: r.top, width: r.width, height: r.height } });
   });
   return snap;
 }

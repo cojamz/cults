@@ -28,6 +28,7 @@ if (!base || !label) { console.error('usage: node scripts/v4-rig.mjs <url> <labe
 const QUERY = String(flag('query', '') || ''); // extra page query, e.g. trace=1 (src/v4/perf.js: React commits per component → json react)
 const CPU = Number(flag('cpu', 4)), SPEED = String(flag('speed', 'relaxed')), SEED = Number(flag('seed', 20261028));
 const TRACE = !!flag('trace-clicks', false);
+const TRACE_DUMP = String(flag('trace-dump', '') || '');
 const TRACE_MIN = Number(flag('trace-min', 150)); // --trace-min=ms: trace clicks at least this slow (default 150) // a Chrome trace per click: main-thread time by kind (style, layout, paint, script…) in slow ones
 const PROFILE = !!flag('profile-clicks', false);
 // --profile-clicks: CPU-profile every click; where the time goes in slow ones (use an unminified build)
@@ -36,6 +37,9 @@ const FLIGHTS = !!flag('flights', false); // every flight watched: any taken off
 // each frame, which hid a fix to how often the game itself needs one, Oct 28); frame columns read empty. Judge any change
 // to frames, timers or idle work with it on, on round busy % and clicks; freezes are scripts/v4-freeze.mjs's bar.
 const NO_FRAMES = !!flag('no-frame-loop', false);
+// --still: every endless animation (breathing leaders, member scenes, minion bob) held paused all game, so a run
+// shows what they cost each click (layerize and paint every frame); shows and flights, which end, still play
+const STILL = !!flag('still', false);
 const OUT = String(flag('out', 'design/eval/perf')), MAX_MIN = Number(flag('max-min', 45)), GATE = !flag('no-gate', false);
 mkdirSync(OUT, { recursive: true });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -128,6 +132,7 @@ const ctx = await browser.newContext({ viewport: { width: VW, height: VH } });
 if (NO_FRAMES) await ctx.addInitScript(() => { window.__rigNoFrames = true; });
 await ctx.addInitScript(RECORDER);
 if (FLIGHTS) await ctx.addInitScript(FLIGHT_WATCH);
+if (STILL) await ctx.addInitScript(() => { const hold = () => { try { for (const a of document.getAnimations()) { if (a.playState === 'running' && a.effect?.getTiming().iterations === Infinity) a.pause(); } } catch { /* */ } }; setInterval(hold, 200); addEventListener('pointerdown', hold, true); });
 await ctx.addInitScript(s => { let a = s >>> 0; Math.random = () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }, SEED);
 await ctx.addInitScript(s => { try { localStorage.setItem('patrons.v4.motionSpeed', s); } catch { /* */ } }, SPEED);
 const page = await ctx.newPage();
@@ -189,6 +194,8 @@ const traceStop = async (what, ms) => {
   await cdp.send('IO.close', { handle: stream });
   if (ms == null || ms < TRACE_MIN) return;
   traceN++;
+  // --trace-dump=<dir>: the raw trace of each slow click, for a closer look (Chrome DevTools > Performance > Load)
+  if (TRACE_DUMP) { mkdirSync(TRACE_DUMP, { recursive: true }); writeFileSync(`${TRACE_DUMP}/${String(traceN).padStart(2, '0')}-${what}-${ms}ms.json`, txt); }
   const evs = JSON.parse(txt).traceEvents || JSON.parse(txt);
   const main = evs.find(e => e.name === 'thread_name' && e.args?.name === 'CrRendererMain');
   if (main) {
@@ -196,7 +203,7 @@ const traceStop = async (what, ms) => {
     const mine = evs.filter(e => e.ph === 'X' && e.pid === main.pid && e.tid === main.tid).sort((a, b) => a.ts - b.ts);
     const down = mine.find(e => e.name === 'EventDispatch' && /pointerdown|mousedown/.test(e.args?.data?.type || ''));
     const t0 = down ? down.ts : mine[0]?.ts || 0;
-    const tasks = mine.filter(e => e.name === 'RunTask' && e.dur > 4000 && e.ts >= t0 - 1000 && e.ts <= t0 + ms * 1000);
+    const tasks = mine.filter(e => e.name === 'RunTask' && e.dur > 4000 && e.ts + e.dur >= t0 && e.ts <= t0 + ms * 1000); // the task holding the press starts before it
     const lines = tasks.map(t => {
       const kids = {}; for (const e of mine) if (e !== t && e.ts >= t.ts && e.ts + (e.dur || 0) <= t.ts + t.dur && TRACE_NAMES.includes(e.name) && e.name !== 'RunTask') kids[e.name] = (kids[e.name] || 0) + e.dur / 1000;
       const fn = mine.find(e => e.name === 'FunctionCall' && e.ts >= t.ts && e.ts < t.ts + t.dur)?.args?.data;
