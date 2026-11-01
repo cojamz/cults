@@ -11,7 +11,7 @@
 //     change), each timed from the end of the hover delay (hoverDelay.js: pointer arrival + HOVER_DELAY_MS).
 // window.__perf = { entries, summary(), reset(), mark(name) }. A corner overlay shows p50/p95 input→paint.
 // Harness: node scripts/v4-perf.mjs <url> <label> [--cpu=4] [--online]
-import { Profiler, createElement } from 'react';
+import React, { Profiler, createElement } from 'react';
 import { HOVER_DELAY_MS } from './game/hoverDelay.js';
 
 const qs = (() => { try { return new URLSearchParams(globalThis.location?.search || ''); } catch { return new URLSearchParams(''); } })();
@@ -498,3 +498,24 @@ function overlay() {
 }
 
 if (PERF_ON) { try { install(); } catch (err) { console.warn('[perf] tracer failed to start', err); } }
+
+// ?trace=1&fx=1: every effect's own time (mount and cleanup), keyed by the first words of its code, while the rig times
+// a click (window.__cmLog is set by scripts/v4-rig.mjs): window.__fxLog → the rig's "Effects in clicks" table
+if (PERF_ON && qs.get('fx') === '1') {
+  try {
+    const keyOf = fn => { const k = keyOf.m.get(fn); if (k) return k; return String(fn).replace(/\s+/g, ' ').slice(0, 110); };
+    keyOf.m = new WeakMap();
+    const wrap = (orig, kind) => function patched(fn, deps) {
+      return orig(() => {
+        if (!globalThis.__rig || !globalThis.__rig.armed) return fn();
+        const t = now(); const r = fn(); const d = now() - t;
+        const log = (globalThis.__fxLog ||= []);
+        if (d > 0.3) log.push([kind, keyOf(fn), d]);
+        if (typeof r !== 'function') return r;
+        return () => { if (!globalThis.__rig || !globalThis.__rig.armed) return r(); const t2 = now(); r(); const d2 = now() - t2; if (d2 > 0.3) log.push([kind + ' cleanup', keyOf(fn), d2]); };
+      }, deps);
+    };
+    React.useEffect = wrap(React.useEffect, 'effect');
+    React.useLayoutEffect = wrap(React.useLayoutEffect, 'layout');
+  } catch (err) { console.warn('[perf] effect timer failed', err); }
+}

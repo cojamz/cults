@@ -103,6 +103,7 @@ const cardHandlers = (refs, uid, name, optId) => {
 };
 // a card's element as last built: the same element, no render (ShopCards' built cache)
 const Kept = memo(function KeptCard({ el }) { return el; });
+const FIT_MEMO = new Map(); // a shop card's text fit (ShopCards' fit): row layout + card + price lines → '' | tight | bare
 
 function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, onDenied, phase, hover = null, onViewChange = null }) {
   const pend = state.pending;
@@ -175,12 +176,22 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
     // every card is written, then every card read, a pass at a time: at most three layouts for the row (read and
     // write card by card made the browser lay the page out up to three times per card, 10-30 ms of a recruit click
     // at 4x CPU; speed pass, Nov 1)
-    const fit = () => {
+    // a card fitted before, in a row laid out the same (window size, cards in the row, the pile beside it) with the same
+    // price lines, takes its fit back unmeasured: a recruit or the buy view opening measured the whole row again, which
+    // laid the page out two or three times inside the click (~60 ms at 4x CPU; click speed pass, Nov 1). A resize
+    // measures every card again.
+    const fit = (all = false) => {
       const cards = [];
+      const ctx = `${innerWidth}x${innerHeight}|${row.dataset.n || ''}|${row.closest('[data-pile-extra]') ? 1 : 0}`;
       for (const a of row.querySelectorAll('.lt-pick-ability')) {
         const card = a.closest('.lt-card'), ft = card && card.querySelector('.ft');
-        if (ft) cards.push({ a, card, ft });
+        if (!ft) continue;
+        const key = `${ctx}|${card.dataset.uid}|${a.textContent}|${ft.textContent}`;
+        const known = all ? undefined : FIT_MEMO.get(key);
+        if (known !== undefined) { if (known) a.setAttribute('data-fit', known); else a.removeAttribute('data-fit'); continue; }
+        cards.push({ a, card, ft, key });
       }
+      if (!cards.length) return;
       const over = ({ a, card, ft }) => a.getBoundingClientRect().bottom > ft.getBoundingClientRect().top + 0.5 || ft.getBoundingClientRect().bottom > card.getBoundingClientRect().bottom + 0.5;
       for (const c of cards) c.a.removeAttribute('data-fit');
       const tight = cards.filter(over);
@@ -188,6 +199,8 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
       // still under the price (a long rule over a discounted price's two lines, "7" over "free"): the picture gives way
       const bare = tight.filter(over);
       for (const c of bare) c.a.setAttribute('data-fit', 'bare');
+      if (FIT_MEMO.size > 400) FIT_MEMO.clear();
+      for (const c of cards) FIT_MEMO.set(c.key, c.a.getAttribute('data-fit') || '');
     };
     // fit again only when the row's size changes (a ResizeObserver also reports once as it starts watching: at the
     // size just fitted, that report is skipped)
@@ -199,7 +212,7 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
       const now = es[0] ? sizeOf(es[0].contentRect) : '';
       if (now && now === size) return;
       size = now;
-      fit();
+      fit(true);
     }) : null;
     ro?.observe(row);
     return () => ro?.disconnect();

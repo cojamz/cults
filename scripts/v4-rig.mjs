@@ -39,7 +39,7 @@ const FLIGHTS = !!flag('flights', false); // every flight watched: any taken off
 const NO_FRAMES = !!flag('no-frame-loop', false);
 // --still: every endless animation (breathing leaders, member scenes, minion bob) held paused all game, so a run
 // shows what they cost each click (layerize and paint every frame); shows and flights, which end, still play
-const STILL = !!flag('still', false);
+const STILL = flag('still', false); // --still=cancel takes them off instead (a paused animation keeps its layer)
 const OUT = String(flag('out', 'design/eval/perf')), MAX_MIN = Number(flag('max-min', 45)), GATE = !flag('no-gate', false);
 mkdirSync(OUT, { recursive: true });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -132,7 +132,7 @@ const ctx = await browser.newContext({ viewport: { width: VW, height: VH } });
 if (NO_FRAMES) await ctx.addInitScript(() => { window.__rigNoFrames = true; });
 await ctx.addInitScript(RECORDER);
 if (FLIGHTS) await ctx.addInitScript(FLIGHT_WATCH);
-if (STILL) await ctx.addInitScript(() => { const hold = () => { try { for (const a of document.getAnimations()) { if (a.playState === 'running' && a.effect?.getTiming().iterations === Infinity) a.pause(); } } catch { /* */ } }; setInterval(hold, 200); addEventListener('pointerdown', hold, true); });
+if (STILL) await ctx.addInitScript(CANCEL => { const hold = () => { try { for (const a of document.getAnimations()) { if (a.playState === 'running' && a.effect?.getTiming().iterations === Infinity) { if (CANCEL) a.cancel(); else a.pause(); } } } catch { /* */ } }; setInterval(hold, 200); addEventListener('pointerdown', hold, true); }, STILL === 'cancel');
 await ctx.addInitScript(s => { let a = s >>> 0; Math.random = () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }, SEED);
 await ctx.addInitScript(s => { try { localStorage.setItem('patrons.v4.motionSpeed', s); } catch { /* */ } }, SPEED);
 const page = await ctx.newPage();
@@ -357,6 +357,8 @@ const over = !!(await page.$('.results'));
 
 const extra = await page.evaluate(() => window.__rigExtra || null).catch(() => null); // a probe build's own readings
 const clickPhases = await page.evaluate(() => window.__rigClicks || []).catch(() => []);
+// ?trace=1&fx=1 (src/v4/perf.js): each effect's own time inside timed clicks, summed by effect
+const fxLog = await page.evaluate(() => window.__fxLog || []).catch(() => []);
 const react = await page.evaluate(() => window.__perf ? { ...window.__perf.summary().react, commitsAll: (window.__perf.entries.commits || []).filter(c => (c.total || 0) > 3) } : null).catch(() => null); // ?trace=1 only
 const flights = FLIGHTS ? await page.evaluate(() => window.__flightWatch.report()).catch(() => null) : null;
 const F = await page.evaluate(() => ({ frames: window.__rig.frames, loaf: window.__rig.loaf, big: window.__rig.big || [] })).catch(() => ({ frames: [], loaf: [] }));
@@ -437,6 +439,11 @@ for (const r of rounds) {
   L.push('', `## Round ${r}`, '', 'Clicks by kind: ' + s.clicks.byKind.map(k => `${k.k} ${k.n}× p50 ${v(k.p50)} p95 ${v(k.p95)}`).join(' · ') + (s.clicks.dead ? ` · ${s.clicks.dead} changed nothing in 4 s` : ''));
   L.push('', '| animating | frames | p95 | worst | hitch % |', '|---|---|---|---|---|', ...s.anims.map(a => `| ${a.k} | ${a.n} | ${v(a.p95)} | ${v(a.worst)} | ${a.hitch} |`));
   if (s.loaf.top.length) L.push('', 'Longest frames: ' + s.loaf.top.map(l => `${l.d} ms (${l.scripts.join(', ') || 'style/layout/paint'})`).join(' · '));
+}
+if (fxLog.length) {
+  const by = new Map(); for (const [k, key, d] of fxLog) { const e = by.get(k + ' | ' + key) || { ms: 0, n: 0 }; e.ms += d; e.n++; by.set(k + ' | ' + key, e); }
+  const nClicks = clickPhases.filter(e => !e.dead).length || 1;
+  L.push('', `Effects in timed clicks (${nClicks} clicks; own time, ms per click):`, ...[...by].sort((a, b) => b[1].ms - a[1].ms).slice(0, 40).map(([k, e]) => `- ${(e.ms / nClicks).toFixed(1)} (${e.n}×) ${k.replace(/\|/g, '/')}`));
 }
 if (F.big && F.big.length) L.push('', 'Frames over 2 s, with the screen at the time:', ...F.big.map(b => `- ${b.d} ms · ${b.phase} · prompt "${b.prompt}" · hover "${b.hover}" · options ${b.options.join(' ')}`));
 if (flights) L.push('', `Flights: ${flights.flights} flew, ${flights.landed} landed, ${flights.skipped} cut by a press, ${flights.cut} cut short with no press, ${flights.jumps} shows jumped to their end; ${flights.missed} of ${flights.aimed} aimed ended away from their place.`, ...flights.misses.slice(0, 10).map(m => `- missed by ${m.off}px: ${m.kind} → ${m.target} (round ${m.round}, move ${m.moves})`), ...Object.entries(flights.by).sort((a, b) => b[1].n - a[1].n).map(([k, x]) => `- ${x.n}× ${k} (at ${x.shares.slice(0, 12).join(', ')}% of the way)`));
