@@ -45,17 +45,20 @@ for (const q of Object.values(QUADRANTS)) index(q);
 
 export const DEFAULT_QUADRANTS = ['gold', 'red', 'blue', 'green'];
 // A game has as many spheres as players (Cory, 2026-10-15: "there are only X number of spheres for X number of
-// players"), so every round-I space still fills (3 per sphere, 3 minions each). Classic, by table size: four seats
-// play Gold, Red, Blue (market) and Green (echo); three drop Green (echo); two play Gold and Red (Claude, under
-// Cory's go-with-your-gut: the two longest-tested real spheres, and the economy/recruit pair the game is about).
-// Five and six seats add Purple, then Yellow, with no other rule change (Cory, 2026-10-22: "just an additional color on
-// the board per player", "lets say purple and yellow").
-export const CLASSIC = ['gold', 'red', 'market', 'echo', 'purple', 'yellow'];
+// players"), so every round-I space still fills (3 per sphere, 3 minions each). Classic (Cory, 2026-10-31, decisions
+// ae4897bd): four seats play Blue (market), Red, Yellow and Purple; three drop Purple; two drop Yellow too. Gold goes to
+// the backlog (kept registered for old saves and replays, off the picker); Silver takes Purple's place once it has
+// members. Five and six seats add Green (echo), then Magenta (thieves) (Claude, under Cory's go-with-your-gut: the
+// next real 2.0 colors, until he names the big-table colors).
+export const CLASSIC = ['market', 'red', 'yellow', 'purple', 'echo', 'thieves'];
 export const MAX_PLAYERS = CLASSIC.length;
 export const classicFor = n => CLASSIC.slice(0, Math.max(2, Math.min(MAX_PLAYERS, n)));
-/** The engine's default table for n seats: the plain 4-sphere test table, or Classic's first n when fewer play (the
- *  plain Blue and Green hand out each other's colors, so they don't split). */
-export const defaultQuadrants = n => (n === 4 ? [...DEFAULT_QUADRANTS] : classicFor(n));
+/** The engine's default table for n seats: the plain 4-sphere test table, or the old test table's first n when fewer
+ *  play (the plain Blue and Green hand out each other's colors, so they don't split). */
+// (the engine's own default stays the long-tested table the tests and sims are written against; players get Classic
+// from the setup page)
+const TEST_TABLE = ['gold', 'red', 'market', 'echo', 'purple', 'yellow'];
+export const defaultQuadrants = n => (n === 4 ? [...DEFAULT_QUADRANTS] : TEST_TABLE.slice(0, Math.max(2, Math.min(MAX_PLAYERS, n))));
 // Guest members' stand-in sphere: colorless, never on a table, so no color counts them and no sphere scores them.
 const GUEST_QUADRANT = Object.freeze({ id: 'guest', name: 'Grey', resource: 'colorless', members: [], actions: [] });
 export const quadrant = id => {

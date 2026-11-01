@@ -9,14 +9,15 @@ For 2 to 6 players. You lead a cult for three rounds. Send minions to the wheel,
 - **Members** are cards you recruit from the shop. Most have an ability. Each member counts as 1 member, or the number its card shows beside the member mark. Every member is a follower: it is worth at least as many followers as it counts as members, and some are worth more (Proselytizer, Trendsetter). Being worth more followers never makes it more members, and followers from abilities never add members.
 
 ## The colors
-There is one color per player on the table, picked on the setup page (Classic, Random or your own). Each color is a sphere on the wheel with its own spaces, members, artifact and contest (most of that color held at round end).
+There is one color per player on the table, picked on the setup page (Classic, Random or your own). Classic is Blue, Red, Yellow and Purple; three players drop Purple, two drop Yellow too. Each color is a sphere on the wheel with its own spaces, members, artifact and contest (most of that color held at round end).
 - **Red** recruits: free members, and swaps with shop and rival members.
 - **Blue** bends the shop: extra recruits, burying shop members, a look at the pile.
 - **Green** copies spaces: a rival's, or your own again.
 - **Purple** bends turns: go twice in a row, skip turns, +1 minion.
 - **Magenta** steals resources and members from rivals.
 - **White** turns what you have into followers.
-- **Silver** and **Yellow** are being redesigned; their spaces and members may change.
+- **Yellow** goes broad: picks its colors, and changes rivals' resources.
+- **Silver** is being redesigned; its spaces and members may change.
 
 ## The wheel
 - The wheel has one sphere per player, each in its own color, with six spaces: three on the outer ring, two on the middle ring and one in the center. Each sphere's contest is printed on its rim.

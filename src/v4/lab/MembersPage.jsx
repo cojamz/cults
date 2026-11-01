@@ -27,13 +27,15 @@ import { sphereLine, sphereVersion } from '../tables.js';
 import { VERSION } from '../version.js';
 
 // 2.0 colors first, in the setup picker's order; then the colors not redesigned yet; guests last
-const ORDER = ['red', 'echo', 'thieves', 'purple', 'market', 'trading', 'gold', 'silver', 'yellow'];
+const ORDER = ['red', 'echo', 'thieves', 'purple', 'market', 'trading', 'silver', 'yellow'];
+// Gold is in the backlog (Cory, 2026-10-31): off this page like it's off the table picker
+const BACKLOG = new Set(['gold']);
 const ROUNDS = DEFAULT_RULES.roundDecks || 3;
 const price = d => costParts(d).reduce((t, p) => t + p.n, 0);
 const byPrice = (a, b) => price(a) - price(b) || a.name.localeCompare(b.name);
 
 function catalog() {
-  const ids = allQuadrantIds().filter(id => !quadrant(id).standIn).sort((a, b) => (ORDER.indexOf(a) + 1 || 99) - (ORDER.indexOf(b) + 1 || 99));
+  const ids = allQuadrantIds().filter(id => !quadrant(id).standIn && !BACKLOG.has(id)).sort((a, b) => (ORDER.indexOf(a) + 1 || 99) - (ORDER.indexOf(b) + 1 || 99));
   const artifactIds = new Set(Object.values(ARTIFACTS));
   const groups = ids.map(id => {
     const q = quadrant(id);

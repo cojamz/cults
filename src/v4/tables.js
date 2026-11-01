@@ -1,19 +1,20 @@
 // Tables: which spheres sit on the wheel, as many as there are players (Cory, 2026-10-15: "there are only X number of
-// spheres for X number of players"). Classic (Gold, Red, Blue and Green, all real spheres; fewer players take its first
-// N), random, or a custom pick. Classic was Gold, Red and the plain stand-in Blue/Green until Cory moved the friends
-// build to the real ones (2026-10-14).
+// spheres for X number of players"). Classic (Blue, Red, Yellow, Purple since 2026-10-31; fewer players take its first
+// N), random, or a custom pick. Gold is in the backlog: off the picker and random tables, still known to old saves.
 import { allQuadrantIds, quadrant, CLASSIC, MAX_PLAYERS, classicFor } from '../engine/v4/index.js';
 import { seededRandom } from '../engine/v4/rng.js';
 
 export { CLASSIC, classicFor };
 /** How many spheres a table of `players` plays: one each, 2 to 6. */
 export const sphereCount = players => Math.max(2, Math.min(MAX_PLAYERS, Number(players) || 4));
+// colors parked in the backlog (Cory, 2026-10-31: Gold): not offered, still playable from an old save or link
+const BACKLOG = new Set(['gold']);
 const ALIAS = { magenta: 'thieves', white: 'trading', blue: 'market', green: 'echo' };
 
 /** Current playable arcs. Legacy Basic definitions remain only for replay compatibility. */
 export const spheres = () => {
   const ids = allQuadrantIds();
-  return ids.filter(id => !quadrant(id).standIn);
+  return ids.filter(id => !quadrant(id).standIn && !BACKLOG.has(id));
 };
 /** What the picker calls a sphere: its color name, "(basic)" for a stand-in (w2b #32: "(plain)" read as developer phrasing). */
 export const sphereName = id => `${quadrant(id).name}${quadrant(id).standIn ? ' (basic)' : ''}`;

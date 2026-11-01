@@ -34,11 +34,11 @@ describe('spheres = players', () => {
     expect(defaultQuadrants(3)).toEqual(['gold', 'red', 'market']);
   });
 
-  it('Classic for 2 and 3 players is its first 2 and 3 spheres', () => {
-    expect(classicFor(2)).toEqual(['gold', 'red']);
-    expect(classicFor(3)).toEqual(['gold', 'red', 'market']);
-    expect(classicFor(4)).toEqual(['gold', 'red', 'market', 'echo']);
-    expect(fitTable({ mode: 'classic', quadrants: ['gold', 'red', 'market', 'echo'] }, 2).quadrants).toEqual(['gold', 'red']);
+  it('Classic is Blue, Red, Yellow, Purple; 3 players drop Purple, 2 drop Yellow too (Cory, 2026-10-31)', () => {
+    expect(classicFor(2)).toEqual(['market', 'red']);
+    expect(classicFor(3)).toEqual(['market', 'red', 'yellow']);
+    expect(classicFor(4)).toEqual(['market', 'red', 'yellow', 'purple']);
+    expect(fitTable({ mode: 'classic', quadrants: ['market', 'red', 'yellow', 'purple'] }, 2).quadrants).toEqual(['market', 'red']);
   });
 
   it('every round-I space fills with 2 and 3 players, on Classic and random tables', () => {

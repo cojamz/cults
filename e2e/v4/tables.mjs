@@ -34,12 +34,12 @@ if (!base) {
 
 // Between them: Blue (market), Green (echo), Magenta, Purple, Silver, White, Yellow.
 const TABLES = [
-  { tag: 'market-echo', ids: ['gold', 'red', 'market', 'echo'], how: 'click' },
+  { tag: 'market-echo', ids: ['market', 'red', 'thieves', 'echo'], how: 'click' },
   { tag: 'thieves-purple-silver', ids: ['gold', 'thieves', 'purple', 'silver'], how: 'url' },
   { tag: 'trading-yellow-echo', ids: ['red', 'trading', 'yellow', 'echo'], how: 'url' },
   { tag: 'yellow-market-thieves-trading', ids: ['yellow', 'market', 'thieves', 'trading'], how: 'url', url: 'yellow,market,magenta,white' },
   // one sphere per player (Cory, 2026-10-15): two seats play Classic's first two; three seats play a 3-sphere table
-  { tag: '2p-classic', ids: ['gold', 'red'], how: 'classic', seats: 2 },
+  { tag: '2p-classic', ids: ['market', 'red'], how: 'classic', seats: 2 },
   { tag: '3p-thieves-yellow-silver', ids: ['thieves', 'yellow', 'silver'], how: 'url', url: 'thieves,yellow,silver', seats: 3 },
 ];
 
@@ -71,7 +71,8 @@ async function play(t) {
       const sizes = [await box()];
       // Classic by default; Random 4 offers a fresh table on Reroll; Custom picks by clicks, in wheel order.
       const classic = await page.$eval('[data-table]', e => e.getAttribute('data-table'));
-      if (classic !== 'gold,red,market,echo') err(`default table is ${classic}`);
+      // Classic (Cory, 2026-10-31): Blue, Red, Yellow, Purple; Gold is off the picker
+      if (classic !== 'market,red,yellow,purple') err(`default table is ${classic}`);
       await page.click('.table-pick [role="radio"]:has-text("Random 4")');
       sizes.push(await box());
       const r1 = await page.$eval('[data-table]', e => e.getAttribute('data-table'));
@@ -80,6 +81,7 @@ async function play(t) {
       if (r1 === r2 || r1.split(',').length !== 4 || r2.split(',').length !== 4) err(`random/reroll gave ${r1} then ${r2}`);
       await page.click('.table-pick [role="radio"]:has-text("Custom")');
       sizes.push(await box());
+      if (await page.$('[data-sphere="gold"]')) err('Gold is still offered on the picker (it went to the backlog, Cory 2026-10-31)');
       if (new Set(sizes.map(z => `${z.w}|${z.left}`)).size > 1) err(`the setup page changes width with the table mode: ${JSON.stringify(sizes)}`);
       if (new Set(sizes.map(z => z.start.join())).size > 1) err(`Start moves with the table mode: ${JSON.stringify(sizes.map(z => z.start))}`);
       // four picked: a fifth swaps in for the last one picked, in its place, and says so quietly by the count (live panel
