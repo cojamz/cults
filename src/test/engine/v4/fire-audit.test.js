@@ -160,6 +160,7 @@ const ALLOW = {
   // Silver's Nov 1 members: bots use it only when rivals together hold 2 silver each, which these games rarely gave (thread told)
   'silver.debtcollector': 'On Use, once per game; a bot waits for rivals to hold silver (cards-silver: Debt Collector)',
   'yellow.puppeteer': 'new Nov 1; recruited in 2 seeded games without its moment (cards-yellow: Puppeteers)',
+  'silver.guest': 'Hanger-On pays only when a rival gives its owner something; recruited once after Collector went to 6 (cards-silver: Hanger-On)',
   'red.recruiter': 'pays only on a later recruit; recruited once in the sample (cards-red: Recruiter)',
   'red.loyalists': 'only removes its cult from swap options (red-members-hooks / red-members-pressure: Loyalists)',
   // needs its holder to Promote/Demote a rival's member out of their cult; the 5/6/7 shop (2026-10-21) moved the
