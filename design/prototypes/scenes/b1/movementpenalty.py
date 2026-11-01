@@ -56,6 +56,8 @@ def draw():
                arms=[([(18, 32), (15, 38), (16, 41)], 4), ([(30, 32), (30, 38), (24, 38)], 4)],
                lg=dict(pants='n', pdark='N', shoe='z', lh=8),
                front=front, top=lambda f: (cap(f), top(f)), props=pen, DK={'n': 'N', 'x': 'x'})
+    c.paste(solo(_fig, dx=9, dy=-10, keys={'H': 'x', 'h': 'X'}))
+    c.paste(solo(_fig, dx=13, dy=-10, keys={'a': 'b', 'A': 'B'}, mirror=True))
     c.paste(solo(_fig, dx=7, dy=-2, keys={'a': 'b', 'A': 'B', 'H': 'z', 'h': 'x'}, mirror=True))
     c.paste(solo(_fig, dx=-4, dy=0))
     return c.rows(), pal

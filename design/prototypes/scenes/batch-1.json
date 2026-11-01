@@ -57,7 +57,7 @@
   "id": "red.movementpenalty",
   "name": "Deprogrammers",
   "sphere": "red",
-  "n": 2,
+  "n": 4,
   "text": "When you move a rival’s member out of their cult, they lose 1 follower.",
   "oldPeople": [
    "golden"
