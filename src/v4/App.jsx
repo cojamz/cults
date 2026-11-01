@@ -133,7 +133,7 @@ function App() {
     const quadrants = fit && !tableProblem(fit.quadrants, seats.length) ? fit.quadrants : undefined;
     // this tab takes the one local save (any other tab holding a game lets go), then starts over in it
     claimLocal(); clearLocal(); clearLast(); setLast(null);
-    begin(createLocalSession({ seats, seed: Math.floor(Math.random() * 1e9), botDelayMs, quadrants, rules: cfg.roundDecks === 3 || cfg.deck !== 15 ? { ...(cfg.roundDecks === 3 ? { roundDecks: 3 } : {}), ...(cfg.deck !== 15 ? { deck: 10 } : {}) } : undefined, botLevel: cfg.level, holdRoundEnds: true, isOwner: ownsLocal }), cfg);
+    begin(createLocalSession({ seats, seed: Math.floor(Math.random() * 1e9), botDelayMs, quadrants, rules: cfg.roundDecks === 3 || cfg.deck !== 15 || cfg.swapCard ? { ...(cfg.roundDecks === 3 ? { roundDecks: 3 } : {}), ...(cfg.deck !== 15 ? { deck: 10 } : {}), ...(cfg.swapCard ? { swapCard: true } : {}) } : undefined, botLevel: cfg.level, holdRoundEnds: true, isOwner: ownsLocal }), cfg);
     introOnGameStart(); // this browser's first game: the intro, on this screen only (Intro.jsx)
   }, [begin]);
 

@@ -542,6 +542,27 @@ export function FollowerRates({ state, me = null, optionFor = () => null, onPick
           </button>
         );
       })}
+      {/* the swap card, a table setting (Cory, Nov 1 3:01pm): as your recruit, a free swap within 2 cost */}
+      {state.rules?.swapCard && (() => {
+        const opt = optionFor('swapcard');
+        const look = opt ? ' can lit' : buying ? ' recede' : ' dim';
+        const text = 'As your recruit: swap one of your members with a shop or rival member costing up to 2 more or less.';
+        return (
+          <button key="swapcard" type="button" className={`fb lt-rate lt-card card paper lt-swapcard${look}`} style={{ '--q': 'var(--any)' }} data-option={opt ? opt.id : undefined} aria-disabled={!opt}
+            data-rate="swap" aria-label={`Swap card: ${text}`}
+            onClick={() => opt && onPick(opt.id)}>
+            <Tip className="fb-tip" beside=".lt-rate" hint={`Swap card: ${text}`} content={() => (
+              <div className="pop-card rate-card" data-rate-card="swap">
+                <b>Swap card</b>
+                <span>{text}</span>
+                <span>Free: nothing pays the difference.</span>
+                <small>{opt ? 'Choose the two members' : 'You can use it after placing a minion, if a swap fits.'}</small>
+              </div>
+            )}><span className="art rt-art"><span className="rt-trade"><b className="num get">⇄</b></span></span>
+              <span className="nm">Swap</span><span className="ft"><small className="rt-left">free</small></span><span className="hitbox" aria-hidden="true" /></Tip>
+          </button>
+        );
+      })()}
       </span>
       {/* ending your turn without buying (Cory, 2026-10-16: "pass is hard to find"): right under the follower buys, where
           the eye already is while you shop. Its room is kept when it isn't offered, so the shop never shifts as your buy

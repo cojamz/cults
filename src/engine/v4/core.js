@@ -25,7 +25,7 @@ const LOG_MAX = 300;
 // Rule flags a table can toggle (sims flip them). release: once per round, on your turn, release one of your
 // members (it goes to the bottom of the pile) for its colored part in its own color (not one recruited this round). guests: rule-bending guest
 // members join the deck.
-export const DEFAULT_RULES = { release: false, guests: true, cull: true, artifacts: true, roundDecks: 2 };
+export const DEFAULT_RULES = { release: false, guests: true, cull: true, artifacts: true, roundDecks: 2, swapCard: false };
 /** Round decks (Cory, 2026-10-25): one deck, but round II and round III members wait out of it and are shuffled in
  *  when their round starts. A member's round is its `round`, else its printed cost (ROUND_CUTOFFS). rules.roundDecks: 3 batches, 2 folds round III into round II, 0 is off.
  *  Default 2 (Cory, 2026-10-27: "round 1 deck one, round 2 and 3 all three decks"). */
@@ -532,6 +532,15 @@ function inputFor(state, task) {
       // (only while there is a space to take, so a use is never forced on you)
       return { kind: 'place', prompt: `${p.name}: place a minion`, options: slots.length ? [...slots, ...useOptions(state, p)] : [], onEmpty: () => { p.left -= 1; log(state, `No open space: ${p.name}'s minion sits out.`); } };
     }
+    case 'swapcard': {
+      const where = uid => state.players.find(o => o.members.includes(uid))?.name || 'Shop';
+      const price = uid => { const d = cardDef(state, uid); return d.s + d.w; };
+      return { kind: 'choose', prompt: `${p.name}: swap card: choose one of your members and the one it swaps with`, options: [
+        ...swapCardPairs(state, p).map(([a, b]) => ({ id: `trade:${a}:${b}`, label: `${where(a)}: ${cardDef(state, a).name} ↔ ${where(b)}: ${cardDef(state, b).name}`, kind: 'trade', value: [a, b],
+          hint: (cardDef(state, b).f + price(b)) - (cardDef(state, a).f + price(a)) })),
+        { id: 'back', label: 'Back', kind: 'pass', value: null },
+      ] };
+    }
     case 'buy': {
       // a run of recruits (Spree) says how many are left after this one
       const more = buysAfter(state, p);
@@ -555,6 +564,8 @@ function inputFor(state, task) {
       for (const uid of state.pile.slice(0, pileReach(state, p))) if (memberPrice(state, p, uid).afford)
         opts.push({ id: `card:${uid}`, label: `${cardDef(state, uid).name} (from the pile)`, kind: 'card', uid, fromPile: true });
       TIERS.forEach(t => { if (canBuyTier(state, p, t)) opts.push({ id: `tier:${t.key}`, label: `+${t.get} followers`, kind: 'tier', tier: t.key }); });
+      // the swap card, a table setting (Cory, Nov 1 3:01pm), beside the follower cards
+      if (swapCardPairs(state, p).length) opts.push({ id: 'swapcard', label: 'Swap card', kind: 'swapcard' });
       for (const uid of p.members) {
         const c = state.cards[uid], d = defById(c.def);
         // a Doppelganger offers what it copies too
@@ -567,7 +578,7 @@ function inputFor(state, task) {
         const d = cardDef(state, uid), back = releaseRefund(state, uid);
         if (back.n > 0) opts.push({ id: `release:${uid}`, label: `Release ${d.name} for ${back.label}`, kind: 'release', uid, refund: back.n, color: back.color });
       }
-      const real = opts.filter(o => o.kind === 'card' || o.kind === 'tier' || o.kind === 'use' || o.kind === 'release');
+      const real = opts.filter(o => o.kind === 'card' || o.kind === 'tier' || o.kind === 'use' || o.kind === 'release' || o.kind === 'swapcard');
       if (!real.length) return { kind: 'buy', prompt: '', options: [], onEmpty: task.extra ? undefined : () => log(state, `${p.name} couldn't afford anything.`) };
       opts.push({ id: 'pass', label: 'Pass', kind: 'pass' });
       return { kind: 'buy', extra: !!task.extra, prompt: task.extra ? `${p.name}: recruit again (Big Spender), or pass` : `${p.name}: recruit a member or followers${more ? ` (${more + 1} recruits left)` : ''}, or pass`, options: opts };
@@ -710,6 +721,7 @@ function resolveTask(state, task, optionId) {
     }
     case 'buy': {
       if (optionId === 'pass') { log(state, `${p.name} passed.`); dropBuys(state, p); return; }
+      if (optionId === 'swapcard') { state.queue.unshift({ t: 'swapcard', p: p.id, ...extraOf(task) }); return; }
       const [kind, rest] = optionId.split(':');
       if (kind === 'card') {
         // One way to buy: always the payment step (the suggestion preselected), unless there's nothing to pay.
@@ -740,6 +752,15 @@ function resolveTask(state, task, optionId) {
         return;
       }
       throw new Error(`Bad buy option ${optionId}`);
+    }
+    case 'swapcard': {
+      if (optionId === 'back') { state.queue.unshift({ t: 'buy', p: p.id, ...extraOf(task) }); return; }
+      const [, a, b] = optionId.split(':').map(Number);
+      if (!swapCardPairs(state, p).some(([x, y]) => x === a && y === b)) { state.queue.unshift({ t: 'buy', p: p.id, ...extraOf(task) }); return; }
+      boughtOnce(state, p, task);
+      const names = [a, b].map(uid => `${state.players.find(o => o.members.includes(uid))?.name || 'Shop'}'s ${cardDef(state, uid).name}`);
+      if (swapMembers(state, p, a, b)) log(state, `${p.name} used the swap card: swapped ${names[0]} and ${names[1]}.`);
+      return;
     }
     case 'choose': {
       const o = task.options.find(x => x.id === optionId);
@@ -1240,6 +1261,20 @@ function returnWorkers(state, uid, from) {
   from.workers = (from.workers ?? WORKERS[state.round - 1]) - grants.size;
   const card = state.cards[uid];
   if (card.workerGrantRound === state.round) card.workerGrants = Math.max(0, (card.workerGrants || 0) - grants.size);
+}
+
+/** The swap card (a table setting, rules.swapCard; Cory, Nov 1 3:01pm): "As your recruit: swap one of your members with
+ *  a shop or rival member costing up to 2 more or less." Free: nothing pays the difference. A trade, not a steal, so
+ *  Bodyguards and Lie Low let it through (Nov 1 2:02pm). [yours, theirs] uid pairs. */
+function swapCardPairs(state, p) {
+  if (!state.rules?.swapCard) return [];
+  const ctx = ctxFor(state);
+  const price = uid => { const d = cardDef(state, uid); return d.s + d.w; };
+  const mine = p.members.filter(u => ctx.canSwapMember(u));
+  const theirs = [...state.shop, ...state.players.filter(o => o !== p && ctx.canSteal(p, o, 'swap')).flatMap(o => o.members.filter(u => ctx.canSwapMember(u)))];
+  const out = [];
+  for (const a of mine) for (const b of theirs) if (Math.abs(price(a) - price(b)) <= 2) out.push([a, b]);
+  return out;
 }
 
 /** Atomic exchange: both departures settle before either incoming member can trigger an effect. */
