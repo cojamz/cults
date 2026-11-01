@@ -200,19 +200,17 @@ describe('Doppelganger copying Purple, Green and Silver members', () => {
 // ---------------------------------------------------------------------------------------------------------
 describe('Silver gifts with Guest and Kickback', () => {
   const Q = ['gold', 'red', 'silver', 'yellow'];
-  it('Goody Bags: the Guest gets 1 more of the color', () => {
-    const s = go(scene({ quads: Q, members: [[], ['silver.guest']] }), 'silver.gift', 'color:red');
-    expect(R(s, 1).red).toBe(2);
-    expect(R(s, 0)).toMatchObject({ silver: 2, red: 2 });
+  it('Party Gifts: the Guest gets 1 more silver per gift', () => {
+    let s = scene({ quads: Q, members: [[], ['silver.guest']] });
+    s = go(s, 'silver.partygifts', 'player:1');
+    s = move(move(s, 'player:1'), 'done');
+    expect(R(s, 1).silver).toBe(3); // 2 given + Guest’s 1
+    expect(s.players[0].bonus).toBe(4);
   });
-  it('Good Deed: the Guest gets 3', () => {
-    const s = go(scene({ quads: Q, members: [[], ['silver.guest']] }), 'silver.alms', 'give:1:gold');
-    expect(R(s, 1).gold).toBe(3);
-  });
-  it('Rising Tide counts what the Guest just got', () => {
-    const s = go(scene({ quads: Q, round: 2, res: [{}, { silver: 5 }], members: [[], ['silver.guest']] }), 'silver.tide');
-    expect(R(s, 1).silver).toBe(8); // 5 held + 2 given + Guest’s 1
-    expect(R(s, 0).silver).toBe(4);
+  it('Party Favors: the rival’s 2 silver is a gift, so the Guest gets 1 more', () => {
+    const s = go(scene({ quads: Q, round: 2, res: [{}, { red: 1 }], members: [[], ['silver.guest']] }), 'silver.favors', 'color:red');
+    expect(R(s, 1)).toMatchObject({ silver: 3, red: 0 });
+    expect(R(s, 0)).toMatchObject({ silver: 2, red: 1 });
   });
   it('Kickback’s gold is a gift: the Guest gets 1 more', () => {
     const s = go(scene({ quads: Q, members: [[], ['silver.guest']] }), 'gold.jv', 'player:1');

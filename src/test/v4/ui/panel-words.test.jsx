@@ -72,7 +72,7 @@ describe('panel words (w3)', () => {
     // w4b #5: "A rival's member or its cost" read as "I choose": the rival pays or loses, in line 1
     // shortened to fit on phones (v0.8.8 Magenta, 68c9bf0f): line 1 still says the rival decides, pay or lose
     expect(panelText('thieves', { key: 'ransom' }, 2).verb).toMatch(/^Rival pays or loses a member$/);
-    expect(panelText('silver', { key: 'jubilee' }, 3).verb).toMatch(/per silver the richest rival holds/);
+    expect(panelText('silver', { key: 'largesse' }, 3).verb).toMatch(/per silver rivals gain/);
     // Shake Down's line 2 is the limit (Cory's wording pass, 2026-10-21; line 1 says the rival pays or loses it)
     expect(panelText('thieves', { key: 'ransom' }, 2).second).toBe('costing 5 or less');
   });
@@ -82,7 +82,6 @@ describe('panel words (w3)', () => {
     expect(lines(panelText('gold', { key: 'jv' }, 1))).toContain('+1 gold to a rival');
     expect(lines(panelText('gold', { key: 'jv' }, 1)).join(' ')).not.toMatch(/you pick who/);
     expect(lines(panelText('silver', { key: 'toast' }, 2))).toContain('others get 2 silver');
-    expect(lines(panelText('silver', { key: 'tide' }, 2))).toContain('others get 2 silver');
     for (const [qid, key, t] of panelEntries()) for (const l of lines(t)) expect(l, `${qid}.${key}`).not.toMatch(/\bget 1$/);
     // Cheap Seats grants followers for held white; it never describes a purchase or payment.
     const cs = panelText('trading', { key: 'buylow' }, 2);
@@ -124,7 +123,7 @@ describe('panel words (w3)', () => {
 
   it('"You\'d get" says the likely and the best case, or the best pick, or the mix, in numbers', () => {
     const q = ['thieves', 'trading', 'purple', 'silver'];
-    const seen = { ransom: null, gift: null };
+    const seen = { ransom: null };
     for (let seed = 1; seed < 40 && Object.values(seen).some(v => !v); seed++) {
       let s = createGame({ seats: [0, 1, 2, 3].map(i => ({ name: `P${i + 1}`, kind: 'bot' })), seed, quadrants: q });
       const rand = seededRandom(seed);
@@ -149,8 +148,6 @@ describe('panel words (w3)', () => {
     expect(seen.ransom.likely).toMatch(/^(?:up to )?\+\d+ \w+/);
     expect(seen.ransom.best).toMatch(/^\+\d+ (magenta|member)/);
     expect(seen.ransom.best).not.toBe(seen.ransom.likely);
-    // one color of your choosing
-    expect(seen.gift.text).toMatch(/\+2 of a color you pick$/);
     for (const y of Object.values(seen)) expect(JSON.stringify(y)).not.toMatch(/depends on|−-/);
   }, 120000);
 });

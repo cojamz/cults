@@ -70,6 +70,54 @@ const colorHint = (ctx, p, color) => {
 const tideAmount = (ctx, p, extra) => Math.ceil((Math.max(0, ...ctx.rivals(p).map(o => o.res[S])) + extra) / 2);
 const spillCost = (ctx, n) => 0.25 * n * (ctx.state.players.length - 1);
 
+// Silver 2.0 (Cory, 2026-10-31): Toast, Polish, Party Gifts; Party Favors, Sweet Talk; Largesse (design/decisions.md).
+// Party Gifts and Largesse hand rivals silver from the bank, never your own, and pay you followers per silver.
+const lowest = (ctx, p) => Math.min(...others(ctx, p).map(o => ctx.followers(o)));
+/** Rivals gain up to `left` silver from the bank, split as the giver picks one at a time. */
+function shareStep(ctx, p, data) {
+  const given = data.given || {};
+  const total = Object.values(given).reduce((s, n) => s + n, 0);
+  const left = data.max - total;
+  if (left <= 0) return shareDone(ctx, p, data);
+  const low = lowest(ctx, p);
+  const opts = others(ctx, p).map(o => ({
+    id: `player:${o.id}`, label: `${o.name} +1 silver`, kind: 'player', value: o.id,
+    // bots spread to whoever trails
+    hint: (ctx.followers(o) === low ? 1 : 0) - 0.2 * (given[o.id] || 0),
+  }));
+  opts.push({ id: 'done', label: total ? 'Done' : 'Give nothing', kind: 'done', value: 'done', hint: -5 });
+  ctx.choose(p, `${data.who}: which rival gains 1 silver? You get ${data.per} ${data.per === 1 ? 'follower' : 'followers'} for each, ${left} more at most`, opts, 'silver.share', { ...data, given });
+}
+function shareDone(ctx, p, data) {
+  const given = data.given || {};
+  const total = Object.values(given).reduce((s, n) => s + n, 0);
+  if (!total) { ctx.log(`${p.name}'s ${data.who}: gave nothing.`); return; }
+  for (const [id, n] of Object.entries(given)) giveTo(ctx, p, ctx.player(Number(id)), S, n);
+  afterGive(ctx, p);
+  p.bonus += total * data.per;
+  const list = Object.entries(given).map(([id, n]) => `${ctx.player(Number(id)).name} +${n}`).join(', ');
+  ctx.log(`${p.name}'s ${data.who}: ${list} silver, then +${total * data.per} followers.`);
+}
+/** Sweet Talk: turn silver into other colors one at a time, as many as you want. */
+function turnStep(ctx, p, data) {
+  const left = data.max == null ? p.res[S] : Math.min(p.res[S], data.max - (data.done || 0));
+  if (left <= 0) return;
+  const opts = otherColors(ctx).map(c => ({
+    id: `color:${c}`, label: `1 silver → ${data.each} ${c}`, kind: 'color', value: c, spend: { silver: 1, [c]: -data.each },
+    hint: 1 - 0.3 * (p.res[c] || 0),
+  }));
+  opts.push({ id: 'done', label: data.done ? 'Done' : 'Keep my silver', kind: 'done', value: 'done',
+    // bots keep a little silver for the contest at Sweet Talk's 1 for 1; Polish's 2 for 1 they always take
+    hint: data.each > 1 ? -5 : (p.res[S] <= 2 ? 2 : -1) });
+  ctx.choose(p, `${data.who}: turn 1 silver into ${data.each} of a color? (you have ${p.res[S]})`, opts, 'silver.turn', data);
+}
+
+function polishPick(ctx, p, left) {
+  ctx.choose(p, `Polish: +1 of which color? (${left} to pick)`, otherColors(ctx).map(c => ({
+    id: `color:${c}`, label: `+1 ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0),
+  })), 'silver.polish', { left });
+}
+
 export const silverActions = [
   {
     key: 'toast', ring: 1, name: 'Toast', text: '+3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III.',
@@ -84,69 +132,64 @@ export const silverActions = [
     },
   },
   {
-    key: 'gift', ring: 1, name: 'Goody Bags', text: '+2 silver, and +2 of another color you choose. Each rival +1 of that color.',
-    estimate: ctx => 4 - spillCost(ctx, 1),
+    key: 'polish', copyDoesIt: true, ring: 1, name: 'Polish', text: 'Turn 2 of your silver into 4 of any colors.',
+    estimate: (ctx, p) => Math.min(2, p.res[S] || 0) * 1 + 0.5,
+    resolve(ctx, p) {
+      // with 1 silver, 1 turns into 2 (Claude's reading of "2 silver -> 4 wild")
+      const k = Math.min(2, p.res[S] || 0);
+      if (!k) { ctx.log(`${p.name}'s Polish: no silver to turn.`); return; }
+      p.res[S] -= k;
+      ctx.log(`${p.name}'s Polish: ${k} silver into ${2 * k} of any colors.`);
+      polishPick(ctx, p, 2 * k);
+    },
+  },
+  {
+    key: 'partygifts', ring: 1, name: 'Party Gifts', copyDoesIt: true, text: 'Rivals gain up to 3 silver, split as you choose. +2 followers for each.',
+    estimate: ctx => 2 * 6 - spillCost(ctx, 1) * 3,
+    resolve(ctx, p) { shareStep(ctx, p, { who: 'Party Gifts', max: 3, per: 2 }); },
+  },
+  {
+    key: 'favors', ring: 2, name: 'Party Favors', text: '+2 silver. Each rival gives you 1 resource of their choice, then gains 2 silver.',
+    estimate: ctx => 2 + (ctx.state.players.length - 1) - spillCost(ctx, 2),
     resolve(ctx, p) {
       hostGain(ctx, p, 2);
-      ctx.choose(p, 'Goody Bags: which color? You get 2, everyone else gets 1.', otherColors(ctx).map(c => ({
-        id: `color:${c}`, label: c, kind: 'color', value: c, hint: colorHint(ctx, p, c),
-      })), 'silver.gift', { mine: 2 });
+      favorNext(ctx, p, others(ctx, p).map(o => o.id));
     },
   },
   {
-    key: 'alms', ring: 1, name: 'Good Deed', text: '+4 silver, and +2 of a color you choose to a rival you choose.',
-    estimate: () => 4 - 0.5,
+    key: 'tongue', copyDoesIt: true, ring: 2, name: 'Sweet Talk', text: '+3 silver. Then turn as many of your silver as you want into other colors.',
+    estimate: () => 3.5,
     resolve(ctx, p) {
-      hostGain(ctx, p, 4);
-      const leader = Math.max(...ctx.state.players.map(o => ctx.followers(o)));
-      const opts = [];
-      for (const o of others(ctx, p)) for (const c of ctx.state.resources) {
-        // bots feed whoever trails, in the color that rival is closest to winning; never the leader
-        const lead = leadIn(ctx, o, c);
-        opts.push({
-          id: `give:${o.id}:${c}`, label: `${o.name}: 2 ${c}`, kind: 'give', value: [o.id, c],
-          hint: -0.3 * ctx.followers(o) + (lead >= -2 && lead <= 0 ? 1 : 0) - (ctx.followers(o) === leader ? 2 : 0) + (c === S ? -0.5 : 0),
-        });
-      }
-      ctx.choose(p, 'Good Deed: give 2 of which color, to whom?', opts, 'silver.alms');
+      hostGain(ctx, p, 3);
+      turnStep(ctx, p, { who: 'Sweet Talk', max: null, each: 1, done: 0 });
     },
   },
   {
-    key: 'tongue', ring: 2, name: 'Sweet Talk', text: '+4 silver. Then swap half or all your silver for one other color, 1 for 1. Each rival +1 silver.',
-    estimate: ctx => 5 - spillCost(ctx, 1),
-    resolve(ctx, p) {
-      hostGain(ctx, p, 4);
-      const have = p.res[S];
-      const opts = [{ id: 'keep', label: 'Keep it all', kind: 'swap', value: null, hint: 0 }];
-      for (const c of otherColors(ctx)) for (const x of [...new Set([Math.floor(have / 2), have])].filter(v => v > 0)) {
-        opts.push({ id: `swap:${c}:${x}`, label: `${x} silver → ${x} ${c}`, kind: 'swap', value: [c, x], spend: { silver: x, [c]: -x },
-          // bots: turn half into the color they're shortest of
-          hint: x === Math.floor(have / 2) ? 1 - 0.2 * (p.res[c] || 0) : -1 });
-      }
-      ctx.choose(p, `Sweet Talk: swap silver for another color? (you have ${have})`, opts, 'silver.tongue');
-    },
-  },
-  {
-    key: 'tide', ring: 2, name: 'Rising Tide', text: 'Each rival +2 silver. Then gain half the silver of the rival with the most, rounded up.',
-    estimate: (ctx, p) => tideAmount(ctx, p, 2) - spillCost(ctx, 2),
-    resolve(ctx, p) {
-      giveAll(ctx, p, S, 2);
-      const k = tideAmount(ctx, p, 0);
-      const got = hostGain(ctx, p, k);
-      ctx.log(`${p.name}'s Rising Tide: +2 silver to everyone else, then +${got} silver.`);
-    },
-  },
-  {
-    key: 'jubilee', copyDoesIt: true, ring: 3, name: 'High Tide', text: 'Each rival +1 silver. Then gain 1 follower per silver the rival with the most silver holds.',
-    estimate: (ctx, p) => 2 * (Math.max(0, ...ctx.rivals(p).map(o => o.res[S])) + 1) - spillCost(ctx, 1),
-    resolve(ctx, p) {
-      giveAll(ctx, p, S, 1);
-      const f = Math.max(0, ...ctx.rivals(p).map(o => o.res[S]));
-      p.bonus += f;
-      ctx.log(`${p.name}'s High Tide: +1 silver to everyone else, then +${f} followers.`);
-    },
+    key: 'largesse', copyDoesIt: true, ring: 3, name: 'Largesse', text: 'Rivals gain up to 10 silver, split as you choose. +1 follower for each.',
+    estimate: ctx => 2 * 10 - spillCost(ctx, 1) * 10,
+    resolve(ctx, p) { shareStep(ctx, p, { who: 'Largesse', max: 10, per: 1 }); },
   },
 ];
+
+/** Party Favors: each rival in turn gives the host 1 resource of their choice, then gains 2 silver. */
+function favorNext(ctx, host, queue) {
+  if (!queue.length) return;
+  const [id, ...rest] = queue;
+  const o = ctx.player(id);
+  const have = ctx.state.resources.filter(c => (o.res[c] || 0) > 0);
+  if (!have.length) {
+    giveTo(ctx, host, o, S, 2);
+    afterGive(ctx, host);
+    ctx.log(`${o.name} had nothing to give; +2 silver (${host.name}'s Party Favors).`);
+    return favorNext(ctx, host, rest);
+  }
+  ctx.choose(o, `Party Favors: give ${host.name} 1 resource, then you gain 2 silver`, have.map(c => ({
+    id: `color:${c}`, label: `Give 1 ${c}`, kind: 'color', value: c,
+    // bots give from their biggest pile, and not the color they lead the host in by 1 or less
+    hint: 0.3 * (o.res[c] || 0) - ((o.res[c] || 0) - (host.res[c] || 0) <= 1 && (o.res[c] || 0) >= (host.res[c] || 0) ? 1 : 0),
+  })), 'silver.favor', { host: host.id, rest });
+}
+
 
 const silver = {
   id: 'silver',
@@ -176,6 +219,30 @@ const silver = {
       giveAll(ctx, p, S, 1);
       // each gift names the space (panel tester C: a copied Sweet Talk on an Echo turn gave P3 +1 silver, unexplained)
       for (const o of others(ctx, p)) ctx.log(`${o.name} +1 silver (${p.name}'s Sweet Talk).`);
+    },
+    share(ctx, p, value, data) {
+      if (value === 'done') return shareDone(ctx, p, data);
+      const given = { ...data.given, [value]: (data.given[value] || 0) + 1 };
+      shareStep(ctx, p, { ...data, given });
+    },
+    polish(ctx, p, c, data) {
+      ctx.gain(p, c, 1);
+      ctx.log(`${p.name}'s Polish: +1 ${c}.`);
+      if (data.left > 1) polishPick(ctx, p, data.left - 1);
+    },
+    turn(ctx, p, value, data) {
+      if (value === 'done') return;
+      p.res[S] -= 1; ctx.gain(p, value, data.each);
+      ctx.log(`${p.name}'s ${data.who}: 1 silver into ${data.each} ${value}.`);
+      turnStep(ctx, p, { ...data, done: (data.done || 0) + 1 });
+    },
+    favor(ctx, o, color, data) {
+      const host = ctx.player(data.host);
+      o.res[color] -= 1; ctx.gain(host, color, 1);
+      giveTo(ctx, host, o, S, 2);
+      afterGive(ctx, host);
+      ctx.log(`${o.name} gave ${host.name} 1 ${color}, then +2 silver (${host.name}'s Party Favors).`);
+      favorNext(ctx, host, data.rest);
     },
     benefactor(ctx, p, id) {
       const t = ctx.player(id);

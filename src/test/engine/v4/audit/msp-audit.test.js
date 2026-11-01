@@ -13,12 +13,12 @@ const QM = ['gold', 'trading', 'market', 'purple'];
 const sc = (quadrants, o) => sceneQ({ quadrants, ...o });
 
 describe('audit', () => {
-  it('Sweet Talk: "swap any of your silver" offers only half or all', () => {
-    const s = take(sc(QP, { round: 2, res: [{ silver: 2 }] }), 'silver.tongue'); // 2 + 4 = 6 silver
+  it('Sweet Talk: "turn as many of your silver as you want" offers one at a time, and Done', () => {
+    const s = take(sc(QP, { round: 2, res: [{ silver: 2 }] }), 'silver.tongue'); // 2 + 3 = 5 silver
     const ids = s.pending.options.map(o => o.id);
-    expect(s.players[0].res.silver).toBe(6);
-    expect(ids.filter(x => x.startsWith('swap:red:'))).toEqual(['swap:red:3', 'swap:red:6']);
-    expect(ids).not.toContain('swap:red:1');
+    expect(s.players[0].res.silver).toBe(5);
+    expect(ids).toContain('color:red');
+    expect(ids).toContain('done');
   });
 
   it('Lamplighter: "+1 purple per minion you get this round" counts Extra Hand in round III (Cory 2026-10-15)', () => {
@@ -80,12 +80,9 @@ describe('audit', () => {
 });
 
 describe('audit: log lines', () => {
-  it('Grand Host: Toast and Rising Tide log what the taker got, doubled', () => {
+  it('Grand Host: Toast logs what the taker got, doubled', () => {
     let s = take(sc(QP, { round: 2, members: [['silver.grandhost']] }), 'silver.toast');
     expect(s.players[0].res.silver).toBe(12);
     expect(s.log.some(l => /raised a toast: \+12 silver/.test(l))).toBe(true);
-    s = take(sc(QP, { round: 2, res: [{}, { silver: 5 }], members: [['silver.grandhost']] }), 'silver.tide');
-    expect(s.players[0].res.silver).toBe(8);
-    expect(s.log.some(l => /Rising Tide: \+2 silver to everyone else, then \+8 silver/.test(l))).toBe(true);
   });
 });

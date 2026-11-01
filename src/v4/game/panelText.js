@@ -83,19 +83,11 @@ const P = {
   silver: {
     // "others get 1" left "1 of what?" (live panel r1): silver
     toast: r => ({ main: `+${3 * r} silver`, second: `others get ${r} silver`, note: run(n => `+${3 * n}`) }),
-    // "+2 of a color": which one? (w3a #56) yours to pick
-    gift: { main: '+2 silver', second: '+2 of a color you choose', note: 'others get 1 of it' },
-    // said like Kickback's gift ("a rival gets 2" ran on as "+4 silver a rival gets 2" off the wheel)
-    // "+2 to a rival" left "2 of what?" (blind testers, 2026-10-15): the color is yours to pick too
-    alms: { main: '+4 silver', second: '+2 of a color to a rival', note: 'you choose both' },
-    // "trade silver" (w3a #57): with whom? it's a swap of your silver into one other color. Line 2 within 16 letters
-    // ("swap silver for a color" didn't fit ring II, and dropped whole)
-    tongue: { main: '+4 silver', second: 'swap for a color', note: 'others get 1 silver' },
-    // the richest in silver: the hover says "the rival with the most" ("Gain half the silver" left no room for line 2)
-    // "half the richest" read as half your own pile (blind testers, 2026-10-15): it's the top rival's
-    tide: { verb: 'Gain silver', second: 'half the top rival’s', note: 'others get 2 silver' },
-    // on the center line 2 drops: the rate is in line 1, and "held" says the silver stays
-    jubilee: { verb: '+1 @f per silver the richest rival holds', second: 'others get 1 silver first' },
+    polish: { verb: '2 silver → 4 any', second: 'colors you choose' },
+    partygifts: { verb: '+2 @f per silver', second: 'rivals gain, up to 3', note: 'from the bank' },
+    favors: { main: '+2 silver', second: 'each rival gives you 1', note: 'then gains 2 silver' },
+    tongue: { main: '+3 silver', second: 'then turn silver into colors' },
+    largesse: { verb: '+1 @f per silver rivals gain', second: 'up to 10, from the bank' },
   },
   yellow: {
     harvest: (r, now) => ({ main: `+${now ?? 1} yellow`, second: now == null ? '+1 per other color you hold' : '1, +1 per other color you hold' }),

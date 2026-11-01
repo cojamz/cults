@@ -28,7 +28,7 @@ const S = {
     hourly: r => `+${3 + r} purple`, catchup: '+1 purple, +1 per rival who placed more', windup: '+1 purple per minion you placed', planahead: '+1 purple per minion left', overtime: '1 extra turn', lastcall: '+2 followers per minion left, rest go last; +1 purple', skip: r => `+${r + 3} purple, skip your next turn`, holdup: r => `+${r + 1} purple, the next turn is skipped`, crowdin: '+5 purple, +1 minion this round', rally: '+2 purple, two turns after this one', again: r => `+${r} purple, another turn after this one`,
   },
   silver: {
-    toast: r => `+${3 * r} silver · others +${r} silver`, gift: '+2 silver +2 · share', alms: '+4 silver · give 2', tongue: '+4 silver · swap', tide: 'half the top rival’s', jubilee: 'followers from the top rival’s silver',
+    toast: r => `+${3 * r} silver · others +${r} silver`, polish: '2 silver → 4 any', partygifts: '+2 followers per silver rivals gain', favors: '+2 silver · each rival gives 1', tongue: '+3 silver · turn into colors', largesse: '+1 follower per silver rivals gain',
   },
   yellow: {
     harvest: '+1 yellow per color', bloom: r => `+${r} yellow · +1 of your fewest`, transmute: '+2 yellow · then swap up to 3', prism: '+1 each per 3 yellow', gather: '1 per member', flourish: '+1 each per set',
@@ -52,7 +52,7 @@ const PIPS = {
   gold: { steal: 'steal 3 gold', windfall: '+1 gold per member', strike: 'double gold' },
   red: { hireup: 'promote a member', trade: 'demote a member', take: 'recruit one costing 8 or less, free' },
   purple: { lastcall: '+2 followers per minion left, rest go last' },
-  silver: { tide: 'half the top rival’s', jubilee: 'followers from the top rival’s silver' },
+  silver: { partygifts: '+2 followers per silver rivals gain', largesse: '+1 follower per silver rivals gain' },
   yellow: { gather: '+1 per member' },
   market: { clearance: 'recruit twice', pricecheck: 'bury for half its cost', spree: 'recruit 3 times' },
   thieves: { rob: 'steal half a one-color pile', ransom: 'rival pays or loses a member', heist: 'recruit a rival’s member' },

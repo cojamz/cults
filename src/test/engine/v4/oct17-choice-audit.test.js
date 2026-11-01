@@ -32,22 +32,6 @@ describe('October 17 reported choices', () => {
     } finally { restore(); }
   });
 
-  it('Good Deed color/rival choices map to that exact recipient and color, with no payment', () => {
-    const s = take(sceneQ({ quadrants: ['gold', 'red', 'silver', 'green'], n: 3 }), 'silver.alms');
-    expect(s.players[0].res.silver).toBe(4);
-    for (const color of s.resources) {
-      const g = giftPick(s, s.pending, color);
-      expect(g.kind).toBe('give');
-      expect(g.n).toBe(2);
-      expect(g.seconds.map(x => x.b)).toEqual([1, 2]);
-      for (const { o, b } of g.seconds) {
-        const next = move(s, o.id);
-        expect(next.players[0].res.silver).toBe(4);
-        expect(next.players[b].res[color]).toBe(2);
-        expect(next.players[b === 1 ? 2 : 1].res[color]).toBe(0);
-      }
-    }
-  });
 
   it('Go-Getter bought after your last scheduled placement remains usable when the board has room', () => {
     let s = take(sceneQ({ quadrants: ['gold', 'red', 'purple', 'green'], round: 2, left: 1,

@@ -72,7 +72,7 @@ describe('cross-sphere tables', () => {
       stats.optionKinds.forEach(k => optionKinds.add(k));
     });
     expect([...kinds].sort()).toEqual(['buy', 'choose', 'pay', 'place', 'setup']);
-    for (const k of ['card', 'tier', 'pass', 'slot', 'player', 'color', 'use', 'toggle', 'member', 'pay', 'back', 'amount', 'space', 'take', 'swap', 'give'])
+    for (const k of ['card', 'tier', 'pass', 'slot', 'player', 'color', 'use', 'toggle', 'member', 'pay', 'back', 'amount', 'space', 'take', 'swap'])
       expect(optionKinds.has(k), k).toBe(true);
     expect(optionKinds.has('release')).toBe(false);
   });

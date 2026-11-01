@@ -13,28 +13,46 @@ const S = (s, i = 0) => s.players[i].res.silver;
 const rich = { gold: 30, red: 30, silver: 30, green: 30 };
 
 describe('Silver actions', () => {
-  it('Toast 3 / 6 / 9 and everyone else +1 / +2 / +3; Goody Bags +2 silver +2 of a color, others 1 of it; Good Deed +4, a rival gets 2', () => {
-    let s = take(sc({ n: 3, round: 2 }), 'silver.toast');
+  it('Toast 3 / 6 / 9 and everyone else +1 / +2 / +3', () => {
+    const s = take(sc({ n: 3, round: 2 }), 'silver.toast');
     expect(s.players.map(p => p.res.silver)).toEqual([6, 2, 2]);
-    s = move(take(sc({ n: 3 }), 'silver.gift'), 'color:red');
-    expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[2, 2], [0, 1], [0, 1]]);
-    s = move(take(sc({ n: 3 }), 'silver.alms'), 'give:2:green');
-    expect(s.players.map(p => [p.res.silver, p.res.green])).toEqual([[4, 0], [0, 0], [0, 2]]);
+  });
+  it('Polish: 2 silver into 4 of any colors, picked one at a time; 1 silver gives 2', () => {
+    let s = take(sc({ res: [{ silver: 3 }] }), 'silver.polish');
+    for (const c of ['red', 'red', 'green', 'gold']) s = move(s, `color:${c}`);
+    expect([S(s), s.players[0].res.red, s.players[0].res.green, s.players[0].res.gold]).toEqual([1, 2, 1, 1]);
+    s = take(sc({ res: [{ silver: 1 }] }), 'silver.polish');
+    s = move(move(s, 'color:red'), 'color:red');
+    expect([S(s), s.players[0].res.red]).toEqual([0, 2]);
+    expect(s.pending?.prompt || '').not.toMatch(/Polish/);
+  });
+  it('Party Gifts: rivals gain up to 3 silver from the bank, split as you choose, +2 followers each', () => {
+    let s = take(sc({ n: 3, res: [{ silver: 2 }] }), 'silver.partygifts');
+    s = move(move(move(s, 'player:1'), 'player:2'), 'player:1');
+    expect(s.players.map(p => p.res.silver)).toEqual([2, 2, 1]);
+    expect(s.players[0].bonus).toBe(6);
+    s = move(take(sc({ n: 3 }), 'silver.partygifts'), 'done');
+    expect(s.players[0].bonus).toBe(0);
+  });
+  it('Party Favors: +2 silver, each rival gives you 1 resource of their choice, then gains 2 silver', () => {
+    let s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, {}] }), 'silver.favors');
+    s = move(s, 'color:red');
+    expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[2, 1], [2, 1], [2, 0]]);
+  });
+  it('Sweet Talk: +3 silver, then turn as many as you want into other colors; Largesse: rivals up to 10 silver, +1 follower each', () => {
+    let s = take(sc({ round: 2 }), 'silver.tongue');
+    s = move(move(move(s, 'color:red'), 'color:red'), 'done');
+    expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[1, 2], [0, 0]]);
+    s = take(sc({ round: 3 }), 'silver.largesse');
+    for (let i = 0; i < 10; i++) s = move(s, 'player:1');
+    expect(s.players[1].res.silver).toBe(10);
+    expect(s.players[0].bonus).toBe(10);
   });
   it.each([1, 2, 3])('Toast round %i scales each rival gift, with Guest, Caterer and Grand Host', round => {
     const s = take(sc({ n: 3, round, members: [['silver.grandhost', 'silver.caterer'], ['silver.guest']] }), 'silver.toast');
     expect(s.players.map(p => p.res.silver)).toEqual([6 * round + 1, round + 1, round]);
     expect(named(s, 'Caterer')).toHaveLength(1); // one gift, not one per recipient
     expect(s.log).toContain(`P1 raised a toast: +${6 * round} silver, +${round} silver to everyone else.`);
-  });
-  it('Sweet Talk +4 then swap; Rising Tide: others +2 then half the richest rival’s, rounded up; High Tide', () => {
-    let s = move(take(sc({ round: 2 }), 'silver.tongue'), 'swap:red:4');
-    expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[0, 4], [1, 0]]);
-    s = take(sc({ round: 2, res: [{}, { silver: 4 }] }), 'silver.tide');
-    expect(s.players.map(p => p.res.silver)).toEqual([3, 6]);
-    s = take(sc({ round: 3, res: [{ silver: 7 }, { silver: 4 }] }), 'silver.jubilee');
-    expect(s.players[0].bonus).toBe(5);
-    expect(s.players.map(p => p.res.silver)).toEqual([7, 5]);
   });
 });
 
@@ -164,7 +182,7 @@ describe('Silver members', () => {
   });
 
   it('Toastmaster: +1 follower per Silver space, named; Straggler onto Silver counts', () => {
-    let s = take(sc({ members: [['silver.toastmaster']] }), 'silver.alms');
+    let s = take(sc({ members: [['silver.toastmaster']] }), 'silver.toast');
     expect(s.players[0].bonus).toBe(1);
     expect(named(s, 'Toastmaster')[0]).toMatch(/P1's Toastmaster: \+1 follower/);
     s = sc({ round: 2, members: [['silver.toastmaster', 'benders.straggler']], slots: { '0-0': 0 }, queue: [{ t: 'allPlaced' }] });

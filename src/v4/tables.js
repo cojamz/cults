@@ -26,7 +26,7 @@ const LINES = {
   gold: 'Piles up gold, and saves on your next member.',
   red: 'Recruits: free members, and swaps with rivals.',
   purple: 'Turns: go twice in a row, skip, +1 minion.',
-  silver: 'Big gains for you, a little for everyone else.',
+  silver: 'Gifts to rivals that pay you back.',
   yellow: 'Goes broad: picks its colors, and changes rivals’ resources.',
   market: 'Bends the shop: extra recruits, bury shop members, a look at the pile.',
   thieves: 'Steals resources and members from rivals.',
@@ -46,6 +46,7 @@ const VERSION = {
   market: '2.0',
   trading: '2.0',
   yellow: '2.0',
+  silver: '1.5',
 };
 export const sphereVersion = id => VERSION[id] || '1.0';
 const VERSION_WORDS = { '2.0': 'Redesigned', '1.5': 'Spaces redesigned, members not yet', '1.0': 'Not redesigned yet' };

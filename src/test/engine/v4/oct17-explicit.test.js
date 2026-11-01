@@ -52,10 +52,6 @@ describe('October17 explicit rules',()=>{
   let s=sceneQ({quadrants:Q,members:[['yellow.weaver']],res:[{gold:10}],queue:[{t:'buy',p:0}]});
   s=move(s,'tier:mid');expect(s.players[0].res).toEqual({gold:6,red:1,yellow:1,green:1});
  });
- it('Rising Tide gives each rival2 before calculating half the richest pile',()=>{
-  const s=take(sceneQ({quadrants:['silver','red','yellow','green'],round:2,res:[{},{silver:3}]}),'silver.tide');
-  expect(s.players.map(p=>p.res.silver)).toEqual([3,5]);
- });
  it('Bury logs the gain, including converted gains',()=>{
   for(const converted of [false,true]){
    let s=sceneQ({quadrants:['market','gold','red','yellow'],round:2,members:[converted?['gold.midas']:[]]});
