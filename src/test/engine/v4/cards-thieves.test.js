@@ -34,22 +34,22 @@ describe('Magenta actions', () => {
     expect(s.players[1].bonus).toBe(5);
     expect(s.log.some(l => l.includes('now magenta'))).toBe(false);
   });
-  it('Sticky Fingers +1 and Desperado double base theft, separately from the inherent grant: 3×2+1 = 7', () => {
+  it('Sticky Fingers +1 and Desperado +2 on base theft, separately from the inherent grant: 3+2+1 = 6', () => {
     let s = table(Q, { res: [{}, { gold: 9 }], members: [['thieves.sticky', 'thieves.desperado']], bonus: [0, 9], shop: ROW });
     s = take(s, 'thieves.pickpocket');
     while (s.pending?.kind === 'choose') s = move(s, 'take:1:gold');
-    expect(R(s)).toMatchObject({ magenta: 0, gold: 7 });
-    expect(R(s, 1).gold).toBe(2);
+    expect(R(s)).toMatchObject({ magenta: 0, gold: 6 });
+    expect(R(s, 1).gold).toBe(3);
     expect(s.players[0].bonus).toBe(0);
     expect(named(s, 'Sticky Fingers').length).toBe(1);
     expect(named(s, 'Desperado').length).toBe(1);
   });
-  it('× Sticky Fingers and Desperado on Gold\'s Collect Debts: 3×2+1 = 7, and the log names both', () => {
+  it('× Sticky Fingers and Desperado on Gold\'s Collect Debts: 3+2+1 = 6, and the log names both', () => {
     let s = table(Q, { round: 2, left: 4, res: [{}, { gold: 9 }], members: [['thieves.sticky', 'thieves.desperado']], bonus: [0, 3], shop: ROW });
     s = take(s, 'gold.steal');
-    for (let k = 0; k < 4; k++) s = move(s, 'player:1');
-    expect(R(s).gold).toBe(7);
-    expect(R(s, 1).gold).toBe(2);
+    while (s.pending?.kind === 'choose' && s.pending.options.some(o => o.id === 'player:1')) s = move(s, 'player:1');
+    expect(R(s).gold).toBe(6);
+    expect(R(s, 1).gold).toBe(3);
     expect(named(s, 'Sticky Fingers').length).toBe(1);
     expect(named(s, 'Desperado').length).toBe(1);
   });

@@ -371,7 +371,7 @@ const market = {
     // Blue's artifact only, never dealt (Cory, 2026-10-24: "whenever shop members go to the bottom of the pile, gain 1
     // blue… one per batch"). Name is Claude's fill-in.
     m('bargainbin', 'Bargain Bin', 0, 0, 'Whenever shop members go to the bottom of the pile, +1 blue.', { artifact: true, bottomBlue: true }),
-    m('patroness', 'Patroness', 5, 2, 'Whenever a shop member goes to the bottom of the pile, +1 follower.', { bottomFollowers: true }),
+    m('patroness', 'Patroness', 5, 2, 'Whenever shop members go to the bottom of the pile, +1 follower.', { bottomFollowers: true }),
     m('blackmarket', 'Talent Scout', 2, 2, 'Once per game, on your turn: also look at the top 5 of the pile and recruit one at its cost.', {
       activate: 'game',
       onActivate(ctx, owner) {

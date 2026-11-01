@@ -1707,14 +1707,15 @@ function ctxFor(state) {
       eachMemberOf(state, victim, (card, def) => { if (def.guardSteal && def.guardSteal(ctx, victim, card, thief, kind)) blocked = true; }, ['guardSteal']);
       return !blocked;
     },
-    /** How many a steal of `base` takes for this thief (members: stealMore adds, stealDouble(ctx, owner) doubles). */
+    /** How many a steal of `base` takes for this thief (members: stealMore adds, stealMoreIf(ctx, owner) adds when it returns more than 0, stealDouble(ctx, owner) doubles). */
     stealCount(thief, base, { say = false } = {}) {
       let extra = 0, double = false;
       const who = [], why = [];
       eachMemberOf(state, thief, (card, def) => {
         if (typeof def.stealMore === 'number') { extra += def.stealMore; if (def.stealMore) { who.push(`${thief.name}'s ${def.name}: +${def.stealMore}`); why.push([def.name, `+${def.stealMore} to steal`]); } }
+        if (def.stealMoreIf) { const k = def.stealMoreIf(ctx, thief); if (k) { extra += k; who.push(`${thief.name}'s ${def.name}: +${k}`); why.push([def.name, `+${k} to steal`]); } }
         if (def.stealDouble && def.stealDouble(ctx, thief)) { double = true; who.push(`${thief.name}'s ${def.name}: doubled`); why.push([def.name, 'steal doubled']); }
-      }, ['stealMore', 'stealDouble']);
+      }, ['stealMore', 'stealMoreIf', 'stealDouble']);
       const out = (double ? base * 2 : base) + extra;
       // say: a real steal (not an estimate) names the members that changed its size, in the log and in a hover's Why
       // (live panel r1: Help Yourself's face said +4 and its hover +8, and neither named Desperado)

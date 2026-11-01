@@ -15,12 +15,12 @@ const words = (s, name) => {
 };
 
 describe('hover honesty (live panel r1)', () => {
-  it('Help Yourself doubled by Desperado: the Why names Desperado', () => {
+  it('Help Yourself with Desperado: the Why names Desperado', () => {
     const s = sceneQ({ quadrants: T, round: 3, n: 3, res: [{}, { gold: 5, red: 4 }, { blue: 3 }], bonus: [0, 3, 3], members: [['thieves.desperado'], [], []] });
     const { pv, y } = words(s, 'Help Yourself');
-    // round III steals 5, doubled to 10: what the rivals hold reads as the gain, the rest as your pick
-    expect(y.text).toBe('+3 gold, +2 red, +1 blue; steal 4 in colors you pick');
-    expect(whyLine(pv.reasons)).toBe('Desperado: steal doubled (5 → 10)');
+    // round III steals 5, +2 with Desperado (Cory, Nov 1, 2:27pm): 7, all your pick
+    expect(y.text).toBe('steal 7 in colors you pick');
+    expect(whyLine(pv.reasons)).toBe('Desperado: +2 to steal (5 → 7)');
   });
 
   it('Collect Debts with Sticky Fingers: the Why names it, and a rival it can rob reads now and after, never a gift', () => {

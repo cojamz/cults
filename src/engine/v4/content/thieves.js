@@ -153,8 +153,8 @@ export function magentaOccupied(ctx, p) {
   const q = ctx.state.quadrants.indexOf('thieves');
   return Object.keys(ctx.state.slots).filter(k => k.startsWith(`${q}-`)).length;
 }
-// Sticky Fingers on a member's steal (spaces get it through ctx.stealCount, with Desperado's double)
-const stickyMore = (ctx, p) => ctx.membersOf(p).reduce((n, c) => n + (typeof c.def.stealMore === 'number' ? c.def.stealMore : 0), 0);
+// Sticky Fingers and Desperado on a member's steal (spaces get them through ctx.stealCount)
+const stickyMore = (ctx, p) => ctx.membersOf(p).reduce((n, c) => n + (typeof c.def.stealMore === 'number' ? c.def.stealMore : 0) + (c.def.stealMoreIf ? c.def.stealMoreIf(ctx, p) : 0), 0);
 const memberHint = c => c.def.f * 1.5 + cost(c) + (c.def.vanilla || c.used ? 0 : 1);
 // Shake Down: each rival's members it can put at stake (costing 5 or less, and more than 0), by rival id.
 function atStake(ctx, p) {
@@ -378,8 +378,9 @@ const thieves = {
     }),
     // every steal, a member's too (Cory, 2026-10-22 playtest: "it should proc on member recruits (like grifter)")
     m('sticky', 'Sticky Fingers', 2, 1, 'Your steals take 1 more resource.', { stealMore: 1 }),
-    m('desperado', 'Desperado', 2, 2, 'While you have the fewest followers (ties count), double what you steal from spaces.', {
-      stealDouble: (ctx, owner) => fewestFollowers(ctx, owner),
+    // +2 to every steal, spaces and members, no longer double (Cory, Nov 1, 2:27pm: "Yeah, number one is fine")
+    m('desperado', 'Desperado', 2, 2, 'While you have the fewest followers (ties count), your steals take 2 more resources.', {
+      stealMoreIf: (ctx, owner) => (fewestFollowers(ctx, owner) ? 2 : 0),
     }),
     m('robinhood', 'Robin Hood', 2, 1, 'Whenever you steal from the player with the most followers, +1 follower.', {
       onSteal(ctx, owner, card, info) {

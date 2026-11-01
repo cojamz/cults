@@ -64,13 +64,13 @@ describe('Magenta redesign edge cases', () => {
     expect(loaded.players[0].res).toMatchObject({ magenta: 0, gold: 3, red: 2 });
     expect(loaded.players[0].bonus).toBe(0);
   });
-  it('Desperado doubles Help Yourself\'s 3 while tied for fewest followers', () => {
+  it('Desperado adds 2 to Help Yourself\'s 3 while tied for fewest followers', () => {
     let s = table(Q, { round: 1, res: [{}, { gold: 8 }], members: [['thieves.desperado']], bonus: [0, 1], shop });
     s = take(s, 'thieves.pickpocket');
-    expect(s.pending.count.left).toBe(6);
-    for (let k = 0; k < 6; k++) s = move(s, 'take:1:gold');
+    expect(s.pending.count.left).toBe(5);
+    for (let k = 0; k < 5; k++) s = move(s, 'take:1:gold');
     expect(s.players[0].bonus).toBe(0);
-    expect(s.players[0].res).toMatchObject({ gold: 6, magenta: 0 });
+    expect(s.players[0].res).toMatchObject({ gold: 5, magenta: 0 });
   });
   it('half-stack theft allows a smaller chosen color and excludes singletons and protected rivals', () => {
     let s = table(Q, { round: 2, n: 3, res: [{}, { gold: 9, red: 5 }, { gold: 12, red: 1 }], members: [[], [], ['thieves.watchdog']], shop });

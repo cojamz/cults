@@ -60,7 +60,7 @@ describe('Silver actions', () => {
   });
   it.each([1, 2, 3])('Toast round %i scales each rival gift, with Guest, Caterer and Grand Host', round => {
     const s = take(sc({ n: 3, round, members: [['silver.grandhost', 'silver.caterer'], ['silver.guest']] }), 'silver.toast');
-    expect(s.players.map(p => p.res.silver)).toEqual([6 * round + 2, round + 1, round]); // Caterer +2 (Nov 1 balance)
+    expect(s.players.map(p => p.res.silver)).toEqual([6 * round + 1, round + 1, round]); // Caterer +1 (Cory, Nov 1, 2:25pm)
     expect(named(s, 'Caterer')).toHaveLength(1); // one gift, not one per recipient
     expect(s.log).toContain(`P1 raised a toast: +${6 * round} silver, +${round} silver to everyone else.`);
   });
@@ -76,11 +76,11 @@ describe('Silver members', () => {
     expect(s.players[0].bonus).toBe(1);
     expect(named(s, 'Gift Wrapper')).toHaveLength(1);
   });
-  it('Caterer: Party Favors is one gift, +2 silver once however many rivals answer (as Toast)', () => {
+  it('Caterer: Party Favors is one gift, +1 silver once however many rivals answer (as Toast)', () => {
     let s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, { green: 1 }], members: [['silver.caterer']] }), 'silver.favors');
     s = move(s, s.pending.options[0].id);
     s = move(s, s.pending.options[0].id);
-    expect(S(s)).toBe(2 + 2);
+    expect(S(s)).toBe(2 + 1);
     expect(named(s, 'Caterer')).toHaveLength(1);
   });
   it('Polisher: once per game, up to 3 silver into 2 of any colors each', () => {
@@ -168,21 +168,21 @@ describe('Silver members', () => {
     s.players[0].members = [];
     s.players[0].artifact = uid;
     s = take(s, 'silver.toast');
-    expect(S(s)).toBe(3 + 2);
-    expect(named(s, 'Caterer')[0]).toMatch(/P1's Caterer: \+2 silver/);
+    expect(S(s)).toBe(3 + 1);
+    expect(named(s, 'Caterer')[0]).toMatch(/P1's Caterer: \+1 silver/);
   });
   it('Caterer: +1 silver per gift (not per player), named', () => {
     const s = take(sc({ n: 4, members: [['silver.caterer']] }), 'silver.toast');
-    expect(S(s)).toBe(3 + 2);
-    expect(named(s, 'Caterer')[0]).toMatch(/P1's Caterer: \+2 silver/);
+    expect(S(s)).toBe(3 + 1);
+    expect(named(s, 'Caterer')[0]).toMatch(/P1's Caterer: \+1 silver/);
   });
   // Cory, Nov 1: Caterer pays when a player is gifted silver, anyone's gift; a gift of gold doesn't count
-  it('Caterer: a gift of gold (Kickback) pays nothing; a rival gifting silver pays +2', () => {
+  it('Caterer: a gift of gold (Kickback) pays nothing; a rival gifting silver pays +1', () => {
     const s = move(take(sc({ members: [['silver.caterer']] }), 'gold.jv'), 'player:1');
     expect(S(s)).toBe(0);
     expect(named(s, 'Caterer')).toHaveLength(0);
     const t = take(sc({ queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 0 }], members: [['silver.caterer']] }), 'silver.toast');
-    expect(S(t)).toBe(2 + 1); // P2's Toast gives P1 1 silver, and Caterer +2
+    expect(S(t)).toBe(1 + 1); // P2's Toast gives P1 1 silver, and Caterer +1
     expect(named(t, 'Caterer')).toHaveLength(1);
   });
 

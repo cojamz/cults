@@ -22,23 +22,23 @@ describe('Magenta corrections retained through the redesign', () => {
     expect(s.log).toContain('P2 found nothing worth a heist.');
     expect(s.players[0].members).toHaveLength(1);
   });
-  it('doubles the base before Sticky Fingers once across a split theft', () => {
+  it('adds Desperado and Sticky Fingers once across a split theft', () => {
     let s = table(Q, { n: 3, res: [{}, { gold: 9 }, { red: 9 }], members: [['thieves.sticky', 'thieves.desperado']], bonus: [0, 5, 5], shop });
     s = take(s, 'thieves.pickpocket');
-    expect(s.pending.count.left).toBe(7); // 3×2+1
+    expect(s.pending.count.left).toBe(6); // 3+2+1 (Desperado +2, Cory, Nov 1, 2:27pm)
     s = move(s, 'take:1:gold');
-    expect(s.pending.count.left).toBe(6);
-    for (let k = 0; k < 6; k++) s = move(s, 'take:2:red');
-    expect(s.players[0].res).toMatchObject({ magenta: 0, gold: 1, red: 6 });
+    expect(s.pending.count.left).toBe(5);
+    for (let k = 0; k < 5; k++) s = move(s, 'take:2:red');
+    expect(s.players[0].res).toMatchObject({ magenta: 0, gold: 1, red: 5 });
     expect(s.players[1].res.gold).toBe(8);
-    expect(s.players[2].res.red).toBe(3);
+    expect(s.players[2].res.red).toBe(4);
   });
-  it('Collect Debts still doubles a selected rival in one click', () => {
+  it('Collect Debts takes Desperado\'s 2 more from a selected rival', () => {
     let s = table(Q, { round: 2, left: 4, res: [{}, { gold: 9 }], members: [['thieves.desperado']], bonus: [0, 5], shop });
     s = move(take(s, 'gold.steal'), 'player:1');
     expect(s.pending.count.left).toBe(4);
-    s = move(move(s, 'player:1'), 'player:1');
-    expect(s.players[0].res.gold).toBe(6);
+    while (s.pending?.kind === 'choose' && s.pending.options.some(o => o.id === 'player:1')) s = move(s, 'player:1');
+    expect(s.players[0].res.gold).toBe(5);
   });
   it('Grifter offers color choices and logs the colors actually transferred', () => {
     let s = table(Q, { res: [{ magenta: 10 }, { gold: 3, red: 3 }], members: [['red.intern']], shop: ['thieves.grifter', ...shop] });

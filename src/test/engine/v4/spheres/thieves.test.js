@@ -265,13 +265,13 @@ describe('Magenta members', () => {
     expect(R(s)[0].gold).toBe(4);
   });
 
-  it('Desperado: while no one has fewer followers, steals take double', () => {
+  it('Desperado: while no one has fewer followers, steals take 2 more', () => {
     // P1 (Desperado's 1 follower + 1) ties P2 for fewest
     let s = scene({ res: [{}, { gold: 9 }], bonus: [1, 2, 5], members: [['thieves.desperado']] });
-    for (let k = 0; k < 6; k++) s = move(k ? s : take(s, 'thieves.pickpocket'), 'take:1:gold');
+    for (let k = 0; k < 5; k++) s = move(k ? s : take(s, 'thieves.pickpocket'), 'take:1:gold');
     expect(s.pending?.kind).not.toBe('choose');
-    expect(R(s)[0]).toEqual({ ...Z, gold: 6 });
-    // not the fewest: no doubling
+    expect(R(s)[0]).toEqual({ ...Z, gold: 5 });
+    // not the fewest: nothing more
     let t = scene({ res: [{}, { gold: 9 }], bonus: [2, 2, 5], members: [['thieves.desperado']] });
     t = play(take(t, 'thieves.pickpocket'), 'take:1:gold', 'take:1:gold', 'take:1:gold');
     expect(t.pending?.kind).not.toBe('choose');
