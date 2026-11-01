@@ -132,10 +132,10 @@ export const startSteal = (ctx, p, name, n, extra = {}) => stealStep(ctx, p, { n
 const estimateSteal = (ctx, p, n, who = ctx.rivals(p)) => Math.min(n, who.reduce((s, o) => s + stealable(ctx, p, o), 0)) * 1.33;
 
 // Members a thief may take.
-function takeable(ctx, p, maxCost = Infinity) {
+function takeable(ctx, p, maxCost = Infinity, kind = 'member') {
   const out = [];
   for (const o of ctx.rivals(p)) {
-    if (!ctx.canSteal(p, o, 'member')) continue;
+    if (!ctx.canSteal(p, o, kind)) continue;
     for (const c of ctx.membersOf(o)) if (cost(c) <= maxCost) out.push([o, c]);
   }
   return out;
@@ -227,7 +227,7 @@ const thieves = {
     },
     {
       // Cory, Nov 1 morning: "so steal 1, +1 magenta, rivals can't steal or recruit from you this round" (was the protection only)
-      key: 'hideout', ring: 1, name: 'Lie Low', text: 'Steal 1. Rivals can’t steal or recruit from you this round. +1 magenta.',
+      key: 'hideout', ring: 1, name: 'Lie Low', text: 'Steal 1. Rivals can’t steal from you this round. +1 magenta.',
       estimate: (ctx, p) => 1.8 + 0.6 * ctx.state.round + estimateSteal(ctx, p, ctx.stealCount(p, 1)),
       resolve(ctx, p) {
         startSteal(ctx, p, 'Lie Low', ctx.stealCount(p, 1, { say: true }));
@@ -348,7 +348,9 @@ const thieves = {
     recruitFree(ctx, p, uid) { if (ctx.state.shop.includes(uid)) ctx.recruit(p, uid, { free: true }); },
     doubleAgent(ctx, p, uid, data) {
       const v = ctx.ownerOf(uid);
-      if (!ctx.steal(p, v, { uid })) return;
+      // a swap, not a steal (Cory, 2026-11-01): Bodyguards and Lie Low let it through, and steal reactions (Fence,
+      // Snitch, Robin Hood) don't fire
+      if (!v || !ctx.canSteal(p, v, 'swap') || !ctx.moveMember(uid, v, p, { recruit: true })) return;
       ctx.moveMember(data.uid, p, v);
       ctx.log(`${p.name}'s Double Agent swaps sides: ${p.name} gets ${v.name}'s ${ctx.card(uid).def.name}.`);
     },
@@ -400,13 +402,16 @@ const thieves = {
       onRoundStart(ctx, owner) { startSteal(ctx, owner, 'Extortionist', 2 + stickyMore(ctx, owner), { fromAction: false, richest: true }); },
     }),
     m('watchdog', 'Bodyguards', 5, 2, 'Rivals can’t steal from you.', { f: 2, // +1 follower (Cory, 2026-10-25)
-      guardSteal: () => true,
+      // steals, not swaps (Cory, 2026-11-01: "balance wise it works best if it blocks steals, not swaps"): Promote, Demote,
+      // Panel, Anarchist, Headhunter and Double Agent go through, as they do through Lie Low
+      guardSteal: (ctx, victim, card, thief, kind) => kind !== 'swap',
     }),
     m('crew', 'Crew', 1, 1, 'Worth 2 followers.', { f: 2, n: 2 }), // 2 members (Cory, Oct 29)
-    m('doubleagent', 'Double Agent', 3, 4, /* 4 to 8 (Cory, Oct 29: "double agent definitely too cheap", then "can say 8 for now") */  'On Recruit: swap this member for a rival’s member you choose.', {
+    m('doubleagent', 'Double Agent', 3, 4, /* 4 to 8 (Cory, Oct 29: "double agent definitely too cheap", then "can say 8 for now") */  'On Recruit: give this member to a rival and recruit one of theirs.', {
       onRecruited(ctx, owner, card) {
         // a swap, so Loyalists' "Your other members can’t be swapped" holds (Claude, 2026-10-29, from the bots thread)
-        const list = takeable(ctx, owner).filter(([, c]) => c.uid !== card.uid && ctx.canSwapMember(c.uid));
+        // a swap, never a steal: Bodyguards and Lie Low let it through (Cory, 2026-11-01)
+        const list = takeable(ctx, owner, Infinity, 'swap').filter(([, c]) => c.uid !== card.uid && ctx.canSwapMember(c.uid));
         if (list.length) pickMember(ctx, owner, list, 'Double Agent: swap for which member?', 'thieves.doubleAgent', { uid: card.uid });
       },
     }),

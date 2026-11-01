@@ -139,6 +139,15 @@ function sweepRow(ctx) {
 }
 /** k shop members just went to the bottom of the pile on someone's turn: Patroness pays once (Cory, Oct 21: "just one
  * follower each time it happens, not per card"), not for the round-start refresh. */
+// Window Shopper: one pick at a time, so the second choice sees the refilled shop
+function windowPick(ctx, owner, left) {
+  const shop = ctx.shopCards();
+  if (!shop.length) return;
+  ctx.choose(owner, left > 1 ? `Window Shopper: send which member to the bottom? (${left} to go)` : 'Window Shopper: send which member to the bottom?', shop.map(c => ({
+    id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: priceOf(c),
+  })), `${Q}.windowShop`, { left });
+}
+
 export function toBottom(ctx, k) {
   if (!(k > 0)) return;
   for (const p of ctx.state.players) for (const u of [...p.members, ...(p.artifact !== undefined ? [p.artifact] : [])]) {
@@ -238,7 +247,7 @@ const market = {
   ],
 
   handlers: {
-    windowShop(ctx, p, uid) {
+    windowShop(ctx, p, uid, data) {
       if (!ctx.state.shop.includes(uid)) return;
       const c = ctx.card(uid), col = colorOf(ctx, c);
       ctx.state.shop.splice(ctx.state.shop.indexOf(uid), 1);
@@ -247,6 +256,7 @@ const market = {
       ctx.log(`${p.name}'s Window Shopper sends ${c.def.name} to the bottom of the pile${col ? `: +1 ${col}` : ''}.`);
       if (c.def.everyColor) gainColorOf(ctx, p, c.def, 'Window Shopper');
       ctx.refillShop(); toBottom(ctx, 1);
+      if (data?.left > 1) windowPick(ctx, p, data.left - 1);
     },
     churn(ctx, p, uid, data) {
       if (ctx.state.shop.includes(uid)) {
@@ -383,14 +393,8 @@ const market = {
     // concepts, Oct 21, not approved (design/eval/member-concepts-2026-10-21.md): prices are sim starting points
     // Cory, 2026-10-24: Blue's round start ("Yeah I kinda like it") and Blue's once per game, the shop refresh that replaces
     // Makeover; names and prices Claude's fill-in
-    m('windowshopper', 'Window Shopper', 2, 2, 'On Recruit: send 1 shop member to the bottom of the pile. +1 of its color. Round Start: send 1 shop member to the bottom of the pile. +1 of its color.', { now: true,
-      onRoundStart(ctx, owner) {
-        const shop = ctx.shopCards();
-        if (!shop.length) return;
-        ctx.choose(owner, 'Window Shopper: send which member to the bottom?', shop.map(c => ({
-          id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: priceOf(c),
-        })), `${Q}.windowShop`);
-      },
+    m('windowshopper', 'Window Shopper', 2, 2, /* 2 members (Cory, Nov 1, 2:20pm) */ 'On Recruit and Round Start: send 2 shop members to the bottom of the pile. +1 of each one’s color.', { now: true,
+      onRoundStart(ctx, owner) { windowPick(ctx, owner, 2); },
     }),
     m('restocker', 'Restockers', 2, 1, 'On Use, once per game: send the whole shop to the bottom of the pile, then refill.', {
       f: 2, // (Cory, Oct 29, balance run: +1 follower)

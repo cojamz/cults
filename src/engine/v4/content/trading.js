@@ -237,9 +237,9 @@ const trading = {
     m('raider', 'Raiders', 2, 2, /* Claude's fill-in price 4, was 5 (Cory, 2026-10-22: "probably too expensive") */ 'On Use, once per game: steal 4 followers from the leader. Pay them 2 white.', { n: 2, // 2 members (Cory, Oct 29: "choir and raiders can be more"; 2 is Claude's start)
       activate: 'game',
       onActivate(ctx, owner, card) {
-        const t = raidTarget(ctx, owner);
+        const t = raidTarget(ctx, owner, true);
         const k = t ? Math.min(4, sellable(t)) : 0;
-        if (!k || (owner.res[W] || 0) < 2) { card.used = false; ctx.log(`${owner.name}'s Raiders: ${!k ? 'no leader to steal from' : 'needs 2 white'}.`); return; }
+        if (!k || (owner.res[W] || 0) < 2) { card.used = false; ctx.log(`${owner.name}'s Raiders: ${!k ? (raidTarget(ctx, owner) ? 'the leader can’t be stolen from now' : 'no leader to steal from') : 'needs 2 white'}.`); return; }
         owner.res[W] -= 2; t.res[W] = (t.res[W] || 0) + 2;
         t.bonus -= k; owner.bonus += k;
         ctx.log(`${owner.name}'s Raiders stole ${plural(k, 'follower')} from ${t.name} and paid 2 white.`);
@@ -249,7 +249,7 @@ const trading = {
           for (const d of [c.def, ...(c.copy ? [ctx.defOf({ def: c.copy })] : [])]) if (d.key === 'fence' && d.onSteal) ctx.asMember(o, d.name, () => d.onSteal(ctx, o, c, info), c.uid);
         }
       },
-      botActivate: (ctx, owner) => { const t = raidTarget(ctx, owner); return !!t && sellable(t) >= 3 && (owner.res[W] || 0) >= 2; },
+      botActivate: (ctx, owner) => { const t = raidTarget(ctx, owner, true); return !!t && sellable(t) >= 3 && (owner.res[W] || 0) >= 2; },
     }),
     // new (Claude's names from here down)
     m('cashier', 'Cashier', 2, 0, 'On Recruit: turn all your white into followers.', {
@@ -411,10 +411,11 @@ function actionFollowers(ctx, p, n) {
 }
 
 /** The leader: most followers, and more than you. Ties go to whoever has more followers to sell. */
-function raidTarget(ctx, p) {
+// guarded: only a leader who can be stolen from (Bodyguards, Lie Low: Cory, 2026-11-01, they block steals, not swaps)
+function raidTarget(ctx, p, guarded = false) {
   const top = Math.max(...ctx.state.players.map(o => ctx.followers(o)));
   if (ctx.followers(p) >= top) return null;
-  return ctx.rivals(p).filter(o => ctx.followers(o) === top).sort((a, b) => b.bonus - a.bonus)[0];
+  return ctx.rivals(p).filter(o => ctx.followers(o) === top && (!guarded || ctx.canSteal(p, o))).sort((a, b) => b.bonus - a.bonus)[0];
 }
 function raid(ctx, owner, t, k) {
   if (!(k > 0)) return;

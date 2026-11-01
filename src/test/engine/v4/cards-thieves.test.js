@@ -123,7 +123,7 @@ describe('Magenta actions', () => {
     expect([R(t).magenta, R(t).red, R(t, 1).red]).toEqual([1, 2, 1]);
     expect(owns(t, 1, 'red.intern')).toBe(true);
   });
-  it('× Bodyguards: Shake Down, Poach and Double Agent can\'t reach a Bodyguards owner\'s members', () => {
+  it('× Bodyguards: Shake Down and Poach can\'t reach a Bodyguards owner\'s members', () => {
     let s = table(Q, { round: 2, members: [[], ['thieves.watchdog', 'red.twins']], shop: ROW });
     s = take(s, 'thieves.ransom');
     expect(s.log).toContain('P1 found no one to hold to ransom.');
@@ -266,6 +266,17 @@ describe('Magenta members', () => {
     expect(named(s, 'Extortionist').length).toBe(1);
   });
 
+  it('Double Agent is a swap, not a steal: it reaches Bodyguards and Lie Low players (Cory, Nov 1)', () => {
+    for (const guard of ['bodyguards', 'lielow']) {
+      let s = table(Q, { res: [{ magenta: 6 }], members: [[], guard === 'bodyguards' ? ['thieves.watchdog', 'red.bigfamily'] : ['red.bigfamily']], shop: ['thieves.doubleagent', ...ROW] });
+      if (guard === 'lielow') s.players[1].hideout = s.round;
+      s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'thieves.doubleagent', 'shop'));
+      expect(s.pending.prompt).toMatch(/Double Agent/);
+      s = move(s, cardOpt(s, 'red.bigfamily', 1));
+      expect(owns(s, 0, 'red.bigfamily')).toBe(true);
+      expect(owns(s, 1, 'thieves.doubleagent')).toBe(true);
+    }
+  });
   it('Double Agent: when recruited, swap it for any rival\'s member (named)', () => {
     let s = table(Q, { res: [{ magenta: 6 }], members: [[], ['red.bigfamily']], shop: ['thieves.doubleagent', ...ROW] });
     s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'thieves.doubleagent', 'shop'));

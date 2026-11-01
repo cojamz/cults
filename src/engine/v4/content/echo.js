@@ -601,7 +601,7 @@ const echoQ = {
       },
     }),
     // Cory, 2026-10-28: "lets shift tribute band into this", then "should maybe get to pick the rival they copy"
-    m('dejavu', 'Tribute Band', 8, 3, /* Cory, Oct 27: "tribute band at 12" (with the +1 wild) */ 'On Use, once per game: choose a rival. Do every action they have a minion on this round.', { n: 3, // 3 members, still 12 (Cory, Oct 29: "Tribute Band at least 3. its cost should still be 12")
+    m('dejavu', 'Tribute Band', 10, 3, /* Cory, Oct 27: "tribute band at 12" (with the +1 wild); 14 (Cory, Nov 1: "just raise it to 14") */ 'On Use, once per game: choose a rival. Do every action they have a minion on this round.', { n: 3, // 3 members, still 12 (Cory, Oct 29: "Tribute Band at least 3. its cost should still be 12")
       activate: 'game',
       onActivate(ctx, owner, card) {
         const list = ctx.rivals(owner).filter(o => ownPlan(ctx, o).take.length);

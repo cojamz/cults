@@ -47,7 +47,7 @@ export default {
       },
     },
     {
-      key: 'hireup', ring: 2, name: 'Promote', text: 'Swap a member with a shop or rival member costing up to 2 more. +3 red.', copyDoesIt: true, // +3 red (Cory, Oct 30: balance run)
+      key: 'hireup', ring: 2, name: 'Promote', text: 'Give one of your members to a rival or the shop, and recruit one of theirs costing up to 2 more. +3 red.', copyDoesIt: true, // +3 red (Cory, Oct 30: balance run)
       estimate: (ctx, p) => 3 + (swapPairs(ctx, p, 'promote').length ? 2 : 0),
       resolve(ctx, p) {
         ctx.gain(p, 'red', 3, { fromAction: true });
@@ -55,7 +55,7 @@ export default {
       },
     },
     {
-      key: 'trade', ring: 2, name: 'Demote', text: 'Swap a member with a shop or rival member costing up to 2 less. +3 red.', copyDoesIt: true, // +3 red (Cory, Oct 30: balance run)
+      key: 'trade', ring: 2, name: 'Demote', text: 'Give one of your members to a rival or the shop, and recruit one of theirs costing up to 2 less. +3 red.', copyDoesIt: true, // +3 red (Cory, Oct 30: balance run)
       estimate: (ctx, p) => 3 + (swapPairs(ctx, p, 'demote').length ? 2 : 0),
       resolve(ctx, p) { ctx.gain(p, 'red', 3, { fromAction: true }); swap(ctx, p, 'demote', 'Demote: choose a member and its replacement'); },
     },
@@ -112,7 +112,7 @@ export default {
       // a recruit is a member or a follower purchase (Cory, 2026-10-21); not its own arrival
       onRecruit(ctx, owner, card, by, what) { if (by === owner && what.member?.uid !== card.uid) owner.bonus += 1; },
     }),
-    m('mob', 'Mob', 7, 4, /* 12, 4 members (Cory, Oct 30) */ 'Game End: +1 follower per red member you have.', { f: 5, n: 4,
+    m('mob', 'Mob', 7, 4, /* 12, 4 members (Cory, Oct 30); worth 4 (Cory, Nov 1: "Just make mob four") */ 'Game End: +1 follower per red member you have.', { f: 4, n: 4,
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'red'),
     }),
     // members only, never a follower buy (Cory, 2026-10-29: "red recruit should only work for gaining members")

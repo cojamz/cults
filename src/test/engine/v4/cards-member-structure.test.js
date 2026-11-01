@@ -43,7 +43,7 @@ describe('member structure: the new members', () => {
     expect(named(s, 'Restockers')).toHaveLength(1);
   });
 
-  it('Window Shopper: at round start, one shop member goes to the bottom of the pile, +1 of its color', () => {
+  it('Window Shopper: at round start, two shop members go to the bottom of the pile, +1 of each one’s color', () => {
     const Q = ['gold', 'red', 'market', 'thieves'];
     let s = table(Q, { round: 1, members: [['market.windowshopper']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending?.player).toBe(0);
@@ -55,6 +55,14 @@ describe('member structure: the new members', () => {
     expect(s.shop.includes(uid)).toBe(false);
     if (s.resources.includes(color)) expect(s.players[0].res[color]).toBe(before + 1);
     expect(named(s, 'Window Shopper')).toHaveLength(1);
+    // the second pick (Cory, Nov 1: 2 members instead of 1)
+    expect(s.pending?.player).toBe(0);
+    expect(s.pending.options.some(o => o.id === `card:${uid}`)).toBe(false);
+    const uid2 = Number(s.pending.options[0].id.split(':')[1]);
+    s = move(s, s.pending.options[0].id);
+    expect(s.pile[s.pile.length - 1]).toBe(uid2);
+    expect(named(s, 'Window Shopper')).toHaveLength(2);
+    expect(s.pending?.prompt || '').not.toMatch(/Window Shopper/);
   });
 
   it('Timekeepers and Old Money: game end, +1 follower per member of their color', () => {

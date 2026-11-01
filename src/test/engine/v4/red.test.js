@@ -99,7 +99,7 @@ describe('Red members', () => {
 
   it('Mob: game end +1 follower per red member', () => {
     const s = scene({ members: [['red.mob', 'red.twins', 'red.intern', 'gold.banker']], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.total).toBe(9); // Mob 5 (worth 5, Nov 1), Triplets 3, Intern 1
+    expect(s.players[0].final.total).toBe(8); // Mob 4 (worth 4, Nov 1, 2:16pm), Triplets 3, Intern 1
   });
 
   it('Recruiter: a recruit from the deck is no member leaving a rival’s cult, so nothing', () => {

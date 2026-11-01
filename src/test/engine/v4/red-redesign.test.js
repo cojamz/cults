@@ -148,7 +148,7 @@ describe('locked Red action progression', () => {
     expect(s.players[0].res.green).toBe(0);
   });
 
-  it('Bodyguards protect rival cults while the actor may exchange their own protected member; Lie Low lets swaps through (Cory, Nov 1)', () => {
+  it('Bodyguards and Lie Low let swaps through (Cory, Nov 1: they block steals, not swaps)', () => {
     const s = take(table(['gold', 'red', 'thieves', 'echo'], { n: 3, round: 2, members: [['thieves.watchdog'], ['red.twins', 'thieves.crew'], ['red.intern']], shop: ROW }), 'red.hireup');
     const own = uidIn(s, 'thieves.watchdog', 0);
     expect(s.pending.options.some(o => o.value[0] === own)).toBe(true);
@@ -156,6 +156,9 @@ describe('locked Red action progression', () => {
     const a = uidIn(s, 'red.twins', 1), b = uidIn(s, 'gold.banker', 'shop');
     expect(ctx.swapMembers(s.players[0], a, b)).toBe(true);
     expect(s.players[1].members).not.toContain(a);
+    // a Bodyguards owner's member can be swapped too
+    const t = take(table(['gold', 'red', 'thieves', 'echo'], { n: 3, round: 2, members: [['red.intern'], ['thieves.watchdog', 'red.twins'], []], shop: ROW }), 'red.hireup');
+    expect(contextFor(t).swapMembers(t.players[0], uidIn(t, 'red.twins', 1), uidIn(t, 'gold.banker', 'shop'))).toBe(true);
   });
 
   it('stale trade options disappear if either member changes location', () => {

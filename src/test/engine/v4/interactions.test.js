@@ -388,12 +388,12 @@ describe('Lie Low against Gold’s Collect Debts and Shake Down', () => {
     expect(R(s, 0).gold).toBe(3); // stole 3, Lookout took 1 back
     expect(R(s, 2)).toMatchObject({ gold: 1, magenta: 0 }); // as gold: stolen resources keep their colors
   });
-  it('Bodyguards stop Red’s Swap Sides; Lie Low doesn’t (Cory, Nov 1: swaps still go through)', () => {
+  it('Neither Bodyguards nor Lie Low stops Red’s Swap Sides (Cory, Nov 1: they block steals, not swaps)', () => {
     const T = ['gold', 'red', 'thieves', 'green'];
     let s = scene({ quads: T, n: 3, round: 2, members: [['red.intern'], ['thieves.watchdog', 'red.twins'], ['red.volunteer']] });
     s.players[2].hideout = 2; // P3 is lying low this round
     s = take(s, 'red.trade');
-    expect(ids(s)).not.toContain(`trade:${uidOf(s, 'red.intern', 0)}:${uidOf(s, 'red.twins', 1)}`);
+    expect(ids(s)).toContain(`trade:${uidOf(s, 'red.intern', 0)}:${uidOf(s, 'red.twins', 1)}`);
     expect(ids(s)).toContain(`trade:${uidOf(s, 'red.intern', 0)}:${uidOf(s, 'red.volunteer', 2)}`);
   });
 });

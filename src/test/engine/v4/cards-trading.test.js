@@ -160,6 +160,12 @@ describe('White members', () => {
     expect(named(s, 'Recruiter')).toHaveLength(1);
   });
 
+  it('Raiders can\'t steal from a leader with Bodyguards (Cory, Nov 1: Bodyguards and Lie Low block every steal)', () => {
+    const s = use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider'], ['thieves.watchdog']], shop: ROW, ...buy }), 'trading.raider');
+    expect([B(s, 0), B(s, 1), R(s, 0).white]).toEqual([0, 5, 2]);
+    expect(s.log).toContain("P1's Raiders: the leader can’t be stolen from now.");
+  });
+
   it('Cashier: when recruited, all your white becomes followers (named)', () => {
     let s = table(Q, { res: [{ white: 9 }], shop: ['trading.cashier', ...ROW], ...buy });
     s = move(s, cardOpt(s, 'trading.cashier', 'shop'));
