@@ -24,12 +24,13 @@ import './card-header.css'; // the trading-card face (Cory, Oct 29)
 // a name on the card's bar: one line, a size down when it's long, two lines only past that (never broken mid-word)
 export const nameFit = name => (name.length > 15 && name.includes(' ') ? { 'data-wide': '' } : name.length > 11 || name.split(' ').some(w => w.length >= 10) ? { 'data-long': '' } : {});
 // a member that counts as more than one: the count and the member bust on its picture (the worth stays followers)
-// a member worth N followers also counts as N members (core.js printedMembers; Cory, Oct 28)
-export const membersOf = d => Math.max(d.n ?? 1, d.f || 0);
+// a member counts as its printed member count only; being worth more followers never adds members (core.js printedMembers; Cory, Oct 29)
+export const membersOf = d => d.n ?? 1;
 // the top right: the members a card counts as, in its color's bust (every member is a follower, so it's also its score)
-export const WorthTag = ({ d, sphere }) => <>
-  <span className="val" data-worth={d.f} title={`Counts as ${membersOf(d)} member${membersOf(d) === 1 ? '' : 's'}`}><b className="num">{membersOf(d)}</b><MemberGlyph r={d.everyColor ? null : sphere || 'colorless'} size={14} decorative /></span>
-</>;
+export const WorthTag = ({ d, sphere }) => {
+  const n = membersOf(d), more = (d.f || 0) > n; // worth more followers than it counts as members (Recruit Bonus, Trendsetter): the worth beside it
+  return <span className="val" data-worth={d.f} title={`Counts as ${n} member${n === 1 ? '' : 's'}${more ? `, worth ${d.f} followers` : ''}`}><b className="num">{n}</b><MemberGlyph r={d.everyColor ? null : sphere || 'colorless'} size={14} decorative />{more && <><b className="num worth-more">{d.f}</b><FollowerGlyph size={12} title={`worth ${d.f} followers`} /></>}</span>;
+};
 const sphereOf = (state, d) => { if (!onTable(state, d)) return 'colorless'; try { return quadrant(d.quadrant).resource; } catch { return 'colorless'; } };
 
 // The face-up row's order (Cory, 2026-10-15): by cost, cheapest first, or by color (the table's color order, then
@@ -203,7 +204,7 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
       {/* one header line: the members' title and the sort; the follower buys stand beside the cards, as findable */}
       <div className="lt-shop-head">
         {/* a discount is said once, here, beside the struck prices (w4 A#23: its sentence was on all ten hovers) */}
-        <h3 className="lt-h">{tray ? 'Top of the pile' : 'Shop'}<small>{tray ? `${tray.filter(u => optionFor(`card:${u}`)).length} you can pay for` : peeking ? 'Put the top of the pile in order' : discount > 0 ? <Tip label="Discount sources" content={<p>{discountWhy(state, viewer)}.</p>}><span data-shop-discount>{viewer.discount ? 'your next one' : 'your members'} {discount} less</span></Tip> : buying && affordable ? `${affordable} members affordable` : `${state.shop.length} members`}</small></h3>
+        <h3 className="lt-h">{tray ? 'Top of the pile' : 'Shop'}<small>{tray ? `${tray.filter(u => optionFor(`card:${u}`)).length} you can pay for` : peeking ? 'Put the top of the pile in order' : discount > 0 ? <Tip label="Discount sources" content={<p>{discountWhy(state, viewer)}.</p>}><span data-shop-discount>{viewer.discount ? 'your next one' : 'your members'} {discount} less</span></Tip> : buying && affordable ? `${affordable} member${affordable === 1 ? '' : 's'} affordable` : `${state.shop.length} members`}</small></h3>
         <span className="lt-shop-controls">
           {viewer && <button type="button" className="lt-view-btn" aria-label="Fade members you can't afford" title="Fade members you can't afford right now" aria-pressed={fade} onClick={toggleFade}>affordable</button>}
           <button type="button" className="lt-view-btn" aria-label="Show member abilities" aria-pressed={detailed} onClick={toggleView}>details</button>
