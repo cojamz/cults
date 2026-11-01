@@ -4,6 +4,15 @@ Written before the data, scored after. Each use adds a dated block at the top. H
 
 Format: `- [conf] prediction → result (✅/❌/↔, the number that settled it)`
 
+## 2026-11-01 balance thread, batch 5 (deck 10, 8 colors with Silver at 10, v0.9.940 + Shift Crew 4, Old Maid −5), written 1:10am Eastern before reading it
+- [high] Greatest Hits drops from +40 to under +15 at Normal (round I copies only, 3 at most) → pending
+- [med] Red stays the top main color by raw share (+8 or more) but its members read even: member count, not cards → pending
+- [med] Money Changers stays the worst artifact (under −8) → pending
+- [med] Shift Crew at 4 for worth 4 reads STRONG (+5 or more) at Normal: 4 members' worth in round I is a lot → pending
+- [med] Silver as a main color reads below even at Normal (gives to rivals; bots value gifts badly) → pending
+- [low] Hard bots raise the small-cult share over Normal (they buy fewer weak members) → pending
+- [med] Customs at 6 is still above +5 → pending
+
 ## 2026-11-01 overnight 0.99 balance pass (lens v1), written 2:20am Eastern before reading the batch-2+ numbers
 Grounded in: batch 1 (Normal, deck 10, 7 colors, 800 games), the Nov 1 pick-rate note (400 Normal games), the Oct 29 Normal/Hard runs, and the live board.
 - [med] Greatest Hits ("Copy any 3 round I actions with a minion on them") is still the top space at Normal, but its lift drops well under batch 1's +41 → pending
