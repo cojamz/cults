@@ -1,6 +1,7 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def art():
@@ -14,6 +15,7 @@ def art():
         'h': '#2e2124', 'H': '#4a3530',          # hair
         'r': '#7a2a2a',
         's': MED[0], 'S': MED[1]})
+    pal.update({'d': OLIVE[0], 'D': OLIVE[1]})
     c.rect(0, 0, 63, 63, 'p')
     for ax in (2, 46):
         c.rect(ax, 14, ax + 15, 50, 'P'); c.ell(ax, 6, ax + 15, 22, 'P')
@@ -51,11 +53,14 @@ def art():
         for ex, ey in ((45, 16), (49, 14), (53, 17)):
             f.line(46, 26, ex, ey, 'G')
 
-    person(c, DK, hx=25, hy=10, skin='s', shade='S', mouth='smile', brows='soft', brow='h', glint='w',
-           hs='bun', hk='h', hd='H', side='L', cloth='1', cdark='2', cx=cx, sw=6, ww=5, th=11,
-           arms=[([(26, 28), (22, 33), (24, 38)], 3, 'g'), ([(38, 28), (43, 32), (45, 27)], 3, 'g')],
-           hands=[(23, 38, 'fist', False), (44, 25, 'grip', False)],
-           front=front, top=lambda f: (tiara(f), fan(f)))
+    def _fig(c):
+        person(c, DK, hx=25, hy=10, skin='s', shade='S', mouth='smile', brows='soft', brow='h', glint='w',
+               hs='bun', hk='h', hd='H', side='L', cloth='1', cdark='2', cx=cx, sw=6, ww=5, th=11,
+               arms=[([(26, 28), (22, 33), (24, 38)], 3, 'g'), ([(38, 28), (43, 32), (45, 27)], 3, 'g')],
+               hands=[(23, 38, 'fist', False), (44, 25, 'grip', False)],
+               front=front, top=lambda f: (tiara(f), fan(f)))
+    c.paste(solo(_fig, dx=-14, dy=0, keys={'s': 'd', 'S': 'D'}, mirror=True))
+    c.paste(solo(_fig, dx=8, dy=0))
     return c.rows(), pal
 
 

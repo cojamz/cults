@@ -1,6 +1,7 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def art():
@@ -16,6 +17,7 @@ def art():
         'h': '#c66a36', 'H': '#9a4e26',          # ginger hair
         's': PALE[0], 'S': PALE[1], 'f': '#d39a7c', 'r': '#7a2a2a',
         'g': '#7a9a5a', 'G': '#617f46'})
+    pal.update({'d': DEEP[0], 'D': DEEP[1]})
     c.rect(0, 0, 63, 63, 'p')
     c.rect(0, 54, 63, 63, 'P')
 
@@ -54,12 +56,15 @@ def art():
     def freckles(h):
         h.pts('f', [(19, 22), (29, 22)])
 
-    person(c, DK, hx=17, hy=11, skin='s', shade='S', mouth='smile', brows='soft', brow='H',
-           hs='side', hk='h', hd='H', cloth='1', cdark='2', cx=cx, sw=7, ww=6, th=14,
-           lg=dict(pants='x', pdark='X', shoe='z', lh=10),
-           arms=[([(18, 29), (15, 35), (17, 40)], 3), ([(30, 29), (33, 35), (31, 40)], 3)],
-           hands=[],
-           top=gift, face=freckles)
+    def _fig(c):
+        person(c, DK, hx=17, hy=11, skin='s', shade='S', mouth='smile', brows='soft', brow='H',
+               hs='side', hk='h', hd='H', cloth='1', cdark='2', cx=cx, sw=7, ww=6, th=14,
+               lg=dict(pants='x', pdark='X', shoe='z', lh=10),
+               arms=[([(18, 29), (15, 35), (17, 40)], 3), ([(30, 29), (33, 35), (31, 40)], 3)],
+               hands=[],
+               top=gift, face=freckles)
+    c.paste(solo(_fig, dx=15, dy=-1, keys={'s': 'd', 'S': 'D', 'h': 'z'}, mirror=True))
+    c.paste(solo(_fig, dx=-9, dy=0))
     return c.rows(), pal
 
 

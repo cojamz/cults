@@ -1,9 +1,9 @@
 [
  {
   "id": "silver.gala",
-  "name": "Debutante",
+  "name": "Debutantes",
   "sphere": "silver",
-  "n": 1,
+  "n": 2,
   "text": "Once per game: double your silver. Each rival +2 silver.",
   "oldPeople": [
    "warmtan"
@@ -21,9 +21,9 @@
  },
  {
   "id": "silver.guest",
-  "name": "Guest",
+  "name": "Hangers-On",
   "sphere": "silver",
-  "n": 1,
+  "n": 2,
   "text": "Whenever a rival gives you something, +1 more of it.",
   "oldPeople": [
    "freckled"

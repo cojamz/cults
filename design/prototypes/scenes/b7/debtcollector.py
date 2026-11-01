@@ -7,7 +7,7 @@ def art():
     c = C(N)
     pal = base_pal(p='#7a7068', P='#6a6058', d='#8a5a36', D='#6a4227', b='#3a3040', q='#eef2f6', Q='#b0b8c0',
                    R='#c74a3a', h='#2b1d18', H='#4a332a', n='#2f3036', N='#222328', z='#1e1e22', e='#7a8288',
-                   a=OLIVE[0], A=OLIVE[1], **{'1': SILVER[0], '2': SILVER[1]})
+                   a=OLIVE[0], A=OLIVE[1], u=PALE[0], U=PALE[1], **{'1': SILVER[0], '2': SILVER[1]})
     c.rect(0, 0, 63, 63, 'p'); floor(c, 52, 'P', 'D')
 
     def door(l):                          # at a rival's front door
@@ -18,6 +18,8 @@ def art():
 
     def hat(f):                           # bowler
         f.ell(22, 3, 41, 13, 'b'); f.hl(19, 44, 12, 'b'); f.hl(20, 43, 13, 'b')
+    c.paste(solo(lambda cc: fig(cc, DK, 32, 11, 'u', 'U', hs='crop', hk='H', hd='h', pose='hips', mouth='flat', top=hat,
+                                legs=dict(pants='n', pdark='N', shoe='z', lh=6)), dx=18, dy=-2, mirror=True))
     tops = fig(c, DK, 28, 10, 'a', 'A', hs='crop', hk='h', hd='H', pose='point', mouth='flat', top=hat,
                legs=dict(pants='n', pdark='N', shoe='z', lh=6))
     held(c, lambda l: (l.rect(8, 32, 18, 44, 'R'), l.hl(9, 17, 35, 'w'), l.hl(9, 15, 38, 'w')))    # the bill, tucked under an arm

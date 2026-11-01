@@ -137,9 +137,9 @@
  },
  {
   "id": "silver.smoothtalker",
-  "name": "Smooth Talker",
+  "name": "Smooth Talkers",
   "sphere": "silver",
-  "n": 1,
+  "n": 2,
   "text": "Your silver pays for any color.",
   "oldPeople": []
  },
@@ -169,9 +169,9 @@
  },
  {
   "id": "silver.debtcollector",
-  "name": "Debt Collector",
+  "name": "Debt Collectors",
   "sphere": "silver",
-  "n": 1,
+  "n": 2,
   "text": "On Use, once per game: each rival gives you 2 silver, if they have it.",
   "oldPeople": []
  },
