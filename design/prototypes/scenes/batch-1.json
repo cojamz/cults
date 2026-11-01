@@ -87,9 +87,9 @@
  },
  {
   "id": "red.proselytizer",
-  "name": "Proselytizer",
+  "name": "Proselytizers",
   "sphere": "red",
-  "n": 1,
+  "n": 2,
   "text": "Whenever you recruit, +1 follower.",
   "oldPeople": [
    "deep",

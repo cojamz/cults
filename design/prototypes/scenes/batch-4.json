@@ -11,9 +11,9 @@
  },
  {
   "id": "market.trendsetter",
-  "name": "Trendsetter",
+  "name": "Trendsetters",
   "sphere": "blue",
-  "n": 1,
+  "n": 3,
   "text": "Whenever you recruit a member, send 1 shop member to the bottom of the pile, then refill.",
   "oldPeople": [
    "deep",
@@ -23,9 +23,9 @@
  },
  {
   "id": "market.windowdresser",
-  "name": "Window Dresser",
+  "name": "Window Dressers",
   "sphere": "blue",
-  "n": 1,
+  "n": 3,
   "text": "On Recruit: send 3 shop members to the bottom of the pile, then refill.",
   "oldPeople": [
    "coolbrown",
@@ -45,9 +45,9 @@
  },
  {
   "id": "trading.broker",
-  "name": "Broker",
+  "name": "Brokers",
   "sphere": "white",
-  "n": 1,
+  "n": 3,
   "text": "Whenever a White action gives you followers, +1 follower.",
   "oldPeople": [
    "deep",
@@ -66,9 +66,9 @@
  },
  {
   "id": "trading.changer",
-  "name": "Money Changer",
+  "name": "Money Changers",
   "sphere": "white",
-  "n": 1,
+  "n": 2,
   "text": "Whenever you turn resources or members into followers, +1 white.",
   "oldPeople": [
    "brown",
@@ -77,9 +77,9 @@
  },
  {
   "id": "trading.exporter",
-  "name": "Exporter",
+  "name": "Exporters",
   "sphere": "white",
-  "n": 1,
+  "n": 2,
   "text": "Whenever you recruit a non-white member, +1 white.",
   "oldPeople": [
    "tan",
@@ -88,9 +88,9 @@
  },
  {
   "id": "trading.heiress",
-  "name": "Heiress",
+  "name": "Heiresses",
   "sphere": "white",
-  "n": 1,
+  "n": 2,
   "text": "Once per game: +1 white per member you have.",
   "oldPeople": [
    "verydeep",
@@ -109,9 +109,9 @@
  },
  {
   "id": "trading.martyr",
-  "name": "Martyr",
+  "name": "Martyrs",
   "sphere": "white",
-  "n": 1,
+  "n": 2,
   "text": "When this member leaves your cult, gain followers equal to its cost.",
   "oldPeople": [
    "coolbrown",

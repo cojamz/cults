@@ -1,9 +1,9 @@
 [
  {
   "id": "benders.freelancer",
-  "name": "Alchemist",
+  "name": "Alchemists",
   "sphere": "colorless",
-  "n": 1,
+  "n": 2,
   "text": "You may pay any member’s colored part in any colors.",
   "oldPeople": [
    "freckled"

@@ -203,9 +203,9 @@
  },
  {
   "id": "thieves.watchdog",
-  "name": "Bodyguard",
+  "name": "Bodyguards",
   "sphere": "magenta",
-  "n": 1,
+  "n": 2,
   "text": "Rivals can’t steal from you.",
   "oldPeople": [
    "deep",

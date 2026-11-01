@@ -10,6 +10,7 @@ def draw():
                    z='#2a2220', H='#1c1513', y='#f3d27a')
     pal['1'], pal['2'] = RED
     pal['a'], pal['A'] = DEEP
+    pal['b'], pal['B'] = OLIVE
     c.rect(0, 0, 63, 63, 's'); c.rect(0, 40, 63, 63, 'g'); c.rect(0, 52, 63, 63, 'G')
 
     def trees(l):
@@ -18,9 +19,6 @@ def draw():
     bg(c, trees, 'T')
     c.ell(-1, 13, 6, 20, 'S'); c.ell(50, 9, 57, 16, 'S')
 
-    def lamp(l):
-        l.rect(47, 14, 48, 46, 'x'); l.rect(45, 11, 50, 13, 'x'); l.hl(46, 49, 14, 'y')
-    bg(c, lamp)
 
     def crate(l):                         # the soapbox
         l.rect(14, 48, 40, 59, 'o'); l.rect(16, 50, 38, 57, 'O'); l.rect(17, 51, 37, 56, 'o')
@@ -44,6 +42,18 @@ def draw():
            arms=[([(19, 26), (13, 32), (10, 31)], 4), ([(29, 26), (35, 31), (34, 27)], 4)],
            lg=dict(pants='n', pdark='N', shoe='z', lh=10, stance=1),
            top=top, DK={'n': 'N'})
+
+    def leaflet(f):                       # the second one hands a leaflet out toward the street
+        lf = layer(); lf.rect(36, 30, 41, 36, 'm'); lf.rect(36, 30, 41, 31, '1'); lf.hl(37, 40, 33, 'M')
+        over(f, lf, {'1': '2', 'm': 'M'})
+        hl = layer(); hand(hl, 39, 35, 'grip', 'b', 'B', True); over(f, hl, {'1': '2', 'm': 'M'})
+
+    person(c, hx=45, hy=15, size=14, skin='b', shade='B', hs='bun', hk='O', hd='H', side='R', mouth='smile', brows='soft',
+           shirt='1', sdark='2', cx=52, sw=6, ww=5, th=12,
+           arms=[([(47, 33), (44, 37), (41, 37)], 3), ([(57, 33), (59, 39), (58, 43)], 3)],
+           hands=[(57, 43, 'fist', False)],
+           lg=dict(pants='n', pdark='N', shoe='z', lh=9),
+           top=leaflet, DK={'n': 'N'})
     return c.rows(), pal
 
 

@@ -1,9 +1,9 @@
 [
  {
   "id": "purple.clockmaker",
-  "name": "Clockmaker",
+  "name": "Clockmakers",
   "sphere": "purple",
-  "n": 1,
+  "n": 2,
   "text": "On Recruit: +1 purple per 2 purple you have. Round Start: +1 purple per 2 purple you have.",
   "oldPeople": [
    "porcelain"
@@ -42,9 +42,9 @@
  },
  {
   "id": "purple.earlybird",
-  "name": "Early Bird",
+  "name": "Early Birds",
   "sphere": "purple",
-  "n": 1,
+  "n": 2,
   "text": "Your turns can’t be skipped.",
   "oldPeople": [
    "verydeep"
@@ -82,9 +82,9 @@
  },
  {
   "id": "purple.nightowl",
-  "name": "Night Owl",
+  "name": "Night Owls",
   "sphere": "purple",
-  "n": 1,
+  "n": 2,
   "text": "Once per round: after you place your last minion, take an extra turn.",
   "oldPeople": [
    "brown",
@@ -183,9 +183,9 @@
  },
  {
   "id": "market.plusone",
-  "name": "Plus-One",
+  "name": "Plus-Ones",
   "sphere": "blue",
-  "n": 1,
+  "n": 2,
   "text": "On Recruit: recruit again this turn.",
   "oldPeople": [
    "brown",
@@ -204,9 +204,9 @@
  },
  {
   "id": "market.restocker",
-  "name": "Restocker",
+  "name": "Restockers",
   "sphere": "blue",
-  "n": 1,
+  "n": 2,
   "text": "Once per game: send the whole shop to the bottom of the pile, then refill.",
   "oldPeople": [
    "palepink"

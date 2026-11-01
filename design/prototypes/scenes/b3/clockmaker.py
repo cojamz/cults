@@ -1,22 +1,23 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def draw():
     c = C(N)
     pal = base(p='#c8b08c', P='#b89f7b', o='#8a5a36', O='#6b4227', d='#a8744a',
                y='#e0b648', Y='#b08a2c', m='#a8acb4', M='#7c8088', e='#f2e8d2',
-               a=PALE[0], A=PALE[1], h='#b3aca6', H='#857e78',
+               a=PALE[0], A=PALE[1], b=MED[0], B=MED[1], h='#b3aca6', H='#857e78',
                **{'1': PURPLE[0], '2': PURPLE[1], 'q': '#3a3448', 'u': '#e8e2d6', 'U': '#c9c2b4'})
     DK = {'1': '2', '2': '2', 'a': 'A', 'u': 'U', 'U': 'U', 'h': 'H'}
     c.rect(0, 0, 63, 63, 'p')
     c.rect(0, 0, 63, 3, 'P')
 
     def wallclock(l):                      # big clock face, wood rim
-        l.ell(2, 5, 19, 22, 'o'); l.ell(4, 7, 17, 20, 'e')
-        l.vl(10, 9, 14, 'q'); l.hl(11, 14, 14, 'q')
-        for (x, y) in ((10, 8), (16, 13), (10, 19), (5, 13)):
+        l.ell(24, -1, 39, 14, 'o'); l.ell(26, 1, 37, 12, 'e')
+        l.vl(31, 3, 7, 'q'); l.hl(32, 35, 7, 'q')
+        for (x, y) in ((31, 2), (36, 7), (31, 11), (27, 7)):
             l.px(x, y, 'O')
     bg(c, wallclock, 'O')
 
@@ -26,20 +27,24 @@ def draw():
         l.rect(57, 10, 62, 19, 'O'); l.ell(58, 11, 61, 14, 'e'); l.vl(59, 15, 18, 'y')
     bg(c, shelfclocks, 'O')
 
-    def front(f):                          # white collar, cardigan buttons
-        f.poly([(28.5, 27), (35.5, 27), (32, 32)], 'u')
-        f.pts('U', [(32, 31), (32, 32)])
-        for y in (35, 39):
-            f.px(32, y, 'Y')
-    person(c, DK, hx=24, hy=10, size=16, skin='a', shade='A', mouth='smile', brows='soft', brow='H',
-           hs='bun', hk='h', hd='H', side='R', cx=32, sw=11, ww=11, th=17, cloth='1',
-           front=front,
-           arms=[([(22, 31), (18, 37), (19, 42)], 4, '1'), ([(42, 31), (47, 36), (45, 38)], 4, '1')],
-           hands=[(16, 42, 'flat', False), (44, 36, 'grip', True)],
-           face=lambda h: (h.ell(26, 16, 31, 21, 'q'), h.ell(27, 17, 30, 20, 'M'), h.px(28, 17, 'w'),
-                           h.hl(32, 34, 18, 'q')),
-           props=lambda p: (pole(p, 46, 28, 35, 'm', 'M')),
-           post=lambda f: f.rect(45, 38, 47, 40, 'o'))
+    def maker(fc, skin, shade, hs, hk, hd, loupe, mouth):
+        def front(f):                      # white collar, cardigan buttons
+            f.poly([(28.5, 27), (35.5, 27), (32, 32)], 'u')
+            f.pts('U', [(32, 31), (32, 32)])
+            for y in (35, 39):
+                f.px(32, y, 'Y')
+        dk = dict(DK); dk[skin] = shade; dk[hk] = hd
+        person(fc, dk, hx=24, hy=10, size=16, skin=skin, shade=shade, mouth=mouth, brows='soft', brow=hd,
+               hs=hs, hk=hk, hd=hd, side='R', cx=32, sw=10, ww=10, th=17, cloth='1',
+               front=front,
+               arms=[([(22, 31), (18, 37), (19, 42)], 4, '1'), ([(42, 31), (47, 36), (45, 38)], 4, '1')],
+               hands=[(16, 42, 'flat', False), (44, 36, 'grip', True)],
+               face=(lambda h: (h.ell(26, 16, 31, 21, 'q'), h.ell(27, 17, 30, 20, 'M'), h.px(28, 17, 'w'),
+                                h.hl(32, 34, 18, 'q'))) if loupe else None,
+               props=lambda p: (pole(p, 46, 28, 35, 'm', 'M')),
+               post=lambda f: f.rect(45, 38, 47, 40, 'o'))
+    c.paste(solo(lambda fc: maker(fc, 'b', 'B', 'crop', 'q', 'O', False, 'smile'), dx=12, dy=1))
+    c.paste(solo(lambda fc: maker(fc, 'a', 'A', 'bun', 'h', 'H', True, 'smile'), dx=-11))
 
     def bench(l):
         l.rect(0, 44, 63, 47, 'd'); l.rect(0, 48, 63, 63, 'o'); l.hl(0, 63, 48, 'O')
