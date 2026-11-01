@@ -1,137 +1,464 @@
-# Expert AI players: feel ratings (balance-1.0, deck 10, 4 games, 16 players)
+# Expert AI players: feel ratings (balance-1.0, deck 10)
 
-Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its color (yes/no/unsure). Each card then lists every player's clause.
+Games: g1 (4p, red, purple, silver, yellow; build cd500e3a); g2 (4p, market, thieves, trading, echo; build cd500e3a); g3 (4p, red, thieves, yellow, echo; build cd500e3a); g4 (4p, purple, silver, market, trading; build cd500e3a); g6 (3p, purple, thieves, trading; build cd500e3a); g7 (4p, silver, purple, trading, thieves; build cd500e3a); g8 (2p, echo, purple; build cd500e3a).
+
+Strategic and fun are 1 to 5 (averaged over every player who rated the card); fits = how many said it fits its color (yes/no/unsure). Every clause follows the table.
 
 | card | n | strategic | fun | fits y/n/? |
 |---|---|---|---|---|
-| Con Men | 10 | 4.7 | 3.0 | 2/4/4 |
-| Dabblers | 9 | 2.0 | 2.1 | 1/2/6 |
-| Tryout | 8 | 3.4 | 3.5 | 7/0/1 |
-| Gather | 8 | 2.5 | 2.5 | 8/0/0 |
-| Walk-In | 8 | 3.9 | 3.8 | 7/0/1 |
-| Promote | 8 | 3.9 | 2.6 | 4/0/4 |
-| Demote | 8 | 4.1 | 2.6 | 5/0/3 |
-| Recruit a Member | 8 | 3.1 | 3.4 | 8/0/0 |
-| Sleep In | 8 | 3.1 | 3.1 | 8/0/0 |
-| Hold Up | 8 | 2.9 | 2.6 | 8/0/0 |
-| Right Away | 8 | 1.4 | 1.4 | 8/0/0 |
-| Crowd In | 8 | 3.1 | 3.0 | 8/0/0 |
-| Last Call | 8 | 5.0 | 4.3 | 8/0/0 |
-| Crunch Time | 8 | 1.0 | 1.0 | 8/0/0 |
-| Toast | 8 | 3.4 | 3.4 | 8/0/0 |
-| Polish | 8 | 2.8 | 2.6 | 8/0/0 |
-| Party Gifts | 8 | 4.0 | 3.9 | 8/0/0 |
-| Party Favors | 8 | 2.3 | 2.4 | 8/0/0 |
-| Sweet Talk | 8 | 2.9 | 2.9 | 8/0/0 |
-| Largesse | 8 | 4.6 | 3.8 | 8/0/0 |
-| Harvest | 8 | 3.0 | 3.0 | 8/0/0 |
-| Trade Seeds | 8 | 2.8 | 2.6 | 8/0/0 |
-| Dilute | 8 | 3.9 | 3.3 | 8/0/0 |
+| Crowd In | 17 | 3.2 | 3.1 | 17/0/0 |
+| Crunch Time | 17 | 1.8 | 1.9 | 17/0/0 |
+| Hold Up | 17 | 2.9 | 2.7 | 17/0/0 |
+| Last Call | 17 | 5.0 | 4.2 | 17/0/0 |
+| Right Away | 17 | 1.9 | 2.1 | 17/0/0 |
+| Sleep In | 17 | 3.2 | 3.2 | 17/0/0 |
+| Allowance | 15 | 3.2 | 3.3 | 15/0/0 |
+| Cash In | 15 | 2.5 | 2.3 | 15/0/0 |
+| Crime Wave | 15 | 3.6 | 2.9 | 15/0/0 |
+| Estate Sale | 15 | 3.7 | 3.3 | 15/0/0 |
+| Exchange | 15 | 3.3 | 3.3 | 15/0/0 |
+| Farewell | 15 | 3.6 | 3.4 | 13/1/1 |
+| Help Yourself | 15 | 4.3 | 3.5 | 15/0/0 |
+| Lie Low | 15 | 4.5 | 3.5 | 15/0/0 |
+| Poach | 15 | 4.2 | 2.9 | 15/0/0 |
+| Shake Down | 15 | 4.1 | 3.3 | 15/0/0 |
+| Splurge | 15 | 1.5 | 1.8 | 15/0/0 |
+| Stash | 15 | 2.9 | 2.9 | 13/0/2 |
+| Con Men | 12 | 4.5 | 3.1 | 2/4/6 |
+| Dabblers | 12 | 2.0 | 2.1 | 2/3/7 |
+| Largesse | 12 | 3.8 | 3.8 | 12/0/0 |
+| Party Favors | 12 | 2.3 | 2.4 | 12/0/0 |
+| Party Gifts | 12 | 3.7 | 4.0 | 12/0/0 |
+| Polish | 12 | 2.9 | 2.9 | 12/0/0 |
+| Sweet Talk | 12 | 3.0 | 2.9 | 12/0/0 |
+| Toast | 12 | 3.6 | 3.6 | 12/0/0 |
+| Alchemists | 11 | 2.6 | 2.4 | 3/2/6 |
+| Line Cutters | 11 | 3.7 | 3.9 | 1/3/7 |
+| Build Up | 10 | 2.7 | 2.5 | 10/0/0 |
+| Cover | 10 | 3.4 | 3.2 | 10/0/0 |
+| Echo | 10 | 4.5 | 3.8 | 9/0/1 |
+| Encore | 10 | 4.1 | 3.1 | 10/0/0 |
+| Greatest Hits | 10 | 3.6 | 3.0 | 10/0/0 |
+| Reprise | 10 | 4.2 | 3.6 | 10/0/0 |
+| Fence | 9 | 2.8 | 2.7 | 8/0/1 |
+| Pocket Watch | 9 | 3.7 | 3.3 | 9/0/0 |
 | Big Dilute | 8 | 3.9 | 2.8 | 8/0/0 |
-| Melting Pot | 8 | 2.1 | 2.1 | 8/0/0 |
-| Makeover | 8 | 3.8 | 3.1 | 8/0/0 |
-| Alchemists | 8 | 2.1 | 2.0 | 3/0/5 |
-| Savings | 8 | 2.4 | 2.3 | 8/0/0 |
-| Out of Style | 8 | 2.8 | 2.9 | 8/0/0 |
-| Peek | 8 | 3.4 | 3.3 | 8/0/0 |
-| Recruit Twice | 8 | 2.9 | 2.9 | 7/0/1 |
 | Bury | 8 | 3.4 | 3.0 | 6/0/2 |
+| Demote | 8 | 4.1 | 2.6 | 5/0/3 |
+| Dilute | 8 | 3.9 | 3.3 | 8/0/0 |
+| Extra Hand | 8 | 3.9 | 3.1 | 4/1/3 |
+| Gather | 8 | 2.5 | 2.5 | 8/0/0 |
+| Harvest | 8 | 3.0 | 3.0 | 8/0/0 |
+| Makeover | 8 | 3.8 | 3.1 | 8/0/0 |
+| Melting Pot | 8 | 2.1 | 2.1 | 8/0/0 |
+| Out of Style | 8 | 2.8 | 2.9 | 8/0/0 |
+| Party Crasher | 8 | 3.9 | 3.6 | 1/2/5 |
+| Peek | 8 | 3.4 | 3.3 | 8/0/0 |
+| Promote | 8 | 3.9 | 2.6 | 4/0/4 |
+| Recruit a Member | 8 | 3.1 | 3.4 | 8/0/0 |
+| Recruit Twice | 8 | 2.9 | 2.9 | 7/0/1 |
+| Savings | 8 | 2.4 | 2.3 | 8/0/0 |
 | Spree | 8 | 3.1 | 3.3 | 8/0/0 |
-| Help Yourself | 8 | 4.3 | 3.5 | 8/0/0 |
-| Stash | 8 | 2.5 | 2.6 | 7/0/1 |
-| Lie Low | 8 | 4.8 | 3.5 | 8/0/0 |
-| Crime Wave | 8 | 3.5 | 2.8 | 8/0/0 |
-| Shake Down | 8 | 4.0 | 2.9 | 8/0/0 |
-| Poach | 8 | 4.4 | 2.6 | 8/0/0 |
-| Allowance | 8 | 3.3 | 3.4 | 8/0/0 |
-| Splurge | 8 | 1.4 | 1.6 | 8/0/0 |
-| Exchange | 8 | 3.1 | 3.1 | 8/0/0 |
-| Farewell | 8 | 4.3 | 3.9 | 7/1/0 |
-| Estate Sale | 8 | 3.5 | 3.3 | 8/0/0 |
-| Cash In | 8 | 3.0 | 2.8 | 8/0/0 |
-| Build Up | 8 | 2.8 | 2.4 | 8/0/0 |
-| Echo | 8 | 4.4 | 3.5 | 7/0/1 |
-| Reprise | 8 | 4.4 | 3.5 | 8/0/0 |
-| Encore | 8 | 4.5 | 3.4 | 8/0/0 |
-| Cover | 8 | 3.5 | 3.3 | 8/0/0 |
-| Greatest Hits | 8 | 3.6 | 2.8 | 8/0/0 |
-| Line Cutters | 7 | 3.7 | 3.7 | 1/2/4 |
+| Trade Seeds | 8 | 2.8 | 2.6 | 8/0/0 |
+| Tryout | 8 | 3.4 | 3.5 | 7/0/1 |
+| Walk-In | 8 | 3.9 | 3.8 | 7/0/1 |
+| Impressionist | 7 | 2.4 | 2.3 | 6/0/1 |
+| Raiders | 7 | 3.7 | 3.3 | 7/0/0 |
+| Gossip | 6 | 3.0 | 2.7 | 6/0/0 |
+| HR | 6 | 2.5 | 2.0 | 1/1/4 |
 | Recruiter | 6 | 3.2 | 2.2 | 3/0/3 |
-| Party Crasher | 6 | 3.7 | 3.3 | 1/2/3 |
-| Guest Book | 5 | 2.6 | 3.0 | 4/0/1 |
-| Impressionist | 5 | 1.8 | 1.8 | 4/0/1 |
+| Shift Crew | 6 | 2.5 | 2.8 | 6/0/0 |
+| Accomplice | 5 | 4.0 | 4.0 | 5/0/0 |
+| Anarchist | 5 | 3.2 | 2.8 | 1/2/2 |
 | Bargain Bin | 5 | 2.6 | 2.6 | 5/0/0 |
-| HR | 4 | 2.5 | 2.3 | 1/1/2 |
-| Ringleader | 4 | 2.8 | 3.0 | 3/0/1 |
-| Shift Crew | 4 | 2.5 | 3.0 | 4/0/0 |
-| Scouts | 4 | 2.8 | 2.5 | 1/3/0 |
+| Clockmakers | 5 | 2.8 | 2.6 | 5/0/0 |
+| Debt Collectors | 5 | 3.4 | 3.2 | 5/0/0 |
+| Guest Book | 5 | 2.6 | 3.0 | 4/0/1 |
+| Hot Streak | 5 | 4.0 | 4.0 | 5/0/0 |
+| Martyrs | 5 | 3.8 | 4.6 | 5/0/0 |
+| Money Changers | 5 | 3.6 | 3.8 | 5/0/0 |
+| Night Owls | 5 | 3.0 | 2.6 | 4/1/0 |
+| Philanthropists | 5 | 3.4 | 3.0 | 5/0/0 |
+| Scouts | 5 | 3.0 | 2.8 | 1/3/1 |
+| Caterer | 4 | 4.3 | 3.8 | 4/0/0 |
+| Fan Club | 4 | 3.5 | 3.5 | 3/0/1 |
+| Heiresses | 4 | 4.3 | 3.8 | 2/2/0 |
 | Loyalists | 4 | 3.3 | 2.5 | 4/0/0 |
-| Extra Hand | 4 | 4.3 | 4.0 | 3/0/1 |
-| Pocket Watch | 3 | 3.0 | 3.3 | 3/0/0 |
+| Ringleader | 4 | 2.8 | 3.0 | 3/0/1 |
+| Roadie | 4 | 3.3 | 3.3 | 4/0/0 |
+| Toastmaster | 4 | 2.8 | 3.3 | 3/1/0 |
+| Agents | 3 | 3.3 | 2.7 | 3/0/0 |
+| Busker | 3 | 3.3 | 3.3 | 3/0/0 |
+| Closer | 3 | 3.7 | 3.7 | 3/0/0 |
+| Double Agent | 3 | 3.0 | 2.0 | 3/0/0 |
+| Early Birds | 3 | 2.0 | 2.0 | 3/0/0 |
 | Mob | 3 | 2.3 | 2.0 | 3/0/0 |
-| Clockmakers | 3 | 3.0 | 3.0 | 3/0/0 |
-| Philanthropists | 3 | 3.7 | 3.0 | 3/0/0 |
-| Caterer | 3 | 4.3 | 3.7 | 3/0/0 |
-| Toastmaster | 3 | 2.7 | 3.0 | 2/1/0 |
-| Fence | 3 | 3.7 | 3.3 | 2/0/1 |
-| Martyrs | 3 | 3.7 | 4.3 | 3/0/0 |
-| Raiders | 3 | 3.3 | 3.3 | 3/0/0 |
 | Patroness | 3 | 4.0 | 2.7 | 3/0/0 |
+| Polisher | 3 | 2.7 | 2.7 | 3/0/0 |
+| Recluse | 3 | 4.0 | 4.3 | 3/0/0 |
 | Snobs | 3 | 4.0 | 3.7 | 3/0/0 |
-| Fan Club | 3 | 3.3 | 3.3 | 2/0/1 |
-| Roadie | 3 | 2.7 | 2.7 | 3/0/0 |
-| Volunteer | 2 | 1.0 | 2.0 | 2/0/0 |
+| Stunt Double | 3 | 3.7 | 4.0 | 3/0/0 |
+| Big Tent | 2 | 4.0 | 4.0 | 2/0/0 |
+| Brokers | 2 | 3.5 | 3.5 | 2/0/0 |
+| Connoisseurs | 2 | 2.5 | 3.0 | 2/0/0 |
+| Courier | 2 | 4.0 | 4.0 | 0/0/2 |
+| Cutpurse | 2 | 3.5 | 3.5 | 2/0/0 |
+| Debutantes | 2 | 4.0 | 3.5 | 2/0/0 |
 | Deprogrammers | 2 | 4.0 | 3.5 | 2/0/0 |
-| Closer | 2 | 3.5 | 3.5 | 2/0/0 |
-| Early Birds | 2 | 2.0 | 2.0 | 2/0/0 |
-| Gossip | 2 | 2.0 | 2.0 | 2/0/0 |
+| Desperado | 2 | 5.0 | 3.0 | 2/0/0 |
+| Doormen | 2 | 1.0 | 1.0 | 2/0/0 |
 | Drifters | 2 | 3.0 | 3.5 | 2/0/0 |
 | Gardener | 2 | 3.0 | 4.0 | 2/0/0 |
-| Tastemaker | 2 | 2.0 | 1.5 | 2/0/0 |
-| Debt Collectors | 2 | 3.0 | 3.5 | 2/0/0 |
-| Mentor & Protégés | 2 | 3.0 | 3.5 | 2/0/0 |
-| Polisher | 2 | 3.0 | 3.5 | 2/0/0 |
-| Anarchist | 2 | 3.5 | 3.0 | 0/1/1 |
-| Triplets | 2 | 2.0 | 3.0 | 2/0/0 |
-| High Society | 2 | 2.0 | 2.0 | 2/0/0 |
-| Agents | 2 | 2.5 | 2.0 | 2/0/0 |
-| Stunt Double | 2 | 3.5 | 4.0 | 2/0/0 |
-| Trendsetters | 2 | 4.0 | 4.5 | 2/0/0 |
-| Window Dressers | 2 | 3.0 | 3.5 | 2/0/0 |
-| Connoisseurs | 2 | 2.5 | 3.0 | 2/0/0 |
-| Doormen | 2 | 1.0 | 1.0 | 2/0/0 |
-| Regular | 2 | 3.5 | 4.5 | 2/0/0 |
-| Money Changers | 2 | 4.5 | 4.0 | 2/0/0 |
-| Busker | 2 | 3.5 | 3.5 | 2/0/0 |
-| Recluse | 2 | 4.0 | 4.5 | 2/0/0 |
-| Desperado | 2 | 5.0 | 3.0 | 2/0/0 |
-| Big Tent | 2 | 4.0 | 4.0 | 2/0/0 |
-| Old Maid | 2 | 4.0 | 3.0 | 0/0/2 |
 | Grifter | 2 | 4.0 | 3.0 | 1/0/1 |
+| High Society | 2 | 2.0 | 2.0 | 2/0/0 |
+| Mentor & Protégés | 2 | 3.0 | 3.5 | 2/0/0 |
 | Muse | 2 | 2.5 | 2.0 | 1/1/0 |
-| Heiresses | 2 | 5.0 | 3.5 | 2/0/0 |
-| Night Owls | 1 | 3.0 | 3.0 | 1/0/0 |
-| Dyer | 1 | 4.0 | 4.0 | 1/0/0 |
-| Patriarch | 1 | 4.0 | 4.0 | 1/0/0 |
-| Debutantes | 1 | 5.0 | 5.0 | 1/0/0 |
-| Collector | 1 | 1.0 | 1.0 | 1/0/0 |
-| Accomplice | 1 | 4.0 | 4.0 | 1/0/0 |
-| Extortionist | 1 | 2.0 | 1.0 | 1/0/0 |
-| Double Agent | 1 | 3.0 | 2.0 | 1/0/0 |
-| Shopaholics | 1 | 3.0 | 2.0 | 1/0/0 |
-| Cutpurse | 1 | 3.0 | 3.0 | 1/0/0 |
-| Customs | 1 | 4.0 | 4.0 | 1/0/0 |
-| Kingpin | 1 | 1.0 | 1.0 | 1/0/0 |
-| Critic | 1 | 2.0 | 3.0 | 1/0/0 |
-| Courier | 1 | 4.0 | 4.0 | 0/0/1 |
-| Shopkeeper | 1 | 2.0 | 3.0 | 1/0/0 |
-| Brokers | 1 | 4.0 | 4.0 | 1/0/0 |
+| Old Maid | 2 | 4.0 | 3.0 | 0/0/2 |
+| Regular | 2 | 3.5 | 4.5 | 2/0/0 |
+| Sticky Fingers | 2 | 2.0 | 2.0 | 2/0/0 |
+| Tastemaker | 2 | 2.0 | 1.5 | 2/0/0 |
+| Trendsetters | 2 | 4.0 | 4.5 | 2/0/0 |
+| Triplets | 2 | 2.0 | 3.0 | 2/0/0 |
+| Volunteer | 2 | 1.0 | 2.0 | 2/0/0 |
+| Window Dressers | 2 | 3.0 | 3.5 | 2/0/0 |
+| Bodyguards | 1 | 4.0 | 3.0 | 1/0/0 |
+| Bouncers | 1 | 3.0 | 4.0 | 1/0/0 |
 | Cashier | 1 | 2.0 | 2.0 | 1/0/0 |
-| Smooth Talkers | 1 | 3.0 | 2.0 | 1/0/0 |
+| Chronicler | 1 | 5.0 | 4.0 | 1/0/0 |
+| Collector | 1 | 1.0 | 1.0 | 1/0/0 |
+| Critic | 1 | 2.0 | 3.0 | 1/0/0 |
+| Customs | 1 | 4.0 | 4.0 | 1/0/0 |
+| Doppelganger | 1 | 3.0 | 3.0 | 1/0/0 |
+| Dyer | 1 | 4.0 | 4.0 | 1/0/0 |
+| Extortionist | 1 | 2.0 | 1.0 | 1/0/0 |
 | Gift Wrapper | 1 | 2.0 | 1.0 | 1/0/0 |
 | Hangers-On | 1 | 1.0 | 1.0 | 1/0/0 |
+| Kingpin | 1 | 1.0 | 1.0 | 1/0/0 |
+| Patriarch | 1 | 4.0 | 4.0 | 1/0/0 |
+| Shopaholics | 1 | 3.0 | 2.0 | 1/0/0 |
+| Shopkeeper | 1 | 2.0 | 3.0 | 1/0/0 |
+| Smooth Talkers | 1 | 3.0 | 2.0 | 1/0/0 |
+| Tribute Band | 1 | 5.0 | 5.0 | 1/0/0 |
 
 ## Every clause
+
+### Crowd In
+- g1 Ava (2/2, yes): Cal used it once; +1 minion in round III is fine but quiet
+- g1 Ben (3/3, yes): An extra minion in round III is good, but nobody fought for it.
+- g1 Cal (4/4, yes): an extra recruit in round III is worth a buy-10, which makes it much better than +3 purple reads
+- g1 Dee (3/3, yes): extra minion is strong in round III when recruits are the cap
+- g4 Ava (3/3, yes): read at the table as the only counter to Last Call, but the extra minion still lands before a Last Call block so it isn't one.
+- g4 Ben (3/3, yes): Cal took it as the counter to Last Call, but an extra minion that still lands before a Last Call block isn't much of a counter.
+- g4 Cal (4/3, yes): I took it thinking the extra minion came after Last Call; it doesn't, which made it a plain extra turn and a bit of a letdown
+- g4 Dee (3/3, yes): Cal took it as a counter to Last Call but its extra minion still landed before Ben's block, so the counter didn't really work.
+- g6 Ava (3/3, yes): Ben used it well; +1 minion in round III is strong but it's only 3 purple on the chip.
+- g6 Ben (3/3, yes): I took it hoping the extra minion would land after Last Call and it landed before, so it was just +3 and an early seat
+- g6 Cal (3/3, yes): Ben used the extra minion well, but +3 purple and a body is plain
+- g7 Ava (3/3, yes): an extra recruit after the contests settle is a quiet conversion turn
+- g7 Ben (3/3, yes): Dee used it well as a late conversion turn, I never needed it
+- g7 Cal (3/4, yes): late extra recruit is a sneaky conversion turn
+- g7 Dee (4/4, yes): a second recruit in round III is real conversion; I expected it to land last and it slotted before Ben's four
+- g8 Ava (4/4, yes): an extra minion is an extra recruit, which in round III is worth 10 followers; I got it through Tribute Band.
+- g8 Ben (3/2, yes): the extra minion slotted into my run instead of coming last, which surprised me and cost me the last word.
+
+### Crunch Time
+- g1 Ava (1/1, yes): never taken all game; +2 purple and turns in a row didn't compete with anything
+- g1 Ben (1/1, yes): Never taken; +2 purple and turns sooner isn't worth a minion.
+- g1 Cal (1/1, yes): nobody took it all game, a double turn without a payoff
+- g1 Dee (1/1, yes): nobody took it all game
+- g4 Ava (1/1, yes): nobody took it in either round; +2 purple for an in-a-row is too little.
+- g4 Ben (1/1, yes): never wanted it; +2 purple and turn speed I didn't need.
+- g4 Cal (1/1, yes): nobody took it all game; +2 purple and a double turn never beat anything else
+- g4 Dee (1/1, yes): nobody took it all game.
+- g6 Ava (3/3, yes): felt weak until Ben turned it into a three-turn run for Hot Streak.
+- g6 Ben (5/5, yes): pulling my last turns up turned Hot Streak from +3 into +9; the best combo turn I had
+- g6 Cal (4/4, yes): with Hot Streak it was worth 9 followers, without it a shrug
+- g7 Ava (2/2, yes): never mattered this game
+- g7 Ben (2/2, yes): never wanted it before the very end
+- g7 Cal (2/2, yes): did nothing when Ben took it last; almost never placed
+- g7 Dee (1/1, yes): nobody wanted it, and Ben's copy fizzled with no minions left
+- g8 Ava (2/2, yes): did nothing on its own; it's a Hot Streak enabler.
+- g8 Ben (2/3, yes): +2 purple is thin; only useful to keep a Hot Streak run alive.
+
+### Hold Up
+- g1 Ava (4/4, yes): skipping Dee pushed her turn and won me the purple tie, a real blocking tool
+- g1 Ben (2/2, yes): Skipping a rival mostly just paid Ava's Pocket Watch; the sting on the skipped player is small.
+- g1 Cal (3/3, yes): decent purple and the skip on the next player stings, especially Dee's round I last pick
+- g1 Dee (4/2, yes): pushing a rival's turn feels mean in a good way, but with Pocket Watch on the table it pays Ava every time
+- g4 Ava (2/2, yes): Ben skipping me in round I with it just shoved me onto the last space left; felt-bad on the receiving end, small for the taker.
+- g4 Ben (4/4, yes): in round I skipping Ava for a Pocket Watch ping was a real tactical play; late it was just +4.
+- g4 Cal (2/2, yes): just purple for whoever's on purple; the skip on a rival rarely mattered
+- g4 Dee (2/2, yes): mostly a purple pickup; the skip rarely hurt anyone.
+- g6 Ava (4/4, yes): skipping a rival is a real swing, and aimed at your own next turn late in a round it's pure purple.
+- g6 Ben (3/2, yes): with Pocket Watch out it's really a purple space for the watch owner, whoever takes it
+- g6 Cal (3/3, yes): fine on its own, but the skip feeding Pocket Watch made it Ava's space
+- g7 Ava (2/2, yes): mostly a second Sleep In for whoever already owns purple
+- g7 Ben (4/4, yes): skipping my own snake double turn in round I gave me purple plus a later reactive placement
+- g7 Cal (3/3, yes): fine, its skip stacks with Pocket Watch and Gossip
+- g7 Dee (2/2, yes): mostly a smaller Sleep In that feeds Pocket Watch and Gossip
+- g8 Ava (2/2, yes): I took it once for the purple; the skip landing on my own next turn felt pointless.
+- g8 Ben (3/3, yes): fine, though in two-player the skip usually lands on me unless I time it.
+
+### Last Call
+- g1 Ava (5/5, yes): in round III it's the strongest space in the game: four placements after everyone's out wins every cheap contest; probably too strong at the +10 tier
+- g1 Ben (5/5, yes): The decisive card of the game: in round III, four placements after everyone is out let Ava take all four +10 contests. Too strong at the +10 tier.
+- g1 Cal (5/3, yes): in round III it's the best space in the game: four closing placements swept every contest; feels-bad for the other three
+- g1 Dee (5/4, yes): in round III it's the best space in the game: four closing placements decided all four +10 contests; probably too strong at that tier
+- g4 Ava (5/4, yes): the strongest space in round III: four or five placements nobody can answer, and it decided this game.
+- g4 Ben (5/5, yes): the most interesting space I played: followers, purple, and the last word, paid for with thin leftovers; in round III it may be too good with Pocket Watch and Courier.
+- g4 Cal (5/4, yes): won the game: going to the back in round III with nothing left to fear from rivals turns into four free cash-outs; worth a look
+- g4 Dee (5/4, yes): in round III it's four unanswerable placements and recruits at the very end; it decided the game.
+- g6 Ava (5/5, yes): best space I played: followers, purple, Pocket Watch triggers and the last word of the round, maybe too much in one spot.
+- g6 Ben (5/4, yes): strongest space in the game with Pocket Watch: purple, followers, and three or four answers after everyone's done
+- g6 Cal (5/4, yes): strongest space on the board: purple, followers and a block of last placements that nobody can answer
+- g7 Ava (5/2, yes): decided the game: in round III it gave Ben the last four placements in a row, which no one can answer
+- g7 Ben (5/5, yes): won me the game: going last after everyone is out means uncontested contests plus four recruits, too strong in round III with Gossip and Pocket Watch
+- g7 Cal (5/4, yes): going last four times in round III with Party Crasher was unanswerable; it decided the game
+- g7 Dee (5/4, yes): going last with four minions plus Party Crasher won Ben the game; strongest space I saw
+- g8 Ava (5/4, yes): with Line Cutters it's Ben's guaranteed opener, and copying it to jump to the end of the order was the best tempo trick in the game; the mutual-skip deadlock that feeds Gossip 8 fo
+- g8 Ben (5/5, yes): opening with it at full minions is the best purple play every round, but a copy of it hands the rival the same go-last.
+
+### Right Away
+- g1 Ava (1/1, yes): nobody wanted it; Dee placing it as a last minion did literally nothing
+- g1 Ben (1/1, yes): Never mattered; Dee took it with no minions left and it did nothing.
+- g1 Cal (1/1, yes): tiny purple and a double turn I never needed; Dee placed it with no minion left and got nothing
+- g1 Dee (1/1, yes): took it as the last open space; it did nothing because I had no minion left
+- g4 Ava (1/1, yes): took it once as the only open space with no minions left, so it did nothing; a filler.
+- g4 Ben (2/2, yes): small purple and the extra speed rarely mattered; filler.
+- g4 Cal (2/2, yes): small purple, useful only to chain Ben's end block
+- g4 Dee (2/2, yes): weak in round I when you have few minions, fine filler later.
+- g6 Ava (3/3, yes): small gain, but it decided round I's purple for me by denying Ben the last purple.
+- g6 Ben (4/4, yes): small gain, but it was the first link of my four-in-a-row chain
+- g6 Cal (2/3, yes): small, and it only shines with Hot Streak or Courier
+- g7 Ava (2/2, yes): tiny gain unless you build the combo around it
+- g7 Ben (2/2, yes): the weakest purple space, I only took it as a last conversion turn
+- g7 Cal (2/3, yes): rarely worth it on its own
+- g7 Dee (3/3, yes): I used the double turn to grab Polish before Ava could; good when the next space matters
+- g8 Ava (2/2, yes): small purple; only shines inside Ben's Hot Streak chain.
+- g8 Ben (2/3, yes): only good for keeping a turn run going for Hot Streak; otherwise small.
+
+### Sleep In
+- g1 Ava (4/4, yes): with Pocket Watch it was one of my best purple plays every round, and the self-skip is a real cost early
+- g1 Ben (3/3, yes): Biggest raw purple, and the skip barely hurts, which makes it a near auto-pick when it's open.
+- g1 Cal (2/2, yes): big purple but I never wanted to skip myself; with Pocket Watch it's Ava's space
+- g1 Dee (4/3, yes): big purple and the skip is a real tool to move your last minion to the end of the round; I used it that way
+- g4 Ava (3/3, yes): +6 purple in III was my best flat grab and the skip cost me nothing; it's free whenever you have a snake double or a late turn.
+- g4 Ben (3/3, yes): big purple, and the skip is near free on your own snake double, so it's usually obvious.
+- g4 Cal (3/4, yes): +4 in round I was a contest-winner, and the skip is free when it lands on your own last turn
+- g4 Dee (3/3, yes): free on your last minion, so it's really a 4-6 purple space with no cost for whoever places last.
+- g6 Ava (4/4, yes): with Pocket Watch it's really +1 more, and the self-skip feels like a cost you can turn into a gain.
+- g6 Ben (3/3, yes): big purple and the skip is free on your last minion, which is when I took it
+- g6 Cal (2/2, yes): big purple but the skip barely mattered, and I never wanted it
+- g7 Ava (3/3, yes): big purple and the skip barely hurts
+- g7 Ben (4/4, yes): with Pocket Watch the self-skip is a bonus not a cost, and the delayed minion is good tempo
+- g7 Cal (3/3, yes): big purple for a skip, mostly Ben's engine
+- g7 Dee (4/4, yes): the biggest purple chunk, and the skip pushing you late is an upside, not a cost
+- g8 Ava (3/2, yes): big purple, but in two-player every skip feeds Pocket Watch and Gossip, so it's mostly Ben's card.
+- g8 Ben (4/4, yes): the big purple space, and with Pocket Watch and Gossip the self-skip is a bonus, not a cost.
+
+### Allowance
+- g2 Ava (3/3, yes): solid white plus a follower nudge
+- g2 Ben (3/4, yes): Allowance plus a member buy is a nice tempo turn; Dee's Echo copying mine was a fair sting.
+- g2 Cal (3/3, yes): solid white plus a follower; Dee's last-turn closer.
+- g2 Dee (4/4, yes): solid every round, and its recruit bonus made cheap members worth taking
+- g4 Ava (3/3, yes): Cal used it every round with a recruit; solid, never contested.
+- g4 Ben (3/3, yes): steady white plus a small member bonus, Cal's bread and butter.
+- g4 Cal (4/4, yes): +white plus a follower bonus for recruiting a member; I took it every round and it always paid
+- g4 Dee (3/3, yes): solid white plus a member bonus, Cal took it every round.
+- g6 Ava (3/3, yes): plain and good, the follower kicker makes recruiting there feel right.
+- g6 Ben (3/3, yes): reliable white plus a member bonus; never a hard choice
+- g6 Cal (4/4, yes): +4 white and +3 on a member recruit in round III is one of the best turns there
+- g7 Ava (3/3, yes): solid white plus a follower bonus when you're recruiting anyway
+- g7 Ben (2/3, yes): solid but generic, everyone took it as a member-buy turn
+- g7 Cal (4/4, yes): white plus a member bonus, my bread and butter
+- g7 Dee (3/3, yes): fine white plus a small recruit bonus; I used it to buy Recluse
+
+### Cash In
+- g2 Ava (1/1, yes): never better than buying followers 1:1, nobody took it
+- g2 Ben (2/2, yes): Nobody took it; by round III white mostly went straight into follower buys instead.
+- g2 Cal (1/1, yes): nobody took it; holding white for the contest beat cashing it every time.
+- g2 Dee (3/3, yes): a genuine last-turn dilemma against keeping the white prize; I passed it for 10 followers plus the contest
+- g4 Ava (4/3, yes): 16 white into 17 followers for Cal in one go; fine as the white payoff but it makes white a race nobody else can join.
+- g4 Ben (4/4, yes): Cal turned 16 white into 17 followers in one placement; it's the white payoff, and fine as a center space.
+- g4 Cal (4/4, yes): 16 white into 17 followers in one placement without a recruit; the catch is it empties your white contest, which is the right tension
+- g4 Dee (5/4, yes): 16 white into 17 followers in one placement; white's whole game funnels into it.
+- g6 Ava (2/1, yes): by the time it opens nobody has white except the white leader, so it was +1 white for me.
+- g6 Ben (2/2, yes): I never had a turn where Cash In beat keeping White for the +10; it's a dead space if you're contesting White
+- g6 Cal (2/2, yes): nobody wants to give up the white contest to use it; it ended as Ava's filler
+- g7 Ava (2/2, yes): needed a white pile no one but Cal had
+- g7 Ben (2/2, yes): needs a white pile you are not defending, rarely lines up
+- g7 Cal (2/2, yes): it kills your own white lead, so it only works for whoever isn't fighting white
+- g7 Dee (2/2, yes): weak unless you're leading white; it was my 2-follower scrap at the end
+
+### Crime Wave
+- g2 Ava (2/2, yes): half a pile sounds scary but piles were tiny, so it took 1
+- g2 Ben (4/3, yes): I took it mostly to deny it; its threat shapes everyone's pile size, which is good design.
+- g2 Cal (4/2, yes): halving my blue late was the exact threat I planned around; feels bad to receive.
+- g2 Dee (4/3, yes): I took it purely so it couldn't halve my 11 white; a great blocking space
+- g3 Ava (4/4, yes): with Desperado it wiped Ben's whole green pile; fine without it
+- g3 Ben (4/3, yes): halving is fair; with Desperado it's a full wipe, which is too much, but as my last-seat green denial it was a great move
+- g3 Cal (3/2, yes): half a pile is strong, and with Desperado it takes the whole pile; the doubling is the problem, not this space
+- g3 Dee (3/3, yes): fine alone, a full-pile wipe with Desperado
+- g6 Ava (3/2, yes): scary in theory, but with Lie Low and Bodyguards around it was dead by the time I could use it.
+- g6 Ben (3/3, yes): Cal's half-pile hit on my white in round II hurt, but later nobody had an unprotected pile to aim it at
+- g6 Cal (3/3, yes): halving Ben's white was good in round II, but against Bodyguards and empty piles it's blank
+- g7 Ava (4/1, yes): felt awful from my side twice: half my silver pile gone each time, with nothing I could do
+- g7 Ben (5/4, yes): halving Ava's 11 silver was a big swing and taking it also protected my own pile
+- g7 Cal (4/4, yes): halving a big pile is a scary threat and a fair one
+- g7 Dee (4/4, yes): halving a pile is the scariest space on the wheel, so taking it first is half defense
+
+### Estate Sale
+- g2 Ava (4/3, yes): Dee turned a poached 8-cost Patroness into 9 white and the white +10
+- g2 Ben (4/4, yes): Dee's Estate Sale on a poached Patroness for 8 white won him white; strong when chained with theft.
+- g2 Cal (4/3, yes): turning a poached 8-cost into 8 white is a huge two-step; strong, maybe too strong paired with Poach.
+- g2 Dee (5/5, yes): turning a poached 8-cost member into 8 white won me a +10 contest; really swingy
+- g4 Ava (3/2, yes): I weighed casting out Doormen to steal white from Cal; real choice, but casting out your own members rarely feels good.
+- g4 Ben (3/4, yes): turning Scouts into Recluse was a nice pivot; it's flexible.
+- g4 Cal (3/3, yes): Martyrs for 4 white plus its own 4 followers was neat, but it was mostly a defensive grab
+- g4 Dee (2/2, yes): a decent white pivot, never a key play.
+- g6 Ava (3/3, yes): Cal's Martyrs and Cutpurse dumps were clever, but it's niche.
+- g6 Ben (4/3, yes): Cal turning Martyrs and Cutpurse into white won him the White contests; a strong conversion
+- g6 Cal (5/4, yes): Martyrs plus Estate Sale was 4 followers and 5 white, and it also blocked Ben's Bodyguards-for-9-white
+- g7 Ava (3/3, yes): a real contest buy for white
+- g7 Ben (3/3, yes): Cal used it as a contest buy, reasonable dilemma
+- g7 Cal (5/5, yes): casting out a spent Extra Hand for 10 white is the best contest tool I found
+- g7 Dee (4/3, yes): Cal used it twice as a contest buy and it won him white both times
+
+### Exchange
+- g2 Ava (3/3, yes): my clean last-turn conversion, 3 white into 6 followers
+- g2 Ben (4/4, yes): Best conversion rate on the board and great on a last turn; I used it twice.
+- g2 Cal (3/3, yes): good late cash-out of odd leftovers, the pack sizes otherwise strand them.
+- g2 Dee (3/3, yes): fine converter; through Cover it handed me 4 followers while keeping my white lead
+- g4 Ava (4/4, yes): 2 followers per resource is the best conversion rate on the wheel; I'd take it more if it wasn't gone early.
+- g4 Ben (3/3, yes): a clean small conversion that gives followers without spending a recruit, which matters more than its numbers suggest.
+- g4 Cal (2/2, yes): a small +1 to +3 that everybody took when nothing else was left
+- g4 Dee (3/3, yes): +2 per resource is a nice small edge for a last minion, never exciting.
+- g6 Ava (4/4, yes): 3 white into 6 followers in round III is very efficient; Cal lived on it.
+- g6 Ben (3/3, yes): Cal's round III Exchange into a 10-buy was a quiet 6 points; fine
+- g6 Cal (4/4, yes): 3 resources for 6 followers in round III is a clean cash-out; in round I it's a trap if you hold the only white
+- g7 Ava (3/4, yes): turning a dead color into 2 followers each feels great
+- g7 Ben (3/3, yes): clean conversion that Dee leaned on, fair
+- g7 Cal (3/3, yes): solid conversion, Dee used it well
+- g7 Dee (4/4, yes): the best follower rate in the game for a numbers player; I took it every round I could
+
+### Farewell
+- g2 Ava (4/4, yes): Martyrs paid its cost twice, +5 net for one minion
+- g2 Ben (3/4, yes): Farewell on Martyrs is a double payout; fun, but only with Martyrs it feels like a combo, otherwise rarely worth it.
+- g2 Cal (4/4, yes): Martyrs through Farewell paying twice was the strongest single play I saw.
+- g2 Dee (3/3, yes): with Martyrs it pays twice, otherwise it's niche
+- g4 Ava (5/2, no): paying full printed cost for a used-up once-per-game card (Heiresses 9, Extra Hand 9) is the biggest exploit in the game and feels bad to watch.
+- g4 Ben (5/5, yes): casting out a spent once-per-game card for its full cost is a big payoff (Cal's Heiresses for 9, my Extra Hand for 9); fun but probably overtuned on expensive used-up cards.
+- g4 Cal (5/5, yes): casting out a spent Heiresses for 9 and Ben's Extra Hand for 9: paying full cost on a used-up card is the strongest thing white does and maybe too strong
+- g4 Dee (5/4, yes): full printed cost back on a spent once-per-game member (Heiresses for 9, Extra Hand for 9) is the outlier on the board.
+- g6 Ava (2/1, unsure): I had no members left so it was +1 white; never wanted it otherwise.
+- g6 Ben (1/1, yes): nobody wanted to give up members; Ava took it at the end with nothing to send away
+- g6 Cal (2/2, yes): I always preferred Estate Sale; Farewell on Martyrs was the combo I passed on
+- g7 Ava (4/3, yes): Con Men or Martyrs into Farewell is a strong two-step that rewards reading the board
+- g7 Ben (4/5, yes): casting out a spent Con Men for +7 was the best feeling play of round II
+- g7 Cal (4/5, yes): Martyrs into Farewell paid twice, and Ben's Con Men into Farewell was nasty
+- g7 Dee (3/3, yes): Ben's Con Men into Farewell and Cal's Martyrs into Farewell were both strong two-steps
+
+### Help Yourself
+- g2 Ava (4/4, yes): strong but a steal into an open Echo just gets copied back at you
+- g2 Ben (4/4, yes): The best round-one space and a real fight over who takes it; it decides who gets to keep a pile.
+- g2 Cal (3/2, yes): round-one 5-steal swings, and with Echo right behind it the first player gets stripped.
+- g2 Dee (4/4, yes): strong, and it sets up an Echo for whoever is next, which is a nice tension
+- g3 Ava (5/4, yes): the strongest outer space all game; with Fence plus Reprise it's 8 resources, with Desperado it's 10
+- g3 Ben (4/2, yes): fine alone, but with Fence plus Reprise or Desperado doubling it to 10 it's the single strongest space on the wheel and feels bad to be on the end of
+- g3 Cal (5/5, yes): the best space on the board for me with Fence, then the cruelest one against me with Desperado; nothing else swings this much
+- g3 Dee (5/3, yes): with Fence plus Reprise, or Desperado doubling to 10, this is the strongest space in the game
+- g6 Ava (5/2, yes): steal 3 then steal 4 off my purple both decided contests; strongest outer space, and it feels bad on the receiving end every time.
+- g6 Ben (5/5, yes): steal 3 in round I decided two contests, steal 4 in round II broke Ava's stack; maybe too efficient early
+- g6 Cal (4/3, yes): brutal in round I-II on stacked piles, dead in round III once everyone had Lie Low or Bodyguards
+- g7 Ava (4/4, yes): my round II steal-back of Ben's silver was satisfying and exactly what the color should feel like
+- g7 Ben (4/3, yes): punishes any pile, took 5 silver from me right when it hurt
+- g7 Cal (4/5, yes): in round I, three steals from tiny piles gave me three contest leads at once
+- g7 Dee (4/3, yes): a steal of 5 that also shields your pile by taking the space away from others
+
+### Lie Low
+- g2 Ava (5/4, yes): as the leader in round III this was the best space on the board, it shuts off Poach, Shake Down and every steal at once
+- g2 Ben (5/3, yes): Round III Lie Low made Ava untouchable and decided the game; too strong when stealing is this dense.
+- g2 Cal (5/4, yes): the most important defensive space; it saved my round II pile and it's how Ava protected three contests in round III.
+- g2 Dee (5/3, yes): Ava's round III Lie Low decided the game: with this much theft, immunity beats any steal, and it feels bad to have no answer
+- g3 Ava (5/3, yes): in round III it decided the game: Dee's 19-resource pile was untouchable while everyone else got stripped
+- g3 Ben (4/3, yes): in round III it's the best defence in the game; Dee's 19 untouchable resources won her two contests
+- g3 Cal (4/3, yes): looked weak in round I, then in round III it protected Dee's huge pile and won her the game
+- g3 Dee (5/5, yes): the best defensive space I've played; in round III it lets you hold two contests while everyone else gets robbed
+- g6 Ava (4/3, yes): Cal used it every round and it blanked my late Help Yourself and Crime Wave completely.
+- g6 Ben (5/3, yes): Cal took it every round and was untouchable three rounds running; once per round to one player is too much protection
+- g6 Cal (5/4, yes): I took it all three rounds; immunity from steals is worth far more than its tiny gain
+- g7 Ava (4/4, yes): Lie Low plus Accomplice in round I was a clean combo; Cal's round III shield looked cheap for what it blocks
+- g7 Ben (3/3, yes): Cal grabbed it every round as a shield, the follower-steal wording question needs a ruling
+- g7 Cal (5/4, yes): a shield for the leader, but it misses Raiders and Debt Collectors, which feels wrong
+- g7 Dee (4/3, yes): Cal's round III Lie Low made him immune to every steal, so all theft fell on the other three of us
+
+### Poach
+- g2 Ava (4/3, yes): Dee's Poach plus Reprise took two of Cal's cards, a lot for one center space
+- g2 Ben (4/2, yes): Dee's Poach plus Reprise on it took two of Cal's best cards; strong, and the copy makes it a feel-bad.
+- g2 Cal (5/1, yes): brutal: with Reprise repeating it Dee took two of my best members in one double turn, the biggest feel-bad of my night.
+- g2 Dee (5/5, yes): the highlight of my game, but when Reprise can repeat it, it's too much in one double turn
+- g3 Ava (4/2, yes): fine alone, but Echo copying it gave Cal two members for one space, which felt bad
+- g3 Ben (4/1, yes): taking members is on-color, but Echo copying Poach for two members in one placement was the worst feel-bad of the night
+- g3 Cal (5/5, yes): Con Men's On Recruit made it a 5-steal plus 2 members; that it can be copied is the issue
+- g3 Dee (4/2, yes): copying it with Echo for a second member in one turn felt like too much
+- g6 Ava (5/2, yes): losing Line Cutters for nothing in round III stung, and there's no defense except Lie Low.
+- g6 Ben (4/4, yes): Line Cutters for a 6-point swing, and I took it partly to stop Cal swapping my Bodyguards
+- g6 Cal (3/3, yes): Ben grabbed Line Cutters with it; fine, never a dilemma for me
+- g7 Ava (4/2, yes): losing an unused once-per-game member hurt, but it was fair: use it or lose it
+- g7 Ben (4/3, yes): Cal poaching an unfired Extra Hand was a sharp punish
+- g7 Cal (5/5, yes): taking Ava's unused Extra Hand was my best moment of the game
+- g7 Dee (3/3, yes): great on an unfired once-per-game card like Extra Hand, otherwise just a body
+
+### Shake Down
+- g2 Ava (5/4, yes): against a player with no resources it is just a free member, which felt great for me and brutal for Ben
+- g2 Ben (5/1, yes): Brutal on a broke player: no choice, you just lose a member; with Reprise it took two of my three cards in one round.
+- g2 Cal (3/2, yes): punishes broke players hard, Ava took two of Ben's members with it plus Reprise.
+- g2 Dee (4/2, yes): brutal on a broke player; Ben lost two members to it for nothing, which reads as a feel-bad
+- g3 Ava (3/3, yes): with empty piles it's just Poach in round II; it never asked me to choose a rival when only one was legal
+- g3 Ben (3/2, yes): against an empty pile it's just Poach in round II; it only became the pay-or-lose dilemma Cal liked at the very end
+- g3 Cal (4/4, yes): as the last placement it gave me a real choice, pay 5 and drop Red into a tie or lose Loyalists; I liked it, but against empty piles it's just Poach
+- g3 Dee (5/5, yes): as the final placement it's a real dilemma for the target, best moment of the night
+- g6 Ava (5/2, yes): took Closer off me for free because I was broke; brutal against someone who just converted.
+- g6 Ben (4/5, yes): taking Closer off a broke Ava was a highlight; it really punishes an empty pile
+- g6 Cal (3/3, yes): punishes an empty pile hard; taking Closer from Ava was a real swing
+- g7 Ava (5/4, yes): the best dilemma on the wheel; the On Recruit firing again for the taker is a trap that's too easy to miss
+- g7 Ben (4/4, yes): best-written dilemma on the wheel, the Accomplice re-fire wrinkle is great
+- g7 Cal (4/4, yes): a real pay-or-give dilemma, and the On Recruit re-fire makes it sharper
+- g7 Dee (4/4, yes): a real dilemma, especially with members whose On Recruit fires again for the taker
+
+### Splurge
+- g2 Ava (1/1, yes): nobody wanted it, +1 white and a bonus no one set up
+- g2 Ben (1/1, yes): Never had the resources to make the per-2 bonus mean anything; it was just +1 white for a contest.
+- g2 Cal (1/1, yes): never mattered, nobody wanted it.
+- g2 Dee (1/1, yes): nobody ever wanted it
+- g4 Ava (1/1, yes): stayed open in II and III; +1 white and a conditional bonus nobody lined up.
+- g4 Ben (2/2, yes): needs a pricey member that turn to matter; mostly a leftover.
+- g4 Cal (3/4, yes): Shift Crew paid in purple for +2 extra was a clean round I turn; later nobody wanted it
+- g4 Dee (1/2, yes): rarely worth a minion; mostly left open.
+- g6 Ava (2/2, yes): only 1 white unless you're buying something big; I took it as scraps.
+- g6 Ben (2/3, yes): only mattered as my last-slot white tie in round I
+- g6 Cal (1/1, yes): +1 white and the follower bonus never mattered to anyone
+- g7 Ava (2/2, yes): the space left over every round
+- g7 Ben (1/1, yes): my round I last pick by default and I never wanted it
+- g7 Cal (3/3, yes): made Shift Crew 6 followers for 4, good with a mid-price member
+- g7 Dee (1/2, yes): 1 white and a bonus that needs a pricey member; almost dead
+
+### Stash
+- g2 Ava (4/3, yes): I took it mostly to deny the last magenta, a real contest tool
+- g2 Ben (2/3, unsure): Plain magenta plus a follower; doesn't feel like stealing, reads like a generic income space.
+- g2 Cal (2/2, yes): fine resource space nobody fought over.
+- g2 Dee (2/2, yes): flat magenta; only Ava wanted it
+- g3 Ava (2/3, yes): reliable magenta, good when you also recruit that turn
+- g3 Ben (2/2, yes): solid magenta and a follower bonus, never a dilemma
+- g3 Cal (2/2, yes): +N magenta and a follower for a member; filler that people take for the contest
+- g3 Dee (4/4, yes): clean way to win magenta, and the recruit bonus made Scouts a great buy
+- g6 Ava (3/3, yes): solid magenta with a small member bonus, never a dilemma.
+- g6 Ben (3/3, unsure): solid magenta and a member bonus, but it plays like White's Allowance in a magenta coat
+- g6 Cal (4/4, yes): +5 magenta and a recruit bonus decided the magenta contest and powered Raiders
+- g7 Ava (4/3, yes): I took it in round III mainly to keep Cal off it, which is a good sign
+- g7 Ben (2/3, yes): plain magenta plus a recruit bonus, fine
+- g7 Cal (4/3, yes): safe magenta plus a member bonus, solid every round
+- g7 Dee (3/3, yes): plain magenta plus a recruit bonus; solid filler
 
 ### Con Men
 - g1 Cal (4/3, n/a): a 5 steal on a 7 card is strong; the steal picker renumbers after each pick, which cost me a misclick
@@ -144,6 +471,8 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g3 Cal (5/5, unsure): free off Walk-In and then copied by Encore, Echo, Poach and Greatest Hits; its On Recruit is the most copied effect in the game
 - g3 Dee (5/3, no): its 5-steal On Recruit fired four times through Walk-In, Encore, Echo and Greatest Hits; too copyable
 - g4 Ben (3/3, yes): weighed it on the last turn to steal Cal's white or blue, but 5 can't flip a 14 lead, so it lost to a straight buy of 10.
+- g7 Ben (5/5, unsure): 7 any for 2 followers and a 5-steal is really about 2 net, too cheap, and Farewell then refunds the whole cost
+- g8 Ben (2/2, unsure): stealing 5 from a player with 40 surplus does nothing; 7 cost is too high.
 
 ### Dabblers
 - g1 Cal (2/2, n/a): a 2-for-3 body I mostly used as swap fodder
@@ -155,176 +484,9 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g3 Dee (2/2, unsure): 3 for 2 loses to buying 5 followers; I worried 'wild' would block Guest Book
 - g4 Ava (2/3, n/a-grey): 2 followers for 3 is a fine cheap body, nothing more.
 - g4 Cal (2/2, unsure): weighed it as a cheap body; 2 for 3 is fine but forgettable
-
-### Tryout
-- g1 Ava (3/3, yes): only as good as the best On Recruit in the shop, and Dee's Ringleader/Philanthropists Tryouts showed it can be decent
-- g1 Ben (3/3, unsure): Only as good as the best On Recruit in the shop; Gardener and Philanthropists made it fine, and it's a Blue-feeling shop trick sitting in Red.
-- g1 Cal (3/4, yes): dead text until a shop card has a good On Recruit; Gardener in round I and Philanthropists for Dee in round III made it great
-- g1 Dee (4/4, yes): twice it was the best space just because of what sat in the shop (Ringleader, Philanthropists): fun to read the shop for it
-- g3 Ava (4/4, yes): using a shop member's On Recruit for free is great when Grifter or Ringleader is up; Ben's Grifter off it took 6 from me
-- g3 Ben (4/4, yes): Grifter through Tryout scaled off my member count into a 5-6 steal, and picking which shop On Recruit to borrow is a real read of the shop
-- g3 Cal (3/3, yes): borrowing Ringleader's On Recruit in round II was a neat way to lock Red, but most turns it's just +2 red
-- g3 Dee (3/3, yes): fine filler, but Grifter through it (6-steal for free) was a bigger deal than the space itself
-
-### Gather
-- g1 Ava (3/3, yes): solid red, and the follower kicker for buying a member made me buy Closer when I might not have
-- g1 Ben (3/3, yes): Solid red plus a follower kicker if you're recruiting anyway; rarely a dilemma.
-- g1 Cal (3/3, yes): plain red with a small member kicker, a fine filler that sometimes swung the red count
-- g1 Dee (2/2, yes): plain red, the member bonus rarely mattered next to buying 10
-- g3 Ava (2/2, yes): plain red, and the member bonus only mattered once
-- g3 Ben (2/2, yes): plain red with a small recruit bonus; only mattered as the last-seat red grab
-- g3 Cal (3/3, yes): plain and honest; the round III +3 for recruiting a member made my last pick a real choice
-- g3 Dee (2/2, yes): +2/3/4 red and a small bonus; I only took it when nothing else was left
-
-### Walk-In
-- g1 Ava (4/5, yes): free Deprogrammers and free HR off a visible top card were my two best moments of the early game; very swingy, depends on what's on top
-- g1 Ben (4/4, yes): A free 4-member card for one minion is the best feeling on the wheel when the top card is good; swingy because the top card is known.
-- g1 Cal (3/4, yes): the preview of the top card makes it a no-brainer or a pass; free HR and Deprogrammers for Ava were huge
-- g1 Dee (4/3, yes): swingy: a free HR or Deprogrammers when the top card is fat, a dud otherwise, and everyone sees which
-- g3 Ava (4/3, yes): a blind free member that can be Con Men is a lottery ticket; the red gift to everyone is a real cost
-- g3 Ben (4/4, yes): blind free flip is exciting but swingy: Con Men for free decided a whole round, Triplets for free was a gift
-- g3 Cal (4/3, unsure): a blind flip that hit Con Men for free and set off three 5-steals; too swingy for an outer space
-- g3 Dee (4/4, yes): a free blind member is exciting, but flipping Con Men for free and stealing 5 is a lottery ticket that's too big
-
-### Promote
-- g1 Ava (5/2, yes): the list offered rival-to-rival swaps and a 1-cost for a 10-cost, way past 'up to 2 more'; it decided too much for Cal and felt bad to be on the end of
-- g1 Ben (5/2, unsure): Offering rival-to-rival swaps, with Recruiter and Deprogrammers paying out each time, was the strongest engine at the table and felt like a misread of the card.
-- g1 Cal (5/5, unsure): swapping my spent cards for rivals' fat bodies with Recruiter paying was my best engine, but the list offered rival-to-rival and cost-ignoring swaps the card te
-- g1 Dee (5/2, yes): the list offers rival-to-rival swaps far past 'up to 2 more'; with Recruiter it was the snowball that built Cal's lead; reads like a bug
-- g3 Ava (4/4, yes): Cutpurse into Alchemists was a good swap, but it lets you swap any cult's member, so a 1-cost could take a 7-cost 'from the rival's side'
-- g3 Ben (3/2, unsure): it reaching into my cult to swap Alchemists for Cutpurse felt like theft wearing a red hat, and the 'up to 2 more' side reads backwards to everyone at the table
-- g3 Cal (2/2, yes): I never took it; the 'up to 2 more' on a rival's card reads backwards, and the table argued about it
-- g3 Dee (2/2, unsure): the 'up to 2 more' read backwards when the pricier card is the rival's, the table argued about it
-
-### Demote
-- g1 Ava (4/1, yes): with Recruiter and Deprogrammers stacking, losing Line Cutters and HR to it felt awful and I couldn't defend
-- g1 Ben (4/2, unsure): Same issue as Promote; Cal took HR off Ava with it, which is a big feel-bad for whoever loses the member.
-- g1 Cal (4/4, unsure): same as Promote: Scouts for Line Cutters and Mentor & Protégés for HR were big swings, and the cost limit didn't seem to apply
-- g1 Dee (5/2, yes): same rival-to-rival problem; taking HR and Line Cutters off Ava for one minion felt like a feel-bad for her
-- g3 Ava (5/5, yes): pushing Old Maid into Dee's cult was my best moment; also the most broken-feeling thing I did
-- g3 Ben (3/3, unsure): Ava pushing Old Maid into Dee's cult was clever but it's another red space that acts like magenta
-- g3 Cal (4/2, yes): pushing Old Maid into Dee's cult was a -8 swing off one space; clever, but it feels bad on the receiving end
-- g3 Dee (4/2, yes): Demote plus Old Maid into a rival's cult is a -8 swing for one middle-ring space; strong and a feel-bad
-
-### Recruit a Member
-- g1 Ava (2/3, yes): fine round III space, never a dilemma for me
-- g1 Ben (3/3, yes): A free member up to 8 is fine, but in round III a 10-follower buy usually beats any 8-cost body.
-- g1 Cal (4/4, yes): a free card of 8 or less in round III; Philanthropists through it was +5 and decided silver
-- g1 Dee (3/3, yes): fine round III value, a free recruit on top of the turn's buy
-- g3 Ava (4/4, yes): a free member up to 8 in round III; Big Tent for free set up my endgame
-- g3 Ben (4/4, yes): a free member up to 8 in round III is a strong, clear center space
-- g3 Cal (2/3, yes): fine center space, but it never competed with Poach or Greatest Hits for me
-- g3 Dee (3/3, yes): solid center, nobody fought over it
-
-### Sleep In
-- g1 Ava (4/4, yes): with Pocket Watch it was one of my best purple plays every round, and the self-skip is a real cost early
-- g1 Ben (3/3, yes): Biggest raw purple, and the skip barely hurts, which makes it a near auto-pick when it's open.
-- g1 Cal (2/2, yes): big purple but I never wanted to skip myself; with Pocket Watch it's Ava's space
-- g1 Dee (4/3, yes): big purple and the skip is a real tool to move your last minion to the end of the round; I used it that way
-- g4 Ava (3/3, yes): +6 purple in III was my best flat grab and the skip cost me nothing; it's free whenever you have a snake double or a late turn.
-- g4 Ben (3/3, yes): big purple, and the skip is near free on your own snake double, so it's usually obvious.
-- g4 Cal (3/4, yes): +4 in round I was a contest-winner, and the skip is free when it lands on your own last turn
-- g4 Dee (3/3, yes): free on your last minion, so it's really a 4-6 purple space with no cost for whoever places last.
-
-### Hold Up
-- g1 Ava (4/4, yes): skipping Dee pushed her turn and won me the purple tie, a real blocking tool
-- g1 Ben (2/2, yes): Skipping a rival mostly just paid Ava's Pocket Watch; the sting on the skipped player is small.
-- g1 Cal (3/3, yes): decent purple and the skip on the next player stings, especially Dee's round I last pick
-- g1 Dee (4/2, yes): pushing a rival's turn feels mean in a good way, but with Pocket Watch on the table it pays Ava every time
-- g4 Ava (2/2, yes): Ben skipping me in round I with it just shoved me onto the last space left; felt-bad on the receiving end, small for the taker.
-- g4 Ben (4/4, yes): in round I skipping Ava for a Pocket Watch ping was a real tactical play; late it was just +4.
-- g4 Cal (2/2, yes): just purple for whoever's on purple; the skip on a rival rarely mattered
-- g4 Dee (2/2, yes): mostly a purple pickup; the skip rarely hurt anyone.
-
-### Right Away
-- g1 Ava (1/1, yes): nobody wanted it; Dee placing it as a last minion did literally nothing
-- g1 Ben (1/1, yes): Never mattered; Dee took it with no minions left and it did nothing.
-- g1 Cal (1/1, yes): tiny purple and a double turn I never needed; Dee placed it with no minion left and got nothing
-- g1 Dee (1/1, yes): took it as the last open space; it did nothing because I had no minion left
-- g4 Ava (1/1, yes): took it once as the only open space with no minions left, so it did nothing; a filler.
-- g4 Ben (2/2, yes): small purple and the extra speed rarely mattered; filler.
-- g4 Cal (2/2, yes): small purple, useful only to chain Ben's end block
-- g4 Dee (2/2, yes): weak in round I when you have few minions, fine filler later.
-
-### Crowd In
-- g1 Ava (2/2, yes): Cal used it once; +1 minion in round III is fine but quiet
-- g1 Ben (3/3, yes): An extra minion in round III is good, but nobody fought for it.
-- g1 Cal (4/4, yes): an extra recruit in round III is worth a buy-10, which makes it much better than +3 purple reads
-- g1 Dee (3/3, yes): extra minion is strong in round III when recruits are the cap
-- g4 Ava (3/3, yes): read at the table as the only counter to Last Call, but the extra minion still lands before a Last Call block so it isn't one.
-- g4 Ben (3/3, yes): Cal took it as the counter to Last Call, but an extra minion that still lands before a Last Call block isn't much of a counter.
-- g4 Cal (4/3, yes): I took it thinking the extra minion came after Last Call; it doesn't, which made it a plain extra turn and a bit of a letdown
-- g4 Dee (3/3, yes): Cal took it as a counter to Last Call but its extra minion still landed before Ben's block, so the counter didn't really work.
-
-### Last Call
-- g1 Ava (5/5, yes): in round III it's the strongest space in the game: four placements after everyone's out wins every cheap contest; probably too strong at the +10 tier
-- g1 Ben (5/5, yes): The decisive card of the game: in round III, four placements after everyone is out let Ava take all four +10 contests. Too strong at the +10 tier.
-- g1 Cal (5/3, yes): in round III it's the best space in the game: four closing placements swept every contest; feels-bad for the other three
-- g1 Dee (5/4, yes): in round III it's the best space in the game: four closing placements decided all four +10 contests; probably too strong at that tier
-- g4 Ava (5/4, yes): the strongest space in round III: four or five placements nobody can answer, and it decided this game.
-- g4 Ben (5/5, yes): the most interesting space I played: followers, purple, and the last word, paid for with thin leftovers; in round III it may be too good with Pocket Watch and C
-- g4 Cal (5/4, yes): won the game: going to the back in round III with nothing left to fear from rivals turns into four free cash-outs; worth a look
-- g4 Dee (5/4, yes): in round III it's four unanswerable placements and recruits at the very end; it decided the game.
-
-### Crunch Time
-- g1 Ava (1/1, yes): never taken all game; +2 purple and turns in a row didn't compete with anything
-- g1 Ben (1/1, yes): Never taken; +2 purple and turns sooner isn't worth a minion.
-- g1 Cal (1/1, yes): nobody took it all game, a double turn without a payoff
-- g1 Dee (1/1, yes): nobody took it all game
-- g4 Ava (1/1, yes): nobody took it in either round; +2 purple for an in-a-row is too little.
-- g4 Ben (1/1, yes): never wanted it; +2 purple and turn speed I didn't need.
-- g4 Cal (1/1, yes): nobody took it all game; +2 purple and a double turn never beat anything else
-- g4 Dee (1/1, yes): nobody took it all game.
-
-### Toast
-- g1 Ava (3/3, yes): Dee's silver engine with Caterer; for everyone else it just fed Dee's lead
-- g1 Ben (3/3, yes): Gives everyone silver, which only helps whoever already leads silver; fine for Dee with Caterer.
-- g1 Cal (3/3, yes): Dee's engine with Caterer; the gift to rivals is small enough not to matter
-- g1 Dee (5/5, yes): my engine every round; with Caterer it's +5/+8/+11 silver and a clear plan from turn one
-- g4 Ava (3/3, yes): with Caterer it was Dee's engine; without Caterer it's a gift to the table.
-- g4 Ben (3/3, yes): big for Dee with Caterer; for anyone else it's mostly a gift to the table.
-- g4 Cal (3/3, yes): the silver player's bread and butter; the gifts to rivals were mostly harmless
-- g4 Dee (4/4, yes): with Caterer it was my backbone, and in round III taking it was mostly to deny a rival +9 silver.
-
-### Polish
-- g1 Ava (2/2, yes): a leftover space; 2 silver into 4 any is fine but never exciting
-- g1 Ben (2/2, yes): A small 2-for-4 conversion and mostly a leftover space.
-- g1 Cal (2/2, yes): +2 net resources, mostly a leftover; Ava used it once for red
-- g1 Dee (3/3, yes): small, but turning 2 silver into 4 purple to tie a contest at the end was a nice little out
-- g4 Ava (4/4, yes): 2 silver into 4 of anything is a real decision every time and fed my blue race.
-- g4 Ben (4/3, yes): in round I it was the block that won me purple, since Cal could have turned my gifted silver into 4 purple.
-- g4 Cal (3/3, yes): the escape hatch for silver you were handed; fine and honest
-- g4 Dee (2/2, yes): a quiet converter; it mainly recycled gifted silver into blue for rivals.
-
-### Party Gifts
-- g1 Ava (4/3, yes): 6 followers for nothing in round I is loud, and it sends silver to whoever isn't racing you, which kingmakes
-- g1 Ben (4/4, yes): Six followers for 3 silver to rivals is the best flat space early; the silver has to go somewhere, which kingmakes the leader.
-- g1 Cal (4/5, yes): 6 followers for 3 silver you never owned is the strongest cheap space; best in round I and still great in round III
-- g1 Dee (4/3, yes): 6 followers for nothing in round I is loud, and the silver has to go somewhere, usually to the leader
-- g4 Ava (4/4, yes): +6 to +7 followers for one minion was my best space twice; it feels a notch above the other outer spaces.
-- g4 Ben (4/4, yes): +6 followers from one outer space is the best early rate on the wheel, and the silver you hand out can come back on you through Polish.
-- g4 Cal (4/4, yes): +6 or +7 followers for one minion in rounds I and II is the best outer space on the wheel
-- g4 Dee (4/4, yes): +6 followers for 3 silver to rivals is the best outer-ring rate, picked every round.
-
-### Party Favors
-- g1 Ava (2/2, yes): giving 1 resource back felt like a small tax nobody noticed
-- g1 Ben (2/2, yes): Plus 3 for you and plus 6 silver for the table; meh, unless you're Dee with Caterer.
-- g1 Cal (2/2, yes): a little silver for Dee and a resource from each of us; barely moved anything
-- g1 Dee (3/3, yes): good raw gain; rivals choosing what to give means it's always their junk, which is fine
-- g4 Ava (2/2, yes): as the receiver it's a painless 1-for-2 swap; as the taker it's mostly Caterer bait.
-- g4 Ben (2/2, yes): a small tax on everyone; the choice of what to give was always the obvious junk color.
-- g4 Cal (2/2, yes): the giving-a-resource tax was small and never a real dilemma for me
-- g4 Dee (3/4, yes): nice give-and-take, everyone gets something, and Caterer made it a net 7 resources for me.
-
-### Sweet Talk
-- g1 Ava (3/3, yes): Cal turned it into red for the round II contest; useful converter
-- g1 Ben (3/3, yes): Good for anyone sitting on big silver; otherwise a plain +3.
-- g1 Cal (4/4, yes): turning silver into red took round II's red contest; a real converter
-- g1 Dee (3/3, yes): flexible converter, mostly a +3 silver space for me
-- g4 Ava (2/2, yes): never took it; Dee used it as a silver-to-white converter, fine but quiet.
-- g4 Ben (3/3, yes): flexible converter; it mattered for Dee and could have mattered for anyone fighting a contest.
-- g4 Cal (2/2, yes): Dee's converter; never on my radar
-- g4 Dee (3/3, yes): I took it mostly to deny Ben silver; the conversion only mattered once, for Raiders.
+- g6 Ben (2/3, yes): 3 for 2 followers and 2 members, mostly bought to pump Heiresses
+- g7 Cal (2/2, n/a): a plain body, which I later fed to Estate Sale
+- g7 Dee (2/1, unsure): 3 for 2 followers was worse than just buying followers for my plan
 
 ### Largesse
 - g1 Ava (4/3, yes): 10 followers for one minion is huge, and Party Crasher doubling it fed Cal 10 silver
@@ -335,36 +497,200 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g4 Ben (5/5, yes): +10 followers for one placement is the biggest swing on the board, and it handed out enough silver to decide the silver contest.
 - g4 Cal (5/4, yes): +10 followers in one center placement, and Party Crasher let Ben take it a second time; too big when copyable
 - g4 Dee (5/5, yes): +10 followers in one go, but the 10 silver you give away becomes someone's contest win or followers; it's a real dilemma.
+- g7 Ava (2/4, yes): +10 followers for one minion with silver from the supply, which makes it the obvious first pick, not a choice
+- g7 Ben (2/3, yes): +10 free followers with no setup, Ava took it first and nobody could argue
+- g7 Cal (2/4, yes): +10 for one minion with almost no downside, the obvious first pick in round III
+- g7 Dee (2/4, yes): +10 flat for one minion with no setup, the strongest center space, and you take it without thinking
 
-### Harvest
-- g1 Ava (2/2, yes): plain and fine, Ben's bread and butter
-- g1 Ben (3/3, yes): Plain flexible resources and always a decent pick; I took it every round.
-- g1 Cal (3/3, yes): flexible colors, Ben's yellow base, and red for him at the end
-- g1 Dee (2/2, yes): solid filler, never a hard choice
-- g3 Ava (4/4, yes): the most flexible space; my first pick and my last
-- g3 Ben (3/3, yes): flexible any-color income, good opener; Echo right after it in round I was an obvious pairing
-- g3 Cal (3/3, yes): flexible colors make it the go-to space for reaching a contest late
-- g3 Dee (4/4, yes): +5 of any colors is flexible; I took it partly to deny it
+### Party Favors
+- g1 Ava (2/2, yes): giving 1 resource back felt like a small tax nobody noticed
+- g1 Ben (2/2, yes): Plus 3 for you and plus 6 silver for the table; meh, unless you're Dee with Caterer.
+- g1 Cal (2/2, yes): a little silver for Dee and a resource from each of us; barely moved anything
+- g1 Dee (3/3, yes): good raw gain; rivals choosing what to give means it's always their junk, which is fine
+- g4 Ava (2/2, yes): as the receiver it's a painless 1-for-2 swap; as the taker it's mostly Caterer bait.
+- g4 Ben (2/2, yes): a small tax on everyone; the choice of what to give was always the obvious junk color.
+- g4 Cal (2/2, yes): the giving-a-resource tax was small and never a real dilemma for me
+- g4 Dee (3/4, yes): nice give-and-take, everyone gets something, and Caterer made it a net 7 resources for me.
+- g7 Ava (3/3, yes): good with Caterer, but it raises every rival's silver, so it's only safe when your lead is big
+- g7 Ben (2/2, yes): being on the giving end of a rival's Favors was a chore, the choice is always give your least useful color
+- g7 Cal (3/3, yes): choosing what to hand over is a nice little decision; nobody took it in round III
+- g7 Dee (2/2, yes): nobody touched it in round III; the gift goes to whoever placed, so it never felt like mine
 
-### Trade Seeds
-- g1 Ava (4/4, yes): my closing swap into red decided a contest by one; a great late tool
-- g1 Ben (3/3, yes): A cheap contest swing piece; useful defense in round I.
-- g1 Cal (4/3, yes): swapping 3 into red won me round II's red; Ava used it to close yellow and red
-- g1 Dee (3/3, yes): quiet until the last placements, where swapping into an empty color steals a contest
-- g3 Ava (2/2, yes): rarely worth a minion
-- g3 Ben (3/3, yes): my round I swap into green locked that contest; a quiet but real tool for the last turns
-- g3 Cal (1/1, yes): never mattered to me
-- g3 Dee (2/2, yes): rarely the best option, mostly a threat I counted against
+### Party Gifts
+- g1 Ava (4/3, yes): 6 followers for nothing in round I is loud, and it sends silver to whoever isn't racing you, which kingmakes
+- g1 Ben (4/4, yes): Six followers for 3 silver to rivals is the best flat space early; the silver has to go somewhere, which kingmakes the leader.
+- g1 Cal (4/5, yes): 6 followers for 3 silver you never owned is the strongest cheap space; best in round I and still great in round III
+- g1 Dee (4/3, yes): 6 followers for nothing in round I is loud, and the silver has to go somewhere, usually to the leader
+- g4 Ava (4/4, yes): +6 to +7 followers for one minion was my best space twice; it feels a notch above the other outer spaces.
+- g4 Ben (4/4, yes): +6 followers from one outer space is the best early rate on the wheel, and the silver you hand out can come back on you through Polish.
+- g4 Cal (4/4, yes): +6 or +7 followers for one minion in rounds I and II is the best outer space on the wheel
+- g4 Dee (4/4, yes): +6 followers for 3 silver to rivals is the best outer-ring rate, picked every round.
+- g7 Ava (3/4, yes): free followers with no real cost; in round III it was obviously right, so not much of a decision
+- g7 Ben (3/5, yes): +6 on the first placement is the loudest space in round I and too obvious to pass up
+- g7 Cal (3/4, yes): +6 for handing out 3 is loud in round I and fine later
+- g7 Dee (3/4, yes): +6 for 3 silver handed out is easy money; the only thought is who you feed
 
-### Dilute
-- g1 Ava (5/5, yes): contest defense and offense in one minion; Dee's round I Dilute and my round III one both decided contests
-- g1 Ben (4/4, yes): Three changes when piles are small erase a lead; it was the tool that broke my last contest.
-- g1 Cal (4/3, yes): three changes decides small round I contests; strong for one outer space
-- g1 Dee (5/4, yes): in round I three changes decided two contests for one minion; my favourite tactical space
-- g3 Ava (3/2, yes): I used it defensively, and Customs grew back every yellow I changed, a hard counter
-- g3 Ben (3/2, yes): mostly blunted by Customs; changing a pile concentrated it as often as it broke it
-- g3 Cal (3/2, yes): Dee's Dilute piled all my resources into red and won me Red in round I; it backfires easily
-- g3 Dee (4/4, yes): good tempo in round I; less useful against a Customs holder, which feels right
+### Polish
+- g1 Ava (2/2, yes): a leftover space; 2 silver into 4 any is fine but never exciting
+- g1 Ben (2/2, yes): A small 2-for-4 conversion and mostly a leftover space.
+- g1 Cal (2/2, yes): +2 net resources, mostly a leftover; Ava used it once for red
+- g1 Dee (3/3, yes): small, but turning 2 silver into 4 purple to tie a contest at the end was a nice little out
+- g4 Ava (4/4, yes): 2 silver into 4 of anything is a real decision every time and fed my blue race.
+- g4 Ben (4/3, yes): in round I it was the block that won me purple, since Cal could have turned my gifted silver into 4 purple.
+- g4 Cal (3/3, yes): the escape hatch for silver you were handed; fine and honest
+- g4 Dee (2/2, yes): a quiet converter; it mainly recycled gifted silver into blue for rivals.
+- g7 Ava (4/5, yes): a quiet space that became my game-winning contest flip: two silver into four magenta at the last moment
+- g7 Ben (2/2, yes): a fine late contest flip for Ava but mostly filler
+- g7 Cal (4/4, yes): small on paper but it was the late flip that stole magenta off me by one
+- g7 Dee (3/3, yes): small, but it was my round I purple flip and Ava's round III magenta flip, so a real late-turn tool
+
+### Sweet Talk
+- g1 Ava (3/3, yes): Cal turned it into red for the round II contest; useful converter
+- g1 Ben (3/3, yes): Good for anyone sitting on big silver; otherwise a plain +3.
+- g1 Cal (4/4, yes): turning silver into red took round II's red contest; a real converter
+- g1 Dee (3/3, yes): flexible converter, mostly a +3 silver space for me
+- g4 Ava (2/2, yes): never took it; Dee used it as a silver-to-white converter, fine but quiet.
+- g4 Ben (3/3, yes): flexible converter; it mattered for Dee and could have mattered for anyone fighting a contest.
+- g4 Cal (2/2, yes): Dee's converter; never on my radar
+- g4 Dee (3/3, yes): I took it mostly to deny Ben silver; the conversion only mattered once, for Raiders.
+- g7 Ava (4/3, yes): the swing space for any contest; Cal took it to block me, which was the right read
+- g7 Ben (3/3, yes): a real threat to any single-color lead, it made me nervous about my purple pile all round III
+- g7 Cal (4/4, yes): I took it purely as a block so Ava couldn't turn silver into magenta, which I love as a pick
+- g7 Dee (2/2, yes): a converter; with a huge silver pile it's just a contest-flip button for someone else
+
+### Toast
+- g1 Ava (3/3, yes): Dee's silver engine with Caterer; for everyone else it just fed Dee's lead
+- g1 Ben (3/3, yes): Gives everyone silver, which only helps whoever already leads silver; fine for Dee with Caterer.
+- g1 Cal (3/3, yes): Dee's engine with Caterer; the gift to rivals is small enough not to matter
+- g1 Dee (5/5, yes): my engine every round; with Caterer it's +5/+8/+11 silver and a clear plan from turn one
+- g4 Ava (3/3, yes): with Caterer it was Dee's engine; without Caterer it's a gift to the table.
+- g4 Ben (3/3, yes): big for Dee with Caterer; for anyone else it's mostly a gift to the table.
+- g4 Cal (3/3, yes): the silver player's bread and butter; the gifts to rivals were mostly harmless
+- g4 Dee (4/4, yes): with Caterer it was my backbone, and in round III taking it was mostly to deny a rival +9 silver.
+- g7 Ava (4/4, yes): with Caterer it was the best opener in rounds I and II, but it also hands out the silver someone steals right back
+- g7 Ben (4/4, yes): huge with Caterer, and joining it late via Party Crasher won me silver outright
+- g7 Cal (4/4, yes): a giant silver pile that also feeds everyone; with Caterer or Party Crasher it decides round III
+- g7 Dee (4/4, yes): round III Toast was my whole silver plan, and Party Crasher joining it is what beat me
+
+### Alchemists
+- g1 Ben (1/1, yes): In round III a recruit slot is worth 10 followers, so a 5-cost 3-follower body is a trap.
+- g2 Ben (2/2, unsure): 3 followers for 5 any was on offer twice; never better than just buying followers.
+- g2 Cal (2/2, yes): 3 for 5 is fine; I buried it rather than buy it.
+- g2 Dee (1/1, unsure): never wanted it
+- g3 Ava (3/3, unsure): I took it for the swap, not the text; 3 followers is the real value
+- g3 Ben (3/2, unsure): fine 5-for-3 body but it got Poached and then Promoted away; I never once used its ability
+- g3 Cal (3/2, yes): I poached it for 3 and lost it to Shake Down the next turn, before using it once
+- g4 Cal (2/3, unsure): bought as a 3-for-5 body with Allowance; its ability never mattered
+- g6 Cal (3/3, unsure): 3 for 5 only beats buying because of a recruit bonus; the any-color clause was a nice side effect
+- g7 Ben (4/3, no): Cal turned it into pure 'any' prices for Shift Crew and Martyrs, feels underpriced at 5
+- g7 Cal (5/4, n/a): it makes every colored cost wild, so Shift Crew and Martyrs became anyone's; underpriced at 5
+
+### Line Cutters
+- g1 Ava (4/4, unsure): 3 followers for 2 any is a steal and going first enabled my Big Dilute, but it got Demoted away and then Cal went first
+- g1 Ben (3/3, unsure): 3 followers for 2 is a bargain, and 'always first' mattered more than I expected once Ava and Cal held it.
+- g1 Cal (4/4, n/a): 3 followers for 2 plus first pick; with Clockmakers it gave me round III's first two moves
+- g2 Ava (5/3, yes): 3 followers for 2 any plus first pick is the best rate in the game, and stealing it from Ben swung two seats
+- g2 Ben (4/4, no): 3 followers and first pick for 2 any is the best price in the shop, and stealing it gave Ava first pick in round III.
+- g3 Ava (2/4, unsure): 3 followers for 2 any is too cheap; the go-first text barely matters
+- g4 Dee (4/4, unsure): 3 followers for 2 and first pick every round feels underpriced for a guest card.
+- g6 Ava (4/5, unsure): 3 followers for 2 is underpriced and going first is real, but it's a Poach and Shake Down magnet.
+- g6 Cal (3/3, unsure): 3 followers for 2 is underpriced, and go-first never felt like it mattered
+- g7 Cal (4/4, n/a): 3 followers for 2 is the best deal in the shop, and first pick as leader matters
+- g8 Ben (4/5, unsure): 3 followers for 2 plus first pick every round is underpriced, especially with Last Call.
+
+### Build Up
+- g2 Ava (4/2, yes): boring text but in III it was the only answer to green, so taking it was a lock
+- g2 Ben (3/3, yes): Solid green income; the round I target I wanted to copy, but everything green got stolen anyway.
+- g2 Cal (2/2, yes): plain green, fine.
+- g2 Dee (3/2, yes): plain, but it's the only real green refill when you've been robbed
+- g3 Ava (3/3, yes): honest green, and big pile bait
+- g3 Ben (2/2, yes): plain green income; I took it three times and it was always obvious
+- g3 Cal (2/2, yes): flat green, mostly taken as a placement once the copy spaces were gone
+- g3 Dee (3/3, yes): plain and fair
+- g8 Ava (2/3, yes): the honest base income, and the thing every green copy wants to point at.
+- g8 Ben (3/3, yes): the plain green income everyone's copies point back at, so taking it is mostly about denying the chain.
+
+### Cover
+- g2 Ava (2/2, yes): the empty-space restriction usually left it copying something small
+- g2 Ben (4/4, yes): Cover copying an empty Recruit Twice with Impressionist gave me the blue lead; the best Impressionist turn I had.
+- g2 Cal (3/3, yes): flexible, Ben used it as a second Recruit Twice.
+- g2 Dee (4/4, yes): the last open green space, plus a flexible copy; it won me green in round II
+- g3 Ava (3/3, yes): Ben chained it three deep into Shake Down; powerful but hard to follow at the table
+- g3 Ben (5/4, yes): my favourite space: copying Tryout, Melting Pot or Shake Down from Cover was a real choice every time
+- g3 Cal (4/3, yes): it's what let Ben reach Shake Down and Melting Pot; strong in long chains
+- g3 Dee (3/3, yes): flexible but rarely the top pick
+- g8 Ava (3/3, yes): good when Build Up or Greatest Hits is still empty, otherwise a leftover.
+- g8 Ben (3/3, yes): flexible, but in two-player there's rarely a juicy empty space to copy.
+
+### Echo
+- g2 Ava (4/3, unsure): it copies whatever just happened, so it punishes the player before you more than it helps the copier plan
+- g2 Ben (4/3, yes): Copying a fresh Help Yourself or Encore is huge; it rewards sitting right after the big play.
+- g2 Cal (4/4, yes): copying a fresh Con Men Encore was a 5-steal; whether it's good depends entirely on who went before you.
+- g2 Dee (5/4, yes): round I Echo on Help Yourself, and round III Echo on Encore on Con Men, are the strongest plays on the wheel
+- g3 Ava (4/3, yes): copying Harvest, Encore or Poach right after it's taken is very strong, and depends entirely on seat order
+- g3 Ben (4/3, yes): great in round I after Harvest, but copying Poach and Encore chains makes whoever sits after a big play the real winner of it
+- g3 Cal (5/4, yes): copying my own Poach for a second member was huge; it's strong whenever the previous action is a center space
+- g3 Dee (5/4, yes): the copy chains (Echo to Encore to Con Men, Echo to Poach) are the game's real engine and a bit too strong
+- g8 Ava (5/5, yes): copying Ben's Last Call with it was my best move three rounds running, and chaining it through Reprise felt clever.
+- g8 Ben (5/5, yes): Echo on a rival's Last Call took the go-last too, the biggest swing of the game and a great read.
+
+### Encore
+- g2 Ava (5/3, yes): it turned my Con Men into everyone's Con Men three times; too much value from someone else's buy
+- g2 Ben (5/4, yes): Encore on Con Men is a free 5-steal with no buy; strong and fun for me, but it makes Con Men a table-wide weapon.
+- g2 Cal (4/2, yes): Con Men's On Recruit got fired something like four times off one buy, which makes Con Men a table-wide card.
+- g2 Dee (5/4, yes): Encore on Con Men is a 5-steal with no buy; it fired three times this game and that's the loudest problem
+- g3 Ava (5/5, yes): copying Ben's Con Men for steal 5 was a highlight; with Echo stacked it fired Con Men three times off one free flip
+- g3 Ben (4/2, yes): copying a rival's On Recruit made my Con Men fire three times for the table and my Fan Club pay Cal 6 green; it punishes the person who bought the good card
+- g3 Cal (4/4, yes): Fan Club's On Recruit through Encore gave me 7 green once every Green space was filled, and Con Men through Encore and Echo ran three deep in round II
+- g3 Dee (4/3, yes): its value is entirely what rivals' On Recruits are; Con Men and Fan Club made it huge
+- g8 Ava (2/1, yes): Ben's only On Recruit was Bouncers, so it was +1 green filler for me; for Ben it stole 5 off my Fan Club once.
+- g8 Ben (3/3, yes): copying Fan Club for +5 green felt clever, but green to a player who can't win green is just money.
+
+### Greatest Hits
+- g2 Ava (5/5, yes): Con Men plus Accomplice for an 8-steal was the play of the game, maybe too much
+- g2 Ben (5/2, yes): With Con Men and Accomplice it was an 8-steal; whether it is huge or nothing depends entirely on owning steal-on-recruit members.
+- g2 Cal (4/2, yes): Con Men plus Accomplice through it was an 8-steal from one center space.
+- g2 Dee (4/3, yes): on Con Men plus Accomplice it's an 8-steal, which is too much in one center space
+- g3 Ava (2/2, yes): only as good as your members, and mostly good for a Con Men holder
+- g3 Ben (3/2, yes): weak for me once my On Recruit members were stolen; Cal got more out of it via Con Men
+- g3 Cal (4/4, yes): firing Con Men again for a 5-steal felt great; it's only as good as your On Recruits
+- g3 Dee (2/2, yes): only good if you hold On Recruit members; mine had none
+- g8 Ava (3/4, yes): with Roadie it was +17 green, but by round III green was surplus so the size didn't matter.
+- g8 Ben (4/4, yes): firing Roadie's On Recruit for +12 off a pile of multi-count green members is huge, maybe too huge.
+
+### Reprise
+- g2 Ava (4/4, yes): doubling my own Shake Down was my best round II turn
+- g2 Ben (5/2, yes): Reprise on Shake Down or Poach doubles the nastiest spaces; it was the swingiest green space and felt bad to receive.
+- g2 Cal (4/3, yes): doubling my own Out of Style in round I was great; doubling Poach is too much.
+- g2 Dee (5/5, yes): strong on Out of Style and too strong on Poach
+- g3 Ava (4/3, yes): with Fence on Help Yourself it was the best pairing in the game
+- g3 Ben (4/3, yes): Reprise into my own Cover into Shake Down was a fun three-deep play; Reprise on Help Yourself with Fence is too much every round
+- g3 Cal (5/5, yes): Reprise on Help Yourself with Fence was my engine for two rounds; probably too good for an outer Green space
+- g3 Dee (4/3, yes): on Help Yourself with Fence it's a second steal every round; Cal ran it every round
+- g8 Ava (3/4, yes): Reprise on my own Build Up with Impressionist is a strong round I opener, maybe too easy.
+- g8 Ben (4/4, yes): copying my own Sleep In for +5 was my best green turn; for Ava it doubled Build Up every round.
+
+### Fence
+- g2 Ava (4/3, yes): +1 magenta per steal quietly kept me on top of magenta every round
+- g2 Dee (2/2, yes): the one I'd least want: Ava's magenta came from Stash and Lie Low anyway, and +1 per steal is small
+- g3 Cal (5/5, unsure): the best artifact by far for a steal player, though it pays magenta whatever color you steal
+- g6 Ava (2/2, yes): the one I'd least want: Cal got a handful of magenta from it and the steals mostly got blocked late.
+- g6 Ben (2/2, yes): only fires on your own steals, and Cal's run had more to do with Lie Low than with Fence
+- g6 Cal (4/4, yes): quietly +1 magenta on every steal, and it turned Cutpurse into an engine
+- g7 Ben (2/2, yes): the artifact I'd least want, +1 magenta per steal is small next to Caterer
+- g7 Cal (3/3, yes): a steady +1 magenta per steal, useful but quiet
+- g7 Dee (1/1, yes): the artifact I'd least want; +1 magenta per steal is too small to swing anything
+
+### Pocket Watch
+- g1 Ava (4/4, yes): quietly paid 6-7 purple over the game off my own Sleep Ins and others' skips; better than it reads
+- g4 Ben (3/4, yes): paid about 8 purple across the game off Last Call and Hold Up skips; good but the purple contest had no rivals so it mostly padded a lead.
+- g4 Dee (2/2, yes): the artifact I'd least want: a purple drip that only mattered because Ben already owned purple.
+- g6 Ava (5/5, yes): fired 10+ times; with Last Call and self-skips it's the best artifact here.
+- g7 Ava (3/2, yes): the artifact I'd least want, until Ben stacked skips and it quietly added up
+- g7 Ben (4/4, yes): quiet in round I, but with Gossip and Last Call it paid a purple every skip all game
+- g7 Cal (4/3, yes): the artifact I'd least want to face; with Last Call, Sleep In and Gossip it powered the winner
+- g8 Ava (4/1, yes): the artifact I'd least want to face in two-player: every skip, including the ones I took, paid Ben purple.
+- g8 Ben (4/5, yes): in two-player every skip is mine, about 15 purple over the game, possibly too strong for a free artifact.
 
 ### Big Dilute
 - g1 Ava (5/4, yes): six changes going first in round II lets you pick the round's winners; strong, possibly too strong with Line Cutters
@@ -376,15 +702,65 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g3 Cal (3/2, yes): six changes moved the contests, but against Customs it just feeds yellow back
 - g3 Dee (4/3, yes): I took it mainly so nobody could turn my magenta into something else
 
-### Melting Pot
-- g1 Ava (2/2, yes): Ben used it for yellow; never tempting for me
-- g1 Ben (3/3, yes): Rewards having members in many colors; up to +6 for me by round III, which felt earned.
-- g1 Cal (2/2, yes): fine if your members span colors; mine didn't
-- g1 Dee (2/2, yes): never looked at it
-- g3 Ava (2/2, yes): small; mostly mattered as a Cover target
-- g3 Ben (3/3, yes): Cover into Melting Pot as my last round II placement won yellow; nice last-seat tool
-- g3 Cal (1/1, yes): with no members it's +2 yellow; nobody wanted it
-- g3 Dee (2/2, yes): never beat the alternatives for me
+### Bury
+- g2 Ava (3/3, yes): big blue for Cal off pricey shop cards, fine
+- g2 Ben (3/3, yes): Cal's +6 blue off burying Tribute Band was big; the gain scales with the shop in a satisfying way.
+- g2 Cal (4/4, yes): +half cost on the priciest card is big and it also denies; felt like the best blue space.
+- g2 Dee (3/3, yes): Cal's 6-blue Bury on an 8-cost card was a real tempo spike
+- g4 Ava (4/3, unsure): paying half the buried card's cost means it rewards burying the priciest card, not the most dangerous one; backwards for a bury.
+- g4 Ben (3/2, yes): paying blue for half the cost of the most expensive card feels backwards, as Cal said.
+- g4 Cal (4/4, yes): burying an 11-cost card for +6 blue and denying Dee Smooth Talkers was a great turn, but it pays most for the card nobody can buy, which reads backwards
+- g4 Dee (3/2, unsure): pays the most for burying cards nobody can afford, which feels backwards.
+
+### Demote
+- g1 Ava (4/1, yes): with Recruiter and Deprogrammers stacking, losing Line Cutters and HR to it felt awful and I couldn't defend
+- g1 Ben (4/2, unsure): Same issue as Promote; Cal took HR off Ava with it, which is a big feel-bad for whoever loses the member.
+- g1 Cal (4/4, unsure): same as Promote: Scouts for Line Cutters and Mentor & Protégés for HR were big swings, and the cost limit didn't seem to apply
+- g1 Dee (5/2, yes): same rival-to-rival problem; taking HR and Line Cutters off Ava for one minion felt like a feel-bad for her
+- g3 Ava (5/5, yes): pushing Old Maid into Dee's cult was my best moment; also the most broken-feeling thing I did
+- g3 Ben (3/3, unsure): Ava pushing Old Maid into Dee's cult was clever but it's another red space that acts like magenta
+- g3 Cal (4/2, yes): pushing Old Maid into Dee's cult was a -8 swing off one space; clever, but it feels bad on the receiving end
+- g3 Dee (4/2, yes): Demote plus Old Maid into a rival's cult is a -8 swing for one middle-ring space; strong and a feel-bad
+
+### Dilute
+- g1 Ava (5/5, yes): contest defense and offense in one minion; Dee's round I Dilute and my round III one both decided contests
+- g1 Ben (4/4, yes): Three changes when piles are small erase a lead; it was the tool that broke my last contest.
+- g1 Cal (4/3, yes): three changes decides small round I contests; strong for one outer space
+- g1 Dee (5/4, yes): in round I three changes decided two contests for one minion; my favourite tactical space
+- g3 Ava (3/2, yes): I used it defensively, and Customs grew back every yellow I changed, a hard counter
+- g3 Ben (3/2, yes): mostly blunted by Customs; changing a pile concentrated it as often as it broke it
+- g3 Cal (3/2, yes): Dee's Dilute piled all my resources into red and won me Red in round I; it backfires easily
+- g3 Dee (4/4, yes): good tempo in round I; less useful against a Customs holder, which feels right
+
+### Extra Hand
+- g3 Ben (4/3, yes): weighed it for a true last placement; at 9 it was too many contest pieces for me, but Dee made it work
+- g3 Dee (5/5, yes): at 9 it looks overpriced, but a minion that lands after the last seat in round III won me the game
+- g4 Ben (4/4, yes): at 9 it's pricey, but an extra placement plus a recruit, then Farewelled for 9, made it almost free.
+- g4 Cal (4/4, unsure): I passed on it to keep my contest piles; Ben bought it and Farewelled it for a +1 minion and 9 followers, and that swing beat me
+- g6 Ben (3/2, yes): weighed it for one more recruit at the end, but 9 any meant giving up a contest
+- g7 Ava (4/1, unsure): 9 cost for a minion I never got to place because Cal Poached it; it's a trap when Poach is open
+- g7 Cal (4/4, n/a): 9 for a once-a-game minion is steep, but poached it's gold, and then it's Estate Sale fodder
+- g8 Ben (3/2, unsure): weighed it twice in round III; 9 for a minion and recruit only breaks even.
+
+### Gather
+- g1 Ava (3/3, yes): solid red, and the follower kicker for buying a member made me buy Closer when I might not have
+- g1 Ben (3/3, yes): Solid red plus a follower kicker if you're recruiting anyway; rarely a dilemma.
+- g1 Cal (3/3, yes): plain red with a small member kicker, a fine filler that sometimes swung the red count
+- g1 Dee (2/2, yes): plain red, the member bonus rarely mattered next to buying 10
+- g3 Ava (2/2, yes): plain red, and the member bonus only mattered once
+- g3 Ben (2/2, yes): plain red with a small recruit bonus; only mattered as the last-seat red grab
+- g3 Cal (3/3, yes): plain and honest; the round III +3 for recruiting a member made my last pick a real choice
+- g3 Dee (2/2, yes): +2/3/4 red and a small bonus; I only took it when nothing else was left
+
+### Harvest
+- g1 Ava (2/2, yes): plain and fine, Ben's bread and butter
+- g1 Ben (3/3, yes): Plain flexible resources and always a decent pick; I took it every round.
+- g1 Cal (3/3, yes): flexible colors, Ben's yellow base, and red for him at the end
+- g1 Dee (2/2, yes): solid filler, never a hard choice
+- g3 Ava (4/4, yes): the most flexible space; my first pick and my last
+- g3 Ben (3/3, yes): flexible any-color income, good opener; Echo right after it in round I was an obvious pairing
+- g3 Cal (3/3, yes): flexible colors make it the go-to space for reaching a contest late
+- g3 Dee (4/4, yes): +5 of any colors is flexible; I took it partly to deny it
 
 ### Makeover
 - g1 Ava (3/3, yes): Ben's big rearrange, but he then cashed it all out, so it fed buying, not contests
@@ -396,25 +772,15 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g3 Cal (4/3, yes): gave Dee a whole-pile rewrite for the yellow and magenta leads; strong for whoever owns the big pile
 - g3 Dee (5/4, yes): in round III it decides who wins any contest you like; I took it to deny Cal, which says a lot
 
-### Alchemists
-- g1 Ben (1/1, yes): In round III a recruit slot is worth 10 followers, so a 5-cost 3-follower body is a trap.
-- g2 Ben (2/2, unsure): 3 followers for 5 any was on offer twice; never better than just buying followers.
-- g2 Cal (2/2, yes): 3 for 5 is fine; I buried it rather than buy it.
-- g2 Dee (1/1, unsure): never wanted it
-- g3 Ava (3/3, unsure): I took it for the swap, not the text; 3 followers is the real value
-- g3 Ben (3/2, unsure): fine 5-for-3 body but it got Poached and then Promoted away; I never once used its ability
-- g3 Cal (3/2, yes): I poached it for 3 and lost it to Shake Down the next turn, before using it once
-- g4 Cal (2/3, unsure): bought as a 3-for-5 body with Allowance; its ability never mattered
-
-### Savings
-- g2 Ava (2/2, yes): a plain blue pile that only Cal's Bargain Bin made interesting
-- g2 Ben (2/2, yes): +blue with a small shop nudge; never a hard choice, but it fed Cal's Bargain Bin and Patroness.
-- g2 Cal (3/3, yes): steady blue plus a bury; fine filler that fed my Bargain Bin.
-- g2 Dee (2/2, yes): a plain blue gain; I took it once only to keep Cal from a Bargain Bin bury
-- g4 Ava (3/3, yes): steady blue plus a bury that kept dangerous cards (Martyrs, Hoarder) away from Cal; my workhorse.
-- g4 Ben (2/2, yes): solid blue, rarely exciting.
-- g4 Cal (3/2, yes): I took it purely as denial and it cost me the game; the bury option mainly feeds Bargain Bin
-- g4 Dee (2/2, yes): plain blue; the bury is a minor bonus mostly for whoever has Bargain Bin.
+### Melting Pot
+- g1 Ava (2/2, yes): Ben used it for yellow; never tempting for me
+- g1 Ben (3/3, yes): Rewards having members in many colors; up to +6 for me by round III, which felt earned.
+- g1 Cal (2/2, yes): fine if your members span colors; mine didn't
+- g1 Dee (2/2, yes): never looked at it
+- g3 Ava (2/2, yes): small; mostly mattered as a Cover target
+- g3 Ben (3/3, yes): Cover into Melting Pot as my last round II placement won yellow; nice last-seat tool
+- g3 Cal (1/1, yes): with no members it's +2 yellow; nobody wanted it
+- g3 Dee (2/2, yes): never beat the alternatives for me
 
 ### Out of Style
 - g2 Ava (3/3, yes): swingy with Bargain Bin and Reprise, otherwise a few blue
@@ -426,6 +792,16 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g4 Cal (2/2, yes): small blue, mostly a Bargain Bin trigger
 - g4 Dee (2/2, yes): small blue, and Ben used it late to dig Party Crasher out.
 
+### Party Crasher
+- g1 Dee (3/2, no): couldn't land on my own Toast (surprise), so it became a Largesse join that fed the leader; doesn't feel like a guest card with a plan
+- g2 Ava (2/2, unsure): weighed it in II, 1 follower for 4 is too little for one placement trick
+- g2 Dee (3/2, unsure): I weighed it as a blocker tool every round and never found a turn worth 4
+- g4 Ben (5/5, yes): joining a center space someone else already took (Largesse) in the last turn of the game is a huge, satisfying swing for 4.
+- g4 Cal (4/4, unsure): weighed it in round I as useless; in Ben's hands onto Largesse in the last turn it was 11 followers for 4
+- g4 Dee (5/5, no): for 4 resources Ben joined my Largesse in the last turn for 10 followers and swung my silver contest; it needs a limit on center spaces.
+- g7 Ben (5/5, unsure): joining Toast at the end flipped a +10 contest, great once-per-game card
+- g7 Dee (4/4, unsure): I wrote it off as a 4-cost body, and paired with Last Call it decided the game
+
 ### Peek
 - g2 Ava (4/3, yes): +4 in II stole the blue +6 off Cal when he spent down, the pile look itself barely mattered since the row resets
 - g2 Ben (3/3, yes): +6 blue in round III flipped the blue lead, and stacking the pile to bury Extortionist felt clever.
@@ -435,6 +811,26 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g4 Ben (4/4, yes): Peek-then-recruit-from-the-pile (Heiresses, Brokers) was strong for Cal.
 - g4 Cal (4/5, yes): +6 blue and recruiting off the top of the pile (got me Heiresses and Brokers) was my favorite space
 - g4 Dee (4/4, yes): Peek plus Window Dressers let me set the next shop row; Cal's Peek-to-Heiresses was big.
+
+### Promote
+- g1 Ava (5/2, yes): the list offered rival-to-rival swaps and a 1-cost for a 10-cost, way past 'up to 2 more'; it decided too much for Cal and felt bad to be on the end of
+- g1 Ben (5/2, unsure): Offering rival-to-rival swaps, with Recruiter and Deprogrammers paying out each time, was the strongest engine at the table and felt like a misread of the card.
+- g1 Cal (5/5, unsure): swapping my spent cards for rivals' fat bodies with Recruiter paying was my best engine, but the list offered rival-to-rival and cost-ignoring swaps the card text doesn't support
+- g1 Dee (5/2, yes): the list offers rival-to-rival swaps far past 'up to 2 more'; with Recruiter it was the snowball that built Cal's lead; reads like a bug
+- g3 Ava (4/4, yes): Cutpurse into Alchemists was a good swap, but it lets you swap any cult's member, so a 1-cost could take a 7-cost 'from the rival's side'
+- g3 Ben (3/2, unsure): it reaching into my cult to swap Alchemists for Cutpurse felt like theft wearing a red hat, and the 'up to 2 more' side reads backwards to everyone at the table
+- g3 Cal (2/2, yes): I never took it; the 'up to 2 more' on a rival's card reads backwards, and the table argued about it
+- g3 Dee (2/2, unsure): the 'up to 2 more' read backwards when the pricier card is the rival's, the table argued about it
+
+### Recruit a Member
+- g1 Ava (2/3, yes): fine round III space, never a dilemma for me
+- g1 Ben (3/3, yes): A free member up to 8 is fine, but in round III a 10-follower buy usually beats any 8-cost body.
+- g1 Cal (4/4, yes): a free card of 8 or less in round III; Philanthropists through it was +5 and decided silver
+- g1 Dee (3/3, yes): fine round III value, a free recruit on top of the turn's buy
+- g3 Ava (4/4, yes): a free member up to 8 in round III; Big Tent for free set up my endgame
+- g3 Ben (4/4, yes): a free member up to 8 in round III is a strong, clear center space
+- g3 Cal (2/3, yes): fine center space, but it never competed with Poach or Greatest Hits for me
+- g3 Dee (3/3, yes): solid center, nobody fought over it
 
 ### Recruit Twice
 - g2 Ava (2/2, yes): only good if you have two things worth buying, which with 1/5/10 packs you rarely do
@@ -446,15 +842,15 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g4 Cal (2/2, yes): extra recruit rarely mattered except as Ava's cash-out
 - g4 Dee (3/3, yes): only matters when you have a lot to cash out at once.
 
-### Bury
-- g2 Ava (3/3, yes): big blue for Cal off pricey shop cards, fine
-- g2 Ben (3/3, yes): Cal's +6 blue off burying Tribute Band was big; the gain scales with the shop in a satisfying way.
-- g2 Cal (4/4, yes): +half cost on the priciest card is big and it also denies; felt like the best blue space.
-- g2 Dee (3/3, yes): Cal's 6-blue Bury on an 8-cost card was a real tempo spike
-- g4 Ava (4/3, unsure): paying half the buried card's cost means it rewards burying the priciest card, not the most dangerous one; backwards for a bury.
-- g4 Ben (3/2, yes): paying blue for half the cost of the most expensive card feels backwards, as Cal said.
-- g4 Cal (4/4, yes): burying an 11-cost card for +6 blue and denying Dee Smooth Talkers was a great turn, but it pays most for the card nobody can buy, which reads backwards
-- g4 Dee (3/2, unsure): pays the most for burying cards nobody can afford, which feels backwards.
+### Savings
+- g2 Ava (2/2, yes): a plain blue pile that only Cal's Bargain Bin made interesting
+- g2 Ben (2/2, yes): +blue with a small shop nudge; never a hard choice, but it fed Cal's Bargain Bin and Patroness.
+- g2 Cal (3/3, yes): steady blue plus a bury; fine filler that fed my Bargain Bin.
+- g2 Dee (2/2, yes): a plain blue gain; I took it once only to keep Cal from a Bargain Bin bury
+- g4 Ava (3/3, yes): steady blue plus a bury that kept dangerous cards (Martyrs, Hoarder) away from Cal; my workhorse.
+- g4 Ben (2/2, yes): solid blue, rarely exciting.
+- g4 Cal (3/2, yes): I took it purely as denial and it cost me the game; the bury option mainly feeds Bargain Bin
+- g4 Dee (2/2, yes): plain blue; the bury is a minor bonus mostly for whoever has Bargain Bin.
 
 ### Spree
 - g2 Ava (2/2, yes): three recruits mostly became three follower buys, which feels like a fancy Exchange
@@ -466,194 +862,69 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g4 Cal (3/3, yes): three recruits sounds huge but the shop rarely has three cards worth taking
 - g4 Dee (4/4, yes): three recruits in one turn is the blue cash-out space, Ava used it well.
 
-### Help Yourself
-- g2 Ava (4/4, yes): strong but a steal into an open Echo just gets copied back at you
-- g2 Ben (4/4, yes): The best round-one space and a real fight over who takes it; it decides who gets to keep a pile.
-- g2 Cal (3/2, yes): round-one 5-steal swings, and with Echo right behind it the first player gets stripped.
-- g2 Dee (4/4, yes): strong, and it sets up an Echo for whoever is next, which is a nice tension
-- g3 Ava (5/4, yes): the strongest outer space all game; with Fence plus Reprise it's 8 resources, with Desperado it's 10
-- g3 Ben (4/2, yes): fine alone, but with Fence plus Reprise or Desperado doubling it to 10 it's the single strongest space on the wheel and feels bad to be on the end of
-- g3 Cal (5/5, yes): the best space on the board for me with Fence, then the cruelest one against me with Desperado; nothing else swings this much
-- g3 Dee (5/3, yes): with Fence plus Reprise, or Desperado doubling to 10, this is the strongest space in the game
+### Trade Seeds
+- g1 Ava (4/4, yes): my closing swap into red decided a contest by one; a great late tool
+- g1 Ben (3/3, yes): A cheap contest swing piece; useful defense in round I.
+- g1 Cal (4/3, yes): swapping 3 into red won me round II's red; Ava used it to close yellow and red
+- g1 Dee (3/3, yes): quiet until the last placements, where swapping into an empty color steals a contest
+- g3 Ava (2/2, yes): rarely worth a minion
+- g3 Ben (3/3, yes): my round I swap into green locked that contest; a quiet but real tool for the last turns
+- g3 Cal (1/1, yes): never mattered to me
+- g3 Dee (2/2, yes): rarely the best option, mostly a threat I counted against
 
-### Stash
-- g2 Ava (4/3, yes): I took it mostly to deny the last magenta, a real contest tool
-- g2 Ben (2/3, unsure): Plain magenta plus a follower; doesn't feel like stealing, reads like a generic income space.
-- g2 Cal (2/2, yes): fine resource space nobody fought over.
-- g2 Dee (2/2, yes): flat magenta; only Ava wanted it
-- g3 Ava (2/3, yes): reliable magenta, good when you also recruit that turn
-- g3 Ben (2/2, yes): solid magenta and a follower bonus, never a dilemma
-- g3 Cal (2/2, yes): +N magenta and a follower for a member; filler that people take for the contest
-- g3 Dee (4/4, yes): clean way to win magenta, and the recruit bonus made Scouts a great buy
+### Tryout
+- g1 Ava (3/3, yes): only as good as the best On Recruit in the shop, and Dee's Ringleader/Philanthropists Tryouts showed it can be decent
+- g1 Ben (3/3, unsure): Only as good as the best On Recruit in the shop; Gardener and Philanthropists made it fine, and it's a Blue-feeling shop trick sitting in Red.
+- g1 Cal (3/4, yes): dead text until a shop card has a good On Recruit; Gardener in round I and Philanthropists for Dee in round III made it great
+- g1 Dee (4/4, yes): twice it was the best space just because of what sat in the shop (Ringleader, Philanthropists): fun to read the shop for it
+- g3 Ava (4/4, yes): using a shop member's On Recruit for free is great when Grifter or Ringleader is up; Ben's Grifter off it took 6 from me
+- g3 Ben (4/4, yes): Grifter through Tryout scaled off my member count into a 5-6 steal, and picking which shop On Recruit to borrow is a real read of the shop
+- g3 Cal (3/3, yes): borrowing Ringleader's On Recruit in round II was a neat way to lock Red, but most turns it's just +2 red
+- g3 Dee (3/3, yes): fine filler, but Grifter through it (6-steal for free) was a bigger deal than the space itself
 
-### Lie Low
-- g2 Ava (5/4, yes): as the leader in round III this was the best space on the board, it shuts off Poach, Shake Down and every steal at once
-- g2 Ben (5/3, yes): Round III Lie Low made Ava untouchable and decided the game; too strong when stealing is this dense.
-- g2 Cal (5/4, yes): the most important defensive space; it saved my round II pile and it's how Ava protected three contests in round III.
-- g2 Dee (5/3, yes): Ava's round III Lie Low decided the game: with this much theft, immunity beats any steal, and it feels bad to have no answer
-- g3 Ava (5/3, yes): in round III it decided the game: Dee's 19-resource pile was untouchable while everyone else got stripped
-- g3 Ben (4/3, yes): in round III it's the best defence in the game; Dee's 19 untouchable resources won her two contests
-- g3 Cal (4/3, yes): looked weak in round I, then in round III it protected Dee's huge pile and won her the game
-- g3 Dee (5/5, yes): the best defensive space I've played; in round III it lets you hold two contests while everyone else gets robbed
+### Walk-In
+- g1 Ava (4/5, yes): free Deprogrammers and free HR off a visible top card were my two best moments of the early game; very swingy, depends on what's on top
+- g1 Ben (4/4, yes): A free 4-member card for one minion is the best feeling on the wheel when the top card is good; swingy because the top card is known.
+- g1 Cal (3/4, yes): the preview of the top card makes it a no-brainer or a pass; free HR and Deprogrammers for Ava were huge
+- g1 Dee (4/3, yes): swingy: a free HR or Deprogrammers when the top card is fat, a dud otherwise, and everyone sees which
+- g3 Ava (4/3, yes): a blind free member that can be Con Men is a lottery ticket; the red gift to everyone is a real cost
+- g3 Ben (4/4, yes): blind free flip is exciting but swingy: Con Men for free decided a whole round, Triplets for free was a gift
+- g3 Cal (4/3, unsure): a blind flip that hit Con Men for free and set off three 5-steals; too swingy for an outer space
+- g3 Dee (4/4, yes): a free blind member is exciting, but flipping Con Men for free and stealing 5 is a lottery ticket that's too big
 
-### Crime Wave
-- g2 Ava (2/2, yes): half a pile sounds scary but piles were tiny, so it took 1
-- g2 Ben (4/3, yes): I took it mostly to deny it; its threat shapes everyone's pile size, which is good design.
-- g2 Cal (4/2, yes): halving my blue late was the exact threat I planned around; feels bad to receive.
-- g2 Dee (4/3, yes): I took it purely so it couldn't halve my 11 white; a great blocking space
-- g3 Ava (4/4, yes): with Desperado it wiped Ben's whole green pile; fine without it
-- g3 Ben (4/3, yes): halving is fair; with Desperado it's a full wipe, which is too much, but as my last-seat green denial it was a great move
-- g3 Cal (3/2, yes): half a pile is strong, and with Desperado it takes the whole pile; the doubling is the problem, not this space
-- g3 Dee (3/3, yes): fine alone, a full-pile wipe with Desperado
+### Impressionist
+- g2 Ava (1/1, yes): least wanted, copies only gave Ben a stray resource and he ended last
+- g2 Ben (2/2, yes): Only paid +1 twice all game; copying is great but the artifact adds little and doesn't change what you copy.
+- g2 Cal (1/1, unsure): the artifact I'd least want; Ben barely got anything from it.
+- g3 Ava (2/2, yes): the artifact I'd least want: +1 per copy is small next to Fence
+- g3 Ben (3/3, yes): steady +1 on every copy, good fit with green, never spectacular; I'd pick it again
+- g8 Ava (4/4, yes): +1 on every copy, and green is copies, so it paid every turn I touched green.
+- g8 Ben (4/3, yes): the one I'd least want to face: +1 on every link of a copy chain adds up fast for green.
 
-### Shake Down
-- g2 Ava (5/4, yes): against a player with no resources it is just a free member, which felt great for me and brutal for Ben
-- g2 Ben (5/1, yes): Brutal on a broke player: no choice, you just lose a member; with Reprise it took two of my three cards in one round.
-- g2 Cal (3/2, yes): punishes broke players hard, Ava took two of Ben's members with it plus Reprise.
-- g2 Dee (4/2, yes): brutal on a broke player; Ben lost two members to it for nothing, which reads as a feel-bad
-- g3 Ava (3/3, yes): with empty piles it's just Poach in round II; it never asked me to choose a rival when only one was legal
-- g3 Ben (3/2, yes): against an empty pile it's just Poach in round II; it only became the pay-or-lose dilemma Cal liked at the very end
-- g3 Cal (4/4, yes): as the last placement it gave me a real choice, pay 5 and drop Red into a tie or lose Loyalists; I liked it, but against empty piles it's just Poach
-- g3 Dee (5/5, yes): as the final placement it's a real dilemma for the target, best moment of the night
+### Raiders
+- g2 Ben (3/3, yes): Weighed it in round II against Martyrs; a 4-follower swing off the leader is good but slow for a 5-cost.
+- g2 Dee (3/2, yes): I weighed it in round II, but 5 to buy plus 2 white to use felt slow
+- g4 Dee (4/5, yes): stealing 4 off the leader for 2 white was a nice swing, though Cal shrugged it off.
+- g6 Ben (4/2, yes): the catch-up card that beat me; a fair concept but it went through my Bodyguards, which felt bad
+- g6 Cal (5/5, yes): the catch-up card that won me the game; it only works because someone ran away
+- g7 Cal (3/2, yes): 4 followers from the leader with no defense; feel-bad on the receiving end
+- g7 Dee (4/4, yes): an 8-point swing on the leader for 5, and the Lie Low ruling question it raised is a real gap
 
-### Poach
-- g2 Ava (4/3, yes): Dee's Poach plus Reprise took two of Cal's cards, a lot for one center space
-- g2 Ben (4/2, yes): Dee's Poach plus Reprise on it took two of Cal's best cards; strong, and the copy makes it a feel-bad.
-- g2 Cal (5/1, yes): brutal: with Reprise repeating it Dee took two of my best members in one double turn, the biggest feel-bad of my night.
-- g2 Dee (5/5, yes): the highlight of my game, but when Reprise can repeat it, it's too much in one double turn
-- g3 Ava (4/2, yes): fine alone, but Echo copying it gave Cal two members for one space, which felt bad
-- g3 Ben (4/1, yes): taking members is on-color, but Echo copying Poach for two members in one placement was the worst feel-bad of the night
-- g3 Cal (5/5, yes): Con Men's On Recruit made it a 5-steal plus 2 members; that it can be copied is the issue
-- g3 Dee (4/2, yes): copying it with Echo for a second member in one turn felt like too much
+### Gossip
+- g1 Ava (2/2, yes): weighed it with Pocket Watch; skips didn't come often enough to pay 6
+- g4 Ben (2/2, yes): weighed it for my Last Call skips; at 6 cost it only breaks even.
+- g6 Ava (3/2, yes): weighed it with all the skips, but 6 for 1 follower needs too many skips to pay.
+- g7 Ben (4/4, yes): with Last Call it paid 4-6 followers, a genuinely fun purple engine
+- g8 Ava (3/1, yes): it paid Ben for my skips, including the Last Call deadlock, which felt like a tax on me.
+- g8 Ben (4/5, yes): about 10 followers off skips, many caused by Ava's own Tribute Band copying my skip spaces.
 
-### Allowance
-- g2 Ava (3/3, yes): solid white plus a follower nudge
-- g2 Ben (3/4, yes): Allowance plus a member buy is a nice tempo turn; Dee's Echo copying mine was a fair sting.
-- g2 Cal (3/3, yes): solid white plus a follower; Dee's last-turn closer.
-- g2 Dee (4/4, yes): solid every round, and its recruit bonus made cheap members worth taking
-- g4 Ava (3/3, yes): Cal used it every round with a recruit; solid, never contested.
-- g4 Ben (3/3, yes): steady white plus a small member bonus, Cal's bread and butter.
-- g4 Cal (4/4, yes): +white plus a follower bonus for recruiting a member; I took it every round and it always paid
-- g4 Dee (3/3, yes): solid white plus a member bonus, Cal took it every round.
-
-### Splurge
-- g2 Ava (1/1, yes): nobody wanted it, +1 white and a bonus no one set up
-- g2 Ben (1/1, yes): Never had the resources to make the per-2 bonus mean anything; it was just +1 white for a contest.
-- g2 Cal (1/1, yes): never mattered, nobody wanted it.
-- g2 Dee (1/1, yes): nobody ever wanted it
-- g4 Ava (1/1, yes): stayed open in II and III; +1 white and a conditional bonus nobody lined up.
-- g4 Ben (2/2, yes): needs a pricey member that turn to matter; mostly a leftover.
-- g4 Cal (3/4, yes): Shift Crew paid in purple for +2 extra was a clean round I turn; later nobody wanted it
-- g4 Dee (1/2, yes): rarely worth a minion; mostly left open.
-
-### Exchange
-- g2 Ava (3/3, yes): my clean last-turn conversion, 3 white into 6 followers
-- g2 Ben (4/4, yes): Best conversion rate on the board and great on a last turn; I used it twice.
-- g2 Cal (3/3, yes): good late cash-out of odd leftovers, the pack sizes otherwise strand them.
-- g2 Dee (3/3, yes): fine converter; through Cover it handed me 4 followers while keeping my white lead
-- g4 Ava (4/4, yes): 2 followers per resource is the best conversion rate on the wheel; I'd take it more if it wasn't gone early.
-- g4 Ben (3/3, yes): a clean small conversion that gives followers without spending a recruit, which matters more than its numbers suggest.
-- g4 Cal (2/2, yes): a small +1 to +3 that everybody took when nothing else was left
-- g4 Dee (3/3, yes): +2 per resource is a nice small edge for a last minion, never exciting.
-
-### Farewell
-- g2 Ava (4/4, yes): Martyrs paid its cost twice, +5 net for one minion
-- g2 Ben (3/4, yes): Farewell on Martyrs is a double payout; fun, but only with Martyrs it feels like a combo, otherwise rarely worth it.
-- g2 Cal (4/4, yes): Martyrs through Farewell paying twice was the strongest single play I saw.
-- g2 Dee (3/3, yes): with Martyrs it pays twice, otherwise it's niche
-- g4 Ava (5/2, no): paying full printed cost for a used-up once-per-game card (Heiresses 9, Extra Hand 9) is the biggest exploit in the game and feels bad to watch.
-- g4 Ben (5/5, yes): casting out a spent once-per-game card for its full cost is a big payoff (Cal's Heiresses for 9, my Extra Hand for 9); fun but probably overtuned on expensive u
-- g4 Cal (5/5, yes): casting out a spent Heiresses for 9 and Ben's Extra Hand for 9: paying full cost on a used-up card is the strongest thing white does and maybe too strong
-- g4 Dee (5/4, yes): full printed cost back on a spent once-per-game member (Heiresses for 9, Extra Hand for 9) is the outlier on the board.
-
-### Estate Sale
-- g2 Ava (4/3, yes): Dee turned a poached 8-cost Patroness into 9 white and the white +10
-- g2 Ben (4/4, yes): Dee's Estate Sale on a poached Patroness for 8 white won him white; strong when chained with theft.
-- g2 Cal (4/3, yes): turning a poached 8-cost into 8 white is a huge two-step; strong, maybe too strong paired with Poach.
-- g2 Dee (5/5, yes): turning a poached 8-cost member into 8 white won me a +10 contest; really swingy
-- g4 Ava (3/2, yes): I weighed casting out Doormen to steal white from Cal; real choice, but casting out your own members rarely feels good.
-- g4 Ben (3/4, yes): turning Scouts into Recluse was a nice pivot; it's flexible.
-- g4 Cal (3/3, yes): Martyrs for 4 white plus its own 4 followers was neat, but it was mostly a defensive grab
-- g4 Dee (2/2, yes): a decent white pivot, never a key play.
-
-### Cash In
-- g2 Ava (1/1, yes): never better than buying followers 1:1, nobody took it
-- g2 Ben (2/2, yes): Nobody took it; by round III white mostly went straight into follower buys instead.
-- g2 Cal (1/1, yes): nobody took it; holding white for the contest beat cashing it every time.
-- g2 Dee (3/3, yes): a genuine last-turn dilemma against keeping the white prize; I passed it for 10 followers plus the contest
-- g4 Ava (4/3, yes): 16 white into 17 followers for Cal in one go; fine as the white payoff but it makes white a race nobody else can join.
-- g4 Ben (4/4, yes): Cal turned 16 white into 17 followers in one placement; it's the white payoff, and fine as a center space.
-- g4 Cal (4/4, yes): 16 white into 17 followers in one placement without a recruit; the catch is it empties your white contest, which is the right tension
-- g4 Dee (5/4, yes): 16 white into 17 followers in one placement; white's whole game funnels into it.
-
-### Build Up
-- g2 Ava (4/2, yes): boring text but in III it was the only answer to green, so taking it was a lock
-- g2 Ben (3/3, yes): Solid green income; the round I target I wanted to copy, but everything green got stolen anyway.
-- g2 Cal (2/2, yes): plain green, fine.
-- g2 Dee (3/2, yes): plain, but it's the only real green refill when you've been robbed
-- g3 Ava (3/3, yes): honest green, and big pile bait
-- g3 Ben (2/2, yes): plain green income; I took it three times and it was always obvious
-- g3 Cal (2/2, yes): flat green, mostly taken as a placement once the copy spaces were gone
-- g3 Dee (3/3, yes): plain and fair
-
-### Echo
-- g2 Ava (4/3, unsure): it copies whatever just happened, so it punishes the player before you more than it helps the copier plan
-- g2 Ben (4/3, yes): Copying a fresh Help Yourself or Encore is huge; it rewards sitting right after the big play.
-- g2 Cal (4/4, yes): copying a fresh Con Men Encore was a 5-steal; whether it's good depends entirely on who went before you.
-- g2 Dee (5/4, yes): round I Echo on Help Yourself, and round III Echo on Encore on Con Men, are the strongest plays on the wheel
-- g3 Ava (4/3, yes): copying Harvest, Encore or Poach right after it's taken is very strong, and depends entirely on seat order
-- g3 Ben (4/3, yes): great in round I after Harvest, but copying Poach and Encore chains makes whoever sits after a big play the real winner of it
-- g3 Cal (5/4, yes): copying my own Poach for a second member was huge; it's strong whenever the previous action is a center space
-- g3 Dee (5/4, yes): the copy chains (Echo to Encore to Con Men, Echo to Poach) are the game's real engine and a bit too strong
-
-### Reprise
-- g2 Ava (4/4, yes): doubling my own Shake Down was my best round II turn
-- g2 Ben (5/2, yes): Reprise on Shake Down or Poach doubles the nastiest spaces; it was the swingiest green space and felt bad to receive.
-- g2 Cal (4/3, yes): doubling my own Out of Style in round I was great; doubling Poach is too much.
-- g2 Dee (5/5, yes): strong on Out of Style and too strong on Poach
-- g3 Ava (4/3, yes): with Fence on Help Yourself it was the best pairing in the game
-- g3 Ben (4/3, yes): Reprise into my own Cover into Shake Down was a fun three-deep play; Reprise on Help Yourself with Fence is too much every round
-- g3 Cal (5/5, yes): Reprise on Help Yourself with Fence was my engine for two rounds; probably too good for an outer Green space
-- g3 Dee (4/3, yes): on Help Yourself with Fence it's a second steal every round; Cal ran it every round
-
-### Encore
-- g2 Ava (5/3, yes): it turned my Con Men into everyone's Con Men three times; too much value from someone else's buy
-- g2 Ben (5/4, yes): Encore on Con Men is a free 5-steal with no buy; strong and fun for me, but it makes Con Men a table-wide weapon.
-- g2 Cal (4/2, yes): Con Men's On Recruit got fired something like four times off one buy, which makes Con Men a table-wide card.
-- g2 Dee (5/4, yes): Encore on Con Men is a 5-steal with no buy; it fired three times this game and that's the loudest problem
-- g3 Ava (5/5, yes): copying Ben's Con Men for steal 5 was a highlight; with Echo stacked it fired Con Men three times off one free flip
-- g3 Ben (4/2, yes): copying a rival's On Recruit made my Con Men fire three times for the table and my Fan Club pay Cal 6 green; it punishes the person who bought the good card
-- g3 Cal (4/4, yes): Fan Club's On Recruit through Encore gave me 7 green once every Green space was filled, and Con Men through Encore and Echo ran three deep in round II
-- g3 Dee (4/3, yes): its value is entirely what rivals' On Recruits are; Con Men and Fan Club made it huge
-
-### Cover
-- g2 Ava (2/2, yes): the empty-space restriction usually left it copying something small
-- g2 Ben (4/4, yes): Cover copying an empty Recruit Twice with Impressionist gave me the blue lead; the best Impressionist turn I had.
-- g2 Cal (3/3, yes): flexible, Ben used it as a second Recruit Twice.
-- g2 Dee (4/4, yes): the last open green space, plus a flexible copy; it won me green in round II
-- g3 Ava (3/3, yes): Ben chained it three deep into Shake Down; powerful but hard to follow at the table
-- g3 Ben (5/4, yes): my favourite space: copying Tryout, Melting Pot or Shake Down from Cover was a real choice every time
-- g3 Cal (4/3, yes): it's what let Ben reach Shake Down and Melting Pot; strong in long chains
-- g3 Dee (3/3, yes): flexible but rarely the top pick
-
-### Greatest Hits
-- g2 Ava (5/5, yes): Con Men plus Accomplice for an 8-steal was the play of the game, maybe too much
-- g2 Ben (5/2, yes): With Con Men and Accomplice it was an 8-steal; whether it is huge or nothing depends entirely on owning steal-on-recruit members.
-- g2 Cal (4/2, yes): Con Men plus Accomplice through it was an 8-steal from one center space.
-- g2 Dee (4/3, yes): on Con Men plus Accomplice it's an 8-steal, which is too much in one center space
-- g3 Ava (2/2, yes): only as good as your members, and mostly good for a Con Men holder
-- g3 Ben (3/2, yes): weak for me once my On Recruit members were stolen; Cal got more out of it via Con Men
-- g3 Cal (4/4, yes): firing Con Men again for a 5-steal felt great; it's only as good as your On Recruits
-- g3 Dee (2/2, yes): only good if you hold On Recruit members; mine had none
-
-### Line Cutters
-- g1 Ava (4/4, unsure): 3 followers for 2 any is a steal and going first enabled my Big Dilute, but it got Demoted away and then Cal went first
-- g1 Ben (3/3, unsure): 3 followers for 2 is a bargain, and 'always first' mattered more than I expected once Ava and Cal held it.
-- g1 Cal (4/4, n/a): 3 followers for 2 plus first pick; with Clockmakers it gave me round III's first two moves
-- g2 Ava (5/3, yes): 3 followers for 2 any plus first pick is the best rate in the game, and stealing it from Ben swung two seats
-- g2 Ben (4/4, no): 3 followers and first pick for 2 any is the best price in the shop, and stealing it gave Ava first pick in round III.
-- g3 Ava (2/4, unsure): 3 followers for 2 any is too cheap; the go-first text barely matters
-- g4 Dee (4/4, unsure): 3 followers for 2 and first pick every round feels underpriced for a guest card.
+### HR
+- g1 Ava (4/4, unsure): free off Walk-In then stolen by Demote; a 4-member body is the juiciest swap target
+- g1 Cal (3/3, n/a): worth 4 and it paid +2 at the end; I took it for the body, not the bonus
+- g2 Cal (2/1, yes): 10 any for 4 plus maybe 2 never beat buying 10 followers.
+- g4 Cal (1/1, unsure): 10 for 4 with a three-of-a-color bonus nobody can reach; dead card
+- g6 Ava (3/2, unsure): considered it with Splurge for about 9 followers; 10 any for 4 is poor and the game-end bonus is hard to hit.
+- g6 Cal (2/1, unsure): 10 for 4 and a 3-of-a-color condition nobody here could meet
 
 ### Recruiter
 - g1 Ava (5/2, unsure): the artifact I'd least want to face: with rival swaps it paid Cal +2 red every Promote/Demote and snowballed him
@@ -663,27 +934,27 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g3 Ben (1/1, unsure): the artifact I'd least want: it only pays on swaps and steals you mostly don't control, though Ava got a few +2s
 - g3 Dee (1/1, unsure): it didn't even fire when Ava's own Demote took a member out of my cult
 
-### Party Crasher
-- g1 Dee (3/2, no): couldn't land on my own Toast (surprise), so it became a Largesse join that fed the leader; doesn't feel like a guest card with a plan
-- g2 Ava (2/2, unsure): weighed it in II, 1 follower for 4 is too little for one placement trick
-- g2 Dee (3/2, unsure): I weighed it as a blocker tool every round and never found a turn worth 4
-- g4 Ben (5/5, yes): joining a center space someone else already took (Largesse) in the last turn of the game is a huge, satisfying swing for 4.
-- g4 Cal (4/4, unsure): weighed it in round I as useless; in Ben's hands onto Largesse in the last turn it was 11 followers for 4
-- g4 Dee (5/5, no): for 4 resources Ben joined my Largesse in the last turn for 10 followers and swung my silver contest; it needs a limit on center spaces.
+### Shift Crew
+- g1 Ben (2/4, yes): A free 4-member card from Walk-In; nothing to decide, but a nice hit.
+- g4 Ava (3/2, yes): 4 followers for 4 came up off my own bury and Cal took it; best flat rate in the deck.
+- g4 Ben (3/2, yes): 4 for 4 is fine value but it's just a body; passing it in round I to keep the purple lead was a real but easy choice.
+- g4 Cal (2/4, yes): 4 followers for 4 is just good; never a dilemma, always a buy
+- g7 Cal (3/3, yes): with Alchemists it's 4 for 4, too efficient
+- g8 Ben (2/2, yes): a plain 4-for-4 body, no decision.
 
-### Guest Book
-- g1 Ben (3/4, yes): Fired four times for about 8 yellow and won me two yellow contests; it fits a color that's about going broad.
-- g1 Cal (2/2, yes): a few yellow for spreading colors; Ben got little from it beyond round I
-- g1 Dee (2/2, unsure): least wanted: four triggers at most, and Ben's yellow came from Dyer and Harvest anyway
-- g3 Cal (2/2, yes): the artifact I'd least want; a few yellows for Dee, never decisive, though Dee did win
-- g3 Dee (4/5, yes): +2 yellow per new color fired 4 times, and Drifters choosing a color to trigger it felt clever
+### Accomplice
+- g2 Ava (4/4, yes): pay 3, steal 3, with Fence it nets a resource and a body; underpriced in a steal deck
+- g6 Ben (5/5, yes): last placement of round I, steal 3 split across two rivals, won me two contests; nobody could answer it
+- g6 Cal (3/3, yes): on the last placement of round I it decided two contests; that steal has no answer
+- g7 Ava (4/4, yes): cheap, punchy steal; but holding it after use is a liability under Shake Down and Poach
+- g7 Dee (4/4, yes): getting it through Shake Down re-fired its steal and won me Silver in round II
 
-### Impressionist
-- g2 Ava (1/1, yes): least wanted, copies only gave Ben a stray resource and he ended last
-- g2 Ben (2/2, yes): Only paid +1 twice all game; copying is great but the artifact adds little and doesn't change what you copy.
-- g2 Cal (1/1, unsure): the artifact I'd least want; Ben barely got anything from it.
-- g3 Ava (2/2, yes): the artifact I'd least want: +1 per copy is small next to Fence
-- g3 Ben (3/3, yes): steady +1 on every copy, good fit with green, never spectacular; I'd pick it again
+### Anarchist
+- g1 Cal (3/3, n/a): a once-a-round swap engine at 7 is interesting, but a flat buy-10 beat it on the last turns
+- g1 Dee (4/3, unsure): weighed swapping my spent Party Crasher for Ben's Shift Crew; strong idea, but a flat buy of 10 beat it on the last turn
+- g7 Ava (4/3, yes): swapping Toastmaster for Cal's Shift Crew was a real temptation I turned down for the magenta race
+- g7 Cal (2/2, n/a): I weighed it to strip Dee's Recluse, but 7 for a 1-worth swap is too steep that late
+- g7 Dee (3/3, unsure): swapping my Accomplice for Cal's Shift Crew was tempting, but 7 any drained the silver I needed
 
 ### Bargain Bin
 - g2 Ben (3/2, yes): The artifact I'd least want to face: a steady blue drip that made blue Cal's color all game.
@@ -692,29 +963,86 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g4 Ben (2/2, yes): the one I'd least want: a trickle of blue that only matters if you're in the blue race, and Ava still lost blue to Cal.
 - g4 Cal (2/2, yes): the artifact I'd least want: a trickle of blue that fires on everyone's buries but Ava still lost blue every round after round I
 
-### HR
-- g1 Ava (4/4, unsure): free off Walk-In then stolen by Demote; a 4-member body is the juiciest swap target
-- g1 Cal (3/3, n/a): worth 4 and it paid +2 at the end; I took it for the body, not the bonus
-- g2 Cal (2/1, yes): 10 any for 4 plus maybe 2 never beat buying 10 followers.
-- g4 Cal (1/1, unsure): 10 for 4 with a three-of-a-color bonus nobody can reach; dead card
+### Clockmakers
+- g1 Cal (3/3, yes): the round III double opener was strong; one use per round once Line Cutters gives you first pick
+- g4 Ben (2/2, yes): I passed on it; for Dee, paired with Line Cutters, it was a decent opener.
+- g4 Dee (4/4, yes): with Line Cutters it's a guaranteed opening double; round III double took Largesse and Toast.
+- g6 Ava (2/2, yes): 5 for 2 followers and a turn order quirk, never close to buying a 5-follower buy instead.
+- g6 Ben (3/2, yes): weighed it against Courier; its round-start double did less than Courier's payout
 
-### Ringleader
-- g1 Ava (3/3, unsure): tempting contest tool, but paying 6 would have thinned the leads it was meant to protect
-- g1 Ben (2/2, yes): Four followers for 6 plus a small poke; I never found the turn for it.
-- g1 Dee (3/4, yes): via Tryout: 3 followers plus three surgical changes, fun
-- g3 Cal (3/3, yes): through Tryout it gave me 2 followers and trimmed Ava's red; nice to borrow
+### Debt Collectors
+- g1 Ben (2/2, yes): Break-even unless you've just Toasted; Dee's Toast-then-collect loop was cute.
+- g1 Dee (4/5, yes): firing it right after my own Toast took back what the Toast gave; net cost 2 for a 2-body that drains everyone
+- g7 Ben (4/4, yes): bought to rescue my silver lead, pulling 2 from everyone flipped the contest
+- g7 Cal (4/3, yes): it pulled silver from me under Lie Low and swung silver to Ben; feels like a steal in disguise
+- g7 Dee (3/2, yes): I passed on it and Ben used it to take Silver from me; underrated
 
-### Shift Crew
-- g1 Ben (2/4, yes): A free 4-member card from Walk-In; nothing to decide, but a nice hit.
-- g4 Ava (3/2, yes): 4 followers for 4 came up off my own bury and Cal took it; best flat rate in the deck.
-- g4 Ben (3/2, yes): 4 for 4 is fine value but it's just a body; passing it in round I to keep the purple lead was a real but easy choice.
-- g4 Cal (2/4, yes): 4 followers for 4 is just good; never a dilemma, always a buy
+### Guest Book
+- g1 Ben (3/4, yes): Fired four times for about 8 yellow and won me two yellow contests; it fits a color that's about going broad.
+- g1 Cal (2/2, yes): a few yellow for spreading colors; Ben got little from it beyond round I
+- g1 Dee (2/2, unsure): least wanted: four triggers at most, and Ben's yellow came from Dyer and Harvest anyway
+- g3 Cal (2/2, yes): the artifact I'd least want; a few yellows for Dee, never decisive, though Dee did win
+- g3 Dee (4/5, yes): +2 yellow per new color fired 4 times, and Drifters choosing a color to trigger it felt clever
+
+### Hot Streak
+- g6 Ava (5/4, yes): I spotted it for my four-turn run, passed for safety, and Ben used it for 9; my biggest regret.
+- g6 Ben (5/5, yes): I took it to keep it from Ava's four-turn Last Call run and then built my own +9; great tension card
+- g7 Ben (2/3, yes): weighed it for a Crunch Time combo but the setup costs too many placements
+- g8 Ava (4/3, yes): watched Ben cash +9 off a Crunch Time/Right Away chain; strong in purple's hands.
+- g8 Ben (4/5, yes): +9 off a Crunch-Right Away run was a real highlight and made the tempo cards matter.
+
+### Martyrs
+- g2 Ava (4/4, yes): arrived via Shake Down, cast out with Farewell for +5 net; it pays its cost twice
+- g2 Ben (4/5, yes): Paid me back when Shake Down took it and paid Ava twice via Farewell; the most fun card at the table.
+- g4 Cal (3/4, yes): 3 for 4, then Estate Sale out for 4 white plus its 4 back; a nice white loop
+- g6 Cal (4/5, yes): 3 followers for 4, then 4 more when it leaves; the Estate Sale combo felt great
+- g7 Cal (4/5, yes): worth 3, and Farewell pays it back again
+
+### Money Changers
+- g2 Dee (5/4, yes): quietly gave me about 15 white over the game off everyone's follower buys and won me white twice; maybe the best artifact here
+- g4 Cal (4/4, yes): my artifact; about 12 white over the game for nothing, and it kept the white contest mine all three rounds
+- g6 Ben (3/4, yes): a white drip off everyone's buys, plus free 1-follower buys for me, about 8 white over the game; good but never decisive
+- g6 Cal (3/3, yes): the artifact I'd least want: free white for Ben on everyone's buys, but it mostly piled up past what the white contest needed
+- g7 Dee (3/4, yes): the white-for-follower refund loop was a free follower every turn, but it never won me the white contest
+
+### Night Owls
+- g1 Ava (3/3, yes): weighed it twice; 8 cost for one more placement barely breaks even unless you're short of turns
+- g7 Ben (3/3, yes): only worth it when you have more resources than recruits, which is exactly when I bought it
+- g7 Cal (3/3, yes): I weighed it for a last placement; Ben's use showed it's real at the end
+- g8 Ava (3/2, no): wanted it for a round III extra recruit, but 6 purple is a lot for a green player; felt like a purple card that only purple can use.
+- g8 Ben (3/2, yes): weighed it, but an extra minion placed after my last one lands when the wheel is nearly full.
+
+### Philanthropists
+- g1 Cal (4/4, yes): +4 on recruit, and where you send the silver decides the silver contest
+- g1 Dee (3/3, yes): via Tryout: 4 followers that don't use the recruit, but the silver again goes to someone
+- g4 Dee (4/2, yes): I seriously weighed it to block a gift to Ben but it would have dropped my silver margin; didn't buy it.
+- g7 Ava (3/3, yes): 6 silver for a body, 4 followers and Caterer silver; fine, not exciting
+- g7 Cal (3/3, yes): a decent Poach target, but Extra Hand beat it
 
 ### Scouts
 - g1 Cal (3/3, n/a): burying Shift Crew from Ava was satisfying, but the refill brought her Line Cutters anyway
 - g2 Cal (3/2, yes): 2 for 3 is fine, but its sweep didn't trigger Bargain Bin or Patroness, which read wrong to everyone at the table.
 - g3 Dee (3/3, no): bought only as a cheap 2-follower body for Stash's bonus; never used its ability
 - g4 Ben (2/2, no): bought it as a body and sold it to Estate Sale the same round; its shop wipe never came up.
+- g7 Ben (4/4, unsure): 3 for 2 followers plus a shop reset each round, burying Debutantes and Grifter mattered a lot
+
+### Caterer
+- g1 Dee (4/5, yes): made silver my lane from the first Toast; firing on Debutantes before the double was a great moment
+- g4 Ava (5/2, yes): the artifact I'd least want to sit against: Dee's silver lead never wobbled once Toast and Largesse each paid her +2.
+- g4 Dee (4/4, yes): +2 silver per gift made Toast, Party Favors and Largesse all better for me, but it only kept me in a contest, it didn't win the game.
+- g7 Ava (4/4, yes): turns every silver gift into my silver; strong, maybe only because silver spaces give so much
+
+### Fan Club
+- g2 Cal (3/3, unsure): 3 followers plus green refund was fine value, but it's a body, not a green idea.
+- g3 Ava (3/3, yes): weighed it for green; Big Tent beat it for me
+- g3 Ben (4/4, yes): with 4 occupied green spaces it refunds most of its cost, a good round III buy, until Encore gave Cal the same 6 green
+- g8 Ava (4/4, yes): 3 followers, counts 3 for Roadie and Chronicler, refunded 4 green; cheap for what it does.
+
+### Heiresses
+- g4 Ava (5/2, yes): +11 white then Farewell for 9 was a ~20-point turn for Cal; the card is fine, the Farewell combo isn't.
+- g4 Cal (5/5, yes): +11 white then Farewell for 9: the best two turns I had, maybe too much together
+- g6 Ben (3/5, no): +1 white per member, not per white member, so a wide cult gets +13 white and a contest; it pays for being big, not for being white
+- g6 Cal (4/3, no): a white card that pays for total member count; Ben's +13 white felt too easy for one action
 
 ### Loyalists
 - g3 Ava (4/3, yes): protects everything but itself, which is exactly the hole I used
@@ -722,96 +1050,114 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g3 Cal (3/2, yes): bought for 3 bodies and Gather's +3, then Shake Down took it at once; protecting everything except itself is the hole
 - g3 Dee (3/3, yes): 5 for 3 is fair, but not protecting itself let Ava Demote it out for Old Maid
 
-### Extra Hand
-- g3 Ben (4/3, yes): weighed it for a true last placement; at 9 it was too many contest pieces for me, but Dee made it work
-- g3 Dee (5/5, yes): at 9 it looks overpriced, but a minion that lands after the last seat in round III won me the game
-- g4 Ben (4/4, yes): at 9 it's pricey, but an extra placement plus a recruit, then Farewelled for 9, made it almost free.
-- g4 Cal (4/4, unsure): I passed on it to keep my contest piles; Ben bought it and Farewelled it for a +1 minion and 9 followers, and that swing beat me
+### Ringleader
+- g1 Ava (3/3, unsure): tempting contest tool, but paying 6 would have thinned the leads it was meant to protect
+- g1 Ben (2/2, yes): Four followers for 6 plus a small poke; I never found the turn for it.
+- g1 Dee (3/4, yes): via Tryout: 3 followers plus three surgical changes, fun
+- g3 Cal (3/3, yes): through Tryout it gave me 2 followers and trimmed Ava's red; nice to borrow
 
-### Pocket Watch
-- g1 Ava (4/4, yes): quietly paid 6-7 purple over the game off my own Sleep Ins and others' skips; better than it reads
-- g4 Ben (3/4, yes): paid about 8 purple across the game off Last Call and Hold Up skips; good but the purple contest had no rivals so it mostly padded a lead.
-- g4 Dee (2/2, yes): the artifact I'd least want: a purple drip that only mattered because Ben already owned purple.
+### Roadie
+- g2 Dee (3/3, yes): it paired well with Busker, but everything got stolen before scoring
+- g3 Ava (2/2, yes): arrived by Shake Down; one green a round
+- g3 Ben (3/3, yes): a nice cheap green engine until Shake Down handed it to Ava; one round of payoff
+- g8 Ava (5/5, yes): counting member weight makes it pay 11-12 a round with Fan Club and Tribute Band; it's the engine, maybe too much.
+
+### Toastmaster
+- g1 Dee (4/4, yes): cheap and paid a follower on 6 silver spaces; exactly the kind of engine I like
+- g4 Ava (2/3, no): +1 per Silver space was worth about 4 over the game; cheap and fine but it pulled me into silver spaces more than blue's idea.
+- g4 Dee (2/2, yes): I sent it to... kept it for myself then Ava took it; +1 per silver space is slow.
+- g7 Ava (3/4, yes): +1 on every silver space added about 6 over the game for 3 cost
+
+### Agents
+- g2 Ava (2/2, yes): weighed it twice; 2 for 3 is poor and the copy block came too late
+- g2 Dee (3/2, yes): I weighed it twice, and with this much copying it should matter more than it did; I never had the green
+- g8 Ava (5/4, yes): 3 cost for 2 followers and it shut off Ben copying my Build Up chains all game; great defensive card.
+
+### Busker
+- g2 Dee (3/3, yes): a good green-contest engine early, then dead weight once the round starts run out
+- g3 Ben (4/4, yes): +2 green every round start is exactly the cheap engine I like and it survived all game
+- g8 Ava (3/3, yes): fine steady +2, a tidy small engine.
+
+### Closer
+- g1 Ava (4/4, yes): +4 purple on the round's last minion won my round III purple, but a Sleep In skip moved Dee's turn past mine in round II and it missed
+- g1 Ben (3/3, yes): Plus 4 purple at round end quietly kept Ava's purple safe every round.
+- g6 Ava (4/4, yes): basically free in a Last Call round, and Shake Down took it the next round.
+
+### Double Agent
+- g2 Ava (3/2, yes): weighed it to take Fan Club, but 8 resources for a net 3 loses to buying followers
+- g6 Ben (3/2, yes): the threat of a swap past Bodyguards made me Poach early; nobody actually bought it
+- g6 Cal (3/2, yes): I weighed it for Line Cutters and Closer, but 8 for a swap nets less than a 10-buy
+
+### Early Birds
+- g1 Ava (2/2, yes): just a cheap 2-for-3 body to dump leftover resources on the final recruit
+- g1 Ben (2/2, yes): Plain value; the skip protection barely matters at this table.
+- g7 Ben (2/2, yes): cheap body but would have broken my round I purple tie
 
 ### Mob
 - g1 Ava (2/2, yes): 12 cost is too much when buy-10 gives 10 followers on one recruit
 - g1 Cal (3/2, yes): weighed at 12 in round II; it would have cost me the red contest, so it never fit
 - g3 Cal (2/2, yes): I weighed it, but 12 resources would have cost me the Red prize
 
-### Clockmakers
-- g1 Cal (3/3, yes): the round III double opener was strong; one use per round once Line Cutters gives you first pick
-- g4 Ben (2/2, yes): I passed on it; for Dee, paired with Line Cutters, it was a decent opener.
-- g4 Dee (4/4, yes): with Line Cutters it's a guaranteed opening double; round III double took Largesse and Toast.
-
-### Philanthropists
-- g1 Cal (4/4, yes): +4 on recruit, and where you send the silver decides the silver contest
-- g1 Dee (3/3, yes): via Tryout: 4 followers that don't use the recruit, but the silver again goes to someone
-- g4 Dee (4/2, yes): I seriously weighed it to block a gift to Ben but it would have dropped my silver margin; didn't buy it.
-
-### Caterer
-- g1 Dee (4/5, yes): made silver my lane from the first Toast; firing on Debutantes before the double was a great moment
-- g4 Ava (5/2, yes): the artifact I'd least want to sit against: Dee's silver lead never wobbled once Toast and Largesse each paid her +2.
-- g4 Dee (4/4, yes): +2 silver per gift made Toast, Party Favors and Largesse all better for me, but it only kept me in a contest, it didn't win the game.
-
-### Toastmaster
-- g1 Dee (4/4, yes): cheap and paid a follower on 6 silver spaces; exactly the kind of engine I like
-- g4 Ava (2/3, no): +1 per Silver space was worth about 4 over the game; cheap and fine but it pulled me into silver spaces more than blue's idea.
-- g4 Dee (2/2, yes): I sent it to... kept it for myself then Ava took it; +1 per silver space is slow.
-
-### Fence
-- g2 Ava (4/3, yes): +1 magenta per steal quietly kept me on top of magenta every round
-- g2 Dee (2/2, yes): the one I'd least want: Ava's magenta came from Stash and Lie Low anyway, and +1 per steal is small
-- g3 Cal (5/5, unsure): the best artifact by far for a steal player, though it pays magenta whatever color you steal
-
-### Martyrs
-- g2 Ava (4/4, yes): arrived via Shake Down, cast out with Farewell for +5 net; it pays its cost twice
-- g2 Ben (4/5, yes): Paid me back when Shake Down took it and paid Ava twice via Farewell; the most fun card at the table.
-- g4 Cal (3/4, yes): 3 for 4, then Estate Sale out for 4 white plus its 4 back; a nice white loop
-
-### Raiders
-- g2 Ben (3/3, yes): Weighed it in round II against Martyrs; a 4-follower swing off the leader is good but slow for a 5-cost.
-- g2 Dee (3/2, yes): I weighed it in round II, but 5 to buy plus 2 white to use felt slow
-- g4 Dee (4/5, yes): stealing 4 off the leader for 2 white was a nice swing, though Cal shrugged it off.
-
 ### Patroness
 - g2 Cal (5/2, yes): the payoff card for blue churn, but 8 cost for 1 follower makes it the perfect Poach target and then it pays your rival.
 - g2 Dee (4/4, yes): Cal's churn engine; moving it to me and then cashing it for 8 white felt great
 - g4 Ava (3/2, yes): weighed it all of round III with Trendsetters, but 8 cost for 1 follower and a trigger with few turns left never added up.
+
+### Polisher
+- g1 Cal (3/3, yes): pays back its cost with its one use; a clean late-game converter
+- g4 Cal (3/4, yes): turned rival-gifted silver into 6 blue for my round II blue push; cheap and flexible
+- g7 Ben (2/1, yes): it converted all my silver when I wanted 2 and nearly cost me silver, the up-to-3 should let you choose fewer
+
+### Recluse
+- g2 Dee (4/4, yes): +4 at the end for staying lean, which suited a contest player well
+- g4 Ben (4/5, yes): +6 at game end for 4 because I stayed narrow; decided the game by itself.
+- g7 Dee (4/4, yes): +4 for staying lean was the right pick for a light-member plan, and it bent every later member choice
 
 ### Snobs
 - g2 Cal (4/3, yes): 8ish followers for 6 in a blue-member build, then got poached; Game End cards are a big Poach target.
 - g2 Dee (4/3, yes): I poached it as a 9-point hit to Cal; it's a big target in a blue-heavy cult
 - g4 Ava (4/5, yes): paid 13 at game end off a 6-cost card; strong reward for going deep in blue members, maybe a bit too strong.
 
-### Fan Club
-- g2 Cal (3/3, unsure): 3 followers plus green refund was fine value, but it's a body, not a green idea.
-- g3 Ava (3/3, yes): weighed it for green; Big Tent beat it for me
-- g3 Ben (4/4, yes): with 4 occupied green spaces it refunds most of its cost, a good round III buy, until Encore gave Cal the same 6 green
+### Stunt Double
+- g2 Ben (3/3, yes): Weighed it on my last round II turn to copy Exchange with Impressionist; costs green and the tie, so no.
+- g3 Ben (4/5, yes): copying Walk-In for a free Triplets was the highlight of my night
+- g8 Ava (4/4, yes): recruiting it right after Echo-on-Last-Call doubled a big turn, +3 followers and purple for 5.
 
-### Roadie
-- g2 Dee (3/3, yes): it paired well with Busker, but everything got stolen before scoring
-- g3 Ava (2/2, yes): arrived by Shake Down; one green a round
-- g3 Ben (3/3, yes): a nice cheap green engine until Shake Down handed it to Ava; one round of payoff
+### Big Tent
+- g3 Ava (5/5, yes): +8 for a free member once I shaped my cult around exactly one of each color; best odd combo of the night
+- g3 Dee (3/3, yes): weighed it at 8 followers for 7; Ava made +8 off it, so it's better than I counted
 
-### Volunteer
-- g1 Ava (1/2, yes): a 1-for-1 placeholder that later became the Promote bait for Deprogrammers
-- g3 Ava (1/2, yes): 1 for 1, filler that held Big Tent's red
+### Brokers
+- g4 Cal (4/4, yes): 3 followers for 5 plus a point on every White payout; great if you are the white player, nothing otherwise
+- g7 Cal (3/3, yes): small payoff, only 1-2 extra triggers in round III
+
+### Connoisseurs
+- g2 Cal (2/2, yes): +1 blue per blue recruit, only fired a few times; filler.
+- g4 Ava (3/4, yes): bought right before Snobs and Critic so it refunded on both; neat sequencing payoff.
+
+### Courier
+- g4 Ben (4/4, unsure): with Last Call's end block it fired about four times for 12 resources, but those resources mostly went to waste for lack of recruits; it reads more blue/yellow than purple.
+- g6 Ben (4/4, unsure): paid 5-6 resources over the game off snake doubles and Crunch Time; it's a purple card paying other colors, which is odd
+
+### Cutpurse
+- g3 Ava (3/3, yes): small steady steals and a cheap first body; the round-start steal goes to whoever is richest, so it was a real swing
+- g6 Cal (4/4, yes): cheap, paid every round start, and broke two magenta ties with Fence
+
+### Debutantes
+- g1 Dee (5/5, yes): the payoff for a silver pile; doubling to 26 was the high point of my game, and Caterer stacks on it
+- g7 Ava (3/2, yes): the combo I wanted for round III got buried by Scouts before I could afford it
 
 ### Deprogrammers
 - g1 Ava (4/3, yes): a 4-member body that changed hands three times; its -1 follower sting adds insult to the swap
 - g1 Cal (4/4, yes): worth 4 at cost 3 and pairs with Red's swaps; stealing it from Ava and losing it back felt right for Red
 
-### Closer
-- g1 Ava (4/4, yes): +4 purple on the round's last minion won my round III purple, but a Sleep In skip moved Dee's turn past mine in round II and it missed
-- g1 Ben (3/3, yes): Plus 4 purple at round end quietly kept Ava's purple safe every round.
+### Desperado
+- g3 Ava (5/5, yes): the comeback card: Crime Wave took a whole pile and Help Yourself took 10; maybe too much for 5
+- g3 Cal (5/1, yes): doubled Help Yourself to 10 in round III; 'fewest followers' is close to free in a tight race, and it lost me the game
 
-### Early Birds
-- g1 Ava (2/2, yes): just a cheap 2-for-3 body to dump leftover resources on the final recruit
-- g1 Ben (2/2, yes): Plain value; the skip protection barely matters at this table.
-
-### Gossip
-- g1 Ava (2/2, yes): weighed it with Pocket Watch; skips didn't come often enough to pay 6
-- g4 Ben (2/2, yes): weighed it for my Last Call skips; at 6 cost it only breaks even.
+### Doormen
+- g2 Cal (1/1, yes): paid me 2 blue all game; rivals almost never recruit twice.
+- g4 Ava (1/1, yes): 5 for 2 and its trigger never fired once; dead card.
 
 ### Drifters
 - g1 Ben (2/3, yes): A fine 3-cost body worth 2; picking its color to keep Guest Book open was a nice small choice.
@@ -821,157 +1167,107 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g1 Ben (3/4, yes): Cheap, refills missing colors at round start, and teaches you to spend down; a good engine piece.
 - g1 Cal (3/4, yes): through Tryout it was 3 free resources, a good cheap On Recruit
 
-### Tastemaker
-- g1 Ben (3/1, yes): I read it as +1 per resource changed; it's +1 per Dilute, so it's a 6-cost card that paid me 2. The wording needs fixing.
-- g3 Dee (1/2, yes): arrived free off Walk-In and never fired
-
-### Debt Collectors
-- g1 Ben (2/2, yes): Break-even unless you've just Toasted; Dee's Toast-then-collect loop was cute.
-- g1 Dee (4/5, yes): firing it right after my own Toast took back what the Toast gave; net cost 2 for a 2-body that drains everyone
-
-### Mentor & Protégés
-- g1 Cal (3/4, yes): a 9-cost card that pulls a free cheapest card; good, then good swap bait for HR
-- g3 Cal (3/3, yes): through Tryout I chose Ringleader because I wasn't sure Mentor's recruit was free; that wording isn't clear
-
-### Polisher
-- g1 Cal (3/3, yes): pays back its cost with its one use; a clean late-game converter
-- g4 Cal (3/4, yes): turned rival-gifted silver into 6 blue for my round II blue push; cheap and flexible
-
-### Anarchist
-- g1 Cal (3/3, n/a): a once-a-round swap engine at 7 is interesting, but a flat buy-10 beat it on the last turns
-- g1 Dee (4/3, unsure): weighed swapping my spent Party Crasher for Ben's Shift Crew; strong idea, but a flat buy of 10 beat it on the last turn
-
-### Triplets
-- g1 Dee (2/3, yes): 3 followers for 3 is just correct, never a decision
-- g3 Ben (2/3, yes): 3 bodies for 3 is honest and it inflated my Grifter count
+### Grifter
+- g3 Ava (4/2, yes): never bought, but through Tryout it stole 6 from me for free; scales off guest bodies too fast
+- g3 Ben (4/4, unsure): steal-per-2-members via Tryout is the best counter to theft-heavy tables, but it's a red-space trick more than a magenta card
 
 ### High Society
 - g1 Dee (2/2, yes): the math never got close to a buy of 10
 - g4 Ben (2/2, yes): weighed it; with your silver at zero it's break-even at 8 cost.
 
-### Agents
-- g2 Ava (2/2, yes): weighed it twice; 2 for 3 is poor and the copy block came too late
-- g2 Dee (3/2, yes): I weighed it twice, and with this much copying it should matter more than it did; I never had the green
-
-### Stunt Double
-- g2 Ben (3/3, yes): Weighed it on my last round II turn to copy Exchange with Impressionist; costs green and the tie, so no.
-- g3 Ben (4/5, yes): copying Walk-In for a free Triplets was the highlight of my night
-
-### Trendsetters
-- g2 Cal (4/4, yes): 3 for 4 and a free bury every recruit; great engine, until the Patroness it fed belonged to someone else.
-- g4 Ava (4/5, yes): 3 followers for 4 and every recruit buries a threat (Con Men, Debutantes, Hot Streak, Night Owls) while paying blue; my favorite card.
-
-### Window Dressers
-- g2 Cal (3/3, yes): 3 for 4 is good value; the 3-card churn was mostly tidy-up.
-- g4 Dee (3/4, yes): 3 followers for 4 and you pick the next shop row with Peek; fun, but Bargain Bin got paid for it.
-
-### Connoisseurs
-- g2 Cal (2/2, yes): +1 blue per blue recruit, only fired a few times; filler.
-- g4 Ava (3/4, yes): bought right before Snobs and Critic so it refunded on both; neat sequencing payoff.
-
-### Doormen
-- g2 Cal (1/1, yes): paid me 2 blue all game; rivals almost never recruit twice.
-- g4 Ava (1/1, yes): 5 for 2 and its trigger never fired once; dead card.
-
-### Regular
-- g2 Cal (4/5, yes): sleeper: pay 1 for a follower and get the blue back turned every spare recruit into a free follower.
-- g4 Ava (3/4, yes): in round III each follower buy refunded a blue, about 4 back for 3; great when you plan to cash out.
-
-### Money Changers
-- g2 Dee (5/4, yes): quietly gave me about 15 white over the game off everyone's follower buys and won me white twice; maybe the best artifact here
-- g4 Cal (4/4, yes): my artifact; about 12 white over the game for nothing, and it kept the white contest mine all three rounds
-
-### Busker
-- g2 Dee (3/3, yes): a good green-contest engine early, then dead weight once the round starts run out
-- g3 Ben (4/4, yes): +2 green every round start is exactly the cheap engine I like and it survived all game
-
-### Recluse
-- g2 Dee (4/4, yes): +4 at the end for staying lean, which suited a contest player well
-- g4 Ben (4/5, yes): +6 at game end for 4 because I stayed narrow; decided the game by itself.
-
-### Desperado
-- g3 Ava (5/5, yes): the comeback card: Crime Wave took a whole pile and Help Yourself took 10; maybe too much for 5
-- g3 Cal (5/1, yes): doubled Help Yourself to 10 in round III; 'fewest followers' is close to free in a tight race, and it lost me the game
-
-### Big Tent
-- g3 Ava (5/5, yes): +8 for a free member once I shaped my cult around exactly one of each color; best odd combo of the night
-- g3 Dee (3/3, yes): weighed it at 8 followers for 7; Ava made +8 off it, so it's better than I counted
-
-### Old Maid
-- g3 Ava (5/5, unsure): nobody buys it, but used as a weapon through Demote it's a -5 on a rival; needs a look
-- g3 Dee (3/1, unsure): a -5 trap that only matters when a rival swaps it into you; that's a feel-bad, not a decision
-
-### Grifter
-- g3 Ava (4/2, yes): never bought, but through Tryout it stole 6 from me for free; scales off guest bodies too fast
-- g3 Ben (4/4, unsure): steal-per-2-members via Tryout is the best counter to theft-heavy tables, but it's a red-space trick more than a magenta card
+### Mentor & Protégés
+- g1 Cal (3/4, yes): a 9-cost card that pulls a free cheapest card; good, then good swap bait for HR
+- g3 Cal (3/3, yes): through Tryout I chose Ringleader because I wasn't sure Mentor's recruit was free; that wording isn't clear
 
 ### Muse
 - g3 Ben (3/2, yes): weighed it at a very copy-heavy table; still too slow to justify emptying my pile
 - g3 Dee (2/2, no): tempting for Guest Book but paying for it would have cost me a contest
 
-### Heiresses
-- g4 Ava (5/2, yes): +11 white then Farewell for 9 was a ~20-point turn for Cal; the card is fine, the Farewell combo isn't.
-- g4 Cal (5/5, yes): +11 white then Farewell for 9: the best two turns I had, maybe too much together
+### Old Maid
+- g3 Ava (5/5, unsure): nobody buys it, but used as a weapon through Demote it's a -5 on a rival; needs a look
+- g3 Dee (3/1, unsure): a -5 trap that only matters when a rival swaps it into you; that's a feel-bad, not a decision
 
-### Night Owls
-- g1 Ava (3/3, yes): weighed it twice; 8 cost for one more placement barely breaks even unless you're short of turns
+### Regular
+- g2 Cal (4/5, yes): sleeper: pay 1 for a follower and get the blue back turned every spare recruit into a free follower.
+- g4 Ava (3/4, yes): in round III each follower buy refunded a blue, about 4 back for 3; great when you plan to cash out.
 
-### Dyer
-- g1 Ben (4/4, yes): Four yellow on recruit and four more at round III; it's what made yellow mine, and it felt great.
+### Sticky Fingers
+- g7 Ava (2/2, yes): weighed it with Stash's bonus but it cost my contest pile
+- g7 Cal (2/2, yes): never fit my turns
 
-### Patriarch
-- g1 Ben (4/4, yes): Worth 6 for 6 with 10 members, plus Guest Book's new color; a good late buy for a wide cult.
+### Tastemaker
+- g1 Ben (3/1, yes): I read it as +1 per resource changed; it's +1 per Dilute, so it's a 6-cost card that paid me 2. The wording needs fixing.
+- g3 Dee (1/2, yes): arrived free off Walk-In and never fired
 
-### Debutantes
-- g1 Dee (5/5, yes): the payoff for a silver pile; doubling to 26 was the high point of my game, and Caterer stacks on it
+### Trendsetters
+- g2 Cal (4/4, yes): 3 for 4 and a free bury every recruit; great engine, until the Patroness it fed belonged to someone else.
+- g4 Ava (4/5, yes): 3 followers for 4 and every recruit buries a threat (Con Men, Debutantes, Hot Streak, Night Owls) while paying blue; my favorite card.
 
-### Collector
-- g1 Dee (1/1, yes): nobody pays silver for members much; passed twice
+### Triplets
+- g1 Dee (2/3, yes): 3 followers for 3 is just correct, never a decision
+- g3 Ben (2/3, yes): 3 bodies for 3 is honest and it inflated my Grifter count
 
-### Accomplice
-- g2 Ava (4/4, yes): pay 3, steal 3, with Fence it nets a resource and a body; underpriced in a steal deck
+### Volunteer
+- g1 Ava (1/2, yes): a 1-for-1 placeholder that later became the Promote bait for Deprogrammers
+- g3 Ava (1/2, yes): 1 for 1, filler that held Big Tent's red
 
-### Extortionist
-- g2 Ava (2/1, yes): 7 cost for 1 follower and a slow drip, never close
+### Window Dressers
+- g2 Cal (3/3, yes): 3 for 4 is good value; the 3-card churn was mostly tidy-up.
+- g4 Dee (3/4, yes): 3 followers for 4 and you pick the next shop row with Peek; fun, but Bargain Bin got paid for it.
 
-### Double Agent
-- g2 Ava (3/2, yes): weighed it to take Fan Club, but 8 resources for a net 3 loses to buying followers
+### Bodyguards
+- g6 Ben (4/3, yes): stopped Ava's endgame steals cold, but I misread it as covering Raiders; the card should say whether follower steals count
 
-### Shopaholics
-- g2 Cal (3/2, yes): wanted it for the engine but 9 was always one turn out of reach.
-
-### Cutpurse
-- g3 Ava (3/3, yes): small steady steals and a cheap first body; the round-start steal goes to whoever is richest, so it was a real swing
-
-### Customs
-- g3 Dee (4/4, yes): free off Walk-In; it made Dilute useless against my yellow, a neat counter
-
-### Kingpin
-- g3 Dee (1/1, yes): never worth 4
-
-### Critic
-- g4 Ava (2/3, yes): nearly free after refunds but the trigger never fired.
-
-### Courier
-- g4 Ben (4/4, unsure): with Last Call's end block it fired about four times for 12 resources, but those resources mostly went to waste for lack of recruits; it reads more blue/yellow 
-
-### Shopkeeper
-- g4 Cal (2/3, yes): pays for itself quietly; should have Farewelled it at the end for the win
-
-### Brokers
-- g4 Cal (4/4, yes): 3 followers for 5 plus a point on every White payout; great if you are the white player, nothing otherwise
+### Bouncers
+- g8 Ben (3/4, yes): two skips refund 2 purple with Pocket Watch, so it was nearly free.
 
 ### Cashier
 - g4 Cal (2/2, yes): weighed it as a Cash In on a recruit; Cash In itself did the job better
 
-### Smooth Talkers
-- g4 Cal (3/2, yes): I buried it to keep it from Dee; never saw it played
+### Chronicler
+- g8 Ava (5/4, yes): +12 at game end for 5 because it counts member weight; it decided the margin.
+
+### Collector
+- g1 Dee (1/1, yes): nobody pays silver for members much; passed twice
+
+### Critic
+- g4 Ava (2/3, yes): nearly free after refunds but the trigger never fired.
+
+### Customs
+- g3 Dee (4/4, yes): free off Walk-In; it made Dilute useless against my yellow, a neat counter
+
+### Doppelganger
+- g8 Ava (3/3, yes): copying Fan Club would have been 3 followers for net zero; I took the 10-buy instead.
+
+### Dyer
+- g1 Ben (4/4, yes): Four yellow on recruit and four more at round III; it's what made yellow mine, and it felt great.
+
+### Extortionist
+- g2 Ava (2/1, yes): 7 cost for 1 follower and a slow drip, never close
 
 ### Gift Wrapper
 - g4 Dee (2/1, yes): +1 per gift event is too little when Caterer already pays more.
 
 ### Hangers-On
 - g4 Dee (1/1, yes): 9 for 2 followers with a tiny trigger, never worth it.
+
+### Kingpin
+- g3 Dee (1/1, yes): never worth 4
+
+### Patriarch
+- g1 Ben (4/4, yes): Worth 6 for 6 with 10 members, plus Guest Book's new color; a good late buy for a wide cult.
+
+### Shopaholics
+- g2 Cal (3/2, yes): wanted it for the engine but 9 was always one turn out of reach.
+
+### Shopkeeper
+- g4 Cal (2/3, yes): pays for itself quietly; should have Farewelled it at the end for the win
+
+### Smooth Talkers
+- g4 Cal (3/2, yes): I buried it to keep it from Dee; never saw it played
+
+### Tribute Band
+- g8 Ava (5/5, yes): in two-player, firing it after the rival fills six spaces is a monster: four followers, ~25 resources and a minion; I needed to place last to make it work.
 
 ## META notes
 
@@ -991,3 +1287,12 @@ Strategic and fun are 1 to 5 (averaged), fits = how many said the card fits its 
 - g4 Ben: The contests and the snake make for real tension, and the late-game catch-up tools (Party Crasher, Extra Hand, Farewell, Raiders, Last Call) made a 45-follower deficit winnable, which felt great. But purple was uncontested all game because no one else wanted purple resources, so its +20 went to whoever showed up, while silver's giving spaces (Largesse, Party Gifts) and Farewell on expensive spent cards pay far more than the rest of the wheel. The first thing I'd change is Farewell: pay half the cost, or nothing for a member whose once-per-game ability is used up. Close second: stop Party Crasher from joining center spaces.
 - g4 Cal: The contest economy and the any-resource-is-a-follower rule make the game a clean counting puzzle, and white's convert-everything identity felt great to play. What isn't working is round III's endgame: Last Call plus Hold Up and Right Away gives a trailing player four or five unanswerable cash-out turns, and Party Crasher, Extra Hand and Farewell let that block multiply big center spaces; going from 36 to 102 in one round is too much swing. First change: stop Last Call's end block from being unanswerable in round III (or limit Party Crasher off center spaces) so the last turns aren't a solo show.
 - g4 Dee: The contests and the round III cash-out spaces (Cash In, Spree, Last Call, Largesse) are where the game is won, and holding a color for its contest feels worse than just cashing out: I won silver three rounds running and finished last. Purple's Last Call end block and Farewell's full-cost refund on spent members were the strongest things I saw. The silver gift cards are fun and create real decisions, but gifted silver tends to come back to bite the giver. The first thing I'd change is Party Crasher: stop it joining a center space, or at least the last placement of the game.
+- g6 Ava: Contests and the 1:1 follower buy dominate the math, and purple's skip engine with Pocket Watch is strong and fun. Theft is the big swing: Help Yourself, Poach and Shake Down punish whoever holds a lead or a cheap member, and the only answers are Lie Low and Bodyguards, so a player who converts to stay safe just becomes a member-steal target instead. Late white spaces (Farewell, Cash In) were dead for anyone but the white leader. First thing I'd change: make Poach and Shake Down cost the thief something or cap them, since losing a member for nothing late in round III felt worse than any resource steal.
+- g6 Ben: The contests drive everything, and the steals and skips around them give real last-turn swings, which is the best part of the game. What isn't working is protection: Lie Low gives one player a full round of immunity every round for one placement, and Last Call plus Pocket Watch turns one purple space into three payouts and the last word in the round. I'd change Lie Low first, maybe so it only blocks resource steals or only lasts until your next turn, and I'd make Bodyguards say plainly that follower steals like Raiders still go through.
+- g6 Cal: The contests carry the game: magenta and white leads at +10 were worth more than any member, and choosing which color to hold and which to cash out was the best decision space we had. Last Call plus Pocket Watch, and Heiresses on a wide cult, are the two lines that look too strong, and Splurge and Cash In are nearly dead. In round III no member beats buying followers 1:1 unless a recruit bonus props it up, so the shop goes quiet just when the most is at stake. First change: tone down Last Call's block of end-of-round placements, maybe by capping the followers it gives or letting a rival act after it.
+- g7 Ava: The contest-versus-spending tension is the heart of the game and it works: my best moments were contest flips and dilemmas like Shake Down. What isn't working is round III Last Call combined with skips and extra-minion members. Whoever goes last with four or five turns in a row gets every remaining space and buys 40 followers unanswered. I'd change that first, by limiting Last Call's skip so the taker can't end up with all the closing turns, or by keeping Party Crasher and Night Owls from extending it. Silver also leans hard on the Caterer holder, and Largesse is too clearly the best center space.
+- g7 Ben: Contests and the 10-buy dominate round III: three of us scored most of our total buying 10 followers at a time, so the game ends as who holds the most spare resources and recruits. Silver feels like it belongs to whoever has Caterer, and Last Call plus going last is a bigger swing than any center space because the last player plays against a frozen board. The steal cards and Shake Down create the best table moments. First change: make Last Call stop giving a full set of reactive last placements (for example, the skipped minions come back but cannot buy followers, or Last Call is +1 per minion only with no skip).
+- g7 Cal: The contests are the heart of the game, and blocking spaces for contest reasons (Sweet Talk, Estate Sale, Poach) felt great. What isn't working: Last Call plus Party Crasher lets one player act after everyone in round III with nothing anyone can answer, and the skip artifact and members pile on top of it. Lie Low reads as total protection, but follower steals and gives get through it. The first thing I'd change: Last Call shouldn't hand someone four uncontested final placements in round III (cap it, or have the skipped turns still count in order).
+- g7 Dee: The contests are the game and reading late placements is the real skill; when it works it is tense and countable. What isn't working is how far turn-order effects reach: Last Call plus Party Crasher (or Night Owls) lets one player act after everyone with a full menu, and no amount of counting covers it. Silver also leans hard on Caterer and Toast. First change: make Last Call give up something real, or stop Party Crasher from joining a contest-color space someone else already took in round III.
+- g8 Ava: Two-player Green vs Purple is a resource race that turns into a recruit race by round III: both of us ended with resources to spare and the one-recruit-per-turn 10-buy cap was the real ceiling, so extra minions and extra turns are worth far more than resource income late. Green's copy engine plus Roadie/Chronicler counting member weight snowballs, while Purple's skips feed its own artifact and Gossip no matter who causes them. The first thing I'd change is the mutual Last Call interaction (both players 'skip until everyone else is out' produces a chain of skips that pays Gossip and Pocket Watch eight times); after that, look at Roadie and Chronicler counting multi-member cards as several green members.
+- g8 Ben: Two-player Green vs Purple is lopsided: green's copies turn into whole extra actions and Roadie scales off member weight, while purple's tempo mostly pays in single purple. Tribute Band is a once-per-game blowout in two-player, copying all six of a rival's spaces. The one-recruit-per-turn cap left both of us with stranded resources in round III. First change: make Roadie (and Greatest Hits copying it) count green cards rather than member weight, or cap it.

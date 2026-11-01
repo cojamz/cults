@@ -150,3 +150,433 @@
 {"t":1793550517670,"type":"log","text":"The member market refreshes for round II.","by":1}
 {"t":1793550517670,"type":"log","text":"Round II begins. Cal picks first. (Cal's Line Cutters: always picks first.)","by":1}
 {"t":1793550517670,"type":"log","text":"New in the shop: Proselytizers, Old Maid, HR, Panel, Ringleader.","by":1}
+{"t":1793550535213,"type":"move","seat":2,"round":2,"n":56,"kind":"place","option":"slot:0-3","label":"Red · Promote → you'd get: +3..5 red, +0..1 yellow, +0..1 blue; +-1..0 followers; +-1..0 members; rivals together 0..1 blue; rivals followers -1..0; then you choose: Promote: choose a member and its replacement; Drifters: count as a member of which color?; Churn: send which member to the bottom? (3 to go); Churn: send which member to the bottom? (2 to go); Churn: send which member to the bottom? (1 to go)","think":"Promote is my round: swap Recruit Bonus up into a rival's 3-follower body. Recruiter pays +2 red when it leaves them and Deprogrammers knocks them down 1, on top of Promote's +3 red.","prompt":"Cal: place a minion"}
+{"t":1793550535213,"type":"log","text":"Cal took Promote (Red).","by":2}
+{"t":1793550535213,"type":"log","text":"Cal's Promote: +3 red.","by":2}
+{"t":1793550538872,"type":"move","seat":2,"round":2,"n":57,"kind":"choose","option":"trade:6:28","label":"Cal: Recruit Bonus ↔ Ben: Trendsetters — value hint 2","think":"Take Trendsetters off Ben: breaks his auto-churn engine, +1 body for me.","prompt":"Promote: choose a member and its replacement"}
+{"t":1793550538872,"type":"log","text":"Ben −1 follower (Cal's Deprogrammers).","by":2}
+{"t":1793550538872,"type":"log","text":"Cal's Recruiter: +2 red.","by":2}
+{"t":1793550538872,"type":"log","text":"Cal swapped Cal's Recruit Bonus and Ben's Trendsetters.","by":2}
+{"t":1793550549955,"type":"move","seat":2,"round":2,"n":58,"kind":"buy","option":"card:3","label":"Recruit Proselytizers [3 red + 5 any; you pay 8 (3 red + 5 any); worth 2] — Whenever you recruit, +1 follower.","think":"Proselytizers now, while there are ~9 recruits left: +1 follower each one. It empties my red, but I have three more placements this round and red spaces are still open to refill before scoring.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793550549955,"type":"say","seat":2,"text":"Promote plus Recruiter plus Deprogrammers stacks hard: that one swap was +5 red, a body upgrade, and a follower off Ben. Red's swap spaces feel like the real engine of this color."}
+{"t":1793550551985,"type":"move","seat":2,"round":2,"n":59,"kind":"pay","option":"pay:8-0-0","label":"Pay 8 red (suggested) — spending this gives up your contest lead in red","think":"Pay it.","prompt":"Cal: choose how to pay for Proselytizers"}
+{"t":1793550551985,"type":"log","text":"Cal recruited Proselytizers (8 red).","by":2}
+{"t":1793550551985,"type":"log","text":"New in the shop: Patriarch.","by":2}
+{"t":1793550556412,"type":"move","seat":2,"round":2,"n":60,"kind":"choose","option":"card:15","label":"Ringleader [3 yellow + 3 any; worth 1] — On Recruit: change 1 of each rival's resources one for one. +1 follower per rival changed.","think":"Ringleader is the card Ava can afford right now with her yellow; bury it.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793550556412,"type":"log","text":"Cal's Trendsetters: Cal sends Ringleader to the bottom of the pile.","by":2}
+{"t":1793550556412,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":2}
+{"t":1793550556412,"type":"log","text":"New in the shop: Gardener.","by":2}
+{"t":1793550570063,"type":"move","seat":1,"round":2,"n":61,"kind":"place","option":"slot:0-4","label":"Red · Demote → you'd get: +3 red, +0..1 yellow; +-2..2 followers; +-2..2 members; rivals together 0..4 red; rivals followers -2..2; then you choose: Demote: choose a member and its replacement; Drifters: count as a member of which color?","think":"Cal took my Trendsetters with Promote; Demote lets me hand him Recruit Bonus (3) for his Line Cutters (2): +1 follower for me, -1 for him, and the permanent first seat moves to me. Recruiter probably pays him 2 red, fine.","prompt":"Ben: place a minion"}
+{"t":1793550570063,"type":"say","seat":1,"text":"That Promote swap was brutal; the Recruiter plus Deprogrammers stack on one action feels like a lot for an outer-wheel-adjacent space."}
+{"t":1793550570063,"type":"log","text":"Ben took Demote (Red).","by":1}
+{"t":1793550570063,"type":"log","text":"Ben's Demote: +3 red.","by":1}
+{"t":1793550574608,"type":"move","seat":1,"round":2,"n":62,"kind":"choose","option":"trade:6:7","label":"Ben: Recruit Bonus ↔ Cal: Deprogrammers — value hint 2","think":"Better than Line Cutters: Deprogrammers costs 3 like Recruit Bonus but is worth 4, so a 4-point swing and Cal loses the card that just nicked me.","prompt":"Demote: choose a member and its replacement"}
+{"t":1793550574609,"type":"log","text":"Cal's Recruiter: +2 red.","by":1}
+{"t":1793550574609,"type":"log","text":"Ben swapped Ben's Recruit Bonus and Cal's Deprogrammers.","by":1}
+{"t":1793550581372,"type":"move","seat":1,"round":2,"n":63,"kind":"buy","option":"use:37","label":"Use Scouts — On Use, once per round: send any shop members to the bottom of the pile, then refill.","think":"Scouts first: bury Old Maid before anyone finds a way to hand it to me, plus Ava's yellow fodder, +1 blue from Bargain Bin.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550583778,"type":"move","seat":1,"round":2,"n":64,"kind":"choose","option":"card:34","label":"Old Maid [5 any; worth 1] — Whenever this member joins your cult, −5 followers.","think":"Old Maid","prompt":"Scout: send which shop members to the bottom of the pile?"}
+{"t":1793550583854,"type":"move","seat":1,"round":2,"n":65,"kind":"choose","option":"card:16","label":"Drifters [2 yellow + 1 any; worth 2] — Worth 2 followers. On Recruit: choose a color; these count as a member of that color.","think":"Drifters","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793550586564,"type":"move","seat":1,"round":2,"n":66,"kind":"choose","option":"card:10","label":"Gardener [2 yellow + 1 any; worth 1] — On Recruit: +1 of each color you have none of. Round Start: +1 of each color you have none of.","think":"Gardener","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793550586671,"type":"move","seat":1,"round":2,"n":67,"kind":"choose","option":"done","label":"Pass (recruit nothing)","think":"done","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793550586672,"type":"log","text":"Ben's Scout: sent Old Maid, Drifters, Gardener to the bottom of the pile.","by":1}
+{"t":1793550586672,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793550586672,"type":"log","text":"New in the shop: Extra Hand, Con Men, Snobs.","by":1}
+{"t":1793550598321,"type":"move","seat":1,"round":2,"n":68,"kind":"buy","option":"card:38","label":"Recruit Con Men [7 any; you pay 7 (7 any); worth 2] — Counts as 2 members. On Recruit: steal 5 resources.","think":"Con Men: 7 out, 5 back by stealing, so 2 bodies for a net 2 plus it strips Cal's 2 red (red contest swings to me). Ava's Customs refunds her per yellow taken, so stealing her yellow mainly just feeds me.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550602605,"type":"move","seat":1,"round":2,"n":69,"kind":"pay","option":"pay:3-0-4","label":"Pay 3 red, 4 blue — spending this gives up your contest lead in red","think":"Spend red, keep 3 blue; I'll refill red from Cal's pile.","prompt":"Ben: choose how to pay for Con Men"}
+{"t":1793550602605,"type":"log","text":"Ben recruited Con Men (3 red, 4 blue).","by":1}
+{"t":1793550602605,"type":"log","text":"New in the shop: Mentor & Protégés.","by":1}
+{"t":1793550604387,"type":"move","seat":1,"round":2,"n":70,"kind":"choose","option":"take:2:red","label":"Cal's red (2) — value hint 2.75","think":"Cal's red first.","prompt":"Con Men: choose a resource to steal. (5 left)"}
+{"t":1793550606083,"type":"move","seat":1,"round":2,"n":71,"kind":"choose","option":"take:2:red","label":"Cal's red (1) — value hint 1.75","think":"and the other red","prompt":"Con Men: choose a resource to steal. (4 left)"}
+{"t":1793550607827,"type":"move","seat":1,"round":2,"n":72,"kind":"choose","option":"take:0:yellow","label":"Ava's yellow (5) — value hint 5.75","think":"Ava's yellow","prompt":"Con Men: choose a resource to steal. (3 left)"}
+{"t":1793550607905,"type":"move","seat":1,"round":2,"n":73,"kind":"choose","option":"take:0:yellow","label":"Ava's yellow (4) — value hint 4.75","think":"Ava's yellow","prompt":"Con Men: choose a resource to steal. (2 left)"}
+{"t":1793550607984,"type":"move","seat":1,"round":2,"n":74,"kind":"choose","option":"take:0:yellow","label":"Ava's yellow (3) — value hint 3.75","think":"Ava's yellow","prompt":"Con Men: choose a resource to steal. (1 left)"}
+{"t":1793550607984,"type":"log","text":"Ava's Customs: +1 yellow.","by":1}
+{"t":1793550607984,"type":"log","text":"Ben's Con Men stole 5 (3 yellow from Ava, 2 red from Cal).","by":1}
+{"t":1793550631125,"type":"move","seat":0,"round":2,"n":75,"kind":"place","option":"slot:1-3","label":"Yellow · Big Dilute → you'd get: +4 yellow; rivals together -2..0 red, 0..3 yellow, -2..2 blue; then you choose: Big Dilute: change a rival's resource, 6 more at most; Big Dilute: change Ben's 1 red into which color?; Big Dilute: change a rival's resource, 5 more at most; Big Dilute: change a rival's resource, 4 more at most; Big Dilute: change Ben's 1 yellow into which color?; Big Dilute: change a rival's resource, 3 more at most; Big Dilute: change a rival's resource, 2 more at most; Big Dilute: change a rival's resource, 1 more at most; Big Dilute: change Ben's 1 blue into which color?","think":"Big Dilute: +4 yellow puts me at 7, and six changes can strip Ben's 3 yellow and 3 blue into red, leaving him nothing in either of the colors I can fight for. Customs means Dilutes back at me cost me no yellow.","prompt":"Ava: place a minion"}
+{"t":1793550631125,"type":"say","seat":0,"text":"Con Men taking 5 for a 7-cost body is a lot when the table runs on held resources. Ben stole the yellow lead and the round-two contest in one buy."}
+{"t":1793550631125,"type":"log","text":"Ava took Big Dilute (Yellow).","by":0}
+{"t":1793550631125,"type":"log","text":"Ava's Big Dilute: +4 yellow.","by":0}
+{"t":1793550638668,"type":"move","seat":0,"round":2,"n":76,"kind":"choose","option":"res:1:yellow","label":"Ben's yellow — value hint -0.5","think":"Ben's yellow first; I'll send everything into red where I'm not competing.","prompt":"Big Dilute: change a rival's resource, 6 more at most"}
+{"t":1793550641670,"type":"move","seat":0,"round":2,"n":77,"kind":"choose","option":"color:red","label":"1 red — value hint -2","think":"to red","prompt":"Big Dilute: change Ben's 1 yellow into which color?"}
+{"t":1793550641670,"type":"log","text":"Ava's Big Dilute: Ben's 1 yellow becomes 1 red.","by":0}
+{"t":1793550644151,"type":"move","seat":0,"round":2,"n":78,"kind":"choose","option":"res:1:yellow","label":"Ben's yellow — value hint -1.5","think":"next yellow","prompt":"Big Dilute: change a rival's resource, 5 more at most"}
+{"t":1793550644234,"type":"move","seat":0,"round":2,"n":79,"kind":"choose","option":"color:red","label":"1 red — value hint -3","think":"to red","prompt":"Big Dilute: change Ben's 1 yellow into which color?"}
+{"t":1793550644234,"type":"log","text":"Ava's Big Dilute: Ben's 1 yellow becomes 1 red.","by":0}
+{"t":1793550646871,"type":"move","seat":0,"round":2,"n":80,"kind":"choose","option":"res:1:yellow","label":"Ben's yellow — value hint -2.5","think":"last yellow","prompt":"Big Dilute: change a rival's resource, 4 more at most"}
+{"t":1793550646945,"type":"move","seat":0,"round":2,"n":81,"kind":"choose","option":"color:red","label":"1 red — value hint -4","think":"to red","prompt":"Big Dilute: change Ben's 1 yellow into which color?"}
+{"t":1793550646945,"type":"log","text":"Ava's Big Dilute: Ben's 1 yellow becomes 1 red.","by":0}
+{"t":1793550649184,"type":"move","seat":0,"round":2,"n":82,"kind":"choose","option":"res:1:blue","label":"Ben's blue — value hint 3","think":"Ben's blue","prompt":"Big Dilute: change a rival's resource, 3 more at most"}
+{"t":1793550651082,"type":"move","seat":0,"round":2,"n":83,"kind":"choose","option":"color:red","label":"1 red — value hint -5","think":"to red","prompt":"Big Dilute: change Ben's 1 blue into which color?"}
+{"t":1793550651082,"type":"log","text":"Ava's Big Dilute: Ben's 1 blue becomes 1 red.","by":0}
+{"t":1793550653176,"type":"move","seat":0,"round":2,"n":84,"kind":"choose","option":"res:1:blue","label":"Ben's blue — value hint 2","think":"Ben's blue","prompt":"Big Dilute: change a rival's resource, 2 more at most"}
+{"t":1793550653252,"type":"move","seat":0,"round":2,"n":85,"kind":"choose","option":"color:red","label":"1 red — value hint -6","think":"to red","prompt":"Big Dilute: change Ben's 1 blue into which color?"}
+{"t":1793550653252,"type":"log","text":"Ava's Big Dilute: Ben's 1 blue becomes 1 red.","by":0}
+{"t":1793550656039,"type":"move","seat":0,"round":2,"n":86,"kind":"choose","option":"res:1:blue","label":"Ben's blue — value hint 1","think":"Ben's last blue","prompt":"Big Dilute: change a rival's resource, 1 more at most"}
+{"t":1793550656112,"type":"move","seat":0,"round":2,"n":87,"kind":"choose","option":"color:red","label":"1 red — value hint -7","think":"to red","prompt":"Big Dilute: change Ben's 1 blue into which color?"}
+{"t":1793550656112,"type":"log","text":"Ava's Big Dilute: Ben's 1 blue becomes 1 red.","by":0}
+{"t":1793550662315,"type":"move","seat":0,"round":2,"n":88,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Ben could still Trade Seeds his red into yellow and Harvest on top, so every yellow I hold matters for the +6. Dabblers at 3 for 2 is below par; pass.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550662315,"type":"log","text":"Ava passed.","by":0}
+{"t":1793550672377,"type":"move","seat":0,"round":2,"n":89,"kind":"place","option":"slot:1-4","label":"Yellow · Melting Pot → you'd get: +0..3 red, +2..5 yellow, +0..3 blue; then you choose: Melting Pot: +1 of which color? (3 to pick); Melting Pot: +1 of which color? (2 to pick); Melting Pot: +1 of which color? (1 to pick)","think":"Melting Pot is +5 for me (3 member colors plus 2 yellow), the biggest raw take, and it shuts the yellow space Ben would use to rebuild yellow out of his 8 red. Yellow to 12 makes the +6 nearly locked.","prompt":"Ava: place a minion"}
+{"t":1793550672377,"type":"log","text":"Ava took Melting Pot (Yellow).","by":0}
+{"t":1793550672377,"type":"log","text":"Ava's Melting Pot: +2 yellow.","by":0}
+{"t":1793550678161,"type":"move","seat":0,"round":2,"n":90,"kind":"choose","option":"color:yellow","label":"+1 yellow — value hint -9","think":"one yellow to get to 10, past what Ben can build with two yellow spaces","prompt":"Melting Pot: +1 of which color? (3 to pick)"}
+{"t":1793550678161,"type":"log","text":"Ava's Melting Pot: +1 yellow.","by":0}
+{"t":1793550680389,"type":"move","seat":0,"round":2,"n":91,"kind":"choose","option":"color:blue","label":"+1 blue — value hint 0","think":"blue","prompt":"Melting Pot: +1 of which color? (2 to pick)"}
+{"t":1793550680389,"type":"log","text":"Ava's Melting Pot: +1 blue.","by":0}
+{"t":1793550680467,"type":"move","seat":0,"round":2,"n":92,"kind":"choose","option":"color:blue","label":"+1 blue — value hint -1","think":"blue, to start a blue lead while Ben sits at 0","prompt":"Melting Pot: +1 of which color? (1 to pick)"}
+{"t":1793550680467,"type":"log","text":"Ava's Melting Pot: +1 blue.","by":0}
+{"t":1793550686516,"type":"move","seat":0,"round":2,"n":93,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Nothing here beats holding: HR at 10 for 4 is poor unless I build 3-of-a-color, and every held yellow or blue is contest weight. Converting later in a 10-for-10 costs the same.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550686516,"type":"log","text":"Ava passed.","by":0}
+{"t":1793550710823,"type":"move","seat":1,"round":2,"n":94,"kind":"place","option":"slot:2-4","label":"Blue · Bury → you'd get: +3..7 blue; then you choose: Bury: send which member to the bottom?","think":"Bury HR: half of 10 = 5, +1, +1 Bargain Bin = 7 blue, which retakes blue from Ava's 2. Then Panel to promote Scouts into Cal's Trendsetters with Deprogrammers biting him.","prompt":"Ben: place a minion"}
+{"t":1793550710823,"type":"say","seat":1,"text":"Big Dilute turning all six of my non-red into red is a nasty one; it handed me the red lead though, so I'm not sure it was a net win for you, Ava."}
+{"t":1793550710823,"type":"log","text":"Ben took Bury (Blue).","by":1}
+{"t":1793550710823,"type":"log","text":"Ben's Bury: +1 blue.","by":1}
+{"t":1793550712642,"type":"move","seat":1,"round":2,"n":95,"kind":"choose","option":"card:39","label":"HR [10 any; worth 4] — Counts as 4 members. Game End: +2 followers per color you have 3 members of.","think":"HR for 5 blue","prompt":"Bury: send which member to the bottom?"}
+{"t":1793550712642,"type":"log","text":"Bury: Ben sends HR to the bottom of the pile.","by":1}
+{"t":1793550712642,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793550712642,"type":"log","text":"Ben's Bury: +5 blue.","by":1}
+{"t":1793550712642,"type":"log","text":"New in the shop: Loyalists.","by":1}
+{"t":1793550726734,"type":"move","seat":1,"round":2,"n":96,"kind":"buy","option":"card:8","label":"Recruit Panel [4 red + 3 any; you pay 7 (4 red + 3 any); worth 3] — On Recruit: promote or demote another of your members.","think":"Panel: 3 bodies, and its promote turns Scouts into Cal's Trendsetters, with Deprogrammers costing him a follower. That's a 6-point swing for 7 resources.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550729017,"type":"move","seat":1,"round":2,"n":97,"kind":"pay","option":"pay:7-0-0","label":"Pay 7 red","think":"All red; keep 7 blue as the contest I defend against Ava's Dilute+Peek.","prompt":"Ben: choose how to pay for Panel"}
+{"t":1793550729017,"type":"log","text":"Ben recruited Panel (7 red).","by":1}
+{"t":1793550729017,"type":"log","text":"New in the shop: Critic.","by":1}
+{"t":1793550730874,"type":"move","seat":1,"round":2,"n":98,"kind":"choose","option":"promote","label":"Promote","think":"Promote","prompt":"Panel: Promote or Demote?"}
+{"t":1793550739997,"type":"move","seat":1,"round":2,"n":99,"kind":"choose","option":"trade:37:28","label":"Ben: Scouts ↔ Cal: Trendsetters — value hint 2","think":"Scouts for Trendsetters: +1 me, Cal -1 body and -1 from Deprogrammers, and the Bargain Bin engine comes home. Con Men to Mentor was tempting but it would put Con Men back in the shop for Ava to steal 5 of my blue.","prompt":"Panel: promote another member"}
+{"t":1793550739997,"type":"log","text":"Cal −1 follower (Ben's Deprogrammers).","by":1}
+{"t":1793550739997,"type":"log","text":"Cal's Recruiter: +2 red.","by":1}
+{"t":1793550739997,"type":"log","text":"Ben swapped Ben's Scouts and Cal's Trendsetters.","by":1}
+{"t":1793550760476,"type":"move","seat":2,"round":2,"n":100,"kind":"place","option":"slot:0-1","label":"Red · Gather → you'd get: +3 red","think":"Ben took back Deprogrammers and Trendsetters with Demote and Panel, so swaps cut both ways. Gather to 5 red, then Loyalists (2 red + 3) shuts the swap door on my cult, with Gather's +2 and Proselytizers' +1 on top. Then Tryout borrows Mentor's free recruit.","prompt":"Cal: place a minion"}
+{"t":1793550760476,"type":"say","seat":2,"text":"Ben, that Demote-then-Panel combo plus Con Men was a big turn. Swaps with Deprogrammers and Recruiter attached are swingy enough that Loyalists suddenly looks essential."}
+{"t":1793550760476,"type":"log","text":"Cal took Gather (Red).","by":2}
+{"t":1793550760476,"type":"log","text":"Cal's Gather: +3 red.","by":2}
+{"t":1793550762215,"type":"move","seat":2,"round":2,"n":101,"kind":"buy","option":"card:9","label":"Recruit Loyalists [2 red + 3 any; you pay 5 (2 red + 3 any); worth 3] — Your other members can’t be swapped.","think":"Loyalists.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793550764243,"type":"move","seat":2,"round":2,"n":102,"kind":"pay","option":"pay:5-0-0","label":"Pay 5 red (suggested) — spending this gives up your contest lead in red","think":"Pay.","prompt":"Cal: choose how to pay for Loyalists"}
+{"t":1793550764243,"type":"log","text":"Cal recruited Loyalists (5 red).","by":2}
+{"t":1793550764243,"type":"log","text":"Cal's Gather: +2 followers for recruiting a member.","by":2}
+{"t":1793550764243,"type":"log","text":"Cal's Proselytizers: +1 follower.","by":2}
+{"t":1793550764243,"type":"log","text":"New in the shop: Connoisseurs.","by":2}
+{"t":1793550766935,"type":"move","seat":2,"round":2,"n":103,"kind":"place","option":"slot:0-0","label":"Red · Tryout → you'd get: +2 red; +2..3 followers; +1..2 members; then you choose: Tryout: use which shop member’s On Recruit?; Mentor & Protégés: which of the cheapest members?","think":"Tryout: +2 red back and Mentor's On Recruit hands me the cheapest shop member free, another Proselytizers trigger.","prompt":"Cal: place a minion"}
+{"t":1793550766935,"type":"log","text":"Cal took Tryout (Red).","by":2}
+{"t":1793550766935,"type":"log","text":"Cal's Tryout: +2 red.","by":2}
+{"t":1793550768641,"type":"move","seat":2,"round":2,"n":104,"kind":"choose","option":"card:2","label":"Mentor & Protégés [5 red + 4 any; worth 3] — On Recruit: recruit the cheapest member in the shop.","think":"Mentor.","prompt":"Tryout: use which shop member’s On Recruit?"}
+{"t":1793550768641,"type":"log","text":"Cal uses Mentor & Protégés’s On Recruit; it stays in the shop.","by":2}
+{"t":1793550768641,"type":"log","text":"Cal's Mentor & Protégés: the cheapest face-up member comes along free.","by":2}
+{"t":1793550771100,"type":"move","seat":2,"round":2,"n":105,"kind":"choose","option":"card:35","label":"Dabblers [3 any; worth 2] — Counts as 2 wild members.","think":"Dabblers, 2 bodies.","prompt":"Mentor & Protégés: which of the cheapest members?"}
+{"t":1793550771100,"type":"log","text":"Cal recruited Dabblers (free).","by":2}
+{"t":1793550771100,"type":"log","text":"Cal's Proselytizers: +1 follower.","by":2}
+{"t":1793550771100,"type":"log","text":"New in the shop: Dyer.","by":2}
+{"t":1793550775102,"type":"move","seat":2,"round":2,"n":106,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Hold the 2 red against Ben's 1; the +6 red contest beats a 2-follower buy.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793550775102,"type":"log","text":"Cal passed.","by":2}
+{"t":1793550790091,"type":"move","seat":1,"round":2,"n":107,"kind":"place","option":"slot:2-2","label":"Blue · Peek → you'd get: +4 blue; then you choose: Peek: which goes on top?; Peek: which goes next?","think":"Red's out of reach (Cal can Harvest after me), yellow is Ava's. Lock blue: Peek to 11 so even Dilute plus a blue space from Ava can't catch me, then spend some on Snobs.","prompt":"Ben: place a minion"}
+{"t":1793550790091,"type":"say","seat":1,"text":"Cal, Loyalists right after my swaps was the right read. I think it's the best defensive card in the game once Promote and Demote are open."}
+{"t":1793550790091,"type":"log","text":"Ben took Peek (Blue).","by":1}
+{"t":1793550790091,"type":"log","text":"Ben's Peek: +4 blue.","by":1}
+{"t":1793550790091,"type":"log","text":"Ben peeks at the top 4 of the pile.","by":1}
+{"t":1793550800628,"type":"move","seat":1,"round":2,"n":108,"kind":"choose","option":"keep","label":"Keep this order — value hint -1","think":"Keep order: Shopaholics stays deep, ideally landing in a row when I have the blue for it.","prompt":"Peek: which goes on top?"}
+{"t":1793550800628,"type":"log","text":"Ben puts the top 4 of the pile back in a new order.","by":1}
+{"t":1793550809068,"type":"move","seat":1,"round":2,"n":109,"kind":"buy","option":"card:31","label":"Recruit Alchemists [5 any; you pay 5 (5 any); worth 3] — All your resources count as any when you recruit a member.","think":"Alchemists is 3 bodies for 5 and keeps 8 blue for the contest; Shopaholics at 9 would leave me at 4 blue and open to Ava's Dilute. Buying followers doesn't need extra recruits, so Shopaholics is weaker than it reads.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550810792,"type":"move","seat":1,"round":2,"n":110,"kind":"pay","option":"pay:1-0-4","label":"Pay 1 red, 4 blue (suggested)","think":"pay","prompt":"Ben: choose how to pay for Alchemists"}
+{"t":1793550810792,"type":"log","text":"Ben recruited Alchemists from the pile with Peek (1 red, 4 blue).","by":1}
+{"t":1793550813756,"type":"move","seat":1,"round":2,"n":111,"kind":"choose","option":"card:14","label":"Dyer [4 yellow + 3 any; worth 1] — On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.","think":"Dyer is a yellow engine Ava can afford right now.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793550813756,"type":"log","text":"Ben's Trendsetters: Ben sends Dyer to the bottom of the pile.","by":1}
+{"t":1793550813756,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793550813756,"type":"log","text":"New in the shop: Doormen.","by":1}
+{"t":1793550864065,"type":"move","seat":0,"round":2,"n":112,"kind":"place","option":"slot:1-0","label":"Yellow · Harvest → you'd get: +1..4 red, +0..3 yellow, +0..3 blue; then you choose: Harvest: +1 of which color? (4 to pick); Harvest: +1 of which color? (3 to pick); Harvest: +1 of which color? (2 to pick); Harvest: +1 of which color? (1 to pick)","think":"Blue is Ben's whatever I do (he answers my last blue space with the next one). But red is only Cal's 2: Harvest all 4 into red, then my second placement Dilutes Cal's 2 red away, and I take red's +6 on top of yellow's.","prompt":"Ava: place a minion"}
+{"t":1793550864065,"type":"log","text":"Ava took Harvest (Yellow).","by":0}
+{"t":1793550865989,"type":"move","seat":0,"round":2,"n":113,"kind":"choose","option":"color:red","label":"+1 red — value hint 0","think":"red","prompt":"Harvest: +1 of which color? (4 to pick)"}
+{"t":1793550865989,"type":"log","text":"Ava's Harvest: +1 red.","by":0}
+{"t":1793550866061,"type":"move","seat":0,"round":2,"n":114,"kind":"choose","option":"color:red","label":"+1 red — value hint -1","think":"red","prompt":"Harvest: +1 of which color? (3 to pick)"}
+{"t":1793550866061,"type":"log","text":"Ava's Harvest: +1 red.","by":0}
+{"t":1793550866137,"type":"move","seat":0,"round":2,"n":115,"kind":"choose","option":"color:red","label":"+1 red — value hint -2","think":"red","prompt":"Harvest: +1 of which color? (2 to pick)"}
+{"t":1793550866137,"type":"log","text":"Ava's Harvest: +1 red.","by":0}
+{"t":1793550866220,"type":"move","seat":0,"round":2,"n":116,"kind":"choose","option":"color:red","label":"+1 red — value hint -3","think":"red","prompt":"Harvest: +1 of which color? (1 to pick)"}
+{"t":1793550866220,"type":"log","text":"Ava's Harvest: +1 red.","by":0}
+{"t":1793550873496,"type":"move","seat":0,"round":2,"n":117,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Holding: the pile is contest weight now and in round III (Makeover can turn a big pile into yellow for anyone), and I can convert 10-for-10 later at the same rate. Patriarch is 6 for about 4.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550880286,"type":"move","seat":0,"round":2,"n":118,"kind":"pay","option":"back","label":"Back","think":"Misclicked into buying 5 followers; going back.","prompt":"Ava: choose how to pay for 5 followers"}
+{"t":1793550882370,"type":"move","seat":0,"round":2,"n":119,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Holding the pile for contest weight; I'll convert 10-for-10 in round III at the same rate.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550882370,"type":"log","text":"Ava passed.","by":0}
+{"t":1793550888245,"type":"move","seat":0,"round":2,"n":120,"kind":"place","option":"slot:1-2","label":"Yellow · Dilute → you'd get: +2 yellow; rivals together -1..3 red, 0..2 yellow, -3..1 blue; then you choose: Dilute: change a rival's resource, 3 more at most; Dilute: change Ben's 1 blue into which color?; Dilute: change a rival's resource, 2 more at most; Dilute: change Ben's 1 red into which color?; Dilute: change a rival's resource, 1 more at most; Dilute: change Ben's 1 yellow into which color?; Dilute: change Cal's 1 red into which color?","think":"Dilute Cal's 2 red away; then my 4 red beats anything Cal or Ben can rebuild with Trade Seeds (3 at most), and I also deny them the one space that could change my red.","prompt":"Ava: place a minion"}
+{"t":1793550888245,"type":"log","text":"Ava took Dilute (Yellow).","by":0}
+{"t":1793550888245,"type":"log","text":"Ava's Dilute: +2 yellow.","by":0}
+{"t":1793550891420,"type":"move","seat":0,"round":2,"n":121,"kind":"choose","option":"res:2:red","label":"Cal's red — value hint 0","think":"Cal's red","prompt":"Dilute: change a rival's resource, 3 more at most"}
+{"t":1793550893161,"type":"move","seat":0,"round":2,"n":122,"kind":"choose","option":"color:blue","label":"1 blue — value hint 0","think":"to blue","prompt":"Dilute: change Cal's 1 red into which color?"}
+{"t":1793550893161,"type":"log","text":"Ava's Dilute: Cal's 1 red becomes 1 blue.","by":0}
+{"t":1793550895515,"type":"move","seat":0,"round":2,"n":123,"kind":"choose","option":"res:2:red","label":"Cal's red — value hint -1","think":"Cal's other red","prompt":"Dilute: change a rival's resource, 2 more at most"}
+{"t":1793550897492,"type":"move","seat":0,"round":2,"n":124,"kind":"choose","option":"color:blue","label":"1 blue — value hint -1","think":"to blue","prompt":"Dilute: change Cal's 1 red into which color?"}
+{"t":1793550897492,"type":"log","text":"Ava's Dilute: Cal's 1 red becomes 1 blue.","by":0}
+{"t":1793550901016,"type":"move","seat":0,"round":2,"n":125,"kind":"choose","option":"res:1:blue","label":"Ben's blue — value hint 7","think":"shave Ben's blue","prompt":"Dilute: change a rival's resource, 1 more at most"}
+{"t":1793550903779,"type":"move","seat":0,"round":2,"n":126,"kind":"choose","option":"color:yellow","label":"1 yellow — value hint -1","think":"yellow, not red; a red would let Ben Trade Seeds up to tie my 4 red","prompt":"Dilute: change Ben's 1 blue into which color?"}
+{"t":1793550903779,"type":"log","text":"Ava's Dilute: Ben's 1 blue becomes 1 yellow.","by":0}
+{"t":1793550910771,"type":"move","seat":0,"round":2,"n":127,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Pass; holding 12 yellow, 4 red, 2 blue into round end for yellow and red.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550910771,"type":"say","seat":0,"text":"Ben, fair challenge on Big Dilute. My read was that your red was the contest I wasn't in, so piling everything there cost me nothing and cleared blue and yellow. Blue came back fast though; Bury and Bargain Bin refill you quicker than I expected."}
+{"t":1793550910771,"type":"log","text":"Ava passed.","by":0}
+{"t":1793550928469,"type":"move","seat":1,"round":2,"n":128,"kind":"place","option":"slot:2-1","label":"Blue · Out of Style → you'd get: +3..6 blue; then you choose: Out of Style: send which color to the bottom?","think":"Cal's last turn could reach 5 blue (Savings or Recruit Twice on his 2), so I take Out of Style myself: send the four blue members for 6 blue, up to 13. Then Patriarch (red, but Alchemists lets blue pay) since I'm at 18 members and climbing: that's +9 or more at game end.","prompt":"Ben: place a minion"}
+{"t":1793550928469,"type":"say","seat":1,"text":"Ava, that makes sense. Dilute on blue is the one thing that can catch me, so Big Dilute aimed at red was probably right for you, just cost you the chance to hit blue later."}
+{"t":1793550928469,"type":"log","text":"Ben took Out of Style (Blue).","by":1}
+{"t":1793550928469,"type":"log","text":"Ben's Out of Style: +1 blue.","by":1}
+{"t":1793550930782,"type":"move","seat":1,"round":2,"n":129,"kind":"choose","option":"color:blue","label":"blue (4) — value hint 4","think":"blue, keep Patriarch","prompt":"Out of Style: send which color to the bottom?"}
+{"t":1793550930782,"type":"log","text":"Out of Style: Ben sends 4 blue members to the bottom.","by":1}
+{"t":1793550930782,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793550930782,"type":"log","text":"Ben's Out of Style: +4 blue.","by":1}
+{"t":1793550930782,"type":"log","text":"New in the shop: Go-Between, Shopaholics, Window Shopper, Regular.","by":1}
+{"t":1793550936472,"type":"move","seat":1,"round":2,"n":130,"kind":"buy","option":"card:5","label":"Recruit Patriarch [3 red + 3 any; you pay 6 (6 any); worth 1] — Game End: +1 follower per 2 members you have.","think":"Patriarch: I'm at 18 members heading to 25+, so it's worth 12-ish at the end for 6. Alchemists lets blue pay the red part.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550938501,"type":"move","seat":1,"round":2,"n":131,"kind":"pay","option":"pay:0-1-5","label":"Pay 1 yellow, 5 blue (suggested)","think":"pay","prompt":"Ben: choose how to pay for Patriarch"}
+{"t":1793550938501,"type":"log","text":"Ben recruited Patriarch (1 yellow, 5 blue; Alchemists: colored part in any colors).","by":1}
+{"t":1793550938501,"type":"log","text":"New in the shop: Harmonist.","by":1}
+{"t":1793550942582,"type":"move","seat":1,"round":2,"n":132,"kind":"choose","option":"card:27","label":"Regular [1 blue + 2 any; worth 1] — Whenever you buy followers, +1 blue.","think":"Row resets at round end anyway; Regular is the cheap thing Cal could actually afford now.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793550942582,"type":"log","text":"Ben's Trendsetters: Ben sends Regular to the bottom of the pile.","by":1}
+{"t":1793550942582,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793550942582,"type":"log","text":"New in the shop: Mob.","by":1}
+{"t":1793550951325,"type":"move","seat":2,"round":2,"n":133,"kind":"place","option":"slot:0-2","label":"Red · Walk-In → you'd get: +2 red, +2 yellow, +1 blue; +4 followers; +3 members; rivals together 2 red","think":"Ava's Harvest-into-red plus Dilute on my red took the red contest; I can't reach 4 red with Trade Seeds. Walk-In is the best raw value: a free top-deck body plus Proselytizers, and the +1 red to rivals no longer matters this round.","prompt":"Cal: place a minion"}
+{"t":1793550951325,"type":"log","text":"Cal took Walk-In (Red).","by":2}
+{"t":1793550951325,"type":"log","text":"Walk-In: Ava +1 red; Ben +1 red.","by":2}
+{"t":1793550951325,"type":"log","text":"Cal recruited Caravan from the top of the deck (free).","by":2}
+{"t":1793550951325,"type":"log","text":"Cal's Proselytizers: +1 follower.","by":2}
+{"t":1793550951325,"type":"log","text":"Cal's Recruit Bonus: +1 yellow.","by":2}
+{"t":1793550951325,"type":"log","text":"Cal's Caravan: +1 red, +1 yellow, +1 blue.","by":2}
+{"t":1793550959741,"type":"move","seat":2,"round":2,"n":134,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"No contest within reach, so convert: 5 resources into 6 followers with Proselytizers, keeping 2 for round III. Caravan's round start refills me anyway.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793550959741,"type":"say","seat":2,"text":"Caravan off the top of Walk-In was a lucky one. Ava, Harvest straight into red to steal that contest was sharp; I left myself at 2 red and Dilute ate it."}
+{"t":1793550962720,"type":"move","seat":2,"round":2,"n":135,"kind":"pay","option":"pay:0-2-3","label":"Pay 2 yellow, 3 blue (suggested)","think":"Keep 2 red toward round III's red fight.","prompt":"Cal: choose how to pay for 5 followers"}
+{"t":1793550962720,"type":"log","text":"Cal bought 5 followers (2 yellow, 3 blue).","by":2}
+{"t":1793550962720,"type":"log","text":"Cal's Proselytizers: +1 follower.","by":2}
+{"t":1793550962720,"type":"log","text":"Round II ends. Most red: Ava +6 · Most yellow: Ava +6 · Most blue: Ben +6","by":2}
+{"t":1793550962720,"type":"log","text":"The member market refreshes for round III.","by":2}
+{"t":1793550962720,"type":"log","text":"Cal's Caravan: +1 red.","by":2}
+{"t":1793550962720,"type":"log","text":"Round III begins. Cal picks first. (Cal's Line Cutters: always picks first.)","by":2}
+{"t":1793550962720,"type":"log","text":"New in the shop: Big Tent, Anarchist, Patroness, Tastemaker, Party Crasher, Ringleader, Old Maid, Drifters.","by":2}
+{"t":1793551007862,"type":"move","seat":2,"round":3,"n":136,"kind":"place","option":"slot:2-5","label":"Blue · Spree → you'd get: +5 blue","think":"With Proselytizers every recruit is +1, so my round III score is roughly resources gathered plus recruits used. Spree is +5 blue and three recruits, the best single space for me. Ava's yellow pile plus Makeover and the Dilutes means I likely can't hold red against her anyway.","prompt":"Cal: place a minion"}
+{"t":1793551007862,"type":"say","seat":2,"text":"Makeover looks scary in Ava's hands: with 19 resources she can rearrange into whichever contest she wants on her last placement. Ben, you're the one with the blue to fight her on it."}
+{"t":1793551007862,"type":"log","text":"Cal took Spree (Blue).","by":2}
+{"t":1793551007862,"type":"log","text":"Cal's Spree: +5 blue.","by":2}
+{"t":1793551007862,"type":"log","text":"Cal goes on a spree: 3 recruits this turn.","by":2}
+{"t":1793551020737,"type":"move","seat":2,"round":3,"n":137,"kind":"buy","option":"card:21","label":"Recruit Patroness [5 blue + 3 any; you pay 8 (5 blue + 3 any); worth 1] — Whenever a shop member goes to the bottom of the pile, +1 follower.","think":"Patroness plus my Scouts: Scouts can send the whole 8-card row to the bottom, +1 each, and Ben's Trendsetters, Bury and Out of Style keep feeding it all round. Beats 8 resources into flat followers even after wasting two Spree recruits.","prompt":"Cal: recruit a member or followers (3 recruits left), or pass"}
+{"t":1793551022753,"type":"move","seat":2,"round":3,"n":138,"kind":"pay","option":"pay:3-0-5","label":"Pay 3 red, 5 blue (suggested)","think":"Pay.","prompt":"Cal: choose how to pay for Patroness"}
+{"t":1793551022753,"type":"log","text":"Cal recruited Patroness (3 red, 5 blue).","by":2}
+{"t":1793551022753,"type":"log","text":"Cal's Proselytizers: +1 follower.","by":2}
+{"t":1793551022753,"type":"log","text":"New in the shop: Gardener.","by":2}
+{"t":1793551029940,"type":"move","seat":2,"round":3,"n":139,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Hold Scouts for a later turn so the churn can also deny whatever a rival is eyeing.","prompt":"Cal: recruit a member or followers (2 recruits left), or pass"}
+{"t":1793551029940,"type":"say","seat":2,"text":"Patroness reads as a quiet monster at this table: Ben's whole blue engine churns the shop, and every churn is a follower for me now."}
+{"t":1793551029940,"type":"log","text":"Cal passed.","by":2}
+{"t":1793551070226,"type":"move","seat":0,"round":3,"n":140,"kind":"place","option":"slot:1-3","label":"Yellow · Big Dilute → you'd get: +4 yellow; rivals together -1..2 red, 0..2 yellow, -2..1 blue; then you choose: Big Dilute: change a rival's resource, 6 more at most; Big Dilute: change Ben's 1 red into which color?; Big Dilute: change a rival's resource, 5 more at most; Big Dilute: change Ben's 1 yellow into which color?; Big Dilute: change a rival's resource, 4 more at most; Big Dilute: change a rival's resource, 3 more at most; Big Dilute: change a rival's resource, 2 more at most; Big Dilute: change a rival's resource, 1 more at most; Big Dilute: change Ben's 1 blue into which color?","think":"Big Dilute is the one space that could gut my 5 red (6 changes), so I take it first: +4 yellow to 16 and I strip 6 of Ben's 9 blue into yellow, where my Customs-protected pile still towers over him. Forces Ben to spend placements rebuilding blue.","prompt":"Ava: place a minion"}
+{"t":1793551070226,"type":"say","seat":0,"text":"Cal, Makeover is less scary than Big Dilute from where I sit: Customs makes my yellow hard to dent, but my red is thin. Patroness with Ben's churn engine does look like the strongest thing on the board right now."}
+{"t":1793551070226,"type":"log","text":"Ava took Big Dilute (Yellow).","by":0}
+{"t":1793551070226,"type":"log","text":"Ava's Big Dilute: +4 yellow.","by":0}
+{"t":1793551072811,"type":"move","seat":0,"round":3,"n":141,"kind":"choose","option":"res:1:blue","label":"Ben's blue — value hint 8","think":"Ben's blue","prompt":"Big Dilute: change a rival's resource, 6 more at most"}
+{"t":1793551075197,"type":"move","seat":0,"round":3,"n":142,"kind":"choose","option":"color:yellow","label":"1 yellow — value hint -1","think":"to yellow","prompt":"Big Dilute: change Ben's 1 blue into which color?"}
+{"t":1793551075197,"type":"log","text":"Ava's Big Dilute: Ben's 1 blue becomes 1 yellow.","by":0}
+{"t":1793551080136,"type":"move","seat":0,"round":3,"n":143,"kind":"choose","option":"res:1:blue","label":"Ben's blue — value hint 7","think":"Ben's blue","prompt":"Big Dilute: change a rival's resource, 5 more at most"}
+{"t":1793551080229,"type":"move","seat":0,"round":3,"n":144,"kind":"choose","option":"color:yellow","label":"1 yellow — value hint -2","think":"to yellow","prompt":"Big Dilute: change Ben's 1 blue into which color?"}
+{"t":1793551080229,"type":"log","text":"Ava's Big Dilute: Ben's 1 blue becomes 1 yellow.","by":0}
+{"t":1793551080334,"type":"move","seat":0,"round":3,"n":145,"kind":"choose","option":"res:1:blue","label":"Ben's blue — value hint 6","think":"Ben's blue","prompt":"Big Dilute: change a rival's resource, 4 more at most"}
+{"t":1793551080517,"type":"move","seat":0,"round":3,"n":146,"kind":"choose","option":"color:yellow","label":"1 yellow — value hint -3","think":"to yellow","prompt":"Big Dilute: change Ben's 1 blue into which color?"}
+{"t":1793551080517,"type":"log","text":"Ava's Big Dilute: Ben's 1 blue becomes 1 yellow.","by":0}
+{"t":1793551080633,"type":"move","seat":0,"round":3,"n":147,"kind":"choose","option":"res:1:blue","label":"Ben's blue — value hint 5","think":"Ben's blue","prompt":"Big Dilute: change a rival's resource, 3 more at most"}
+{"t":1793551080729,"type":"move","seat":0,"round":3,"n":148,"kind":"choose","option":"color:yellow","label":"1 yellow — value hint -4","think":"to yellow","prompt":"Big Dilute: change Ben's 1 blue into which color?"}
+{"t":1793551080729,"type":"log","text":"Ava's Big Dilute: Ben's 1 blue becomes 1 yellow.","by":0}
+{"t":1793551080841,"type":"move","seat":0,"round":3,"n":149,"kind":"choose","option":"res:1:blue","label":"Ben's blue — value hint 4","think":"Ben's blue","prompt":"Big Dilute: change a rival's resource, 2 more at most"}
+{"t":1793551080928,"type":"move","seat":0,"round":3,"n":150,"kind":"choose","option":"color:yellow","label":"1 yellow — value hint -5","think":"to yellow","prompt":"Big Dilute: change Ben's 1 blue into which color?"}
+{"t":1793551080929,"type":"log","text":"Ava's Big Dilute: Ben's 1 blue becomes 1 yellow.","by":0}
+{"t":1793551081020,"type":"move","seat":0,"round":3,"n":151,"kind":"choose","option":"res:1:blue","label":"Ben's blue — value hint 3","think":"Ben's blue","prompt":"Big Dilute: change a rival's resource, 1 more at most"}
+{"t":1793551081111,"type":"move","seat":0,"round":3,"n":152,"kind":"choose","option":"color:yellow","label":"1 yellow — value hint -6","think":"to yellow","prompt":"Big Dilute: change Ben's 1 blue into which color?"}
+{"t":1793551081111,"type":"log","text":"Ava's Big Dilute: Ben's 1 blue becomes 1 yellow.","by":0}
+{"t":1793551091096,"type":"move","seat":0,"round":3,"n":153,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Spare recruit: turn 1 yellow into a follower; yellow stays at 15, above the 14 Ben could Makeover into.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793551094385,"type":"move","seat":0,"round":3,"n":154,"kind":"pay","option":"pay:0-1-0","label":"Pay 1 yellow","think":"yellow; keep blue open as a Peek threat","prompt":"Ava: choose how to pay for 1 followers"}
+{"t":1793551094385,"type":"log","text":"Ava bought 1 follower (1 yellow).","by":0}
+{"t":1793551127233,"type":"move","seat":1,"round":3,"n":155,"kind":"place","option":"slot:0-5","label":"Red · Recruit a Member → you'd get: +1 red, +1 blue; +-4..2 followers; +1 members; rivals together -1..0 red, 0..2 yellow; rivals followers 1; then you choose: Recruit a Member: which member?; Trendsetters: send which member to the bottom? (1 to go); Ringleader: change a rival's resource, 2 more at most; Ringleader: change Ava's 1 red into which color?","think":"Odd combo time: Recruit a Member takes Anarchist free, then Anarchist swaps Cal's Loyalists (5) with Old Maid (5) in the shop. Loyalists doesn't protect itself, Cal eats -5 and drops 3 bodies, and his Patroness is then open to my Promote with Con Men next placement.","prompt":"Ben: place a minion"}
+{"t":1793551127233,"type":"log","text":"Ben took Recruit a Member (Red).","by":1}
+{"t":1793551127233,"type":"log","text":"Ben's Recruit a Member: +1 red.","by":1}
+{"t":1793551129431,"type":"move","seat":1,"round":3,"n":156,"kind":"choose","option":"card:36","label":"Anarchist [7 any; worth 1] — On Use, once per round: swap any 2 members, in any cult or the shop, that cost within 2 of each other.","think":"Anarchist","prompt":"Recruit a Member: which member?"}
+{"t":1793551129431,"type":"log","text":"Ben recruited Anarchist (free).","by":1}
+{"t":1793551129431,"type":"log","text":"New in the shop: HR.","by":1}
+{"t":1793551132259,"type":"move","seat":1,"round":3,"n":157,"kind":"choose","option":"card:19","label":"Tastemaker [3 yellow + 3 any; worth 1] — Whenever you change rivals' resources, +1 follower.","think":"Tastemaker would pay Ava for every Dilute; under.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793551132259,"type":"log","text":"Ben's Trendsetters: Ben sends Tastemaker to the bottom of the pile.","by":1}
+{"t":1793551132259,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793551132259,"type":"log","text":"Cal's Patroness: +1 follower.","by":1}
+{"t":1793551132259,"type":"log","text":"New in the shop: Dyer.","by":1}
+{"t":1793551136504,"type":"move","seat":1,"round":3,"n":158,"kind":"buy","option":"use:36","label":"Use Anarchist — On Use, once per round: swap any 2 members, in any cult or the shop, that cost within 2 of each other.","think":"Use Anarchist now before Old Maid leaves the shop.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551136504,"type":"log","text":"Ben uses Anarchist.","by":1}
+{"t":1793551141774,"type":"move","seat":1,"round":3,"n":159,"kind":"choose","option":"trade:9:34","label":"Cal: Loyalists ↔ Shop: Old Maid — value hint 0","think":"Loyalists out, Old Maid in: Cal loses a 3-body and eats -5, and his Patroness is now swappable.","prompt":"Anarchist: choose two members within 2 cost to swap"}
+{"t":1793551141774,"type":"say","seat":1,"text":"Rules check for the table: Anarchist moving Old Maid into a rival's cult. The card says 'whenever this member joins your cult', no 'by your own doing', so I read it as firing. Shout if you read it differently."}
+{"t":1793551141774,"type":"log","text":"Cal −1 follower (Ben's Deprogrammers).","by":1}
+{"t":1793551141774,"type":"log","text":"Cal's Old Maid: −5 followers.","by":1}
+{"t":1793551141774,"type":"log","text":"Ben's Anarchist swapped Cal's Loyalists and Shop's Old Maid.","by":1}
+{"t":1793551141774,"type":"log","text":"New in the shop: Loyalists.","by":1}
+{"t":1793551153845,"type":"move","seat":1,"round":3,"n":160,"kind":"buy","option":"card:16","label":"Recruit Drifters [2 yellow + 1 any; you pay 3 (3 any); worth 2] — Worth 2 followers. On Recruit: choose a color; these count as a member of that color.","think":"Drifters: 2 bodies for 3 yellow (yellow is Ava's anyway), +1 Patriarch tick. Saving Loyalists for next placement, after my Promote, since Loyalists would block my own swaps too.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551153845,"type":"say","seat":1,"text":"Cal, I think that's the real hole in Loyalists: it guards everything except itself, and Anarchist is exactly within 2 of it."}
+{"t":1793551155631,"type":"move","seat":1,"round":3,"n":161,"kind":"pay","option":"pay:0-3-0","label":"Pay 3 yellow (suggested)","think":"yellow","prompt":"Ben: choose how to pay for Drifters"}
+{"t":1793551155631,"type":"log","text":"Ben recruited Drifters (3 yellow).","by":1}
+{"t":1793551155631,"type":"log","text":"New in the shop: Snobs.","by":1}
+{"t":1793551158225,"type":"move","seat":1,"round":3,"n":162,"kind":"choose","option":"card:14","label":"Dyer [4 yellow + 3 any; worth 1] — On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.","think":"Dyer under again.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793551158225,"type":"log","text":"Ben's Trendsetters: Ben sends Dyer to the bottom of the pile.","by":1}
+{"t":1793551158225,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793551158225,"type":"log","text":"Cal's Patroness: +1 follower.","by":1}
+{"t":1793551158225,"type":"log","text":"New in the shop: Critic.","by":1}
+{"t":1793551161618,"type":"move","seat":1,"round":3,"n":163,"kind":"choose","option":"color:market","label":"Blue — value hint -1","think":"Blue, in case Snobs or HR end up mine.","prompt":"Drifters: count as a member of which color?"}
+{"t":1793551161618,"type":"log","text":"Ben's Drifters count as a Blue member.","by":1}
+{"t":1793551170342,"type":"move","seat":1,"round":3,"n":164,"kind":"place","option":"slot:0-3","label":"Red · Promote → you'd get: +3 red, +0..1 blue; +-2..0 followers; +-2..0 members; rivals followers 0..1; then you choose: Promote: choose a member and its replacement; Trendsetters: send which member to the bottom? (1 to go)","think":"Promote Con Men (7) into Cal's Patroness (8): with Loyalists gone it's open. My Trendsetters and Bargain churn, and Cal's own Scouts, will pay me instead of him. Not giving him Anarchist, he could use it this round.","prompt":"Ben: place a minion"}
+{"t":1793551170342,"type":"log","text":"Ben took Promote (Red).","by":1}
+{"t":1793551170342,"type":"log","text":"Ben's Promote: +3 red.","by":1}
+{"t":1793551181363,"type":"move","seat":1,"round":3,"n":165,"kind":"choose","option":"trade:38:21","label":"Ben: Con Men ↔ Cal: Patroness — value hint 0","think":"Caravan was tempting (+1 body, +3 resources), but Cal still has Scouts unused this round: Scouts plus Patroness could be +8 for him in one go. Taking Patroness kills that and pays me on my own Trendsetters churn.","prompt":"Promote: choose a member and its replacement"}
+{"t":1793551181363,"type":"log","text":"Cal −1 follower (Ben's Deprogrammers).","by":1}
+{"t":1793551181363,"type":"log","text":"Cal's Recruiter: +2 red.","by":1}
+{"t":1793551181363,"type":"log","text":"Ben swapped Ben's Con Men and Cal's Patroness.","by":1}
+{"t":1793551184481,"type":"move","seat":1,"round":3,"n":166,"kind":"choose","option":"card:15","label":"Ringleader [3 yellow + 3 any; worth 1] — On Recruit: change 1 of each rival's resources one for one. +1 follower per rival changed.","think":"Ringleader under; keeping Loyalists for my recruit.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793551184481,"type":"log","text":"Ben's Trendsetters: Ben sends Ringleader to the bottom of the pile.","by":1}
+{"t":1793551184481,"type":"log","text":"Ben's Patroness: +1 follower.","by":1}
+{"t":1793551184481,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793551184481,"type":"log","text":"New in the shop: Connoisseurs.","by":1}
+{"t":1793551190380,"type":"move","seat":1,"round":3,"n":167,"kind":"buy","option":"card:9","label":"Recruit Loyalists [2 red + 3 any; you pay 5 (5 any); worth 3] — Your other members can’t be swapped.","think":"Loyalists now: 3 bodies for 5, and it stops Cal from Promoting his Old Maid back onto me. My swaps are done anyway.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551193003,"type":"move","seat":1,"round":3,"n":168,"kind":"pay","option":"pay:0-3-2","label":"Pay 3 yellow, 2 blue (suggested)","think":"Spend yellow, keep the red and blue leads.","prompt":"Ben: choose how to pay for Loyalists"}
+{"t":1793551193003,"type":"log","text":"Ben recruited Loyalists (3 yellow, 2 blue; Alchemists: colored part in any colors).","by":1}
+{"t":1793551193003,"type":"log","text":"New in the shop: Doormen.","by":1}
+{"t":1793551197718,"type":"move","seat":1,"round":3,"n":169,"kind":"choose","option":"card:30","label":"Party Crasher [4 any; worth 1] — On Use, once per game: your next minion can be placed on a space a rival already took.","think":"Party Crasher is the one card that could break my last-placement plans.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793551197718,"type":"log","text":"Ben's Trendsetters: Ben sends Party Crasher to the bottom of the pile.","by":1}
+{"t":1793551197718,"type":"log","text":"Ben's Patroness: +1 follower.","by":1}
+{"t":1793551197718,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793551197718,"type":"log","text":"New in the shop: Regular.","by":1}
+{"t":1793551214436,"type":"move","seat":0,"round":3,"n":170,"kind":"place","option":"slot:2-2","label":"Blue · Peek → you'd get: +6 blue; then you choose: Peek: which goes on top?; Peek: which goes next?","think":"Ben jumped to 37 and his Patriarch will add about a dozen, so I need all three contests. Peek is the biggest raw gain (+6 blue) and puts me 8 to 5 on blue; I'll fight red with Gather and keep Makeover as the late rearrange if it survives.","prompt":"Ava: place a minion"}
+{"t":1793551214436,"type":"say","seat":0,"text":"Ben, I read Old Maid the same way; 'joins your cult' has no 'by your own doing', so Anarchist dumping it on Cal fires. That's a brutal 6-follower swing for a once-per-round ability."}
+{"t":1793551214436,"type":"log","text":"Ava took Peek (Blue).","by":0}
+{"t":1793551214436,"type":"log","text":"Ava's Peek: +6 blue.","by":0}
+{"t":1793551214436,"type":"log","text":"Ava peeks at the top 4 of the pile.","by":0}
+{"t":1793551218529,"type":"move","seat":0,"round":3,"n":171,"kind":"choose","option":"card:12","label":"Go-Between [2 yellow + 2 any; worth 1] — Whenever a space gives you resources, you may change 1 of them to any color.","think":"Weakest card on top so a rival's Walk-In gets little.","prompt":"Peek: which goes on top?"}
+{"t":1793551221139,"type":"move","seat":0,"round":3,"n":172,"kind":"choose","option":"card:32","label":"Extra Hand [9 any; worth 1] — On Use, once per game: +1 minion this round.","think":"Extra Hand next; poor value for anyone this late.","prompt":"Peek: which goes next?"}
+{"t":1793551222957,"type":"move","seat":0,"round":3,"n":173,"kind":"choose","option":"keep","label":"Keep this order — value hint -1","think":"rest as is","prompt":"Peek: which goes next?"}
+{"t":1793551222957,"type":"log","text":"Ava puts the top 4 of the pile back in a new order.","by":0}
+{"t":1793551235268,"type":"move","seat":0,"round":3,"n":174,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Convert 5 of my surplus yellow now so I'm not stuck with an unconverted pile at the end; 10 yellow still needs Ben to spend two placements or dump his red and blue into Makeover to catch.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793551240188,"type":"move","seat":0,"round":3,"n":175,"kind":"pay","option":"pay:0-5-0","label":"Pay 5 yellow (suggested)","think":"5 yellow","prompt":"Ava: choose how to pay for 5 followers"}
+{"t":1793551240189,"type":"log","text":"Ava bought 5 followers (5 yellow).","by":0}
+{"t":1793551253609,"type":"move","seat":2,"round":3,"n":176,"kind":"place","option":"slot:0-4","label":"Red · Demote → you'd get: +3..5 red, +0..1 yellow, +0..1 blue; +-1..3 followers; +-2..2 members; rivals together 0..1 blue; rivals followers -6..2; then you choose: Demote: choose a member and its replacement; Churn: send which member to the bottom? (3 to go); Churn: send which member to the bottom? (2 to go); Churn: send which member to the bottom? (1 to go)","think":"I got burned holding Scouts: Anarchist dumped Old Maid on me and Promote took Patroness. Demote lets me hand Old Maid right back: Ben's Loyalists costs 5, same as Old Maid, and Loyalists can't protect itself. Ben eats the -5 and loses a 3-body, I get +5 red from Demote and Recruiter.","prompt":"Cal: place a minion"}
+{"t":1793551253609,"type":"say","seat":2,"text":"Ben, fair play on Anarchist, and I agree Old Maid fires on any join. Which means it's a hot potato now."}
+{"t":1793551253609,"type":"log","text":"Cal took Demote (Red).","by":2}
+{"t":1793551253609,"type":"log","text":"Cal's Demote: +3 red.","by":2}
+{"t":1793551255841,"type":"move","seat":2,"round":3,"n":177,"kind":"choose","option":"trade:34:9","label":"Cal: Old Maid ↔ Ben: Loyalists — value hint 2","think":"Old Maid for Loyalists.","prompt":"Demote: choose a member and its replacement"}
+{"t":1793551255841,"type":"log","text":"Cal's Recruiter: +2 red.","by":2}
+{"t":1793551255841,"type":"log","text":"Cal's Proselytizers: +1 follower.","by":2}
+{"t":1793551255841,"type":"log","text":"Ben's Old Maid: −5 followers.","by":2}
+{"t":1793551255841,"type":"log","text":"Cal swapped Cal's Old Maid and Ben's Loyalists.","by":2}
+{"t":1793551267999,"type":"move","seat":2,"round":3,"n":178,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Scouts is dead to me now that Ben holds Patroness; every churn pays him. A 1-follower buy is +2 with Proselytizers and red stays 6 vs 5s.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551268085,"type":"move","seat":2,"round":3,"n":179,"kind":"pay","option":"pay:1-0-0","label":"Pay 1 red (suggested)","think":"Pay 1 red.","prompt":"Cal: choose how to pay for 1 followers"}
+{"t":1793551268085,"type":"log","text":"Cal bought 1 follower (1 red).","by":2}
+{"t":1793551268085,"type":"log","text":"Cal's Proselytizers: +1 follower.","by":2}
+{"t":1793551271943,"type":"move","seat":2,"round":3,"n":180,"kind":"place","option":"slot:1-5","label":"Yellow · Makeover → you'd get: -6..4 red, +0..10 yellow, +0..10 blue; then you choose: Makeover: pick a color for all 10, or split them; Makeover: how many red? (10 left to place); Makeover: how many yellow? (10 left to place; the rest become blue); Makeover: how many yellow? (9 left to place; the rest become blue); Makeover: how many yellow? (8 left to place; the rest become blue); Makeover: how many yellow? (7 left to place; the rest become blue); Makeover: how many yellow? (6 left to place; the rest become blue); Makeover: how many yellow? (5 left to place; the rest become blue)","think":"Makeover for denial as much as gain: Ava has 23 resources and Makeover would let her dump them all into red on one placement. Taking it puts me at 10 red, ahead of 5s, and forces her to spend placements to catch up.","prompt":"Cal: place a minion"}
+{"t":1793551271943,"type":"log","text":"Cal took Makeover (Yellow).","by":2}
+{"t":1793551271943,"type":"log","text":"Cal's Makeover: +4 yellow.","by":2}
+{"t":1793551276441,"type":"move","seat":2,"round":3,"n":181,"kind":"choose","option":"color:red","label":"All 10 red — value hint 2.5","think":"All red: rivals at 5 need two placements to pass 10, while blue (Ava 8) falls to one Savings.","prompt":"Makeover: pick a color for all 10, or split them"}
+{"t":1793551276441,"type":"log","text":"Cal's Makeover: +4 red, −4 yellow.","by":2}
+{"t":1793551276441,"type":"log","text":"Cal's Makeover: everything becomes red (10).","by":2}
+{"t":1793551281037,"type":"move","seat":2,"round":3,"n":182,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Hold all 10: one Harvest only ties me.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551281037,"type":"say","seat":2,"text":"For the record, Makeover in round III is a contest-decider: whoever holds the biggest pile picks the +10 they want. I took it mostly so nobody else could."}
+{"t":1793551281037,"type":"log","text":"Cal passed.","by":2}
+{"t":1793551310643,"type":"move","seat":0,"round":3,"n":183,"kind":"place","option":"slot:2-4","label":"Blue · Bury → you'd get: +2..6 blue; rivals together 1 blue; rivals followers 1; then you choose: Bury: send which member to the bottom?","think":"Bury HR: +6 blue for me (14 vs Ben's 5) and it takes away both the biggest blue space and HR, which would have been about 10 followers for Ben's 22-member Patriarch cult. Cal's 10 red is out of my reach, so my red becomes followers this turn.","prompt":"Ava: place a minion"}
+{"t":1793551310643,"type":"log","text":"Ava took Bury (Blue).","by":0}
+{"t":1793551310643,"type":"log","text":"Ava's Bury: +1 blue.","by":0}
+{"t":1793551313112,"type":"move","seat":0,"round":3,"n":184,"kind":"choose","option":"card:39","label":"HR [10 any; worth 4] — Counts as 4 members. Game End: +2 followers per color you have 3 members of.","think":"HR","prompt":"Bury: send which member to the bottom?"}
+{"t":1793551313112,"type":"log","text":"Bury: Ava sends HR to the bottom of the pile.","by":0}
+{"t":1793551313112,"type":"log","text":"Ben's Patroness: +1 follower.","by":0}
+{"t":1793551313112,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":0}
+{"t":1793551313112,"type":"log","text":"Ava's Bury: +5 blue.","by":0}
+{"t":1793551313112,"type":"log","text":"New in the shop: Go-Between.","by":0}
+{"t":1793551316479,"type":"move","seat":0,"round":3,"n":185,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Red is dead money against Cal's 10; turn all 5 into followers.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793551320321,"type":"move","seat":0,"round":3,"n":186,"kind":"pay","option":"pay:5-0-0","label":"Pay 5 red (suggested)","think":"5 red","prompt":"Ava: choose how to pay for 5 followers"}
+{"t":1793551320321,"type":"say","seat":0,"text":"Cal, agreed on Makeover: it's less a space than a round-three trump card. Taking it to deny is probably right for whoever moves first."}
+{"t":1793551320321,"type":"log","text":"Ava bought 5 followers (5 red).","by":0}
+{"t":1793551341023,"type":"move","seat":1,"round":3,"n":187,"kind":"place","option":"slot:2-1","label":"Blue · Out of Style → you'd get: +5..7 blue; +1 followers; then you choose: Out of Style: send which color to the bottom?","think":"Misjudged: Loyalists doesn't guard itself, exactly the hole I used on Cal, and he used Demote to hand Old Maid back. Now: Out of Style on blue sends 5 members, so +7 blue and Patroness pays +5 followers. Blue vs Ava's 14 is the +10 I can fight for since I place last.","prompt":"Ben: place a minion"}
+{"t":1793551341023,"type":"say","seat":1,"text":"Well played, Cal. I pointed at the Loyalists hole and then walked into it with Demote. Old Maid as a hot potato is genuinely fun, but -5 every time it moves might be too swingy for a 5-cost card."}
+{"t":1793551341023,"type":"log","text":"Ben took Out of Style (Blue).","by":1}
+{"t":1793551341023,"type":"log","text":"Ben's Out of Style: +1 blue.","by":1}
+{"t":1793551343364,"type":"move","seat":1,"round":3,"n":188,"kind":"choose","option":"color:blue","label":"blue (5) — value hint 5","think":"blue, 5","prompt":"Out of Style: send which color to the bottom?"}
+{"t":1793551343364,"type":"log","text":"Out of Style: Ben sends 5 blue members to the bottom.","by":1}
+{"t":1793551343364,"type":"log","text":"Ben's Patroness: +1 follower.","by":1}
+{"t":1793551343364,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793551343364,"type":"log","text":"Ben's Out of Style: +5 blue.","by":1}
+{"t":1793551343364,"type":"log","text":"New in the shop: Extra Hand, Mentor & Protégés, Shopaholics, Window Shopper, Harmonist.","by":1}
+{"t":1793551370257,"type":"move","seat":1,"round":3,"n":189,"kind":"buy","option":"card:2","label":"Recruit Mentor & Protégés [5 red + 4 any; you pay 9 (9 any); worth 3] — On Recruit: recruit the cheapest member in the shop.","think":"Mentor & Protégés: 3 bodies plus the cheapest shop member free, so ~4 bodies, two Trendsetters triggers (+2 blue, +2 Patroness) and +2 Patriarch. Paying all 5 red plus 4 blue; red is Cal's anyway. Blue ends ~11, Savings next.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551372154,"type":"move","seat":1,"round":3,"n":190,"kind":"pay","option":"pay:5-0-4","label":"Pay 5 red, 4 blue (suggested)","think":"pay","prompt":"Ben: choose how to pay for Mentor & Protégés"}
+{"t":1793551372154,"type":"log","text":"Ben recruited Mentor & Protégés (5 red, 4 blue).","by":1}
+{"t":1793551372154,"type":"log","text":"Ben's Mentor & Protégés: the cheapest face-up member comes along free.","by":1}
+{"t":1793551372154,"type":"log","text":"Ben recruited Gardener (free).","by":1}
+{"t":1793551372154,"type":"log","text":"Ben's Gardener: +1 red, +1 yellow.","by":1}
+{"t":1793551372154,"type":"log","text":"New in the shop: Mob, Tastemaker.","by":1}
+{"t":1793551377957,"type":"move","seat":1,"round":3,"n":191,"kind":"choose","option":"card:32","label":"Extra Hand [9 any; worth 1] — On Use, once per game: +1 minion this round.","think":"Extra Hand would give Ava or Cal a placement after my last one; under.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793551377957,"type":"log","text":"Ben's Trendsetters: Ben sends Extra Hand to the bottom of the pile.","by":1}
+{"t":1793551377957,"type":"log","text":"Ben's Patroness: +1 follower.","by":1}
+{"t":1793551377957,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793551377957,"type":"log","text":"New in the shop: Dyer.","by":1}
+{"t":1793551382128,"type":"move","seat":1,"round":3,"n":192,"kind":"choose","option":"card:19","label":"Tastemaker [3 yellow + 3 any; worth 1] — Whenever you change rivals' resources, +1 follower.","think":"Tastemaker again.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793551382128,"type":"log","text":"Ben's Trendsetters: Ben sends Tastemaker to the bottom of the pile.","by":1}
+{"t":1793551382128,"type":"log","text":"Ben's Patroness: +1 follower.","by":1}
+{"t":1793551382128,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793551382128,"type":"log","text":"New in the shop: Ringleader.","by":1}
+{"t":1793551403286,"type":"move","seat":1,"round":3,"n":193,"kind":"place","option":"slot:2-0","label":"Blue · Savings → you'd get: +4..5 blue; +0..1 followers; then you choose: Savings: send a shop member to the bottom of the pile?","think":"Blue race with Ava (14 vs my 11). Savings +4, bury one for Bargain Bin and Patroness. Then Window Shopper with red/yellow/3 blue: its bottoming plus Trendsetters' gives the blue right back, plus two Patroness followers.","prompt":"Ben: place a minion"}
+{"t":1793551403286,"type":"log","text":"Ben took Savings (Blue).","by":1}
+{"t":1793551403286,"type":"log","text":"Ben's Savings: +4 blue.","by":1}
+{"t":1793551407436,"type":"move","seat":1,"round":3,"n":194,"kind":"choose","option":"card:15","label":"Ringleader [3 yellow + 3 any; worth 1] — On Recruit: change 1 of each rival's resources one for one. +1 follower per rival changed.","think":"Ringleader could knock a blue off me.","prompt":"Savings: send a shop member to the bottom of the pile?"}
+{"t":1793551407437,"type":"log","text":"Savings: Ben sends Ringleader to the bottom of the pile.","by":1}
+{"t":1793551407437,"type":"log","text":"Ben's Patroness: +1 follower.","by":1}
+{"t":1793551407437,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793551407437,"type":"log","text":"New in the shop: Party Crasher.","by":1}
+{"t":1793551415982,"type":"move","seat":1,"round":3,"n":195,"kind":"buy","option":"card:30","label":"Recruit Party Crasher [4 any; you pay 4 (4 any); worth 1] — On Use, once per game: your next minion can be placed on a space a rival already took.","think":"Party Crasher resurfaced. With the last placement of the game, it lets me land on a taken space like Big Dilute and turn 6 of Ava's blue. That's the blue +10 trump, and it keeps the card out of Ava's hands for her turn 14.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551418129,"type":"move","seat":1,"round":3,"n":196,"kind":"pay","option":"pay:1-1-2","label":"Pay 1 red, 1 yellow, 2 blue (suggested)","think":"pay","prompt":"Ben: choose how to pay for Party Crasher"}
+{"t":1793551418129,"type":"log","text":"Ben recruited Party Crasher (1 red, 1 yellow, 2 blue).","by":1}
+{"t":1793551418129,"type":"log","text":"New in the shop: HR.","by":1}
+{"t":1793551422313,"type":"move","seat":1,"round":3,"n":197,"kind":"choose","option":"card:24","label":"Shopaholics [3 blue + 6 any; worth 3] — You can recruit twice each turn.","think":"Shopaholics would let Ava convert twice per turn with her big pile.","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793551422313,"type":"log","text":"Ben's Trendsetters: Ben sends Shopaholics to the bottom of the pile.","by":1}
+{"t":1793551422313,"type":"log","text":"Ben's Patroness: +1 follower.","by":1}
+{"t":1793551422313,"type":"log","text":"Ben's Bargain Bin: +1 blue.","by":1}
+{"t":1793551422313,"type":"log","text":"New in the shop: Snobs.","by":1}
+{"t":1793551425056,"type":"move","seat":1,"round":3,"n":198,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Hold Party Crasher for my last placement.","prompt":"Ben: use a member, or finish your turn"}
+{"t":1793551425056,"type":"say","seat":1,"text":"Ava, you're the one to beat now with that blue and yellow pile. Curious whether you hold it for both contests or cash it in."}
+{"t":1793551425056,"type":"log","text":"Ben passed.","by":1}
+{"t":1793551507437,"type":"move","seat":0,"round":3,"n":199,"kind":"place","option":"slot:2-3","label":"Blue · Recruit Twice → you'd get: +3 blue","think":"Ben's best last turn is Recruit Twice: two buys turn 15 of his blue into followers and he still holds enough to win blue. Taking it denies him about 5 and gives me two recruits to cash 15 blue now. Blue is his; I keep yellow and decide at my last turn how much to hold against Cal.","prompt":"Ava: place a minion"}
+{"t":1793551507437,"type":"say","seat":0,"text":"Ben, cashing most of it. With your last placement after mine, a blue race is one I can't win; you always get the final answer."}
+{"t":1793551507437,"type":"log","text":"Ava took Recruit Twice (Blue).","by":0}
+{"t":1793551507437,"type":"log","text":"Ava's Recruit Twice: +3 blue.","by":0}
+{"t":1793551507437,"type":"log","text":"Ava recruits twice this turn.","by":0}
+{"t":1793551510876,"type":"move","seat":0,"round":3,"n":200,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"10 blue into 10 followers.","prompt":"Ava: recruit a member or followers (2 recruits left), or pass"}
+{"t":1793551515221,"type":"move","seat":0,"round":3,"n":201,"kind":"pay","option":"pay:0-0-10","label":"Pay 10 blue — spending this gives up your contest lead in blue","think":"All blue; yellow is the contest I keep.","prompt":"Ava: choose how to pay for 10 followers"}
+{"t":1793551515221,"type":"log","text":"Ava bought 10 followers (10 blue).","by":0}
+{"t":1793551518407,"type":"move","seat":0,"round":3,"n":202,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"5 more blue into followers.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793551521807,"type":"move","seat":0,"round":3,"n":203,"kind":"pay","option":"pay:0-0-5","label":"Pay 5 blue (suggested)","think":"5 blue","prompt":"Ava: choose how to pay for 5 followers"}
+{"t":1793551521807,"type":"log","text":"Ava bought 5 followers (5 blue).","by":0}
+{"t":1793551543225,"type":"move","seat":2,"round":3,"n":204,"kind":"place","option":"slot:0-1","label":"Red · Gather → you'd get: +4 red","think":"I'm well behind (Ava 53, Ben 41 plus Patriarch). Rivals have no red and one placement each, so I can spend: Gather to 14, then Mob (worth 5, +1 per red member at game end) with Gather's +3 and Proselytizers. Harvest next to rebuild red above anything a Trade Seeds plus Dilute combo can do.","prompt":"Cal: place a minion"}
+{"t":1793551543225,"type":"say","seat":2,"text":"Ava cashing 15 into followers in one Recruit Twice was the swing of the game. Holding resources for contests looks like a trap when you can buy followers at 1:1 any time."}
+{"t":1793551543225,"type":"log","text":"Cal took Gather (Red).","by":2}
+{"t":1793551543225,"type":"log","text":"Cal's Gather: +4 red.","by":2}
+{"t":1793551552200,"type":"move","seat":2,"round":3,"n":205,"kind":"buy","option":"card:4","label":"Recruit Mob [7 red + 5 any; you pay 12 (7 red + 5 any); worth 5] — Game End: +1 follower per red member you have.","think":"Mob: 5 worth, +4 or more at game end from my red members, +3 Gather, +1 Proselytizers, about 13 for 12, the best rate available.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551552332,"type":"move","seat":2,"round":3,"n":206,"kind":"pay","option":"pay:12-0-0","label":"Pay 12 red (suggested)","think":"Pay.","prompt":"Cal: choose how to pay for Mob"}
+{"t":1793551552332,"type":"log","text":"Cal recruited Mob (12 red).","by":2}
+{"t":1793551552332,"type":"log","text":"Cal's Gather: +3 followers for recruiting a member.","by":2}
+{"t":1793551552332,"type":"log","text":"Cal's Proselytizers: +1 follower.","by":2}
+{"t":1793551552332,"type":"log","text":"New in the shop: Critic.","by":2}
+{"t":1793551554895,"type":"move","seat":2,"round":3,"n":207,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Done; Scouts would only feed Ben's Patroness.","prompt":"Cal: use a member, or finish your turn"}
+{"t":1793551554895,"type":"log","text":"Cal passed.","by":2}
+{"t":1793551567799,"type":"move","seat":2,"round":3,"n":208,"kind":"place","option":"slot:1-0","label":"Yellow · Harvest → you'd get: +2..5 red, +0..3 yellow, +0..3 blue; then you choose: Harvest: +1 of which color? (5 to pick); Harvest: +1 of which color? (4 to pick); Harvest: +1 of which color? (3 to pick); Harvest: +1 of which color? (2 to pick); Harvest: +1 of which color? (1 to pick)","think":"Harvest all red rebuilds to 7; neither rival has red and each has one placement, Ben's best is 3 via Trade Seeds.","prompt":"Cal: place a minion"}
+{"t":1793551567799,"type":"log","text":"Cal took Harvest (Yellow).","by":2}
+{"t":1793551567982,"type":"move","seat":2,"round":3,"n":209,"kind":"choose","option":"color:red","label":"+1 red — value hint -2","think":"Red.","prompt":"Harvest: +1 of which color? (5 to pick)"}
+{"t":1793551567982,"type":"log","text":"Cal's Harvest: +1 red.","by":2}
+{"t":1793551568167,"type":"move","seat":2,"round":3,"n":210,"kind":"choose","option":"color:red","label":"+1 red — value hint -3","think":"Red.","prompt":"Harvest: +1 of which color? (4 to pick)"}
+{"t":1793551568167,"type":"log","text":"Cal's Harvest: +1 red.","by":2}
+{"t":1793551568297,"type":"move","seat":2,"round":3,"n":211,"kind":"choose","option":"color:red","label":"+1 red — value hint -4","think":"Red.","prompt":"Harvest: +1 of which color? (3 to pick)"}
+{"t":1793551568297,"type":"log","text":"Cal's Harvest: +1 red.","by":2}
+{"t":1793551568453,"type":"move","seat":2,"round":3,"n":212,"kind":"choose","option":"color:red","label":"+1 red — value hint -5","think":"Red.","prompt":"Harvest: +1 of which color? (2 to pick)"}
+{"t":1793551568453,"type":"log","text":"Cal's Harvest: +1 red.","by":2}
+{"t":1793551568576,"type":"move","seat":2,"round":3,"n":213,"kind":"choose","option":"color:red","label":"+1 red — value hint -6","think":"Red.","prompt":"Harvest: +1 of which color? (1 to pick)"}
+{"t":1793551568576,"type":"log","text":"Cal's Harvest: +1 red.","by":2}
+{"t":1793551576311,"type":"move","seat":2,"round":3,"n":214,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"One follower buy, +2 with Proselytizers; 6 red still beats Ben's 3-swap ceiling unless Ava spends her last minion diluting me.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551576465,"type":"move","seat":2,"round":3,"n":215,"kind":"pay","option":"pay:1-0-0","label":"Pay 1 red (suggested)","think":"Pay red.","prompt":"Cal: choose how to pay for 1 followers"}
+{"t":1793551576465,"type":"log","text":"Cal bought 1 follower (1 red).","by":2}
+{"t":1793551576465,"type":"log","text":"Cal's Proselytizers: +1 follower.","by":2}
+{"t":1793551604382,"type":"move","seat":0,"round":3,"n":216,"kind":"place","option":"slot:1-4","label":"Yellow · Melting Pot → you'd get: +0..3 red, +2..5 yellow, +0..3 blue; then you choose: Melting Pot: +1 of which color? (3 to pick); Melting Pot: +1 of which color? (2 to pick); Melting Pot: +1 of which color? (1 to pick)","think":"Melting Pot is +5 for me and the one space that gets Ben to 5 yellow cheapest. After it I cash 10 and hold 7 yellow; Ben's best answer (Trade Seeds) reaches 5, and Customs refunds any Dilute on my yellow.","prompt":"Ava: place a minion"}
+{"t":1793551604382,"type":"say","seat":0,"text":"Cal, I'd push back a little: holding won me +12 in round two. The trap is holding a color someone else can out-race on the last placement."}
+{"t":1793551604382,"type":"log","text":"Ava took Melting Pot (Yellow).","by":0}
+{"t":1793551604382,"type":"log","text":"Ava's Melting Pot: +2 yellow.","by":0}
+{"t":1793551608605,"type":"move","seat":0,"round":3,"n":217,"kind":"choose","option":"color:yellow","label":"+1 yellow — value hint -12","think":"yellow","prompt":"Melting Pot: +1 of which color? (3 to pick)"}
+{"t":1793551608605,"type":"log","text":"Ava's Melting Pot: +1 yellow.","by":0}
+{"t":1793551608716,"type":"move","seat":0,"round":3,"n":218,"kind":"choose","option":"color:yellow","label":"+1 yellow — value hint -13","think":"yellow","prompt":"Melting Pot: +1 of which color? (2 to pick)"}
+{"t":1793551608716,"type":"log","text":"Ava's Melting Pot: +1 yellow.","by":0}
+{"t":1793551608807,"type":"move","seat":0,"round":3,"n":219,"kind":"choose","option":"color:yellow","label":"+1 yellow — value hint -14","think":"yellow","prompt":"Melting Pot: +1 of which color? (1 to pick)"}
+{"t":1793551608807,"type":"log","text":"Ava's Melting Pot: +1 yellow.","by":0}
+{"t":1793551611930,"type":"move","seat":0,"round":3,"n":220,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Cash 10; keep 7 yellow, more than Ben's best reach of 5.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793551615671,"type":"move","seat":0,"round":3,"n":221,"kind":"pay","option":"pay:0-8-2","label":"Pay 8 yellow, 2 blue (suggested)","think":"8 yellow, 2 blue","prompt":"Ava: choose how to pay for 10 followers"}
+{"t":1793551615671,"type":"log","text":"Ava bought 10 followers (8 yellow, 2 blue).","by":0}

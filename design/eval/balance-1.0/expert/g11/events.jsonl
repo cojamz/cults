@@ -1,0 +1,366 @@
+{"t":1793550911034,"type":"log","text":"Round I's turn order: Ava, Ben, Cal, Dee. Draft 1 resource each in reverse order; each color can be taken once."}
+{"t":1793550935989,"type":"move","seat":3,"round":0,"n":1,"kind":"setup","option":"color:silver","label":"Silver's artifact: Caterer — Whenever a player is gifted silver, +2 silver.","think":"Caterer looks like the best counted value: every Toast, Party Gifts or Party Favors gifts several players silver, so +2 per gift should snowball the silver contest and give convertible resources.","prompt":"Dee: pick an artifact"}
+{"t":1793550935989,"type":"say","seat":3,"text":"Caterer reads huge to me if it triggers per player gifted. Toast alone could be +6 for whoever holds it."}
+{"t":1793550935989,"type":"log","text":"Dee takes Silver's artifact, Caterer (\"Whenever a player is gifted silver, +2 silver.\"), and +1 silver.","by":3}
+{"t":1793550940863,"type":"move","seat":2,"round":0,"n":2,"kind":"setup","option":"color:purple","label":"Purple's artifact: Pocket Watch — Whenever a player’s turn is skipped, +1 purple.","think":"Pocket Watch: Sleep In and Hold Up both cause skips every round, so purple trickles in from everyone else's plays too. That's a contest edge I don't have to spend placements on.","prompt":"Cal: pick an artifact"}
+{"t":1793550940863,"type":"say","seat":2,"text":"Caterer could be big, Dee, but Toast gifts three rivals at once, so whoever takes Toast feeds you +6. Watch how much the rest of us avoid silver gifting."}
+{"t":1793550940863,"type":"log","text":"Cal takes Purple's artifact, Pocket Watch (\"Whenever a player’s turn is skipped, +1 purple.\"), and +1 purple.","by":2}
+{"t":1793550948066,"type":"move","seat":1,"round":0,"n":3,"kind":"setup","option":"color:echo","label":"Green's artifact: Impressionist — Whenever any player copies an action, +2 of its color.","think":"Impressionist pays +2 every time anyone copies, and Echo/Reprise get taken every round; that's a steady trickle that fits an engine game. Fence only pays 1 per steal, though it does feed the magenta contest for whoever gets it.","prompt":"Ben: pick an artifact"}
+{"t":1793550948066,"type":"say","seat":1,"text":"Impressionist pays 2 of the copied color, so it's a free resource stream as long as anyone touches Echo or Reprise. Curious whether Fence ends up the better one by being steady magenta for the contest."}
+{"t":1793550948066,"type":"log","text":"Ben takes Green's artifact, Impressionist (\"Whenever any player copies an action, +2 of its color.\"), and +1 green.","by":1}
+{"t":1793550948066,"type":"log","text":"Ava takes Magenta's artifact, Fence (\"Whenever any player steals, +1 magenta.\"), and +1 magenta.","by":1}
+{"t":1793550948066,"type":"log","text":"Round I begins. Ava picks first.","by":1}
+{"t":1793550954698,"type":"move","seat":0,"round":1,"n":4,"kind":"place","option":"slot:2-2","label":"Silver · Party Gifts → you'd get: +0..6 followers; rivals together 0..5 silver; then you choose: Party Gifts: which rival gains 1 silver? You get 2 followers for each, 3 more at most; Party Gifts: which rival gains 1 silver? You get 2 followers for each, 2 more at most; Party Gifts: which rival gains 1 silver? You get 2 followers for each, 1 more at most","think":"Party Gifts is 6 followers flat for 3 silver to rivals; that beats any contest share this round. Dee's Caterer gets fed but silver contest is only +4.","prompt":"Ava: place a minion"}
+{"t":1793550954698,"type":"say","seat":0,"text":"Party Gifts at 2 followers per silver given looks like the best opener on the board; curious how Caterer scores off it."}
+{"t":1793550954698,"type":"log","text":"Ava took Party Gifts (Silver).","by":0}
+{"t":1793550958313,"type":"move","seat":0,"round":1,"n":5,"kind":"choose","option":"player:1","label":"Ben +1 silver — value hint 1","think":"Ben first; keep silver away from Dee.","prompt":"Party Gifts: which rival gains 1 silver? You get 2 followers for each, 3 more at most"}
+{"t":1793550958412,"type":"move","seat":0,"round":1,"n":6,"kind":"choose","option":"player:2","label":"Cal +1 silver — value hint 1","think":"Cal next.","prompt":"Party Gifts: which rival gains 1 silver? You get 2 followers for each, 2 more at most"}
+{"t":1793550960737,"type":"move","seat":0,"round":1,"n":7,"kind":"choose","option":"player:1","label":"Ben +1 silver — value hint 0.8","think":"Ben again, Dee already has Caterer feeding her.","prompt":"Party Gifts: which rival gains 1 silver? You get 2 followers for each, 1 more at most"}
+{"t":1793550960737,"type":"log","text":"Dee's Caterer: +2 silver.","by":0}
+{"t":1793550960737,"type":"log","text":"Ava's Party Gifts: Ben +2, Cal +1 silver, then +6 followers.","by":0}
+{"t":1793550963727,"type":"move","seat":0,"round":1,"n":8,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Keep my 1 magenta for the contest; a single follower isn't worth giving up the lead.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550963727,"type":"log","text":"Ava passed.","by":0}
+{"t":1793550968308,"type":"move","seat":1,"round":1,"n":9,"kind":"place","option":"slot:1-1","label":"Green · Echo → you'd get: +1 green, +2 silver; +2..6 followers; rivals together 3..5 silver; then you choose: Echo: copy the previous action?; Party Gifts: which rival gains 1 silver? You get 2 followers for each, 3 more at most; Party Gifts: which rival gains 1 silver? You get 2 followers for each, 2 more at most; Party Gifts: which rival gains 1 silver? You get 2 followers for each, 1 more at most","think":"Echo on Party Gifts is +6 followers plus my own Impressionist +2 silver and a green toward the contest. Easily the biggest thing on the board; the silver I hand out mostly goes where Dee wins anyway.","prompt":"Ben: place a minion"}
+{"t":1793550968308,"type":"log","text":"Ben took Echo (Green).","by":1}
+{"t":1793550968308,"type":"log","text":"Ben's Echo: +1 green.","by":1}
+{"t":1793550970530,"type":"move","seat":1,"round":1,"n":10,"kind":"choose","option":"space:now:2-2","label":"Party Gifts (Ava): do Party Gifts yourself — value hint 9.75","think":"Copy it.","prompt":"Echo: copy the previous action?"}
+{"t":1793550970530,"type":"log","text":"Ben copies Party Gifts (Ava's): doing it again.","by":1}
+{"t":1793550970530,"type":"log","text":"Ben's Impressionist: +2 silver.","by":1}
+{"t":1793550973998,"type":"move","seat":1,"round":1,"n":11,"kind":"choose","option":"player:0","label":"Ava +1 silver — value hint 0","think":"All to Ava: she has no silver, and gifting one player keeps Caterer triggers down.","prompt":"Party Gifts: which rival gains 1 silver? You get 2 followers for each, 3 more at most"}
+{"t":1793550974074,"type":"move","seat":1,"round":1,"n":12,"kind":"choose","option":"player:0","label":"Ava +1 silver — value hint -0.2","think":"All to Ava: she has no silver, and gifting one player keeps Caterer triggers down.","prompt":"Party Gifts: which rival gains 1 silver? You get 2 followers for each, 2 more at most"}
+{"t":1793550974207,"type":"move","seat":1,"round":1,"n":13,"kind":"choose","option":"player:0","label":"Ava +1 silver — value hint -0.4","think":"All to Ava: she has no silver, and gifting one player keeps Caterer triggers down.","prompt":"Party Gifts: which rival gains 1 silver? You get 2 followers for each, 1 more at most"}
+{"t":1793550974207,"type":"log","text":"Dee's Caterer: +2 silver.","by":1}
+{"t":1793550974207,"type":"log","text":"Ben's Party Gifts: Ava +3 silver, then +6 followers.","by":1}
+{"t":1793550978291,"type":"move","seat":1,"round":1,"n":14,"kind":"buy","option":"card:10","label":"Recruit Busker [1 green + 3 any; you pay 4 (1 green + 3 any); worth 1] — On Recruit: +2 green. Round Start: +2 green.","think":"Busker is exactly my kind of card: 4 cost, gives back 2 green now and 2 every round start, and green is my contest. Paying with silver I can't hold against Dee's Caterer anyway.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550978291,"type":"say","seat":1,"text":"Caterer is triggering once per gift action, not per player gifted, so Dee gets +2 each time anyone gifts. Party Gifts at 2 followers a silver still looks like the strongest outer space."}
+{"t":1793550980236,"type":"move","seat":1,"round":1,"n":15,"kind":"pay","option":"pay:0-1-3-0","label":"Pay 1 green, 3 silver (suggested)","think":"Keep green.","prompt":"Ben: choose how to pay for Busker"}
+{"t":1793550980236,"type":"log","text":"Ben recruited Busker (1 green, 3 silver).","by":1}
+{"t":1793550980236,"type":"log","text":"Ben's Busker: +2 green.","by":1}
+{"t":1793550980236,"type":"log","text":"New in the shop: Kingpin.","by":1}
+{"t":1793550991159,"type":"move","seat":2,"round":1,"n":16,"kind":"place","option":"slot:3-0","label":"Purple · Sleep In → you'd get: +4 purple","think":"Sleep In is +4 purple and the skip pays my Pocket Watch +1, so I sit on 6 purple; nobody else can reach that this round with Hold Up/Right Away. Locks the +4 purple contest early.","prompt":"Cal: place a minion"}
+{"t":1793550991159,"type":"say","seat":2,"text":"Echo copying Party Gifts for another +6 is a lot for round I. Two Party Gifts already put Ava and Ben 6 up before anyone else moved."}
+{"t":1793550991159,"type":"log","text":"Cal took Sleep In (Purple).","by":2}
+{"t":1793550991159,"type":"log","text":"Cal's Sleep In: +4 purple.","by":2}
+{"t":1793550991159,"type":"log","text":"Cal's Sleep In: Cal skips their next turn.","by":2}
+{"t":1793550994117,"type":"move","seat":2,"round":1,"n":17,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Silver is Dee's contest anyway; turn my 1 silver into a follower and keep all the purple.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793550996021,"type":"move","seat":2,"round":1,"n":18,"kind":"pay","option":"pay:0-0-1-0","label":"Pay 1 silver (suggested)","think":"silver","prompt":"Cal: choose how to pay for 1 followers"}
+{"t":1793550996021,"type":"log","text":"Cal bought 1 follower (1 silver).","by":2}
+{"t":1793551004979,"type":"move","seat":3,"round":1,"n":19,"kind":"place","option":"slot:2-0","label":"Silver · Toast → you'd get: +5 silver; rivals together 3 silver","think":"Toast is +3 silver plus +2 from my own Caterer, so +5 silver; rivals get 1 each but I'd sit at 10 silver vs Ava 4, which locks the round I silver contest. I have the double turn so I can follow up.","prompt":"Dee: place a minion"}
+{"t":1793551004979,"type":"log","text":"Dee took Toast (Silver).","by":3}
+{"t":1793551004979,"type":"log","text":"Dee's Caterer: +2 silver.","by":3}
+{"t":1793551004979,"type":"log","text":"Dee raised a toast: +3 silver, +1 silver to everyone else.","by":3}
+{"t":1793551008838,"type":"move","seat":3,"round":1,"n":20,"kind":"buy","option":"card:22","label":"Recruit Toastmaster [1 silver + 2 any; you pay 3 (1 silver + 2 any); worth 1] — Whenever you take a Silver space, +1 follower.","think":"Toastmaster: 3 silver for a body plus +1 follower on every Silver space, and I'm the silver player; should pay 4-6 over the game. Still 7 silver vs Ava 4.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793551008838,"type":"say","seat":3,"text":"Caterer only fired once on my Toast, so it's per gift action, not per player. Still fine, but less than I hoped."}
+{"t":1793551010663,"type":"move","seat":3,"round":1,"n":21,"kind":"pay","option":"pay:0-0-3-0","label":"Pay 3 silver (suggested)","think":"pay","prompt":"Dee: choose how to pay for Toastmaster"}
+{"t":1793551010663,"type":"log","text":"Dee recruited Toastmaster (3 silver).","by":3}
+{"t":1793551010663,"type":"log","text":"New in the shop: Sticky Fingers.","by":3}
+{"t":1793551023005,"type":"move","seat":3,"round":1,"n":22,"kind":"place","option":"slot:0-2","label":"Magenta · Lie Low → you'd get: +1..2 magenta, +0..1 green, +0..1 silver, +0..1 purple; rivals together 0..1 magenta, -1..0 green, -1..0 silver, -1..0 purple; then you choose: Lie Low: choose a resource to steal.","think":"Help Yourself is still open and could take 3 of my silver; Lie Low makes me unstealable this round, so my 7 silver locks the +4. Steal from Ava's silver to widen the gap.","prompt":"Dee: place a minion"}
+{"t":1793551023005,"type":"log","text":"Dee took Lie Low (Magenta).","by":3}
+{"t":1793551023005,"type":"log","text":"Dee's Lie Low: +1 magenta.","by":3}
+{"t":1793551023005,"type":"log","text":"Dee lies low: safe from thieves until round end.","by":3}
+{"t":1793551028391,"type":"move","seat":3,"round":1,"n":23,"kind":"choose","option":"take:0:silver","label":"Ava's silver (4) — value hint 4.35","think":"Ava at 4 silver could Help Yourself 3 more from Ben and Cal and tie my 7; taking one of hers makes her ceiling 6 vs my 8.","prompt":"Lie Low: choose a resource to steal. (1 left)"}
+{"t":1793551028391,"type":"log","text":"Ava's Fence: +1 magenta.","by":3}
+{"t":1793551028391,"type":"log","text":"Dee stole 1 (1 silver from Ava).","by":3}
+{"t":1793551034949,"type":"move","seat":3,"round":1,"n":24,"kind":"buy","option":"card:0","label":"Recruit Cutpurse [1 magenta + 2 any; you pay 3 (1 magenta + 2 any); worth 1] — On Recruit: steal 1 resource from the rival with the most resources. Round Start: steal 1 resource from the rival with the most resources.","think":"Cutpurse: 3 cost, worth 1, steals 1 now and 1 each at rounds II and III start, so ~4 value for 3. I can spare 2 silver and still stay above Ava's ceiling.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793551036680,"type":"move","seat":3,"round":1,"n":25,"kind":"pay","option":"pay:1-0-2-0","label":"Pay 1 magenta, 2 silver (suggested)","think":"pay","prompt":"Dee: choose how to pay for Cutpurse"}
+{"t":1793551036680,"type":"log","text":"Dee recruited Cutpurse (1 magenta, 2 silver).","by":3}
+{"t":1793551036680,"type":"log","text":"New in the shop: Roadie.","by":3}
+{"t":1793551039664,"type":"move","seat":3,"round":1,"n":26,"kind":"choose","option":"take:2:silver","label":"Cal's silver (1) — value hint 1.1","think":"Silver keeps my contest margin and leaves fewer silver for Ava to steal.","prompt":"Cutpurse: choose a resource to steal. (1 left)"}
+{"t":1793551039664,"type":"log","text":"Ava's Fence: +1 magenta.","by":3}
+{"t":1793551039664,"type":"log","text":"Dee's Cutpurse stole 1 (1 silver from Cal).","by":3}
+{"t":1793551039664,"type":"log","text":"Cal's turn is skipped (Sleep In).","by":3}
+{"t":1793551039664,"type":"log","text":"Cal's Pocket Watch: +1 purple.","by":3}
+{"t":1793551046003,"type":"move","seat":1,"round":1,"n":27,"kind":"place","option":"slot:1-2","label":"Green · Reprise → you'd get: +3..4 magenta, +4 green, +0..1 silver, +0..1 purple; rivals together 0..1 magenta, -1..0 silver, -1..0 purple; then you choose: Reprise: copy which of your spaces?; Echo: copy the previous action?; Lie Low: choose a resource to steal.","think":"Reprise on my Echo, which now copies Dee's Lie Low: 4 green locks green, ~4 magenta challenges Ava's 3, and Lie Low protects my pile. Impressionist fires twice on the chain.","prompt":"Ben: place a minion"}
+{"t":1793551046003,"type":"log","text":"Ben took Reprise (Green).","by":1}
+{"t":1793551046003,"type":"log","text":"Ben's Reprise: +1 green.","by":1}
+{"t":1793551047719,"type":"move","seat":1,"round":1,"n":28,"kind":"choose","option":"space:now:1-1","label":"Echo (Ben): Copy the previous action. +1 green. Choose again. — value hint 3","think":"Echo.","prompt":"Reprise: copy which of your spaces?"}
+{"t":1793551047719,"type":"log","text":"Ben copies Echo: doing it again.","by":1}
+{"t":1793551047719,"type":"log","text":"Ben's Impressionist: +2 green.","by":1}
+{"t":1793551049707,"type":"move","seat":1,"round":1,"n":29,"kind":"choose","option":"space:now:0-2","label":"Lie Low (Dee): do Lie Low yourself — value hint 4.73","think":"Lie Low.","prompt":"Echo: copy the previous action?"}
+{"t":1793551049707,"type":"log","text":"Ben copies Lie Low (Dee's): doing it again.","by":1}
+{"t":1793551049707,"type":"log","text":"Ben's Impressionist: +2 magenta.","by":1}
+{"t":1793551049707,"type":"log","text":"Ben lies low: safe from thieves until round end.","by":1}
+{"t":1793551052205,"type":"move","seat":1,"round":1,"n":30,"kind":"choose","option":"take:0:magenta","label":"Ava's magenta (3) — value hint 3.35","think":"Take Ava's magenta: swings the magenta contest toward me directly.","prompt":"Lie Low: choose a resource to steal. (1 left)"}
+{"t":1793551052205,"type":"log","text":"Ava's Fence: +1 magenta.","by":1}
+{"t":1793551052205,"type":"log","text":"Ben stole 1 (1 magenta from Ava).","by":1}
+{"t":1793551055673,"type":"move","seat":1,"round":1,"n":31,"kind":"buy","option":"card:14","label":"Recruit Roadie [1 green + 2 any; you pay 3 (1 green + 2 any); worth 1] — On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.","think":"Roadie with Busker already in: +2 green now and +2 each round start, scaling if I add more green. Paid with silver I'm not contesting.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551058113,"type":"move","seat":1,"round":1,"n":32,"kind":"pay","option":"pay:0-1-2-0","label":"Pay 1 green, 2 silver (suggested)","think":"Silver is spare.","prompt":"Ben: choose how to pay for Roadie"}
+{"t":1793551058113,"type":"log","text":"Ben recruited Roadie (1 green, 2 silver).","by":1}
+{"t":1793551058113,"type":"log","text":"Ben's Roadie: +2 green.","by":1}
+{"t":1793551058113,"type":"log","text":"New in the shop: Early Birds.","by":1}
+{"t":1793551074386,"type":"move","seat":0,"round":1,"n":33,"kind":"place","option":"slot:0-0","label":"Magenta · Help Yourself → you'd get: +1 magenta, +3 purple; rivals together -3 purple; then you choose: Help Yourself: choose a resource to steal.","think":"Double turn: Help Yourself on Cal's purple (Ben and Dee are lying low), Fence ticks my magenta, then Stash to lock magenta past Ben's 4.","prompt":"Ava: place a minion"}
+{"t":1793551074386,"type":"say","seat":0,"text":"Lie Low plus Echo/Reprise copying it means two of three rivals are untouchable already; Help Yourself only has one target this round."}
+{"t":1793551074386,"type":"log","text":"Ava took Help Yourself (Magenta).","by":0}
+{"t":1793551076718,"type":"move","seat":0,"round":1,"n":34,"kind":"choose","option":"take:2:purple","label":"Cal's purple (6) — value hint 6.1","think":"purple from Cal","prompt":"Help Yourself: choose a resource to steal. (3 left)"}
+{"t":1793551076828,"type":"move","seat":0,"round":1,"n":35,"kind":"choose","option":"take:2:purple","label":"Cal's purple (5) — value hint 5.1","think":"purple from Cal","prompt":"Help Yourself: choose a resource to steal. (2 left)"}
+{"t":1793551076935,"type":"move","seat":0,"round":1,"n":36,"kind":"choose","option":"take:2:purple","label":"Cal's purple (4) — value hint 4.1","think":"purple from Cal","prompt":"Help Yourself: choose a resource to steal. (1 left)"}
+{"t":1793551076935,"type":"log","text":"Ava's Fence: +1 magenta.","by":0}
+{"t":1793551076935,"type":"log","text":"Ava stole 3 (3 purple from Cal).","by":0}
+{"t":1793551079525,"type":"move","seat":0,"round":1,"n":37,"kind":"buy","option":"card:33","label":"Recruit Early Birds [2 purple + 1 any; you pay 3 (2 purple + 1 any); worth 2] — Your turns can’t be skipped.","think":"Early Birds: 2 followers for 3 resources, paid with the stolen purple I can't defend against Cal anyway. Anti-skip is a bonus with Cal on Pocket Watch.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793551082338,"type":"move","seat":0,"round":1,"n":38,"kind":"pay","option":"pay:0-0-0-3","label":"Pay 3 purple — spending this gives up your contest lead in purple","think":"All purple; Cal retakes purple anyway, keep silver as spending money.","prompt":"Ava: choose how to pay for Early Birds"}
+{"t":1793551082338,"type":"log","text":"Ava recruited Early Birds (3 purple).","by":0}
+{"t":1793551082338,"type":"log","text":"New in the shop: Line Cutters.","by":0}
+{"t":1793551085167,"type":"move","seat":0,"round":1,"n":39,"kind":"place","option":"slot:0-1","label":"Magenta · Stash → you'd get: +3 magenta","think":"Stash locks magenta (8 vs Ben 4) and pays a follower if I recruit; Line Cutters just showed up at 2 for 3 followers.","prompt":"Ava: place a minion"}
+{"t":1793551085167,"type":"log","text":"Ava took Stash (Magenta).","by":0}
+{"t":1793551085167,"type":"log","text":"Ava's Stash: +3 magenta.","by":0}
+{"t":1793551087874,"type":"move","seat":0,"round":1,"n":40,"kind":"buy","option":"card:43","label":"Recruit Line Cutters [2 any; you pay 2 (2 any); worth 3] — You go first every round.","think":"Line Cutters: 3 followers for 2, plus first pick every round. Easy.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793551087874,"type":"say","seat":0,"text":"Line Cutters at 2 any for 3 followers and permanent first pick seems underpriced next to everything else in the row."}
+{"t":1793551090213,"type":"move","seat":0,"round":1,"n":41,"kind":"pay","option":"pay:0-0-2-0","label":"Pay 2 silver (suggested)","think":"silver","prompt":"Ava: choose how to pay for Line Cutters"}
+{"t":1793551090213,"type":"log","text":"Ava recruited Line Cutters (2 silver).","by":0}
+{"t":1793551090213,"type":"log","text":"Ava's Stash: +1 follower for recruiting a member.","by":0}
+{"t":1793551090213,"type":"log","text":"New in the shop: Bouncers.","by":0}
+{"t":1793551103944,"type":"move","seat":1,"round":1,"n":42,"kind":"place","option":"slot:1-0","label":"Green · Build Up → you'd get: +3 green","think":"Green is mine uncontested; purple is Cal's and magenta is Ava's. Build Up banks 3 more green for round II members instead of feeding Cal's Pocket Watch with Hold Up.","prompt":"Ben: place a minion"}
+{"t":1793551103944,"type":"log","text":"Ben took Build Up (Green).","by":1}
+{"t":1793551103944,"type":"log","text":"Ben's Build Up: +3 green.","by":1}
+{"t":1793551108659,"type":"move","seat":1,"round":1,"n":43,"kind":"buy","option":"card:40","label":"Recruit Party Crasher [4 any; you pay 4 (4 any); worth 1] — On Use, once per game: your next minion can be placed on a space a rival already took.","think":"Magenta is dead money against Ava's 7 and a theft target next round. Party Crasher turns it into one doubled big space later (round III Party Gifts or Toast).","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551111329,"type":"move","seat":1,"round":1,"n":44,"kind":"pay","option":"pay:4-0-0-0","label":"Pay 4 magenta (suggested)","think":"Magenta.","prompt":"Ben: choose how to pay for Party Crasher"}
+{"t":1793551111329,"type":"say","seat":1,"text":"Line Cutters at 2 for 3 members does look underpriced, Ava. Permanent first pick plus 3 bodies for two resources is better than most round I buys."}
+{"t":1793551111329,"type":"log","text":"Ben recruited Party Crasher (4 magenta).","by":1}
+{"t":1793551111329,"type":"log","text":"New in the shop: Muse.","by":1}
+{"t":1793551114417,"type":"move","seat":1,"round":1,"n":45,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Save Party Crasher for a big round III space.","prompt":"Ben: use a member, or finish your turn"}
+{"t":1793551114417,"type":"log","text":"Ben passed.","by":1}
+{"t":1793551130511,"type":"move","seat":2,"round":1,"n":46,"kind":"place","option":"slot:3-1","label":"Purple · Hold Up → you'd get: +2 purple","think":"Ava's Help Yourself took 3 of my purple, annoying. Hold Up gives +2 and skips Dee's turn, which my Pocket Watch turns into another purple; Dee has 0 purple so I can spend most of it and still own the contest.","prompt":"Cal: place a minion"}
+{"t":1793551130511,"type":"say","seat":2,"text":"Ava, Help Yourself having only one legal target after two Lie Lows is a real feel-bad for whoever is that target. Lie Low being copyable feels strong."}
+{"t":1793551130511,"type":"log","text":"Cal took Hold Up (Purple).","by":2}
+{"t":1793551130511,"type":"log","text":"Cal's Hold Up: +2 purple.","by":2}
+{"t":1793551130511,"type":"log","text":"Cal's Hold Up: Dee skips their next turn.","by":2}
+{"t":1793551134781,"type":"move","seat":2,"round":1,"n":47,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Five purple into five followers: I take Right Away next before Dee places again, so I end with purple and Dee can only reach Polish. Contest still mine.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551137474,"type":"move","seat":2,"round":1,"n":48,"kind":"pay","option":"pay:0-0-0-5","label":"Pay 5 purple (suggested) — spending this gives up your contest lead in purple","think":"fine, Right Away gets it back","prompt":"Cal: choose how to pay for 5 followers"}
+{"t":1793551137474,"type":"log","text":"Cal bought 5 followers (5 purple).","by":2}
+{"t":1793551137474,"type":"log","text":"Dee's turn is skipped (Hold Up).","by":2}
+{"t":1793551137474,"type":"log","text":"Cal's Pocket Watch: +1 purple.","by":2}
+{"t":1793551139939,"type":"move","seat":2,"round":1,"n":49,"kind":"place","option":"slot:3-2","label":"Purple · Right Away → you'd get: +1 purple","think":"Right Away for purple 2; Dee's only left with Polish so purple's mine.","prompt":"Cal: place a minion"}
+{"t":1793551139939,"type":"log","text":"Cal took Right Away (Purple).","by":2}
+{"t":1793551139939,"type":"log","text":"Cal's Right Away: +1 purple.","by":2}
+{"t":1793551139939,"type":"log","text":"Cal has no minions left to place: Right Away does nothing.","by":2}
+{"t":1793551146761,"type":"move","seat":2,"round":1,"n":50,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Just realised Polish lets Dee turn 2 silver into 4 purple and take the purple contest off me. Nothing I can do about it; if she goes for it 2 purple loses anyway, so bank the follower and keep 1.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551146761,"type":"say","seat":2,"text":"Dee, Polish is a quiet contest-breaker: 2 silver into 4 of anything lands in whichever race is closest."}
+{"t":1793551149051,"type":"move","seat":2,"round":1,"n":51,"kind":"pay","option":"pay:0-0-0-1","label":"Pay 1 purple (suggested)","think":"pay","prompt":"Cal: choose how to pay for 1 followers"}
+{"t":1793551149051,"type":"log","text":"Cal bought 1 follower (1 purple).","by":2}
+{"t":1793551160858,"type":"move","seat":3,"round":1,"n":52,"kind":"place","option":"slot:2-1","label":"Silver · Polish → you'd get: +1..4 magenta, +0..3 green, -2 silver, +0..3 purple; +1 followers; then you choose: Polish: +1 of which color? (4 to pick); Polish: +1 of which color? (3 to pick); Polish: +1 of which color? (2 to pick); Polish: +1 of which color? (1 to pick)","think":"Last placement of the round: Polish is +1 follower from Toastmaster and turns 2 silver into purple, and Cal only holds 1 purple, so I can steal the purple contest too while keeping silver.","prompt":"Dee: place a minion"}
+{"t":1793551160858,"type":"log","text":"Dee took Polish (Silver).","by":3}
+{"t":1793551160858,"type":"log","text":"Dee's Toastmaster: +1 follower.","by":3}
+{"t":1793551160858,"type":"log","text":"Dee's Polish: 2 silver into 4 of any colors.","by":3}
+{"t":1793551162624,"type":"move","seat":3,"round":1,"n":53,"kind":"choose","option":"color:purple","label":"+1 purple — value hint 0","think":"purple","prompt":"Polish: +1 of which color? (4 to pick)"}
+{"t":1793551162624,"type":"log","text":"Dee's Polish: +1 purple.","by":3}
+{"t":1793551162713,"type":"move","seat":3,"round":1,"n":54,"kind":"choose","option":"color:purple","label":"+1 purple — value hint -1","think":"purple","prompt":"Polish: +1 of which color? (3 to pick)"}
+{"t":1793551162713,"type":"log","text":"Dee's Polish: +1 purple.","by":3}
+{"t":1793551162802,"type":"move","seat":3,"round":1,"n":55,"kind":"choose","option":"color:purple","label":"+1 purple — value hint -2","think":"purple","prompt":"Polish: +1 of which color? (2 to pick)"}
+{"t":1793551162802,"type":"log","text":"Dee's Polish: +1 purple.","by":3}
+{"t":1793551162890,"type":"move","seat":3,"round":1,"n":56,"kind":"choose","option":"color:purple","label":"+1 purple — value hint -3","think":"purple","prompt":"Polish: +1 of which color? (1 to pick)"}
+{"t":1793551162890,"type":"log","text":"Dee's Polish: +1 purple.","by":3}
+{"t":1793551165448,"type":"move","seat":3,"round":1,"n":57,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Recruits are the scarce thing; 5 for 5 now, keeping 2 silver over Ava's 1 and 2 purple over Cal's 1 to take both contests.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793551168136,"type":"move","seat":3,"round":1,"n":58,"kind":"pay","option":"pay:0-0-3-2","label":"Pay 3 silver, 2 purple (suggested)","think":"keep 2/2","prompt":"Dee: choose how to pay for 5 followers"}
+{"t":1793551168136,"type":"say","seat":3,"text":"Cal, you called Polish right. Two silver into purple flips a 1-purple lead at the buzzer; last seat in round I is strong when the snake ends on you."}
+{"t":1793551168136,"type":"log","text":"Dee bought 5 followers (3 silver, 2 purple).","by":3}
+{"t":1793551168136,"type":"log","text":"Round I ends. Most magenta: Ava +4 · Most green: Ben +4 · Most silver: Dee +4 · Most purple: Dee +4","by":3}
+{"t":1793551168136,"type":"log","text":"Round II members (31) are shuffled into the deck.","by":3}
+{"t":1793551168136,"type":"log","text":"The member market refreshes for round II.","by":3}
+{"t":1793551168136,"type":"log","text":"Ben's Busker: +2 green.","by":3}
+{"t":1793551168136,"type":"log","text":"Ben's Roadie: +2 green.","by":3}
+{"t":1793551168136,"type":"log","text":"Round II begins. Ava picks first. (Ava's Line Cutters: always picks first.)","by":3}
+{"t":1793551168136,"type":"log","text":"New in the shop: Debutantes, Con Men, Smooth Talkers, Gossip, Collector, Night Owls, Shift Crew.","by":3}
+{"t":1793551170693,"type":"move","seat":3,"round":2,"n":59,"kind":"choose","option":"take:1:green","label":"Ben's green (15) — value hint 15.7","think":"only option","prompt":"Cutpurse: choose a resource to steal. (1 left)"}
+{"t":1793551170693,"type":"log","text":"Ava's Fence: +1 magenta.","by":3}
+{"t":1793551170693,"type":"log","text":"Dee's Cutpurse stole 1 (1 green from Ben).","by":3}
+{"t":1793551187215,"type":"move","seat":0,"round":2,"n":60,"kind":"place","option":"slot:0-3","label":"Magenta · Crime Wave → you'd get: +2 magenta, +0..7 green, +0..1 silver, +0..1 purple; rivals together -7..0 green, -1..0 silver, -1..0 purple; then you choose: Crime Wave: choose a pile to halve.","think":"Crime Wave on Ben's 14 green: 7 for me, breaks his green lock, and Fence ticks magenta. Then Con Men paid in green can steal 5 more from him. Risk: Cal Echoes Crime Wave onto my magenta.","prompt":"Ava: place a minion"}
+{"t":1793551187215,"type":"say","seat":0,"text":"Ben sitting on 14 green at round start is the juiciest pile on the table; Crime Wave halving it feels like what that space is for."}
+{"t":1793551187215,"type":"log","text":"Ava took Crime Wave (Magenta).","by":0}
+{"t":1793551187215,"type":"log","text":"Ava's Crime Wave: +1 magenta.","by":0}
+{"t":1793551189478,"type":"move","seat":0,"round":2,"n":61,"kind":"choose","option":"take:1:green","label":"Ben: steal 7 green — value hint 9.31","think":"7 green from Ben.","prompt":"Crime Wave: choose a pile to halve."}
+{"t":1793551189478,"type":"log","text":"Ava's Fence: +1 magenta.","by":0}
+{"t":1793551189478,"type":"log","text":"Ava stole 7 green from Ben.","by":0}
+{"t":1793551193575,"type":"move","seat":0,"round":2,"n":62,"kind":"buy","option":"card:48","label":"Recruit Con Men [7 any; you pay 7 (7 any); worth 2] — Counts as 2 members. On Recruit: steal 5 resources.","think":"Con Men: pay the stolen green, steal 5 more of Ben's green so I lead green too.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793551200119,"type":"move","seat":0,"round":2,"n":63,"kind":"pay","option":"pay:4-2-1-0","label":"Pay 4 magenta, 2 green, 1 silver — spending this gives up your contest lead in green","think":"Split the cost so both magenta and green stay well clear of rivals.","prompt":"Ava: choose how to pay for Con Men"}
+{"t":1793551200120,"type":"log","text":"Ava recruited Con Men (4 magenta, 2 green, 1 silver).","by":0}
+{"t":1793551200120,"type":"log","text":"New in the shop: Tribute Band.","by":0}
+{"t":1793551202758,"type":"move","seat":0,"round":2,"n":64,"kind":"choose","option":"take:1:green","label":"Ben's green (7) — value hint 7.7","think":"Ben's green","prompt":"Con Men: choose a resource to steal. (5 left)"}
+{"t":1793551202855,"type":"move","seat":0,"round":2,"n":65,"kind":"choose","option":"take:1:green","label":"Ben's green (6) — value hint 6.7","think":"Ben's green","prompt":"Con Men: choose a resource to steal. (4 left)"}
+{"t":1793551202975,"type":"move","seat":0,"round":2,"n":66,"kind":"choose","option":"take:1:green","label":"Ben's green (5) — value hint 5.7","think":"Ben's green","prompt":"Con Men: choose a resource to steal. (3 left)"}
+{"t":1793551203130,"type":"move","seat":0,"round":2,"n":67,"kind":"choose","option":"take:1:green","label":"Ben's green (4) — value hint 4.7","think":"Ben's green","prompt":"Con Men: choose a resource to steal. (2 left)"}
+{"t":1793551203230,"type":"move","seat":0,"round":2,"n":68,"kind":"choose","option":"take:1:green","label":"Ben's green (3) — value hint 3.7","think":"Ben's green","prompt":"Con Men: choose a resource to steal. (1 left)"}
+{"t":1793551203230,"type":"log","text":"Ava's Fence: +1 magenta.","by":0}
+{"t":1793551203230,"type":"log","text":"Ava's Con Men stole 5 (5 green from Ben).","by":0}
+{"t":1793551228852,"type":"move","seat":2,"round":2,"n":69,"kind":"place","option":"slot:1-1","label":"Green · Echo → you'd get: +1..4 magenta, +1..6 green, +0..1 silver, +0..1 purple; rivals together 0..3 magenta, -5..0 green, -1..0 silver, -1..0 purple; then you choose: Echo: copy the previous action?; Crime Wave: choose a pile to halve.","think":"I'm last on 8 and broke. Echo on Ava's Crime Wave halves her 10 green into my pile, so it's +6 for me and -5 for the leader, and it's the one copy nobody can take off me next turn. Party Gifts is +6 too but gives me nothing to recruit with and Ben would just echo it.","prompt":"Cal: place a minion"}
+{"t":1793551228852,"type":"log","text":"Cal took Echo (Green).","by":2}
+{"t":1793551228852,"type":"log","text":"Cal's Echo: +1 green.","by":2}
+{"t":1793551230919,"type":"move","seat":2,"round":2,"n":70,"kind":"choose","option":"space:now:0-3","label":"Crime Wave (Ava): do Crime Wave yourself — value hint 7.65","think":"Crime Wave","prompt":"Echo: copy the previous action?"}
+{"t":1793551230919,"type":"log","text":"Cal's Echo: +1 magenta.","by":2}
+{"t":1793551230919,"type":"log","text":"Cal copies Crime Wave (Ava's): doing it again.","by":2}
+{"t":1793551230919,"type":"log","text":"Ben's Impressionist: +2 magenta.","by":2}
+{"t":1793551233579,"type":"move","seat":2,"round":2,"n":71,"kind":"choose","option":"take:0:green","label":"Ava: steal 5 green — value hint 6.65","think":"Ava's green","prompt":"Crime Wave: choose a pile to halve."}
+{"t":1793551233579,"type":"say","seat":2,"text":"Crime Wave is brutal on any pile over 8; it's going to make everyone spend down early in round II."}
+{"t":1793551233579,"type":"log","text":"Ava's Fence: +1 magenta.","by":2}
+{"t":1793551233579,"type":"log","text":"Cal stole 5 green from Ava.","by":2}
+{"t":1793551238541,"type":"move","seat":2,"round":2,"n":72,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"With Encore (Con Men) and Help Yourself open, a fat pile just gets stolen. Bank 5 followers now, paying magenta, purple and 3 green, keep 3 green as a toe in the race.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551241056,"type":"move","seat":2,"round":2,"n":73,"kind":"pay","option":"pay:1-3-0-1","label":"Pay 1 magenta, 3 green, 1 purple (suggested) — spending this gives up your contest lead in green","think":"pay","prompt":"Cal: choose how to pay for 5 followers"}
+{"t":1793551241056,"type":"log","text":"Cal bought 5 followers (1 magenta, 3 green, 1 purple).","by":2}
+{"t":1793551252627,"type":"move","seat":1,"round":2,"n":74,"kind":"place","option":"slot:2-2","label":"Silver · Party Gifts → you'd get: +0..6 followers; rivals together 0..5 silver; then you choose: Party Gifts: which rival gains 1 silver? You get 2 followers for each, 3 more at most; Party Gifts: which rival gains 1 silver? You get 2 followers for each, 2 more at most; Party Gifts: which rival gains 1 silver? You get 2 followers for each, 1 more at most","think":"Got Crime Waved and Con Manned for 13 green; lesson learned about sitting on a pile. Party Gifts is +6 followers with no resources at risk, and taking it denies Dee the Caterer combo.","prompt":"Ben: place a minion"}
+{"t":1793551252627,"type":"say","seat":1,"text":"Crime Wave plus Con Men took 13 off me in one turn, and Echo let Cal re-run it. A round-start pile is basically a gift to whoever opens round II. Engine members that pay at round start feel punished by that."}
+{"t":1793551252628,"type":"log","text":"Ben took Party Gifts (Silver).","by":1}
+{"t":1793551255257,"type":"move","seat":1,"round":2,"n":75,"kind":"choose","option":"player:2","label":"Cal +1 silver — value hint 1","think":"Silver to Cal, who has none and is behind.","prompt":"Party Gifts: which rival gains 1 silver? You get 2 followers for each, 3 more at most"}
+{"t":1793551255381,"type":"move","seat":1,"round":2,"n":76,"kind":"choose","option":"player:2","label":"Cal +1 silver — value hint 0.8","think":"Silver to Cal, who has none and is behind.","prompt":"Party Gifts: which rival gains 1 silver? You get 2 followers for each, 2 more at most"}
+{"t":1793551255467,"type":"move","seat":1,"round":2,"n":77,"kind":"choose","option":"player:2","label":"Cal +1 silver — value hint 0.6","think":"Silver to Cal, who has none and is behind.","prompt":"Party Gifts: which rival gains 1 silver? You get 2 followers for each, 1 more at most"}
+{"t":1793551255467,"type":"log","text":"Dee's Caterer: +2 silver.","by":1}
+{"t":1793551255467,"type":"log","text":"Ben's Party Gifts: Cal +3 silver, then +6 followers.","by":1}
+{"t":1793551259138,"type":"move","seat":1,"round":2,"n":78,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Hold my 4 for Shift Crew once I pick up 2 purple; 4 followers for 4 resources beats buying 1.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551259138,"type":"log","text":"Ben passed.","by":1}
+{"t":1793551268585,"type":"move","seat":3,"round":2,"n":79,"kind":"place","option":"slot:2-0","label":"Silver · Toast → you'd get: +8 silver; +1 followers; rivals together 6 silver","think":"Toast in round II is +6 silver, +2 Caterer, +1 Toastmaster; rivals get 2 each but I'd be at 12 silver. Then Lie Low on my second turn to keep the pile safe from Help Yourself and Cover.","prompt":"Dee: place a minion"}
+{"t":1793551268585,"type":"log","text":"Dee took Toast (Silver).","by":3}
+{"t":1793551268585,"type":"log","text":"Dee's Toastmaster: +1 follower.","by":3}
+{"t":1793551268585,"type":"log","text":"Dee's Caterer: +2 silver.","by":3}
+{"t":1793551268585,"type":"log","text":"Dee raised a toast: +6 silver, +2 silver to everyone else.","by":3}
+{"t":1793551276633,"type":"move","seat":3,"round":2,"n":80,"kind":"buy","option":"card:39","label":"Recruit Shift Crew [2 purple + 2 any; you pay 4 (2 purple + 2 any); worth 4] — Worth 4 followers.","think":"Shift Crew is 4 followers for 4 resources, as good as buying but it also counts members; my 2 purple won't hold the purple race with five purple spaces open, so spend them here and keep silver at 11.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793551278506,"type":"move","seat":3,"round":2,"n":81,"kind":"pay","option":"pay:0-1-1-2","label":"Pay 1 green, 1 silver, 2 purple (suggested) — spending this gives up your contest lead in purple","think":"pay","prompt":"Dee: choose how to pay for Shift Crew"}
+{"t":1793551278506,"type":"log","text":"Dee recruited Shift Crew (1 green, 1 silver, 2 purple).","by":3}
+{"t":1793551278506,"type":"log","text":"New in the shop: Polisher.","by":3}
+{"t":1793551288976,"type":"move","seat":3,"round":2,"n":82,"kind":"place","option":"slot:1-2","label":"Green · Reprise → you'd get: +1 green, +6 silver; rivals together 2 silver; then you choose: Reprise: copy which of your spaces?","think":"Reprise on my Toast is +6 silver +1 green, way more than Lie Low's +2; I'd rather have a fat lead that survives a steal than a safe thin one. Ben gets 2 from Impressionist, acceptable.","prompt":"Dee: place a minion"}
+{"t":1793551288976,"type":"log","text":"Dee took Reprise (Green).","by":3}
+{"t":1793551288976,"type":"log","text":"Dee's Reprise: +1 green.","by":3}
+{"t":1793551291140,"type":"move","seat":3,"round":2,"n":83,"kind":"choose","option":"space:now:2-0","label":"Toast (Dee): +6 silver — value hint 6","think":"Toast","prompt":"Reprise: copy which of your spaces?"}
+{"t":1793551291140,"type":"log","text":"Dee copied Toast: +6 silver.","by":3}
+{"t":1793551291140,"type":"log","text":"Ben's Impressionist: +2 silver.","by":3}
+{"t":1793551301274,"type":"move","seat":3,"round":2,"n":84,"kind":"buy","option":"card:23","label":"Recruit Debutantes [4 silver + 5 any; you pay 9 (4 silver + 5 any); worth 2] — On Use, once per game: double your silver. Each rival +2 silver.","think":"Debutantes: 9 for 2 followers now, and doubling my silver in round III after a Toast or two could be +15-20. That's the efficient big play for a silver engine, as long as I keep recruits to convert it.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793551301459,"type":"move","seat":3,"round":2,"n":85,"kind":"pay","option":"pay:0-1-8-0","label":"Pay 1 green, 8 silver (suggested)","think":"pay","prompt":"Dee: choose how to pay for Debutantes"}
+{"t":1793551301459,"type":"log","text":"Dee recruited Debutantes (1 green, 8 silver).","by":3}
+{"t":1793551301459,"type":"log","text":"New in the shop: Scouts.","by":3}
+{"t":1793551304913,"type":"move","seat":3,"round":2,"n":86,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Save Debutantes for a bigger pile in round III.","prompt":"Dee: use a member, or finish your turn"}
+{"t":1793551304913,"type":"say","seat":3,"text":"Reprise on your own Toast is a lot: +6 silver for a green space. Green's copy spaces feel like they mostly serve whatever color has the biggest flat gain."}
+{"t":1793551304913,"type":"log","text":"Dee passed.","by":3}
+{"t":1793551318540,"type":"move","seat":1,"round":2,"n":87,"kind":"place","option":"slot:1-3","label":"Green · Encore → you'd get: +3..5 magenta, +1..3 green, +0..2 silver; rivals together -4..-2 magenta, -2..0 green, -2..0 silver; then you choose: Encore: copy which rival member’s On Recruit?; Con Men: choose a resource to steal.","think":"Encore on Ava's Con Men: steal 5, all of it from Dee's silver. That flips silver to me 9 vs 4 and slows the follower leader. Purple is tempting but every skip feeds Cal's Pocket Watch.","prompt":"Ben: place a minion"}
+{"t":1793551318540,"type":"log","text":"Ben took Encore (Green).","by":1}
+{"t":1793551318540,"type":"log","text":"Ben's Encore: +1 green.","by":1}
+{"t":1793551320601,"type":"move","seat":1,"round":2,"n":88,"kind":"choose","option":"card:48","label":"Con Men [7 any; worth 2] — Counts as 2 members. On Recruit: steal 5 resources.","think":"Con Men.","prompt":"Encore: copy which rival member’s On Recruit?"}
+{"t":1793551320601,"type":"log","text":"Ben copies Ava's Con Men: its On Recruit.","by":1}
+{"t":1793551324063,"type":"move","seat":1,"round":2,"n":89,"kind":"choose","option":"take:3:silver","label":"Dee's silver (9) — value hint 10.2","think":"Dee's silver.","prompt":"Con Men: choose a resource to steal. (5 left)"}
+{"t":1793551324158,"type":"move","seat":1,"round":2,"n":90,"kind":"choose","option":"take:3:silver","label":"Dee's silver (8) — value hint 9.2","think":"Dee's silver.","prompt":"Con Men: choose a resource to steal. (4 left)"}
+{"t":1793551324242,"type":"move","seat":1,"round":2,"n":91,"kind":"choose","option":"take:3:silver","label":"Dee's silver (7) — value hint 8.2","think":"Dee's silver.","prompt":"Con Men: choose a resource to steal. (3 left)"}
+{"t":1793551324341,"type":"move","seat":1,"round":2,"n":92,"kind":"choose","option":"take:3:silver","label":"Dee's silver (6) — value hint 7.2","think":"Dee's silver.","prompt":"Con Men: choose a resource to steal. (2 left)"}
+{"t":1793551324453,"type":"move","seat":1,"round":2,"n":93,"kind":"choose","option":"take:3:silver","label":"Dee's silver (5) — value hint 6.2","think":"Dee's silver.","prompt":"Con Men: choose a resource to steal. (1 left)"}
+{"t":1793551324453,"type":"log","text":"Ava's Fence: +1 magenta.","by":1}
+{"t":1793551324453,"type":"log","text":"Ben's Con Men stole 5 (5 silver from Dee).","by":1}
+{"t":1793551331706,"type":"move","seat":1,"round":2,"n":94,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Against my instincts: after losing 13 green to theft, loose magenta and green are just targets. 5 of them into 5 followers, keep all 9 silver for the contest. Nothing in the row is a cheap engine piece.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551336031,"type":"move","seat":1,"round":2,"n":95,"kind":"pay","option":"pay:2-3-0-0","label":"Pay 2 magenta, 3 green (suggested)","think":"Keep silver.","prompt":"Ben: choose how to pay for 5 followers"}
+{"t":1793551336031,"type":"say","seat":1,"text":"Dee, Reprise on Toast for +6 silver is the same pattern as my Echo on Party Gifts in round I: green is a multiplier for whichever space just did something big. Encore on Con Men is the same story, a 7-cost card's payoff for a green space."}
+{"t":1793551336031,"type":"log","text":"Ben bought 5 followers (2 magenta, 3 green).","by":1}
+{"t":1793551350973,"type":"move","seat":2,"round":2,"n":96,"kind":"place","option":"slot:0-0","label":"Magenta · Help Yourself → you'd get: +1..4 magenta, +0..2 green, +0..2 silver; rivals together -3..0 magenta, -2..0 green, -2..0 silver; then you choose: Help Yourself: choose a resource to steal.","think":"Ben leads silver with 9 and leads the table on followers. Help Yourself taking 4 of his silver flips silver to me (9 vs 5) and blocks the space so nobody turns it on my pile. Cover on it would leave it open for a counter-steal.","prompt":"Cal: place a minion"}
+{"t":1793551350973,"type":"log","text":"Cal took Help Yourself (Magenta).","by":2}
+{"t":1793551354029,"type":"move","seat":2,"round":2,"n":97,"kind":"choose","option":"take:1:silver","label":"Ben's silver (9) — value hint 10.25","think":"Ben's silver","prompt":"Help Yourself: choose a resource to steal. (4 left)"}
+{"t":1793551354153,"type":"move","seat":2,"round":2,"n":98,"kind":"choose","option":"take:1:silver","label":"Ben's silver (8) — value hint 9.25","think":"Ben's silver","prompt":"Help Yourself: choose a resource to steal. (3 left)"}
+{"t":1793551354316,"type":"move","seat":2,"round":2,"n":99,"kind":"choose","option":"take:1:silver","label":"Ben's silver (7) — value hint 8.25","think":"Ben's silver","prompt":"Help Yourself: choose a resource to steal. (2 left)"}
+{"t":1793551354492,"type":"move","seat":2,"round":2,"n":100,"kind":"choose","option":"take:1:silver","label":"Ben's silver (6) — value hint 7.25","think":"Ben's silver","prompt":"Help Yourself: choose a resource to steal. (1 left)"}
+{"t":1793551354492,"type":"log","text":"Ava's Fence: +1 magenta.","by":2}
+{"t":1793551354492,"type":"log","text":"Cal stole 4 (4 silver from Ben).","by":2}
+{"t":1793551364139,"type":"move","seat":2,"round":2,"n":101,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Bank 5 (3 green + 2 silver), keep 7 silver against Ben's 5 and Dee's 4. Only Cover-into-Help-Yourself can really hit me, and I have two placements left to top up with Sweet Talk or Party Favors.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551367057,"type":"move","seat":2,"round":2,"n":102,"kind":"pay","option":"pay:0-3-2-0","label":"Pay 3 green, 2 silver (suggested)","think":"pay","prompt":"Cal: choose how to pay for 5 followers"}
+{"t":1793551367057,"type":"say","seat":2,"text":"Ben, Shake Down is blank against a cult with no members, so being memberless is weirdly safe from it. Not sure that's intended."}
+{"t":1793551367057,"type":"log","text":"Cal bought 5 followers (3 green, 2 silver).","by":2}
+{"t":1793551388736,"type":"move","seat":0,"round":2,"n":103,"kind":"place","option":"slot:1-0","label":"Green · Build Up → you'd get: +4 green","think":"Build Up takes green to 9 and keeps it from being Covered; a rival's Build Up + Cover could have hit 9. Next, Sleep In is free +5 purple for me since Early Birds ignores the skip.","prompt":"Ava: place a minion"}
+{"t":1793551388736,"type":"say","seat":0,"text":"Cal, agreed on Shake Down: it does nothing to a memberless cult, so going memberless is a real dodge."}
+{"t":1793551388736,"type":"log","text":"Ava took Build Up (Green).","by":0}
+{"t":1793551388736,"type":"log","text":"Ava's Build Up: +4 green.","by":0}
+{"t":1793551400333,"type":"move","seat":0,"round":2,"n":104,"kind":"buy","option":"card:47","label":"Recruit Scouts [3 any; you pay 3 (3 any); worth 2] — On Use, once per round: send any shop members to the bottom of the pile, then refill.","think":"Scouts is 2 followers for 3 off-color resources. Eyeing Tribute Band on my last turn of the round, when I can see whether green survives spending 8 of it.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793551402441,"type":"move","seat":0,"round":2,"n":105,"kind":"pay","option":"pay:1-0-2-0","label":"Pay 1 magenta, 2 silver","think":"silver plus a spare magenta","prompt":"Ava: choose how to pay for Scouts"}
+{"t":1793551402441,"type":"log","text":"Ava recruited Scouts (1 magenta, 2 silver).","by":0}
+{"t":1793551402441,"type":"log","text":"New in the shop: Bouncers.","by":0}
+{"t":1793551404148,"type":"move","seat":0,"round":2,"n":106,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Keep the shop; Tribute Band is in it.","prompt":"Ava: use a member, or finish your turn"}
+{"t":1793551404148,"type":"log","text":"Ava passed.","by":0}
+{"t":1793551407564,"type":"move","seat":0,"round":2,"n":107,"kind":"place","option":"slot:3-0","label":"Purple · Sleep In → you'd get: +5 purple","think":"Sleep In: +5 purple and Early Birds eats the skip. Nobody holds purple yet; Cal needs Hold Up plus Right Away just to tie.","prompt":"Ava: place a minion"}
+{"t":1793551407564,"type":"say","seat":0,"text":"Early Birds turning Sleep In into a free +5 feels like a nice little combo, though it's a lot for a 3-cost card."}
+{"t":1793551407564,"type":"log","text":"Ava took Sleep In (Purple).","by":0}
+{"t":1793551407564,"type":"log","text":"Ava's Sleep In: +5 purple.","by":0}
+{"t":1793551407564,"type":"log","text":"Ava's Early Birds: Ava's turn can't be skipped.","by":0}
+{"t":1793551414235,"type":"move","seat":0,"round":2,"n":108,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"One spare magenta into a follower; 8 magenta still beats anything a rival can reach with Stash plus Lie Low.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793551416605,"type":"move","seat":0,"round":2,"n":109,"kind":"pay","option":"pay:1-0-0-0","label":"Pay 1 magenta (suggested)","think":"magenta","prompt":"Ava: choose how to pay for 1 followers"}
+{"t":1793551416605,"type":"log","text":"Ava bought 1 follower (1 magenta).","by":0}
+{"t":1793551427351,"type":"move","seat":2,"round":2,"n":110,"kind":"place","option":"slot:2-4","label":"Silver · Sweet Talk → you'd get: +7..10 magenta, +0..3 green, -7..-5 silver, +0..2 purple; then you choose: Sweet Talk: turn 1 silver into 1 of a color? (you have 10); Sweet Talk: turn 1 silver into 1 of a color? (you have 9); Sweet Talk: turn 1 silver into 1 of a color? (you have 8); Sweet Talk: turn 1 silver into 1 of a color? (you have 7); Sweet Talk: turn 1 silver into 1 of a color? (you have 6); Sweet Talk: turn 1 silver into 1 of a color? (you have 5); Sweet Talk: turn 1 silver into 1 of a color? (you have 4); Sweet Talk: turn 1 silver into 1 of a color? (you have 3); Sweet Talk: turn 1 silver into 1 of a color? (you have 2); Sweet Talk: turn 1 silver into 1 of a color? (you have 1)","think":"Sweet Talk takes me to 10 silver and denies Ben the +3 he'd need to catch up. The scary one is Dee's Debutantes doubling, but she's on 4; I'll keep the whole pile.","prompt":"Cal: place a minion"}
+{"t":1793551427351,"type":"log","text":"Cal took Sweet Talk (Silver).","by":2}
+{"t":1793551427351,"type":"log","text":"Cal's Sweet Talk: +3 silver.","by":2}
+{"t":1793551429160,"type":"move","seat":2,"round":2,"n":111,"kind":"choose","option":"done","label":"Keep my silver — value hint -1","think":"keep it all","prompt":"Sweet Talk: turn 1 silver into 1 of a color? (you have 10)"}
+{"t":1793551436175,"type":"move","seat":2,"round":2,"n":112,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"One follower, silver stays at 9: still above Ben's best (Party Favors to 7).","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551436264,"type":"move","seat":2,"round":2,"n":113,"kind":"pay","option":"pay:0-0-1-0","label":"Pay 1 silver (suggested)","think":"pay","prompt":"Cal: choose how to pay for 1 followers"}
+{"t":1793551436264,"type":"log","text":"Cal bought 1 follower (1 silver).","by":2}
+{"t":1793551457191,"type":"move","seat":1,"round":2,"n":114,"kind":"place","option":"slot:1-4","label":"Green · Cover → you'd get: +1..6 magenta, +1..3 green, +0..4 silver, +0..3 purple; +0..4 followers; +0..4 members; rivals together 0..2 magenta, -2..0 green, -4..0 silver, -1..0 purple; rivals followers -4..0; then you choose: Cover: copy which empty action?; Lie Low: choose a resource to steal.; Shake Down: choose a rival.; Cutpurse: choose a resource to steal.; Polish: +1 of which color? (4 to pick); Polish: +1 of which color? (3 to pick); Polish: +1 of which color? (2 to pick); Polish: +1 of which color? (1 to pick)","think":"Cover on the empty Stash is +4 magenta, +2 more from my own Impressionist, +1 green: 7 resources, the biggest raw gain left. Silver is Cal's at 9 and Ava has the last placement, so I'd rather bank and convert than chase a contest she can answer.","prompt":"Ben: place a minion"}
+{"t":1793551457191,"type":"log","text":"Ben took Cover (Green).","by":1}
+{"t":1793551457191,"type":"log","text":"Ben's Cover: +1 green.","by":1}
+{"t":1793551461693,"type":"move","seat":1,"round":2,"n":115,"kind":"choose","option":"space:empty:0-1","label":"Stash: +2 magenta in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower (+2 in round II, +3 in round III). — value hint 5.4","think":"Stash, and recruit a member for the +2.","prompt":"Cover: copy which empty action?"}
+{"t":1793551461693,"type":"log","text":"Ben copies Stash: doing it.","by":1}
+{"t":1793551461693,"type":"log","text":"Ben's Impressionist: +2 magenta.","by":1}
+{"t":1793551465221,"type":"move","seat":1,"round":2,"n":116,"kind":"buy","option":"card:26","label":"Recruit Polisher [1 silver + 2 any; you pay 3 (1 silver + 2 any); worth 1] — On Use, once per game: turn up to 3 silver into 2 of any colors each.","think":"Polisher for 3: worth 1, Stash adds 2, and later it turns 3 silver into 6 of anything. That's the cheap payer I like.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551468385,"type":"move","seat":1,"round":2,"n":117,"kind":"pay","option":"pay:1-1-1-0","label":"Pay 1 magenta, 1 green, 1 silver","think":"Keep silver to feed Polisher later.","prompt":"Ben: choose how to pay for Polisher"}
+{"t":1793551468385,"type":"log","text":"Ben recruited Polisher (1 magenta, 1 green, 1 silver).","by":1}
+{"t":1793551468385,"type":"log","text":"Ben's Stash: +2 followers for recruiting a member.","by":1}
+{"t":1793551468385,"type":"log","text":"New in the shop: Closer.","by":1}
+{"t":1793551470896,"type":"move","seat":1,"round":2,"n":118,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Hold Polisher until I know which race to tip.","prompt":"Ben: use a member, or finish your turn"}
+{"t":1793551470896,"type":"log","text":"Ben passed.","by":1}
+{"t":1793551488622,"type":"move","seat":3,"round":2,"n":119,"kind":"place","option":"slot:2-3","label":"Silver · Party Favors → you'd get: +0..2 magenta, +0..1 green, +5..6 silver, +0..1 purple; +1 followers; rivals together -2..0 magenta, -1..0 green, 4..5 silver, -1..0 purple","think":"Ben's Encore on Con Men took 5 of my silver; Cal leads 9 to 4. Party Favors gets +2 silver, 3 resources from rivals, Caterer +2 off the gift and Toastmaster +1; then Debutantes doubles me past Cal with only one silver space chance left for him.","prompt":"Dee: place a minion"}
+{"t":1793551488622,"type":"say","seat":3,"text":"Encore on Con Men stealing 5 is a lot for a middle-ring space, Ben. That's a 7-cost card's whole payoff with no recruit spent."}
+{"t":1793551488622,"type":"log","text":"Dee took Party Favors (Silver).","by":3}
+{"t":1793551488622,"type":"log","text":"Dee's Party Favors: +2 silver.","by":3}
+{"t":1793551488622,"type":"log","text":"Dee's Toastmaster: +1 follower.","by":3}
+{"t":1793551495336,"type":"move","seat":0,"round":2,"n":120,"kind":"choose","option":"color:green","label":"Give 1 green — value hint 2.6999999999999997","think":"Green is the one I can spare: 9 vs nobody. Magenta is live with Ben on 5 and Stash open; purple is thin.","prompt":"Party Favors: give Dee 1 resource, then you gain 2 silver"}
+{"t":1793551495336,"type":"log","text":"Dee's Caterer: +2 silver.","by":0}
+{"t":1793551495336,"type":"log","text":"Ava gave Dee 1 green, then +2 silver (Dee's Party Favors).","by":0}
+{"t":1793551500136,"type":"move","seat":1,"round":2,"n":121,"kind":"choose","option":"color:magenta","label":"Give 1 magenta — value hint 1.5","think":"Magenta; silver may still matter.","prompt":"Party Favors: give Dee 1 resource, then you gain 2 silver"}
+{"t":1793551500136,"type":"say","seat":1,"text":"Fair, Dee, Encore on Con Men felt strong to me too. Encore's value is entirely whatever the best On Recruit at the table is, so a single big On Recruit card makes it swingy."}
+{"t":1793551500136,"type":"log","text":"Ben gave Dee 1 magenta, then +2 silver (Dee's Party Favors).","by":1}
+{"t":1793551504014,"type":"move","seat":2,"round":2,"n":122,"kind":"choose","option":"color:silver","label":"Give 1 silver — value hint 2.6999999999999997","think":"Only silver to give. Net +1 for me, but Dee's Caterer made her Party Favors a +4 silver swing for her, and Debutantes is still sitting there.","prompt":"Party Favors: give Dee 1 resource, then you gain 2 silver"}
+{"t":1793551504014,"type":"log","text":"Cal gave Dee 1 silver, then +2 silver (Dee's Party Favors).","by":2}
+{"t":1793551511101,"type":"move","seat":3,"round":2,"n":123,"kind":"buy","option":"use:23","label":"Use Debutantes — On Use, once per game: double your silver. Each rival +2 silver.","think":"Doubling now: 9 to 18 plus Caterer +2 off the gifts = 20 vs Cal 12. Silver contest is +6 now and a fat pile risks Crime Wave in round III anyway, so cash it here.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793551511101,"type":"log","text":"Dee's Caterer: +2 silver.","by":3}
+{"t":1793551511101,"type":"log","text":"Dee's Debutantes: silver doubled to 20, +2 silver to everyone else.","by":3}
+{"t":1793551517476,"type":"move","seat":3,"round":2,"n":124,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Convert 10 now (1 magenta, 1 green, 8 silver), leaving 12 silver; my next turn is right after and Lie Low steals 1 from Cal's 12, so I end 13 to 11 and unstealable.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793551520171,"type":"move","seat":3,"round":2,"n":125,"kind":"pay","option":"pay:1-1-8-0","label":"Pay 1 magenta, 1 green, 8 silver (suggested)","think":"pay","prompt":"Dee: choose how to pay for 10 followers"}
+{"t":1793551520171,"type":"log","text":"Dee bought 10 followers (1 magenta, 1 green, 8 silver).","by":3}
+{"t":1793551524014,"type":"move","seat":3,"round":2,"n":126,"kind":"place","option":"slot:0-2","label":"Magenta · Lie Low → you'd get: +1..2 magenta, +0..1 green, +0..1 silver, +0..1 purple; rivals together 0..1 magenta, -1..0 green, -1..0 silver, -1..0 purple; then you choose: Lie Low: choose a resource to steal.","think":"Lie Low: take 1 silver off Cal to go 13 to 11 and nobody can steal from me before round end. Shake Down on Ben was tempting but the silver contest is the +6 that matters.","prompt":"Dee: place a minion"}
+{"t":1793551524014,"type":"log","text":"Dee took Lie Low (Magenta).","by":3}
+{"t":1793551524014,"type":"log","text":"Dee's Lie Low: +1 magenta.","by":3}
+{"t":1793551524014,"type":"log","text":"Dee lies low: safe from thieves until round end.","by":3}
+{"t":1793551526857,"type":"move","seat":3,"round":2,"n":127,"kind":"choose","option":"take:2:silver","label":"Cal's silver (12) — value hint 12.95","think":"Cal's silver: 13 vs 11, a 2-point swing on the +6 race.","prompt":"Lie Low: choose a resource to steal. (1 left)"}
+{"t":1793551526857,"type":"log","text":"Ava's Fence: +1 magenta.","by":3}
+{"t":1793551526857,"type":"log","text":"Dee stole 1 (1 silver from Cal).","by":3}
+{"t":1793551534714,"type":"move","seat":3,"round":2,"n":128,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Spend just the magenta; Cal could still Shake Down Ben for a few silver on his last turn, so I keep all 13 silver.","prompt":"Dee: recruit a member or followers, or pass"}
+{"t":1793551537558,"type":"move","seat":3,"round":2,"n":129,"kind":"pay","option":"pay:1-0-0-0","label":"Pay 1 magenta (suggested)","think":"pay","prompt":"Dee: choose how to pay for 1 followers"}
+{"t":1793551537558,"type":"say","seat":3,"text":"Debutantes plus Caterer is quietly a lot: the doubling's gift to all of you triggers Caterer for me. Silver's gifting cards feel cohesive at least."}
+{"t":1793551537558,"type":"log","text":"Dee bought 1 follower (1 magenta).","by":3}
+{"t":1793551550066,"type":"move","seat":1,"round":2,"n":130,"kind":"place","option":"slot:2-1","label":"Silver · Polish → you'd get: +1..4 magenta, +0..3 green, -2 silver, +0..3 purple; then you choose: Polish: +1 of which color? (4 to pick); Polish: +1 of which color? (3 to pick); Polish: +1 of which color? (2 to pick); Polish: +1 of which color? (1 to pick)","think":"Purple is Ava's at 5 and she has the last placement. Polish (2 silver into 4 purple) plus Polisher (3 silver into 6 purple) gets me to 10, and taking Polish denies her the one space that could catch up; Hold Up only gets her to 8.","prompt":"Ben: place a minion"}
+{"t":1793551550066,"type":"log","text":"Ben took Polish (Silver).","by":1}
+{"t":1793551550066,"type":"log","text":"Ben's Polish: 2 silver into 4 of any colors.","by":1}
+{"t":1793551551956,"type":"move","seat":1,"round":2,"n":131,"kind":"choose","option":"color:purple","label":"+1 purple — value hint 0","think":"Purple.","prompt":"Polish: +1 of which color? (4 to pick)"}
+{"t":1793551551956,"type":"log","text":"Ben's Polish: +1 purple.","by":1}
+{"t":1793551552042,"type":"move","seat":1,"round":2,"n":132,"kind":"choose","option":"color:purple","label":"+1 purple — value hint -1","think":"Purple.","prompt":"Polish: +1 of which color? (3 to pick)"}
+{"t":1793551552042,"type":"log","text":"Ben's Polish: +1 purple.","by":1}
+{"t":1793551552385,"type":"move","seat":1,"round":2,"n":133,"kind":"choose","option":"color:purple","label":"+1 purple — value hint -2","think":"Purple.","prompt":"Polish: +1 of which color? (2 to pick)"}
+{"t":1793551552385,"type":"log","text":"Ben's Polish: +1 purple.","by":1}
+{"t":1793551552578,"type":"move","seat":1,"round":2,"n":134,"kind":"choose","option":"color:purple","label":"+1 purple — value hint -3","think":"Purple.","prompt":"Polish: +1 of which color? (1 to pick)"}
+{"t":1793551552579,"type":"log","text":"Ben's Polish: +1 purple.","by":1}
+{"t":1793551555067,"type":"move","seat":1,"round":2,"n":135,"kind":"buy","option":"use:26","label":"Use Polisher — On Use, once per game: turn up to 3 silver into 2 of any colors each.","think":"Polisher now: 3 silver into 6 purple.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551555067,"type":"log","text":"Ben's Polisher: 3 silver into 6 of any colors.","by":1}
+{"t":1793551559746,"type":"move","seat":1,"round":2,"n":136,"kind":"choose","option":"color:purple","label":"+1 purple — value hint -4","think":"Purple.","prompt":"Polisher: +1 of which color? (6 to pick)"}
+{"t":1793551559746,"type":"log","text":"Ben's Polisher: +1 purple.","by":1}
+{"t":1793551559841,"type":"move","seat":1,"round":2,"n":137,"kind":"choose","option":"color:purple","label":"+1 purple — value hint -5","think":"Purple.","prompt":"Polisher: +1 of which color? (5 to pick)"}
+{"t":1793551559841,"type":"log","text":"Ben's Polisher: +1 purple.","by":1}
+{"t":1793551559929,"type":"move","seat":1,"round":2,"n":138,"kind":"choose","option":"color:purple","label":"+1 purple — value hint -6","think":"Purple.","prompt":"Polisher: +1 of which color? (4 to pick)"}
+{"t":1793551559929,"type":"log","text":"Ben's Polisher: +1 purple.","by":1}
+{"t":1793551560018,"type":"move","seat":1,"round":2,"n":139,"kind":"choose","option":"color:purple","label":"+1 purple — value hint -7","think":"Purple.","prompt":"Polisher: +1 of which color? (3 to pick)"}
+{"t":1793551560018,"type":"log","text":"Ben's Polisher: +1 purple.","by":1}
+{"t":1793551560129,"type":"move","seat":1,"round":2,"n":140,"kind":"choose","option":"color:purple","label":"+1 purple — value hint -8","think":"Purple.","prompt":"Polisher: +1 of which color? (2 to pick)"}
+{"t":1793551560129,"type":"log","text":"Ben's Polisher: +1 purple.","by":1}
+{"t":1793551560230,"type":"move","seat":1,"round":2,"n":141,"kind":"choose","option":"color:purple","label":"+1 purple — value hint -9","think":"Purple.","prompt":"Polisher: +1 of which color? (1 to pick)"}
+{"t":1793551560230,"type":"log","text":"Ben's Polisher: +1 purple.","by":1}
+{"t":1793551568525,"type":"move","seat":1,"round":2,"n":142,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Keep all 10 purple (Ava can reach 8 at most with Hold Up). Convert loose magenta to followers before round-start thieves get it.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551572863,"type":"move","seat":1,"round":2,"n":143,"kind":"pay","option":"pay:2-0-3-0","label":"Pay 2 magenta, 3 silver (suggested)","think":"Fine.","prompt":"Ben: choose how to pay for 5 followers"}
+{"t":1793551572863,"type":"say","seat":1,"text":"Debutantes plus Caterer took Dee from 25 to 36 in one turn. Doubling a silver pile while every gift pays Caterer looks like the strongest combo on the table so far."}
+{"t":1793551572863,"type":"log","text":"Ben bought 5 followers (2 magenta, 3 silver).","by":1}
+{"t":1793551585838,"type":"move","seat":2,"round":2,"n":144,"kind":"place","option":"slot:0-4","label":"Magenta · Shake Down → you'd get: +1..3 magenta, +0..2 green, +0..4 purple; +0..3 followers; +0..3 members; rivals together -1..1 magenta, -1..0 green, -4..0 purple; rivals followers -3..0; then you choose: Shake Down: choose a rival.","think":"Dee's 13 silver beats my 11 and no silver space is left. Shake Down on Dee is a fork: she only holds silver, so paying me 3 flips the silver contest to me 14-10, or she hands over Cutpurse/Toastmaster. Either hurts the leader.","prompt":"Cal: place a minion"}
+{"t":1793551585838,"type":"log","text":"Cal took Shake Down (Magenta).","by":2}
+{"t":1793551585838,"type":"log","text":"Cal's Shake Down: +1 magenta.","by":2}
+{"t":1793551595956,"type":"move","seat":2,"round":2,"n":145,"kind":"choose","option":"player:0","label":"Ava (Early Birds, Line Cutters, Scouts) — value hint 7","think":"Missed that Dee's Lie Low shields her; my misread. Ava's cheap members are all good ones (Line Cutters, Early Birds, Scouts), so she pays or hands me a real card; Ben would just give me his spent Polisher.","prompt":"Shake Down: choose a rival."}
+{"t":1793551595956,"type":"say","seat":2,"text":"I forgot Lie Low blocks Shake Down too, since it's a steal. Lie Low is doing a lot of work for a one-resource space."}
+{"t":1793551601896,"type":"move","seat":0,"round":2,"n":146,"kind":"choose","option":"card:43","label":"Line Cutters (2) — value hint -7.5","think":"Line Cutters is cheapest to pay off (2), and I'll pay rather than lose 3 followers and first pick.","prompt":"Shake Down: Cal is shaking you down. Which member is at stake?"}
+{"t":1793551605016,"type":"move","seat":0,"round":2,"n":147,"kind":"choose","option":"pay","label":"Pay Cal 2 (2 magenta) to keep Line Cutters — value hint 6.5","think":"Pay 2 magenta; still lead magenta 7 to 3.","prompt":"Shake Down: pay Cal 2 (2 magenta) to keep Line Cutters?"}
+{"t":1793551605016,"type":"log","text":"Ava's Fence: +1 magenta.","by":0}
+{"t":1793551605016,"type":"log","text":"Ava chose to pay Cal 2 (2 magenta) to keep Line Cutters: its cost is 2.","by":0}
+{"t":1793551610878,"type":"move","seat":2,"round":2,"n":148,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Silver's lost to Dee by 2 with no space left to fix it, so cash in 10; keep a few silver toward round III.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551613257,"type":"move","seat":2,"round":2,"n":149,"kind":"pay","option":"pay:3-0-7-0","label":"Pay 3 magenta, 7 silver (suggested)","think":"pay","prompt":"Cal: choose how to pay for 10 followers"}
+{"t":1793551613257,"type":"log","text":"Cal bought 10 followers (3 magenta, 7 silver).","by":2}
