@@ -1,0 +1,28 @@
+# Cory's notes while reading the balance list (Nov 1), for the walk-through at the end
+
+- 1:16pm, copies (focus 1): likes Echo and repeating On Recruits; asked whether a copy can re-copy an action already in its chain (it can't: a chain never revisits an action, tests pass). Wants Green's direction elaborated.
+- 1:17pm: wants focus 2 and 3 explained in depth, in plain words (plain-words page sent).
+- 1:20pm, Last Call: "shouldn't be like an auto win"; likes the payout; try paying less per minion left, and give other purple levers a way to go last (directions page sent: Night Owls after everyone [default], Sleep In moves to end of round, Last Call drops purple per minion).
+- 1:22pm, Largesse copied four times: doubted it (confirmed from the g11 log). Leanings: Tribute Band more expensive; Party Crasher more expensive. "We'll talk about the copy logic."
+- 1:24pm, Party Crasher and Largesse: likes Party Crasher ("makes you want to steal the party crasher action at the end"), not aggressively too strong; Largesse "a little bit of an issue, but interesting". Inclined to leave both and think about counterplay: "can the bots effectively counterplay? Or does the game need more counterplays? … we need to figure out which."
+- 1:25pm, Desperado: test flat +2 and +3 instead of double (running).
+- 1:26pm, Greatest Hits: keep as is; the answer is counterplay (swap with the player stacking On Recruits).
+- 1:27pm, Encore on Con Men: fine as is (the steal isn't aimed at one victim).
+- 1:28pm, Lie Low + Bodyguards pile-on: feels bad, remember it; next direction is counterplay (member movement); hold any steal cap until counterplay is solved.
+- 1:29pm, Recruit Twice: leave as is; wants evidence the bots weigh it right (a 20-follower swing). Check running.
+- 1:30pm, Party Favors: keep.
+- 1:31pm, Farewell/Estate Sale: fine, that's White's core (use once-per-game members, cycle them out). Take-aways: more once-per-game members in White; more member movement outside Red.
+- 1:31pm, Doormen: needs a replacement within Blue (later).
+- 1:34pm, Guest Book: keep +2; suspects it isn't firing (grey members? Dabblers?); re-run with the Dabblers fix (live v0.9.967). Engine thread's own fill-in to confirm with Cory: recruiting Dabblers itself pays while you're missing any color.
+- 1:35pm, Bargain Bin: could try +2 blue, skeptical; suspects it's not triggering on what it should. Wants an audit of what triggers every artifact (running).
+- 1:36pm, Early Birds: couldn't follow the item; explain in plain words at the walk-through.
+- 1:36pm, Go-Between: rework it ("annoying in the games and dumb in the UI"); pitch replacements at the walk-through.
+- 1:37pm, Drifters: keep; should work optimally for its owner every time, not block things. Wants every place the member count or member color matters checked so Drifters, Dabblers and counts-as-N members work right everywhere (audit asked).
+- 1:37pm, Right Away: talk more; maybe a rework rather than a number. "Interesting, though."
+- 1:38pm, Mob: definitely fewer members (message cut off at "make it"; the list's suggestion was worth 4 / counts as 4; confirm the number).
+- 1:39pm, Accomplice: price up (3 to 4). Caterer: back to +1 silver; asked about "gifted resources" instead of silver (answered: only Walk-In and Party Favors' answers would add).
+- 1:39pm, Splurge: OK with the recommendation (per 1 paid in round II, per 2 in rounds I and III).
+- 1:40pm, Artifacts (Pocket Watch, Fence, all): hold every artifact balance change until the trigger audit is done; then talk balance per artifact.
+- 1:40pm, Window Shopper: send 2 members instead of 1 (so you get 2 colors); needs elegant wording.
+- 1:41pm, Agents (item 25; today "Rivals can't copy your actions."): leaning to "Your actions and On Recruits can't be copied", by anyone, the owner too, so it works against whoever holds it. Then, with counterplay, you swap Agents into a player stacking copies: Agents is Green's hard counter, and counterplay should be moving members like Agents around. Confirm the wording at the walk-through; talk with counterplay.
+- 1:42pm, Bodyguards and swaps: a dedicated walk-through item, covering items 26 (what Bodyguards and Lie Low block among swaps) and 27 (Raiders and Debt Collectors getting past Lie Low and Bodyguards).
