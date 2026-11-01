@@ -170,44 +170,16 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
   useLayoutEffect(() => {
     const row = rowRef.current;
     if (!fitKey || !row) return undefined;
-    // details cards laid out per row (member-pick.css): measure the room each card's rule leaves for its picture
-    const MIN = 18;
     const fit = () => {
-      const cards = [...row.querySelectorAll('.lt-card[data-uid]')].filter(c => c.querySelector(':scope > .lt-pick-ability') && c.querySelector(':scope > .ft'));
-      if (!cards.length) return;
-      // the room a card leaves for its picture: its height less the name bar, the price and the rule's own words (the
-      // rule's box stretches to fill, so its words are measured, not its box)
-      const px = v => parseFloat(v) || 0;
-      const room = c => {
-        const cs = getComputedStyle(c), a = c.querySelector(':scope > .lt-pick-ability'), as = getComputedStyle(a);
-        const hd = c.querySelector(':scope > .lt-hd'), ft = c.querySelector(':scope > .ft');
-        const words = a.querySelector(':scope > .pa-in') || a;
-        // (layout sizes, never screen rects: wide screens scale the shop's cards up)
-        return c.clientHeight - px(cs.paddingTop) - px(cs.paddingBottom) - (hd ? hd.offsetHeight : 0) - ft.offsetHeight
-          - words.offsetHeight - px(as.paddingTop) - px(as.paddingBottom);
-      };
-      // every card full, nothing squeezed or left empty: the picture takes the room its rule leaves (up to the scene's
-      // own size), a row of cards shares one type size (a 12px rule beside an 11px one reads as a mistake; if one needs
-      // the smaller step to keep a real picture, the row takes it), a card with no room for a picture shows its rule
-      // alone, and a card with no rule to print (Triplets: its count is on its badge) is all picture.
-      const rules = cards.map(c => c.querySelector(':scope > .lt-pick-ability'));
-      const blank = rules.map(a => !a.textContent.trim());
-      rules.forEach((a, i) => { if (blank[i]) a.setAttribute('data-fit', 'art'); else a.removeAttribute('data-fit'); });
-      const w = cards[0].clientWidth, cap = Math.round(w * 0.72), floor = Math.round(w * 0.4);
-      const rowOf = cards.map(c => Math.round(c.getBoundingClientRect().top / 8));
-      const free = cards.map(room);
-      for (const r of new Set(rowOf)) {
-        const at = cards.map((c, i) => i).filter(i => rowOf[i] === r && !blank[i]);
-        if (at.some(i => free[i] < floor)) for (const i of at) { rules[i].setAttribute('data-fit', 'tight'); free[i] = room(cards[i]); }
+      for (const a of row.querySelectorAll('.lt-pick-ability')) {
+        const card = a.closest('.lt-card'), ft = card && card.querySelector('.ft');
+        if (!ft) continue;
+        a.removeAttribute('data-fit');
+        const over = () => a.getBoundingClientRect().bottom > ft.getBoundingClientRect().top + 0.5 || ft.getBoundingClientRect().bottom > card.getBoundingClientRect().bottom + 0.5;
+        if (over()) a.setAttribute('data-fit', 'tight');
+        // still under the price (a long rule over a discounted price's two lines, "7" over "free"): the picture gives way
+        if (over()) a.setAttribute('data-fit', 'bare');
       }
-      cards.forEach((c, i) => {
-        if (blank[i]) return;
-        const f = Math.floor(free[i]);
-        // no room for a picture: the rule takes the card; on the narrowest shops (1100px) a rule longer than the card
-        // starts at the top, so its opening words are never the part cut (todo 0b)
-        if (f < MIN) { rules[i].setAttribute('data-fit', f < 0 ? 'over' : 'bare'); return; }
-        c.style.setProperty('--pick-art', `${Math.min(cap, f)}px`);
-      });
     };
     fit();
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(fit) : null;
@@ -291,7 +263,7 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
                 {fromPile && !tray && <span className="need from-pile" title="From the top of the pile">pile</span>}
               </span>
               {/* a rule that grows by round reads by round, this round lit, as in every hover (RuleText; compact on the small card) */}
-              {detailed && <span className="lt-pick-ability"><span className="pa-in"><RuleText def={d} round={state.round} plain compact /></span></span>}
+              {detailed && <span className="lt-pick-ability"><RuleText def={d} round={state.round} plain compact /></span>}
               <span className="ft" data-discount={paid ? '' : undefined}>
                 {paid ? (
                   <span className="cost-now" data-paid={paid.reduce((t, c) => t + c.n, 0)}>
