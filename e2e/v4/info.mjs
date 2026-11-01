@@ -166,7 +166,8 @@ async function nearChecks(page, step) {
   const line = page.locator('[data-since-line]').first();
   if ((await line.count()) && (await line.isVisible())) {
     await page.mouse.move(5, 690); await page.waitForTimeout(200);
-    await line.click(); await page.waitForTimeout(400);
+    // the line itself, not its middle: a name can sit there, and clicking it pins that name's card instead
+    await line.evaluate(e => e.click()); await page.waitForTimeout(400);
     const inner = page.locator('body > .popover [data-hover-name]').first();
     if (await inner.count()) {
       const b = await inner.boundingBox();
@@ -276,7 +277,8 @@ async function deckCheck(page) {
     });
     last = r;
     if (r && r.held) return 'held';
-    if (r && r.moves === r.saved) {
+    // the deck shows the screen's move, which plays a beat behind the engine: compare only once it has caught up
+    if (r && r.moves === r.saved && String(r.moves) === r.pm && !r.anim) {
       if (r.left !== r.pile) { fail(`(h) the deck says ${r.left}, the engine's pile has ${r.pile} (${JSON.stringify(r)})`, 'deck'); return 'checked'; }
       if (r.shown === String(r.pile)) return 'checked';
     }
