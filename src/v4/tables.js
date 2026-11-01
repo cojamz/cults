@@ -120,3 +120,8 @@ export function fitTable(table, players) {
   for (const id of pool) if (out.length < n && !used.has(quadrant(id).resource)) { out.push(id); used.add(quadrant(id).resource); }
   return { mode, quadrants: out.length === n ? out : randomTable(rand, n) };
 }
+
+/** The shop a setup picked (Cory, 2026-11-01): 'deck' (as it is, the default), 'grey' piles or 'all' piles, as the rule
+ *  a new game takes (rules.shop); the default adds nothing, so a current-shop game is exactly what it was. */
+export const SHOP_OPTS = [['deck', 'Current', 'The shop as it is: one shuffled deck'], ['grey', 'Grey piles', 'Five grey members are piles out every game; buy as many copies as you like. The rest of the shop as now'], ['all', 'All piles', 'Ten piles a game, dealt at random; every member is a pile you can buy several of']];
+export const shopRule = v => (v === 'grey' || v === 'all' ? { shop: v } : {});
