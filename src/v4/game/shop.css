@@ -210,7 +210,7 @@
 .app.game.lt .lt-pile-row .lt-card .ft{margin:auto 3px 0;justify-content:center}
 .app.game.lt .lt-pile-row .lt-card .lt-res{margin-right:2px}
 .lt-pile-row .pr-slot{position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font:800 12px/1 var(--sans);background:#f4b860;color:#2b2018;box-shadow:0 0 0 1px #c98a3c}
-.lt-pile-row .pr-keep{flex:none;white-space:nowrap;font:700 13px/1 var(--sans);color:#2b2018;background:#f4b860;border:0;border-radius:999px;padding:6px 12px;box-shadow:0 0 0 1px #c98a3c;cursor:pointer}
+.lt-pile-row .pr-keep{flex:none;white-space:nowrap;font:700 12px/1 var(--sans);color:#2b2018;background:#f4b860;border:0;border-radius:999px;padding:6px 12px;box-shadow:0 0 0 1px #c98a3c;cursor:pointer}
 .lt-pile-row .pr-keep:hover{background:#ffc877}
 .lt-pile-row .pr-keep:active{transform:translateY(1px)}
 /* The shop as one clean grid (Cory, playtest Oct 28: "very weird looking shop"; his yes to the layout): the deck and the
