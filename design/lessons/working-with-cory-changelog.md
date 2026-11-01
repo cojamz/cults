@@ -53,3 +53,4 @@ Why each rule in .claude/rules/working-with-cory.md exists, in Cory's words. Mov
 - 2026-11-01 1:20pm: Reports and lists use plain game words with a real turn per finding; no test shorthand (Cory: "caught up in the own jargon of the test runs and the shorthand"). From the balance-1.0 list.
 - 2026-11-01: Cory on the balance-1.0 list (numbered items, card text inline, evidence line, questions-for-you section, what's-working section, considered-and-dropped): "really good… I like this kind of style. We could probably evolve it." Reuse that shape for balance reports; keep findings in plain words.
 - 2026-11-01: proposed seat tags on screen to track who goes last; Cory: "we can't cheat and do it digitally. the mechanism itself has to translate to a tabletop game." Rule: every mechanism works on a physical table; the screen only shows what tokens could.
+- 2026-11-01: Cory: the 10-card deck is the game; 15 stays a setting, untested. Balance runs no longer ask which deck.

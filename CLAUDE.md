@@ -30,7 +30,7 @@ The game was called Patrons; since 2026-10-14 it's **Cults** (v0.5). Code ids an
 
 ## Commands
 - `npm run check:v4` — the gate: all v4 tests, a production build, every browser e2e (`-- --commit HEAD` for a verdict). `npm run check:v4:quick` (~2 min) while iterating; `-- --fast` skips e2e; `check:v4:full` plays every seeded game (nightly). Parallel agents set their own `V4_OUTDIR=.v4-build-<name>` and `V4_PORT=<port>`.
-- `npx vitest run <files>` · `npm run dev` (v4 by default). Sims (`DECK=15 npm run sim:v4 -- 300 4`) only when Cory asks, and ask him first which deck (10 or 15 per color) to balance on.
+- `npx vitest run <files>` · `npm run dev` (v4 by default). Sims (`DECK=10 npm run sim:v4 -- 300 4`) only when Cory asks; balance on the 10-card deck (the 15 deck is an untested setting, Cory Nov 1).
 - This box has 4 CPUs; re-run a failing timing test alone once before calling it real.
 - Status line for the thread board: `node scripts/status.mjs set --thread "<title>" --state working --doing … --next … --eta …`.
 
