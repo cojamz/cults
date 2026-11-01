@@ -51,3 +51,4 @@
 - 2:25pm: Early Birds: full rework (Last Call is already strong; don't buff it). Going-last thread pitches.
 - 2:25pm: item 7 words approved. Next: item 8 results.
 - 2:27pm: Desperado: any steal takes 2 more while fewest followers.
+- 2:28-2:31pm: artifact audit questions all handled in the audit thread (1 and 3 live; 2, 4-6 asked there). Struck from here.
