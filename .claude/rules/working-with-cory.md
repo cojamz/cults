@@ -21,7 +21,7 @@ Current rules only, short on purpose: every line here loads into every thread. W
 - Each thread stays in its lane: design questions outside its job go to the coordinator, never to Cory.
 
 ## How messages read
-- A few lines, eight at most, unless he asks for more. Longer goes in a file or picture, linked.
+- At most 3 short lines plus a numbered pick list, one idea per line (a hard check in message-check.mjs since his second ask). Longer goes in a file or picture, linked (Cory, Nov 1: "i need shorter and better formatted messages").
 - Lead with what you did and what's next. Status: what's running, what's next, ETA in his Eastern 12-hour clock ("7:43pm"), as Claude's real build time.
 - Plain everyday words about what changes for him or a player. No file names, mechanisms, system terms, "v3"/"v4", Netlify, sessions or tools.
 - Bold card and space names and the ask; one item per line; blank lines between groups. No tables or headers.
