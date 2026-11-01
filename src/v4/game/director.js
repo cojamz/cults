@@ -538,12 +538,14 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   const cap = Math.round(2400 * speedScale());
   // a step in a round also fits the table's hold cap (stepHoldCap, less a margin for its landing): past it the rest of
   // the chain lands at once and its last pieces never fly (Cory, Oct 28: "often seems like half the animation is
-  // skipped"; at Relaxed a third of rivals' steps ran past it). It plays faster to fit instead, never faster than Steady
+  // skipped"; at Relaxed a third of rivals' steps ran past it). It plays faster to fit instead, never faster than Quick
+  // (was Steady, Nov 1: a rival's recruit whose free member brought four bonuses, 11.6s at Relaxed, still ran past the
+  // cap at Steady's pace, and its last beats jumped with nobody pressing; landing gate, round II move 47)
   const fit = state.round >= 1 && state.round === before.round ? stepHoldCap(chainBehind) - FIT_MARGIN : Infinity;
   const room = Math.min(cap, fit);
   // (a new round's opening isn't a turn: its beats keep their own pace, outside the turn's cap)
   if (end > room && !roundAdvance) {
-    const k = Math.max(room < cap ? Math.min(0.5, SPEEDS.steady / speedScale()) : 0.5, room / end);
+    const k = Math.max(room < cap ? Math.min(0.5, SPEEDS.quick / speedScale()) : 0.5, room / end);
     for (const a of atoms) { a.at = Math.round(a.at * k); if (a.dur) a.dur = Math.round(a.dur * k); if (a.lift) a.lift = Math.round(a.lift * k); if (a.wait) a.wait = Math.round(a.wait * k); for (const f of ['toHub', 'show', 'fromHub']) if (a[f]) a[f] = Math.round(a[f] * k); }
     end *= k; hand *= k; t *= k;
   }
