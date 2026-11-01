@@ -149,10 +149,10 @@ describe('Guest members (rule-benders)', () => {
     expect(t.cards[v].used).toBe(false);
   });
 
-  it('Front-runner: picks first even when ahead; the round’s opening line names it', () => {
+  it('Line Cutters: picks first even when ahead; the round’s opening line names it', () => {
     const s = sceneQ({ bonus: [9, 0], members: [['benders.frontrunner']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending.player).toBe(0);
-    expect(named(s, 'Front-runner')[0]).toMatch(/P1's Front-runner: always picks first/);
+    expect(named(s, 'Line Cutters')[0]).toMatch(/P1's Line Cutters: always picks first/);
   });
 
   it('Straggler: after the last placement, your last minion moves to an unused space and does it; named', () => {

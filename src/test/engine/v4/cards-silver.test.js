@@ -97,7 +97,7 @@ describe('Silver members', () => {
     if (s.pending?.player === 1 && s.pending.kind === 'choose') s = move(s, s.pending.options[0].id);
     expect(S(s)).toBe(1);
   });
-  it('Debt Collector: once per game, each rival gives you 2 silver if they have it', () => {
+  it('Debt Collectors: once per game, each rival gives you 2 silver if they have it', () => {
     let s = sc({ n: 3, res: [{}, { silver: 5 }, { silver: 1 }], members: [['silver.debtcollector']] });
     s = move(s, s.pending.options.find(o => o.kind === 'use').id);
     expect(s.players.map(p => p.res.silver)).toEqual([3, 3, 0]);
@@ -106,7 +106,7 @@ describe('Silver members', () => {
     const s = sc({ n: 3, res: [{ silver: 1 }, { silver: 5 }, { silver: 1 }], members: [['silver.highsociety']] });
     expect(memberCount(s, s.players[0])).toBe(2);
   });
-  it('Smooth Talker: your silver pays a member’s colored part', () => {
+  it('Smooth Talkers: your silver pays a member’s colored part', () => {
     const s = sc({ res: [{ silver: 9 }], members: [['silver.smoothtalker']], shop: ['red.patriarch'] });
     const uid = s.shop.find(u => s.cards[u].def === 'red.patriarch');
     expect(paymentPlan(s, s.players[0], uid).silver).toBeGreaterThan(0);
@@ -124,12 +124,12 @@ describe('Silver members', () => {
   it('Guest: another player’s gift gives +1 more, named', () => {
     const s = take(sc({ members: [[], ['silver.guest']] }), 'silver.toast');
     expect(S(s, 1)).toBe(2);
-    expect(named(s, 'Hanger-On')[0]).toMatch(/P2's Hanger-On: \+1 silver/);
+    expect(named(s, 'Hangers-On')[0]).toMatch(/P2's Hangers-On: \+1 silver/);
   });
   it('Guest × Kickback: Gold’s gift counts, named', () => {
     const s = move(take(sc({ members: [[], ['silver.guest']] }), 'gold.jv'), 'player:1');
     expect(s.players[1].res.gold).toBe(2);
-    expect(named(s, 'Hanger-On')).toHaveLength(1);
+    expect(named(s, 'Hangers-On')).toHaveLength(1);
   });
 
   it('Benefactor: round start +3 silver, a rival you pick +1; named', () => {
@@ -263,13 +263,13 @@ describe('Silver members', () => {
     expect(s.players[0].bonus).toBe(1);
   });
 
-  it('Debutante: once per game, double your silver and everyone else +2; named; a rival’s Guest gets 1 more', () => {
+  it('Debutantes: once per game, double your silver and everyone else +2; named; a rival’s Guest gets 1 more', () => {
     let s = sc({ res: [{ silver: 5 }], members: [['silver.gala'], ['silver.guest']] });
     s = take(s, 'gold.rush');
     s = move(s, `use:${uidOf(s, 'silver.gala', 0)}`);
     expect(S(s)).toBe(10);
     expect(S(s, 1)).toBe(3);
-    expect(named(s, 'Debutante')).toHaveLength(1);
+    expect(named(s, 'Debutantes')).toHaveLength(1);
   });
 
   it('Grand Host: Silver spaces give twice the silver, and the log says Grand Host did it', () => {

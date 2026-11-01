@@ -46,8 +46,8 @@ describe('panel words (w3)', () => {
     expect(ownSpace.verb).toBe('Copy an action');
     expect(ownSpace.second).toBe('with your minion');
     const allOwn = panelText('echo', { key: 'eternity' });
-    expect(allOwn.verb).toBe('Copy any 3 round I actions');
-    expect(allOwn.second).toBe('with a minion on them');
+    expect(allOwn.verb).toBe('Copy each member’s On Recruit'); // On Recruits, not actions, since Nov 1
+    expect(allOwn.second).toBe('yours, in any order');
     // Rival and own minions are distinct, as are the previous action and your own last action.
     expect(panelText('echo', { key: 'encore' }).second).toBe('of a rival’s member'); // Encore copies an On Recruit (Oct 28)
     expect(panelText('echo', { key: 'echo' }).verb).toBe('Copy previous action');
@@ -118,7 +118,7 @@ describe('panel words (w3)', () => {
   it('Spree prints its blue and says it is 3 buys (Name Drop, the live-payout space, left with Blue\'s Oct 20 rework)', () => {
     const a = quadrant('market').actions.find(x => x.key === 'spree');
     const t = panelText('market', a, 3);
-    expect([t.verb, t.second, t.note]).toEqual(['Recruit 3 times', 'this turn', '+3 blue']);
+    expect([t.verb, t.second, t.note]).toEqual(['Recruit 3 times', 'this turn', '+5 blue']); // +5 since Nov 1
   });
 
   it('"You\'d get" says the likely and the best case, or the best pick, or the mix, in numbers', () => {

@@ -57,35 +57,17 @@ describe('Green table action boundaries', () => {
     const s = go(scene({ round: 3 }), action);
     expect(R(s)).toEqual({ ...Z, green });
   });
-  it('Greatest Hits leaves Spree, a round III action, and copies the round I one (Cory, Nov 1)', () => {
-    let s = table(['gold', 'red', 'market', 'echo'], { round: 3, left: 8, shop: SHOP, queue: [0, 0, 0].map(p => ({ t: 'turn', p })) });
-    s = go(s, 'market.spree');
-    while (s.pending?.kind === 'buy') s = move(s, 'pass');
-    s = go(s, 'gold.rush');
-    const gold = R(s).gold;
+  // Greatest Hits copies On Recruits since Nov 1 (its round-I-only, click-order and rival-action checks went with its
+  // action copies). Stunt Double copied by it stays in its chain, so it can't run Greatest Hits again: seeded games
+  // looped forever on that.
+  it('Greatest Hits copying Stunt Double’s On Recruit does not run Greatest Hits again', () => {
+    let s = scene({ round: 3, turns: [0, 1], members: [['echo.hourglass', 'gold.seed']] });
     s = take(s, 'echo.eternity');
-    expect(R(s).gold).toBe(gold + 6);
-    expect(s.log.some(l => /copie[sd] Spree/.test(l))).toBe(false);
-  });
-  it('Greatest Hits copies in the order you click its spaces (Cory, Oct 26)', () => {
-    let s = scene({ round: 3, turns: [0, 0, 0, 0] });
-    s = go(s, 'gold.rush'); s = go(s, 'echo.chant'); s = go(s, 'red.turnout');
-    s = take(s, 'echo.eternity');
-    expect(s.pending.prompt).toBe('Greatest Hits: copy which next?');
-    expect(s.pending.options).toHaveLength(3);
-    s = chooseTarget(s, 'echo.chant');
-    expect(s.log.at(-1)).toMatch(/copied Build Up/);
-    expect(s.pending.options.map(o => o.value).sort()).toHaveLength(2);
-    s = chooseTarget(s, 'gold.rush');
-    expect(s.log.some(l => /copied Golden Years|copies Golden Years/.test(l))).toBe(true);
-  });
-  it('Greatest Hits copies a rival’s round I action too, never a center (Cory, Nov 1)', () => {
-    let s = scene({ round: 3, turns: [0, 1, 0, 0], res: [{ gold: 3 }] });
-    s = go(s, 'gold.strike'); s = go(s, 'echo.chant'); s = go(s, 'gold.rush');
-    s = take(s, 'echo.eternity');
-    expect(s.pending.options.map(o => o.label.split(' (')[0]).sort()).toEqual(['Build Up', 'Golden Years']);
-    s = pass(play(s, target('echo.chant')));
-    expect(R(s)).toEqual({ ...Z, gold: 18, green: 6 });
+    let steps = 0;
+    while (s.pending?.kind === 'choose' && s.pending.player === 0 && steps++ < 10) s = move(s, s.pending.options[0].id);
+    expect(steps).toBeLessThan(10);
+    expect(s.log.filter(l => /copies .*On Recruit/.test(l))).toHaveLength(2);
+    expect(s.log.some(l => /copies Greatest Hits/.test(l))).toBe(false);
   });
   it('the original owner’s passive bonuses never enter the chip', () => {
     let s = scene({ turns: [1, 0], res: [{ gold: 9 }], members: [[], ['gold.prospector', 'gold.underdog']] });

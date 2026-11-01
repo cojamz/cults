@@ -41,13 +41,17 @@ describe('new Red member hooks', () => {
     expect(p.res.green).toBe(2);
   });
 
-  it('Recruiter pays for an active take from a rival, but not a gift', () => {
-    const s = fixture({ members: [['red.recruiter'], ['red.volunteer', 'red.twins']] });
-    const c = contextFor(s), [p, other] = s.players;
+  it('Recruiter: +2 red whenever a member leaves a rival’s cult (taken or given), never its holder’s own', () => {
+    const s = fixture({ n: 3, members: [['red.recruiter', 'red.intern'], ['red.volunteer', 'red.twins'], ['gold.banker']] });
+    const c = contextFor(s), [p, other, third] = s.players;
     c.steal(p, other, { uid: uidIn(s, 'red.volunteer', 1) });
-    expect(p.res.red).toBe(1);
+    expect(p.res.red).toBe(2);
     c.moveMember(uidIn(s, 'red.twins', 1), other, p);
-    expect(p.res.red).toBe(1);
+    expect(p.res.red).toBe(4);
+    c.steal(other, third, { uid: uidIn(s, 'gold.banker', 2) }); // between two rivals
+    expect(p.res.red).toBe(6);
+    c.steal(other, p, { uid: uidIn(s, 'red.intern', 0) }); // its holder's own member
+    expect(p.res.red).toBe(6);
   });
 
   it('movement penalty applies once per rival outgoing card, never own or same-container movement', () => {

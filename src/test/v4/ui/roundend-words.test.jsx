@@ -98,7 +98,7 @@ describe('round summary and results (live panel r1)', () => {
     expect(fr).toBeTruthy();
     info.after.players[first].members.push(fr.uid);
     const { container } = render(<RoundEnd info={info} onNext={() => {}} autoMs={0} />);
-    expect(container.querySelector('[data-first-pick]').textContent).toMatch(/picks? first: (they|you) have Front-runner, a member who always picks first/);
+    expect(container.querySelector('[data-first-pick]').textContent).toMatch(/picks? first: (they|you) have Line Cutters, a member who always picks first/);
     expect(container.querySelector('[data-round-news]').textContent).toMatch(/middle ring opens/);
   });
 

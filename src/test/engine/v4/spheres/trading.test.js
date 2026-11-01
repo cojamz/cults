@@ -257,7 +257,7 @@ describe('White members', () => {
     expect([R(s).white, B(s)]).toEqual([0, 3]); // paid 2 white, the other 3 turned
     let k = scene({ res: [{ white: 6 }], members: [['trading.changer']], shop: ['trading.cashier'], ...buyTurn });
     k = move(k, pick(k, 'trading.cashier', 'shop'));
-    expect([R(k).white, B(k)]).toEqual([2, 4]); // Money Changers: +2 white (Nov 1 balance) after the turning
+    expect([R(k).white, B(k)]).toEqual([0, 4]); // the turning is no follower buy: Money Changers stays quiet (Nov 1)
     let none = scene({ res: [{ white: 2 }], shop: ['trading.cashier'], ...buyTurn });
     none = move(none, pick(none, 'trading.cashier', 'shop'));
     expect([R(none).white, B(none)]).toEqual([0, 0]);
@@ -281,19 +281,22 @@ describe('White members', () => {
     expect([R(s).white, B(s)]).toEqual([3, 2]);
   });
 
-  it('Money Changers: whenever you turn resources or members into followers, +1 white (once per turning)', () => {
+  it('Money Changers: whenever any player buys followers, +1 white; turning things into followers is no buy', () => {
     const bk = 'trading.changer';
-    let s = take(scene({ round: 3, res: [{ red: 3 }], members: [[bk]] }), 'trading.exchange');
+    let s = scene({ res: [{ gold: 5 }], members: [[], [bk]], ...buyTurn });
+    s = move(s, 'tier:mid');
+    expect([B(s), R(s, 1).white]).toEqual([5, 1]);
+    s = scene({ res: [{ gold: 1 }], members: [[bk]], ...buyTurn });
+    s = move(s, 'tier:small');
+    expect([B(s), R(s).white]).toEqual([1, 1]);
+    s = take(scene({ round: 3, res: [{ red: 3 }], members: [[bk]] }), 'trading.exchange');
     s = move(move(move(s, 'color:red'), 'color:red'), 'color:red');
-    expect([B(s), R(s).white]).toEqual([6, 3]); // +1 space, +2 Money Changers once (Nov 1 balance)
+    expect([B(s), R(s).white]).toEqual([6, 1]); // +1 space only
     s = take(scene({ round: 3, res: [{ white: 4 }], members: [[bk]] }), 'trading.cashin');
-    expect([B(s), R(s).white]).toEqual([4, 3]);
+    expect([B(s), R(s).white]).toEqual([4, 1]);
     s = take(scene({ round: 2, members: [[bk, 'red.twins']] }), 'trading.farewell');
     s = move(s, `card:${uidOf(s, 'red.twins', 0)}`);
-    expect([B(s), R(s).white]).toEqual([2, 3]);
-    s = take(scene({ round: 2, members: [[bk, 'red.twins']] }), 'trading.estatesale');
-    s = move(s, `card:${uidOf(s, 'red.twins', 0)}`);
-    expect(R(s).white).toBe(3); // turned into white, not followers: no Money Changers
+    expect([B(s), R(s).white]).toEqual([2, 1]);
   });
 
   it('Appraiser: once per game, get rid of a member for followers or white equal to its cost', () => {

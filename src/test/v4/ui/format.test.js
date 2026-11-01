@@ -431,7 +431,7 @@ describe('v4 format helpers', () => {
     const s = createGame({ seats, seed: 5 });
     const uid = Object.keys(s.cards).map(Number).find(u => s.cards[u].def === 'benders.frontrunner');
     const at = (round, members) => ({ ...s, round, players: s.players.map((p, i) => (i === 1 ? { ...p, members } : p)) });
-    if (uid != null) expect(firstPickWhy(at(2, [uid]), 1)).toBe('Front-runner');
+    if (uid != null) expect(firstPickWhy(at(2, [uid]), 1)).toBe('Line Cutters');
     expect(firstPickWhy(at(2, []), 1)).toBe('fewest followers');
     expect(firstPickWhy(at(1, []), 1)).toBeNull();
   });

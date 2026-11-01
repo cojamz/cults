@@ -1253,6 +1253,7 @@ function swapMembers(state, actor, aUid, bUid) {
   // a member arriving in a cult joins the end of its row, oldest to newest (Cory, 2026-10-22); the shop keeps its slot
   for (const [uid, dest] of [[bUid, a], [aUid, b]]) if (dest.owner) dest.list.push(uid); else dest.list.splice(dest.index, 0, uid);
   for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner) memberMoved(state, actor, uid, from.owner, to.owner || null, movedHooks);
+  for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner && to.owner && from.owner !== to.owner) cultMove(state, uid, from.owner, to.owner);
   // A member swapped into the shop goes back wiped clean, as a released one does (no old owner's copy or flags).
   for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner && !to.owner) state.cards[uid] = { uid, def: state.cards[uid].def };
   for (const [uid, dest] of [[bUid, a], [aUid, b]]) if (dest.owner) {
@@ -1564,6 +1565,11 @@ function releaseNow(state, p, uid) {
 }
 // A member leaves its owner (stolen, swapped, released, traded in): its onLeave hooks settle what it held for them
 // (Investor's set-aside gold goes back to the owner, not doubled).
+/** A member moved from one cult to another (a steal, a rival swap, Poach): every member's onCultMove hears it (Recruiter). */
+function cultMove(state, uid, from, to) {
+  const ctx = ctxFor(state);
+  eachMember(state, (owner, card, def) => { if (def.onCultMove) def.onCultMove(ctx, owner, wrap(state, card), { uid, from, to }); }, ['onCultMove']);
+}
 function cardLeaves(state, p, uid) {
   const card = state.cards[uid], ctx = ctxFor(state);
   for (const def of effectiveDefs(card)) if (def.onLeave) def.onLeave(ctx, p, wrap(state, card));
@@ -1668,6 +1674,7 @@ function ctxFor(state) {
       from.members.splice(from.members.indexOf(uid), 1);
       to.members.push(uid);
       memberMoved(state, actor, uid, from, to, movedHooks);
+      cultMove(state, uid, from, to);
       if (activelyAcquired) memberAcquired(state, to, uid, { stolen: true });
       memberJoined(state, to, uid);
       return true;

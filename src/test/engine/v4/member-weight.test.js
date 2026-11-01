@@ -65,7 +65,7 @@ describe('A member counts as many members as its followers (Cory, 2026-11-01: "m
     expect(s.players[0].turnRecruits).toBe(4);
     expect(s.recruits).toBe(4);
     expect(s.log.filter(l => l.includes('Pied Piper: +2 red'))).toHaveLength(1);
-    // Big Family cost 6 (Oct 29): +2 from Piper and +1 from Recruiter, not one hook per person.
-    expect(s.players[0].res.red).toBe(17);
+    // Big Family cost 6 (Oct 29): +2 from Piper, not one hook per person; Recruiter quiet (nothing left a rival's cult, Nov 1)
+    expect(s.players[0].res.red).toBe(16);
   });
 });

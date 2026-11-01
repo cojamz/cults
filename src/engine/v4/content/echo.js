@@ -354,6 +354,25 @@ function rivalRecruits(ctx, p) {
       && !/\bit\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
 }
 
+// Greatest Hits: your members with an On Recruit (or a now-and-round-start effect, as Encore reads it).
+const recruitDef = c => (c.copy ? defById(c.copy) : c.def);
+function ownRecruits(ctx, p) {
+  return ctx.membersOf(p).filter(c => { const d = recruitDef(c); return !d.artifact && (d.onRecruited || (d.now && (d.onRoundStart || d.onRoundStartLate))); });
+}
+// Greatest Hits is a chain like any copy: an On Recruit it copies (Stunt Double's "copy the action you just took") stays
+// in that chain, so it can't copy Greatest Hits again (that looped forever in seeded games, Nov 1).
+const hitsKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => x.name === 'Greatest Hits').map(x => actionKey(x.key));
+let hitsChain = false;
+function hitsStep(ctx, p, left) {
+  const mine = left.filter(u => ctx.ownerOf(u)?.id === p.id);
+  if (!mine.length) return;
+  if (mine.length === 1) { ctx.defer(p, 'echo.hitsDo', { uid: mine[0] }); return; }
+  ctx.choose(p, `Greatest Hits: copy which member's On Recruit first? (${mine.length} to go)`, mine.map(u => {
+    const c = ctx.card(u), d = recruitDef(c);
+    return { id: `card:${u}`, label: `${d.name}: ${d.text}`, kind: 'card', value: u, hint: 2 + (d.f || 0) };
+  }), 'echo.hitsPick', { left: mine });
+}
+
 // ---------- the quadrant ----------
 const echoQ = {
   id: 'echo',
@@ -413,11 +432,16 @@ const echoQ = {
       },
     },
     {
-      key: 'eternity', ring: 3, name: 'Greatest Hits', echo: true, text: 'Copy any 3 round I actions with a minion on them. +1 green.', // was every action with your minion (Cory, Nov 1)
-      estimate: (ctx, p) => VARIANT.plus + hitsPlan(ctx, p).take.map(e => entryValue(ctx, e, p)).sort((a, b) => b - a).slice(0, HITS).reduce((s, v) => s + v, 0),
+      // Cory, Nov 1 morning: "maybe we try copying all your members On Recruit in any order" (was "Copy any 3 round I
+      // actions with a minion on them", +41 in the balance runs). Your own members, so a self-acting On Recruit
+      // works on that card; a copied member (Doppelganger, Impostors) does the On Recruit of what it copies.
+      key: 'eternity', ring: 3, name: 'Greatest Hits', text: 'Copy the On Recruit of each of your members, in any order. +1 green.', copyDoesIt: true,
+      estimate: (ctx, p) => VARIANT.plus + 3 * ownRecruits(ctx, p).length,
       resolve(ctx, p) {
         plus(ctx, p);
-        copyHits(ctx, p, ledger(ctx.state).open, 'Greatest Hits');
+        const list = ownRecruits(ctx, p);
+        if (!list.length) { ctx.log(`${p.name}: none of their members has an On Recruit to copy.`); return; }
+        withPath(ctx, [...new Set([...pathNow(ctx), ...hitsKeys(ctx)])], () => hitsStep(ctx, p, list.map(c => c.uid)));
       },
     },
   ],
@@ -427,6 +451,22 @@ const echoQ = {
       const leader = ctx.player(id);
       const card = ctx.card(data.uid);
       if (!copyLeader(ctx, p, leader) && card) card.used = false;
+    },
+    hitsPick(ctx, p, uid, data) {
+      ctx.defer(p, 'echo.hitsDo', { uid });
+      ctx.defer(p, 'echo.hitsNext', { left: data.left.filter(u => u !== uid) });
+    },
+    hitsNext(ctx, p, _, data) { hitsStep(ctx, p, data.left); },
+    hitsDo(ctx, p, _, data) {
+      const c = ctx.card(data.uid);
+      if (!c || ctx.ownerOf(data.uid)?.id !== p.id) { ctx.log(`${p.name}: that member left their cult.`); return; }
+      const d = recruitDef(c);
+      ctx.log(`${p.name} copies ${d.name}'s On Recruit.`);
+      hitsChain = true;
+      try {
+        if (d.onRecruited) ctx.recruitAbility(p, c, d, () => d.onRecruited(ctx, p, c));
+        if (d.now) for (const hook of ['onRoundStart', 'onRoundStartLate']) if (d[hook]) ctx.recruitAbility(p, c, d, () => d[hook](ctx, p, c));
+      } finally { hitsChain = false; }
     },
     encoreCopy(ctx, p, uid) {
       const o = ctx.ownerOf(uid);
@@ -554,8 +594,9 @@ const echoQ = {
           ctx.log(`${owner.name}'s Stunt Double has nothing to copy.`);
           return;
         }
-        // A recruited member begins its own chain, even when an action recruited it for free.
-        withPath(ctx, [], () => copy(ctx, owner, e, { by: 'Stunt Double' }), e.key);
+        // A recruited member begins its own chain, even when an action recruited it for free; copied by Greatest Hits,
+        // it stays in Greatest Hits' chain.
+        withPath(ctx, hitsChain ? pathNow(ctx) : [], () => copy(ctx, owner, e, { by: 'Stunt Double' }), hitsChain ? undefined : e.key);
       },
     }),
     // Cory, 2026-10-28: "lets shift tribute band into this", then "should maybe get to pick the rival they copy"

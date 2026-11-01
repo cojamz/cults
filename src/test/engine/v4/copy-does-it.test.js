@@ -70,7 +70,9 @@ describe('Stunt Double (Cory’s playtest, Oct 23)', () => {
   });
 });
 
-describe('Greatest Hits copying turn spaces (Cory’s playtest, Oct 23)', () => {
+// Greatest Hits copies On Recruits since Nov 1, so the turn-space copies are checked through Reprise, which still copies
+// an action with your minion (Sleep In's copy is checked through Echo above; Crunch Time's round-I limit was Greatest Hits only).
+describe('Reprise copying turn spaces (Cory’s playtest, Oct 23)', () => {
   const after = (sp) => {
     const rich = { purple: 9, green: 9, gold: 9, red: 9 };
     let s = sceneQ({ quadrants: ['purple', 'echo', 'gold', 'red'], n: 2, round: 3, res: [rich, rich], queue: [0, 1, 0, 1, 0, 1].map(p => ({ t: 'turn', p })).concat({ t: 'allPlaced' }) });
@@ -81,7 +83,10 @@ describe('Greatest Hits copying turn spaces (Cory’s playtest, Oct 23)', () => 
       s = passBuys(settle(move(s, o.id)));
     }
     const n = s.log.length;
-    s = passBuys(settle(take(s, 'echo.eternity')));
+    s = take(s, 'echo.refrain');
+    const pick = s.pending?.options?.find(o => /Right Away/.test(o.label || ''));
+    if (pick && s.pending.kind !== 'place') s = move(s, pick.id);
+    s = passBuys(settle(s));
     return { s, log: s.log.slice(n) };
   };
   it('Right Away: the copy gives its turn too', () => {
@@ -89,13 +94,5 @@ describe('Greatest Hits copying turn spaces (Cory’s playtest, Oct 23)', () => 
     expect(log).toContain('P1 copies Right Away: doing it again.');
     expect(log).toContain("P1's Right Away: P1 takes their next turn now.");
     expect(s.pending.player).toBe(0);
-  });
-  it('Crunch Time is a round II action: Greatest Hits leaves it (Cory, Nov 1: round I actions only)', () => {
-    const { log } = after('purple.rally');
-    expect(log.some(l => /Crunch Time/.test(l))).toBe(false);
-  });
-  it('Sleep In: the copy skips your next turn', () => {
-    const { log } = after('purple.skip');
-    expect(log).toContain("P1's Sleep In: P1 skips their next turn.");
   });
 });

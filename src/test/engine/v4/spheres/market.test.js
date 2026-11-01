@@ -126,9 +126,9 @@ describe('Blue actions', () => {
     s = move(s, card(s, 'gold.midas')); // 5
     expect(R(s).blue).toBe(2 + 1);
   });
-  it('Spree (ring III): +3 blue and three buys this turn', () => {
+  it('Spree (ring III): +5 blue and three buys this turn', () => {
     let s = take(scene({ round: 3, res: [{ red: 10, gold: 8, green: 8 }], shop: CHEAP }), 'market.spree');
-    expect(R(s).blue).toBe(3);
+    expect(R(s).blue).toBe(5); // +5 since Nov 1
     s = move(s, card(s, 'red.intern'));
     expect(s.pending.kind).toBe('buy');
     s = move(s, 'tier:mid');
@@ -171,19 +171,19 @@ describe('Blue members', () => {
   it('Connoisseurs: whenever you recruit a blue member, +1 blue', () => {
     let s = take(scene({ round: 2, res: [{ gold: 9, blue: 1 }], members: [['market.connoisseur']], shop: ['market.recluse', ...SHOP.slice(0, 5)] }), 'market.clearance');
     s = move(s, card(s, 'market.recluse'));
-    expect(R(s).gold).toBe(8); // the 1 blue held and Recruit Twice's 1 pay Recluse's blue part, 1 gold the rest
-    expect(R(s).blue).toBe(2 - 2 + 1);
+    expect(R(s).gold).toBe(9); // the 1 blue held and Recruit Twice's 3 (since Nov 1) pay Recluse in blue, no gold
+    expect(R(s).blue).toBe(4 - 3 + 1);
     let t = take(scene({ round: 2, res: [{ red: 9 }], members: [['market.connoisseur']], shop: CHEAP }), 'market.clearance');
     t = move(t, card(t, 'red.twins'));
-    // Recruit Twice's 1 blue is kept (Blue scores held blue since Oct 20, like Red's held red), Twins is all red,
+    // Recruit Twice's 3 blue (since Nov 1) are kept (Blue scores held blue since Oct 20, like Red's held red), Twins is all red,
     // and no +1 comes back for a red member
-    expect(R(t)).toMatchObject({ red: 7, blue: 1 });
+    expect(R(t)).toMatchObject({ red: 7, blue: 3 });
   });
   it('Reseller: whenever you recruit, +1 of that member’s color', () => {
     let s = take(scene({ round: 2, res: [{ gold: 9 }], members: [['market.reseller']], shop: SHOP }), 'market.clearance');
     s = move(s, card(s, 'gold.tycoon'));
-    // Held-blue scoring keeps Recruit Twice's blue out of the default payment: 4 gold paid, Reseller's +1 gold back.
-    expect(R(s)).toEqual({ gold: 6, red: 0, blue: 1, green: 0 });
+    // Recruit Twice's 3 blue (since Nov 1): 1 blue and 3 gold pay Tycoon's 4, Reseller's +1 gold back.
+    expect(R(s)).toEqual({ gold: 7, red: 0, blue: 2, green: 0 });
   });
   it('Curator: round start, +1 blue per other blue member', () => {
     expect(R(start([['market.curator', 'market.stylist', 'market.planner', 'gold.midas']])).blue).toBe(2); // Stylist, Planner

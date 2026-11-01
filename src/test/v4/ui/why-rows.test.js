@@ -1,6 +1,6 @@
 // The hover's "Why" and "You'd get" rows tell the real payout (blind testers B and C):
 // - Grand Host's doubling is named, the biggest part of a Silver space's payout (Toast, Good Deed);
-// - a member that fires more than once in one branch says its sum (Greatest Hits: Impressionist +1 per copy);
+// - a member that fires more than once in one branch says its sum (a copy chain: Impressionist +1 per copy);
 // - a space whose gain is your pick (Out of Style: one color) says its best case as your pick.
 import { describe, it, expect } from 'vitest';
 import { previewSpace } from '../../../engine/v4/index.js';
@@ -16,16 +16,17 @@ describe('Why rows', () => {
     const p = pv(s, 'silver.toast');
     expect(p.reasons).toContain('Grand Host: silver gain 9 → 18');
   });
-  it('Greatest Hits: Impressionist fired once per copy says its sum', () => {
-    let s = sceneQ({ quadrants: ['gold', 'echo', 'red', 'market'], round: 3, left: 5, members: [['echo.tuningfork']],
-      queue: [0, 1, 0, 1, 0].map(p => ({ t: 'turn', p })) });
+  // Greatest Hits copies On Recruits since Nov 1; a copy chain still fires Impressionist more than once: Echo copies
+  // your Reprise (green), which copies Golden Years again (gold).
+  it('Echo of a Reprise: Impressionist fired once per copy says its sum', () => {
+    let s = sceneQ({ quadrants: ['gold', 'echo', 'red', 'market'], round: 2, left: 5, members: [['echo.tuningfork']],
+      queue: [0, 0, 0].map(p => ({ t: 'turn', p })) });
     s = take(s, 'gold.rush'); while (s.pending?.kind === 'buy') s = move(s, 'pass');
-    s = take(s, 'red.turnout'); while (s.pending?.kind === 'buy') s = move(s, 'pass');
-    s = take(s, 'gold.windfall'); while (s.pending?.kind === 'buy') s = move(s, 'pass');
-    s = take(s, 'market.clearance'); while (s.pending?.kind === 'buy') s = move(s, 'pass');
-    const p = pv(s, 'echo.eternity');
+    s = take(s, 'echo.refrain'); while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
+    while (s.pending?.kind === 'buy') s = move(s, 'pass');
+    const p = pv(s, 'echo.echo');
     const line = p.reasons.find(l => l.startsWith('Impressionist'));
-    expect(line).toBe('Impressionist: +1 gold, +1 red'); // round I copies only, a rival's Gather included (Cory, Nov 1)
+    expect(line).toBe('Impressionist: +1 green, +1 gold');
   });
 });
 

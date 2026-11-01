@@ -257,7 +257,7 @@ const silver = {
   },
 
   members: [
-    m('guest', 'Hanger-On', 4, 4, 'Whenever a rival gives you something, +1 more of it.', {
+    m('guest', 'Hangers-On', 4, 4, 'Whenever a rival gives you something, +1 more of it.', { f: 2, n: 2, // worth 2 (Cory, Nov 1)
       onGiven(ctx, owner, card, giver, color) { if (giver !== owner) ctx.gain(owner, color, 1); },
     }),
     m('benefactor', 'Benefactor', 4, 2, 'On Recruit: +3 silver, and +1 silver to a rival you choose. Round Start: +3 silver, and +1 silver to a rival you choose.', { now: true,
@@ -318,18 +318,18 @@ const silver = {
     m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', {
       afterAction(ctx, owner, card, qid) { if (qid === S) owner.bonus += 1; },
     }),
-    m('gala', 'Debutante', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', {
+    m('gala', 'Debutantes', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, // worth 2 (Cory, Nov 1)
       activate: 'game',
       onActivate(ctx, owner) {
         ctx.gain(owner, S, owner.res[S]);
         giveAll(ctx, owner, S, 2);
-        ctx.log(`${owner.name}'s Debutante: silver doubled to ${owner.res[S]}, +2 silver to everyone else.`);
+        ctx.log(`${owner.name}'s Debutantes: silver doubled to ${owner.res[S]}, +2 silver to everyone else.`);
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 && owner.res[S] >= 6,
     }),
     m('dowager', 'Dowager', 2, 2, 'Worth 3 followers.', { f: 3 }),
     // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
-    m('smoothtalker', 'Smooth Talker', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true }),
+    m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2 }), // worth 2 (Cory, Nov 1)
     m('philanthropists', 'Philanthropists', 3, 2, 'On Recruit: rivals gain up to 4 silver, split as you choose. +1 follower for each.', {
       onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropists', max: 4, per: 1 }); },
     }),
@@ -351,7 +351,7 @@ const silver = {
         ctx.log(`${owner.name}'s Collector: +1 silver (${by.name} paid silver).`);
       },
     }),
-    m('debtcollector', 'Debt Collector', 4, 3, 'On Use, once per game: each rival gives you 2 silver, if they have it.', {
+    m('debtcollector', 'Debt Collectors', 4, 3, 'On Use, once per game: each rival gives you 2 silver, if they have it.', { f: 2, n: 2, // worth 2 (Cory, Nov 1)
       activate: 'game',
       onActivate(ctx, owner) {
         let n = 0;

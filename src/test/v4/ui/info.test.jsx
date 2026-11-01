@@ -241,7 +241,7 @@ it('glossary matches confirmed member quantity, protection and recruit rules', (
   expect(term('member').def).toContain('is worth that many followers');
   expect(term('member').def).toContain('Bonus followers never add members');
   expect(term('colorless').def).not.toContain('one of your members');
-  expect(term('steal').def).toContain('stops steals and Poach on you until round end');
+  expect(term('steal').def).toContain('Lie Low stops steals and Poach on you until round end'); // Lie Low (Cory, Nov 1)
   expect(term('when recruited').def).toContain('paid or free');
   expect(term('when recruited').def).toContain('recruit, take or swap');
   expect(term('when recruited').def).toContain('Being given a member does not trigger it, and a rival moving it into your cult doesn’t either.');

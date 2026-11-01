@@ -12,10 +12,10 @@ export default {
   actions: [
     {
       // Cory, 2026-10-27: replaces Even Swap ("nobody has members initially"). Name and the +2 are Claude's fill-ins.
-      key: 'evenswap', ring: 1, name: 'Tryout', text: 'Use the On Recruit effect of a shop member; it stays in the shop. +1 red.', copyDoesIt: true,
-      estimate: ctx => 1 + (borrowable(ctx).length ? 2 : 0),
+      key: 'evenswap', ring: 1, name: 'Tryout', text: 'Use the On Recruit effect of a shop member; it stays in the shop. +2 red.', copyDoesIt: true, // +2 (Cory, Nov 1)
+      estimate: ctx => 2 + (borrowable(ctx).length ? 2 : 0),
       resolve(ctx, p) {
-        ctx.gain(p, 'red', 1, { fromAction: true });
+        ctx.gain(p, 'red', 2, { fromAction: true });
         const list = borrowable(ctx);
         if (!list.length) { ctx.log(`${p.name}: no shop member has an On Recruit effect.`); return; }
         ctx.choose(p, 'Tryout: use which shop member’s On Recruit?', list.map(c => ({
@@ -116,11 +116,9 @@ export default {
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'red'),
     }),
     // members only, never a follower buy (Cory, 2026-10-29: "red recruit should only work for gaining members")
-    m('recruiter', 'Recruiter', 4, 1, 'Whenever you recruit a member, +1 of its color.', { // Cory, Oct 30: a guest has no color, so nothing
-      onRecruit(ctx, owner, card, by, what) {
-        if (by !== owner || !what.member || what.member.uid === card.uid) return;
-        gainColorOf(ctx, owner, ctx.defOf(what.member), 'Recruiter');
-      },
+    // Cory, Nov 1: artifacts fire on any player's move ("doesn't the anarchist do this too? … let's try it at +2")
+    m('recruiter', 'Recruiter', 4, 1, 'Whenever a member leaves a rival’s cult, +2 red.', {
+      onCultMove(ctx, owner, card, { from }) { if (from !== owner) { ctx.gain(owner, 'red', 2); ctx.log(`${owner.name}'s Recruiter: +2 red.`); } },
     }),
     m('drive', 'Pied Piper', 2, 2, 'Whenever you recruit 2 or more members in one turn, +2 red.', {
       // pays the moment your second recruit of the turn lands, so the red can still be spent this turn
