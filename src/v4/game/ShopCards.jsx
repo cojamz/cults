@@ -5,7 +5,7 @@
 // as a sheet with Recruit (reading a card never recruits it); with a mouse a click on an affordable card recruits.
 import { breakable } from './hyphen.js';
 import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { cardDef, paymentPlan, followerChoices, TIERS, tierLeft, quadrant, pileReach } from '../../engine/v4/index.js';
+import { cardDef, paymentPlan, followerChoices, TIERS, tierLeft, quadrant, pileReach, joinsRound, roman } from '../../engine/v4/index.js';
 import { costParts } from '../format.js';
 import { Sprite } from '../art/Sprite.jsx';
 import { spriteId } from '../art/index.js';
@@ -21,6 +21,7 @@ import './lamp-b.css';
 import './member-pick.css';
 import './shop.css'; // live panel r1 (G2): the deck, the struck price and the worth
 import './card-header.css'; // the trading-card face (Cory, Oct 29)
+import './piles.css'; // piles (rules.shop grey or all): the stack under a pile's top card, piles still to open
 
 // a name on the card's bar: one line, a size down when it's long, two lines only past that (never broken mid-word)
 export const nameFit = name => (name.length > 15 && name.includes(' ') ? { 'data-wide': '' } : name.length > 10 || name.split(' ').some(w => w.length >= 10) ? { 'data-long': '' } : {});
@@ -162,6 +163,10 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
     : pileTop.length ? { uids: pileTop, placed: pileTop.length, ordering: false } : null;
   const uids = tray || (pileRow ? row : [...new Set([...row, ...pileTop, ...peekTop])]);
   const extra = !tray && !pileRow && (pileTop.length + peekTop.length) > 0;
+  // all piles (rules.shop 'all'): the whole shop is the ten piles, so every pile keeps its place on the table all game, as
+  // a dealt pile would on a real table: one that opens in a later round waits face up, marked with its round, and an
+  // emptied pile stays as a gap with its name (Cory, 2026-11-01: "you'll have to figure out the UI here a little bit")
+  const ghosts = state.supply && state.rules?.piles?.only && !tray && !pileRow ? pileGhosts(state) : [];
   const memberPick = picking && uids.some(uid => optionFor(`card:${uid}`));
   // Show abilities for a first member choice, but a reader's explicit preference always wins, in every phase.
   const detailed = view === 'details' || (view === null && memberPick);
@@ -234,7 +239,7 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
       {/* one header line: the members' title and the sort; the follower buys stand beside the cards, as findable */}
       <div className="lt-shop-head">
         {/* a discount is said once, here, beside the struck prices (w4 A#23: its sentence was on all ten hovers) */}
-        <h3 className="lt-h">{tray ? 'Top of the pile' : 'Shop'}<small>{tray ? `${tray.filter(u => optionFor(`card:${u}`)).length} you can pay for` : peeking ? 'Put the top of the pile in order' : discount > 0 ? <Tip label="Discount sources" content={<p>{discountWhy(state, viewer)}.</p>}><span data-shop-discount>{viewer.discount ? 'your next one' : 'your members'} {discount} less</span></Tip> : buying && affordable ? `${affordable} member${affordable === 1 ? '' : 's'} affordable` : `${state.shop.length} members`}</small></h3>
+        <h3 className="lt-h">{tray ? 'Top of the pile' : 'Shop'}<small>{tray ? `${tray.filter(u => optionFor(`card:${u}`)).length} you can pay for` : peeking ? 'Put the top of the pile in order' : discount > 0 ? <Tip label="Discount sources" content={<p>{discountWhy(state, viewer)}.</p>}><span data-shop-discount>{viewer.discount ? 'your next one' : 'your members'} {discount} less</span></Tip> : buying && affordable ? `${affordable} member${affordable === 1 ? '' : 's'} affordable` : ghosts.length || (state.supply && state.rules?.piles?.only) ? `${state.shop.length} pile${state.shop.length === 1 ? '' : 's'} open` : `${state.shop.length} members`}</small></h3>
         <span className="lt-shop-controls">
           {viewer && <button type="button" className="lt-view-btn" aria-label="Fade members you can't afford" title="Fade members you can't afford right now" aria-pressed={fade} onClick={toggleFade}>affordable</button>}
           <button type="button" className="lt-view-btn" aria-label="Show member abilities" aria-pressed={detailed} onClick={toggleView}>details</button>
@@ -244,7 +249,7 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
         </span>
       </div>
       <div className="lt-shop-body">
-      <div className="lt-cards" data-n={uids.length} ref={rowRef}>
+      <div className="lt-cards" data-n={uids.length + ghosts.length} ref={rowRef}>
       <MemberDeck state={state} deckRef={deckRef} />
       <FollowerRates state={state} me={me} optionFor={optionFor} onPick={onPick} onDenied={onDenied} buying={buying || picking} />
         {uids.map(uid => {
@@ -266,6 +271,8 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
           const fromPile = !state.shop.includes(uid);
           // a pile (rules.shop grey or all): how many copies are left, this one included
           const stack = state.supply && state.supply[d.id] && state.shop.includes(uid) ? state.supply[d.id].length + 1 : 0;
+          // the copies under it show as card edges, as the deck's do: two for three or more, one for two, none for the last
+          const edges = stack >= 3 ? 2 : stack === 2 ? 1 : 0;
           const color = cardColor(state, d), ground = cardGround(state, d), sphere = sphereOf(state, d);
           const sig = [d.id, d.name, d.f, d.n, d.text, optId ?? '', dim ? 1 : 0, looking ? 1 : 0, lit ? 1 : 0, short ? 1 : 0, buying || picking ? 1 : 0, JSON.stringify(parts), JSON.stringify(paid), fromPile ? 1 : 0, stack, tray ? 1 : 0, detailed ? 1 : 0, state.round, color, ground, sphere].join('|');
           const had = built.current.get(uid);
@@ -275,7 +282,8 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
               key={uid} type="button" data-uid={uid} data-option={opt ? opt.id : undefined}
               className={`card lt-card paper${opt ? ' can' : ''}${dim ? ((buying || picking) && !looking ? ' recede' : ' dim') : ''}${lit ? ' lit' : ''}`}
               style={{ '--q': color }} data-ground={ground} aria-disabled={!opt} data-unaffordable={short || undefined}
-              aria-label={`${d.name}, ${timingOf(d)}, worth ${d.f}, costs ${parts.map(c => `${c.n} ${c.color}`).join(' + ') || 'nothing'}`}
+              data-stack={stack || undefined} data-stack-edges={stack ? edges : undefined}
+              aria-label={`${d.name}, ${timingOf(d)}, worth ${d.f}, costs ${parts.map(c => `${c.n} ${c.color}`).join(' + ') || 'nothing'}${stack ? `, a pile of ${stack}` : ''}`}
               data-hint={`${d.name} · worth ${d.f} · ${d.text}`}
               {...cardHandlers(refs, uid, d.name, optId)}
             >
@@ -293,7 +301,6 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
                 {/* no "need N" on the face (Cory: "the shouting 'need N' goes"): what you can't afford is the card fading */}
                 {/* works from round II on (Cory, 2026-10-22: "a better way to denote round II/round III only"): a corner tag, not words */}
                 {d.from > 1 && <span className="lt-round-tag" data-round-tag="" title="Works from round II on">II+</span>}
-                {stack > 0 && <span className="lt-stack num" data-stack={stack} title={`A pile: ${stack} cop${stack === 1 ? 'y' : 'ies'} left`}>×{stack}</span>}
                 {fromPile && !tray && <span className="need from-pile" title="From the top of the pile">pile</span>}
               </span>
               {/* a rule that grows by round reads by round, this round lit, as in every hover (RuleText; compact on the small card) */}
@@ -306,11 +313,31 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
                     <CostShapes parts={paid} />
                   </span>
                 ) : <CostShapes parts={parts} />}
+                {/* how many are left in the pile, this one included: plain ink at the foot's end, never a badge on the art */}
+                {stack > 0 && <span className="lt-pile-left num" data-stack={stack} title={stack === 1 ? 'The last one in this pile' : `${stack} left in this pile`}>×{stack}</span>}
               </span>
             </button>
           );
           built.current.set(uid, { sig, el });
           return <Kept key={uid} el={el} />;
+        })}
+        {ghosts.map(g => {
+          const d = cardDef(state, g.uid), color = cardColor(state, d), ground = cardGround(state, d), sphere = sphereOf(state, d);
+          const word = g.round ? `Round ${roman(g.round)}` : 'All taken';
+          return (
+            <span key={`ghost:${d.id}`} className="card lt-card paper lt-pile-ghost" data-pile-ghost={g.round ? 'later' : 'gone'} data-def={d.id}
+              style={{ '--q': color }} data-ground={ground} aria-label={`${d.name}: ${g.round ? `a pile that opens in round ${roman(g.round)}` : 'every copy has been recruited'}`}
+              data-hint={`${d.name} · worth ${d.f} · ${d.text}`} {...cardHandlers(refs, g.uid, d.name, null)}>
+              <span className="lt-hd">
+                <span className="lt-corner-cost num" aria-hidden="true">{costParts(d, state.resources).reduce((t, c) => t + c.n, 0)}</span>
+                <WorthTag d={d} sphere={sphere} />
+                <span className="nm" {...nameFit(d.name)}>{d.name}</span>
+              </span>
+              <span className="art">{g.round ? <Sprite id={[d.id, spriteId(d.name)]} kind="member" sphere={sphere} size={48} /> : null}</span>
+              {detailed && g.round ? <span className="lt-pick-ability"><RuleText def={d} round={state.round} plain compact /></span> : null}
+              <span className="ft"><span className="lt-ghost-word">{word}</span></span>
+            </span>
+          );
         })}
       </div>
       </div>
@@ -319,6 +346,21 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
       {pileRow && <PileRow state={state} viewer={viewer} row={pileRow} optionFor={optionFor} onPick={onPick} hover={hover} />}
     </section>
   );
+}
+
+/** All piles: the dealt piles with no copy face up now, in deal order: one that opens later ({ uid, round }) or one
+ *  every copy of which has been recruited ({ uid, round: 0 }). uid is a copy of it, for its hover. */
+export function pileGhosts(state) {
+  const up = new Set(state.shop.map(u => state.cards[u]?.def));
+  const out = [];
+  for (const id of state.rules?.piles?.defs || []) {
+    if (up.has(id) || !state.supply[id]) continue;
+    const uid = state.supply[id][0] ?? Number(Object.keys(state.cards).find(u => state.cards[u].def === id));
+    if (uid === undefined || Number.isNaN(uid)) continue;
+    const r = joinsRound(state, cardDef(state, uid));
+    out.push({ uid, round: r > Math.max(1, state.round) ? r : 0 });
+  }
+  return out;
 }
 
 const NTH = ['1st', '2nd', '3rd', '4th', '5th', '6th'];

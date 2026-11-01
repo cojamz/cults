@@ -230,10 +230,10 @@
   .app.game.lt .lt-shop-cards .lt-rate .rt-trade .get{font-size:22px}
   .app.game.lt .lt-shop-cards .lt-rate .rt-trade .follower-mark{width:20px;height:20px}
   .app.game.lt .lt-shop-cards .lt-rate .nm,.app.game.lt .lt-shop-cards[data-view] .lt-rate.card .nm{display:none}
-  .app.game.lt .lt-shop-cards .lt-cards > .lt-card[data-uid]{grid-column:span 4}
-  .app.game.lt .lt-shop-cards .lt-cards > .lt-card[data-uid]:last-child:nth-child(3n){grid-column:5 / 9}
-  .app.game.lt .lt-shop-cards .lt-cards > .lt-card[data-uid]:last-child:nth-child(3n+1){grid-column:7 / 11}
-  .app.game.lt .lt-shop-cards .lt-cards > .lt-card[data-uid]:nth-last-child(2):nth-child(3n){grid-column:3 / 7}
+  .app.game.lt .lt-shop-cards .lt-cards > .lt-card:is([data-uid],[data-pile-ghost]){grid-column:span 4}
+  .app.game.lt .lt-shop-cards .lt-cards > .lt-card:is([data-uid],[data-pile-ghost]):last-child:nth-child(3n){grid-column:5 / 9}
+  .app.game.lt .lt-shop-cards .lt-cards > .lt-card:is([data-uid],[data-pile-ghost]):last-child:nth-child(3n+1){grid-column:7 / 11}
+  .app.game.lt .lt-shop-cards .lt-cards > .lt-card:is([data-uid],[data-pile-ghost]):nth-last-child(2):nth-child(3n){grid-column:3 / 7}
 }
 /* The members fill the shop's height (Cory, Oct 29: "we have so much space here… we should give more room"): their rows
    share what's left under the follower buys instead of stopping at 184px, and a shop of 6 or fewer deals two to a row
@@ -242,8 +242,8 @@
   .app.game.lt .lt-shop-cards .lt-shop-body > .lt-cards,
   .app.game.lt .lt-shop-cards .lt-shop-body > .lt-cards[data-n],
   .app.game.lt .lt-shop-cards[data-pile-extra] .lt-shop-body > .lt-cards{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
-  .app.game.lt .lt-shop-cards:not([data-pile-extra]) .lt-cards:is([data-n="4"],[data-n="5"],[data-n="6"]) > .lt-card[data-uid]{grid-column:span 6}
-  .app.game.lt .lt-shop-cards:not([data-pile-extra]) .lt-cards:is([data-n="5"]) > .lt-card[data-uid]:last-child{grid-column:4 / 10}
+  .app.game.lt .lt-shop-cards:not([data-pile-extra]) .lt-cards:is([data-n="4"],[data-n="5"],[data-n="6"]) > .lt-card:is([data-uid],[data-pile-ghost]){grid-column:span 6}
+  .app.game.lt .lt-shop-cards:not([data-pile-extra]) .lt-cards:is([data-n="5"]) > .lt-card:is([data-uid],[data-pile-ghost]):last-child{grid-column:4 / 10}
 }
 @media (min-width:1200px) and (min-height:680px){
   /* two to a row, the rule has the width for a bigger size */
