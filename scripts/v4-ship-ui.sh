@@ -25,7 +25,21 @@ git commit -qm "Release $(node -p "require('fs').readFileSync('src/v4/version.js
 t "push"
 PUSHED=0
 for attempt in 1 2 3 4; do
-  if ! git pull -q --rebase origin "$BRANCH"; then git rebase --abort 2>/dev/null || true; echo 'Rebase conflict: resolve it by hand, push, then bash scripts/v4-play.sh <sha>.' >&2; exit 1; fi
+  if ! git pull -q --rebase origin "$BRANCH"; then
+    CONF=$(git diff --name-only --diff-filter=U | sort | tr '\n' ' ')
+    git rebase --abort 2>/dev/null || true
+    # a version clash (another thread released the same number): drop our release commit, take theirs, bump again (Nov 1)
+    if [ "$CONF" = "CHANGELOG.md " ] || [ "$CONF" = "CHANGELOG.md src/v4/version.js " ] || [ "$CONF" = "src/v4/version.js " ]; then
+      echo "version clash; re-bumping on top of theirs ($attempt/4)"
+      git reset -q --soft HEAD~1 && git checkout -q HEAD -- src/v4/version.js CHANGELOG.md
+      git pull -q --rebase origin "$BRANCH"
+      npm run -s version:v4 -- patch "$NOTE"
+      git add src/v4/version.js CHANGELOG.md
+      git commit -qm "Release $(node -p "require('fs').readFileSync('src/v4/version.js','utf8').match(/v[\d.]+/)[0]"): $NOTE"
+      continue
+    fi
+    echo "Rebase conflict in $CONF: resolve it by hand, push, then bash scripts/v4-play.sh <sha>." >&2; exit 1
+  fi
   if git push -q origin "HEAD:$BRANCH"; then PUSHED=1; break; fi
   echo "push refused (another thread pushed); retry $attempt/4"; sleep $((attempt * 3))
 done
