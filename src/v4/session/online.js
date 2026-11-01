@@ -15,7 +15,7 @@
 // v3rooms/_index/<CODE>: when that room last showed life (server ms). The DB rules don't let anyone list v3rooms, so this
 // index is how a client finds rooms left idle for IDLE_MS and clears them (sweepIdleRooms, run when a room is made).
 import { createTalkLog, cleanTalk, TALK_GAP_MS } from './talk.js';
-import { isLegal, chooseBotMove, setBotLevels, BOT_LEVELS, MAX_PLAYERS } from '../../engine/v4/index.js';
+import { isLegal, askFor, chooseBotMove, setBotLevels, BOT_LEVELS, MAX_PLAYERS } from '../../engine/v4/index.js';
 import { seededRandom } from '../../engine/v4/rng.js';
 import { parseTable, fitTable, tableProblem } from '../tables.js';
 import { randomFreeEmoji, settleEmojis } from '../emojiPick.js';
@@ -685,6 +685,17 @@ function createOnlineSession({ transport, base, code, playerId, getRoom, getView
   });
 
   const mySeats = () => seatList(getRoom()).filter(s => s.kind === 'human' && s.id === playerId).map(s => s.seat);
+  // A choice several players answer at the same time (Party Favors: pending.also): the table shows me my own ask, so
+  // I answer without waiting for the player the engine lists first. The real state stays as it is for moves.
+  const viewOf = st => {
+    const pd = st?.pending;
+    if (!pd?.also || mySeats().includes(pd.player)) return st;
+    const seat = mySeats().find(x => askFor(st, x));
+    if (seat == null) return st;
+    const v = { ...st, pending: { ...askFor(st, seat), player: seat, also: pd.also.filter(a => a.player !== seat).concat([{ ...pd, also: undefined }]) } };
+    if (st.effects) Object.defineProperty(v, 'effects', { value: st.effects, enumerable: false, configurable: true, writable: true });
+    return v;
+  };
   // seats[i] lines up with state.players[i] (seats are compacted at start): who's here, who's gone, who a bot plays for
   const info = () => {
     const room = getRoom();
@@ -713,7 +724,7 @@ function createOnlineSession({ transport, base, code, playerId, getRoom, getView
     for (const [mid, w] of [...waiting]) if (done.has(mid)) { waiting.delete(mid); w.resolve(state); }
     const i = info();
     lastInfoKey = JSON.stringify(i);
-    subs.emit(state, i);
+    subs.emit(viewOf(state), i);
   });
 
   const rejectsPath = `${base}/rejects/${playerId}`;
@@ -754,10 +765,10 @@ function createOnlineSession({ transport, base, code, playerId, getRoom, getView
   }
 
   return {
-    getState: () => state,
+    getState: () => viewOf(state),
     subscribe(fn) {
       const off = subs.on(fn);
-      if (state) fn(state, info());
+      if (state) fn(viewOf(state), info());
       return off;
     },
     submit,
@@ -786,7 +797,7 @@ function createOnlineSession({ transport, base, code, playerId, getRoom, getView
       if (state && !destroyed) {
         const i = info();
         const key = JSON.stringify(i);
-        if (key !== lastInfoKey) { lastInfoKey = key; subs.emit(state, i); }
+        if (key !== lastInfoKey) { lastInfoKey = key; subs.emit(viewOf(state), i); }
       }
     },
     _teardown() {
@@ -879,7 +890,7 @@ function startHost({ transport, base, getRoom, botDelayMs }) {
     else if (move.player !== rec.seat) reason = 'Move is for a different seat.';
     else if (cur.over) reason = 'The game is over.';
     else if (rec.n !== ver) reason = 'Stale move: the game had moved on.';
-    else if (!cur.pending || cur.pending.player !== move.player) reason = 'Not your turn.';
+    else if (!cur.pending || !askFor(cur, move.player)) reason = 'Not your turn.';
     else if (!isLegal(cur, move)) reason = `Illegal move: ${move.option}`;
     if (reason) return refuse(key, rec, reason);
 

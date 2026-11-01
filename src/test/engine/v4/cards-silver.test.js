@@ -2,7 +2,7 @@
 // Card-by-card: every Silver action and member, through real moves, against the printed text, with a log line naming
 // the card whenever it changes a number. Plus one cross-sphere case per member.
 import { describe, it, expect } from 'vitest';
-import { followers, resume, memberCount, contestTable, paymentPlan } from '../../../engine/v4/core.js';
+import { followers, resume, memberCount, contestTable, paymentPlan, applyMove } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, buy, linesNaming } from './cards-helpers.js';
 
@@ -38,6 +38,16 @@ describe('Silver actions', () => {
     let s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, {}] }), 'silver.favors');
     s = move(s, 'color:red');
     expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[2, 1], [2, 1], [2, 0]]);
+  });
+  it('Party Favors: rivals answer at the same time; either can answer first', () => {
+    let s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, { green: 1 }] }), 'silver.favors');
+    const asked = [s.pending.player, ...(s.pending.also || []).map(a => a.player)].sort();
+    expect(asked).toEqual([1, 2]);
+    const last = s.pending.also[0].player;
+    s = applyMove(s, { player: last, option: last === 2 ? 'color:green' : 'color:red' }); // the one listed second answers first
+    expect(s.pending.also).toBeUndefined();
+    s = move(s, last === 2 ? 'color:red' : 'color:green');
+    expect(s.players.map(p => [p.res.silver, p.res.red, p.res.green])).toEqual([[2, 1, 1], [2, 1, 0], [2, 0, 0]]);
   });
   it('Sweet Talk: +3 silver, then turn as many as you want into other colors; Largesse: rivals up to 10 silver, +1 follower each', () => {
     let s = take(sc({ round: 2 }), 'silver.tongue');

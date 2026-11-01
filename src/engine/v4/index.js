@@ -1,6 +1,6 @@
 // Public API of the Patrons v4 engine.
 export {
-  createGame, applyMove, legalMoves, isLegal,
+  createGame, applyMove, legalMoves, isLegal, askFor,
   followers, memberCount, memberWeight, countMembersOfColor, cardDef, actionAt, openSlots, spaceOpen,
   memberPrice, paymentPlan, followerPlan, paymentChoices, followerChoices, RING_VALUE, WORKERS, SHOP_SIZE, shopSize, memberRound, joinsRound, TIERS, tierLeft, roman,
   contestTable, turnRail, roundOrder, roundWorkers, pileReach, minionPool,

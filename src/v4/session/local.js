@@ -1,6 +1,6 @@
 // Hot-seat session: the whole game runs on this device. Bots move on their own after a short delay.
 import { createTalkLog, cleanTalk, TALK_GAP_MS } from './talk.js';
-import { isLegal, chooseBotMove, setBotLevels } from '../../engine/v4/index.js';
+import { isLegal, askFor, chooseBotMove, setBotLevels } from '../../engine/v4/index.js';
 import { seededRandom } from '../../engine/v4/rng.js';
 import { createEmitter } from './emitter.js';
 import { newGame, step, trackState, botStep } from './record.js';
@@ -27,7 +27,7 @@ export function moveProblem(state, move, mySeats) {
   if (state.over) return 'The game is over.';
   if (!move || typeof move.option !== 'string') return 'A move needs an option id.';
   if (!mySeats.includes(move.player)) return `Seat ${move.player + 1} isn't yours.`;
-  if (!state.pending || state.pending.player !== move.player) return 'Not your turn.';
+  if (!state.pending || !askFor(state, move.player)) return 'Not your turn.';
   if (!isLegal(state, move)) return `Illegal move: ${move.option}`;
   return null;
 }

@@ -153,7 +153,7 @@ export const silverActions = [
     estimate: ctx => 2 + (ctx.state.players.length - 1) - spillCost(ctx, 2),
     resolve(ctx, p) {
       hostGain(ctx, p, 2);
-      favorNext(ctx, p, others(ctx, p).map(o => o.id));
+      favorAll(ctx, p);
     },
   },
   {
@@ -171,23 +171,26 @@ export const silverActions = [
   },
 ];
 
-/** Party Favors: each rival in turn gives the host 1 resource of their choice, then gains 2 silver. */
-function favorNext(ctx, host, queue) {
-  if (!queue.length) return;
-  const [id, ...rest] = queue;
-  const o = ctx.player(id);
-  const have = ctx.state.resources.filter(c => (o.res[c] || 0) > 0);
-  if (!have.length) {
-    giveTo(ctx, host, o, S, 2);
-    afterGive(ctx, host);
-    ctx.log(`${o.name} had nothing to give; +2 silver (${host.name}'s Party Favors).`);
-    return favorNext(ctx, host, rest);
+/** Party Favors: every rival gives the host 1 resource of their choice, then gains 2 silver. They answer at the same
+ *  time (Cory, Oct 31: "they SHOULD be able to do at the same time otherwise takes forever"): one ask each, asked
+ *  together (pending.also); bots are queued first so they answer at once and people never wait on them. */
+function favorAll(ctx, host) {
+  const rivals = others(ctx, host).sort((a, b) => (a.kind === 'bot' ? 0 : 1) - (b.kind === 'bot' ? 0 : 1));
+  const key = `favors:${ctx.state.moves}`;
+  for (const o of rivals) {
+    const have = ctx.state.resources.filter(c => (o.res[c] || 0) > 0);
+    if (!have.length) {
+      giveTo(ctx, host, o, S, 2);
+      afterGive(ctx, host);
+      ctx.log(`${o.name} had nothing to give; +2 silver (${host.name}'s Party Favors).`);
+      continue;
+    }
+    ctx.choose(o, `Party Favors: give ${host.name} 1 resource, then you gain 2 silver`, have.map(c => ({
+      id: `color:${c}`, label: `Give 1 ${c}`, kind: 'color', value: c,
+      // bots give from their biggest pile, and not the color they lead the host in by 1 or less
+      hint: 0.3 * (o.res[c] || 0) - ((o.res[c] || 0) - (host.res[c] || 0) <= 1 && (o.res[c] || 0) >= (host.res[c] || 0) ? 1 : 0),
+    })), 'silver.favor', { host: host.id }, { together: key });
   }
-  ctx.choose(o, `Party Favors: give ${host.name} 1 resource, then you gain 2 silver`, have.map(c => ({
-    id: `color:${c}`, label: `Give 1 ${c}`, kind: 'color', value: c,
-    // bots give from their biggest pile, and not the color they lead the host in by 1 or less
-    hint: 0.3 * (o.res[c] || 0) - ((o.res[c] || 0) - (host.res[c] || 0) <= 1 && (o.res[c] || 0) >= (host.res[c] || 0) ? 1 : 0),
-  })), 'silver.favor', { host: host.id, rest });
 }
 
 
@@ -243,7 +246,6 @@ const silver = {
       giveTo(ctx, host, o, S, 2);
       afterGive(ctx, host);
       ctx.log(`${o.name} gave ${host.name} 1 ${color}, then +2 silver (${host.name}'s Party Favors).`);
-      favorNext(ctx, host, data.rest);
     },
     benefactor(ctx, p, id) {
       const t = ctx.player(id);

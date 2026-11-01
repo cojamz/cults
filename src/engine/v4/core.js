@@ -107,18 +107,31 @@ export function createGame({ seats, seed = 1, quadrants, rules = {} }) {
 
 export function legalMoves(state) {
   if (!state.pending) return [];
-  return state.pending.options.map(o => ({ player: state.pending.player, option: o.id }));
+  const out = state.pending.options.map(o => ({ player: state.pending.player, option: o.id }));
+  for (const a of state.pending.also || []) for (const o of a.options) out.push({ player: a.player, option: o.id });
+  return out;
+}
+
+/** The ask a player answers now: the pending decision, or their part of a choice everyone answers at once (also). */
+export function askFor(state, player) {
+  const pd = state?.pending;
+  if (!pd) return null;
+  if (pd.player === player) return pd;
+  return (pd.also || []).find(a => a.player === player) || null;
 }
 
 export function isLegal(state, move) {
-  return !!(state.pending && move && move.player === state.pending.player && state.pending.options.some(o => o.id === move.option));
+  const ask = move && askFor(state, move.player);
+  return !!(ask && ask.options.some(o => o.id === move.option));
 }
 
 /** Returns a new state. Throws on an illegal move. */
 export function applyMove(prev, move, { effects = false } = {}) {
   if (!isLegal(prev, move)) throw new Error(`Illegal move: ${JSON.stringify(move)}`);
   const state = plainCopy(prev);
-  const task = state.queue.shift();
+  // a choice answered at the same time (also): whoever answers first, their own task resolves
+  const at = move.player === prev.pending.player ? 0 : state.queue.findIndex(t => t.t === 'choose' && t.together && t.together === state.queue[0].together && t.p === move.player);
+  const task = state.queue.splice(Math.max(0, at), 1)[0];
   state.pending = null;
   state.moves += 1;
   // effects (effects.js): what moved and why, for the table to play back; recorded only when asked (the play session)
@@ -437,7 +450,23 @@ function advance(state) {
     const task = state.queue[0];
     const ask = inputFor(state, task);
     if (ask) {
-      if (ask.options.length) { const { onEmpty, ...shown } = ask; void onEmpty; state.pending = { player: task.p, ...shown }; return; }
+      if (ask.options.length) {
+        const { onEmpty, ...shown } = ask; void onEmpty;
+        state.pending = { player: task.p, ...shown };
+        // a choice several players answer at the same time (Party Favors): the tasks right behind it with the same
+        // together key are asked now too, each player their own (pending.also)
+        if (task.t === 'choose' && task.together) {
+          const also = [];
+          for (let i = 1; i < state.queue.length; i++) {
+            const t = state.queue[i];
+            if (t.t !== 'choose' || t.together !== task.together) break;
+            const a = inputFor(state, t);
+            if (a && a.options.length) { const { onEmpty: _e, ...sh } = a; void _e; also.push({ player: t.p, ...sh }); }
+          }
+          if (also.length) state.pending.also = also;
+        }
+        return;
+      }
       // nothing to choose: skip the task quietly
       state.queue.shift();
       if (ask.onEmpty) ask.onEmpty();
@@ -1705,7 +1734,7 @@ function ctxFor(state) {
       if (!options.length) return;
       // follow-up choices queued during one resolution keep their call order
       const at = state.queue.findIndex(t => !t._fresh);
-      const task = { t: 'choose', p: p.id, prompt, options: withTargets(state, options).map(o => pinCards(state, o)), h: handler, data, ...(extra.count ? { count: extra.count } : {}), ...(extra.blocked && Object.keys(extra.blocked).length ? { blocked: extra.blocked } : {}), ...(extra.show ? { show: extra.show } : {}), _fresh: true };
+      const task = { t: 'choose', p: p.id, prompt, options: withTargets(state, options).map(o => pinCards(state, o)), h: handler, data, ...(extra.count ? { count: extra.count } : {}), ...(extra.blocked && Object.keys(extra.blocked).length ? { blocked: extra.blocked } : {}), ...(extra.show ? { show: extra.show } : {}), ...(extra.together ? { together: extra.together } : {}), _fresh: true };
       state.queue.splice(at < 0 ? state.queue.length : at, 0, task);
     },
     defer(p, handler, data = null, cause = null) {
