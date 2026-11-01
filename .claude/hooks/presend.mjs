@@ -85,6 +85,9 @@ for (const c of cards) {
 }
 if (missing.length) problems.push(`Card text missing. Quote each card in full, next to its name, every time: ${missing.join('; ')}. If a name is only a plain word here, add --ok "Name".`);
 
+// Cory, Nov 1: the neutral members are grey, never "Guests".
+if (/\bguests\b|\bguest members?\b/i.test(prose)) problems.push('Say "grey" for the neutral members, never "Guests" (Cory, Nov 1).');
+
 // 4. A design pitch: the checklist in .claude/rules/pitching.md, done in writing before sending.
 const looksLikePitch = pitch || (/(^|\n)\s*\d+[.)] .*["“]/.test(text) && /\b(pitch|idea|could|new space|new member|round I{1,3}\b)/i.test(text));
 if (looksLikePitch) {
