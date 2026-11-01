@@ -145,7 +145,7 @@ export function toBottom(ctx, k) {
     const def = ctx.defOf(ctx.card(u));
     if (def.bottomFollowers) { p.bonus += 1; ctx.log(`${p.name}'s ${def.name}: +1 follower.`); }
     // Blue's artifact (Cory, 2026-10-24): once per batch, turns only, as Patroness
-    if (def.bottomBlue) { const got = ctx.gain(p, B, 1); if (got) ctx.log(`${p.name}'s ${def.name}: +${got.n} ${got.color}.`); }
+    if (def.bottomBlue) { const got = ctx.gain(p, B, Number(globalThis.process?.env?.BARGAIN || 1)); /* TEST BRANCH: BARGAIN=2 (Cory, Nov 1 1:35pm) */ if (got) ctx.log(`${p.name}'s ${def.name}: +${got.n} ${got.color}.`); }
   }
 }
 /** Extra buys this turn: they run right after the current one (added to the engine's queue directly). */
