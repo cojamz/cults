@@ -79,7 +79,7 @@ describe('Blue actions', () => {
     s = move(s, 'color:neutral');
     expect(s.shop.filter(u => guests.includes(u))).toEqual([]);
     expect(s.pile.slice(-2)).toEqual(guests);
-    expect(s.log).toContain('Out of Style: P1 sends 2 neutral members to the bottom.');
+    expect(s.log).toContain('Out of Style: P1 sends 2 grey members to the bottom.');
   });
 
   it('Peek: reorder the top 4 of the pile; this turn\'s buy may recruit one of them, and only one', () => {

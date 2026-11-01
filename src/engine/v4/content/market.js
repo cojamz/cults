@@ -124,6 +124,8 @@ function peekStep(ctx, p, { left, placed }) {
 // Out of Style's colors: neutral (colorless guests) is one of them (Cory, 2026-10-28: "you should be able to chose
 // neutral as a color you send to the bottom")
 const styleOf = (ctx, c) => colorOf(ctx, c) || 'neutral';
+// said "grey" to players (Cory: neutral members are "grey"); the id stays 'neutral'
+const styleWord = c => (c === 'neutral' ? 'grey' : c);
 function shopColors(ctx) {
   const n = {};
   for (const c of ctx.shopCards()) { const col = styleOf(ctx, c); n[col] = (n[col] || 0) + 1; }
@@ -193,7 +195,7 @@ const market = {
         const colors = shopColors(ctx);
         if (!colors.length) return;
         ctx.choose(p, 'Out of Style: send which color to the bottom?', colors.map(([c, n]) => ({
-          id: `color:${c}`, label: `${c} (${n})`, kind: 'color', value: c, hint: n,
+          id: `color:${c}`, label: `${styleWord(c)} (${n})`, kind: 'color', value: c, hint: n,
         })), `${Q}.outOfStyle`);
       },
     },
@@ -259,7 +261,7 @@ const market = {
       const out = ctx.shopCards().filter(c => styleOf(ctx, c) === color);
       for (const c of out) { ctx.state.shop.splice(ctx.state.shop.indexOf(c.uid), 1); ctx.state.pile.push(c.uid); }
       ctx.refillShop();
-      ctx.log(`Out of Style: ${p.name} sends ${out.length} ${color} member${out.length === 1 ? '' : 's'} to the bottom.`);
+      ctx.log(`Out of Style: ${p.name} sends ${out.length} ${styleWord(color)} member${out.length === 1 ? '' : 's'} to the bottom.`);
       toBottom(ctx, out.length);
       const got = out.length ? ctx.gain(p, B, out.length, { fromAction: true }) : null;
       if (got) ctx.log(`${p.name}'s Out of Style: +${got.n} ${got.color}.`);

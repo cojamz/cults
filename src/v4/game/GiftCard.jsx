@@ -187,9 +187,9 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
     }
     if (g.kind === 'color' && b === 'neutral') {
       return (
-        <button key={b} {...common} className={`${common.className} gc-dot gc-neutral`} data-res={b} aria-label="neutral" title="neutral">
+        <button key={b} {...common} className={`${common.className} gc-dot gc-neutral`} data-res={b} aria-label="grey" title="grey">
           <ResourceGlyph r="colorless" size={24} decorative />
-          <span className="gc-word">neutral</span>
+          <span className="gc-word">grey</span>
         </button>
       );
     }
