@@ -155,7 +155,7 @@ Cut (5):
 - **Leveler** (8, worth 1): "On Use, once per round: choose a color; 1 of each rival's biggest color becomes it." A fourth card that changes rivals' resources.
 - **Book Cooker** (10, worth 3): "Worth 3 followers. On Use, once per game: rearrange your resources into any mix of colors." Launderers' twin, and the round III space does it too.
 
-## Grey: cut Big Spender, Scout, Launderers, Cheerleader and Saboteur.
+## Grey: cut Big Spender, Scout, Launderers, Cheerleader and Old Maid.
 
 Keep, round I (4):
 - **Party Crasher** (4, worth 1): "On Use, once per game: your next minion can be placed on a space a rival already took." Bends blocking.
@@ -174,6 +174,6 @@ Keep, round II on (6):
 Cut (5):
 - **Big Spender** (3, worth 1): "On Use, once per game: recruit twice this turn." Blue's Shopaholics and Plus-One do recruiting twice; you once said no to it.
 - **Launderers** (4, worth 3, counts as 3 members): "Worth 3 followers. On Recruit: rearrange your resources into any mix of colors." Yellow's round III space now does it.
-- **Saboteur** (5, worth 1): "Whenever this member joins your cult, −3 followers." Only works with a swap color on the table.
+- **Old Maid** (was Saboteur; 4, worth 1): "Whenever this member joins your cult, −3 followers." Only works with a swap color on the table.
 - **Cheerleader** (4, worth 1): "Whenever you win a contest, +1 follower." A follower drip, not a rule bend; Tiebreaker covers contests.
 - **Scout** (3, worth 1): "On Use, once per round: send any shop members to the bottom of the pile, then refill." Blue's shop sweepers do this.
