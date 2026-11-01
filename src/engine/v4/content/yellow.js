@@ -91,14 +91,14 @@ export default {
       if (value === 'done') { if (!data.done) ctx.log(`${p.name}'s ${data.who}: changed nothing.`); return; }
       const [oid, a] = value, o = ctx.state.players[oid];
       ctx.choose(p, `${data.who}: change ${o.name}'s 1 ${a} into which color?`, colors(ctx).filter(b => b !== a).map(b => ({
-        id: `color:${b}`, label: `1 ${b}`, kind: 'color', value: b, hint: -(o.res[b] || 0) + (b === Y ? -1 : 0),
+        id: `color:${b}`, label: `1 ${b}`, kind: 'color', value: b, hint: -(o.res[b] || 0) + (b === Y ? -1 : 0) - ((data.took || []).includes(`${oid}:${b}`) ? 50 : 0),
       })), 'yellow.changeTo', { ...data, pick: [oid, a] });
     },
     changeTo(ctx, p, b, data) {
       const [oid, a] = data.pick, o = ctx.state.players[oid];
       if ((o.res[a] || 0) > 0) changeOne(ctx, p, o, a, b, data.who);
       if (data.follower) { p.bonus += 1; ctx.log(`${p.name}'s ${data.who}: +1 follower.`); }
-      const next = { ...data, pick: null, left: data.left - 1, done: data.done + 1, used: [...(data.used || []), oid] };
+      const next = { ...data, pick: null, left: data.left - 1, done: data.done + 1, used: [...(data.used || []), oid], made: [...(data.made || []), `${oid}:${b}`], took: [...(data.took || []), `${oid}:${data.pick[1]}`] };
       if (next.left > 0) changeStep(ctx, p, next);
     },
     gobetween(ctx, p, value) {
@@ -352,8 +352,9 @@ function changeStep(ctx, p, data) {
     if (data.perRival && data.used.includes(o.id)) continue;
     for (const a of colors(ctx)) if ((o.res[a] || 0) > 0) opts.push({
       id: `res:${o.id}:${a}`, label: `${o.name}'s ${a}`, kind: 'choice', value: [o.id, a],
-      // bots knock down the rival's biggest piles, most of all where that rival out-holds them
-      hint: (o.res[a] || 0) - (p.res[a] || 0) * 0.5,
+      // bots knock down the rival's biggest piles, most of all where that rival out-holds them; never one this same
+      // change just made, which only undoes it (bug bash, Nov 1: a bot turned a rival's green to blue, then back)
+      hint: (o.res[a] || 0) - (p.res[a] || 0) * 0.5 - ((data.made || []).includes(`${o.id}:${a}`) ? 100 : 0),
     });
   }
   if (!opts.length) { if (!data.done) ctx.log(`${p.name}'s ${data.who}: no rival resources to change.`); return; }
