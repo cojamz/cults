@@ -236,10 +236,10 @@ describe('shop discount origin', () => {
 
 
 it('glossary matches confirmed member quantity, protection and recruit rules', () => {
-  // decisions.md, Oct 29: a member counts as its printed member count only; worth more followers never adds members
+  // Cory, 2026-11-01: "member count = follower count, for members"
   expect(term('member').def).toContain('counts as 1 member, or the number its card shows');
-  expect(term('member').def).toContain('being worth more never makes it more members');
-  expect(term('member').def).toContain('bonus followers never add members');
+  expect(term('member').def).toContain('is worth that many followers');
+  expect(term('member').def).toContain('Bonus followers never add members');
   expect(term('colorless').def).not.toContain('one of your members');
   expect(term('steal').def).toContain('protects your members and resources until round end');
   expect(term('when recruited').def).toContain('paid or free');

@@ -172,6 +172,8 @@ const ALLOW = {
   // Con Men at 7 and Promote/Demote reaching rivals (Oct 29) moved the seeded games: held in 3 games whose holders had
   // no catch-up left by their last buy, where bots use it (cards-yellow: Rainmaker's bot test)
   'yellow.rainmaker': 'pays only when used, and bots wait for a big catch-up or their last buy (cards-yellow: Rainmaker)',
+  // members counting their followers (Nov 1) moved the seeded games: recruited in one game with no 5+ follower buy after
+  'yellow.weaver': 'pays only on a buy of 5 or more followers; cut from the deck (cards-yellow: Weaver)',
 };
 
 describe('namesCard: what counts as a line naming a card', () => {

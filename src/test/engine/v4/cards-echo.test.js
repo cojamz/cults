@@ -168,7 +168,7 @@ describe('Green current members', () => {
   });
   it('Roadie: round start, +1 green per Green member you have', () => {
     const start = members => { let s = table(Q, { members: [members] }); s.queue = [{ t: 'round', r: 2 }]; return R(resume(s)).green || 0; };
-    expect(start(['echo.roadie', 'echo.muse', 'echo.ensemble', 'red.twins']) - start(['echo.muse', 'echo.ensemble', 'red.twins'])).toBe(4); // Roadie, Muse, Ensemble (2 members)
+    expect(start(['echo.roadie', 'echo.muse', 'echo.ensemble', 'red.twins']) - start(['echo.muse', 'echo.ensemble', 'red.twins'])).toBe(5); // Roadie, Muse, Ensemble (3 members: worth 3, Nov 1)
   });
   it('Busker gives two green on recruit and at round start, naming the source', () => {
     let s = table(Q, { shop: ['echo.evergreen', ...ROW], res: [{ green: 4, red: 1 }], queue: turns(0) });

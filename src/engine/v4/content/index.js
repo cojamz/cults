@@ -21,6 +21,9 @@ const addWild = def => { if (!def.extraWild) { def.w = (def.w || 0) + EXTRA_WILD
 // Every member is a follower (Cory, Oct 29: "Every card should score its member count. Its a core rule! every member is a
 // follower. Not every follower is a member."): a card that counts as N members scores at least N followers.
 const asFollowers = def => { if ((def.n || 1) > (def.f || 1)) def.f = def.n; };
+// and the other way (Cory, 2026-11-01: "member count = follower count, for members"; "1. yes"): a member worth N
+// followers counts as N members, as its card shows (Proselytizer 2, Trendsetter 3).
+const asMembers = def => { if ((def.f || 1) > (def.n || 1)) def.n = def.f; };
 const DEFS = {};
 const HANDLERS = {};
 /** Add a quadrant module to the registry (used by index below, and by new spheres while they're being designed). */
@@ -36,6 +39,7 @@ function index(q) {
     def.copies = def.copies || 1;
     addWild(def);
     asFollowers(def);
+    asMembers(def);
     DEFS[def.id] = def;
   }
   for (const a of q.actions) a.id = `${q.id}.${a.key}`;
@@ -92,6 +96,7 @@ export function registerGuests(group, defs, handlers = {}) {
     if (def.s) { def.w = (def.w || 0) + def.s; def.s = 0; }
     addWild(def);
     asFollowers(def);
+    asMembers(def);
     def.copies = def.copies || 1;
     def.guest = group;
     DEFS[def.id] = def;

@@ -1,5 +1,5 @@
 // End-game bonus cards on the Reckoning (QA, Oct 28): Snob counts blue members by worth (a member worth 2 followers
-// counts as 2, countMembersOfColor), and the card's number is the prize the engine paid; its rule text ends in one period.
+// counts as 2, countMembersOfColor; Cory, Nov 1), and the card's number is the prize the engine paid; its rule text ends in one period.
 import { it, expect, vi, afterEach } from 'vitest';
 import { render, act, cleanup } from '@testing-library/react';
 import { resume, followers } from '../../../engine/v4/core.js';
@@ -12,7 +12,7 @@ it('Snob with worth-2 and worth-3 blue members: the card shows the prize paid, a
     members: [['market.snob', 'market.shopaholic', 'market.windowdresser'], []] });
   s = resume(s);
   const paid = s.players[0].final.cards.find(c => c.name === 'Snob').n;
-  expect(paid).toBe(1 + 3 + 1); // Shopaholics counts as 3 members (Cory, Oct 30); worth alone isn't members (Cory, 2026-10-29)
+  expect(paid).toBe(1 + 3 + 3); // Shopaholics 3, Window Dresser worth 3 so 3 members (Cory, Nov 1: member count = follower count)
   const info = { after: s, board: s, result: { round: 'III', rows: [] } };
   const snob = reckonSteps(info).find(x => x.kind === 'bonus' && x.rule === 'Snob');
   expect(snob.prize).toBe(paid);

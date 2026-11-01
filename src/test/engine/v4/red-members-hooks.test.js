@@ -17,9 +17,9 @@ describe('new Red member hooks', () => {
       expect(defById(`red.${id}`)).toMatchObject({ s, w: w + EXTRA_WILD, f });
     }
     const s = fixture({ members: [['red.mob', 'red.panel']] });
-    expect(memberCount(s, s.players[0])).toBe(7);
-    expect(countMembersOfColor(s, s.players[0], 'red')).toBe(7);
-    expect(defById('red.mob').onGameEnd(contextFor(s), s.players[0])).toBe(7);
+    expect(memberCount(s, s.players[0])).toBe(8); // Mob 5 (worth 5, Nov 1), Panel 3
+    expect(countMembersOfColor(s, s.players[0], 'red')).toBe(8);
+    expect(defById('red.mob').onGameEnd(contextFor(s), s.players[0])).toBe(8);
   });
 
   it('Recruit Bonus rewards actual explicit and Now abilities, not a vanilla acquisition', () => {

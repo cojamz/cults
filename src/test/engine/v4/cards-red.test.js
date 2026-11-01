@@ -56,11 +56,11 @@ describe('Red members', () => {
 
   it('Mob: game end +1 follower per red member; a Doppelganger (green since 2026-10-15) is a second Mob', () => {
     let s = sceneQ({ members: [['red.mob', 'red.intern', 'echo.doppel']], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.parts).toEqual(['Mob +5']) // Mob counts as 4 since Oct 30;
+    expect(s.players[0].final.parts).toEqual(['Mob +6']) // Mob is worth 5, so counts as 5 (Nov 1: member count = follower count);
     s = sceneQ({ members: [['red.mob', 'red.intern', 'echo.doppel']], queue: [] });
     s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'red.mob';
     s.queue = [{ t: 'finish' }]; s = resume(s);
-    expect(s.players[0].final.parts).toEqual(['Mob +5', 'Mob +5']);
+    expect(s.players[0].final.parts).toEqual(['Mob +6', 'Mob +6']);
   });
 
   it('Recruiter: +1 of the recruited member\'s color, named', () => {

@@ -6,7 +6,7 @@ For 2 to 6 players. You lead a cult for three rounds. Send minions to the wheel,
 - **Followers** are your score, shown by the follower mark. You start with 1 (yourself). Each member you hold adds the followers it is worth. Followers you recruit or win are yours too, and only those can be stolen.
 - **Minions** are your workers, small copies of your emoji: 3 in round I, 4 in round II, 5 in round III.
 - **Resources** come in one color per sphere on the table. A resource is a plain dot in its color. A dot split into the table's colors means "any resources", your choice of colors.
-- **Members** are cards you recruit from the shop. Most have an ability. Each member counts as 1 member, or the number its card shows beside the member mark. Every member is a follower: it is worth at least as many followers as it counts as members, and some are worth more (Proselytizer, Trendsetter). Being worth more followers never makes it more members, and followers from abilities never add members.
+- **Members** are cards you recruit from the shop. Most have an ability. Each member counts as 1 member, or the number its card shows beside the member mark, and is worth that many followers: member count = follower count. Followers from abilities never add members.
 
 ## The colors
 There is one color per player on the table, picked on the setup page (Classic, Random or your own). Classic is Blue, Red, Yellow and Purple; three players drop Purple, two drop Yellow too. Each color is a sphere on the wheel with its own spaces, members, artifact and contest (most of that color held at round end).

@@ -102,8 +102,8 @@ describe('White members', () => {
 
   it('Heiress: once per game, +1 white per member (named)', () => {
     const s = use(table(Q, { members: [['trading.heiress', 'red.twins', 'red.bigfamily']], shop: ROW, ...buy }), 'trading.heiress');
-    expect(R(s).white).toBe(8);
-    expect(named(s, 'Heiress')).toEqual(['P1 used Heiress: +8 white.']);
+    expect(R(s).white).toBe(9); // Heiress 2 (worth 2, Nov 1), Triplets 3, Big Family 4
+    expect(named(s, 'Heiress')).toEqual(['P1 used Heiress: +9 white.']);
   });
 
   it('Bulk Buyer: buying 5 followers gives 6 (named); buying 1 gives 1', () => {
