@@ -135,11 +135,12 @@ const members = [
     onRecruited(ctx, owner) { startLaunder(ctx, owner, 'Launderers'); },
   }),
   // Cory, 2026-10-28: "a 5 cost Saboteur… gives -3 Followers each time it enters somebody's cult (swapped in OR recruited etc)"
-  m('saboteur', 'Saboteur', null, 0, 4, 'Whenever this member joins your cult, −3 followers.', {
+  // Cory, 2026-10-31: renamed Old Maid (the card nobody wants stuck with), same card; the id stays 'saboteur'
+  m('saboteur', 'Old Maid', null, 0, 4, 'Whenever this member joins your cult, −3 followers.', {
     botValue: 0,
     onJoined(ctx, owner) {
       owner.bonus -= 3;
-      ctx.log(`${owner.name}'s Saboteur: −3 followers.`);
+      ctx.log(`${owner.name}'s Old Maid: −3 followers.`);
     },
   }),
   // Cory, 2026-10-28: Dabblers (Turncoat, then Groupies), 3, "give 2 members, and count as every color"

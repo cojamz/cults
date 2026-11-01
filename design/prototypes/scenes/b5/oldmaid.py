@@ -1,52 +1,79 @@
 import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
 
+# Old Maid (was Saboteur; Cory, 2026-10-31): the card nobody wants stuck in their hand. A prim old lady in her
+# parlour, holding her hand of cards close, the cat at her feet, tea on the side table.
 
-def saboteur():
+
+def oldmaid():
     c = C(N)
-    pal = base(PALE, 'grey', p='#3c4250', P='#353a47', f='#2e323d', g='#8d9296', G='#6b7075', e='#c9ced3',
-               R='#c8463c', T='#9a3328', u='#4f86c6', U='#3b6a9e', y='#f6d24a', Y='#fff3b0',
-               h='#25252b', j='#3a3a42', H='#8a5a32', z='#5e3c1e', q='#4b4f55', o='#e07a3a')
-    c.rect(0, 0, 63, 63, 'p'); c.rect(0, 54, 63, 63, 'f')
-    c.vl(53, 0, 3, 'P')                             # one caged work bulb on a cord
-    c.ell(51, 4, 56, 10, 'y'); c.pts('Y', [(52, 6), (53, 5)])
-    for x in (51, 54, 56):
-        c.vl(x, 5, 9, 'P')
-    c.hl(51, 56, 4, 'P')
+    pal = base(PALE, 'grey', p='#7a6572', P='#6d5966', f='#5b4234', F='#4c372b',
+               W='#c9d3d6', V='#a9b6bb', L='#e8dfcf', l='#cdbfa9',
+               o='#8a5b3c', O='#6e4630', t='#f4ede1', T='#c9c0b2',
+               H='#d8d8de', z='#a7a7b2', q='#6f7376', Q='#585c5f',
+               c='#d98a3e', C='#b36a2a', R='#b8423a', h='#4a3a33')
+    c.rect(0, 0, 63, 63, 'p'); c.rect(0, 36, 63, 53, 'P'); c.rect(0, 54, 63, 63, 'f')
 
-    def panel(l):                                   # power panel with its cables
-        l.rect(3, 12, 22, 38, 'g'); l.rect(5, 14, 20, 36, 'G'); l.rect(6, 15, 19, 35, 'g')
-        for y in (18, 24, 30):
-            l.rect(8, y, 10, y + 3, 'e'); l.rect(14, y, 16, y + 3, 'e')
-    bg(c, panel, 'G')
-    for (x, k, d) in ((8, 'R', 'T'), (14, 'u', 'U')):
-        c.rect(x, 39, x + 1, 54, k); c.vl(x + 1, 39, 54, d)
+    def window(l):                                  # small window, lace curtains drawn back
+        l.rect(4, 6, 19, 26, 'o'); l.rect(6, 8, 17, 24, 'W'); l.vl(11, 8, 24, 'o'); l.vl(12, 8, 24, 'o')
+        l.hl(6, 17, 16, 'o'); l.rect(13, 9, 17, 15, 'V')
+        l.poly([(3, 5), (8, 5), (6, 16), (4, 27), (3, 27)], 'L'); l.poly([(15, 5), (20, 5), (20, 27), (18, 27), (17, 16)], 'L')
+        l.pts('l', [(4, 9), (4, 10), (4, 11), (5, 19), (5, 20), (4, 23), (4, 24), (4, 25),
+                    (19, 9), (19, 10), (19, 11), (18, 19), (18, 20), (19, 23), (19, 24), (19, 25)])
+    bg(c, window, None)
 
-    cx = 40
-    DK = {'1': '2', 'h': 'j', 'q': 'q'}
+    def table(l):                                   # little round side table, cup and saucer
+        l.rect(4, 40, 19, 40, 'o'); l.hl(5, 18, 41, 'O'); l.vl(11, 42, 54, 'o'); l.vl(12, 42, 54, 'O')
+        l.hl(8, 15, 55, 'O'); l.hl(9, 14, 54, 'o')
+        l.hl(7, 15, 39, 't'); l.rect(9, 35, 13, 38, 't'); l.pts('T', [(13, 36), (13, 37), (12, 38)])
+        l.pts('t', [(14, 36), (15, 36), (15, 37)]); l.hl(9, 13, 35, 'T')
+    bg(c, table, None)
 
-    def front(f):                                   # coveralls: zip and a pocket
-        f.vl(cx, 33, 46, '2'); f.rect(cx + 2, 37, cx + 5, 40, '2')
+    cx = 37
+    hy = 17
+    ty = hy + 15
+    DK = {'1': '2', 'q': 'Q', 'H': 'z', 'w': 'T', 't': 'T'}
 
-    def beanie(f):
-        f.ell(cx - 7, 13, cx + 6, 23, 'h'); f.rect(cx - 7, 19, cx + 6, 21, 'j')
-        f.recolor('s', 'S', (cx - 7, 22, cx + 6, 22))
+    def front(f):                                   # long skirt over the legs, lace collar, a fold at the hem
+        f.poly([(cx - 7, 43), (cx + 8, 43), (cx + 11, 53), (cx - 10, 53)], 'q')
+        f.poly([(cx + 6, 47), (cx + 7, 47), (cx + 10, 53), (cx + 6, 53)], 'Q', only='q')
+        f.pts('h', [(cx - 6, 54), (cx - 5, 54), (cx - 4, 54), (cx + 3, 54), (cx + 4, 54), (cx + 5, 54)])
+        f.rect(cx - 3, ty, cx + 3, ty + 1, 'w'); f.pts('w', [(cx - 2, ty + 2), (cx + 2, ty + 2)]); f.px(cx, ty + 1, 'T')
 
-    def cutters(p):                                 # long cutters reaching to the red cable
-        for i in range(10):
-            p.px(cx - 19 - i, 44 + (i > 6), 'e'); p.px(cx - 19 - i, 45 + (i > 6), 'G')
-        p.pts('e', [(10, 44), (10, 47)])
+    def bun(f):                                     # a small round bun at the back of the head
+        x1 = cx - 7 + 13
+        f.rect(x1 - 3, hy - 4, x1, hy - 1, 'H'); f.pts('.', [(x1 - 3, hy - 4), (x1, hy - 4)])
+        f.pts('z', [(x1, hy - 2), (x1 - 1, hy - 1), (x1, hy - 1)])
 
-    def snip(f):
-        f.rect(8, 45, 9, 46, 'p'); f.pts('R', [(7, 47), (7, 48)])
-        f.pts('y', [(6, 43), (11, 42), (5, 46)]); f.pts('Y', [(7, 44), (10, 43)])
+    def cards(f):                                   # her hand of cards, backs out: bottoms together in her hands, tops spread
+        l = layer()
+        for i, (bx, lean, top) in enumerate([(cx - 7, -4, 38), (cx - 5, -2, 36), (cx - 2, 0, 35), (cx + 1, 2, 36), (cx + 3, 4, 38)]):
+            for y in range(top, 45):
+                x = bx + round(lean * (44 - y) / (44 - top))
+                face = i == 4                       # the front card shows its face: one red pip
+                l.hl(x, x + 4, y, 't' if y == top or face else 'R')
+                l.px(x, y, 'T' if face else 't'); l.px(x + 4, y, 'T')
+                if face and y in (top + 2, top + 3):
+                    l.hl(x + 2, x + 3, y, 'R')
+        over(f, l, DK)
+        for hx, flip in ((cx - 8, False), (cx + 5, True)):    # thumbs over the front of the fan
+            hand(f, hx, 43, 'grip', 's', 'S', flip)
 
-    person(c, cx, 17, hs='short', hk='H', hdk='z', mouth='smirk', brows='angry', brow='z',
-           shirt='1', sdk='2', sw=8, ww=7, th=14, pants='1', pdk='2', shoe='h', lh=7, front=front, hat=beanie, DK=DK, slope=4,
-           arms=[([(cx - 7, 37), (cx - 11, 47), (cx - 16, 45)], 4, '1'),
-                 ([(cx + 7, 37), (cx + 9, 42), (cx + 8, 47)], 4, '1')],
-           hands=[(cx - 20, 43, 'grip', False), (cx + 6, 47, 'fist', True)], props=cutters, post=snip)
+    person(c, cx, hy, hs='short', hk='H', hdk='z', mouth='flat', brows='stern', brow='z',
+           shirt='1', sdk='2', sw=7, ww=6, th=11, pants='q', pdk='Q', shoe='h', lh=4, gap=2, front=front, DK=DK, slope=3,
+           arms=[([(cx - 6, ty + 4), (cx - 11, ty + 8), (cx - 7, ty + 12)], 4, '1'),
+                 ([(cx + 6, ty + 4), (cx + 11, ty + 8), (cx + 7, ty + 12)], 4, '1')],
+           hands=[], hat=bun, top=cards)
+
+    def cat(l):                                     # ginger cat sitting, tail curled on the floor
+        l.ell(47, 47, 58, 56, 'c')
+        l.rect(50, 42, 55, 48, 'c'); l.hl(51, 54, 41, 'c')
+        l.pts('c', [(50, 39), (50, 40), (51, 40), (55, 39), (55, 40), (54, 40)])
+        l.pts('k', [(51, 44), (54, 44)]); l.pts('C', [(52, 46), (53, 46), (52, 48), (53, 48)])
+        l.pts('C', [(56, 51), (57, 51), (56, 52), (57, 52), (57, 53), (56, 54), (57, 54), (55, 54)])
+        l.hl(57, 61, 56, 'c'); l.vl(61, 52, 56, 'c'); l.px(60, 52, 'c')
+    bg(c, cat, 'C')
     return c.rows(), pal
 
 
-PORTRAIT = ('benders.saboteur', saboteur)
+PORTRAIT = ('benders.saboteur', oldmaid)

@@ -19,7 +19,7 @@ const { sphereVersion } = await import('../src/v4/tables.js');
 
 const level = process.env.LEVEL || 'hard';
 const all = process.env.ONLY ? process.env.ONLY.split(',') : allQuadrantIds().filter(q => sphereVersion(q) === '2.0');
-const WATCH = (process.env.WATCH || 'Agents,Saboteur,Loyalists,Anarchist,Headhunter,Double Agent').split(',');
+const WATCH = (process.env.WATCH || 'Agents,Old Maid,Loyalists,Anarchist,Headhunter,Double Agent').split(',');
 for (let g = first; g < first + count; g++) {
   const rand = seededRandom(g * 7717 + 3);
   const must = process.env.MUST ? process.env.MUST.split(',') : [];
