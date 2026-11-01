@@ -1004,9 +1004,10 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   const fromPile = idx < 0 ? state.pile.indexOf(uid) : -1;
   // top: Red's round I space takes the deck's top member (Cory, 2026-10-27)
   if (idx < 0 && (fromPile < 0 || (fromPile >= pileReach(state, p) && !(top && fromPile === 0)))) throw new Error(`Card ${uid} is not in the shop`);
-  let paid = 'free';
+  let paid = 'free', spent = null;
   if (!free) {
     const spend = chosen || paymentPlan(state, p, uid, how);
+    spent = spend;
     if (!spend || !memberPayOk(state, p, cardDef(state, uid), spend, how) || Object.keys(spend).some(r => spend[r] > (p.res[r] || 0))) throw new Error('Cannot afford');
     for (const r in spend) p.res[r] -= spend[r];
     spendBonus(state, p, spend);
@@ -1047,12 +1048,12 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   p.members.push(uid);
   const def = cardDef(state, uid);
   log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
-  memberAcquired(state, p, uid);
+  memberAcquired(state, p, uid, { spent });
   // an arrival like any other (Saboteur: "whenever this joins your cult"); swaps and moves fire it in their own code
   memberJoined(state, p, uid);
 }
 /** A member recruit: p took it (shop, free, a steal) or swapped it in with their own red action (see recruited). */
-function memberAcquired(state, p, uid, { stolen = false } = {}) {
+function memberAcquired(state, p, uid, { stolen = false, spent = null } = {}) {
   state.recruits += memberWeight(state, uid);
   p.turnRecruits += memberWeight(state, uid);
   const card = state.cards[uid], def = defById(card.def);
@@ -1061,7 +1062,8 @@ function memberAcquired(state, p, uid, { stolen = false } = {}) {
   if (!stolen) { card.recruitedRound = state.round; card.recruitedBy = p.id; }
   const ctx = ctxFor(state);
   const w = wrap(state, card);
-  recruited(state, p, { member: w });
+  // spent: what the recruit paid (Collector reads silver in it); null when free
+  recruited(state, p, { member: w, spent });
   // a when-recruited effect leaves a trace like any other member hook (Seed Money, Pilgrim, Retinue…)
   if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));
   joinNow(state, p, w, [def]);
@@ -1271,7 +1273,7 @@ function buyFollowersNow(state, p, tier, chosen) {
   const ctx = ctxFor(state);
   eachMember(state, (owner, card, def) => { if (def.onBuyFollowers) def.onBuyFollowers(ctx, owner, card, p, tier); }, ['onBuyFollowers']);
   // buying followers is a recruit (Cory, 2026-10-21): "whenever you recruit" members fire once per purchase
-  recruited(state, p, { followers: tier.get, tier });
+  recruited(state, p, { followers: tier.get, tier, spent: spend });
 }
 
 // again: a later part of a gain the same action already paid (Collect Debts' second victim), so "whenever an action

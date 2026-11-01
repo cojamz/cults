@@ -42,6 +42,6 @@ describe("You'd get", () => {
     const s = sceneQ({ quadrants: ['red', 'silver', 'gold', 'market'] });
     const y = youdWords(pv(s, 'red.hire'), s, 'red');
     expect(y.text).toMatch(/^\+1 red/);
-    expect(y.text).toMatch(/\+1 member/);
+    expect(y.text).toMatch(/\+\d+ members?/); // the cheapest shop member; a group (Revelers) counts as 3
   });
 });

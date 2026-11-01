@@ -13,7 +13,9 @@ export const CUT = new Set([
   'purple.errand', 'purple.foreman', 'purple.apprentice', 'purple.taskmaster', 'purple.doubletime',
   'purple.overseer', // Cory, 2026-10-18: cut; its replacement is his call
   'purple.bookkeeper', 'purple.lamplighter', 'purple.patience', // Cory, 2026-10-22: his Purple set of 12
-  'silver.silversmith', 'silver.toastmaster', 'silver.caterer', 'silver.dowager', 'silver.steward',
+  // Silver 2.0 (Cory, 2026-11-01): his deck of 10 (silver.js), in both the 10 and 15 modes for now
+  'silver.silversmith', 'silver.dowager', 'silver.steward', 'silver.benefactor', 'silver.majordomo', 'silver.retinue',
+  'silver.revelers', 'silver.heir', 'silver.spoon', 'silver.grandhost', 'silver.saint',
   // Yellow 2.0 (Cory, 2026-10-31): his deck of 15 (yellow.js); Gardener and Harmonist come back
   'yellow.sower', 'yellow.farmer', 'yellow.gleaner', 'yellow.peddler', 'yellow.admirer', 'yellow.latebloomer',
   'yellow.rainmaker', 'yellow.pilgrim', 'yellow.weaver', 'yellow.chefs',
@@ -27,7 +29,7 @@ export const CUT = new Set([
 // The 10-card decks (Cory, 2026-10-31: "create two versions of game, 10 card deck version and 15 card deck version";
 // "i'll use your recommendations sight unseen"): rules.deck = 10 also leaves these out, so each 2.0 color and grey deal
 // 10 (4 join in round I). Claude's keep/cut list, design/notes/deck-10-keep-cut.md. Without it a table deals the
-// 15-card decks (CUT only). Silver and Gold aren't cut yet (redesigns running).
+// 15-card decks (CUT only). Silver has 10 in both modes; Gold is parked.
 export const CUT10 = new Set([
   'red.host', 'red.headhunter',
   'echo.bait', 'echo.understudy', 'echo.ensemble', 'echo.impostor',

@@ -112,10 +112,10 @@ function turnStep(ctx, p, data) {
   ctx.choose(p, `${data.who}: turn 1 silver into ${data.each} of a color? (you have ${p.res[S]})`, opts, 'silver.turn', data);
 }
 
-function polishPick(ctx, p, left) {
-  ctx.choose(p, `Polish: +1 of which color? (${left} to pick)`, otherColors(ctx).map(c => ({
+function polishPick(ctx, p, left, who = 'Polish') {
+  ctx.choose(p, `${who}: +1 of which color? (${left} to pick)`, otherColors(ctx).map(c => ({
     id: `color:${c}`, label: `+1 ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0),
-  })), 'silver.polish', { left });
+  })), 'silver.polish', { left, who });
 }
 
 export const silverActions = [
@@ -226,9 +226,10 @@ const silver = {
       shareStep(ctx, p, { ...data, given });
     },
     polish(ctx, p, c, data) {
+      const who = data.who || 'Polish';
       ctx.gain(p, c, 1);
-      ctx.log(`${p.name}'s Polish: +1 ${c}.`);
-      if (data.left > 1) polishPick(ctx, p, data.left - 1);
+      ctx.log(`${p.name}'s ${who}: +1 ${c}.`);
+      if (data.left > 1) polishPick(ctx, p, data.left - 1, who);
     },
     turn(ctx, p, value, data) {
       if (value === 'done') return;
@@ -314,6 +315,42 @@ const silver = {
     m('smoothtalker', 'Smooth Talker', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true }),
     m('philanthropists', 'Philanthropists', 3, 2, 'On Recruit: rivals gain up to 4 silver, split as you choose. +1 follower for each.', {
       onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropists', max: 4, per: 1 }); },
+    }),
+    m('polisher', 'Polisher', 3, 2, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', {
+      activate: 'game',
+      onActivate(ctx, owner) {
+        const k = Math.min(3, owner.res[S] || 0);
+        if (!k) { ctx.log(`${owner.name}'s Polisher: no silver to turn.`); return; }
+        owner.res[S] -= k;
+        ctx.log(`${owner.name}'s Polisher: ${k} silver into ${2 * k} of any colors.`);
+        polishPick(ctx, owner, 2 * k, 'Polisher');
+      },
+      botActivate: (ctx, owner) => (owner.res[S] || 0) >= 3,
+    }),
+    m('collector', 'Collector', 3, 2, 'Whenever a rival recruits paying silver, +1 silver.', {
+      onRecruit(ctx, owner, card, by, what) {
+        if (by === owner || !(what?.spent?.[S] > 0)) return;
+        ctx.gain(owner, S, 1);
+        ctx.log(`${owner.name}'s Collector: +1 silver (${by.name} paid silver).`);
+      },
+    }),
+    m('debtcollector', 'Debt Collector', 4, 3, 'On Use, once per game: each rival gives you 2 silver, if they have it.', {
+      activate: 'game',
+      onActivate(ctx, owner) {
+        let n = 0;
+        for (const o of others(ctx, owner)) {
+          const k = Math.min(2, o.res[S] || 0);
+          if (!k) continue;
+          o.res[S] -= k; n += k;
+          ctx.log(`${o.name} gave ${owner.name} ${k} silver (Debt Collector).`);
+        }
+        if (n) ctx.gain(owner, S, n); else ctx.log(`${owner.name}'s Debt Collector: no rival had silver.`);
+      },
+      botActivate: (ctx, owner) => others(ctx, owner).reduce((t, o) => t + Math.min(2, o.res[S] || 0), 0) >= 2 * Math.max(1, ctx.state.players.length - 2),
+    }),
+    // "should be multiple members" (Cory): counts as 2, Claude's fill-in
+    m('highsociety', 'High Society', 4, 3, 'Counts as 2 members. Game End: +2 followers per rival with more silver than you.', { n: 2,
+      onGameEnd: (ctx, owner) => 2 * others(ctx, owner).filter(o => (o.res[S] || 0) > (owner.res[S] || 0)).length,
     }),
     m('grandhost', 'Grand Host', 8, 4, 'Double the silver you gain from Silver spaces.', { hostDouble: true }),
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 12 → 6 (the most one pass moves);

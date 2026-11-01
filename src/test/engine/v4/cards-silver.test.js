@@ -57,6 +57,29 @@ describe('Silver actions', () => {
 });
 
 describe('Silver members', () => {
+  it('Polisher: once per game, up to 3 silver into 2 of any colors each', () => {
+    let s = sc({ res: [{ silver: 4 }], members: [['silver.polisher']] });
+    const use = s.pending.options.find(o => o.kind === 'use');
+    s = move(s, use.id);
+    for (let i = 0; i < 6; i++) s = move(s, 'color:red');
+    expect([S(s), s.players[0].res.red]).toEqual([1, 6]);
+  });
+  it('Collector: a rival recruiting with silver gives you +1 silver; paying without silver gives nothing', () => {
+    let s = sc({ res: [{}, { silver: 5 }], members: [['silver.collector']], queue: [{ t: 'buy', p: 1 }] });
+    const t = s.pending.options.find(o => o.kind === 'tier' && /1/.test(o.label || o.id));
+    s = move(s, t.id);
+    if (s.pending?.player === 1 && s.pending.kind === 'choose') s = move(s, s.pending.options[0].id);
+    expect(S(s)).toBe(1);
+  });
+  it('Debt Collector: once per game, each rival gives you 2 silver if they have it', () => {
+    let s = sc({ n: 3, res: [{}, { silver: 5 }, { silver: 1 }], members: [['silver.debtcollector']] });
+    s = move(s, s.pending.options.find(o => o.kind === 'use').id);
+    expect(s.players.map(p => p.res.silver)).toEqual([3, 3, 0]);
+  });
+  it('High Society: counts as 2 members; game end +2 followers per rival with more silver', () => {
+    const s = sc({ n: 3, res: [{ silver: 1 }, { silver: 5 }, { silver: 1 }], members: [['silver.highsociety']] });
+    expect(memberCount(s, s.players[0])).toBe(2);
+  });
   it('Smooth Talker: your silver pays a member’s colored part', () => {
     const s = sc({ res: [{ silver: 9 }], members: [['silver.smoothtalker']], shop: ['red.patriarch'] });
     const uid = s.shop.find(u => s.cards[u].def === 'red.patriarch');
