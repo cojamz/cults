@@ -200,7 +200,9 @@ if (wantE2E && existsSync(join(root, 'e2e/v4'))) {
     // memory.mjs is not: it reads the heap after a forced GC, which load doesn't change.
     // scoring, score-screens and reckoning (count-ups, results-in-time, every quadrant told before the hold cap) went
     // red only under the full run's load on Nov 1, and pass alone: they join the solo set.
-    const SOLO = new Set(['info.mjs', 'motion.mjs', 'snappy.mjs', 'scoring.mjs', 'score-screens.mjs', 'reckoning.mjs']); // snappy: spin, hover and click-to-minion budgets
+    // members.mjs too: the pointer crossing from a member to its card's Use button within the card's close grace
+    // (red under load, Nov 1, twice)
+    const SOLO = new Set(['info.mjs', 'motion.mjs', 'snappy.mjs', 'scoring.mjs', 'score-screens.mjs', 'reckoning.mjs', 'members.mjs']); // snappy: spin, hover and click-to-minion budgets
     // the heavy ones run several browsers each (tables: six games at once; online: three players and the emulator):
     // they take two tokens, so the first wave doesn't pile eight browsers onto four CPUs beside the unit tests
     const HEAVY = { 'tables.mjs': 2, 'online.mjs': 2 };

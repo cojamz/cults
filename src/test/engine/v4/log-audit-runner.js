@@ -20,12 +20,12 @@ function changed(a, b) {
   return [...new Set(out)];
 }
 
-export function auditLog({ games = 40, seed = 7, levels = ['easy', 'normal', 'hard', 'normal'] } = {}) {
+export function auditLog({ games = 40, from = 0, seed = 7, levels = ['easy', 'normal', 'hard', 'normal'] } = {}) {
   const { tables } = makeTables(seed, 6);
   const gaps = {};
   const crashes = [];
   let moves = 0;
-  for (let g = 0; g < games; g++) {
+  for (let g = from; g < games; g++) {
     const quads = tables[g % tables.length];
     try {
       let s = createGame({ seats: [0, 1, 2, 3].map(() => ({ kind: 'bot' })), seed: 2000 + g, quadrants: quads });

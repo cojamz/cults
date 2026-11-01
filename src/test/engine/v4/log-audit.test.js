@@ -6,9 +6,13 @@ import { describe, it, expect } from 'vitest';
 import { auditLog } from './log-audit-runner.js';
 
 describe('the log says every change to a player', () => {
-  it('no silent change over seeded games', () => {
-    const { crashes, gaps } = auditLog({ games: 6 });
-    expect(crashes).toEqual([]);
-    expect(Object.entries(gaps).map(([k, e]) => `${k}: ${e.ex}`)).toEqual([]);
-  }, 240000);
+  // one game a test, each with its own time limit: the six together ran past 4 minutes under the full check's load
+  // (Nov 1). Same seeds and tables as before.
+  for (let g = 0; g < 6; g++) {
+    it(`no silent change over seeded game ${g + 1} of 6`, () => {
+      const { crashes, gaps } = auditLog({ from: g, games: g + 1 });
+      expect(crashes).toEqual([]);
+      expect(Object.entries(gaps).map(([k, e]) => `${k}: ${e.ex}`)).toEqual([]);
+    }, 240000);
+  }
 });

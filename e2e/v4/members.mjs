@@ -246,7 +246,9 @@ try {
   // (m8) Safecracker's own hover: muted, with the reason
   await pointAt('[data-cult="0"] .cs-member[data-member="thieves.bigscore"] .fig');
   await page.waitForTimeout(300);
-  await page.waitForFunction(() => !!document.querySelector('[data-tip-body] [data-card]'), null, { timeout: 1500 }).catch(() => {});
+  // (a wait, not a speed bar: under the full check's load the card took over 1.5s to fill, Nov 1)
+  await page.waitForFunction(() => !!document.querySelector('[data-tip-body] [data-card]'), null, { timeout: 8000 }).catch(() => {});
+  await page.waitForFunction(() => !!document.querySelector('[data-tip-body] [data-idle-why], [data-tip-body] [data-use]'), null, { timeout: 1500 }).catch(() => {});
   const sh = await page.evaluate(() => { const w = document.querySelector('[data-tip-body] [data-idle-why]'); return { card: !!document.querySelector('[data-tip-body] [data-card]'), button: !!document.querySelector('[data-tip-body] [data-use]'), why: w ? w.textContent : '' }; });
   if (!sh.card || sh.button || !/Nothing to gain now: .*magenta/.test(sh.why)) fail(`Safecracker's hover (worth 0 now) must say why and offer no button: ${JSON.stringify(sh)}`, 'm8');
   else await page.screenshot({ path: `${SHOTS}/6-use-worth-nothing.png` });
