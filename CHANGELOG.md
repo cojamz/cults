@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.910 — 2026-11-01
+
+- New games use the 10-per-color decks by default; 15 per color is one click away on the setup screen and in the lobby.
+
 ## v0.9.909 — 2026-11-01
 
 - Con Men steals 5 when recruited (was a once-per-game use). Grey's 10-card deck keeps Scout and Old Maid and drops Coach and Tiebreaker.
