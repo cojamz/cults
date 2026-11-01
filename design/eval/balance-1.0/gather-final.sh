@@ -37,6 +37,8 @@ for L in hard veryhard; do
   node scripts/v4-balance-report.mjs $M/$L-4p.jsonl --json=$D/report-$L-4p.json > $D/report-$L-4p.md
   # choices: every decision of a game re-run on the revert build replaces that game's old decisions
   DROP=$(node scripts/v4-balance-tables-with.mjs 1 500 4 red) KEY=choices merge $E/raw2/$L/*.choices -- $E/raw3/$L/*.choices > $M/$L.choices 2>/dev/null || true
+  # keep only decisions from games that finished (a cut game leaves a partial .choices)
+  node -e 'const fs=require("fs"),[g,c]=process.argv.slice(1),keep=new Set(fs.readFileSync(g,"utf8").split("\n").filter(Boolean).map(l=>JSON.parse(l).game));fs.writeFileSync(c,fs.readFileSync(c,"utf8").split("\n").filter(l=>{try{return keep.has(JSON.parse(l).game)}catch{return false}}).join("\n")+"\n")' $M/$L-4p.jsonl $M/$L.choices
   node scripts/v4-choice-report.mjs "$M/$L.choices" --md=$D/choices-$L.md --json=$D/choices-$L.json --min=15 >/dev/null
   echo "$L: $(wc -l < $M/$L-4p.jsonl) games"
 done
