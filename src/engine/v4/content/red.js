@@ -196,7 +196,7 @@ function hireCheapest(ctx, p, who) {
 }
 // A swap can rearrange any cult, but taking from a protected rival remains blocked.
 function swapPairs(ctx, p, mode, excludeUid = null) {
-  const cult = ctx.state.players.flatMap(owner => (owner === p ? mode !== 'rival' : ctx.canSteal(p, owner, 'member')) ? ctx.membersOf(owner).filter(c => ctx.canSwapMember(c.uid)) : []);
+  const cult = ctx.state.players.flatMap(owner => (owner === p ? mode !== 'rival' : ctx.canSteal(p, owner, 'swap')) ? ctx.membersOf(owner).filter(c => ctx.canSwapMember(c.uid)) : []);
   const shop = ctx.shopCards();
   const out = [];
   const first = mode === 'even' ? [...cult, ...shop] : cult;

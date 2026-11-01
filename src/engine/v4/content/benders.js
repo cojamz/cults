@@ -59,7 +59,7 @@ const cost = c => c.def.s + c.def.w;
 // Anarchist's swaps: any two members, in any cult or the shop, costing within 2 of each other; a rival's member only
 // where it may be taken (Bodyguards), and never a member that can't be swapped (Loyalists)
 function anarchyPairs(ctx, p) {
-  const all = [...ctx.state.players.flatMap(o => (o === p || ctx.canSteal(p, o, 'member')) ? ctx.membersOf(o).filter(c => ctx.canSwapMember(c.uid)) : []), ...ctx.shopCards()];
+  const all = [...ctx.state.players.flatMap(o => (o === p || ctx.canSteal(p, o, 'swap')) ? ctx.membersOf(o).filter(c => ctx.canSwapMember(c.uid)) : []), ...ctx.shopCards()];
   const out = [];
   for (let i = 0; i < all.length; i++) for (let j = i + 1; j < all.length; j++) {
     const a = all[i], b = all[j], oa = ctx.ownerOf(a.uid), ob = ctx.ownerOf(b.uid);

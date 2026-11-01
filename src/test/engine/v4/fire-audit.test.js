@@ -130,6 +130,8 @@ const SPHERES = ['gold', 'red', 'purple', 'silver', 'yellow'];
 // Members that may stay unnamed on bot tables, with why (see design/eval/card-ledger-a.md).
 // Conditional cards that can go a whole bot game without their condition; each has a named test of its own.
 const ALLOW = {
+  // Lie Low steals 1 (Nov 1) moved the seeded games: Apprentice recruited in 4 without an extra turn coming after
+  'purple.apprentice': 'fires only after an extra turn (Right Away, Crunch Time); its own tests cover it (cards-purple: Apprentice)',
   // cut since Yellow 2.0; the full-deck seeded games moved with the Nov 1 Yellow swaps and its owners planted nothing
   'yellow.sower': 'out of the deck; plants only when a bot holds spare yellow at round start (cards-yellow: Sower)',
   // seeded games moved with +1 wild and the round I rework (Oct 27-28): recruited in 4-5 games without the trigger coming up

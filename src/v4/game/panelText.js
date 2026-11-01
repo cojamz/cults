@@ -110,7 +110,7 @@ const P = {
   thieves: {
     pickpocket: r => ({ verb: `Steal ${r + 2}`, second: 'split among rivals', note: run(n => `${n + 2}`) }),
     tipoff: r => ({ main: `+${r + 1} magenta`, second: `+${r} @f if you recruit a member` }), // Gather's shape (Cory, Oct 31)
-    hideout: { verb: 'Safe from steals', second: 'this round', note: '+1 magenta' },
+    hideout: { verb: 'Steal 1', second: 'Rivals can’t steal or recruit from you this round', note: '+1 magenta' },
     rob: { verb: 'Steal half a rival’s pile', second: 'one color, rounded down', note: '+1 magenta' },
     ransom: { verb: 'Rival pays or loses a member', second: 'costing 5 or less', note: '+1 magenta' },
     heist: { verb: 'Recruit a rival’s member', note: '+1 magenta' },

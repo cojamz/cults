@@ -61,18 +61,26 @@ describe('Magenta actions', () => {
     expect(R(s).magenta).toBe(round + 2);
     expect([R(s, 1).gold, R(s, 2).red]).toEqual([3, 3]);
   });
-  it('Lie Low: no steal (Cory, 2026-10-22); resources are safe this round', () => {
-    let s = table(Q, { res: [{ gold: 4 }, { red: 1 }], shop: ROW, queue: turns(0, 1) });
-    s = pass(take(s, 'thieves.hideout'));
-    expect(R(s).magenta).toBe(1);
+  it('Lie Low: steal 1 (Cory, Nov 1); resources are safe this round', () => {
+    let s = table(Q, { res: [{ gold: 4 }, { red: 2 }], shop: ROW, queue: turns(0, 1) });
+    s = take(s, 'thieves.hideout');
+    while (s.pending?.kind === 'choose') s = move(s, 'take:1:red');
+    s = pass(s);
+    expect(R(s)).toMatchObject({ magenta: 1, red: 1, gold: 4 });
+    expect(R(s, 1).red).toBe(1);
     s = take(s, 'thieves.pickpocket');
     expect(s.pending?.kind).toBe('buy'); // nothing to take
     expect(R(s).gold).toBe(4);
     expect(s.log).toContain('P2 found nothing to steal.');
   });
-  it('Lie Low protects members from Poach, Shake Down and Swap Sides', () => {
+  // Cory, Nov 1: "rivals can't steal or recruit from you … they can still move your members around, they just can't take them"
+  it('Lie Low protects members from Poach and Shake Down, not from swaps', () => {
     const base = { round: 3, left: 5, res: [{ gold: 4 }, { red: 3 }], members: [['red.twins'], ['red.intern']], shop: ROW, queue: turns(0, 1) };
-    for (const action of ['thieves.heist', 'thieves.ransom', 'red.trade']) {
+    let t = take(table(Q, base), 'thieves.hideout');
+    while (t.pending?.kind === 'choose') t = move(t, 'take:1:red');
+    t = take(pass(t), 'red.trade');
+    expect(ids(t).some(id => id.includes(`:${uidIn(t, 'red.twins', 0)}`))).toBe(true);
+    for (const action of ['thieves.heist', 'thieves.ransom']) {
       let s = take(table(Q, base), 'thieves.hideout');
       while (s.pending?.kind === 'choose') s = move(s, 'take:1:red');
       s = pass(s);

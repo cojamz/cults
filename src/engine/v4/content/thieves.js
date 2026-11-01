@@ -187,8 +187,10 @@ const thieves = {
   rule: 'Stolen resources keep their colors. Every Magenta action gives +1 magenta. Most magenta at round end wins.',
   scoring: SCORING.resources,
 
-  // Lie Low protects both members and resources until round end (Cory, 2026-10-17).
-  guardSteal: (ctx, thief, victim) => victim.hideout === ctx.state.round,
+  // Lie Low protects both members and resources until round end (Cory, 2026-10-17). Since Nov 1 ("rivals can't steal or
+  // recruit from you… they can still move your members around, they just can't take them"), swaps and Yellow's color
+  // changes go through; steals and Poach stay blocked.
+  guardSteal: (ctx, thief, victim, kind) => victim.hideout === ctx.state.round && kind !== 'swap' && kind !== 'change',
   onSteal(ctx, info) {
     // measurement only: who robbed whom, and where the victim stood
     const s = ctx.state;
@@ -222,9 +224,11 @@ const thieves = {
       },
     },
     {
-      key: 'hideout', ring: 1, name: 'Lie Low', text: 'Rivals can’t steal from you this round. +1 magenta.', // no steal: the protection is the strength (Cory, 2026-10-22 playtest: "Lie Low probably shouldnt even steal")
-      estimate: (ctx, p) => 1.8 + 0.6 * ctx.state.round,
+      // Cory, Nov 1 morning: "so steal 1, +1 magenta, rivals can't steal or recruit from you this round" (was the protection only)
+      key: 'hideout', ring: 1, name: 'Lie Low', text: 'Steal 1. Rivals can’t steal or recruit from you this round. +1 magenta.',
+      estimate: (ctx, p) => 1.8 + 0.6 * ctx.state.round + estimateSteal(ctx, p, ctx.stealCount(p, 1)),
       resolve(ctx, p) {
+        startSteal(ctx, p, 'Lie Low', ctx.stealCount(p, 1, { say: true }));
         p.hideout = ctx.state.round;
         ctx.log(`${p.name} lies low: safe from thieves until round end.`);
       },

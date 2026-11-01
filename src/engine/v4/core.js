@@ -1237,7 +1237,7 @@ function swapMembers(state, actor, aUid, bUid) {
   if (!a || !b) return false;
   const ctx = ctxFor(state);
   if ((a.owner && !ctx.canSwapMember(aUid)) || (b.owner && !ctx.canSwapMember(bUid))) return false;
-  for (const loc of [a, b]) if (loc.owner && loc.owner !== actor && !ctx.canSteal(actor, loc.owner, 'member')) return false;
+  for (const loc of [a, b]) if (loc.owner && loc.owner !== actor && !ctx.canSteal(actor, loc.owner, 'swap')) return false;
   // Any two includes two in the same shop/cult: change their positions, with no acquisition.
   if (a.list === b.list) {
     [a.list[a.index], a.list[b.index]] = [bUid, aUid];
@@ -1676,7 +1676,7 @@ function ctxFor(state) {
     /** Coach: use one of p's members' abilities as a free extra use (freeUse). */
     freeUse: (p, uid) => freeUse(state, p, uid),
     // ---- stealing: one shared verb, so protections and reactions apply to every sphere's steals ----
-    /** May `thief` steal from `victim`? kind is 'res' (resources, piles) or 'member'. Quadrants and the
+    /** May `thief` steal from `victim`? kind is 'res' (resources, piles), 'member', 'swap' (a trade of members) or 'change' (Yellow turning a rival's colors). Quadrants and the
      *  victim's members can refuse (guardSteal returns true). */
     canSteal(thief, victim, kind = 'res') {
       if (!victim || victim === thief) return false;

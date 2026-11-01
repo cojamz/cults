@@ -148,14 +148,14 @@ describe('locked Red action progression', () => {
     expect(s.players[0].res.green).toBe(0);
   });
 
-  it('Bodyguards/Lie Low protect rival cults while the actor may exchange their own protected member', () => {
+  it('Bodyguards protect rival cults while the actor may exchange their own protected member; Lie Low lets swaps through (Cory, Nov 1)', () => {
     const s = take(table(['gold', 'red', 'thieves', 'echo'], { n: 3, round: 2, members: [['thieves.watchdog'], ['red.twins', 'thieves.crew'], ['red.intern']], shop: ROW }), 'red.hireup');
     const own = uidIn(s, 'thieves.watchdog', 0);
     expect(s.pending.options.some(o => o.value[0] === own)).toBe(true);
     const ctx = contextFor(s); s.players[1].hideout = s.round;
     const a = uidIn(s, 'red.twins', 1), b = uidIn(s, 'gold.banker', 'shop');
-    expect(ctx.swapMembers(s.players[0], a, b)).toBe(false);
-    expect(s.players[1].members).toContain(a);
+    expect(ctx.swapMembers(s.players[0], a, b)).toBe(true);
+    expect(s.players[1].members).not.toContain(a);
   });
 
   it('stale trade options disappear if either member changes location', () => {

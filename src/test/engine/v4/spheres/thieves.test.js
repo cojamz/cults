@@ -108,11 +108,11 @@ describe('Magenta actions', () => {
     }
   });
 
-  it('Lie Low: no steal (Cory, 2026-10-22); no one can steal your resources or members this round, Gold’s Collect Debts included', () => {
-    let s = scene({ round: 2, res: [{ gold: 4 }, {}, { gold: 2 }], members: [['red.intern'], [], []],
+  it('Lie Low: steal 1 (Cory, Nov 1); no one can steal your resources or members this round, Gold’s Collect Debts included', () => {
+    let s = scene({ round: 2, res: [{ gold: 4 }, {}, { gold: 3 }], members: [['red.intern'], [], []],
       queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 1 }, { t: 'turn', p: 1 }] });
-    s = pass(take(s, 'thieves.hideout'));
-    expect(R(s)[0]).toEqual({ ...Z, gold: 4, magenta: 1 });
+    s = pass(move(take(s, 'thieves.hideout'), 'take:2:gold'));
+    expect(R(s)[0]).toEqual({ ...Z, gold: 5, magenta: 1 });
     expect(s.players[0].hideout).toBe(2);
     // P2's Help Yourself can only reach P3
     s = take(s, 'thieves.pickpocket');
@@ -125,7 +125,7 @@ describe('Magenta actions', () => {
     expect(defs(s, 0)).toEqual(['red.intern']);
     s = take(s, 'gold.steal');
     expect(s.pending?.kind).not.toBe('choose');
-    expect(R(s)[0].gold).toBe(4);
+    expect(R(s)[0].gold).toBe(5);
   });
 
   it('Crime Wave: steal half (rounded down) of one rival’s pile of one color, +1 magenta', () => {

@@ -158,9 +158,9 @@ describe('Green current actions', () => {
     s = go(s, 'echo.echo', sp('thieves.pickpocket'), 'take:2:blue', 'take:2:blue', 'take:1:gold');
     // the copier steals for itself (blue stays blue) and gets Help Yourself's own +1 magenta
     expect([R(s).magenta, R(s).blue, R(s).gold, R(s, 2).blue, R(s).green]).toEqual([0, 2, 1, 0, 1]);
-    // Lie Low no longer steals (Cory, 2026-10-22): P3 hides, P2 steals from P1, P1's copy of that steal can't reach P3
+    // P3 lies low (stealing 1 gold from P2, Cory Nov 1), P2 steals from P1, P1's copy of that steal can't reach P3
     let t = table(QT, { n: 3, shop: ROW, res: [{ red: 3 }, { gold: 3 }, { blue: 3 }], queue: turns(2, 1, 0) });
-    t = go(t, 'thieves.hideout');
+    t = go(t, 'thieves.hideout', 'take:1:gold');
     t = go(t, 'thieves.pickpocket', 'take:0:red', 'take:0:red', 'take:0:red');
     t = play(take(t, 'echo.echo'), sp('thieves.pickpocket'));
     expect(ids(t).length).toBeGreaterThan(0);

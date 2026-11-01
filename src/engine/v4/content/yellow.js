@@ -26,7 +26,7 @@ function guestBook(ctx, owner, member) {
   ctx.gain(owner, Y, 2);
   ctx.log(`${owner.name}'s Guest Book: a new member color, +2 yellow.`);
 }
-const touchable = (ctx, p) => ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'res'));
+const touchable = (ctx, p) => ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'change'));
 
 export default {
   id: 'yellow',
