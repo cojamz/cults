@@ -1,29 +1,27 @@
 # Lens read: deck10-1.0-final
-Tiers: normal (800 games), hard (351 games), veryhard (237 games). Lift = owner win share minus expected for their member count, in points.
+Tiers: normal (389 games), hard (220 games), veryhard (249 games). Lift = owner win share minus expected for their member count, in points.
 
 ## Members
-- **DOMINANT**: Accomplice (thieves) (N +7 @98%, H +13 @96%, V -1 @95%)
-- **TRAP**: Early Birds (purple) (N -4 @89%, H -15 @87%, V -14 @69%); Drifters (yellow) (N -4 @88%, H -8 @87%, V -11 @78%)
-- **SLEEPER**: Tribute Band (echo) (N +17 @12%, H +11 @19%)
-- **SKILL−**: Doormen (market) (N +6 @69%, H +0 @71%, V -12 @56%); Doppelganger (echo) (N +5 @81%, H -1 @80%, V -9 @79%); Timekeepers (purple) (N -1 @90%, H -6 @90%, V -11 @79%); Early Birds (purple) (N -4 @89%, H -15 @87%, V -14 @69%); Double Agent (thieves) (N -5 @60%, H -1 @57%, V -17 @42%)
-- **SKILL+**: Hot Streak (purple) (N -1 @21%, H +2 @34%, V +19 @45%)
+- **DOMINANT**: Patriarch (red) (H +15 @86%, V -3 @81%)
+- **TRAP**: Early Birds (purple) (N -6 @85%, H -15 @82%, V -13 @69%); Drifters (yellow) (N -7 @84%, H -12 @84%, V -8 @79%); Loyalists (red) (H -6 @90%, V -12 @67%)
+- **SLEEPER**: Collector (silver) (N +24 @21%, V +2 @35%); Extra Hand (benders) (V +19 @26%)
+- **SKILL−**: Collector (silver) (N +24 @21%, V +2 @35%); Chronicler (echo) (N +7 @87%, H -4 @86%, V -10 @75%); Double Agent (thieves) (N -4 @49%, H -3 @56%, V -17 @43%)
 
 ## Spaces
-- **STRONG**: purple: Last Call (N +6 1.6 takers, H +11 1.6 takers, V +17 1.6 takers); purple: Crunch Time (N +3 1.1 takers, H +11 1.2 takers, V +14 1.1 takers)
-- **WEAK**: red: Promote (N -5 1.8 takers, H -5 1.9 takers, V -3 1.9 takers)
-- **SKILL+**: purple: Last Call (N +6 1.6 takers, H +11 1.6 takers, V +17 1.6 takers)
+- **STRONG**: purple: Last Call (N +6 1.6 takers, H +12 1.6 takers, V +17 1.6 takers)
+- **SKILL+**: purple: Last Call (N +6 1.6 takers, H +12 1.6 takers, V +17 1.6 takers); purple: Crunch Time (N 0 1.1 takers, H +9 1.2 takers, V +14 1.1 takers)
 
 ## Colors (main-color seats, lift vs even)
-- thieves: normal +10, hard +5, veryhard +3
-- red: normal +10, hard +6, veryhard +12
-- echo: normal +4, hard +2, veryhard +3
-- trading: normal +2, hard +8, veryhard +0
-- purple: normal +1, hard -7, veryhard -1
-- silver: normal +1, hard +14, veryhard +0
-- market: normal -2, hard +4, veryhard -7
-- yellow: normal -8, hard -7, veryhard -2
+- echo: normal +10, hard +2, veryhard +0
+- thieves: normal +9, hard +12, veryhard +6
+- trading: normal +5, hard +5, veryhard +6
+- silver: normal +2, hard +21, veryhard -3
+- red: hard +1, veryhard +10
+- purple: normal +0, hard -7, veryhard -2
+- market: normal -2, hard +5, veryhard -3
+- yellow: normal -4, hard -14, veryhard -2
 
 ## Small cults and sweeps
-- normal, 4 seats: winners with 5 or fewer members 9% (bar 20%), margin 10.3
-- hard, 4 seats: winners with 5 or fewer members 9% (bar 20%), margin 8.4
-- veryhard, 4 seats: winners with 5 or fewer members 15% (bar 20%), margin 8.4
+- normal, 4 seats: winners with 5 or fewer members 14% (bar 20%), margin 9.3
+- hard, 4 seats: winners with 5 or fewer members 12% (bar 20%), margin 7.7
+- veryhard, 4 seats: winners with 5 or fewer members 16% (bar 20%), margin 8.7
