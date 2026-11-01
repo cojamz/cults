@@ -74,3 +74,12 @@ for the wheel, shop, rivals' seats and the strip; your own seat, the header and 
 /mnt/project-files/click-speed/answer-first-pay.png. Waiting on Cory's look before it goes on; then gates, then ship.
 Risks to check before shipping: a flight whose target is in a deferred part (a member going back to the shop) measured on
 the old table; the shop's lit cards reading fresh options against the old state for one frame.
+
+### 7:20am: answer-first not shipped
+With it on for everyone (branch claude/project-thread-6jkzfg, c15eb95), the full check was green except benders, and
+benders' b1 failed 1 run in 3 alone: a click on a joinable space right after a step did nothing, because the wheel was
+still showing the step before (deferred). A dropped click is worse than a slow one. Keeping the wheel in the click
+(1b48df9) keeps every click alive but the gain goes with it (paired game: p50 97 → 92, p95 144 → 152, noise).
+So the wheel is the part worth deferring and the one part that can't be. Next idea, if this lane reopens: the wheel's
+own clicks read the fresh state (legal, slots) through a ref while its drawing is deferred, then rerun benders b1 ten
+times. (benders b4, Straggler's "Stay put", is red on live v0.9.956 too: red-gates lane.)
