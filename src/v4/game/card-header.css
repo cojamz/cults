@@ -75,7 +75,7 @@
 .app.game.lt .lt-shop-cards .lt-card.card .lt-hd .nm:not([data-wide]){white-space:nowrap;display:block;margin:0}
 /* the top of the pile's cards are a quarter of the tray: a long name ("Deprogrammers", "Recruit Bonus") wraps at 12px
    instead of running off the card (hotseat gate, Nov 1) */
-.app.game.lt .lt-pile-row .lt-card.card .lt-hd .nm:not([data-wide]){white-space:normal;overflow-wrap:anywhere;display:block;margin:0}
+.app.game.lt .lt-pile-row .lt-card.card .lt-hd .nm:not([data-wide]){white-space:normal;hyphens:manual;display:block;margin:0}
 .app.game.lt .lt-pile-row .lt-card.card .lt-hd .nm[data-long]{font-size:12px;line-height:13px}
 .app.game.lt .lt-shop-cards .lt-card.card .lt-hd .nm[data-wide],.app.game.lt .lt-pile-row .lt-card.card .lt-hd .nm[data-wide]{display:block;margin:0}
 /* a card's contents never stretch its row (the shop's rows share the height; Details must not move a slot) */

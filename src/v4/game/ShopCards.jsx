@@ -3,6 +3,7 @@
 // afford are dim, and the ones the space under your pointer would unlock brighten (engine dry run).
 // While buying, the figure gives way to the card's text; hover shows what you'd pay. On touch a tap opens the card
 // as a sheet with Recruit (reading a card never recruits it); with a mouse a click on an affordable card recruits.
+import { breakable } from './hyphen.js';
 import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { cardDef, paymentPlan, followerChoices, TIERS, tierLeft, quadrant, pileReach } from '../../engine/v4/index.js';
 import { costParts } from '../format.js';
@@ -420,7 +421,7 @@ function PileRow({ state, viewer, row, optionFor, onPick, hover }) {
               <span className="lt-hd">
                 <span className="lt-corner-cost num" aria-hidden="true">{shown.reduce((t, c) => t + c.n, 0)}</span>
                 <WorthTag d={d} sphere={sphereOf(state, d)} />
-                <span className="nm" {...nameFit(d.name)}>{d.name}</span>
+                <span className="nm" {...nameFit(d.name)}>{breakable(d.name)}</span>
               </span>
               <span className="art"><Sprite id={[d.id, spriteId(d.name)]} kind="member" sphere={sphereOf(state, d)} size={48} />
                 {set && <span className="pr-slot num" aria-hidden="true">{k + 1}</span>}</span>
