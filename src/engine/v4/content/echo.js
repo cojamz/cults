@@ -533,7 +533,8 @@ const echoQ = {
       },
     }),
     // Cory, 2026-10-28: "Roadie is good" (Green's 16th); cost 3 is Claude's
-    m('roadie', 'Roadie', 1, 1, 'Round Start: +1 green per green member you have.', {
+    // Cory, 2026-11-01 playtest: "roadie should be On Recruit as well" (now: its round-start part fires once on recruit)
+    m('roadie', 'Roadie', 1, 1, 'On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.', { now: true,
       onRoundStart(ctx, owner) {
         const g = ctx.countMembersOfColor(owner, 'echo');
         if (g) ctx.gain(owner, 'green', g);

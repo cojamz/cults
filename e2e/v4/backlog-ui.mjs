@@ -42,7 +42,8 @@ try{for(const[size,opts]of[['desktop',{viewport:{width:1270,height:700}}],['phon
   await p.waitForFunction(want=>{try{const s=JSON.parse(localStorage.getItem('patrons.v4.local')).state;return JSON.stringify({res:s.players.map(p=>p.res),members:s.players.map(p=>p.members),shop:s.shop})===JSON.stringify(want);}catch{return false;}},compare(expected));
  }else{
   await p.locator('.lt-seat.mine .cs-head').click();const list=p.locator('[data-seat-card="0"]');await list.waitFor();await settleCards();
-  const rows=await list.locator('.mu-row').evaluateAll(es=>es.map(e=>{const n=e.querySelector('.mu-name').getBoundingClientRect(),c=e.querySelector('.mu-price').getBoundingClientRect();return{name:e.innerText,aligned:c.left>=n.right-1,ability:!!e.querySelector('[data-ability]')};}));
+  // your seat's card is the rival format since Cory's playtest (Nov 1): each member with its price disc and its whole ability
+  const rows=await list.locator('[data-member-row]').evaluateAll(es=>es.map(e=>({name:e.innerText,aligned:!!e.querySelector('.rc-disc'),ability:!!e.querySelector('[data-ability]')})));
   if(rows.length<4||rows.some(r=>!r.aligned||!r.ability))throw Error(`member rows broken: ${JSON.stringify(rows)}`);
  }
  if(kind!=='pay')await p.screenshot({path:`${out}/${size}-${kind}.png`});

@@ -14,6 +14,7 @@ import { Rich } from './Rich.jsx';
 import { MemberGlyph } from './Glyphs.jsx';
 import { ArtifactTile } from './ArtifactDraft.jsx';
 import { memberRows } from './memberUse.js';
+import { UseButton, MemberSwitch } from './MemberUse.jsx';
 import { incomeOf } from './build.js';
 import { cardGains } from '../format.js';
 import './rival-card.css';
@@ -79,9 +80,10 @@ function Heading({ state, pid, who }) {
   );
 }
 
-function Card({ state, r }) {
+function Card({ state, r, onPick = null }) {
   const use = r.kind === 'use';
-  const st = use ? (r.loaded ? 'unused' : 'used') : r.used ? 'used' : '';
+  const idle = !!(onPick && use && r.loaded && r.use && r.use.idle);
+  const st = use ? (idle ? 'idle' : r.loaded ? 'unused' : 'used') : r.used ? 'used' : '';
   const end = r.kind === 'end' && !state.over ? cardGains(state, r.uid).end : null;
   const made = madeOf(state, r.uids);
   return (
@@ -89,7 +91,7 @@ function Card({ state, r }) {
       <span className="rc-bar">
         <span className="rc-disc num" title={`Costs ${price(r)}`}>{price(r)}</span>
         <span className="rc-bar-n"><CardName state={state} uid={r.uid} />{r.n > 1 ? ` ×${r.n}` : ''}</span>
-        {use ? <span className="rc-usetag">{r.loaded ? 'Not used yet' : 'Used'}</span> : r.used ? <span className="rc-usetag">Used this round</span> : null}
+        {use ? <span className="rc-usetag">{idle ? 'Nothing to gain now' : r.loaded ? 'Not used yet' : 'Used'}</span> : r.used ? <span className="rc-usetag">Used this round</span> : null}
       </span>
       <span className="rc-body">
         <Pic state={state} def={r.def} name={r.name} size={28} />
@@ -97,14 +99,19 @@ function Card({ state, r }) {
           <span className="rc-text" data-ability><Rich text={r.text} /></span>
           {made ? <span className="rc-gain"><Rich text={made} /><small> so far</small></span>
             : end != null ? <span className="rc-gain"><Rich text={`+${end} followers`} /><small> if it ended now</small></span> : null}
+          {/* your own card: its Use button, or why it can't be used now (Cory's playtest, Nov 1) */}
+          {onPick && r.use && !r.use.blocked && !r.use.idle ? <UseButton use={r.use} uid={r.uid} name={r.name} onPick={onPick} /> : null}
+          {onPick && r.use && (r.use.blocked || r.use.idle) && r.use.why ? <small className="rc-why" data-use-why={r.uid}>{r.use.idle ? 'Nothing to gain now' : 'Can’t use now'}: {r.use.why}.</small> : null}
+          {onPick && r.toggle ? <MemberSwitch name={r.name} on={r.toggle.on} option={r.toggle.option} onPick={onPick} /> : null}
         </span>
       </span>
     </div>
   );
 }
 
-export function RivalCard({ state, pid, who }) {
-  const rows = memberRows(state, pid, null).map(r => ({ ...r, type: typeOf(r) }))
+export function RivalCard({ state, pid, who, me = null, optionFor = () => null, onPick = null }) {
+  const mine = me != null && me === pid && !!onPick;
+  const rows = memberRows(state, pid, mine ? me : null, mine ? optionFor : undefined).map(r => ({ ...r, type: typeOf(r) }))
     .sort((a, b) => price(b) - price(a) || a.name.localeCompare(b.name));
   const groups = TYPES.map(([t, label]) => ({ t, label, rows: rows.filter(r => r.type === t) })).filter(g => g.rows.length);
   return (
@@ -124,7 +131,7 @@ export function RivalCard({ state, pid, who }) {
                         <span className="rc-hide" data-ability>{r.text}</span>
                       </span>
                     ))}</div>
-                    : g.rows.map(r => <Card key={r.key} state={state} r={r} />)}
+                    : g.rows.map(r => <Card key={r.key} state={state} r={r} onPick={mine ? onPick : null} />)}
                 </div>
               ))}
             </div>

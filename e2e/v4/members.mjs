@@ -76,7 +76,7 @@ const seatCard = pid => page.evaluate(id => {
       return {
         id: r.dataset.memberRow, state: r.dataset.state || '', ability: a.textContent,
         cut: a.scrollWidth > a.clientWidth + 1 || a.scrollHeight > a.clientHeight + 1 || st.textOverflow === 'ellipsis' || st.whiteSpace === 'nowrap' || st.webkitLineClamp !== 'none' && st.webkitLineClamp !== '',
-        tag: (r.querySelector('.mu-tag') || {}).textContent || '', use: (r.querySelector('[data-use]') || {}).textContent || '',
+        tag: ((r.querySelector('.mu-tag') || r.querySelector('.rc-usetag') || {}).textContent || '').toLowerCase(), use: (r.querySelector('[data-use]') || {}).textContent || '',
         sw: (r.querySelector('[data-switch]') || {}).dataset?.switch || '',
         idle: !!r.querySelector('[data-use][data-idle]'), why: (r.querySelector('[data-use]') || {}).title || '',
       };

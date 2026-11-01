@@ -187,6 +187,14 @@ describe('Green current members', () => {
     const start = members => { let s = table(Q, { members: [members] }); s.queue = [{ t: 'round', r: 2 }]; return R(resume(s)).green || 0; };
     expect(start(['echo.roadie', 'echo.muse', 'echo.ensemble', 'red.twins']) - start(['echo.muse', 'echo.ensemble', 'red.twins'])).toBe(5); // Roadie, Muse, Ensemble (3 members: worth 3, Nov 1)
   });
+  it('Roadie: On Recruit too, +1 green per Green member, itself counted (Cory, Nov 1)', () => {
+    let s = table(Q, { members: [['echo.muse']], shop: ['echo.roadie', ...ROW], res: [{ green: 4, red: 4 }], queue: turns(0) });
+    const g0 = R(s).green;
+    s = move(take(s, 'red.turnout'), cardOpt(s, 'echo.roadie'));
+    expect(s.players[0].members).toContain(uidIn(s, 'echo.roadie', 0));
+    expect(named(s, 'Roadie').length).toBe(1);
+    expect(R(s).green).toBeGreaterThan(g0 - 2);
+  });
   it('Busker gives two green on recruit and at round start, naming the source', () => {
     let s = table(Q, { shop: ['echo.evergreen', ...ROW], res: [{ green: 4, red: 1 }], queue: turns(0) });
     s = move(take(s, 'red.turnout'), cardOpt(s, 'echo.evergreen'));

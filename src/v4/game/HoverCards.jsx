@@ -14,7 +14,7 @@ import { SeatFigure } from './Glyphs.jsx';
 import { Rich } from './Rich.jsx';
 import { memberCopyTargets, ownCopyPlan, copiesAll, copyAllPlan } from './cards.js';
 import { DeckCard } from './MemberDeck.jsx';
-import { SeatMembers, FollowersCard } from './MemberUse.jsx';
+import { FollowersCard } from './MemberUse.jsx';
 import { RivalCard, RIVAL_CARD_WIDTH } from './RivalCard.jsx';
 import { safeThisRound } from './memberUse.js';
 import './lamp-b.css';
@@ -344,7 +344,7 @@ export function HoverCardLayer({ hover, state, me, optionFor = () => null, onPic
 }
 
 // a rival's seat card is the wide one (RivalCard.jsx): their whole cult in columns
-const cardWidth = (c, me) => Math.min(c.kind === 'seat' ? (c.pid !== me ? RIVAL_CARD_WIDTH : 360) : c.kind === 'followers' ? 260 : 280, innerWidth - 16);
+const cardWidth = (c, me) => Math.min(c.kind === 'seat' ? RIVAL_CARD_WIDTH : c.kind === 'followers' ? 260 : 280, innerWidth - 16);
 
 // where the pointer last was: a hover card whose target was re-drawn re-links only while the pointer is still on it
 let lastPt = null;
@@ -649,17 +649,12 @@ export function StandingsCard({ state, qid, meId = null }) {
 export function SeatCard({ state, pid, meId = null, optionFor = () => null, onPick = null }) {
   const p = state.players[pid];
   const lvl = p.kind === 'bot' ? BOT_LEVEL_INFO.find(l => l.level === botLevel(state, pid)) : null; // Easy / Normal / Hard
-  // a rival's: everything competitive about their cult (Cory, Oct 29; RivalCard.jsx)
-  if (pid !== meId) {
-    const who = <><SeatFigure id={pid} state={state} size={32} face /><h4>{p.name}{lvl ? <small><span data-bot-level={lvl.level} title={lvl.blurb}>{lvl.name} bot</span></small> : null}{safeThisRound(state, pid) ? <small className="seat-safe" data-safe="1">No one can steal members or resources from {p.name} this round.</small> : null}</h4></>;
-    return <div className="lt-card-body seat-card rival" data-seat-card={pid} style={{ '--pc': playerColor(pid) }}><RivalCard state={state} pid={pid} who={who} /></div>;
-  }
-  return (
-    <div className="lt-card-body seat-card" data-seat-card={pid} style={{ '--pc': playerColor(pid) }}>
-      <div className="t"><SeatFigure id={pid} state={state} size={32} face={pid !== meId} /><h4>{pid === meId ? 'You' : p.name}{lvl ? <small><span data-bot-level={lvl.level} title={lvl.blurb}>{lvl.name} bot</span></small> : null}{safeThisRound(state, pid) ? <small className="seat-safe" data-safe="1">No one can steal members or resources from {pid === meId ? 'you' : p.name} this round.</small> : null}</h4></div>
-      <SeatMembers state={state} pid={pid} me={meId} optionFor={pid === meId ? optionFor : undefined} onPick={pid === meId ? onPick : null} />
-    </div>
-  );
+  // everything competitive about a cult (Cory, Oct 29; RivalCard.jsx). Your own seat reads the same card (Cory's
+  // playtest, Nov 1: "hover on your own player card should show same format it shows for opponents"); Use stays on your
+  // seat's figures
+  const you = pid === meId;
+  const who = <><SeatFigure id={pid} state={state} size={32} face={!you} /><h4>{you ? 'You' : p.name}{lvl ? <small><span data-bot-level={lvl.level} title={lvl.blurb}>{lvl.name} bot</span></small> : null}{safeThisRound(state, pid) ? <small className="seat-safe" data-safe="1">No one can steal members or resources from {you ? 'you' : p.name} this round.</small> : null}</h4></>;
+  return <div className="lt-card-body seat-card rival" data-seat-card={pid} style={{ '--pc': playerColor(pid) }}><RivalCard state={state} pid={pid} who={who} me={meId} optionFor={optionFor} onPick={you ? onPick : null} /></div>;
 }
 
 /** The tap sheet's button says what the pick does: Churn and Bury send the card to the bottom, Peek stacks the pile
