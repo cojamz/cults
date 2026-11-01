@@ -23,9 +23,9 @@ Cards compared against:
 - Not Poach: nobody keeps the member, and it reaches a player behind Lie Low or Bodyguards (it isn't a steal).
 - Risk: in round II it takes a member away early, which you've wanted to stay a mild sting.
 
-## 3. Understudy (about 5, worth 1)
+## 3. Royalties (about 5, worth 1)
 "Whenever a rival copies one of your actions or one of your members' On Recruits, give them this member and recruit their most expensive member costing 7 or less."
-- Round III: Ava takes Largesse (+10); Cal Echoes it (+10). Understudy goes to Cal; Ava recruits Cal's Con Men. Cal still nets about +9, Ava +1 and a Con Men. Understudy now sits with Cal and taxes whoever copies him next.
+- Round III: Ava takes Largesse (+10); Cal Echoes it (+10). Royalties goes to Cal; Ava recruits Cal's Con Men. Cal still nets about +9, Ava +1 and a Con Men. Royalties now sits with Cal and taxes whoever copies him next.
 - Who feels it: every copier, who sees the tax before copying. A soft, moving version of the new Agents.
 - Risk: it fires on another player's turn; doesn't touch Greatest Hits copying your own members (Usurper does).
 
