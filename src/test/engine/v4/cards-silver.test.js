@@ -76,6 +76,13 @@ describe('Silver members', () => {
     expect(s.players[0].bonus).toBe(1);
     expect(named(s, 'Gift Wrapper')).toHaveLength(1);
   });
+  it('Caterer: Party Favors is one gift, +1 silver once however many rivals answer (as Toast)', () => {
+    let s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, { green: 1 }], members: [['silver.caterer']] }), 'silver.favors');
+    s = move(s, s.pending.options[0].id);
+    s = move(s, s.pending.options[0].id);
+    expect(S(s)).toBe(2 + 1);
+    expect(named(s, 'Caterer')).toHaveLength(1);
+  });
   it('Polisher: once per game, up to 3 silver into 2 of any colors each', () => {
     let s = sc({ res: [{ silver: 4 }], members: [['silver.polisher']] });
     const use = s.pending.options.find(o => o.kind === 'use');

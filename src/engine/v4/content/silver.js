@@ -280,7 +280,11 @@ const silver = {
       },
     }),
     m('caterer', 'Caterer', 2, 2, 'Whenever you give a rival something, +1 silver.', {
-      onGive(ctx, owner) { ctx.gain(owner, S, 1); },
+      // one gift per space, as Toast: Party Favors' answers are one gift, not one per rival (as Gift Wrapper; bug bash, Nov 1)
+      onGive(ctx, owner, card, color, once) {
+        if (once) { if (card.catered === once) return; card.catered = once; }
+        ctx.gain(owner, S, 1);
+      },
     }),
     m('majordomo', 'Majordomo', 4, 2, 'Whenever you take a Silver space, +2 silver.', {
       afterAction(ctx, owner, card, qid) { if (qid === S) ctx.gain(owner, S, 2); },
