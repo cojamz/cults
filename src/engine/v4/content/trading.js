@@ -269,7 +269,7 @@ const trading = {
       botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.membersOf(owner).some(c => c.def.key !== 'appraiser' && buryValue(ctx, owner, c, fv(ctx)) >= 2),
     }),
     m('changer', 'Money Changers', 2, 1, 'Whenever you turn resources or members into followers, +1 white.', { f: 2, onTurned: 1 }),
-    m('martyr', 'Martyrs', 2, 1, 'Whenever this member leaves your cult, gain followers equal to its cost.', { f: 2,
+    m('martyr', 'Martyrs', 2, 1, 'Whenever this member leaves your cult, gain followers equal to its cost.', { f: 3,
       onLeave(ctx, owner, card) {
         const c = card.def.s + card.def.w;
         ctx.asMember(owner, 'Martyrs', () => { owner.bonus += c; ctx.log(`${owner.name}'s Martyrs left: +${plural(c, 'follower')}.`); });

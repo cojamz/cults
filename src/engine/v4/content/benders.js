@@ -114,7 +114,7 @@ const members = [
     onTurnEnd(ctx, owner, card, p) { if (p === owner) delete owner.buyTwiceNow; },
     botActivate: (ctx, p) => !p.buyTwiceNow && ctx.state.round >= 2 && p.turnBuys === 0 && Object.values(p.res).reduce((a, b) => a + b, 0) >= 10,
   }),
-  m('freelancer', 'Alchemists', 'yellow', 2, 2, /* Freelancer until Cory renamed it, Oct 28 */ 'All your resources count as any when you recruit a member.', { f: 2, anyColorPart: true }), // (Cory, Oct 29, balance run: +1 follower)
+  m('freelancer', 'Alchemists', 'yellow', 2, 2, /* Freelancer until Cory renamed it, Oct 28 */ 'All your resources count as any when you recruit a member.', { f: 3, anyColorPart: true }), // (Cory, Oct 29, balance run: +1 follower)
   m('insider', 'Insider', 'market', 3, 1, 'You may also recruit from the top 3 of the pile.', { pileReach: 3 }),
   // Extra Hand as it printed until Oct 28, never dealt (retired): the tests of extra minions a card grants by round
   // (Poach and swaps moving an unplaced grant, copies, a full board) keep it as their fixture
@@ -182,7 +182,7 @@ const members = [
     onRecruited(ctx, owner) { startSteal(ctx, owner, 'Con Men', 5, { fromAction: false }); },
   }),
   // Cory, 2026-10-28: HR (Archivist), 9, worth 3 (so it counts as 3 members)
-  m('hr', 'HR', null, 0, 9, /* 10, counts as 4 (Cory, Oct 29: "bump HR to four members"; +1 price Claude's) */ 'Counts as 4 members. Game End: +3 followers per color you have 3 members of.', { f: 4, n: 4,
+  m('hr', 'HR', null, 0, 10, /* 10, counts as 4 (Cory, Oct 29: "bump HR to four members"; +1 price Claude's) */ 'Counts as 4 members. Game End: +3 followers per color you have 3 members of.', { f: 4, n: 4,
     // guests count as a color here, they just have no resource (Cory, 2026-10-30: "should they count for the purposes of HR? they should")
     onGameEnd: (ctx, owner) => 3 * [...ctx.state.quadrants, 'guest'].filter(q => ctx.countMembersOfColor(owner, q) >= 3).length,
   }),

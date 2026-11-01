@@ -318,7 +318,7 @@ const market = {
     m('onlooker', 'Onlooker', 6, 4, 'Whenever a rival recruits a blue member, +2 blue.', {
       onAnyRecruit(ctx, owner, card, by, rec) { if (by !== owner && isBlue(ctx.defOf(rec))) ctx.gain(owner, B, 2); },
     }),
-    m('connoisseur', 'Connoisseur', 1, 2, 'Whenever you recruit a blue member, +1 blue.', {
+    m('connoisseur', 'Connoisseur', 1, 2, 'Whenever you recruit a blue member, +1 blue.', { f: 2,
       onAnyRecruit(ctx, owner, card, by, rec) { if (by === owner && rec.uid !== card.uid && isBlue(ctx.defOf(rec))) ctx.gain(owner, B, 1); },
     }),
     m('reseller', 'Reseller', 4, 2, 'Whenever you recruit, +1 of that member’s color.', {
@@ -371,7 +371,7 @@ const market = {
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && totalRes(owner) >= 8,
     }),
-    m('snob', 'Snob', 3, 2, 'Game End: +1 follower per blue member you have.', {
+    m('snob', 'Snob', 3, 2, 'Game End: +1 follower per blue member you have.', { f: 2,
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, Q),
     }),
     m('recluse', 'Recluse', 2, 2, 'Game End: +2 followers per rival with more members than you.', {
@@ -412,7 +412,7 @@ const market = {
     }),
     // Cory, Oct 21: "any time a player recruits more than once in a turn", swaps and takes included (they all reach
     // onAnyRecruit through memberAcquired)
-    m('doorman', 'Doorman', 1, 3, 'Whenever a rival recruits more than once in a turn (swaps count), +1 blue.', {
+    m('doorman', 'Doorman', 1, 3, 'Whenever a rival recruits more than once in a turn (swaps count), +1 blue.', { f: 2,
       // every recruit (members, own red swaps, follower buys) reaches onRecruit (core.js recruited)
       onRecruit(ctx, owner, card, by) {
         if (by === owner) return;

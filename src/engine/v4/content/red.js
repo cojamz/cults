@@ -108,7 +108,7 @@ export default {
       },
     }),
     // balance pass 2 (pooled bench, both bots agree; design/eval/balance-pass-2.md): 12 → 6
-    m('proselytizer', 'Proselytizers', 3, 3,'Whenever you recruit, +1 follower.', { f: 2, // +1 follower (Cory, 2026-10-25)
+    m('proselytizer', 'Proselytizers', 3, 4,'Whenever you recruit, +1 follower.', { f: 2, // +1 follower (Cory, 2026-10-25)
       // a recruit is a member or a follower purchase (Cory, 2026-10-21); not its own arrival
       onRecruit(ctx, owner, card, by, what) { if (by === owner && what.member?.uid !== card.uid) owner.bonus += 1; },
     }),
@@ -142,7 +142,7 @@ export default {
     m('recruitbonus', 'Recruit Bonus', 1, 1, 'Your On Recruits also give +1 of that member’s color.', { f: 2,
       onRecruitAbility(ctx, owner, card, recruited) { gainColorOf(ctx, owner, recruited.def, 'Recruit Bonus'); }, // a guest: nothing; Dabblers: pick
     }),
-    m('movementpenalty', 'Deprogrammers', 1, 2, 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 2, n: 2, // +1 (Cory, Oct 30)
+    m('movementpenalty', 'Deprogrammers', 1, 2, 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 3, n: 2, // +1 (Cory, Oct 30)
       onMoveMember(ctx, owner, card, info) { if (info.from !== owner && ctx.followers(info.from) > 0) info.from.bonus -= 1; },
     }),
     m('panel', 'Panel', 4, 2, 'On Recruit: promote or demote another of your members.', { f: 3, n: 3,
