@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.967 — 2026-11-01
+
+- Skipped turns show on the table ("Turn skipped" on the seat), and Pocket Watch and Gossip pay as it shows; Guest Book pays for a new color even with Dabblers
+
 ## v0.9.966 — 2026-11-01
 
 - Last Call no longer skips turns that already come last (no extra Gossip or Pocket Watch); Stash pays its printed +2/+3/+4 magenta
