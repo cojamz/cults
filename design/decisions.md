@@ -1653,3 +1653,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - (Cory, 2026-11-01 2:18pm Eastern) Tribute Band stays On Use and costs 14 (was 12): as On Recruit, Tryout could fire it from the shop for one minion and Greatest Hits could repeat it. Party Crasher stays at 4 (answer it with counterplay).
 - (Cory, 2026-11-01 2:20pm Eastern) Window Shopper reads "On Recruit and Round Start: send 2 shop members to the bottom of the pile. +1 of each one's color." (Claude's words for his 2-member call).
 - (Cory, 2026-11-01 2:21pm Eastern) Early Birds' purpose: let you take a skip space for its payout (Last Call's bonus per minion) without your minions going last. Held until the Goes Last cards are set, then reworked with them.
+- (Cory, 2026-11-01 2:25pm Eastern) Early Birds gets a full rework, not a buff to Last Call: "the space is already strong even when it was not interacting with it, and it's meant to buff the space." Replaces the 2:21pm hold.
