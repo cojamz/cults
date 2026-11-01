@@ -198,6 +198,7 @@ try {
     if (a.wide) errors.push('(w2) the crowded swap card runs wider than itself (a row that doesn\'t wrap)');
     // live panel round 1: every row shows whole (nothing cut off at the card's foot, nothing to scroll to), and every
     // member shows what it costs (Even Swap is "equal cost", Swap Sides "no more than yours +2")
+    await page.screenshot({ path: `${SHOTS}/w2-open.png` });
     const whole = await page.evaluate(() => {
       const card = document.querySelector('.gift-card'), c = card.getBoundingClientRect();
       const sc = card.querySelector('.gc-row[data-row="2"] > .gc-items');

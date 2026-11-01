@@ -21,6 +21,9 @@ const LABELS = { share: [null, 'To'], color: [null, null], give: ['Color', 'To']
 // a swap with this many members on the card sets them closer (round III: twelve of yours and twenty of theirs), so
 // every row shows whole, never cut off at the card's foot (live panel round 1)
 const DENSE = 14;
+// a crowd (round III Demote reaches rivals' members too: 85+ on one card) drops the pictures for one-line name chips with
+// the price beside the name, so every member fits on the card with nothing to scroll; the picture is a hover away
+const CROWD = 36;
 
 // "Take all N" runs one pick per question the engine asks, as each comes back (kept outside the card, so a re-render
 // between two picks never loses it): { key, picks: [{ pid, res }], done: the question already answered }
@@ -131,6 +134,14 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
   const memberFace = (d, size, pay = null) => {
     const parts = pay || costParts(d, state.resources);
     const total = parts.reduce((t, c) => t + c.n, 0);
+    if (crowd) return (
+      <>
+        <span className="gc-name">{d.name}</span>
+        <span className="gc-cost" data-cost={total} aria-label={parts.length ? `costs ${parts.map(c => `${c.n} ${c.color === 'any' ? 'any' : c.color}`).join(' + ')}` : 'free'}>
+          {parts.length ? parts.map((c, k) => <span key={k} className="gc-cd num" data-res={c.color} data-any={c.color === 'any' ? anyParts() : undefined} style={c.color === 'any' ? undefined : { '--d': `var(--q-${c.color}, var(--${c.color}))` }}>{c.n}</span>) : <span className="gc-free">free</span>}
+        </span>
+      </>
+    );
     return (
       <>
         <span className="gc-pic">
@@ -146,6 +157,7 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
     );
   };
   const dense = g.kind === 'trade' && g.firsts.length + g.others.length > DENSE;
+  const crowd = g.kind === 'trade' && g.firsts.length + g.others.length > CROWD;
   const pic = dense ? 24 : 28;
 
   const firstItem = f => {
@@ -242,7 +254,7 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
     return [...groups].map(([pid, uids]) => (
       <span key={pid} className="gc-group" data-pid={pid}>
         <span className="gc-who gc-holder">
-          {pid !== 'shop' && <Minion color={playerColor(pid)} emoji={seatEmoji(state, pid)} size={20} />}
+          {pid !== 'shop' && <Minion color={playerColor(pid)} emoji={seatEmoji(state, pid)} size={crowd ? 16 : 20} />}
           <span className="gc-who-name">{pid === 'shop' ? 'Shop' : pid === g.actor ? 'You' : state.players[pid].name}</span>
         </span>
         <span className="gc-group-items">{uids.map(u => {
@@ -334,7 +346,7 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
 
   return (
     <section ref={box} className={`prompt choice plain gift-card${place ? ` at-space ${place.up ? 'below' : 'above'}` : ''}`} role="group" aria-label={pend.prompt}
-      data-gift={g.kind} data-step={step} data-dense={dense ? '1' : undefined} style={place ? { left: place.left, top: place.top } : undefined}>
+      data-gift={g.kind} data-step={step} data-dense={dense ? '1' : undefined} data-crowd={crowd ? '1' : undefined} style={place ? { left: place.left, top: place.top } : undefined}>
       {turnOf && <TurnOf player={turnOf} />}
       <header className="gc-head">
         {g.title && <small className="gc-title">{g.title}{g.kind === 'share' ? <> · <span className="num gc-given" data-given={g.total}>{g.total}</span> given · <span className="num pick-left" data-left={g.left}>{g.left}</span> left</> : g.left != null ? <> · <span className="num pick-left" data-left={g.left}>{g.left}</span> left</> : null}{g.done ? <> · <span className="num">{g.done}</span> swapped</> : null}</small>}
@@ -351,7 +363,10 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
       {!far && (
         <div className="gc-row" data-row="2" data-live={step === 2 ? '1' : undefined}>
           {l2 && <span className="gc-lbl">{l2}</span>}
-          <div ref={more} onScroll={edge} className={`gc-items${g.kind === 'trade' ? ' gc-theirs' : ''}`}>{g.kind === 'trade' ? memberGroups(g.others) : g.others.map(secondItem)}</div>
+          <div ref={more} onScroll={edge} className={`gc-items${g.kind === 'trade' ? ' gc-theirs' : ''}`}>{crowd
+            // a crowd lists the rivals' members once: the second row waits for a first, then holds only what it can swap for
+            ? g.chosen == null ? <span className="gc-wait">Pick a member above first.</span> : memberGroups(g.seconds.map(x => x.b))
+            : g.kind === 'trade' ? memberGroups(g.others) : g.others.map(secondItem)}</div>
         </div>
       )}
       {(g.rest.length > 0 || (g.plan && g.plan.length > 1)) && (
