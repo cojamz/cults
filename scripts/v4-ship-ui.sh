@@ -20,7 +20,15 @@ t "version"; npm run -s version:v4 -- patch "$NOTE"
 git add src/v4/version.js CHANGELOG.md
 git commit -qm "Release $(node -p "require('fs').readFileSync('src/v4/version.js','utf8').match(/v[\d.]+/)[0]"): $NOTE"
 # other threads push during the ~4 min check: take their work again before pushing (a version clash stops here)
-t "push"; git pull -q --rebase origin "$BRANCH"   # a failed pull or push stops here, before anything is published
-git push -q origin "HEAD:$BRANCH"
+# A busy branch loses push races (lessons, Oct 29 and Nov 1): rebase and retry up to 4 times. A rebase conflict
+# aborts cleanly and stops here, before anything is published (decisions.md: keep both sides; CHANGELOG: newest on top).
+t "push"
+PUSHED=0
+for attempt in 1 2 3 4; do
+  if ! git pull -q --rebase origin "$BRANCH"; then git rebase --abort 2>/dev/null || true; echo 'Rebase conflict: resolve it by hand, push, then bash scripts/v4-play.sh <sha>.' >&2; exit 1; fi
+  if git push -q origin "HEAD:$BRANCH"; then PUSHED=1; break; fi
+  echo "push refused (another thread pushed); retry $attempt/4"; sleep $((attempt * 3))
+done
+[ "$PUSHED" = 1 ] || { echo 'Push failed four times; nothing published.' >&2; exit 1; }
 t "publish"; V4_PAGES_POLL=${V4_PAGES_POLL:-5} bash scripts/v4-play.sh HEAD
 t "live"

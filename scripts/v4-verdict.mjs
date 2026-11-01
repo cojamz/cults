@@ -7,8 +7,8 @@
 //   node scripts/v4-verdict.mjs --short    one line (orientation, ship scripts)
 //   node scripts/v4-verdict.mjs record <check.log> <sha> <out.json>   (the workflow) parse a check:v4 log into JSON
 //
-// A new verdict on demand: the GitHub Actions "v4 browser verdict" workflow, Run workflow (any thread can trigger it
-// with the GitHub tools: workflow v4-verdict.yml, ref main, input ref = a branch or sha).
+// A new verdict on demand: Actions tab, "v4 browser verdict", Run workflow (Cory or a token with workflow rights; the
+// threads' GitHub tools get 403 on dispatch, checked Nov 1). Otherwise the next 4-hourly run picks up the tip.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 
