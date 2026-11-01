@@ -1638,3 +1638,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - (Cory, 2026-11-01 1:44pm Eastern) Caterer pays once per instance of gifts being given (one gift action, however many players are gifted), not once per player; the behavior stays, the words need to say it.
 - (Cory, 2026-11-01 1:44pm Eastern) Polisher ("On Use, once per game: turn up to 3 silver into 2 of any colors each."): the player chooses how many silver to turn (1, 2 or 3); it no longer always turns 3.
 - (Cory, 2026-11-01 1:45pm Eastern) Greatest Hits is "Copy the On Recruit of each of your members, in any order. +1 green." (confirmed as his; supersedes the older "Copy any 3 round I actions with a minion on them" entry, which this log never replaced).
+- (Cory, 2026-11-01 1:53pm Eastern) Follower shop (buy 1, 5 or 10 followers 1-for-1) stays as is; re-check after Last Call is settled.

@@ -34,3 +34,4 @@
 - 1:45pm, Recruiter (item 33): no comment. Greatest Hits (item 34): the live text is his ("Copy the On Recruit of each of your members, in any order. +1 green."); the decisions log was missing it, now logged.
 - 1:46pm: keep the skeptic's considered-and-dropped list as a running log (design/watch.md, done). 1:47pm: done reading; walk-through started at item 1 (counterplay: where member movement lives).
 - 1:49pm: before counterplay, asked how the follower shop feels from the games (follower-shop.md sent; asked: leave as is until Last Call is settled).
+- 1:53pm: follower shop stays as is (re-check after Last Call is settled). Started a thought on counterplay: "maybe there's a broader change where" (cut off; wait for the rest).
