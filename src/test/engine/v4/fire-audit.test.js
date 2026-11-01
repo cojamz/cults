@@ -155,6 +155,9 @@ const ALLOW = {
   // like Bodyguards and Agents above: a pure restriction (its cult's members drop out of every swap's options) that
   // changes no number, so there is no payout line to name it (v0.8.2 Red deck)
   // the Nov 1 balance numbers (Last Call, Customs, Loyalists…) moved the seeded games: recruited in 1, as its owner's last
+  // Silver's Nov 1 members: bots use it only when rivals together hold 2 silver each, which these games rarely gave (thread told)
+  'silver.debtcollector': 'On Use, once per game; a bot waits for rivals to hold silver (cards-silver: Debt Collector)',
+  'yellow.puppeteer': 'new Nov 1; recruited in 2 seeded games without its moment (cards-yellow: Puppeteers)',
   'red.recruiter': 'pays only on a later recruit; recruited once in the sample (cards-red: Recruiter)',
   'red.loyalists': 'only removes its cult from swap options (red-members-hooks / red-members-pressure: Loyalists)',
   // needs its holder to Promote/Demote a rival's member out of their cult; the 5/6/7 shop (2026-10-21) moved the
