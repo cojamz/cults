@@ -243,6 +243,9 @@ export function HoverCardLayer({ hover, state, me, optionFor = () => null, onPic
   // a move closes the card only if what it explains is gone from under the pointer: a rival's step used to close the card
   // you were reading, and it came back only after another move of the pointer and the hover delay (snappy pair Q1)
   useEffect(() => { const k = cur.current; if (k.c && !k.c.pinned && !k.el) hover.close(); }, [state.moves]); // eslint-disable-line react-hooks/exhaustive-deps
+  // the game ending swaps the table for the results: a card still open from the last turn (a space you placed on) stayed
+  // over the results, re-anchored to the hidden wheel, and no pointer move closed it (bug bash, Nov 1)
+  useEffect(() => { if (state.over) hover.close(); }, [state.over]); // eslint-disable-line react-hooks/exhaustive-deps
   // a pinned card whose target is gone for good closes, so it can't hold the layer shut against every later hover
   useEffect(() => { const k = cur.current; if (k.c && k.c.pinned && !k.el) hover.close(); });
   const placed = useRef(null); // { el, at, h }: what the last placement measured (opening a prepared card re-measures only if it moved)

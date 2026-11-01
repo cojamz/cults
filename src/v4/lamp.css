@@ -645,6 +645,9 @@ h1,h2,h3{font-family:var(--serif)}
      what they hold 11; they carried 16, 22, 25 and 12 */
   .app.game.lt > .main.over .over-seat .cs-who b,.app.game.lt > .main.over .over-seat .cs-total .tv{font-size:18px;line-height:22px}
   .app.game.lt > .main.over .over-seat .cs-stack b{font-size:12px}
+  /* "N members" on its own line over the artifact and the figures (bug bash, Nov 1: it sat in the middle of the
+     pictures, which wrapped around it) */
+  .app.game.lt > .main.over .over-seat .cs-crowd > .cs-member-count{order:-1;flex-basis:100%;margin-bottom:4px}
 }
 .prompt.choice.setup .token .tk-label{white-space:nowrap}
 /* the Reckoning's scoreboard: every player's count side by side on the card; the winner's column cheers */
