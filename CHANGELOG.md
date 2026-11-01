@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.927 — 2026-11-01
+
+- Fan Club with no minion on a Green space says so instead of "+0 green".
+
 ## v0.9.926 — 2026-11-01
 
 - Party Crasher and Big Spender can be used again: their Use button was dimmed as if it would do nothing
