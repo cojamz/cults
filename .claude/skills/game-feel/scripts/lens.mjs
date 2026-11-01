@@ -7,7 +7,7 @@
 //   TRAP      bought at or above median but lift ≤ −2 SE: players take it and lose: the feel-bad card
 //   DEAD      bought in under 3% of the games it showed, in every tier: nobody wants it at this price or at all
 //   STRONG/WEAK (spaces) lift past 2 SE either way in most tiers (spaces have no buy rate; a round III space has 1 taker)
-//   SKILL+    lift climbs by 8+ points from normal to the smartest tier: it rewards good play (good, protect it)
+//   SKILL+    lift climbs by 8+ points (and past 2 SE of the difference, so a 100-game Hard run can't fake it) from normal to the smartest tier: it rewards good play (good, protect it)
 //   SKILL−    lift falls by 8+ points as bots get smarter: it only beats weak players (strong rivals answer it)
 const T = { z: 2, dead: 0.03, skill: 0.08, color: 0.08, minN: 30 };
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -37,7 +37,7 @@ function classify(kind, rows) {
       if (weak.filter(([, r]) => r.hot).length >= half) tags.add('TRAP');
     }
     const lo = v.normal, hi = v.veryhard || v.hard;
-    if (lo && hi && lo.n >= T.minN && hi.n >= T.minN) { const d = hi.lift - lo.lift; if (d >= T.skill) tags.add('SKILL+'); if (d <= -T.skill) tags.add('SKILL−'); }
+    if (lo && hi && lo.n >= T.minN && hi.n >= T.minN) { const d = hi.lift - lo.lift, bar = Math.max(T.skill, T.z * Math.hypot(lo.err, hi.err)); if (d >= bar) tags.add('SKILL+'); if (d <= -bar) tags.add('SKILL−'); }
     if (tags.size) out[k] = { tags: [...tags], v };
   }
   return out;
