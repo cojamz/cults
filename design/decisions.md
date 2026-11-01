@@ -1654,3 +1654,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - (Cory, 2026-11-01 2:20pm Eastern) Window Shopper reads "On Recruit and Round Start: send 2 shop members to the bottom of the pile. +1 of each one's color." (Claude's words for his 2-member call).
 - (Cory, 2026-11-01 2:21pm Eastern) Early Birds' purpose: let you take a skip space for its payout (Last Call's bonus per minion) without your minions going last. Held until the Goes Last cards are set, then reworked with them.
 - (Cory, 2026-11-01 2:25pm Eastern) Early Birds gets a full rework, not a buff to Last Call: "the space is already strong even when it was not interacting with it, and it's meant to buff the space." Replaces the 2:21pm hold.
+- (Cory, 2026-11-01 2:25pm Eastern) Wording: Patroness "Whenever shop members go to the bottom of the pile, +1 follower."; Caterer "Whenever silver is gifted, +1 silver." (plural or general nouns read once per event, as Bargain Bin does).

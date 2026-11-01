@@ -49,3 +49,4 @@
 - 2:18pm: Tribute Band On Use, 12 to 14. Party Crasher stays. Next: item 5 reworks (Window Shopper words first).
 - 2:21pm: Early Birds held; its purpose is taking Last Call's payout without going last. Rework with the Goes Last cards.
 - 2:25pm: Early Birds: full rework (Last Call is already strong; don't buff it). Going-last thread pitches.
+- 2:25pm: item 7 words approved. Next: item 8 results.
