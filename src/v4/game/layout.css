@@ -361,7 +361,7 @@
 }
 
 /* the story's "N earlier" in its header, when the room holds only the newest line (SinceStrip `bare`) */
-.lt-since .since-head .since-more.in-head{margin-left:auto;font:inherit;font-size:12px;letter-spacing:.06em;color:var(--cream-3);background:none;border:0;padding:2px 4px;cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}
+.lt-since .since-head .since-more.in-head,.lt-since .since-own .since-more.in-head{margin-left:auto;font:inherit;font-size:12px;letter-spacing:.06em;color:var(--cream-3);background:none;border:0;padding:2px 4px;cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}
 
 
 /* a member with no sphere (a guest from no quadrant on the table) stands on no colored ground: its grey halo read as a

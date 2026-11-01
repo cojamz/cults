@@ -9,5 +9,7 @@
 .pool-tip{margin:0;max-width:240px}
 .lt-pool .pool-src{display:none}
 /* with the spare minions in the head, the strip's title takes its own line under it */
+.lt-since .since-own{display:flex;align-items:center;gap:8px;min-width:0}
+.lt-since .since-own .since-more.in-head{flex:none;white-space:nowrap}
 .lt-since .since-title.own-line{display:block;padding:4px 2px 2px 0;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--cream-3)}
 .lt-since.empty .since-head.with-pool{justify-content:space-between}

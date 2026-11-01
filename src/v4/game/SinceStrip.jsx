@@ -181,6 +181,9 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
   // nothing to tell (before your first turn, or your second turn in a row): the strip says nothing at all, only the Log
   // stays (blind panel: "No moves since yours yet." narrated nothing)
   const empty = !entries.length;
+  const count = (bare || lvl >= 2) && more + (lvl >= 2 ? shown.length : 0) > 0 ? (
+    <button type="button" className="since-more in-head" onClick={onLog} title="Open the log">{lvl >= 2 ? `${more + shown.length} ${more + shown.length === 1 ? 'move' : 'moves'}` : `${more} earlier`}</button>
+  ) : null;
   return (
     <section ref={secRef} className={`lt-since${yours ? ' yours' : ''}${empty ? ' empty' : ''}${compact ? ' compact' : ''}`} data-since data-empty={empty || undefined} data-folded={cut || undefined} aria-label="Since your last turn">
       <header className={`since-head${pool ? ' with-pool' : ''}`}>
@@ -188,12 +191,13 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
         {pool}
         {!empty && !pool && <span className="since-title">Since your last turn</span>}
         {/* the newest line alone: the earlier ones are counted up here, beside the Log, taking no line of their own */}
-        {(bare || lvl >= 2) && more + (lvl >= 2 ? shown.length : 0) > 0 && (
-          <button type="button" className="since-more in-head" onClick={onLog} title="Open the log">{lvl >= 2 ? `${more + shown.length} ${more + shown.length === 1 ? 'move' : 'moves'}` : `${more} earlier`}</button>
-        )}
+        {!pool && count}
         <button type="button" className="since-log" data-open-log onClick={onLog} title="The whole game, move by move">Log</button>
       </header>
-      {!empty && pool && <span className="since-title own-line">Since your last turn</span>}
+      {/* with the spare minions in the head, the title and its count take their own line, but only over a line they head:
+          folded to a count, the head wrapped it ("1" over "move") and the title stood alone under the turn card, cut in
+          half (playtest, Nov 1). The Log beside the minions still opens every move. */}
+      {!empty && pool && lvl < 2 && <div className="since-own"><span className="since-title own-line">Since your last turn</span>{count}</div>}
       {shown.length ? (
         <ol className="since-list" ref={listRef}>
           {more > 0 && !bare && <li className="since-more"><button type="button" onClick={onLog}>{more} earlier… open the log</button></li>}
