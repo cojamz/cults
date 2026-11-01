@@ -22,6 +22,7 @@ import { Sprite } from '../art/Sprite.jsx';
 import { spriteId } from '../art/index.js';
 import { costParts } from '../format.js';
 import { ruleWords } from '../shorts.js';
+import { DECK10 } from './deck10.js';
 import { sphereLine, sphereVersion } from '../tables.js';
 import { VERSION } from '../version.js';
 
@@ -56,6 +57,18 @@ const TABLE = {
 const tint = g => (g.guest ? 'var(--colorless)' : `var(--${g.id})`);
 const joins = d => Math.min(memberRound(d), ROUNDS);
 
+// ?deck10: Claude's 10-per-color proposal (lab/deck10.js) over the live deck: kept by the round it would join, then the
+// cuts greyed out, each with its reason and any price move (Cory, Oct 31: "i need to be able to visualize your proposals")
+const PROPOSAL = typeof location !== 'undefined' && /[?&]deck10\b/.test(location.search) ? DECK10 : null;
+/** A member at a proposed price: the any part moves first (the +1 wild stays), then the colored part. */
+function repriced(def, to) {
+  const from = (def.s || 0) + (def.w || 0);
+  if (!to || to === from) return def;
+  let s = def.s || 0, w = def.w || 0, d = to - from;
+  if (d > 0) w += d; else { const off = Math.min(-d, Math.max(0, w - 1)); w -= off; s = Math.max(1, s - (-d - off)); }
+  return { ...def, s, w };
+}
+
 const VIEW_KEY = 'patrons.v4.membersView';
 const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* private window */ } } };
 const fromHash = groups => { const h = decodeURIComponent(location.hash.slice(1)); return groups.some(g => g.id === h) ? h : groups[0].id; };
@@ -84,9 +97,11 @@ function Tile({ def, copies, onOver, onOut, onPin, pinned }) {
 }
 
 /** The full card, on the hover card's paper, with where it sits in the deck. */
-function Full({ def }) {
-  return <article className="mp-card" data-card-full={def.id} style={{ '--c': cardColor(TABLE, def) }}>
+function Full({ def, note, cut }) {
+  return <article className={`mp-card${cut ? ' mp-cut' : ''}`} data-card-full={def.id} style={{ '--c': cardColor(TABLE, def) }}>
+    {cut && <span className="mp-cut-stamp">Cut</span>}
     <MemberCard state={TABLE} def={def} />
+    {note && <footer className="mp-why">{note}</footer>}
     {/* the round it joins is the heading it sits under; only what the face doesn't say */}
     {def.copies > 1 && <footer className="mp-meta"><span>{def.copies} copies in the deck</span></footer>}
   </article>;
@@ -163,6 +178,30 @@ export default function MembersPage() {
   const pin = useCallback((def, el) => setHover(h => (h && h.pinned && h.def.id === def.id ? null : { def, at: place(el), pinned: true })), []);
   const scroller = useRef(null);
   useEffect(() => { if (scroller.current) scroller.current.scrollTop = 0; }, [color]);
+
+  const plan = PROPOSAL && PROPOSAL[g.id];
+  if (plan) {
+    const all = [...g.members];
+    const rows = all.map(d => { const x = plan.cards[d.id] || {}; const nd = repriced(d, x.price); const from = (d.s || 0) + (d.w || 0);
+      const r = x.round || joins(d);
+      const moved = x.price ? `${from} → ${x.price}${r !== joins(d) ? `, joins round ${roman(r)} (was ${roman(joins(d))})` : ''}. ` : '';
+      return { d: nd, cut: !!x.cut, r, note: (moved || x.why) ? <>{moved && <b>{moved}</b>}{x.why}</> : null }; });
+    const kept = rows.filter(x => !x.cut), cuts = rows.filter(x => x.cut);
+    const sections = [[`Keep · joins round I`, kept.filter(x => x.r === 1)], [`Keep · joins round II`, kept.filter(x => x.r > 1)], ['Cut', cuts]];
+    return <main className="mp mp-proposal" style={{ '--c': tint(g) }}>
+      <header className="mp-head">
+        <h1>Cults <small>10 per color · Claude's proposal</small></h1>
+        <nav className="mp-nav" aria-label="Colors">{groups.filter(x => PROPOSAL[x.id]).map(x => <button key={x.id} type="button" aria-pressed={x.id === color} onClick={() => pick(x.id)} style={{ '--c': tint(x) }}>{x.name}</button>)}</nav>
+      </header>
+      <section className="mp-deck mp-prop" ref={scroller} aria-label={`${g.name} proposal`}>
+        <h2 className="mp-deck-head" style={{ color: 'var(--c)' }}>{g.name}<small>keep {kept.length}, cut {cuts.length}{g.artifact ? ` · artifact ${g.artifact.name} sits outside the 10` : ''}</small></h2>
+        {sections.map(([title, list]) => list.length ? <div key={title} className="mp-round">
+          <h3>{title} ({list.length})</h3>
+          <div className="mp-grid">{list.sort((a, b) => byPrice(a.d, b.d)).map(x => <Full key={x.d.id} def={x.d} note={x.note} cut={x.cut} />)}</div>
+        </div> : null)}
+      </section>
+    </main>;
+  }
 
   const byRound = [1, 2, 3].map(r => ({ r, members: g.members.filter(d => joins(d) === r) })).filter(x => x.members.length);
   const deckSize = g.members.reduce((n, d) => n + (d.copies || 1), 0);
