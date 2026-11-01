@@ -1602,3 +1602,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - 2026-11-01 (Cory, 10:28am Eastern): fresh balance runs use the 10-card deck.
 - 2026-11-01 (Cory, 10:30am Eastern: "1 yes"): Tryout reads "Use the On Recruit effect of a shop member; it stays in the shop. +2 red." (was +1 red).
 - 2026-11-01 (Cory, 10:30am Eastern: "for red, yeah ship it"): Recruiter ships as "Whenever a member leaves a rival's cult, +2 red." (Normal test −2 ±2; fires ~10 a game, none in round I). Fresh 10-card run will re-read it.
+- 2026-11-01 (Cory, 10:31am Eastern: "keep Cash In as something to reconsider. white in general needs a little revisiting. yes to 2"): Cash In unchanged, on the White revisit list. Smooth Talker, Debutante, Hanger-On and Debt Collector are each worth 1 more follower, price unchanged, to try.

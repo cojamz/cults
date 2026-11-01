@@ -75,3 +75,5 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 - White's round II spaces need members people usually don't have yet; cheaper members will probably fix it (Cory).
 - "Stealing spaces don't create money" (a player; Cory not sure he agrees); "more complex than anticipated"; the shop needs more people; Red and Purple have too many actions that are bad at the end; members are best bought early but seen late; "if you mess up your first couple turns you're just kind of toast".
 - Two decks (Cory, Oct 31), live v0.9.907: rules.deck = 10 (content/cull.js CUT10, the list in design/notes/deck-10-keep-cut.md) or 15 (default). Setup and lobby pick it. Every balance run asks Cory which deck (DECK=10|15). Silver needs a 10-card cut once its redesign lands. Run-out probe: scripts/v4-deck-runout.mjs.
+
+- White revisit (Cory, Nov 1: "white in general needs a little revisiting"): Cash In ("Turn all your white into followers. +1 white.") pays only par; Money Changers test pending.
