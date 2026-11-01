@@ -233,7 +233,7 @@ export default function CultSeat({ state, pid, me = null, mine = false, now = fa
       )}
       <div className="cs-crowd" {...bodyHover} role="group" aria-label={`${mine ? 'Your' : `${p.name}'s`} members: ${nMembers}`}>
         {/* the artifact (Cory, 2026-10-25): its picture on a small plate in its color, first in the row; the hover names it */}
-        {p.artifact !== undefined && (() => {
+        {false && p.artifact !== undefined && (() => {
           const art = cardDef(state, p.artifact), q = artifactColor(state, p.artifact);
           return <Tip className="cs-artifact" data-artifact={p.artifact} label={art.name} content={<><p><b>{art.name}</b><br /><Rich text={art.text} /></p><MemberGains state={state} uid={p.artifact} /></>}><ArtifactTile q={q} res={q ? quadrant(q).resource : 'colorless'} title={`Artifact: ${art.name}`} /></Tip>;
         })()}
