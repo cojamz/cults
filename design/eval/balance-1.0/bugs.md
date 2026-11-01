@@ -29,3 +29,4 @@ Every runner, reviewer and expert game adds here. Kinds: **BUG** (the game break
 | 23 | RULE | Copies of follower spaces: Echo, Reprise, Party Crasher, Tribute Band repeat Party Gifts and Largesse (Largesse paid 10 three times in round III, Tribute Band +20) | g9 (all 4) | as built; top feel note with row 14 |
 | 24 | RULE | Farewell and Estate Sale pay a member's full cost even after its once-per-game ability is spent (Heiresses: +7 white used, then 9 white cast out) | g12 (Ben) | as built; feel note |
 | 25 | RULE | Money Changers' +1 white on every follower buy kept white uncontested all game for its owner | g12 (Ben, won white 3 of 3) | already a lead (fewer fires) |
+| 26 | WORDS | Guest Book never fired for new red or yellow members while its owner held Dabblers (wild members); owner expected +4 yellow | g12 (Ava) | engine check, then a wording question |
