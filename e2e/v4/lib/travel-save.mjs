@@ -18,8 +18,9 @@ export const TRAVEL = {
   gift: { q: ['gold', 'red', 'blue', 'green'], hit: (s, mv, n) => /^Kickback: give/.test(prompt(s)) && (g => g && { from: g.from, to: g.to })(fx(n).find(e => e.type === 'gain' && e.to.pid !== 0)) },
   // a member taken: Poach, a rival's member to your crowd
   member: { q: ['gold', 'thieves', 'red', 'purple'], hit: (s, mv, n) => /^Poach: take which/.test(prompt(s)) && (e => e && { from: { kind: 'crowd', pid: e.from.pid }, to: { kind: 'member', pid: 0, uid: e.what.uid } })(fx(n).find(e => e.type === 'member-move' && e.to.pid === 0)) },
-  // a ransom paid: your resources to the rival who holds your member (arriving as magenta)
-  ransom: { q: ['gold', 'thieves', 'red', 'purple'], force: 'pay', hit: (s, mv, n) => /^Shake Down: pay /.test(prompt(s)) && mv.option === 'pay' && (g => g && { from: { kind: 'seat', pid: 0 }, to: g.to })(fx(n).find(e => e.type === 'gain' && e.to.pid !== 0)) },
+  // a ransom paid: your resources to the rival who holds your member. The ransom's own gain, never a rival member's
+  // bonus on the same move (Fence: "Whenever you steal, +1 magenta" gains first and flies from Fence, not your seat)
+  ransom: { q: ['gold', 'thieves', 'red', 'purple'], force: 'pay', hit: (s, mv, n) => /^Shake Down: pay /.test(prompt(s)) && mv.option === 'pay' && (g => g && { from: { kind: 'seat', pid: 0 }, to: g.to })(fx(n).find(e => e.type === 'gain' && e.to.pid !== 0 && e.cause?.kind !== 'member')) },
   // a member's Use: what it gives flies from the member to your stack
   use: { q: ['gold', 'red', 'blue', 'green'], hit: (s, mv, n) => String(mv.option).startsWith('use:') && s.pending.kind === 'buy' && (g => g && { from: { kind: 'member', pid: 0, uid: g.cause.uid }, to: g.to })(fx(n).find(e => e.type === 'gain' && e.cause.kind === 'member' && e.to.pid === 0)) },
   // a member off the top of the deck (Walk-In): its card leaves the deck for your crowd

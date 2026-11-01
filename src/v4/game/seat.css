@@ -25,6 +25,8 @@
   .app.game.lt > .lt-seat .cs-head .cs-who{grid-column:2;display:flex;flex-direction:column;justify-content:center;gap:0;min-width:0;position:relative;padding:0}
   .app.game.lt > .lt-seat .cs-who .cs-name{height:18px;align-items:baseline;gap:8px;white-space:nowrap}
   .app.game.lt > .lt-seat .cs-who b{font-family:var(--sans);font-weight:800;font-size:18px;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  /* "You" never gives way: a long turn note ("two turns in a row") squeezed it to "Y…" (hotseat text-cut, red since Oct 27) */
+  .app.game.lt > .lt-seat .lt-cult-seat.mine .cs-who .cs-name > b{flex:none}
   .app.game.lt > .lt-seat .cs-pips{height:16px;margin-top:0;gap:6px;white-space:nowrap}
   .app.game.lt > .lt-seat .cs-minions{display:flex;flex-direction:row;align-items:center;gap:3px;min-width:0;height:16px}
   .app.game.lt > .lt-seat .cs-minions.out{display:none}

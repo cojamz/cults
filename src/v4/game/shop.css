@@ -35,6 +35,9 @@
 
 /* Three buys in one row leave room for the eight-member shop below. */
 .lt-shop-cards .lt-rates-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+/* Follower buys read the same with details on as off: no "FOLLOWERS" label (it spilled its narrow tile by 4px at 1270x700,
+   e2e/v4/shop-names.mjs, and turning details on is for members' abilities; the tile has none) */
+.app.game.lt .lt-shop-cards[data-view="details"] .lt-cards .lt-rate.card .nm{display:none}
 
 /* Shop paper stays readable while placing; availability belongs to the edge, never a darkened portrait. */
 .lt-shop .lt-card.card.paper,.lt-shop .lt-rates .lt-rate{background:#fff3da;opacity:1;filter:none}
@@ -134,7 +137,8 @@
   /* the whole market on screen (1100x700 ran it off the right edge, "Done, no recruit" with it): two rows that fill
      column by column, every slot sharing the width, Done in the last slot */
   .app.game.lt{--shop-h:280px}
-  .app.game.lt .lt-shop-cards .lt-shop-body{overflow:hidden}
+  /* the body fills the shop to its foot whatever the cards hold: sized by content, turning details on grew every row 2px (shop-sizing.mjs) */
+  .app.game.lt .lt-shop-cards .lt-shop-body{overflow:hidden;flex:1 1 0}
   .app.game.lt .lt-shop-cards .lt-shop-body > .lt-cards{display:grid;height:100%;grid-template-rows:repeat(2,minmax(0,1fr));grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px;overflow:hidden;padding:4px}
   .app.game.lt .lt-shop-cards .lt-card.card,.app.game.lt .lt-shop-cards .lt-deck{height:auto;min-height:0}
   .app.game.lt .lt-shop-cards .lt-rate .art{min-height:0}

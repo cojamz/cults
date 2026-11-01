@@ -5,8 +5,10 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //  (l3) nothing makes the page scroll sideways;
 //  (l4) a member whose color isn't on the table never prints that color as its cost;
 //  (l5) no color rule for follower buys anywhere (they take anything);
-//  (l6) the starting pick stands in your own chair, lit, whole and on screen, with no other pick panel (Cory,
-//       2026-10-15: it replaces the panel at the column's foot, which he hunted for); round I's turn order is set
+//  (l6) the starting pick is the artifact draft on the wheel's middle, the only place to pick (Cory, 2026-10-25: "only
+//       pick from the wheels list, but it has to be obvious when it's your turn"; it replaced the resource pick in your
+//       chair, Cory 2026-10-15): on your pick it is lit, every artifact left is a whole, readable button on screen, and
+//       no other pick panel shows; round I's turn order is set
 //       before the picks, so the chairs don't reshuffle after them (Cory: "it had us pick resources THEN it randomized
 //       the order???").
 //  (l7) live panel r1 (G4): every chair says how many members it has, whole and in view ("+N more" hid them, so "Most
@@ -27,6 +29,7 @@ import { richSave } from './lib/rich-save.mjs';
 import { answerChoice } from './lib/answer.mjs';
 import { seedSave } from './lib/seed.mjs';
 import { membersSave } from './lib/members-save.mjs';
+import { memberCount } from '../../src/engine/v4/core.js';
 
 const SHOTS = (process.env.V4_SHOTS || '/tmp/patrons-shots/v4') + '/layout';
 mkdirSync(SHOTS, { recursive: true });
@@ -157,8 +160,8 @@ for (const size of [{ width: 1270, height: 700 }, { width: 1100, height: 700 }])
     await page.click('[data-start]');
     // the draft's last color is automatic: a seat drawn last in the reverse draft never sees a pick (start again)
     for (let tries = 0; ; tries++) {
-      await page.waitForSelector('.lt > .lt-seat.mine .cs-setup [data-option], .app.game[data-phase="place"]', { timeout: 20000 });
-      if (await page.$('.lt > .lt-seat.mine .cs-setup [data-option]')) break;
+      await page.waitForSelector('[data-art-draft].mine [data-option], .app.game[data-phase="place"]', { timeout: 20000 });
+      if (await page.$('[data-art-draft].mine [data-option]')) break;
       if (tries >= 5) throw new Error('your chair never drew a draft pick in 6 games');
       await page.evaluate(() => localStorage.clear());
       await page.goto(`${base}/?botDelay=20&intro=0`);
@@ -168,27 +171,29 @@ for (const size of [{ width: 1270, height: 700 }, { width: 1100, height: 700 }])
     await page.waitForTimeout(700);
     const order0 = await page.$$eval('.lt > .lt-seat[data-pid]', els => els.map(e => [Number(e.dataset.pid), Math.round(e.getBoundingClientRect().top)]).sort((x, y) => x[1] - y[1]).map(x => x[0]).join());
     const r = await page.evaluate(() => {
-      const seat = document.querySelector('.lt > .lt-seat.mine').getBoundingClientRect();
-      const toks = [...document.querySelectorAll('.lt > .lt-seat.mine .cs-setup [data-option]')].map(e => ({ b: e.getBoundingClientRect(), lit: /rgba?\(/.test(getComputedStyle(e).boxShadow), whole: [...e.querySelectorAll('.tk-name')].every(n => n.scrollWidth <= n.clientWidth + 1) && e.scrollWidth <= e.clientWidth + 1 && e.scrollHeight <= e.clientHeight + 1 && [...e.children].every(c => { const cb = c.getBoundingClientRect(), eb = e.getBoundingClientRect(); return cb.top >= eb.top - 0.5 && cb.bottom <= eb.bottom + 0.5; }) }));
+      const panel = document.querySelector('[data-art-draft].mine');
+      const pb = panel.getBoundingClientRect();
+      const toks = [...panel.querySelectorAll('[data-option]')].map(e => ({ b: e.getBoundingClientRect(), whole: e.scrollWidth <= e.clientWidth + 1 && e.scrollHeight <= e.clientHeight + 1 && [...e.querySelectorAll('*')].every(c => { const cb = c.getBoundingClientRect(), eb = e.getBoundingClientRect(); return cb.width === 0 || (cb.left >= eb.left - 0.5 && cb.right <= eb.right + 0.5 && cb.top >= eb.top - 0.5 && cb.bottom <= eb.bottom + 0.5); }) }));
       const vis = e => { const st = getComputedStyle(e); const b = e.getBoundingClientRect(); return st.display !== 'none' && st.visibility !== 'hidden' && b.width > 0 && b.height > 0; };
       return {
-        n: toks.length, want: document.querySelectorAll('[data-setup-order] [data-order="draft"] .setup-order-step').length, inSeat: toks.every(t => t.b.left >= seat.left && t.b.right <= seat.right && t.b.top >= seat.top && t.b.bottom <= seat.bottom),
-        onScreen: toks.every(t => t.b.left >= 0 && t.b.top >= 0 && t.b.right <= innerWidth && t.b.bottom <= innerHeight),
-        lit: toks.every(t => t.lit), whole: toks.every(t => t.whole), big: toks.every(t => t.b.height >= 24),
-        panel: [...document.querySelectorAll('.prompt.choice.setup')].filter(vis).length,
+        n: toks.length, want: panel.querySelectorAll('li').length,
+        inPanel: toks.every(t => t.b.left >= pb.left - 0.5 && t.b.right <= pb.right + 0.5 && t.b.top >= pb.top - 0.5 && t.b.bottom <= pb.bottom + 0.5),
+        onScreen: [pb, ...toks.map(t => t.b)].every(b => b.left >= 0 && b.top >= 0 && b.right <= innerWidth && b.bottom <= innerHeight),
+        lit: panel.classList.contains('mine'), whole: toks.every(t => t.whole), big: toks.every(t => t.b.height >= 24),
+        others: [...document.querySelectorAll('.prompt.choice.setup, .lt-seat .cs-setup [data-option]')].filter(vis).length,
       };
     });
-    // the reverse draft (v0.8.5): one pick each from a shrinking pool, one color per player still to draft
-    if (!r.want || r.n !== r.want) errors.push(`[${tag} setup] (l6) your chair offers ${r.n} starting picks, not the ${r.want} left in the draft`);
-    if (!r.inSeat) errors.push(`[${tag} setup] (l6) the starting pick runs out of your chair`);
-    if (!r.onScreen) errors.push(`[${tag} setup] (l6) the starting pick runs off the window`);
-    if (!r.lit) errors.push(`[${tag} setup] (l6) the starting pick isn't lit`);
-    if (!r.whole) errors.push(`[${tag} setup] (l6) a starting pick's word is cut`);
-    if (!r.big) errors.push(`[${tag} setup] (l6) the starting picks are under 24px tall`);
-    if (r.panel) errors.push(`[${tag} setup] (l6) a second pick panel still shows outside your chair`);
+    // the artifact draft (v0.9): one pick each from a shrinking list; every artifact still on the list is yours to take
+    if (!r.n || r.n !== r.want) errors.push(`[${tag} setup] (l6) your pick offers ${r.n} artifacts, not the ${r.want} on the list`);
+    if (!r.inPanel) errors.push(`[${tag} setup] (l6) an artifact pick runs out of the draft panel`);
+    if (!r.onScreen) errors.push(`[${tag} setup] (l6) the artifact draft runs off the window`);
+    if (!r.lit) errors.push(`[${tag} setup] (l6) the draft isn't lit on your pick`);
+    if (!r.whole) errors.push(`[${tag} setup] (l6) an artifact pick's words are cut`);
+    if (!r.big) errors.push(`[${tag} setup] (l6) the artifact picks are under 24px tall`);
+    if (r.others) errors.push(`[${tag} setup] (l6) a second pick panel shows outside the draft`);
     await page.screenshot({ path: `${SHOTS}/${tag}-setup.png` });
     // draft your one pick, then round I: the chairs keep the order they showed during the picks
-    await page.click('.lt > .lt-seat.mine .cs-setup [data-option]');
+    await page.click('[data-art-draft].mine [data-option]');
     await page.waitForTimeout(800);
     await page.waitForSelector('.lt[data-round="1"]', { timeout: 20000 });
     await page.waitForTimeout(1200);
@@ -252,7 +257,9 @@ for (const size of [{ width: 1270, height: 700 }, { width: 1100, height: 700 }])
     for (const x of seats) {
       const want = save.state.players[x.pid].members.length;
       if (!x.countRemoved) errors.push(`[${tag}] (l7) P${x.pid + 1}'s retired member-count label still occupies the crowd`);
-      if (!x.accessible.includes(`${want} member`)) errors.push(`[${tag}] (l7) P${x.pid + 1}'s accessible count misses ${want} members`);
+      // the count says members as the game counts them: a 2- or 3-member card (Shopaholics, Con Men) counts as that many
+      const said = memberCount(save.state, save.state.players[x.pid]);
+      if (!x.accessible.includes(`${said} member`)) errors.push(`[${tag}] (l7) P${x.pid + 1}'s accessible count misses ${said} members`);
       if (x.n !== want) errors.push(`[${tag}] (l7) P${x.pid + 1}'s figures and "+N" add up to ${x.n}, not ${want}`);
       if (x.clash) errors.push(`[${tag}] (l7) P${x.pid + 1}'s count, figures, "+N" and "each round" overlap (${x.clash} pair(s))`);
       if (x.rows > x.room) errors.push(`[${tag}] (l7) P${x.pid + 1}'s figures stand in ${x.rows} rows; its member area holds ${x.room}`);

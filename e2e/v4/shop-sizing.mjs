@@ -24,6 +24,8 @@ try{for(const[tag,opts]of[['laptop',{viewport:{width:1270,height:700}}],['deskto
  await seedSave(p,fixture(quads));await p.goto(`${base}/?intro=0`);await p.locator('[data-home="resume"]').click();
  const hand=p.locator('[data-handoff]');if(await hand.isVisible())await hand.click();
  await p.locator('.app.game[data-phase="buy"]:not([data-animating])').waitFor();
+ // the pointer left where Resume was can rest on a card and lift it 2px (a hover): park it off the shop, let the lift settle
+ await p.mouse.move(2,2);await p.waitForTimeout(400);
  const inspect=()=>p.locator('.lt-shop-cards').evaluate(e=>{
  const body=e.querySelector('.lt-shop-body'),r=x=>{const b=x.getBoundingClientRect();return{x:b.x,y:b.y,w:b.width,h:b.height}};
  return {overflow:body.scrollHeight-body.clientHeight,docOverflow:document.documentElement.scrollWidth-innerWidth,deck:!!e.querySelector('.lt-deck').getClientRects().length,cards:[...e.querySelectorAll('.lt-card')].map(c=>({id:c.dataset.uid||c.dataset.rate,...r(c),footer:r(c.querySelector('.ft')),ability:c.querySelector('.lt-pick-ability')?r(c.querySelector('.lt-pick-ability')):null,clipped:c.querySelector('.lt-pick-ability')?(c.querySelector('.lt-pick-ability').getBoundingClientRect().bottom>c.querySelector('.ft').getBoundingClientRect().top+1||c.querySelector('.ft').getBoundingClientRect().bottom>c.getBoundingClientRect().bottom+1):false}))};
