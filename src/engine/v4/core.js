@@ -583,7 +583,9 @@ function useOptions(state, p, uids = p.members) {
 export function useIdle(state, p, uid) {
   try {
     const s = plainCopy({ ...state, log: [], pending: null, queue: [], notes: undefined });
-    const look = x => JSON.stringify([x.players.map(o => [o.res, o.bonus, o.discount || 0, o.members, o.left]), x.shop, x.pile.length]);
+    // the whole player: a use that only sets a flag for later (Party Crasher's crashNext, Big Spender's buyTwiceNow) is
+    // not idle (Cory's playtest, Nov 1: Party Crasher looked unusable)
+    const look = x => JSON.stringify([x.players, x.shop, x.pile.length]);
     const before = look(s);
     useMember(s, s.players[p.id], uid, { t: 'idle-check' });
     if (s.queue.some(t => t.t !== 'idle-check')) return false;
