@@ -65,8 +65,8 @@ export function createGame({ seats, seed = 1, quadrants, rules = {} }) {
   const table = { ...DEFAULT_RULES, ...(FULL_DECK.tests ? { cull: false, artifacts: false, roundDecks: 0 } : {}), ...rules }; // tests: content/cull.js (artifacts too: a test asks for them)
   // The shop (Cory, 2026-11-01: "anything we update needs to go to all the different types of the game"): rules.shop is
   // 'deck' (the shop as it is: one shuffled deck, the default), 'grey' (the grey core as piles anyone can buy several
-  // of; the rest of the shop as now) or 'all' (every member a pile, ten piles a game, no deck). piles.js builds it.
-  if (table.shop && table.shop !== 'deck' && !table.piles) Object.assign(table, pileRules(table.shop, quadrants, seed, table.deck === 10 ? 10 : 15));
+  // of; the rest of the shop as now) or 'all' (every member a pile, ten piles a game; the rest face down as the deck, no face-up row). piles.js builds it.
+  if (table.shop && table.shop !== 'deck' && !table.piles) Object.assign(table, pileRules(table.shop, quadrants, seed, table.deck === 10 ? 10 : 15, { seats: seats.length }));
   const artifactIds = new Set(table.artifacts ? quadrants.map(q => ARTIFACTS[q]).filter(Boolean) : []);
   const dealt = def => !(table.cull && (CUT.has(def.id) || (table.deck === 10 && CUT10.has(def.id)))) && !artifactIds.has(def.id) && !def.artifact && !def.retired; // the cull (content/cull.js); artifacts (an artifact-only card is never dealt)
   // Piles (experiment, branch only; Cory, 2026-11-01): rules.piles = { defs: [member ids], copies: n, only: bool } deals
