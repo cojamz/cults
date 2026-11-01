@@ -87,8 +87,25 @@ describe('Silver members', () => {
     let s = sc({ res: [{ silver: 4 }], members: [['silver.polisher']] });
     const use = s.pending.options.find(o => o.kind === 'use');
     s = move(s, use.id);
+    expect(s.pending.options.map(o => o.id)).toEqual(['amount:1', 'amount:2', 'amount:3']);
+    s = move(s, 'amount:3');
     for (let i = 0; i < 6; i++) s = move(s, 'color:red');
     expect([S(s), s.players[0].res.red]).toEqual([1, 6]);
+  });
+  it('Polisher: the player picks how much silver, 1 to 3 (Cory, Nov 1)', () => {
+    let s = sc({ res: [{ silver: 4 }], members: [['silver.polisher']] });
+    s = move(s, s.pending.options.find(o => o.kind === 'use').id);
+    s = move(s, 'amount:1');
+    for (let i = 0; i < 2; i++) s = move(s, 'color:red');
+    expect([S(s), s.players[0].res.red]).toEqual([3, 2]);
+    expect(s.pending?.prompt || '').not.toMatch(/Polisher/);
+    // with 2 silver: 1 or 2; with 1: no question
+    let t = sc({ res: [{ silver: 2 }], members: [['silver.polisher']] });
+    t = move(t, t.pending.options.find(o => o.kind === 'use').id);
+    expect(t.pending.options.map(o => o.id)).toEqual(['amount:1', 'amount:2']);
+    let u = sc({ res: [{ silver: 1 }], members: [['silver.polisher']] });
+    u = move(u, u.pending.options.find(o => o.kind === 'use').id);
+    expect(u.pending.prompt).toMatch(/Polisher: \+1 of which color/);
   });
   it('Collector: a rival recruiting with silver gives you +1 silver; paying without silver gives nothing', () => {
     let s = sc({ res: [{}, { silver: 5 }], members: [['silver.collector']], queue: [{ t: 'buy', p: 1 }] });

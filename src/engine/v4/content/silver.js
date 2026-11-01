@@ -114,6 +114,12 @@ function turnStep(ctx, p, data) {
   ctx.choose(p, `${data.who}: turn 1 silver into ${data.each} of a color? (you have ${p.res[S]})`, opts, 'silver.turn', data);
 }
 
+/** Polisher: x silver into 2x of any colors. */
+function polisherTurn(ctx, p, x) {
+  p.res[S] -= x;
+  ctx.log(`${p.name}'s Polisher: ${x} silver into ${2 * x} of any colors.`);
+  polishPick(ctx, p, 2 * x, 'Polisher');
+}
 function polishPick(ctx, p, left, who = 'Polish') {
   ctx.choose(p, `${who}: +1 of which color? (${left} to pick)`, otherColors(ctx).map(c => ({
     id: `color:${c}`, label: `+1 ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0),
@@ -230,6 +236,7 @@ const silver = {
       const given = { ...data.given, [value]: (data.given[value] || 0) + 1 };
       shareStep(ctx, p, { ...data, given });
     },
+    polisher(ctx, p, x) { polisherTurn(ctx, p, x); },
     polish(ctx, p, c, data) {
       const who = data.who || 'Polish';
       ctx.gain(p, c, 1);
@@ -340,9 +347,12 @@ const silver = {
       onActivate(ctx, owner) {
         const k = Math.min(3, owner.res[S] || 0);
         if (!k) { ctx.log(`${owner.name}'s Polisher: no silver to turn.`); return; }
-        owner.res[S] -= k;
-        ctx.log(`${owner.name}'s Polisher: ${k} silver into ${2 * k} of any colors.`);
-        polishPick(ctx, owner, 2 * k, 'Polisher');
+        if (k === 1) { polisherTurn(ctx, owner, 1); return; }
+        // "up to 3": the player picks how many (Cory, 2026-11-01: "Polisher, yes. Player should be able to")
+        ctx.choose(owner, `Polisher: turn how much silver into 2 of any colors each? (you have ${owner.res[S]})`,
+          Array.from({ length: k }, (_, i) => i + 1).map(x => ({
+            id: `amount:${x}`, label: `${x} silver into ${2 * x}`, kind: 'amount', value: x, spend: { [S]: x }, hint: x === k ? 1 : 0,
+          })), 'silver.polisher', {});
       },
       botActivate: (ctx, owner) => (owner.res[S] || 0) >= 3,
     }),
