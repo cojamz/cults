@@ -144,7 +144,10 @@ try {
 
     // (b4) Straggler: the open spaces light on the wheel, "Stay put" is a button, and picking a lit space moves it
     const prompt = await page.$eval('.prompt.choice', e => e.textContent).catch(() => '');
-    if (/Straggler/.test(prompt) && !seen.has(`straggler-${prompt.slice(0, 30)}`)) {
+    // Straggler's own ask (its title), not another card's ask that lists Straggler as a pick (Panel: promote another
+    // member, Nov 1)
+    const asker = await page.$eval('.prompt.choice', e => e.getAttribute('aria-label') || '').catch(() => '');
+    if ((asker ? /^Straggler\b/.test(asker) : /Straggler/.test(prompt)) && !seen.has(`straggler-${prompt.slice(0, 30)}`)) {
       seen.add(`straggler-${prompt.slice(0, 30)}`);
       seen.add('straggler');
       // the ask docks once the minion's own flight has landed (as a person sees it)

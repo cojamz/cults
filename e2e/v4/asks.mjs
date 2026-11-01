@@ -56,7 +56,7 @@ async function hoverFig(page, id) {
   await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 4 });
   // a long wait, not a slow-card bar: under the full check's load the card took over 1.5s to fill (Nov 1)
   await page.waitForFunction(() => !!document.querySelector('[data-tip-body] [data-card]'), null, { timeout: 8000 }).catch(() => {});
-  await page.waitForFunction(() => !!document.querySelector('[data-tip-body] [data-ask], [data-tip-body] [data-skip]'), null, { timeout: 1500 }).catch(() => {});
+  await page.waitForFunction(() => !!document.querySelector('[data-tip-body] [data-ask], [data-tip-body] [data-skip]'), null, { timeout: 8000 }).catch(() => {});
   await page.waitForTimeout(150);
   return page.evaluate(() => {
     const t = document.querySelector('[data-tip-body]');

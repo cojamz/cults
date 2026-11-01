@@ -208,7 +208,9 @@ if (wantE2E && existsSync(join(root, 'e2e/v4'))) {
     const HEAVY = { 'tables.mjs': 2, 'online.mjs': 2 };
     // longest first (typical seconds on a quiet box), so the long pole starts at once
     // (tables.mjs: its own per-game budget is 8 minutes, so its stall limit sits above that, 5 x 100 s)
-    const LONG = { 'online.mjs': 130, 'touch.mjs': 120, 'hotseat.mjs': 75, 'tables.mjs': 100, 'spaces.mjs': 60, 'memory.mjs': 60, 'benders.mjs': 50, 'reckoning.mjs': 21, 'layout.mjs': 13 };
+    const LONG = { 'online.mjs': 130, 'touch.mjs': 120, 'hotseat.mjs': 75, 'tables.mjs': 100, 'spaces.mjs': 60, 'memory.mjs': 60, 'benders.mjs': 50, 'reckoning.mjs': 21, 'layout.mjs': 13,
+      // shop-names and turndock take 5+ minutes under the full run's load (320s and 310s here, stalled at 360s on GitHub, Nov 1)
+      'shop-names.mjs': 130, 'turndock.mjs': 130 };
     const order = (a, b) => (LONG[b] || 30) - (LONG[a] || 30) || a.localeCompare(b);
     const one = async (f, weight) => {
       const tok = await acquire('e2e', { weight, what: `${what}: ${f}`, kind, quietMs: 60000, log: m => console.log(`[${f}] ${m}`) });
