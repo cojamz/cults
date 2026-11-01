@@ -344,7 +344,7 @@ const silver = {
       },
       botActivate: (ctx, owner) => (owner.res[S] || 0) >= 3,
     }),
-    m('collector', 'Collector', 2, 2, 'Whenever a rival recruits paying silver, +1 silver.', { round: 1,
+    m('collector', 'Collector', 3, 2, 'Whenever a rival recruits paying silver, +1 silver.', { round: 1,
       onRecruit(ctx, owner, card, by, what) {
         if (by === owner || !(what?.spent?.[S] > 0)) return;
         ctx.gain(owner, S, 1);
