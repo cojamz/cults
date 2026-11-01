@@ -40,6 +40,7 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 9. Seat pass: minions, follower number, resources and rivals' engines readable at a glance. Show Cory 2 mockups first.
 
 ## Lag and motion (ours: engineering never waits on Cory; judge on the freeze probe in Chrome and Firefox)
+- Click speed bar (speed thread): clicks p95 170-240 ms at 4x CPU vs the 100 ms bar. Next: defer seats/SinceStrip/MemberDeck out of the click's render, Wheel comparator, measured with rig spread. Also fix or retire scripts/v4-perf.mjs (stale).
 - Wheel in Firefox: one ~180 ms hitch the first time the rim's words flip; 100-130 ms frames as a spin starts on slowed Firefox. Only if Cory says it still drags.
 - Smoothness panel leftovers (/mnt/project-files/smooth-panel/plan.md): the wheel's landing re-lay (lay out only panels whose upright side flips), scoringSnapshot cache, income line keyed by members, preview cap by time.
 - Snappy pair next (Claude's): bots off the main thread (worker), one animation clock + piece pool, acknowledgment/frame bars in the snappy gate, cult-hop filter. design/eval/snappy-pair/README.md.
