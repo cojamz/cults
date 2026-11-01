@@ -47,6 +47,8 @@ Each one has drawn a no. Run every idea past all of them.
 
 15. **A rival's choice with a dominated side.** Magenta, Oct 31: "Each rival chooses: give you 1 resource, or you steal 2 from them" → "nobody would ever choose not to give one. really basic strategic thing that makes me have no confidence in you." Check: for every "they choose" or "you choose", play the chooser's side; if one option is always better for them, it isn't a choice, and the card is just the better option.
 
+18. **Anything that reads as "what came back to you".** Silver, Oct 31: Return the Favor ("Each rival gives you 1 of their silver in round I, 2 in round II, 3 in round III") → "the exact fucking kind of thing i dont want players to have to keep track of", though the card needs no memory: pitched as "the silver you handed out comes back", it read as a ledger. Also out the same night: Sponsor (a bigger Toast aimed at one rival), Commission (fire a rival's On Use), Small Talk (a smaller Sweet Talk). Check: a round I slot beside a fuel space and a converter must touch a different piece, and nothing in its text or pitch should sound like counting past events.
+
 ## How he wants it delivered
 
 - About 5 ideas per open slot, in one message, one line each. He hates one-at-a-time pitches: "why are you doing these so piecemeal?" (Oct 22). He still decides one slot at a time.

@@ -46,3 +46,4 @@ Current rules only, short on purpose: every line here loads into every thread. W
 - Prices are educated guesses refined by human play: lean pricier, never below 2, lift a weak card with followers before cutting its price.
 - Bot numbers name their instrument (Easy/Normal/Hard, thinking bots, AI tester), check which way the fix points, and report the share of games won with 5 or fewer members (bar: at least 20%; buying followers has no target). Bot stats are not design flaws. Batches use the 2.0 colors unless he names others. A balance report covers every member, color, space and artifact.
 - Versions: small publishes are sub-steps (v0.9.801, v0.9.802); the next whole step only for a release worth calling one.
+- 2026-10-31: Cory, on "New picks by 12:00am" after two nos on Silver round I: "why would it take 30 fucking minutes". A redo after a no is still a few minutes, done inline; the full re-run means playing every idea through, never a quoted half hour.
