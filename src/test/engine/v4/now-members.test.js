@@ -29,7 +29,7 @@ describe('now and at round start', () => {
   it('every card with the flag says "On Recruit: … Round Start: …" and has a round-start effect', async () => {
     const { allQuadrantIds, quadrant } = await import('../../../engine/v4/content/index.js');
     for (const id of allQuadrantIds()) for (const d of quadrant(id).members) if (d.now) {
-      expect(d.text).toMatch(/On Recruit: .* Round (?:I+ )?Start: /); // two keywords (Cory, 2026-10-27)
+      expect(d.text).toMatch(/On Recruit: .* Round (?:I+ )?Start: |^On Recruit and Round Start: /); // two keywords (Cory, 2026-10-27), or both at once (Window Shopper, Cory, Nov 1 2:20pm)
       expect(memberTimingWords(d.text)).not.toMatch(/\bNow\b/);
       expect(!!(d.onRoundStart || d.onRoundStartLate)).toBe(true);
     }

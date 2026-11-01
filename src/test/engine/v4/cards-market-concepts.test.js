@@ -16,7 +16,7 @@ describe('Blue concepts', () => {
     expect(def('market.makeover').text).toBe('On Recruit: send the whole shop to the bottom of the pile, then refill.');
     expect(def('market.regular').text).toBe('Whenever you buy followers, +1 blue.');
     expect(def('market.critic').text).toBe('Whenever a rival recruits a blue member, +1 follower.');
-    expect(def('market.patroness').text).toBe('Whenever a shop member goes to the bottom of the pile, +1 follower.');
+    expect(def('market.patroness').text).toBe('Whenever shop members go to the bottom of the pile, +1 follower.') // Cory, Nov 1 2:25pm;
     expect(def('market.connoisseur').text).toBe('Whenever you recruit a blue member, +1 blue.');
     expect(def('market.plusone').f).toBe(2);
   });
