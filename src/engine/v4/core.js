@@ -854,6 +854,8 @@ function startRound(state, r) {
     }
     refill(state);
     log(state, `The member market refreshes for round ${roman(r)}.`);
+    // Bargain Bin counts the refresh: the old shop went to the bottom (Cory, Nov 1: "Yes, you count the refreshes")
+    if (old.length) { const ctx = ctxFor(state); for (const p of state.players) for (const c of ctx.abilitiesOf(p)) if (c.def.bottomBlue) ctx.asMember(p, c.def.name, () => { const got = ctx.gain(p, 'blue', 1); if (got) ctx.log(`${p.name}'s ${c.def.name}: +${got.n} ${got.color}.`); }, c.uid); }
   }
   state.slots = {};
   state.squats = {};

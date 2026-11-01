@@ -146,6 +146,12 @@ describe('White members', () => {
     expect(named(s, 'Raiders')).toEqual(["P1's Raiders stole 4 followers from P2 and paid 2 white."]);
   });
 
+  it('Raiders counts as a steal for Fence (Cory, Nov 1: "Count raiders… that should count")', () => {
+    const s = use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider'], [], ['thieves.fence']], shop: ROW, ...buy }), 'trading.raider');
+    expect(R(s, 2).magenta).toBe(1);
+    expect(named(s, 'Fence')).toHaveLength(1);
+  });
+
   it('Cashier: when recruited, all your white becomes followers (named)', () => {
     let s = table(Q, { res: [{ white: 9 }], shop: ['trading.cashier', ...ROW], ...buy });
     s = move(s, cardOpt(s, 'trading.cashier', 'shop'));

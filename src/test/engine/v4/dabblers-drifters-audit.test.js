@@ -3,7 +3,7 @@
 import { describe, it, expect } from 'vitest';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming } from './cards-helpers.js';
-import { cardDef, contextFor } from '../../../engine/v4/core.js';
+import { cardDef, contextFor, resume } from '../../../engine/v4/core.js';
 
 const rich = { gold: 30, red: 30, yellow: 30, green: 30, blue: 30 };
 const named = (s, name) => linesNaming(s.log, name);
@@ -58,5 +58,15 @@ describe('Dabblers and Drifters audit', () => {
     expect(named(s, 'Bargain Bin')).toHaveLength(1);
     expect(s.cards[art].made?.blue).toBe(1);
     expect(s.players[0].res.blue - b0).toBeGreaterThanOrEqual(2); // Bury's +1 and Bargain Bin's +1
+  });
+  it('Bargain Bin: the shop refresh at a round start pays +1 blue (Cory, Nov 1: "you count the refreshes")', () => {
+    let s = sceneQ({ quadrants: ['market', 'red', 'yellow', 'green'], round: 1 });
+    const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
+    s.cards[art] = { uid: art, def: 'market.bargainbin' }; s.players[1].artifact = art;
+    const b0 = s.players[1].res.blue;
+    s.pending = null; s.queue = [{ t: 'round', r: 2 }];
+    s = resume(s);
+    expect(s.players[1].res.blue - b0).toBe(1);
+    expect(named(s, 'Bargain Bin')).toHaveLength(1);
   });
 });

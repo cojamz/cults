@@ -243,6 +243,11 @@ const trading = {
         owner.res[W] -= 2; t.res[W] = (t.res[W] || 0) + 2;
         t.bonus -= k; owner.bonus += k;
         ctx.log(`${owner.name}'s Raiders stole ${plural(k, 'follower')} from ${t.name} and paid 2 white.`);
+        // a steal for Fence ("Whenever any player steals, +1 magenta."; Cory, Nov 1: "Count raiders… that should count")
+        const info = { thief: owner, victim: t, took: {}, n: k, followers: k, instance: ctx.stealInstance() };
+        for (const o of ctx.state.players) for (const c of ctx.abilitiesOf(o)) {
+          for (const d of [c.def, ...(c.copy ? [ctx.defOf({ def: c.copy })] : [])]) if (d.key === 'fence' && d.onSteal) ctx.asMember(o, d.name, () => d.onSteal(ctx, o, c, info), c.uid);
+        }
       },
       botActivate: (ctx, owner) => { const t = raidTarget(ctx, owner); return !!t && sellable(t) >= 3 && (owner.res[W] || 0) >= 2; },
     }),
