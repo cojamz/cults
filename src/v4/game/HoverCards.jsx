@@ -523,7 +523,7 @@ function Row({ k, children }) { return <div className="lt-yd-row"><span classNam
 export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick, pinned = false, past = false, fresh = false }) {
   const [q, i] = spaceKey.split('-').map(Number);
   const qid = state.quadrants[q];
-  const Q = quadrant(qid), a = Q.actions[i];
+  const Q = quadrant(qid), a = spacesOf(state, qid)[i];
   const owner = state.slots[spaceKey];
   const opt = optionFor(`slot:${spaceKey}`) || optionFor(`squat:${spaceKey}`) || optionFor(`to:${spaceKey}`);
   const round = Math.max(1, state.round);

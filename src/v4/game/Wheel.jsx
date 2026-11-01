@@ -112,10 +112,10 @@ export function spaceGeometry(state, look = 'sockets') {
   const out = [];
   const nq = state.quadrants.length, k = sector(nq) / 90; // a ring's spans are drawn for a quarter; k scales them to the sector
   state.quadrants.forEach((qid, q) => {
-    const Q = quadrant(qid);
-    Q.actions.forEach((a, i) => {
+    const acts = spacesOf(state, qid);
+    acts.forEach((a, i) => {
       const t = a.ring, R = rings[t];
-      const idx = Q.actions.filter((x, j) => x.ring === t && j < i).length;
+      const idx = acts.filter((x, j) => x.ring === t && j < i).length;
       const c = qCenter(q, nq);
       const ang = R.n === 1 ? c : (c + (R.span * k) / 2) - idx * ((R.span * k) / (R.n - 1));
       out.push({ key: `${q}-${i}`, q, i, idx, qid, a, ring: t, ang, half: (45 * k) / R.n, xy: polar(ang, R.r) });

@@ -97,7 +97,7 @@ function liveCards() {
   for (const id of allQuadrantIds()) {
     const q = quadrant(id);
     if (q.standIn) continue;
-    for (const a of q.actions) out.push({ name: a.name, text: a.text || '' });
+    for (const a of q.actions.flatMap(x => (x.piles ? [x, x.piles] : [x]))) out.push({ name: a.name, text: a.text || '' });
     for (const m of q.members) if (!CUT.has(m.id)) out.push({ name: m.name, text: m.text || '' });
   }
   for (const m of guestMembers()) if (!CUT.has(m.id)) out.push({ name: m.name, text: m.text || '' });

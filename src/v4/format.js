@@ -669,7 +669,7 @@ export function boardWords(name, round = 1, sphere = null) {
   for (const id of allQuadrantIds()) {
     const q = quadrant(id);
     if (sphere && q.name !== sphere) continue;
-    const a = q.actions.find(x => x.name === name);
+    const a = q.actions.flatMap(x => (x.piles ? [x, x.piles] : [x])).find(x => x.name === name);
     if (!a) continue;
     let w = '';
     try { w = panelWords(id, a, Math.max(1, Math.min(3, round))) || ''; } catch { w = ''; }
