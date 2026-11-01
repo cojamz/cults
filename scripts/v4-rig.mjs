@@ -29,6 +29,7 @@ const QUERY = String(flag('query', '') || ''); // extra page query, e.g. trace=1
 const CPU = Number(flag('cpu', 4)), SPEED = String(flag('speed', 'relaxed')), SEED = Number(flag('seed', 20261028));
 const TRACE = !!flag('trace-clicks', false);
 const TRACE_DUMP = String(flag('trace-dump', '') || '');
+const TRACE_CATS = String(flag('trace-cats', '') || ''); // more trace categories, e.g. disabled-by-default-blink.debug (selector stats per style pass)
 const TRACE_MIN = Number(flag('trace-min', 150)); // --trace-min=ms: trace clicks at least this slow (default 150) // a Chrome trace per click: main-thread time by kind (style, layout, paint, script…) in slow ones
 const PROFILE = !!flag('profile-clicks', false);
 // --profile-clicks: CPU-profile every click; where the time goes in slow ones (use an unminified build)
@@ -185,7 +186,7 @@ async function idleSample(round) {
 const prof = new Map(), profTotal = new Map(), profNative = new Map(); let profN = 0, m0 = null; const rend = { style: 0, styleN: 0, layout: 0, layoutN: 0, script: 0, task: 0 };
 const trace = new Map(), forced = new Map(); let traceN = 0; const slowest = []; // the slowest traced clicks, each as a timeline of tasks
 const TRACE_NAMES = ['UpdateLayoutTree', 'Layout', 'PrePaint', 'Paint', 'Layerize', 'Commit', 'UpdateLayer', 'HitTest', 'FunctionCall', 'EventDispatch', 'TimerFire', 'FireAnimationFrame', 'RunMicrotasks', 'V8.GC_SCAVENGER', 'MajorGC', 'MinorGC', 'ScheduleStyleRecalculation', 'RunTask'];
-const traceStart = async () => { if (!TRACE) return; await cdp.send('Tracing.start', { categories: 'devtools.timeline,disabled-by-default-devtools.timeline,disabled-by-default-devtools.timeline.stack,v8', transferMode: 'ReturnAsStream' }); };
+const traceStart = async () => { if (!TRACE) return; await cdp.send('Tracing.start', { categories: 'devtools.timeline,disabled-by-default-devtools.timeline,disabled-by-default-devtools.timeline.stack,v8' + (TRACE_CATS ? ',' + TRACE_CATS : ''), transferMode: 'ReturnAsStream' }); };
 const traceStop = async (what, ms) => {
   if (!TRACE) return;
   const done = new Promise(r => cdp.once('Tracing.tracingComplete', r));
