@@ -63,6 +63,16 @@ async function answer(page, held, { prefer, last, avoid, panelFirst, skip, domFa
       await c.el.click({ timeout }); return { id: c.id, kind: kindOf(c.id) };
     } catch { /* covered, moved or gone: the next */ }
   }
+  // a person's click at the middle of it: a seat pick sits under its members and artifact on purpose (they keep their
+  // hovers, and a click on them picks the seat), which Playwright's own click calls covered and refuses (bug bash, Nov 1)
+  for (const c of cands) {
+    const b = await c.el.boundingBox().catch(() => null);
+    if (!b || !b.width || !b.height) continue;
+    const hit = await page.evaluate(([x, y, el]) => { const t = document.elementFromPoint(x, y); return !!t && (el.contains(t) || !!(el.closest('[data-cult]') && el.closest('[data-cult]').contains(t))); }, [b.x + b.width / 2, b.y + b.height / 2, c.el]).catch(() => false);
+    if (!hit) continue;
+    await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
+    return { id: c.id, kind: kindOf(c.id) };
+  }
   if (domFallback) {
     await page.mouse.move(1, 1).catch(() => {});
     for (const c of cands) {

@@ -138,7 +138,8 @@ export default function CultSeat({ state, pid, me = null, mine = false, now = fa
       // a choice that picks this seat: its member figures sit over the seat's button so they still open their cards
       // (Cory, Oct 29: "can't hover over members in shake down"), and a click on one picks the seat like the rest of it
       onClickCapture={pick && pick.seatMode && pick.seat ? e => {
-        if (!(e.target.closest && e.target.closest('.cs-member'))) return;
+        // the artifact and the member count sit over it too (bug bash, Nov 1: a click on the artifact picked nothing)
+        if (!(e.target.closest && e.target.closest('.cs-member, .cs-crowd'))) return;
         e.stopPropagation(); e.preventDefault();
         pick.onPick(pick.seat.id, e.currentTarget.querySelector('.cs-pick-seat') || e.currentTarget);
       } : undefined}
