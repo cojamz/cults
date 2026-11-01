@@ -32,3 +32,4 @@
 - 1:44pm, Caterer (item 31): pays once per instance of gifts being given (one gift action, however many players get silver), not per player. Needs clearer words; also find a shared word for "once per instance" across Caterer, Tastemaker, Patroness (wording pass at the walk-through).
 - 1:44pm, Polisher (item 32; "On Use, once per game: turn up to 3 silver into 2 of any colors each."): yes, the player chooses how many (1, 2 or 3). Sent to be built.
 - 1:45pm, Recruiter (item 33): no comment. Greatest Hits (item 34): the live text is his ("Copy the On Recruit of each of your members, in any order. +1 green."); the decisions log was missing it, now logged.
+- 1:46pm: keep the skeptic's considered-and-dropped list as a running log (design/watch.md, done). 1:47pm: done reading; walk-through started at item 1 (counterplay: where member movement lives).
