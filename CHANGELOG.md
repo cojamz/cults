@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.935 — 2026-11-01
+
+- Caterer picked as Silver's artifact now pays its +1 silver whenever you give a rival something.
+
 ## v0.9.934 — 2026-11-01
 
 - Paying, recruiting and answering a choice answer faster: the table redraws in your click instead of a beat after it.
