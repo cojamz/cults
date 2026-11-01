@@ -386,8 +386,9 @@ function changeStep(ctx, p, data) {
 // Tastemaker: +1 follower each time you change rivals' resources (once per space or card, however many it changed;
 // Claude, under Cory's go-with-your-gut, Nov 1)
 function tastemaker(ctx, p) {
+  // a Doppelganger copying it counts too (bug bash, Nov 1)
   for (const card of ctx.membersOf(p)) {
-    if (ctx.defOf(card).key !== 'tastemaker') continue;
+    if (ctx.defOf(card).key !== 'tastemaker' && card.copy !== 'yellow.tastemaker') continue;
     p.bonus += 1;
     ctx.log(`${p.name}'s Tastemaker: +1 follower.`);
   }

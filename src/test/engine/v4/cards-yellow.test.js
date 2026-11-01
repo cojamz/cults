@@ -122,6 +122,14 @@ describe('Yellow members', () => {
     expect(s.players[0].bonus).toBe(1);
     expect(named(s, 'Tastemaker')).toHaveLength(1);
   });
+  it('Tastemaker copied by a Doppelganger pays too', () => {
+    let s = sc({ round: 3, res: [{}, { red: 5 }], members: [['echo.doppel']], shop: ['yellow.agitator'] });
+    s.cards[s.players[0].members[0]].copy = 'yellow.tastemaker';
+    s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.agitator', 'shop')}`);
+    s = move(move(move(s, 'res:1:red'), 'color:green'), 'done');
+    expect(s.players[0].bonus).toBe(1);
+    expect(named(s, 'Tastemaker')).toHaveLength(1);
+  });
   it('Spice Route: game end +1 follower per color you hold 3 or more of', () => {
     const s = sc({ members: [['yellow.spiceroute']], res: [{ gold: 3, red: 5, yellow: 2 }] });
     expect(cardDef(s, uidOf(s, 'yellow.spiceroute', 0)).onGameEnd({ state: s }, s.players[0])).toBe(2);
