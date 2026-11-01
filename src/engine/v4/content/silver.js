@@ -253,7 +253,7 @@ const silver = {
   },
 
   members: [
-    m('guest', 'Guest', 4, 4, 'Whenever a rival gives you something, +1 more of it.', {
+    m('guest', 'Hanger-On', 4, 4, 'Whenever a rival gives you something, +1 more of it.', {
       onGiven(ctx, owner, card, giver, color) { if (giver !== owner) ctx.gain(owner, color, 1); },
     }),
     m('benefactor', 'Benefactor', 4, 2, 'On Recruit: +3 silver, and +1 silver to a rival you choose. Round Start: +3 silver, and +1 silver to a rival you choose.', { now: true,
@@ -310,6 +310,11 @@ const silver = {
       botActivate: (ctx, owner) => ctx.state.round === 3 && owner.res[S] >= 6,
     }),
     m('dowager', 'Dowager', 2, 2, 'Worth 3 followers.', { f: 3 }),
+    // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
+    m('smoothtalker', 'Smooth Talker', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true }),
+    m('philanthropists', 'Philanthropists', 3, 2, 'On Recruit: rivals gain up to 4 silver, split as you choose. +1 follower for each.', {
+      onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropists', max: 4, per: 1 }); },
+    }),
     m('grandhost', 'Grand Host', 8, 4, 'Double the silver you gain from Silver spaces.', { hostDouble: true }),
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 12 → 6 (the most one pass moves);
     // pass 2's pooled midpoint (5.2) rounds back to 6, so it stays (design/eval/balance-pass-2.md)

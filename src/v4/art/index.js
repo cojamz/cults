@@ -137,6 +137,13 @@ for (const [key, name, source] of [
   const art = BY_ID.get(`yellow.${source}`);
   if (art) BY_ID.set(`yellow.${key}`, { ...art, id: `yellow.${key}`, name });
 }
+// Silver 2.0's new members (Cory, 2026-11-01) reuse cut Silver portraits while names and artwork settle.
+for (const [key, name, source] of [
+  ['smoothtalker', 'Smooth Talker', 'spoon'], ['philanthropists', 'Philanthropists', 'benefactor'],
+]) {
+  const art = BY_ID.get(`silver.${source}`);
+  if (art) BY_ID.set(`silver.${key}`, { ...art, id: `silver.${key}`, name });
+}
 // Feastmaker became Chefs (Cory, 2026-10-18): same drawing under the new id
 { const art = BY_ID.get('yellow.feastmaker'); if (art) BY_ID.set('yellow.chefs', { ...art, id: 'yellow.chefs', name: 'Chefs' }); }
 /** An icon id from a card or space name: "Mentor & Protégé" → "mentor-protege". */

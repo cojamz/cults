@@ -211,13 +211,16 @@ function priceParts(state, p, def, how = {}) {
   const off = (p.discount || 0) + sumMemberFlag(state, p, 'costReduction');
   const colored = Math.max(0, s - off), total = Math.max(0, s + w - off);
   const goldDouble = sumMemberFlag(state, p, 'goldPaysDouble') > 0;
-  return { q: colored > 0 ? colorOf(def) : null, colored, total, worth: c => (c === 'gold' && goldDouble ? 2 : 1) };
+  const q = colored > 0 ? colorOf(def) : null;
+  // Smooth Talker (flag silverPaysColor): your silver pays a colored part too
+  const alt = q && q !== 'silver' && sumMemberFlag(state, p, 'silverPaysColor') > 0 ? 'silver' : null;
+  return { q, alt, colored, total, worth: c => (c === 'gold' && goldDouble ? 2 : 1) };
 }
 const unitsOf = (v, worth) => Object.entries(v).reduce((t, [c, n]) => t + (n || 0) * worth(c), 0);
 /** Does paying the coins `v` cover the price? The colored units from q, the rest from anything (q's spare too). */
 function memberPayOk(state, p, def, v, how) {
-  const { q, colored, total, worth } = priceParts(state, p, def, how);
-  return (!q || (v[q] || 0) * worth(q) >= colored) && unitsOf(v, worth) >= total;
+  const { q, alt, colored, total, worth } = priceParts(state, p, def, how);
+  return (!q || (v[q] || 0) * worth(q) + (alt ? (v[alt] || 0) * worth(alt) : 0) >= colored) && unitsOf(v, worth) >= total;
 }
 /**
  * The exact price p pays for member uid right now, after every discount and rule-changer, and what's missing:
@@ -228,9 +231,9 @@ function memberPayOk(state, p, def, v, how) {
  */
 export function memberPrice(state, p, uid, how = {}) {
   const def = cardDef(state, uid);
-  const { q, colored, total, worth } = priceParts(state, p, def, how);
+  const { q, alt, colored, total, worth } = priceParts(state, p, def, how);
   const res = p.res;
-  const haveQ = q ? (res[q] || 0) * worth(q) : 0;
+  const haveQ = q ? (res[q] || 0) * worth(q) + (alt ? (res[alt] || 0) * worth(alt) : 0) : 0;
   const shortQ = q ? Math.ceil(Math.max(0, colored - haveQ) / worth(q)) : 0;
   const shortAny = Math.max(0, total - unitsOf(res, worth) - shortQ * (q ? worth(q) : 1));
   const afford = shortQ === 0 && shortAny === 0;
@@ -244,14 +247,19 @@ export function memberPrice(state, p, uid, how = {}) {
 /** A way p can pay for member uid now ({ color: n }), or null if p can't: the colored part from its color, the rest
  *  from the colors p holds most of, gold last (gold scores the Crown). */
 export function paymentPlan(state, p, uid, how = {}) {
-  const { q, colored, total, worth } = priceParts(state, p, cardDef(state, uid), how);
+  const { q, alt, colored, total, worth } = priceParts(state, p, cardDef(state, uid), how);
   const res = { ...p.res };
   const spend = Object.fromEntries(Object.keys(res).map(r => [r, 0]));
   let paid = 0;
   if (q && colored > 0) {
-    const k = Math.ceil(colored / worth(q));
-    if ((res[q] || 0) < k) return null;
+    let k = Math.min(res[q] || 0, Math.ceil(colored / worth(q)));
     res[q] -= k; spend[q] = (spend[q] || 0) + k; paid += k * worth(q);
+    // Smooth Talker: silver covers what the color can't
+    if (paid < colored && alt) {
+      const j = Math.min(res[alt] || 0, Math.ceil((colored - paid) / worth(alt)));
+      res[alt] -= j; spend[alt] = (spend[alt] || 0) + j; paid += j * worth(alt);
+    }
+    if (paid < colored) return null;
   }
   while (paid < total) {
     const c = Object.keys(res).filter(r => r !== 'gold' && res[r] > 0).sort((a, b) => res[b] - res[a])[0] || (res.gold > 0 ? 'gold' : null);

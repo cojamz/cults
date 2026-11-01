@@ -2,7 +2,7 @@
 // Card-by-card: every Silver action and member, through real moves, against the printed text, with a log line naming
 // the card whenever it changes a number. Plus one cross-sphere case per member.
 import { describe, it, expect } from 'vitest';
-import { followers, resume, memberCount, contestTable } from '../../../engine/v4/core.js';
+import { followers, resume, memberCount, contestTable, paymentPlan } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, buy, linesNaming } from './cards-helpers.js';
 
@@ -57,15 +57,30 @@ describe('Silver actions', () => {
 });
 
 describe('Silver members', () => {
+  it('Smooth Talker: your silver pays a member’s colored part', () => {
+    const s = sc({ res: [{ silver: 9 }], members: [['silver.smoothtalker']], shop: ['red.patriarch'] });
+    const uid = s.shop.find(u => s.cards[u].def === 'red.patriarch');
+    expect(paymentPlan(s, s.players[0], uid).silver).toBeGreaterThan(0);
+    const s2 = sc({ res: [{ silver: 9 }], shop: ['red.patriarch'] });
+    expect(paymentPlan(s2, s2.players[0], s2.shop.find(u => s2.cards[u].def === 'red.patriarch'))).toBe(null);
+  });
+  it('Philanthropists: On Recruit, rivals gain up to 4 silver, +1 follower each', () => {
+    let s = sc({ n: 3, round: 2, res: [rich], shop: ['silver.philanthropists'], queue: [{ t: 'buy', p: 0 }] });
+    s = buy(s, 'silver.philanthropists');
+    if (s.pending?.kind === 'choose' && /pay|Pay/.test(s.pending.prompt || '')) s = move(s, s.pending.options[0].id);
+    for (const x of ['player:1', 'player:1', 'player:2', 'player:2']) s = move(s, x);
+    expect(s.players.map(p => p.res.silver).slice(1)).toEqual([2, 2]);
+    expect(s.players[0].bonus).toBe(4);
+  });
   it('Guest: another player’s gift gives +1 more, named', () => {
     const s = take(sc({ members: [[], ['silver.guest']] }), 'silver.toast');
     expect(S(s, 1)).toBe(2);
-    expect(named(s, 'Guest')[0]).toMatch(/P2's Guest: \+1 silver/);
+    expect(named(s, 'Hanger-On')[0]).toMatch(/P2's Hanger-On: \+1 silver/);
   });
   it('Guest × Kickback: Gold’s gift counts, named', () => {
     const s = move(take(sc({ members: [[], ['silver.guest']] }), 'gold.jv'), 'player:1');
     expect(s.players[1].res.gold).toBe(2);
-    expect(named(s, 'Guest')).toHaveLength(1);
+    expect(named(s, 'Hanger-On')).toHaveLength(1);
   });
 
   it('Benefactor: round start +3 silver, a rival you pick +1; named', () => {
