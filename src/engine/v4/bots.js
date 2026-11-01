@@ -219,8 +219,9 @@ function givenAway(state, me) {
     if (typeof line !== 'string') continue;
     const m = line.startsWith(`${p.name} traded `) && line.match(/ traded (.+) for .+'s (.+)\.$/);
     if (m) { given.add(m[1]); continue; }
-    const head = `${p.name} swapped `;
-    if (!line.startsWith(head) || !line.endsWith('.')) continue;
+    // Anarchist logs "P1's Anarchist swapped P1's X and P2's Y." (benders.js anarchy): the same body
+    const head = [`${p.name} swapped `, `${p.name}'s Anarchist swapped `].find(h => line.startsWith(h));
+    if (!head || !line.endsWith('.')) continue;
     const body = line.slice(head.length, -1);
     for (const left of owners) for (const right of owners) {
       if (!body.startsWith(`${left}'s `) || left === right && left === p.name) continue;

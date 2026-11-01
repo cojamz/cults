@@ -132,7 +132,7 @@ for (const [key, name, source] of [
   ['customs', 'Customs', 'gleaner'], ['tinker', 'Tinker', 'sower'], ['matchmaker', 'Matchmaker', 'admirer'],
   ['agitator', 'Agitator', 'farmer'], ['ringleader', 'Ringleader', 'latebloomer'], ['drifters', 'Drifters', 'weaver'],
   ['leveler', 'Leveler', 'rainmaker'], ['bigtent', 'Big Tent', 'pilgrim'], ['bookcooker', 'Book Cookers', 'peddler'],
-  ['puppeteer', 'Puppeteers', 'feastmaker'], ['guestbook', 'Guest Book', 'farmer'],
+  ['puppeteer', 'Puppeteers', 'feastmaker'], ['caravan', 'Caravan', 'peddler'], ['tastemaker', 'Tastemaker', 'admirer'], ['spiceroute', 'Spice Route', 'gleaner'], ['guestbook', 'Guest Book', 'farmer'],
 ]) {
   const art = BY_ID.get(`yellow.${source}`);
   if (art) BY_ID.set(`yellow.${key}`, { ...art, id: `yellow.${key}`, name });
@@ -141,7 +141,7 @@ for (const [key, name, source] of [
 for (const [key, name, source] of [
   ['smoothtalker', 'Smooth Talker', 'spoon'], ['philanthropists', 'Philanthropists', 'benefactor'],
   ['polisher', 'Polisher', 'steward'], ['collector', 'Collector', 'silversmith'], ['debtcollector', 'Debt Collector', 'majordomo'],
-  ['highsociety', 'High Society', 'revelers'],
+  ['highsociety', 'High Society', 'revelers'], ['giftwrapper', 'Gift Wrapper', 'heir'],
 ]) {
   const art = BY_ID.get(`silver.${source}`);
   if (art) BY_ID.set(`silver.${key}`, { ...art, id: `silver.${key}`, name });

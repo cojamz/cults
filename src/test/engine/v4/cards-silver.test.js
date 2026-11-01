@@ -67,6 +67,15 @@ describe('Silver actions', () => {
 });
 
 describe('Silver members', () => {
+  it('Gift Wrapper: +1 follower whenever you give rivals silver, once per space (Toast, Party Favors)', () => {
+    let s = take(sc({ n: 3, members: [['silver.giftwrapper']] }), 'silver.toast');
+    expect(s.players[0].bonus).toBe(1);
+    s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, { green: 1 }], members: [['silver.giftwrapper']] }), 'silver.favors');
+    s = move(s, s.pending.options[0].id);
+    s = move(s, s.pending.options[0].id);
+    expect(s.players[0].bonus).toBe(1);
+    expect(named(s, 'Gift Wrapper')).toHaveLength(1);
+  });
   it('Polisher: once per game, up to 3 silver into 2 of any colors each', () => {
     let s = sc({ res: [{ silver: 4 }], members: [['silver.polisher']] });
     const use = s.pending.options.find(o => o.kind === 'use');

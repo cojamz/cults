@@ -109,6 +109,23 @@ describe('Yellow members', () => {
     const s = sc({ members: [['yellow.dyer']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
     expect(R(s).yellow).toBe(2);
   });
+  it('Caravan: worth 3 followers; round start +1 of each color you hold', () => {
+    const s = sc({ members: [['yellow.caravan']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
+    expect(R(s)).toMatchObject({ gold: 2, red: 3, yellow: 0, green: 0 });
+    expect(followers(s, s.players[0])).toBeGreaterThanOrEqual(3);
+  });
+  it("Tastemaker: +1 follower each time you change rivals' resources, once per card however many it changes", () => {
+    let s = sc({ round: 3, res: [{}, { red: 5 }], members: [['yellow.tastemaker']], shop: ['yellow.agitator'] });
+    s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.agitator', 'shop')}`);
+    for (let i = 0; i < 2; i++) { s = move(s, 'res:1:red'); s = move(s, 'color:green'); }
+    s = move(s, 'done');
+    expect(s.players[0].bonus).toBe(1);
+    expect(named(s, 'Tastemaker')).toHaveLength(1);
+  });
+  it('Spice Route: game end +1 follower per color you hold 3 or more of', () => {
+    const s = sc({ members: [['yellow.spiceroute']], res: [{ gold: 3, red: 5, yellow: 2 }] });
+    expect(cardDef(s, uidOf(s, 'yellow.spiceroute', 0)).onGameEnd({ state: s }, s.players[0])).toBe(2);
+  });
   it("Agitator: On Recruit, change up to 4 of rivals' resources", () => {
     let s = sc({ round: 3, res: [{}, { red: 5 }], shop: ['yellow.agitator'] });
     s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.agitator', 'shop')}`);

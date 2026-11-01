@@ -26,7 +26,8 @@ describe('the curated member decks', () => {
   // Purple and White; Bulk Buyer, Appraiser and Makeover cut
   // Oct 25: Recluse moves to White, Stylist cut
   // Green grows to 16 (Cory, 2026-10-29: Understudy, Wallflower, Fan Club, Roadie), then 15 (Connector cut)
-  const DEALT = { echo: 15, red: 13, thieves: 15, purple: 13, market: 12, trading: 12, yellow: 15 };
+  // Silver deals 10 besides Caterer, its artifact (Cory, Nov 1: "on silver - it should be 10"; Gift Wrapper)
+  const DEALT = { echo: 15, red: 13, thieves: 15, purple: 13, market: 12, trading: 12, yellow: 15, silver: 11 };
   it('Green deals 15, Blue 12, Red and Purple 13, Magenta 15, White 12, Yellow 15, other spheres 10, guests 15; no cut card is dealt', () => {
     for (const q of SPHERES) {
       const s = createGame({ seats: seats(4), quadrants: [q, ...SPHERES.filter(x => x !== q).slice(0, 3)] });

@@ -95,7 +95,7 @@ export default {
       if (data.left > 1) pickColors(ctx, p, data.left - 1, data.who, data.fromAction, data.got + 1);
     },
     changeFrom(ctx, p, value, data) {
-      if (value === 'done') { if (!data.done) ctx.log(`${p.name}'s ${data.who}: changed nothing.`); return; }
+      if (value === 'done') { if (!data.done) ctx.log(`${p.name}'s ${data.who}: changed nothing.`); else tastemaker(ctx, p); return; }
       const [oid, a] = value, o = ctx.state.players[oid];
       ctx.choose(p, `${data.who}: change ${o.name}'s 1 ${a} into which color?`, colors(ctx).filter(b => b !== a).map(b => ({
         id: `color:${b}`, label: `1 ${b}`, kind: 'color', value: b, hint: -(o.res[b] || 0) + (b === Y ? -1 : 0) - ((data.took || []).includes(`${oid}:${b}`) ? 50 : 0),
@@ -106,7 +106,7 @@ export default {
       if ((o.res[a] || 0) > 0) changeOne(ctx, p, o, a, b, data.who);
       if (data.follower) { p.bonus += 1; ctx.log(`${p.name}'s ${data.who}: +1 follower.`); }
       const next = { ...data, pick: null, left: data.left - 1, done: data.done + 1, used: [...(data.used || []), oid], made: [...(data.made || []), `${oid}:${b}`], took: [...(data.took || []), `${oid}:${data.pick[1]}`] };
-      if (next.left > 0) changeStep(ctx, p, next);
+      if (next.left > 0) changeStep(ctx, p, next); else tastemaker(ctx, p);
     },
     gobetween(ctx, p, value) {
       if (!value) return;
@@ -129,12 +129,15 @@ export default {
       if (p.artifact !== undefined && ctx.defOf(p.artifact).key === 'guestbook') guestBook(ctx, p, card);
     },
     level(ctx, p, b) {
+      let any = false;
       for (const o of touchable(ctx, p)) {
         const pool = colors(ctx).filter(c => c !== b && (o.res[c] || 0) > 0);
         if (!pool.length) continue;
         const top = Math.max(...pool.map(c => o.res[c]));
         changeOne(ctx, p, o, pool.find(c => o.res[c] === top), b, 'Leveler');
+        any = true;
       }
+      if (any) tastemaker(ctx, p);
     },
   },
 
@@ -225,6 +228,16 @@ export default {
     // Claude's fill-in, the second big card
     m('puppeteer', 'Puppeteers', 5, 4, "Worth 3 followers. Round Start: change up to 3 of rivals' resources one for one.", { f: 3,
       onRoundStart(ctx, owner) { startChange(ctx, owner, { who: 'Puppeteers', left: 3 }); },
+    }),
+    // Cory, Nov 1 (in place of Puppeteers): "Make it 'On Recruit' as well"
+    m('caravan', 'Caravan', 5, 4, 'Worth 3 followers. On Recruit: +1 of each color you hold. Round Start: +1 of each color you hold.', { f: 3, now: true,
+      onRoundStart(ctx, owner) { for (const c of held(ctx, owner)) ctx.gain(owner, c, 1); },
+    }),
+    // Cory, Nov 1 (in place of Explorer): a payoff for changing rivals' resources
+    m('tastemaker', 'Tastemaker', 3, 2, "Whenever you change rivals' resources, +1 follower."),
+    // Cory, Nov 1 (in place of Agitator, 15-card deck only)
+    m('spiceroute', 'Spice Route', 3, 2, 'Game End: +1 follower per color you hold 3 or more of.', {
+      onGameEnd: (ctx, owner) => colors(ctx).filter(c => (owner.res[c] || 0) >= 3).length,
     }),
     // Yellow's artifact (Cory, 2026-10-31: "I think C is probably best"; replaces Farmer). Name: Claude's fill-in.
     m('guestbook', 'Guest Book', 0, 0, 'Whenever you recruit a member of a color none of your members have, +2 yellow.', { artifact: true,
@@ -365,10 +378,19 @@ function changeStep(ctx, p, data) {
       hint: (o.res[a] || 0) - (p.res[a] || 0) * 0.5 - ((data.made || []).includes(`${o.id}:${a}`) ? 100 : 0),
     });
   }
-  if (!opts.length) { if (!data.done) ctx.log(`${p.name}'s ${data.who}: no rival resources to change.`); return; }
+  if (!opts.length) { if (!data.done) ctx.log(`${p.name}'s ${data.who}: no rival resources to change.`); else tastemaker(ctx, p); return; }
   opts.push({ id: 'done', label: data.done ? 'Done' : 'Change nothing', kind: 'done', value: 'done', hint: -5 });
   // "(N left)" would read as a counted steal on screen (Take all buttons), so the count is said another way
   ctx.choose(p, `${data.who}: change a rival's resource, ${data.left} more at most`, opts, 'yellow.changeFrom', data);
+}
+// Tastemaker: +1 follower each time you change rivals' resources (once per space or card, however many it changed;
+// Claude, under Cory's go-with-your-gut, Nov 1)
+function tastemaker(ctx, p) {
+  for (const card of ctx.membersOf(p)) {
+    if (ctx.defOf(card).key !== 'tastemaker') continue;
+    p.bonus += 1;
+    ctx.log(`${p.name}'s Tastemaker: +1 follower.`);
+  }
 }
 function changeOne(ctx, p, o, a, b, who) {
   o.res[a] -= 1; o.res[b] = (o.res[b] || 0) + 1;

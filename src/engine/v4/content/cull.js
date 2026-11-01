@@ -19,6 +19,7 @@ export const CUT = new Set([
   // Yellow 2.0 (Cory, 2026-10-31): his deck of 15 (yellow.js); Gardener and Harmonist come back
   'yellow.sower', 'yellow.farmer', 'yellow.gleaner', 'yellow.peddler', 'yellow.admirer', 'yellow.latebloomer',
   'yellow.rainmaker', 'yellow.pilgrim', 'yellow.weaver', 'yellow.chefs',
+  'yellow.puppeteer', 'yellow.explorer', 'yellow.agitator', // Cory, Nov 1: Caravan, Tastemaker, Spice Route in
   'thieves.mole', 'thieves.lightfingers', 'thieves.bigscore', 'thieves.lookout',
   'trading.lender', 'trading.tipster', 'trading.dealer', 'trading.pawnbroker', 'trading.liquidator',
   'trading.safetynet', 'trading.magnate', 'trading.shareholder', 'trading.reinvestor', // Cory, 2026-10-22: his White set of 12
@@ -37,7 +38,7 @@ export const CUT10 = new Set([
   'purple.extrashift', 'purple.secondwind', 'purple.lateriser', // Gossip back in, Extra Shift out (Cory, Nov 1)
   'market.restocker', 'market.plusone',
   'trading.undertaker',
-  'yellow.tinker', 'yellow.matchmaker', 'yellow.agitator', 'yellow.leveler', 'yellow.bookcooker',
+  'yellow.tinker', 'yellow.matchmaker', 'yellow.spiceroute', 'yellow.leveler', 'yellow.bookcooker',
   'benders.bigspender', 'benders.launderer', 'benders.cheerleader', 'benders.secondwind', 'benders.tiebreaker', // grey: Cory, Oct 31, keeps Scout and Old Maid, cuts Coach and Tiebreaker
 ]);
 

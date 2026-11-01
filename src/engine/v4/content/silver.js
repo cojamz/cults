@@ -33,16 +33,16 @@ function giveTo(ctx, giver, to, color, n) {
 function giveAll(ctx, giver, color, n) {
   if (!(n > 0)) return;
   for (const o of others(ctx, giver)) giveTo(ctx, giver, o, color, n);
-  afterGive(ctx, giver);
+  afterGive(ctx, giver, color);
 }
 /** One gift from giver to one player, as any sphere gives (Gold's Kickback): receiver's and giver's gift hooks fire. */
 export function give(ctx, giver, to, color, n) {
   if (!(n > 0)) return;
   giveTo(ctx, giver, to, color, n);
-  afterGive(ctx, giver);
+  afterGive(ctx, giver, color);
 }
-function afterGive(ctx, giver) {
-  for (const [c, d] of hooks(ctx, giver, 'onGive')) ctx.asMember(giver, d.name, () => d.onGive(ctx, giver, c));
+function afterGive(ctx, giver, color = null, once = null) {
+  for (const [c, d] of hooks(ctx, giver, 'onGive')) ctx.asMember(giver, d.name, () => d.onGive(ctx, giver, c, color, once));
 }
 /** Silver a Silver space pays its taker: Grand Host doubles it (each copy doubles again). */
 function hostGain(ctx, p, n) {
@@ -94,7 +94,7 @@ function shareDone(ctx, p, data) {
   const total = Object.values(given).reduce((s, n) => s + n, 0);
   if (!total) { ctx.log(`${p.name}'s ${data.who}: gave nothing.`); return; }
   for (const [id, n] of Object.entries(given)) giveTo(ctx, p, ctx.player(Number(id)), S, n);
-  afterGive(ctx, p);
+  afterGive(ctx, p, S);
   p.bonus += total * data.per;
   const list = Object.entries(given).map(([id, n]) => `${ctx.player(Number(id)).name} +${n}`).join(', ');
   ctx.log(`${p.name}'s ${data.who}: ${list} silver, then +${total * data.per} followers.`);
@@ -182,7 +182,7 @@ function favorAll(ctx, host) {
     const have = ctx.state.resources.filter(c => (o.res[c] || 0) > 0);
     if (!have.length) {
       giveTo(ctx, host, o, S, 2);
-      afterGive(ctx, host);
+      afterGive(ctx, host, S, key);
       ctx.log(`${o.name} had nothing to give; +2 silver (${host.name}'s Party Favors).`);
       continue;
     }
@@ -190,7 +190,7 @@ function favorAll(ctx, host) {
       id: `color:${c}`, label: `Give 1 ${c}`, kind: 'color', value: c,
       // bots give from their biggest pile, and not the color they lead the host in by 1 or less
       hint: 0.3 * (o.res[c] || 0) - ((o.res[c] || 0) - (host.res[c] || 0) <= 1 && (o.res[c] || 0) >= (host.res[c] || 0) ? 1 : 0),
-    })), 'silver.favor', { host: host.id }, { together: key });
+    })), 'silver.favor', { host: host.id, key }, { together: key });
   }
 }
 
@@ -211,7 +211,7 @@ const silver = {
     alms(ctx, p, [id, color]) {
       const t = ctx.player(id);
       giveTo(ctx, p, t, color, 2);
-      afterGive(ctx, p);
+      afterGive(ctx, p, color);
       ctx.log(`${p.name} gave ${t.name} 2 ${color}.`);
     },
     tongue(ctx, p, value) {
@@ -245,13 +245,13 @@ const silver = {
       const host = ctx.player(data.host);
       o.res[color] -= 1; ctx.gain(host, color, 1);
       giveTo(ctx, host, o, S, 2);
-      afterGive(ctx, host);
+      afterGive(ctx, host, S, data.key);
       ctx.log(`${o.name} gave ${host.name} 1 ${color}, then +2 silver (${host.name}'s Party Favors).`);
     },
     benefactor(ctx, p, id) {
       const t = ctx.player(id);
       giveTo(ctx, p, t, S, 1);
-      afterGive(ctx, p);
+      afterGive(ctx, p, S);
       ctx.log(`${p.name}'s Benefactor gives ${t.name} 1 silver.`);
     },
   },
@@ -267,6 +267,16 @@ const silver = {
         ctx.choose(owner, 'Benefactor: give 1 silver to…', others(ctx, owner).map(o => ({
           id: `player:${o.id}`, label: o.name, kind: 'player', value: o.id, hint: ctx.followers(o) === low ? 1 : 0,
         })), 'silver.benefactor');
+      },
+    }),
+    // Cory, Nov 1: Silver's tenth member. Once per space or card that gives silver, however many rivals it reaches
+    // (Party Favors' answers count as one gift; Claude, under Cory's go-with-your-gut).
+    m('giftwrapper', 'Gift Wrapper', 3, 2, 'Whenever you give rivals silver, +1 follower.', {
+      onGive(ctx, owner, card, color, once) {
+        if (color !== S) return;
+        if (once) { if (card.wrapped === once) return; card.wrapped = once; }
+        owner.bonus += 1;
+        ctx.log(`${owner.name}'s Gift Wrapper: +1 follower.`);
       },
     }),
     m('caterer', 'Caterer', 2, 2, 'Whenever you give a rival something, +1 silver.', {
