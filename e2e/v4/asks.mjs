@@ -59,7 +59,10 @@ async function hoverFig(page, id) {
   await page.waitForFunction(() => !!document.querySelector('[data-tip-body] [data-ask], [data-tip-body] [data-skip]'), null, { timeout: 8000 }).catch(() => {});
   await page.waitForTimeout(150);
   return page.evaluate(() => {
-    const t = document.querySelector('[data-tip-body]');
+    // the open card: another tip body can still be in the page (closing, or the seat's), so take the one with an ask,
+    // else the last one opened (a1 read an empty one under load while the card on screen had its ask, Nov 1)
+    const all = [...document.querySelectorAll('[data-tip-body]')];
+    const t = all.find(e => e.querySelector('[data-ask], [data-skip]')) || all[all.length - 1];
     if (!t) return null;
     const s = t.querySelector('[data-skip]');
     return { ask: t.querySelector('[data-ask]')?.textContent || '', skip: s ? s.textContent : '', skipOption: s ? s.dataset.option : '' };
