@@ -1,6 +1,7 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def draw():
@@ -10,7 +11,8 @@ def draw():
                a=DEEP[0], A=DEEP[1], L='#8c5a3a', b=LIGHT[0], B=LIGHT[1], h='#241a18', H='#3e2c26',
                i='#9a5a32', I='#6e3c20', z='#4a3a34',
                **{'1': PURPLE[0], '2': PURPLE[1]})
-    DK = {'1': '2', '2': '2', 'a': 'A', 'b': 'B', 'y': 'Y', 'm': 'M'}
+    DK = {'1': '2', '2': '2', 'a': 'A', 'b': 'B', 'o': 'O', 'c': 'C', 'y': 'Y', 'm': 'M'}
+    pal.update({'o': OLIVE[0], 'O': OLIVE[1], 'c': MED[0], 'C': MED[1]}); pal['L'] = pal['i']; pal['G'] = pal['P']; pal['F'] = pal['f']; pal['M'] = pal['q']
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 52, 63, 63, 'f'); c.hl(0, 63, 52, 'F')
 
     def timeclock(l):                       # the time clock with a rack of cards
@@ -26,13 +28,17 @@ def draw():
     def legsA(f):
         pass
     # crew member A (cool deep brown): lunch pail, standing back-left
-    person(c, DK, hx=10, hy=19, skin='a', shade='A', mouth='smile', brows='soft', brow='h',
-           hs='crop', hk='h', hd='H', cx=17, sw=9, ww=8, th=12, cloth='1',
-           lg=dict(gap=2, lw=5, lh=6, pants='2', pdark='2', shoe='z'),
-           top=lambda f: hardhat(f, 10, 19, 14, 'y', 'Y'),
-           face=lambda h: None,
-           arms=[([(9, 37), (7, 42), (8, 45)], 4, '1'), ([(25, 37), (27, 41), (26, 44)], 4, '1')],
-           hands=[(7, 45, 'grip', False), (24, 44, 'fist', True)])
+    def _fig(c):
+        person(c, DK, hx=10, hy=19, skin='a', shade='A', mouth='smile', brows='soft', brow='h',
+               hs='crop', hk='h', hd='H', cx=17, sw=9, ww=8, th=12, cloth='1',
+               lg=dict(gap=2, lw=5, lh=6, pants='2', pdark='2', shoe='z'),
+               top=lambda f: hardhat(f, 10, 19, 14, 'y', 'Y'),
+               face=lambda h: None,
+               arms=[([(9, 37), (7, 42), (8, 45)], 4, '1'), ([(25, 37), (27, 41), (26, 44)], 4, '1')],
+               hands=[(7, 45, 'grip', False), (24, 44, 'fist', True)])
+    c.paste(solo(_fig, dx=4, dy=-11, keys={'a': 'o', 'A': 'O', 'h': 'z'}, mirror=True))
+    c.paste(solo(_fig, dx=9, dy=-12, keys={'a': 'i', 'A': 'I'}, mirror=False))
+    c.paste(solo(_fig, dx=0, dy=0))
     pail = layer()
     pail.rect(4, 48, 13, 54, 'm'); pail.rect(4, 48, 13, 49, 'M'); pail.rect(11, 50, 13, 54, 'M')
     outline_once(pail); c.paste(pail)
