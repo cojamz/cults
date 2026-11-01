@@ -28,7 +28,7 @@ function unreachable(state) {
   if (g) {
     // a gift (its color fixed), a color of yours (one row), and the asks from far away (a steal, a recruit from the row,
     // a minion's move: one row) have no first to pick: the card as it opens is the step
-    const steps = ['gift', 'color', 'steal', 'recruit', 'move'].includes(g.kind) ? [g] : g.firsts.map(f => giftPick(state, pend, f.a));
+    const steps = ['gift', 'share', 'color', 'steal', 'recruit', 'move'].includes(g.kind) ? [g] : g.firsts.map(f => giftPick(state, pend, f.a));
     for (const s of steps) {
       if (!s.seconds.length) bad.push(`the second row (after ${s.chosen}) holds nothing to answer with`);
       for (const { o, b } of s.seconds) {

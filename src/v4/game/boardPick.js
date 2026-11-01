@@ -106,6 +106,18 @@ export function giftPick(state, pend, first = null) {
     const n = Number(gift[1]), color = state.resources.includes(gift[2]) ? gift[2] : null;
     return { ...base, kind: 'gift', n, color, head: 'Give', chosen: color, firsts: [], seconds: players.map(o => ({ o, b: o.target.pid })), others: players.map(o => o.target.pid), rest: [] };
   }
+  // rivals gain silver from the bank, split one at a time (Party Gifts, Largesse, Philanthropists; Cory, 2026-11-01:
+  // "not clear how many times you've clicked / what's remaining"): the rivals' faces, each with what you've sent them
+  // so far, and "N given · M left" on the card. The engine hands the silver out at Done, so the tally is the card's.
+  const share = state.queue?.[0]?.h === 'silver.share' ? state.queue[0].data : null;
+  if (share && players.length) {
+    const given = share.given || {};
+    const total = Object.values(given).reduce((s, n) => s + n, 0);
+    const color = state.resources.includes('silver') ? 'silver' : null;
+    return { ...base, kind: 'share', n: share.max, color, chosen: color, per: share.per || 0, given, total, left: Math.max(0, share.max - total),
+      head: `Rivals gain up to ${share.max} silver`, firsts: [], seconds: players.map(o => ({ o, b: o.target.pid })), others: players.map(o => o.target.pid),
+      rest: pend.options.filter(o => !players.includes(o)) };
+  }
   const far = farPick(state, pend, title, question, base);
   if (far) return far;
   // a color of yours asked by a space just used (Goody Bags' color, Cheap Seats' "pay 1 for 1 follower"): one row of your

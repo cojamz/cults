@@ -148,3 +148,8 @@
 .gift-card .gc-space .gc-name{font:700 15px/20px var(--sans);white-space:nowrap}
 .gift-card .gc-rival .gc-group-items{flex:1;align-items:center}
 .gift-card .gc-why{text-align:left}
+/* giving silver one at a time (Party Gifts, Largesse): each face's "+N" so far sits beside what they hold, read at
+   a glance (Cory, 2026-11-01: "not clear how many times you've clicked") */
+.gift-card .gc-share .gc-tally{margin-left:4px;padding:0 5px;border-radius:8px;background:var(--paper-ink,#2a1f17);color:var(--paper,#f4ebd7);font:700 13px/17px var(--sans);font-style:normal}
+.gift-card .gc-share[data-given]{border-color:var(--paper-ink,#2a1f17)}
+.gift-card[data-gift="share"] .gc-title .num{font-weight:800;color:var(--paper-ink,#2a1f17)}

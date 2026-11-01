@@ -17,7 +17,7 @@ import { realHover } from '../hover.js';
 import { TurnOf } from './parts.jsx';
 import './giftcard.css';
 
-const LABELS = { color: [null, null], give: ['Color', 'To'], gift: [null, 'To'], colors: ['Give', 'Get'], amount: ['Get', 'How many'], trade: ['Member', 'For'], steal: [null, null], recruit: [null, null], move: [null, null] };
+const LABELS = { share: [null, 'To'], color: [null, null], give: ['Color', 'To'], gift: [null, 'To'], colors: ['Give', 'Get'], amount: ['Get', 'How many'], trade: ['Member', 'For'], steal: [null, null], recruit: [null, null], move: [null, null] };
 // a swap with this many members on the card sets them closer (round III: twelve of yours and twenty of theirs), so
 // every row shows whole, never cut off at the card's foot (live panel round 1)
 const DENSE = 14;
@@ -35,7 +35,7 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
   const pend = state.pending;
   const me = state.players[g.actor];
   const box = useRef(null);
-  const step = g.kind === 'gift' || g.kind === 'color' || g.kind === 'steal' || g.kind === 'recruit' || g.kind === 'move' || g.chosen != null ? 2 : 1;
+  const step = g.kind === 'gift' || g.kind === 'share' || g.kind === 'color' || g.kind === 'steal' || g.kind === 'recruit' || g.kind === 'move' || g.chosen != null ? 2 : 1;
   // Escape closes the card (live panel round 1: it didn't close Kickback's): a lifted first is put down; else the
   // placement is taken back (Undo, while it's offered); else a choice you may decline (Stay put, Recruit nothing) is
   // declined. A hover open over it closes first, on its own Escape.
@@ -112,6 +112,7 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
   const from = g.kind === 'amount' ? (String(pend.prompt).match(/swap (\w+) for/i) || [])[1] : null;
   // the gift comes from the bank, never your own stack (blind testers read "Give 1 to a rival" as paying it, 2026-10-15)
   const head = g.kind === 'give' && g.chosen ? <>A rival you pick gets <b className="num">{g.n}</b><Pip color={g.chosen} /></>
+    : g.kind === 'share' ? <>Rivals gain up to <b className="num">{g.n}</b>{g.color ? <Pip color={g.color} /> : ' silver'}</>
     : g.kind === 'gift' ? <>A rival you pick gets <b className="num">{g.n}</b>{g.color ? <Pip color={g.color} /> : null}</>
       : g.kind === 'colors' && g.chosen ? <>Swap <b className="num">1</b><Pip color={g.chosen} /> for another color</>
         : g.kind === 'amount' && from ? <>Swap {g.chosen ? 'your' : ''}<Pip color={from} /> for {g.chosen ? <Pip color={g.chosen} /> : 'another color'}</>
@@ -119,7 +120,7 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
             : g.head;
   // what the second row's items pair with, live or (before a first is picked) quiet
   const live = new Map(g.seconds.map(x => [x.b, x.o]));
-  const color = g.kind === 'gift' ? g.color : g.chosen;
+  const color = g.kind === 'gift' || g.kind === 'share' ? g.color : g.chosen;
   const memberHover = uid => (hover ? {
     onPointerEnter: e => { if (realHover(e)) hover.onCardHover(uid, e.currentTarget); },
     onPointerLeave: e => { if (e.pointerType === 'mouse') hover.onCardHover(uid, null); },
@@ -171,6 +172,21 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
     const o = live.get(b) || null;
     const press = e => o && onAnswer(o.id, e.currentTarget, b);
     const common = { type: 'button', 'data-option': o ? o.id : undefined, disabled: busy || !o, onClick: press, className: 'gc-item' };
+    if (g.kind === 'share') {
+      // one silver a click; the badge is what you've sent them so far (it reaches them when you're done)
+      const p = state.players[b];
+      const has = color ? p.res[color] || 0 : 0;
+      const k = g.given[b] || 0;
+      return (
+        <button key={b} {...common} className={`${common.className} gc-face gc-share`} data-pid={b} data-given={k || undefined} style={{ '--pc': playerColor(b) }}
+          disabled={busy || !o || g.left <= 0}
+          aria-label={`${p.name} +1 silver${k ? `, ${k} given so far` : ''} (has ${has})`} title={`${p.name} has ${has} silver${k ? `, +${k} from you` : ''}`}>
+          <Minion color={playerColor(b)} emoji={seatEmoji(state, b)} size={28} />
+          <span className="gc-name">{p.name}</span>
+          <span className="gc-has num">{has}<ResourceGlyph r={color || 'silver'} size={11} decorative />{k > 0 && <i className="gc-tally num" aria-hidden="true">+{k}</i>}</span>
+        </button>
+      );
+    }
     if (g.kind === 'give' || g.kind === 'gift') {
       const p = state.players[b];
       const has = color ? p.res[color] || 0 : null;
@@ -299,7 +315,8 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
   });
   const headOf = g.halfPile ? <>{g.head}</> : g.kind === 'steal' ? <>Take <b className="num">{g.n}</b>{g.color ? <Pip color={g.color} /> : null}</>
     : g.kind === 'move' ? <>{g.head}</> : g.kind === 'recruit' ? <>{g.head}</> : head;
-  const sub = g.kind === 'move' ? <>{g.from ? <>It’s on {g.from}. </> : null}{g.sub}</> : g.sub;
+  const sub = g.kind === 'share' ? <>One per click. You get +{g.per} {g.per === 1 ? 'follower' : 'followers'} for each{g.total ? <>: <b className="num">+{g.total * g.per}</b> so far</> : null}.</>
+    : g.kind === 'move' ? <>{g.from ? <>It’s on {g.from}. </> : null}{g.sub}</> : g.sub;
   const farBody = g.kind === 'steal' ? (
     <div className="gc-row" data-row="2" data-live="1">
       <div className="gc-items gc-theirs">{stealRows()}</div>
@@ -320,7 +337,7 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
       data-gift={g.kind} data-step={step} data-dense={dense ? '1' : undefined} style={place ? { left: place.left, top: place.top } : undefined}>
       {turnOf && <TurnOf player={turnOf} />}
       <header className="gc-head">
-        {g.title && <small className="gc-title">{g.title}{g.left != null ? <> · <span className="num pick-left" data-left={g.left}>{g.left}</span> left</> : null}{g.done ? <> · <span className="num">{g.done}</span> swapped</> : null}</small>}
+        {g.title && <small className="gc-title">{g.title}{g.kind === 'share' ? <> · <span className="num gc-given" data-given={g.total}>{g.total}</span> given · <span className="num pick-left" data-left={g.left}>{g.left}</span> left</> : g.left != null ? <> · <span className="num pick-left" data-left={g.left}>{g.left}</span> left</> : null}{g.done ? <> · <span className="num">{g.done}</span> swapped</> : null}</small>}
         <p className="gc-what">{far ? headOf : head}</p>
         {sub && <p className="gc-sub">{sub}</p>}
       </header>
@@ -345,7 +362,7 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
               Take all <b className="num">{planTotal}</b>
             </button>
           )}
-          {g.rest.map(o => <button key={o.id} type="button" className="btn gc-rest-btn" data-option={o.id} disabled={busy} onClick={e => onAnswer(o.id, e.currentTarget, null)}>{o.label}</button>)}
+          {g.rest.map(o => <button key={o.id} type="button" className="btn gc-rest-btn" data-option={o.id} disabled={busy} onClick={e => onAnswer(o.id, e.currentTarget, null)}>{g.kind === 'share' && o.kind === 'done' && g.total ? <>Done: give <b className="num">{g.total}</b></> : o.label}</button>)}
         </div>
       )}
     </section>
