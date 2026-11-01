@@ -95,13 +95,17 @@ try {
       const { ids, label } = offer;
       if (!/you can join/.test(label)) errors.push(`(b1) a joinable space doesn't say so: "${label}"`);
       const key = ids[0].slice('squat:'.length);
+      // a person's click on a settled table: a press within the new step's 400ms lock is a double-click guard's to drop
+      // (GameScreen onPick), and under load the click landed inside it (Nov 1)
+      await page.waitForFunction(() => { const g = document.querySelector('.app.game'); return g && !g.hasAttribute('data-animating') && g.dataset.presentationMoves === g.dataset.moves; }, null, { timeout: 8000, polling: 50 }).catch(() => {});
+      await page.waitForTimeout(450);
       const before = await page.$eval('.app.game', e => e.dataset.moves);
       const base0 = await page.$(`.slot[data-slot="${key}"] .base`);
       const bb = await base0.boundingBox();
       await page.mouse.click(bb.x + bb.width / 2, bb.y + bb.height / 2);
       await page.waitForTimeout(400);
       const conf = await page.$('[data-place]'); if (conf) await conf.click();
-      await page.waitForTimeout(400);
+      await page.waitForFunction(b => document.querySelector('.app.game')?.dataset.moves !== b, before, { timeout: 4000 }).catch(() => {});
       const after = await page.$eval('.app.game', e => e.dataset.moves);
       if (after === before) errors.push(`(b1) clicking the joinable space ${key} did nothing`);
       continue;
