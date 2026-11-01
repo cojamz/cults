@@ -1773,8 +1773,7 @@ function ctxFor(state) {
       cardLeaves(state, p, uid);
       p.members.splice(p.members.indexOf(uid), 1);
       state.cards[uid] = { uid, def: state.cards[uid].def };
-      // (piles: refill puts a pile member back under its own pile, as the card says; whether it should leave the game instead
-      // waits on Cory)
+      // (piles: refill puts a pile member back under its own pile, as the card says, and it can be bought again; Cory, Nov 1)
       state.pile.push(uid);
       log(state, `${p.name} sent ${def.name} to the bottom of the pile.`);
       // a member leaving its owner's cult: Recruiter hears a rival's cast-out (Cory, Nov 1: "Yes")
