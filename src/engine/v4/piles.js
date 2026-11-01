@@ -43,9 +43,10 @@ export function allPiles(quadrants, seed, { deck = 10, copies = 4, colored = 8, 
   return { defs, copies, only: true };
 }
 
-/** The rules a table adds for a variant: 'A' (grey core as piles, the other greys out) or 'B' (all piles, no deck). */
+/** The rules a table adds for a shop type: 'grey' (A: grey core as piles, the other greys out) or 'all' (B: all piles, no deck). */
+export const SHOP_TYPES = ['deck', 'grey', 'all'];
 export function pileRules(variant, quadrants, seed, deck = 10, { core = GREY_CORE } = {}) {
-  if (variant === 'A') return { guests: false, piles: greyPiles({ core }) };
-  if (variant === 'B') return { piles: allPiles(quadrants, seed, { deck, core }) };
+  if (variant === 'A' || variant === 'grey') return { guests: false, piles: greyPiles({ core }) };
+  if (variant === 'B' || variant === 'all') return { piles: allPiles(quadrants, seed, { deck, core }) };
   return {};
 }

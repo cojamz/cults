@@ -6,7 +6,7 @@ import HowToPlay from '../HowToPlay.jsx';
 import { friendlyError } from '../errors.js';
 import { quadrant, defById, BOT_LEVEL_INFO, DEFAULT_BOT_LEVEL } from '../../engine/v4/index.js';
 import { ARTIFACTS } from '../../engine/v4/core.js';
-import { CLASSIC, spheres, sphereName, sphereLine, sphereVersion, sphereVersionWords, tableProblem, randomTable, urlTable, fitTable, sphereCount } from '../tables.js';
+import { CLASSIC, spheres, sphereName, sphereLine, sphereVersion, sphereVersionWords, tableProblem, randomTable, urlTable, fitTable, sphereCount, SHOP_OPTS } from '../tables.js';
 import { panelWords } from '../game/panelText.js';
 import { GAME_NAME, VERSION_LABEL } from '../version.js';
 import { copyText } from '../Recovery.jsx';
@@ -203,6 +203,13 @@ export function DeckPick({ value, onChange, readOnly }) {
       : <Seg label="Member deck" value={String(value)} options={DECK_OPTS} onChange={v => onChange(Number(v))} />}
   </div>;
 }
+export function ShopPick({ value, onChange, readOnly }) {
+  const opt = SHOP_OPTS.find(o => o[0] === value) || SHOP_OPTS[0];
+  return <div className="seat" data-shop-pick={opt[0]}><span>Shop</span>
+    {readOnly ? <span className="hint">{opt[1]}</span>
+      : <Seg label="Shop" value={opt[0]} options={SHOP_OPTS} onChange={onChange} />}
+  </div>;
+}
 function LatePick({ value, onChange, readOnly }) {
   return <div className="seat" data-late-pick={value}><span>Round III members join in</span>
     {readOnly ? <span className="hint">{value === 2 ? 'Arrive in round II' : 'Arrive in round III'}</span>
@@ -317,6 +324,7 @@ export function LocalSetup({ initial, onStart, onBack }) {
   const [table, setTable] = useState(() => initialTable(initial?.table));
   const [late, setLate] = useState(initial?.roundDecks === 3 ? 3 : 2);
   const [deck, setDeck] = useState(initial?.deck === 15 ? 15 : 10);
+  const [shop, setShop] = useState(initial?.shop === 'grey' || initial?.shop === 'all' ? initial.shop : 'deck');
   const filled = seats.filter(s => s.kind !== 'empty');
   // one sphere per player (Cory, 2026-10-15): the table follows the seats as they're filled or emptied
   const nSph = sphereCount(filled.length);
@@ -361,12 +369,13 @@ export function LocalSetup({ initial, onStart, onBack }) {
         <div className="seat"><span>Speed</span><Seg label="Speed" value={speed} options={SPEED_OPTS} onChange={v => { setSpeed(v); setMotionSpeed(v); }} /></div>
         <TablePicker value={fitted} n={nSph} onChange={setTable} />
         <DeckPick value={deck} onChange={setDeck} />
+        <ShopPick value={shop} onChange={setShop} />
         <LatePick value={late} onChange={setLate} />
         <div className="row-btns">
           {/* why Start is off, said beside it (RC1 #8: it dimmed at 3 of 4 with nothing near it) */}
           {startWhy && <span className="hint start-why" data-start-why>{startWhy}</span>}
           <button type="button" className="btn" onClick={onBack}>Back</button>
-          <button type="button" className="btn pri" data-start disabled={!!startWhy} title={startWhy || undefined} onClick={() => onStart({ seats: named(), speed, level, table: fitted, roundDecks: late, deck })}>Start</button>
+          <button type="button" className="btn pri" data-start disabled={!!startWhy} title={startWhy || undefined} onClick={() => onStart({ seats: named(), speed, level, table: fitted, roundDecks: late, deck, shop })}>Start</button>
         </div>
       </div>
     </div>
@@ -445,6 +454,7 @@ export function Lobby({ lobby, myId, onLeave }) {
         )}
         <TablePicker value={shownTable} n={nSph} onChange={pickTable} readOnly={!isHost || !lobby.setTable} />
         <DeckPick value={view.deck === 15 ? 15 : 10} onChange={v => act(() => lobby.setDeck(v))} readOnly={!isHost || !lobby.setDeck} />
+        <ShopPick value={view.shop || 'deck'} onChange={v => act(() => lobby.setShop(v))} readOnly={!isHost || !lobby.setShop} />
         <LatePick value={view.roundDecks === 3 ? 3 : 2} onChange={v => act(() => lobby.setRoundDecks(v))} readOnly={!isHost || !lobby.setRoundDecks} />
         {err && <p className="error">{err}</p>}
         {!isHost && <p className="hint">Waiting for {view.hostName || 'the host'} to start…</p>}
