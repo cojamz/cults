@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.0 — 2026-11-01
+
+- 0.99: every color and both decks polished, with tonight's balance calls and card fixes; the whole game passes every check
+
 ## v0.9.972 — 2026-11-01
 
 - Bodyguards and Lie Low stop steals, not trades; new words for Promote, Demote, Double Agent and Lie Low; Mob worth 4; Tribute Band 14; Window Shopper sends 2; Caterer +1; Desperado +2 to every steal
