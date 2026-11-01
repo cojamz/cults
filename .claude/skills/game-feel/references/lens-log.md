@@ -12,3 +12,14 @@ One entry per use: date, job, lens version, prediction hit rate, what changed an
 - What would make every lens wrong at once: bots that never block and never play around triggers, so every space lift and every "whenever a rival…" card is off the same way. Countered by: reading Hard and Very Hard, and playing flagged turns out on paper.
 - Interim (deck 10 Normal in): three tool bugs found and fixed before any finding went out (see v1.1). Hit rate below in predictions.md.
 - Changes: v1.1 (first use; heavy step due at use 3, but run in part now because the skill is new: outside-principles walk).
+- Outside-principles walk (run early because the skill is new):
+  - 1 interesting decisions: kept. Green's copy spaces swing with the table (real choice); Peek, Build Up, Savings, Harvest, Stash, Allowance are fixed numbers, six fuel spaces with no spread. That's one per color, as intended.
+  - 2 feedback brakes: round I leader wins 36% at 4 seats, fine; at 2 seats 63%, weak brake. Gap logged in findings.
+  - 3 blocking: every round I space is taken 2+ times a game at 4 seats; nothing goes untaken. Lacking a lens for "fought over" (how often the space a seat wanted was gone). Candidate lens S7 if it keeps coming up.
+  - 4 counter to the counter: Greatest Hits has no counter but turn order; Agents ("Rivals can't copy your actions.") doesn't stop it. Logged.
+  - 5 kingmaking: Party Gifts, Largesse and Help Yourself let the chooser pick who gets or loses. Bots can't show it. New confound noted in findings; a human-table question.
+  - 7 lucky shop: not measured. Candidate: winners' round I buys vs everyone's. Next use.
+  - 9 your fault, not the card's: Tryout and Lie Low empty turns; Recruit Twice with nothing to pay. All in findings.
+  - 10 snowball the end: gain climbs 2.7 / 4.6 / 5.2. Kept.
+  - 14 cost curve: Silver has four cards at 8 to 11, all rarely bought. Added to findings.
+- What would make every lens wrong at once (answer, use 1): run-to-run noise. Two runs on the same seeds moved untouched cards by sd 4 points, so any single-run lift under 8 is a coin flip. Lens v1.2 now asks for the floor.
