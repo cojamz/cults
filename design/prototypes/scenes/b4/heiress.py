@@ -1,5 +1,6 @@
 import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def heiress():
@@ -7,7 +8,7 @@ def heiress():
     pal = {'k': INK, 'w': WHITE[0], 'W': WHITE[1],
            'p': '#b98e9a', 'P': '#a97f8b', 'g': '#d9cdb8', 'G': '#c4b69e', 'y': '#f2d27a', 'Y': '#c9a24a',
            'l': '#fff3c4', 's': '#dfe4e8', 'S': '#a9b2ba', 'c': '#e9d8a0',
-           'v': VDEEP[0], 'V': VDEEP[1], 'e': DEEP[0], 'H': '#140c0a', 'h': '#2e201c', 'x': '#2a1610',
+           'v': VDEEP[0], 'V': VDEEP[1], 'a': LIGHT[0], 'A': LIGHT[1], 'm': '#8a3e26', 'e': DEEP[0], 'H': '#140c0a', 'h': '#2e201c', 'x': '#2a1610',
            'r': '#7a3a3a', 'z': '#8a7a6a'}
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 50, 63, 63, 'P')
 
@@ -37,16 +38,17 @@ def heiress():
     def tiara(f):
         f.hl(27, 36, 11, 's'); f.pts('s', [(28, 10), (31, 9), (32, 9), (35, 10)]); f.px(31, 10, 'l'); f.px(32, 10, 'l')
 
-    def lit(f):                                      # forehead and cheekbone highlight, a stepped plane
-        f.pts('e', [(28, 14), (29, 14), (30, 14), (27, 15), (28, 15), (27, 22), (28, 22)])
-
     def flute(p):
         p.vl(43, 17, 22, 'c'); p.vl(44, 17, 22, 'Y'); p.vl(43, 23, 26, 's'); p.vl(44, 23, 26, 'S')
         p.hl(43, 44, 27, 's')
-    person(c, DK, 25, 12, ('v', 'V'), 'long', 'H', 'h', mouth='smile', brows='soft', brow='h', eye='x',
-           cloth='w', cdark='W', sw=6, ww=6, th=12, nolegs=True, front=gown, top=tiara,
-           arms=[([(26, 31), (23, 36), (24, 41)], 3, 'v'), ([(38, 31), (43, 35), (40, 39)], 3, 'v')],
-           hands=[(22, 41, 'flat', False), (38, 38, 'fist', True)])
+    def heir(cc, sk, hs, hk, hd, flute_on, side='L'):
+        dk = dict(DK); dk[sk[0]] = sk[1]
+        person(cc, dk, 25, 12, sk, hs, hk, hd, side=side, mouth='smile', brows='soft', brow=hd, eye='x',
+               cloth='w', cdark='W', sw=6, ww=6, th=12, nolegs=True, front=gown, top=tiara, props=flute if flute_on else None,
+               arms=[([(26, 31), (23, 36), (24, 41)], 3, sk[0]), ([(38, 31), (43, 35), (40, 39)], 3, sk[0])],
+               hands=[(22, 41, 'flat', False), (38, 38, 'fist', True)])
+    c.paste(solo(lambda cc: heir(cc, ('a', 'A'), 'bun', 'm', 'h', False, 'R'), dx=11, dy=-1, mirror=True))
+    c.paste(solo(lambda cc: heir(cc, ('v', 'V'), 'long', 'H', 'h', True), dx=-10))
     return c.rows(), pal
 
 

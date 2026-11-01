@@ -204,5 +204,21 @@
   "oldPeople": [
    "deep"
   ]
+ },
+ {
+  "id": "yellow.bookcooker",
+  "name": "Book Cookers",
+  "sphere": "yellow",
+  "n": 3,
+  "text": "Worth 3 followers. On Use, once per game: rearrange your resources into any mix of colors.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.puppeteer",
+  "name": "Puppeteers",
+  "sphere": "yellow",
+  "n": 3,
+  "text": "Worth 3 followers. Round Start: change up to 3 of rivals' resources one for one.",
+  "oldPeople": []
  }
 ]

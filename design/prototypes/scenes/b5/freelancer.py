@@ -1,12 +1,13 @@
 import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def alchemist():
     c = C(N)
     pal = base(LIGHT, 'grey', p='#6b5546', P='#5f4b3e', o='#8a5e3c', O='#6e4a2e',
                R='#d0533f', g='#5fae5a', u='#4f86c6', v='#9a5bb8', y='#f0c548', e='#d9e6ea', E='#a9bcc4',
-               H='#4a2e1e', z='#2e1c12', q='#4b4f55')
+               H='#4a2e1e', z='#2e1c12', q='#4b4f55', a=DEEP[0], A=DEEP[1])
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 52, 63, 63, 'P')
 
     def shelves(l):                                 # two shelves of coloured bottles
@@ -37,11 +38,19 @@ def alchemist():
         h_ = layer(); hand(h_, cx + 12, 21, 'grip', 's', 'S', True); over(f, h_, DK)
         f.pts('S', [(cx - 4, 29), (cx + 3, 29)])   # two freckles
 
-    person(c, cx, 18, hs='side', hk='H', hdk='z', mouth='o', brows='soft',
+    def partner(cc):                                # grinds the next mix in a mortar
+        person(cc, cx, 18, hs='bun', hk='z', hdk='H', mouth='smile', brows='soft', side='R',
+               shirt='1', sdk='2', sw=7, ww=8, th=18, pants='q', pdk='q', shoe='z', lh=3, DK=DK,
+               arms=[([(cx - 6, 37), (cx - 7, 42), (cx - 3, 44)], 4, '1'), ([(cx + 6, 37), (cx + 8, 41), (cx + 4, 43)], 4, '1')],
+               hands=[(cx - 4, 42, 'grip', False), (cx + 2, 41, 'grip', True)])
+        m = layer(); m.rect(cx + 1, 36, cx + 2, 44, 'o'); m.ell(cx - 6, 42, cx + 6, 51, 'E'); m.ell(cx - 6, 42, cx + 6, 47, 'e', only='E'); m.hl(cx - 4, cx + 4, 43, 'g')
+        outline_once(m); cc.paste(m)
+    c.paste(solo(partner, dx=20, dy=1, keys={'s': 'a', 'S': 'A'}))
+    c.paste(solo(lambda cc: person(cc, cx, 18, hs='side', hk='H', hdk='z', mouth='o', brows='soft',
            shirt='1', sdk='2', sw=8, ww=9, th=18, pants='q', pdk='q', shoe='z', lh=3, front=front, DK=DK,
            arms=[([(cx - 7, 37), (cx - 9, 43), (cx - 7, 47)], 5, '1'),
                  ([(cx + 7, 37), (44, 34), (cx + 14, 25)], 4, '1')],
-           hands=[(cx - 10, 48, 'fist', False)], top=flask)
+           hands=[(cx - 10, 48, 'fist', False)], top=flask), dx=-9))
     return c.rows(), pal
 
 

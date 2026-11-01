@@ -1,5 +1,6 @@
 import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def exporter():
@@ -7,7 +8,7 @@ def exporter():
     pal = {'k': INK, 'w': WHITE[0], 'W': WHITE[1],
            'p': '#bcd6e2', 'P': '#a9c8d6', 'q': '#5d7f99', 'Q': '#4c6c85', 'f': '#a99a86', 'F': '#958673',
            'r': '#c86a4e', 'R': '#a65538', 'o': '#c9a066', 'O': '#9e7840', 'd': '#8a6838',
-           'u': MED[0], 'U': MED[1], 'H': '#2a1c14', 'z': '#4a3c34', 'n': '#4a5a72', 'N': '#3a4860',
+           'u': MED[0], 'U': MED[1], 'a': LIGHT[0], 'A': LIGHT[1], 'H': '#2a1c14', 'z': '#4a3c34', 'n': '#4a5a72', 'N': '#3a4860',
            'y': '#f2d27a', 'b': '#e8e0cf'}
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 34, 63, 63, 'q'); c.rect(0, 46, 63, 63, 'f'); c.hl(0, 63, 46, 'F')
 
@@ -31,10 +32,14 @@ def exporter():
 
     def beanie(f):
         f.rect(26, 9, 37, 14, 'n'); f.hl(27, 36, 8, 'n'); f.rect(25, 13, 38, 15, 'N')
-    person(c, DK, 25, 12, ('u', 'U'), 'crop', 'H', 'z', mouth='smile', brows='soft', cloth='w', cdark='W',
-           sw=8, ww=7, th=13, pants=('n', 'N'), lh=8, front=crate, top=beanie,
-           arms=[([(25, 30), (21, 34), (21, 37)], 3, 'w'), ([(39, 30), (43, 34), (43, 37)], 3, 'w')],
-           hands=[(20, 37, 'grip', False), (41, 37, 'grip', True)])
+    def docker(cc, sk, hs, hk, hd, cap):
+        dk = dict(DK); dk[sk[0]] = sk[1]
+        person(cc, dk, 25, 12, sk, hs, hk, hd, mouth='smile', brows='soft', cloth='w', cdark='W',
+               sw=8, ww=7, th=13, pants=('n', 'N'), lh=8, front=crate, top=beanie if cap else None,
+               arms=[([(25, 30), (21, 34), (21, 37)], 3, 'w'), ([(39, 30), (43, 34), (43, 37)], 3, 'w')],
+               hands=[(20, 37, 'grip', False), (41, 37, 'grip', True)])
+    c.paste(solo(lambda cc: docker(cc, ('a', 'A'), 'bun', 'r', 'R', False), dx=12, dy=-2, mirror=True))
+    c.paste(solo(lambda cc: docker(cc, ('u', 'U'), 'crop', 'H', 'z', True), dx=-10))
     return c.rows(), pal
 
 

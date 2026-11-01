@@ -1,5 +1,6 @@
 import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def martyr():
@@ -7,7 +8,7 @@ def martyr():
     pal = {'k': INK, 'w': WHITE[0], 'W': WHITE[1],
            'p': '#6a5f86', 'P': '#7a6a8e', 'b': '#5a5068', 'B': '#4e4560', 'l': '#f6dca6', 'L': '#e8c084',
            'f': '#6e6a78', 'F': '#605c6a', 'o': '#8a5a3a', 'O': '#6a4429', 'y': '#c9a24a',
-           'u': MED[0], 'U': MED[1], 'H': '#2a1c14', 'h': '#4a3426', 'z': '#4a3c34', 'n': '#4a5262', 'N': '#3a4150'}
+           'u': MED[0], 'U': MED[1], 'a': PALE[0], 'A': PALE[1], 'H': '#2a1c14', 'h': '#4a3426', 'z': '#4a3c34', 'n': '#4a5262', 'N': '#3a4150'}
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 30, 63, 63, 'P'); c.rect(0, 52, 63, 63, 'f')
 
     def house(l):
@@ -28,10 +29,19 @@ def martyr():
     def case(f):
         f.rect(42, 43, 52, 51, 'o'); f.rect(49, 43, 52, 51, 'O'); f.hl(42, 52, 47, 'O')
         f.hl(45, 48, 41, 'O'); f.vl(45, 41, 42, 'O'); f.vl(48, 41, 42, 'O')
-    person(c, DK, 29, 13, ('u', 'U'), 'side', 'H', 'h', mouth='smile', brows='soft', brow='h', cloth='w', cdark='W',
-           sw=7, ww=6, th=13, pants=('n', 'N'), shoe='z', lh=8, stance=1, front=coat, top=lambda f: (glance(f), case(f)),
-           arms=[([(30, 31), (25, 30), (24, 23)], 3, 'w'), ([(42, 31), (45, 36), (46, 40)], 3, 'w')],
-           hands=[(22, 18, WAVE, False), (45, 40, 'grip', True)])
+    def leaver(cc, sk, hs, hk, hd, wave, side='L'):
+        dk = dict(DK); dk[sk[0]] = sk[1]
+        if wave:
+            arms = [([(30, 31), (25, 30), (24, 23)], 3, 'w'), ([(42, 31), (45, 36), (46, 40)], 3, 'w')]
+            hands = [(22, 18, WAVE, False), (45, 40, 'grip', True)]
+        else:
+            arms = [([(30, 31), (28, 37), (30, 41)], 3, 'w'), ([(42, 31), (45, 36), (46, 40)], 3, 'w')]
+            hands = [(29, 40, 'flat', False), (45, 40, 'grip', True)]
+        person(cc, dk, 29, 13, sk, hs, hk, hd, mouth='smile', brows='soft', brow=hd, cloth='w', cdark='W', side=side,
+               sw=7, ww=6, th=13, pants=('n', 'N'), shoe='z', lh=8, stance=1, front=coat, top=lambda f: (glance(f), case(f)),
+               arms=arms, hands=hands)
+    c.paste(solo(lambda cc: leaver(cc, ('a', 'A'), 'bun', 'o', 'O', False, 'R'), dx=15, dy=-1))
+    c.paste(solo(lambda cc: leaver(cc, ('u', 'U'), 'side', 'H', 'h', True), dx=-3))
     return c.rows(), pal
 
 

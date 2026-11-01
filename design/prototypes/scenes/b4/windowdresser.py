@@ -1,5 +1,6 @@
 import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo, shift
 
 
 def windowdresser():
@@ -7,8 +8,9 @@ def windowdresser():
     pal = {'k': INK, 'w': '#f6f1e6', 'W': '#d3cabb',
            'p': '#d7e3e4', 'P': '#c6d4d6', 'f': '#b99a7c', 'F': '#a3866a', 'o': '#5e6a78', 'O': '#4b5562',
            'd': '#d9c9ad', 'D': '#b8a585', 'y': '#e6b84a', 'Y': '#b98c2c', 'r': '#c95a4a', 'R': '#9c4236',
-           '1': BLUE[0], '2': BLUE[1], 'u': MED[0], 'U': MED[1],
+           '1': BLUE[0], '2': BLUE[1], 'u': MED[0], 'U': MED[1], 'a': PALE[0], 'A': PALE[1], 'e': VDEEP[0], 'E': VDEEP[1],
            'H': '#2e2019', 'z': '#5a4a3e', 'n': '#4a5262', 'N': '#3a4150'}
+    pal['E'] = pal['H']; pal['N'] = pal['O']
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 52, 63, 63, 'f'); c.hl(0, 63, 52, 'F')
     c.poly([(44, 0), (50, 0), (30, 52), (24, 52)], 'P')            # one quiet glass streak
     c.rect(0, 0, 63, 5, 'o'); c.hl(0, 63, 5, 'O')                  # window frame top
@@ -21,7 +23,7 @@ def windowdresser():
         l.poly([(19, 19), (23, 19), (24, 22), (21, 30), (23, 39), (19, 39)], 'R')
         l.rect(15, 40, 16, 50, 'Y'); l.rect(11, 50, 20, 51, 'Y')
         l.line(19, 22, 21, 31, 'D'); l.stamp(20, 32, ['www', 'wwW', 'wWW'])     # price tag on a string
-    bg(c, form, None)
+    fl = layer(); form(fl); c.paste(shift(fl, -7))
     for (x, y) in ((9, 19), (23, 19), (8, 22), (24, 22)):
         pass
     DK = {'1': '2', 'u': 'U', 'w': 'W', 'y': 'Y', 'n': 'N'}
@@ -38,11 +40,27 @@ def windowdresser():
         l.poly([(9, 18), (24, 18), (24, 21), (9, 21)], 'y')
         l.poly([(8, 18), (12, 18), (11, 34), (7, 33)], 'y'); l.poly([(20, 21), (24, 21), (24, 30), (21, 31)], 'y')
         l.poly([(10, 21), (12, 21), (11, 34), (9, 34)], 'Y'); l.vl(24, 21, 30, 'Y')
-    bg(c, scarf, 'Y')
-    person(c, DK, 36, 13, ('u', 'U'), 'short', 'H', 'z', mouth='smile', brows='soft', cloth='1', cdark='2',
-           sw=7, ww=6, th=13, pants=('n', 'N'), shoe='z', lh=9, front=lambda f: (apron(f), tape(f)),
-           arms=[([(37, 31), (32, 36), (28, 26)], 3, '1'), ([(50, 31), (52, 37), (51, 42)], 3, '1')],
-           hands=[(24, 21, 'grip', False), (49, 42, 'fist', True)])
+    sl = layer(); scarf(sl); edged(sl, 'Y'); c.paste(shift(sl, -7))
+    def lead(cc):                                   # pins the scarf on the form
+        person(cc, DK, 36, 13, ('u', 'U'), 'short', 'H', 'z', mouth='smile', brows='soft', cloth='1', cdark='2',
+               sw=7, ww=6, th=13, pants=('n', 'N'), shoe='z', lh=9, front=lambda f: (apron(f), tape(f)),
+               arms=[([(37, 31), (32, 36), (28, 26)], 3, '1'), ([(50, 31), (52, 37), (51, 42)], 3, '1')],
+               hands=[(24, 21, 'grip', False), (49, 42, 'fist', True)])
+
+    def helper(cc, sk, hs, hk, hd, arms, hands, side='L'):
+        dk = dict(DK); dk[sk[0]] = sk[1]
+        person(cc, dk, 36, 13, sk, hs, hk, hd, mouth='smile', brows='soft', cloth='1', cdark='2', side=side,
+               sw=6, ww=6, th=13, pants=('n', 'N'), shoe='z', lh=9, front=lambda f: apron(f), arms=arms, hands=hands)
+    # one holds up a hat for the form, one stands back to judge it, hand on hip
+    def folder(cc):                                 # holds the next outfit, folded
+        helper(cc, ('a', 'A'), 'bun', 'y', 'Y', [([(37, 31), (36, 37), (39, 40)], 3, '1'), ([(50, 31), (51, 37), (48, 40)], 3, '1')],
+               [(38, 39, 'grip', False), (46, 39, 'grip', True)], side='R')
+        fl = layer(); fl.rect(37, 35, 49, 39, 'r'); fl.hl(37, 49, 37, 'R'); outline_once(fl); cc.paste(fl)
+    c.paste(solo(lambda cc: helper(cc, ('e', 'E'), 'crop', 'H', 'z',
+                                   [([(37, 31), (35, 37), (38, 41)], 3, '1'), ([(50, 31), (52, 37), (50, 41)], 3, '1')],
+                                   [(37, 40, 'fist', False), (48, 40, 'fist', True)]), dx=10, dy=-1))
+    c.paste(solo(folder, dx=-1, dy=1))
+    c.paste(solo(lead, dx=-15, dy=0))
     rows = [r[::-1] for r in c.rows()]           # mirrored: dresser on the left, inside the window
     return rows, pal
 

@@ -8,7 +8,7 @@ def changer():
            'p': '#c9b48e', 'P': '#b9a37c', 'b': '#3a4252', 'B': '#4a5366', 'r': '#d06a5a', 'g': '#7fb08a',
            'u': '#7fa6d0', 'o': '#8a5434', 'O': '#6a3d25', 'y': '#f2d27a', 'Y': '#c9a24a',
            's': '#d4d8dc', 'S': '#9aa1a8', 'm': '#a8693f', 'M': '#86512f', 'H': '#8e8a86', 'h': '#6a6662',
-           'z': '#4a3c34', 'q': '#2f3640'}
+           'z': '#4a3c34', 'q': '#2f3640', 'a': OLIVE[0], 'A': OLIVE[1], '1': '#e8e2d2', '2': '#c9c0ac', 'G': '#5a8a66'}
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 0, 63, 6, 'P')
 
     def board(l):
@@ -18,6 +18,12 @@ def changer():
             l.hl(46, 58, y + 1, 'B'); l.hl(46, 52, y + 2, 'B')
         l.hl(39, 58, 29, 'B')
     bg(c, board, None)
+    # the partner behind the scale, holding up a note to check it
+    person(c, {'w': 'W', 'm': 'M', 'y': 'Y', 's': 'S', 'q': 'q', 'a': 'A', '1': '2'}, 39, 14, ('a', 'A'), 'bun', 'z', 'q', mouth='smile', brows='soft', brow='z', cloth='w', cdark='W',
+           sw=7, ww=7, th=17, nolegs=True, side='R',
+           arms=[([(39, 32), (36, 37), (38, 42)], 3, 'w'), ([(53, 32), (57, 28), (56, 22)], 3, 'w')],
+           hands=[(37, 41, 'flat', False), (54, 19, 'grip', True)])
+    nt = layer(); nt.rect(52, 13, 60, 18, 'g'); nt.rect(55, 15, 56, 16, 'q'); outline_once(nt); c.paste(nt)
 
     def counter(l):
         l.rect(0, 46, 63, 63, 'o'); l.hl(0, 63, 46, 'O'); l.hl(0, 63, 47, 'O')
