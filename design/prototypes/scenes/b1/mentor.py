@@ -1,6 +1,7 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def draw():
@@ -11,6 +12,7 @@ def draw():
     pal['1'], pal['2'] = RED
     pal['a'], pal['A'] = MED
     pal['b'], pal['B'] = LIGHT
+    pal['J'] = pal['P']; pal['h'] = pal['H']; pal['w'] = pal['m']; pal['r'] = pal['2']; pal['Y'] = pal['T']
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 53, 63, 63, 'P')
 
     def board(l):                         # chalkboard with a lesson on it
@@ -60,11 +62,14 @@ def draw():
             hl = layer(); hl.rect(hx_, 44, hx_ + 2, 46, 'b'); hl.pts('B', [(hx_ + 1, 46), (hx_ + 2, 46), (hx_ + 2, 45)])
             over(f, hl, {'v': 'V', '1': '2'})
 
-    person(c, hx=11, hy=26, size=14, skin='b', shade='B', hs='side', hk='y', hd='Y', mouth='o', brows='soft',
-           brow='Y', shirt='1', sdark='2', cx=18, sw=6, ww=6, th=10,
-           arms=[([(13, 43), (12, 47)], 3), ([(23, 43), (23, 47)], 3)],
-           lg=dict(pants='n', pdark='n', shoe='z', lh=6),
-           top=nb, DK={'n': 'n'})
+    def _kid(c):
+        person(c, hx=11, hy=26, size=14, skin='b', shade='B', hs='side', hk='y', hd='Y', mouth='o', brows='soft',
+               brow='Y', shirt='1', sdark='2', cx=18, sw=6, ww=6, th=10,
+               arms=[([(13, 43), (12, 47)], 3), ([(23, 43), (23, 47)], 3)],
+               lg=dict(pants='n', pdark='n', shoe='z', lh=6),
+               top=nb, DK={'n': 'n'})
+    c.paste(solo(_kid, dx=0))
+    c.paste(solo(_kid, dx=38, dy=1, keys={'b': 't', 'B': 'T', 'y': 'H', 'Y': 'z', 'v': 'q', 'V': 'Q'}))
     return c.rows(), pal
 
 

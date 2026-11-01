@@ -1,6 +1,7 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def draw():
@@ -10,6 +11,7 @@ def draw():
                    H='#2a1d18', h='#4a3328', x='#45507a', j='#f3ead2')
     pal['1'], pal['2'] = GREEN
     pal['a'], pal['A'] = PALE
+    pal.update({'b': DEEP[0], 'B': DEEP[1]})
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 52, 63, 63, 'P')
 
     def curtains(l):                      # a masked ball: tall curtained window
@@ -39,11 +41,14 @@ def draw():
     def stick(p):
         pole(p, 14, 25, 33, 't', 'T')
 
-    person(c, hx=25, hy=13, size=14, skin='a', shade='A', hs='side', hk='H', hd='h', mouth='smirk', brows='angry',
-           brow='H', shirt='1', sdark='2', cx=32, sw=8, ww=8, th=17,
-           arms=[([(26, 31), (21, 37), (16, 35)], 4), ([(38, 31), (40, 38), (38, 43)], 4)],
-           hands=[(13, 33, 'grip', False), (37, 43, 'fist', False)],
-           lg=dict(pants='n', pdark='n', shoe='z', lh=5), front=front, top=top, props=stick, DK={'n': 'n'})
+    def _fig(c):
+        person(c, hx=25, hy=13, size=14, skin='a', shade='A', hs='side', hk='H', hd='h', mouth='smirk', brows='angry',
+               brow='H', shirt='1', sdark='2', cx=32, sw=8, ww=8, th=17,
+               arms=[([(26, 31), (21, 37), (16, 35)], 4), ([(38, 31), (40, 38), (38, 43)], 4)],
+               hands=[(13, 33, 'grip', False), (37, 43, 'fist', False)],
+               lg=dict(pants='n', pdark='n', shoe='z', lh=5), front=front, top=top, props=stick, DK={'n': 'n'})
+    c.paste(solo(_fig, dx=13, dy=-1, keys={'a': 'b', 'A': 'B', 'H': 'z', 'h': 'H'}, mirror=True))
+    c.paste(solo(_fig, dx=-9, dy=0))
     return c.rows(), pal
 
 

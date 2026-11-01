@@ -72,9 +72,9 @@
  },
  {
   "id": "purple.lateriser",
-  "name": "Late Riser",
+  "name": "Late Risers",
   "sphere": "purple",
-  "n": 1,
+  "n": 2,
   "text": "Round Start: if you have the fewest followers (ties count), take an extra turn before anyone places.",
   "oldPeople": [
    "freckled"
@@ -214,9 +214,9 @@
  },
  {
   "id": "market.shopaholic",
-  "name": "Shopaholic",
+  "name": "Shopaholics",
   "sphere": "blue",
-  "n": 1,
+  "n": 3,
   "text": "You can always recruit twice.",
   "oldPeople": [
    "warmtan",

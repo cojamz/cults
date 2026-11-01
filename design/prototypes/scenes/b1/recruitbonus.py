@@ -1,6 +1,7 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def draw():
@@ -10,6 +11,7 @@ def draw():
                    h='#4a3328', u='#7a9fd0', U='#5579b0', x='#d76a8a')
     pal['1'], pal['2'] = RED
     pal['a'], pal['A'] = MED
+    pal.update({'b': PALE[0], 'B': PALE[1]})
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 50, 63, 63, 'P')
 
     def poster(l):                        # framed gold-star certificate
@@ -44,10 +46,13 @@ def draw():
         for (x, y) in ((24, 29), (24, 30), (25, 31), (25, 32), (26, 33), (26, 34)):
             f.px(x, y, '2'); f.px(57 - x, y, '2')
 
-    person(c, hx=21, hy=14, size=14, skin='a', shade='A', hs='bun', hk='H', hd='h', mouth='grin', brows='soft',
-           shirt='1', sdark='2', cx=28, ty=29, sw=7, ww=7, th=17,
-           arms=[([(22, 31), (19, 37), (19, 43)], 4), ([(34, 31), (40, 27), (41, 17)], 4)],
-           front=front, top=top)
+    def _fig(c):
+        person(c, hx=21, hy=14, size=14, skin='a', shade='A', hs='bun', hk='H', hd='h', mouth='grin', brows='soft',
+               shirt='1', sdark='2', cx=28, ty=29, sw=7, ww=7, th=17,
+               arms=[([(22, 31), (19, 37), (19, 43)], 4), ([(34, 31), (40, 27), (41, 17)], 4)],
+               front=front, top=top)
+    c.paste(solo(_fig, dx=-9, dy=1, keys={'a': 'b', 'A': 'B', 'H': 'O', 'h': 'o'}, mirror=True))
+    c.paste(solo(_fig, dx=8, dy=0))
     return c.rows(), pal
 
 

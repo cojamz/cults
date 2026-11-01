@@ -1,6 +1,7 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def draw():
@@ -10,6 +11,7 @@ def draw():
                    j='#f3ead2', J='#c9bc9c', H='#7a4a2a', h='#5a361f')
     pal['1'], pal['2'] = RED
     pal['a'], pal['A'] = LIGHT
+    pal.update({'b': OLIVE[0], 'B': OLIVE[1]}); pal['S'] = pal['P']
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 44, 63, 51, 's'); c.rect(0, 52, 63, 63, 'S')
 
     def shop(l):                          # shopfront with a no-parking sign
@@ -48,11 +50,14 @@ def draw():
     def pen(p):
         p.pts('n', [(21, 35), (20, 34), (19, 33)])
 
-    person(c, hx=17, hy=15, size=14, skin='a', shade='A', hs='crop', hk='H', hd='h', mouth='flat', brows='stern',
-           brow='H', shirt='1', sdark='2', cx=24, sw=7, ww=6, th=12,
-           arms=[([(18, 32), (15, 38), (16, 41)], 4), ([(30, 32), (30, 38), (24, 38)], 4)],
-           lg=dict(pants='n', pdark='N', shoe='z', lh=8),
-           front=front, top=lambda f: (cap(f), top(f)), props=pen, DK={'n': 'N', 'x': 'x'})
+    def _fig(c):
+        person(c, hx=17, hy=15, size=14, skin='a', shade='A', hs='crop', hk='H', hd='h', mouth='flat', brows='stern',
+               brow='H', shirt='1', sdark='2', cx=24, sw=7, ww=6, th=12,
+               arms=[([(18, 32), (15, 38), (16, 41)], 4), ([(30, 32), (30, 38), (24, 38)], 4)],
+               lg=dict(pants='n', pdark='N', shoe='z', lh=8),
+               front=front, top=lambda f: (cap(f), top(f)), props=pen, DK={'n': 'N', 'x': 'x'})
+    c.paste(solo(_fig, dx=7, dy=-2, keys={'a': 'b', 'A': 'B', 'H': 'z', 'h': 'x'}, mirror=True))
+    c.paste(solo(_fig, dx=-4, dy=0))
     return c.rows(), pal
 
 

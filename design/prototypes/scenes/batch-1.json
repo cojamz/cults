@@ -32,9 +32,9 @@
  },
  {
   "id": "red.mentor",
-  "name": "Mentor & Protégé",
+  "name": "Mentor & Protégés",
   "sphere": "red",
-  "n": 1,
+  "n": 3,
   "text": "On Recruit: recruit the cheapest member in the shop.",
   "oldPeople": [
    "tan",
@@ -55,9 +55,9 @@
  },
  {
   "id": "red.movementpenalty",
-  "name": "Movement Penalty",
+  "name": "Deprogrammers",
   "sphere": "red",
-  "n": 1,
+  "n": 2,
   "text": "When you move a rival’s member out of their cult, they lose 1 follower.",
   "oldPeople": [
    "golden"
@@ -100,7 +100,7 @@
   "id": "red.recruitbonus",
   "name": "Recruit Bonus",
   "sphere": "red",
-  "n": 1,
+  "n": 2,
   "text": "Whenever one of your members’ \"On Recruit\" happens, +1 of its color.",
   "oldPeople": [
    "warmtan",
@@ -222,9 +222,9 @@
  },
  {
   "id": "echo.impostor",
-  "name": "Impostor",
+  "name": "Impostors",
   "sphere": "green",
-  "n": 1,
+  "n": 2,
   "text": "On Recruit: it becomes a copy of a rival’s member.",
   "oldPeople": [
    "porcelain"
