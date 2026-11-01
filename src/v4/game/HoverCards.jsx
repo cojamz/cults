@@ -299,7 +299,8 @@ export function HoverCardLayer({ hover, state, me, optionFor = () => null, onPic
     // its long list still scrolls under the wheel, though the pointer events go through the card, and from the seat
     // itself too: hover a seat, roll the wheel, read on (Cory, playtest Oct 28)
     const wheel = e => {
-      const list = box.current && box.current.querySelector('.mu-list');
+      // the seat's hover is the rival card since Cory's Nov 1 playtest: the card itself scrolls (.rc), else the old list
+      const list = box.current && box.current.querySelector('.mu-list, .rc');
       const p = { x: e.clientX, y: e.clientY }, t = cur.current.el;
       if (!list || list.scrollHeight <= list.clientHeight || !(over(box.current, p) || (t && over(t.closest('.lt-seat') || t, p)))) return;
       e.preventDefault();

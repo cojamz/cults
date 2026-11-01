@@ -151,7 +151,13 @@ try {
     const amount = b.verdict.match(/([+−-])(\d+) follower/);
     const n = amount ? Number(amount[2]) * (amount[1] === '+' ? 1 : -1) : NaN;
     if (n !== g.n) errors.push(`${g.name}: caption grants ${n}, engine grants ${g.n}`);
-    if (b.values.length < 2 || b.values.at(-1) - b.values[0] !== g.n) errors.push(`${g.name}: chair should gain ${g.n} during its step, showed ${b.values.join(' → ')}`);
+    // the chair counts during its step; the next step lights while the total still rolls (Oct 29: a still hold read as a
+    // stall), so a big bonus finishes its roll into the next one. Per seat: it rises, never overshoots what's been
+    // granted so far, and the end totals (below) land exact.
+    if (b.values.length < 2 || b.values.at(-1) <= b.values[0]) errors.push(`${g.name}: chair should count up during its step, showed ${b.values.join(' → ')}`);
+    const prior = expected.slice(0, expected.indexOf(g) + 1).filter(x => x.pid === g.pid).reduce((n, x) => n + x.n, 0);
+    const start = fs.bonuses.find(x => x.pid === g.pid)?.values[0];
+    if (start != null && b.values.at(-1) > start + prior) errors.push(`${g.name}: chair overshot, showed ${b.values.at(-1)} with ${start} + ${prior} granted`);
   }
   const firstBonus = fs.order.findIndex(k => k.startsWith('bonus:'));
   if (firstBonus !== state.quadrants.length || fs.order.slice(firstBonus).some(k => k.startsWith('contest:'))) errors.push(`bonuses did not follow every contest: ${fs.order.join(', ')}`);

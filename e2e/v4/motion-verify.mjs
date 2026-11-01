@@ -22,14 +22,14 @@ function saveOf(state) {
 // Scenes deal from the whole deck, as the unit tests do (round decks, the cull and artifacts would hold cards back).
 // (The cross-cult swap scene went with Even Swap: Tryout took its space in the round I rework, Cory Oct 27.)
 const SCENE = { roundDecks: 0, cull: false, artifacts: false };
-// Help Yourself steals 3 / 4 / 5 by round (Cory, Oct 27; round I: 3); stolen resources keep their colors and the space
-// adds its own +1 magenta (Cory, 2026-10-19)
+// Help Yourself steals 3 / 4 / 5 by round (Cory, Oct 27; round I: 3); stolen resources keep their colors, and the space
+// gives no magenta of its own (Cory, 2026-10-29: "Help Yourself shouldnt give a magenta")
 let steal = sceneQ({ quadrants: ['gold', 'silver', 'thieves'], round: 1, res: [{}, { gold: 1, silver: 2 }], rules: SCENE });
 steal = take(steal, 'Help Yourself');
 steal = move(steal, 'take:1:gold');
 steal = move(steal, 'take:1:silver');
 const stolen = move(steal, 'take:1:silver');
-assert.deepEqual(stolen.players[0].res, { gold: 1, silver: 2, magenta: 1 });
+assert.deepEqual(stolen.players[0].res, { gold: 1, silver: 2, magenta: 0 });
 const takes = stolen.effects.filter(e => e.type === 'transfer' && e.from.pid === 1 && e.to.pid === 0);
 assert.deepEqual(takes.map(e => `${e.what.n} ${e.what.r}`).sort(), ['1 gold', '2 silver']);
 const scenarios = [{ name: 'magenta', state: steal, option: 'take:1:silver', expected: stolen.players.map(p => p.res) }];

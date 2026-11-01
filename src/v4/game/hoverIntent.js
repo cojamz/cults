@@ -84,7 +84,7 @@ export function overControls(el, p = pt) {
   // a long list being scrolled is a control too, right where it is: while the wheel turns on it, what lies under the
   // card doesn't take its place (Cory, playtest Oct 28: "i cant scroll the list of members on the hover over when it
   // gets long"); a pointer just resting there still opens what it rests on (m14)
-  const list = p && el && el.isConnected && el.querySelector('.mu-list');
+  const list = p && el && el.isConnected && el.querySelector('.mu-list, .rc'); // .rc: the rival card, a seat's hover since Nov 1
   return !!list && nowMs() - scrolledAt < SCROLL_HOLD_MS && list.scrollHeight > list.clientHeight && over(list, p);
 }
 const SCROLL_HOLD_MS = 1200;

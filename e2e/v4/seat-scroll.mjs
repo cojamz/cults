@@ -24,16 +24,18 @@ try {
   await page.goto(`${base}/?intro=0`);
   await page.click('[data-home="resume"]');
   const hand = page.locator('[data-handoff]'); if (await hand.isVisible().catch(() => false)) await hand.click();
-  const count = page.getByText(/^14 members$/);
+  // Bo's count: 14 cards, more members where one counts as 2+ (member count = follower count, Cory Oct 31)
+  const count = page.locator('.lt-seat[data-pid="1"] .cs-member-count');
   await count.waitFor();
   const b = await count.boundingBox();
   await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
-  const list = page.locator('.lt-hover.on .mu-list');
+  // the seat's hover is the rival card since Cory's Nov 1 playtest; the card itself is what scrolls
+  const list = page.locator('.lt-hover.on .rc');
   await list.waitFor({ timeout: 5000 });
   const m = () => list.evaluate(l => ({ sh: l.scrollHeight, ch: l.clientHeight, top: l.scrollTop })).catch(() => null);
   const a = await m();
   if (!a || a.sh <= a.ch) errors.push(`the 14-member list should overflow its card: ${JSON.stringify(a)}`);
-  await page.mouse.wheel(0, 200); await page.waitForTimeout(250);
+  await page.mouse.wheel(0, 20); await page.waitForTimeout(250); // a nudge: leave room to scroll on from the list
   const fromSeat = await m();
   if (!fromSeat || fromSeat.top <= 0) errors.push(`the wheel on the seat didn't scroll the list: ${JSON.stringify(fromSeat)}`);
   const r = await list.boundingBox();
@@ -42,7 +44,7 @@ try {
   const rest = await m();
   if (!rest) errors.push('moving onto the list closed the card');
   // scrolling on and on: the card stays the whole time, whatever lies under it
-  for (let k = 0; k < 4; k++) { await page.mouse.wheel(0, 60); await page.waitForTimeout(350); }
+  for (let k = 0; k < 4; k++) { await page.mouse.wheel(0, 15); await page.waitForTimeout(350); }
   const fromList = await m();
   if (!fromList || !rest || fromList.top <= rest.top) errors.push(`the wheel on the list didn't scroll it: ${JSON.stringify({ rest, fromList })}`);
 } finally { await browser.close(); }
