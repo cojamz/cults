@@ -25,3 +25,11 @@ No single part dominates; the Wheel and ShopCards take state whole, so memo neve
 2. Move non-urgent passive effects (talk, gifts, robbed flash, sounds) to after paint (afterPaint in GameScreen.jsx).
 3. ShopCards: cache `paymentPlan` per (viewer resources, discounts, uid) across renders.
 4. Measure with v4-rig-spread (3 runs, same --parallel) before/after each; freeze probe in Chrome and Firefox before shipping.
+
+## Late finding (worth checking first)
+Prod profiles say the components themselves are cheap (ShopCards render ~2 ms a click at 4x; dev numbers overstate them 5-10x).
+The Chrome trace of a slow click splits about evenly: script ~112 ms (forced style and layout included) and the browser's own
+pipeline ~117 ms: style 27, layout 19, prepaint 11, **layerize 26**, **paint 24**, commit 10. Layerize and paint scale with the
+always-running idle animations (leader cult-breathe and cult-blink, member scenes cult-shift/cult-breathe, cs-bob minions:
+lamp-b.css 250-552), each its own layer, 30+ by round III. Measure first: inject CSS pausing them in the rig and compare click
+phases. If it's the win, pausing them for a beat around your own click is invisible; removing them is Cory's call (feel).
