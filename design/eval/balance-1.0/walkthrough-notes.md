@@ -42,3 +42,4 @@
 - 2:08pm, item 3: yes to both Night Owls (extra minion after everyone) and Sleep In (next turn moves to end of round); Last Call payout stays. Open: words, showing who's waiting, order when several wait.
 - 2:08pm: Night Owls needs a real reword; 3 options sent (default "Each round, once everyone is out of minions: +1 minion."). Still open: order when several wait (default: later waiter goes last).
 - 2:10pm: Sleep In words (his): skip your next turn; take it after rivals have placed their last minions. Use the same phrase on Night Owls and Last Call. Going-last must be obvious, not in your head: may need to rework how these interplay. Claude: mock up 'goes last' seat tags (every waiting seat, minions left, order) on a real round III.
+- 2:11pm: going-last tracking must work on a physical table, no digital-only fix. Screen thread proposes physical options (token or track) first.
