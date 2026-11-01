@@ -348,8 +348,8 @@ const silver = {
       },
       botActivate: (ctx, owner) => others(ctx, owner).reduce((t, o) => t + Math.min(2, o.res[S] || 0), 0) >= 2 * Math.max(1, ctx.state.players.length - 2),
     }),
-    // "should be multiple members" (Cory): counts as 2, Claude's fill-in
-    m('highsociety', 'High Society', 4, 3, 'Counts as 2 members. Game End: +2 followers per rival with more silver than you.', { n: 2,
+    // "should be multiple members" (Cory): worth 2 followers, so it counts as 2 members (Claude's fill-in)
+    m('highsociety', 'High Society', 4, 3, 'Game End: +2 followers per rival with more silver than you.', { f: 2,
       onGameEnd: (ctx, owner) => 2 * others(ctx, owner).filter(o => (o.res[S] || 0) > (owner.res[S] || 0)).length,
     }),
     m('grandhost', 'Grand Host', 8, 4, 'Double the silver you gain from Silver spaces.', { hostDouble: true }),
