@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.2 — 2026-11-01
+
+- The Goes Last token: Last Call, Sleep In and Night Owls put minions on it, and its holder places them once every hand is empty. New table setting, off by default: the swap card. Doormen sends a rival's member to the bottom of the pile and gives them a shop member costing up to 2 more. Blue Cloak pays when any member goes to the bottom. Red Cloak pays +1 red when you recruit from the shop. Raiders steals from any rival. Tourists joins Yellow's deck in place of Go-Between. Anarchist costs 6, Party Crasher 5. Desperado boosts every steal. Spaces show their limits and payoffs on the wheel, and Party Gifts says what it gives.
+
 ## v0.99.1 — 2026-11-01
 
 - Artifacts are now colored cloaks: your leader wears its color and your player card is outlined in it, so everyone sees who each color's moves pay (Red Cloak, Blue Cloak and so on).
