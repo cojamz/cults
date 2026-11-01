@@ -13,7 +13,8 @@ import { spawn } from 'node:child_process';
 import { createServer } from 'node:net';
 import { answerChoice } from './lib/answer.mjs';
 
-const TABLE = ['market', 'echo', 'yellow', 'gold'];
+// Gold left the setup picker for the backlog (Nov 1): Red takes its seat
+const TABLE = ['market', 'echo', 'yellow', 'red'];
 const WANT = Number(process.env.V4_DOCK_TURNS || 52); // rival placements played through per size
 const CARDS = Number(process.env.V4_DOCK_CARDS || 8); // distinct rival turn cards seen per size (bots that move in one
 // commit share one card, so cards are fewer than placements)

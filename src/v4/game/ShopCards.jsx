@@ -22,7 +22,7 @@ import './shop.css'; // live panel r1 (G2): the deck, the struck price and the w
 import './card-header.css'; // the trading-card face (Cory, Oct 29)
 
 // a name on the card's bar: one line, a size down when it's long, two lines only past that (never broken mid-word)
-export const nameFit = name => (name.length > 15 && name.includes(' ') ? { 'data-wide': '' } : name.length > 11 || name.split(' ').some(w => w.length >= 10) ? { 'data-long': '' } : {});
+export const nameFit = name => (name.length > 15 && name.includes(' ') ? { 'data-wide': '' } : name.length > 10 || name.split(' ').some(w => w.length >= 10) ? { 'data-long': '' } : {});
 // a member that counts as more than one: the count and the member bust on its picture (the worth stays followers)
 // a member counts as its printed member count only; being worth more followers never adds members (core.js printedMembers; Cory, Oct 29)
 export const membersOf = d => d.n ?? 1;

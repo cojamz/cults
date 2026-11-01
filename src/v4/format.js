@@ -894,7 +894,8 @@ export function traceLine(line, players, resources) {
   for (const o of players) {
     if (!body.startsWith(`${o.name}'s `)) continue;
     const rest = body.slice(o.name.length + 3), c = rest.indexOf(': ');
-    const got = c > 0 ? parts(rest.slice(c + 2)) : null;
+    // a note after the amounts is the why, not an amount ("P1's Collector: +1 silver (P4 paid silver).")
+    const got = c > 0 ? parts(rest.slice(c + 2).replace(/ \([^()]*\)$/, '')) : null;
     if (got) return { owner: o.id, target: o.id, card: rest.slice(0, c), ...got };
   }
   const m = body.match(/^(.+) \((.+?)'s (.+?)\)$/);

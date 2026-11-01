@@ -1630,6 +1630,9 @@ export function installChainSkip() {
     const t = e && e.target;
     const app = t && t.closest && t.closest('.app.game');
     if (app && app.dataset.phase === 'choose' && t.closest('[data-option]')) return;
+    // Undo during the move's own show is the undo, not a skip: the rewind lands that show itself (playRewind); a skip's
+    // re-render here could pull the link out from under the click, so it did nothing (hotseat gate, Nov 1)
+    if (t && t.closest && t.closest('.undo')) return;
     // everything has landed and only the settle is left (your choices light at the landing): a press on a choice is
     // your move, not a skip; the settle finishes under it (smooth panel, animation.md #4: the skip's cleanup cost every
     // first click of your turn a whole-table render before the move)
