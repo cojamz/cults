@@ -28,7 +28,7 @@ const LINES = {
   purple: 'Turns: go twice in a row, skip, +1 minion.',
   silver: 'Big gains for you, a little for everyone else.',
   yellow: 'Goes broad: picks its colors, and changes rivals’ resources.',
-  market: 'Bends the shop: extra recruits, pay half, refresh the row.',
+  market: 'Bends the shop: extra recruits, bury shop members, a look at the pile.',
   thieves: 'Steals resources and members from rivals.',
   trading: 'Turns what you have into followers.',
   echo: 'Copies spaces: a rival’s, or your own again.',
