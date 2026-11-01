@@ -87,6 +87,8 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   const score = i => totals[i] / counts[i] + (rival ? 0 : nudge(pool[i].o));
   let best = 0;
   for (let i = 1; i < pool.length; i++) if (score(i) > score(best)) best = i;
+  opts.onDecision?.({ player: me, kind: pend.kind, round, chosen: pool[best].o.id, ranked,
+    options: pool.map((r, i) => ({ id: r.o.id, normal: r.v, mean: counts[i] ? totals[i] / counts[i] : null, n: counts[i] })) }, state);
   return { player: me, option: pool[best].o.id };
 }
 

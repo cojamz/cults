@@ -30,7 +30,20 @@ for (const pair of (process.env.PRICE || '').split(',').filter(Boolean)) {
   d.s = s; d.w = w;
 }
 // Very Hard is uncapped too: its in-game 600 ms clock made each game depend on how busy the box was (Nov 1)
-const botOpts = level === 'hard' || level === 'veryhard' ? { level, maxMs: Infinity, ...(process.env.BUDGET ? { budget: Number(process.env.BUDGET) } : {}) } : { level };
+// BOTOPTS='{"crn":true,"halving":true,"candidates":6,"window":6}' adds search settings for Hard and Very Hard (thinker.js).
+// CHOICES=<file.jsonl> (Hard and Very Hard) logs every looked-ahead decision: what was on offer, the options it played
+// out and what each was worth, and what it chose. That's the choice log: which spaces and cards are real contenders.
+const extra = process.env.BOTOPTS ? JSON.parse(process.env.BOTOPTS) : {};
+const botOpts = level === 'hard' || level === 'veryhard' ? { level, maxMs: Infinity, ...(process.env.BUDGET ? { budget: Number(process.env.BUDGET) } : {}), ...extra } : { level };
+const choiceLabel = (s, id) => {
+  const o = s.pending?.options?.find(x => x.id === id);
+  if (!o) return id;
+  if (o.kind === 'slot') { const a = quadrant(s.quadrants[o.q]).actions[o.i]; return a ? `space:${s.quadrants[o.q]}: ${a.name}` : id; }
+  if (o.kind === 'card') return `member:${name(s.cards[o.uid].def)}`;
+  if (o.kind === 'use') return `use:${name(s.cards[o.uid].def)}`;
+  if (o.kind === 'tier') return `followers:${o.tier}`;
+  return `${o.kind}:${o.label || id}`;
+};
 const name = d => { try { const x = defById(d); return `${x.name} (${d.split('.')[0]})`; } catch { return d; } };
 const cost = d => { try { const x = defById(d); return (x.s || 0) + (x.w || 0); } catch { return null; } };
 
@@ -46,7 +59,15 @@ for (let g = first; g < first + count; g++) {
     for (const uid of s.shop) seen[s.cards[uid].def] ??= s.round;
     const before = s.players.map(p => new Set(p.members));
     const pl = s.pending.player;
-    const m = pl === buyer ? chooseFollowerBuyerMove(s, rand) : chooseBotMove(s, rand, botOpts);
+    const logIt = process.env.CHOICES && pl !== buyer && botOpts.level !== 'normal' && botOpts.level !== 'easy';
+    const onDecision = logIt ? (info, st) => appendFileSync(process.env.CHOICES, JSON.stringify({
+      game: g, round: st.round, kind: info.kind, seat: info.player, color: st.quadrants[info.player] ?? null,
+      offered: (st.pending.options || []).map(o => choiceLabel(st, o.id)),
+      normal: (info.ranked || []).slice(0, 8).map(r => [choiceLabel(st, r.o.id), +r.v.toFixed(2)]),
+      played: info.options.map(o => [choiceLabel(st, o.id), o.mean === null ? null : +o.mean.toFixed(2), o.n]),
+      chose: choiceLabel(st, info.chosen),
+    }) + '\n') : null;
+    const m = pl === buyer ? chooseFollowerBuyerMove(s, rand) : chooseBotMove(s, rand, onDecision ? { ...botOpts, onDecision } : botOpts);
     if (typeof m.option === 'string' && /^(slot|squat):/.test(m.option)) {
       const [q, i] = m.option.split(':')[1].split('-').map(Number);
       const a = quadrant(s.quadrants[q]).actions[i];
