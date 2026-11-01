@@ -15,7 +15,7 @@
 // Every level is deterministic for a given state and rand.
 import {
   contextFor, actionAt, cardDef, TIERS, followers, memberCount, RING_VALUE, WORKERS, tierLeft,
-  paymentChoices, followerChoices, releaseRefund, liveOptions,
+  paymentChoices, followerChoices, releaseRefund, liveOptions, swapCardPairs,
 } from './core.js';
 import { defById, quadrant, handlerById } from './content/index.js';
 import { plainCopy } from './copy.js';
@@ -227,7 +227,7 @@ function givenAway(state, me) {
     const m = line.startsWith(`${p.name} traded `) && line.match(/ traded (.+) for .+'s (.+)\.$/);
     if (m) { given.add(m[1]); continue; }
     // Anarchist logs "P1's Anarchist swapped P1's X and P2's Y." (benders.js anarchy): the same body
-    const head = [`${p.name} swapped `, `${p.name}'s Anarchist swapped `].find(h => line.startsWith(h));
+    const head = [`${p.name} swapped `, `${p.name}'s Anarchist swapped `, `${p.name} used the swap card: swapped `].find(h => line.startsWith(h));
     if (!head || !line.endsWith('.')) continue;
     const body = line.slice(head.length, -1);
     for (const left of owners) for (const right of owners) {
@@ -265,6 +265,7 @@ function chooseSwap(state, pend) {
 // Until 2026-10-29 only the bot's own side of a swap counted, so bots handed rivals Agents or Loyalists for free,
 // never pushed a Saboteur into a leader's cult, and never swapped two members that weren't theirs (Cory: "the bots
 // clearly aren't using it to switch into somebody"). Returns [{ o, v }]; with `base`, also the value of not choosing.
+const SWAP_CARD_CAP = 6; // swap-card trades played out per buy step, best by tradeScore first
 const RATE_CAP = 16; // options played out in full; the rest are ranked by tradeScore first (Anarchist can offer 100+)
 function rateOnCopy(state, pend, options, { base = false } = {}) {
   const me = pend.player;
@@ -289,7 +290,9 @@ function rateOnCopy(state, pend, options, { base = false } = {}) {
     try {
       const s = lightClone(state);
       const ctx = contextFor(s);
-      handlerById(task?.h || 'red.trade')(ctx, s.players[me], o.value, task?.data);
+      // the swap card (a table setting) has no handler: its step swaps the pair itself (core.js 'swapcard')
+      if (!task && state.queue[0]?.t === 'swapcard') ctx.swapMembers(s.players[me], ...o.value);
+      else handlerById(task?.h || 'red.trade')(ctx, s.players[me], o.value, task?.data);
       v = valueOf(s);
     } catch (e) { globalThis.__swapFail = (globalThis.__swapFail || 0) + 1; v = (o.hint || 0) - 100; }
     // never take back a member you swapped away (see undoesSwap)
@@ -673,7 +676,32 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
       const pays = pend.options.filter(o => o.kind === 'pay').slice(0, opts.payOptions ?? Infinity);
       for (const o of pays) out.push({ o, v: valueOf(what, o.spend) + (o.default ? 0.01 : 0) });
     } else {
+      // The swap card (a table setting, Cory Nov 1): the best fresh trade within 2, valued on a copy like a recruit.
+      // Trades that take back a member you swapped away are left out, as on Red's swaps.
+      const swapCardValue = () => {
+        const given = givenAway(state, me);
+        const owner = (s, u) => s.players.find(q => q.members.includes(u));
+        const pairs = swapCardPairs(state, state.players[me])
+          .filter(([, b]) => !given.has(cardDef(state, b).name))
+          .map(pair => ({ pair, q: tradeScore(state, me, pair) }))
+          .sort((x, y) => y.q - x.q).slice(0, SWAP_CARD_CAP);
+        let top = -1e6;
+        for (const { pair: [a, b] } of pairs) {
+          try {
+            const s = lightClone(state);
+            const ctx = contextFor(s);
+            const rival = owner(s, b);
+            const extra = { [me]: abilityValue(cardDef(s, b), placesLeft, opts.k) - abilityValue(cardDef(s, a), placesLeft, opts.k) };
+            if (rival) extra[rival.id] = -extra[me];
+            if (!ctx.swapMembers(s.players[me], a, b)) continue;
+            settle(s, ctx);
+            top = Math.max(top, marginOf(evaluate(s, buysAt(s, 0), incomeAt(s), roundLeft, extra, opts.future), me, opts.spite));
+          } catch { /* a trade that can't be played out is skipped */ }
+        }
+        return top;
+      };
       for (const o of pend.options) {
+        if (o.kind === 'swapcard') { if (!opts.noMembers) out.push({ o, v: swapCardValue() + rand() * buyNoise }); continue; }
         if (!['card', 'tier', 'pass'].includes(o.kind)) continue;
         if (opts.noMembers && o.kind === 'card') continue;
         if (o.kind === 'release') { out.push({ o, v: releaseValue(o.uid) + rand() * buyNoise }); continue; }

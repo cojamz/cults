@@ -1266,7 +1266,7 @@ function returnWorkers(state, uid, from) {
 /** The swap card (a table setting, rules.swapCard; Cory, Nov 1 3:01pm): "As your recruit: swap one of your members with
  *  a shop or rival member costing up to 2 more or less." Free: nothing pays the difference. A trade, not a steal, so
  *  Bodyguards and Lie Low let it through (Nov 1 2:02pm). [yours, theirs] uid pairs. */
-function swapCardPairs(state, p) {
+export function swapCardPairs(state, p) {
   if (!state.rules?.swapCard) return [];
   const ctx = ctxFor(state);
   const price = uid => { const d = cardDef(state, uid); return d.s + d.w; };

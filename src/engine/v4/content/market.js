@@ -25,6 +25,19 @@ const botWorth = c => c.def.f * 1.4 + (c.def.vanilla ? 0 : 1.6) + priceOf(c) * 0
 let LEAN = false;
 export function setLean(on) { LEAN = !!on; }
 
+// Doormen: [rival's member, shop member costing up to 2 more] (a trade of members, so swap protections apply)
+const doorPairs = (ctx, p) => {
+  const out = [];
+  for (const o of ctx.rivals(p)) {
+    if (!ctx.canSteal(p, o, 'swap')) continue;
+    for (const a of ctx.membersOf(o)) {
+      if (!ctx.canSwapMember(a.uid)) continue;
+      for (const b of ctx.shopCards()) if (priceOf(b) <= priceOf(a) + 2) out.push([a, b]);
+    }
+  }
+  return out;
+};
+
 // ---------- paying outside the normal buy ----------
 // One price rule (the engine's memberPrice, through ctx.price / ctx.payChoices): every discount and rule-changer
 // applies here as in the buy step (Intro Offer, Sponsor, Penny Pincher's double gold). how: Snap Up { anyColors },
@@ -247,6 +260,15 @@ const market = {
   ],
 
   handlers: {
+    doormen(ctx, p, value) {
+      if (!Array.isArray(value)) { ctx.log(`${p.name} chose not to use Doormen.`); return; }
+      const [a, b] = value;
+      if (!doorPairs(ctx, p).some(([x, y]) => x.uid === a && y.uid === b)) return;
+      const rival = ctx.ownerOf(a), sent = ctx.card(a).def.name, given = ctx.card(b).def.name;
+      if (!ctx.swapMembers(p, a, b)) return;
+      ctx.buryFromShop(a);
+      ctx.log(`${p.name}'s Doormen: sends ${rival.name}'s ${sent} to the bottom of the pile and gives ${rival.name} ${given}.`);
+    },
     windowShop(ctx, p, uid, data) {
       if (!ctx.state.shop.includes(uid)) return;
       const c = ctx.card(uid), col = colorOf(ctx, c);
@@ -417,18 +439,22 @@ const market = {
     m('plusone', 'Plus-Ones', 2, 1, 'On Recruit: recruit again this turn.', { f: 2,
       onRecruited(ctx, owner) { extraBuys(ctx, owner, 1); ctx.log(`${owner.name}'s Plus-Ones: recruit again this turn.`); },
     }),
-    // Cory, Oct 21: "any time a player recruits more than once in a turn", swaps and takes included (they all reach
-    // onAnyRecruit through memberAcquired)
-    m('doorman', 'Doormen', 1, 3, 'Whenever a rival recruits more than once in a turn (swaps count), +1 blue.', { f: 2,
-      // every recruit (members, own red swaps, follower buys) reaches onRecruit (core.js recruited)
-      onRecruit(ctx, owner, card, by) {
-        if (by === owner) return;
-        const stamp = `${ctx.state.round}:${(ctx.state.turns || []).length}`;
-        const seen = card.doorSeen || (card.doorSeen = {});
-        const n = seen[by.id]?.[0] === stamp ? seen[by.id][1] + 1 : 1;
-        seen[by.id] = [stamp, n];
-        if (n === 2) { ctx.gain(owner, B, 1); ctx.log(`${owner.name}'s Doormen: +1 blue.`); }
+    // Cory, Nov 1 3:21pm (picked 1): a rival's member to the bottom of the pile, and the owner hands them a shop member
+    // costing up to 2 more. Given, not recruited, so its On Recruit doesn't fire. Price 2 blue + 5 any, worth and counts
+    // as 2: the design thread's fill-ins. A trade, not a steal (Bodyguards and Lie Low block steals only).
+    m('doorman', 'Doormen', 2, 5, 'On Use, once per round: send a rival’s member to the bottom of the pile. Give them a shop member costing up to 2 more.', { f: 2, n: 2,
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const pairs = doorPairs(ctx, owner);
+        if (!pairs.length) { card.used = false; ctx.log(`${owner.name}'s Doormen: no rival's member has a shop member costing up to 2 more.`); return; }
+        ctx.log(`${owner.name} uses Doormen.`);
+        ctx.choose(owner, 'Doormen: send which rival member to the bottom of the pile, and give them which shop member?', pairs.map(([a, b]) => ({
+          id: `trade:${a.uid}:${b.uid}`, label: `${ctx.ownerOf(a.uid).name}: ${a.def.name} → pile, gets ${b.def.name}`, kind: 'trade', value: [a.uid, b.uid],
+          hint: botWorth(a) - botWorth(b),
+        })).concat({ id: 'none', label: 'Don’t send one', kind: 'pass', value: null, hint: -99 }), `${Q}.doormen`, { uid: card.uid });
       },
+      botActivate: (ctx, p) => doorPairs(ctx, p).some(([a, b]) => botWorth(a) - botWorth(b) >= 2),
     }),
     // Cory's, Oct 21: "one recruit, refresh the shop. all the members"; prices are sim starting points
     m('makeover', 'Makeover', 2, 1, 'On Recruit: send the whole shop to the bottom of the pile, then refill.', { f: 3,
