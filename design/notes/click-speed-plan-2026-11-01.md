@@ -33,3 +33,35 @@ pipeline ~117 ms: style 27, layout 19, prepaint 11, **layerize 26**, **paint 24*
 always-running idle animations (leader cult-breathe and cult-blink, member scenes cult-shift/cult-breathe, cs-bob minions:
 lamp-b.css 250-552), each its own layer, 30+ by round III. Measure first: inject CSS pausing them in the rig and compare click
 phases. If it's the win, pausing them for a beat around your own click is invisible; removing them is Cory's call (feel).
+
+## Status, Nov 1 5:50am Eastern (Rebuild table redraws thread)
+Live: v0.9.956 (eaf8b4a). Evidence: design/eval/perf/redraw/ (rig runs, paired 2 at a time, so both builds share the load).
+New tools: `scripts/v4-rig-work.mjs <dir> <labels…>` (our own main-thread work per click: rules + render + effects, far
+steadier than wall-clock clicks, which swing ±100 ms run to run); rig `--still` / `--still=cancel` (endless animations
+paused / taken off), `--trace-dump=<dir>` (raw trace per slow click), `?trace=1&fx=1` (every effect's own time inside
+timed clicks, report table "Effects in timed clicks"); profiling build: `vite build -c` with react-dom → react-dom/profiling
+and minify off (per-component times at production cost).
+
+Findings:
+- Components at production cost are small: GameScreen's whole render 15-40 ms per click (wheel 5, seats 5, shop 3-15,
+  Tip 2-9, follower rates 2-9). A click is about: input/Playwright ~20, rules ~5, render ~30, effects ~17, frame ~31.
+- Idle animations: pausing them changed nothing (a paused animation keeps its layer); taking them all off cut the slow
+  frames (frame p90 77 → 58 ms, click p95 195 → 175, medians unchanged). Removing them is Cory's call (feel).
+- The show's setup (playChain, ~17 ms a click) and the shop's text fit (~60 ms when it ran) were mostly the browser's own
+  layout bill landing on their first measurement, not their own code.
+
+Shipped (v0.9.956): onPick no longer measures and copies every shop card (beforeShow already does, now only the leaving
+cards' pictures): rules step 14 → 5 ms median; a shop card's text fit is remembered per layout. Paired games: clicks
+p50 ~100, p95 155-175 ms at 4x CPU (v0.9.951: p95 170-240).
+
+Parked, not shipped: the wheel skips steps that draw the same board (sameWheel + wheelSig, Wheel.jsx; test
+src/test/v4/ui/wheel-skip.test.jsx proves every skipped step draws identical HTML). Branch claude/project-thread-6jkzfg.
+Measured gain within noise (pay render p90 57 → 51 ms, medians flat), so not worth a 30-minute gate tonight.
+
+Next (in order of likely payoff):
+1. Answer first: in your own click draw only what the click changes (the dialog closing, your seat), the rest of the
+   table as a transition after the paint. The only lever left that's tens of ms; it changes what a player sees for one
+   frame, so it needs Cory's eye on a clip.
+2. Endless animations off or calmer (Cory's call; measured above).
+3. Smaller per-step DOM churn: style passes touch 75-250 elements per click; find which selectors (`:has()` in
+   member-pick.css, data attributes on .app.game) widen them.
