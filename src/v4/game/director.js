@@ -307,6 +307,20 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   let lastStart = null; // when the last beat that wasn't a rival's reaction began
   for (const beat of beats) {
     const c = beat.cause, owner = owner0(c);
+    // a turn passed over (Purple's skips), as play reaches it: "Turn skipped" stamps the seat whose turn it was, and
+    // what pays for it (Pocket Watch, Gossip) is its own beat right after, so the gain lands as the skip shows
+    // (Cory, 2026-11-01: "it's not clear when a turn is skipped … the pocket watch gain should occur when that
+    // animation happens")
+    if (c.kind === 'skip') {
+      const s0 = Math.max(t, end - (rival ? 0 : MO.lead));
+      at(s0, { op: 'skip', pid: c.pid, why: c.why || null, dur: MO.skipShow });
+      ends(s0 + MO.skipShow);
+      hand = Math.max(hand, s0 + MO.skipShow * (2 / 3));
+      t = s0 + Math.round(MO.skipShow * 0.6);
+      lastStart = null; // what pays for it gives from its own card, not from the move before
+      movePlace = null;
+      continue;
+    }
     const m = movesOf(c, beat.effects, owner);
     let s = t;
     if (!(c.kind === 'member' && mover != null && c.pid !== mover)) lastStart = s;
@@ -1307,6 +1321,7 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
           return;
         }
         case 'hop': if (!skip) hopEl(where(a.place), MO.hop); return;
+        case 'skip': if (!skip) skipStamp(root, a.pid, a.dur); return;
         case 'stage': if (!skip) stageOut(root, a, ctx, where, chainId, mine, pre.get(a)); return;
         case 'tug': {
           if (skip) return;
@@ -1529,6 +1544,26 @@ function takeTag(el, n, dot, r = el && !el.rectOnly ? el.getBoundingClientRect()
   b.style.setProperty('--tl', `${life}ms`);
   document.body.appendChild(b);
   setTimeout(() => b.remove(), life + 50);
+}
+
+/** "Turn skipped" on the seat whose turn was just passed over: the seat dims a beat and its next minion sits out. */
+function skipStamp(root, pid, dur) {
+  if (!root || typeof document === 'undefined') return;
+  const seat = root.querySelector(`.lt-cult-seat[data-seat="${pid}"]`);
+  if (!seat || !seat.getBoundingClientRect) return;
+  const r = seat.getBoundingClientRect();
+  if (!r.width) return;
+  const life = dur + MO.lingerDelta / 2;
+  seat.classList.add('turn-skipped');
+  seat.style.setProperty('--sk', `${life}ms`);
+  const b = document.createElement('b');
+  b.className = 'skip-tag ghost-layer';
+  b.dataset.skip = String(pid);
+  b.textContent = 'Turn skipped';
+  Object.assign(b.style, { left: `${Math.round(r.left + r.width / 2)}px`, top: `${Math.round(r.top + r.height / 2)}px` });
+  b.style.setProperty('--sk', `${life}ms`);
+  document.body.appendChild(b);
+  setTimeout(() => { b.remove(); seat.classList.remove('turn-skipped'); }, life + 50);
 }
 
 /** A space or member flies out of its place onto the stage (stage.js; ActionStage.jsx draws it). */

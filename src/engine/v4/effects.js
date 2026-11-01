@@ -14,6 +14,8 @@
 // An effect: { n (order), type, cause, from, to, what }
 //   type: 'gain' | 'pay' | 'transfer' | 'followers' | 'recruit' | 'release' | 'member-move' | 'refill' | 'shop-out' | 'discount'
 //        | 'minion' (an extra minion this round: from the spare minions, { kind: 'pool' }, to { kind: 'minions', pid })
+//        | 'skip' (a turn passed over as play reaches it: cause { kind: 'skip', pid, why }, from and to { kind: 'minions', pid };
+//          what pays for it, Pocket Watch or Gossip, follows under its own member cause)
 //   cause: { kind: 'space', key, qid, pid } | { kind: 'member', pid, uid, def } | { kind: 'recruit', pid, uid, index }
 //        | { kind: 'buy', pid, tier, get } | { kind: 'contest', qid, round } | { kind: 'round', round }
 //        | { kind: 'release', pid, uid } | { kind: 'final' } | { kind: 'setup', pid, qid } | { kind: 'move', pid, option, slot }
@@ -50,6 +52,13 @@ function pop() {
   const f = rec.stack.pop();
   flush(f);
   if (rec.stack.length) top().snap = snap();
+}
+/** Write down an effect no change of state shows (a turn skipped): it carries the cause on top, in order. */
+export function markEffect(e) {
+  if (!rec) return;
+  flush(top());
+  top().snap = snap();
+  rec.list.push({ n: rec.n++, cause: top().cause, ...e });
 }
 /** Run fn under a cause: what it changes is that cause's doing (nested causes inside it keep their own). */
 export function underCause(cause, fn) {

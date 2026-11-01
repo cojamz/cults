@@ -6,7 +6,7 @@ import { plainCopy } from './copy.js';
 import { quadrant, defById, handlerById, defaultQuadrants, guestMembers, MAX_PLAYERS } from './content/index.js';
 import { shuffleInPlace } from './rng.js';
 import { CUT, CUT10, FULL_DECK } from './content/cull.js';
-import { startEffects, stopEffects, abandonEffects, underCause } from './effects.js';
+import { startEffects, stopEffects, abandonEffects, underCause, markEffect } from './effects.js';
 
 export const RING_VALUE = [4, 6, 10];
 export const WORKERS = [3, 4, 5];
@@ -1628,6 +1628,15 @@ function ctxFor(state) {
     cardLeaves: (p, uid) => cardLeaves(state, p, uid),
     /** Run fn on behalf of owner's member `name` (a hook content code calls itself, e.g. Choir reacting to a copy):
      *  whatever it changes and doesn't log is logged under that name, like the engine's own member hooks. */
+    /** p's turn is passed over now (Purple's skips): the table shows it on p's seat, and what pays for it (Pocket Watch,
+     *  Gossip) runs inside fn, so it lands as the skip shows (Cory, 2026-11-01: "the pocket watch … gain should occur
+     *  when that animation happens"). */
+    skipBeat(p, why, fn) {
+      return underCause({ kind: 'skip', pid: p.id, why: why || null }, () => {
+        markEffect({ type: 'skip', from: { kind: 'minions', pid: p.id }, to: { kind: 'minions', pid: p.id }, what: { why: why || null } });
+        return fn();
+      });
+    },
     asMember(owner, name, fn, uid0 = null) {
       const before = traceSnapshot(state);
       // uid0: the card itself, so a Doppelganger copying it is its own source beside the original (Cory, Oct 28)

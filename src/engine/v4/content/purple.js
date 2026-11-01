@@ -144,8 +144,10 @@ function skipNext(ctx, p, why, by = p, quiet = false) {
 /** The skip marker reached: p's turn is passed over now. Gossip (Cory, 2026-10-22: "+1 follower every time a players
  *  turn is skipped", anyone's, yours too; Oct 23: "should pay when turn is actually skipped"). */
 function skipped(ctx, p, value, data) {
-  ctx.log(`${p.name}'s turn is skipped${data?.why ? ` (${data.why})` : ''}.`);
-  for (const o of ctx.state.players) for (const c of ctx.abilitiesOf(o)) if (c.def.onSkip) ctx.asMember(o, c.def.name, () => c.def.onSkip(ctx, o, c, p));
+  ctx.skipBeat(p, data?.why, () => {
+    ctx.log(`${p.name}'s turn is skipped${data?.why ? ` (${data.why})` : ''}.`);
+    for (const o of ctx.state.players) for (const c of ctx.abilitiesOf(o)) if (c.def.onSkip) ctx.asMember(o, c.def.name, () => c.def.onSkip(ctx, o, c, p));
+  });
 }
 /** How many turns p still has to come this round, after the one now running. */
 const turnsLeft = (ctx, p) => {

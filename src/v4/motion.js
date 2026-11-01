@@ -132,6 +132,7 @@ const TABLE = {
   pulse:       [50,    90],   // a source about to give
   hop:         [120,   180],  // a member acts
   choicePoint: [100,   160],  // a rival's choice: what they chose lights before its effect flies (grammar S3)
+  skipShow:    [280,   400],  // "Turn skipped" on a seat, before what pays for the skip flies (Cory, Nov 1)
   setupRest:   [60,    160],  // between two players' starting picks: each pick lands and is read before the next lights
   lead:        [40,    60],   // hop or pulse → first piece leaves
   tug:         [60,    90],   // a stack being taken from
