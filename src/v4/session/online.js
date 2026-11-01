@@ -142,7 +142,7 @@ function lobbyView(room, code, playerId, { awaySince = new Map(), subAfterMs = S
     code, hostId: room.hostId ?? null, hostName: list.find(s => s.id === room.hostId)?.name || '', status, seed: room.seed ?? null,
     table: parseTable(room.table) ? { mode: room.tableMode || 'custom', quadrants: parseTable(room.table) } : null,
     roundDecks: room.roundDecks === 3 ? 3 : 2,
-    deck: room.deck === 10 ? 10 : 15,
+    deck: room.deck === 15 ? 15 : 10,
     players, seats: players.length, maxSeats: MAX_SEATS,
     canStart: isHost && status === 'lobby' && players.length >= MIN_SEATS, startHint,
     me: { playerId, seat: mine ? mine.seat : null }, isHost, subAfterMs,
@@ -567,10 +567,10 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
       await hostOnly('pick when round III members arrive');
       await transport.update(base, { roundDecks: n === 3 ? 3 : 2 });
     },
-    /** Host: the member deck, 15 per color (the default) or 10 (rules.deck). */
+    /** Host: the member deck, 10 per color (the default) or 15 (rules.deck). */
     async setDeck(n) {
       await hostOnly('pick the member deck');
-      await transport.update(base, { deck: n === 10 ? 10 : 15 });
+      await transport.update(base, { deck: n === 15 ? 15 : 10 });
     },
     async start() {
       await hostOnly('start');
@@ -588,7 +588,7 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
         const quadrants = fitTable({ mode: r.table ? r.tableMode || 'custom' : 'classic', quadrants: parseTable(r.table) || [] }, list.length).quadrants;
         tableWhy = tableProblem(quadrants, list.length);
         if (tableWhy) return undefined;
-        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, ...((r.roundDecks === 2 || r.roundDecks === 3 || r.deck === 10) ? { rules: { ...(r.roundDecks === 2 || r.roundDecks === 3 ? { roundDecks: r.roundDecks } : {}), ...(r.deck === 10 ? { deck: 10 } : {}) } } : {}) });
+        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, ...((r.roundDecks === 2 || r.roundDecks === 3 || r.deck !== 15) ? { rules: { ...(r.roundDecks === 2 || r.roundDecks === 3 ? { roundDecks: r.roundDecks } : {}), ...(r.deck !== 15 ? { deck: 10 } : {}) } } : {}) });
         setBotLevels(game, list.map(s => (s.kind === 'bot' ? s.bot : null))); // the level the host picked for each bot
         return {
           ...r, seats, seed, status: 'playing', startedAt: Date.now(), build: { ...BUILD },

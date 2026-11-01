@@ -194,8 +194,9 @@ const sameTable = (a, b) => a.length === b.length && a.every((x, i) => x === b[i
 // Round decks (Cory, 2026-10-25): whether round III members wait for round III or arrive with round II's.
 // Round II is the default (Cory, 2026-10-27: "round 1 deck one, round 2 and 3 all three decks")
 const LATE_OPTS = [['2', 'Round II', 'Round III members are shuffled in with round II members'], ['3', 'Round III', 'Round III members are shuffled in when round III starts']];
-// the deck (Cory, 2026-10-31: two versions, 10 and 15 members per color; rules.deck)
-const DECK_OPTS = [['15', '15 per color', 'Every member of each color (about 15)'], ['10', '10 per color', 'The trimmed decks: 10 members per color and 10 grey']];
+// the deck (Cory, 2026-10-31: two versions, 10 and 15 members per color; rules.deck). 10 is the default (Cory, Nov 1:
+// "keep the 15 available as a mode when setting up a game… just not the default mode")
+const DECK_OPTS = [['10', '10 per color', 'The standard decks: 10 members per color and 10 grey'], ['15', '15 per color', 'Every member of each color (about 15)']];
 export function DeckPick({ value, onChange, readOnly }) {
   return <div className="seat" data-deck-pick={value}><span>Member deck</span>
     {readOnly ? <span className="hint">{value === 10 ? '10 per color' : '15 per color'}</span>
@@ -315,7 +316,7 @@ export function LocalSetup({ initial, onStart, onBack }) {
   const [level, setLevel] = useState(initial?.level || DEFAULT_BOT_LEVEL);
   const [table, setTable] = useState(() => initialTable(initial?.table));
   const [late, setLate] = useState(initial?.roundDecks === 3 ? 3 : 2);
-  const [deck, setDeck] = useState(initial?.deck === 10 ? 10 : 15);
+  const [deck, setDeck] = useState(initial?.deck === 15 ? 15 : 10);
   const filled = seats.filter(s => s.kind !== 'empty');
   // one sphere per player (Cory, 2026-10-15): the table follows the seats as they're filled or emptied
   const nSph = sphereCount(filled.length);
@@ -443,7 +444,7 @@ export function Lobby({ lobby, myId, onLeave }) {
           </div>
         )}
         <TablePicker value={shownTable} n={nSph} onChange={pickTable} readOnly={!isHost || !lobby.setTable} />
-        <DeckPick value={view.deck === 10 ? 10 : 15} onChange={v => act(() => lobby.setDeck(v))} readOnly={!isHost || !lobby.setDeck} />
+        <DeckPick value={view.deck === 15 ? 15 : 10} onChange={v => act(() => lobby.setDeck(v))} readOnly={!isHost || !lobby.setDeck} />
         <LatePick value={view.roundDecks === 3 ? 3 : 2} onChange={v => act(() => lobby.setRoundDecks(v))} readOnly={!isHost || !lobby.setRoundDecks} />
         {err && <p className="error">{err}</p>}
         {!isHost && <p className="hint">Waiting for {view.hostName || 'the host'} to start…</p>}
