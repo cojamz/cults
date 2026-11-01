@@ -20,7 +20,12 @@ import {
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
-const SIX = ['red', 'echo', 'thieves', 'purple', 'market', 'trading']; // the 2.0 colors
+import { sphereVersion } from '../src/v4/tables.js';
+import { allQuadrantIds } from '../src/engine/v4/index.js';
+// the 2.0 colors, live (was a fixed list of six, Oct 29)
+const SIX = allQuadrantIds().filter(q => sphereVersion(q) === '2.0');
+// DECK=10 plays the 10-per-color deck (Cory, Nov 1: fresh balance runs use it); unset plays the game's default.
+const DECK_RULES = process.env.DECK === '10' ? { deck: 10 } : {};
 const NAMES = ['Ava', 'Ben', 'Cal', 'Dee'];
 const ROMAN = ['', 'I', 'II', 'III'];
 let DIR = '';
@@ -241,9 +246,9 @@ async function main() {
     const seed = Number(flags.seed || Math.floor(Math.random() * 90000) + 1000);
     const names = flags.names ? String(flags.names).split(',') : NAMES;
     const colors = flags.colors ? String(flags.colors).split(',') : shuffled(SIX, seed).slice(0, names.length);
-    const s = createGame({ seats: names.map(name => ({ name, kind: 'human' })), seed, quadrants: colors });
+    const s = createGame({ seats: names.map(name => ({ name, kind: 'human' })), seed, quadrants: colors, rules: DECK_RULES });
     writeJson(f(dir, 'state.json'), s);
-    writeJson(f(dir, 'meta.json'), { seed, names, colors, seen: {}, post: {}, startedAt: new Date().toISOString() });
+    writeJson(f(dir, 'meta.json'), { seed, names, colors, deck: DECK_RULES.deck || 15, seen: {}, post: {}, startedAt: new Date().toISOString() });
     fs.writeFileSync(f(dir, 'cards.md'), cardsMd(s));
     fs.writeFileSync(f(dir, 'events.jsonl'), '');
     addEvents(dir, s.log.map(text => ({ type: 'log', text })));
