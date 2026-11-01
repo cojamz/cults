@@ -28,15 +28,15 @@ describe('Guest members (rule-benders)', () => {
     expect(named(s, 'Hustler')).toHaveLength(1);
   });
 
-  it('Old Maid (was Saboteur): −3 followers to whoever it joins, recruited or swapped in; named', () => {
+  it('Old Maid (was Saboteur): −5 followers (Cory, Nov 1) to whoever it joins, recruited or swapped in; named', () => {
     let s = sceneQ({ res: [rich], bonus: [5, 5], members: [[], ['gold.prospector']], shop: ['benders.saboteur'] });
     s = buy(take(s, 'gold.rush'), 'benders.saboteur');
-    expect(s.players[0].bonus).toBe(2);
+    expect(s.players[0].bonus).toBe(0);
     expect(named(s, 'Old Maid')).toHaveLength(1);
     const u = uidOf(s, 'benders.saboteur', 0);
     expect(contextFor(s).swapMembers(s.players[0], u, uidOf(s, 'gold.prospector', 1))).toBe(true);
     expect(s.players[1].members).toContain(u);
-    expect(s.players[1].bonus).toBe(2);
+    expect(s.players[1].bonus).toBe(0);
   });
   it('Launderers: worth 2; all into one color, or split color by color; the last color takes the rest', () => {
     let s = sceneQ({ res: [{ gold: 4, red: 3, blue: 2, green: 1 }], shop: ['benders.launderer'] });

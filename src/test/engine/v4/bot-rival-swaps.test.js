@@ -22,6 +22,6 @@ describe('bots and rival swaps', () => {
     const sab = Object.values(s.cards).find(c => c.def === 'benders.saboteur').uid;
     expect(s.log.join('\n')).toMatch(/Anarchist swapped/);
     expect(s.players[1].members).toContain(sab);
-    expect(s.players[1].bonus).toBe(17);
+    expect(s.players[1].bonus).toBe(15); // Old Maid −5 (Nov 1)
   });
 });

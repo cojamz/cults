@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Audit (market / purple / silver): cards whose effect may not match their text. Each test pins what the engine does.
 import { describe, it, expect } from 'vitest';
-import { take, move } from '../helpers.js';
+import { take, move, pinCosts } from '../helpers.js';
 import { sceneQ } from '../cards-helpers.js';
 import { useRetiredOvertime, useRetiredRollCall } from '../retired-overtime.js';
 
@@ -29,10 +29,13 @@ describe('audit', () => {
 
   it('Bury: half of a 3-cost member rounds down to 1, plus its own +1', () => {
     // Shift Crew: printed 1 purple + 1 any, 3 with the extra wild every member pays
-    let s = take(sc(QM, { round: 2, shop: ['purple.crew'] }), 'market.pricecheck');
-    const u = s.shop.find(x => s.cards[x].def === 'purple.crew');
-    s = move(s, `card:${u}`);
-    expect(s.players[0].res.blue).toBe(1 + 1);
+    const restore = pinCosts({ 'purple.crew': [1, 1] }); // Shift Crew costs 4 since Nov 1: pinned at its old 3
+    try {
+      let s = take(sc(QM, { round: 2, shop: ['purple.crew'] }), 'market.pricecheck');
+      const u = s.shop.find(x => s.cards[x].def === 'purple.crew');
+      s = move(s, `card:${u}`);
+      expect(s.players[0].res.blue).toBe(1 + 1);
+    } finally { restore(); }
   });
 
   it('Overseer: 1 purple held gives nothing (half, rounded down)', () => {

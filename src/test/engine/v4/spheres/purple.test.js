@@ -320,9 +320,9 @@ describe('Purple members', () => {
     const s = scene({ round: 3, members: [['purple.patience']], res: [{ purple: 10 }], queue: [{ t: 'finish' }] });
     expect(s.players[0].final.parts).toContain('Timekeeper +3');
   });
-  it('Shift Crew: worth 2 followers', () => {
+  it('Shift Crew: worth 4 followers (Cory, Nov 1)', () => {
     const s = scene({ members: [['purple.crew']] });
-    expect(followers(s, s.players[0])).toBe(3);
+    expect(followers(s, s.players[0])).toBe(5);
   });
 });
 

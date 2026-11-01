@@ -468,6 +468,6 @@ export default {
       },
       botActivate: (ctx, owner) => inARow(ctx, owner) >= 2 || (inARow(ctx, owner) >= 1 && ctx.state.round === 3),
     }),
-    m('crew', 'Shift Crew', 1, 1, 'Worth 2 followers.', { f: 2, n: 2, vanilla: true }), // 2 members (Cory, Oct 29)
+    m('crew', 'Shift Crew', 2, 1, 'Worth 4 followers.', { f: 4, n: 4, vanilla: true, round: 1 }), // 2 members (Cory, Oct 29); 4 (Cory, Nov 1: "shift crew is just bad. should be 4 members?"), price 4 Claude's
   ],
 };
