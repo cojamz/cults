@@ -14,6 +14,7 @@ Current rules only, short on purpose: every line here loads into every thread. W
 - Build his calls exactly as said. Flag a risk in one line; never add restrictions or explanatory card text he didn't ask for.
 - A test, bot or AI player calling one of his logged calls a bug is a question for him, never a fix: check design/decisions.md before routing any "bug" that changes how a card plays (Nov 1, Promote/Demote).
 - Never start work on a pick he hasn't confirmed; his answer replaces the suggestion unless he says "also". Pitch broad ideas; he designs the cards and numbers.
+- Every mechanism must work on a physical tabletop; the screen may only show what a table could track with cards and tokens, never fix an unclear rule (Cory, Nov 1: "we can't cheat and do it digitally").
 - Turn rules: read them the plain way a table would. Before answering a turn-rule question, play one concrete round out in game words and ask him to confirm.
 - Fixes and "X should be cheaper": go with your gut, log it in design/decisions.md as "(Claude, under Cory's go-with-your-gut)" with the why.
 - A picked mockup is ported from its own code and values; change only what he named. Visual work goes through a picky anti-slop critic each round; ship the best version of every piece.
