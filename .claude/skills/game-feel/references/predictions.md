@@ -27,3 +27,13 @@ Grounded in: batch 1 (Normal, deck 10, 7 colors, 800 games), the Nov 1 pick-rate
 - [low] Deck 15 spreads color lifts wider than deck 10 (more members per color = more variance in what shows) → ❌ narrower (+3 to +12 vs −4 to +11); what it spreads is the shop: 23 rarely bought cards vs 14
 - [high] Old Maid and Extra Hand stay DEAD → ↔ RARE (10% and 4% owned), not under 3%; Hoarder is the only DEAD card
 Final: 0 ✅, 4 ↔, 6 ❌ (Last Call moved to ↔ when deck 15 Hard came in) (Purple 2–3 seats unmeasured, counted ↔). Interim note at 7 of 10: Read: I over-trusted batch 1 and the playtest (White sweeps), and under-weighted how copies scale. Lesson for the next block: predict from the mechanism (what a copy pays in round III), not from the last run's headline.
+
+## 2026-11-01 late morning: the 1.0 balance round (deck 10, after the Nov 1 fixes), written before any data
+1. The rebuilt Very Hard (paired dice, 6 options, halving) beats today's Very Hard by over 1 follower a seat, paired (med).
+2. Greatest Hits (new version) is no longer the top space at any tier (med).
+3. Recruiter ("Whenever a member leaves a rival's cult, +2 red.") sits within ±5 at every tier, and Red drops under +6 as a color (med).
+4. The choice log tags Recruit Twice and Spree FILLER or DEAD, not REAL CHOICE (med).
+5. Yellow is still the weakest color at 4 seats on Hard and Very Hard (low).
+6. Small-cult share (5 or fewer members, counting members) stays under 20% at 4 seats (med).
+7. Expert players rate at least one artifact "fun 1-2" across both tables it shows up on (low).
+8. The choice log finds most round I spaces REAL CHOICE and most round III centers AUTO-PICK (med).
