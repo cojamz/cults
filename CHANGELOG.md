@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.939 — 2026-11-01
+
+- The rules page: a skip stays in its round and never carries into the next.
+
 ## v0.9.938 — 2026-11-01
 
 - Greatest Hits now copies any 3 round I actions with a minion on them. Balance numbers: Last Call +1 follower per minion left; Customs 6, Loyalists 5, Grifter 7, HR 12, Proselytizers 8, Deprogrammers 3, and a few members worth more followers.
