@@ -1,7 +1,7 @@
 /* the artifact draft on the wheel's dark middle (ArtifactDraft.jsx), for the starting pick only */
 .art-tile { display: inline-grid; place-items: center; width: 28px; height: 28px; flex: none; border-radius: 6px; background: color-mix(in srgb, var(--c) 18%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 55%, transparent); }
 .art-tile .sprite { display: block; }
-.art-draft { position: absolute; left: 50%; top: 50%; translate: -50% -50%; z-index: 4; width: min(330px, 58cqmin); padding: 8px 10px 10px; border-radius: 12px;
+.art-draft { position: absolute; left: 50%; top: 50%; translate: -50% -50%; z-index: 4; width: clamp(300px, 58cqmin, 330px); /* at least 300px: on a 1100x700 window the wheel is small, and four long artifacts at 58% of it ran off the top (layout l6, Nov 1) */ padding: 8px 10px 10px; border-radius: 12px;
   background: #221a15; color: #ece6d6; box-shadow: 0 0 0 1px rgba(236,230,214,.14), 0 14px 34px rgba(0,0,0,.55); animation: rise .25s ease-out both; }
 .art-draft .ad-head { margin: 0; font-family: var(--serif); font-size: 18px; line-height: 22px; font-weight: 700; }
 .art-draft .ad-head small { font-family: inherit; font-size: 15px; font-weight: 400; color: var(--muted, #b09f82); }

@@ -60,7 +60,17 @@ async function sample(tag) {
   // the states the collector let go are counted a task later (FinalizationRegistry): a beat, and once more
   await page.waitForTimeout(60);
   await cdp.send('HeapProfiler.collectGarbage').catch(() => {});
-  const states = await page.evaluate(() => (typeof window.patronsLiveStates === 'function' ? window.patronsLiveStates() : null)).catch(() => null);
+  const live = () => page.evaluate(() => (typeof window.patronsLiveStates === 'function' ? window.patronsLiveStates() : null)).catch(() => null);
+  let states = await live();
+  // under load the finalizers run late, so one read can still count states already collected (43 on a busy box,
+  // 17-33 alone on the same build, Nov 1): collect and read again until two reads agree (at most 5 rounds)
+  for (let i = 0, prevN = null; states != null && states !== prevN && i < 5; i++) {
+    prevN = states;
+    await page.waitForTimeout(150);
+    await cdp.send('HeapProfiler.collectGarbage').catch(() => {});
+    await page.waitForTimeout(60);
+    states = await live();
+  }
   const { metrics } = await cdp.send('Performance.getMetrics');
   const m = Object.fromEntries(metrics.map(x => [x.name, x.value]));
   const where = await at();
