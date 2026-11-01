@@ -65,6 +65,7 @@ function anarchyPairs(ctx, p) {
   for (let i = 0; i < all.length; i++) for (let j = i + 1; j < all.length; j++) {
     const a = all[i], b = all[j], oa = ctx.ownerOf(a.uid), ob = ctx.ownerOf(b.uid);
     if (oa === ob) continue; // two in the same cult or both in the shop: nothing moves
+    if (a.def.id === b.def.id) continue; // two copies of one member (piles): nothing changes
     if (Math.abs(cost(a) - cost(b)) <= 2) out.push([a, b]);
   }
   return out;
