@@ -5,7 +5,7 @@
 set -euo pipefail
 cd /home/user/patrons
 D=design/eval/balance-1.0/final; M=/mnt/project-files/balance-1.0/merged; T=/tmp/claude-0/gather
-B="runner-hard-1 project-thread-x1cltz runner-normal-1 runner-vh-a runner-vh-b runner-vh-c runner-hard-red runner-vh-red"
+B="runner-hard-1 project-thread-x1cltz runner-normal-1 runner-hard-red $(git ls-remote --heads origin 'claude/runner-vh-*' | sed 's#.*refs/heads/claude/##' | tr '\n' ' ')"
 rm -rf $T; mkdir -p $T $D $M
 for b in $B; do git fetch -q origin claude/$b 2>/dev/null || true; done
 for b in $B; do for p in raw2 raw3 final; do git archive origin/claude/$b design/eval/balance-1.0/$p 2>/dev/null | tar -x -C $T || true; done; done
