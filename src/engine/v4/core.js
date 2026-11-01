@@ -1122,12 +1122,12 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   p.members.push(uid);
   const def = cardDef(state, uid);
   log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
-  memberAcquired(state, p, uid, { spent });
+  memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 });
   // an arrival like any other (Saboteur: "whenever this joins your cult"); swaps and moves fire it in their own code
   memberJoined(state, p, uid);
 }
 /** A member recruit: p took it (shop, free, a steal) or swapped it in with their own red action (see recruited). */
-function memberAcquired(state, p, uid, { stolen = false, spent = null } = {}) {
+function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop = false } = {}) {
   state.recruits += memberWeight(state, uid);
   p.turnRecruits += memberWeight(state, uid);
   const card = state.cards[uid], def = defById(card.def);
@@ -1137,7 +1137,8 @@ function memberAcquired(state, p, uid, { stolen = false, spent = null } = {}) {
   const ctx = ctxFor(state);
   const w = wrap(state, card);
   // spent: what the recruit paid (Collector reads silver in it); null when free
-  recruited(state, p, { member: w, spent });
+  // fromShop: a member taken from the face-up shop (Red Cloak, Cory Nov 1)
+  recruited(state, p, { member: w, spent, fromShop });
   // a when-recruited effect leaves a trace like any other member hook (Seed Money, Pilgrim, Retinue…)
   if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));
   joinNow(state, p, w, [def]);

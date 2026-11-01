@@ -196,7 +196,7 @@ export default {
     }),
     // Cory, Nov 1 3:14pm: "I like tourists. maybe on recruit and round start?" Replaces Go-Between in the 10-card deck.
     // Price 3 yellow + 4 any and worth 1 are the design thread's fill-ins
-    m('tourists', 'Tourists', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { now: true,
+    m('tourists', 'Tourists', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { now: true, round: 1, // a round I member like Go-Between, so Yellow keeps 4 (Claude's fill-in)
       onRoundStart(ctx, owner) {
         const k = held(ctx, owner).length;
         if (k) { owner.bonus += k; ctx.log(`${owner.name}'s Tourists: +${k} follower${k === 1 ? '' : 's'}.`); }

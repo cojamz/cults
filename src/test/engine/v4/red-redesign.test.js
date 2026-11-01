@@ -191,11 +191,10 @@ describe('active acquisition versus gifts', () => {
     const s = table(Q, { members: [['red.recruiter'], ['echo.evergreen']], queue: [] });
     const uid = uidIn(s, 'echo.evergreen', 1), ctx = contextFor(s);
     ctx.moveMember(uid, s.players[1], s.players[0]);
-    expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([0, 0, 2]); // a gift is no recruit; Recruiter: a member left a rival's cult, +2 red
+    expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([0, 0, 0]); // a gift is no recruit
     ctx.moveMember(uid, s.players[0], s.players[1]);
-    expect(s.players[0].res.red).toBe(2); // its holder's own member leaving pays nothing
     expect(ctx.steal(s.players[0], s.players[1], { uid })).toBe(1);
-    expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([1, 2, 4]); // Evergreen's On Recruit +2; Recruiter +2
+    expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([1, 2, 0]); // Evergreen's On Recruit +2; Recruiter: not from the shop
   });
 
   it('a return-to-shop removes only an Extra Hand’s unplaced minion and reacquisition restores it once', () => {

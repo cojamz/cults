@@ -16,44 +16,40 @@ const colors = (s, i) => s.resources.map(r => s.players[i].res[r]);
 
 // Recruiter changed (Cory, Nov 1): "Whenever a member leaves a rival’s cult, +2 red." It no longer watches recruits;
 // these pin what a recruit from the shop, a shop swap and a follower purchase now pay it (nothing), and a rival swap.
-describe('Recruiter ("Whenever a member leaves a rival’s cult, +2 red") watches cult-to-cult moves, not recruits', () => {
-  it('a member taken from the shop pays nothing', () => {
-    const s = fixture({ members: [['red.recruiter']], shop: ['red.volunteer'] });
+// Red Cloak (Cory, Nov 1 3:59pm): "Put it back at 1 red when you recruit a member from the shop"
+describe('Recruiter ("Whenever you recruit a member from the shop, +1 red") pays for shop recruits only', () => {
+  it('a member taken from the shop pays +1 red, free or paid', () => {
+    const s = fixture({ members: [['red.recruiter']], shop: ['red.volunteer', 'red.intern'] });
     contextFor(s).recruit(s.players[0], uidIn(s, 'red.volunteer', 'shop'), { free: true });
-    expect(s.players[0].res.red).toBe(0);
+    expect(s.players[0].res.red).toBe(1);
   });
 
-  it('a member you swap in from the shop pays nothing', () => {
+  it('a member you swap in from the shop pays nothing (a swap is no recruit from the shop)', () => {
     const s = fixture({ members: [['red.recruiter', 'red.twins']], shop: ['red.volunteer'] });
     const p = s.players[0];
     expect(contextFor(s).swapMembers(p, uidIn(s, 'red.twins', 0), uidIn(s, 'red.volunteer', 'shop'))).toBe(true);
     expect(p.res.red).toBe(0);
   });
 
-  it('a follower purchase moves no member, so it pays nothing (Cory, 2026-10-29)', () => {
+  it('a follower purchase recruits no member, so it pays nothing', () => {
     let s = fixture({ members: [['red.recruiter']], res: [{ gold: 3 }] });
     s = buyOne(s);
     expect(s.players[0].bonus).toBe(1);
     expect(s.players[0].res.red || 0).toBe(0);
   });
 
-  it('a rival’s swap with your cult: their member leaving theirs pays +2, yours leaving yours nothing; a hand-off pays too', () => {
-    const s = fixture({ members: [['red.recruiter', 'red.twins'], ['red.volunteer']] });
-    const [p, rival] = s.players;
-    // the rival's own red swap: your Twins for their Volunteer
-    expect(contextFor(s).swapMembers(rival, uidIn(s, 'red.twins', 0), uidIn(s, 'red.volunteer', 1))).toBe(true);
-    expect(p.members).toContain(uidIn(s, 'red.volunteer', 0));
-    expect(p.res.red).toBe(2);
-    // and a member a rival hands you
-    contextFor(s).moveMember(uidIn(s, 'red.twins', 1), rival, p);
-    expect(p.res.red).toBe(4);
+  it('a member stolen or handed over from a rival pays nothing', () => {
+    const s = fixture({ members: [['red.recruiter'], ['red.volunteer', 'red.twins']] });
+    const [p, rival] = s.players, c = contextFor(s);
+    c.steal(p, rival, { uid: uidIn(s, 'red.volunteer', 1) });
+    c.moveMember(uidIn(s, 'red.twins', 1), rival, p);
+    expect(p.res.red || 0).toBe(0);
   });
 
-  it('a rival buying followers pays nothing', () => {
-    let s = fixture({ members: [['red.recruiter']], res: [{}, { gold: 3 }] });
-    s = buyOne(s, 1);
-    expect(s.players[1].bonus).toBe(1);
-    expect(s.players[0].res.red).toBe(0);
+  it('a rival recruiting from the shop pays nothing', () => {
+    const s = fixture({ members: [['red.recruiter']], shop: ['red.volunteer'] });
+    contextFor(s).recruit(s.players[1], uidIn(s, 'red.volunteer', 'shop'), { free: true });
+    expect(s.players[0].res.red || 0).toBe(0);
   });
 });
 

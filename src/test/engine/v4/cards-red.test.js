@@ -41,8 +41,8 @@ describe('Red members', () => {
     s = take(s, 'gold.rush');
     s = buy(s, 'red.mentor');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
-    // Drive +2 on the second; Recruiter quiet: both came from the shop, not a rival's cult
-    expect(named(s, 'Recruiter')).toHaveLength(0);
+    // Drive +2 on the second; Recruiter +1 for each: both came from the shop (Cory, Nov 1 3:59pm)
+    expect(named(s, 'Recruiter')).toHaveLength(2);
     expect(named(s, 'Pied Piper')).toHaveLength(1);
   });
 
@@ -63,13 +63,13 @@ describe('Red members', () => {
     expect(s.players[0].final.parts).toEqual(['Mob +5', 'Mob +5']);
   });
 
-  it('Recruiter: a rival’s Poach of another rival’s member pays its holder +2 red, named', () => {
+  it('Recruiter: a rival’s Poach of another rival’s member pays its holder nothing (shop recruits only, Nov 1)', () => {
     // 3 players, round III: P1 Poaches P3's Triplets; P2 holds Recruiter
     let s = sceneQ({ quadrants: ['gold', 'red', 'thieves', 'echo'], n: 3, round: 3, members: [[], ['red.recruiter'], ['red.twins']] });
     s = move(take(s, 'thieves.heist'), `card:${uidOf(s, 'red.twins', 2)}`);
     expect(s.players[0].members).toHaveLength(1);
-    expect(R(s, 1).red).toBe(2);
-    expect(named(s, 'Recruiter')).toEqual(["P2's Recruiter: +2 red."]);
+    expect(R(s, 1).red).toBe(0);
+    expect(named(s, 'Recruiter')).toHaveLength(0);
   });
 
   it('Recruiter: its holder’s own member leaving pays nothing; a shop swap pays nothing', () => {
@@ -87,13 +87,13 @@ describe('Red members', () => {
     expect(named(t, 'Recruiter')).toHaveLength(0);
   });
 
-  it('Recruiter: a rival’s member swapped into the shop pays +2 red (Cory, Nov 1)', () => {
+  it('Recruiter: a rival’s member swapped into the shop pays nothing (shop recruits only, Nov 1 3:59pm)', () => {
     let s = sceneQ({ round: 2, members: [['red.recruiter'], ['red.intern']], shop: ['red.volunteer'] });
     s = take(s, 'red.hireup');
     const swap = s.pending.options.find(o => o.id.startsWith(`trade:${uidOf(s, 'red.intern', 1)}:`));
     s = settle(move(s, swap.id));
-    expect(R(s).red).toBe(3 + 2); // Promote's +3, Recruiter's +2
-    expect(named(s, 'Recruiter')).toEqual(["P1's Recruiter: +2 red."]);
+    expect(R(s).red).toBe(3); // Promote's +3
+    expect(named(s, 'Recruiter')).toHaveLength(0);
   });
 
   it('Pied Piper: the second recruit in one turn pays +2 red at once, named; Big Spender makes it two buys', () => {
