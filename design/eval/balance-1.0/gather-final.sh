@@ -12,6 +12,7 @@ for b in $B; do for p in raw2 raw3 final; do git archive origin/claude/$b design
 E=$T/design/eval/balance-1.0
 mkdir -p $E/raw2/veryhard; cp /home/user/final-run/out/veryhard/*.jsonl $E/raw2/veryhard/ 2>/dev/null || true
 cp /home/user/final-run/out/veryhard/*.choices $E/raw2/veryhard/ 2>/dev/null || true
+mkdir -p $E/raw3/veryhard; cp /home/user/revert-run/out/veryhard/*.jsonl /home/user/revert-run/out/veryhard/*.choices $E/raw3/veryhard/ 2>/dev/null || true
 
 # merge <old files...> -- <new files...>  -> stdout: one line per game, new wins
 merge() { node -e '
