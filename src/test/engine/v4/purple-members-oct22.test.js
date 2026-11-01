@@ -20,7 +20,7 @@ describe('Purple members, Oct 22', () => {
   });
   it('Early Birds: Last Call still pays its followers, and you keep your turns', () => {
     const s = take(sc({ round: 2, left: 3, members: [['purple.earlybird']], queue: turns(0, 1, 0, 1, 0) }), 'purple.lastcall');
-    expect(s.players[0].bonus).toBe(4);
+    expect(s.players[0].bonus).toBe(2);
     expect(upcoming(s)).toEqual([1, 0, 1, 0]);
   });
   it('Bouncer: when recruited, the next two rivals’ turns are skipped; your own between them still happens', () => {

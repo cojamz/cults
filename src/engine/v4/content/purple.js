@@ -295,12 +295,12 @@ export default {
       // Cory, 2026-10-22: a follower bonus for taking the rest of your turns last ("YES now you're cooking"), in his
       // words ("take the remainder of your turns when others are out of minions"), "let's just try it at 2 followers
       // per minion left". Replaces Rush Hour. Name is Claude's fill-in.
-      key: 'lastcall', copyDoesIt: true, ring: 2, name: 'Last Call', text: '+1 purple. +2 followers per minion you have left. Skip your turns until everyone else is out of minions.',
-      estimate: (ctx, p) => 1 + 2 * Math.max(0, p.left - 1),
+      key: 'lastcall', copyDoesIt: true, ring: 2, name: 'Last Call', text: '+1 purple. +1 follower per minion you have left. Skip your turns until everyone else is out of minions.',
+      estimate: (ctx, p) => 1 + 1 * Math.max(0, p.left - 1),
       resolve(ctx, p) {
         ctx.gain(p, P, 1, { fromAction: true });
-        const k = turnsLeft(ctx, p), f = 2 * p.left;
-        if (f) { p.bonus += f; ctx.log(`${p.name}'s Last Call: +${f} followers.`); }
+        const k = turnsLeft(ctx, p), f = p.left;
+        if (f) { p.bonus += f; ctx.log(`${p.name}'s Last Call: +${f} follower${f === 1 ? '' : 's'}.`); }
         let moved = 0;
         for (let i = 0; i < k; i++) if (skipNext(ctx, p, 'Last Call', p, true)) moved++;
         // the rest of the round too: a rival's turn that lands later still goes first (core lastCallLast)

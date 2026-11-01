@@ -1,7 +1,7 @@
 // @vitest-environment node
-// Last Call (Purple, round II; Cory, 2026-10-22): "+2 followers per minion you have left" for taking "the remainder
+// Last Call (Purple, round II; Cory, 2026-10-22): "+2 followers per minion you have left" (+1 since the Nov 1 balance pass) for taking "the remainder
 // of your turns when others are out of minions". Round II, 4 players, A B C D D C B A A B C D D C B A: B takes it on
-// their first turn with 3 minions left: +6 followers; A C D place all theirs, then B places 3 in a row.
+// their first turn with 3 minions left: +3 followers; A C D place all theirs, then B places 3 in a row.
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, actionAt, followers } from '../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../engine/v4/bots.js';
@@ -21,10 +21,10 @@ function plain(s, rand) {
 }
 
 describe('Last Call', () => {
-  it('round II, 4 players: B on their first turn gets +6 followers and places their other 3 after everyone', () => {
-    // seed 44 since the deck-of-10 price moves (Oct 31); seed 12 since Gather's recruit followers (Oct 31); seed 88 since the Oct 30 prices and bodies; seed 61 since Promote +3 red and Recruiter's color (Oct 30); seed 17 since the Oct 29 balance-run followers (Brokers, Clockmakers…); seed 10 since Clockmakers, Courier and Help Yourself changed (Oct 29); seed 7 since bots rate Cover's empty actions (Oct 29; seed 3 before); seed 2 since +1 wild and the round I rework (Oct 28; seed 5 since Oct 27; seed 7 since Gather's +3, Oct 25; seed 11 since the Oct 24 member structure) (seed 6 since Even Swap's +2 red): on other seeds a second bot took Last Call too
-    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 44, quadrants: Q });
-    const rand = seededRandom(44);
+  it('round II, 4 players: B on their first turn gets +3 followers and places their other 3 after everyone', () => {
+    // seed 7 since Last Call's +1 per minion (Nov 1); seed 44 since the deck-of-10 price moves (Oct 31); seed 12 since Gather's recruit followers (Oct 31); seed 88 since the Oct 30 prices and bodies; seed 61 since Promote +3 red and Recruiter's color (Oct 30); seed 17 since the Oct 29 balance-run followers (Broker, Clockmaker…); seed 10 since Clockmaker, Courier and Help Yourself changed (Oct 29); seed 7 since bots rate Cover's empty actions (Oct 29; seed 3 before); seed 2 since +1 wild and the round I rework (Oct 28; seed 5 since Oct 27; seed 7 since Gather's +3, Oct 25; seed 11 since the Oct 24 member structure) (seed 6 since Even Swap's +2 red): on other seeds a second bot took Last Call too
+    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 7, quadrants: Q });
+    const rand = seededRandom(7);
     while (!(s.round === 2 && s.pending?.kind === 'place')) s = applyMove(s, plain(s, rand));
     const base = s.order.slice(0, 4), [A, B] = base;
     const placed = [];
@@ -33,7 +33,7 @@ describe('Last Call', () => {
     const i = quadrant('purple').actions.findIndex(a => a.key === 'lastcall');
     const f0 = followers(s, s.players[B]), p0 = s.players[B].res.purple || 0;
     s = applyMove(s, { player: B, option: `slot:${s.quadrants.indexOf('purple')}-${i}` });
-    expect(followers(s, s.players[B])).toBe(f0 + 6);
+    expect(followers(s, s.players[B])).toBe(f0 + 3);
     expect(s.players[B].res.purple).toBe(p0 + 1);
     while (s.round === 2) {
       const next = plain(s, rand);

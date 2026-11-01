@@ -25,7 +25,7 @@ const S = {
   blue: { a1: '+3 blue', a2: '+2 blue +1 red', a3: '+2 blue +1 green', a4: '+5 blue', a5: '+4 blue +1 gold', a6: '+8 blue' },
   green: { a1: '+3 green', a2: '+2 green +1 gold', a3: '+2 green +1 blue', a4: '+5 green', a5: '+4 green +1 red', a6: '+8 green' },
   purple: {
-    hourly: r => `+${3 + r} purple`, catchup: '+1 purple, +1 per rival who placed more', windup: '+1 purple per minion you placed', planahead: '+1 purple per minion left', overtime: '1 extra turn', lastcall: '+2 followers per minion left, rest go last; +1 purple', skip: r => `+${r + 3} purple, skip your next turn`, holdup: r => `+${r + 1} purple, the next turn is skipped`, crowdin: '+5 purple, +1 minion this round', rally: '+2 purple, two turns after this one', again: r => `+${r} purple, another turn after this one`,
+    hourly: r => `+${3 + r} purple`, catchup: '+1 purple, +1 per rival who placed more', windup: '+1 purple per minion you placed', planahead: '+1 purple per minion left', overtime: '1 extra turn', lastcall: '+1 follower per minion left, rest go last; +1 purple', skip: r => `+${r + 3} purple, skip your next turn`, holdup: r => `+${r + 1} purple, the next turn is skipped`, crowdin: '+5 purple, +1 minion this round', rally: '+2 purple, two turns after this one', again: r => `+${r} purple, another turn after this one`,
   },
   silver: {
     toast: r => `+${3 * r} silver · others +${r} silver`, polish: '2 silver → 4 any', partygifts: '+2 followers per silver rivals gain', favors: '+2 silver · each rival gives 1', tongue: '+3 silver · turn into colors', largesse: '+1 follower per silver rivals gain',
@@ -51,7 +51,7 @@ const S = {
 const PIPS = {
   gold: { steal: 'steal 3 gold', windfall: '+1 gold per member', strike: 'double gold' },
   red: { hireup: 'promote a member', trade: 'demote a member', take: 'recruit one costing 8 or less, free' },
-  purple: { lastcall: '+2 followers per minion left, rest go last' },
+  purple: { lastcall: '+1 follower per minion left, rest go last' },
   silver: { partygifts: '+2 followers per silver rivals gain', largesse: '+1 follower per silver rivals gain' },
   yellow: { gather: '+1 per member' },
   market: { clearance: 'recruit twice', pricecheck: 'bury for half its cost', spree: 'recruit 3 times' },
