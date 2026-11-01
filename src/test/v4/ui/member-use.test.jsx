@@ -173,6 +173,16 @@ describe('a use that changes only the shop is a real use (Cory, Oct 28: Restocke
     cleanup();
   });
 });
+describe("a use that only sets up later is a real use (Cory's playtest, Nov 1: Party Crasher wouldn't light)", () => {
+  for (const id of ['benders.squatter', 'benders.bigspender']) it(`${id}: lit, a Use button, never "nothing to gain now"`, () => {
+    const s = table(['red', 'gold', 'echo', 'trading'], { members: [[id]], res: [{}, {}] });
+    const uid = uidIn(s, id, 0);
+    const u = useNow(s, 0, uid);
+    expect(u.blocked).toBe(false);
+    expect(u.idle).toBe(false);
+    expect(usableNow(s, 0).map(x => x.uid)).toContain(uid);
+  });
+});
 describe('a second buy is seen (w2a #6)', () => {
   it('Big Spender: the headline says "Recruit again (Big Spender)", the member hops, then reads "used this round"', () => {
     const s = table(['gold', 'echo', 'trading', 'thieves'], { members: [['benders.bigspender1']], res: [{ gold: 6, white: 6 }] });

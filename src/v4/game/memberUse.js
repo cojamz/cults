@@ -62,7 +62,9 @@ export function useNow(state, pid, uid) {
     const opt = pend.options.find(o => o.id === id) || {};
     // a change the words don't count still counts (Restockers' new shop, a rival's loss, a discount: Cory, Oct 28, "says
     // it will do nothing"), read the way the engine's own idle check reads it
-    const look = x => JSON.stringify([x.players.map(o => [o.res, o.bonus, o.discount || 0, o.members, o.left]), x.shop, x.pile.length]);
+    // the whole player, as the engine's idle check reads it: a use that only sets up later (Party Crasher's next minion,
+    // Big Spender's second recruit) is not idle (Cory's playtest, Nov 1)
+    const look = x => JSON.stringify([x.players, x.shop, x.pile.length]);
     const idle = !blocked && (opt.idle === true || (typeof opt.value === 'number' && opt.value <= 0) || (opt.idle !== false && !asks && !words && look(after) === look(state)));
     // the engine's own line, without the owner's name: "no loose followers to sell (…)", "Safecracker found no magenta…"
     const name = cardDef(state, uid).name;
