@@ -3,15 +3,15 @@
  "schema": 1,
  "build": {
   "schema": 1,
-  "content": "2gdztdawqu8.10afe12b33",
+  "content": "173nx50n62c.daf1f74274",
   "id": "dev",
-  "version": "v0.9.956"
+  "version": "v0.9.961"
  },
  "made": {
   "schema": 1,
-  "content": "2gdztdawqu8.10afe12b33",
+  "content": "173nx50n62c.daf1f74274",
   "id": "dev",
-  "version": "v0.9.956"
+  "version": "v0.9.961"
  },
  "seed": 20261014,
  "quadrants": [
@@ -677,14 +677,14 @@
   "over": true,
   "moves": 156,
   "followers": [
-   56,
-   46,
-   54
+   54,
+   53,
+   47
   ]
  },
  "refreshed": {
-  "from": "237ib62mvf3.e97fb4db49",
-  "kept": 26,
-  "of": 148
+  "from": "2gdztdawqu8.10afe12b33",
+  "kept": 156,
+  "of": 156
  }
 }
