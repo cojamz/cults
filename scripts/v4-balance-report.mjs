@@ -36,7 +36,9 @@ for (const r of rows) {
   S.games++;
   const fs = r.players.map(p => p.followers).sort((a, b) => b - a);
   S.top += fs[0]; S.margin += fs[0] - fs[1];
-  for (const m of r.shop) offered[m] = (offered[m] || 0) + 1;
+  // a member can reach a cult without being seen in the shop between moves (drawn and taken in one move, or gained
+  // from the deck), so a game counts as "showed it" when it was in the shop or a bot owned it: owned share stays <= 100%
+  for (const m of new Set([...r.shop, ...bots(r).flatMap(p => p.members)])) offered[m] = (offered[m] || 0) + 1;
   for (const p of r.players) {
     const w = share(r, p);
     // the 1.0 bar (Cory, Oct 31): winners with 5 or fewer members win at least 20% of games (every seat counts)
