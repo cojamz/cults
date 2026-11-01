@@ -32,7 +32,7 @@ Distilled from `design/decisions.md`, which stays the full log. Check every sugg
 - Everyone's items are public.
 
 ## How you win
-- Pure follower-buying ("big followers") is the baseline strategy, like Big Money in Dominion: it should win about 25% of 4-player games (15–30% acceptable; outside that, retune), and a good member engine beats it. (Cory, 2026-10-14)
+- Small cults must win: winners with 5 or fewer members take at least 20% of games (Cory, 2026-10-31, the 1.0 bar: "Winning with like <=5 members should be >=20%"). Buying followers has no target ("buying followers doesnt need a guardrail"; the old 25% target is retired).
 - The game is about recruiting lots of members (items) and escalating your resources to win followers in bulk (the fixtures). Ring contests are seasoning, not the meal.
 - Each quadrant has exactly one scoring rule, printed on each of its rings, visually distinct from the actions.
 - Scoring rules measure visible state (what players hold right now), never counts of events during turns. Anyone looking at the other players can tell who's winning each contest. (Cory, 2026-10-14)
@@ -65,7 +65,7 @@ Distilled from `design/decisions.md`, which stays the full log. Check every sugg
 - The tracking burden is the UI's job. Only cut a rule if it can't be shown clearly.
 - Price every card before Cory sees it with design/eval/value-model.md, and name the instrument behind every number (value model, Easy/Normal/Hard bot, thinking bots, AI tester). Sims (`scripts/v4-sim.mjs` and friends) run only when Cory asks (Oct 20, token-conscious week).
 - Bot statistics are not design flaws. A bot taking a dead option says nothing about a person; fix only what can never pay, duplicates and dominated cards.
-- Report the buy-followers-only win rate (target about 25%) with every balance change, and check which way each fix points.
+- Report the share of games won with 5 or fewer members (bar: at least 20%) with every balance change, and check which way each fix points.
 
 ## Screen
 - Every UI element has a hover that gives more info (long-press/tap on phone). Numbers explain where they came from; card names open the card; icons say what they are. (Cory, 2026-10-14)

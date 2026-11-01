@@ -41,7 +41,8 @@ Current rules only, short on purpose: every line here loads into every thread. W
 - Before a thread ends or fills: design/HANDOFF.md, in-flight.md and todo.md true for a fresh thread. At most one scheduled check-in.
 
 ## Spending and numbers
+- Two decks, 10 and 15 per color: every balance run first asks him which deck to balance on (scripts need DECK=10|15).
 - No sims, test-game batches or blind panels unless he asks; suggest a panel when a big stretch of work makes one due. Spend freely on harness and tooling.
 - Prices are educated guesses refined by human play: lean pricier, never below 2, lift a weak card with followers before cutting its price.
-- Bot numbers name their instrument (Easy/Normal/Hard, thinking bots, AI tester), check which way the fix points, and leave out the buy-followers-only seats (reported as their own win rate). Bot stats are not design flaws. Batches use the 2.0 colors unless he names others. A balance report covers every member, color, space and artifact.
+- Bot numbers name their instrument (Easy/Normal/Hard, thinking bots, AI tester), check which way the fix points, and report the share of games won with 5 or fewer members (bar: at least 20%; buying followers has no target). Bot stats are not design flaws. Batches use the 2.0 colors unless he names others. A balance report covers every member, color, space and artifact.
 - Versions: small publishes are sub-steps (v0.9.801, v0.9.802); the next whole step only for a release worth calling one.
