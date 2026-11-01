@@ -177,6 +177,8 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
         a.removeAttribute('data-fit');
         const over = () => a.getBoundingClientRect().bottom > ft.getBoundingClientRect().top + 0.5 || ft.getBoundingClientRect().bottom > card.getBoundingClientRect().bottom + 0.5;
         if (over()) a.setAttribute('data-fit', 'tight');
+        // still under the price (a long rule over a discounted price's two lines, "7" over "free"): the picture gives way
+        if (over()) a.setAttribute('data-fit', 'bare');
       }
     };
     fit();
