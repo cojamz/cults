@@ -21,7 +21,7 @@ const PICKS = ['Host', 'Busker', 'Headhunter', 'Patriarch', 'Bodyguard', 'Triple
 const everyone = () => [...allQuadrantIds().flatMap(id => quadrant(id).members), ...guestMembers()];
 const find = name => everyone().find(d => d.name === name);
 const sphereOf = d => (d.quadrant && TABLE.quadrants.includes(d.quadrant) ? quadrant(d.quadrant).resource : 'colorless');
-const colorName = d => (d.quadrant && TABLE.quadrants.includes(d.quadrant) ? quadrant(d.quadrant).name : 'Guest');
+const colorName = d => (d.quadrant && TABLE.quadrants.includes(d.quadrant) ? quadrant(d.quadrant).name : 'Grey');
 const ability = d => String(d.text || '').replace(/^Worth \d+ followers?\.\s*/i, '').replace(/^(Free\.\s*)?No effect\.?$/i, '').trim();
 const total = d => costParts(d, TABLE.resources).reduce((t, c) => t + c.n, 0);
 

@@ -22,7 +22,7 @@ export function deckCatalog(state) {
     entries.set(def.id, { def, parts, copies: 1, cost: parts.reduce((n, p) => n + p.n, 0), color: onTable(state, def) ? def.quadrant : 'colorless', ...(waitRound.has(card.uid) ? { later: waitRound.get(card.uid) } : {}) });
   }
   const cards = [...entries.values()].sort((a, b) => a.cost - b.cost || a.def.name.localeCompare(b.def.name));
-  const rows = [...state.quadrants.map(q => ({ key: q, name: quadrant(q).name, color: `var(--${q})` })), { key: 'colorless', name: 'Colorless', color: 'var(--any)' }].filter(r => cards.some(c => c.color === r.key))
+  const rows = [...state.quadrants.map(q => ({ key: q, name: quadrant(q).name, color: `var(--${q})` })), { key: 'colorless', name: 'Grey', color: 'var(--any)' }].filter(r => cards.some(c => c.color === r.key))
     .sort((a, b) => cards.find(c => c.color === a.key).cost - cards.find(c => c.color === b.key).cost);
   return { cards, rows, prices: [...new Set(cards.map(c => c.cost))].sort((a, b) => a - b), ...otherColors(state) };
 }

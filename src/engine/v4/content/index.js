@@ -57,7 +57,7 @@ export const classicFor = n => CLASSIC.slice(0, Math.max(2, Math.min(MAX_PLAYERS
  *  plain Blue and Green hand out each other's colors, so they don't split). */
 export const defaultQuadrants = n => (n === 4 ? [...DEFAULT_QUADRANTS] : classicFor(n));
 // Guest members' stand-in sphere: colorless, never on a table, so no color counts them and no sphere scores them.
-const GUEST_QUADRANT = Object.freeze({ id: 'guest', name: 'Guest', resource: 'colorless', members: [], actions: [] });
+const GUEST_QUADRANT = Object.freeze({ id: 'guest', name: 'Grey', resource: 'colorless', members: [], actions: [] });
 export const quadrant = id => {
   if (id === 'guest') return GUEST_QUADRANT;
   const q = QUADRANTS[id];

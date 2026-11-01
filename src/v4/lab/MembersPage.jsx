@@ -44,7 +44,7 @@ function catalog() {
       artifact: ARTIFACTS[id] ? q.members.find(d => d.id === ARTIFACTS[id]) : null,
     };
   });
-  groups.push({ id: 'guest', name: 'Guests', line: 'Colorless: paid in any colors, in every game.', guest: true, actions: [], members: guestMembers().filter(d => !CUT.has(d.id)).sort(byPrice) });
+  groups.push({ id: 'guest', name: 'Grey', line: 'No color: paid in any colors, in every game.', guest: true, actions: [], members: guestMembers().filter(d => !CUT.has(d.id)).sort(byPrice) });
   return groups;
 }
 

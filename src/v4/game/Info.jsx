@@ -243,7 +243,7 @@ export const cardGround = (state, def) => (!onTable(state, def) ? 'colorless' : 
 /** "colorless": a member whose quadrant isn't on this table. */
 export function Colorless({ state, def }) {
   if (onTable(state, def)) return null;
-  return <Term k="colorless" className="colorless-tag">Colorless</Term>;
+  return <Term k="colorless" className="colorless-tag">Grey</Term>;
 }
 
 /** A cost as the plate prints it: "2● 2◐" (the number before its dot, colored part first, then any; no color names). */

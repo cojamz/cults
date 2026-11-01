@@ -36,7 +36,7 @@ You can use a member's ability any time during your own turn, as often as its ca
 ## The shop
 - 6 members are face up in round I, 7 in round II and 8 in round III. When one leaves, the top of the face-down pile refills the row. The pile shows how many are left.
 - Between rounds the whole row goes to the bottom of the pile and a fresh row is dealt.
-- A cost has a colored part, paid only in that member's color, and an "any" part, paid in any resources. Members of no color (guests) cost only "any".
+- A cost has a colored part, paid only in that member's color, and an "any" part, paid in any resources. Grey members have no color and cost only "any".
 - The pay sheet suggests a payment; tap one of your resources to swap it in.
 - A discount ("your next member costs 4 less") waits until your next member that costs something, comes off the colored part first, and is used up by that member. While you hold one, each card shows what you'd pay, with its list price struck above it, or "free".
 - Point at a card to see what you're short of. The "affordable" switch fades the members you can't pay for.

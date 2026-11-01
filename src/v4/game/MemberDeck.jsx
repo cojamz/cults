@@ -23,7 +23,7 @@ export const DECK_LOW = 10;
 /** The deck by color: every color on the table (in table order), then colorless (members of spheres not on it). */
 export function deckColors(state) {
   const rows = state.quadrants.map(qid => ({ key: qid, name: quadrant(qid).name, res: quadrant(qid).resource, n: 0 }));
-  const colorless = { key: 'colorless', name: 'Colorless', res: null, n: 0 };
+  const colorless = { key: 'colorless', name: 'Grey', res: null, n: 0 };
   for (const uid of state.pile) {
     const d = cardDef(state, uid);
     const row = onTable(state, d) ? rows.find(r => r.key === d.quadrant) : null;
