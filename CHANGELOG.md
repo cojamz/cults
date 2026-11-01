@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.945 — 2026-11-01
+
+- Caterer pays +1 silver once for Party Favors, as for Toast, not once per rival who answers.
+
 ## v0.9.944 — 2026-11-01
 
 - Giving silver one at a time (Party Gifts, Largesse, Philanthropists) shows how many you've given, how many are left, and a +1 on each rival you've picked.
