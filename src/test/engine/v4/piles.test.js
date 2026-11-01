@@ -117,15 +117,39 @@ describe('Piles: members that meet copies of themselves', () => {
   });
 });
 
-describe('Piles: variant B (every member a pile, no deck)', () => {
-  it('ten piles: two from each color and two greys, four copies each; nothing in the deck', () => {
+describe('Piles: variant B (all piles: ten piles, the rest face down as the deck)', () => {
+  it('ten piles: two from each color (one round I, one later) and two greys, one copy per player', () => {
     const r = allPiles(TABLE, 5);
     expect(r.defs).toHaveLength(10);
-    for (const q of TABLE) expect(r.defs.filter(d => d.startsWith(`${q}.`))).toHaveLength(2);
+    for (const q of TABLE) {
+      const mine = r.defs.filter(d => d.startsWith(`${q}.`));
+      expect(mine).toHaveLength(2);
+    }
     expect(r.defs.filter(d => d.startsWith('benders.'))).toHaveLength(2);
+    expect(r.copies).toBe(4);
+    expect(allPiles(TABLE.slice(0, 3), 5, { seats: 3 }).copies).toBe(3);
+    const two = allPiles(TABLE.slice(0, 2), 5, { seats: 2 });
+    expect(two.defs.filter(d => d.startsWith('red.'))).toHaveLength(4);
     const s = game('B', { seed: 5 });
-    expect(s.pile).toHaveLength(0);
     for (const d of r.defs) expect(copiesOf(s, d)).toBe(4);
+  });
+  it('round I opens a pile of every color; the shop is only the piles, the rest of the members wait face down', () => {
+    for (const seed of [1, 2, 3, 4, 5, 6]) {
+      const s = game('B', { seed });
+      expect(s.shop.every(u => s.supply[defOf(s, u)])).toBe(true);
+      for (const q of TABLE) expect(tops(s).some(d => d.startsWith(`${q}.`))).toBe(true);
+      expect(s.pile.length).toBeGreaterThan(0);
+      expect(s.pile.every(u => !s.supply[defOf(s, u)])).toBe(true);
+    }
+  });
+  it('Walk-In recruits the top member of the face-down deck, and the shop stays only piles', () => {
+    let s = scene('B', { round: 1 });
+    s.players[0].res.red = 9;
+    const top = s.pile[0], shopBefore = [...s.shop];
+    const ctx = contextFor(s);
+    ctx.recruit(s.players[0], top, { free: true, top: true });
+    expect(s.players[0].members).toContain(top);
+    expect(s.shop.sort()).toEqual(shopBefore.sort());
   });
 });
 

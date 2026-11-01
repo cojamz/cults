@@ -68,7 +68,8 @@ export function createGame({ seats, seed = 1, quadrants, rules = {} }) {
   // each listed member as a face-up pile of n copies anyone can recruit from, Dominion-style. only: the piles are the
   // whole market (no shuffled deck). See src/engine/v4/piles.js.
   const pileDefs = table.piles ? new Set(table.piles.defs) : null;
-  const inDeck = def => dealt(def) && !(pileDefs && (pileDefs.has(def.id) || table.piles.only));
+  // only + deck (all piles): the members not dealt as piles stay face down as the deck, with no face-up row
+  const inDeck = def => dealt(def) && !(pileDefs && (pileDefs.has(def.id) || (table.piles.only && !table.piles.deck)));
   for (const q of quadrants) for (const def of quadrant(q).members.filter(inDeck))
     for (let k = 0; k < def.copies; k++) { cards[uid] = { uid, def: def.id }; uid++; }
   if (table.guests) for (const def of guestMembers().filter(inDeck))
@@ -1059,7 +1060,11 @@ function refillPiles(state) {
     if (seen.has(d) || !pileOpen(state, d)) { state.shop.splice(i--, 1); back(u); } else seen.add(d);
   }
   const row = state.shop.filter(u => !isPileCard(state, u));
-  while (row.length < shopSize(state) && state.pile.length) row.push(state.pile.shift());
+  // all piles: the piles are the whole shop, so the deck (if kept) deals no face-up row
+  const rowSize = state.rules?.piles?.only ? 0 : shopSize(state);
+  while (row.length < rowSize && state.pile.length) row.push(state.pile.shift());
+  // a row card left over (it can't happen with no row, but a swap can push a deck member into the shop): back on the deck
+  while (row.length > rowSize && state.rules?.piles?.only) state.pile.push(row.pop());
   const tops = [];
   for (const d of Object.keys(state.supply)) {
     if (!pileOpen(state, d)) continue;

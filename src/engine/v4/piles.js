@@ -23,24 +23,27 @@ export function greyPiles({ copies = 3, core = GREY_CORE } = {}) {
   return { defs: [...core], copies, only: false };
 }
 
-/** Variant B: every member is a pile and there is no deck. Ten piles a game, Dominion's count: 8 from the table's
- *  colors (spread evenly, alternating a round I member and a later one) and 2 from the grey core, drawn by seed. */
-export function allPiles(quadrants, seed, { deck = 10, copies = 4, colored = 8, grey = 2, core = GREY_CORE } = {}) {
+/** All piles (Cory, 2026-11-01: "everything's a pile, like all the colors… just deal like 10 of them randomly").
+ *  The deal (Claude's pick, for Cory to confirm): ten piles a game, Dominion's count. Every color on the table gets the
+ *  same share of 8 (two each at four players, three and three and two at three, four each at two), and each color's
+ *  share alternates a round I member and a later one, so every color has a pile open from round I and one that opens
+ *  in round II or III. The last 2 are grey, from the grey core: one round I, one later. Copies: one per player.
+ *  Every member of the table's colors that isn't dealt as a pile stays face down as the deck, with no face-up row:
+ *  Walk-In, Peek, Talent Scout and Insider read "the deck" and "the pile" as printed. */
+export function allPiles(quadrants, seed, { deck = 10, seats = 4, copies = seats, colored = 8, grey = 2, core = GREY_CORE } = {}) {
   const rand = seededRandom(seed * 9173 + 11);
   const pick = list => list.splice(Math.floor(rand() * list.length), 1)[0];
-  const pools = quadrants.map(q => {
-    const ds = dealtDefs(q, deck);
-    return { early: ds.filter(d => memberRound(d) <= 1).map(d => d.id), late: ds.filter(d => memberRound(d) > 1).map(d => d.id) };
-  });
+  const split = ds => ({ early: ds.filter(d => memberRound(d) <= 1).map(d => d.id), late: ds.filter(d => memberRound(d) > 1).map(d => d.id) });
+  const take = (pool, tier) => { const list = pool[tier].length ? pool[tier] : pool[tier === 'early' ? 'late' : 'early']; return list.length ? pick(list) : null; };
+  const pools = quadrants.map(q => split(dealtDefs(q, deck)));
   const defs = [];
   for (let k = 0; defs.length < colored && k < colored * 4; k++) {
-    const pool = pools[k % pools.length], tier = Math.floor(k / pools.length) % 2 === 0 ? 'early' : 'late';
-    const list = pool[tier].length ? pool[tier] : pool[tier === 'early' ? 'late' : 'early'];
-    if (list.length) defs.push(pick(list));
+    const id = take(pools[k % pools.length], Math.floor(k / pools.length) % 2 === 0 ? 'early' : 'late');
+    if (id) defs.push(id);
   }
-  const greys = core.filter(id => guestMembers().some(d => d.id === id));
-  for (let k = 0; k < grey && greys.length; k++) defs.push(pick(greys));
-  return { defs, copies, only: true };
+  const greys = split(guestMembers().filter(d => core.includes(d.id)));
+  for (let k = 0; k < grey; k++) { const id = take(greys, k % 2 === 0 ? 'early' : 'late'); if (id) defs.push(id); }
+  return { defs, copies: Math.max(2, copies), only: true, deck: true };
 }
 
 /** The rules a table adds for a variant: 'A' (grey core as piles, the other greys out) or 'B' (all piles, no deck). */
