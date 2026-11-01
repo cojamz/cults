@@ -259,6 +259,16 @@ try {
       if (!(await page.$(`[data-cult="${pid}"] ${part}`))) { fail(`seat ${pid} has no ${part}`, 'm7'); continue; }
       await pointAt(`[data-cult="${pid}"] ${part}`);
       await page.waitForTimeout(250);
+      // under the full check's load the card was read mid-move from the last seat (gap -100, Nov 1): wait until this
+      // seat's card is open and has held still for a few frames before measuring
+      await page.waitForFunction(id => {
+        const L = document.querySelector('[data-hover-layer][data-open="1"]');
+        if (!L || !L.querySelector(`[data-seat-card="${id}"]`)) { window.__m7 = null; return false; }
+        const b = L.getBoundingClientRect(), k = `${Math.round(b.left)},${Math.round(b.top)},${Math.round(b.width)}`;
+        const w = window.__m7;
+        if (!w || w.k !== k) { window.__m7 = { k, n: 1 }; return false; }
+        return ++w.n >= 4;
+      }, pid, { timeout: 4000, polling: 'raf' }).catch(() => {});
       const r = await page.evaluate(([id, sel]) => {
         const L = document.querySelector('[data-hover-layer][data-open="1"]');
         if (!L || !L.querySelector(`[data-seat-card="${id}"]`)) return null;

@@ -45,7 +45,9 @@ const at = () => page.evaluate(() => { try { return JSON.parse(window.patronsRec
 const moves = async () => (await at()).moves ?? 0;
 async function sample(tag) {
   // a settled table: the shows still to play hold the states they show (the director's queue), which is no leak
-  await page.locator('.app.game[data-animating]').first().waitFor({ state: 'detached', timeout: 8000 }).catch(() => {});
+  // (under the full check's load a show queue took over 8s to drain, and a sample read mid-queue counted 67, Nov 1:
+  // wait longer, and say whether the table was settled; only settled samples face LIVE_MAX)
+  const settled = await page.locator('.app.game[data-animating]').first().waitFor({ state: 'detached', timeout: 30000 }).then(() => true, () => false);
   await cdp.send('HeapProfiler.collectGarbage').catch(() => {});
   // the states the collector let go are counted a task later (FinalizationRegistry): a beat, and once more
   await page.waitForTimeout(60);
@@ -55,7 +57,7 @@ async function sample(tag) {
   const m = Object.fromEntries(metrics.map(x => [x.name, x.value]));
   const where = await at();
   const inDoc = await page.evaluate(() => document.getElementsByTagName('*').length).catch(() => null);
-  const row = { inDoc, tag, moves: where.moves ?? 0, round: where.over ? 'over' : where.round ?? '?', heapMB: +(m.JSHeapUsedSize / 2 ** 20).toFixed(1), totalMB: +(m.JSHeapTotalSize / 2 ** 20).toFixed(1), nodes: m.Nodes, listeners: m.JSEventListeners, documents: m.Documents, states };
+  const row = { inDoc, tag, moves: where.moves ?? 0, round: where.over ? 'over' : where.round ?? '?', heapMB: +(m.JSHeapUsedSize / 2 ** 20).toFixed(1), totalMB: +(m.JSHeapTotalSize / 2 ** 20).toFixed(1), nodes: m.Nodes, listeners: m.JSEventListeners, documents: m.Documents, states, settled };
   curve.push(row);
   return row;
 }
@@ -153,7 +155,8 @@ else {
   }
   const live = curve.filter(r => r.states != null);
   if (!live.length) fails.push('no live-state count (window.patronsLiveStates missing)');
-  const most = live.reduce((a, r) => (!a || r.states > a.states ? r : a), null);
+  const most = live.filter(r => r.settled).reduce((a, r) => (!a || r.states > a.states ? r : a), null);
+  if (live.filter(r => r.settled).length < 4) fails.push(`only ${live.filter(r => r.settled).length} samples on a settled table: the shows never drained`);
   if (most && most.states > LIVE_MAX) fails.push(`${most.states} game states still alive after a GC (${most.tag}), over ${LIVE_MAX}: something keeps old states (a closure made in a render, a cache keyed by state)`);
   console.log(`round-I level: heap ${top('heapMB')} MB, ${top('nodes')} nodes, ${top('listeners')} listeners · peak: heap ${h.heapMB} MB (${h.tag}), ${nd.nodes} nodes (${nd.tag}), ${ls.listeners} listeners (${ls.tag})`);
 }

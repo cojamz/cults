@@ -198,23 +198,31 @@ describe('Silver members', () => {
 });
 
 describe(`Silver on the table: ${GAMES} seeded bot games`, () => {
-  it('every game finishes with no errors and every invariant holds', () => {
-    let silverTakes = 0;
-    for (let g = 1; g <= GAMES; g++) {
-      const n = 2 + (g % 3);
-      const rand = seededRandom(g * 31 + 5);
-      let s = createGame({ seats: Array.from({ length: n }, () => ({ kind: 'bot' })), seed: g, quadrants: Q });
-      let guard = 0;
-      while (!s.over) {
-        const m = chooseBotMove(s, rand);
-        const o = s.pending.options.find(x => x.id === m.option);
-        if (o?.kind === 'slot' && o.q === 3) silverTakes++;
-        s = applyMove(s, m);
-        checkInvariants(s, `silver game ${g}`);
-        if (++guard > 1500) throw new Error(`game ${g} did not finish`);
+  // Played in slices of 25 so each slice gets its own time limit: under the full check's load one 200-game test ran
+  // past 10 minutes (Nov 1). Same seeds, same order; the rate is asserted over the whole sample at the end.
+  let silverTakes = 0;
+  const SLICE = 25;
+  for (let from = 1; from <= GAMES; from += SLICE) {
+    const to = Math.min(GAMES, from + SLICE - 1);
+    it(`games ${from}-${to} finish with no errors and every invariant holds`, () => {
+      for (let g = from; g <= to; g++) {
+        const n = 2 + (g % 3);
+        const rand = seededRandom(g * 31 + 5);
+        let s = createGame({ seats: Array.from({ length: n }, () => ({ kind: 'bot' })), seed: g, quadrants: Q });
+        let guard = 0;
+        while (!s.over) {
+          const m = chooseBotMove(s, rand);
+          const o = s.pending.options.find(x => x.id === m.option);
+          if (o?.kind === 'slot' && o.q === 3) silverTakes++;
+          s = applyMove(s, m);
+          checkInvariants(s, `silver game ${g}`);
+          if (++guard > 1500) throw new Error(`game ${g} did not finish`);
+        }
+        expect(s.ranking).toHaveLength(n);
       }
-      expect(s.ranking).toHaveLength(n);
-    }
+    });
+  }
+  it('Silver takes over 6 a game across the sample', () => {
     expect(silverTakes).toBeGreaterThan(GAMES * 6);
   });
 });

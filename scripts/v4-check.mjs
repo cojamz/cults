@@ -198,9 +198,15 @@ if (wantE2E && existsSync(join(root, 'e2e/v4'))) {
     if (ENGINE === 'firefox') for (const f of [...all]) if (/newCDPSession/.test(readFileSync(join(root, 'e2e/v4', f), 'utf8')) && !/cdpOk/.test(readFileSync(join(root, 'e2e/v4', f), 'utf8'))) { all.splice(all.indexOf(f), 1); console.log(`[${f}] Chromium only (uses CDP): not run in Firefox`); }
     // timing-sensitive: hover p95 (info), count-ups and bot pacing (motion). They take every e2e token on the box.
     // memory.mjs is not: it reads the heap after a forced GC, which load doesn't change.
-    const SOLO = new Set(['info.mjs', 'motion.mjs', 'snappy.mjs']); // snappy: spin, hover and click-to-minion budgets
+    // scoring, score-screens and reckoning (count-ups, results-in-time, every quadrant told before the hold cap) went
+    // red only under the full run's load on Nov 1, and pass alone: they join the solo set.
+    const SOLO = new Set(['info.mjs', 'motion.mjs', 'snappy.mjs', 'scoring.mjs', 'score-screens.mjs', 'reckoning.mjs']); // snappy: spin, hover and click-to-minion budgets
+    // the heavy ones run several browsers each (tables: six games at once; online: three players and the emulator):
+    // they take two tokens, so the first wave doesn't pile eight browsers onto four CPUs beside the unit tests
+    const HEAVY = { 'tables.mjs': 2, 'online.mjs': 2 };
     // longest first (typical seconds on a quiet box), so the long pole starts at once
-    const LONG = { 'online.mjs': 130, 'touch.mjs': 120, 'hotseat.mjs': 75, 'tables.mjs': 62, 'spaces.mjs': 60, 'memory.mjs': 60, 'benders.mjs': 50, 'reckoning.mjs': 21, 'layout.mjs': 13 };
+    // (tables.mjs: its own per-game budget is 8 minutes, so its stall limit sits above that, 5 x 100 s)
+    const LONG = { 'online.mjs': 130, 'touch.mjs': 120, 'hotseat.mjs': 75, 'tables.mjs': 100, 'spaces.mjs': 60, 'memory.mjs': 60, 'benders.mjs': 50, 'reckoning.mjs': 21, 'layout.mjs': 13 };
     const order = (a, b) => (LONG[b] || 30) - (LONG[a] || 30) || a.localeCompare(b);
     const one = async (f, weight) => {
       const tok = await acquire('e2e', { weight, what: `${what}: ${f}`, kind, quietMs: 60000, log: m => console.log(`[${f}] ${m}`) });
@@ -211,7 +217,10 @@ if (wantE2E && existsSync(join(root, 'e2e/v4'))) {
     // the FIFO token queue runs them in this order: the parallel ones (one token each), then each solo one alone
     const par = all.filter(f => !SOLO.has(f)).sort(order), solo = all.filter(f => SOLO.has(f)).sort(order);
     // (each ticket is filed the moment one() is called, so this order is the queue's order)
-    const jobs = [...par.map(f => one(f, 1)), ...solo.map(f => one(f, E2E_TOKENS))];
+    // the solo ones queue behind the unit tests, in order, so each still runs alone once its turn comes
+    let chain = unit.then(() => {}, () => {});
+    const soloJobs = solo.map(f => { const j = chain.then(() => one(f, E2E_TOKENS)); chain = j.then(() => {}, () => {}); return j; });
+    const jobs = [...par.map(f => one(f, HEAVY[f] || 1)), ...soloJobs];
     await Promise.all(jobs);
     await server.close();
   }

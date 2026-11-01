@@ -409,7 +409,8 @@ try {
   await pages.hana.waitForSelector(GAME, { timeout: 20000 });
   log('hana reloaded');
 
-  await playUntil(atResults, 240000, 'final results');
+  // a time budget for a whole game, not a speed bar: under the full check's load it ran past 4 minutes (Nov 1)
+  await playUntil(atResults, 420000, 'final results');
   // the same winners and score on every device (each says "You win" on the winner's own screen, so compare the seats)
   const wins = await Promise.all(Object.values(pages).map(p => p.$eval('.results .win', e => ({ winners: e.dataset.winners, top: e.dataset.top, text: e.textContent }))));
   if (wins.some(w => !w.winners || !w.top) || new Set(wins.map(w => `${w.winners}|${w.top}`)).size !== 1) throw new Error(`players disagree on the result: ${JSON.stringify(wins)}`);

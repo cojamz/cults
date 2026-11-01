@@ -270,22 +270,30 @@ describe('Blue members', () => {
 });
 
 describe(`Blue table: ${GAMES} seeded bot games`, () => {
-  it('finish cleanly with invariants holding', () => {
-    const restoreReal = restore; restoreReal(); restore = () => {};
-    let usedSpree = 0;
-    for (let g = 1; g <= GAMES; g++) {
-      const rand = seededRandom(g * 131);
-      let s = createGame({ seats: [0, 1, 2, 3].map(() => ({ kind: 'bot' })), seed: g, quadrants: Q });
-      let k = 0;
-      while (!s.over) {
-        s = applyMove(s, chooseBotMove(s, rand));
-        if (g <= 25) checkInvariants(s, { seed: g });
-        if (++k > 1500) throw new Error(`game ${g} stuck`);
+  // Played in slices of 25 so each slice gets its own time limit: under the full check's load one 200-game test ran
+  // past 10 minutes (Nov 1). Same seeds, same order; the rate is asserted over the whole sample at the end.
+  let usedSpree = 0;
+  const SLICE = 25;
+  for (let from = 1; from <= GAMES; from += SLICE) {
+    const to = Math.min(GAMES, from + SLICE - 1);
+    it(`games ${from}-${to} finish cleanly with invariants holding`, () => {
+      const restoreReal = restore; restoreReal(); restore = () => {};
+      for (let g = from; g <= to; g++) {
+        const rand = seededRandom(g * 131);
+        let s = createGame({ seats: [0, 1, 2, 3].map(() => ({ kind: 'bot' })), seed: g, quadrants: Q });
+        let k = 0;
+        while (!s.over) {
+          s = applyMove(s, chooseBotMove(s, rand));
+          if (g <= 25) checkInvariants(s, { seed: g });
+          if (++k > 1500) throw new Error(`game ${g} stuck`);
+        }
+        if (s.log.some(l => l.includes('goes on a spree'))) usedSpree++;
+        expect(s.ranking).toHaveLength(4);
+        for (const p of s.players) expect(followers(s, p)).toBeGreaterThan(0);
       }
-      if (s.log.some(l => l.includes('goes on a spree'))) usedSpree++;
-      expect(s.ranking).toHaveLength(4);
-      for (const p of s.players) expect(followers(s, p)).toBeGreaterThan(0);
-    }
+    });
+  }
+  it('bots reach Spree in over 45% of the games', () => {
     // Bots still reach Spree in about half the games. The bar was 0.75 under the old 10→10 clock (166/200 then), then
     // 0.6 with 10→10 unlimited (134/200). Re-measured 2026-10-15 on these 200 seeds, Normal bots: 105/200 at c90c278
     // and the live tree. Bisected: 134 through balance pass 1, 129 at a6ebe85 (pass 2), 95 at 86a7c8a (Cory's six
