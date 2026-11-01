@@ -1599,3 +1599,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - 2026-11-01 (Claude, under Cory's "figure out a better name. redo the art etc", 10:21am Eastern): Front-runner, now worth 2, is renamed Line Cutters ("You go first every round."), art redrawn with two people, as the other worth-2 renames.
 - 2026-11-01 (Cory, 10:25am Eastern: "maybe we make it 3 members? it seems pretty weak now"): Line Cutters (was Front-runner) is worth 3 followers (counts as 3 members), not 2; art shows three people.
 - 2026-11-01 (Cory, 10:27am Eastern: "I like scout, why cut? just bad? make it more members maybe"): Scout stays and is worth 2 followers (counts as 2 members), price unchanged (Claude's number for "more members"); plural name and art as the other worth-2 renames. Recruiter held: Cory is skeptical of the test, being checked.
+- 2026-11-01 (Cory, 10:28am Eastern): fresh balance runs use the 10-card deck.
