@@ -24,3 +24,6 @@ Every runner, reviewer and expert game adds here. Kinds: **BUG** (the game break
 | 18 | WORDS | Lie Low didn't stop Red's swaps or Anarchist taking the Lie Low player's members; the whole table read it as blocking them (extends row 5) | g9 | for Cory |
 | 19 | CHECK | Final swap lists: Double Agent and Anarchist offered none of Dee's members (Bodyguards), Double Agent none of Ava's (Lie Low); both texts only say they stop stealing | g9 | engine check, then a wording question |
 | 20 | WORDS | Recruiter misread again: player expected +2 red when their member went to the shop (see row 3) | g9 (Ben) | for Cory with row 3 |
+| 21 | RULE | Panel's On Recruit fires for whoever swaps it in, so Promote or Double Agent on a rival's Panel gives two swaps from one move | g9 (Cal, Dee) | as built; feel note |
+| 22 | WORDS | Agents ("blocks copying") doesn't stop Encore copying its owner's Con Men steal; owner read it as blocked | g9 (Ava) | for Cory |
+| 23 | RULE | Copies of follower spaces: Echo, Reprise, Party Crasher, Tribute Band repeat Party Gifts and Largesse (Largesse paid 10 three times in round III, Tribute Band +20) | g9 (all 4) | as built; top feel note with row 14 |
