@@ -5,7 +5,7 @@
 // as a sheet with Recruit (reading a card never recruits it); with a mouse a click on an affordable card recruits.
 import { breakable } from './hyphen.js';
 import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { cardDef, paymentPlan, followerChoices, TIERS, tierLeft, quadrant, pileReach, joinsRound, roman } from '../../engine/v4/index.js';
+import { cardDef, paymentPlan, followerChoices, TIERS, tierLeft, quadrant, pileReach, joinsRound, roman, spacesOf } from '../../engine/v4/index.js';
 import { costParts } from '../format.js';
 import { Sprite } from '../art/Sprite.jsx';
 import { spriteId } from '../art/index.js';
@@ -501,7 +501,7 @@ function ShopTicks({ state, viewer, placing, hover, rowRef }) {
   const space = useHoverSpace(hover);
   const sp = space && viewer && !state.over ? space.split('-').map(Number) : null;
   const pv = usePreview(state, sp ? viewer.id : null, sp ? sp[0] : 0, sp ? sp[1] : 0, { now: true });
-  const after = placing && sp && pv ? quadrant(state.quadrants[sp[0]]).actions[sp[1]].name : null;
+  const after = placing && sp && pv ? spacesOf(state, state.quadrants[sp[0]])[sp[1]].name : null;
   const unlocked = after ? unlockedBy(state, viewer, surely(pv)) : [];
   const sig = after && unlocked.length ? `${after}|${unlocked.join(',')}` : '';
   // the face-up members the space itself acts on light up with its hover and go with it (Cory, 2026-10-16: "hovering

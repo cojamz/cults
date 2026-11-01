@@ -22,7 +22,7 @@ import { gainsBetween } from './gains.js';
 import { seatOrder } from './seats.js';
 import { stageRect, hubRect, stageShow, stageRelease, stageClear, stageBusy, subscribeStage, stageItems, stagePlace, spaceRect, bubbleRect, stageLeave, HUB_MEMBER } from './stage.js';
 import { panelText } from './panelText.js';
-import { quadrant, defById } from '../../engine/v4/index.js';
+import { quadrant, defById, spacesOf } from '../../engine/v4/index.js';
 import { seatEmoji } from '../format.js';
 import { spriteId } from '../art/index.js';
 import { motionOK, flyPath, pulse, tug, settle, flyMinionsHome, slideShop, holdStack, bump, track, landAll, expectArrival, clearArrivals, clearFlights, aim, safetyNet, arcFrames, bezier, onScreenBow, relative, motionPending, onMotionChange } from './flight.js';
@@ -1625,7 +1625,7 @@ function stageOut(root, a, ctx, where, chainId, mine = [], pre = null) {
     const [q, i] = String(key).split('-').map(Number);
     const qid = st.quadrants[q];
     let said = null;
-    try { said = panelText(qid, quadrant(qid).actions[i], Math.max(1, st.round)); } catch { return; }
+    try { said = panelText(qid, spacesOf(st, qid)[i], Math.max(1, st.round)); } catch { return; }
     const pid = a.pid ?? (st.slots && st.slots[key]);
     const p = st.players[pid];
     const slot = a.slot || 'card';

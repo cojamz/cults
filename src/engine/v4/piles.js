@@ -27,10 +27,12 @@ export function greyPiles({ copies = 3, core = GREY_CORE } = {}) {
  *  The deal (Claude's pick, for Cory to confirm): ten piles a game, Dominion's count. Every color on the table gets the
  *  same share of 8 (two each at four players, three and three and two at three, four each at two), and each color's
  *  share alternates a round I member and a later one, so every color has a pile open from round I and one that opens
- *  in round II or III. The last 2 are grey, from the grey core: one round I, one later. Copies: one per player.
+ *  in round II or III (a spread of prices; every pile opens in round I, Cory: "there should be no limit on when you can
+ *  buy"). The last 2 are grey, from the grey core: one round I, one later. Copies: 10 a pile (Cory, 2026-11-01: "let's say
+ *  10 for now? see if it matters?").
  *  Every member of the table's colors that isn't dealt as a pile stays face down as the deck, with no face-up row:
  *  Walk-In, Peek, Talent Scout and Insider read "the deck" and "the pile" as printed. */
-export function allPiles(quadrants, seed, { deck = 10, seats = 4, copies = seats, colored = 8, grey = 2, core = GREY_CORE } = {}) {
+export function allPiles(quadrants, seed, { deck = 10, copies = 10, colored = 8, grey = 2, core = GREY_CORE } = {}) {
   const rand = seededRandom(seed * 9173 + 11);
   const pick = list => list.splice(Math.floor(rand() * list.length), 1)[0];
   const split = ds => ({ early: ds.filter(d => memberRound(d) <= 1).map(d => d.id), late: ds.filter(d => memberRound(d) > 1).map(d => d.id) });
@@ -43,13 +45,13 @@ export function allPiles(quadrants, seed, { deck = 10, seats = 4, copies = seats
   }
   const greys = split(guestMembers().filter(d => core.includes(d.id)));
   for (let k = 0; k < grey; k++) { const id = take(greys, k % 2 === 0 ? 'early' : 'late'); if (id) defs.push(id); }
-  return { defs, copies: Math.max(2, copies), only: true, deck: true };
+  return { defs, copies, only: true, deck: true };
 }
 
 /** The rules a table adds for a shop type: 'grey' (A: grey core as piles, the other greys out) or 'all' (B: all piles; the rest face down as the deck). */
 export const SHOP_TYPES = ['deck', 'grey', 'all'];
-export function pileRules(variant, quadrants, seed, deck = 10, { core = GREY_CORE, seats = 4 } = {}) {
+export function pileRules(variant, quadrants, seed, deck = 10, { core = GREY_CORE } = {}) {
   if (variant === 'A' || variant === 'grey') return { guests: false, piles: greyPiles({ core }) };
-  if (variant === 'B' || variant === 'all') return { piles: allPiles(quadrants, seed, { deck, core, seats }) };
+  if (variant === 'B' || variant === 'all') return { piles: allPiles(quadrants, seed, { deck, core }) };
   return {};
 }

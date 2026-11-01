@@ -20,7 +20,7 @@ const S = {
     jv: '+3 gold · 1 gold to a rival', rush: r => `+${2 * r} gold`, discount: '−4 cost', steal: 'steal 3 gold', windfall: '+1 gold per member', strike: 'double gold',
   },
   red: {
-    evenswap: 'use a shop member’s On Recruit; +2 red', turnout: r => `+${r + 1} red; +${r} followers if you recruit a member this turn`, hire: 'recruit the top of the deck; each rival +1 red; +1 red', hireup: 'promote: one costing up to 2 more; +3 red', trade: 'demote: one costing up to 2 less; +3 red', take: 'recruit one costing 8 or less, free; +1 red',
+    evenswap: 'use a shop member’s On Recruit; +2 red', turnout: r => `+${r + 1} red; +${r} followers if you recruit a member this turn`, hire: 'recruit the top of the deck; each rival +1 red; +1 red', opendoor: 'recruit the cheapest in the shop, free; +1 red', hireup: 'promote: one costing up to 2 more; +3 red', trade: 'demote: one costing up to 2 less; +3 red', take: 'recruit one costing 8 or less, free; +1 red',
   },
   blue: { a1: '+3 blue', a2: '+2 blue +1 red', a3: '+2 blue +1 green', a4: '+5 blue', a5: '+4 blue +1 gold', a6: '+8 blue' },
   green: { a1: '+3 green', a2: '+2 green +1 gold', a3: '+2 green +1 blue', a4: '+5 green', a5: '+4 green +1 red', a6: '+8 green' },

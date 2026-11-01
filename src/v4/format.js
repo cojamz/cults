@@ -1,5 +1,5 @@
 // Display helpers. No rules here: everything is read off engine state.
-import { quadrant, cardDef, defById, roman, TIERS, RING_VALUE, memberCount, followers as engineFollowers, applyMove, contestTable, roundWorkers, WORKERS, allQuadrantIds, turnRail, roundOrder } from '../engine/v4/index.js';
+import { quadrant, cardDef, defById, roman, TIERS, RING_VALUE, memberCount, followers as engineFollowers, applyMove, contestTable, roundWorkers, WORKERS, allQuadrantIds, turnRail, roundOrder, spacesOf } from '../engine/v4/index.js';
 import { contextFor, logSince } from '../engine/v4/core.js';
 import { defaultEmoji } from './art/emojis.js';
 import { usableNow, memberAsks, secondBuyGiver } from './game/memberUse.js';
@@ -791,7 +791,7 @@ export function latestRivalMove(state, mine) {
     if (!p || mine.includes(p.id)) continue;
     const q = state.quadrants.findIndex(id => quadrant(id).name === m[3]);
     if (q < 0) continue;
-    const i2 = quadrant(state.quadrants[q]).actions.findIndex(a => a.name === m[2]);
+    const i2 = spacesOf(state, state.quadrants[q]).findIndex(a => a.name === m[2]);
     const key = `${q}-${i2}`;
     if (state.slots[key] === p.id) return { key, pid: p.id, n: i };
   }
@@ -813,7 +813,7 @@ export function movesSinceYourTurn(state, mine) {
     if (!p) continue;
     const q = state.quadrants.findIndex(id => quadrant(id).name === m[3]);
     if (q < 0) continue;
-    const i2 = quadrant(state.quadrants[q]).actions.findIndex(a => a.name === m[2]);
+    const i2 = spacesOf(state, state.quadrants[q]).findIndex(a => a.name === m[2]);
     const key = `${q}-${i2}`;
     if (state.slots[key] !== p.id) continue;
     if (mine.includes(p.id)) { if (!out.length) out.push({ key, pid: p.id, action: m[2], mine: true }); break; }
@@ -1115,7 +1115,7 @@ export function turnStory(start, end, actor, me = null, mid = null) {
   let spaceKey = null;
   if (place) {
     const q = end.quadrants.findIndex(id => quadrant(id).name === place[4]);
-    const i = q < 0 ? -1 : quadrant(end.quadrants[q]).actions.findIndex(x => x.name === space);
+    const i = q < 0 ? -1 : spacesOf(end, end.quadrants[q]).findIndex(x => x.name === space);
     if (i >= 0) spaceKey = `${q}-${i}`;
   }
   const uids = {};

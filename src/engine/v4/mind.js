@@ -12,7 +12,7 @@
 // space, every seat counted (so a bot learns from what worked for its rivals too). Older games fade. It's plain
 // JSON: newMemory(), then learnFromGame() after each game.
 import { cardDef, followers } from './core.js';
-import { quadrant } from './content/index.js';
+import { quadrant, spacesOf } from './content/index.js';
 
 export const STYLES = ['engine', 'contest', 'followers'];
 // normal's valuation, tilted by style (see scoreOptions' opts)
@@ -127,7 +127,7 @@ const BASE = { memberBias: 2, k: 2, future: 0.4, spite: 0.4 };
 export function lessonNudge(state, lessons, o) {
   if (!lessons) return 0;
   if (o.kind === 'slot') {
-    const qid = state.quadrants[o.q], a = quadrant(qid).actions[o.i];
+    const qid = state.quadrants[o.q], a = spacesOf(state, qid)[o.i];
     return a ? lessons.spaces?.[`${qid}:${a.key}`] || 0 : 0;
   }
   if (o.kind === 'card') { try { return lessons.members?.[cardDef(state, o.uid).id] || 0; } catch { return 0; } }
@@ -144,7 +144,7 @@ export function planNudge(state, plan, memory, o) {
     const qid = state.quadrants[o.q];
     const f = focus(qid);
     if (f >= 0) v += FOCUS[f];
-    const a = quadrant(qid).actions[o.i];
+    const a = spacesOf(state, qid)[o.i];
     if (a) v += learned(memory, 'spaces', `${qid}:${a.key}`);
   } else if (o.kind === 'card') {
     const qid = colorOf(state, o.uid);

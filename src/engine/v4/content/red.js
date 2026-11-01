@@ -45,6 +45,13 @@ export default {
         else ctx.recruit(p, top, { free: true, top: true });
         for (const o of ctx.rivals(p)) ctx.gain(o, 'red', 1);
       },
+      // All piles (Cory, 2026-11-01: "for the piles mode, we may need to change red round 1 action back to recruit the
+      // cheapest (+1 red)"): the old Open Door, word for word, in Walk-In's place (content/index.js spacesOf)
+      piles: {
+        key: 'opendoor', ring: 1, name: 'Open Door', text: 'Recruit the cheapest member in the shop. +1 red.', copyDoesIt: true,
+        estimate: ctx => 1 + cheapValue(ctx),
+        resolve(ctx, p) { ctx.gain(p, 'red', 1, { fromAction: true }); hireCheapest(ctx, p, 'Open Door'); },
+      },
     },
     {
       key: 'hireup', ring: 2, name: 'Promote', text: 'Give one of your members to a rival or the shop, and recruit one of theirs costing up to 2 more. +3 red.', copyDoesIt: true, // +3 red (Cory, Oct 30: balance run)

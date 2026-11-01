@@ -11,7 +11,7 @@
 //   extraWorkers: [I,II,III] extra workers by round (taken after the snake)
 //   pickFirst: true        always first in a round's turn order
 // Straggler uses the onAllPlaced hook (after the round's last placement, before its contests).
-import { registerGuests } from './index.js';
+import { registerGuests, spacesOf } from './index.js';
 import { extraMinion, spareSpace } from './purple.js';
 import { startSteal } from './thieves.js';
 import { toBottom } from './market.js';
@@ -24,12 +24,12 @@ const m = (key, name, lean, s, w, text, extra = {}) => ({ key, name, lean, s, w,
 // ---------- Straggler: after the last placement, move one of your workers to an unused space and do it ----------
 function openSpaces(ctx) {
   const out = [];
-  ctx.state.quadrants.forEach((qid, q) => ctx.quadrant(qid).actions.forEach((a, i) => {
+  ctx.state.quadrants.forEach((qid, q) => spacesOf(ctx.state, qid).forEach((a, i) => {
     if (!(a.ring > ctx.state.round || (a.lastRound && ctx.state.round > a.lastRound)) && ctx.state.slots[`${q}-${i}`] === undefined) out.push({ key: `${q}-${i}`, q, i, a });
   }));
   return out;
 }
-const actionOf = (ctx, key) => { const [q, i] = key.split('-').map(Number); return ctx.quadrant(ctx.state.quadrants[q]).actions[i]; };
+const actionOf = (ctx, key) => { const [q, i] = key.split('-').map(Number); return spacesOf(ctx.state, ctx.state.quadrants[q])[i]; };
 const spaceLabel = (ctx, key) => { const q = Number(key.split('-')[0]); return `${actionOf(ctx, key).name} (${ctx.quadrant(ctx.state.quadrants[q]).name})`; };
 /** p's workers on the board: { key, joined } (joined = it shares the space through Squatter). */
 function myWorkers(ctx, p) {

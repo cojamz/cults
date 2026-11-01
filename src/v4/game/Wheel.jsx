@@ -18,7 +18,7 @@
 // Hover or focus (mouse) or a first tap (touch) shows a space's card; on touch, placing takes a second tap.
 import { memo, startTransition, useEffect, useLayoutEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { quadrant, roman, spaceOpen, RING_VALUE } from '../../engine/v4/index.js';
+import { quadrant, roman, spaceOpen, RING_VALUE, spacesOf } from '../../engine/v4/index.js';
 import { playerColor, standings, seatEmoji, shortLabel } from '../format.js';
 import { Minion } from '../art/Leader.jsx';
 import { emojiArt } from '../art/emojis.js';
@@ -373,7 +373,7 @@ export function deniedText(state, key, meId = null) {
   const owner = state.slots[key];
   if (owner !== undefined) return `Taken by ${owner === meId ? 'you' : state.players[owner].name}`;
   const [q, i] = key.split('-').map(Number);
-  const a = quadrant(state.quadrants[q]).actions[i];
+  const a = spacesOf(state, state.quadrants[q])[i];
   if (a && a.ring > Math.max(1, state.round)) return `Opens in round ${roman(a.ring)}`;
   if (a && a.lastRound && state.round > a.lastRound) return `Closed after round ${roman(a.lastRound)}`;
   return null;

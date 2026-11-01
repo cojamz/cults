@@ -8,7 +8,7 @@ import { Minion } from '../art/Leader.jsx';
 import { Tip } from './Info.jsx';
 import { HoverName, HoverNames } from './HoverNames.jsx';
 import { Rich } from './Rich.jsx';
-import { quadrant } from '../../engine/v4/index.js';
+import { quadrant, spacesOf } from '../../engine/v4/index.js';
 import { panelWords } from './panelText.js';
 import './since.css';
 import { holdFlag } from './bodyFlag.js';
@@ -17,7 +17,7 @@ const MAX = 6;
 /** The words the board prints on a space ("+3 gold, +1 to anyone"), for this round: the panel's own lines. */
 const words = (state, key) => {
   if (!key) return '';
-  try { const [q, i] = key.split('-').map(Number); const qid = state.quadrants[q]; return panelWords(qid, quadrant(qid).actions[i], Math.max(1, state.round)) || ''; } catch { return ''; }
+  try { const [q, i] = key.split('-').map(Number); const qid = state.quadrants[q]; return panelWords(qid, spacesOf(state, qid)[i], Math.max(1, state.round)) || ''; } catch { return ''; }
 };
 
 /** The story stands under the chairs (the wide laptop layout, layout.css): there it's the compact log. */

@@ -1,5 +1,5 @@
 // Seat facts read off the engine: this round's seats in turn order, each seat's last moves.
-import { turnRail, quadrant } from '../../engine/v4/index.js';
+import { turnRail, quadrant, spacesOf } from '../../engine/v4/index.js';
 import { turnSequence, firstPickWhy, closedBy } from '../format.js';
 
 /** This round's seats in their turn order (the first pass of the snake); before round I, round I's order, drawn before
@@ -98,7 +98,7 @@ export function lastSpace(state, pid) {
     if (!m || m[1] !== name) continue;
     const q = state.quadrants.findIndex(id => quadrant(id).name === m[3]);
     if (q < 0) continue;
-    const i2 = quadrant(state.quadrants[q]).actions.findIndex(a => a.name === m[2]);
+    const i2 = spacesOf(state, state.quadrants[q]).findIndex(a => a.name === m[2]);
     if (i2 >= 0) return { key: `${q}-${i2}`, name: m[2], qid: state.quadrants[q] };
   }
   return null;

@@ -3,7 +3,7 @@
 // (Cory: "hovering over named stuff in the log should show what it does"). The names come from the table itself, its
 // spaces' keys and its cards' defs, so a word is a target only when it is one of this game's spaces or members.
 import { useEffect } from 'react';
-import { quadrant, cardDef } from '../../engine/v4/index.js';
+import { quadrant, cardDef, spacesOf } from '../../engine/v4/index.js';
 import { Rich } from './Rich.jsx';
 import { realHover } from '../hover.js';
 import './since.css';
@@ -15,7 +15,7 @@ export function nameIndex(state) {
   if (cache.has(id)) return cache.get(id);
   if (cache.size > 8) cache.clear();
   const byName = new Map();
-  state.quadrants.forEach((qid, q) => quadrant(qid).actions.forEach((a, i) => { if (!byName.has(a.name)) byName.set(a.name, { kind: 'space', key: `${q}-${i}` }); }));
+  state.quadrants.forEach((qid, q) => spacesOf(state, qid).forEach((a, i) => { if (!byName.has(a.name)) byName.set(a.name, { kind: 'space', key: `${q}-${i}` }); }));
   for (const c of Object.values(state.cards)) {
     let d = null;
     try { d = cardDef(state, c.uid); } catch { /* gone */ }

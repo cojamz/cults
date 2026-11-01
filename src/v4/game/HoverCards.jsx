@@ -5,7 +5,7 @@
 // cards are mine. GameScreen mounts <HoverCardLayer> once.
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
-import { quadrant, roman, spaceOpen, contestTable, cardDef, botLevel, BOT_LEVEL_INFO, RING_VALUE } from '../../engine/v4/index.js';
+import { quadrant, roman, spaceOpen, contestTable, cardDef, botLevel, BOT_LEVEL_INFO, RING_VALUE, spacesOf } from '../../engine/v4/index.js';
 import { ruleWords } from '../shorts.js';
 import { playerColor, standings } from '../format.js';
 import { Popover } from './parts.jsx';
@@ -192,7 +192,7 @@ export function usePreviewWarmup(state, pid) {
     if (pid == null || state.over || !state.players[pid]) return undefined;
     const round = Math.max(1, state.round || 0);
     const keys = new Set();
-    state.quadrants.forEach((qid, q) => quadrant(qid).actions.forEach((a, i) => { if (spaceOpen(a, round) && state.slots[`${q}-${i}`] === undefined) keys.add(`${q}-${i}`); }));
+    state.quadrants.forEach((qid, q) => spacesOf(state, qid).forEach((a, i) => { if (spaceOpen(a, round) && state.slots[`${q}-${i}`] === undefined) keys.add(`${q}-${i}`); }));
     const mine = state.pending && state.pending.player === pid;
     if (mine && state.pending.options) for (const o of state.pending.options) if (o.q != null && o.i != null) keys.add(`${o.q}-${o.i}`);
     if (!keys.size) return undefined;
@@ -442,7 +442,7 @@ function useCopyTargets(c, state, me) {
   // Greatest Hits / Tribute Band: every space of yours it would copy lights up
   // A copy-all preview may already be asking a nested copy's first question.
   // Its root hover still highlights the whole replay plan, not just that question's targets.
-  const allText = space ? quadrant(state.quadrants[space[0]]).actions[space[1]].text : c && c.kind === 'card' && state.cards[c.uid] ? cardDef(state, c.uid).text : '';
+  const allText = space ? spacesOf(state, state.quadrants[space[0]])[space[1]].text : c && c.kind === 'card' && state.cards[c.uid] ? cardDef(state, c.uid).text : '';
   if (viewer != null && copiesAll(allText)) { const plan = copyAllPlan(state, viewer, allText); if (plan) keys = plan.keys; }
   const sig = keys ? keys.join(',') : '';
   // lit in the same frame the card opens (a layout effect), not a frame after it
@@ -624,7 +624,7 @@ export function raceAfter(state, race, qid, pid, yours = true) {
 }
 
 /** "Rush (Bo)" for a board key. */
-const spaceName = (state, key) => { const [q, i] = key.split('-').map(Number); const a = quadrant(state.quadrants[q]).actions[i]; const o = state.slots[key]; return `${a.name}${o !== undefined ? ` (${state.players[o].name})` : ''}`; };
+const spaceName = (state, key) => { const [q, i] = key.split('-').map(Number); const a = spacesOf(state, state.quadrants[q])[i]; const o = state.slots[key]; return `${a.name}${o !== undefined ? ` (${state.players[o].name})` : ''}`; };
 
 /** A rim plaque: the contest's standings, straight from the engine. */
 export function StandingsCard({ state, qid, meId = null }) {
