@@ -14,6 +14,7 @@
 import { registerGuests } from './index.js';
 import { extraMinion, spareSpace } from './purple.js';
 import { startSteal } from './thieves.js';
+import { toBottom } from './market.js';
 import { startLaunder, launderPick, launderAmount } from './launder.js';
 
 // Prices: member-value sim (scripts/v4-member-value.mjs, 4 normal bots, Release off, handed over at round II),
@@ -83,6 +84,8 @@ function scoutStep(ctx, p, data) {
 }
 function scoutDone(ctx, p, data) {
   if (data.sent.length) ctx.log(`${p.name}'s Scout: sent ${data.sent.join(', ')} to the bottom of the pile.`);
+  // pays Patroness and Bargain Bin once, as Savings, Bury and Trendsetters do (expert AI games, Nov 1)
+  toBottom(ctx, data.sent.length);
   ctx.refillShop();
 }
 

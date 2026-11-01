@@ -139,7 +139,7 @@ function sweepRow(ctx) {
 }
 /** k shop members just went to the bottom of the pile on someone's turn: Patroness pays once (Cory, Oct 21: "just one
  * follower each time it happens, not per card"), not for the round-start refresh. */
-function toBottom(ctx, k) {
+export function toBottom(ctx, k) {
   if (!(k > 0)) return;
   for (const p of ctx.state.players) for (const u of [...p.members, ...(p.artifact !== undefined ? [p.artifact] : [])]) {
     const def = ctx.defOf(ctx.card(u));

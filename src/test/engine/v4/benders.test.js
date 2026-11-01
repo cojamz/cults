@@ -472,3 +472,15 @@ describe('bots play every bender and Release without breaking the game', () => {
   });
 });
 void cardDef;
+
+describe('Scouts pays Patroness once, like the other sends to the bottom of the pile', () => {
+  it('two shop members sent: Patroness +1 follower once', () => {
+    let s = scene({ quadrants: ['gold', 'red', 'market', 'green'], members: [['benders.scout', 'market.patroness']] });
+    s = move(s, `use:${uidOf(s, 'benders.scout', 0)}`);
+    s = move(s, s.pending.options.find(o => o.id.startsWith('card:')).id);
+    s = move(s, s.pending.options.find(o => o.id.startsWith('card:')).id);
+    s = move(s, 'done');
+    expect(s.players[0].bonus).toBe(1);
+    expect(s.log.some(l => /Patroness: \+1 follower/.test(typeof l === 'string' ? l : l.text || ''))).toBe(true);
+  });
+});

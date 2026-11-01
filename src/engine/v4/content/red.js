@@ -197,13 +197,16 @@ function swapPairs(ctx, p, mode, excludeUid = null) {
   const cult = ctx.state.players.flatMap(owner => (owner === p ? mode !== 'rival' : ctx.canSteal(p, owner, 'swap')) ? ctx.membersOf(owner).filter(c => ctx.canSwapMember(c.uid)) : []);
   const shop = ctx.shopCards();
   const out = [];
-  const first = mode === 'even' ? [...cult, ...shop] : cult;
+  // Promote and Demote swap one of YOUR members, and the 2-cost window is measured from it (coordinator, Nov 1: they
+  // offered rival-for-rival swaps and HR for Volunteer)
+  const own = cult.filter(c => ctx.ownerOf(c.uid) === p);
+  const first = mode === 'even' ? [...cult, ...shop] : mode === 'promote' || mode === 'demote' ? own : cult;
   // Promote and Demote reach other cults too, any member that can be swapped (Cory, 2026-10-29: "demote and promote
   // should work with rivals. if their members are able to be swapped"); never two members of the same cult
   const second = mode === 'even' ? first : mode === 'promote' || mode === 'demote' ? [...shop, ...cult] : shop;
   const owner = c => ctx.ownerOf(c.uid);
   for (const a of first) for (const b of second) if (a.uid !== b.uid && a.uid !== excludeUid && b.uid !== excludeUid && !(owner(b) && owner(b) === owner(a)) && (mode === 'even' ? cost(a) === cost(b)
-    : mode === 'promote' ? cost(b) <= cost(a) + 2 : mode === 'rival' ? cost(b) >= cost(a) : cost(b) <= cost(a) && cost(b) >= cost(a) - 2)) out.push([a, b]);
+    : mode === 'promote' ? cost(b) >= cost(a) && cost(b) <= cost(a) + 2 : mode === 'rival' ? cost(b) >= cost(a) : cost(b) <= cost(a) && cost(b) >= cost(a) - 2)) out.push([a, b]);
   return out;
 }
 function swap(ctx, p, mode, prompt, excludeUid = null) {

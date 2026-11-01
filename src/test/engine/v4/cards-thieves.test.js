@@ -78,7 +78,7 @@ describe('Magenta actions', () => {
     const base = { round: 3, left: 5, res: [{ gold: 4 }, { red: 3 }], members: [['red.twins'], ['red.intern']], shop: ROW, queue: turns(0, 1) };
     let t = take(table(Q, base), 'thieves.hideout');
     while (t.pending?.kind === 'choose') t = move(t, 'take:1:red');
-    t = take(pass(t), 'red.trade');
+    t = take(pass(t), 'red.hireup'); // Promote: P2's Intern up to P1's Twins (your own member since Nov 1)
     expect(ids(t).some(id => id.includes(`:${uidIn(t, 'red.twins', 0)}`))).toBe(true);
     for (const action of ['thieves.heist', 'thieves.ransom']) {
       let s = take(table(Q, base), 'thieves.hideout');

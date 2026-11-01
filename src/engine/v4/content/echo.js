@@ -310,7 +310,8 @@ function copyResolved(ctx, p, e, { later, by, asker }) {
 // members that react to a copy
 function heard(ctx, p, e, taker) {
   // each runs as its member, so the log names it ("P1's Choir: +1 green.")
-  each(ctx, p, 'tuningfork', 'Impressionist', () => ctx.gain(p, ctx.quadrant(e.color).resource, 1));
+  // any player's copy, +2 (Cory, Nov 1)
+  for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(e.color).resource, 2));
   each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
   for (const owner of ctx.rivals(p)) each(ctx, owner, 'muse', 'Muse', () => ctx.gain(owner, 'green', 1));
   if (taker === p) each(ctx, p, 'ensemble', 'Ensemble', () => { p.bonus += 1; });
@@ -479,7 +480,7 @@ const echoQ = {
       if (!hit) { ctx.log(`${p.name}: that action has a minion now.`); return; }
       withPath(ctx, [...pathNow(ctx), key], () => {
         ctx.log(`${p.name} copies ${hit.a.name}: doing it.`);
-        each(ctx, p, 'tuningfork', 'Impressionist', () => ctx.gain(p, ctx.quadrant(hit.qid).resource, 1));
+        for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(hit.qid).resource, 2));
         each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
         (hit.a.resolve.__orig || hit.a.resolve).call(hit.a, ctx, p);
       });
@@ -559,7 +560,7 @@ const echoQ = {
       toggle: true,
       onRecruited(ctx, owner, card) { card.on = true; },
     }),
-    m('tuningfork', 'Impressionist', 1, 2, 'Whenever you copy an action, +1 of its color.'),
+    m('tuningfork', 'Impressionist', 1, 2, 'Whenever any player copies an action, +2 of its color.'),
     // Cory, 2026-10-28: back as a big card at 10 (6 green + 3 any + the +1 wild); no follower condition any more
     m('wallflower', 'Wallflower', 6, 3, 'Whenever you copy an action, double the resources it gives you.'),
     // Keepsake ("When recruited: copy one of your spaces from this round") is cut: Reprise does the same on a space.

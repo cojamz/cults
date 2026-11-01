@@ -37,8 +37,12 @@ const asked = () => page.evaluate(() => ({ ...(window.__patronsSounds || {}) }))
 const playTo = async (done, ms) => {
   const t0 = Date.now();
   while (!(await done()) && Date.now() - t0 < ms) {
+    // a press while a show plays skips it, and a skipped show lands its coins without a sound: let each show play
+    if (await page.$('.app.game[data-animating]')) { await page.waitForTimeout(60); continue; }
     // your placement takes the space that gains you resources (its printed text starts "+N color")
-    const o = await page.$('.slot.can[aria-label*=": +"]') || await page.$('.slot.can, [data-option]:not([disabled]):not([data-option^="toggle:"]):not([data-option^="release:"]):not([data-option="back"])');
+    // (a resource, not followers: "+1 follower" spaces matched ": +" too and sounded no coin, Nov 1)
+    const gainKey = await page.evaluate(() => [...document.querySelectorAll('.slot.can')].find(e => /: \+\d+ (?!followers?\b)[a-z]/.test(e.getAttribute('aria-label') || ''))?.dataset.slot || null);
+    const o = (gainKey && await page.$(`.slot.can[data-slot="${gainKey}"]`)) || await page.$('.slot.can, [data-option]:not([disabled]):not([data-option^="toggle:"]):not([data-option^="release:"]):not([data-option="back"])');
     if (o) await o.click({ timeout: 800 }).catch(() => {});
     await page.waitForTimeout(60);
   }
@@ -51,7 +55,7 @@ try {
   let save = null;
   for (let seed = 21; seed < 80 && !save; seed++) {
     const sv = lateSave(seed, 1), st = sv.state;
-    if (st.pending.options.some(o => { const m = /^slot:(\d+)-(\d+)$/.exec(o.id); return m && /^\+\d/.test(actionAt(st, +m[1], +m[2]).text); })) save = sv;
+    if (st.pending.options.some(o => { const m = /^slot:(\d+)-(\d+)$/.exec(o.id); return m && /^\+\d+ (?!followers?\b)[a-z]/.test(actionAt(st, +m[1], +m[2]).text); })) save = sv;
   }
   if (!save) throw new Error('no late save with a gain space open');
   await seedSave(page, save);
