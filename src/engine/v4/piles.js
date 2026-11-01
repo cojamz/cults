@@ -44,8 +44,8 @@ export function allPiles(quadrants, seed, { deck = 10, copies = 4, colored = 8, 
 }
 
 /** The rules a table adds for a variant: 'A' (grey core as piles, the other greys out) or 'B' (all piles, no deck). */
-export function pileRules(variant, quadrants, seed, deck = 10) {
-  if (variant === 'A') return { guests: false, piles: greyPiles() };
-  if (variant === 'B') return { piles: allPiles(quadrants, seed, { deck }) };
+export function pileRules(variant, quadrants, seed, deck = 10, { core = GREY_CORE } = {}) {
+  if (variant === 'A') return { guests: false, piles: greyPiles({ core }) };
+  if (variant === 'B') return { piles: allPiles(quadrants, seed, { deck, core }) };
   return {};
 }
