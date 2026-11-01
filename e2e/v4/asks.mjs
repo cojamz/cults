@@ -46,7 +46,8 @@ async function open(name) {
 const saved = page => page.evaluate(() => JSON.parse(localStorage.getItem('patrons.v4.local')).state);
 const lit = page => page.evaluate(() => [...document.querySelectorAll('.lt-cult-seat .cs-member.ready')].map(m => ({
   seat: m.closest('[data-cult]').dataset.cult, id: m.dataset.member, state: m.dataset.state || '',
-  ring: /rgba?\(/.test(getComputedStyle(m.querySelector('.fig'), '::before').boxShadow || ''),
+  // the warm glow behind a member you can use (a radial light since Oct 28: "no ring or outline on the portraits")
+  ring: /gradient\(/.test(getComputedStyle(m.querySelector('.fig'), '::before').backgroundImage || ''),
 })));
 async function hoverFig(page, id) {
   const f = await page.$(`[data-cult="0"] .cs-member[data-member="${id}"] .fig`);

@@ -193,6 +193,24 @@ export function usableNow(state, pid) {
   return out;
 }
 
+/**
+ * The member giving p the second recruit of this turn: { uid, name, keeps } or null. keeps: a pass keeps it for a later
+ * turn this round (a once-a-round extraBuy card); false for Big Spender used this turn (p.buyTwiceNow, its Use spent).
+ */
+export function secondBuyGiver(state, p) {
+  if (!state || !p) return null;
+  const defsOf = c => [c.def, c.copy].filter(Boolean).map(id => { try { return defById(id); } catch { return null; } }).filter(Boolean);
+  for (const u of p.members) {
+    const c = state.cards[u];
+    if (c && !(c.spent && c.spent.extraBuy === state.round) && defsOf(c).some(d => d.extraBuy)) return { uid: u, name: cardDef(state, u).name, keeps: true };
+  }
+  if (p.buyTwiceNow) for (const u of p.members) {
+    const c = state.cards[u];
+    if (c && c.used && [c.def, c.copy].includes('benders.bigspender')) return { uid: u, name: cardDef(state, u).name, keeps: false };
+  }
+  return null;
+}
+
 const askCache = new WeakMap();
 /**
  * Your members that are asking you something right now, besides a Use (blind testers, 2026-10-15: Straggler's question
@@ -212,11 +230,15 @@ export function memberAsks(state, pid) {
   const p = state.players[pid];
   const defsOf = c => [c.def, c.copy].filter(Boolean).map(id => { try { return defById(id); } catch { return null; } }).filter(Boolean);
   if (pend.kind === 'buy' && pend.extra) {
-    const uid = p.members.find(u => { const c = state.cards[u]; return c && !(c.spent && c.spent.extraBuy === state.round) && defsOf(c).some(d => d.extraBuy); });
-    if (uid != null) {
-      const name = cardDef(state, uid).name;
+    const giver = secondBuyGiver(state, p);
+    if (giver) {
+      const { uid, name, keeps } = giver;
       const pass = pend.options.find(o => o.kind === 'pass') || null;
-      out.set(uid, { uid, name, kind: 'again', say: 'Recruiting again now: a member or followers.', skip: pass ? { option: pass.id, label: 'Skip, keep it for later', title: `Skip the second recruit: ${name} keeps it for a later turn this round.` } : null });
+      // a used Big Spender (On Use, once per game, since Cory's Oct 28 call) is spent by the Use: a pass gives up the
+      // second recruit; only the old once-a-round card keeps it for a later turn
+      out.set(uid, { uid, name, kind: 'again', say: 'Recruiting again now: a member or followers.', skip: pass ? (keeps
+        ? { option: pass.id, label: 'Skip, keep it for later', title: `Skip the second recruit: ${name} keeps it for a later turn this round.` }
+        : { option: pass.id, label: 'Skip the second recruit', title: `Skip the second recruit: ${name} is used up either way.` }) : null });
     }
   } else if (pend.kind === 'choose') {
     const title = (String(pend.prompt || '').match(/^([^:]{2,28}):\s*(.*)$/) || []);

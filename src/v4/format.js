@@ -2,7 +2,7 @@
 import { quadrant, cardDef, defById, roman, TIERS, RING_VALUE, memberCount, followers as engineFollowers, applyMove, contestTable, roundWorkers, WORKERS, allQuadrantIds, turnRail, roundOrder } from '../engine/v4/index.js';
 import { contextFor, logSince } from '../engine/v4/core.js';
 import { defaultEmoji } from './art/emojis.js';
-import { usableNow, memberAsks } from './game/memberUse.js';
+import { usableNow, memberAsks, secondBuyGiver } from './game/memberUse.js';
 import { panelWords } from './game/panelText.js';
 
 // Seat colors are an accent now (identity is the player's emoji on their leader, Cory 2026-10-14): ochre, teal,
@@ -59,15 +59,10 @@ export function costParts(def, resources = null) {
 export const tierCostText = t => (t.colors > 1 ? `${t.cost}, ${t.colors}+ colors` : `${t.cost} of anything`);
 export { TIERS };
 
-/** The member giving p a second buy this round (Big Spender: flag extraBuy), by name, or null. */
+/** The member giving p a second recruit now (Big Spender), by name, or null (memberUse.js secondBuyGiver). */
 export function extraBuyer(state, p) {
-  for (const u of p.members) {
-    const c = state.cards[u];
-    if (!c || (c.spent && c.spent.extraBuy === state.round)) continue;
-    const d = [c.def, c.copy].filter(Boolean).map(id => defById(id)).find(x => x.extraBuy);
-    if (d) return defById(c.def).name;
-  }
-  return null;
+  const g = secondBuyGiver(state, p);
+  return g ? g.name : null;
 }
 
 /** The line under your first "place a minion" of each round: where the open spaces are. */
@@ -153,7 +148,9 @@ export function promptFor(state, mine) {
         ? (pend.extra ? { who: p, text: `Recruit again (${extraBuyer(state, p) || 'a second recruit'})`, keepCase: false,
           ...([...memberAsks(state, p.id).values()].some(a => a.kind === 'again')
             ? (use ? { sub: `…or use ${use}` } : {})
-            : { sub: `Once a round: pass and ${extraBuyer(state, p) || 'it'} keeps it for a later turn${use ? `; or use ${use}` : ''}` }) }
+            : secondBuyGiver(state, p)?.keeps
+              ? { sub: `Once a round: pass and ${extraBuyer(state, p) || 'it'} keeps it for a later turn${use ? `; or use ${use}` : ''}` }
+              : (use ? { sub: `…or use ${use}` } : {})) }
           // one line for one step (blind testers, 2026-10-15: headline, a subtitle saying it again and the step tabs):
           // the headline says it all; the line under it only when there's another way out
           : { who: p, text: 'Recruit a member or followers', ...(use ? { sub: `…or use ${use}` } : {}) })
