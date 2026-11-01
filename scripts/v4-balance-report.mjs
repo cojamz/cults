@@ -89,4 +89,27 @@ console.log('\nSpaces by lift (seats that took it at least once: win share minus
 const sl = Object.entries(out.spaces).map(([k, v]) => { const u = out.spaceUse[k]; return { k, per: v.uses / (v.tables || 1), w: v.win / (v.nw || 1), l: v.lose / (v.nl || 1), n: u.n, lift: (u.w - u.e) / u.n, err: se(u.w / u.n, u.n), takers: u.n / (v.tables || 1) }; }).sort((a, b) => b.lift - a.lift);
 out.spaceTable = sl;
 for (const x of sl) console.log(`  ${x.k}: ${pts(x.lift)} ±${Math.round(x.err * 100)}${Math.abs(x.lift) >= 2 * x.err ? (x.lift > 0 ? ' STRONG' : ' WEAK') : ''} | ${x.per.toFixed(1)}/game, ${x.takers.toFixed(1)} seats take it | winner ${x.w.toFixed(2)} vs others ${x.l.toFixed(2)}`);
+// Sweeps (coordinator, Nov 1, from the playtest: one seat took White's contest all three rounds in 3 of 7 games):
+// how often one seat alone wins a color's contest every round, how often that seat wins the game, and how often the
+// contest followers were more than its winning margin (the sweep decided the game).
+const sw = {};
+for (const r of rows) {
+  if (r.buyer >= 0 || !r.contests?.length) continue;
+  const fs = r.players.map(p => p.followers).sort((a, b) => b - a);
+  for (const q of r.table) {
+    const x = (sw[q] ??= { games: 0, sweeps: 0, won: 0, decided: 0 });
+    x.games++;
+    const ws = r.contests.map(c => c[q] || []);
+    if (!ws.every(w => w.length === 1 && w[0] === ws[0][0])) continue;
+    x.sweeps++;
+    const p = r.players.find(y => y.seat === ws[0][0]);
+    if (p.win) { x.won++; if (p.contest > fs[0] - fs[1]) x.decided++; }
+  }
+}
+out.sweeps = sw;
+if (Object.keys(sw).length) {
+  console.log('\nContest sweeps (one seat alone wins a color\'s contest every round; the sweeper won the game; and its contest followers were more than the margin):');
+  for (const [q, x] of Object.entries(sw).sort((a, b) => b[1].sweeps / b[1].games - a[1].sweeps / a[1].games))
+    console.log(`  ${q}: swept in ${pct(x.sweeps / x.games)} of ${x.games} games; sweeper won ${pct(x.won / (x.sweeps || 1))}; decided by contests ${pct(x.decided / (x.sweeps || 1))}`);
+}
 if (flags.json) writeFileSync(flags.json, JSON.stringify(out, null, 1));

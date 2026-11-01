@@ -12,7 +12,7 @@ it('Snob with worth-2 and worth-3 blue members: the card shows the prize paid, a
     members: [['market.snob', 'market.shopaholic', 'market.windowdresser'], []] });
   s = resume(s);
   const paid = s.players[0].final.cards.find(c => c.name === 'Snob').n;
-  expect(paid).toBe(1 + 3 + 3); // Shopaholics 3, Window Dressers worth 3 so 3 members (Cory, Nov 1: member count = follower count)
+  expect(paid).toBe(2 + 3 + 3); // Snob itself worth 2 (Nov 1 balance), Shopaholics 3, Window Dressers worth 3 so 3 members (Cory, Nov 1: member count = follower count)
   const info = { after: s, board: s, result: { round: 'III', rows: [] } };
   const snob = reckonSteps(info).find(x => x.kind === 'bonus' && x.rule === 'Snob');
   expect(snob.prize).toBe(paid);

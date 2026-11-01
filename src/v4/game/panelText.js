@@ -137,7 +137,7 @@ const P = {
     encore: { verb: 'Copy an On Recruit', second: 'of a rival’s member', note: '+1 green' },
     // one word for it, the hover's (w3a #22: "redo" here, "copy" there)
     refrain: { verb: 'Copy an action', second: 'with your minion', note: '+1 green' },
-    eternity: { verb: 'Copy every action', second: 'with your minions', note: '+1 green' },
+    eternity: { verb: 'Copy any 3 round I actions', second: 'with a minion on them', note: '+1 green' },
   },
 };
 

@@ -25,7 +25,7 @@ describe('Why rows', () => {
     s = take(s, 'market.clearance'); while (s.pending?.kind === 'buy') s = move(s, 'pass');
     const p = pv(s, 'echo.eternity');
     const line = p.reasons.find(l => l.startsWith('Impressionist'));
-    expect(line).toBe('Impressionist: +2 gold');
+    expect(line).toBe('Impressionist: +1 gold, +1 red'); // round I copies only, a rival's Gather included (Cory, Nov 1)
   });
 });
 

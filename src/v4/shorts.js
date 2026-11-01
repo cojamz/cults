@@ -43,7 +43,7 @@ const S = {
     stipend: r => `+${r + 1} white; +${r} followers if you recruit a member this turn`, splurge: '+1 follower per 2 paid for a member this turn; +1 white', exchange: r => `turn ${r} into ${2 * r} followers; +1 white`, farewell: 'cast out a member for its cost in followers; +1 white', estatesale: 'cast out a member for its cost in white; +1 white', cashin: 'all your white into followers; +1 white',
     haggle: '+2 white, +1 per leader', buylow: '+1 follower per 3 white', pawn: r => `${r} follower · may take 2 white each instead`, sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower bought or won', boom: 'all for followers',
   },
-  echo: { hum: 'copy an action with no minion on it; +1 green', chant: r => `+${r + 2} green`, echo: 'copy previous; +1 green', encore: 'copy a rival member’s On Recruit; +1 green', refrain: 'copy your action; +1 green', eternity: 'copy all your actions; +1 green' },
+  echo: { hum: 'copy an action with no minion on it; +1 green', chant: r => `+${r + 2} green`, echo: 'copy previous; +1 green', encore: 'copy a rival member’s On Recruit; +1 green', refrain: 'copy your action; +1 green', eternity: 'copy 3 round I actions; +1 green' },
 };
 
 // The shortest form, for the inner rings. Two symbols only (Cory, 2026-10-15: "just simplify visual language
@@ -57,7 +57,7 @@ const PIPS = {
   market: { clearance: 'recruit twice', pricecheck: 'bury for half its cost', spree: 'recruit 3 times' },
   thieves: { rob: 'steal half a one-color pile', ransom: 'rival pays or loses a member', heist: 'recruit a rival’s member' },
   trading: { stipend: r => `+${r + 1} white; +${r} if you recruit a member`, splurge: '+1 follower per 2 paid', exchange: r => `${r} into ${2 * r} followers`, farewell: 'cast out one for followers', estatesale: 'cast out one for white', cashin: 'all white for followers', sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower', boom: 'all for followers' },
-  echo: { refrain: 'copy yours', eternity: 'copy all' },
+  echo: { refrain: 'copy yours', eternity: 'copy 3 round I' },
 };
 /** The pips-first form of a space's yield (falls back to the few words). */
 export function pipEffect(qid, action, round = 1) {

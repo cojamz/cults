@@ -90,10 +90,9 @@ describe('Greatest Hits copying turn spaces (Cory’s playtest, Oct 23)', () => 
     expect(log).toContain("P1's Right Away: P1 takes their next turn now.");
     expect(s.pending.player).toBe(0);
   });
-  it('Crunch Time: the copy moves up your last turn', () => {
-    const { s, log } = after('purple.rally');
-    expect(log.some(l => /^P1's Crunch Time: P1 takes their next turn now/.test(l))).toBe(true);
-    expect(s.pending.player).toBe(0);
+  it('Crunch Time is a round II action: Greatest Hits leaves it (Cory, Nov 1: round I actions only)', () => {
+    const { log } = after('purple.rally');
+    expect(log.some(l => /Crunch Time/.test(l))).toBe(false);
   });
   it('Sleep In: the copy skips your next turn', () => {
     const { log } = after('purple.skip');

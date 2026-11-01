@@ -57,18 +57,15 @@ describe('Green table action boundaries', () => {
     const s = go(scene({ round: 3 }), action);
     expect(R(s)).toEqual({ ...Z, green });
   });
-  it('Spree copied by Greatest Hits recruits after the whole chain, in the recruit step (Maxwell, Oct 26)', () => {
+  it('Greatest Hits leaves Spree, a round III action, and copies the round I one (Cory, Nov 1)', () => {
     let s = table(['gold', 'red', 'market', 'echo'], { round: 3, left: 8, shop: SHOP, queue: [0, 0, 0].map(p => ({ t: 'turn', p })) });
     s = go(s, 'market.spree');
     while (s.pending?.kind === 'buy') s = move(s, 'pass');
     s = go(s, 'gold.rush');
     const gold = R(s).gold;
     s = take(s, 'echo.eternity');
-    expect(s.pending.prompt).toBe('Greatest Hits: copy which next?');
-    s = chooseTarget(s, 'market.spree');
-    expect(s.pending.kind).toBe('buy');
-    expect(R(s).gold).toBeGreaterThan(gold);
-    expect(s.pending.prompt).toMatch(/3 recruits left/);
+    expect(R(s).gold).toBe(gold + 6);
+    expect(s.log.some(l => /copie[sd] Spree/.test(l))).toBe(false);
   });
   it('Greatest Hits copies in the order you click its spaces (Cory, Oct 26)', () => {
     let s = scene({ round: 3, turns: [0, 0, 0, 0] });
@@ -82,11 +79,13 @@ describe('Green table action boundaries', () => {
     s = chooseTarget(s, 'gold.rush');
     expect(s.log.some(l => /copied Golden Years|copies Golden Years/.test(l))).toBe(true);
   });
-  it('an occupied center copies its printed gain, without recalculating the copier’s wealth', () => {
+  it('Greatest Hits copies a rival’s round I action too, never a center (Cory, Nov 1)', () => {
     let s = scene({ round: 3, turns: [0, 1, 0, 0], res: [{ gold: 3 }] });
     s = go(s, 'gold.strike'); s = go(s, 'echo.chant'); s = go(s, 'gold.rush');
-    s = go(s, 'echo.eternity', target('gold.strike'));
-    expect(R(s)).toEqual({ ...Z, gold: 21, green: 1 });
+    s = take(s, 'echo.eternity');
+    expect(s.pending.options.map(o => o.label.split(' (')[0]).sort()).toEqual(['Build Up', 'Golden Years']);
+    s = pass(play(s, target('echo.chant')));
+    expect(R(s)).toEqual({ ...Z, gold: 18, green: 6 });
   });
   it('the original owner’s passive bonuses never enter the chip', () => {
     let s = scene({ turns: [1, 0], res: [{ gold: 9 }], members: [[], ['gold.prospector', 'gold.underdog']] });

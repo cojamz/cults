@@ -62,10 +62,12 @@ for (let g = first; g < first + count; g++) {
   const row = {
     game: g, level, seats, table: quads, deck: DECK_RULES.deck || 15, buyer, prices,
     shop: Object.keys(seen).map(name), shopRound: Object.fromEntries(Object.entries(seen).map(([d, r]) => [name(d), r])),
+    // each round's contests: color -> winning seats (for sweeps: one seat taking a color's contest every round)
+    contests: (s.contests || []).map(c => Object.fromEntries(c.results.map(x => [x.qid, x.winners]))),
     players: s.players.map(p => ({
       seat: p.id, followers: followers(s, p), win: followers(s, p) === top, members: p.members.map(u => name(s.cards[u].def)),
       memberCount: memberCount(s, p), artifact: p.artifact !== undefined ? name(s.cards[p.artifact].def) : null, places: places[p.id],
-      gotRound: got[p.id], left: Object.values(p.res).reduce((a, b) => a + b, 0),
+      gotRound: got[p.id], left: Object.values(p.res).reduce((a, b) => a + b, 0), contest: p.contest || 0,
       memberFollowers: Object.fromEntries(p.members.map(u => {
         const c = s.cards[u], d = defById(c.def), f = c.copy ? Math.max(d.f || 0, defById(c.copy).f || 0) : d.f || 0;
         return [name(c.def), f + ((s.ledger && s.ledger[p.id] && s.ledger[p.id][d.name]) || 0)];

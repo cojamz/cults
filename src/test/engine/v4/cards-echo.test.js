@@ -122,8 +122,25 @@ describe('Green current actions', () => {
     expect(s.pending.prompt).toBe('Greatest Hits: copy which next?');
     s = play(s, sp('echo.refrain'));
     expect(s.pending.prompt).toMatch(/Reprise/);
+    s = play(s, sp('gold.rush'));
+    expect(s.pending.prompt).toBe('Greatest Hits: copy which next?'); // Golden Years and P2's Build Up left, 2 more copies
     s = pass(play(s, sp('gold.rush')));
-    expect(R(s)).toMatchObject({ gold: 24, green: 3 });
+    expect(R(s)).toMatchObject({ gold: 24, green: 8 });
+  });
+  it('Greatest Hits copies any 3 round I actions with a minion on them, anyone\'s, and never a round II or III one (Cory, Nov 1)', () => {
+    let s = table(Q, { round: 3, left: 6, shop: ROW, queue: turns(1, 0, 1, 0, 1, 0) });
+    s = go(s, 'gold.rush'); s = go(s, 'echo.chant'); s = go(s, 'gold.discount'); s = go(s, 'gold.windfall');
+    s = go(s, 'red.turnout');
+    s = take(s, 'echo.eternity');
+    expect(s.pending.prompt).toBe('Greatest Hits: copy which next? (3 more)');
+    expect(s.pending.options.map(o => o.label.split(' (')[0])).toEqual(['Golden Years', 'Build Up', 'Intro Offer', 'Gather']);
+    s = play(s, sp('gold.rush'));
+    expect(s.pending.prompt).toBe('Greatest Hits: copy which next? (2 more)');
+    s = play(s, sp('echo.chant'));
+    s = play(s, sp('red.turnout'));
+    s = pass(s);
+    expect(s.pending?.prompt || '').not.toMatch(/Greatest Hits/);
+    expect(s.log.filter(l => /^P1 copie[sd] /.test(l))).toHaveLength(3);
   });
   it('Agents: rivals can’t copy your actions, and you still can (Cory, 2026-10-29)', () => {
     let s = table(Q, { round: 3, members: [['echo.agents']], queue: turns(0, 1) });

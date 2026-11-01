@@ -221,7 +221,7 @@ describe('Blue members', () => {
     s = move(s, card(s, 'market.curator'));
     expect(owns(s, 0, 'market.recluse') && owns(s, 0, 'market.curator')).toBe(true);
     // 8, Recruit Twice's 1, two members at 4 blue each, Connoisseur's 1 twice, Curator's own 2 (Connoisseur, Recluse)
-    expect(R(s).blue).toBe(8 + 1 - 8 + 2 + 2);
+    expect(R(s).blue).toBe(8 + 1 - 8 + 2 + 3); // Curator now counts Connoisseur as 2 (worth 2 followers since Nov 1 balance; member count = follower count)
     expect(named(s, 'Connoisseur').length).toBe(2);
   });
 
@@ -384,7 +384,7 @@ describe('Blue members', () => {
   const finish = members => table(Q, { members, shop: ROW, n: members.length, queue: [{ t: 'finish' }] });
   it('Snob: game end, +1 follower per blue member', () => {
     const s = finish([['market.snob', 'market.stylist', 'gold.tycoon', 'red.twins'], []]);
-    expect(s.players[0].final.parts).toContain('Snob +2'); // Snob itself and Stylist; not Tycoon or Twins
+    expect(s.players[0].final.parts).toContain('Snob +3'); // Snob itself (worth 2, so 2 members, Nov 1) and Stylist; not Tycoon or Twins
   });
   it('Recluse: game end, +2 followers per rival with more members', () => {
     const s = finish([['market.recluse'], ['red.twins', 'red.intern'], ['red.volunteer', 'red.bigfamily'], ['echo.doppel']]);

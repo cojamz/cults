@@ -46,8 +46,8 @@ describe('panel words (w3)', () => {
     expect(ownSpace.verb).toBe('Copy an action');
     expect(ownSpace.second).toBe('with your minion');
     const allOwn = panelText('echo', { key: 'eternity' });
-    expect(allOwn.verb).toBe('Copy every action');
-    expect(allOwn.second).toBe('with your minions');
+    expect(allOwn.verb).toBe('Copy any 3 round I actions');
+    expect(allOwn.second).toBe('with a minion on them');
     // Rival and own minions are distinct, as are the previous action and your own last action.
     expect(panelText('echo', { key: 'encore' }).second).toBe('of a rival’s member'); // Encore copies an On Recruit (Oct 28)
     expect(panelText('echo', { key: 'echo' }).verb).toBe('Copy previous action');

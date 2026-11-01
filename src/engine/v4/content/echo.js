@@ -199,17 +199,28 @@ export function skipWords(skip) {
     return names.length ? `${names.join(', ')} (${SKIP_WHY[why]})` : '';
   }).filter(Boolean).join('; ');
 }
-/** Greatest Hits and Tribute Band: copy p's spaces from this round, and say what was left out and why. */
-function copyOwn(ctx, p, self, by, who) {
-  const { take, skip } = ownPlan(ctx, p, self);
+/** Greatest Hits: the round I actions with any minion on them this round, and what was left out and why (Cory, Nov 1). */
+export function hitsPlan(ctx, p, self = null) {
+  const L = ledger(ctx.state);
+  // one action, however many minions are on it: a space a joiner shares counts once, as the copier's own entry if they have one
+  const byAction = new Map();
+  for (const e of Object.values(L.now).filter(x => x.ring === 1 && x.key !== self).sort((a, b) => (a.seq || 0) - (b.seq || 0))) {
+    const k = actionKey(e.key), had = byAction.get(k);
+    if (!had || (had.p !== p.id && e.p === p.id)) byAction.set(k, e);
+  }
+  const all = [...byAction.values()].sort((a, b) => (a.seq || 0) - (b.seq || 0));
+  const take = all.filter(e => allowed(ctx, e, p));
+  const skip = all.filter(e => !allowed(ctx, e, p)).map(e => ({ e, why: protectedAction(ctx, e, p) ? 'protected' : pathNow(ctx).includes(actionKey(e.key)) ? 'chain' : 'nothing' }));
+  return { take, skip };
+}
+export const HITS = 3;
+/** Greatest Hits: copy any 3 round I actions with a minion on them, one at a time in the order you pick. */
+function copyHits(ctx, p, self, who) {
+  const { take, skip } = hitsPlan(ctx, p, self);
   const skipped = skipWords(skip);
-  const name = `${p.name}${by ? `'s ${by}` : ''}`;
-  // a member says it in the present ("P1's Tribute Band has nothing to copy"), a space in the past ("P1 had…")
-  if (!take.length) { ctx.log(`${name} ${by ? 'has' : 'had'} nothing to copy${skipped ? `: it skips ${skipped}` : ''}.`); return false; }
+  if (!take.length) { ctx.log(`${p.name} had no round I action to copy${skipped ? `: it skips ${skipped}` : ''}.`); return false; }
   if (skipped) ctx.log(`${who} skips ${skipped}.`);
-  // Greatest Hits: you pick the order, one space at a time on the wheel (Cory, 2026-10-26, from playtester Maxwell)
-  if (!by) orderStep(ctx, p, take.map(e => e.key), who);
-  else copyAll(ctx, p, take, by, who);
+  orderStep(ctx, p, take.map(e => e.key), who, HITS);
   return true;
 }
 /** Tribute Band: do every action the chosen rival has a minion on this round, in placement order. */
@@ -223,14 +234,16 @@ function copyLeader(ctx, p, leader) {
   return true;
 }
 /** Greatest Hits' next copy: one left goes straight on; more ask which, and the rest wait until that copy is done. */
-function orderStep(ctx, p, keys, who) {
+function orderStep(ctx, p, keys, who, n = Infinity) {
   const L = ledger(ctx.state);
   const left = keys.map(k => L.now[k]).filter(e => e && allowed(ctx, e, p));
+  if (n <= 0) return;
   if (left.length === 1) ctx.defer(p, 'echo.continueCopy', { key: left[0].key, by: null, who }, { kind: 'space', key: left[0].key, qid: left[0].color, pid: p.id });
   if (left.length < 2) return;
-  ctx.choose(p, `${who}: copy which next?`, left.map(e => ({
+  const more = Number.isFinite(n) && left.length > n ? ` (${n} more)` : '';
+  ctx.choose(p, `${who}: copy which next?${more}`, left.map(e => ({
     id: `space:order:${e.key}`, label: `${e.name} (${ctx.player(e.p).name}): ${describe(ctx, e)}`, kind: 'space', value: e.key, hint: entryValue(ctx, e, p),
-  })), 'echo.order', { left: left.map(e => e.key), who });
+  })), 'echo.order', { left: left.map(e => e.key), who, ...(Number.isFinite(n) ? { n } : {}) });
 }
 /** Latest placement regardless of its owner; legality never makes us fall back to an earlier placement. */
 export const previousEntry = (ctx, skip = null) => Object.values(ledger(ctx.state).now)
@@ -400,11 +413,11 @@ const echoQ = {
       },
     },
     {
-      key: 'eternity', ring: 3, name: 'Greatest Hits', echo: true, text: 'Copy every action with your minion. +1 green.',
-      estimate: (ctx, p) => VARIANT.plus + targets(ctx, p, 'own').reduce((s, e) => s + entryValue(ctx, e, p), 0),
+      key: 'eternity', ring: 3, name: 'Greatest Hits', echo: true, text: 'Copy any 3 round I actions with a minion on them. +1 green.', // was every action with your minion (Cory, Nov 1)
+      estimate: (ctx, p) => VARIANT.plus + hitsPlan(ctx, p).take.map(e => entryValue(ctx, e, p)).sort((a, b) => b - a).slice(0, HITS).reduce((s, v) => s + v, 0),
       resolve(ctx, p) {
         plus(ctx, p);
-        copyOwn(ctx, p, ledger(ctx.state).open, null, 'Greatest Hits');
+        copyHits(ctx, p, ledger(ctx.state).open, 'Greatest Hits');
       },
     },
   ],
@@ -439,9 +452,9 @@ const echoQ = {
       const L = ledger(ctx.state);
       const e = L.now[key];
       if (e) ctx.defer(p, 'echo.continueCopy', { key, by: null, who: data.who }, { kind: 'space', key, qid: e.color, pid: p.id });
-      ctx.defer(p, 'echo.orderNext', { left: data.left.filter(k => k !== key), who: data.who });
+      ctx.defer(p, 'echo.orderNext', { left: data.left.filter(k => k !== key), who: data.who, ...(data.n ? { n: data.n - 1 } : {}) });
     },
-    orderNext(ctx, p, _, data) { orderStep(ctx, p, data.left, data.who); },
+    orderNext(ctx, p, _, data) { orderStep(ctx, p, data.left, data.who, data.n ?? Infinity); },
     pick(ctx, p, key, data) {
       const L = ledger(ctx.state);
       const e = (data.from === 'last' ? L.last : L.now)[key];

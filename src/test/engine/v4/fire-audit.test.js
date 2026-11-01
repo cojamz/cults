@@ -154,6 +154,8 @@ const ALLOW = {
   'purple.doubletime': 'halves only Taskmaster’s paid turn now (cards-purple: Corner-Cutter); cut from the deck',
   // like Bodyguards and Agents above: a pure restriction (its cult's members drop out of every swap's options) that
   // changes no number, so there is no payout line to name it (v0.8.2 Red deck)
+  // the Nov 1 balance numbers (Last Call, Customs, Loyalists…) moved the seeded games: recruited in 1, as its owner's last
+  'red.recruiter': 'pays only on a later recruit; recruited once in the sample (cards-red: Recruiter)',
   'red.loyalists': 'only removes its cult from swap options (red-members-hooks / red-members-pressure: Loyalists)',
   // needs its holder to Promote/Demote a rival's member out of their cult; the 5/6/7 shop (2026-10-21) moved the
   // seeded games where a bot did
