@@ -6,7 +6,7 @@ Every runner, reviewer and expert game adds here. Kinds: **BUG** (the game break
 |---|---|---|---|---|
 | 1 | BUG | Scouts' sweep sent members to the bottom without paying Patroness or Bargain Bin (benders.js scoutDone never called market.js toBottom) | g2, g5 (3 players each) | fixed in v0.9.962 |
 | 2 | CORY? | Promote and Demote reach any two cults (rival-to-rival) and measure the cost window from the rival's card. Matches Cory's Oct 29 "should work with rivals"; a "fix" shipped by mistake | g1 (all 4), g3 | reverted; Cory keeps them as is |
-| 3 | CORY? | Recruiter ("Whenever a member leaves a rival's cult, +2 red.") doesn't pay when a rival's member goes to the shop (Demote) or is released; fires only cult to cult (core.js swapMembers) | g3 | asked by the balance thread |
+| 3 | CORY? | Recruiter ("Whenever a member leaves a rival's cult, +2 red.") doesn't pay when a rival's member goes to the shop (Demote) or is released; fires only cult to cult (core.js swapMembers) | g3 | Cory, Nov 1 12:11pm: yes, it pays on shop moves too; shipping after the red re-runs started, so bot numbers on Recruiter predate it |
 | 4 | CORY? | Promote has no lower cost limit (also swaps for anything cheaper) | review | asked by the balance thread |
 | 5 | WORDS | Lie Low ("Rivals can't steal or recruit from you this round") doesn't stop Raiders taking followers or Debt Collectors taking silver; Bodyguards same question | g6, g7 (3 players) | for Cory |
 | 6 | WORDS | Tastemaker ("Whenever you change rivals' resources, +1 follower.") pays once per space; players read once per resource | g1, review | for Cory |
