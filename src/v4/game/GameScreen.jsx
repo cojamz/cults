@@ -153,7 +153,10 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
     // ...except your own move (smooth pass, 2026-10-28): sliced between the show's frames, ~170ms of drawing at 4x CPU
     // stretched to ~400ms before your click answered. It draws in one go instead, a frame after the click, so the
     // press itself paints first.
-    const paint = userMove ? f => requestAnimationFrame(() => setTimeout(f, 0)) : startTransition;
+    // A click that isn't a placement (pay, recruit, a choice) draws in the click itself (speed pass, Nov 1): waiting a
+    // frame for the press to paint first cost 25-100 ms at 4x CPU before the table even started drawing, and the
+    // answer is the press's feedback. A placement keeps the frame: the Wheel stands your minion at once, then the table.
+    const paint = userMove === 'now' ? f => f() : userMove ? f => requestAnimationFrame(() => setTimeout(f, 0)) : startTransition;
     if (end) {
       held.current = true;
       const start = roundStart.current;
@@ -250,7 +253,7 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
     // The transport can be ahead; reveal its queued snapshots only after this sequence lands.
     if (!timer.current) startTransition(() => pumpRef.current());
   }, []);
-  useLayoutEffect(() => { committed.current = table.shown; }, [table.shown]);
+  useLayoutEffect(() => { committed.current = table.shown; if (globalThis.__cm) globalThis.__cm('commit'); }, [table.shown]);
   useEffect(() => onChainEnd(finishPresentation), [finishPresentation]);
   // as the last piece lands the table moves on: your choices light, or the next move starts (its own hold still paces
   // it), while the settle and the stage's cards going home finish under it (Cory, Oct 28, yes to: "the next move waits
@@ -859,7 +862,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const undoSig = () => (typeof session.canUndo === 'function' && session.canUndo() ? `${session.undoKind}:${session.undoSeat}` : '');
   const [, setUndoSeen] = useState(undoSig);
   const undoSeen = useRef(null);
-  useEffect(() => session.subscribe(() => { const u = undoSig(); if (u !== undoSeen.current) { undoSeen.current = u; if (userMove) startTransition(() => setUndoSeen(u)); else setUndoSeen(u); } }), [session]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => session.subscribe(() => { const u = undoSig(); if (u !== undoSeen.current) { undoSeen.current = u; if (userMove === true) startTransition(() => setUndoSeen(u)); else setUndoSeen(u); } }), [session]); // eslint-disable-line react-hooks/exhaustive-deps
   // A local game's bots wait at a round end (session roundHold) until its summary is gone; they go on once the table
   // shows that state with no summary up (dismissed, or never detected: never a stalled table).
   useEffect(() => { if (!moment && live0 === settled0 && session.roundHold && live0 === session.getState() && session.continueRound) session.continueRound(); }, [moment, live0, settled0, session]);
@@ -1198,6 +1201,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     lastStep.current = step;
   }, [pend, mine]);
   const onPick = useCallback((optionId, mode) => {
+    if (globalThis.__cm) globalThis.__cm('pick'); // the rig's click phases (scripts/v4-rig.mjs)
     // A still-lit old option is presentation only, never a stale command to a newer authoritative state.
     if (interactionState !== physicalState || session.getState() !== physicalState) return;
     // a double-click is one choice: the same option again within 350ms is ignored (replays are exempt)
@@ -1228,8 +1232,10 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     if (errorOn.current) setError('');
     const token = ++sendToken.current;
     let sent;
-    userMove = true; // the table's update for this move is a transition (useTable.show): the click's frame paints first
+    // the table's update for this move (useTable.show): a placement a frame after the click, anything else in the click
+    userMove = String(optionId).startsWith('slot:') ? true : 'now';
     try { sent = session.submit({ player: pend.player, option: optionId }); } catch (e) { sent = Promise.reject(e); } finally { userMove = false; }
+    if (globalThis.__cm) globalThis.__cm('submitted');
     // the table shows a move in flight only while it is (online, waiting on the host): a move the session took at once
     // (a local game) skipped the busy redraw and its undo, two whole-table renders per click (smoothness panel, react #2)
     if (session.getState() === physicalState) { busyOn.current = true; startTransition(() => setBusy(true)); }

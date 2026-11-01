@@ -81,7 +81,9 @@ const RECORDER = () => {
   // click → answer painted: armed by the harness before each click
   F.arm = () => new Promise(done => {
     F.armed = true;
-    const resolve = v => { F.armed = false; done(v); };
+    // the game's own click phases (GameScreen: pick, submitted, commit), ms after the press: window.__rigClicks → json clickPhases
+    window.__cmLog = []; window.__cm = n => window.__cmLog.push([n, performance.now()]);
+    const resolve = v => { F.armed = false; if (v != null) (window.__rigClicks ||= []).push({ ms: v, what: document.querySelector('.app.game')?.dataset.phase, marks: window.__cmLog.map(([n, t]) => n + '+' + Math.round(t - t0)).join(' ') }); done(v); };
     const look = () => {
       const g = document.querySelector('.app.game');
       return [g?.dataset.moves, !!document.querySelector('[data-next-round]'), [...document.querySelectorAll('[data-option]')].map(e => e.getAttribute('data-option')).sort().join(' '), !!document.querySelector('[data-place], .dialog.pay')].join('|');
@@ -93,7 +95,7 @@ const RECORDER = () => {
     const t1 = performance.now();
     const poll = () => {
       if (t0 != null && look() !== before) { requestAnimationFrame(() => resolve(Math.round(performance.now() - t0))); return; }
-      if (performance.now() - t1 > 4000) { resolve(null); return; }
+      if (performance.now() - t1 > 4000) { (window.__rigClicks ||= []).push({ dead: true, t0, before, after: look(), phase: document.querySelector('.app.game')?.dataset.phase }); resolve(null); return; }
       requestAnimationFrame(poll);
     };
     requestAnimationFrame(poll);
@@ -335,6 +337,7 @@ await letGo();
 const over = !!(await page.$('.results'));
 
 const extra = await page.evaluate(() => window.__rigExtra || null).catch(() => null); // a probe build's own readings
+const clickPhases = await page.evaluate(() => window.__rigClicks || []).catch(() => []);
 const flights = FLIGHTS ? await page.evaluate(() => window.__flightWatch.report()).catch(() => null) : null;
 const F = await page.evaluate(() => ({ frames: window.__rig.frames, loaf: window.__rig.loaf, big: window.__rig.big || [] })).catch(() => ({ frames: [], loaf: [] }));
 // the leak control: a reload on the last round's turn (the game is saved locally), measured the same way
@@ -428,6 +431,6 @@ if (PROFILE) {
     ...[...profNative].sort((a, b) => b[1] - a[1]).slice(0, 40).map(([k, ms]) => `| ${Math.round(ms)} | ${k.replace(/\|/g, '/')} |`));
   writeFileSync(`${OUT}/rig-${label}-clicks.md`, P.join('\n') + '\n');
 }
-writeFileSync(`${OUT}/rig-${label}.json`, JSON.stringify({ label, cpu: CPU, speed: SPEED, seed: SEED, bars: BARS, fails, sum, unbroken, reloaded, errors, path, extra, flights, odd: Object.fromEntries(rounds.map(r => [r, R[r].clicks.filter(c => c.why)])) }, null, 1));
+writeFileSync(`${OUT}/rig-${label}.json`, JSON.stringify({ label, cpu: CPU, speed: SPEED, seed: SEED, bars: BARS, fails, sum, unbroken, reloaded, errors, path, extra, clickPhases, flights, odd: Object.fromEntries(rounds.map(r => [r, R[r].clicks.filter(c => c.why)])) }, null, 1));
 console.log(L.slice(0, 12 + rounds.length + 3).join('\n'));
 process.exit(GATE && fails.length ? 1 : 0);
