@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.931 — 2026-11-01
+
+- Late Risers, Shopaholics, Impostors, Deprogrammers, Recruit Bonus and Mentor & Protégés pictures show as many people as they count.
+
 ## v0.9.930 — 2026-11-01
 
 - Every yellow and silver member now has a scene picture: Customs, Harmonist, Matchmaker, Ringleader, Leveler, Big Tent, Guest Book, Gleaner, Sower, Silversmith, Steward, Toastmaster, Dowager, Smooth Talker, Philanthropists, Polisher, Collector, Debt Collector and High Society.
