@@ -6,7 +6,7 @@
 //   ONLY=red,echo,... sets the color pool (default: the 2.0 colors). MUST=thieves puts that color on every table.
 //   BUDGET=<n> trims Hard's lookahead (default: the game's). Every 5th game one seat only buys followers; the report counts those games only for that seat's win rate (Cory, Oct 29).
 // Same game numbers with the same settings replay the same games, so a price run compares game for game with the base.
-import { appendFileSync } from 'node:fs';
+import { appendFileSync, writeFileSync } from 'node:fs';
 import { createGame, applyMove, followers, memberCount, allQuadrantIds, quadrant } from '../src/engine/v4/index.js';
 import { defById, guestMembers } from '../src/engine/v4/content/index.js';
 import { chooseBotMove, chooseFollowerBuyerMove } from '../src/engine/v4/bots.js';
@@ -35,6 +35,9 @@ for (const pair of (process.env.PRICE || '').split(',').filter(Boolean)) {
 // out and what each was worth, and what it chose. That's the choice log: which spaces and cards are real contenders.
 const extra = process.env.BOTOPTS ? JSON.parse(process.env.BOTOPTS) : {};
 const botOpts = level === 'hard' || level === 'veryhard' ? { level, maxMs: Infinity, ...(process.env.BUDGET ? { budget: Number(process.env.BUDGET) } : {}), ...extra } : { level };
+// CHOICES=auto writes next to the output (<out>.choices), one file per shard, started fresh, so parallel or re-run shards never mix
+const choicesFile = process.env.CHOICES === 'auto' ? `${out.replace(/\.part$/, '')}.choices` : process.env.CHOICES;
+if (process.env.CHOICES === 'auto') writeFileSync(choicesFile, '');
 const choiceLabel = (s, id) => {
   const o = s.pending?.options?.find(x => x.id === id);
   if (!o) return id;
@@ -59,8 +62,8 @@ for (let g = first; g < first + count; g++) {
     for (const uid of s.shop) seen[s.cards[uid].def] ??= s.round;
     const before = s.players.map(p => new Set(p.members));
     const pl = s.pending.player;
-    const logIt = process.env.CHOICES && pl !== buyer && botOpts.level !== 'normal' && botOpts.level !== 'easy';
-    const onDecision = logIt ? (info, st) => appendFileSync(process.env.CHOICES, JSON.stringify({
+    const logIt = choicesFile && pl !== buyer && botOpts.level !== 'normal' && botOpts.level !== 'easy';
+    const onDecision = logIt ? (info, st) => appendFileSync(choicesFile, JSON.stringify({
       game: g, round: st.round, kind: info.kind, seat: info.player, color: st.quadrants[info.player] ?? null,
       offered: (st.pending.options || []).map(o => choiceLabel(st, o.id)),
       normal: (info.ranked || []).slice(0, 8).map(r => [choiceLabel(st, r.o.id), +r.v.toFixed(2)]),
