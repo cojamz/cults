@@ -50,7 +50,11 @@ const choiceLabel = (s, id) => {
 const name = d => { try { const x = defById(d); return `${x.name} (${d.split('.')[0]})`; } catch { return d; } };
 const cost = d => { try { const x = defById(d); return (x.s || 0) + (x.w || 0); } catch { return null; } };
 
+// GAMES=1,5,9 plays only those game numbers inside first..first+count-1 (e.g. re-running just the tables a card change touches;
+// a game number always deals the same table, so the rest of a batch stays valid)
+const only = process.env.GAMES ? new Set(process.env.GAMES.split(',').map(Number)) : null;
 for (let g = first; g < first + count; g++) {
+  if (only && !only.has(g)) continue;
   const rand = seededRandom(g * 7717 + 3 + seats * 101);
   const pool = all.filter(q => !must.includes(q)), quads = [...must];
   while (quads.length < seats) quads.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);

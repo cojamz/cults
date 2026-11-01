@@ -47,3 +47,5 @@ Why each rule in .claude/rules/working-with-cory.md exists, in Cory's words. Mov
 - 2026-11-01 (Cory, "harness review isn't bug testing. harness is our meta level how we operate"): the overnight harness thread was handed "ship script, gates, sim tooling" by the coordinator and delivered test plumbing. Rule: threads check their goal against Cory's own words; coordinator scope is a suggestion; "harness" = how we operate.
 - 2026-11-01 · Cory: "i need shorter and better formatted messages from you." Messages are five lines at most, one item per line, the ask on its own line; data stays out unless he asks.
 - 2026-11-01 · Second brevity ask (coordinator relayed): hard cap of 3 prose lines plus numbered picks, now a bounce in message-check.mjs.
+- 2026-11-01: Cory, after Promote/Demote were 'fixed' to own-member swaps from an expert-game report: "wait what? why'd you change that? they should be kept as is". Rule added: test findings that match a logged call go to him as a question.
+- 2026-11-01 · A rule that a test or bot report calls a bug, but which matches a logged call of Cory's, goes to Cory before it changes (Promote/Demote reverted, Nov 1).
