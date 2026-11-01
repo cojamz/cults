@@ -74,7 +74,7 @@ const P = {
     // Cory, 2026-10-22: place on taken spaces for the rest of the round
     // Cory, 2026-10-22: the old game's "Gain 4 purple, skip next turn"
     skip: r => ({ main: `+${r + 3} purple`, second: 'skip your next turn' }),
-    holdup: r => ({ main: `+${r + 1} purple`, second: 'the next turn is skipped' }),
+    holdup: r => ({ main: `+${r + 1} purple`, second: 'whoever is next skips, even you' }),
     // the center ring can drop line 2 (round III since Oct 22): line 1 says it whole
     // Cory, 2026-10-28: +5 purple and a minion this round
     crowdin: { verb: '+1 minion this round', note: '+3 purple' },

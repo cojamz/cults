@@ -269,8 +269,8 @@ export default {
     {
       // Cory, 2026-10-22: replaces Catch Up ("the skip should replace catch up"); "1 purple per round" so it isn't weak
       // late. Wording and name are Claude's fill-in.
-      key: 'holdup', copyDoesIt: true, ring: 1, name: 'Hold Up', text: '+2 purple (+3 in round II, +4 in round III). The next turn is skipped.',
-      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'The next turn is skipped.' },
+      key: 'holdup', copyDoesIt: true, ring: 1, name: 'Hold Up', text: '+2 purple (+3 in round II, +4 in round III). Whoever’s turn is next skips it, even yours.',
+      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Whoever’s turn is next skips it, even yours.' },
       // Cory, 2026-10-22: "it has to be the next TURN not even the next player. so a player could skip their own in
       // snake draft". Whoever's turn comes next is passed over once and still places every minion.
       // Cory, 2026-10-25: +1 each round (Hard bot read).
