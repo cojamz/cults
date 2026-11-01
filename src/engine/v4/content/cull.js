@@ -34,7 +34,7 @@ export const CUT10 = new Set([
   'red.host', 'red.headhunter',
   'echo.bait', 'echo.understudy', 'echo.ensemble', 'echo.impostor',
   'thieves.crew', 'thieves.robinhood', 'thieves.snitch', 'thieves.fixer',
-  'purple.gossip', 'purple.secondwind', 'purple.lateriser',
+  'purple.extrashift', 'purple.secondwind', 'purple.lateriser', // Gossip back in, Extra Shift out (Cory, Nov 1)
   'market.restocker', 'market.plusone',
   'trading.undertaker',
   'yellow.tinker', 'yellow.matchmaker', 'yellow.agitator', 'yellow.leveler', 'yellow.bookcooker',

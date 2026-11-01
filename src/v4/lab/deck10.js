@@ -146,8 +146,7 @@ export const DECK10 = {
    "purple.streak": {},
    "purple.courier": {},
    "purple.gossip": {
-    "cut": true,
-    "why": "The same trigger as Purple's artifact, Pocket Watch (\"Whenever a player's turn is skipped, +1 purple\")."
+    "why": "Pays on every skip, yours included (Cory, Nov 1: back in, in place of Extra Shift)."
    },
    "purple.secondwind": {
     "cut": true,
@@ -161,7 +160,8 @@ export const DECK10 = {
     "why": "Big buy."
    },
    "purple.extrashift": {
-    "why": "Big buy."
+    "cut": true,
+    "why": "A worse Night Owl: one +1 minion, once (Cory, Nov 1: Gossip takes its place)."
    }
   }
  },

@@ -72,7 +72,7 @@ Cut (4):
 - **Fixer** (6, worth 1): "On Use, once per game: spend magenta equal to a rival’s member’s cost to steal it." Double Agent and the Poach space already take a rival's member.
 - **Snitch** (4, worth 1): "Whenever a rival steals from you, they lose 1 follower." Bodyguard is the counter to stealing; two is one too many in 10.
 
-## Purple: cut Go-Getter, Late Risers and Gossip; Early Bird and Timekeepers get cheaper so round I has 4.
+## Purple: cut Go-Getter, Late Risers and Extra Shift (Cory, Nov 1: Gossip back in, Extra Shift out); Early Bird and Timekeepers get cheaper so round I has 4.
 
 Keep, round I (4):
 - **Early Bird** (5, worth 2): "Your turns can’t be skipped." Down to 3, into round I: the counter to Bouncer, and a second cheap card.
