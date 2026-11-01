@@ -47,3 +47,4 @@
 - 2:16pm: yes to a Goes Last token, part of the Purple set; colors can have their own pieces. Mob: worth 4, counts as 4.
 - 2:17pm: Tribute Band: maybe make it On Recruit. Risks sent (Tryout fires it from the shop, Encore and swaps repeat it); asked On Recruit [default] vs On Use at 14. Party Crasher price still open.
 - 2:18pm: Tribute Band On Use, 12 to 14. Party Crasher stays. Next: item 5 reworks (Window Shopper words first).
+- 2:21pm: Early Birds held; its purpose is taking Last Call's payout without going last. Rework with the Goes Last cards.
