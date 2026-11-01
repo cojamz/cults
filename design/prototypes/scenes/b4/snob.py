@@ -1,5 +1,6 @@
 import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def snob():
@@ -8,6 +9,7 @@ def snob():
            'p': '#c9ab95', 'P': '#b8977f', 'y': '#e2b85a', 'Y': '#a88238', 'g': '#8aa37a', 's': '#a9c3c9',
            '1': BLUE[0], '2': BLUE[1], 'a': PALE[0], 'A': PALE[1],
            'H': '#b98a4a', 'z': '#7a5530', 'm': '#3c2c3a', 'q': '#5d7a52'}
+    pal.update({'b': DEEP[0], 'B': DEEP[1]})
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 40, 63, 63, 'P'); c.hl(0, 63, 40, 'Y')
 
     def frame(l):
@@ -40,11 +42,14 @@ def snob():
 
     def cup(f):
         f.hl(34, 41, 40, 'W'); f.rect(35, 36, 39, 39, 'w'); f.vl(39, 37, 39, 'W'); f.pts('w', [(40, 37), (41, 38), (40, 39)])
-    person(c, DK, 25, 13, ('a', 'A'), 'bun', 'H', 'z', mouth='flat', brows='stern', brow='z',
-           cloth='1', cdark='2', sw=6, ww=6, th=12, nolegs=True, front=gown,
-           arms=[([(26, 31), (21, 36), (22, 30)], 3, '1'), ([(38, 31), (41, 36), (34, 39)], 3, '1')],
-           hands=[(21, 27, 'fist', False), (30, 38, 'flat', True)], top=lorgnette,
-           props=handle, side='R')
+    def _fig(c):
+        person(c, DK, 25, 13, ('a', 'A'), 'bun', 'H', 'z', mouth='flat', brows='stern', brow='z',
+               cloth='1', cdark='2', sw=6, ww=6, th=12, nolegs=True, front=gown,
+               arms=[([(26, 31), (21, 36), (22, 30)], 3, '1'), ([(38, 31), (41, 36), (34, 39)], 3, '1')],
+               hands=[(21, 27, 'fist', False), (30, 38, 'flat', True)], top=lorgnette,
+               props=handle, side='R')
+    c.paste(solo(_fig, dx=14, dy=-1, keys={'a': 'b', 'A': 'B', 'H': 'm'}, mirror=True))
+    c.paste(solo(_fig, dx=-9, dy=0))
     return c.rows(), pal
 
 

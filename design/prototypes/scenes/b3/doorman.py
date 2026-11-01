@@ -1,6 +1,7 @@
 import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def draw():
@@ -10,6 +11,7 @@ def draw():
                a=LIGHT[0], A=LIGHT[1], h='#6a4428', H='#4a2c18', n='#2b3a5c', N='#223050', z='#2a221e',
                **{'1': BLUE[0], '2': BLUE[1]})
     DK = {'1': '2', '2': '2', 'a': 'A', 'n': 'N', 'y': 'Y'}
+    pal.update({'b': MED[0], 'B': MED[1]})
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 54, 63, 63, 'f'); c.hl(0, 63, 54, 'F')
 
     def canopy(l):                          # entrance canopy with scalloped edge
@@ -38,12 +40,15 @@ def draw():
         for y in (32, 36, 40):
             f.px(27, y, 'y'); f.px(32, y, 'y')
         f.hl(22, 37, 43, 'n')
-    person(c, DK, hx=23, hy=12, skin='a', shade='A', mouth='smile', brows='soft', brow='H',
-           hs='crop', hk='h', hd='H', cx=30, sw=8, ww=7, th=15, cloth='1', front=front,
-           lg=dict(gap=2, lw=4, lh=8, pants='n', pdark='N', shoe='z'),
-           arms=[([(37, 31), (41, 37), (40, 35)], 4, '1'), ([(22, 31), (17, 34), (13, 31)], 4, '1')],
-           hands=[(9, 28, 'flat', False)],
-           top=lambda f: (top(f), f.pts('a', [(13, 26), (13, 25)]), f.px(13, 27, 'A')))
+    def _fig(c):
+        person(c, DK, hx=23, hy=12, skin='a', shade='A', mouth='smile', brows='soft', brow='H',
+               hs='crop', hk='h', hd='H', cx=30, sw=8, ww=7, th=15, cloth='1', front=front,
+               lg=dict(gap=2, lw=4, lh=8, pants='n', pdark='N', shoe='z'),
+               arms=[([(37, 31), (41, 37), (40, 35)], 4, '1'), ([(22, 31), (17, 34), (13, 31)], 4, '1')],
+               hands=[(9, 28, 'flat', False)],
+               top=lambda f: (top(f), f.pts('a', [(13, 26), (13, 25)]), f.px(13, 27, 'A')))
+    c.paste(solo(_fig, dx=14, dy=-1, keys={'a': 'b', 'A': 'B', 'h': 'z'}, mirror=False))
+    c.paste(solo(_fig, dx=-6, dy=0))
     hl = layer(); hand(hl, 38, 32, 'grip', 'a', 'A', flip=True); outline_once(hl); c.paste(hl)
     c.rect(39, 30, 40, 31, 'y'); c.rect(39, 35, 40, 37, 'Y')   # handle shows above and below the grip
     return c.rows(), pal

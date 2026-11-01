@@ -143,9 +143,9 @@
  },
  {
   "id": "market.connoisseur",
-  "name": "Connoisseur",
+  "name": "Connoisseurs",
   "sphere": "blue",
-  "n": 1,
+  "n": 2,
   "text": "Whenever you recruit a blue member, +1 blue.",
   "oldPeople": [
    "deep"
@@ -163,9 +163,9 @@
  },
  {
   "id": "market.doorman",
-  "name": "Doorman",
+  "name": "Doormen",
   "sphere": "blue",
-  "n": 1,
+  "n": 2,
   "text": "Whenever a rival recruits more than once in a turn (swaps count), +1 blue.",
   "oldPeople": [
    "fair"

@@ -1,9 +1,9 @@
 [
  {
   "id": "market.snob",
-  "name": "Snob",
+  "name": "Snobs",
   "sphere": "blue",
-  "n": 1,
+  "n": 2,
   "text": "Game end: +1 follower per blue member you have.",
   "oldPeople": [
    "porcelain"

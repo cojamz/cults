@@ -1,5 +1,6 @@
 import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
+from crowd import solo
 
 
 def bouncer():
@@ -8,6 +9,7 @@ def bouncer():
            'y': '#f2d27a', 'Y': '#c9a24a', 'r': '#b5304a', 'R': '#8a2238', 'o': '#a8703f', 'O': '#7a4e2a',
            '1': PURPLE[0], '2': PURPLE[1], 's': OLIVE[0], 'S': OLIVE[1],
            'h': '#2a1c18', 'x': '#2c2a36', 'X': '#45424f', 'z': '#3a2a22', 'f': '#2e2638'}
+    pal.update({'b': DEEP[0], 'B': DEEP[1]})
     c.rect(0, 0, 63, 63, 'b'); c.rect(0, 54, 63, 63, 'f')
 
     def door(l):
@@ -28,13 +30,16 @@ def bouncer():
         f.rect(16, 34, 24, 45, 'o'); f.rect(17, 36, 23, 44, 'w'); f.rect(19, 33, 21, 35, 'X')
         for y in (38, 40, 42):
             f.hl(18, 22, y, 'W')
-    person(c, 24, 12, 16, 's', 'S', '1', '2', th=17, sw=12, ww=11,
-           lg=dict(pants='x', pdark='X', shoe='z', lh=8, lw=5, gap=3),
-           arms=[([(21, 34), (17, 39), (19, 44)], 5, '1'), ([(43, 34), (46, 39), (44, 45)], 5, '1')],
-           hands=[(43, 45, 'fist', True)],
-           late=lambda f, DK: (f.recolor('1', '2', (41, 36, 41, 44)), f.recolor('1', '2', (42, 43, 42, 45)), clip(f, DK), hand(f, 15, 41, 'grip', 's', 'S')),
-           mouth='flat', brows='stern', brow='h', hr=('crop', 'h', 'x'),
-           dk={'o': 'O', 'w': 'W'})
+    def _fig(c):
+        person(c, 24, 12, 16, 's', 'S', '1', '2', th=17, sw=12, ww=11,
+               lg=dict(pants='x', pdark='X', shoe='z', lh=8, lw=5, gap=3),
+               arms=[([(21, 34), (17, 39), (19, 44)], 5, '1'), ([(43, 34), (46, 39), (44, 45)], 5, '1')],
+               hands=[(43, 45, 'fist', True)],
+               late=lambda f, DK: (f.recolor('1', '2', (41, 36, 41, 44)), f.recolor('1', '2', (42, 43, 42, 45)), clip(f, DK), hand(f, 15, 41, 'grip', 's', 'S')),
+               mouth='flat', brows='stern', brow='h', hr=('crop', 'h', 'x'),
+               dk={'o': 'O', 'w': 'W'})
+    c.paste(solo(_fig, dx=14, dy=-1, keys={'s': 'b', 'S': 'B'}, mirror=True))
+    c.paste(solo(_fig, dx=-10, dy=0))
     return c.rows(), pal
 
 
