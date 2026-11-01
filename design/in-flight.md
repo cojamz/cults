@@ -3,6 +3,7 @@
 Live: v0.9.854 (main:play/build.json, source f17618b0). The list before this tidy-up: design/archive/in-flight-2026-10-28-to-29.md. Long-term goals live in design/todo.md under "Backlog initiatives".
 
 Running now
+- Backlog sweep (thread "Clear backlog work that needs no design calls", Nov 1): v0.9.900 live: "You" no longer squeezes to "Y…", follower buys steady with details on; hotseat, layout and travel gates green; new shop-names gate. Next from todo "Ours": 0b/0d (details cuts the longest abilities' price at 1100 and on discounted round III cards).
 - Card polish (thread "Polish member card design and icons"): Header look live, price circle smaller (v0.9.854). Asked Cory: top right shows the member bust and how many members a card counts as, and the four cards that score less than they count (Dabblers, Con Men, Ensemble, Revelers) say "Worth 1 follower." [yes].
 - Portraits (thread "Improve all member images"): live v0.9.862, every member a 64px little scene (style F, design/prototypes/scenes: STYLE.md, BRIEF.md, b1-b6 sources, build.py N, then node scripts/v4-portrait4-import.mjs). Next: Cory's playtest notes on the pictures.
 - Balance round 2 (thread "Run balance tests and suggest 2.0 changes"): Cory answered the Oct 29 report. Logged: Accomplice 3, Tiebreaker 4, Impressionist and Greatest Hits stay; Last Call claim withdrawn. Shipping: Front-runner 2, Extra Hand 9, Agents "Your actions can't be copied", Crowd In +4 purple, Triplets worth 3. Next: whether bots handle skips and member swaps well.

@@ -27,10 +27,8 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 ## Ours, open (no call needed)
 - Portraits: wider skin-tone variation across the scene set (Cory, Oct 29: "maybe need wider variations in skin tones but these are good for now"). Kit has 6 tones; add in-between tones and spread them.
 0. Confirm two browsers in one online room see each other's table-talk bubbles on the live build (v0.9.2 shipped it).
-0b. Known-red browser checks have no owner: shop-sizing.mjs (follower buys resize with details on), layout.mjs (setup waits, P1's count), hotseat.mjs (text cuts in "You" and the Even Swap picker), info.mjs (deck count 3 vs pile 36 in (h); lamp ring check in (s) misses a 3px outline). All red before v0.9.8xx details-text change. Fix, then empty e2e/v4/known-red.json.
-0c. travel.mjs t5 (ransom paid) is red on the build before v0.9.822 too: the ransom's pieces leave the payer's seat but the gate reads them as not from the seat. Fix the gate or the flight; t7 (Walk-In off the deck) is new and green.
-1. Even Swap trading two shop members' places says nothing in "since your last turn"; say "swapped the shop's X and Y".
-2. Long shop member names fit their box (Lottery Winner, Sponsor, Patriarch, Speculator, Stunt Double): recheck on the 6/7/8 shop first.
+0b. Known-red browser checks: hotseat and layout green Nov 1 (v0.9.900), travel t5 too. Left: shop-sizing at 1100x700 with details on, where the longest abilities (Trendsetter, Cutpurse, Restocker) push the price off the card; a taller shop there shrank the wheel past reading. Needs a narrow-laptop layout idea (ability scrolls, or a smaller step).
+0d. With details on at 1270x700, a 6-line ability over a discounted price ("7 → free" in round III, Anarchist) runs the price off the card's foot (seen in the Nov 1 hot-seat game). Same fitter as 0b.
 3. "Recruit" for members everywhere ("buy followers" stays): recheck buttons, prompts, toasts, log and rulebook since v0.8.31.
 4. Round-end and end-game screens: appear quickly, readable layout, hover for detail, no totals counting up for nothing.
 5. End-game scoring shows where every point comes from: each member pops "+x" for its people, then its granted followers (Cory, Oct 15).
