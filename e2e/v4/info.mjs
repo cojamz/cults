@@ -172,7 +172,7 @@ async function nearChecks(page, step) {
       const b = await inner.boundingBox();
       await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await page.waitForTimeout(450);
       const c = await card();
-      if (!c || !c.layer) fail('(m) a name in a pinned strip card opened nothing', step);
+      if (!c || !c.layer) fail(`(m) a name in a pinned strip card opened nothing (pointed at "${(await inner.textContent().catch(() => '')) || ''}"; saw ${JSON.stringify(c)})`, step);
       else if (c.stacked) fail(`(m) a name in a pinned strip card stacked its card on that card ("${c.says}")`, step);
     }
     await page.keyboard.press('Escape'); await page.mouse.move(5, 690); await page.waitForTimeout(250);
@@ -678,6 +678,12 @@ try {
     give(0, 'gold.thrift'); give(0, 'benders.frontrunner'); give(0, 'red.crowd');
     st.pile.slice(0, 9).forEach((u, k) => give(1 + (k % 3), st.cards[u].def));
     while (st.shop.length < 10 && st.pile.length) st.shop.push(st.pile.shift());
+    // the pay dialog below needs a gold member in the shop: the deal stopped bringing one with Nov 1's cards, so one
+    // is moved up from the pile when the shop has none (the test's subject is the dialog, not the deal)
+    if (!st.shop.some(u => st.cards[u].def.startsWith('gold.') && st.cards[u].def !== 'gold.thrift')) {
+      const g = st.pile.find(u => st.cards[u].def.startsWith('gold.') && st.cards[u].def !== 'gold.thrift');
+      if (g != null) { st.pile = st.pile.filter(u => u !== g); st.pile.unshift(st.shop.pop()); st.shop.push(g); }
+    }
     st.players[0].discount = 4;
     const pg = await browser.newPage({ viewport: { width: 1270, height: 700 } });
     pg.on('pageerror', e => errors.push(`cards pageerror: ${e.message}`));

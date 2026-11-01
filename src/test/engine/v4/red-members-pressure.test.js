@@ -200,9 +200,10 @@ describe('Red members: bounded acquisition and body invariants', () => {
   });
 
   it('Panel cannot swap itself after reload, while promoting another member into Doppelganger terminates normally', () => {
-    // the swaps below need Doppelganger at 5 (Promote reaches up to 2 more); its printed price moves with balance passes
+    // the swaps below need Doppelganger at 7, between Impostor (7) and Panel (8): Promote reaches the same cost up to 2
+    // more (Nov 1); its printed price moves with balance passes
     const dop = defById('echo.doppel'), was = { s: dop.s, w: dop.w };
-    Object.assign(dop, { s: 3, w: 2 });
+    Object.assign(dop, { s: 4, w: 2 });
     try {
     let s = table(Q, { round: 2, members: [['echo.impostor', 'echo.doppel', 'red.recruitbonus']], shop: ['red.panel'], queue: turns(0, 0) });
     const impostor = uidIn(s, 'echo.impostor', 0), doppel = uidIn(s, 'echo.doppel', 0), panel = uidIn(s, 'red.panel', 'shop');

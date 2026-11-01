@@ -23,11 +23,12 @@ function hooks(ctx, p, name) {
 }
 
 /** Give n of a color to one player. Fires the receiver's onGiven hooks. */
-function giveTo(ctx, giver, to, color, n) {
+function giveTo(ctx, giver, to, color, n, once = null) {
   if (!(n > 0)) return;
   ctx.gain(to, color, n);
   // run as the member, so what it gives traces to it (Guest)
   for (const [c, d] of hooks(ctx, to, 'onGiven')) ctx.asMember(to, d.name, () => d.onGiven(ctx, to, c, giver, color, n));
+  if (color === S) for (const o of ctx.state.players) for (const [c, d] of hooks(ctx, o, 'onAnyGifted')) ctx.asMember(o, d.name, () => d.onAnyGifted(ctx, o, c, giver, once));
 }
 /** Give n of a color to every other player. One gift for the giver's onGive hooks. */
 function giveAll(ctx, giver, color, n) {
@@ -181,7 +182,7 @@ function favorAll(ctx, host) {
   for (const o of rivals) {
     const have = ctx.state.resources.filter(c => (o.res[c] || 0) > 0);
     if (!have.length) {
-      giveTo(ctx, host, o, S, 2);
+      giveTo(ctx, host, o, S, 2, key);
       afterGive(ctx, host, S, key);
       ctx.log(`${o.name} had nothing to give; +2 silver (${host.name}'s Party Favors).`);
       continue;
@@ -244,7 +245,7 @@ const silver = {
     favor(ctx, o, color, data) {
       const host = ctx.player(data.host);
       o.res[color] -= 1; ctx.gain(host, color, 1);
-      giveTo(ctx, host, o, S, 2);
+      giveTo(ctx, host, o, S, 2, data.key);
       afterGive(ctx, host, S, data.key);
       ctx.log(`${o.name} gave ${host.name} 1 ${color}, then +2 silver (${host.name}'s Party Favors).`);
     },
@@ -279,11 +280,12 @@ const silver = {
         ctx.log(`${owner.name}'s Gift Wrapper: +1 follower.`);
       },
     }),
-    m('caterer', 'Caterer', 2, 2, 'Whenever you give a rival something, +2 silver.', {
-      // one gift per space, as Toast: Party Favors' answers are one gift, not one per rival (as Gift Wrapper; bug bash, Nov 1)
-      onGive(ctx, owner, card, color, once) {
-        if (once) { if (card.catered === once) return; card.catered = once; }
-        ctx.gain(owner, S, 2); // +2 (Claude, Nov 1 balance: the artifact read −10)
+    // Cory, Nov 1: "whenever a player is gifted silver +1 silver", then +2 after the test read −4; one gift per space counts once
+    m('caterer', 'Caterer', 2, 2, 'Whenever a player is gifted silver, +2 silver.', {
+      onAnyGifted(ctx, owner, card, giver, once) {
+        const k = once || `${ctx.state.moves}:${giver.id}`;
+        if (card.catered === k) return;
+        card.catered = k; ctx.gain(owner, S, 2);
       },
     }),
     m('majordomo', 'Majordomo', 4, 2, 'Whenever you take a Silver space, +2 silver.', {

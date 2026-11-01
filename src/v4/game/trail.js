@@ -118,19 +118,22 @@ function usedBy(prev, s) {
   return { name: cardDef(s, uid).name, before: pend.kind === 'place', cause: { kind: 'member', pid, uid, def: s.cards[uid].def } };
 }
 
-function step(trail, s) {
+function step(trail, s, replayedFx = null) {
   const prev = trail.last;
   trail.last = s;
   const k = turnKey(s);
   // the move's effects (effects.js) go to the turn it belongs to: the one running before it, or the one it ends
-  const fx = prev && Array.isArray(s.effects) && s.moves === prev.moves + 1 ? s.effects : null;
+  // (replayedFx: a saved state comes back without its effects; the bridge replays its move for them)
+  const fx = prev && s.moves === prev.moves + 1 ? (Array.isArray(s.effects) ? s.effects : replayedFx) : null;
   const c0 = trail.cur;
   if (c0 && prev && s !== c0.start) {
     const use = usedBy(prev, s);
     if (use) c0.uses = [...(c0.uses || []), use];
     // a member's choices (Tribute Band copying Collect Debts: which rival, coin by coin) are its doing, not the space's:
     // the engine names a follow-up choice's effects by the move alone, which told them as the placement's own result
-    const by = c0.useBy;
+    // and so is the use itself: Raiders used on a rival's turn paid you 2 white and took 4 followers under the move's
+    // name, and the strip told "you +2" with no Raiders (turnstory t10, Nov 1)
+    const by = use ? use.cause : c0.useBy;
     if (c0.fx) { if (fx) c0.fx.push(...(by ? fx.map(e => (e.cause && e.cause.kind === 'move' ? { ...e, cause: by } : e)) : fx)); else c0.fx = null; }
     const choosing = s.pending && s.pending.kind === 'choose';
     c0.useBy = use ? (choosing ? use.cause : null) : choosing ? by : null;
@@ -166,6 +169,7 @@ function bridge(from, to) {
     const last = applyMove(s, { player: h[to.moves - 1][0], option: h[to.moves - 1][1] }, { effects: true });
     // the replay must land where the game is
     if (last.log.length !== to.log.length || last.log[last.log.length - 1] !== to.log[to.log.length - 1]) return null;
+    out.lastFx = Array.isArray(last.effects) ? last.effects : null;
   } catch { return null; }
   return out;
 }
@@ -180,7 +184,7 @@ export function feed(trail, next, base = null) {
   if (!last || next.seed !== trail.seed) {
     Object.assign(trail, createTrail(trail.me), { seed: next.seed });
     const mid = base && base.seed === next.seed && base.moves < next.moves ? bridge(base, next) : null;
-    if (mid) { step(trail, base); for (const s of mid) step(trail, s); step(trail, next); return trail; }
+    if (mid) { step(trail, base); for (const s of mid) step(trail, s); step(trail, next, mid.lastFx); return trail; }
     trail.last = next;
     const k = turnKey(next);
     // a turn we join part way through can't be told whole (a placement at its very start can)
@@ -193,7 +197,7 @@ export function feed(trail, next, base = null) {
   if (next.moves <= last.moves) { rewind(trail, next); return trail; }
   const mid = next.moves > last.moves + 1 ? bridge(last, next) : null;
   if (mid) for (const s of mid) step(trail, s);
-  step(trail, next);
+  step(trail, next, mid ? mid.lastFx : null);
   return trail;
 }
 

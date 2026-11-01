@@ -1,0 +1,7 @@
+- g2 (Ava report): possible bug: Scouts doesn't trigger Bargain Bin or Patroness (Savings and Bury do), seen twice by Cal. Check engine.
+- Scouts bug confirmed in code: scoutDone never calls market.js toBottom; routed to coordinator 11:00am.
+- g3 (Dee): Recruiter didn't pay when Ava's Demote swapped a member out of Dee's cult. Check who held Recruiter and whether swaps count as 'leaves'.
+- Recruiter: onCultMove fires only cult→cult (core.js:1256); a rival's member swapped to the shop (Demote) or released doesn't pay, though the text says 'leaves a rival's cult'. Text vs behavior: Cory's call.
+- Promote/Demote bug: swapPairs lets a rival's member be the 'first' side, so rival-to-rival swaps and backwards cost windows (red.js:197). Routed to coordinator. Red results affected.
+- Choice-log artifact: On Use abilities ("use:" options) are taken by Normal's shortcut before the lookahead, so the choice log never shows them chosen. Checked in 40 Normal games: bots do use them (Party Crasher 23 of 31 offers, Polisher 11 of 77, Hot Streak 3 of 9, Raiders 12 of 35, Scouts 22 of 668, Anarchist 5/5, Heiresses 3/3); only Debutantes went unused (0 of 4). "Never used" claims from the choice log are wrong.
+- g8 (2p, Ava): Echo copying Last Call with the owner's own Last Call ran a long skip chain; each skip paid Gossip +1 follower and Pocket Watch +1 purple, eight times in one round. Check whether skips double-count.
