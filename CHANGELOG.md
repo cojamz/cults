@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.937 — 2026-11-01
+
+- Your own seat's hover shows the same card as a rival's, with your Use buttons in it. Roadie also pays when you recruit it.
+
 ## v0.9.936 — 2026-11-01
 
 - The rules page: Silver's line now that it's redesigned, and Classic for five and six players.
