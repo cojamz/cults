@@ -36,7 +36,6 @@ function classify(kind, rows) {
       if (strong.filter(([, r]) => r.hot).length >= half) tags.add('DOMINANT'); else if (strong.length >= half) tags.add('SLEEPER');
       if (weak.filter(([, r]) => r.hot).length >= half) tags.add('TRAP');
     }
-    if (kind === 'm' && ts.every(([, r]) => r.buyRate < T.dead)) tags.add('DEAD');
     const lo = v.normal, hi = v.veryhard || v.hard;
     if (lo && hi && lo.n >= T.minN && hi.n >= T.minN) { const d = hi.lift - lo.lift; if (d >= T.skill) tags.add('SKILL+'); if (d <= -T.skill) tags.add('SKILL−'); }
     if (tags.size) out[k] = { tags: [...tags], v };
@@ -54,7 +53,25 @@ const show = (title, kind) => {
   }
   return c;
 };
+// DEAD needs every member, not only those with 30+ owners: read the raw runs next to each JSON (<same name>.jsonl)
+import { existsSync } from 'node:fs';
+const deadBy = {};
+for (const { t } of tiers) {
+  const raw = flags[t].replace(/\.json$/, '.jsonl');
+  if (!existsSync(raw)) continue;
+  const off = {}, own = {};
+  for (const line of readFileSync(raw, 'utf8').split('\n')) {
+    if (!line) continue; const r = JSON.parse(line); if (r.stuck || r.buyer >= 0) continue;
+    for (const m of r.shop || []) off[m] = (off[m] || 0) + 1;
+    for (const m of new Set(r.players.flatMap(p => p.members))) own[m] = (own[m] || 0) + 1;
+  }
+  for (const [m, o] of Object.entries(off)) if (o >= 20) (deadBy[m] ??= {})[t] = (own[m] || 0) / o;
+}
 const members = show('Members', 'm');
+const dead = Object.entries(deadBy).filter(([, v]) => Object.keys(v).length && Object.values(v).every(x => x < T.dead));
+const rare = Object.entries(deadBy).filter(([, v]) => Object.values(v).every(x => x >= T.dead && x < 0.15)).sort((a, b) => Object.values(a[1])[0] - Object.values(b[1])[0]);
+if (dead.length) say(`- **DEAD** (owned in under ${T.dead * 100}% of the games it showed, every tier): ${dead.map(([k, v]) => `${k} (${Object.entries(v).map(([t, x]) => `${t[0].toUpperCase()} ${(x * 100).toFixed(1)}%`).join(', ')})`).join('; ')}`);
+if (rare.length) say(`- **RARE** (owned in 3 to 15% of the games it showed): ${rare.map(([k, v]) => `${k} (${Object.entries(v).map(([t, x]) => `${t[0].toUpperCase()} ${Math.round(x * 100)}%`).join(', ')})`).join('; ')}`);
 const spaces = show('Spaces', 's');
 say('\n## Colors (main-color seats, lift vs even)');
 const cols = {};

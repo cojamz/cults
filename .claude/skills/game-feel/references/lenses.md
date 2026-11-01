@@ -1,4 +1,4 @@
-# The lenses (v1, 2026-11-01)
+# The lenses (v1.1, 2026-11-01)
 
 Each lens: the question, why it matters in Cults specifically, how to measure it (data, probe, or paper), the bar, and its blind spot. Lenses are tools, not truths; lens-log.md records when one misled us. Cory's gut on feel beats every bar here.
 
@@ -78,4 +78,7 @@ Each lens: the question, why it matters in Cults specifically, how to measure it
 - Pick rate = games a bot bought it ÷ games it showed in the shop. Low pick + any lift = price or bot blind spot; low pick + negative lift when bought = really weak.
 - Across tiers (Normal → Hard → Very Hard): stable lift = a real property of the card; rising = skill reward; falling = only beats weak play.
 - A space's lift is the lift of seats that took it at least once; round III spaces have one taker per game, so compare them with each other, not with round I spaces.
+- **Member-count correction hides cheap bodies** (found use 1): the report's expected share rises with member count, so a card whose point is extra count (Triplets, Deprogrammers, Early Birds, Panel, Red's recruit spaces) reads weaker than it plays. Read their raw win share and the color's raw lift beside the lift.
+- **Feel probe limits** (found use 1): it sums resources and followers, so conversions (Cash In, Polish), color changes (Dilute), timing (Right Away, Last Call, Crowd In's minion) and buy spaces (Splurge, Recruit Twice, Spree) read as small or dead. Its dead share means something only for spaces that give resources.
+- **Artifacts are a setup choice**: read their lift spread as a choice with a dominated side (brainstorm verdict 15), the highest-feel finding a run can make.
 - Never call a balance flaw from one tier, one seat count or one deck alone. Report the instrument every time.
