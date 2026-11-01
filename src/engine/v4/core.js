@@ -1587,7 +1587,9 @@ function ctxFor(state) {
     asMember(owner, name, fn, uid0 = null) {
       const before = traceSnapshot(state);
       // uid0: the card itself, so a Doppelganger copying it is its own source beside the original (Cory, Oct 28)
-      const uid = uid0 ?? owner.members.find(u => { try { return cardDef(state, u).name === name; } catch { return false; } });
+      // an artifact's own hook runs as itself too (Pocket Watch, Impressionist): its uid is the artifact's, not a member's,
+      // or the turn story called it "A member" (bug bash, Nov 1)
+      const uid = uid0 ?? [...owner.members, ...(owner.artifact !== undefined ? [owner.artifact] : [])].find(u => { try { return cardDef(state, u).name === name; } catch { return false; } });
       const out = underCause({ kind: 'member', pid: owner.id, uid: uid ?? null, def: uid != null ? state.cards[uid].def : null }, () => tallied(state, owner, uid, fn));
       traceChanges(state, before, owner, { name });
       return out;

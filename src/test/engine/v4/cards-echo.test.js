@@ -201,6 +201,17 @@ describe('Green current members', () => {
     expect(R(s)).toMatchObject({ gold: 5, green: 1 });
     expect(named(s, 'Impressionist')).toEqual(["P1's Impressionist: +1 gold."]);
   });
+  it('Impressionist held as an artifact is its own source (the turn story named it "A member")', () => {
+    let s = table(Q, { round: 2, shop: ROW, queue: turns(1, 0), members: [['echo.tuningfork']] });
+    const uid = s.players[0].members[0];
+    s.players[0].members = [];
+    s.players[0].artifact = uid;
+    s = take(go(s, 'gold.rush'), 'echo.echo');
+    s = applyMove(s, { player: s.pending.player, option: s.pending.options.find(sp('gold.rush')).id }, { effects: true });
+    expect(R(s)).toMatchObject({ gold: 5, green: 1 });
+    const fx = (s.effects || []).filter(e => e && e.cause && e.cause.kind === 'member' && e.type === 'gain');
+    expect(fx.map(e => e.cause.uid)).toEqual([uid]);
+  });
   it('Ensemble gives a loose follower for your own action, never a rival’s', () => {
     const s = buildThenEcho({ members: [['echo.ensemble']] });
     expect(s.players[0].bonus).toBe(0);
