@@ -79,6 +79,19 @@ describe('Yellow members', () => {
     expect(run('color:green')).toEqual({ n: 1, y: 2 });
     expect(run('color:red')).toEqual({ n: 0, y: 0 });
   });
+  it('Guest Book: Dabblers never blocks a new color, and recruiting it pays while a color is missing (Cory, Nov 1: "Dabblers always works optimally for the player")', () => {
+    const run = (members, buyDef) => {
+      let s = sc({ round: 3, res: [rich], members, shop: [buyDef] });
+      const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
+      s.cards[art] = { uid: art, def: 'yellow.guestbook' }; s.players[0].artifact = art;
+      const y0 = R(s).yellow;
+      s = move(take(s, 'red.take'), `card:${uidOf(s, buyDef, 'shop')}`);
+      return { n: named(s, 'Guest Book').length, y: R(s).yellow - y0 };
+    };
+    expect(run([['benders.dabblers']], 'red.intern')).toEqual({ n: 1, y: 2 }); // red is new: Dabblers doesn't count against it
+    expect(run([['benders.dabblers', 'red.volunteer']], 'red.intern')).toEqual({ n: 0, y: 0 }); // a real red member does
+    expect(run([['red.volunteer']], 'benders.dabblers')).toEqual({ n: 1, y: 2 }); // Dabblers itself: you had no gold, yellow or green
+  });
   it('Customs: +1 yellow when a rival changes or steals your resources, named', () => {
     let s = take(sc({ res: [{}, { red: 2 }], members: [[], ['yellow.customs']] }), 'yellow.dilute');
     s = move(s, 'res:1:red'); s = move(s, 'color:gold'); s = move(s, 'done');

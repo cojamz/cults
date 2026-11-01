@@ -19,10 +19,20 @@ const colorOf = (ctx, card) => { const r = ctx.quadrant(ctx.defOf(card).quadrant
 const eachColor = (ctx, p, n, opts) => { for (const c of colors(ctx)) ctx.gain(p, c, n, opts); };
 /** The table's colors p has at least one member of (Drifters counts as its chosen color). */
 const memberColors = (ctx, p) => ctx.state.quadrants.filter(q => ctx.countMembersOfColor(p, q) > 0);
-/** Guest Book: +2 yellow when member is the only member of its color in owner's cult. */
+/** Dabblers ("Counts as 2 wild members.") and a copy of it: wild for every color. */
+const isWild = (ctx, card) => !!(ctx.defOf(card).everyColor || (card.copy && ctx.defOf({ def: card.copy }).everyColor));
+/** Guest Book: +2 yellow when member is the only member of its color in owner's cult. Dabblers always works in its
+ *  owner's favor (Cory, 2026-11-01: "Dabblers always works optimally for the player"): it never blocks a new color,
+ *  and recruiting it pays when its owner lacks any color on the table. */
 function guestBook(ctx, owner, member) {
-  const def = ctx.defOf(member), q = member.asColor || def.quadrant;
-  if (!ctx.state.quadrants.includes(q) || ctx.countMembersOfColor(owner, q) > (def.n ?? 1)) return;
+  const def = ctx.defOf(member);
+  const others = ctx.membersOf(owner).filter(c => c.uid !== member.uid && !isWild(ctx, c));
+  const has = q => others.some(c => (c.asColor || c.def.quadrant) === q);
+  if (isWild(ctx, member)) { if (!ctx.state.quadrants.some(q => !has(q))) return; }
+  else {
+    const q = member.asColor || def.quadrant;
+    if (!ctx.state.quadrants.includes(q) || has(q)) return;
+  }
   ctx.gain(owner, Y, 2);
   ctx.log(`${owner.name}'s Guest Book: a new member color, +2 yellow.`);
 }
