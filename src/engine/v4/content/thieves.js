@@ -376,9 +376,14 @@ const thieves = {
     }),
     // every steal, a member's too (Cory, 2026-10-22 playtest: "it should proc on member recruits (like grifter)")
     m('sticky', 'Sticky Fingers', 2, 1, 'Your steals take 1 more resource.', { stealMore: 1 }),
-    m('desperado', 'Desperado', 2, 2, 'While you have the fewest followers (ties count), double what you steal from spaces.', {
-      stealDouble: (ctx, owner) => fewestFollowers(ctx, owner),
-    }),
+    // TEST BRANCH ONLY (Cory, Nov 1 1:25pm: "make it a flat, like +2 or +3, and try and run some balance tests"): DESPERADO=2|3 in sims
+    ...(() => { const flat = Number(globalThis.process?.env?.DESPERADO || 0); return flat
+      ? [m('desperado', 'Desperado', 2, 2, `While you have the fewest followers (ties count), your steals from spaces take ${flat} more.`, {
+        stealMoreIf: (ctx, owner) => (fewestFollowers(ctx, owner) ? flat : 0),
+      })]
+      : [m('desperado', 'Desperado', 2, 2, 'While you have the fewest followers (ties count), double what you steal from spaces.', {
+        stealDouble: (ctx, owner) => fewestFollowers(ctx, owner),
+      })]; })(),
     m('robinhood', 'Robin Hood', 2, 1, 'Whenever you steal from the player with the most followers, +1 follower.', {
       onSteal(ctx, owner, card, info) {
         if (info.thief === owner && (info.led ?? ledBefore(ctx, info))) { owner.bonus += 1; ctx.log(`${owner.name}'s Robin Hood: +1 follower.`); }
