@@ -16,7 +16,9 @@ export const TYPE_SCALE = () => {
     if (e.closest('[aria-hidden="true"], .wheel-paper, [data-spaces] .face, [data-intro], [data-recovery], script, style, option')) continue;
     // member cards' names on their color bar are 13px: the Header card Cory picked, ported value for value (Oct 29:
     // "the designs should literally match the image i sent"; src/v4/game/card-header.css)
-    if (e.closest('.lt-card .ft, .lt-rate .rt-trade, .lt-card .lt-pick-ability, .lt-card .lt-hd .nm')) continue;
+    // the big member card (.card-face.mc) is the same picked card at 17px (card-header.css, Oct 29), and a seat's hover
+    // is the rival card with its own three sizes (rival-card.css; your seat's hover too since Cory's Nov 1 playtest)
+    if (e.closest('.lt-card .ft, .lt-rate .rt-trade, .lt-card .lt-pick-ability, .lt-card .lt-hd .nm, .card-face.mc, .rc')) continue;
     const r = e.getBoundingClientRect();
     if (r.width <= 1 || r.height <= 1) continue;
     const fs = Math.round(parseFloat(getComputedStyle(e).fontSize) * 10) / 10;

@@ -3,6 +3,9 @@
    slightly bigger text for the card body"). Shop and top of the pile take the small card, .mc below is the big one. */
 .lt-shop .lt-card.card.paper:has(> .lt-hd),.lt-card.card.paper:has(> .lt-hd){background:#f4ebd7;border-radius:6px;box-shadow:inset 0 0 0 2px var(--q),0 8px 18px -8px rgba(0,0,0,.8)}
 .lt-shop .lt-card.card.paper.lit:has(> .lt-hd){background:#f4ebd7;box-shadow:inset 0 0 0 2px var(--q),0 0 0 2px #ffe0a1,0 8px 18px -8px rgba(0,0,0,.8)}
+/* a card a hovered space would recruit keeps the shop's lamp ring and halo (shop.css [data-aim]); the header card's own
+   inset edge was winning over it, so the lit card lost its warm light (info gate, Nov 1) */
+.lt-shop .lt-card.card.paper[data-aim]:has(> .lt-hd){box-shadow:inset 0 0 0 2px #ffe0a1,0 0 0 1px #382516,0 0 24px rgba(255,224,161,.65)}
 .lt-card.card .lt-hd{flex:none;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"cost . worth" "name name name";
   align-items:center;gap:2px;padding:3px;background:var(--q);color:#fff;position:relative}
 .lt-card.card .lt-hd .lt-corner-cost{grid-area:cost;position:static;opacity:1;width:16px;height:16px;border-radius:50%;display:grid;place-items:center;

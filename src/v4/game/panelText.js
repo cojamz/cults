@@ -37,7 +37,8 @@ const P = {
     discount: { verb: '4 off', second: 'your next member' },
     steal: { main: '+3 gold', second: 'from rivals' },
     // live (round 3 skeptic: "+1●" in big type paid +5): line 1 is this turn's gain, the rate small under it
-    windfall: (r, now) => (now == null ? { main: '+1 gold', second: 'per member' } : { main: `+${now} gold`, second: '1 per member you have' }),
+    // live: "1 per member" ("you have" made a third line that lifted the minion off its panel, spaces gate Nov 1)
+    windfall: (r, now) => (now == null ? { main: '+1 gold', second: 'per member' } : { main: `+${now} gold`, second: '1 per member' }),
     strike: { verb: 'Double your gold' },
   },
   red: {
@@ -90,7 +91,13 @@ const P = {
     largesse: { verb: '+1 @f per silver rivals gain', second: 'up to 10, from the bank' },
   },
   yellow: {
-    harvest: (r, now) => ({ main: `+${now ?? 1} yellow`, second: now == null ? '+1 per other color you hold' : '1, +1 per other color you hold' }),
+    // Yellow 2.0 (Oct 31): the wheel printed the old Harvest ("+1 yellow, +1 per other color you hold") and only the
+    // yellow of Dilute, Big Dilute and Makeover; Melting Pot's long sentence ran off its panel (Claude, gut call, Nov 1)
+    harvest: r => ({ main: `+${r + 2} any`, second: 'colors you choose', note: run(n => `+${n + 2}`) }),
+    dilute: { main: '+2 yellow', second: 'rivals’: change up to 3', note: 'one for one' },
+    bigdilute: { main: '+4 yellow', second: 'rivals’: change up to 6', note: 'one for one' },
+    meltingpot: { verb: '+1 any per member color', note: '+2 yellow' },
+    makeover: { verb: '+4 yellow, then rearrange all', second: 'into any colors' },
     bloom: r => ({ main: `+${r} yellow`, second: '+1 of each fewest color', note: run(n => `+${n}`, 'yellow: ') }),
     // Match the current rule: the yellow arrives before the optional swaps.
     transmute: { main: '+2 yellow', second: 'then swap up to 3', note: 'for other colors' },
@@ -145,7 +152,7 @@ const P = {
 // own estimate is the payout for these (Name Drop: 1 + the blue members in the shop), so it never drifts from the rule.
 // A space that pays per something shows this turn's gain big and its rate small (round 3 skeptic: Bandwagon's "+1●"
 // paid +5, Roll Call's +3), for `pid` (the viewer; else whoever's turn it is).
-const LIVE = new Set(['gold.windfall', 'purple.windup', 'yellow.harvest', 'trading.haggle', 'trading.dividend']);
+const LIVE = new Set(['gold.windfall', 'purple.windup', 'trading.haggle', 'trading.dividend']);
 function liveYield(qid, action, state, pid) {
   if (!state || !LIVE.has(`${qid}.${action.key}`) || typeof action.estimate !== 'function') return null;
   const p = state.players && state.players[pid ?? state.current ?? 0];
