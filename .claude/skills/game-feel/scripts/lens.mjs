@@ -1,5 +1,5 @@
 // Read balance-report JSONs across bot tiers through the strategy lens. No games are played here.
-// Usage: node .claude/skills/game-feel/scripts/lens.mjs --normal=a.json [--hard=b.json] [--veryhard=c.json] [--label=deck10] [--md=out.md]
+// Usage: node .claude/skills/game-feel/scripts/lens.mjs --normal=a.json [--hard=b.json] [--veryhard=c.json] [--label=deck10] [--md=out.md] [--before=earlier.json]
 // Each JSON comes from: node scripts/v4-balance-report.mjs <runs.jsonl> --json=<out.json>
 // Classes (thresholds at the top; change them in references/lens-log.md when a prediction shows they're off):
 //   DOMINANT  lift ≥ 2 SE and bought at or above the tier's median rate, in most tiers it shows up in: a must-buy
@@ -85,6 +85,18 @@ for (const { t, d } of tiers) {
   for (const [n, S] of Object.entries(d.bySeats || {})) say(`- ${t}, ${n} seats: winners with 5 or fewer members ${Math.round(100 * (S.small || 0) / (S.games || 1))}% (bar 20%), margin ${(S.margin / (S.games || 1)).toFixed(1)}`);
   const sw = Object.entries(d.sweeps || {}).filter(([, x]) => x.sweeps / x.games >= 0.2);
   if (sw.length) say(`- ${t} sweeps over 20%: ${sw.map(([q, x]) => `${q} ${Math.round(100 * x.sweeps / x.games)}% (decided ${Math.round(100 * x.decided / (x.sweeps || 1))}%)`).join(', ')}`);
+}
+// --before=<report.json> (same seeds, an earlier build): the noise floor is the spread of lift change among cards
+// with 100+ owners in both; a move counts only past 2x that spread (found use 1: unchanged cards moved ±4 between
+// two 800-game runs on the same seeds, so a 5-point "fix" is noise).
+if (flags.before) {
+  const A = JSON.parse(readFileSync(flags.before, 'utf8')).memberTable, Bm = Object.fromEntries((tiers[0].d.memberTable || []).map(r => [r.k, r]));
+  const d = A.filter(r => Bm[r.k] && r.n >= 100 && Bm[r.k].n >= 100).map(r => ({ k: r.k, d: Bm[r.k].lift - r.lift, a: r.lift, b: Bm[r.k].lift }));
+  const sd = Math.sqrt(d.reduce((x, y) => x + y.d * y.d, 0) / (d.length || 1));
+  say(`\n## Against ${flags.before.split('/').pop()} (${tiers[0].t})`);
+  say(`- Noise floor: lift moves with sd ${pts(sd)} points between the runs across ${d.length} cards; a move past ${pts(2 * sd)} is likely real.`);
+  const big = d.filter(x => Math.abs(x.d) >= 2 * sd).sort((x, y) => Math.abs(y.d) - Math.abs(x.d));
+  if (big.length) say(`- Moved past the floor: ${big.map(x => `${x.k} ${pts(x.a)} → ${pts(x.b)}`).join('; ')}`);
 }
 const md = lines.join('\n');
 console.log(md);
