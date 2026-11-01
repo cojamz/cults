@@ -1,18 +1,19 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
-// E2E: Greatest Hits ("Copy all your spaces / from this round") at 1270×700, from a real round III where you took a
+// E2E: Greatest Hits ("Copy any 3 round I actions with a minion on them", Cory Nov 1; was every space of yours) at 1270×700, from a real round III where you took a
 // mix of spaces, an Echo or Reprise among them. Cory's play (2026-10-16): "Copy all your spaces doesn't work quite
 // right": a copy space you took was skipped without a word. The revised rule includes copy actions, which offer a
 // fresh choice without revisiting an action in the same chain:
-//  (c1) the hover lists every eligible action, including copies, and explains any protected/empty skips;
-//  (c2) every space of yours it copies lights up on the wheel while it's under the pointer, and no other;
-//  (c3) after you take it, the Chronicle carries the skip line, and every copied space is named there.
+//  (c1) the hover's "Can copy" row names every round I action with a minion on it that it may copy;
+//  (c2) exactly those spaces light up on the wheel while it's under the pointer;
+//  (c3) after you take it you pick 3 (fewer if fewer are open), each picked one is copied and named in the log, and
+//       any skip line reaches the Chronicle.
 // Server: $V4_URL (a built preview). Shots: $V4_SHOTS/copyall (or $GH_SHOTS).
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 import { createGame, applyMove, chooseBotMove, quadrant } from '../../src/engine/v4/index.js';
 import { seededRandom } from '../../src/engine/v4/rng.js';
 import { contextFor } from '../../src/engine/v4/core.js';
-import { ownPlan, skipWords } from '../../src/engine/v4/content/echo.js';
+import { hitsPlan, HITS, skipWords } from '../../src/engine/v4/content/echo.js';
 import { buildStamp } from './lib/stamp.mjs';
 import { seedSave } from './lib/seed.mjs';
 import { answerChoice } from './lib/answer.mjs';
@@ -51,7 +52,7 @@ function copyAllSave() {
     const mine = Object.entries(s.slots).filter(([, p]) => p === 0).map(([k]) => k);
     const ok = s.round === 3 && s.pending?.kind === 'place' && s.pending.player === 0 && s.players[0].left === 1
       && s.pending.options.some(o => o.id === `slot:${GH}`) && mine.some(k => COPIES.includes(k)) && mine.length >= 4;
-    if (!ok || ownPlan(contextFor(s), s.players[0]).take.length < 2) continue;
+    if (!ok || hitsPlan(contextFor(s), s.players[0]).take.length < 2) continue;
     return { seed, mine, save: { config: { seats: seats.map(x => ({ kind: x.kind, name: x.name })), speed: 'normal' }, state: s, undo: null, savedAt: Date.now() } };
   }
   throw new Error('copyall: no seed reached round III with a copy space among P1\'s and Greatest Hits open');
@@ -79,7 +80,7 @@ try {
   await page.waitForSelector(`[data-slot="${GH}"]`);
   await page.waitForTimeout(900);
   const names = got.mine.map(k => { const [q, i] = k.split('-').map(Number); return quadrant(QUADS[q]).actions[i]; });
-  const plan = ownPlan(contextFor(got.save.state), got.save.state.players[0]);
+  const plan = hitsPlan(contextFor(got.save.state), got.save.state.players[0]);
   const copied = plan.take.map(e => e.name);
   const skipped = plan.skip.map(x => x.e.name);
   const skipReason = skipWords(plan.skip);
@@ -87,17 +88,13 @@ try {
   // (c1)(c2) the hover
   const box = await (await page.$(`[data-slot="${GH}"]`)).boundingBox();
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  const card = await page.waitForFunction(k => { const c = document.querySelector(`[data-space-card="${k}"]`); return c && c.querySelector('[data-copies-all]') ? c.innerText : null; }, GH, { timeout: 4000 }).then(h => h.jsonValue(), () => null);
+  const card = await page.waitForFunction(k => { const c = document.querySelector(`[data-space-card="${k}"]`); return c && /Can copy/i.test(c.innerText) ? c.innerText : null; }, GH, { timeout: 4000 }).then(h => h.jsonValue(), () => null);
   await page.waitForTimeout(500);
   await page.screenshot({ path: `${SHOTS}/01-hover.png` });
-  if (!card) fail('Greatest Hits\' hover has no "Copies" row', 'c1');
+  if (!card) fail('Greatest Hits\' hover has no "Can copy" row', 'c1');
   else {
-    const copiesRow = await page.evaluate(() => document.querySelector("[data-copies-all]")?.innerText || '');
-    const skipRow = await page.evaluate(() => document.querySelector("[data-copies-skip]")?.innerText || '');
-    for (const n of copied) if (!copiesRow.includes(n)) fail(`"Copies" doesn't name ${n}: "${copiesRow}"`, 'c1');
-    for (const n of skipped) if (copiesRow.includes(n)) fail(`"Copies" names ineligible ${n}: "${copiesRow}"`, 'c1');
-    for (const n of skipped) if (!skipRow.includes(n)) fail(`"Skips" doesn't name ${n}: "${skipRow}"`, 'c1');
-    if (skipped.length && !skipRow.includes(skipReason)) fail(`"Skips" doesn't say why: "${skipRow}"`, 'c1');
+    const row = (card.match(/Can copy\s*([^\n]*(?:\n(?!You|Why)[^\n]*)*)/i) || [])[1] || '';
+    for (const n of copied) if (!row.includes(n)) fail(`"Can copy" doesn't name ${n}: "${row}"`, 'c1');
   }
   const lit = await page.evaluate(() => [...new Set([...document.querySelectorAll('[data-slot].copy-target')].map(e => e.dataset.slot))].sort());
   const wantLit = [...new Set(plan.take.map(e => e.key.split('+')[0]))].sort();
@@ -123,7 +120,9 @@ try {
   if (at < 0) fail('the game log never says P1 took Greatest Hits', 'c3');
   else {
     if (skipped.length && !after.some(l => l.includes(`skips ${skipReason}`))) fail(`no skip line after Greatest Hits: ${JSON.stringify(after.slice(0, 8))}`, 'c3');
-    for (const n of copied) if (!after.some(l => new RegExp(`P1 cop(ied|ies) ${n}\\b`).test(l))) fail(`no "copied ${n}" line: ${JSON.stringify(after.slice(0, 10))}`, 'c3');
+    const did = copied.filter(n => after.some(l => new RegExp(`P1 cop(ied|ies) ${n}\\b`).test(l)));
+    const want = Math.min(HITS, copied.length);
+    if (did.length !== want) fail(`copied ${did.length} (${did.join(', ')}), want ${want} of ${copied.join(', ')}: ${JSON.stringify(after.slice(0, 12))}`, 'c3');
   }
   await page.click('.lt-menu .menu-glyph').catch(() => {});
   await page.click('.lt-menu .log-btn').catch(() => {});

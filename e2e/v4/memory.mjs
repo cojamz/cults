@@ -113,7 +113,8 @@ try {
     // prefer recruiting (cults with members are the heavier screen), then followers, Pass last; never back/undo or a
     // member's on/off switch (a free toggle: flipping it forever would stall the game). lib/answer.mjs answers board
     // picks, pairs and the pay sheet; a hover card over the target gets a plain DOM click.
-    await answerChoice(page, { prefer: [/^(card|pay):/, /^tier:/], last: [/^pass$/], avoid: [/^undo/], domFallback: true }).then(did => (did ? null : page.waitForTimeout(40)));
+    // Peek's order: keep it as dealt (clicking its cards one by one reorders; the shop's card: ids would be preferred)
+    await answerChoice(page, { prefer: [/^keep$/, /^(card|pay):/, /^tier:/], last: [/^pass$/], avoid: [/^undo/], domFallback: true }).then(did => (did ? null : page.waitForTimeout(40)));
     const n = await moves();
     if (n !== lastMoves) { lastMoves = n; movedAt = Date.now(); }
     if (n >= next) { await sample(`move ${n}`); next = n - (n % EVERY) + EVERY; }
