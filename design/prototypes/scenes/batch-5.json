@@ -10,16 +10,6 @@
   ]
  },
  {
-  "id": "benders.frontrunner",
-  "name": "Front-runner",
-  "sphere": "colorless",
-  "n": 1,
-  "text": "You go first every round.",
-  "oldPeople": [
-   "golden"
-  ]
- },
- {
   "id": "benders.hr",
   "name": "HR",
   "sphere": "colorless",

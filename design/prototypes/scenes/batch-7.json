@@ -254,5 +254,15 @@
   "n": 1,
   "text": "Game End: +1 follower per color you hold 3 or more of.",
   "oldPeople": []
+ },
+ {
+  "id": "benders.frontrunner",
+  "name": "Line Cutters",
+  "sphere": "colorless",
+  "n": 2,
+  "text": "You go first every round.",
+  "oldPeople": [
+   "golden"
+  ]
  }
 ]
