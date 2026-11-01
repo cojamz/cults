@@ -10,5 +10,5 @@ Each number is how often the owner won, against what they'd win on average with 
 ## Desperado (today "While you have the fewest followers (ties count), double what you steal from spaces.")
 - Double (today): easy bots 23% vs 26%, Hard 31% vs 27%.
 - Flat +2 more: easy bots 24% vs 25%, Hard 19% vs 25%.
-- Flat +3 more: easy bots 23% vs 25%, Hard still running (too few owners so far).
+- Flat +3 more: easy bots 23% vs 25%, Hard 21% vs 24%.
 - Read: every version lands about even; the differences are inside the noise (30 to 40 owners at Hard). Bots buy it in about 3 games of 10 when it shows. The flat versions don't make it weaker or stronger in a way the games can see, so the choice is about which reads better at the table.
