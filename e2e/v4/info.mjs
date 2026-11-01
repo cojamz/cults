@@ -171,7 +171,9 @@ async function nearChecks(page, step) {
     if (await inner.count()) {
       const b = await inner.boundingBox();
       await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await page.waitForTimeout(450);
-      const c = await card();
+      // under a loaded box the card can take longer than 450ms to paint: wait up to 3s for it before judging
+      let c = await card();
+      for (const until = Date.now() + 3000; !(c && c.layer) && Date.now() < until; c = await card()) await page.waitForTimeout(100);
       if (!c || !c.layer) fail(`(m) a name in a pinned strip card opened nothing (pointed at "${(await inner.textContent().catch(() => '')) || ''}"; saw ${JSON.stringify(c)})`, step);
       else if (c.stacked) fail(`(m) a name in a pinned strip card stacked its card on that card ("${c.says}")`, step);
     }
@@ -270,12 +272,12 @@ async function deckCheck(page) {
       try { save = JSON.parse(localStorage.getItem('patrons.v4.local')); } catch { /* none */ }
       if (!g || !d || !save || !save.state) return null;
       const tv = d.querySelector('.n .tv') || d.querySelector('.n');
-      return { moves: Number(g.dataset.moves), saved: save.state.moves, pile: save.state.pile.length, left: Number(d.dataset.left), shown: tv.textContent.trim() };
+      return { moves: Number(g.dataset.moves), pm: g.dataset.presentationMoves, anim: g.dataset.animating, saved: save.state.moves, pile: save.state.pile.length, left: Number(d.dataset.left), shown: tv.textContent.trim(), decks: document.querySelectorAll("[data-deck]").length, round: save.state.round };
     });
     last = r;
     if (r && r.held) return 'held';
     if (r && r.moves === r.saved) {
-      if (r.left !== r.pile) { fail(`(h) the deck says ${r.left}, the engine's pile has ${r.pile}`, 'deck'); return 'checked'; }
+      if (r.left !== r.pile) { fail(`(h) the deck says ${r.left}, the engine's pile has ${r.pile} (${JSON.stringify(r)})`, 'deck'); return 'checked'; }
       if (r.shown === String(r.pile)) return 'checked';
     }
     await page.waitForTimeout(100);
