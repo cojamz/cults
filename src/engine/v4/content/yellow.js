@@ -25,19 +25,21 @@ const isWild = (ctx, card) => !!(ctx.defOf(card).everyColor || (card.copy && ctx
  *  owner's favor (Cory, 2026-11-01: "Dabblers always works optimally for the player"): it never blocks a new color,
  *  and recruiting it pays when its owner lacks any color on the table. */
 function guestBook(ctx, owner, member) {
-  if (!newColor(ctx, owner, member)) return;
+  if (!newColor(ctx, owner, member, { grey: true })) return;
   ctx.gain(owner, Y, 2);
   ctx.log(`${owner.name}'s Guest Book: a new member color, +2 yellow.`);
 }
 /** member is of a color none of owner's other members have (Guest Book, Matchmaker). Dabblers never blocks, and
  *  Dabblers itself is new while owner lacks any color on the table; Drifters reads as its chosen color. */
-function newColor(ctx, owner, member) {
+function newColor(ctx, owner, member, { grey = false } = {}) {
   const def = ctx.defOf(member);
   const others = ctx.membersOf(owner).filter(c => c.uid !== member.uid && !isWild(ctx, c));
   const has = q => others.some(c => (c.asColor || c.def.quadrant) === q);
-  if (isWild(ctx, member)) return ctx.state.quadrants.some(q => !has(q));
+  // grey counts as a color for Guest Book (Cory, Nov 1: "Yes"), as for HR; Dabblers is grey and every color
+  const pool = grey ? [...ctx.state.quadrants, 'guest'] : ctx.state.quadrants;
+  if (isWild(ctx, member)) return pool.some(q => !has(q));
   const q = member.asColor || def.quadrant;
-  return ctx.state.quadrants.includes(q) && !has(q);
+  return pool.includes(q) && !has(q);
 }
 function matchmaker(ctx, owner, member) {
   if (!newColor(ctx, owner, member)) return;
@@ -124,7 +126,7 @@ export default {
     },
     changeTo(ctx, p, b, data) {
       const [oid, a] = data.pick, o = ctx.state.players[oid];
-      if ((o.res[a] || 0) > 0) changeOne(ctx, p, o, a, b, data.who);
+      if ((o.res[a] || 0) > 0) changeOne(ctx, p, o, a, b, data.who, data.instance);
       if (data.follower) { p.bonus += 1; ctx.log(`${p.name}'s ${data.who}: +1 follower.`); }
       const next = { ...data, pick: null, left: data.left - 1, done: data.done + 1, used: [...(data.used || []), oid], made: [...(data.made || []), `${oid}:${b}`], took: [...(data.took || []), `${oid}:${data.pick[1]}`] };
       if (next.left > 0) changeStep(ctx, p, next); else tastemaker(ctx, p);
@@ -154,11 +156,12 @@ export default {
     },
     level(ctx, p, b) {
       let any = false;
+      const instance = newChange(ctx);
       for (const o of touchable(ctx, p)) {
         const pool = colors(ctx).filter(c => c !== b && (o.res[c] || 0) > 0);
         if (!pool.length) continue;
         const top = Math.max(...pool.map(c => o.res[c]));
-        changeOne(ctx, p, o, pool.find(c => o.res[c] === top), b, 'Leveler');
+        changeOne(ctx, p, o, pool.find(c => o.res[c] === top), b, 'Leveler', instance);
         any = true;
       }
       if (any) tastemaker(ctx, p);
@@ -172,7 +175,12 @@ export default {
     // Cory, 2026-10-31: "maybe just +1 yellow when any of your resources are stolen or moved"
     m('customs', 'Customs', 2, 3, 'Whenever a rival steals or changes any of your resources, +1 yellow.', { round: 1, // 6 but still a round I member (Claude, balance Nov 1: strong at 4; Yellow keeps 4 round I members)
       onSteal(ctx, owner, card, info) { if (info.victim === owner && info.thief !== owner) { ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs: +1 yellow.`); } },
-      onChanged(ctx, owner, card, by) { if (by !== owner) { ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs: +1 yellow.`); } },
+      // once per change, however many of your resources it changes (Cory, Nov 1: "Yes"), as once per steal
+      onChanged(ctx, owner, card, by, instance) {
+        if (by === owner || (instance != null && card.changed === instance)) return;
+        if (instance != null) card.changed = instance;
+        ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs: +1 yellow.`);
+      },
     }),
     // Claude's fill-in (Cory, 2026-10-31: "whenever you recruit, +1 of its color" may become Red's artifact)
     m('gobetween', 'Go-Between', 2, 1, 'Whenever a space gives you resources, you may change 1 of them to any color.', {
@@ -389,7 +397,7 @@ function pickColors(ctx, p, n, who, fromAction = false, got = 0) {
 // resource, then the color it becomes. A rival who can't be stolen from can't be changed either (Bodyguards).
 function startChange(ctx, p, data) {
   if (!(data.left > 0)) return;
-  changeStep(ctx, p, { done: 0, used: [], ...data });
+  changeStep(ctx, p, { done: 0, used: [], instance: newChange(ctx), ...data });
 }
 function changeStep(ctx, p, data) {
   const opts = [];
@@ -417,11 +425,13 @@ function tastemaker(ctx, p) {
     ctx.log(`${p.name}'s Tastemaker: +1 follower.`);
   }
 }
-function changeOne(ctx, p, o, a, b, who) {
+/** One change of rivals' resources (a space or card, however many it changes): Customs pays once per change. */
+const newChange = ctx => (ctx.state.changeSeq = (ctx.state.changeSeq || 0) + 1);
+function changeOne(ctx, p, o, a, b, who, instance = newChange(ctx)) {
   o.res[a] -= 1; o.res[b] = (o.res[b] || 0) + 1;
   ctx.log(`${p.name}'s ${who}: ${o.name}'s 1 ${a} becomes 1 ${b}.`);
   for (const card of ctx.membersOf(o)) {
     const def = ctx.defOf(card);
-    if (def.onChanged) def.onChanged(ctx, o, card, p);
+    if (def.onChanged) def.onChanged(ctx, o, card, p, instance);
   }
 }

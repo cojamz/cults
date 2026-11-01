@@ -152,6 +152,14 @@ describe('White members', () => {
     expect(named(s, 'Fence')).toHaveLength(1);
   });
 
+  it('Farewell casting out pays a rival\'s Recruiter +2 red (Cory, Nov 1: "Yes")', () => {
+    let s = take(table(Q, { round: 2, members: [['red.bigfamily'], ['red.recruiter']], shop: ROW }), 'trading.farewell');
+    const r0 = R(s, 1).red;
+    s = move(s, `card:${uidIn(s, 'red.bigfamily', 0)}`);
+    expect(R(s, 1).red - r0).toBe(2);
+    expect(named(s, 'Recruiter')).toHaveLength(1);
+  });
+
   it('Cashier: when recruited, all your white becomes followers (named)', () => {
     let s = table(Q, { res: [{ white: 9 }], shop: ['trading.cashier', ...ROW], ...buy });
     s = move(s, cardOpt(s, 'trading.cashier', 'shop'));

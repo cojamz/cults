@@ -98,6 +98,25 @@ describe('Yellow members', () => {
     expect(R(s, 1)).toMatchObject({ red: 1, gold: 1, yellow: 1 });
     expect(named(s, 'Customs')).toHaveLength(1);
   });
+  it('Customs: once per change, however many of your resources it changes (Cory, Nov 1: "Yes")', () => {
+    let s = take(sc({ res: [{}, { red: 3 }], members: [[], ['yellow.customs']] }), 'yellow.dilute');
+    s = move(s, 'res:1:red'); s = move(s, 'color:gold');
+    s = move(s, 'res:1:red'); s = move(s, 'color:green');
+    s = move(s, 'done');
+    expect(named(s, 'Customs')).toHaveLength(1);
+    expect(R(s, 1).yellow).toBe(1);
+  });
+  it('Guest Book: a first grey member is a new color; a second grey is not (Cory, Nov 1: "Yes")', () => {
+    const run = (members, buyDef) => {
+      let s = sc({ round: 3, res: [rich], members, shop: [buyDef] });
+      const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
+      s.cards[art] = { uid: art, def: 'yellow.guestbook' }; s.players[0].artifact = art;
+      s = move(take(s, 'red.take'), `card:${uidOf(s, buyDef, 'shop')}`);
+      return named(s, 'Guest Book').length;
+    };
+    expect(run([['red.volunteer']], 'benders.scout')).toBe(1);
+    expect(run([['red.volunteer', 'benders.saboteur']], 'benders.scout')).toBe(0);
+  });
   it('Go-Between: once per space, you may change 1 gained resource to another color', () => {
     let s = take(sc({ members: [['yellow.gobetween']] }), 'yellow.transmute');
     s = move(s, 'color:red');
