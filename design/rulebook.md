@@ -34,7 +34,7 @@ Round I's turn order is drawn at random. Then, starting with the player who goes
 - **+1 minion** (Crowd In, Extra Shift, Go-Getter, Night Owls) gives you one more minion this round, to place and recruit with. The card says when you place it; otherwise it goes after everyone else. It never happens in round I, and later only while a space would still be free after every minion still to come has landed.
 - **In a row** (Right Away, Crunch Time, Clockmakers) moves your own next turn up, so you place twice in a row. No new minion: you place the same minions, just sooner.
 - What you just did happens now, even if a skip is already waiting on you: a copied Right Away after your Last Call still places right away, then the skip goes on.
-- A **skipped** turn is passed over: play goes on to the next turn, and you place that minion later in the round. Nobody loses a turn or a minion.
+- A **skipped** turn is passed over: play goes on to the next turn, and you place that minion later in the same round. Nobody loses a turn or a minion. A skip only reaches a turn in the same round: if that player has no turn left, nothing is skipped, and a skip never carries into the next round. Cards that pay "whenever a turn is skipped" pay when play reaches the skipped turn.
 
 ## Your turn
 1. **Place a minion** on an open space and do what it says. If no space is open, that minion sits out.

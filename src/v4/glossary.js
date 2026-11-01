@@ -34,7 +34,7 @@ export const GLOSSARY = [
     def: 'Your own next turn comes up now, so you place twice in a row. No new minion: you place the same minions, just sooner.' },
   // Cory, 2026-10-22: a skip passes you over once; you never lose the turn or the minion
   { key: 'skip', word: 'Skip', match: /\bskip(?:s|ped)?\b/i,
-    def: 'A skipped turn is passed over: play goes on to the next turn, and the skipped player places that minion later in the round. Nobody loses a turn or a minion.' },
+    def: 'A skipped turn is passed over: play goes on to the next turn, and the skipped player places that minion later in the same round. Nobody loses a turn or a minion. A skip never carries into the next round: with no turn left this round, nothing is skipped.' },
   // Cory, 2026-10-24: "cast out" instead of "bury a member", in the cult's own words
   { key: 'cast out', word: 'Cast out', match: /\bcast out\b/i,
     def: 'Send one of your own members to the bottom of the pile. It leaves your cult.' },
