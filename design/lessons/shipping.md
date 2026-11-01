@@ -6,3 +6,4 @@
 - 2026-10-26 · Testers given the live URL all failed: the box can't reach cojamz.github.io · serve main's play/ and rules/ on localhost and give testers that URL
 - 2026-10-28 · One stalled check held a release overnight · every check stage has a limit and a stall is named, screenshotted and shipped around · scripts/v4-check.mjs, design/releasing.md
 - 2026-10-28 · Seven version bumps in one morning · small publishes are sub-steps (v0.9.801) · scripts/v4-version.mjs; old releases pruned by build time in v4-play.sh
+- 2026-11-01: with several threads shipping at once, v4-ship-ui.sh's version commit clashed in CHANGELOG.md on its final rebase, and v4-play.sh's main commit clashed with another publish. Fix: `git rebase --skip` the release commit only, pull, bump, commit and push in one command; rerun v4-play.sh, which starts from main afresh.
