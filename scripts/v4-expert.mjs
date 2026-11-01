@@ -45,7 +45,17 @@ const STYLES = [[
 
 // ---------- files, lock ----------
 const f = (dir, n) => path.join(dir, n);
-const readJson = p => JSON.parse(fs.readFileSync(p, 'utf8'));
+// A reader can land in the instant a write swaps the file in (a network folder can briefly show it missing or half
+// written: g10, between rounds I and II), so a read retries for up to 3 s before it gives up.
+const pause = ms => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+const readJson = p => {
+  for (let i = 0; ; i++) {
+    try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) {
+      if (i >= 30 || !(e.code === 'ENOENT' || e instanceof SyntaxError)) throw e;
+      pause(100);
+    }
+  }
+};
 const writeJson = (p, o) => { const t = `${p}.tmp${process.pid}`; fs.writeFileSync(t, JSON.stringify(o)); fs.renameSync(t, p); };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function locked(dir, fn) {
@@ -212,17 +222,44 @@ function view(dir, seat, { fresh, full = false }) {
     out.push('', `Game over. Write your postgame note: node scripts/v4-expert.mjs postgame ${dir} ${seat} "<text>"`);
     return out.join('\n');
   }
-  if (s.pending?.player === seat) out.push('', decisionView(s, me));
+  if (s.pending?.player === seat) { out.push('', decisionView(s, me, meta)); writeJson(f(dir, 'meta.json'), meta); }
   else if (s.pending) out.push('', `Not your decision: waiting on ${s.players[s.pending.player].name} (${s.pending.kind}).`);
   return out.join('\n');
 }
 
-function decisionView(s, me) {
-  const t = s.pending;
+// Option numbers are stable (bug log row 11: misclicks in g1, g4, g5, g7 when a Dilute pick, a steal or a payment
+// shifted the list). Each seat's numbers live in meta.numbers as option id -> number. Through one turn's chain of
+// steps an option keeps its number, a removed option leaves a gap and a new one gets a fresh number, so a number
+// read off any earlier list of the same turn either means the same option or is refused with the fresh list. The
+// numbers start again at 1 for each new turn.
+function numberOptions(s, seat, meta, carry) {
+  const ids = s.pending.options.map(o => o.id), old = meta?.numbers?.[seat];
+  const keep = old && (old.moves === s.moves || carry);
+  const map = keep ? { ...old.map } : {};
+  let next = keep ? old.next : 1;
+  for (const id of ids) if (map[id] === undefined) map[id] = next++;
+  if (meta) (meta.numbers ??= {})[seat] = { moves: s.moves, map, next };
+  return map;
+}
+
+function decisionView(s, me, meta, carry = false) {
+  const t = s.pending, map = numberOptions(s, me.id, meta, carry);
   const L = [`YOUR DECISION (${t.kind}): ${t.prompt}`];
-  t.options.forEach((o, i) => L.push(`  [${i + 1}] ${renderOption(s, me, o, t.kind)}`));
+  t.options.forEach(o => L.push(`  [${map[o.id]}] ${renderOption(s, me, o, t.kind)}`));
   L.push('', `Answer with: node scripts/v4-expert.mjs move ${DIR} ${me.id} <number> --why "..." [--say "..."]`);
   return L.join('\n');
+}
+
+// the option a move names: an option id, or a number this seat was shown this turn
+function pickOption(s, meta, seat, arg) {
+  const opts = s.pending.options;
+  if (!/^\d+$/.test(arg || '')) return { o: opts.find(x => x.id === arg) };
+  const n = Number(arg), nums = meta.numbers?.[seat];
+  if (!nums) return { o: opts[n - 1] };
+  const id = Object.keys(nums.map).find(k => nums.map[k] === n);
+  if (id === undefined) return { o: null };
+  const o = opts.find(x => x.id === id);
+  return o ? { o } : { o: null, gone: true };
 }
 
 // ---------- commands ----------
@@ -263,7 +300,7 @@ async function main() {
     console.log(`Wrote ${meta.names.length} briefs in ${dir}`);
     return;
   }
-  if (cmd === 'view') { console.log(view(dir, seat, { fresh: false, full: !!flags.full })); return; }
+  if (cmd === 'view') { await locked(dir, async () => console.log(view(dir, seat, { fresh: false, full: !!flags.full }))); return; }
   if (cmd === 'wait') {
     const max = Number(flags.max || 100) * 1000, t0 = Date.now();
     for (;;) {
@@ -281,9 +318,13 @@ async function main() {
       const { s, meta } = load(dir);
       if (s.over) { console.log('The game is over.'); return; }
       if (s.pending?.player !== seat) { console.log(`Not your decision now (waiting on ${s.players[s.pending.player].name}). Run wait.`); return; }
-      const opts = s.pending.options;
-      const o = /^\d+$/.test(arg || '') ? opts[Number(arg) - 1] : opts.find(x => x.id === arg);
-      if (!o) { console.log(`No such option "${arg}". Pick a number from the list:\n${decisionView(s, s.players[seat])}`); return; }
+      const { o, gone } = pickOption(s, meta, seat, arg);
+      if (!o) {
+        const why = gone ? `Option ${arg} isn't offered any more (an earlier step of your turn changed the list). Nothing was played.` : `No such option "${arg}".`;
+        console.log(`${why} Pick a number from this list:\n${decisionView(s, s.players[seat], meta)}`);
+        writeJson(f(dir, 'meta.json'), meta);
+        return;
+      }
       const label = renderOption(s, s.players[seat], o, s.pending.kind);
       const round = s.round;
       const next = applyMove(s, { player: seat, option: o.id });
@@ -298,7 +339,7 @@ async function main() {
       const mine = newLines(s, next);
       console.log(`Done: ${label.slice(0, 160)}\nWhat happened:\n${mine.map(l => `  ${l}`).join('\n') || '  (nothing logged)'}`);
       if (next.over) console.log(`\nGAME OVER. ${next.ranking.map((id, i) => `${i + 1}. ${next.players[id].name} ${followers(next, next.players[id])}`).join(' · ')}\nNow run postgame.`);
-      else if (next.pending?.player === seat) console.log(`\nYour turn continues.\n${tableView(next, seat).split('\n').slice(0, 2).join('\n')}\n\n${decisionView(next, next.players[seat])}`);
+      else if (next.pending?.player === seat) { console.log(`\nYour turn continues.\n${tableView(next, seat).split('\n').slice(0, 2).join('\n')}\n\n${decisionView(next, next.players[seat], meta, true)}`); writeJson(f(dir, 'meta.json'), meta); }
       else console.log(`\nYour decisions are finished for now. Run wait.`);
     });
     return;
