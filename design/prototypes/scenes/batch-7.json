@@ -182,5 +182,77 @@
   "n": 2,
   "text": "Game End: +2 followers per rival with more silver than you.",
   "oldPeople": []
+ },
+ {
+  "id": "red.bigfamily",
+  "name": "Big Family",
+  "sphere": "red",
+  "n": 4,
+  "text": "Worth 4 followers.",
+  "oldPeople": []
+ },
+ {
+  "id": "market.makeover",
+  "name": "Makeover",
+  "sphere": "market",
+  "n": 3,
+  "text": "On Recruit: send the whole shop to the bottom of the pile, then refill.",
+  "oldPeople": []
+ },
+ {
+  "id": "trading.bulkbuyer",
+  "name": "Bulk Buyer",
+  "sphere": "trading",
+  "n": 2,
+  "text": "Whenever you buy 5 or more followers, +1 follower.",
+  "oldPeople": []
+ },
+ {
+  "id": "trading.shareholder",
+  "name": "Shareholder",
+  "sphere": "trading",
+  "n": 3,
+  "text": "Worth 3 followers.",
+  "oldPeople": []
+ },
+ {
+  "id": "echo.choir",
+  "name": "Choir",
+  "sphere": "echo",
+  "n": 2,
+  "text": "Whenever you copy a space, +1 green.",
+  "oldPeople": []
+ },
+ {
+  "id": "silver.giftwrapper",
+  "name": "Gift Wrapper",
+  "sphere": "silver",
+  "n": 1,
+  "text": "Whenever you give rivals silver, +1 follower.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.caravan",
+  "name": "Caravan",
+  "sphere": "yellow",
+  "n": 3,
+  "text": "Worth 3 followers. On Recruit: +1 of each color you hold. Round Start: +1 of each color you hold.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.tastemaker",
+  "name": "Tastemaker",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "Whenever you change rivals' resources, +1 follower.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.spiceroute",
+  "name": "Spice Route",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "Game End: +1 follower per color you hold 3 or more of.",
+  "oldPeople": []
  }
 ]
