@@ -142,7 +142,7 @@ export default {
     m('recruitbonus', 'Recruit Bonus', 1, 1, 'Your On Recruits also give +1 of that member’s color.', { f: 2,
       onRecruitAbility(ctx, owner, card, recruited) { gainColorOf(ctx, owner, recruited.def, 'Recruit Bonus'); }, // a guest: nothing; Dabblers: pick
     }),
-    m('movementpenalty', 'Deprogrammers', 1, 2, 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 3, n: 2, // +1 (Cory, Oct 30)
+    m('movementpenalty', 'Deprogrammers', 1, 1, 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 3, n: 2, // +1 (Cory, Oct 30)
       onMoveMember(ctx, owner, card, info) { if (info.from !== owner && ctx.followers(info.from) > 0) info.from.bonus -= 1; },
     }),
     m('panel', 'Panel', 4, 2, 'On Recruit: promote or demote another of your members.', { f: 3, n: 3,
@@ -153,7 +153,7 @@ export default {
         ctx.choose(owner, 'Panel: Promote or Demote?', options, 'red.panelMode', { excludeUid: card.uid });
       },
     }),
-    m('loyalists', 'Loyalists', 2, 3, /* Claude's fill-in price 5, was 3 (Cory, 2026-10-22: "too cheap") */ 'Your other members can’t be swapped.', { f: 2, n: 2, blockMemberSwaps: true }),
+    m('loyalists', 'Loyalists', 2, 3, /* Claude's fill-in price 5, was 3 (Cory, 2026-10-22: "too cheap") */ 'Your other members can’t be swapped.', { f: 3, n: 2, blockMemberSwaps: true }),
     // Cory, 2026-10-24: Red's once per game, "swap a rivals with the shop" (equal or greater cost); name and price Claude's fill-in
     m('headhunter', 'Headhunter', 3, 2, 'On Use, once per game: swap a rival’s member with a shop member that costs as much or more.', {
       activate: 'game',

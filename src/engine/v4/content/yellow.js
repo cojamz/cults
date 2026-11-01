@@ -143,7 +143,7 @@ export default {
       onRoundStart(ctx, owner) { for (const c of missing(ctx, owner)) ctx.gain(owner, c, 1); },
     }),
     // Cory, 2026-10-31: "maybe just +1 yellow when any of your resources are stolen or moved"
-    m('customs', 'Customs', 2, 1, 'Whenever a rival steals or changes any of your resources, +1 yellow.', {
+    m('customs', 'Customs', 2, 2, 'Whenever a rival steals or changes any of your resources, +1 yellow.', { round: 1, // 5 but still a round I member (Claude, balance Nov 1: strong at 4; Yellow keeps 4 round I members)
       onSteal(ctx, owner, card, info) { if (info.victim === owner && info.thief !== owner) { ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs: +1 yellow.`); } },
       onChanged(ctx, owner, card, by) { if (by !== owner) { ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs: +1 yellow.`); } },
     }),
