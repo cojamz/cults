@@ -580,3 +580,24 @@
 {"t":1793551611930,"type":"move","seat":0,"round":3,"n":220,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Cash 10; keep 7 yellow, more than Ben's best reach of 5.","prompt":"Ava: recruit a member or followers, or pass"}
 {"t":1793551615671,"type":"move","seat":0,"round":3,"n":221,"kind":"pay","option":"pay:0-8-2","label":"Pay 8 yellow, 2 blue (suggested)","think":"8 yellow, 2 blue","prompt":"Ava: choose how to pay for 10 followers"}
 {"t":1793551615671,"type":"log","text":"Ava bought 10 followers (8 yellow, 2 blue).","by":0}
+{"t":1793551634701,"type":"move","seat":1,"round":3,"n":222,"kind":"place","option":"use:30","label":"Use Party Crasher — On Use, once per game: your next minion can be placed on a space a rival already took.","think":"Big Dilute on Ava's yellow is useless against Customs (she gets one back per change). But Party Crasher onto Cal's Makeover: +4 yellow, then remix all 19 into 8 yellow (beats Ava's 7), 7 red (beats Cal's 6) and the rest blue (nobody else holds any). All three +10s on the last placement.","prompt":"Ben: place a minion"}
+{"t":1793551634701,"type":"log","text":"Ben's Party Crasher: the next minion may go on a space a rival took.","by":1}
+{"t":1793551640142,"type":"move","seat":1,"round":3,"n":223,"kind":"place","option":"squat:1-5","label":"Yellow · Makeover (taken: you would join it) → you'd get: +0..19 red, +0..19 yellow, -15..4 blue; then you choose: Makeover: pick a color for all 19, or split them; Makeover: how many red? (19 left to place); Makeover: how many yellow? (19 left to place; the rest become blue); Makeover: how many yellow? (18 left to place; the rest become blue); Makeover: how many yellow? (17 left to place; the rest become blue); Makeover: how many yellow? (16 left to place; the rest become blue); Makeover: how many yellow? (15 left to place; the rest become blue); Makeover: how many yellow? (14 left to place; the rest become blue)","think":"Makeover","prompt":"Ben: place a minion"}
+{"t":1793551640142,"type":"log","text":"Ben joined Cal on Makeover (Yellow).","by":1}
+{"t":1793551640142,"type":"log","text":"Ben's Makeover: +4 yellow.","by":1}
+{"t":1793551642026,"type":"move","seat":1,"round":3,"n":224,"kind":"choose","option":"split","label":"Split them yourself — value hint -1","think":"split","prompt":"Makeover: pick a color for all 19, or split them"}
+{"t":1793551645550,"type":"move","seat":1,"round":3,"n":225,"kind":"choose","option":"amount:7","label":"7 red — value hint -7","think":"7 red beats Cal's 6","prompt":"Makeover: how many red? (19 left to place)"}
+{"t":1793551648028,"type":"move","seat":1,"round":3,"n":226,"kind":"choose","option":"amount:8","label":"8 yellow — value hint -4","think":"8 yellow beats Ava's 7; 4 blue left, nobody else holds blue.","prompt":"Makeover: how many yellow? (12 left to place; the rest become blue)"}
+{"t":1793551648028,"type":"log","text":"Ben's Makeover: rearranged into 7 red, 8 yellow, 4 blue.","by":1}
+{"t":1793551652708,"type":"move","seat":1,"round":3,"n":227,"kind":"buy","option":"card:29","label":"Recruit Critic [1 blue + 2 any; you pay 3 (3 any); worth 1] — Whenever a rival recruits a blue member, +1 follower.","think":"Critic with 3 blue: body, Patriarch tick, Trendsetters/Patroness/Bargain refund. Red and yellow margins stay at 1.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551654622,"type":"move","seat":1,"round":3,"n":228,"kind":"pay","option":"pay:0-0-3","label":"Pay 3 blue (suggested)","think":"blue","prompt":"Ben: choose how to pay for Critic"}
+{"t":1793551654622,"type":"log","text":"Ben recruited Critic (3 blue).","by":1}
+{"t":1793551654622,"type":"log","text":"New in the shop: Connoisseurs.","by":1}
+{"t":1793551656726,"type":"move","seat":1,"round":3,"n":229,"kind":"choose","option":"card:17","label":"Big Tent [3 yellow + 4 any; worth 1] — Game End: +2 followers per color you have exactly one member of.","think":"any","prompt":"Trendsetters: send which member to the bottom? (1 to go)"}
+{"t":1793551656726,"type":"log","text":"Ben's Trendsetters: Ben sends Big Tent to the bottom of the pile.","by":1}
+{"t":1793551656726,"type":"log","text":"Ben's Patroness: +1 follower.","by":1}
+{"t":1793551656726,"type":"log","text":"New in the shop: Doormen.","by":1}
+{"t":1793551656726,"type":"log","text":"Round III ends. Most red: Ben +10 · Most yellow: Ben +10 · Most blue: Ben +10","by":1}
+{"t":1793551656726,"type":"log","text":"Ben's Patriarch: +14 followers.","by":1}
+{"t":1793551656726,"type":"log","text":"Cal's Mob: +14 followers.","by":1}
+{"t":1793551656726,"type":"log","text":"Game over. Ben wins with 87 followers.","by":1}

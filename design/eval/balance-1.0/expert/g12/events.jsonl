@@ -248,3 +248,218 @@
 {"t":1793551596585,"type":"move","seat":0,"round":2,"n":104,"kind":"pay","option":"pay:0-1-0","label":"Pay 1 red (suggested)","think":"white","prompt":"Ava: choose how to pay for 1 followers"}
 {"t":1793551596585,"type":"log","text":"Ava bought 1 follower (1 red).","by":0}
 {"t":1793551596585,"type":"log","text":"Ben's Money Changers: +1 white.","by":0}
+{"t":1793551617887,"type":"move","seat":2,"round":2,"n":105,"kind":"place","option":"slot:1-0","label":"Red · Tryout → you'd get: +2 red; then you choose: Tryout: use which shop member’s On Recruit?","think":"Splurge+Mob is +11 now but throws the +6 red contest. Tryout to 16 red, then buy 5 followers and still sit on 11 vs Ava's 8; banks red for round III's +10.","prompt":"Cal: place a minion"}
+{"t":1793551617887,"type":"say","seat":2,"text":"Agreed Recruiter with both swap spaces is a lot, though it only works because the swaps are mine to aim. Ben, 28 is a runaway; Money Changers refunding every buy is the real engine here."}
+{"t":1793551617887,"type":"log","text":"Cal took Tryout (Red).","by":2}
+{"t":1793551617887,"type":"log","text":"Cal's Tryout: +2 red.","by":2}
+{"t":1793551620240,"type":"move","seat":2,"round":2,"n":106,"kind":"choose","option":"card:6","label":"Cashier [2 white + 1 any; worth 1] — On Recruit: turn all your white into followers.","think":"Only choice; does nothing with no white.","prompt":"Tryout: use which shop member’s On Recruit?"}
+{"t":1793551620240,"type":"log","text":"Cal uses Cashier’s On Recruit; it stays in the shop.","by":2}
+{"t":1793551620240,"type":"log","text":"Cal's Cashier: no white to turn into followers.","by":2}
+{"t":1793551623598,"type":"move","seat":2,"round":2,"n":107,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"5 followers, keep 11 red over Ava's 8. Mob at 12 for ~8 followers is worse than buying.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551625346,"type":"move","seat":2,"round":2,"n":108,"kind":"pay","option":"pay:0-5-0","label":"Pay 5 red (suggested)","think":"pay","prompt":"Cal: choose how to pay for 5 followers"}
+{"t":1793551625346,"type":"log","text":"Cal bought 5 followers (5 red).","by":2}
+{"t":1793551625346,"type":"log","text":"Ben's Money Changers: +1 white.","by":2}
+{"t":1793551625346,"type":"log","text":"Round II ends. Most white: Ben +6 · Most red: Cal +6 · Most yellow: Ben +6","by":2}
+{"t":1793551625346,"type":"log","text":"The member market refreshes for round III.","by":2}
+{"t":1793551625346,"type":"log","text":"Ben's Shopkeeper: +2 white.","by":2}
+{"t":1793551625346,"type":"log","text":"Ben's Dyer: +2 yellow.","by":2}
+{"t":1793551625346,"type":"log","text":"Round III begins. Cal picks first. (Cal's Line Cutters: always picks first.)","by":2}
+{"t":1793551625346,"type":"log","text":"New in the shop: Extra Hand, Caravan, Deprogrammers, Exporters, Big Tent, Mentor & Protégés, Go-Between, Heiresses.","by":2}
+{"t":1793551641018,"type":"move","seat":2,"round":3,"n":109,"kind":"place","option":"slot:1-1","label":"Red · Gather → you'd get: +4 red","think":"Ben's at 40, I'm 22. First pick: Gather +4 red and grab Deprogrammers (3 cost, worth 4) with Gather's +3: +7 followers and still 12 red over Ava's 8.","prompt":"Cal: place a minion"}
+{"t":1793551641018,"type":"log","text":"Cal took Gather (Red).","by":2}
+{"t":1793551641018,"type":"log","text":"Cal's Gather: +4 red.","by":2}
+{"t":1793551648602,"type":"move","seat":2,"round":3,"n":110,"kind":"buy","option":"card:17","label":"Recruit Deprogrammers [1 red + 2 any; you pay 3 (1 red + 2 any); worth 4] — Whenever you take a rival’s member out of their cult, they lose 1 follower.","think":"Deprogrammers: 4 followers for 3 plus Gather's +3. Mentor line is +3 more but drops me to ~7 red under Ava's 8 with Makeover out there.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551650261,"type":"move","seat":2,"round":3,"n":111,"kind":"pay","option":"pay:0-3-0","label":"Pay 3 red (suggested)","think":"pay","prompt":"Cal: choose how to pay for Deprogrammers"}
+{"t":1793551650261,"type":"log","text":"Cal recruited Deprogrammers (3 red).","by":2}
+{"t":1793551650261,"type":"log","text":"Cal's Gather: +3 followers for recruiting a member.","by":2}
+{"t":1793551650261,"type":"log","text":"New in the shop: Brokers.","by":2}
+{"t":1793551654183,"type":"move","seat":2,"round":3,"n":112,"kind":"buy","option":"use:37","label":"Use Scouts — On Use, once per round: send any shop members to the bottom of the pile, then refill.","think":"Brokers just showed up and Ben has 11 white with Cash In open; bury it.","prompt":"Cal: use a member, or finish your turn"}
+{"t":1793551656173,"type":"move","seat":2,"round":3,"n":113,"kind":"choose","option":"card:3","label":"Brokers [2 white + 3 any; worth 3] — Whenever a White action gives you followers, +1 follower.","think":"Brokers","prompt":"Scout: send which shop members to the bottom of the pile?"}
+{"t":1793551658066,"type":"move","seat":2,"round":3,"n":114,"kind":"choose","option":"done","label":"Pass (recruit nothing)","think":"done","prompt":"Scout: send another to the bottom of the pile, or done"}
+{"t":1793551658066,"type":"log","text":"Cal's Scout: sent Brokers to the bottom of the pile.","by":2}
+{"t":1793551658066,"type":"log","text":"New in the shop: Old Money.","by":2}
+{"t":1793551694511,"type":"move","seat":0,"round":3,"n":115,"kind":"place","option":"slot:2-3","label":"Yellow · Big Dilute → you'd get: +4 yellow; rivals together -6..-4 white, 3..6 red, -1..2 yellow; then you choose: Big Dilute: change a rival's resource, 6 more at most; Big Dilute: change Ben's 1 white into which color?; Big Dilute: change a rival's resource, 5 more at most; Big Dilute: change a rival's resource, 4 more at most; Big Dilute: change a rival's resource, 3 more at most; Big Dilute: change a rival's resource, 2 more at most; Big Dilute: change a rival's resource, 1 more at most; Big Dilute: change Ben's 1 red into which color?; Big Dilute: change Ben's 1 yellow into which color?; Big Dilute: change Cal's 1 red into which color?","think":"Ben at 40 is likely out of reach; my real fight is second place with Cal (29). Big Dilute: +4 yellow puts me over Ben's 3 yellow, and turning 6 of Cal's red into white drops him to 6 red under my 8, so he has to spend placements to win red back. White is Ben's anyway, so the white I hand Cal is harmless.","prompt":"Ava: place a minion"}
+{"t":1793551694511,"type":"log","text":"Ava took Big Dilute (Yellow).","by":0}
+{"t":1793551694511,"type":"log","text":"Ava's Big Dilute: +4 yellow.","by":0}
+{"t":1793551698416,"type":"move","seat":0,"round":3,"n":116,"kind":"choose","option":"res:2:red","label":"Cal's red — value hint 8","think":"Cal's red","prompt":"Big Dilute: change a rival's resource, 6 more at most"}
+{"t":1793551700985,"type":"move","seat":0,"round":3,"n":117,"kind":"choose","option":"color:white","label":"1 white — value hint 0","think":"into white","prompt":"Big Dilute: change Cal's 1 red into which color?"}
+{"t":1793551700985,"type":"log","text":"Ava's Big Dilute: Cal's 1 red becomes 1 white.","by":0}
+{"t":1793551705788,"type":"move","seat":0,"round":3,"n":118,"kind":"choose","option":"res:2:red","label":"Cal's red — value hint 7","think":"Cal's red","prompt":"Big Dilute: change a rival's resource, 5 more at most"}
+{"t":1793551705972,"type":"move","seat":0,"round":3,"n":119,"kind":"choose","option":"color:white","label":"1 white — value hint -1","think":"white","prompt":"Big Dilute: change Cal's 1 red into which color?"}
+{"t":1793551705972,"type":"log","text":"Ava's Big Dilute: Cal's 1 red becomes 1 white.","by":0}
+{"t":1793551706155,"type":"move","seat":0,"round":3,"n":120,"kind":"choose","option":"res:2:red","label":"Cal's red — value hint 6","think":"Cal's red","prompt":"Big Dilute: change a rival's resource, 4 more at most"}
+{"t":1793551706269,"type":"move","seat":0,"round":3,"n":121,"kind":"choose","option":"color:white","label":"1 white — value hint -2","think":"white","prompt":"Big Dilute: change Cal's 1 red into which color?"}
+{"t":1793551706269,"type":"log","text":"Ava's Big Dilute: Cal's 1 red becomes 1 white.","by":0}
+{"t":1793551706414,"type":"move","seat":0,"round":3,"n":122,"kind":"choose","option":"res:2:red","label":"Cal's red — value hint 5","think":"Cal's red","prompt":"Big Dilute: change a rival's resource, 3 more at most"}
+{"t":1793551706542,"type":"move","seat":0,"round":3,"n":123,"kind":"choose","option":"color:white","label":"1 white — value hint -3","think":"white","prompt":"Big Dilute: change Cal's 1 red into which color?"}
+{"t":1793551706542,"type":"log","text":"Ava's Big Dilute: Cal's 1 red becomes 1 white.","by":0}
+{"t":1793551706638,"type":"move","seat":0,"round":3,"n":124,"kind":"choose","option":"res:2:red","label":"Cal's red — value hint 4","think":"Cal's red","prompt":"Big Dilute: change a rival's resource, 2 more at most"}
+{"t":1793551706734,"type":"move","seat":0,"round":3,"n":125,"kind":"choose","option":"color:white","label":"1 white — value hint -4","think":"white","prompt":"Big Dilute: change Cal's 1 red into which color?"}
+{"t":1793551706734,"type":"log","text":"Ava's Big Dilute: Cal's 1 red becomes 1 white.","by":0}
+{"t":1793551706816,"type":"move","seat":0,"round":3,"n":126,"kind":"choose","option":"res:2:red","label":"Cal's red — value hint 3","think":"Cal's red","prompt":"Big Dilute: change a rival's resource, 1 more at most"}
+{"t":1793551706905,"type":"move","seat":0,"round":3,"n":127,"kind":"choose","option":"color:white","label":"1 white — value hint -5","think":"white","prompt":"Big Dilute: change Cal's 1 red into which color?"}
+{"t":1793551706905,"type":"log","text":"Ava's Big Dilute: Cal's 1 red becomes 1 white.","by":0}
+{"t":1793551723817,"type":"move","seat":0,"round":3,"n":128,"kind":"buy","option":"card:12","label":"Recruit Mentor & Protégés [5 red + 4 any; you pay 9 (5 red + 4 any); worth 3] — On Recruit: recruit the cheapest member in the shop.","think":"Mentor & Protégés: worth 3, pulls the cheapest shop member (Go-Between) free, and both are new colors for Guest Book, +4 yellow. Paying with red gives up my thin red lead, which Cal was going to retake with 4 placements anyway, and puts me at 8 yellow vs Ben's 3. Ben can't Makeover his white into yellow freely now that Cal sits on 6 white.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793551726378,"type":"move","seat":0,"round":3,"n":129,"kind":"pay","option":"pay:1-8-0","label":"Pay 1 white, 8 red — spending this gives up your contest lead in red","think":"1 white + 8 red, keep all 4 yellow","prompt":"Ava: choose how to pay for Mentor & Protégés"}
+{"t":1793551726378,"type":"log","text":"Ava recruited Mentor & Protégés (1 white, 8 red).","by":0}
+{"t":1793551726378,"type":"log","text":"Ava's Mentor & Protégés: the cheapest face-up member comes along free.","by":0}
+{"t":1793551726378,"type":"log","text":"Ava recruited Go-Between (free).","by":0}
+{"t":1793551726378,"type":"log","text":"New in the shop: Alchemists, Ringleader.","by":0}
+{"t":1793551756781,"type":"move","seat":1,"round":3,"n":130,"kind":"place","option":"slot:2-5","label":"Yellow · Makeover → you'd get: -11..7 white, +0..18 red, -3..15 yellow; then you choose: Makeover: pick a color for all 18, or split them; Makeover: how many white? (18 left to place); Makeover: how many red? (18 left to place; the rest become yellow); Makeover: how many red? (17 left to place; the rest become yellow); Makeover: how many red? (16 left to place; the rest become yellow); Makeover: how many red? (15 left to place; the rest become yellow); Makeover: how many red? (14 left to place; the rest become yellow); Makeover: how many red? (13 left to place; the rest become yellow)","think":"Makeover is the scariest space for my white: Cal could rearrange 16 resources into white and pass my 11. Taking it myself blocks that, nets +4 yellow, and lets me set my split.","prompt":"Ben: place a minion"}
+{"t":1793551756781,"type":"log","text":"Ben took Makeover (Yellow).","by":1}
+{"t":1793551756781,"type":"log","text":"Ben's Makeover: +4 yellow.","by":1}
+{"t":1793551760673,"type":"move","seat":1,"round":3,"n":131,"kind":"choose","option":"split","label":"Split them yourself — value hint -1","think":"Split.","prompt":"Makeover: pick a color for all 18, or split them"}
+{"t":1793551763041,"type":"move","seat":1,"round":3,"n":132,"kind":"choose","option":"amount:11","label":"11 white — value hint 0","think":"11 white.","prompt":"Makeover: how many white? (18 left to place)"}
+{"t":1793551764781,"type":"move","seat":1,"round":3,"n":133,"kind":"choose","option":"amount:0","label":"0 red — value hint 0","think":"Rest yellow: 7.","prompt":"Makeover: how many red? (7 left to place; the rest become yellow)"}
+{"t":1793551764781,"type":"log","text":"Ben's Makeover: rearranged into 11 white, 7 yellow.","by":1}
+{"t":1793551777566,"type":"move","seat":1,"round":3,"n":134,"kind":"buy","option":"card:2","label":"Recruit Heiresses [4 white + 5 any; you pay 9 (4 white + 5 any); worth 2] — On Use, once per game: +1 white per member you have.","think":"Heiresses is the one card that beats my white: Cal has 6 white and 11 members, so Allowance into Heiresses would give him about 15 white in one turn. Taking it off the table, and it's +5 white for me whenever I want it.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551780448,"type":"move","seat":1,"round":3,"n":135,"kind":"pay","option":"pay:4-0-5","label":"Pay 4 white, 5 yellow — spending this gives up your contest lead in yellow","think":"Keep white ahead at 7 vs Cal's 6; yellow I'll fight for separately.","prompt":"Ben: choose how to pay for Heiresses"}
+{"t":1793551780448,"type":"log","text":"Ben recruited Heiresses (4 white, 5 yellow).","by":1}
+{"t":1793551780448,"type":"log","text":"New in the shop: Triplets.","by":1}
+{"t":1793551783169,"type":"move","seat":1,"round":3,"n":136,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Hold Heiresses; it grows with every member I add and it's my late answer to a white push.","prompt":"Ben: use a member, or finish your turn"}
+{"t":1793551783169,"type":"log","text":"Ben passed.","by":1}
+{"t":1793551790655,"type":"move","seat":1,"round":3,"n":137,"kind":"place","option":"slot:0-0","label":"White · Allowance → you'd get: +4 white","think":"Allowance keeps +4 white away from Cal and pays +3 on a member. Alchemists is 5 for 3 followers and 3 more members, which also pumps Heiresses later.","prompt":"Ben: place a minion"}
+{"t":1793551790655,"type":"log","text":"Ben took Allowance (White).","by":1}
+{"t":1793551790655,"type":"log","text":"Ben's Allowance: +4 white.","by":1}
+{"t":1793551792341,"type":"move","seat":1,"round":3,"n":138,"kind":"buy","option":"card:31","label":"Recruit Alchemists [5 any; you pay 5 (5 any); worth 3] — All your resources count as any when you recruit a member.","think":"Alchemists.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551795627,"type":"move","seat":1,"round":3,"n":139,"kind":"pay","option":"pay:3-0-2","label":"Pay 3 white, 2 yellow (suggested)","think":"Dump the yellow, keep 8 white.","prompt":"Ben: choose how to pay for Alchemists"}
+{"t":1793551795627,"type":"log","text":"Ben recruited Alchemists (3 white, 2 yellow).","by":1}
+{"t":1793551795627,"type":"log","text":"Ben's Allowance: +3 followers for recruiting a member.","by":1}
+{"t":1793551795627,"type":"log","text":"New in the shop: Proselytizers.","by":1}
+{"t":1793551803754,"type":"move","seat":1,"round":3,"n":140,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Still holding Heiresses; I place last this round, so I can fire it with the most members once I see everyone's white.","prompt":"Ben: use a member, or finish your turn"}
+{"t":1793551803754,"type":"log","text":"Ben passed.","by":1}
+{"t":1793551822378,"type":"move","seat":0,"round":3,"n":141,"kind":"place","option":"slot:2-2","label":"Yellow · Dilute → you'd get: +2 yellow; rivals together -3..-1 white, 0..3 red, 0..2 yellow; then you choose: Go-Between: change 1 yellow to another color?; Dilute: change a rival's resource, 3 more at most; Dilute: change Ben's 1 white into which color?; Dilute: change a rival's resource, 2 more at most; Dilute: change a rival's resource, 1 more at most; Dilute: change Ben's 1 red into which color?; Dilute: change Cal's 1 white into which color?; Dilute: change Cal's 1 red into which color?; Dilute: change Ben's 1 yellow into which color?","think":"Surprise: Guest Book didn't fire for Mentor or Go-Between; Dabblers count as wild so I already 'had' every color. Misread. Now yellow is my +10: I hold 4, nobody else has any. Taking Dilute denies the one space that could strip my yellow, and I'll use the changes to push Cal's white into red so he can't steal white from Ben and jump past me.","prompt":"Ava: place a minion"}
+{"t":1793551822378,"type":"log","text":"Ava took Dilute (Yellow).","by":0}
+{"t":1793551822378,"type":"log","text":"Ava's Dilute: +2 yellow.","by":0}
+{"t":1793551825015,"type":"move","seat":0,"round":3,"n":142,"kind":"choose","option":"keep","label":"Pass (recruit nothing)","think":"keep yellow","prompt":"Go-Between: change 1 yellow to another color?"}
+{"t":1793551830727,"type":"move","seat":0,"round":3,"n":143,"kind":"choose","option":"res:2:white","label":"Cal's white — value hint 6","think":"Cal's white","prompt":"Dilute: change a rival's resource, 3 more at most"}
+{"t":1793551830869,"type":"move","seat":0,"round":3,"n":144,"kind":"choose","option":"color:yellow","label":"1 yellow — value hint -1","think":"into red","prompt":"Dilute: change Cal's 1 white into which color?"}
+{"t":1793551830869,"type":"log","text":"Ava's Dilute: Cal's 1 white becomes 1 yellow.","by":0}
+{"t":1793551830987,"type":"move","seat":0,"round":3,"n":145,"kind":"choose","option":"res:2:white","label":"Cal's white — value hint 5","think":"Cal's white","prompt":"Dilute: change a rival's resource, 2 more at most"}
+{"t":1793551831078,"type":"move","seat":0,"round":3,"n":146,"kind":"choose","option":"color:yellow","label":"1 yellow — value hint -2","think":"into red","prompt":"Dilute: change Cal's 1 white into which color?"}
+{"t":1793551831078,"type":"log","text":"Ava's Dilute: Cal's 1 white becomes 1 yellow.","by":0}
+{"t":1793551831164,"type":"move","seat":0,"round":3,"n":147,"kind":"choose","option":"res:2:white","label":"Cal's white — value hint 4","think":"Cal's white","prompt":"Dilute: change a rival's resource, 1 more at most"}
+{"t":1793551831268,"type":"move","seat":0,"round":3,"n":148,"kind":"choose","option":"color:yellow","label":"1 yellow — value hint -3","think":"into red","prompt":"Dilute: change Cal's 1 white into which color?"}
+{"t":1793551831268,"type":"log","text":"Ava's Dilute: Cal's 1 white becomes 1 yellow.","by":0}
+{"t":1793551839432,"type":"move","seat":0,"round":3,"n":149,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Misclick on the Dilute colors: I meant to turn Cal's white into red and the second option was yellow, so I handed Cal 3 yellow. Still 6 vs 3 in yellow. Hold everything to protect the +10.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793551839432,"type":"say","seat":0,"text":"Heads up, I fat-fingered that Dilute: meant Cal's white to red and gave him yellow instead. The option list shifts between picks, easy to misread."}
+{"t":1793551839432,"type":"log","text":"Ava passed.","by":0}
+{"t":1793551863137,"type":"move","seat":2,"round":3,"n":150,"kind":"place","option":"slot:1-3","label":"Red · Promote → you'd get: +0..3 white, +3..5 red, +0..1 yellow; +-3..1 followers; +-3..1 members; rivals followers -2..2; then you choose: Promote: choose a member and its replacement; Drifters: count as a member of which color?","think":"Ben 48, me 29. Ava's Big Dilute gutted my red to 6. Promote taking Ben's Alchemists: +5 red with Recruiter, +1 follower for me, and Ben drops 2 (body plus Deprogrammers). Then Demote for another +5 to lock red.","prompt":"Cal: place a minion"}
+{"t":1793551863137,"type":"say","seat":2,"text":"Ava, the shifting option list got me last round too. Ben, 48 going into the last stretch is a lot; Makeover into Heiresses was a clean pivot."}
+{"t":1793551863137,"type":"log","text":"Cal took Promote (Red).","by":2}
+{"t":1793551863137,"type":"log","text":"Cal's Promote: +3 red.","by":2}
+{"t":1793551865291,"type":"move","seat":2,"round":3,"n":151,"kind":"choose","option":"trade:16:31","label":"Cal: Recruit Bonus ↔ Ben: Alchemists — value hint 3","think":"Recruit Bonus for Alchemists.","prompt":"Promote: choose a member and its replacement"}
+{"t":1793551865291,"type":"log","text":"Ben −1 follower (Cal's Deprogrammers).","by":2}
+{"t":1793551865291,"type":"log","text":"Cal's Recruiter: +2 red.","by":2}
+{"t":1793551865291,"type":"log","text":"Cal swapped Cal's Recruit Bonus and Ben's Alchemists.","by":2}
+{"t":1793551869752,"type":"move","seat":2,"round":3,"n":152,"kind":"buy","option":"card:10","label":"Recruit Triplets [1 red + 2 any; you pay 3 (3 any); worth 3] — Worth 3 followers.","think":"Triplets, 3 followers for 3, paid with the yellow I can't win with (Alchemists makes it any).","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551873541,"type":"move","seat":2,"round":3,"n":153,"kind":"pay","option":"pay:3-0-0","label":"Pay 3 white (suggested)","think":"Pay white; white is Ben's, yellow might still be live.","prompt":"Cal: choose how to pay for Triplets"}
+{"t":1793551873541,"type":"log","text":"Cal recruited Triplets (3 white; Alchemists: colored part in any colors).","by":2}
+{"t":1793551873541,"type":"log","text":"New in the shop: Patriarch.","by":2}
+{"t":1793551891358,"type":"move","seat":2,"round":3,"n":154,"kind":"place","option":"slot:1-5","label":"Red · Recruit a Member → you'd get: +1 red; +1..3 followers; +1..2 members; rivals together -1..1 white, 0..2 red, -1..1 yellow; then you choose: Recruit a Member: which member?; Ringleader: change a rival's resource, 2 more at most; Ringleader: change Ava's 1 yellow into which color?; Ringleader: change a rival's resource, 1 more at most; Ringleader: change Ben's 1 white into which color?","think":"Patriarch just appeared: +1 per 2 members at game end, and I'm at 15 members, so it's ~9 followers. Recruit a Member grabs it free before Ava or Ben can. Red at 11 vs their 0 feels safe enough for now; Demote later if it's still open.","prompt":"Cal: place a minion"}
+{"t":1793551891358,"type":"log","text":"Cal took Recruit a Member (Red).","by":2}
+{"t":1793551891358,"type":"log","text":"Cal's Recruit a Member: +1 red.","by":2}
+{"t":1793551896674,"type":"move","seat":2,"round":3,"n":155,"kind":"choose","option":"card:15","label":"Patriarch [3 red + 3 any; worth 1] — Game End: +1 follower per 2 members you have.","think":"Patriarch.","prompt":"Recruit a Member: which member?"}
+{"t":1793551896674,"type":"log","text":"Cal recruited Patriarch (free).","by":2}
+{"t":1793551896674,"type":"log","text":"New in the shop: Old Maid.","by":2}
+{"t":1793551908372,"type":"move","seat":2,"round":3,"n":156,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Buying 10 is one recruit, so I don't need this recruit; holding 12 red as a wall until my last turns, then convert the surplus.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793551908372,"type":"say","seat":2,"text":"Walk-In showing -4 followers on top is a funny trap; Old Maid sitting under it makes that space a no-go for everyone now."}
+{"t":1793551908372,"type":"log","text":"Cal passed.","by":2}
+{"t":1793551921754,"type":"move","seat":0,"round":3,"n":157,"kind":"place","option":"slot:2-0","label":"Yellow · Harvest → you'd get: +2..5 white, +0..3 red, +0..2 yellow; then you choose: Harvest: +1 of which color? (5 to pick); Go-Between: change 1 white to another color?; Harvest: +1 of which color? (4 to pick); Harvest: +1 of which color? (3 to pick); Harvest: +1 of which color? (2 to pick); Harvest: +1 of which color? (1 to pick)","think":"Yellow is my +10 and Cal could convert his 12 red with Harvest + Trade Seeds to pass my 6. Harvest all yellow puts me at 11; with only Trade Seeds and Melting Pot left, nobody can realistically reach 11 before the round ends, and I get the next pick after Ben's pair.","prompt":"Ava: place a minion"}
+{"t":1793551921754,"type":"log","text":"Ava took Harvest (Yellow).","by":0}
+{"t":1793551926645,"type":"move","seat":0,"round":3,"n":158,"kind":"choose","option":"color:yellow","label":"+1 yellow — value hint -6","think":"yellow","prompt":"Harvest: +1 of which color? (5 to pick)"}
+{"t":1793551926645,"type":"log","text":"Ava's Harvest: +1 yellow.","by":0}
+{"t":1793551929110,"type":"move","seat":0,"round":3,"n":159,"kind":"choose","option":"keep","label":"Pass (recruit nothing)","think":"keep yellow","prompt":"Go-Between: change 1 yellow to another color?"}
+{"t":1793551931351,"type":"move","seat":0,"round":3,"n":160,"kind":"choose","option":"color:yellow","label":"+1 yellow — value hint -7","think":"yellow","prompt":"Harvest: +1 of which color? (4 to pick)"}
+{"t":1793551931351,"type":"log","text":"Ava's Harvest: +1 yellow.","by":0}
+{"t":1793551931445,"type":"move","seat":0,"round":3,"n":161,"kind":"choose","option":"color:yellow","label":"+1 yellow — value hint -8","think":"yellow","prompt":"Harvest: +1 of which color? (3 to pick)"}
+{"t":1793551931445,"type":"log","text":"Ava's Harvest: +1 yellow.","by":0}
+{"t":1793551931529,"type":"move","seat":0,"round":3,"n":162,"kind":"choose","option":"color:yellow","label":"+1 yellow — value hint -9","think":"yellow","prompt":"Harvest: +1 of which color? (2 to pick)"}
+{"t":1793551931529,"type":"log","text":"Ava's Harvest: +1 yellow.","by":0}
+{"t":1793551931610,"type":"move","seat":0,"round":3,"n":163,"kind":"choose","option":"color:yellow","label":"+1 yellow — value hint -10","think":"yellow","prompt":"Harvest: +1 of which color? (1 to pick)"}
+{"t":1793551931610,"type":"log","text":"Ava's Harvest: +1 yellow.","by":0}
+{"t":1793551937914,"type":"move","seat":0,"round":3,"n":164,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Sit on 11 yellow until I see Ben's pair; I still have two recruits to cash the surplus.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793551937915,"type":"say","seat":0,"text":"Cal, Deprogrammers plus Recruiter on every Promote is a lot of value from one swap: +3 red, +2 red, and Ben loses a follower."}
+{"t":1793551937915,"type":"log","text":"Ava passed.","by":0}
+{"t":1793551956760,"type":"move","seat":1,"round":3,"n":165,"kind":"place","option":"use:2","label":"Use Heiresses — On Use, once per game: +1 white per member you have.","think":"Firing Heiresses now (+7) before anyone can Demote it away; Ava's Mentor costs 9 too and that swap would hand her the card.","prompt":"Ben: place a minion"}
+{"t":1793551956760,"type":"log","text":"Ben used Heiresses: +7 white.","by":1}
+{"t":1793551959050,"type":"move","seat":1,"round":3,"n":166,"kind":"place","option":"slot:0-4","label":"White · Estate Sale → you'd get: +1..10 white; +-2..0 followers; +-2..0 members; then you choose: Estate Sale: cast out which member?","think":"Estate Sale is Ava's only real white swing (cast out Mentor for 10 white), so I take it, and cast out my spent Heiresses for 9 white.","prompt":"Ben: place a minion"}
+{"t":1793551959050,"type":"log","text":"Ben took Estate Sale (White).","by":1}
+{"t":1793551959050,"type":"log","text":"Ben's Estate Sale: +1 white.","by":1}
+{"t":1793551961402,"type":"move","seat":1,"round":3,"n":167,"kind":"choose","option":"card:2","label":"Heiresses [4 white + 5 any; worth 2] — On Use, once per game: +1 white per member you have.","think":"Heiresses is spent; 9 white for a 2-follower card.","prompt":"Estate Sale: cast out which member?"}
+{"t":1793551961402,"type":"log","text":"Ben sent Heiresses to the bottom of the pile.","by":1}
+{"t":1793551961402,"type":"log","text":"Ben's Estate Sale: Heiresses paid 9 white.","by":1}
+{"t":1793551967078,"type":"move","seat":1,"round":3,"n":168,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"25 white against rivals at zero; banking 10 and keeping 16 is plenty.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551967220,"type":"move","seat":1,"round":3,"n":169,"kind":"pay","option":"pay:10-0-0","label":"Pay 10 white (suggested)","think":"White.","prompt":"Ben: choose how to pay for 10 followers"}
+{"t":1793551967220,"type":"log","text":"Ben bought 10 followers (10 white).","by":1}
+{"t":1793551967220,"type":"log","text":"Ben's Money Changers: +1 white.","by":1}
+{"t":1793551980874,"type":"move","seat":1,"round":3,"n":170,"kind":"place","option":"slot:0-3","label":"White · Farewell → you'd get: +1 white; +0..6 followers; +-2..0 members; then you choose: Farewell: cast out which member?","think":"Farewell on Dyer is +7 followers for a 1-follower card, and it takes away Ava's Farewell on Mentor (+9). Dyer's round-start yellow is worthless now.","prompt":"Ben: place a minion"}
+{"t":1793551980874,"type":"log","text":"Ben took Farewell (White).","by":1}
+{"t":1793551980874,"type":"log","text":"Ben's Farewell: +1 white.","by":1}
+{"t":1793551982604,"type":"move","seat":1,"round":3,"n":171,"kind":"choose","option":"card:24","label":"Dyer [4 yellow + 3 any; worth 1] — On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.","think":"Dyer.","prompt":"Farewell: cast out which member?"}
+{"t":1793551982604,"type":"log","text":"Ben sent Dyer to the bottom of the pile.","by":1}
+{"t":1793551982604,"type":"log","text":"Ben's Farewell: Dyer paid 7 followers.","by":1}
+{"t":1793551985895,"type":"move","seat":1,"round":3,"n":172,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Bank 10 more; 8 white left still beats anything the others can scrape together, and I place last to adjust.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793551985987,"type":"move","seat":1,"round":3,"n":173,"kind":"pay","option":"pay:10-0-0","label":"Pay 10 white (suggested)","think":"White.","prompt":"Ben: choose how to pay for 10 followers"}
+{"t":1793551985987,"type":"say","seat":1,"text":"Farewell and Estate Sale on a spent once-per-game member feel like a big loophole: Heiresses paid me 7 white, then 9 more white when I cast her out."}
+{"t":1793551985987,"type":"log","text":"Ben bought 10 followers (10 white).","by":1}
+{"t":1793551985987,"type":"log","text":"Ben's Money Changers: +1 white.","by":1}
+{"t":1793551999763,"type":"move","seat":0,"round":3,"n":174,"kind":"place","option":"slot:2-4","label":"Yellow · Melting Pot → you'd get: +0..3 white, +0..3 red, +2..5 yellow; then you choose: Go-Between: change 1 yellow to another color?; Melting Pot: +1 of which color? (3 to pick); Melting Pot: +1 of which color? (2 to pick); Melting Pot: +1 of which color? (1 to pick)","think":"Ben is gone at 70; second place vs Cal is the game now. Cal's two placements could be Trade Seeds + Melting Pot and climb to ~11 yellow, tying me. Taking Melting Pot shuts that and is the bigger gain (2 yellow + 1 per member color); then I can spend surplus.","prompt":"Ava: place a minion"}
+{"t":1793551999763,"type":"say","seat":0,"text":"Ben, agreed on Farewell/Estate Sale: casting out a spent Heiresses for her full cost twice over is the biggest swing I've seen all game."}
+{"t":1793551999763,"type":"log","text":"Ava took Melting Pot (Yellow).","by":0}
+{"t":1793551999763,"type":"log","text":"Ava's Melting Pot: +2 yellow.","by":0}
+{"t":1793552004586,"type":"move","seat":0,"round":3,"n":175,"kind":"choose","option":"color:white","label":"1 yellow → 1 white — value hint 11.5","think":"surplus yellow, a white costs nothing","prompt":"Go-Between: change 1 yellow to another color?"}
+{"t":1793552004586,"type":"log","text":"Ava's Go-Between: 1 yellow becomes 1 white.","by":0}
+{"t":1793552008086,"type":"move","seat":0,"round":3,"n":176,"kind":"choose","option":"color:white","label":"+1 white — value hint 0","think":"white","prompt":"Melting Pot: +1 of which color? (3 to pick)"}
+{"t":1793552008086,"type":"log","text":"Ava's Melting Pot: +1 white.","by":0}
+{"t":1793552008171,"type":"move","seat":0,"round":3,"n":177,"kind":"choose","option":"color:white","label":"+1 white — value hint -2","think":"white","prompt":"Melting Pot: +1 of which color? (2 to pick)"}
+{"t":1793552008171,"type":"log","text":"Ava's Melting Pot: +1 white.","by":0}
+{"t":1793552008259,"type":"move","seat":0,"round":3,"n":178,"kind":"choose","option":"color:white","label":"+1 white — value hint -3","think":"white","prompt":"Melting Pot: +1 of which color? (1 to pick)"}
+{"t":1793552008259,"type":"log","text":"Ava's Melting Pot: +1 white.","by":0}
+{"t":1793552015220,"type":"move","seat":0,"round":3,"n":179,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Cash 5 now (4 white + 1 yellow), leaving 11 yellow; Cal's best is Trade Seeds to 8 plus a Ringleader tick off me, so 11 holds.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793552017731,"type":"move","seat":0,"round":3,"n":180,"kind":"pay","option":"pay:4-0-1","label":"Pay 4 white, 1 yellow (suggested)","think":"pay","prompt":"Ava: choose how to pay for 5 followers"}
+{"t":1793552017731,"type":"log","text":"Ava bought 5 followers (4 white, 1 yellow).","by":0}
+{"t":1793552017731,"type":"log","text":"Ben's Money Changers: +1 white.","by":0}
+{"t":1793552043579,"type":"move","seat":2,"round":3,"n":181,"kind":"place","option":"slot:1-4","label":"Red · Demote → you'd get: +0..2 white, +3..5 red; +-7..2 followers; +-3..0 members; rivals together 0..1 red, -1..0 yellow; rivals followers -1..2; then you choose: Demote: choose a member and its replacement; Drifters: count as a member of which color?; Ringleader: change a rival's resource, 2 more at most; Ringleader: change Ava's 1 yellow into which color?; Ringleader: change a rival's resource, 1 more at most; Ringleader: change Ben's 1 white into which color?","think":"Ben's at 70 after the Heiresses cast-out combo; I'm playing for second against Ava (28 +10 yellow). Demote taking her Dabblers for Scouts: +5 red, she loses 1 to Deprogrammers, and nobody else gets this red source on their last turn.","prompt":"Cal: place a minion"}
+{"t":1793552043579,"type":"say","seat":2,"text":"Ben, that Heiresses line is the swing of the game: a once-per-game card that pays 7, then pays its 9 cost again on Estate Sale. Farewell on Dyer for 7 too. Casting out for full cost looks underpriced."}
+{"t":1793552043579,"type":"log","text":"Cal took Demote (Red).","by":2}
+{"t":1793552043579,"type":"log","text":"Cal's Demote: +3 red.","by":2}
+{"t":1793552045969,"type":"move","seat":2,"round":3,"n":182,"kind":"choose","option":"trade:37:35","label":"Cal: Scouts ↔ Ava: Dabblers — value hint 0","think":"Scouts for Dabblers: even bodies, Ava -1, Recruiter +2.","prompt":"Demote: choose a member and its replacement"}
+{"t":1793552045969,"type":"log","text":"Ava −1 follower (Cal's Deprogrammers).","by":2}
+{"t":1793552045969,"type":"log","text":"Cal's Recruiter: +2 red.","by":2}
+{"t":1793552045969,"type":"log","text":"Cal swapped Cal's Scouts and Ava's Dabblers.","by":2}
+{"t":1793552049446,"type":"move","seat":2,"round":3,"n":183,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Straight 10 followers beats any member here; keeps 10 red.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793552051443,"type":"move","seat":2,"round":3,"n":184,"kind":"pay","option":"pay:0-7-3","label":"Pay 7 red, 3 yellow (suggested)","think":"pay","prompt":"Cal: choose how to pay for 10 followers"}
+{"t":1793552051443,"type":"log","text":"Cal bought 10 followers (7 red, 3 yellow).","by":2}
+{"t":1793552051443,"type":"log","text":"Ben's Money Changers: +1 white.","by":2}
+{"t":1793552066053,"type":"move","seat":2,"round":3,"n":185,"kind":"place","option":"slot:0-2","label":"White · Exchange → you'd get: +0..1 white, -3..0 red; +0..6 followers; then you choose: Exchange: turn which resource into 2 followers?","think":"Exchange 3 red for 6 followers, leaves 7 red. Ava's best red on her last turn is ~4 (Trade Seeds with Go-Between), so 7 is the safe floor; buying 5 more would drop me to 3.","prompt":"Cal: place a minion"}
+{"t":1793552066053,"type":"log","text":"Cal took Exchange (White).","by":2}
+{"t":1793552066053,"type":"log","text":"Cal's Exchange: +1 white.","by":2}
+{"t":1793552069127,"type":"move","seat":2,"round":3,"n":186,"kind":"choose","option":"color:white","label":"1 white → 2 followers — value hint 1.38","think":"white first","prompt":"Exchange: turn which resource into 2 followers? (3 left)"}
+{"t":1793552069127,"type":"log","text":"Cal's Exchange: 1 white became 2 followers.","by":2}
+{"t":1793552069211,"type":"move","seat":2,"round":3,"n":187,"kind":"choose","option":"done","label":"Done — value hint 0.1","think":"red","prompt":"Exchange: turn which resource into 2 followers? (2 left)"}
+{"t":1793552078986,"type":"move","seat":2,"round":3,"n":188,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Misclicked Exchange to only one conversion (the list shifted under my chained command). With 10 red, buy 5 and keep 5: Ava's ceiling is 4 red (Trade Seeds + Go-Between), Ben's 3.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793552079170,"type":"move","seat":2,"round":3,"n":189,"kind":"pay","option":"pay:0-5-0","label":"Pay 5 red (suggested)","think":"pay","prompt":"Cal: choose how to pay for 5 followers"}
+{"t":1793552079170,"type":"log","text":"Cal bought 5 followers (5 red).","by":2}
+{"t":1793552079170,"type":"log","text":"Ben's Money Changers: +1 white.","by":2}
+{"t":1793552106346,"type":"move","seat":0,"round":3,"n":190,"kind":"place","option":"slot:2-1","label":"Yellow · Trade Seeds → you'd get: +0..3 white, +0..2 red, -1..2 yellow; then you choose: Go-Between: change 1 yellow to another color?; Trade Seeds: swap one for one, or stop (0 swapped so far); Trade Seeds: swap one for one, or stop (1 swapped so far); Trade Seeds: swap one for one, or stop (2 swapped so far)","think":"Last placement. Cal's at 51 with red and Patriarch to come, so second is out of reach; maximize my own score. Trade Seeds takes the one space Ben could use to reach 5 yellow, then I buy 10 and keep 3 yellow for the +10. I looked at Trade Seeds into red plus Ringleader to tie Cal's red, but it strands 7 resources and nets less.","prompt":"Ava: place a minion"}
+{"t":1793552106346,"type":"log","text":"Ava took Trade Seeds (Yellow).","by":0}
+{"t":1793552106346,"type":"log","text":"Ava's Trade Seeds: +2 yellow.","by":0}
+{"t":1793552108694,"type":"move","seat":0,"round":3,"n":191,"kind":"choose","option":"keep","label":"Pass (recruit nothing)","think":"keep","prompt":"Go-Between: change 1 yellow to another color?"}
+{"t":1793552113500,"type":"move","seat":0,"round":3,"n":192,"kind":"choose","option":"done","label":"Swap nothing — value hint 0.5","think":"no swaps","prompt":"Trade Seeds: swap one for one, or stop (0 swapped so far)"}
+{"t":1793552113500,"type":"log","text":"Ava swapped nothing.","by":0}
+{"t":1793552120009,"type":"move","seat":0,"round":3,"n":193,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Buy 10 with yellow, keep 3 yellow for the contest; nothing in the shop beats 1:1 on the last turn (checked Extra Hand into Tryout/Ringleader: about 6 vs 10).","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793552122916,"type":"move","seat":0,"round":3,"n":194,"kind":"pay","option":"pay:0-0-10","label":"Pay 10 yellow (suggested)","think":"pay","prompt":"Ava: choose how to pay for 10 followers"}
+{"t":1793552122916,"type":"say","seat":0,"text":"Ben, you've earned it. For the notes: once Money Changers started refunding every buy, nobody had a lever on white."}
+{"t":1793552122916,"type":"log","text":"Ava bought 10 followers (10 yellow).","by":0}
+{"t":1793552122916,"type":"log","text":"Ben's Money Changers: +1 white.","by":0}
+{"t":1793552131665,"type":"move","seat":1,"round":3,"n":195,"kind":"place","option":"slot:0-5","label":"White · Cash In → you'd get: -11 white; +12 followers","think":"Nobody else holds any white, so Cash In converts all 12 and its +1 white back still wins the contest. Best last move on the board.","prompt":"Ben: place a minion"}
+{"t":1793552131665,"type":"log","text":"Ben took Cash In (White).","by":1}
+{"t":1793552131665,"type":"log","text":"Ben's Cash In: 12 white became 12 followers.","by":1}
+{"t":1793552134373,"type":"move","seat":1,"round":3,"n":196,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"Money Changers refunds it, so I still hold 1 white for the contest.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793552134493,"type":"move","seat":1,"round":3,"n":197,"kind":"pay","option":"pay:1-0-0","label":"Pay 1 white (suggested) — spending this gives up your contest lead in white","think":"White.","prompt":"Ben: choose how to pay for 1 followers"}
+{"t":1793552134493,"type":"log","text":"Ben bought 1 follower (1 white).","by":1}
+{"t":1793552134493,"type":"log","text":"Ben's Money Changers: +1 white.","by":1}
+{"t":1793552134493,"type":"log","text":"Round III ends. Most white: Ben +10 · Most red: Cal +10 · Most yellow: Ava +10","by":1}
+{"t":1793552134493,"type":"log","text":"Cal's Patriarch: +8 followers.","by":1}
+{"t":1793552134493,"type":"log","text":"Game over. Ben wins with 93 followers.","by":1}
