@@ -213,9 +213,9 @@ const market = {
       },
     },
     {
-      key: 'clearance', ring: 2, name: 'Recruit Twice', text: 'Recruit twice this turn. +1 blue.', copyDoesIt: true,
-      estimate: (ctx, p) => 1 + Math.min(10, Math.max(0, totalRes(p) - 2)) * 0.4,
-      resolve(ctx, p) { ctx.gain(p, B, 1, { fromAction: true }); extraBuys(ctx, p, 1); ctx.log(`${p.name} recruits twice this turn.`); },
+      key: 'clearance', ring: 2, name: 'Recruit Twice', text: 'Recruit twice this turn. +3 blue.', copyDoesIt: true,
+      estimate: (ctx, p) => 3 + Math.min(10, Math.max(0, totalRes(p) - 2)) * 0.4, // +3 blue (Cory, Nov 1)
+      resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); extraBuys(ctx, p, 1); ctx.log(`${p.name} recruits twice this turn.`); },
     },
     {
       key: 'pricecheck', ring: 2, name: 'Bury', text: 'Send a shop member to the bottom of the pile, then refill. Gain blue equal to half its cost, rounded down. +1 blue.', copyDoesIt: true,
@@ -230,9 +230,9 @@ const market = {
       },
     },
     {
-      key: 'spree', ring: 3, name: 'Spree', text: 'Recruit 3 times this turn. +3 blue.', copyDoesIt: true,
-      estimate: (ctx, p) => 3 + Math.min(10, Math.max(0, totalRes(p) - 3)) * 0.8,
-      resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); extraBuys(ctx, p, 2); ctx.log(`${p.name} goes on a spree: 3 recruits this turn.`); },
+      key: 'spree', ring: 3, name: 'Spree', text: 'Recruit 3 times this turn. +5 blue.', copyDoesIt: true,
+      estimate: (ctx, p) => 5 + Math.min(10, Math.max(0, totalRes(p) - 3)) * 0.8, // +5 blue (Cory, Nov 1)
+      resolve(ctx, p) { ctx.gain(p, B, 5, { fromAction: true }); extraBuys(ctx, p, 2); ctx.log(`${p.name} goes on a spree: 3 recruits this turn.`); },
     },
   ],
 

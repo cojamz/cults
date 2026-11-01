@@ -72,46 +72,33 @@ describe('Green redesign: copied copy actions and continuation safety', () => {
     expect(s.players[0].res).toMatchObject({ gold: 3, green: 1 });
   });
 
-  it('Greatest Hits keeps sibling paths independent while its Echo chooses a fresh Reprise chain', () => {
-    let s = table(Q, { round: 3, left: 7, queue: turns(0, 1, 0, 0, 0, 0) });
-    s = go(s, 'gold.rush'); s = go(s, 'gold.discount');
-    s = pass(choose(take(s, 'echo.echo'), 'gold.discount'));
-    s = pass(choose(take(s, 'echo.refrain'), 'gold.rush'));
-    s = take(s, 'echo.eternity');
-    // you pick the order (Cory, 2026-10-26): the placement order here
-    s = choose(saved(s), 'gold.rush'); s = choose(saved(s), 'echo.echo');
-    // Its Echo now sees Reprise as the previous placement, rather than the original Intro Offer target.
-    s = choose(saved(s), 'echo.refrain');
-    s = choose(saved(s), 'gold.rush');
-    // one copy left (3 in all, Cory Nov 1): the separate sibling Reprise may copy Golden Years again: only ancestors are excluded.
-    s = choose(saved(s), 'echo.refrain');
-    s = pass(choose(saved(s), 'gold.rush'));
-    expect(s.players[0].res).toMatchObject({ gold: 30, green: 6 });
-    expect(s.players[0].discount).toBe(4);
-    expect(s.pending?.kind).not.toBe('choose');
-  });
-
-  // Greatest Hits copies round I actions only (Cory, Nov 1): the nested recruit is a copied Walk-In
-  it('Greatest Hits resumes after a copied Walk-In recruits Stunt Double', () => {
+  // Greatest Hits copies On Recruits since Nov 1: its sibling-path and nested-remainder checks went with its action
+  // copies. The nested recruit is now a Reprise copy of Walk-In, which must still finish its Stunt Double chain.
+  it('Reprise resumes after a copied Walk-In recruits Stunt Double', () => {
     const stunt = member('Stunt Double');
     let s = table(Q, { round: 3, left: 7, shop: [stunt], queue: turns(0, 0, 0, 0) });
     s = go(s, 'red.hire');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
     s = pass(s);
-    s = go(s, 'gold.rush');
-    const before = s.players[0].res.gold;
     const u = onTop(s, stunt);
-    s = choose(take(s, 'echo.eternity'), 'red.hire');
-    // Recruiting starts a fresh Stunt Double chain; nested Greatest Hits must preserve the outer remainder.
+    s = choose(take(s, 'echo.refrain'), 'red.hire');
     let decisions = 0;
-    while (s.pending?.kind === 'choose' && decisions++ < 20) {
-      const preferred = s.pending.options.find(o => o.kind === 'space' && o.label.startsWith(`${actionName('gold.rush')} (`)) || s.pending.options[0];
-      s = move(saved(s), preferred.id);
-    }
+    while (s.pending?.kind === 'choose' && decisions++ < 20) s = move(saved(s), s.pending.options[0].id);
     expect(decisions).toBeLessThan(20);
     expect(s.pending?.kind).not.toBe('choose');
     expect(s.players[0].members).toContain(u);
-    expect(s.players[0].res.gold - before).toBe(12);
+  });
+  it('Greatest Hits picks survive a reload between each On Recruit copy', () => {
+    let s = table(Q, { round: 3, left: 5, members: [['gold.seed', 'gold.hustler', 'echo.tuningfork']], queue: turns(0, 1) });
+    s = take(s, 'echo.eternity');
+    let a = s, b = saved(s), steps = 0;
+    while (a.pending?.player === 0 && a.pending.kind !== 'place' && a.pending.kind !== 'buy' && steps++ < 10) {
+      const id = a.pending.options[0].id;
+      a = move(a, id); b = move(saved(b), id);
+    }
+    expect(steps).toBeGreaterThan(1); // the order pick, then Hustler's color pick
+    expect(steps).toBeLessThan(10);
+    expect(b).toEqual(a);
   });
 
   it('Tribute Band is once per game and its saved replay resumes through choice-bearing actions', () => {
@@ -199,20 +186,7 @@ describe('Green redesign: copy observers and anti-copy members', () => {
     expect(s.players[0].bonus).toBe(2);
   });
 
-  it('recruiting Agents midway through Greatest Hits doesn’t stop its owner’s later copies (Agents only stops rivals)', () => {
-    let s = table(Q, { round: 3, left: 6, shop: ['echo.agents'], queue: turns(0, 0, 0, 0) });
-    s = go(s, 'red.hire');
-    while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
-    s = pass(s);
-    s = go(s, 'gold.rush');
-    const before = s.players[0].res.gold;
-    const u = onTop(s, 'echo.agents');
-    s = choose(take(s, 'echo.eternity'), 'red.hire');
-    while (s.pending?.kind === 'choose') s = move(saved(s), s.pending.options[0].id);
-    expect(s.players[0].res.gold).toBe(2 * before); // the Golden Years copy still lands
-    expect(s.players[0].members).toContain(u);
-  });
-
+  // (Greatest Hits copies On Recruits since Nov 1: the Agents-midway-through-its-copies check went with it.)
   it('losing a printed member after Bait losses cannot take the total below zero', () => {
     let s = table(Q, { round: 2, left: 6, members: [['echo.bait'], ['red.bigfamily']], queue: turns(0, 1, 0, 1) });
     s = go(s, 'gold.rush');

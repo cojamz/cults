@@ -88,7 +88,9 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     // 14s (Claude, 2026-10-29): members counting their printed number moved a seeded run of six to 13.76s; same shows, longer chain
     // free recruit, a Con Men steal of 5, an Anarchist swap and three recruits (21.2s vs 21.1s); content, not slower motion
     // 14.1s (Claude, Nov 1): the Nov 1 balance numbers moved a seeded run of six by 24 ms
-    expect(h2max).toBeLessThanOrEqual(14100 * K);
+    // 15s (Claude, Nov 1): Tryout's +2 red, Recruiter and Last Call moved seed 2's round II run of six (seat 0) into a
+    // Tryout on Treasurer plus two Anarchist swaps, a Coach and a Mentor protégé (14.95s); content, not slower motion
+    expect(h2max).toBeLessThanOrEqual(15000 * K);
   });
   it('Relaxed plays a rival\'s turn about twice as long as Steady, and Steady a little slower than the first table', () => {
     const steady = rivalTurnsAt('steady'), relaxed = rivalTurnsAt('relaxed'), quick = rivalTurnsAt('quick');

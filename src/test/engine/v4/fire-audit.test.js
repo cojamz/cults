@@ -138,7 +138,7 @@ const ALLOW = {
   'yellow.tinker': 'its swaps log as "swapped 1 x for 1 y (Tinker)"; recruited once in the sample (cards-yellow: Tinker)',
   'yellow.matchmaker': 'pays only for a recruit in a new member color; its 2 owners in the Yellow 2.0 sample (Oct 31) recruited none (cards-yellow)',
   'silver.dowager': 'a plain worth-3 member the audit counts (cards-silver)',
-  'silver.smoothtalker': 'names itself only when silver pays a colored part the color itself couldn\'t; bot owners in the sample paid in color (cards-silver: Smooth Talker)',
+  'silver.smoothtalker': 'names itself only when silver pays a colored part the color itself couldn\'t; bot owners in the sample paid in color (cards-silver: Smooth Talkers)',
   'purple.courier': 'pays only on two turns in a row (courier.test.js)',
   // bots almost never buy it at 12 (Hard bot read, Oct 24); recruited once in the Oct 25 sample
   'silver.grandhost': 'doubles silver from Silver spaces, rarely bought (cards-silver: Grand Host)',
@@ -160,10 +160,10 @@ const ALLOW = {
   // changes no number, so there is no payout line to name it (v0.8.2 Red deck)
   // the Nov 1 balance numbers (Last Call, Customs, Loyalists…) moved the seeded games: recruited in 1, as its owner's last
   // Silver's Nov 1 members: bots use it only when rivals together hold 2 silver each, which these games rarely gave (thread told)
-  'silver.debtcollector': 'On Use, once per game; a bot waits for rivals to hold silver (cards-silver: Debt Collector)',
+  'silver.debtcollector': 'On Use, once per game; a bot waits for rivals to hold silver (cards-silver: Debt Collectors)',
   'yellow.puppeteer': 'new Nov 1; recruited in 2 seeded games without its moment (cards-yellow: Puppeteers)',
-  'silver.guest': 'Hanger-On pays only when a rival gives its owner something; recruited once after Collector went to 6 (cards-silver: Hanger-On)',
-  'red.recruiter': 'pays only on a later recruit; recruited once in the sample (cards-red: Recruiter)',
+  'silver.guest': 'Hangers-On pays only when a rival gives its owner something; recruited once after Collector went to 6 (cards-silver: Hangers-On)',
+  'red.recruiter': 'pays only when a member leaves a rival’s cult (Poach, a rival swap, a steal); rare in the sample (cards-red: Recruiter)',
   'red.loyalists': 'only removes its cult from swap options (red-members-hooks / red-members-pressure: Loyalists)',
   // needs its holder to Promote/Demote a rival's member out of their cult; the 5/6/7 shop (2026-10-21) moved the
   // seeded games where a bot did

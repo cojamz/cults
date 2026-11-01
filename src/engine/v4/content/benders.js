@@ -125,7 +125,7 @@ const members = [
     onActivate(ctx, owner, card) { if (!extraMinion(ctx, owner, 'Extra Hand')) card.used = false; },
     botActivate: ctx => ctx.state.round === 3 && spareSpace(ctx),
   }),
-  m('frontrunner', 'Front-runner', 'purple', 1, 0, 'You go first every round.', { pickFirst: true }), // Cory, Oct 21: 5; Oct 27: 4; Oct 28 "could probably be cheaper": 3 with the +1 wild (Claude's price, the floor); Oct 29 "I'm okay with front runners at 2": 2
+  m('frontrunner', 'Line Cutters', 'purple', 1, 0, 'You go first every round.', { pickFirst: true, f: 3, n: 3 }), // worth 3 (Cory, Nov 1: "maybe we make it 3 members?"), renamed (Cory, Nov 1: "make front runner worth more followers. figure out a better name") // Cory, Oct 21: 5; Oct 27: 4; Oct 28 "could probably be cheaper": 3 with the +1 wild (Claude's price, the floor); Oct 29 "I'm okay with front runners at 2": 2
   // Cory's ideas, Oct 21, on this sim branch only. Launderer is simplified for the bots: one color, not any split.
   // Cory, Oct 28: "Launderers, 2 Followers" and "it should let you completely redo all your money… converting a lot at
   // once and being flexible across colors": all into one color in one click, or split color by color.
@@ -166,7 +166,7 @@ const members = [
     botActivate: (ctx, p) => anarchyPairs(ctx, p).some(([a, b]) => gainFor(ctx, p, a, b) >= 2),
   }),
   // Cory, 2026-10-28: Scout, 4, once per round (it stands in for Blue's shop work)
-  m('scout', 'Scout', null, 0, 2, 'On Use, once per round: send any shop members to the bottom of the pile, then refill.', {
+  m('scout', 'Scouts', null, 0, 2, 'On Use, once per round: send any shop members to the bottom of the pile, then refill.', { f: 2, n: 2, // worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
     activate: 'round',
     onRoundStart(ctx, owner, card) { card.used = false; },
     onActivate(ctx, owner, card) {
@@ -182,9 +182,9 @@ const members = [
     onRecruited(ctx, owner) { startSteal(ctx, owner, 'Con Men', 5, { fromAction: false }); },
   }),
   // Cory, 2026-10-28: HR (Archivist), 9, worth 3 (so it counts as 3 members)
-  m('hr', 'HR', null, 0, 12, /* 10, counts as 4 (Cory, Oct 29: "bump HR to four members"; +1 price Claude's) */ 'Counts as 4 members. Game End: +3 followers per color you have 3 members of.', { f: 4, n: 4,
+  m('hr', 'HR', null, 0, 9, /* price 10 and +2 per color (Cory, Nov 1: "we can try +2. then price it at 10 to start") */ 'Counts as 4 members. Game End: +2 followers per color you have 3 members of.', { f: 4, n: 4,
     // guests count as a color here, they just have no resource (Cory, 2026-10-30: "should they count for the purposes of HR? they should")
-    onGameEnd: (ctx, owner) => 3 * [...ctx.state.quadrants, 'guest'].filter(q => ctx.countMembersOfColor(owner, q) >= 3).length,
+    onGameEnd: (ctx, owner) => 2 * [...ctx.state.quadrants, 'guest'].filter(q => ctx.countMembersOfColor(owner, q) >= 3).length,
   }),
   // Cory, 2026-10-28: the 8 ("use one of your One Time Use members again"), named Coach (Cory, Oct 29); now any member's
   // Once per game or Once per round ability, as a free extra use (Cory, Oct 29: "activate the On Use effect of one of

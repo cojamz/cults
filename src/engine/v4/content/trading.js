@@ -268,7 +268,10 @@ const trading = {
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.membersOf(owner).some(c => c.def.key !== 'appraiser' && buryValue(ctx, owner, c, fv(ctx)) >= 2),
     }),
-    m('changer', 'Money Changers', 2, 1, 'Whenever you turn resources or members into followers, +2 white.', { f: 2, onTurned: 2 }),
+    // Cory, Nov 1: artifacts fire on any player's move ("Whenever any player buys followers, +1 white"): −8 → +1 in 400 games
+    m('changer', 'Money Changers', 2, 1, 'Whenever any player buys followers, +1 white.', { f: 2,
+      onBuyFollowers(ctx, owner) { ctx.gain(owner, W, 1); ctx.log(`${owner.name}'s Money Changers: +1 white.`); },
+    }),
     m('martyr', 'Martyrs', 2, 1, 'Whenever this member leaves your cult, gain followers equal to its cost.', { f: 3,
       onLeave(ctx, owner, card) {
         const c = card.def.s + card.def.w;

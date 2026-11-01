@@ -79,7 +79,7 @@ function tryoutScenario() {
   expected = move(expected, `card:${banker}`);
   if (expected.pending?.kind !== 'buy') throw new Error('tryout: did not return to buying');
   const me = expected.players[0], was = s.players[0];
-  if (me.res.red !== was.res.red + 1) throw new Error(`tryout: red ${was.res.red} -> ${me.res.red}`);
+  if (me.res.red !== was.res.red + 2) throw new Error(`tryout: red ${was.res.red} -> ${me.res.red}`);
   if (me.res.gold !== was.res.gold + 3) throw new Error(`tryout: gold ${was.res.gold} -> ${me.res.gold}`);
   if (!expected.shop.includes(banker) || me.members.includes(banker)) throw new Error('tryout: Banker left the shop');
   if (expected.recruits !== s.recruits || JSON.stringify(me.members) !== JSON.stringify(was.members)) throw new Error('tryout: counted as a recruit');
@@ -89,7 +89,7 @@ const comparable = s => ({ players: s.players.map(p => ({ members: p.members, re
 if (process.argv.includes('--fixtures-only')) {
   // (rival-swap went with Even Swap: Tryout took its space in the round I rework, Cory Oct 27)
   for (const name of ['promote', 'copy-promote']) { scenario(name); console.log(`${name}: fixture resolves to buying.`); }
-  tryoutScenario(); console.log('tryout: Banker offered, Stunt Double not; +1 red, +3 gold, Banker stays in the shop, no recruit.');
+  tryoutScenario(); console.log('tryout: Banker offered, Stunt Double not; +2 red, +3 gold, Banker stays in the shop, no recruit.');
   process.exit(0);
 }
 const browser = await launchBrowser({ executablePath: browserPath });

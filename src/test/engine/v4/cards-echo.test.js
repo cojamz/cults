@@ -90,57 +90,23 @@ describe('Green current actions', () => {
       else expect(d.text).toContain('+1 green');
     }
   });
-  it('Greatest Hits copies all your ordinary actions in order and adds one green', () => {
-    let s = table(Q, { round: 3, left: 5, shop: ROW, queue: turns(0, 0, 0) });
-    s = go(s, 'gold.rush'); s = go(s, 'echo.chant');
-    s = go(s, 'echo.eternity', sp('gold.rush'));
-    expect(R(s)).toMatchObject({ gold: 12, green: 11 });
-    expect(s.log.filter(l => /^P1 copied /.test(l)).map(l => l.split(':')[0])).toEqual(['P1 copied Golden Years', 'P1 copied Build Up']);
-  });
-  // Cory's v0.9.1 playtest (Oct 27): "using squatter on greatest hits didnt seem to work… players actions werent copied"
-  it('Squatter joining a rival\'s Greatest Hits copies every action with your minion', () => {
-    const GH = `3-${quadrant('echo').actions.findIndex(a => a.key === 'eternity')}`;
-    let s = table(Q, { round: 3, left: 5, shop: ROW, members: [['benders.squatter']], queue: turns(0, 1, 0, 0) });
-    s = go(s, 'gold.rush'); s = go(s, 'echo.eternity'); s = go(s, 'echo.chant');
-    s = move(move(s, `use:${s.players[0].members[0]}`), `squat:${GH}`); // Party Crasher (Once per game since Oct 28)
-    expect(s.pending.prompt).toBe('Greatest Hits: copy which next?');
-    s = pass(play(s, sp('gold.rush')));
-    expect(R(s)).toMatchObject({ gold: 12, green: 11 });
-    expect(s.log.filter(l => /^P1 copied /.test(l)).map(l => l.split(':')[0])).toEqual(['P1 copied Golden Years', 'P1 copied Build Up']);
-    // and a space you joined with Squatter is one of yours for Greatest Hits
-    let t = table(Q, { round: 3, left: 5, shop: ROW, members: [['benders.squatter']], queue: turns(1, 0, 0) });
-    t = go(t, 'gold.rush');
-    t = pass(move(move(t, `use:${t.players[0].members[0]}`), 'squat:0-1'));
-    t = go(t, 'echo.eternity');
-    expect(R(t)).toMatchObject({ gold: 12, green: 1 });
-  });
-  it('Greatest Hits includes prior copy actions and lets their target be chosen again', () => {
-    let s = table(Q, { round: 3, left: 5, shop: ROW, queue: turns(0, 1, 0, 0) });
-    s = go(s, 'gold.rush'); s = go(s, 'echo.chant');
-    s = go(s, 'echo.refrain', sp('gold.rush'));
+  // Cory, Nov 1 morning: "maybe we try copying all your members On Recruit in any order"
+  it('Greatest Hits copies the On Recruit of each of your members, in the order you pick', () => {
+    let s = table(Q, { round: 3, left: 5, shop: ROW, members: [['gold.seed', 'gold.hustler', 'gold.tycoon']], queue: turns(0, 1) });
     s = take(s, 'echo.eternity');
-    expect(s.pending.prompt).toBe('Greatest Hits: copy which next?');
-    s = play(s, sp('echo.refrain'));
-    expect(s.pending.prompt).toMatch(/Reprise/);
-    s = play(s, sp('gold.rush'));
-    expect(s.pending.prompt).toBe('Greatest Hits: copy which next?'); // Golden Years and P2's Build Up left, 2 more copies
-    s = pass(play(s, sp('gold.rush')));
-    expect(R(s)).toMatchObject({ gold: 24, green: 8 });
-  });
-  it('Greatest Hits copies any 3 round I actions with a minion on them, anyone\'s, and never a round II or III one (Cory, Nov 1)', () => {
-    let s = table(Q, { round: 3, left: 6, shop: ROW, queue: turns(1, 0, 1, 0, 1, 0) });
-    s = go(s, 'gold.rush'); s = go(s, 'echo.chant'); s = go(s, 'gold.discount'); s = go(s, 'gold.windfall');
-    s = go(s, 'red.turnout');
-    s = take(s, 'echo.eternity');
-    expect(s.pending.prompt).toBe('Greatest Hits: copy which next? (3 more)');
-    expect(s.pending.options.map(o => o.label.split(' (')[0])).toEqual(['Golden Years', 'Build Up', 'Intro Offer', 'Gather']);
-    s = play(s, sp('gold.rush'));
-    expect(s.pending.prompt).toBe('Greatest Hits: copy which next? (2 more)');
-    s = play(s, sp('echo.chant'));
-    s = play(s, sp('red.turnout'));
+    expect(s.pending.prompt).toBe("Greatest Hits: copy which member's On Recruit first? (2 to go)");
+    expect(s.pending.options.map(o => o.label.split(':')[0])).toEqual(['Treasurer', 'Hustler']); // Tycoon has no On Recruit
+    s = move(s, s.pending.options.find(o => o.label.startsWith('Hustler')).id);
+    expect(s.pending.prompt).toMatch(/^Hustler/);
+    s = move(s, 'color:echo');
     s = pass(s);
-    expect(s.pending?.prompt || '').not.toMatch(/Greatest Hits/);
-    expect(s.log.filter(l => /^P1 copie[sd] /.test(l))).toHaveLength(3);
+    expect(R(s)).toMatchObject({ gold: 3, green: 1 }); // Treasurer: +1 gold per member (3)
+    expect(s.log.filter(l => /copies .*On Recruit/.test(l))).toEqual(["P1 copies Hustler's On Recruit.", "P1 copies Treasurer's On Recruit."]);
+  });
+  it('Greatest Hits with no On Recruit among your members gives just its green', () => {
+    let s = table(Q, { round: 3, left: 5, shop: ROW, members: [['gold.tycoon']], queue: turns(0, 1) });
+    s = go(s, 'echo.eternity');
+    expect(R(s)).toMatchObject({ green: 1 });
   });
   it('Agents: rivals can’t copy your actions, and you still can (Cory, 2026-10-29)', () => {
     let s = table(Q, { round: 3, members: [['echo.agents']], queue: turns(0, 1) });

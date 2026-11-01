@@ -46,7 +46,7 @@ export const GLOSSARY = [
     def: 'Happens once when you recruit the member, then again each time a later round starts.' },
   // Cory, 2026-10-27: cards print two keywords, "On Recruit: X Round Start: X"
   { key: 'copy', word: 'Copy', match: /\bcop(y|ies|ied)\b(?= (?:any|every|one|the|it|that|what|a)\b)|\bwhat you copy\b|\bcopy a space\b/,
-    def: 'Copy an action: get its own printed gain (what its chip shows). Members’ bonuses on it and its gifts to others don’t repeat. Its taker keeps what they got. Copying a copy lets you choose again; never choose an action already in that chain. Each green action gives +1 green, including when copied. Agents stops rivals from copying its owner’s actions. Echo copies the previous action, Cover an action with no minion on it, Reprise one with your minion, and Greatest Hits any 3 round I actions with a minion on them.' },
+    def: 'Copy an action: get its own printed gain (what its chip shows). Members’ bonuses on it and its gifts to others don’t repeat. Its taker keeps what they got. Copying a copy lets you choose again; never choose an action already in that chain. Each green action gives +1 green, including when copied. Agents stops rivals from copying its owner’s actions. Echo copies the previous action, Cover an action with no minion on it, and Reprise one with your minion. Greatest Hits and Encore copy On Recruits: Greatest Hits each of your members’, Encore a rival member’s.' },
   { key: 'face-up', word: 'Face-up', match: /\bface-up\b/,
     def: 'The members in the shop that everyone can see. When one leaves, the pile refills the row.' },
   { key: 'pile', word: 'Pile', match: /\b(?:the|of the) pile\b/,

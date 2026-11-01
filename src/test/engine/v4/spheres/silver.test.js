@@ -165,7 +165,7 @@ describe('Silver members', () => {
     expect(s.players[0].bonus).toBe(0);
   });
 
-  it('Debutante: once per game, double your silver and everyone else +2 silver', () => {
+  it('Debutantes: once per game, double your silver and everyone else +2 silver', () => {
     let s = scene({ res: [{ silver: 5 }], members: [['silver.gala']], queue: [{ t: 'buy', p: 0 }] });
     const u = uidOf(s, 'silver.gala', 0);
     s = move(s, `use:${u}`);

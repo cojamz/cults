@@ -1,20 +1,16 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
-// E2E: Greatest Hits ("Copy any 3 round I actions with a minion on them", Cory Nov 1; was every space of yours) at 1270×700, from a real round III where you took a
-// mix of spaces, an Echo or Reprise among them. Cory's play (2026-10-16): "Copy all your spaces doesn't work quite
-// right": a copy space you took was skipped without a word. The revised rule includes copy actions, which offer a
-// fresh choice without revisiting an action in the same chain:
-//  (c1) the hover's "Can copy" row names every round I action with a minion on it that it may copy;
-//  (c2) exactly those spaces light up on the wheel while it's under the pointer;
-//  (c3) after you take it you pick 3 (fewer if fewer are open), each picked one is copied and named in the log, and
-//       any skip line reaches the Chronicle.
+// E2E: Greatest Hits at 1270×700. Since Nov 1 it reads "Copy the On Recruit of each of your members, in any order.
+// +1 green." (it copied actions before; Cory's Oct 16 play, "Copy all your spaces doesn't work quite right", was about
+// that). Round III, P1 places their last minion with Treasurer, Hustler and Tycoon in their cult:
+//  (c1) the space's hover card opens;
+//  (c2) after you take it you pick the order, Hustler's color, and each member with an On Recruit (Treasurer,
+//       Hustler; Tycoon has none) is copied and named in the log;
+//  (c3) the Chronicle carries those lines.
 // Server: $V4_URL (a built preview). Shots: $V4_SHOTS/copyall (or $GH_SHOTS).
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
-import { createGame, applyMove, chooseBotMove, quadrant } from '../../src/engine/v4/index.js';
-import { seededRandom } from '../../src/engine/v4/rng.js';
-import { contextFor } from '../../src/engine/v4/core.js';
-import { hitsPlan, HITS, skipWords } from '../../src/engine/v4/content/echo.js';
-import { buildStamp } from './lib/stamp.mjs';
+import { createGame, quadrant } from '../../src/engine/v4/index.js';
+import { resume } from '../../src/engine/v4/core.js';
 import { seedSave } from './lib/seed.mjs';
 import { answerChoice } from './lib/answer.mjs';
 
@@ -24,38 +20,22 @@ const base = (process.env.V4_URL || 'http://localhost:5532/').replace(/\/$/, '')
 const QUADS = ['gold', 'red', 'purple', 'echo'];
 const key = (q, k) => `${QUADS.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.key === k)}`;
 const GH = key('echo', 'eternity');
-const COPIES = [key('echo', 'echo'), key('echo', 'refrain')];
-// what you take in round III before Greatest Hits, first that's open (a copy space at least once)
-const WANT = [key('echo', 'echo'), key('echo', 'refrain'), key('gold', 'steal'), key('red', 'hireup'), key('red', 'turnout'), key('echo', 'hum'), key('gold', 'rush')];
+const MEMBERS = ['gold.seed', 'gold.hustler', 'gold.tycoon'];
+const COPIED = ['Treasurer', 'Hustler'];
 
-/** Round III, P1 (the only person) to place their last minion, having taken a mix that includes a copy space. */
-function copyAllSave() {
+/** Round III, P1 (the only person) to place their last minion, with members that have On Recruits. */
+function copyAllSave(stamp) {
   const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }];
-  for (let seed = 1; seed < 200; seed++) {
-    let s = createGame({ seats, seed, quadrants: QUADS });
-    s.build = buildStamp();
-    const rand = seededRandom(seed);
-    for (let n = 0; n < 6000 && !s.over; n++) {
-      const pend = s.pending;
-      if (!pend) break;
-      if (s.round === 3 && pend.player === 0) {
-        if (pend.kind === 'place' && s.players[0].left === 1) break;
-        if (pend.kind === 'place') {
-          const k = WANT.find(w => pend.options.some(o => o.id === `slot:${w}`));
-          s = applyMove(s, { player: 0, option: k ? `slot:${k}` : chooseBotMove(s, rand).option });
-          continue;
-        }
-        if (pend.kind === 'buy') { s = applyMove(s, { player: 0, option: 'pass' }); continue; }
-      }
-      s = applyMove(s, chooseBotMove(s, rand));
-    }
-    const mine = Object.entries(s.slots).filter(([, p]) => p === 0).map(([k]) => k);
-    const ok = s.round === 3 && s.pending?.kind === 'place' && s.pending.player === 0 && s.players[0].left === 1
-      && s.pending.options.some(o => o.id === `slot:${GH}`) && mine.some(k => COPIES.includes(k)) && mine.length >= 4;
-    if (!ok || hitsPlan(contextFor(s), s.players[0]).take.length < 2) continue;
-    return { seed, mine, save: { config: { seats: seats.map(x => ({ kind: x.kind, name: x.name })), speed: 'normal' }, state: s, undo: null, savedAt: Date.now() } };
-  }
-  throw new Error('copyall: no seed reached round III with a copy space among P1\'s and Greatest Hits open');
+  let s = createGame({ seats, seed: 7, quadrants: QUADS });
+  s.build = stamp;
+  Object.assign(s, { round: 3, slots: {}, squats: {}, order: [], pending: null });
+  delete s.echo;
+  s.players.forEach(p => { p.res = Object.fromEntries(s.resources.map(r => [r, 0])); p.left = 1; p.members = []; });
+  for (const def of MEMBERS) { const u = Math.max(...Object.keys(s.cards).map(Number)) + 1; s.cards[u] = { uid: u, def }; s.players[0].members.push(u); }
+  s.queue = [0, 1, 2].map(p => ({ t: 'turn', p }));
+  s = resume(s);
+  if (!(s.pending?.player === 0 && s.pending.options.some(o => o.id === `slot:${GH}`))) throw new Error('copyall: setup never offered Greatest Hits');
+  return { config: { seats: seats.map(x => ({ kind: x.kind, name: x.name })), speed: 'normal' }, state: s, undo: null, savedAt: Date.now() };
 }
 
 const fails = [];
@@ -71,41 +51,26 @@ try {
   await page.click('[data-start]');
   await page.waitForFunction(() => { try { return !!JSON.parse(localStorage.getItem('patrons.v4.local')).state.build; } catch { return false; } });
   const stamp = await page.evaluate(() => JSON.parse(localStorage.getItem('patrons.v4.local')).state.build);
-  const got = copyAllSave();
-  got.save.state.build = stamp;
-  await seedSave(page, got.save);
+  await seedSave(page, copyAllSave(stamp));
   await page.goto(`${base}/?botDelay=300&intro=0`);
   await page.waitForSelector('.lt-wheel, [data-home="resume"]');
   if (!(await page.$('.lt-wheel'))) await page.click('[data-home="resume"]');
   await page.waitForSelector(`[data-slot="${GH}"]`);
   await page.waitForTimeout(900);
-  const names = got.mine.map(k => { const [q, i] = k.split('-').map(Number); return quadrant(QUADS[q]).actions[i]; });
-  const plan = hitsPlan(contextFor(got.save.state), got.save.state.players[0]);
-  const copied = plan.take.map(e => e.name);
-  const skipped = plan.skip.map(x => x.e.name);
-  const skipReason = skipWords(plan.skip);
 
-  // (c1)(c2) the hover
+  // (c1) the hover
   const box = await (await page.$(`[data-slot="${GH}"]`)).boundingBox();
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  const card = await page.waitForFunction(k => { const c = document.querySelector(`[data-space-card="${k}"]`); return c && /Can copy/i.test(c.innerText) ? c.innerText : null; }, GH, { timeout: 4000 }).then(h => h.jsonValue(), () => null);
+  const card = await page.waitForSelector(`[data-space-card="${GH}"]`, { timeout: 4000 }).catch(() => null);
   await page.waitForTimeout(500);
   await page.screenshot({ path: `${SHOTS}/01-hover.png` });
-  if (!card) fail('Greatest Hits\' hover has no "Can copy" row', 'c1');
-  else {
-    const row = (card.match(/Can copy\s*([^\n]*(?:\n(?!You|Why)[^\n]*)*)/i) || [])[1] || '';
-    for (const n of copied) if (!row.includes(n)) fail(`"Can copy" doesn't name ${n}: "${row}"`, 'c1');
-  }
-  const lit = await page.evaluate(() => [...new Set([...document.querySelectorAll('[data-slot].copy-target')].map(e => e.dataset.slot))].sort());
-  const wantLit = [...new Set(plan.take.map(e => e.key.split('+')[0]))].sort();
-  if (JSON.stringify(lit) !== JSON.stringify(wantLit)) fail(`lit ${JSON.stringify(lit)}, want your copyable spaces ${JSON.stringify(wantLit)}`, 'c2');
+  if (!card) fail('Greatest Hits\' hover card never opened', 'c1');
 
-  // (c3) take it, answer its choices as a person would, then read the Chronicle
+  // (c2) take it, answer its choices as a person would
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-  // Greatest Hits now asks which copy comes next (Cory, 2026-10-26): wait for the placement to land before reading
   await page.waitForFunction(() => JSON.parse(localStorage.getItem('patrons.v4.local')).state.players[0].left === 0, null, { timeout: 5000 }).catch(() => {});
   await page.waitForTimeout(600);
-  for (let k = 0; k < 48; k++) {
+  for (let k = 0; k < 12; k++) {
     const st = await page.evaluate(() => JSON.parse(localStorage.getItem('patrons.v4.local')).state.pending);
     if (!st || st.player !== 0 || st.kind !== 'choose') break;
     await page.screenshot({ path: `${SHOTS}/02-choice-${k + 1}.png` });
@@ -117,22 +82,21 @@ try {
   const log = await page.evaluate(() => JSON.parse(localStorage.getItem('patrons.v4.local')).state.log);
   const at = log.findIndex(l => /took Greatest Hits/.test(l));
   const after = at < 0 ? [] : log.slice(at);
-  if (at < 0) fail('the game log never says P1 took Greatest Hits', 'c3');
+  if (at < 0) fail('the game log never says P1 took Greatest Hits', 'c2');
   else {
-    if (skipped.length && !after.some(l => l.includes(`skips ${skipReason}`))) fail(`no skip line after Greatest Hits: ${JSON.stringify(after.slice(0, 8))}`, 'c3');
-    const did = copied.filter(n => after.some(l => new RegExp(`P1 cop(ied|ies) ${n}\\b`).test(l)));
-    const want = Math.min(HITS, copied.length);
-    if (did.length !== want) fail(`copied ${did.length} (${did.join(', ')}), want ${want} of ${copied.join(', ')}: ${JSON.stringify(after.slice(0, 12))}`, 'c3');
+    for (const n of COPIED) if (!after.includes(`P1 copies ${n}'s On Recruit.`)) fail(`no "P1 copies ${n}'s On Recruit.": ${JSON.stringify(after.slice(0, 12))}`, 'c2');
+    if (after.some(l => /copies Tycoon/.test(l))) fail('Tycoon has no On Recruit but was copied', 'c2');
   }
+
+  // (c3) the Chronicle
   await page.click('.lt-menu .menu-glyph').catch(() => {});
   await page.click('.lt-menu .log-btn').catch(() => {});
   const chron = await page.waitForSelector('.lt-chron', { timeout: 4000 }).catch(() => null);
   if (chron) {
     const text = await page.evaluate(() => document.querySelector('.lt-chron').innerText);
-    if (skipped.length && !text.includes(skipReason)) fail('the Chronicle doesn\'t carry the skip line', 'c3');
+    for (const n of COPIED) if (!text.includes(`${n}'s On Recruit`) && !text.includes(`${n}’s On Recruit`)) fail(`the Chronicle doesn't carry ${n}'s copy`, 'c3');
     await page.screenshot({ path: `${SHOTS}/04-chronicle.png` });
   } else fail('the Chronicle did not open', 'c3');
-  console.log(`copyall: seed ${got.seed}, took ${names.map(a => a.name).join(', ')}; copies ${copied.join(', ')}; skips ${skipped.join(', ')}`);
   await ctx.close();
 } finally { await browser.close(); }
 if (errors.length) fail(errors.join(' | '), 'pageerror');

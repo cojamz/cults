@@ -89,7 +89,7 @@ describe('locked Red action progression', () => {
 
   it('Tryout uses a shop member’s On Recruit; the member stays in the shop and nobody recruits', () => {
     let s = take(table(Q, { shop: ROW.slice(0, 6) }), 'red.evenswap');
-    expect(s.players[0].res.red).toBe(1);
+    expect(s.players[0].res.red).toBe(2); // +2 red (Cory, Nov 1)
     const banker = uidIn(s, 'gold.banker', 'shop'), shop = [...s.shop], pile = [...s.pile];
     expect(s.pending.options.map(o => o.id)).toContain(`card:${banker}`);
     expect(s.pending.options.map(o => o.id)).not.toContain(`card:${uidIn(s, 'red.twins', 'shop')}`); // no On Recruit
@@ -103,7 +103,7 @@ describe('locked Red action progression', () => {
   it('Tryout with no On Recruit member in the shop gives its red and says so', () => {
     const s = take(table(Q, { shop: ['red.twins', 'red.intern', 'red.volunteer'] }), 'red.evenswap');
     expect(s.pending?.kind).not.toBe('choose');
-    expect(s.players[0].res.red).toBe(1);
+    expect(s.players[0].res.red).toBe(2);
     expect(s.log.some(l => /no shop member has an On Recruit effect/.test(l))).toBe(true);
   });
 
@@ -117,7 +117,7 @@ describe('locked Red action progression', () => {
     expect(remaining(s).sort((x, y) => x - y)).toEqual(before);
     expect(defs(s, 0)).toContain('echo.evergreen'); expect(s.shop).toContain(a);
     expect(s.recruits).toBe(1); expect(s.players[0].turnRecruits).toBe(1);
-    expect(s.players[0].res.green).toBe(3); // Evergreen +2, Recruiter +1 of its color
+    expect(s.players[0].res.green).toBe(2); // Evergreen +2; Recruiter quiet: a shop swap takes nothing from a rival's cult
     expect(s.players[0].res.red).toBe(3); // Promote +3
     expect(s.players[0].bonus).toBe(1);
   });
@@ -188,10 +188,11 @@ describe('active acquisition versus gifts', () => {
     const s = table(Q, { members: [['red.recruiter'], ['echo.evergreen']], queue: [] });
     const uid = uidIn(s, 'echo.evergreen', 1), ctx = contextFor(s);
     ctx.moveMember(uid, s.players[1], s.players[0]);
-    expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([0, 0, 0]);
+    expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([0, 0, 2]); // a gift is no recruit; Recruiter: a member left a rival's cult, +2 red
     ctx.moveMember(uid, s.players[0], s.players[1]);
+    expect(s.players[0].res.red).toBe(2); // its holder's own member leaving pays nothing
     expect(ctx.steal(s.players[0], s.players[1], { uid })).toBe(1);
-    expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([1, 3, 0]); // Recruiter: +1 of the taken member's color
+    expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([1, 2, 4]); // Evergreen's On Recruit +2; Recruiter +2
   });
 
   it('a return-to-shop removes only an Extra Hand’s unplaced minion and reacquisition restores it once', () => {

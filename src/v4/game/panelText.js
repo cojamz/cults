@@ -43,7 +43,7 @@ const P = {
   },
   red: {
     // the +2 red sat in line 3, which drops on the outer ring (round I review, Oct 25): it takes line 2, as Right Away's purple
-    evenswap: { verb: 'Use a shop member’s On Recruit', second: '+1 red', note: 'it stays in the shop' },
+    evenswap: { verb: 'Use a shop member’s On Recruit', second: '+2 red', note: 'it stays in the shop' },
     turnout: r => ({ main: `+${r + 1} red`, second: `+${r} @f if you recruit a member` }), // Cory, Oct 31
     hire: { verb: 'Recruit the top of the deck', second: '+1 red to all' }, // the rivals' red sat in line 3, which drops on the outer ring (blind panel, Nov 1)
     hireup: { verb: 'Promote a member', second: 'shop cost up to 2 more', note: '+2 red' },
@@ -55,9 +55,9 @@ const P = {
     restock: { verb: 'Send one color to the bottom', second: '+1 blue per member sent', note: '+1 blue' },
     // line 2 was too long and dropped whole at the wheel's bottom, taking the blue with it (round I review, Oct 25)
     showroom: r => ({ main: `+${2 * r} blue`, second: 'peek at the top 4', note: run(n => `+${2 * n}`, 'blue: ') }),
-    clearance: { verb: 'Recruit twice', second: 'this turn', note: '+1 blue' },
+    clearance: { verb: 'Recruit twice', second: 'this turn', note: '+3 blue' },
     pricecheck: { verb: 'Bury a shop member', second: 'gain half its cost in blue', note: '+1 blue' },
-    spree: { verb: 'Recruit 3 times', second: 'this turn', note: '+3 blue' },
+    spree: { verb: 'Recruit 3 times', second: 'this turn', note: '+5 blue' },
   },
   purple: {
     hourly: r => ({ main: `+${3 + r} purple`, second: run(n => `+${3 + n}`) }),
@@ -69,7 +69,7 @@ const P = {
     planahead: (r, now) => (now == null ? { main: '+1 purple', second: 'per minion to place' } : { main: `+${now} purple`, second: '1 per minion left to place' }),
     // free since 2026-10-15 (Cory: no board action requires spending). A ring II verb can drop line 2: whole in line 1
     // line 1 alone must not read as a flat +2 (text review, 2026-10-23: line 2 drops on ring II)
-    lastcall: { verb: '+2 @f per minion left', second: 'then you go last', note: '+1 purple' }, // 'skip till others are out' didn't fit line 2 and dropped (blind panel, Nov 1)
+    lastcall: { verb: '+1 @f and +1 purple per minion left', second: 'then you go last', note: '+1 purple' }, // 'skip till others are out' didn't fit line 2 and dropped (blind panel, Nov 1)
     // the center drops line 2, so it's whole in line 1. Your own next turns, moved up, not extra ones (Cory, 2026-10-15)
     // Cory, 2026-10-22: place on taken spaces for the rest of the round
     // Cory, 2026-10-22: the old game's "Gain 4 purple, skip next turn"
@@ -144,7 +144,7 @@ const P = {
     encore: { verb: 'Copy an On Recruit', second: 'of a rival’s member', note: '+1 green' },
     // one word for it, the hover's (w3a #22: "redo" here, "copy" there)
     refrain: { verb: 'Copy an action', second: 'with your minion', note: '+1 green' },
-    eternity: { verb: 'Copy any 3 round I actions', second: 'with a minion on them', note: '+1 green' },
+    eternity: { verb: 'Copy each member’s On Recruit', second: 'yours, in any order', note: '+1 green' },
   },
 };
 

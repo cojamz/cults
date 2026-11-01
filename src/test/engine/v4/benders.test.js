@@ -52,7 +52,7 @@ describe('guest members join the deck', () => {
     expect(R(t).red + R(t).blue).toBe(10 - cost('benders.squatter'));
   });
   it('a guest is colorless even when the sphere it leans to is on the table: no sphere counts it, and its whole cost is any colors', () => {
-    // Front-runner leans Purple (printed 5 colored + 0 any): on a table with Purple, it's still nobody's color
+    // Line Cutters (Front-runner) leans Purple (printed 5 colored + 0 any): on a table with Purple, it's still nobody's color
     const Q = ['gold', 'red', 'purple', 'green'];
     expect(defById('benders.frontrunner')).toMatchObject({ quadrant: 'guest', lean: 'purple', s: 0, w: 1 + EXTRA_WILD });
     const s = scene({ quadrants: Q, res: [{ red: 20 }], shop: ['benders.frontrunner'], queue: [{ t: 'buy', p: 0 }] });
@@ -64,7 +64,7 @@ describe('guest members join the deck', () => {
     expect(R(t).red).toBe(20 - cost('benders.frontrunner'));
     expect(R(t).purple).toBe(0);
     const v = scene({ quadrants: Q, members: [['benders.frontrunner']] });
-    for (const q of [...Q, 'guest']) expect(contextFor(v).countMembersOfColor(v.players[0], q), q).toBe(q === 'guest' ? 1 : 0);
+    for (const q of [...Q, 'guest']) expect(contextFor(v).countMembersOfColor(v.players[0], q), q).toBe(q === 'guest' ? 3 : 0); // Line Cutters counts as 3 (Cory, Nov 1)
   });
 });
 

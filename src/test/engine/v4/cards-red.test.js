@@ -41,8 +41,8 @@ describe('Red members', () => {
     s = take(s, 'gold.rush');
     s = buy(s, 'red.mentor');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
-    // Recruiter +1 per recruit (2), Drive +2 on the second
-    expect(named(s, 'Recruiter')).toHaveLength(2);
+    // Drive +2 on the second; Recruiter quiet: both came from the shop, not a rival's cult
+    expect(named(s, 'Recruiter')).toHaveLength(0);
     expect(named(s, 'Pied Piper')).toHaveLength(1);
   });
 
@@ -63,28 +63,28 @@ describe('Red members', () => {
     expect(s.players[0].final.parts).toEqual(['Mob +6', 'Mob +6']);
   });
 
-  it('Recruiter: +1 of the recruited member\'s color, named', () => {
-    const s = settle(take(sceneQ({ members: [['red.recruiter']], shop: ['red.intern'] }), 'red.hire'));
-    expect(R(s).red).toBe(2); // Walk-In's +1, Recruiter's +1 for a red member
-    expect(named(s, 'Recruiter')).toHaveLength(1);
+  it('Recruiter: a rival’s Poach of another rival’s member pays its holder +2 red, named', () => {
+    // 3 players, round III: P1 Poaches P3's Triplets; P2 holds Recruiter
+    let s = sceneQ({ quadrants: ['gold', 'red', 'thieves', 'echo'], n: 3, round: 3, members: [[], ['red.recruiter'], ['red.twins']] });
+    s = move(take(s, 'thieves.heist'), `card:${uidOf(s, 'red.twins', 2)}`);
+    expect(s.players[0].members).toHaveLength(1);
+    expect(R(s, 1).red).toBe(2);
+    expect(named(s, 'Recruiter')).toEqual(["P2's Recruiter: +2 red."]);
   });
 
-  it('Recruiter: a recruited Dabblers lets you pick its color; a guest gives nothing', () => {
-    const restore = pinCosts({ 'benders.dabblers': [0, 0], 'benders.hr': [0, 0] });
-    let s = sceneQ({ res: [rich], members: [['red.recruiter']], shop: ['benders.dabblers', 'benders.hr'] });
-    s = take(s, 'gold.rush');
-    const blue0 = R(s).blue;
-    s = buy(s, 'benders.dabblers');
-    expect(s.pending?.prompt).toMatch(/Recruiter: \+1 of which color/); // Cory, Oct 30
-    s = move(s, 'blue');
-    expect(R(s).blue).toBe(blue0 + 1);
-    expect(named(s, 'Recruiter')).toHaveLength(1);
-    let t = take(sceneQ({ res: [rich], members: [['red.recruiter']], shop: ['benders.hr'] }), 'gold.rush');
-    const r0 = { ...R(t) };
-    t = settle(buy(t, 'benders.hr'));
-    expect(['red', 'blue', 'green'].map(c => R(t)[c] - r0[c])).toEqual([0, 0, 0]);
+  it('Recruiter: its holder’s own member leaving pays nothing; a shop swap pays nothing', () => {
+    let s = sceneQ({ quadrants: ['gold', 'red', 'thieves', 'echo'], round: 3, members: [[], ['red.recruiter', 'red.twins']] });
+    s = move(take(s, 'thieves.heist'), `card:${uidOf(s, 'red.twins', 1)}`);
+    expect(s.players[0].members).toHaveLength(1);
+    expect(R(s, 1).red).toBe(0);
+    expect(named(s, 'Recruiter')).toHaveLength(0);
+    // Promote (round II) swaps your member with a shop member: nothing leaves a rival's cult
+    let t = sceneQ({ round: 2, members: [['red.recruiter', 'red.intern']], shop: ['red.volunteer'] });
+    t = take(t, 'red.hireup');
+    const swap = t.pending.options.find(o => o.id.startsWith(`trade:${uidOf(t, 'red.intern', 0)}:`));
+    t = settle(move(t, swap.id));
+    expect(R(t).red).toBe(3); // Promote's +3 only
     expect(named(t, 'Recruiter')).toHaveLength(0);
-    restore();
   });
 
   it('Pied Piper: the second recruit in one turn pays +2 red at once, named; Big Spender makes it two buys', () => {

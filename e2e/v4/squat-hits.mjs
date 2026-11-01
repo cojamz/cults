@@ -1,7 +1,8 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
-// E2E: Squatter onto a rival's Greatest Hits copies every action with your minion (Cory's v0.9.1 playtest, Oct 27:
+// E2E: Party Crasher (was Squatter) onto a rival's Greatest Hits does it for you (Cory's v0.9.1 playtest, Oct 27:
 // "using squatter on greatest hits didnt seem to work… players actions werent copied"). Round III, you took two
-// spaces, a rival took Greatest Hits; you join it with Squatter on the wheel and answer its "copy which next?".
+// spaces, a rival took Greatest Hits; you join it on the wheel. Greatest Hits copies On Recruits since Nov 1, so the
+// joiner copies its own Treasurer's On Recruit (Twins has none).
 // Server: $V4_URL (a built preview). Shots: $V4_SHOTS/squat-hits.
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
@@ -27,6 +28,7 @@ function squatSave(stamp) {
   const uid = Math.max(...Object.keys(s.cards).map(Number)) + 1;
   s.cards[uid] = { uid, def: 'benders.squatter', used: true };
   s.players[0].members.push(uid);
+  for (const def of ['gold.seed', 'red.twins']) { const u = Math.max(...Object.keys(s.cards).map(Number)) + 1; s.cards[u] = { uid: u, def }; s.players[0].members.push(u); }
   s.players[0].crashNext = true; // Party Crasher already used: the next minion may join (Once per game since Oct 28)
   s.queue = [0, 1, 0, 0, 1].map(p => ({ t: 'turn', p }));
   s = resume(s);
@@ -82,7 +84,7 @@ try {
   const end = await page.evaluate(() => JSON.parse(localStorage.getItem('patrons.v4.local')).state);
   const log = end.log.slice(end.log.findIndex(l => /P1 joined P2 on Greatest Hits/.test(l)));
   console.log(JSON.stringify(log.slice(0, 10)), JSON.stringify(end.players[0].res), JSON.stringify(before));
-  for (const n of ['Golden Years', 'Build Up']) if (!log.some(l => l.startsWith(`P1 copied ${n}`))) fails.push(`no "P1 copied ${n}" after joining Greatest Hits`);
+  if (!log.includes("P1 copies Treasurer's On Recruit.")) fails.push('no "P1 copies Treasurer\'s On Recruit." after joining Greatest Hits');
   if (errors.length) fails.push(errors.join(' | '));
   await ctx.close();
 } finally { await browser.close(); }
