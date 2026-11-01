@@ -1552,7 +1552,8 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const lastLine = state.log.length ? plainLine(state.log, state.log.length - 1) : '';
   // The latest rival placement, marked on the wheel; read from the state so it survives a reload.
   // answer first (click speed pass, Nov 1; ?answer=now turns it off): your own click draws its answer (the dialog going, your seat, the header)
-  // first, and the wheel, the shop, the rivals' seats and the strip follow a frame later, after the answer has painted
+  // first, and the shop, the rivals' seats and the strip follow a frame later, after the answer has painted (the wheel
+  // stays in the click: it carries picks on the board, Straggler's lit spaces, which can't wait a frame)
   const later = useDeferredValue(state);
   const laterSeats = useDeferredValue(seatState);
   const deferTable = ANSWER_FIRST && !state.over && later.round === state.round;
@@ -1674,7 +1675,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
         <>
           {/* (data-step: after you've placed, the wheel steps back so only your buys are bright; final panel S#27) */}
           <section className="lt-wheel" data-region="wheel" data-step={buyingNow ? 'buy' : undefined}>
-            <Wheel state={tState} interactionState={deferTable ? tState : interactionState} hover={hover} lampQid={lampQid} legal={needHandoff ? NO_SLOTS : pickSpaces || legalSlots} idle={pickSpaces ? null : idleSlots} pickNotes={pickNotes} onPick={onPick} onDenied={onDenied} confirmPlace={!wide} flash={flash} lastMove={lastMove} recentMoves={recentMoves} spacePeek={spacePeek} onSpacePeek={setSpacePeek} meId={mySeats.length === 1 ? mySeats[0] : null} facing={facingRef.current} onFacing={onFacing} />
+            <Wheel state={state} interactionState={interactionState} hover={hover} lampQid={lampQid} legal={needHandoff ? NO_SLOTS : pickSpaces || legalSlots} idle={pickSpaces ? null : idleSlots} pickNotes={pickNotes} onPick={onPick} onDenied={onDenied} confirmPlace={!wide} flash={flash} lastMove={lastMove} recentMoves={recentMoves} spacePeek={spacePeek} onSpacePeek={setSpacePeek} meId={mySeats.length === 1 ? mySeats[0] : null} facing={facingRef.current} onFacing={onFacing} />
             {showChoice && (!picker || (gift && !shopRecruit && !wheelMove)) && !payChoice(pend) && pend.kind !== 'setup' && (gift
               ? <GiftCard state={state} gift={gift} onFirst={onGiftFirst} onAnswer={gift.board === 'seats' ? onSeatPick : onGiftAnswer} onBack={canUndo ? undo : null} busy={busy} place={plainAt} hover={hover} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />
               : <ChoicePrompt state={state} onPick={onPick} busy={busy} place={plainAt} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />)}
