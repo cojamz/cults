@@ -46,3 +46,4 @@ Why each rule in .claude/rules/working-with-cory.md exists, in Cory's words. Mov
 - 2026-10-31: Cory chose two deck versions and asks to be asked before each balance run which one; enforced by scripts/lib/deck-choice.mjs (balance and sim scripts exit without DECK).
 - 2026-11-01 (Cory, "harness review isn't bug testing. harness is our meta level how we operate"): the overnight harness thread was handed "ship script, gates, sim tooling" by the coordinator and delivered test plumbing. Rule: threads check their goal against Cory's own words; coordinator scope is a suggestion; "harness" = how we operate.
 - 2026-11-01 · Cory: "i need shorter and better formatted messages from you." Messages are five lines at most, one item per line, the ask on its own line; data stays out unless he asks.
+- 2026-11-01 · Second brevity ask (coordinator relayed): hard cap of 3 prose lines plus numbered picks, now a bounce in message-check.mjs.

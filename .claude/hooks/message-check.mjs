@@ -43,10 +43,14 @@ const asks = lines.filter(l => /^\s*\d+[.)] /.test(l) || /\?\s*(\[[^\]]*\])?\s*$
 const engAsk = asks.find(l => ENG.test(l));
 if (engAsk) hard.push(`engineering never waits on Cory ("${engAsk.match(ENG)[0]}" in a question to him): decide it, do it, report it; ask only what a player would see or feel differently`);
 
+// Cory, Nov 1 (second ask for brevity): at most 3 short lines plus a numbered pick list. Hard.
+const proseLines = lines.length - numbered;
+if (proseLines > 3) hard.push(`${proseLines} lines besides the numbered picks (cap 3, Cory Nov 1: "shorter and better formatted"); one idea per line, the rest in a linked file`);
+
 const soft = [];
 const maxLines = numbered >= 2 ? Math.max(8, numbered + 3) : 8;
 if (lines.length > maxLines) soft.push(`${lines.length} lines (cap ${maxLines}); put the rest in a file and link it`);
-if (words > (numbered >= 2 ? 220 : 160)) soft.push(`${words} words; cut to the result, what's next and any ask`);
+if (words > (numbered >= 2 ? 140 : 90)) soft.push(`${words} words; cut to the result, what's next and any ask`);
 
 if (!hard.length && !soft.length) process.exit(0);
 
