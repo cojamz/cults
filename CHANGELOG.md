@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.966 — 2026-11-01
+
+- Last Call no longer skips turns that already come last (no extra Gossip or Pocket Watch); Stash pays its printed +2/+3/+4 magenta
+
 ## v0.9.965 — 2026-11-01
 
 - Recruiter: +2 red also when a rival's member is swapped into the shop
