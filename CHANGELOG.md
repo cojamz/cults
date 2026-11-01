@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.906 — 2026-10-31
+
+- Member details cards redesigned: each picture fills the room its rule leaves, rules sit centered with margins and one text size per row, and no card shows an empty box or a sliver of a picture.
+
 ## v0.9.905 — 2026-10-31
 
 - The rules page matches the game: one follower purchase per turn, current card names, members and their worth, when round II and III members arrive, a line per color
