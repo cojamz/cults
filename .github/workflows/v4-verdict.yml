@@ -1,5 +1,5 @@
 # The off-box browser verdict: the whole check:v4 gate (unit tests, build, every browser gate) on the game branch's tip,
-# every 4 hours, on GitHub's machine instead of a loaded 4-CPU cloud box. Why: 16 browser gates went red for days
+# every 4 hours and after every ship, on GitHub's machine instead of a loaded 4-CPU cloud box. Why: 16 browser gates went red for days
 # without anyone noticing (Nov 1, 2026), because ships run unit tests only.
 # The result goes to the ci-verdicts branch (latest.json, history.jsonl); `node scripts/v4-verdict.mjs` reads it, and the
 # thread orientation and ship scripts print it. The job itself always ends green, so a red gate never sends an email:
@@ -10,6 +10,10 @@ name: v4 browser verdict
 on:
   schedule:
     - cron: '23 */4 * * *'
+  # every ship: v4-play.sh rewrites main's play/build.json (also a fallback when GitHub delays schedules, as it did Nov 1)
+  push:
+    branches: [main]
+    paths: ['play/build.json']
   workflow_dispatch:
     inputs:
       ref:
@@ -38,7 +42,7 @@ jobs:
           SHA=$(git rev-parse HEAD); echo "sha=$SHA" >> "$GITHUB_OUTPUT"
           git fetch -q --depth 1 origin ci-verdicts 2>/dev/null || true
           LAST=$(git show FETCH_HEAD:latest.json 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{process.stdout.write(JSON.parse(s).sha||"")}catch{}})' || true)
-          if [ "${{ github.event_name }}" = schedule ] && [ "$LAST" = "$SHA" ]; then echo "skip=1" >> "$GITHUB_OUTPUT"; echo "Already checked $SHA"; fi
+          if [ "${{ github.event_name }}" != workflow_dispatch ] && [ "$LAST" = "$SHA" ]; then echo "skip=1" >> "$GITHUB_OUTPUT"; echo "Already checked $SHA"; fi
       - uses: actions/setup-node@v4
         if: steps.skip.outputs.skip != '1'
         with:
