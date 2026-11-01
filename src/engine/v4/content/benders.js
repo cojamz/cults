@@ -95,7 +95,7 @@ const coachable = (ctx, p) => ctx.membersOf(p).filter(c => c.freeTurn !== ctx.tu
   && [c.def, c.copy && ctx.defOf(c.copy)].some(d => d?.activate && d.onActivate));
 const members = [
   // Party Crasher (was Squatter; id kept for old records): Cory, 2026-10-28, Once per game, cheaper; 5 with the +1 wild (Cory, Nov 1: "5"; was 4)
-  m('squatter', 'Party Crasher', 'thieves', 2, 2, 'On Use, once per game: your next minion can be placed on a space a rival already took.', {
+  m('squatter', 'Party Crasher', 'thieves', 2, 2, 'On Use, once per game: your next minion can be placed on a space a rival already took.', { round: 1, // still joins in round I at 5, so grey keeps 4 (Claude's fill-in)
     activate: 'game',
     onActivate(ctx, owner, card) {
       if (owner.crashNext) { card.used = false; return; }
