@@ -46,8 +46,8 @@ const P = {
     evenswap: { verb: 'Use a shop member’s On Recruit', second: '+2 red', note: 'it stays in the shop' },
     turnout: r => ({ main: `+${r + 1} red`, second: `+${r} @f if you recruit a member` }), // Cory, Oct 31
     hire: { verb: 'Recruit the top of the deck', second: '+1 red to all' }, // the rivals' red sat in line 3, which drops on the outer ring (blind panel, Nov 1)
-    hireup: { verb: 'Promote a member', second: 'shop cost up to 2 more', note: '+2 red' },
-    trade: { verb: 'Demote a member', second: 'shop cost up to 2 less', note: '+2 red' },
+    hireup: { verb: 'Promote a member +3 red', second: 'one costing up to 2 more' },
+    trade: { verb: 'Demote a member +3 red', second: 'one costing up to 2 less' },
     take: { verb: 'Recruit a member', second: 'costing 8 or less, free', note: '+1 red' },
   },
   market: {
@@ -77,7 +77,7 @@ const P = {
     holdup: r => ({ main: `+${r + 1} purple`, second: 'the next turn is skipped' }),
     // the center ring can drop line 2 (round III since Oct 22): line 1 says it whole
     // Cory, 2026-10-28: +5 purple and a minion this round
-    crowdin: { verb: '+1 minion this round', note: '+5 purple' },
+    crowdin: { verb: '+1 minion this round', note: '+3 purple' },
     rally: { verb: 'Your next two turns, now', note: '+2 purple' },
     again: r => ({ verb: 'Your next turn, now', note: `+${r} purple` }),
   },
