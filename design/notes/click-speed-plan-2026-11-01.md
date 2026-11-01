@@ -65,3 +65,12 @@ Next (in order of likely payoff):
 2. Endless animations off or calmer (Cory's call; measured above).
 3. Smaller per-step DOM churn: style passes touch 75-250 elements per click; find which selectors (`:has()` in
    member-pick.css, data attributes on .app.game) widen them.
+
+### 6:10am: answer-first trial
+Built behind `?answer=first` (off for players; branch claude/project-thread-6jkzfg, with the parked wheel skip): useDeferredValue
+for the wheel, shop, rivals' seats and the strip; your own seat, the header and the dialog draw in the click. Paired games
+(rig-nowait / rig-answer): clicks p50 114 → 103, p95 ~202 → 163 ms; choices p50 99 → 81. A Pay click frame by frame
+(scripts/v4-click-frames.mjs): the answer painted ~70 ms sooner, in one visible change (no second step seen), picture
+/mnt/project-files/click-speed/answer-first-pay.png. Waiting on Cory's look before it goes on; then gates, then ship.
+Risks to check before shipping: a flight whose target is in a deferred part (a member going back to the shop) measured on
+the old table; the shop's lit cards reading fresh options against the old state for one frame.
