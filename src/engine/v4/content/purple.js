@@ -93,7 +93,7 @@ export function extraMinion(ctx, p, what) {
 }
 
 /** Give p up to n extra turns right after the current one. Returns how many it got. */
-export function extraTurns(ctx, p, n = 1, why = null) {
+export function extraTurns(ctx, p, n = 1, why = null, { quiet = false } = {}) {
   // no extra minions in round I (Cory, 2026-10-15): every space there is already spoken for
   if (ctx.state.round === 1) { ctx.log(`No extra minions in round I: ${p.name} gets no extra turn${why ? ` from ${why}` : ''}.`); return 0; }
   let k = 0;
@@ -105,7 +105,7 @@ export function extraTurns(ctx, p, n = 1, why = null) {
   }
   if (k) {
     // why: the member that gave it (Errand Runner, Go-Getter), so the turn traces to the card
-    ctx.log(`${why ? `${p.name}'s ${why}: ${p.name}` : p.name} gets ${k === 1 ? '1 more minion' : `${k} more minions`}, placed now.`); // Cory, 2026-10-29: "extra turn" left the game's words
+    if (!quiet) ctx.log(`${why ? `${p.name}'s ${why}: ${p.name}` : p.name} gets ${k === 1 ? '1 more minion' : `${k} more minions`}, placed now.`); // Cory, 2026-10-29: "extra turn" left the game's words
     for (let i = 0; i < k; i++) extraHooks(ctx, p);
   // said with the card or space first, so the turn card names it (Cory, 2026-10-15: "I bought Night Owls in round 1 and it
   // didn't seem to give me an extra"; with 4 players round I has no free space)
@@ -161,10 +161,10 @@ export const tokenHolder = s => (s.goesLast && s.goesLast.round === s.round ? s.
  * passed turn takes that turn again, and any whose turn already went by places after the other hands (core lastCallLast
  * keeps the new holder's minions on the token behind them).
  */
-function takeToken(ctx, p, why) {
+function takeToken(ctx, p, why, what = '') {
   const s = ctx.state, was = tokenHolder(s);
   s.goesLast = { round: s.round, pid: p.id };
-  if (was === null || was === p.id) { ctx.log(`${p.name}'s ${why}: ${p.name} takes the Goes Last token.`); return; }
+  if (was === null || was === p.id) { ctx.log(`${p.name}'s ${why}: ${p.name} ${was === p.id ? 'keeps' : 'takes'} the Goes Last token${what}.`); return; }
   const o = ctx.player(was), q = s.queue;
   const close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
   const on = q.slice(0, stop).filter(t => t.t === 'turn' && t.p === o.id && t.token);
@@ -181,7 +181,7 @@ function takeToken(ctx, p, why) {
       if (k >= 0) s.early.moves.splice(k, 1);
     }
   }
-  ctx.log(`${p.name}'s ${why}: ${p.name} takes the Goes Last token from ${o.name}${on.length ? `, and ${o.name}'s ${on.length === 1 ? 'minion on it goes' : `${on.length} minions on it go`} back to their hand` : ''}.`);
+  ctx.log(`${p.name}'s ${why}: ${p.name} takes the Goes Last token${what} from ${o.name}${on.length ? `, and ${o.name}'s ${on.length === 1 ? 'minion on it goes' : `${on.length} minions on it go`} back to their hand` : ''}.`);
 }
 /**
  * p takes the Goes Last token and puts n of their minions still to place on it (Last Call: all; Sleep In: 1). Each one
@@ -489,9 +489,9 @@ export default {
       afterAction(ctx, owner, card) {
         if (owner.left !== 0 || card.owlRound === ctx.state.round) return;
         card.owlRound = ctx.state.round;
-        if (!extraTurns(ctx, owner, 1, 'Night Owls')) return;
+        if (!extraTurns(ctx, owner, 1, 'Night Owls', { quiet: true })) return;
         const q = ctx.state.queue, t = turnsAhead(ctx, owner).map(i => q[i]).pop();
-        takeToken(ctx, owner, 'Night Owls');
+        takeToken(ctx, owner, 'Night Owls', ' with 1 more minion on it');
         if (t) t.token = true;
       },
     }),

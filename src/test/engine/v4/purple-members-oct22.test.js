@@ -16,7 +16,7 @@ describe('Purple members, Oct 22', () => {
     const s = take(sc({ round: 2, members: [['purple.earlybird']], queue: turns(0, 1, 0, 1) }), 'purple.skip');
     expect(s.players[0].res.purple).toBe(5);
     expect(upcoming(s)).toEqual([1, 0, 1]);
-    expect(s.log).toContain("P1's Early Birds: P1's turn can't be skipped.");
+    expect(s.log).toContain("P1's Early Birds: P1's turns can't be skipped, so P1 doesn't go last.");
   });
   it('Early Birds: Last Call still pays its followers, and you keep your turns', () => {
     const s = take(sc({ round: 2, left: 3, members: [['purple.earlybird']], queue: turns(0, 1, 0, 1, 0) }), 'purple.lastcall');

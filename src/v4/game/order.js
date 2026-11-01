@@ -35,7 +35,7 @@ export function tableView(physical, interaction) {
   if (physical === interaction) return physical;
   return { ...physical,
     pending: interaction.pending, current: interaction.current, over: interaction.over, order: interaction.order,
-    turns: interaction.turns, queue: interaction.queue, early: interaction.early,
+    turns: interaction.turns, queue: interaction.queue, early: interaction.early, goesLast: interaction.goesLast,
   };
 }
 

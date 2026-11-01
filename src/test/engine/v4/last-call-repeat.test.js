@@ -37,8 +37,9 @@ describe('Last Call skips only turns a rival still places after', () => {
     s0.players[1].left = 0;
     const s = take(s0, 'purple.lastcall');
     expect(s.players[0].bonus).toBe(2);
-    expect(s.players[0].lastCall).toBe(2);
-    expect(s.log).toContain("P1's Last Call: P1 goes last this round.");
+    expect(s.goesLast).toEqual({ round: 2, pid: 0 });
+    expect(s.log).toContain("P1's Last Call: P1 takes the Goes Last token.");
+    expect(s.log).toContain("P1's Last Call: 2 minions wait on the Goes Last token.");
     const { s: end, placed } = playOut(s);
     expect(placed).toEqual([0, 0]);
     expect(skips(end)).toEqual([]);
@@ -51,13 +52,14 @@ describe('Last Call skips only turns a rival still places after', () => {
     s = toPlace(take(s, 'purple.lastcall'));
     s = take(s, 'echo.echo');
     s = applyMove(s, { player: 0, option: s.pending.options.find(o => /Last Call/.test(o.label)).id });
-    // Ben's last turn already came after Ava's last, so his Last Call skipped 2; Ava's copy skips her 3
+    // Ben's last turn already came after Ava's last, so his Last Call put 2 passes ahead; Ava's copy takes the Goes Last
+    // token (Cory, Nov 1 2:35pm), so Ben's minions go back to his hand and take those turns again; Ava's 3 are passed
     s = buy(s, 'echo.hourglass');
     if (s.pending?.kind === 'choose' && s.pending.player === 0) s = applyMove(s, { player: 0, option: s.pending.options.find(o => /Last Call/.test(o.label)).id });
     expect(s.log.filter(l => l.startsWith("P1 copies Last Call"))).toHaveLength(2);
     const { s: end, placed } = playOut(s);
     expect(placed).toEqual([1, 1, 1, 0, 0, 0]); // Ben's are all left; Ava's 3 come after them
-    expect(skips(end)).toHaveLength(5);
-    expect(linesNaming(end.log, 'Gossip')).toHaveLength(5);
+    expect(skips(end)).toHaveLength(3);
+    expect(linesNaming(end.log, 'Gossip')).toHaveLength(3);
   });
 });

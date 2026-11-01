@@ -44,19 +44,21 @@ describe('a copy does what the space does', () => {
 });
 
 describe('Echo copying Sleep In (Cory’s playtest, Oct 23)', () => {
-  it('skips the copier’s next turn, and Gossip pays when that turn is passed over', () => {
+  it('the copier takes the Goes Last token, and Gossip pays when their emptied hand is passed over (Cory, Nov 1 2:35pm)', () => {
     const rich = { purple: 9, green: 9, gold: 9, red: 9 };
     let s = sceneQ({ quadrants: ['purple', 'echo', 'gold', 'red'], n: 3, round: 2, res: [rich, rich, rich], members: [[], [], ['purple.gossip']],
       queue: [0, 1, 2, 2, 1, 0].map(p => ({ t: 'turn', p })).concat({ t: 'allPlaced' }) });
     s = passBuys(settle(take(s, 'purple.skip')));
     s = passBuys(settle(take(s, 'echo.echo')));
-    expect(s.log).toContain("P2's Sleep In: P2 skips their next turn.");
+    // P1's Sleep In minion was already last (nothing passed); P2's copy takes the token and P1's minion goes back
+    expect(s.log).toContain("P2's Sleep In: P2 takes the Goes Last token from P1, and P1's minion on it goes back to their hand.");
+    expect(s.goesLast.pid).toBe(1);
     expect(s.players[1].res.purple).toBe(9 + 5); // Sleep In's round II gain (+4 / +5 / +6, Oct 28)
     s = passBuys(settle(take(s, 'gold.rush'))); // P3
     s = passBuys(settle(take(s, 'red.turnout'))); // P3 again; P2's turn is next, passed over
     expect(s.log).toContain("P2's turn is skipped (Sleep In).");
     expect(s.pending.player).toBe(0);
-    expect(s.players[2].bonus).toBe(2); // P1's skip and P2's
+    expect(s.players[2].bonus).toBe(1); // P2's pass only
   });
 });
 

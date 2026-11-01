@@ -28,7 +28,7 @@ describe('Night Owls', () => {
   it('is printed as decided: 6 purple + 1 any, worth 2 followers, in plain words', () => {
     const d = defById('purple.nightowl');
     expect([d.s, d.w, d.f]).toEqual([6, 1 + EXTRA_WILD, 2]); // 8 → 6 purple after the Oct 22 bot run; 9 → 8 in total after the Oct 29 balance runs
-    expect(d.text).toBe('Once per round: after you place your last minion, +1 minion, placed right away.');
+    expect(d.text).toBe('Once per round: after you place your last minion, take the Goes Last token with 1 more minion on it.'); // Cory, Nov 1 2:35pm
     expect(d.from).toBe(2); // the II+ tag (Cory, 2026-10-22)
   });
 
@@ -38,31 +38,33 @@ describe('Night Owls', () => {
     expect(owl(s)).toEqual([]);
   });
 
-  it('after your last minion (and that turn’s buy), you place one more before the next player does, named', () => {
+  it('after your last minion, one more waits on the Goes Last token and places after every hand is empty, named', () => {
     let s = take(sc({ round: 2, left: 1, members: [['purple.nightowl']], queue: turns(0, 1) }), 'purple.windup');
     expect(s.players[0].left).toBe(1);
-    expect(owl(s)).toEqual(["P1's Night Owls: P1 gets 1 more minion, placed now."]);
+    expect(owl(s)).toEqual(["P1's Night Owls: P1 takes the Goes Last token with 1 more minion on it."]);
+    expect(s.goesLast).toEqual({ round: 2, pid: 0 });
     expect(queuedTurns(s, 0)).toBe(1);
     const next = nextPlacer(s);
-    expect(next.who).toBe(0);
+    expect(next.who).toBe(1);
+    s = take(next.s, 'gold.rush');
+    expect(nextPlacer(s).who).toBe(0);
   });
 
   it('and buy again; one more, not two: that minion is a last minion too, and nothing more comes of it', () => {
-    let s = take(sc({ round: 2, left: 1, members: [['purple.nightowl']], queue: turns(0, 1) }), 'purple.windup');
+    let s = take(sc({ round: 2, left: 1, members: [['purple.nightowl']], queue: turns(0) }), 'purple.windup');
     ({ s } = nextPlacer(s));
-    s = take(s, 'purple.lastcall'); // the one more minion: the last again
+    s = take(s, 'gold.rush'); // the one more minion: the last again
     expect(s.pending).toMatchObject({ kind: 'buy', player: 0 }); // buy again
     expect(s.players[0].left).toBe(0);
     expect(owl(s)).toHaveLength(1);
     expect(queuedTurns(s, 0)).toBe(0);
-    expect(nextPlacer(s).who).toBe(1);
   });
 
   it('each round: it works again in the next round', () => {
     let s = sc({ round: 3, left: 1, members: [['purple.nightowl']], queue: turns(0, 1) });
     s.cards[uidOf(s, 'purple.nightowl', 0)].owlRound = 2; // it fired last round
     s = take(s, 'purple.windup');
-    expect(owl(s)).toEqual(["P1's Night Owls: P1 gets 1 more minion, placed now."]);
+    expect(owl(s)).toEqual(["P1's Night Owls: P1 takes the Goes Last token with 1 more minion on it."]);
     expect(s.players[0].left).toBe(1);
   });
 

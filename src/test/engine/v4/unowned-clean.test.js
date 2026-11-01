@@ -18,13 +18,14 @@ it('Tryout on Hustler: the color you pick is not left on the shop card', () => {
   clean(s, uid);
 });
 
-it('Tryout on Night Owls with your last minion placed: the shop card keeps no round mark', () => {
+it('Tryout never offers Night Owls (its words name the token "it"), so the shop card keeps no round mark', () => {
+  // Night Owls since Nov 1 2:35pm: "Once per round: after you place your last minion, take the Goes Last token with 1
+  // more minion on it." Tryout skips members whose words point at a thing ("it"), as before
   const before = sceneQ({ quadrants: ['red', 'gold', 'purple', 'echo'], shop: ['purple.nightowl'] });
   before.players[0].left = 1;
   const uid = shopCard(before, 'purple.nightowl');
-  let s = take(before, 'red.evenswap');
-  s = move(s, `card:${uid}`);
-  expect(s.log.some(l => l.includes('Night Owls'))).toBe(true);
+  const s = take(before, 'red.evenswap');
+  expect((s.pending?.options || []).some(o => o.id === `card:${uid}`)).toBe(false);
   expect(s.shop).toContain(uid);
   clean(s, uid);
 });
