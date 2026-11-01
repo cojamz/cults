@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.4 — 2026-11-01
+
+- New table setting, Shop: Current (as before, the default), Grey piles (five grey members are piles you can buy several of, out every game beside the shop row) or All piles (ten piles a game, ten copies each, every one open from round I; no Blue; Red's round I space is Open Door: recruit the cheapest member in the shop). A pile shows its copies as card edges and how many are left.
+
 ## v0.99.3 — 2026-11-01
 
 - Red Cloak: whenever you recruit a member, +1 red (swaps and steals count). Exchange says the white comes first, Promote and Demote show their cost limit on the wheel, and a member's Use button names the member.
