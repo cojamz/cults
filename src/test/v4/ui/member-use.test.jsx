@@ -49,7 +49,7 @@ describe('every use-once member goes through the one flow', () => {
         return;
       }
       expect(row.tag).toEqual({ text: 'ready to use', tone: 'lit' });
-      expect(u.label).toMatch(/^Use(: | now)/);
+      expect(u.label).toMatch(/^Use(: | now| )/);
       // the label is what the engine does: resources and followers after the same move
       const after = applyMove(s, { player: 0, option: u.option });
       for (const r of s.resources) {
@@ -207,13 +207,14 @@ describe('a second buy is seen (w2a #6)', () => {
   });
 });
 
-describe('a use that goes on into a choice says so (w4 skeptic #5)', () => {
-  it('Talent Scout: "Use: a choice", never a bare "Use now"', () => {
+describe('a use that goes on into a choice names the card, never a guess at what follows (Cory, Nov 1)', () => {
+  it('Talent Scout: "Use Talent Scout", never "a choice, up to …" or a bare "Use now"', () => {
     const s = table(['gold', 'echo', 'trading', 'market'], { members: [['market.blackmarket']], res: [{ gold: 9, white: 9, green: 9, blue: 9 }] });
     const u = useNow(s, 0, uidIn(s, 'market.blackmarket', 0));
     if (u && !u.blocked && !u.idle) {
       expect(u.asks).toBe(true);
-      expect(u.label).toMatch(/^Use: a choice/);
+      expect(u.label).toBe('Use Talent Scout');
+      expect(u.label).not.toMatch(/up to|a choice/);
     }
   });
 });
