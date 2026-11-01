@@ -5,7 +5,7 @@ import { playerColor, lowColor } from '../format.js';
 import HowToPlay from '../HowToPlay.jsx';
 import { friendlyError } from '../errors.js';
 import { quadrant, defById, BOT_LEVEL_INFO, DEFAULT_BOT_LEVEL } from '../../engine/v4/index.js';
-import { ARTIFACTS } from '../../engine/v4/core.js';
+import { ARTIFACTS, cloakName } from '../../engine/v4/core.js';
 import { CLASSIC, spheres, sphereName, sphereLine, sphereVersion, sphereVersionWords, tableProblem, randomTable, urlTable, fitTable, sphereCount } from '../tables.js';
 import { panelWords } from '../game/panelText.js';
 import { GAME_NAME, VERSION_LABEL } from '../version.js';
@@ -115,7 +115,7 @@ const shownNames = rec => {
   const people = rec.seats.filter(s => s.kind === 'human').length;
   return rec.seats.map(s => (people === 1 && s.kind === 'human' ? 'You' : s.name));
 };
-const gameLine = g => `${g.over ? 'Final scores' : g.round ? `Round ${['I', 'II', 'III'][g.round - 1]}` : 'Artifacts'} · ${agoLine(g.at)}`;
+const gameLine = g => `${g.over ? 'Final scores' : g.round ? `Round ${['I', 'II', 'III'][g.round - 1]}` : 'Picking cloaks'} · ${agoLine(g.at)}`;
 
 function PastGamesDialog({ games, onClose }) {
   const box = useDialog(onClose);
@@ -291,7 +291,7 @@ function TableChip({ id }) {
     )}><i className="dot" />{sphereName(id)}<small className="chip-line">{sphereLine(id)}</small>
       {/* the legend under each color (Cory, 2026-10-27, from Mike: "maybe this spot can have an overall legend of all
           the colors"): what its spaces do, then its artifact, in the room's empty column */}
-      {art && <small className="chip-line chip-legend" data-chip-artifact={id}>Artifact: {art.name}. {art.text}</small>}</Tip>
+      {art && <small className="chip-line chip-legend" data-chip-artifact={id}>{cloakName(id)}: {art.text}</small>}</Tip>
   );
 }
 

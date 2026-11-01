@@ -4,15 +4,17 @@
 // to be obvious when it's your turn… as a player picks it disappears. and it's clear whose turn it is"): the head says
 // whose pick it is, on yours the panel is lit and its rows are buttons, and a taken artifact leaves the list.
 import { cardDef, quadrant } from '../../engine/v4/index.js';
-import { Sprite } from '../art/Sprite.jsx';
+import { Cloak } from '../art/Leader.jsx';
+import { CLOAK_HEX } from './cloak.js';
 import { playerColor } from '../format.js';
 import { ResourceGlyph } from './Glyphs.jsx';
 import { Rich } from './Rich.jsx';
 import './artifact-draft.css';
 
-/** An artifact's picture on a small plate in its color (the seat, the starting pick and the draft). */
+/** An artifact's picture on a small plate in its color (the seat's hover, the starting pick): since Nov 1 an empty
+ *  cloak in the color (Cory: "the wheels list shows each cloak and its colors… don't use the artifact pictures"). */
 export function ArtifactTile({ q, res, title = null, size = 24 }) {
-  return <span className="art-tile" style={{ '--c': `var(--${q})` }}><Sprite id={`artifact.${q}`} kind="artifact" sphere={res} size={size} title={title} /></span>;
+  return <span className="art-tile" style={{ '--c': `var(--${q})` }}><Cloak robe={CLOAK_HEX[res]} size={size} title={title} /></span>;
 }
 
 export const SUB = 'A boon for your cult. Comes with 1 resource.';
@@ -25,7 +27,7 @@ export default function ArtifactDraft({ state, onPick, mine = false, busy = fals
   if (!qs.length || pend?.kind !== 'setup') return null;
   const who = state.players[pend.player];
   return (
-    <section className={`art-draft${mine ? ' mine' : ''}`} aria-label={mine ? 'Your pick: take an artifact' : `${who.name} is picking an artifact`} data-art-draft="" data-picker={pend.player}>
+    <section className={`art-draft${mine ? ' mine' : ''}`} aria-label={mine ? 'Your pick: take a cloak' : `${who.name} is picking a cloak`} data-art-draft="" data-picker={pend.player}>
       <p className="ad-head" style={{ '--pc': playerColor(who.id) }}>
         {mine ? <>Your pick</> : <><span className="ad-who">{who.name}</span> is picking</>}
       </p>

@@ -9,7 +9,7 @@ For 2 to 6 players. You lead a cult for three rounds. Send minions to the wheel,
 - **Members** are cards you recruit from the shop. Most have an ability. Each member counts as 1 member, or the number its card shows beside the member mark, and is worth that many followers: member count = follower count. Followers from abilities never add members.
 
 ## The colors
-There is one color per player on the table, picked on the setup page (Classic, Random or your own). Classic is Blue, Red, Yellow and Purple; five players add Green and six add Magenta, three drop Purple, and two drop Yellow too. Each color is a sphere on the wheel with its own spaces, members, artifact and contest (most of that color held at round end).
+There is one color per player on the table, picked on the setup page (Classic, Random or your own). Classic is Blue, Red, Yellow and Purple; five players add Green and six add Magenta, three drop Purple, and two drop Yellow too. Each color is a sphere on the wheel with its own spaces, members, cloak and contest (most of that color held at round end).
 - **Red** recruits: free members, and swaps with shop and rival members.
 - **Blue** bends the shop: extra recruits, burying shop members, a look at the pile.
 - **Green** copies spaces: a rival's, or your own again.
@@ -26,7 +26,7 @@ There is one color per player on the table, picked on the setup page (Classic, R
 - A space holds one minion per round, unless a card lets you join a taken space (Party Crasher). Every minion comes home at round end.
 
 ## Setup
-Round I's turn order is drawn at random. Then, starting with the player who goes last, each player picks an **artifact** from the list on the wheel: a boon for your cult all game, which comes with 1 resource of its color. Each sphere has one artifact, and a taken one leaves the list. The first player gets the one left over. This happens only before round I.
+Round I's turn order is drawn at random. Then, starting with the player who goes last, each player picks a **cloak** from the list on the wheel: a boon for your cult all game, which comes with 1 resource of its color. Your leader wears it and your player card is outlined in its color, so everyone sees who that color's moves pay. Each sphere has one cloak (the Red Cloak, the Blue Cloak…), and a taken one leaves the list. The first player gets the one left over. This happens only before round I.
 
 ## Turn order
 - Turns snake: down the order and back up, one minion per turn (1-2-3-4, 4-3-2-1, 1-2-3-4…) until everyone has placed every minion. The players at each end take two turns in a row.

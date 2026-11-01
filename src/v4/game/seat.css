@@ -128,3 +128,12 @@
 .app.game.lt > .lt-seat .cs-setup .cs-setup-token.art .tk-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* the member row's block box sat over the floated artifact and took its hover (Cory, live, Oct 27: artifacts had no hover) */
 .app.game.lt > .lt-seat .cs-crowd > .cs-artifact { position: relative; z-index: 1; }
+
+/* cloaks (Cory, Nov 1): a chair is outlined in the color of the cloak its leader wears; whose turn it is stays the
+   lamp's warm wash and an outer halo, so the two never fight over the same line */
+@media (min-width:861px) and (min-height:500px){
+  .app.game.lt > .lt-seat[data-cloak]{box-shadow:inset 0 0 0 2px var(--cloak)}
+  .app.game.lt > .lt-seat[data-cloak].now{box-shadow:inset 0 0 0 2px var(--cloak),0 0 0 2px rgba(var(--lamp),.55),0 0 18px rgba(var(--lamp),.22)}
+}
+.lt-cult-seat .cs-leader{position:relative}
+.lt-cult-seat .cs-leader > .cs-cloak-on{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}

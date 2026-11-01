@@ -191,7 +191,21 @@ export const countMembersOfColor = (state, p, q, { wild = true } = {}) => p.memb
   // Drifters counts as the one color its owner chose when recruiting it (card.asColor; Cory, 2026-10-31)
   return s + ((c.asColor || defById(c.def).quadrant) === q || every ? countOf(c) : 0);
 }, 0);
-export const cardDef = (state, uid) => defById(state.cards[uid].def);
+// Artifacts are worn as cloaks and named for their color (Cory, 2026-11-01: "just call them Red Cloak"): the card
+// keeps its rules and its id; only the name a player reads changes, and only for a card picked as an artifact here.
+const cloaked = new Map();
+/** A color's cloak, by name ("Red Cloak"). */
+export const cloakName = q => `${quadrant(q).name} Cloak`;
+const cloakDef = (d, q) => {
+  const k = `${d.id}|${q}`;
+  if (!cloaked.has(k)) cloaked.set(k, Object.freeze({ ...d, name: cloakName(q), cardName: d.name }));
+  return cloaked.get(k);
+};
+export const cardDef = (state, uid) => {
+  const d = defById(state.cards[uid].def), arts = state.artifacts;
+  if (arts) for (const q in arts) if (arts[q] === uid) return cloakDef(d, q);
+  return d;
+};
 export function actionAt(state, q, i) { return quadrant(state.quadrants[q]).actions[i]; }
 /** A space is open from its ring's round on, and shuts after its lastRound if it has one (Overtime: rounds I–II only, Cory 2026-10-15). */
 export const spaceOpen = (a, round) => a.ring <= round && !(a.lastRound && round > a.lastRound);
@@ -503,7 +517,7 @@ function inputFor(state, task) {
     case 'setupPick':
       if (state.startPool?.length === 1) return null;
       return {
-        kind: 'setup', prompt: state.artifacts && Object.keys(state.artifacts).length ? `${p.name}: pick an artifact` : `${p.name}: draft 1 resource`,
+        kind: 'setup', prompt: state.artifacts && Object.keys(state.artifacts).length ? `${p.name}: pick a cloak` : `${p.name}: draft 1 resource`,
         options: (state.startPool || state.quadrants).map(q => ({ id: `color:${q}`, label: quadrant(q).name, kind: 'color', value: q })),
       };
     case 'place': {
@@ -669,7 +683,7 @@ function resolveTask(state, task, optionId) {
       const art = state.artifacts?.[q];
       if (art !== undefined) {
         p.artifact = art;
-        log(state, `${p.name} takes ${quadrant(q).name}'s artifact, ${cardDef(state, art).name} ("${cardDef(state, art).text}"), and +1 ${quadrant(q).resource}.`);
+        log(state, `${p.name} takes the ${cardDef(state, art).name} ("${cardDef(state, art).text}"), and +1 ${quadrant(q).resource}.`);
       } else log(state, `${p.name} drafts +1 ${quadrant(q).resource}.`);
       return;
     }

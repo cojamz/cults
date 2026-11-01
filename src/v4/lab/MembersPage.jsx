@@ -12,7 +12,7 @@ import '../game/card-header.css';
 import { allQuadrantIds, quadrant, memberRound, roman } from '../../engine/v4/index.js';
 import { guestMembers } from '../../engine/v4/content/index.js';
 import { CUT } from '../../engine/v4/content/cull.js';
-import { ARTIFACTS, DEFAULT_RULES } from '../../engine/v4/core.js';
+import { ARTIFACTS, DEFAULT_RULES, cloakName } from '../../engine/v4/core.js';
 import { MemberCard, RuleText, cardColor, cardGround } from '../game/Info.jsx';
 import { CostShapes, nameFit, WorthTag } from '../game/ShopCards.jsx';
 import { FollowerGlyph, ResourceGlyph } from '../game/Glyphs.jsx';
@@ -115,10 +115,10 @@ function Full({ def, note, cut }) {
 function Artifact({ qid, def }) {
   const res = quadrant(qid).resource;
   return <section className="mp-ring mp-art" data-artifact={def.id}>
-    <h3>Artifact</h3>
+    <h3>Cloak</h3>
     <div className="mp-art-row" style={{ '--c': `var(--${qid})` }}>
       <ArtifactTile q={qid} res={res} size={32} />
-      <span className="mp-art-words"><b>{def.name}</b><span><Rich text={def.text} /></span></span>
+      <span className="mp-art-words"><b>{cloakName(qid)}</b><span><Rich text={def.text} /></span></span>
       <span className="mp-art-plus num">+1<ResourceGlyph r={res} size={12} decorative /></span>
     </div>
     <small className="mp-art-note">Each player picks one at the start</small>
@@ -196,7 +196,7 @@ export default function MembersPage() {
         <nav className="mp-nav" aria-label="Colors">{groups.filter(x => PROPOSAL[x.id]).map(x => <button key={x.id} type="button" aria-pressed={x.id === color} onClick={() => pick(x.id)} style={{ '--c': tint(x) }}>{x.name}</button>)}</nav>
       </header>
       <section className="mp-deck mp-prop" ref={scroller} aria-label={`${g.name} proposal`}>
-        <h2 className="mp-deck-head" style={{ color: 'var(--c)' }}>{g.name}<small>keep {kept.length}, cut {cuts.length}{g.artifact ? ` · artifact ${g.artifact.name} sits outside the 10` : ''}</small></h2>
+        <h2 className="mp-deck-head" style={{ color: 'var(--c)' }}>{g.name}<small>keep {kept.length}, cut {cuts.length}{g.artifact ? ` · ${cloakName(g.id)} sits outside the 10` : ''}</small></h2>
         {sections.map(([title, list]) => list.length ? <div key={title} className="mp-round">
           <h3>{title} ({list.length})</h3>
           <div className="mp-grid">{list.sort((a, b) => byPrice(a.d, b.d)).map(x => <Full key={x.d.id} def={x.d} note={x.note} cut={x.cut} />)}</div>

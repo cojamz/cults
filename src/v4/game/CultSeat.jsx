@@ -21,11 +21,10 @@ import Tick from './Tick.jsx';
 import { MO } from '../motion.js';
 import { Rich } from './Rich.jsx';
 import { ArtifactTile } from './ArtifactDraft.jsx';
+import { cloakOf } from './cloak.js';
 import './lamp-b.css';
 import './seat.css'; // the laptop chair, mockup A
 
-/** Which color's artifact a card is (state.artifacts maps color to card). */
-const artifactColor = (state, uid) => Object.keys(state.artifacts || {}).find(q => state.artifacts[q] === uid) || null;
 
 // A member figure's card, drawn when shown: made here, outside the chair's render, and reading the chair's latest props
 // through a ref (leak pass, 2026-10-28). React keeps a figure's old props on its element while nothing on the element
@@ -168,7 +167,12 @@ export default function CultSeat({ state, pid, me = null, mine = false, now = fa
           openSeat(e, true);
         }}
         onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSeat(e, true); } }}>
-        <span className={`cs-leader${react && react.leader ? ` react-${react.leader}` : ''}`} data-say={onLeader ? '' : undefined}><LeaderRing state={state} id={pid} size={32} orbit={false} face={!mine} /></span>
+        <span className={`cs-leader${react && react.leader ? ` react-${react.leader}` : ''}`} data-say={onLeader ? '' : undefined}>
+          {/* the leader wears its cloak (Cory, Nov 1): the cloaked leader sits over the plain one, so while a picked cloak
+              flies in (director.js) the plain one shows, and the cloak appears as it lands */}
+          <LeaderRing state={state} id={pid} size={32} orbit={false} face={!mine} cloak={false} />
+          {p.artifact !== undefined && cloakOf(state, pid) && <span className="cs-cloak-on" data-artifact={p.artifact}><LeaderRing state={state} id={pid} size={32} orbit={false} face={!mine} /></span>}
+        </span>
         <span className="cs-who">
           {/* the name, and on yours its place in the turns in words beside it ("your turn in 3") */}
           <span className="cs-name">
@@ -204,8 +208,8 @@ export default function CultSeat({ state, pid, me = null, mine = false, now = fa
           what I needed to do. It could just show it IN the player card"): it stands where your members will, until both
           picks are in */}
       {setupPick && (
-        <div className="cs-setup" role="group" aria-label={drafting ? 'Pick an artifact' : 'Draft 1 resource'} data-setup-k={setupPick.k}>
-          <small className="cs-setup-say">{drafting ? 'Your pick: take an artifact from the wheel' : 'Draft 1 resource'}</small>
+        <div className="cs-setup" role="group" aria-label={drafting ? 'Pick a cloak' : 'Draft 1 resource'} data-setup-k={setupPick.k}>
+          <small className="cs-setup-say">{drafting ? 'Your pick: take a cloak from the wheel' : 'Draft 1 resource'}</small>
           {/* artifacts are picked only from the wheel's list (Cory, 2026-10-25); the chair just says it's your pick */}
           {!drafting && <span className="cs-setup-row">
             {setupPick.options.map(o => {
@@ -232,11 +236,6 @@ export default function CultSeat({ state, pid, me = null, mine = false, now = fa
         </div>
       )}
       <div className="cs-crowd" {...bodyHover} role="group" aria-label={`${mine ? 'Your' : `${p.name}'s`} members: ${nMembers}`}>
-        {/* the artifact (Cory, 2026-10-25): its picture on a small plate in its color, first in the row; the hover names it */}
-        {p.artifact !== undefined && (() => {
-          const art = cardDef(state, p.artifact), q = artifactColor(state, p.artifact);
-          return <Tip className="cs-artifact" data-artifact={p.artifact} label={art.name} content={<><p><b>{art.name}</b><br /><Rich text={art.text} /></p><MemberGains state={state} uid={p.artifact} /></>}><ArtifactTile q={q} res={q ? quadrant(q).resource : 'colorless'} title={`Artifact: ${art.name}`} /></Tip>;
-        })()}
         <b className="cs-member-count num" data-members={nMembers} title="Members: each card counts its printed follower value, or its stated member count if higher">{nMembers}<span> member{nMembers === 1 ? '' : 's'}</span></b>
         {/* Lie Low and the like: no one can steal from this seat this round (w2b #21). A small shield under the member
             count (Cory's todo: the words crowded the row); its hover says it in words, the seat card too */}

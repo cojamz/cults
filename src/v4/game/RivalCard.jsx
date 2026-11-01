@@ -71,7 +71,7 @@ function Heading({ state, pid, who }) {
         {art ? (
           <div className="rc-art" data-artifact-row={artUid} style={{ '--mc': artQ ? `var(--${artQ})` : 'var(--colorless, #8a7f72)' }}>
             <ArtifactTile q={artQ} res={artQ ? quadrant(artQ).resource : 'colorless'} size={28} />
-            <span><span className="rc-k">Artifact</span> <b className="rc-name">{art.name}</b><span className="rc-text"><Rich text={memberTimingWords(art.text || '')} /></span>{artMade ? <span className="rc-gain"><Rich text={artMade} /><small> so far</small></span> : null}</span>
+            <span><b className="rc-name">{art.name}</b><span className="rc-text"><Rich text={memberTimingWords(art.text || '')} /></span>{artMade ? <span className="rc-gain"><Rich text={artMade} /><small> so far</small></span> : null}</span>
           </div>
         ) : null}
       </div>

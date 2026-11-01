@@ -26,7 +26,7 @@ const mix = (a, b, t) => {
 /** The one robe every leader wears: a warm gray that stays clear of the walnut table at 32px. */
 export const ROBE = '#857c72';
 // the drawing's own palette rule (leaders.js accentPalette): shade toward the walnut, highlight toward cream; h/H: hands
-const ROBE_PAL = { ...(DRAWN ? DRAWN.base : {}), 1: mix(ROBE, '#1d1611', 0.45), 2: ROBE, 3: mix(ROBE, '#f6eedb', 0.38), h: '#dcc49a', H: '#9c8058' };
+const robePal = c => ({ ...(DRAWN ? DRAWN.base : {}), 1: mix(c, '#1d1611', 0.45), 2: c, 3: mix(c, '#f6eedb', 0.38), h: '#dcc49a', H: '#9c8058' });
 const cache = new Map();
 const cached = (k, fn) => { if (!cache.has(k)) cache.set(k, fn()); return cache.get(k); };
 
@@ -88,10 +88,10 @@ const TALL = 1.2;
  * <Leader emoji sigil size pose>: emoji an emoji id; sigil the stand-in shape. color (the seat accent) is accepted
  * but no longer paints anything: every robe is ROBE. pose: one of LEADER_POSES (a frame of pixel animation), else idle.
  */
-export const Leader = memo(function Leader({ emoji = null, sigil = 'circle', size = 32, title = null, dim = false, pose = null, tall = false }) {
+export const Leader = memo(function Leader({ emoji = null, sigil = 'circle', size = 32, title = null, dim = false, pose = null, tall = false, robe = ROBE }) {
   const art = emoji ? emojiArt(emoji) : null;
   const p = DRAWN && POSES[pose] ? pose : null;
-  const body = DRAWN ? cached(`D|${p || ''}`, () => runs(p ? posed(p) : DRAWN.px, ROBE_PAL)) : cached('L', () => runs(LEADER, palette(ROBE)));
+  const body = DRAWN ? cached(`D|${p || ''}|${robe}`, () => runs(p ? posed(p) : DRAWN.px, robePal(robe))) : cached(`L|${robe}`, () => runs(LEADER, palette(robe)));
   const E = DRAWN ? DRAWN.emblem : { x: LEADER_PANEL.x + 2, y: LEADER_PANEL.y + 2 };
   // eyes: the drawing's glow (row 8, x 13–14 and 17–18) or the template's glints (row 7, x 13 and 18); a pose has its own
   const eyes = p ? [] : DRAWN ? [[13, 8, 2], [17, 8, 2]] : [[13, 7, 1], [18, 7, 1]];
@@ -116,6 +116,26 @@ export const Minion = memo(function Minion({ color, emoji = null, size = 16, tit
   return (
     <svg className={`minion${dim ? ' dim' : ''}`} viewBox="0 0 16 16" width={size} height={size} shapeRendering="crispEdges"
       role={title ? 'img' : undefined} aria-label={title || undefined} aria-hidden={title ? undefined : 'true'} data-emoji={art ? emoji : undefined}>
+      {title ? <title>{title}</title> : null}
+      {pixelPaths(body)}
+    </svg>
+  );
+});
+
+// ---------- a cloak (Cory, 2026-11-01: artifacts are colored cloaks the leader wears) ----------
+// The leader's own robe with nobody in it: the hood empty (no eyes), the chest medallion gone (robe cloth), the gold
+// cord and the hem trim kept. Drawn in the color's ink.
+const CLOAK_PX = DRAWN ? DRAWN.px.map((r, y) => [...r].map((ch, x) => {
+  if (ch === 'o') return 'd';
+  if (y >= 17 && y <= 28 && x >= 10 && x <= 21 && 'ymGg'.includes(ch)) return '2';
+  return ch;
+}).join('')) : null;
+/** <Cloak robe size title>: an empty cloak in the robe color (the starting pick's tiles, a seat's hover). */
+export const Cloak = memo(function Cloak({ robe = ROBE, size = 24, title = null }) {
+  const body = CLOAK_PX ? cached(`C|${robe}`, () => runs(CLOAK_PX, robePal(robe))) : cached(`L|${robe}`, () => runs(LEADER, palette(robe)));
+  return (
+    <svg className="cloak" viewBox="0 0 32 32" width={size} height={size} shapeRendering="crispEdges"
+      role={title ? 'img' : undefined} aria-label={title || undefined} aria-hidden={title ? undefined : 'true'}>
       {title ? <title>{title}</title> : null}
       {pixelPaths(body)}
     </svg>

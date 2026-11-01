@@ -1,4 +1,5 @@
 // Small shapes for the Lamplit table. The visual language (plate 1b; Cory 2026-10-15: "just simplify visual language
+import { cloakOf, CLOAK_HEX } from './cloak.js';
 // everywhere"): two symbols only. A resource is a plain flat dot in its color ("any" is the dot split into the table's
 // four colors), and a follower is Cory's pixel person; everything else is a plain word. A seat is a hooded figure in its
 // color carrying its sigil. Every one says what it is on hover (title) and long-press (TouchTips).
@@ -139,7 +140,7 @@ export function SeatFigure({ id, state = null, size = 32, title = null, dim = fa
   return (
     <span className={`seat-fig${dim ? ' dim' : ''}`} data-seat={id} title={title || undefined} style={{ width: size, height: size }}>
       {/* every seat shows the robed leader (Cory, 2026-10-15; face is ignored) */}
-      <Leader color={playerColor(id)} emoji={seatEmoji(state, id)} sigil={seatSigil(id)} size={size} tall={isMax(state, id)} />
+      <Leader color={playerColor(id)} emoji={seatEmoji(state, id)} sigil={seatSigil(id)} size={size} tall={isMax(state, id)} robe={state && cloakOf(state, id) ? CLOAK_HEX[cloakOf(state, id)] : undefined} />
     </span>
   );
 }
@@ -154,7 +155,7 @@ export function SeatMinion({ id, size = 16, dim = false, title = null }) {
  * The leader is the anchor a placed minion flies from (data-leader={id}); each floating minion is data-minion.
  * size: the leader (32); minion: each minion (16). compact packs the ring tighter.
  */
-export function LeaderRing({ state, id, size = 32, minion = 16, compact = false, orbit = true, face = false }) {
+export function LeaderRing({ state, id, size = 32, minion = 16, compact = false, orbit = true, face = false, cloak = true }) {
   const p = state.players[id];
   // orbit false: the leader alone (the chairs stand their minions in a column beside the total, CultSeat)
   const n = orbit ? Math.max(0, p.left || 0) : 0;
@@ -176,7 +177,7 @@ export function LeaderRing({ state, id, size = 32, minion = 16, compact = false,
     <span className={`lt-ring${compact ? ' compact' : ''}`} style={{ width: W, height: H }} data-hint={label} aria-label={label} role="img" data-leader-ring={id} data-left={left}>
       <span className="lead" data-leader={id} style={{ left: cx - size / 2, top: cy - size / 2 }}>
         {/* every seat shows the robed leader (Cory, 2026-10-15: "every block should show a robed leader") */}
-        <Leader color={playerColor(id)} emoji={seatEmoji(state, id)} sigil={seatSigil(id)} size={size} tall={isMax(state, id)} />
+        <Leader color={playerColor(id)} emoji={seatEmoji(state, id)} sigil={seatSigil(id)} size={size} tall={isMax(state, id)} robe={cloak && cloakOf(state, id) ? CLOAK_HEX[cloakOf(state, id)] : undefined} />
       </span>
       {Array.from({ length: n }, (_, k) => {
         // its own slow period and phase (golden-ratio spread), so no two bob together

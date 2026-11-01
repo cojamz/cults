@@ -1,5 +1,6 @@
-// A picked artifact flies from the wheel's list to its picker's seat (Cory, Oct 29), a rival's and your own: a flight
-// leaves while the seat's tile waits unseen, and the tile shows once it lands.
+// A picked cloak flies from the wheel's list to its picker's seat (Cory, Oct 29), a rival's and your own: a flight
+// leaves while the leader's cloak waits unseen, and the leader wears it once it lands; the chair is then outlined in
+// the cloak's color (Cory, Nov 1).
 import { mkdirSync } from 'node:fs';
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 import { buildStamp } from './lib/stamp.mjs';
@@ -30,16 +31,19 @@ try {
   await mine.click();
   if (await grab('my-flight')) shot++;
   if (await grab('rival-flight-2')) shot++;
-  await p.locator('.cs-artifact').first().waitFor();
-  await p.waitForFunction(() => document.querySelectorAll('.cs-artifact').length === 4, null, { timeout: 30000 });
+  await p.locator('.cs-cloak-on').first().waitFor();
+  await p.waitForFunction(() => document.querySelectorAll('.cs-cloak-on').length === 4, null, { timeout: 30000 });
   await p.locator('.app.game:not([data-animating])').waitFor();
   await p.waitForTimeout(600);
   const n = await p.evaluate(() => window.__artifactFlights || 0);
-  const hidden = await p.evaluate(() => [...document.querySelectorAll('.cs-artifact .art-tile')].filter(e => getComputedStyle(e).opacity !== '1').length);
+  const hidden = await p.evaluate(() => [...document.querySelectorAll('.cs-cloak-on')].filter(e => getComputedStyle(e).opacity !== '1').length);
   await p.screenshot({ path: `${out}/after.png` });
   console.log(`artifact flights: ${n} (4 picks), mid-flight shots ${shot}, seat tiles still hidden after: ${hidden}`);
   if (n < 4) { console.error('FAIL: a pick did not fly'); fail = 1; }
-  if (hidden) { console.error('FAIL: a seat tile stayed hidden'); fail = 1; }
+  if (hidden) { console.error('FAIL: a leader\'s cloak stayed hidden'); fail = 1; }
+  const outlined = await p.evaluate(() => [...document.querySelectorAll('.lt-seat[data-pid]')].filter(e => e.dataset.cloak && getComputedStyle(e).boxShadow.includes('inset')).length);
+  console.log(`chairs outlined in their cloak's color: ${outlined} of 4`);
+  if (outlined !== 4) { console.error('FAIL: a chair has no cloak outline'); fail = 1; }
   await ctx.close();
 } finally { await browser.close(); }
 process.exit(fail);

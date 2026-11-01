@@ -1,4 +1,5 @@
 // The game table. Renders engine state from a session and turns clicks into { player, option } moves.
+import { cloakOf } from './cloak.js';
 // What's clickable is exactly state.pending.options, and only for seats this client controls.
 import { memo, startTransition, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { tierLeft, quadrant } from '../../engine/v4/index.js';
@@ -1332,7 +1333,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     if (moment) text = 'Start the round first';
     else if (!mySeats.includes(pend.player)) text = `${who.name} is ${verbFor(pend.kind)} — your turn comes`;
     else if (needHandoff) text = `Hand the device to ${who.name}`;
-    else if (pend.kind === 'setup') text = state.artifacts && Object.keys(state.artifacts).length ? 'Pick your artifact first' : 'Draft your resource first';
+    else if (pend.kind === 'setup') text = state.artifacts && Object.keys(state.artifacts).length ? 'Pick your cloak first' : 'Draft your resource first';
     else if (pend.kind === 'choose' || pend.kind === 'pay') text = 'Answer the question first';
     else if (info.type === 'slot') {
       // A taken or unopened space explains itself on its own card (wheel) or row (panel); the prompt stays put.
@@ -1691,7 +1692,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
           <div className="lt-snake" aria-hidden="true" style={{ '--n': state.players.length }} />
           {seatCorners(state, me).map((pid, k) => (
             <section key={k} className={`lt-seat lt-seat-${k}${pid === me ? ' mine' : ''}${pid != null && pend && pend.player === pid && !state.over ? ' now' : ''}`} data-region={`seat-${k}`} data-pid={pid ?? undefined} data-slot={pid == null ? undefined : snake.slot[pid]}
-              style={{ '--slot': pid == null ? k : snake.slot[pid] ?? k }} aria-label={pid == null ? undefined : pid === me ? 'Your cult' : `${state.players[pid].name}’s cult`}>
+              data-cloak={pid == null ? undefined : cloakOf(state, pid) || undefined} style={{ '--slot': pid == null ? k : snake.slot[pid] ?? k, ...(pid != null && cloakOf(state, pid) ? { '--cloak': `var(--${cloakOf(state, pid)})` } : null) }} aria-label={pid == null ? undefined : pid === me ? 'Your cult' : `${state.players[pid].name}’s cult`}>
               {pid == null ? null : (
                 <CultSeat state={seatState} pid={pid} me={me} mine={pid === me} now={!!(pend && pend.player === pid && !state.over)} hover={hover} optionFor={pid === me ? live : undefined} onPick={shopPick} pick={pickParts[pid] || null}
                   onLeader={pid === me && canTalk ? openTalkAt : null} talking={pid === me && talkOpen} />

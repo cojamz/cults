@@ -1193,7 +1193,7 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
   for (const a of plan.atoms) {
     if (a.op !== 'artifact') continue;
     const seatEl = root.querySelector(`.lt-cult-seat[data-seat="${a.pid}"]`);
-    a.el = seatEl && shown(seatEl.querySelector(`[data-artifact="${a.uid}"] .art-tile`));
+    a.el = seatEl && shown(seatEl.querySelector(`.cs-cloak-on[data-artifact="${a.uid}"]`)); // the cloak the leader puts on
     a.toRect = a.el ? rectOf(a.el) : seatEl ? rectOf(seatEl) : null;
     a.from = arts && arts.get(a.qid);
     if (a.el && a.el.animate && a.from) track(a.el.animate([{ opacity: 0 }, { opacity: 0, offset: 0.97 }, { opacity: 1 }], { duration: Math.max(0, base - chain.clock) + a.at + a.dur + 30 }));

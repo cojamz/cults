@@ -81,7 +81,7 @@ export function SeatMembers({ state, pid, me = null, optionFor = () => null, onP
     <li key="artifact" className="mu-row k-artifact" data-artifact-row={artUid}>
       <span className="mu-art" aria-hidden="true"><ArtifactTile q={artQ} res={artQ ? quadrant(artQ).resource : 'colorless'} size={20} /></span>
       <span className="mu-body" style={{ '--member-color': artQ ? `var(--q-${artQ}, var(--${artQ}))` : 'var(--pl-ink-3)' }}>
-        <span className="mu-head"><b className="mu-name">{art.name}</b><span className="mu-price mu-kind">Artifact</span></span>
+        <span className="mu-head"><b className="mu-name">{art.name}</b></span>
         <span className="mu-text" data-ability><Rich text={memberTimingWords(art.text)} /></span>
       </span>
     </li>
