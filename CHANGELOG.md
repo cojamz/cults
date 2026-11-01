@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.953 — 2026-11-01
+
+- Long names on the top-of-the-pile cards break at a natural point (Trend-setters).
+
 ## v0.9.952 — 2026-11-01
 
 - Long names fit on the top-of-the-pile cards, Undo works while your move's animation is still playing, and "since your last turn" names Collector when it pays you.
