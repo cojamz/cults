@@ -185,8 +185,9 @@ const countOf = card => Math.max(printedMembers(defById(card.def)), card.copy ? 
 export const memberWeight = (state, uid) => countOf(state.cards[uid]);
 export const memberCount = (state, p) => p.members.reduce((s, u) => s + countOf(state.cards[u]), 0);
 // Dabblers (everyColor) counts for every color on the table (Cory, 2026-10-28)
-export const countMembersOfColor = (state, p, q) => p.members.reduce((s, u) => {
-  const c = state.cards[u], every = effectiveDefs(c).some(d => d.everyColor) && q !== 'guest' && state.quadrants.includes(q);
+// { wild: false } leaves Dabblers out, for a card where counting it would hurt its owner (Big Tent's "exactly one")
+export const countMembersOfColor = (state, p, q, { wild = true } = {}) => p.members.reduce((s, u) => {
+  const c = state.cards[u], every = wild && effectiveDefs(c).some(d => d.everyColor) && q !== 'guest' && state.quadrants.includes(q);
   // Drifters counts as the one color its owner chose when recruiting it (card.asColor; Cory, 2026-10-31)
   return s + ((c.asColor || defById(c.def).quadrant) === q || every ? countOf(c) : 0);
 }, 0);
@@ -1600,7 +1601,7 @@ function ctxFor(state) {
     followers: p => followers(state, p),
     memberCount: p => memberCount(state, p),
     memberWeight: card => memberWeight(state, typeof card === 'number' ? card : card.uid),
-    countMembersOfColor: (p, q) => countMembersOfColor(state, p, q),
+    countMembersOfColor: (p, q, opts) => countMembersOfColor(state, p, q, opts),
     card: uid => wrap(state, state.cards[uid]),
     defOf: c => (typeof c === 'number' ? cardDef(state, c) : c.def),
     membersOf: p => p.members.map(u => wrap(state, state.cards[u])),

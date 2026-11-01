@@ -25,17 +25,28 @@ const isWild = (ctx, card) => !!(ctx.defOf(card).everyColor || (card.copy && ctx
  *  owner's favor (Cory, 2026-11-01: "Dabblers always works optimally for the player"): it never blocks a new color,
  *  and recruiting it pays when its owner lacks any color on the table. */
 function guestBook(ctx, owner, member) {
-  const def = ctx.defOf(member);
-  const others = ctx.membersOf(owner).filter(c => c.uid !== member.uid && !isWild(ctx, c));
-  const has = q => others.some(c => (c.asColor || c.def.quadrant) === q);
-  if (isWild(ctx, member)) { if (!ctx.state.quadrants.some(q => !has(q))) return; }
-  else {
-    const q = member.asColor || def.quadrant;
-    if (!ctx.state.quadrants.includes(q) || has(q)) return;
-  }
+  if (!newColor(ctx, owner, member)) return;
   ctx.gain(owner, Y, 2);
   ctx.log(`${owner.name}'s Guest Book: a new member color, +2 yellow.`);
 }
+/** member is of a color none of owner's other members have (Guest Book, Matchmaker). Dabblers never blocks, and
+ *  Dabblers itself is new while owner lacks any color on the table; Drifters reads as its chosen color. */
+function newColor(ctx, owner, member) {
+  const def = ctx.defOf(member);
+  const others = ctx.membersOf(owner).filter(c => c.uid !== member.uid && !isWild(ctx, c));
+  const has = q => others.some(c => (c.asColor || c.def.quadrant) === q);
+  if (isWild(ctx, member)) return ctx.state.quadrants.some(q => !has(q));
+  const q = member.asColor || def.quadrant;
+  return ctx.state.quadrants.includes(q) && !has(q);
+}
+function matchmaker(ctx, owner, member) {
+  if (!newColor(ctx, owner, member)) return;
+  owner.bonus += 1;
+  ctx.log(`${owner.name}'s Matchmaker: a new color, +1 follower.`);
+  pickColors(ctx, owner, 2, 'Matchmaker');
+}
+// every recruit of Drifters (a steal too) runs its On Recruit color pick, and the pick settles color-reading cards
+const unpickedDrifters = (ctx, member) => ctx.defOf(member).key === 'drifters';
 const touchable = (ctx, p) => ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'change'));
 
 export default {
@@ -135,8 +146,11 @@ export default {
       const card = ctx.card(data.uid);
       card.asColor = q;
       ctx.log(`${p.name}'s Drifters count as a ${ctx.quadrant(q).name} member.`);
-      // Guest Book reads Drifters' color once it's chosen (Cory's playtest, Nov 1: recruiting Drifters never paid it)
-      if (p.artifact !== undefined && ctx.defOf(p.artifact).key === 'guestbook') guestBook(ctx, p, card);
+      // cards that read a recruit's color hear Drifters once its color is chosen (Cory's playtest, Nov 1: recruiting
+      // Drifters never paid Guest Book): Guest Book, Matchmaker, Connoisseurs
+      for (const c of ctx.abilitiesOf(p)) for (const d of [ctx.defOf(c), ...(c.copy ? [ctx.defOf({ def: c.copy })] : [])]) {
+        if (d.onColorChosen && c.uid !== card.uid) ctx.asMember(p, d.name, () => d.onColorChosen(ctx, p, c, card), p.members.includes(c.uid) ? c.uid : null);
+      }
     },
     level(ctx, p, b) {
       let any = false;
@@ -182,14 +196,12 @@ export default {
     }),
     // Cory, 2026-10-31: "also give followers… like side quests"
     m('matchmaker', 'Matchmaker', 3, 2, 'Whenever you recruit a member of a color none of your members have, +2 in colors you choose and +1 follower.', {
+      // Dabblers never blocks a new color and Drifters counts once its color is chosen, as Guest Book (Cory, Nov 1)
       onAnyRecruit(ctx, owner, card, by, recruited) {
-        if (by !== owner || recruited.uid === card.uid) return;
-        const q = ctx.defOf(recruited).quadrant;
-        if (!ctx.state.quadrants.includes(q) || ctx.countMembersOfColor(owner, q) > (ctx.defOf(recruited).n ?? 1)) return;
-        owner.bonus += 1;
-        ctx.log(`${owner.name}'s Matchmaker: a new color, +1 follower.`);
-        pickColors(ctx, owner, 2, 'Matchmaker');
+        if (by !== owner || recruited.uid === card.uid || unpickedDrifters(ctx, recruited)) return;
+        matchmaker(ctx, owner, recruited);
       },
+      onColorChosen(ctx, owner, card, member) { matchmaker(ctx, owner, member); },
     }),
     // Cory, 2026-10-31: "i dont like round end. i like on recruit and round start"
     m('dyer', 'Dyer', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true,
@@ -227,7 +239,8 @@ export default {
     }),
     // Cory, 2026-10-31 (in place of HR's "+3 per color you have 3 members of")
     m('bigtent', 'Big Tent', 3, 3, 'Game End: +2 followers per color you have exactly one member of.', {
-      onGameEnd: (ctx, owner) => 2 * ctx.state.quadrants.filter(q => ctx.countMembersOfColor(owner, q) === 1).length,
+      // Dabblers never knocks a color off "exactly one" (Cory, Nov 1: Dabblers and Drifters always work in the owner's favor)
+      onGameEnd: (ctx, owner) => 2 * ctx.state.quadrants.filter(q => ctx.countMembersOfColor(owner, q, { wild: false }) === 1).length,
     }),
     // Cory, 2026-10-31: named Book Cookers; "agree this gives multiple followers"
     m('bookcooker', 'Book Cookers', 5, 4, 'Worth 3 followers. On Use, once per game: rearrange your resources into any mix of colors.', { f: 3,
@@ -254,9 +267,10 @@ export default {
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what.member || what.member.uid === card.uid) return;
         // Drifters has no color until its On Recruit pick lands: the pick checks Guest Book itself (drift)
-        if (ctx.defOf(what.member).key === 'drifters' && !what.member.asColor) return;
+        if (unpickedDrifters(ctx, what.member)) return;
         guestBook(ctx, owner, what.member);
       },
+      onColorChosen(ctx, owner, card, member) { guestBook(ctx, owner, member); },
     }),
     // ---- out of the deck since Yellow 2.0 (cull.js); kept so old records still read ----
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 4 → 8

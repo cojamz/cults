@@ -143,9 +143,10 @@ export function toBottom(ctx, k) {
   if (!(k > 0)) return;
   for (const p of ctx.state.players) for (const u of [...p.members, ...(p.artifact !== undefined ? [p.artifact] : [])]) {
     const def = ctx.defOf(ctx.card(u));
-    if (def.bottomFollowers) { p.bonus += 1; ctx.log(`${p.name}'s ${def.name}: +1 follower.`); }
+    // run as the card, so its hover's "gained this game" counts it (it read 0 for Bargain Bin: artifact audit, Nov 1)
+    if (def.bottomFollowers) ctx.asMember(p, def.name, () => { p.bonus += 1; ctx.log(`${p.name}'s ${def.name}: +1 follower.`); }, u);
     // Blue's artifact (Cory, 2026-10-24): once per batch, turns only, as Patroness
-    if (def.bottomBlue) { const got = ctx.gain(p, B, 1); if (got) ctx.log(`${p.name}'s ${def.name}: +${got.n} ${got.color}.`); }
+    if (def.bottomBlue) ctx.asMember(p, def.name, () => { const got = ctx.gain(p, B, 1); if (got) ctx.log(`${p.name}'s ${def.name}: +${got.n} ${got.color}.`); }, u);
   }
 }
 /** Extra buys this turn: they run right after the current one (added to the engine's queue directly). */
@@ -318,8 +319,10 @@ const market = {
     m('onlooker', 'Onlooker', 6, 4, 'Whenever a rival recruits a blue member, +2 blue.', {
       onAnyRecruit(ctx, owner, card, by, rec) { if (by !== owner && isBlue(ctx.defOf(rec))) ctx.gain(owner, B, 2); },
     }),
+    // your own Dabblers counts as blue and Drifters once it picks Blue (Cory, Nov 1: they always work in the owner's favor)
     m('connoisseur', 'Connoisseurs', 1, 2, 'Whenever you recruit a blue member, +1 blue.', { f: 2,
-      onAnyRecruit(ctx, owner, card, by, rec) { if (by === owner && rec.uid !== card.uid && isBlue(ctx.defOf(rec))) ctx.gain(owner, B, 1); },
+      onAnyRecruit(ctx, owner, card, by, rec) { if (by === owner && rec.uid !== card.uid && ctx.defOf(rec).key !== 'drifters' && (isBlue(ctx.defOf(rec)) || ctx.defOf(rec).everyColor)) ctx.gain(owner, B, 1); },
+      onColorChosen(ctx, owner, card, member) { if (member.asColor === Q) ctx.gain(owner, B, 1); },
     }),
     m('reseller', 'Reseller', 4, 2, 'Whenever you recruit, +1 of that member’s color.', {
       onAnyRecruit(ctx, owner, card, by, rec) { if (by === owner && rec.uid !== card.uid) gainColorOf(ctx, owner, ctx.defOf(rec), 'Reseller'); },
