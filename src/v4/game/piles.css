@@ -11,7 +11,10 @@
 /* room for the edges: a pile's card gives up 6px on its right and bottom inside its slot */
 .app.game.lt .lt-shop-cards .lt-cards > .lt-card.card[data-stack]{margin:0 6px 6px 0}
 
-.lt-shop-cards .lt-card .ft .lt-pile-left{flex:none;margin-left:auto;padding-left:4px;font-size:13px;line-height:16px;font-weight:700;color:var(--pl-ink-2,#6e5c49)}
+.lt-shop-cards .lt-card .art{position:relative}
+.lt-shop-cards .lt-card .art .lt-pile-left{position:absolute;right:3px;bottom:2px;padding:0 3px;border-radius:4px;font-size:12px;line-height:15px;font-weight:700;color:var(--pl-ink,#2b2018);background:rgba(255,248,235,.9);pointer-events:none}
+/* with details on the picture can shrink to a strip: it keeps room for the tab */
+.app.game.lt .lt-shop-cards[data-view="details"] .lt-cards .lt-card.card .art:has(> .lt-pile-left){min-height:16px}
 
 /* All piles: a pile that opens in a later round waits in its place, quiet, its round where the price would be; an emptied
    pile leaves its name on an empty outline. Neither can be picked; both still show the card on hover. */

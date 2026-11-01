@@ -305,6 +305,9 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
                 {/* works from round II on (Cory, 2026-10-22: "a better way to denote round II/round III only"): a corner tag, not words */}
                 {d.from > 1 && <span className="lt-round-tag" data-round-tag="" title="Works from round II on">II+</span>}
                 {fromPile && !tray && <span className="need from-pile" title="From the top of the pile">pile</span>}
+                {/* how many are left in the pile, this one included: a small tab in the picture's corner, over the stack's edges
+                    (at the foot's end a "×10" pushed the price off a narrow card) */}
+                {stack > 0 && <span className="lt-pile-left num" data-stack={stack} title={stack === 1 ? 'The last one in this pile' : `${stack} left in this pile`}>×{stack}</span>}
               </span>
               {/* a rule that grows by round reads by round, this round lit, as in every hover (RuleText; compact on the small card) */}
               {detailed && <span className="lt-pick-ability"><RuleText def={d} round={state.round} plain compact /></span>}
@@ -316,8 +319,6 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
                     <CostShapes parts={paid} />
                   </span>
                 ) : <CostShapes parts={parts} />}
-                {/* how many are left in the pile, this one included: plain ink at the foot's end, never a badge on the art */}
-                {stack > 0 && <span className="lt-pile-left num" data-stack={stack} title={stack === 1 ? 'The last one in this pile' : `${stack} left in this pile`}>×{stack}</span>}
               </span>
             </button>
           );
