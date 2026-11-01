@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.928 — 2026-11-01
+
+- Gardener, Drifters, Tinker and Agitator get scene pictures like the other members.
+
 ## v0.9.927 — 2026-11-01
 
 - Fan Club with no minion on a Green space says so instead of "+0 green".
