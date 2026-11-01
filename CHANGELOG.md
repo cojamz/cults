@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.972 — 2026-11-01
+
+- Bodyguards and Lie Low stop steals, not trades; new words for Promote, Demote, Double Agent and Lie Low; Mob worth 4; Tribute Band 14; Window Shopper sends 2; Caterer +1; Desperado +2 to every steal
+
 ## v0.9.971 — 2026-11-01
 
 - Recruiter pays when a rival casts out a member with Farewell or Estate Sale; Guest Book counts your first grey member as a new color; Customs pays once per change, not once per resource
