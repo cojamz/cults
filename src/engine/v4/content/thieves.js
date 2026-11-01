@@ -267,7 +267,7 @@ const thieves = {
       },
     },
     {
-      key: 'heist', ring: 3, name: 'Poach', text: 'Recruit a rival’s member you choose. +1 magenta.', // "recruit", not "steal" (Cory, Oct 31); still a steal for Bodyguards, Lie Low and Fence
+      key: 'heist', ring: 3, name: 'Poach', text: 'Recruit a rival’s member you choose, for free. +1 magenta.', // "recruit", not "steal" (Cory, Oct 31); still a steal for Bodyguards, Lie Low and Fence
       estimate: (ctx, p) => { const l = takeable(ctx, p); return l.length ? Math.max(...l.map(([, c]) => memberHint(c))) : 0; },
       resolve(ctx, p) {
         const list = takeable(ctx, p);
