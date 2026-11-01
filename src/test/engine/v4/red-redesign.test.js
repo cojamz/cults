@@ -117,8 +117,8 @@ describe('locked Red action progression', () => {
     expect(remaining(s).sort((x, y) => x - y)).toEqual(before);
     expect(defs(s, 0)).toContain('echo.evergreen'); expect(s.shop).toContain(a);
     expect(s.recruits).toBe(1); expect(s.players[0].turnRecruits).toBe(1);
-    expect(s.players[0].res.green).toBe(2); // Evergreen +2; Recruiter quiet: a shop swap takes nothing from a rival's cult
-    expect(s.players[0].res.red).toBe(3); // Promote +3
+    expect(s.players[0].res.green).toBe(2); // Evergreen +2
+    expect(s.players[0].res.red).toBe(4); // Promote +3, Recruiter +1 (a swap you make is a recruit)
     expect(s.players[0].bonus).toBe(1);
   });
 
@@ -194,7 +194,7 @@ describe('active acquisition versus gifts', () => {
     expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([0, 0, 0]); // a gift is no recruit
     ctx.moveMember(uid, s.players[0], s.players[1]);
     expect(ctx.steal(s.players[0], s.players[1], { uid })).toBe(1);
-    expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([1, 2, 0]); // Evergreen's On Recruit +2; Recruiter: not from the shop
+    expect([s.recruits, s.players[0].res.green, s.players[0].res.red]).toEqual([1, 2, 1]); // Evergreen's On Recruit +2; Recruiter +1 (a steal is a recruit)
   });
 
   it('a return-to-shop removes only an Extra Hand’s unplaced minion and reacquisition restores it once', () => {

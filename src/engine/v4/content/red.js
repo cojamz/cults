@@ -116,10 +116,10 @@ export default {
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'red'),
     }),
     // members only, never a follower buy (Cory, 2026-10-29: "red recruit should only work for gaining members")
-    // Red Cloak. Cory, Nov 1 3:59pm: "Put it back at 1 red when you recruit a member from the shop" (the rival-cult
-    // trigger paid 35 times a game with the swap card on)
-    m('recruiter', 'Recruiter', 4, 1, 'Whenever you recruit a member from the shop, +1 red.', {
-      onRecruit(ctx, owner, card, by, what) { if (by === owner && what.member && what.fromShop) { ctx.gain(owner, 'red', 1); ctx.log(`${owner.name}'s Recruiter: +1 red.`); } },
+    // Red Cloak. Cory, Nov 1 5:06pm (version 1 of two tested): "Whenever you recruit a member, +1 red." Swaps and
+    // steals count (your own doing: memberAcquired); follower buys don't. 31% of wins off, 28% with the swap card on.
+    m('recruiter', 'Recruiter', 4, 1, 'Whenever you recruit a member, +1 red.', {
+      onRecruit(ctx, owner, card, by, what) { if (by === owner && what.member) { ctx.gain(owner, 'red', 1); ctx.log(`${owner.name}'s Recruiter: +1 red.`); } },
     }),
     m('drive', 'Pied Piper', 2, 2, 'Whenever you recruit 2 or more members in one turn, +2 red.', {
       // pays the moment your second recruit of the turn lands, so the red can still be spent this turn

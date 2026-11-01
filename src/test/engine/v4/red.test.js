@@ -102,10 +102,10 @@ describe('Red members', () => {
     expect(s.players[0].final.total).toBe(8); // Mob 4 (worth 4, Nov 1, 2:16pm), Triplets 3, Intern 1
   });
 
-  it('Recruiter: a recruit from the deck is no member leaving a rival’s cult, so nothing', () => {
+  it('Recruiter: a recruit from the deck is a recruit, +1 red; a rival’s pays nothing', () => {
     let s = scene({ members: [['red.recruiter']], shop: SHOP, pileFirst: ['red.volunteer'] });
     s = take(s, 'red.hire');
-    expect(R(s)[0].red).toBe(1); // Walk-In's +1 only
+    expect(R(s)[0].red).toBe(2); // Walk-In's +1 and Recruiter's +1
     const t = scene({ members: [[], ['red.recruiter']], shop: SHOP, pileFirst: ['red.volunteer'] });
     expect(R(take(t, 'red.hire'))[1].red).toBe(1); // only Walk-In's rival +1
   });

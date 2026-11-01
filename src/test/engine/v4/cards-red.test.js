@@ -72,19 +72,19 @@ describe('Red members', () => {
     expect(named(s, 'Recruiter')).toHaveLength(0);
   });
 
-  it('Recruiter: its holder’s own member leaving pays nothing; a shop swap pays nothing', () => {
+  it('Recruiter: its holder’s own member leaving pays nothing; a shop swap is a recruit, +1 red (Cory, Nov 1 5:06pm)', () => {
     let s = sceneQ({ quadrants: ['gold', 'red', 'thieves', 'echo'], round: 3, members: [[], ['red.recruiter', 'red.twins']] });
     s = move(take(s, 'thieves.heist'), `card:${uidOf(s, 'red.twins', 1)}`);
     expect(s.players[0].members).toHaveLength(1);
     expect(R(s, 1).red).toBe(0);
     expect(named(s, 'Recruiter')).toHaveLength(0);
-    // Promote (round II) swaps your member with a shop member: nothing leaves a rival's cult
+    // Promote (round II) swaps your member with a shop member: a member you recruit
     let t = sceneQ({ round: 2, members: [['red.recruiter', 'red.intern']], shop: ['red.volunteer'] });
     t = take(t, 'red.hireup');
     const swap = t.pending.options.find(o => o.id.startsWith(`trade:${uidOf(t, 'red.intern', 0)}:`));
     t = settle(move(t, swap.id));
-    expect(R(t).red).toBe(3); // Promote's +3 only
-    expect(named(t, 'Recruiter')).toHaveLength(0);
+    expect(R(t).red).toBe(4); // Promote's +3 and Recruiter's +1
+    expect(named(t, 'Recruiter')).toHaveLength(1);
   });
 
   it('Recruiter: a rival’s member swapped into the shop pays nothing (shop recruits only, Nov 1 3:59pm)', () => {
