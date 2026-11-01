@@ -14,7 +14,7 @@ Every runner, reviewer and expert game adds here. Kinds: **BUG** (the game break
 | 8 | CHECK | Echo copying a rival's Last Call while they hold their own made a long skip chain; each skip paid Gossip +1 follower and Pocket Watch +1 purple, eight times in one round | g8 | needs an engine check: is each skip real? |
 | 9 | CHECK | Closer ("last minion of the round") didn't fire after a Sleep In skip pushed a turn past it | g1 | needs an engine check |
 | 10 | RULE | A member taken by Shake Down or Poach fires its On Recruit again for the taker (Accomplice stole twice) | g7 | as built; flag on the list as a feel note |
-| 11 | TOOL | Expert tool: option numbers shift between steps (Dilute, Con Men steals, payments), causing misclicks in 5 games | g1, g4, g5, g7 | tool fix: stable option ids |
+| 11 | TOOL | Expert tool: option numbers shift between steps (Dilute, Con Men steals, payments), causing misclicks in 5 games | g1, g4, g5, g7, g9, g10, g12 | tool fix: stable option ids |
 | 12 | TOOL | Choice log never shows On Use abilities (Normal's shortcut takes them before the lookahead); bots do use them | review | noted in leads.md; reports read accordingly |
 | 13 | TOOL | Balance report: "owned in 103% / 109% of games" for Recruit Bonus and Deprogrammers (counter can pass games shown) | runner 1 | report fix |
 | 14 | RULE | Party Crasher can join a taken Makeover on the last placement; Ben rearranged 19 resources and won all three round III contests (+30) | g10 (all 3 players) | as built; top feel note on the list |
@@ -27,3 +27,5 @@ Every runner, reviewer and expert game adds here. Kinds: **BUG** (the game break
 | 21 | RULE | Panel's On Recruit fires for whoever swaps it in, so Promote or Double Agent on a rival's Panel gives two swaps from one move | g9 (Cal, Dee) | as built; feel note |
 | 22 | WORDS | Agents ("blocks copying") doesn't stop Encore copying its owner's Con Men steal; owner read it as blocked | g9 (Ava) | for Cory |
 | 23 | RULE | Copies of follower spaces: Echo, Reprise, Party Crasher, Tribute Band repeat Party Gifts and Largesse (Largesse paid 10 three times in round III, Tribute Band +20) | g9 (all 4) | as built; top feel note with row 14 |
+| 24 | RULE | Farewell and Estate Sale pay a member's full cost even after its once-per-game ability is spent (Heiresses: +7 white used, then 9 white cast out) | g12 (Ben) | as built; feel note |
+| 25 | RULE | Money Changers' +1 white on every follower buy kept white uncontested all game for its owner | g12 (Ben, won white 3 of 3) | already a lead (fewer fires) |
