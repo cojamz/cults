@@ -96,6 +96,7 @@ fi
 if ! git -C "$WT" diff --cached --quiet; then
   git -C "$WT" commit -qm "Play link: build $SHORT"
 fi
+source "$TMP/source/scripts/pages-wait.sh" 2>/dev/null || source "$(dirname "$0")/pages-wait.sh"; pages_wait "$REPO"
 PUSHED=0
 for attempt in 1 2 3 4; do
   if git -C "$WT" push -q origin HEAD:main; then PUSHED=1; break; fi

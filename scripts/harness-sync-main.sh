@@ -35,6 +35,7 @@ git fetch -q origin '+main:refs/remotes/origin/main'  # forced: a diverged local
 git worktree add -q --detach "$TMP/main" origin/main
 mirror "$TMP/src" "$TMP/main"
 if git -C "$TMP/main" diff --cached --quiet; then echo "main's harness already matches ${SHA:0:7}"; exit 0; fi
+source "$(dirname "$0")/pages-wait.sh"; pages_wait cojamz/patrons
 git -C "$TMP/main" commit -qm "Harness mirror from v4 ${SHA:0:7} (no game changes)"
 for attempt in 1 2 3 4; do
   git -C "$TMP/main" push -q origin HEAD:main && { echo "main's harness now mirrors ${SHA:0:7}"; exit 0; }
