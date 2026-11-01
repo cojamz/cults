@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.933 — 2026-11-01
+
+- Party Crasher and Big Spender light up on your seat and can be used (the last fix missed the seat)
+
 ## v0.9.932 — 2026-11-01
 
 - Big Family, Makeover, Bulk Buyer, Shareholder, Choir, Gift Wrapper, Caravan, Tastemaker and Spice Route get scene pictures.
