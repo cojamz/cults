@@ -30,3 +30,4 @@ Every runner, reviewer and expert game adds here. Kinds: **BUG** (the game break
 | 24 | RULE | Farewell and Estate Sale pay a member's full cost even after its once-per-game ability is spent (Heiresses: +7 white used, then 9 white cast out) | g12 (Ben) | as built; feel note |
 | 25 | RULE | Money Changers' +1 white on every follower buy kept white uncontested all game for its owner | g12 (Ben, won white 3 of 3) | already a lead (fewer fires) |
 | 26 | WORDS | Guest Book never fired for new red or yellow members while its owner held Dabblers (wild members); owner expected +4 yellow | g12 (Ava) | engine check, then a wording question |
+| 27 | WORDS | Caterer pays once per gift action, not once per player who gets silver; owner checked before buying | g11 (Dee) | for Cory if the text reads per player |
