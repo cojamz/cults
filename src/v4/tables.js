@@ -47,7 +47,7 @@ const VERSION = {
   market: '2.0',
   trading: '2.0',
   yellow: '2.0',
-  silver: '1.5',
+  silver: '2.0',
 };
 export const sphereVersion = id => VERSION[id] || '1.0';
 const VERSION_WORDS = { '2.0': 'Redesigned', '1.5': 'Spaces redesigned, members not yet', '1.0': 'Not redesigned yet' };

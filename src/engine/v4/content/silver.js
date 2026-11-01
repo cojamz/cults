@@ -298,7 +298,7 @@ const silver = {
       onRecruited(ctx, owner) { ctx.gain(owner, S, Math.ceil(Math.max(0, ...others(ctx, owner).map(o => o.res[S] || 0)) / 2)); },
     }),
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 8 → 4
-    m('toastmaster', 'Toastmaster', 2, 2, 'Whenever you take a Silver space, +1 follower.', {
+    m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', {
       afterAction(ctx, owner, card, qid) { if (qid === S) owner.bonus += 1; },
     }),
     m('gala', 'Debutante', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', {
@@ -316,7 +316,7 @@ const silver = {
     m('philanthropists', 'Philanthropists', 3, 2, 'On Recruit: rivals gain up to 4 silver, split as you choose. +1 follower for each.', {
       onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropists', max: 4, per: 1 }); },
     }),
-    m('polisher', 'Polisher', 3, 2, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', {
+    m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', {
       activate: 'game',
       onActivate(ctx, owner) {
         const k = Math.min(3, owner.res[S] || 0);
@@ -327,7 +327,7 @@ const silver = {
       },
       botActivate: (ctx, owner) => (owner.res[S] || 0) >= 3,
     }),
-    m('collector', 'Collector', 3, 2, 'Whenever a rival recruits paying silver, +1 silver.', {
+    m('collector', 'Collector', 1, 1, 'Whenever a rival recruits paying silver, +1 silver.', {
       onRecruit(ctx, owner, card, by, what) {
         if (by === owner || !(what?.spent?.[S] > 0)) return;
         ctx.gain(owner, S, 1);
