@@ -36,3 +36,4 @@
 - 1:49pm: before counterplay, asked how the follower shop feels from the games (follower-shop.md sent; asked: leave as is until Last Call is settled).
 - 1:53pm: follower shop stays as is (re-check after Last Call is settled). Started a thought on counterplay: "maybe there's a broader change where" (cut off; wait for the rest).
 - 1:57pm, counterplay (item 1): default path is baking more counterplay into the grey deck. Also consider, and build in parallel if there's room and a lull in redesign: (a) a branch where members are set piles, Dominion-style (buy several of the same member; try it without Blue first; test members that interact with copies of themselves); (b) grey members as 5 or 6 set piles out every game, buy multiples, so interaction is guaranteed whatever the colors. Cory: "for now I do like the way the game is".
+- 2:02pm, item 2: protection blocks steals, not swaps; both block Raiders too. Open: making the difference clear to players.
