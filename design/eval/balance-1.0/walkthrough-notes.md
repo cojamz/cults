@@ -31,3 +31,4 @@
 - 1:43pm, Patroness (item 30): Cory believes once per batch. Answered: it already pays once per batch (Oct 21); bots buy it about 1 in 10 times shown, too few owners to read strength. Words read per member: fix the wording at the walk-through.
 - 1:44pm, Caterer (item 31): pays once per instance of gifts being given (one gift action, however many players get silver), not per player. Needs clearer words; also find a shared word for "once per instance" across Caterer, Tastemaker, Patroness (wording pass at the walk-through).
 - 1:44pm, Polisher (item 32; "On Use, once per game: turn up to 3 silver into 2 of any colors each."): yes, the player chooses how many (1, 2 or 3). Sent to be built.
+- 1:45pm, Recruiter (item 33): no comment. Greatest Hits (item 34): the live text is his ("Copy the On Recruit of each of your members, in any order. +1 green."); the decisions log was missing it, now logged.
