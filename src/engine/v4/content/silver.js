@@ -279,11 +279,11 @@ const silver = {
         ctx.log(`${owner.name}'s Gift Wrapper: +1 follower.`);
       },
     }),
-    m('caterer', 'Caterer', 2, 2, 'Whenever you give a rival something, +1 silver.', {
+    m('caterer', 'Caterer', 2, 2, 'Whenever you give a rival something, +2 silver.', {
       // one gift per space, as Toast: Party Favors' answers are one gift, not one per rival (as Gift Wrapper; bug bash, Nov 1)
       onGive(ctx, owner, card, color, once) {
         if (once) { if (card.catered === once) return; card.catered = once; }
-        ctx.gain(owner, S, 1);
+        ctx.gain(owner, S, 2); // +2 (Claude, Nov 1 balance: the artifact read −10)
       },
     }),
     m('majordomo', 'Majordomo', 4, 2, 'Whenever you take a Silver space, +2 silver.', {
@@ -344,7 +344,7 @@ const silver = {
       },
       botActivate: (ctx, owner) => (owner.res[S] || 0) >= 3,
     }),
-    m('collector', 'Collector', 1, 1, 'Whenever a rival recruits paying silver, +1 silver.', {
+    m('collector', 'Collector', 2, 2, 'Whenever a rival recruits paying silver, +1 silver.', { round: 1,
       onRecruit(ctx, owner, card, by, what) {
         if (by === owner || !(what?.spent?.[S] > 0)) return;
         ctx.gain(owner, S, 1);

@@ -142,7 +142,7 @@ export default {
     m('recruitbonus', 'Recruit Bonus', 1, 1, 'Your On Recruits also give +1 of that member’s color.', { f: 2,
       onRecruitAbility(ctx, owner, card, recruited) { gainColorOf(ctx, owner, recruited.def, 'Recruit Bonus'); }, // a guest: nothing; Dabblers: pick
     }),
-    m('movementpenalty', 'Deprogrammers', 1, 1, 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 3, n: 2, // +1 (Cory, Oct 30)
+    m('movementpenalty', 'Deprogrammers', 1, 1, 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 4, n: 2, // +1 (Cory, Oct 30)
       onMoveMember(ctx, owner, card, info) { if (info.from !== owner && ctx.followers(info.from) > 0) info.from.bonus -= 1; },
     }),
     m('panel', 'Panel', 4, 2, 'On Recruit: promote or demote another of your members.', { f: 3, n: 3,

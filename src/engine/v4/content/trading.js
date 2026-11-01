@@ -206,7 +206,7 @@ const trading = {
   // (white + any, followers printed); names marked new are Claude's fill-ins.
   members: [
     // Recluse moves here from Blue (Cory, 2026-10-25: "yes"), so a seat with few members has a payoff
-    m('recluse', 'Recluse', 2, 0, 'Game End: +2 followers per rival with more members than you.', {
+    m('recluse', 'Recluse', 2, 1, 'Game End: +2 followers per rival with more members than you.', { round: 1,
       onGameEnd: (ctx, owner) => 2 * ctx.rivals(owner).filter(o => ctx.memberCount(o) > ctx.memberCount(owner)).length,
     }),
     // Cory, 2026-10-25: cost 3 (was 4), so White has a cheap starter
@@ -268,7 +268,7 @@ const trading = {
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.membersOf(owner).some(c => c.def.key !== 'appraiser' && buryValue(ctx, owner, c, fv(ctx)) >= 2),
     }),
-    m('changer', 'Money Changers', 2, 1, 'Whenever you turn resources or members into followers, +1 white.', { f: 2, onTurned: 1 }),
+    m('changer', 'Money Changers', 2, 1, 'Whenever you turn resources or members into followers, +2 white.', { f: 2, onTurned: 2 }),
     m('martyr', 'Martyrs', 2, 1, 'Whenever this member leaves your cult, gain followers equal to its cost.', { f: 3,
       onLeave(ctx, owner, card) {
         const c = card.def.s + card.def.w;

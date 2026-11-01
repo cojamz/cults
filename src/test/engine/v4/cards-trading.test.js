@@ -164,14 +164,14 @@ describe('White members', () => {
 
   it('Money Changers: Cash In turns white into followers, +1 white (named)', () => {
     const s = take(table(Q, { round: 3, left: 5, res: [{ white: 3 }], members: [['trading.changer']], shop: ROW }), 'trading.cashin');
-    expect([B(s), R(s).white]).toEqual([3, 2]);
-    expect(named(s, 'Money Changers')).toEqual(["P1's Money Changers: +1 white."]);
+    expect([B(s), R(s).white]).toEqual([3, 3]); // Money Changers +2 (Nov 1 balance)
+    expect(named(s, 'Money Changers')).toEqual(["P1's Money Changers: +2 white."]);
   });
   it('× Doppelganger copying Money Changers: +1 white each', () => {
     let s = table(QE, { round: 3, left: 5, res: [{ white: 3 }], members: [['trading.changer', 'echo.doppel']], shop: ROW });
     s.cards[uidIn(s, 'echo.doppel', 0)].copy = 'trading.changer';
     s = take(s, 'trading.cashin');
-    expect(R(s).white).toBe(1 + 2);
+    expect(R(s).white).toBe(1 + 4); // +2 each (Nov 1 balance)
   });
 
   it('Martyrs: sent away with Farewell, 4 + 4 followers (named)', () => {

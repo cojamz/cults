@@ -103,9 +103,9 @@ describe('Silver members', () => {
 
   it('Caterer: whenever you give to other players, +1 silver (once per gift, not per player)', () => {
     let s = take(scene({ members: [['silver.caterer']] }), 'silver.toast');
-    expect(R(s).silver).toBe(4);
+    expect(R(s).silver).toBe(5); // Caterer +2 (Nov 1 balance)
     s = move(move(move(take(scene({ members: [['silver.caterer']] }), 'silver.partygifts'), 'player:1'), 'player:2'), 'done');
-    expect(R(s).silver).toBe(1);
+    expect(R(s).silver).toBe(2);
   });
 
   it('Majordomo: whenever you take a Silver space, +2 silver (not elsewhere)', () => {

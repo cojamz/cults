@@ -216,7 +216,7 @@ export default {
       botActivate: (ctx, owner) => touchable(ctx, owner).some(o => total(ctx, o) > 0),
     }),
     // Cory, 2026-10-31 (in place of HR's "+3 per color you have 3 members of")
-    m('bigtent', 'Big Tent', 4, 3, 'Game End: +2 followers per color you have exactly one member of.', {
+    m('bigtent', 'Big Tent', 3, 3, 'Game End: +2 followers per color you have exactly one member of.', {
       onGameEnd: (ctx, owner) => 2 * ctx.state.quadrants.filter(q => ctx.countMembersOfColor(owner, q) === 1).length,
     }),
     // Cory, 2026-10-31: named Book Cookers; "agree this gives multiple followers"
@@ -230,7 +230,7 @@ export default {
       onRoundStart(ctx, owner) { startChange(ctx, owner, { who: 'Puppeteers', left: 3 }); },
     }),
     // Cory, Nov 1 (in place of Puppeteers): "Make it 'On Recruit' as well"
-    m('caravan', 'Caravan', 5, 4, 'Worth 3 followers. On Recruit: +1 of each color you hold. Round Start: +1 of each color you hold.', { f: 3, now: true,
+    m('caravan', 'Caravan', 4, 4, 'Worth 3 followers. On Recruit: +1 of each color you hold. Round Start: +1 of each color you hold.', { f: 3, now: true,
       onRoundStart(ctx, owner) { for (const c of held(ctx, owner)) ctx.gain(owner, c, 1); },
     }),
     // Cory, Nov 1 (in place of Explorer): a payoff for changing rivals' resources

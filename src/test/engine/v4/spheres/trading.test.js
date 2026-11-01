@@ -257,7 +257,7 @@ describe('White members', () => {
     expect([R(s).white, B(s)]).toEqual([0, 3]); // paid 2 white, the other 3 turned
     let k = scene({ res: [{ white: 6 }], members: [['trading.changer']], shop: ['trading.cashier'], ...buyTurn });
     k = move(k, pick(k, 'trading.cashier', 'shop'));
-    expect([R(k).white, B(k)]).toEqual([1, 4]); // Money Changers: +1 white after the turning
+    expect([R(k).white, B(k)]).toEqual([2, 4]); // Money Changers: +2 white (Nov 1 balance) after the turning
     let none = scene({ res: [{ white: 2 }], shop: ['trading.cashier'], ...buyTurn });
     none = move(none, pick(none, 'trading.cashier', 'shop'));
     expect([R(none).white, B(none)]).toEqual([0, 0]);
@@ -285,12 +285,12 @@ describe('White members', () => {
     const bk = 'trading.changer';
     let s = take(scene({ round: 3, res: [{ red: 3 }], members: [[bk]] }), 'trading.exchange');
     s = move(move(move(s, 'color:red'), 'color:red'), 'color:red');
-    expect([B(s), R(s).white]).toEqual([6, 2]); // +1 space, +1 Money Changers once
+    expect([B(s), R(s).white]).toEqual([6, 3]); // +1 space, +2 Money Changers once (Nov 1 balance)
     s = take(scene({ round: 3, res: [{ white: 4 }], members: [[bk]] }), 'trading.cashin');
-    expect([B(s), R(s).white]).toEqual([4, 2]);
+    expect([B(s), R(s).white]).toEqual([4, 3]);
     s = take(scene({ round: 2, members: [[bk, 'red.twins']] }), 'trading.farewell');
     s = move(s, `card:${uidOf(s, 'red.twins', 0)}`);
-    expect([B(s), R(s).white]).toEqual([2, 2]);
+    expect([B(s), R(s).white]).toEqual([2, 3]);
     s = take(scene({ round: 2, members: [[bk, 'red.twins']] }), 'trading.estatesale');
     s = move(s, `card:${uidOf(s, 'red.twins', 0)}`);
     expect(R(s).white).toBe(3); // turned into white, not followers: no Money Changers
