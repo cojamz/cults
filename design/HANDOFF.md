@@ -1,7 +1,8 @@
 # Cults — handoff (current state; update in place, don't stack sections)
 
-Last updated 2026-10-28 10:40am Eastern by the harness review thread. Before this: design/archive/handoff-2026-10-24-to-28.md.
-- Live: https://cojamz.github.io/patrons/play/ is v0.9.801 (source 02b3a7d, Oct 28 10:24am Eastern). The orientation hook warns when this file or in-flight.md doesn't name the live version.
+Last updated 2026-11-01 4:35am Eastern by the overnight balance thread. Before this: design/archive/handoff-2026-10-24-to-28.md.
+- Live: https://cojamz.github.io/patrons/play/ is v0.9.955 (Nov 1 4:07am Eastern; main play/build.json is the truth).
+- Road to 0.99 then 1.0 (Cory, Oct 31 night): 0.99 = all colors and both decks polished with balance tweaks shipped and rework picks in front of him; 1.0 = after his final action/member review and the tweaks from it. The overnight balance report and his 13 numbered picks: /mnt/project-files/balance-0.99.md (shipped tonight: numbers and member counts only; every text change waits for him).
 - Versions (Cory, Oct 28): small publishes are sub-steps, v0.9.801, v0.9.802… (`npm run version:v4 -- patch`); `point` makes the next whole step (v0.9.9) only for a release worth naming. All colors at 2.0 is v1.0.
 - Since Oct 24 the v0.9 line shipped: round I rework (v0.9.0), contest prizes +4/+6/+10 and +1 wild on every member (v0.8.100), table talk, saved games and Past games, the Peek row, Front-runner 4 / Launderer 5 / Straggler 8 / Tribute Band 12 / Loyalists (v0.9.2), narrow-laptop shop (v0.9.3), freeze and lag fixes (v0.9.4 to v0.9.7, flights always land), neutral in Out of Style (v0.9.8), Tiebreaker 5 (v0.9.801). CHANGELOG.md has each.
 - Running now: the freeze work (Cory: "laggy" = the page freezing, clicks ignored, then sputtering back; he plays Firefox on a Mac). Owners and next steps: design/in-flight.md.

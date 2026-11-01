@@ -5,6 +5,7 @@ The road to 1.0 (bar, gaps, order, Cory's calls): design/1.0.md. It sets the ord
 Done items and the old lists: design/archive/todo-2026-10-20-to-23.md and design/archive/todo-before-2026-10-20.md.
 
 ## Cory's calls
+First (Nov 1 morning): the 13 balance picks in /mnt/project-files/balance-0.99.md (Greatest Hits, Lie Low, small-cult bar, Recruiter, Money Changers, Recruit Twice, HR, Front-runner/Scout, which color to rework next). Then 0.99 ships; his final action/member review makes 1.0.
 All open design and feel questions are numbered in design/notes/waiting-on-cory-2026-10-24.md, defaults in brackets. When he answers, log each call in design/decisions.md, tick it there, and build in this order: two shops (#1 to #4), card changes (#5 to #11), board (#12 to #14), members (#15 to #17).
 
 Redesign, brainstorm with Cory: Late Bloomers (works against itself and counts itself). From his Oct 24 game. (Shake Down is done: the rival picks which member is at stake, v0.9.835.)

@@ -25,3 +25,4 @@ One entry per use: date, job, lens version, prediction hit rate, what changed an
   - 10 snowball the end: gain climbs 2.7 / 4.6 / 5.2. Kept.
   - 14 cost curve: Silver has four cards at 8 to 11, all rarely bought. Added to findings.
 - What would make every lens wrong at once (answer, use 1): run-to-run noise. Two runs on the same seeds moved untouched cards by sd 4 points, so any single-run lift under 8 is a coin flip. Lens v1.2 now asks for the floor.
+- 2026-11-01 4:30am, balance thread: scored batch-5 predictions (3 ✅, 4 ❌). Lens that helped: payoff timing (Greatest Hits copies pay round III amounts). Lens that misled: reading worth-N members by raw win share; added a step to subtract the count's share first.

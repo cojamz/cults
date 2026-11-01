@@ -5,13 +5,14 @@ Written before the data, scored after. Each use adds a dated block at the top. H
 Format: `- [conf] prediction → result (✅/❌/↔, the number that settled it)`
 
 ## 2026-11-01 balance thread, batch 5 (deck 10, 8 colors with Silver at 10, v0.9.940 + Shift Crew 4, Old Maid −5), written 1:10am Eastern before reading it
-- [high] Greatest Hits drops from +40 to under +15 at Normal (round I copies only, 3 at most) → pending
-- [med] Red stays the top main color by raw share (+8 or more) but its members read even: member count, not cards → pending
-- [med] Money Changers stays the worst artifact (under −8) → pending
-- [med] Shift Crew at 4 for worth 4 reads STRONG (+5 or more) at Normal: 4 members' worth in round I is a lot → pending
-- [med] Silver as a main color reads below even at Normal (gives to rivals; bots value gifts badly) → pending
-- [low] Hard bots raise the small-cult share over Normal (they buy fewer weak members) → pending
-- [med] Customs at 6 is still above +5 → pending
+- [high] Greatest Hits drops from +40 to under +15 at Normal (round I copies only, 3 at most) → ❌ +41 Normal, +46 Hard, +33 Very Hard; 2 copies still +30
+- [med] Red stays the top main color by raw share (+8 or more) but its members read even: member count, not cards → ✅ Red +11 to +13; the lift is Recruiter (+12), not its members
+- [med] Money Changers stays the worst artifact (under −8) → ✅ −11, then −9 and −6 at +2 white
+- [med] Shift Crew at 4 for worth 4 reads STRONG (+5 or more) at Normal: 4 members' worth in round I is a lot → ❌ not strong; the member-count correction charges it 4 members
+- [med] Silver as a main color reads below even at Normal (gives to rivals; bots value gifts badly) → ❌ +4 batch 5, +1 round 6: near even
+- [low] Hard bots raise the small-cult share over Normal (they buy fewer weak members) → ❌ 11% Hard vs 13% Normal (deck 10); ↔ 20% on Hard deck 15
+- [med] Customs at 6 is still above +5 → ✅ +10; 7 changed nothing on block 2
+Final: 3 ✅, 4 ❌. Read: I keep predicting a card's text change shrinks it (Greatest Hits) and keep forgetting the member-count correction (Shift Crew). Next block: before predicting a multi-count member, subtract its count's expected share first; before predicting a copy card, price the copies at the round they're taken.
 
 ## 2026-11-01 overnight 0.99 balance pass (lens v1), written 2:20am Eastern before reading the batch-2+ numbers
 Grounded in: batch 1 (Normal, deck 10, 7 colors, 800 games), the Nov 1 pick-rate note (400 Normal games), the Oct 29 Normal/Hard runs, and the live board.
