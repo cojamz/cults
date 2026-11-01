@@ -37,3 +37,14 @@ Final: 0 ✅, 4 ↔, 6 ❌ (Last Call moved to ↔ when deck 15 Hard came in) (P
 6. Small-cult share (5 or fewer members, counting members) stays under 20% at 4 seats (med).
 7. Expert players rate at least one artifact "fun 1-2" across both tables it shows up on (low).
 8. The choice log finds most round I spaces REAL CHOICE and most round III centers AUTO-PICK (med).
+
+Scored 1:10pm Nov 1 (final: Normal 1,400, Hard 422, Very Hard 398; design/eval/balance-1.0/final/):
+1. HIT. New Very Hard beat the old 20 seats to 8, 4.9 followers a seat (paired duel).
+2. MISS (partly). Greatest Hits reads strong at every level (+12/+15/+13); it tops Last Call at Hard (+15 vs +13), not at Very Hard (+13 vs +15).
+3. MISS (partly). Recruiter read 0 at Hard but −7 at Very Hard (old payout, before shop moves paid). Red as a color not re-checked against +6.
+4. HIT for Recruit Twice (Hard takes it 5% of the time, filler); Spree not checked.
+5. HIT at Hard (Yellow −14, the weakest); Very Hard not checked.
+6. HIT. 8% / 9% / 15% at 4 players.
+7. HIT. Pocket Watch rated fun 1-2 by both g11 holders.
+8. NOT SCORED (choice report tags by ring not tallied).
+Lesson: copy effects and last-placement joins decided the expert games and never showed in bot numbers (bots don't aim copies); a feel finding on an interaction card needs the expert games, not a bot prediction.
