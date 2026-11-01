@@ -198,3 +198,200 @@
 {"t":1793549992976,"type":"log","text":"New in the shop: Kingpin.","by":0}
 {"t":1793549992976,"type":"log","text":"Ava's turn is skipped (Sleep In).","by":0}
 {"t":1793549992976,"type":"log","text":"Ava's Pocket Watch: +1 purple.","by":0}
+{"t":1793549999204,"type":"move","seat":0,"round":2,"n":70,"kind":"place","option":"slot:0-1","label":"Purple · Hold Up → you'd get: +3 purple","think":"Hold Up +3, its skip lands on my own last turn for another Pocket Watch purple. I'll save the recruit and do one 10-buy at the end so Money Changers only pays Ben once.","prompt":"Ava: place a minion"}
+{"t":1793549999204,"type":"log","text":"Ava took Hold Up (Purple).","by":0}
+{"t":1793549999204,"type":"log","text":"Ava's Hold Up: +3 purple.","by":0}
+{"t":1793549999204,"type":"log","text":"Ava's Hold Up: Ava skips their next turn.","by":0}
+{"t":1793550004760,"type":"move","seat":0,"round":2,"n":71,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Gossip tempted me with all the skips around, but it's 6 for 1 follower and needs 4+ skips in round III just to break even. Passing to do one 10-buy at the end.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550004760,"type":"log","text":"Ava passed.","by":0}
+{"t":1793550004760,"type":"log","text":"Ava's turn is skipped (Hold Up).","by":0}
+{"t":1793550004760,"type":"log","text":"Ava's Pocket Watch: +1 purple.","by":0}
+{"t":1793550012485,"type":"move","seat":0,"round":2,"n":72,"kind":"place","option":"slot:0-2","label":"Purple · Right Away → you'd get: +6 purple","think":"Right Away +2 plus Closer +4 gets me to 15. Splurge into HR was close (about 9 followers) but a straight 10-buy keeping 5 purple is better by a point or two.","prompt":"Ava: place a minion"}
+{"t":1793550012485,"type":"log","text":"Ava took Right Away (Purple).","by":0}
+{"t":1793550012485,"type":"log","text":"Ava's Right Away: +2 purple.","by":0}
+{"t":1793550012485,"type":"log","text":"Ava's Closer: +4 purple.","by":0}
+{"t":1793550012485,"type":"log","text":"Ava has no minions left to place: Right Away does nothing.","by":0}
+{"t":1793550016687,"type":"move","seat":0,"round":2,"n":73,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"One 10-for-10 buy, one Money Changers trigger for Ben (6 white, still under Cal). Keeps 5 purple to win this contest and seed round III.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550016687,"type":"say","seat":0,"text":"Last Call into Sleep In, Hold Up and Right Away with nobody left to answer was a lot: roughly 20 purple across the round. I think Last Call is the strongest round II space with Pocket Watch in play."}
+{"t":1793550019089,"type":"move","seat":0,"round":2,"n":74,"kind":"pay","option":"pay:10-0-0","label":"Pay 10 purple (suggested)","think":"pay","prompt":"Ava: choose how to pay for 10 followers"}
+{"t":1793550019089,"type":"log","text":"Ava bought 10 followers (10 purple).","by":0}
+{"t":1793550019089,"type":"log","text":"Ben's Money Changers: +1 white.","by":0}
+{"t":1793550019089,"type":"log","text":"Round II ends. Most purple: Ava +6 · Most magenta: Ben & Cal +3 · Most white: Cal +6","by":0}
+{"t":1793550019089,"type":"log","text":"The member market refreshes for round III.","by":0}
+{"t":1793550019089,"type":"log","text":"Round III begins. Ava picks first. (Ava's Line Cutters: always picks first.)","by":0}
+{"t":1793550019089,"type":"log","text":"New in the shop: Heiresses, Desperado, Hoarder, Alchemists, Hot Streak, Sticky Fingers, Old Maid, Bodyguards.","by":0}
+{"t":1793550022474,"type":"move","seat":2,"round":3,"n":75,"kind":"choose","option":"take:1:magenta","label":"Ben's magenta (6) — value hint 7.1","think":"Ben's magenta breaks the 6-6 tie: 8 to 5 with Fence.","prompt":"Cutpurse: choose a resource to steal. (1 left)"}
+{"t":1793550022474,"type":"log","text":"Cal's Fence: +1 magenta.","by":2}
+{"t":1793550022474,"type":"log","text":"Cal's Cutpurse stole 1 (1 magenta from Ben).","by":2}
+{"t":1793550039991,"type":"move","seat":0,"round":3,"n":76,"kind":"place","option":"slot:0-4","label":"Purple · Last Call → you'd get: +5 purple; +4 followers","think":"Last Call again: +5 purple, +4 followers, four skips feed Pocket Watch, and it makes me the last placer so Closer fires. The danger is ten rival turns of Crime Wave and Help Yourself on a big purple pile, so I'll cash the 10 purple straight into followers now and rebuild purple at the end when nobody can answer.","prompt":"Ava: place a minion"}
+{"t":1793550039991,"type":"log","text":"Ava took Last Call (Purple).","by":0}
+{"t":1793550039991,"type":"log","text":"Ava's Last Call: +5 purple.","by":0}
+{"t":1793550039991,"type":"log","text":"Ava's Last Call: +4 followers.","by":0}
+{"t":1793550039991,"type":"log","text":"Ava's Last Call: Ava goes last this round.","by":0}
+{"t":1793550056783,"type":"move","seat":0,"round":3,"n":77,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Hot Streak caught my eye: I'll take four turns in a row at the end, so it could pay +9. But buying it now leaves it and 5 purple sitting out for ten rival turns of Poach and steals. Banking 10 safe followers; if Hot Streak survives to my run I'll grab it on the first of those four turns.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550060610,"type":"move","seat":0,"round":3,"n":78,"kind":"pay","option":"pay:10-0-0","label":"Pay 10 purple (suggested) — spending this gives up your contest lead in purple","think":"pay; I'll rebuild purple in my closing run","prompt":"Ava: choose how to pay for 10 followers"}
+{"t":1793550060610,"type":"say","seat":0,"text":"Hot Streak looks scary in the hands of whoever ends a round with a long run of turns. Worth watching who can set that up."}
+{"t":1793550060610,"type":"log","text":"Ava bought 10 followers (10 purple).","by":0}
+{"t":1793550060610,"type":"log","text":"Ben's Money Changers: +1 white.","by":0}
+{"t":1793550074478,"type":"move","seat":2,"round":3,"n":79,"kind":"place","option":"slot:1-2","label":"Magenta · Lie Low → you'd get: +0..1 purple, +2..3 magenta, +0..1 white; rivals together -1..0 purple, -1..0 magenta, -1..0 white; then you choose: Lie Low: choose a resource to steal.","think":"Ava is at 40 with four placements stacked at the very end, and with 0 resources her only way to hurt me is stealing. Lie Low first again, so my magenta and white leads only have to beat Ben's spaces, not Ava's steals.","prompt":"Cal: place a minion"}
+{"t":1793550074478,"type":"say","seat":2,"text":"Ava, Last Call into a 10-follower buy two rounds running is the strongest line I've seen in this game. Last Call with Pocket Watch and Closer pays three ways off one space."}
+{"t":1793550074478,"type":"log","text":"Cal took Lie Low (Magenta).","by":2}
+{"t":1793550074478,"type":"log","text":"Cal's Lie Low: +1 magenta.","by":2}
+{"t":1793550074478,"type":"log","text":"Cal lies low: safe from thieves until round end.","by":2}
+{"t":1793550076958,"type":"move","seat":2,"round":3,"n":80,"kind":"choose","option":"take:1:white","label":"Ben's white (6) — value hint 7.1","think":"Ben's white: white is the close contest, 7-6, this makes it 8-5.","prompt":"Lie Low: choose a resource to steal. (1 left)"}
+{"t":1793550076958,"type":"log","text":"Cal's Fence: +1 magenta.","by":2}
+{"t":1793550076958,"type":"log","text":"Cal stole 1 (1 white from Ben).","by":2}
+{"t":1793550094210,"type":"move","seat":2,"round":3,"n":81,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"In round III no member here beats buying followers 1:1, and I have four recruits left to convert with. Hold the pile for the two contests until I see which one Ben fights.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793550094210,"type":"log","text":"Cal passed.","by":2}
+{"t":1793550139329,"type":"move","seat":1,"round":3,"n":82,"kind":"place","option":"slot:0-3","label":"Purple · Crowd In → you'd get: +3 purple; 1 extra turns","think":"Ava is at 40 and holds nothing, so Purple is the +10 I can take from her if I hoard it. Crowd In first: +3 purple and an extra minion that lands after her four-in-a-row, the only seat that can answer Last Call. Next I need Bodyguards before anyone steals my stack.","prompt":"Ben: place a minion"}
+{"t":1793550139329,"type":"say","seat":1,"text":"Ava's line is the story of this game so far: Last Call plus Pocket Watch plus a 10-buy twice. Cal and I both lie open to her four placements at the end, which feels like too much reach from one space."}
+{"t":1793550139329,"type":"log","text":"Ben took Crowd In (Purple).","by":1}
+{"t":1793550139329,"type":"log","text":"Ben's Crowd In: +3 purple.","by":1}
+{"t":1793550139329,"type":"log","text":"Ben's Crowd In: Ben gets 1 more minion this round.","by":1}
+{"t":1793550143755,"type":"move","seat":1,"round":3,"n":83,"kind":"buy","option":"card:16","label":"Recruit Bodyguards [5 magenta + 3 any; you pay 8 (5 magenta + 3 any); worth 2] — Rivals can’t steal from you.","think":"Crowd In's minion lands before Ava, not after, so I can't answer her; I have to be unstealable instead. Bodyguards shuts off Help Yourself, Crime Wave and Cutpurse on me, and with Cal behind Lie Low, Ava's four placements can't steal from anyone.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550146562,"type":"move","seat":1,"round":3,"n":84,"kind":"pay","option":"pay:0-5-3","label":"Pay 5 magenta, 3 white (suggested)","think":"keep purple for the contest","prompt":"Ben: choose how to pay for Bodyguards"}
+{"t":1793550146562,"type":"log","text":"Ben recruited Bodyguards (5 magenta, 3 white).","by":1}
+{"t":1793550146562,"type":"log","text":"New in the shop: Old Money.","by":1}
+{"t":1793550146562,"type":"log","text":"Ben's Courier: +1 magenta, +1 white.","by":1}
+{"t":1793550160972,"type":"move","seat":1,"round":3,"n":85,"kind":"place","option":"slot:1-5","label":"Magenta · Poach → you'd get: +1 magenta; +1..3 followers; +1..3 members; rivals followers -3..-1; then you choose: Poach: recruit which member?","think":"Poach before Cal can: Bodyguards stops steals, not Poach, and Cal taking my Bodyguards would open me to Ava's whole run. Line Cutters is a 6-point swing against the leader.","prompt":"Ben: place a minion"}
+{"t":1793550160972,"type":"log","text":"Ben took Poach (Magenta).","by":1}
+{"t":1793550160972,"type":"log","text":"Ben's Poach: +1 magenta.","by":1}
+{"t":1793550163763,"type":"move","seat":1,"round":3,"n":86,"kind":"choose","option":"card:33","label":"Ava's Line Cutters (2) — value hint 7.5","think":"Line Cutters: 3 off Ava, 3 to me. Closer was tempting to blunt her purple, but I can out-place her on purple spaces.","prompt":"Poach: recruit which member?"}
+{"t":1793550163763,"type":"log","text":"Ben pulled a heist: Ava's Line Cutters.","by":1}
+{"t":1793550174126,"type":"move","seat":1,"round":3,"n":87,"kind":"buy","option":"card:8","label":"Recruit Hot Streak [2 purple + 3 any; you pay 5 (2 purple + 3 any); worth 1] — On Use, once per game: +3 followers per turn in a row you’ve taken just before this one.","think":"Hate-draft: Ava's four placements in a row would make Hot Streak +9 for her. For me it's at least +3 on a double turn, so 5 resources for ~4 followers plus denying ~9 is fine.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550174126,"type":"say","seat":1,"text":"Ava called it on Hot Streak; the person it's scariest for is whoever has Last Call in round III, and that's you."}
+{"t":1793550177018,"type":"move","seat":1,"round":3,"n":88,"kind":"pay","option":"pay:2-2-1","label":"Pay 2 purple, 2 magenta, 1 white","think":"magenta is dead money vs Cal's 10","prompt":"Ben: choose how to pay for Hot Streak"}
+{"t":1793550177018,"type":"log","text":"Ben recruited Hot Streak (2 purple, 2 magenta, 1 white).","by":1}
+{"t":1793550177018,"type":"log","text":"New in the shop: Double Agent.","by":1}
+{"t":1793550186588,"type":"move","seat":1,"round":3,"n":89,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Saving Hot Streak: Crunch Time on turn 8 should pull my last two turns up, giving 7-8-11-12 in a row and +9 on the last one instead of +3 now.","prompt":"Ben: use a member, or finish your turn"}
+{"t":1793550186588,"type":"say","seat":1,"text":"Double Agent just came out, and it gets around Bodyguards since it's a swap, not a steal. That seems like the right kind of counter."}
+{"t":1793550186588,"type":"log","text":"Ben passed.","by":1}
+{"t":1793550220758,"type":"move","seat":2,"round":3,"n":90,"kind":"place","option":"slot:2-0","label":"White · Allowance → you'd get: +4 white","think":"Ben's threat to white is Estate Sale on Bodyguards for 9 white, so on this double turn I take Allowance (with Alchemists for +3 on top of its 3) and then Estate Sale myself. That leaves Ben only the +1 white spaces.","prompt":"Cal: place a minion"}
+{"t":1793550220758,"type":"log","text":"Cal took Allowance (White).","by":2}
+{"t":1793550220758,"type":"log","text":"Cal's Allowance: +4 white.","by":2}
+{"t":1793550226704,"type":"move","seat":2,"round":3,"n":91,"kind":"buy","option":"card:31","label":"Recruit Alchemists [5 any; you pay 5 (5 any); worth 3] — All your resources count as any when you recruit a member.","think":"Alchemists is 3 followers plus Allowance's 3 for 5 resources, better than any buy.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793550232483,"type":"move","seat":2,"round":3,"n":92,"kind":"pay","option":"pay:0-1-4","label":"Pay 1 magenta, 4 white","think":"keep magenta high against Ava's four end placements","prompt":"Cal: choose how to pay for Alchemists"}
+{"t":1793550232483,"type":"log","text":"Cal recruited Alchemists (1 magenta, 4 white).","by":2}
+{"t":1793550232483,"type":"log","text":"Cal's Allowance: +3 followers for recruiting a member.","by":2}
+{"t":1793550232483,"type":"log","text":"New in the shop: Dabblers.","by":2}
+{"t":1793550232483,"type":"log","text":"Ava's turn is skipped (Last Call).","by":2}
+{"t":1793550232483,"type":"log","text":"Ava's Pocket Watch: +1 purple.","by":2}
+{"t":1793550232483,"type":"log","text":"Ava's turn is skipped (Last Call).","by":2}
+{"t":1793550232483,"type":"log","text":"Ava's Pocket Watch: +1 purple.","by":2}
+{"t":1793550237961,"type":"move","seat":2,"round":3,"n":93,"kind":"place","option":"slot:2-4","label":"White · Estate Sale → you'd get: +1..6 white; +-3..0 followers; +-3..0 members; then you choose: Estate Sale: cast out which member?","think":"Estate Sale now: Cutpurse has no round starts left, so it's worth more as 4 white, and it takes away Ben's Bodyguards-for-9-white swing before his double turn.","prompt":"Cal: place a minion"}
+{"t":1793550237961,"type":"log","text":"Cal took Estate Sale (White).","by":2}
+{"t":1793550237961,"type":"log","text":"Cal's Estate Sale: +1 white.","by":2}
+{"t":1793550240090,"type":"move","seat":2,"round":3,"n":94,"kind":"choose","option":"card:10","label":"Cutpurse [1 magenta + 2 any; worth 1] — On Recruit: steal 1 resource from the rival with the most resources. Round Start: steal 1 resource from the rival with the most resources.","think":"Cutpurse","prompt":"Estate Sale: cast out which member?"}
+{"t":1793550240090,"type":"log","text":"Cal sent Cutpurse to the bottom of the pile.","by":2}
+{"t":1793550240090,"type":"log","text":"Cal's Estate Sale: Cutpurse paid 3 white.","by":2}
+{"t":1793550251874,"type":"move","seat":2,"round":3,"n":95,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Convert 5 of the 12 white now; 7 white still beats Ben's 2 plus every +1 white space he can reach. Recruits are running out, so each one has to turn something into followers.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793550253895,"type":"move","seat":2,"round":3,"n":96,"kind":"pay","option":"pay:0-0-5","label":"Pay 5 white","think":"all white","prompt":"Cal: choose how to pay for 5 followers"}
+{"t":1793550253895,"type":"log","text":"Cal bought 5 followers (5 white).","by":2}
+{"t":1793550253895,"type":"log","text":"Ben's Money Changers: +1 white.","by":2}
+{"t":1793550294290,"type":"move","seat":1,"round":3,"n":97,"kind":"place","option":"slot:0-2","label":"Purple · Right Away → you'd get: +3 purple","think":"Setting up a run: Right Away now, Crunch Time next pulls my last two turns up, so I go four in a row and Hot Streak pays +9 on the last one, with Sleep In there because a skip on my final turn costs nothing. Purple ends around 16 against Ava's Closer-plus-Hold-Up ceiling of about 9.","prompt":"Ben: place a minion"}
+{"t":1793550294291,"type":"log","text":"Ben took Right Away (Purple).","by":1}
+{"t":1793550294291,"type":"log","text":"Ben's Right Away: +3 purple.","by":1}
+{"t":1793550294291,"type":"log","text":"Ben's Right Away: Ben takes their next turn now.","by":1}
+{"t":1793550297356,"type":"move","seat":1,"round":3,"n":98,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"free follower via Money Changers","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550297463,"type":"move","seat":1,"round":3,"n":99,"kind":"pay","option":"pay:0-0-1","label":"Pay 1 white (suggested)","think":"white","prompt":"Ben: choose how to pay for 1 followers"}
+{"t":1793550297464,"type":"log","text":"Ben bought 1 follower (1 white).","by":1}
+{"t":1793550297464,"type":"log","text":"Ben's Money Changers: +1 white.","by":1}
+{"t":1793550297464,"type":"log","text":"Ben's Courier: +1 magenta, +1 white.","by":1}
+{"t":1793550300801,"type":"move","seat":1,"round":3,"n":100,"kind":"place","option":"slot:0-5","label":"Purple · Crunch Time → you'd get: +2 purple","think":"Crunch Time pulls my last turn up ahead of Cal: four in a row for Hot Streak.","prompt":"Ben: place a minion"}
+{"t":1793550300801,"type":"log","text":"Ben took Crunch Time (Purple).","by":1}
+{"t":1793550300801,"type":"log","text":"Ben's Crunch Time: +2 purple.","by":1}
+{"t":1793550300801,"type":"log","text":"Ben's Crunch Time: Ben takes their next 2 turns now.","by":1}
+{"t":1793550319280,"type":"move","seat":1,"round":3,"n":101,"kind":"buy","option":"card:22","label":"Recruit Heiresses [4 white + 5 any; you pay 9 (4 white + 5 any); worth 2] — On Use, once per game: +1 white per member you have.","think":"Didn't see this coming: Heiresses counts members, not white members, and I'm at 8 members (Line Cutters and Bodyguards are fat), so with it I use it for +10 white and take White off Cal's 7. Cal has only 2 placements left and none of the open white spaces give more than +1.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550321307,"type":"move","seat":1,"round":3,"n":102,"kind":"pay","option":"pay:4-1-4","label":"Pay 4 purple, 1 magenta, 4 white (suggested)","think":"keep purple","prompt":"Ben: choose how to pay for Heiresses"}
+{"t":1793550321307,"type":"log","text":"Ben recruited Heiresses (4 purple, 1 magenta, 4 white).","by":1}
+{"t":1793550321307,"type":"log","text":"New in the shop: Extra Hand.","by":1}
+{"t":1793550325170,"type":"move","seat":1,"round":3,"n":103,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Nobody can steal from me, so Heiresses can wait until I've added any more members.","prompt":"Ben: use a member, or finish your turn"}
+{"t":1793550325170,"type":"log","text":"Ben passed.","by":1}
+{"t":1793550325170,"type":"log","text":"Ben's Courier: +1 magenta, +1 white.","by":1}
+{"t":1793550331648,"type":"move","seat":1,"round":3,"n":104,"kind":"place","option":"slot:1-4","label":"Magenta · Shake Down → you'd get: +1 magenta; +1 followers; +1 members; rivals followers -1","think":"Shake Down on Ava: Closer is her only member and she has 2 purple, so she can't pay 5 and I take it. That kills her +4 purple on the last placement and adds a member for Heiresses.","prompt":"Ben: place a minion"}
+{"t":1793550331648,"type":"log","text":"Ben took Shake Down (Magenta).","by":1}
+{"t":1793550331648,"type":"log","text":"Ben's Shake Down: +1 magenta.","by":1}
+{"t":1793550331648,"type":"log","text":"Ava couldn't pay 5 (held 2), so lost Closer to Ben.","by":1}
+{"t":1793550336747,"type":"move","seat":1,"round":3,"n":105,"kind":"buy","option":"card:35","label":"Recruit Dabblers [3 any; you pay 3 (3 any); worth 2] — Counts as 2 wild members.","think":"Dabblers: 3 non-purple dots for 2 followers and 2 more members, which is +2 white when Heiresses goes off.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550338758,"type":"move","seat":1,"round":3,"n":106,"kind":"pay","option":"pay:0-2-1","label":"Pay 2 magenta, 1 white (suggested)","think":"keep purple","prompt":"Ben: choose how to pay for Dabblers"}
+{"t":1793550338758,"type":"log","text":"Ben recruited Dabblers (2 magenta, 1 white).","by":1}
+{"t":1793550338758,"type":"log","text":"New in the shop: Raiders.","by":1}
+{"t":1793550342844,"type":"move","seat":1,"round":3,"n":107,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Both once-per-game uses wait for the fourth turn of the run.","prompt":"Ben: use a member, or finish your turn"}
+{"t":1793550342844,"type":"log","text":"Ben passed.","by":1}
+{"t":1793550342844,"type":"log","text":"Ben's Courier: +1 magenta, +1 white.","by":1}
+{"t":1793550352843,"type":"move","seat":1,"round":3,"n":108,"kind":"place","option":"use:8","label":"Use Hot Streak — On Use, once per game: +3 followers per turn in a row you’ve taken just before this one.","think":"Fourth turn in a row: Hot Streak for +9.","prompt":"Ben: place a minion"}
+{"t":1793550352843,"type":"log","text":"Ben's Hot Streak: +9 followers.","by":1}
+{"t":1793550360322,"type":"move","seat":1,"round":3,"n":109,"kind":"place","option":"slot:0-0","label":"Purple · Sleep In → you'd get: +6 purple","think":"Sleep In to 10 purple; with Closer gone, Ava tops out around 8 from Hold Up and Pocket Watch. The skip lands on nothing since this is my last minion.","prompt":"Ben: place a minion"}
+{"t":1793550360322,"type":"log","text":"Ben took Sleep In (Purple).","by":1}
+{"t":1793550360322,"type":"log","text":"Ben's Sleep In: +6 purple.","by":1}
+{"t":1793550360322,"type":"log","text":"Ben's Sleep In: no turn left to skip this round.","by":1}
+{"t":1793550367736,"type":"move","seat":1,"round":3,"n":110,"kind":"buy","option":"use:22","label":"Use Heiresses — On Use, once per game: +1 white per member you have.","think":"Heiresses now: 13 members' worth of white.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550367736,"type":"log","text":"Ben used Heiresses: +13 white.","by":1}
+{"t":1793550396361,"type":"move","seat":1,"round":3,"n":111,"kind":"buy","option":"tier:mid","label":"Buy followers: 5 of anything, pay 5 get +5","think":"Last recruit of my game. Ava tops out at 7 purple (2 + Hold Up 4 + her own skip), Cal around 9 white without blowing up his magenta with Hoarder, so I can spare 2 purple, the magenta and 2 white for 5 followers and still hold both.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550400345,"type":"move","seat":1,"round":3,"n":112,"kind":"pay","option":"pay:2-1-2","label":"Pay 2 purple, 1 magenta, 2 white","think":"8 purple, 12+1 white left","prompt":"Ben: choose how to pay for 5 followers"}
+{"t":1793550400345,"type":"say","seat":1,"text":"Heiresses reads as a white card but it scales off total members, and Line Cutters plus Bodyguards plus Dabblers made it +13 white for me. That felt a bit too easy for a once-per-game."}
+{"t":1793550400345,"type":"log","text":"Ben bought 5 followers (2 purple, 1 magenta, 2 white).","by":1}
+{"t":1793550400345,"type":"log","text":"Ben's Money Changers: +1 white.","by":1}
+{"t":1793550439602,"type":"move","seat":2,"round":3,"n":113,"kind":"place","option":"slot:1-1","label":"Magenta · Stash → you'd get: +5 magenta","think":"Ben's 13 white and 8 purple are out of reach, but Stash plus Raiders is the swing: Stash takes away Ava's only real magenta source, then Raiders gives me 2 + Stash's 3 + 4 stolen from Ben. Projected me ~66 to Ben ~64 if I Exchange and buy 10 next turn.","prompt":"Cal: place a minion"}
+{"t":1793550439602,"type":"say","seat":2,"text":"That Heiresses turn was something: 13 white from a once-per-game on a wide cult. It reads like a white card but it pays for member count."}
+{"t":1793550439602,"type":"log","text":"Cal took Stash (Magenta).","by":2}
+{"t":1793550439602,"type":"log","text":"Cal's Stash: +5 magenta.","by":2}
+{"t":1793550445739,"type":"move","seat":2,"round":3,"n":114,"kind":"buy","option":"card:25","label":"Recruit Raiders [2 white + 3 any; you pay 5 (5 any); worth 2] — On Use, once per game: steal 4 followers from the leader. Pay them 2 white.","think":"Raiders: 2 followers, +3 from Stash, and 4 stolen from Ben the leader.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793550447942,"type":"move","seat":2,"round":3,"n":115,"kind":"pay","option":"pay:0-5-0","label":"Pay 5 magenta","think":"pay in magenta, keep white for the Raiders payment","prompt":"Cal: choose how to pay for Raiders"}
+{"t":1793550447942,"type":"log","text":"Cal recruited Raiders (5 magenta; Alchemists: colored part in any colors).","by":2}
+{"t":1793550447942,"type":"log","text":"Cal's Stash: +3 followers for recruiting a member.","by":2}
+{"t":1793550447942,"type":"log","text":"New in the shop: Exporters.","by":2}
+{"t":1793550449865,"type":"move","seat":2,"round":3,"n":116,"kind":"buy","option":"use:25","label":"Use Raiders — On Use, once per game: steal 4 followers from the leader. Pay them 2 white.","think":"Ben is the leader, take 4","prompt":"Cal: use a member, or finish your turn"}
+{"t":1793550449865,"type":"log","text":"Cal's Raiders stole 4 followers from Ben and paid 2 white.","by":2}
+{"t":1793550449865,"type":"log","text":"Ava's turn is skipped (Last Call).","by":2}
+{"t":1793550449865,"type":"log","text":"Ava's Pocket Watch: +1 purple.","by":2}
+{"t":1793550449865,"type":"log","text":"Ava's turn is skipped (Last Call).","by":2}
+{"t":1793550449865,"type":"log","text":"Ava's Pocket Watch: +1 purple.","by":2}
+{"t":1793550463450,"type":"move","seat":2,"round":3,"n":117,"kind":"place","option":"slot:2-2","label":"White · Exchange → you'd get: -3..0 magenta, -2..1 white; +0..6 followers; then you choose: Exchange: turn which resource into 2 followers?","think":"Leaving Ava's purple alone on purpose: with Hold Up she can reach 9 and take purple off Ben's 8, which only helps me. Exchange 3 for 6, then buy 10 keeping 2 magenta; Ava's only magenta left is Crime Wave's +1.","prompt":"Cal: place a minion"}
+{"t":1793550463451,"type":"say","seat":2,"text":"Raiders on the last swing felt like the right kind of catch-up card: it only works because Ben was clearly ahead."}
+{"t":1793550463451,"type":"log","text":"Cal took Exchange (White).","by":2}
+{"t":1793550463451,"type":"log","text":"Cal's Exchange: +1 white.","by":2}
+{"t":1793550466108,"type":"move","seat":2,"round":3,"n":118,"kind":"choose","option":"color:white","label":"1 white → 2 followers — value hint 1.43","think":"white","prompt":"Exchange: turn which resource into 2 followers? (3 left)"}
+{"t":1793550466108,"type":"log","text":"Cal's Exchange: 1 white became 2 followers.","by":2}
+{"t":1793550466188,"type":"move","seat":2,"round":3,"n":119,"kind":"choose","option":"color:white","label":"1 white → 2 followers — value hint 1.42","think":"white","prompt":"Exchange: turn which resource into 2 followers? (2 left)"}
+{"t":1793550466188,"type":"log","text":"Cal's Exchange: 1 white became 2 followers.","by":2}
+{"t":1793550466265,"type":"move","seat":2,"round":3,"n":120,"kind":"choose","option":"color:white","label":"1 white → 2 followers — value hint 1.41","think":"white","prompt":"Exchange: turn which resource into 2 followers? (1 left)"}
+{"t":1793550466265,"type":"log","text":"Cal's Exchange: 1 white became 2 followers.","by":2}
+{"t":1793550471710,"type":"move","seat":2,"round":3,"n":121,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Buy 10, keep 2 magenta. Double Agent on Line Cutters only nets 5 against Ben; this nets 10.","prompt":"Cal: recruit a member or followers, or pass"}
+{"t":1793550473906,"type":"move","seat":2,"round":3,"n":122,"kind":"pay","option":"pay:0-7-3","label":"Pay 7 magenta, 3 white (suggested)","think":"keep 2 magenta","prompt":"Cal: choose how to pay for 10 followers"}
+{"t":1793550473906,"type":"log","text":"Cal bought 10 followers (7 magenta, 3 white).","by":2}
+{"t":1793550473906,"type":"log","text":"Ben's Money Changers: +1 white.","by":2}
+{"t":1793550489588,"type":"move","seat":0,"round":3,"n":123,"kind":"place","option":"slot:0-1","label":"Purple · Hold Up → you'd get: +4 purple","think":"That round went badly: Ben poached Line Cutters and Shake Down took Closer because I'd converted everything and held only 2. Now purple is the only contest I can take: Hold Up +4 ties Ben at 8, and its skip on my own next turn pays Pocket Watch to 9.","prompt":"Ava: place a minion"}
+{"t":1793550489588,"type":"say","seat":0,"text":"I underrated how exposed an empty pile makes you to Shake Down: I couldn't pay 5 so Closer just walked. And Ben's Crunch Time into Hot Streak was the exact line I flagged and then didn't deny."}
+{"t":1793550489588,"type":"log","text":"Ava took Hold Up (Purple).","by":0}
+{"t":1793550489588,"type":"log","text":"Ava's Hold Up: +4 purple.","by":0}
+{"t":1793550489588,"type":"log","text":"Ava's Hold Up: Ava skips their next turn.","by":0}
+{"t":1793550492899,"type":"move","seat":0,"round":3,"n":124,"kind":"buy","option":"pass","label":"Pass (recruit nothing)","think":"Need every purple to clear Ben's 8.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550492899,"type":"log","text":"Ava passed.","by":0}
+{"t":1793550492899,"type":"log","text":"Ava's turn is skipped (Hold Up).","by":0}
+{"t":1793550492899,"type":"log","text":"Ava's Pocket Watch: +1 purple.","by":0}
+{"t":1793550498496,"type":"move","seat":0,"round":3,"n":125,"kind":"place","option":"slot:2-1","label":"White · Splurge → you'd get: +1 white","think":"9 purple beats Ben's 8. Rest is scraps: a white per space, converted to a follower each turn. Steals are dead since Ben has Bodyguards and Cal lies low.","prompt":"Ava: place a minion"}
+{"t":1793550498496,"type":"log","text":"Ava took Splurge (White).","by":0}
+{"t":1793550498496,"type":"log","text":"Ava's Splurge: +1 white.","by":0}
+{"t":1793550500915,"type":"move","seat":0,"round":3,"n":126,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"convert the white","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550502517,"type":"move","seat":0,"round":3,"n":127,"kind":"pay","option":"pay:0-0-1","label":"Pay 1 white (suggested)","think":"pay white","prompt":"Ava: choose how to pay for 1 followers"}
+{"t":1793550502517,"type":"log","text":"Ava bought 1 follower (1 white).","by":0}
+{"t":1793550502517,"type":"log","text":"Ben's Money Changers: +1 white.","by":0}
+{"t":1793550504590,"type":"move","seat":0,"round":3,"n":128,"kind":"place","option":"slot:2-3","label":"White · Farewell → you'd get: +1 white","think":"+1 white, then convert.","prompt":"Ava: place a minion"}
+{"t":1793550504590,"type":"log","text":"Ava took Farewell (White).","by":0}
+{"t":1793550504590,"type":"log","text":"Ava's Farewell: +1 white.","by":0}
+{"t":1793550504590,"type":"log","text":"Ava's Farewell: no members to send away.","by":0}
+{"t":1793550504662,"type":"move","seat":0,"round":3,"n":129,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"convert","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550506571,"type":"move","seat":0,"round":3,"n":130,"kind":"pay","option":"pay:0-0-1","label":"Pay 1 white (suggested)","think":"pay white","prompt":"Ava: choose how to pay for 1 followers"}
+{"t":1793550506571,"type":"log","text":"Ava bought 1 follower (1 white).","by":0}
+{"t":1793550506571,"type":"log","text":"Ben's Money Changers: +1 white.","by":0}
+{"t":1793550509838,"type":"move","seat":0,"round":3,"n":131,"kind":"place","option":"slot:2-5","label":"White · Cash In → you'd get: +1 white","think":"Last placement; one more white to turn into a follower.","prompt":"Ava: place a minion"}
+{"t":1793550509838,"type":"log","text":"Ava took Cash In (White).","by":0}
+{"t":1793550509838,"type":"log","text":"Ava's Cash In: +1 white.","by":0}
+{"t":1793550509838,"type":"log","text":"Ava's Cash In: no white to turn into followers.","by":0}
+{"t":1793550513102,"type":"move","seat":0,"round":3,"n":132,"kind":"buy","option":"tier:small","label":"Buy followers: 1 of anything, pay 1 get +1","think":"convert","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550513179,"type":"move","seat":0,"round":3,"n":133,"kind":"pay","option":"pay:0-0-1","label":"Pay 1 white (suggested)","think":"pay white","prompt":"Ava: choose how to pay for 1 followers"}
+{"t":1793550513179,"type":"log","text":"Ava bought 1 follower (1 white).","by":0}
+{"t":1793550513179,"type":"log","text":"Ben's Money Changers: +1 white.","by":0}
+{"t":1793550513179,"type":"log","text":"Round III ends. Most purple: Ava +10 · Most magenta: Cal +10 · Most white: Ben +10","by":0}
+{"t":1793550513179,"type":"log","text":"Game over. Cal wins with 66 followers.","by":0}

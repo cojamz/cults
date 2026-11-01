@@ -257,3 +257,133 @@
 {"t":1793549985194,"type":"move","seat":1,"round":3,"n":63,"kind":"pay","option":"pay:0-5","label":"Pay 5 purple (suggested)","think":"pay","prompt":"Ben: choose how to pay for Hot Streak"}
 {"t":1793549985194,"type":"log","text":"Ben recruited Hot Streak (5 purple).","by":1}
 {"t":1793549985194,"type":"log","text":"New in the shop: Closer.","by":1}
+{"t":1793550008841,"type":"move","seat":1,"round":3,"n":64,"kind":"place","option":"slot:1-5","label":"Purple · Crunch Time → you'd get: +2 purple","think":"Keep my run of turns unbroken for Hot Streak: Crunch, then Right Away, then Sleep In last so its self-skip lands on my final minion instead of mid-run. That leaves Ava only Hold Up among the purple spaces.","prompt":"Ben: place a minion"}
+{"t":1793550008841,"type":"log","text":"Ben took Crunch Time (Purple).","by":1}
+{"t":1793550008841,"type":"log","text":"Ben's Crunch Time: +2 purple.","by":1}
+{"t":1793550008841,"type":"log","text":"Ben's Crunch Time: Ben takes their next 2 turns now.","by":1}
+{"t":1793550048640,"type":"move","seat":1,"round":3,"n":65,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Crowd In's extra minion got folded into this run instead of coming last, so Ava places after me and Tribute Band can copy everything I'm on, probably 30+ purple. Holding purple to fight that would strand most of my pile; with 4 recruits left, converting 10 each time is worth more than the +10 contest.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550050552,"type":"move","seat":1,"round":3,"n":66,"kind":"pay","option":"pay:0-10","label":"Pay 10 purple (suggested)","think":"pay","prompt":"Ben: choose how to pay for 10 followers"}
+{"t":1793550050552,"type":"log","text":"Ben bought 10 followers (10 purple).","by":1}
+{"t":1793550057906,"type":"move","seat":1,"round":3,"n":67,"kind":"place","option":"slot:1-2","label":"Purple · Right Away → you'd get: +3 purple","think":"Right Away keeps the run going so Hot Streak hits for 3 prior turns next time; then Sleep In with my second-to-last minion so its skip pushes my final minion after Ava's turns.","prompt":"Ben: place a minion"}
+{"t":1793550057906,"type":"log","text":"Ben took Right Away (Purple).","by":1}
+{"t":1793550057907,"type":"log","text":"Ben's Right Away: +3 purple.","by":1}
+{"t":1793550057907,"type":"log","text":"Ben's Right Away: Ben takes their next turn now.","by":1}
+{"t":1793550062506,"type":"move","seat":1,"round":3,"n":68,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Another 10; recruits are my bottleneck now, so each one should convert the maximum.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550062601,"type":"move","seat":1,"round":3,"n":69,"kind":"pay","option":"pay:0-10","label":"Pay 10 purple (suggested)","think":"pay","prompt":"Ben: choose how to pay for 10 followers"}
+{"t":1793550062601,"type":"log","text":"Ben bought 10 followers (10 purple).","by":1}
+{"t":1793550065839,"type":"move","seat":1,"round":3,"n":70,"kind":"place","option":"use:18","label":"Use Hot Streak — On Use, once per game: +3 followers per turn in a row you’ve taken just before this one.","think":"Cash Hot Streak now on the fourth turn of the run, before Sleep In's skip can confuse the count.","prompt":"Ben: place a minion"}
+{"t":1793550065839,"type":"log","text":"Ben's Hot Streak: +9 followers.","by":1}
+{"t":1793550069645,"type":"move","seat":1,"round":3,"n":71,"kind":"place","option":"slot:1-0","label":"Purple · Sleep In → you'd get: +6 purple","think":"Sleep In +6, and its skip should push my last minion behind Ava's four turns, giving me the final placement and recruit.","prompt":"Ben: place a minion"}
+{"t":1793550069645,"type":"log","text":"Ben took Sleep In (Purple).","by":1}
+{"t":1793550069645,"type":"log","text":"Ben's Sleep In: +6 purple.","by":1}
+{"t":1793550069645,"type":"log","text":"Ben's Sleep In: Ben skips their next turn.","by":1}
+{"t":1793550075381,"type":"move","seat":1,"round":3,"n":72,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Weighed Extra Hand for one more placement and recruit; it comes out about even with just converting 10 now, and this is surer.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550075471,"type":"move","seat":1,"round":3,"n":73,"kind":"pay","option":"pay:0-10","label":"Pay 10 purple (suggested)","think":"pay","prompt":"Ben: choose how to pay for 10 followers"}
+{"t":1793550075471,"type":"log","text":"Ben bought 10 followers (10 purple).","by":1}
+{"t":1793550075471,"type":"log","text":"Ben's turn is skipped (Sleep In).","by":1}
+{"t":1793550075471,"type":"log","text":"Ben's Gossip: +1 follower.","by":1}
+{"t":1793550075471,"type":"log","text":"Ben's Pocket Watch: +1 purple.","by":1}
+{"t":1793550082971,"type":"move","seat":1,"round":3,"n":74,"kind":"place","option":"slot:1-1","label":"Purple · Hold Up → you'd get: +4 purple","think":"Hold Up puts me at exactly 10 for one last 10-buy, takes the last purple space from Ava, and its skip lands on her turn for a Gossip follower.","prompt":"Ben: place a minion"}
+{"t":1793550082971,"type":"log","text":"Ben took Hold Up (Purple).","by":1}
+{"t":1793550082972,"type":"log","text":"Ben's Hold Up: +4 purple.","by":1}
+{"t":1793550082972,"type":"log","text":"Ben's Hold Up: Ava skips their next turn.","by":1}
+{"t":1793550088530,"type":"move","seat":1,"round":3,"n":75,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"Last recruit; 10 purple can't hold off a Tribute Band copy of my six purple spaces, so convert it all.","prompt":"Ben: recruit a member or followers, or pass"}
+{"t":1793550088613,"type":"move","seat":1,"round":3,"n":76,"kind":"pay","option":"pay:0-10","label":"Pay 10 purple (suggested) — spending this gives up your contest lead in purple","think":"pay","prompt":"Ben: choose how to pay for 10 followers"}
+{"t":1793550088613,"type":"log","text":"Ben bought 10 followers (10 purple).","by":1}
+{"t":1793550088613,"type":"log","text":"Ava's turn is skipped (Hold Up).","by":1}
+{"t":1793550088613,"type":"log","text":"Ben's Gossip: +1 follower.","by":1}
+{"t":1793550088613,"type":"log","text":"Ben's Pocket Watch: +1 purple.","by":1}
+{"t":1793550104822,"type":"move","seat":0,"round":3,"n":77,"kind":"place","option":"use:6","label":"Use Tribute Band — On Use, once per game: choose a rival. Do every action they have a minion on this round.","think":"Ben jumped to 104 with four 10-buys plus Hot Streak; I have to cash everything. Tribute Band now, before placing, so its Last Call counts all 4 of my minions and Crowd In adds a fifth placement/recruit. The purple refills my pile too.","prompt":"Ava: place a minion"}
+{"t":1793550104822,"type":"say","seat":0,"text":"Ben went from 44 to 104 in one round. Crunch Time into Right Away plus Hot Streak plus four 10-buys off Last Call purple is a huge round; purple's tempo cards turn into recruits really efficiently."}
+{"t":1793550104822,"type":"log","text":"Ava's Tribute Band plays Ben's actions.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Tribute Band: Ava copies Last Call (Ben's): doing it again.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Impressionist: +1 purple.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Last Call: +4 followers.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Last Call: Ava goes last this round.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Tribute Band: Ava copies Crowd In (Ben's): doing it again.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Impressionist: +1 purple.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Crowd In: Ava gets 1 more minion this round.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Tribute Band: Ava copies Crunch Time (Ben's): doing it again.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Impressionist: +1 purple.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Crunch Time: Ava takes their next 2 turns now.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Tribute Band: Ava copies Right Away (Ben's): doing it again.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Impressionist: +1 purple.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Right Away: Ava takes their next turn now.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Tribute Band: Ava copies Sleep In (Ben's): doing it again.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Impressionist: +1 purple.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Sleep In: Ava skips their next turn.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Tribute Band: Ava copies Hold Up (Ben's): doing it again.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Impressionist: +1 purple.","by":0}
+{"t":1793550104822,"type":"log","text":"Ava's Hold Up: Ava skips their next turn.","by":0}
+{"t":1793550115742,"type":"move","seat":0,"round":3,"n":78,"kind":"place","option":"slot:0-5","label":"Green · Greatest Hits → you'd get: +17 green; then you choose: Greatest Hits: copy which member's On Recruit first? (4 to go); Greatest Hits: copy which member's On Recruit first? (3 to go); Greatest Hits: copy which member's On Recruit first? (2 to go)","think":"Tribute Band paid 4 followers, 6 purple-ish plus Impressionist, and an extra minion: 58 resources, 5 recruits left. Plan is simply five 10-buys while holding both contests. Greatest Hits for the biggest pile first.","prompt":"Ava: place a minion"}
+{"t":1793550115742,"type":"log","text":"Ava took Greatest Hits (Green).","by":0}
+{"t":1793550115742,"type":"log","text":"Ava's Greatest Hits: +1 green.","by":0}
+{"t":1793550118028,"type":"move","seat":0,"round":3,"n":79,"kind":"choose","option":"card:4","label":"Roadie [1 green + 2 any; worth 1] — On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.","think":"Roadie","prompt":"Greatest Hits: copy which member's On Recruit first? (4 to go)"}
+{"t":1793550118028,"type":"log","text":"Ava copies Roadie's On Recruit.","by":0}
+{"t":1793550118028,"type":"log","text":"Ava's Roadie: +12 green.","by":0}
+{"t":1793550122072,"type":"move","seat":0,"round":3,"n":80,"kind":"choose","option":"card:0","label":"Busker [1 green + 3 any; worth 1] — On Recruit: +2 green. Round Start: +2 green.","think":"Busker","prompt":"Greatest Hits: copy which member's On Recruit first? (3 to go)"}
+{"t":1793550122072,"type":"log","text":"Ava copies Busker's On Recruit.","by":0}
+{"t":1793550122072,"type":"log","text":"Ava's Busker: +2 green.","by":0}
+{"t":1793550122265,"type":"move","seat":0,"round":3,"n":81,"kind":"choose","option":"card:3","label":"Fan Club [2 green + 4 any; worth 3] — On Recruit: +1 green per Green space with anyone’s minion.","think":"Fan Club","prompt":"Greatest Hits: copy which member's On Recruit first? (2 to go)"}
+{"t":1793550122266,"type":"log","text":"Ava copies Fan Club's On Recruit.","by":0}
+{"t":1793550122266,"type":"log","text":"Ava's Fan Club: +2 green.","by":0}
+{"t":1793550122266,"type":"log","text":"Ava copies Stunt Double's On Recruit.","by":0}
+{"t":1793550127244,"type":"move","seat":0,"round":3,"n":82,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"10-buy; nothing in the shop beats 10 followers per recruit.","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550129578,"type":"move","seat":0,"round":3,"n":83,"kind":"pay","option":"pay:10-0","label":"Pay 10 green (suggested)","think":"green, plenty of both","prompt":"Ava: choose how to pay for 10 followers"}
+{"t":1793550129578,"type":"log","text":"Ava bought 10 followers (10 green).","by":0}
+{"t":1793550129578,"type":"log","text":"Ava's turn is skipped (Sleep In).","by":0}
+{"t":1793550129578,"type":"log","text":"Ben's Gossip: +1 follower.","by":0}
+{"t":1793550129578,"type":"log","text":"Ben's Pocket Watch: +1 purple.","by":0}
+{"t":1793550129578,"type":"log","text":"Ava's turn is skipped (Hold Up).","by":0}
+{"t":1793550129578,"type":"log","text":"Ben's Gossip: +1 follower.","by":0}
+{"t":1793550129578,"type":"log","text":"Ben's Pocket Watch: +1 purple.","by":0}
+{"t":1793550132020,"type":"move","seat":0,"round":3,"n":84,"kind":"place","option":"slot:0-0","label":"Green · Build Up → you'd get: +5 green","think":"Resources are surplus now; recruits are the cap. Build Up, then another 10-buy.","prompt":"Ava: place a minion"}
+{"t":1793550132020,"type":"log","text":"Ava took Build Up (Green).","by":0}
+{"t":1793550132020,"type":"log","text":"Ava's Build Up: +5 green.","by":0}
+{"t":1793550134058,"type":"move","seat":0,"round":3,"n":85,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"10-buy","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550134128,"type":"move","seat":0,"round":3,"n":86,"kind":"pay","option":"pay:9-1","label":"Pay 9 green, 1 purple (suggested)","think":"pay green","prompt":"Ava: choose how to pay for 10 followers"}
+{"t":1793550134128,"type":"log","text":"Ava bought 10 followers (9 green, 1 purple).","by":0}
+{"t":1793550134128,"type":"log","text":"Ava's turn is skipped (Last Call).","by":0}
+{"t":1793550134128,"type":"log","text":"Ben's Gossip: +1 follower.","by":0}
+{"t":1793550134128,"type":"log","text":"Ben's Pocket Watch: +1 purple.","by":0}
+{"t":1793550134128,"type":"log","text":"Ava's turn is skipped (Last Call).","by":0}
+{"t":1793550134128,"type":"log","text":"Ben's Gossip: +1 follower.","by":0}
+{"t":1793550134128,"type":"log","text":"Ben's Pocket Watch: +1 purple.","by":0}
+{"t":1793550134128,"type":"log","text":"Ava's turn is skipped (Last Call).","by":0}
+{"t":1793550134128,"type":"log","text":"Ben's Gossip: +1 follower.","by":0}
+{"t":1793550134128,"type":"log","text":"Ben's Pocket Watch: +1 purple.","by":0}
+{"t":1793550140363,"type":"move","seat":0,"round":3,"n":87,"kind":"place","option":"slot:0-2","label":"Green · Reprise → you'd get: +7..21 green; then you choose: Reprise: copy which of your spaces?; Echo: copy the previous action?; Greatest Hits: copy which member's On Recruit first? (4 to go); Greatest Hits: copy which member's On Recruit first? (3 to go); Greatest Hits: copy which member's On Recruit first? (2 to go)","think":"Reprise; the resources just pad the green lead. Those Last Call skips keep feeding Ben's Gossip a follower each, which stings.","prompt":"Ava: place a minion"}
+{"t":1793550140363,"type":"say","seat":0,"text":"Gossip plus Pocket Watch got paid for my own Tribute Band skips: every skip I take is a follower and a purple for Ben. Copying a rival's skip spaces is a trap with those two out."}
+{"t":1793550140363,"type":"log","text":"Ava took Reprise (Green).","by":0}
+{"t":1793550140363,"type":"log","text":"Ava's Reprise: +1 green.","by":0}
+{"t":1793550142391,"type":"move","seat":0,"round":3,"n":88,"kind":"choose","option":"space:now:0-0","label":"Build Up (Ava): +5 green — value hint 5","think":"Build Up, keep it simple","prompt":"Reprise: copy which of your spaces?"}
+{"t":1793550142391,"type":"log","text":"Ava copied Build Up: +5 green.","by":0}
+{"t":1793550142391,"type":"log","text":"Ava's Impressionist: +1 green.","by":0}
+{"t":1793550144494,"type":"move","seat":0,"round":3,"n":89,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"10-buy","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550144581,"type":"move","seat":0,"round":3,"n":90,"kind":"pay","option":"pay:9-1","label":"Pay 9 green, 1 purple (suggested)","think":"pay","prompt":"Ava: choose how to pay for 10 followers"}
+{"t":1793550144582,"type":"log","text":"Ava bought 10 followers (9 green, 1 purple).","by":0}
+{"t":1793550147512,"type":"move","seat":0,"round":3,"n":91,"kind":"place","option":"slot:0-4","label":"Green · Cover → you'd get: +3 green; then you choose: Cover: copy which empty action?; Encore: copy which rival member’s On Recruit?","think":"Cover, then Encore last.","prompt":"Ava: place a minion"}
+{"t":1793550147512,"type":"log","text":"Ava took Cover (Green).","by":0}
+{"t":1793550147512,"type":"log","text":"Ava's Cover: +1 green.","by":0}
+{"t":1793550149383,"type":"move","seat":0,"round":3,"n":92,"kind":"choose","option":"space:empty:0-3","label":"Encore: Copy the On Recruit of a rival’s member. +1 green. — value hint 4","think":"only option","prompt":"Cover: copy which empty action?"}
+{"t":1793550149383,"type":"log","text":"Ava copies Encore: doing it.","by":0}
+{"t":1793550149383,"type":"log","text":"Ava's Impressionist: +1 green.","by":0}
+{"t":1793550152517,"type":"move","seat":0,"round":3,"n":93,"kind":"choose","option":"card:14","label":"Bouncers [1 purple + 3 any; worth 2] — On Recruit: the next two rivals’ turns are skipped.","think":"Ben has no turns left, so this should skip nothing.","prompt":"Encore: copy which rival member’s On Recruit?"}
+{"t":1793550152517,"type":"log","text":"Ava copies Ben's Bouncers: its On Recruit.","by":0}
+{"t":1793550152517,"type":"log","text":"Ava's Bouncers: no rival has a turn left to skip this round.","by":0}
+{"t":1793550155396,"type":"move","seat":0,"round":3,"n":94,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"10-buy","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550155479,"type":"move","seat":0,"round":3,"n":95,"kind":"pay","option":"pay:6-4","label":"Pay 6 green, 4 purple (suggested)","think":"pay","prompt":"Ava: choose how to pay for 10 followers"}
+{"t":1793550155479,"type":"log","text":"Ava bought 10 followers (6 green, 4 purple).","by":0}
+{"t":1793550158177,"type":"move","seat":0,"round":3,"n":96,"kind":"place","option":"slot:0-3","label":"Green · Encore → you'd get: +1 green; then you choose: Encore: copy which rival member’s On Recruit?","think":"last space","prompt":"Ava: place a minion"}
+{"t":1793550158177,"type":"log","text":"Ava took Encore (Green).","by":0}
+{"t":1793550158177,"type":"log","text":"Ava's Encore: +1 green.","by":0}
+{"t":1793550160913,"type":"move","seat":0,"round":3,"n":97,"kind":"choose","option":"card:14","label":"Bouncers [1 purple + 3 any; worth 2] — On Recruit: the next two rivals’ turns are skipped.","think":"only option","prompt":"Encore: copy which rival member’s On Recruit?"}
+{"t":1793550160913,"type":"log","text":"Ava copies Ben's Bouncers: its On Recruit.","by":0}
+{"t":1793550160913,"type":"log","text":"Ava's Bouncers: no rival has a turn left to skip this round.","by":0}
+{"t":1793550164605,"type":"move","seat":0,"round":3,"n":98,"kind":"buy","option":"tier:top","label":"Buy followers: 10 of anything, pay 10 get +10","think":"last 10-buy; ~40 resources go to waste, which says round III recruits were my real limit","prompt":"Ava: recruit a member or followers, or pass"}
+{"t":1793550164605,"type":"say","seat":0,"text":"I'm ending with about 40 resources I can't convert. One recruit per turn makes the 10-buy cap the real ceiling in round III."}
+{"t":1793550164704,"type":"move","seat":0,"round":3,"n":99,"kind":"pay","option":"pay:6-4","label":"Pay 6 green, 4 purple (suggested)","think":"pay","prompt":"Ava: choose how to pay for 10 followers"}
+{"t":1793550164704,"type":"log","text":"Ava bought 10 followers (6 green, 4 purple).","by":0}
+{"t":1793550164704,"type":"log","text":"Round III ends. Most green: Ava +10 · Most purple: Ava +10","by":0}
+{"t":1793550164704,"type":"log","text":"Ava's Chronicler: +12 followers.","by":0}
+{"t":1793550164704,"type":"log","text":"Game over. Ava wins with 129 followers.","by":0}
