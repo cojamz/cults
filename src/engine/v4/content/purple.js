@@ -412,7 +412,7 @@ export default {
       onGameEnd: (ctx, owner) => Math.floor((owner.res[P] || 0) / 3),
     }),
     // Cory's Purple members (2026-10-22); names are Claude's fill-ins; prices are the pricing thread's educated guesses
-    m('earlybird', 'Early Bird', 2, 2, 'Your turns can’t be skipped.', { f: 2, noSkip: true }), // (Cory, Oct 29, balance run: +1 follower)
+    m('earlybird', 'Early Bird', 2, 0, 'Your turns can’t be skipped.', { f: 2, noSkip: true }), // (Cory, Oct 29, balance run: +1 follower)
     m('bouncer', 'Bouncer', 1, 2, 'On Recruit: the next two rivals’ turns are skipped.', {
       // the next two turns that belong to rivals; your own turn between them still happens (Cory's yes)
       onRecruited(ctx, owner) {
@@ -447,7 +447,7 @@ export default {
     }),
     // Cory, 2026-10-23: "its when you place THE last minion of the round. so it benefits folks going last"
     // Cory, 2026-10-24: "go deep card for every color" ("sure for now"); name and price Claude's fill-in, priced like Chronicler
-    m('timekeepers', 'Timekeepers', 1, 3, 'Game end: +1 follower per purple member you have.', {
+    m('timekeepers', 'Timekeepers', 1, 2, 'Game end: +1 follower per purple member you have.', {
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'purple'),
     }),
     m('closer', 'Closer', 2, 2, 'When you place the last minion of the round: +4 purple.', {

@@ -139,7 +139,7 @@ export default {
       onChanged(ctx, owner, card, by) { if (by !== owner) { ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs: +1 yellow.`); } },
     }),
     // Claude's fill-in (Cory, 2026-10-31: "whenever you recruit, +1 of its color" may become Red's artifact)
-    m('gobetween', 'Go-Between', 2, 2, 'Whenever a space gives you resources, you may change 1 of them to any color.', {
+    m('gobetween', 'Go-Between', 2, 1, 'Whenever a space gives you resources, you may change 1 of them to any color.', {
       afterGain(ctx, owner, card, g) {
         if (!g.fromAction || !(g.n > 0) || card.gbTurn === ctx.turnKey()) return;
         card.gbTurn = ctx.turnKey();
@@ -186,7 +186,7 @@ export default {
       onRecruited(ctx, owner) { startChange(ctx, owner, { who: 'Ringleader', left: touchable(ctx, owner).length, perRival: true, follower: true }); },
     }),
     // Cory, 2026-10-31 ("Drifters is good"; worth 2)
-    m('drifters', 'Drifters', 2, 2, 'Worth 2 followers. On Recruit: choose a color; these count as a member of that color.', { f: 2,
+    m('drifters', 'Drifters', 2, 0, 'Worth 2 followers. On Recruit: choose a color; these count as a member of that color.', { f: 2,
       onRecruited(ctx, owner, card) {
         ctx.choose(owner, 'Drifters: count as a member of which color?', ctx.state.quadrants.map(q => ({
           id: `color:${q}`, label: ctx.quadrant(q).name, kind: 'color', value: q, hint: ctx.countMembersOfColor(owner, q) ? -1 : 1,

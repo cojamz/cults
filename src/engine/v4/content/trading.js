@@ -206,7 +206,7 @@ const trading = {
   // (white + any, followers printed); names marked new are Claude's fill-ins.
   members: [
     // Recluse moves here from Blue (Cory, 2026-10-25: "yes"), so a seat with few members has a payoff
-    m('recluse', 'Recluse', 2, 2, 'Game End: +2 followers per rival with more members than you.', {
+    m('recluse', 'Recluse', 2, 0, 'Game End: +2 followers per rival with more members than you.', {
       onGameEnd: (ctx, owner) => 2 * ctx.rivals(owner).filter(o => ctx.memberCount(o) > ctx.memberCount(owner)).length,
     }),
     // Cory, 2026-10-25: cost 3 (was 4), so White has a cheap starter
@@ -247,7 +247,7 @@ const trading = {
       botActivate: (ctx, owner) => { const t = raidTarget(ctx, owner); return !!t && sellable(t) >= 3 && (owner.res[W] || 0) >= 2; },
     }),
     // new (Claude's names from here down)
-    m('cashier', 'Cashier', 3, 1, 'On Recruit: turn all your white into followers.', {
+    m('cashier', 'Cashier', 2, 0, 'On Recruit: turn all your white into followers.', {
       onRecruited(ctx, owner) {
         const n = owner.res[W] || 0;
         if (!n) { ctx.log(`${owner.name}'s Cashier: no white to turn into followers.`); return; }

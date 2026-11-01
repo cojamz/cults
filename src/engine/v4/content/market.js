@@ -410,7 +410,7 @@ const market = {
     }),
     // Cory, Oct 21: "any time a player recruits more than once in a turn", swaps and takes included (they all reach
     // onAnyRecruit through memberAcquired)
-    m('doorman', 'Doorman', 1, 2, 'Whenever a rival recruits more than once in a turn (swaps count), +1 blue.', {
+    m('doorman', 'Doorman', 1, 3, 'Whenever a rival recruits more than once in a turn (swaps count), +1 blue.', {
       // every recruit (members, own red swaps, follower buys) reaches onRecruit (core.js recruited)
       onRecruit(ctx, owner, card, by) {
         if (by === owner) return;
@@ -439,7 +439,7 @@ const market = {
       },
     }),
     // Cory's yes, Oct 21
-    m('critic', 'Critic', 1, 2, 'Whenever a rival recruits a blue member, +1 follower.', {
+    m('critic', 'Critic', 1, 1, 'Whenever a rival recruits a blue member, +1 follower.', {
       onAnyRecruit(ctx, owner, card, by, rec) {
         if (by !== owner && isBlue(ctx.defOf(rec))) { owner.bonus += 1; ctx.log(`${owner.name}'s Critic: +1 follower.`); }
       },

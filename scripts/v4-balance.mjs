@@ -1,6 +1,6 @@
 // Balance batch: bots on random tables of the 2.0 colors, any seat count, optional price changes. One JSON line per game.
 // Usage: node scripts/v4-balance.mjs <firstGame> <count> <out.jsonl>
-//   SEATS=2|3|4 (default 4; one color per seat, as the game deals). LEVEL=normal|hard|easy (default normal).
+//   DECK=10|15 (required: ask Cory which deck to balance on). SEATS=2|3|4 (default 4; one color per seat, as the game deals). LEVEL=normal|hard|easy (default normal).
 //   PRICE="cheerleader=0/5,echo.impostor=2/4" sets a member's price as colored/any (by key, id or name; prices only, never
 //   what a card does). A new price can move a card to another round's deck, as it would in the game (core.js memberRound).
 //   ONLY=red,echo,... sets the color pool (default: the 2.0 colors). MUST=thieves puts that color on every table.
@@ -12,6 +12,8 @@ import { defById, guestMembers } from '../src/engine/v4/content/index.js';
 import { chooseBotMove, chooseFollowerBuyerMove } from '../src/engine/v4/bots.js';
 import { seededRandom } from '../src/engine/v4/rng.js';
 import { sphereVersion } from '../src/v4/tables.js';
+import { deckRules } from './lib/deck-choice.mjs';
+const DECK_RULES = deckRules();
 
 const [first, count, out] = [Number(process.argv[2] || 1), Number(process.argv[3] || 1), process.argv[4] || 'balance.jsonl'];
 const level = process.env.LEVEL || 'normal', seats = Number(process.env.SEATS || 4);
@@ -35,7 +37,7 @@ for (let g = first; g < first + count; g++) {
   const rand = seededRandom(g * 7717 + 3 + seats * 101);
   const pool = all.filter(q => !must.includes(q)), quads = [...must];
   while (quads.length < seats) quads.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
-  let s = createGame({ seats: Array.from({ length: seats }, () => ({ kind: 'bot' })), seed: g, quadrants: quads });
+  let s = createGame({ seats: Array.from({ length: seats }, () => ({ kind: 'bot' })), seed: g, quadrants: quads, rules: DECK_RULES });
   const buyer = g % 5 === 0 ? g % seats : -1;
   const places = s.players.map(() => ({})), seen = {}, got = s.players.map(() => ({}));
   let moves = 0;
@@ -58,7 +60,7 @@ for (let g = first; g < first + count; g++) {
   if (!s.over) { appendFileSync(out, JSON.stringify({ game: g, level, seats, table: quads, stuck: true, round: s.round }) + '\n'); continue; }
   const top = Math.max(...s.players.map(p => followers(s, p)));
   const row = {
-    game: g, level, seats, table: quads, buyer, prices,
+    game: g, level, seats, table: quads, deck: DECK_RULES.deck || 15, buyer, prices,
     shop: Object.keys(seen).map(name), shopRound: Object.fromEntries(Object.entries(seen).map(([d, r]) => [name(d), r])),
     players: s.players.map(p => ({
       seat: p.id, followers: followers(s, p), win: followers(s, p) === top, members: p.members.map(u => name(s.cards[u].def)),

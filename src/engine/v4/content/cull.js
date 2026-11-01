@@ -24,6 +24,21 @@ export const CUT = new Set([
   'trading.bulkbuyer', 'trading.appraiser', 'market.makeover', 'market.stylist', // Cory, 2026-10-24 / Stylist 2026-10-25: thinning ("I like Closer rest can go"); Restocker replaces Makeover
 ]);
 
+// The 10-card decks (Cory, 2026-10-31: "create two versions of game, 10 card deck version and 15 card deck version";
+// "i'll use your recommendations sight unseen"): rules.deck = 10 also leaves these out, so each 2.0 color and grey deal
+// 10 (4 join in round I). Claude's keep/cut list, design/notes/deck-10-keep-cut.md. Without it a table deals the
+// 15-card decks (CUT only). Silver and Gold aren't cut yet (redesigns running).
+export const CUT10 = new Set([
+  'red.host', 'red.headhunter',
+  'echo.bait', 'echo.understudy', 'echo.ensemble', 'echo.impostor',
+  'thieves.crew', 'thieves.robinhood', 'thieves.snitch', 'thieves.fixer',
+  'purple.gossip', 'purple.secondwind', 'purple.lateriser',
+  'market.restocker', 'market.plusone',
+  'trading.undertaker',
+  'yellow.tinker', 'yellow.matchmaker', 'yellow.agitator', 'yellow.leveler', 'yellow.bookcooker',
+  'benders.bigspender', 'benders.scout', 'benders.launderer', 'benders.cheerleader', 'benders.saboteur',
+]);
+
 // The card and scenario tests pin seeded decks and deal cut cards by id, so the test setup deals the full deck through
 // this switch (src/test/setup.js); it stays out of DEFAULT_RULES so the build's content stamp sees the real table.
 export const FULL_DECK = { tests: false };

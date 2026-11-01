@@ -194,6 +194,14 @@ const sameTable = (a, b) => a.length === b.length && a.every((x, i) => x === b[i
 // Round decks (Cory, 2026-10-25): whether round III members wait for round III or arrive with round II's.
 // Round II is the default (Cory, 2026-10-27: "round 1 deck one, round 2 and 3 all three decks")
 const LATE_OPTS = [['2', 'Round II', 'Round III members are shuffled in with round II members'], ['3', 'Round III', 'Round III members are shuffled in when round III starts']];
+// the deck (Cory, 2026-10-31: two versions, 10 and 15 members per color; rules.deck)
+const DECK_OPTS = [['15', '15 per color', 'Every member of each color (about 15)'], ['10', '10 per color', 'The trimmed decks: 10 members per color and 10 grey']];
+export function DeckPick({ value, onChange, readOnly }) {
+  return <div className="seat" data-deck-pick={value}><span>Member deck</span>
+    {readOnly ? <span className="hint">{value === 10 ? '10 per color' : '15 per color'}</span>
+      : <Seg label="Member deck" value={String(value)} options={DECK_OPTS} onChange={v => onChange(Number(v))} />}
+  </div>;
+}
 function LatePick({ value, onChange, readOnly }) {
   return <div className="seat" data-late-pick={value}><span>Round III members join in</span>
     {readOnly ? <span className="hint">{value === 2 ? 'Arrive in round II' : 'Arrive in round III'}</span>
@@ -307,6 +315,7 @@ export function LocalSetup({ initial, onStart, onBack }) {
   const [level, setLevel] = useState(initial?.level || DEFAULT_BOT_LEVEL);
   const [table, setTable] = useState(() => initialTable(initial?.table));
   const [late, setLate] = useState(initial?.roundDecks === 3 ? 3 : 2);
+  const [deck, setDeck] = useState(initial?.deck === 10 ? 10 : 15);
   const filled = seats.filter(s => s.kind !== 'empty');
   // one sphere per player (Cory, 2026-10-15): the table follows the seats as they're filled or emptied
   const nSph = sphereCount(filled.length);
@@ -350,12 +359,13 @@ export function LocalSetup({ initial, onStart, onBack }) {
         <div className="seat"><span>Bots</span><Seg label="Bot level" value={level} options={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} onChange={setLevel} /></div>
         <div className="seat"><span>Speed</span><Seg label="Speed" value={speed} options={SPEED_OPTS} onChange={v => { setSpeed(v); setMotionSpeed(v); }} /></div>
         <TablePicker value={fitted} n={nSph} onChange={setTable} />
+        <DeckPick value={deck} onChange={setDeck} />
         <LatePick value={late} onChange={setLate} />
         <div className="row-btns">
           {/* why Start is off, said beside it (RC1 #8: it dimmed at 3 of 4 with nothing near it) */}
           {startWhy && <span className="hint start-why" data-start-why>{startWhy}</span>}
           <button type="button" className="btn" onClick={onBack}>Back</button>
-          <button type="button" className="btn pri" data-start disabled={!!startWhy} title={startWhy || undefined} onClick={() => onStart({ seats: named(), speed, level, table: fitted, roundDecks: late })}>Start</button>
+          <button type="button" className="btn pri" data-start disabled={!!startWhy} title={startWhy || undefined} onClick={() => onStart({ seats: named(), speed, level, table: fitted, roundDecks: late, deck })}>Start</button>
         </div>
       </div>
     </div>
@@ -433,6 +443,7 @@ export function Lobby({ lobby, myId, onLeave }) {
           </div>
         )}
         <TablePicker value={shownTable} n={nSph} onChange={pickTable} readOnly={!isHost || !lobby.setTable} />
+        <DeckPick value={view.deck === 10 ? 10 : 15} onChange={v => act(() => lobby.setDeck(v))} readOnly={!isHost || !lobby.setDeck} />
         <LatePick value={view.roundDecks === 3 ? 3 : 2} onChange={v => act(() => lobby.setRoundDecks(v))} readOnly={!isHost || !lobby.setRoundDecks} />
         {err && <p className="error">{err}</p>}
         {!isHost && <p className="hint">Waiting for {view.hostName || 'the host'} to start…</p>}
