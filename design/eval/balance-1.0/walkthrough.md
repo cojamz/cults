@@ -47,7 +47,8 @@ You said counterplay is the next direction, before changing the pile-ons. What i
 - **Guest Book** ("Whenever you recruit a member of a color none of your members have, +2 yellow.") with **Dabblers** fixed: easy-bot games done, harder bots running.
 - **Bargain Bin** ("Whenever shop members go to the bottom of the pile, +1 blue.") at +2: running.
 - **Recruit Twice** ("Recruit twice this turn. +3 blue."): checking whether bots value it right.
-- What triggers every artifact (Pocket Watch, Fence, Bargain Bin first), and every place member count or color matters (Drifters, Dabblers, counts-as-more members).
+- DONE 1:54pm: what triggers every artifact (artifact-audit.md): every artifact paid in every game it was held; four counting faults fixed live (Big Tent, Matchmaker, Connoisseurs with Dabblers and Drifters; Bargain Bin's tally). Six questions for you there (Bargain Bin and the round II/III shop refresh, Pocket Watch paying on skips that delay nobody, Fence and Raiders, Recruiter and cast-outs, Guest Book and grey members, Customs per resource). Earlier balance numbers predate the fixes.
+- Was: what triggers every artifact (Pocket Watch, Fence, Bargain Bin first), and every place member count or color matters (Drifters, Dabblers, counts-as-more members).
 
 ## 9. Being built from your calls
 **Accomplice** ("On Recruit: steal 3 resources.") price 3 to 4. **Caterer** back to +1 silver. **Splurge** ("This turn, if you recruit a member, +1 follower for every 2 resources you pay for it. +1 white.") pays per 1 paid in round II. **Polisher** lets you pick 1, 2 or 3 silver. One to confirm: recruiting **Dabblers** itself pays Guest Book while you're missing any color (the builder's fill-in).
