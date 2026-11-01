@@ -1218,12 +1218,14 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // A new kind of step (place → buy, choose → buy…) ignores taps for 400ms, so a double tap on one step's
   // button can't land on the next step's button in the same spot. Repeated steps (setup picks) don't lock.
   const lockUntil = useRef(0);
-  const noLock = useRef(false); // an undo is deliberate: the step it returns to isn't locked
+  // an undo is deliberate: the step it returns to isn't locked. A time window, not a one-shot flag: the undo's rewind can
+  // show the steps in two renders, and a one-shot flag spent on the first left the second to lock, so the first click on
+  // a lit space after Undo did nothing (hotseat gate, 2 runs in 3, Nov 1)
+  const noLock = useRef(0);
   const lastStep = useRef(null);
   useEffect(() => {
     const step = pend && mine ? `${pend.player}:${pend.kind}` : null;
-    if (step && lastStep.current && step !== lastStep.current && !noLock.current) lockUntil.current = Date.now() + MO.stepLock;
-    noLock.current = false;
+    if (step && lastStep.current && step !== lastStep.current && !(noLock.current > Date.now())) lockUntil.current = Date.now() + MO.stepLock;
     lastStep.current = step;
   }, [pend, mine]);
   const onPick = useCallback((optionId, mode) => {
@@ -1574,7 +1576,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     if (!session.undo || !session.undo()) return;
     // Undo starts a new deliberate decision: retaking the same space or member is
     // valid immediately, even inside the previous choice's double-click window.
-    noLock.current = true;
+    noLock.current = Date.now() + 1500;
     lockUntil.current = 0;
     lastPick.current = { id: null, t: 0, x: null, y: null };
     lastDown.current = { x: null, y: null, t: 0 };

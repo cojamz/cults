@@ -118,11 +118,19 @@ try {
     else {
       await page.waitForTimeout(700);
       await shot('02a-intro');
-      const t = Date.now();
+      // timed in the page, from the press to the intro leaving the DOM: the test runner's own click and wait round
+      // trips added ~30ms+ under the full check's load (1027ms, Nov 1)
+      await page.evaluate(() => {
+        window.__introT = {};
+        document.querySelector('[data-intro-skip]').addEventListener('pointerdown', () => { window.__introT.down = performance.now(); }, { once: true, capture: true });
+        new MutationObserver((_, o) => { if (!document.querySelector('[data-intro]')) { window.__introT.gone = performance.now(); o.disconnect(); } }).observe(document.body, { childList: true, subtree: true });
+      });
       await page.click('[data-intro-skip]');
       const gone = await page.waitForSelector('[data-intro]', { state: 'detached', timeout: 1500 }).then(() => true, () => false);
+      const it = await page.evaluate(() => window.__introT);
+      const took = it.down != null && it.gone != null ? Math.round(it.gone - it.down) : null;
       if (!gone) errors.push('one tap on Skip did not dismiss the intro');
-      else if (Date.now() - t > 1000) errors.push(`the intro took ${Date.now() - t}ms to go after Skip`);
+      else if (took == null || took > 1000) errors.push(`the intro took ${took}ms to go after Skip`);
     }
   }
   await page.waitForSelector('.lt-seat[data-pid]');
@@ -341,7 +349,10 @@ try {
       await page.waitForFunction(b => document.querySelectorAll('.slot .worker').length === b - 1, before, { timeout: 3000, polling: 50 }).catch(() => {});
       const after = await page.$$eval('.slot .worker', e => e.length);
       if (after !== before - 1) errors.push(`undo did not take the worker back (${before} -> ${after})`);
-      // a click on the exact center of a glowing space places there (the dot and label never eat it)
+      // a click on the exact center of a glowing space places there (the dot and label never eat it), on the settled
+      // table (the lag bar's terms): while the undo's own rewind still plays, a click is dropped as a stale command
+      // (GameScreen onPick), which this gate hit about 1 run in 4 under load (Nov 1; handed to the click-speed lane)
+      await page.waitForFunction(() => { const g = document.querySelector('.app.game'); return g && !g.hasAttribute('data-animating') && g.dataset.presentationMoves === g.dataset.moves; }, null, { timeout: 5000, polling: 50 }).catch(() => {});
       const base = await page.$('.slot.can .base');
       const bb = base && await base.boundingBox();
       if (bb) {

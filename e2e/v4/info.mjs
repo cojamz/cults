@@ -336,6 +336,9 @@ try {
     }
     const hand = page.locator('[data-handoff]');
     if (await hand.count()) { await hand.first().click().catch(() => {}); continue; }
+    // read the step off a settled table: under load, the last click's placement had landed (Undo showing) while the
+    // spaces were still drawn lit, and the space check then waited for a lit space that never came back (Nov 1)
+    await page.waitForFunction(() => { const g = document.querySelector('.app.game'); return !g || (!g.hasAttribute('data-animating') && g.dataset.presentationMoves === g.dataset.moves); }, null, { timeout: 10000 }).catch(() => {});
     const kind = await page.evaluate(() => {
       const g = document.querySelector('.app.game');
       const round = [...document.querySelectorAll('header .round, [data-region="prompt"], .lt-prompt, .rnd, [data-round]')].map(e => e.textContent).join(' ');
@@ -351,6 +354,7 @@ try {
       if (step === 'place') {
         // (b) hover a board space and a shop card: each shows a card
         const slot = page.locator('.slot.can').first();
+        if (!(await slot.waitFor({ timeout: 10000 }).then(() => true, () => false))) { seen.delete(step); continue; }
         await slot.hover();
         await page.waitForTimeout(500);
         if (!(await page.locator('.peek, [data-hover-card="space"], [data-space-card]').count())) fail('(b) hovering a space shows no card', step);
