@@ -98,13 +98,13 @@ describe('Magenta actions', () => {
     expect(followers(z, z.players[0])).toBe(f0);
   });
 
-  it('Stash: +3 / +4 / +5 magenta by round (its own +1 included), no steal', () => {
+  it('Stash: +2 / +3 / +4 magenta by round as printed (its own +1 included), no steal', () => {
     for (const round of [1, 2, 3]) {
       let s = scene({ n: 4, round, res: [{ gold: 2 }, { gold: 3 }, { red: 1, blue: 2 }, { gold: 2 }] });
       s.slots = { '3-0': 1, '3-2': 2, '0-0': 3 };
       s = take(s, 'thieves.tipoff');
       expect(s.pending?.kind).not.toBe('choose');
-      expect(R(s).map(r => [r.gold, r.red, r.blue, r.magenta])).toEqual([[2, 0, 0, round + 2], [3, 0, 0, 0], [0, 1, 2, 0], [2, 0, 0, 0]]);
+      expect(R(s).map(r => [r.gold, r.red, r.blue, r.magenta])).toEqual([[2, 0, 0, round + 1], [3, 0, 0, 0], [0, 1, 2, 0], [2, 0, 0, 0]]);
     }
   });
 

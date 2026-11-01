@@ -52,6 +52,6 @@ describe('hover honesty (live panel r1)', () => {
   });
 
   it('Stash says its round gain', () => {
-    for (const round of [1, 2, 3]) expect(words(sceneQ({ quadrants: T, round, n: 3 }), 'Stash').y.text).toBe(`+${round + 2} magenta`);
+    for (const round of [1, 2, 3]) expect(words(sceneQ({ quadrants: T, round, n: 3 }), 'Stash').y.text).toBe(`+${round + 1} magenta`);
   });
 });

@@ -152,6 +152,13 @@ const turnsLeft = (ctx, p) => {
   const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');
   return q.slice(end + 1, close < 0 ? q.length : close).filter(t => t.t === 'turn' && t.p === p.id).length;
 };
+/** p's next turn this round still has a rival's turn after it (Last Call's "until everyone else is out of minions"). */
+const waitsOnRival = (ctx, p) => {
+  const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');
+  const win = q.slice(end + 1, close < 0 ? q.length : close);
+  const mine = win.findIndex(t => t.t === 'turn' && t.p === p.id);
+  return mine >= 0 && win.slice(mine + 1).some(t => t.t === 'turn' && t.p !== p.id);
+};
 /** Turns in a row p took just before the one now running (this round's turn record; the last entry is this turn). */
 const inARow = (ctx, p) => {
   const turns = ctx.state.turns || [];
@@ -301,12 +308,19 @@ export default {
         ctx.gain(p, P, 1 + p.left, { fromAction: true });
         const k = turnsLeft(ctx, p), f = p.left;
         if (f) { p.bonus += f; ctx.log(`${p.name}'s Last Call: +${f} follower${f === 1 ? '' : 's'}.`); }
-        let moved = 0;
-        for (let i = 0; i < k; i++) if (skipNext(ctx, p, 'Last Call', p, true)) moved++;
+        // only turns with a rival's turn still after them are skipped: once everyone else is out of minions (or already
+        // places before you, as after your own earlier Last Call) there is nothing to wait for, so nothing is skipped and
+        // Gossip and Pocket Watch pay nothing (balance-1.0 g8: a second copy of Last Call re-skipped turns already last,
+        // paying both for skips that passed over no one)
+        let moved = 0, blocked = false;
+        for (let i = 0; i < k && waitsOnRival(ctx, p); i++) {
+          if (skipNext(ctx, p, 'Last Call', p, true)) moved++;
+          else { blocked = true; break; }
+        }
         // the rest of the round too: a rival's turn that lands later still goes first (core lastCallLast)
         // said plainly, here and on the seat (Cory, 2026-10-28: P4's Echo copied Last Call and its going last looked broken)
-        if (moved) { p.lastCall = ctx.state.round; ctx.log(`${p.name}'s Last Call: ${p.name} goes last this round.`); }
-        else if (k) ctx.log(`${p.name}'s Early Birds: ${p.name}'s turns can't be skipped.`);
+        if (blocked && !moved) ctx.log(`${p.name}'s Early Birds: ${p.name}'s turns can't be skipped.`);
+        else if (k) { p.lastCall = ctx.state.round; ctx.log(`${p.name}'s Last Call: ${p.name} goes last this round.`); }
       },
     },
     {
