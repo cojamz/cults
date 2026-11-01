@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.947 — 2026-11-01
+
+- A rival's hover card scrolls again when you roll the mouse wheel over their seat.
+
 ## v0.9.946 — 2026-11-01
 
 - Yellow's spaces on the wheel say what they do now: Harvest, Dilute, Big Dilute, Makeover and Melting Pot had old or half text. A shop member a space would recruit glows again.
