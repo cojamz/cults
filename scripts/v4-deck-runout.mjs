@@ -3,12 +3,12 @@
 // because the pile was empty, how low the pile got, and how many members were recruited.
 // Usage: node scripts/v4-deck-runout.mjs <firstGame> <count>
 //   DECK=full (today's deck) | ten (each color and grey cut to TEN members at random per game, R1 of them round I)
-//   TEN=10 R1=4 SEATS=4 LEVEL=normal KEEP=<file of ids, one per line: a fixed keep list instead of random>
+//   TEN=10 R1=4 SEATS=4 LEVEL=normal KEEP=<file of ids, one per line: a fixed keep list instead of random> MOVE=id=1,...
 import { readFileSync } from 'node:fs';
 import { createGame, applyMove, quadrant, allQuadrantIds } from '../src/engine/v4/index.js';
 import { guestMembers } from '../src/engine/v4/content/index.js';
 import { CUT } from '../src/engine/v4/content/cull.js';
-import { ARTIFACTS, joinsRound, shopSize, DEFAULT_RULES } from '../src/engine/v4/core.js';
+import { ARTIFACTS, joinsRound, shopSize, DEFAULT_RULES, ROUND_OF } from '../src/engine/v4/core.js';
 import { chooseBotMove } from '../src/engine/v4/bots.js';
 import { seededRandom } from '../src/engine/v4/rng.js';
 import { sphereVersion } from '../src/v4/tables.js';
@@ -17,6 +17,8 @@ const [first, count] = [Number(process.argv[2] || 1), Number(process.argv[3] || 
 const deck = process.env.DECK || 'full', TEN = Number(process.env.TEN || 10), R1 = Number(process.env.R1 || 4);
 const seats = Number(process.env.SEATS || 4), level = process.env.LEVEL || 'normal';
 const keep = process.env.KEEP ? new Set(readFileSync(process.env.KEEP, 'utf8').split(/\s+/).filter(Boolean)) : null;
+// MOVE=id=1,id=2 puts a member in another round's deck (as a price change would)
+for (const pair of (process.env.MOVE || '').split(',').filter(Boolean)) { const [id, r] = pair.split('='); ROUND_OF[id] = Number(r); }
 const pool = allQuadrantIds().filter(q => sphereVersion(q) === '2.0');
 const base = new Set(CUT);
 const fake = { rules: DEFAULT_RULES };

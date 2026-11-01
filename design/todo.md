@@ -72,3 +72,4 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 ## Player feedback logged, no action yet (*)
 - White's round II spaces need members people usually don't have yet; cheaper members will probably fix it (Cory).
 - "Stealing spaces don't create money" (a player; Cory not sure he agrees); "more complex than anticipated"; the shop needs more people; Red and Purple have too many actions that are bad at the end; members are best bought early but seen late; "if you mess up your first couple turns you're just kind of toast".
+- Member decks at 10 per color (Cory, Oct 31): deck rules draft (design/notes/deck-10-rules-draft.md) and keep/cut list (design/notes/deck-10-keep-cut.md) sent; waiting on his yes. Build only what he confirms, as cuts in content/cull.js and price moves. Probe: scripts/v4-deck-runout.mjs.
