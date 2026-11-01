@@ -4,7 +4,7 @@
 // Per placement it snapshots every seat when the minion goes down and again when the buy step opens, so the space's own
 // effect is separated from the buy. Measures (each maps to a lens in SKILL.md):
 //   F-choice  open spaces per placement, and "forced" placements (2 or fewer open)
-//   F-dead    placements whose space gave the taker nothing (no resource, follower or member change) and touched nobody
+//   F-dead    placements that gave the taker 1 or less (the +1 every space gives) and no member, and touched nobody
 //   F-touch   placements that changed a rival (sting: rival lost something; gift: rival gained) — interaction rate
 //   F-burst   gain per placement by round (resources + followers), so round III should feel bigger than round I
 //   F-buy     buy steps that pass or can't afford anything (stuck feeling), and member vs follower-card buys by round
@@ -40,7 +40,7 @@ for (let g = first; g < first + (count || 1); g++) {
   let guard = 0;
   while (!s.over && ++guard < 6000) {
     const pd = s.pending, pl = pd.player;
-    if (s.round !== lastRound) { const f = s.players.map(p => followers(s, p)); roundLeaders.push(f); lastRound = s.round; }
+    if (s.round !== lastRound) { if (lastRound >= 1) roundLeaders[lastRound - 1] = s.players.map(p => followers(s, p)); lastRound = s.round; }
     if (pd.kind === 'place' && pd.options.some(o => o.kind === 'slot' || o.kind === 'squat')) {
       const m = chooseBotMove(s, rand, botOpts);
       const o = pd.options.find(x => x.id === m.option);
@@ -75,7 +75,7 @@ for (let g = first; g < first + (count || 1); g++) {
     let sting = false, gift = false;
     after.forEach((x, j) => { if (j === me) return; const d = x.f - b[j].f + x.r - b[j].r + 3 * (x.m - b[j].m); if (d < 0) sting = true; if (d > 0) gift = true; });
     const r = R(open.round); r.n++; r.gain += gain;
-    const dead = gain <= 0 && !memberMove && !sting && !gift;
+    const dead = gain <= 1 && !memberMove && !sting && !gift; // only the +1 every space gives, or less
     if (dead) { T.dead++; r.dead++; }
     if (sting) T.sting++; if (gift) T.gift++; if (sting || gift) r.touch++;
     const sp = (T.spaces[open.key] ??= {}); const x = (sp[open.round] ??= { n: 0, sum: 0, sq: 0, dead: 0, touch: 0 });
@@ -87,7 +87,7 @@ for (let g = first; g < first + (count || 1); g++) {
 const pct = (a, b) => `${Math.round((100 * a) / (b || 1))}%`;
 console.log(`Feel probe: ${T.games} games, ${seats} seats, ${level} bots, ${RULES.deck || 15}-card decks.`);
 console.log(`Choice: ${(T.open / T.placements).toFixed(1)} open spaces per placement; forced (2 or fewer open) ${pct(T.forced, T.placements)}.`);
-console.log(`Dead placements (space gave nothing, touched nobody): ${pct(T.dead, T.placements)}. Touched a rival: sting ${pct(T.sting, T.placements)}, gift ${pct(T.gift, T.placements)}.`);
+console.log(`Dead placements (1 or less, no member, touched nobody): ${pct(T.dead, T.placements)}. Touched a rival: sting ${pct(T.sting, T.placements)}, gift ${pct(T.gift, T.placements)}.`);
 for (const [r, x] of Object.entries(T.byRound)) console.log(`  round ${r}: gain ${(x.gain / x.n).toFixed(1)} per placement, dead ${pct(x.dead, x.n)}, touched a rival ${pct(x.touch, x.n)}`);
 for (const [r, b] of Object.entries(T.buys)) console.log(`  round ${r} buys: member ${pct(b.member, b.steps)}, follower card ${pct(b.tier, b.steps)}, pass or nothing affordable ${pct(b.pass, b.steps)}`);
 console.log(`Leads: round I leader wins ${pct(T.leadWins[0], T.games)}, round II leader wins ${pct(T.leadWins[1], T.games)}, last after round II wins ${pct(T.lastWins, T.games)} (even ${pct(1, seats)}).`);
