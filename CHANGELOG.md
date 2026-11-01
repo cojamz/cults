@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.964 — 2026-11-01
+
+- Promote and Demote back as they were
+
 ## v0.9.963 — 2026-11-01
 
 - Fence: +1 magenta whenever any player steals. Impressionist: +2 of its color whenever any player copies an action. Caterer: +2 silver whenever a player is gifted silver.
