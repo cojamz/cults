@@ -48,16 +48,16 @@ const P = {
     hire: { verb: 'Recruit the top of the deck', second: '+1 red to all' }, // the rivals' red sat in line 3, which drops on the outer ring (blind panel, Nov 1)
     hireup: { verb: 'Promote a member +3 red', second: 'one costing up to 2 more' },
     trade: { verb: 'Demote a member +3 red', second: 'one costing up to 2 less' },
-    take: { verb: 'Recruit a member', second: 'costing 8 or less, free', note: '+1 red' },
+    take: { verb: 'Free member costing 8 or less', second: '+1 red' },
   },
   market: {
     bargain: r => ({ main: `+${r + 1} blue`, second: '1 shop member to the bottom' }), // Cory, Oct 31 ("may" made line 2 too long; it dropped)
     restock: { verb: 'Send one color to the bottom', second: '+1 blue per member sent', note: '+1 blue' },
     // line 2 was too long and dropped whole at the wheel's bottom, taking the blue with it (round I review, Oct 25)
     showroom: r => ({ main: `+${2 * r} blue`, second: 'peek at the top 4', note: run(n => `+${2 * n}`, 'blue: ') }),
-    clearance: { verb: 'Recruit twice', second: 'this turn', note: '+3 blue' },
-    pricecheck: { verb: 'Bury a shop member', second: 'gain half its cost in blue', note: '+1 blue' },
-    spree: { verb: 'Recruit 3 times', second: 'this turn', note: '+5 blue' },
+    clearance: { verb: 'Recruit twice +3 blue', second: 'this turn' },
+    pricecheck: { verb: 'Bury a shop member for half its cost in blue', note: '+1 blue' },
+    spree: { verb: 'Recruit 3 times +5 blue', second: 'this turn' },
   },
   purple: {
     hourly: r => ({ main: `+${3 + r} purple`, second: run(n => `+${3 + n}`) }),
@@ -69,7 +69,7 @@ const P = {
     planahead: (r, now) => (now == null ? { main: '+1 purple', second: 'per minion to place' } : { main: `+${now} purple`, second: '1 per minion left to place' }),
     // free since 2026-10-15 (Cory: no board action requires spending). A ring II verb can drop line 2: whole in line 1
     // line 1 alone must not read as a flat +2 (text review, 2026-10-23: line 2 drops on ring II)
-    lastcall: { verb: '+1 @f and +1 purple per minion left', second: 'then you go last', note: '+1 purple' }, // 'skip till others are out' didn't fit line 2 and dropped (blind panel, Nov 1)
+    lastcall: { verb: '+1 @f and +1 purple per minion left, then go last', note: '+1 purple' }, // 'skip till others are out' didn't fit line 2 and dropped (blind panel, Nov 1)
     // the center drops line 2, so it's whole in line 1. Your own next turns, moved up, not extra ones (Cory, 2026-10-15)
     // Cory, 2026-10-22: place on taken spaces for the rest of the round
     // Cory, 2026-10-22: the old game's "Gain 4 purple, skip next turn"
@@ -110,9 +110,9 @@ const P = {
   thieves: {
     pickpocket: r => ({ verb: `Steal ${r + 2}`, second: 'split among rivals', note: run(n => `${n + 2}`) }),
     tipoff: r => ({ main: `+${r + 1} magenta`, second: `+${r} @f if you recruit a member` }), // Gather's shape (Cory, Oct 31)
-    hideout: { verb: 'Steal 1', second: 'Rivals can’t steal from you this round', note: '+1 magenta' },
+    hideout: { verb: 'Steal 1, then safe from steals', second: 'this round', note: '+1 magenta' },
     rob: { verb: 'Steal half a rival’s pile', second: 'one color, rounded down', note: '+1 magenta' },
-    ransom: { verb: 'Rival pays or loses a member', second: 'costing 5 or less', note: '+1 magenta' },
+    ransom: { verb: 'Rival pays or loses a member costing 5 or less', note: '+1 magenta' },
     heist: { verb: 'Recruit a rival’s member', note: '+1 magenta' },
   },
   trading: {
@@ -141,10 +141,10 @@ const P = {
     // the hover's own words, "since your last turn" (w4b #22: "a rival just took" said it two ways)
     echo: { verb: 'Copy previous action', note: '+1 green' },
     // Cory, 2026-10-28: a rival member's On Recruit, not a space
-    encore: { verb: 'Copy an On Recruit', second: 'of a rival’s member', note: '+1 green' },
+    encore: { verb: 'Copy a rival member’s On Recruit', note: '+1 green' },
     // one word for it, the hover's (w3a #22: "redo" here, "copy" there)
     refrain: { verb: 'Copy an action', second: 'with your minion', note: '+1 green' },
-    eternity: { verb: 'Copy each member’s On Recruit', second: 'yours, in any order', note: '+1 green' },
+    eternity: { verb: 'Copy each of your members’ On Recruit', second: 'in any order', note: '+1 green' },
   },
 };
 

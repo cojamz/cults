@@ -46,10 +46,10 @@ describe('panel words (w3)', () => {
     expect(ownSpace.verb).toBe('Copy an action');
     expect(ownSpace.second).toBe('with your minion');
     const allOwn = panelText('echo', { key: 'eternity' });
-    expect(allOwn.verb).toBe('Copy each member’s On Recruit'); // On Recruits, not actions, since Nov 1
-    expect(allOwn.second).toBe('yours, in any order');
+    expect(allOwn.verb).toBe('Copy each of your members’ On Recruit'); // On Recruits, not actions, since Nov 1; "yours" in line 1 (line 2 drops on ring III, text audit Nov 1)
+    expect(allOwn.second).toBe('in any order');
     // Rival and own minions are distinct, as are the previous action and your own last action.
-    expect(panelText('echo', { key: 'encore' }).second).toBe('of a rival’s member'); // Encore copies an On Recruit (Oct 28)
+    expect(panelText('echo', { key: 'encore' }).verb).toBe('Copy a rival member’s On Recruit'); // Encore copies an On Recruit (Oct 28); whose, in line 1 (text audit Nov 1)
     expect(panelText('echo', { key: 'echo' }).verb).toBe('Copy previous action');
     // The purple gain counts only your minions, not every piece on the wheel.
     expect(panelText('purple', { key: 'windup' }).second).toBe('per minion you placed');
@@ -71,10 +71,8 @@ describe('panel words (w3)', () => {
     expect(panelText('purple', { key: 'rally' }, 3).verb).toMatch(/^Your next two turns, now$/);
     // w4b #5: "A rival's member or its cost" read as "I choose": the rival pays or loses, in line 1
     // shortened to fit on phones (v0.8.8 Magenta, 68c9bf0f): line 1 still says the rival decides, pay or lose
-    expect(panelText('thieves', { key: 'ransom' }, 2).verb).toMatch(/^Rival pays or loses a member$/);
+    expect(panelText('thieves', { key: 'ransom' }, 2).verb).toMatch(/^Rival pays or loses a member costing 5 or less$/); // the limit too: line 2 dropped on ring III (text audit Nov 1)
     expect(panelText('silver', { key: 'largesse' }, 3).verb).toMatch(/per silver rivals gain/);
-    // Shake Down's line 2 is the limit (Cory's wording pass, 2026-10-21; line 1 says the rival pays or loses it)
-    expect(panelText('thieves', { key: 'ransom' }, 2).second).toBe('costing 5 or less');
   });
 
   it('says 1 of what, what a space costs, and whose cost (live panel r1)', () => {
@@ -90,8 +88,7 @@ describe('panel words (w3)', () => {
     expect(lines(cs).join(' ')).not.toMatch(/buy|spend|resource each/i);
     // Bury: what it does in line 1, what it pays in line 2 ("half its cost": the member's, never your pile's)
     const bury = panelText('market', { key: 'pricecheck' }, 2);
-    expect(bury.verb).toBe('Bury a shop member');
-    expect(bury.second).toBe('gain half its cost in blue');
+    expect(bury.verb).toBe('Bury a shop member for half its cost in blue'); // whole in line 1: line 2 dropped on ring II and III (text audit Nov 1)
   });
 
   it('Gather follows the round while Tithe counts the viewer’s members', () => {
@@ -118,7 +115,7 @@ describe('panel words (w3)', () => {
   it('Spree prints its blue and says it is 3 buys (Name Drop, the live-payout space, left with Blue\'s Oct 20 rework)', () => {
     const a = quadrant('market').actions.find(x => x.key === 'spree');
     const t = panelText('market', a, 3);
-    expect([t.verb, t.second, t.note]).toEqual(['Recruit 3 times', 'this turn', '+5 blue']); // +5 since Nov 1
+    expect([t.verb, t.second]).toEqual(['Recruit 3 times +5 blue', 'this turn']); // +5 since Nov 1; in line 1, line 3 dropped (text audit Nov 1)
   });
 
   it('"You\'d get" says the likely and the best case, or the best pick, or the mix, in numbers', () => {

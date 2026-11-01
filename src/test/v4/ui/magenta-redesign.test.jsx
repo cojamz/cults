@@ -16,15 +16,15 @@ describe('Magenta action wording and one-stack theft', () => {
       expect(pick.verb).toBe(`Steal ${round + 2}`);
       expect(pick.second).toBe('split among rivals');
       const safe = panelText('thieves', { key: 'hideout' }, round);
-      expect(safe.verb).toBe('Steal 1'); // Cory, Nov 1
-      expect(safe.second).toBe('Rivals can’t steal from you this round');
+      expect(safe.verb).toBe('Steal 1, then safe from steals'); // Cory, Nov 1; the protection in line 1 (line 2 dropped every round, text audit Nov 1)
+      expect(safe.second).toBe('this round');
       expect(safe.note).toBe('+1 magenta');
       expect(shortEffect('thieves', { key: 'pickpocket' }, round)).toContain(`steal ${round + 2}`);
     }
     const stash = panelText('thieves', { key: 'tipoff' }, 1);
     expect(stash.main).toBe('+2 magenta'); // Gather's shape (Oct 31)
     expect(stash.second).toBe('+1 @f if you recruit a member');
-    expect(panelText('thieves', { key: 'ransom' }, 2).second).toBe('costing 5 or less');
+    expect(panelText('thieves', { key: 'ransom' }, 2).verb).toContain('costing 5 or less');
     expect(panelText('thieves', { key: 'rob' }, 2).second).toBe('one color, rounded down');
     expect(pipEffect('thieves', { key: 'rob' }, 2)).toBe('steal half a one-color pile');
   });
