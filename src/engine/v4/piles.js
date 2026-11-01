@@ -11,7 +11,7 @@ import { seededRandom } from './rng.js';
 
 /** Variant A's grey core (Claude's pick from the 10-card grey deck, for Cory to confirm): the greys that reach rivals. */
 // Con Men is a normal shop member again (Cory, Nov 1: "i like con men, it doesn't have to be a pile"); Scouts takes its seat
-// (Claude's fill-in until Cory picks the fifth).
+// (Cory, Nov 1: "scouts good").
 export const GREY_CORE = ['benders.squatter', 'benders.anarchist', 'benders.saboteur', 'benders.frontrunner', 'benders.scout'];
 
 // the members a table deals on the 10 or 15 deck (as createGame's cull and artifacts do)
