@@ -44,9 +44,13 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   const until = Number.isFinite(maxMs) ? now() + maxMs : Infinity;
   const late = () => until !== Infinity && now() > until;
   // only weigh options normal rates close to its best
-  const pool = ranked.slice(0, candidates).filter((r, i) => i === 0 || r.v >= ranked[0].v - 4);
-  if (pool.length === 1) return { player: me, option: pool[0].o.id };
+  const pool = ranked.slice(0, candidates).filter((r, i) => i === 0 || r.v >= ranked[0].v - (opts.window ?? 4));
+  if (pool.length === 1) {
+    opts.onDecision?.({ player: me, kind: pend.kind, round: state.round, chosen: pool[0].o.id, ranked, options: [{ id: pool[0].o.id, normal: pool[0].v, mean: null, n: 0 }] }, state);
+    return { player: me, option: pool[0].o.id };
+  }
   const round = state.round;
+  if (opts.crn || opts.halving) return searchPaired(state, rand, pool, opts, { me, rival, nudge, now, until, full, budget, round, ranked });
   const totals = pool.map(() => 0), counts = pool.map(() => 0);
   let spent = 0;
   // a rollout stops at the round end, or when its share of the budget is used up (then it's scored statically)
@@ -83,6 +87,64 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   const score = i => totals[i] / counts[i] + (rival ? 0 : nudge(pool[i].o));
   let best = 0;
   for (let i = 1; i < pool.length; i++) if (score(i) > score(best)) best = i;
+  return { player: me, option: pool[best].o.id };
+}
+
+// One rollout of option o from state, played by normal bots with seed `seed`: the margin it ends at (static past the cap).
+function rollout(state, me, o, seed, { full, cap, round, late, opts }) {
+  const r = seededRandom(seed);
+  let s, steps = 1, value;
+  try {
+    s = applyMove(state, { player: me, option: o.id });
+    while (!s.over && (full || (s.round === round && steps < cap)) && steps < 800 && !late()) {
+      const counted = s.pending && (s.pending.kind === 'place' || s.pending.kind === 'buy');
+      s = applyMove(s, opts.rollout === 'greedy' ? chooseGreedyMove(s, r, { noise: 1 }) : chooseNormalMove(s, r, ROLLOUT));
+      if (counted) steps++;
+    }
+    value = s.over ? margin(s, me) : valueAtBoundary(s, me, opts.valueModel);
+  } catch (err) {
+    if (globalThis.process?.env?.THINKER_DUMP) rolloutCrash(state, o.id, err);
+    value = -100;
+  }
+  return { value, steps };
+}
+
+// Very Hard's search (sims first): every candidate is played out on the same seeds (common random numbers), so two
+// options are compared on the same luck, and with opts.halving the weaker half is dropped after each stage, so the
+// budget goes to the close calls. opts.onDecision(info) gets every candidate's mean result (the choice log).
+function searchPaired(state, rand, pool, opts, { me, rival, nudge, now, until, full, budget, round, ranked }) {
+  const late = () => until !== Infinity && now() > until;
+  const n = pool.length;
+  const cap = Math.max(8, Math.floor(budget / Math.min(n, 3)));
+  const seeds = [];
+  const seedAt = j => { while (seeds.length <= j) seeds.push(Math.floor(rand() * 2 ** 31)); return seeds[j]; };
+  const totals = pool.map(() => 0), counts = pool.map(() => 0);
+  let alive = pool.map((_, i) => i), spent = 0, j = 0;
+  const mean = i => (counts[i] ? totals[i] / counts[i] : -Infinity) + (rival ? 0 : nudge(pool[i].o));
+  const stages = opts.halving ? Math.max(1, Math.ceil(Math.log2(n))) : 1;
+  for (let st = 0; st < stages && alive.length > 1; st++) {
+    const share = Math.floor((budget - spent) / (stages - st));
+    let used = 0;
+    // rounds of one rollout per alive candidate, all on seed j
+    while (used < share || alive.some(i => counts[i] === 0)) {
+      if (late() && alive.every(i => counts[i] > 0)) break;
+      const seed = seedAt(j++);
+      for (const i of alive) {
+        const { value, steps } = rollout(state, me, pool[i].o, seed, { full, cap, round, late, opts });
+        totals[i] += value; counts[i] += 1; used += steps;
+      }
+      if (j > 400) break;
+    }
+    spent += used;
+    if (opts.halving && st < stages - 1) alive = [...alive].sort((a, b) => mean(b) - mean(a)).slice(0, Math.max(2, Math.ceil(alive.length / 2)));
+  }
+  let best = alive[0];
+  for (const i of alive) if (mean(i) > mean(best)) best = i;
+  if (opts.onDecision) {
+    opts.onDecision({ player: me, kind: state.pending.kind, round, chosen: pool[best].o.id,
+      options: pool.map((r, i) => ({ id: r.o.id, normal: r.v, mean: counts[i] ? totals[i] / counts[i] : null, n: counts[i] })),
+      ranked }, state);
+  }
   return { player: me, option: pool[best].o.id };
 }
 
