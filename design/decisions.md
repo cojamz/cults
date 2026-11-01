@@ -1600,3 +1600,5 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - 2026-11-01 (Cory, 10:25am Eastern: "maybe we make it 3 members? it seems pretty weak now"): Line Cutters (was Front-runner) is worth 3 followers (counts as 3 members), not 2; art shows three people.
 - 2026-11-01 (Cory, 10:27am Eastern: "I like scout, why cut? just bad? make it more members maybe"): Scout stays and is worth 2 followers (counts as 2 members), price unchanged (Claude's number for "more members"); plural name and art as the other worth-2 renames. Recruiter held: Cory is skeptical of the test, being checked.
 - 2026-11-01 (Cory, 10:28am Eastern): fresh balance runs use the 10-card deck.
+- 2026-11-01 (Cory, 10:30am Eastern: "1 yes"): Tryout reads "Use the On Recruit effect of a shop member; it stays in the shop. +2 red." (was +1 red).
+- 2026-11-01 (Cory, 10:30am Eastern: "for red, yeah ship it"): Recruiter ships as "Whenever a member leaves a rival's cult, +2 red." (Normal test −2 ±2; fires ~10 a game, none in round I). Fresh 10-card run will re-read it.
