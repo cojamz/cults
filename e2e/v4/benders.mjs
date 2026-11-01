@@ -156,6 +156,13 @@ try {
       // the ask docks once the minion's own flight has landed (as a person sees it)
       await page.waitForSelector('.app.game:not([data-animating])', { timeout: 8000 }).catch(() => {});
       await page.waitForTimeout(300);
+      // under load the ask can still be on its way to its dock: wait for it, and if the game itself has moved past
+      // Straggler's ask (nothing to judge), look again on the next pass
+      await page.waitForSelector('.prompt.choice', { timeout: 5000 }).catch(() => {});
+      if (!(await page.$('.prompt.choice'))) {
+        const still = await page.evaluate(() => { try { return /^Straggler\b/.test(JSON.parse(localStorage.getItem('patrons.v4.local')).state.pending?.prompt || ''); } catch { return false; } });
+        if (!still) { seen.delete(`straggler-${prompt.slice(0, 30)}`); continue; }
+      }
       await shot(`b4-straggler-${seen.size}`);
       if (/which (one|minion)|move one of your minions/i.test(prompt)) errors.push(`(b4) Straggler still asks which minion: "${prompt.slice(0, 80)}"`);
       const stay = await page.$('.prompt.choice button[data-option="no"]');
