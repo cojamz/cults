@@ -25,12 +25,12 @@ describe('artifacts', () => {
   });
   it('the starting pick takes the artifact and 1 of its color, and the log names it', () => {
     let s = start();
-    expect(s.pending.prompt).toMatch(/pick an artifact/);
+    expect(s.pending.prompt).toMatch(/pick a cloak/); // artifacts are cloaks to players (Cory, Nov 1)
     const p = s.pending.player, q = s.pending.options[0].value;
     s = applyMove(s, { player: p, option: s.pending.options[0].id });
     expect(s.players[p].artifact).toBe(s.artifacts[q]);
     expect(Object.values(s.players[p].res).reduce((a, b) => a + b, 0)).toBe(1);
-    expect(s.log.some(l => l.includes("artifact") && l.includes(cardDef(s, s.artifacts[q]).name))).toBe(true);
+    expect(s.log.some(l => l.includes(`takes the ${cardDef(s, s.artifacts[q]).name}`) && /Cloak/.test(cardDef(s, s.artifacts[q]).name))).toBe(true);
     s = pickAll(s);
     expect(new Set(s.players.map(o => o.artifact)).size).toBe(TABLE.length);
   });

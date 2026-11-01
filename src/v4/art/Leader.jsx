@@ -1,5 +1,5 @@
 // A player's cult leader (32px): the robed, hooded figure from leaders.js, a gold medallion on the chest carrying the
-// player's emoji emblem (8×8, drawn 1:1 at x 12–19, y 19–26; never a shrunk minion). Every leader wears the same robe
+// player's emoji emblem (8×8, drawn 1:1 at x 12–19, y 19–26; never a shrunk minion). Every leader wears the same robe until it picks a cloak (then the robe is the cloak's color, Cory 2026-11-01)
 // (Cory, 2026-10-14: "brown or gray; the emojis are what set them apart"), so the seat color never reaches it. And a
 // minion (16px): the player's emoji itself. Size order: leader 32 > member 24 > minion 16 > follower 10.
 // Until the drawings are imported (scripts/v4-art-import.mjs), figures.js templates and the seat's sigil stand in.

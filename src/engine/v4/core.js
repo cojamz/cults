@@ -1358,8 +1358,8 @@ function gain(state, p, color, n, { fromAction = false, again = false } = {}) {
 
 // ---------- member iteration (a Doppelganger also runs the hooks of the member it copies) ----------
 
-function effectiveDefs(card) {
-  const own = defById(card.def);
+function effectiveDefs(card, state = null) {
+  const own = state ? cardDef(state, card.uid) : defById(card.def);
   if (!card.copy) return [own];
   const copied = defById(card.copy);
   const { onRecruited, ...hooks } = copied; void onRecruited;
@@ -1371,7 +1371,7 @@ function eachMemberOf(state, p, fn, keys) {
   // an artifact's ability works like a member's (it isn't one: no count, no worth, never moves)
   for (const uid of [...p.members, ...(p.artifact !== undefined ? [p.artifact] : [])]) {
     const card = state.cards[uid];
-    for (const def of effectiveDefs(card)) {
+    for (const def of effectiveDefs(card, state)) {
       if (keys && !keys.some(k => def[k] !== undefined)) continue;
       const before = traceSnapshot(state);
       accounted(state, null, () => { underCause({ kind: 'member', pid: p.id, uid, def: card.def }, () => tallied(state, p, uid, () => fn(wrap(state, card), def))); traceChanges(state, before, p, def); });
@@ -1598,7 +1598,7 @@ const turnOrder = state => (state.order.length ? state.order.slice(0, state.play
 // Cards in state are plain JSON. Content code sees a live view with `.def` attached.
 function wrap(state, card) {
   return new Proxy(card, {
-    get(target, key) { return key === 'def' ? defById(target.def) : target[key]; },
+    get(target, key) { return key === 'def' ? cardDef(state, target.uid) : target[key]; }, // a cloak by its cloak name
     set(target, key, value) { if (key === 'def') throw new Error('def is read-only'); target[key] = value; return true; },
   });
 }
