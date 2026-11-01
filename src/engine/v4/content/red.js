@@ -60,7 +60,7 @@ export default {
       resolve(ctx, p) { ctx.gain(p, 'red', 3, { fromAction: true }); swap(ctx, p, 'demote', 'Demote: choose a member and its replacement'); },
     },
     {
-      key: 'take', ring: 3, name: 'Recruit a Member', text: 'Recruit a member in the shop costing 8 or less. +1 red.', // the cap (Cory, 2026-10-24: "8 or less")
+      key: 'take', ring: 3, name: 'Recruit a Member', text: 'Recruit a member in the shop costing 8 or less, for free. +1 red.', // the cap (Cory, 2026-10-24: "8 or less")
       estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().filter(c => cost(c) <= 8).map(c => c.def.f + cost(c) * 0.6)),
       resolve(ctx, p) {
         const shop = ctx.shopCards().filter(c => cost(c) <= 8);

@@ -39,7 +39,7 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //      each rule-changer bending the price (Penny Pincher, a discount);
 //  (n) you are "You": the round summary and the Chronicle never use your seat's name; the summary keeps the type scale (caps labels 11, words 14 at least);
 //  (r) every hover card opened in (m) reads whole (lib/textclip.mjs) and keeps to the two marks (lib/legacy.mjs);
-//  (s) hovering Recruit a Member ("Recruit a member in the shop costing 8 or less.") in round III lights exactly the
+//  (s) hovering Recruit a Member ("Recruit a member in the shop costing 8 or less, for free.") in round III lights exactly the
 //      face-up members at 8 or less (two, both lit, the pricier ones not), its hover card names them ("Could recruit:
 //      A or B"), and the light leaves with the hover without moving any card (Cory, 2026-10-16; was Open Door, cut Oct 27);
 //  (a) also covers each chair's member count, its "+N" cell and its "each round" line (live panel r1, G4).
