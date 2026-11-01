@@ -11,6 +11,7 @@ One entry per use: date, job, lens version, prediction hit rate, what changed an
 ## Uses
 ### Use 1 · 2026-11-01 · overnight 0.99 balance pass, all 8 colors, decks 10 and 15 · v1
 - What would make every lens wrong at once: bots that never block and never play around triggers, so every space lift and every "whenever a rival…" card is off the same way. Countered by: reading Hard and Very Hard, and playing flagged turns out on paper.
+- Final hit rate 1 of 10 clean (3 partial). Biggest misses: trusting the last run's headline (Greatest Hits would drop, White sweeps) and guessing deck effects on color instead of on the shop. Next use: predict from mechanisms, and add a shop-dilution lens (share of the row nobody buys) since it was the real deck-15 effect.
 - Interim (deck 10 Normal in): three tool bugs found and fixed before any finding went out (see v1.1). Hit rate below in predictions.md.
 - Changes: v1.1 (first use; heavy step due at use 3, but run in part now because the skill is new: outside-principles walk).
 - Outside-principles walk (run early because the skill is new):
