@@ -8,7 +8,7 @@ export function memberTimingWords(text) {
     .replace(/^Now and at the start of round\b/i, 'On recruit and at the start of round')
     .replace(/^Now\b/i, 'On recruit')
     .replace(/^When recruited\b|^When it joins you\b/i, 'On recruit')
-    .replace(/^Recruit\b/i, 'On recruit')
+    .replace(/^Recruit:/i, 'On recruit:') // a member's 'Recruit:' opener only; an action's 'Recruit twice' stays a verb (blind panel, Nov 1)
     .replace(/^Round start\b/i, 'At round start');
 }
 

@@ -147,7 +147,7 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
         {/* the round's turn order as the snake it is, in names (Cory's todo: "make it clear the turn order is a snake draft") */}
         {first && <p className="hint" data-snake-order>{snakeWords(after, meId)}</p>}
         {/* the spaces change with the round: say so as it happens (live panel r1: "faces change by round without saying so") */}
-        {first && after.round >= 2 && <p className="hint" data-round-news>New this round: the {after.round === 2 ? 'middle' : 'inner'} ring opens, and spaces that say “more each round” pay more.</p>}
+        {first && after.round >= 2 && <p className="hint" data-round-news>New this round: the {after.round === 2 ? 'middle' : 'inner'} ring opens, and spaces with I, II and III numbers pay more.</p>}
         </div>
         {more && <span className="re-more" aria-hidden="true">More below</span>}
         <div className="re-foot">
