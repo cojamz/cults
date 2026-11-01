@@ -1,5 +1,7 @@
 # To do (one ordered list; rewritten 2026-10-24 in the tidy-up; backlog initiatives added 2026-10-29)
 
+
+The road to 1.0 (bar, gaps, order, Cory's calls): design/1.0.md. It sets the order; this list keeps the detail.
 Done items and the old lists: design/archive/todo-2026-10-20-to-23.md and design/archive/todo-before-2026-10-20.md.
 
 ## Cory's calls
