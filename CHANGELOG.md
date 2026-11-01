@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.915 — 2026-11-01
+
+- "Since your last turn" no longer shows cut in half under the turn card when four spare minions are out.
+
 ## v0.9.914 — 2026-11-01
 
 - Turn stories name the artifact (Impressionist, Pocket Watch) instead of "A member"; the results no longer keep a space's card open over them, and each cult's member count sits above its pictures; Yellow bots stop changing a rival's color back; a click on a rival's artifact picks that rival; Makeover's card says "rearrange your resources".
