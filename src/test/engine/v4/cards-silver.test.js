@@ -129,6 +129,15 @@ describe('Silver members', () => {
     expect(S(s, 1)).toBe(2);
   });
 
+  it('Caterer held as an artifact (Silver\u2019s artifact) pays its +1 too', () => {
+    let s = sc({ n: 4, members: [['silver.caterer']] });
+    const uid = s.players[0].members[0];
+    s.players[0].members = [];
+    s.players[0].artifact = uid;
+    s = take(s, 'silver.toast');
+    expect(S(s)).toBe(3 + 1);
+    expect(named(s, 'Caterer')[0]).toMatch(/P1's Caterer: \+1 silver/);
+  });
   it('Caterer: +1 silver per gift (not per player), named', () => {
     const s = take(sc({ n: 4, members: [['silver.caterer']] }), 'silver.toast');
     expect(S(s)).toBe(3 + 1);
