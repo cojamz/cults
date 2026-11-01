@@ -36,7 +36,7 @@ export const CUT10 = new Set([
   'market.restocker', 'market.plusone',
   'trading.undertaker',
   'yellow.tinker', 'yellow.matchmaker', 'yellow.agitator', 'yellow.leveler', 'yellow.bookcooker',
-  'benders.bigspender', 'benders.scout', 'benders.launderer', 'benders.cheerleader', 'benders.saboteur',
+  'benders.bigspender', 'benders.launderer', 'benders.cheerleader', 'benders.secondwind', 'benders.tiebreaker', // grey: Cory, Oct 31, keeps Scout and Old Maid, cuts Coach and Tiebreaker
 ]);
 
 // The card and scenario tests pin seeded decks and deal cut cards by id, so the test setup deals the full deck through

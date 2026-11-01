@@ -294,7 +294,7 @@ export const DECK10 = {
   }
  },
  "guest": {
-  "head": "cut Big Spender, Scout, Launderers, Cheerleader and Saboteur (renamed Old Maid).",
+  "head": "cut Big Spender, Launderers, Cheerleader, Coach and Tiebreaker (Cory).",
   "cards": {
    "benders.frontrunner": {
     "why": "Bends turn order."
@@ -306,10 +306,7 @@ export const DECK10 = {
    "benders.dabblers": {
     "why": "Bends colors."
    },
-   "benders.scout": {
-    "cut": true,
-    "why": "Blue's shop sweepers do this."
-   },
+   "benders.scout": { "why": "Your call: stays."},
    "benders.squatter": {
     "why": "Bends blocking."
    },
@@ -321,19 +318,14 @@ export const DECK10 = {
     "cut": true,
     "why": "A follower drip, not a rule bend; Tiebreaker covers contests."
    },
-   "benders.tiebreaker": {
-    "why": "Bends contest ties."
-   },
+   "benders.tiebreaker": { "cut": true, "why": "Your call: out."},
    "benders.freelancer": {
     "why": "Bends payment."
    },
-   "benders.saboteur": {
-    "cut": true,
-    "why": "Only works with a swap color on the table."
-   },
+   "benders.saboteur": { "why": "Your call: stays."},
    "benders.anarchist": {},
    "benders.conmen": {},
-   "benders.secondwind": {},
+   "benders.secondwind": { "cut": true, "why": "Your call: out."},
    "benders.extrahand": {
     "why": "Big buy, bends minions."
    },

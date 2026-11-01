@@ -72,14 +72,11 @@ describe('Guest members (rule-benders)', () => {
     expect(s.players[0].left).toBe(left);
     expect(s.cards[hand].used).toBeFalsy();
   });
-  it('Con Men: On Use, once per game, steal 5 when you choose (not on recruit); spent after', () => {
-    let s = sceneQ({ res: [{}, { gold: 9 }], members: [['benders.conmen']] });
-    const u = uidOf(s, 'benders.conmen', 0);
-    expect(s.players[0].res.gold).toBe(0);
-    s = move(s, `use:${u}`);
+  it('Con Men: On Recruit, steal 5 (Cory, Oct 31)', () => {
+    let s = sceneQ({ res: [rich, { gold: 9 }], shop: ['benders.conmen'] });
+    s = buy(take(s, 'gold.rush'), 'benders.conmen');
     while (s.pending?.kind === 'choose' && s.pending.player === 0) s = move(s, s.pending.options[0].id);
     expect(s.players[1].res.gold).toBe(4);
-    expect(s.cards[u].used).toBe(true);
   });
   it('Big Spender: One Time Use, a second recruit this turn; named; spent after', () => {
     let s = sceneQ({ res: [rich], members: [['benders.bigspender']] });

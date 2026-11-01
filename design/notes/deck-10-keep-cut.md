@@ -155,7 +155,7 @@ Cut (5):
 - **Leveler** (8, worth 1): "On Use, once per round: choose a color; 1 of each rival's biggest color becomes it." A fourth card that changes rivals' resources.
 - **Book Cooker** (10, worth 3): "Worth 3 followers. On Use, once per game: rearrange your resources into any mix of colors." Launderers' twin, and the round III space does it too.
 
-## Grey: cut Big Spender, Scout, Launderers, Cheerleader and Old Maid.
+## Grey (Cory, Nov 1): cut Big Spender, Launderers, Cheerleader, Coach and Tiebreaker; Scout and Old Maid stay.
 
 Keep, round I (4):
 - **Party Crasher** (4, worth 1): "On Use, once per game: your next minion can be placed on a space a rival already took." Bends blocking.
