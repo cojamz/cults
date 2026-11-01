@@ -515,8 +515,8 @@ const echoQ = {
       onRecruited(ctx, owner) {
         const q = ctx.state.quadrants.indexOf('echo');
         const g = q < 0 ? 0 : Object.keys(ctx.state.slots).filter(k => Number(k.split('-')[0]) === q).length;
-        if (g) ctx.gain(owner, 'green', g);
-        ctx.log(`${owner.name}'s Fan Club: +${g} green.`);
+        if (g) { ctx.gain(owner, 'green', g); ctx.log(`${owner.name}'s Fan Club: +${g} green.`); }
+        else ctx.log(`${owner.name}'s Fan Club: no minion on a Green space, so no green.`); // never "+0 green" (bug bash, Nov 1)
       },
     }),
     // Cory, 2026-10-28: "Roadie is good" (Green's 16th); cost 3 is Claude's
