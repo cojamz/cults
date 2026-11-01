@@ -1,6 +1,6 @@
 // The turn card and the "since your last turn" strip (trail.js, format.js turnStory/effectStory), three fixes:
 //  1. an extra turn says which card gave it, on the turn that gets it and on the extra turn itself (Cory: "Log did not
-//     indicate a Night Owl turn");
+//     indicate a Night Owls turn");
 //  2. what a member used before the placement did is told as that member's, never as the space's own result (final
 //     panel S#6 / game-skeptic w4 #6: "You took Spree · +3 gold · 3 gold from P2", the gold from Tribute Band's copy);
 //  3. a steal is told once: each rival's loss on one line, in the colors taken (stolen resources keep their colors
@@ -44,25 +44,25 @@ function table(opts, me = null) {
 const lastLive = d => d.lives[d.lives.length - 1];
 
 describe('an extra turn names the card that gave it', () => {
-  it('Night Owl: the turn that earns it and the extra turn itself both say so, on the card and in the strip', () => {
+  it('Night Owls: the turn that earns it and the extra turn itself both say so, on the card and in the strip', () => {
     const d = table({ quadrants: ['gold', 'red', 'purple', 'green'], round: 2, left: 1, members: [['purple.nightowl']],
       queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }], order: [0, 1] }, 1);
     d.take('purple.windup');
     d.on();
-    expect(d.s.log).toContain("P1's Night Owl: P1 gets 1 more minion, placed now.");
+    expect(d.s.log).toContain("P1's Night Owls: P1 gets 1 more minion, placed now.");
     d.take('purple.lastcall');
     d.on();
     const [earn, extra] = d.t.stories;
-    expect(earn.lines).toContain('Night Owl: +1 minion, placed now');
+    expect(earn.lines).toContain('Night Owls: +1 minion, placed now');
     expect(earn.lines).not.toContain('an extra turn');
-    expect(earn.short).toContain('Night Owl: +1 minion, placed now');
+    expect(earn.short).toContain('Night Owls: +1 minion, placed now');
     // the extra turn's own card leads with why it happened, and so does its line in the strip
     expect(extra.head).toBe(`P1 took ${actionName('purple.lastcall')}`);
-    expect(extra.lines[0]).toBe('Night Owl: extra turn');
-    expect(extra.text.startsWith(`P1 took ${actionName('purple.lastcall')} · Night Owl: extra turn`)).toBe(true);
-    expect(extra.short.startsWith('Night Owl: extra turn')).toBe(true);
+    expect(extra.lines[0]).toBe('Night Owls: extra turn');
+    expect(extra.text.startsWith(`P1 took ${actionName('purple.lastcall')} · Night Owls: extra turn`)).toBe(true);
+    expect(extra.short.startsWith('Night Owls: extra turn')).toBe(true);
     // and the live card as the extra turn is played
-    expect(lastLive(d).lines[0]).toBe('Night Owl: extra turn');
+    expect(lastLive(d).lines[0]).toBe('Night Owls: extra turn');
     // a turn in the round's order says nothing of the kind
     const next = d.t.stories.length;
     expect(d.s.pending.player).toBe(1);

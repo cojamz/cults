@@ -23,7 +23,7 @@ export const CUT = new Set([
   'trading.lender', 'trading.tipster', 'trading.dealer', 'trading.pawnbroker', 'trading.liquidator',
   'trading.safetynet', 'trading.magnate', 'trading.shareholder', 'trading.reinvestor', // Cory, 2026-10-22: his White set of 12
   'benders.insider', 'benders.straggler', // Straggler: Cory, 2026-10-28, to the bench (design/bench.md)
-  'trading.bulkbuyer', 'trading.appraiser', 'market.makeover', 'market.stylist', // Cory, 2026-10-24 / Stylist 2026-10-25: thinning ("I like Closer rest can go"); Restocker replaces Makeover
+  'trading.bulkbuyer', 'trading.appraiser', 'market.makeover', 'market.stylist', // Cory, 2026-10-24 / Stylist 2026-10-25: thinning ("I like Closer rest can go"); Restockers replaces Makeover
 ]);
 
 // The 10-card decks (Cory, 2026-10-31: "create two versions of game, 10 card deck version and 15 card deck version";

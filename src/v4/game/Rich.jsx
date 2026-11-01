@@ -111,7 +111,7 @@ export function Rich({ text, after = '', timingDone = false, memberDone = false 
       const before = text.slice(Math.max(0, at - 6), at), after = text.slice(at + 3, at + 12);
       // only a counted amount is the dot ("2 any" → "2◍"); "any" as a plain word stays a word ("+2 of any color you
       // choose", "pay in any colors"): a dot there read "+2 of ◍ color you choose" (design pod, 2026-10-15)
-      // "count as any" is the wild too (Alchemist, Cory Oct 29: "all your resources count as WILDSYMBOL")
+      // "count as any" is the wild too (Alchemists, Cory Oct 29: "all your resources count as WILDSYMBOL")
       const meansResources = /\d\s$/.test(before) || /\bas\s$/.test(before);
       if (!meansResources) continue;
     }

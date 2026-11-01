@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Night Owl (Purple, Relay's slot): "From round II, after your last minion each round, take an extra turn: place one more and buy again."
+// Night Owls (Purple, Relay's slot): "From round II, after your last minion each round, take an extra turn: place one more and buy again."
 // No extra minions in round I (Cory, 2026-10-15).
 // In the engine this is one extra turn (glossary: "you place one more minion and may buy again", only while the board
 // has a space to spare), queued right after the turn of your last minion. Through real moves: only after the last
@@ -15,7 +15,7 @@ useRetiredRollCall(); // Roll Call, a plain purple space, kept for these tests (
 
 const Q = ['gold', 'red', 'purple', 'green'];
 const sc = o => sceneQ({ quadrants: Q, ...o });
-const owl = s => linesNaming(s.log, 'Night Owl');
+const owl = s => linesNaming(s.log, 'Night Owls');
 const turns = (...ps) => ps.map(p => ({ t: 'turn', p }));
 /** Pass every buy step; who places next (undefined when nobody does). */
 function nextPlacer(s) {
@@ -24,7 +24,7 @@ function nextPlacer(s) {
 }
 const queuedTurns = (s, id) => s.queue.filter(t => t.t === 'turn' && t.p === id).length;
 
-describe('Night Owl', () => {
+describe('Night Owls', () => {
   it('is printed as decided: 6 purple + 1 any, worth 2 followers, in plain words', () => {
     const d = defById('purple.nightowl');
     expect([d.s, d.w, d.f]).toEqual([6, 1 + EXTRA_WILD, 2]); // 8 → 6 purple after the Oct 22 bot run; 9 → 8 in total after the Oct 29 balance runs
@@ -41,7 +41,7 @@ describe('Night Owl', () => {
   it('after your last minion (and that turn’s buy), you place one more before the next player does, named', () => {
     let s = take(sc({ round: 2, left: 1, members: [['purple.nightowl']], queue: turns(0, 1) }), 'purple.windup');
     expect(s.players[0].left).toBe(1);
-    expect(owl(s)).toEqual(["P1's Night Owl: P1 gets 1 more minion, placed now."]);
+    expect(owl(s)).toEqual(["P1's Night Owls: P1 gets 1 more minion, placed now."]);
     expect(queuedTurns(s, 0)).toBe(1);
     const next = nextPlacer(s);
     expect(next.who).toBe(0);
@@ -62,7 +62,7 @@ describe('Night Owl', () => {
     let s = sc({ round: 3, left: 1, members: [['purple.nightowl']], queue: turns(0, 1) });
     s.cards[uidOf(s, 'purple.nightowl', 0)].owlRound = 2; // it fired last round
     s = take(s, 'purple.windup');
-    expect(owl(s)).toEqual(["P1's Night Owl: P1 gets 1 more minion, placed now."]);
+    expect(owl(s)).toEqual(["P1's Night Owls: P1 gets 1 more minion, placed now."]);
     expect(s.players[0].left).toBe(1);
   });
 
@@ -74,7 +74,7 @@ describe('Night Owl', () => {
     let s = take(sc({ round: 1, left: 1, slots, members: [['purple.nightowl']], queue: turns(0, 1) }), 'purple.windup');
     expect(s.players[0].left).toBe(0);
     expect(queuedTurns(s, 0)).toBe(0);
-    expect(s.log).toContain('No extra minions in round I: P1 gets no extra turn from Night Owl.');
+    expect(s.log).toContain('No extra minions in round I: P1 gets no extra turn from Night Owls.');
     expect(nextPlacer(s).who).toBe(1);
   });
 
@@ -86,9 +86,9 @@ describe('Night Owl', () => {
   });
 });
 
-// Cory, 2026-10-15: "I bought Night Owl in round 1 and it didn't seem to give me an extra." With 4 players round I
-// has no free space, and a Night Owl recruited after your last minion waits a round: either way the log says why.
-describe('Night Owl says why it gave no extra turn', () => {
+// Cory, 2026-10-15: "I bought Night Owls in round 1 and it didn't seem to give me an extra." With 4 players round I
+// has no free space, and a Night Owls recruited after your last minion waits a round: either way the log says why.
+describe('Night Owls says why it gave no extra turn', () => {
   it('4 players, round I: no extra minions even on the final free space', () => {
     const probe = sceneQ({ quadrants: Q, n: 4 });
     const free = spaceOf(probe, 'purple.windup');
@@ -96,7 +96,7 @@ describe('Night Owl says why it gave no extra turn', () => {
     const s = take(sceneQ({ quadrants: Q, n: 4, round: 1, left: 1, slots, members: [['purple.nightowl']], queue: turns(0) }), 'purple.windup');
     expect(queuedTurns(s, 0)).toBe(0);
     expect(owl(s)).toEqual([]);
-    expect(s.log).toContain('No extra minions in round I: P1 gets no extra turn from Night Owl.');
+    expect(s.log).toContain('No extra minions in round I: P1 gets no extra turn from Night Owls.');
   });
   it('recruited in the buy step after your last minion: it says the extra turn starts next round', () => {
     const cost = defById('purple.nightowl');
@@ -104,6 +104,6 @@ describe('Night Owl says why it gave no extra turn', () => {
     let s = move(s0, s0.pending.options.find(o => o.kind === 'card' && s0.cards[o.uid].def === 'purple.nightowl').id);
     if (s.pending?.kind === 'choose' && s.pending.options.some(o => o.kind === 'pay')) s = move(s, s.pending.options.find(o => o.default).id);
     expect(s.players[0].members.map(u => s.cards[u].def)).toContain('purple.nightowl');
-    expect(owl(s)).toEqual(["P1's Night Owl: P1's last minion this round is already placed, so its extra turn starts next round."]);
+    expect(owl(s)).toEqual(["P1's Night Owls: P1's last minion this round is already placed, so its extra turn starts next round."]);
   });
 });

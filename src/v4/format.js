@@ -201,7 +201,7 @@ function roundLogStart(log) {
   for (let i = log.length - 1; i >= 0; i--) if (/^Round \S+ ends\./.test(log[i])) return i + 1;
   return 0;
 }
-/** The cards and spaces that gave each player extra turns this round, in order: { [pid]: ['Night Owl', …] }. */
+/** The cards and spaces that gave each player extra turns this round, in order: { [pid]: ['Night Owls', …] }. */
 function extraGrants(state) {
   const out = {}, log = state.log;
   const byName = n => state.players.find(p => p.name === n);
@@ -910,7 +910,7 @@ export function traceLine(line, players, resources) {
   return null;
 }
 
-/** A turn card's line for a minion placed now: "+1 minion, placed now", or with the card that gave it ("Night Owl: +1 minion, placed now"). */
+/** A turn card's line for a minion placed now: "+1 minion, placed now", or with the card that gave it ("Night Owls: +1 minion, placed now"). */
 const EXTRA_LINE = /^(?:[^:]+: )?\+\d+ minions?, placed now$/;
 
 /**
@@ -1021,7 +1021,7 @@ export function turnStory(start, end, actor, me = null, mid = null) {
       else if (/^ couldn't afford anything\.$/.test(own)) said.push('nothing affordable');
       else if ((m = own.match(/^ traded (.+)\.$/))) said.push(youName(`traded ${m[1]}`));
       else if ((m = own.match(/^ pulled a heist: (.+)\.$/))) said.push(youName(`took ${m[1]}`));
-      // the card that gave it, named (Cory: "Log did not indicate a Night Owl turn"): "Night Owl: an extra turn after this one"
+      // the card that gave it, named (Cory: "Log did not indicate a Night Owls turn"): "Night Owls: an extra turn after this one"
       else if ((m = own.match(/^'s (.+?): .+? gets (1 more minion|(\d+) more minions), placed now\.$/))) said.push(`${m[1]}: +${m[3] || 1} minion${m[3] ? 's' : ''}, placed now`);
       else if ((m = own.match(/gets (1 more minion|(\d+) more minions), placed now\.$/))) said.push(`+${m[2] || 1} minion${m[2] ? 's' : ''}, placed now`);
       else if ((m = own.match(/^'s next member costs (\d+) less\.$/))) said.push(`next member costs ${m[1]} less`);
@@ -1085,7 +1085,7 @@ export function turnStory(start, end, actor, me = null, mid = null) {
   const did = place ? (joined ? `joined ${nm(joined.id)} on ${space} (Squatter)` : `took ${space}`) : null;
   const head = usedFirst.length ? `${who} used ${usedFirst.join(', ')}${did ? `, then ${did}` : ''}` : did ? `${who} ${did}` : who;
   // the strip's one line: what hit you first, then the biggest thing the turn did
-  // a member changing hands names both and whose it was first ("took your Retinue, gave Broker"; w4 A#62: the strip said
+  // a member changing hands names both and whose it was first ("took your Retinue, gave Brokers"; w4 A#62: the strip said
   // "Swap Sides · bought 10" with no word of the swap)
   const swapLine = out.filter(l => /^(took (your|\S+['’]s) |gave .+ to )/.test(l)).join(', ');
   const big = swapLine || out.find(l => /^(recruited|bought|traded|released) /.test(l) || EXTRA_LINE.test(l));
@@ -1268,7 +1268,7 @@ export function effectStory(start, end, actor, me = null, fx = []) {
   for (const l of (base ? base.lines : [])) if ((/^(used |switched )/.test(l) || EXTRA_LINE.test(l)) && !out.includes(l) && !(base.head && l.startsWith('used ') && base.head.includes(` ${l}`))) out.push(l);
   if (!base && !out.length) return null;
   const hit = hits.join(', ');
-  // a member changing hands names both and whose it was first ("took your Retinue, gave Broker"; w4 A#62: the strip said
+  // a member changing hands names both and whose it was first ("took your Retinue, gave Brokers"; w4 A#62: the strip said
   // "Swap Sides · bought 10" with no word of the swap)
   const swapLine = out.filter(l => /^(took (your|the shop['’]s|\S+['’]s) |gave .+ to |swapped .+ for )/.test(l)).join(', ');
   const big = swapLine || out.find(l => /^(recruited|bought|traded|released) /.test(l) || EXTRA_LINE.test(l));

@@ -56,7 +56,7 @@ describe('Recruiter ("Whenever you add a member to your cult, +1 red") counts me
 });
 
 describe('the other "whenever you recruit" members fire on follower purchases too', () => {
-  it('Proselytizer: +1 follower on a follower purchase', () => {
+  it('Proselytizers: +1 follower on a follower purchase', () => {
     let s = fixture({ members: [['red.proselytizer']], res: [{ gold: 3 }] });
     s = buyOne(s);
     expect(s.players[0].bonus).toBe(2);

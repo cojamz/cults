@@ -1,4 +1,4 @@
-// Rearranging your resources into any mix of colors: the Launderers guest, Yellow's round III space and Book Cooker
+// Rearranging your resources into any mix of colors: the Launderers guest, Yellow's round III space and Book Cookers
 // (Cory, 2026-10-29: "should let me rearrange colors as i please, not all to one color"). On screen LaunderCard.jsx sets
 // any mix at once and answers these steps itself; bots pick here. `who` names the card or space in prompts and log.
 const sum = p => Object.values(p.res).reduce((a, b) => a + b, 0);

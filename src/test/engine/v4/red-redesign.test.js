@@ -148,7 +148,7 @@ describe('locked Red action progression', () => {
     expect(s.players[0].res.green).toBe(0);
   });
 
-  it('Bodyguard/Lie Low protect rival cults while the actor may exchange their own protected member', () => {
+  it('Bodyguards/Lie Low protect rival cults while the actor may exchange their own protected member', () => {
     const s = take(table(['gold', 'red', 'thieves', 'echo'], { n: 3, round: 2, members: [['thieves.watchdog'], ['red.twins', 'thieves.crew'], ['red.intern']], shop: ROW }), 'red.hireup');
     const own = uidIn(s, 'thieves.watchdog', 0);
     expect(s.pending.options.some(o => o.value[0] === own)).toBe(true);

@@ -104,7 +104,7 @@ export const DECK10 = {
    },
    "thieves.snitch": {
     "cut": true,
-    "why": "Bodyguard is the counter to stealing; two is one too many in 10."
+    "why": "Bodyguards is the counter to stealing; two is one too many in 10."
    },
    "thieves.desperado": {},
    "thieves.grifter": {},
@@ -125,7 +125,7 @@ export const DECK10 = {
   }
  },
  "purple": {
-  "head": "cut Go-Getter, Late Risers and Gossip; Early Bird and Timekeepers get cheaper so round I has 4.",
+  "head": "cut Go-Getter, Late Risers and Gossip; Early Birds and Timekeepers get cheaper so round I has 4.",
   "cards": {
    "purple.crew": {},
    "purple.bouncer": {
@@ -166,7 +166,7 @@ export const DECK10 = {
   }
  },
  "market": {
-  "head": "cut Restocker, Plus-One and Doorman's round I spot. Blue has only 4 round II members, so it runs 5 and 5, with Doorman up to 5 in round II.",
+  "head": "cut Restockers, Plus-Ones and Doorman's round I spot. Blue has only 4 round II members, so it runs 5 and 5, with Doorman up to 5 in round II.",
   "cards": {
    "market.regular": {
     "why": "Cheap."
@@ -176,7 +176,7 @@ export const DECK10 = {
    },
    "market.restocker": {
     "cut": true,
-    "why": "A third shop sweeper after Window Dresser and Trendsetter."
+    "why": "A third shop sweeper after Window Dressers and Trendsetters."
    },
    "market.windowdresser": {},
    "market.plusone": {
@@ -226,7 +226,7 @@ export const DECK10 = {
    },
    "trading.undertaker": {
     "cut": true,
-    "why": "Martyr's twin (followers when a member leaves you)."
+    "why": "Martyrs' twin (followers when a member leaves you)."
    },
    "trading.oldmoney": {
     "why": "Game end, per white member."
@@ -241,7 +241,7 @@ export const DECK10 = {
   }
  },
  "yellow": {
-  "head": "cut Tinker, Matchmaker, Agitator, Leveler and Book Cooker; Go-Between and Drifters get cheaper so round I has 4.",
+  "head": "cut Tinker, Matchmaker, Agitator, Leveler and Book Cookers; Go-Between and Drifters get cheaper so round I has 4.",
   "cards": {
    "yellow.gardener": {},
    "yellow.customs": {
@@ -268,7 +268,7 @@ export const DECK10 = {
    "yellow.explorer": {},
    "yellow.agitator": {
     "cut": true,
-    "why": "Four cards change rivals' resources; keep Ringleader and Puppeteer."
+    "why": "Four cards change rivals' resources; keep Ringleader and Puppeteers."
    },
    "yellow.ringleader": {
     "why": "Yellow's sting."
@@ -301,7 +301,7 @@ export const DECK10 = {
    },
    "benders.bigspender": {
     "cut": true,
-    "why": "Blue's Shopaholics and Plus-One do recruiting twice; you once said no to it."
+    "why": "Blue's Shopaholics and Plus-Ones do recruiting twice; you once said no to it."
    },
    "benders.dabblers": {
     "why": "Bends colors."

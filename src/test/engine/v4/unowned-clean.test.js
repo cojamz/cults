@@ -18,13 +18,13 @@ it('Tryout on Hustler: the color you pick is not left on the shop card', () => {
   clean(s, uid);
 });
 
-it('Tryout on Night Owl with your last minion placed: the shop card keeps no round mark', () => {
+it('Tryout on Night Owls with your last minion placed: the shop card keeps no round mark', () => {
   const before = sceneQ({ quadrants: ['red', 'gold', 'purple', 'echo'], shop: ['purple.nightowl'] });
   before.players[0].left = 1;
   const uid = shopCard(before, 'purple.nightowl');
   let s = take(before, 'red.evenswap');
   s = move(s, `card:${uid}`);
-  expect(s.log.some(l => l.includes('Night Owl'))).toBe(true);
+  expect(s.log.some(l => l.includes('Night Owls'))).toBe(true);
   expect(s.shop).toContain(uid);
   clean(s, uid);
 });

@@ -57,7 +57,7 @@ const stillMine = (ctx, p, w) => (w.joined ? (ctx.state.squats?.[w.key] || []).i
 
 const cost = c => c.def.s + c.def.w;
 // Anarchist's swaps: any two members, in any cult or the shop, costing within 2 of each other; a rival's member only
-// where it may be taken (Bodyguard), and never a member that can't be swapped (Loyalists)
+// where it may be taken (Bodyguards), and never a member that can't be swapped (Loyalists)
 function anarchyPairs(ctx, p) {
   const all = [...ctx.state.players.flatMap(o => (o === p || ctx.canSteal(p, o, 'member')) ? ctx.membersOf(o).filter(c => ctx.canSwapMember(c.uid)) : []), ...ctx.shopCards()];
   const out = [];
@@ -114,7 +114,7 @@ const members = [
     onTurnEnd(ctx, owner, card, p) { if (p === owner) delete owner.buyTwiceNow; },
     botActivate: (ctx, p) => !p.buyTwiceNow && ctx.state.round >= 2 && p.turnBuys === 0 && Object.values(p.res).reduce((a, b) => a + b, 0) >= 10,
   }),
-  m('freelancer', 'Alchemist', 'yellow', 2, 2, /* Freelancer until Cory renamed it, Oct 28 */ 'All your resources count as any when you recruit a member.', { f: 2, anyColorPart: true }), // (Cory, Oct 29, balance run: +1 follower)
+  m('freelancer', 'Alchemists', 'yellow', 2, 2, /* Freelancer until Cory renamed it, Oct 28 */ 'All your resources count as any when you recruit a member.', { f: 2, anyColorPart: true }), // (Cory, Oct 29, balance run: +1 follower)
   m('insider', 'Insider', 'market', 3, 1, 'You may also recruit from the top 3 of the pile.', { pileReach: 3 }),
   // Extra Hand as it printed until Oct 28, never dealt (retired): the tests of extra minions a card grants by round
   // (Poach and swaps moving an unplaced grant, copies, a full board) keep it as their fixture

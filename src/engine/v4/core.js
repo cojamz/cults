@@ -731,7 +731,7 @@ function runTask(state, task) {
     case 'turn': {
       state.current = p.id;
       (state.turns = state.turns || []).push(p.id);
-      // two turns in a row (a snake turnaround, Right Away, Crunch Time, Clockmaker, +1 minion placed now): Courier
+      // two turns in a row (a snake turnaround, Right Away, Crunch Time, Clockmakers, +1 minion placed now): Courier
       if (state.turns.length > 1 && state.turns[state.turns.length - 2] === p.id) {
         const ctx = ctxFor(state);
         eachMemberOf(state, p, (card, def) => { if (def.onTurnInRow) def.onTurnInRow(ctx, p, card); }, ['onTurnInRow']);
@@ -864,7 +864,7 @@ function startRound(state, r) {
   }));
   const rowNotes = [];
   const snake = state.order.map(id => ({ t: 'turn', p: id }));
-  // Clockmaker (flag firstTwoInRow, Cory 2026-10-29): your first two turns of the round come in a row. Your last snake
+  // Clockmakers (flag firstTwoInRow, Cory 2026-10-29): your first two turns of the round come in a row. Your last snake
   // turn moves up to right after your first, as Right Away moves one (your turns between stay where they are)
   for (const id of base) if (sumMemberFlag(state, state.players[id], 'firstTwoInRow') > 0) {
     const f = snake.findIndex(t => t.p === id), l = snake.findLastIndex(t => t.p === id);
@@ -1235,7 +1235,7 @@ function swapMembers(state, actor, aUid, bUid) {
 
 // White's round I space: "This turn, if you recruit a member, +1 follower for every 2 resources you pay for it" (2026-10-27).
 // p.perSpend is set by the space and cleared at turn start; it pays once, on the turn's first paid recruit.
-// A White action giving followers, so Broker adds its +1.
+// A White action giving followers, so Brokers adds its +1.
 function spendBonus(state, p, spend) {
   if (!p.perSpend) return;
   delete p.perSpend;
@@ -1244,12 +1244,12 @@ function spendBonus(state, p, spend) {
   const extra = sumMemberFlag(state, p, 'brokerBonus'), mark = fMark(state);
   p.bonus += n + extra;
   fCredit(state, mark, 'Splurge');
-  log(state, `${p.name}'s Splurge: +${n} follower${n > 1 ? 's' : ''} for spending.${extra ? ` Broker: +${extra}.` : ''}`);
+  log(state, `${p.name}'s Splurge: +${n} follower${n > 1 ? 's' : ''} for spending.${extra ? ` Brokers: +${extra}.` : ''}`);
 }
 // Gather-style fuel spaces (Cory, 2026-10-31: Gather, then Allowance and Stash "gather style"): "This turn, if you recruit
 // a member, +1 follower (+2 in round II, +3 in round III)". Each space taken this turn adds { n, name, broker } to
 // p.recruitFollowers (cleared at turn start); all of them pay once, on the turn's first member recruit. A White space's
-// followers also get Broker's +1.
+// followers also get Brokers' +1.
 function recruitFollowersBonus(state, p) {
   const list = p.recruitFollowers;
   if (!list?.length) return;
@@ -1258,7 +1258,7 @@ function recruitFollowersBonus(state, p) {
     const extra = broker ? sumMemberFlag(state, p, 'brokerBonus') : 0, mark = fMark(state);
     p.bonus += n + extra;
     fCredit(state, mark, name);
-    log(state, `${p.name}'s ${name}: +${n} follower${n > 1 ? 's' : ''} for recruiting a member.${extra ? ` Broker: +${extra}.` : ''}`);
+    log(state, `${p.name}'s ${name}: +${n} follower${n > 1 ? 's' : ''} for recruiting a member.${extra ? ` Brokers: +${extra}.` : ''}`);
   }
 }
 function buyFollowers(state, p, tier, chosen) {

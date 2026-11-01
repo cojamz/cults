@@ -5,12 +5,12 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 // Purple table and is about to place in round I. Build-failing assertions:
 //  (m1) your seat card is your members: one row each with its whole ability (every word of the card's text, never cut:
 //       no ellipsis, no clipping), no Followers / Has / Last moves rows, whole on screen (a long list scrolls inside);
-//  (m2) a member you can use now is lit in your seat (Lottery Winner, Heiress); one already used reads
+//  (m2) a member you can use now is lit in your seat (Lottery Winner, Heiresses); one already used reads
 //       "used" (Speculator); one the engine would refuse now stays unlit (Pawnbroker, nothing to sell); switches show
 //       their state (Midas on, Translator off) in the seat and in the seat card;
 //  (m3) the lit member's hover has a "Use: +7 ●" button that works: the pointer can move onto it, a click uses it (gold
 //       up by what it said, in the saved game), pieces fly, and it reads "used" in the seat, its hover and the seat card;
-//  (m4) the seat card's own Use button works too (Heiress: +1 white per member);
+//  (m4) the seat card's own Use button works too (Heiresses: +1 white per member);
 //  (m5) the prompt names what you can use once, quietly, and only what would do something;
 //  (m6) a rival's seat card lists their members with no Use buttons;
 //  (m7) w2b #20, w3a A8: every seat's card opens right next to what's pointed at (its leader, its name), level with
@@ -224,9 +224,9 @@ try {
     if (!r || r.state !== 'used' || r.tag !== 'used' || r.use) fail(`after use, its seat card row: ${JSON.stringify(r)}`, 'm3');
     await page.screenshot({ path: `${SHOTS}/4-seat-card-after.png` });
 
-    // (m4) the seat card's own button: Heiress, +1 white per member
+    // (m4) the seat card's own button: Heiresses, +1 white per member
     const hb = await page.$('[data-hover-layer][data-open="1"] [data-member-row="trading.heiress"] [data-use]');
-    if (!hb) fail('Heiress\'s row in the seat card has no Use button', 'm4');
+    if (!hb) fail('Heiresses\'s row in the seat card has no Use button', 'm4');
     else {
       const bb = await hb.boundingBox();
       await page.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2, { steps: 10 });
@@ -236,9 +236,9 @@ try {
       await page.mouse.down(); await page.mouse.up();
       await page.waitForFunction(m => { try { return JSON.parse(localStorage.getItem('patrons.v4.local')).state.moves > m; } catch { return false; } }, s1.moves, { timeout: 4000 }).catch(() => {});
       const s2 = await saved();
-      // members as the game counts them: a member worth 2 followers counts as 2 (Chefs, Twins, and Heiress herself)
+      // members as the game counts them: a member worth 2 followers counts as 2 (Chefs, Twins, and Heiresses herself)
       const n = memberCount(s1, s1.players[0]);
-      if (!s2.cards[uids['trading.heiress']].used || s2.players[0].res.white - s1.players[0].res.white !== n) fail(`Heiress from the seat card: used ${!!s2.cards[uids['trading.heiress']].used}, white +${s2.players[0].res.white - s1.players[0].res.white} (want +${n})`, 'm4');
+      if (!s2.cards[uids['trading.heiress']].used || s2.players[0].res.white - s1.players[0].res.white !== n) fail(`Heiresses from the seat card: used ${!!s2.cards[uids['trading.heiress']].used}, white +${s2.players[0].res.white - s1.players[0].res.white} (want +${n})`, 'm4');
     }
   }
   await away();

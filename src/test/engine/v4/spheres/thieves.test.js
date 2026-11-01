@@ -163,7 +163,7 @@ describe('Magenta actions', () => {
     let s = scene({ round: 2, res: [{}, { gold: 1 }], members: [[], ['red.mob', 'red.bigfamily', 'red.volunteer', 'gold.speculator', 'red.proselytizer']] });
     s = take(s, 'thieves.ransom');
     const mob = uidOf(s, 'red.mob', 1), fam = uidOf(s, 'red.bigfamily', 1), spec = uidOf(s, 'gold.speculator', 1);
-    // Volunteer costs 0 and Proselytizer 6 (over 5), so Mob (3), Big Family (4) and Speculator (5) can be at stake;
+    // Volunteer costs 0 and Proselytizers 6 (over 5), so Mob (3), Big Family (4) and Speculator (5) can be at stake;
     // the holder picks which (Cory, 2026-10-28)
     expect(s.pending.player).toBe(1);
     expect(ids(s).sort()).toEqual([`card:${mob}`, `card:${fam}`, `card:${spec}`].sort());
@@ -346,7 +346,7 @@ describe('Magenta members', () => {
     expect(Object.values(R(s)[0]).reduce((a, b) => a + b, 0)).toBe(2);
   });
 
-  it('Bodyguard: rivals can’t steal your members or your resources', () => {
+  it('Bodyguards: rivals can’t steal your members or your resources', () => {
     const s = take(scene({ round: 3, members: [[], ['thieves.watchdog', 'red.intern']] }), 'thieves.heist');
     expect(s.pending?.kind).not.toBe('choose');
     expect(s.players[1].members).toHaveLength(2);

@@ -1,5 +1,5 @@
 // The seat's "each round" line is a dry run of next round's start, so conditional income read as guaranteed (f8):
-// Late Bloomers showed +1 every round, and Clockmaker's +2 fell to +1 after a steal with no word why. A part that
+// Late Bloomers showed +1 every round, and Clockmakers' +2 fell to +1 after a steal with no word why. A part that
 // hangs on a condition now says it ("if fewest", "per 2 purple"), and the hover gives each member's rule.
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/react';
@@ -14,7 +14,7 @@ const toPlace = s => { let t = s; for (let k = 0; k < 400 && !(t.pending && t.pe
 const give = (s, pid, def) => { const c = Object.values(s.cards).find(x => x.def === def); s.shop = s.shop.filter(u => u !== c.uid); s.pile = s.pile.filter(u => u !== c.uid); s.players[pid].members.push(c.uid); return c; };
 
 describe('seat income says its conditions', () => {
-  // Steward stands in for Clockmaker, which stopped paying purple (Cory, 2026-10-29: now "take your first two turns in a row")
+  // Steward stands in for Clockmakers, which stopped paying purple (Cory, 2026-10-29: now "take your first two turns in a row")
   it('Steward scales: "per 3 silver", with what you hold in the hover; Banker stays bare', () => {
     const s = toPlace(createGame({ seats, seed: 4, quadrants: ['silver', 'yellow', 'gold', 'red'] }));
     give(s, 0, 'silver.steward');

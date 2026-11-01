@@ -22,7 +22,7 @@ const addWild = def => { if (!def.extraWild) { def.w = (def.w || 0) + EXTRA_WILD
 // follower. Not every follower is a member."): a card that counts as N members scores at least N followers.
 const asFollowers = def => { if ((def.n || 1) > (def.f || 1)) def.f = def.n; };
 // and the other way (Cory, 2026-11-01: "member count = follower count, for members"; "1. yes"): a member worth N
-// followers counts as N members, as its card shows (Proselytizer 2, Trendsetter 3).
+// followers counts as N members, as its card shows (Proselytizers 2, Trendsetters 3).
 const asMembers = def => { if ((def.f || 1) > (def.n || 1)) def.n = def.f; };
 const DEFS = {};
 const HANDLERS = {};

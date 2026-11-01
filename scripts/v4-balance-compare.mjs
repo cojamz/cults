@@ -1,4 +1,4 @@
-// Compare v4-balance-report.mjs --json files round by round. Usage: node scripts/v4-balance-compare.mjs <r0.json> <r1.json> ... [--cards=Tiebreaker,Heiress]
+// Compare v4-balance-report.mjs --json files round by round. Usage: node scripts/v4-balance-compare.mjs <r0.json> <r1.json> ... [--cards=Tiebreaker,Heiresses]
 // Prints, per card, lift ±1 SE and how often a bot owned it when it showed, for each round; then the buy-followers-only seat.
 import { readFileSync } from 'node:fs';
 const args = process.argv.slice(2), files = args.filter(a => !a.startsWith('--'));

@@ -108,7 +108,7 @@ export default {
       },
     }),
     // balance pass 2 (pooled bench, both bots agree; design/eval/balance-pass-2.md): 12 → 6
-    m('proselytizer', 'Proselytizer', 3, 3,'Whenever you recruit, +1 follower.', { f: 2, // +1 follower (Cory, 2026-10-25)
+    m('proselytizer', 'Proselytizers', 3, 3,'Whenever you recruit, +1 follower.', { f: 2, // +1 follower (Cory, 2026-10-25)
       // a recruit is a member or a follower purchase (Cory, 2026-10-21); not its own arrival
       onRecruit(ctx, owner, card, by, what) { if (by === owner && what.member?.uid !== card.uid) owner.bonus += 1; },
     }),

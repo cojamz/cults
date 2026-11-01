@@ -213,13 +213,13 @@ const trading = {
     m('shopkeeper', 'Shopkeeper', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true,
       onRoundStart(ctx, owner) { ctx.gain(owner, W, 2); },
     }),
-    m('heiress', 'Heiress', 4, 4, // 9 (Cory, Oct 30: balance run)
+    m('heiress', 'Heiresses', 4, 4, // 9 (Cory, Oct 30: balance run)
       'On Use, once per game: +1 white per member you have.', { f: 2,
       activate: 'game',
       onActivate(ctx, owner) {
         const n = ctx.memberCount(owner);
         ctx.gain(owner, W, n);
-        ctx.log(`${owner.name} used Heiress: +${n} white.`);
+        ctx.log(`${owner.name} used Heiresses: +${n} white.`);
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 || (ctx.state.round === 2 && ctx.memberCount(owner) >= 5),
     }),
@@ -228,8 +228,8 @@ const trading = {
         if (buyer === owner && tier?.get >= 5) { owner.bonus += 1; ctx.log(`${owner.name}'s Bulk Buyer: +1 follower.`); }
       },
     }),
-    m('broker', 'Broker', 2, 2, 'Whenever a White action gives you followers, +1 follower.', { f: 3, brokerBonus: 1 }), // (Cory, Oct 29, balance run: +1 follower)
-    m('exporter', 'Exporter', 2, 4, 'Whenever you recruit a non-white member, +1 white.', { f: 2,
+    m('broker', 'Brokers', 2, 2, 'Whenever a White action gives you followers, +1 follower.', { f: 3, brokerBonus: 1 }), // (Cory, Oct 29, balance run: +1 follower)
+    m('exporter', 'Exporters', 2, 4, 'Whenever you recruit a non-white member, +1 white.', { f: 2,
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (by === owner && recruited.uid !== card.uid && ctx.defOf(recruited).quadrant !== 'trading') ctx.gain(owner, W, 1);
       },
@@ -268,11 +268,11 @@ const trading = {
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.membersOf(owner).some(c => c.def.key !== 'appraiser' && buryValue(ctx, owner, c, fv(ctx)) >= 2),
     }),
-    m('changer', 'Money Changer', 2, 1, 'Whenever you turn resources or members into followers, +1 white.', { f: 2, onTurned: 1 }),
-    m('martyr', 'Martyr', 2, 1, 'Whenever this member leaves your cult, gain followers equal to its cost.', { f: 2,
+    m('changer', 'Money Changers', 2, 1, 'Whenever you turn resources or members into followers, +1 white.', { f: 2, onTurned: 1 }),
+    m('martyr', 'Martyrs', 2, 1, 'Whenever this member leaves your cult, gain followers equal to its cost.', { f: 2,
       onLeave(ctx, owner, card) {
         const c = card.def.s + card.def.w;
-        ctx.asMember(owner, 'Martyr', () => { owner.bonus += c; ctx.log(`${owner.name}'s Martyr left: +${plural(c, 'follower')}.`); });
+        ctx.asMember(owner, 'Martyrs', () => { owner.bonus += c; ctx.log(`${owner.name}'s Martyrs left: +${plural(c, 'follower')}.`); });
       },
     }),
     // Cory, 2026-10-24: "go deep card for every color" ("sure for now"); name and price Claude's fill-in, priced like Chronicler
@@ -387,19 +387,19 @@ function payLoan(ctx, owner, card) {
   ctx.gain(owner, W, 5);
   ctx.log(`${owner.name}'s Lender: +5 white.`);
 }
-// Cheap Seats trades one resource at a time; Broker pays once per use of the action (on its first trade), not per trade.
+// Cheap Seats trades one resource at a time; Brokers pays once per use of the action (on its first trade), not per trade.
 function buyLow(ctx, p, color, first = true) {
   p.res[color] -= 1;
   if (first) actionFollowers(ctx, p, 1); else p.bonus += 1;
   ctx.log(`${p.name} traded 1 ${color} for 1 follower.`);
 }
-/** Followers from a White action, plus 1 per Broker (a Doppelganger's copy counts too). Called once per action use. */
+/** Followers from a White action, plus 1 per Brokers (a Doppelganger's copy counts too). Called once per action use. */
 function actionFollowers(ctx, p, n) {
   if (!(n > 0)) return;
   let extra = 0;
   for (const c of ctx.membersOf(p)) for (const d of [c.def, c.copy ? defById(c.copy) : null]) extra += d?.brokerBonus || 0;
   p.bonus += n + extra;
-  if (extra) ctx.log(`${p.name}'s Broker: +${extra} follower${extra > 1 ? 's' : ''}.`);
+  if (extra) ctx.log(`${p.name}'s Brokers: +${extra} follower${extra > 1 ? 's' : ''}.`);
 }
 
 /** The leader: most followers, and more than you. Ties go to whoever has more followers to sell. */

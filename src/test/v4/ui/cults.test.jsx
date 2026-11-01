@@ -75,7 +75,7 @@ describe('every member reads as its sphere', () => {
   });
 
   it('every member of a real sphere (and every guest) has its own drawing, not the hooded template', async () => {
-    // a new or renamed member without art fails here (Night Owl and Revelers were caught missing, 2026-10-14)
+    // a new or renamed member without art fails here (Night Owls and Revelers were caught missing, 2026-10-14)
     const { iconFor, spriteId } = await import('../../../v4/art/index.js');
     const { allQuadrantIds } = await import('../../../engine/v4/index.js');
     const { guestMembers } = await import('../../../engine/v4/content/index.js');

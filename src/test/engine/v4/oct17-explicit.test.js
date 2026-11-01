@@ -41,7 +41,7 @@ describe('October17 explicit rules',()=>{
   expect(s.shop).toEqual(next);expect(s.pile.slice(-old.length)).toEqual(old);
   expect([...s.shop,...s.pile].sort((a,b)=>a-b)).toEqual(all);
  });
- it('removes Release from normal games and makes Night Owl worth2followers',()=>{
+ it('removes Release from normal games and makes Night Owls worth2followers',()=>{
   expect(DEFAULT_RULES.release).toBe(false);expect(defById('purple.nightowl').f).toBe(2);
   const s=sceneQ({quadrants:Q,members:[['red.twins']],res:[{gold:1}],queue:[{t:'buy',p:0}]});
   expect(s.pending.options.some(o=>o.kind==='release')).toBe(false);

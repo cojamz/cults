@@ -90,7 +90,7 @@ describe('Blue actions', () => {
     }
   });
   it('Out of Style (ring I): one color to the bottom, +1 blue per member sent, +1', () => {
-    let s = take(scene({ shop: S5 }), 'market.restock'); // Midas, Jackpot, Tycoon gold; Mentor, Proselytizer red
+    let s = take(scene({ shop: S5 }), 'market.restock'); // Midas, Jackpot, Tycoon gold; Mentor, Proselytizers red
     // the row fills to its size from the pile, so count the gold actually showing (the deck's order moves with it)
     const gold = s.shop.filter(u => s.cards[u].def.startsWith('gold.')).length;
     expect(gold).toBeGreaterThanOrEqual(3);

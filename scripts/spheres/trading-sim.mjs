@@ -52,7 +52,7 @@ for (let g = 1; g <= games; g++) {
       let mm;
       if ((mm = l.match(/ (sold|pawned)[^\d]*(\d+) follower/))) st.sold += Number(mm[2]);
       if ((mm = l.match(/All In: (\d+) resources became/))) st.boom.push(Number(mm[1]));
-      if ((mm = l.match(/used Heiress: \+(\d+) white/))) st.heiress.push(Number(mm[1]));
+      if ((mm = l.match(/used Heiresses: \+(\d+) white/))) st.heiress.push(Number(mm[1]));
       if ((mm = l.match(/traded (\d+) white for/))) st.cashed.push(Number(mm[1]));
     }
     // only new lines matter; the engine caps the log, so clear it after reading
@@ -81,7 +81,7 @@ if (BUYER) console.log(`buy-followers-only seat wins ${(100 * buyerWins / games)
 console.log(`White prize went to (one of) the fewest-followers players ${(100 * lastGot / Math.max(1, lastRounds)).toFixed(0)}% of scored rounds`);
 if (wq >= 0) {
   console.log(`White action takes per game: ${Object.entries(st.takes).sort().map(([k, v]) => `${k} ${(v / games).toFixed(2)}`).join(' · ')}`);
-  console.log(`followers sold per game ${(st.sold / games).toFixed(1)} · Boom turns ${avg(st.boom)} resources into followers · Cash In trades ${avg(st.cashed)} white · Heiress gives ${avg(st.heiress)} white`);
+  console.log(`followers sold per game ${(st.sold / games).toFixed(1)} · Boom turns ${avg(st.boom)} resources into followers · Cash In trades ${avg(st.cashed)} white · Heiresses gives ${avg(st.heiress)} white`);
   console.log(`White contest: ${st.contestRounds} rounds; nobody scored ${(100 * st.noScore / st.contestRounds).toFixed(0)}%; shared ${(100 * st.ties / st.contestRounds).toFixed(0)}%; wins by seat ${st.contestWins.join('/')}`);
   console.log(`  white held at round end (avg) I ${avg(st.whiteAtRoundEnd[0])} · II ${avg(st.whiteAtRoundEnd[1])} · III ${avg(st.whiteAtRoundEnd[2])}; leader's margin over 2nd ${avg(st.spread)}`);
   console.log(`  winner's followers from the White contest ${avg(st.winnerWhiteContest)}; the game's top White scorer won the game ${(100 * st.contestWinnerWonGame / games).toFixed(0)}%`);

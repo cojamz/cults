@@ -62,7 +62,7 @@ export function audit(tables, games, { seed = 3100, hand = [], perSeat = 0, rule
 
 describe('fire audit: Blue, Magenta, White, Green', () => {
   const GROUP = ['market', 'thieves', 'trading', 'echo'];
-  // Bodyguard changes no number (it only refuses a steal). Social Climber pays only on a Release, and this audit plays
+  // Bodyguards changes no number (it only refuses a steal). Social Climber pays only on a Release, and this audit plays
   // with Release off; cards-market.test.js covers it.
   // Magnate pays only from white left at game end (1 follower per 3); normal bots spend white down because any
   // follower buy beats that rate, so it fires about 1 hold in 13 (ledger) and 4 holds can all miss. Since the
@@ -74,7 +74,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
   // Hoarder fires only when its bot chooses to, in round III with 3+ non-white; the 6/7/8 shop (2026-10-23) has bots
   // spending down by then in all 6 games it was held. cards-trading.test.js (Hoarder) covers its line.
   const EXEMPT = new Set(['thieves.watchdog', 'market.climber', 'trading.magnate', 'thieves.doubleagent', 'trading.hoarder']);
-  // Agents denies copy targets without changing a number, like Bodyguard's steal protection. Keep it in the dealt
+  // Agents denies copy targets without changing a number, like Bodyguards' steal protection. Keep it in the dealt
   // hands (preserving the audit's coverage distribution), but require no payout log from this pure restriction.
   // green-redesign-pressure.test.js verifies that it blocks both its owner's and rivals' copies, including copies of Agents.
   // Cashier only acts when recruited; dealt into a starting hand it never does (Sleep In's +3, 2026-10-25, moved the
@@ -86,8 +86,8 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
   // (Translator, like Wallflower, names itself only when its owner copies resources; held 3 games without a copy after
   // the +1 wild on every member, Oct 27, moved the games. cards-echo covers it.)
   const QUIET_RESTRICTIONS = new Set(['echo.agents', 'trading.cashier', 'echo.doppel', 'market.makeover', 'echo.wallflower', 'echo.translator',
-    'market.snob', // Snob pays only for blue members at game end; Shoplifter 7 and Heiress 9 (Oct 30) moved the games so its owners had none. cards-market covers it
-    'market.restocker']); // Restocker: bots held it in 4 seeded games without using it once Out of Style went back to per member (Oct 28); cards-member-structure covers it
+    'market.snob', // Snob pays only for blue members at game end; Shoplifter 7 and Heiresses 9 (Oct 30) moved the games so its owners had none. cards-market covers it
+    'market.restocker']); // Restockers: bots held it in 4 seeded games without using it once Out of Style went back to per member (Oct 28); cards-member-structure covers it
   const TABLES = [
     ['thieves', 'market', 'trading', 'echo'], ['gold', 'thieves', 'trading', 'echo'], ['red', 'market', 'thieves', 'echo'],
     ['gold', 'market', 'trading', 'echo'], ['red', 'thieves', 'market', 'trading'],
@@ -148,11 +148,11 @@ const ALLOW = {
   // the Oct 29 balance-run followers moved the seeded games: recruited once, its paid turn never bought
   'purple.taskmaster': 'pays 5 purple for a turn, rarely worth it to a bot (cards-purple: Taskmaster)',
   // Promote +3 red and Recruiter's color (Oct 30) moved the seeded games: recruited in 4, never set gold aside
-  // the Oct 30 prices (Shoplifter, Heiress, Coach, Mob…) moved the seeded games again
+  // the Oct 30 prices (Shoplifter, Heiresses, Coach, Mob…) moved the seeded games again
   'purple.closer': 'pays only when its owner places the round’s last minion, which these games never gave it (cards-purple: Closer)',
   'gold.investor': 'sets gold aside at Round Start only when a bot sees the double (cards-gold: Investor)',
   'purple.doubletime': 'halves only Taskmaster’s paid turn now (cards-purple: Corner-Cutter); cut from the deck',
-  // like Bodyguard and Agents above: a pure restriction (its cult's members drop out of every swap's options) that
+  // like Bodyguards and Agents above: a pure restriction (its cult's members drop out of every swap's options) that
   // changes no number, so there is no payout line to name it (v0.8.2 Red deck)
   'red.loyalists': 'only removes its cult from swap options (red-members-hooks / red-members-pressure: Loyalists)',
   // needs its holder to Promote/Demote a rival's member out of their cult; the 5/6/7 shop (2026-10-21) moved the

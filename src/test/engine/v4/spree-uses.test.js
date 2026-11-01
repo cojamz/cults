@@ -27,7 +27,7 @@ describe('Spree with a usable member', () => {
     expect(r.recruits).toBe(3);
     expect(r.usesSeen).toBeGreaterThan(0);
   });
-  it('the same with Trendsetter sending a member to the bottom after each recruit', () => {
+  it('the same with Trendsetters sending a member to the bottom after each recruit', () => {
     expect(spree(['market.trendsetter']).recruits).toBe(3);
   });
 });

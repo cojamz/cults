@@ -156,11 +156,11 @@ describe('Gold members', () => {
     expect(named(s, 'Speculator')).toHaveLength(1);
   });
 
-  it('Alchemist: an action gaining another color gives +1 gold, named', () => {
+  it('Alchemists: an action gaining another color gives +1 gold, named', () => {
     const s = take(sceneQ({ members: [['gold.tinker']] }), 'red.evenswap');
     expect(s.players[0].res.red).toBe(1);
     expect(G(s)[0]).toBe(1);
-    expect(named(s, 'Alchemist')[0]).toMatch(/P1's Alchemist: \+1 gold/);
+    expect(named(s, 'Alchemists')[0]).toMatch(/P1's Alchemists: \+1 gold/);
   });
 
   it('Investor: set aside at round start, back doubled at round end; both named', () => {

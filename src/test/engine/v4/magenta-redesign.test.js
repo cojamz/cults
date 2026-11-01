@@ -87,7 +87,7 @@ describe('Magenta redesign edge cases', () => {
     expect(s.players[0].res).toMatchObject({ magenta: 1, gold: 5 });
     expect(s.players[1].res.gold).toBe(0);
   });
-  it('Bodyguard blocks resource theft as well as member taking and ransom', () => {
+  it('Bodyguards blocks resource theft as well as member taking and ransom', () => {
     for (const key of ['pickpocket', 'hideout', 'rob', 'ransom', 'heist']) {
       const s = take(table(Q, { round: 3, res: [{}, { gold: 10 }], members: [[], ['thieves.watchdog', 'red.twins']], shop }), `thieves.${key}`);
       if (key !== 'pickpocket') expect(s.pending.kind).toBe('buy'); // Help Yourself gives no magenta: nothing to buy with

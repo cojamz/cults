@@ -48,7 +48,7 @@ describe('White actions', () => {
     expect(named(s, 'Allowance')).toContain("P1's Allowance: +2 followers for recruiting a member.");
   });
 
-  it('Splurge: a 12-cost Tycoon pays +6 followers, named; Broker adds 1 in the same line', () => {
+  it('Splurge: a 12-cost Tycoon pays +6 followers, named; Brokers adds 1 in the same line', () => {
     let s = take(table(Q, { res: [{ gold: 12 }], shop: ROW }), 'trading.splurge');
     s = move(s, cardOpt(s, 'gold.tycoon', 'shop'));
     expect(owns(s, 0, 'gold.tycoon')).toBe(true);
@@ -57,7 +57,7 @@ describe('White actions', () => {
     let b = take(table(Q, { res: [{ gold: 12 }], members: [['trading.broker']], shop: ROW }), 'trading.splurge');
     b = move(b, cardOpt(b, 'gold.tycoon', 'shop'));
     expect(B(b)).toBe(7);
-    expect(named(b, 'Splurge')).toContain("P1's Splurge: +6 followers for spending. Broker: +1.");
+    expect(named(b, 'Splurge')).toContain("P1's Splurge: +6 followers for spending. Brokers: +1.");
   });
 
   it('Exchange: round III, three resources into 6 followers, each trade named', () => {
@@ -100,10 +100,10 @@ describe('White members', () => {
     expect(named(t, 'Shopkeeper').length).toBe(1);
   });
 
-  it('Heiress: once per game, +1 white per member (named)', () => {
+  it('Heiresses: once per game, +1 white per member (named)', () => {
     const s = use(table(Q, { members: [['trading.heiress', 'red.twins', 'red.bigfamily']], shop: ROW, ...buy }), 'trading.heiress');
-    expect(R(s).white).toBe(9); // Heiress 2 (worth 2, Nov 1), Triplets 3, Big Family 4
-    expect(named(s, 'Heiress')).toEqual(['P1 used Heiress: +9 white.']);
+    expect(R(s).white).toBe(9); // Heiresses 2 (worth 2, Nov 1), Triplets 3, Big Family 4
+    expect(named(s, 'Heiresses')).toEqual(['P1 used Heiresses: +9 white.']);
   });
 
   it('Bulk Buyer: buying 5 followers gives 6 (named); buying 1 gives 1', () => {
@@ -114,13 +114,13 @@ describe('White members', () => {
     expect(B(s)).toBe(1);
   });
 
-  it('Broker: +1 on Farewell (named)', () => {
+  it('Brokers: +1 on Farewell (named)', () => {
     let s = take(table(Q, { round: 2, members: [['trading.broker', 'red.twins']], shop: ROW }), 'trading.farewell');
     s = move(s, cardOpt(s, 'red.twins', 0));
     expect(B(s)).toBe(4 + 1);
-    expect(named(s, 'Broker')).toEqual(["P1's Broker: +1 follower."]);
+    expect(named(s, 'Brokers')).toEqual(["P1's Brokers: +1 follower."]);
   });
-  it('× Doppelganger copying Broker: two Brokers, +2 on Allowance', () => {
+  it('× Doppelganger copying Brokers: two Brokers, +2 on Allowance', () => {
     let s = table(QE, { members: [['trading.broker', 'echo.doppel']], shop: ROW });
     s.cards[uidIn(s, 'echo.doppel', 0)].copy = 'trading.broker';
     s.players[0].res.red = 2;
@@ -129,11 +129,11 @@ describe('White members', () => {
     expect(B(s)).toBe(1 + 2);
   });
 
-  it('Exporter: recruiting a non-white member +1 white (named); a white one, nothing', () => {
+  it('Exporters: recruiting a non-white member +1 white (named); a white one, nothing', () => {
     let s = table(Q, { res: [{ red: 2 }], members: [['trading.exporter']], shop: ROW, ...buy });
     s = move(s, cardOpt(s, 'red.intern', 'shop'));
     expect(R(s).white).toBe(1);
-    expect(named(s, 'Exporter').length).toBe(1);
+    expect(named(s, 'Exporters').length).toBe(1);
     s = table(Q, { res: [{ white: 2 }], members: [['trading.exporter']], shop: ['trading.broker', ...ROW], ...buy });
     s = move(s, cardOpt(s, 'trading.broker', 'shop'));
     expect(R(s).white).toBe(0);
@@ -162,31 +162,31 @@ describe('White members', () => {
     expect(named(s, 'Undertaker')).toEqual(["P1's Undertaker: +2 followers."]);
   });
 
-  it('Money Changer: Cash In turns white into followers, +1 white (named)', () => {
+  it('Money Changers: Cash In turns white into followers, +1 white (named)', () => {
     const s = take(table(Q, { round: 3, left: 5, res: [{ white: 3 }], members: [['trading.changer']], shop: ROW }), 'trading.cashin');
     expect([B(s), R(s).white]).toEqual([3, 2]);
-    expect(named(s, 'Money Changer')).toEqual(["P1's Money Changer: +1 white."]);
+    expect(named(s, 'Money Changers')).toEqual(["P1's Money Changers: +1 white."]);
   });
-  it('× Doppelganger copying Money Changer: +1 white each', () => {
+  it('× Doppelganger copying Money Changers: +1 white each', () => {
     let s = table(QE, { round: 3, left: 5, res: [{ white: 3 }], members: [['trading.changer', 'echo.doppel']], shop: ROW });
     s.cards[uidIn(s, 'echo.doppel', 0)].copy = 'trading.changer';
     s = take(s, 'trading.cashin');
     expect(R(s).white).toBe(1 + 2);
   });
 
-  it('Martyr: sent away with Farewell, 4 + 4 followers (named)', () => {
+  it('Martyrs: sent away with Farewell, 4 + 4 followers (named)', () => {
     let s = take(table(Q, { round: 2, members: [['trading.martyr']], shop: ROW }), 'trading.farewell');
     s = move(s, cardOpt(s, 'trading.martyr', 0));
     expect(B(s)).toBe(8);
-    expect(named(s, 'Martyr')).toEqual(["P1's Martyr left: +4 followers."]);
+    expect(named(s, 'Martyrs')).toEqual(["P1's Martyrs left: +4 followers."]);
   });
-  it('× Poach: a stolen Martyr pays its old owner 4 followers', () => {
+  it('× Poach: a stolen Martyrs pays its old owner 4 followers', () => {
     let s = table(Q, { round: 3, left: 5, members: [[], ['trading.martyr']], shop: ROW });
     const u = uidIn(s, 'trading.martyr', 1);
     s = move(take(s, 'thieves.heist'), `card:${u}`);
     expect(s.players[0].members).toContain(u);
     expect(B(s, 1)).toBe(4);
-    expect(named(s, 'Martyr')).toEqual(["P2's Martyr left: +4 followers."]);
+    expect(named(s, 'Martyrs')).toEqual(["P2's Martyrs left: +4 followers."]);
   });
 
   it('Hoarder: once per game, every resource becomes white (named)', () => {

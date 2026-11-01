@@ -288,7 +288,7 @@ describe('Purple members', () => {
     s = pass(s); // the turn ends: 4 workers on the board → +2
     expect(R(s).purple).toBe(2);
   });
-  it('Clockmaker: your first two turns of the round come in a row; your last turn moves up (Cory, 2026-10-29)', () => {
+  it('Clockmakers: your first two turns of the round come in a row; your last turn moves up (Cory, 2026-10-29)', () => {
     for (const who of [0, 1, 2]) {
       const members = [[], [], []]; members[who] = ['purple.clockmaker'];
       const s = scene({ n: 3, members, queue: [{ t: 'round', r: 2 }] });
@@ -299,10 +299,10 @@ describe('Purple members', () => {
       const want = [...snake]; want.splice(want.lastIndexOf(who), 1); want.splice(f + 1, 0, who);
       expect(order).toEqual(want);
       const name = `P${who + 1}`;
-      expect(s.log.some(l => l.includes(`${name}'s Clockmaker: ${name}'s first two turns come in a row.`))).toBe(true);
+      expect(s.log.some(l => l.includes(`${name}'s Clockmakers: ${name}'s first two turns come in a row.`))).toBe(true);
     }
   });
-  it('Clockmaker: nothing moves when your first two turns already come in a row (a snake end)', () => {
+  it('Clockmakers: nothing moves when your first two turns already come in a row (a snake end)', () => {
     for (const seed of [1, 2, 3, 4, 5, 6]) {
       const s = scene({ seed, members: [['purple.clockmaker']], queue: [{ t: 'round', r: 2 }] });
       const order = [s.pending.player, ...s.queue.filter(t => t.t === 'turn').map(t => t.p)];

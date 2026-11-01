@@ -58,7 +58,7 @@ export function gainsBetween(before, state) {
     }
   }
   // 3. what's left of a loss went somewhere: the card recruited, the followers bought, the space's trade, else the bank
-  // a member the mover just used (Lottery Winner, Heiress, Taskmaster…): what it gives or costs travels from it
+  // a member the mover just used (Lottery Winner, Heiresses, Taskmaster…): what it gives or costs travels from it
   const usedUid = actor == null || newRound ? null : state.players[actor].members.find(u => state.cards[u] && state.cards[u].used && before.cards[u] && !before.cards[u].used);
   let usedSrc = null;
   if (usedUid != null) { try { usedSrc = { kind: 'member', pid: actor, def: cardDef(state, usedUid).id }; } catch { /* gone */ } }

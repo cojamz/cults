@@ -87,14 +87,14 @@ describe('Red members', () => {
     expect(s.shop).toHaveLength(shopSize(s));
   });
 
-  it('Proselytizer: +1 follower whenever you recruit (not for itself)', () => {
+  it('Proselytizers: +1 follower whenever you recruit (not for itself)', () => {
     let s = scene({ res: [{ red: 3, gold: 3 }], shop: ['red.proselytizer', 'red.volunteer', 'gold.midas', 'gold.jackpot', 'red.bigfamily', 'gold.tycoon'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }] });
     s = beginBuy(s);
     s = move(s, `card:${uidOf(s, 'red.proselytizer', 'shop')}`);
     expect(s.players[0].bonus).toBe(0);
     s = take(s, 'red.hire');
     expect(s.players[0].bonus).toBe(1);
-    expect(fol(s, 0)).toBe(2 + 1 + 2); // Proselytizer is worth 2 (Cory, 2026-10-25)
+    expect(fol(s, 0)).toBe(2 + 1 + 2); // Proselytizers is worth 2 (Cory, 2026-10-25)
   });
 
   it('Mob: game end +1 follower per red member', () => {

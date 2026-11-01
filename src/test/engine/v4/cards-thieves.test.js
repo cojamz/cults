@@ -115,7 +115,7 @@ describe('Magenta actions', () => {
     expect([R(t).magenta, R(t).red, R(t, 1).red]).toEqual([1, 2, 1]);
     expect(owns(t, 1, 'red.intern')).toBe(true);
   });
-  it('× Bodyguard: Shake Down, Poach and Double Agent can\'t reach a Bodyguard owner\'s members', () => {
+  it('× Bodyguards: Shake Down, Poach and Double Agent can\'t reach a Bodyguards owner\'s members', () => {
     let s = table(Q, { round: 2, members: [[], ['thieves.watchdog', 'red.twins']], shop: ROW });
     s = take(s, 'thieves.ransom');
     expect(s.log).toContain('P1 found no one to hold to ransom.');

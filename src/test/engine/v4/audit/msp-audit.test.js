@@ -40,7 +40,7 @@ describe('audit', () => {
     expect(s.players[1].res.purple).toBe(1);
   });
 
-  it('Night Owl at 4 players never fires in round I', () => {
+  it('Night Owls at 4 players never fires in round I', () => {
     const order = [0, 1, 2, 3, 3, 2, 1, 0, 0, 1, 2, 3];
     let s = sc(QP, { n: 4, round: 1, members: [['purple.nightowl']], queue: order.map(p => ({ t: 'turn', p })) });
     let p0 = 0;
@@ -51,7 +51,7 @@ describe('audit', () => {
       if (!s.queue.some(t => t.t === 'turn') && s.pending?.kind !== 'place' && s.pending?.kind !== 'buy') break;
     }
     expect(p0).toBe(3);
-    expect(s.log.some(l => /No extra minions in round I: P1 gets no extra turn from Night Owl/.test(l))).toBe(true);
+    expect(s.log.some(l => /No extra minions in round I: P1 gets no extra turn from Night Owls/.test(l))).toBe(true);
   });
 
   it('Bookkeeper pays once the extra (true last) minion\'s turn ends, not on the Overtime minion (Cory 2026-10-15)', () => {
@@ -65,12 +65,12 @@ describe('audit', () => {
     expect(s.players[0].res.purple).toBe(2); // floor(4/2) when the last turn ends
   });
 
-  it('Bookkeeper + Night Owl: the same pay whichever card you bought first (Cory 2026-10-15)', () => {
+  it('Bookkeeper + Night Owls: the same pay whichever card you bought first (Cory 2026-10-15)', () => {
     const run = members => {
       let s = sc(QP, { round: 2, left: 1, slots: { '0-0': 0, '0-1': 0, '0-2': 0, '0-3': 0 }, members: [members], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
       s = take(s, 'purple.windup'); // 5 purple; 5th minion
       while (s.pending?.kind === 'buy') s = move(s, 'pass');
-      s = move(s, s.pending.options.find(o => o.kind === 'slot').id); // Night Owl's 6th
+      s = move(s, s.pending.options.find(o => o.kind === 'slot').id); // Night Owls' 6th
       while (s.pending?.kind === 'buy' && s.pending.player === 0) s = move(s, 'pass');
       return s.players[0].res.purple - 5;
     };

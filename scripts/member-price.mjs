@@ -73,7 +73,7 @@ export const MAGENTA = [
   { name: 'Kingpin', now: [4, 0], f: 1, y: 2, why: 'game end, ~4 magenta held: +2' },
   { name: 'Grifter', now: [4, 2], f: 1, y: 3, why: 'bought in round III with ~6 bodies: 3 stolen' },
   { name: 'Sticky Fingers', now: [4, 4], f: 1, y: g.steals[0], why: '+1 on ~4 steals from spaces after round I' },
-  { name: 'Bodyguard', now: [4, 2], f: 1, y: g.stealsAtMe[1] + 1.5, why: '~2.5 resources kept, and Shake Down/Poach/Double Agent can\'t touch you (~1.5)' },
+  { name: 'Bodyguards', now: [4, 2], f: 1, y: g.stealsAtMe[1] + 1.5, why: '~2.5 resources kept, and Shake Down/Poach/Double Agent can\'t touch you (~1.5)' },
   { name: 'Double Agent', now: [4, 2], f: 1, y: 6 + 1, extra: true, why: 'a rival\'s best member (~6) for this blank one, and the rival is down one (~1)' },
   { name: 'Extortionist', now: [8, 2], f: 1, y: 3 * g.rivalBig5[1] * 2, why: '3 rivals x ~1.5 buys of 5+ after round II x 2 taken' },
 ];

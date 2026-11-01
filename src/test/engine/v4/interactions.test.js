@@ -219,10 +219,10 @@ describe('Silver gifts with Guest and Kickback', () => {
 });
 
 // ---------------------------------------------------------------------------------------------------------
-describe('Blue’s out-of-buy recruits with Pied Piper and Proselytizer', () => {
+describe('Blue’s out-of-buy recruits with Pied Piper and Proselytizers', () => {
   const Q = ['gold', 'red', 'market', 'green'];
   const rich = { gold: 9, red: 9, blue: 9, green: 9 };
-  it('Recruit Twice makes 2 recruits: Drive pays, Proselytizer pays twice', () => {
+  it('Recruit Twice makes 2 recruits: Drive pays, Proselytizers pays twice', () => {
     let s = scene({ quads: Q, round: 2, res: [rich, { blue: 30 }], members: [['red.drive', 'red.proselytizer']] });
     s = take(s, 'market.clearance');
     s = payUp(move(s, `card:${uidOf(s, 'red.intern', 'shop')}`));
@@ -388,7 +388,7 @@ describe('Lie Low against Gold’s Collect Debts and Shake Down', () => {
     expect(R(s, 0).gold).toBe(3); // stole 3, Lookout took 1 back
     expect(R(s, 2)).toMatchObject({ gold: 1, magenta: 0 }); // as gold: stolen resources keep their colors
   });
-  it('Bodyguard and Lie Low both stop Red’s Swap Sides', () => {
+  it('Bodyguards and Lie Low both stop Red’s Swap Sides', () => {
     const T = ['gold', 'red', 'thieves', 'green'];
     let s = scene({ quads: T, n: 3, round: 2, members: [['red.intern'], ['thieves.watchdog', 'red.twins'], ['red.volunteer']] });
     s.players[2].hideout = 2; // P3 is lying low this round

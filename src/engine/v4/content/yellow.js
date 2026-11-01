@@ -207,15 +207,15 @@ export default {
     m('bigtent', 'Big Tent', 4, 3, 'Game End: +2 followers per color you have exactly one member of.', {
       onGameEnd: (ctx, owner) => 2 * ctx.state.quadrants.filter(q => ctx.countMembersOfColor(owner, q) === 1).length,
     }),
-    // Cory, 2026-10-31: named Book Cooker; "agree this gives multiple followers"
-    m('bookcooker', 'Book Cooker', 5, 4, 'Worth 3 followers. On Use, once per game: rearrange your resources into any mix of colors.', { f: 3,
+    // Cory, 2026-10-31: named Book Cookers; "agree this gives multiple followers"
+    m('bookcooker', 'Book Cookers', 5, 4, 'Worth 3 followers. On Use, once per game: rearrange your resources into any mix of colors.', { f: 3,
       activate: 'game',
-      onActivate(ctx, owner) { startLaunder(ctx, owner, 'Book Cooker'); },
+      onActivate(ctx, owner) { startLaunder(ctx, owner, 'Book Cookers'); },
       botActivate: (ctx, owner) => ctx.state.round === 3 && owner.left === 0,
     }),
     // Claude's fill-in, the second big card
-    m('puppeteer', 'Puppeteer', 5, 4, "Worth 3 followers. Round Start: change up to 3 of rivals' resources one for one.", { f: 3,
-      onRoundStart(ctx, owner) { startChange(ctx, owner, { who: 'Puppeteer', left: 3 }); },
+    m('puppeteer', 'Puppeteers', 5, 4, "Worth 3 followers. Round Start: change up to 3 of rivals' resources one for one.", { f: 3,
+      onRoundStart(ctx, owner) { startChange(ctx, owner, { who: 'Puppeteers', left: 3 }); },
     }),
     // Yellow's artifact (Cory, 2026-10-31: "I think C is probably best"; replaces Farmer). Name: Claude's fill-in.
     m('guestbook', 'Guest Book', 0, 0, 'Whenever you recruit a member of a color none of your members have, +2 yellow.', { artifact: true,
@@ -340,8 +340,8 @@ function pickColors(ctx, p, n, who, fromAction = false, got = 0) {
   })), 'yellow.wild', { left: n, who, fromAction, got });
 }
 
-// Changing rivals' resources one for one (Dilute, Big Dilute, Agitator, Ringleader, Puppeteer): pick a rival's
-// resource, then the color it becomes. A rival who can't be stolen from can't be changed either (Bodyguard).
+// Changing rivals' resources one for one (Dilute, Big Dilute, Agitator, Ringleader, Puppeteers): pick a rival's
+// resource, then the color it becomes. A rival who can't be stolen from can't be changed either (Bodyguards).
 function startChange(ctx, p, data) {
   if (!(data.left > 0)) return;
   changeStep(ctx, p, { done: 0, used: [], ...data });

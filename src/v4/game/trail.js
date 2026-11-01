@@ -65,7 +65,7 @@ function tell(trail, c, end, last = null) {
 
 /**
  * What the story can't read off the log or the effects, added by the trail: why this turn came about (an extra turn
- * names the card that gave it: "Night Owl: extra turn"; Cory, "Log did not indicate a Night Owl turn"), and the members
+ * names the card that gave it: "Night Owls: extra turn"; Cory, "Log did not indicate a Night Owls turn"), and the members
  * used this turn (a member used before the placement leads the head, so what it did isn't read as the space's doing).
  */
 function told(trail, c, end, story) {
@@ -88,7 +88,7 @@ function told(trail, c, end, story) {
   return { ...story, head, lines, short, text: [head, ...lines].join(' · ') };
 }
 
-/** Why the turn that begins at `s` came about, said on its card when it isn't the round's order: "Night Owl: extra turn". */
+/** Why the turn that begins at `s` came about, said on its card when it isn't the round's order: "Night Owls: extra turn". */
 function whyTurn(s) {
   const t = currentTurn(s);
   if (!t || t.pid !== s.current) return null;

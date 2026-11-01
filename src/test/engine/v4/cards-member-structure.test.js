@@ -33,14 +33,14 @@ describe('member structure: the new members', () => {
     expect(named(s, 'Fixer')).toHaveLength(1);
   });
 
-  it('Restocker: once per game, the whole row goes to the bottom of the pile and refills', () => {
+  it('Restockers: once per game, the whole row goes to the bottom of the pile and refills', () => {
     const Q = ['gold', 'red', 'market', 'thieves'];
     let s = table(Q, { members: [['market.restocker']], shop: ['gold.tycoon', 'red.volunteer', 'red.twins'], ...buy });
     const old = [...s.shop];
     s = use(s, 'market.restocker');
     expect(s.shop.some(u => old.includes(u))).toBe(false);
     expect(s.pile.slice(-old.length).sort()).toEqual([...old].sort());
-    expect(named(s, 'Restocker')).toHaveLength(1);
+    expect(named(s, 'Restockers')).toHaveLength(1);
   });
 
   it('Window Shopper: at round start, one shop member goes to the bottom of the pile, +1 of its color', () => {

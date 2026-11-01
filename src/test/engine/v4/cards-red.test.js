@@ -46,12 +46,12 @@ describe('Red members', () => {
     expect(named(s, 'Pied Piper')).toHaveLength(1);
   });
 
-  it('Proselytizer: +1 follower whenever you recruit (not itself), named; a free Walk-In counts', () => {
+  it('Proselytizers: +1 follower whenever you recruit (not itself), named; a free Walk-In counts', () => {
     let s = sceneQ({ members: [['red.proselytizer']] });
     const f0 = followers(s, s.players[0]);
     s = settle(take(s, 'red.hire'));
     expect(followers(s, s.players[0])).toBe(f0 + 1 + defById(s.cards[s.players[0].members[1]].def).f);
-    expect(named(s, 'Proselytizer')[0]).toMatch(/P1's Proselytizer: \+1 follower/);
+    expect(named(s, 'Proselytizers')[0]).toMatch(/P1's Proselytizers: \+1 follower/);
   });
 
   it('Mob: game end +1 follower per red member; a Doppelganger (green since 2026-10-15) is a second Mob', () => {

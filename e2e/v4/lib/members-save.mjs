@@ -1,6 +1,6 @@
 // A saved hot-seat game for the members gate (e2e/v4/members.mjs): P1 (the only person) is about to place in round I
 // on a table of Gold, Echo, Trading and Magenta, holding a full spread of members: use-once ones ready (Lottery Winner,
-// Heiress), one worth nothing now (Safecracker: no rival holds 2 magenta), one already used (Speculator), switches
+// Heiresses), one worth nothing now (Safecracker: no rival holds 2 magenta), one already used (Speculator), switches
 // (Midas on, Translator off), reactions (Prospector, Impressionist), a game-end scorer
 // (Tycoon) and one the engine would refuse now (Pawnbroker: nothing to sell). P2 holds gold, so Lottery Winner has
 // something to win, and Raider (a use still in hand; Stunt Double's copy is a recruit trigger now, not a use);
@@ -42,7 +42,7 @@ export function membersSave(from = 1) {
     const theirs = RIVAL.map(id => give(1, id));
     // P4 holds a crowd (w2a #16: a 12+ member seat card ran off the screen): the first 13 one-body members left in
     // the pile (a printed group like Mob counts several members, which would blur cards against members here)
-    // (no steal guard such as Bodyguard either: it would make P4 "safe this round" too, and only P3 lies low)
+    // (no steal guard such as Bodyguards either: it would make P4 "safe this round" too, and only P3 lies low)
     for (const u of s.pile.filter(x => !s.players.some(p => p.members.includes(x)) && memberWeight(s, x) === 1 && !cardDef(s, x).guardSteal).slice(0, 13)) give(3, s.cards[u].def);
     while (s.shop.length < shopSize(s) && s.pile.length) s.shop.push(s.pile.shift());
     s.cards[uids[HAND.indexOf('gold.midas')]].on = true;

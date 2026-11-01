@@ -124,8 +124,8 @@ export default {
         return `no ×2 (no one has more gold than your ${owner.res.gold})`;
       },
     }),
-    // Cory, 2026-10-15: Tinker was way too strong; now +1 gold per other color an action gains you, named Alchemist
-    m('tinker', 'Alchemist', 4, 2, 'Whenever an action gains you another color, +1 gold.', {
+    // Cory, 2026-10-15: Tinker was way too strong; now +1 gold per other color an action gains you, named Alchemists
+    m('tinker', 'Alchemists', 4, 2, 'Whenever an action gains you another color, +1 gold.', {
       afterGain(ctx, owner, card, g) { if (g.fromAction && g.color !== 'gold' && g.n > 0) owner.res.gold += 1; },
     }),
     m('investor', 'Investor', 4, 2, 'Round Start: set aside any of your gold. Round End: gain double that.', {

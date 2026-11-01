@@ -60,7 +60,7 @@ export function memberGroups(state, p) {
 
 // The "each round" line is a dry run of next round's start (roundStartIncome), so a member whose pay hangs on the
 // table read as a sure thing: Late Bloomer showed +1 every round while it pays only to the fewest followers, and
-// Clockmaker's +2 dropped to +1 after a steal with no word why (f8). Each such member marks the parts it can touch with
+// Clockmakers' +2 dropped to +1 after a steal with no word why (f8). Each such member marks the parts it can touch with
 // a plain condition ("if fewest", "per 2 purple"); members that always pay the same leave theirs bare.
 const INCOME_IF = {
   latebloomer: 'if fewest', // "if you have the fewest followers"

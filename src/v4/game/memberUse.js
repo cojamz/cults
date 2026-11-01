@@ -60,7 +60,7 @@ export function useNow(state, pid, uid) {
     // worth nothing now (w2b #19: Safecracker invited a use that gave 0): the engine's flag when it gives one, else the
     // copy says so (nothing counted changed, nothing asked); such a use is never lit or invited, it reads "Use: +0"
     const opt = pend.options.find(o => o.id === id) || {};
-    // a change the words don't count still counts (Restocker's new shop, a rival's loss, a discount: Cory, Oct 28, "says
+    // a change the words don't count still counts (Restockers' new shop, a rival's loss, a discount: Cory, Oct 28, "says
     // it will do nothing"), read the way the engine's own idle check reads it
     const look = x => JSON.stringify([x.players.map(o => [o.res, o.bonus, o.discount || 0, o.members, o.left]), x.shop, x.pile.length]);
     const idle = !blocked && (opt.idle === true || (typeof opt.value === 'number' && opt.value <= 0) || (opt.idle !== false && !asks && !words && look(after) === look(state)));

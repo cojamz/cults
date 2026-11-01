@@ -103,7 +103,7 @@ for (const [key, name, source] of [
 }
 // Purple's new members (Cory, 2026-10-22) reuse cut Purple portraits while names and artwork settle.
 for (const [key, name, source] of [
-  ['earlybird', 'Early Bird', 'bookkeeper'], ['bouncer', 'Bouncer', 'overseer'], ['gossip', 'Gossip', 'apprentice'],
+  ['earlybird', 'Early Birds', 'bookkeeper'], ['bouncer', 'Bouncer', 'overseer'], ['gossip', 'Gossip', 'apprentice'],
   ['extrashift', 'Extra Shift', 'errand'], ['closer', 'Closer', 'lamplighter'], ['streak', 'Hot Streak', 'taskmaster'],
 ]) {
   const art = BY_ID.get(`purple.${source}`);
@@ -112,7 +112,7 @@ for (const [key, name, source] of [
 // White's new members (Cory, 2026-10-22) reuse cut White portraits while names and artwork settle.
 for (const [key, name, source] of [
   ['cashier', 'Cashier', 'dealer'], ['undertaker', 'Undertaker', 'lender'], ['appraiser', 'Appraiser', 'pawnbroker'],
-  ['martyr', 'Martyr', 'safetynet'], ['hoarder', 'Hoarder', 'magnate'], ['changer', 'Money Changer', 'tipster'],
+  ['martyr', 'Martyrs', 'safetynet'], ['hoarder', 'Hoarder', 'magnate'], ['changer', 'Money Changers', 'tipster'],
 ]) {
   const art = BY_ID.get(`trading.${source}`);
   if (art) BY_ID.set(`trading.${key}`, { ...art, id: `trading.${key}`, name });
@@ -120,7 +120,7 @@ for (const [key, name, source] of [
 // Member structure (Cory, 2026-10-24): the new members reuse cut portraits while names and artwork settle.
 for (const [id, name, source] of [
   ['red.headhunter', 'Headhunter', 'red.sponsor'], ['thieves.fixer', 'Fixer', 'thieves.bigscore'],
-  ['market.windowshopper', 'Window Shopper', 'market.curator'], ['market.restocker', 'Restocker', 'market.makeover'],
+  ['market.windowshopper', 'Window Shopper', 'market.curator'], ['market.restocker', 'Restockers', 'market.makeover'],
   ['purple.timekeepers', 'Timekeepers', 'purple.patience'], ['trading.oldmoney', 'Old Money', 'trading.shareholder'],
   ['trading.recluse', 'Recluse', 'market.recluse'], // Recluse moves to White (Cory, 2026-10-25)
 ]) {
@@ -131,8 +131,8 @@ for (const [id, name, source] of [
 for (const [key, name, source] of [
   ['customs', 'Customs', 'gleaner'], ['tinker', 'Tinker', 'sower'], ['matchmaker', 'Matchmaker', 'admirer'],
   ['agitator', 'Agitator', 'farmer'], ['ringleader', 'Ringleader', 'latebloomer'], ['drifters', 'Drifters', 'weaver'],
-  ['leveler', 'Leveler', 'rainmaker'], ['bigtent', 'Big Tent', 'pilgrim'], ['bookcooker', 'Book Cooker', 'peddler'],
-  ['puppeteer', 'Puppeteer', 'feastmaker'], ['guestbook', 'Guest Book', 'farmer'],
+  ['leveler', 'Leveler', 'rainmaker'], ['bigtent', 'Big Tent', 'pilgrim'], ['bookcooker', 'Book Cookers', 'peddler'],
+  ['puppeteer', 'Puppeteers', 'feastmaker'], ['guestbook', 'Guest Book', 'farmer'],
 ]) {
   const art = BY_ID.get(`yellow.${source}`);
   if (art) BY_ID.set(`yellow.${key}`, { ...art, id: `yellow.${key}`, name });

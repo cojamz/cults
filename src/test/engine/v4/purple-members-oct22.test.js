@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Cory's Purple members (2026-10-22), through real moves: Early Bird, Bouncer, Gossip, Extra Shift, Closer, Hot Streak.
+// Cory's Purple members (2026-10-22), through real moves: Early Birds, Bouncer, Gossip, Extra Shift, Closer, Hot Streak.
 import { describe, it, expect } from 'vitest';
 import { followers } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';
@@ -12,13 +12,13 @@ const rich = { gold: 30, red: 30, purple: 30, green: 30 };
 const upcoming = s => s.queue.filter(t => t.t === 'turn').map(t => t.p);
 
 describe('Purple members, Oct 22', () => {
-  it('Early Bird: your turns can’t be skipped; Sleep In still gives its +5 in round II', () => {
+  it('Early Birds: your turns can’t be skipped; Sleep In still gives its +5 in round II', () => {
     const s = take(sc({ round: 2, members: [['purple.earlybird']], queue: turns(0, 1, 0, 1) }), 'purple.skip');
     expect(s.players[0].res.purple).toBe(5);
     expect(upcoming(s)).toEqual([1, 0, 1]);
-    expect(s.log).toContain("P1's Early Bird: P1's turn can't be skipped.");
+    expect(s.log).toContain("P1's Early Birds: P1's turn can't be skipped.");
   });
-  it('Early Bird: Last Call still pays its followers, and you keep your turns', () => {
+  it('Early Birds: Last Call still pays its followers, and you keep your turns', () => {
     const s = take(sc({ round: 2, left: 3, members: [['purple.earlybird']], queue: turns(0, 1, 0, 1, 0) }), 'purple.lastcall');
     expect(s.players[0].bonus).toBe(4);
     expect(upcoming(s)).toEqual([1, 0, 1, 0]);

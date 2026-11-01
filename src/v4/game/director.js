@@ -449,7 +449,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
       }
       cur = after(lastR);
     }
-    // members changing hands (grammar M10; motion gaps 3: "P3 traded Broker for P4's Retinue" showed no travel): a swap's
+    // members changing hands (grammar M10; motion gaps 3: "P3 traded Brokers for P4's Retinue" showed no travel): a swap's
     // two members cross at once on mirrored arcs; a member taken (Poach, a ransom let go) is a take, the victim's crowd
     // tugs and it flies straight. Each lands on its own new chip, which shows when it lands.
     const moves = m.cards.filter(e => e.type === 'member-move');

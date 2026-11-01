@@ -92,7 +92,7 @@ function bestRowValue(ctx, p, how) {
 }
 
 /** Churn: pick shop members one at a time; the row refills once, after the last (churnRefill, queued behind the picks). */
-// who: the space or member doing it (Churn, or Trendsetter), named in the prompt and the log
+// who: the space or member doing it (Churn, or Trendsetters), named in the prompt and the log
 function churnStep(ctx, p, { left, who = 'Churn' }) {
   const shop = ctx.shopCards();
   if (left <= 0 || !shop.length) return;
@@ -105,7 +105,7 @@ function churnStep(ctx, p, { left, who = 'Churn' }) {
 function peekStep(ctx, p, { left, placed }) {
   if (left.length <= 1) {
     const pile = ctx.state.pile;
-    // only cards still in the pile: a refill between the peek and the reorder (Trendsetter on a Peek recruit) may have drawn one
+    // only cards still in the pile: a refill between the peek and the reorder (Trendsetters on a Peek recruit) may have drawn one
     const order = [...placed, ...left].filter(u => pile.includes(u));
     const rest = pile.filter(u => !order.includes(u));
     pile.splice(0, pile.length, ...order, ...rest);
@@ -389,26 +389,26 @@ const market = {
         })), `${Q}.windowShop`);
       },
     }),
-    m('restocker', 'Restocker', 2, 1, 'On Use, once per game: send the whole shop to the bottom of the pile, then refill.', {
+    m('restocker', 'Restockers', 2, 1, 'On Use, once per game: send the whole shop to the bottom of the pile, then refill.', {
       f: 2, // (Cory, Oct 29, balance run: +1 follower)
       activate: 'game',
       onActivate(ctx, owner, card) {
-        if (!ctx.state.shop.length) { card.used = false; ctx.log(`${owner.name}'s Restocker: the shop is empty.`); return; }
+        if (!ctx.state.shop.length) { card.used = false; ctx.log(`${owner.name}'s Restockers: the shop is empty.`); return; }
         sweepRow(ctx); ctx.refillShop();
-        ctx.log(`${owner.name}'s Restocker sends the whole shop to the bottom of the pile and refills it.`);
+        ctx.log(`${owner.name}'s Restockers sends the whole shop to the bottom of the pile and refills it.`);
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && !ctx.shopCards().some(c => ctx.payChoices(owner, c.uid, {}).length),
     }),
     m('shopaholic', 'Shopaholics', 3, 5, 'You can recruit twice each turn.', { buyTwice: true, f: 3, n: 3 }), // +1 follower and member (Cory, Oct 30)
-    m('windowdresser', 'Window Dresser', 2, 1, 'On Recruit: send 3 shop members to the bottom of the pile, then refill.', { f: 3,
+    m('windowdresser', 'Window Dressers', 2, 1, 'On Recruit: send 3 shop members to the bottom of the pile, then refill.', { f: 3,
       onRecruited(ctx, owner) {
-        ctx.log(`${owner.name}'s Window Dresser: send 3 shop members to the bottom of the pile.`);
+        ctx.log(`${owner.name}'s Window Dressers: send 3 shop members to the bottom of the pile.`);
         churnStep(ctx, owner, { left: Math.min(3, ctx.state.shop.length) });
         ctx.defer(owner, `${Q}.churnRefill`);
       },
     }),
-    m('plusone', 'Plus-One', 2, 1, 'On Recruit: recruit again this turn.', { f: 2,
-      onRecruited(ctx, owner) { extraBuys(ctx, owner, 1); ctx.log(`${owner.name}'s Plus-One: recruit again this turn.`); },
+    m('plusone', 'Plus-Ones', 2, 1, 'On Recruit: recruit again this turn.', { f: 2,
+      onRecruited(ctx, owner) { extraBuys(ctx, owner, 1); ctx.log(`${owner.name}'s Plus-Ones: recruit again this turn.`); },
     }),
     // Cory, Oct 21: "any time a player recruits more than once in a turn", swaps and takes included (they all reach
     // onAnyRecruit through memberAcquired)
@@ -432,11 +432,11 @@ const market = {
       onBuyFollowers(ctx, owner, card, by) { if (by.id === owner.id && ctx.gain(owner, B, 1)) ctx.log(`${owner.name}'s Regular: +1 blue.`); },
     }),
     // Cory's pick for Blue's 12th, Oct 21 ("trendsetter is good!")
-    m('trendsetter', 'Trendsetter', 2, 1, 'Whenever you recruit a member, send 1 shop member to the bottom of the pile, then refill.', { f: 3,
+    m('trendsetter', 'Trendsetters', 2, 1, 'Whenever you recruit a member, send 1 shop member to the bottom of the pile, then refill.', { f: 3,
       // members only, not follower buys (Cory, Oct 27: it was paying Bargain Bin and Patroness on every follower buy)
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what.member || what.member.uid === card.uid || !ctx.state.shop.length) return;
-        churnStep(ctx, owner, { left: 1, who: 'Trendsetter' });
+        churnStep(ctx, owner, { left: 1, who: 'Trendsetters' });
         ctx.defer(owner, `${Q}.churnRefill`);
       },
     }),

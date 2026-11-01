@@ -39,7 +39,7 @@ export const loadLocal = () => {
 // engine can't read, is never returned (so never auto-resumed into a crash): it's set aside under STALE and the home
 // screen says "saved on an older version: start fresh" (Recovery.jsx), with its game record still copyable.
 function usable(v) {
-  // This exact release changes only Snap Up/Night Owl descriptions in the engine sources.
+  // This exact release changes only Snap Up/Night Owls descriptions in the engine sources.
   // Preserve local games from its immediate predecessor; never extend this to other rule hashes.
   if (CONTENT_HASH === '22q53nl0l4m.3601c69be7' && v.state.build?.content === '22q53nl0l4m.4cc3239e30') {
     v = { ...v, state: { ...v.state, build: { ...v.state.build, content: CONTENT_HASH } } };

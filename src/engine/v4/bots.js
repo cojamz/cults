@@ -490,7 +490,7 @@ export function abilityValue(def, placementsLeft, k = K_ABILITY) {
   const keys = Object.keys(def).filter(x => !DATA_KEYS.has(x));
   // pays on recruit or at game end only: measured directly
   if (keys.length && keys.every(x => MEASURED.has(x))) return 0;
-  // anything else keeps working: hooks, rule flags (Corner-Cutter's halfTurns, Broker), or a passive its sphere reads
+  // anything else keeps working: hooks, rule flags (Corner-Cutter's halfTurns, Brokers), or a passive its sphere reads
   // by key (Choir, Muse, Wallflower). Flags and key-read passives used to count as no ability at all, so bots released
   // Corner-Cutter for its refund before it ever halved a turn (fire audit, 2026-10-15).
   return k * (def.s + def.w) * Math.min(1, placementsLeft / 12);

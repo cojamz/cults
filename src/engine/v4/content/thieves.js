@@ -2,7 +2,7 @@
 // Every Magenta action grants +1 magenta, including copied actions.
 // The ring goes to most magenta resources held at round end.
 // Every steal (Magenta's, Gold's Collect Debts, anyone's) goes through the engine's shared ctx.steal(), so Lie Low,
-// Bodyguard, Lookout and Robin Hood apply to all of them.
+// Bodyguards, Lookout and Robin Hood apply to all of them.
 import { registerQuadrant, defById } from './index.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -261,7 +261,7 @@ const thieves = {
       },
     },
     {
-      key: 'heist', ring: 3, name: 'Poach', text: 'Recruit a rival’s member you choose. +1 magenta.', // "recruit", not "steal" (Cory, Oct 31); still a steal for Bodyguard, Lie Low and Fence
+      key: 'heist', ring: 3, name: 'Poach', text: 'Recruit a rival’s member you choose. +1 magenta.', // "recruit", not "steal" (Cory, Oct 31); still a steal for Bodyguards, Lie Low and Fence
       estimate: (ctx, p) => { const l = takeable(ctx, p); return l.length ? Math.max(...l.map(([, c]) => memberHint(c))) : 0; },
       resolve(ctx, p) {
         const list = takeable(ctx, p);
@@ -393,7 +393,7 @@ const thieves = {
     m('extortionist', 'Extortionist', 4, 2, 'On Recruit: steal 2 resources from the rival with the most resources. Round Start: steal 2 resources from the rival with the most resources.', { now: true,
       onRoundStart(ctx, owner) { startSteal(ctx, owner, 'Extortionist', 2 + stickyMore(ctx, owner), { fromAction: false, richest: true }); },
     }),
-    m('watchdog', 'Bodyguard', 5, 2, 'Rivals can’t steal from you.', { f: 2, // +1 follower (Cory, 2026-10-25)
+    m('watchdog', 'Bodyguards', 5, 2, 'Rivals can’t steal from you.', { f: 2, // +1 follower (Cory, 2026-10-25)
       guardSteal: () => true,
     }),
     m('crew', 'Crew', 1, 1, 'Worth 2 followers.', { f: 2, n: 2 }), // 2 members (Cory, Oct 29)

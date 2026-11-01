@@ -228,7 +228,7 @@ describe('Gold members', () => {
     }
   });
 
-  it('Alchemist (was Tinker; Cory 2026-10-15): +1 gold for each other color an action gains you', () => {
+  it('Alchemists (was Tinker; Cory 2026-10-15): +1 gold for each other color an action gains you', () => {
     expect(R(take(scene({ members: [['gold.tinker']] }), 'blue.a1'))[0]).toMatchObject({ blue: 3, gold: 1 });
     expect(R(take(scene({ members: [['gold.tinker']] }), 'blue.a2'))[0]).toMatchObject({ blue: 2, red: 1, gold: 2 });
     expect(R(take(scene({ members: [['gold.tinker']] }), 'gold.rush'))[0]).toMatchObject({ gold: 2 });
