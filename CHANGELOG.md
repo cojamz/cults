@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.969 — 2026-11-01
+
+- Polisher asks how much silver to turn, 1 to 3
+
 ## v0.9.968 — 2026-11-01
 
 - Dabblers and Drifters never work against their owner: Big Tent counts colors without Dabblers, Matchmaker pays like Guest Book, Connoisseurs pays for your Dabblers and for Drifters that pick Blue; Bargain Bin's card shows what it has gained
