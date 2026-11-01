@@ -32,7 +32,7 @@ function fixture() {
   const deal = (def, where) => {
     (where === 'shop' ? s.shop : s.players[where].members).push(takeCard(s, def));
   };
-  for (const [who, def] of [[0, 'red.recruiter'], [1, 'gold.prospector'], [2, 'echo.evergreen'], ['shop', 'red.host'], ['shop', 'red.twins'], ['shop', 'echo.muse'], ['shop', 'gold.banker']]) deal(def, who);
+  for (const [who, def] of [[0, 'red.host'], [1, 'gold.prospector'], [2, 'echo.evergreen'], ['shop', 'red.recruiter'], ['shop', 'red.bigfamily'], ['shop', 'red.twins'], ['shop', 'echo.muse'], ['shop', 'gold.banker']]) deal(def, who);
   return s;
 }
 function scenario(name) {
@@ -42,7 +42,12 @@ function scenario(name) {
   let action = 'hireup';
   if (name === 'copy-promote') {
     s = move(s, `slot:${slot('red', 'hireup')}`);
-    s = pass(move(s, `trade:${uid(s, 'gold.prospector', 1)}:${uid(s, 'echo.muse', 'shop')}`));
+    // P2's own Promote first (any pair it's offered that leaves Recruiter in the shop for P1's copy): costs move with
+    // the balance calls, so the pair is read off the offer rather than named (Prospector to Muse stopped being one, Nov 1)
+    const own = `trade:${uid(s, 'gold.prospector', 1)}:`, keep = `:${uid(s, 'red.recruiter', 'shop')}`;
+    const pick = s.pending.options.find(o => o.id.startsWith(own) && !o.id.endsWith(keep) && s.shop.includes(Number(o.id.split(':')[2])));
+    if (!pick) throw new Error(`${name}: P2 has no Promote pair; offered ${s.pending.options.map(o => o.id).join(' ')}`);
+    s = pass(move(s, pick.id));
     action = 'echo';
   }
   s.build = stamp;
@@ -54,10 +59,11 @@ function scenario(name) {
     const copy = expected.pending?.kind !== 'buy' && expected.pending.options.find(o => o.value === slot('red', 'hireup'));
     if (copy) { picks.push(copy.id); expected = move(expected, copy.id); }
   }
-  const a = uid(expected, 'red.recruiter', 0);
-  const b = uid(expected, 'red.host', 'shop');
+  // Host (cost 4) up to Recruiter (cost 5): Promote reaches a member costing up to 2 more (Recruiter 4+1 since Nov 1)
+  const a = uid(expected, 'red.host', 0);
+  const b = uid(expected, 'red.recruiter', 'shop');
   const pair = `trade:${a}:${b}`;
-  if (!expected.pending.options.some(o => o.id === pair)) throw new Error(`${name}: missing swap ${pair}`);
+  if (!expected.pending.options.some(o => o.id === pair)) throw new Error(`${name}: missing swap ${pair}; offered ${expected.pending.options.map(o => o.id).join(" ")}; prompt ${expected.pending.prompt}`);
   expected = move(expected, pair);
   if (expected.pending?.kind !== 'buy') throw new Error(`${name}: did not return to buying`);
   return { save, action: `slot:${slot(name === 'copy-promote' ? 'echo' : 'red', action)}`, picks, a, b, pair, expected };
