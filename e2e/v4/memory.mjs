@@ -47,7 +47,15 @@ async function sample(tag) {
   // a settled table: the shows still to play hold the states they show (the director's queue), which is no leak
   // (under the full check's load a show queue took over 8s to drain, and a sample read mid-queue counted 67, Nov 1:
   // wait longer, and say whether the table was settled; only settled samples face LIVE_MAX)
-  const settled = await page.locator('.app.game[data-animating]').first().waitFor({ state: 'detached', timeout: 30000 }).then(() => true, () => false);
+  // settled = no show playing and the table showing the latest state, held for 300ms (between two queued shows the
+  // animating mark drops for a frame, which read as settled with 26 moves still queued)
+  const settled = await page.waitForFunction(() => {
+    const g = document.querySelector('.app.game');
+    const calm = g && !g.hasAttribute('data-animating') && g.dataset.presentationMoves === g.dataset.moves;
+    if (!calm) { window.__calmSince = 0; return false; }
+    window.__calmSince ||= performance.now();
+    return performance.now() - window.__calmSince >= 300;
+  }, null, { timeout: 30000, polling: 50 }).then(() => true, () => false);
   await cdp.send('HeapProfiler.collectGarbage').catch(() => {});
   // the states the collector let go are counted a task later (FinalizationRegistry): a beat, and once more
   await page.waitForTimeout(60);

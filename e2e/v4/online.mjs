@@ -391,6 +391,10 @@ try {
     const t0 = Date.now();
     while (!(await pages.pia.$('[data-option]:not([disabled])'))) {
       if (Date.now() - t0 > 60000) throw new Error('Pia never got a turn after coming back');
+      // back after a round ended without her: her table first shows that round's scoring, and she starts the next
+      // round as anyone would (random games cross round I's end before she's back about half the time)
+      const nx = await pages.pia.$('[data-next-round]');
+      if (nx) { await nx.click().catch(() => {}); continue; }
       const a = await stepFirstOption(pages.hana), b = await stepFirstOption(pages.gus);
       if (!a && !b) await pages.hana.waitForTimeout(40);
     }

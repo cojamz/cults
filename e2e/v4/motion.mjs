@@ -186,7 +186,13 @@ for (const prof of PROFILES) {
         // shows: the step played a chain of its own (director.js counts each one as the table shows it)
         const chains = window.__patronsChains || 0;
         // by: who made the step; kind: the step's own phase (a placement starts a turn)
-        if (now.moves !== prev.moves) { window.__steps.push({ t: performance.now(), byBot: prev.bot === '1', by: prev.actor, kind: prev.phase, inRound: /Round/.test(prev.round) && /Round/.test(now.round), modal: !!document.querySelector('.roundend'), shows: chains > (window.__chainsSeen || 0) }); window.__chainsSeen = chains; }
+        // who made the step and what kind it was, from the game's own move list: data-actor and data-phase follow the
+        // table's interaction state, which trails the drawn one while a show plays (a rival's own sub-step after its
+        // placement read as the previous player's hand-over, Nov 1)
+        let made = null;
+        try { made = (JSON.parse(window.patronsRecord()).moves || [])[Number(now.moves) - 1] || null; } catch { /* no record */ }
+        const by = made ? String(made[0]) : prev.actor, kind = made ? (/^slot:/.test(String(made[1])) ? 'place' : 'step') : prev.phase;
+        if (now.moves !== prev.moves) { window.__steps.push({ mv: now.moves, t: performance.now(), byBot: made ? by !== '0' : prev.bot === '1', by, kind, inRound: /Round/.test(prev.round) && /Round/.test(now.round), modal: !!document.querySelector('.roundend'), shows: chains > (window.__chainsSeen || 0) }); window.__chainsSeen = chains; }
         prev = now;
       }).observe(el, { attributes: true, attributeFilter: ['data-moves'] });
     };
@@ -208,7 +214,7 @@ for (const prof of PROFILES) {
       }
     }
     const st = await page.evaluate(() => window.__steps || []);
-    let pairs = 0, worst = Infinity;
+    let pairs = 0, worst = Infinity, worstAt = '';
     for (let i = 1; i < st.length; i++) {
       if (!st[i].byBot || !st[i - 1].byBot || !st[i].inRound || !st[i - 1].inRound || st[i].modal || st[i - 1].modal) continue;
       // what it guards: a rival's last visible step stays up at least FLOOR before the next player's step (or that
@@ -218,9 +224,10 @@ for (const prof of PROFILES) {
       let j = i - 1;
       while (j > 0 && !st[j].shows && st[j - 1].by === st[i - 1].by && st[j].kind !== 'place') j--;
       if (!st[j].shows || st[j].by !== st[i - 1].by || st[j].modal || !st[j].inRound) continue;
-      pairs++; worst = Math.min(worst, st[i].t - st[j].t);
+      pairs++;
+      if (st[i].t - st[j].t < worst) { worst = st[i].t - st[j].t; worstAt = st.slice(Math.max(0, j - 1), i + 1).map(x => `${x.mv}:${x.by}:${x.kind}${x.shows ? '*' : ''}@${Math.round(x.t - st[j].t)}`).join(' '); }
     }
-    console.log(`laptop pacing: ${pairs} hand-overs from a rival's visible step to the next player's (rounds I–II), shortest ${Math.round(worst)}ms`);
+    console.log(`laptop pacing: ${pairs} hand-overs from a rival's visible step to the next player's (rounds I–II), shortest ${Math.round(worst)}ms${worstAt ? ` (steps: ${worstAt})` : ''}`);
     if (pairs < 6) errors.push(`(m4) too few bot steps measured (${pairs})`);
     else if (worst < FLOOR - 20) errors.push(`(m4) bot steps ${Math.round(worst)}ms apart at 1270×700 (need ≥${FLOOR})`);
   } catch (e) { errors.push(`m4 run: ${e.message}`); }

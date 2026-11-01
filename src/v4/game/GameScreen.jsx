@@ -137,6 +137,7 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
   const capTimer = useRef(null);
   const pace = useRef(null); // ?trace=1: this step's pacing record (perf.js summary().pace)
   const handedAt = useRef(null); // when the step now being drawn was handed to React
+  const lastShow = useRef(null); // a rival's last visible step this turn: { actor, at, floor } (its floor outlasts its hidden sub-steps)
   const shownRef = useRef(first);
   const committed = useRef(first); // the step on screen (shownRef runs ahead of it while a step is being drawn)
   const online = session.info?.mode === 'online';
@@ -224,9 +225,23 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
       const dwellOf = pl => holdAfter(pl, { sameNext, rivalStep, floor: Math.min(rivalDwell, MO.stepFloor), base, nextPlaces: !!(next.pending && next.pending.kind === 'place'), placing: !!(prev.pending && prev.pending.kind === 'place') });
       // reduced motion (grammar §6, H14): nothing travels, so a step shows its end state and the next follows a beat later
       const still = !motionOK();
-      const dwell = still ? (plan.total || rivalStep ? (sameNext && !plan.total ? 0 : Math.min(150, plan.total || 150)) : base) : dwellOf(plan);
+      let dwell = still ? (plan.total || rivalStep ? (sameNext && !plan.total ? 0 : Math.min(150, plan.total || 150)) : base) : dwellOf(plan);
+      // a rival's visible step, then a sub-step of its own with nothing to show (a choice, a pass) that hands the turn on:
+      // the visible step still gets its floor before the next player's step (motion.mjs m4 saw 349ms, Nov 1)
+      // (the turn ends: another player's step, or this rival's own next placement in a snake order)
+      const turnEnds = !!(next.pending && next.pending.kind === 'place');
+      let heldFor = 0; // a hidden step held for the visible step's floor (a re-measure keeps it)
+      if (!still && rivalStep) {
+        const now = performance.now(), ls = lastShow.current; // (ls.at: the visible step's commit, set below)
+        if (plan.total) lastShow.current = { actor, at: null, floor: Math.round(Math.min(rivalDwell, MO.stepFloor) * (plan.pace ?? 1)) };
+        else if ((!sameNext || turnEnds) && ls && ls.actor === actor) dwell = heldFor = Math.max(dwell, ls.floor - (ls.at == null ? 0 : now - ls.at));
+        if (!sameNext || turnEnds) lastShow.current = null;
+      }
       // the screen measures the real distances once this step is drawn: the pace follows that plan (retime below)
-      remeasure.current = still ? null : dwellOf;
+      // (a re-measure never takes a rival's visible step under its floor: a measured chain that reports less, or
+      // nothing left to play, retimed a pay step to 396ms against the 421ms floor; motion.mjs m4, Nov 1)
+      const floorMin = rivalStep && plan.total && (!sameNext || next.pending?.kind === 'place') ? Math.round(Math.min(rivalDwell, MO.stepFloor) * (plan.pace ?? 1)) : heldFor;
+      remeasure.current = still ? null : floorMin ? pl => Math.max(dwellOf(pl), floorMin) : dwellOf;
       if (typeof window !== 'undefined') window.__patronsDwellSum = (window.__patronsDwellSum || 0) + dwell; // (the pacing gate reads it)
       handedAt.current = performance.now();
       if (PERF_ON) pace.current = tracePace({ moves: next.moves, actor: prev.pending ? prev.pending.player : null, kind: prev.pending ? prev.pending.kind : null, plan: plan.total, handoff: plan.handoff, dwell, handed: performance.now() });
@@ -294,6 +309,8 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
     // Never render a later snapshot ahead of this sequence to compensate for rendering cost.
     const now = performance.now(), lead = 0;
     handedAt.current = null;
+    // a rival's visible step counts its floor from when it's on screen (its commit), as the hold does
+    if (lastShow.current && lastShow.current.at == null) lastShow.current.at = now;
     timer.current = setTimeout(() => { timer.current = null; if (pace.current) pace.current.fired = performance.now(); pump(); }, d - lead);
     timerAt.current = { t0: now - lead, d };
     if (pace.current) { pace.current.committed = now; pace.current.lead = Math.round(lead); }
