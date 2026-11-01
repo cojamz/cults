@@ -45,6 +45,7 @@ You can use a member's ability any time during your own turn, as often as its ca
 
 ## The shop
 - 6 members are face up in round I, 7 in round II and 8 in round III. When one leaves, the top of the face-down pile refills the row. The pile shows how many are left.
+- The setup page picks the member deck: about 15 members per color, or the trimmed 10 per color (with 10 grey).
 - Round I deals only the cheaper members. The pricier round II and round III members are shuffled into the pile when round II starts (or, if the setup page says so, round III members wait for round III).
 - Between rounds the whole row goes to the bottom of the pile and a fresh row is dealt.
 - A cost has a colored part, paid only in that member's color, and an "any" part, paid in any resources. Grey members have no color and cost only "any".
