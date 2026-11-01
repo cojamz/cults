@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.9.904 — 2026-10-31
+
+- A discounted member shows its crossed-off price right beside the new one ("~~7~~ free") instead of above it.
+
 ## v0.9.903 — 2026-10-31
 
 - Members page can show a deck proposal (add ?deck10).
