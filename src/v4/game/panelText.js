@@ -44,7 +44,7 @@ const P = {
     // the +2 red sat in line 3, which drops on the outer ring (round I review, Oct 25): it takes line 2, as Right Away's purple
     evenswap: { verb: 'Use a shop member’s On Recruit', second: '+1 red', note: 'it stays in the shop' },
     turnout: r => ({ main: `+${r + 1} red`, second: `+${r} @f if you recruit a member` }), // Cory, Oct 31
-    hire: { verb: 'Recruit the top of the deck', second: '+1 red', note: 'each rival +1 red' },
+    hire: { verb: 'Recruit the top of the deck', second: '+1 red to all' }, // the rivals' red sat in line 3, which drops on the outer ring (blind panel, Nov 1)
     hireup: { verb: 'Promote a member', second: 'shop cost up to 2 more', note: '+2 red' },
     trade: { verb: 'Demote a member', second: 'shop cost up to 2 less', note: '+2 red' },
     take: { verb: 'Recruit a member', second: 'costing 8 or less, free', note: '+1 red' },
@@ -68,7 +68,7 @@ const P = {
     planahead: (r, now) => (now == null ? { main: '+1 purple', second: 'per minion to place' } : { main: `+${now} purple`, second: '1 per minion left to place' }),
     // free since 2026-10-15 (Cory: no board action requires spending). A ring II verb can drop line 2: whole in line 1
     // line 1 alone must not read as a flat +2 (text review, 2026-10-23: line 2 drops on ring II)
-    lastcall: { verb: '+2 @f per minion left', second: 'skip till others are out', note: '+1 purple' },
+    lastcall: { verb: '+2 @f per minion left', second: 'then you go last', note: '+1 purple' }, // 'skip till others are out' didn't fit line 2 and dropped (blind panel, Nov 1)
     // the center drops line 2, so it's whole in line 1. Your own next turns, moved up, not extra ones (Cory, 2026-10-15)
     // Cory, 2026-10-22: place on taken spaces for the rest of the round
     // Cory, 2026-10-22: the old game's "Gain 4 purple, skip next turn"

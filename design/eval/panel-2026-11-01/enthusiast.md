@@ -1,0 +1,6 @@
+# Hobby gamer (blind, fun and pacing), live v0.9.908. Red/Blue/Green/Purple vs 3 Normal bots, rounds I-II and part of III. Load 9-11.
+Scores after II: tester 41, bots 30/26/22.
+Game: (1) snowball: Echo copied Walk-In for a free member, then Triplets + Roadie, uncatchable by round II; (2) Last Call obvious twice (+6, preview +8) then ~9 bot turns (45-60 s) watching; (3) a Red swap handed the leader Front-runner, so the leader picked first in round III; (4) best moment: Con Men stealing 5 purple flipped the purple contest; (5) round I turns mostly arithmetic.
+Screen: (6) previews omit rivals' gains (Hold Up feeds P4's Pocket Watch) though Reprise lists them; (7) Peek asks to order before saying you can recruit one; (8) suggested payment broke a held contest lead once; (9) single-option picks still need a click (Tryout, Echo); (10) shop reflows after each Churn bury; (11) tooltips open under the pointer, "Send one color to the bottor" clipped; (12) seats re-sort each round; spare minions unreadable.
+Pacing at Relaxed: bot turns 3-5 s; round I scoring 8.5 s then waits for a click (good); board ~5 s to settle after Start.
+Table talk: "I copied a copy of Walk-In and got a free member?" "Con Men just took all five of my purple." "Why does the guy with 41 go first? Oh, you gave him Front-runner."
