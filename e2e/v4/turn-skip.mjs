@@ -1,6 +1,6 @@
 // A skipped turn shows on the table (Cory, Nov 1: "it's not clear when a turn is skipped. we need to show it happening
 // with some UI component or emphases, and the pocket watch (or whatever) gain should occur when that animation
-// happens"). P1 holds Pocket Watch ("Whenever a player's turn is skipped, +1 purple.") and takes Hold Up ("The next
+// happens"). P1 holds Pocket Watch ("Whenever a player's turn is skipped, +2 purple.") and takes Hold Up ("The next
 // turn is skipped."): "Turn skipped" stands on the next player's seat, and Pocket Watch's purple lands only after it
 // shows, never with Hold Up's own purple.
 import { mkdirSync } from 'node:fs';
@@ -94,7 +94,7 @@ try {
     const end = firstUp ? firstUp[1] : afterSpace;
     console.log(`P1 purple: before ${p0}, after Hold Up ${afterSpace}, before the skip shows ${atTag}, first change ${end}${firstUp ? ` at ${Math.round(firstUp[0] - seenAt)}ms after the tag` : ''}`);
     if (atTag !== afterSpace) errors.push(`purple rose before the skip showed (${afterSpace} → ${atTag})`);
-    if (end !== afterSpace + 1) errors.push(`Pocket Watch did not pay +1 with the skip (${afterSpace} → ${end})`);
+    if (end !== afterSpace + 2) errors.push(`Pocket Watch did not pay +2 with the skip (${afterSpace} → ${end})`);
     else if (firstUp[0] - seenAt > 4000) errors.push('Pocket Watch paid long after the skip showed');
   }
   await ctx.close();

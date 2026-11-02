@@ -167,7 +167,9 @@ export function giftPick(state, pend, first = null) {
   const done = (question.match(/\((\d+) swapped so far\)/) || [])[1];
   // Promote and Demote by name, or by a member's question about them (Panel: "Panel: demote another member")
   const swapKind = /^promote\b/i.test(title) || /^promote\b/i.test(question) ? 'Promote' : /^demote\b/i.test(title) || /^demote\b/i.test(question) ? 'Demote' : null;
-  const tradeHead = swapKind === 'Promote' ? 'Promote a member' : swapKind === 'Demote' ? 'Demote a member' : 'Swap any two equal-cost members';
+  // the swap card trades within 2 cost, never only equal ones (its card: "costing up to 2 more or less")
+  const swapCard = /swap card/i.test(question) || /swap card/i.test(title);
+  const tradeHead = swapKind === 'Promote' ? 'Promote a member' : swapKind === 'Demote' ? 'Demote a member' : swapCard ? 'Swap card: a member within 2 cost' : 'Swap any two equal-cost members';
   const head = { give: n ? `A rival you pick gets ${n}` : 'A rival you pick gets some', colors: 'Swap one for one', amount: 'Swap for another color', trade: tradeHead }[kind];
   return { ...base, kind, n, color: null, head, chosen, firsts, seconds, others, rest, done: done == null ? null : Number(done), sameCost: /equal cost/i.test(question) };
 }

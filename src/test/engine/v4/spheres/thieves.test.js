@@ -307,19 +307,19 @@ describe('Magenta members', () => {
     expect(R(s)[2]).toEqual({ ...Z, gold: 1 });
   });
 
-  it('Fence: +1 magenta once per steal: a steal split among rivals pays 1, each separate steal pays again', () => {
+  it('Fence (Magenta Cloak): when a rival steals from you, +2 magenta, once per steal; your own steals and others\' pay nothing', () => {
     const run = members => {
-      const s = scene({ round: 2, res: [{}, { gold: 3 }, { gold: 3 }], members: [members] });
+      const s = scene({ round: 2, res: [{}, { gold: 3 }, { gold: 3 }], members });
       return play(take(s, 'thieves.pickpocket'), 'take:1:gold', 'take:2:gold', 'take:1:gold', 'take:2:gold');
     };
-    const without = run([]), with_ = run(['thieves.fence']);
-    expect(R(with_)[0].magenta).toBe(R(without)[0].magenta + 1);
-    expect(R(with_)[0].gold).toBe(R(without)[0].gold);
-    // two more steals the same turn (a member's steal after a recruit, say): each its own steal, each pays
-    const ctx = contextFor(with_), m0 = with_.players[0].res.magenta;
-    ctx.steal(with_.players[0], with_.players[1], { take: { gold: 1 } });
-    ctx.steal(with_.players[0], with_.players[2], { take: { gold: 1 } });
-    expect(with_.players[0].res.magenta).toBe(m0 + 2);
+    const without = run([]), mine = run([['thieves.fence']]), victim = run([[], ['thieves.fence']]);
+    expect(R(mine)[0].magenta).toBe(R(without)[0].magenta); // the thief's own cloak: nothing
+    expect(R(victim)[1].magenta || 0).toBe((R(without)[1].magenta || 0) + 2); // one steal split among rivals: +2 once
+    // two more steals: each its own steal; only the one from the holder pays
+    const ctx = contextFor(victim), m1 = victim.players[1].res.magenta || 0;
+    ctx.steal(victim.players[0], victim.players[1], { take: { gold: 1 } });
+    ctx.steal(victim.players[0], victim.players[2], { take: { gold: 1 } });
+    expect(victim.players[1].res.magenta).toBe(m1 + 2);
   });
 
   it('Light Fingers: when a rival recruits a member costing 8+, take 1 from them', () => {

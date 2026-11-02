@@ -148,10 +148,13 @@ describe('White members', () => {
     expect(named(s, 'Raiders')).toEqual(["P1's Raiders stole 4 followers from P2 and paid 2 white."]);
   });
 
-  it('Raiders counts as a steal for Fence (Cory, Nov 1: "Count raiders… that should count")', () => {
-    const s = move(use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider'], [], ['thieves.fence']], shop: ROW, ...buy }), 'trading.raider'), 'player:1');
-    expect(R(s, 2).magenta).toBe(1);
+  it('Raiders counts as a steal for the Magenta Cloak (Cory, Nov 1: "Count raiders… that should count"): its victim gets +2', () => {
+    const s = move(use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider'], ['thieves.fence'], []], shop: ROW, ...buy }), 'trading.raider'), 'player:1');
+    expect(R(s, 1).magenta).toBe(2);
     expect(named(s, 'Fence')).toHaveLength(1);
+    // a bystander's cloak pays nothing (option C, Nov 1 8:25pm: "Whenever a rival steals from you, +2 magenta.")
+    const t = move(use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider'], [], ['thieves.fence']], shop: ROW, ...buy }), 'trading.raider'), 'player:1');
+    expect(R(t, 2).magenta || 0).toBe(0);
   });
 
   it('Farewell casting out pays a rival\'s Recruiter nothing (it pays for shop recruits since Cory, Nov 1 3:59pm)', () => {

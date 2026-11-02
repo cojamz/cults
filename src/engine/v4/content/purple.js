@@ -520,8 +520,9 @@ export default {
     }),
     // Purple's artifact only, never dealt (Claude's pick, 2026-10-24, after Cory found Courier "a little too good").
     // Name is Claude's fill-in.
-    m('pocketwatch', 'Pocket Watch', 0, 0, 'Whenever a player’s turn is skipped, +1 purple.', { artifact: true,
-      onSkip(ctx, owner) { const got = ctx.gain(owner, 'purple', 1); if (got) ctx.log(`${owner.name}'s Pocket Watch: +${got.n} ${got.color}.`); },
+    // +2 (Cory, Nov 1 8:25pm: option A; 19.5% held in the 200-game test, against 11% at +1)
+    m('pocketwatch', 'Pocket Watch', 0, 0, 'Whenever a player’s turn is skipped, +2 purple.', { artifact: true,
+      onSkip(ctx, owner) { const got = ctx.gain(owner, 'purple', 2); if (got) ctx.log(`${owner.name}'s Pocket Watch: +${got.n} ${got.color}.`); },
     }),
     m('gossip', 'Gossip', 3, 2, 'Whenever a player’s turn is skipped, +1 follower.', {
       onSkip(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Gossip: +1 follower.`); },

@@ -461,10 +461,12 @@ const thieves = {
     }),
     // Cory, 2026-10-29: "it's once per steal instance. not per turn, and not per currency taken": a split steal
     // (several rivals) pays 1, a second steal the same turn (after a recruit) pays again
-    m('fence', 'Fence', 2, 2, 'Whenever any player steals, +1 magenta.', { // any player (Cory, Nov 1; +17 in the test, "no cap")
+    // Cory, Nov 1 8:25pm: option C ("Whenever a rival steals from you, +2 magenta."; held 25% either way in the
+    // 200-game test, against 39.5% for "any player steals"). Still once per steal instance.
+    m('fence', 'Fence', 2, 2, 'Whenever a rival steals from you, +2 magenta.', {
       onSteal(ctx, owner, card, info) {
-        if (card.inst === info.instance) return;
-        card.inst = info.instance; ctx.gain(owner, 'magenta', 1);
+        if (info.victim !== owner || info.thief === owner || card.inst === info.instance) return;
+        card.inst = info.instance; ctx.gain(owner, 'magenta', 2);
       },
     }),
   ],

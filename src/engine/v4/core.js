@@ -626,6 +626,11 @@ function inputFor(state, task) {
       return { kind: 'choose', prompt: `${p.name}: take ${task.left} more from the release, in any colors`, options: opts };
     }
     case 'pay': {
+      if (task.swap) {
+        const list = swapCardPayChoices(state, p), lost = list.length ? rimCost(state, p) : null;
+        return { kind: 'pay', prompt: `${p.name}: choose how to pay for the swap card`, swap: task.swap,
+          options: [...list.map((v, i) => payOption(state, v, i, lost)), { id: 'back', label: 'Back', kind: 'back' }] };
+      }
       const list = task.uid !== undefined ? paymentChoices(state, p, task.uid) : followerChoices(state, p, TIERS.find(t => t.key === task.tier));
       const what = task.uid !== undefined ? cardDef(state, task.uid).name : `${TIERS.find(t => t.key === task.tier).get} followers`;
       const lost = list.length ? rimCost(state, p) : null;
@@ -777,9 +782,25 @@ function resolveTask(state, task, optionId) {
       if (optionId === 'back') { state.queue.unshift({ t: 'buy', p: p.id, ...extraOf(task) }); return; }
       const [, a, b] = optionId.split(':').map(Number);
       if (!swapCardPairs(state, p).some(([x, y]) => x === a && y === b)) { state.queue.unshift({ t: 'buy', p: p.id, ...extraOf(task) }); return; }
+      if (swapCardCost(state) > 0) { state.queue.unshift({ t: 'pay', p: p.id, swap: [a, b], ...extraOf(task) }); return; }
+      useSwapCard(state, p, task, a, b);
+      return;
+    }
+    case 'pay': {
+      if (task.swap) {
+        if (optionId === 'back') { state.queue.unshift({ t: 'swapcard', p: p.id, ...extraOf(task) }); return; }
+        const v = Object.fromEntries(optionId.slice(4).split('-').map((n, i) => [state.resources[i], Number(n)]));
+        const [a, b] = task.swap;
+        if (!swapCardPairs(state, p).some(([x, y]) => x === a && y === b) || !swapCardPayChoices(state, p).some(w => vecKey(state, w) === vecKey(state, v))) { state.queue.unshift({ t: 'buy', p: p.id, ...extraOf(task) }); return; }
+        for (const r of state.resources) p.res[r] -= v[r] || 0;
+        useSwapCard(state, p, task, a, b, v);
+        return;
+      }
+      if (optionId === 'back') { state.queue.unshift({ t: 'buy', p: p.id, ...extraOf(task) }); return; }
+      const v = Object.fromEntries(optionId.slice(4).split('-').map((n, i) => [state.resources[i], Number(n)]));
       boughtOnce(state, p, task);
-      const names = [a, b].map(uid => `${state.players.find(o => o.members.includes(uid))?.name || 'Shop'}'s ${cardDef(state, uid).name}`);
-      if (swapMembers(state, p, a, b)) log(state, `${p.name} used the swap card: swapped ${names[0]} and ${names[1]}.`);
+      if (task.uid !== undefined) recruit(state, p, task.uid, { free: false, spend: v });
+      else buyFollowers(state, p, TIERS.find(t => t.key === task.tier), v);
       return;
     }
     case 'choose': {
@@ -796,14 +817,6 @@ function resolveTask(state, task, optionId) {
       p.res[c] = (p.res[c] || 0) + n;
       log(state, `${p.name} takes ${n} ${c} from the release.`);
       if (task.left - n > 0) state.queue.unshift({ t: 'release', p: p.id, left: task.left - n });
-      return;
-    }
-    case 'pay': {
-      if (optionId === 'back') { state.queue.unshift({ t: 'buy', p: p.id, ...extraOf(task) }); return; }
-      const v = Object.fromEntries(optionId.slice(4).split('-').map((n, i) => [state.resources[i], Number(n)]));
-      boughtOnce(state, p, task);
-      if (task.uid !== undefined) recruit(state, p, task.uid, { free: false, spend: v });
-      else buyFollowers(state, p, TIERS.find(t => t.key === task.tier), v);
       return;
     }
     default:
@@ -1322,10 +1335,36 @@ function returnWorkers(state, uid, from) {
 }
 
 /** The swap card (a table setting, rules.swapCard; Cory, Nov 1 3:01pm): "As your recruit: swap one of your members with
- *  a shop or rival member costing up to 2 more or less." Free: nothing pays the difference. A trade, not a steal, so
+ *  a shop or rival member costing up to 2 more or less." Nothing pays the price difference. A trade, not a steal, so
  *  Bodyguards and Lie Low let it through (Nov 1 2:02pm). [yours, theirs] uid pairs. */
+/** The swap card's price (Cory, Nov 1 8:25pm: "cost 2 wild"): 2 resources in any colors. rules.swapCardCost overrides
+ *  it (sims); a game saved before the price reads 2 as well. */
+export const swapCardCost = state => state.rules?.swapCardCost ?? 2;
+/** Every way p can pay the swap card's price, the default way first (as a follower buy's: leads kept, surplus spent). */
+export function swapCardPayChoices(state, p) {
+  const n = swapCardCost(state);
+  if (!n) return [{}];
+  const plan = {}, res = { ...p.res };
+  for (let k = n; k > 0; k--) { const r = state.resources.reduce((a, b) => ((res[b] || 0) > (res[a] || 0) ? b : a)); if (!(res[r] > 0)) return []; res[r] -= 1; plan[r] = (plan[r] || 0) + 1; }
+  const have = Object.fromEntries(state.resources.map(r => [r, p.res[r] || 0]));
+  return orderChoices(state, vectors(have, state.resources, n, n), plan, p);
+}
+/** The default payment taken from p at once (bot lookahead on a copy). */
+export function paySwapCard(state, p) {
+  const v = swapCardPayChoices(state, p)[0];
+  if (!v) return false;
+  for (const r of state.resources) p.res[r] -= v[r] || 0;
+  return true;
+}
+function useSwapCard(state, p, task, a, b, paid = null) {
+  boughtOnce(state, p, task);
+  const names = [a, b].map(uid => `${state.players.find(o => o.members.includes(uid))?.name || 'Shop'}'s ${cardDef(state, uid).name}`);
+  const cost = paid && state.resources.filter(r => paid[r] > 0).map(r => `${paid[r]} ${r}`).join(', ');
+  if (swapMembers(state, p, a, b)) log(state, `${p.name} used the swap card${cost ? ` (paid ${cost})` : ''}: swapped ${names[0]} and ${names[1]}.`);
+}
 export function swapCardPairs(state, p) {
   if (!state.rules?.swapCard) return [];
+  if (Object.values(p.res).reduce((a, b) => a + (b || 0), 0) < swapCardCost(state)) return [];
   const ctx = ctxFor(state);
   const price = uid => { const d = cardDef(state, uid); return d.s + d.w; };
   const mine = p.members.filter(u => ctx.canSwapMember(u));

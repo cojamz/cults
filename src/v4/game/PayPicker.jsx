@@ -43,6 +43,10 @@ export const rowStep = n => (n <= 5 ? 20 : Math.max(4, Math.round((ROW / (n - 1)
  * and what one coin of each color pays (a Penny Pincher gold pays 2 toward a member). From the engine's price rule.
  */
 function costShape(state, p, pend, uid, how) {
+  if (pend.swap) { // the swap card's price: 2 in any colors (Cory, Nov 1 8:25pm), read off its ways to pay
+    const n = Object.values(pend.options.find(o => o.kind === 'pay')?.spend || {}).reduce((a, b) => a + b, 0);
+    return { units: Array.from({ length: n }, () => 'any'), worth: () => 1 };
+  }
   if (uid === undefined) {
     const tier = TIERS.find(t => t.key === pend.tier);
     return { units: Array.from({ length: tier.cost }, () => 'any'), worth: () => 1 };
@@ -84,9 +88,10 @@ export default function PayPicker({ state, onPick, busy, turnOf = null }) {
 
   const def = uid !== undefined ? cardDef(state, uid) : null;
   const tier = pend.tier ? TIERS.find(t => t.key === pend.tier) : null;
-  const title = def ? `Recruit ${def.name}` : `Recruit ${tier.get} follower${tier.get > 1 ? 's' : ''}`;
+  const swap = pend.swap ? pend.swap.map(u => cardDef(state, u).name) : null;
+  const title = def ? `Recruit ${def.name}` : swap ? 'Use the swap card' : `Recruit ${tier.get} follower${tier.get > 1 ? 's' : ''}`;
   const shape = useMemo(() => costShape(state, p, pend, uid, how), [pend]); // eslint-disable-line react-hooks/exhaustive-deps
-  const printed = def ? costParts(def, res) : [{ color: 'any', n: tier.cost }];
+  const printed = def ? costParts(def, res) : swap ? [{ color: 'any', n: shape.units.length }] : [{ color: 'any', n: tier.cost }];
   // the price you pay, as the shop card's face shows it (live panel r1: the card showed the discounted price, the sheet
   // the list price plus a discount line): the engine's price under the rule it's paid by, the list price struck before
   // it when they differ
@@ -113,7 +118,7 @@ export default function PayPicker({ state, onPick, busy, turnOf = null }) {
   // beside what you're buying: the card (or follower tile) you clicked stays lit in a hole in the dimmed table, and the
   // sheet stands next to it, on the side with room, its middle level with the card's; a phone keeps the bottom sheet
   const hole = useRef(null);
-  const anchorSel = def ? `.lt-shop .lt-card[data-uid="${uid}"]` : tier ? `.lt-rates [data-rate="${tier.key}"]` : null;
+  const anchorSel = def ? `.lt-shop .lt-card[data-uid="${uid}"]` : swap ? '.lt-rates [data-rate="swap"]' : tier ? `.lt-rates [data-rate="${tier.key}"]` : null;
   useLayoutEffect(() => {
     const el = box.current, ho = hole.current;
     if (!el || !ho) return undefined;
@@ -219,11 +224,12 @@ export default function PayPicker({ state, onPick, busy, turnOf = null }) {
               {/* followers: a small crowd of them (as many as you get, up to three), never one mark in a grey box,
                   which read as a missing picture (w3a #50) */}
               {def ? <Sprite id={[def.id, spriteId(def.name)]} kind="member" sphere={sphere} size={48} />
+                : swap ? <b className="pay-swap num">⇄</b>
                 : <span className="fol-crowd" data-n={Math.min(3, tier.get)}>{Array.from({ length: Math.min(3, tier.get) }, (_, k) => <Follower key={k} size={k === 0 ? 27 : 18} />)}</span>}
             </span>
             <span className="mc-id">
               <span className="mc-row">
-                <h2 className="mc-name">{def ? def.name : `${tier.get} follower${tier.get > 1 ? 's' : ''}`}</h2>
+                <h2 className="mc-name">{def ? def.name : swap ? 'Swap card' : `${tier.get} follower${tier.get > 1 ? 's' : ''}`}</h2>
                 {def && <span className="mc-worth" title={`Worth ${def.f} follower${def.f === 1 ? '' : 's'}`}><b className="n">{def.f}</b><Follower size={14} title={`worth ${def.f} follower${def.f === 1 ? '' : 's'}`} /></span>}
               </span>
               <small className="mc-cost" data-pay-cost={printed.map(c => `${c.n}${c.color}`).join(' ')} data-pay-price={(price ? price.parts : printed).map(c => `${c.n}${c.color}`).join(' ')}>
@@ -232,6 +238,7 @@ export default function PayPicker({ state, onPick, busy, turnOf = null }) {
             </span>
           </div>
           {def && <p className="ability" data-pay-ability><CardText text={def.text} /></p>}
+          {swap && <p className="ability" data-pay-swap>{swap[0]} ⇄ {swap[1]}</p>}
           {notes.length > 0 && <ul className="pay-rules" data-pay-rules={notes.length}>{notes.map(n => <li key={n.key} data-pay-rule={n.key}>{n.text}</li>)}</ul>}
         </div>
 
@@ -311,7 +318,7 @@ export const RECEIPT_MS = 1800;
  */
 export function receiptFor(state, pend, way) {
   if (!pend || !way || typeof document === 'undefined') return null;
-  const sel = pend.uid !== undefined ? `.lt-shop .lt-card[data-uid="${pend.uid}"]` : pend.tier ? `.lt-rates [data-rate="${pend.tier}"]` : null;
+  const sel = pend.uid !== undefined ? `.lt-shop .lt-card[data-uid="${pend.uid}"]` : pend.swap ? '.lt-rates [data-rate="swap"]' : pend.tier ? `.lt-rates [data-rate="${pend.tier}"]` : null;
   const a = sel && document.querySelector(sel);
   const r = a && a.getBoundingClientRect();
   if (!r || !r.width) return null;

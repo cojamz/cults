@@ -15,7 +15,7 @@
 // Every level is deterministic for a given state and rand.
 import {
   contextFor, actionAt, cardDef, TIERS, followers, memberCount, RING_VALUE, WORKERS, tierLeft,
-  paymentChoices, followerChoices, releaseRefund, liveOptions, swapCardPairs,
+  paymentChoices, followerChoices, releaseRefund, liveOptions, swapCardPairs, paySwapCard,
 } from './core.js';
 import { defById, quadrant, handlerById } from './content/index.js';
 import { plainCopy } from './copy.js';
@@ -222,8 +222,9 @@ function swapSides(state, me, [a, b]) {
 function givenAway(state, me) {
   const p = state.players[me], given = new Set();
   const owners = [...state.players.map(o => o.name), 'Shop'];
-  for (const line of state.log || []) {
-    if (typeof line !== 'string') continue;
+  for (const raw of state.log || []) {
+    if (typeof raw !== 'string') continue;
+    const line = raw.replace(/ used the swap card \(paid [^)]*\):/, ' used the swap card:'); // its price (Nov 1 8:25pm)
     const m = line.startsWith(`${p.name} traded `) && line.match(/ traded (.+) for .+'s (.+)\.$/);
     if (m) { given.add(m[1]); continue; }
     // Anarchist logs "P1's Anarchist swapped P1's X and P2's Y." (benders.js anarchy): the same body
@@ -632,6 +633,11 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
           ctx.recruit(p, what.uid, { free: false, spend: full });
           settle(s, ctx);
           extraAbility[me] = abilityValue(cardDef(s, what.uid), placesLeft, opts.k);
+        } else if (what.swap) {
+          // the swap card's price (Nov 1 8:25pm), then the swap itself
+          for (const r of s.resources) p.res[r] -= full[r];
+          ctx.swapMembers(p, ...what.swap);
+          settle(s, ctx);
         } else if (what.tier) {
           const tier = TIERS.find(t => t.key === what.tier);
           for (const r of s.resources) p.res[r] -= full[r];
@@ -671,7 +677,7 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
       return [...first, ...extra];
     };
     if (pend.kind === 'pay') {
-      const what = pend.uid !== undefined ? { uid: pend.uid } : { tier: pend.tier };
+      const what = pend.swap ? { swap: pend.swap } : pend.uid !== undefined ? { uid: pend.uid } : { tier: pend.tier };
       // all the ways (the menu is the engine's); rollouts pass payOptions to look at only the first few
       const pays = pend.options.filter(o => o.kind === 'pay').slice(0, opts.payOptions ?? Infinity);
       for (const o of pays) out.push({ o, v: valueOf(what, o.spend) + (o.default ? 0.01 : 0) });
@@ -694,6 +700,7 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
             const extra = { [me]: abilityValue(cardDef(s, b), placesLeft, opts.k) - abilityValue(cardDef(s, a), placesLeft, opts.k) };
             if (rival) extra[rival.id] = -extra[me];
             if (!ctx.swapMembers(s.players[me], a, b)) continue;
+            paySwapCard(s, s.players[me]); // its price, paid the default way (Cory, Nov 1 8:25pm: "cost 2 wild")
             settle(s, ctx);
             top = Math.max(top, marginOf(evaluate(s, buysAt(s, 0), incomeAt(s), roundLeft, extra, opts.future), me, opts.spite));
           } catch { /* a trade that can't be played out is skipped */ }

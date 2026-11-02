@@ -3,7 +3,7 @@ export {
   createGame, applyMove, legalMoves, isLegal, askFor,
   followers, memberCount, memberWeight, countMembersOfColor, cardDef, actionAt, spacesOf, openSlots, spaceOpen,
   memberPrice, paymentPlan, followerPlan, paymentChoices, followerChoices, RING_VALUE, WORKERS, SHOP_SIZE, shopSize, memberRound, joinsRound, TIERS, tierLeft, roman,
-  contestTable, turnRail, roundOrder, roundWorkers, pileReach, minionPool,
+  contestTable, turnRail, roundOrder, roundWorkers, pileReach, minionPool, swapCardCost,
 } from './core.js';
 export { quadrant, defById, DEFAULT_QUADRANTS, CLASSIC, MAX_PLAYERS, classicFor, defaultQuadrants, allQuadrantIds } from './content/index.js';
 export { previewSpace, roundStartIncome, spaceTargets } from './preview.js';

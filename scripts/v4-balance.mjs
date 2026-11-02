@@ -14,8 +14,8 @@ import { chooseBotMove, chooseFollowerBuyerMove } from '../src/engine/v4/bots.js
 import { seededRandom } from '../src/engine/v4/rng.js';
 import { sphereVersion } from '../src/v4/tables.js';
 import { deckRules } from './lib/deck-choice.mjs';
-// SWAP=1 turns on the swap card table setting (Cory, Nov 1)
-const DECK_RULES = { ...deckRules(), ...(process.env.SWAP === '1' ? { swapCard: true } : {}) };
+// SWAP=1 turns on the swap card table setting (Cory, Nov 1); SWAPCOST=n sets its price (default 2)
+const DECK_RULES = { ...deckRules(), ...(process.env.SWAP === '1' ? { swapCard: true } : {}), ...(process.env.SWAPCOST ? { swapCardCost: Number(process.env.SWAPCOST) } : {}) };
 
 const [first, count, out] = [Number(process.argv[2] || 1), Number(process.argv[3] || 1), process.argv[4] || 'balance.jsonl'];
 const level = process.env.LEVEL || 'normal', seats = Number(process.env.SEATS || 4);
@@ -63,7 +63,7 @@ for (let g = first; g < first + count; g++) {
   let s = createGame({ seats: Array.from({ length: seats }, () => ({ kind: 'bot' })), seed: g, quadrants: quads, rules: DECK_RULES });
   const buyer = g % 5 === 0 ? g % seats : -1;
   const places = s.players.map(() => ({})), seen = {}, got = s.players.map(() => ({}));
-  let moves = 0;
+  let moves = 0, swaps = 0;
   while (!s.over && ++moves < 4000) {
     for (const uid of s.shop) seen[s.cards[uid].def] ??= s.round;
     const before = s.players.map(p => new Set(p.members));
@@ -83,6 +83,7 @@ for (let g = first; g < first + count; g++) {
       const k = a ? `${s.quadrants[q]}: ${a.name}` : m.option;
       places[pl][k] = (places[pl][k] || 0) + 1;
     }
+    if (m.option === 'swapcard') swaps++;
     const round = s.round;
     s = applyMove(s, m);
     s.players.forEach((p, i) => { for (const u of p.members) if (!before[i].has(u)) got[i][name(s.cards[u].def)] ??= round; });
@@ -91,7 +92,7 @@ for (let g = first; g < first + count; g++) {
   if (!s.over) { appendFileSync(out, JSON.stringify({ game: g, level, seats, table: quads, stuck: true, round: s.round }) + '\n'); continue; }
   const top = Math.max(...s.players.map(p => followers(s, p)));
   const row = {
-    game: g, level, seats, table: quads, deck: DECK_RULES.deck || 15, buyer, prices,
+    game: g, level, seats, table: quads, deck: DECK_RULES.deck || 15, buyer, prices, swaps,
     shop: Object.keys(seen).map(name), shopRound: Object.fromEntries(Object.entries(seen).map(([d, r]) => [name(d), r])),
     // each round's contests: color -> winning seats (for sweeps: one seat taking a color's contest every round)
     contests: (s.contests || []).map(c => Object.fromEntries(c.results.map(x => [x.qid, x.winners]))),

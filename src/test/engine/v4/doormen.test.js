@@ -4,7 +4,7 @@
 import { describe, it, expect } from 'vitest';
 import { move } from './helpers.js';
 import { table, uidIn, owns } from './cards-helpers-b.js';
-import { chooseBotMove } from '../../../engine/v4/index.js';
+import { chooseBotMove, applyMove } from '../../../engine/v4/index.js';
 
 const Q = ['market', 'red', 'gold', 'purple'];
 const buy = () => ({ queue: [{ t: 'buy', p: 0 }, { t: 'turn', p: 1 }] });
@@ -61,11 +61,19 @@ describe('Bargain Bin', () => {
 });
 
 describe('bots and the swap card', () => {
-  it('a Normal bot takes a free swap for a much better member when it can afford nothing', () => {
-    const s = table(['red', 'gold', 'purple', 'echo'], { rules: { swapCard: true }, members: [['red.volunteer'], ['red.twins']], shop: [], ...buy() });
+  it('a Normal bot takes a free swap for a much better member when it can afford nothing (a sim at price 0)', () => {
+    const s = table(['red', 'gold', 'purple', 'echo'], { rules: { swapCard: true, swapCardCost: 0 }, members: [['red.volunteer'], ['red.twins']], shop: [], ...buy() });
     s.players[0].res = Object.fromEntries(Object.keys(s.players[0].res).map(r => [r, 0]));
-    expect(s.pending.kind).toBe('buy');
-    const mv = chooseBotMove(s, () => 0.5, { level: 'normal' });
-    expect(mv.option).toBe('swapcard');
+    expect(chooseBotMove(s, () => 0.5, { level: 'normal' }).option).toBe('swapcard');
+  });
+
+  it('at the price of 2 (Cory, Nov 1 8:25pm: "cost 2 wild") a bot on the swap card picks a pair and pays the 2', () => {
+    const s = table(['red', 'gold', 'purple', 'echo'], { rules: { swapCard: true }, res: [{ red: 0, gold: 2, purple: 0, green: 0 }], members: [['red.volunteer'], ['red.twins']], shop: [], ...buy() });
+    let t = applyMove(s, { player: 0, option: 'swapcard' });
+    t = applyMove(t, chooseBotMove(t, () => 0.5, { level: 'normal' }));
+    expect(t.pending.kind).toBe('pay');
+    t = applyMove(t, chooseBotMove(t, () => 0.5, { level: 'normal' }));
+    expect(t.players[0].res.gold).toBe(0);
+    expect(t.players[0].members.some(u => t.cards[u].def === 'red.twins')).toBe(true);
   });
 });

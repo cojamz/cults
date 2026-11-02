@@ -204,7 +204,7 @@ export function DeckPick({ value, onChange, readOnly }) {
   </div>;
 }
 // the swap card (Cory, Nov 1 3:01pm: "add it as a setting, let's try it!"), off by default
-const SWAP_OPTS = [['off', 'Off', 'No swap card'], ['on', 'On', 'As your recruit: swap one of your members with a shop or rival member costing up to 2 more or less']];
+const SWAP_OPTS = [['off', 'Off', 'No swap card'], ['on', 'On', 'As your recruit, for 2 resources in any colors: swap one of your members with a shop or rival member costing up to 2 more or less']];
 export function SwapPick({ value, onChange, readOnly }) {
   return <div className="seat" data-swap-pick={value ? 'on' : 'off'}><span>Swap card</span>
     {readOnly ? <span className="hint">{value ? 'On' : 'Off'}</span>
