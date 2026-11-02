@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.503 — 2026-11-01
+
+- Magenta Cloak: "Whenever a rival steals from you, +2 magenta." Purple Cloak: "Whenever a player's turn is skipped, +2 purple." The swap card now costs 2 resources in any colors.
+
 ## v0.99.502 — 2026-11-01
 
 - The Green Cloak's payouts now show as Green Cloak in the game log.
