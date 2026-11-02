@@ -44,6 +44,20 @@ describe('Launderers card', () => {
     expect(t.picks[0]).toBe('split');
     expect(screen.getByText('after')).toBeTruthy();
   });
+  it('+ with nothing loose moves one over from your biggest color you have not raised (Cory, Nov 2)', () => {
+    vi.useFakeTimers();
+    const s0 = recruited();
+    const before = { ...s0.players[0].res };
+    const t = table(s0);
+    const big = Object.keys(before).reduce((a, c) => (before[c] > before[a] ? c : a));
+    const small = Object.keys(before).reduce((a, c) => (before[c] < before[a] ? c : a));
+    press(small, '+'); press(small, '+');
+    expect(row(small).dataset.n).toBe(String(before[small] + 2));
+    expect(row(big).dataset.n).toBe(String(before[big] - 2));
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }));
+    for (let k = 0; k < 6; k++) act(() => { vi.advanceTimersByTime(200); });
+    expect(t.now().players[0].res).toEqual({ ...before, [big]: before[big] - 2, [small]: before[small] + 2 });
+  });
   it('All puts everything on one color in one answer; Keep my colors keeps them', () => {
     const s0 = recruited();
     const total = Object.values(s0.players[0].res).reduce((a, b) => a + b, 0);

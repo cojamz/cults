@@ -17,7 +17,7 @@ import { realHover } from '../hover.js';
 import { TurnOf } from './parts.jsx';
 import './giftcard.css';
 
-const LABELS = { share: [null, 'To'], color: [null, null], give: ['Color', 'To'], gift: [null, 'To'], colors: ['Give', 'Get'], amount: ['Get', 'How many'], trade: ['Member', 'For'], steal: [null, null], recruit: [null, null], move: [null, null] };
+const LABELS = { share: [null, 'To'], color: [null, null], give: ['Color', 'To'], gift: [null, 'To'], colors: ['Give', 'Get'], amount: ['Get', 'How many'], trade: ['Member', 'For'], steal: [null, null], recruit: [null, null], move: [null, null], change: [null, null] };
 // a swap with this many members on the card sets them closer (round III: twelve of yours and twenty of theirs), so
 // every row shows whole, never cut off at the card's foot (live panel round 1)
 const DENSE = 14;
@@ -28,6 +28,9 @@ const CROWD = 36;
 // "Take all N" runs one pick per question the engine asks, as each comes back (kept outside the card, so a re-render
 // between two picks never loses it): { key, picks: [{ pid, res }], done: the question already answered }
 let takeAll = null;
+// changing rivals' resources: the color they become, kept from one change to the next ({ key, c }), and a tap on a pile
+// with a color kept answers the color question that follows it ({ key, c, done: the question already answered })
+let changeInto = null, changeRun = null;
 const sphereOf = (state, d) => { if (!onTable(state, d)) return 'colorless'; try { return quadrant(d.quadrant).resource; } catch { return 'colorless'; } };
 
 /**
@@ -38,7 +41,7 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
   const pend = state.pending;
   const me = state.players[g.actor];
   const box = useRef(null);
-  const step = g.kind === 'gift' || g.kind === 'share' || g.kind === 'color' || g.kind === 'steal' || g.kind === 'recruit' || g.kind === 'move' || g.chosen != null ? 2 : 1;
+  const step = g.kind === 'gift' || g.kind === 'share' || g.kind === 'color' || g.kind === 'steal' || g.kind === 'recruit' || g.kind === 'move' || g.kind === 'change' || g.chosen != null ? 2 : 1;
   // Escape closes the card (live panel round 1: it didn't close Kickback's): a lifted first is put down; else the
   // placement is taken back (Undo, while it's offered); else a choice you may decline (Stay put, Recruit nothing) is
   // declined. A hover open over it closes first, on its own Escape.
@@ -59,7 +62,7 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
     };
     addEventListener('keydown', key);
     // a "Take all" still running when the card goes (the game moved on) never answers a later steal
-    return () => { removeEventListener('keydown', key); takeAll = null; };
+    return () => { removeEventListener('keydown', key); takeAll = null; changeRun = null; };
   }, []);
   // the steal's "Take all": the plan's stacks show what each gives up while the button is pointed at
   const [preview, setPreview] = useState(false);
@@ -82,6 +85,22 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
     if (takeAll.key !== allKey) { takeAll = null; return undefined; }
     // a beat between picks, so each coin's flight reads on its own
     const t = setTimeout(takeNext, 140);
+    return () => clearTimeout(t);
+  }, [pend, busy]); // eslint-disable-line react-hooks/exhaustive-deps
+  // the change card: the color kept for this card or space this turn, and the second answer of a tap on a pile
+  const changeKey = g.kind === 'change' ? `${g.actor}|${g.title}|${state.round}` : null;
+  const [, redraw] = useState(0);
+  const into = changeKey && changeInto && changeInto.key === changeKey ? changeInto.c : null;
+  const setInto = c => { changeInto = c ? { key: changeKey, c } : null; redraw(n => n + 1); };
+  useEffect(() => {
+    if (g.kind !== 'change' || g.step !== 'to' || !changeRun || changeRun.key !== changeKey || changeRun.done === pend || busy) return undefined;
+    const t = setTimeout(() => {
+      const run = changeRun;
+      if (!run || run.key !== changeKey || run.done === pend) return;
+      changeRun = null;
+      const o = g.colorOpts[run.c];
+      if (o) onAnswer(o.id, null, null);
+    }, 120);
     return () => clearTimeout(t);
   }, [pend, busy]); // eslint-disable-line react-hooks/exhaustive-deps
   const onTakeAll = () => {
@@ -325,14 +344,68 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
       </button>
     );
   });
+  // the change card: the colors they can become (kept once picked), then each rival's piles, one change a tap
+  const changeColors = () => state.resources.map(c => {
+    const o = g.step === 'to' ? g.colorOpts[c] : null;
+    const on = into === c;
+    const off = busy || (g.step === 'to' && !o);
+    const press = () => {
+      if (g.step === 'to') { if (o) { setInto(c); onAnswer(o.id, null, null); } return; }
+      setInto(on ? null : c);
+    };
+    return (
+      <button key={c} type="button" className={`gc-item gc-dot${on ? ' chosen' : ''}`} data-res={c} data-into={c} data-option={o ? o.id : undefined} aria-pressed={on} disabled={off}
+        aria-label={g.step === 'to' ? `Into ${c}` : on ? `${c}, picked: tap again to clear` : `Change them into ${c}`} title={c} onClick={press}>
+        <ResourceGlyph r={c} size={24} decorative />
+      </button>
+    );
+  });
+  const changeRows = () => g.rivals.map(r => (
+    <span key={r.pid} className="gc-group gc-rival" data-pid={r.pid} data-dim={r.stacks.length ? undefined : '1'}>
+      <span className="gc-who" title={r.name}><Minion color={playerColor(r.pid)} emoji={seatEmoji(state, r.pid)} size={24} /><span className="gc-who-name">{r.name}</span></span>
+      <span className="gc-group-items">
+        {r.stacks.map(st => {
+          const picked = g.pick && g.pick[0] === r.pid && g.pick[1] === st.res;
+          const same = into === st.res;
+          const off = busy || !st.o || same;
+          const press = e => {
+            if (off) return;
+            if (into) changeRun = { key: changeKey, c: into, done: pend };
+            onAnswer(st.o.id, e.currentTarget, r.pid);
+          };
+          return (
+            <button key={st.res} type="button" className={`gc-item gc-dot gc-stack${picked ? ' chosen' : ''}`} data-pid={r.pid} data-res={st.res} data-option={st.o ? st.o.id : undefined} disabled={off && !picked}
+              aria-pressed={picked || undefined} aria-label={same ? `${r.name}'s ${st.res} (${st.has}): already ${into}` : into ? `Change 1 of ${r.name}'s ${st.res} (${st.has}) into ${into}` : `Change 1 of ${r.name}'s ${st.res} (${st.has})`}
+              title={same ? `Already ${into}` : `${r.name}'s ${st.res}`} onClick={press}>
+              <ResourceGlyph r={st.res} size={24} decorative />
+              <b className="num">{st.has}</b>
+            </button>
+          );
+        })}
+        {!r.stacks.length && <span className="gc-why">{r.why}</span>}
+      </span>
+    </span>
+  ));
   const headOf = g.halfPile ? <>{g.head}</> : g.kind === 'steal' ? <>Take <b className="num">{g.n}</b>{g.color ? <Pip color={g.color} /> : null}</>
-    : g.kind === 'move' ? <>{g.head}</> : g.kind === 'recruit' ? <>{g.head}</> : head;
+    : g.kind === 'move' || g.kind === 'recruit' || g.kind === 'change' ? <>{g.head}</> : head;
   const sub = g.kind === 'share' ? <>One per click, from the bank. +{g.per} {g.per === 1 ? 'follower' : 'followers'} per silver you give{g.total ? <>: <b className="num">+{g.total * g.per}</b> so far</> : null}.</>
-    : g.kind === 'move' ? <>{g.from ? <>It’s on {g.from}. </> : null}{g.sub}</> : g.sub;
+    : g.kind === 'move' ? <>{g.from ? <>It’s on {g.from}. </> : null}{g.sub}</>
+      : g.kind === 'change' ? (g.step === 'to' ? <>Pick the color it becomes.</> : into ? <>Each tap on a pile turns 1 of it <Pip color={into} />.</> : <>Pick the color they become, then tap their piles: one each tap.</>)
+        : g.sub;
   const farBody = g.kind === 'steal' ? (
     <div className="gc-row" data-row="2" data-live="1">
       <div className="gc-items gc-theirs">{stealRows()}</div>
     </div>
+  ) : g.kind === 'change' ? (
+    <>
+      <div className="gc-row" data-row="1" data-live={!into || g.step === 'to' ? '1' : undefined}>
+        <span className="gc-lbl">Into</span>
+        <div className="gc-items">{changeColors()}</div>
+      </div>
+      <div className="gc-row" data-row="2" data-live="1">
+        <div className="gc-items gc-theirs">{changeRows()}</div>
+      </div>
+    </>
   ) : g.kind === 'recruit' ? (
     <div className="gc-row" data-row="2" data-live="1">
       <div ref={more} onScroll={edge} className="gc-items">{recruitItems()}</div>
@@ -342,14 +415,14 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
       <div className="gc-items">{spaceItems()}</div>
     </div>
   ) : null;
-  const far = g.kind === 'steal' || g.kind === 'recruit' || g.kind === 'move';
+  const far = g.kind === 'steal' || g.kind === 'recruit' || g.kind === 'move' || g.kind === 'change';
 
   return (
     <section ref={box} className={`prompt choice plain gift-card${place ? ` at-space ${place.up ? 'below' : 'above'}` : ''}`} role="group" aria-label={pend.prompt}
       data-gift={g.kind} data-step={step} data-dense={dense ? '1' : undefined} data-crowd={crowd ? '1' : undefined} style={place ? { left: place.left, top: place.top } : undefined}>
       {turnOf && <TurnOf player={turnOf} />}
       <header className="gc-head">
-        {g.title && <small className="gc-title">{g.title}{g.kind === 'share' ? <> · <span className="num gc-given" data-given={g.total}>{g.total}</span> given · <span className="num pick-left" data-left={g.left}>{g.left}</span> left</> : g.left != null ? <> · <span className="num pick-left" data-left={g.left}>{g.left}</span> left</> : null}{g.done ? <> · <span className="num">{g.done}</span> swapped</> : null}</small>}
+        {g.title && <small className="gc-title">{g.title}{g.kind === 'share' ? <> · <span className="num gc-given" data-given={g.total}>{g.total}</span> given · <span className="num pick-left" data-left={g.left}>{g.left}</span> left</> : null}{g.done ? <> · <span className="num">{g.done}</span> {g.kind === 'change' ? 'changed' : 'swapped'}</> : null}{g.kind !== 'share' && g.left != null ? <> · <span className="num pick-left" data-left={g.left}>{g.left}</span> left</> : null}</small>}
         <p className="gc-what">{far ? headOf : head}</p>
         {sub && <p className="gc-sub">{sub}</p>}
       </header>

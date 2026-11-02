@@ -118,6 +118,8 @@ export function giftPick(state, pend, first = null) {
       head: `Give rivals up to ${share.max} silver`, firsts: [], seconds: players.map(o => ({ o, b: o.target.pid })), others: players.map(o => o.target.pid),
       rest: pend.options.filter(o => !players.includes(o)) };
   }
+  const change = changePick(state, pend, base);
+  if (change) return change;
   const far = farPick(state, pend, title, question, base);
   if (far) return far;
   // a color of yours asked by a space just used (Goody Bags' color, Cheap Seats' "pay 1 for 1 follower"): one row of your
@@ -171,7 +173,37 @@ export function giftPick(state, pend, first = null) {
   const swapCard = /swap card/i.test(question) || /swap card/i.test(title);
   const tradeHead = swapKind === 'Promote' ? 'Promote a member' : swapKind === 'Demote' ? 'Demote a member' : swapCard ? 'Swap card: a member within 2 cost' : 'Swap any two equal-cost members';
   const head = { give: n ? `A rival you pick gets ${n}` : 'A rival you pick gets some', colors: 'Swap one for one', amount: 'Swap for another color', trade: tradeHead }[kind];
-  return { ...base, kind, n, color: null, head, chosen, firsts, seconds, others, rest, done: done == null ? null : Number(done), sameCost: /equal cost/i.test(question) };
+  // Trade Seeds' swaps still to make, on the card's title line ("1 swapped · 2 left")
+  const swapTask = state.queue?.[0]?.h === 'yellow.swap' ? state.queue[0].data : null;
+  const left = swapTask && Number.isInteger(swapTask.left) ? swapTask.left : null;
+  return { ...base, kind, n, color: null, head, chosen, firsts, seconds, others, rest, done: done == null ? null : Number(done), left, sameCost: /equal cost/i.test(question) };
+}
+
+/**
+ * Changing rivals' resources (Dilute, Big Dilute, Agitator, Ringleader, Puppeteers; Cory, Nov 2: the rearrange "feels
+ * pretty bad"): one card with each rival's piles and a row of the colors they can become, for both of the engine's
+ * questions (which pile, then which color), so the card keeps its shape. GiftCard keeps the color picked, so a tap on a
+ * pile answers both. Null when it isn't one.
+ */
+function changePick(state, pend, base) {
+  const task = state.queue?.[0];
+  if (!task || (task.h !== 'yellow.changeFrom' && task.h !== 'yellow.changeTo') || !task.data) return null;
+  const d = task.data, to = task.h === 'yellow.changeTo';
+  const byId = new Map(pend.options.map(o => [o.id, o]));
+  const pick = to && Array.isArray(d.pick) ? d.pick : null;
+  const rivals = state.players.filter(o => o.id !== pend.player).map(o => {
+    const stacks = state.resources.map(r => ({ res: r, has: o.res[r] || 0, o: to ? null : byId.get(`res:${o.id}:${r}`) || null })).filter(x => x.has > 0);
+    const live = to ? stacks.length > 0 : stacks.some(x => x.o);
+    const why = live ? null : (pend.blocked && pend.blocked[o.id]) || (d.perRival && (d.used || []).includes(o.id) ? `${o.name}: changed already.` : stacks.length ? `${o.name} can't be changed.` : `${o.name} has nothing to change.`);
+    return { pid: o.id, name: o.name, stacks: live ? stacks : [], why };
+  });
+  const colorOpts = {};
+  if (to) for (const o of pend.options) if (o.kind === 'color' && typeof o.value === 'string') colorOpts[o.value] = o;
+  const rest = to ? [] : pend.options.filter(o => o.kind === 'done');
+  const who = pick ? state.players[pick[0]] : null;
+  const head = pick ? `Change ${who.name}'s 1 ${pick[1]} into…` : "Change rivals' resources";
+  return { ...base, title: base.title || d.who || '', kind: 'change', n: null, color: null, chosen: null, head, step: to ? 'to' : 'from', pick,
+    rivals, colorOpts, left: Number.isInteger(d.left) ? d.left : null, done: d.done || null, firsts: [], seconds: [], others: [], rest };
 }
 
 /** The name of the space a player's last minion stands on (p.lastSlot), or null. */

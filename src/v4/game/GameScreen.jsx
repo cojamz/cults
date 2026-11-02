@@ -1406,8 +1406,11 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // buttons and a list for the keyboard. A gift or a choice of pairs (Good Deed, Kickback, the swaps…) is the gift card
   // beside the space instead; its first part picked is kept here, for this question only.
   const [shopDetails, setShopDetails] = useState(false);
-  const [pickFirst, setPickFirst] = useState({ pend: null, v: null });
-  const first = pickFirst.pend === pend ? pickFirst.v : null;
+  const [pickFirst, setPickFirst] = useState({ pend: null, v: null, seq: null });
+  // Trade Seeds keeps what you give picked from one swap to the next (Cory, Nov 2: the rearrange "feels pretty bad"):
+  // red, purple, purple is three clicks, never a Give to pick again each time
+  const swapSeq = pend && pend.kind === 'choose' && state.queue?.[0]?.h === 'yellow.swap' ? `${pend.player}|${state.round}|${state.queue[0].data?.who || ''}` : null;
+  const first = pickFirst.pend === pend ? pickFirst.v : swapSeq && pickFirst.seq === swapSeq ? pickFirst.v : null;
   // a gift or a pair is picked on the gift card beside the space (GiftCard.jsx), not on the board
   const gift = useMemo(() => (showChoice && pend.kind === 'choose' ? giftPick(state, pend, first) : null), [showChoice, state, pend, first]);
   if (gift && pr.forMe && mine) pr.text = `${gift.title ? `${gift.title}: ` : ''}${gift.kind === 'gift' ? `a rival you pick gets ${gift.n}${gift.color ? ` ${gift.color}` : ''}` : gift.head[0].toLowerCase() + gift.head.slice(1)}`;
@@ -1494,7 +1497,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     onPick(id);
   }, [options, onPick, pickKey, interactionState, physicalState, session]);
   // the gift card: a first lifts (or is put back); nothing goes to the engine until the second
-  const onGiftFirst = useCallback(a => setPickFirst({ pend, v: a }), [pend]);
+  const onGiftFirst = useCallback(a => setPickFirst({ pend, v: a, seq: swapSeq }), [pend, swapSeq]);
   const onGiftAnswer = useCallback((id, el, b) => {
     if (interactionState !== physicalState || session.getState() !== physicalState) return;
     const g = gift;

@@ -167,3 +167,8 @@
 .gift-card[data-crowd] .gc-holder{flex-direction:row;gap:3px;height:19px;min-height:19px;min-width:44px;max-width:none}
 .gift-card[data-crowd][data-gift="trade"] .gc-row > .gc-items{max-height:none}
 .gift-card[data-crowd] .gc-wait{font:500 12px/19px var(--sans);color:var(--paper-ink-2,#5f4e3d)}
+/* changing rivals' resources (Dilute and the yellow members): the colors they become on one row, then each rival's piles
+   on a line of their own, as in the steal */
+.gift-card[data-gift="change"] .gc-row[data-row="2"]{grid-template-columns:minmax(0,1fr)}
+.gift-card[data-gift="change"] .gc-stack:disabled:not(.chosen){opacity:.4}
+.gift-card[data-gift="change"] .gc-stack.chosen:disabled{opacity:1}

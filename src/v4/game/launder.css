@@ -15,4 +15,4 @@
 .ld-step:disabled,.ld-all:disabled{opacity:.35;cursor:default}
 .ld-was{font-size:12px;color:var(--pl-ink-2,#6e5c49);white-space:nowrap}
 .ld-loose{min-height:20px;margin:12px 0 0;font-size:15px;line-height:20px}
-.ld-loose[data-loose="0"]{visibility:hidden}
+.ld-loose[data-loose="0"]{color:var(--paper-ink-2,#5f4e3d)}

@@ -73,6 +73,19 @@ export default function LaunderCard({ state, onPick, busy, turnOf = null }) {
   };
   const keepIt = () => send(Object.fromEntries(colors.map(c => [c, p.res[c] || 0])));
   const set = (c, n) => setMix(m => ({ ...m, [c]: n }));
+  // + with nothing loose moves one over from another color (Cory, Nov 2: the rearrange "feels pretty bad"; + sat grey
+  // until a − somewhere): from the biggest color not yet raised past what you had, else the biggest other one
+  const donor = c => {
+    const others = colors.filter(x => x !== c && (mix[x] || 0) > 0);
+    const big = l => l.reduce((a, x) => ((mix[x] || 0) > (mix[a] || 0) ? x : a), l[0]);
+    const unraised = others.filter(x => (mix[x] || 0) <= (p.res[x] || 0));
+    return others.length ? big(unraised.length ? unraised : others) : null;
+  };
+  const plus = c => {
+    if (loose > 0) { set(c, (mix[c] || 0) + 1); return; }
+    const d = donor(c);
+    if (d) setMix(m => ({ ...m, [d]: m[d] - 1, [c]: (m[c] || 0) + 1 }));
+  };
   const shown = useMemo(() => colors.map(c => ({ c, n: mix[c] || 0, was: p.res[c] || 0 })), [colors, mix, p.res]);
   const locked = busy || sending;
 
@@ -90,14 +103,14 @@ export default function LaunderCard({ state, onPick, busy, turnOf = null }) {
               <span className="ld-name">{c}</span>
               <button type="button" className="ld-step" data-step="-" disabled={locked || n === 0} aria-label={`One less ${c}`} onClick={() => set(c, n - 1)}>−</button>
               <b className="ld-n num" aria-live="polite">{n}</b>
-              <button type="button" className="ld-step" data-step="+" disabled={locked || loose === 0} aria-label={`One more ${c}`} onClick={() => set(c, n + 1)}>+</button>
+              <button type="button" className="ld-step" data-step="+" disabled={locked || n === total} aria-label={`One more ${c}`} onClick={() => plus(c)}>+</button>
               <button type="button" className="ld-all" disabled={locked || n === total} aria-label={`All ${total} ${c}`}
                 onClick={() => setMix(Object.fromEntries(colors.map(x => [x, x === c ? total : 0])))}>All</button>
               <small className="ld-was" data-moved={n !== was || undefined}>{n === was ? '' : `was ${was}`}</small>
             </div>
           ))}
         </div>
-        <p className="ld-loose" data-loose={loose} role="status">{loose ? <><b className="num">{loose}</b> still to place: press + on a color.</> : ' '}</p>
+        <p className="ld-loose" data-loose={loose} role="status">{loose ? <><b className="num">{loose}</b> still to place: press + on a color.</> : 'Press + on a color to move one over to it.'}</p>
         <div className="pay-foot">
           <button type="button" className="pay-cancel ld-keep" disabled={locked} onClick={keepIt}>Keep my colors</button>
           <button type="button" className="pay-go" data-autofocus data-launder-done disabled={locked || loose > 0} onClick={() => send(mix)}>Done</button>
