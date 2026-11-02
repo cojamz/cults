@@ -237,7 +237,7 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
   // state it was drawn with) for the rest of the game (leak pass, 2026-10-28)
   for (const uid of built.current.keys()) if (!uids.includes(uid)) built.current.delete(uid);
   return (
-    <section className="lt-shop-cards" data-phase={phase} data-sort={sort} data-member-pick={memberPick || undefined} data-view={detailed ? 'details' : 'compact'} data-tray={tray ? 'pile' : undefined} data-pile-extra={extra || undefined} data-fade={viewer && fade ? 'on' : undefined} data-peek={peeking || undefined} data-choosing={choosing} data-pile-row={pileRow ? '' : undefined} aria-label="Shop">
+    <section className="lt-shop-cards" data-phase={phase} data-sort={sort} data-member-pick={memberPick || undefined} data-view={detailed ? 'details' : 'compact'} data-tray={tray ? 'pile' : undefined} data-pile-extra={extra || undefined} data-fade={viewer && fade ? 'on' : undefined} data-peek={peeking || undefined} data-choosing={choosing} data-pile-row={pileRow ? '' : undefined} data-swap={state.rules?.swapCard ? '' : undefined} aria-label="Shop">
       <div className="lt-shop-main">
       {/* one header line: the members' title and the sort; the follower buys stand beside the cards, as findable */}
       <div className="lt-shop-head">

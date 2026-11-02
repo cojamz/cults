@@ -234,6 +234,14 @@
   .app.game.lt .lt-shop-cards .lt-cards > .lt-card:is([data-uid],[data-pile-ghost]):last-child:nth-child(3n){grid-column:5 / 9}
   .app.game.lt .lt-shop-cards .lt-cards > .lt-card:is([data-uid],[data-pile-ghost]):last-child:nth-child(3n+1){grid-column:7 / 11}
   .app.game.lt .lt-shop-cards .lt-cards > .lt-card:is([data-uid],[data-pile-ghost]):nth-last-child(2):nth-child(3n){grid-column:3 / 7}
+  /* the swap card (a table setting) joins the follower buys in the short top row, so the members keep their full rows of
+     three (Cory, Nov 2: "the shop shows a little weird in round three with the swap added in": it took a member's slot
+     and pushed the rows out of line). The deck narrows to its pile, the four buys share the rest of the row. */
+  .app.game.lt .lt-shop-cards[data-swap] .lt-cards[data-n] .lt-deck{grid-column:span 2}
+  .app.game.lt .lt-shop-cards[data-swap] .lt-deck .cap{display:none}
+  .app.game.lt .lt-shop-cards[data-swap] .lt-rates{display:block;position:static;grid-column:span 10;order:-1;min-width:0}
+  .app.game.lt .lt-shop-cards[data-swap] .lt-rates-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:auto;gap:8px;height:100%}
+  .app.game.lt .lt-shop-cards[data-swap] .lt-rate{grid-column:auto}
 }
 /* The members fill the shop's height (Cory, Oct 29: "we have so much space here… we should give more room"): their rows
    share what's left under the follower buys instead of stopping at 184px, and a shop of 6 or fewer deals two to a row
