@@ -329,7 +329,8 @@ function each(ctx, p, key, name, fn) {
   const cards = (key === 'tuningfork' ? ctx.abilitiesOf(p) : ctx.membersOf(p)).filter(c => c.def.id === `echo.${key}` || c.copy === `echo.${key}`);
   for (const c of cards) {
     const own = c.def.id === `echo.${key}`;
-    ctx.asMember(p, own ? name : `${c.def.name} (as ${name})`, fn, p.members.includes(c.uid) ? c.uid : null);
+    // a worn cloak logs as itself ("P1's Green Cloak: +2 red."), like every other cloak, and is its own source
+    ctx.asMember(p, own ? c.def.name : `${c.def.name} (as ${name})`, fn, p.members.includes(c.uid) || c.uid === p.artifact ? c.uid : null);
   }
 }
 /** Copy several spaces; free members are picked one after another at the end. who: the card or space copying. */

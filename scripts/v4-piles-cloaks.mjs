@@ -13,6 +13,8 @@ import { deckRules } from './lib/deck-choice.mjs';
 
 const DECK = deckRules();
 const [first, count, out] = [Number(process.argv[2] || 1), Number(process.argv[3] || 1), process.argv[4] || 'cloaks.jsonl'];
+// ONLY=echo plays just the games whose table has that color (a re-run after a fix to one cloak)
+const only = process.env.ONLY;
 const shop = process.env.SHOP || 'deck', level = process.env.LEVEL || 'normal';
 const colors = allQuadrantIds().filter(q => sphereVersion(q) === '2.0' && q !== 'market');
 const botOpts = level === 'hard' || level === 'veryhard' ? { level, maxMs: Infinity } : { level };
@@ -21,6 +23,7 @@ for (let g = first; g < first + count; g++) {
   const rand = seededRandom(g * 7717 + 3 + 4 * 101);
   const pool = [...colors], table = [];
   while (table.length < 4) table.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
+  if (only && !table.includes(only)) continue;
   let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ kind: 'bot', name: `P${i + 1}` })), seed: g, quadrants: table, rules: { ...DECK, ...(shop === 'deck' ? {} : { shop }) } });
   const paid = s.players.map(() => ({ times: 0, amount: 0 }));
   let moves = 0;
