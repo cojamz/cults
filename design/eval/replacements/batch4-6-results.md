@@ -7,7 +7,7 @@ Each batch: 120 games with the hardest bots and 600 with the normal bots, new ca
 Taken 52% (54%) vs Hangers-On ("Whenever a rival gives you something, +1 more of it.") 26% (19%). Owners won 27% (26%), vs 21% (17%). A dead card turned into a fair one. Going live.
 
 **Tithe Takers** (Red, replaces Mentor & Protégés): [4 red + 2 any, worth 2] "On Use, once per game: each rival gives you one of their members."
-Taken 94% (51%). Owners won 33% (40%). Too strong as priced; retesting at 2 more. (Mentor & Protégés, "On Recruit: recruit the cheapest member in the shop.", isn't in the 10-card deck, so no old number.)
+Taken 94% (51%). Owners won 33% (40%). Too strong as priced. Retested at 2 more (6 red + 2 any): owners still won 38% (34%), so it stays out of the live game. (Mentor & Protégés, "On Recruit: recruit the cheapest member in the shop.", isn't in the 10-card deck, so no old number.)
 
 ## Fair, not clearly better than the old card
 **Inquisitors** (White, replaces Raiders): [4 white + 1 any, worth 1] "On Use, once per game: each rival casts out one of their members. +2 followers per member cast out." Taken 56% (14%), owners 33% (32%); Raiders ("On Use, once per game: steal 4 followers from a rival. Pay them 2 white.") 50% (41%), 27% (31%).
