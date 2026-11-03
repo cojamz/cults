@@ -98,9 +98,32 @@ function skill() {
   for (const r of rows) say(`- ${r.c}: ${r.normal >= 0 ? '+' : ''}${Math.round(r.normal * 100)} → ${r.hard >= 0 ? '+' : ''}${Math.round(r.hard * 100)} points (${r.nN} and ${r.nH} seats)`);
 }
 
+// Focus: how many colors a cult's members come from, and the share in its biggest color (grey members left out)
+function focus(rows, label) {
+  const by = {};
+  for (const r of rows) {
+    if (r.buyer >= 0) continue;
+    const top = Math.max(...r.players.map(p => p.followers));
+    for (const p of r.players) {
+      const c = {};
+      for (const m of p.members) { const q = m.match(/\((\w+)\)$/)?.[1]; if (q && q !== 'benders') c[q] = (c[q] || 0) + 1; }
+      const n = Object.values(c).reduce((a, b) => a + b, 0);
+      if (!n) continue;
+      for (const k of ['all', ...(p.followers === top ? ['winners'] : [])]) {
+        const x = (by[k] ??= { n: 0, colors: 0, main: 0 });
+        x.n++; x.colors += Object.keys(c).length; x.main += Math.max(...Object.values(c)) / n;
+      }
+    }
+  }
+  out[`focus_${label}`] = by;
+  say(`\n## Focus (${label} bots): colors among a cult's members (grey left out)`);
+  for (const [k, x] of Object.entries(by)) say(`- ${k === 'all' ? 'Every player' : 'Winners'}: ${(x.colors / x.n).toFixed(1)} colors, ${pct(x.main / x.n)} of members in their biggest color.`);
+}
+
 catchUp(normal, 'Normal'); if (hard.length) catchUp(hard, 'Hard');
 interaction(normal, 'Normal'); if (hard.length) interaction(hard, 'Hard');
 variety(normal, 'Normal'); if (hard.length) variety(hard, 'Hard');
+focus(normal, 'Normal'); if (hard.length) focus(hard, 'Hard');
 skill();
 if (flags.json) writeFileSync(flags.json, JSON.stringify(out, null, 1));
 if (flags.md) writeFileSync(flags.md, md.join('\n') + '\n');
