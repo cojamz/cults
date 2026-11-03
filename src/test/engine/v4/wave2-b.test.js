@@ -14,7 +14,7 @@ const MAG = ['gold', 'thieves', 'market', 'echo'];
 const takeFrom = (s, pid) => move(s, s.pending.options.find(o => o.value[0] === pid).id);
 
 // Magenta redesign (design/spheres/magenta-redesign-2026-10-19.md): Redistribute steals 1 per Magenta action that
-// has a minion (its own space too, Cory Oct 22), Crime Wave halves one rival's one-color stack, and general steals split freely among rivals.
+// has a minion (its own space too, Cory Oct 22), Heist halves one rival's one-color stack, and general steals split freely among rivals.
 describe('#6 Help Yourself: a rival lying low is never offered', () => {
   it('round I: 3 to take, all may come from P2, never from P3', () => {
     let s = sceneQ({ quadrants: MAG, n: 4, res: [{ gold: 1 }, { gold: 3, red: 2 }, { gold: 4 }, { gold: 3 }] });
@@ -34,12 +34,12 @@ describe('#6 Help Yourself: a rival lying low is never offered', () => {
   });
 });
 
-describe('#7 Crime Wave: half of one rival\'s one-color stack, and the choice says so', () => {
+describe('#7 Heist: half of one rival\'s one-color stack, and the choice says so', () => {
   it('offers each rival stack of 2 or more at half, rounded down; a singleton or a rival lying low is not offered', () => {
     let s = sceneQ({ quadrants: MAG, n: 4, round: 2, res: [{}, { gold: 5 }, { gold: 5, red: 1 }, { gold: 4 }] });
     s.players[3].hideout = s.round; // P4 lies low
     s = take(s, 'thieves.rob');
-    expect(s.pending.prompt).toMatch(/Crime Wave: choose a pile to halve\./);
+    expect(s.pending.prompt).toMatch(/Heist: choose a pile to halve\./);
     expect(s.pending.options.map(o => [o.id, o.take]).sort()).toEqual([['take:1:gold', 2], ['take:2:gold', 2]]);
     s = move(s, 'take:2:gold');
     expect(s.players[0].res).toMatchObject({ gold: 2, magenta: 1 });

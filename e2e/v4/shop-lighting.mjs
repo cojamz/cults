@@ -11,7 +11,7 @@ mkdirSync(shots, { recursive: true });
 const browser = await launchBrowser({ executablePath: browserPath });
 try {
   const page = await browser.newPage({ viewport: { width: 1270, height: 700 } });
-  // round III, P1 to place, Recruit a Member open with two face-up members it lights (lib/aim-save.mjs): the space
+  // round III, P1 to place, Initiation open with two face-up members it lights (lib/aim-save.mjs): the space
   // hover that lights shop cards since Open Door was cut (round I rework, Oct 27)
   const { save, key } = aimSave();
   await seedSave(page, save);

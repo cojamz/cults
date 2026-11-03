@@ -70,13 +70,13 @@ export default {
       resolve(ctx, p) { ctx.gain(p, 'red', 3, { fromAction: true }); swap(ctx, p, 'demote', 'Demote: choose a member and its replacement'); },
     },
     {
-      key: 'take', ring: 3, name: 'Recruit a Member', text: 'Recruit a member in the shop costing 8 or less, for free. +1 red.', // the cap (Cory, 2026-10-24: "8 or less")
+      key: 'take', ring: 3, name: 'Initiation', text: 'Recruit a member in the shop costing 8 or less, for free. +1 red.', // the cap (Cory, 2026-10-24: "8 or less")
       estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().filter(c => cost(c) <= 8).map(c => c.def.f + cost(c) * 0.6)),
       resolve(ctx, p) {
         const shop = ctx.shopCards().filter(c => cost(c) <= 8);
         ctx.gain(p, 'red', 1, { fromAction: true });
         if (!shop.length) { ctx.log(`${p.name}: no shop member costs 8 or less.`); return; }
-        ctx.choose(p, 'Recruit a Member: which member?', shop.map(c => ({
+        ctx.choose(p, 'Initiation: which member?', shop.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + cost(c),
         })), 'red.takeFree');
       },
@@ -274,8 +274,8 @@ export default {
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 && ctx.membersOf(owner).filter(c => c.def.key !== 'missionaries').length >= ctx.state.players.length - 1,
     })),
-    m('recruitbonus', 'Recruit Bonus', 1, 1, 'Your On Recruits also give +1 of that member’s color.', { f: 2,
-      onRecruitAbility(ctx, owner, card, recruited) { gainColorOf(ctx, owner, recruited.def, 'Recruit Bonus'); }, // a guest: nothing; Dabblers: pick
+    m('recruitbonus', 'Greeters', 1, 1, 'Your On Recruits also give +1 of that member’s color.', { f: 2,
+      onRecruitAbility(ctx, owner, card, recruited) { gainColorOf(ctx, owner, recruited.def, 'Greeters'); }, // a guest: nothing; Dabblers: pick
     }),
     m('movementpenalty', 'Deprogrammers', 1, 1, 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 4, n: 2, // +1 (Cory, Oct 30)
       onMoveMember(ctx, owner, card, info) { if (info.from !== owner && ctx.followers(info.from) > 0) info.from.bonus -= 1; },

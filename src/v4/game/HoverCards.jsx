@@ -427,7 +427,7 @@ export function besideSeat(a, w, h) {
 }
 
 /**
- * While a copy space (Echo, Encore, Refrain…) or a copying member (Understudy) is under the pointer, the spaces it
+ * While a copy space (Echo, Sample, Refrain…) or a copying member (Understudy) is under the pointer, the spaces it
  * could copy light up on the wheel ("since your turn" targets), straight from the engine. Classes are toggled on the
  * board's [data-slot] elements, so the wheel never re-renders for it.
  */

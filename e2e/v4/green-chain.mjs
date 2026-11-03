@@ -1,4 +1,4 @@
-// A real browser must re-choose after Cover copies Reprise, then return to buying. (Encore copied actions until it
+// A real browser must re-choose after Cover copies Reprise, then return to buying. (Sample copied actions until it
 // became "Copy the On Recruit of a rival's member"; Cover is the copy that can still land on Reprise.)
 // The same pending nested choice resumes after reload; desktop and phone use actual clicks/taps.
 import { chromium, devices } from 'playwright';

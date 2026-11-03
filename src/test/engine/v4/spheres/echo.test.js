@@ -52,7 +52,7 @@ describe('Green table action boundaries', () => {
     expect(s.pending.kind).not.toBe('choose');
     expect(R(s)).toEqual({ ...Z, green: 2 });
   });
-  // Echo and Reprise give +1 green (Cory, Oct 28), Encore and Greatest Hits +1
+  // Echo and Reprise give +1 green (Cory, Oct 28), Sample and Greatest Hits +1
   it.each([['echo.echo', 1], ['echo.encore', 1], ['echo.refrain', 1], ['echo.eternity', 1]])('%s still gives inherent green with no copy target', (action, green) => {
     const s = go(scene({ round: 3 }), action);
     expect(R(s)).toEqual({ ...Z, green });
@@ -94,8 +94,8 @@ describe('Green table action boundaries', () => {
     s = pass(play(s, 'player:1', 'player:1', 'player:1'));
     expect([R(s).gold, R(s, 1).gold, R(s, 2).gold]).toEqual([3, 0, 2]);
   });
-  // Encore copies a rival member's On Recruit (Cory, Oct 28): plain bodies have none, so it gives only its +1 green
-  it('Encore with no rival On Recruit to copy gives only its own green', () => {
+  // Sample copies a rival member's On Recruit (Cory, Oct 28): plain bodies have none, so it gives only its +1 green
+  it('Sample with no rival On Recruit to copy gives only its own green', () => {
     let s = scene({ round: 3, turns: [1, 1, 0, 0], res: [{}, { gold: 5 }], members: [[], ['red.intern', 'red.twins', 'red.volunteer']] });
     s = go(s, 'gold.windfall'); s = go(s, 'gold.strike'); s = go(s, 'echo.chant');
     s = pass(take(s, 'echo.encore'));

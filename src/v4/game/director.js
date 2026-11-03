@@ -354,7 +354,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
       let s0 = s;
       if (c.key !== pulsed) { at(s, { op: 'pulse', place: { kind: 'space', key: c.key }, dur: MO.pulse }); s0 += MO.lead; pulsed = c.key; }
       else if (selectedAt != null) s0 = Math.max(0, selectedAt - MO.minionFly * 0.25);
-      // a second space in one move is the one a copy runs (Echo, Encore): it lands on the first card, fanned, "copies"
+      // a second space in one move is the one a copy runs (Echo, Sample): it lands on the first card, fanned, "copies"
       const slot = stagedKeys.size ? 'card2' : 'card';
       at(s0, { op: 'stage', kind: 'space', place: { kind: 'space', key: c.key }, pid: c.pid, slot, dur: MO.stageIn });
       s = Math.max(selectedAt != null ? selectedAt : s, s0 + MO.stageIn * 0.6);

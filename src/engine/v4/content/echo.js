@@ -278,7 +278,7 @@ function emptyValue(ctx, a, p) {
   try { return Math.max(0, a.estimate(ctx, p) || 0); } catch { return 0; } finally { rating = false; }
 }
 // by: the member making the copy (Understudy, Sleepwalker…), so the log names it. who: the card or space asking
-// (the prompt's own name), so a copied space's free member is titled with it ("Encore: take a face-up member…").
+// (the prompt's own name), so a copied space's free member is titled with it ("Sample: take a face-up member…").
 function offer(ctx, p, list, prompt, from, by = null) {
   if (!list.length) { ctx.log(`${p.name}${by ? `'s ${by}` : ''} had nothing to copy.`); return; }
   const who = by || prompt.split(':')[0];
@@ -354,7 +354,7 @@ function freeStep(ctx, p, data) {
   })), 'echo.free', { cost: c, left: data.left.slice(1), who: data.who || 'Copy' });
 }
 
-// Encore's rival members: an On Recruit (or a now-and-round-start effect) that doesn't act on the card itself ("swap
+// Sample's rival members: an On Recruit (or a now-and-round-start effect) that doesn't act on the card itself ("swap
 // it", "it becomes a copy"), which a card held by someone else can't do for you. Same test as Red's Tryout.
 function rivalRecruits(ctx, p) {
   return ctx.rivals(p).flatMap(o => ctx.membersOf(o).map(c => ({ c, o })))
@@ -362,7 +362,7 @@ function rivalRecruits(ctx, p) {
       && !/\bit\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
 }
 
-// Greatest Hits: your members with an On Recruit (or a now-and-round-start effect, as Encore reads it).
+// Greatest Hits: your members with an On Recruit (or a now-and-round-start effect, as Sample reads it).
 const recruitDef = c => (c.copy ? defById(c.copy) : c.def);
 function ownRecruits(ctx, p) {
   return ctx.membersOf(p).filter(c => { const d = recruitDef(c); return !d.artifact && !d.recruitNote && (d.onRecruited || (d.now && (d.onRoundStart || d.onRoundStartLate))); });
@@ -412,15 +412,15 @@ const echoQ = {
       },
     },
     {
-      // Cory, 2026-10-28: Green had one copy too many, so Encore stops copying a space; "maybe copy an On Recruit"
+      // Cory, 2026-10-28: Green had one copy too many, so Sample stops copying a space; "maybe copy an On Recruit"
       // (the rival's member, Claude's read of his yes). Like Red's Tryout, but on a rival's member, not the shop's.
-      key: 'encore', ring: 2, name: 'Encore', text: 'Copy the On Recruit of a rival’s member. +1 green.', copyDoesIt: true,
+      key: 'encore', ring: 2, name: 'Sample', text: 'Copy the On Recruit of a rival’s member. +1 green.', copyDoesIt: true,
       estimate: (ctx, p) => VARIANT.plus + (rivalRecruits(ctx, p).length ? 3 : 0),
       resolve(ctx, p) {
         plus(ctx, p);
         const list = rivalRecruits(ctx, p);
         if (!list.length) { ctx.log(`${p.name}: no rival's member has an On Recruit to copy.`); return; }
-        ctx.choose(p, 'Encore: copy which rival member’s On Recruit?', list.map(({ c, o }) => ({
+        ctx.choose(p, 'Sample: copy which rival member’s On Recruit?', list.map(({ c, o }) => ({
           id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name}: ${c.def.text}`, kind: 'card', value: c.uid, hint: 2 + (c.def.f || 0),
         })), 'echo.encoreCopy');
       },

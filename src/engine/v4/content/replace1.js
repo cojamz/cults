@@ -3,7 +3,7 @@
 //   red.volunteer -> red.turncoats, market.critic -> market.scavengers, thieves.crew -> thieves.racketeers,
 //   purple.clockmaker -> purple.nightwatch, yellow.dyer -> yellow.barterers, silver.giftwrapper -> silver.hostesses,
 //   benders.frontrunner (Line Cutters) -> benders.grudge, trading.exporter -> trading.heirs.
-// Live since Nov 3 (Claude, under Cory's "use your judgement"): Hostesses and Heirs are always on and Gift Wrapper and
+// Live since Nov 3 (Claude, under Cory's "use your judgement"): Hostesses and Misers are always on and Gift Wrapper and
 // Exporters always retired, with or without the switch (silver.js and trading.js print them without add1/old1).
 // Unset, the other six new cards are never defined and their old cards stay.
 export const REPLACE1 = globalThis.process?.env?.REPLACE1 === '1';

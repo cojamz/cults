@@ -41,7 +41,7 @@ describe('space targets', () => {
       [twins, intern], [intern, twins],
     ].map(key).sort());
   });
-  it('Recruit a Member: every face-up member costing 8 or less (Cory, 2026-10-25)', () => {
+  it('Initiation: every face-up member costing 8 or less (Cory, 2026-10-25)', () => {
     const s = table(Q, { round: 3, shop: ['gold.tycoon', 'red.intern', 'red.bigfamily', 'gold.taxman', 'red.mentor'] });
     const t = targetsAt(s, 'take');
     expect(sorted(t.shop)).toEqual(sorted(['red.intern', 'red.bigfamily', 'gold.taxman'].map(d => uidIn(s, d, 'shop'))));

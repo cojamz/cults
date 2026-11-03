@@ -222,7 +222,7 @@ export const DECK10 = {
    "trading.cashier": {
     "round": 1,
     "price": 3,
-    "why": "It cashes in what Shopkeeper makes."
+    "why": "It cashes in what Landlord makes."
    },
    "trading.undertaker": {
     "cut": true,
@@ -268,7 +268,7 @@ export const DECK10 = {
    "yellow.explorer": {},
    "yellow.agitator": {
     "cut": true,
-    "why": "Four cards change rivals' resources; keep Ringleader and Puppeteers."
+    "why": "Four cards change rivals' resources; keep Meddler and Puppeteers."
    },
    "yellow.ringleader": {
     "why": "Yellow's sting."

@@ -60,14 +60,14 @@ describe('Green current actions', () => {
     expect(R(s).green).toBe(4); // Echo's own +1 plus Build Up's +3
     expect(s.log.some(l => l.includes('P1 copied Build Up') && l.includes('+3 green'))).toBe(true);
   });
-  // Encore copies a rival member's On Recruit, not a space (Cory, 2026-10-28)
-  it('Encore offers only rivals\' members with an On Recruit, and does it for you', () => {
+  // Sample copies a rival member's On Recruit, not a space (Cory, 2026-10-28)
+  it('Sample offers only rivals\' members with an On Recruit, and does it for you', () => {
     let s = table(Q, { round: 2, shop: ROW, members: [[], ['echo.evergreen', 'echo.agents', 'echo.hourglass']], queue: turns(0) });
     s = take(s, 'echo.encore');
-    expect(s.pending.prompt).toMatch(/^Encore:/);
+    expect(s.pending.prompt).toMatch(/^Sample:/);
     expect(s.pending.options.map(o => o.label)).toEqual([expect.stringMatching(/^P2's Busker/)]);
     s = pass(move(s, s.pending.options[0].id));
-    expect(R(s).green).toBe(3); // Encore's own +1, Busker's +2
+    expect(R(s).green).toBe(3); // Sample's own +1, Busker's +2
     expect(s.players[1].members.length).toBe(3); // Busker stays with P2
   });
   it('Reprise offers only your actions, excludes itself, and adds inherent green', () => {

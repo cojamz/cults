@@ -659,7 +659,7 @@ function roundAt(log, i) {
 /**
  * The words the board prints on a space, said plainly ("Copy a space taken this round"), by its name and, when the line
  * gives it, its sphere's name; '' when no space has that name. The board shows these words, not the space's name (blind
- * panel r1: the log said "Encore", the board "Copy a space taken this round"; wave-2 B#3: "which space is Crime Wave?").
+ * panel r1: the log said "Sample", the board "Copy a space taken this round"; wave-2 B#3: "which space is Heist?").
  */
 export function boardWords(name, round = 1, sphere = null) {
   for (const id of allQuadrantIds()) {
@@ -673,7 +673,7 @@ export function boardWords(name, round = 1, sphere = null) {
   }
   return '';
 }
-/** "P1 took Encore (Echo)." → "P1 took Encore (Copy a space taken this round)."; a copy names its space's words too. */
+/** "P1 took Sample (Echo)." → "P1 took Sample (Copy a space taken this round)."; a copy names its space's words too. */
 function withBoardWords(log, i, line) {
   let m = line.match(/^(.+? took )(.+?) \(([A-Z][\w ]*)\)\.$/);
   if (m) { const w = boardWords(m[2], roundAt(log, i), m[3]); return w ? `${m[1]}${m[2]} (${w}).` : line; }

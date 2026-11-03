@@ -75,7 +75,7 @@ describe('REPLACE3: each card fires', () => {
     let s = table(['red', 'thieves', 'market', 'trading'], { n: 3, round: 1, members: [['thieves.kidnappers'], ['red.recruitbonus', 'trading.martyr'], ['market.snob']], queue: [{ t: 'round', r: 2 }] });
     expect(owns(s, 0, 'red.recruitbonus')).toBe(true);
     expect(owns(s, 1, 'red.recruitbonus')).toBe(false);
-    expect(named(s, 'Kidnappers')).toContain("P1's Kidnappers: stole P2's Recruit Bonus.");
+    expect(named(s, 'Kidnappers')).toContain("P1's Kidnappers: stole P2's Greeters.");
   });
 
   it('Kidnappers: a tie for the most members is the owner’s pick', () => {

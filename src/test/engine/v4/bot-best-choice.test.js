@@ -6,7 +6,7 @@ import { seededRandom } from '../../../engine/v4/rng.js';
 // Cory, Nov 2: "so bots are interpreting text instead of doing best thing possible?" Every "you choose" a bot answers
 // (a rival, a color, a resource, a member, a trade) is played out on a copy of the game over every option, and the
 // bot takes the best. Until Nov 2 most followed the card's hint and trades looked only at a top-16 shortlist, so
-// Doormen never sent a rival's 10-cost member away for a 1-cost one, and the hint chose worse in 1 Party Favors pick
+// Doormen never sent a rival's 10-cost member away for a 1-cost one, and the hint chose worse in 1 Potluck pick
 // of 2 (scripts/v4-bot-choice-audit.mjs).
 describe('bots answer every choice with the best option', () => {
   it('picks the best-rated option at every choice, over every option (silver, thieves, yellow, market)', () => {

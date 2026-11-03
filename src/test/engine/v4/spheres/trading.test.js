@@ -186,7 +186,7 @@ describe('White actions', () => {
 describe('White members', () => {
   const start = (members, res = [{}, {}], extra = {}) => scene({ members, res, queue: [{ t: 'round', r: 2 }], ...extra });
 
-  it('Shopkeeper: now and at round start, +2 white', () => {
+  it('Landlord: now and at round start, +2 white', () => {
     expect(R(start([['trading.shopkeeper']])).white).toBe(2);
     let s = scene({ res: [{ white: 2 }], shop: ['trading.shopkeeper'], ...buyTurn });
     s = move(s, pick(s, 'trading.shopkeeper', 'shop'));

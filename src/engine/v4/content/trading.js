@@ -245,7 +245,7 @@ const trading = {
       onGameEnd: (ctx, owner) => 2 * ctx.rivals(owner).filter(o => ctx.memberCount(o) > ctx.memberCount(owner)).length,
     }),
     // Cory, 2026-10-25: cost 3 (was 4), so White has a cheap starter
-    m('shopkeeper', 'Shopkeeper', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true,
+    m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true,
       onRoundStart(ctx, owner) { ctx.gain(owner, W, 2); },
     }),
     m('heiress', 'Heiresses', 4, 4, // 9 (Cory, Oct 30: balance run)
@@ -264,14 +264,14 @@ const trading = {
       },
     }),
     m('broker', 'Brokers', 2, 2, 'Whenever a White action gives you followers, +1 follower.', { f: 3, brokerBonus: 1 }), // (Cory, Oct 29, balance run: +1 follower)
-    m('exporter', 'Exporters', 2, 4, 'Whenever you recruit a non-white member, +1 white.', { f: 2, retired: true, // Heirs takes its place (Claude, under Cory's "use your judgement", 2026-11-03)
+    m('exporter', 'Exporters', 2, 4, 'Whenever you recruit a non-white member, +1 white.', { f: 2, retired: true, // Misers takes its place (Claude, under Cory's "use your judgement", 2026-11-03)
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (by === owner && recruited.uid !== card.uid && ctx.defOf(recruited).quadrant !== 'trading') ctx.gain(owner, W, 1);
       },
     }),
     // Replacement batch 1 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Exporters' place.
     // 4 white + 3 any as a player sees it.
-    m('heirs', 'Heirs', 3, 3, 'Game End: +1 follower per 2 white you hold.', { f: 2,
+    m('heirs', 'Misers', 3, 3, 'Game End: +1 follower per 2 white you hold.', { f: 2,
       onGameEnd: (ctx, owner) => Math.floor((owner.res[W] || 0) / 2),
     }),
     // REPLACE6 bot test (Nov 3, replacement batch 6): Raiders' place. 4 white + 1 any as a player sees it. Each rival with a

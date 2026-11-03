@@ -49,7 +49,7 @@ describe('panel words (w3)', () => {
     expect(allOwn.verb).toBe('Copy each of your members’ On Recruit'); // On Recruits, not actions, since Nov 1; "yours" in line 1 (line 2 drops on ring III, text audit Nov 1)
     expect(allOwn.second).toBe('in any order');
     // Rival and own minions are distinct, as are the previous action and your own last action.
-    expect(panelText('echo', { key: 'encore' }).verb).toBe('Copy a rival member’s On Recruit'); // Encore copies an On Recruit (Oct 28); whose, in line 1 (text audit Nov 1)
+    expect(panelText('echo', { key: 'encore' }).verb).toBe('Copy a rival member’s On Recruit'); // Sample copies an On Recruit (Oct 28); whose, in line 1 (text audit Nov 1)
     expect(panelText('echo', { key: 'echo' }).verb).toBe('Copy previous action');
     // The purple gain counts only your minions, not every piece on the wheel.
     expect(panelText('purple', { key: 'windup' }).second).toBe('per minion you placed');

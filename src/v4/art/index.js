@@ -93,7 +93,7 @@ for (const [key, name, source] of [
 }
 // Red's redesign reuses retired portraits while names and final artwork settle.
 for (const [key, name, source] of [
-  ['recruitbonus', 'Recruit Bonus', 'crowd'], ['movementpenalty', 'Movement Penalty', 'drive'],
+  ['recruitbonus', 'Greeters', 'crowd'], ['movementpenalty', 'Movement Penalty', 'drive'],
   ['panel', 'Panel', 'bigfamily'], ['loyalists', 'Loyalists', 'twins'],
 ]) {
   const art = BY_ID.get(`red.${source}`);
@@ -128,7 +128,7 @@ for (const [id, name, source] of [
 // Yellow 2.0's new members (Cory, 2026-10-31) reuse cut Yellow portraits while names and artwork settle.
 for (const [key, name, source] of [
   ['customs', 'Customs', 'gleaner'], ['tinker', 'Tinker', 'sower'], ['matchmaker', 'Matchmaker', 'admirer'],
-  ['agitator', 'Agitator', 'farmer'], ['ringleader', 'Ringleader', 'latebloomer'], ['drifters', 'Drifters', 'weaver'],
+  ['agitator', 'Agitator', 'farmer'], ['ringleader', 'Meddler', 'latebloomer'], ['drifters', 'Drifters', 'weaver'],
   ['leveler', 'Leveler', 'rainmaker'], ['bigtent', 'Big Tent', 'pilgrim'], ['bookcooker', 'Book Cookers', 'peddler'],
   ['puppeteer', 'Puppeteers', 'feastmaker'], ['caravan', 'Caravan', 'peddler'], ['tastemaker', 'Tastemaker', 'admirer'], ['spiceroute', 'Spice Route', 'gleaner'], ['guestbook', 'Guest Book', 'farmer'],
 ]) {
@@ -157,7 +157,7 @@ for (const i of PORTRAITS4) PORTRAIT.set(i.id, { ...i, portrait: true, scene: tr
 // The replacements that went live Nov 3 reuse the scene of the card they replace (retired, so never dealt beside them)
 // while their own pictures are drawn.
 for (const [id, name, source] of [
-  ['silver.hostesses', 'Hostesses', 'silver.giftwrapper'], ['trading.heirs', 'Heirs', 'trading.exporter'],
+  ['silver.hostesses', 'Hostesses', 'silver.giftwrapper'], ['trading.heirs', 'Misers', 'trading.exporter'],
   ['red.bodysnatchers', 'Body Snatchers', 'red.twins'], ['benders.spoilsports', 'Spoilsports', 'benders.scout'],
 ]) {
   const art = PORTRAIT.get(source);

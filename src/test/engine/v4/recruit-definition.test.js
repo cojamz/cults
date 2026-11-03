@@ -109,7 +109,7 @@ describe('Pilgrim ("When recruited: +1 of each color") fires when it joins by yo
     expect(colors(s, 0)).toEqual([0, 0, 0, 0]);
   });
 
-  it('Recruit Bonus pays for a "When recruited" only when it happens', () => {
+  it('Greeters pays for a "When recruited" only when it happens', () => {
     const s = fixture({ members: [['red.recruitbonus', 'red.twins'], ['yellow.pilgrim']], res: [{ gold: 2 }] });
     const [p, rival] = s.players;
     contextFor(s).swapMembers(rival, uidIn(s, 'red.twins', 0), uidIn(s, 'yellow.pilgrim', 1));

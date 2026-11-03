@@ -285,10 +285,10 @@ export default {
       onRecruited(ctx, owner) { startChange(ctx, owner, { who: 'Agitator', left: 4 }); },
     }),
     // Claude's fill-in (Cory, 2026-10-31: "just come up with whatever's remaining quick")
-    m('ringleader', 'Ringleader', 3, 2, "On Recruit: change 1 of each rival's resources one for one. +1 follower per rival changed.", { ...old2,
-      onRecruited(ctx, owner) { startChange(ctx, owner, { who: 'Ringleader', left: touchable(ctx, owner).length, perRival: true, follower: true }); },
+    m('ringleader', 'Meddler', 3, 2, "On Recruit: change 1 of each rival's resources one for one. +1 follower per rival changed.", { ...old2,
+      onRecruited(ctx, owner) { startChange(ctx, owner, { who: 'Meddler', left: touchable(ctx, owner).length, perRival: true, follower: true }); },
     }),
-    // REPLACE2 bot test (Nov 3, replacement batch 2): Ringleader's place. 4 yellow + 2 any as a player sees it. Trade
+    // REPLACE2 bot test (Nov 3, replacement batch 2): Meddler's place. 4 yellow + 2 any as a player sees it. Trade
     // Seeds' own swaps, asked after the round's last placement and before anything is scored (core's allPlaced step).
     ...add2(m('nightmarket', 'Night Market', 3, 2, 'Round End: before contests are scored, swap up to 3 of your resources for other colors, one for one.', {
       onAllPlaced(ctx, owner) {
@@ -483,7 +483,7 @@ function pickColors(ctx, p, n, who, fromAction = false, got = 0) {
   })), 'yellow.wild', { left: n, who, fromAction, got });
 }
 
-// Changing rivals' resources one for one (Dilute, Big Dilute, Agitator, Ringleader, Puppeteers): pick a rival's
+// Changing rivals' resources one for one (Dilute, Big Dilute, Agitator, Meddler, Puppeteers): pick a rival's
 // resource, then the color it becomes. A rival who can't be stolen from can't be changed either (Bodyguards).
 function startChange(ctx, p, data) {
   if (!(data.left > 0)) return;

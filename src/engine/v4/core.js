@@ -492,7 +492,7 @@ function advance(state) {
       if (ask.options.length) {
         const { onEmpty, ...shown } = ask; void onEmpty;
         state.pending = { player: task.p, ...shown };
-        // a choice several players answer at the same time (Party Favors): the tasks right behind it with the same
+        // a choice several players answer at the same time (Potluck): the tasks right behind it with the same
         // together key are asked now too, each player their own (pending.also)
         if (task.t === 'choose' && task.together) {
           const also = [];
@@ -744,7 +744,7 @@ function resolveTask(state, task, optionId) {
       const key = `${q}-${i}`;
       if (squat) {
         // Party Crasher's one use is spent by the minion it lets in (Cory, 2026-10-28: "your next minion")
-        if (p.squatAll === state.round) { /* Crowd In's open board */ } else if (p.crashNext && state.slots[key] !== p.id) delete p.crashNext;
+        if (p.squatAll === state.round) { /* Overtime's open board */ } else if (p.crashNext && state.slots[key] !== p.id) delete p.crashNext;
         else spendAllowance(state, p, 'squat');
         (state.squats[key] = state.squats[key] || []).push(p.id);
       } else state.slots[key] = p.id;
@@ -2189,7 +2189,7 @@ function pinCards(state, o, where = null) {
 }
 // An option that points at something on the board says so in one structured field, so a screen lights that thing
 // and never reads the label (the board picker, src/v4/game/boardPick.js). Ids never change.
-//   { space: 'q-i' }      a space on the wheel (Echo's and Encore's copies, Straggler's moves)
+//   { space: 'q-i' }      a space on the wheel (Echo's and Sample's copies, Straggler's moves)
 //   { uid }               a member: face up in the shop, or on someone's seat (Hand-pick, Shake Down, Poach)
 //   { pid }               a player (Kickback, Benefactor)
 //   { pid, res }          one of a player's resource stacks (a steal's take:pid:color; give: true for Good Deed's gift)

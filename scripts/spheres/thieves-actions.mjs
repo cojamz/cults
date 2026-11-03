@@ -10,11 +10,11 @@ const N = Number(process.argv[2] || 120), MODE = process.argv[3] || 'black';
 const QUADS = ['gold', 'red', 'blue', 'thieves'];
 const LIST = [
   ['Kickback', 1], ['Golden Years', 1], ['Open Door', 1], ['Help Yourself', 1], ['Redistribute', 1], ['Lie Low', 1],
-  ['Collect Debts', 2], ['Tithe', 2], ['Open House', 2], ['Swap Sides', 2], ['Crime Wave', 2], ['Shake Down', 2],
+  ['Collect Debts', 2], ['Tithe', 2], ['Open House', 2], ['Swap Sides', 2], ['Heist', 2], ['Shake Down', 2],
   ['Double Down', 3], ['Hand-pick', 3], ['Poach', 3],
   // the same early actions taken late
   ['Kickback', 3], ['Golden Years', 3], ['Help Yourself', 3], ['Redistribute', 3], ['Lie Low', 3],
-  ['Collect Debts', 3], ['Tithe', 3], ['Crime Wave', 3], ['Shake Down', 3],
+  ['Collect Debts', 3], ['Tithe', 3], ['Heist', 3], ['Shake Down', 3],
 ];
 function play(seed, force) {
   const rand = seededRandom(seed * 104729 + 7);

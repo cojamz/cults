@@ -36,7 +36,7 @@ const secondCopy = s => {
 };
 
 describe('Green redesign: copied copy actions and continuation safety', () => {
-  // Echo copies a rival's Reprise (Encore stopped copying spaces, Oct 28)
+  // Echo copies a rival's Reprise (Sample stopped copying spaces, Oct 28)
   it('Echo copies a rival Reprise, which chooses from the copier’s own actions afresh', () => {
     let s = table(Q, { round: 2, left: 6, queue: turns(0, 1, 1, 0, 0) });
     s = go(s, 'gold.rush');

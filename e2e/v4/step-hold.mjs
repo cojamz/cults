@@ -1,6 +1,6 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E step-hold gate (Mike, 2026-10-26: the game "locks up" a lot in late round II). At Relaxed, a late-game recruit set
-// off 4–6 members one after another (Doormen, Recruiter, Recruit Bonus, Host…) and the table waited for every one: bot
+// off 4–6 members one after another (Doormen, Recruiter, Greeters, Host…) and the table waited for every one: bot
 // steps held 7–9s each and the screen fell minutes behind the game, sitting on "Bot 3 is choosing…". Now no step in a
 // round holds the table past stepHoldCap (director.js); the rest of its chain lands at once, as a click does.
 // From a saved game at P1's first placement of round II (bots elsewhere), at Relaxed: P1 places and answers whatever

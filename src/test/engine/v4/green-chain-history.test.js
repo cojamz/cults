@@ -9,7 +9,7 @@ const pass = s => s.pending?.kind === 'buy' ? move(s, 'pass') : s;
 const keyOf = (q, k) => `${Q.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.key === k)}`;
 const pick = (s, k) => move(s, s.pending.options.find(o => o.value === k).id);
 describe('Green copy chains across saved choices', () => {
-  // Reprise copies your Cover, which chooses again (Encore copied spaces until Oct 28; Cover now plays the source)
+  // Reprise copies your Cover, which chooses again (Sample copied spaces until Oct 28; Cover now plays the source)
   it('Reprise re-chooses a copied Cover target after save/rejoin', () => {
     let s = table(Q, { round: 3, left: 5, queue: [0, 0, 0].map(p => ({ t: 'turn', p })) });
     s = take(s, 'echo.hum');

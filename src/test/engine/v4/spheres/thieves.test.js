@@ -129,7 +129,7 @@ describe('Magenta actions', () => {
     expect(R(s)[0].gold).toBe(5);
   });
 
-  it('Crime Wave: steal half (rounded down) of one rival’s pile of one color, +1 magenta', () => {
+  it('Heist: steal half (rounded down) of one rival’s pile of one color, +1 magenta', () => {
     let s = scene({ n: 3, round: 2, res: [{}, { gold: 5, red: 3 }, { blue: 4, red: 1 }] });
     s = take(s, 'thieves.rob');
     // one color's pile, not the rival's whole holding; a pile of 1 halves to nothing
@@ -140,7 +140,7 @@ describe('Magenta actions', () => {
     expect(R(s)).toEqual([{ ...Z, gold: 2, magenta: 1 }, { ...Z, gold: 3, red: 3 }, { ...Z, blue: 4, red: 1 }]);
   });
 
-  it('Crime Wave: no pile of 2 or more anywhere means nothing to steal, just the magenta', () => {
+  it('Heist: no pile of 2 or more anywhere means nothing to steal, just the magenta', () => {
     const s = take(scene({ n: 3, round: 2, res: [{}, { gold: 1, red: 1 }, { blue: 1 }] }), 'thieves.rob');
     expect(s.pending?.kind).not.toBe('choose');
     expect(R(s)).toEqual([{ ...Z, magenta: 1 }, { ...Z, gold: 1, red: 1 }, { ...Z, blue: 1 }]);

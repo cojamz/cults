@@ -18,7 +18,7 @@ describe('Red action gains', () => {
     const s = sceneQ({ round }); s.recruits = 99;
     expect(R(take(s, 'red.turnout')).red).toBe(round + 1);
   });
-  it('Walk-In and Recruit a Member give a free member plus their red (Walk-In: +1, each rival +1)', () => {
+  it('Walk-In and Initiation give a free member plus their red (Walk-In: +1, each rival +1)', () => {
     for (const [action, round, red, rival] of [['red.hire', 1, 1, 1], ['red.take', 3, 1, 0]]) {
       const s = settle(take(sceneQ({ round, shop: ['red.volunteer'] }), action));
       expect(s.players[0].members).toHaveLength(1);

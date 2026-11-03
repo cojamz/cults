@@ -53,7 +53,7 @@
 .lt-cult-seat .cs-pick-member > .hitbox{position:absolute;left:50%;top:50%;width:max(44px,100%);height:max(44px,100%);transform:translate(-50%,-50%)}
 @keyframes pick-hop{50%{transform:translateY(-2px)}}
 
-/* spaces a choice offers (Echo, Encore, Reprise, Straggler): lit by the wheel itself; hover says what you'd get */
+/* spaces a choice offers (Echo, Sample, Reprise, Straggler): lit by the wheel itself; hover says what you'd get */
 .lt-wheel .slot[data-pick-note]:hover::after{content:attr(data-pick-note);position:absolute;z-index:40;left:50%;top:calc(100% + 6px);transform:translateX(-50%);
   width:max-content;max-width:220px;padding:6px 9px;border-radius:8px;font:600 12px/1.3 var(--sans,inherit);text-align:left;white-space:normal;
   color:var(--paper-ink);background:var(--paper);box-shadow:0 0 0 1px rgba(42,31,23,.25),0 8px 20px rgba(0,0,0,.5);pointer-events:none}

@@ -22,7 +22,7 @@ describe('new Red member hooks', () => {
     expect(defById('red.mob').onGameEnd(contextFor(s), s.players[0])).toBe(7);
   });
 
-  it('Recruit Bonus rewards actual explicit and Now abilities, not a vanilla acquisition', () => {
+  it('Greeters rewards actual explicit and Now abilities, not a vanilla acquisition', () => {
     const s = fixture({ members: [['red.recruitbonus']], shop: ['red.volunteer', 'echo.evergreen', 'gold.banker'] });
     acquire(s, 'red.volunteer');
     expect(s.players[0].res.red).toBe(0);
@@ -32,7 +32,7 @@ describe('new Red member hooks', () => {
     expect(s.players[0].res.gold).toBe(4); // Now's three, plus one
   });
 
-  it('gifts and ordinary round-start hooks do not pay Recruit Bonus', () => {
+  it('gifts and ordinary round-start hooks do not pay Greeters', () => {
     const s = fixture({ members: [['red.recruitbonus'], ['echo.evergreen']] });
     const c = contextFor(s), [p, other] = s.players;
     c.moveMember(other.members[0], other, p);

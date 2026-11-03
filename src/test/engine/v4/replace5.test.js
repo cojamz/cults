@@ -71,7 +71,7 @@ describe('REPLACE5: each card fires', () => {
     let s = table(['red', 'purple', 'market', 'yellow'], { round: 3, members: [['purple.tagalongs']], queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'allPlaced' }] });
     const before = s.players[0].left;
     s = take(s, 'purple.crowdin');
-    expect(s.players[1].left).toBe(3); // 3, less the one placed, plus Crowd In's
+    expect(s.players[1].left).toBe(3); // 3, less the one placed, plus Overtime's
     expect(s.players[0].left).toBe(before + 1);
     expect(s.queue.filter(t => t.t === 'turn' && t.p === 0).length).toBe(2);
     expect(named(s, 'Tagalongs')).toContain("P1's Tagalongs: P1 gets 1 more minion this round.");

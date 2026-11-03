@@ -209,9 +209,9 @@ describe('v4 format helpers', () => {
     expect(st.short).toMatch(/^\+6 gold \(Midas\)/);
   });
 
-  it('the log names a space by the words the board shows on it too (panel r1: "Encore"; wave-2 B#3: "which is Crime Wave?")', () => {
-    const log = ['Round II begins. Bo picks first.', 'P1 took Encore (Green).', "Cy copied Largesse (Di's): +6 followers.", 'P1 took Kickback (Gold).', 'P1 took Nowhere (Gold).'];
-    expect(plainLine(log, 1)).toBe('P1 took Encore (Copy a rival member’s On Recruit: +1 green).');
+  it('the log names a space by the words the board shows on it too (panel r1: "Sample"; wave-2 B#3: "which is Heist?")', () => {
+    const log = ['Round II begins. Bo picks first.', 'P1 took Sample (Green).', "Cy copied Largesse (Di's): +6 followers.", 'P1 took Kickback (Gold).', 'P1 took Nowhere (Gold).'];
+    expect(plainLine(log, 1)).toBe('P1 took Sample (Copy a rival member’s On Recruit: +1 green).');
     expect(plainLine(log, 2)).toBe('Cy copied Di\'s Largesse (Give rivals up to 10 silver: +1 follower each): +6 followers.');
     expect(plainLine(log, 3)).toBe('P1 took Kickback (+3 gold, +1 gold to a rival).');
     expect(plainLine(log, 4)).toBe('P1 took Nowhere (Gold).'); // no such space: the line as the engine wrote it
@@ -277,7 +277,7 @@ describe('v4 format helpers', () => {
       expect(st.text.startsWith(st.actor === 0 ? 'You' : name)).toBe(true);
       // exactly one placement per card, and the head names it
       expect(st.text.match(/ (took|joined) /g) || []).toHaveLength(st.space ? 1 : 0);
-      // a minion joining a rival's space says whose doing it is: "… joined Bo on Recruit a Member (Squatter)"
+      // a minion joining a rival's space says whose doing it is: "… joined Bo on Initiation (Squatter)"
       if (st.space) expect(st.head).toMatch(new RegExp(`${st.space.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}( \\(Squatter\\))?$`));
       for (const id of st.touched) { touched++; expect(st.text).toMatch(new RegExp(`(from |· |: )${id === 0 ? 'you' : s.players[id].name}( |$)`)); }
       if (/recruited /.test(st.text)) { recruits++; expect(st.text).toMatch(/recruited [^·]+\((paid [^)]+|free)\)/); }

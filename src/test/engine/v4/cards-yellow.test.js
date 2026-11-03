@@ -307,7 +307,7 @@ describe('Yellow members', () => {
   it('Pilgrim: when recruited +1 of each color, named', () => {
     let s = sc({ round: 3, shop: ['yellow.pilgrim'] });
     s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.pilgrim', 'shop')}`);
-    expect(R(s)).toEqual({ gold: 1, red: 2, yellow: 1, green: 1 }); // and Recruit a Member's own +1 red (v0.8.0)
+    expect(R(s)).toEqual({ gold: 1, red: 2, yellow: 1, green: 1 }); // and Initiation's own +1 red (v0.8.0)
     expect(named(s, 'Pilgrim')[0]).toMatch(/P1's Pilgrim: \+1 gold, \+1 red, \+1 yellow, \+1 green/);
   });
   it('Farmer: +1 more when an action gains yellow, named; a Doppelganger copy adds another', () => {

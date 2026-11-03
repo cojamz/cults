@@ -86,7 +86,7 @@ describe('setup', () => {
 
   it('starts with a shuffled deck of every table sphere\'s members (plus the guest rule-benders) and a full row face up', () => {
     const s = createGame({ quadrants: TABLE, seats: seats(2), seed: 9, rules: { guests: false } });
-    // 64 on this table (tests deal the full deck, cut cards too): the 12-member Red deck (v0.8.2: Recruit Bonus,
+    // 64 on this table (tests deal the full deck, cut cards too): the 12-member Red deck (v0.8.2: Greeters,
     // Deprogrammers, Panel, Loyalists joined) plus Headhunter (Oct 24); the deck is whatever the spheres hold
     const deck = 64;
     expect(TABLE.reduce((n, q) => n + quadrant(q).members.reduce((a, d) => a + (d.retired ? 0 : d.copies), 0), 0)).toBe(deck); // a retired card (Triplets, Nov 3) is never dealt

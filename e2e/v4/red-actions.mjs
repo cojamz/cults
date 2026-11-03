@@ -1,5 +1,5 @@
 // Focused real clicks: Red swaps can involve two rivals or the shop; Green copying Promote asks afresh (Echo copies
-// the rival's Promote just placed; Encore copied it until it became "Copy the On Recruit of a rival's member").
+// the rival's Promote just placed; Sample copied it until it became "Copy the On Recruit of a rival's member").
 import { chromium, devices } from 'playwright';
 import { mkdirSync } from 'node:fs';
 import { browserPath, launchBrowser } from './lib/browser.mjs';

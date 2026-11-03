@@ -34,12 +34,12 @@ describe('Silver actions', () => {
     s = move(take(sc({ n: 3 }), 'silver.partygifts'), 'done');
     expect(s.players[0].bonus).toBe(0);
   });
-  it('Party Favors: +2 silver, each rival gives you 1 resource of their choice, then gains 2 silver', () => {
+  it('Potluck: +2 silver, each rival gives you 1 resource of their choice, then gains 2 silver', () => {
     let s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, {}] }), 'silver.favors');
     s = move(s, 'color:red');
     expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[2, 1], [2, 1], [2, 0]]);
   });
-  it('Party Favors: rivals answer at the same time; either can answer first', () => {
+  it('Potluck: rivals answer at the same time; either can answer first', () => {
     let s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, { green: 1 }] }), 'silver.favors');
     const asked = [s.pending.player, ...(s.pending.also || []).map(a => a.player)].sort();
     expect(asked).toEqual([1, 2]);
@@ -67,7 +67,7 @@ describe('Silver actions', () => {
 });
 
 describe('Silver members', () => {
-  it('Gift Wrapper: +1 follower whenever you give rivals silver, once per space (Toast, Party Favors)', () => {
+  it('Gift Wrapper: +1 follower whenever you give rivals silver, once per space (Toast, Potluck)', () => {
     let s = take(sc({ n: 3, members: [['silver.giftwrapper']] }), 'silver.toast');
     expect(s.players[0].bonus).toBe(1);
     s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, { green: 1 }], members: [['silver.giftwrapper']] }), 'silver.favors');
@@ -76,7 +76,7 @@ describe('Silver members', () => {
     expect(s.players[0].bonus).toBe(1);
     expect(named(s, 'Gift Wrapper')).toHaveLength(1);
   });
-  it('Caterer: Party Favors is one gift, +1 silver once however many rivals answer (as Toast)', () => {
+  it('Caterer: Potluck is one gift, +1 silver once however many rivals answer (as Toast)', () => {
     let s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, { green: 1 }], members: [['silver.caterer']] }), 'silver.favors');
     s = move(s, s.pending.options[0].id);
     s = move(s, s.pending.options[0].id);

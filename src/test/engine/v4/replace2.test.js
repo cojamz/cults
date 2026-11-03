@@ -39,7 +39,7 @@ describe('REPLACE2: each card fires', () => {
     s = answer(s, `trade:${a}:${b}`);
     expect(owns(s, 0, 'red.movementpenalty')).toBe(true);
     expect(owns(s, 1, 'red.recruitbonus')).toBe(true);
-    expect(s.log).toContain("P1 swapped P1's Recruit Bonus and P2's Deprogrammers.");
+    expect(s.log).toContain("P1 swapped P1's Greeters and P2's Deprogrammers.");
     expect(named(s, 'Body Snatchers')).toContain("P1's Body Snatchers: a swap at round start.");
   });
 

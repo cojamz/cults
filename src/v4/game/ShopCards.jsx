@@ -30,7 +30,7 @@ export const nameFit = name => (name.length > 15 && name.includes(' ') ? { 'data
 export const membersOf = d => d.n ?? 1;
 // the top right: the members a card counts as, in its color's bust (every member is a follower, so it's also its score)
 export const WorthTag = ({ d, sphere }) => {
-  const n = membersOf(d), more = (d.f || 0) > n; // worth more followers than it counts as members (Recruit Bonus, Trendsetter): the worth beside it
+  const n = membersOf(d), more = (d.f || 0) > n; // worth more followers than it counts as members (Greeters, Trendsetter): the worth beside it
   return <span className="val" data-worth={d.f} title={`Counts as ${n} member${n === 1 ? '' : 's'}${more ? `, worth ${d.f} followers` : ''}`}><b className="num">{n}</b><MemberGlyph r={d.everyColor ? null : sphere || 'colorless'} size={14} decorative />{more && <><b className="num worth-more">{d.f}</b><FollowerGlyph size={12} title={`worth ${d.f} followers`} /></>}</span>;
 };
 const sphereOf = (state, d) => { if (!onTable(state, d)) return 'colorless'; try { return quadrant(d.quadrant).resource; } catch { return 'colorless'; } };

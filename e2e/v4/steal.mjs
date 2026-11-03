@@ -17,7 +17,7 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //  (s4) Kickback ("give 1 gold to…"): a gift, so it's the gift card beside the space (Cory, 2026-10-16): one face per
 //       rival the engine offers, and the same rivals' seats light (Cory, 2026-10-15: as Good Deed's), each the engine's
 //       answer, its gold stack lit, never your own; a click on a lit seat gives that player 1 gold.
-//  (s5) Cover (Encore copies a member's On Recruit since Cory's Oct 28 call, so it asks no pick on the wheel):
+//  (s5) Cover (Sample copies a member's On Recruit since Cory's Oct 28 call, so it asks no pick on the wheel):
 //       exactly the copyable spaces light on the wheel, the caption covers none of them, a lit space's hover says
 //       what the copy gives, and clicking it copies (your resources match the engine's).
 //  (s6) Bury: exactly the offered face-up members light in the shop; no duplicate
@@ -229,7 +229,7 @@ try {
     await expectCounts(page, 's4', { '3:gold': save.state.players[3].res.gold + 1 });
     await ctx.close();
   }
-  // (s5) Cover: copy a space on the wheel (was Encore, which copies a member's On Recruit since Cory's Oct 28 call)
+  // (s5) Cover: copy a space on the wheel (was Sample, which copies a member's On Recruit since Cory's Oct 28 call)
   {
     const { ctx, page, save } = await open('cover', '.prompt.choice.seat-pick');
     const want = save.state.pending.options.filter(o => o.target && o.target.space).map(o => o.target.space).sort();

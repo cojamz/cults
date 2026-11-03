@@ -63,7 +63,7 @@ const turnValue = ctx => TURN_VALUE[ctx.state.round - 1] || 3;
 const freeTurnsEstimate = (ctx, n) => Math.max(0, Math.min(n, room(ctx) - 1)) * turnValue(ctx);
 function freeTurns(ctx, p, n, what) {
   if (!spareSpace(ctx)) { ctx.log(`${p.name}'s ${what}: no free space this round, so no extra turn.`); return 0; }
-  // a seat placing on taken spaces (Crowd In) could take the same extra-turn space forever: none that round
+  // a seat placing on taken spaces (Overtime) could take the same extra-turn space forever: none that round
   if (p.squatAll === ctx.state.round) { ctx.log(`${p.name}'s ${what}: no extra turn while placing on taken spaces.`); return 0; }
   return extraTurns(ctx, p, n);
 }
@@ -411,9 +411,9 @@ export default {
       // raise it to +3 after play). Any taken space, yours or a rival's, for the rest of this round. Name is Claude's fill-in.
       // Cory, 2026-10-28 9:31pm Eastern: "It should just be like, +5 purple and gain a minion this round" (placing on
       // taken spaces copied too much with Greatest Hits). Extra minions stop when the round's spare spaces run out.
-      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Crowd In', text: '+3 purple. +1 minion this round.', // back to +3 (Cory, Oct 30: balance run)
+      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Overtime', text: '+3 purple. +1 minion this round.', // back to +3 (Cory, Oct 30: balance run)
       estimate: ctx => 3 + (spareSpace(ctx) ? turnValue(ctx) : 0),
-      resolve(ctx, p) { ctx.gain(p, P, 3, { fromAction: true }); extraMinion(ctx, p, 'Crowd In'); },
+      resolve(ctx, p) { ctx.gain(p, P, 3, { fromAction: true }); extraMinion(ctx, p, 'Overtime'); },
     },
     {
       // Cory, 2026-10-22: a follower bonus for taking the rest of your turns last ("YES now you're cooking"), in his
@@ -530,7 +530,7 @@ export default {
     // pays from round II. Fires once per round (owlRound), whether or not the board had room.
     // Cory, Nov 1 2:35pm: the Goes Last token; the extra minion waits on it
     m('nightowl', 'Night Owls', 6, 1, 'From round II: after your last minion, +1 minion, placed right away.', { f: 2, from: 2,
-      // its onRecruited only says when the extra minion starts: no On Recruit for Tryout or Encore to borrow
+      // its onRecruited only says when the extra minion starts: no On Recruit for Tryout or Sample to borrow
       recruitNote: true,
       // recruited after your last minion of the round (its buy step): it waits for next round, and says so
       onRecruited(ctx, owner, card) {
@@ -560,7 +560,7 @@ export default {
     // Cory's Purple members (2026-10-22); names are Claude's fill-ins; prices are the pricing thread's educated guesses
     m('earlybird', 'Early Birds', 2, 0, 'Your turns can’t be skipped.', { f: 2, noSkip: true }), // (Cory, Oct 29, balance run: +1 follower)
     // REPLACE5 bot test (Nov 3, replacement batch 5): Bouncers' place. 6 purple + 3 any as a player sees it. Every +1
-    // minion a rival gets (Crowd In, Night Owls, Go-Getter, Extra Hand, Overtime…: the purple helpers' onRivalExtraTurn)
+    // minion a rival gets (Overtime, Night Owls, Go-Getter, Extra Hand, Overtime…: the purple helpers' onRivalExtraTurn)
     // gives you one, placed after everyone else's, while the board has a spare space (none in round I). A minion from
     // Tagalongs doesn't set off another Tagalongs.
     ...add5(m('tagalongs', 'Tagalongs', 5, 3, 'Whenever a rival gets +1 minion, you get +1 minion too.', {

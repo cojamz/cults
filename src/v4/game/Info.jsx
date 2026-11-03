@@ -682,7 +682,7 @@ export function previewWords(pv, state) {
   ].filter(Boolean);
   // the rivals' line is their summed change: "in all" says so ("rivals +3 silver" read as +3 each, when it was +1 each);
   // only its sure parts: a part that varies (a steal's "−1 to 0, −2 to 0…" per color) read as algebra, whether your
-  // pick decides it or the space does (w3b: Lie Low and Crime Wave still printed four ranges); the rule says the rest
+  // pick decides it or the space does (w3b: Lie Low and Heist still printed four ranges); the rule says the rest
   const theirs = (r, unit, plural) => (r[0] !== r[1] ? null : span(r, unit, plural));
   const others = [...state.resources.map(r => theirs(pv.others.res[r], r, r)), theirs(pv.others.followers, 'follower', 'followers'), theirs(pv.others.members, 'member', 'members')].filter(Boolean);
   const many = state.players.length > 2;

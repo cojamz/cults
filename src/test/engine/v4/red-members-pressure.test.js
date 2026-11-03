@@ -67,7 +67,7 @@ describe('Green exact action targets alongside Red recruitment', () => {
     expect(s.pending?.kind).not.toBe('choose');
   });
 
-  // Reprise plays the role Encore had until Oct 28 (Encore now copies a member's On Recruit)
+  // Reprise plays the role Sample had until Oct 28 (Sample now copies a member's On Recruit)
   it('Reprise → Echo chooses the latest placement and cannot fall back past its own chain', () => {
     let s = table(Q, { round: 2, queue: turns(0, 0, 0) });
     s = go(s, 'gold.rush');
@@ -113,7 +113,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(reload.players[0].res.red).toBe(1); // Red space only; Panel itself pays no inherent red.
   });
 
-  it('Recruit Bonus pays per ability, never for an effectless active acquisition or a gift', () => {
+  it('Greeters pays per ability, never for an effectless active acquisition or a gift', () => {
     const s = table(Q, { members: [['red.recruitbonus'], ['red.volunteer', 'echo.evergreen']] });
     const ctx = contextFor(s), actor = s.players[0], rival = s.players[1];
     ctx.moveMember(uidIn(s, 'red.volunteer', 1), rival, actor, { recruit: true });
@@ -133,12 +133,12 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(s.pending.options.every(o => !o.value?.includes(panel))).toBe(true);
   });
 
-  it('Recruit Bonus rewards Doppelganger’s identity choice and its copied On Recruit, in its physical color', () => {
+  it('Greeters rewards Doppelganger’s identity choice and its copied On Recruit, in its physical color', () => {
     let s = table(Q, { round: 3, members: [['red.recruitbonus', 'red.host']], shop: ['echo.doppel'], queue: turns(0, 0) });
     s = move(take(s, 'red.take'), `card:${uidIn(s, 'echo.doppel', 'shop')}`);
     expect(s.players[0].res.green).toBe(1); // Doppelganger's choice is one Recruit ability.
     s = move(saved(s), `card:${uidIn(s, 'red.host', 0)}`);
-    // Doppelganger also does the copied Host's On Recruit (Cory, 2026-10-28): +1 red per 2 members, and Recruit Bonus
+    // Doppelganger also does the copied Host's On Recruit (Cory, 2026-10-28): +1 red per 2 members, and Greeters
     // pays once more for it, in Doppelganger's own color
     expect(s.players[0].res.green).toBe(2);
     expect(s.players[0].res.red).toBe(1 + Math.floor(memberCount(s, s.players[0]) / 2));
@@ -147,7 +147,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
   it.each(['echo.evergreen', 'red.host', 'red.panel'])('Impostors adopts %s without firing its Recruit or Now ability', target => {
     let s = table(Q, { round: 3, members: [['red.recruitbonus', 'red.twins'], [target]], shop: ['echo.impostor'], queue: turns(0, 0) });
     s = move(take(s, 'red.take'), `card:${uidIn(s, 'echo.impostor', 'shop')}`);
-    expect(s.players[0].res.green).toBe(1); // Its own identity-selection Recruit still triggers Recruit Bonus.
+    expect(s.players[0].res.green).toBe(1); // Its own identity-selection Recruit still triggers Greeters.
     s = move(saved(s), `card:${uidIn(s, target, 1)}`);
     expect(s.cards[uidIn(s, 'echo.impostor', 0)].copy).toBe(target);
     expect(s.players[0].res).toMatchObject({ green: 1, red: 1 });

@@ -35,7 +35,7 @@ export function boardPicker(state, pend) {
     if (!key) { if (o.kind !== 'keep') rest.push(o); continue; }
     if (where.has(key)) {
       // two copies of one space (its taker's and a Squatter's join): the board keeps the better one for you, the other
-      // is a button by the caption; giving up here put a grid of chips over the wheel (w4 skeptic #3, Encore)
+      // is a button by the caption; giving up here put a grid of chips over the wheel (w4 skeptic #3, Sample)
       const prev = where.get(key);
       if (o.kind === 'space' && prev.kind === 'space') {
         if ((o.hint ?? 0) > (prev.hint ?? 0)) { where.set(key, o); rest.push(prev); } else rest.push(o);
@@ -81,7 +81,7 @@ export function boardPicker(state, pend) {
  * And three asks from far away (live panel round 1: the steal's, Collect Debts', Snap Up's and Hand-pick's targets sat
  * 420–600 px from the space while the prompt sat top centre; Straggler waited on a pill up there), which open on the
  * same card while their targets stay lit on the board (board: where else they're picked):
- *   steal   Help Yourself, Collect Debts, Redistribute, Lie Low, Crime Wave: each rival's face and the stacks you can
+ *   steal   Help Yourself, Collect Debts, Redistribute, Lie Low, Heist: each rival's face and the stacks you can
  *           take from, one coin per click, and "Take all N" (plan: the picks it makes, biggest pile first)
  *   recruit Hand-pick, Open Door (and Churn, Bury: the shop members they send to the bottom): picture, name, price
  *   move    Straggler: the lit spaces on the wheel are the answer; the card says so and holds Stay put
@@ -180,7 +180,7 @@ export function giftPick(state, pend, first = null) {
 }
 
 /**
- * Changing rivals' resources (Dilute, Big Dilute, Agitator, Ringleader, Puppeteers; Cory, Nov 2: the rearrange "feels
+ * Changing rivals' resources (Dilute, Big Dilute, Agitator, Meddler, Puppeteers; Cory, Nov 2: the rearrange "feels
  * pretty bad"): one card with each rival's piles and a row of the colors they can become, for both of the engine's
  * questions (which pile, then which color), so the card keeps its shape. GiftCard keeps the color picked, so a tap on a
  * pile answers both. Null when it isn't one.
@@ -213,7 +213,7 @@ function lastSpaceName(state, p) {
   const [q, i] = l.key.split('-').map(Number);
   try { const a = spacesOf(state, state.quadrants[q])[i]; return a ? a.name : null; } catch { return null; }
 }
-const SHOP_HEADS = { 'Hand-pick': 'Take a member, free', 'Recruit a Member': 'Recruit a shop member, free', 'Open Door': 'Recruit the cheapest shop member, free', 'Bury': 'Send one to the bottom: half its cost in blue' };
+const SHOP_HEADS = { 'Hand-pick': 'Take a member, free', 'Initiation': 'Recruit a shop member, free', 'Open Door': 'Recruit the cheapest shop member, free', 'Bury': 'Send one to the bottom: half its cost in blue' };
 
 /** The steal, the recruit from the row and the minion's move, on the card by the space (see giftPick), or null. */
 function farPick(state, pend, title, question, base) {
@@ -272,7 +272,7 @@ function stealModel(state, pend, title, question, base, takes) {
   const taken = count.of - count.left;
   const n = Math.min(count.of, taken + avail);
   const limit = (question.match(/\(\d+ left, ([^)]+)\)/) || [])[1];
-  // a steal owed 1 from each of some rivals (Redistribute, Crime Wave: "1 each from P3, P4", or "at least 1 from each
+  // a steal owed 1 from each of some rivals (Redistribute, Heist: "1 each from P3, P4", or "at least 1 from each
   // of …"): "Take all" takes those first, one each, so a forced split is one click too (live panel round 3)
   const owedNames = ((limit || '').match(/^(?:1 each from|at least 1 from each of) (.+)$/) || [])[1];
   const owed = owedNames ? owedNames.split(', ').map(nm => (state.players.find(o => o.name === nm) || {}).id).filter(Number.isInteger) : [];

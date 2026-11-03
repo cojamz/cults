@@ -237,12 +237,12 @@ const thieves = {
       },
     },
     {
-      key: 'rob', ring: 2, name: 'Crime Wave', text: 'Steal half of one rival’s pile of one color, rounded down. +1 magenta.',
+      key: 'rob', ring: 2, name: 'Heist', text: 'Steal half of one rival’s pile of one color, rounded down. +1 magenta.',
       estimate: (ctx, p) => Math.max(0, ...halfPiles(ctx, p).map(({ n }) => n * 1.33)),
       resolve(ctx, p) {
         const list = halfPiles(ctx, p);
         if (!list.length) { ctx.log(`${p.name} found no resource pile worth halving.`); return; }
-        ctx.choose(p, 'Crime Wave: choose a pile to halve.', list.map(({ owner, color, n }) => ({
+        ctx.choose(p, 'Heist: choose a pile to halve.', list.map(({ owner, color, n }) => ({
           id: `take:${owner.id}:${color}`, kind: 'take', value: [owner.id, color], target: { pid: owner.id, res: color },
           label: `${owner.name}: steal ${n} ${color}`, take: n, hint: n * 1.33,
         })), 'thieves.halfPile');

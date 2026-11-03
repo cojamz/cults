@@ -1,4 +1,4 @@
-// A saved hot-seat game where P1 (the only person) is about to place in round III with Recruit a Member ("Recruit a
+// A saved hot-seat game where P1 (the only person) is about to place in round III with Initiation ("Recruit a
 // member in the shop costing 8 or less.") open, and the face-up row holds exactly two members at 8 or less, the rest
 // pricier: hovering it should light exactly those two (Cory, 2026-10-16: a space's hover lights what it acts on).
 // It replaced Open Door (cut in the round I rework, Oct 27). The expected set is read off the card defs (cost = the
@@ -10,7 +10,7 @@ import { buildStamp } from './stamp.mjs';
 const cost = (s, u) => { const d = defById(s.cards[u].def); return (d.s || 0) + (d.w || 0); };
 export const CAP = 8;
 
-/** { save, key: "q-i" of Recruit a Member, lit: [uid] } */
+/** { save, key: "q-i" of Initiation, lit: [uid] } */
 export function aimSave(seed = 4) {
   const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];
   for (let k = seed; k < seed + 40; k++) {
@@ -35,5 +35,5 @@ export function aimSave(seed = 4) {
     s.shop = shop;
     return { save: { config: { seats: seats.map(x => ({ kind: x.kind, name: x.name })), speed: 'normal' }, state: s, undo: null, savedAt: Date.now() }, key, lit: row };
   }
-  throw new Error('aim save: no table with Recruit a Member open for P1 in round III in 40 seeds');
+  throw new Error('aim save: no table with Initiation open for P1 in round III in 40 seeds');
 }

@@ -705,7 +705,7 @@ function createOnlineSession({ transport, base, code, playerId, getRoom, getView
   });
 
   const mySeats = () => seatList(getRoom()).filter(s => s.kind === 'human' && s.id === playerId).map(s => s.seat);
-  // A choice several players answer at the same time (Party Favors: pending.also): the table shows me my own ask, so
+  // A choice several players answer at the same time (Potluck: pending.also): the table shows me my own ask, so
   // I answer without waiting for the player the engine lists first. The real state stays as it is for moves.
   const viewOf = st => {
     const pd = st?.pending;

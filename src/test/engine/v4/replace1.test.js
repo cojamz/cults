@@ -67,7 +67,7 @@ describe('REPLACE1: each card fires', () => {
     while (s.pending?.player === 1 && s.pending.kind === 'choose') s = answer(s, s.pending.options[0].id);
     expect(owns(s, 1, 'red.recruitbonus')).toBe(true);
     expect(s.players[1].res.red).toBe(0);
-    expect(s.log.some(l => /^P2's Scavengers: pays 3 red for Recruit Bonus\.$/.test(l))).toBe(true);
+    expect(s.log.some(l => /^P2's Scavengers: pays 3 red for Greeters\.$/.test(l))).toBe(true);
   });
 
   it('Racketeers: at round end, steals 2 of the contest color from each rival who won it', () => {
@@ -134,9 +134,9 @@ describe('REPLACE1: each card fires', () => {
     expect(named(s, 'Grudge')).toContain("P1's Grudge: steals 4 followers from P2.");
   });
 
-  it('Heirs: Game End +1 follower per 2 white held', () => {
+  it('Misers: Game End +1 follower per 2 white held', () => {
     const s = table(['red', 'trading', 'market', 'yellow'], { round: 3, res: [{ white: 5 }], members: [['trading.heirs']], queue: [{ t: 'finish' }] });
     expect(s.over).toBe(true);
-    expect(s.players[0].final.parts).toEqual(['Heirs +2']);
+    expect(s.players[0].final.parts).toEqual(['Misers +2']);
   });
 });

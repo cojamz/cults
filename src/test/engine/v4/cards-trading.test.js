@@ -91,13 +91,13 @@ describe('White actions', () => {
 });
 
 describe('White members', () => {
-  it('Shopkeeper: +2 white now and at round start (named)', () => {
+  it('Landlord: +2 white now and at round start (named)', () => {
     let s = table(Q, { res: [{ white: 4 }], shop: ['trading.shopkeeper', ...ROW], ...buy });
     s = move(s, cardOpt(s, 'trading.shopkeeper', 'shop'));
     expect(R(s).white).toBe(2);
     const t = table(Q, { members: [['trading.shopkeeper']], shop: ROW, queue: [{ t: 'round', r: 2 }] });
     expect(R(t).white).toBe(2);
-    expect(named(t, 'Shopkeeper').length).toBe(1);
+    expect(named(t, 'Landlord').length).toBe(1);
   });
 
   it('Heiresses: once per game, +1 white per member (named)', () => {

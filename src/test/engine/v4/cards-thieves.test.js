@@ -90,7 +90,7 @@ describe('Magenta actions', () => {
     }
   });
 
-  it('Crime Wave takes half of a chosen color stack, rounded down', () => {
+  it('Heist takes half of a chosen color stack, rounded down', () => {
     let s = table(Q, { n: 3, round: 2, res: [{}, { gold: 7, red: 9 }, { red: 1 }], shop: ROW });
     s = move(take(s, 'thieves.rob'), 'take:1:gold');
     expect(R(s)).toMatchObject({ magenta: 1, gold: 3, red: 0 });

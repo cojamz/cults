@@ -38,7 +38,7 @@ function playRound(s, rand, onTurn) {
   }
   return seq;
 }
-/** A bot move, minus Purple's turn-moving spaces (Sleep In, Hold Up, Right Away, Last Call, and Crowd In's extra minion; these tests count the plain snake against Crunch Time). */
+/** A bot move, minus Purple's turn-moving spaces (Sleep In, Hold Up, Right Away, Last Call, and Overtime's extra minion; these tests count the plain snake against Crunch Time). */
 function botMove(s, rand) {
   const m = chooseBotMove(s, rand);
   const o = s.pending?.options?.find(x => x.id === m.option);

@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Crowd In (Purple, round III; Cory, 2026-10-28): "+5 purple and gain a minion this round". Replaces placing on taken
+// Overtime (Purple, round III; Cory, 2026-10-28): "+5 purple and gain a minion this round". Replaces placing on taken
 // spaces, which copied too much with Greatest Hits. Extra minions stop when the round's spare spaces run out.
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove } from '../../../engine/v4/core.js';
@@ -7,7 +7,7 @@ import { chooseBotMove } from '../../../engine/v4/bots.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
 import { quadrant } from '../../../engine/v4/index.js';
 
-describe('Crowd In', () => {
+describe('Overtime', () => {
   it('round III: +3 purple and one more minion this round; no taken spaces opened; not open before round III', () => {
     let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 5, quadrants: ['gold', 'red', 'purple', 'echo'] });
     const rand = seededRandom(5);

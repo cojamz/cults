@@ -71,11 +71,11 @@ describe('Silver actions', () => {
     expect(R(s, 1).silver).toBe(3);
   });
 
-  it('rings: Polish and Party Gifts open in round I, Party Favors and Sweet Talk in round II, Largesse in round III', () => {
+  it('rings: Polish and Party Gifts open in round I, Potluck and Sweet Talk in round II, Largesse in round III', () => {
     const names = s => s.pending.options.map(o => o.label);
     expect(names(scene())).toEqual(expect.arrayContaining(['Toast', 'Polish', 'Party Gifts']));
     expect(names(scene())).not.toContain('Sweet Talk');
-    expect(names(scene({ round: 2 }))).toEqual(expect.arrayContaining(['Party Favors', 'Sweet Talk']));
+    expect(names(scene({ round: 2 }))).toEqual(expect.arrayContaining(['Potluck', 'Sweet Talk']));
     expect(names(scene({ round: 2 }))).not.toContain('Largesse');
     expect(names(scene({ round: 3 }))).toContain('Largesse');
   });

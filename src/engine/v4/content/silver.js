@@ -75,7 +75,7 @@ const colorHint = (ctx, p, color) => {
 const tideAmount = (ctx, p, extra) => Math.ceil((Math.max(0, ...ctx.rivals(p).map(o => o.res[S])) + extra) / 2);
 const spillCost = (ctx, n) => 0.25 * n * (ctx.state.players.length - 1);
 
-// Silver 2.0 (Cory, 2026-10-31): Toast, Polish, Party Gifts; Party Favors, Sweet Talk; Largesse (design/decisions.md).
+// Silver 2.0 (Cory, 2026-10-31): Toast, Polish, Party Gifts; Potluck, Sweet Talk; Largesse (design/decisions.md).
 // Party Gifts and Largesse hand rivals silver from the bank, never your own, and pay you followers per silver.
 const lowest = (ctx, p) => Math.min(...others(ctx, p).map(o => ctx.followers(o)));
 /** Rivals gain up to `left` silver from the bank, split as the giver picks one at a time. */
@@ -160,7 +160,7 @@ export const silverActions = [
     resolve(ctx, p) { shareStep(ctx, p, { who: 'Party Gifts', max: 3, per: 2 }); },
   },
   {
-    key: 'favors', ring: 2, name: 'Party Favors', text: '+2 silver. Each rival gives you 1 resource of their choice, then gains 2 silver.',
+    key: 'favors', ring: 2, name: 'Potluck', text: '+2 silver. Each rival gives you 1 resource of their choice, then gains 2 silver.',
     estimate: ctx => 2 + (ctx.state.players.length - 1) - spillCost(ctx, 2),
     resolve(ctx, p) {
       hostGain(ctx, p, 2);
@@ -182,7 +182,7 @@ export const silverActions = [
   },
 ];
 
-/** Party Favors: every rival gives the host 1 resource of their choice, then gains 2 silver. They answer at the same
+/** Potluck: every rival gives the host 1 resource of their choice, then gains 2 silver. They answer at the same
  *  time (Cory, Oct 31: "they SHOULD be able to do at the same time otherwise takes forever"): one ask each, asked
  *  together (pending.also); bots are queued first so they answer at once and people never wait on them. */
 function favorAll(ctx, host) {
@@ -193,10 +193,10 @@ function favorAll(ctx, host) {
     if (!have.length) {
       giveTo(ctx, host, o, S, 2, key);
       afterGive(ctx, host, S, key);
-      ctx.log(`${o.name} had nothing to give; +2 silver (${host.name}'s Party Favors).`);
+      ctx.log(`${o.name} had nothing to give; +2 silver (${host.name}'s Potluck).`);
       continue;
     }
-    ctx.choose(o, `Party Favors: give ${host.name} 1 resource, then you gain 2 silver`, have.map(c => ({
+    ctx.choose(o, `Potluck: give ${host.name} 1 resource, then you gain 2 silver`, have.map(c => ({
       id: `color:${c}`, label: `Give 1 ${c}`, kind: 'color', value: c,
       // bots give from their biggest pile, and not the color they lead the host in by 1 or less
       hint: 0.3 * (o.res[c] || 0) - ((o.res[c] || 0) - (host.res[c] || 0) <= 1 && (o.res[c] || 0) >= (host.res[c] || 0) ? 1 : 0),
@@ -281,7 +281,7 @@ const silver = {
       o.res[color] -= 1; ctx.gain(host, color, 1);
       giveTo(ctx, host, o, S, 2, data.key);
       afterGive(ctx, host, S, data.key);
-      ctx.log(`${o.name} gave ${host.name} 1 ${color}, then +2 silver (${host.name}'s Party Favors).`);
+      ctx.log(`${o.name} gave ${host.name} 1 ${color}, then +2 silver (${host.name}'s Potluck).`);
     },
     benefactor(ctx, p, id) {
       const t = ctx.player(id);
@@ -321,7 +321,7 @@ const silver = {
       },
     }),
     // Cory, Nov 1: Silver's tenth member. Once per space or card that gives silver, however many rivals it reaches
-    // (Party Favors' answers count as one gift; Claude, under Cory's go-with-your-gut).
+    // (Potluck' answers count as one gift; Claude, under Cory's go-with-your-gut).
     // Retired: Hostesses takes its place (Claude, under Cory's "use your judgement", 2026-11-03).
     m('giftwrapper', 'Gift Wrapper', 3, 2, 'Whenever you give rivals silver, +1 follower.', { retired: true,
       onGive(ctx, owner, card, color, once) {

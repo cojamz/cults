@@ -18,7 +18,7 @@ import { runTable, pickers } from '../src/test/engine/v4/fuzz-tables-runner.js';
 
 const REDONE = ['red', 'echo', 'thieves', 'purple', 'market', 'trading']; // the 2.0 colors (src/v4/tables.js)
 const ALL = allQuadrantIds().filter(id => !quadrant(id).standIn);
-const COPY_NAMES = /Loyalists|↔|Swap|swap|Promote|Demote|Greatest Hits|Tryout|Stunt Double|Tribute Band|Doppelganger|Impostor|Squatter|copy|Copy|Reprise|Encore/;
+const COPY_NAMES = /Loyalists|↔|Swap|swap|Promote|Demote|Greatest Hits|Tryout|Stunt Double|Tribute Band|Doppelganger|Impostor|Squatter|copy|Copy|Reprise|Sample/;
 
 function table(rand, mode, n) {
   const want = n;
