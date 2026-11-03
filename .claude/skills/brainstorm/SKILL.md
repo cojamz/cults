@@ -20,12 +20,6 @@ Every card or space pitched is checked against these, in writing, with one line 
 6. **A new way into its color's theme**: a way the color doesn't have yet, not a repeat.
 Refused shape to never repeat (Nov 3): a member that upgrades one shared space ("your Crime Wave steals from two rivals"): a rival takes the space first, and per-space bonuses are hard to track. Plain words to Cory: no "worth the turn" or "two live sides"; say what a player does.
 
-## What 44 bot-tested replacements taught (Nov 3; design/eval/replacements/)
-- Shapes that landed (taken often, owners near 25 to 34%): a Round Start or Round End act on members or contests (Body Snatchers, Spoilsports, Kidnappers), a gift that pays you per rival it helps (Hostesses), a once-per-game give that pays its cost (Godparents), a simple game-end count (Heirs, Creditors).
-- Shapes that flopped: anything that hands rivals as much as you get (Barterers' one-for-one swap, Fundraisers, Evictors giving the victim white); "recruit a whole color" (nobody holds that much); scoring for second place (Second Fiddles).
-- Cards that only answer a rival's move ("whenever a rival...") at 7 to 9 go unbought by bots even when owners win: price them at 5 to 6 or give them worth, and say in the pitch that bots undervalue them.
-- Before a batch: say for each card which price band its old card sat in and why the new one earns more or less.
-
 ## Every pitch: four gates, in order, none skipped
 
 Oct 30, Yellow: eight nos in a morning ("small ball gains", "how do you have NO clue how the game works????", "are you using the skill?"). Every one came from skipping a gate below to answer fast. Speed means no padded waits, never skipped steps: a list takes the time the gates take, and you say a real time.
