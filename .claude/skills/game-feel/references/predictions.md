@@ -48,3 +48,26 @@ Scored 1:10pm Nov 1 (final: Normal 1,400, Hard 422, Very Hard 398; design/eval/b
 7. HIT. Pocket Watch rated fun 1-2 by both g11 holders.
 8. NOT SCORED (choice report tags by ring not tallied).
 Lesson: copy effects and last-placement joins decided the expert games and never showed in bot numbers (bots don't aim copies); a feel finding on an interaction card needs the expert games, not a bot prediction.
+
+## 2026-11-03 12:10pm: fast run on live v0.99.513 (printed contests, deck 10), written before any data
+Grounded in: the Nov 3 overnight run (46d689f7) and the By color vs printed fast runs (0f94cfcd); since then Doormen, Night Owls, Encore words and Doormen's cost range changed.
+1. Night Owls owners still win well above expected at Hard (+15 or more) (high): its text didn't change in power.
+2. Silver Cloak (Caterer) is still the weakest cloak at Normal and Hard (high).
+3. White or Green Cloak is the strongest cloak at Hard (med).
+4. Red is the strongest main color at Normal and Hard (med): red topped both fast runs.
+5. Yellow is the weakest main color at Hard (med).
+6. Winners with 5 or fewer member cards stay at or above 20% at 4 players (med).
+7. Loyalists reads TRAP again at Normal and Hard (med).
+8. Doormen moves to within ±5 of even (low): the cost range change matters little to bots.
+9. Seat order: the first seat wins more than the last at 4 players by 5+ points (low).
+Scored 2:15pm Nov 3 (runs 2026-11-03-fast-live-379cda47 printed, -bycolor- By color):
+1. ❌ Night Owls +8 Normal both settings, too few Hard owners (14); the overnight +22 came before its words changed and before every-owner counting.
+2. ✅ Caterer weakest at both levels with printed (−8/−10); ↔ By color (−4/0).
+3. ↔ Impressionist strongest at Hard printed (+15); By color its edge drops to +5.
+4. ✅ Red strongest main color at both levels, both settings.
+5. ↔ Yellow −8 Hard printed (6 seats, too few); By color +8 (6 seats).
+6. ✅ 33% Hard, 32% Normal printed; 26%/32% By color.
+7. ❌ Loyalists −2 Normal, +1 Hard: not a trap.
+8. ❌ Doormen −6 Normal printed, +7 Hard By color (10 to 13 owners): too few to read.
+9. ❌ Seat 1 vs 4 flat at Normal; Hard noise.
+Hit rate 3 of 9 clean (3 partial). Lesson: I predicted from old headlines again (Night Owls, Loyalists); the counting change between runs moved cards, so after a tool change predict from mechanisms, not last run's number.
