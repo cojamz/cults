@@ -44,6 +44,6 @@ describe('your own seat reads "You"', () => {
     const { container } = render(<Results state={s} meId={0} onPlayAgain={() => {}} onHome={() => {}} />);
     const text = container.querySelector('.results').textContent;
     expect(text).not.toMatch(word('Ana'));
-    expect(container.querySelector('.res-t').textContent).toMatch(/You/);
+    expect(container.querySelector('[data-sources]').textContent).toMatch(/You/);
   });
 });

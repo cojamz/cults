@@ -47,7 +47,7 @@ describe('round summary and results (live panel r1)', () => {
       expect(line.textContent).not.toMatch(/still to add/);
       cleanup();
       const r = render(<Results state={over} onPlayAgain={() => {}} onHome={() => {}} />);
-      const res = [...r.container.querySelectorAll('.res-t tbody tr .tot')].map(td => Number(td.textContent));
+      const res = [...r.container.querySelectorAll('[data-src-row]')].map(e => Number(e.dataset.total));
       expect(res).toEqual(over.ranking.map(id => shown[id]));
       cleanup();
     }
@@ -82,12 +82,12 @@ describe('round summary and results (live panel r1)', () => {
     p.members.push(rev.uid);
     expect(memberCount(over, p) - before).toBe(3);
     const { container } = render(<Results state={over} onPlayAgain={() => {}} onHome={() => {}} />);
-    expect(container.querySelector(`[data-members="${p.id}"]`).textContent).toBe(`${memberCount(over, p)} members`);
-    // the cult cell's hover names the same count
-    fireEvent.click(container.querySelector(`[data-cult="${p.id}"] [aria-label]`));
+    expect(container.querySelector(`[data-members="${p.id}"]`).textContent).toMatch(new RegExp(`^${memberCount(over, p)} members`));
+    // the members part's hover names the same count
+    fireEvent.click(container.querySelector(`[data-src-row="${p.id}"] [data-seg="members"]`));
     const pop = [...document.querySelectorAll('.pop-card')].map(e => e.textContent).join(' ');
-    expect(pop).toMatch(new RegExp(`their ${memberCount(over, p)} members`));
-    expect(pop).not.toMatch(new RegExp(`their ${p.members.length} members`));
+    expect(pop).toMatch(new RegExp(`${memberCount(over, p)} members:`));
+    expect(pop).not.toMatch(new RegExp(`(^|\\D)${p.members.length} members:`));
   });
 
   it('who picks first says why in words: a member, named as one', () => {

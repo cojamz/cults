@@ -1,52 +1,26 @@
-/* Where the followers came from (Sources.jsx). Two looks; one grid of 4px, three sizes (fs-1, fs-2, fs-5). */
-
-/* ---------- bars ---------- */
+/* Where the followers came from (Sources.jsx): one bar per cult, split by kind, in wood and cream tones (no game
+   colors: Cory, 2026-11-03). One 4px grid; three sizes (fs-1, fs-2, fs-5). */
 .src-bars{display:flex;flex-direction:column;gap:8px;width:100%}
 .src-row{display:grid;grid-template-columns:24px 168px minmax(0,1fr) 72px;align-items:center;gap:12px;padding:8px 12px;border-radius:10px}
 .src-row.first{background:color-mix(in srgb,var(--ink) 5%,transparent)}
 .src-row .rank{color:var(--muted);font-size:var(--fs-2);text-align:center}
 .src-who{display:flex;flex-direction:column;gap:2px;min-width:0;font-size:var(--fs-2)}
-.src-who small{color:var(--muted);font-size:var(--fs-1);white-space:nowrap}
-.src-who small b{font-weight:600}
-.src-track{display:block;min-width:0}
+.src-who small{color:var(--muted);font-size:var(--fs-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src-track{display:flex;align-items:center;gap:8px;min-width:0}
 .src-bar{display:flex;height:32px;border-radius:6px;overflow:hidden;gap:2px;min-width:0}
-.src-seg{display:flex;align-items:center;min-width:0;flex-basis:0;padding:0;overflow:hidden;cursor:default;
-  background:color-mix(in srgb,var(--c) 52%,#1b130c);color:var(--cream)}
-.src-seg .src-lab{padding:0 8px}
-.src-seg.lean{background:var(--c);color:#1b130c}
-.src-seg.seg-guests{background:color-mix(in srgb,var(--any) 30%,#1b130c)}
-.src-seg.seg-bought{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--cream) 12%,transparent) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cream) 22%,transparent);border-radius:0 6px 6px 0;color:var(--cream-2)}
-.src-seg.seg-leader{display:none}
-.src-lab{font-size:var(--fs-2);white-space:nowrap;overflow:hidden;text-overflow:clip}
+.src-seg{display:flex;align-items:center;min-width:0;flex-basis:0;overflow:hidden;cursor:default;color:var(--cream)}
+.src-lab{padding:0 8px;font-size:var(--fs-2);white-space:nowrap;overflow:hidden}
 .src-lab b{font-weight:700;margin-left:2px}
+.kind-members{background:color-mix(in srgb,var(--cream) 34%,#1b130c);color:#1b130c}
+.src-row.first .kind-members{background:var(--cream)}
+.kind-prizes{background:color-mix(in srgb,var(--cream) 22%,#1b130c)}
+.kind-bought{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--cream) 12%,transparent) 0 4px,transparent 4px 8px);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cream) 22%,transparent);color:var(--cream-2)}
+.kind-play,.kind-end{background:color-mix(in srgb,var(--cream) 10%,#1b130c);color:var(--cream-2)}
+.src-lost{font-size:var(--fs-2);color:var(--muted);white-space:nowrap;cursor:default}
 .src-tot{display:flex;align-items:center;justify-content:flex-end;gap:4px;font-size:var(--fs-5);font-weight:700}
-
-/* ---------- grid ---------- */
-table.src-grid{border-collapse:separate;border-spacing:4px 4px;width:100%;font-variant-numeric:tabular-nums lining-nums}
-.src-grid th{font-size:var(--fs-1);font-weight:600;color:var(--muted);text-align:center;padding:0 4px 4px}
-.src-grid th .src-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);margin-right:4px;vertical-align:1px}
-.src-grid td{padding:4px 8px;border-radius:8px;text-align:center;font-size:var(--fs-2)}
-.src-grid td.rank{color:var(--muted);width:24px}
-.src-grid td.src-who{text-align:left;width:168px}
-.src-cell{background:color-mix(in srgb,var(--c) var(--share),transparent);min-width:88px;height:40px}
-.src-cell b{font-size:var(--fs-5);font-weight:600}
-.src-cell.lean{background:var(--c)}
-.src-cell.lean b{color:#1b130c;font-weight:700}
-.src-cell.grey{background:transparent}
-.src-cell.zero{background:transparent}
-.src-cell.plain{background:transparent}
-.src-cell.plain b{color:var(--cream-2);font-weight:600}
-.src-grid td.src-tot{font-size:var(--fs-5);font-weight:700;width:72px;text-align:right}
-.src-grid tr.first td.src-tot{background:none}
-
-.src-grid td.src-tot{white-space:nowrap}
-
-.src-card .src-spaces{color:var(--muted)}
-
-/* ---------- bars by kind: wood and cream tones, no game colors ---------- */
-.kinds .src-seg{color:var(--cream)}
-.kinds .kind-members{background:color-mix(in srgb,var(--cream) 34%,#1b130c);color:#1b130c}
-.kinds .kind-prizes{background:color-mix(in srgb,var(--cream) 22%,#1b130c)}
-.kinds .kind-bought{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--cream) 12%,transparent) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cream) 22%,transparent);color:var(--cream-2)}
-.kinds .kind-play,.kinds .kind-end{background:color-mix(in srgb,var(--cream) 10%,#1b130c);color:var(--cream-2)}
-.kinds .src-row.first .kind-members{background:var(--cream)}
+@media (max-width:640px){
+  .src-row{grid-template-columns:20px minmax(0,1fr) 56px;gap:4px 8px;padding:8px}
+  .src-track{grid-column:1 / -1}
+  .src-row .src-tot{grid-row:1;grid-column:3}
+}

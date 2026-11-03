@@ -118,13 +118,11 @@ async function results(page) {
 }
 
 /** What the results' table and seats say each player ended on. */
-const finals = page => page.evaluate(() => Object.fromEntries([...document.querySelectorAll('.res-t tbody tr')].map(tr => {
-  const pid = tr.querySelector('[data-cult]').dataset.cult;
-  const cells = [...tr.querySelectorAll('td')];
-  const heads = [...document.querySelectorAll('.res-t th')].map(th => th.textContent);
-  const at = h => { const k = heads.indexOf(h); return k < 0 ? 0 : Number(cells[k].textContent.replace('−', '-').replace('+', '')); };
+const finals = page => page.evaluate(() => Object.fromEntries([...document.querySelectorAll('[data-src-row]')].map(row => {
+  const pid = row.dataset.srcRow;
+  const seg = k => Number(row.querySelector(`[data-seg="${k}"]`)?.dataset.n || 0);
   const seat = document.querySelector(`.over-seat[data-pid="${pid}"]`);
-  return [pid, { table: at('Followers'), endGame: at('End-game'), members: Number(tr.querySelector('.who small').textContent.match(/\d+/)?.[0] || 0),
+  return [pid, { table: Number(row.dataset.total), endGame: seg('end'), members: Number(row.querySelector('[data-members]').textContent.match(/\d+/)?.[0] || 0),
     seat: Number(seat?.querySelector('.cs-total .tv')?.textContent), final: Number(seat?.dataset.final), figs: seat ? seat.querySelectorAll('.cs-member').length : 0 }];
 })));
 
