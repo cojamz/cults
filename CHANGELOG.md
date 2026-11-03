@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.533 — 2026-11-03
+
+- Small polish: a seat's follower change shows beside its count, rival moves no longer cover a hover card you're reading, long space names wrap on the hub card, the end screen's Play and End bars show, final cult cards line up, and many spare minions no longer run into Log
+
 ## v0.99.532 — 2026-11-03
 
 - Long member names in a crowded swap break at a natural seam (Deprogram-mers) instead of being cut off.
