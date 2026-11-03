@@ -1065,6 +1065,21 @@ export function scoringOf(state, qid) {
       purple: { label: 'Went last', counts: "whoever placed the round's last minion", tiebreak: null,
         score: (ctx, p) => (state.lastPlaced && state.lastPlaced.round === state.round && state.lastPlaced.pid === p.id ? 1 : 0) },
     };
+    // trial fixes for sims (rules.contestFix), not offered at setup: Green ties and White staying with one player
+    const fix = state.rules?.contestFix || {};
+    const greenScore = by.echo.score, onGreen = p => greenScore(null, p);
+    if (fix.green === 'tb') by.echo = { ...by.echo, tiebreak: { unit: 'green', text: 'ties go to the most green held' },
+      score: (ctx, p) => { const n = onGreen(p); return n > 0 ? n * 1000 + (p.res.green || 0) : 0; }, show: (ctx, p) => ({ count: onGreen(p), tiebreak: p.res.green || 0 }) };
+    if (fix.green === 'members') by.echo = { ...by.echo, label: 'Most minions on green, plus green members', counts: 'your minions on Green spaces plus your green members, when the round ends',
+      score: (ctx, p) => onGreen(p) + countMembersOfColor(state, p, 'echo') };
+    if (fix.white === 'net') by.trading = { label: 'Most white, minus 1 per member', counts: 'the white you hold minus your members, when the round ends',
+      score: (ctx, p) => Math.max(0, (p.res.white || 0) - memberCount(state, p)), show: (ctx, p) => ({ count: (p.res.white || 0) - memberCount(state, p) }) };
+    if (fix.white === 'followers') by.trading = { label: 'Fewest followers', counts: 'your followers when the round ends',
+      score: (ctx, p) => 100000 - followers(state, p), show: (ctx, p) => ({ count: followers(state, p) }) };
+    if (fix.white === 'notTwice') {
+      const last = (state.contests || []).at(-1)?.results.find(c => c.qid === 'trading')?.winners || [];
+      by.trading = { ...fewest, label: 'Fewest members, not last round\'s winner', score: (ctx, p) => (last.includes(p.id) ? 0 : fewest.score(ctx, p)) };
+    }
     return by[qid] || q.scoring;
   }
   if (mode === 'whiteFewest' && qid === 'trading') return { label: 'Fewest members', counts: 'your members when the round ends (at least 1)',
