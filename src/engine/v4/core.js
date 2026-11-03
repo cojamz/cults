@@ -8,6 +8,7 @@ import { shuffleInPlace } from './rng.js';
 import { CUT, CUT10, FULL_DECK } from './content/cull.js';
 import { pileRules } from './piles.js';
 import { startEffects, stopEffects, abandonEffects, underCause, markEffect } from './effects.js';
+import { REPLACE4 } from './content/replace4.js';
 
 export const RING_VALUE = [4, 6, 10];
 export const WORKERS = [3, 4, 5];
@@ -599,11 +600,13 @@ function inputFor(state, task) {
         if (back.n > 0) opts.push({ id: `release:${uid}`, label: `Release ${d.name} for ${back.label}`, kind: 'release', uid, refund: back.n, color: back.color });
       }
       // Doorbusters' round-start recruit: a member or followers only (it isn't a turn)
-      if (task.doorbuster) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'card' || o.kind === 'tier'));
+      // (Late Shoppers' round-end recruit, REPLACE4 bot test, likewise)
+      if (task.doorbuster || task.lateShop) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'card' || o.kind === 'tier'));
       const real = opts.filter(o => o.kind === 'card' || o.kind === 'tier' || o.kind === 'use' || o.kind === 'release' || o.kind === 'swapcard');
       if (!real.length) return { kind: 'buy', prompt: '', options: [], onEmpty: task.extra ? undefined : () => log(state, `${p.name} couldn't afford anything.`) };
       opts.push({ id: 'pass', label: 'Pass', kind: 'pass' });
       if (task.doorbuster) return { kind: 'buy', prompt: `${p.name}: Doorbusters: recruit once before anyone places, or pass`, options: opts };
+      if (task.lateShop) return { kind: 'buy', prompt: `${p.name}: Late Shoppers: recruit once after the contests, or pass`, options: opts };
       return { kind: 'buy', extra: !!task.extra, prompt: task.extra ? `${p.name}: recruit again (Big Spender), or pass` : `${p.name}: recruit a member or followers${more ? ` (${more + 1} recruits left)` : ''}, or pass`, options: opts };
     }
     case 'choose': {
@@ -756,6 +759,7 @@ function resolveTask(state, task, optionId) {
         // One way to buy: always the payment step (the suggestion preselected), unless there's nothing to pay.
         const uid = Number(rest), list = paymentChoices(state, p, uid);
         const nothing = list.length === 1 && Object.values(list[0]).every(v => !v);
+        if (nothing && askOutbid(state, p, uid, list[0], extraOf(task))) return;
         if (nothing) { boughtOnce(state, p, { ...task, uid }); recruit(state, p, uid, { free: false, spend: list[0] }); }
         else state.queue.unshift({ t: 'pay', p: p.id, uid, ...extraOf(task) });
         return;
@@ -802,6 +806,7 @@ function resolveTask(state, task, optionId) {
       }
       if (optionId === 'back') { state.queue.unshift({ t: 'buy', p: p.id, ...extraOf(task) }); return; }
       const v = Object.fromEntries(optionId.slice(4).split('-').map((n, i) => [state.resources[i], Number(n)]));
+      if (task.uid !== undefined && askOutbid(state, p, task.uid, v, extraOf(task))) return;
       boughtOnce(state, p, task);
       if (task.uid !== undefined) recruit(state, p, task.uid, { free: false, spend: v });
       else buyFollowers(state, p, TIERS.find(t => t.key === task.tier), v);
@@ -1019,6 +1024,7 @@ function endRound(state) {
   for (const c of table) {
     if (c.spoiled !== undefined) msg.push(`${c.label}: spoiled by ${state.players[c.spoiled].name}'s Spoilsports, nobody wins`);
     if (!c.winners.length) continue;
+    if (c.copycats) msg.push(`${c.label}: ${c.copycats.map(id => `${state.players[id].name}'s Copycats`).join(' & ')} ${c.copycats.length > 1 ? 'tie' : 'ties'} for it, 1 short`);
     const winners = c.winners.map(id => state.players[id]);
     underCause({ kind: 'contest', qid: c.qid, round: state.round }, () => { for (const w of winners) { w.bonus += c.prize; w.contest += c.prize; fBump(state, w, c.prize); } });
     // members that answer a contest won (Cheerleader)
@@ -1030,6 +1036,18 @@ function endRound(state) {
   log(state, `Round ${roman(state.round)} ends. ${msg.join(' · ') || 'No one scored.'}`);
   // members that answer a rival winning a contest (Racketeers, REPLACE1 bot test), each winner of each contest
   for (const c of table) for (const id of c.winners) eachMember(state, (owner, card, def) => { if (def.onRivalContestWin && owner.id !== id) def.onRivalContestWin(ctx, owner, card, state.players[id], c); }, ['onRivalContestWin']);
+  // Late Shoppers (REPLACE4 bot test: flag roundEndBuy): one recruit each, in this round's order, after the contests
+  // and before the row goes to the bottom (in round III, before the Game End cards count)
+  if (REPLACE4) {
+    const late = [];
+    for (const id of turnOrder(state)) for (let k = sumMemberFlag(state, state.players[id], 'roundEndBuy'); k > 0; k--) late.push({ t: 'buy', p: id, lateShop: true });
+    for (const t of late) { const p = state.players[t.p]; p.turnRecruits = 0; p.turnBuys = 0; delete p.peekReach; delete p.perSpend; delete p.recruitFollowers; }
+    if (late.length) {
+      log(state, [...new Set(late.map(t => t.p))].map(id => `${state.players[id].name}'s ${flagName(state, state.players[id], 'roundEndBuy')}: recruits once after the contests.`).join(' '));
+      const at = state.queue.findIndex(t => !t._fresh);
+      state.queue.splice(at < 0 ? state.queue.length : at, 0, ...late);
+    }
+  }
 }
 
 // ---------- contests: one function decides them, and every screen shows it ----------
@@ -1108,6 +1126,12 @@ export function contestTable(state, ctx = ctxFor(state)) {
     // Spoilsports (REPLACE2 bot test): a contest spoiled this round pays nobody
     const spoiled = state.spoiled && state.spoiled.round === state.round && state.spoiled.list.find(x => x.qid === qid);
     if (spoiled) winners = [];
+    // Copycats (REPLACE4 bot test: flag copycat): a holder of exactly 1 less than the winner (at least 1) ties for it
+    let copycats = null;
+    if (REPLACE4 && winners.length && top - 1 > 0) {
+      copycats = state.players.filter((p, i) => scores[i] === top - 1 && p.members.some(u => effectiveDefs(state.cards[u]).some(d => d.copycat))).map(p => p.id);
+      if (copycats.length) winners = [...winners, ...copycats].sort((a, b) => a - b); else copycats = null;
+    }
     // Tiebreaker (concept): a tie its owner is in goes to them alone
     if (winners.length > 1) { const tb = winners.filter(id => state.players[id].members.some(u => effectiveDefs(state.cards[u]).some(d => d.tiebreak))); if (tb.length === 1) winners = tb; }
     const rows = state.players.map((p, i) => {
@@ -1119,6 +1143,7 @@ export function contestTable(state, ctx = ctxFor(state)) {
     return {
       qid, label: sc.label, rule: ruleOf(sc.label), counts: sc.counts || null, tiebreak: sc.tiebreak || null,
       prize: winners.length > 1 ? Math.ceil(prize / 2) : prize, fullPrize: prize, rows, winners, ...(spoiled ? { spoiled: spoiled.by } : {}),
+      ...(copycats && copycats.some(id => winners.includes(id)) ? { copycats: copycats.filter(id => winners.includes(id)) } : {}),
     };
   });
 }
@@ -1719,7 +1744,7 @@ function dropBuys(state, p) {
   const gone = new Set(turnBuys(state, p, 0));
   if (gone.size) state.queue = state.queue.filter(t => !gone.has(t));
 }
-const extraOf = task => ({ ...workerSourceOf(task), ...(task.extra ? { extra: true } : {}), ...(task.afterPurchase ? { afterPurchase: true } : {}), ...(task.doorbuster ? { doorbuster: true } : {}) });
+const extraOf = task => ({ ...workerSourceOf(task), ...(task.extra ? { extra: true } : {}), ...(task.afterPurchase ? { afterPurchase: true } : {}), ...(task.doorbuster ? { doorbuster: true } : {}), ...(task.lateShop ? { lateShop: true } : {}) });
 // A real buy (member or followers) in a buy step. The second one spends a Big Spender.
 function boughtOnce(state, p, task) {
   if (task.extra) {
@@ -1731,8 +1756,66 @@ function boughtOnce(state, p, task) {
   }
 
   p.turnBuys = (p.turnBuys || 0) + 1;
-  if (task.uid !== undefined && !task.doorbuster) state.queue.unshift({ t: 'buy', p: p.id, afterPurchase: true, ...workerSourceOf(task) });
+  if (task.uid !== undefined && !task.doorbuster && !task.lateShop) state.queue.unshift({ t: 'buy', p: p.id, afterPurchase: true, ...workerSourceOf(task) });
 }
+// ---------- Outbidders (REPLACE4 bot test: flag outbids) ----------
+// "Whenever a rival recruits a shop member, you may pay its cost plus 2 to recruit it instead. They get back what they
+// paid and recruit again." Read on the recruit step (a turn's recruit, Spree's, Doorbusters', Late Shoppers'): a
+// shop member chosen and paid for there is offered first to each holder, in seat order from the buyer's left, who can
+// pay; nothing of the buyer's is spent until all of them pass. Outbid, the buyer has the same recruit step again.
+/** What o pays to outbid for uid: o's own price, the usual way, and 2 more from the piles o holds most of; null if o can't. */
+function outbidPlan(state, o, uid) {
+  const plan = paymentPlan(state, o, uid);
+  if (!plan) return null;
+  const left = { ...o.res };
+  for (const r in plan) left[r] -= plan[r];
+  for (let k = 0; k < 2; k++) {
+    const c = Object.keys(left).filter(r => left[r] > 0).sort((a, b) => left[b] - left[a])[0];
+    if (!c) return null;
+    left[c] -= 1; plan[c] = (plan[c] || 0) + 1;
+  }
+  return plan;
+}
+/** Ask the next holder who hasn't been asked (seat order from the buyer's left). True when a choice was queued. */
+function askOutbid(state, buyer, uid, spend, extra, asked = []) {
+  if (!REPLACE4 || !state.shop.includes(uid)) return false;
+  const n = state.players.length;
+  for (let k = 1; k < n; k++) {
+    const o = state.players[(buyer.id + k) % n];
+    if (asked.includes(o.id) || !sumMemberFlag(state, o, 'outbids')) continue;
+    const plan = outbidPlan(state, o, uid);
+    if (!plan) continue;
+    const name = cardDef(state, uid).name;
+    ctxFor(state).choose(o, `Outbidders: ${buyer.name} recruits ${name}. Pay ${payString(plan)} to recruit it instead?`, [
+      { id: 'outbid', label: `Outbid: pay ${payString(plan)} for ${name}`, kind: 'choice', value: 'outbid', hint: 1 },
+      { id: 'let', label: `Let ${buyer.name} have it`, kind: 'pass', value: 'let', hint: 0 },
+    ], 'market.outbid', { pid: buyer.id, uid, spend, extra, asked: [...asked, o.id] });
+    return true;
+  }
+  return false;
+}
+/** The buyer's recruit, as the recruit step would have made it (every holder passed). */
+function outbidLet(state, data) {
+  const buyer = state.players[data.pid];
+  if (askOutbid(state, buyer, data.uid, data.spend, data.extra, data.asked)) return;
+  const ok = state.shop.includes(data.uid) && Object.keys(data.spend).every(r => (data.spend[r] || 0) <= (buyer.res[r] || 0)) && memberPayOk(state, buyer, cardDef(state, data.uid), data.spend);
+  if (!ok) { againBuy(state, buyer, data.extra); return; }
+  boughtOnce(state, buyer, { t: 'buy', p: buyer.id, ...data.extra, uid: data.uid });
+  recruit(state, buyer, data.uid, { free: false, spend: data.spend });
+}
+/** o outbids: o pays and recruits it; the buyer has the same recruit step again, nothing spent. */
+function outbidTake(state, o, data) {
+  const buyer = state.players[data.pid], plan = state.shop.includes(data.uid) ? outbidPlan(state, o, data.uid) : null;
+  if (!plan) { outbidLet(state, data); return; }
+  log(state, `${o.name}'s Outbidders: outbids ${buyer.name} for ${cardDef(state, data.uid).name}; ${buyer.name} pays nothing and recruits again.`);
+  recruit(state, o, data.uid, { free: false, spend: plan });
+  againBuy(state, buyer, data.extra);
+}
+function againBuy(state, p, extra) {
+  const at = state.queue.findIndex(t => !t._fresh);
+  state.queue.splice(at < 0 ? state.queue.length : at, 0, { t: 'buy', p: p.id, ...extra });
+}
+
 /** How many cards off the top of the pile p may recruit from (Insider: flag pileReach; copies don't stack). */
 export function pileReach(state, p) {
   // Peek (Blue) lets its taker reach the cards it looked at, this turn only
@@ -1950,6 +2033,9 @@ function ctxFor(state) {
       return true;
     },
     turnKey: () => turnKey(state),
+    /** Outbidders (REPLACE4 bot test): the holder asked lets the buyer's recruit go ahead, or outbids it (askOutbid). */
+    outbidLet: data => outbidLet(state, data),
+    outbidTake: (o, data) => outbidTake(state, o, data),
     /** Coach: use one of p's members' abilities as a free extra use (freeUse). */
     freeUse: (p, uid) => freeUse(state, p, uid),
     // ---- stealing: one shared verb, so protections and reactions apply to every sphere's steals ----

@@ -3,6 +3,7 @@ import { gainColorOf } from './color-of.js';
 import { add1, old1 } from './replace1.js';
 import { add2, old2, handlers2 } from './replace2.js';
 import { add3, old3, handlers3 } from './replace3.js';
+import { add4, old4, handlers4 } from './replace4.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
 
@@ -84,6 +85,26 @@ export default {
   ],
 
   handlers: {
+    ...handlers4({
+      defect(ctx, p, id) {
+        const o = ctx.player(id);
+        if (!o || o === p || !ctx.canSteal(p, o, 'swap')) return;
+        const mine = defectList(ctx, p), theirs = defectList(ctx, o);
+        const names = list => list.map(c => c.def.name).join(', ') || 'nobody';
+        ctx.log(`${p.name}'s Defectors: ${p.name}'s red members (${names(mine)}) swap for ${o.name}'s (${names(theirs)}).`);
+        // both lists are read before anything moves, so nothing that arrives goes back
+        for (const c of mine) ctx.moveMember(c.uid, p, o, { actor: p });
+        for (const c of theirs) ctx.moveMember(c.uid, o, p, { recruit: true, actor: p });
+      },
+      tithe(ctx, giver, uid, data) {
+        const owner = ctx.player(data.to);
+        if (giver.members.includes(uid)) {
+          const name = ctx.card(uid).def.name;
+          if (ctx.moveMember(uid, giver, owner, { actor: owner })) ctx.log(`${owner.name}'s Tithe Takers: ${giver.name} gives ${name} to ${owner.name}.`);
+        }
+        titheStep(ctx, owner, data.left);
+      },
+    }),
     ...handlers3({
       missionGive(ctx, p, uid, data) {
         const o = ctx.player(data.left[0]);
@@ -177,12 +198,44 @@ export default {
         if (ctx.shopCards().length) ctx.log(`${owner.name}'s ${who}: the cheapest face-up member comes along free.`);
         hireCheapest(ctx, owner, who);
       },
+      ...old4,
     }),
+    // REPLACE4 bot test (Nov 3, replacement batch 4): Mentor & Protégés' place. 4 red + 2 any as a player sees it. Each
+    // rival with a member, in seat order from the owner's left, chooses one of theirs to give. A gift, not a steal or a
+    // swap (the draft's reading), so Bodyguards and Loyalists don't stop it; it is the owner's card taking it, so the
+    // giver's Turncoats answers it, and it's an arrival for the owner (Old Maid's −5 lands), not their recruit.
+    ...add4(m('tithetakers', 'Tithe Takers', 3, 2, 'On Use, once per game: each rival gives you one of their members.', { f: 2,
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const n = ctx.state.players.length, left = Array.from({ length: n - 1 }, (_, k) => (owner.id + 1 + k) % n);
+        if (!left.some(id => ctx.player(id).members.length)) { card.used = false; ctx.log(`${owner.name}'s Tithe Takers: no rival has a member.`); return; }
+        ctx.log(`${owner.name} uses Tithe Takers.`);
+        titheStep(ctx, owner, left);
+      },
+      botActivate: (ctx, owner) => ctx.state.round === 3 || ctx.rivals(owner).filter(o => o.members.length >= 3).length >= 2,
+    })),
     // balance pass 2 (pooled bench, both bots agree; design/eval/balance-pass-2.md): 12 → 6
-    m('proselytizer', 'Proselytizers', 3, 4,'Whenever you recruit, +1 follower.', { f: 2, // +1 follower (Cory, 2026-10-25)
+    m('proselytizer', 'Proselytizers', 3, 4,'Whenever you recruit, +1 follower.', { f: 2, ...old4, // +1 follower (Cory, 2026-10-25)
       // a recruit is a member or a follower purchase (Cory, 2026-10-21); not its own arrival
       onRecruit(ctx, owner, card, by, what) { if (by === owner && what.member?.uid !== card.uid) owner.bonus += 1; },
     }),
+    // REPLACE4 bot test (Nov 3, replacement batch 4): Proselytizers' place. 6 red + 3 any as a player sees it. Red members
+    // are the ones of the red color (Drifters set to red too; Dabblers isn't one). Any rival may be chosen; one whose
+    // members can't be swapped (Loyalists: only Loyalists itself moves) keeps those, as a swap would, and the owner's own
+    // Loyalists holds the owner's other members the same way. Members taken come in as the owner's recruits (their On
+    // Recruit fires), as with Red's swaps; members given are arrivals for the rival.
+    ...add4(m('defectors', 'Defectors', 5, 3, "On Use, once per game: swap all your red members, this one too, for all of one rival's red members.", {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const list = ctx.rivals(owner).filter(o => ctx.canSteal(owner, o, 'swap'));
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Defectors: no rival to swap with.`); return; }
+        ctx.choose(owner, "Defectors: swap all your red members for which rival's red members?", list.map(o => ({
+          id: `player:${o.id}`, label: `${o.name} (${defectList(ctx, o).map(c => c.def.name).join(', ') || 'no red members'})`, kind: 'player', value: o.id,
+          hint: defectWorth(ctx, o) - defectWorth(ctx, owner),
+        })), 'red.defect');
+      },
+      botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).some(o => ctx.canSteal(owner, o, 'swap') && defectWorth(ctx, o) - defectWorth(ctx, owner) >= 4),
+    })),
     m('mob', 'Mob', 7, 4, /* 12, 4 members (Cory, Oct 30); worth 4 (Cory, Nov 1: "Just make mob four") */ 'Game End: +1 follower per red member you have.', { f: 4, n: 4,
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'red'),
     }),
@@ -343,4 +396,20 @@ function missionTakeStep(ctx, p, allow) {
   ctx.choose(p, `Missionaries: recruit which member for free? (${allow.length} to go: up to ${[...allow].sort((a, b) => b - a).join(', ')})`, shop.map(c => ({
     id: `card:${c.uid}`, label: `${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + cost(c),
   })), 'red.missionTake', { allow });
+}
+
+// ---------- REPLACE4 bot test (Nov 3, replacement batch 4): Defectors and Tithe Takers ----------
+/** p's red members that may move in a swap (Loyalists holds the others). */
+const defectList = (ctx, p) => ctx.membersOf(p).filter(c => (c.asColor || c.def.quadrant) === 'red' && ctx.canSwapMember(c.uid));
+const defectWorth = (ctx, p) => defectList(ctx, p).reduce((n, c) => n + (c.def.f || 1) * 1.5 + cost(c) * 0.5, 0);
+/** The next rival in `left` (seat order) with a member gives one to the owner. */
+function titheStep(ctx, owner, left) {
+  const at = left.findIndex(id => ctx.player(id).members.length);
+  if (at < 0) return;
+  const o = ctx.player(left[at]);
+  ctx.choose(o, `Tithe Takers: give which of your members to ${owner.name}?`, ctx.membersOf(o).map(c => ({
+    id: `card:${c.uid}`, label: `${c.def.name} (${cost(c)})`, kind: 'member', value: c.uid,
+    // a hint for quick reads: the card worth least to keep (a spent or plain one), Old Maid first
+    hint: -((c.def.f || 1) * 1.5 + cost(c) * 0.5 + (c.used || c.def.vanilla ? 0 : 1)) + (c.def.onJoined ? 5 : 0),
+  })), 'red.tithe', { to: owner.id, left: left.slice(at + 1) });
 }

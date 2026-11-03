@@ -17,6 +17,7 @@
 import { registerQuadrant, allQuadrantIds, quadrant, defById, spacesOf } from './index.js';
 import { add2, old2, handlers2 } from './replace2.js';
 import { add3, old3, handlers3 } from './replace3.js';
+import { add4, old4, handlers4 } from './replace4.js';
 
 // IMPRESSIONIST=n: bot test only; the game pays 1 (Claude, under Cory's "use your judgement", Nov 3; was 2, Cory Nov 1)
 const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 1);
@@ -454,6 +455,16 @@ const echoQ = {
   ],
 
   handlers: {
+    ...handlers4({
+      // Opening Act: the rival's first placement of the round, copied once its own choices are made
+      openingAct(ctx, p, _v, data) {
+        const rival = ctx.player(data.pid);
+        const e = Object.values(ledger(ctx.state).now).filter(x => x.p === data.pid && actionKey(x.key) === data.key).sort((a, b) => (b.seq || 0) - (a.seq || 0))[0];
+        if (!e || !copyable(e)) { ctx.log(`${p.name}'s Opening Act: ${rival.name}'s first space gave nothing to copy.`); return; }
+        if (protectedAction(ctx, e, p)) { ctx.log(`${p.name}'s Opening Act: ${rival.name}'s Agents prevents copying ${e.name}.`); return; }
+        withPath(ctx, [], () => copy(ctx, p, e, { by: 'Opening Act' }), e.key);
+      },
+    }),
     ...handlers3({
       impersonate(ctx, p, uid, data) {
         const self = ctx.card(data.uid), target = ctx.card(uid);
@@ -632,12 +643,16 @@ const echoQ = {
     }),
     // Cory, 2026-10-28: "Roadie is good" (Green's 16th); cost 3 is Claude's
     // Cory, 2026-11-01 playtest: "roadie should be On Recruit as well" (now: its round-start part fires once on recruit)
-    m('roadie', 'Roadie', 1, 1, 'On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.', { now: true,
+    m('roadie', 'Roadie', 1, 1, 'On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.', { now: true, ...old4,
       onRoundStart(ctx, owner) {
         const g = ctx.countMembersOfColor(owner, 'echo');
         if (g) ctx.gain(owner, 'green', g);
       },
     }),
+    // REPLACE4 bot test (Nov 3, replacement batch 4): Roadie's place. 3 green + 1 any as a player sees it. Core scores it
+    // (contestTable, flag copycat): in each contest, a holder whose count is exactly the winner's minus 1, and at least 1,
+    // is one of its winners, so the prize splits as any tie's. A spoiled contest has no winner to tie.
+    ...add4(m('copycats', 'Copycats', 2, 1, 'Round End: in each contest where you hold exactly 1 less than the winner, you tie for it.', { copycat: true })),
     m('afterimage', 'Sleepwalker', 4, 2, 'On Recruit: copy one of your spaces from last round. Round Start: copy one of your spaces from last round.', { now: true,
       onRoundStart(ctx, owner) {
         const L = ledger(ctx.state);
@@ -671,7 +686,23 @@ const echoQ = {
       },
       botActivate: (ctx, owner) => owner.left === 0 && ctx.state.round >= 2
         && Math.max(0, ...ctx.rivals(owner).map(o => ownPlan(ctx, o).take.reduce((n, e) => n + entryValue(ctx, e, owner), 0))) >= (ctx.state.round === 3 ? 6 : 10),
+      ...old4,
     }),
+    // REPLACE4 bot test (Nov 3, replacement batch 4): Tribute Band's place. 7 green + 3 any as a player sees it. "The first
+    // minion of a round" is the round's first one placed on the wheel. It is a copy (Agents stops it, Bait and
+    // Impressionist answer it), made after that space's own choices and before its taker's recruit step.
+    ...add4(m('openingact', 'Opening Act', 6, 3, 'Whenever a rival places the first minion of a round, you do that action too.', { f: 2,
+      afterRivalAction(ctx, owner, card, qid, rival) {
+        const st = ctx.state;
+        if (card.opened === st.round || !ctx.placement) return;
+        const placed = Object.keys(st.slots).length + Object.values(st.squats || {}).reduce((n, list) => n + list.length, 0);
+        if (placed !== 1) return;
+        card.opened = st.round;
+        // behind the space's own choices (queued as it resolves, at the head), ahead of the taker's recruit step
+        const q = st.queue, at = q.findIndex(t => t.t !== 'choose' && t.t !== 'content');
+        q.splice(at < 0 ? q.length : at, 0, { t: 'content', p: owner.id, h: 'echo.openingAct', data: { key: ctx.placement.key, pid: rival.id } });
+      },
+    })),
     // Cory, 2026-10-15: moved here from Red (same card; its rename and recruit-time pick wait for his redesign)
     m('doppel', 'Doppelganger', 2, 2, 'On Recruit: this member becomes a copy of another of your members.', { round: 3, // joins in round III (Cory, 2026-10-25)
       onRecruited(ctx, owner, card) {
