@@ -56,6 +56,12 @@ describe('trade picker', () => {
     expect(container.querySelector('.gc-what').textContent).not.toContain('your');
   });
 
+  it('heads Body Snatchers with its own swap: one of yours for a rival’s (playtest, Nov 3)', () => {
+    const { s, a, c } = scene();
+    s.pending = { ...s.pending, prompt: 'Body Snatchers: swap one of your members with a rival’s of the same cost?', options: [{ kind: 'trade', id: `trade:${a}:${c}`, value: [a, c] }] };
+    expect(giftPick(s, s.pending).head).toBe('Swap one of yours for a rival’s of the same cost');
+  });
+
   it('keeps Promote and Demote ownership neutral and shows the new limits', () => {
     const { s, a, c } = scene();
     for (const title of ['Promote', 'Demote']) {

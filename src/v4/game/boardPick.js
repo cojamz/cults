@@ -171,7 +171,9 @@ export function giftPick(state, pend, first = null) {
   const swapKind = /^promote\b/i.test(title) || /^promote\b/i.test(question) ? 'Promote' : /^demote\b/i.test(title) || /^demote\b/i.test(question) ? 'Demote' : null;
   // the swap card trades within 2 cost, never only equal ones (its card: "costing up to 2 more or less")
   const swapCard = /swap card/i.test(question) || /swap card/i.test(title);
-  const tradeHead = swapKind === 'Promote' ? 'Promote a member' : swapKind === 'Demote' ? 'Demote a member' : swapCard ? 'Swap card: a member within 2 cost' : 'Swap any two equal-cost members';
+  // Body Snatchers trades one of yours for a rival's, never two rivals' (playtest, Nov 3: the generic head read "any two")
+  const snatch = /body snatchers/i.test(title) || /body snatchers/i.test(question);
+  const tradeHead = swapKind === 'Promote' ? 'Promote a member' : swapKind === 'Demote' ? 'Demote a member' : swapCard ? 'Swap card: a member within 2 cost' : snatch ? 'Swap one of yours for a rival’s of the same cost' : 'Swap any two equal-cost members';
   const head = { give: n ? `A rival you pick gets ${n}` : 'A rival you pick gets some', colors: 'Swap one for one', amount: 'Swap for another color', trade: tradeHead }[kind];
   // Trade Seeds' swaps still to make, on the card's title line ("1 swapped · 2 left")
   const swapTask = state.queue?.[0]?.h === 'yellow.swap' ? state.queue[0].data : null;

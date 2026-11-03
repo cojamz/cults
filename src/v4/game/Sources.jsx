@@ -69,7 +69,7 @@ export default function FollowerBars({ state, meId, ranks = null }) {
             </span>
             {lost.map(g => (
               <Tip key={g.key} as="span" className="src-lost num" label={`${poss} ${g.label.toLowerCase()}`} data-seg={g.key} data-n={g.n}
-                content={() => <div className="pop-card">{g.card}</div>}>{sign(g.n)}</Tip>
+                content={() => <div className="pop-card">{g.card}</div>}>{/* named, as a gain is (playtest, Nov 3: a bare "−5" said nothing) */}{g.label} {sign(g.n)}</Tip>
             ))}
           </span>
           <b className="src-tot num">{s.total}<Follower size={12} title="followers" /></b>

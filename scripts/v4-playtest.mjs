@@ -3,6 +3,7 @@
 //   env: PT_URL (default the live play link; a box that can't reach github.io serves main's play/ locally:
 //        git archive origin/main play | tar -x -C <dir>, then python3 -m http.server, and point PT_URL at it),
 //        PT_DECK=10|15, PT_SPEED=Quick|Steady|Relaxed, PT_EXTRAS=1 (undo, a reload each round, log, shop views),
+//        PT_CONTESTS='As printed'|'By color',
 //        PT_SMART=0..1 (share of the person's moves a Normal bot picks, the rest random legal), PT_OUT (.v4-playtest).
 // Person seats (P) answer on the board like a person; bots (B) play themselves. Writes shots, moves.txt, stories.txt,
 // results.txt and bugs.txt (console errors, stuck turns, odd text like "undefined", seat scores against the save,
@@ -41,6 +42,7 @@ for (let i = 0; i < 6; i++) {
 await page.locator('[aria-label="Bot level"] button', { hasText: new RegExp('^' + level + '$') }).click();
 await page.locator('button', { hasText: new RegExp('^' + (process.env.PT_SPEED || 'Quick') + '$') }).click();
 if (process.env.PT_DECK) await page.locator('button[role="radio"]', { hasText: new RegExp('^' + process.env.PT_DECK + ' per color$') }).click();
+if (process.env.PT_CONTESTS) await page.locator('[data-contest-pick] button', { hasText: new RegExp('^' + process.env.PT_CONTESTS + '$') }).click();
 await page.locator('button', { hasText: /^Custom$/ }).click();
 await page.waitForTimeout(200);
 // clear what's on, then pick ours
@@ -143,6 +145,34 @@ while (!(await page.$('.results'))) {
       }
       for (const r of Object.keys(st.players[s.pid].res)) if (st.players[s.pid].res[r] < 0) note(`seat ${s.pid} has negative ${r}`);
     }
+  }
+  // PT_GIVE=<def ids, comma>: hand the person (seat 0) these members early in round I, through the save and a reload,
+  // so a person (not only the bots) meets them in play. Their On Recruit doesn't fire; Round Start and the rest do.
+  if (process.env.PT_GIVE && !extrasDone.has('give') && look.round === '1' && look.phase === 'place') {
+    extrasDone.add('give');
+    const gave = await page.evaluate(ids => {
+      const v = JSON.parse(localStorage.getItem('patrons.v4.local'));
+      const s = v.state, me = s.players[0], out = [];
+      for (const id of ids) {
+        const uid = Object.keys(s.cards).map(Number).find(u => s.cards[u].def === id && !s.players.some(p => p.members.includes(u)));
+        if (uid == null) { out.push(id + ' missing'); continue; }
+        for (const arr of [s.pile, ...Object.values(s.waiting || {})]) { const i = arr.indexOf(uid); if (i >= 0) arr.splice(i, 1); }
+        const k = s.shop.indexOf(uid); if (k >= 0) { if (s.pile.length) s.shop[k] = s.pile.shift(); else s.shop.splice(k, 1); }
+        me.members.push(uid); out.push(id + ' ' + uid);
+      }
+      v.undo = null;
+      localStorage.setItem('patrons.v4.local', JSON.stringify(v));
+      return out;
+    }, process.env.PT_GIVE.split(','));
+    appendFileSync(`${OUT}/extras.txt`, `gave ${gave.join(', ')}\n`);
+    console.log('gave', gave.join(', '));
+    await page.reload();
+    const res = await page.waitForSelector('[data-home="resume"]', { timeout: 8000 }).catch(() => null);
+    if (res) await res.click();
+    else note('give: no Resume after reload', await shot('give-resume'));
+    await page.waitForSelector('.lt-seat[data-pid]', { timeout: 10000 }).catch(() => note('give: table did not come back', null));
+    await shot('after-give');
+    continue;
   }
   if (look.round !== lastRound) { lastRound = look.round; }
   steps++;
