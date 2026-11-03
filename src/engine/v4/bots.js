@@ -490,8 +490,8 @@ function liquidate(s, res, extra, buys, wild) {
   const used = {};
   let got = 0;
   const tiers = TIERS_BY_GET;
-  // the pool's total, added in its key order (as sum() did)
-  const poolSum = () => { let t = 0; for (const k of keys) t += pool[k]; return t; };
+  // the pool's total, in its own key order as sum() added it (s.resources can name a color twice: two rings of one color)
+  const poolSum = () => { let t = 0; for (const k in pool) t += pool[k]; return t; };
   for (let b = 0; b < buys; b++) {
     let bought = false;
     for (const t of tiers) {
