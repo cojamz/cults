@@ -6,7 +6,7 @@ import { Tip, NamedText, asYou } from './Info.jsx';
 import { Who } from './Glyphs.jsx';
 import { gameRecord } from '../session/record.js';
 import { saveGame } from '../session/archive.js';
-import { SourceBars, SourceGrid } from './Sources.jsx';
+import { SourceBars, SourceGrid, KindBars } from './Sources.jsx';
 
 const lookParam = () => { try { return new URLSearchParams(location.search).get('results'); } catch { return null; } };
 
@@ -31,7 +31,7 @@ export default function Results({ state, onPlayAgain, onHome, meId = null }) {
         <span>{winners.map(nm).join(' & ')}</span> {winners.length > 1 ? 'tie' : winners[0].id === meId ? 'win' : 'wins'} with <span className="num big">{top}</span> followers
       </h2>
       <p className="why" data-why>{meId != null ? asYou(winSentence(state), state.players[meId].name) : winSentence(state)}</p>
-      {lookParam() === 'bars' ? <SourceBars state={state} meId={meId} /> : lookParam() === 'grid' ? <SourceGrid state={state} meId={meId} /> : <div className="table-scroll">
+      {lookParam() === 'kinds' ? <KindBars state={state} meId={meId} /> : lookParam() === 'bars' ? <SourceBars state={state} meId={meId} /> : lookParam() === 'grid' ? <SourceGrid state={state} meId={meId} /> : <div className="table-scroll">
         {/* every number opens what it's made of (w3b #52); a column that's the same for everyone folds away: "Yourself"
             (1 each) joins the members, and End-game shows only when some member scored at game end (w3a #40) */}
         <table className="res-t">
@@ -99,7 +99,7 @@ export default function Results({ state, onPlayAgain, onHome, meId = null }) {
         </table>
       </div>}
       {/* the columns add up to the total; a word the rulebook doesn't use never explains one ("raids", w3a #40) */}
-      {lookParam() === 'bars' || lookParam() === 'grid' ? <p className="hint">Each part opens what it’s made of: members, prizes, followers won during play and at game end. Every cult’s leader counts 1 more.</p> : <p className="hint">Each number opens what it’s made of.{playCol ? ' During play: followers won or lost through members’ abilities and spaces.' : ''} Prizes: the rims’ round-end prizes.{endCol ? ' End-game: members that score when the game ends.' : ''}</p>}
+      {['bars', 'grid', 'kinds'].includes(lookParam()) ? <p className="hint">Each part opens what it’s made of: members, prizes, followers won during play and at game end. Every cult’s leader counts 1 more.</p> : <p className="hint">Each number opens what it’s made of.{playCol ? ' During play: followers won or lost through members’ abilities and spaces.' : ''} Prizes: the rims’ round-end prizes.{endCol ? ' End-game: members that score when the game ends.' : ''}</p>}
       {brokeTie && <p className="hint">Tied on followers: more members breaks the tie.</p>}
       {/* (no list of end-game bonuses under the table: the End-game column's hover names each one, and the cults below pop
           each over the member that scored it; the list repeated both, Claude under Cory's go-with-your-gut, 2026-10-21) */}

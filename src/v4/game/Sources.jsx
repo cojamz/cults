@@ -9,7 +9,7 @@ import { Tip } from './Info.jsx';
 import { Who } from './Glyphs.jsx';
 import { Follower } from '../art/Follower.jsx';
 import { followerSources, spacesTaken } from './sources.js';
-import { plural } from '../format.js';
+import { plural, breakdown, contestLines } from '../format.js';
 import './sources.css';
 
 const cname = qid => (qid ? quadrant(qid).name : 'Grey');
@@ -105,5 +105,44 @@ export function SourceGrid({ state, meId }) {
         ))}
       </tbody>
     </table>
+  );
+}
+
+/** Bars split by kind of source, in the table's own wood tones (Cory, 2026-11-03: "I like bars, i don't like that they
+ *  seem to correspond to existing colors"). Members, prizes, bought, won during play, game end. */
+export function KindBars({ state, meId }) {
+  const rows = useRows(state, meId);
+  const max = Math.max(1, ...rows.map(r => r.s.total));
+  return (
+    <div className="src-bars kinds" data-sources="kinds">
+      {rows.map(({ p, s, poss }, k) => {
+        const b = breakdown(state, p);
+        const n = memberCount(state, p);
+        const segs = [
+          { key: 'members', n: b.members + b.self, label: 'Members', card: <><b>{poss} members: {b.members + b.self}</b><span>{plural(n, 'member')} {b.members}, and 1 for {p.id === meId ? 'you' : 'the leader'}</span>{s.colors.filter(c => c.count).map(c => <span key={c.qid}>{plural(c.count, `${cname(c.qid).toLowerCase()} member`)}: +{c.members}</span>)}{s.neutral.count ? <span>{plural(s.neutral.count, 'grey member')}: +{s.neutral.members}</span> : null}</> },
+          { key: 'prizes', n: b.contests, label: 'Prizes', card: <><b>{poss} prizes: {b.contests}</b>{contestLines(state, p).map(l => <span key={l.rule}>{l.text}</span>)}</> },
+          { key: 'bought', n: b.bought, label: 'Bought', card: <b>{poss} follower buys: {b.bought}</b> },
+          { key: 'play', n: b.effects, label: 'Play', card: <><b>{poss} followers won in play: {sign(b.effects)}</b>{b.play.map(l => <span key={l.label}>{l.label} {sign(l.n)}</span>)}</> },
+          { key: 'end', n: b.endGame, label: 'End', card: <><b>{poss} game-end bonuses: {sign(b.endGame)}</b>{b.parts.map(t => <span key={t}>{t}</span>)}</> },
+        ].filter(g => g.n > 0);
+        return (
+          <div key={p.id} className={`src-row${k === 0 ? ' first' : ''}`} data-src-row={p.id}>
+            <span className="rank num">{k + 1}</span>
+            <span className="src-who"><Who state={state} id={p.id} meId={meId} /><small>{plural(n, 'member')}{s.lean ? ` · mostly ${cname(s.lean).toLowerCase()}` : ''}</small></span>
+            <span className="src-track">
+              <span className="src-bar" style={{ width: `${(100 * s.total) / max}%` }}>
+                {segs.map(g => (
+                  <Tip key={g.key} as="span" className={`src-seg kind-${g.key}`} style={{ flexGrow: g.n }} label={`${poss} ${g.label.toLowerCase()}`} data-seg={g.key} data-n={g.n}
+                    content={() => <div className="pop-card">{g.card}</div>}>
+                    {g.n / max >= 0.06 && <span className="src-lab">{g.n / max >= (g.label.length > 4 ? 0.13 : 0.075) ? `${g.label} ` : ''}<b className="num">{g.n}</b></span>}
+                  </Tip>
+                ))}
+              </span>
+            </span>
+            <b className="src-tot num">{s.total}<Follower size={12} title="followers" /></b>
+          </div>
+        );
+      })}
+    </div>
   );
 }

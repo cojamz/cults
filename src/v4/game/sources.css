@@ -42,3 +42,11 @@ table.src-grid{border-collapse:separate;border-spacing:4px 4px;width:100%;font-v
 .src-grid td.src-tot{white-space:nowrap}
 
 .src-card .src-spaces{color:var(--muted)}
+
+/* ---------- bars by kind: wood and cream tones, no game colors ---------- */
+.kinds .src-seg{color:var(--cream)}
+.kinds .kind-members{background:color-mix(in srgb,var(--cream) 34%,#1b130c);color:#1b130c}
+.kinds .kind-prizes{background:color-mix(in srgb,var(--cream) 22%,#1b130c)}
+.kinds .kind-bought{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--cream) 12%,transparent) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cream) 22%,transparent);color:var(--cream-2)}
+.kinds .kind-play,.kinds .kind-end{background:color-mix(in srgb,var(--cream) 10%,#1b130c);color:var(--cream-2)}
+.kinds .src-row.first .kind-members{background:var(--cream)}
