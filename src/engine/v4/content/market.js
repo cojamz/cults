@@ -7,6 +7,7 @@ import { REPLACE1, add1, old1, handlers1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add4, old4, handlers4 } from './replace4.js';
+import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const B = 'blue';
@@ -510,7 +511,8 @@ const market = {
     // REPLACE4 bot test (Nov 3, replacement batch 4): Window Shopper's place. 5 blue + 3 any as a player sees it. Core runs
     // it (flag roundEndBuy): after each round's contests are scored, one recruit step (a member or followers) per holder
     // in that round's turn order, before the row goes to the bottom; in round III, before the Game End cards count.
-    ...add4(m('lateshoppers', 'Late Shoppers', 4, 3, 'Round End: after contests are scored, recruit once.', { roundEndBuy: true })),
+    ...add4(m('lateshoppers', 'Late Shoppers', 4, 3, 'Round End: after contests are scored, recruit once.', { roundEndBuy: true,
+      ...see(i => endsAhead(i).length * 2.5) })), // BOTSEE: an extra recruit each round end still ahead
     m('restocker', 'Restockers', 2, 1, 'On Use, once per game: send the whole shop to the bottom of the pile, then refill.', {
       f: 2, // (Cory, Oct 29, balance run: +1 follower)
       activate: 'game',

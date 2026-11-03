@@ -8,6 +8,7 @@ import { add1, old1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add5, old5, handlers5 } from './replace5.js';
+import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
@@ -404,6 +405,8 @@ const thieves = {
     // order): one rival, then which 2 of theirs, through the shared steal (Bodyguards, Lie Low and Hush Money apply;
     // Desperado adds). Stolen resources keep their color.
     ...add5(m('secondstory', 'Second-Story Men', 3, 3, 'Round End: before contests are scored, steal 2 resources from one rival.', {
+      // BOTSEE: each round end still ahead, 2 resources taken from a rival, plus a quarter chance it swings a contest
+      ...see(i => (i.rivals.some(o => Object.values(o.res).some(v => v > 0)) ? endsAhead(i).reduce((a, r) => a + 2 * resAt(r) * (1 + SEE_SPITE) + 0.25 * SEE_RING[r - 1], 0) : 0)),
       onAllPlaced(ctx, owner) {
         const list = ctx.rivals(owner).filter(o => stealable(ctx, owner, o) > 0);
         if (!list.length) { ctx.log(`${owner.name}'s Second-Story Men: no rival to steal from.`); return; }
@@ -421,6 +424,8 @@ const thieves = {
     // of loose followers (bought or won; never the ones members are worth) through the shared steal, so Bodyguards and
     // Lie Low block it and Snitch, Robin Hood and Hush Money answer it. Sticky Fingers adds nothing: they aren't resources.
     ...add2(m('skimmers', 'Skimmers', 3, 2, 'Whenever a rival buys 10 followers, steal 3 of them.', {
+      // BOTSEE: each rival placement left buys 10 followers with a chance that grows by round (5%, 20%, 40%)
+      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r] * [0.05, 0.2, 0.4][r - 1], 0) * 3 * (1 + SEE_SPITE)),
       onBuyFollowers(ctx, owner, card, buyer, tier) {
         if (buyer === owner || !(tier?.get >= 10) || !ctx.canSteal(owner, buyer)) return;
         const got = ctx.steal(owner, buyer, { followers: 3 });
@@ -457,6 +462,8 @@ const thieves = {
     // for each contest a rival wins (tied winners each count), 2 of that contest's color from that rival, through the
     // shared steal (Bodyguards and Lie Low block it; Sticky Fingers and Desperado add). Round III's comes at game end.
     ...add1(m('racketeers', 'Racketeers', 3, 2, 'Whenever a rival wins a contest, steal 2 of that color from them.', {
+      // BOTSEE: each round end still ahead, rivals win (seats − 1)/seats of the contests, 2 resources from each
+      ...see(i => endsAhead(i).reduce((a, r) => a + i.s.quadrants.length * ((i.n - 1) / i.n) * 2 * resAt(r) * (1 + SEE_SPITE), 0)),
       onRivalContestWin(ctx, owner, card, winner, contest) {
         const color = ctx.quadrant(contest.qid).resource;
         if (!color || !(winner.res[color] > 0) || !ctx.canSteal(owner, winner)) return;
@@ -478,6 +485,8 @@ const thieves = {
     // Evictors…); a rival's Bodyguards or Lie Low blocks it. The member is your recruit (its On Recruit fires), as a
     // stolen member is; the rival keeps what their space paid. The row going to the bottom between rounds doesn't count.
     ...add5(m('vultures', 'Vultures', 4, 3, "Whenever a rival's member goes to the shop or the bottom of the pile, you may steal it.", {
+      // BOTSEE: about one rival member in 20 rival placements leaves their cult, worth about 5 followers to take
+      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.05 * 5),
       onCultMove(ctx, owner, card, { uid, from, to }) {
         if (to || !from || from === owner || uid === card.uid || !ctx.canSteal(owner, from, 'member')) return;
         const c = ctx.card(uid);
@@ -543,6 +552,8 @@ const thieves = {
     // followers isn't one), any rival's steal, from you too. The 1 is of a color the thief took, the one they took most
     // of that they still hold. A steal Jackals makes doesn't set off another Jackals. Bodyguards on the thief blocks it.
     ...add5(m('jackals', 'Jackals', 3, 2, 'Whenever a rival steals resources, steal 1 of them from that rival.', {
+      // BOTSEE: about one steal in 7 rival placements, 1 resource from the thief
+      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r] * 0.15 * resAt(r) * (1 + SEE_SPITE), 0)),
       onSteal(ctx, owner, card, info) {
         const thief = info.thief;
         if (thief === owner || info.jackals || info.uid !== undefined || card.inst === info.instance) return;

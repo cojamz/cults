@@ -19,6 +19,7 @@ import {
 } from './core.js';
 import { defById, quadrant, handlerById } from './content/index.js';
 import { REPLACE3 } from './content/replace3.js';
+import { BOTSEE } from './content/botsee.js';
 import { plainCopy, copyPart } from './copy.js';
 import { chooseThinkerMove } from './thinker.js';
 import { planFor, planSetupPick } from './mind.js';
@@ -317,7 +318,7 @@ function rateOnCopy(state, pend, options, { base = false } = {}) {
 
 /** What each player's members still do, in followers (abilityValue, read from the table they sit at). */
 function abilityTotals(s, places, k = K_ABILITY) {
-  return s.players.map(p => p.members.reduce((a, u) => a + abilityValue(cardDef(s, u), places[p.id], k), 0));
+  return s.players.map(p => p.members.reduce((a, u) => a + abilityValue(cardDef(s, u), places[p.id], k, s, p.id), 0));
 }
 
 /** A quick read of a swap of cards a and b for `chooser` (no copy of the game): each side's gain in followers and
@@ -328,7 +329,7 @@ export function tradeScore(state, chooser, [a, b], places = null) {
   const left = places || state.players.map(() => 6);
   const worth = (u, at) => {
     const d = cardDef(state, u);
-    return (d.f || 0) + abilityValue(d, left[at] ?? 6);
+    return (d.f || 0) + abilityValue(d, left[at] ?? 6, K_ABILITY, state, at);
   };
   const d = {};
   const oa = owner(a), ob = owner(b);
@@ -585,10 +586,12 @@ const DATA_KEYS = new Set(['key', 'name', 's', 'w', 'text', 'f', 'n', 'id', 'qua
 const MEASURED = new Set(['onGameEnd', 'onRecruited', 'botActivate', 'estimate']);
 const PLAIN_TEXT = /^(Free\. )?((Worth \d+ followers?\.|No effect\.|Counts as \d+ members\.)\s*)+$/;
 /** A member's ability, in followers, for the turns left (its stars are counted separately). */
-export function abilityValue(def, placementsLeft, k = K_ABILITY) {
+export function abilityValue(def, placementsLeft, k = K_ABILITY, s = null, ownerId = null) {
   if (def.vanilla || PLAIN_TEXT.test((def.text || '').trim())) return 0;
-  // a card whose whole effect the evaluation already sees when it joins (Saboteur's −3)
-  if (def.botValue !== undefined) return def.botValue;
+  // BOTSEE bot test: a card's own estimate, from the game it sits in (content/botsee.js); without a game, the formula below
+  if (typeof def.botValue === 'function') {
+    if (s && ownerId !== null && s.players[ownerId]) try { return def.botValue(seeInfo(s, ownerId, placementsLeft)); } catch { /* the formula */ }
+  } else if (def.botValue !== undefined) return def.botValue; // a card whose whole effect the evaluation already sees when it joins (Saboteur's −3)
   const keys = Object.keys(def).filter(x => !DATA_KEYS.has(x));
   // pays on recruit or at game end only: measured directly
   if (keys.length && keys.every(x => MEASURED.has(x))) return 0;
@@ -596,6 +599,32 @@ export function abilityValue(def, placementsLeft, k = K_ABILITY) {
   // by key (Choir, Muse, Wallflower). Flags and key-read passives used to count as no ability at all, so bots released
   // Corner-Cutter for its refund before it ever halved a turn (fire audit, 2026-10-15).
   return k * (def.s + def.w) * Math.min(1, placementsLeft / 12);
+}
+/** What a BOTSEE estimate reads (content/botsee.js): the round, the owner, and the placements left (the owner's, and
+ *  rivals' by round, taking each rival to have as many left this round as the owner). */
+function seeInfo(s, ownerId, placesLeft) {
+  const n = s.players.length;
+  const later = laterTurns(s).turns;
+  const myNow = Math.max(0, placesLeft - later);
+  const rivalByRound = { 1: 0, 2: 0, 3: 0 };
+  rivalByRound[s.round] = myNow * (n - 1);
+  for (let r = s.round + 1; r <= 3; r++) rivalByRound[r] = WORKERS[r - 1] * (n - 1);
+  return { s, owner: s.players[ownerId], rivals: s.players.filter(p => p.id !== ownerId), round: s.round, n, placesLeft, myNow, rivalByRound, income: INCOME };
+}
+/** BOTSEE bot test (fix A): what an On Use member just recruited on copy s would gain from being used, for each use it
+ *  still has (once a game: 1 if a turn is left; once a round: this round's if a turn is left, plus one per later round),
+ *  measured as useGain measures a use of one already owned. 0 when it has no use left or using it gains nothing. */
+function seeUse(state, s, me, uid) {
+  const card = s.cards[uid];
+  const act = [card.def, card.copy, card.ability].filter(Boolean).map(defById).find(d => d.onActivate);
+  if (!act || card.used) return 0;
+  const p = s.players[me];
+  const later = Math.max(0, 3 - s.round);
+  const uses = act.activate === 'round' ? (p.left > 0 ? 1 : 0) + later : (p.left > 0 || later > 0 ? 1 : 0);
+  if (!uses) return 0;
+  // the copy's queue is empty: the real one tells useGain the turns still ahead
+  const g = useGain({ ...s, queue: state.queue, pending: { player: me } }, uid);
+  return g && g.gain > 0 ? g.gain * uses : 0;
 }
 
 /**
@@ -704,7 +733,7 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
         let undo = false;
         settle(s, ctx, t => { undo = undo || undoesSwap(state, s, me, t); });
         // members the action brought in (Open Door, Hand-pick…) bring their abilities too
-        const gained = p.members.filter(u => !had.has(u)).reduce((a, u) => a + abilityValue(cardDef(s, u), placesLeft, opts.k), 0);
+        const gained = p.members.filter(u => !had.has(u)).reduce((a, u) => a + abilityValue(cardDef(s, u), placesLeft, opts.k, s, me), 0);
         v = marginOf(evaluate(s, buysAt(s, 1 + moreBuys + moreTurns), incomeAt(s, moreTurns), roundLeft, { [me]: gained }, opts.future), me, opts.spite);
         if (opts.noMembers && memberCount(s, p) > before) v -= 100;
         if (undo) v -= UNDO_SWAP;
@@ -726,7 +755,8 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
         if (what.uid !== undefined) {
           ctx.recruit(p, what.uid, { free: false, spend: full });
           settle(s, ctx);
-          extraAbility[me] = abilityValue(cardDef(s, what.uid), placesLeft, opts.k);
+          extraAbility[me] = abilityValue(cardDef(s, what.uid), placesLeft, opts.k, s, me);
+          if (BOTSEE) extraAbility[me] = Math.max(extraAbility[me], seeUse(state, s, me, what.uid));
         } else if (what.swap) {
           // the swap card's price (Nov 1 8:25pm), then the swap itself
           for (const r of s.resources) p.res[r] -= full[r];
@@ -753,7 +783,7 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
         const def = cardDef(s, uid);
         refundInto(s, p, uid);
         p.members = p.members.filter(u => u !== uid);
-        return marginOf(evaluate(s, buysAt(s, 1), incomeAt(s), roundLeft, { [me]: -abilityValue(def, placesLeft, opts.k) }), me, opts.spite) - 0.5;
+        return marginOf(evaluate(s, buysAt(s, 1), incomeAt(s), roundLeft, { [me]: -abilityValue(def, placesLeft, opts.k, state, me) }), me, opts.spite) - 0.5;
       } catch {
         return -1e6;
       }
@@ -790,7 +820,7 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
             const s = lightClone(state);
             const ctx = contextFor(s);
             const rival = owner(s, b);
-            const extra = { [me]: abilityValue(cardDef(s, b), placesLeft, opts.k) - abilityValue(cardDef(s, a), placesLeft, opts.k) };
+            const extra = { [me]: abilityValue(cardDef(s, b), placesLeft, opts.k, s, me) - abilityValue(cardDef(s, a), placesLeft, opts.k, s, me) };
             if (rival) extra[rival.id] = -extra[me];
             if (!ctx.swapMembers(s.players[me], a, b)) continue;
             paySwapCard(s, s.players[me]); // its price, paid the default way (Cory, Nov 1 8:25pm: "cost 2 wild")
@@ -856,7 +886,7 @@ function releaseOption(state, opts) {
       const def = cardDef(s, o.uid);
       refundInto(s, p, o.uid);
       p.members = p.members.filter(u => u !== o.uid);
-      const v = marginOf(evaluate(s, buys, income, roundLeft, { [me]: -abilityValue(def, placesLeft, opts.k) }, opts.future), me, opts.spite);
+      const v = marginOf(evaluate(s, buys, income, roundLeft, { [me]: -abilityValue(def, placesLeft, opts.k, state, me) }, opts.future), me, opts.spite);
       if (v > bestV) { bestV = v; best = o; }
     } catch { /* skip */ }
   }

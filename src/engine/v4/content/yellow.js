@@ -7,6 +7,7 @@ import { startLaunder } from './launder.js';
 import { add1, old1, handlers1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
 import { add5, old5 } from './replace5.js';
+import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
 const Y = 'yellow';
@@ -291,6 +292,8 @@ export default {
     // REPLACE2 bot test (Nov 3, replacement batch 2): Meddler's place. 4 yellow + 2 any as a player sees it. Trade
     // Seeds' own swaps, asked after the round's last placement and before anything is scored (core's allPlaced step).
     ...add2(m('nightmarket', 'Night Market', 3, 2, 'Round End: before contests are scored, swap up to 3 of your resources for other colors, one for one.', {
+      // BOTSEE: each round end still ahead, about a 30% chance the swap wins or saves a contest
+      ...see(i => endsAhead(i).reduce((a, r) => a + 0.3 * SEE_RING[r - 1], 0)),
       onAllPlaced(ctx, owner) {
         const k = Math.min(3, total(ctx, owner));
         if (!k) { ctx.log(`${owner.name}'s Night Market: nothing to swap.`); return; }

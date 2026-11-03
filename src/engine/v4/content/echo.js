@@ -18,6 +18,7 @@ import { registerQuadrant, allQuadrantIds, quadrant, defById, spacesOf } from '.
 import { add2, old2, handlers2 } from './replace2.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add4, old4, handlers4 } from './replace4.js';
+import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 // IMPRESSIONIST=n: bot test only; the game pays 1 (Claude, under Cory's "use your judgement", Nov 3; was 2, Cory Nov 1)
 const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 1);
@@ -692,6 +693,8 @@ const echoQ = {
     // minion of a round" is the round's first one placed on the wheel. It is a copy (Agents stops it, Bait and
     // Impressionist answer it), made after that space's own choices and before its taker's recruit step.
     ...add4(m('openingact', 'Opening Act', 6, 3, 'Whenever a rival places the first minion of a round, you do that action too.', { f: 2,
+      // BOTSEE: each later round, a rival goes first (seats − 1 in seats), and a copied action brings about 80% of a placement
+      ...see(i => [1, 2, 3].filter(r => r > i.round).reduce((a, r) => a + ((i.n - 1) / i.n) * 0.8 * i.income[r - 1], 0)),
       afterRivalAction(ctx, owner, card, qid, rival) {
         const st = ctx.state;
         if (card.opened === st.round || !ctx.placement) return;
