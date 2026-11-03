@@ -499,11 +499,18 @@ function liquidate(s, res, extra, buys, wild) {
       // a fair share of a limited stock: the rest will likely go to rivals (so a scarce buy is worth taking now)
       if (t.limited && (used[t.key] || 0) >= Math.floor(tierLeft(s, t) / n)) continue;
       if (poolSum() < t.cost - 1e-9) continue;
-      const plain = keys.filter(k => !wild.has(k) && pool[k] >= 1).sort((x, y) => pool[y] - pool[x]);
-      const wilds = keys.filter(k => wild.has(k));
+      // the colors held at 1 or more, biggest first (a stable sort); a one-color buy needs only the first of them
+      let plain;
+      if (t.colors === 1) {
+        let top = null, count = 0;
+        for (const k of keys) if (!wild.has(k) && pool[k] >= 1) { count++; if (top === null || pool[k] > pool[top]) top = k; }
+        plain = { length: count, first: top };
+      } else plain = keys.filter(k => !wild.has(k) && pool[k] >= 1).sort((x, y) => pool[y] - pool[x]);
+      const wilds = wild.size ? keys.filter(k => wild.has(k)) : [];
       if (plain.length + wilds.reduce((a, k) => a + Math.floor(pool[k]), 0) < t.colors) continue;
       let need = t.cost, c = t.colors;
-      for (const k of plain) { if (!c) break; pool[k] -= 1; need -= 1; c -= 1; }
+      if (t.colors === 1) { if (plain.first !== null) { pool[plain.first] -= 1; need -= 1; c -= 1; } }
+      else for (const k of plain) { if (!c) break; pool[k] -= 1; need -= 1; c -= 1; }
       for (const k of wilds) while (c > 0 && pool[k] >= 1) { pool[k] -= 1; need -= 1; c -= 1; }
       while (need > 1e-9) {
         const k = keys.reduce((x, y) => (pool[y] > pool[x] ? y : x));
