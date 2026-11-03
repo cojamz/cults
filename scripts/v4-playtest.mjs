@@ -130,6 +130,18 @@ while (!(await page.$('.results'))) {
     }
     return out;
   });
+  // anything inside the question's card running past its edges (playtest Nov 3: Body Snatchers' members ran off the right)
+  const spill = await page.evaluate(() => {
+    const card = document.querySelector('.prompt.choice'); if (!card) return null;
+    const cr = card.getBoundingClientRect(); const out = [];
+    for (const e of card.querySelectorAll('button, .gc-item, .gc-member')) {
+      const r = e.getBoundingClientRect(); if (!r.width) continue;
+      let clip = false; for (let a = e.parentElement; a && a !== card; a = a.parentElement) { const ov = getComputedStyle(a).overflowX; if (ov === 'auto' || ov === 'scroll') { clip = true; break; } }
+      if (!clip && (r.right > cr.right + 1 || r.left < cr.left - 1)) out.push(`"${e.innerText.replace(/\s+/g, ' ').slice(0, 24)}" ${Math.round(r.right - cr.right)}px past the card (card ${Math.round(cr.width)}px, parent ${card.parentElement.className.slice(0, 30)})`);
+    }
+    return out.length ? out.slice(0, 3).join('; ') : null;
+  });
+  if (spill) note(`question card spills: ${spill}`, await shot('spill'));
   for (const x of since) note(`since strip: ${x}`, await shot('since'));
   for (const b of look.bad) note(`odd text on screen: "${b.trim()}"`, await shot('odd-text'));
   // screen vs saved state (after the save lands)

@@ -15,6 +15,7 @@ import { spriteId } from '../art/index.js';
 import { cardColor, onTable } from './Info.jsx';
 import { realHover } from '../hover.js';
 import { TurnOf } from './parts.jsx';
+import { breakable } from './hyphen.js';
 import './giftcard.css';
 
 const LABELS = { share: [null, 'To'], color: [null, null], give: ['Color', 'To'], gift: [null, 'To'], colors: ['Give', 'Get'], amount: ['Get', 'How many'], trade: ['Member', 'For'], steal: [null, null], recruit: [null, null], move: [null, null], change: [null, null] };
@@ -171,7 +172,8 @@ export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, plac
             {parts.length ? parts.map((c, k) => <span key={k} className="gc-cd num" data-res={c.color} data-any={c.color === 'any' ? anyParts() : undefined} style={c.color === 'any' ? undefined : { '--d': `var(--q-${c.color}, var(--${c.color}))` }}>{c.n}</span>) : <span className="gc-free">free</span>}
           </span>
         </span>
-        <span className="gc-name">{d.name}</span>
+        {/* a long single word breaks at its seam in a narrow tile (playtest Nov 3: "Deprogramme" cut in a dense swap) */}
+        <span className="gc-name">{breakable(d.name)}</span>
       </>
     );
   };

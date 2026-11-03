@@ -7,7 +7,10 @@ function seam(w) {
   const lo = 4, hi = w.length - 4, mid = w.length / 2;
   let best = -1;
   const take = i => { if (best < 0 || Math.abs(i - mid) < Math.abs(best - mid)) best = i; };
-  for (let i = lo; i <= hi; i++) if (!V.test(w[i - 1]) && !V.test(w[i])) take(i);
+  // never inside a pair that starts a syllable ("th", "gr", "ph", "pl": Philan-thropists and Deprogram-mers, not
+  // Philant-hropists and Deprog-rammers; playtest Nov 3)
+  const onset = i => (/[bcdfgkpstw]/i.test(w[i - 1]) && /[hlr]/i.test(w[i])) || (/[tscp]/i.test(w[i - 2] || '') && /h/i.test(w[i - 1]) && /[rl]/i.test(w[i]));
+  for (let i = lo; i <= hi; i++) if (!V.test(w[i - 1]) && !V.test(w[i]) && !onset(i)) take(i);
   if (best < 0) for (let i = lo; i <= hi; i++) if (V.test(w[i - 1]) && !V.test(w[i]) && V.test(w[i + 1] || '')) take(i);
   return best;
 }
