@@ -5,6 +5,7 @@
 import { gainColorOf } from './color-of.js';
 import { startLaunder } from './launder.js';
 import { add1, old1, handlers1 } from './replace1.js';
+import { add2, old2 } from './replace2.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
 const Y = 'yellow';
@@ -265,9 +266,18 @@ export default {
       onRecruited(ctx, owner) { startChange(ctx, owner, { who: 'Agitator', left: 4 }); },
     }),
     // Claude's fill-in (Cory, 2026-10-31: "just come up with whatever's remaining quick")
-    m('ringleader', 'Ringleader', 3, 2, "On Recruit: change 1 of each rival's resources one for one. +1 follower per rival changed.", {
+    m('ringleader', 'Ringleader', 3, 2, "On Recruit: change 1 of each rival's resources one for one. +1 follower per rival changed.", { ...old2,
       onRecruited(ctx, owner) { startChange(ctx, owner, { who: 'Ringleader', left: touchable(ctx, owner).length, perRival: true, follower: true }); },
     }),
+    // REPLACE2 bot test (Nov 3, replacement batch 2): Ringleader's place. 4 yellow + 2 any as a player sees it. Trade
+    // Seeds' own swaps, asked after the round's last placement and before anything is scored (core's allPlaced step).
+    ...add2(m('nightmarket', 'Night Market', 3, 2, 'Round End: before contests are scored, swap up to 3 of your resources for other colors, one for one.', {
+      onAllPlaced(ctx, owner) {
+        const k = Math.min(3, total(ctx, owner));
+        if (!k) { ctx.log(`${owner.name}'s Night Market: nothing to swap.`); return; }
+        transmuteStep(ctx, owner, { who: 'Night Market', left: k, done: 0 });
+      },
+    })),
     // Cory, 2026-10-31 ("Drifters is good"; worth 2)
     m('drifters', 'Drifters', 2, 0, 'Worth 2 followers. On Recruit: choose a color; these count as a member of that color.', { f: 2,
       onRecruited(ctx, owner, card) {

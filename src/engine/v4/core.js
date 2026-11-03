@@ -598,9 +598,12 @@ function inputFor(state, task) {
         const d = cardDef(state, uid), back = releaseRefund(state, uid);
         if (back.n > 0) opts.push({ id: `release:${uid}`, label: `Release ${d.name} for ${back.label}`, kind: 'release', uid, refund: back.n, color: back.color });
       }
+      // Doorbusters' round-start recruit: a member or followers only (it isn't a turn)
+      if (task.doorbuster) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'card' || o.kind === 'tier'));
       const real = opts.filter(o => o.kind === 'card' || o.kind === 'tier' || o.kind === 'use' || o.kind === 'release' || o.kind === 'swapcard');
       if (!real.length) return { kind: 'buy', prompt: '', options: [], onEmpty: task.extra ? undefined : () => log(state, `${p.name} couldn't afford anything.`) };
       opts.push({ id: 'pass', label: 'Pass', kind: 'pass' });
+      if (task.doorbuster) return { kind: 'buy', prompt: `${p.name}: Doorbusters: recruit once before anyone places, or pass`, options: opts };
       return { kind: 'buy', extra: !!task.extra, prompt: task.extra ? `${p.name}: recruit again (Big Spender), or pass` : `${p.name}: recruit a member or followers${more ? ` (${more + 1} recruits left)` : ''}, or pass`, options: opts };
     }
     case 'choose': {
@@ -989,7 +992,12 @@ function startRound(state, r) {
   // the cards that bend this round's order and workers are named, so the order and the extra worker trace to them
   const hands = base.filter(id => extras[id].length).map(id => `${state.players[id].name}'s ${flagName(state, state.players[id], 'extraWorkers')}: +${extras[id].length} minion${extras[id].length > 1 ? 's' : ''}.`);
   log(state, `Round ${roman(r)} begins. ${state.players[base[0]].name} picks first.${lead.length ? ` (${lead.map(id => `${state.players[id].name}'s ${flagName(state, state.players[id], 'pickFirst')}`).join(', ')}: always pick${lead.length === 1 ? 's' : ''} first.)` : ''}${hands.length ? ` ${hands.join(' ')}` : ''}${rowNotes.length ? ` ${rowNotes.join(' ')}` : ''}`);
-  state.queue.push(...snake, { t: 'allPlaced' }, { t: 'endRound' }, { t: 'afterRound' });
+  // Doorbusters (REPLACE2 bot test: flag roundStartBuy): one recruit each, in this round's order, before anyone places
+  const doors = [];
+  for (const id of base) for (let k = sumMemberFlag(state, state.players[id], 'roundStartBuy'); k > 0; k--) doors.push({ t: 'buy', p: id, doorbuster: true });
+  for (const t of doors) { const p = state.players[t.p]; p.turnRecruits = 0; p.turnBuys = 0; delete p.peekReach; delete p.perSpend; delete p.recruitFollowers; }
+  if (doors.length) log(state, [...new Set(doors.map(t => t.p))].map(id => `${state.players[id].name}'s ${flagName(state, state.players[id], 'roundStartBuy')}: recruits once before anyone places.`).join(' '));
+  state.queue.push(...doors, ...snake, { t: 'allPlaced' }, { t: 'endRound' }, { t: 'afterRound' });
 }
 
 function endRound(state) {
@@ -999,6 +1007,7 @@ function endRound(state) {
   const table = contestTable(state, ctx);
   const msg = [];
   for (const c of table) {
+    if (c.spoiled !== undefined) msg.push(`${c.label}: spoiled by ${state.players[c.spoiled].name}'s Spoilsports, nobody wins`);
     if (!c.winners.length) continue;
     const winners = c.winners.map(id => state.players[id]);
     underCause({ kind: 'contest', qid: c.qid, round: state.round }, () => { for (const w of winners) { w.bonus += c.prize; w.contest += c.prize; fBump(state, w, c.prize); } });
@@ -1070,6 +1079,9 @@ export function contestTable(state, ctx = ctxFor(state)) {
     const scores = state.players.map(p => sc.score(ctx, p));
     const top = Math.max(...scores);
     let winners = top > 0 ? state.players.filter((p, i) => scores[i] === top).map(p => p.id) : [];
+    // Spoilsports (REPLACE2 bot test): a contest spoiled this round pays nobody
+    const spoiled = state.spoiled && state.spoiled.round === state.round && state.spoiled.list.find(x => x.qid === qid);
+    if (spoiled) winners = [];
     // Tiebreaker (concept): a tie its owner is in goes to them alone
     if (winners.length > 1) { const tb = winners.filter(id => state.players[id].members.some(u => effectiveDefs(state.cards[u]).some(d => d.tiebreak))); if (tb.length === 1) winners = tb; }
     const rows = state.players.map((p, i) => {
@@ -1080,7 +1092,7 @@ export function contestTable(state, ctx = ctxFor(state)) {
     }).sort((a, b) => b.score - a.score || a.player - b.player);
     return {
       qid, label: sc.label, rule: ruleOf(sc.label), counts: sc.counts || null, tiebreak: sc.tiebreak || null,
-      prize: winners.length > 1 ? Math.ceil(prize / 2) : prize, fullPrize: prize, rows, winners,
+      prize: winners.length > 1 ? Math.ceil(prize / 2) : prize, fullPrize: prize, rows, winners, ...(spoiled ? { spoiled: spoiled.by } : {}),
     };
   });
 }
@@ -1674,7 +1686,7 @@ function dropBuys(state, p) {
   const gone = new Set(turnBuys(state, p, 0));
   if (gone.size) state.queue = state.queue.filter(t => !gone.has(t));
 }
-const extraOf = task => ({ ...workerSourceOf(task), ...(task.extra ? { extra: true } : {}), ...(task.afterPurchase ? { afterPurchase: true } : {}) });
+const extraOf = task => ({ ...workerSourceOf(task), ...(task.extra ? { extra: true } : {}), ...(task.afterPurchase ? { afterPurchase: true } : {}), ...(task.doorbuster ? { doorbuster: true } : {}) });
 // A real buy (member or followers) in a buy step. The second one spends a Big Spender.
 function boughtOnce(state, p, task) {
   if (task.extra) {
@@ -1686,7 +1698,7 @@ function boughtOnce(state, p, task) {
   }
 
   p.turnBuys = (p.turnBuys || 0) + 1;
-  if (task.uid !== undefined) state.queue.unshift({ t: 'buy', p: p.id, afterPurchase: true, ...workerSourceOf(task) });
+  if (task.uid !== undefined && !task.doorbuster) state.queue.unshift({ t: 'buy', p: p.id, afterPurchase: true, ...workerSourceOf(task) });
 }
 /** How many cards off the top of the pile p may recruit from (Insider: flag pileReach; copies don't stack). */
 export function pileReach(state, p) {
@@ -1945,6 +1957,13 @@ function ctxFor(state) {
     stealInstance: () => (state.stealSeq = (state.stealSeq || 0) + 1),
     steal(thief, victim, what = {}) {
       if (!ctx.canSteal(thief, victim, what.uid !== undefined ? 'member' : 'res')) return 0;
+      // a victim's member that answers the steal before it lands (Hush Money, REPLACE2 bot test): it queues the victim's
+      // choice, which makes the steal again (what.hushed) or pays it off; nothing is taken now
+      if (!what.hushed) {
+        let held = false;
+        eachMemberOf(state, victim, (card, def) => { if (!held && def.beforeStolen && def.beforeStolen(ctx, victim, card, thief, what)) held = true; }, ['beforeStolen']);
+        if (held) return 0;
+      }
       const took = {};
       let n = what.other || 0;
       for (const [c, k] of Object.entries(what.take || {})) {
@@ -1952,9 +1971,12 @@ function ctxFor(state) {
         if (x) { victim.res[c] -= x; took[c] = x; n += x; }
       }
       if (what.uid !== undefined && ctx.moveMember(what.uid, victim, thief, { recruit: true })) n += 1;
+      // what.followers: loose followers (bought, won, gained), never the ones members are worth (Skimmers, REPLACE2)
+      const fx = what.followers ? Math.min(what.followers, Math.max(0, victim.bonus)) : 0;
+      if (fx) { victim.bonus -= fx; thief.bonus += fx; n += fx; }
       if (!n) return 0;
       if (what.give) what.give(n, took);
-      const info = { thief, victim, took, uid: what.uid, n, reaction: !!what.reaction, instance: what.instance ?? ctx.stealInstance(), ...(what.led !== undefined ? { led: !!what.led } : {}) };
+      const info = { thief, victim, took, uid: what.uid, n, reaction: !!what.reaction, instance: what.instance ?? ctx.stealInstance(), ...(what.led !== undefined ? { led: !!what.led } : {}), ...(fx ? { followers: fx } : {}) };
       for (const qid of state.quadrants) { const q = quadrant(qid); if (q.onSteal) q.onSteal(ctx, info); }
       eachMember(state, (owner, card, def) => { if (def.onSteal) def.onSteal(ctx, owner, card, info); }, ['onSteal']);
       return n;

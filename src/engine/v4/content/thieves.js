@@ -5,6 +5,7 @@
 // Bodyguards, Lookout and Robin Hood apply to all of them.
 import { registerQuadrant, defById } from './index.js';
 import { add1, old1 } from './replace1.js';
+import { add2, old2 } from './replace2.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
@@ -384,9 +385,19 @@ const thieves = {
     // every steal, a member's too (Cory, 2026-10-22 playtest: "it should proc on member recruits (like grifter)")
     m('sticky', 'Sticky Fingers', 2, 1, 'Your steals take 1 more resource.', { stealMore: 1 }),
     // +2 to every steal, spaces and members, no longer double (Cory, Nov 1, 2:27pm: "Yeah, number one is fine")
-    m('desperado', 'Desperado', 2, 2, 'While you have the fewest followers (ties count), your steals take 2 more resources.', {
+    m('desperado', 'Desperado', 2, 2, 'While you have the fewest followers (ties count), your steals take 2 more resources.', { ...old2,
       stealMoreIf: (ctx, owner) => (fewestFollowers(ctx, owner) ? 2 : 0),
     }),
+    // REPLACE2 bot test (Nov 3, replacement batch 2): Desperado's place. 4 magenta + 2 any as a player sees it. A steal
+    // of loose followers (bought or won; never the ones members are worth) through the shared steal, so Bodyguards and
+    // Lie Low block it and Snitch, Robin Hood and Hush Money answer it. Sticky Fingers adds nothing: they aren't resources.
+    ...add2(m('skimmers', 'Skimmers', 3, 2, 'Whenever a rival buys 10 followers, steal 3 of them.', {
+      onBuyFollowers(ctx, owner, card, buyer, tier) {
+        if (buyer === owner || !(tier?.get >= 10) || !ctx.canSteal(owner, buyer)) return;
+        const got = ctx.steal(owner, buyer, { followers: 3 });
+        if (got) ctx.log(`${owner.name}'s Skimmers: stole ${got} of ${buyer.name}'s 10 followers.`);
+      },
+    })),
     m('robinhood', 'Robin Hood', 2, 1, 'Whenever you steal from the player with the most followers, +1 follower.', {
       onSteal(ctx, owner, card, info) {
         if (info.thief === owner && (info.led ?? ledBefore(ctx, info))) { owner.bonus += 1; ctx.log(`${owner.name}'s Robin Hood: +1 follower.`); }

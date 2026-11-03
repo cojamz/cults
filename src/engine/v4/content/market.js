@@ -4,6 +4,7 @@
 import { registerQuadrant } from './index.js';
 import { gainColorOf } from './color-of.js';
 import { REPLACE1, add1, old1, handlers1 } from './replace1.js';
+import { add2, old2 } from './replace2.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const B = 'blue';
@@ -460,7 +461,11 @@ const market = {
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && !ctx.shopCards().some(c => ctx.payChoices(owner, c.uid, {}).length),
     }),
-    m('shopaholic', 'Shopaholics', 3, 5, 'You can recruit twice each turn.', { buyTwice: true, f: 3, n: 3 }), // +1 follower and member (Cory, Oct 30)
+    m('shopaholic', 'Shopaholics', 3, 5, 'You can recruit twice each turn.', { buyTwice: true, f: 3, n: 3, ...old2 }), // +1 follower and member (Cory, Oct 30)
+    // REPLACE2 bot test (Nov 3, replacement batch 2): Shopaholics' place. 5 blue + 3 any as a player sees it. Core runs it
+    // (flag roundStartBuy): at each round start after the fresh row is dealt, one buy step (a member or followers) per
+    // holder, in that round's turn order, before the first placement.
+    ...add2(m('doorbusters', 'Doorbusters', 4, 3, 'Round Start: recruit once, before anyone places.', { f: 2, roundStartBuy: true })),
     m('windowdresser', 'Window Dressers', 2, 1, 'On Recruit: send 3 shop members to the bottom of the pile, then refill.', { f: 3,
       onRecruited(ctx, owner) {
         ctx.log(`${owner.name}'s Window Dressers: send 3 shop members to the bottom of the pile.`);

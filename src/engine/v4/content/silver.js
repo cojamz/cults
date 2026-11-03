@@ -8,6 +8,7 @@
 // Gold's Kickback also gives (Cory): gold.js fires the receiver's onGiven hooks itself.
 import { defById } from './index.js';
 import { add1, old1 } from './replace1.js';
+import { add2, old2, handlers2 } from './replace2.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const S = 'silver';
@@ -211,6 +212,20 @@ const silver = {
   actions: silverActions,
 
   handlers: {
+    ...handlers2({
+      hush(ctx, victim, answer, data) {
+        const thief = ctx.player(data.thief);
+        if (answer === 'pay' && (victim.res[S] || 0) >= 2) {
+          victim.res[S] -= 2;
+          give(ctx, victim, thief, S, 2);
+          ctx.log(`${victim.name}'s Hush Money: ${victim.name} gives ${thief.name} 2 silver instead.`);
+          return;
+        }
+        const got = ctx.steal(thief, victim, { take: data.take, uid: data.uid, followers: data.followers, hushed: true,
+          give: (n, took) => { for (const [c, k] of Object.entries(took)) if (k) ctx.gain(thief, c, k); } });
+        if (got) ctx.log(`${thief.name} stole ${got} from ${victim.name} (${victim.name} let it go).`);
+      },
+    }),
     gift(ctx, p, color, data) {
       ctx.gain(p, color, data.mine, { fromAction: true });
       giveAll(ctx, p, color, 1);
@@ -339,7 +354,7 @@ const silver = {
     m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', {
       afterAction(ctx, owner, card, qid) { if (qid === S) owner.bonus += 1; },
     }),
-    m('gala', 'Debutantes', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, // worth 2 (Cory, Nov 1)
+    m('gala', 'Debutantes', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, ...old2, // worth 2 (Cory, Nov 1)
       activate: 'game',
       onActivate(ctx, owner) {
         ctx.gain(owner, S, owner.res[S]);
@@ -350,7 +365,44 @@ const silver = {
     }),
     m('dowager', 'Dowager', 2, 2, 'Worth 3 followers.', { f: 3 }),
     // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
-    m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2 }), // worth 2 (Cory, Nov 1)
+    m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2 }),
+    // REPLACE2 bot test (Nov 3, replacement batch 2): Debutantes' place. 6 silver + 3 any as a player sees it. The +2 each is
+    // a gift (Caterer, Hangers-On); the count is all the silver rivals hold after it.
+    ...add2(m('fundraisers', 'Fundraisers', 5, 3, 'On Use, once per game: each rival +2 silver, then +1 follower per 2 silver rivals hold in all.', { f: 2,
+      activate: 'game',
+      onActivate(ctx, owner) {
+        giveAll(ctx, owner, S, 2);
+        const held = others(ctx, owner).reduce((t, o) => t + (o.res[S] || 0), 0), k = Math.floor(held / 2);
+        owner.bonus += k;
+        ctx.log(`${owner.name}'s Fundraisers: each rival +2 silver; rivals hold ${held} silver, so ${owner.name} +${k} follower${k === 1 ? '' : 's'}.`);
+      },
+      botActivate: (ctx, owner) => {
+        const k = Math.floor((others(ctx, owner).reduce((t, o) => t + (o.res[S] || 0), 0) + 2 * others(ctx, owner).length) / 2);
+        return (ctx.state.round === 3 && k >= 6) || (ctx.state.round === 3 && owner.left === 0);
+      },
+    })),
+    // REPLACE2 bot test (Nov 3, replacement batch 2): Smooth Talkers' place. 4 silver + 2 any as a player sees it. Core's
+    // shared steal asks it first (beforeStolen): with 2 silver, the victim chooses each time, on the thief's turn; paying
+    // is a gift of 2 silver and nothing is stolen (no steal reactions), letting it go makes the same steal.
+    ...add2(m('hushmoney', 'Hush Money', 3, 2, 'Whenever a rival steals from you, you may give them 2 silver instead.', {
+      beforeStolen(ctx, victim, card, thief, what) {
+        if (thief === victim || (victim.res[S] || 0) < 2) return false;
+        const take = {};
+        for (const [c, k] of Object.entries(what.take || {})) { const x = Math.min(k, victim.res[c] || 0); if (x > 0) take[c] = x; }
+        const uid = what.uid !== undefined && victim.members.includes(what.uid) ? what.uid : undefined;
+        const followers = what.followers ? Math.min(what.followers, Math.max(0, victim.bonus)) : 0;
+        const units = Object.values(take).reduce((a, b) => a + b, 0);
+        if (!units && uid === undefined && !followers) return false;
+        const desc = [units ? Object.entries(take).map(([c, k]) => `${k} ${c}`).join(', ') : '', uid !== undefined ? ctx.card(uid).def.name : '', followers ? `${followers} follower${followers === 1 ? '' : 's'}` : ''].filter(Boolean).join(', ');
+        const worth = units + (uid !== undefined ? ctx.card(uid).def.f * 1.5 + ctx.card(uid).def.s + ctx.card(uid).def.w : 0) + followers * 1.5;
+        ctx.log(`${victim.name}'s Hush Money: ${thief.name} would steal ${desc}; ${victim.name} may pay 2 silver instead.`);
+        ctx.choose(victim, `Hush Money: ${thief.name} is stealing ${desc} from you. Give ${thief.name} 2 silver instead?`, [
+          { id: 'pay', label: `Give ${thief.name} 2 silver`, kind: 'choice', value: 'pay', spend: { [S]: 2 }, hint: worth - 2 },
+          { id: 'let', label: `Let ${thief.name} take ${desc}`, kind: 'pass', value: 'let', hint: 0 },
+        ], 'silver.hush', { thief: thief.id, take, ...(uid !== undefined ? { uid } : {}), followers });
+        return true;
+      },
+    })), // worth 2 (Cory, Nov 1)
     m('philanthropists', 'Philanthropists', 3, 2, 'On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.', {
       onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropists', max: 4, per: 1 }); },
     }),

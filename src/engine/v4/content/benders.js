@@ -16,6 +16,7 @@ import { extraMinion, spareSpace } from './purple.js';
 import { startSteal } from './thieves.js';
 import { toBottom, scavenge } from './market.js';
 import { REPLACE1, add1, old1, handlers1 } from './replace1.js';
+import { add2, old2, handlers2 } from './replace2.js';
 import { startLaunder, launderPick, launderAmount } from './launder.js';
 
 // Prices: member-value sim (scripts/v4-member-value.mjs, 4 normal bots, Release off, handed over at round II),
@@ -197,7 +198,7 @@ const members = [
     botActivate: (ctx, p) => anarchyPairs(ctx, p).some(([a, b]) => gainFor(ctx, p, a, b) >= 2),
   }),
   // Cory, 2026-10-28: Scout, 4, once per round (it stands in for Blue's shop work)
-  m('scout', 'Scouts', null, 0, 2, 'On Use, once per round: send any shop members to the bottom of the pile, then refill.', { f: 2, n: 2, // worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
+  m('scout', 'Scouts', null, 0, 2, 'On Use, once per round: send any shop members to the bottom of the pile, then refill.', { f: 2, n: 2, ...old2, // worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
     activate: 'round',
     onRoundStart(ctx, owner, card) { card.used = false; },
     onActivate(ctx, owner, card) {
@@ -206,6 +207,25 @@ const members = [
     },
     botActivate: (ctx, p) => ctx.state.round >= 2 && ctx.shopCards().filter(c => cost(c) > Object.values(p.res).reduce((a, b) => a + b, 0)).length >= 3,
   }),
+  // REPLACE2 bot test (Nov 3, replacement batch 2): Scouts' place, and a round I member as Scouts was (round: 1, so grey
+  // keeps 4). 6 any as a player sees it. Chosen after the round's last placement, before anything is scored (core's
+  // allPlaced step), among the contests a rival leads and its owner doesn't (a tie for the lead counts as leading);
+  // core's contest table then gives that contest no winner this round (state.spoiled).
+  ...add2(m('spoilsports', 'Spoilsports', null, 0, 5, "Round End: choose a contest you don't lead; nobody wins it this round.", { round: 1,
+    onAllPlaced(ctx, owner) {
+      const led = new Map(ctx.state.players.map(o => [o.id, ctx.contestsLed(o)]));
+      const opts = ctx.state.quadrants.filter(q => !led.get(owner.id).includes(q)).map(q => {
+        const winners = ctx.state.players.filter(o => led.get(o.id).includes(q));
+        return { q, winners };
+      }).filter(x => x.winners.length).map(({ q, winners }) => ({
+        id: `spoil:${q}`, label: `${ctx.quadrant(q).name} (${winners.map(o => o.name).join(' & ')} lead${winners.length === 1 ? 's' : ''})`, kind: 'choice', value: q,
+        // bots spoil the contest of the rival furthest ahead
+        hint: Math.max(...winners.map(o => ctx.followers(o))) / winners.length,
+      }));
+      if (!opts.length) { ctx.log(`${owner.name}'s Spoilsports: no contest a rival leads without ${owner.name}.`); return; }
+      ctx.choose(owner, 'Spoilsports: which contest does nobody win this round?', opts, 'benders.spoil');
+    },
+  })),
   // Cory, 2026-10-28: Con Men, 6, counts as 2 members; On Recruit (was One Time Use), split among rivals like Help Yourself
   // Cory, 2026-10-29: "for the steal on recruit, you should get to choose when you steal": On Use, once per game
   m('conmen', 'Con Men', null, 0, 6, /* 7 (Cory, Oct 29: "i would put con men at 7") */ 'Counts as 2 members. On Recruit: steal 5 resources.', { n: 2,
@@ -295,6 +315,14 @@ export const handlers = {
   },
   launder: launderPick,
   launderAmount,
+  ...handlers2({
+    spoil(ctx, p, q) {
+      const s = ctx.state;
+      if (!s.spoiled || s.spoiled.round !== s.round) s.spoiled = { round: s.round, list: [] };
+      s.spoiled.list.push({ qid: q, by: p.id });
+      ctx.log(`${p.name}'s Spoilsports: nobody wins the ${ctx.quadrant(q).name} contest this round.`);
+    },
+  }),
   ...handlers1({
     grudge(ctx, p, pid, data) {
       const card = ctx.card(data.uid);

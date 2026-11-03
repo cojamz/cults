@@ -15,6 +15,7 @@
 // - Member defs keep quadrant 'echo' (core pays the colored part in quadrant('echo').resource = green), so
 //   color counts (Potluck, countMembersOfColor) see Green members.
 import { registerQuadrant, allQuadrantIds, quadrant, defById, spacesOf } from './index.js';
+import { add2, old2, handlers2 } from './replace2.js';
 
 // IMPRESSIONIST=n: bot test only (Nov 3); the game pays 2 (Cory, Nov 1)
 const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 2);
@@ -452,6 +453,12 @@ const echoQ = {
   ],
 
   handlers: {
+    ...handlers2({
+      mirrorImage(ctx, p, [oid, c]) {
+        const o = ctx.player(oid), d = (o.res[c] || 0) - (p.res[c] || 0);
+        if (d > 0) { ctx.gain(p, c, d); ctx.log(`${p.name}'s Mirror Image: +${d} ${c}, as much as ${o.name} holds.`); }
+      },
+    }),
     tribute(ctx, p, id, data) {
       const leader = ctx.player(id);
       const card = ctx.card(data.uid);
@@ -566,7 +573,22 @@ const echoQ = {
     }),
     m('tuningfork', 'Impressionist', 1, 2, 'Whenever any player copies an action, +2 of its color.'),
     // Cory, 2026-10-28: back as a big card at 10 (6 green + 3 any + the +1 wild); no follower condition any more
-    m('wallflower', 'Wallflower', 6, 3, 'Whenever you copy an action, double the resources it gives you.'),
+    m('wallflower', 'Wallflower', 6, 3, 'Whenever you copy an action, double the resources it gives you.', old2),
+    // REPLACE2 bot test (Nov 3, replacement batch 2): Wallflower's place. 6 green + 3 any as a player sees it. Any color on
+    // the table; a pile isn't an action, so Agents doesn't stop it.
+    ...add2(m('mirrorimage', 'Mirror Image', 5, 3, 'On Use, once per game: choose a rival and a color; gain that color until you hold as much of it as they do.', {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const opts = mirrorOptions(ctx, owner);
+        if (!opts.length) { card.used = false; ctx.log(`${owner.name}'s Mirror Image: no rival holds more of any color.`); return; }
+        ctx.log(`${owner.name} uses Mirror Image.`);
+        ctx.choose(owner, 'Mirror Image: match which rival’s pile?', opts, 'echo.mirrorImage');
+      },
+      botActivate: (ctx, owner) => {
+        const best = Math.max(0, ...mirrorOptions(ctx, owner).map(o => o.hint));
+        return (ctx.state.round === 3 && best >= 6) || (ctx.state.round === 3 && owner.left === 0 && best > 0);
+      },
+    })),
     // Keepsake ("When recruited: copy one of your spaces from this round") is cut: Reprise does the same on a space.
     // Cory, 2026-10-28: Mime returns renamed ("yes but needs a different name"); text and cost 3 are Claude's
     m('mirror', 'Fan Club', 2, 3, 'On Recruit: +1 green per Green space with anyone’s minion.', { n: 3, // 3 members, 3 to 6 (Cory, Oct 29: yes to "counts as 3 members, price 3 to 6")
@@ -686,4 +708,14 @@ export function install() {
   }
   installed = true;
   return echoQ;
+}
+
+/** Mirror Image (REPLACE2): every rival and color where the rival holds more than p; the hint is what p gains. */
+function mirrorOptions(ctx, p) {
+  const out = [];
+  for (const o of ctx.rivals(p)) for (const c of ctx.state.resources) {
+    const d = (o.res[c] || 0) - (p.res[c] || 0);
+    if (d > 0) out.push({ id: `mirror:${o.id}:${c}`, label: `${o.name}'s ${c}: +${d}`, kind: 'choice', value: [o.id, c], hint: d });
+  }
+  return out;
 }
