@@ -17,7 +17,15 @@ const QUADRANTS = { gold, red, blue, green };
 // Every member costs this many wild more than its card file says (Cory, Oct 27: "+1 wild cost to every member"),
 // added once here so the shop, the pay sheet and the bots all read the same price.
 export const EXTRA_WILD = 1;
-const addWild = def => { if (!def.extraWild) { def.w = (def.w || 0) + EXTRA_WILD; def.extraWild = EXTRA_WILD; } };
+// Cory, 2026-11-02: "for every member, to shift 1 wild to 1 color cost". A colored member's +1 above is paid in its
+// own color instead (its colored part +1, its "any" part as printed), so what you hold decides what you can buy.
+// Grey members have no color and keep the wild. Bot test only, not built (Cory, Nov 2: "just balance test it"): sims turn it on with COLORSHIFT=1.
+export const COLOR_SHIFT = globalThis.process?.env?.COLORSHIFT === '1' ? 1 : 0;
+const addWild = def => {
+  if (def.extraWild || def.extraColor) return;
+  if (COLOR_SHIFT && def.quadrant !== 'guest' && def.quadrant !== 'benders') { def.s = (def.s || 0) + EXTRA_WILD; def.extraColor = EXTRA_WILD; def.w = def.w || 0; }
+  else { def.w = (def.w || 0) + EXTRA_WILD; def.extraWild = EXTRA_WILD; }
+};
 // Every member is a follower (Cory, Oct 29: "Every card should score its member count. Its a core rule! every member is a
 // follower. Not every follower is a member."): a card that counts as N members scores at least N followers.
 const asFollowers = def => { if ((def.n || 1) > (def.f || 1)) def.f = def.n; };

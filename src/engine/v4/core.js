@@ -36,7 +36,7 @@ export const ROUND_CUTOFFS = [3, 4];
 /** Members that join in another round than their cost says (Cory, 2026-10-25: Impostors and Doppelganger, round III). */
 export const ROUND_OF = { 'echo.impostor': 3, 'echo.doppel': 3 };
 // (by the cost before the +1 wild every member pays, content/index.js EXTRA_WILD, so no member changes round)
-const baseCost = def => def.s + def.w - (def.extraWild || 0);
+const baseCost = def => def.s + def.w - (def.extraWild || 0) - (def.extraColor || 0);
 export const memberRound = def => def.round ?? ROUND_OF[def.id] ?? (baseCost(def) <= ROUND_CUTOFFS[0] ? 1 : baseCost(def) <= ROUND_CUTOFFS[1] ? 2 : 3);
 /** The round a member joins the deck in this game (1 when it starts in the deck). */
 export const joinsRound = (state, def) => (!state.rules?.roundDecks ? 1 : Math.min(memberRound(def), state.rules.roundDecks));
