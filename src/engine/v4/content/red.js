@@ -234,7 +234,8 @@ export default {
       botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).some(o => ctx.canSteal(owner, o, 'swap') && defectWorth(ctx, o) - defectWorth(ctx, owner) >= 4),
     })),
     m('mob', 'Mob', 7, 4, /* 12, 4 members (Cory, Oct 30); worth 4 (Cory, Nov 1: "Just make mob four") */ 'Game End: +1 follower per red member you have.', { f: 4, n: 4,
-      onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'red'),
+      // MOB=cards: bot test only (Nov 3): one per red member card, not per member it counts as
+      onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'red', { cards: globalThis.process?.env?.MOB === 'cards' }),
     }),
     // members only, never a follower buy (Cory, 2026-10-29: "red recruit should only work for gaining members")
     // Red Cloak. Cory, Nov 1 5:06pm (version 1 of two tested): "Whenever you recruit a member, +1 red." Swaps and

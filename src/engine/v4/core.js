@@ -208,10 +208,11 @@ export const memberWeight = (state, uid) => countOf(state.cards[uid]);
 export const memberCount = (state, p) => p.members.reduce((s, u) => s + countOf(state.cards[u]), 0);
 // Dabblers (everyColor) counts for every color on the table (Cory, 2026-10-28)
 // { wild: false } leaves Dabblers out, for a card where counting it would hurt its owner (Big Tent's "exactly one")
-export const countMembersOfColor = (state, p, q, { wild = true } = {}) => p.members.reduce((s, u) => {
+// { cards: true } counts member cards, one each, whatever they count as
+export const countMembersOfColor = (state, p, q, { wild = true, cards = false } = {}) => p.members.reduce((s, u) => {
   const c = state.cards[u], every = wild && effectiveDefs(c).some(d => d.everyColor) && q !== 'guest' && state.quadrants.includes(q);
   // Drifters counts as the one color its owner chose when recruiting it (card.asColor; Cory, 2026-10-31)
-  return s + ((c.asColor || defById(c.def).quadrant) === q || every ? countOf(c) : 0);
+  return s + ((c.asColor || defById(c.def).quadrant) === q || every ? (cards ? 1 : countOf(c)) : 0);
 }, 0);
 // Artifacts are worn as cloaks and named for their color (Cory, 2026-11-01: "just call them Red Cloak"): the card
 // keeps its rules and its id; only the name a player reads changes, and only for a card picked as an artifact here.
