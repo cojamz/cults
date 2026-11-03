@@ -1019,11 +1019,27 @@ const ruleOf = label => label.replace(/\s*\(.*\)\s*$/, '');
  * that breaks a tie (a quadrant's scoring.show says how its score splits; without it the score is the count).
  * winners take the prize; nobody does when the best score is 0. tiebreak (top level) is { unit, text } or null.
  */
+/** Other contest goals, a table setting (Cory, 2026-11-02: "you can build alt ring goals as a setting"; ideas in
+ *  /mnt/project-files/ring-goals/ideas.md). rules.contests: 'members' (held color, each member of the color counts 2),
+ *  'minions' (your minions on the color's spaces at round end), 'whiteFewest' (White: fewest members, at least 1).
+ *  Anything else (the default) is each color's own printed contest. Every screen and bot reads the contest through this. */
+export function scoringOf(state, qid) {
+  const q = quadrant(qid), mode = state.rules?.contests;
+  if (!mode || !q.scoring) return q.scoring;
+  const name = q.name.toLowerCase(), res = q.resource, qi = state.quadrants.indexOf(qid);
+  if (mode === 'members') return { label: `Most ${name}, members 2`, counts: `the ${name} you hold, plus 2 for each ${name} member`,
+    score: (ctx, p) => (p.res[res] || 0) + 2 * countMembersOfColor(state, p, qid) };
+  if (mode === 'minions') return { label: `Most minions on ${name}`, counts: `your minions on ${q.name} spaces when the round ends`,
+    score: (ctx, p) => q.actions.reduce((n, a, i) => n + (state.slots[`${qi}-${i}`] === p.id ? 1 : 0) + (state.squats?.[`${qi}-${i}`] || []).filter(id => id === p.id).length, 0) };
+  if (mode === 'whiteFewest' && qid === 'trading') return { label: 'Fewest members', counts: 'your members when the round ends (at least 1)',
+    score: (ctx, p) => { const n = memberCount(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: memberCount(state, p) }) };
+  return q.scoring;
+}
 export function contestTable(state, ctx = ctxFor(state)) {
   const prize = RING_VALUE[Math.min(3, Math.max(1, state.round)) - 1];
   return state.quadrants.map(qid => {
     const q = quadrant(qid);
-    const sc = q.scoring;
+    const sc = scoringOf(state, qid);
     const scores = state.players.map(p => sc.score(ctx, p));
     const top = Math.max(...scores);
     let winners = top > 0 ? state.players.filter((p, i) => scores[i] === top).map(p => p.id) : [];

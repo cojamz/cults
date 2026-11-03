@@ -15,7 +15,7 @@
 // Every level is deterministic for a given state and rand.
 import {
   contextFor, actionAt, cardDef, TIERS, followers, memberCount, RING_VALUE, WORKERS, tierLeft,
-  paymentChoices, followerChoices, releaseRefund, liveOptions, swapCardPairs, paySwapCard,
+  paymentChoices, followerChoices, releaseRefund, liveOptions, swapCardPairs, paySwapCard, scoringOf,
 } from './core.js';
 import { defById, quadrant, handlerById } from './content/index.js';
 import { plainCopy } from './copy.js';
@@ -464,11 +464,11 @@ function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS) {
   const v = RING_VALUE[s.round - 1];
   let out = 0;
   for (const qid of s.quadrants) {
-    const q = quadrant(qid);
+    const sc = scoringOf(s, qid);
     let mine, other;
     try {
-      mine = q.scoring.score(ctx, p);
-      other = Math.max(...s.players.filter(o => o !== p).map(o => q.scoring.score(ctx, o)));
+      mine = sc.score(ctx, p);
+      other = Math.max(...s.players.filter(o => o !== p).map(o => sc.score(ctx, o)));
     } catch { continue; }
     if (!(mine > 0)) continue;
     const certain = mine >= other ? 1 : 0;

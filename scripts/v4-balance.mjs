@@ -4,7 +4,7 @@
 //   PRICE="cheerleader=0/5,echo.impostor=2/4" sets a member's price as colored/any (by key, id or name; prices only, never
 //   what a card does). A new price can move a card to another round's deck, as it would in the game (core.js memberRound).
 //   ONLY=red,echo,... sets the color pool (default: the 2.0 colors). MUST=thieves puts that color on every table.
-//   SWAP=1 turns the swap card setting on.
+//   SWAP=1 turns the swap card setting on. CONTESTS=members|minions|whiteFewest sets other contest goals (core.js scoringOf).
 //   BUDGET=<n> trims Hard's lookahead (default: the game's). Every 5th game one seat only buys followers; the report counts those games only for that seat's win rate (Cory, Oct 29).
 // Same game numbers with the same settings replay the same games, so a price run compares game for game with the base.
 import { appendFileSync, writeFileSync } from 'node:fs';
@@ -15,7 +15,7 @@ import { seededRandom } from '../src/engine/v4/rng.js';
 import { sphereVersion } from '../src/v4/tables.js';
 import { deckRules } from './lib/deck-choice.mjs';
 // SWAP=1 turns on the swap card table setting (Cory, Nov 1); SWAPCOST=n sets its price (default 2)
-const DECK_RULES = { ...deckRules(), ...(process.env.SWAP === '1' ? { swapCard: true } : {}), ...(process.env.SWAPCOST ? { swapCardCost: Number(process.env.SWAPCOST) } : {}) };
+const DECK_RULES = { ...deckRules(), ...(process.env.SWAP === '1' ? { swapCard: true } : {}), ...(process.env.SWAPCOST ? { swapCardCost: Number(process.env.SWAPCOST) } : {}), ...(process.env.CONTESTS ? { contests: process.env.CONTESTS } : {}) };
 
 const [first, count, out] = [Number(process.argv[2] || 1), Number(process.argv[3] || 1), process.argv[4] || 'balance.jsonl'];
 const level = process.env.LEVEL || 'normal', seats = Number(process.env.SEATS || 4);
