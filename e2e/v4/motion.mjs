@@ -292,10 +292,16 @@ async function rivalTurns(speed) {
 {
   const med = xs => { const s = [...xs].sort((a, b) => a - b); return s.length ? s[Math.floor(s.length / 2)] : NaN; };
   const steady = await rivalTurns('steady'), relaxed = await rivalTurns('relaxed');
-  const ratio = med(relaxed) / med(steady);
-  console.log(`rival turns, round I: Steady p50 ${med(steady)}ms (${steady.length}: ${steady.join(' ')}); Relaxed p50 ${med(relaxed)}ms (${relaxed.length}: ${relaxed.join(' ')}); Relaxed/Steady ${ratio.toFixed(2)}`);
+  // The same game at both speeds plays the same rival turns in the same order, so each turn is compared with itself
+  // (as pacing.test.js's "the same turn" does): rival turns come in two sizes (a plain placement ~0.6s, a recruit or a
+  // buy ~2.5s at Steady), and with half of each the two medians fell on different sizes (the color cost moved the
+  // seeded game there, Nov 3: 1282ms, a long one, against 1577ms, a short one, read 1.23 with every turn 1.35-2.15×).
+  // If the games part ways (different counts), the two medians as before.
+  const paired = steady.length === relaxed.length;
+  const ratio = paired ? med(steady.map((x, i) => relaxed[i] / x)) : med(relaxed) / med(steady);
+  console.log(`rival turns, round I: Steady p50 ${med(steady)}ms (${steady.length}: ${steady.join(' ')}); Relaxed p50 ${med(relaxed)}ms (${relaxed.length}: ${relaxed.join(' ')}); Relaxed/Steady ${ratio.toFixed(2)} (${paired ? 'median of the same turn at each speed' : 'of the two medians'})`);
   if (steady.length < 4 || relaxed.length < 4) errors.push(`(m5) too few rival turns measured (Steady ${steady.length}, Relaxed ${relaxed.length})`);
-  else if (!(ratio >= 1.3)) errors.push(`(m5) a rival's turn at Relaxed is ${ratio.toFixed(2)}× Steady's (p50 ${med(relaxed)}ms vs ${med(steady)}ms; want ≥ 1.3×)`);
+  else if (!(ratio >= 1.3)) errors.push(`(m5) a rival's turn at Relaxed is ${ratio.toFixed(2)}× Steady's (${paired ? 'median of the same turn at each speed' : `p50 ${med(relaxed)}ms vs ${med(steady)}ms`}; want ≥ 1.3×)`);
 }
 
 await browser.close();

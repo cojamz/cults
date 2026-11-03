@@ -94,7 +94,7 @@ export default {
       if (!Array.isArray(value)) { ctx.log(`${p.name} chose not to swap.`); return; }
       const [a, b] = value;
       // Pinned choices reject a moved card; recheck prices/protection too before applying a queued choice.
-      if (!swapPairs(ctx, p, data.mode, data.excludeUid).some(([x, y]) => x.uid === a && y.uid === b)) return;
+      if (!swapAllowed(ctx, p, data.mode, data.excludeUid ?? null, a, b)) return;
       const names = [a, b].map(uid => `${ctx.ownerOf(uid)?.name || 'Shop'}'s ${ctx.card(uid).def.name}`);
       if (ctx.swapMembers(p, a, b)) ctx.log(`${p.name} swapped ${names[0]} and ${names[1]}.`);
     },
@@ -201,18 +201,31 @@ function hireCheapest(ctx, p, who) {
   })), 'red.takeFree');
 }
 // A swap can rearrange any cult, but taking from a protected rival remains blocked.
-function swapPairs(ctx, p, mode, excludeUid = null) {
-  const cult = ctx.state.players.flatMap(owner => (owner === p ? mode !== 'rival' : ctx.canSteal(p, owner, 'swap')) ? ctx.membersOf(owner).filter(c => ctx.canSwapMember(c.uid)) : []);
-  const shop = ctx.shopCards();
-  const out = [];
+// Each card's owner and cost are read once (bots rate every pair on a copy, and each rating re-checks its pair: the
+// pair loop with a fresh owner lookup per test was most of a bot game's time, Nov 3).
+function swapSides(ctx, p, mode) {
+  const entry = (c, owner) => ({ c, uid: c.uid, id: c.def.id, owner, cost: cost(c) });
+  const cult = ctx.state.players.flatMap(owner => (owner === p ? mode !== 'rival' : ctx.canSteal(p, owner, 'swap')) ? ctx.membersOf(owner).filter(c => ctx.canSwapMember(c.uid)).map(c => entry(c, owner)) : []);
+  const shop = ctx.shopCards().map(c => entry(c, undefined));
   const first = mode === 'even' ? [...cult, ...shop] : cult;
   // Promote and Demote reach other cults too, any member that can be swapped (Cory, 2026-10-29: "demote and promote
   // should work with rivals. if their members are able to be swapped"); never two members of the same cult
   const second = mode === 'even' ? first : mode === 'promote' || mode === 'demote' ? [...shop, ...cult] : shop;
-  const owner = c => ctx.ownerOf(c.uid);
-  for (const a of first) for (const b of second) if (a.uid !== b.uid && a.def.id !== b.def.id /* two copies of one member (piles): no swap */ && a.uid !== excludeUid && b.uid !== excludeUid && !(owner(b) && owner(b) === owner(a)) && (mode === 'even' ? cost(a) === cost(b)
-    : mode === 'promote' ? cost(b) <= cost(a) + 2 : mode === 'rival' ? cost(b) >= cost(a) : cost(b) <= cost(a) && cost(b) >= cost(a) - 2)) out.push([a, b]);
+  return { first, second };
+}
+const pairOk = (mode, excludeUid, a, b) => a.uid !== b.uid && a.id !== b.id /* two copies of one member (piles): no swap */ && a.uid !== excludeUid && b.uid !== excludeUid && !(b.owner && b.owner === a.owner) && (mode === 'even' ? a.cost === b.cost
+  : mode === 'promote' ? b.cost <= a.cost + 2 : mode === 'rival' ? b.cost >= a.cost : b.cost <= a.cost && b.cost >= a.cost - 2);
+function swapPairs(ctx, p, mode, excludeUid = null) {
+  const { first, second } = swapSides(ctx, p, mode);
+  const out = [];
+  for (const a of first) for (const b of second) if (pairOk(mode, excludeUid, a, b)) out.push([a.c, b.c]);
   return out;
+}
+/** Is (a, b) one of swapPairs' pairs, as it stands now? */
+function swapAllowed(ctx, p, mode, excludeUid, ua, ub) {
+  const { first, second } = swapSides(ctx, p, mode);
+  const a = first.find(e => e.uid === ua), b = second.find(e => e.uid === ub);
+  return !!(a && b && pairOk(mode, excludeUid, a, b));
 }
 function swap(ctx, p, mode, prompt, excludeUid = null) {
   const pairs = swapPairs(ctx, p, mode, excludeUid);

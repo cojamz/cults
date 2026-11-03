@@ -340,7 +340,9 @@ export function aim(anim, el) {
   if (anim && el && !el.rectOnly && typeof window !== 'undefined' && window.__flightWatch && window.__flightWatch.aim) window.__flightWatch.aim(anim, el);
   return anim;
 }
-export function clearFlights(maxAge = 0) {
+// spareFlying: a sweep at age 0 that still lets a piece on its way land (the Reckoning, which waits for the last
+// landing before it scores: its sweep took the round's last coins off mid-flight, landing.mjs, Nov 3)
+export function clearFlights(maxAge = 0, { spareFlying = false } = {}) {
   if (typeof document === 'undefined') return;
   const now = Date.now();
   document.querySelectorAll('.ghost-layer').forEach(g => {
@@ -348,7 +350,7 @@ export function clearFlights(maxAge = 0) {
     // a sweep takes only what's left over, never a piece still on its way (Cory, Oct 28: "the follower or the money
     // disappears well before making it to its final destination"): at Relaxed one flight runs up to 1.65s, and the next
     // step drew at two-thirds of it, so a 1.2s sweep took coins off at about three-quarters of their way
-    if (maxAge && (age <= maxAge || (age <= maxAge + 6000 && stillFlying(g)))) return;
+    if ((maxAge || spareFlying) && (age <= maxAge || (age <= maxAge + 6000 && stillFlying(g)))) return;
     const use = inUse.get(g); if (use) use.release(); else g.remove();
   });
 }

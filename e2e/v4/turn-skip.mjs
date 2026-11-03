@@ -91,8 +91,9 @@ try {
 
     if (text !== 'Turn skipped') errors.push(`tag reads "${text}"`);
     if (!dim) errors.push('the skipped seat did not dim');
-    const end = firstUp ? firstUp[1] : afterSpace;
-    console.log(`P1 purple: before ${p0}, after Hold Up ${afterSpace}, before the skip shows ${atTag}, first change ${end}${firstUp ? ` at ${Math.round(firstUp[0] - seenAt)}ms after the tag` : ''}`);
+    // a +2 may count up a step at a time (2 → 3 → 4): what it pays is where the count settles, when it starts is firstUp
+    const end = firstUp ? changes.filter(([t]) => t >= firstUp[0] && t <= firstUp[0] + 1500).pop()[1] : afterSpace;
+    console.log(`P1 purple: before ${p0}, after Hold Up ${afterSpace}, before the skip shows ${atTag}, settles at ${end}${firstUp ? `, first change at ${Math.round(firstUp[0] - seenAt)}ms after the tag` : ''}`);
     if (atTag !== afterSpace) errors.push(`purple rose before the skip showed (${afterSpace} → ${atTag})`);
     if (end !== afterSpace + 2) errors.push(`Pocket Watch did not pay +2 with the skip (${afterSpace} → ${end})`);
     else if (firstUp[0] - seenAt > 4000) errors.push('Pocket Watch paid long after the skip showed');

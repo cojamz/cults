@@ -10,14 +10,27 @@ import { freeCard } from './deal.mjs';
 const SEATS = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];
 const play = (s, move) => { const next = applyMove(s, move); next.history = [...(s.history || []), [move.player, move.option]]; return next; };
 
-export function stripSave({ quadrants = ['silver', 'trading', 'thieves', 'red'], seed = 5, round = 2 } = {}) {
+// The strip needs rival turns since P1's last one: from `seed` up, the first game where at least `since` rival
+// placements came between P1's last move and this placement (an extra turn can put P1's two placements back to back, and then
+// the strip is rightly empty: the color cost moved seed 5 there, Nov 3).
+export function stripSave({ quadrants = ['silver', 'trading', 'thieves', 'red'], seed = 5, round = 2, since = 3 } = {}) {
+  for (let k = seed; k < seed + 60; k++) {
+    const f = stripSeed({ quadrants, seed: k, round });
+    if (!f) continue;
+    const h = f.save.state.history;
+    const after = h.slice(h.map(x => x[0]).lastIndexOf(0) + 1);
+    if (after.filter(([, o]) => /^slot:/.test(o)).length >= since) return f;
+  }
+  throw new Error(`stripSave: no seed from ${seed} reaches P1's placement in round ${round} with ${since} rival placements since P1's last`);
+}
+function stripSeed({ quadrants, seed, round }) {
   let s = createGame({ seats: SEATS, seed, quadrants });
   s.build = buildStamp(); s.history = [];
   const rand = seededRandom(seed);
   let rs = s, r = s.round;
   const ready = st => st.round === round && st.pending && st.pending.player === 0 && st.pending.kind === 'place' && Object.values(st.slots).filter(v => v === 0).length >= 1;
   for (let n = 0; n < 6000 && !ready(s) && !s.over; n++) { s = play(s, chooseBotMove(s, rand)); if (s.round !== r) { r = s.round; rs = s; } }
-  if (!ready(s)) throw new Error(`stripSave: seed ${seed} never reached P1's placement in round ${round}`);
+  if (!ready(s)) return null;
   return {
     save: { config: { seats: SEATS.map(x => ({ kind: x.kind, name: x.name })), speed: 'normal', quadrants }, state: s, undo: null, savedAt: Date.now() },
     roundStart: { seed: s.seed, round: s.round, names: s.players.map(p => p.name).join('|'), state: rs },

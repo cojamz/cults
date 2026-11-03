@@ -81,7 +81,7 @@ async function click(page, sel) {
 const vec = (res, id) => Object.fromEntries(id.slice(4).split('-').map((n, i) => [res[i], Number(n)]));
 
 try {
-  // (p1) a member: Prospector, 2 gold + 3 any (1 more any on every member, Oct 27), with several ways to pay
+  // (p1) a member: Prospector, 3 gold + 2 any (the color cost, Nov 2), with several ways to pay
   {
     const save = paySave();
     const st = save.state, p = st.players[0], res = st.resources;
@@ -133,7 +133,7 @@ try {
   // (p3) one way to pay: straight through, coins flying
   {
     // the rivals hold more gold and green, so the one way gives up no lead (p4: the one way that does asks)
-    const save = paySave({ res: { gold: 2, red: 0, blue: 0, green: 3 }, rivals: { gold: 4, green: 4 } });
+    const save = paySave({ res: { gold: 3, red: 0, blue: 0, green: 2 }, rivals: { gold: 4, green: 4 } });
     if (save.state.pending.options.filter(o => o.kind === 'pay').length !== 1) errors.push('(p3) the save has more than one way to pay');
     if (save.state.pending.options.some(o => o.breaks)) errors.push('(p3) the one way gives up a lead (the save should keep every lead)');
     const ctx = await browser.newContext({ viewport: { width: 1270, height: 700 } });
@@ -415,7 +415,7 @@ try {
   }
   // (h1) w3a #14: Hustler's long question gives way to what to do ("Hustler: pick a color") and where to click, whole
   {
-    const save = paySave({ def: 'gold.hustler', res: { gold: 4, red: 2, blue: 2, green: 3 } }); // (Hustler costs 4 gold; cut from the deck, so minted)
+    const save = paySave({ def: 'gold.hustler', res: { gold: 5, red: 2, blue: 2, green: 3 } }); // (Hustler costs 5 gold since the color cost, Nov 2; cut from the deck, so minted)
     const { applyMove } = await import('../../src/engine/v4/index.js');
     const way = save.state.pending.options.find(o => o.default) || save.state.pending.options.find(o => o.kind === 'pay');
     save.state = applyMove(save.state, { player: 0, option: way.id });
@@ -431,7 +431,7 @@ try {
   // (a1) Wave-2 tester A: an instant buy flies its coins and closes the hover. The hover says the cost and nothing else
   //      about paying (Cory, 03:40: cut "You pay"; info.mjs (q) holds it too)
   {
-    const save = paySave({ res: { gold: 2, red: 0, blue: 0, green: 3 }, rivals: { gold: 4, green: 4 } }); // (no lead lost: p3)
+    const save = paySave({ res: { gold: 3, red: 0, blue: 0, green: 2 }, rivals: { gold: 4, green: 4 } }); // (no lead lost: p3)
     const st = save.state;
     st.queue[0] = { t: 'buy', p: 0 }; // back to the buy step: the card is clicked from the shop
     const { resume } = await import('../../src/engine/v4/core.js');

@@ -135,7 +135,11 @@ try {
   }
   await page.waitForSelector('.lt-seat[data-pid]');
   {
-    const leaders = await page.$$eval('.lt-seat[data-pid] [data-leader] svg[data-emoji]', els => els.map(e => [e.closest('.lt-seat').getAttribute('data-pid'), e.getAttribute('data-emoji')]));
+    // the plain leader of each seat; a seat with a cloak also draws a cloaked copy over it (.cs-cloak-on, Nov 1), which
+    // must wear the same emoji
+    const leaders = await page.$$eval('.lt-seat[data-pid] .cs-leader > .lt-ring [data-leader] svg[data-emoji]', els => els.map(e => [e.closest('.lt-seat').getAttribute('data-pid'), e.getAttribute('data-emoji')]));
+    const cloaked = await page.$$eval('.lt-seat[data-pid] .cs-cloak-on [data-leader] svg[data-emoji]', els => els.map(e => [e.closest('.lt-seat').getAttribute('data-pid'), e.getAttribute('data-emoji')]));
+    for (const [pid, e] of cloaked) { const plain = leaders.find(([q]) => q === pid); if (!plain || plain[1] !== e) errors.push(`seat ${pid}'s cloaked leader wears "${e}", its plain leader "${plain && plain[1]}"`); }
     const mine = leaders.find(([pid]) => pid === '0');
     if (!mine || mine[1] !== PICK) errors.push(`your leader wears "${mine && mine[1]}", not the ${PICK} you picked`);
     const all = leaders.map(([, e]) => e);

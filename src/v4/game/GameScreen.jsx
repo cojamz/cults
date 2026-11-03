@@ -1357,7 +1357,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const shopDenied = useCallback((...a) => handlers.current.onDenied(...a), []);
   // A modal takes the stage: sweep any flying ghosts so nothing floats over it.
   const modalOpen = !!(moment || rules || leaving || logOpen || (needHandoff && !moment) || (mine && pend && pend.kind === 'pay' && !onlyPay) || (mine && !needHandoff && (payChoice(pend) || launderChoice(state, pend))));
-  useEffect(() => { if (modalOpen) clearFlights(0); }, [modalOpen]);
+  // (the Reckoning waits for the last landing before it scores, so the pieces still on their way land first)
+  const onlyMoment = !!moment && !(rules || leaving || logOpen);
+  useEffect(() => { if (modalOpen) clearFlights(0, { spareFlying: onlyMoment }); }, [modalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
   // and the page behind a modal doesn't scroll
   useEffect(() => {
     if (!modalOpen) return undefined;
