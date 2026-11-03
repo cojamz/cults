@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Doormen (Cory, Nov 1 3:21pm, picked 1): "On Use, once per round: send a rival's member to the bottom of the pile.
-// Give them a shop member costing up to 2 more." The owner picks; given, not recruited, so no On Recruit fires.
+// Give them a shop member costing up to 2 more." Range since Nov 2: "costing at most 2 less" (a 6 → 4 and anything
+// above; Cory: "at least 2 less. so a demote at worst", "4 and anything above"). The owner picks; given, not recruited, so no On Recruit fires.
 import { describe, it, expect } from 'vitest';
 import { move } from './helpers.js';
 import { table, uidIn, owns } from './cards-helpers-b.js';
@@ -11,29 +12,31 @@ const buy = () => ({ queue: [{ t: 'buy', p: 0 }, { t: 'turn', p: 1 }] });
 const ids = s => (s.pending?.options || []).map(o => o.id);
 
 describe('Doormen', () => {
-  it('sends a rival member to the bottom and gives them a shop member costing up to 2 more, once per round', () => {
+  it('sends a rival member to the bottom and gives them a shop member costing at most 2 less, once per round', () => {
     let s = table(Q, { members: [['market.doorman'], ['red.bigfamily']], shop: ['red.intern', 'gold.tycoon', 'red.host'], ...buy() });
     const door = uidIn(s, 'market.doorman', 0);
     s = move(s, `use:${door}`);
     expect(s.pending.kind).toBe('choose');
-    const fam = uidIn(s, 'red.bigfamily', 1), intern = uidIn(s, 'red.intern', 'shop'), tycoon = uidIn(s, 'gold.tycoon', 'shop');
-    expect(ids(s)).toContain(`trade:${fam}:${intern}`);
-    const pileLen = s.pile.length;
-    s = move(s, `trade:${fam}:${intern}`);
-    expect(owns(s, 1, 'red.intern')).toBe(true);
+    const fam = uidIn(s, 'red.bigfamily', 1), intern = uidIn(s, 'red.intern', 'shop'), host = uidIn(s, 'red.host', 'shop'), tycoon = uidIn(s, 'gold.tycoon', 'shop');
+    expect(ids(s)).toContain(`trade:${fam}:${host}`);
+    expect(ids(s)).not.toContain(`trade:${fam}:${intern}`); // 7 → 3 is more than 2 less
+    s = move(s, `trade:${fam}:${host}`);
+    expect(owns(s, 1, 'red.host')).toBe(true);
     expect(owns(s, 1, 'red.bigfamily')).toBe(false);
     expect(s.pile.at(-1)).toBe(fam);
     expect(s.shop).toContain(tycoon);
-    expect(s.log.join('\n')).toMatch(/P1's Doormen: sends P2's Big Family to the bottom of the pile and gives P2 Intern\./);
+    expect(s.log.join('\n')).toMatch(/P1's Doormen: sends P2's Big Family to the bottom of the pile and gives P2 Host\./);
     expect(ids(s)).not.toContain(`use:${door}`);
   });
 
-  it('only shop members costing up to 2 more than the sent member', () => {
-    const s0 = table(Q, { members: [['market.doorman'], ['red.volunteer']], shop: ['red.intern', 'red.bigfamily'], ...buy() });
+  it('only shop members costing at most 2 less than the sent member; anything above is fine', () => {
+    const s0 = table(Q, { members: [['market.doorman'], ['red.volunteer', 'red.bigfamily']], shop: ['red.intern', 'gold.tycoon'], ...buy() });
     const s = move(s0, `use:${uidIn(s0, 'market.doorman', 0)}`);
-    const vol = uidIn(s, 'red.volunteer', 1);
-    expect(ids(s)).toContain(`trade:${vol}:${uidIn(s, 'red.intern', 'shop')}`);
-    expect(ids(s)).not.toContain(`trade:${vol}:${uidIn(s, 'red.bigfamily', 'shop')}`);
+    const vol = uidIn(s, 'red.volunteer', 1), fam = uidIn(s, 'red.bigfamily', 1), intern = uidIn(s, 'red.intern', 'shop'), tycoon = uidIn(s, 'gold.tycoon', 'shop');
+    expect(ids(s)).toContain(`trade:${vol}:${intern}`); // 2 → 3
+    expect(ids(s)).toContain(`trade:${vol}:${tycoon}`); // 2 → 8: no ceiling
+    expect(ids(s)).toContain(`trade:${fam}:${tycoon}`); // 7 → 8
+    expect(ids(s)).not.toContain(`trade:${fam}:${intern}`); // 7 → 3: 4 less
   });
 
   it('the rival is given the member: its On Recruit does not fire', () => {
@@ -49,12 +52,12 @@ describe('Doormen', () => {
 describe('Bargain Bin', () => {
   // Cory, Nov 1: "changes to B when any member goes to the bottom of the pile": a cult's member counts too
   it('pays +1 blue when Doormen sends a rival member to the bottom', () => {
-    let s = table(Q, { members: [['market.doorman'], ['red.bigfamily']], shop: ['red.intern'], ...buy() });
+    let s = table(Q, { members: [['market.doorman'], ['red.bigfamily']], shop: ['red.host'], ...buy() });
     const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
     s.cards[art] = { uid: art, def: 'market.bargainbin' }; s.players[0].artifact = art;
     const b0 = s.players[0].res.blue;
     s = move(s, `use:${uidIn(s, 'market.doorman', 0)}`);
-    s = move(s, `trade:${uidIn(s, 'red.bigfamily', 1)}:${uidIn(s, 'red.intern', 'shop')}`);
+    s = move(s, `trade:${uidIn(s, 'red.bigfamily', 1)}:${uidIn(s, 'red.host', 'shop')}`);
     expect(s.players[0].res.blue - b0).toBe(1);
     expect(s.log.join('\n')).toMatch(/P1's Bargain Bin: \+1 blue/);
   });

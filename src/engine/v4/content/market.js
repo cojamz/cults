@@ -25,14 +25,14 @@ const botWorth = c => c.def.f * 1.4 + (c.def.vanilla ? 0 : 1.6) + priceOf(c) * 0
 let LEAN = false;
 export function setLean(on) { LEAN = !!on; }
 
-// Doormen: [rival's member, shop member costing up to 2 more] (a trade of members, so swap protections apply)
+// Doormen: [rival's member, shop member costing at most 2 less, anything above allowed (Cory, Nov 2: "4 and anything above" for a 6)] (a trade of members, so swap protections apply)
 const doorPairs = (ctx, p) => {
   const out = [];
   for (const o of ctx.rivals(p)) {
     if (!ctx.canSteal(p, o, 'swap')) continue;
     for (const a of ctx.membersOf(o)) {
       if (!ctx.canSwapMember(a.uid)) continue;
-      for (const b of ctx.shopCards()) if (priceOf(b) <= priceOf(a) + 2) out.push([a, b]);
+      for (const b of ctx.shopCards()) if (priceOf(b) >= priceOf(a) - 2) out.push([a, b]);
     }
   }
   return out;
@@ -443,12 +443,12 @@ const market = {
     // Cory, Nov 1 3:21pm (picked 1): a rival's member to the bottom of the pile, and the owner hands them a shop member
     // costing up to 2 more. Given, not recruited, so its On Recruit doesn't fire. Price 2 blue + 5 any, worth and counts
     // as 2: the design thread's fill-ins. A trade, not a steal (Bodyguards and Lie Low block steals only).
-    m('doorman', 'Doormen', 2, 5, 'On Use, once per round: send a rival’s member to the bottom of the pile. Give them a shop member costing up to 2 more.', { f: 2, n: 2,
+    m('doorman', 'Doormen', 2, 5, 'On Use, once per round: send a rival’s member to the bottom of the pile. Give them a shop member costing at most 2 less.', { f: 2, n: 2,
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
         const pairs = doorPairs(ctx, owner);
-        if (!pairs.length) { card.used = false; ctx.log(`${owner.name}'s Doormen: no rival's member has a shop member costing up to 2 more.`); return; }
+        if (!pairs.length) { card.used = false; ctx.log(`${owner.name}'s Doormen: no rival's member has a shop member costing at most 2 less.`); return; }
         ctx.log(`${owner.name} uses Doormen.`);
         ctx.choose(owner, 'Doormen: send which rival member to the bottom of the pile, and give them which shop member?', pairs.map(([a, b]) => ({
           id: `trade:${a.uid}:${b.uid}`, label: `${ctx.ownerOf(a.uid).name}: ${a.def.name} → pile, gets ${b.def.name}`, kind: 'trade', value: [a.uid, b.uid],
