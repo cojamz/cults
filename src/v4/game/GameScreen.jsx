@@ -1350,11 +1350,11 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   handlers.current = { onPick, onDenied };
   const shopPick = useCallback((...a) => handlers.current.onPick(...a), []);
   const shopDenied = useCallback((...a) => handlers.current.onDenied(...a), []);
-  // A modal takes the stage: sweep any flying ghosts so nothing floats over it.
+  // A modal takes the stage: sweep the ghosts left over, so nothing lingers over it. A piece still on its way lands
+  // first (at most a flight's length, 1.65s at Relaxed): Cory, Oct 28, "the follower or the money disappears well
+  // before making it to its final destination" (landing.mjs caught the Reckoning, then a pay sheet, taking them, Nov 3).
   const modalOpen = !!(moment || rules || leaving || logOpen || (needHandoff && !moment) || (mine && pend && pend.kind === 'pay' && !onlyPay) || (mine && !needHandoff && (payChoice(pend) || launderChoice(state, pend))));
-  // (the Reckoning waits for the last landing before it scores, so the pieces still on their way land first)
-  const onlyMoment = !!moment && !(rules || leaving || logOpen);
-  useEffect(() => { if (modalOpen) clearFlights(0, { spareFlying: onlyMoment }); }, [modalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (modalOpen) clearFlights(0, { spareFlying: true }); }, [modalOpen]);
   // and the page behind a modal doesn't scroll
   useEffect(() => {
     if (!modalOpen) return undefined;

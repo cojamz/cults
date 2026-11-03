@@ -1,5 +1,5 @@
 // A long cult's member list scrolls (Cory, playtest Oct 28: "i cant scroll the list of members on the hover over when it
-// gets long"): a 14-member seat's card opens at 1270x700, and the mouse wheel scrolls its list from the seat itself and
+// gets long"): a 20-member seat's card opens at 1270x700, and the mouse wheel scrolls its list from the seat itself and
 // from the list, the card staying open while it scrolls.
 import { chromium } from 'playwright';
 import { browserPath, launchBrowser } from './lib/browser.mjs';
@@ -13,7 +13,9 @@ const SEATS = [{ name: 'You', kind: 'human' }, ...['Bo', 'Cy', 'Di'].map(name =>
 let s = createGame({ seats: SEATS, seed: 3, quadrants: ['market', 'gold', 'red', 'echo'] });
 const rand = seededRandom(3);
 for (let n = 0; n < 4000 && !(s.pending && s.pending.player === 0 && s.pending.kind === 'place'); n++) s = applyMove(s, chooseBotMove(s, rand));
-while (s.players[1].members.length < 14 && s.pile.length) s.players[1].members.push(s.pile.shift());
+// 20, not 14: which members the pile gives moves with every bot or card change, and a 14-card list of short ones
+// overflowed by 2px (Nov 3), leaving the wheel nothing to scroll
+while (s.players[1].members.length < 20 && s.pile.length) s.players[1].members.push(s.pile.shift());
 resume(s); s.build = buildStamp();
 const errors = [];
 const browser = await launchBrowser({ executablePath: browserPath });
@@ -24,7 +26,7 @@ try {
   await page.goto(`${base}/?intro=0`);
   await page.click('[data-home="resume"]');
   const hand = page.locator('[data-handoff]'); if (await hand.isVisible().catch(() => false)) await hand.click();
-  // Bo's count: 14 cards, more members where one counts as 2+ (member count = follower count, Cory Oct 31)
+  // Bo's count: 20 cards, more members where one counts as 2+ (member count = follower count, Cory Oct 31)
   const count = page.locator('.lt-seat[data-pid="1"] .cs-member-count');
   await count.waitFor();
   const b = await count.boundingBox();
@@ -34,7 +36,8 @@ try {
   await list.waitFor({ timeout: 5000 });
   const m = () => list.evaluate(l => ({ sh: l.scrollHeight, ch: l.clientHeight, top: l.scrollTop })).catch(() => null);
   const a = await m();
-  if (!a || a.sh <= a.ch) errors.push(`the 14-member list should overflow its card: ${JSON.stringify(a)}`);
+  // room for the seat's nudge (20px) and the list's four turns (15px each)
+  if (!a || a.sh - a.ch < 100) errors.push(`the 20-member list should overflow its card by 100px or more: ${JSON.stringify(a)}`);
   await page.mouse.wheel(0, 20); await page.waitForTimeout(250); // a nudge: leave room to scroll on from the list
   const fromSeat = await m();
   if (!fromSeat || fromSeat.top <= 0) errors.push(`the wheel on the seat didn't scroll the list: ${JSON.stringify(fromSeat)}`);

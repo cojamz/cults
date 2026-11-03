@@ -19,6 +19,7 @@ import { mkdirSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { lateSave } from './lib/late-save.mjs';
 import { seedSave } from './lib/seed.mjs';
+import { answerChoice } from './lib/answer.mjs';
 
 const SHOTS = (process.env.V4_SHOTS || '/tmp/patrons-shots/v4') + '/reckoning';
 mkdirSync(SHOTS, { recursive: true });
@@ -100,7 +101,11 @@ try {
   const skip = await page.$('[data-intro-skip]'); if (skip) await skip.click();
   await page.waitForSelector('.lt-wheel .slot');
 
+  // the person answers the shared way first (lib/answer.mjs: the pay sheet, gifts, board targets); a first-option
+  // clicker alone sometimes met a step it couldn't answer and round I never ended (Nov 3)
   const firstOption = async () => {
+    if (await answerChoice(page, { timeout: 800, avoid: [/^release:/] }).catch(() => null)) return true;
+    const hand = await page.$('[data-handoff]'); if (hand) { await hand.click().catch(() => {}); return true; }
     for (const el of await page.$$('[data-option]:not([disabled])')) {
       const id = await el.getAttribute('data-option').catch(() => null);
       if (!id || id.startsWith('toggle:') || id === 'back' || id.startsWith('release:')) continue;

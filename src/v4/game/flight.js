@@ -340,8 +340,8 @@ export function aim(anim, el) {
   if (anim && el && !el.rectOnly && typeof window !== 'undefined' && window.__flightWatch && window.__flightWatch.aim) window.__flightWatch.aim(anim, el);
   return anim;
 }
-// spareFlying: a sweep at age 0 that still lets a piece on its way land (the Reckoning, which waits for the last
-// landing before it scores: its sweep took the round's last coins off mid-flight, landing.mjs, Nov 3)
+// spareFlying: a sweep at age 0 that still lets a piece on its way land (a modal opening: its sweep took the round's
+// last coins off mid-flight as the Reckoning came up, and a minion's trail as a sheet opened, landing.mjs, Nov 3)
 export function clearFlights(maxAge = 0, { spareFlying = false } = {}) {
   if (typeof document === 'undefined') return;
   const now = Date.now();

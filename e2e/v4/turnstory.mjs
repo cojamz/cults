@@ -333,7 +333,8 @@ try {
     await p2.click('[data-home="resume"]', { timeout: 30000 });
     await p2.waitForSelector('.lt-wheel .slot.can');
     // the resumed turn's card comes up under the strip; then the strip has settled with it
-    if (!(await p2.waitForSelector('.lt > .turn-card', { timeout: 6000 }).catch(() => null))) fail('no turn card came up on the resumed round-II turn', tag);
+    // (15s: GitHub's box, under the unit tests, took longer than 6s to bring it up at 1100 once, Nov 3)
+    if (!(await p2.waitForSelector('.lt > .turn-card', { timeout: 15000 }).catch(() => null))) fail('no turn card came up on the resumed round-II turn', tag);
     await p2.waitForTimeout(800);
     const s2 = await p2.evaluate(() => {
       const l = document.querySelector('[data-since] .since-list'), card = document.querySelector('.lt > .turn-card');
