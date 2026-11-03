@@ -21,9 +21,12 @@ function afterPaint(fn) {
   const r = requestAnimationFrame(() => { t = setTimeout(fn, 0); });
   return () => { cancelAnimationFrame(r); clearTimeout(t); };
 }
+// why a press did nothing, for the perf rig's stuck report (scripts/v4-rig.mjs sets window.__rigWhy; players never do)
+const why = r => { if (globalThis.__rigWhy) globalThis.__rigWhy(r); };
 let userMove = false; // set while your own click is being submitted (useTable.show reads it)
 const NO_SLOTS = new Map();
 const NOOP = () => {};
+const ANSWER_FIRST = (() => { try { return new URLSearchParams(globalThis.location?.search || '').get('answer') !== 'now'; } catch { return true; } })();
 const NO_SEATS = [];
 const NO_OPTIONS = () => null;
 import { useHoverCards, HoverCardLayer, usePreviewWarmup } from './HoverCards.jsx';
@@ -1198,6 +1201,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const busyNow = useRef(false); // in flight since the click itself (busy, the state, lands with the table's transition)
   const repeat = useRef(null);
   const lastPick = useRef({ id: null, t: 0, x: null, y: null });
+  const answering = useRef(false); // your own click is answering a choice: the table holds a frame (answer first, below)
   // where the last press landed: the step lock below only eats a second press near the first one (a double tap),
   // never a deliberate press somewhere else (testers felt those as dropped clicks)
   const lastDown = useRef({ x: null, y: null, t: 0 });
@@ -1222,7 +1226,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const onPick = useCallback((optionId, mode) => {
     if (globalThis.__cm) globalThis.__cm('pick'); // the rig's click phases (scripts/v4-rig.mjs)
     // A still-lit old option is presentation only, never a stale command to a newer authoritative state.
-    if (interactionState !== physicalState || session.getState() !== physicalState) return;
+    if (interactionState !== physicalState || session.getState() !== physicalState) { why('presenting'); return; }
     // a double-click is one choice: the same option again within 350ms is ignored (replays are exempt)
     const now = Date.now();
     // counted picks ("take 1 gold… (2 left)") are meant to be clicked fast and repeatedly: every click counts
@@ -1233,15 +1237,15 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     // Automatic copy answers aren't pointer events: they must not be swallowed by
     // the place→choose double-tap guard (350 ms auto-copy versus a 400 ms lock).
     const inputGuard = mode !== 'replay' && mode !== 'automatic';
-    if (inputGuard && !counted && lastPick.current.id === optionId && now - lastPick.current.t < twin) return;
+    if (inputGuard && !counted && lastPick.current.id === optionId && now - lastPick.current.t < twin) { why('double-click'); return; }
     const d = lastDown.current, p0 = lastPick.current;
     // a fresh pointer press far from the last pick is deliberate; anything else (near it, or a key) waits out the lock
     const farFromLast = d.x != null && p0.x != null && now - d.t < 600 && Math.hypot(d.x - p0.x, d.y - p0.y) >= 48;
-    if (inputGuard && !counted && now < lockUntil.current && !farFromLast) return;
+    if (inputGuard && !counted && now < lockUntil.current && !farFromLast) { why('step-lock'); return; }
     lastPick.current = { id: optionId, t: now, x: now - d.t < 600 ? d.x : null, y: now - d.t < 600 ? d.y : null };
     if (mode === 'all') repeat.current = optionId;
-    if ((busy || busyNow.current) && mine) { queuedClick.current = counted ? [...queuedClick.current, optionId].slice(-4) : [optionId]; return; }
-    if (!mine || needHandoff || !options.has(optionId)) return;
+    if ((busy || busyNow.current) && mine) { why(busy ? 'busy' : 'busyNow'); queuedClick.current = counted ? [...queuedClick.current, optionId].slice(-4) : [optionId]; return; }
+    if (!mine || needHandoff || !options.has(optionId)) { why(!mine ? 'not-mine' : needHandoff ? 'handoff' : 'no-option'); return; }
     // a commit closes any open hover (wave-2 tester A #40: a 2→1 buy's hover stayed up while the bots played); a
     // placement keeps the space's card, which shows what you just took
     if (!String(optionId).startsWith('slot:')) hover.close();
@@ -1253,6 +1257,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     let sent;
     // the table's update for this move (useTable.show): a placement a frame after the click, anything else in the click
     userMove = String(optionId).startsWith('slot:') ? true : 'now';
+    answering.current = !!(pend && pend.kind === 'choose');
     try { sent = session.submit({ player: pend.player, option: optionId }); } catch (e) { sent = Promise.reject(e); } finally { userMove = false; }
     if (globalThis.__cm) globalThis.__cm('submitted');
     // the table shows a move in flight only while it is (online, waiting on the host): a move the session took at once
@@ -1548,6 +1553,30 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const someoneHere = mySeats.length > 0;
   const lastLine = state.log.length ? plainLine(state.log, state.log.length - 1) : '';
   // The latest rival placement, marked on the wheel; read from the state so it survives a reload.
+  // Answer first (click speed, Nov 1 and 3; ?answer=now turns it off): when a choice is answered (a steal, a gift, a pick
+  // on the board), the dialog going and your own seat are the answer, so they draw in the click; the wheel, the shop, the
+  // rivals' seats and the strip keep the table as it stood for one frame and follow in a transition after the paint.
+  // Only for choices: a placement's answer is the minion on the wheel and a buy's is the card leaving the shop (holding
+  // those drew the answer a frame late). Held by hand rather than useDeferredValue, which renders the whole table a second
+  // time after every step, held or not (rig, Nov 3: buys 188 → 236 ms median from that second render alone).
+  const lastDrawn = useRef({ state, seats: seatState });
+  const held = useRef(null); // { show, seats, for }: the table as it stood, kept while `for` is the state
+  const [released, setReleased] = useState(null);
+  const was = lastDrawn.current.state;
+  if (was !== state) {
+    // only your own click (a rival's choice, or a step of the show, draws in one go as before)
+    held.current = ANSWER_FIRST && answering.current && !state.over && was && was.round === state.round && was.pending && was.pending.kind === 'choose'
+      ? { show: was, seats: lastDrawn.current.seats, for: state } : null;
+    answering.current = false;
+  }
+  lastDrawn.current = { state, seats: seatState };
+  const hold = held.current && held.current.for === state && released !== state ? held.current : null;
+  useEffect(() => {
+    if (!hold) return undefined;
+    const id = requestAnimationFrame(() => startTransition(() => setReleased(state)));
+    return () => cancelAnimationFrame(id);
+  }, [state]); // eslint-disable-line react-hooks/exhaustive-deps
+  const tState = hold ? hold.show : state, tSeats = hold ? hold.seats : seatState;
   const lastMove = useMemo(() => (state.over ? null : latestRivalMove(state, mySeats)), [state]); // eslint-disable-line react-hooks/exhaustive-deps
   const recentMoves = useMemo(() => (state.over ? [] : movesSinceYourTurn(state, mySeats)), [state]); // eslint-disable-line react-hooks/exhaustive-deps
   const openLog = () => {
@@ -1665,7 +1694,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
         <>
           {/* (data-step: after you've placed, the wheel steps back so only your buys are bright; final panel S#27) */}
           <section className="lt-wheel" data-region="wheel" data-step={buyingNow ? 'buy' : undefined}>
-            <Wheel state={state} interactionState={interactionState} hover={hover} lampQid={lampQid} legal={needHandoff ? NO_SLOTS : pickSpaces || legalSlots} idle={pickSpaces ? null : idleSlots} pickNotes={pickNotes} onPick={onPick} onDenied={onDenied} confirmPlace={!wide} flash={flash} lastMove={lastMove} recentMoves={recentMoves} spacePeek={spacePeek} onSpacePeek={setSpacePeek} meId={mySeats.length === 1 ? mySeats[0] : null} facing={facingRef.current} onFacing={onFacing} />
+            <Wheel state={tState} interactionState={hold ? tState : interactionState} hover={hover} lampQid={lampQid} legal={needHandoff ? NO_SLOTS : pickSpaces || legalSlots} idle={pickSpaces ? null : idleSlots} pickNotes={pickNotes} onPick={onPick} onDenied={onDenied} confirmPlace={!wide} flash={flash} lastMove={lastMove} recentMoves={recentMoves} spacePeek={spacePeek} onSpacePeek={setSpacePeek} meId={mySeats.length === 1 ? mySeats[0] : null} facing={facingRef.current} onFacing={onFacing} />
             {showChoice && (!picker || (gift && !shopRecruit && !wheelMove)) && !payChoice(pend) && pend.kind !== 'setup' && (gift
               ? <GiftCard state={state} gift={gift} onFirst={onGiftFirst} onAnswer={gift.board === 'seats' ? onSeatPick : onGiftAnswer} onBack={canUndo ? undo : null} busy={busy} place={plainAt} hover={hover} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />
               : <ChoicePrompt state={state} onPick={onPick} busy={busy} place={plainAt} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />)}
@@ -1689,7 +1718,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
             <section key={k} className={`lt-seat lt-seat-${k}${pid === me ? ' mine' : ''}${pid != null && pend && pend.player === pid && !state.over ? ' now' : ''}`} data-region={`seat-${k}`} data-pid={pid ?? undefined} data-slot={pid == null ? undefined : snake.slot[pid]}
               data-cloak={pid == null ? undefined : cloakOf(state, pid) || undefined} style={{ '--slot': pid == null ? k : snake.slot[pid] ?? k, ...(pid != null && cloakOf(state, pid) ? { '--cloak': `var(--${cloakOf(state, pid)})` } : null) }} aria-label={pid == null ? undefined : pid === me ? 'Your cult' : `${state.players[pid].name}’s cult`}>
               {pid == null ? null : (
-                <CultSeat state={seatState} pid={pid} me={me} mine={pid === me} now={!!(pend && pend.player === pid && !state.over)} hover={hover} optionFor={pid === me ? live : undefined} onPick={shopPick} pick={pickParts[pid] || null}
+                <CultSeat state={pid === me ? seatState : tSeats} pid={pid} me={me} mine={pid === me} now={!!(pend && pend.player === pid && !state.over)} hover={hover} optionFor={pid === me ? live : undefined} onPick={shopPick} pick={pickParts[pid] || null}
                   onLeader={pid === me && canTalk ? openTalkAt : null} talking={pid === me && talkOpen} />
               )}
               {pid != null && pid === me && lostText && <div key={lostText} className="seat-stolen" role="status" data-stolen={pid} data-brief=""><Rich text={lostText} /></div>}
@@ -1698,13 +1727,13 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
             </section>
           ))}
           <section className="lt-shop" data-region="shop" aria-label="Shop">
-            <ShopCards state={state} me={me} mySeats={yours ? mySeats : NO_SEATS} optionFor={shopFor || live} onPick={shopPick} onDenied={shopDenied} phase={phase} hover={hover} onViewChange={setShopDetails} />
+            <ShopCards state={tState} me={me} mySeats={yours ? mySeats : NO_SEATS} optionFor={shopFor || live} onPick={shopPick} onDenied={shopDenied} phase={phase} hover={hover} onViewChange={setShopDetails} />
           </section>
           {/* what the rivals did since your own last placement, one line each, always on the board (RC1 panel) */}
           {/* the spare minions sit in its head, beside the Log (Cory, Oct 29). They read the physical state alone: the table view
               mixes the new round's empty board with the old round's spent turns, which read as every space spare for a moment
               between rounds (Cory, Oct 29: "between rounds the spare minions count is HUGE") */}
-          {state.round >= 1 && <SinceStrip state={state} entries={since} me={mySeats.length === 1 ? mySeats[0] : null} yours={yours} hover={hover} onLog={openLog}
+          {state.round >= 1 && <SinceStrip state={tState} entries={since} me={mySeats.length === 1 ? mySeats[0] : null} yours={yours} hover={hover} onLog={openLog}
             pool={physicalState.round >= 2 && !physicalState.over ? <MinionPool state={physicalState} /> : null} />}
         </>
       )}

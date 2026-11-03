@@ -776,8 +776,9 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     }
   };
   const tap = (s, el, pt = null) => {
-    if (moved.current) return;
-    if (ghostNow) return; // a placement is on its way: the board answers it, not a second click
+    if (globalThis.__rigWhy) globalThis.__rigWhy(`tap ${s.key} ${legalV.get(s.key) || '-'}`);
+    if (moved.current) { if (globalThis.__rigWhy) globalThis.__rigWhy('dragging'); return; }
+    if (ghostNow) { if (globalThis.__rigWhy) globalThis.__rigWhy('ghost'); return; } // a placement is on its way: the board answers it, not a second click
     const opt = legalV.get(s.key);
     // online, a placement asks to confirm on its card ("Place here": no Undo online). A choice answered on a space (a
     // copy's target, boardPick.js) has no confirm on that card, so it picks at once, as it does locally: pinning it
