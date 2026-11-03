@@ -2,7 +2,7 @@
 
 Catch up on design/desk.md first (Cory's words, every open workstream, the bot-game queue). This file keeps the longer notes per workstream.
 
-Live: v0.99.528 (main:play/build.json): eight bot-tested replacements went live Nov 3 (see HANDOFF). The list before this tidy-up: design/archive/in-flight-2026-10-28-to-29.md. Long-term goals live in design/todo.md under "Backlog initiatives".
+Live: v0.99.533 (main:play/build.json): eight bot-tested replacements went live Nov 3 (see HANDOFF). The list before this tidy-up: design/archive/in-flight-2026-10-28-to-29.md. Long-term goals live in design/todo.md under "Backlog initiatives".
 
 Running now
 - Playtest full games and fix friction (Nov 3, thread of that name): 23 games through the screen at 3 to 6 players, both contest settings, Hard and Normal bots, today's new cards handed to the person. Shipped v0.99.530 (Body Snatchers swap heading, end-screen loss label), .532 (long names in the swap card), .533 (round card at 5-6 players), .534 (Tryout and Sample skip Drifters; rim words at 5-6 colors). Next: Impersonators, Creditors, Kidnappers and Godparents once they're dealt (PT_GIVE).
