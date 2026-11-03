@@ -35,3 +35,4 @@ Format: date, run, deck, what was flagged, why it was dropped, the numbers in pl
 - 2026-11-03: Yellow's Dilute, Big Dilute, Melting Pot −8 to −10 at Hard, 0 to +4 at Normal; dropped (levels disagree). Second flag for Big Dilute and Melting Pot (By color Hard −10 too? not read).
 - 2026-11-03: Cashier −6 Normal / −17 Hard printed, +4 / −8 By color; watch (one more flag goes to Cory).
 - 2026-11-03: White as a main color under By color −7 Normal / −25 Hard (20 seats); watch.
+- 2026-11-03 (v0.99.520 pass): Early Birds TRAP again (third flag; counts-as-2 artifact suspected, Hard −14/−12). Impressionist at +1: −5/−14 printed, 0/−3 By color; watch. Seat 1 19% under By color at both levels; watch.
