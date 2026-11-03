@@ -61,7 +61,8 @@ for (let g = first; g < first + count; g++) {
   const pool = all.filter(q => !must.includes(q)), quads = [...must];
   while (quads.length < seats) quads.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
   let s = createGame({ seats: Array.from({ length: seats }, () => ({ kind: 'bot' })), seed: g, quadrants: quads, rules: DECK_RULES });
-  const buyer = g % 5 === 0 ? g % seats : -1;
+  const strongSeat = process.env.STRONGSEAT ? g % seats : -1;
+  const buyer = strongSeat < 0 && g % 5 === 0 ? g % seats : -1;
   const places = s.players.map(() => ({})), seen = {}, got = s.players.map(() => ({}));
   let moves = 0, swaps = 0;
   // for the balance system (scripts/balance): standings at each round's end, turns and decisions, and interaction —
@@ -83,7 +84,10 @@ for (let g = first; g < first + count; g++) {
       played: info.options.map(o => [choiceLabel(st, o.id), o.mean === null ? null : +o.mean.toFixed(2), o.n]),
       chose: choiceLabel(st, info.chosen),
     }) + '\n') : null;
-    const m = pl === buyer ? chooseFollowerBuyerMove(s, rand) : chooseBotMove(s, rand, onDecision ? { ...botOpts, onDecision } : botOpts);
+    // STRONGSEAT=hard|veryhard: one seat (rotating by game) plays that level, the rest LEVEL; no follower-only seat
+    const strong = strongSeat >= 0 && pl === strongSeat;
+    const m = strong ? chooseBotMove(s, rand, { level: process.env.STRONGSEAT, maxMs: Infinity })
+      : pl === buyer ? chooseFollowerBuyerMove(s, rand) : chooseBotMove(s, rand, onDecision ? { ...botOpts, onDecision } : botOpts);
     if (typeof m.option === 'string' && /^(slot|squat):/.test(m.option)) {
       const [q, i] = m.option.split(':')[1].split('-').map(Number);
       const a = quadrant(s.quadrants[q]).actions[i];
@@ -118,7 +122,7 @@ for (let g = first; g < first + count; g++) {
   if (!s.over) { appendFileSync(out, JSON.stringify({ game: g, level, seats, table: quads, stuck: true, round: s.round }) + '\n'); continue; }
   const top = Math.max(...s.players.map(p => followers(s, p)));
   const row = {
-    game: g, level, seats, table: quads, deck: DECK_RULES.deck || 15, buyer, prices, swaps, standings, tally,
+    game: g, level, seats, table: quads, deck: DECK_RULES.deck || 15, buyer, strongSeat, prices, swaps, standings, tally,
     shop: Object.keys(seen).map(name), shopRound: Object.fromEntries(Object.entries(seen).map(([d, r]) => [name(d), r])),
     // each round's contests: color -> winning seats (for sweeps: one seat taking a color's contest every round)
     contests: (s.contests || []).map(c => Object.fromEntries(c.results.map(x => [x.qid, x.winners]))),

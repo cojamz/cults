@@ -7,7 +7,7 @@
 //   games    bots play: Normal at 4, 3 and 2 players, Hard at 4 with its choice log (deep: more, plus Very Hard)
 //   numbers  win rates, card lifts and classes, real choices, catch-up, interaction, length, winning plans, skill by
 //            color, members that never show acting (text against engine)
-//   trust    Normal's decisions replayed over every option: how many followers the bots leave on the table
+//   trust    one Hard seat among Normals (how much a stronger player gains) and whether Normal and Hard agree
 //   abuse    the most suspect cards (and any card changed since the last run) handed to a seat that tries to break them
 //   packet   three games as plain logs for the feel step (closest, biggest win, most interaction)
 //   report   one report.md: trust box, flags, every section; the feel step (skill: balance-run) writes the findings
@@ -32,9 +32,9 @@ const times = {};
 const note = s => { const line = `[${new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' })}] ${s}`; console.log(line); appendFileSync(`${dir}/run.log`, line + '\n'); };
 
 const SIZES = {
-  smoke: { normal4: 8, normal3: 4, normal2: 4, hard4: 4, veryhard4: 0, trust: { games: 1, every: 40, seeds: 2 }, abuse: { cards: 1, games: 2 }, fire: 8 },
-  fast: { normal4: 600, normal3: 100, normal2: 100, hard4: 64, veryhard4: 0, trust: { games: 4, every: 9, seeds: 4 }, abuse: { cards: 3, games: 4, budget: 100 }, fire: 120 },
-  deep: { normal4: 1800, normal3: 300, normal2: 300, hard4: 240, veryhard4: 80, trust: { games: 16, every: 6, seeds: 10 }, abuse: { cards: 16, games: 8 }, fire: 400 },
+  smoke: { normal4: 8, normal3: 4, normal2: 4, hard4: 4, veryhard4: 0, strong4: 4, abuse: { cards: 1, games: 2 }, fire: 8 },
+  fast: { normal4: 600, normal3: 100, normal2: 100, hard4: 64, veryhard4: 0, strong4: 40, abuse: { cards: 3, games: 4, budget: 100 }, fire: 120 },
+  deep: { normal4: 1800, normal3: 300, normal2: 300, hard4: 240, veryhard4: 80, strong4: 120, abuse: { cards: 16, games: 8 }, fire: 400 },
 };
 const Z = SIZES[size];
 
@@ -90,6 +90,7 @@ const shard = (group, level, seats, total, per, env = {}) => {
 const files = {
   veryhard4: Z.veryhard4 ? shard('veryhard4', 'veryhard', 4, Z.veryhard4, Math.ceil(Z.veryhard4 / (2 * W)), { CHOICES: 'auto' }) : [],
   hard4: shard('hard4', 'hard', 4, Z.hard4, Math.ceil(Z.hard4 / (2 * W)), { CHOICES: 'auto' }),
+  strong4: shard('strong4', 'normal', 4, Z.strong4, Math.ceil(Z.strong4 / (2 * W)), { STRONGSEAT: 'hard' }),
   normal4: shard('normal4', 'normal', 4, Z.normal4, 100),
   normal3: shard('normal3', 'normal', 3, Z.normal3, 100),
   normal2: shard('normal2', 'normal', 2, Z.normal2, 100),
@@ -117,7 +118,7 @@ await stage('numbers', () => pool([
 ])));
 
 // ---------- trust ----------
-await stage('trust', () => pool([{ name: 'trust check', args: ['scripts/balance/trust.mjs', `--games=${Z.trust.games}`, `--every=${Z.trust.every}`, `--seeds=${Z.trust.seeds}`, `--workers=${W}`, `--json=${dir}/trust.json`, `--md=${dir}/trust.md`], done: `${dir}/trust.done` }]));
+await stage('trust', () => pool([{ name: 'trust check', args: ['scripts/balance/trust.mjs', `--mixed=${files.strong4.join(',')}`, `--normalReport=${dir}/normal4.json`, `--hardReport=${dir}/hard.json`, `--json=${dir}/trust.json`, `--md=${dir}/trust.md`], done: `${dir}/trust.done` }]));
 
 // ---------- abuse ----------
 // suspects: members whose owners win clearly more than expected (Normal and Hard), strongest first, plus any member
@@ -172,7 +173,7 @@ await stage('report', async () => {
     `# Balance run ${id}`,
     '',
     `Build ${sha}, ${size} size, 10-card deck, ${((Date.now() - t0) / 60000).toFixed(0)} min this session${Object.keys(extraEnv).length ? `, settings ${JSON.stringify(extraEnv)}` : ''}.`,
-    `Games: Normal ${Z.normal4} at 4 players, ${Z.normal3} at 3, ${Z.normal2} at 2; Hard ${Z.hard4} at 4${Z.veryhard4 ? `; Very Hard ${Z.veryhard4} at 4` : ''}.`,
+    `Games: Normal ${Z.normal4} at 4 players, ${Z.normal3} at 3, ${Z.normal2} at 2; Hard ${Z.hard4} at 4${Z.veryhard4 ? `; Very Hard ${Z.veryhard4} at 4` : ''}; one Hard seat among Normals ${Z.strong4}.`,
     '',
     '## Findings',
     '(Written by the feel step: at most 10, most important first, each with the card\'s full text, one played-out turn, and which sources agree.)',
