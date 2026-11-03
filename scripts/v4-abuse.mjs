@@ -7,17 +7,18 @@
 // round before choosing (Very Hard's search, wider). Rivals play Normal (--rivals=hard for Hard).
 // Report: how many more followers over the best rival the abuser ends with when it has the card, paired by seed,
 // with its spread; how often it wins; the seed where the card did most, with every log line naming the card.
-// A card is flagged when the gain is at least 3 followers and clearly above 0.
+// A card is flagged when the gain is at least 3 followers and clearly above 0, or the card's own followers beat its
+// price by 3 or more (follower buys are 1 for 1).
 //   DECK=10 node scripts/v4-abuse.mjs doormen [--games=12] [--workers=3] [--rivals=normal|hard] [--budget=150]
 //   Card: key or name (case-insensitive). Writes design/eval/abuse/<key>.md and .json (--out=<dir> for elsewhere).
 import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads';
 import { fileURLToPath } from 'node:url';
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { createGame, applyMove, followers, paymentChoices } from '../src/engine/v4/core.js';
+import { createGame, applyMove, followers, paymentChoices, contextFor } from '../src/engine/v4/core.js';
 import { chooseNormalMove } from '../src/engine/v4/bots.js';
 import { chooseThinkerMove } from '../src/engine/v4/thinker.js';
 import { seededRandom } from '../src/engine/v4/rng.js';
-import { allQuadrantIds, quadrant, guestMembers, registerQuadrant } from '../src/engine/v4/content/index.js';
+import { allQuadrantIds, quadrant, guestMembers, registerQuadrant, defById } from '../src/engine/v4/content/index.js';
 import { sphereVersion } from '../src/v4/tables.js';
 import { deckRules } from './lib/deck-choice.mjs';
 
@@ -75,7 +76,17 @@ function playOut(fork, seed, seat, withCard, uid, o) {
     if (withCard) log.push(...(s.log.length > len ? s.log.slice(len) : s.log.slice(-12)).filter(l => typeof l === 'string'));
   }
   const p = s.players[seat];
-  return { mx: margin(s, seat), own: followers(s, p), win: s.ranking?.[0] === seat ? 1 : 0, bought, boughtRound, lines: withCard ? [...new Set(log)] : [] };
+  // the card's own followers for the abuser: printed (if still held at the end), what the ledger credits to it during
+  // play, and its game-end pay. Resources or steals it brought show only in the margin. Follower buys are 1 for 1, so
+  // a card that yields more followers than it cost beat buying followers with the same resources.
+  let yieldF = null;
+  if (withCard && bought) {
+    const c = s.cards[uid], d = defById(c.def), held = p.members.includes(uid);
+    let end = 0;
+    if (held && d.onGameEnd) { try { end = d.onGameEnd(contextFor(s), p, c) || 0; } catch { /* estimate */ } }
+    yieldF = (held ? d.f || 0 : 0) + ((s.ledger?.[seat] || {})[d.name] || 0) + end;
+  }
+  return { mx: margin(s, seat), own: followers(s, p), win: s.ranking?.[0] === seat ? 1 : 0, bought, boughtRound, yieldF, lines: withCard ? [...new Set(log)] : [] };
 }
 
 function runSeed(g, o) {
@@ -115,7 +126,8 @@ if (!isMainThread) {
   const got = results.filter(r => r.with.bought);
   const d = got.map(r => r.with.mx - r.without.mx);
   const m = mean(d), half = 1.96 * sd(d) / Math.sqrt(Math.max(1, d.length));
-  const flagged = d.length >= 4 && m >= 3 && m - half > 0;
+  const ys = got.map(r => r.with.yieldF ?? 0), ym = mean(ys);
+  const flagged = (d.length >= 4 && m >= 3 && m - half > 0) || (ys.length >= 3 && ym - (def.s + def.w) >= 3);
   const best = got.reduce((a, b) => (!a || b.with.mx - b.without.mx > a.with.mx - a.without.mx ? b : a), null);
   const price = def.s + def.w;
   const lines = [
@@ -124,7 +136,8 @@ if (!isMainThread) {
     `"${def.text}" (costs ${price}; 10-card deck; ${SEATS} players; rivals ${o.rivals}; ${games} seeds, ${((Date.now() - t0) / 60000).toFixed(0)} min)`,
     '',
     `With the card, the abuser ended ${m >= 0 ? '+' : ''}${m.toFixed(1)} followers against the best rival compared with the same game without it (give or take ${half.toFixed(1)}; bought in ${got.length} of ${games} games, after paying ${price}).`,
-    `It won ${got.filter(r => r.with.win).length} of ${got.length} with the card and ${got.filter(r => r.without.win).length} of ${got.length} without.`,
+    `It won ${got.filter(r => r.with.win).length} of ${got.length} with the card and ${got.filter(r => r.without.win).length} of ${got.length} without. (Games with and without the card go different ways after the first change, so this number swings a lot on few games.)`,
+    `The card itself gave the abuser ${ym.toFixed(1)} followers on average (printed, during play and at game end; per game ${ys.map(y => y.toFixed(0)).join(', ')}) for a price of ${price}: ${ym - price >= 0 ? '+' : ''}${(ym - price).toFixed(1)} against spending the same on follower buys.`,
     flagged ? `FLAGGED: worth clearly more than its price to a player trying to break it.` : `Not flagged.`,
     '',
     best ? `Best game (seed ${best.seed}, table ${best.table.join(', ')}, bought in round ${best.with.boughtRound}): ${(best.with.mx - best.without.mx).toFixed(1)} followers better. What the card did:` : '',

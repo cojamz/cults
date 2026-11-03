@@ -33,7 +33,7 @@ const note = s => { const line = `[${new Date().toLocaleTimeString('en-US', { ti
 
 const SIZES = {
   smoke: { normal4: 8, normal3: 4, normal2: 4, hard4: 4, veryhard4: 0, trust: { games: 1, every: 40, seeds: 2 }, abuse: { cards: 1, games: 2 }, fire: 8 },
-  fast: { normal4: 600, normal3: 100, normal2: 100, hard4: 64, veryhard4: 0, trust: { games: 6, every: 9, seeds: 6 }, abuse: { cards: 4, games: 4 }, fire: 120 },
+  fast: { normal4: 600, normal3: 100, normal2: 100, hard4: 64, veryhard4: 0, trust: { games: 4, every: 9, seeds: 4 }, abuse: { cards: 3, games: 4, budget: 100 }, fire: 120 },
   deep: { normal4: 1800, normal3: 300, normal2: 300, hard4: 240, veryhard4: 80, trust: { games: 16, every: 6, seeds: 10 }, abuse: { cards: 16, games: 8 }, fire: 400 },
 };
 const Z = SIZES[size];
@@ -142,7 +142,7 @@ await stage('abuse', async () => {
   writeFileSync(`${dir}/abuse-cards.json`, JSON.stringify(cards));
   note(`abuse: ${cards.join(', ')}`);
   for (const c of cards) {
-    await pool([{ name: `abuse ${c}`, args: ['scripts/v4-abuse.mjs', c, `--games=${Z.abuse.games}`, `--workers=${W}`, `--out=${dir}/abuse`], stdout: `${dir}/abuse-${c.replace(/\W+/g, '_')}.md`, done: `${dir}/abuse-${c.replace(/\W+/g, '_')}.done` }]);
+    await pool([{ name: `abuse ${c}`, args: ['scripts/v4-abuse.mjs', c, `--games=${Z.abuse.games}`, `--workers=${W}`, ...(Z.abuse.budget ? [`--budget=${Z.abuse.budget}`] : []), `--out=${dir}/abuse`], stdout: `${dir}/abuse-${c.replace(/\W+/g, '_')}.md`, done: `${dir}/abuse-${c.replace(/\W+/g, '_')}.done` }]);
   }
 });
 

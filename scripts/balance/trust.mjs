@@ -63,7 +63,10 @@ function runGame(g, o) {
       // the best of many noisy averages looks better than it is: measure the two again on fresh dice
       const again = id => { let t = 0; for (let k = 0; k < o.seeds; k++) { try { t += playFrom(applyMove(s, { player: me, option: id }), me, g * 1e5 + n * 100 + 50 + k); } catch { t += -100; } } return t / o.seeds; };
       const regret = best.id === took.id ? 0 : again(best.id) - again(took.id);
-      out.push({ g, round: s.round, kind: pend.kind, options: vals.length, regret, took: took.label, best: best.label, prompt: pend.kind === 'choose' ? String(s.queue[0]?.prompt || '').slice(0, 80) : '' });
+      // the yardstick: what a random move gives up on the same fresh dice (a bot as good as random scores 100%)
+      const rnd = vals[Math.floor(seededRandom(g * 31 + n)() * vals.length)];
+      const randomRegret = rnd.id === best.id ? 0 : again(best.id) - again(rnd.id);
+      out.push({ g, round: s.round, kind: pend.kind, options: vals.length, regret, randomRegret, took: took.label, best: best.label, prompt: pend.kind === 'choose' ? String(s.queue[0]?.prompt || '').slice(0, 80) : '' });
     }
     s = applyMove(s, mv);
   }
@@ -87,11 +90,13 @@ if (!isMainThread) {
     `${rows.length} of Normal's decisions from ${games} games were replayed over every option, each played forward ${o.seeds} times to the end of the round on the same dice (${((Date.now() - t0) / 60000).toFixed(0)} min).`,
     `On average Normal's pick was ${mean(rows.map(r => r.regret)).toFixed(2)} followers worse than the best option; ${Math.round(100 * rows.filter(r => r.regret >= 1).length / (rows.length || 1))}% of picks were 1 or more worse.`];
   const kindName = { place: 'where to place', buy: 'what to buy', choose: '"you choose" moments', pay: 'how to pay' };
-  for (const [k, list] of Object.entries(by)) md.push(`- ${kindName[k] || k}: ${list.length} decisions, ${mean(list.map(r => r.regret)).toFixed(2)} worse on average, ${list.filter(r => r.regret >= 1).length} of them by 1 or more.`);
+  for (const [k, list] of Object.entries(by)) md.push(`- ${kindName[k] || k}: ${list.length} decisions; Normal gave up ${mean(list.map(r => r.regret)).toFixed(2)}, a random move ${mean(list.map(r => r.randomRegret)).toFixed(2)}.`);
   const worst = [...rows].sort((a, b) => b.regret - a.regret).slice(0, 6).filter(r => r.regret >= 1);
   if (worst.length) { md.push('', 'Biggest misses:'); for (const r of worst) md.push(`- round ${['', 'I', 'II', 'III'][r.round]}${r.prompt ? ` (${r.prompt})` : ''}: took ${r.took}; ${r.best} was ${r.regret.toFixed(1)} better.`); }
-  const verdict = mean(rows.map(r => r.regret)) < 0.5 ? 'TRUSTED' : mean(rows.map(r => r.regret)) < 1.5 ? 'MOSTLY TRUSTED' : 'SUSPECT';
-  md.splice(1, 0, `Verdict: ${verdict}.`);
+  // calibrated against a random move on the same decisions: what share of the gap between random and best Normal leaves
+  const share = mean(rows.map(r => r.regret)) / Math.max(0.01, mean(rows.map(r => r.randomRegret)));
+  const verdict = share < 0.2 ? 'TRUSTED' : share < 0.4 ? 'MOSTLY TRUSTED' : 'SUSPECT';
+  md.splice(1, 0, `Verdict: ${verdict}. A random move gave up ${mean(rows.map(r => r.randomRegret)).toFixed(2)} followers on the same decisions, so Normal leaves ${Math.round(share * 100)}% of the gap between a random move and the best one (under 20%: trusted; over 40%: suspect). Part of every gap is the dice: one decision's options lead to different games.`);
   if (flags.json) writeFileSync(flags.json, JSON.stringify({ verdict, rows }, null, 1));
   if (flags.md) writeFileSync(flags.md, md.join('\n') + '\n'); else console.log(md.join('\n'));
 }
