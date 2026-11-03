@@ -114,7 +114,8 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'market.doorman', 'market.planner', // under 3 holds when Cory's 15 guests and Launderers' split (Oct 28) moved the games; cards-market covers them (Planner is cut)
       'thieves.shoplifter', 'echo.translator', // under 3 holds when Green grew to 16 (Oct 28) moved the games; recruit-definition (Shoplifter) and cards-echo (Translator, cut) cover them
       'thieves.snitch', // under 3 holds when the Oct 29 balance prices moved the games; cards-thieves (Snitch) covers it
-      'market.blackmarket']); // under 3 holds when the color cost (Nov 2: 1 of the wild paid in the member's color) moved the games; cards-market covers it
+      'market.blackmarket', // under 3 holds when the color cost (Nov 2: 1 of the wild paid in the member's color) moved the games; cards-market covers it
+      'echo.bait']); // under 3 holds when bots began rating every choice over every option (Nov 2) moved the games; green-bait-trading covers it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);
     expect(unseen).toEqual([]);
@@ -131,6 +132,8 @@ const SPHERES = ['gold', 'red', 'purple', 'silver', 'yellow'];
 // Members that may stay unnamed on bot tables, with why (see design/eval/card-ledger-a.md).
 // Conditional cards that can go a whole bot game without their condition; each has a named test of its own.
 const ALLOW = {
+  // bots rating every choice over every option (Nov 2) moved the seeded games: recruited in 1, and no turn was skipped after
+  'purple.gossip': 'fires only when a turn is skipped; purple-members-oct22 (Gossip) covers it',
   // Lie Low steals 1 (Nov 1) moved the seeded games: Apprentice recruited in 4 without an extra turn coming after
   'purple.apprentice': 'fires only after an extra turn (Right Away, Crunch Time); its own tests cover it (cards-purple: Apprentice)',
   // cut since Yellow 2.0; the full-deck seeded games moved with the Nov 1 Yellow swaps and its owners planted nothing
