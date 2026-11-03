@@ -25,6 +25,8 @@ const bugs = [];
 const note = (m, extra) => { if (bugs.some(b => b.m === m)) return false; bugs.push({ m, extra }); console.log('BUG?', m); appendFileSync(`${OUT}/bugs.txt`, m + (extra ? `\n   ${extra}` : '') + '\n'); return true; };
 const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--no-sandbox'] });
 const page = await browser.newPage({ viewport: { width: 1270, height: 700 } });
+// PT_ENV=REPLACE3=1,…: the engine's bot-test switches, on in the page too (cards not dealt in the game yet)
+if (process.env.PT_ENV) await page.addInitScript(env => { globalThis.process = { env }; }, Object.fromEntries(process.env.PT_ENV.split(',').map(kv => kv.split('='))));
 page.on('console', m => { if (m.type() === 'error' || m.type() === 'warning') note(`console ${m.type()}: ${m.text().slice(0, 300)}`); });
 page.on('pageerror', e => note(`pageerror: ${e.message}`, e.stack?.slice(0, 400)));
 let shotN = 0;
