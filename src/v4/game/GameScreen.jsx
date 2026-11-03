@@ -1561,7 +1561,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // time after every step, held or not (rig, Nov 3: buys 188 → 236 ms median from that second render alone).
   const lastDrawn = useRef({ state, seats: seatState });
   const held = useRef(null); // { show, seats, for }: the table as it stood, kept while `for` is the state
-  const [released, setReleased] = useState(null);
+  const [, redraw] = useState(0);
   const was = lastDrawn.current.state;
   if (was !== state) {
     // only your own click (a rival's choice, or a step of the show, draws in one go as before)
@@ -1570,10 +1570,12 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     answering.current = false;
   }
   lastDrawn.current = { state, seats: seatState };
-  const hold = held.current && held.current.for === state && released !== state ? held.current : null;
+  const hold = held.current && held.current.for === state ? held.current : null;
   useEffect(() => {
     if (!hold) return undefined;
-    const id = requestAnimationFrame(() => startTransition(() => setReleased(state)));
+    // let go after the paint, keeping no old state (the memory gate counts live game states). A plain update, not a
+    // transition: a transition that bots' steps keep interrupting kept every state since in React's queue (77 alive, Nov 3)
+    const id = requestAnimationFrame(() => { if (held.current === hold) held.current = null; redraw(n => n + 1); });
     return () => cancelAnimationFrame(id);
   }, [state]); // eslint-disable-line react-hooks/exhaustive-deps
   const tState = hold ? hold.show : state, tSeats = hold ? hold.seats : seatState;
