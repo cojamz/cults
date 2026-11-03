@@ -373,6 +373,10 @@ export function useGain(state, uid) {
     const ctx = contextFor(s);
     const card = s.cards[uid];
     card.used = true;
+    // the copy's queue is empty, so a card that checks for a spare space (Taskmaster) would see the whole board free:
+    // count the real turns still to come as unplaced (purple.js scheduled). Without it a bot "bought" a turn the board
+    // had no room for, the real use refunded itself, and the bot used it forever (full-board test, Nov 3)
+    s.unplaced = (state.unplaced || 0) + state.queue.filter(t => t.t === 'turn' || t.t === 'place').length;
     for (const id of [card.def, card.copy].filter(Boolean)) { const d = defById(id); if (d.onActivate) { d.onActivate(ctx, s.players[me], card); break; } }
     const moreTurns = s.queue.filter(t => t.t === 'turn' && t.p === me).length;
     const moreBuys = s.queue.filter(t => t.t === 'buy' && t.p === me).length;
