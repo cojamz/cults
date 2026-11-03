@@ -95,7 +95,7 @@ if (looksLikePitch) {
 }
 
 // Cory, Nov 3 (second no on pitch quality: "those principles are terrible"): a linked pitch file's examples each answer
-// the six principles in writing (his three: Intuitive, Fun, Interacts; plus Powerful, Builds toward, Its color). Examples are blocks that start "**<n>." in the linked .md.
+// the six principles in writing (his three: Intuitive, Fun, Interacts; plus Powerful, Engine or counter, Its color). Examples are blocks that start "**<n>." in the linked .md.
 {
   const { readFileSync, existsSync } = await import('node:fs');
   for (const f of [...text.matchAll(/\]\((\/mnt\/project-files\/[^)\s]+\.md)\)/g)].map(m => m[1])) {
@@ -103,8 +103,8 @@ if (looksLikePitch) {
     const body = readFileSync(f, 'utf8');
     if (!/\breplaces\b|\bpitch|\bexamples?\b/i.test(body)) continue;
     const blocks = body.split(/\n(?=\*\*\d+\.)/).slice(1);
-    const short = blocks.filter(b => !['Intuitive:', 'Fun:', 'Interacts:', 'Powerful:', 'Builds toward:', 'Its color:'].every(k => b.includes(k)));
-    if (short.length) problems.push(`${f}: ${short.length} of ${blocks.length} examples lack the six principles in writing ("Intuitive:", "Fun:", "Interacts:", "Powerful:", "Builds toward:", "Its color:"; design/notes/replacements-principles-2026-11-03.md). Cory, Nov 3: "intuitive and easy to understand, fun to play, interacts with either the color, with other colors, or both."`);
+    const short = blocks.filter(b => !['Intuitive:', 'Fun:', 'Interacts:', 'Powerful:', 'Engine or counter:', 'Its color:'].every(k => b.includes(k)));
+    if (short.length) problems.push(`${f}: ${short.length} of ${blocks.length} examples lack the six principles in writing ("Intuitive:", "Fun:", "Interacts:", "Powerful:", "Engine or counter:", "Its color:"; design/notes/replacements-principles-2026-11-03.md). Cory, Nov 3: "intuitive and easy to understand, fun to play, interacts with either the color, with other colors, or both."`);
   }
 }
 

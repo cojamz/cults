@@ -1,6 +1,6 @@
-# ~50 replacements: principles (third try) and 3 examples
+# ~50 replacements: principles and 3 examples
 
-For Cory's yes before anything is built. Third version (Nov 3, 10:30am Eastern): his three principles kept, three more drawn from his own calls. A second Claude read every example looking for holes; two were cut (one copied Bouncers, one only worked when Old Maid was in the row). Prices are Claude's fill-ins.
+For Cory's yes before anything is built. Final version (Nov 3, 10:25am Eastern): his three principles kept, three more drawn from his own calls, with his note that not every card builds the engine. A second Claude read every example looking for holes; two were cut (one copied Bouncers, one only worked when Old Maid was in the row). Prices are Claude's fill-ins.
 
 ## The principles
 Your three, then three more from your own calls since October.
@@ -8,8 +8,8 @@ Your three, then three more from your own calls since October.
 2. **Fun to play.** Someone at the table reacts to it: a sting, a gift, or a choice they have to make.
 3. **Interacts with its color, with other colors, or both.** It cares what rivals do or hold, ideally the way copying does: without saying "rival" (your Oct 15 "implicit, not explicit, interaction").
 4. **Feels powerful.** It feels good to take (Oct 15: "every action should feel GOOD to take"). Relative amounts and rule-bending beat small fixed numbers ("steal half of one rival's pile" over "+1 follower") (Oct 9: "everything should feel vaguely powerful"; Oct 15: members "all kind of feel weak… except for scoring ones or passive income").
-5. **Builds into an engine.** Its worth comes from the cards it's played with, so the depth is in combining them and a cult grows into a payoff you can see coming (Oct 22: "more about the engine building than about making good action choices in a vacuum"; Nov 2: "you never quite feel the payoff").
-6. **A new way into its color's theme, or a counter to it.** Each color has one theme with several ways to reach it or push back against it (Oct 15). A new card adds a way or a counter the color doesn't have yet, instead of repeating one.
+5. **Builds an engine, or counters one.** Most cards are offense or engine building: their worth comes from the cards they're played with, so a cult grows into a payoff you can see coming (Oct 22: "more about the engine building than about making good action choices in a vacuum"; Nov 2: "you never quite feel the payoff"). Some are defense, or a counter to a color, and that can be quiet rather than spelled out. The most elegant are either one, depending on the table. Not every card has to do this (Nov 3).
+6. **A new way into its color's theme.** Each color has one theme with several ways to reach it or push back against it (Oct 15). A new card adds a way the color doesn't have yet, instead of repeating one.
 
 How we'll use them: replace what fails these first, starting with the members bots almost never recruit and the cards you've named (Encore, the White revisit). Each batch of about 10 plays in bot games only, so the game you play doesn't change; you pick what ships.
 
@@ -23,8 +23,8 @@ Intuitive: one sentence, a counter like **Snitch** ("Whenever a rival steals fro
 Fun: the thief has to think twice, and when they go ahead the whole table sees you get a free card.
 Interacts: with Red's **Promote** ("Give one of your members to a rival or the shop, and recruit one of theirs costing up to 2 more. +3 red.") and **Demote** (the same, "costing up to 2 less"), and Magenta's **Shake Down** ("Choose a rival. They choose one of their members costing 5 or less, then pay you its cost or you steal it. +1 magenta.") and **Poach**.
 Powerful: a free member every time someone comes for you.
-Builds toward: with **Martyrs** ("Whenever this member leaves your cult, gain followers equal to its cost."), a rival who takes Martyrs gives you its cost in followers and a free member.
-Its color: Red moves members around; this is Red's first counter to having yours moved.
+Engine or counter: a counter to Red's and Magenta's taking; with **Martyrs** ("Whenever this member leaves your cult, gain followers equal to its cost."), a rival who takes Martyrs gives you its cost in followers and a free member.
+Its color: Red moves members around; this is a new way in, getting paid when yours are moved.
 
 **2. Blue. Scavengers** replaces **Critic** ("Whenever a rival recruits a blue member, +1 follower.").
 Prints: [4 blue + 2 any, worth 1] "Whenever a rival sends shop members to the bottom of the pile, you may recruit one of them, paying its cost."
@@ -34,7 +34,7 @@ Intuitive: "the bottom of the pile" is already Blue's words.
 Fun: digging stops being free, and the cards going down become one player's second chance.
 Interacts: with Blue's **Out of Style**, **Bury** ("Send a shop member to the bottom of the pile, then refill. Gain blue equal to half its cost, rounded down. +1 blue.") and **Savings** ("...Before you recruit, you may send one shop member to the bottom of the pile, then refill."), **Blue Cloak (Bargain Bin)** ("Whenever members go to the bottom of the pile, +1 blue.") and **Patroness** ("Whenever shop members go to the bottom of the pile, +1 follower."), which pay off the same digging.
 Powerful: extra recruits outside your turn, the thing that's scarce late.
-Builds toward: each extra recruit also fires **Proselytizers** ("Whenever you recruit, +1 follower.").
+Engine or counter: engine; each extra recruit also fires **Proselytizers** ("Whenever you recruit, +1 follower.").
 Its color: Blue works the shop; this is a new way in, working the cards other players throw away.
 
 **3. Magenta. Tax Collectors** replaces **Crew** ("Worth 2 followers.").
@@ -45,7 +45,7 @@ Intuitive: one sentence; "steal" and "wins a contest" are words players already 
 Fun: every contest winner pays a tax the table can see coming.
 Interacts: with every color's contest, the hold-or-spend part of the game, and with **Magenta Cloak (Fence)** ("Whenever a rival steals from you, +2 magenta.") on the other side.
 Powerful: about 8 to 12 resources a game with no minion spent.
-Builds toward: **Sticky Fingers** ("Your steals take 1 more resource.") makes each tax 3, and **Robin Hood** ("Whenever you steal from the player with the most followers, +1 follower.") pays when the leader wins.
+Engine or counter: a counter to hoarding for contests, and an engine with **Sticky Fingers** ("Your steals take 1 more resource.") makes each tax 3, and **Robin Hood** ("Whenever you steal from the player with the most followers, +1 follower.") pays when the leader wins.
 Its color: Magenta steals from piles; this is a new way in, stealing from whoever just won with theirs.
 
 ## What's next after your yes
