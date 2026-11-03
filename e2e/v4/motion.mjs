@@ -26,6 +26,7 @@ import { mkdirSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { richSave } from './lib/rich-save.mjs';
 import { seedSave } from './lib/seed.mjs';
+import { answerChoice } from './lib/answer.mjs';
 import { MO, RIVAL, motionSpeed, setMotionSpeed } from '../../src/v4/motion.js';
 import { TIERS } from '../../src/engine/v4/index.js';
 const GAIN = TIERS.find(t => t.key === 'mid').get; // the 5-for-5 buy
@@ -176,6 +177,10 @@ for (const prof of PROFILES) {
   const ctx = await browser.newContext({ viewport: { width: 1270, height: 700 } });
   const page = await ctx.newPage();
   await page.addInitScript(() => {
+    // a seeded game (as m5): an unseeded one sometimes stalled on a step the old clicker couldn't answer and measured
+    // 4 hand-overs in its two minutes (Nov 3)
+    let s = 20261103;
+    Math.random = () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
     window.__steps = [];
     const watch = () => {
       const el = document.querySelector('.app.game');
@@ -208,8 +213,10 @@ for (const prof of PROFILES) {
     for (let round = 0; round < 2; round++) {
       if (round) { const nx = await page.$('[data-next-round]'); if (!nx) break; await nx.click(); await page.waitForTimeout(400); }
       while (!(await page.$('[data-next-round]')) && Date.now() - t0 < 120000 * (round + 1)) {
-        const els = await page.$$('[data-option]:not([disabled])');
-        for (const el of els) { const id = await el.getAttribute('data-option').catch(() => null); if (!id || id.startsWith('toggle') || id === 'back') continue; try { await el.click({ timeout: 1000 }); break; } catch { /* moved */ } }
+        // the person answers whatever is theirs, the shared way (lib/answer.mjs: the pay sheet, board targets, gifts)
+        if (!(await answerChoice(page, { timeout: 1000 }).catch(() => null))) {
+          const hand = await page.$('[data-handoff]'); if (hand) await hand.click().catch(() => {});
+        }
         await page.waitForTimeout(120);
       }
     }
