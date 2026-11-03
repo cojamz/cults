@@ -151,13 +151,6 @@ function halfPiles(ctx, p) {
     return base > 0 ? [{ owner, color, n: Math.min(held, ctx.stealCount(p, base)) }] : [];
   }));
 }
-// The current placement is not an already occupied action. Copies and squatters
-// still count the minion that was there before this use; each action counts once.
-export function magentaOccupied(ctx, p) {
-  // counts the minion you just placed too (Cory, Oct 22)
-  const q = ctx.state.quadrants.indexOf('thieves');
-  return Object.keys(ctx.state.slots).filter(k => k.startsWith(`${q}-`)).length;
-}
 const desperadoMore = (ctx, p) => ctx.membersOf(p).reduce((n, c) => n + (c.def.stealMoreIf ? c.def.stealMoreIf(ctx, p) : 0), 0);
 // Sticky Fingers and Desperado on a member's steal (spaces get them through ctx.stealCount)
 const stickyMore = (ctx, p) => ctx.membersOf(p).reduce((n, c) => n + (typeof c.def.stealMore === 'number' ? c.def.stealMore : 0) + (c.def.stealMoreIf ? c.def.stealMoreIf(ctx, p) : 0), 0);

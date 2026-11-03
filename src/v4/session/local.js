@@ -66,8 +66,6 @@ export function revealed(before, after) {
 }
 /** Why a move is refused in a tab that no longer owns the local game (another tab took it). */
 export const AWAY_TEXT = 'This game is open in another tab.';
-/** How long the next bot waits after a human's buy, so "Undo buy" is really there to press. */
-export const UNDO_BUY_HOLD_MS = 1600;
 
 /**
  * Local sessions add undo for the acting human's last placement: `undo()` restores the state from just before it,

@@ -52,7 +52,6 @@ export function allPiles(quadrants, seed, { deck = 10, copies = 10, colored = 8,
 }
 
 /** The rules a table adds for a shop type: 'grey' (A: grey core as piles, the other greys out) or 'all' (B: all piles; the rest face down as the deck). */
-export const SHOP_TYPES = ['deck', 'grey', 'all'];
 export function pileRules(variant, quadrants, seed, deck = 10, { core = GREY_CORE } = {}) {
   // the greys that aren't piles stay in the shuffled deck, as today (Cory: "the rest of the shop is members")
   if (variant === 'A' || variant === 'grey') return { piles: greyPiles({ core }) };

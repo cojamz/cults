@@ -271,5 +271,3 @@ export function emoteArt(line) {
   cache.set(line, out);
   return out;
 }
-/** The lines that have a drawing. */
-export const emoteLines = () => Object.keys(EMOTES);

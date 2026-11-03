@@ -113,24 +113,6 @@ export function MemberGlyph({ r = null, size = 16, n = null, decorative = false 
 
 export function FollowerGlyph({ size = 12, title = 'followers' }) { return <Follower size={size} title={title} />; }
 
-/**
- * Followers as a mark that grows: a big disc per 10, a mid disc per 5, a dot per 1 (n up to ~40 stays compact),
- * with the number beside it. title says how it adds up.
- */
-export function FollowerMark({ n, size = 6, label = true }) {
-  const tens = Math.floor(n / 10), fives = Math.floor((n % 10) / 5), ones = n % 5;
-  const title = `${n} follower${n === 1 ? '' : 's'}${n >= 5 ? ` (${[tens && `${tens}×10`, fives && '5', ones && `${ones}×1`].filter(Boolean).join(' + ')})` : ''}`;
-  return (
-    <span className="fol-mark" title={title} aria-label={title} role="img" data-followers={n}>
-      {label && <b className="num"><Tick value={n} className="num" float={false} /></b>}
-      <span className="dots" aria-hidden="true">
-        {Array.from({ length: tens }, (_, k) => <i key={`t${k}`} className="d10" style={{ width: size * 2, height: size * 2 }} />)}
-        {Array.from({ length: fives }, (_, k) => <i key={`f${k}`} className="d5" style={{ width: size * 1.5, height: size * 1.5 }} />)}
-        {Array.from({ length: ones }, (_, k) => <i key={`o${k}`} className="d1" style={{ width: size, height: size }} />)}
-      </span>
-    </span>
-  );
-}
 
 /** Cory's easter egg (2026-10-15): a player named Max gets a leader 20% taller (taller, not bigger); Pants too (2026-10-18) */
 const TALL = new Set(['max', 'pants']);
@@ -143,10 +125,6 @@ export function SeatFigure({ id, state = null, size = 32, title = null, dim = fa
       <Leader color={playerColor(id)} emoji={seatEmoji(state, id)} sigil={seatSigil(id)} size={size} tall={isMax(state, id)} robe={state && cloakOf(state, id) ? CLOAK_HEX[cloakOf(state, id)] : undefined} />
     </span>
   );
-}
-/** A minion (16px): one of a seat's workers. */
-export function SeatMinion({ id, size = 16, dim = false, title = null }) {
-  return <span className={`seat-min${dim ? ' dim' : ''}`} data-seat={id} title={title || undefined}><Minion color={playerColor(id)} size={size} /></span>;
 }
 
 /**

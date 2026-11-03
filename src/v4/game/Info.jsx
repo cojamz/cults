@@ -5,7 +5,7 @@ import { discountSources } from '../../engine/v4/discount.js';
 // - CardName / MemberCard: a member named anywhere opens the full card (color, cost, ability).
 // - ContestStandings / ContestTip: a quadrant's contest straight from the engine's contestTable (who'd score now).
 // - TouchTips: on touch screens a long-press on anything with a title shows that title (hover's touch twin).
-import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { memberWeight, cardDef, defById, quadrant, previewSpace, memberPrice } from '../../engine/v4/index.js';
 import { term, splitTerms } from '../glossary.js';
 import { costParts, playerColor, standings, toStanding, tiebreakNote } from '../format.js';
@@ -240,11 +240,6 @@ export const cardColor = (state, def) => (onTable(state, def) ? `var(--${def.qua
 /** The pale colors' own card ground (shop.css [data-ground]): silver, white and colorless all tinted a near-cream picture
  *  field and looked alike at card size, so each gets a ground of its own: steel with a sheen, clean white, plain grey. */
 export const cardGround = (state, def) => (!onTable(state, def) ? 'colorless' : def.quadrant === 'silver' ? 'silver' : def.quadrant === 'trading' ? 'white' : undefined);
-/** "colorless": a member whose quadrant isn't on this table. */
-export function Colorless({ state, def }) {
-  if (onTable(state, def)) return null;
-  return <Term k="colorless" className="colorless-tag">Grey</Term>;
-}
 
 /** A cost as the plate prints it: "2● 2◐" (the number before its dot, colored part first, then any; no color names). */
 export function CostDots({ parts }) {

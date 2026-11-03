@@ -32,7 +32,6 @@ export const stageItems = () => items;
 const leave = (it, out) => { it.leaving = true; it.out = out; const uid = it.uid; setTimeout(() => stageGone(uid), out + 3000); };
 /** Includes the readable hold and the actual return flight, until ActionStage removes each item. */
 export const stageBusy = () => items.some(it => !it.lingering || it.leaving); // a lingering bubble holds nothing until it flies home
-export const stageVersion = () => ver;
 
 /** The stage's centre on screen: the wheel's hub (null off the board). */
 export function stageCenter() {

@@ -11,8 +11,8 @@ import { ArtifactTile } from './ArtifactDraft.jsx';
 import { memberTimingWords } from './memberTiming.js';
 import { breakdown, costParts, cardGains } from '../format.js';
 import { CardName, onTable, Tip, CostDots, RuleText } from './Info.jsx';
-import { Rich, Pip } from './Rich.jsx';
-import { memberRows, useNow, spendingPower, memberAsks } from './memberUse.js';
+import { Rich } from './Rich.jsx';
+import { memberRows, useNow, memberAsks } from './memberUse.js';
 import './members.css';
 
 const sphereOf = (state, d) => { if (!onTable(state, d)) return 'colorless'; try { return quadrant(d.quadrant).resource; } catch { return 'colorless'; } };
@@ -196,12 +196,6 @@ export function UseResult({ result }) {
   return <span key={result.n} className={`mu-result${result.zero ? ' zero' : ''}`} data-use-result={result.text} aria-live="polite"><Rich text={result.text} /></span>;
 }
 
-/** A rival's seat card: "Holding 23 ◐ · could buy about 20 👤 now", one quiet line. */
-export function SpendingLine({ state, pid }) {
-  if (!(state.round >= 1) || state.over) return null;
-  const { held, get } = spendingPower(state, state.players[pid]);
-  return <small className="seat-spend" data-spend={get}><Rich text={`Holding ${held} any · could recruit about ${get} follower${get === 1 ? '' : 's'} now`} /></small>;
-}
 
 /**
  * Where a player's followers came from (w3b #39: the seat's follower number), adding up to the total: themselves,

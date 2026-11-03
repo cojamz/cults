@@ -568,10 +568,6 @@ export function scoredStandings(state, round) {
   return h ? h.results.map(toStanding) : null;
 }
 
-/** "P2 8 · P3 8 · you 1": the top few, by name ("you" for meId). */
-export function standingLine(state, st, meId, max = 3) {
-  return st.rows.slice(0, max).map(r => `${r.id === meId ? 'you' : state.players[r.id].name} ${r.shown}`).join(' · ');
-}
 
 // ---------- the round-end moment ----------
 /**
@@ -741,14 +737,6 @@ export function explainLine(log, i) {
 /** A log line said plainly, its spaces in the words the board shows them by. */
 export const plainLine = (log, i) => withBoardWords(log, i, explainLine(log, i).text);
 
-/** The unit a contest's tiebreak counts ("red members", "purple"), from the engine's scoring, or null. */
-export function tiebreakWord(label) {
-  for (const id of allQuadrantIds()) {
-    const q = quadrant(id);
-    if (q.scoring.label === label) return q.scoring.tiebreak ? q.scoring.tiebreak.unit : null;
-  }
-  return null;
-}
 /** For a row tied on the shown count, its tiebreak ("2 red members"), else null. */
 export function tiebreakNote(st, row) {
   if (!st.tiebreak || row.tiebreak == null) return null;

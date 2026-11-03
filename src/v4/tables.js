@@ -18,7 +18,6 @@ export const spheres = () => {
 };
 /** What the picker calls a sphere: its color name, "(basic)" for a stand-in (w2b #32: "(plain)" read as developer phrasing). */
 export const sphereName = id => `${quadrant(id).name}${quadrant(id).standIn ? ' (basic)' : ''}`;
-export const tableLine = ids => ids.map(sphereName).join(' · ');
 /**
  * What a sphere does, in one plain line (w3b #1: the picker named quadrants and their rim rule, but not which one
  * steals). From each sphere's own design note (src/engine/v4/content/*.js).

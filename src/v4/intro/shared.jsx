@@ -8,7 +8,7 @@
 // Motion: every moving thing is an <Act> with a track. It RESTS at its last frame (that is also the still
 // storyboard under reduced motion) and plays its track from the beat's start with the Web Animations API, all in one
 // clock (Clock.t0), so beats are deterministic and screenshot-able at any ms.
-import { createContext, memo, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createContext, memo, useContext, useLayoutEffect, useMemo, useRef } from 'react';
 import { Leader, Minion } from '../art/Leader.jsx';
 import { Sprite } from '../art/Sprite.jsx';
 import { Follower } from '../art/Follower.jsx';
@@ -214,13 +214,6 @@ export function Count({ steps, className = '' }) {
     </span>
   );
 }
-/** true once `ms` of the beat have passed (at once in the storyboard): for state that flips mid-beat. */
-export function useAfter(ms) {
-  const { still, at: frozen, run } = useClock();
-  const [on, setOn] = useState(still || ms <= 0 || (frozen != null && ms <= frozen));
-  useEffect(() => { if (on || frozen != null || !run) return undefined; const id = setTimeout(() => setOn(true), ms); return () => clearTimeout(id); }, [run]); // eslint-disable-line react-hooks/exhaustive-deps
-  return on;
-}
 
 // ---------- the cast as pixels (sizes in world units = art pixels) ----------
 /** A leader (32×32) in a pose (Leader.jsx LEADER_POSES; null = idle). */
@@ -308,19 +301,6 @@ export function Crowd({ ox = 0, oy = 0, members, followers, rows = memberRows(me
 // ---------- the camera ----------
 /** Stage position (units) of a world point under camera [cx, cy, z]. */
 export const toStage = ([cx, cy, z], [wx, wy]) => [STAGE.w / 2 + z * (wx - cx), STAGE.h / 2 + z * (wy - cy)];
-/**
- * A beat's camera shots: [{ t, cam: [cx, cy, z], d, lamp: [wx, wy, w, h] }] — at t ms the camera eases to cam over
- * d ms; the lamp pool (w × h stage units) centres on world point (wx, wy).
- */
-export function useShot(shots, still, stillShot) {
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    if (still) return undefined;
-    const ids = shots.map((s, k) => (k ? setTimeout(() => setI(k), s.t) : null));
-    return () => ids.forEach(id => id && clearTimeout(id));
-  }, [shots, still]);
-  return still ? (stillShot || shots[shots.length - 1]) : shots[Math.min(i, shots.length - 1)];
-}
 /** The camera: world children placed in world units, framed by `shot`. uk: CSS px per stage unit (measured). */
 export function Camera({ shot, children }) {
   const [cx, cy, z] = shot.cam;

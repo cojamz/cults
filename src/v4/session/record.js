@@ -220,7 +220,6 @@ const gone = published ? new FinalizationRegistry(() => { alive--; }) : null;
 /** Published game states not yet collected (exact only after a GC and a turn of the event loop); null if unknown. */
 export const liveStates = () => (published ? alive : null);
 if (typeof window !== 'undefined') window.patronsLiveStates = liveStates;
-export const trackedState = () => current;
 /** A record of the game on screen (or null): what "Copy game record" copies. */
 export const currentRecord = (extra = {}) => (current ? gameRecord(current, extra) : null);
 

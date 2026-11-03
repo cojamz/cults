@@ -1,6 +1,6 @@
 // Card facts for the Lamplit shop and hover cards: timing tags, what paying leaves, how a buy moves the contests,
 // and which face-up cards a space would make affordable. All read off the engine; nothing here is a rule.
-import { cardDef, paymentPlan, memberPrice, contestTable } from '../../engine/v4/index.js';
+import { paymentPlan, memberPrice } from '../../engine/v4/index.js';
 import { contextFor } from '../../engine/v4/core.js';
 import { ownPlan, skipWords, justTook, previousNow } from '../../engine/v4/content/echo.js';
 
@@ -42,35 +42,6 @@ export function payBreakdown(state, p, uid) {
   return { spend: null, leaves: null, short: { color: colorN ? pr.color : null, colorN, any: sh.any, total: sh.total, text: sh.text } };
 }
 
-/**
- * How recruiting uid (paying `spend`) would change the contests for p, if the round ended right after:
- * [{ qid, rule, was:[ids], now:[ids], mine:{ before, after }, text }] for each contest whose leaders change for p.
- */
-export function contestEffect(state, p, uid, spend) {
-  let after;
-  try {
-    after = structuredClone({ ...state, log: [], pending: null, queue: [] });
-    const q = after.players[p.id];
-    for (const r in spend || {}) q.res[r] -= spend[r];
-    after.shop = after.shop.filter(u => u !== uid);
-    q.members.push(uid);
-  } catch { return []; }
-  const before = contestTable(state), next = contestTable(after);
-  const name = id => (id === p.id ? 'you' : state.players[id].name);
-  const out = [];
-  before.forEach((c, k) => {
-    const n = next[k];
-    const had = c.winners.includes(p.id), has = n.winners.includes(p.id);
-    if (had === has && (had || c.winners.join() === n.winners.join())) return;
-    const mine0 = c.rows.find(r => r.player === p.id)?.count ?? 0, mine1 = n.rows.find(r => r.player === p.id)?.count ?? 0;
-    const leader = n.rows.find(r => n.winners.includes(r.player) && r.player !== p.id);
-    const text = had && !has
-      ? `${leader ? `${cap(name(leader.player))} would lead` : 'You’d lose the lead'}, ${leader ? leader.count : ''}${leader ? ' to your ' : ''}${mine1}`
-      : !had && has ? `You’d lead, ${mine1}` : `Leaders change: ${n.winners.map(name).join(' & ') || 'no one'}`;
-    out.push({ qid: c.qid, rule: c.rule, was: c.winners, now: n.winners, mine: { before: mine0, after: mine1 }, lost: had && !has, text });
-  });
-  return out;
-}
 const cap = s => s[0].toUpperCase() + s.slice(1);
 
 /**

@@ -33,19 +33,17 @@ import SinceStrip from './SinceStrip.jsx';
 import { MinionPool } from './MinionPool.jsx';
 import { useTalk, TalkBubble, TalkPicker, useEnterToTalk } from './Talk.jsx';
 import { createTrail, feed, liveStory, sinceYourTurn, seatLoss } from './trail.js';
-import { cardDef } from '../../engine/v4/index.js';
 import Results from './Results.jsx';
 import FinalScore from './FinalScore.jsx';
 import RoundEnd from './RoundEnd.jsx';
 import Reckoning, { scoringSeatState } from './Reckoning.jsx';
 import { snakeOrder, tableView, snakeWords, setupOrder } from './order.js';
-import { ChoicePrompt, Confirm, Handoff, Log, useDialog, Popover, CardFace } from './parts.jsx';
+import { ChoicePrompt, Confirm, Handoff, Log, Popover, CardFace } from './parts.jsx';
 import PayPicker, { payChoice, PayReceipt, receiptFor } from './PayPicker.jsx';
 import { Rich } from './Rich.jsx';
 import HowToPlay from '../HowToPlay.jsx';
-import { flyCards, flyWorker, motionOK, snapshotShop, clearFlights, slideShop, snapshotMinions, flyMinionsHome, flyToken, flyGains, snapshotChips, snapshotArtifacts } from './flight.js';
+import { motionOK, snapshotShop, clearFlights, snapshotMinions, flyMinionsHome, flyToken, flyGains, snapshotChips, snapshotArtifacts } from './flight.js';
 import { playChain, planChain, holdAfter, holdCap, stepHoldCap, installChainSkip, noteBehind, skipChain, chainLeft, onChainSkip, onChainEnd, onChainLanded, chainRunning, chainState, noteTable, foldBuys, foldWait, notePick } from './director.js';
-import { gainsBetween } from './gains.js';
 import { soundOn, onSound, setSound, soundVolume, onVolume, setVolume } from '../sound.js';
 import { MO, BOT, SPEEDS, SPEED_NAMES, motionSpeed, setMotionSpeed, onMotionSpeed, speedScale, slowed } from '../motion.js';
 import { PERF_ON } from '../perf.js';
@@ -84,14 +82,6 @@ function useMedia(q) {
 const useWide = () => useMedia('(min-width: 861px) and (min-height: 500px)');
 const useShort = () => useMedia('(max-height: 640px)');
 
-export function useSessionState(session) {
-  const [state, setState] = useState(() => session.getState());
-  useEffect(() => {
-    setState(session.getState());
-    return session.subscribe(s => setState(s));
-  }, [session]);
-  return state;
-}
 
 /**
  * What the table shows. Normally the latest state. When a round ends, the table holds on that moment

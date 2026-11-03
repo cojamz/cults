@@ -41,7 +41,6 @@ export function stopEffects() {
 }
 /** Drop a recording (the move threw). */
 export function abandonEffects() { rec = null; }
-export const recordingEffects = () => rec !== null;
 
 const top = () => rec.stack[rec.stack.length - 1];
 function push(cause) {

@@ -1,5 +1,5 @@
 // Seat facts read off the engine: this round's seats in turn order, each seat's last moves.
-import { turnRail, quadrant, spacesOf } from '../../engine/v4/index.js';
+import { quadrant, spacesOf } from '../../engine/v4/index.js';
 import { turnSequence, firstPickWhy, closedBy } from '../format.js';
 
 /** This round's seats in their turn order (the first pass of the snake); before round I, round I's order, drawn before
@@ -8,11 +8,6 @@ export function seatOrder(state) {
   const n = state.players.length;
   if (state.order && state.order.length >= n) return state.order.slice(0, n);
   return Array.isArray(state.firstOrder) && state.firstOrder.length === n ? [...state.firstOrder] : state.players.map(p => p.id);
-}
-/** { pid: workers still to place }, and who's up now / next, from the engine's turn record (turnRail). */
-export function railInfo(state) {
-  const r = turnRail(state);
-  return { current: r.current, next: r.next[0] ?? null, done: r.done, upcoming: r.next };
 }
 /**
  * Each seat's next placement in what's left of this round (the engine's queue: snake turnarounds and extra turns are
