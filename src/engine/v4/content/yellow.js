@@ -452,7 +452,7 @@ function barterStep(ctx, p, data) {
 function leadersTax(ctx, p) {
   ctx.gain(p, Y, 1, { fromAction: true });
   const rivals = touchable(ctx, p);
-  ctx.choose(p, "Leaders' Tax: choose a color; each rival with more of it than you gives you 1", colors(ctx).map(c => ({
+  ctx.choose(p, "Leaders' Tax: which color? Each rival with more of it than you gives you 1.", colors(ctx).map(c => ({
     id: `color:${c}`, label: c, kind: 'color', value: c, hint: rivals.filter(o => (o.res[c] || 0) > (p.res[c] || 0)).length * 2 - (p.res[c] || 0) * 0.1,
   })), 'yellow.taxColor');
 }
