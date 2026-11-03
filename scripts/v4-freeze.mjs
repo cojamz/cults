@@ -165,6 +165,9 @@ while (Date.now() - t0 < MAX_MIN * 60000) {
         looks.n++; if (await page.$('[data-hover-layer][data-open="1"], .popover:not([data-hover-layer]):not([data-prep])')) looks.open++;
       }
     }
+    // off the shop card and let its hover card close (as the rig, Nov 3): in round III it sits over the wheel and the
+    // press landed on a word on it, dead clicks and a game that never finished
+    await page.mouse.move(6, 694, { steps: 1 }); await sleep(450);
     const legal = await $$('.lt-wheel [data-slot][data-option]');
     if (legal.length) acted = await click(legal[(g.moves * 3) % legal.length], 'place', round);
     const confirm = await page.waitForSelector('[data-place]', { timeout: 500 }).catch(() => null);
