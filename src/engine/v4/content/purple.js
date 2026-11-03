@@ -529,7 +529,7 @@ export default {
     // (Normal bots, n=320), so 8+2 (design/eval/purple-members.md). At 4 players round I has no space to spare, so it
     // pays from round II. Fires once per round (owlRound), whether or not the board had room.
     // Cory, Nov 1 2:35pm: the Goes Last token; the extra minion waits on it
-    m('nightowl', 'Night Owls', 6, 1, 'From round II: after your last minion, +1 minion, placed after everyone else’s.', { f: 2, from: 2,
+    m('nightowl', 'Night Owls', 6, 1, 'From round II: after your last minion, +1 minion, placed right away.', { f: 2, from: 2,
       // its onRecruited only says when the extra minion starts: no On Recruit for Tryout or Encore to borrow
       recruitNote: true,
       // recruited after your last minion of the round (its buy step): it waits for next round, and says so
@@ -542,9 +542,12 @@ export default {
       afterAction(ctx, owner, card) {
         if (owner.left !== 0 || card.owlRound === ctx.state.round) return;
         card.owlRound = ctx.state.round;
-        if (!extraTurns(ctx, owner, 1, 'Night Owls', { quiet: true })) return;
-        // bot test only (Nov 3): NIGHTOWL=notoken keeps the extra minion but drops the token, so it places next, not last
-        if (globalThis.process?.env?.NIGHTOWL === 'notoken') return;
+        const token = globalThis.process?.env?.NIGHTOWL === 'token';
+        if (!extraTurns(ctx, owner, 1, 'Night Owls', { quiet: token })) return;
+        // No Goes Last token since Nov 3 (Claude, under Cory's "use your judgement"): with the token its owner won the
+        // By color Purple contest in 84% of the rounds they held it and won 46% of Hard games; placed right away, 21% and 32%.
+        // NIGHTOWL=token: bot test only, the old way (the extra minion waits on the Goes Last token).
+        if (!token) return;
         const q = ctx.state.queue, t = turnsAhead(ctx, owner).map(i => q[i]).pop();
         takeToken(ctx, owner, 'Night Owls', ' with 1 more minion on it');
         if (t) t.token = true;

@@ -28,7 +28,7 @@ describe('Night Owls', () => {
   it('is printed as decided: 6 purple + 1 any, worth 2 followers, in plain words', () => {
     const d = defById('purple.nightowl');
     expect([d.s, d.w, d.f]).toEqual([6 + COLOR_SHIFT, 1 + EXTRA_WILD - COLOR_SHIFT, 2]); // 8 → 6 purple after the Oct 22 bot run; 9 → 8 in total after the Oct 29 balance runs
-    expect(d.text).toBe('From round II: after your last minion, +1 minion, placed after everyone else’s.'); // Cory, Nov 1 2:35pm; words Nov 3 (his "use your best judgement")
+    expect(d.text).toBe('From round II: after your last minion, +1 minion, placed right away.'); // no Goes Last token since Nov 3 (Claude, under Cory's "use your judgement")
     expect(d.from).toBe(2); // the II+ tag (Cory, 2026-10-22)
   });
 
@@ -38,15 +38,12 @@ describe('Night Owls', () => {
     expect(owl(s)).toEqual([]);
   });
 
-  it('after your last minion, one more waits on the Goes Last token and places after every hand is empty, named', () => {
+  it('after your last minion, one more places right away, before the next player, named', () => {
     let s = take(sc({ round: 2, left: 1, members: [['purple.nightowl']], queue: turns(0, 1) }), 'purple.windup');
     expect(s.players[0].left).toBe(1);
-    expect(owl(s)).toEqual(["P1's Night Owls: P1 takes the Goes Last token with 1 more minion on it."]);
-    expect(s.goesLast).toEqual({ round: 2, pid: 0 });
+    expect(owl(s)).toEqual(["P1's Night Owls: P1 gets 1 more minion, placed now."]);
+    expect(s.goesLast?.pid).not.toBe(0);
     expect(queuedTurns(s, 0)).toBe(1);
-    const next = nextPlacer(s);
-    expect(next.who).toBe(1);
-    s = take(next.s, 'gold.rush');
     expect(nextPlacer(s).who).toBe(0);
   });
 
@@ -64,7 +61,7 @@ describe('Night Owls', () => {
     let s = sc({ round: 3, left: 1, members: [['purple.nightowl']], queue: turns(0, 1) });
     s.cards[uidOf(s, 'purple.nightowl', 0)].owlRound = 2; // it fired last round
     s = take(s, 'purple.windup');
-    expect(owl(s)).toEqual(["P1's Night Owls: P1 takes the Goes Last token with 1 more minion on it."]);
+    expect(owl(s)).toEqual(["P1's Night Owls: P1 gets 1 more minion, placed now."]);
     expect(s.players[0].left).toBe(1);
   });
 
