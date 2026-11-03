@@ -143,7 +143,8 @@ await stage('abuse', async () => {
   writeFileSync(`${dir}/abuse-cards.json`, JSON.stringify(cards));
   note(`abuse: ${cards.join(', ')}`);
   for (const c of cards) {
-    await pool([{ name: `abuse ${c}`, args: ['scripts/v4-abuse.mjs', c, `--games=${Z.abuse.games}`, `--workers=${W}`, ...(Z.abuse.budget ? [`--budget=${Z.abuse.budget}`] : []), `--out=${dir}/abuse`], stdout: `${dir}/abuse-${c.replace(/\W+/g, '_')}.md`, done: `${dir}/abuse-${c.replace(/\W+/g, '_')}.done` }]);
+    // one card that can't be tested (a cloak, a misspelt name) never stops the run
+    await pool([{ name: `abuse ${c}`, args: ['scripts/v4-abuse.mjs', c, `--games=${Z.abuse.games}`, `--workers=${W}`, ...(Z.abuse.budget ? [`--budget=${Z.abuse.budget}`] : []), `--out=${dir}/abuse`], stdout: `${dir}/abuse-${c.replace(/\W+/g, '_')}.md`, done: `${dir}/abuse-${c.replace(/\W+/g, '_')}.done` }]).catch(e => note(`abuse ${c} skipped: ${e.message}`));
   }
 });
 
