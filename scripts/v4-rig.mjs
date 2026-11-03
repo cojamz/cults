@@ -58,6 +58,7 @@ export const BARS = {
 
 const RECORDER = () => {
   const F = (window.__rig = { round: '', frames: [], samples: [], loaf: [] });
+  window.__whyLog = []; window.__rigWhy = r => { window.__whyLog.push(r); if (window.__whyLog.length > 40) window.__whyLog.shift(); }; // why presses did nothing (GameScreen, Wheel)
   const name = a => {
     const el = a.effect && a.effect.target;
     const what = a.animationName || a.transitionProperty || 'js';
@@ -262,6 +263,7 @@ async function click(el, what, round) {
   await profStart();
   const p = page.evaluate(() => window.__rig.arm()).catch(() => null);
   await sleep(20);
+  await page.evaluate(([x, y]) => { const e = document.elementFromPoint(x, y); window.__rigWhy && window.__rigWhy(`press on ${e ? e.tagName.toLowerCase() + '.' + String(e.className?.baseVal ?? e.className).split(' ')[0] + ' slot ' + (e.closest('[data-slot]')?.getAttribute('data-slot') || '-') : 'nothing'}`); }, [c.x, c.y]).catch(() => {});
   await page.mouse.click(c.x, c.y);
   const ms = await p.catch(() => null);
   await profStop(what, ms);
@@ -322,6 +324,10 @@ while (Date.now() - t0 < MAX_MIN * 60000) {
     if (fresh && turns % 2 === 1) console.log(`round ${round} turn ${turns}: idle ${JSON.stringify(await idleSample(round))}`);
     await hover('.lt-wheel [data-slot][data-option]', round);
     await hover('.lt-shop .card[data-uid]', round);
+    // off the shop card and let its hover card close: in round III a shop card's hover card sits over the wheel, and the
+    // pointer jumping from the card to a space under it kept the card open and pressed a word on it, 8 dead clicks and a
+    // game that never finished (Nov 3)
+    await page.mouse.move(6, 694, { steps: 1 }); await sleep(450);
     const legal = await $$('.lt-wheel [data-slot][data-option]');
     if (legal.length) { const el = legal[(g.moves * 3) % legal.length]; path.push(`${g.moves} ${await el.getAttribute('data-option').catch(() => '?')}`); await click(el, 'place', round); }
     const confirm = await page.waitForSelector('[data-place]', { timeout: 500 }).catch(() => null);
@@ -348,6 +354,7 @@ while (Date.now() - t0 < MAX_MIN * 60000) {
   }
   const ok = per(round).clicks.length > before && per(round).clicks.at(-1).ms != null;
   dead = ok ? 0 : dead + 1;
+  if (dead === 3) { await page.screenshot({ path: `${OUT}/rig-${label}-stuck.png` }).catch(() => {}); writeFileSync(`${OUT}/rig-${label}-stuck-table.json`, JSON.stringify(await page.evaluate(() => ({ ...document.querySelector(".app.game")?.dataset, ghost: !!document.querySelector(".slot.flash"), dialogs: [...document.querySelectorAll(".dialog, [role=dialog]")].map(d => d.className), why: window.__whyLog })).catch(e => String(e)))); writeFileSync(`${OUT}/rig-${label}-stuck.json`, await page.evaluate(() => localStorage.getItem("patrons.v4.local")).catch(() => "null") || "null"); } // what the stuck table looked like, and its save
   if (dead === 3) errors.push(`harness: stuck in ${g.phase}, options ${(await page.$$eval('[data-option]', els => els.map(e => `${e.getAttribute('data-option')}${e.disabled ? '(off)' : ''}@${e.className.split(' ')[0]}`)).catch(() => [])).join(' ')}`);
   if (dead >= 8) { errors.push(`harness: 8 clicks in a row changed nothing at round ${round}`); await page.screenshot({ path: `${OUT}/rig-${label}-stuck.png` }); break; }
   await letGo();
