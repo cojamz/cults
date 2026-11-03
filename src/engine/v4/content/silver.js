@@ -10,6 +10,7 @@ import { defById } from './index.js';
 import { add1, old1 } from './replace1.js';
 import { add2, old2, handlers2 } from './replace2.js';
 import { add3, old3 } from './replace3.js';
+import { add6, old6, handlers6 } from './replace6.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const S = 'silver';
@@ -213,6 +214,16 @@ const silver = {
   actions: silverActions,
 
   handlers: {
+    ...handlers6({
+      godparents(ctx, p, value) {
+        const [uid, oid] = value, o = ctx.player(oid);
+        if (!p.members.includes(uid) || !o || o === p) return;
+        const c = ctx.card(uid), k = c.def.s + c.def.w, name = c.def.name;
+        if (!ctx.moveMember(uid, p, o, { actor: p })) return;
+        p.bonus += k;
+        ctx.log(`${p.name}'s Godparents: gives ${name} to ${o.name}: +${k} followers.`);
+      },
+    }),
     ...handlers2({
       hush(ctx, victim, answer, data) {
         const thief = ctx.player(data.thief);
@@ -282,9 +293,25 @@ const silver = {
   },
 
   members: [
-    m('guest', 'Hangers-On', 4, 4, 'Whenever a rival gives you something, +1 more of it.', { f: 2, n: 2, // worth 2 (Cory, Nov 1)
+    m('guest', 'Hangers-On', 4, 4, 'Whenever a rival gives you something, +1 more of it.', { f: 2, n: 2, ...old6, // worth 2 (Cory, Nov 1)
       onGiven(ctx, owner, card, giver, color) { if (giver !== owner) ctx.gain(owner, color, 1); },
     }),
+    // REPLACE6 bot test (Nov 3, replacement batch 6): Hangers-On's place. 4 silver + 1 any as a player sees it. Any of your
+    // members (Godparents itself too) to any rival; its cost is its printed price. A gift, not a steal or a swap
+    // (Loyalists and Bodyguards don't stop it): an arrival for the rival (Old Maid's −5 lands on them), and Martyrs pays
+    // you as it leaves. A used card stays used.
+    ...add6(m('godparents', 'Godparents', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain followers equal to its cost.', {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const opts = [];
+        for (const c of ctx.membersOf(owner)) for (const o of others(ctx, owner)) opts.push({
+          id: `give:${c.uid}:${o.id}`, label: `${c.def.name} (${c.def.s + c.def.w}) to ${o.name}`, kind: 'choice', value: [c.uid, o.id],
+          hint: c.def.s + c.def.w - (c.def.f || 1) * 1.5 - (c.used || c.def.vanilla ? 0 : 1) + (c.def.onJoined ? 5 : 0) - ctx.followers(o) * 0.01,
+        });
+        ctx.choose(owner, 'Godparents: give which of your members to which rival?', opts, 'silver.godparents');
+      },
+      botActivate: (ctx, owner) => ctx.state.round === 3 || (ctx.state.round === 2 && ctx.membersOf(owner).some(c => c.used && c.def.activate === 'game')),
+    })),
     m('benefactor', 'Benefactor', 4, 2, 'On Recruit: +3 silver, and +1 silver to a rival you choose. Round Start: +3 silver, and +1 silver to a rival you choose.', { now: true,
       onRoundStart(ctx, owner) {
         ctx.gain(owner, S, 3);
@@ -355,7 +382,7 @@ const silver = {
     m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', {
       afterAction(ctx, owner, card, qid) { if (qid === S) owner.bonus += 1; },
     }),
-    m('gala', 'Debutantes', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, ...old2, // worth 2 (Cory, Nov 1)
+    m('gala', 'Debutantes', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, ...old2, ...old6, // worth 2 (Cory, Nov 1)
       activate: 'game',
       onActivate(ctx, owner) {
         ctx.gain(owner, S, owner.res[S]);
@@ -369,7 +396,20 @@ const silver = {
     m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2 }),
     // REPLACE2 bot test (Nov 3, replacement batch 2): Debutantes' place. 6 silver + 3 any as a player sees it. The +2 each is
     // a gift (Caterer, Hangers-On); the count is all the silver rivals hold after it.
-    ...add2(m('fundraisers', 'Fundraisers', 5, 3, 'On Use, once per game: each rival +2 silver, then +1 follower per 2 silver rivals hold in all.', { f: 2,
+    // REPLACE6 bot test (Nov 3, replacement batch 6): the Debutantes slot (Fundraisers' under REPLACE2). 6 silver + 3 any as
+    // a player sees it. The rival who holds the most silver when it's used; their silver stays theirs.
+    ...add6(m('socialclimbers', 'Social Climbers', 5, 3, 'On Use, once per game: gain followers equal to the silver of the rival who holds the most.', {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const top = others(ctx, owner).reduce((a, b) => ((b.res[S] || 0) > (a.res[S] || 0) ? b : a));
+        const k = top.res[S] || 0;
+        if (!k) { card.used = false; ctx.log(`${owner.name}'s Social Climbers: no rival holds silver.`); return; }
+        owner.bonus += k;
+        ctx.log(`${owner.name}'s Social Climbers: ${top.name} holds ${k} silver, the most: +${k} followers.`);
+      },
+      botActivate: (ctx, owner) => { const k = Math.max(0, ...others(ctx, owner).map(o => o.res[S] || 0)); return k >= 8 || (ctx.state.round === 3 && (k >= 5 || owner.left === 0)); },
+    })),
+    ...add2(m('fundraisers', 'Fundraisers', 5, 3, 'On Use, once per game: each rival +2 silver, then +1 follower per 2 silver rivals hold in all.', { f: 2, ...old6,
       activate: 'game',
       onActivate(ctx, owner) {
         giveAll(ctx, owner, S, 2);

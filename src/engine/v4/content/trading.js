@@ -18,6 +18,7 @@ import { memberScoring } from './member-scoring.js';
 import { registerQuadrant, defById } from './index.js';
 import { add1, old1 } from './replace1.js';
 import { add3, old3, handlers3 } from './replace3.js';
+import { add6, old6, handlers6 } from './replace6.js';
 
 const W = 'white';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -143,6 +144,23 @@ const trading = {
   ],
 
   handlers: {
+    ...handlers6({
+      successor(ctx, p, uid, data) {
+        if (!ctx.state.shop.includes(uid) || cost(ctx, uid) > data.max) return;
+        ctx.log(`${p.name}'s Successors: recruits ${ctx.card(uid).def.name} for free.`);
+        ctx.recruit(p, uid, { free: true });
+      },
+      inquire(ctx, o, uid, data) {
+        const owner = ctx.player(data.owner);
+        if (o.members.includes(uid)) {
+          const name = ctx.card(uid).def.name;
+          ctx.log(`${owner.name}'s Inquisitors: ${o.name} casts out ${name}; ${owner.name} +2 followers.`);
+          ctx.buryMember(o, uid, o);
+          owner.bonus += 2;
+        }
+        inquireStep(ctx, owner, data.left);
+      },
+    }),
     ...handlers3({
       evict(ctx, p, uid) {
         const o = ctx.ownerOf(uid);
@@ -256,7 +274,20 @@ const trading = {
     ...add1(m('heirs', 'Heirs', 3, 3, 'Game End: +1 follower per 2 white you hold.', { f: 2,
       onGameEnd: (ctx, owner) => Math.floor((owner.res[W] || 0) / 2),
     })),
-    m('raider', 'Raiders', 2, 2, /* Claude's fill-in price 4, was 5 (Cory, 2026-10-22: "probably too expensive") */ 'On Use, once per game: steal 4 followers from a rival. Pay them 2 white.', { n: 2, // 2 members (Cory, Oct 29: "choir and raiders can be more"; 2 is Claude's start)
+    // REPLACE6 bot test (Nov 3, replacement batch 6): Raiders' place. 4 white + 1 any as a player sees it. Each rival with a
+    // member, in seat order from your left, picks one of theirs; it goes to the bottom of the pile as their own cast-out
+    // (Martyrs pays them, their Successors answers it, Pallbearers hears it). Not a steal, so Bodyguards doesn't stop it.
+    ...add6(m('inquisitors', 'Inquisitors', 3, 1, 'On Use, once per game: each rival casts out one of their members. +2 followers per member cast out.', {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const n = ctx.state.players.length, left = Array.from({ length: n - 1 }, (_, k) => (owner.id + 1 + k) % n);
+        if (!left.some(id => ctx.player(id).members.length)) { card.used = false; ctx.log(`${owner.name}'s Inquisitors: no rival has a member.`); return; }
+        ctx.log(`${owner.name} uses Inquisitors.`);
+        inquireStep(ctx, owner, left);
+      },
+      botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).filter(o => o.members.length).length >= 2,
+    })),
+    m('raider', 'Raiders', 2, 2, /* Claude's fill-in price 4, was 5 (Cory, 2026-10-22: "probably too expensive") */ 'On Use, once per game: steal 4 followers from a rival. Pay them 2 white.', { n: 2, ...old6, // 2 members (Cory, Oct 29: "choir and raiders can be more"; 2 is Claude's start)
       activate: 'game',
       // any rival, the owner's pick (Cory, Nov 1: "Raiders shouldnt have to be from the leader")
       onActivate(ctx, owner, card) {
@@ -270,7 +301,20 @@ const trading = {
       botActivate: (ctx, owner) => { const t = raidTarget(ctx, owner, true); return !!t && sellable(t) >= 3 && (owner.res[W] || 0) >= 2; }, // bots still raid the leader
     }),
     // new (Claude's names from here down)
-    m('cashier', 'Cashier', 2, 0, 'On Recruit: turn all your white into followers.', {
+    // REPLACE6 bot test (Nov 3, replacement batch 6): Cashier's place. 4 white + 1 any as a player sees it. Your own
+    // cast-out of your own member (Farewell, Estate Sale, Appraiser; one Inquisitors makes you do): a shop member costing up
+    // to its printed price, free (your recruit). A rival casting out your member (Evictors) isn't you casting out.
+    ...add6(m('successors', 'Successors', 3, 1, 'Whenever you cast out one of your members, recruit a shop member costing up to its cost, for free.', {
+      onCastOut(ctx, owner, card, { from, actor, cost: k, name }) {
+        if (from !== owner || actor !== owner) return;
+        const list = ctx.shopCards().filter(c => cost(ctx, c.uid) <= k);
+        if (!list.length) { ctx.log(`${owner.name}'s Successors: no shop member costs ${k} or less.`); return; }
+        ctx.choose(owner, `Successors: recruit which shop member (costing up to ${k}) for free?`, list.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + cost(ctx, c.uid),
+        })), 'trading.successor', { max: k, was: name });
+      },
+    })),
+    m('cashier', 'Cashier', 2, 0, 'On Recruit: turn all your white into followers.', { ...old6,
       onRecruited(ctx, owner) {
         const n = owner.res[W] || 0;
         if (!n) { ctx.log(`${owner.name}'s Cashier: no white to turn into followers.`); return; }
@@ -303,7 +347,18 @@ const trading = {
       },
     }),
     // Cory, 2026-10-24: "go deep card for every color" ("sure for now"); name and price Claude's fill-in, priced like Chronicler
-    m('oldmoney', 'Old Money', 1, 4, /* 6 (Cory, Oct 30) */ 'Game End: +1 follower per white member you have.', {
+    // REPLACE6 bot test (Nov 3, replacement batch 6): Old Money's place. 4 white + 1 any as a player sees it. Any rival's
+    // cast-out to the bottom of the pile (Farewell, Estate Sale, Evictors, one Inquisitors makes them do, yours or theirs
+    // cast out by them); its cost is its printed price.
+    ...add6(m('pallbearers', 'Pallbearers', 3, 1, 'Whenever a rival casts out a member, gain followers equal to half its cost, rounded up.', {
+      onCastOut(ctx, owner, card, { actor, cost: k, name }) {
+        if (!actor || actor === owner || !(k > 0)) return;
+        const n = Math.ceil(k / 2);
+        owner.bonus += n;
+        ctx.log(`${owner.name}'s Pallbearers: ${actor.name} cast out ${name} (${k}): +${n} followers.`);
+      },
+    })),
+    m('oldmoney', 'Old Money', 1, 4, /* 6 (Cory, Oct 30) */ 'Game End: +1 follower per white member you have.', { ...old6,
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'trading'),
     }),
     m('hoarder', 'Hoarder', 4, 3, 'On Use, once per game: turn all your resources into white.', { ...old3,
@@ -472,6 +527,17 @@ function raid(ctx, owner, t, k) {
 }
 function raidAmount(ctx, p, t) {
   return Math.min(3, sellable(t), p.res[W]);
+}
+
+/** Inquisitors (REPLACE6): the next rival in `left` (seat order) with a member casts one out. */
+function inquireStep(ctx, owner, left) {
+  const at = left.findIndex(id => ctx.player(id).members.length);
+  if (at < 0) return;
+  const o = ctx.player(left[at]);
+  ctx.choose(o, 'Inquisitors: cast out which of your members?', ctx.membersOf(o).map(c => ({
+    id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'member', value: c.uid,
+    hint: -((c.def.f || 1) * 1.5 + cost(ctx, c.uid) * 0.5 + (c.used || c.def.vanilla ? 0 : 1)) + (c.def.onLeave ? 4 : 0),
+  })), 'trading.inquire', { owner: owner.id, left: left.slice(at + 1) });
 }
 
 export default trading;

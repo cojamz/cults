@@ -10,6 +10,7 @@ import { pileRules } from './piles.js';
 import { startEffects, stopEffects, abandonEffects, underCause, markEffect } from './effects.js';
 import { REPLACE4 } from './content/replace4.js';
 import { REPLACE5 } from './content/replace5.js';
+import { REPLACE6 } from './content/replace6.js';
 
 export const RING_VALUE = [4, 6, 10];
 export const WORKERS = [3, 4, 5];
@@ -585,6 +586,9 @@ function inputFor(state, task) {
       // the top of the pile, for a player who can reach it (Insider: flag pileReach)
       for (const uid of state.pile.slice(0, pileReach(state, p))) if (memberPrice(state, p, uid).afford)
         opts.push({ id: `card:${uid}`, label: `${cardDef(state, uid).name} (from the pile)`, kind: 'card', uid, fromPile: true });
+      // a rival's Peddlers stall (REPLACE6 bot test)
+      if (REPLACE6) for (const [uid, o] of stallCards(state, p)) if (memberPrice(state, p, uid).afford)
+        opts.push({ id: `card:${uid}`, label: `${cardDef(state, uid).name} (${o.name}'s Peddlers)`, kind: 'card', uid, stall: o.id });
       TIERS.forEach(t => { if (canBuyTier(state, p, t)) opts.push({ id: `tier:${t.key}`, label: `+${t.get} followers`, kind: 'tier', tier: t.key }); });
       // the swap card, a table setting (Cory, Nov 1 3:01pm), beside the follower cards
       if (swapCardPairs(state, p).length) opts.push({ id: 'swapcard', label: 'Swap card', kind: 'swapcard' });
@@ -1037,8 +1041,8 @@ function endRound(state) {
   log(state, `Round ${roman(state.round)} ends. ${msg.join(' · ') || 'No one scored.'}`);
   // members that answer a rival winning a contest (Racketeers, REPLACE1 bot test), each winner of each contest
   for (const c of table) for (const id of c.winners) eachMember(state, (owner, card, def) => { if (def.onRivalContestWin && owner.id !== id) def.onRivalContestWin(ctx, owner, card, state.players[id], c); }, ['onRivalContestWin']);
-  // members that read the scored contests (Second Fiddles, REPLACE5 bot test), in this round's turn order
-  if (REPLACE5) for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.afterContests) def.afterContests(ctx, state.players[id], card, table); }, ['afterContests']);
+  // members that read the scored contests (Second Fiddles, REPLACE5; Sore Losers, REPLACE6: bot tests), in this round's turn order
+  if (REPLACE5 || REPLACE6) for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.afterContests) def.afterContests(ctx, state.players[id], card, table); }, ['afterContests']);
   // Late Shoppers (REPLACE4 bot test: flag roundEndBuy): one recruit each, in this round's order, after the contests
   // and before the row goes to the bottom (in round III, before the Game End cards count)
   if (REPLACE4) {
@@ -1256,6 +1260,9 @@ function recruit(state, p, uid, opts) {
   return underCause(() => ({ kind: 'recruit', pid: p.id, uid, index: state.shop.indexOf(uid) }), () => recruitNow(state, p, uid, opts));
 }
 function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false }) {
+  // a rival's Peddlers stall (REPLACE6 bot test): taken from beside the card, paid to its owner
+  const stall = REPLACE6 && state.shop.indexOf(uid) < 0 ? stallCards(state, p).find(([u]) => u === uid)?.[1] : null;
+  if (stall) for (const list of Object.values(state.stalls)) if (list.includes(uid)) { list.splice(list.indexOf(uid), 1); state.shop.push(uid); }
   const idx = state.shop.indexOf(uid);
   const fromPile = idx < 0 ? state.pile.indexOf(uid) : -1;
   // top: Red's round I space takes the deck's top member (Cory, 2026-10-27)
@@ -1296,6 +1303,7 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
       if ((spend[q0] || 0) < needS && spend.silver > 0) notes.push(`${flagName(state, p, 'silverPaysColor')}: silver paid for ${q0}`);
     }
     if (notes.length) paid += `; ${notes.join(', ')}`;
+    if (stall) { for (const r in spend) stall.res[r] = (stall.res[r] || 0) + spend[r]; paid += `, paid to ${stall.name}'s Peddlers`; }
     // a discount waits for a member that actually costs something
     if (cardDef(state, uid).s + cardDef(state, uid).w > 0) { p.discount = 0; p.discountSources = []; }
   }
@@ -1308,7 +1316,7 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   p.members.push(uid);
   const def = cardDef(state, uid);
   log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
-  memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 });
+  memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 && !stall });
   // an arrival like any other (Saboteur: "whenever this joins your cult"); swaps and moves fire it in their own code
   memberJoined(state, p, uid);
 }
@@ -1819,6 +1827,14 @@ function againBuy(state, p, extra) {
   state.queue.splice(at < 0 ? state.queue.length : at, 0, { t: 'buy', p: p.id, ...extra });
 }
 
+/** Peddlers (REPLACE6 bot test: flag stall): the members beside rivals' Peddlers that p may recruit, as [uid, owner]. */
+function stallCards(state, p) {
+  const out = [];
+  if (!state.stalls) return out;
+  for (const o of state.players) if (o !== p) for (const u of o.members) if (state.stalls[u]?.length && effectiveDefs(state.cards[u]).some(d => d.stall))
+    for (const uid of state.stalls[u]) out.push([uid, o]);
+  return out;
+}
 /** How many cards off the top of the pile p may recruit from (Insider: flag pileReach; copies don't stack). */
 export function pileReach(state, p) {
   // Peek (Blue) lets its taker reach the cards it looked at, this turn only
@@ -2000,6 +2016,8 @@ function ctxFor(state) {
       log(state, `${p.name} sent ${def.name} to the bottom of the pile.`);
       // a member leaving its owner's cult: Recruiter hears a rival's cast-out (Cory, Nov 1: "Yes")
       cultMove(state, uid, p, null, actor);
+      // members that answer a cast-out (Successors, Pallbearers: REPLACE6 bot test); actor is who cast it out
+      if (REPLACE6) eachMember(state, (owner, card, d) => { if (d.onCastOut) d.onCastOut(ctx, owner, wrap(state, card), { uid, from: p, actor, cost: c, name: def.name }); }, ['onCastOut']);
       bottomBlue(state);
       // a shop short of its size (the pile ran out) takes it back up, as every other way to the bottom does
       refill(state);
