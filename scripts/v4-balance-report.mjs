@@ -49,7 +49,7 @@ for (const r of rows) {
     S.followers += p.followers; S.members += p.memberCount; S.seatsN++;
     const e = expected(r.seats, p.memberCount);
     add(out.seatOrder, `${r.seats}p seat ${p.seat + 1}`, w, 1 / r.seats);
-    for (const m of new Set(p.members)) {
+    for (const m of new Set([...p.members, ...Object.keys(p.gotRound || {})])) { // everyone who ever owned it, so a card that changes hands (Mob) counts for each owner
       add(out.members, m, w, e); add(out.membersBySeats[r.seats] ??= {}, m, w, e);
       if (p.gotRound?.[m] !== undefined) { (gotR[m] ??= [0, 0, 0, 0]); gotR[m][p.gotRound[m]]++; }
     }

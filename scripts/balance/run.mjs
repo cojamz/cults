@@ -33,7 +33,7 @@ const note = s => { const line = `[${new Date().toLocaleTimeString('en-US', { ti
 
 const SIZES = {
   smoke: { normal4: 8, normal3: 4, normal2: 4, hard4: 4, veryhard4: 0, strong4: 4, abuse: { cards: 1, games: 2 }, fire: 8 },
-  fast: { normal4: 600, normal3: 100, normal2: 100, hard4: 64, veryhard4: 0, strong4: 40, abuse: { cards: 3, games: 4, budget: 100 }, fire: 120 },
+  fast: { normal4: 400, normal3: 100, normal2: 100, hard4: 120, veryhard4: 0, strong4: 40, abuse: { cards: 2, games: 4, budget: 100 }, fire: 120 },
   deep: { normal4: 1800, normal3: 300, normal2: 300, hard4: 240, veryhard4: 80, strong4: 120, abuse: { cards: 16, games: 8 }, fire: 400 },
 };
 const Z = SIZES[size];
