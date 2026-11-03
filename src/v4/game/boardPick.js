@@ -485,6 +485,9 @@ export function seatPart(state, pk, pid, picked = {}) {
 export const shopLookup = pk => id => {
   // Peek's "Keep this order" is answered from the shop's pile row
   if (id === 'keep') return pk.options.find(o => o.id === 'keep' && o.kind === 'keep') || null;
+  // a shop pick you can stop early (Scouts' Done) is answered from the shop too
+  const stop = pk.options.find(o => o.id === id && o.kind === 'pass');
+  if (stop) return stop;
   const m = /^card:(\d+)$/.exec(id);
   return m ? pk.cards.get(Number(m[1])) || null : null;
 };

@@ -550,7 +550,15 @@ export function FollowerRates({ state, me = null, optionFor = () => null, onPick
   // when you can make it
   const viewer = me != null ? state.players[me] : null;
   const held = viewer ? Object.values(viewer.res).reduce((a, b) => a + (b || 0), 0) : null;
-  const done = optionFor('pass'); // offered only in your own buy step
+  const pass = optionFor('pass'); // offered only in your own buy step
+  // a pick among the shop's members that you can stop early (Scouts: "send any shop members"): its Done sits here too,
+  // where the eye is (Cory, Nov 2: "in the UI you have to pick everything")
+  const pend = state.pending;
+  const stopId = !pass && pend?.kind === 'choose' && pend.options.some(o => o.kind === 'card' && state.shop.includes(o.value))
+    ? pend.options.find(o => o.kind === 'pass')?.id : null;
+  const stop = stopId != null ? optionFor(stopId) : null;
+  const done = pass || stop;
+  const doneId = pass ? 'pass' : stop ? stopId : undefined;
   const when = (t, opt) => {
     // what a click does (wave-2 tester A): one way to pay buys at once and says what it pays; several open the sheet
     if (opt) {
@@ -616,9 +624,9 @@ export function FollowerRates({ state, me = null, optionFor = () => null, onPick
       {/* ending your turn without buying (Cory, 2026-10-16: "pass is hard to find"): right under the follower buys, where
           the eye already is while you shop. Its room is kept when it isn't offered, so the shop never shifts as your buy
           step starts or ends (it's hidden then, and on phones folded away). */}
-      <button type="button" className={`btn lt-done${done ? '' : ' idle'}`} data-option={done ? 'pass' : undefined} data-done-no-buy={done ? 'on' : 'off'}
+      <button type="button" className={`btn lt-done${done ? '' : ' idle'}`} data-option={doneId} data-done-no-buy={done ? 'on' : 'off'}
         disabled={!done} tabIndex={done ? 0 : -1} aria-hidden={done ? undefined : 'true'}
-        title={done ? (state.pending?.afterPurchase ? 'Finish your turn' : 'End your turn without recruiting') : undefined} onClick={() => done && onPick('pass')}>{state.pending?.afterPurchase ? 'End turn' : 'Done, no recruit'}</button>
+        title={stop ? 'Stop here' : done ? (state.pending?.afterPurchase ? 'Finish your turn' : 'End your turn without recruiting') : undefined} onClick={() => done && onPick(doneId)}>{stop ? 'Done' : state.pending?.afterPurchase ? 'End turn' : 'Done, no recruit'}</button>
     </div>
   );
 }
