@@ -199,7 +199,7 @@ export default {
   },
 
   members: [
-    m('gardener', 'Gardener', 2, 0, 'On Recruit: +1 of each color you have none of. Round Start: +1 of each color you have none of.', { now: true,
+    m('gardener', 'Gardener', 2, 0, 'On Recruit: +1 of each color you have none of. Round Start: +1 of each color you have none of.', { f: 2, now: true,
       onRoundStart(ctx, owner) { for (const c of missing(ctx, owner)) ctx.gain(owner, c, 1); },
     }),
     // Cory, 2026-10-31: "maybe just +1 yellow when any of your resources are stolen or moved"
