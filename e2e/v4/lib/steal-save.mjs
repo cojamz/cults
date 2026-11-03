@@ -5,6 +5,7 @@
 //  Hand-pick (round III).
 // Used by the board-picker gate (e2e/v4/steal.mjs) and the before/after shots.
 import { createGame, applyMove, chooseBotMove, quadrant } from '../../../src/engine/v4/index.js';
+import { contextFor } from '../../../src/engine/v4/core.js';
 import { seededRandom } from '../../../src/engine/v4/rng.js';
 import { buildStamp } from './stamp.mjs';
 
@@ -42,6 +43,9 @@ export function stealSave(space = 'help', { placed = true, piles = PILES, round:
     for (let n = 0; n < 1500 && !ready(s) && !s.over; n++) s = applyMove(s, chooseBotMove(s, rand));
     if (!ready(s)) continue;
     if (table === STEAL_TABLE) piles.forEach((r, k) => { s.players[k].res = { ...r }; });
+    // the known piles say which stacks light only while every rival can be stolen from (a cloak or Lie Low the bots
+    // reached in this seed would hide one: the Nov 3 replacements moved the seeded games onto such a seat)
+    if (table === STEAL_TABLE && s.players.slice(1).some(o => !contextFor(s).canSteal(s.players[0], o))) continue;
     if (occupy) {
       if (Object.keys(occupy).some(k => s.slots[k] !== undefined || k === `${q}-${i}`)) continue;
       s = { ...s, slots: { ...s.slots }, players: s.players.map(p => ({ ...p })) };
