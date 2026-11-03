@@ -13,6 +13,7 @@
 //   so they never squeeze anyone out of the last space (round I fills every space).
 // - onExtraTurn / onRivalExtraTurn are purple-only member hooks, fired by the helpers below.
 import { defById } from './index.js';
+import { REPLACE1, add1, old1 } from './replace1.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const P = 'purple';
@@ -201,7 +202,17 @@ function toToken(ctx, p, n, why) {
   const q = ctx.state.queue, rest = turnsAhead(ctx, p).map(i => q[i]).filter(t => !t.token && !t.now);
   for (const t of rest.slice(-(n - put) || rest.length)) if (put < n) { t.token = true; put++; }
   if (put) ctx.log(`${p.name}'s ${why}: ${put === 1 ? '1 minion waits' : `${put} minions wait`} on the Goes Last token.`);
+  nightWatch(ctx, p, put);
   return put;
+}
+/** Night Watch (REPLACE1 bot test, Nov 3): p just took the Goes Last token with n minions on it; each rival's Night
+ *  Watch pays +1 follower per minion. */
+function nightWatch(ctx, p, n) {
+  if (!REPLACE1 || !(n > 0)) return;
+  for (const o of ctx.rivals(p)) for (const c of ctx.membersOf(o)) if (c.def.watchToken) ctx.asMember(o, c.def.name, () => {
+    o.bonus += n;
+    ctx.log(`${o.name}'s Night Watch: +${n} follower${n === 1 ? '' : 's'} (${p.name} took the Goes Last token with ${n} minion${n === 1 ? '' : 's'} on it).`);
+  }, c.uid);
 }
 /** p's last turn this round still has a rival's turn after it (Sleep In passes that one). */
 const lastWaits = (ctx, p) => {
@@ -468,7 +479,10 @@ export default {
     // Cory, 2026-10-29: "clock maker doesnt feel good" (was +1 purple per 2 purple you have, on recruit and at round start).
     // Price 5 (was 4): Claude, under Cory's go-with-your-gut ("will likely need to rebalance cost"): first pick of two spaces
     // every round beats the old trickle. Core builds the order (firstTwoInRow).
-    m('clockmaker', 'Clockmakers', 2, 2, 'Round Start: take your first two turns in a row.', { f: 2, firstTwoInRow: true }), // (Cory, Oct 29, balance run: +1 follower)
+    m('clockmaker', 'Clockmakers', 2, 2, 'Round Start: take your first two turns in a row.', { f: 2, firstTwoInRow: true, ...old1 }), // (Cory, Oct 29, balance run: +1 follower)
+    // REPLACE1 bot test (Nov 3, replacement batch 1): Clockmakers' place. 3 purple + 2 any as a player sees it. Last Call
+    // and Sleep In pay for the minions they put on the token, Night Owls for its 1.
+    ...add1(m('nightwatch', 'Night Watch', 2, 2, 'Whenever a rival takes the Goes Last token, +1 follower per minion on it.', { f: 2, watchToken: true })),
     // balance pass 2 (pooled bench, both bots agree; design/eval/balance-pass-2.md): 8 → 12
     m('lamplighter', 'Lamplighter', 6, 2,'On Recruit: +1 purple per minion you get this round (3 / 4 / 5). Round Start: +1 purple per minion you get this round (3 / 4 / 5).', { now: true,
       // Cory, 2026-10-15: every minion you get counts (Extra Hand's too)
@@ -497,6 +511,7 @@ export default {
         const q = ctx.state.queue, t = turnsAhead(ctx, owner).map(i => q[i]).pop();
         takeToken(ctx, owner, 'Night Owls', ' with 1 more minion on it');
         if (t) t.token = true;
+        if (t) nightWatch(ctx, owner, 1);
       },
     }),
     m('patience', 'Timekeeper', 4, 2, 'Game end: +1 follower per 3 purple.', {

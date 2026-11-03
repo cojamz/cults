@@ -14,7 +14,8 @@
 import { registerGuests, spacesOf } from './index.js';
 import { extraMinion, spareSpace } from './purple.js';
 import { startSteal } from './thieves.js';
-import { toBottom } from './market.js';
+import { toBottom, scavenge } from './market.js';
+import { REPLACE1, add1, old1, handlers1 } from './replace1.js';
 import { startLaunder, launderPick, launderAmount } from './launder.js';
 
 // Prices: member-value sim (scripts/v4-member-value.mjs, 4 normal bots, Release off, handed over at round II),
@@ -87,7 +88,9 @@ function scoutDone(ctx, p, data) {
   if (data.sent.length) ctx.log(`${p.name}'s Scout: sent ${data.sent.join(', ')} to the bottom of the pile.`);
   // pays Patroness and Bargain Bin once, as Savings, Bury and Trendsetters do (expert AI games, Nov 1)
   toBottom(ctx, data.sent.length);
+  const sentUids = REPLACE1 && data.sent.length ? ctx.state.pile.slice(-data.sent.length) : [];
   ctx.refillShop();
+  scavenge(ctx, p, sentUids);
 }
 
 // Coach's picks: your members with a Once per game or Once per round ability, used or not, but not one Coach already
@@ -129,7 +132,31 @@ const members = [
     onActivate(ctx, owner, card) { if (!extraMinion(ctx, owner, 'Extra Hand')) card.used = false; },
     botActivate: ctx => ctx.state.round === 3 && spareSpace(ctx),
   }),
-  m('frontrunner', 'Line Cutters', 'purple', 1, 0, 'You go first every round.', { pickFirst: true, f: 3, n: 3 }), // worth 3 (Cory, Nov 1: "maybe we make it 3 members?"), renamed (Cory, Nov 1: "make front runner worth more followers. figure out a better name") // Cory, Oct 21: 5; Oct 27: 4; Oct 28 "could probably be cheaper": 3 with the +1 wild (Claude's price, the floor); Oct 29 "I'm okay with front runners at 2": 2
+  m('frontrunner', 'Line Cutters', 'purple', 1, 0, 'You go first every round.', { pickFirst: true, f: 3, n: 3, ...old1 }), // worth 3 (Cory, Nov 1: "maybe we make it 3 members?"), renamed (Cory, Nov 1: "make front runner worth more followers. figure out a better name") // Cory, Oct 21: 5; Oct 27: 4; Oct 28 "could probably be cheaper": 3 with the +1 wild (Claude's price, the floor); Oct 29 "I'm okay with front runners at 2": 2
+  // REPLACE1 bot test (Nov 3, replacement batch 1): Line Cutters' place. 4 any as a player sees it. The rival chosen is
+  // kept on the card (card.grudge: a marker on that rival's board). Scores after every other game-end bonus, and only
+  // loose followers can be taken (as Raiders); Bodyguards and Lie Low block it like any steal.
+  ...add1(m('grudge', 'Grudge', null, 0, 3, 'On Recruit: choose a rival. Game End: steal 4 followers from them if they have more than you.', { f: 2, botValue: 0, endLast: true,
+    onRecruited(ctx, owner, card) {
+      const list = ctx.rivals(owner);
+      if (!list.length) return;
+      ctx.choose(owner, 'Grudge: choose a rival', list.map(o => ({
+        id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers)`, kind: 'player', value: o.id, hint: ctx.followers(o),
+      })), 'benders.grudge', { uid: card.uid });
+    },
+    // a pure read (bots and the results screen call it): what Grudge takes now
+    onGameEnd(ctx, owner, card) {
+      const t = card.grudge != null ? ctx.player(card.grudge) : null;
+      if (!t || t === owner || ctx.followers(t) <= ctx.followers(owner) || !ctx.canSteal(owner, t)) return 0;
+      return Math.min(4, Math.max(0, t.bonus));
+    },
+    onGameEndTake(ctx, owner, card, got) {
+      const t = ctx.player(card.grudge);
+      t.bonus -= got;
+      if (t.final) { t.final.total -= got; t.final.parts.push(`${owner.name}'s Grudge −${got}`); }
+      ctx.log(`${owner.name}'s Grudge: steals ${got} follower${got === 1 ? '' : 's'} from ${t.name}.`);
+    },
+  })),
   // Cory's ideas, Oct 21, on this sim branch only. Launderer is simplified for the bots: one color, not any split.
   // Cory, Oct 28: "Launderers, 2 Followers" and "it should let you completely redo all your money… converting a lot at
   // once and being flexible across colors": all into one color in one click, or split color by color.
@@ -268,6 +295,14 @@ export const handlers = {
   },
   launder: launderPick,
   launderAmount,
+  ...handlers1({
+    grudge(ctx, p, pid, data) {
+      const card = ctx.card(data.uid);
+      if (!p.members.includes(card.uid)) return;
+      card.grudge = pid;
+      ctx.log(`${p.name}'s Grudge: a grudge against ${ctx.player(pid).name}.`);
+    },
+  }),
 };
 
 const group = { id: 'benders', members, handlers };

@@ -4,6 +4,7 @@
 // 2.0 color's is (Claude, under Cory's go-with-your-gut). The wheel and deck: design/decisions.md, Oct 30-31.
 import { gainColorOf } from './color-of.js';
 import { startLaunder } from './launder.js';
+import { add1, old1, handlers1 } from './replace1.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
 const Y = 'yellow';
@@ -103,6 +104,25 @@ export default {
   ],
 
   handlers: {
+    ...handlers1({
+      barterWith(ctx, p, oid) {
+        if (oid == null) { ctx.log(`${p.name}'s Barterers: swapped nothing.`); return; }
+        barterStep(ctx, p, { oid, left: 3, done: 0, instance: newChange(ctx) });
+      },
+      barter(ctx, p, value, data) {
+        const o = ctx.player(data.oid);
+        if (value === 'done') { if (data.done) tastemaker(ctx, p); else ctx.log(`${p.name}'s Barterers: swapped nothing.`); return; }
+        const [a, b] = value;
+        if (!((p.res[a] || 0) > 0 && (o.res[b] || 0) > 0 && ctx.canSteal(p, o, 'change'))) { if (data.done) tastemaker(ctx, p); return; }
+        p.res[a] -= 1; o.res[a] = (o.res[a] || 0) + 1;
+        o.res[b] -= 1; p.res[b] = (p.res[b] || 0) + 1;
+        ctx.log(`${p.name}'s Barterers: ${p.name} gives ${o.name} 1 ${a} for 1 ${b}.`);
+        // a change of the rival's resources: Customs pays once per Barterers use
+        for (const card of ctx.membersOf(o)) { const def = ctx.defOf(card); if (def.onChanged) def.onChanged(ctx, o, card, p, data.instance); }
+        const next = { ...data, left: data.left - 1, done: data.done + 1 };
+        if (next.left > 0) barterStep(ctx, p, next); else tastemaker(ctx, p);
+      },
+    }),
     swap(ctx, p, value, data) {
       if (value === 'done') { finishTransmute(ctx, p, data); return; }
       const [from, to] = value;
@@ -221,9 +241,21 @@ export default {
       onColorChosen(ctx, owner, card, member) { matchmaker(ctx, owner, member); },
     }),
     // Cory, 2026-10-31: "i dont like round end. i like on recruit and round start"
-    m('dyer', 'Dyer', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true,
+    m('dyer', 'Dyer', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true, ...old1,
       onRoundStart(ctx, owner) { ctx.gain(owner, Y, held(ctx, owner).length); },
     }),
+    // REPLACE1 bot test (Nov 3, replacement batch 1): Dyer's place. 4 yellow + 2 any as a player sees it. Pick a rival
+    // (Bodyguards blocks, as it blocks Dilute), then up to 3 swaps of 1 of yours for 1 of theirs. Customs and Tastemaker
+    // read it as changing a rival's resources.
+    ...add1(m('barterers', 'Barterers', 3, 2, "On Recruit and Round Start: swap up to 3 of your resources with one rival's, one for one.", { now: true,
+      onRoundStart(ctx, owner) {
+        const list = touchable(ctx, owner).filter(o => total(ctx, o) > 0);
+        if (!list.length || !total(ctx, owner)) { ctx.log(`${owner.name}'s Barterers: nothing to swap.`); return; }
+        ctx.choose(owner, 'Barterers: swap with which rival?', list.map(o => ({
+          id: `player:${o.id}`, label: o.name, kind: 'player', value: o.id, hint: total(ctx, o) * 0.1,
+        })).concat({ id: 'none', label: 'Swap with nobody', kind: 'pass', value: null, hint: -5 }), 'yellow.barterWith');
+      },
+    })),
     // Cory, 2026-10-31: "definitely too expensive" (was 4 + 4); 3 + 1 read strong in both bot runs, so 3 + 2 (Claude, Oct 31 balance run)
     m('explorer', 'Explorer', 3, 2, 'Whenever you take a space outside Yellow, +1 yellow.', {
       afterAction(ctx, owner, card, qid) { if (qid !== 'yellow') ctx.gain(owner, Y, 1); },
@@ -374,6 +406,18 @@ export default {
   ],
 };
 
+/** Barterers (REPLACE1 bot test): one swap at a time with rival data.oid, 1 of yours for 1 of theirs, Done at any time. */
+function barterStep(ctx, p, data) {
+  const o = ctx.player(data.oid), cs = colors(ctx), opts = [];
+  if (ctx.canSteal(p, o, 'change')) for (const a of cs) if ((p.res[a] || 0) > 0) for (const b of cs) if (b !== a && (o.res[b] || 0) > 0) opts.push({
+    id: `barter:${a}:${b}`, label: `Give 1 ${a}, take 1 ${b}`, kind: 'swap', value: [a, b], spend: { [a]: 1, [b]: -1 },
+    // bots take what the rival holds most of and hand back what they hold most of
+    hint: (o.res[b] - p.res[b]) + (p.res[a] - o.res[a]) - 1,
+  });
+  if (!opts.length) { if (data.done) tastemaker(ctx, p); return; }
+  opts.push({ id: 'done', label: data.done ? 'Done' : 'Swap nothing', kind: 'done', value: 'done', hint: 0.5 });
+  ctx.choose(p, `Barterers: swap with ${o.name} one for one, or stop (${data.done} swapped so far)`, opts, 'yellow.barter', data);
+}
 // Trade Seeds (and Tinker): up to 3 one-for-one swaps of your own, with Done at any time.
 function transmuteStep(ctx, p, data) {
   const cs = colors(ctx);

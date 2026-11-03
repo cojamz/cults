@@ -4,6 +4,7 @@
 // Every steal (Magenta's, Gold's Collect Debts, anyone's) goes through the engine's shared ctx.steal(), so Lie Low,
 // Bodyguards, Lookout and Robin Hood apply to all of them.
 import { registerQuadrant, defById } from './index.js';
+import { add1, old1 } from './replace1.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
@@ -411,7 +412,19 @@ const thieves = {
       // Panel, Anarchist, Headhunter and Double Agent go through, as they do through Lie Low
       guardSteal: (ctx, victim, card, thief, kind) => kind !== 'swap',
     }),
-    m('crew', 'Crew', 1, 1, 'Worth 2 followers.', { f: 2, n: 2 }), // 2 members (Cory, Oct 29)
+    m('crew', 'Crew', 1, 1, 'Worth 2 followers.', { f: 2, n: 2, ...old1 }), // 2 members (Cory, Oct 29)
+    // REPLACE1 bot test (Nov 3, replacement batch 1): Crew's place. 4 magenta + 2 any as a player sees it. At round end,
+    // for each contest a rival wins (tied winners each count), 2 of that contest's color from that rival, through the
+    // shared steal (Bodyguards and Lie Low block it; Sticky Fingers and Desperado add). Round III's comes at game end.
+    ...add1(m('racketeers', 'Racketeers', 3, 2, 'Whenever a rival wins a contest, steal 2 of that color from them.', {
+      onRivalContestWin(ctx, owner, card, winner, contest) {
+        const color = ctx.quadrant(contest.qid).resource;
+        if (!color || !(winner.res[color] > 0) || !ctx.canSteal(owner, winner)) return;
+        const n = ctx.stealCount(owner, 2, { say: true });
+        const got = commit(ctx, owner, winner, { [color]: n }, false, false);
+        if (got) ctx.log(`${owner.name}'s Racketeers: took ${got} ${color} from ${winner.name} (${contest.label}).`);
+      },
+    })),
     m('doubleagent', 'Double Agent', 3, 4, /* 4 to 8 (Cory, Oct 29: "double agent definitely too cheap", then "can say 8 for now") */  'On Recruit: give this member to a rival and recruit one of theirs.', {
       onRecruited(ctx, owner, card) {
         // a swap, so Loyalists' "Your other members can’t be swapped" holds (Claude, 2026-10-29, from the bots thread)

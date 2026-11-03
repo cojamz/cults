@@ -16,6 +16,7 @@ import { memberScoring } from './member-scoring.js';
 // - Actions can't leave anything due later (a loan repaid at game end) because only members have
 //   round-end and game-end hooks. That's why the loan lives on a member (Lender), not on a space.
 import { registerQuadrant, defById } from './index.js';
+import { add1, old1 } from './replace1.js';
 
 const W = 'white';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -233,11 +234,15 @@ const trading = {
       },
     }),
     m('broker', 'Brokers', 2, 2, 'Whenever a White action gives you followers, +1 follower.', { f: 3, brokerBonus: 1 }), // (Cory, Oct 29, balance run: +1 follower)
-    m('exporter', 'Exporters', 2, 4, 'Whenever you recruit a non-white member, +1 white.', { f: 2,
+    m('exporter', 'Exporters', 2, 4, 'Whenever you recruit a non-white member, +1 white.', { f: 2, ...old1,
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (by === owner && recruited.uid !== card.uid && ctx.defOf(recruited).quadrant !== 'trading') ctx.gain(owner, W, 1);
       },
     }),
+    // REPLACE1 bot test (Nov 3, replacement batch 1): Exporters' place. 4 white + 3 any as a player sees it.
+    ...add1(m('heirs', 'Heirs', 3, 3, 'Game End: +1 follower per 2 white you hold.', { f: 2,
+      onGameEnd: (ctx, owner) => Math.floor((owner.res[W] || 0) / 2),
+    })),
     m('raider', 'Raiders', 2, 2, /* Claude's fill-in price 4, was 5 (Cory, 2026-10-22: "probably too expensive") */ 'On Use, once per game: steal 4 followers from a rival. Pay them 2 white.', { n: 2, // 2 members (Cory, Oct 29: "choir and raiders can be more"; 2 is Claude's start)
       activate: 'game',
       // any rival, the owner's pick (Cory, Nov 1: "Raiders shouldnt have to be from the leader")

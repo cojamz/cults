@@ -1,5 +1,6 @@
 // Red builds and moves members; held red resources decide its round-end contest.
 import { gainColorOf } from './color-of.js';
+import { add1, old1 } from './replace1.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
 
@@ -103,7 +104,22 @@ export default {
   members: [
     m('twins', 'Triplets', 1, 1, 'Worth 3 followers.', { f: 3, n: 3 }), // was Twins, worth 2 (Cory, 2026-10-29: "make it triplets, 3 followers")
     m('bigfamily', 'Big Family', 2, 3, 'Worth 4 followers.', { f: 4, n: 4 }), // 4 members (Cory, Oct 29: "maybe make it 4 members"); 5 to 6, Claude's price
-    m('volunteer', 'Volunteer', 0, 0, 'Worth 1 follower.'),
+    m('volunteer', 'Volunteer', 0, 0, 'Worth 1 follower.', old1),
+    // REPLACE1 bot test (Nov 3, replacement batch 1): Volunteer's place. Fires only when a rival's card or space moves
+    // one of your members into that rival's own cult (Promote, Demote, Panel, Poach, Shake Down, Double Agent,
+    // Anarchist), never for one you give away yourself, and not for Turncoats itself. 3 red + 1 any as a player sees it.
+    ...add1(m('turncoats', 'Turncoats', 2, 1, 'Whenever a rival takes one of your members into their cult, recruit a shop member costing up to its cost, for free.', { f: 2,
+      // (a Turncoats that arrives in the same swap wasn't yours when the member was taken)
+      onCultMove(ctx, owner, card, { uid, from, to, actor, swappedWith }) {
+        if (from !== owner || !to || to !== actor || actor === owner || uid === card.uid || swappedWith === card.uid) return;
+        const c = cost(ctx.card(uid)), list = ctx.shopCards().filter(x => cost(x) <= c);
+        if (!list.length) { ctx.log(`${owner.name}'s Turncoats: ${actor.name} took ${ctx.card(uid).def.name}, but no shop member costs ${c} or less.`); return; }
+        ctx.log(`${owner.name}'s Turncoats: ${actor.name} took ${ctx.card(uid).def.name}, so ${owner.name} recruits a shop member costing up to ${c}, for free.`);
+        ctx.choose(owner, `Turncoats: recruit which shop member (costing up to ${c}) for free?`, list.map(x => ({
+          id: `card:${x.uid}`, label: `${x.def.name} (${cost(x)})`, kind: 'card', value: x.uid, hint: x.def.f * 1.5 + cost(x),
+        })), 'red.takeFree');
+      },
+    })),
     m('intern', 'Intern', 1, 0, 'Worth 1 follower.'),
     m('mentor', 'Mentor & Protégés', 5, 3, 'On Recruit: recruit the cheapest member in the shop.', { f: 3, n: 3, // 3 members (Cory, Oct 30: +1 follower, "change the names accordingly")
       // +1 follower (Cory, 2026-10-25)

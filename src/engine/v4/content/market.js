@@ -3,6 +3,7 @@
 // Blue's members watch who recruits blue members, and Blue's spaces pay out in blue.
 import { registerQuadrant } from './index.js';
 import { gainColorOf } from './color-of.js';
+import { REPLACE1, add1, old1, handlers1 } from './replace1.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const B = 'blue';
@@ -145,20 +146,21 @@ function shopColors(ctx) {
   return Object.entries(n).sort(([a], [b]) => (a === 'neutral') - (b === 'neutral')); // neutral last
 }
 
-function sweepRow(ctx) {
+function sweepRow(ctx, actor = null) {
   const old = [...ctx.state.shop];
   for (const u of old) ctx.buryFromShop(u);
   toBottom(ctx, old.length);
+  scavenge(ctx, actor, old);
 }
 /** k shop members just went to the bottom of the pile on someone's turn: Patroness pays once (Cory, Oct 21: "just one
  * follower each time it happens, not per card"), not for the round-start refresh. */
 // Window Shopper: one pick at a time, so the second choice sees the refilled shop
-function windowPick(ctx, owner, left) {
+function windowPick(ctx, owner, left, sent = []) {
   const shop = ctx.shopCards();
-  if (!shop.length) return;
+  if (!shop.length) { scavenge(ctx, owner, sent); return; }
   ctx.choose(owner, left > 1 ? `Window Shopper: send which member to the bottom? (${left} to go)` : 'Window Shopper: send which member to the bottom?', shop.map(c => ({
     id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: priceOf(c),
-  })), `${Q}.windowShop`, { left });
+  })), `${Q}.windowShop`, { left, ...(REPLACE1 ? { sent } : {}) });
 }
 
 export function toBottom(ctx, k) {
@@ -169,6 +171,21 @@ export function toBottom(ctx, k) {
     if (def.bottomFollowers) ctx.asMember(p, def.name, () => { p.bonus += 1; ctx.log(`${p.name}'s ${def.name}: +1 follower.`); }, u);
     // Blue's artifact (Cory, 2026-10-24): once per batch, turns only, as Patroness
     if (def.bottomBlue) ctx.asMember(p, def.name, () => { const got = ctx.gain(p, B, 1); if (got) ctx.log(`${p.name}'s ${def.name}: +${got.n} ${got.color}.`); }, u);
+  }
+}
+/** Scavengers (REPLACE1 bot test, Nov 3): `actor` just sent these shop members to the bottom of the pile; each rival
+ *  holding Scavengers may recruit one of them, paying its cost (asked on the actor's turn, as Shake Down asks its victim).
+ *  Unset, never called with anything to do. */
+export function scavenge(ctx, actor, uids) {
+  if (!REPLACE1 || !actor || !uids?.length) return;
+  for (const o of ctx.rivals(actor)) for (const c of ctx.membersOf(o)) {
+    if (!c.def.scavenge) continue;
+    const opts = uids.filter(u => ctx.state.pile.includes(u) || ctx.state.shop.includes(u)).filter(u => ctx.payChoices(o, u, {}).length).map(u => ctx.card(u)).map(x => ({
+      id: `card:${x.uid}`, label: `${x.def.name} · pay ${ctx.price(o, x.uid, {}).total}`, kind: 'card', value: x.uid, hint: botWorth(x),
+    }));
+    if (!opts.length) continue;
+    opts.push({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: -1 });
+    ctx.choose(o, `Scavengers: ${actor.name} sent ${uids.length === 1 ? 'a member' : `${uids.length} members`} to the bottom of the pile. Recruit one of them, paying its cost?`, opts, `${Q}.scavenge`);
   }
 }
 /** Extra buys this turn: they run right after the current one (added to the engine's queue directly). */
@@ -269,6 +286,7 @@ const market = {
       ctx.buryFromShop(a);
       ctx.log(`${p.name}'s Doormen: sends ${rival.name}'s ${sent} to the bottom of the pile and gives ${rival.name} ${given}.`);
       ctx.memberBottomed();
+      scavenge(ctx, p, [a]);
     },
     windowShop(ctx, p, uid, data) {
       if (!ctx.state.shop.includes(uid)) return;
@@ -279,7 +297,8 @@ const market = {
       ctx.log(`${p.name}'s Window Shopper sends ${c.def.name} to the bottom of the pile${col ? `: +1 ${col}` : ''}.`);
       if (c.def.everyColor) gainColorOf(ctx, p, c.def, 'Window Shopper');
       ctx.refillShop(); toBottom(ctx, 1);
-      if (data?.left > 1) windowPick(ctx, p, data.left - 1);
+      if (data?.left > 1) windowPick(ctx, p, data.left - 1, REPLACE1 ? [...(data.sent || []), uid] : []);
+      else scavenge(ctx, p, [...(data?.sent || []), uid]);
     },
     churn(ctx, p, uid, data) {
       if (ctx.state.shop.includes(uid)) {
@@ -288,7 +307,9 @@ const market = {
         ctx.state.pile.push(uid);
         ctx.log(`${data.who === 'Churn' || !data.who ? 'Churn' : `${p.name}'s ${data.who}`}: ${p.name} sends ${ctx.card(uid).def.name} to the bottom of the pile.`);
       }
-      churnStep(ctx, p, { left: data.left - 1, who: data.who });
+      const sent = REPLACE1 && ctx.state.pile.includes(uid) ? [...(data.sent || []), uid] : data.sent || [];
+      if (data.left - 1 <= 0 || !ctx.state.shop.length) scavenge(ctx, p, sent);
+      churnStep(ctx, p, { left: data.left - 1, who: data.who, ...(REPLACE1 ? { sent } : {}) });
     },
     churnRefill(ctx) { ctx.refillShop(); toBottom(ctx, 1); },
     outOfStyle(ctx, p, color) {
@@ -299,6 +320,7 @@ const market = {
       toBottom(ctx, out.length);
       const got = out.length ? ctx.gain(p, B, out.length, { fromAction: true }) : null;
       if (got) ctx.log(`${p.name}'s Out of Style: +${got.n} ${got.color}.`);
+      scavenge(ctx, p, out.map(c => c.uid));
     },
     peek(ctx, p, uid, data) {
       if (uid === 'keep') { peekStep(ctx, p, { left: [], placed: [...data.placed, ...data.left] }); return; }
@@ -310,6 +332,7 @@ const market = {
       ctx.buryFromShop(uid);
       ctx.log(`Savings: ${p.name} sends ${c.def.name} to the bottom of the pile.`);
       toBottom(ctx, 1);
+      scavenge(ctx, p, [uid]);
     },
     bury(ctx, p, uid) {
       if (!ctx.state.shop.includes(uid)) return;
@@ -319,6 +342,7 @@ const market = {
       toBottom(ctx, 1);
       const got = k ? ctx.gain(p, B, k, { fromAction: true }) : null;
       if (got) ctx.log(`${p.name}'s Bury: +${got.n} ${got.color}.`);
+      scavenge(ctx, p, [uid]);
     },
     pickRow(ctx, p, uid, data) {
       if (uid === null) { ctx.log(`${data.why}: ${p.name} recruits nothing.`); return; }
@@ -334,6 +358,13 @@ const market = {
       if (!scoutChoices(ctx, p, uid).length) return;
       askPay(ctx, p, `Talent Scout: how do you pay for ${c.def.name}?`, { uid, why: 'Talent Scout', fromPile: true, how: {} });
     },
+    ...handlers1({
+      scavenge(ctx, p, uid) {
+        if (uid == null) { ctx.log(`${p.name}'s Scavengers: recruits nothing.`); return; }
+        if (!scoutChoices(ctx, p, uid).length) return;
+        askPay(ctx, p, `Scavengers: how do you pay for ${ctx.card(uid).def.name}?`, { uid, why: 'Scavengers', fromPile: true, how: {} });
+      },
+    }),
     climb(ctx, p, color) {
       ctx.gain(p, color, 2);
       ctx.log(`${p.name}'s Social Climber: +2 ${color}.`);
@@ -424,7 +455,7 @@ const market = {
       activate: 'game',
       onActivate(ctx, owner, card) {
         if (!ctx.state.shop.length) { card.used = false; ctx.log(`${owner.name}'s Restockers: the shop is empty.`); return; }
-        sweepRow(ctx); ctx.refillShop();
+        sweepRow(ctx, owner); ctx.refillShop();
         ctx.log(`${owner.name}'s Restockers sends the whole shop to the bottom of the pile and refills it.`);
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && !ctx.shopCards().some(c => ctx.payChoices(owner, c.uid, {}).length),
@@ -459,7 +490,7 @@ const market = {
     }),
     // Cory's, Oct 21: "one recruit, refresh the shop. all the members"; prices are sim starting points
     m('makeover', 'Makeover', 2, 1, 'On Recruit: send the whole shop to the bottom of the pile, then refill.', { f: 3,
-      onRecruited(ctx) { sweepRow(ctx); },
+      onRecruited(ctx, owner) { sweepRow(ctx, owner); },
     }),
     // Cory's, Oct 21: "when you buy followers +1 blue"; his Oct 21 definition makes buying followers a recruit
     m('regular', 'Regular', 1, 1, 'Whenever you buy followers, +1 blue.', {
@@ -475,11 +506,15 @@ const market = {
       },
     }),
     // Cory's yes, Oct 21
-    m('critic', 'Critic', 1, 1, 'Whenever a rival recruits a blue member, +1 follower.', {
+    m('critic', 'Critic', 1, 1, 'Whenever a rival recruits a blue member, +1 follower.', { ...old1,
       onAnyRecruit(ctx, owner, card, by, rec) {
         if (by !== owner && isBlue(ctx.defOf(rec))) { owner.bonus += 1; ctx.log(`${owner.name}'s Critic: +1 follower.`); }
       },
     }),
+    // REPLACE1 bot test (Nov 3, replacement batch 1): Critic's place. 4 blue + 2 any as a player sees it. Every turn send of
+    // shop members to the bottom (Savings, Out of Style, Bury, Window Shopper, Window Dressers, Trendsetters, Restockers,
+    // Makeover, Scouts, Doormen's sent member) asks it; the round-start refresh doesn't (nobody sends those).
+    ...add1(m('scavengers', 'Scavengers', 3, 2, 'Whenever a rival sends shop members to the bottom of the pile, you may recruit one of them, paying its cost.', { scavenge: true })),
     // Claude's fill-in counters, Oct 21, not approved
   ],
 };

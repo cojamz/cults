@@ -1009,6 +1009,8 @@ function endRound(state) {
   // the round's scoring, kept as decided: the round-end card and the results read it back (never re-derived)
   state.contests = [...(state.contests || []), { round: state.round, prize: v, results: table }];
   log(state, `Round ${roman(state.round)} ends. ${msg.join(' · ') || 'No one scored.'}`);
+  // members that answer a rival winning a contest (Racketeers, REPLACE1 bot test), each winner of each contest
+  for (const c of table) for (const id of c.winners) eachMember(state, (owner, card, def) => { if (def.onRivalContestWin && owner.id !== id) def.onRivalContestWin(ctx, owner, card, state.players[id], c); }, ['onRivalContestWin']);
 }
 
 // ---------- contests: one function decides them, and every screen shows it ----------
@@ -1089,15 +1091,20 @@ function finish(state) {
   // final.zero: members that score at game end and scored nothing this time, so the summary never says "no end-game
   // bonuses" over a Kingpin that came to +0 (blind tester, aminus r1 #5)
   for (const p of state.players) p.final = { total: 0, parts: [], cards: [], zero: [] };
-  eachMember(state, (owner, card, def) => {
-    if (!def.onGameEnd) return;
+  // endLast: a game-end bonus that reads everyone's final count (Grudge, REPLACE1 bot test) scores after all the others;
+  // onGameEndTake: what it takes from a rival as it scores (onGameEnd itself stays a pure read: bots and screens call it)
+  const score = last => (owner, card, def) => {
+    if (!def.onGameEnd || !!def.endLast !== last) return;
     const got = def.onGameEnd(ctx, owner, card) || 0;
     if (got) {
+      if (def.onGameEndTake) def.onGameEndTake(ctx, owner, card, got);
       owner.bonus += got; fBump(state, owner, got); owner.final.total += got;
       owner.final.parts.push(`${def.name} ${got > 0 ? '+' : '−'}${Math.abs(got)}`);
       owner.final.cards.push({ uid: card.uid, name: def.name, n: got });
     } else owner.final.zero.push({ uid: card.uid, name: def.name });
-  }, ['onGameEnd']);
+  };
+  eachMember(state, score(false), ['onGameEnd']);
+  eachMember(state, score(true), ['endLast']);
   const ranked = [...state.players].sort((a, b) => followers(state, b) - followers(state, a) || memberCount(state, b) - memberCount(state, a));
   state.ranking = ranked.map(p => p.id);
   state.over = true;
@@ -1445,7 +1452,7 @@ function swapMembers(state, actor, aUid, bUid) {
   for (const [uid, dest] of [[bUid, a], [aUid, b]]) if (dest.owner) dest.list.push(uid); else dest.list.splice(dest.index, 0, uid);
   for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner) memberMoved(state, actor, uid, from.owner, to.owner || null, movedHooks);
   // out of a cult into another cult or the shop (Recruiter pays for a rival's member going to the shop too; Cory, Nov 1)
-  for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner && from.owner !== to.owner) cultMove(state, uid, from.owner, to.owner || null);
+  for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner && from.owner !== to.owner) cultMove(state, uid, from.owner, to.owner || null, actor, uid === aUid ? bUid : aUid);
   // A member swapped into the shop goes back wiped clean, as a released one does (no old owner's copy or flags).
   for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner && !to.owner) state.cards[uid] = { uid, def: state.cards[uid].def };
   for (const [uid, dest] of [[bUid, a], [aUid, b]]) if (dest.owner) {
@@ -1765,10 +1772,10 @@ function releaseNow(state, p, uid) {
 }
 // A member leaves its owner (stolen, swapped, released, traded in): its onLeave hooks settle what it held for them
 // (Investor's set-aside gold goes back to the owner, not doubled).
-/** A member moved out of a cult to another cult or the shop (a steal, a swap, Poach): every member's onCultMove hears it (Recruiter). to is null for the shop. */
-function cultMove(state, uid, from, to) {
+/** A member moved out of a cult to another cult or the shop (a steal, a swap, Poach): every member's onCultMove hears it (Turncoats). to is null for the shop; actor: the leader whose card or space moved it; swappedWith: the member it traded places with, in a swap. */
+function cultMove(state, uid, from, to, actor = null, swappedWith = null) {
   const ctx = ctxFor(state);
-  eachMember(state, (owner, card, def) => { if (def.onCultMove) def.onCultMove(ctx, owner, wrap(state, card), { uid, from, to }); }, ['onCultMove']);
+  eachMember(state, (owner, card, def) => { if (def.onCultMove) def.onCultMove(ctx, owner, wrap(state, card), { uid, from, to, actor, swappedWith }); }, ['onCultMove']);
 }
 function cardLeaves(state, p, uid) {
   const card = state.cards[uid], ctx = ctxFor(state);
@@ -1860,7 +1867,7 @@ function ctxFor(state) {
       state.pile.push(uid);
       log(state, `${p.name} sent ${def.name} to the bottom of the pile.`);
       // a member leaving its owner's cult: Recruiter hears a rival's cast-out (Cory, Nov 1: "Yes")
-      cultMove(state, uid, p, null);
+      cultMove(state, uid, p, null, p);
       bottomBlue(state);
       // a shop short of its size (the pile ran out) takes it back up, as every other way to the bottom does
       refill(state);
@@ -1891,7 +1898,7 @@ function ctxFor(state) {
       from.members.splice(from.members.indexOf(uid), 1);
       to.members.push(uid);
       memberMoved(state, actor, uid, from, to, movedHooks);
-      cultMove(state, uid, from, to);
+      cultMove(state, uid, from, to, actor);
       if (activelyAcquired) memberAcquired(state, to, uid, { stolen: true });
       memberJoined(state, to, uid);
       return true;
