@@ -116,6 +116,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'thieves.shoplifter', 'echo.translator', // under 3 holds when Green grew to 16 (Oct 28) moved the games; recruit-definition (Shoplifter) and cards-echo (Translator, cut) cover them
       'thieves.snitch', // under 3 holds when the Oct 29 balance prices moved the games; cards-thieves (Snitch) covers it
       'market.blackmarket', // under 3 holds when the color cost (Nov 2: 1 of the wild paid in the member's color) moved the games; cards-market covers it
+      'market.plusone', // under 3 holds when the Nov 3 live replacements (Impersonators, Creditors, Kidnappers, Godparents) moved the games; cards-market-concepts covers it
       'echo.bait']); // under 3 holds when bots began rating every choice over every option (Nov 2) moved the games; green-bait-trading covers it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);

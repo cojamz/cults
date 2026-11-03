@@ -18,7 +18,6 @@ import {
   paymentChoices, followerChoices, releaseRefund, liveOptions, swapCardPairs, paySwapCard, scoringOf,
 } from './core.js';
 import { defById, quadrant, handlerById } from './content/index.js';
-import { REPLACE3 } from './content/replace3.js';
 import { BOTSEE } from './content/botsee.js';
 import { plainCopy, copyPart } from './copy.js';
 import { chooseThinkerMove } from './thinker.js';
@@ -572,10 +571,14 @@ function gameEndPay(s, ctx, p) {
       try { out += d.onGameEnd(ctx, p, ctx.card(uid)) || 0; } catch { /* estimate only */ }
     }
   }
-  // what rivals' members take from p at game end (Creditors, REPLACE3 bot test: endHit reads it)
-  if (REPLACE3) for (const o of s.players) if (o !== p) for (const c of ctx.membersOf(o)) for (const id of [c.def.id, c.copy, c.ability].filter(Boolean)) {
-    const d = defById(id);
-    if (d.endHit) try { out -= d.endHit(ctx, o, p) || 0; } catch { /* estimate only */ }
+  // what rivals' members take from p at game end (Creditors, live Nov 3: endHit reads it), read straight from the state
+  for (const o of s.players) if (o !== p) for (const uid of o.members) {
+    const card = s.cards[uid];
+    for (const id of [cardDef(s, uid).id, card.copy, card.ability]) {
+      if (!id) continue;
+      const d = defById(id);
+      if (d.endHit) try { out -= d.endHit(ctx, o, p) || 0; } catch { /* estimate only */ }
+    }
   }
   return out;
 }

@@ -21,7 +21,7 @@ describe('REPLACE3: the switch', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
     expect(price('trading.evictors')).toEqual([5, 3, 1]);
     expect(price('purple.interrupters')).toEqual([4, 2, 1]);
-    expect(price('thieves.kidnappers')).toEqual([4, 2, 1]);
+    expect(price('thieves.kidnappers')).toEqual([6, 2, 1]); // 2 more when it went live (Claude, Nov 3: owners won 44% at 4 + 2)
     expect(price('market.completists')).toEqual([6, 3, 2]);
     expect(price('echo.impersonators')).toEqual([4, 2, 1]);
     expect(price('red.missionaries')).toEqual([6, 3, 2]);
@@ -101,7 +101,7 @@ describe('REPLACE3: each card fires', () => {
 
   it("Impersonators: choose a rival's member; this member has its ability until you choose again", () => {
     let s = table(['red', 'echo', 'market', 'yellow'], { round: 1, members: [['echo.impersonators', 'market.regular'], ['market.snob', 'red.crowd']], queue: [{ t: 'round', r: 2 }] });
-    expect(s.pending.prompt).toBe("Impersonators: choose a rival's member; this member has its ability");
+    expect(s.pending.prompt).toBe("Impersonators: choose a rival's member; until you choose again, Impersonators has that member's ability");
     s = answer(s, `card:${uidIn(s, 'market.snob', 1)}`);
     const me = s.cards[uidIn(s, 'echo.impersonators', 0)];
     expect(me.ability).toBe('market.snob');

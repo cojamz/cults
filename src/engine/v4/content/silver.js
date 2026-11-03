@@ -8,8 +8,7 @@
 // Gold's Kickback also gives (Cory): gold.js fires the receiver's onGiven hooks itself.
 import { defById } from './index.js';
 import { add2, old2, handlers2 } from './replace2.js';
-import { add3, old3 } from './replace3.js';
-import { add6, old6, handlers6 } from './replace6.js';
+import { add6, old6 } from './replace6.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const S = 'silver';
@@ -213,16 +212,14 @@ const silver = {
   actions: silverActions,
 
   handlers: {
-    ...handlers6({
-      godparents(ctx, p, value) {
-        const [uid, oid] = value, o = ctx.player(oid);
-        if (!p.members.includes(uid) || !o || o === p) return;
-        const c = ctx.card(uid), k = c.def.s + c.def.w, name = c.def.name;
-        if (!ctx.moveMember(uid, p, o, { actor: p })) return;
-        p.bonus += k;
-        ctx.log(`${p.name}'s Godparents: gives ${name} to ${o.name}: +${k} followers.`);
-      },
-    }),
+    godparents(ctx, p, value) {
+      const [uid, oid] = value, o = ctx.player(oid);
+      if (!p.members.includes(uid) || !o || o === p) return;
+      const c = ctx.card(uid), k = c.def.s + c.def.w, name = c.def.name;
+      if (!ctx.moveMember(uid, p, o, { actor: p })) return;
+      p.bonus += k;
+      ctx.log(`${p.name}'s Godparents: gives ${name} to ${o.name}: +${k} followers.`);
+    },
     ...handlers2({
       hush(ctx, victim, answer, data) {
         const thief = ctx.player(data.thief);
@@ -292,14 +289,14 @@ const silver = {
   },
 
   members: [
-    m('guest', 'Hangers-On', 4, 4, 'Whenever a rival gives you something, +1 more of it.', { f: 2, n: 2, ...old6, // worth 2 (Cory, Nov 1)
+    m('guest', 'Hangers-On', 4, 4, 'Whenever a rival gives you something, +1 more of it.', { f: 2, n: 2, retired: true, // Godparents takes its place (Claude, under Cory's "use your judgement", 2026-11-03) // worth 2 (Cory, Nov 1)
       onGiven(ctx, owner, card, giver, color) { if (giver !== owner) ctx.gain(owner, color, 1); },
     }),
-    // REPLACE6 bot test (Nov 3, replacement batch 6): Hangers-On's place. 4 silver + 1 any as a player sees it. Any of your
+    // Replacement batch 6 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Hangers-On's place. 4 silver + 1 any as a player sees it. Any of your
     // members (Godparents itself too) to any rival; its cost is its printed price. A gift, not a steal or a swap
     // (Loyalists and Bodyguards don't stop it): an arrival for the rival (Old Maid's −5 lands on them), and Martyrs pays
     // you as it leaves. A used card stays used.
-    ...add6(m('godparents', 'Godparents', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain followers equal to its cost.', {
+    m('godparents', 'Godparents', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain followers equal to its cost.', {
       activate: 'game',
       onActivate(ctx, owner, card) {
         const opts = [];
@@ -310,7 +307,7 @@ const silver = {
         ctx.choose(owner, 'Godparents: give which of your members to which rival?', opts, 'silver.godparents');
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 || (ctx.state.round === 2 && ctx.membersOf(owner).some(c => c.used && c.def.activate === 'game')),
-    })),
+    }),
     m('benefactor', 'Benefactor', 4, 2, 'On Recruit: +3 silver, and +1 silver to a rival you choose. Round Start: +3 silver, and +1 silver to a rival you choose.', { now: true,
       onRoundStart(ctx, owner) {
         ctx.gain(owner, S, 3);
@@ -461,17 +458,17 @@ const silver = {
       },
       botActivate: (ctx, owner) => (owner.res[S] || 0) >= 3,
     }),
-    m('collector', 'Collector', 3, 2, 'Whenever a rival recruits paying silver, +1 silver.', { round: 1, ...old3,
+    m('collector', 'Collector', 3, 2, 'Whenever a rival recruits paying silver, +1 silver.', { round: 1, retired: true, // Creditors takes its place (Claude, under Cory's "use your judgement", 2026-11-03)
       onRecruit(ctx, owner, card, by, what) {
         if (by === owner || !(what?.spent?.[S] > 0)) return;
         ctx.gain(owner, S, 1);
         ctx.log(`${owner.name}'s Collector: +1 silver (${by.name} paid silver).`);
       },
     }),
-    // REPLACE3 bot test (Nov 3, replacement batch 3): Collector's place. 4 silver + 2 any as a player sees it. Read at game
+    // Replacement batch 3 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Collector's place. 4 silver + 2 any as a player sees it. Read at game
     // end after the other game-end bonuses (core's onGameEndHit), never below 0 followers; it isn't a steal, so nothing
     // blocks it. Two Creditors each take their own.
-    ...add3(m('creditors', 'Creditors', 3, 2, 'Game End: each rival loses 1 follower per 3 silver they hold.', { f: 2,
+    m('creditors', 'Creditors', 3, 2, 'Game End: each rival loses 1 follower per 3 silver they hold.', { f: 2,
       // a pure read for bots: what it takes from victim if the game ended now
       endHit: (ctx, owner, victim) => Math.min(Math.floor((victim.res[S] || 0) / 3), Math.max(0, ctx.followers(victim))),
       onGameEndHit(ctx, owner) {
@@ -483,7 +480,7 @@ const silver = {
           ctx.log(`${owner.name}'s Creditors: ${o.name} holds ${o.res[S]} silver and loses ${k} follower${k === 1 ? '' : 's'}.`);
         }
       },
-    })),
+    }),
     m('debtcollector', 'Debt Collectors', 4, 3, 'On Use, once per game: each rival gives you 2 silver, if they have it.', { f: 2, n: 2, // worth 2 (Cory, Nov 1)
       activate: 'game',
       onActivate(ctx, owner) {

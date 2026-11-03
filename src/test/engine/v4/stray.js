@@ -3,7 +3,8 @@
 // the retired Extra Hand (never dealt) too, and the four cards retired Nov 3 (Hostesses, Misers, Spoilsports and Body
 // Snatchers took their places): their rules stay, and the scenes that use them as fixtures still run
 export const STRAYS = new Set(['echo.doppel', 'benders.extrahand3', 'benders.bigspender1',
-  'red.twins', 'trading.exporter', 'silver.giftwrapper', 'benders.scout']);
+  'red.twins', 'trading.exporter', 'silver.giftwrapper', 'benders.scout',
+  'echo.muse', 'silver.collector', 'thieves.kingpin', 'silver.guest']); // and the four retired later Nov 3 (Impersonators, Creditors, Kidnappers, Godparents)
 export function stray(s, def) {
   const uid = Math.max(...Object.keys(s.cards).map(Number)) + 1;
   s.cards[uid] = { uid, def };

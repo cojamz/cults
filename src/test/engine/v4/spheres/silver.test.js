@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Silver: every action and every member with exact numbers, plus 200 seeded bot games on a Silver table.
+import { STRAYS, stray } from '../stray.js';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createGame, applyMove, resume, followers, memberCount } from '../../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../../engine/v4/bots.js';
@@ -38,7 +39,7 @@ function scene({ n = 3, seed = 7, round = 1, res = [], members = [], shop = null
     p.bonus = bonus[i] || 0; p.discount = 0; p.left = 3;
   });
   s.pile = [...s.shop, ...s.pile]; s.shop = [];
-  const grab = def => { const k = s.pile.findIndex(u => s.cards[u].def === def); if (k < 0) throw new Error(`no ${def}`); return s.pile.splice(k, 1)[0]; };
+  const grab = def => { const k = s.pile.findIndex(u => s.cards[u].def === def); if (k < 0) { if (!STRAYS.has(def)) throw new Error(`no ${def}`); return stray(s, def); } return s.pile.splice(k, 1)[0]; };
   members.forEach((list, i) => { for (const d of list || []) s.players[i].members.push(grab(d)); });
   if (shop) for (const d of shop) s.shop.push(grab(d));
   while (s.shop.length < 6 && s.pile.length) s.shop.push(s.pile.shift());

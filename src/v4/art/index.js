@@ -159,6 +159,8 @@ for (const i of PORTRAITS4) PORTRAIT.set(i.id, { ...i, portrait: true, scene: tr
 for (const [id, name, source] of [
   ['silver.hostesses', 'Hostesses', 'silver.giftwrapper'], ['trading.heirs', 'Misers', 'trading.exporter'],
   ['red.bodysnatchers', 'Body Snatchers', 'red.twins'], ['benders.spoilsports', 'Spoilsports', 'benders.scout'],
+  ['echo.impersonators', 'Impersonators', 'echo.muse'], ['silver.creditors', 'Creditors', 'silver.collector'],
+  ['thieves.kidnappers', 'Kidnappers', 'thieves.kingpin'], ['silver.godparents', 'Godparents', 'silver.guest'],
 ]) {
   const art = PORTRAIT.get(source);
   if (art && !PORTRAIT.has(id)) PORTRAIT.set(id, { ...art, id, name });

@@ -6,7 +6,6 @@
 import { registerQuadrant, defById } from './index.js';
 import { add1, old1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
-import { add3, old3, handlers3 } from './replace3.js';
 import { add5, old5, handlers5 } from './replace5.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
@@ -292,14 +291,12 @@ const thieves = {
         if (ctx.claimMember(p, uid)) ctx.log(`${p.name}'s Vultures: steals ${ctx.player(data.from).name}'s ${name} on its way out.`);
       },
     }),
-    ...handlers3({
-      kidnap(ctx, p, uid) {
-        const v = ctx.ownerOf(uid);
-        if (!v || v === p || !kidnapList(ctx, p).some(([, c]) => c.uid === uid)) return;
-        const name = ctx.card(uid).def.name;
-        if (ctx.steal(p, v, { uid })) ctx.log(`${p.name}'s Kidnappers: stole ${v.name}'s ${name}.`);
-      },
-    }),
+    kidnap(ctx, p, uid) {
+      const v = ctx.ownerOf(uid);
+      if (!v || v === p || !kidnapList(ctx, p).some(([, c]) => c.uid === uid)) return;
+      const name = ctx.card(uid).def.name;
+      if (ctx.steal(p, v, { uid })) ctx.log(`${p.name}'s Kidnappers: stole ${v.name}'s ${name}.`);
+    },
     halfPile(ctx, p, [vid, color]) {
       const victim = ctx.player(vid);
       if (!victim || !ctx.canSteal(p, victim)) return;
@@ -518,21 +515,22 @@ const thieves = {
       botActivate: (ctx, owner) => ctx.state.round >= 2 && takeable(ctx, owner, owner.res.magenta || 0).some(([, c]) => cost(c) >= 4),
     }),
     // Cory's #69 "King of Thieves… based more on members… shouldn't compete with ring competition" (Cory's yes, Oct 21)
-    m('kingpin', 'Kingpin', 1, 2, 'Game End: +1 follower per magenta member you have.', { ...old3,
+    m('kingpin', 'Kingpin', 1, 2, 'Game End: +1 follower per magenta member you have.', { retired: true, // Kidnappers takes its place (Claude, under Cory's "use your judgement", 2026-11-03)
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'thieves'),
     }),
-    // REPLACE3 bot test (Nov 3, replacement batch 3): Kingpin's place. 4 magenta + 2 any as a player sees it. "The most
+    // Replacement batch 3 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Kingpin's place. 6 magenta + 2 any as a player sees it
+    // (2 more than the first bot test, which was too strong at 4 + 2; Claude's price, under Cory's "use your judgement"). "The most
     // members" counts as members count (Counts as N). A tie for the most members, or for the cheapest, is the owner's
     // pick; a rival who can't be stolen from (Bodyguards, Lie Low) is passed over only inside such a tie. A steal of a
     // member: the member is the owner's recruit (its On Recruit fires), as Heist's is.
-    ...add3(m('kidnappers', 'Kidnappers', 3, 2, 'On Recruit and Round Start: steal the cheapest member of the rival with the most members.', { now: true,
+    m('kidnappers', 'Kidnappers', 5, 2, 'On Recruit and Round Start: steal the cheapest member of the rival with the most members.', { now: true,
       onRoundStart(ctx, owner) {
         const list = kidnapList(ctx, owner);
         if (!list.length) { ctx.log(`${owner.name}'s Kidnappers: no member to steal.`); return; }
         if (list.length === 1) { const [v, c] = list[0]; if (ctx.steal(owner, v, { uid: c.uid })) ctx.log(`${owner.name}'s Kidnappers: stole ${v.name}'s ${c.def.name}.`); return; }
         pickMember(ctx, owner, list, 'Kidnappers: steal which cheapest member?', 'thieves.kidnap');
       },
-    })),
+    }),
     // Cory's yes, Oct 21: a counter in Bait's shape, and a weak card for "magenta doesn't gain enough"
     m('snitch', 'Snitch', 2, 1, 'Whenever a rival steals from you, they lose 1 follower.', {
       onSteal(ctx, owner, card, info) {
