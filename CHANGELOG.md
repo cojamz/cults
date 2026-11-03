@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.530 — 2026-11-03
+
+- Body Snatchers' swap says what it does: one of yours for a rival's of the same cost. The end screen names a loss (Play −5), not just −5.
+
 ## v0.99.529 — 2026-11-03
 
 - New pictures for Greeters, Landlord, Meddler and Misers
