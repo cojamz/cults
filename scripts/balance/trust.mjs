@@ -24,6 +24,9 @@ function boundary(s, me) {
   return scoreOptions(probe, () => 0, { spite: 1 })[0].v;
 }
 function label(s, o) {
+  try { return labelOf(s, o); } catch { return `${o.kind} ${o.label || o.id}`; }
+}
+function labelOf(s, o) {
   if (o.kind === 'slot') { const a = quadrant(s.quadrants[o.q]).actions[o.i]; return a ? `space ${a.name}` : o.id; }
   if (o.kind === 'card') return `recruit ${cardDef(s, o.uid).name}`;
   if (o.kind === 'use') return `use ${cardDef(s, o.uid).name}`;

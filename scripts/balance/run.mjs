@@ -2,7 +2,7 @@
 // exploitable mechanics, overall game feedback ... all in one efficient system that takes <2 hours", and an overnight
 // size). One command plays every game once and runs every read on the same records:
 //   DECK=10 node scripts/balance/run.mjs [--size=fast|deep] [--workers=4] [--id=<name>] [--only=games,numbers,trust,abuse,packet,report]
-//   [--env='{"SWAP":"1"}'] adds settings to every game (a variant run).
+//   [--env='{"SWAP":"1"}'] adds settings to every game (a variant run). [--abuse=Doormen,Shake Down] adds cards to the abuse hunt.
 // Stages (each skipped when its output is already there, so a stopped run picks up where it left off):
 //   games    bots play: Normal at 4, 3 and 2 players, Hard at 4 with its choice log (deep: more, plus Very Hard)
 //   numbers  win rates, card lifts and classes, real choices, catch-up, interaction, length, winning plans, skill by
@@ -126,14 +126,16 @@ function suspects() {
   const n = JSON.parse(readFileSync(`${dir}/normal4.json`, 'utf8')), h = existsSync(`${dir}/hard.json`) ? JSON.parse(readFileSync(`${dir}/hard.json`, 'utf8')) : null;
   const hl = Object.fromEntries((h?.memberTable || []).map(m => [m.k, m]));
   const score = m => m.z + (hl[m.k] ? hl[m.k].z : 0);
-  const list = (n.memberTable || []).filter(m => m.z >= 1.5 || hl[m.k]?.z >= 1.5).sort((a, b) => score(b) - score(a)).map(m => m.k.replace(/ \(\w+\)$/, ''));
+  // strongest first (owners win more than expected for their member count, Normal and Hard added)
+  const list = (n.memberTable || []).sort((a, b) => score(b) - score(a)).map(m => m.k.replace(/ \(\w+\)$/, ''));
+  const asked = flags.abuse ? String(flags.abuse).split(',') : [];
   let changed = [];
   try {
     const last = JSON.parse(readFileSync('.balance-runs/last.json', 'utf8'));
     const diff = execSync(`git diff ${last.sha} HEAD -- src/engine/v4/content`).toString();
     changed = [...new Set([...diff.matchAll(/^\+\s*m\('\w+', '([^']+)'/gm)].map(x => x[1]))];
   } catch { /* first run */ }
-  return [...new Set([...changed, ...list])].slice(0, Z.abuse.cards + changed.length);
+  return [...new Set([...asked, ...changed, ...list])].slice(0, Z.abuse.cards + changed.length + asked.length);
 }
 await stage('abuse', async () => {
   const cards = suspects();
