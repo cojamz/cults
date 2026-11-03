@@ -1034,6 +1034,9 @@ export function scoringOf(state, qid) {
   const onIt = p => q.actions.some((a, i) => state.slots[`${qi}-${i}`] === p.id || (state.squats?.[`${qi}-${i}`] || []).includes(p.id));
   if (mode === 'present') return { label: `Most ${res}, if on ${res}`, counts: `the ${res} you hold, if you have a minion on a ${q.name} space when the round ends`,
     score: (ctx, p) => (onIt(p) ? (p.res[res] || 0) : 0), show: (ctx, p) => ({ count: p.res[res] || 0 }) };
+  // bot test only (Nov 3, depth ideas): most held, among players with at least one member of the color
+  if (mode === 'memberGate') return { label: `Most ${res}, if you have a ${res} member`, counts: `the ${res} you hold, if you have a ${res} member when the round ends`,
+    score: (ctx, p) => (countMembersOfColor(state, p, qid) > 0 ? (p.res[res] || 0) : 0), show: (ctx, p) => ({ count: p.res[res] || 0 }) };
   if (mode === 'byColor') {
     // A different contest per color (Cory, 2026-11-02: "they should all have different goals"; set in
     // /mnt/project-files/ring-goals/by-color.md). Each is won by taking that color's own spaces.

@@ -21,9 +21,16 @@ export const EXTRA_WILD = 1;
 // own color instead (its colored part +1, its "any" part as printed), so what you hold decides what you can buy.
 // Grey members have no color and keep the wild. Live (Cory, Nov 2 7:39pm: "let's swing the cost towards the colors by 1 and keep that anyways"); COLORSHIFT=0 gives the old prices for comparison.
 export const COLOR_SHIFT = globalThis.process?.env?.COLORSHIFT === '0' ? 0 : 1;
+// Bot tests only (Nov 3, depth ideas): COLORSHIFT=2 moves one more of the printed "any" to the color where 2+ any remain;
+// COLORSHIFT=all makes the whole cost colored. Same totals; the game uses 1.
+const SHIFT_MORE = globalThis.process?.env?.COLORSHIFT;
 const addWild = def => {
   if (def.extraWild || def.extraColor) return;
-  if (COLOR_SHIFT && def.quadrant !== 'guest' && def.quadrant !== 'benders') { def.s = (def.s || 0) + EXTRA_WILD; def.extraColor = EXTRA_WILD; def.w = def.w || 0; }
+  if (COLOR_SHIFT && def.quadrant !== 'guest' && def.quadrant !== 'benders') {
+    def.s = (def.s || 0) + EXTRA_WILD; def.extraColor = EXTRA_WILD; def.w = def.w || 0;
+    const more = SHIFT_MORE === 'all' ? def.w : SHIFT_MORE === '2' && def.w >= 2 ? 1 : 0;
+    if (more) { def.s += more; def.w -= more; def.shiftedMore = more; }
+  }
   else { def.w = (def.w || 0) + EXTRA_WILD; def.extraWild = EXTRA_WILD; }
 };
 // Every member is a follower (Cory, Oct 29: "Every card should score its member count. Its a core rule! every member is a

@@ -20,7 +20,17 @@ The open threads keep their jobs: the balance thread is comparing By color conte
 
 6. **Notes true for the next thread** (this thread, first, 20 minutes). The handoff and road-to-1.0 notes still describe last week's game.
 
+
+## Revised 9:55am with Cory's message
+Cory: "code/engineering pass to make snappier/more efficient. a few animation/UI upgrades (don't change too much!)", balance testing on the new system in parallel, then "DEEPLY thinking through different colors members actions etc to come up with ~50 replacements spread across the game, then building and balance testing them in batches", with "the principles you'll apply, and like 5-10 examples" first, plus brainstorming skill and harness upgrades.
+- Snappier: item 5 (faster clicks) stays, widened to an efficiency pass (slow page work, idle cost, memory). Item 1 (tests passing) goes first so speed changes can ship safely.
+- UI: item 3 (end screen) is the one UI upgrade for now, kept small; any other look change is one small step shown before and after.
+- Balance testing: the new system is built (fast run under 2 hours, overnight run done Nov 3). Items 2 and 4 run on it all day.
+- The ~50 replacements (new item 7, this thread): first the principles and 5 to 10 examples, each played out a turn, to Cory about 12:30pm. Nothing built before his yes. Then batches of about 10: build as test switches, run the fast balance size, report what the bots like and what they ignore.
+- Skill upgrades (new item 8): the brainstorm skill gets the principles Cory signs off, a check that every idea answers "what does this make me build toward?", and a way to test a batch of ideas on bots without building them into the game. Harness: a standing "replacement batch" step in the balance run.
+
 ## Calls that will come to you (none blocks anything)
+- The principles and examples for the ~50 replacements (item 7), about 12:30pm.
 - The three outlier fixes in item 2.
 - The final-screen look in item 3.
 - The depth ideas in item 4.
