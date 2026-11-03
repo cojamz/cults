@@ -9,6 +9,7 @@
 import { defById } from './index.js';
 import { add1, old1 } from './replace1.js';
 import { add2, old2, handlers2 } from './replace2.js';
+import { add3, old3 } from './replace3.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const S = 'silver';
@@ -420,13 +421,29 @@ const silver = {
       },
       botActivate: (ctx, owner) => (owner.res[S] || 0) >= 3,
     }),
-    m('collector', 'Collector', 3, 2, 'Whenever a rival recruits paying silver, +1 silver.', { round: 1,
+    m('collector', 'Collector', 3, 2, 'Whenever a rival recruits paying silver, +1 silver.', { round: 1, ...old3,
       onRecruit(ctx, owner, card, by, what) {
         if (by === owner || !(what?.spent?.[S] > 0)) return;
         ctx.gain(owner, S, 1);
         ctx.log(`${owner.name}'s Collector: +1 silver (${by.name} paid silver).`);
       },
     }),
+    // REPLACE3 bot test (Nov 3, replacement batch 3): Collector's place. 4 silver + 2 any as a player sees it. Read at game
+    // end after the other game-end bonuses (core's onGameEndHit), never below 0 followers; it isn't a steal, so nothing
+    // blocks it. Two Creditors each take their own.
+    ...add3(m('creditors', 'Creditors', 3, 2, 'Game End: each rival loses 1 follower per 3 silver they hold.', { f: 2,
+      // a pure read for bots: what it takes from victim if the game ended now
+      endHit: (ctx, owner, victim) => Math.min(Math.floor((victim.res[S] || 0) / 3), Math.max(0, ctx.followers(victim))),
+      onGameEndHit(ctx, owner) {
+        for (const o of others(ctx, owner)) {
+          const k = Math.min(Math.floor((o.res[S] || 0) / 3), Math.max(0, ctx.followers(o)));
+          if (!k) continue;
+          o.bonus -= k;
+          if (o.final) { o.final.total -= k; o.final.parts.push(`${owner.name}'s Creditors −${k}`); }
+          ctx.log(`${owner.name}'s Creditors: ${o.name} holds ${o.res[S]} silver and loses ${k} follower${k === 1 ? '' : 's'}.`);
+        }
+      },
+    })),
     m('debtcollector', 'Debt Collectors', 4, 3, 'On Use, once per game: each rival gives you 2 silver, if they have it.', { f: 2, n: 2, // worth 2 (Cory, Nov 1)
       activate: 'game',
       onActivate(ctx, owner) {

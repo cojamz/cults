@@ -12,8 +12,9 @@
 // - Extra turns only happen when the board has a space to spare (more open spaces than turns still to come),
 //   so they never squeeze anyone out of the last space (round I fills every space).
 // - onExtraTurn / onRivalExtraTurn are purple-only member hooks, fired by the helpers below.
-import { defById } from './index.js';
+import { defById, spacesOf } from './index.js';
 import { REPLACE1, add1, old1 } from './replace1.js';
+import { add3, old3, handlers3 } from './replace3.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const P = 'purple';
@@ -329,7 +330,35 @@ export default {
   id: 'purple',
   name: 'Purple',
   resource: P,
-  handlers: { skipped },
+  handlers: {
+    skipped,
+    ...handlers3({
+      interrupt(ctx, owner, answer, data) {
+        const mover = ctx.player(data.pid);
+        if (answer === 'skip') { skipNext(ctx, mover, 'Interrupters', owner); return; }
+        ctx.log(`${owner.name}'s Interrupters: lets ${mover.name} go again.`);
+        askInterrupt(ctx, mover, owner.id);
+      },
+      pacerTo(ctx, p, to, data) {
+        if (!to || ctx.state.slots[to] !== undefined) return;
+        const mine = myWorkers(ctx, p);
+        if (!mine.length) return;
+        if (mine.length === 1) { pacerMove(ctx, p, mine[0], to); return; }
+        ctx.choose(p, `Pacers: move which minion to ${pacerSpace(ctx, to).name}?`, mine.map(w => ({
+          id: `from:${w.key}${w.joined ? '+j' : ''}`, label: `${pacerSpace(ctx, w.key).name}${w.joined ? ' (joined)' : ''}`, kind: 'slot',
+          value: `${w.key}${w.joined ? '+j' : ''}`,
+          // bots move off the space worth least to the next player (it opens for them)
+          hint: -pacerSpace(ctx, w.key).estimate(ctx, p),
+        })), 'purple.pacerFrom', { to });
+      },
+      pacerFrom(ctx, p, from, data) {
+        const [key, j] = String(from).split('+');
+        const w = myWorkers(ctx, p).find(x => x.key === key && x.joined === (j === 'j'));
+        if (!w || ctx.state.slots[data.to] !== undefined) return;
+        pacerMove(ctx, p, w, data.to);
+      },
+    }),
+  },
   // Most purple: honest about what the old "most workers on the board" measured (everyone places every worker, so
   // purple's tiebreak decided it). Holding purple for the ring is the price of spending it on turns.
   // held purple, like every reworked color (Cory, 2026-10-22: "contests are always resources now")
@@ -453,9 +482,16 @@ export default {
     // Cory, 2026-10-29: pays on two turns in a row ("the former"), not on a new minion; "courier doesnt seem to work right"
     // (Right Away and Crunch Time never paid). Price 6 (was 5): Claude, under Cory's go-with-your-gut, since the snake's
     // turnarounds now pay too
-    m('courier', 'Courier', 3, 2, 'Whenever you take two turns in a row, +1 of each other color.', {
+    m('courier', 'Courier', 3, 2, 'Whenever you take two turns in a row, +1 of each other color.', { ...old3,
       onTurnInRow(ctx, owner) { for (const c of ctx.state.resources) if (c !== P) ctx.gain(owner, c, 1); },
     }),
+    // REPLACE3 bot test (Nov 3, replacement batch 3): Courier's place. 4 purple + 2 any as a player sees it. Core asks it
+    // when a rival's turn starts right after their own (onRivalTurnInRow): skipping passes that turn as Hold Up does
+    // (it places after the round's other turns; Early Birds stops it; Gossip pays). Offered only while another player
+    // still has a turn this round (with none, a skip would move nothing). Two holders are asked in seat order.
+    ...add3(m('interrupters', 'Interrupters', 3, 2, 'Whenever a rival takes two turns in a row, you may skip the second.', { interrupts: true,
+      onRivalTurnInRow(ctx, owner, card, mover) { return askInterrupt(ctx, mover, -1); },
+    })),
     m('apprentice', 'Apprentice', 2, 2, 'Whenever you take an extra turn, your next member costs 4 less.', {
       onExtraTurn(ctx, owner) { ctx.discount(owner, 4, 'Apprentice'); },
     }),
@@ -575,6 +611,68 @@ export default {
       },
       botActivate: (ctx, owner) => inARow(ctx, owner) >= 2 || (inARow(ctx, owner) >= 1 && ctx.state.round === 3),
     }),
-    m('crew', 'Shift Crew', 2, 1, 'Worth 4 followers.', { f: 4, n: 4, vanilla: true, round: 1 }), // 2 members (Cory, Oct 29); 4 (Cory, Nov 1: "shift crew is just bad. should be 4 members?"), price 4 Claude's
+    m('crew', 'Shift Crew', 2, 1, 'Worth 4 followers.', { f: 4, n: 4, vanilla: true, round: 1, ...old3 }), // 2 members (Cory, Oct 29); 4 (Cory, Nov 1: "shift crew is just bad. should be 4 members?"), price 4 Claude's
+    // REPLACE3 bot test (Nov 3, replacement batch 3): Shift Crew's place. 6 purple + 3 any as a player sees it. On your
+    // turn, any of your minions on the board (a joined one too) moves to a space with no minion on it, and that space's
+    // action happens, as Straggler's move does; the old space's action stays done and the space opens. No recruit comes
+    // with it (it is an action, not a turn).
+    ...add3(m('pacers', 'Pacers', 5, 3, 'On Use, once per round: move one of your minions to an open space and do that action.', { f: 2,
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const to = pacerOpen(ctx);
+        if (!to.length || !myWorkers(ctx, owner).length) { card.used = false; ctx.log(`${owner.name}'s Pacers: ${to.length ? 'no minion on the board to move' : 'no open space'}.`); return; }
+        ctx.choose(owner, 'Pacers: move one of your minions to which open space?', to.map(t => ({
+          id: `to:${t.key}`, label: t.a.name, kind: 'slot', value: t.key, hint: t.a.estimate(ctx, owner),
+        })), 'purple.pacerTo');
+      },
+      botActivate: (ctx, owner) => myWorkers(ctx, owner).length > 0 && Math.max(0, ...pacerOpen(ctx).map(t => t.a.estimate(ctx, owner))) >= 3,
+    })),
   ],
 };
+
+// ---------- REPLACE3 bot test (Nov 3, replacement batch 3): Interrupters and Pacers ----------
+const holds = (c, key) => !!(c.def[key] || (c.copy && defById(c.copy)?.[key]) || (c.ability && defById(c.ability)?.[key]));
+/** mover's turn is the second in a row: ask the next rival holding Interrupters (seat order, after seat `after`) whether
+ *  to skip it. True when a choice was queued. */
+function askInterrupt(ctx, mover, after) {
+  if (noSkip(ctx, mover)) return false;
+  const q = ctx.state.queue, close = q.findIndex(t => t.t === 'allPlaced');
+  // another player's turn still to come this round (the asked turn itself sits at the head of the queue)
+  if (!q.slice(0, close < 0 ? q.length : close).some(t => t.t === 'turn' && t.p !== mover.id)) return false;
+  const o = ctx.rivals(mover).find(x => x.id > after && ctx.membersOf(x).some(c => holds(c, 'interrupts')));
+  if (!o) return false;
+  const closer = ctx.membersOf(mover).some(c => [c.def.id, c.copy, c.ability].includes('purple.closer'));
+  ctx.choose(o, `Interrupters: ${mover.name} takes two turns in a row. Skip the second?`, [
+    { id: 'skip', label: `Skip ${mover.name}'s turn`, kind: 'choice', value: 'skip', hint: closer ? 0 : 1 },
+    { id: 'let', label: `Let ${mover.name} go`, kind: 'pass', value: 'let', hint: closer ? 1 : 0 },
+  ], 'purple.interrupt', { pid: mover.id });
+  return true;
+}
+function pacerOpen(ctx) {
+  const out = [];
+  ctx.state.quadrants.forEach((qid, q) => spacesOf(ctx.state, qid).forEach((a, i) => {
+    if (!(a.ring > ctx.state.round || (a.lastRound && ctx.state.round > a.lastRound)) && ctx.state.slots[`${q}-${i}`] === undefined) out.push({ key: `${q}-${i}`, q, i, a });
+  }));
+  return out;
+}
+const pacerSpace = (ctx, key) => { const [q, i] = key.split('-').map(Number); return spacesOf(ctx.state, ctx.state.quadrants[q])[i]; };
+function myWorkers(ctx, p) {
+  const out = [];
+  for (const [key, o] of Object.entries(ctx.state.slots)) if (o === p.id) out.push({ key, joined: false });
+  for (const [key, list] of Object.entries(ctx.state.squats || {})) if (list.includes(p.id)) out.push({ key, joined: true });
+  return out;
+}
+function pacerMove(ctx, p, { key, joined }, to) {
+  if (joined) {
+    const list = ctx.state.squats[key];
+    list.splice(list.indexOf(p.id), 1);
+    if (!list.length) delete ctx.state.squats[key];
+  } else delete ctx.state.slots[key];
+  ctx.state.slots[to] = p.id;
+  p.lastSlot = { key: to, joined: false };
+  const [q, i] = to.split('-').map(Number);
+  ctx.log(`${p.name}'s Pacers: moves a minion from ${pacerSpace(ctx, key).name} to ${pacerSpace(ctx, to).name}.`);
+  // the engine's own act task: the new space resolves as usual (no recruit)
+  ctx.state.queue.unshift({ t: 'act', p: p.id, q, i });
+}

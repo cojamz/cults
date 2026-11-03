@@ -18,6 +18,7 @@ import {
   paymentChoices, followerChoices, releaseRefund, liveOptions, swapCardPairs, paySwapCard, scoringOf,
 } from './core.js';
 import { defById, quadrant, handlerById } from './content/index.js';
+import { REPLACE3 } from './content/replace3.js';
 import { plainCopy } from './copy.js';
 import { chooseThinkerMove } from './thinker.js';
 import { planFor, planSetupPick } from './mind.js';
@@ -377,7 +378,7 @@ export function useGain(state, uid) {
     // count the real turns still to come as unplaced (purple.js scheduled). Without it a bot "bought" a turn the board
     // had no room for, the real use refunded itself, and the bot used it forever (full-board test, Nov 3)
     s.unplaced = (state.unplaced || 0) + state.queue.filter(t => t.t === 'turn' || t.t === 'place').length;
-    for (const id of [card.def, card.copy].filter(Boolean)) { const d = defById(id); if (d.onActivate) { d.onActivate(ctx, s.players[me], card); break; } }
+    for (const id of [card.def, card.copy, card.ability].filter(Boolean)) { const d = defById(id); if (d.onActivate) { d.onActivate(ctx, s.players[me], card); break; } }
     const moreTurns = s.queue.filter(t => t.t === 'turn' && t.p === me).length;
     const moreBuys = s.queue.filter(t => t.t === 'buy' && t.p === me).length;
     // the first choice it asks, played out over every option; later ones settle
@@ -398,7 +399,7 @@ function useOption(state, pend, ctx, p) {
   const canUse = c => {
     const def = defById(c.def);
     const g = useGain(state, c.uid);
-    const rule = [c.def, c.copy].some(id => id && defById(id).botActivate?.(ctx, p));
+    const rule = [c.def, c.copy, c.ability].some(id => id && defById(id).botActivate?.(ctx, p));
     if (!g || Math.abs(g.gain) <= 0.05) return rule;
     if (g.gain < useBar(state, def, p)) return false;
     // when, for a once-a-game use: the copy can't see that waiting may pay more (Rainmaker grows with your yellow),
@@ -553,10 +554,15 @@ function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null) 
 // Followers members will pay at game end if it ended now (Tycoon, Patriarch…).
 function gameEndPay(s, ctx, p) {
   let out = 0;
-  for (const c of ctx.membersOf(p)) for (const id of [c.def.id, c.copy].filter(Boolean)) {
+  for (const c of ctx.membersOf(p)) for (const id of [c.def.id, c.copy, c.ability].filter(Boolean)) {
     const d = defById(id);
     if (!d.onGameEnd) continue;
     try { out += d.onGameEnd(ctx, p, c) || 0; } catch { /* estimate only */ }
+  }
+  // what rivals' members take from p at game end (Creditors, REPLACE3 bot test: endHit reads it)
+  if (REPLACE3) for (const o of s.players) if (o !== p) for (const c of ctx.membersOf(o)) for (const id of [c.def.id, c.copy, c.ability].filter(Boolean)) {
+    const d = defById(id);
+    if (d.endHit) try { out -= d.endHit(ctx, o, p) || 0; } catch { /* estimate only */ }
   }
   return out;
 }

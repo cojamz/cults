@@ -16,6 +16,7 @@
 //   color counts (Potluck, countMembersOfColor) see Green members.
 import { registerQuadrant, allQuadrantIds, quadrant, defById, spacesOf } from './index.js';
 import { add2, old2, handlers2 } from './replace2.js';
+import { add3, old3, handlers3 } from './replace3.js';
 
 // IMPRESSIONIST=n: bot test only (Nov 3); the game pays 2 (Cory, Nov 1)
 const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 2);
@@ -453,6 +454,20 @@ const echoQ = {
   ],
 
   handlers: {
+    ...handlers3({
+      impersonate(ctx, p, uid, data) {
+        const self = ctx.card(data.uid), target = ctx.card(uid);
+        if (!p.members.includes(self.uid) || !ctx.ownerOf(uid) || ctx.ownerOf(uid) === p) return;
+        // one On Use a game, one a round: a use spent under the old ability stays spent for a new one of the same kind
+        const was = self.ability ? defById(self.ability) : null;
+        if (self.used && was?.activate === 'game') self.gameUsed = true;
+        if (self.used && was?.activate === 'round') self.roundUsed = ctx.state.round;
+        self.ability = target.copy || target.def.id;
+        const d = defById(self.ability);
+        self.used = (d.activate === 'game' && !!self.gameUsed) || (d.activate === 'round' && self.roundUsed === ctx.state.round);
+        ctx.log(`${p.name}'s Impersonators: has the ability of ${ctx.ownerOf(uid).name}'s ${d.name} ("${d.text}").`);
+      },
+    }),
     ...handlers2({
       mirrorImage(ctx, p, [oid, c]) {
         const o = ctx.player(oid), d = (o.res[c] || 0) - (p.res[c] || 0);
@@ -548,7 +563,23 @@ const echoQ = {
       onRoundStart(ctx, owner) { ctx.gain(owner, 'green', 2); },
     }),
     m('choir', 'Choir', 4, 2, 'Whenever you copy a space, +1 green.', { n: 2 }), // 2 members (Cory, Oct 29: "choir and raiders can be more"; 2 is Claude's start)
-    m('muse', 'Muse', 1, 2, 'Whenever a rival copies an action, +1 green.'),
+    m('muse', 'Muse', 1, 2, 'Whenever a rival copies an action, +1 green.', old3),
+    // REPLACE3 bot test (Nov 3, replacement batch 3): Muse's place. 4 green + 2 any as a player sees it. The chosen
+    // member's ability rides on the card (card.ability: core's effectiveDefs), never its worth or member count. Its On
+    // Recruit does nothing (nothing is being recruited). At round start the ability it holds still does its Round Start,
+    // then the owner chooses again; the new one's Round Start waits for the next round. One On Use a game (and one a
+    // round) across every ability it holds. Another Impersonators, or an uncopied Doppelganger or Impostors, has no
+    // ability of its own to lend, so it isn't offered.
+    ...add3(m('impersonators', 'Impersonators', 3, 2, "On Recruit and Round Start: choose a rival's member. Until you choose again, this member has its ability.", { now: true,
+      onRoundStart(ctx, owner, card) {
+        const list = ctx.rivals(owner).flatMap(o => ctx.membersOf(o)).filter(c => c.copy || !['doppel', 'impostor', 'impersonators'].includes(c.def.key));
+        if (!list.length) { ctx.log(`${owner.name}'s Impersonators: no rival member to choose.`); return; }
+        ctx.choose(owner, "Impersonators: choose a rival's member; this member has its ability", list.map(c => ({
+          id: `card:${c.uid}`, label: `${ctx.ownerOf(c.uid).name}: ${c.def.name}`, kind: 'member', value: c.uid,
+          hint: impersonateHint(ctx, owner, card, defById(c.copy || c.def.id)),
+        })), 'echo.impersonate', { uid: card.uid });
+      },
+    })),
     // Understudy and Ensemble replaced Choirmaster (green for a rival's copy: a gift for doing nothing, and Muse's
     // twin) and Fan (green when a rival takes the center: nothing to do with copying). Claude, 2026-10-14.
     // Cory, 2026-10-28: back in the deck at 4, "two green two wild" (2 green + 1 any + the +1 wild)
@@ -718,4 +749,14 @@ function mirrorOptions(ctx, p) {
     if (d > 0) out.push({ id: `mirror:${o.id}:${c}`, label: `${o.name}'s ${c}: +${d}`, kind: 'choice', value: [o.id, c], hint: d });
   }
   return out;
+}
+
+/** Impersonators (REPLACE3): a rough worth of holding def's ability, for bots' near ties (an On Recruit or a plain card
+ *  lends nothing; a game-end count is read now). */
+function impersonateHint(ctx, owner, card, def) {
+  const keys = Object.keys(def).filter(k => !['key', 'name', 's', 'w', 'text', 'f', 'n', 'id', 'quadrant', 'copies', 'vanilla', 'round', 'onRecruited', 'extraColor', 'extraWild', 'retired'].includes(k));
+  if (def.vanilla || !keys.length) return 0;
+  let end = 0;
+  if (def.onGameEnd) { try { end = def.onGameEnd(ctx, owner, card) || 0; } catch { end = 0; } }
+  return (def.s + def.w) * 0.5 + end;
 }

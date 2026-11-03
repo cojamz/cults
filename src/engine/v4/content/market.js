@@ -5,6 +5,7 @@ import { registerQuadrant } from './index.js';
 import { gainColorOf } from './color-of.js';
 import { REPLACE1, add1, old1, handlers1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
+import { add3, old3, handlers3 } from './replace3.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const B = 'blue';
@@ -349,6 +350,14 @@ const market = {
       if (uid === null) { ctx.log(`${data.why}: ${p.name} recruits nothing.`); return; }
       buyAt(ctx, p, uid, howFor(data.why), data.why);
     },
+    ...handlers3({
+      complete(ctx, p, color) {
+        const left = ctx.shopCards().filter(c => colorOf(ctx, c) === color).map(c => c.uid);
+        ctx.log(`${p.name}'s Completists: recruits every ${color} shop member (${left.map(u => ctx.card(u).def.name).join(', ')}).`);
+        completeStep(ctx, p, left);
+      },
+      completeNext(ctx, p, _v, data) { completeStep(ctx, p, data.left); },
+    }),
     pay(ctx, p, v, data) {
       if (!v) { ctx.log(`${data.why}: ${p.name} recruits nothing.`); return; }
       payAndRecruit(ctx, p, v, data);
@@ -426,7 +435,20 @@ const market = {
     // Blue's artifact only, never dealt (Cory, 2026-10-24: "whenever shop members go to the bottom of the pile, gain 1
     // blue… one per batch"). Name is Claude's fill-in.
     m('bargainbin', 'Bargain Bin', 0, 0, 'Whenever members go to the bottom of the pile, +1 blue.', { artifact: true, bottomBlue: true }),
-    m('patroness', 'Patroness', 5, 2, 'Whenever shop members go to the bottom of the pile, +1 follower.', { bottomFollowers: true }),
+    m('patroness', 'Patroness', 5, 2, 'Whenever shop members go to the bottom of the pile, +1 follower.', { bottomFollowers: true, ...old3 }),
+    // REPLACE3 bot test (Nov 3, replacement batch 3): Patroness' place. 6 blue + 3 any as a player sees it. The color's
+    // members are the ones face up when it's used (a refill drawn meanwhile isn't one of them), each paid at its price
+    // the usual way (the pay sheet when there's more than one way); one you can't pay for when its turn comes stays in
+    // the shop. These recruits don't use up the turn's recruit (as Talent Scout's doesn't). Grey members have no color.
+    ...add3(m('completists', 'Completists', 5, 3, 'On Use, once per game: recruit every shop member of one color, paying their costs.', { f: 2,
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const opts = completeColors(ctx, owner);
+        if (!opts.length) { card.used = false; ctx.log(`${owner.name}'s Completists: no shop member of a color you can pay for.`); return; }
+        ctx.choose(owner, 'Completists: recruit every shop member of which color?', opts, `${Q}.complete`);
+      },
+      botActivate: (ctx, owner) => ctx.state.round >= 2 && completeColors(ctx, owner).some(o => o.affordable >= 2),
+    })),
     m('blackmarket', 'Talent Scout', 2, 2, 'Once per game, on your turn: also look at the top 5 of the pile and recruit one at its cost.', {
       activate: 'game',
       onActivate(ctx, owner) {
@@ -540,3 +562,34 @@ const scoutChoices = (ctx, p, uid) => ctx.payChoices(p, uid, {});
 function rivalsBigger(ctx, p) { const mine = ctx.memberCount(p); return ctx.rivals(p).filter(o => ctx.memberCount(o) > mine).length; }
 function showroomCount(ctx) { return ctx.shopCards().filter(c => isBlue(c.def)).reduce((n, c) => n + ctx.memberWeight(c), 0); }
 function priciest(ctx, p) { return Math.max(0, ...ctx.membersOf(p).map(priceOf)); }
+
+/** Completists (REPLACE3): the colors face up in the shop, each with how many of its members p could pay for one by one. */
+function completeColors(ctx, p) {
+  const by = new Map();
+  for (const c of ctx.shopCards()) { const col = colorOf(ctx, c); if (col) by.set(col, [...(by.get(col) || []), c]); }
+  const out = [];
+  for (const [col, cards] of by) {
+    // a rough count: the cheapest first, out of what p holds in all
+    let left = Object.values(p.res).reduce((a, b) => a + b, 0), affordable = 0, worth = 0;
+    for (const c of [...cards].sort((a, b) => priceOf(a) - priceOf(b))) {
+      const pr = ctx.price(p, c.uid, {});
+      if (!pr.afford || pr.total > left) continue;
+      left -= pr.total; affordable++; worth += botWorth(c);
+    }
+    if (!affordable) continue;
+    out.push({ id: `color:${col}`, label: `${col} (${cards.map(c => c.def.name).join(', ')})`, kind: 'choice', value: col, hint: worth, affordable });
+  }
+  return out;
+}
+function completeStep(ctx, p, left) {
+  for (let k = 0; k < left.length; k++) {
+    const uid = left[k];
+    if (!ctx.state.shop.includes(uid) || !ctx.payChoices(p, uid, {}).length) {
+      if (ctx.state.shop.includes(uid)) ctx.log(`Completists: ${p.name} can't pay for ${ctx.card(uid).def.name}.`);
+      continue;
+    }
+    buyAt(ctx, p, uid, {}, 'Completists');
+    if (k + 1 < left.length) ctx.defer(p, `${Q}.completeNext`, { left: left.slice(k + 1) });
+    return;
+  }
+}

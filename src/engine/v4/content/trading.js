@@ -17,6 +17,7 @@ import { memberScoring } from './member-scoring.js';
 //   round-end and game-end hooks. That's why the loan lives on a member (Lender), not on a space.
 import { registerQuadrant, defById } from './index.js';
 import { add1, old1 } from './replace1.js';
+import { add3, old3, handlers3 } from './replace3.js';
 
 const W = 'white';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -142,6 +143,18 @@ const trading = {
   ],
 
   handlers: {
+    ...handlers3({
+      evict(ctx, p, uid) {
+        const o = ctx.ownerOf(uid);
+        if (!o || o === p) return;
+        const c = ctx.card(uid), name = c.def.name, k = c.def.s + c.def.w;
+        ctx.log(`${p.name}'s Evictors: casts out ${o.name}'s ${name} to the bottom of the pile.`);
+        ctx.buryMember(o, uid, p);
+        ctx.gain(p, W, k);
+        ctx.gain(o, W, k);
+        ctx.log(`${p.name}'s Evictors: ${p.name} and ${o.name} each +${k} white.`);
+      },
+    }),
     raiders(ctx, p, id) {
       const t = raidTargets(ctx, p).find(o => o.id === id);
       if (t && (p.res[W] || 0) >= 2) raidersSteal(ctx, p, t);
@@ -293,7 +306,7 @@ const trading = {
     m('oldmoney', 'Old Money', 1, 4, /* 6 (Cory, Oct 30) */ 'Game End: +1 follower per white member you have.', {
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'trading'),
     }),
-    m('hoarder', 'Hoarder', 4, 3, 'On Use, once per game: turn all your resources into white.', {
+    m('hoarder', 'Hoarder', 4, 3, 'On Use, once per game: turn all your resources into white.', { ...old3,
       activate: 'game',
       onActivate(ctx, owner, card) {
         let n = 0;
@@ -304,6 +317,21 @@ const trading = {
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 && totalRes(owner) - (owner.res[W] || 0) >= 3,
     }),
+    // REPLACE3 bot test (Nov 3, replacement batch 3): Hoarder's place. 5 white + 3 any as a player sees it. Any rival's
+    // member (casting out isn't a steal or a swap, so Bodyguards and Loyalists don't stop it); its cost is its printed
+    // price. It leaves its cult as a cast-out does (Martyrs pays its owner), then both players gain the white.
+    ...add3(m('evictors', 'Evictors', 4, 3, "On Use, once per game: cast out a rival's member to the bottom of the pile. You and that rival each gain white equal to its cost.", {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const list = ctx.rivals(owner).flatMap(o => ctx.membersOf(o).map(c => [o, c]));
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Evictors: no rival has a member.`); return; }
+        ctx.choose(owner, "Evictors: cast out which rival's member?", list.map(([o, c]) => ({
+          id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${c.def.s + c.def.w})`, kind: 'member', value: c.uid,
+          hint: (c.def.f || 1) * 1.5 + c.def.s + c.def.w,
+        })), 'trading.evict');
+      },
+      botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).some(o => ctx.membersOf(o).some(c => c.def.s + c.def.w >= 6)),
+    })),
     // cut by Cory (2026-10-22); kept defined for old records and card tests
     m('dealer', 'Dealer', 2, 0, 'Whenever you sell followers, +1 white per follower sold.', {
       onSell(ctx, owner, card, k) { ctx.gain(owner, W, k); },

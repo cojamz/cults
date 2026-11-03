@@ -2,6 +2,7 @@
 import { gainColorOf } from './color-of.js';
 import { add1, old1 } from './replace1.js';
 import { add2, old2, handlers2 } from './replace2.js';
+import { add3, old3, handlers3 } from './replace3.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
 
@@ -83,6 +84,28 @@ export default {
   ],
 
   handlers: {
+    ...handlers3({
+      missionGive(ctx, p, uid, data) {
+        const o = ctx.player(data.left[0]);
+        if (!p.members.includes(uid)) { missionGiveStep(ctx, p, data); return; }
+        const c = ctx.card(uid), k = cost(c), name = c.def.name;
+        if (!ctx.moveMember(uid, p, o, { actor: p })) { missionGiveStep(ctx, p, data); return; }
+        ctx.log(`${p.name}'s Missionaries: gives ${name} (${k}) to ${o.name}.`);
+        missionGiveStep(ctx, p, { left: data.left.slice(1), allow: [...data.allow, k + 2] });
+      },
+      missionTake(ctx, p, uid, data) {
+        if (!ctx.state.shop.includes(uid)) { missionTakeStep(ctx, p, data.allow); return; }
+        const k = cost(ctx.card(uid));
+        // the smallest allowance it fits uses itself up
+        const fit = data.allow.filter(a => a >= k).sort((a, b) => a - b)[0];
+        if (fit === undefined) { missionTakeStep(ctx, p, data.allow); return; }
+        const rest = [...data.allow]; rest.splice(rest.indexOf(fit), 1);
+        ctx.log(`${p.name}'s Missionaries: recruits ${ctx.card(uid).def.name} (${k}, up to ${fit}) for free.`);
+        ctx.recruit(p, uid, { free: true });
+        if (rest.length) ctx.defer(p, 'red.missionNext', { allow: rest });
+      },
+      missionNext(ctx, p, _v, data) { missionTakeStep(ctx, p, data.allow); },
+    }),
     ...handlers2({
       snatch(ctx, p, value) {
         if (!Array.isArray(value)) { ctx.log(`${p.name} chose not to swap.`); return; }
@@ -183,9 +206,23 @@ export default {
     m('crowd', 'Crowd-Pleaser', 2, 0, 'Whenever you buy followers, +1 red.', {
       onBuyFollowers(ctx, owner, card, buyer) { if (buyer === owner) ctx.gain(owner, 'red', 1); },
     }),
-    m('patriarch', 'Patriarch', 3, 2, 'Game End: +1 follower per 2 members you have.', {
+    m('patriarch', 'Patriarch', 3, 2, 'Game End: +1 follower per 2 members you have.', { ...old3,
       onGameEnd: (ctx, owner) => Math.floor(ctx.memberCount(owner) / 2),
     }),
+    // REPLACE3 bot test (Nov 3, replacement batch 3): Patriarch's place. 6 red + 3 any as a player sees it. Every rival
+    // gets one (seat order from the owner's left), as long as the owner has members; any member may go, Missionaries
+    // itself too. A give is an arrival, not their recruit (Old Maid's −5 lands on them, Martyrs pays the giver). Then one
+    // free recruit per member given, each costing up to 2 more than one of them (any order; the smallest allowance that
+    // fits is used); an allowance nothing in the shop fits is lost.
+    ...add3(m('missionaries', 'Missionaries', 5, 3, 'On Use, once per game: give one of your members to each rival, then recruit a shop member costing up to 2 more for each one given, for free.', { f: 2,
+      activate: 'game',
+      onActivate(ctx, owner) {
+        const n = ctx.state.players.length, left = Array.from({ length: n - 1 }, (_, k) => (owner.id + 1 + k) % n);
+        ctx.log(`${owner.name} uses Missionaries.`);
+        missionGiveStep(ctx, owner, { left, allow: [] });
+      },
+      botActivate: (ctx, owner) => ctx.state.round === 3 && ctx.membersOf(owner).filter(c => c.def.key !== 'missionaries').length >= ctx.state.players.length - 1,
+    })),
     m('recruitbonus', 'Recruit Bonus', 1, 1, 'Your On Recruits also give +1 of that member’s color.', { f: 2,
       onRecruitAbility(ctx, owner, card, recruited) { gainColorOf(ctx, owner, recruited.def, 'Recruit Bonus'); }, // a guest: nothing; Dabblers: pick
     }),
@@ -286,4 +323,24 @@ function swap(ctx, p, mode, prompt, excludeUid = null) {
       : ctx.ownerOf(b.uid) === p ? (a.def.f + cost(a)) - (b.def.f + cost(b)) : 0,
   // the swap is yours to skip (Cory, 2026-10-22 playtest: "You shouldnt HAVE to swap")
   })).concat({ id: 'none', label: 'Don’t swap', kind: 'pass', value: null, hint: -99 }), 'red.trade', { mode, excludeUid });
+}
+
+/** Missionaries (REPLACE3): give one of p's members to the next rival in data.left; then the free recruits. */
+function missionGiveStep(ctx, p, data) {
+  if (!data.left.length || !p.members.length) { missionTakeStep(ctx, p, data.allow); return; }
+  const o = ctx.player(data.left[0]);
+  ctx.choose(p, `Missionaries: give which of your members to ${o.name}?`, ctx.membersOf(p).map(c => ({
+    id: `card:${c.uid}`, label: `${c.def.name} (${cost(c)})`, kind: 'member', value: c.uid,
+    // bots give what's worth least to keep and lets in the most: a spent or plain card, a pricier one opens a bigger recruit
+    hint: cost(c) * 0.5 - (c.def.f || 1) * 1.5 - (c.used ? 0 : 1) + (c.def.onJoined ? 5 : 0),
+  })), 'red.missionGive', data);
+}
+function missionTakeStep(ctx, p, allow) {
+  if (!allow.length) return;
+  const most = Math.max(...allow);
+  const shop = ctx.shopCards().filter(c => cost(c) <= most);
+  if (!shop.length) { ctx.log(`${p.name}'s Missionaries: no shop member costs ${most} or less.`); return; }
+  ctx.choose(p, `Missionaries: recruit which member for free? (${allow.length} to go: up to ${[...allow].sort((a, b) => b - a).join(', ')})`, shop.map(c => ({
+    id: `card:${c.uid}`, label: `${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + cost(c),
+  })), 'red.missionTake', { allow });
 }

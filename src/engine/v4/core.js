@@ -834,6 +834,16 @@ function runTask(state, task) {
     case 'setupPick': return resolveTask(state, task, `color:${state.startPool[0]}`);
     case 'round': return underCause({ kind: 'round', round: task.r }, () => startRound(state, task.r));
     case 'turn': {
+      // a rival's member that may skip the second of two turns in a row (Interrupters, REPLACE3 bot test): the turn goes
+      // back on the queue behind that rival's choice (task.asked), and nothing of it has happened yet
+      if (!task.asked && state.turns?.length && state.turns[state.turns.length - 1] === p.id) {
+        const ctx = ctxFor(state), back = { ...task, asked: true };
+        state.queue.unshift(back);
+        let held = false;
+        eachMember(state, (owner, card, def) => { if (!held && owner !== p && def.onRivalTurnInRow && def.onRivalTurnInRow(ctx, owner, card, p)) held = true; }, ['onRivalTurnInRow']);
+        if (held) return;
+        state.queue.splice(state.queue.indexOf(back), 1);
+      }
       state.current = p.id;
       (state.turns = state.turns || []).push(p.id);
       // two turns in a row (a snake turnaround, Right Away, Crunch Time, Clockmakers, +1 minion placed now): Courier
@@ -1131,6 +1141,8 @@ function finish(state) {
     } else owner.final.zero.push({ uid: card.uid, name: def.name });
   };
   eachMember(state, score(false), ['onGameEnd']);
+  // a game-end loss a member deals rivals (Creditors, REPLACE3 bot test), before the bonuses that read final counts
+  eachMember(state, (owner, card, def) => { if (def.onGameEndHit) def.onGameEndHit(ctx, owner, card); }, ['onGameEndHit']);
   eachMember(state, score(true), ['endLast']);
   const ranked = [...state.players].sort((a, b) => followers(state, b) - followers(state, a) || memberCount(state, b) - memberCount(state, a));
   state.ranking = ranked.map(p => p.id);
@@ -1569,10 +1581,15 @@ function gain(state, p, color, n, { fromAction = false, again = false } = {}) {
 
 function effectiveDefs(card, state = null) {
   const own = state ? cardDef(state, card.uid) : defById(card.def);
-  if (!card.copy) return [own];
-  const copied = defById(card.copy);
-  const { onRecruited, ...hooks } = copied; void onRecruited;
-  return [own, hooks];
+  if (!card.copy && !card.ability) return [own];
+  const out = [own];
+  for (const id of [card.copy, card.ability]) {
+    if (!id) continue;
+    // card.ability: a rival member's ability only, no worth or member count (Impersonators, REPLACE3 bot test)
+    const { onRecruited, ...hooks } = defById(id); void onRecruited;
+    out.push(hooks);
+  }
+  return out;
 }
 // keys: the hooks fn reads. A member with none of them is skipped before its accounting frame opens, which was
 // most of a move's cost late in the game (smoothness panel, Oct 28); without keys every member runs as before.
@@ -1884,7 +1901,8 @@ function ctxFor(state) {
     },
     refillShop: () => refill(state),
     /** Send one of p's members to the bottom of the pile, wiped clean (White: "get rid of"). Returns its printed cost. */
-    buryMember(p, uid) {
+    // actor: whose card did it (Evictors, REPLACE3 bot test, casts out a rival's member); p's own by default
+    buryMember(p, uid, actor = p) {
       if (!p.members.includes(uid)) return 0;
       const def = cardDef(state, uid), c = def.s + def.w;
       cardLeaves(state, p, uid);
@@ -1894,7 +1912,7 @@ function ctxFor(state) {
       state.pile.push(uid);
       log(state, `${p.name} sent ${def.name} to the bottom of the pile.`);
       // a member leaving its owner's cult: Recruiter hears a rival's cast-out (Cory, Nov 1: "Yes")
-      cultMove(state, uid, p, null, p);
+      cultMove(state, uid, p, null, actor);
       bottomBlue(state);
       // a shop short of its size (the pile ran out) takes it back up, as every other way to the bottom does
       refill(state);
