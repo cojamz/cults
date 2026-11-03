@@ -140,6 +140,8 @@ const ALLOW = {
   'yellow.sower': 'out of the deck; plants only when a bot holds spare yellow at round start (cards-yellow: Sower)',
   // seeded games moved with +1 wild and the round I rework (Oct 27-28): recruited in 4-5 games without the trigger coming up
   'yellow.tinker': 'its swaps log as "swapped 1 x for 1 y (Tinker)"; recruited once in the sample (cards-yellow: Tinker)',
+  // the Nov 3 card words (Doormen's price, Night Owls, Sleep In, Last Call) moved the seeded games: recruited once, never changing a rival's resources after
+  'yellow.tastemaker': 'pays only when its owner changes a rival\'s resources (cards-yellow: Tastemaker)',
   'yellow.matchmaker': 'pays only for a recruit in a new member color; its 2 owners in the Yellow 2.0 sample (Oct 31) recruited none (cards-yellow)',
   'silver.dowager': 'a plain worth-3 member the audit counts (cards-silver)',
   'silver.revelers': 'a plain counts-as-3 member with nothing to name; recruited in the sample once the color cost (Nov 2) moved the games (cards-silver)',
