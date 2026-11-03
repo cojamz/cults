@@ -48,26 +48,10 @@ describe('Yellow actions', () => {
     for (let i = 0; i < 3; i++) s = move(s, 'color:green');
     expect(R(s)).toMatchObject({ yellow: 2, green: 3 });
   });
-  it('Makeover (round III): rearrange everything, then +1 follower per contest you lead (Cory, Nov 2)', () => {
-    // a rival holds 3 gold: all 4 into red leads red (gold and the rest go to the rival or nobody)
-    let s = take(sc({ round: 3, res: [{ gold: 2, red: 2 }, { gold: 3 }] }), 'yellow.makeover');
-    const b0 = s.players[0].bonus;
+  it('Makeover (round III): +4 yellow, then rearrange everything', () => {
+    let s = take(sc({ round: 3, res: [{ gold: 2, red: 2 }] }), 'yellow.makeover');
     s = move(s, 'color:red');
-    expect(R(s)).toEqual({ gold: 0, red: 4, yellow: 0, green: 0 });
-    expect(s.players[0].bonus - b0).toBe(1);
-    expect(named(s, 'Makeover').some(l => /\+1 follower/.test(l))).toBe(true);
-  });
-  it('Makeover: a split that leads two contests pays 2; keeping your colors still pays for what you lead', () => {
-    let s = take(sc({ round: 3, res: [{ gold: 2, red: 2 }, { gold: 3 }] }), 'yellow.makeover');
-    const b0 = s.players[0].bonus;
-    s = move(s, 'split');
-    // gold 4, red 0, yellow 0: the last color (green) takes the rest
-    for (const id of ['amount:2', 'amount:1', 'amount:1']) if (s.pending?.options.some(o => o.id === id)) s = move(s, id);
-    expect(s.players[0].bonus - b0).toBe(2);
-    let k = take(sc({ round: 3, res: [{ gold: 2, red: 2 }, { gold: 3 }] }), 'yellow.makeover');
-    const k0 = k.players[0].bonus;
-    k = move(k, 'keep');
-    expect(k.players[0].bonus - k0).toBe(1);
+    expect(R(s)).toEqual({ gold: 0, red: 8, yellow: 0, green: 0 });
   });
 });
 
