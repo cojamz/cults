@@ -63,7 +63,7 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
   const whyFirst = !why || why === 'fewest followers' ? why : `${first.id === meId ? 'you have' : 'they have'} ${why}, a member who always picks first`;
   return (
     <div className="overlay moment" role="dialog" aria-modal="true" aria-label={`Round ${result.round} scoring`}>
-      <div className="dialog roundend" ref={box}>
+      <div className="dialog roundend" ref={box} data-seats={after.players.length}>
         <h2>Round {result.round} scored</h2>
         <div className={`re-body${more ? ' more' : ''}`} ref={body}>
         {/* the last round: the end-game bonuses lead, so the lines that can decide a close game are never below the fold

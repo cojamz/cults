@@ -181,7 +181,7 @@ while (!(await page.$('.results'))) {
     await page.reload();
     const res = await page.waitForSelector('[data-home="resume"]', { timeout: 8000 }).catch(() => null);
     if (res) await res.click();
-    else note('give: no Resume after reload', await shot('give-resume'));
+    // (a local game resumes by itself after a reload; Resume shows only sometimes)
     await page.waitForSelector('.lt-seat[data-pid]', { timeout: 10000 }).catch(() => note('give: table did not come back', null));
     await shot('after-give');
     continue;
