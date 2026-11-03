@@ -15,7 +15,7 @@ import { seededRandom } from '../src/engine/v4/rng.js';
 import { sphereVersion } from '../src/v4/tables.js';
 import { deckRules } from './lib/deck-choice.mjs';
 // SWAP=1 turns on the swap card table setting (Cory, Nov 1); SWAPCOST=n sets its price (default 2)
-const DECK_RULES = { ...deckRules(), ...(process.env.SWAP === '1' ? { swapCard: true } : {}), ...(process.env.SWAPCOST ? { swapCardCost: Number(process.env.SWAPCOST) } : {}), ...(process.env.CONTESTS ? { contests: process.env.CONTESTS } : {}) };
+const DECK_RULES = { ...deckRules(), ...(process.env.SWAP === '1' ? { swapCard: true } : {}), ...(process.env.SWAPCOST ? { swapCardCost: Number(process.env.SWAPCOST) } : {}), ...(process.env.CONTESTS ? { contests: process.env.CONTESTS } : {}), ...(process.env.CONTESTFIX ? { contestFix: JSON.parse(process.env.CONTESTFIX) } : {}) };
 
 const [first, count, out] = [Number(process.argv[2] || 1), Number(process.argv[3] || 1), process.argv[4] || 'balance.jsonl'];
 const level = process.env.LEVEL || 'normal', seats = Number(process.env.SEATS || 4);
