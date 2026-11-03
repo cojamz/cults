@@ -139,6 +139,7 @@ const ALLOW = {
   'yellow.tinker': 'its swaps log as "swapped 1 x for 1 y (Tinker)"; recruited once in the sample (cards-yellow: Tinker)',
   'yellow.matchmaker': 'pays only for a recruit in a new member color; its 2 owners in the Yellow 2.0 sample (Oct 31) recruited none (cards-yellow)',
   'silver.dowager': 'a plain worth-3 member the audit counts (cards-silver)',
+  'silver.revelers': 'a plain counts-as-3 member with nothing to name; recruited in the sample once the color cost (Nov 2) moved the games (cards-silver)',
   // the color cost (Nov 2) moved the seeded games: recruited once without its trigger coming up
   'yellow.explorer': 'recruited once in the sample after the Nov 2 color cost, trigger never came up (cards-yellow covers it)',
   'silver.smoothtalker': 'names itself only when silver pays a colored part the color itself couldn\'t; bot owners in the sample paid in color (cards-silver: Smooth Talkers)',
