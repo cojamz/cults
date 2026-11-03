@@ -1,6 +1,7 @@
 # Cults — handoff (current state; update in place, don't stack sections)
 
 Last updated 2026-11-03 10:15am Eastern by the "Plan and run today's autonomous improvements" thread. Before this: design/archive/handoff-2026-10-24-to-28.md (the Nov 1 section is in git history).
+- Revert point (Cory, Nov 3 2:31pm: "branch for us so it's easy to revert to the version we had before we kicked off today's work"): branch `snapshot/pre-nov3` = 56ea45c (v0.99.510, color cost and By color contests live, before Nov 3's day of work). Before the color cost: v0.99.509 is 4e192d5.
 - Live: https://cojamz.github.io/patrons/play/ is v0.99.510 (a2432c4, Nov 3 1:15am Eastern; main play/build.json is the truth).
 - Since v0.99.0 (Nov 1): cloaks named "<Color> Cloak" and picked before round I, the Goes Last token, the swap card (2 any), piles modes, Splurge per resource in round II, members pay 1 more of their own color and 1 less any (v0.99.510), and the Contests setting (As printed or By color, one goal per color). CHANGELOG.md has each.
 - The critic's review (design/eval/critic-review-2026-11-02/review.md, Cory agreed): every turn is "biggest number" and nothing pays for going deep in a color. Cory liked directions 1 (resources worth more to one player than another: the color cost) and 3 (each rim its own contest: By color). He wants the reason to focus to come from how the game works, not a bonus ("members count as 2" is out).
