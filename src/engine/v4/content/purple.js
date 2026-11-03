@@ -373,7 +373,7 @@ export default {
       // Cory, 2026-10-28: grows by round, "maybe more like 4/5/6", so a late skip is worth taking
       // Cory, Nov 1 2:35pm: the Goes Last token ("Let's just try it with the goes last token"): one minion waits on it,
       // so your hand empties a turn early and that snake turn is passed (a skip, for Pocket Watch and Gossip)
-      key: 'skip', copyDoesIt: true, ring: 1, name: 'Sleep In', text: '+4 purple (+5 in round II, +6 in round III). Take the Goes Last token: your next minion is placed after everyone else’s.',
+      key: 'skip', copyDoesIt: true, ring: 1, name: 'Sleep In', text: '+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your next minion is placed after everyone else’s.',
       byRound: { lines: ['+4 purple', '+5 purple', '+6 purple'], rest: 'Take the Goes Last token: your next minion is placed after everyone else’s.' },
       estimate: ctx => ctx.state.round + 3,
       resolve(ctx, p) {
@@ -384,7 +384,7 @@ export default {
     {
       // Cory, 2026-10-22: replaces Catch Up ("the skip should replace catch up"); "1 purple per round" so it isn't weak
       // late. Wording and name are Claude's fill-in.
-      key: 'holdup', copyDoesIt: true, ring: 1, name: 'Hold Up', text: '+2 purple (+3 in round II, +4 in round III). Whoever’s turn is next skips it, even yours.',
+      key: 'holdup', copyDoesIt: true, ring: 1, name: 'Hold Up', text: '+2 purple in round I, +3 in round II, +4 in round III. Whoever’s turn is next skips it, even yours.',
       byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Whoever’s turn is next skips it, even yours.' },
       // Cory, 2026-10-22: "it has to be the next TURN not even the next player. so a player could skip their own in
       // snake draft". Whoever's turn comes next is passed over once and still places every minion.
@@ -401,7 +401,7 @@ export default {
       // Cory, 2026-10-22: "+1 purple, take another turn right after this one", in Roll Call's spot. One of your own
       // turns, moved up (his yes: you still place the same minions that round), like Crunch Time's two. Name: fill-in.
       // Cory, 2026-10-23: "Right Away should scale. +1 +2 +3" (Hold Up's wording).
-      key: 'again', copyDoesIt: true, ring: 1, name: 'Right Away', text: '+1 purple (+2 in round II, +3 in round III). Your next turn comes right after this one.',
+      key: 'again', copyDoesIt: true, ring: 1, name: 'Right Away', text: '+1 purple in round I, +2 in round II, +3 in round III. Your next turn comes right after this one.',
       byRound: { lines: ['+1 purple', '+2 purple', '+3 purple'], rest: 'Your next turn comes right after this one.' },
       estimate: (ctx, p) => ctx.state.round + turnsNowEstimate(ctx, p, 1),
       resolve(ctx, p) { ctx.gain(p, P, ctx.state.round, { fromAction: true }); turnsNow(ctx, p, 1, 'Right Away'); },
@@ -605,7 +605,7 @@ export default {
     }),
     // Cory, 2026-10-23: "its when you place THE last minion of the round. so it benefits folks going last"
     // Cory, 2026-10-24: "go deep card for every color" ("sure for now"); name and price Claude's fill-in, priced like Chronicler
-    m('timekeepers', 'Timekeepers', 1, 2, 'Game end: +1 follower per purple member you have.', { ...old5,
+    m('timekeepers', 'Timekeepers', 1, 2, 'Game End: +1 follower per purple member you have.', { ...old5,
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'purple'),
     }),
     // REPLACE5 bot test (Nov 3, replacement batch 5): Timekeepers' place. 4 purple + 2 any as a player sees it. Counted

@@ -216,7 +216,7 @@ const thieves = {
     {
       // every color's 3/4/5 (Cory, 2026-10-27), counting the +1 magenta every Magenta action gives; name Claude's fill-in
       key: 'tipoff', ring: 1, name: 'Stash', copyDoesIt: true,
-      text: '+2 magenta in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower (+2 in round II, +3 in round III).',
+      text: '+2 magenta in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.',
       // Gather's shape for now (Cory, 2026-10-31: "just default to gather style for now for the rest"); Magenta's round I is parked
       byRound: { lines: ['+2 magenta. This turn, if you recruit a member, +1 follower.', '+3 magenta. This turn, if you recruit a member, +2 followers.', '+4 magenta. This turn, if you recruit a member, +3 followers.'] },
       // the wrapper at the bottom adds every Magenta action's +1, so this gives the rest: +2/+3/+4 in all, as printed
@@ -229,7 +229,7 @@ const thieves = {
     },
     {
       // Cory, Nov 1 morning: "so steal 1, +1 magenta, rivals can't steal or recruit from you this round" (was the protection only)
-      key: 'hideout', ring: 1, name: 'Lie Low', text: 'Steal 1. Rivals can’t steal from you this round. +1 magenta.',
+      key: 'hideout', ring: 1, name: 'Lie Low', text: 'Steal 1 resource. Rivals can’t steal from you this round. +1 magenta.',
       estimate: (ctx, p) => 1.8 + 0.6 * ctx.state.round + estimateSteal(ctx, p, ctx.stealCount(p, 1)),
       resolve(ctx, p) {
         startSteal(ctx, p, 'Lie Low', ctx.stealCount(p, 1, { say: true }));

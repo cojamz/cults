@@ -28,7 +28,7 @@ export default {
     },
     {
       key: 'turnout', ring: 1, name: 'Gather', copyDoesIt: true,
-      text: '+2 red in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower (+2 in round II, +3 in round III).',
+      text: '+2 red in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.',
       // Cory, 2026-10-31: fuel tied to the recruit ("B": 2/3/4 red, 1/2/3 followers). Core pays it on the turn's first member recruit.
       byRound: { lines: ['+2 red. This turn, if you recruit a member, +1 follower.', '+3 red. This turn, if you recruit a member, +2 followers.', '+4 red. This turn, if you recruit a member, +3 followers.'] },
       estimate: ctx => ctx.state.round + 1 + ctx.state.round * 0.7,
@@ -39,7 +39,7 @@ export default {
     },
     {
       // Cory, 2026-10-27: "recruit the top member of the deck. each rival gets 1 red". Name and the +2 are Claude's fill-ins.
-      key: 'hire', ring: 1, name: 'Walk-In', text: 'Recruit the top member of the deck. Each rival +1 red. +1 red.', copyDoesIt: true,
+      key: 'hire', ring: 1, name: 'Walk-In', text: 'Recruit the top member of the pile. Each rival +1 red. +1 red.', copyDoesIt: true,
       estimate: ctx => 1 + (ctx.state.pile.length ? 3 : 0),
       resolve(ctx, p) {
         ctx.gain(p, 'red', 1, { fromAction: true });

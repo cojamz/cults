@@ -168,7 +168,7 @@ const members = [
   // once and being flexible across colors": all into one color in one click, or split color by color.
   // Cory, Oct 29: "should let me rearrange colors as i please, not all to one color": on screen the Launderers card
   // (LaunderCard.jsx) sets any mix at once and answers these steps itself; bots still pick here
-  m('launderer', 'Launderers', null, 0, 3, /* Cory, Oct 27: "closer to 5" with the +1 wild */ 'Worth 3 followers. On Recruit: rearrange your resources into any mix of colors.', { f: 3, n: 3, // +1 (Cory, Oct 30)
+  m('launderer', 'Launderers', null, 0, 3, /* Cory, Oct 27: "closer to 5" with the +1 wild */ 'On Recruit: rearrange your resources into any mix of colors.', { f: 3, n: 3, // +1 (Cory, Oct 30)
     onRecruited(ctx, owner) { startLaunder(ctx, owner, 'Launderers'); },
   }),
   // Cory, 2026-10-28: "a 5 cost Saboteur… gives -3 Followers each time it enters somebody's cult (swapped in OR recruited etc)"
@@ -233,12 +233,12 @@ const members = [
   }),
   // Cory, 2026-10-28: Con Men, 6, counts as 2 members; On Recruit (was One Time Use), split among rivals like Help Yourself
   // Cory, 2026-10-29: "for the steal on recruit, you should get to choose when you steal": On Use, once per game
-  m('conmen', 'Con Men', null, 0, 6, /* 7 (Cory, Oct 29: "i would put con men at 7") */ 'Counts as 2 members. On Recruit: steal 5 resources.', { n: 2,
+  m('conmen', 'Con Men', null, 0, 6, /* 7 (Cory, Oct 29: "i would put con men at 7") */ 'On Recruit: steal 5 resources.', { n: 2,
     // On Recruit, not a once-per-game use (Cory, 2026-10-31: "Con men should be on recruit")
     onRecruited(ctx, owner) { startSteal(ctx, owner, 'Con Men', 5, { fromAction: false }); },
   }),
   // Cory, 2026-10-28: HR (Archivist), 9, worth 3 (so it counts as 3 members)
-  m('hr', 'HR', null, 0, 9, /* price 10 and +2 per color (Cory, Nov 1: "we can try +2. then price it at 10 to start") */ 'Counts as 4 members. Game End: +2 followers per color you have 3 members of.', { f: 4, n: 4, ...old6,
+  m('hr', 'HR', null, 0, 9, /* price 10 and +2 per color (Cory, Nov 1: "we can try +2. then price it at 10 to start") */ 'Game End: +2 followers per color you have 3 members of.', { f: 4, n: 4, ...old6,
     // guests count as a color here, they just have no resource (Cory, 2026-10-30: "should they count for the purposes of HR? they should")
     onGameEnd: (ctx, owner) => 2 * [...ctx.state.quadrants, 'guest'].filter(q => ctx.countMembersOfColor(owner, q) >= 3).length,
   }),

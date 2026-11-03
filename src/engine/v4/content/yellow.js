@@ -301,7 +301,7 @@ export default {
       },
     })),
     // Cory, 2026-10-31 ("Drifters is good"; worth 2)
-    m('drifters', 'Drifters', 2, 0, 'Worth 2 followers. On Recruit: choose a color; these count as a member of that color.', { f: 2,
+    m('drifters', 'Drifters', 2, 0, 'On Recruit: choose a color; these count as a member of that color.', { f: 2,
       onRecruited(ctx, owner, card) {
         ctx.choose(owner, 'Drifters: count as a member of which color?', ctx.state.quadrants.map(q => ({
           id: `color:${q}`, label: ctx.quadrant(q).name, kind: 'color', value: q, hint: ctx.countMembersOfColor(owner, q) ? -1 : 1,
@@ -324,7 +324,7 @@ export default {
       onGameEnd: (ctx, owner) => 2 * ctx.state.quadrants.filter(q => ctx.countMembersOfColor(owner, q, { wild: false }) === 1).length,
     }),
     // Cory, 2026-10-31: named Book Cookers; "agree this gives multiple followers"
-    m('bookcooker', 'Book Cookers', 5, 4, 'Worth 3 followers. On Use, once per game: rearrange your resources into any mix of colors.', { f: 3,
+    m('bookcooker', 'Book Cookers', 5, 4, 'On Use, once per game: rearrange your resources into any mix of colors.', { f: 3,
       activate: 'game',
       onActivate(ctx, owner) { startLaunder(ctx, owner, 'Book Cookers'); },
       botActivate: (ctx, owner) => ctx.state.round === 3 && owner.left === 0,
@@ -334,7 +334,7 @@ export default {
       onRoundStart(ctx, owner) { startChange(ctx, owner, { who: 'Puppeteers', left: 3 }); },
     }),
     // Cory, Nov 1 (in place of Puppeteers): "Make it 'On Recruit' as well"
-    m('caravan', 'Caravan', 4, 4, 'Worth 3 followers. On Recruit: +1 of each color you hold. Round Start: +1 of each color you hold.', { f: 3, now: true,
+    m('caravan', 'Caravan', 4, 4, 'On Recruit: +1 of each color you hold. Round Start: +1 of each color you hold.', { f: 3, now: true,
       onRoundStart(ctx, owner) { for (const c of held(ctx, owner)) ctx.gain(owner, c, 1); },
     }),
     // Cory, Nov 1 (in place of Explorer): a payoff for changing rivals' resources

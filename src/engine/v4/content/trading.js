@@ -84,7 +84,7 @@ const trading = {
   actions: [
     {
       key: 'stipend', copyDoesIt: true, ring: 1, name: 'Allowance',
-      text: '+2 white in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower (+2 in round II, +3 in round III).',
+      text: '+2 white in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.',
       // Gather's shape (Cory, 2026-10-31: "just default to gather style for now for the rest"); was +1/2/3 followers and +2/3/4 white
       byRound: { lines: ['+2 white. This turn, if you recruit a member, +1 follower.', '+3 white. This turn, if you recruit a member, +2 followers.', '+4 white. This turn, if you recruit a member, +3 followers.'] },
       estimate: ctx => ctx.state.round + 1 + ctx.state.round * 0.7,
