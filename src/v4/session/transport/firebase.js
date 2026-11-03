@@ -7,7 +7,9 @@
 // to a local RTDB emulator instead, with a mock signed-in user, through the same SDK calls. Each emulator transport
 // is its own app and its own socket, like a separate browser, so tests can drop one (goOffline) and the server runs
 // its onDisconnect writes. Only localhost hosts are accepted, so a link can't point players at someone's server.
-import { serverTimestamp } from 'firebase/database';
+// The SDK's serverTimestamp() is this constant. Written out so the database SDK (~250 KB) loads only when a game goes
+// online, not with every page (its static import pulled it into the first download; Nov 3).
+const SERVER_TIMESTAMP = Object.freeze({ '.sv': 'timestamp' });
 
 const cleanJson = v => (v === undefined ? null : JSON.parse(JSON.stringify(v)));
 const NAMESPACE = 'cornycolonies-default-rtdb';
@@ -113,7 +115,7 @@ export function createFirebaseTransport({ emulator = urlEmulator() } = {}) {
       await m.onDisconnect(at(m, path)).cancel();
     },
     onConnectedChange(cb) { connCbs.add(cb); watchConnection(); return () => connCbs.delete(cb); },
-    serverTime: () => serverTimestamp(),
+    serverTime: () => SERVER_TIMESTAMP,
     /** The server's clock now (ms): compare against serverTime() values someone else wrote. */
     serverNow: () => { watchConnection(); return Date.now() + offset; },
     /** Drops this client's socket (the server runs its onDisconnect writes); goOnline() reconnects. */
