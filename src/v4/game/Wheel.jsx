@@ -384,6 +384,25 @@ export function deniedText(state, key, meId = null) {
  *   flash:Set<string>, late?:boolean, facing:number, onFacing:(q:number)=>void, look?:string }} props
  *   (look: 'panels' | 'sockets' | the name of a face in ./faces/, whose contract is at the top of faces/index.js)
  */
+// The board's last measured scale for this window size (Nov 3): the table's first draw at a guessed scale of 1 measured,
+// set the real scale and drew and laid out the whole table a second time, ~0.6 s of the 1.4 s Start click at 4x CPU.
+// Starting from the scale this window measured last time makes the measure a no-op; a wrong guess is corrected as before.
+const SCALE_KEY = 'patrons.v4.wheelScale';
+const windowKey = () => (typeof window === 'undefined' ? '' : `${window.innerWidth}x${window.innerHeight}@${window.devicePixelRatio || 1}`);
+let scaleMemo = null;
+function rememberedScale() {
+  const k = windowKey();
+  if (scaleMemo && scaleMemo.k === k) return scaleMemo.s;
+  try { const v = JSON.parse(localStorage.getItem(SCALE_KEY) || 'null'); if (v && v.k === k && v.s > 0) return v.s; } catch { /* no storage */ }
+  return 1;
+}
+function rememberScale(s) {
+  const k = windowKey();
+  if (scaleMemo && scaleMemo.k === k && scaleMemo.s === s) return;
+  scaleMemo = { k, s };
+  try { localStorage.setItem(SCALE_KEY, JSON.stringify(scaleMemo)); } catch { /* no storage */ }
+}
+
 function Wheel({ state, interactionState = state, legal, idle = null, pickNotes = null, onPick, onDenied, onTouched, confirmPlace = false, flash, late = false, caption = null, lastMove = null, recentMoves = [], spacePeek = null, onSpacePeek, meId = null, facing, onFacing, hover = null, lampQid = null, look: lookProp = null }) {
   const look = useMemo(() => lookProp || spacesLook(), [lookProp]);
   const panels = look === 'panels';
@@ -431,14 +450,14 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   const lastPointer = useRef('mouse');
   // On-screen scale of the board, so text is sized in real pixels.
   const stageSize = useRef(null); // [clientWidth, clientHeight], from the ResizeObserver
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(rememberedScale);
   // measured before the first paint (wave-4 B #32: measured after it, the first frame laid the panels out for a 416px
   // board and they reflowed bigger a frame later); one layout read at mount, then the ResizeObserver
   useLayoutEffect(() => {
     const el = stage.current;
     if (!el) return undefined;
     // (the stage's inner size is kept too: a spin reads its spaces' places from it, never forcing a layout in the key's frame)
-    const measure = () => { const w = el.getBoundingClientRect().width; stageSize.current = [el.clientWidth, el.clientHeight]; if (w) setScale(w / VBS); };
+    const measure = () => { const w = el.getBoundingClientRect().width; stageSize.current = [el.clientWidth, el.clientHeight]; if (w) { setScale(w / VBS); rememberScale(w / VBS); } };
     measure();
     if (typeof ResizeObserver === 'undefined') return undefined;
     const ro = new ResizeObserver(measure);
