@@ -99,7 +99,7 @@ const P = {
     dilute: { main: '+2 yellow', second: 'rivals’: change up to 3', note: 'one for one' },
     bigdilute: { main: '+4 yellow', second: 'rivals’: change up to 6', note: 'one for one' },
     meltingpot: { verb: '+1 any per member color', note: '+2 yellow' },
-    makeover: { verb: '+4 yellow, then rearrange all', second: 'into any colors' },
+    makeover: { verb: 'rearrange all', second: '+1 🧍 per contest led' },
     bloom: r => ({ main: `+${r} yellow`, second: '+1 of each fewest color', note: run(n => `+${n}`, 'yellow: ') }),
     // Match the current rule: the yellow arrives before the optional swaps.
     transmute: { main: '+2 yellow', second: 'then swap up to 3', note: 'for other colors' },

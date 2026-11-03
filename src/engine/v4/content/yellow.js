@@ -94,10 +94,11 @@ export default {
       },
     },
     {
-      // Cory, 2026-10-30: "let's stick with launderers effect round III", "+3 or +4 yellow". Name: Claude's fill-in.
-      key: 'makeover', ring: 3, name: 'Makeover', text: '+4 yellow, then rearrange your resources into any mix of colors.',
-      estimate: () => 5,
-      resolve(ctx, p) { ctx.gain(p, Y, 4, { fromAction: true }); startLaunder(ctx, p, 'Makeover'); },
+      // Cory, 2026-10-30: "let's stick with launderers effect round III". Name: Claude's fill-in. Nov 2 ("never felt
+      // useful"): the +4 yellow goes, it pays a follower per contest you lead after ("1 is good but should be 1 follower").
+      key: 'makeover', ring: 3, name: 'Makeover', text: 'Rearrange your resources into any mix of colors. +1 follower per contest you lead after.',
+      estimate: (ctx, p) => 2 + 0.5 * ctx.state.quadrants.length,
+      resolve(ctx, p) { startLaunder(ctx, p, 'Makeover', { pay: 'contests' }); },
     },
   ],
 

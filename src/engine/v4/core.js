@@ -1777,6 +1777,8 @@ function ctxFor(state) {
     /** The colors whose contest lead or tie p holds now and would give up by spending `v` ({ color: n }; a negative n
      *  is a gain, for a swap). Display and asking only: a one-way payment that gives up a lead asks first. */
     leadsLost: (p, v) => { const g = rimCost(state, p)(v); return [...g.colors, ...g.cuts.map(c => c.member)]; },
+    /** The contests p leads or ties for now, as if the round ended (contestTable's winners): quadrant ids. */
+    contestsLed: p => contestTable(state).filter(c => c.winners.includes(p.id)).map(c => c.qid),
     log: text => log(state, text),
     /** A preview's reason for a member's effect content applies itself (Grand Host's double): the "Why" row. */
     note: (p, member, text, res = null) => note(state, p, member, text, res),
