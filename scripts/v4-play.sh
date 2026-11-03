@@ -34,6 +34,9 @@ if ! curl -fsSL --connect-timeout 5 --max-time 10 "$URL/build.json?version-check
   git show origin/main:play/build.json > "$TMP/previous-build.json" || echo '{}' > "$TMP/previous-build.json"
   SERVED_UNREACHABLE=1
 fi
+# Every card change going live, so the thread checks each against Cory's words (Cory, Nov 2: "Build only what you said").
+PREV_COMMIT=$(node -e 'try{process.stdout.write(JSON.parse(require("fs").readFileSync(process.argv[1])).commit||"")}catch{}' "$TMP/previous-build.json")
+[ -n "$PREV_COMMIT" ] && node "$ROOT/scripts/card-diff.mjs" "$PREV_COMMIT" "$SHA" || true
 node --input-type=module - "$TMP/source" "$TMP/previous-build.json" "$SHA" <<'RELEASE_CHECK'
 import {readFileSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';

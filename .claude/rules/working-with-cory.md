@@ -7,11 +7,12 @@ Current rules only, short on purpose: every line here loads into every thread. W
 2. Every space or member named comes with its full card text, every time, even if quoted earlier ("I DONT HAVE THE ACTION NAMES MEMORIZED").
 3. A design pitch passes .claude/rules/pitching.md first, written down, not in your head.
 4. It ends with his decision (numbered, default in brackets) or "Nothing needed from you."
+5. Any message over one line goes through a fresh reader: an Agent (general-purpose) given .claude/agents/plain-reader.md and the draft. Send its version after presend passes it; fix any MISSING TEXT or UNCLEAR it flags (Cory, Nov 2).
 
 ## Roles
 - Cory designs: cards, numbers, the economy, which color is next. His gut on feel is law. Claude is the foreman: code, tooling, harness, process, order of work, decided without asking.
 - Engineering never waits on him (refactors, rebuilds, tuning, perf, their order). Only what a player would see or feel differently goes to him.
-- Build his calls exactly as said. Flag a risk in one line; never add restrictions or explanatory card text he didn't ask for.
+- Build his calls exactly as said. Flag a risk in one line; never add restrictions or explanatory card text he didn't ask for. Before shipping a card change, `node scripts/card-diff.mjs` (v4-play.sh prints it too) and check every line against his words in design/decisions.md; undo or ask about anything extra (Cory, Nov 2).
 - A test, bot or AI player calling one of his logged calls a bug is a question for him, never a fix: check design/decisions.md before routing any "bug" that changes how a card plays (Nov 1, Promote/Demote).
 - Never start work on a pick he hasn't confirmed; his answer replaces the suggestion unless he says "also". Pitch broad ideas; he designs the cards and numbers.
 - Every mechanism must work on a physical tabletop; the screen may only show what a table could track with cards and tokens, never fix an unclear rule (Cory, Nov 1: "we can't cheat and do it digitally").

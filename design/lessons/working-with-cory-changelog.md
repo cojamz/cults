@@ -55,3 +55,4 @@ Why each rule in .claude/rules/working-with-cory.md exists, in Cory's words. Mov
 - 2026-11-01: proposed seat tags on screen to track who goes last; Cory: "we can't cheat and do it digitally. the mechanism itself has to translate to a tabletop game." Rule: every mechanism works on a physical table; the screen only shows what tokens could.
 - 2026-11-01: Cory: the 10-card deck is the game; 15 stays a setting, untested. Balance runs no longer ask which deck.
 - 2026-11-02: Cory, "super brief. go even more concise": messages aim for 1 or 2 lines, card text and the ask only.
+- 2026-11-02: Weekly review, Cory said "ok" to both: a fresh reader for every message (six message corrections that week) and build only what he said ("why'd you change that? they should be kept as is", a repeat of Oct 21's Crunch Time). Now presend step 5 and card-diff.mjs.
