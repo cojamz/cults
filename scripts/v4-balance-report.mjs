@@ -42,7 +42,8 @@ for (const r of rows) {
   for (const p of r.players) {
     const w = share(r, p);
     // the 1.0 bar (Cory, Oct 31): winners with 5 or fewer members win at least 20% of games (every seat counts)
-    S.winM = (S.winM || 0) + w * p.memberCount; S.small = (S.small || 0) + (p.memberCount <= 5 ? w : 0);
+    // by member cards in the cult, not worth (Cory, Nov 1 9:48am: "sounds good in member counts"; decisions.md)
+    S.winM = (S.winM || 0) + w * p.members.length; S.small = (S.small || 0) + (p.members.length <= 5 ? w : 0);
     if (p.seat === r.buyer) { S.buyer.n++; S.buyer.w += w; continue; }
     if (r.buyer >= 0) continue;
     S.followers += p.followers; S.members += p.memberCount; S.seatsN++;
@@ -70,7 +71,7 @@ const lvl = [...new Set(rows.map(r => r.level))].join('+');
 const priced = [...new Set(rows.flatMap(r => Object.entries(r.prices || {}).map(([k, v]) => `${k} ${v.from}→${v.to}`)))];
 console.log(`${lvl} bots, ${rows.length} games${stuck ? ` (+${stuck} stuck in a rules loop, left out)` : ''}, random tables of the 2.0 colors, ${[...new Set(rows.map(r => r.deck || 15))].join(' and ')}-card decks.${priced.length ? ` Prices changed: ${priced.join(', ')}.` : ''}`);
 for (const [n, S] of Object.entries(out.bySeats)) console.log(`  ${n} seats: ${S.games} games; buy-followers-only seat (no target) won ${pct(S.buyer.w / (S.buyer.n || 1))} of ${S.buyer.n} (even ${pct(1 / n)}); avg followers ${(S.followers / S.seatsN).toFixed(1)}, winner ${(S.top / S.games).toFixed(1)}, margin ${(S.margin / S.games).toFixed(1)}; avg members ${(S.members / S.seatsN).toFixed(1)}`);
-for (const [n, S] of Object.entries(out.bySeats)) console.log(`  ${n} seats: winners with 5 or fewer members ${pct((S.small || 0) / S.games)} of games (bar: at least 20%); winner's members avg ${((S.winM || 0) / S.games).toFixed(1)}`);
+for (const [n, S] of Object.entries(out.bySeats)) console.log(`  ${n} seats: winners with 5 or fewer member cards ${pct((S.small || 0) / S.games)} of games (bar: at least 20%); winner's member cards avg ${((S.winM || 0) / S.games).toFixed(1)}`);
 console.log('\nSeat order (win share vs even):');
 for (const [k, v] of Object.entries(out.seatOrder).sort()) console.log(`  ${k}: ${pct(v.w / v.n)} vs ${pct(v.e / v.n)} (${v.n})`);
 console.log('\nMain color (seats with 3+ members of one color, most of that color; win share vs even):');
