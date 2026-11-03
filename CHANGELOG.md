@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.514 — 2026-11-03
+
+- The game loads faster: about a quarter less to download before the home screen, and bots think faster.
+
 ## v0.99.513 — 2026-11-03
 
 - Clearer words for Doormen, Night Owls, Sleep In and Last Call; Doormen's replacement can cost up to 2 less, or any amount more.
