@@ -19,7 +19,7 @@ import {
 } from './core.js';
 import { defById, quadrant, handlerById } from './content/index.js';
 import { REPLACE3 } from './content/replace3.js';
-import { plainCopy } from './copy.js';
+import { plainCopy, copyPart } from './copy.js';
 import { chooseThinkerMove } from './thinker.js';
 import { planFor, planSetupPick } from './mind.js';
 
@@ -445,23 +445,9 @@ const FUTURE_CONTESTS = 0.4;
 const copy = plainCopy;
 // contests is shared, not copied: the scored rounds, append-only (endRound replaces the array, never edits an entry),
 // and a third of a late game's state.
-// Green's ledger (state.echo) is most of a big table's state: every space taken this round and last, each with a
-// snapshot of every player from before it (`before`). Last round's spaces and every snapshot are written once and only
-// read after (content/echo.js), so a trial copy shares them and copies the rest.
-const copyEntry = e => { const o = {}; for (const k in e) o[k] = k === 'before' ? e[k] : copy(e[k]); return o; };
-const copyEcho = L => {
-  if (!L || typeof L !== 'object') return L;
-  const o = {};
-  for (const k in L) {
-    if (k === 'last') o[k] = L[k];
-    else if (k === 'now' && L.now && typeof L.now === 'object') { const n = {}; for (const key in L.now) n[key] = copyEntry(L.now[key]); o[k] = n; }
-    else o[k] = copy(L[k]);
-  }
-  return o;
-};
 const lightClone = s => {
   const c = {};
-  for (const k in s) if (k !== 'log' && k !== 'queue' && k !== 'pending') c[k] = k === 'contests' ? s[k] : k === 'echo' ? copyEcho(s[k]) : copy(s[k]);
+  for (const k in s) if (k !== 'log' && k !== 'queue' && k !== 'pending') c[k] = copyPart(k, s[k]); // contests and Green's ledger snapshots shared (copy.js)
   c.log = []; c.queue = []; c.pending = null;
   return c;
 };

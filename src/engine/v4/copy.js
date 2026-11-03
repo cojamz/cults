@@ -12,3 +12,21 @@ function copyObj(v) {
   for (const k in v) { const x = v[k]; o[k] = x === null || typeof x !== 'object' ? x : copyObj(x); }
   return o;
 }
+
+// A game state's copy that shares what is written once and only read after: the scored rounds (contests: endRound
+// replaces the array, never edits an entry) and Green's ledger snapshots (echo: last round's spaces, and each space's
+// `before`, content/echo.js). In a big Green game those were most of the state. Every other part is copied.
+const copyEntry = e => { const o = {}; for (const k in e) o[k] = k === 'before' ? e[k] : plainCopy(e[k]); return o; };
+const copyEcho = L => {
+  if (!L || typeof L !== 'object') return L;
+  const o = {};
+  for (const k in L) {
+    if (k === 'last') o[k] = L[k];
+    else if (k === 'now' && L.now && typeof L.now === 'object') { const n = {}; for (const key in L.now) n[key] = copyEntry(L.now[key]); o[k] = n; }
+    else o[k] = plainCopy(L[k]);
+  }
+  return o;
+};
+/** One part of a state, copied as stateCopy would (skip: keys the caller sets itself). */
+export const copyPart = (k, v) => (k === 'contests' ? v : k === 'echo' ? copyEcho(v) : plainCopy(v));
+export const stateCopy = s => { const o = {}; for (const k in s) o[k] = copyPart(k, s[k]); return o; };

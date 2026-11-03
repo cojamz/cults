@@ -1,5 +1,5 @@
 import { grantDiscount } from './discount.js';
-import { plainCopy } from './copy.js';
+import { plainCopy, stateCopy } from './copy.js';
 // Patrons v4 engine. Pure and deterministic: state in, move in, state out.
 // Everything runs through a task queue. When a task needs a decision, the engine stops and publishes
 // state.pending = { player, kind, prompt, options:[{ id, label, kind, ... }] }. A move is { player, option }.
@@ -146,7 +146,7 @@ export function isLegal(state, move) {
 /** Returns a new state. Throws on an illegal move. */
 export function applyMove(prev, move, { effects = false } = {}) {
   if (!isLegal(prev, move)) throw new Error(`Illegal move: ${JSON.stringify(move)}`);
-  const state = plainCopy(prev);
+  const state = stateCopy(prev); // the scored rounds and Green's snapshots shared (copy.js)
   // a choice answered at the same time (also): whoever answers first, their own task resolves
   const at = move.player === prev.pending.player ? 0 : state.queue.findIndex(t => t.t === 'choose' && t.together && t.together === state.queue[0].together && t.p === move.player);
   const task = state.queue.splice(Math.max(0, at), 1)[0];
