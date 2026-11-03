@@ -1027,7 +1027,7 @@ export function scoringOf(state, qid) {
   const q = quadrant(qid), mode = state.rules?.contests;
   if (!mode || !q.scoring) return q.scoring;
   const name = q.name.toLowerCase(), res = q.resource, qi = state.quadrants.indexOf(qid);
-  if (mode === 'members') return { label: `Most ${name}, members 2`, counts: `the ${name} you hold, plus 2 for each ${name} member`,
+  if (mode === 'members') return { label: `Most ${res}, 2 per ${res} member`, counts: `the ${res} you hold, plus 2 for each ${res} member`,
     score: (ctx, p) => (p.res[res] || 0) + 2 * countMembersOfColor(state, p, qid) };
   if (mode === 'minions') return { label: `Most minions on ${name}`, counts: `your minions on ${q.name} spaces when the round ends`,
     score: (ctx, p) => q.actions.reduce((n, a, i) => n + (state.slots[`${qi}-${i}`] === p.id ? 1 : 0) + (state.squats?.[`${qi}-${i}`] || []).filter(id => id === p.id).length, 0) };

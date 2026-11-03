@@ -23,6 +23,8 @@ import { createEmitter, randomId } from './emitter.js';
 import { moveProblem, normalizeMove } from './local.js';
 import { BUILD, CONTENT_HASH, newGame, step, trackState, botStep, reportProblem } from './record.js';
 import { askBot } from './botThink.js';
+// other contest goals (core.js scoringOf), a host setting
+const CONTEST_MODES = ['members', 'minions', 'whiteFewest'];
 
 /** Shown when a room was made by a build with different rules content (a deploy happened in between). */
 export const VERSION_MISMATCH = 'That room is on a different version of Cults. Refresh this page and try again; if it still won’t join, the host should refresh and make a new room.';
@@ -144,6 +146,7 @@ function lobbyView(room, code, playerId, { awaySince = new Map(), subAfterMs = S
     roundDecks: room.roundDecks === 3 ? 3 : 2,
     deck: room.deck === 15 ? 15 : 10,
     swapCard: room.swapCard === true,
+    contests: CONTEST_MODES.includes(room.contests) ? room.contests : '',
     shop: room.shop === 'grey' || room.shop === 'all' ? room.shop : 'deck',
     players, seats: players.length, maxSeats: MAX_SEATS,
     canStart: isHost && status === 'lobby' && players.length >= MIN_SEATS, startHint,
@@ -584,6 +587,11 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
       await hostOnly('pick the swap card');
       await transport.update(base, { swapCard: !!on });
     },
+    /** Host: other contest goals, a table setting ('' is each color's printed contest). */
+    async setContests(mode) {
+      await hostOnly('pick the contests');
+      await transport.update(base, { contests: CONTEST_MODES.includes(mode) ? mode : '' });
+    },
     async start() {
       await hostOnly('start');
       let tableWhy = '';
@@ -600,7 +608,7 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
         const quadrants = fitTable({ mode: r.table ? r.tableMode || 'custom' : 'classic', quadrants: parseTable(r.table) || [] }, list.length, r.shop).quadrants;
         tableWhy = tableProblem(quadrants, list.length, r.shop);
         if (tableWhy) return undefined;
-        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, ...((r.roundDecks === 2 || r.roundDecks === 3 || r.deck !== 15 || r.swapCard === true || r.shop === 'grey' || r.shop === 'all') ? { rules: { ...(r.roundDecks === 2 || r.roundDecks === 3 ? { roundDecks: r.roundDecks } : {}), ...(r.deck !== 15 ? { deck: 10 } : {}), ...(r.swapCard === true ? { swapCard: true } : {}), ...shopRule(r.shop) } } : {}) });
+        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, ...((r.roundDecks === 2 || r.roundDecks === 3 || r.deck !== 15 || r.swapCard === true || CONTEST_MODES.includes(r.contests) || r.shop === 'grey' || r.shop === 'all') ? { rules: { ...(r.roundDecks === 2 || r.roundDecks === 3 ? { roundDecks: r.roundDecks } : {}), ...(r.deck !== 15 ? { deck: 10 } : {}), ...(r.swapCard === true ? { swapCard: true } : {}), ...(CONTEST_MODES.includes(r.contests) ? { contests: r.contests } : {}), ...shopRule(r.shop) } } : {}) });
         setBotLevels(game, list.map(s => (s.kind === 'bot' ? s.bot : null))); // the level the host picked for each bot
         return {
           ...r, seats, seed, status: 'playing', startedAt: Date.now(), build: { ...BUILD },

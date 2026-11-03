@@ -211,6 +211,14 @@ export function SwapPick({ value, onChange, readOnly }) {
       : <Seg label="Swap card" value={value ? 'on' : 'off'} options={SWAP_OPTS} onChange={v => onChange(v === 'on')} />}
   </div>;
 }
+const CONTEST_OPTS = [['', 'As printed', 'Each color: most of its color held'], ['members', 'Members 2', 'Most of the color held; each of your members of that color counts as 2'], ['minions', 'Minions', 'Most of your minions on the color\'s spaces at round end'], ['whiteFewest', 'White fewest', 'White: fewest members (at least 1); other colors as printed']];
+export function ContestPick({ value, onChange, readOnly }) {
+  const opt = CONTEST_OPTS.find(o => o[0] === (value || '')) || CONTEST_OPTS[0];
+  return <div className="seat" data-contest-pick={opt[0] || 'printed'}><span>Contests</span>
+    {readOnly ? <span className="hint">{opt[1]}</span>
+      : <Seg label="Contests" value={opt[0]} options={CONTEST_OPTS} onChange={onChange} />}
+  </div>;
+}
 export function ShopPick({ value, onChange, readOnly }) {
   const opt = SHOP_OPTS.find(o => o[0] === value) || SHOP_OPTS[0];
   return <div className="seat" data-shop-pick={opt[0]}><span>Shop</span>
@@ -333,6 +341,7 @@ export function LocalSetup({ initial, onStart, onBack }) {
   const [late, setLate] = useState(initial?.roundDecks === 3 ? 3 : 2);
   const [deck, setDeck] = useState(initial?.deck === 15 ? 15 : 10);
   const [swapCard, setSwapCard] = useState(!!initial?.swapCard);
+  const [contests, setContests] = useState(initial?.contests || '');
   const [shop, setShop] = useState(initial?.shop === 'grey' || initial?.shop === 'all' ? initial.shop : 'deck');
   const filled = seats.filter(s => s.kind !== 'empty');
   // one sphere per player (Cory, 2026-10-15): the table follows the seats as they're filled or emptied
@@ -379,13 +388,14 @@ export function LocalSetup({ initial, onStart, onBack }) {
         <TablePicker value={fitted} n={nSph} onChange={setTable} />
         <DeckPick value={deck} onChange={setDeck} />
         <SwapPick value={swapCard} onChange={setSwapCard} />
+        <ContestPick value={contests} onChange={setContests} />
         <ShopPick value={shop} onChange={setShop} />
         <LatePick value={late} onChange={setLate} />
         <div className="row-btns">
           {/* why Start is off, said beside it (RC1 #8: it dimmed at 3 of 4 with nothing near it) */}
           {startWhy && <span className="hint start-why" data-start-why>{startWhy}</span>}
           <button type="button" className="btn" onClick={onBack}>Back</button>
-          <button type="button" className="btn pri" data-start disabled={!!startWhy} title={startWhy || undefined} onClick={() => onStart({ seats: named(), speed, level, table: fitted, roundDecks: late, deck, swapCard, shop })}>Start</button>
+          <button type="button" className="btn pri" data-start disabled={!!startWhy} title={startWhy || undefined} onClick={() => onStart({ seats: named(), speed, level, table: fitted, roundDecks: late, deck, swapCard, shop, contests })}>Start</button>
         </div>
       </div>
     </div>
@@ -465,6 +475,7 @@ export function Lobby({ lobby, myId, onLeave }) {
         <TablePicker value={shownTable} n={nSph} onChange={pickTable} readOnly={!isHost || !lobby.setTable} />
         <DeckPick value={view.deck === 15 ? 15 : 10} onChange={v => act(() => lobby.setDeck(v))} readOnly={!isHost || !lobby.setDeck} />
         <SwapPick value={!!view.swapCard} onChange={v => act(() => lobby.setSwapCard(v))} readOnly={!isHost || !lobby.setSwapCard} />
+        <ContestPick value={view.contests || ''} onChange={v => act(() => lobby.setContests(v))} readOnly={!isHost || !lobby.setContests} />
         <ShopPick value={view.shop || 'deck'} onChange={v => act(() => lobby.setShop(v))} readOnly={!isHost || !lobby.setShop} />
         <LatePick value={view.roundDecks === 3 ? 3 : 2} onChange={v => act(() => lobby.setRoundDecks(v))} readOnly={!isHost || !lobby.setRoundDecks} />
         {err && <p className="error">{err}</p>}
