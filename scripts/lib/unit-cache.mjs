@@ -4,7 +4,8 @@
 // A file's key hashes: the test file and every repo file it imports, followed through relative imports, re-exports,
 // dynamic imports, `new URL(…)` and import.meta.glob (a glob takes its whole directory: a superset); the lockfile, the
 // vitest config, its setup file and this file; the games level; and the value of every environment variable any of
-// those files reads (process.env.X, env.X). Anything that could read an input the key can't see makes the file
+// those files reads (process.env.X, env.X); a file reading __V4_SRC__ (the rules-source hash) depends on every
+// engine file. Anything that could read an input the key can't see makes the file
 // uncacheable, so it always runs: a file in the closure that reads the filesystem (readFileSync, readdirSync,
 // existsSync…), fetches, runs a process, or imports a path built at run time.
 //
@@ -57,6 +58,11 @@ export function closure(root, testFile, memo = new Map()) {
         const dir = resolve(dirname(f), dirname(pat));
         if (!existsSync(dir)) { info.bad = true; continue; }
         for (const x of readdirSync(dir)) { const full = join(dir, x); if (statSync(full).isFile()) info.deps.push(full); }
+      }
+      // __V4_SRC__ (vitest.config.js define) is a hash of every rules file: a file reading it depends on all of them
+      if (src.includes('__V4_SRC__')) {
+        const walk = d => { for (const x of readdirSync(d)) { const full = join(d, x); if (statSync(full).isDirectory()) walk(full); else info.deps.push(full); } };
+        walk(resolve(root, 'src/engine/v4'));
       }
       memo.set(f, info);
     }
