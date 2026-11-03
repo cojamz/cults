@@ -31,7 +31,7 @@ describe('White: the printed cards', () => {
     expect(W.actions.map(a => [a.key, a.ring])).toEqual([
       ['stipend', 1], ['splurge', 1], ['exchange', 1], ['farewell', 2], ['estatesale', 2], ['cashin', 3],
     ]);
-    expect(text('splurge')).toBe('This turn, if you recruit a member, +1 follower for every 2 resources you pay for it. +1 white.');
+    expect(text('splurge')).toBe('This turn, if you recruit a member, +1 follower for every 2 resources you pay for it (every 1 in round II). +1 white.');
     expect(text('farewell')).toBe('Cast out one of your members to the bottom of the pile, gain followers equal to its cost. +1 white.');
     expect(text('estatesale')).toBe('Cast out one of your members to the bottom of the pile, gain white equal to its cost. +1 white.');
     expect(text('cashin')).toBe('Turn all your white into followers. +1 white.');

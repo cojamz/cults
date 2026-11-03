@@ -88,6 +88,14 @@ describe('White actions', () => {
     expect(s.log.join('\n')).toContain("P1's Splurge: +2 followers for spending.");
   });
 
+  it('Splurge in round II: +1 follower per resource paid (Cory, Nov 1 1:39pm)', () => {
+    let s = take(scene({ round: 2, res: [{ gold: 4 }], shop: ['gold.midas'] }), 'trading.splurge');
+    const b0 = B(s);
+    s = move(s, pick(s, 'gold.midas', 'shop')); // Midas 3+2: pays 5
+    expect(B(s) - b0).toBe(5);
+    expect(s.log.join('\n')).toContain("P1's Splurge: +5 followers for spending.");
+  });
+
   it('Splurge pays on members only: buying followers gets nothing extra', () => {
     let s = take(scene({ res: [{ red: 6 }] }), 'trading.splurge');
     s = move(s, 'tier:mid'); // spends 5 → +5 bought, no Splurge

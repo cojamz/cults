@@ -92,8 +92,8 @@ const trading = {
       },
     },
     {
-      key: 'splurge', copyDoesIt: true, ring: 1, name: 'Splurge', text: 'This turn, if you recruit a member, +1 follower for every 2 resources you pay for it. +1 white.', // members only: Claude's default, 2026-10-27; +1 (Cory, Oct 28)
-      estimate: (ctx, p) => 1 + Math.floor(Math.min(totalRes(p) + 1, 7) / 2) * fv(ctx) * 0.8,
+      key: 'splurge', copyDoesIt: true, ring: 1, name: 'Splurge', text: 'This turn, if you recruit a member, +1 follower for every 2 resources you pay for it (every 1 in round II). +1 white.', // members only: Claude's default, 2026-10-27; +1 (Cory, Oct 28); per 1 in round II (Cory, Nov 1 1:39pm)
+      estimate: (ctx, p) => 1 + Math.floor(Math.min(totalRes(p) + 1, 7) / (ctx.state.round === 2 ? 1 : 2)) * fv(ctx) * 0.8,
       resolve(ctx, p) {
         ctx.gain(p, W, 1, { fromAction: true });
         p.perSpend = true;

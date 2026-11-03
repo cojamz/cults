@@ -1459,7 +1459,8 @@ function swapMembers(state, actor, aUid, bUid) {
 function spendBonus(state, p, spend) {
   if (!p.perSpend) return;
   delete p.perSpend;
-  const n = Math.floor(Object.values(spend).reduce((a, b) => a + b, 0) / 2);
+  // per 1 resource in round II, per 2 in rounds I and III (Cory, Nov 1 1:39pm)
+  const n = Math.floor(Object.values(spend).reduce((a, b) => a + b, 0) / (state.round === 2 ? 1 : 2));
   if (!n) return;
   const extra = sumMemberFlag(state, p, 'brokerBonus'), mark = fMark(state);
   p.bonus += n + extra;
