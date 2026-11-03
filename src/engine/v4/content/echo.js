@@ -16,6 +16,8 @@
 //   color counts (Potluck, countMembersOfColor) see Green members.
 import { registerQuadrant, allQuadrantIds, quadrant, defById, spacesOf } from './index.js';
 
+// IMPRESSIONIST=n: bot test only (Nov 3); the game pays 2 (Cory, Nov 1)
+const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 2);
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const costOf = def => def.s + def.w;
 
@@ -312,7 +314,7 @@ function copyResolved(ctx, p, e, { later, by, asker }) {
 function heard(ctx, p, e, taker) {
   // each runs as its member, so the log names it ("P1's Choir: +1 green.")
   // any player's copy, +2 (Cory, Nov 1)
-  for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(e.color).resource, 2));
+  for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(e.color).resource, IMPRESSION));
   each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
   for (const owner of ctx.rivals(p)) each(ctx, owner, 'muse', 'Muse', () => ctx.gain(owner, 'green', 1));
   if (taker === p) each(ctx, p, 'ensemble', 'Ensemble', () => { p.bonus += 1; });
@@ -482,7 +484,7 @@ const echoQ = {
       if (!hit) { ctx.log(`${p.name}: that action has a minion now.`); return; }
       withPath(ctx, [...pathNow(ctx), key], () => {
         ctx.log(`${p.name} copies ${hit.a.name}: doing it.`);
-        for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(hit.qid).resource, 2));
+        for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(hit.qid).resource, IMPRESSION));
         each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
         (hit.a.resolve.__orig || hit.a.resolve).call(hit.a, ctx, p);
       });

@@ -490,6 +490,8 @@ export default {
         if (owner.left !== 0 || card.owlRound === ctx.state.round) return;
         card.owlRound = ctx.state.round;
         if (!extraTurns(ctx, owner, 1, 'Night Owls', { quiet: true })) return;
+        // bot test only (Nov 3): NIGHTOWL=notoken keeps the extra minion but drops the token, so it places next, not last
+        if (globalThis.process?.env?.NIGHTOWL === 'notoken') return;
         const q = ctx.state.queue, t = turnsAhead(ctx, owner).map(i => q[i]).pop();
         takeToken(ctx, owner, 'Night Owls', ' with 1 more minion on it');
         if (t) t.token = true;

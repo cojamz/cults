@@ -293,7 +293,7 @@ const silver = {
       onAnyGifted(ctx, owner, card, giver, once) {
         const k = once || `${ctx.state.moves}:${giver.id}`;
         if (card.catered === k) return;
-        card.catered = k; ctx.gain(owner, S, 1);
+        card.catered = k; ctx.gain(owner, S, Number(globalThis.process?.env?.CATERER || 1)); // CATERER=n: bot test only (Nov 3)
       },
     }),
     m('majordomo', 'Majordomo', 4, 2, 'Whenever you take a Silver space, +2 silver.', {
