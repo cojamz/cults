@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.532 — 2026-11-03
+
+- Long member names in a crowded swap break at a natural seam (Deprogram-mers) instead of being cut off.
+
 ## v0.99.531 — 2026-11-03
 
 - New pictures for Body Snatchers, Hostesses and Spoilsports
