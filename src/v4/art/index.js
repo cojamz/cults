@@ -5,8 +5,6 @@ import { createElement } from 'react';
 import SETS from './icons/index.js';
 import PORTRAITS from './portraits/index.js';
 import { portraitRuns } from './portrait.js';
-import PORTRAITS3 from './portraits3/index.js';
-import { portrait3Runs } from './portrait3.js';
 import PORTRAITS4 from './portraits4/index.js';
 
 const TABLE = '#101817';
@@ -153,8 +151,7 @@ export const spriteId = name => String(name).normalize('NFD').replace(/[̀-ͯ]/g
 /** The icon for an id (or the first of several candidate ids), or the template for its kind. */
 // the portraits (Cory, 2026-10-28) win over the older 24×24 drawings wherever one is drawn
 const PORTRAIT = new Map(PORTRAITS.map(i => [i.id, { ...i, portrait: true }]));
-// the 48×48 portraits (Cory, 2026-10-29) win over the 32×32 ones wherever one is drawn
-for (const i of PORTRAITS3) PORTRAIT.set(i.id, { ...i, portrait: true, v3: true });
+// the 48×48 portraits (Cory, 2026-10-29) were all redrawn as scenes, so they're gone (Nov 3; git history has them)
 // the little scenes (Cory, 2026-10-29: "definitely little scenes is the way to go") win over those: own colours, any size
 for (const i of PORTRAITS4) PORTRAIT.set(i.id, { ...i, portrait: true, scene: true });
 export function iconFor(id, kind = 'member') {
@@ -175,7 +172,6 @@ export function rectsFor(icon, sphere) {
   const k = `${icon.id}|${sphere}`;
   if (rectCache.has(k)) return rectCache.get(k);
   if (icon.scene) { const out = runsOf(icon.px, icon.pal); rectCache.set(k, out); return out; }
-  if (icon.v3) return portrait3Runs(icon, sphere);
   if (icon.portrait) return portraitRuns(icon, sphere);
   const person = icon.kind === 'member' && !icon.palette;
   const pal = icon.palette ? { ...NEUTRALS, ...icon.palette } : { ...palette(sphere), ...(person ? personPalette(icon.id) : null) };
