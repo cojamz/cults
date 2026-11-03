@@ -7,6 +7,7 @@ import { registerQuadrant, defById } from './index.js';
 import { add1, old1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
 import { add3, old3, handlers3 } from './replace3.js';
+import { add5, old5, handlers5 } from './replace5.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
@@ -278,6 +279,18 @@ const thieves = {
   ],
 
   handlers: {
+    ...handlers5({
+      secondStory(ctx, p, id) {
+        const o = ctx.player(id);
+        if (!o || !stealable(ctx, p, o)) return;
+        startSteal(ctx, p, 'Second-Story Men', 2 + stickyMore(ctx, p), { fromAction: false, only: [o.id] });
+      },
+      vulture(ctx, p, uid, data) {
+        if (uid == null) { ctx.log(`${p.name}'s Vultures: lets it go.`); return; }
+        const name = ctx.card(uid).def.name;
+        if (ctx.claimMember(p, uid)) ctx.log(`${p.name}'s Vultures: steals ${ctx.player(data.from).name}'s ${name} on its way out.`);
+      },
+    }),
     ...handlers3({
       kidnap(ctx, p, uid) {
         const v = ctx.ownerOf(uid);
@@ -385,7 +398,21 @@ const thieves = {
       },
     }),
     // every steal, a member's too (Cory, 2026-10-22 playtest: "it should proc on member recruits (like grifter)")
-    m('sticky', 'Sticky Fingers', 2, 1, 'Your steals take 1 more resource.', { stealMore: 1 }),
+    m('sticky', 'Sticky Fingers', 2, 1, 'Your steals take 1 more resource.', { stealMore: 1, ...old5 }),
+    // REPLACE5 bot test (Nov 3, replacement batch 5): Sticky Fingers' place. 4 magenta + 3 any as a player sees it. Asked
+    // after the round's last placement and before anything is scored (core's allPlaced step, in this round's turn
+    // order): one rival, then which 2 of theirs, through the shared steal (Bodyguards, Lie Low and Hush Money apply;
+    // Desperado adds). Stolen resources keep their color.
+    ...add5(m('secondstory', 'Second-Story Men', 3, 3, 'Round End: before contests are scored, steal 2 resources from one rival.', {
+      onAllPlaced(ctx, owner) {
+        const list = ctx.rivals(owner).filter(o => stealable(ctx, owner, o) > 0);
+        if (!list.length) { ctx.log(`${owner.name}'s Second-Story Men: no rival to steal from.`); return; }
+        if (list.length === 1) { thieves.handlers.secondStory(ctx, owner, list[0].id); return; }
+        ctx.choose(owner, 'Second-Story Men: steal 2 resources from which rival?', list.map(o => ({
+          id: `player:${o.id}`, label: `${o.name} (${stealable(ctx, owner, o)} resources)`, kind: 'player', value: o.id, hint: stealable(ctx, owner, o) * 0.1,
+        })), 'thieves.secondStory');
+      },
+    })),
     // +2 to every steal, spaces and members, no longer double (Cory, Nov 1, 2:27pm: "Yeah, number one is fine")
     m('desperado', 'Desperado', 2, 2, 'While you have the fewest followers (ties count), your steals take 2 more resources.', { ...old2,
       stealMoreIf: (ctx, owner) => (fewestFollowers(ctx, owner) ? 2 : 0),
@@ -438,7 +465,7 @@ const thieves = {
         if (got) ctx.log(`${owner.name}'s Racketeers: took ${got} ${color} from ${winner.name} (${contest.label}).`);
       },
     })),
-    m('doubleagent', 'Double Agent', 3, 4, /* 4 to 8 (Cory, Oct 29: "double agent definitely too cheap", then "can say 8 for now") */  'On Recruit: give this member to a rival and recruit one of theirs.', {
+    m('doubleagent', 'Double Agent', 3, 4, /* 4 to 8 (Cory, Oct 29: "double agent definitely too cheap", then "can say 8 for now") */  'On Recruit: give this member to a rival and recruit one of theirs.', { ...old5,
       onRecruited(ctx, owner, card) {
         // a swap, so Loyalists' "Your other members can’t be swapped" holds (Claude, 2026-10-29, from the bots thread)
         // a swap, never a steal: Bodyguards and Lie Low let it through (Cory, 2026-11-01)
@@ -446,6 +473,20 @@ const thieves = {
         if (list.length) pickMember(ctx, owner, list, 'Double Agent: swap for which member?', 'thieves.doubleAgent', { uid: card.uid });
       },
     }),
+    // REPLACE5 bot test (Nov 3, replacement batch 5): Double Agent's place. 5 magenta + 3 any as a player sees it. A rival's
+    // member leaving their cult for the shop or the bottom of the pile (Promote, Demote, Farewell, Estate Sale, Doormen,
+    // Evictors…); a rival's Bodyguards or Lie Low blocks it. The member is your recruit (its On Recruit fires), as a
+    // stolen member is; the rival keeps what their space paid. The row going to the bottom between rounds doesn't count.
+    ...add5(m('vultures', 'Vultures', 4, 3, "Whenever a rival's member goes to the shop or the bottom of the pile, you may steal it.", {
+      onCultMove(ctx, owner, card, { uid, from, to }) {
+        if (to || !from || from === owner || uid === card.uid || !ctx.canSteal(owner, from, 'member')) return;
+        const c = ctx.card(uid);
+        ctx.choose(owner, `Vultures: ${from.name}'s ${c.def.name} leaves their cult. Steal it?`, [
+          { id: 'steal', label: `Steal ${c.def.name} (${cost(c)})`, kind: 'choice', value: uid, hint: memberHint(c) - (c.def.onJoined ? 8 : 0) },
+          { id: 'none', label: 'Let it go', kind: 'pass', value: null, hint: 0 },
+        ], 'thieves.vulture', { from: from.id });
+      },
+    })),
     m('bigscore', 'Safecracker', 2, 2, 'On Use, once per game: steal half the magenta of the rival with the most, rounded down.', {
       activate: 'game',
       onActivate(ctx, owner) {
@@ -492,11 +533,26 @@ const thieves = {
     }),
     // Cory's #26 "Steal when you buy a member - should be essential to magenta" (Cory's yes, Oct 21)
     m('shoplifter', 'Shoplifter', 3, 3, // 7 (Cory, Oct 30: balance run)
-      'Whenever you recruit, steal 1 resource.', {
+      'Whenever you recruit, steal 1 resource.', { ...old5,
       onRecruit(ctx, owner, card, by, what) {
         if (by === owner && what.member?.uid !== card.uid) startSteal(ctx, owner, 'Shoplifter', 1 + stickyMore(ctx, owner), { fromAction: false });
       },
     }),
+    // REPLACE5 bot test (Nov 3, replacement batch 5): Shoplifter's place. 4 magenta + 2 any as a player sees it. Once per
+    // steal (a steal from several rivals counts once, as Fence pays once), of resources only (a member or loose
+    // followers isn't one), any rival's steal, from you too. The 1 is of a color the thief took, the one they took most
+    // of that they still hold. A steal Jackals makes doesn't set off another Jackals. Bodyguards on the thief blocks it.
+    ...add5(m('jackals', 'Jackals', 3, 2, 'Whenever a rival steals resources, steal 1 of them from that rival.', {
+      onSteal(ctx, owner, card, info) {
+        const thief = info.thief;
+        if (thief === owner || info.jackals || info.uid !== undefined || card.inst === info.instance) return;
+        const col = Object.entries(info.took || {}).filter(([c, k]) => k > 0 && (thief.res[c] || 0) > 0).sort((a, b) => b[1] - a[1])[0]?.[0];
+        if (!col || !ctx.canSteal(owner, thief)) return;
+        card.inst = info.instance;
+        const got = ctx.steal(owner, thief, { take: { [col]: 1 }, jackals: true, give: (n, took) => stash(ctx, owner, took, false) });
+        if (got) ctx.log(`${owner.name}'s Jackals: steals 1 ${col} from ${thief.name}.`);
+      },
+    })),
     // Cory, 2026-10-29: "it's once per steal instance. not per turn, and not per currency taken": a split steal
     // (several rivals) pays 1, a second steal the same turn (after a recruit) pays again
     // Cory, Nov 1 8:25pm: option C ("Whenever a rival steals from you, +2 magenta."; held 25% either way in the

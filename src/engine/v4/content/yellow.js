@@ -6,6 +6,7 @@ import { gainColorOf } from './color-of.js';
 import { startLaunder } from './launder.js';
 import { add1, old1, handlers1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
+import { add5, old5 } from './replace5.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
 const Y = 'yellow';
@@ -242,19 +243,30 @@ export default {
       onColorChosen(ctx, owner, card, member) { matchmaker(ctx, owner, member); },
     }),
     // Cory, 2026-10-31: "i dont like round end. i like on recruit and round start"
-    m('dyer', 'Dyer', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true, ...old1,
+    m('dyer', 'Dyer', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true, ...old1, ...old5,
       onRoundStart(ctx, owner) { ctx.gain(owner, Y, held(ctx, owner).length); },
     }),
     // REPLACE1 bot test (Nov 3, replacement batch 1): Dyer's place. 4 yellow + 2 any as a player sees it. Pick a rival
     // (Bodyguards blocks, as it blocks Dilute), then up to 3 swaps of 1 of yours for 1 of theirs. Customs and Tastemaker
     // read it as changing a rival's resources.
-    ...add1(m('barterers', 'Barterers', 3, 2, "On Recruit and Round Start: swap up to 3 of your resources with one rival's, one for one.", { now: true,
+    ...add1(m('barterers', 'Barterers', 3, 2, "On Recruit and Round Start: swap up to 3 of your resources with one rival's, one for one.", { now: true, ...old5,
       onRoundStart(ctx, owner) {
         const list = touchable(ctx, owner).filter(o => total(ctx, o) > 0);
         if (!list.length || !total(ctx, owner)) { ctx.log(`${owner.name}'s Barterers: nothing to swap.`); return; }
         ctx.choose(owner, 'Barterers: swap with which rival?', list.map(o => ({
           id: `player:${o.id}`, label: o.name, kind: 'player', value: o.id, hint: total(ctx, o) * 0.1,
         })).concat({ id: 'none', label: 'Swap with nobody', kind: 'pass', value: null, hint: -5 }), 'yellow.barterWith');
+      },
+    })),
+    // REPLACE5 bot test (Nov 3, replacement batch 5): the Dyer slot (Barterers' under REPLACE1). 5 yellow + 3 any as a
+    // player sees it. Core runs it after the contests are scored (afterContests): second is the biggest count below the
+    // winners' (below the top count in a contest nobody wins); ties for second each pay; at least 1 of what's counted.
+    ...add5(m('secondfiddles', 'Second Fiddles', 4, 3, 'Round End: +2 followers per contest you come second in.', {
+      afterContests(ctx, owner, card, table) {
+        const seconds = table.filter(c => secondIn(c, owner.id)).map(c => c.label);
+        if (!seconds.length) return;
+        owner.bonus += 2 * seconds.length;
+        ctx.log(`${owner.name}'s Second Fiddles: second in ${seconds.join(', ')}: +${2 * seconds.length} followers.`);
       },
     })),
     // Cory, 2026-10-31: "definitely too expensive" (was 4 + 4); 3 + 1 read strong in both bot runs, so 3 + 2 (Claude, Oct 31 balance run)
@@ -497,4 +509,14 @@ function changeOne(ctx, p, o, a, b, who, instance = newChange(ctx)) {
     const def = ctx.defOf(card);
     if (def.onChanged) def.onChanged(ctx, o, card, p, instance);
   }
+}
+
+/** Second Fiddles (REPLACE5): is player `id` second in scored contest c (contestTable's row)? */
+function secondIn(c, id) {
+  const score = pid => c.rows.find(r => r.player === pid)?.score ?? 0;
+  const top = c.winners.length ? Math.min(...c.winners.map(score)) : Math.max(0, ...c.rows.map(r => r.score));
+  const below = c.rows.filter(r => r.score > 0 && r.score < top && !c.winners.includes(r.player));
+  if (!below.length) return false;
+  const second = Math.max(...below.map(r => r.score));
+  return below.some(r => r.player === id && r.score === second);
 }

@@ -9,6 +9,7 @@ import { CUT, CUT10, FULL_DECK } from './content/cull.js';
 import { pileRules } from './piles.js';
 import { startEffects, stopEffects, abandonEffects, underCause, markEffect } from './effects.js';
 import { REPLACE4 } from './content/replace4.js';
+import { REPLACE5 } from './content/replace5.js';
 
 export const RING_VALUE = [4, 6, 10];
 export const WORKERS = [3, 4, 5];
@@ -1036,6 +1037,8 @@ function endRound(state) {
   log(state, `Round ${roman(state.round)} ends. ${msg.join(' · ') || 'No one scored.'}`);
   // members that answer a rival winning a contest (Racketeers, REPLACE1 bot test), each winner of each contest
   for (const c of table) for (const id of c.winners) eachMember(state, (owner, card, def) => { if (def.onRivalContestWin && owner.id !== id) def.onRivalContestWin(ctx, owner, card, state.players[id], c); }, ['onRivalContestWin']);
+  // members that read the scored contests (Second Fiddles, REPLACE5 bot test), in this round's turn order
+  if (REPLACE5) for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.afterContests) def.afterContests(ctx, state.players[id], card, table); }, ['afterContests']);
   // Late Shoppers (REPLACE4 bot test: flag roundEndBuy): one recruit each, in this round's order, after the contests
   // and before the row goes to the bottom (in round III, before the Game End cards count)
   if (REPLACE4) {
@@ -2033,6 +2036,19 @@ function ctxFor(state) {
       return true;
     },
     turnKey: () => turnKey(state),
+    /** Vultures (REPLACE5 bot test): p steals a member just sent to the shop or the pile; it is p's recruit (its On
+     *  Recruit fires), as a stolen member is. False when it isn't there any more. */
+    claimMember(p, uid) {
+      const lists = [state.shop, state.pile, ...Object.values(state.supply || {})], list = lists.find(l => l.includes(uid));
+      if (!list) return false;
+      list.splice(list.indexOf(uid), 1);
+      state.cards[uid] = { uid, def: state.cards[uid].def };
+      p.members.push(uid);
+      if (list === state.shop) refill(state);
+      memberAcquired(state, p, uid, { stolen: true });
+      memberJoined(state, p, uid);
+      return true;
+    },
     /** Outbidders (REPLACE4 bot test): the holder asked lets the buyer's recruit go ahead, or outbids it (askOutbid). */
     outbidLet: data => outbidLet(state, data),
     outbidTake: (o, data) => outbidTake(state, o, data),
@@ -2096,7 +2112,7 @@ function ctxFor(state) {
       if (fx) { victim.bonus -= fx; thief.bonus += fx; n += fx; }
       if (!n) return 0;
       if (what.give) what.give(n, took);
-      const info = { thief, victim, took, uid: what.uid, n, reaction: !!what.reaction, instance: what.instance ?? ctx.stealInstance(), ...(what.led !== undefined ? { led: !!what.led } : {}), ...(fx ? { followers: fx } : {}) };
+      const info = { thief, victim, took, uid: what.uid, n, reaction: !!what.reaction, instance: what.instance ?? ctx.stealInstance(), ...(what.led !== undefined ? { led: !!what.led } : {}), ...(fx ? { followers: fx } : {}), ...(what.jackals ? { jackals: true } : {}) };
       for (const qid of state.quadrants) { const q = quadrant(qid); if (q.onSteal) q.onSteal(ctx, info); }
       eachMember(state, (owner, card, def) => { if (def.onSteal) def.onSteal(ctx, owner, card, info); }, ['onSteal']);
       return n;

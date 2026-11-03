@@ -15,6 +15,7 @@
 import { defById, spacesOf } from './index.js';
 import { REPLACE1, add1, old1 } from './replace1.js';
 import { add3, old3, handlers3 } from './replace3.js';
+import { add5, old5 } from './replace5.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const P = 'purple';
@@ -555,7 +556,18 @@ export default {
     }),
     // Cory's Purple members (2026-10-22); names are Claude's fill-ins; prices are the pricing thread's educated guesses
     m('earlybird', 'Early Birds', 2, 0, 'Your turns can’t be skipped.', { f: 2, noSkip: true }), // (Cory, Oct 29, balance run: +1 follower)
-    m('bouncer', 'Bouncers', 1, 2, 'On Recruit: the next two rivals’ turns are skipped.', { f: 2,
+    // REPLACE5 bot test (Nov 3, replacement batch 5): Bouncers' place. 6 purple + 3 any as a player sees it. Every +1
+    // minion a rival gets (Crowd In, Night Owls, Go-Getter, Extra Hand, Overtime…: the purple helpers' onRivalExtraTurn)
+    // gives you one, placed after everyone else's, while the board has a spare space (none in round I). A minion from
+    // Tagalongs doesn't set off another Tagalongs.
+    ...add5(m('tagalongs', 'Tagalongs', 5, 3, 'Whenever a rival gets +1 minion, you get +1 minion too.', {
+      onRivalExtraTurn(ctx, owner) {
+        if (ctx.state.tagalong) return;
+        ctx.state.tagalong = true;
+        try { extraMinion(ctx, owner, 'Tagalongs'); } finally { delete ctx.state.tagalong; }
+      },
+    })),
+    m('bouncer', 'Bouncers', 1, 2, 'On Recruit: the next two rivals’ turns are skipped.', { f: 2, ...old5,
       // the next two turns that belong to rivals; your own turn between them still happens (Cory's yes)
       onRecruited(ctx, owner) {
         const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');
@@ -590,9 +602,20 @@ export default {
     }),
     // Cory, 2026-10-23: "its when you place THE last minion of the round. so it benefits folks going last"
     // Cory, 2026-10-24: "go deep card for every color" ("sure for now"); name and price Claude's fill-in, priced like Chronicler
-    m('timekeepers', 'Timekeepers', 1, 2, 'Game end: +1 follower per purple member you have.', {
+    m('timekeepers', 'Timekeepers', 1, 2, 'Game end: +1 follower per purple member you have.', { ...old5,
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'purple'),
     }),
+    // REPLACE5 bot test (Nov 3, replacement batch 5): Timekeepers' place. 4 purple + 2 any as a player sees it. Counted
+    // at round end before the contests: every minion of yours on a space (one joining a rival's space too); a minion
+    // that sat out for want of a space isn't on the wheel.
+    ...add5(m('fullhouse', 'Full House', 3, 2, 'Round End: if you have more minions on the wheel than every rival, +1 follower per minion you have there.', {
+      onRoundEnd(ctx, owner) {
+        const mine = onBoard(ctx, owner);
+        if (!mine || ctx.rivals(owner).some(o => onBoard(ctx, o) >= mine)) return;
+        owner.bonus += mine;
+        ctx.log(`${owner.name}'s Full House: ${mine} minions on the wheel, more than every rival: +${mine} followers.`);
+      },
+    })),
     m('closer', 'Closer', 2, 2, 'When you place the last minion of the round: +4 purple.', {
       afterAction(ctx, owner, card) {
         if (card.paidRound === ctx.state.round || ctx.state.players.some(o => o.left > 0)) return;
