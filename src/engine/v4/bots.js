@@ -489,13 +489,15 @@ function liquidate(s, res, extra, buys, wild) {
   const n = s.players.length;
   const used = {};
   let got = 0;
-  const tiers = [...TIERS].sort((a, b) => b.get - a.get);
+  const tiers = TIERS_BY_GET;
+  // the pool's total, added in its key order (as sum() did)
+  const poolSum = () => { let t = 0; for (const k of keys) t += pool[k]; return t; };
   for (let b = 0; b < buys; b++) {
     let bought = false;
     for (const t of tiers) {
       // a fair share of a limited stock: the rest will likely go to rivals (so a scarce buy is worth taking now)
       if (t.limited && (used[t.key] || 0) >= Math.floor(tierLeft(s, t) / n)) continue;
-      if (sum(pool) < t.cost - 1e-9) continue;
+      if (poolSum() < t.cost - 1e-9) continue;
       const plain = keys.filter(k => !wild.has(k) && pool[k] >= 1).sort((x, y) => pool[y] - pool[x]);
       const wilds = keys.filter(k => wild.has(k));
       if (plain.length + wilds.reduce((a, k) => a + Math.floor(pool[k]), 0) < t.colors) continue;
@@ -512,8 +514,9 @@ function liquidate(s, res, extra, buys, wild) {
     }
     if (!bought) break;
   }
-  return got + 0.2 * Math.min(2, sum(pool));
+  return got + 0.2 * Math.min(2, poolSum());
 }
+const TIERS_BY_GET = [...TIERS].sort((a, b) => b.get - a.get);
 
 // Expected followers from this round's ring contests, given who leads each one now.
 // table: every player's score per contest, shared by one evaluate's players (scores are pure reads of the state; the
