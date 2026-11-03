@@ -561,10 +561,15 @@ function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null) 
 // Followers members will pay at game end if it ended now (Tycoon, Patriarch…).
 function gameEndPay(s, ctx, p) {
   let out = 0;
-  for (const c of ctx.membersOf(p)) for (const id of [c.def.id, c.copy, c.ability].filter(Boolean)) {
-    const d = defById(id);
-    if (!d.onGameEnd) continue;
-    try { out += d.onGameEnd(ctx, p, c) || 0; } catch { /* estimate only */ }
+  // each member's card read straight from the state; the live view (ctx.card) is made only for a member that pays
+  for (const uid of p.members) {
+    const card = s.cards[uid];
+    for (const id of [cardDef(s, uid).id, card.copy, card.ability]) {
+      if (!id) continue;
+      const d = defById(id);
+      if (!d.onGameEnd) continue;
+      try { out += d.onGameEnd(ctx, p, ctx.card(uid)) || 0; } catch { /* estimate only */ }
+    }
   }
   // what rivals' members take from p at game end (Creditors, REPLACE3 bot test: endHit reads it)
   if (REPLACE3) for (const o of s.players) if (o !== p) for (const c of ctx.membersOf(o)) for (const id of [c.def.id, c.copy, c.ability].filter(Boolean)) {
