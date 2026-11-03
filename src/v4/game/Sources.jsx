@@ -56,7 +56,7 @@ export default function FollowerBars({ state, meId, ranks = null }) {
       {rowsWithParts.map(({ p, s, poss, n, bars, lost }, k) => (
         <div key={p.id} className={`src-row${k === 0 ? ' first' : ''}`} data-src-row={p.id} data-total={s.total}>
           <span className="rank num">{ranks ? ranks[k] : k + 1}</span>
-          <span className="src-who"><Who state={state} id={p.id} meId={meId} />{p.kind === 'bot' ? ' · bot' : ''}
+          <span className="src-who"><span><Who state={state} id={p.id} meId={meId} />{p.kind === 'bot' ? ' · bot' : ''}</span>
             <small data-members={p.id}>{plural(n, 'member')}{s.lean ? ` · mostly ${cname(s.lean).toLowerCase()}` : ''}</small></span>
           <span className="src-track">
             <span className="src-bar" style={{ width: `${(100 * bars.reduce((t, g) => t + g.n, 0)) / max}%` }}>
