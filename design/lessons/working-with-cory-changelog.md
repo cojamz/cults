@@ -56,3 +56,4 @@ Why each rule in .claude/rules/working-with-cory.md exists, in Cory's words. Mov
 - 2026-11-01: Cory: the 10-card deck is the game; 15 stays a setting, untested. Balance runs no longer ask which deck.
 - 2026-11-02: Cory, "super brief. go even more concise": messages aim for 1 or 2 lines, card text and the ask only.
 - 2026-11-02: Weekly review, Cory said "ok" to both: a fresh reader for every message (six message corrections that week) and build only what he said ("why'd you change that? they should be kept as is", a repeat of Oct 21's Crunch Time). Now presend step 5 and card-diff.mjs.
+- 2026-11-03 · Pitch quality, second time ("those principles are terrible"): every card in a pitch meets Cory's bar in writing (intuitive, fun, interacts, worth the turn); presend now refuses a linked pitch file whose examples lack those lines.
