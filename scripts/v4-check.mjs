@@ -19,6 +19,7 @@ import { join, resolve } from 'node:path';
 import { availableParallelism, loadavg } from 'node:os';
 import { runChild, exitOf, VITE, VITEST, portBusy, busyMessage, servePreview, removeOnExit, removeNow } from './lib/procs.mjs';
 import { acquireSlot, acquire, E2E_TOKENS, SLOTS, recordRun, RUNS } from './lib/slots.mjs';
+import { keysFor, passedKeys, recordPasses, testFilesUnder } from './lib/unit-cache.mjs';
 
 const HELP = `npm run check:v4 [-- options]
 
@@ -41,6 +42,10 @@ const HELP = `npm run check:v4 [-- options]
   --firefox            The browser gates in Firefox (V4_ENGINE=firefox) instead of Chromium; CDP-only gates are named
                        and skipped. Run it for any screen, motion or perf change: Cory plays Firefox on a Mac.
   --help               This.
+
+  Unit-test reuse: a whole-suite run skips each test file whose inputs (the file, all it imports, the lockfile, the
+  games level, the env it reads) match an earlier passing --commit run's (scripts/lib/unit-cache.mjs), and names how
+  many. --full and V4_FRESH=1 run everything.
 
   V4_OUTDIR=.v4-build-<name>  build dir (default .v4-build; inside the export with --commit)
   V4_PORT=<5281+>             preview port for the e2e (default 5180); refused up front if anything answers there
@@ -172,10 +177,36 @@ const workers = Number(process.env.V4_UNIT_WORKERS) || availableParallelism();
 // --quick leaves out the coverage gates that play their full sample even on the fast slice (they gate verdicts)
 const QUICK_SKIP = ['**/fire-audit.test.js', '**/truth/contest-truth-*.test.jsx', '**/records.test.js'];
 if (tests) console.log(`SCOPED TEST SELECTION (${tests.length} files): ${tests.join(', ')}; no whole-suite coverage claim.`);
+// Reuse (scripts/lib/unit-cache.mjs): a whole-suite run skips each test file whose every input (the file, everything it
+// imports, the lockfile, the games level, the env it reads) matches an earlier passing verdict's, and says how many.
+// --full and V4_FRESH=1 run everything; only --commit runs record passes (a live tree can change under a run).
+const reuse = !tests && !related && !full && !process.env.V4_FRESH;
+let unitKeys = {}, reused = [];
+let unitFiles = null;
+if (reuse) {
+  const skip = quick ? [/\/fire-audit\.test\.js$/, /\/truth\/contest-truth-[^/]*\.test\.jsx$/, /\/records\.test\.js$/] : [];
+  const all = testFilesUnder(root, ['src/test/engine/v4', 'src/test/v4']).filter(f => !skip.some(r => r.test(f)));
+  try { unitKeys = keysFor(root, all, { games: games || 'verdict' }); } catch (err) { console.log(`unit reuse off: ${err.message}`); unitKeys = {}; }
+  const passed = passedKeys(root);
+  reused = all.filter(f => unitKeys[f] && passed.has(unitKeys[f]));
+  unitFiles = all.filter(f => !reused.includes(f));
+  if (reused.length) console.log(`unit tests: ${reused.length} of ${all.length} files reused from an earlier passing verdict on identical inputs; running ${unitFiles.length} (V4_FRESH=1 runs all)`);
+}
 const unitArgs = tests ? [VITEST, 'run', ...tests, `--maxWorkers=${workers}`] : related
   ? [VITEST, 'related', '--run', ...related, `--maxWorkers=${workers}`, '--passWithNoTests']
+  : unitFiles ? [VITEST, 'run', ...unitFiles, `--maxWorkers=${workers}`, '--passWithNoTests']
   : [VITEST, 'run', 'src/test/engine/v4', 'src/test/v4', `--maxWorkers=${workers}`, ...(quick ? QUICK_SKIP.flatMap(g => ['--exclude', g]) : [])];
-const unit = run('unit tests', unitArgs, { nice: 10, env: games ? { V4_GAMES: games } : {}, tail: 2500, limitS: full ? 7200 : 2400 });
+const unit = (unitFiles && !unitFiles.length
+  ? Promise.resolve((() => { const r = { name: 'unit tests', ok: true, s: 0, start: 0, output: `all ${reused.length} files reused` }; results.push(r); console.log(`\n── PASS unit tests (all ${reused.length} files reused) ──`); return r; })())
+  : run('unit tests', unitArgs, { nice: 10, env: games ? { V4_GAMES: games } : {}, tail: 2500, limitS: full ? 7200 : 2400 }))
+  .then(r => {
+    // a verdict on a commit records each file that passed, by its key
+    if (sha && reuse && r.output) {
+      const ok = [...r.output.replace(/\x1b\[[0-9;]*m/g, '').matchAll(/^ ✓ (src\/\S+) \(/gm)].map(m => m[1]);
+      try { recordPasses(root, ok.filter(f => unitKeys[f]).map(f => ({ file: f, key: unitKeys[f] })), { sha: sha.slice(0, 7), games: games || 'verdict' }); } catch { /* the record is a speed-up only */ }
+    }
+    return r;
+  });
 // 2. the build (COMMIT_REF stamps it with the exported commit (vite.config.js), not whatever HEAD the live tree has)
 const built = await run('production build', [VITE, 'build', '--outDir', outDir, '--emptyOutDir'], { env: sha ? { COMMIT_REF: sha } : {}, tail: 300, limitS: 900 });
 
