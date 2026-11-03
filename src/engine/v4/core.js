@@ -1062,11 +1062,11 @@ export function scoringOf(state, qid) {
   if (mode === 'byColor') {
     // A different contest per color (Cory, 2026-11-02: "they should all have different goals"; set in
     // /mnt/project-files/ring-goals/by-color.md). Each is won by taking that color's own spaces.
-    const cost = u => { const d = cardDef(state, u); return (d.s || 0) + (d.w || 0); };
     const fewest = { label: 'Fewest members', counts: 'your members when the round ends (at least 1)',
       score: (ctx, p) => { const n = memberCount(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: memberCount(state, p) }) };
     const by = {
-      red: { label: 'Priciest member', counts: 'the cost of your priciest member when the round ends', score: (ctx, p) => Math.max(0, ...p.members.map(cost)) },
+      // Red keeps its printed contest, most red (Claude, under Cory's "use your judgement", Nov 3): "Priciest member" went
+      // to whoever bought Mob (82% of round IIIs, Normal bots) and red cults won 52% where 21% was even.
       market: { label: 'Most members', counts: 'your members when the round ends', score: (ctx, p) => memberCount(state, p) },
       trading: fewest,
       thieves: { label: 'Most resources', counts: 'all the resources you hold when the round ends, every color together', score: (ctx, p) => state.resources.reduce((n, r) => n + (p.res[r] || 0), 0) },

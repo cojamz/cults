@@ -26,7 +26,7 @@ describe('Why rows', () => {
     while (s.pending?.kind === 'buy') s = move(s, 'pass');
     const p = pv(s, 'echo.echo');
     const line = p.reasons.find(l => l.startsWith('Impressionist'));
-    expect(line).toBe('Impressionist: +2 green, +2 gold');
+    expect(line).toBe('Impressionist: +1 green, +1 gold');
   });
 });
 

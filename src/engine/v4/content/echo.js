@@ -18,8 +18,8 @@ import { registerQuadrant, allQuadrantIds, quadrant, defById, spacesOf } from '.
 import { add2, old2, handlers2 } from './replace2.js';
 import { add3, old3, handlers3 } from './replace3.js';
 
-// IMPRESSIONIST=n: bot test only (Nov 3); the game pays 2 (Cory, Nov 1)
-const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 2);
+// IMPRESSIONIST=n: bot test only; the game pays 1 (Claude, under Cory's "use your judgement", Nov 3; was 2, Cory Nov 1)
+const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 1);
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const costOf = def => def.s + def.w;
 
@@ -602,7 +602,7 @@ const echoQ = {
       toggle: true,
       onRecruited(ctx, owner, card) { card.on = true; },
     }),
-    m('tuningfork', 'Impressionist', 1, 2, 'Whenever any player copies an action, +2 of its color.'),
+    m('tuningfork', 'Impressionist', 1, 2, 'Whenever any player copies an action, +1 of its color.'),
     // Cory, 2026-10-28: back as a big card at 10 (6 green + 3 any + the +1 wild); no follower condition any more
     m('wallflower', 'Wallflower', 6, 3, 'Whenever you copy an action, double the resources it gives you.', old2),
     // REPLACE2 bot test (Nov 3, replacement batch 2): Wallflower's place. 6 green + 3 any as a player sees it. Any color on

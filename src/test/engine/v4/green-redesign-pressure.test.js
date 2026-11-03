@@ -69,7 +69,7 @@ describe('Green redesign: copied copy actions and continuation safety', () => {
     s = go(s, 'gold.rush');
     expect(s.players[1].res.gold).toBe(3);
     s = pass(choose(take(s, 'echo.echo'), 'gold.rush'));
-    expect(s.players[0].res).toMatchObject({ gold: 4, green: 1 }) // Impressionist +2 of its color (Cory, Nov 1);
+    expect(s.players[0].res).toMatchObject({ gold: 3, green: 1 }) // Impressionist +1 of its color (Nov 3; was +2);
   });
 
   // Greatest Hits copies On Recruits since Nov 1: its sibling-path and nested-remainder checks went with its action
