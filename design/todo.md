@@ -41,10 +41,10 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 9. Seat pass: minions, follower number, resources and rivals' engines readable at a glance. Show Cory 2 mockups first.
 
 ## Lag and motion (ours: engineering never waits on Cory; judge on the freeze probe in Chrome and Firefox)
-- Click speed bar: clicks p95 155-175 ms at 4x CPU (v0.9.956) vs the 100 ms bar. Next steps in order: design/notes/click-speed-plan-2026-11-01.md "Status, Nov 1 5:50am" (answer first in your own click; endless animations need Cory's call). Also fix or retire scripts/v4-perf.mjs (stale).
+- Click speed bar: answer first shipped v0.99.519 (choose clicks p90 211 → 162 ms; notes "Nov 3" in the plan file). Clicks p95 ~200 ms at 4x CPU vs the 100 ms bar. Next steps in order: design/notes/click-speed-plan-2026-11-01.md "Status, Nov 1 5:50am" (answer first in your own click; endless animations need Cory's call). Also fix or retire scripts/v4-perf.mjs (stale).
 - Wheel in Firefox: one ~180 ms hitch the first time the rim's words flip; 100-130 ms frames as a spin starts on slowed Firefox. Only if Cory says it still drags.
 - Smoothness panel leftovers (/mnt/project-files/smooth-panel/plan.md): the wheel's landing re-lay (lay out only panels whose upright side flips), scoringSnapshot cache, income line keyed by members, preview cap by time.
-- Snappy pair next (Claude's): bots off the main thread (worker), one animation clock + piece pool, acknowledgment/frame bars in the snappy gate, cult-hop filter. design/eval/snappy-pair/README.md.
+- Snappy pair next (Claude's; bots in a worker and the frame loop are done since Oct 25): acknowledgment/frame bars in the snappy gate, cult-hop filter. design/eval/snappy-pair/README.md.
 - React commits 80-130ms at 4x CPU; seat re-renders as cards land; hover "a tiny bit wonky"; linger motion starts late. Leftovers: design/eval/perf/lag-2026-10-21.md.
 - Smooth play, next (ours, no call needed): tuning pass (structural sharing after applyMove, keep idle loops through shows instead of the data-chain rule, rect reads once per chain), then the staged show layer (design/eval/perf/smooth-proposal.md). Measure each with scripts/v4-rig.mjs.
 - Re-port minion-on-press and the compositor wheel spin (/mnt/project-files/handoff/speed/) onto today's wheel.

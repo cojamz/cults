@@ -83,3 +83,16 @@ still showing the step before (deferred). A dropped click is worse than a slow o
 So the wheel is the part worth deferring and the one part that can't be. Next idea, if this lane reopens: the wheel's
 own clicks read the fresh state (legal, slots) through a ref while its drawing is deferred, then rerun benders b1 ten
 times. (benders b4, Straggler's "Stay put", is red on live v0.9.956 too: red-gates lane.)
+
+### Nov 3: answer first shipped (v0.99.519, thread "Make clicks answer faster")
+- The Nov 1 "dropped click" in benders b1 was the test's own fallback clicking the squat first; fixed in the test (8 of 8).
+- The rig and freeze probe never finished round III: a shop card's hover card sits over the wheel and the pointer jumped
+  onto it. Both now move off the card first; the rig saves a screenshot, the save and why each press did nothing
+  (window.__rigWhy, reasons logged by GameScreen onPick and Wheel tap) when it gets stuck.
+- useDeferredValue drew the whole table twice after every step (buys 188 → 236 ms). Now held by hand, only for your own
+  answer to a choice; released by a plain update in the next frame (a transition, starved by bot steps, kept 43-77 old
+  states alive in React's queue: memory gate).
+- Paired rig, 3 games each, 4x CPU (design/eval/perf/nov3f): choose median 98 → 80, p90 211 → 162; all clicks median
+  144 → 133. Freeze probe (nov3-freeze): Chrome worst wait 333 → 185 ms; Firefox passes both.
+- Still open: buys right after an answered choice pay for the table's catch-up when clicked within a frame or two (the rig
+  clicks that fast, people don't); placements and buys are untouched. Clicks p95 still ~200 ms at 4x vs the 100 bar.
