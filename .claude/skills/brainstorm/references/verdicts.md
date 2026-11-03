@@ -56,3 +56,5 @@ Each one has drawn a no. Run every idea past all of them.
 - Say what changes for a player in one line, in game words.
 - Your numbers are fill-ins; label them. He changes numbers by feel.
 - He often answers with his own idea. His answer replaces yours unless he says "also"; build his exactly, and if his has a gap, ask about the gap, don't redesign it.
+
+19. **A member that upgrades one shared space.** Nov 3, replacement principles ("your Crime Wave steals from two rivals", "your Echo copies two", "your Largesse gives up to 15") → "those principles are terrible. if you spend a turn to buff your crime wave, you've wasted a turn and somebody else is going to take crime wave… keeping track of who gets bonus what on which square is not great." Check: a member must pay off without winning one particular contested space, and must not leave per-space bonuses for the table to track. His own bar for every card: intuitive and easy to understand, fun to play, interacts with its color, other colors, or both.
