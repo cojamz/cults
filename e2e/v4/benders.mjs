@@ -99,6 +99,9 @@ try {
       // (GameScreen onPick), and under load the click landed inside it (Nov 1)
       await page.waitForFunction(() => { const g = document.querySelector('.app.game'); return g && !g.hasAttribute('data-animating') && g.dataset.presentationMoves === g.dataset.moves; }, null, { timeout: 8000, polling: 50 }).catch(() => {});
       await page.waitForTimeout(450);
+      // the table may have moved on while it settled (a rival's step, or the round's end): no offer, nothing to judge;
+      // look again on the next pass
+      if (!(await page.$(`.app.game .slot[data-option="squat:${key}"]`))) { seen.delete('squat'); continue; }
       const before = await page.$eval('.app.game', e => e.dataset.moves);
       const base0 = await page.$(`.slot[data-slot="${key}"] .base`);
       const bb = await base0.boundingBox();
@@ -180,7 +183,9 @@ try {
 
     // otherwise: the first answer in page order (lib/answer.mjs: board picks, pairs, the pay sheet; never a toggle or
     // Back), and no more releases after the first
-    const did = await answerChoice(page, { avoid: ['release:'] });
+    // (never a squat until b1 has judged one: the fallback took the joinable space in the pass where b1's own look came a
+    // moment before it lit, and b1 then found it already taken, "did nothing" (Nov 3))
+    const did = await answerChoice(page, { avoid: seen.has('squat') ? ['release:'] : ['release:', 'squat:'] });
     await page.waitForTimeout(did ? 60 : 80);
   }
   if (!(await page.$('.results'))) errors.push('the game did not finish');
