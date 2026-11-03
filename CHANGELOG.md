@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.520 — 2026-11-03
+
+- Night Owls: its one more minion is placed right away, instead of after everyone else's.
+
 ## v0.99.519 — 2026-11-03
 
 - Clicks answering a choice (a steal, a gift, a pick) show their answer sooner; the rest of the table follows a frame later.
