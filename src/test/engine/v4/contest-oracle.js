@@ -40,6 +40,8 @@ export function oracleTiebreak() { return null; }
 export function oracleWinners(state, qid) {
   const rows = state.players.map(p => ({ id: p.id, c: oracleCount(state, qid, p) }));
   if (rows.some(r => r.c == null)) return null;
+  // Spoilsports (live Nov 3): "Round End: choose a contest you don't lead; nobody wins it this round."
+  if (state.spoiled?.round === state.round && state.spoiled.list.some(x => x.qid === qid)) return [];
   const best = Math.max(...rows.map(r => r.c));
   const top = best > 0 ? rows.filter(r => r.c === best).map(r => r.id).sort((a, b) => a - b) : [];
   // Tiebreaker (guest, Cory 2026-10-21): "Ties you're in go to you alone" when exactly one tied player holds one

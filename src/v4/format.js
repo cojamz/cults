@@ -554,7 +554,7 @@ export function toStanding(c) {
   const lead = rows.find(r => leaders.includes(r.id));
   const next = rows.find(r => !leaders.includes(r.id));
   const margin = leaders.length === 1 && next ? lead.shown - next.shown : 0;
-  return { qid: c.qid, label: c.label, rule: lowColor(c.rule || shortLabel(c.label)), counts: c.counts || null, tiebreak: c.tiebreak || null, prize: c.prize, rows, leaders, margin, top: rows[0] ? rows[0].score : 0 };
+  return { qid: c.qid, label: c.label, rule: lowColor(c.rule || shortLabel(c.label)), counts: c.counts || null, tiebreak: c.tiebreak || null, prize: c.prize, rows, leaders, margin, top: rows[0] ? rows[0].score : 0, ...(c.spoiled != null ? { spoiled: c.spoiled } : {}) };
 }
 /** Every quadrant's contest if the round ended now, from the engine. */
 export function standings(state) {

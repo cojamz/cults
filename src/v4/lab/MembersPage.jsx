@@ -43,7 +43,7 @@ function catalog() {
       id, name: q.name, line: sphereLine(id), redone: sphereVersion(id) === '2.0',
       rim: q.scoring ? `${ruleWords(id, q.scoring.label)}: ${q.scoring.counts}` : '',
       actions: [...q.actions].sort((a, b) => a.ring - b.ring),
-      members: q.members.filter(d => !CUT.has(d.id) && !d.artifact && !artifactIds.has(d.id)).sort(byPrice),
+      members: q.members.filter(d => !CUT.has(d.id) && !d.retired && !d.artifact && !artifactIds.has(d.id)).sort(byPrice),
       artifact: ARTIFACTS[id] ? q.members.find(d => d.id === ARTIFACTS[id]) : null,
     };
   });

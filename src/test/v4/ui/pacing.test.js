@@ -107,7 +107,14 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     expect(pair).toBeLessThanOrEqual(2.6);
     // the old Steady's p50 on these games was 1541ms (2026-10-15); "a little slower" was about a fifth more, until rivals'
     // follower buys moved to the rival pace too (Cory, 2026-10-28: 1565ms): a floor so the table never collapses to a blur
-    expect(s).toBeGreaterThan(1541 * 0.95);
+    // (Claude, Nov 3: the four replacements that went live, Body Snatchers in Triplets' seat above all, moved these seeded
+    // games' round III to fewer recruit turns, p50 1753 -> 1370ms with every turn the same length at each speed; content,
+    // not faster motion.) The floor now rides on the same turn at Quick, which no change of cards moves: Steady stays
+    // at least twice Quick turn by turn (2.28 on this mix), plus an absolute floor under the new mix.
+    expect(s).toBeGreaterThan(1300);
+    const slow = pct(steady.map((x, i) => x / quick[i]).filter(Number.isFinite), 0.5);
+    console.log(`[pacing] the same turn, Steady/Quick p50 ${slow.toFixed(2)}`);
+    expect(slow).toBeGreaterThanOrEqual(2);
     expect(q).toBeLessThan(s);
   });
 });

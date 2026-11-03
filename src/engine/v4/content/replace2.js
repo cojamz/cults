@@ -3,7 +3,9 @@
 //   red.twins (Triplets) -> red.bodysnatchers, echo.wallflower -> echo.mirrorimage, thieves.desperado -> thieves.skimmers,
 //   market.shopaholic -> market.doorbusters, yellow.ringleader -> yellow.nightmarket, silver.gala (Debutantes) ->
 //   silver.fundraisers, silver.smoothtalker -> silver.hushmoney, benders.scout (Scouts) -> benders.spoilsports.
-// Unset, the new cards are never defined and nothing in the game changes.
+// Live since Nov 3 (Claude, under Cory's "use your judgement"): Body Snatchers and Spoilsports are always on and
+// Triplets and Scouts always retired, with or without the switch (red.js and benders.js print them without add2/old2).
+// Unset, the other six new cards are never defined and their old cards stay.
 export const REPLACE2 = globalThis.process?.env?.REPLACE2 === '1';
 /** The new card, in its color's member list only under the switch. */
 export const add2 = card => (REPLACE2 ? [card] : []);
@@ -11,3 +13,5 @@ export const add2 = card => (REPLACE2 ? [card] : []);
 export const old2 = REPLACE2 ? { retired: true } : {};
 /** Handlers the new cards use, registered only under the switch. */
 export const handlers2 = hs => (REPLACE2 ? hs : {});
+/** The new cards of this batch that are in the live game (always on, their old cards always retired). */
+export const LIVE2 = ['red.bodysnatchers', 'benders.spoilsports'];

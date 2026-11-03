@@ -12,8 +12,8 @@ const acquire = (s, id) => contextFor(s).recruit(s.players[0], uidIn(s, id, 'sho
 
 describe('new Red member hooks', () => {
   it('deals exactly thirteen ordinary Red members, with the approved printed bodies and prices', () => {
-    expect(quadrant('red').members.filter(d => !CUT.has(d.id))).toHaveLength(13);
-    for (const [id, s, w, f] of [['volunteer', 0, 0, 1], ['twins', 1, 1, 3], ['panel', 4, 2, 3], ['mob', 7, 4, 4], ['loyalists', 2, 2, 3]]) {
+    expect(quadrant('red').members.filter(d => !CUT.has(d.id) && !d.retired)).toHaveLength(13);
+    for (const [id, s, w, f] of [['volunteer', 0, 0, 1], ['bodysnatchers', 3, 2, 2], ['panel', 4, 2, 3], ['mob', 7, 4, 4], ['loyalists', 2, 2, 3]]) {
       expect(defById(`red.${id}`)).toMatchObject({ s: s + COLOR_SHIFT, w: w + EXTRA_WILD - COLOR_SHIFT, f }); // Nov 2: 1 of the wild is paid in the member's color
     }
     const s = fixture({ members: [['red.mob', 'red.panel']] });

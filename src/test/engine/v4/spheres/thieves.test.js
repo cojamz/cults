@@ -1,6 +1,7 @@
 // @vitest-environment node
 // Magenta (thieves): every action and every member, with exact numbers. Plus 200 seeded bot games.
 // Stolen resources keep their colors; every Magenta action gives +1 magenta; the ring goes to most magenta held.
+import { STRAYS, stray } from '../stray.js';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createGame, applyMove, resume, followers, contextFor } from '../../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../../engine/v4/bots.js';
@@ -43,7 +44,7 @@ function scene({ n = 3, seed = 7, round = 1, res = [], members = [], shop = SHOP
   Object.assign(s, { queue: [], pending: null, round, slots: {}, order: [], log: [] });
   s.players.forEach((p, i) => { p.res = { ...Z, ...(res[i] || {}) }; p.bonus = bonus[i] || 0; p.left = 3; });
   s.pile = [...s.shop, ...s.pile]; s.shop = [];
-  const grab = def => { const k = s.pile.findIndex(u => s.cards[u].def === def); if (k < 0) throw new Error(def); return s.pile.splice(k, 1)[0]; };
+  const grab = def => { const k = s.pile.findIndex(u => s.cards[u].def === def); if (k < 0) { if (!STRAYS.has(def)) throw new Error(def); return stray(s, def); } return s.pile.splice(k, 1)[0]; };
   members.forEach((list, i) => { for (const d of list || []) s.players[i].members.push(grab(d)); });
   for (const d of shop) s.shop.push(grab(d));
   s.queue = queue || [{ t: 'turn', p: turn }];

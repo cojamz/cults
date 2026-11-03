@@ -32,7 +32,7 @@ function otherColors(state) {
   const ids = allQuadrantIds().filter(id => !state.quadrants.includes(id) && !quadrant(id).standIn);
   const others = [], otherRows = [];
   for (const id of ids) {
-    const q = quadrant(id), defs = q.members.filter(d => !CUT.has(d.id) && !d.artifact);
+    const q = quadrant(id), defs = q.members.filter(d => !CUT.has(d.id) && !d.retired && !d.artifact);
     if (!defs.length) continue;
     for (const def of defs) {
       const parts = costParts(def, [...state.resources, q.resource]);

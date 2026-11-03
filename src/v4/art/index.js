@@ -154,6 +154,15 @@ const PORTRAIT = new Map(PORTRAITS.map(i => [i.id, { ...i, portrait: true }]));
 // the 48×48 portraits (Cory, 2026-10-29) were all redrawn as scenes, so they're gone (Nov 3; git history has them)
 // the little scenes (Cory, 2026-10-29: "definitely little scenes is the way to go") win over those: own colours, any size
 for (const i of PORTRAITS4) PORTRAIT.set(i.id, { ...i, portrait: true, scene: true });
+// The replacements that went live Nov 3 reuse the scene of the card they replace (retired, so never dealt beside them)
+// while their own pictures are drawn.
+for (const [id, name, source] of [
+  ['silver.hostesses', 'Hostesses', 'silver.giftwrapper'], ['trading.heirs', 'Heirs', 'trading.exporter'],
+  ['red.bodysnatchers', 'Body Snatchers', 'red.twins'], ['benders.spoilsports', 'Spoilsports', 'benders.scout'],
+]) {
+  const art = PORTRAIT.get(source);
+  if (art && !PORTRAIT.has(id)) PORTRAIT.set(id, { ...art, id, name });
+}
 export function iconFor(id, kind = 'member') {
   const ids = Array.isArray(id) ? id : [id];
   const hit = (kind !== 'action' && ids.map(x => PORTRAIT.get(x)).find(Boolean)) || ids.map(x => BY_ID.get(x)).find(Boolean);

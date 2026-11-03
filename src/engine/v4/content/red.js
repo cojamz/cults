@@ -1,7 +1,6 @@
 // Red builds and moves members; held red resources decide its round-end contest.
 import { gainColorOf } from './color-of.js';
 import { add1, old1 } from './replace1.js';
-import { add2, old2, handlers2 } from './replace2.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add4, old4, handlers4 } from './replace4.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -127,16 +126,14 @@ export default {
       },
       missionNext(ctx, p, _v, data) { missionTakeStep(ctx, p, data.allow); },
     }),
-    ...handlers2({
-      snatch(ctx, p, value) {
-        if (!Array.isArray(value)) { ctx.log(`${p.name} chose not to swap.`); return; }
-        const [a, b] = value;
-        if (!snatchPairs(ctx, p).some(([x, y]) => x.uid === a && y.uid === b)) return;
-        const names = [a, b].map(uid => `${ctx.ownerOf(uid)?.name || 'Shop'}'s ${ctx.card(uid).def.name}`);
-        ctx.log(`${p.name}'s Body Snatchers: a swap at round start.`);
-        if (ctx.swapMembers(p, a, b)) ctx.log(`${p.name} swapped ${names[0]} and ${names[1]}.`);
-      },
-    }),
+    snatch(ctx, p, value) {
+      if (!Array.isArray(value)) { ctx.log(`${p.name} chose not to swap.`); return; }
+      const [a, b] = value;
+      if (!snatchPairs(ctx, p).some(([x, y]) => x.uid === a && y.uid === b)) return;
+      const names = [a, b].map(uid => `${ctx.ownerOf(uid)?.name || 'Shop'}'s ${ctx.card(uid).def.name}`);
+      ctx.log(`${p.name}'s Body Snatchers: a swap at round start.`);
+      if (ctx.swapMembers(p, a, b)) ctx.log(`${p.name} swapped ${names[0]} and ${names[1]}.`);
+    },
     borrow(ctx, p, uid) {
       if (!ctx.state.shop.includes(uid)) { ctx.log(`${p.name}: that member left the shop.`); return; }
       ctx.log(`${p.name} uses ${ctx.defOf(uid).name}’s On Recruit; it stays in the shop.`);
@@ -157,12 +154,12 @@ export default {
   },
 
   members: [
-    m('twins', 'Triplets', 1, 1, 'Worth 3 followers.', { f: 3, n: 3, ...old2 }), // was Twins, worth 2 (Cory, 2026-10-29: "make it triplets, 3 followers")
-    // REPLACE2 bot test (Nov 3, replacement batch 2): Triplets' place, and a round I member as Triplets was (round: 1).
+    m('twins', 'Triplets', 1, 1, 'Worth 3 followers.', { f: 3, n: 3, retired: true }), // Body Snatchers takes its place (Claude, under Cory's "use your judgement", 2026-11-03) // was Twins, worth 2 (Cory, 2026-10-29: "make it triplets, 3 followers")
+    // Replacement batch 2 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Triplets' place, and a round I member as Triplets was (round: 1).
     // 4 red + 2 any as a player sees it. Its swap is a choice with "Don't swap" (Red's swaps can be skipped: Cory,
     // 2026-10-22, "You shouldnt HAVE to swap"); a rival's member it can take is one that may be swapped (Loyalists,
     // Bodyguards). The member you get is your recruit (its On Recruit fires), as with Promote.
-    ...add2(m('bodysnatchers', 'Body Snatchers', 3, 2, "Round Start: swap one of your members with a rival's member of the same cost.", { f: 2, round: 1,
+    m('bodysnatchers', 'Body Snatchers', 3, 2, "Round Start: swap one of your members with a rival's member of the same cost.", { f: 2, round: 1,
       onRoundStart(ctx, owner, card) {
         const pairs = snatchPairs(ctx, owner);
         if (!pairs.length) { ctx.log(`${owner.name}'s Body Snatchers: no rival holds a member at the cost of one of yours.`); return; }
@@ -171,7 +168,7 @@ export default {
           value: [a.uid, b.uid], hint: b.def.f - a.def.f,
         })).concat({ id: 'none', label: 'Don’t swap', kind: 'pass', value: null, hint: -99 }), 'red.snatch', { uid: card.uid });
       },
-    })),
+    }),
     m('bigfamily', 'Big Family', 2, 3, 'Worth 4 followers.', { f: 4, n: 4 }), // 4 members (Cory, Oct 29: "maybe make it 4 members"); 5 to 6, Claude's price
     m('volunteer', 'Volunteer', 0, 0, 'Worth 1 follower.', old1),
     // REPLACE1 bot test (Nov 3, replacement batch 1): Volunteer's place. Fires only when a rival's card or space moves

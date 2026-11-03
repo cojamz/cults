@@ -1,5 +1,6 @@
 // @vitest-environment node
 // Audit scratch (2026-10-15): do the Gold, Red and Green (echo) cards do what they say?
+import { STRAYS, stray } from '../stray.js';
 import { describe, it, expect } from 'vitest';
 import { createGame, resume, followers } from '../../../../engine/v4/core.js';
 import { install } from '../../../../engine/v4/content/echo.js';
@@ -15,7 +16,7 @@ function scene({ n = 2, seed = 7, round = 1, res = [], members = [], shop = [], 
   delete s.echo;
   s.players.forEach((p, i) => { p.res = { ...Z, ...(res[i] || {}) }; p.bonus = 0; p.left = 5; p.discount = 0; });
   s.pile = [...s.shop, ...s.pile]; s.shop = [];
-  const grab = def => { const k = s.pile.findIndex(u => s.cards[u].def === def); if (k < 0) throw new Error(def); return s.pile.splice(k, 1)[0]; };
+  const grab = def => { const k = s.pile.findIndex(u => s.cards[u].def === def); if (k < 0) { if (!STRAYS.has(def)) throw new Error(def); return stray(s, def); } return s.pile.splice(k, 1)[0]; };
   members.forEach((list, i) => { for (const d of list || []) s.players[i].members.push(grab(d)); });
   for (const d of shop) s.shop.push(grab(d));
   s.queue = turns.map(p => ({ t: 'turn', p }));

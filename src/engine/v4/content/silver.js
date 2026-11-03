@@ -7,7 +7,6 @@
 // module-level hooks on members: onGive (the giver's members) and onGiven (the receiver's members).
 // Gold's Kickback also gives (Cory): gold.js fires the receiver's onGiven hooks itself.
 import { defById } from './index.js';
-import { add1, old1 } from './replace1.js';
 import { add2, old2, handlers2 } from './replace2.js';
 import { add3, old3 } from './replace3.js';
 import { add6, old6, handlers6 } from './replace6.js';
@@ -323,7 +322,8 @@ const silver = {
     }),
     // Cory, Nov 1: Silver's tenth member. Once per space or card that gives silver, however many rivals it reaches
     // (Party Favors' answers count as one gift; Claude, under Cory's go-with-your-gut).
-    m('giftwrapper', 'Gift Wrapper', 3, 2, 'Whenever you give rivals silver, +1 follower.', { ...old1,
+    // Retired: Hostesses takes its place (Claude, under Cory's "use your judgement", 2026-11-03).
+    m('giftwrapper', 'Gift Wrapper', 3, 2, 'Whenever you give rivals silver, +1 follower.', { retired: true,
       onGive(ctx, owner, card, color, once) {
         if (color !== S) return;
         if (once) { if (card.wrapped === once) return; card.wrapped = once; }
@@ -331,16 +331,16 @@ const silver = {
         ctx.log(`${owner.name}'s Gift Wrapper: +1 follower.`);
       },
     }),
-    // REPLACE1 bot test (Nov 3, replacement batch 1): Gift Wrapper's place. 4 silver + 2 any as a player sees it. The
-    // silver comes from the bank and is a gift (Hangers-On, Caterer and the giver's gift hooks fire), then the count.
-    ...add1(m('hostesses', 'Hostesses', 3, 2, 'On Recruit and Round Start: give each rival 1 silver. +1 follower per rival who then holds more silver than you.', { f: 2, now: true,
+    // Replacement batch 1 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Gift Wrapper's place.
+    // 4 silver + 2 any as a player sees it. The silver comes from the bank and is a gift (Hangers-On, Caterer and the giver's gift hooks fire), then the count.
+    m('hostesses', 'Hostesses', 3, 2, 'On Recruit and Round Start: give each rival 1 silver. +1 follower per rival who then holds more silver than you.', { f: 2, now: true,
       onRoundStart(ctx, owner) {
         giveAll(ctx, owner, S, 1);
         const k = others(ctx, owner).filter(o => (o.res[S] || 0) > (owner.res[S] || 0)).length;
         ctx.log(`${owner.name}'s Hostesses: ${others(ctx, owner).map(o => o.name).join(', ')} +1 silver each${k ? `; ${owner.name} +${k} follower${k === 1 ? '' : 's'}` : ''}.`);
         if (k) owner.bonus += k;
       },
-    })),
+    }),
     // Cory, Nov 1: "whenever a player is gifted silver +1 silver", then +2 after the test read −4; one gift per space counts once
     // words and +1 (Cory, Nov 1, 2:25pm: "Whenever silver is gifted, +1 silver."), once per gift event
     m('caterer', 'Caterer', 2, 2, 'Whenever silver is gifted, +1 silver.', {
