@@ -31,3 +31,20 @@ describe('By color contests', () => {
     expect(scoringOf(s, 'yellow').score(contextFor(s), p)).toBe(0);
   });
 });
+
+describe('By color: Green and White (Cory, Nov 3: "use your judgement")', () => {
+  it('Green: a tie on minions goes to the most green held; White: fewest followers', () => {
+    const s = game();
+    const ctx = contextFor(s);
+    const g = scoringOf(s, 'echo'), w = scoringOf(s, 'trading');
+    const qi = s.quadrants.indexOf('echo');
+    s.slots[`${qi}-0`] = 0; s.slots[`${qi}-1`] = 1;
+    s.players[0].res.green = 2; s.players[1].res.green = 5;
+    expect(g.score(ctx, s.players[1])).toBeGreaterThan(g.score(ctx, s.players[0]));
+    expect(g.score(ctx, s.players[2])).toBe(0);
+    expect(w.label).toBe('Fewest followers');
+    s.players[3].bonus -= 1; s.players[0].bonus += 3;
+    const best = Math.max(...s.players.map(p => w.score(ctx, p)));
+    expect(s.players.filter(p => w.score(ctx, p) === best).map(p => p.id)).toEqual([3]);
+  });
+});
