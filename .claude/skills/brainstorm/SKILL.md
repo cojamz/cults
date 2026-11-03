@@ -10,6 +10,16 @@ Cory designs Cults; Claude brings ideas he can react to. He has called the ideas
 
 **Speed is part of the job.** He's in a live conversation. A pitch takes about a minute, never a quoted wait ("15 minutes????? what the fuck"). The heavy reading happens once per thread; after that, pitch from what you already know.
 
+## The six principles (Cory said yes, Nov 3; design/notes/replacements-principles-2026-11-03.md)
+Every card or space pitched is checked against these, in writing, with one line each ("Intuitive:", "Fun:", "Interacts:", "Powerful:", "Engine or counter:", "Its color:"); presend refuses a linked pitch file without them.
+1. **Intuitive and easy to understand** (Cory's): one sentence, words already on the cards, nothing to track.
+2. **Fun to play** (Cory's): someone at the table reacts: a sting, a gift, or a choice they have to make.
+3. **Interacts with its color, with other colors, or both** (Cory's): it cares what rivals do or hold, ideally implicitly, as copying does.
+4. **Feels powerful**: relative amounts and rule-bending over small fixed numbers ("everything should feel vaguely powerful").
+5. **Builds an engine, or counters one**: most cards build; some defend or counter, quietly; the most elegant are either one depending on the table. Not every card must ("don't over-index on that").
+6. **A new way into its color's theme**: a way the color doesn't have yet, not a repeat.
+Refused shape to never repeat (Nov 3): a member that upgrades one shared space ("your Crime Wave steals from two rivals"): a rival takes the space first, and per-space bonuses are hard to track. Plain words to Cory: no "worth the turn" or "two live sides"; say what a player does.
+
 ## Every pitch: four gates, in order, none skipped
 
 Oct 30, Yellow: eight nos in a morning ("small ball gains", "how do you have NO clue how the game works????", "are you using the skill?"). Every one came from skipping a gate below to answer fast. Speed means no padded waits, never skipped steps: a list takes the time the gates take, and you say a real time.
