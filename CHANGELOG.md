@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.523 — 2026-11-03
+
+- Yellow: Leaders' Tax replaces Trade Seeds: +1 yellow, choose a color, each rival with more of it than you gives you 1
+
 ## v0.99.522 — 2026-11-03
 
 - By color contests: a Green tie splits the prize like every other contest (no tie-break).
