@@ -99,7 +99,9 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     expect(steady.length).toBe(relaxed.length); // the same games, step for step
     // turn by turn: the same turn at both speeds (a ratio of two p50s moved with the game's mix of recruit turns,
     // 1.59 to 1.92 on a guest's price alone, Oct 28)
-    const pair = pct(steady.map((x, i) => relaxed[i] / x), 0.5);
+    // a turn that shows nothing at either speed (0 ms) has no ratio: 0/0 is NaN, and one NaN breaks the sort under pct
+    // (Claude, Nov 2: the color cost moved two seeded rival turns to 0 ms; the real turns still run 2.31x)
+    const pair = pct(steady.map((x, i) => relaxed[i] / x).filter(Number.isFinite), 0.5);
     console.log(`[pacing] the same turn, Relaxed/Steady p50 ${pair.toFixed(2)}`);
     expect(pair).toBeGreaterThanOrEqual(1.8);
     expect(pair).toBeLessThanOrEqual(2.6);
