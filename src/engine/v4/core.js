@@ -738,6 +738,7 @@ function resolveTask(state, task, optionId) {
       } else state.slots[key] = p.id;
       p.lastSlot = { key, joined: squat }; // the minion Straggler moves (Cory, 2026-10-15: it's always the last one)
       p.left -= 1;
+      state.lastPlaced = { round: state.round, pid: p.id }; // Purple's By color contest: whoever placed the round's last minion
       const a = actionAt(state, q, i);
       log(state, squat ? `${p.name} joined ${state.players[state.slots[key]].name} on ${a.name} (${quadrant(state.quadrants[q]).name}).`
         : `${p.name} took ${a.name} (${quadrant(state.quadrants[q]).name}).`);
@@ -1048,10 +1049,10 @@ export function scoringOf(state, qid) {
       market: { label: 'Most members', counts: 'your members when the round ends', score: (ctx, p) => memberCount(state, p) },
       trading: fewest,
       thieves: { label: 'Most resources', counts: 'all the resources you hold when the round ends, every color together', score: (ctx, p) => state.resources.reduce((n, r) => n + (p.res[r] || 0), 0) },
-      yellow: { label: 'Most of your smallest color', counts: 'how many you hold of the color you hold least of, when the round ends', score: (ctx, p) => Math.min(...state.resources.map(r => p.res[r] || 0)) },
+      yellow: { label: 'Most full sets', counts: 'your full sets of one of every color in play, when the round ends', score: (ctx, p) => Math.min(...state.resources.map(r => p.res[r] || 0)) },
       echo: { label: 'Most minions on green', counts: 'your minions on Green spaces when the round ends', score: (ctx, p) => q.actions.reduce((n, a, i) => n + (state.slots[`${qi}-${i}`] === p.id ? 1 : 0) + (state.squats?.[`${qi}-${i}`] || []).filter(id => id === p.id).length, 0) },
-      purple: { label: 'Holds the Goes Last token', counts: 'the Goes Last token when the round ends; if nobody holds it, the purple you hold', tiebreak: null,
-        score: (ctx, p) => { const holder = state.goesLast && state.goesLast.round === state.round ? state.goesLast.pid : null; return holder != null ? (holder === p.id ? 1 : 0) : (p.res.purple || 0); } },
+      purple: { label: 'Went last', counts: "whoever placed the round's last minion", tiebreak: null,
+        score: (ctx, p) => (state.lastPlaced && state.lastPlaced.round === state.round && state.lastPlaced.pid === p.id ? 1 : 0) },
     };
     return by[qid] || q.scoring;
   }
