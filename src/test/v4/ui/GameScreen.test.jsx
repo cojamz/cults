@@ -171,9 +171,10 @@ describe('v4 game screen', () => {
     expect(state.over).toBe(true);
     const onPlayAgain = vi.fn();
     render(<GameScreen session={fakeSession(state, [0])} onPlayAgain={onPlayAgain} />);
-    const table = screen.getByRole('table');
-    expect(within(table).getAllByRole('row')).toHaveLength(1 + seats.length);
-    expect(within(table).getByText('Prizes')).toBeTruthy(); // the rims' prizes, in the rulebook's words (RC1 sweep 110)
+    // one bar per cult, split by kind of source (Cory, 2026-11-03)
+    const bars = document.querySelector('[data-sources]');
+    expect(bars.querySelectorAll('[data-src-row]')).toHaveLength(seats.length);
+    expect(bars.textContent).toMatch(/Prizes/); // the rims' prizes, in the rulebook's words (RC1 sweep 110)
     fireEvent.click(screen.getByRole('button', { name: 'Play again' }));
     expect(onPlayAgain).toHaveBeenCalled();
   });
