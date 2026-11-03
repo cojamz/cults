@@ -1102,7 +1102,7 @@ export function scoringOf(state, qid) {
     };
     // Green ties go to the most green held, White is fewest followers (Cory, Nov 3: "use your judgement", after the
     // balance run found Green shared 80% of rounds and White staying with one player). rules.contestFix tries others in sims.
-    const fix = { green: 'tb', white: 'followers', ...(state.rules?.contestFix || {}) };
+    const fix = { white: 'followers', ...(state.rules?.contestFix || {}) }; // Green ties split like every contest (Cory, Nov 3: "ties are split… like they already were…")
     const greenScore = by.echo.score, onGreen = p => greenScore(null, p);
     if (fix.green === 'tb') by.echo = { ...by.echo, tiebreak: { unit: 'green', text: 'ties go to the most green held' },
       score: (ctx, p) => { const n = onGreen(p); return n > 0 ? n * 1000 + (p.res.green || 0) : 0; }, show: (ctx, p) => ({ count: onGreen(p), tiebreak: p.res.green || 0 }) };
