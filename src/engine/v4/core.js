@@ -2003,7 +2003,7 @@ function ctxFor(state) {
       if (!options.length) return;
       // follow-up choices queued during one resolution keep their call order
       const at = state.queue.findIndex(t => !t._fresh);
-      const task = { t: 'choose', p: p.id, prompt, options: withTargets(state, options).map(o => pinCards(state, o)), h: handler, data, ...(extra.count ? { count: extra.count } : {}), ...(extra.blocked && Object.keys(extra.blocked).length ? { blocked: extra.blocked } : {}), ...(extra.show ? { show: extra.show } : {}), ...(extra.together ? { together: extra.together } : {}), _fresh: true };
+      const task = { t: 'choose', p: p.id, prompt, options: (() => { const where = options.length > 1 ? whereAll(state) : null; return withTargets(state, options).map(o => pinCards(state, o, where)); })(), h: handler, data, ...(extra.count ? { count: extra.count } : {}), ...(extra.blocked && Object.keys(extra.blocked).length ? { blocked: extra.blocked } : {}), ...(extra.show ? { show: extra.show } : {}), ...(extra.together ? { together: extra.together } : {}), _fresh: true };
       state.queue.splice(at < 0 ? state.queue.length : at, 0, task);
     },
     defer(p, handler, data = null, cause = null) {
@@ -2030,9 +2030,22 @@ function whereIs(state, uid) {
   if (!o) { const a = state.players.find(q => q.artifact === uid); if (a) return `a${a.id}`; }
   return o ? `p${o.id}` : 'gone';
 }
-function pinCards(state, o) {
+// Every card's whereIs at once (the same answers, in its order of checks): a choice pins every option's cards, and a
+// swap's dozens of pairs each looked through every pile and cult again.
+function whereAll(state) {
+  const m = new Map();
+  const put = (list, w) => { for (const u of list) if (!m.has(u)) m.set(u, w); };
+  put(state.shop, 'shop');
+  put(state.pile, 'pile');
+  for (const w of Object.values(state.supply || {})) put(w, 'supply');
+  for (const w of Object.values(state.waiting || {})) put(w, 'waiting');
+  for (const q of state.players) put(q.members, `p${q.id}`);
+  for (const q of state.players) if (q.artifact !== undefined && !m.has(q.artifact)) m.set(q.artifact, `a${q.id}`);
+  return m;
+}
+function pinCards(state, o, where = null) {
   const uids = CARD_KINDS.has(o.kind) ? [].concat(o.value).filter(u => Number.isInteger(u) && state.cards[u]) : [];
-  return uids.length ? { ...o, at: Object.fromEntries(uids.map(u => [u, whereIs(state, u)])) } : o;
+  return uids.length ? { ...o, at: Object.fromEntries(uids.map(u => [u, where ? where.get(u) ?? 'gone' : whereIs(state, u)])) } : o;
 }
 // An option that points at something on the board says so in one structured field, so a screen lights that thing
 // and never reads the label (the board picker, src/v4/game/boardPick.js). Ids never change.
@@ -2079,7 +2092,8 @@ function withBreaks(state, p, options) {
 }
 
 export function liveOptions(state, task) {
-  return task.options.filter(o => !o.at || Object.entries(o.at).every(([u, w]) => whereIs(state, Number(u)) === w));
+  const where = task.options.length > 1 ? whereAll(state) : null;
+  return task.options.filter(o => !o.at || Object.entries(o.at).every(([u, w]) => (where ? where.get(Number(u)) ?? 'gone' : whereIs(state, Number(u))) === w));
 }
 
 // Follow-up choices queued while one task resolves are marked fresh so they keep their call order.
