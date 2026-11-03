@@ -61,16 +61,21 @@ const stillMine = (ctx, p, w) => (w.joined ? (ctx.state.squats?.[w.key] || []).i
 const cost = c => c.def.s + c.def.w;
 // Anarchist's swaps: any two members, in any cult or the shop, costing within 2 of each other; a rival's member only
 // where it may be taken (Bodyguards), and never a member that can't be swapped (Loyalists)
+const anarchyCards = (ctx, p) => [...ctx.state.players.flatMap(o => (o === p || ctx.canSteal(p, o, 'swap')) ? ctx.membersOf(o).filter(c => ctx.canSwapMember(c.uid)) : []), ...ctx.shopCards()];
+const anarchyFits = (ctx, a, b) => ctx.ownerOf(a.uid) !== ctx.ownerOf(b.uid) // two in the same cult or both in the shop: nothing moves
+  && a.def.id !== b.def.id // two copies of one member (piles): nothing changes
+  && Math.abs(cost(a) - cost(b)) <= 2;
 function anarchyPairs(ctx, p) {
-  const all = [...ctx.state.players.flatMap(o => (o === p || ctx.canSteal(p, o, 'swap')) ? ctx.membersOf(o).filter(c => ctx.canSwapMember(c.uid)) : []), ...ctx.shopCards()];
+  const all = anarchyCards(ctx, p);
   const out = [];
-  for (let i = 0; i < all.length; i++) for (let j = i + 1; j < all.length; j++) {
-    const a = all[i], b = all[j], oa = ctx.ownerOf(a.uid), ob = ctx.ownerOf(b.uid);
-    if (oa === ob) continue; // two in the same cult or both in the shop: nothing moves
-    if (a.def.id === b.def.id) continue; // two copies of one member (piles): nothing changes
-    if (Math.abs(cost(a) - cost(b)) <= 2) out.push([a, b]);
-  }
+  for (let i = 0; i < all.length; i++) for (let j = i + 1; j < all.length; j++) if (anarchyFits(ctx, all[i], all[j])) out.push([all[i], all[j]]);
   return out;
+}
+/** Is the swap of uids a and b one of anarchyPairs (either way round)? Checks the one pair, not all of them. */
+function anarchyPairOk(ctx, p, a, b) {
+  const all = anarchyCards(ctx, p);
+  const x = all.find(c => c.uid === a), y = all.find(c => c.uid === b);
+  return !!(x && y && x !== y && anarchyFits(ctx, x, y));
 }
 const worth = c => c.def.f + cost(c);
 function gainFor(ctx, p, a, b) {
@@ -267,7 +272,7 @@ export const handlers = {
   anarchy(ctx, p, value) {
     if (!Array.isArray(value)) { ctx.log(`${p.name} chose not to swap.`); return; }
     const [a, b] = value;
-    if (!anarchyPairs(ctx, p).some(([x, y]) => (x.uid === a && y.uid === b) || (x.uid === b && y.uid === a))) return;
+    if (!anarchyPairOk(ctx, p, a, b)) return;
     const names = [a, b].map(uid => `${ctx.ownerOf(uid)?.name || 'Shop'}'s ${ctx.card(uid).def.name}`);
     if (ctx.swapMembers(p, a, b)) ctx.log(`${p.name}'s Anarchist swapped ${names[0]} and ${names[1]}.`);
   },

@@ -442,9 +442,11 @@ const FUTURE_CONTESTS = 0.4;
 // A copy of the game for trying a move: everything but the log, queue and pending decision (state is plain JSON,
 // and a hand copy is several times faster than structuredClone).
 const copy = plainCopy;
+// contests is shared, not copied: the scored rounds, append-only (endRound replaces the array, never edits an entry),
+// and a third of a late game's state.
 const lightClone = s => {
   const c = {};
-  for (const k in s) if (k !== 'log' && k !== 'queue' && k !== 'pending') c[k] = copy(s[k]);
+  for (const k in s) if (k !== 'log' && k !== 'queue' && k !== 'pending') c[k] = k === 'contests' ? s[k] : copy(s[k]);
   c.log = []; c.queue = []; c.pending = null;
   return c;
 };
@@ -504,19 +506,27 @@ function liquidate(s, res, extra, buys, wild) {
 }
 
 // Expected followers from this round's ring contests, given who leads each one now.
-function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS) {
+// table: every player's score per contest, shared by one evaluate's players (scores are pure reads of the state; the
+// same numbers, worked out once per contest instead of once per player per contest). null for a contest that threw.
+function contestScores(s, ctx, table, qid) {
+  if (table && table.has(qid)) return table.get(qid);
+  let row;
+  try { const sc = scoringOf(s, qid); row = s.players.map(o => sc.score(ctx, o)); } catch { row = null; }
+  table?.set(qid, row);
+  return row;
+}
+function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null) {
   if (s.over || !s.round) return 0;
   // later rounds' rings count too, discounted: a lead in members lasts, a pile of resources mostly gets spent
   const later = RING_VALUE.slice(s.round).reduce((a, b) => a + b, 0) * future;
   const v = RING_VALUE[s.round - 1];
   let out = 0;
   for (const qid of s.quadrants) {
-    const sc = scoringOf(s, qid);
-    let mine, other;
-    try {
-      mine = sc.score(ctx, p);
-      other = Math.max(...s.players.filter(o => o !== p).map(o => sc.score(ctx, o)));
-    } catch { continue; }
+    const row = contestScores(s, ctx, table, qid);
+    if (!row) continue;
+    const mine = row[p.id];
+    let other = -Infinity;
+    for (let i = 0; i < row.length; i++) if (i !== p.id) other = Math.max(other, row[i]);
     if (!(mine > 0)) continue;
     const certain = mine >= other ? 1 : 0;
     const rough = mine > other ? 0.75 : mine === other ? 0.55 : 0.15;
@@ -564,10 +574,11 @@ export function abilityValue(def, placementsLeft, k = K_ABILITY) {
 function evaluate(s, buysLeft, incomeLeft, roundLeft, extraAbility = {}, future) {
   const ctx = contextFor(s);
   const wild = new Set(s.quadrants.map(quadrant).filter(q => q.wildInFollowerBuys).map(q => q.resource));
+  const table = new Map();
   return s.players.map(p => {
     const extra = incomeLeft[p.id];
     return followers(s, p) + gameEndPay(s, ctx, p) + (extraAbility[p.id] || 0)
-      + liquidate(s, p.res, extra, buysLeft[p.id], wild) + contests(s, ctx, p, roundLeft, future);
+      + liquidate(s, p.res, extra, buysLeft[p.id], wild) + contests(s, ctx, p, roundLeft, future, table);
   });
 }
 /**
@@ -604,7 +615,10 @@ function settle(s, ctx, seen) {
     const trades = live.filter(o => o.kind === 'trade');
     const score = trades.length && trades.length === live.filter(o => o.kind !== 'pass').length
       ? o => (o.kind === 'trade' ? tradeScore(s, t.p, o.value) : -Infinity) : o => (o.hint || 0);
-    const o = live.reduce((a, b) => (score(b) > score(a) ? b : a));
+    const sc = live.map(score); // each option's score once (the reduce below read every one twice)
+    let bi = 0;
+    for (let i = 1; i < live.length; i++) if (sc[i] > sc[bi]) bi = i;
+    const o = live[bi];
     handlerById(t.h)(ctx, s.players[t.p], o.value, t.data);
   }
 }
