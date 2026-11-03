@@ -27,12 +27,12 @@ Seeds considered and cut: Rainmaker-lite "raise your fewest color to your yellow
    Fun: you pick the target in the open; leaders groan, trailing players cheer.
    Interacts: rivals' piles and the contests of every color on the table.
    Powerful: round I about 3 in the exact color you need; round III it can flip a contest worth 10.
-   Builds toward: Makeover, which rearranges what you collected into contest leads.
+   Engine or counter: a counter to whoever hoards one color for its contest; feeds Makeover, which rearranges what you collected into leads.
    Its color: a new way into Yellow's "translate currencies": you turn rivals' surplus into the colors you lack.
 2. Hard Bargain: "Give a rival 2 of one of your colors, then take up to 3 of another color from them (4 in round II, 5 in round III)." Round I: give Bo 2 yellow, take 3 red: net +1 resource, but the red you need and Bo's red lead down 3. Round III: give 2, take 5 of their contest color: net +3 and a 7-swing in one contest (prize 10). Rival feels a sting and a small gift. Your choice: which rival, which two colors. Not Magenta's steal: you always pay first.
    Intuitive: give 2, take 3 (4, 5): a lopsided trade.
    Fun: a targeted swing on one rival's contest color, with a small gift back.
    Interacts: one rival's pile and contest, and members' colored parts you need.
    Powerful: net +1/+2/+3 plus a 5/6/7 swing in one color between you and that rival.
-   Builds toward: Makeover and members' colored parts: you hold the colors you need going into round III.
+   Engine or counter: engine, you collect the colors your members' colored parts and Makeover need; a counter to one rival's contest color.
    Its color: a new way into "translate currencies", trading with a rival instead of the bank.
