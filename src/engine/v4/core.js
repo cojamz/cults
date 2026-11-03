@@ -1021,7 +1021,7 @@ const ruleOf = label => label.replace(/\s*\(.*\)\s*$/, '');
  */
 /** Other contest goals, a table setting (Cory, 2026-11-02: "you can build alt ring goals as a setting"; ideas in
  *  /mnt/project-files/ring-goals/ideas.md). rules.contests: 'members' (held color, each member of the color counts 2),
- *  'minions' (your minions on the color's spaces at round end), 'whiteFewest' (White: fewest members, at least 1).
+ *  'minions' (your minions on the color's spaces at round end), 'present' (most held among players with a minion on the color's spaces), 'whiteFewest' (White: fewest members, at least 1).
  *  Anything else (the default) is each color's own printed contest. Every screen and bot reads the contest through this. */
 export function scoringOf(state, qid) {
   const q = quadrant(qid), mode = state.rules?.contests;
@@ -1031,6 +1031,27 @@ export function scoringOf(state, qid) {
     score: (ctx, p) => (p.res[res] || 0) + 2 * countMembersOfColor(state, p, qid) };
   if (mode === 'minions') return { label: `Most minions on ${name}`, counts: `your minions on ${q.name} spaces when the round ends`,
     score: (ctx, p) => q.actions.reduce((n, a, i) => n + (state.slots[`${qi}-${i}`] === p.id ? 1 : 0) + (state.squats?.[`${qi}-${i}`] || []).filter(id => id === p.id).length, 0) };
+  const onIt = p => q.actions.some((a, i) => state.slots[`${qi}-${i}`] === p.id || (state.squats?.[`${qi}-${i}`] || []).includes(p.id));
+  if (mode === 'present') return { label: `Most ${res}, if on ${res}`, counts: `the ${res} you hold, if you have a minion on a ${q.name} space when the round ends`,
+    score: (ctx, p) => (onIt(p) ? (p.res[res] || 0) : 0), show: (ctx, p) => ({ count: p.res[res] || 0 }) };
+  if (mode === 'byColor') {
+    // A different contest per color (Cory, 2026-11-02: "they should all have different goals"; set in
+    // /mnt/project-files/ring-goals/by-color.md). Each is won by taking that color's own spaces.
+    const cost = u => { const d = cardDef(state, u); return (d.s || 0) + (d.w || 0); };
+    const fewest = { label: 'Fewest members', counts: 'your members when the round ends (at least 1)',
+      score: (ctx, p) => { const n = memberCount(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: memberCount(state, p) }) };
+    const by = {
+      red: { label: 'Priciest member', counts: 'the cost of your priciest member when the round ends', score: (ctx, p) => Math.max(0, ...p.members.map(cost)) },
+      market: { label: 'Most members', counts: 'your members when the round ends', score: (ctx, p) => memberCount(state, p) },
+      trading: fewest,
+      thieves: { label: 'Most resources', counts: 'all the resources you hold when the round ends, every color together', score: (ctx, p) => state.resources.reduce((n, r) => n + (p.res[r] || 0), 0) },
+      yellow: { label: 'Most of your smallest color', counts: 'how many you hold of the color you hold least of, when the round ends', score: (ctx, p) => Math.min(...state.resources.map(r => p.res[r] || 0)) },
+      echo: { label: 'Most minions on green', counts: 'your minions on Green spaces when the round ends', score: (ctx, p) => q.actions.reduce((n, a, i) => n + (state.slots[`${qi}-${i}`] === p.id ? 1 : 0) + (state.squats?.[`${qi}-${i}`] || []).filter(id => id === p.id).length, 0) },
+      purple: { label: 'Holds the Goes Last token', counts: 'the Goes Last token when the round ends; if nobody holds it, the purple you hold', tiebreak: null,
+        score: (ctx, p) => { const holder = state.goesLast && state.goesLast.round === state.round ? state.goesLast.pid : null; return holder != null ? (holder === p.id ? 1 : 0) : (p.res.purple || 0); } },
+    };
+    return by[qid] || q.scoring;
+  }
   if (mode === 'whiteFewest' && qid === 'trading') return { label: 'Fewest members', counts: 'your members when the round ends (at least 1)',
     score: (ctx, p) => { const n = memberCount(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: memberCount(state, p) }) };
   return q.scoring;

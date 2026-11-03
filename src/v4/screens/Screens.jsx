@@ -211,7 +211,7 @@ export function SwapPick({ value, onChange, readOnly }) {
       : <Seg label="Swap card" value={value ? 'on' : 'off'} options={SWAP_OPTS} onChange={v => onChange(v === 'on')} />}
   </div>;
 }
-const CONTEST_OPTS = [['', 'As printed', 'Each color: most of its color held'], ['members', 'Members 2', 'Most of the color held; each of your members of that color counts as 2'], ['minions', 'Minions', 'Most of your minions on the color\'s spaces at round end'], ['whiteFewest', 'White fewest', 'White: fewest members (at least 1); other colors as printed']];
+const CONTEST_OPTS = [['', 'As printed', 'Each color: most of its color held'], ['byColor', 'By color', 'A different contest per color: Red priciest member, Blue most members, White fewest members, Magenta most resources, Yellow most of your smallest color, Green most minions on Green, Purple holds the Goes Last token, Silver most silver']];
 export function ContestPick({ value, onChange, readOnly }) {
   const opt = CONTEST_OPTS.find(o => o[0] === (value || '')) || CONTEST_OPTS[0];
   return <div className="seat" data-contest-pick={opt[0] || 'printed'}><span>Contests</span>

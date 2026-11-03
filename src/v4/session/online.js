@@ -24,7 +24,7 @@ import { moveProblem, normalizeMove } from './local.js';
 import { BUILD, CONTENT_HASH, newGame, step, trackState, botStep, reportProblem } from './record.js';
 import { askBot } from './botThink.js';
 // other contest goals (core.js scoringOf), a host setting
-const CONTEST_MODES = ['members', 'minions', 'whiteFewest'];
+const CONTEST_MODES = ['byColor']; // the other modes stay in the engine for sims only (Cory wanted a different goal per color)
 
 /** Shown when a room was made by a build with different rules content (a deploy happened in between). */
 export const VERSION_MISMATCH = 'That room is on a different version of Cults. Refresh this page and try again; if it still won’t join, the host should refresh and make a new room.';

@@ -6,7 +6,7 @@
 // minion, one more minion with its own buy, before the next player; once per round; nothing when no space is spare.
 // Price: design/eval/purple-members.md (member-value sim, 8+2).
 import { describe, it, expect } from 'vitest';
-import { defById, EXTRA_WILD } from '../../../engine/v4/content/index.js';
+import { defById, EXTRA_WILD, COLOR_SHIFT } from '../../../engine/v4/content/index.js';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming, spaceOf } from './cards-helpers.js';
 import { useRetiredRollCall } from './retired-overtime.js';
@@ -27,7 +27,7 @@ const queuedTurns = (s, id) => s.queue.filter(t => t.t === 'turn' && t.p === id)
 describe('Night Owls', () => {
   it('is printed as decided: 6 purple + 1 any, worth 2 followers, in plain words', () => {
     const d = defById('purple.nightowl');
-    expect([d.s, d.w, d.f]).toEqual([6, 1 + EXTRA_WILD, 2]); // 8 → 6 purple after the Oct 22 bot run; 9 → 8 in total after the Oct 29 balance runs
+    expect([d.s, d.w, d.f]).toEqual([6 + COLOR_SHIFT, 1 + EXTRA_WILD - COLOR_SHIFT, 2]); // 8 → 6 purple after the Oct 22 bot run; 9 → 8 in total after the Oct 29 balance runs
     expect(d.text).toBe('Once per round: after you place your last minion, take the Goes Last token with 1 more minion on it.'); // Cory, Nov 1 2:35pm
     expect(d.from).toBe(2); // the II+ tag (Cory, 2026-10-22)
   });

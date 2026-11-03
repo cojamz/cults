@@ -19,8 +19,8 @@ const QUADRANTS = { gold, red, blue, green };
 export const EXTRA_WILD = 1;
 // Cory, 2026-11-02: "for every member, to shift 1 wild to 1 color cost". A colored member's +1 above is paid in its
 // own color instead (its colored part +1, its "any" part as printed), so what you hold decides what you can buy.
-// Grey members have no color and keep the wild. Bot test only, not built (Cory, Nov 2: "just balance test it"): sims turn it on with COLORSHIFT=1.
-export const COLOR_SHIFT = globalThis.process?.env?.COLORSHIFT === '1' ? 1 : 0;
+// Grey members have no color and keep the wild. Live (Cory, Nov 2 7:39pm: "let's swing the cost towards the colors by 1 and keep that anyways"); COLORSHIFT=0 gives the old prices for comparison.
+export const COLOR_SHIFT = globalThis.process?.env?.COLORSHIFT === '0' ? 0 : 1;
 const addWild = def => {
   if (def.extraWild || def.extraColor) return;
   if (COLOR_SHIFT && def.quadrant !== 'guest' && def.quadrant !== 'benders') { def.s = (def.s || 0) + EXTRA_WILD; def.extraColor = EXTRA_WILD; def.w = def.w || 0; }

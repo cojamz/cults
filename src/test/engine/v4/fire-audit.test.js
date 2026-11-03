@@ -113,7 +113,8 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'market.restocker', // under 3 holds when Encore's On Recruit copy and Sleep In's growth (Oct 28) moved the games; cards-member-structure covers it
       'market.doorman', 'market.planner', // under 3 holds when Cory's 15 guests and Launderers' split (Oct 28) moved the games; cards-market covers them (Planner is cut)
       'thieves.shoplifter', 'echo.translator', // under 3 holds when Green grew to 16 (Oct 28) moved the games; recruit-definition (Shoplifter) and cards-echo (Translator, cut) cover them
-      'thieves.snitch']); // under 3 holds when the Oct 29 balance prices moved the games; cards-thieves (Snitch) covers it
+      'thieves.snitch', // under 3 holds when the Oct 29 balance prices moved the games; cards-thieves (Snitch) covers it
+      'market.blackmarket']); // under 3 holds when the color cost (Nov 2: 1 of the wild paid in the member's color) moved the games; cards-market covers it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);
     expect(unseen).toEqual([]);
@@ -138,6 +139,8 @@ const ALLOW = {
   'yellow.tinker': 'its swaps log as "swapped 1 x for 1 y (Tinker)"; recruited once in the sample (cards-yellow: Tinker)',
   'yellow.matchmaker': 'pays only for a recruit in a new member color; its 2 owners in the Yellow 2.0 sample (Oct 31) recruited none (cards-yellow)',
   'silver.dowager': 'a plain worth-3 member the audit counts (cards-silver)',
+  // the color cost (Nov 2) moved the seeded games: recruited once without its trigger coming up
+  'yellow.explorer': 'recruited once in the sample after the Nov 2 color cost, trigger never came up (cards-yellow covers it)',
   'silver.smoothtalker': 'names itself only when silver pays a colored part the color itself couldn\'t; bot owners in the sample paid in color (cards-silver: Smooth Talkers)',
   'purple.courier': 'pays only on two turns in a row (courier.test.js)',
   // bots almost never buy it at 12 (Hard bot read, Oct 24); recruited once in the Oct 25 sample
