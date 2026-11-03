@@ -315,7 +315,7 @@ function snatchPairs(ctx, p) {
 // Tryout's shop members: an On Recruit or round-start effect that doesn't act on the card itself ("swap it",
 // "it becomes"), which a member still in the shop can't do.
 function borrowable(ctx) {
-  return ctx.shopCards().filter(c => !c.def.recruitNote && (c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate))) && !/\bit\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
+  return ctx.shopCards().filter(c => !c.def.recruitNote && (c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate))) && !/\bit\b|\bthese\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
 }
 function cheapValue(ctx) {
   const c = cheapest(ctx);

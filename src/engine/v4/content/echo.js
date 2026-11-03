@@ -360,7 +360,7 @@ function freeStep(ctx, p, data) {
 function rivalRecruits(ctx, p) {
   return ctx.rivals(p).flatMap(o => ctx.membersOf(o).map(c => ({ c, o })))
     .filter(({ c }) => !c.def.artifact && !c.def.recruitNote && (c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate)))
-      && !/\bit\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
+      && !/\bit\b|\bthese\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
 }
 
 // Greatest Hits: your members with an On Recruit (or a now-and-round-start effect, as Sample reads it).

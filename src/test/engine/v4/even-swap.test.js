@@ -29,6 +29,11 @@ describe('Tryout — a shop member’s On Recruit, and it stays in the shop', ()
     expect(ids(s)).not.toContain(`card:${uidOf(s, 'thieves.doubleagent', 'shop')}`);
     expect(ids(s)).not.toContain(`card:${uidOf(s, 'echo.doppel', 'shop')}`);
   });
+  it('skips Drifters: its color is chosen for the card itself ("these count"), so from the shop it would do nothing (playtest, Nov 3)', () => {
+    const s = take(sceneQ({ quadrants: ['gold', 'red', 'yellow', 'echo'], shop: ['gold.banker', 'yellow.drifters'] }), 'red.evenswap');
+    expect(ids(s)).toContain(`card:${uidOf(s, 'gold.banker', 'shop')}`);
+    expect(ids(s)).not.toContain(`card:${uidOf(s, 'yellow.drifters', 'shop')}`);
+  });
   it('uses the On Recruit; the member stays in the shop, nobody recruits, and your recruit watchers stay quiet', () => {
     let s = take(sceneQ({ quadrants: T, members: [['red.recruiter', 'red.proselytizer']], shop: ['gold.banker', 'red.twins'] }), 'red.evenswap');
     const banker = uidOf(s, 'gold.banker', 'shop'), shop = [...s.shop], pile = [...s.pile];

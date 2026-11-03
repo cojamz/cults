@@ -827,6 +827,9 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   const RIM_PX = 15;
   const rimFont = Math.min(20, Math.max(13, RIM_PX / (scale || 1)));
   const arcHalf = 44; // the path the text runs on (wider than any label)
+  // the room a rim's words have is its own color's share of the wheel (44° each way at four colors; five and six colors
+  // have 36° and 30°: their lines ran into the next color's, playtest Nov 3)
+  const rimHalf = Math.min(arcHalf, 180 / nq - 1);
   const RIM_MARK = 1.25; // the follower mark's room after the prize, per unit of font size
   // a leader's emoji on the rim: its 8×8 pixel art at a whole number of screen pixels per art pixel, small and well
   // inside the band (Cory, 2026-10-15: "the emojis on the wheel are too big and out of line": at 24px they filled the
@@ -850,7 +853,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     const top = Math.abs(norm(qCenter(q, nq) + rot)) < 90;
     const rr = top ? RIM.r - 3.6 : RIM.r + 3.6;
     // the arc, less air at each end (clear of the dividers, w2a #52) and the leaders' emojis
-    const room = (2 * arcHalf * Math.PI / 180) * rr - 26 - leaders.length * EMOJI_ROOM;
+    const room = (2 * rimHalf * Math.PI / 180) * rr - 26 - leaders.length * EMOJI_ROOM;
     // the follower mark, and the space before the emojis, per unit of font size
     const tailK = RIM_MARK + (leaders.length ? 0.45 : 0);
     const head = `${rule}${prize}`;
@@ -873,17 +876,24 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     const sc = quadrant(qid).scoring;
     const tb = (st && st.tiebreak) || sc.tiebreak || null;
     const tie = tieWords(tb);
-    const runs = [{ kind: 'text', text: `${EACH}${ruleWords(qid, st ? st.rule : shortLabel(sc.label)).replace(/^Most /, 'most ')}`, tie }, { kind: 'text', text: '·' }, { kind: 'prize', text: `+${RING_VALUE[paying - 1]}` }];
+    const words = ruleWords(qid, st ? st.rule : shortLabel(sc.label));
+    const runs = [{ kind: 'text', text: `${EACH}${words.replace(/^Most /, 'most ')}`, tie }, { kind: 'text', text: '·' }, { kind: 'prize', text: `+${RING_VALUE[paying - 1]}` }];
     // widths per unit of font size, and the gaps before each run
-    for (const [k, r] of runs.entries()) {
-      r.w = r.kind === 'dot' ? 1.1 : r.kind === 'prize' ? 1.3 * rimWidth(r.text, 800, 0, PIXEL) : rimWidth(r.text, 800, 0, PIXEL) + RIM_LS * r.text.length + (r.tie ? rimWidth(`  ·  ties: ${r.tie}`, 600, 0.04) : 0);
-      r.gap = !k ? 0 : 0.45;
-    }
+    const measure = () => {
+      for (const [k, r] of runs.entries()) {
+        r.w = r.kind === 'dot' ? 1.1 : r.kind === 'prize' ? 1.3 * rimWidth(r.text, 800, 0, PIXEL) : rimWidth(r.text, 800, 0, PIXEL) + RIM_LS * r.text.length + (r.tie ? rimWidth(`  ·  ties: ${r.tie}`, 600, 0.04) : 0);
+        r.gap = !k ? 0 : 0.45;
+      }
+      return runs.reduce((a, r) => a + r.gap + r.w, 0);
+    };
     const top = Math.abs(norm(qCenter(q, nq) + rot)) < 90;
     const rr = top ? RIM.r + 2.2 : RIM.r + 1.6; // the pixel face sits low in its box: the top half goes out further (Cory, Oct 29)
-    const room = (2 * arcHalf * Math.PI / 180) * rr - 26 - leaders.length * EMOJI_ROOM;
-    const lineK = runs.reduce((a, r) => a + r.gap + r.w, 0);
+    const room = (2 * rimHalf * Math.PI / 180) * rr - 26 - leaders.length * EMOJI_ROOM;
     const tailK = RIM_MARK + (leaders.length ? 0.45 : 0);
+    let lineK = measure();
+    // a rim too short for the whole line even at the smallest size (six colors: neighbours' words ran into each other,
+    // playtest Nov 3) drops "Each round:" and keeps the rule and the prize
+    if (room / (lineK + tailK) < 9) { runs[0].text = words; lineK = measure(); }
     const font = Math.max(9, Math.min(rimFont, room / (lineK + tailK)));
     let at = 0;
     for (const r of runs) { at += r.gap * font; r.s = at; at += r.w * font; }
