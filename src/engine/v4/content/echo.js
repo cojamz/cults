@@ -579,7 +579,7 @@ const echoQ = {
     // then the owner chooses again; the new one's Round Start waits for the next round. One On Use a game (and one a
     // round) across every ability it holds. Another Impersonators, or an uncopied Doppelganger or Impostors, has no
     // ability of its own to lend, so it isn't offered.
-    m('impersonators', 'Impersonators', 3, 2, "On Recruit and Round Start: choose a rival's member. Until you choose again, Impersonators has that member's ability.", { now: true,
+    m('impersonators', 'Impersonators', 3, 2, "On Recruit and Round Start: choose a rival's member. Until you choose again, Impersonators has that member's ability.", { now: true, round: 1, // a round I member as Muse was (bot-tested in a later round; Nov 3)
       onRoundStart(ctx, owner, card) {
         const list = ctx.rivals(owner).flatMap(o => ctx.membersOf(o)).filter(c => c.copy || !['doppel', 'impostor', 'impersonators'].includes(c.def.key));
         if (!list.length) { ctx.log(`${owner.name}'s Impersonators: no rival member to choose.`); return; }

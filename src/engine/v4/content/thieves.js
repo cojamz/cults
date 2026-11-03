@@ -523,7 +523,7 @@ const thieves = {
     // members" counts as members count (Counts as N). A tie for the most members, or for the cheapest, is the owner's
     // pick; a rival who can't be stolen from (Bodyguards, Lie Low) is passed over only inside such a tie. A steal of a
     // member: the member is the owner's recruit (its On Recruit fires), as Heist's is.
-    m('kidnappers', 'Kidnappers', 5, 2, 'On Recruit and Round Start: steal the cheapest member of the rival with the most members.', { now: true,
+    m('kidnappers', 'Kidnappers', 5, 2, 'On Recruit and Round Start: steal the cheapest member of the rival with the most members.', { now: true, round: 1, // a round I member as Kingpin was (bot-tested in a later round; Nov 3)
       onRoundStart(ctx, owner) {
         const list = kidnapList(ctx, owner);
         if (!list.length) { ctx.log(`${owner.name}'s Kidnappers: no member to steal.`); return; }

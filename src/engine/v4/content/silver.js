@@ -296,7 +296,7 @@ const silver = {
     // members (Godparents itself too) to any rival; its cost is its printed price. A gift, not a steal or a swap
     // (Loyalists and Bodyguards don't stop it): an arrival for the rival (Old Maid's −5 lands on them), and Martyrs pays
     // you as it leaves. A used card stays used.
-    m('godparents', 'Godparents', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain followers equal to its cost.', {
+    m('godparents', 'Godparents', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain followers equal to its cost.', { round: 1, // a round I member as Hangers-On was (bot-tested in a later round; Nov 3)
       activate: 'game',
       onActivate(ctx, owner, card) {
         const opts = [];
@@ -468,7 +468,7 @@ const silver = {
     // Replacement batch 3 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Collector's place. 4 silver + 2 any as a player sees it. Read at game
     // end after the other game-end bonuses (core's onGameEndHit), never below 0 followers; it isn't a steal, so nothing
     // blocks it. Two Creditors each take their own.
-    m('creditors', 'Creditors', 3, 2, 'Game End: each rival loses 1 follower per 3 silver they hold.', { f: 2,
+    m('creditors', 'Creditors', 3, 2, 'Game End: each rival loses 1 follower per 3 silver they hold.', { f: 2, round: 1, // a round I member as Collector was (bot-tested in a later round; Nov 3)
       // a pure read for bots: what it takes from victim if the game ended now
       endHit: (ctx, owner, victim) => Math.min(Math.floor((victim.res[S] || 0) / 3), Math.max(0, ctx.followers(victim))),
       onGameEndHit(ctx, owner) {
