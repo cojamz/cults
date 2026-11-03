@@ -450,6 +450,16 @@ const lightClone = s => {
   c.log = []; c.queue = []; c.pending = null;
   return c;
 };
+// A copy for a follower buy, which changes only the buyer (resources, followers) and the limited stock: the rest is
+// shared with the game, read-only (evaluate only reads). Most of a buy step's copies were these, each a whole game.
+const buyerClone = (s, me) => {
+  const c = {};
+  for (const k in s) if (k !== 'log' && k !== 'queue' && k !== 'pending') c[k] = s[k];
+  c.players = s.players.map((p, i) => (i === me ? copy(p) : p));
+  if (s.stock) c.stock = { ...s.stock };
+  c.log = []; c.queue = []; c.pending = null;
+  return c;
+};
 const sum = o => Object.values(o).reduce((a, b) => a + b, 0);
 
 /** Turns each player still has (not counting the one being played), and how far through its round the game is. */
@@ -686,7 +696,7 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
     // One buy, paid one way, valued on a copy of the game.
     const valueOf = (what, spend) => {
       try {
-        const s = lightClone(state);
+        const s = what.tier ? buyerClone(state, me) : lightClone(state);
         const ctx = contextFor(s);
         const p = s.players[me];
         const extraAbility = {};

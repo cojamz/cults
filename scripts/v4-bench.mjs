@@ -4,7 +4,7 @@
 // Same fingerprint before and after = same games. Hard runs with maxMs: Infinity (deterministic, as sims do).
 import { createHash } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
-import { createGame, applyMove, chooseBotMove } from '../src/engine/v4/index.js';
+import { createGame, applyMove, chooseBotMove, setBotLevels } from '../src/engine/v4/index.js';
 import { seededRandom } from '../src/engine/v4/rng.js';
 
 const arg = (k, d) => { const a = process.argv.find(x => x.startsWith(`--${k}=`)); return a ? a.split('=')[1] : d; };
@@ -12,7 +12,8 @@ const N = Number(arg('normal', 40)), H = Number(arg('hard', 4)), P = Number(arg(
 
 function play(seed, level) {
   const rand = seededRandom(seed * 9973);
-  let s = createGame({ seats: Array.from({ length: P }, () => ({ kind: 'bot', bot: level })), seed, rules: { deck } });
+  let s = createGame({ seats: Array.from({ length: P }, () => ({ kind: 'bot' })), seed, rules: { deck } });
+  setBotLevels(s, Array(P).fill(level));
   const h = createHash('sha1');
   let moves = 0;
   while (!s.over) {
