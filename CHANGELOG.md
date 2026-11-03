@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.526 — 2026-11-03
+
+- Extortionist costs 1 more magenta; Gardener is worth 2 followers.
+
 ## v0.99.525 — 2026-11-03
 
 - Four new members: Hostesses (Silver) replaces Gift Wrapper, Heirs (White) replaces Exporters, Spoilsports (grey) replaces Scouts, and Body Snatchers (Red) replaces Triplets. For now each wears the old card's picture.
