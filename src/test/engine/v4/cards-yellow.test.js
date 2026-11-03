@@ -22,10 +22,13 @@ describe('Yellow actions', () => {
     for (let i = 0; i < 5; i++) s = move(s, 'color:gold');
     expect(R(s).gold).toBe(5);
   });
-  it('Trade Seeds: +2 yellow, then up to 3 one-for-one swaps', () => {
-    let s = take(sc({ res: [{ gold: 4 }] }), 'yellow.transmute');
-    s = move(s, 'swap:gold:red'); s = move(s, 'swap:gold:green'); s = move(s, 'swap:gold:red');
-    expect(R(s)).toEqual({ gold: 1, red: 2, yellow: 2, green: 1 });
+  it("Leaders' Tax: +1 yellow, then each rival with more of the chosen color gives you 1 (Cory, Nov 3)", () => {
+    let s = take(sc({ n: 4, res: [{ gold: 1 }, { gold: 3 }, { gold: 1 }, { gold: 5, red: 2 }] }), 'yellow.transmute');
+    expect(R(s).yellow).toBe(1);
+    s = move(s, 'color:gold');
+    expect(R(s).gold).toBe(3);
+    expect([R(s, 1).gold, R(s, 2).gold, R(s, 3).gold]).toEqual([2, 1, 4]);
+    expect(named(s, "Leaders' Tax").filter(l => /gives 1 gold/.test(l))).toHaveLength(2);
   });
   it("Dilute: +2 yellow, then change up to 3 of rivals' resources one for one, each named", () => {
     let s = take(sc({ res: [{}, { red: 3 }] }), 'yellow.dilute');
@@ -118,7 +121,7 @@ describe('Yellow members', () => {
     expect(run([['red.volunteer', 'benders.saboteur']], 'benders.scout')).toBe(0);
   });
   it('Go-Between: once per space, you may change 1 gained resource to another color', () => {
-    let s = take(sc({ members: [['yellow.gobetween']] }), 'yellow.transmute');
+    let s = take(sc({ members: [['yellow.gobetween']] }), 'yellow.dilute');
     s = move(s, 'color:red');
     expect(R(s)).toMatchObject({ yellow: 1, red: 1 });
     expect(named(s, 'Go-Between')).toHaveLength(1);
@@ -296,7 +299,7 @@ describe('Yellow members', () => {
   });
   it('Rainmaker × Underdog: the gold part is a gold gain, so it doubles past the match (see ledger question)', () => {
     let s = sc({ res: [{ gold: 1, yellow: 5 }, { gold: 20 }], members: [['yellow.rainmaker', 'gold.underdog']] });
-    s = move(take(s, 'yellow.transmute'), 'done');
+    s = move(take(s, 'yellow.dilute'), 'done');
     const y = R(s).yellow;
     s = move(s, `use:${uidOf(s, 'yellow.rainmaker', 0)}`);
     expect(R(s).gold).toBe(1 + 2 * (y - 1));
@@ -308,12 +311,12 @@ describe('Yellow members', () => {
     expect(named(s, 'Pilgrim')[0]).toMatch(/P1's Pilgrim: \+1 gold, \+1 red, \+1 yellow, \+1 green/);
   });
   it('Farmer: +1 more when an action gains yellow, named; a Doppelganger copy adds another', () => {
-    let s = take(sc({ members: [['yellow.farmer']] }), 'yellow.transmute');
+    let s = take(sc({ members: [['yellow.farmer']] }), 'yellow.dilute');
     expect(R(s).yellow).toBe(3);
     expect(named(s, 'Farmer')).toHaveLength(1);
     s = sc({ members: [['yellow.farmer', 'echo.doppel']] });
     s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'yellow.farmer';
-    expect(R(take(s, 'yellow.transmute')).yellow).toBe(4); // Trade Seeds' 2, +1 Farmer, +1 its copy
+    expect(R(take(s, 'yellow.dilute')).yellow).toBe(4); // Dilute's 2, +1 Farmer, +1 its copy
   });
   it('Weaver: buying 5+ followers gives +1 of each color, named; a 1-buy does not', () => {
     let s = sc({ res: [{ gold: 3, red: 3, yellow: 3, green: 3 }], members: [['yellow.weaver']] });

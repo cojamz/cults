@@ -102,7 +102,7 @@ const P = {
     makeover: { verb: '+4 yellow, then rearrange all', second: 'into any colors' },
     bloom: r => ({ main: `+${r} yellow`, second: '+1 of each fewest color', note: run(n => `+${n}`, 'yellow: ') }),
     // Match the current rule: the yellow arrives before the optional swaps.
-    transmute: { main: '+2 yellow', second: 'then swap up to 3', note: 'for other colors' },
+    transmute: { main: '+1 yellow', second: 'pick a color: each rival', note: 'with more gives you 1' },
     prism: { verb: '+1 each other color', second: 'per 3 yellow', note: 'you keep the yellow' },
     // "Members pay out" was all a tight ring II showed: the gain first, whole in line 1
     gather: { verb: '+1 per member', second: 'in its own color' },

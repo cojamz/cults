@@ -69,9 +69,11 @@ export default {
       resolve(ctx, p) { pickColors(ctx, p, ctx.state.round + 2, 'Harvest', true); },
     },
     {
-      key: 'transmute', ring: 1, name: 'Trade Seeds', text: '+2 yellow, then swap up to 3 of your resources for other colors.', // Cory, 2026-10-15: the gain first, then the swap (was swap, then +1)
-      estimate: (ctx, p) => 2 + Math.min(3, Math.max(0, Math.floor(total(ctx, p) / colors(ctx).length) - setsOf(ctx, p))) * 0.8,
-      resolve(ctx, p) { ctx.gain(p, Y, 2, { fromAction: true }); transmuteStep(ctx, p, { left: Math.min(3, total(ctx, p)), done: 0 }); },
+      // Cory, Nov 2-3: Trade Seeds "never felt useful"; Leaders' Tax replaces it (his "coordinator figure this shit out":
+      // the better of two candidates in bot games, Normal 400 and Hard). Key kept for old saves and records.
+      key: 'transmute', ring: 1, name: "Leaders' Tax", text: '+1 yellow. Choose a color: each rival with more of it than you gives you 1 of it.',
+      estimate: (ctx, p) => 1 + Math.max(0, ...colors(ctx).map(c => touchable(ctx, p).filter(o => (o.res[c] || 0) > (p.res[c] || 0)).length)),
+      resolve(ctx, p) { leadersTax(ctx, p); },
     },
     {
       // Cory, 2026-10-31: "does the same thing as trade seeds but you do it for opponents", no selector
@@ -106,6 +108,11 @@ export default {
   ],
 
   handlers: {
+    taxColor(ctx, p, c) {
+      let got = 0;
+      for (const o of touchable(ctx, p)) if ((o.res[c] || 0) > (p.res[c] || 0)) { o.res[c] -= 1; p.res[c] = (p.res[c] || 0) + 1; got++; ctx.log(`${p.name}'s Leaders' Tax: ${o.name} gives 1 ${c}.`); }
+      if (!got) ctx.log(`${p.name}'s Leaders' Tax: nobody holds more ${c}.`);
+    },
     ...handlers1({
       barterWith(ctx, p, oid) {
         if (oid == null) { ctx.log(`${p.name}'s Barterers: swapped nothing.`); return; }
@@ -441,6 +448,14 @@ function barterStep(ctx, p, data) {
   ctx.choose(p, `Barterers: swap with ${o.name} one for one, or stop (${data.done} swapped so far)`, opts, 'yellow.barter', data);
 }
 // Trade Seeds (and Tinker): up to 3 one-for-one swaps of your own, with Done at any time.
+// Leaders' Tax: a protected rival (Bodyguards, lying low) gives nothing, as for a steal or a change
+function leadersTax(ctx, p) {
+  ctx.gain(p, Y, 1, { fromAction: true });
+  const rivals = touchable(ctx, p);
+  ctx.choose(p, "Leaders' Tax: choose a color; each rival with more of it than you gives you 1", colors(ctx).map(c => ({
+    id: `color:${c}`, label: c, kind: 'color', value: c, hint: rivals.filter(o => (o.res[c] || 0) > (p.res[c] || 0)).length * 2 - (p.res[c] || 0) * 0.1,
+  })), 'yellow.taxColor');
+}
 function transmuteStep(ctx, p, data) {
   const cs = colors(ctx);
   const opts = [];
