@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.528 — 2026-11-03
+
+- Card words made consistent, same rules: every round-scaled gain reads +N in round I, II and III; Walk-In says pile; no card repeats its worth in its text
+
 ## v0.99.527 — 2026-11-03
 
 - New names, same rules: Initiation (was Recruit a Member), Overtime (Crowd In), Heist (Crime Wave), Sample (Encore), Potluck (Party Favors), Greeters (Recruit Bonus), Landlord (Shopkeeper), Misers (Heirs), Meddler (Ringleader)
