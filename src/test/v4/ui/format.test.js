@@ -315,7 +315,12 @@ describe('v4 format helpers', () => {
       const victim = s.players.find(p => raid.includes(`from ${p.name} `)).id;
       const t = createTrail(victim);
       for (const x of states) feed(t, x);
-      found = { t, n: Number(raid.match(/stole (\d+)/)[1]) };
+      const n = Number(raid.match(/stole (\d+)/)[1]);
+      // a turn where the raid is the only thing done to the victim (since Nov 2's bots, seed 2's raiding turn also
+      // took 1 gold, which the strip names first, rightly)
+      const hit = t.stories.find(x => /Raiders took/.test(x.hit || ''));
+      if (hit && !hit.short.startsWith(`Raiders took ${n}`)) continue;
+      found = { t, n };
     }
     expect(found).toBeTruthy();
     const st = found.t.stories.find(x => /Raiders took/.test(x.hit || ''));

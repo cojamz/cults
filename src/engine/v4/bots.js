@@ -169,12 +169,15 @@ function followUp(pend, rand, state) {
   }
   // a rival's member to take (Double Agent, Heist, Fixer…): rated on a copy, both sides, like a swap
   if (state && pend.kind === 'choose' && pend.options.length > 1 && pend.options.every(o => o.kind === 'member')) {
-    return move(rateOnCopy(state, pend, pend.options).reduce((a, b) => (b.v > a.v ? b : a)).o);
+    return move(bestRated(rateOnCopy(state, pend, pend.options)));
   }
   if (pend.kind === 'pay') return move(pend.options.find(o => o.default) || pend.options[0]);
   if (pend.kind === 'choose') {
     const opts = state && pend.options.length > 1 ? avoidUndo(state, pend) : pend.options;
-    return move(opts.reduce((a, b) => ((b.hint || 0) + rand() * 0.01 > (a.hint || 0) ? b : a)));
+    if (opts.length === 1 || !state) return move(opts[0]);
+    // every choice played on a copy of the game and valued like a buy (Cory, Nov 2: bots must do the best thing, not
+    // read the card's text). A card's hint only breaks a near tie; an option that can't be played out keeps its hint.
+    return move(bestRated(rateOnCopy(state, pend, opts)));
   }
   return move(pend.options[0]);
 }
@@ -258,7 +261,12 @@ export function rankRivalChoice(state) {
 }
 
 function chooseSwap(state, pend) {
-  return rateOnCopy(state, pend, pend.options).reduce((a, b) => (b.v > a.v ? b : a)).o;
+  return bestRated(rateOnCopy(state, pend, pend.options));
+}
+// The best-rated option; within 0.01 follower of it, the card's hint decides (then the first listed).
+function bestRated(rated) {
+  const top = Math.max(...rated.map(r => r.v));
+  return rated.filter(r => r.v >= top - 0.01).reduce((a, b) => ((b.o.hint || 0) > (a.o.hint || 0) ? b : a)).o;
 }
 
 // A swap or a member taken, played on a copy of the game and valued for everyone it touches: followers (Saboteur's −3
@@ -266,8 +274,9 @@ function chooseSwap(state, pend) {
 // Until 2026-10-29 only the bot's own side of a swap counted, so bots handed rivals Agents or Loyalists for free,
 // never pushed a Saboteur into a leader's cult, and never swapped two members that weren't theirs (Cory: "the bots
 // clearly aren't using it to switch into somebody"). Returns [{ o, v }]; with `base`, also the value of not choosing.
-const SWAP_CARD_CAP = 6; // swap-card trades played out per buy step, best by tradeScore first
-const RATE_CAP = 16; // options played out in full; the rest are ranked by tradeScore first (Anarchist can offer 100+)
+// Every option is played out, however many there are. Until Nov 2 only the 16 a quick read ranked best were (6 for the
+// swap card), and the quick read could miss the best trade (Doormen never sent a rival's 10-cost member away for a
+// 1-cost one). Cory: "bots are interpreting text instead of doing best thing possible?"
 function rateOnCopy(state, pend, options, { base = false } = {}) {
   const me = pend.player;
   const given = givenAway(state, me);
@@ -279,8 +288,7 @@ function rateOnCopy(state, pend, options, { base = false } = {}) {
   // the queued choice carries its handler and data (Even Swap's mode, Swap Sides'); without them every trade threw and fell back to its hint
   const task = pend.task || state.queue.find(t => t.t === 'choose' && t.p === me);
   const before = abilityTotals(state, places);
-  const quick = o => (o.kind === 'trade' ? tradeScore(state, me, o.value, places) : (o.hint || 0));
-  const pool = options.length > RATE_CAP ? [...options].sort((a, b) => quick(b) - quick(a)).slice(0, RATE_CAP) : options;
+  const pool = options;
   const valueOf = s => {
     const after = abilityTotals(s, places);
     const extra = Object.fromEntries(after.map((v, i) => [i, v - before[i]]));
@@ -294,6 +302,7 @@ function rateOnCopy(state, pend, options, { base = false } = {}) {
       // the swap card (a table setting) has no handler: its step swaps the pair itself (core.js 'swapcard')
       if (!task && state.queue[0]?.t === 'swapcard') ctx.swapMembers(s.players[me], ...o.value);
       else handlerById(task?.h || 'red.trade')(ctx, s.players[me], o.value, task?.data);
+      settle(s, ctx); // what the choice queues next (a counted pick's next pick, a gift's color…)
       v = valueOf(s);
     } catch (e) { globalThis.__swapFail = (globalThis.__swapFail || 0) + 1; v = (o.hint || 0) - 100; }
     // never take back a member you swapped away (see undoesSwap)
@@ -333,31 +342,65 @@ export function tradeScore(state, chooser, [a, b], places = null) {
   return (d[chooser] || 0) - rivals.reduce((acc, p) => acc + (d[p.id] || 0) * (p.id === lead ? SPITE : SPITE / 2), 0);
 }
 
-// An activation that ends in a swap (Anarchist, Headhunter, any to come) is played on a copy and used when its best
-// swap beats not swapping: by 1 follower for a once-per-round member, 2.5 for once a game (0.5 in the last round).
-// A card's own botActivate read only what a swap did for the bot's own cult, so a swap that hurt a rival never counted.
-const swapBar = (state, def) => (def.activate === 'round' ? 1 : state.round >= 3 ? 0.5 : 2.5);
-function swapUseGain(state, uid) {
+// Using a member's ability (On Use) is played on a copy of the game, with every choice it asks played out
+// (rateOnCopy), and taken when it beats not using it (useBar). Turns and buys it queues count as turns and
+// buys still ahead. Until Nov 2 only swaps were measured; every other card followed a hand-written rule (Cory: "bots
+// are interpreting text instead of doing best thing possible?"). The rule still decides when the copy shows no change
+// at all (an effect the end-of-game value can't see, like a later turn's discount).
+// Waiting keeps the use for a later turn, so it needs a clear gain unless this is the last buy it can come in
+// (the round's last for a once-per-round member, the game's last for once a game).
+const useBar = (state, def, p) => {
+  const last = p.left === 0 && (def.activate === 'round' || state.round >= 3);
+  return last ? 0.05 : def.activate === 'round' ? 1 : 2.5;
+};
+export function useGain(state, uid) {
   const me = state.pending.player;
   try {
+    const { turns, roundLeft } = horizon(state);
+    const lt = laterTurns(state);
+    const places = state.players.map((_, i) => turns[i] + lt.turns);
+    const income = turns.map(t => (t * INCOME[Math.max(1, state.round) - 1] + lt.income) * INCOME_SCALE);
+    const before = abilityTotals(state, places);
+    const value = (s, moreTurns = 0, moreBuys = 0) => {
+      const after = abilityTotals(s, places);
+      const extra = Object.fromEntries(after.map((v, i) => [i, v - before[i]]));
+      const buys = state.players.map((_, i) => turns[i] + lt.turns + (i === me ? 1 + moreTurns + moreBuys : 0));
+      const inc = income.map((v, i) => v + (i === me ? moreTurns * INCOME[Math.max(1, state.round) - 1] * INCOME_SCALE : 0));
+      return marginOf(evaluate(s, buys, inc, roundLeft, extra), me);
+    };
+    const base = value(lightClone(state));
     const s = lightClone(state);
     const ctx = contextFor(s);
     const card = s.cards[uid];
     card.used = true;
-    defById(card.def).onActivate(ctx, s.players[me], card);
-    const task = s.queue.find(t => t.t === 'choose' && t.p === me);
-    const trades = task?.options.filter(o => o.kind === 'trade') || [];
-    if (!trades.length) return null; // not a swap: the card's own botActivate decides
-    const rated = rateOnCopy(s, { player: me, task }, trades, { base: true });
-    return Math.max(...rated.map(r => r.v)) - rated.base;
+    for (const id of [card.def, card.copy].filter(Boolean)) { const d = defById(id); if (d.onActivate) { d.onActivate(ctx, s.players[me], card); break; } }
+    const moreTurns = s.queue.filter(t => t.t === 'turn' && t.p === me).length;
+    const moreBuys = s.queue.filter(t => t.t === 'buy' && t.p === me).length;
+    // the first choice it asks, played out over every option; later ones settle
+    const ask = s.queue.find(t => t.t === 'choose' && t.p === me);
+    if (ask) {
+      s.queue = s.queue.filter(t => t !== ask);
+      const opts = liveOptions(s, ask);
+      if (!opts.length) return { gain: value(s, moreTurns, moreBuys) - base, base };
+      const rated = rateOnCopy(s, { player: me, task: ask, options: opts }, opts);
+      return { gain: Math.max(...rated.map(r => r.v)) - base, base, chose: true };
+    }
+    settle(s, ctx);
+    return { gain: value(s, moreTurns, moreBuys) - base, base };
   } catch { return null; }
 }
 
 function useOption(state, pend, ctx, p) {
   const canUse = c => {
-    const gain = swapUseGain(state, c.uid);
-    if (gain !== null) return gain >= swapBar(state, defById(c.def));
-    return [c.def, c.copy].some(id => id && defById(id).botActivate?.(ctx, p));
+    const def = defById(c.def);
+    const g = useGain(state, c.uid);
+    const rule = [c.def, c.copy].some(id => id && defById(id).botActivate?.(ctx, p));
+    if (!g || Math.abs(g.gain) <= 0.05) return rule;
+    if (g.gain < useBar(state, def, p)) return false;
+    // when, for a once-a-game use: the copy can't see that waiting may pay more (Rainmaker grows with your yellow),
+    // so before the game's last buy the card's own timing rule must agree
+    const last = p.left === 0 && state.round >= 3;
+    return def.activate === 'round' || last || !def.botActivate || rule;
   };
   return pend.options.find(o => o.kind === 'use' && canUse(state.cards[o.uid]));
 }
@@ -689,8 +732,7 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
         const owner = (s, u) => s.players.find(q => q.members.includes(u));
         const pairs = swapCardPairs(state, state.players[me])
           .filter(([, b]) => !given.has(cardDef(state, b).name))
-          .map(pair => ({ pair, q: tradeScore(state, me, pair) }))
-          .sort((x, y) => y.q - x.q).slice(0, SWAP_CARD_CAP);
+          .map(pair => ({ pair }));
         let top = -1e6;
         for (const { pair: [a, b] } of pairs) {
           try {
@@ -808,3 +850,6 @@ export const chooseFollowerBuyerMove = (state, rand = Math.random) => {
   }
   return chooseNormalMove(state, rand, { noMembers: true });
 };
+
+/** For audits (scripts/v4-bot-choice-audit.mjs): the pieces bots choose with. Not used by the game. */
+export const botInternals = { rateOnCopy: (...a) => rateOnCopy(...a), avoidUndo: (...a) => avoidUndo(...a), lightClone: s => lightClone(s), settle: (...a) => settle(...a), givenAway: (...a) => givenAway(...a) };

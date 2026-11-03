@@ -18,3 +18,4 @@ vite.config.js.timestamp-*
 .v4-shop-visual/
 .status/
 .v4-playtest/
+.balance-runs/

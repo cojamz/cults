@@ -39,8 +39,8 @@ describe('a full board', () => {
 
 describe('Late Risers on a full board', () => {
   it('2 players, 2 spheres, round III: Extra Hand twice fills all 12 spaces, so Late Risers gives no turn', () => {
-    // seed 1 since the Goes Last token (Nov 1, 2:35pm); seed 8 since Cory's Nov 1 balance calls; seed 7 since Shift Crew worth 4 and Old Maid −5 (Nov 1); seed 5 since Late Risers is 2 members (Oct 30); seed 3 since Promote and Demote reach rivals (Oct 29): on seed 2 P1 swapped its Loyalists to P2, then Late Risers away
-    let s = createGame({ seats: [{ kind: 'bot' }, { kind: 'bot' }], seed: 1, quadrants: ['purple', 'red'], rules: { release: false } });
+    // seed 2 since bots play out every choice (Nov 2); seed 1 since the Goes Last token (Nov 1, 2:35pm); seed 8 since Cory's Nov 1 balance calls; seed 7 since Shift Crew worth 4 and Old Maid −5 (Nov 1); seed 5 since Late Risers is 2 members (Oct 30); seed 3 since Promote and Demote reach rivals (Oct 29): on seed 2 P1 swapped its Loyalists to P2, then Late Risers away
+    let s = createGame({ seats: [{ kind: 'bot' }, { kind: 'bot' }], seed: 2, quadrants: ['purple', 'red'], rules: { release: false } });
     const give = id => {
       const uid = Object.values(s.cards).find(c => c.def === id).uid;
       s.pile = s.pile.filter(u => u !== uid); s.shop = s.shop.filter(u => u !== uid);
@@ -49,7 +49,7 @@ describe('Late Risers on a full board', () => {
     give('purple.lateriser');
     give('red.loyalists'); // Red's swaps (v0.8.0) would otherwise let a bot trade Late Risers away before round III
     s.players[1].bonus += 50; // P1 keeps the fewest followers
-    const rand = seededRandom(1);
+    const rand = seededRandom(2);
     let dealt = false;
     while (!s.over && s.round < 3) {
       // Extra Hand and a Doppelganger copying it, handed over after round II's last minion (so no bot releases them)
