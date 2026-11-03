@@ -227,7 +227,7 @@ if (wantE2E && existsSync(join(root, 'e2e/v4'))) {
       .filter(f => !/^qa-|probe/.test(f));
     // in Firefox, gates that need CDP (CPU throttle, heap) can't run unless they fall back on cdpOk: named, not silently dropped
     if (ENGINE === 'firefox') for (const f of [...all]) if (/newCDPSession/.test(readFileSync(join(root, 'e2e/v4', f), 'utf8')) && !/cdpOk/.test(readFileSync(join(root, 'e2e/v4', f), 'utf8'))) { all.splice(all.indexOf(f), 1); console.log(`[${f}] Chromium only (uses CDP): not run in Firefox`); }
-    // timing-sensitive: hover p95 (info), count-ups and bot pacing (motion). They take every e2e token on the box.
+    // timing-sensitive: hover p95 (info), count-ups and bot pacing (motion). They run after every other gate, in two lanes that together hold every e2e token on the box.
     // memory.mjs is not: it reads the heap after a forced GC, which load doesn't change.
     // scoring, score-screens and reckoning (count-ups, results-in-time, every quadrant told before the hold cap) went
     // red only under the full run's load on Nov 1, and pass alone: they join the solo set.
@@ -255,10 +255,15 @@ if (wantE2E && existsSync(join(root, 'e2e/v4'))) {
     // the FIFO token queue runs them in this order: the parallel ones (one token each), then each solo one alone
     const par = all.filter(f => !SOLO.has(f)).sort(order), solo = all.filter(f => SOLO.has(f)).sort(order);
     // (each ticket is filed the moment one() is called, so this order is the queue's order)
-    // the solo ones queue behind the unit tests, in order, so each still runs alone once its turn comes
-    let chain = unit.then(() => {}, () => {});
-    const soloJobs = solo.map(f => { const j = chain.then(() => one(f, E2E_TOKENS)); chain = j.then(() => {}, () => {}); return j; });
-    const jobs = [...par.map(f => one(f, HEAVY[f] || 1)), ...soloJobs];
+    // the solo ones wait for the unit tests and every parallel gate, then run in two lanes: motion.mjs (the long pole,
+    // ~4 min alone) in one, the rest one after another in the other. Two browsers on an otherwise idle box: 3 of 3
+    // rounds all green, 342 s against ~790 s one at a time (Nov 3). Nothing else runs beside them.
+    const parJobs = par.map(f => one(f, HEAVY[f] || 1));
+    const quiet = Promise.all([unit, ...parJobs].map(j => j.then(() => {}, () => {})));
+    const LANE_A = new Set(['motion.mjs']);
+    const lane = files => { let chain = quiet; return files.map(f => { const j = chain.then(() => one(f, Math.max(1, Math.floor(E2E_TOKENS / 2)))); chain = j.then(() => {}, () => {}); return j; }); };
+    const soloJobs = [...lane(solo.filter(f => LANE_A.has(f))), ...lane(solo.filter(f => !LANE_A.has(f)))];
+    const jobs = [...parJobs, ...soloJobs];
     await Promise.all(jobs);
     await server.close();
   }
