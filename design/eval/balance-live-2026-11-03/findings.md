@@ -75,3 +75,7 @@ Four-player games with purple on the table. Normal 189 games: 567 rounds, every 
 ## Addendum: test runs of the fixes (from the "Plan and run today's autonomous improvements" thread, /mnt/project-files/replacements/runs/)
 Same 120 Hard games (same seeds) as run A, printed contests, with Caterer +2, Impressionist +1 and Money Changers paying only on its owner's buys (CATERER=2 IMPRESSIONIST=1 CHANGER=self). Cloak holders' win share, before → after: Impressionist 40% → 30% (53 holders); Caterer 16% → 33% (64); Money Changers 39% → 12% (67); Fence 17% → 40% (63); Pocket Watch 19% → 25%; Guest Book 33% → 21%; Bargain Bin 28% → 37%; Recruiter 22% → 28%. Give or take about 6 each; Fence moving 23 points with no change of its own shows how far games drift once anything changes.
 Night Owls variants (owl-base, owl-10 at cost 10, owl-notoken; 100 Hard games each) ran with printed contests, so they say nothing about the By color Purple goal; holders at game end won 39% (23), 40% (10) and 45% (22): too few to read.
+
+## Shipped (Cory, Nov 3: "use your judgement")
+- v0.99.517: Impressionist +1 (was +2); By color Red back to most red. Caterer and Money Changers unchanged.
+- v0.99.520: Night Owls' extra minion placed right away (no Goes Last token). Test: 120 Hard games each, By color, MUST=purple, same seeds (.balance-runs/owl-bycolor/): owners won 17/37 (46%) → 10/31 (32%); Purple contest in held rounds 37/44 → 8/38.
