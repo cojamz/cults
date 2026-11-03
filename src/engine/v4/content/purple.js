@@ -332,8 +332,8 @@ export default {
       // Cory, 2026-10-28: grows by round, "maybe more like 4/5/6", so a late skip is worth taking
       // Cory, Nov 1 2:35pm: the Goes Last token ("Let's just try it with the goes last token"): one minion waits on it,
       // so your hand empties a turn early and that snake turn is passed (a skip, for Pocket Watch and Gossip)
-      key: 'skip', copyDoesIt: true, ring: 1, name: 'Sleep In', text: '+4 purple (+5 in round II, +6 in round III). Take the Goes Last token and put your next minion on it.',
-      byRound: { lines: ['+4 purple', '+5 purple', '+6 purple'], rest: 'Take the Goes Last token and put your next minion on it.' },
+      key: 'skip', copyDoesIt: true, ring: 1, name: 'Sleep In', text: '+4 purple (+5 in round II, +6 in round III). Take the Goes Last token: your next minion is placed after everyone else’s.',
+      byRound: { lines: ['+4 purple', '+5 purple', '+6 purple'], rest: 'Take the Goes Last token: your next minion is placed after everyone else’s.' },
       estimate: ctx => ctx.state.round + 3,
       resolve(ctx, p) {
         ctx.gain(p, P, ctx.state.round + 3, { fromAction: true });
@@ -378,7 +378,7 @@ export default {
       // Cory, 2026-10-22: a follower bonus for taking the rest of your turns last ("YES now you're cooking"), in his
       // words ("take the remainder of your turns when others are out of minions"), "let's just try it at 2 followers
       // per minion left". Replaces Rush Hour. Name is Claude's fill-in.
-      key: 'lastcall', copyDoesIt: true, ring: 2, name: 'Last Call', text: '+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token and put your other minions on it.', // (Cory, Nov 1: "keep it one follower, and give purple per minion"; "also keep +1 purple up front")
+      key: 'lastcall', copyDoesIt: true, ring: 2, name: 'Last Call', text: '+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token: your other minions are placed after everyone else’s.', // (Cory, Nov 1: "keep it one follower, and give purple per minion"; "also keep +1 purple up front")
       estimate: (ctx, p) => 1 + 2 * Math.max(0, p.left - 1),
       resolve(ctx, p) {
         ctx.gain(p, P, 1 + p.left, { fromAction: true });
@@ -478,7 +478,9 @@ export default {
     // (Normal bots, n=320), so 8+2 (design/eval/purple-members.md). At 4 players round I has no space to spare, so it
     // pays from round II. Fires once per round (owlRound), whether or not the board had room.
     // Cory, Nov 1 2:35pm: the Goes Last token; the extra minion waits on it
-    m('nightowl', 'Night Owls', 6, 1, 'Once per round: after you place your last minion, take the Goes Last token with 1 more minion on it.', { f: 2, from: 2,
+    m('nightowl', 'Night Owls', 6, 1, 'From round II: after your last minion, +1 minion, placed after everyone else’s.', { f: 2, from: 2,
+      // its onRecruited only says when the extra minion starts: no On Recruit for Tryout or Encore to borrow
+      recruitNote: true,
       // recruited after your last minion of the round (its buy step): it waits for next round, and says so
       onRecruited(ctx, owner, card) {
         if (owner.left !== 0 || ctx.state.round < 1) return;

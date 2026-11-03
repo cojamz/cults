@@ -355,14 +355,14 @@ function freeStep(ctx, p, data) {
 // it", "it becomes a copy"), which a card held by someone else can't do for you. Same test as Red's Tryout.
 function rivalRecruits(ctx, p) {
   return ctx.rivals(p).flatMap(o => ctx.membersOf(o).map(c => ({ c, o })))
-    .filter(({ c }) => !c.def.artifact && (c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate)))
+    .filter(({ c }) => !c.def.artifact && !c.def.recruitNote && (c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate)))
       && !/\bit\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
 }
 
 // Greatest Hits: your members with an On Recruit (or a now-and-round-start effect, as Encore reads it).
 const recruitDef = c => (c.copy ? defById(c.copy) : c.def);
 function ownRecruits(ctx, p) {
-  return ctx.membersOf(p).filter(c => { const d = recruitDef(c); return !d.artifact && (d.onRecruited || (d.now && (d.onRoundStart || d.onRoundStartLate))); });
+  return ctx.membersOf(p).filter(c => { const d = recruitDef(c); return !d.artifact && !d.recruitNote && (d.onRecruited || (d.now && (d.onRoundStart || d.onRoundStartLate))); });
 }
 // Greatest Hits is a chain like any copy: an On Recruit it copies (Stunt Double's "copy the action you just took") stays
 // in that chain, so it can't copy Greatest Hits again (that looped forever in seeded games, Nov 1).

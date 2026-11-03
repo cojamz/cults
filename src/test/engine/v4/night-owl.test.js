@@ -28,7 +28,7 @@ describe('Night Owls', () => {
   it('is printed as decided: 6 purple + 1 any, worth 2 followers, in plain words', () => {
     const d = defById('purple.nightowl');
     expect([d.s, d.w, d.f]).toEqual([6 + COLOR_SHIFT, 1 + EXTRA_WILD - COLOR_SHIFT, 2]); // 8 → 6 purple after the Oct 22 bot run; 9 → 8 in total after the Oct 29 balance runs
-    expect(d.text).toBe('Once per round: after you place your last minion, take the Goes Last token with 1 more minion on it.'); // Cory, Nov 1 2:35pm
+    expect(d.text).toBe('From round II: after your last minion, +1 minion, placed after everyone else’s.'); // Cory, Nov 1 2:35pm; words Nov 3 (his "use your best judgement")
     expect(d.from).toBe(2); // the II+ tag (Cory, 2026-10-22)
   });
 

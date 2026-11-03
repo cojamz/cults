@@ -443,7 +443,7 @@ const market = {
     // Cory, Nov 1 3:21pm (picked 1): a rival's member to the bottom of the pile, and the owner hands them a shop member
     // costing up to 2 more. Given, not recruited, so its On Recruit doesn't fire. Price 2 blue + 5 any, worth and counts
     // as 2: the design thread's fill-ins. A trade, not a steal (Bodyguards and Lie Low block steals only).
-    m('doorman', 'Doormen', 2, 5, 'On Use, once per round: send a rival’s member to the bottom of the pile. Give them a shop member costing at most 2 less.', { f: 2, n: 2,
+    m('doorman', 'Doormen', 2, 5, 'On Use, once per round: send a rival’s member to the bottom of the pile. Give them a shop member; it can cost up to 2 less, or any amount more.', { f: 2, n: 2,
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
