@@ -5,7 +5,7 @@ Current rules only, short on purpose: every line here loads into every thread. W
 ## Before every message to him (chat threads run no hooks: this is the only check)
 1. `node .claude/hooks/presend.mjs <<'EOF'` the exact text `EOF`. Fix what it says; follow any NEW RULES it prints.
 2. Every space or member named comes with its full card text, every time, even if quoted earlier ("I DONT HAVE THE ACTION NAMES MEMORIZED").
-3. A design pitch passes .claude/rules/pitching.md first, written down, not in your head. Every card meets Cory's bar in writing: intuitive, fun, interacts with its color or others, and worth the turn even if a rival takes the space you wanted (Nov 3; presend checks linked pitch files).
+3. A design pitch passes .claude/rules/pitching.md first, written down, not in your head. Every card is checked in writing against the six principles in design/notes/replacements-principles-2026-11-03.md: Cory's three (intuitive, fun, interacts with its color or others) plus feels powerful, builds into an engine, a new way into its color's theme or a counter (Nov 3; presend checks linked pitch files).
 4. It ends with his decision (numbered, default in brackets) or "Nothing needed from you."
 5. Any message over one line goes through a fresh reader: an Agent (general-purpose) given .claude/agents/plain-reader.md and the draft. Send its version after presend passes it; fix any MISSING TEXT or UNCLEAR it flags (Cory, Nov 2).
 
