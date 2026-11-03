@@ -55,7 +55,24 @@ jobs:
       - name: check:v4 verdict
         if: steps.skip.outputs.skip != '1'
         continue-on-error: true
+        # each stage's whole log and every gate's screenshots land where the next step can keep them: the step log
+        # shows only each stage's tail, and a gate red only here (load, Chromium's headless shell) needs its pictures
+        env:
+          V4_LOGS: ${{ runner.temp }}/v4-logs
+          V4_SHOTS: ${{ runner.temp }}/v4-shots
         run: npm run check:v4 -- --commit HEAD 2>&1 | tee check.log
+      - name: Keep the logs and screenshots (7 days)
+        if: steps.skip.outputs.skip != '1'
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: verdict-${{ steps.skip.outputs.sha }}
+          path: |
+            check.log
+            ${{ runner.temp }}/v4-logs
+            ${{ runner.temp }}/v4-shots
+          retention-days: 7
+          if-no-files-found: ignore
       - name: Record the verdict
         if: steps.skip.outputs.skip != '1'
         run: |
