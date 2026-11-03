@@ -26,9 +26,7 @@ Seeds considered and cut: Rainmaker-lite "raise your fewest color to your yellow
    Intuitive: one color named, everyone ahead of you in it hands you 1.
    Fun: you pick the target in the open; leaders groan, trailing players cheer.
    Interacts: rivals' piles and the contests of every color on the table.
-   Worth the turn: it needs only a color someone leads, so it pays wherever Yellow's other spaces went.
 2. Hard Bargain: "Give a rival 2 of one of your colors, then take up to 3 of another color from them (4 in round II, 5 in round III)." Round I: give Bo 2 yellow, take 3 red: net +1 resource, but the red you need and Bo's red lead down 3. Round III: give 2, take 5 of their contest color: net +3 and a 7-swing in one contest (prize 10). Rival feels a sting and a small gift. Your choice: which rival, which two colors. Not Magenta's steal: you always pay first.
    Intuitive: give 2, take 3 (4, 5): a lopsided trade.
    Fun: a targeted swing on one rival's contest color, with a small gift back.
    Interacts: one rival's pile and contest, and members' colored parts you need.
-   Worth the turn: net +1/+2/+3 plus the color you need, whatever other space was taken.
