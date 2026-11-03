@@ -94,6 +94,21 @@ if (looksLikePitch) {
   notes.push('Pitch: before sending, for each idea you wrote down (1) one played turn at 4 players vs the best other space, by name and number, (2) both sides of every "choose": if one side always wins for the chooser, cut it, (3) who at the table feels it. Ideas that fail any of these are cut, not sent. See .claude/rules/pitching.md.');
 }
 
+// Cory, Nov 3 (second no on pitch quality: "those principles are terrible"): a linked pitch file's examples each answer
+// his bar in writing (Intuitive, Fun, Interacts) and say why it is worth the turn it costs, even when a rival takes the
+// space you hoped for. Examples are blocks that start "**<n>." in the linked .md.
+{
+  const { readFileSync, existsSync } = await import('node:fs');
+  for (const f of [...text.matchAll(/\]\((\/mnt\/project-files\/[^)\s]+\.md)\)/g)].map(m => m[1])) {
+    if (!existsSync(f)) continue;
+    const body = readFileSync(f, 'utf8');
+    if (!/\breplaces\b|\bpitch|\bexamples?\b/i.test(body)) continue;
+    const blocks = body.split(/\n(?=\*\*\d+\.)/).slice(1);
+    const short = blocks.filter(b => !['Intuitive:', 'Fun:', 'Interacts:', 'Worth the turn:'].every(k => b.includes(k)));
+    if (short.length) problems.push(`${f}: ${short.length} of ${blocks.length} examples lack Cory's bar in writing ("Intuitive:", "Fun:", "Interacts:" and "Worth the turn:", the last saying why it pays even if a rival takes the space you wanted). Cory, Nov 3: "intuitive and easy to understand, fun to play, interacts with either the color, with other colors, or both."`);
+  }
+}
+
 for (const n of notes) console.log(`note: ${n}`);
 if (problems.length) {
   console.log(`DON'T SEND YET:\n- ${problems.join('\n- ')}`);
