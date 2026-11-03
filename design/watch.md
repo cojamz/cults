@@ -27,3 +27,11 @@ Format: date, run, deck, what was flagged, why it was dropped, the numbers in pl
 
 ## All four newest AI games won by 20 or more
 - 2026-11-01, balance-1.0: too few games to call. Check the winning margin in the next AI games.
+
+## Nov 3 live v0.99.513 runs (printed and By color, fast): considered and dropped
+- 2026-11-03: Line Cutters, Window Dressers, Fan Club, Early Birds, Shift Crew read TRAP or WEAK; dropped (each counts as 2 to 4 members and the lift charges for it).
+- 2026-11-03: Polisher DOMINANT at Normal (+9); dropped (Hard +1 printed, −4 By color).
+- 2026-11-03: Hard seat 1 33% vs seat 4 18% (printed run); dropped (By color run 22% vs 25%, overnight 21% vs 24%).
+- 2026-11-03: Yellow's Dilute, Big Dilute, Melting Pot −8 to −10 at Hard, 0 to +4 at Normal; dropped (levels disagree). Second flag for Big Dilute and Melting Pot (By color Hard −10 too? not read).
+- 2026-11-03: Cashier −6 Normal / −17 Hard printed, +4 / −8 By color; watch (one more flag goes to Cory).
+- 2026-11-03: White as a main color under By color −7 Normal / −25 Hard (20 seats); watch.
