@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.507 — 2026-11-02
+
+- New table setting, Contests: try other contest goals (members count 2, minions on a color's spaces, or White's fewest members).
+
 ## v0.99.506 — 2026-11-02
 
 - Makeover is back to +4 yellow, then rearrange your resources into any mix of colors
