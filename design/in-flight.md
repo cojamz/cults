@@ -41,3 +41,4 @@ Branches
 - claude/gifted-newton-3lcy3i: the game (PR #1). main: the old game plus play/, rules/ and the harness mirror.
 - Every other claude/* branch is an old thread workspace and stale; none are needed.
 - Purple members (thread "Rework Purple's members for 1.0", Nov 1): Cory said no to Insomniac and Holdouts, keeps Hot Streak; Gossip back in the 10 deck in place of Extra Shift, live v0.9.921. Done unless he asks for more.
+- Names and pictures (thread "Give cards clearer names and images", Nov 3): 9 renames live v0.99.527 (Initiation, Overtime, Heist, Sample, Potluck, Greeters, Landlord, Misers, Meddler), wording made consistent v0.99.528, new scenes for those members plus Body Snatchers, Hostesses, Spoilsports (design/prototypes/scenes b9, b10; v0.99.529, v0.99.531). Next: Cory's vetoes; Impersonators, Creditors, Kidnappers, Godparents wear old pictures until drawn the same way (batch file, build.py N, scripts/v4-portrait4-import.mjs).
