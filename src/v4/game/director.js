@@ -1578,7 +1578,8 @@ function linger(el, n, r = el && !el.rectOnly ? el.getBoundingClientRect() : nul
   const b = document.createElement('b');
   b.className = `seat-delta ${n > 0 ? 'up' : 'down'}`;
   b.textContent = `${n > 0 ? '+' : '−'}${Math.abs(n)}`;
-  Object.assign(b.style, { left: `${Math.round(r.right)}px`, top: `${Math.round(r.bottom + 1)}px` });
+  // beside the count, to its left: under it, it sat on the resource row's corner and read as "+19 purple" (polish, Nov 3)
+  Object.assign(b.style, { left: `${Math.round(r.left - 4)}px`, top: `${Math.round(r.top + r.height / 2)}px` });
   b.style.setProperty('--ld', `${MO.lingerDelta}ms`);
   document.body.appendChild(b);
   const t = setTimeout(() => { b.remove(); lingering.delete(el); }, MO.lingerDelta);

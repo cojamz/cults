@@ -16,7 +16,7 @@ export const MinionPool = memo(function MinionPool({ state }) {
   if (!(state.round >= 2) || state.over) return null;
   const n = minionPool(state);
   return (
-    <Tip as="div" className="lt-pool" data-pool={n} label={words(n)} content={<p className="pool-tip">{words(n)}</p>}>
+    <Tip as="div" className={`lt-pool${n >= 5 ? ' many' : ''}${n >= 7 ? ' crowd' : ''}`} data-pool={n} label={words(n)} content={<p className="pool-tip">{words(n)}</p>}>
       <span className="pool-men" aria-hidden="true">
         {Array.from({ length: n }, (_, k) => (
           <i key={k} className="pool-min" data-pool-min={k}><Minion color={ROBE} size={18} /></i>

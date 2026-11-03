@@ -1,13 +1,14 @@
 /* The action stage (ActionStage.jsx): a space's card and the members who chip in, out on the wheel's hub while a
    move plays. Above the board, under the flying pieces (.flight is 61), never takes a click. */
-.action-stage{position:fixed;inset:0;z-index:60;pointer-events:none}
+/* 59: under an open hover card (60), so a rival's move never covers what you're reading (polish, Nov 3) */
+.action-stage{position:fixed;inset:0;z-index:59;pointer-events:none}
 .action-stage > *{position:fixed;transform-origin:center;will-change:transform,opacity}
 .as-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-sizing:border-box;padding:18px 10px 10px;
   border-radius:10px;background:var(--paper-lit,#fbf6ea);color:var(--pl-ink,#2b2018);text-align:center;--glyph:.95em;
   box-shadow:inset 0 4px 0 var(--q),0 0 0 1px rgba(43,32,24,.18),0 14px 30px rgba(0,0,0,.55)}
 .as-card .as-who{position:absolute;top:9px;left:10px;display:flex;align-items:center;gap:4px;font:600 12px/1 var(--sans);color:var(--pl-ink-2,#6e5c49)}
 .as-card .as-who svg{display:block}
-.as-card .as-main{font:800 18px/1.05 var(--sans);letter-spacing:-.01em;white-space:nowrap}
+.as-card .as-main{font:800 18px/1.05 var(--sans);letter-spacing:-.01em;text-wrap:balance;max-width:100%}
 .as-card .as-second{font:600 15px/1.1 var(--sans);color:var(--pl-ink-2,#6e5c49);text-wrap:balance}
 .as-member{display:flex;flex-direction:row;align-items:center;gap:8px;box-sizing:border-box;padding:6px 10px 6px 6px;border-radius:10px;text-align:left;
   background:color-mix(in srgb,var(--q) 22%,var(--walnut-2,#271d16));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--q) 55%,transparent),0 10px 24px rgba(0,0,0,.5)}
@@ -35,7 +36,7 @@
 .piece-member.staged .pm-name{position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:2px;padding:1px 5px;border-radius:4px;background:var(--walnut-2,#271d16);color:var(--cream,#f3e6c8);font:600 12px/1.2 var(--sans);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
 .flight.piece-member.staged,.piece-flight.piece-member.staged{overflow:visible}
 /* a seat's follower change, under its count for a while (director.js linger) */
-.seat-delta{position:fixed;transform:translateX(-100%);z-index:55;pointer-events:none;padding:1px 5px;border-radius:4px;font:800 12px/1.25 var(--sans);background:var(--walnut-2,#271d16);box-shadow:0 1px 3px rgba(0,0,0,.5);animation:seatdelta var(--ld,2.6s) ease-out both}
+.seat-delta{position:fixed;transform:translate(-100%,-50%);z-index:55;pointer-events:none;padding:1px 5px;border-radius:4px;font:800 12px/1.25 var(--sans);background:var(--walnut-2,#271d16);box-shadow:0 1px 3px rgba(0,0,0,.5);animation:seatdelta var(--ld,2.6s) ease-out both}
 .seat-delta.up{color:#bfe6a8}.seat-delta.down{color:#f0a49a}
 /* what a steal takes, on the victim's pile the moment it's taken (director.js takeTag) */
 .take-tag{position:fixed;transform:translate(-50%,-100%);z-index:62;pointer-events:none;display:flex;align-items:center;gap:2px;padding:1px 5px 1px 4px;border-radius:4px;
@@ -43,7 +44,7 @@
 .take-tag svg,.take-tag .piece-dot{width:10px;height:10px;display:block}
 @keyframes taketag{0%{opacity:0;transform:translate(-50%,-80%) scale(1.25)}14%{opacity:1;transform:translate(-50%,-100%) scale(1)}80%{opacity:1}100%{opacity:0}}
 @media (prefers-reduced-motion: reduce){.take-tag{animation:none}}
-@keyframes seatdelta{0%{opacity:0;transform:translate(-100%,-3px)}8%{opacity:1;transform:translate(-100%,0)}82%{opacity:1}100%{opacity:0}}
+@keyframes seatdelta{0%{opacity:0;transform:translate(-100%,calc(-50% - 3px))}8%{opacity:1;transform:translate(-100%,-50%)}82%{opacity:1}100%{opacity:0}}
 @media (prefers-reduced-motion: reduce){.seat-delta{animation:none}}
 
 /* round II and III members shuffled into the deck (director.js shuffleIn): card backs like the deck's top card, and

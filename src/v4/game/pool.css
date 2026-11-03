@@ -13,3 +13,9 @@
 .lt-since .since-own .since-more.in-head{flex:none;white-space:nowrap}
 .lt-since .since-title.own-line{display:block;padding:4px 2px 2px 0;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--cream-3)}
 .lt-since.empty .since-head.with-pool{justify-content:space-between}
+/* five or more spares: the label takes two short lines, and from seven the figures stand shoulder to shoulder, so the row
+   never runs into the Log button (polish, Nov 3) */
+.lt-since .since-head > .lt-pool{flex:0 1 auto}
+.lt-pool.many .pool-cap{white-space:normal;max-width:64px;line-height:1.1}
+.lt-pool.crowd .pool-men{gap:0}
+.lt-pool.crowd .pool-min + .pool-min{margin-left:-3px}
