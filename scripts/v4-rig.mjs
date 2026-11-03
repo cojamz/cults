@@ -38,6 +38,8 @@ const FLIGHTS = !!flag('flights', false); // every flight watched: any taken off
 // each frame, which hid a fix to how often the game itself needs one, Oct 28); frame columns read empty. Judge any change
 // to frames, timers or idle work with it on, on round busy % and clicks; freezes are scripts/v4-freeze.mjs's bar.
 const NO_FRAMES = !!flag('no-frame-loop', false);
+const BIG_MS = Number(flag('big-ms', 2000)); // --big-ms=N: list frames over N ms with the screen at the time (default 2 s)
+const HEAP_SNAP = String(flag('heap-snap', '') || ''); // --heap-snap=<file>: a heap snapshot at the leak control's unbroken measure (what holds detached nodes)
 // --still: every endless animation (breathing leaders, member scenes, minion bob) held paused all game, so a run
 // shows what they cost each click (layerize and paint every frame); shows and flights, which end, still play
 const STILL = flag('still', false); // --still=cancel takes them off instead (a paused animation keeps its layer)
@@ -57,7 +59,7 @@ export const BARS = {
 };
 
 const RECORDER = () => {
-  const F = (window.__rig = { round: '', frames: [], samples: [], loaf: [] });
+  const F = (window.__rig = { round: '', frames: [], samples: [], loaf: [], own: [] }); // own: the rig's own forced GC and DOM walk (memory()), left out of frames
   window.__whyLog = []; window.__rigWhy = r => { window.__whyLog.push(r); if (window.__whyLog.length > 40) window.__whyLog.shift(); }; // why presses did nothing (GameScreen, Wheel)
   const name = a => {
     const el = a.effect && a.effect.target;
@@ -77,7 +79,7 @@ const RECORDER = () => {
       try { cur = [...new Set(document.getAnimations().filter(a => a.playState === 'running').map(name))]; } catch { cur = []; }
     }
     // frames while the tab is idle-measured or hidden are skipped by the harness (F.pause)
-    if (last && !F.pause && F.round) F.frames.push([F.round, Math.round((t - last) * 10) / 10, cur]);
+    if (last && !F.pause && !F.owning && F.round) F.frames.push([F.round, Math.round((t - last) * 10) / 10, cur]);
     last = t;
     // paused (the idle reading): no frame loop at all, or its own frames would restyle every running animation
     if (F.pause) { F.stopped = true; last = 0; return; }
@@ -85,7 +87,7 @@ const RECORDER = () => {
   };
   F.resume = () => { F.pause = false; if (F.stopped && !window.__rigNoFrames) { F.stopped = false; requestAnimationFrame(tick); } };
   if (!window.__rigNoFrames) requestAnimationFrame(tick);
-  try { new PerformanceObserver(l => { for (const e of l.getEntries()) { if (e.duration > 2000) F.big = (F.big || []).concat({ d: Math.round(e.duration), prompt: (document.querySelector('[data-prompt]')?.textContent || '').slice(0, 120), phase: document.querySelector('.app.game')?.dataset.phase, hover: (document.querySelector('.lt-hover')?.textContent || '').slice(0, 120), options: [...document.querySelectorAll('[data-option]')].map(x => x.getAttribute('data-option')).slice(0, 20) }); F.loaf.push({ round: F.round, d: Math.round(e.duration), scripts: (e.scripts || []).slice(0, 3).map(s => `${(s.sourceFunctionName || s.invoker || '?').slice(0, 40)} ${Math.round(s.duration)}${s.duration > 1000 ? ` [${s.invoker || ''} @ ${(s.sourceURL || '').split('/').pop()}:${s.sourceCharPosition}]` : ''}`) }); } }).observe({ type: 'long-animation-frame', buffered: false }); } catch { /* no LoAF */ }
+  try { new PerformanceObserver(l => { for (const e of l.getEntries()) { if (e.duration > (window.__rigBigMs || 2000)) F.big = (F.big || []).concat({ d: Math.round(e.duration), style: Math.round(e.styleAndLayoutStart ? e.startTime + e.duration - e.styleAndLayoutStart : 0), round: F.round, at: Math.round(e.startTime), layers: [...document.querySelectorAll('.app.game > *, body > div > *')].map(x => (x.className && typeof x.className === 'string' ? x.className.split(' ')[0] : x.tagName)).filter(Boolean).slice(0, 14).join(' '), prompt: (document.querySelector('[data-prompt]')?.textContent || '').slice(0, 120), phase: document.querySelector('.app.game')?.dataset.phase, hover: (document.querySelector('.lt-hover')?.textContent || '').slice(0, 120), options: [...document.querySelectorAll('[data-option]')].map(x => x.getAttribute('data-option')).slice(0, 20) }); F.loaf.push({ round: F.round, t: Math.round(e.startTime), d: Math.round(e.duration), scripts: (e.scripts || []).slice(0, 3).map(s => `${(s.sourceFunctionName || s.invoker || '?').slice(0, 40)} ${Math.round(s.duration)}${s.duration > 1000 ? ` [${s.invoker || ''} @ ${(s.sourceURL || '').split('/').pop()}:${s.sourceCharPosition}]` : ''}`) }); } }).observe({ type: 'long-animation-frame', buffered: false }); } catch { /* no LoAF */ }
   // click → answer painted: armed by the harness before each click
   F.arm = () => new Promise(done => {
     F.armed = true;
@@ -133,6 +135,7 @@ const [VW, VH] = String(flag('size', '1270x700')).split('x').map(Number); // --s
 const ctx = await browser.newContext({ viewport: { width: VW, height: VH } });
 if (NO_FRAMES) await ctx.addInitScript(() => { window.__rigNoFrames = true; });
 await ctx.addInitScript(RECORDER);
+if (BIG_MS !== 2000) await ctx.addInitScript(ms => { window.__rigBigMs = ms; }, BIG_MS);
 if (FLIGHTS) await ctx.addInitScript(FLIGHT_WATCH);
 if (STILL) await ctx.addInitScript(CANCEL => { const hold = () => { try { for (const a of document.getAnimations()) { if (a.playState === 'running' && a.effect?.getTiming().iterations === Infinity) { if (CANCEL) a.cancel(); else a.pause(); } } } catch { /* */ } }; setInterval(hold, 200); addEventListener('pointerdown', hold, true); }, STILL === 'cancel');
 await ctx.addInitScript(s => { let a = s >>> 0; Math.random = () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }, SEED);
@@ -146,7 +149,9 @@ const cdp = await ctx.newCDPSession(page);
 await cdp.send('Performance.enable');
 const throttle = r => cdp.send('Emulation.setCPUThrottlingRate', { rate: r });
 const metrics = async () => Object.fromEntries((await cdp.send('Performance.getMetrics')).metrics.map(m => [m.name, m.value]));
-const memory = async () => { await cdp.send('HeapProfiler.collectGarbage'); const c = await cdp.send('Memory.getDOMCounters'); const h = await cdp.send('Runtime.getHeapUsage');
+const memory = async () => { await page.evaluate(() => { window.__rig.owning = true; window.__rig.ownStart = performance.now(); }).catch(() => {}); try { return await memoryNow(); } finally { await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => { const F = window.__rig; F.own.push([F.ownStart, performance.now()]); F.owning = false; r(); })))).catch(() => {}); } };
+// the rig's forced GC and DOM walk once a round (0.4-0.9 s at 4x late in a game) read as the game's worst frame until Nov 3: memory() marks it as the rig's own
+const memoryNow = async () => { await cdp.send('HeapProfiler.collectGarbage'); const c = await cdp.send('Memory.getDOMCounters'); const h = await cdp.send('Runtime.getHeapUsage');
   // elements in the document by tag.firstClass (what a reload rebuilds), beside the counters (which count detached nodes too)
   const inDoc = await page.evaluate(() => { const m = {}; for (const e of document.getElementsByTagName('*')) { const k = e.tagName.toLowerCase() + '.' + String(typeof e.className === 'string' ? e.className : e.className?.baseVal || '').trim().split(/\s+/)[0]; m[k] = (m[k] || 0) + 1; } return m; }).catch(() => ({}));
   return { nodes: c.nodes, listeners: c.jsEventListeners, heapMB: Math.round(h.usedSize / 1e5) / 10, elements: Object.values(inDoc).reduce((a, b) => a + b, 0), byClass: inDoc }; };
@@ -303,7 +308,22 @@ while (Date.now() - t0 < MAX_MIN * 60000) {
   const hand = await $('[data-handoff]'); if (hand) { await hand.click().catch(() => {}); continue; }
   const round = await roundOf();
   const next = await $('[data-next-round]');
-  if (next) { await sleep(900); await click(next, 'next-round', round || lastRound); continue; }
+  if (next) {
+    await sleep(900);
+    // --trace-round=<dir>: a Chrome trace of the 14 s after each next-round click (the new round's opening), raw, for a closer look
+    const TR = String(flag('trace-round', '') || '');
+    if (TR && !TRACE) await cdp.send('Tracing.start', { categories: 'devtools.timeline,disabled-by-default-devtools.timeline,disabled-by-default-devtools.timeline.frame,v8', transferMode: 'ReturnAsStream' });
+    await click(next, 'next-round', round || lastRound);
+    if (TR && !TRACE) {
+      await sleep(14000);
+      const done = new Promise(r => cdp.once('Tracing.tracingComplete', r));
+      await cdp.send('Tracing.end'); const { stream } = await done;
+      let txt = ''; for (;;) { const c = await cdp.send('IO.read', { handle: stream }); txt += c.base64Encoded ? Buffer.from(c.data, 'base64').toString() : c.data; if (c.eof) break; }
+      await cdp.send('IO.close', { handle: stream });
+      mkdirSync(TR, { recursive: true }); writeFileSync(`${TR}/after-${round || lastRound}.json`, txt);
+    }
+    continue;
+  }
   const g = await page.evaluate(() => { const e = document.querySelector('.app.game'); return e ? { yours: e.dataset.yours === '1', phase: e.dataset.phase, anim: e.dataset.animating === 'true', moves: Number(e.dataset.moves) } : null; }).catch(() => null);
   if (!g || !g.yours) { await sleep(60); continue; }
   // the table still showing earlier moves: its phase and choices lag the game's, so acting now would follow the
@@ -369,12 +389,13 @@ const clickPhases = await page.evaluate(() => window.__rigClicks || []).catch(()
 const fxLog = await page.evaluate(() => window.__fxLog || []).catch(() => []);
 const react = await page.evaluate(() => window.__perf ? { ...window.__perf.summary().react, commitsAll: (window.__perf.entries.commits || []).filter(c => (c.total || 0) > 3) } : null).catch(() => null); // ?trace=1 only
 const flights = FLIGHTS ? await page.evaluate(() => window.__flightWatch.report()).catch(() => null) : null;
-const F = await page.evaluate(() => ({ frames: window.__rig.frames, loaf: window.__rig.loaf, big: window.__rig.big || [] })).catch(() => ({ frames: [], loaf: [] }));
+const F = await page.evaluate(() => { const R = window.__rig, mine = e => R.own.some(([a, b]) => e.t != null && e.t < b && e.t + e.d > a); return { frames: R.frames, loaf: R.loaf.filter(e => !mine(e)), big: (R.big || []).filter(e => !mine({ t: e.at, d: e.d })) }; }).catch(() => ({ frames: [], loaf: [] }));
 // the leak control: a reload on the last round's turn (the game is saved locally), measured the same way
 let unbroken = null, reloaded = null;
 if (finalRound && R[finalRound]) {
   await page.evaluate(() => { window.__rig.frames = []; window.__rig.loaf = []; }).catch(() => {}); // the recorder's own data isn't the game's
   unbroken = await memory();
+  if (HEAP_SNAP) { const chunks = []; const on = e => chunks.push(e.chunk); cdp.on('HeapProfiler.addHeapSnapshotChunk', on); await cdp.send('HeapProfiler.takeHeapSnapshot', { reportProgress: false }); cdp.off('HeapProfiler.addHeapSnapshotChunk', on); writeFileSync(HEAP_SNAP, chunks.join('')); }
   await throttle(1);
   await page.reload();
   await page.waitForSelector('[data-home="resume"], .app.game');
@@ -453,7 +474,7 @@ if (fxLog.length) {
   const nClicks = clickPhases.filter(e => !e.dead).length || 1;
   L.push('', `Effects in timed clicks (${nClicks} clicks; own time, ms per click):`, ...[...by].sort((a, b) => b[1].ms - a[1].ms).slice(0, 40).map(([k, e]) => `- ${(e.ms / nClicks).toFixed(1)} (${e.n}×) ${k.replace(/\|/g, '/')}`));
 }
-if (F.big && F.big.length) L.push('', 'Frames over 2 s, with the screen at the time:', ...F.big.map(b => `- ${b.d} ms · ${b.phase} · prompt "${b.prompt}" · hover "${b.hover}" · options ${b.options.join(' ')}`));
+if (F.big && F.big.length) L.push('', `Frames over ${BIG_MS} ms, with the screen at the time:`, ...F.big.map(b => `- ${b.d} ms (style/layout ${b.style}) · round ${b.round} · layers ${b.layers} · ${b.phase} · prompt "${b.prompt}" · hover "${b.hover}" · options ${b.options.join(' ')}`));
 if (flights) L.push('', `Flights: ${flights.flights} flew, ${flights.landed} landed, ${flights.skipped} cut by a press, ${flights.cut} cut short with no press, ${flights.jumps} shows jumped to their end; ${flights.missed} of ${flights.aimed} aimed ended away from their place.`, ...flights.misses.slice(0, 10).map(m => `- missed by ${m.off}px: ${m.kind} → ${m.target} (round ${m.round}, move ${m.moves})`), ...Object.entries(flights.by).sort((a, b) => b[1].n - a[1].n).map(([k, x]) => `- ${x.n}× ${k} (at ${x.shares.slice(0, 12).join(', ')}% of the way)`));
 if (errors.length) L.push('', 'Errors:', ...errors.slice(0, 10).map(e => `- ${e}`));
 writeFileSync(`${OUT}/rig-${label}.md`, L.join('\n') + '\n');
