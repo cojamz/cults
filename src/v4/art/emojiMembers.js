@@ -102,7 +102,7 @@ const M = {
   undertaker: ['⚰️', '♾️ You cast out a member: +2 followers'],
   'old-money': ['🏛️', '🏁 +1 follower per white member'],
   misers: ['🪙', '🏁 +1 follower per 2 white'],
-  hoarder: ['🐿️', '☝️ Turn all your resources into white'],
+  magpie: ['🐿️', '☝️ Turn all your resources into white'],
   heiresses: ['💎', '☝️ +1 white per member'],
   // Silver
   caterer: ['🍰', '♾️ Silver is gifted: +1 silver'],
