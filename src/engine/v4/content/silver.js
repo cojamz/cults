@@ -12,7 +12,7 @@ import { add6, old6 } from './replace6.js';
 import { add8, old8, handlers8 } from './replace8.js';
 import { swap11, handlers11 } from './replace11.js';
 import { add14, old14, handlers14 } from './replace14.js';
-import { see, SEE_SPITE } from './botsee.js';
+import { see, endsAhead, SEE_SPITE } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const S = 'silver';
@@ -109,6 +109,7 @@ function shareDone(ctx, p, data) {
   const given = data.given || {};
   const total = Object.values(given).reduce((s, n) => s + n, 0);
   if (!total) { ctx.log(`${p.name}'s ${data.who}: gave nothing.`); return; }
+  if (data.own) p.res[S] -= total; // your own silver (Patronesses, REPLACE14), not the bank's
   for (const [id, n] of Object.entries(given)) giveTo(ctx, p, ctx.player(Number(id)), S, n);
   afterGive(ctx, p, S);
   p.bonus += total * data.per;
@@ -485,7 +486,7 @@ const silver = {
     // Bot test only (Nov 4, Cory on "+1 follower for each": "thats still like max 6 followers? maybe? for more than that in
     // followers? feels bad"): HOSTESSES=A gives each rival 1 silver for +2 followers each; HOSTESSES=B gives 1/2/3 by round,
     // +1 follower per silver given. Unset: the live card.
-    m('hostesses', 'Hostesses', 3, 2, HOSTESS_TEXT[HOSTESS_TEST] || 'On Recruit and Round Start: give each rival 1 silver. +1 follower per rival who then holds more silver than you.', { f: 2, now: true,
+    m('hostesses', 'Hostesses', 3, 2, HOSTESS_TEXT[HOSTESS_TEST] || 'On Recruit and Round Start: give each rival 1 silver. +1 follower per rival who then holds more silver than you.', { f: 2, ...old14('hostesstwo'), now: true,
       onRoundStart(ctx, owner) {
         if (HOSTESS_TEXT[HOSTESS_TEST]) {
           const n = HOSTESS_TEST !== 'B' ? 1 : Math.min(3, Math.max(1, ctx.state.round || 1)), rivals = others(ctx, owner);
@@ -501,6 +502,17 @@ const silver = {
         if (k) owner.bonus += k;
       },
     }),
+    // REPLACE14 bot test (Members E lane, Nov 4; lane B's B-scale4, paper 18 vs 16; a play A/B under "paper filters, play
+    // ranks"): Hostesses' place, same price. Bank silver, a gift (Caterer, Hangers-On and gift hooks fire).
+    ...add14(m('hostesstwo', 'Hostesses', 3, 2, 'Round Start: give each rival 2 silver. +2 followers for each.', { f: 2,
+      onRoundStart(ctx, owner) {
+        const rivals = others(ctx, owner);
+        giveAll(ctx, owner, S, 2);
+        owner.bonus += 2 * rivals.length;
+        ctx.log(`${owner.name}'s Hostesses: ${rivals.map(o => o.name).join(', ')} +2 silver each; ${owner.name} +${2 * rivals.length} followers.`);
+      },
+      ...see(info => 2 * (info.n - 1) * [1, 2, 3].filter(r => r > info.round).length),
+    })),
     // Cory, Nov 1: "whenever a player is gifted silver +1 silver", then +2 after the test read −4; one gift per space counts once
     // words and +1 (Cory, Nov 1, 2:25pm: "Whenever silver is gifted, +1 silver."), once per gift event
     m('caterer', 'Caterer', 2, 2, 'Whenever silver is gifted, +1 silver.', {
@@ -746,7 +758,17 @@ const silver = {
       },
       botActivate: (ctx, owner) => others(ctx, owner).some(o => ctx.followers(o) >= 2),
     }),
-    m('debtcollector', 'Debt Collectors', 4, 3, 'On Use, once per game: each rival gives you 2 silver, if they have it.', { f: 2, n: 2, ...old8('silver.debtcollector'), // worth 2 (Cory, Nov 1)
+    // REPLACE14 bot test (Members E lane, Nov 4; lane B's B-debtcollectors-2, paper 16 vs 14; play A/B): Debt Collectors'
+    // place, same price. Round End as Mob's: after the last placement, before contests (the silver contest sees it).
+    ...add14(m('patronesses', 'Patronesses', 4, 3, 'Round End: you may give rivals any of your silver, split as you choose. +1 follower per silver you give.', { f: 2, n: 2,
+      onAllPlaced(ctx, owner) {
+        const k = owner.res[S] || 0;
+        if (!k) { ctx.log(`${owner.name}'s Patronesses: no silver to give.`); return; }
+        shareStep(ctx, owner, { who: 'Patronesses', max: k, per: 1, own: true });
+      },
+      ...see(info => 3 * endsAhead(info).length),
+    })),
+    m('debtcollector', 'Debt Collectors', 4, 3, 'On Use, once per game: each rival gives you 2 silver, if they have it.', { f: 2, n: 2, ...old8('silver.debtcollector'), ...old14('patronesses'), // worth 2 (Cory, Nov 1)
       activate: 'game',
       onActivate(ctx, owner) {
         let n = 0;

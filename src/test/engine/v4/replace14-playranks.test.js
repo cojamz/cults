@@ -2,7 +2,7 @@
 // Members E lane (REPLACE14, Nov 4): paper passers sent to play under "paper filters, play ranks". One test per sentence.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE14 = 'ragpicker,shopcolor,shoptwo,openhouse,thrifty';
+process.env.REPLACE14 = 'ragpicker,shopcolor,shoptwo,openhouse,thrifty,hostesstwo,patronesses';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { quadrant, defById } = await import('../../../engine/v4/content/index.js');
 const { table, uidIn } = await import('./cards-helpers-b.js');
@@ -72,5 +72,27 @@ describe('REPLACE14 (thrifty): Misers, "Game End: +1 follower per white you hold
     expect(defById('trading.thrifty').text).toBe('Game End: +1 follower per white you hold.');
     expect(defById('trading.heirs').retired).toBe(true);
     expect(defById('trading.thrifty').onGameEnd(null, { res: { white: 7 } })).toBe(7);
+  });
+});
+
+describe('REPLACE14: Hostesses ("Round Start: give each rival 2 silver. +2 followers for each.")', () => {
+  it('3 rivals: each +2 silver, +6 followers', () => {
+    const s = table(['red', 'silver'], { n: 4, queue: [{ t: 'round', r: 2 }], bonus: [0, 0, 0, 0], members: [['silver.hostesstwo']] });
+    expect([1, 2, 3].map(i => s.players[i].res.silver)).toEqual([2, 2, 2]);
+    expect(log(s)).toContain("P1's Hostesses: P2, P3, P4 +2 silver each; P1 +6 followers.");
+  });
+});
+
+describe('REPLACE14: Patronesses ("Round End: you may give rivals any of your silver, split as you choose. +1 follower per silver you give.")', () => {
+  it('gives 2 of your own 3 silver, +2 followers; or nothing', () => {
+    let s = table(['red', 'silver'], { n: 3, round: 1, queue: [{ t: 'allPlaced' }], res: [{ silver: 3 }, {}, {}], members: [['silver.patronesses']] });
+    const b = s.players[0].bonus;
+    s = answer(s, 'player:1'); s = answer(s, 'player:2'); s = answer(s, 'done');
+    expect(s.players[0].res.silver).toBe(1);
+    expect([s.players[1].res.silver, s.players[2].res.silver]).toEqual([1, 1]);
+    expect(s.players[0].bonus).toBe(b + 2);
+    let t = table(['red', 'silver'], { n: 2, round: 1, queue: [{ t: 'allPlaced' }], res: [{ silver: 3 }, {}], members: [['silver.patronesses']] });
+    t = answer(t, 'done');
+    expect(t.players[0].res.silver).toBe(3);
   });
 });
