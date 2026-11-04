@@ -1,5 +1,5 @@
 {
- "updated": "12:14 AM Eastern",
+ "updated": "12:59 AM Eastern",
  "rows": [
   {
    "workstream": "Card quality team: new members and spaces, tested overnight",
@@ -7,9 +7,9 @@
    "eta": "ships as each passes, through the night"
   },
   {
-   "workstream": "Rival moves one at a time, spotlight",
+   "workstream": "Fix test gates hit by the Harvest picker and resource hover",
    "blocked": "No",
-   "eta": "~1:00am"
+   "eta": "~2:00am"
   },
   {
    "workstream": "Wheel: remaining small pauses",
@@ -17,12 +17,12 @@
    "eta": "~1:30am"
   },
   {
-   "workstream": "Red and White Cloak results, then ship",
+   "workstream": "Red Cloak: held, already near fair after the Mob change",
    "blocked": "No",
-   "eta": "full results ~3:00am"
+   "eta": "done"
   },
   {
-   "workstream": "Shipped tonight: v0.99.544 to .554 (pickers, rival-move lines, step-by-step recruits, 11 card reworks, sounds, setup fixes, wheel Firefox fix, pixel emoji members)",
+   "workstream": "Shipped tonight: v0.99.544 to .556 (pickers, rival moves one at a time, step-by-step recruits, 12 card reworks incl. White Cloak, sounds, setup fixes, wheel Firefox fix, pixel emoji members)",
    "blocked": "No",
    "eta": "live"
   }
