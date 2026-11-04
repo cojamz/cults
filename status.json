@@ -1,11 +1,6 @@
 {
- "updated": "11:23 PM Eastern",
+ "updated": "11:54 PM Eastern",
  "rows": [
-  {
-   "workstream": "Wheel lag, real fix",
-   "blocked": "No",
-   "eta": "~11:45pm"
-  },
   {
    "workstream": "More action changes (our calls)",
    "blocked": "No",
@@ -17,7 +12,7 @@
    "eta": "12:30am (full 3:00am)"
   },
   {
-   "workstream": "Shipped tonight: v0.99.544 to .550 (Harvest and Exchange pickers, rival-move lines, step-by-step recruits, 11 card reworks, sounds, setup fixes)",
+   "workstream": "Shipped tonight: v0.99.544 to .552 (Harvest and Exchange pickers, rival-move lines, step-by-step recruits, 11 card reworks, sounds, setup fixes, wheel Firefox stall fix)",
    "blocked": "No",
    "eta": "live"
   }
