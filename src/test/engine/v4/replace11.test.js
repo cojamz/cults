@@ -108,3 +108,63 @@ describe('REPLACE11: Call Back', () => {
   });
 });
 
+
+describe('REPLACE11: Yard Sale', () => {
+  const slot = (s, name) => { const q = s.quadrants.indexOf('trading'); return `${q}-${quadrant('trading').actions.findIndex(a => a.name === name)}`; };
+  it("is on the wheel in Estate Sale's place", () => {
+    const names = quadrant('trading').actions.map(a => a.name);
+    expect(names).toContain('Yard Sale');
+    expect(names).not.toContain('Estate Sale');
+  });
+
+  // "After you recruit this turn, cast out one of your members face up into the shop, gain white equal to twice its
+  // cost. +1 white."
+  it('after your recruit, puts your member face up in the shop, fresh, and pays twice its cost in white plus 1', () => {
+    let s = table(['red', 'trading'], { round: 2, members: [['trading.raider', 'trading.undertaker']] });
+    const raiders = s.players[0].members.find(u => s.cards[u].def === 'trading.raider');
+    s.cards[raiders].used = true;
+    s = answer(s, `slot:${slot(s, 'Yard Sale')}`);
+    expect(s.players[0].res.white).toBe(1);
+    // the recruit comes first: the sale is asked once you're done recruiting
+    expect(s.pending.kind).toBe('buy');
+    s = answer(s, 'pass');
+    while (s.pending && s.pending.kind === 'buy') s = answer(s, 'pass');
+    expect(s.pending.prompt).toBe('Yard Sale: put which member into the shop?');
+    s = answer(s, `card:${raiders}`);
+    expect(s.players[0].members).not.toContain(raiders);
+    expect(s.shop).toContain(raiders);
+    expect(s.shop.at(-1)).toBe(raiders); // laid at the end of the row
+    expect(s.pile).not.toContain(raiders);
+    expect(s.cards[raiders].used).toBeFalsy(); // fresh for its next owner
+    expect(s.players[0].res.white).toBe(2 * 5 + 1); // Raiders costs 5
+    const log = s.log.join('\n');
+    expect(log).toContain("P1's Yard Sale: Raiders goes face up into the shop and paid 10 white.");
+    expect(log).not.toContain('sent Raiders to the bottom of the pile');
+    // a cast-out, so Undertaker ("Whenever you cast out one of your members, +2 followers.") pays
+    expect(log).toMatch(/Undertaker/);
+  });
+
+  it('a rival can recruit the sold member from the shop', () => {
+    let s = table(['red', 'trading'], { round: 2, members: [['trading.raider']], res: [{}, { white: 9, red: 9 }], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
+    const raiders = s.players[0].members[0];
+    s = answer(s, `slot:${slot(s, 'Yard Sale')}`);
+    while (s.pending && s.pending.kind === 'buy') s = answer(s, 'pass');
+    s = answer(s, `card:${raiders}`);
+    while (s.pending && s.pending.player === 0) s = answer(s, s.pending.kind === 'buy' ? 'pass' : s.pending.options[0].id);
+    s = answer(s, s.pending.options.find(o => o.id.startsWith('slot:')).id);
+    while (s.pending && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
+    const buy = s.pending.options.find(o => o.id === `card:${raiders}`);
+    expect(buy, JSON.stringify(s.pending.options.map(o => o.id))).toBeTruthy();
+    s = answer(s, buy.id);
+    while (s.pending && s.pending.player === 1 && s.pending.kind !== 'place' && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
+    expect(s.players[1].members).toContain(raiders);
+  });
+
+  it('with no members, it just gives the +1 white', () => {
+    let s = table(['red', 'trading'], { round: 2 });
+    s = answer(s, `slot:${slot(s, 'Yard Sale')}`);
+    while (s.pending && s.pending.kind === 'buy') s = answer(s, 'pass');
+    expect(s.players[0].res.white).toBe(1);
+    expect(s.log.join('\n')).toContain("P1's Yard Sale: no members to sell.");
+  });
+});

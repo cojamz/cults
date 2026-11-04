@@ -18,6 +18,7 @@ import { memberScoring } from './member-scoring.js';
 import { registerQuadrant, defById } from './index.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add6, old6, handlers6 } from './replace6.js';
+import { swap11, handlers11 } from './replace11.js';
 
 const W = 'white';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -72,6 +73,48 @@ function sellChoice(ctx, p, prompt, most, each, why) {
 
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
+/**
+ * Yard Sale (REPLACE11, Actions lane, Nov 4; /mnt/project-files/quality/pitches/actions-estate-sale.md), in Estate
+ * Sale's place: "After you recruit this turn, cast out one of your members face up into the shop, gain white equal to
+ * twice its cost. +1 white." The sale waits for the end of your recruits (so you can't buy it straight back: bots sold
+ * and rebought for a profit when it came first). The member leaves as a cast-out does (Undertaker, Martyrs, Recruiter
+ * hear it), fresh, and sits at the end of the shop row (one card over the row's size until the row goes under the pile
+ * at round end), so anyone can recruit it.
+ */
+const YARD_SALE = {
+  key: 'yardsale', copyDoesIt: true, ring: 2, name: 'Yard Sale', text: 'After you recruit this turn, cast out one of your members face up into the shop, gain white equal to twice its cost. +1 white.',
+  // a rival may buy it off the row: bots count a little less than the full twice
+  estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, 2) - 1)),
+  resolve(ctx, p) {
+    ctx.gain(p, W, 1, { fromAction: true });
+    const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn' && t.p === p.id);
+    const task = { t: 'content', p: p.id, h: 'trading.yardSaleAsk' };
+    if (end >= 0) q.splice(end, 0, task); else q.unshift(task);
+  },
+};
+function yardSaleAsk(ctx, p) {
+  const list = ctx.membersOf(p);
+  if (!list.length) { ctx.log(`${p.name}'s Yard Sale: no members to sell.`); return; }
+  const opts = list.map(c => ({ id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: buryValue(ctx, p, c, 2) - 1 }));
+  opts.push({ id: 'done', label: 'Keep them all', kind: 'done', value: 'done', hint: 0 });
+  ctx.choose(p, 'Yard Sale: put which member into the shop?', opts, 'trading.yardSale');
+}
+function yardSale(ctx, p, uid) {
+  if (uid === 'done') { ctx.log(`${p.name}'s Yard Sale: keeps every member.`); return; }
+  if (!p.members.includes(uid)) return;
+  const s = ctx.state, name = ctx.card(uid).def.name;
+  const c = ctx.buryMember(p, uid);
+  // it goes into the shop, not under the pile: the cast-out's "to the bottom of the pile" line is replaced (the log
+  // keeps only its newest lines, so look from the end)
+  const k = s.log.lastIndexOf(`${p.name} sent ${name} to the bottom of the pile.`);
+  if (k >= 0) s.log.splice(k, 1);
+  const i = s.pile.indexOf(uid);
+  if (i >= 0) { s.pile.splice(i, 1); s.shop.push(uid); }
+  ctx.gain(p, W, 2 * c, { fromAction: true });
+  ctx.log(`${p.name}'s Yard Sale: ${name} goes face up into the shop and paid ${2 * c} white.`);
+  gotRidOf(ctx, p);
+}
+
 const trading = {
   id: 'trading',
   name: 'White',
@@ -118,14 +161,14 @@ const trading = {
         buryChoice(ctx, p, 'Farewell', 'followers');
       },
     },
-    {
+    swap11({
       key: 'estatesale', copyDoesIt: true, ring: 2, name: 'Estate Sale', text: 'Cast out one of your members to the bottom of the pile, gain white equal to its cost. +1 white.',
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, 1))),
       resolve(ctx, p) {
         ctx.gain(p, W, 1, { fromAction: true });
         buryChoice(ctx, p, 'Estate Sale', 'white');
       },
-    },
+    }, YARD_SALE),
     {
       key: 'cashin', copyDoesIt: true, ring: 3, name: 'Cash In', text: 'Turn all your white into followers. +1 white.',
       estimate: (ctx, p) => (p.res[W] || 0) * fv(ctx) + 1,
@@ -143,6 +186,7 @@ const trading = {
   ],
 
   handlers: {
+    ...handlers11({ yardSale, yardSaleAsk }),
     ...handlers6({
       successor(ctx, p, uid, data) {
         if (!ctx.state.shop.includes(uid) || cost(ctx, uid) > data.max) return;
