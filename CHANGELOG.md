@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.540 — 2026-11-03
+
+- A recruit's seat keeps its old member count until the card lands; old member notes leave when the next action shows; a rival's cloak pick no longer covers the wheel into your turn
+
 ## v0.99.539 — 2026-11-03
 
 - Members that count as 1 have singular names: Spoilsport, Timekeeper, Godparent, Philanthropist, Customs Officer, Tourist, Kidnapper, Impersonator
