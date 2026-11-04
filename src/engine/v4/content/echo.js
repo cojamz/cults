@@ -25,7 +25,6 @@ const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 1);
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const costOf = def => def.s + def.w;
 const COPYIST = on10('copyist2') ? 2 : 1; // REPLACE10
-const ENCORE_NEXT = on10('encorenext'); // REPLACE10
 
 // ---------- the yield ledger ----------
 // state.echo = { round, now: { 'q-i': entry }, last: { ... } (last round's chips, kept for the board), open: key | null }
@@ -818,20 +817,25 @@ const echoQ = {
     // REPLACE10 bot test (Nov 4): Chronicler's place, Cory's idea ("use once per game and the next on-recruit is doubled").
     // 2 green + 3 any as a player sees it. Used on your turn; the member you recruit later this same turn has its On
     // Recruit (or now-and-round-start effect) done twice (core's recruit). A recruit on another turn doesn't count.
-    // REPLACE10=encore,encorenext: Cory's own words ("once per game, your next On Recruit is doubled"; director, Nov 4:
-    // he picks between the two). The next member you recruit that has an On Recruit, on any turn; the card stays
-    // turned until then, so a table can see it's waiting.
-    ...add10(m('encore', 'Encore', 1, 3, ENCORE_NEXT ? 'On Use, once per game: your next On Recruit happens twice.'
-      : 'On Use, once per game: this turn, the On Recruit of the member you recruit happens twice.', {
+    // Cory, Nov 4 10:45am Eastern ("Yeah, go with mine"): Encore takes Chronicler's place, in his words ("once per game,
+    // your next On Recruit is doubled"). Used on any turn; the next member you recruit that has an On Recruit, on any turn,
+    // has it happen twice; the card stays turned until then, so a table can see it's waiting. Price 2 green + 3 any.
+    // Archived: the "this turn" wording (REPLACE10=encore, Nov 4 trials q-d-encore-c1, A/B +0.28).
+    m('encore', 'Encore', 1, 3, 'On Use, once per game: your next On Recruit happens twice.', {
       activate: 'game',
-      // not offered after this turn's recruit (Lab play judges, Nov 4: it could be wasted); the "next" wording carries over
-      beforeRecruit: !ENCORE_NEXT,
       onActivate(ctx, owner) {
-        owner.encoreTurn = ENCORE_NEXT ? 'next' : (ctx.state.turns || []).length;
-        ctx.log(ENCORE_NEXT ? `${owner.name} uses Encore: their next On Recruit happens twice.` : `${owner.name} uses Encore: this turn's recruit's On Recruit happens twice.`);
+        owner.encoreTurn = 'next';
+        ctx.log(`${owner.name} uses Encore: their next On Recruit happens twice.`);
       },
-      botActivate: (ctx, p) => ctx.state.round >= 2 && ctx.shopCards().some(c => (c.def.onRecruited || c.def.now) && ctx.payChoices(p, c.uid, {}).length && c.def.s + c.def.w >= 5),
-    })),
+      // bots use it in the buy step, right before the recruit it should double (Cory, Nov 4: the A/B lost because bots
+      // used it early and then bought something else): only when the priciest shop member they can pay for has an On Recruit
+      botActivate: (ctx, p) => {
+        const can = ctx.shopCards().filter(c => ctx.payChoices(p, c.uid, {}).length);
+        if (!can.length) return false;
+        const top = can.reduce((a, c) => (c.def.s + c.def.w > a.def.s + a.def.w ? c : a));
+        return !!(top.def.onRecruited || top.def.now) && top.def.s + top.def.w >= 5;
+      },
+    }),
     // REPLACE10 bot test (Nov 4, quality loop lane D): Chronicler's place. 4 green + 3 any as a player sees it. On your
     // turn, once a round: another of your members' On Recruit (or now-and-round-start effect, as Greatest Hits reads it)
     // runs again for you, as one Greatest Hits copy does; the card is turned until the next round starts.
@@ -849,7 +853,7 @@ const echoQ = {
       },
       botActivate: (ctx, p) => ownRecruits(ctx, p).some(c => recruitDef(c).key !== 'bootlegger'),
     })),
-    m('chronicler', 'Chronicler', 1, 3, 'Game End: +1 follower per green member you have.', { ...old10('bootlegger'), ...old10('encore'),
+    m('chronicler', 'Chronicler', 1, 3, 'Game End: +1 follower per green member you have.', { retired: true, // Encore takes its place (Cory, Nov 4)
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'echo'),
     }),
   ],

@@ -1475,7 +1475,7 @@ function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop 
   if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));
   joinNow(state, p, w, [def]);
   // Encore (REPLACE10 bot test): used this turn, the recruited member's On Recruit happens a second time
-  if (REPLACE10 && (p.encoreTurn === 'next' || p.encoreTurn === (state.turns || []).length) && (def.onRecruited || def.now)) {
+  if (p.encoreTurn === 'next' && (def.onRecruited || def.now)) { // Encore (Cory, Nov 4)
     delete p.encoreTurn;
     log(state, `${p.name}'s Encore: ${def.name}'s On Recruit again.`);
     if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));

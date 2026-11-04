@@ -18,4 +18,4 @@ export const old10 = newKey => (on10(newKey) ? { retired: true } : {});
 /** Handlers the new cards use, registered under any of the switch. */
 export const handlers10 = hs => (REPLACE10 ? hs : {});
 /** The new cards of this batch that are in the live game (always on, their old cards always retired). */
-export const LIVE10 = [];
+export const LIVE10 = ['echo.encore'];

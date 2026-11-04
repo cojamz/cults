@@ -36,7 +36,7 @@ describe('REPLACE10: Encore', () => {
     expect(named(s, 'Encore')).toContain("P1's Encore: Accomplice's On Recruit again.");
   });
 
-  it('is not offered once the turn\'s recruit is spent (Lab play judge, Nov 4)', () => {
+  it('Cory\'s wording (live Nov 4): still offered after the turn\'s recruit, since it waits for the next one', () => {
     const at = after => table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, members: [['echo.encore', 'benders.squatter']], queue: [{ t: 'buy', p: 0, ...(after ? { afterPurchase: true } : {}) }] });
     const ids = s => s.pending.options.map(o => o.id);
     const before = at(false), after = at(true);
@@ -44,7 +44,7 @@ describe('REPLACE10: Encore', () => {
     expect(ids(before)).toContain(`use:${enc}`);
     expect(after.pending.afterPurchase).toBe(true);
     expect(ids(after)).toContain(`use:${sq}`);
-    expect(ids(after)).not.toContain(`use:${uidOf(after, 'echo.encore', 0)}`);
+    expect(ids(after)).toContain(`use:${uidOf(after, 'echo.encore', 0)}`);
   });
 
   it('a free recruit counts: Encore, then Walk-In recruits the top of the pile; its On Recruit happens twice', () => {
@@ -59,7 +59,7 @@ describe('REPLACE10: Encore', () => {
     expect(named(s, 'Encore')).toContain("P1's Encore: Accomplice's On Recruit again.");
   });
 
-  it('recruited this turn: not offered in the same turn once the recruit is spent (A/B judges, Nov 4)', () => {
+  it('recruited this turn: can be used the same turn, for a later recruit (Cory\'s wording, live Nov 4)', () => {
     let s = table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, left: 4, res: [{ green: 9, red: 9 }, {}], members: [['benders.squatter']], shop: ['echo.encore'] });
     s = take(s, 'red.turnout');
     const enc = s.shop.find(x => s.cards[x].def === 'echo.encore');
@@ -69,6 +69,6 @@ describe('REPLACE10: Encore', () => {
     expect(s.pending.afterPurchase).toBe(true);
     const ids = s.pending.options.map(o => o.id);
     expect(ids).toContain(`use:${uidOf(s, 'benders.squatter', 0)}`); // the step is shown (Party Crasher can be used)
-    expect(ids).not.toContain(`use:${enc}`);
+    expect(ids).toContain(`use:${enc}`);
   });
 });
