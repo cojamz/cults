@@ -18,6 +18,7 @@ import { memberScoring } from './member-scoring.js';
 import { registerQuadrant, defById } from './index.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add6, old6, handlers6 } from './replace6.js';
+import { add9, old9 } from './replace9.js';
 import { swap11, handlers11, add11, old11 } from './replace11.js';
 import { see, endsAhead, resAt } from './botsee.js';
 import { add10, old10, handlers10 } from './replace10.js';
@@ -365,7 +366,7 @@ const trading = {
       },
     })),
     m('heiress', 'Heiresses', 4, 4, // 9 (Cory, Oct 30: balance run)
-      'On Use, once per game: +1 white per member you have.', { f: 2, ...old10('widows'),
+      'On Use, once per game: +1 white per member you have.', { f: 2, ...old10('widows'), ...old9('trading.heiress'),
       activate: 'game',
       onActivate(ctx, owner) {
         const n = ctx.memberCount(owner);
@@ -374,6 +375,16 @@ const trading = {
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 || (ctx.state.round === 2 && ctx.memberCount(owner) >= 5),
     }),
+    // REPLACE9 bot test (Members C, Nov 4, batch bC5: paper 15 vs Heiresses' 11, White's set 14 -> 16): Heiresses' place.
+    // 4 white + 3 any as a player sees it. Reads followers at Round End, before contests (onAllPlaced), ties count.
+    ...add9(m('latebloomers', 'Late Bloomers', 3, 3, 'Round End: if you have the fewest followers (ties count), +3 white.', { f: 2,
+      onAllPlaced(ctx, owner) {
+        const mine = ctx.followers(owner);
+        if (!ctx.state.players.every(o => o === owner || ctx.followers(o) >= mine)) return;
+        ctx.gain(owner, W, 3);
+        ctx.log(`${owner.name}'s Late Bloomers: fewest followers, +3 white.`);
+      },
+    })),
     m('bulkbuyer', 'Bulk Buyer', 1, 2, 'Whenever you buy 5 or more followers, +1 follower.', { f: 2,
       onBuyFollowers(ctx, owner, card, buyer, tier) {
         if (buyer === owner && tier?.get >= 5) { owner.bonus += 1; ctx.log(`${owner.name}'s Bulk Buyer: +1 follower.`); }

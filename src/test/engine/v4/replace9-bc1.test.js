@@ -3,7 +3,7 @@
 // Hand's place), Tailor (Dyer's place), Dabbler (Dabblers' place).
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler';
+process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler,latebloomers';
 const { applyMove, countMembersOfColor } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move } = await import('./helpers.js');
@@ -86,5 +86,24 @@ describe('Dabbler: "Counts as a member of every color."', () => {
   it('one member of each color on the table', () => {
     const s = table(Q4, { n: 2, members: [['benders.dabbler']] });
     for (const q of Q4) expect(countMembersOfColor(s, s.players[0], q)).toBe(1);
+  });
+});
+
+describe('Late Bloomers: "Round End: if you have the fewest followers (ties count), +3 white."', () => {
+  const Q = ['red', 'trading', 'market', 'purple'];
+  it('price, and Heiresses retired', () => {
+    const d = defById('trading.latebloomers');
+    expect([d.s, d.w]).toEqual([4, 3]);
+    expect(defById('trading.heiress').retired).toBe(true);
+  });
+  const end = bonus => table(Q, { n: 3, round: 1, bonus, members: [['trading.latebloomers']], queue: [{ t: 'allPlaced' }] });
+  it('fewest (its own worth counts): +3 white, before contests', () => {
+    const s = end([1, 4, 6]);
+    expect(s.players[0].res.white).toBe(3);
+    expect(named(s, 'Late Bloomers')).toContain("P1's Late Bloomers: fewest followers, +3 white.");
+  });
+  it('tied for fewest counts; not fewest: nothing', () => {
+    expect(end([1, 3, 6]).players[0].res.white).toBe(3);
+    expect(end([4, 3, 6]).players[0].res.white || 0).toBe(0);
   });
 });
