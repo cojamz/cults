@@ -17,6 +17,7 @@
 import { registerQuadrant, allQuadrantIds, quadrant, defById, spacesOf } from './index.js';
 import { add2, old2, handlers2 } from './replace2.js';
 import { add4, old4, handlers4 } from './replace4.js';
+import { add10, old10, handlers10 } from './replace10.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 // IMPRESSIONIST=n: bot test only; the game pays 1 (Claude, under Cory's "use your judgement", Nov 3; was 2, Cory Nov 1)
@@ -473,6 +474,22 @@ const echoQ = {
   ],
 
   handlers: {
+    ...handlers10({
+      // Wannabe (REPLACE10): the shop member picked, then how to pay (asked only when there's more than one way)
+      wannabe(ctx, p, uid, data) {
+        if (uid == null) { ctx.log(`${p.name}'s Wannabe: recruits nothing.`); return; }
+        const c = ctx.card(uid), w = ctx.card(data.card);
+        if (!ctx.state.shop.includes(uid) || c.def.s + c.def.w > data.max) return;
+        const ways = ctx.payChoices(p, uid, {});
+        if (!ways.length) return;
+        if (w) w.round = ctx.state.round;
+        if (ways.length === 1) return wannabeBuy(ctx, p, uid, ways[0]);
+        ctx.choose(p, `Wannabe: how do you pay for ${c.def.name}?`, ways.map((v, i) => ({
+          id: `pay:${ctx.state.resources.map(r => v[r] || 0).join('-')}`, label: ctx.state.resources.filter(r => v[r]).map(r => `${v[r]} ${r}`).join(', '), kind: 'pay', value: v, hint: i === 0 ? 1 : 0, uid,
+        })), 'echo.wannabePay', { uid });
+      },
+      wannabePay(ctx, p, v, data) { if (v) wannabeBuy(ctx, p, data.uid, v); },
+    }),
     ...handlers4({
       // Opening Act: the rival's first placement of the round, copied once its own choices are made
       openingAct(ctx, p, _v, data) {
@@ -755,7 +772,23 @@ const echoQ = {
     }),
     m('agents', 'Agents', 1, 1, 'Rivals can’t copy your actions.', { f: 2, n: 2 }),
     m('bait', 'Bait', 1, 1, 'Whenever anyone copies one of your actions, they −1 follower and you +1 follower.'),
-    m('chronicler', 'Chronicler', 1, 3, 'Game End: +1 follower per green member you have.', {
+    // REPLACE10 bot test (Nov 4, quality loop lane D): Chronicler's place. 4 green + 4 any as a player sees it. Asked right
+    // after a rival recruits a member (a shop buy, a free recruit, a steal they make; never a follower card), once a round:
+    // a face-up shop member costing up to that member's printed price, paid at its own price by the one price rule. The
+    // row has already refilled. It is a recruit of yours (On Recruit fires), and it doesn't use your turn's recruit.
+    ...add10(m('wannabe', 'Wannabe', 3, 4, 'Once per round, right after a rival recruits a member, you may recruit a shop member costing no more than theirs, paying its cost.', {
+      onAnyRecruit(ctx, owner, card, by, member) {
+        if (by === owner || card.round === ctx.state.round) return;
+        const max = member.def.s + member.def.w;
+        const opts = ctx.shopCards().filter(c => c.def.s + c.def.w <= max && ctx.payChoices(owner, c.uid, {}).length).map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name} (${c.def.s + c.def.w})`, kind: 'card', value: c.uid, hint: c.def.f * 1.4 + 1.6 + (c.def.s + c.def.w) * 0.3,
+        }));
+        if (!opts.length) return;
+        opts.push({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: 2 });
+        ctx.choose(owner, `Wannabe: ${by.name} recruited ${member.def.name} (${max}). Recruit a shop member costing up to ${max}, paying its cost?`, opts, 'echo.wannabe', { max, card: card.uid });
+      },
+    })),
+    m('chronicler', 'Chronicler', 1, 3, 'Game End: +1 follower per green member you have.', { ...old10,
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'echo'),
     }),
   ],
@@ -815,4 +848,11 @@ function impersonateHint(ctx, owner, card, def) {
   let end = 0;
   if (def.onGameEnd) { try { end = def.onGameEnd(ctx, owner, card) || 0; } catch { end = 0; } }
   return (def.s + def.w) * 0.5 + end;
+}
+
+/** Wannabe (REPLACE10): pay `v` for shop member `uid` and recruit it, outside p's own turn's recruit. */
+function wannabeBuy(ctx, p, uid, v) {
+  if (!ctx.state.shop.includes(uid)) return;
+  ctx.log(`${p.name}'s Wannabe: pays ${ctx.state.resources.filter(r => v[r]).map(r => `${v[r]} ${r}`).join(', ')} for ${ctx.card(uid).def.name}.`);
+  ctx.recruit(p, uid, { spend: v, how: {}, paid: true });
 }

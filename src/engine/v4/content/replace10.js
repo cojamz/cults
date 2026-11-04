@@ -1,6 +1,6 @@
 // Quality loop, lane D (Magenta, White, Green; Nov 4 overnight, /mnt/project-files/quality/pitches/D-*.md), bot games
 // only. REPLACE10=1 deals the new members in their old cards' places (the old card is retired, so never dealt):
-//   thieves.grifter -> thieves.racketeer, trading.oldmoney -> trading.pauper
+//   thieves.grifter -> thieves.racketeer, trading.oldmoney -> trading.pauper, echo.chronicler -> echo.wannabe
 // Unset, the new cards are never defined and their old cards stay.
 export const REPLACE10 = globalThis.process?.env?.REPLACE10 === '1';
 /** The new card, in its color's member list only under the switch. */
