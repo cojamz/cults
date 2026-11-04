@@ -10,7 +10,7 @@ import { guestMembers } from '../../src/engine/v4/content/index.js';
 import { sphereVersion } from '../../src/v4/tables.js';
 
 const ALIAS = { green: 'echo', blue: 'market', magenta: 'thieves', white: 'trading', grey: 'guests', greys: 'guests', guest: 'guests' };
-export function boardText(colors = [], { without = [], members = true, spaces = true, extra = [] } = {}) {
+export function boardText(colors = [], { without = [], members = true, spaces = true, extra = [], extraSpaces = [] } = {}) {
   const drop = new Set(without.map(s => s.toLowerCase()));
   const ids = (colors.length ? colors.map(c => ALIAS[c.toLowerCase()] || c.toLowerCase()) : [...allQuadrantIds().filter(q => sphereVersion(q) === '2.0'), 'guests']);
   const L = [], R = ['', 'I', 'II', 'III'];
@@ -27,6 +27,7 @@ export function boardText(colors = [], { without = [], members = true, spaces = 
     try { const s = createGame({ seats: [{ kind: 'bot' }, { kind: 'bot' }, { kind: 'bot' }, { kind: 'bot' }], seed: 1, quadrants: [id, ...allQuadrantIds().filter(x => x !== id && sphereVersion(x) === '2.0').slice(0, 3)], rules: { deck: 10, contests: 'byColor' } }); const c = scoringOf(s, id); contest = `${c.label} (counts ${c.counts})`; } catch (e) { contest = '?'; }
     L.push('', `## ${q.name} · resource: ${q.resource} · contest each round (By color): ${contest}`);
     if (spaces) for (const a of [...q.actions].sort((x, y) => x.ring - y.ring)) if (!drop.has(a.name.toLowerCase())) L.push(`  ${R[a.ring] || a.ring}  ${a.name}: ${a.text}`);
+    if (spaces) for (const a of extraSpaces.filter(x => (ALIAS[x.color.toLowerCase()] || x.color.toLowerCase()) === id)) L.push(`  ${R[a.round] || a.round}  ${a.name}: ${a.text}`);
     if (members) for (const m of q.members.filter(inDeck)) if (!drop.has(m.name.toLowerCase())) L.push(`    · ${m.name} [${m.s ? `${m.s} ${q.resource} + ` : ''}${m.w} any, worth ${m.f}${m.n > 1 ? `, counts as ${m.n}` : ''}] ${m.text ?? ''}`);
     // cards in bot test that the lanes want on the board: [{color, name, price, text}]
     if (members) for (const m of extra.filter(x => (ALIAS[x.color.toLowerCase()] || x.color.toLowerCase()) === id)) L.push(`    · ${m.name} [${m.price}] ${m.text}`);

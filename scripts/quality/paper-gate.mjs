@@ -62,7 +62,7 @@ function bundle(spec, extra = []) {
     `Each lettered card is a version of ${head}. Score each one on its own, as if it were the one on the table, against the color's board below. Some may be near-copies of each other or of live cards; judge each on its own text.`, '',
     ...shuffled.map(o => `- **${o.label}. ${o.name}**${o.price ? ` [${o.price}]` : ''}${o.round ? ` (round ${R[o.round]} space)` : round ? ` (round ${R[round]} space)` : ''}: ${o.text}`), '',
     spec.rules ? `Rules the cards refer to: ${spec.rules}\n` : '',
-    `## The board around it (live; the slot being judged and one other card left out)`, boardText([old.qid === 'guests' ? 'guests' : old.qid, ...(spec.boards || [])], { without: [...without, ...(spec.dropFromBoard || [])], extra: spec.extraMembers || [] }),
+    `## The board around it (live; the slot being judged and one other card left out)`, boardText([old.qid === 'guests' ? 'guests' : old.qid, ...(spec.boards || [])], { without: [...without, ...(spec.dropFromBoard || [])], extra: spec.extraMembers || [], extraSpaces: spec.extraSpaces || [] }),
     `## The other colors' spaces (for cross-color reads)`, otherSpaces(old.qid)].join('\n');
   writeFileSync(join(dir, 'cards.md'), md);
   writeFileSync(join(dir, 'key.json'), JSON.stringify({ spec, kind, round, old: old.name, options: shuffled.map(o => ({ label: o.label, role: o.role, name: o.name, text: o.text, ...(o.price ? { price: o.price } : {}), ...(o.real ? { real: o.real } : {}) })) }, null, 1));
@@ -264,7 +264,7 @@ function setcheck(id, names = []) {
   const spec = key.spec, slot = key.kind === 'space' ? `its round ${R[key.round]} space` : 'one member';
   writeFileSync(join(dir, 'set.md'), [`# Whole-set check: ${old.color}, ${slot}`, '', `The board below is ${old.color} with the slot open. Each lettered version puts a different card in the slot. Score each version as a whole set.`, '',
     ...sh.map(o => `- **${o.label}.** the slot holds **${o.name}**${o.price ? ` [${o.price}]` : ""}: ${o.text}`), '', spec.rules ? `Rules the cards refer to: ${spec.rules}\n` : '',
-    `## ${old.color} with the slot open`, boardText([old.qid === 'guests' ? 'guests' : old.qid, ...(key.spec.boards || [])], { without: [old.name, ...(key.spec.dropFromBoard || [])], extra: key.spec.extraMembers || [] }),
+    `## ${old.color} with the slot open`, boardText([old.qid === 'guests' ? 'guests' : old.qid, ...(key.spec.boards || [])], { without: [old.name, ...(key.spec.dropFromBoard || [])], extra: key.spec.extraMembers || [], extraSpaces: key.spec.extraSpaces || [] }),
     `## The other colors' spaces`, otherSpaces(old.qid)].join('\n'));
   writeFileSync(join(dir, 'key.json'), JSON.stringify({ gate: id, options: sh.map(o => ({ label: o.label, role: o.role, name: o.name })) }, null, 1));
   return `${dir}/set.md: ${sh.length} versions (${sh.map(o => `${o.label} ${o.name}`).join(', ')}); judges: .claude/agents/set-judge.md`;
@@ -285,7 +285,7 @@ function setmulti(ids, combos) {
   const n = ids.length, rules = ks.map(k => k.spec.rules).filter(Boolean);
   writeFileSync(join(dir, 'set.md'), [`# Whole-set check: ${old.color}, ${n} member slots filled together`, '', `The board below is ${old.color} with ${n} member slots open. Each lettered version fills all ${n}. Score each version as a whole set.`, '',
     ...sh.map(v => `- **${v.label}.** the slots hold ${v.cards.map(card).join('; ')}`), '', rules.length ? `Rules the cards refer to: ${[...new Set(rules)].join(' ')}\n` : '',
-    `## ${old.color} with the slots open`, boardText([old.qid, ...(ks[0].spec.boards || [])], { without: drop, extra }),
+    `## ${old.color} with the slots open`, boardText([old.qid, ...(ks[0].spec.boards || [])], { without: drop, extra, extraSpaces: ks.flatMap(k => k.spec.extraSpaces || []) }),
     `## The other colors' spaces`, otherSpaces(old.qid)].join('\n'));
   writeFileSync(join(dir, 'key.json'), JSON.stringify({ gate: id, options: sh.map(v => ({ label: v.label, role: v.role, name: v.name })) }, null, 1));
   return `${dir}/set.md: ${sh.length} versions (${sh.map(v => `${v.label} ${v.name}`).join(', ')}); judges: .claude/agents/set-judge.md; score with setscore ${id}`;
