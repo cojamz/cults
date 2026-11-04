@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.539 — 2026-11-03
+
+- Members that count as 1 have singular names: Spoilsport, Timekeeper, Godparent, Philanthropist, Customs Officer, Tourist, Kidnapper, Impersonator
+
 ## v0.99.538 — 2026-11-03
 
 - Four more new members: Impersonators (Green) replaces Muse, Creditors (Silver) replaces Collector, Kidnappers (Magenta) replaces Kingpin, and Godparents (Silver) replaces Hangers-On. All four can show up from round I, like the cards they replace.
