@@ -111,7 +111,7 @@ When done, the loop stops instead of churning. It writes a final report (what ch
 - **Only live cards are ranked.** The first ranking listed about 50 members and 6 spaces not in the 10-card game (retired and cut cards, plus Gold). The rescore uses scripts/quality/board.mjs, which lists only live 10-card-deck cards.
 
 ## Cory's verdicts on the first batches (Nov 4, 12:35am): new rules (full text: cory-verdicts-2026-11-04.md)
-- **Hard fail, turn flow:** nothing acts during another player's turn or asks anyone to respond mid-turn. Cards act on their owner's turn or at Round Start / Round End, resolved one player at a time in turn order.
+- **Hard fail, turn flow** (narrowed by Cory, 12:36am: "a card can passively act during somebody else's turn. It just can't like actively act"): an automatic trigger on someone else's turn is fine ("whenever a rival X, +1 follower"). A card may not ask its owner, or anyone, to choose or click during another player's turn. Choices happen on the owner's turn or at Round Start / Round End, resolved one player at a time in turn order.
 - **C6 and C10 are 0 when it's already doable another way** (a space, a recruit or a follower buy gives the same thing), or when it's another color's job.
 - **C1=2 only if a friend could explain it in one breath** and it moves pieces the way the game already does.
 - **A space must do something for a taker with no members.**

@@ -14,7 +14,7 @@ Source message: thread "Direct the card quality team", 12:35am Eastern.
 - Grifter slot: "I actually kind of like Grifter. It should maybe be rated a little higher." **Hijacker** "tough. It's an interesting idea, though."
 
 ## What the judges missed, as rules (from these verdicts)
-1. **Turn flow (hard fail):** nothing acts during another player's turn or asks a player to respond mid-turn (Interrupter, Scavenger, Wannabe, Hijacker). Cards act on their owner's turn, or at Round Start / Round End, and those resolve one player at a time in turn order. Judges picture who clicks what, when.
+1. **Turn flow (hard fail):** no choice or click during another player's turn (Interrupter, Scavenger, Wannabe, Hijacker); passive automatic triggers are fine (Cory, 12:36am). Cards act on their owner's turn, or at Round Start / Round End, and those resolve one player at a time in turn order. Judges picture who clicks what, when.
 2. **Already doable another way:** before scoring, ask "would a player already get this from a space, a recruit or a follower buy?" If yes, C10 and C6 are 0 (Pauper, Mug the Leader, Pathfinder, Shoplift).
 3. **Explainable at the table:** C1=2 only if a friend could explain it in one breath and it matches how the game already moves pieces (Yard Sale: members don't go "into the shop" that way).
 4. **Spaces must work for anyone:** a space must do something even when the taker has no members (Heirloom).
