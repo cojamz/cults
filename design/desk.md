@@ -12,6 +12,7 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 
 ## Cory's words, newest first
 
+- **Nov 3, 8:03pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3AhARsjDR95E6bBn2mnugS9): "we'll also need a big design audit on animations. are things intuitive? On relaxed speed thigns are still quite fast. I want a deep expert audit and revamp here, maybe new animations or UI where needed. UI upgrade! mostly for animations and info tracking\n\nand as always Id love an engineering pass on the wheel." → threads "Revamp animations and info tracking" and "Engineer a better wheel"; both merge through the desk.
 - **Nov 3, 8:01pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3YaDacNWS8y198tHoQiFHEm, playtest feedback): "Melting Pot is worded strangely. I still don't like Dilute. Mob is probably just too strong needs rework?" → three open items below (Melting Pot words, Dilute, Mob). Options go to Cory before anything ships; more feedback is coming, batch it.
 - **Nov 3, 7:54pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3Txef8sqacLxDEbLxdogRXq): "by the way we are going to have a LOT of different parallel things going on. You may need a secondary helper or something, and oyu begin managing on a more meta level. BUt setup needs to be such that nothing gets lost in translation." → this page and the bot-game queue.
 - **Nov 3** *unverified-id*, contests: "is By color the contest setting going forward? wtf?" then "own contest. very likely we will go that way". → By color is the primary setting; balance runs use it, As printed gets none (decisions.md, 7:43pm).
@@ -32,6 +33,8 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 | Plan and run today's autonomous improvements (333bSCwXiSbXsUYNhenCzTk) | Member replacements in batches; strong8 and all-see runs | Batches 4-6 results pending; Impersonators, Creditors, Kidnappers next to go live | strong8 and all-see games (queue) |
 | Rebuild the balance testing system (WndbGQVXTYkmTbch5utY89 / board line) | One balance command and report | By color comparison sent | Cory's read |
 | Get every test passing again (34ijD1M88cXDiX7zBSgvkGP) | Green gates | Quiet since 1:05pm; GitHub verdict on 5402746 RED (turnstory, members) | Someone to own the two red gates |
+| Revamp animations and info tracking (MNYf8WAC6G3t45GjNDaCkA) | Deep expert audit and revamp of animations and info tracking; Relaxed is still too fast (Cory, 8:03pm) | Starting | Its audit; merges coordinated through the desk |
+| Engineer a better wheel (AQfac66Psrms76zJQ6yhtS) | Engineering pass on the wheel (Cory, 8:03pm) | Starting | Its plan; merges coordinated through the desk (shares screen files with the animations thread) |
 | Unowned: Melting Pot words | Reword so it reads clearly (Cory, 8:01pm) | Not started | Coordinator to assign; options to Cory before shipping |
 | Unowned: Dilute | Rework or replace (Cory, 8:01pm: "I still don't like Dilute") | Not started | Coordinator to assign; options to Cory |
 | Unowned: Mob | Rework; ties to the wide-cult pattern (Patriarch plus Mob holders win 64-87%) | Not started | Coordinator to assign; options to Cory |
