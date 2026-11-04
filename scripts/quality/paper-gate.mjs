@@ -221,8 +221,9 @@ function scoreGate(arg, batchVoid, print, shift = 0, rankOffset = null) {
     const med10 = median(o.entries.map(e => e.scores.slice(0, 10).reduce((a, b) => a + b, 0)));
     const ranked = key.kind === 'space' || rankOffset == null ? null : rankingRef(old.name);
     const beatRanked = ranked == null ? null : +(med10 - (ranked + rankOffset)).toFixed(1);
-    const pass = !voided && o.over && beat >= BEAT && textOk && (beatRanked == null || process.env.GATE_RANKED === '0' || beatRanked >= BEAT); // a shape clash is reported, and blocks only at claim // BEAT: 3 since Cory's v2 notes
-    return { name: o.name, label: o.label, text: o.text, median: o.med, totals: o.totals, q: o.q, overBar: o.over, beatsOldBy: beat, words: w, wordBudget: budget, textOk, shapes, shapeClash: clash, hardFails: o.fails, pass, beatRanked,
+    const lines = gateLines(key.spec, old, o);
+    const pass = !voided && o.over && beat >= BEAT && textOk && !lines.length && (beatRanked == null || process.env.GATE_RANKED === '0' || beatRanked >= BEAT); // a shape clash is reported, and blocks only at claim // BEAT: 3 since Cory's v2 notes
+    return { name: o.name, label: o.label, text: o.text, median: o.med, totals: o.totals, q: o.q, overBar: o.over, beatsOldBy: beat, words: w, wordBudget: budget, textOk, shapes, shapeClash: clash, hardFails: o.fails, pass, beatRanked, gateLines: lines,
       why: o.entries.map(e => e.why) };
   });
   const out = { questions: K, id: key.spec.id, lane: key.spec.lane, batch: key.spec.batch, old: { name: old.name, median: old.med, totals: old.totals, q: old.q }, decoy: d1 ? { name: d1.name, medians: [d1.med, d2.med], gap: decoyGap, judgeGaps } : null, voided, judges: files.length, candidates: res };
@@ -234,7 +235,7 @@ function scoreGate(arg, batchVoid, print, shift = 0, rankOffset = null) {
     d1 ? `Decoy **${d1.name}** scored ${d1.med} and ${d2.med} as two labels (gap ${decoyGap}; per judge ${judgeGaps.join('/')}). ${voided ? 'VOID: the gate is inflated or noisy; fix the prompt before trusting this.' : 'Gate is steady.'}` : 'No decoy.', '',
     ...res.flatMap(c => [`## ${c.pass ? 'PASS' : 'no'}: ${c.name} (median ${c.median}, ${c.totals.join('/')}; ${c.beatsOldBy >= 0 ? '+' : ''}${c.beatsOldBy} on the old card)`,
       `"${c.text}"`, `- ${qline(c.q)}.`,
-      `- Bar: ${c.overBar ? 'over' : 'under'}. Beats old by ${BEAT}: ${c.beatsOldBy >= BEAT ? 'yes' : 'no'}${c.beatRanked != null ? ` (and its ranking score: ${c.beatRanked >= 0 ? '+' : ''}${c.beatRanked})` : ''}. Words ${c.words} of ${c.wordBudget}: ${c.textOk ? 'ok' : 'over budget'}. Shapes: ${c.shapes.join(', ') || 'none'}${c.shapeClash.length ? ` (already used this batch: ${c.shapeClash.join(', ')})` : ''}.${c.hardFails.length ? ` Hard fail from ${c.hardFails.length}: ${c.hardFails[0]}` : ''}`,
+      `- Bar: ${c.overBar ? 'over' : 'under'}. Beats old by ${BEAT}: ${c.beatsOldBy >= BEAT ? 'yes' : 'no'}${c.beatRanked != null ? ` (and its ranking score: ${c.beatRanked >= 0 ? '+' : ''}${c.beatRanked})` : ''}. Words ${c.words} of ${c.wordBudget}: ${c.textOk ? 'ok' : 'over budget'}. Shapes: ${c.shapes.join(', ') || 'none'}${c.shapeClash.length ? ` (already used this batch: ${c.shapeClash.join(', ')})` : ''}.${c.hardFails.length ? ` Hard fail from ${c.hardFails.length}: ${c.hardFails[0]}` : ''}${c.gateLines.length ? ` Blocked by a gate line: ${c.gateLines.join('; ')}.` : ''}`,
       ...c.why.map(w => `- Judge: ${w}`), ''])].join('\n');
   writeFileSync(join(dir, 'result.md'), md);
   // shapes are claimed only when a lane picks its card (claim), so scoring order never decides who gets a shape
@@ -269,6 +270,20 @@ function setcheck(id, names = []) {
     `## The other colors' spaces`, otherSpaces(old.qid)].join('\n'));
   writeFileSync(join(dir, 'key.json'), JSON.stringify({ gate: id, options: sh.map(o => ({ label: o.label, role: o.role, name: o.name })) }, null, 1));
   return `${dir}/set.md: ${sh.length} versions (${sh.map(o => `${o.label} ${o.name}`).join(', ')}); judges: .claude/agents/set-judge.md`;
+}
+// Gate lines from steering (principles.md, "Process changes after batch 1"; director, Nov 4 6:31am): enforced, not advice.
+// Each color keeps a cheap way-in member (total cost 3 or less) after the swap; Magenta gets no new steals.
+function costOf(price) { const m = String(price || '').match(/(\d+)\s+[a-z]+\s*\+\s*(\d+)\s+any/i); return m ? +m[1] + +m[2] : null; }
+function gateLines(spec, old, cand) {
+  const out = [];
+  if (spec.kind !== 'space' && spec.color) {
+    const color = String(spec.color).toLowerCase();
+    if (color === 'magenta' && /\bsteal/i.test(cand.text) && !/\bsteal/i.test(old.text)) out.push('Magenta gets no new steals');
+    const board = boardText([color], { without: [old.name, ...(spec.dropFromBoard || [])], spaces: false, extra: (spec.extraMembers || []).filter(e => String(e.color).toLowerCase() === color) });
+    const cheap = [...board.matchAll(/· ([^[]+) \[([^\]]+)\]/g)].filter(m => (costOf(m[2]) ?? 99) <= 3).map(m => m[1].trim());
+    if (!cheap.length && (costOf(cand.price) ?? 99) > 3) out.push(`${spec.color} would have no member costing 3 or less`);
+  }
+  return out;
 }
 function setmulti(ids, combos) {
   const ks = ids.map(id => JSON.parse(readFileSync(join(GATE, id, 'key.json'), 'utf8')));
