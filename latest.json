@@ -1,78 +1,79 @@
 {
- "sha": "bb2721f63e02f79265d6ac0d348410d1ba887da2",
- "at": "2026-11-04T20:28:14.093Z",
+ "sha": "5cdbd9df8f74f2861729327cf7e5d316ff93bcea",
+ "at": "2026-11-04T21:17:04.641Z",
  "ok": false,
  "finished": true,
  "red": [
+  "e2e tables.mjs",
   "e2e info.mjs"
  ],
  "knownRed": [],
- "passed": 54,
+ "passed": 53,
  "stages": [
   {
    "status": "PASS",
    "name": "production build",
-   "s": 23.6
+   "s": 25.5
   },
   {
    "status": "PASS",
    "name": "e2e shop-names.mjs",
-   "s": 324.4
+   "s": 385.8
   },
   {
    "status": "PASS",
    "name": "e2e online.mjs",
-   "s": 280.8
+   "s": 282.4
   },
   {
    "status": "PASS",
    "name": "e2e turndock.mjs",
-   "s": 532.5
+   "s": 574.5
   },
   {
-   "status": "PASS",
+   "status": "FAIL",
    "name": "e2e tables.mjs",
-   "s": 231.8
+   "s": 272.6
   },
   {
    "status": "PASS",
    "name": "e2e hotseat.mjs",
-   "s": 168.6
+   "s": 183.9
   },
   {
    "status": "PASS",
    "name": "e2e memory.mjs",
-   "s": 192.1
+   "s": 200.9
   },
   {
    "status": "PASS",
    "name": "e2e spaces.mjs",
-   "s": 104
+   "s": 116.5
   },
   {
    "status": "PASS",
    "name": "e2e benders.mjs",
-   "s": 94.7
+   "s": 100.3
   },
   {
    "status": "PASS",
    "name": "e2e artifact-fly.mjs",
-   "s": 10.6
+   "s": 12.7
   },
   {
    "status": "PASS",
    "name": "e2e asks.mjs",
-   "s": 29.8
+   "s": 30.5
   },
   {
    "status": "PASS",
    "name": "e2e backlog-ui.mjs",
-   "s": 48.1
+   "s": 62.8
   },
   {
    "status": "PASS",
    "name": "e2e caption-linger.mjs",
-   "s": 67.6
+   "s": 70.3
   },
   {
    "status": "PASS",
@@ -82,208 +83,208 @@
   {
    "status": "PASS",
    "name": "e2e copyall.mjs",
-   "s": 14.2
+   "s": 15.4
   },
   {
    "status": "PASS",
    "name": "e2e draft-retinue.mjs",
-   "s": 44.7
+   "s": 47.1
   },
   {
    "status": "PASS",
    "name": "e2e drifters.mjs",
-   "s": 10.3
+   "s": 11.1
   },
   {
    "status": "PASS",
    "name": "e2e green-chain.mjs",
-   "s": 12.6
+   "s": 13.1
   },
   {
    "status": "PASS",
    "name": "e2e landing.mjs",
-   "s": 122
+   "s": 124.4
   },
   {
    "status": "PASS",
    "name": "e2e magenta-actions.mjs",
-   "s": 86.5
+   "s": 93.2
   },
   {
    "status": "PASS",
    "name": "e2e magenta-contest.mjs",
-   "s": 24.7
+   "s": 27.6
   },
   {
    "status": "PASS",
    "name": "e2e midchain.mjs",
-   "s": 114.5
+   "s": 115.5
   },
   {
    "status": "PASS",
    "name": "e2e motion-verify.mjs",
-   "s": 5.3
+   "s": 5.8
   },
   {
    "status": "PASS",
    "name": "e2e party-crasher.mjs",
-   "s": 5.4
+   "s": 8.8
   },
   {
    "status": "PASS",
    "name": "e2e pay.mjs",
-   "s": 68.4
+   "s": 85.4
   },
   {
    "status": "PASS",
    "name": "e2e payflow.mjs",
-   "s": 21.5
+   "s": 28.1
   },
   {
    "status": "PASS",
    "name": "e2e peek.mjs",
-   "s": 19.4
+   "s": 21
   },
   {
    "status": "PASS",
    "name": "e2e pool-between.mjs",
-   "s": 34.5
+   "s": 35.8
   },
   {
    "status": "PASS",
    "name": "e2e red-actions.mjs",
-   "s": 66.5
+   "s": 73.4
   },
   {
    "status": "PASS",
    "name": "e2e red-members.mjs",
-   "s": 67
+   "s": 70.9
   },
   {
    "status": "PASS",
    "name": "e2e resource-contests.mjs",
-   "s": 24.3
+   "s": 26.1
   },
   {
    "status": "PASS",
    "name": "e2e resume-edge.mjs",
-   "s": 123.8
+   "s": 142.3
   },
   {
    "status": "PASS",
    "name": "e2e round-end.mjs",
-   "s": 142.1
+   "s": 142.4
   },
   {
    "status": "PASS",
    "name": "e2e seat-scroll.mjs",
-   "s": 7.3
+   "s": 7.9
   },
   {
    "status": "PASS",
    "name": "e2e shop-lighting.mjs",
-   "s": 24.2
+   "s": 24.5
   },
   {
    "status": "PASS",
    "name": "e2e shop-sizing.mjs",
-   "s": 36.9
+   "s": 42.2
   },
   {
    "status": "PASS",
    "name": "e2e silver-share.mjs",
-   "s": 12.4
+   "s": 13.3
   },
   {
    "status": "PASS",
    "name": "e2e sound.mjs",
-   "s": 18.2
+   "s": 18.9
   },
   {
    "status": "PASS",
    "name": "e2e squat-hits.mjs",
-   "s": 12.1
+   "s": 13.1
   },
   {
    "status": "PASS",
    "name": "e2e steal.mjs",
-   "s": 59.8
+   "s": 67.7
   },
   {
    "status": "PASS",
    "name": "e2e step-hold.mjs",
-   "s": 97.1
+   "s": 98.3
   },
   {
    "status": "PASS",
    "name": "e2e straggler-choice.mjs",
-   "s": 13.2
+   "s": 14.4
   },
   {
    "status": "PASS",
    "name": "e2e travel.mjs",
-   "s": 68.1
+   "s": 76.7
   },
   {
    "status": "PASS",
    "name": "e2e turn-skip.mjs",
-   "s": 8.1
+   "s": 9.5
   },
   {
    "status": "PASS",
    "name": "e2e turnstory.mjs",
-   "s": 40.5
+   "s": 47.7
   },
   {
    "status": "PASS",
    "name": "e2e wheel-contention.mjs",
-   "s": 38.1
+   "s": 54.8
   },
   {
    "status": "PASS",
    "name": "e2e layout.mjs",
-   "s": 47.9
-  },
-  {
-   "status": "FAIL",
-   "name": "e2e info.mjs",
-   "s": 107.3
+   "s": 56.2
   },
   {
    "status": "PASS",
    "name": "e2e motion.mjs",
-   "s": 268
+   "s": 279.1
+  },
+  {
+   "status": "FAIL",
+   "name": "e2e info.mjs",
+   "s": 155.6
   },
   {
    "status": "PASS",
    "name": "e2e members.mjs",
-   "s": 37.1
+   "s": 39.1
   },
   {
    "status": "PASS",
    "name": "e2e score-screens.mjs",
-   "s": 32.1
+   "s": 34.4
   },
   {
    "status": "PASS",
    "name": "e2e scoring.mjs",
-   "s": 28.9
+   "s": 29.4
   },
   {
    "status": "PASS",
    "name": "e2e snappy.mjs",
-   "s": 99.7
+   "s": 100
   },
   {
    "status": "PASS",
    "name": "e2e reckoning.mjs",
-   "s": 63.7
+   "s": 59.3
   },
   {
    "status": "PASS",
    "name": "unit tests",
-   "s": 747.4
+   "s": 819.4
   }
  ],
- "run": "https://github.com/cojamz/cults/actions/runs/41899267296"
+ "run": "https://github.com/cojamz/cults/actions/runs/41904315142"
 }
