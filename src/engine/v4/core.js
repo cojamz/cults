@@ -2089,6 +2089,7 @@ function ctxFor(state) {
     abilitiesOf: p => [...p.members, ...(p.artifact !== undefined ? [p.artifact] : [])].map(u => wrap(state, state.cards[u])),
     ownerOf: uid => state.players.find(o => o.members.includes(uid)),
     // a card Snobs reserved for someone else is not offered to the player whose turn it is
+    openSpaces: () => openSlots(state).map(([q, i]) => { const a = actionAt(state, q, i); return { key: `${q}-${i}`, name: a.name, ring: a.ring, qid: state.quadrants[q] }; }),
     shopCards: () => state.shop.filter(u => state.current == null || !reservedFor(state, state.players[state.current], u)).map(u => wrap(state, state.cards[u])),
     gain: (p, color, n, opts) => gain(state, p, color, n, opts),
     discount: grantDiscount,
@@ -2103,6 +2104,8 @@ function ctxFor(state) {
      *  is a gain, for a swap). Display and asking only: a one-way payment that gives up a lead asks first. */
     leadsLost: (p, v) => { const g = rimCost(state, p)(v); return [...g.colors, ...g.cuts.map(c => c.member)]; },
     /** The contests p leads or ties for now, as if the round ended (contestTable's winners): quadrant ids. */
+    /** Each contest's leaders now, as if the round ended: [{ qid, winners: [ids] }]. */
+    contestLeaders: () => contestTable(state).map(c => ({ qid: c.qid, winners: c.winners })),
     contestsLed: p => contestTable(state).filter(c => c.winners.includes(p.id)).map(c => c.qid),
     log: text => log(state, text),
     /** A preview's reason for a member's effect content applies itself (Grand Host's double): the "Why" row. */

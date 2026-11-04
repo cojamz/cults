@@ -426,3 +426,39 @@ describe('REPLACE11: Snobs, the reserved token', () => {
     expect(s.reserved).toBeUndefined();
   });
 });
+
+describe('REPLACE11: Landlord, rent on a space', () => {
+  const gatherSlot = s => `${s.quadrants.indexOf('red')}-${quadrant('red').actions.findIndex(a => a.name === 'Gather')}`;
+  it('replaces the old Landlord', async () => {
+    const { defById } = await import('../../../engine/v4/content/index.js');
+    expect(defById('trading.landlord2').text).toBe('On Recruit and Round Start: put your token on a space. This round, whenever a rival takes it, +3 white.');
+    expect(defById('trading.shopkeeper').retired).toBe(true);
+  });
+  // "Round Start: put your token on a space. This round, whenever a rival takes it, +3 white."
+  it('pays +3 white when a rival takes the token space, and nothing when its owner does', () => {
+    const run = rivalTakes => {
+      let s = table(['red', 'trading'], { n: 2, round: 1, members: [['trading.landlord2'], []], queue: [{ t: 'round', r: 2 }] });
+      expect(s.pending.prompt).toBe('Landlord: put your token on which space this round?');
+      const g = gatherSlot(s);
+      s = answer(s, `space:${g}`);
+      expect(s.log.join('\n')).toContain("P1's Landlord: a token on Gather this round.");
+      s = passBuys(s);
+      const want = rivalTakes ? 1 : 0;
+      // whoever isn't meant to take it places elsewhere first, if it's their turn
+      if (s.pending.player !== want) {
+        const other = s.pending.options.find(o => o.id.startsWith('slot:') && o.id !== `slot:${g}`);
+        s = answer(s, other.id); s = passBuys(s);
+      }
+      const w0 = s.players[0].res.white || 0;
+      expect(s.pending.player).toBe(want);
+      s = answer(s, `slot:${g}`);
+      if (!rivalTakes) return s;
+      return { s, w0 };
+    };
+    const { s, w0 } = run(true);
+    expect((s.players[0].res.white || 0) - w0).toBe(3);
+    expect(s.log.join('\n')).toContain("P1's Landlord: rent on the token's space, +3 white.");
+    const own = run(false);
+    expect(own.log.join('\n')).not.toContain('rent on');
+  });
+});

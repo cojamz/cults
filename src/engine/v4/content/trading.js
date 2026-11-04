@@ -18,7 +18,7 @@ import { memberScoring } from './member-scoring.js';
 import { registerQuadrant, defById } from './index.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add6, old6, handlers6 } from './replace6.js';
-import { swap11, handlers11 } from './replace11.js';
+import { swap11, handlers11, add11, old11 } from './replace11.js';
 import { add10, old10, handlers10 } from './replace10.js';
 import { add8, old8 } from './replace8.js';
 
@@ -202,6 +202,12 @@ const trading = {
 
   handlers: {
     ...handlers11({ yardSale, yardSaleAsk,
+      landlordToken(ctx, p, v) {
+        if (!v || !ctx.state.cards[v.uid]) return;
+        ctx.state.cards[v.uid].landToken = { key: v.key, round: ctx.state.round };
+        const [q, i] = v.key.split('-').map(Number), name = ctx.state.quadrants[q] && ctx.openSpaces().find(s => s.key === v.key)?.name;
+        ctx.log(`${p.name}'s Landlord: a token on ${name || 'a space'} this round.`);
+      },
       cashOut(ctx, p, k) { if (k > 0) sell(ctx, p, k, 2, { fromAction: true, why: 'cashed out', by: 'Cash Out' }); },
     }),
     ...handlers10({
@@ -324,7 +330,26 @@ const trading = {
         ctx.log(`${owner.name}'s Almoner: +${n} white${last ? ' (fewest followers)' : ''}.`);
       },
     })),
-    m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true, ...old10('almoner'),
+    // Actions lane (Nov 4; /mnt/project-files/quality/pitches/actions-landlord.md), REPLACE11=landlord2 in Landlord's
+    // place: rent on a wheel space. The token is the card's landToken {key, round}; a rival placing a minion there (a
+    // joined spot counts, a Green copy doesn't: it sits on the Green space) pays the owner +3 white from the bank.
+    ...add11(m('landlord2', 'Landlord', 2, 1, 'On Recruit and Round Start: put your token on a space. This round, whenever a rival takes it, +3 white.', { now: true,
+      onRoundStart(ctx, owner, card) {
+        const open = ctx.openSpaces();
+        if (!open.length) return;
+        ctx.choose(owner, 'Landlord: put your token on which space this round?', open.map(sp => ({
+          id: `space:${sp.key}`, label: sp.name, kind: 'space', value: { uid: card.uid, key: sp.key },
+          hint: sp.ring + ctx.rivals(owner).filter(o => ctx.countMembersOfColor(o, sp.qid) > 0).length,
+        })), 'trading.landlordToken');
+      },
+      afterRivalAction(ctx, owner, card) {
+        const t = ctx.state.cards[card.uid]?.landToken;
+        if (!t || t.round !== ctx.state.round || ctx.placement?.key !== t.key) return;
+        ctx.gain(owner, W, 3);
+        ctx.log(`${owner.name}'s Landlord: rent on the token's space, +3 white.`);
+      },
+    })),
+    m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true, ...old10('almoner'), ...old11('landlord2'),
       onRoundStart(ctx, owner) { ctx.gain(owner, W, 2); },
     }),
     // REPLACE10 bot test (Nov 4, quality loop lane D): Heiresses' place. 5 white + 4 any as a player sees it, worth 2.

@@ -8,6 +8,7 @@ import { add1, old1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
 import { add5, old5, handlers5 } from './replace5.js';
 import { add10, old10, on10 } from './replace10.js';
+import { on11 } from './replace11.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -81,6 +82,17 @@ function commit(ctx, thief, victim, pick, reaction = false, fromAction = true, l
   return ctx.steal(thief, victim, { take: pick, reaction, instance, give: (n, took) => stash(ctx, thief, took, fromAction), ...(led !== undefined ? { led } : {}) });
 }
 // Automatic small steal used by members: from the victim's biggest pile, one at a time.
+/** Racket (REPLACE11=racket): [[rival, steals]] for each contest p doesn't lead; a tie picks the biggest pile. */
+function racketPlan(ctx, p) {
+  const owed = new Map();
+  for (const c of ctx.contestLeaders()) {
+    if (!c.winners.length || c.winners.includes(p.id)) continue;
+    const o = c.winners.map(id => ctx.player(id)).sort((a, b) => stealable(ctx, p, b) - stealable(ctx, p, a))[0];
+    owed.set(o, (owed.get(o) || 0) + 1);
+  }
+  return [...owed];
+}
+
 function autoSteal(ctx, thief, victim, why, n = 1, reaction = false) {
   if (!victim || victim === thief) return 0;
   // Desperado's +2 reaches these 1-resource steals too (Cory, Nov 1 3:11pm: "yes i think"), named in the log
@@ -285,6 +297,19 @@ const thieves = {
         if (!list.length) { insideNone(ctx, p, 'Inside Job'); return; }
         const n = ctx.stealCount(p, 2, { say: true });
         for (const o of list) autoSteal(ctx, p, o, 'Inside Job', n);
+      },
+    }] : on11('racket') ? [{
+      // Actions lane (Nov 4, director: put Cory's two Stash ideas through paper and a short A/B), REPLACE11=racket:
+      // Cory's Oct 31 standing pick "Steal 1 of each contest's color from its leader, if it isn't you.", in Members D's
+      // reword for contests that don't count a color. One steal per contest you don't lead or tie for; a tied lead
+      // gives one steal, from the tied leader with the biggest pile (no choice). Through the shared steal.
+      key: 'racket', ring: 1, name: 'Racket', copyDoesIt: true,
+      text: "Steal 1 resource from the leader of each contest you aren't leading. +1 magenta.",
+      estimate: (ctx, p) => racketPlan(ctx, p).reduce((a, [o, n]) => a + Math.min(n, stealable(ctx, p, o)), 0) * 0.9,
+      resolve(ctx, p) {
+        const plan = racketPlan(ctx, p);
+        if (!plan.length) { ctx.log(`${p.name}'s Racket: no contest led by a rival.`); return; }
+        for (const [o, n] of plan) autoSteal(ctx, p, o, 'Racket', n);
       },
     }] : [    {
       // every color's 3/4/5 (Cory, 2026-10-27), counting the +1 magenta every Magenta action gives; name Claude's fill-in
