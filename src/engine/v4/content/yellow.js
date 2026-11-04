@@ -496,9 +496,20 @@ export default {
       onRecruited(ctx, owner) { startChange(ctx, owner, { who: 'Agitator', left: 4 }); },
     }),
     // Claude's fill-in (Cory, 2026-10-31: "just come up with whatever's remaining quick")
-    m('ringleader', 'Meddler', 3, 2, "On Recruit: change 1 of each rival's resources one for one. +1 follower per rival changed.", { ...old2,
+    m('ringleader', 'Meddler', 3, 2, "On Recruit: change 1 of each rival's resources one for one. +1 follower per rival changed.", { ...old2, ...old9('yellow.ringleader'),
       onRecruited(ctx, owner) { startChange(ctx, owner, { who: 'Meddler', left: touchable(ctx, owner).length, perRival: true, follower: true }); },
     }),
+    // REPLACE9 (Members C, bC8: paper 17 vs 11; Cory's "paper filters, play ranks", Nov 4): Meddler as once per round.
+    ...add9(m('meddler9', 'Meddler', 3, 2, "On Use, once per round: change 1 of each rival's resources one for one. +1 follower per rival changed.", {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const n = touchable(ctx, owner).filter(o => total(ctx, o) > 0).length;
+        if (!n) { card.used = false; ctx.log(`${owner.name}'s Meddler: no rival resources to change.`); return; }
+        startChange(ctx, owner, { who: 'Meddler', left: touchable(ctx, owner).length, perRival: true, follower: true });
+      },
+      botActivate: (ctx, owner) => touchable(ctx, owner).some(o => total(ctx, o) > 0),
+    })),
     // REPLACE2 bot test (Nov 3, replacement batch 2): Meddler's place. 4 yellow + 2 any as a player sees it. Trade
     // Seeds' own swaps, asked after the round's last placement and before anything is scored (core's allPlaced step).
     ...add2(m('nightmarket', 'Night Market', 3, 2, 'Round End: before contests are scored, swap up to 3 of your resources for other colors, one for one.', {

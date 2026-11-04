@@ -751,6 +751,15 @@ const market = {
     ...add9(m('windowdressers9', 'Window Dressers', 2, 1, 'On Recruit: send any shop members to the bottom of the pile, then refill. Recruit again this turn.', { f: 3,
       onRecruited(ctx, owner) { wd9Step(ctx, owner, { n: 0 }); },
     })),
+    // REPLACE9 (Members C, bC7b: paper 14 vs 11; Cory's "paper filters, play ranks", Nov 4): Window Dressers' place,
+    // same price. Its own recruit counts (it is a blue member by then).
+    ...add9(m('buyersclub', "Buyers' Club", 2, 1, 'Whenever you recruit, +1 blue per blue member you have, up to 3.', { f: 3, n: 3,
+      onAnyRecruit(ctx, owner, card, by) {
+        if (by !== owner) return;
+        const k = Math.min(3, ctx.countMembersOfColor(owner, Q));
+        if (k) { ctx.gain(owner, B, k); ctx.log(`${owner.name}'s Buyers' Club: +${k} blue.`); }
+      },
+    })),
     m('windowdresser', 'Window Dressers', 2, 1, 'On Recruit: send 3 shop members to the bottom of the pile, then refill.', { f: 3, ...old4, ...old9('market.windowdresser'),
       onRecruited(ctx, owner) {
         ctx.log(`${owner.name}'s Window Dressers: send 3 shop members to the bottom of the pile.`);
