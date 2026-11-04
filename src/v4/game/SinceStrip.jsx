@@ -105,7 +105,19 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
   const asked = useRef(null); // the fold the observer asked for and hid lines for, until React draws it
   const ro = useRef(null), watched = useRef(new Set()), fold = useRef(null);
   // the list and each line on it are watched (observing is not a layout read; a newly watched line reports once)
+  // one line per move under the chairs: a piece that wrapped to the hidden second line is hidden itself, so nothing on
+  // screen is ever a cut piece (the hot-seat gate's text check, Nov 4)
+  const dropWrapped = () => {
+    const l = listRef.current;
+    if (!compact || !l) return;
+    for (const row of l.querySelectorAll(':scope > .since-row')) {
+      const kids = [...row.children];
+      const top = kids.length ? kids[0].offsetTop : 0;
+      for (const k of kids) { const off = k.offsetTop > top + 2; if (off !== k.hasAttribute('data-wrapped')) { if (off) { k.setAttribute('data-wrapped', ''); k.style.visibility = 'hidden'; } else { k.removeAttribute('data-wrapped'); k.style.visibility = ''; } } }
+    }
+  };
   useLayoutEffect(() => {
+    dropWrapped();
     const prev = committed.current, was = prev.sig;
     committed.current = { sig, cut, len: base.length, lvl, bare };
     // the fold asked for is drawn (or these are new lines, or a new room): lines hidden while it was on its way show again
@@ -120,6 +132,7 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
       fold.current = () => {
         const list = listRef.current;
         if (!list) return;
+        dropWrapped();
         const { sig: s0, cut: c0, len, lvl: l0 } = committed.current;
         if (l0 >= 2) return;
         const kids = [...list.children];

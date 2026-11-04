@@ -248,7 +248,7 @@ try {
   for (const [tag, space] of [['c1', 'polish']]) {
     const save = colorSave(space);
     const st = save.state, slot = st.players[0].lastSlot && st.players[0].lastSlot.key;
-    const { ctx, page } = await open(tag, save, '.lt-wheel .gift-card[data-gift="color"]');
+    const { ctx, page } = await open(tag, save, '.lt-wheel .gift-card[data-gift="split"]');
     await page.waitForTimeout(300);
     const where = await page.evaluate(key => {
       const c = document.querySelector('.gift-card').getBoundingClientRect();
@@ -260,31 +260,25 @@ try {
     if (await page.$('.lt-seat .cs-stack.pick-on, .lt-seat .cs-pick-seat, .seat-pick.docked')) errors.push(`(${tag}) the seats or the header still take the pick`);
     const chips = await page.$$eval('.pick-key, .prompt.choice .opts .btn', els => els.filter(e => e.getBoundingClientRect().width > 2).length);
     if (chips) errors.push(`(${tag}) ${chips} chips show`);
-    const want = st.pending.options.filter(o => o.target).map(o => `${o.target.res}=${o.id}`);
-    const dots = await page.$$eval('.gift-card .gc-row[data-live] .gc-dot:not([disabled])', els => els.map(e => `${e.dataset.res}=${e.dataset.option}`));
-    if (dots.slice().sort().join() !== want.slice().sort().join()) errors.push(`(${tag}) the card's colors ${dots.join(' ')} ≠ the engine's ${want.join(' ')}`);
-    // a row that fits is whole: no "more below" fade over its own picks (an 8px-short scroller faded every card's last line)
-    const row2 = await page.$eval('.gift-card .gc-row[data-row="2"] > .gc-items', e => ({ more: e.dataset.more || null, over: e.scrollHeight - e.clientHeight }));
-    if (row2.more || row2.over > 1) errors.push(`(${tag}) the card's row is cut and faded though nothing is hidden: ${JSON.stringify(row2)}`);
+    // Polish's 4 coins are picked whole on the split card, like a payment (Harvest's picker, Cory Nov 4: "all the other
+    // purchasing selectors are solid and elegant"): a stack per engine color, Take answers the engine's four questions
+    const want = st.pending.options.filter(o => o.target).map(o => o.target.res);
+    const stacks = await page.$$eval('.gift-card [data-split-stack]', els => els.map(e => e.dataset.splitStack));
+    if (stacks.slice().sort().join() !== want.slice().sort().join()) errors.push(`(${tag}) the card's colors ${stacks.join(' ')} ≠ the engine's ${want.join(' ')}`);
     const title = await page.$eval('.gift-card .gc-title', e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
     const head = await page.$eval('.gift-card .gc-what', e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
     await page.screenshot({ path: `${SHOTS}/${tag}-card.png` });
-    if (title !== 'Polish' || head !== '+1 of which color?') errors.push(`(c1) the card reads "${title}" / "${head}"`);
-    const sub = await page.$eval('.gift-card .gc-sub', e => e.textContent.trim()).catch(() => '');
-    if (!/\(4 to pick\)/.test(sub)) errors.push(`(c1) the line under the heading reads "${sub}"`);
-    const pick = st.pending.options.find(o => o.id === 'color:red') || st.pending.options.find(o => o.target);
-    const before = st.players[0].res[pick.value] || 0;
-    await click(page, `.gift-card .gc-dot[data-option="${pick.id}"]`);
-    await page.waitForFunction(m => Number(document.querySelector('.app.game').dataset.moves) > m, st.moves, { timeout: 6000 }).catch(() => errors.push('(c1) clicking a color did nothing'));
-    const rec = await lastMove(page);
-    if (rec && rec !== pick.id) errors.push(`(c1) recorded ${rec}, not ${pick.id}`);
+    if (title !== 'Polish' || head !== '+4 in colors you choose') errors.push(`(c1) the card reads "${title}" / "${head}"`);
+    const pick = want.includes('red') ? 'red' : want[0];
+    const before = st.players[0].res[pick] || 0;
+    for (let k = 0; k < 4; k++) await click(page, `.gift-card [data-split-add="${pick}"]`);
+    const plan = await page.$eval('[data-split-take]', e => e.dataset.splitTake).catch(() => '');
+    if (plan !== `4${pick}`) errors.push(`(c1) four clicks on ${pick} planned "${plan}"`);
+    await click(page, '.gift-card [data-split-take]');
+    await page.waitForFunction(m => Number(document.querySelector('.app.game').dataset.moves) >= m + 4, st.moves, { timeout: 10000 }).catch(() => errors.push('(c1) Take did not answer all four'));
     let got = NaN;
-    for (let k = 0; k < 30 && got !== before + 1; k++) { got = await page.$eval(`.lt-seat[data-pid="0"] .cs-stack[data-res="${pick.value}"] b`, e => Number(e.textContent)).catch(() => NaN); await page.waitForTimeout(100); }
-    if (got !== before + 1) errors.push(`(c1) you hold ${got} ${pick.value}, want ${before + 1}`);
-    // Polish asks four times: the card stays at the space and counts down
-    await page.waitForFunction(() => /\(3 to pick\)/.test(document.querySelector('.gift-card .gc-sub')?.textContent || ''), null, { timeout: 4000 }).catch(() => {});
-    const sub2 = await page.$eval('.gift-card .gc-sub', e => e.textContent.trim()).catch(() => '');
-    if (!/\(3 to pick\)/.test(sub2)) errors.push(`(c1) after one pick the line under the heading reads "${sub2}"`);
+    for (let k = 0; k < 40 && got !== before + 4; k++) { got = await page.$eval(`.lt-seat[data-pid="0"] .cs-stack[data-res="${pick}"] b`, e => Number(e.textContent)).catch(() => NaN); await page.waitForTimeout(100); }
+    if (got !== before + 4) errors.push(`(c1) you hold ${got} ${pick}, want ${before + 4}`);
     await ctx.close();
   }
   // (w1) Promote (Even Swap until the round I rework, Cory Oct 27): yours, then the shop's, on the same card

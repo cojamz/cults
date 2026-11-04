@@ -9,8 +9,9 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //       sits in the open, clear of the wheel and the shop, and a line opens that placement's card on hover;
 //       whole lines only is watched every frame of the run: no line (or the "N earlier" line) may show in part, cut by
 //       the strip's top or foot, for 3 frames running (a fold lands within a frame; a sliver that stays is the bug);
-//  (t2b) the same on a full strip over a tall pinned card: a ring-II resume on a table of long, two-line stories
-//       (silver, trading, thieves, red), at 1270×700 and 1100×700, with the turn card up under the strip;
+//  (t2b) the same on a full strip: a ring-II resume on a table of long, two-line stories (silver, trading, thieves,
+//       red), at 1270×700 and 1100×700; on your own placement turn the turn card is gone and the strip has its room
+//       (Cory, Nov 4: "yes" to one line per rival move, still up when your turn starts);
 //  (t3) after a placement, the turn card names the space actually taken (the engine's log is the truth);
 //  (t4) the snake turnaround reads "Your turn again (snake order)", never "Extra turn";
 //  (t5) the second placement gets its own card: its space, and nothing from the first;
@@ -200,8 +201,11 @@ try {
     await page.mouse.move(5, 5);
     await page.waitForTimeout(300);
   };
-  await nameCard('[data-since] [data-hover-name="space"]', 'space', 't8');
-  await nameCard('[data-since] [data-hover-name="member"]', 'card', 't8');
+  // (under the chairs each move is one line: a piece that doesn't fit is hidden whole, data-wrapped, Nov 4)
+  await nameCard('[data-since] .since-row > :not([data-wrapped]) [data-hover-name="space"], [data-since] .since-row > [data-hover-name="space"]:not([data-wrapped])', 'space', 't8');
+  // a member's name is often the piece that drops on a one-line row; when none shows, the log's check below covers it
+  if (await page.locator('[data-since] .since-row > :not([data-wrapped]) [data-hover-name="member"]').count()) await nameCard('[data-since] .since-row > :not([data-wrapped]) [data-hover-name="member"]', 'card', 't8');
+  else console.log('turnstory t8: note, no member name in sight on the strip; checked in the log');
   // (t7) the log, one tap from the strip; (t8) its names open their cards too, above the drawer
   await page.click('[data-since] [data-open-log]');
   if (!(await page.waitForSelector('.lt-chron', { timeout: 3000 }).catch(() => null))) fail('the strip\'s Log button opened no log', 't7');
@@ -341,11 +345,12 @@ try {
           part: [...l.children].filter(x => { const a = x.getBoundingClientRect(); return a.height && getComputedStyle(x).visibility !== 'hidden' && (a.top < b.top - 1 || a.bottom > b.bottom + 1); }).map(x => x.textContent.slice(0, 50)),
           cover: card ? Math.max(0, b.bottom - card.getBoundingClientRect().top) : 0 };
       };
+      // measured 800ms after your turn's spaces light: the card of the turn that just passed has folded by then
       const tick = () => {
         const card = document.querySelector('.lt > .turn-card');
-        const up = card && !card.classList.contains('folding');
-        if (up && M.upAt == null) M.upAt = performance.now();
-        if (M.upAt != null && !M.s2 && (!up || performance.now() - M.upAt >= 800)) M.s2 = { ...measure(), heldMs: Math.round(performance.now() - M.upAt), up: !!up };
+        const up = !!card && !card.classList.contains('folding') && getComputedStyle(card).display !== 'none';
+        if (M.upAt == null && document.querySelector('.lt-wheel .slot.can')) M.upAt = performance.now();
+        if (M.upAt != null && !M.s2 && performance.now() - M.upAt >= 800) M.s2 = { ...measure(), heldMs: Math.round(performance.now() - M.upAt), up };
         if (!M.s2) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
@@ -356,19 +361,19 @@ try {
     await p2.waitForSelector('.lt-wheel .slot.can');
     // (15s: GitHub's box, under the unit tests, took longer than 6s to bring it up at 1100 once, Nov 3)
     const got = await p2.waitForFunction(() => window.__t2b && window.__t2b.s2, null, { timeout: 15000 }).then(h => h.jsonValue(), () => null);
-    if (!got) fail(`no turn card came up on the resumed round-II turn (${JSON.stringify(await p2.evaluate(() => window.__t2b))})`, tag);
-    else if (!got.up) console.log(`turnstory ${tag}: note, the card folded ${got.heldMs}ms after it came up, before the 800ms settle; measured at its last frame`);
+    if (!got) fail(`the resumed round-II turn never settled (${JSON.stringify(await p2.evaluate(() => window.__t2b))})`, tag);
+    else if (got.up) fail('a turn card is up on your own placement turn (the strip should have the room)', tag);
     const s2 = got && got.lines != null ? got : null;
     await p2.screenshot({ path: `${SHOTS}/7-full-strip-${width}.png` });
     if (!s2) fail('the resumed round-II turn shows no strip', tag);
     else {
-      if (s2.part.length) fail(`with the turn card up, the strip shows ${s2.part.length} line(s) only in part: ${JSON.stringify(s2.part)}`, tag);
+      if (s2.part.length) fail(`on your turn, the strip shows ${s2.part.length} line(s) only in part: ${JSON.stringify(s2.part)}`, tag);
       if (s2.lines < 1) fail('the full strip shows no whole line at all', tag);
       if (s2.cover > 1) fail(`the turn card covers the strip's foot by ${Math.round(s2.cover)}px`, tag);
       if (!s2.folded) console.log(`turnstory ${tag}: note, the strip fit without folding (${s2.lines} lines), so the fold went unexercised here`);
     }
     const W2 = await stripFrames(p2, tag);
-    console.log(`turnstory ${tag}: ${s2 ? s2.lines : 0} whole lines + ${s2 ? s2.folded : 0} folded with the card up; strip watched ${W2 ? W2.frames : 0} frames, longest part-line run ${W2 ? W2.worst : '?'}`);
+    console.log(`turnstory ${tag}: ${s2 ? s2.lines : 0} whole lines + ${s2 ? s2.folded : 0} folded on your turn; strip watched ${W2 ? W2.frames : 0} frames, longest part-line run ${W2 ? W2.worst : '?'}`);
     await p2.close();
   }
   // (t10) what you got on a rival's turn is named, with its cause (wave-2 testers A#3, B#46: "my silver went 3→9
