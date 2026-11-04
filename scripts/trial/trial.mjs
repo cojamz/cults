@@ -26,6 +26,9 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSy
 import { hostname } from 'node:os';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { quadrant } from '../../src/engine/v4/index.js';
+// a color's name as the table prints it (thieves -> Magenta)
+const colorName = q => { try { return quadrant(q).name; } catch { return q; } };
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const ROOT = process.env.TRIALS_DIR || '/mnt/project-files/trials';
@@ -312,13 +315,17 @@ function verdict(c) {
   return 'fair and wanted';
 }
 
+/** The color of the cloak a player picked (v4-balance rows name it as "<card> (<color>)"). */
+const cloakColor = p => (p.artifact || '').match(/\((\w+)\)$/)?.[1] || null;
+
 /** A player's plan in table words: how wide, how focused, where the followers came from. */
 function plan(r, p) {
   const by = {};
   for (const m of p.members) { const q = m.match(/\((\w+)\)$/)?.[1]; if (q && q !== 'benders') by[q] = (by[q] || 0) + 1; }
-  const own = by[r.table[p.seat]] || 0, top = Math.max(0, ...Object.values(by));
+  const own = by[cloakColor(p)] || 0, top = Math.max(0, ...Object.values(by));
   const size = p.memberCount <= 5 ? 'few members (5 or less)' : p.memberCount >= 9 ? 'wide (9+ members)' : '6 to 8 members';
-  const focus = top >= 3 && own === top ? 'deep in own color' : top >= 3 ? 'deep in a rival color' : 'mixed colors';
+  const topQ = Object.keys(by).find(q => by[q] === top);
+  const focus = top >= 3 && own === top ? "deep in their cloak's color" : top >= 3 ? `deep in ${colorName(topQ)}, not their cloak's color` : 'mixed colors';
   const fromM = Object.values(p.memberFollowers || {}).reduce((a, b) => a + b, 0), fromC = p.contest || 0;
   const source = fromC >= fromM && fromC > 0 ? 'contests' : 'members';
   return { size, focus, source, key: `${focus}, ${size}`, fromM, fromC, other: Math.max(0, p.followers - fromM - fromC) };
@@ -344,7 +351,7 @@ function patterns(rows) {
       plans[k] ??= { n: 0, w: 0, even: 0 }; plans[k].n++; plans[k].w += w; plans[k].even += 1 / r.seats;
       wins += w;
       const s = sources[w ? 'win' : 'lose']; s[0] += pl.fromM; s[1] += pl.fromC; s[2] += pl.other; s[3]++;
-      const c = r.table[p.seat]; colors[c] ??= { n: 0, w: 0, even: 0 }; colors[c].n++; colors[c].w += w; colors[c].even += 1 / r.seats;
+      const c = cloakColor(p) || 'no cloak'; colors[c] ??= { n: 0, w: 0, even: 0 }; colors[c].n++; colors[c].w += w; colors[c].even += 1 / r.seats;
       const ms = [...new Set(p.members.map(m => m.replace(/ \(\w+\)$/, '')))].sort();
       for (let i = 0; i < ms.length; i++) for (let j = i + 1; j < ms.length; j++) {
         const pk = `${ms[i]} + ${ms[j]}`; pairs[pk] ??= { n: 0, w: 0, even: 0 }; pairs[pk].n++; pairs[pk].w += w; pairs[pk].even += 1 / r.seats;
@@ -385,7 +392,7 @@ function cmdReport() {
     if (x.n + y.n < 10) continue;
     say(`- ${k}: ${pct(x.w / (P.wins || 1))} of wins, players on it won ${pct(x.w / (x.n || 1))} (${x.n} players). Without the change: ${pct(y.w / (Q.wins || 1))} of wins, ${pct(y.w / (y.n || 1))}.`);
   }
-  const src = s => { const tot = s[0] + s[1] + s[2] || 1; return `${pct(s[0] / tot)} from members, ${pct(s[1] / tot)} from contests, ${pct(s[2] / tot)} other (bought, bonuses), ${Math.round(tot / (s[3] || 1))} followers a player`; };
+  const src = s => { const tot = s[0] + s[1] + s[2] || 1; return `${pct(s[0] / tot)} from members, ${pct(s[1] / tot)} from contests, ${pct(s[2] / tot)} other (spaces, follower buys, bonuses), ${Math.round(tot / (s[3] || 1))} followers a player`; };
   say(`- Where winners' followers came from: ${src(P.sources.win)}. Everyone else: ${src(P.sources.lose)}.`);
   say(`  Without the change, winners: ${src(Q.sources.win)}.`);
   say('');
@@ -395,11 +402,11 @@ function cmdReport() {
   for (const [k, v] of top) { const y = Q.pairs[k]; say(`- ${k}: holders won ${pct(v.w / v.n)} (${v.n} players)${y && y.n >= 10 ? `; without the change ${pct(y.w / y.n)} (${y.n})` : ''}.`); }
   if (!top.length) say('- Not enough games yet.');
   say('');
-  say('## Colors (By color: each color its own contest)');
+  say('## By cloak (the color each player picked before round I)');
   const cs = Object.keys({ ...P.colors, ...Q.colors }).sort((x, y) => (P.colors[y]?.w / P.colors[y]?.n || 0) - (P.colors[x]?.w / P.colors[x]?.n || 0));
   for (const c of cs) {
     const x = P.colors[c] || { n: 0, w: 0 }, y = Q.colors[c] || { n: 0, w: 0 };
-    say(`- ${c}: won ${pct(x.w / (x.n || 1))} of ${x.n} seats; without the change ${pct(y.w / (y.n || 1))}.`);
+    say(`- ${colorName(c)} cloak: won ${pct(x.w / (x.n || 1))} of ${x.n} players; without the change ${pct(y.w / (y.n || 1))}.`);
   }
   const md = L.join('\n') + '\n';
   const outF = flags.md || join(trialDir(spec.name), 'report.md');
