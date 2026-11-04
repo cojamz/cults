@@ -82,6 +82,8 @@ async function audit(page, step) {
       if (e.matches('[data-tip], [aria-haspopup]')) return true;
       if (e.querySelector(':scope > title')) return true; // an SVG symbol with its own <title>
       if (e.matches('.slot')) return true; // the board's space card (checked by hovering below)
+      // a seat's resource opens where it came from this round (its own hover card since Nov 4; the title went then)
+      if (e.matches('.cs-stack[data-res]') && e.closest('[data-cult], .lt-seat')) return true;
       // a symbol inside something that explains itself (a pip in a titled cost) is covered by its parent
       const up = e.parentElement && e.parentElement.closest('[title], [data-hint], [data-tip], [aria-haspopup]');
       return !!(up && up.contains(e) && e.matches('.pip, .res-glyph, .follower, .fol-mark'));

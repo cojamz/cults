@@ -3,7 +3,7 @@
 // is Tab-only; drivers that clicked only ".prompt.choice button"s waited forever (Kickback asks for a rival's seat).
 //
 // answerChoice(page, opts) answers whatever is pending for the person at the device:
-//   - the pay sheet: its Pay button (the suggested way), else Enter in the sheet;
+//   - the pay sheet: its Pay button (the suggested way), else Enter in the sheet; the split and spend cards: their Take;
 //   - board targets and buttons alike, by their data-option: seats, stacks, members, spaces, shop cards, plain buttons;
 //   - a gift or a pair (the gift card, boardPick.js giftPick): the first row (@pick:x), then the second; once one is picked
 //     (@unpick on screen) it never puts it back or switches, which would only go round in circles;
@@ -45,6 +45,13 @@ async function answer(page, held, { prefer, last, avoid, panelFirst, skip, domFa
     if (go) { try { await go.click({ timeout }); return { id, kind: 'pay' }; } catch { /* covered: Enter below */ } }
     await sheet.press('Enter').catch(() => {});
     return { id: id || 'Enter', kind: 'pay' };
+  }
+  // the split card (Harvest's colors, SplitPicker.jsx) and the spend card (SpendPicker.jsx), picked like a payment: their
+  // Take carries no data-option and answers with the suggested split, like the pay sheet's Pay (Nov 4)
+  const take = keep(await page.$('[data-split-take]:not([disabled]), [data-spend-take]:not([disabled])'));
+  if (take) {
+    const id = await take.evaluate(e => (e.hasAttribute('data-split-take') ? 'split:' : 'spend:') + (e.getAttribute('data-split-take') ?? e.getAttribute('data-spend-take'))).catch(() => 'take');
+    try { await take.click({ timeout }); return { id, kind: 'pay' }; } catch { /* covered: fall through to the board */ }
   }
   const els = await page.$$('[data-option]:not([disabled]):not([aria-disabled="true"])');
   held.push(...els);

@@ -200,12 +200,14 @@ const unitArgs = tests ? [VITEST, 'run', ...tests, `--maxWorkers=${workers}`] : 
 // V4_UNIT_AFTER=1 (GitHub's verdict): the unit tests start once every browser gate is done. GitHub's box, with the
 // unit tests on every core beside the browsers, timed out on plain clicks (Resume, Start: 10-30s) in gates that pass
 // here every time, run after run (Nov 1-3); there the verdict is worth more than the ~20 min it adds.
+// The preview server sets this process's NODE_ENV to production, so a unit run started after it would load React's
+// production build (act() unsupported: every UI test red, Nov 4): the unit run always gets NODE_ENV=test.
 const UNIT_AFTER = process.env.V4_UNIT_AFTER === '1';
 let kickUnit = null;
 const unitStart = UNIT_AFTER ? new Promise(r => { kickUnit = r; }) : Promise.resolve();
 const unit = unitStart.then(() => unitFiles && !unitFiles.length
   ? Promise.resolve((() => { const r = { name: 'unit tests', ok: true, s: 0, start: 0, output: `all ${reused.length} files reused` }; results.push(r); console.log(`\n── PASS unit tests (all ${reused.length} files reused) ──`); return r; })())
-  : run('unit tests', unitArgs, { nice: 10, env: games ? { V4_GAMES: games } : {}, tail: 2500, limitS: full ? 7200 : 2400 }))
+  : run('unit tests', unitArgs, { nice: 10, env: { NODE_ENV: 'test', ...(games ? { V4_GAMES: games } : {}) }, tail: 2500, limitS: full ? 7200 : 2400 }))
   .then(r => {
     // a verdict on a commit records each file that passed, by its key
     if (sha && reuse && r.output) {

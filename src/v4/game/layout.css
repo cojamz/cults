@@ -193,7 +193,10 @@
   /* the deck and when round III joins sit under the table, in its column (Oct 31: the deck pick made the left column run off a laptop) */
   .app.narrow > .dialog.page:has(> .table-pick.editable) > [data-deck-pick]{grid-column:2;grid-row:9;padding-left:32px;margin-left:-16px}
   .app.narrow > .dialog.page:has(> .table-pick.editable) > [data-late-pick]{grid-column:2;grid-row:10;padding-left:32px;margin-left:-16px}
-  .app.narrow > .dialog.page:has(> .table-pick.editable) > .row-btns:last-child{grid-column:1 / -1;grid-row:11;position:static;margin:4px 0 0;padding:0;background:none}
+  /* Back and Start after every setting, held at the bottom of the screen as the page scrolls (Nov 4: six seats and the
+     swap, contests, shop and member-look rows outgrew a laptop's height; Start sat at row 11 with four settings under it,
+     and moved when Custom's table ran taller than the seats) */
+  .app.narrow > .dialog.page:has(> .table-pick.editable) > .row-btns:last-child{grid-column:1 / -1;grid-row:auto;margin:4px -4px -18px;padding:12px 4px 18px}
   .app.narrow > .dialog.page:has(> .table-pick.editable) .sphere-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   /* Classic and Random 4 fill the same column: each sphere on its own line, with what it does under its name */
   .app.narrow > .dialog.page > .table-pick.editable .table-chips{flex-direction:column;align-items:stretch;gap:12px;margin-top:4px}

@@ -223,7 +223,7 @@ async function stepOn(page, who) {
   // dialog's) own answers first. A step whose last click changed nothing tries the next answer (skip), and when every
   // real click is refused (usually a hover card left open under the pointer) the option is pressed directly: this e2e
   // tests the online flow; the UI e2e test hit-testing.
-  if (!(await page.$('[data-option]:not([disabled])'))) return no('nothing to answer');
+  if (!(await page.$('[data-option]:not([disabled]), [data-split-take]:not([disabled]), [data-spend-take]:not([disabled])'))) return no('nothing to answer');
   const now = await page.evaluate(() => ({
     key: `${document.querySelector('.app.game')?.dataset.moves}|${document.querySelector('.app.game')?.dataset.phase}|${document.querySelector('[data-prompt]')?.textContent}`,
     // a space lit as chosen with no confirm up: our move is on its way to the host and back (Wheel: sent / Place here)
