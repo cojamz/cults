@@ -10,6 +10,7 @@
 //   member thieves.extortionist (Extortionist) -> thieves.boss (The Boss)
 //   member thieves.extortionist (Extortionist) -> thieves.mobboss (Mob Boss)
 //   member trading.heirs (Misers) -> trading.interest (Misers, interest)
+//   member trading.heirs (Misers) -> trading.thrifty (Misers, 1 per white; lane B)
 //   member trading.broker (Brokers) -> trading.brokerage (Brokers, round-end cash-out)
 //   member thieves.accomplice (Accomplice) -> thieves.partners (Accomplice, +1 follower per rival)
 //   member trading.shopkeeper (Landlord) -> trading.barker (Barker; Cory's extra follower buy, Nov 4)

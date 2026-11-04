@@ -2,7 +2,7 @@
 // Members E lane (REPLACE14, Nov 4): paper passers sent to play under "paper filters, play ranks". One test per sentence.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE14 = 'ragpicker,shopcolor,shoptwo,openhouse';
+process.env.REPLACE14 = 'ragpicker,shopcolor,shoptwo,openhouse,thrifty';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { quadrant, defById } = await import('../../../engine/v4/content/index.js');
 const { table, uidIn } = await import('./cards-helpers-b.js');
@@ -64,5 +64,13 @@ describe('REPLACE14: Open House', () => {
     const opts = (s.pending?.options || []).filter(o => o.kind === 'card');
     for (const o of opts) expect(defById(s.cards[o.value].def).s + defById(s.cards[o.value].def).w).toBeLessThanOrEqual(4);
     if (opts.length) { const u = opts[0].value; s = answer(s, opts[0].id); expect(s.players[0].members).toContain(u); expect(log(s)).toContain("Open House: recruits"); }
+  });
+});
+
+describe('REPLACE14 (thrifty): Misers, "Game End: +1 follower per white you hold."', () => {
+  it("is dealt in Misers' place and pays 1 per white", async () => {
+    expect(defById('trading.thrifty').text).toBe('Game End: +1 follower per white you hold.');
+    expect(defById('trading.heirs').retired).toBe(true);
+    expect(defById('trading.thrifty').onGameEnd(null, { res: { white: 7 } })).toBe(7);
   });
 });

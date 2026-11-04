@@ -542,7 +542,7 @@ const trading = {
     }),
     // Replacement batch 1 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Exporters' place.
     // 4 white + 3 any as a player sees it.
-    m('heirs', 'Misers', 3, 3, 'Game End: +1 follower per 2 white you hold.', { f: 2, ...old14('interest'),
+    m('heirs', 'Misers', 3, 3, 'Game End: +1 follower per 2 white you hold.', { f: 2, ...old14('interest'), ...old14('thrifty'),
       onGameEnd: (ctx, owner) => Math.floor((owner.res[W] || 0) / 2),
     }),
     // REPLACE14 bot tests (Members E lane, Nov 4, BOTSMART A/Bs of above-bar paper ideas, Cory's yes to play them all):
@@ -556,6 +556,11 @@ const trading = {
       },
       // BOTSEE: about 6 white held at each later round start, 2 white each, worth a follower each before round III ends
       ...see(info => 2 * [1, 2, 3].filter(r => r > info.round).length),
+    })),
+    // Misers at 1 per white (lane B's M2, paper 18 vs 16, quality/pitches/B-scale4.md; play A/B under "paper filters, play
+    // ranks"), same price.
+    ...add14(m('thrifty', 'Misers', 3, 3, 'Game End: +1 follower per white you hold.', { f: 2,
+      onGameEnd: (ctx, owner) => owner.res[W] || 0,
     })),
     // Brokers with a round-end cash-out (paper 14 vs 13, quality/pitches/E-brokers.md), same price. After the round's last
     // placement and before contests, as Night Market's swap.
