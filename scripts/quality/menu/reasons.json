@@ -1,0 +1,516 @@
+{
+ "_note": "Hand-written reasons and verdicts. Key: <status>|<member|space>|<lowercase name>, or <member|space>|<name> for any status. Fields: reason, verdict (keep, watch, cut, untested), replaces. Sources: /mnt/project-files/replacements/*-results.md, /mnt/project-files/quality/lab/results.md, design/decisions.md.",
+ "live|member|charity ball": {
+  "verdict": "keep",
+  "reason": "Live since today in Philanthropist's place. Beat it in blind judging of bot games (+0.30), and 120 bot games passed balance: owners won 29%, it fires about 10 times a game."
+ },
+ "live|member|socialites": {
+  "verdict": "keep",
+  "reason": "Live since today in High Society's place. Cory liked it by name. 120 bot games passed balance: owners won 32% (High Society 24%), bought more often, fires about 6 times a game."
+ },
+ "considered|member|turncoats": {
+  "verdict": "watch",
+  "replaces": "Volunteer",
+  "reason": "Too strong as priced: bots that can read it bought it almost every game and owners won 55%. Cory liked the idea for Volunteer's slot. Needs a higher price."
+ },
+ "considered|member|barterers": {
+  "verdict": "cut",
+  "replaces": "Dyer",
+  "reason": "Swapping 3 for 3 only moves colors around and gains nothing. Bots almost never bought it, even after they learned to read it."
+ },
+ "considered|member|scavengers": {
+  "verdict": "cut",
+  "replaces": "Critic",
+  "reason": "Only works when a rival clears the shop, which rarely happens. Bought in 18% of games and still unbought by the better bots."
+ },
+ "considered|member|racketeers": {
+  "verdict": "cut",
+  "replaces": "Crew",
+  "reason": "Bought a lot when cheap, but owners won only 17%. Weak at every price tried."
+ },
+ "considered|member|grudge": {
+  "verdict": "cut",
+  "replaces": "Line Cutters",
+  "reason": "Cory said no. Bots also bought it nearly every game: an auto-buy that never changes how you play."
+ },
+ "considered|member|racketeer": {
+  "verdict": "cut",
+  "replaces": "Grifter",
+  "reason": "Works as written, but the card team kept Grifter and parked this one. Magenta steals are on hold."
+ },
+ "considered|member|almoner": {
+  "verdict": "cut",
+  "replaces": "Landlord",
+  "reason": "Another flat white gain, the kind Cory wants gone. In 60 bot games owners won 21% (Landlord 29%)."
+ },
+ "considered|member|widows": {
+  "verdict": "cut",
+  "replaces": "Heiresses",
+  "reason": "Rarely fires in real games (under 1 a game), so it does nothing most of the time. Heiresses is protected anyway."
+ },
+ "considered|member|pauper": {
+  "verdict": "cut",
+  "replaces": "Old Money",
+  "reason": "Cory dropped it in this morning's verdicts."
+ },
+ "considered|member|warm-up act": {
+  "verdict": "cut",
+  "replaces": "Busker",
+  "reason": "Weak and rarely bought: taken in 32% of games (Busker 84%), owners won 14%."
+ },
+ "considered|member|copyist": {
+  "verdict": "cut",
+  "replaces": "Roadie",
+  "reason": "Balanced, but it fired under once a game, so owners hardly noticed it."
+ },
+ "considered|member|stagehand": {
+  "verdict": "untested",
+  "replaces": null,
+  "reason": "Built; no games yet. Pays for stacking minions on Green, which the Green contest already rewards."
+ },
+ "considered|member|bootlegger": {
+  "verdict": "cut",
+  "replaces": "Chronicler",
+  "reason": "Lost blind judging of bot games to Chronicler (+0.17, needs +0.30), and owners won 20% against Chronicler's 34%. Encore took the slot."
+ },
+ "considered|member|snobs": {
+  "verdict": "cut",
+  "replaces": "Snobs",
+  "reason": "This version (reserve a shop member) lost blind judging; the live Snobs stays."
+ },
+ "considered|member|landlord": {
+  "verdict": "untested",
+  "replaces": "Landlord",
+  "reason": "A non-flat Landlord: rivals pay you to use your space. Built; no result yet. Barker is the other try for this slot."
+ },
+ "considered|member|punch card": {
+  "verdict": "watch",
+  "replaces": "Regular",
+  "reason": "Beat Regular in blind judging three times (+0.43 to +0.70). A 60-game balance test is running."
+ },
+ "considered|member|exit counselor": {
+  "verdict": "untested",
+  "replaces": "Deprogrammers",
+  "reason": "Rerun playing. Combos with Red's give-away spaces (Promote, Demote) and Godparents."
+ },
+ "considered|member|foundling": {
+  "verdict": "untested",
+  "replaces": "Deprogrammers",
+  "reason": "A catch-up card for the smallest cult. Built; no result yet."
+ },
+ "considered|member|early birds": {
+  "verdict": "untested",
+  "replaces": "Early Birds",
+  "reason": "Reworked Early Birds, which bots rate as a trap today (owners 13%). A/B on the smarter bots is playing."
+ },
+ "considered|member|big spenders": {
+  "verdict": "untested",
+  "replaces": "Smooth Talkers",
+  "reason": "Built; no result yet. Turns every silver you spend into a gift and a follower."
+ },
+ "considered|member|charmers": {
+  "verdict": "untested",
+  "replaces": "Smooth Talkers",
+  "reason": "Three earlier A/B runs; a rerun on the smarter bots is queued."
+ },
+ "considered|member|pickpocket": {
+  "verdict": "untested",
+  "replaces": "Cutpurse",
+  "reason": "Rerun on the smarter bots queued. Cory cut an older Pickpocket on Oct 28; this one steals only from cults ahead of you."
+ },
+ "considered|member|tax collector": {
+  "verdict": "untested",
+  "replaces": "Cutpurse",
+  "reason": "Rerun on the smarter bots queued. Taxes whoever just won a contest, so it hits the leader."
+ },
+ "considered|member|accomplice": {
+  "verdict": "untested",
+  "replaces": "Accomplice",
+  "reason": "A/B on the smarter bots playing: the live Accomplice plus a follower per rival robbed."
+ },
+ "considered|member|the boss": {
+  "verdict": "cut",
+  "replaces": "Extortionist",
+  "reason": "Bots bought it only 3 times in 24 games, so nothing could be read. Mob Boss took the slot."
+ },
+ "considered|member|mob boss": {
+  "verdict": "watch",
+  "replaces": "Extortionist",
+  "reason": "Beat Extortionist in blind judging (+0.83 and +1.12). A 60-game balance test is running; watch for one-turn hauls."
+ },
+ "considered|member|barker": {
+  "verdict": "untested",
+  "replaces": "Landlord",
+  "reason": "Cory's own idea for Landlord's slot (an extra follower buy each turn). Built today; first games queued."
+ },
+ "considered|member|misers": {
+  "verdict": "untested",
+  "replaces": "Misers",
+  "reason": "Interest on hoarded white, in place of the live game-end Misers. A/B on the smarter bots is playing."
+ },
+ "considered|member|brokers": {
+  "verdict": "untested",
+  "replaces": "Brokers",
+  "reason": "A round-end cash-out for Brokers. A/B on the smarter bots is playing."
+ },
+ "considered|member|cheerleaders": {
+  "verdict": "untested",
+  "replaces": "an added grey",
+  "reason": "Cory's pick (+2 followers per contest won), tested as an addition; he decides later what to drop."
+ },
+ "considered|member|victors": {
+  "verdict": "untested",
+  "replaces": "an added grey",
+  "reason": "Cory's pick (+2 of a contest's color when you win it), tested beside Cheerleaders."
+ },
+ "considered|member|war chest": {
+  "verdict": "cut",
+  "replaces": "an added grey",
+  "reason": "Cory dropped it today in favor of Cheerleaders and Victors."
+ },
+ "considered|member|gloaters": {
+  "verdict": "cut",
+  "replaces": "an added grey",
+  "reason": "Cory dropped it today in favor of Cheerleaders and Victors."
+ },
+ "considered|member|fundraisers": {
+  "verdict": "watch",
+  "replaces": "Debutantes",
+  "reason": "Too strong once bots could read it: owners won 45%. It hands every rival silver, which feeds their contest. Needs a higher price."
+ },
+ "considered|member|hush money": {
+  "verdict": "cut",
+  "replaces": "Smooth Talkers",
+  "reason": "A defensive card bots rarely bought, even after they learned to read it. Nobody feels it until a steal."
+ },
+ "considered|member|night market": {
+  "verdict": "cut",
+  "replaces": "Meddler",
+  "reason": "Rarely bought, even by bots that could read it. Meddler stayed."
+ },
+ "considered|member|doorbusters": {
+  "verdict": "cut",
+  "replaces": "Shopaholics",
+  "reason": "Rarely bought and no better than Shopaholics."
+ },
+ "considered|member|skimmers": {
+  "verdict": "watch",
+  "replaces": "Desperado",
+  "reason": "Near an auto-buy when cheap: taken 82%, owners won 38%. Stings any rival buying followers. Parked with the other Magenta steals."
+ },
+ "considered|member|mirror image": {
+  "verdict": "watch",
+  "replaces": "Wallflower",
+  "reason": "Too strong once bots could read it: owners won 44%. Needs a higher price."
+ },
+ "considered|member|missionaries": {
+  "verdict": "cut",
+  "replaces": "Patriarch",
+  "reason": "Bots avoid giving members away; taken 23%, owners even. Still unbought by the better bots."
+ },
+ "considered|member|interrupters": {
+  "verdict": "cut",
+  "replaces": "Courier",
+  "reason": "Cory said no (\"like interrupter. That's bad\"). Also rarely bought."
+ },
+ "considered|member|pacers": {
+  "verdict": "cut",
+  "replaces": "Shift Crew",
+  "reason": "Rarely bought at 9, even by bots that could read it."
+ },
+ "considered|member|completists": {
+  "verdict": "cut",
+  "replaces": "Patroness",
+  "reason": "Nobody has the resources to buy a whole color at once; owners never won with the hard bots."
+ },
+ "considered|member|evictors": {
+  "verdict": "watch",
+  "replaces": "Magpie",
+  "reason": "Strong once bots could read it (owners 37%), but the victim gets the same white, which blunts the sting. Magpie is protected."
+ },
+ "considered|member|tithe takers": {
+  "verdict": "watch",
+  "replaces": "Mentor & Protégés",
+  "reason": "Too strong at two prices: owners won 37% to 38%. Each rival hands you a member, a real sting."
+ },
+ "considered|member|defectors": {
+  "verdict": "watch",
+  "replaces": "Proselytizers",
+  "reason": "Too strong once bots could read it: owners won 50%."
+ },
+ "considered|member|late shoppers": {
+  "verdict": "cut",
+  "replaces": "a Blue member",
+  "reason": "Rarely bought, even by bots that could read it."
+ },
+ "considered|member|outbidders": {
+  "verdict": "watch",
+  "replaces": "Window Dressers",
+  "reason": "Too strong once bots could read it: owners won 46%. Lets you snatch a rival's buy, a real sting."
+ },
+ "considered|member|copycats": {
+  "verdict": "cut",
+  "replaces": "Roadie",
+  "reason": "Fair (owners 26%) but no better than Roadie, which Cory likes."
+ },
+ "considered|member|opening act": {
+  "verdict": "cut",
+  "replaces": "a Green member",
+  "reason": "Rarely bought, even by bots that could read it."
+ },
+ "considered|member|tagalongs": {
+  "verdict": "cut",
+  "replaces": "a Purple member",
+  "reason": "Rarely bought, even by bots that could read it."
+ },
+ "considered|member|full house": {
+  "verdict": "cut",
+  "replaces": "a Purple member",
+  "reason": "Rarely bought, even by bots that could read it."
+ },
+ "considered|member|second fiddles": {
+  "verdict": "cut",
+  "replaces": "Dyer",
+  "reason": "Almost never bought (8%), and owners won 0 of 3."
+ },
+ "considered|member|vultures": {
+  "verdict": "cut",
+  "replaces": "a Magenta member",
+  "reason": "Rarely bought, even by bots that could read it."
+ },
+ "considered|member|jackals": {
+  "verdict": "cut",
+  "replaces": "Shoplifter",
+  "reason": "Fine when cheap (owners 33%), but still rarely bought at full price. Parked with the Magenta steals."
+ },
+ "considered|member|social climber": {
+  "verdict": "cut",
+  "replaces": "Debutantes",
+  "reason": "Cory cut Social Climber. Bots also rated this version too strong (owners 41%)."
+ },
+ "considered|member|inquisitors": {
+  "verdict": "watch",
+  "replaces": "Raiders",
+  "reason": "Close to an auto-buy (taken 92%, owners 34%). Every rival loses a member, a big sting."
+ },
+ "considered|member|successors": {
+  "verdict": "cut",
+  "replaces": "Cashier",
+  "reason": "Rarely bought, even by bots that could read it."
+ },
+ "considered|member|pallbearers": {
+  "verdict": "cut",
+  "replaces": "Old Money",
+  "reason": "Rarely bought, even by bots that could read it."
+ },
+ "considered|member|peddlers": {
+  "verdict": "cut",
+  "replaces": "Alchemists",
+  "reason": "Fair (owners 26%) but no better than Alchemists, with a rules bug left in it."
+ },
+ "considered|member|seat filler": {
+  "verdict": "untested",
+  "replaces": "Volunteer",
+  "reason": "Cory liked this idea (as Drifter) for Volunteer's slot. Second build passed its rules check; no result yet."
+ },
+ "considered|member|godfather": {
+  "verdict": "cut",
+  "replaces": "Patriarch",
+  "reason": "Cory said no. Its test was also void because of a rules loop."
+ },
+ "considered|member|pace-setters": {
+  "verdict": "cut",
+  "replaces": "Night Watch",
+  "reason": "Balanced, but it lost blind judging of bot games (-0.09)."
+ },
+ "considered|member|night manager": {
+  "verdict": "watch",
+  "replaces": "Timekeeper",
+  "reason": "Passed balance right at the line (owners 37%, Timekeeper 31%); over the line next to Day Laborers. Waiting on a blind judging test."
+ },
+ "considered|member|day laborers": {
+  "verdict": "cut",
+  "replaces": "Shift Crew",
+  "reason": "Picket Line took Shift Crew's slot. It also fired under once a game."
+ },
+ "considered|member|chaperone": {
+  "verdict": "untested",
+  "replaces": "High Society",
+  "reason": "Built; no games. Socialites took the slot."
+ },
+ "considered|member|usher": {
+  "verdict": "cut",
+  "replaces": "Polisher",
+  "reason": "Bots bought it almost every time (91%), an auto-buy. Guest of Honor took the slot."
+ },
+ "considered|member|well-wishers": {
+  "verdict": "untested",
+  "replaces": "Debt Collectors",
+  "reason": "Won its blind judging (+0.83), but bots skip it even when it's dealt to them. Rerun on the smarter bots."
+ },
+ "considered|member|squire": {
+  "verdict": "cut",
+  "replaces": "Landlord",
+  "reason": "Another flat white gain, the kind Cory wants gone."
+ },
+ "considered|member|penny pincher": {
+  "verdict": "cut",
+  "replaces": "a White member",
+  "reason": "A flat white gain with a condition. Cory wants flat one-color gainers gone."
+ },
+ "considered|member|toll keeper": {
+  "verdict": "cut",
+  "replaces": "a Yellow member",
+  "reason": "Lost its blind judging rerun (+0.17, needs +0.30)."
+ },
+ "considered|member|hawker": {
+  "verdict": "untested",
+  "replaces": "Hawker",
+  "reason": "A reworded Hawker. Built; no result yet."
+ },
+ "considered|member|power shoppers": {
+  "verdict": "cut",
+  "replaces": "Shopaholics",
+  "reason": "Lost blind judging of bot games to Shopaholics (-0.75)."
+ },
+ "considered|member|bargain hunter": {
+  "verdict": "untested",
+  "replaces": "Regular",
+  "reason": "Passed balance (owners 31%, Regular 32%). Needs a blind judging test. Punch Card is ahead of it for the slot."
+ },
+ "considered|member|last-minute shopper": {
+  "verdict": "cut",
+  "replaces": "Critic",
+  "reason": "Cory's text, but owners won 13% in 60 bot games. The alternate with +2 of any colors passed balance (30%)."
+ },
+ "considered|member|late bloomers": {
+  "verdict": "cut",
+  "replaces": "Heiresses",
+  "reason": "Lost blind judging to Heiresses (-0.75). A flat white gain, and Heiresses is protected."
+ },
+ "considered|member|dabbler": {
+  "verdict": "cut",
+  "replaces": "a grey",
+  "reason": "Tied the live Dabblers in blind judging of bot games (+0), and Dabblers is protected."
+ },
+ "considered|member|quilter": {
+  "verdict": "cut",
+  "replaces": "Dyer",
+  "reason": "Cory liked it, but once made weaker it was rarely bought: taken 15% (Dyer 60%)."
+ },
+ "considered|member|dowagers": {
+  "verdict": "cut",
+  "replaces": "Heiresses",
+  "reason": "Slightly behind Heiresses in a small blind judging test (-0.17), and Heiresses is protected."
+ },
+ "considered|member|window dressers": {
+  "verdict": "untested",
+  "replaces": "Window Dressers",
+  "reason": "A stronger Window Dressers (recruit again). Three blind judging runs; final rerun on the smarter bots."
+ },
+ "considered|member|moneylender": {
+  "verdict": "cut",
+  "replaces": "Landlord",
+  "reason": "Lost both blind judging runs (-0.24 and -0.15)."
+ },
+ "considered|member|roadie": {
+  "verdict": "watch",
+  "replaces": "Roadie",
+  "reason": "Beat the live Roadie in blind judging (+0.30, 13 of 18), but bots misplayed it. One more test after the smarter bots land."
+ },
+ "considered|member|night watch": {
+  "verdict": "watch",
+  "replaces": "Night Watch",
+  "reason": "Beat the live Night Watch in blind judging (+0.21, 10 to 2), but bots misplayed it. One more test after the smarter bots land."
+ },
+ "considered|member|hypnotist": {
+  "verdict": "cut",
+  "replaces": "a grey",
+  "reason": "Too strong: owners won 56%."
+ },
+ "considered|member|mannequin": {
+  "verdict": "untested",
+  "replaces": "Hawker",
+  "reason": "Built; no result yet. Replaces Hawker, whose rivals-choose-on-your-turn breaks a standing rule."
+ },
+ "considered|space|turf": {
+  "verdict": "untested",
+  "replaces": "Stash",
+  "reason": "Cory's own Stash idea. Small edge in blind judging (+0.09). Waiting for Cory, since Magenta steals are on hold."
+ },
+ "considered|space|racket": {
+  "verdict": "untested",
+  "replaces": "Stash",
+  "reason": "Cory's Oct 31 pick, reworded. Small edge in blind judging (+0.25). Waiting for Cory."
+ },
+ "considered|space|call back": {
+  "verdict": "untested",
+  "replaces": "Right Away",
+  "reason": "Built; no result yet."
+ },
+ "considered|space|gift shop": {
+  "verdict": "cut",
+  "replaces": "Polish",
+  "reason": "Balance was fine (takers 26%), but small cults won less with it, and the blind judges rated it low (7 of 12)."
+ },
+ "considered|space|sweet nothings": {
+  "verdict": "keep",
+  "replaces": "Sweet Talk",
+  "reason": "Ready, waiting for Cory, who said he doesn't love Sweet Talk. Beat it in blind judging (+0.92) and passed 120 bot games: takers won 27% (Sweet Talk 19%)."
+ },
+ "considered|space|yard sale": {
+  "verdict": "cut",
+  "replaces": "Estate Sale",
+  "reason": "Cory dropped it."
+ },
+ "considered|space|cash out": {
+  "verdict": "cut",
+  "replaces": "Estate Sale",
+  "reason": "Lost blind judging; the slot was closed."
+ },
+ "considered|space|dumpster dive": {
+  "verdict": "untested",
+  "replaces": "Bury",
+  "reason": "Built; no result yet."
+ },
+ "considered|space|pawnshop": {
+  "verdict": "untested",
+  "replaces": "Allowance",
+  "reason": "Built; no result yet. Low Profile is ahead of it for the slot."
+ },
+ "considered|space|tag along": {
+  "verdict": "cut",
+  "replaces": "Leaders' Tax",
+  "reason": "Lost blind judging (-0.03). Leaders' Tax stays."
+ },
+ "considered|space|clean out": {
+  "verdict": "cut",
+  "replaces": "Shake Down",
+  "reason": "Small cults won much less with it (17% vs 25%); takers won 21%."
+ },
+ "considered|space|mugging": {
+  "verdict": "cut",
+  "replaces": "Shake Down",
+  "reason": "Small cults won much less with it (15% vs 25%)."
+ },
+ "considered|space|squeeze": {
+  "verdict": "untested",
+  "replaces": "Shake Down",
+  "reason": "The third try for Shake Down's slot; its bot games are next."
+ },
+ "considered|space|grand tour": {
+  "verdict": "untested",
+  "replaces": "Melting Pot",
+  "reason": "Built; no result yet. Cory called Melting Pot worded strangely."
+ },
+ "considered|space|pawn shop": {
+  "verdict": "cut",
+  "replaces": "Exchange",
+  "reason": "Cory refused cash-in-a-card spaces on Oct 20, and nobody else at the table feels it."
+ },
+ "considered|member|executor": {
+  "verdict": "untested",
+  "replaces": "Old Money",
+  "reason": "Silver lane's pick for Old Money's place: a follower whenever a member leaves a rival's cult. A/B on the smarter bots is running."
+ }
+}

@@ -73,6 +73,23 @@ const retiredNote = new Map();
 for (const f of ['design/archive/members/retired-2026-11-04.md', 'design/archive/spaces/retired-2026-11-04.md'])
   for (const m of readT(new URL('../../../' + f, import.meta.url).pathname).matchAll(/^- \*\*(.+?)\*\*.*?(?:Replaced by|Retired Nov 4 for) \*\*(.+?)\*\*/gm)) retiredNote.set(norm(m[1]), m[2]);
 
+// Nov 3 swaps ("**New** (live) "text" replaces **Old**")
+for (const m of readT('/mnt/project-files/replacements/member-changes-by-color.md').matchAll(/^- \*\*(.+?)\*\*.*? replaces \*\*(.+?)\*\*/gm)) if (!retiredNote.has(norm(m[2]))) retiredNote.set(norm(m[2]), m[1]);
+// why a card left the deck: Claude's 10-card keep/cut notes and the cull list's comments
+const sing = s => norm(s).replace(/s$/, '');
+const cutWhy = new Map();
+{
+  const t = readT(new URL('../../../design/notes/deck-10-keep-cut.md', import.meta.url).pathname);
+  let inCut = false;
+  for (const l of t.split('\n')) {
+    if (/^Cut \(\d+\)/.test(l) || /^Cut:/.test(l)) inCut = true; else if (/^Keep/.test(l) || /^## /.test(l)) inCut = false;
+    const m = inCut && l.match(/^- \*\*(.+?)\*\* \([^)]*\): ".*?"\s*(.*)$/);
+    if (m && m[2]) cutWhy.set(sing(m[1]), m[2].trim());
+  }
+  const cull = readT(new URL('../../../src/engine/v4/content/cull.js', import.meta.url).pathname);
+  for (const l of cull.split('\n')) { const c = l.match(/\/\/\s*(.+)$/); if (!c || !/Cory/.test(c[1])) continue; for (const id of l.matchAll(/'[\w]+\.(\w+)'/g)) cutWhy.set('id:' + id[1], c[1].trim()); }
+}
+
 // --- assemble
 const cards = [];
 const rankBy = new Map([...rank.members.map(r => ['member|' + norm(r.name), r]), ...rank.spaces.map(r => ['space|' + norm(r.name), r])]);
@@ -82,7 +99,7 @@ const push = c => {
   const rk = c.status === 'live' ? rankBy.get(k) : null;
   const p1 = c.status === 'archived' ? r1.get(k + '|' + c.color) : null;
   const b = c.kind === 'member' ? bots.members.get(norm(c.name)) : bots.spaces.get(norm(c.name));
-  const o = overrides[k] || overrides[norm(c.name)] || {};
+  const o = overrides[c.status + '|' + k] || overrides[k] || {};
   cards.push({
     ...c,
     protected: PROTECTED.has(norm(c.name)) || !!rk?.protected,
@@ -98,7 +115,7 @@ for (const m of base.members) {
   const status = m.color === 'gold' ? 'archived' : (m.retired || m.cut || m.cut10) ? 'archived' : 'live';
   if (m.artifact) continue;
   push({ kind: 'member', name: m.name, text: m.text, color: m.color, price: m.price, status,
-    why_left: m.color === 'gold' ? 'Gold is parked: not one of the colors on the table.' : m.retired ? 'Retired for a replacement.' : m.cut10 ? 'Left out of the 10-card deck.' : m.cut ? 'Cut from the deck.' : null });
+    why_left: (cutWhy.get(sing(m.name)) && (m.cut || m.cut10)) ? `Cut: ${cutWhy.get(sing(m.name))}` : (cutWhy.get('id:' + String(m.id).split('.').pop()) && (m.cut || m.cut10)) ? `Cut (${cutWhy.get('id:' + String(m.id).split('.').pop())}).` : m.color === 'gold' ? 'Gold is parked: not one of the colors on the table.' : m.retired ? 'Retired for a replacement.' : m.cut10 ? 'Left out of the 10-card deck.' : m.cut ? 'Cut from the deck.' : null });
 }
 for (const s of base.spaces) {
   if (!LIVE_COLORS.has(s.color) && s.color !== 'gold') continue;
