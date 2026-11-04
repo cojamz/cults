@@ -12,6 +12,9 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 
 ## Cory's words, newest first
 
+- **Nov 3, 9:28pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3HmycJV22699pRwTgmNAhoZ), on an 11pm estimate for the Wallflower fix: "11pm???? for one mmeber fix?? no you need to coordinate better" → shipped v0.99.542 at 9:34pm; every fix now ships as it passes (harness.md Shipping).
+- **Nov 3, 9:27pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3Th2umKN7EJKPZYgcgYkkeu): "How long until all of the current and fixes and changes in flight are in the game"
+- **Nov 3, 9:24pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3NtMMuCyTN6xgVLKNBCNQ1U), on new members: "eh lets overindex on bringing them in. We'll fix them up as I play with the new versions"
 - **Nov 3, 9:58pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3JzfAPuxoWpRdixRXuDSdQY): "copying Polish didnt double with Wallflower. gotta audit what wallflower works with" → thread "Fix what Wallflower doubles".
 - **Nov 3, 8:52pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3Y35C9dLW75QteS3fazB8WA, on the cloak table): "creditors doesn't make sense, nobody would ever have extra silver laying around. you just buy followers. Based on that chart, we need to nerf red a little and buff white a touch. otherwise looks real good" → Red and White Cloak trials (balance thread); Creditors to the replacements thread.
 - **Nov 3, 8:48pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo341dxyqMQgQ14AMEH9oWmha): "maybe the members should be more emoji like? and simpler concepts? then it would I think be easier to learn and track what they do. idk" → thread "Explore simpler, emoji-like members" (mockup only, no game code).
@@ -52,7 +55,7 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 
 ## Publishing (one at a time; ask the desk for go or wait)
 
-- Live: v0.99.541 (261fb219, main 19200c6), shipped Nov 3 9:20pm by "Make game logs critiqueable": pay warnings read the By color contest, "0 members", wheel words for Leaders' Tax, Potluck, Heist. Publish lock: free.
+- Live: v0.99.542 (cef8f924), shipped Nov 3 9:34pm by the desk: Wallflower doubles every copied action; Dabblers show once as 2 any-color. Next: set 3 members (plan thread, v0.99.543). Rule: ship each fix the moment it passes; no time slots.
 - Held back from shipping until Cory says yes: the animations thread's Relaxed pacing change (not pushed).
 | Make game logs critiqueable (KbyWRuwuvJ21rjZetXFU2e) | Cory, Nov 4 9:01pm: send Claude a game log and get a critique of his play; not player-facing, copy/save at the end; replay from a point later | Save game already keeps every pick (seed plus moves replays exactly). Added scripts/v4-critique.mjs (each decision with the table, shop and every option) and a Build tag on saved games. Sample critique: /mnt/project-files/game-critique/. Found and fixed: pay warnings read the printed contest under By color (21130bba, pushed, not published) | Cory's read of the sample; the desk's go to publish the pay-warning fix |
 
