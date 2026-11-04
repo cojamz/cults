@@ -1268,14 +1268,14 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
           const html = a.landed ? a.landed.innerHTML : `<i style="background:${playerColor(a.pid)}"></i>`;
           if (a.own) {
             // yours stands in the door at once (the stamp); the trail from your column fades onto it
-            play('place');
+            play('place', { who: seatEmoji(state, a.pid) });
             if (a.landed && a.landed.animate) track(a.landed.animate([{ transform: 'scale(1.25)', opacity: 0.6 }, { transform: 'scale(1)', opacity: 1 }], { duration: MO.ownStamp, easing: 'cubic-bezier(.3,1.5,.5,1)' }));
             flyPath(html, 'worker-flight minion-flight trail', square(F, size), square(a.toRect, size), { path: 'arc', duration: a.dur, fade: true });
           } else {
             chain.flying++;
             const anim = flyPath(html, 'worker-flight minion-flight', square(F, size), square(a.toRect, size), { path: 'arc', duration: a.dur });
             if (a.landed && a.landed.animate) track(a.landed.animate([{ opacity: 0 }, { opacity: 0, offset: 0.97 }, { opacity: 1 }], { duration: a.dur + 30 }));
-            onFinish(anim, () => { chain.flying = Math.max(0, chain.flying - 1); if (a.landed) settle(a.landed, MO.settle); play('place'); });
+            onFinish(anim, () => { chain.flying = Math.max(0, chain.flying - 1); if (a.landed) settle(a.landed, MO.settle); play('place', { who: seatEmoji(state, a.pid) }); });
           }
           return;
         }

@@ -2,7 +2,7 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E: the game's sounds (src/v4/sound.js; Cory, 2026-10-15: a click when you place a minion, coins as resources
 // land, a fanfare for the round winner, a little voice when followers join; a mute toggle).
 //  (s1) from a save at P1's last placement of round I, played to the round's summary, the game asks for every sound:
-//       place, coin, follower and fanfare;
+//       place, coin, follower and fanfare; and a minion landing asks for its emoji's own call (Cor, 2026-11-04);
 //  (s2) the ☰ menu's "Sound on" turns it off; then the game asks for no sound at all, and "Sound off" survives a reload;
 //  (s3) no page error, and no click waits on a sound (the snappy gate measures click times; this checks nothing throws).
 // Server: $V4_URL if set, else its own `npx vite` on a free port from 5296.
@@ -67,6 +67,9 @@ try {
   if (!(await page.$('[data-next-round]'))) throw new Error('round I never reached its summary');
   const a = await asked();
   for (const k of ['place', 'coin', 'follower', 'fanfare']) if (!a[k]) errors.push(`(s1) the game never asked for "${k}" (${JSON.stringify(a)})`);
+  const calls = await page.evaluate(() => ({ ...(window.__patronsCalls || {}) }));
+  if (!Object.keys(calls).length) errors.push('(s1) no minion landing asked for its emoji\'s call');
+  console.log(`sound: emoji calls ${JSON.stringify(calls)}`);
   await page.screenshot({ path: `${SHOTS}/s1-summary.png` }).catch(() => {});
 
   // (s2) the menu turns it off

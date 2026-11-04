@@ -4,6 +4,7 @@
 //  - coin:     a small clink as a resource lands in a pile
 //  - fanfare:  a short brass flourish for a round prize's winner
 //  - follower: a tiny voice chirping gibberish as followers join (original formant synthesis; a fresh line each time)
+//  - each emoji's call: the cat meows, the robot beeps, on top of the knock as that player's minion lands (Cor, Nov 4)
 // A sound never waits on anything and nothing waits on it: play() schedules on the audio clock and returns. Muted is
 // kept in this browser (☰ menu); ?sound=off in the address mutes that page.
 //
@@ -232,6 +233,243 @@ export function voice(ctx, dest, name, t, seed = Math.floor(Math.random() * 1e9)
   return fn(ctx, g, t, rng(seed), n);
 }
 
+// ---------- each emoji's call (Cor, 2026-11-04: "little sounds when the emojis are played. For each of the emojis we
+// have … like when a minion is placed on an action it makes a little sound") ----------
+// A minion landing on a space plays a quiet knock and its emoji's own short call on top: the cat meows, the robot
+// beeps. Each is under half a second, all synthesized here (no recordings to license).
+const sweep = (ctx, type, f0, f1, t, dur, out) => {
+  const o = tone(ctx, type, f0, t, dur, out);
+  o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+  return o;
+};
+/** Filtered noise from t for dur seconds; returns the filter so a call can move it. */
+const hiss = (ctx, dest, t, dur, r, { type = 'bandpass', f = 1000, q = 1, peak = 0.3, attack = 0.005 } = {}) => {
+  const n = ctx.createBufferSource(); n.buffer = noise(ctx); n.loop = true;
+  const bp = ctx.createBiquadFilter(); bp.type = type; bp.frequency.value = f; bp.Q.value = q;
+  n.connect(bp); bp.connect(env(ctx, dest, t, peak, attack, Math.max(0.01, dur - attack)));
+  n.start(t, r() * 0.3); n.stop(t + dur + 0.03);
+  return bp;
+};
+/** A held note: gain up over `attack`, holds, falls away by t + dur. */
+const held = (ctx, dest, t, peak, attack, dur) => {
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(peak, t + attack);
+  g.gain.setValueAtTime(peak, t + dur * 0.6);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  g.connect(dest);
+  return g;
+};
+/** A wobble on a param: an LFO of `rate` Hz and `depth` added to it from t for dur. */
+const wobble = (ctx, param, t, dur, rate, depth, type = 'sine') => {
+  const l = ctx.createOscillator(); l.type = type; l.frequency.value = rate;
+  const d = ctx.createGain(); d.gain.value = depth;
+  l.connect(d); d.connect(param); l.start(t); l.stop(t + dur + 0.02);
+  return d;
+};
+
+const CALLS = {
+  // sleigh bells, two shakes
+  santa(ctx, dest, t, r) {
+    for (let i = 0; i < 6; i++) {
+      const at = t + (i < 3 ? i * 0.03 : 0.16 + (i - 3) * 0.03) + r() * 0.01;
+      const f = 3100 * (1 + (r() - 0.5) * 0.1);
+      [[1, 0.1], [1.47, 0.06], [2.3, 0.03]].forEach(([m, a]) => tone(ctx, 'sine', f * m, at, 0.12, env(ctx, dest, at, a, 0.002, 0.1)));
+      hiss(ctx, dest, at, 0.04, r, { type: 'highpass', f: 7000, peak: 0.06 });
+    }
+    return 0.34;
+  },
+  // a little harp run upward
+  unicorn(ctx, dest, t) {
+    [1047, 1175, 1319, 1568, 1760, 2093].forEach((f, i) => {
+      const at = t + i * 0.035;
+      tone(ctx, 'sine', f, at, 0.3, env(ctx, dest, at, 0.11, 0.003, 0.28));
+      tone(ctx, 'triangle', f * 2, at, 0.12, env(ctx, dest, at, 0.025, 0.002, 0.1));
+    });
+    return 0.5;
+  },
+  // a wave rolling in and breaking
+  surfer(ctx, dest, t, r) {
+    const bp = hiss(ctx, dest, t, 0.42, r, { f: 400, q: 1.2, peak: 0.45, attack: 0.16 });
+    bp.frequency.setValueAtTime(400, t);
+    bp.frequency.exponentialRampToValueAtTime(1900, t + 0.18);
+    bp.frequency.exponentialRampToValueAtTime(700, t + 0.42);
+    return 0.45;
+  },
+  // a cricket's chirp: three quick high pulses
+  bug(ctx, dest, t) {
+    for (let i = 0; i < 3; i++) {
+      const at = t + i * 0.035;
+      const o = tone(ctx, 'sine', 4300, at, 0.025, held(ctx, dest, at, 0.13, 0.004, 0.025));
+      wobble(ctx, o.frequency, at, 0.025, 90, 250);
+    }
+    return 0.15;
+  },
+  // a soft wavering "oooo" that drifts down
+  ghost(ctx, dest, t) {
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400; lp.connect(held(ctx, dest, t, 0.22, 0.09, 0.48));
+    const o = tone(ctx, 'sine', 560, t, 0.48, lp);
+    o.frequency.linearRampToValueAtTime(720, t + 0.15);
+    o.frequency.linearRampToValueAtTime(470, t + 0.48);
+    wobble(ctx, o.frequency, t, 0.48, 6, 18);
+    return 0.5;
+  },
+  // a flying saucer's warble, rising
+  alien(ctx, dest, t) {
+    const o = sweep(ctx, 'sine', 700, 1500, t, 0.32, held(ctx, dest, t, 0.13, 0.02, 0.32));
+    wobble(ctx, o.frequency, t, 0.32, 22, 220);
+    return 0.34;
+  },
+  // "bee-boop"
+  robot(ctx, dest, t) {
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600; lp.connect(dest);
+    tone(ctx, 'square', 988, t, 0.07, held(ctx, lp, t, 0.06, 0.004, 0.07));
+    tone(ctx, 'square', 740, t + 0.09, 0.09, held(ctx, lp, t + 0.09, 0.06, 0.004, 0.09));
+    return 0.2;
+  },
+  // a small "mew": the mouth opens from m through a to u while the pitch rises and falls
+  cat(ctx, dest, t) {
+    const d = 0.32;
+    const src = tone(ctx, 'sawtooth', 620, t, d, ctx.createGain());
+    src.disconnect();
+    src.frequency.linearRampToValueAtTime(820, t + 0.1);
+    src.frequency.linearRampToValueAtTime(560, t + d);
+    const out = held(ctx, dest, t, 0.5, 0.05, d);
+    [[[420, 1050, 480], 7, 1], [[2400, 1650, 1000], 10, 0.5]].forEach(([fs, q, a]) => {
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = q;
+      bp.frequency.setValueAtTime(fs[0], t);
+      bp.frequency.linearRampToValueAtTime(fs[1], t + 0.1);
+      bp.frequency.linearRampToValueAtTime(fs[2], t + d);
+      const g = ctx.createGain(); g.gain.value = a;
+      src.connect(bp); bp.connect(g); g.connect(out);
+    });
+    return d + 0.02;
+  },
+  // "rib-bit": two croaks, the second a little higher
+  frog(ctx, dest, t) {
+    const lp = ctx.createBiquadFilter(); lp.type = 'bandpass'; lp.frequency.value = 600; lp.Q.value = 2; lp.connect(dest);
+    [[0, 118, 4], [0.13, 140, 3]].forEach(([at0, f, k]) => {
+      for (let i = 0; i < k; i++) {
+        const at = t + at0 + i * 0.022;
+        tone(ctx, 'sawtooth', f, at, 0.016, held(ctx, lp, at, 0.5, 0.003, 0.016));
+      }
+    });
+    return 0.25;
+  },
+  // bubbles rising
+  octopus(ctx, dest, t, r) {
+    let at = t;
+    for (let i = 0; i < 4; i++) {
+      const f = 380 + r() * 260;
+      sweep(ctx, 'sine', f, f * 2.6, at, 0.05, held(ctx, dest, at, 0.16, 0.006, 0.05));
+      at += 0.05 + r() * 0.05;
+    }
+    return at - t + 0.06;
+  },
+  // a low "heh heh heh"
+  pumpkin(ctx, dest, t, r) {
+    const s = ['h', 'e'];
+    return follower(ctx, dest, t, r, { word: [s, s, s], pitch: 0.55 });
+  },
+  // bones rattling: a few dry wooden taps, tumbling down
+  skull(ctx, dest, t, r) {
+    [1500, 1250, 1380, 1100].forEach((f, i) => {
+      const at = t + i * 0.045 + r() * 0.012;
+      tone(ctx, 'sine', f, at, 0.06, env(ctx, dest, at, 0.16, 0.001, 0.05));
+      tone(ctx, 'sine', f * 3.9, at, 0.02, env(ctx, dest, at, 0.05, 0.001, 0.015));
+      hiss(ctx, dest, at, 0.012, r, { f: 3000, q: 2, peak: 0.08, attack: 0.001 });
+    });
+    return 0.25;
+  },
+  // a jaw harp's "boing" from the desert
+  cactus(ctx, dest, t) {
+    const d = 0.36;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 9;
+    bp.frequency.setValueAtTime(450, t);
+    bp.frequency.exponentialRampToValueAtTime(1700, t + 0.12);
+    bp.frequency.exponentialRampToValueAtTime(600, t + d);
+    bp.connect(env(ctx, dest, t, 0.55, 0.004, d));
+    tone(ctx, 'sawtooth', 130, t, d, bp);
+    return d + 0.02;
+  },
+  // a crunch and a "nom"
+  pizza(ctx, dest, t, r) {
+    hiss(ctx, dest, t, 0.05, r, { type: 'highpass', f: 2500, peak: 0.12, attack: 0.002 });
+    return 0.04 + follower(ctx, dest, t + 0.04, r, { word: [['n', 'o'], ['m', 'u']], pitch: 0.7, rise: false });
+  },
+  // a little roar
+  dino(ctx, dest, t, r) {
+    const d = 0.38;
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1100; lp.Q.value = 3;
+    const g = held(ctx, dest, t, 0.32, 0.04, d);
+    const trem = ctx.createGain(); trem.gain.value = 0.8;
+    wobble(ctx, trem.gain, t, d, 28, 0.2);
+    lp.connect(trem); trem.connect(g);
+    sweep(ctx, 'sawtooth', 190, 95, t, d, lp);
+    hiss(ctx, lp, t, d, r, { f: 700, q: 1.5, peak: 0.25, attack: 0.04 });
+    return d + 0.02;
+  },
+  // a quick swish and a thin blade's ring
+  ninja(ctx, dest, t, r) {
+    const bp = hiss(ctx, dest, t, 0.13, r, { f: 900, q: 2.2, peak: 0.35, attack: 0.04 });
+    bp.frequency.setValueAtTime(900, t);
+    bp.frequency.exponentialRampToValueAtTime(5500, t + 0.13);
+    [[3520, 0.03], [5280, 0.018]].forEach(([f, a]) => tone(ctx, 'sine', f, t + 0.1, 0.3, env(ctx, dest, t + 0.1, a, 0.003, 0.28)));
+    return 0.42;
+  },
+  // a spell rising, then a sparkle
+  wizard(ctx, dest, t) {
+    const o = sweep(ctx, 'triangle', 330, 1320, t, 0.22, held(ctx, dest, t, 0.12, 0.02, 0.22));
+    wobble(ctx, o.frequency, t, 0.22, 14, 25);
+    [2637, 3136, 2349].forEach((f, i) => { const at = t + 0.2 + i * 0.04; tone(ctx, 'sine', f, at, 0.2, env(ctx, dest, at, 0.05, 0.002, 0.18)); });
+    return 0.5;
+  },
+  // "snip snip": two pinches of a claw
+  crab(ctx, dest, t, r) {
+    [0, 0.09].forEach(at0 => {
+      const at = t + at0;
+      hiss(ctx, dest, at, 0.012, r, { type: 'highpass', f: 4000, peak: 0.22, attack: 0.001 });
+      tone(ctx, 'triangle', 2700, at, 0.03, env(ctx, dest, at, 0.12, 0.001, 0.025));
+      tone(ctx, 'triangle', 1900, at + 0.018, 0.03, env(ctx, dest, at + 0.018, 0.08, 0.001, 0.025));
+    });
+    return 0.16;
+  },
+  // a springy "boing"
+  mushroom(ctx, dest, t) {
+    const d = 0.32;
+    const o = sweep(ctx, 'triangle', 260, 520, t, 0.08, env(ctx, dest, t, 0.22, 0.004, d));
+    o.frequency.setValueAtTime(520, t + 0.08);
+    const w = wobble(ctx, o.frequency, t + 0.08, d - 0.08, 16, 70);
+    w.gain.setValueAtTime(70, t + 0.08);
+    w.gain.exponentialRampToValueAtTime(2, t + d);
+    return d + 0.02;
+  },
+  // a bee buzzing past
+  bee(ctx, dest, t) {
+    const d = 0.36;
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1700; lp.connect(held(ctx, dest, t, 0.12, 0.06, d));
+    [-8, 9].forEach(det => {
+      const o = tone(ctx, 'sawtooth', 215, t, d, lp); o.detune.value = det;
+      o.frequency.linearRampToValueAtTime(255, t + d * 0.45);
+      o.frequency.linearRampToValueAtTime(205, t + d);
+      wobble(ctx, o.frequency, t, d, 11, 9);
+    });
+    return d + 0.02;
+  },
+};
+/** The emoji ids that have a call. */
+export const CALL_IDS = Object.keys(CALLS);
+// each call's loudness against the others (set by peak and rms, scripts/v4-sounds.mjs); a call sits under the place knock
+const CALL_LEVEL = { santa: 1.21, unicorn: 1.23, surfer: 1.88, bug: 0.64, ghost: 0.44, alien: 0.61, robot: 1.35, cat: 0.71, frog: 0.93, octopus: 0.65, pumpkin: 0.22, skull: 1.41, cactus: 2.82, pizza: 0.19, dino: 0.54, ninja: 4.03, wizard: 1.33, crab: 1.34, mushroom: 1.02, bee: 0.99 };
+const CALL_MASTER = 0.6;
+/** Render emoji `id`'s call into ctx at time t. Returns its length in seconds (0 for an emoji with no call). */
+export function call(ctx, dest, id, t, seed = Math.floor(Math.random() * 1e9)) {
+  const fn = CALLS[id];
+  if (!fn) return 0;
+  const g = ctx.createGain(); g.gain.value = CALL_MASTER * (CALL_LEVEL[id] ?? 1); g.connect(dest);
+  return fn(ctx, g, t, rng(seed));
+}
+
 // ---------- the player (the browser only) ----------
 
 const KEY = 'patrons.v4.sound';
@@ -299,8 +537,8 @@ let ringing = 0;
 // clip again. Four or more fly as one bundle and sound as one quick cheer.
 let group = null; // { at (audio time), voices, r }
 /** Play a sound now (or `delay` seconds from now). `n`: how many coins or followers landed together. Never throws. */
-export function play(name, { delay = 0, n = 1 } = {}) {
-  if (name !== 'follower' || n >= 4) { sound(name, delay, n); return; }
+export function play(name, { delay = 0, n = 1, who = null } = {}) {
+  if (name !== 'follower' || n >= 4) { sound(name, delay, n, who); return; }
   if (!on) return;
   try { const c = (globalThis.__patronsSounds ||= {}); c[name] = (c[name] || 0) + 1; } catch { /* no global */ }
   if (!ctx || ctx.state !== 'running') return;
@@ -312,17 +550,23 @@ export function play(name, { delay = 0, n = 1 } = {}) {
     for (let j = 0; j < n; j++, group.voices++) crowdVoice(ctx, g, now + j * 0.06, group.r, group.voices % 5, { most: 3, gain: group.voices ? 0.65 : 1 });
   } catch { /* a sound is never worth an error */ }
 }
-function sound(name, delay, n) {
+function sound(name, delay, n, who) {
   if (!on || !VOICES[name]) return;
   // what the game asked for, for the gates (e2e/v4/sound.mjs)
   try { const c = (globalThis.__patronsSounds ||= {}); c[name] = (c[name] || 0) + 1; } catch { /* no global */ }
+  // and which emoji's call it asked for
+  if (name === 'place' && who && CALLS[who]) try { const c = (globalThis.__patronsCalls ||= {}); c[who] = (c[who] || 0) + 1; } catch { /* no global */ }
   if (!ctx || ctx.state !== 'running') return;
   try {
     const now = ctx.currentTime + 0.005 + delay;
     if (last[name] != null && now - last[name] < (GAP[name] ?? 0)) return;
     if (ringing >= 6) return;
     last[name] = now;
-    const len = voice(ctx, master, name, now, undefined, n);
+    let len = voice(ctx, master, name, now, undefined, n);
+    // a minion landing: its emoji's own call on top of the knock (Cor, 2026-11-04)
+    if (name === 'place' && who && CALLS[who]) {
+      len = Math.max(len, 0.01 + call(ctx, master, who, now + 0.01));
+    }
     ringing++;
     setTimeout(() => { ringing = Math.max(0, ringing - 1); }, (delay + len) * 1000 + 50);
   } catch { /* a sound is never worth an error */ }
