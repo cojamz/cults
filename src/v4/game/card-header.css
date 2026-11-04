@@ -105,6 +105,7 @@
 .sprite.emoji-member{display:inline-grid;place-items:center;width:var(--em);height:var(--em);font-size:calc(var(--em) * .8);line-height:1;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;user-select:none}
 .card .art:has(> .emoji-member),.card-face.mc .mc-art:has(> .emoji-member){display:grid;place-items:center}
 .card .art > .emoji-member{width:100%;height:100%;font-size:min(calc(var(--em) * .9),56px)}
+.sprite.emoji-member.emoji-pixel,.card .art > .emoji-member.emoji-pixel{display:block;width:auto;height:auto;font-size:0;image-rendering:pixelated}
 .mc-line{margin:0;font-weight:700;font-size:1.05em;line-height:1.3}
 .mc-line .mc-trig{margin-right:.3em}
 .mc-text.mc-full{opacity:.72;font-size:.9em}
