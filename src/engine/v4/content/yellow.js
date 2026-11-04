@@ -373,12 +373,15 @@ export default {
       onRoundStart(ctx, owner) { transmuteStep(ctx, owner, { who: 'Tinker', left: Math.min(3, total(ctx, owner)), done: 0 }); },
     }),
     // Cory, 2026-10-31: "needs to be more expensive" (was 4)
-    m('harmonist', 'Harmonist', 4, 2, 'Game End: +1 follower per full set you hold.', { ...old9('yellow.harmonist'),
+    // Seamstress takes its place (Claude, under Cory's go-with-your-gut, overnight quality loop, 2026-11-04)
+    m('harmonist', 'Harmonist', 4, 2, 'Game End: +1 follower per full set you hold.', { retired: true,
       onGameEnd: (ctx, owner) => setsOf(ctx, owner),
     }),
-    // REPLACE9 bot test (Members C, Nov 4): Harmonist's place. 4 yellow + 2 any as a player sees it (was 6 + 3: A/B judges, its price ate the sets it doubled). "Double": +1 of each
+    // Quality loop (Members C, Nov 4), live since Nov 4 (Claude, under Cory's go-with-your-gut): Harmonist's place (paper
+    // 18 vs 9; blind play +0.58; trial taken 68%, owners won 18%, weak side of fair; fired in every owner game).
+    // 4 yellow + 2 any as a player sees it (was 6 + 3: A/B judges, its price ate the sets it doubled). "Double": +1 of each
     // color on the table per full set held (setsOf, so Jack-of-All-Trades' yellow sets count). No set: the use comes back.
-    ...add9(m('seamstress', 'Seamstress', 3, 2, 'On Use, once per game: double your full sets.', {
+    m('seamstress', 'Seamstress', 3, 2, 'On Use, once per game: double your full sets.', {
       activate: 'game',
       onActivate(ctx, owner, card) {
         const k = setsOf(ctx, owner);
@@ -388,7 +391,7 @@ export default {
       },
       // bots wait for 3 sets, or take 2 in round III, or any set on their last turn (A/B, Nov 4: early on 2 sets it paid back 8 for 9)
       botActivate: (ctx, owner) => { const k = setsOf(ctx, owner), r3 = ctx.state.round === 3; return k >= 3 || (r3 && k >= 2) || (k >= 1 && r3 && (owner.left || 0) <= 1); },
-    })),
+    }),
     // Cory, 2026-10-31: "also give followers… like side quests"
     m('matchmaker', 'Matchmaker', 3, 2, 'Whenever you recruit a member of a color none of your members have, +2 in colors you choose and +1 follower.', {
       // Dabblers never blocks a new color and Drifters counts once its color is chosen, as Guest Book (Cory, Nov 1)
