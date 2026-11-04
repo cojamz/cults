@@ -1,0 +1,2079 @@
+{
+ "label": "nowait-1",
+ "cpu": 4,
+ "speed": "relaxed",
+ "seed": 20261028,
+ "bars": {
+  "clickP95": 100,
+  "hoverP95": 100,
+  "frameP95": 33.4,
+  "hitchPct": 5,
+  "idleBusyPct": 10,
+  "growth": 1.5,
+  "leakNodes": 1.1,
+  "leakListeners": 1.1,
+  "leakHeap": 1.25
+ },
+ "fails": [
+  "round I: clicks p95 259 ms (bar 100)",
+  "round I: hovers p95 133 ms (bar 100)",
+  "round II: clicks p95 215 ms (bar 100)",
+  "round III: clicks p95 242 ms (bar 100)",
+  "round III: show frames p95 33.5 ms (bar 33.4)",
+  "leak: 6539 elements vs 5430 after a reload",
+  "leak: 914 listeners vs 738 after a reload",
+  "leak: heap 19.3 MB vs 9.8 MB after a reload"
+ ],
+ "sum": {
+  "I": {
+   "frames": {
+    "n": 5540,
+    "showN": 5312,
+    "p50": 16.7,
+    "p95": 33.4,
+    "worst": 266.6,
+    "hitch": 3
+   },
+   "anims": [
+    {
+     "k": "b.seat-delta.up:seatdelta",
+     "n": 2912,
+     "p95": 33.4,
+     "worst": 266.6,
+     "hitch": 4
+    },
+    {
+     "k": "span.cs-stack:js",
+     "n": 1287,
+     "p95": 50,
+     "worst": 200.1,
+     "hitch": 6
+    },
+    {
+     "k": "span.tc-line:tcline",
+     "n": 1762,
+     "p95": 33.4,
+     "worst": 200.1,
+     "hitch": 4
+    },
+    {
+     "k": "span.tick.num:bump",
+     "n": 954,
+     "p95": 33.4,
+     "worst": 183.3,
+     "hitch": 5
+    },
+    {
+     "k": "div.path-inner:js",
+     "n": 1572,
+     "p95": 33.4,
+     "worst": 183.4,
+     "hitch": 3
+    },
+    {
+     "k": "svg.leader:cult-breathe",
+     "n": 2018,
+     "p95": 33.3,
+     "worst": 233.3,
+     "hitch": 2
+    },
+    {
+     "k": "g.blink:cult-blink",
+     "n": 2018,
+     "p95": 33.3,
+     "worst": 233.3,
+     "hitch": 2
+    },
+    {
+     "k": "img.sprite.scene:cult-shift",
+     "n": 2018,
+     "p95": 33.3,
+     "worst": 233.3,
+     "hitch": 2
+    },
+    {
+     "k": "div.piece-flight.piece-res:js",
+     "n": 1335,
+     "p95": 33.4,
+     "worst": 183.4,
+     "hitch": 3
+    },
+    {
+     "k": "span.worker-fig:panelland-under",
+     "n": 550,
+     "p95": 50,
+     "worst": 200.1,
+     "hitch": 7
+    },
+    {
+     "k": "span.tick.dip:bump",
+     "n": 442,
+     "p95": 50,
+     "worst": 183.3,
+     "hitch": 8
+    },
+    {
+     "k": "button.card.lt-card:js",
+     "n": 499,
+     "p95": 50,
+     "worst": 100.1,
+     "hitch": 7
+    }
+   ],
+   "clicks": {
+    "n": 18,
+    "p50": 125,
+    "p95": 259,
+    "max": 259,
+    "dead": 5,
+    "byKind": [
+     {
+      "k": "place",
+      "n": 3,
+      "p50": 70,
+      "p95": 70
+     },
+     {
+      "k": "choose",
+      "n": 8,
+      "p50": 109,
+      "p95": 259
+     },
+     {
+      "k": "recruit",
+      "n": 3,
+      "p50": null,
+      "p95": null
+     },
+     {
+      "k": "pay",
+      "n": 3,
+      "p50": 139,
+      "p95": 202
+     },
+     {
+      "k": "next-round",
+      "n": 1,
+      "p50": 134,
+      "p95": 134
+     }
+    ]
+   },
+   "hovers": {
+    "n": 6,
+    "p50": 37,
+    "p95": 133,
+    "missed": 0
+   },
+   "busy": 60,
+   "idle": {
+    "busyPct": 3,
+    "style": 10,
+    "script": 3,
+    "anims": 1
+   },
+   "memory": {
+    "nodes": 2363,
+    "listeners": 499,
+    "heapMB": 13,
+    "elements": 1339,
+    "byClass": {
+     "html.": 1,
+     "head.": 1,
+     "meta.": 3,
+     "title.": 43,
+     "link.": 19,
+     "script.": 2,
+     "body.": 1,
+     "div.": 1,
+     "div.app": 1,
+     "header.bar": 1,
+     "div.bar-row": 2,
+     "span.say": 1,
+     "i.": 4,
+     "span.say-text": 1,
+     "span.lead": 5,
+     "em.": 1,
+     "span.undo-slot": 1,
+     "span.round": 1,
+     "span.say-sub": 1,
+     "div.lt-menu": 1,
+     "button.menu-glyph": 1,
+     "section.lt-wheel": 1,
+     "div.wheel-wrap": 1,
+     "div.stage": 1,
+     "div.turn-layer": 2,
+     "svg.wheel-paper": 1,
+     "defs.": 1,
+     "radialgradient.": 2,
+     "stop.": 10,
+     "filter.": 1,
+     "fegaussianblur.": 1,
+     "lineargradient.": 1,
+     "pattern.": 1,
+     "line.": 1,
+     "circle.disk": 1,
+     "g.knurl": 1,
+     "circle.": 1,
+     "g.wheel": 1,
+     "path.rim": 4,
+     "path.rim-foot": 4,
+     "g.pcell": 24,
+     "g.glow": 10,
+     "path.g3": 10,
+     "path.g2": 10,
+     "path.g1": 10,
+     "path.lift": 10,
+     "path.wash": 24,
+     "path.slice-outline": 24,
+     "path.edge-lit": 10,
+     "path.fresh": 2,
+     "path.": 303,
+     "text.rim-rule": 4,
+     "textpath.": 12,
+     "tspan.rim-prize": 4,
+     "g.rim-mark": 4,
+     "circle.rim-halo": 4,
+     "svg.follower-mark": 13,
+     "g.rim-emoji": 9,
+     "line.seam": 4,
+     "circle.edge": 1,
+     "circle.hub": 1,
+     "div.hub-label": 1,
+     "small.": 2,
+     "b.": 5,
+     "span.pips": 1,
+     "i.on": 1,
+     "div.slot": 24,
+     "span.hit": 24,
+     "span.base": 24,
+     "span.face": 24,
+     "span.yl": 43,
+     "span.amt": 26,
+     "b.n": 27,
+     "span.pip": 38,
+     "svg.res-glyph": 54,
+     "circle.res-ring": 54,
+     "span.worker-fig": 2,
+     "span.worker": 2,
+     "svg.minion": 15,
+     "path.any-cross": 12,
+     "span.note": 1,
+     "svg.rim-layer": 1,
+     "g.": 5,
+     "path.rim-hit": 4,
+     "div.lt-snake": 1,
+     "section.lt-seat": 4,
+     "section.lt-cult-seat": 4,
+     "header.cs-head": 4,
+     "span.cs-leader": 4,
+     "span.lt-ring": 4,
+     "svg.leader": 4,
+     "g.blink": 4,
+     "rect.": 8,
+     "span.cs-who": 4,
+     "span.cs-name": 4,
+     "span.tip": 10,
+     "span.cs-pips": 4,
+     "span.cs-minions": 4,
+     "i.cs-min": 12,
+     "span.cs-total": 4,
+     "span.tick": 5,
+     "span.tv": 5,
+     "div.cs-crowd": 4,
+     "span.art-tile": 4,
+     "img.sprite": 11,
+     "span.hitbox": 9,
+     "b.cs-member-count": 4,
+     "span.": 5,
+     "span.cs-figs": 4,
+     "footer.cs-foot": 4,
+     "span.cs-res": 4,
+     "span.cs-stack": 16,
+     "b.num": 39,
+     "span.cs-member": 1,
+     "span.aura": 1,
+     "section.lt-shop": 1,
+     "section.lt-shop-cards": 1,
+     "div.lt-shop-main": 1,
+     "div.lt-shop-head": 1,
+     "h3.lt-h": 1,
+     "span.lt-shop-controls": 1,
+     "button.lt-view-btn": 2,
+     "button.lt-sort": 1,
+     "span.on": 1,
+     "div.lt-shop-body": 1,
+     "div.lt-cards": 1,
+     "button.lt-deck": 1,
+     "span.pile": 1,
+     "span.edge": 2,
+     "span.back": 1,
+     "svg.cult-mark": 1,
+     "span.n": 1,
+     "span.cap": 1,
+     "div.lt-rates": 1,
+     "span.lt-rates-grid": 1,
+     "button.fb": 3,
+     "span.art": 9,
+     "span.rt-trade": 3,
+     "span.nm": 9,
+     "span.ft": 9,
+     "span.lt-cost": 9,
+     "span.lt-res": 14,
+     "button.btn": 1,
+     "button.card": 6,
+     "span.lt-hd": 6,
+     "span.lt-corner-cost": 6,
+     "span.val": 6,
+     "svg.member-glyph": 6,
+     "section.lt-since": 1,
+     "header.since-head": 1,
+     "span.since-title": 1,
+     "button.since-more": 1,
+     "button.since-log": 1,
+     "ol.since-list": 1,
+     "li.since-row": 1,
+     "b.who": 1,
+     "span.hn": 1,
+     "span.sp": 1,
+     "span.sp-words": 1,
+     "span.rich-n": 7,
+     "span.big": 1,
+     "div.turn-card": 1,
+     "b.tc-head": 1,
+     "span.tc-line": 1,
+     "div.lt-hover": 1,
+     "b.seat-delta": 1
+    }
+   },
+   "loaf": {
+    "n": 105,
+    "over100": 30,
+    "top": [
+     {
+      "round": "I",
+      "d": 272,
+      "scripts": []
+     },
+     {
+      "round": "I",
+      "d": 231,
+      "scripts": [
+       "hn 200"
+      ]
+     },
+     {
+      "round": "I",
+      "d": 188,
+      "scripts": []
+     },
+     {
+      "round": "I",
+      "d": 185,
+      "scripts": [
+       "hn 138"
+      ]
+     },
+     {
+      "round": "I",
+      "d": 181,
+      "scripts": []
+     }
+    ]
+   }
+  },
+  "II": {
+   "frames": {
+    "n": 7257,
+    "showN": 7115,
+    "p50": 16.7,
+    "p95": 33.4,
+    "worst": 800,
+    "hitch": 4
+   },
+   "anims": [
+    {
+     "k": "b.seat-delta.up:seatdelta",
+     "n": 5296,
+     "p95": 33.4,
+     "worst": 266.7,
+     "hitch": 4
+    },
+    {
+     "k": "span.cs-stack:js",
+     "n": 2887,
+     "p95": 33.4,
+     "worst": 183.3,
+     "hitch": 4
+    },
+    {
+     "k": "span.tc-line:tcline",
+     "n": 3485,
+     "p95": 33.4,
+     "worst": 183.3,
+     "hitch": 3
+    },
+    {
+     "k": "svg.leader:cult-breathe",
+     "n": 1586,
+     "p95": 50,
+     "worst": 266.7,
+     "hitch": 6
+    },
+    {
+     "k": "g.blink:cult-blink",
+     "n": 1586,
+     "p95": 50,
+     "worst": 266.7,
+     "hitch": 6
+    },
+    {
+     "k": "img.sprite.scene:cult-shift",
+     "n": 1586,
+     "p95": 50,
+     "worst": 266.7,
+     "hitch": 6
+    },
+    {
+     "k": "img.sprite.scene:cult-breathe",
+     "n": 1586,
+     "p95": 50,
+     "worst": 266.7,
+     "hitch": 6
+    },
+    {
+     "k": "span.tick.num:bump",
+     "n": 1376,
+     "p95": 50,
+     "worst": 166.7,
+     "hitch": 6
+    },
+    {
+     "k": "div.path-inner:js",
+     "n": 2635,
+     "p95": 33.4,
+     "worst": 266.6,
+     "hitch": 3
+    },
+    {
+     "k": "button.card.lt-card:js",
+     "n": 1322,
+     "p95": 33.4,
+     "worst": 800,
+     "hitch": 5
+    },
+    {
+     "k": "div.piece-flight.piece-res:js",
+     "n": 2428,
+     "p95": 33.3,
+     "worst": 166.7,
+     "hitch": 2
+    },
+    {
+     "k": "span.worker-fig:panelland-under",
+     "n": 955,
+     "p95": 50,
+     "worst": 266.7,
+     "hitch": 5
+    }
+   ],
+   "clicks": {
+    "n": 20,
+    "p50": 121,
+    "p95": 215,
+    "max": 215,
+    "dead": 5,
+    "byKind": [
+     {
+      "k": "place",
+      "n": 4,
+      "p50": 103,
+      "p95": 103
+     },
+     {
+      "k": "choose",
+      "n": 7,
+      "p50": 125,
+      "p95": 212
+     },
+     {
+      "k": "recruit",
+      "n": 4,
+      "p50": 121,
+      "p95": 121
+     },
+     {
+      "k": "pay",
+      "n": 4,
+      "p50": 141,
+      "p95": 215
+     },
+     {
+      "k": "next-round",
+      "n": 1,
+      "p50": 127,
+      "p95": 127
+     }
+    ]
+   },
+   "hovers": {
+    "n": 8,
+    "p50": 56,
+    "p95": 85,
+    "missed": 0
+   },
+   "busy": 66,
+   "idle": {
+    "busyPct": 7,
+    "style": 34,
+    "script": 10,
+    "anims": 33
+   },
+   "memory": {
+    "nodes": 3527,
+    "listeners": 583,
+    "heapMB": 16.5,
+    "elements": 1604,
+    "byClass": {
+     "html.": 1,
+     "head.": 1,
+     "meta.": 3,
+     "title.": 35,
+     "link.": 19,
+     "script.": 2,
+     "body.": 1,
+     "div.": 1,
+     "div.app": 1,
+     "header.bar": 1,
+     "div.bar-row": 2,
+     "span.say": 1,
+     "i.": 3,
+     "span.say-text": 1,
+     "span.lead": 5,
+     "em.": 1,
+     "span.undo-slot": 1,
+     "span.round": 1,
+     "span.say-sub": 1,
+     "div.lt-menu": 1,
+     "button.menu-glyph": 1,
+     "section.lt-wheel": 1,
+     "div.wheel-wrap": 1,
+     "div.stage": 1,
+     "div.turn-layer": 2,
+     "svg.wheel-paper": 1,
+     "defs.": 1,
+     "radialgradient.": 2,
+     "stop.": 10,
+     "filter.": 1,
+     "fegaussianblur.": 1,
+     "lineargradient.": 1,
+     "pattern.": 1,
+     "line.": 1,
+     "circle.disk": 1,
+     "g.knurl": 1,
+     "circle.": 1,
+     "g.wheel": 1,
+     "path.rim": 4,
+     "path.rim-foot": 4,
+     "g.pcell": 24,
+     "g.glow": 20,
+     "path.g3": 20,
+     "path.g2": 20,
+     "path.g1": 20,
+     "path.lift": 20,
+     "path.wash": 24,
+     "path.slice-outline": 24,
+     "path.edge-lit": 20,
+     "path.": 367,
+     "text.rim-rule": 4,
+     "textpath.": 12,
+     "tspan.rim-prize": 4,
+     "g.rim-mark": 4,
+     "circle.rim-halo": 4,
+     "svg.follower-mark": 13,
+     "g.rim-emoji": 5,
+     "line.seam": 4,
+     "circle.edge": 1,
+     "circle.hub": 1,
+     "div.hub-label": 1,
+     "small.": 2,
+     "b.": 5,
+     "span.pips": 1,
+     "i.on": 2,
+     "div.slot": 24,
+     "span.hit": 24,
+     "span.base": 24,
+     "span.face": 24,
+     "span.yl": 43,
+     "span.amt": 19,
+     "b.n": 27,
+     "span.pip": 46,
+     "svg.res-glyph": 62,
+     "circle.res-ring": 62,
+     "path.any-cross": 18,
+     "span.note": 1,
+     "svg.rim-layer": 1,
+     "g.": 5,
+     "path.rim-hit": 4,
+     "div.lt-snake": 1,
+     "section.lt-seat": 4,
+     "section.lt-cult-seat": 4,
+     "header.cs-head": 4,
+     "span.cs-leader": 4,
+     "span.lt-ring": 4,
+     "svg.leader": 4,
+     "g.blink": 4,
+     "rect.": 8,
+     "span.cs-who": 4,
+     "span.cs-name": 4,
+     "span.tip": 15,
+     "span.cs-pips": 4,
+     "span.cs-minions": 4,
+     "i.cs-min": 16,
+     "svg.minion": 21,
+     "span.cs-total": 4,
+     "span.tick": 5,
+     "span.tv": 5,
+     "div.cs-crowd": 4,
+     "span.art-tile": 4,
+     "img.sprite": 24,
+     "span.hitbox": 15,
+     "b.cs-member-count": 4,
+     "span.": 5,
+     "span.cs-figs": 4,
+     "footer.cs-foot": 4,
+     "span.cs-res": 4,
+     "span.cs-stack": 16,
+     "b.num": 61,
+     "span.cs-member": 7,
+     "span.aura": 7,
+     "section.lt-shop": 1,
+     "section.lt-shop-cards": 1,
+     "div.lt-shop-main": 1,
+     "div.lt-shop-head": 1,
+     "h3.lt-h": 1,
+     "span.lt-shop-controls": 1,
+     "button.lt-view-btn": 2,
+     "button.lt-sort": 1,
+     "span.on": 1,
+     "div.lt-shop-body": 1,
+     "div.lt-cards": 1,
+     "button.lt-deck": 1,
+     "span.pile": 1,
+     "span.edge": 3,
+     "span.back": 1,
+     "svg.cult-mark": 1,
+     "span.n": 1,
+     "span.cap": 1,
+     "div.lt-rates": 1,
+     "span.lt-rates-grid": 1,
+     "button.fb": 3,
+     "span.art": 16,
+     "span.rt-trade": 3,
+     "span.nm": 16,
+     "span.ft": 16,
+     "span.lt-cost": 16,
+     "span.lt-res": 29,
+     "button.btn": 1,
+     "button.card": 13,
+     "span.lt-hd": 13,
+     "span.lt-corner-cost": 13,
+     "span.val": 13,
+     "svg.member-glyph": 13,
+     "section.lt-since": 1,
+     "header.since-head": 1,
+     "div.tip": 1,
+     "span.pool-men": 1,
+     "i.pool-min": 4,
+     "i.pool-src": 1,
+     "small.pool-cap": 1,
+     "button.since-log": 1,
+     "div.lt-hover": 1,
+     "b.deck-join-tag": 1
+    }
+   },
+   "loaf": {
+    "n": 132,
+    "over100": 26,
+    "top": [
+     {
+      "round": "II",
+      "d": 803,
+      "scripts": []
+     },
+     {
+      "round": "II",
+      "d": 261,
+      "scripts": [
+       "hn 241"
+      ]
+     },
+     {
+      "round": "II",
+      "d": 259,
+      "scripts": [
+       "TimerHandler:setTimeout 39"
+      ]
+     },
+     {
+      "round": "II",
+      "d": 243,
+      "scripts": [
+       "hn 9",
+       "hn 212"
+      ]
+     },
+     {
+      "round": "II",
+      "d": 195,
+      "scripts": [
+       "Lf 150"
+      ]
+     }
+    ]
+   }
+  },
+  "III": {
+   "frames": {
+    "n": 9468,
+    "showN": 9430,
+    "p50": 16.7,
+    "p95": 33.5,
+    "worst": 1200,
+    "hitch": 5
+   },
+   "anims": [
+    {
+     "k": "b.seat-delta.up:seatdelta",
+     "n": 6764,
+     "p95": 49.9,
+     "worst": 1200,
+     "hitch": 5
+    },
+    {
+     "k": "span.tc-line:tcline",
+     "n": 4535,
+     "p95": 50,
+     "worst": 283.3,
+     "hitch": 6
+    },
+    {
+     "k": "span.cs-stack:js",
+     "n": 3804,
+     "p95": 50,
+     "worst": 283.3,
+     "hitch": 6
+    },
+    {
+     "k": "div.path-inner:js",
+     "n": 3280,
+     "p95": 33.4,
+     "worst": 266.6,
+     "hitch": 5
+    },
+    {
+     "k": "div.piece-flight.piece-res:js",
+     "n": 2995,
+     "p95": 33.4,
+     "worst": 150,
+     "hitch": 4
+    },
+    {
+     "k": "button.card.lt-card:js",
+     "n": 1260,
+     "p95": 50,
+     "worst": 266.7,
+     "hitch": 9
+    },
+    {
+     "k": "span.tick.num:bump",
+     "n": 2005,
+     "p95": 49.9,
+     "worst": 233.4,
+     "hitch": 5
+    },
+    {
+     "k": "svg.leader:cult-breathe",
+     "n": 2361,
+     "p95": 33.4,
+     "worst": 1200,
+     "hitch": 4
+    },
+    {
+     "k": "g.blink:cult-blink",
+     "n": 2361,
+     "p95": 33.4,
+     "worst": 1200,
+     "hitch": 4
+    },
+    {
+     "k": "img.sprite.scene:cult-shift",
+     "n": 2361,
+     "p95": 33.4,
+     "worst": 1200,
+     "hitch": 4
+    },
+    {
+     "k": "img.sprite.scene:cult-breathe",
+     "n": 2361,
+     "p95": 33.4,
+     "worst": 1200,
+     "hitch": 4
+    },
+    {
+     "k": "span.base:opacity",
+     "n": 1514,
+     "p95": 50,
+     "worst": 283.3,
+     "hitch": 6
+    }
+   ],
+   "clicks": {
+    "n": 29,
+    "p50": 118,
+    "p95": 242,
+    "max": 269,
+    "dead": 4,
+    "byKind": [
+     {
+      "k": "place",
+      "n": 5,
+      "p50": 94,
+      "p95": 97
+     },
+     {
+      "k": "choose",
+      "n": 10,
+      "p50": 118,
+      "p95": 234
+     },
+     {
+      "k": "recruit",
+      "n": 5,
+      "p50": 162,
+      "p95": 269
+     },
+     {
+      "k": "pay",
+      "n": 5,
+      "p50": 160,
+      "p95": 242
+     },
+     {
+      "k": "pick",
+      "n": 3,
+      "p50": 80,
+      "p95": 97
+     },
+     {
+      "k": "next-round",
+      "n": 1,
+      "p50": 62,
+      "p95": 62
+     }
+    ]
+   },
+   "hovers": {
+    "n": 10,
+    "p50": 53,
+    "p95": 81,
+    "missed": 0
+   },
+   "busy": 69,
+   "idle": {
+    "busyPct": 6,
+    "style": 7,
+    "script": 9,
+    "anims": 1
+   },
+   "memory": {
+    "nodes": 3921,
+    "listeners": 582,
+    "heapMB": 21.2,
+    "elements": 1634,
+    "byClass": {
+     "html.": 1,
+     "head.": 1,
+     "meta.": 3,
+     "title.": 39,
+     "link.": 19,
+     "script.": 2,
+     "body.": 1,
+     "div.": 1,
+     "div.app": 1,
+     "header.bar": 1,
+     "div.bar-row": 2,
+     "span.say": 1,
+     "i.": 2,
+     "span.say-text": 1,
+     "span.lead": 5,
+     "em.": 1,
+     "span.undo-slot": 1,
+     "span.round": 1,
+     "span.say-sub": 1,
+     "div.lt-menu": 1,
+     "button.menu-glyph": 1,
+     "section.lt-wheel": 1,
+     "div.wheel-wrap": 1,
+     "div.stage": 1,
+     "div.turn-layer": 2,
+     "svg.wheel-paper": 1,
+     "defs.": 1,
+     "radialgradient.": 2,
+     "stop.": 10,
+     "filter.": 1,
+     "fegaussianblur.": 1,
+     "lineargradient.": 1,
+     "pattern.": 1,
+     "line.": 1,
+     "circle.disk": 1,
+     "g.knurl": 1,
+     "circle.": 1,
+     "g.wheel": 1,
+     "path.rim": 4,
+     "path.rim-foot": 4,
+     "g.pcell": 24,
+     "g.glow": 23,
+     "path.g3": 23,
+     "path.g2": 23,
+     "path.g1": 23,
+     "path.lift": 23,
+     "path.wash": 24,
+     "path.slice-outline": 24,
+     "path.edge-lit": 23,
+     "path.fresh": 1,
+     "path.": 373,
+     "text.rim-rule": 4,
+     "textpath.": 12,
+     "tspan.rim-prize": 4,
+     "g.rim-mark": 4,
+     "circle.rim-halo": 4,
+     "svg.follower-mark": 15,
+     "g.rim-emoji": 5,
+     "line.seam": 4,
+     "circle.edge": 1,
+     "circle.hub": 1,
+     "div.hub-label": 1,
+     "small.": 2,
+     "b.": 5,
+     "span.pips": 1,
+     "i.on": 3,
+     "div.slot": 24,
+     "span.hit": 24,
+     "span.base": 24,
+     "span.face": 24,
+     "span.yl": 43,
+     "span.amt": 26,
+     "b.n": 27,
+     "span.pip": 40,
+     "svg.res-glyph": 56,
+     "circle.res-ring": 56,
+     "path.any-cross": 13,
+     "span.note": 1,
+     "span.worker-fig": 1,
+     "span.worker": 1,
+     "svg.minion": 27,
+     "svg.rim-layer": 1,
+     "g.": 5,
+     "path.rim-hit": 4,
+     "div.lt-snake": 1,
+     "section.lt-seat": 4,
+     "section.lt-cult-seat": 4,
+     "header.cs-head": 4,
+     "span.cs-leader": 4,
+     "span.lt-ring": 4,
+     "svg.leader": 4,
+     "g.blink": 4,
+     "rect.": 8,
+     "span.cs-who": 4,
+     "span.cs-name": 4,
+     "span.tip": 26,
+     "span.cs-pips": 4,
+     "span.cs-minions": 4,
+     "i.cs-min": 20,
+     "span.cs-total": 4,
+     "span.tick": 5,
+     "span.tv": 5,
+     "div.cs-crowd": 4,
+     "span.art-tile": 4,
+     "img.sprite": 30,
+     "span.hitbox": 26,
+     "b.cs-member-count": 4,
+     "span.": 5,
+     "span.cs-figs": 4,
+     "footer.cs-foot": 4,
+     "span.cs-res": 4,
+     "span.cs-stack": 16,
+     "b.num": 44,
+     "div.seat-stolen": 1,
+     "span.rich-n": 10,
+     "span.cs-member": 17,
+     "span.aura": 17,
+     "span.cs-loaded-dot": 1,
+     "section.lt-shop": 1,
+     "section.lt-shop-cards": 1,
+     "div.lt-shop-main": 1,
+     "div.lt-shop-head": 1,
+     "h3.lt-h": 1,
+     "span.lt-shop-controls": 1,
+     "button.lt-view-btn": 2,
+     "button.lt-sort": 1,
+     "span.on": 1,
+     "div.lt-shop-body": 1,
+     "div.lt-cards": 1,
+     "button.lt-deck": 1,
+     "span.pile": 1,
+     "span.edge": 2,
+     "span.back": 1,
+     "svg.cult-mark": 1,
+     "span.n": 1,
+     "span.cap": 1,
+     "div.lt-rates": 1,
+     "span.lt-rates-grid": 1,
+     "button.fb": 3,
+     "span.art": 11,
+     "span.rt-trade": 3,
+     "span.nm": 11,
+     "span.ft": 11,
+     "span.lt-cost": 11,
+     "span.lt-res": 17,
+     "button.btn": 1,
+     "button.card": 8,
+     "span.lt-hd": 8,
+     "span.lt-corner-cost": 8,
+     "span.val": 8,
+     "svg.member-glyph": 8,
+     "section.lt-since": 1,
+     "header.since-head": 1,
+     "div.tip": 1,
+     "span.pool-men": 1,
+     "i.pool-min": 4,
+     "i.pool-src": 1,
+     "small.pool-cap": 1,
+     "button.since-log": 1,
+     "ol.since-list": 1,
+     "li.since-row": 1,
+     "b.who": 1,
+     "span.hn": 1,
+     "span.sp": 1,
+     "span.sp-words": 1,
+     "span.big": 1,
+     "div.turn-card": 1,
+     "b.tc-head": 1,
+     "span.tc-line": 2,
+     "div.lt-hover": 1,
+     "div.action-stage": 1,
+     "div.as-member": 1,
+     "span.as-fig": 1,
+     "span.as-words": 1,
+     "span.as-name": 1,
+     "span.as-rule": 1,
+     "span.as-got": 1,
+     "b.seat-delta": 1
+    }
+   },
+   "loaf": {
+    "n": 209,
+    "over100": 50,
+    "top": [
+     {
+      "round": "III",
+      "d": 1190,
+      "scripts": []
+     },
+     {
+      "round": "III",
+      "d": 271,
+      "scripts": [
+       "hn 7",
+       "hn 245"
+      ]
+     },
+     {
+      "round": "III",
+      "d": 264,
+      "scripts": [
+       "hn 257"
+      ]
+     },
+     {
+      "round": "III",
+      "d": 249,
+      "scripts": [
+       "hn 105"
+      ]
+     },
+     {
+      "round": "III",
+      "d": 241,
+      "scripts": [
+       "hn 229"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "unbroken": {
+  "nodes": 6539,
+  "listeners": 914,
+  "heapMB": 19.3,
+  "elements": 2929,
+  "byClass": {
+   "html.": 1,
+   "head.": 1,
+   "meta.": 3,
+   "title.": 57,
+   "link.": 19,
+   "script.": 2,
+   "body.": 1,
+   "div.": 42,
+   "div.app": 1,
+   "header.bar": 1,
+   "div.bar-row": 2,
+   "span.say": 1,
+   "span.say-text": 1,
+   "span.": 6,
+   "span.undo-slot": 1,
+   "span.round": 1,
+   "div.lt-menu": 1,
+   "button.menu-glyph": 1,
+   "i.": 1,
+   "div.main": 1,
+   "section.results": 1,
+   "h2.win": 1,
+   "span.num": 1,
+   "p.why": 1,
+   "div.table-scroll": 1,
+   "table.res-t": 1,
+   "thead.": 1,
+   "tr.": 4,
+   "th.": 8,
+   "tbody.": 1,
+   "tr.first": 1,
+   "td.rank": 4,
+   "td.who": 4,
+   "span.who-tag": 4,
+   "svg.minion": 4,
+   "path.": 414,
+   "span.who-name": 4,
+   "small.": 6,
+   "td.tot": 4,
+   "span.tip": 57,
+   "span.hitbox": 57,
+   "td.": 20,
+   "p.hint": 1,
+   "div.row-btns": 1,
+   "button.btn": 3,
+   "div.side": 1,
+   "div.over-seat": 4,
+   "span.rank": 4,
+   "section.lt-cult-seat": 4,
+   "header.cs-head": 4,
+   "span.cs-leader": 4,
+   "span.lt-ring": 4,
+   "span.lead": 4,
+   "svg.leader": 4,
+   "g.blink": 4,
+   "rect.": 8,
+   "g.": 8,
+   "span.cs-who": 4,
+   "span.cs-name": 4,
+   "b.": 4,
+   "span.cs-pips": 4,
+   "span.cs-minions": 4,
+   "span.cs-total": 4,
+   "span.tick": 8,
+   "span.tv": 8,
+   "svg.follower-mark": 36,
+   "div.cs-crowd": 4,
+   "span.art-tile": 4,
+   "img.sprite": 33,
+   "b.cs-member-count": 4,
+   "span.cs-figs": 4,
+   "span.cs-member": 29,
+   "span.aura": 29,
+   "span.cs-more": 2,
+   "footer.cs-foot": 4,
+   "span.cs-res": 4,
+   "span.cs-stack": 16,
+   "svg.res-glyph": 261,
+   "circle.res-ring": 261,
+   "b.num": 16,
+   "b.final": 4,
+   "div.log": 1,
+   "details.": 2,
+   "summary.": 2,
+   "div.lines": 2,
+   "span.amt": 283,
+   "span.rich-n": 315,
+   "span.hn": 272,
+   "div.turn-more": 223,
+   "span.pip": 245,
+   "span.mem-show": 6,
+   "svg.member-glyph": 6,
+   "defs.": 4,
+   "clippath.": 4,
+   "span.mem-words": 6,
+   "strong.ability-timing": 2,
+   "path.any-cross": 3,
+   "div.lt-hover": 1
+  }
+ },
+ "reloaded": {
+  "nodes": 5430,
+  "listeners": 738,
+  "heapMB": 9.8,
+  "elements": 2929,
+  "byClass": {
+   "html.": 1,
+   "head.": 1,
+   "meta.": 3,
+   "title.": 57,
+   "link.": 19,
+   "script.": 2,
+   "body.": 1,
+   "div.": 42,
+   "div.app": 1,
+   "header.bar": 1,
+   "div.bar-row": 2,
+   "span.say": 1,
+   "span.say-text": 1,
+   "span.": 6,
+   "span.undo-slot": 1,
+   "span.round": 1,
+   "div.lt-menu": 1,
+   "button.menu-glyph": 1,
+   "i.": 1,
+   "div.main": 1,
+   "section.results": 1,
+   "h2.win": 1,
+   "span.num": 1,
+   "p.why": 1,
+   "div.table-scroll": 1,
+   "table.res-t": 1,
+   "thead.": 1,
+   "tr.": 4,
+   "th.": 8,
+   "tbody.": 1,
+   "tr.first": 1,
+   "td.rank": 4,
+   "td.who": 4,
+   "span.who-tag": 4,
+   "svg.minion": 4,
+   "path.": 414,
+   "span.who-name": 4,
+   "small.": 6,
+   "td.tot": 4,
+   "span.tip": 57,
+   "span.hitbox": 57,
+   "td.": 20,
+   "p.hint": 1,
+   "div.row-btns": 1,
+   "button.btn": 3,
+   "div.side": 1,
+   "div.over-seat": 4,
+   "span.rank": 4,
+   "section.lt-cult-seat": 4,
+   "header.cs-head": 4,
+   "span.cs-leader": 4,
+   "span.lt-ring": 4,
+   "span.lead": 4,
+   "svg.leader": 4,
+   "g.blink": 4,
+   "rect.": 8,
+   "g.": 8,
+   "span.cs-who": 4,
+   "span.cs-name": 4,
+   "b.": 4,
+   "span.cs-pips": 4,
+   "span.cs-minions": 4,
+   "span.cs-total": 4,
+   "span.tick": 8,
+   "span.tv": 8,
+   "svg.follower-mark": 36,
+   "div.cs-crowd": 4,
+   "span.art-tile": 4,
+   "img.sprite": 33,
+   "b.cs-member-count": 4,
+   "span.cs-figs": 4,
+   "span.cs-member": 29,
+   "span.aura": 29,
+   "span.cs-more": 2,
+   "footer.cs-foot": 4,
+   "span.cs-res": 4,
+   "span.cs-stack": 16,
+   "svg.res-glyph": 261,
+   "circle.res-ring": 261,
+   "b.num": 16,
+   "b.final": 4,
+   "div.log": 1,
+   "details.": 2,
+   "summary.": 2,
+   "div.lines": 2,
+   "span.amt": 283,
+   "span.rich-n": 315,
+   "span.hn": 272,
+   "div.turn-more": 223,
+   "span.pip": 245,
+   "span.mem-show": 6,
+   "svg.member-glyph": 6,
+   "defs.": 4,
+   "clippath.": 4,
+   "span.mem-words": 6,
+   "strong.ability-timing": 2,
+   "path.any-cross": 3,
+   "div.lt-hover": 1
+  }
+ },
+ "errors": [],
+ "path": [
+  "1 color:market",
+  "12 slot:2-2",
+  "13 res:1:blue",
+  "14 color:red",
+  "15 res:1:red",
+  "16 color:blue",
+  "17 res:1:blue",
+  "18 color:red",
+  "19 tier:small",
+  "20 pay:0-0-1-0",
+  "43 slot:0-2",
+  "44 keep",
+  "45 tier:small",
+  "46 pay:0-0-1-0",
+  "51 slot:0-0",
+  "52 none",
+  "53 tier:small",
+  "54 pay:0-1-0-0",
+  "55 slot:1-0",
+  "56 card:26",
+  "57 color:market",
+  "58 tier:small",
+  "59 pay:0-1-0-0",
+  "88 slot:0-4",
+  "89 card:8",
+  "90 tier:small",
+  "91 pay:0-1-0-0",
+  "130 slot:3-4",
+  "131 tier:small",
+  "132 pay:0-0-1-0",
+  "136 slot:2-0",
+  "137 color:blue",
+  "138 color:blue",
+  "139 color:blue",
+  "140 color:blue",
+  "141 tier:small",
+  "142 pay:0-0-1-0",
+  "158 slot:2-2",
+  "159 res:1:blue",
+  "160 color:red",
+  "161 res:1:red",
+  "162 color:blue",
+  "163 res:1:blue",
+  "164 color:red",
+  "165 tier:small",
+  "166 pay:0-0-1-0",
+  "201 slot:2-1",
+  "202 @pick:blue",
+  "202 swap:blue:red",
+  "203 @pick:blue",
+  "203 swap:blue:red",
+  "204 @pick:blue",
+  "204 swap:blue:red",
+  "205 tier:small",
+  "206 pay:0-0-0-1",
+  "210 slot:1-2",
+  "211 card:9",
+  "212 tier:small",
+  "213 pay:0-0-0-1",
+  "238 slot:3-5",
+  "239 tier:small",
+  "240 pay:0-0-0-1",
+  "241 slot:1-1",
+  "242 tier:small",
+  "243 pay:0-0-0-1"
+ ],
+ "extra": null,
+ "clickPhases": [
+  {
+   "ms": 188,
+   "t0": 9085.099999999627,
+   "what": "setup",
+   "marks": "pick+68 submitted+78 commit+115 fx+136 seen+163"
+  },
+  {
+   "ms": 70,
+   "t0": 31164.200000001118,
+   "what": "place",
+   "marks": "pick+23 submitted+31 seen+49"
+  },
+  {
+   "ms": 109,
+   "t0": 33172.800000000745,
+   "what": "choose",
+   "marks": "pick+30 submitted+34 commit+69 fx+83 seen+89"
+  },
+  {
+   "ms": 102,
+   "t0": 33779.5,
+   "what": "choose",
+   "marks": "pick+12 submitted+13 commit+71 fx+84 seen+90"
+  },
+  {
+   "ms": 102,
+   "t0": 35471.40000000037,
+   "what": "choose",
+   "marks": "fx+-353 pick+15 submitted+18 commit+48 fx+59 seen+78"
+  },
+  {
+   "ms": 69,
+   "t0": 36060.70000000112,
+   "what": "choose",
+   "marks": "pick+13 submitted+14 commit+37 fx+55 seen+63"
+  },
+  {
+   "ms": 83,
+   "t0": 38219,
+   "what": "choose",
+   "marks": "pick+5 submitted+10 commit+56 fx+62 seen+68"
+  },
+  {
+   "ms": 125,
+   "t0": 38825.5,
+   "what": "choose",
+   "marks": "pick+28 submitted+31 commit+70 fx+86 seen+94"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "20|false|back pay:0-0-1-0|true",
+   "after": "20|false|back pay:0-0-1-0|true",
+   "phase": "pay"
+  },
+  {
+   "ms": 132,
+   "t0": 45518.300000000745,
+   "what": "pay",
+   "marks": "pick+17 submitted+30 commit+65 fx+90 seen+105"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "43|false|slot:0-0 slot:3-1 slot:3-2|false",
+   "after": "44|false|card:26 card:36 card:39 card:40 keep|false",
+   "phase": "choose"
+  },
+  {
+   "ms": 226,
+   "t0": 79388.90000000037,
+   "what": "buy",
+   "marks": "pick+26 submitted+35 commit+135 seen+167 fx+207"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "46|false|back pay:0-0-1-0|true",
+   "after": "46|false|back pay:0-0-1-0|true",
+   "phase": "pay"
+  },
+  {
+   "ms": 139,
+   "t0": 84713.5,
+   "what": "pay",
+   "marks": "pick+19 submitted+33 commit+70 fx+99 seen+112"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "51|false||false",
+   "after": "52|false|card:16 card:21 card:22 card:33 card:7 card:9 none|false",
+   "phase": "choose"
+  },
+  {
+   "ms": 259,
+   "t0": 104992.5,
+   "what": "buy",
+   "marks": "pick+58 submitted+67 commit+99 fx+136 seen+158"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "54|false|back pay:0-1-0-0|true",
+   "after": "54|false|back pay:0-1-0-0|true",
+   "phase": "pay"
+  },
+  {
+   "ms": 202,
+   "t0": 110359.30000000075,
+   "what": "pay",
+   "marks": "pick+24 submitted+70 commit+101 fx+142 seen+158"
+  },
+  {
+   "ms": 134,
+   "t0": 128248.5,
+   "what": "reckon",
+   "marks": "fx+89 seen+91"
+  },
+  {
+   "ms": 103,
+   "t0": 135678.09999999963,
+   "what": "place",
+   "marks": "pick+34 submitted+46 seen+84"
+  },
+  {
+   "ms": 209,
+   "t0": 137578.20000000112,
+   "what": "choose",
+   "marks": "pick+47 submitted+56 commit+101 fx+135 seen+145 fx+198"
+  },
+  {
+   "ms": 139,
+   "t0": 138271.30000000075,
+   "what": "buy",
+   "marks": "pick+28 submitted+30 commit+78 fx+80 seen+95 fx+127"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "59|false|back pay:0-1-0-0|true",
+   "after": "59|false|back pay:0-1-0-0|true",
+   "phase": "pay"
+  },
+  {
+   "ms": 107,
+   "t0": 143520.80000000075,
+   "what": "pay",
+   "marks": "pick+13 submitted+19 commit+56 fx+77 seen+94"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "88|false|slot:0-0 slot:0-1 slot:0-2 slot:0-3 slot:1-1 slot:2-0 slot:2-1 slot:2-2 slot:2-3 slot:3-2 slot:3-4 slot:3-5|false",
+   "after": "89|false|card:13 card:30 card:32 card:35 card:39 card:46 card:8|false",
+   "phase": "choose"
+  },
+  {
+   "ms": 212,
+   "t0": 190219.80000000075,
+   "what": "choose",
+   "marks": "pick+38 submitted+45 commit+104 fx+121 seen+167"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "91|false|back pay:0-1-0-0|true",
+   "after": "91|false|back pay:0-1-0-0|true",
+   "phase": "pay"
+  },
+  {
+   "ms": 99,
+   "t0": 197249.09999999963,
+   "what": "pay",
+   "marks": "pick+12 submitted+25 commit+54 fx+75 seen+95"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "130|false|slot:0-0 slot:0-2 slot:0-3 slot:2-0 slot:3-2 slot:3-5|false",
+   "after": "131|false|card:1 card:13 card:2 card:4 card:40 card:46 pass tier:mid tier:small tier:top|false",
+   "phase": "buy"
+  },
+  {
+   "ms": 121,
+   "t0": 237987.09999999963,
+   "what": "pay",
+   "marks": "pick+12 submitted+13 commit+62 fx+81 seen+92"
+  },
+  {
+   "ms": 141,
+   "t0": 238600.20000000112,
+   "what": "pay",
+   "marks": "pick+13 submitted+22 commit+56 fx+85 seen+101"
+  },
+  {
+   "ms": 96,
+   "t0": 254062.09999999963,
+   "what": "place",
+   "marks": "pick+25 submitted+35 seen+77"
+  },
+  {
+   "ms": 92,
+   "t0": 255099,
+   "what": "choose",
+   "marks": "pick+17 submitted+21 commit+38 fx+53 seen+67"
+  },
+  {
+   "ms": 83,
+   "t0": 256586.40000000037,
+   "what": "choose",
+   "marks": "pick+13 submitted+17 commit+39 fx+56 seen+66"
+  },
+  {
+   "ms": 125,
+   "t0": 257972.40000000037,
+   "what": "choose",
+   "marks": "fx+-112 pick+16 submitted+19 commit+45 fx+83 seen+100"
+  },
+  {
+   "ms": 105,
+   "t0": 259489.59999999963,
+   "what": "choose",
+   "marks": "pick+19 submitted+22 commit+49 fx+62 seen+78"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "142|false|back pay:0-0-1-0|true",
+   "after": "142|false|back pay:0-0-1-0|true",
+   "phase": "pay"
+  },
+  {
+   "ms": 215,
+   "t0": 265857.2000000011,
+   "what": "pay",
+   "marks": "pick+21 submitted+95 commit+144 fx+170 seen+185"
+  },
+  {
+   "ms": 127,
+   "t0": 282871.30000000075,
+   "what": "reckon",
+   "marks": "fx+63 seen+78"
+  },
+  {
+   "ms": 97,
+   "t0": 303208.4000000004,
+   "what": "place",
+   "marks": "pick+36 submitted+45 seen+79"
+  },
+  {
+   "ms": 81,
+   "t0": 306353.9000000004,
+   "what": "choose",
+   "marks": "pick+15 submitted+15 commit+45 fx+52 seen+60"
+  },
+  {
+   "ms": 101,
+   "t0": 306949.2000000011,
+   "what": "choose",
+   "marks": "pick+22 submitted+31 commit+67 fx+78 seen+87"
+  },
+  {
+   "ms": 95,
+   "t0": 308538.4000000004,
+   "what": "choose",
+   "marks": "pick+26 submitted+31 commit+54 fx+56 seen+66"
+  },
+  {
+   "ms": 145,
+   "t0": 309205.4000000004,
+   "what": "choose",
+   "marks": "pick+7 submitted+8 commit+44 fx+88 seen+100"
+  },
+  {
+   "ms": 153,
+   "t0": 311239.0999999996,
+   "what": "choose",
+   "marks": "pick+11 submitted+17 commit+54 fx+66 seen+82"
+  },
+  {
+   "ms": 114,
+   "t0": 311828.0999999996,
+   "what": "choose",
+   "marks": "pick+17 submitted+22 commit+60 fx+79 seen+88"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "166|false|back pay:0-0-1-0|true",
+   "after": "166|false|back pay:0-0-1-0|true",
+   "phase": "pay"
+  },
+  {
+   "ms": 242,
+   "t0": 318530.80000000075,
+   "what": "pay",
+   "marks": "pick+24 submitted+37 commit+106 fx+160 seen+185"
+  },
+  {
+   "ms": 78,
+   "t0": 355214.5,
+   "what": "place",
+   "marks": "pick+25 submitted+31 seen+58"
+  },
+  {
+   "ms": 97,
+   "t0": 357214.0999999996,
+   "what": "choose",
+   "marks": "fx+58 seen+66"
+  },
+  {
+   "ms": 111,
+   "t0": 357971.2000000011,
+   "what": "choose",
+   "marks": "fx+-244 pick+21 submitted+22 commit+38 fx+75 seen+82"
+  },
+  {
+   "ms": 76,
+   "t0": 360457.4000000004,
+   "what": "choose",
+   "marks": "fx+-632 fx+44 seen+53"
+  },
+  {
+   "ms": 142,
+   "t0": 361299,
+   "what": "choose",
+   "marks": "pick+68 submitted+79 commit+95 fx+109 seen+117"
+  },
+  {
+   "ms": 80,
+   "t0": 363289.2000000011,
+   "what": "choose",
+   "marks": "fx+46 seen+57"
+  },
+  {
+   "ms": 118,
+   "t0": 363952.30000000075,
+   "what": "choose",
+   "marks": "pick+36 submitted+40 commit+61 fx+82 seen+90"
+  },
+  {
+   "ms": 269,
+   "t0": 366345.80000000075,
+   "what": "pay",
+   "marks": "pick+112 submitted+112 commit+189 fx+190 seen+214"
+  },
+  {
+   "ms": 168,
+   "t0": 367314.30000000075,
+   "what": "pay",
+   "marks": "pick+18 submitted+38 commit+84 fx+107 seen+130"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "210|false|slot:0-0 slot:0-1 slot:0-3 slot:0-5 slot:1-0 slot:1-1 slot:1-4 slot:2-0 slot:2-4 slot:2-5 slot:3-1 slot:3-2 slot:3-3 slot:3-4 slot:3-5|false",
+   "after": "211|false|card:23 card:31 card:37 card:41 card:42 card:44 card:6 card:9|false",
+   "phase": "choose"
+  },
+  {
+   "ms": 234,
+   "t0": 383604.5999999996,
+   "what": "choose",
+   "marks": "pick+34 submitted+43 commit+126 fx+139 seen+181"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "213|false|back pay:0-0-0-1|true",
+   "after": "213|false|back pay:0-0-0-1|true",
+   "phase": "pay"
+  },
+  {
+   "ms": 160,
+   "t0": 390165.30000000075,
+   "what": "pay",
+   "marks": "pick+18 submitted+27 commit+79 fx+100 seen+118"
+  },
+  {
+   "ms": 94,
+   "t0": 421902.2000000011,
+   "what": "place",
+   "marks": "pick+38 submitted+47 seen+77"
+  },
+  {
+   "ms": 151,
+   "t0": 423789.5,
+   "what": "pay",
+   "marks": "pick+15 submitted+18 commit+99 fx+112 seen+122 fx+150"
+  },
+  {
+   "ms": 141,
+   "t0": 424355.4000000004,
+   "what": "pay",
+   "marks": "pick+19 submitted+29 commit+69 fx+97 seen+116"
+  },
+  {
+   "dead": true,
+   "t0": null,
+   "before": "241|false|slot:0-1 slot:0-3 slot:1-0 slot:1-4 slot:2-0 slot:2-5 slot:3-1 slot:3-2 slot:3-4|false",
+   "after": "242|false|card:18 card:23 card:27 card:31 card:37 card:41 card:42 card:44 pass tier:mid tier:small tier:top|false",
+   "phase": "buy"
+  },
+  {
+   "ms": 162,
+   "t0": 432833.80000000075,
+   "what": "pay",
+   "marks": "pick+15 submitted+16 commit+68 fx+80 seen+102"
+  },
+  {
+   "ms": 153,
+   "t0": 433512,
+   "what": "pay",
+   "marks": "pick+25 submitted+36 commit+62 fx+95 seen+121 fx+151"
+  },
+  {
+   "ms": 62,
+   "t0": 489621.2000000011,
+   "what": "reckon",
+   "marks": "fx+34 seen+47"
+  }
+ ],
+ "react": null,
+ "flights": null,
+ "odd": {
+  "I": [
+   {
+    "what": "recruit",
+    "ms": null,
+    "why": {
+     "prompt": "Your turn — choose how to pay",
+     "phase": "pay",
+     "place": false,
+     "pay": true,
+     "options": [
+      "back",
+      "pay:0-0-1-0"
+     ],
+     "moves": "20"
+    }
+   },
+   {
+    "what": "place",
+    "ms": null,
+    "why": {
+     "prompt": "",
+     "phase": "choose",
+     "place": false,
+     "pay": false,
+     "options": [
+      "keep",
+      "card:36",
+      "card:40",
+      "card:39",
+      "card:26"
+     ],
+     "moves": "44"
+    }
+   },
+   {
+    "what": "recruit",
+    "ms": null,
+    "why": {
+     "prompt": "Your turn — choose how to pay",
+     "phase": "pay",
+     "place": false,
+     "pay": true,
+     "options": [
+      "back",
+      "pay:0-0-1-0"
+     ],
+     "moves": "46"
+    }
+   },
+   {
+    "what": "place",
+    "ms": null,
+    "why": {
+     "prompt": "",
+     "phase": "choose",
+     "place": false,
+     "pay": false,
+     "options": [
+      "none",
+      "card:9",
+      "card:7",
+      "card:16",
+      "card:33",
+      "card:22",
+      "card:21"
+     ],
+     "moves": "52"
+    }
+   },
+   {
+    "what": "recruit",
+    "ms": null,
+    "why": {
+     "prompt": "Your turn — choose how to pay",
+     "phase": "pay",
+     "place": false,
+     "pay": true,
+     "options": [
+      "back",
+      "pay:0-1-0-0"
+     ],
+     "moves": "54"
+    }
+   }
+  ],
+  "II": [
+   {
+    "what": "recruit",
+    "ms": null,
+    "why": {
+     "prompt": "Your turn — choose how to pay",
+     "phase": "pay",
+     "place": false,
+     "pay": true,
+     "options": [
+      "back",
+      "pay:0-1-0-0"
+     ],
+     "moves": "59"
+    }
+   },
+   {
+    "what": "place",
+    "ms": null,
+    "why": {
+     "prompt": "",
+     "phase": "choose",
+     "place": false,
+     "pay": false,
+     "options": [
+      "card:8",
+      "card:39",
+      "card:30",
+      "card:35",
+      "card:46",
+      "card:13",
+      "card:32"
+     ],
+     "moves": "89"
+    }
+   },
+   {
+    "what": "recruit",
+    "ms": null,
+    "why": {
+     "prompt": "Your turn — choose how to pay",
+     "phase": "pay",
+     "place": false,
+     "pay": true,
+     "options": [
+      "back",
+      "pay:0-1-0-0"
+     ],
+     "moves": "91"
+    }
+   },
+   {
+    "what": "place",
+    "ms": null,
+    "why": {
+     "prompt": "Your turn — recruit a member or followers",
+     "phase": "buy",
+     "place": false,
+     "pay": false,
+     "options": [
+      "tier:small",
+      "tier:mid",
+      "tier:top",
+      "pass",
+      "card:40",
+      "card:2",
+      "card:46",
+      "card:1",
+      "card:13",
+      "card:4"
+     ],
+     "moves": "131"
+    }
+   },
+   {
+    "what": "recruit",
+    "ms": null,
+    "why": {
+     "prompt": "Your turn — choose how to pay",
+     "phase": "pay",
+     "place": false,
+     "pay": true,
+     "options": [
+      "back",
+      "pay:0-0-1-0"
+     ],
+     "moves": "142"
+    }
+   }
+  ],
+  "III": [
+   {
+    "what": "recruit",
+    "ms": null,
+    "why": {
+     "prompt": "Your turn — choose how to pay",
+     "phase": "pay",
+     "place": false,
+     "pay": true,
+     "options": [
+      "back",
+      "pay:0-0-1-0"
+     ],
+     "moves": "166"
+    }
+   },
+   {
+    "what": "place",
+    "ms": null,
+    "why": {
+     "prompt": "",
+     "phase": "choose",
+     "place": false,
+     "pay": false,
+     "options": [
+      "card:9",
+      "card:6",
+      "card:31",
+      "card:37",
+      "card:41",
+      "card:44",
+      "card:23",
+      "card:42"
+     ],
+     "moves": "211"
+    }
+   },
+   {
+    "what": "recruit",
+    "ms": null,
+    "why": {
+     "prompt": "Your turn — choose how to pay",
+     "phase": "pay",
+     "place": false,
+     "pay": true,
+     "options": [
+      "back",
+      "pay:0-0-0-1"
+     ],
+     "moves": "213"
+    }
+   },
+   {
+    "what": "place",
+    "ms": null,
+    "why": {
+     "prompt": "Your turn — recruit a member or followers",
+     "phase": "buy",
+     "place": false,
+     "pay": false,
+     "options": [
+      "tier:small",
+      "tier:mid",
+      "tier:top",
+      "pass",
+      "card:31",
+      "card:37",
+      "card:41",
+      "card:44",
+      "card:18",
+      "card:27",
+      "card:23",
+      "card:42"
+     ],
+     "moves": "242"
+    }
+   }
+  ]
+ }
+}

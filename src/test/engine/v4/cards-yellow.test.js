@@ -1,0 +1,390 @@
+// @vitest-environment node
+// Card-by-card: every Yellow action and member, through real moves, against the printed text, with a log line naming
+// the card whenever it changes a number. Plus one cross-sphere case per member.
+import { describe, it, expect } from 'vitest';
+import { EXTRA_WILD, COLOR_SHIFT } from '../../../engine/v4/content/index.js';
+import { resume, followers, memberCount, cardDef } from '../../../engine/v4/core.js';
+import { take, move, uidOf, pinCosts } from './helpers.js';
+import { sceneQ, buy, linesNaming } from './cards-helpers.js';
+
+const Q = ['gold', 'red', 'yellow', 'green'];
+const sc = o => sceneQ({ quadrants: Q, ...o });
+const named = (s, name) => linesNaming(s.log, name);
+const R = (s, i = 0) => s.players[i].res;
+const rich = { gold: 30, red: 30, yellow: 30, green: 30 };
+
+describe('Yellow actions', () => {
+  it('Harvest: +3 in round I, +4 in II, +5 in III, one color at a time, named', () => {
+    let s = take(sc({}), 'yellow.harvest');
+    for (const c of ['red', 'red', 'green']) s = move(s, `color:${c}`);
+    expect(R(s)).toEqual({ gold: 0, red: 2, yellow: 0, green: 1 });
+    s = take(sc({ round: 3 }), 'yellow.harvest');
+    for (let i = 0; i < 5; i++) s = move(s, 'color:gold');
+    expect(R(s).gold).toBe(5);
+  });
+  it("Leaders' Tax: choose a color, +1 of it per rival with a minion on its spaces, then +1 yellow (Nov 4)", () => {
+    let s = sc({ n: 4 });
+    // rivals 1 and 2 sit on gold's spaces (quadrant 0), rival 3 on red's; your own minion on gold doesn't count
+    s.slots = { '0-0': 1, '0-1': 2, '0-2': 0, '1-0': 3 };
+    s = take(s, 'yellow.transmute');
+    expect(s.pending.options.map(o => o.label)).toEqual(['gold (+2)', 'red (+1)', 'yellow (+0)', 'green (+0)']);
+    s = move(s, 'color:gold');
+    expect(R(s).gold).toBe(2);
+    expect(R(s).yellow).toBe(1);
+    expect(named(s, "Leaders' Tax").some(l => /\+2 gold \(2 rivals on its spaces\)/.test(l))).toBe(true);
+  });
+  // New Blood and Big New Blood (Nov 4) replaced Dilute and Big Dilute: Gather's "this turn, if you recruit" shape
+  const newBlood = (round, key, members, buyDef) => {
+    let s = take(sc({ round, res: [rich], members: [members], shop: [buyDef] }), key);
+    const y = R(s).yellow, b = s.players[0].bonus;
+    s = move(s, `card:${uidOf(s, buyDef, 'shop')}`);
+    return { s, y, paid: s.players[0].bonus - b };
+  };
+  it.each([[1, 2], [2, 3], [3, 4]])('New Blood in round %i: +2 yellow; recruiting a member of a new color, +%i followers', (round, n) => {
+    const { s, y, paid } = newBlood(round, 'yellow.dilute', ['red.volunteer'], 'gold.banker');
+    expect(y).toBe(30 + 2);
+    expect(paid).toBe(n);
+    expect(named(s, 'New Blood')).toContain(`P1's New Blood: +${n} followers for recruiting a member.`);
+  });
+  it('New Blood: a member of a color you already have pays nothing, and the promise ends with the turn', () => {
+    let s = take(sc({ res: [rich], members: [['red.volunteer']], shop: ['red.intern', 'gold.banker'] }), 'yellow.dilute');
+    const b = s.players[0].bonus;
+    s = move(s, `card:${uidOf(s, 'red.intern', 'shop')}`);
+    expect(s.players[0].bonus).toBe(b);
+    expect(s.players[0].recruitFollowers).toBeUndefined();
+    expect(named(s, 'New Blood').filter(l => /followers/.test(l))).toEqual([]);
+  });
+  it('New Blood: your first member is always a new color', () => {
+    const { paid } = newBlood(1, 'yellow.dilute', [], 'red.intern');
+    expect(paid).toBe(2);
+  });
+  it('Big New Blood (round II): +4 yellow; recruiting a member of a new color, +5 followers', () => {
+    const { s, y, paid } = newBlood(2, 'yellow.bigdilute', ['red.volunteer'], 'gold.banker');
+    expect(y).toBe(30 + 4);
+    expect(paid).toBe(5);
+    expect(named(s, 'Big New Blood')).toContain("P1's Big New Blood: +5 followers for recruiting a member.");
+    expect(newBlood(2, 'yellow.bigdilute', ['gold.tycoon'], 'gold.banker').paid).toBe(0);
+  });
+  it('Melting Pot (round II): +2 yellow; count the different colors of your members, and gain that many in colors you choose', () => {
+    let s = take(sc({ round: 2, members: [['red.twins', 'gold.banker', 'yellow.explorer']] }), 'yellow.meltingpot');
+    for (let i = 0; i < 3; i++) s = move(s, 'color:green');
+    expect(R(s)).toMatchObject({ yellow: 2, green: 3 });
+  });
+  it('Makeover (round III): +4 yellow, then rearrange everything', () => {
+    let s = take(sc({ round: 3, res: [{ gold: 2, red: 2 }] }), 'yellow.makeover');
+    s = move(s, 'color:red');
+    expect(R(s)).toEqual({ gold: 0, red: 8, yellow: 0, green: 0 });
+  });
+});
+
+describe('Yellow members', () => {
+  it('Guest Book (artifact): a recruit in a new member color gives +2 yellow, named; a second of that color gives nothing', () => {
+    let s = sc({ round: 3, res: [rich], shop: ['red.intern', 'red.volunteer'] });
+    const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
+    s.cards[art] = { uid: art, def: 'yellow.guestbook' }; s.players[0].artifact = art;
+    const y0 = R(s).yellow;
+    s = move(take(s, 'red.take'), `card:${uidOf(s, 'red.intern', 'shop')}`);
+    expect(named(s, 'Guest Book')).toHaveLength(1);
+    expect(R(s).yellow - y0).toBe(2);
+  });
+  it('Guest Book: Drifters pays once its color is chosen, only for a color you had no member of (Cory, Nov 1)', () => {
+    const run = (pick, members = [['red.intern']]) => {
+      let s = sc({ round: 3, res: [rich], members, shop: ['yellow.drifters'] });
+      const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
+      s.cards[art] = { uid: art, def: 'yellow.guestbook' }; s.players[0].artifact = art;
+      const y0 = R(s).yellow;
+      s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.drifters', 'shop')}`);
+      expect(named(s, 'Guest Book')).toHaveLength(0);
+      s = move(s, pick);
+      return { n: named(s, 'Guest Book').length, y: R(s).yellow - y0 };
+    };
+    expect(run('color:green')).toEqual({ n: 1, y: 2 });
+    expect(run('color:red')).toEqual({ n: 0, y: 0 });
+  });
+  it('Guest Book: Dabblers never blocks a new color, and recruiting it pays while a color is missing (Cory, Nov 1: "Dabblers always works optimally for the player")', () => {
+    const run = (members, buyDef) => {
+      let s = sc({ round: 3, res: [rich], members, shop: [buyDef] });
+      const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
+      s.cards[art] = { uid: art, def: 'yellow.guestbook' }; s.players[0].artifact = art;
+      const y0 = R(s).yellow;
+      s = move(take(s, 'red.take'), `card:${uidOf(s, buyDef, 'shop')}`);
+      return { n: named(s, 'Guest Book').length, y: R(s).yellow - y0 };
+    };
+    expect(run([['benders.dabblers']], 'red.intern')).toEqual({ n: 1, y: 2 }); // red is new: Dabblers doesn't count against it
+    expect(run([['benders.dabblers', 'red.volunteer']], 'red.intern')).toEqual({ n: 0, y: 0 }); // a real red member does
+    expect(run([['red.volunteer']], 'benders.dabblers')).toEqual({ n: 1, y: 2 }); // Dabblers itself: you had no gold, yellow or green
+  });
+  // Agitator ("On Recruit: change up to 4 of rivals' resources one for one") makes the change since Dilute left (Nov 4)
+  const agitate = res1 => {
+    const s = take(sc({ round: 3, res: [rich, res1], shop: ['yellow.agitator'], members: [[], ['yellow.customs']] }), 'red.take');
+    return move(s, `card:${uidOf(s, 'yellow.agitator', 'shop')}`);
+  };
+  it('Customs Officer: +1 yellow when a rival changes or steals your resources, named', () => {
+    let s = agitate({ red: 2 });
+    s = move(s, 'res:1:red'); s = move(s, 'color:gold'); s = move(s, 'done');
+    expect(R(s, 1)).toMatchObject({ red: 1, gold: 1, yellow: 1 });
+    expect(named(s, 'Customs Officer')).toHaveLength(1);
+  });
+  it('Customs Officer: once per change, however many of your resources it changes (Cory, Nov 1: "Yes")', () => {
+    let s = agitate({ red: 3 });
+    s = move(s, 'res:1:red'); s = move(s, 'color:gold');
+    s = move(s, 'res:1:red'); s = move(s, 'color:green');
+    s = move(s, 'done');
+    expect(named(s, 'Customs Officer')).toHaveLength(1);
+    expect(R(s, 1).yellow).toBe(1);
+  });
+  it('Guest Book: a first grey member is a new color; a second grey is not (Cory, Nov 1: "Yes")', () => {
+    const run = (members, buyDef) => {
+      let s = sc({ round: 3, res: [rich], members, shop: [buyDef] });
+      const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
+      s.cards[art] = { uid: art, def: 'yellow.guestbook' }; s.players[0].artifact = art;
+      s = move(take(s, 'red.take'), `card:${uidOf(s, buyDef, 'shop')}`);
+      return named(s, 'Guest Book').length;
+    };
+    expect(run([['red.volunteer']], 'benders.scout')).toBe(1);
+    expect(run([['red.volunteer', 'benders.saboteur']], 'benders.scout')).toBe(0);
+  });
+  it('Go-Between: once per space, you may change 1 gained resource to another color', () => {
+    let s = take(sc({ members: [['yellow.gobetween']] }), 'yellow.dilute');
+    s = move(s, 'color:red');
+    expect(R(s)).toMatchObject({ yellow: 1, red: 1 });
+    expect(named(s, 'Go-Between')).toHaveLength(1);
+  });
+  it('Tinker: On Recruit and Round Start, up to 3 swaps of your own', () => {
+    let s = sc({ res: [{ gold: 3 }], members: [['yellow.tinker']], queue: [{ t: 'round', r: 2 }] });
+    s = move(s, 'swap:gold:red'); s = move(s, 'done');
+    expect(R(s)).toMatchObject({ gold: 2, red: 1 });
+  });
+  it('Matchmaker: a recruit in a new member color gives +1 follower and +2 in colors you choose', () => {
+    let s = sc({ round: 3, res: [rich], members: [['yellow.matchmaker']], shop: ['red.intern'] });
+    const f0 = followers(s, s.players[0]);
+    s = move(take(s, 'red.take'), `card:${uidOf(s, 'red.intern', 'shop')}`);
+    const g0 = R(s).green;
+    s = move(s, 'color:green'); s = move(s, 'color:green');
+    expect(R(s).green - g0).toBe(2);
+    expect(followers(s, s.players[0]) - f0).toBe(1 + cardDef(s, uidOf(s, 'red.intern', 0)).f);
+  });
+  it('Dyer: round start, +1 yellow per color you hold', () => {
+    const s = sc({ members: [['yellow.dyer']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
+    expect(R(s).yellow).toBe(2);
+  });
+  it('Tourist: round start, +1 follower per color you hold (Cory, Nov 1 3:14pm)', () => {
+    const s = sc({ members: [['yellow.tourists']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
+    expect(s.players[0].bonus).toBe(2);
+    expect(s.log).toContain("P1's Tourist: +2 followers.");
+  });
+  it('Caravan: worth 3 followers; round start +1 of each color you hold', () => {
+    const s = sc({ members: [['yellow.caravan']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
+    expect(R(s)).toMatchObject({ gold: 2, red: 3, yellow: 0, green: 0 });
+    expect(followers(s, s.players[0])).toBeGreaterThanOrEqual(3);
+  });
+  it("Tastemaker: +1 follower each time you change rivals' resources, once per card however many it changes", () => {
+    let s = sc({ round: 3, res: [{}, { red: 5 }], members: [['yellow.tastemaker']], shop: ['yellow.agitator'] });
+    s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.agitator', 'shop')}`);
+    for (let i = 0; i < 2; i++) { s = move(s, 'res:1:red'); s = move(s, 'color:green'); }
+    s = move(s, 'done');
+    expect(s.players[0].bonus).toBe(1);
+    expect(named(s, 'Tastemaker')).toHaveLength(1);
+  });
+  it('Tastemaker copied by a Doppelganger pays too', () => {
+    let s = sc({ round: 3, res: [{}, { red: 5 }], members: [['echo.doppel']], shop: ['yellow.agitator'] });
+    s.cards[s.players[0].members[0]].copy = 'yellow.tastemaker';
+    s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.agitator', 'shop')}`);
+    s = move(move(move(s, 'res:1:red'), 'color:green'), 'done');
+    expect(s.players[0].bonus).toBe(1);
+    expect(named(s, 'Tastemaker')).toHaveLength(1);
+  });
+  it('Spice Route: game end +1 follower per color you hold 3 or more of', () => {
+    const s = sc({ members: [['yellow.spiceroute']], res: [{ gold: 3, red: 5, yellow: 2 }] });
+    expect(cardDef(s, uidOf(s, 'yellow.spiceroute', 0)).onGameEnd({ state: s }, s.players[0])).toBe(2);
+  });
+  it("Agitator: On Recruit, change up to 4 of rivals' resources", () => {
+    let s = sc({ round: 3, res: [{}, { red: 5 }], shop: ['yellow.agitator'] });
+    s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.agitator', 'shop')}`);
+    for (let i = 0; i < 4; i++) { s = move(s, 'res:1:red'); s = move(s, 'color:green'); }
+    expect(R(s, 1)).toMatchObject({ red: 1, green: 4 });
+  });
+  it('Drifters: counts as a member of the color chosen on recruit', () => {
+    let s = sc({ round: 3, shop: ['yellow.drifters'] });
+    s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.drifters', 'shop')}`);
+    s = move(s, 'color:green');
+    expect(s.cards[uidOf(s, 'yellow.drifters', 0)].asColor).toBe('green');
+  });
+  it("Leveler: once per round, 1 of each rival's biggest color becomes the color you choose", () => {
+    let s = sc({ res: [{}, { red: 3, gold: 1 }], members: [['yellow.leveler']] });
+    s = take(s, 'gold.rush');
+    s = move(s, `use:${uidOf(s, 'yellow.leveler', 0)}`);
+    s = move(s, 'color:green');
+    expect(R(s, 1)).toMatchObject({ red: 2, green: 1, gold: 1 });
+  });
+  it('Big Tent: game end, +2 followers per color you have exactly one member of', () => {
+    const s = sc({ members: [['yellow.bigtent', 'red.twins', 'red.intern', 'gold.banker']] });
+    expect(cardDef(s, uidOf(s, 'yellow.bigtent', 0)).onGameEnd({ state: s, countMembersOfColor: (p, q) => ({ yellow: 1, red: 2, gold: 1 })[q] || 0 }, s.players[0])).toBe(4);
+  });
+  it('Gardeners: round start +1 of each color you have none of, named; Midas leaves member income alone', () => {
+    const s = sc({ res: [{ gold: 2 }], members: [['yellow.gardener', 'gold.midas']], queue: [{ t: 'round', r: 2 }] });
+    expect(R(s)).toEqual({ gold: 2, red: 1, yellow: 1, green: 1 });
+    expect(named(s, 'Gardeners')).toHaveLength(1);
+  });
+  it('Peddler: round start +1 of each color, named', () => {
+    const s = sc({ members: [['yellow.peddler']], queue: [{ t: 'round', r: 2 }] });
+    expect(R(s)).toEqual({ gold: 1, red: 1, yellow: 1, green: 1 });
+    expect(named(s, 'Peddler')).toHaveLength(1);
+  });
+  it('Gleaner: an action gaining 2+ of another color at once gives +1 yellow, named; Midas’s converted gain counts', () => {
+    let s = take(sc({ members: [['yellow.gleaner']] }), 'green.a1');
+    expect(R(s).yellow).toBe(1);
+    expect(named(s, 'Gleaner')).toHaveLength(1);
+    s = sc({ members: [['yellow.gleaner', 'gold.midas']] });
+    s.cards[uidOf(s, 'gold.midas', 0)].on = true;
+    s = take(s, 'green.a1');
+    expect(R(s)).toMatchObject({ gold: 3, green: 0, yellow: 1 });
+  });
+  it('Admirer: a rival recruiting a member of a color you lack gives +1 of it, named; a guest (leans gold) is colorless and gives nothing', () => {
+    let s = sc({ res: [{}, rich], members: [['yellow.admirer']], shop: ['gold.banker'], queue: [{ t: 'turn', p: 1 }] });
+    s = take(s, 'gold.rush'); s = buy(s, 'gold.banker');
+    expect(R(s).gold).toBe(1);
+    expect(named(s, 'Admirer')).toHaveLength(1);
+    // neutral cards stay neutral (Cory, 2026-10-18): the rival recruits Big Spender, Admirer stays quiet
+    s = sc({ res: [{}, rich], members: [['yellow.admirer']], shop: ['benders.bigspender'], queue: [{ t: 'turn', p: 1 }] });
+    const u = uidOf(s, 'benders.bigspender', 'shop');
+    s = take(s, 'gold.rush'); s = buy(s, 'benders.bigspender');
+    expect(s.players[1].members).toContain(u);
+    expect(R(s)).toEqual({ gold: 0, red: 0, yellow: 0, green: 0 });
+    expect(named(s, 'Admirer')).toEqual([]);
+  });
+  it('Late Bloomers: round start +1 of each color with the fewest followers (ties count), named; not when ahead', () => {
+    let s = sc({ members: [['yellow.latebloomer']], bonus: [0, 0], queue: [{ t: 'round', r: 2 }] });
+    expect(R(s)).toEqual({ gold: 1, red: 1, yellow: 1, green: 1 });
+    expect(named(s, 'Late Bloomers')).toHaveLength(1);
+    s = sc({ members: [['yellow.latebloomer']], bonus: [3, 0], queue: [{ t: 'round', r: 2 }] });
+    expect(R(s).gold).toBe(0);
+  });
+  // "now" (dead-window audit, 2026-10-14): recruited in round III it used to give nothing
+  it('Late Bloomers recruited with the fewest followers: +1 of each color right away, named', () => {
+    let s = sc({ round: 3, res: [{ yellow: 5 }], bonus: [0, 2], shop: ['yellow.latebloomer'], queue: [{ t: 'buy', p: 0 }] });
+    s = buy(s, 'yellow.latebloomer');
+    expect(R(s)).toEqual({ gold: 1, red: 1, yellow: 1, green: 1 });
+    expect(named(s, 'Late Bloomers')).toHaveLength(1);
+  });
+  it('Late Bloomers is worth 2 followers and excludes only itself from the comparison', () => {
+    const s = sc({ members: [['yellow.latebloomer', 'gold.tycoon']], queue: [{ t: 'round', r: 2 }] });
+    expect(followers(s, s.players[0])).toBe(4);
+    expect(followers(s, s.players[1])).toBe(1);
+    // The other member leaves the owner ahead even after Late Bloomers is excluded.
+    expect(R(s)).toEqual({ gold: 0, red: 0, yellow: 0, green: 0 });
+  });
+  it('a Doppelganger copying Late Bloomers excludes its copied follower value at round start', () => {
+    let s = sc({ members: [['echo.doppel']] });
+    s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'yellow.latebloomer';
+    s.queue = [{ t: 'round', r: 2 }];
+    s = resume(s);
+    expect(followers(s, s.players[0])).toBe(3);
+    expect(R(s)).toEqual({ gold: 1, red: 1, yellow: 1, green: 1 });
+  });
+  it('Sower: plant at round start, harvest that many of each other color at round end; both named', () => {
+    let s = sc({ res: [{ yellow: 4 }], members: [['yellow.sower']], queue: [{ t: 'round', r: 2 }] });
+    s = move(s, 'amount:2');
+    expect(R(s).yellow).toBe(2);
+    s.queue = [{ t: 'endRound' }]; s = resume(s);
+    expect(R(s)).toMatchObject({ gold: 2, red: 2, green: 2 });
+    expect(named(s, 'Sower')).toHaveLength(2);
+  });
+  it('Sower × Release: planted yellow comes back when the Sower leaves (as Cory ruled for Investor)', () => {
+    const restore = pinCosts({ 'yellow.sower': [2, 2] });
+    let s = sc({ round: 2, rules: { release: true }, res: [{ yellow: 1 }], members: [['yellow.sower']], queue: [{ t: 'buy', p: 0 }] });
+    const u = uidOf(s, 'yellow.sower', 0);
+    s.cards[u].sown = 3;
+    s = move(s, `release:${u}`);
+    restore();
+    // plus Sower's colored part, 2 yellow: Release gives back only that, in its color (Cory, 2026-10-14)
+    expect(R(s).yellow).toBe(1 + 3 + 2);
+    expect(named(s, 'Sower')).toHaveLength(1);
+  });
+  it('Harmonist: game end +1 follower per full set', () => {
+    const s = sc({ res: [{ gold: 2, red: 3, yellow: 2, green: 5 }], members: [['yellow.harmonist']], queue: [{ t: 'finish' }] });
+    expect(s.players[0].final.parts).toEqual(['Harmonist +2']);
+  });
+  it('Rainmaker: once per game, each color up to your yellow, named', () => {
+    let s = sc({ res: [{ gold: 1, red: 5, yellow: 4 }], members: [['yellow.rainmaker']] });
+    s = take(s, 'gold.rush');
+    s = move(s, `use:${uidOf(s, 'yellow.rainmaker', 0)}`);
+    expect(R(s)).toEqual({ gold: 3 + 1, red: 5, yellow: 4, green: 4 });
+    expect(named(s, 'Rainmaker')).toHaveLength(1);
+  });
+  // bots left it unused (dead-window audit, 2026-10-14): they now use it on their last buy of the game if it gives anything
+  it('Rainmaker: a bot uses it on its last buy of the game for a small catch-up; not earlier in round III', async () => {
+    const { chooseEasyMove } = await import('../../../engine/v4/bots.js');
+    const res = [{ yellow: 3, gold: 2, red: 2, green: 2 }];
+    const s = sc({ round: 3, left: 0, res, members: [['yellow.rainmaker']], queue: [{ t: 'buy', p: 0 }] });
+    expect(chooseEasyMove(s, () => 0.5).option).toBe(`use:${uidOf(s, 'yellow.rainmaker', 0)}`);
+    const t = sc({ round: 3, left: 2, res, members: [['yellow.rainmaker']], queue: [{ t: 'buy', p: 0 }] });
+    expect(chooseEasyMove(t, () => 0.5).option).not.toMatch(/^use:/);
+  });
+  it('Rainmaker × Underdog: the gold part is a gold gain, so it doubles past the match (see ledger question)', () => {
+    let s = sc({ res: [{ gold: 1, yellow: 5 }, { gold: 20 }], members: [['yellow.rainmaker', 'gold.underdog']] });
+    s = take(s, 'yellow.dilute');
+    const y = R(s).yellow;
+    s = move(s, `use:${uidOf(s, 'yellow.rainmaker', 0)}`);
+    expect(R(s).gold).toBe(1 + 2 * (y - 1));
+  });
+  it('Pilgrim: when recruited +1 of each color, named', () => {
+    let s = sc({ round: 3, shop: ['yellow.pilgrim'] });
+    s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.pilgrim', 'shop')}`);
+    expect(R(s)).toEqual({ gold: 1, red: 2, yellow: 1, green: 1 }); // and Initiation's own +1 red (v0.8.0)
+    expect(named(s, 'Pilgrim')[0]).toMatch(/P1's Pilgrim: \+1 gold, \+1 red, \+1 yellow, \+1 green/);
+  });
+  it('Farmer: +1 more when an action gains yellow, named; a Doppelganger copy adds another', () => {
+    let s = take(sc({ members: [['yellow.farmer']] }), 'yellow.dilute');
+    expect(R(s).yellow).toBe(3);
+    expect(named(s, 'Farmer')).toHaveLength(1);
+    s = sc({ members: [['yellow.farmer', 'echo.doppel']] });
+    s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'yellow.farmer';
+    expect(R(take(s, 'yellow.dilute')).yellow).toBe(4); // New Blood's 2, +1 Farmer, +1 its copy
+  });
+  it('Weaver: buying 5+ followers gives +1 of each color, named; a 1-buy does not', () => {
+    let s = sc({ res: [{ gold: 3, red: 3, yellow: 3, green: 3 }], members: [['yellow.weaver']] });
+    s = take(s, 'gold.rush');
+    s = move(s, 'tier:mid'); // The five-follower tier now reaches Weaver's threshold.
+    expect(named(s, 'Weaver')).toHaveLength(1);
+    expect(s.players[0].bonus).toBe(5);
+    expect(named(s, 'Weaver')[0]).toContain('+1 gold, +1 red, +1 yellow, +1 green');
+    s = take(sc({ res: [{ gold: 3, red: 3 }], members: [['yellow.weaver']] }), 'gold.rush');
+    s = move(s, 'tier:small');
+    expect(named(s, 'Weaver')).toHaveLength(0);
+  });
+  it('Explorer: +1 yellow for a space outside Yellow, named; Straggler’s move counts', () => {
+    let s = take(sc({ members: [['yellow.explorer']] }), 'gold.rush');
+    expect(R(s).yellow).toBe(1);
+    expect(named(s, 'Explorer')).toHaveLength(1);
+    s = sc({ round: 2, members: [['yellow.explorer', 'benders.straggler']], slots: { '2-0': 0 }, queue: [{ t: 'allPlaced' }] });
+    s = move(s, 'to:0-1');
+    expect(R(s).yellow).toBe(1);
+  });
+  it('Chefs: once per game, +1 of each color per round number, named', () => {
+    let s = sc({ round: 2, members: [['yellow.chefs']] });
+    s = take(s, 'gold.rush');
+    s = move(s, `use:${uidOf(s, 'yellow.chefs', 0)}`);
+    expect(R(s)).toEqual({ gold: 6, red: 2, yellow: 2, green: 2 });
+    expect(named(s, 'Chefs')).toHaveLength(1);
+  });
+  // Cory, 2026-10-18: Feastmaker became Chefs, a little cheaper (6+4 → 6+3) and counting as 2 members
+  it('Chefs: costs 6 yellow + 3 any, worth 2 followers, 2 members', () => {
+    const s = sc({ members: [['yellow.chefs']] });
+    const d = cardDef(s, uidOf(s, 'yellow.chefs', 0));
+    expect([d.s, d.w, d.f]).toEqual([6 + COLOR_SHIFT, 3 + EXTRA_WILD - COLOR_SHIFT, 2]);
+    expect(memberCount(s, s.players[0])).toBe(2);
+    expect(followers(s, s.players[0]) - followers(sc({}), sc({}).players[0])).toBe(2);
+  });
+});
+
+it('Book Cookers: once per game, On Use rearranges every resource into one chosen color, and the log names it', () => {
+  let s = sceneQ({ quadrants: ['yellow', 'gold', 'red', 'echo'], res: [{ gold: 3, red: 1 }], members: [['yellow.bookcooker']] });
+  const use = `use:${uidOf(s, 'yellow.bookcooker', 0)}`;
+  s = move(s, use);
+  expect(s.pending.prompt).toMatch(/Book Cookers: pick a color for all 4/);
+  s = move(s, 'color:green');
+  expect(s.players[0].res).toMatchObject({ green: 4, gold: 0, red: 0 });
+  expect(linesNaming(s.log, 'Book Cookers').length).toBeGreaterThan(0);
+  expect(s.pending.options.some(o => o.id === use)).toBe(false);
+});

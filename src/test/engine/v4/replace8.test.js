@@ -1,0 +1,121 @@
+// @vitest-environment node
+// Quality loop lane B (Nov 4; /mnt/project-files/quality/pitches/B-*.md), the REPLACE8=1 bot-test switch: a test per sentence of each new card, the turn played in its pitch, and the
+// old card no longer dealt. The switches are read when the engine loads, so they are set before the engine is imported
+// (dynamic imports below), then cleared.
+import { describe, it, expect } from 'vitest';
+
+process.env.REPLACE8 = '1';
+const { resume, contextFor } = await import('../../../engine/v4/core.js');
+const { defById } = await import('../../../engine/v4/content/index.js');
+const { move, take } = await import('./helpers.js');
+const { sceneQ, linesNaming } = await import('./cards-helpers.js');
+const { uidIn } = await import('./cards-helpers-b.js');
+delete process.env.REPLACE8;
+
+const sc = o => sceneQ({ quadrants: ['gold', 'red', 'silver', 'green'], ...o });
+const pass = s => move(s, s.pending.options.find(o => o.kind === 'pass').id);
+const opt = (s, re) => s.pending.options.find(o => re.test(o.id) || re.test(o.label || ''));
+
+describe('REPLACE8: the switch', () => {
+  it("keeps the old cards' prices, worth and count, and retires the old cards", () => {
+    const card = id => { const d = defById(id); return [d.s, d.w, d.f, d.n]; };
+    expect(card('silver.wellwishers')).toEqual(card('silver.debtcollector'));
+    expect(card('silver.usher')).toEqual(card('silver.polisher'));
+    expect(card('silver.guestofhonor')).toEqual(card('silver.toastmaster'));
+    expect(card('silver.socialites')).toEqual(card('silver.highsociety'));
+    for (const id of ['silver.debtcollector', 'silver.polisher', 'silver.toastmaster', 'silver.highsociety']) expect(defById(id).retired).toBe(true);
+    expect(defById('silver.gala').retired).toBeFalsy();
+  });
+});
+
+describe('Well-Wishers: "Whenever one of your members goes to a rival\'s cult, +3 followers."', () => {
+  it("a member moved into a rival's cult by anyone: +3; Well-Wishers itself leaving pays nothing", () => {
+    let s = sc({ n: 3, members: [['silver.wellwishers', 'silver.usher']], queue: [] });
+    const ctx = contextFor(s);
+    ctx.moveMember(uidIn(s, 'silver.usher', 0), s.players[0], s.players[1], { actor: s.players[1], recruit: true });
+    expect(s.players[0].bonus).toBe(3);
+    expect(linesNaming(s.log, 'Well-Wishers')).toContain("P1's Well-Wishers: Usher goes to P2: +3 followers.");
+    ctx.moveMember(uidIn(s, 'silver.wellwishers', 0), s.players[0], s.players[2], { actor: s.players[2], recruit: true });
+    expect(s.players[0].bonus).toBe(3);
+  });
+  it('a member sent to the bottom of the pile is not a rival\'s cult: nothing', () => {
+    let s = sc({ n: 3, members: [['silver.wellwishers', 'silver.usher']], queue: [] });
+    contextFor(s).buryMember(s.players[0], uidIn(s, 'silver.usher', 0));
+    expect(s.players[0].bonus).toBe(0);
+  });
+  it('the pitched turn: Godparent gives your Hostesses to Ben: its cost from Godparent, +3 from Well-Wishers', () => {
+    let s = sc({ n: 4, round: 2, members: [['silver.godparents', 'silver.wellwishers', 'silver.hostesses']], queue: [{ t: 'buy', p: 0 }] });
+    const host = uidIn(s, 'silver.hostesses', 0), d = defById('silver.hostesses');
+    s = move(s, `use:${uidIn(s, 'silver.godparents', 0)}`);
+    s = move(s, `give:${host}:1`);
+    expect(s.players[1].members).toContain(host);
+    expect(s.players[0].bonus).toBe(d.s + d.w + 3);
+  });
+});
+
+describe('Usher: "On Recruit: give a rival 2 silver from the bank. +3 followers."', () => {
+  it('on recruit you choose a rival; they gain 2 silver from the bank and you +3 followers (the pitched turn, round I)', () => {
+    let s = sc({ n: 4, res: [{ silver: 2, gold: 1 }], shop: ['silver.usher'], queue: [{ t: 'buy', p: 0 }] });
+    const before = s.players[0].res.silver;
+    s = move(s, s.pending.options.find(o => /Usher/.test(o.label || '')).id);
+    if (s.pending?.prompt?.startsWith('Pay')) s = move(s, s.pending.options[0].id);
+    expect(s.pending.prompt).toBe('Usher: which rival gains 2 silver? You get 3 followers');
+    s = move(s, 'player:2');
+    expect(s.players[2].res.silver).toBe(2);
+    expect(s.players[0].bonus).toBe(3);
+    expect(s.players[0].res.silver).toBeLessThan(before);
+    expect(linesNaming(s.log, 'Usher')).toContain("P1's Usher: gives P3 2 silver: +3 followers.");
+  });
+});
+
+describe('Guest of Honor: "Whenever you take a Silver space, you may give a rival one of your members costing 3 or less for +4 followers."', () => {
+  const at = members => sc({ n: 4, round: 2, members: [members], queue: [{ t: 'turn', p: 0 }] });
+  it('taking a Silver space: you may give a member costing 3 or less to a rival; it moves and you +4', () => {
+    let s = take(at(['silver.guestofhonor', 'silver.usher']), 'silver.toast');
+    expect(s.pending.prompt).toBe('Guest of Honor: give one of your members costing 3 or less to a rival, for +4 followers?');
+    const usher = uidIn(s, 'silver.usher', 0);
+    s = move(s, `give:${usher}:2`);
+    expect(s.players[2].members).toContain(usher);
+    expect(s.players[0].bonus).toBe(4);
+    expect(linesNaming(s.log, 'Guest of Honor')).toContain("P1's Guest of Honor: gives Usher to P3: +4 followers.");
+  });
+  it('"you may": giving nothing keeps your members; members costing more than 3 are not offered', () => {
+    let s = take(at(['silver.guestofhonor', 'silver.godparents']), 'silver.toast');
+    expect(s.pending.options.some(o => o.label.startsWith('Godparent'))).toBe(false);
+    s = move(s, 'none');
+    expect(s.players[0].members.length).toBe(2);
+    expect(s.players[0].bonus).toBe(0);
+  });
+  it('a space of another color: nothing offered', () => {
+    let s = take(at(['silver.guestofhonor', 'silver.usher']), 'Gather');
+    expect(s.pending?.prompt || '').not.toMatch(/Guest of Honor/);
+  });
+  it('the pitched turn: Toast, give your Usher to Ben; with Well-Wishers +4 and +3', () => {
+    let s = take(at(['silver.guestofhonor', 'silver.usher', 'silver.wellwishers']), 'silver.toast');
+    s = move(s, `give:${uidIn(s, 'silver.usher', 0)}:1`);
+    expect(s.players[0].bonus).toBe(7);
+  });
+});
+
+describe('Socialites: "Whenever a rival recruits paying silver, +2 followers."', () => {
+  const buyOne = s => { s = move(s, s.pending.options.find(o => o.kind === 'tier' && /1/.test(o.label || o.id)).id); if (s.pending?.player === 1 && s.pending.kind === 'choose') s = move(s, s.pending.options[0].id); return s; };
+  it('a rival recruits paying silver: +2; paying without silver: nothing; your own recruits: nothing', () => {
+    let s = buyOne(sc({ res: [{}, { silver: 5 }], members: [['silver.socialites']], queue: [{ t: 'buy', p: 1 }] }));
+    expect(s.players[0].bonus).toBe(2);
+    expect(linesNaming(s.log, 'Socialites')).toContain("P1's Socialites: +2 followers (P2 paid silver).");
+    let u = buyOne(sc({ res: [{}, { red: 5 }], members: [['silver.socialites']], queue: [{ t: 'buy', p: 1 }] }));
+    expect(u.players[0].bonus).toBe(0);
+    let v = sc({ res: [{ silver: 5 }], members: [['silver.socialites']], queue: [{ t: 'buy', p: 0 }] });
+    v = move(v, v.pending.options.find(o => o.kind === 'tier' && /1/.test(o.label || o.id)).id);
+    if (v.pending?.player === 0 && v.pending.kind === 'choose') v = move(v, v.pending.options[0].id);
+    expect(v.players[0].bonus).toBe(1); // the follower bought, nothing from Socialites
+  });
+  it('the pitched turn: you Toast (each rival +2 silver), then Ben buys a follower card paying silver: +2', () => {
+    let s = sc({ n: 4, round: 2, members: [['silver.socialites']], queue: [{ t: 'turn', p: 0 }, { t: 'buy', p: 1 }] });
+    s = take(s, 'silver.toast');
+    if (s.pending?.player === 0) s = pass(s);
+    s = buyOne(s);
+    expect(s.players[1].res.silver).toBe(1);
+    expect(s.players[0].bonus).toBe(2);
+  });
+});

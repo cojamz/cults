@@ -1,0 +1,27 @@
+/* Where the followers came from (Sources.jsx): one bar per cult, split by kind, in wood and cream tones (no game
+   colors: Cory, 2026-11-03). One 4px grid; three sizes (fs-1, fs-2, fs-5). */
+.src-bars{display:flex;flex-direction:column;gap:8px;width:100%}
+.src-row{display:grid;grid-template-columns:24px 168px minmax(0,1fr) 72px;align-items:center;gap:12px;padding:8px 12px;border-radius:10px}
+.src-row.first{background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.src-row .rank{color:var(--muted);font-size:var(--fs-2);text-align:center}
+.src-who{display:flex;flex-direction:column;gap:2px;min-width:0;font-size:var(--fs-2)}
+.src-who small{color:var(--muted);font-size:var(--fs-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src-track{display:flex;align-items:center;gap:8px;min-width:0}
+.src-bar{display:flex;height:32px;border-radius:6px;overflow:hidden;gap:2px;min-width:0}
+.src-seg{display:flex;align-items:center;min-width:0;flex-basis:0;overflow:hidden;cursor:default;color:var(--cream)}
+.src-lab{padding:0 8px;font-size:var(--fs-2);white-space:nowrap;overflow:hidden}
+.src-lab b{font-weight:700;margin-left:2px}
+.kind-members{background:color-mix(in srgb,var(--cream) 34%,#1b130c);color:#1b130c}
+.src-row.first .kind-members{background:var(--cream)}
+.kind-prizes{background:color-mix(in srgb,var(--cream) 22%,#1b130c)}
+.kind-bought{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--cream) 12%,transparent) 0 4px,transparent 4px 8px);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cream) 22%,transparent);color:var(--cream-2)}
+/* a quiet fill with a hairline, so a part reads as a bar on the wood (it vanished at 10%: polish, Nov 3) */
+.kind-play,.kind-end{background:color-mix(in srgb,var(--cream) 14%,#1b130c);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cream) 22%,transparent);color:var(--cream-2)}
+.src-lost{font-size:var(--fs-2);color:var(--muted);white-space:nowrap;cursor:default}
+.src-tot{display:flex;align-items:center;justify-content:flex-end;gap:4px;font-size:var(--fs-5);font-weight:700}
+@media (max-width:640px){
+  .src-row{grid-template-columns:20px minmax(0,1fr) 56px;gap:4px 8px;padding:8px}
+  .src-track{grid-column:1 / -1}
+  .src-row .src-tot{grid-row:1;grid-column:3}
+}

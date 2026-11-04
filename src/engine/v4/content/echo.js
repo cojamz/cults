@@ -1,0 +1,882 @@
+// Green copies actions, including copy actions whose targets are chosen afresh.
+// Each action pays +1 green; each branch excludes actions already in that branch.
+//
+// The copy rule: a copy gives the space's own printed gain, as its chip shows: the resources and discount the
+// action itself handed its taker, never their members' bonuses and never what they paid. A free member copies as
+// "a face-up member costing no more, free". A space that took or traded (Collect Debts, Swap Sides…) is copied by doing the
+// action yourself. Green's one rule, printed once (the sphere's `rule`, the rulebook and the glossary's "copy"), not
+// on each card: copy choices can chain, but never revisit an action. Occupied center actions can be copied too.
+//
+// Prototype notes (engine changes this module would like, see design/spheres/echo.md):
+// - The engine doesn't record what a space gave. install() wraps every action's resolve and every handler,
+//   and records the gains/free recruits made through that content's own ctx (members run on a fresh ctx, so
+//   their bonuses never land on a chip). The real fix in core.js: an 'act'-scoped ctx that tags gains and free
+//   recruits with the space, kept per round on state (this round and last round, for the board's chips).
+// - Member defs keep quadrant 'echo' (core pays the colored part in quadrant('echo').resource = green), so
+//   color counts (Potluck, countMembersOfColor) see Green members.
+import { registerQuadrant, allQuadrantIds, quadrant, defById, spacesOf } from './index.js';
+import { add2, old2, handlers2 } from './replace2.js';
+import { add4, old4, handlers4 } from './replace4.js';
+import { add10, old10, handlers10, on10 } from './replace10.js';
+import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
+
+// IMPRESSIONIST=n: bot test only; the game pays 1 (Claude, under Cory's "use your judgement", Nov 3; was 2, Cory Nov 1)
+const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 1);
+const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
+const costOf = def => def.s + def.w;
+const COPYIST = on10('copyist2') ? 2 : 1; // REPLACE10
+
+// ---------- the yield ledger ----------
+// state.echo = { round, now: { 'q-i': entry }, last: { ... } (last round's chips, kept for the board), open: key | null }
+// entry = { key, p, ring, name, color, idx, echo, res: { color: n }, discount, members: [cost, ...], redo }
+// What a space records is its own printed gain for the taker: the amounts its action hands over (before the
+// taker's members change them), the discount it gives, and the members it recruits free. Gains from the
+// taker's members (Prospector, Underdog, Mentor…) run on a fresh context and are never recorded.
+// A space that took or traded (anyone's resources or members went down) records redo: a copy does the action itself.
+export function ledger(state) {
+  if (!state.echo) state.echo = { round: state.round, now: {}, last: {}, open: null };
+  const L = state.echo;
+  if (L.round !== state.round) {
+    L.last = L.round === state.round - 1 ? L.now : {};
+    L.now = {}; L.round = state.round; L.open = null;
+  }
+  return L;
+}
+const snapAll = (state, p) => ({ res: state.players.map(o => ({ ...o.res })), members: state.players.map(o => [...o.members]), bonus: state.players.map(o => o.bonus), discount: p.discount });
+function settle(state, e) {
+  const p = state.players[e.p];
+  e.discount = Math.max(0, p.discount - e.before.discount);
+  const lost = state.players.some((o, i) => Object.keys(e.before.res[i]).some(r => (o.res[r] || 0) < e.before.res[i][r])
+    || e.before.members[i].some(u => !o.members.includes(u))
+    // selling followers (White) is a trade too: a copy must sell its own
+    || o.bonus < (e.before.bonus?.[i] ?? o.bonus));
+  if (lost) e.redo = true;
+}
+const quadrantDef = (state, uid) => defById(state.cards[uid].def);
+// The window for a space stays open while its follow-up choices run, until the taker's buy step. The buy step that
+// follows the space carries the space's key (win, set in wrapAction); once that step has been taken off the queue,
+// choices made in the buy step (Understudy's copy, a Doppelganger's pick, a tied Mentor pick) never land on the chip.
+function windowOpen(state, e) {
+  const next = state.queue.find(t => t.t !== 'choose' && t.t !== 'content');
+  return !!next && next.t === 'buy' && next.p === e.p && next.win === e.key;
+}
+// Record what this context hands the taker (the content code's own calls only).
+function track(ctx, e) {
+  const gain = ctx.gain, recruit = ctx.recruit;
+  // Only the action's own printed gains (fromAction) land on the chip; member hooks the action sets off through
+  // this same ctx (Caterer, Foreman, Dealer…) don't. `printed` is the gain before a member doubled it (Grand Host).
+  ctx.gain = (t, c, n, o) => {
+    if (t.id === e.p && n > 0 && o?.fromAction) { const k = o.printed ?? n; if (k > 0) e.res[c] = (e.res[c] || 0) + k; }
+    return gain(t, c, n, o);
+  };
+  ctx.recruit = (t, uid, o) => {
+    // a member the taker paid for (Snap Up, Half Price) is a trade: a copy does the action itself
+    if (t.id === e.p && o?.paid) e.redo = true;
+    else if (t.id === e.p && o?.free) { e.members.push(costOf(quadrantDef(ctx.state, uid))); e.members.sort((x, y) => x - y); }
+    return recruit(t, uid, o);
+  };
+}
+function wrapAction(qid, a, idx) {
+  if (a.resolve.__echo) return;
+  const orig = a.resolve;
+  const wrapped = function (ctx, p) {
+    const L = ledger(ctx.state);
+    let key = `${ctx.state.quadrants.indexOf(qid)}-${idx}`;
+    // a second worker on a taken space (Squatter) gets its own chip, so the first taker's stays copyable
+    if (L.now[key] && L.now[key].p !== p.id && ctx.state.squats?.[key]?.includes(p.id)) key = `${key}+${p.id}`;
+    const e = { key, p: p.id, ring: a.ring, name: a.name, color: qid, idx, echo: !!a.echo, before: snapAll(ctx.state, p), res: {}, discount: 0, members: [] };
+    L.seq = (L.seq || 0) + 1; e.seq = L.seq;
+    L.now[key] = e; L.open = key; L.lastBy = key;
+    // a space whose gain is an extra turn (Overtime, free since 2026-10-15) hands over nothing a chip can hold:
+    // a copy does the action itself, as it did when Overtime was paid for
+    if (a.copyDoesIt) e.redo = true;
+    track(ctx, e);
+    withPath(ctx, [actionKey(key)], () => orig.call(this, ctx, p), key, null);
+    settle(ctx.state, e);
+    // mark the taker's buy step that follows: the window stays open until it starts (windowOpen)
+    const next = ctx.state.queue.find(t => t.t !== 'choose' && t.t !== 'content');
+    if (next && next.t === 'buy' && next.p === p.id) next.win = key;
+  };
+  wrapped.__echo = true;
+  wrapped.__orig = orig;
+  a.resolve = wrapped;
+}
+function wrapHandler(q, k) {
+  const orig = q.handlers[k];
+  if (orig.__echo) return;
+  const wrapped = function (ctx, p, value, data) {
+    const L = ctx.state.echo;
+    const e = L && L.open && L.now[L.open];
+    const open = e && windowOpen(ctx.state, e);
+    if (open) track(ctx, e);
+    if (data?.__echoPath) withPath(ctx, data.__echoPath, () => orig.call(this, ctx, p, value, data), data.__echoOrigin, data.__echoCopier ?? null);
+    else orig.call(this, ctx, p, value, data);
+    if (open) settle(ctx.state, e);
+  };
+  wrapped.__echo = true;
+  q.handlers[k] = wrapped;
+}
+// st: the table (all piles shows a space's piles version); without it, the printed space
+const actionOf = (e, st) => spacesOf(st, e.color)[e.idx];
+
+// ---------- reading and copying ----------
+const spaceTotal = e => Object.values(e.res).reduce((a, b) => a + b, 0);
+/** Rough worth of copying an entry for player p right now (bots and hints). */
+export function entryValue(ctx, e, p = null) {
+  // Estimates never recurse through a copy action's estimate: cycles are choices, not infinite bot work.
+  if (e.echo) return 2 + (e.color === 'echo' ? VARIANT.plus : 0);
+  if (e.redo) { const a = actionOf(e, ctx.state); return p && a.estimate ? a.estimate(ctx, p) : spaceTotal(e); }
+  let v = spaceTotal(e) + e.discount * 0.9;
+  const shop = ctx.shopCards();
+  for (const c of e.members) {
+    const fits = shop.filter(x => costOf(x.def) <= c);
+    if (fits.length) v += Math.max(...fits.map(x => x.def.f * 1.4 + costOf(x.def) * 0.8));
+  }
+  return v;
+}
+const copyable = e => e.echo || e.redo || spaceTotal(e) > 0 || e.discount > 0 || e.members.length > 0;
+// c.ability: an Impersonator holding the member's ability counts as it
+const has = (ctx, p, key) => (key === 'tuningfork' ? ctx.abilitiesOf(p) : ctx.membersOf(p)).filter(c => [c.def.id, c.copy, c.ability].includes(`echo.${key}`)).length;
+const actionKey = key => key.split('+')[0];
+const pathNow = ctx => ledger(ctx.state).path || [];
+// Agents (Cory, 2026-10-29: "your actions can't be copied"): rivals can't copy its owner's actions; the owner still can
+const protectedAction = (ctx, e, by) => e.p !== by?.id && has(ctx, ctx.player(e.p), 'agents') > 0;
+const allowed = (ctx, e, by, path = pathNow(ctx)) => copyable(e) && !protectedAction(ctx, e, by) && !path.includes(actionKey(e.key));
+// The active context exists only while content resolves. Every queued choice/continuation gets its
+// own immutable path, so siblings don't poison each other's targets and save/load needs no closures.
+// copier: while a copy does a space itself (a redo, Cover, a copied Echo), the copier's Wallflower and Translator act on
+// every resource that space hands them ({ p, x, green }); it rides on queued choices like the path, so Polish's
+// four picks, made one at a time, are each doubled. Null outside such a copy; a nested copy() starts fresh.
+function withPath(ctx, path, fn, origin = ledger(ctx.state).origin, copier = ledger(ctx.state).copier ?? null) {
+  const L = ledger(ctx.state), previous = { path: L.path, origin: L.origin, copier: L.copier };
+  // base: ctx.gain without any copier's change, so a fresh copy inside a copy is doubled once, not twice
+  const choose = ctx.choose, defer = ctx.defer, gain = ctx.gain, base = gain.__copyBase || gain;
+  L.path = path; L.origin = origin;
+  if (copier) L.copier = copier; else delete L.copier;
+  const stamp = data => data?.__echoPath ? data : ({ ...(data || {}), __echoPath: [...path], __echoOrigin: origin ?? null, ...(copier ? { __echoCopier: copier } : {}) });
+  ctx.choose = (p, prompt, options, h, data, extra) => choose(p, prompt, options, h, stamp(data), extra);
+  ctx.defer = (p, h, data, cause) => defer(p, h, stamp(data), cause);
+  if (copier) ctx.gain = Object.assign((t, c, n, o) => (t.id === copier.p && n > 0 ? base(t, copier.green ? 'green' : c, n * copier.x, o) : base(t, c, n, o)), { __copyBase: base });
+  else ctx.gain = base;
+  try { return fn(); }
+  finally {
+    ctx.choose = choose; ctx.defer = defer; ctx.gain = gain;
+    if (previous.path === undefined) delete L.path; else L.path = previous.path;
+    if (previous.origin === undefined) delete L.origin; else L.origin = previous.origin;
+    if (previous.copier === undefined) delete L.copier; else L.copier = previous.copier;
+  }
+}
+/** What p's copy-changing members do to a copy that does its space itself; null when nothing changes. */
+function copierOf(ctx, p) {
+  const x = has(ctx, p, 'wallflower') ? 2 : 1, green = translating(ctx, p);
+  return x > 1 || green ? { p: p.id, x, green } : null;
+}
+const translating = (ctx, p) => ctx.membersOf(p).some(c => [c.def.id, c.copy, c.ability].includes('echo.translator') && c.on !== false);
+/** The chip on a taken space: exactly what a copy gives. */
+export const describe = (ctx, e) => {
+  if (e.echo) return `${actionOf(e, ctx?.state).text} Choose again.`;
+  if (e.redo) return `do ${e.name} yourself`;
+  const bits = Object.entries(e.res).map(([c, n]) => `+${n} ${c}`);
+  if (e.discount) bits.push(`${e.discount} off`);
+  // say so when no face-up member is that cheap right now, so the chip never promises a member you can't get
+  // in words, never "a member (≤6)" (w3a #34)
+  for (const c of e.members) {
+    const m = c > 0 ? `a member costing ${c} or less` : 'a free member';
+    bits.push(ctx.shopCards().some(x => costOf(x.def) <= c) ? m : `${m} (none face up)`);
+  }
+  return bits.join(', ') || 'nothing';
+};
+/**
+ * Targets: 'previous' is the immediately preceding placement; 'any' is any occupied action;
+ * 'own' and 'rival' use minion ownership. Agents and the current branch exclude targets.
+ * 'since' remains for legacy callers. skip excludes the current placement while a copy action or recruit resolves.
+ */
+export const VARIANT = { plus: 1 }; // Every Green action pays its inherent green, including each traversal in a chain.
+const plus = (ctx, p) => { if (VARIANT.plus) ctx.gain(p, 'green', VARIANT.plus, { fromAction: true }); };
+export function targets(ctx, p, which, skip = null) {
+  const L = ledger(ctx.state);
+  const pool = Object.values(L.now);
+  if (which === 'previous') {
+    const previous = previousEntry(ctx, skip);
+    return previous && allowed(ctx, previous, p) ? [previous] : [];
+  }
+  const since = which === 'since' ? Math.max(0, ...pool.filter(e => e.p === p.id && e.key !== skip).map(e => e.seq || 0)) : 0;
+  return pool.filter(e => e.key !== skip && allowed(ctx, e, p) && (which === 'since' ? e.p !== p.id && (e.seq || 0) > since : which === 'own' ? e.p === p.id : which === 'rival' ? e.p !== p.id : true));
+}
+/**
+ * Greatest Hits / Tribute Band replay occupied own actions in placement order. A branch can
+ * include copy actions, but not its ancestors. The UI/log explain every blocked action.
+ */
+export function ownPlan(ctx, p, self = null) {
+  const L = ledger(ctx.state);
+  const mine = Object.values(L.now).filter(e => e.p === p.id && e.key !== self).sort((a, b) => (a.seq || 0) - (b.seq || 0));
+  const take = mine.filter(e => allowed(ctx, e, p));
+  const skip = mine.filter(e => !allowed(ctx, e, p)).map(e => ({ e, why: protectedAction(ctx, e, p) ? 'protected' : pathNow(ctx).includes(actionKey(e.key)) ? 'chain' : 'nothing' }));
+  return { take, skip };
+}
+const SKIP_WHY = { protected: 'Agents prevents copying', chain: 'already in this chain', nothing: 'gave nothing' };
+/** Group skipped actions by the rule that blocked them. */
+export function skipWords(skip) {
+  return ['protected', 'chain', 'nothing'].map(why => {
+    const names = skip.filter(x => x.why === why).map(x => x.e.name);
+    return names.length ? `${names.join(', ')} (${SKIP_WHY[why]})` : '';
+  }).filter(Boolean).join('; ');
+}
+/** Greatest Hits: the round I actions with any minion on them this round, and what was left out and why (Cory, Nov 1). */
+export function hitsPlan(ctx, p, self = null) {
+  const L = ledger(ctx.state);
+  // one action, however many minions are on it: a space a joiner shares counts once, as the copier's own entry if they have one
+  const byAction = new Map();
+  for (const e of Object.values(L.now).filter(x => x.ring === 1 && x.key !== self).sort((a, b) => (a.seq || 0) - (b.seq || 0))) {
+    const k = actionKey(e.key), had = byAction.get(k);
+    if (!had || (had.p !== p.id && e.p === p.id)) byAction.set(k, e);
+  }
+  const all = [...byAction.values()].sort((a, b) => (a.seq || 0) - (b.seq || 0));
+  const take = all.filter(e => allowed(ctx, e, p));
+  const skip = all.filter(e => !allowed(ctx, e, p)).map(e => ({ e, why: protectedAction(ctx, e, p) ? 'protected' : pathNow(ctx).includes(actionKey(e.key)) ? 'chain' : 'nothing' }));
+  return { take, skip };
+}
+export const HITS = 3;
+/** Greatest Hits: copy any 3 round I actions with a minion on them, one at a time in the order you pick. */
+function copyHits(ctx, p, self, who) {
+  const { take, skip } = hitsPlan(ctx, p, self);
+  const skipped = skipWords(skip);
+  if (!take.length) { ctx.log(`${p.name} had no round I action to copy${skipped ? `: it skips ${skipped}` : ''}.`); return false; }
+  if (skipped) ctx.log(`${who} skips ${skipped}.`);
+  orderStep(ctx, p, take.map(e => e.key), who, HITS);
+  return true;
+}
+/** Tribute Band: do every action the chosen rival has a minion on this round, in placement order. */
+function copyLeader(ctx, p, leader) {
+  const { take, skip } = ownPlan(ctx, leader);
+  const skipped = skipWords(skip);
+  if (!take.length) { ctx.log(`${p.name}'s Tribute Band has nothing to copy from ${leader.name}${skipped ? `: it skips ${skipped}` : ''}.`); return false; }
+  if (skipped) ctx.log(`Tribute Band skips ${skipped}.`);
+  ctx.log(`${p.name}'s Tribute Band plays ${leader.name}'s actions.`);
+  copyAll(ctx, p, take, 'Tribute Band', 'Tribute Band');
+  return true;
+}
+/** Greatest Hits' next copy: one left goes straight on; more ask which, and the rest wait until that copy is done. */
+function orderStep(ctx, p, keys, who, n = Infinity) {
+  const L = ledger(ctx.state);
+  const left = keys.map(k => L.now[k]).filter(e => e && allowed(ctx, e, p));
+  if (n <= 0) return;
+  if (left.length === 1) ctx.defer(p, 'echo.continueCopy', { key: left[0].key, by: null, who }, { kind: 'space', key: left[0].key, qid: left[0].color, pid: p.id });
+  if (left.length < 2) return;
+  const more = Number.isFinite(n) && left.length > n ? ` (${n} more)` : '';
+  ctx.choose(p, `${who}: copy which next?${more}`, left.map(e => ({
+    id: `space:order:${e.key}`, label: `${e.name} (${ctx.player(e.p).name}): ${describe(ctx, e)}`, kind: 'space', value: e.key, hint: entryValue(ctx, e, p),
+  })), 'echo.order', { left: left.map(e => e.key), who, ...(Number.isFinite(n) ? { n } : {}) });
+}
+/** Latest placement regardless of its owner; legality never makes us fall back to an earlier placement. */
+export const previousEntry = (ctx, skip = null) => Object.values(ledger(ctx.state).now)
+  .filter(e => e.key !== skip).sort((a, b) => (b.seq || 0) - (a.seq || 0))[0] || null;
+/** Exclude the active placement while executing it, rather than guessing from the previous owner's identity. */
+export const previousNow = (ctx, p) => {
+  const L = ledger(ctx.state);
+  return targets(ctx, p, 'previous', L.path?.length ? L.origin : null);
+};
+/** Cover's targets: open actions with no minion on them, not already in this copy chain. */
+function emptyTargets(ctx) {
+  const st = ctx.state, path = pathNow(ctx), out = [];
+  st.quadrants.forEach((qid, q) => spacesOf(st, qid).forEach((a, i) => {
+    const key = `${q}-${i}`;
+    if (a.ring <= st.round && !(a.lastRound && st.round > a.lastRound) && st.slots[key] === undefined && !path.includes(key)) out.push({ key, a, qid });
+  }));
+  return out;
+}
+const bestValue = (ctx, list, p) => Math.max(0, ...list.map(e => entryValue(ctx, e, p)));
+// What doing an empty action would give p: its own estimate. Cover never rates itself (it would ask itself forever),
+// and a throw rates 0. Bots used to see every empty action as worth 2, so they took Cover rarely and copied blind.
+let rating = false;
+function emptyValue(ctx, a, p) {
+  if (rating || a.key === 'hum' || !a.estimate) return 0;
+  rating = true;
+  try { return Math.max(0, a.estimate(ctx, p) || 0); } catch { return 0; } finally { rating = false; }
+}
+// by: the member making the copy (Understudy, Sleepwalker…), so the log names it. who: the card or space asking
+// (the prompt's own name), so a copied space's free member is titled with it ("Sample: take a face-up member…").
+function offer(ctx, p, list, prompt, from, by = null) {
+  if (!list.length) { ctx.log(`${p.name}${by ? `'s ${by}` : ''} had nothing to copy.`); return; }
+  const who = by || prompt.split(':')[0];
+  ctx.choose(p, prompt, list.map(e => ({
+    id: `space:${from}:${e.key}`, label: `${e.name} (${ctx.player(e.p).name}): ${describe(ctx, e)}`, kind: 'space',
+    value: e.key, hint: entryValue(ctx, e, p),
+  })), 'echo.pick', by ? { from, by, who } : { from, who });
+}
+
+/** p copies entry e: same resources, same discount, and a free face-up member (cost ≤ theirs) per member. */
+export function copy(ctx, p, e, { later = null, by = null, asker = null } = {}) {
+  if (!allowed(ctx, e, p)) return;
+  return withPath(ctx, [...pathNow(ctx), actionKey(e.key)], () => copyResolved(ctx, p, e, { later, by, asker }), undefined, null);
+}
+function copyResolved(ctx, p, e, { later, by, asker }) {
+  const taker = ctx.player(e.p);
+  const who = by ? `${p.name}'s ${by}: ${p.name}` : p.name;
+  if (e.redo || e.echo) {
+    // a space that took or traded: the copy does the action itself
+    ctx.log(`${who} copies ${e.name}${taker !== p ? ` (${taker.name}'s)` : ''}: doing it again.`);
+    heard(ctx, p, e, taker);
+    // Wallflower doubles, and Translator greens, what the space hands the copier here too (Cory, Nov 3: copying
+    // Polish wasn't doubled)
+    const a = actionOf(e, ctx.state);
+    withPath(ctx, pathNow(ctx), () => (a.resolve.__orig || a.resolve).call(a, ctx, p), undefined, copierOf(ctx, p));
+    return;
+  }
+  const mult = has(ctx, p, 'wallflower') ? 2 : 1;
+  const asGreen = translating(ctx, p);
+  for (const [c, n] of Object.entries(e.res)) ctx.gain(p, asGreen ? 'green' : c, n * mult, { fromAction: true });
+  if (e.discount) ctx.discount(p, e.discount, `Copy of ${e.name}`);
+  const notes = [mult > 1 ? `doubled by ${p.name}'s Wallflower` : '', asGreen && Object.keys(e.res).length ? `as green by ${p.name}'s Translator` : ''].filter(Boolean);
+  ctx.log(`${who} copied ${e.name}${e.p !== p.id ? ` (${ctx.player(e.p).name}'s)` : ''}: ${describe(ctx, e)}${notes.length ? `, ${notes.join(', ')}` : ''}.`);
+  heard(ctx, p, e, taker);
+  if (later) later.push(...e.members);
+  else if (e.members.length) freeStep(ctx, p, { left: [...e.members], who: asker || by || 'Copy' });
+}
+// members that react to a copy
+function heard(ctx, p, e, taker) {
+  // each runs as its member, so the log names it ("P1's Choir: +1 green.")
+  // any player's copy, +2 (Cory, Nov 1)
+  for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(e.color).resource, IMPRESSION));
+  each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
+  each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += COPYIST; }); // REPLACE10
+  for (const owner of ctx.rivals(p)) each(ctx, owner, 'muse', 'Muse', () => ctx.gain(owner, 'green', 1));
+  if (taker === p) each(ctx, p, 'ensemble', 'Ensemble', () => { p.bonus += 1; });
+  // −1 for the copier, +1 for Bait's owner, so copying your own is even (Cory, Oct 29: "clearly neutral for the
+  // player who has it (+1 -1). the +1 shouldnt be limited to rivals only")
+  if (taker !== p) each(ctx, taker, 'bait', 'Bait', () => {
+    p.bonus -= Math.min(1, ctx.followers(p));
+    taker.bonus += 1;
+  });
+}
+// Run fn once per card of p's that is (or copies) the member `key`, each as its own source: a Doppelganger copying
+// Muse pays its +1 beside Muse's, named "Doppelganger (as Muse)" (Cory, Oct 28). An artifact has no uid among members.
+function each(ctx, p, key, name, fn) {
+  const cards = (key === 'tuningfork' ? ctx.abilitiesOf(p) : ctx.membersOf(p)).filter(c => [c.def.id, c.copy, c.ability].includes(`echo.${key}`));
+  for (const c of cards) {
+    const own = c.def.id === `echo.${key}`;
+    // a worn cloak logs as itself ("P1's Green Cloak: +2 red."), like every other cloak, and is its own source
+    ctx.asMember(p, own ? c.def.name : `${c.def.name} (as ${name})`, fn, p.members.includes(c.uid) || c.uid === p.artifact ? c.uid : null);
+  }
+}
+/** Copy several spaces; free members are picked one after another at the end. who: the card or space copying. */
+export function copyAll(ctx, p, list, by = null, who = by) {
+  const member = by && ctx.membersOf(p).find(c => c.def.name === by || (c.copy && defById(c.copy).name === by));
+  for (const e of list) ctx.defer(p, 'echo.continueCopy', { key: e.key, by, who: who || 'Copy' },
+    member ? { kind: 'member', pid: p.id, uid: member.uid, def: member.def.id } : { kind: 'space', key: e.key, qid: e.color, pid: p.id });
+}
+function freeStep(ctx, p, data) {
+  if (!data.left.length) return;
+  const c = data.left[0];
+  const fits = ctx.shopCards().filter(x => costOf(x.def) <= c);
+  if (!fits.length) { ctx.log(`${p.name}: no face-up member costs ${c} or less.`); freeStep(ctx, p, { ...data, left: data.left.slice(1) }); return; }
+  ctx.choose(p, `${data.who || 'Copy'}: take a face-up member costing ${c} or less, free`, fits.map(x => ({
+    id: `card:${x.uid}`, label: `${x.def.name} (${costOf(x.def)})`, kind: 'card', value: x.uid, hint: x.def.f * 1.4 + costOf(x.def),
+  })), 'echo.free', { cost: c, left: data.left.slice(1), who: data.who || 'Copy' });
+}
+
+// Sample's rival members: an On Recruit (or a now-and-round-start effect) that doesn't act on the card itself ("swap
+// it", "it becomes a copy"), which a card held by someone else can't do for you. Same test as Red's Tryout.
+function rivalRecruits(ctx, p) {
+  return ctx.rivals(p).flatMap(o => ctx.membersOf(o).map(c => ({ c, o })))
+    .filter(({ c }) => !c.def.artifact && !c.def.recruitNote && (c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate)))
+      && !/\bit\b|\bthese\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
+}
+
+// Greatest Hits: your members with an On Recruit (or a now-and-round-start effect, as Sample reads it).
+const recruitDef = c => (c.copy ? defById(c.copy) : c.def);
+function ownRecruits(ctx, p) {
+  return ctx.membersOf(p).filter(c => { const d = recruitDef(c); return !d.artifact && !d.recruitNote && (d.onRecruited || (d.now && (d.onRoundStart || d.onRoundStartLate))); });
+}
+// Greatest Hits is a chain like any copy: an On Recruit it copies (Stunt Double's "copy the action you just took") stays
+// in that chain, so it can't copy Greatest Hits again (that looped forever in seeded games, Nov 1).
+const hitsKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => x.name === 'Greatest Hits').map(x => actionKey(x.key));
+let hitsChain = false;
+function hitsStep(ctx, p, left) {
+  const mine = left.filter(u => ctx.ownerOf(u)?.id === p.id);
+  if (!mine.length) return;
+  if (mine.length === 1) { ctx.defer(p, 'echo.hitsDo', { uid: mine[0] }); return; }
+  ctx.choose(p, `Greatest Hits: copy which member's On Recruit first? (${mine.length} to go)`, mine.map(u => {
+    const c = ctx.card(u), d = recruitDef(c);
+    return { id: `card:${u}`, label: `${d.name}: ${d.text}`, kind: 'card', value: u, hint: 2 + (d.f || 0) };
+  }), 'echo.hitsPick', { left: mine });
+}
+
+// ---------- the quadrant ----------
+const echoQ = {
+  id: 'echo',
+  name: 'Green',
+  resource: 'green',
+  rule: 'Copying a copy lets you choose again. Never copy an action already in its chain. Every Green action gives +1 green.',
+  scoring: { label: 'Most green', counts: 'the green you hold when the round ends', score: (ctx, p) => p.res.green },
+
+  actions: [
+    {
+      key: 'chant', ring: 1, name: 'Build Up', text: '+3 green in round I, +4 in round II, +5 in round III.', // every color's 3/4/5 (Cory, 2026-10-27)
+      byRound: { lines: ['+3 green', '+4 green', '+5 green'] },
+      estimate: ctx => 2 + ctx.state.round,
+      resolve(ctx, p) { plus(ctx, p); ctx.gain(p, 'green', ctx.state.round + 1, { fromAction: true }); },
+    },
+    {
+      // The previous placement can be your own on a snake double turn.
+      key: 'echo', ring: 1, name: 'Echo', echo: true, text: 'Copy the previous action. +1 green.', // back to +1 (Cory, Oct 28)
+      estimate: (ctx, p) => VARIANT.plus + bestValue(ctx, targets(ctx, p, 'previous'), p),
+      resolve(ctx, p) { plus(ctx, p); offer(ctx, p, previousNow(ctx, p), 'Echo: copy the previous action?', 'now'); },
+    },
+    {
+      // your own spaces are on the board in your color: no memory of last round needed (it replaced Recall)
+      key: 'refrain', ring: 1, name: 'Reprise', echo: true, text: 'Copy an action with your minion. +1 green.', // round I (Cory, 2026-10-27); +1 (Cory, Oct 28)
+      estimate: (ctx, p) => VARIANT.plus + bestValue(ctx, targets(ctx, p, 'own'), p),
+      resolve(ctx, p) {
+        plus(ctx, p);
+        offer(ctx, p, targets(ctx, p, 'own'), 'Reprise: copy which of your spaces?', 'now');
+      },
+    },
+    {
+      // Cory, 2026-10-28: Green had one copy too many, so Sample stops copying a space; "maybe copy an On Recruit"
+      // (the rival's member, Claude's read of his yes). Like Red's Tryout, but on a rival's member, not the shop's.
+      key: 'encore', ring: 2, name: 'Sample', text: 'Copy the On Recruit of a rival’s member. +1 green.', copyDoesIt: true,
+      estimate: (ctx, p) => VARIANT.plus + (rivalRecruits(ctx, p).length ? 3 : 0),
+      resolve(ctx, p) {
+        plus(ctx, p);
+        const list = rivalRecruits(ctx, p);
+        if (!list.length) { ctx.log(`${p.name}: no rival's member has an On Recruit to copy.`); return; }
+        ctx.choose(p, 'Sample: copy which rival member’s On Recruit?', list.map(({ c, o }) => ({
+          id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name}: ${c.def.text}`, kind: 'card', value: c.uid, hint: 2 + (c.def.f || 0),
+        })), 'echo.encoreCopy');
+      },
+    },
+    {
+      // Cory, 2026-10-27: Chorus out; "Copy an action with no minion on it" takes Reprise's round II spot. Name is
+      // Claude's fill-in. A copy of an empty space does that action itself (nobody took it, so there's no chip).
+      key: 'hum', ring: 2, name: 'Cover', echo: true, text: 'Copy an action with no minion on it. +1 green.',
+      estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...emptyTargets(ctx).map(({ a }) => emptyValue(ctx, a, p))),
+      resolve(ctx, p) {
+        plus(ctx, p);
+        const list = emptyTargets(ctx);
+        if (!list.length) { ctx.log(`${p.name} found no empty action to copy.`); return; }
+        ctx.choose(p, 'Cover: copy which empty action?', list.map(({ key, a }) => ({
+          id: `space:empty:${key}`, label: `${a.name}: ${a.text}`, kind: 'space', value: key, hint: emptyValue(ctx, a, p),
+        })), 'echo.copyEmpty');
+      },
+    },
+    {
+      // Cory, Nov 1 morning: "maybe we try copying all your members On Recruit in any order" (was "Copy any 3 round I
+      // actions with a minion on them", +41 in the balance runs). Your own members, so a self-acting On Recruit
+      // works on that card; a copied member (Doppelganger, Impostors) does the On Recruit of what it copies.
+      key: 'eternity', ring: 3, name: 'Greatest Hits', text: 'Copy the On Recruit of each of your members, in any order. +1 green.', copyDoesIt: true,
+      estimate: (ctx, p) => VARIANT.plus + 3 * ownRecruits(ctx, p).length,
+      resolve(ctx, p) {
+        plus(ctx, p);
+        const list = ownRecruits(ctx, p);
+        if (!list.length) { ctx.log(`${p.name}: none of their members has an On Recruit to copy.`); return; }
+        withPath(ctx, [...new Set([...pathNow(ctx), ...hitsKeys(ctx)])], () => hitsStep(ctx, p, list.map(c => c.uid)));
+      },
+    },
+  ],
+
+  handlers: {
+    ...handlers10({
+      // Bootlegger (REPLACE10): the member picked; its On Recruit runs as Greatest Hits runs one
+      bootleg(ctx, p, uid) {
+        if (uid == null) return;
+        echoQ.handlers.hitsDo(ctx, p, null, { uid });
+      },
+    }),
+    ...handlers4({
+      // Opening Act: the rival's first placement of the round, copied once its own choices are made
+      openingAct(ctx, p, _v, data) {
+        const rival = ctx.player(data.pid);
+        const e = Object.values(ledger(ctx.state).now).filter(x => x.p === data.pid && actionKey(x.key) === data.key).sort((a, b) => (b.seq || 0) - (a.seq || 0))[0];
+        if (!e || !copyable(e)) { ctx.log(`${p.name}'s Opening Act: ${rival.name}'s first space gave nothing to copy.`); return; }
+        if (protectedAction(ctx, e, p)) { ctx.log(`${p.name}'s Opening Act: ${rival.name}'s Agents prevents copying ${e.name}.`); return; }
+        withPath(ctx, [], () => copy(ctx, p, e, { by: 'Opening Act' }), e.key);
+      },
+    }),
+    impersonate(ctx, p, uid, data) {
+      const self = ctx.card(data.uid), target = ctx.card(uid);
+      if (!p.members.includes(self.uid) || !ctx.ownerOf(uid) || ctx.ownerOf(uid) === p) return;
+      // one On Use a game, one a round: a use spent under the old ability stays spent for a new one of the same kind
+      const was = self.ability ? defById(self.ability) : null;
+      if (self.used && was?.activate === 'game') self.gameUsed = true;
+      if (self.used && was?.activate === 'round') self.roundUsed = ctx.state.round;
+      self.ability = target.copy || target.def.id;
+      const d = defById(self.ability);
+      self.used = (d.activate === 'game' && !!self.gameUsed) || (d.activate === 'round' && self.roundUsed === ctx.state.round);
+      ctx.log(`${p.name}'s Impersonator: has the ability of ${ctx.ownerOf(uid).name}'s ${d.name} ("${d.text}").`);
+    },
+    ...handlers2({
+      mirrorImage(ctx, p, [oid, c]) {
+        const o = ctx.player(oid), d = (o.res[c] || 0) - (p.res[c] || 0);
+        if (d > 0) { ctx.gain(p, c, d); ctx.log(`${p.name}'s Mirror Image: +${d} ${c}, as much as ${o.name} holds.`); }
+      },
+    }),
+    tribute(ctx, p, id, data) {
+      const leader = ctx.player(id);
+      const card = ctx.card(data.uid);
+      if (!copyLeader(ctx, p, leader) && card) card.used = false;
+    },
+    hitsPick(ctx, p, uid, data) {
+      ctx.defer(p, 'echo.hitsDo', { uid });
+      ctx.defer(p, 'echo.hitsNext', { left: data.left.filter(u => u !== uid) });
+    },
+    hitsNext(ctx, p, _, data) { hitsStep(ctx, p, data.left); },
+    hitsDo(ctx, p, _, data) {
+      const c = ctx.card(data.uid);
+      if (!c || ctx.ownerOf(data.uid)?.id !== p.id) { ctx.log(`${p.name}: that member left their cult.`); return; }
+      const d = recruitDef(c);
+      ctx.log(`${p.name} copies ${d.name}'s On Recruit.`);
+      hitsChain = true;
+      try {
+        if (d.onRecruited) ctx.recruitAbility(p, c, d, () => d.onRecruited(ctx, p, c));
+        if (d.now) for (const hook of ['onRoundStart', 'onRoundStartLate']) if (d[hook]) ctx.recruitAbility(p, c, d, () => d[hook](ctx, p, c));
+      } finally { hitsChain = false; }
+    },
+    encoreCopy(ctx, p, uid) {
+      const o = ctx.ownerOf(uid);
+      if (!o || o.id === p.id) { ctx.log(`${p.name}: that member left the rival's cult.`); return; }
+      ctx.log(`${p.name} copies ${o.name}'s ${ctx.defOf(uid).name}: its On Recruit.`);
+      ctx.borrowOnRecruit(p, uid);
+    },
+    warmupDo(ctx, p, key) { echoQ.handlers.copyEmpty(ctx, p, key, { as: 'Warm-Up Act' }); },
+    // data.as: a member doing the copy (Warm-Up Act), so the copied action's gain is said under its name; Choir's and
+    // Impressionist's lines stay their own
+    copyEmpty(ctx, p, key, data) {
+      const hit = emptyTargets(ctx).find(x => x.key === key);
+      if (!hit) { ctx.log(`${p.name}: that action has a minion now.`); return; }
+      withPath(ctx, [...pathNow(ctx), key], () => {
+        ctx.log(`${p.name} copies ${hit.a.name}: doing it.`);
+        for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(hit.qid).resource, IMPRESSION));
+        each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
+        each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += COPYIST; }); // REPLACE10
+        const run = () => withPath(ctx, pathNow(ctx), () => (hit.a.resolve.__orig || hit.a.resolve).call(hit.a, ctx, p), undefined, copierOf(ctx, p));
+        if (data?.as) ctx.asMember(p, data.as, run); else run();
+      });
+    },
+    continueCopy(ctx, p, _, data) {
+      const e = ledger(ctx.state).now[data.key];
+      if (e) copy(ctx, p, e, { by: data.by, asker: data.who });
+    },
+    order(ctx, p, key, data) {
+      const L = ledger(ctx.state);
+      const e = L.now[key];
+      if (e) ctx.defer(p, 'echo.continueCopy', { key, by: null, who: data.who }, { kind: 'space', key, qid: e.color, pid: p.id });
+      ctx.defer(p, 'echo.orderNext', { left: data.left.filter(k => k !== key), who: data.who, ...(data.n ? { n: data.n - 1 } : {}) });
+    },
+    orderNext(ctx, p, _, data) { orderStep(ctx, p, data.left, data.who, data.n ?? Infinity); },
+    pick(ctx, p, key, data) {
+      const L = ledger(ctx.state);
+      const e = (data.from === 'last' ? L.last : L.now)[key];
+      if (e) copy(ctx, p, e, { by: data.by || null, asker: data.who || data.by || null });
+    },
+    free(ctx, p, uid, data) {
+      if (!ctx.state.shop.includes(uid)) { freeStep(ctx, p, { left: [data.cost, ...data.left], who: data.who }); return; }
+      ctx.recruit(p, uid, { free: true });
+      freeStep(ctx, p, data);
+    },
+    doppelCopy(ctx, p, uid, data) {
+      const target = ctx.card(uid);
+      const self = ctx.card(data.uid);
+      self.copy = target.copy || target.def.id;
+      // a copied Hustler works the same color (until its own when-recruited pick below sets one)
+      if (target.color !== undefined) self.color = target.color;
+      ctx.log(`${p.name}'s ${self.def.name} becomes a copy of ${defById(self.copy).name}.`);
+      // Becoming a copy is this physical card's Recruit ability. Impostors doesn't recruit that identity again:
+      // its ongoing hooks start now, and round-start hooks wait.
+      const d = defById(self.copy);
+      // Doppelganger also does the copied member's On Recruit right then (Cory, 2026-10-28: a copied Connector
+      // did nothing, since Doppelganger only comes in round III and Connector's Round Start never came)
+      // Once per round per Doppelganger, so a Doppelganger swapped out and back in by Panel-style swaps can't loop
+      // (Claude, under Cory's go-with-your-gut).
+      if (self.def.key === 'doppel' && self.copiedRecruit !== ctx.state.round) {
+        self.copiedRecruit = ctx.state.round;
+        if (d.onRecruited) ctx.recruitAbility(p, self, d, () => d.onRecruited(ctx, p, self));
+        if (d.now) for (const hook of ['onRoundStart', 'onRoundStartLate']) if (d[hook]) ctx.recruitAbility(p, self, d, () => d[hook](ctx, p, self));
+      }
+      ctx.grantWorkers(p, d, self.uid);
+    },
+  },
+
+  members: [
+    // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 4 → 8
+    // REPLACE10 bot test (Nov 4, quality loop lane D): Busker's place. 3 green + 2 any as a player sees it. At round start
+    // (before anyone places): one round I space of any color, done for its owner as Cover does an empty one (Green's own
+    // copy spaces left out: at round start there is nothing for them to copy). Nothing to remember after.
+    // Spaces whose text says "this turn" (Gather, Allowance, Splurge, Peek) are left off: at round start there is no turn
+    // for that half to apply to (Lab's play judge, Nov 4). Done as the member, so a copied Build Up's +5 says so.
+    // REPLACE10=warmup,warmupcheap: 2 green + 2 any (pitches/D-green-4.md), for a trial beside 3 + 2
+    ...add10(m('warmup', 'Warm-Up Act', on10('warmupcheap') ? 1 : 2, 2, 'Round Start: copy a round I action without “this turn” in it.', {
+      onRoundStart(ctx, owner) {
+        const list = emptyTargets(ctx).filter(x => x.a.ring === 1 && !(x.qid === 'echo' && x.a.key !== 'chant') && !/this turn/i.test(x.a.text || ''));
+        if (!list.length) return;
+        ctx.choose(owner, 'Warm-Up Act: copy which round I action?', list.map(x => ({
+          id: `slot:${x.key}`, label: `${x.a.name}: ${x.a.text}`, kind: 'action', value: x.key, hint: emptyValue(ctx, x.a, owner),
+        })), 'echo.warmupDo');
+      },
+    })),
+    m('evergreen', 'Busker', 1, 2, // Cory, 2026-10-25: cost 3 (was 4)
+      'On Recruit: +2 green. Round Start: +2 green.', { ...old10('warmup'),
+      onRecruited(ctx, owner) { ctx.gain(owner, 'green', 2); },
+      onRoundStart(ctx, owner) { ctx.gain(owner, 'green', 2); },
+    }),
+    m('choir', 'Choir', 4, 2, 'Whenever you copy a space, +1 green.', { n: 2 }), // 2 members (Cory, Oct 29: "choir and raiders can be more"; 2 is Claude's start)
+    m('muse', 'Muse', 1, 2, 'Whenever a rival copies an action, +1 green.', { retired: true }), // Impersonator takes its place (Claude, under Cory's "use your judgement", 2026-11-03)
+    // Replacement batch 3 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Muse's place. 4 green + 2 any as a player sees it. The chosen
+    // member's ability rides on the card (card.ability: core's effectiveDefs), never its worth or member count. Its On
+    // Recruit does nothing (nothing is being recruited). At round start the ability it holds still does its Round Start,
+    // then the owner chooses again; the new one's Round Start waits for the next round. One On Use a game (and one a
+    // round) across every ability it holds. Another Impersonator, or an uncopied Doppelganger or Impostors, has no
+    // ability of its own to lend, so it isn't offered.
+    m('impersonators', 'Impersonator', 3, 2, "On Recruit and Round Start: choose a rival's member. Until you choose again, Impersonator has that member's ability.", { now: true, round: 1, // a round I member as Muse was (bot-tested in a later round; Nov 3)
+      onRoundStart(ctx, owner, card) {
+        const list = ctx.rivals(owner).flatMap(o => ctx.membersOf(o)).filter(c => c.copy || !['doppel', 'impostor', 'impersonators'].includes(c.def.key));
+        if (!list.length) { ctx.log(`${owner.name}'s Impersonator: no rival member to choose.`); return; }
+        ctx.choose(owner, "Impersonator: choose a rival's member; until you choose again, Impersonator has that member's ability", list.map(c => ({
+          id: `card:${c.uid}`, label: `${ctx.ownerOf(c.uid).name}: ${c.def.name}`, kind: 'member', value: c.uid,
+          hint: impersonateHint(ctx, owner, card, defById(c.copy || c.def.id)),
+        })), 'echo.impersonate', { uid: card.uid });
+      },
+    }),
+    // Understudy and Ensemble replaced Choirmaster (green for a rival's copy: a gift for doing nothing, and Muse's
+    // twin) and Fan (green when a rival takes the center: nothing to do with copying). Claude, 2026-10-14.
+    // Cory, 2026-10-28: back in the deck at 4, "two green two wild" (2 green + 1 any + the +1 wild)
+    m('understudy', 'Understudy', 2, 1, 'On Recruit: copy the action taken the previous turn.', { // wording Cory's, Oct 28
+      onRecruited(ctx, owner) {
+        // Retired Understudy keeps its old before-this-turn behavior in saved games; current Echo uses previousNow.
+        const L = ledger(ctx.state), skip = L.origin || (L.now[L.open]?.p === owner.id ? L.open : null);
+        offer(ctx, owner, targets(ctx, owner, 'previous', skip), 'Understudy: copy the action taken the previous turn?', 'now', 'Understudy');
+      },
+    }),
+    // was "Game end: +1 follower per green member." (2+2) until the design critic's follow-ups (2026-10-14): now it
+    // pays for the copy itself, a rival's space only, and the follower counts at once (heard() above).
+    m('ensemble', 'Ensemble', 2, 2, 'Whenever you copy your own action, +1 follower.', { n: 2, f: 3 }), // Cory, 2026-10-28: 2 members; (Cory, Oct 29, balance run: +1 follower)
+    m('groupie', 'Groupie', 4, 4, 'Whenever anyone recruits a green member, +1 green.', {
+      onAnyRecruit(ctx, owner, card, by, recruited) {
+        if (recruited.uid !== card.uid && recruited.def.id.startsWith('echo.')) ctx.gain(owner, 'green', 1);
+      },
+    }),
+    m('translator', 'Translator', 3, 1, 'What you copy comes as green. Switch it on or off when you recruit.', {
+      toggle: true,
+      onRecruited(ctx, owner, card) { card.on = true; },
+    }),
+    m('tuningfork', 'Impressionist', 1, 2, 'Whenever any player copies an action, +1 of its color.'),
+    // Cory, 2026-10-28: back as a big card at 10 (6 green + 3 any + the +1 wild); no follower condition any more
+    m('wallflower', 'Wallflower', 6, 3, 'Whenever you copy an action, double the resources it gives you.', old2),
+    // REPLACE2 bot test (Nov 3, replacement batch 2): Wallflower's place. 6 green + 3 any as a player sees it. Any color on
+    // the table; a pile isn't an action, so Agents doesn't stop it.
+    ...add2(m('mirrorimage', 'Mirror Image', 5, 3, 'On Use, once per game: choose a rival and a color; gain that color until you hold as much of it as they do.', {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const opts = mirrorOptions(ctx, owner);
+        if (!opts.length) { card.used = false; ctx.log(`${owner.name}'s Mirror Image: no rival holds more of any color.`); return; }
+        ctx.log(`${owner.name} uses Mirror Image.`);
+        ctx.choose(owner, 'Mirror Image: match which rival’s pile?', opts, 'echo.mirrorImage');
+      },
+      botActivate: (ctx, owner) => {
+        const best = Math.max(0, ...mirrorOptions(ctx, owner).map(o => o.hint));
+        return (ctx.state.round === 3 && best >= 6) || (ctx.state.round === 3 && owner.left === 0 && best > 0);
+      },
+    })),
+    // Keepsake ("When recruited: copy one of your spaces from this round") is cut: Reprise does the same on a space.
+    // Cory, 2026-10-28: Mime returns renamed ("yes but needs a different name"); text and cost 3 are Claude's
+    // Nov 4 (Claude, under Cory's go-with-your-gut; was "+1 green per Green space with anyone's minion"): fans copy the
+    // leader. Holding the most yourself, or tying for it, it reads the rival with the most; rivals tied for the most:
+    // any of their actions (Claude's reading). Nothing when that player has no minion on the board.
+    m('mirror', 'Fan Club', 2, 3, 'On Recruit: copy an action the player with the most followers has a minion on.', { n: 3, // 3 members, 3 to 6 (Cory, Oct 29: yes to "counts as 3 members, price 3 to 6")
+      onRecruited(ctx, owner) {
+        const rivals = ctx.rivals(owner);
+        if (!rivals.length) return;
+        const most = Math.max(...rivals.map(o => ctx.followers(o)));
+        const leaders = rivals.filter(o => ctx.followers(o) === most).map(o => o.id);
+        const list = targets(ctx, owner, 'any').filter(e => leaders.includes(e.p));
+        const names = leaders.map(id => ctx.player(id).name).join(' and ');
+        if (!list.length) { ctx.log(`${owner.name}'s Fan Club: ${names} has no minion on an action to copy.`); return; }
+        offer(ctx, owner, list, `Fan Club: copy which of ${names}'s actions?`, 'now', 'Fan Club');
+      },
+    }),
+    // Cory, 2026-10-28: "Roadie is good" (Green's 16th); cost 3 is Claude's
+    // Cory, 2026-11-01 playtest: "roadie should be On Recruit as well" (now: its round-start part fires once on recruit)
+    // REPLACE10 bot test (Nov 4, quality loop lane D): Roadie's place. 2 green + 1 any as a player sees it. Fires where
+    // Choir does: each copy of an action you make (Echo, Reprise, Cover, a member's copy), once per copy.
+    // REPLACE10=copyist,copyist2: the +2 version (pitches/D-green-4.md), for a trial beside the +1
+    ...add10(m('copyist', 'Copyist', 1, 1, `Whenever you copy an action, +${COPYIST} follower${COPYIST > 1 ? 's' : ''}.`)),
+    m('roadie', 'Roadie', 1, 1, 'On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.', { now: true, ...old4, ...old10('copyist'),
+      onRoundStart(ctx, owner) {
+        const g = ctx.countMembersOfColor(owner, 'echo');
+        if (g) ctx.gain(owner, 'green', g);
+      },
+    }),
+    // REPLACE4 bot test (Nov 3, replacement batch 4): Roadie's place. 3 green + 1 any as a player sees it. Core scores it
+    // (contestTable, flag copycat): in each contest, a holder whose count is exactly the winner's minus 1, and at least 1,
+    // is one of its winners, so the prize splits as any tie's. A spoiled contest has no winner to tie.
+    ...add4(m('copycats', 'Copycats', 2, 1, 'Round End: in each contest where you hold exactly 1 less than the winner, you tie for it.', { copycat: true })),
+    m('afterimage', 'Sleepwalker', 4, 2, 'On Recruit: copy one of your spaces from last round. Round Start: copy one of your spaces from last round.', { now: true,
+      onRoundStart(ctx, owner) {
+        const L = ledger(ctx.state);
+        const list = Object.values(L.last).filter(e => copyable(e) && e.p === owner.id);
+        offer(ctx, owner, list, 'Sleepwalker: copy which of your spaces from last round?', 'last', 'Sleepwalker');
+      },
+    }),
+    m('hourglass', 'Stunt Double', 2, 2, 'On Recruit: copy the action you just took.', {
+      onRecruited(ctx, owner) {
+        const e = justTook(ctx, owner);
+        if (!e) {
+          ctx.log(`${owner.name}'s Stunt Double has nothing to copy.`);
+          return;
+        }
+        // A recruited member begins its own chain, even when an action recruited it for free; copied by Greatest Hits,
+        // it stays in Greatest Hits' chain.
+        withPath(ctx, hitsChain ? pathNow(ctx) : [], () => copy(ctx, owner, e, { by: 'Stunt Double' }), hitsChain ? undefined : e.key);
+      },
+    }),
+    // Cory, 2026-10-28: "lets shift tribute band into this", then "should maybe get to pick the rival they copy"
+    m('dejavu', 'Tribute Band', 10, 3, /* Cory, Oct 27: "tribute band at 12" (with the +1 wild); 14 (Cory, Nov 1: "just raise it to 14") */ 'On Use, once per game: choose a rival. Do every action they have a minion on this round.', { n: 3, // 3 members, still 12 (Cory, Oct 29: "Tribute Band at least 3. its cost should still be 12")
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const list = ctx.rivals(owner).filter(o => ownPlan(ctx, o).take.length);
+        // nothing to copy: the use isn't spent (as Stunt Double's isn't)
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Tribute Band has no rival's actions to copy.`); return; }
+        if (list.length === 1) { copyLeader(ctx, owner, list[0]); return; }
+        ctx.choose(owner, 'Tribute Band: whose actions?', list.map(o => ({
+          id: `player:${o.id}`, label: o.name, kind: 'player', value: o.id, hint: ownPlan(ctx, o).take.reduce((n, e) => n + entryValue(ctx, e, owner), 0),
+        })), 'echo.tribute', { uid: card.uid });
+      },
+      botActivate: (ctx, owner) => owner.left === 0 && ctx.state.round >= 2
+        && Math.max(0, ...ctx.rivals(owner).map(o => ownPlan(ctx, o).take.reduce((n, e) => n + entryValue(ctx, e, owner), 0))) >= (ctx.state.round === 3 ? 6 : 10),
+      ...old4,
+    }),
+    // REPLACE4 bot test (Nov 3, replacement batch 4): Tribute Band's place. 7 green + 3 any as a player sees it. "The first
+    // minion of a round" is the round's first one placed on the wheel. It is a copy (Agents stops it, Bait and
+    // Impressionist answer it), made after that space's own choices and before its taker's recruit step.
+    ...add4(m('openingact', 'Opening Act', 6, 3, 'Whenever a rival places the first minion of a round, you do that action too.', { f: 2,
+      // BOTSEE: each later round, a rival goes first (seats − 1 in seats), and a copied action brings about 80% of a placement
+      ...see(i => [1, 2, 3].filter(r => r > i.round).reduce((a, r) => a + ((i.n - 1) / i.n) * 0.8 * i.income[r - 1], 0)),
+      afterRivalAction(ctx, owner, card, qid, rival) {
+        const st = ctx.state;
+        if (card.opened === st.round || !ctx.placement) return;
+        const placed = Object.keys(st.slots).length + Object.values(st.squats || {}).reduce((n, list) => n + list.length, 0);
+        if (placed !== 1) return;
+        card.opened = st.round;
+        // behind the space's own choices (queued as it resolves, at the head), ahead of the taker's recruit step
+        const q = st.queue, at = q.findIndex(t => t.t !== 'choose' && t.t !== 'content');
+        q.splice(at < 0 ? q.length : at, 0, { t: 'content', p: owner.id, h: 'echo.openingAct', data: { key: ctx.placement.key, pid: rival.id } });
+      },
+    })),
+    // Cory, 2026-10-15: moved here from Red (same card; its rename and recruit-time pick wait for his redesign)
+    m('doppel', 'Doppelganger', 2, 2, 'On Recruit: this member becomes a copy of another of your members.', { round: 3, // joins in round III (Cory, 2026-10-25)
+      onRecruited(ctx, owner, card) {
+        const own = ctx.membersOf(owner).filter(c => c.uid !== card.uid && (c.copy || !['doppel', 'impostor'].includes(c.def.key)));
+        if (!own.length) return;
+        ctx.choose(owner, 'Doppelganger: copy which of your members?', own.map(c => ({
+          id: `card:${c.uid}`, label: c.def.name, kind: 'member', value: c.uid,
+          hint: ['banker', 'prospector', 'recruiter', 'proselytizer', 'host'].includes(c.def.key) ? 2 : (c.def.vanilla ? 0 : 1),
+        })), 'echo.doppelCopy', { uid: card.uid });
+      },
+    }),
+    m('impostor', 'Impostors', 2, 3, /* Cory, 2026-10-28: "more expensive": 6 (was 5) */ 'On Recruit: this member becomes a copy of a rival’s member.', { f: 2, n: 2, round: 3, // +1 follower and member (Cory, Oct 30); joins in round III (Cory, 2026-10-25)
+      onRecruited(ctx, owner, card) {
+        const rivals = ctx.rivals(owner).flatMap(p => ctx.membersOf(p)).filter(c => c.copy || !['doppel', 'impostor'].includes(c.def.key));
+        if (!rivals.length) return;
+        ctx.choose(owner, 'Impostors: copy a rival’s member', rivals.map(c => ({
+          id: `card:${c.uid}`, label: `${ctx.ownerOf(c.uid).name}: ${c.def.name}`, kind: 'member', value: c.uid,
+          hint: (defById(c.copy || c.def.id).f || 1) + 1,
+        })), 'echo.doppelCopy', { uid: card.uid });
+      },
+    }),
+    m('connector', 'Connector', 2, 2, 'On Recruit: +1 green per non-green member you have. Round Start: +1 green per non-green member you have.', {
+      onRecruited(ctx, owner) { ctx.gain(owner, 'green', nonGreenMembers(ctx, owner)); },
+      onRoundStart(ctx, owner) { ctx.gain(owner, 'green', nonGreenMembers(ctx, owner)); },
+    }),
+    m('agents', 'Agents', 1, 1, 'Rivals can’t copy your actions.', { f: 2, n: 2 }),
+    m('bait', 'Bait', 1, 1, 'Whenever anyone copies one of your actions, they −1 follower and you +1 follower.'),
+    // REPLACE10 bot test (Nov 4): Chronicler's place, Cory's idea ("use once per game and the next on-recruit is doubled").
+    // 2 green + 3 any as a player sees it. Used on your turn; the member you recruit later this same turn has its On
+    // Recruit (or now-and-round-start effect) done twice (core's recruit). A recruit on another turn doesn't count.
+    ...add10(m('encore', 'Encore', 1, 3, 'On Use, once per game: this turn, the On Recruit of the member you recruit happens twice.', {
+      activate: 'game',
+      beforeRecruit: true, // not offered after this turn's recruit (Lab play judges, Nov 4: it could be wasted)
+      onActivate(ctx, owner) {
+        owner.encoreTurn = (ctx.state.turns || []).length;
+        ctx.log(`${owner.name} uses Encore: this turn's recruit's On Recruit happens twice.`);
+      },
+      botActivate: (ctx, p) => ctx.state.round >= 2 && ctx.shopCards().some(c => (c.def.onRecruited || c.def.now) && ctx.payChoices(p, c.uid, {}).length && c.def.s + c.def.w >= 5),
+    })),
+    // REPLACE10 bot test (Nov 4, quality loop lane D): Chronicler's place. 4 green + 3 any as a player sees it. On your
+    // turn, once a round: another of your members' On Recruit (or now-and-round-start effect, as Greatest Hits reads it)
+    // runs again for you, as one Greatest Hits copy does; the card is turned until the next round starts.
+    ...add10(m('bootlegger', 'Bootlegger', 3, 3, 'On Use, once per round: copy the On Recruit of another of your members.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const list = ownRecruits(ctx, owner).filter(c => c.uid !== card.uid && recruitDef(c).key !== 'bootlegger');
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Bootlegger: no other member with an On Recruit.`); return; }
+        ctx.log(`${owner.name} uses Bootlegger.`);
+        ctx.choose(owner, 'Bootlegger: copy which member\'s On Recruit?', list.map(c => {
+          const d = recruitDef(c);
+          return { id: `card:${c.uid}`, label: `${d.name}: ${d.text}`, kind: 'card', value: c.uid, hint: 2 + (d.f || 0) };
+        }), 'echo.bootleg');
+      },
+      botActivate: (ctx, p) => ownRecruits(ctx, p).some(c => recruitDef(c).key !== 'bootlegger'),
+    })),
+    m('chronicler', 'Chronicler', 1, 3, 'Game End: +1 follower per green member you have.', { ...old10('bootlegger'), ...old10('encore'),
+      onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'echo'),
+    }),
+  ],
+};
+
+export function justTook(ctx, p) {
+  const L = ledger(ctx.state);
+  // your own latest space this round (a rival's space or a copy that ran since can't stand in for it)
+  const last = Object.values(L.now).filter(x => x.p === p.id).sort((a, b) => (b.seq || 0) - (a.seq || 0))[0];
+  // Recruit hooks can run inside a still-resolving take/swap, before its wrapper settles the yield.
+  // Read a settled copy so Stunt Double sees that action without mutating the ledger during UI previews.
+  const e = last && { ...last };
+  if (e?.before) settle(ctx.state, e);
+  return e && e.p === p.id && copyable(e) && !protectedAction(ctx, e, p) ? e : null;
+}
+
+const nonGreenMembers = (ctx, p) => ctx.membersOf(p).reduce((n, c) => n + (c.def.quadrant === 'echo' ? 0 : ctx.memberWeight(c)), 0);
+const greenOccupied = ctx => {
+  const q = ctx.state.quadrants.indexOf('echo');
+  return Object.keys(ctx.state.slots).filter(key => key.startsWith(`${q}-`) && key !== `${q}-0`).length;
+};
+
+export default echoQ;
+
+let installed = false;
+/** Register Green and start the yield ledger on every quadrant registered so far. Call once, after the others. */
+export function install() {
+  if (!installed) registerQuadrant(echoQ);
+  for (const id of allQuadrantIds()) {
+    const q = quadrant(id);
+    q.actions.forEach((a, i) => wrapAction(id, a, i));
+    for (const k of Object.keys(q.handlers || {})) wrapHandler(q, k);
+    // re-index the wrapped handlers, keeping any relabelled member colors (thieves.js does the same trick)
+    const labels = q.members.map(d => d.quadrant);
+    registerQuadrant(q);
+    q.members.forEach((d, i) => { if (labels[i]) d.quadrant = labels[i]; });
+  }
+  installed = true;
+  return echoQ;
+}
+
+/** Mirror Image (REPLACE2): every rival and color where the rival holds more than p; the hint is what p gains. */
+function mirrorOptions(ctx, p) {
+  const out = [];
+  for (const o of ctx.rivals(p)) for (const c of ctx.state.resources) {
+    const d = (o.res[c] || 0) - (p.res[c] || 0);
+    if (d > 0) out.push({ id: `mirror:${o.id}:${c}`, label: `${o.name}'s ${c}: +${d}`, kind: 'choice', value: [o.id, c], hint: d });
+  }
+  return out;
+}
+
+/** Impersonator (REPLACE3): a rough worth of holding def's ability, for bots' near ties (an On Recruit or a plain card
+ *  lends nothing; a game-end count is read now). */
+function impersonateHint(ctx, owner, card, def) {
+  const keys = Object.keys(def).filter(k => !['key', 'name', 's', 'w', 'text', 'f', 'n', 'id', 'quadrant', 'copies', 'vanilla', 'round', 'onRecruited', 'extraColor', 'extraWild', 'retired'].includes(k));
+  if (def.vanilla || !keys.length) return 0;
+  let end = 0;
+  if (def.onGameEnd) { try { end = def.onGameEnd(ctx, owner, card) || 0; } catch { end = 0; } }
+  return (def.s + def.w) * 0.5 + end;
+}
+

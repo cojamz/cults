@@ -1,0 +1,801 @@
+// Purple: extra turns. Its spaces give them free (Cory, 2026-10-15: no board action requires spending); purple held
+// counts for the ring, and members (Taskmaster) can still buy a turn with it.
+// Most purple at round end takes the ring's followers.
+// Rework (Claude, 2026-10-14, under Cory's go-with-your-gut, after his first play): every extra turn a Purple space
+// gives is a net gain (one worker in, two or more out); Linger became Plan Ahead; the ring counts purple honestly.
+// Reprice (Claude, 2026-10-14, go-with-your-gut, from the member-value sim in design/eval/purple-members.md): Corner-Cutter,
+// Taskmaster, Late Risers 4+2; Overseer 2+2; Go-Getter 6+2. Night Owls takes Relay's slot.
+//
+// Engine notes (content-only, no core change, but for roundOrder):
+// - Crunch Time is not an extra turn: turnsNow moves your own next turns up to right after this one (no new minion).
+// - An extra turn is an ordinary { t: 'turn' } task put right after the current turn ends (p.left += 1).
+// - Extra turns only happen when the board has a space to spare (more open spaces than turns still to come),
+//   so they never squeeze anyone out of the last space (round I fills every space).
+// - onExtraTurn / onRivalExtraTurn are purple-only member hooks, fired by the helpers below.
+import { defById, spacesOf } from './index.js';
+import { add3, old3, handlers3 } from './replace3.js';
+import { add5, old5 } from './replace5.js';
+import { swap11, handlers11 } from './replace11.js';
+import { add7, old7, REPLACE7 } from './replace7.js';
+import { REPLACE3 } from './replace3.js';
+import { see, endsAhead } from './botsee.js';
+
+const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
+const P = 'purple';
+const TURN_VALUE = [3, 5, 7]; // a placement plus its buy, by round
+
+/** Workers p has on the board right now (a worker sharing a rival's space counts too). */
+export const onBoard = (ctx, p) => Object.values(ctx.state.slots).filter(o => o === p.id).length
+  + Object.values(ctx.state.squats || {}).reduce((s, list) => s + list.filter(o => o === p.id).length, 0);
+/** Open spaces right now, as [quadrant index, action index]. */
+function openSpaces(ctx) {
+  const out = [];
+  ctx.state.quadrants.forEach((qid, q) => ctx.quadrant(qid).actions.forEach((a, i) => {
+    if (!(a.ring > ctx.state.round || (a.lastRound && ctx.state.round > a.lastRound)) && ctx.state.slots[`${q}-${i}`] === undefined) out.push([q, i]);
+  }));
+  return out;
+}
+// a minion still to land this turn counts too (a queued place, or one held while a member is used beside the spaces):
+// Go-Getter used before placing at a full round I took a rival's last space, and the rival's minion sat out
+const scheduled = ctx => ctx.state.queue.filter(t => t.t === 'turn' || t.t === 'place').length + (ctx.state.unplaced || 0);
+/** True when one more turn can't squeeze anyone out of a space. */
+export const spareSpace = ctx => openSpaces(ctx).length > scheduled(ctx);
+/** What extra turns that cost `base` purple cost p (Corner-Cutter halves it, rounded up). Only Taskmaster pays now:
+ *  Overtime is free (Cory, 2026-10-15: "no board action should require spending"). */
+const priceFor = (ctx, p, base) => (ctx.membersOf(p).some(c => c.def.halfTurns || (c.copy && c.copy.endsWith('.doubletime'))) ? Math.ceil(base / 2) : base);
+/** How many more turns the board has room for (open spaces beyond the turns still to come). */
+const room = ctx => openSpaces(ctx).length - scheduled(ctx);
+const canBuyTurn = (ctx, p, base, n = 1) => (p.res[P] || 0) >= priceFor(ctx, p, base) && room(ctx) >= n;
+/** "(Corner-Cutter: 8 → 4)" when Corner-Cutter made it cheaper, so the price traces to the card. */
+const halfNote = (base, c) => (c < base ? ` (Corner-Cutter: ${base} → ${c})` : '');
+/** Pay for n extra turns; without the purple (or the spare spaces), take the fallback gain instead. */
+function buyTurn(ctx, p, base, what, fallback, member = false, n = 1) {
+  if (canBuyTurn(ctx, p, base, n)) {
+    const c = priceFor(ctx, p, base);
+    p.res[P] -= c;
+    const turns = n === 1 ? 'an extra turn' : `${n} extra turns`;
+    ctx.log(member ? `${p.name}'s ${what}: pays ${c} purple for ${turns}${halfNote(base, c)}.` : `${p.name} pays ${c} purple for ${what}${halfNote(base, c)}.`);
+    extraTurns(ctx, p, n);
+    return true;
+  }
+  if (fallback) ctx.gain(p, P, fallback, { fromAction: true });
+  return false;
+}
+const turnValue = ctx => TURN_VALUE[ctx.state.round - 1] || 3;
+/** A free space: n extra turns right after this one, as many as the board has room for. */
+const freeTurnsEstimate = (ctx, n) => Math.max(0, Math.min(n, room(ctx) - 1)) * turnValue(ctx);
+function freeTurns(ctx, p, n, what) {
+  if (!spareSpace(ctx)) { ctx.log(`${p.name}'s ${what}: no free space this round, so no extra turn.`); return 0; }
+  // a seat placing on taken spaces (Overtime) could take the same extra-turn space forever: none that round
+  if (p.squatAll === ctx.state.round) { ctx.log(`${p.name}'s ${what}: no extra turn while placing on taken spaces.`); return 0; }
+  return extraTurns(ctx, p, n);
+}
+
+function fire(ctx, p, hook, ...args) {
+  for (const c of ctx.membersOf(p)) {
+    const defs = [c.def];
+    // the copied member's def by id: it may be a guest member with no quadrant of its own
+    if (c.copy) defs.push(defById(c.copy));
+    // run as the member, so what it changes is logged under its name (Foreman, Courier, Apprentice, Overseer)
+    for (const d of defs) if (d && d[hook]) ctx.asMember(p, d.name, () => d[hook](ctx, p, c, ...args));
+  }
+}
+function extraHooks(ctx, p) {
+  fire(ctx, p, 'onExtraTurn');
+  for (const o of ctx.rivals(p)) fire(ctx, o, 'onRivalExtraTurn', p);
+}
+
+/** One more minion for p this round, placed after everyone else's (the snake carries on until every minion is placed).
+ *  Only while the board has a free space for it, so a round never hands out more extra minions than it has spare spaces. */
+export function extraMinion(ctx, p, what) {
+  if (ctx.state.round === 1) { ctx.log(`No extra minions in round I: ${p.name} gets no extra minion from ${what}.`); return 0; }
+  if (!spareSpace(ctx)) { ctx.log(`${p.name}'s ${what}: no free space this round, so no extra minion.`); return 0; }
+  const q = ctx.state.queue, close = q.findIndex(t => t.t === 'allPlaced');
+  q.splice(close < 0 ? q.length : close, 0, { t: 'turn', p: p.id });
+  p.left += 1;
+  ctx.log(`${p.name}'s ${what}: ${p.name} gets 1 more minion this round.`);
+  extraHooks(ctx, p);
+  return 1;
+}
+
+/** Give p up to n extra turns right after the current one. Returns how many it got. */
+export function extraTurns(ctx, p, n = 1, why = null, { quiet = false } = {}) {
+  // no extra minions in round I (Cory, 2026-10-15): every space there is already spoken for
+  if (ctx.state.round === 1) { ctx.log(`No extra minions in round I: ${p.name} gets no extra turn${why ? ` from ${why}` : ''}.`); return 0; }
+  let k = 0;
+  for (; k < n && spareSpace(ctx); k++) {
+    const q = ctx.state.queue;
+    const end = q.findIndex(t => t.t === 'endTurn');
+    q.splice(end < 0 ? 0 : end + 1 + k, 0, { t: 'turn', p: p.id });
+    p.left += 1;
+  }
+  if (k) {
+    // why: the member that gave it (Errand Runner, Go-Getter), so the turn traces to the card
+    if (!quiet) ctx.log(`${why ? `${p.name}'s ${why}: ${p.name}` : p.name} gets ${k === 1 ? '1 more minion' : `${k} more minions`}, placed now.`); // Cory, 2026-10-29: "extra turn" left the game's words
+    for (let i = 0; i < k; i++) extraHooks(ctx, p);
+  // said with the card or space first, so the turn card names it (Cory, 2026-10-15: "I bought Night Owls in round 1 and it
+  // didn't seem to give me an extra"; with 4 players round I has no free space)
+  } else ctx.log(why ? `${p.name}'s ${why}: no free space this round, so no extra turn.` : `No free space this round: ${p.name} gets no extra turn.`);
+  return k;
+}
+
+/** p is passed over on their next turn this round; that minion places once the snake carries on past everyone else. */
+function skipNext(ctx, p, why, by = p, quiet = false, { token = false, last = false } = {}) {
+  // Early Birds (Cory, 2026-10-22): "your turns cannot be skipped", your own Sleep In and Last Call too
+  if (noSkip(ctx, p)) { if (!quiet) ctx.log(`${p.name}'s Early Birds: ${p.name}'s turn can't be skipped.`); return false; }
+  const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn');
+  const close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
+  const mine = t => t.t === 'turn' && t.p === p.id && !t.token && !(last && t.now);
+  let i = end + 1;
+  // last: the hand empties at its last snake turn (Sleep In puts one minion on the Goes Last token)
+  if (last) { i = stop - 1; while (i > end && !mine(q[i])) i--; if (i <= end) i = stop; }
+  else while (i < stop && !mine(q[i])) i++;
+  if (i >= stop) { ctx.log(`${by.name}'s ${why}: ${p === by ? 'no turn' : `${p.name} has no turn`} left to skip this round.`); return false; }
+  // where that turn sat in the round's order, matched as the seats match it (as turnsNow does)
+  const s = ctx.state, { order } = ctx.roundOrder();
+  const seq = [...(s.turns || []).map(pid => ({ pid })), ...q.filter(t => t.t === 'turn').map(task => ({ pid: task.p, task }))];
+  let j = 0;
+  for (const t of seq) if (j < order.length && order[j] === t.pid) t.at = j++;
+  const [task] = q.splice(i, 1);
+  const at = (seq.find(t => t.task === task) || {}).at;
+  if (token) task.token = true;
+  // where the turn sat, a marker: the turn is really skipped when play reaches it (Gossip pays then); a token's marker
+  // turns back into the turn if the token is taken first (the minion goes back to its owner's hand)
+  q.splice(i, 0, { t: 'content', p: p.id, h: 'purple.skipped', data: token ? { why, token: true, ...(at !== undefined ? { at } : {}) } : { why } });
+  q.splice(stop, 0, task);
+  // its new place: after every other turn of the round's order still to come
+  if (at !== undefined && at !== order.length - 1) {
+    if (!s.early || s.early.round !== s.round) s.early = { round: s.round, moves: [] };
+    s.early.moves.push({ p: p.id, from: at, to: order.length - 1, why, late: true });
+  }
+  if (!quiet) ctx.log(`${by.name}'s ${why}: ${p.name} skips their next turn.`);
+  return true;
+}
+const noSkip = (ctx, p) => ctx.membersOf(p).some(c => c.def.noSkip || (c.copy && c.copy.endsWith('.earlybird')));
+/** p's turns still to come this round (after the one now running), as queue indices. */
+const turnsAhead = (ctx, p) => {
+  const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');
+  const out = [];
+  for (let i = end + 1; i < (close < 0 ? q.length : close); i++) if (q[i].t === 'turn' && q[i].p === p.id) out.push(i);
+  return out;
+};
+/** Who holds the Goes Last token this round (Cory, Nov 1, 2:16pm and 2:35pm), or null. */
+export const tokenHolder = s => (s.goesLast && s.goesLast.round === s.round ? s.goesLast.pid : null);
+/**
+ * p takes the Goes Last token: "Its holder places the minions on it once every hand is empty. If someone takes it, the
+ * minions on it go back to their owner's hand." The old holder's minions rejoin the snake: each one still waiting on a
+ * passed turn takes that turn again, and any whose turn already went by places after the other hands (core lastCallLast
+ * keeps the new holder's minions on the token behind them).
+ */
+function takeToken(ctx, p, why, what = '') {
+  const s = ctx.state, was = tokenHolder(s);
+  s.goesLast = { round: s.round, pid: p.id };
+  if (was === null || was === p.id) { ctx.log(`${p.name}'s ${why}: ${p.name} ${was === p.id ? 'keeps' : 'takes'} the Goes Last token${what}.`); return; }
+  const o = ctx.player(was), q = s.queue;
+  const close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
+  const on = q.slice(0, stop).filter(t => t.t === 'turn' && t.p === o.id && t.token);
+  on.forEach(t => { delete t.token; });
+  // a passed turn still to come is the minion's own turn again
+  for (const t of on) {
+    const m = q.findIndex(x => x.t === 'content' && x.h === 'purple.skipped' && x.p === o.id && x.data && x.data.token);
+    if (m < 0) break;
+    const at = q[m].data.at;
+    q.splice(q.indexOf(t), 1);
+    q.splice(q.findIndex(x => x.t === 'content' && x.h === 'purple.skipped' && x.p === o.id && x.data && x.data.token), 1, t);
+    if (s.early && s.early.round === s.round) {
+      const k = s.early.moves.findIndex(mv => mv.p === o.id && mv.late && mv.from === at);
+      if (k >= 0) s.early.moves.splice(k, 1);
+    }
+  }
+  ctx.log(`${p.name}'s ${why}: ${p.name} takes the Goes Last token${what} from ${o.name}${on.length ? `, and ${o.name}'s ${on.length === 1 ? 'minion on it goes' : `${on.length} minions on it go`} back to their hand` : ''}.`);
+}
+/**
+ * p takes the Goes Last token and puts n of their minions still to place on it (Last Call: all; Sleep In: 1). Each one
+ * empties the hand a turn sooner, so p's turns that still have a rival's turn after them are passed (skip markers);
+ * the rest already come last and only join the token. Early Birds ("Your turns can't be skipped."): the space pays and
+ * nothing goes on the token, so the token stays where it is (decisions, Nov 1 2:21pm: take the payout without going last).
+ */
+function toToken(ctx, p, n, why) {
+  if (noSkip(ctx, p)) { ctx.log(`${p.name}'s Early Birds: ${p.name}'s turns can't be skipped, so ${p.name} doesn't go last.`); return 0; }
+  takeToken(ctx, p, why);
+  let put = 0;
+  // Last Call: the next turns are the ones passed while the rivals still place; Sleep In: the hand empties at the end
+  for (; put < n && waitsOnRival(ctx, p) && (n === 1 ? lastWaits(ctx, p) : true); put++) {
+    if (!skipNext(ctx, p, why, p, true, { token: true, last: n === 1 })) break;
+  }
+  // the rest: already after every rival's turn, they wait on the token too (nothing passes, so nothing pays)
+  const q = ctx.state.queue, rest = turnsAhead(ctx, p).map(i => q[i]).filter(t => !t.token && !t.now);
+  for (const t of rest.slice(-(n - put) || rest.length)) if (put < n) { t.token = true; put++; }
+  if (put) ctx.log(`${p.name}'s ${why}: ${put === 1 ? '1 minion waits' : `${put} minions wait`} on the Goes Last token.`);
+  nightWatch(ctx, p, put);
+  return put;
+}
+/** Night Watch (live since Nov 4): p just took the Goes Last token with n minions on it; each rival's Night
+ *  Watch pays +1 follower per minion. */
+function nightWatch(ctx, p, n) {
+  if (!(n > 0)) return;
+  for (const o of ctx.rivals(p)) for (const c of ctx.membersOf(o)) if (c.def.watchToken) ctx.asMember(o, c.def.name, () => {
+    o.bonus += n;
+    ctx.log(`${o.name}'s Night Watch: +${n} follower${n === 1 ? '' : 's'} (${p.name} took the Goes Last token with ${n} minion${n === 1 ? '' : 's'} on it).`);
+  }, c.uid);
+}
+/** p's last turn this round still has a rival's turn after it (Sleep In passes that one). */
+const lastWaits = (ctx, p) => {
+  const q = ctx.state.queue, ahead = turnsAhead(ctx, p).filter(i => !q[i].token && !q[i].now);
+  if (!ahead.length) return false;
+  const close = q.findIndex(t => t.t === 'allPlaced');
+  return q.slice(ahead[ahead.length - 1] + 1, close < 0 ? q.length : close).some(t => t.t === 'turn' && t.p !== p.id && !t.token);
+};
+/** The skip marker reached: p's turn is passed over now. Gossip (Cory, 2026-10-22: "+1 follower every time a players
+ *  turn is skipped", anyone's, yours too; Oct 23: "should pay when turn is actually skipped"). */
+function skipped(ctx, p, value, data) {
+  ctx.skipBeat(p, data?.why, () => {
+    ctx.log(`${p.name}'s turn is skipped${data?.why ? ` (${data.why})` : ''}.`);
+    for (const o of ctx.state.players) for (const c of ctx.abilitiesOf(o)) if (c.def.onSkip) ctx.asMember(o, c.def.name, () => c.def.onSkip(ctx, o, c, p));
+  });
+}
+/** How many turns p still has to come this round, after the one now running. */
+const turnsLeft = (ctx, p) => {
+  const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');
+  return q.slice(end + 1, close < 0 ? q.length : close).filter(t => t.t === 'turn' && t.p === p.id).length;
+};
+/** p's next turn this round still has a rival's turn after it (Last Call's "until everyone else is out of minions"). */
+const waitsOnRival = (ctx, p) => {
+  const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');
+  const win = q.slice(end + 1, close < 0 ? q.length : close);
+  const mine = win.findIndex(t => t.t === 'turn' && t.p === p.id);
+  return mine >= 0 && win.slice(mine + 1).some(t => t.t === 'turn' && t.p !== p.id);
+};
+/** Turns in a row p took just before the one now running (this round's turn record; the last entry is this turn). */
+const inARow = (ctx, p) => {
+  const turns = ctx.state.turns || [];
+  let k = 0;
+  for (let i = turns.length - 2; i >= 0 && turns[i] === p.id; i--) k++;
+  return ctx.state.current === p.id ? k : 0;
+};
+/** Whose turn comes next this round, after the one now running (yours too, at a snake end); null when none. */
+const nextTurnOf = ctx => {
+  const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');
+  const t = q.slice(end + 1, close < 0 ? q.length : close).find(x => x.t === 'turn');
+  return t ? t.p : null;
+};
+
+/**
+ * p takes up to n of their own turns still to come this round right after this one (Crunch Time; Cory, 2026-10-15:
+ * "it's not extra turns, it's taking two immediate turns with existing minions"). No new minion, so placements this
+ * round don't change, no spare space is needed, and the extra-turn members (Foreman, Overseer…) don't fire.
+ * The round's order (roundOrder) moves the same turns up, so the seats' "your turn in N" stay true. Returns how many.
+ */
+export function turnsNow(ctx, p, n, why) {
+  const s = ctx.state, q = s.queue;
+  // a preview has no endTurn: its hold stands in, so the moved-up turns wait behind the rest of this act (Greatest Hits)
+  const end = q.findIndex(t => t.t === 'endTurn' || t.t === 'previewHold');
+  const close = q.findIndex(t => t.t === 'allPlaced');
+  const stop = close < 0 ? q.length : close;
+  // your LAST n turns of the round move up, so the turns in between stay where they are and you finish early
+  // (Cory, 2026-10-21: it shouldn't skip your next turns)
+  const picks = [];
+  for (let i = stop - 1; i > end && picks.length < n; i--) if (q[i].t === 'turn' && q[i].p === p.id) picks.unshift(i);
+  if (!picks.length) { ctx.log(`${p.name} has no minions left to place: ${why} does nothing.`); return 0; }
+  // where each turn sits in the round's order, matched as the seats match it (extra turns sit outside it)
+  const { order } = ctx.roundOrder();
+  const seq = [...(s.turns || []).map(pid => ({ pid })), ...q.filter(t => t.t === 'turn').map(task => ({ pid: task.p, task }))];
+  let j = 0;
+  for (const t of seq) if (j < order.length && order[j] === t.pid) t.at = j++;
+  const done = (s.turns || []).length;
+  const cur = Math.max(-1, ...seq.slice(0, done).map(t => (t.at === undefined ? -1 : t.at)));
+  // what you just did happens now, even past a skip you already have (Cory, 2026-10-29: a copied Right Away after Last
+  // Call came at the round's end; "what would be intuitive?" Claude's answer, his game): core's lastCallLast leaves it
+  const tasks = picks.map(i => { q[i].now = true; return q[i]; });
+  for (let k = picks.length - 1; k >= 0; k--) q.splice(picks[k], 1);
+  q.splice(end + 1, 0, ...tasks);
+  const moves = [];
+  tasks.forEach((task, k) => {
+    const at = (seq.find(t => t.task === task) || {}).at;
+    if (at !== undefined && at !== cur + 1 + k) moves.push({ p: p.id, from: at, to: cur + 1 + k, why });
+  });
+  if (moves.length) {
+    if (!s.early || s.early.round !== s.round) s.early = { round: s.round, moves: [] };
+    s.early.moves.push(...moves);
+  }
+  const k = tasks.length;
+  const few = k < n ? ` (${k === 1 ? 'their last minion' : `their last ${k} minions`})` : '';
+  ctx.log(`${p.name}'s ${why}: ${p.name} takes ${k === 1 ? 'their next turn' : `their next ${k} turns`} now${few}.`);
+  return k;
+}
+/** Playing your own turns sooner: each one that jumps rivals gets first pick of the spaces they'd have taken. */
+const turnsNowEstimate = (ctx, p, n) => {
+  const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn');
+  const close = q.findIndex(t => t.t === 'allPlaced');
+  const stop = close < 0 ? q.length : close;
+  const mine = [];
+  for (let i = stop - 1; i > end && mine.length < n; i--) if (q[i].t === 'turn' && q[i].p === p.id) mine.push(i);
+  // each pulled turn jumps every rival turn before it
+  return mine.reduce((v, i) => v + Math.min(1, q.slice(end + 1, i).filter(t => t.t === 'turn' && t.p !== p.id).length / 3) * turnValue(ctx) * 0.25, 0);
+};
+
+/** Overtime, off the board since 2026-10-15 (Rush Hour took its space). Kept for the extra-turn member tests only:
+ *  test/engine/v4/retired-overtime.js puts it back on Purple's quadrant for one test file. */
+/** Roll Call left the board on 2026-10-22 (Right Away took its space); tests that need a plain purple space keep it
+ *  in that space (test/engine/v4/retired-overtime.js useRetiredRollCall). */
+export const RETIRED_ROLLCALL = {
+  key: 'windup', ring: 1, name: 'Roll Call', text: '+1 purple per minion you have on the board, this one included.',
+  estimate: (ctx, p) => onBoard(ctx, p) + 1,
+  resolve(ctx, p) { ctx.gain(p, P, onBoard(ctx, p), { fromAction: true }); },
+};
+export const RETIRED_OVERTIME = {
+  key: 'overtime', ring: 2, name: 'Overtime', text: 'Take 1 extra turn right after this one.',
+  copyDoesIt: true,
+  estimate: ctx => freeTurnsEstimate(ctx, 1),
+  resolve(ctx, p) { freeTurns(ctx, p, 1, 'Overtime'); },
+};
+
+/**
+ * Call Back (REPLACE11, Actions lane, Nov 4; Cory's Nov 3 yes to "new Purple speed spaces that fit going last"):
+ * "+1 purple in round I, +2 in round II, +3 in round III. Take the Goes Last token: move another of your minions from
+ * the wheel onto it, and its space opens." The minion leaves its space (what it did stays done) and waits on the
+ * token like Sleep In's: placed once every hand is empty. With no other minion on the wheel, you still take the token.
+ */
+const callBackKeys = (ctx, p) => myWorkers(ctx, p).filter(w => !(ctx.placement && w.key === ctx.placement.key && w.joined === !!ctx.placement.joined));
+const CALL_BACK = {
+  key: 'callback', copyDoesIt: true, ring: 1, name: 'Call Back',
+  text: '+1 purple in round I, +2 in round II, +3 in round III. Take the Goes Last token: move another of your minions from the wheel onto it, and its space opens.',
+  byRound: { lines: ['+1 purple', '+2 purple', '+3 purple'], rest: 'Take the Goes Last token: move another of your minions from the wheel onto it, and its space opens.' },
+  // a placement back (worth most of a turn: the leftover space plus its recruit) and the round's last minion
+  estimate: (ctx, p) => ctx.state.round + (callBackKeys(ctx, p).length ? Math.round(turnValue(ctx) * 0.6) + 1 : 0),
+  resolve(ctx, p) {
+    ctx.gain(p, P, ctx.state.round, { fromAction: true });
+    // no turn is skipped (the called-back minion is a new turn at the end), so Early Birds doesn't stop it
+    const mine = callBackKeys(ctx, p);
+    if (!mine.length) { takeToken(ctx, p, 'Call Back', ' (no other minion of theirs on the wheel to move onto it)'); return; }
+    if (mine.length === 1) { callBack(ctx, p, `${mine[0].key}${mine[0].joined ? '+j' : ''}`); return; }
+    ctx.choose(p, 'Call Back: move which minion onto the Goes Last token?', mine.map(w => ({
+      id: `from:${w.key}${w.joined ? '+j' : ''}`, label: `${pacerSpace(ctx, w.key).name}${w.joined ? ' (joined)' : ''}`, kind: 'slot',
+      value: `${w.key}${w.joined ? '+j' : ''}`,
+      // bots free the space worth least to the rivals who could take it next
+      hint: -pacerSpace(ctx, w.key).estimate(ctx, p),
+    })), 'purple.callBack');
+  },
+};
+function callBack(ctx, p, from) {
+  const [key, j] = String(from).split('+');
+  const w = myWorkers(ctx, p).find(x => x.key === key && x.joined === (j === 'j'));
+  if (!w) return;
+  if (w.joined) {
+    const list = ctx.state.squats[key];
+    list.splice(list.indexOf(p.id), 1);
+    if (!list.length) delete ctx.state.squats[key];
+  } else delete ctx.state.slots[key];
+  takeToken(ctx, p, 'Call Back');
+  ctx.log(`${p.name}'s Call Back: ${p.name} moves their minion from ${pacerSpace(ctx, key).name} onto the Goes Last token, and ${pacerSpace(ctx, key).name} is open again.`);
+  const q = ctx.state.queue, close = q.findIndex(t => t.t === 'allPlaced');
+  q.splice(close < 0 ? q.length : close, 0, { t: 'turn', p: p.id, token: true });
+  p.left += 1;
+  nightWatch(ctx, p, 1);
+}
+
+export default {
+  id: 'purple',
+  name: 'Purple',
+  resource: P,
+  handlers: {
+    skipped,
+    ...handlers11({ callBack }),
+    // Interrupters (REPLACE3) and Interrupter (REPLACE7) share the ask; the log names the holder's card
+    ...(REPLACE3 || REPLACE7 ? {
+      interrupt(ctx, owner, answer, data) {
+        const mover = ctx.player(data.pid), name = data.name || 'Interrupters';
+        if (answer === 'skip') { skipNext(ctx, mover, name, owner); return; }
+        ctx.log(`${owner.name}'s ${name}: lets ${mover.name} go again.`);
+        askInterrupt(ctx, mover, owner.id);
+      },
+    } : {}),
+    ...handlers3({
+      pacerTo(ctx, p, to, data) {
+        if (!to || ctx.state.slots[to] !== undefined) return;
+        const mine = myWorkers(ctx, p);
+        if (!mine.length) return;
+        if (mine.length === 1) { pacerMove(ctx, p, mine[0], to); return; }
+        ctx.choose(p, `Pacers: move which minion to ${pacerSpace(ctx, to).name}?`, mine.map(w => ({
+          id: `from:${w.key}${w.joined ? '+j' : ''}`, label: `${pacerSpace(ctx, w.key).name}${w.joined ? ' (joined)' : ''}`, kind: 'slot',
+          value: `${w.key}${w.joined ? '+j' : ''}`,
+          // bots move off the space worth least to the next player (it opens for them)
+          hint: -pacerSpace(ctx, w.key).estimate(ctx, p),
+        })), 'purple.pacerFrom', { to });
+      },
+      pacerFrom(ctx, p, from, data) {
+        const [key, j] = String(from).split('+');
+        const w = myWorkers(ctx, p).find(x => x.key === key && x.joined === (j === 'j'));
+        if (!w || ctx.state.slots[data.to] !== undefined) return;
+        pacerMove(ctx, p, w, data.to);
+      },
+    }),
+  },
+  // Most purple: honest about what the old "most workers on the board" measured (everyone places every worker, so
+  // purple's tiebreak decided it). Holding purple for the ring is the price of spending it on turns.
+  // held purple, like every reworked color (Cory, 2026-10-22: "contests are always resources now")
+  scoring: { label: 'Most purple', counts: 'the purple you hold when the round ends', score: (ctx, p) => p.res.purple || 0 },
+
+  actions: [
+    {
+      // Cory, 2026-10-22: "+4 purple, skip your next turn" (always +4: +3 and the space's +1), from the old game's
+      // "Gain 4 purple, skip next turn". You're passed over once; the snake carries on and you still place every minion.
+      // Cory, 2026-10-25: +3 instead of +4 ("skip a turn is basically automatically giving 2 followers")
+      // Cory, 2026-10-28: grows by round, "maybe more like 4/5/6", so a late skip is worth taking
+      // Cory, Nov 1 2:35pm: the Goes Last token ("Let's just try it with the goes last token"): one minion waits on it,
+      // so your hand empties a turn early and that snake turn is passed (a skip, for Pocket Watch and Gossip)
+      key: 'skip', copyDoesIt: true, ring: 1, name: 'Sleep In', text: '+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your next minion is placed after everyone else’s.',
+      byRound: { lines: ['+4 purple', '+5 purple', '+6 purple'], rest: 'Take the Goes Last token: your next minion is placed after everyone else’s.' },
+      estimate: ctx => ctx.state.round + 3,
+      resolve(ctx, p) {
+        ctx.gain(p, P, ctx.state.round + 3, { fromAction: true });
+        toToken(ctx, p, 1, 'Sleep In');
+      },
+    },
+    {
+      // Cory, 2026-10-22: replaces Catch Up ("the skip should replace catch up"); "1 purple per round" so it isn't weak
+      // late. Wording and name are Claude's fill-in.
+      key: 'holdup', copyDoesIt: true, ring: 1, name: 'Hold Up', text: '+2 purple in round I, +3 in round II, +4 in round III. Whoever’s turn is next skips it, even yours.',
+      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Whoever’s turn is next skips it, even yours.' },
+      // Cory, 2026-10-22: "it has to be the next TURN not even the next player. so a player could skip their own in
+      // snake draft". Whoever's turn comes next is passed over once and still places every minion.
+      // Cory, 2026-10-25: +1 each round (Hard bot read).
+      estimate: ctx => ctx.state.round + 2,
+      resolve(ctx, p) {
+        ctx.gain(p, P, ctx.state.round + 1, { fromAction: true });
+        const who = nextTurnOf(ctx);
+        if (who == null) { ctx.log(`${p.name}'s Hold Up: no turn left to skip this round.`); return; }
+        skipNext(ctx, ctx.player(who), 'Hold Up', p);
+      },
+    },
+    swap11({
+      // Cory, 2026-10-22: "+1 purple, take another turn right after this one", in Roll Call's spot. One of your own
+      // turns, moved up (his yes: you still place the same minions that round), like Crunch Time's two. Name: fill-in.
+      // Cory, 2026-10-23: "Right Away should scale. +1 +2 +3" (Hold Up's wording).
+      key: 'again', copyDoesIt: true, ring: 1, name: 'Right Away', text: '+1 purple in round I, +2 in round II, +3 in round III. Your next turn comes right after this one.',
+      byRound: { lines: ['+1 purple', '+2 purple', '+3 purple'], rest: 'Your next turn comes right after this one.' },
+      estimate: (ctx, p) => ctx.state.round + turnsNowEstimate(ctx, p, 1),
+      resolve(ctx, p) { ctx.gain(p, P, ctx.state.round, { fromAction: true }); turnsNow(ctx, p, 1, 'Right Away'); },
+    }, CALL_BACK),
+    {
+      // Cory, 2026-10-22: "+1 purple, you can play on occupied spaces this round" (+2 with the inherent +1; he may
+      // raise it to +3 after play). Any taken space, yours or a rival's, for the rest of this round. Name is Claude's fill-in.
+      // Cory, 2026-10-28 9:31pm Eastern: "It should just be like, +5 purple and gain a minion this round" (placing on
+      // taken spaces copied too much with Greatest Hits). Extra minions stop when the round's spare spaces run out.
+      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Overtime', text: '+3 purple. +1 minion this round.', // back to +3 (Cory, Oct 30: balance run)
+      estimate: ctx => 3 + (spareSpace(ctx) ? turnValue(ctx) : 0),
+      resolve(ctx, p) { ctx.gain(p, P, 3, { fromAction: true }); extraMinion(ctx, p, 'Overtime'); },
+    },
+    {
+      // Cory, 2026-10-22: a follower bonus for taking the rest of your turns last ("YES now you're cooking"), in his
+      // words ("take the remainder of your turns when others are out of minions"), "let's just try it at 2 followers
+      // per minion left". Replaces Rush Hour. Name is Claude's fill-in.
+      key: 'lastcall', copyDoesIt: true, ring: 2, name: 'Last Call', text: '+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token: your other minions are placed after everyone else’s.', // (Cory, Nov 1: "keep it one follower, and give purple per minion"; "also keep +1 purple up front")
+      estimate: (ctx, p) => 1 + 2 * Math.max(0, p.left - 1),
+      resolve(ctx, p) {
+        ctx.gain(p, P, 1 + p.left, { fromAction: true });
+        const k = turnsLeft(ctx, p), f = p.left;
+        if (f) { p.bonus += f; ctx.log(`${p.name}'s Last Call: +${f} follower${f === 1 ? '' : 's'}.`); }
+        // only turns with a rival's turn still after them are skipped: once everyone else is out of minions (or already
+        // places before you, as after your own earlier Last Call) there is nothing to wait for, so nothing is skipped and
+        // Gossip and Pocket Watch pay nothing (balance-1.0 g8: a second copy of Last Call re-skipped turns already last,
+        // paying both for skips that passed over no one)
+        // every minion left goes on the Goes Last token (Cory, Nov 1 2:35pm)
+        toToken(ctx, p, k, 'Last Call');
+      },
+    },
+    {
+      // the burst, free (Cory, 2026-10-15): was "pay all your purple (4 or more) for 2 extra turns, else +4 purple"
+      // your own turns, now (Cory, 2026-10-15: "it's not extra turns, it's taking two immediate turns with existing
+      // minions"): no new minion, no spare space needed, and the extra-turn members don't fire
+      key: 'rally', copyDoesIt: true, ring: 2, name: 'Crunch Time', text: '+2 purple. Your next two turns come right after this one.',
+      // Cory, 2026-10-22: "all should give at least 1"; 2026-10-25: +2 (Hard bot read).
+      estimate: (ctx, p) => 2 + turnsNowEstimate(ctx, p, 2),
+      resolve(ctx, p) { ctx.gain(p, P, 2, { fromAction: true }); turnsNow(ctx, p, 2, 'Crunch Time'); },
+    },
+  ],
+
+  members: [
+    m('secondwind', 'Go-Getter', 4, 2, 'On Use, once per game: +1 minion, placed right after this turn.', { from: 2,
+      activate: 'game',
+      onActivate(ctx, owner, card) { if (!extraTurns(ctx, owner, 1, 'Go-Getter')) card.used = false; },
+      botActivate: ctx => ctx.state.round === 3 && spareSpace(ctx),
+    }),
+    m('errand', 'Errand Runner', 4, 4, 'On Recruit: take an extra turn after this one.', {
+      onRecruited(ctx, owner) { extraTurns(ctx, owner, 1, 'Errand Runner'); },
+    }),
+    m('taskmaster', 'Taskmaster', 4, 2, 'On Use, once per round: pay 5 purple to take an extra turn after this one.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        if (!buyTurn(ctx, owner, 5, 'Taskmaster', 0, true)) { card.used = false; ctx.log(`${owner.name} can't pay for Taskmaster now.`); }
+      },
+      botActivate: (ctx, owner) => canBuyTurn(ctx, owner, 5) && ctx.state.round >= 2,
+    }),
+    m('lateriser', 'Late Risers', 4, 2, 'Round Start: if you have the fewest followers (ties count), +1 minion, placed before anyone else.', { f: 2, n: 2, from: 2, // +1 (Cory, Oct 30)
+      // the round's turns are queued after round-start hooks, so this one goes first
+      onRoundStart(ctx, owner) {
+        const me = ctx.followers(owner);
+        if (ctx.state.round > 1 && ctx.rivals(owner).every(o => ctx.followers(o) >= me)) {
+          // the round's minions aren't queued yet, so count them from what each player has left: with one sphere per
+          // player and Extra Hand twice (a Doppelganger), round III at 2 players can be full before this turn
+          const due = ctx.state.players.reduce((n, o) => n + o.left, 0);
+          if (openSpaces(ctx).length <= due) { ctx.log(`No space to spare: ${owner.name} gets no extra turn from Late Risers.`); return; }
+          ctx.state.queue.unshift({ t: 'turn', p: owner.id });
+          owner.left += 1;
+          ctx.log(`${owner.name}'s Late Risers: 1 more minion, placed first.`);
+          extraHooks(ctx, owner);
+        }
+      },
+    }),
+    m('foreman', 'Foreman', 4, 2, 'Whenever you take an extra turn, +1 purple per minion you have on the board.', {
+      onExtraTurn(ctx, owner) { ctx.gain(owner, P, onBoard(ctx, owner)); },
+    }),
+    // Cory, 2026-10-29: pays on two turns in a row ("the former"), not on a new minion; "courier doesnt seem to work right"
+    // (Right Away and Crunch Time never paid). Price 6 (was 5): Claude, under Cory's go-with-your-gut, since the snake's
+    // turnarounds now pay too
+    // Cory, Nov 4 12:35am: reworded, same rule ("whenever you take a consecutive turn... it benefits you to stack your turns all
+    // together"): each turn that comes right after your own pays, so Crunch Time's three in a row pays twice
+    m('courier', 'Courier', 3, 2, 'Whenever you take a consecutive turn, +1 of each other color.', { ...old3, ...old7('purple.courier'),
+      onTurnInRow(ctx, owner) { for (const c of ctx.state.resources) if (c !== P) ctx.gain(owner, c, 1); },
+    }),
+    // REPLACE7 bot test (Nov 4, quality loop, Members A): Courier's place. 4 purple + 2 any as a player sees it. On the
+    // second of two turns in a row (Right Away, Crunch Time, a snake turnaround, a +1 minion placed now) the owner has one
+    // more recruit step that turn (core reads p.turnExtraBuys when it lays out the turn).
+    ...add7(m('runner', 'Runner', 3, 2, 'Whenever you take two turns in a row, recruit once more on the second.', {
+      onTurnInRow(ctx, owner) { owner.turnExtraBuys = (owner.turnExtraBuys || 0) + 1; ctx.log(`${owner.name}'s Runner: two turns in a row, so ${owner.name} recruits once more this turn.`); },
+      // about one two-in-a-row a round for a purple player (a turnaround or Right Away), a recruit worth ~1.5 followers
+      ...see(info => 1.5 * endsAhead(info).length),
+    })),
+    // REPLACE7 (Nov 4, quality loop, Members A): Courier's place, the lane's pick (paper gate 17 of 20). Batch 3's
+    // Interrupters as one member with a singular name; same ask (askInterrupt), same price (4 purple + 2 any).
+    ...add7(m('interrupter', 'Interrupter', 3, 2, 'Whenever a rival takes two turns in a row, you may skip the second.', { interrupts: true,
+      onRivalTurnInRow(ctx, owner, card, mover) { return askInterrupt(ctx, mover, -1); },
+    })),
+    // REPLACE3 bot test (Nov 3, replacement batch 3): Courier's place. 4 purple + 2 any as a player sees it. Core asks it
+    // when a rival's turn starts right after their own (onRivalTurnInRow): skipping passes that turn as Hold Up does
+    // (it places after the round's other turns; Early Birds stops it; Gossip pays). Offered only while another player
+    // still has a turn this round (with none, a skip would move nothing). Two holders are asked in seat order.
+    ...add3(m('interrupters', 'Interrupters', 3, 2, 'Whenever a rival takes two turns in a row, you may skip the second.', { interrupts: true,
+      onRivalTurnInRow(ctx, owner, card, mover) { return askInterrupt(ctx, mover, -1); },
+    })),
+    m('apprentice', 'Apprentice', 2, 2, 'Whenever you take an extra turn, your next member costs 4 less.', {
+      onExtraTurn(ctx, owner) { ctx.discount(owner, 4, 'Apprentice'); },
+    }),
+    m('overseer', 'Overseer', 2, 2, 'Whenever a rival takes an extra turn, gain half your purple, rounded down (at most 4).', {
+      onRivalExtraTurn(ctx, owner) { ctx.gain(owner, P, Math.min(4, Math.floor((owner.res[P] || 0) / 2))); },
+    }),
+    // fill-in (critic): took the slot of an earlier card called Timekeeper (the name now belongs to the game-end purple card)
+    // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 6 → 4 (the most one pass moves);
+    // balance pass 2 (pooled bench, midpoint 2.1; design/eval/balance-pass-2.md): 4 → 2
+    m('doubletime', 'Corner-Cutter', 2, 0,'Purple you pay for extra turns costs half, rounded up.', { halfTurns: true }),
+    // pays on your last placement of the round, before that turn's buy (at round end, round III's purple came too late).
+    // +1 per worker measured 8.4 followers (57% win, easy bots): late purple decides the ring. Half that is the card.
+    // Cory, 2026-10-15: pays when your last turn of the round ends, after an Overtime or Night Owls minion has landed
+    m('bookkeeper', 'Bookkeeper', 4, 2, 'After your last turn each round: +1 purple per 2 of your minions on the board.', {
+      onTurnEnd(ctx, owner, card, who) {
+        if (who !== owner || owner.left !== 0 || card.paidRound === ctx.state.round) return;
+        card.paidRound = ctx.state.round;
+        ctx.gain(owner, P, Math.floor(onBoard(ctx, owner) / 2));
+      },
+    }),
+    // Cory, 2026-10-29: "clock maker doesnt feel good" (was +1 purple per 2 purple you have, on recruit and at round start).
+    // Price 5 (was 4): Claude, under Cory's go-with-your-gut ("will likely need to rebalance cost"): first pick of two spaces
+    // every round beats the old trickle. Core builds the order (firstTwoInRow).
+    m('clockmaker', 'Clockmakers', 2, 2, 'Round Start: take your first two turns in a row.', { f: 2, firstTwoInRow: true, retired: true }), // (Cory, Oct 29, balance run: +1 follower); Night Watch takes its place (Claude, under Cory's "use your judgement", 2026-11-04)
+    // Replacement batch 1 (Nov 3), live since Nov 4 (Claude, under Cory's "use your judgement"): Clockmakers' place. 3 purple + 2 any as a player sees it. Last Call
+    // and Sleep In pay for the minions they put on the token, Night Owls for its 1.
+    m('nightwatch', 'Night Watch', 2, 2, 'Whenever a rival takes the Goes Last token, +1 follower per minion on it.', { f: 2, watchToken: true, ...old7('purple.nightwatch') }),
+    // REPLACE7 (Nov 4, quality loop, Members A batch 3): Night Watch's place (paper 17, Purple's set 13 -> 16). Cory's
+    // Pace-Setter ("could be a good idea for a different batch"), in his Courier words. 3 purple + 2 any, counts as 2.
+    // On each turn that comes right after your own, the next rival's turn (the first one still queued) is skipped, as
+    // Hold Up skips it; automatic, nobody chooses. Early Birds stops it; Gossip and Pocket Watch pay.
+    ...add7(m('pacesetters', 'Pace-Setters', 2, 2, 'Whenever you take a consecutive turn, the next player skips their turn.', { f: 2, n: 2,
+      onTurnInRow(ctx, owner, card) {
+        const q = ctx.state.queue, close = q.findIndex(t => t.t === 'allPlaced');
+        const t = q.slice(0, close < 0 ? q.length : close).find(x => x.t === 'turn' && x.p !== owner.id);
+        if (!t) return;
+        skipNext(ctx, ctx.player(t.p), card.def.name, owner);
+      },
+      ...see(info => 1.2 * endsAhead(info).length), // a skip a round, about a space to the rival behind
+    })),
+    // balance pass 2 (pooled bench, both bots agree; design/eval/balance-pass-2.md): 8 → 12
+    m('lamplighter', 'Lamplighter', 6, 2,'On Recruit: +1 purple per minion you get this round (3 / 4 / 5). Round Start: +1 purple per minion you get this round (3 / 4 / 5).', { now: true,
+      // Cory, 2026-10-15: every minion you get counts (Extra Hand's too)
+      onRoundStart(ctx, owner) { ctx.gain(owner, P, owner.workers || [3, 4, 5][ctx.state.round - 1] || 3); },
+    }),
+    // Relay's slot (Cory cut Relay, 2026-10-14). Member-value sim, handed over at round II: 6.9 followers, 53% win
+    // (Normal bots, n=320), so 8+2 (design/eval/purple-members.md). At 4 players round I has no space to spare, so it
+    // pays from round II. Fires once per round (owlRound), whether or not the board had room.
+    // Cory, Nov 1 2:35pm: the Goes Last token; the extra minion waits on it
+    m('nightowl', 'Night Owls', 6, 1, 'From round II: after your last minion, +1 minion, placed right away.', { f: 2, from: 2,
+      // its onRecruited only says when the extra minion starts: no On Recruit for Tryout or Sample to borrow
+      recruitNote: true,
+      // recruited after your last minion of the round (its buy step): it waits for next round, and says so
+      onRecruited(ctx, owner, card) {
+        if (owner.left !== 0 || ctx.state.round < 1) return;
+        card.owlRound = ctx.state.round;
+        ctx.log(ctx.state.round < 3 ? `${owner.name}'s Night Owls: ${owner.name}'s last minion this round is already placed, so its extra turn starts next round.`
+          : `${owner.name}'s Night Owls: ${owner.name}'s last minion is already placed, and this is the last round, so it gives no extra turn.`);
+      },
+      afterAction(ctx, owner, card) {
+        if (owner.left !== 0 || card.owlRound === ctx.state.round) return;
+        card.owlRound = ctx.state.round;
+        const token = globalThis.process?.env?.NIGHTOWL === 'token';
+        if (!extraTurns(ctx, owner, 1, 'Night Owls', { quiet: token })) return;
+        // No Goes Last token since Nov 3 (Claude, under Cory's "use your judgement"): with the token its owner won the
+        // By color Purple contest in 84% of the rounds they held it and won 46% of Hard games; placed right away, 21% and 32%.
+        // NIGHTOWL=token: bot test only, the old way (the extra minion waits on the Goes Last token).
+        if (!token) return;
+        const q = ctx.state.queue, t = turnsAhead(ctx, owner).map(i => q[i]).pop();
+        takeToken(ctx, owner, 'Night Owls', ' with 1 more minion on it');
+        if (t) t.token = true;
+        if (t) nightWatch(ctx, owner, 1);
+      },
+    }),
+    m('patience', 'Timekeeper', 4, 2, 'Game end: +1 follower per 3 purple.', {
+      onGameEnd: (ctx, owner) => Math.floor((owner.res[P] || 0) / 3),
+    }),
+    // Cory's Purple members (2026-10-22); names are Claude's fill-ins; prices are the pricing thread's educated guesses
+    m('earlybird', 'Early Birds', 2, 0, 'Your turns can’t be skipped.', { f: 2, noSkip: true }), // (Cory, Oct 29, balance run: +1 follower)
+    // REPLACE5 bot test (Nov 3, replacement batch 5): Bouncers' place. 6 purple + 3 any as a player sees it. Every +1
+    // minion a rival gets (Overtime, Night Owls, Go-Getter, Extra Hand, Overtime…: the purple helpers' onRivalExtraTurn)
+    // gives you one, placed after everyone else's, while the board has a spare space (none in round I). A minion from
+    // Tagalongs doesn't set off another Tagalongs.
+    ...add5(m('tagalongs', 'Tagalongs', 5, 3, 'Whenever a rival gets +1 minion, you get +1 minion too.', {
+      onRivalExtraTurn(ctx, owner) {
+        if (ctx.state.tagalong) return;
+        ctx.state.tagalong = true;
+        try { extraMinion(ctx, owner, 'Tagalongs'); } finally { delete ctx.state.tagalong; }
+      },
+    })),
+    m('bouncer', 'Bouncers', 1, 2, 'On Recruit: the next two rivals’ turns are skipped.', { f: 2, ...old5,
+      // the next two turns that belong to rivals; your own turn between them still happens (Cory's yes)
+      onRecruited(ctx, owner) {
+        const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');
+        const who = q.slice(end + 1, close < 0 ? q.length : close).filter(x => x.t === 'turn' && x.p !== owner.id).slice(0, 2).map(x => x.p);
+        if (!who.length) { ctx.log(`${owner.name}'s Bouncers: no rival has a turn left to skip this round.`); return; }
+        // the second is the next rival turn after the first one moves to the end: skip in order
+        let n = 0;
+        while (n < 2) {
+          const q2 = ctx.state.queue, e2 = q2.findIndex(t => t.t === 'endTurn'), c2 = q2.findIndex(t => t.t === 'allPlaced');
+          const rest = q2.slice(e2 + 1, c2 < 0 ? q2.length : c2).filter(x => x.t === 'turn');
+          const next = rest.slice(0, rest.length - n).find(x => x.p !== owner.id);
+          if (!next) break;
+          skipNext(ctx, ctx.player(next.p), 'Bouncers', owner);
+          n++;
+        }
+      },
+    }),
+    // Purple's artifact only, never dealt (Claude's pick, 2026-10-24, after Cory found Courier "a little too good").
+    // Name is Claude's fill-in.
+    // +2 (Cory, Nov 1 8:25pm: option A; 19.5% held in the 200-game test, against 11% at +1)
+    m('pocketwatch', 'Pocket Watch', 0, 0, 'Whenever a player’s turn is skipped, +2 purple.', { artifact: true,
+      onSkip(ctx, owner) { const got = ctx.gain(owner, 'purple', 2); if (got) ctx.log(`${owner.name}'s Pocket Watch: +${got.n} ${got.color}.`); },
+    }),
+    m('gossip', 'Gossip', 3, 2, 'Whenever a player’s turn is skipped, +1 follower.', {
+      onSkip(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Gossip: +1 follower.`); },
+    }),
+    m('extrashift', 'Extra Shift', 5, 3, 'On Recruit: +1 minion this round.', { from: 2,
+      // the snake carries on until every minion is placed, so the new one goes after everyone else's
+      onRecruited(ctx, owner) {
+        extraMinion(ctx, owner, 'Extra Shift');
+      },
+    }),
+    // Cory, 2026-10-23: "its when you place THE last minion of the round. so it benefits folks going last"
+    // Cory, 2026-10-24: "go deep card for every color" ("sure for now"); name and price Claude's fill-in, priced like Chronicler
+    m('timekeepers', 'Timekeeper', 1, 2, 'Game End: +1 follower per purple member you have.', { ...old5, ...old7('purple.timekeepers'),
+      onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'purple'),
+    }),
+    // REPLACE5 bot test (Nov 3, replacement batch 5): Timekeeper' place. 4 purple + 2 any as a player sees it. Counted
+    // at round end before the contests: every minion of yours on a space (one joining a rival's space too); a minion
+    // that sat out for want of a space isn't on the wheel.
+    ...add5(m('fullhouse', 'Full House', 3, 2, 'Round End: if you have more minions on the wheel than every rival, +1 follower per minion you have there.', {
+      onRoundEnd(ctx, owner) {
+        const mine = onBoard(ctx, owner);
+        if (!mine || ctx.rivals(owner).some(o => onBoard(ctx, o) >= mine)) return;
+        owner.bonus += mine;
+        ctx.log(`${owner.name}'s Full House: ${mine} minions on the wheel, more than every rival: +${mine} followers.`);
+      },
+    })),
+    // REPLACE7 (Nov 4, quality loop, Members A batch 2): Timekeeper's place (paper 19, 18 on a second gate). 2 purple + 2
+    // any as a player sees it. "Placed the round's last minion" is the By color Purple contest's own measure (lastPlaced).
+    ...add7(m('nightmanager', 'Night Manager', 1, 2, 'Round End: if you placed the round’s last minion, +1 follower per purple member you have.', {
+      onRoundEnd(ctx, owner, card) {
+        const last = ctx.state.lastPlaced;
+        if (!last || last.round !== ctx.state.round || last.pid !== owner.id) return;
+        const k = ctx.countMembersOfColor(owner, 'purple');
+        if (!k) return;
+        owner.bonus += k;
+        ctx.log(`${owner.name}'s ${card.def.name}: ${owner.name} placed the round's last minion, +${k} follower${k === 1 ? '' : 's'} (${k} purple member${k === 1 ? '' : 's'}).`);
+      },
+      ...see(info => endsAhead(info).length), // about 3 followers a round it fires, a third of the rounds
+    })),
+    m('closer', 'Closer', 2, 2, 'When you place the last minion of the round: +4 purple.', {
+      afterAction(ctx, owner, card) {
+        if (card.paidRound === ctx.state.round || ctx.state.players.some(o => o.left > 0)) return;
+        card.paidRound = ctx.state.round;
+        ctx.gain(owner, P, 4);
+      },
+    }),
+    // Cory, 2026-10-28: Once per game at +3 per turn in a row (was once per round at +2)
+    m('streak', 'Hot Streak', 2, 2, 'On Use, once per game: +3 followers per turn in a row you’ve taken just before this one.', {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const k = inARow(ctx, owner);
+        if (!k) { card.used = false; ctx.log(`${owner.name}'s Hot Streak: no turns in a row just before this one yet.`); return; }
+        owner.bonus += 3 * k;
+        ctx.log(`${owner.name}'s Hot Streak: +${3 * k} followers.`);
+      },
+      botActivate: (ctx, owner) => inARow(ctx, owner) >= 2 || (inARow(ctx, owner) >= 1 && ctx.state.round === 3),
+    }),
+    m('crew', 'Shift Crew', 2, 1, 'Worth 4 followers.', { f: 4, n: 4, vanilla: true, round: 1, ...old3, ...old7('purple.crew') }),
+    // REPLACE7 (Nov 4, quality loop, Members A batch 2): Shift Crew's place (paper 19; Purple's pair set check with Night
+    // Manager 11 -> 17). Clockmakers' tested rule (core: firstTwoInRow). Worth and count are one number (rulebook), so 3
+    // and 3 at 3 purple + 2 any, a round I member as Shift Crew is (Claude's fill-in; pitched as worth 2, counts as 4).
+    ...add7(m('daylaborers', 'Day Laborers', 2, 2, 'Round Start: take your first two turns in a row.', { f: 3, n: 3, round: 1, firstTwoInRow: true })), // 2 members (Cory, Oct 29); 4 (Cory, Nov 1: "shift crew is just bad. should be 4 members?"), price 4 Claude's
+    // REPLACE3 bot test (Nov 3, replacement batch 3): Shift Crew's place. 6 purple + 3 any as a player sees it. On your
+    // turn, any of your minions on the board (a joined one too) moves to a space with no minion on it, and that space's
+    // action happens, as Straggler's move does; the old space's action stays done and the space opens. No recruit comes
+    // with it (it is an action, not a turn).
+    ...add3(m('pacers', 'Pacers', 5, 3, 'On Use, once per round: move one of your minions to an open space and do that action.', { f: 2,
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const to = pacerOpen(ctx);
+        if (!to.length || !myWorkers(ctx, owner).length) { card.used = false; ctx.log(`${owner.name}'s Pacers: ${to.length ? 'no minion on the board to move' : 'no open space'}.`); return; }
+        ctx.choose(owner, 'Pacers: move one of your minions to which open space?', to.map(t => ({
+          id: `to:${t.key}`, label: t.a.name, kind: 'slot', value: t.key, hint: t.a.estimate(ctx, owner),
+        })), 'purple.pacerTo');
+      },
+      botActivate: (ctx, owner) => myWorkers(ctx, owner).length > 0 && Math.max(0, ...pacerOpen(ctx).map(t => t.a.estimate(ctx, owner))) >= 3,
+    })),
+  ],
+};
+
+// ---------- REPLACE3 bot test (Nov 3, replacement batch 3): Interrupters and Pacers ----------
+const holds = (c, key) => !!(c.def[key] || (c.copy && defById(c.copy)?.[key]) || (c.ability && defById(c.ability)?.[key]));
+/** mover's turn is the second in a row: ask the next rival holding Interrupters (seat order, after seat `after`) whether
+ *  to skip it. True when a choice was queued. */
+function askInterrupt(ctx, mover, after) {
+  if (noSkip(ctx, mover)) return false;
+  const q = ctx.state.queue, close = q.findIndex(t => t.t === 'allPlaced');
+  // another player's turn still to come this round (the asked turn itself sits at the head of the queue)
+  if (!q.slice(0, close < 0 ? q.length : close).some(t => t.t === 'turn' && t.p !== mover.id)) return false;
+  const o = ctx.rivals(mover).find(x => x.id > after && ctx.membersOf(x).some(c => holds(c, 'interrupts')));
+  if (!o) return false;
+  const closer = ctx.membersOf(mover).some(c => [c.def.id, c.copy, c.ability].includes('purple.closer'));
+  const name = ctx.membersOf(o).find(c => holds(c, 'interrupts'))?.def.name || 'Interrupters';
+  ctx.choose(o, `${name}: ${mover.name} takes two turns in a row. Skip the second?`, [
+    { id: 'skip', label: `Skip ${mover.name}'s turn`, kind: 'choice', value: 'skip', hint: closer ? 0 : 1 },
+    { id: 'let', label: `Let ${mover.name} go`, kind: 'pass', value: 'let', hint: closer ? 1 : 0 },
+  ], 'purple.interrupt', { pid: mover.id, name });
+  return true;
+}
+function pacerOpen(ctx) {
+  const out = [];
+  ctx.state.quadrants.forEach((qid, q) => spacesOf(ctx.state, qid).forEach((a, i) => {
+    if (!(a.ring > ctx.state.round || (a.lastRound && ctx.state.round > a.lastRound)) && ctx.state.slots[`${q}-${i}`] === undefined) out.push({ key: `${q}-${i}`, q, i, a });
+  }));
+  return out;
+}
+const pacerSpace = (ctx, key) => { const [q, i] = key.split('-').map(Number); return spacesOf(ctx.state, ctx.state.quadrants[q])[i]; };
+function myWorkers(ctx, p) {
+  const out = [];
+  for (const [key, o] of Object.entries(ctx.state.slots)) if (o === p.id) out.push({ key, joined: false });
+  for (const [key, list] of Object.entries(ctx.state.squats || {})) if (list.includes(p.id)) out.push({ key, joined: true });
+  return out;
+}
+function pacerMove(ctx, p, { key, joined }, to) {
+  if (joined) {
+    const list = ctx.state.squats[key];
+    list.splice(list.indexOf(p.id), 1);
+    if (!list.length) delete ctx.state.squats[key];
+  } else delete ctx.state.slots[key];
+  ctx.state.slots[to] = p.id;
+  p.lastSlot = { key: to, joined: false };
+  const [q, i] = to.split('-').map(Number);
+  ctx.log(`${p.name}'s Pacers: moves a minion from ${pacerSpace(ctx, key).name} to ${pacerSpace(ctx, to).name}.`);
+  // the engine's own act task: the new space resolves as usual (no recruit)
+  ctx.state.queue.unshift({ t: 'act', p: p.id, q, i });
+}

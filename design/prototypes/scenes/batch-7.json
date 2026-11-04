@@ -1,0 +1,268 @@
+[
+ {
+  "id": "yellow.gardener",
+  "name": "Gardener",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "On Recruit: +1 of each color you have none of. Round Start: +1 of each color you have none of.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.customs",
+  "name": "Customs Officer",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "Whenever a rival steals or changes any of your resources, +1 yellow.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.tinker",
+  "name": "Tinker",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "On Recruit: swap up to 3 of your resources one for one. Round Start: swap up to 3 of your resources one for one.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.harmonist",
+  "name": "Harmonist",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "Game End: +1 follower per full set you hold.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.matchmaker",
+  "name": "Matchmaker",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "Whenever you recruit a member of a color none of your members have, +2 in colors you choose and +1 follower.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.agitator",
+  "name": "Agitator",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "On Recruit: change up to 4 of rivals' resources one for one.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.ringleader",
+  "name": "Ringleader",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "On Recruit: change 1 of each rival's resources one for one. +1 follower per rival changed.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.drifters",
+  "name": "Drifters",
+  "sphere": "yellow",
+  "n": 2,
+  "text": "Worth 2 followers. On Recruit: choose a color; these count as a member of that color.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.leveler",
+  "name": "Leveler",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "On Use, once per round: choose a color; 1 of each rival's biggest color becomes it.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.bigtent",
+  "name": "Big Tent",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "Game End: +2 followers per color you have exactly one member of.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.guestbook",
+  "name": "Guest Book",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "Whenever you recruit a member of a color none of your members have, +2 yellow.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.gleaner",
+  "name": "Gleaner",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "Whenever an action gains you 2 or more of another color at once, +1 yellow.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.sower",
+  "name": "Sower",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "Round Start: plant any of your yellow. Round End: gain that many of each other color.",
+  "oldPeople": []
+ },
+ {
+  "id": "silver.silversmith",
+  "name": "Silversmith",
+  "sphere": "silver",
+  "n": 1,
+  "text": "Whenever a rival takes a Silver space, +1 silver.",
+  "oldPeople": []
+ },
+ {
+  "id": "silver.steward",
+  "name": "Steward",
+  "sphere": "silver",
+  "n": 1,
+  "text": "On Recruit: +1 silver per 3 silver you hold. Round Start: +1 silver per 3 silver you hold.",
+  "oldPeople": []
+ },
+ {
+  "id": "silver.toastmaster",
+  "name": "Toastmaster",
+  "sphere": "silver",
+  "n": 1,
+  "text": "Whenever you take a Silver space, +1 follower.",
+  "oldPeople": []
+ },
+ {
+  "id": "silver.dowager",
+  "name": "Dowager",
+  "sphere": "silver",
+  "n": 3,
+  "text": "Worth 3 followers.",
+  "oldPeople": []
+ },
+ {
+  "id": "silver.smoothtalker",
+  "name": "Smooth Talkers",
+  "sphere": "silver",
+  "n": 2,
+  "text": "Your silver pays for any color.",
+  "oldPeople": []
+ },
+ {
+  "id": "silver.philanthropists",
+  "name": "Philanthropist",
+  "sphere": "silver",
+  "n": 1,
+  "text": "On Recruit: rivals gain up to 4 silver, split as you choose. +1 follower for each.",
+  "oldPeople": []
+ },
+ {
+  "id": "silver.polisher",
+  "name": "Polisher",
+  "sphere": "silver",
+  "n": 1,
+  "text": "On Use, once per game: turn up to 3 silver into 2 of any colors each.",
+  "oldPeople": []
+ },
+ {
+  "id": "silver.collector",
+  "name": "Collector",
+  "sphere": "silver",
+  "n": 1,
+  "text": "Whenever a rival recruits paying silver, +1 silver.",
+  "oldPeople": []
+ },
+ {
+  "id": "silver.debtcollector",
+  "name": "Debt Collectors",
+  "sphere": "silver",
+  "n": 2,
+  "text": "On Use, once per game: each rival gives you 2 silver, if they have it.",
+  "oldPeople": []
+ },
+ {
+  "id": "silver.highsociety",
+  "name": "High Society",
+  "sphere": "silver",
+  "n": 2,
+  "text": "Game End: +2 followers per rival with more silver than you.",
+  "oldPeople": []
+ },
+ {
+  "id": "red.bigfamily",
+  "name": "Big Family",
+  "sphere": "red",
+  "n": 4,
+  "text": "Worth 4 followers.",
+  "oldPeople": []
+ },
+ {
+  "id": "market.makeover",
+  "name": "Makeover",
+  "sphere": "market",
+  "n": 3,
+  "text": "On Recruit: send the whole shop to the bottom of the pile, then refill.",
+  "oldPeople": []
+ },
+ {
+  "id": "trading.bulkbuyer",
+  "name": "Bulk Buyer",
+  "sphere": "trading",
+  "n": 2,
+  "text": "Whenever you buy 5 or more followers, +1 follower.",
+  "oldPeople": []
+ },
+ {
+  "id": "trading.shareholder",
+  "name": "Shareholder",
+  "sphere": "trading",
+  "n": 3,
+  "text": "Worth 3 followers.",
+  "oldPeople": []
+ },
+ {
+  "id": "echo.choir",
+  "name": "Choir",
+  "sphere": "echo",
+  "n": 2,
+  "text": "Whenever you copy a space, +1 green.",
+  "oldPeople": []
+ },
+ {
+  "id": "silver.giftwrapper",
+  "name": "Gift Wrapper",
+  "sphere": "silver",
+  "n": 1,
+  "text": "Whenever you give rivals silver, +1 follower.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.caravan",
+  "name": "Caravan",
+  "sphere": "yellow",
+  "n": 3,
+  "text": "Worth 3 followers. On Recruit: +1 of each color you hold. Round Start: +1 of each color you hold.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.tastemaker",
+  "name": "Tastemaker",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "Whenever you change rivals' resources, +1 follower.",
+  "oldPeople": []
+ },
+ {
+  "id": "yellow.spiceroute",
+  "name": "Spice Route",
+  "sphere": "yellow",
+  "n": 1,
+  "text": "Game End: +1 follower per color you hold 3 or more of.",
+  "oldPeople": []
+ },
+ {
+  "id": "benders.frontrunner",
+  "name": "Line Cutters",
+  "sphere": "colorless",
+  "n": 3,
+  "text": "You go first every round.",
+  "oldPeople": [
+   "golden"
+  ]
+ }
+]

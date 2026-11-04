@@ -1685,7 +1685,7 @@ describe('Slag Catcher', () => {
   });
 });
 
-describe("Alchemist's Trunk", () => {
+describe("Alchemists' Trunk", () => {
   it('returns pending decision for redistribution when player has resources', () => {
     let state = makeState({
       players: [

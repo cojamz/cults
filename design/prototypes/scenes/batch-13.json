@@ -1,0 +1,6 @@
+[
+ {"id": "purple.nightwatch", "name": "Night Watch", "sphere": "purple", "n": 2, "text": "Whenever a rival takes the Goes Last token, +1 follower per minion on it."},
+ {"id": "thieves.secondstory", "name": "Second-Story Man", "sphere": "magenta", "n": 1, "text": "Round End: before contests are scored, steal 2 resources from one rival."},
+ {"id": "market.hawkers", "name": "Hawker", "sphere": "blue", "n": 1, "text": "On Use, once per round: choose a shop member. Starting on your left, each rival may recruit it, paying its cost plus 2 to you. If none does, you recruit it for free."},
+ {"id": "benders.sorelosers", "name": "Sore Loser", "sphere": "colorless", "n": 1, "text": "Round End: if you win no contest, steal 3 followers from the rival who wins the most."}
+]

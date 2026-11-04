@@ -1,0 +1,54 @@
+# Cory's notes while reading the balance list (Nov 1), for the walk-through at the end
+
+- 1:16pm, copies (focus 1): likes Echo and repeating On Recruits; asked whether a copy can re-copy an action already in its chain (it can't: a chain never revisits an action, tests pass). Wants Green's direction elaborated.
+- 1:17pm: wants focus 2 and 3 explained in depth, in plain words (plain-words page sent).
+- 1:20pm, Last Call: "shouldn't be like an auto win"; likes the payout; try paying less per minion left, and give other purple levers a way to go last (directions page sent: Night Owls after everyone [default], Sleep In moves to end of round, Last Call drops purple per minion).
+- 1:22pm, Largesse copied four times: doubted it (confirmed from the g11 log). Leanings: Tribute Band more expensive; Party Crasher more expensive. "We'll talk about the copy logic."
+- 1:24pm, Party Crasher and Largesse: likes Party Crasher ("makes you want to steal the party crasher action at the end"), not aggressively too strong; Largesse "a little bit of an issue, but interesting". Inclined to leave both and think about counterplay: "can the bots effectively counterplay? Or does the game need more counterplays? … we need to figure out which."
+- 1:25pm, Desperado: test flat +2 and +3 instead of double (running).
+- 1:26pm, Greatest Hits: keep as is; the answer is counterplay (swap with the player stacking On Recruits).
+- 1:27pm, Encore on Con Men: fine as is (the steal isn't aimed at one victim).
+- 1:28pm, Lie Low + Bodyguards pile-on: feels bad, remember it; next direction is counterplay (member movement); hold any steal cap until counterplay is solved.
+- 1:29pm, Recruit Twice: leave as is; wants evidence the bots weigh it right (a 20-follower swing). Check running.
+- 1:30pm, Party Favors: keep.
+- 1:31pm, Farewell/Estate Sale: fine, that's White's core (use once-per-game members, cycle them out). Take-aways: more once-per-game members in White; more member movement outside Red.
+- 1:31pm, Doormen: needs a replacement within Blue (later).
+- 1:34pm, Guest Book: keep +2; suspects it isn't firing (grey members? Dabblers?); re-run with the Dabblers fix (live v0.9.967). Engine thread's own fill-in to confirm with Cory: recruiting Dabblers itself pays while you're missing any color.
+- 1:35pm, Bargain Bin: could try +2 blue, skeptical; suspects it's not triggering on what it should. Wants an audit of what triggers every artifact (running).
+- 1:36pm, Early Birds: couldn't follow the item; explain in plain words at the walk-through.
+- 1:36pm, Go-Between: rework it ("annoying in the games and dumb in the UI"); pitch replacements at the walk-through.
+- 1:37pm, Drifters: keep; should work optimally for its owner every time, not block things. Wants every place the member count or member color matters checked so Drifters, Dabblers and counts-as-N members work right everywhere (audit asked).
+- 1:37pm, Right Away: talk more; maybe a rework rather than a number. "Interesting, though."
+- 1:38pm, Mob: definitely fewer members (message cut off at "make it"; the list's suggestion was worth 4 / counts as 4; confirm the number).
+- 1:39pm, Accomplice: price up (3 to 4). Caterer: back to +1 silver; asked about "gifted resources" instead of silver (answered: only Walk-In and Party Favors' answers would add).
+- 1:39pm, Splurge: OK with the recommendation (per 1 paid in round II, per 2 in rounds I and III).
+- 1:40pm, Artifacts (Pocket Watch, Fence, all): hold every artifact balance change until the trigger audit is done; then talk balance per artifact.
+- 1:40pm, Window Shopper: send 2 members instead of 1 (so you get 2 colors); needs elegant wording.
+- 1:41pm, Agents (item 25; today "Rivals can't copy your actions."): leaning to "Your actions and On Recruits can't be copied", by anyone, the owner too, so it works against whoever holds it. Then, with counterplay, you swap Agents into a player stacking copies: Agents is Green's hard counter, and counterplay should be moving members like Agents around. Confirm the wording at the walk-through; talk with counterplay.
+- 1:42pm, Bodyguards and swaps: a dedicated walk-through item, covering items 26 (what Bodyguards and Lie Low block among swaps) and 27 (Raiders and Debt Collectors getting past Lie Low and Bodyguards).
+- 1:42pm, Panel (item 28): Cory: "On Recruit only happens when you bring somebody into your cult", not whenever a member enters. Answered: today a member you swap in with your own Promote or Demote counts as recruited (Oct 21 call), so a Promote onto a rival's Panel fires Panel for you. Asked whether that should stay [yes, as now]. Also: Panel's swap reaches rivals' and the shop's members though it says "your members". Put under the Bodyguards and swaps item.
+- 1:43pm, Tastemaker (item 29; "Whenever you change rivals' resources, +1 follower."): once per instance, never per resource. Any instance counts: a space, a member's ability, or a bonus added later. That matches today's behavior (pays once per change); check it fires for member abilities and copies too (added to the trigger audit). Words stay.
+- 1:43pm, Patroness (item 30): Cory believes once per batch. Answered: it already pays once per batch (Oct 21); bots buy it about 1 in 10 times shown, too few owners to read strength. Words read per member: fix the wording at the walk-through.
+- 1:44pm, Caterer (item 31): pays once per instance of gifts being given (one gift action, however many players get silver), not per player. Needs clearer words; also find a shared word for "once per instance" across Caterer, Tastemaker, Patroness (wording pass at the walk-through).
+- 1:44pm, Polisher (item 32; "On Use, once per game: turn up to 3 silver into 2 of any colors each."): yes, the player chooses how many (1, 2 or 3). Sent to be built.
+- 1:45pm, Recruiter (item 33): no comment. Greatest Hits (item 34): the live text is his ("Copy the On Recruit of each of your members, in any order. +1 green."); the decisions log was missing it, now logged.
+- 1:46pm: keep the skeptic's considered-and-dropped list as a running log (design/watch.md, done). 1:47pm: done reading; walk-through started at item 1 (counterplay: where member movement lives).
+- 1:49pm: before counterplay, asked how the follower shop feels from the games (follower-shop.md sent; asked: leave as is until Last Call is settled).
+- 1:53pm: follower shop stays as is (re-check after Last Call is settled). Started a thought on counterplay: "maybe there's a broader change where" (cut off; wait for the rest).
+- 1:57pm, counterplay (item 1): default path is baking more counterplay into the grey deck. Also consider, and build in parallel if there's room and a lull in redesign: (a) a branch where members are set piles, Dominion-style (buy several of the same member; try it without Blue first; test members that interact with copies of themselves); (b) grey members as 5 or 6 set piles out every game, buy multiples, so interaction is guaranteed whatever the colors. Cory: "for now I do like the way the game is".
+- 2:02pm, item 2: protection blocks steals, not swaps; both block Raiders too. Open: making the difference clear to players.
+- 2:05pm, item 2 wording: Cory: reword swaps conceptually as "give a player a member and recruit one of theirs". Drafts sent for Promote, Demote, Double Agent; snag: Lie Low's "or recruit" would block swaps (asked: drop it, Poach still a steal [default]). Anarchist (swaps two others' members) keeps "swap".
+- 2:07pm: yes to Lie Low dropping "or recruit"; swap drafts stand. Next: item 3, Last Call.
+- 2:08pm, item 3: yes to both Night Owls (extra minion after everyone) and Sleep In (next turn moves to end of round); Last Call payout stays. Open: words, showing who's waiting, order when several wait.
+- 2:08pm: Night Owls needs a real reword; 3 options sent (default "Each round, once everyone is out of minions: +1 minion."). Still open: order when several wait (default: later waiter goes last).
+- 2:10pm: Sleep In words (his): skip your next turn; take it after rivals have placed their last minions. Use the same phrase on Night Owls and Last Call. Going-last must be obvious, not in your head: may need to rework how these interplay. Claude: mock up 'goes last' seat tags (every waiting seat, minions left, order) on a real round III.
+- 2:11pm: going-last tracking must work on a physical table, no digital-only fix. Screen thread proposes physical options (token or track) first.
+- 2:13pm: going last still confusing to track; go to first principles. Handed to the 'Show who goes last each round' thread (my Late token idea in going-last.md sent there). Next here: item 4.
+- 2:16pm: yes to a Goes Last token, part of the Purple set; colors can have their own pieces. Mob: worth 4, counts as 4.
+- 2:17pm: Tribute Band: maybe make it On Recruit. Risks sent (Tryout fires it from the shop, Encore and swaps repeat it); asked On Recruit [default] vs On Use at 14. Party Crasher price still open.
+- 2:18pm: Tribute Band On Use, 12 to 14. Party Crasher stays. Next: item 5 reworks (Window Shopper words first).
+- 2:21pm: Early Birds held; its purpose is taking Last Call's payout without going last. Rework with the Goes Last cards.
+- 2:25pm: Early Birds: full rework (Last Call is already strong; don't buff it). Going-last thread pitches.
+- 2:25pm: item 7 words approved. Next: item 8 results.
+- 2:27pm: Desperado: any steal takes 2 more while fewest followers.
+- 2:28-2:31pm: artifact audit questions all handled in the audit thread (1 and 3 live; 2, 4-6 asked there). Struck from here.
