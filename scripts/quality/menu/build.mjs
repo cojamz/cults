@@ -103,7 +103,7 @@ const push = c => {
   cards.push({
     ...c,
     protected: PROTECTED.has(norm(c.name)) || !!rk?.protected,
-    paper: rk ? { score: rk.median, of: 20, round: rank.label || 'r4', why: rk.why, overBar: rk.overBar, hardFails: [...new Set(rk.hardFails || [])].length ? rk.hardFails[0] : null, prev: rk.prevMedian } : (p1 ? { score: p1.median, of: 20, round: 'r1', why: p1.why, overBar: p1.median >= 13 } : null),
+    paper: rk ? { score: rk.median, of: 22, round: rank.label || 'r5', why: rk.why, overBar: rk.overBar, hardFails: [...new Set(rk.hardFails || [])].length ? rk.hardFails[0] : null, prev: rk.prevMedian } : (p1 ? { score: p1.median, of: 20, round: 'r1', why: p1.why, overBar: p1.median >= 13 } : null),
     play: rk?.play || null,
     bots: b ? { ...b } : (dead.has(norm(c.name)) ? { dead: true } : bots.fewMembers.has(norm(c.name)) ? { few: true } : null),
     replacedBy: retiredNote.get(norm(c.name)) || null,
@@ -175,7 +175,8 @@ for (const c of cards) {
   }
 }
 if (!existsSync(OUT)) mkdirSync(OUT, { recursive: true });
-const data = { built: new Date().toISOString(), ranking: rank.label || null, bots: bots.label, cards };
+const taste = (readT(`${Q}/ranking.md`).match(/held-out half B[^:]*: B: [^(]*\((\d+)%\)/) || [])[1];
+const data = { built: new Date().toISOString(), ranking: rank.label || null, bots: bots.label, taste: taste ? +taste : null, cards };
 writeFileSync(`${OUT}/menu.json`, JSON.stringify(data, null, 1));
 const tpl = readFileSync(here + 'page.html', 'utf8');
 writeFileSync(`${OUT}/index.html`, tpl.replace('/*DATA*/null', JSON.stringify(data).replace(/</g, '\\u003c')));

@@ -99,9 +99,9 @@
   "reason": "A catch-up card for the smallest cult. Built; no result yet."
  },
  "considered|member|early birds": {
-  "verdict": "untested",
+  "verdict": "cut",
   "replaces": "Early Birds",
-  "reason": "Reworked Early Birds, which bots rate as a trap today (owners 13%). A/B on the smarter bots is playing."
+  "reason": "Lost blind judging to the live Early Birds (-0.09)."
  },
  "considered|member|big spenders": {
   "verdict": "untested",
@@ -109,24 +109,24 @@
   "reason": "Built; no result yet. Turns every silver you spend into a gift and a follower."
  },
  "considered|member|charmers": {
-  "verdict": "untested",
+  "verdict": "cut",
   "replaces": "Smooth Talkers",
-  "reason": "Three earlier A/B runs; a rerun on the smarter bots is queued."
+  "reason": "Stopped unproven: no matched games after one smarter-bot run."
  },
  "considered|member|pickpocket": {
-  "verdict": "untested",
+  "verdict": "cut",
   "replaces": "Cutpurse",
-  "reason": "Rerun on the smarter bots queued. Cory cut an older Pickpocket on Oct 28; this one steals only from cults ahead of you."
+  "reason": "Closed after three bot runs: no real edge (+0.17)."
  },
  "considered|member|tax collector": {
-  "verdict": "untested",
+  "verdict": "cut",
   "replaces": "Cutpurse",
-  "reason": "Rerun on the smarter bots queued. Taxes whoever just won a contest, so it hits the leader."
+  "reason": "Closed today without an edge in blind judging."
  },
  "considered|member|accomplice": {
-  "verdict": "untested",
+  "verdict": "cut",
   "replaces": "Accomplice",
-  "reason": "A/B on the smarter bots playing: the live Accomplice plus a follower per rival robbed."
+  "reason": "No edge over the live Accomplice in blind judging (+0.06)."
  },
  "considered|member|the boss": {
   "verdict": "cut",
@@ -144,14 +144,14 @@
   "reason": "Cory's own idea for Landlord's slot (an extra follower buy each turn). Built today; first games queued."
  },
  "considered|member|misers": {
-  "verdict": "untested",
+  "verdict": "cut",
   "replaces": "Misers",
-  "reason": "Interest on hoarded white, in place of the live game-end Misers. A/B on the smarter bots is playing."
+  "reason": "Interest on hoarded white lost blind judging badly (-0.86)."
  },
  "considered|member|brokers": {
   "verdict": "untested",
   "replaces": "Brokers",
-  "reason": "A round-end cash-out for Brokers. A/B on the smarter bots is playing."
+  "reason": "Bots misplayed it; one clean pair so far. A rerun was queued when the lane stopped."
  },
  "considered|member|cheerleaders": {
   "verdict": "untested",
@@ -344,9 +344,9 @@
   "reason": "Bots bought it almost every time (91%), an auto-buy. Guest of Honor took the slot."
  },
  "considered|member|well-wishers": {
-  "verdict": "untested",
+  "verdict": "cut",
   "replaces": "Debt Collectors",
-  "reason": "Won its blind judging (+0.83), but bots skip it even when it's dealt to them. Rerun on the smarter bots."
+  "reason": "Won a small blind judging test (+0.83), but bots skip it: taken in 19% of games, owners won 10% to 17%."
  },
  "considered|member|squire": {
   "verdict": "cut",
@@ -414,9 +414,9 @@
   "reason": "Lost both blind judging runs (-0.24 and -0.15)."
  },
  "considered|member|roadie": {
-  "verdict": "watch",
+  "verdict": "keep",
   "replaces": "Roadie",
-  "reason": "Beat the live Roadie in blind judging (+0.30, 13 of 18), but bots misplayed it. One more test after the smarter bots land."
+  "reason": "Now live as Roadie (v0.99.582)."
  },
  "considered|member|night watch": {
   "verdict": "watch",
@@ -512,5 +512,94 @@
   "verdict": "untested",
   "replaces": "Old Money",
   "reason": "Silver lane's pick for Old Money's place: a follower whenever a member leaves a rival's cult. A/B on the smarter bots is running."
+ },
+ "considered|member|night watchman": {
+  "verdict": "cut",
+  "reason": "Bots never bought it (0 of 40 games). Parked.",
+  "replaces": "Bodyguards"
+ },
+ "considered|member|hoard breaker": {
+  "verdict": "cut",
+  "reason": "Rarely bought (6 of 40 games), so nothing could be read. Magenta steals are on hold.",
+  "replaces": "a Magenta member"
+ },
+ "considered|member|poacher": {
+  "verdict": "cut",
+  "reason": "Bots almost never bought it (1 of 40 games). Parked.",
+  "replaces": "Kidnapper"
+ },
+ "considered|member|big finish": {
+  "verdict": "untested",
+  "reason": "Ahead in blind judging (+0.87) on too few matched games to count. Waiting on a rerun with the smarter bots.",
+  "replaces": "Wallflower"
+ },
+ "considered|member|cover band": {
+  "verdict": "untested",
+  "reason": "Ahead in blind judging (+0.46 to +0.58), but bots misplayed it in every pair, so it doesn't count yet.",
+  "replaces": "Wallflower"
+ },
+ "considered|member|turncoat": {
+  "verdict": "untested",
+  "reason": "A cheaper take on Turncoats, which was too strong. Built; no games yet.",
+  "replaces": "Deprogrammers"
+ },
+ "considered|member|pickers": {
+  "verdict": "untested",
+  "reason": "Played but never judged; the lane stopped for the day.",
+  "replaces": "Trendsetters"
+ },
+ "considered|member|last orders": {
+  "verdict": "untested",
+  "reason": "Built; no games yet.",
+  "replaces": "Closer"
+ },
+ "considered|member|busybody": {
+  "verdict": "untested",
+  "reason": "Built; no games yet. Pays off Purple's skip spaces.",
+  "replaces": "Gossip"
+ },
+ "considered|member|hostesses": {
+  "verdict": "cut",
+  "reason": "Paying 2 silver to each rival didn't beat the live Hostesses in blind judging (+0.12, needs +0.30).",
+  "replaces": "Hostesses"
+ },
+ "considered|member|patronesses": {
+  "verdict": "cut",
+  "reason": "Stopped for the day with only 1 matched pair of games. Unproven.",
+  "replaces": "Debt Collectors"
+ },
+ "considered|member|ragpicker": {
+  "verdict": "cut",
+  "reason": "Closed: bots never bought Patroness either, so the slot can't be read.",
+  "replaces": "Patroness"
+ },
+ "considered|member|shoplifter": {
+  "verdict": "cut",
+  "reason": "Stopped unproven: no matched games after one smarter-bot run.",
+  "replaces": "Shoplifter"
+ },
+ "considered|member|silver tongues": {
+  "verdict": "untested",
+  "reason": "Built; no games yet.",
+  "replaces": "Smooth Talkers"
+ },
+ "considered|member|socialites": {
+  "verdict": "cut",
+  "reason": "Socialites went live in High Society's place instead.",
+  "replaces": "Toastmaster"
+ },
+ "considered|member|meddler": {
+  "verdict": "watch",
+  "reason": "Meddler made once per round. Judged on the smarter bots; needs a hard-bot rerun before it can ship.",
+  "replaces": "Meddler"
+ },
+ "considered|member|setlist": {
+  "verdict": "untested",
+  "reason": "Trial re-queued on the hard bots; no result yet."
+ },
+ "considered|space|open house": {
+  "verdict": "watch",
+  "reason": "Beat Melting Pot in blind judging of bot games (+0.47, +0.81 with misplays dropped). Its balance trial is still playing.",
+  "replaces": "Melting Pot"
  }
 }

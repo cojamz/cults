@@ -151,7 +151,7 @@ function row(c){
 }
 $('colors').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; const c = b.dataset.c; st.colors.has(c) ? st.colors.delete(c) : st.colors.add(c); render(); });
 const built = new Date(DATA.built);
-$('legend').textContent = 'Score: the card team\'s judges, out of 20 (13 is the bar). Keep: over the bar and bot games agree, or it beat the card it replaced. Watch: the judges and the bot games disagree. Cut: under the bar or breaks a standing rule. Untested: built, waiting on games. Bot games outrank the judges wherever both exist.';
-$('foot').textContent = `Updated ${built.toLocaleString('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})} Eastern. Scores from ranking ${DATA.ranking||'–'}; bot numbers from ${DATA.bots||'–'}.`;
+$('legend').textContent = 'Score: three blind card judges, out of 22 (13 is the bar). Keep: over the bar and bot games agree, or it beat the card it replaced. Watch: the judges and the bot games disagree. Cut: under the bar or breaks a standing rule. Untested: built, waiting on games. Bot games outrank the judges wherever both exist.';
+$('foot').textContent = `Updated ${built.toLocaleString('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})} Eastern. Scores from ranking ${DATA.ranking||'–'}; bot numbers from ${DATA.bots||'–'}.${DATA.taste!=null?` The judges agreed with your past likes and dislikes ${DATA.taste}% of the time this round (the bar is 70%), so treat their scores as a first read.`:''}`;
 render();
 </script>
