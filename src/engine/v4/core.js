@@ -370,15 +370,17 @@ function protectedColors(state, p) {
   const ctx = ctxFor(state);
   const out = new Set();
   for (const qid of state.quadrants) {
-    const q = quadrant(qid);
+    // the contest this table plays (By color and the other settings change it), never the printed one (Nov 4: under
+    // By color, paying green warned "gives up your contest lead in green" where Green counts minions)
+    const q = quadrant(qid), sc = scoringOf(state, qid);
     const r = q.resource;
-    if (!r || !(p.res[r] > 0)) continue;
+    if (!r || !sc || !(p.res[r] > 0)) continue;
     let mine, top, less;
     try {
-      mine = q.scoring.score(ctx, p);
-      top = Math.max(...state.players.map(o => q.scoring.score(ctx, o)));
+      mine = sc.score(ctx, p);
+      top = Math.max(...state.players.map(o => sc.score(ctx, o)));
       p.res[r] -= 1;
-      try { less = q.scoring.score(ctx, p); } finally { p.res[r] += 1; }
+      try { less = sc.score(ctx, p); } finally { p.res[r] += 1; }
     } catch { continue; }
     if (less < mine && top > 0 && mine >= top) out.add(r);
   }
@@ -394,12 +396,12 @@ function rimCost(state, p) {
   const ctx = ctxFor(state);
   const rims = [];
   for (const qid of state.quadrants) {
-    const q = quadrant(qid);
-    if (!q.resource || !state.resources.includes(q.resource)) continue;
+    const q = quadrant(qid), sc = scoringOf(state, qid); // the table's contest, as in protectedColors
+    if (!q.resource || !sc || !state.resources.includes(q.resource)) continue;
     try {
-      const mine = q.scoring.score(ctx, p);
-      const best = Math.max(0, ...state.players.filter(o => o !== p).map(o => q.scoring.score(ctx, o)));
-      rims.push({ q, r: q.resource, best, held: mine > 0 && mine >= best, tie: mine > 0 && mine === best, near: !(mine > 0 && mine >= best) && best > 0 });
+      const mine = sc.score(ctx, p);
+      const best = Math.max(0, ...state.players.filter(o => o !== p).map(o => sc.score(ctx, o)));
+      rims.push({ q, sc, r: q.resource, best, held: mine > 0 && mine >= best, tie: mine > 0 && mine === best, near: !(mine > 0 && mine >= best) && best > 0 });
     } catch { /* a scoring rule that can't be read here */ }
   }
   // members whose game-end bonus counts what you hold (Kingpin: +1 per 2 magenta; Magnate): spending can cut it, and
@@ -427,7 +429,7 @@ function rimCost(state, p) {
       const any = Object.values(v).some(n => n > 0);
       for (const x of rims) {
         if (!any) continue;
-        const now = x.q.scoring.score(ctx, p);
+        const now = x.sc.score(ctx, p);
         if (x.held && !(now > 0 && now >= x.best)) { lost++; colors.push(x.r); if (x.tie) ties.push(x.r); }
         if (v[x.r] > 0 && x.near && x.best - now <= 3 + (v[x.r] || 0)) near += v[x.r];
       }

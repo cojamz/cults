@@ -427,7 +427,7 @@ const cap1 = s => (s ? s[0].toUpperCase() + s.slice(1) : s);
 /** A quadrant's scoring rule that opens its live standings (the board's rule banner, the panel's score line). */
 export function ContestTip({ state, qid, meId = null, children, className = '' }) {
   return (
-    <Tip className={`contest-tip${className ? ` ${className}` : ''}`} data-contest-tip={qid} label={`${quadrant(qid).scoring.label}: who leads now`}
+    <Tip className={`contest-tip${className ? ` ${className}` : ''}`} data-contest-tip={qid} label={`${standings(state).find(x => x.qid === qid)?.label || quadrant(qid).scoring.label}: who leads now`}
       content={() => {
         const st = standings(state).find(x => x.qid === qid);
         return st ? <ContestStandings state={state} st={st} meId={meId} /> : null;

@@ -66,6 +66,24 @@ describe('follower payments mark the answers that give up a lead', () => {
   });
 });
 
+// Under By color, Blue's contest is most members, not most blue held: spending blue gives up no lead (Nov 4: the
+// warning and the default way to pay read the printed contest, "gives up your contest lead in green" where Green
+// counts minions)
+describe('the warning reads the contest this table plays', () => {
+  it('By color: paying blue while tied for blue is not marked (Blue counts members)', () => {
+    let s = sceneQ({ quadrants: Q, rules: { contests: 'byColor' }, res: [{ blue: 2, gold: 2 }, { blue: 2, gold: 4 }], queue: [{ t: 'buy', p: 0 }] });
+    s = applyMove(s, { player: 0, option: 'tier:small' });
+    const blue = s.pending.options.find(o => o.spend?.blue === 1);
+    expect(blue).toBeTruthy();
+    expect(blue.breaks).toBeUndefined();
+  });
+  it('As printed: the same payment is marked (Blue counts blue held)', () => {
+    let s = sceneQ({ quadrants: Q, res: [{ blue: 2, gold: 2 }, { blue: 2, gold: 4 }], queue: [{ t: 'buy', p: 0 }] });
+    s = applyMove(s, { player: 0, option: 'tier:small' });
+    expect(s.pending.options.find(o => o.spend?.blue === 1)?.breaks).toEqual(['blue']);
+  });
+});
+
 // The full-set contest left with Yellow 2.0 (Oct 31: most yellow, as every 2.0 color); the lead cases above cover it.
 describe('a payment that cuts a member’s game-end bonus is marked (tester A: Kingpin paid +0 unwarned)', () => {
   // Kingpin counted held magenta until Oct 21 (now: per magenta member), so Tycoon carries the case
