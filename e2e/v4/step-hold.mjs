@@ -15,9 +15,9 @@ import { answerChoice } from './lib/answer.mjs';
 
 const base = process.env.V4_URL;
 if (!base) { console.error('step-hold: set V4_URL'); process.exit(2); }
-// stepHoldCap at Relaxed is Steady's cap: 2400 × 1.62 + 400 ≈ 4.3s. The margin covers the landing, the next step's
-// commit and a loaded box; before the cap this save held steps 6.7–6.8s (the live games, 7–9s).
-const LIMIT = 5500;
+// stepHoldCap at Relaxed: 2400 × 3 + 400 ≈ 7.6s (Steady's 4.3s until Cory, Nov 3: "On relaxed speed things are still
+// quite fast"). The margin covers the landing, the next step's commit and a loaded box.
+const LIMIT = 8800;
 // a saved hot-seat game at P1's first placement of round `round` (bots elsewhere): the whole round to watch
 function roundSave(seed, round) {
   const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];

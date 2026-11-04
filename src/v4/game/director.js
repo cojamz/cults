@@ -675,10 +675,14 @@ export function holdAfter(plan, { sameNext, rivalStep, floor = 400, base = 0, ne
 }
 /** The longest a step may hold on screen: the chain's cap plus its breath and the floor (re-timing never goes past it). */
 export const holdCap = () => Math.round(2400 * speedScale()) + MO.breath + 400;
-/** The longest a step in a round may hold the table before the rest of its chain lands at once: Steady's cap even at
- *  Relaxed, and half that while the table is `behind` (3+ steps waiting). A late-game recruit that sets off 4–6
- *  members one by one held 7–9s at Relaxed, and the table fell minutes behind the game (Mike, Oct 26: "locking up"). */
-export const stepHoldCap = (behind = false) => Math.round((2400 * Math.min(speedScale(), SPEEDS.steady) + 400) * (behind ? 0.5 : 1));
+/** The longest a step in a round may hold the table before the rest of its chain lands at once: the speed's own cap,
+ *  up to RELAXED_CAP's pace (about 7.6s at Relaxed), and half that while the table is `behind` (3+ steps waiting).
+ *  A late-game recruit that sets off 4–6 members one by one held 7–9s at Relaxed, and the table fell minutes behind the
+ *  game (Mike, Oct 26: "locking up"): the cap was Steady's (~4s) at every speed until Cory, Nov 3: "On relaxed speed
+ *  things are still quite fast" (a fifth of rivals' steps at Relaxed, mostly recruits, were squeezed to Steady's pace).
+ *  Falling behind still halves it. */
+const RELAXED_CAP = 3;
+export const stepHoldCap = (behind = false) => Math.round((2400 * Math.min(speedScale(), RELAXED_CAP) + 400) * (behind ? 0.5 : 1));
 
 // ---------- the screen ----------
 // One clock for every chain on the table, woken by a timer when its next step is due (tick, below). A late wake (a
