@@ -2,6 +2,7 @@
 // your player id so a reload rejoins your seat. Everything is wrapped: storage can be missing or full.
 import { stateProblem, gameRecord, CONTENT_HASH } from './session/record.js';
 import { createTabLease, OWNER_CHANNEL } from './session/owner.js';
+import { keepGame } from './session/archive.js';
 
 const LOCAL = 'patrons.v4.local';
 const ONLINE = 'patrons.v4.online';
@@ -140,7 +141,15 @@ export function saveLocalSoon(config, state, undo = null, hold = null) {
   else saveTimer = setTimeout(() => { saveTimer = null; flushLocalSave(); }, 0);
 }
 /** Starting over or leaving: forget the saved game and its round-start snapshot (only the owning tab may). */
-export const clearLocal = () => { if (!ownsLocal()) return; dropLocalSave(); write(LOCAL, null); write(ROUND_START, null); };
+export const clearLocal = () => {
+  if (!ownsLocal()) return;
+  // An unfinished game being replaced goes into past games first, with every move it saved, so "Save game" can
+  // still bring it back (coordinator under Cory's go-ahead, Nov 4). The archive's own copy lags up to a second.
+  flushLocalSave();
+  const v = read(LOCAL);
+  if (v && v.state && Array.isArray(v.state.players) && !v.state.over) keepGame(v.state);
+  write(LOCAL, null); write(ROUND_START, null);
+};
 /**
  * The results screen has rendered: the game is done, nothing left to resume. Given the finished state, it's kept as
  * the last game (results and record) until a new game starts.

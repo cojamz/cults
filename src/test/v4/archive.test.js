@@ -28,3 +28,15 @@ it('keeps the newest few, one entry per game', () => {
   expect(list[0].record.seed).toBe(KEEP + 1);
   expect(list[0].round).toBe(2);
 });
+
+it('starting a new game keeps the unfinished one in past games, every saved move included', async () => {
+  const { saveLocal, clearLocal } = await import('../../v4/saved.js');
+  const mid = { ...replayRecord({ ...rec, moves: rec.moves.slice(0, 20) }).state, seed: 4242 };
+  expect(mid.over).toBeFalsy();
+  saveLocal(null, mid);
+  clearLocal();
+  const g = pastGames().find(x => x.record.seed === 4242);
+  expect(g).toBeTruthy();
+  expect(g.over).toBe(false);
+  expect(g.record.moves.length).toBe(20);
+});
