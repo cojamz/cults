@@ -45,8 +45,9 @@ export const Sprite = memo(function Sprite({ id, sphere = 'colorless', size = 48
   if (kind === 'member' && emojiLook()) {
     const pid = emojiPixelId(id);
     if (pid) {
-      // whole pixels: the 24-pixel drawing at the multiple of 24 nearest 80% of the box, at most 72
-      const px = Math.max(24, Math.round(Math.min(size * 0.8, 76) / 24) * 24);
+      // whole pixels: the 24-pixel drawing at 24, 48 or 72. Card pictures (56 and up) get 72, bigger than the system emoji, to
+      // fill the picture (Claude, under Cory's "make judgement calls", Nov 4)
+      const px = size >= 56 ? 72 : size >= 40 ? 48 : 24;
       return <img className={`sprite emoji-member emoji-pixel${className ? ` ${className}` : ''}`} src={emojiPixelUrl(pid)} width={px} height={px} draggable={false} style={{ width: px, height: px }} alt={title || ''} title={title || undefined} aria-hidden={title ? undefined : 'true'} data-emoji-member="" data-sprite={`emoji:${pid}`} decoding="sync" />;
     }
     const em = (Array.isArray(id) ? id : [id]).map(emojiMember).find(Boolean);
