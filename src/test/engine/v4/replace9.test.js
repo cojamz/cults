@@ -269,6 +269,23 @@ describe('Ambassadors: "On Recruit: +1 of each color you have a member of. Round
   });
 });
 
+describe('Mannequin: "Blue members in the shop count as your members when contests are scored."', () => {
+  const Q4 = ['red', 'market', 'purple', 'silver'];
+  it('price and retirement', () => {
+    const d = defById('market.mannequin');
+    expect([d.s, d.w, d.f, d.n, d.round]).toEqual([3, 2, 1, 1, 1]);
+    expect(defById('market.hawkers').retired).toBe(true);
+  });
+  it('pitched turn: round I end, Most members: 1 member plus 2 blue shop members (one counts as 3) beats a rival\'s 3', () => {
+    const won = list => {
+      const s = table(Q4, { n: 2, round: 1, rules: BY, members: [list, ['red.bodysnatchers', 'purple.gossip', 'silver.godparents']], shop: ['market.windowdresser', 'market.curator', 'red.volunteer'], queue: [{ t: 'endRound' }] });
+      return (s.contests || []).at(-1).results.find(c => c.qid === 'market').winners;
+    };
+    expect(won(['market.mannequin'])).toEqual([0]);
+    expect(won(['market.lastminute'])).toEqual([1]);
+  });
+});
+
 describe('REPLACE9 by card key', () => {
   it('a key switches on only that card and retires only its old card', async () => {
     const { execFileSync } = await import('node:child_process');

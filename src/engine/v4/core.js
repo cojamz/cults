@@ -209,6 +209,12 @@ const printedMembers = def => def.n ?? 1;
 const countOf = card => Math.max(printedMembers(defById(card.def)), card.copy ? printedMembers(defById(card.copy)) : 0);
 export const memberWeight = (state, uid) => countOf(state.cards[uid]);
 export const memberCount = (state, p) => p.members.reduce((s, u) => s + countOf(state.cards[u]), 0);
+/** Mannequin (REPLACE9 bot test): "Blue members in the shop count as your members when contests are scored." */
+const contestMembers = (state, p) => {
+  const n = memberCount(state, p);
+  if (!REPLACE9 || !p.members.some(u => state.cards[u].def === 'market.mannequin' || state.cards[u].copy === 'market.mannequin')) return n;
+  return n + state.shop.filter(u => defById(state.cards[u].def).quadrant === 'market').reduce((s, u) => s + countOf(state.cards[u]), 0);
+};
 // Dabblers (everyColor) counts for every color on the table (Cory, 2026-10-28)
 // { wild: false } leaves Dabblers out, for a card where counting it would hurt its owner (Big Tent's "exactly one")
 // { cards: true } counts member cards, one each, whatever they count as
@@ -1126,11 +1132,11 @@ export function scoringOf(state, qid) {
     // A different contest per color (Cory, 2026-11-02: "they should all have different goals"; set in
     // /mnt/project-files/ring-goals/by-color.md). Each is won by taking that color's own spaces.
     const fewest = { label: 'Fewest members', counts: 'your members when the round ends (at least 1)',
-      score: (ctx, p) => { const n = memberCount(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: memberCount(state, p) }) };
+      score: (ctx, p) => { const n = contestMembers(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: contestMembers(state, p) }) };
     const by = {
       // Red keeps its printed contest, most red (Claude, under Cory's "use your judgement", Nov 3): "Priciest member" went
       // to whoever bought Mob (82% of round IIIs, Normal bots) and red cults won 52% where 21% was even.
-      market: { label: 'Most members', counts: 'your members when the round ends', score: (ctx, p) => memberCount(state, p) },
+      market: { label: 'Most members', counts: 'your members when the round ends', score: (ctx, p) => contestMembers(state, p) },
       trading: fewest,
       thieves: { label: 'Most resources', counts: 'all the resources you hold when the round ends, every color together', score: (ctx, p) => state.resources.reduce((n, r) => n + (p.res[r] || 0), 0) },
       yellow: { label: 'Most full sets', counts: 'your full sets of one of every color in play, when the round ends', score: (ctx, p) => (REPLACE9 ? setsOf(ctx, p) : Math.min(...state.resources.map(r => p.res[r] || 0))) },
@@ -1187,7 +1193,7 @@ export function scoringOf(state, qid) {
     return by[qid] || q.scoring;
   }
   if (mode === 'whiteFewest' && qid === 'trading') return { label: 'Fewest members', counts: 'your members when the round ends (at least 1)',
-    score: (ctx, p) => { const n = memberCount(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: memberCount(state, p) }) };
+    score: (ctx, p) => { const n = contestMembers(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: contestMembers(state, p) }) };
   return q.scoring;
 }
 export function contestTable(state, ctx = ctxFor(state)) {

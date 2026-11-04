@@ -450,7 +450,7 @@ const market = {
     // seat order from the owner's left is offered it if they can pay: its cost goes to the bank as any recruit's, and 2
     // more (from the piles they hold most of) to the owner (the draft's reading of "paying its cost plus 2 to you"). The
     // rival's recruit is theirs (its On Recruit fires) and doesn't use their turn's recruit.
-    m('hawkers', 'Hawker', 4, 3, 'On Use, once per round: choose a shop member. Starting on your left, each rival may recruit it, paying its cost plus 2 to you. If none does, you recruit it for free.', { round: 1, // a round I member as Connoisseurs was (bot-tested in a later round; Nov 4)
+    m('hawkers', 'Hawker', 4, 3, 'On Use, once per round: choose a shop member. Starting on your left, each rival may recruit it, paying its cost plus 2 to you. If none does, you recruit it for free.', { round: 1, ...old9('market.hawkers'), // a round I member as Connoisseurs was (bot-tested in a later round; Nov 4)
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
@@ -528,6 +528,10 @@ const market = {
     m('snob', 'Snobs', 3, 2, 'Game End: +1 follower per blue member you have.', { f: 2,
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, Q),
     }),
+    // REPLACE9 bot test (Members C, Nov 4): Hawker's place (Hawker asked rivals to choose on its owner's turn). 3 blue + 2 any as a
+    // player sees it. The shop's blue members count toward the owner's members in every contest that counts them (core
+    // contestMembers: Most members, and Fewest members against the owner). Rivals answer by sending blue members to the bottom.
+    ...add9(m('mannequin', 'Mannequin', 2, 2, 'Blue members in the shop count as your members when contests are scored.', { round: 1 })),
     m('recluse', 'Recluse', 2, 2, 'Game End: +2 followers per rival with more members than you.', {
       onGameEnd: (ctx, owner) => 2 * rivalsBigger(ctx, owner),
     }),
