@@ -16,7 +16,9 @@ export const MinionPool = memo(function MinionPool({ state }) {
   if (!(state.round >= 2) || state.over) return null;
   const n = minionPool(state);
   return (
-    <Tip as="div" className={`lt-pool${n >= 5 ? ' many' : ''}${n >= 7 ? ' crowd' : ''}`} data-pool={n} label={words(n)} content={<p className="pool-tip">{words(n)}</p>}>
+    // the figures stand shoulder to shoulder from six, and the label takes two lines only from eight, when one line
+    // no longer fits beside the Log (picky bot, Nov 4: "SPARE MINIONS" wrapped with five, room to spare)
+    <Tip as="div" className={`lt-pool${n >= 8 ? ' many' : ''}${n >= 6 ? ' crowd' : ''}`} data-pool={n} label={words(n)} content={<p className="pool-tip">{words(n)}</p>}>
       <span className="pool-men" aria-hidden="true">
         {Array.from({ length: n }, (_, k) => (
           <i key={k} className="pool-min" data-pool-min={k}><Minion color={ROBE} size={18} /></i>

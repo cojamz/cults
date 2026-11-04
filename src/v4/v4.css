@@ -1033,6 +1033,10 @@ header.bar{grid-template-rows:minmax(40px,auto) 20px}
 /* the totals' hover words keep their 44px touch box, but it never makes the summary scroll: in the last row it hung
    10px below the table, and the round-III summary scrolled 6px at 700px with "More below" (gate r7, 2026-10-15) */
 .dialog.roundend .re-totals{overflow-y:clip}
+/* your own row stays in sight at the scroller's foot (picky bot, Nov 4: round III hid it under "More below") */
+.dialog.roundend .re-p[data-me]{position:sticky;bottom:0;z-index:1;background:var(--table-2);box-shadow:0 -12px 10px -4px var(--table-2)}
+/* ...so the foot's fade gives way to the row's own soft top edge (it faded your last line) */
+.dialog.roundend .re-body.more:has(.re-p[data-me]){-webkit-mask-image:none;mask-image:none}
 /* header: How to play becomes "?" below 360px */
 .rules-btn .ico{display:none}
 @media (max-width:360px){ .rules-btn .lbl{display:none} .rules-btn .ico{display:inline;font-weight:700;font-size:var(--fs-3)} header.bar h1{font-size:var(--fs-4)} }

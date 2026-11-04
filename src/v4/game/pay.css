@@ -101,7 +101,8 @@
 .pay-receipt .cost-dots{display:inline-flex;gap:6px}
 .pay-receipt .cost-dots .cd{display:inline-flex;align-items:center;gap:2px}
 .pay-receipt .cost-dots .pip.glyph{width:14px;height:14px;vertical-align:0;margin:0}
-@keyframes pay-receipt{0%{opacity:0;transform:translateY(4px)}8%{opacity:1;transform:none}85%{opacity:1}100%{opacity:0}}
+/* a short fade at the end: a faint tail read as a stray "P" and number over the card that slid into the bought one's place (picky bot, Nov 4) */
+@keyframes pay-receipt{0%{opacity:0;transform:translateY(4px)}8%{opacity:1;transform:none}93%{opacity:1}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.pay-receipt{animation:none}}
 
 /* every coin on the paper wears a thin ink ring, so a pale color (white, silver) reads on the cream as clearly as the

@@ -154,6 +154,9 @@ h1,h2,h3{font-family:var(--serif)}
   .lt > .lt-shop{grid-area:shop;min-height:0;overflow:hidden}
   .lt > .room,.lt > .error{position:fixed;left:26px;bottom:10px;z-index:20}
   .app.game.lt > .main.over{grid-column:1 / -1;grid-row:2 / -1;min-height:0;overflow:auto}
+  /* scrolled, the log's lines pass under the header softly, never cut in half at its foot (picky bot, Nov 4); the room
+     the fade takes is padding, so nothing at rest sits in it */
+  .app.game.lt > .main.over{padding-top:14px;-webkit-mask-image:linear-gradient(transparent,#000 14px);mask-image:linear-gradient(transparent,#000 14px)}
 }
 
 /* the lamp: whichever region holds the decision is lit; the rest sit a little in shadow */
@@ -176,7 +179,7 @@ h1,h2,h3{font-family:var(--serif)}
 .lt-prompt .status .say .say-text{font-size:inherit;-webkit-line-clamp:2}
 .lt-prompt .status .say em{font-style:italic;color:var(--lamp-ink)}
 .lt-prompt .status .say .lead{color:var(--cream)}
-.lt-prompt .status .say .say-run{flex:none;margin-left:12px;font-family:var(--sans,inherit);font-size:var(--s);font-style:normal;color:var(--cream-2);white-space:nowrap;align-self:center}
+.lt-prompt .steps-row .say-run{flex:none;margin-left:auto;font-family:var(--sans,inherit);font-size:var(--s);font-style:normal;letter-spacing:0;text-transform:none;color:var(--cream-2);white-space:nowrap}
 .lt-prompt .status .say:not(.mine){color:var(--cream-2);font-size:var(--m)}
 .lt-prompt .status .say.nudge,.lt-prompt .status .say.info{font-size:18px;color:var(--lamp-ink)}
 .lt-prompt .undo-slot{display:flex;width:auto;flex:none}

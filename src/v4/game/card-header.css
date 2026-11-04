@@ -68,6 +68,8 @@
 /* the full card is the whole hover: no paper box around it (it brings its own frame) */
 .popover:has(> .tip-body > .card-face.mc:only-child),.lt-hover.popover:has(.card-face.mc){padding:0;background:#f4ebd7;overflow:hidden;border-radius:9px}
 .popover:has(> .tip-body > .card-face.mc:only-child) .card-face.mc,.lt-hover.popover .card-face.mc{margin:0}
+/* the lines under the card (Impersonator's "Could choose") keep off the hover's edge (picky bot, Nov 4: the labels ran to it) */
+.lt-card-body > .card-face.mc ~ .lt-yd{margin:0;padding:8px 12px 10px}
 .mp .mp-card:has(> .card-face.mc){box-shadow:0 12px 28px -12px rgba(0,0,0,.8);background:#f4ebd7}
 .mp .mp-card > .card-face.mc.mc{padding:0}
 .mp .mp-tile.lt-card.card:has(> .lt-hd){width:104px;height:164px;min-height:0}

@@ -207,6 +207,9 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
       // still under the price (a long rule over a discounted price's two lines, "7" over "free"): the picture gives way
       const bare = tight.filter(over);
       for (const c of bare) c.a.setAttribute('data-fit', 'bare');
+      // still under it (Doormen's long rule in a short bottom row): the rule stops above the price, faded, and its hover
+      // has the whole text (picky bot, Nov 4: "3 blue 5" read through the words)
+      for (const c of bare.filter(over)) c.a.setAttribute('data-fit', 'clip');
       if (FIT_MEMO.size > 400) FIT_MEMO.clear();
       for (const c of cards) FIT_MEMO.set(c.key, c.a.getAttribute('data-fit') || '');
     };

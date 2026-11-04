@@ -128,8 +128,10 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
             // "+1 new members" read as a count of members (live panel r1): it's followers, so "from new members"
             const why = g ? [...membersParts(g).map(t => t.replace(/ that left$/, ' who left')), g.bought && `+${g.bought} bought`, play && `${play} ${g.effects > 0 ? 'gained' : 'lost'}`, endGame && `${endGame} end-game`].filter(Boolean).join(' · ') : '';
             const whyLong = g ? [...membersParts(g).map(t => t.replace(/ that left$/, ' who left')), g.bought && `+${g.bought} followers bought`, play && `${play} ${g.effects > 0 ? 'gained' : 'lost'} from spaces and members' abilities (steals, trades and the like), not prizes`, endGame && `${endGame} from end-game bonuses`].filter(Boolean) : [];
+            // your row sticks to the card's foot while the rows above it scroll: round III's card hid it under "More below"
+            // when you placed last (picky bot, Nov 4)
             return (
-              <div key={p.id} className="re-p" role="row" style={{ '--pc': playerColor(p.id) }} data-total={`${p.id}:${now}`}>
+              <div key={p.id} className="re-p" role="row" style={{ '--pc': playerColor(p.id) }} data-total={`${p.id}:${now}`} data-me={p.id === meId ? '' : undefined}>
                 <span className="nm" role="cell"><Who state={after} id={p.id} meId={meId} /></span>
                 <span className="re-d num" role="cell">{c ? `+${c}` : '—'}</span>
                 {/* the parts whenever there are any, even when they cancel out (live panel r1: P4 recruited 3 and lost 3 to a

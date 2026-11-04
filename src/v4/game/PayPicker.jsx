@@ -16,7 +16,7 @@ import { useDialog, TurnOf } from './parts.jsx';
 import { Follower } from '../art/Follower.jsx';
 import { Sprite } from '../art/Sprite.jsx';
 import { spriteId } from '../art/index.js';
-import { ResourceGlyph } from './Glyphs.jsx';
+import { ResourceGlyph, MemberGlyph } from './Glyphs.jsx';
 import { CostDots, cardColor, onTable, CardText } from './Info.jsx';
 import { priceNotes } from './priceNotes.js';
 import { motionOK } from './flight.js';
@@ -132,7 +132,11 @@ export default function PayPicker({ state, onPick, busy, turnOf = null }) {
       let left = r.left - gap - w;
       if (left < edge) left = r.right + gap;
       if (left + w > innerWidth - edge) left = Math.max(edge, (innerWidth - w) / 2);
-      const top = Math.min(Math.max(edge, r.top + r.height / 2 - h / 2), Math.max(edge, innerHeight - edge - h));
+      // it stays below the turn line when it would sit beside it (picky bot, Nov 4: beside the shop's top row it covered
+      // "Round I of 3 · Place · Rec…"); only a sheet too tall for the room under it goes higher
+      const pr = document.querySelector('.lt-prompt')?.getBoundingClientRect();
+      const ceil = pr && pr.height && left < pr.right && left + w > pr.left ? Math.max(edge, pr.bottom + 8) : edge;
+      const top = Math.min(Math.max(ceil, r.top + r.height / 2 - h / 2), Math.max(edge, innerHeight - edge - h));
       el.style.left = `${Math.round(left)}px`; el.style.top = `${Math.round(top)}px`;
       el.dataset.at = anchorSel;
       Object.assign(ho.style, { left: `${r.left - 4}px`, top: `${r.top - 4}px`, width: `${r.width + 8}px`, height: `${r.height + 8}px` });
@@ -230,7 +234,8 @@ export default function PayPicker({ state, onPick, busy, turnOf = null }) {
             <span className="mc-id">
               <span className="mc-row">
                 <h2 className="mc-name">{def ? def.name : swap ? 'Swap card' : `${tier.get} follower${tier.get > 1 ? 's' : ''}`}</h2>
-                {def && <span className="mc-worth" title={`Worth ${def.f} follower${def.f === 1 ? '' : 's'}`}><b className="n">{def.f}</b><Follower size={14} title={`worth ${def.f} follower${def.f === 1 ? '' : 's'}`} /></span>}
+                {/* the member bust and count, as the shop card's corner prints it, never the follower mark (picky bot, Nov 4) */}
+                {def && <span className="mc-worth" title={`Counts as ${def.n ?? 1} member${(def.n ?? 1) === 1 ? '' : 's'}`}><b className="n">{def.n ?? 1}</b><MemberGlyph r={def.everyColor ? null : sphere} size={14} decorative /></span>}
               </span>
               <small className="mc-cost" data-pay-cost={printed.map(c => `${c.n}${c.color}`).join(' ')} data-pay-price={(price ? price.parts : printed).map(c => `${c.n}${c.color}`).join(' ')}>
                 costs {price ? <><s className="pay-was num" title="List price">{price.list}</s> {price.parts.length ? <CostDots parts={price.parts} /> : 'nothing'}</> : <CostDots parts={printed} />}

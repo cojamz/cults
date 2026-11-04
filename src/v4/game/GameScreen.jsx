@@ -1671,9 +1671,6 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
                   {voice && humansHere && p.who ? <b>{p.who.name}: </b> : null}
                   {voice ? <><span className="lead">{p.lead ?? 'Your turn — '}</span><em>{p.text && !p.keepCase ? p.text[0].toLowerCase() + p.text.slice(1) : p.text}</em></> : state.over || p.over ? <span data-turn-over={p.over ? '' : undefined}>{p.text}</span> : <>{p.text}<span className="dots" aria-hidden="true"> ···</span></>}
                 </span>
-                {/* stacked turns count down beside the headline (Cory, Nov 4: "when i stack a bunch of turns in a row its
-                    not clear to me how many turns i have remaining"): "3 turns left in a row", then 2, then "last one" */}
-                {voice && myRun && myRun.total >= 2 && <span className="say-run" data-run-left={myRun.left} title={runTitle(myRun)}>{myRun.left >= 2 ? `${myRun.left} turns left in a row` : 'last one in a row'}</span>}
               </span>
               );
             }}</AfterChain>
@@ -1698,6 +1695,10 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
               <span className={step === 'buy' ? 'on' : ''}>Recruit</span>
             </span>
           )}
+          {/* stacked turns count down (Cory, Nov 4: "when i stack a bunch of turns in a row its not clear to me how many
+              turns i have remaining"): "3 turns left in a row", then 2, then "last one". On this second row, so the
+              question above stays one line beside Undo (picky bot, Nov 4: it wrapped and was cut at 1270x700) */}
+          {yours && !state.over && myRun && myRun.total >= 2 && <span className="say-run" data-run-left={myRun.left} title={runTitle(myRun)}>{myRun.left >= 2 ? `${myRun.left} turns left in a row` : 'last one in a row'}</span>}
         </div>
         {/* who's winning lives on the chairs (each total, its place, the margin on hover): no score row (Cory, 2026-10-15) */}
         <Menu onRules={() => setRules(true)} onLog={openLog} getState={() => session.getState()} onLeave={onHome ? () => (state.over ? onHome() : setLeaving(true)) : null} />
