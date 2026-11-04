@@ -3,7 +3,7 @@
 //   node scripts/v4-portrait4-import.mjs
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 const dir = 'design/prototypes/scenes/out';
-const files = existsSync(dir) ? readdirSync(dir).filter(f => f.endsWith('.json')).sort().map(f => `${dir}/${f}`) : [];
+const files = existsSync(dir) ? readdirSync(dir).filter(f => f.endsWith('.json')).sort((a, b) => a.localeCompare(b, 'en', { numeric: true })).map(f => `${dir}/${f}`) : [];
 const all = new Map();
 for (const f of files) {
   for (const ic of JSON.parse(readFileSync(f, 'utf8'))) {

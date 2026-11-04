@@ -164,7 +164,6 @@ for (const [id, name, source] of [
   ['echo.impersonators', 'Impersonator', 'echo.muse'], ['silver.creditors', 'Creditor', 'silver.collector'],
   ['thieves.kidnappers', 'Kidnapper', 'thieves.kingpin'], ['silver.godparents', 'Godparent', 'silver.guest'],
   ['echo.encore', 'Encore', 'echo.chronicler'], ['echo.songrequest', 'Song Request', 'echo.evergreen'], // Nov 4: Chronicler's and Busker's places
-  ['trading.barker', 'Barker', 'trading.shopkeeper'], // Nov 4: Landlord's place
 ]) {
   const art = PORTRAIT.get(source);
   if (art && !PORTRAIT.has(id)) PORTRAIT.set(id, { ...art, id, name });
