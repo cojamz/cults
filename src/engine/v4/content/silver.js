@@ -12,7 +12,7 @@ import { add6, old6 } from './replace6.js';
 import { add8, old8, handlers8 } from './replace8.js';
 import { swap11, handlers11 } from './replace11.js';
 import { add14, old14, handlers14 } from './replace14.js';
-import { see, endsAhead, SEE_SPITE } from './botsee.js';
+import { see, SEE_SPITE } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const S = 'silver';
