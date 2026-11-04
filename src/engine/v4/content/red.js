@@ -4,6 +4,7 @@ import { add1, old1 } from './replace1.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add4, old4, handlers4 } from './replace4.js';
 import { see, endsAhead } from './botsee.js';
+import { add7, old7, handlers7 } from './replace7.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
 
@@ -148,6 +149,15 @@ export default {
       ctx.borrowOnRecruit(p, uid);
     },
     takeFree(ctx, p, uid) { ctx.recruit(p, uid, { free: true }); },
+    ...handlers7({
+      drift(ctx, p, uid, data) {
+        if (uid == null) { ctx.log(`${p.name} keeps ${ctx.card(data.uid)?.def.name || 'Seat Filler'}.`); return; }
+        const me = ctx.card(data.uid);
+        if (!p.members.includes(data.uid) || !ctx.state.shop.includes(uid) || cost(ctx.card(uid)) > cost(me) + 3) return;
+        const names = [me.def.name, ctx.card(uid).def.name];
+        if (ctx.swapMembers(p, data.uid, uid)) ctx.log(`${p.name}'s ${names[0]} goes to the shop; ${p.name} recruits ${names[1]} for free.`);
+      },
+    }),
     panelMode(ctx, p, mode, data) {
       if (mode === 'promote' || mode === 'demote') swap(ctx, p, mode, `Panel: ${mode} another member`, data?.excludeUid);
     },
@@ -178,7 +188,22 @@ export default {
       },
     }),
     m('bigfamily', 'Big Family', 2, 3, 'Worth 4 followers.', { f: 4, n: 4 }), // 4 members (Cory, Oct 29: "maybe make it 4 members"); 5 to 6, Claude's price
-    m('volunteer', 'Volunteer', 0, 0, 'Worth 1 follower.', old1),
+    m('volunteer', 'Volunteer', 0, 0, 'Worth 1 follower.', { ...old1, ...old7('red.volunteer') }),
+    // REPLACE7 bot test (Nov 4, quality loop, Members A): Volunteer's place. 2 red + 1 any as a player sees it, a round I
+    // member. At round start (II and III; it can't be bought before round I's) the owner may give it to the shop and
+    // recruit a shop member costing up to 3 more, for free: Promote's trade, done by the card itself.
+    ...add7(m('seatfiller', 'Seat Filler', 1, 1, 'Round Start: you may give this to the shop and recruit a shop member costing up to 3 more.', {
+      onRoundStart(ctx, owner, card) {
+        const list = ctx.shopCards().filter(x => cost(x) <= cost(card) + 3);
+        if (!list.length) { ctx.log(`${owner.name}'s ${card.def.name}: no shop member costs ${cost(card) + 3} or less.`); return; }
+        ctx.choose(owner, `${card.def.name}: give it to the shop and recruit a shop member costing up to ${cost(card) + 3}?`, list.map(x => ({
+          id: `card:${x.uid}`, label: `${card.def.name} ↔ Shop: ${x.def.name} (${cost(x)})`, kind: 'card', value: x.uid,
+          hint: (x.def.f + cost(x)) - (card.def.f + cost(card)),
+        })).concat({ id: 'none', label: 'Keep it', kind: 'pass', value: null, hint: 0 }), 'red.drift', { uid: card.uid });
+      },
+      // a free member up to 3 dearer at each round start still ahead (it leaves after one)
+      ...see(info => (info.round < 3 ? 3 : 0)),
+    })),
     // REPLACE1 bot test (Nov 3, replacement batch 1): Volunteer's place. Fires only when a rival's card or space moves
     // one of your members into that rival's own cult (Promote, Demote, Panel, Poach, Shake Down, Double Agent,
     // Anarchist), never for one you give away yourself, and not for Turncoats itself. 3 red + 1 any as a player sees it.
@@ -299,9 +324,29 @@ export default {
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 && ctx.membersOf(owner).filter(c => c.def.key !== 'missionaries').length >= ctx.state.players.length - 1,
     })),
-    m('recruitbonus', 'Greeters', 1, 1, 'Your On Recruits also give +1 of that member’s color.', { f: 2,
+    m('recruitbonus', 'Greeters', 1, 1, 'Your On Recruits also give +1 of that member’s color.', { f: 2, ...old7('red.recruitbonus'),
       onRecruitAbility(ctx, owner, card, recruited) { gainColorOf(ctx, owner, recruited.def, 'Greeters'); }, // a guest: nothing; Dabblers: pick
     }),
+    // REPLACE7 bot test (Nov 4, quality loop, Members A): Greeters' place, a round I member as Greeters is. 2 red + 2 any
+    // as a player sees it, counts as 2. Each of the owner's turns gets one more recruit step that offers only shop (or
+    // reachable pile) members costing 3 or less (core: flag cheapBuy, the most any of the owner's cards prints).
+    // REPLACE7 (Nov 4, quality loop, Members A): Greeters' place, the lane's pick (paper 15, Red's set 13 -> 15). 2 red +
+    // 2 any as a player sees it, counts as 2, a round I member as Greeters is. Pays when a member comes into its owner's
+    // cult out of a rival's, whoever moves it (Promote, Demote, Panel, Body Snatchers, Poach, Shake Down, Kidnapper, a
+    // rival's Promote that trades with you); not for the shop, and not for itself arriving.
+    ...add7(m('fosterparents', 'Foster Parents', 1, 2, 'Whenever a member joins your cult from a rival’s, +2 followers.', { f: 2, n: 2, round: 1,
+      onCultMove(ctx, owner, card, { uid, from, to }) {
+        if (to !== owner || !from || from === owner || uid === card.uid) return;
+        owner.bonus += 2;
+        ctx.log(`${owner.name}'s ${card.def.name}: ${ctx.card(uid).def.name} joins from ${from.name}'s cult, +2 followers.`);
+      },
+      // about one member in from a rival per round for a Red player (Promote, Demote, Body Snatchers)
+      ...see(info => 2 * endsAhead(info).length),
+    })),
+    ...add7(m('ushers', 'Ushers', 1, 2, 'Each turn, you may also recruit one member costing 3 or less.', { f: 2, n: 2, round: 1, cheapBuy: 3,
+      // about one cheap member a turn in round I, fewer later (the row holds few of them after round I)
+      ...see(info => (info.round === 1 ? 0.6 * info.myNow + 2 : info.round === 2 ? 0.3 * info.myNow : 0)),
+    })),
     m('movementpenalty', 'Deprogrammers', 1, 1, 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 4, n: 2, // +1 (Cory, Oct 30)
       onMoveMember(ctx, owner, card, info) { if (info.from !== owner && ctx.followers(info.from) > 0) info.from.bonus -= 1; },
     }),

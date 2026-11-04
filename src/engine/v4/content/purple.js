@@ -16,6 +16,9 @@ import { defById, spacesOf } from './index.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add5, old5 } from './replace5.js';
 import { swap11, handlers11 } from './replace11.js';
+import { add7, old7, REPLACE7 } from './replace7.js';
+import { REPLACE3 } from './replace3.js';
+import { see, endsAhead } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const P = 'purple';
@@ -378,13 +381,16 @@ export default {
   handlers: {
     skipped,
     ...handlers11({ callBack }),
-    ...handlers3({
+    // Interrupters (REPLACE3) and Interrupter (REPLACE7) share the ask; the log names the holder's card
+    ...(REPLACE3 || REPLACE7 ? {
       interrupt(ctx, owner, answer, data) {
-        const mover = ctx.player(data.pid);
-        if (answer === 'skip') { skipNext(ctx, mover, 'Interrupters', owner); return; }
-        ctx.log(`${owner.name}'s Interrupters: lets ${mover.name} go again.`);
+        const mover = ctx.player(data.pid), name = data.name || 'Interrupters';
+        if (answer === 'skip') { skipNext(ctx, mover, name, owner); return; }
+        ctx.log(`${owner.name}'s ${name}: lets ${mover.name} go again.`);
         askInterrupt(ctx, mover, owner.id);
       },
+    } : {}),
+    ...handlers3({
       pacerTo(ctx, p, to, data) {
         if (!to || ctx.state.slots[to] !== undefined) return;
         const mine = myWorkers(ctx, p);
@@ -528,9 +534,22 @@ export default {
     // Cory, 2026-10-29: pays on two turns in a row ("the former"), not on a new minion; "courier doesnt seem to work right"
     // (Right Away and Crunch Time never paid). Price 6 (was 5): Claude, under Cory's go-with-your-gut, since the snake's
     // turnarounds now pay too
-    m('courier', 'Courier', 3, 2, 'Whenever you take two turns in a row, +1 of each other color.', { ...old3,
+    m('courier', 'Courier', 3, 2, 'Whenever you take two turns in a row, +1 of each other color.', { ...old3, ...old7('purple.courier'),
       onTurnInRow(ctx, owner) { for (const c of ctx.state.resources) if (c !== P) ctx.gain(owner, c, 1); },
     }),
+    // REPLACE7 bot test (Nov 4, quality loop, Members A): Courier's place. 4 purple + 2 any as a player sees it. On the
+    // second of two turns in a row (Right Away, Crunch Time, a snake turnaround, a +1 minion placed now) the owner has one
+    // more recruit step that turn (core reads p.turnExtraBuys when it lays out the turn).
+    ...add7(m('runner', 'Runner', 3, 2, 'Whenever you take two turns in a row, recruit once more on the second.', {
+      onTurnInRow(ctx, owner) { owner.turnExtraBuys = (owner.turnExtraBuys || 0) + 1; ctx.log(`${owner.name}'s Runner: two turns in a row, so ${owner.name} recruits once more this turn.`); },
+      // about one two-in-a-row a round for a purple player (a turnaround or Right Away), a recruit worth ~1.5 followers
+      ...see(info => 1.5 * endsAhead(info).length),
+    })),
+    // REPLACE7 (Nov 4, quality loop, Members A): Courier's place, the lane's pick (paper gate 17 of 20). Batch 3's
+    // Interrupters as one member with a singular name; same ask (askInterrupt), same price (4 purple + 2 any).
+    ...add7(m('interrupter', 'Interrupter', 3, 2, 'Whenever a rival takes two turns in a row, you may skip the second.', { interrupts: true,
+      onRivalTurnInRow(ctx, owner, card, mover) { return askInterrupt(ctx, mover, -1); },
+    })),
     // REPLACE3 bot test (Nov 3, replacement batch 3): Courier's place. 4 purple + 2 any as a player sees it. Core asks it
     // when a rival's turn starts right after their own (onRivalTurnInRow): skipping passes that turn as Hold Up does
     // (it places after the round's other turns; Early Birds stops it; Gossip pays). Offered only while another player
@@ -714,10 +733,11 @@ function askInterrupt(ctx, mover, after) {
   const o = ctx.rivals(mover).find(x => x.id > after && ctx.membersOf(x).some(c => holds(c, 'interrupts')));
   if (!o) return false;
   const closer = ctx.membersOf(mover).some(c => [c.def.id, c.copy, c.ability].includes('purple.closer'));
-  ctx.choose(o, `Interrupters: ${mover.name} takes two turns in a row. Skip the second?`, [
+  const name = ctx.membersOf(o).find(c => holds(c, 'interrupts'))?.def.name || 'Interrupters';
+  ctx.choose(o, `${name}: ${mover.name} takes two turns in a row. Skip the second?`, [
     { id: 'skip', label: `Skip ${mover.name}'s turn`, kind: 'choice', value: 'skip', hint: closer ? 0 : 1 },
     { id: 'let', label: `Let ${mover.name} go`, kind: 'pass', value: 'let', hint: closer ? 1 : 0 },
-  ], 'purple.interrupt', { pid: mover.id });
+  ], 'purple.interrupt', { pid: mover.id, name });
   return true;
 }
 function pacerOpen(ctx) {

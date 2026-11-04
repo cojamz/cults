@@ -1,0 +1,22 @@
+// Card quality loop, Members A (Red, Purple), Nov 4 overnight (/mnt/project-files/quality/pitches/A-*.md and the paper
+// gate in /mnt/project-files/quality/evals/gate/A-*/), bot games only. REPLACE7=1 deals the lane's picks in their old
+// cards' places (the old card is retired, so never dealt); independent of REPLACE1 to REPLACE6:
+//   red.volunteer -> red.seatfiller
+//   purple.courier -> purple.runner
+//   red.recruitbonus -> red.fosterparents
+// Alternates, by name instead of 1 (REPLACE7=interrupter, REPLACE7=ushers, or a comma list of card keys):
+//   purple.courier (alt: lowered Purple's set score, Right Away and Crunch Time lose their payoff) -> purple.interrupter
+//   red.recruitbonus (alt: paper 14, read as a must-buy) -> red.ushers
+// Unset, the new cards are never defined and nothing in the game changes.
+const VAL = globalThis.process?.env?.REPLACE7 || '';
+const PICKS = ['seatfiller', 'runner', 'fosterparents'];
+/** new card key -> the old card id it takes the place of */
+const REPLACES = { seatfiller: 'red.volunteer', interrupter: 'purple.courier', runner: 'purple.courier', ushers: 'red.recruitbonus', fosterparents: 'red.recruitbonus' };
+export const ON7 = VAL === '1' ? PICKS : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
+export const REPLACE7 = ON7.length > 0;
+/** The new card, in its color's member list only when it is switched on. */
+export const add7 = card => (ON7.includes(card.key) ? [card] : []);
+/** The old card's extra fields: retired when a card that replaces it is on, nothing otherwise. */
+export const old7 = oldId => (ON7.some(k => REPLACES[k] === oldId) ? { retired: true } : {});
+/** Handlers the new cards use, registered under the switch. */
+export const handlers7 = hs => (REPLACE7 ? hs : {});

@@ -10,6 +10,7 @@ import { pileRules } from './piles.js';
 import { startEffects, stopEffects, abandonEffects, underCause, markEffect } from './effects.js';
 import { REPLACE4 } from './content/replace4.js';
 import { REPLACE6 } from './content/replace6.js';
+import { REPLACE7 } from './content/replace7.js';
 import { isNewColor } from './content/yellow.js';
 
 export const RING_VALUE = [4, 6, 10];
@@ -612,11 +613,14 @@ function inputFor(state, task) {
       // Doorbusters' round-start recruit: a member or followers only (it isn't a turn)
       // (Late Shoppers' round-end recruit, REPLACE4 bot test, likewise)
       if (task.doorbuster || task.lateShop) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'card' || o.kind === 'tier'));
+      // Ushers' recruit (REPLACE7 bot test): a member costing task.cheap or less, nothing else
+      if (task.cheap) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'card' && cardDef(state, o.uid).s + cardDef(state, o.uid).w <= task.cheap));
       const real = opts.filter(o => o.kind === 'card' || o.kind === 'tier' || o.kind === 'use' || o.kind === 'release' || o.kind === 'swapcard');
       if (!real.length) return { kind: 'buy', prompt: '', options: [], onEmpty: task.extra ? undefined : () => log(state, `${p.name} couldn't afford anything.`) };
       opts.push({ id: 'pass', label: 'Pass', kind: 'pass' });
       if (task.doorbuster) return { kind: 'buy', prompt: `${p.name}: Doorbusters: recruit once before anyone places, or pass`, options: opts };
       if (task.lateShop) return { kind: 'buy', prompt: `${p.name}: Late Shoppers: recruit once after the contests, or pass`, options: opts };
+      if (task.cheap) return { kind: 'buy', prompt: `${p.name}: Ushers: also recruit a member costing ${task.cheap} or less, or pass`, options: opts };
       return { kind: 'buy', extra: !!task.extra, prompt: task.extra ? `${p.name}: recruit again (Big Spender), or pass` : `${p.name}: recruit a member or followers${more ? ` (${more + 1} recruits left)` : ''}, or pass`, options: opts };
     }
     case 'choose': {
@@ -874,6 +878,16 @@ function runTask(state, task) {
       // task.ring: a turn limited to spaces of that ring or lower (a weaker extra worker)
       const source = workerSourceOf(task);
       state.queue.unshift({ t: 'place', p: p.id, ...source, ...(task.ring ? { ring: task.ring } : {}) }, { t: 'buy', p: p.id, ...source }, { t: 'buy', p: p.id, ...source, extra: true }, { t: 'endTurn', p: p.id, ...source });
+      // REPLACE7 bot test: Runner's recruit once more (set by its onTurnInRow above), then Ushers' recruit of a member
+      // costing 3 or less, each a recruit step right after the turn's own
+      if (REPLACE7) {
+        const more = [];
+        for (let k = 0; k < (p.turnExtraBuys || 0); k++) more.push({ t: 'buy', p: p.id, ...source });
+        const cheap = Math.max(0, ...p.members.flatMap(uid => effectiveDefs(state.cards[uid]).map(d => d.cheapBuy || 0)));
+        if (cheap) more.push({ t: 'buy', p: p.id, ...source, cheap });
+        delete p.turnExtraBuys;
+        if (more.length) state.queue.splice(2, 0, ...more);
+      }
       return;
     }
     case 'act': {
