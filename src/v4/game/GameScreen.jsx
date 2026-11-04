@@ -1,4 +1,5 @@
 // The game table. Renders engine state from a session and turns clicks into { player, option } moves.
+import { turnRun, runTitle } from './seats.js';
 import { cloakOf } from './cloak.js';
 // What's clickable is exactly state.pending.options, and only for seats this client controls.
 import { memo, startTransition, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -1387,6 +1388,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   }, [modalOpen]);
   const prForMe = mine || (!!pend && mySeats.includes(pend.player) && !state.over);
   const pr = { ...promptFor(interactionState, prForMe), forMe: prForMe };
+  const myRun = prForMe && pend ? turnRun(interactionState, pend.player) : null;
   if (pend?.afterPurchase && prForMe) { pr.text = 'Use a member ability, or finish your turn'; pr.sub = ''; }
   // your turn just ended (the table moved from a step of yours to someone else's): for a beat the header says so, then
   // the next player's line (w3b #58: after the second Pass the next frame was already a bot's line). It lasts until the
@@ -1669,6 +1671,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
                   {voice && humansHere && p.who ? <b>{p.who.name}: </b> : null}
                   {voice ? <><span className="lead">{p.lead ?? 'Your turn — '}</span><em>{p.text && !p.keepCase ? p.text[0].toLowerCase() + p.text.slice(1) : p.text}</em></> : state.over || p.over ? <span data-turn-over={p.over ? '' : undefined}>{p.text}</span> : <>{p.text}<span className="dots" aria-hidden="true"> ···</span></>}
                 </span>
+                {/* stacked turns count down beside the headline (Cory, Nov 4: "when i stack a bunch of turns in a row its
+                    not clear to me how many turns i have remaining"): "3 turns left in a row", then 2, then "last one" */}
+                {voice && myRun && myRun.total >= 2 && <span className="say-run" data-run-left={myRun.left} title={runTitle(myRun)}>{myRun.left >= 2 ? `${myRun.left} turns left in a row` : 'last one in a row'}</span>}
               </span>
               );
             }}</AfterChain>

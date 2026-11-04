@@ -64,12 +64,35 @@ export function seatTurns(state, me = null) {
     const tail = places[me].title ? ` ${places[me].title.replace(/^[^.]*\.\s*/, '')}`.trimEnd() : '';
     if (k < 0) out[me] = { say: 'done this round', kind: 'done', n: null, title: 'You have no placements left this round.' };
     else if (k === 0 && playing === me) {
-      const twice = order[1] === me;
-      out[me] = { say: twice ? 'two turns in a row' : 'your turn', kind: 'now', n: 0, title: twice ? `Your turn now, twice in a row.${tail}` : 'Your turn now.' };
+      // stacked turns count down (Cory, Nov 4: "when i stack a bunch of turns in a row its not clear to me how many
+      // turns i have remaining"): "your turn, 3 left" counts this one, then "2 left", then "last in a row"
+      const run = turnRun(state, me);
+      const say = !run || run.total < 2 ? 'your turn' : run.left >= 2 ? `your turn, ${run.left} left` : 'your last in a row';
+      out[me] = { say, kind: 'now', n: 0, title: run && run.total >= 2 ? `${runTitle(run)}${tail}` : 'Your turn now.' };
     } else if (k === 0 || (k === 1 && playing != null)) out[me] = { say: '→', kind: 'soon', n: 1, title: `Your turn comes right after this one.${tail}` };
     else out[me] = { say: `your turn in ${k}`, kind: 'in', n: k, title: `${k} turns before yours.${tail}` };
   }
   return out;
+}
+/**
+ * Your turns in a row while you're placing: left counts this one and the ones right after it before anyone else goes,
+ * total adds the ones you already took just before (Hot Streak's "turns in a row"). null when it isn't your turn.
+ * Read off the engine's queue (turnSequence), so an extra turn given mid-turn is counted the moment it's queued.
+ */
+export function turnRun(state, me) {
+  if (me == null || !(state.round >= 1) || state.over || state.current !== me) return null;
+  const seq = turnSequence(state);
+  const at = seq.findIndex(t => t.at === 'now');
+  if (at < 0 || seq[at].pid !== me) return null;
+  let left = 0, before = 0;
+  for (let i = at; i < seq.length && seq[i].pid === me; i++) left++;
+  for (let i = at - 1; i >= 0 && seq[i].pid === me; i--) before++;
+  return { left, before, total: left + before };
+}
+/** The run in words: "This turn and 2 more right after it, before anyone else goes." */
+export function runTitle(run) {
+  const more = run.left - 1;
+  return more > 0 ? `Your turn now. This turn and ${more} more right after it, before anyone else goes.` : 'Your turn now: the last of your turns in a row. Then the next player goes.';
 }
 /** A player's last n placements this round, newest first: ["Rush (Gold)", …]. */
 export function lastMoves(state, pid, n = 3) {

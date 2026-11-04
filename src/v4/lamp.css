@@ -175,6 +175,7 @@ h1,h2,h3{font-family:var(--serif)}
 .lt-prompt .status .say .say-text{font-size:inherit;-webkit-line-clamp:2}
 .lt-prompt .status .say em{font-style:italic;color:var(--lamp-ink)}
 .lt-prompt .status .say .lead{color:var(--cream)}
+.lt-prompt .status .say .say-run{flex:none;margin-left:12px;font-family:var(--sans,inherit);font-size:var(--s);font-style:normal;color:var(--cream-2);white-space:nowrap;align-self:center}
 .lt-prompt .status .say:not(.mine){color:var(--cream-2);font-size:var(--m)}
 .lt-prompt .status .say.nudge,.lt-prompt .status .say.info{font-size:18px;color:var(--lamp-ink)}
 .lt-prompt .undo-slot{display:flex;width:auto;flex:none}
