@@ -277,6 +277,13 @@ const trading = {
       };
       if (data.by) ctx.asMember(p, data.by, run); else run();
     },
+    dowagers(ctx, p, value, data) {
+      if (value === 'done' || !p.members.includes(value)) return;
+      const name = ctx.card(value).def.name;
+      ctx.asMember(p, 'Dowagers', () => { ctx.buryMember(p, value); p.bonus += 3; ctx.log(`${p.name}'s Dowagers: cast out ${name}, +3 followers.`); });
+      gotRidOf(ctx, p);
+      dowagersStep(ctx, p, { ...data, n: data.n + 1 });
+    },
     buryPick(ctx, p, value, data) { if (value !== 'done') trading.handlers.bury(ctx, p, value, data); },
     appraise(ctx, p, value, data) {
       // Appraiser: first the member, then followers or white
@@ -392,6 +399,17 @@ const trading = {
         ctx.gain(owner, W, 3);
         ctx.log(`${owner.name}'s Late Bloomers: fewest followers, +3 white.`);
       },
+    })),
+    // REPLACE9 bot test (Members C, Nov 4, batch bC6: paper 18 vs Heiresses' 14, White's set 13 -> 16): Heiresses' place.
+    // 5 white + 4 any as a player sees it. One member at a time to the bottom of the pile (as Farewell), +3 followers
+    // each, until you stop or have no other member; using it with no other member doesn't spend it (as Appraiser).
+    ...add9(m('dowagers', 'Dowagers', 4, 4, 'On Use, once per game: cast out any of your other members; +3 followers each.', { f: 2,
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        if (!ctx.membersOf(owner).some(c => c.uid !== card.uid)) { card.used = false; ctx.log(`${owner.name}'s Dowagers: no other member to cast out.`); return; }
+        dowagersStep(ctx, owner, { uid: card.uid, n: 0 });
+      },
+      botActivate: (ctx, owner) => ctx.state.round === 3 && ctx.membersOf(owner).filter(c => dowagersValue(ctx, owner, c) > 0).length >= 2,
     })),
     m('bulkbuyer', 'Bulk Buyer', 1, 2, 'Whenever you buy 5 or more followers, +1 follower.', { f: 2,
       onBuyFollowers(ctx, owner, card, buyer, tier) {
@@ -598,6 +616,15 @@ function turned(ctx, p) {
   for (const c of ctx.abilitiesOf(p)) for (const d of defsOf(ctx, c)) if (d.onTurned) { ctx.gain(p, W, d.onTurned); ctx.log(`${p.name}'s ${d.name}: +${d.onTurned} white.`); }
 }
 // Undertaker: "Whenever you cast out one of your members, +2 followers"
+// Dowagers: what casting out one member for 3 followers is worth to a bot (as buryValue, at a flat 3)
+const dowagersValue = (ctx, p, c) => 3 * fv(ctx) - (c.def.f + (c.used || ctx.state.round === 3 ? 0 : 1) + (c.def.onLeave ? -cost(ctx, c.uid) : 0));
+function dowagersStep(ctx, p, data) {
+  const list = ctx.membersOf(p).filter(c => c.uid !== data.uid);
+  if (!list.length) return;
+  const opts = list.map(c => ({ id: `card:${c.uid}`, label: `${c.def.name} (+3 followers)`, kind: 'card', value: c.uid, hint: dowagersValue(ctx, p, c) }));
+  opts.push({ id: 'done', label: data.n ? 'Done' : 'Cast out nobody', kind: 'done', value: 'done', hint: 0 });
+  ctx.choose(p, `Dowagers: cast out which member? (${data.n} so far)`, opts, 'trading.dowagers', data);
+}
 function gotRidOf(ctx, p) {
   for (const c of ctx.membersOf(p)) for (const d of defsOf(ctx, c)) if (d.onGotRidOf) { p.bonus += d.onGotRidOf; ctx.log(`${p.name}'s ${d.name}: +${d.onGotRidOf} followers.`); }
 }

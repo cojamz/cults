@@ -3,7 +3,7 @@
 // Hand's place), Tailor (Dyer's place), Dabbler (Dabblers' place).
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler,latebloomers';
+process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler,latebloomers,dowagers,dutycollector';
 const { applyMove, countMembersOfColor } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move } = await import('./helpers.js');
@@ -105,5 +105,46 @@ describe('Late Bloomers: "Round End: if you have the fewest followers (ties coun
   it('tied for fewest counts; not fewest: nothing', () => {
     expect(end([1, 3, 6]).players[0].res.white).toBe(3);
     expect(end([4, 3, 6]).players[0].res.white || 0).toBe(0);
+  });
+});
+
+describe('Dowagers: "On Use, once per game: cast out any of your other members; +3 followers each."', () => {
+  const Q = ['red', 'trading', 'market', 'purple'];
+  it('price', () => {
+    const d = defById('trading.dowagers');
+    expect([d.s, d.w]).toEqual([5, 4]);
+  });
+  it('casts out members one at a time to the bottom of the pile, +3 each, until Done', () => {
+    let s = table(Q, { n: 2, round: 3, members: [['trading.dowagers', 'red.volunteer', 'market.regular']] });
+    const dow = uidIn(s, 'trading.dowagers', 0), vol = uidIn(s, 'red.volunteer', 0);
+    const b0 = s.players[0].bonus;
+    s = move(s, `use:${dow}`);
+    expect(s.pending.prompt).toContain('Dowagers: cast out which member?');
+    expect(s.pending.options.map(o => o.id)).not.toContain(`card:${dow}`);
+    s = move(s, `card:${vol}`);
+    expect(s.players[0].members).not.toContain(vol);
+    expect(s.pile[s.pile.length - 1]).toBe(vol);
+    expect(s.players[0].bonus).toBe(b0 + 3);
+    s = move(s, 'done');
+    expect(s.players[0].members).toContain(uidIn(s, 'market.regular', 0));
+    expect(named(s, 'Dowagers')).toContain("P1's Dowagers: cast out Volunteer, +3 followers.");
+  });
+});
+
+describe('Duty Collector: "Whenever a rival recruits a member of a color you have a member of, +1 of that color."', () => {
+  it('price, round I, and Customs Officer retired', () => {
+    const d = defById('yellow.dutycollector');
+    expect([d.s, d.w, d.round]).toEqual([3, 3, 1]);
+    expect(defById('yellow.customs').retired).toBe(true);
+  });
+  it('a rival recruits red while you hold a red member: +1 red; a color you have none of: nothing', () => {
+    let s = table(Q4, { n: 2, res: [{}, { red: 20, yellow: 20, blue: 20, purple: 20 }], members: [['yellow.dutycollector', 'red.volunteer'], []],
+      shop: ['red.intern', 'market.regular'], queue: [{ t: 'buy', p: 1 }, { t: 'buy', p: 1, extra: true }] });
+    s.players[1].buyTwiceNow = true;
+    s = pay(move(s, `card:${uidIn(s, 'red.intern', 'shop')}`));
+    expect(s.players[0].res.red).toBe(1);
+    expect(named(s, 'Duty Collector')[0]).toContain("P1's Duty Collector: P2 recruited");
+    s = pay(move(s, `card:${uidIn(s, 'market.regular', 'shop')}`));
+    expect(s.players[0].res.blue || 0).toBe(0);
   });
 });

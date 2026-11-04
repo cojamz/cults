@@ -321,6 +321,17 @@ export default {
       },
     })),
     // Claude's fill-in (Cory, 2026-10-31: "whenever you recruit, +1 of its color" may become Red's artifact)
+    // REPLACE9 bot test (Members C, Nov 4, batch bC6: paper 16 vs Customs Officer's 10, Yellow's set 9 -> 16): Customs
+    // Officer's place, round I. 3 yellow + 3 any as a player sees it. The recruited member's color, if you have a member of
+    // it (Dabblers and Drifters count, as everywhere); automatic, on the rival's recruit.
+    ...add9(m('dutycollector', 'Duty Collector', 2, 3, 'Whenever a rival recruits a member of a color you have a member of, +1 of that color.', { round: 1,
+      onAnyRecruit(ctx, owner, card, by, recruited) {
+        const c = colorOf(ctx, recruited);
+        if (!c || by === owner || !(ctx.countMembersOfColor(owner, ctx.defOf(recruited).quadrant) > 0)) return;
+        ctx.gain(owner, c, 1);
+        ctx.log(`${owner.name}'s Duty Collector: ${by.name} recruited ${ctx.defOf(recruited).name}, +1 ${c}.`);
+      },
+    })),
     m('gobetween', 'Go-Between', 2, 1, 'Whenever a space gives you resources, you may change 1 of them to any color.', {
       afterGain(ctx, owner, card, g) {
         if (!g.fromAction || !(g.n > 0) || card.gbTurn === ctx.turnKey()) return;
