@@ -37,3 +37,10 @@ Evidence: evidence/rig-live569.md (the full game, round by round) and evidence/f
 Skip a rewrite and skip the framework upgrade for now. If the clunkiness Cory feels is in online games with friends, do #1 first: it's the one change a player would notice on every click. Then #3, which is quiet engineering with no call needed. #2 only if Cory wants calmer motion. Keep #4 in reserve: start it only if shows still stutter on his laptop after #3. #5 can ride along with any future upkeep. None of this needs to start before 1.0's card work, and none of it should run while other threads are shipping the same screen files.
 
 One question tells us where to aim: does it feel clunky mostly in online games with friends, or in games against bots too?
+
+## Update, Nov 4 afternoon (after Cory's picks)
+
+- Done: idle motion 1.6x slower (live v0.99.571). React 19.2 with its compiler (pushed as e0dcb8e8): our own work per click p90 132-137 → 108-110 ms at 4x CPU, clicks median 168-172 → 148-155 ms (2 games per build). The compiler skips the biggest components (they read refs during render), and it had to be kept off the "You'd get" previews and the space faces, where it showed stale values.
+- Memory "doubling" is not a leak: the extra is the browser's compiled code and cached strings after a long game. Only about 850 page elements are detached, out of 6,400.
+- The separate show layer won't pay what I said this morning. Measured over a full game at 4x CPU, React's redraws of the table (both of them, per move) total about 10.6 s of a 9-minute game, about 3% of the page's work. The second redraw at each landing is about 35 ms at 4x (about 9 ms on a normal laptop). In the 14 s after a round starts, the page is busy 68%: script about 2 s, the browser drawing frames (style, layers, paint) about 4.7 s, because pieces are moving on most frames (577 drawn frames in 14 s). A new show layer would still draw the same motion.
+- So no rewrite. What's left is effect-by-effect: a few glows animate their shadow (recruit landing, the press ring), and 19 SVG color animations per round can't run off the main thread. Each one is small.
