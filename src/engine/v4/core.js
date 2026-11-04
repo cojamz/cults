@@ -232,7 +232,9 @@ const contestMembers = (state, p) => {
 export const countMembersOfColor = (state, p, q, { wild = true, cards = false } = {}) => p.members.reduce((s, u) => {
   const c = state.cards[u], every = wild && effectiveDefs(c).some(d => d.everyColor) && q !== 'guest' && state.quadrants.includes(q);
   // Drifters counts as the one color its owner chose when recruiting it (card.asColor; Cory, 2026-10-31)
-  return s + ((c.asColor || defById(c.def).quadrant) === q || every ? (cards ? 1 : countOf(c)) : 0);
+  // cards: one each, but Dabblers keeps its 2 in every color count, Most red members too (Cory, Nov 4 11:07am: "It
+  // always works in the best possible interpretation for the player. Why would it be 1 for Most red members??")
+  return s + ((c.asColor || defById(c.def).quadrant) === q || every ? (cards && !every ? 1 : countOf(c)) : 0);
 }, 0);
 /** Dabblers (or a card copying it): counts as every color on the table. */
 export const countsAsEveryColor = (state, uid) => effectiveDefs(state.cards[uid]).some(d => d.everyColor);
