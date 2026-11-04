@@ -15,4 +15,6 @@ For each sheet, answer in plain words, then score 0/1/2 (2 = clearly yes, 1 = so
 - P6 Catch-up (C9): where were you in followers when you got it and at the end? Did it help you catch up, extend a lead, or neither? Could rivals have answered it?
 - Built right: does every log line about the card match its printed text exactly (amounts, targets, timing)? Quote any mismatch. A mismatch is the most important thing you can report.
 
+Before calling anything built wrong on timing: a sheet prints a move's results through the start of the next turn, so a "Round Start", "start of turn" or "whenever you take a turn" line can sit under the turn before the one it belongs to. Check the turn after before you call a timing mismatch (Pace-Setters, Nov 4: a judge called it built wrong from this; the code was right).
+
 Write JSON to <folder>/play-judge-<your number>.json: {"card":name,"sheets":[{"file":name,"scores":{"P1":n,"P2":n,"P3":n,"P4":n,"P5":n,"P6":n},"builtRight":true|false,"mismatch":"quote or null","notes":"3 plain sentences: what happened with the card in this game"}],"verdict":"one plain line on how the card plays"}. Return the verdict line and any mismatch.
