@@ -401,9 +401,15 @@ const trading = {
       botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.membersOf(owner).some(c => c.def.key !== 'appraiser' && buryValue(ctx, owner, c, fv(ctx)) >= 2),
     }),
     // Cory, Nov 1: artifacts fire on any player's move ("Whenever any player buys followers, +1 white"): −8 → +1 in 400 games
-    m('changer', 'Money Changers', 2, 1, 'Whenever any player buys followers, +1 white.', { f: 2,
-      onBuyFollowers(ctx, owner, card, buyer) { if (globalThis.process?.env?.CHANGER === 'self' && buyer?.id !== owner.id) return; ctx.gain(owner, W, globalThis.process?.env?.CHANGER === 'own2' && buyer?.id === owner.id ? 2 : 1); // CHANGER=self: bot test only (Nov 3); own2: +2 on your own buys (Nov 4, Cory "buff white a touch")
-      ctx.log(`${owner.name}'s Money Changers: +${globalThis.process?.env?.CHANGER === 'own2' && buyer?.id === owner.id ? 2 : 1} white.`); },
+    // Cory, Nov 3 8:52pm ("buff white a touch"): +2 on your own buys (Claude, under his go-with-your-gut; trial
+    // cloaks-rw, holders 22% → 27% Normal, 21% → 28% Hard, 22% → 34% Very Hard)
+    m('changer', 'Money Changers', 2, 1, 'Whenever any player buys followers, +1 white (+2 if it\'s you).', { f: 2,
+      onBuyFollowers(ctx, owner, card, buyer) {
+        if (globalThis.process?.env?.CHANGER === 'self' && buyer?.id !== owner.id) return; // CHANGER=self: bot test only (Nov 3)
+        const k = buyer?.id === owner.id ? 2 : 1;
+        ctx.gain(owner, W, k);
+        ctx.log(`${owner.name}'s Money Changers: +${k} white.`);
+      },
     }),
     m('martyr', 'Martyrs', 2, 1, 'Whenever this member leaves your cult, gain followers equal to its cost.', { f: 3,
       onLeave(ctx, owner, card) {

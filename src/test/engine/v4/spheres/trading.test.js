@@ -289,14 +289,14 @@ describe('White members', () => {
     expect([R(s).white, B(s)]).toEqual([3, 2]);
   });
 
-  it('Money Changers: whenever any player buys followers, +1 white; turning things into followers is no buy', () => {
+  it('Money Changers: whenever any player buys followers, +1 white (+2 if it\'s you); turning things into followers is no buy', () => {
     const bk = 'trading.changer';
     let s = scene({ res: [{ gold: 5 }], members: [[], [bk]], ...buyTurn });
     s = move(s, 'tier:mid');
     expect([B(s), R(s, 1).white]).toEqual([5, 1]);
     s = scene({ res: [{ gold: 1 }], members: [[bk]], ...buyTurn });
     s = move(s, 'tier:small');
-    expect([B(s), R(s).white]).toEqual([1, 1]);
+    expect([B(s), R(s).white]).toEqual([1, 2]);
     s = take(scene({ round: 3, res: [{ red: 3 }], members: [[bk]] }), 'trading.exchange');
     s = move(move(move(s, 'color:red'), 'color:red'), 'color:red');
     expect([B(s), R(s).white]).toEqual([6, 1]); // +1 space only

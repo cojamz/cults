@@ -187,23 +187,23 @@ describe('White members', () => {
     expect(named(s, 'Undertaker')).toEqual(["P1's Undertaker: +2 followers."]);
   });
 
-  it('Money Changers: whenever any player buys followers, +1 white (named); Cash In is no buy', () => {
+  it('Money Changers: whenever any player buys followers, +1 white, +2 if it\'s you (named); Cash In is no buy', () => {
     let s = table(Q, { res: [{ gold: 5 }], members: [[], ['trading.changer']], shop: ROW, ...buy });
     s = move(s, 'tier:mid');
     expect([B(s), R(s, 1).white]).toEqual([5, 1]); // a rival's buy pays the holder
     expect(named(s, 'Money Changers')).toEqual(["P2's Money Changers: +1 white."]);
     let t = table(Q, { res: [{ gold: 1 }], members: [['trading.changer']], shop: ROW, ...buy });
     t = move(t, 'tier:small');
-    expect([B(t), R(t).white]).toEqual([1, 1]); // its holder's own buy too
+    expect([B(t), R(t).white]).toEqual([1, 2]); // its holder's own buy: +2
     const c = take(table(Q, { round: 3, left: 5, res: [{ white: 3 }], members: [['trading.changer']], shop: ROW }), 'trading.cashin');
     expect([B(c), R(c).white]).toEqual([3, 1]); // Cash In turns white into followers, but nobody bought any
     expect(named(c, 'Money Changers')).toEqual([]);
   });
-  it('× Doppelganger copying Money Changers: +1 white each', () => {
+  it('× Doppelganger copying Money Changers: +2 white each on your own buy', () => {
     let s = table(QE, { res: [{ gold: 5 }], members: [['trading.changer', 'echo.doppel']], shop: ROW, ...buy });
     s.cards[uidIn(s, 'echo.doppel', 0)].copy = 'trading.changer';
     s = move(s, 'tier:mid');
-    expect(R(s).white).toBe(2);
+    expect(R(s).white).toBe(4);
   });
 
   it('Martyrs: sent away with Farewell, 4 + 4 followers (named)', () => {
