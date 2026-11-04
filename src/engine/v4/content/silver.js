@@ -23,6 +23,7 @@ const HOSTESS_TEXT = {
   C: 'On Recruit and Round Start: give each rival 1 silver. +1 follower for each.', // Cory's pick 1, Nov 3 9:47pm
 };
 const SOC_N = Number(globalThis.process?.env?.SOCIALITES_N || 2);
+const WW_N = Number(globalThis.process?.env?.WELLWISHERS_N || 3); // trial switch: Well-Wishers' followers per move (Nov 4, c1 read weak)
 const others = (ctx, p) => ctx.rivals(p);
 const otherColors = ctx => ctx.state.resources.filter(c => c !== S);
 
@@ -522,7 +523,7 @@ const silver = {
         if (qid !== S) return;
         const cheap = ctx.membersOf(owner).filter(c => c.def.s + c.def.w <= 3);
         if (!cheap.length) return;
-        const ww = ctx.membersOf(owner).some(c => c.def.id === 'silver.wellwishers' || c.def.key === 'wellwishers') ? 3 : 0;
+        const ww = ctx.membersOf(owner).some(c => c.def.id === 'silver.wellwishers' || c.def.key === 'wellwishers') ? WW_N : 0;
         const opts = [];
         for (const c of cheap) for (const o of others(ctx, owner)) opts.push({
           id: `give:${c.uid}:${o.id}`, label: `${c.def.name} (${c.def.s + c.def.w}) to ${o.name}`, kind: 'choice', value: [c.uid, o.id],
@@ -534,7 +535,7 @@ const silver = {
         ctx.choose(owner, 'Guest of Honor: give one of your members costing 3 or less to a rival, for +4 followers?', opts, 'silver.guestofhonor');
       },
     })),
-    m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', { ...old8('silver.toastmaster'),
+    m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', {
       afterAction(ctx, owner, card, qid) { if (qid === S) owner.bonus += 1; },
     }),
     m('gala', 'Debutantes', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, ...old2, ...old6, // worth 2 (Cory, Nov 1)
@@ -561,14 +562,14 @@ const silver = {
     // REPLACE8 bot test (Nov 4, quality loop lane B, pitches/B-debtcollectors.md R5, passed paper gate b3 at 18): Debt
     // Collectors' place, same price. Any of your members moved into a rival's cult (your Godparent's gift, a rival's
     // Promote or Demote, a steal, a swap), while you still hold Well-Wishers; to the shop or the pile doesn't count.
-    ...add8(m('wellwishers', 'Well-Wishers', 4, 3, "Whenever one of your members goes to a rival's cult, +3 followers.", { f: 2, n: 2,
+    ...add8(m('wellwishers', 'Well-Wishers', 4, 3, `Whenever one of your members goes to a rival's cult, +${WW_N} followers.`, { f: 2, n: 2,
       onCultMove(ctx, owner, card, { uid, from, to }) {
         if (from !== owner || !to || to === owner) return;
-        owner.bonus += 3;
-        ctx.log(`${owner.name}'s Well-Wishers: ${ctx.card(uid).def.name} goes to ${to.name}: +3 followers.`);
+        owner.bonus += WW_N;
+        ctx.log(`${owner.name}'s Well-Wishers: ${ctx.card(uid).def.name} goes to ${to.name}: +${WW_N} followers.`);
       },
       // BOTSEE: about one of your members moved to a rival per 12 rival placements (seat-1 games, Nov 4), 3 followers each
-      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.08 * 3),
+      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.08 * WW_N),
     })),
     // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
     m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2 }),

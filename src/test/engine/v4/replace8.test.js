@@ -21,9 +21,10 @@ describe('REPLACE8: the switch', () => {
     const card = id => { const d = defById(id); return [d.s, d.w, d.f, d.n]; };
     expect(card('silver.wellwishers')).toEqual(card('silver.debtcollector'));
     expect(card('silver.usher')).toEqual(card('silver.polisher'));
-    expect(card('silver.guestofhonor')).toEqual(card('silver.toastmaster'));
+    expect(card('silver.guestofhonor')).toEqual(card('silver.polisher'));
     expect(card('silver.socialites')).toEqual(card('silver.highsociety'));
-    for (const id of ['silver.debtcollector', 'silver.polisher', 'silver.toastmaster', 'silver.highsociety']) expect(defById(id).retired).toBe(true);
+    for (const id of ['silver.debtcollector', 'silver.polisher', 'silver.highsociety']) expect(defById(id).retired).toBe(true);
+    expect(defById('silver.toastmaster').retired).toBeFalsy();
     expect(defById('silver.gala').retired).toBeFalsy();
   });
 });
