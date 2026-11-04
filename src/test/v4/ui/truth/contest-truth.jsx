@@ -50,7 +50,7 @@ export function checkContestTruth(g0, n) {
       }
       const { container } = render(<RoundEnd info={info} onNext={() => {}} autoMs={0} />);
       const rows = [...container.querySelectorAll('li[data-qid]')];
-      expect(rows.map(r => r.dataset.qid)).toEqual(after.quadrants);
+      expect(rows.map(r => r.dataset.qid)).toEqual(record.results.map(c => c.qid)); // scored one at a time in cloak order (Cory, Nov 4)
       for (const li of rows) {
         const qid = li.dataset.qid;
         const shown = ids(li.dataset.winners).sort((a, b) => a - b);
