@@ -139,7 +139,7 @@ for (const [key, name, source] of [
 // Silver 2.0's new members (Cory, 2026-11-01) reuse cut Silver portraits while names and artwork settle.
 for (const [key, name, source] of [
   ['smoothtalker', 'Smooth Talker', 'spoon'], ['philanthropists', 'Philanthropist', 'benefactor'],
-  ['polisher', 'Polisher', 'steward'], ['collector', 'Collector', 'silversmith'], ['debtcollector', 'Debt Collector', 'majordomo'],
+  ['polisher', 'Polisher', 'steward'], ['guestofhonor', 'Guest of Honor', 'steward'], ['collector', 'Collector', 'silversmith'], ['debtcollector', 'Debt Collector', 'majordomo'],
   ['highsociety', 'High Society', 'revelers'], ['giftwrapper', 'Gift Wrapper', 'heir'],
 ]) {
   const art = BY_ID.get(`silver.${source}`);
