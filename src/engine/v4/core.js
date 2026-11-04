@@ -214,6 +214,8 @@ export const countMembersOfColor = (state, p, q, { wild = true, cards = false } 
   // Drifters counts as the one color its owner chose when recruiting it (card.asColor; Cory, 2026-10-31)
   return s + ((c.asColor || defById(c.def).quadrant) === q || every ? (cards ? 1 : countOf(c)) : 0);
 }, 0);
+/** Dabblers (or a card copying it): counts as every color on the table. */
+export const countsAsEveryColor = (state, uid) => effectiveDefs(state.cards[uid]).some(d => d.everyColor);
 // Artifacts are worn as cloaks and named for their color (Cory, 2026-11-01: "just call them Red Cloak"): the card
 // keeps its rules and its id; only the name a player reads changes, and only for a card picked as an artifact here.
 const cloaked = new Map();

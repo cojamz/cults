@@ -6,7 +6,7 @@
 // color; a used one is turned face down. Everything is read off the engine.
 import { Sprite } from '../art/Sprite.jsx';
 import { spriteId } from '../art/index.js';
-import { quadrant, cardDef, memberCount, memberWeight, countMembersOfColor } from '../../engine/v4/index.js';
+import { quadrant, cardDef, memberCount, memberWeight, countMembersOfColor, countsAsEveryColor } from '../../engine/v4/index.js';
 import { projectedEndGame } from '../format.js';
 import { memberTimingWords } from './memberTiming.js';
 import { onTable, CardName } from './Info.jsx';
@@ -54,15 +54,20 @@ function Heading({ state, pid, who }) {
   else { try { end = (projectedEndGame(state)[pid] || { total: 0 }).total; } catch { end = 0; } }
   const held = state.resources.filter(c => (p.res[c] || 0) > 0);
   const total = held.reduce((t, c) => t + p.res[c], 0);
-  // members by color, as the rims count them (a card that counts as 3 counts 3); off-table colors last
-  const byColor = state.quadrants.map(q => [quadrant(q).resource, countMembersOfColor(state, p, q)]).filter(([, n]) => n > 0);
-  const off = p.members.filter(u => !onTable(state, cardDef(state, u))).reduce((s, u) => s + memberWeight(state, u), 0);
+  // members by color (a card that counts as 3 counts 3); off-table colors last. Dabblers counts as every color in
+  // the rules, but here it shows once, on its own, so the colors add up to the total (Claude, under Cory's "use your
+  // best judgement", 2026-11-03: "2 [any member] / counts as any color").
+  const wildUids = p.members.filter(u => countsAsEveryColor(state, u));
+  const wild = wildUids.reduce((s, u) => s + memberWeight(state, u), 0);
+  const byColor = state.quadrants.map(q => [quadrant(q).resource, countMembersOfColor(state, p, q, { wild: false }) - wildUids.filter(u => cardDef(state, u).quadrant === q).reduce((s, u) => s + memberWeight(state, u), 0)]).filter(([, n]) => n > 0);
+  const off = p.members.filter(u => !wildUids.includes(u) && !onTable(state, cardDef(state, u))).reduce((s, u) => s + memberWeight(state, u), 0);
   if (off) byColor.push(['colorless', off]);
+  if (wild) byColor.push([null, wild]);
   const nums = [
     ['Each Round Start', 'round', income ? <Rich text={income} /> : <span className="rc-nil">nothing</span>],
     [state.over ? 'Game End' : 'Game End, if it ended now', 'end', end ? <Rich text={`${end > 0 ? '+' : '−'}${Math.abs(end)} followers`} /> : <span className="rc-nil">nothing</span>],
     ['Resources', 'res', <><span className="num">{total}</span>{held.length ? <span className="rc-split"><Rich text={held.map(c => `${p.res[c]} ${c}`).join(' ')} /></span> : null}</>],
-    ['Members', 'members', <><span className="num">{memberCount(state, p)}</span>{byColor.length ? <span className="rc-split">{byColor.map(([r, n]) => <span key={r} className="rc-bust"><b className="num">{n}</b><MemberGlyph r={r} n={n} size={14} /></span>)}</span> : null}</>],
+    ['Members', 'members', <><span className="num">{memberCount(state, p)}</span>{byColor.length ? <span className="rc-split">{byColor.map(([r, n]) => <span key={r || 'any'} className="rc-bust"><b className="num">{n}</b><MemberGlyph r={r} n={n} size={14} /></span>)}</span> : null}{wild ? <span className="rc-anynote"><MemberGlyph size={12} decorative /> counts as any color</span> : null}</>],
   ];
   return (
     <header className="rc-head">
