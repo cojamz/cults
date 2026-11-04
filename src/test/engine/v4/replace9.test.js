@@ -147,3 +147,34 @@ describe('Last-Minute Shopper: "Round End: you may recruit a shop member, paying
     expect(blue.winners).toEqual([0]);
   });
 });
+
+describe('Bargain Hunter: "While you have the fewest followers (ties count), buying followers doesn\'t use up your recruit."', () => {
+  const Q4 = ['red', 'market', 'purple', 'silver'];
+  const buy1 = s => { s = move(s, 'followers:1'); while (s.pending?.kind === 'pay' || s.pending?.prompt?.includes('pay for')) s = answer(s, s.pending.options[0].id); return s; };
+  it('price and retirement', () => {
+    expect([defById('market.bargainhunter').s, defById('market.bargainhunter').w]).toEqual([3, 1]);
+    expect(defById('market.regular').retired).toBe(true);
+  });
+  it('fewest followers: a follower purchase hands back the recruit; once past a rival, the next buy uses it up', () => {
+    // P1 holds 1 + Bargain Hunter's 1 = 2 followers; P2 holds 1 + 3 = 4
+    let s = table(Q4, { n: 2, round: 2, res: [{ red: 9 }], bonus: [0, 3], members: [['market.bargainhunter']], queue: [{ t: 'buy', p: 0 }, { t: 'endTurn', p: 0 }] });
+    s.current = 0;
+    s = move(s, 'tier:small'); // 2 -> 3, fewest before it: free
+    expect(s.pending?.kind).toBe('buy');
+    expect(s.pending.options.some(o => o.id.startsWith('tier:'))).toBe(true);
+    expect(named(s, 'Bargain Hunter')).toContain("P1's Bargain Hunter: fewest followers, so that purchase didn't use up the recruit.");
+    s = move(s, 'tier:small'); // 3 -> 4, still fewest before it (3 < 4): free
+    expect(s.pending?.kind).toBe('buy');
+    s = move(s, 'tier:small'); // 4 -> 5, tied before it (ties count): free
+    expect(s.pending?.kind).toBe('buy');
+    s = move(s, 'tier:small'); // 5 -> 6: not fewest before it: this one is the turn's recruit
+    expect(s.pending?.options?.some(o => o.id.startsWith('tier:'))).not.toBe(true);
+    expect(s.players[0].bonus).toBe(4); // four 1-follower buys, the first three free
+  });
+  it('not fewest: buying followers uses up the recruit as usual', () => {
+    let s = table(Q4, { n: 2, round: 2, res: [{ red: 9 }], bonus: [5, 0], members: [['market.bargainhunter']], queue: [{ t: 'buy', p: 0 }, { t: 'endTurn', p: 0 }] });
+    s.current = 0;
+    s = move(s, 'tier:small');
+    expect(s.pending?.options?.some(o => o.id.startsWith('tier:'))).not.toBe(true);
+  });
+});
