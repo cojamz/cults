@@ -125,6 +125,13 @@ describe('Yellow members', () => {
     expect(R(s, 1)).toMatchObject({ red: 1, gold: 1, yellow: 1 });
     expect(named(s, 'Customs Officer')).toHaveLength(1);
   });
+  it('Customs Officer: a rival Poaching one of your members pays nothing (a member is not a resource; Nov 4)', () => {
+    let s = sceneQ({ quadrants: ['gold', 'yellow', 'thieves', 'echo'], n: 2, round: 3, members: [[], ['yellow.customs', 'yellow.gardener']] });
+    s = move(take(s, 'thieves.heist'), `card:${uidOf(s, 'yellow.gardener', 1)}`);
+    expect(s.players[0].members).toHaveLength(1);
+    expect(R(s, 1).yellow || 0).toBe(0);
+    expect(named(s, 'Customs Officer')).toHaveLength(0);
+  });
   it('Customs Officer: once per change, however many of your resources it changes (Cory, Nov 1: "Yes")', () => {
     let s = agitate({ red: 3 });
     s = move(s, 'res:1:red'); s = move(s, 'color:gold');
