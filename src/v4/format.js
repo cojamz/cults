@@ -1127,7 +1127,8 @@ export function effectStory(start, end, actor, me = null, fx = []) {
   const fword = n => `${Math.abs(n)} follower${Math.abs(n) === 1 ? '' : 's'}`;
   const cardName = u => (end.cards[u] ? cardDef(end, u).name : start.cards[u] ? cardDef(start, u).name : 'a member');
   // a member cause by the name its seat shows: a worn cloak is "Green Cloak", never its card's "Impressionist" (picky bot, Nov 4)
-  const causeName = c => (c.uid != null && (end.cards[c.uid] || start.cards[c.uid]) ? cardName(c.uid) : c.def ? defById(c.def)?.name : null);
+  const worn = u => u != null && [end, start].some(s => s.artifacts && Object.values(s.artifacts).includes(u));
+  const causeName = c => (worn(c.uid) ? cardName(c.uid) : c.def ? defById(c.def)?.name : c.uid != null ? cardName(c.uid) : null);
   const groups = new Map();
   const groupOf = c => {
     const key = !c ? 'space' : c.kind === 'space' || c.kind === 'move' ? 'space' : c.kind === 'member' ? `member:${c.uid}:${c.def || ''}` : c.kind === 'recruit' ? `recruit:${c.uid}` : c.kind === 'buy' ? `buy:${c.tier}` : c.kind === 'release' ? `release:${c.uid}` : null;
