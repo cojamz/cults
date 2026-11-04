@@ -4,7 +4,7 @@ Live: **Fan Club** (Green, 2 green + 3 any, counts as 3 members): "On Recruit: +
 Cory, Nov 4: "Fan club really makes no sense." Read as: nothing about fans in what it does. It counts as 3 members, so a plural name stays.
 
 ## 1. Fan Club [pick]: new text, the name stays
-"On Recruit: copy an action the follower leader has a minion on."
+"On Recruit: copy an action the player with the most followers has a minion on."
 - Fans copy their idol, and copying is Green's verb.
 - One played turn, round II, 4 players: Ana leads on followers and has a minion on **Toast** ("+3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III."). You recruit Fan Club and copy Toast, so you get +6 silver and each rival gets +2. Today's Fan Club in the same spot, with 2 or 3 Green spaces taken, gives +2 or +3 green.
 - The choice: you pick which of the leader's actions to copy, and the best one for you is never automatic. A leader with no minion on the board yet gives nothing, so you buy it once they have placed.
