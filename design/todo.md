@@ -6,7 +6,7 @@ Done items and the old lists: design/archive/todo-2026-10-20-to-23.md and design
 
 ## Cory's calls
 - Decision backlog (Cory, Nov 4 12:36pm): member decks of 12 per color instead of 10 ("maybe we need to increase the member decks to 12...... but we'll talk more about that later"); this also covers fewer, more strategic cults (item 2 under Backlog initiatives, merged Nov 4 12:39pm, Cory: "agreed with all"). The full parked list Cory sees: /mnt/project-files/desk/backlog-for-cory.md.
-- Parked: Refactor for snappier play (plan in progress in its own thread).
+- Refactor for snappier play: approved and in progress in its own thread (Cory, Nov 4 12:52pm).
 - Cleared Nov 4 12:39pm (Cory: "yup those can all go"): contests away from "most of a resource" (they stay fewest followers), the emoji-style members pick (pixel-art redraw went that way), the White rework as a parked item (being built in "Shift White to follower gain").
 First (Nov 1 afternoon): Cory answers the balance-1.0 list by number (/mnt/project-files/balance-1.0/list.md); build each answer as given. Earlier (Nov 1 morning): the 13 balance picks in /mnt/project-files/balance-0.99.md (Greatest Hits, Lie Low, small-cult bar, Recruiter, Money Changers, Recruit Twice, HR, Front-runner/Scout, which color to rework next). Then 0.99 ships; his final action/member review makes 1.0.
 All open design and feel questions are numbered in design/notes/waiting-on-cory-2026-10-24.md, defaults in brackets. When he answers, log each call in design/decisions.md, tick it there, and build in this order: two shops (#1 to #4), card changes (#5 to #11), board (#12 to #14), members (#15 to #17).
