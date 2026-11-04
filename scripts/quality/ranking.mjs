@@ -35,7 +35,17 @@ const prot = new Set(protArg.split(',').map(low).filter(Boolean));
 // round of each space from the board text ("  II  Name: ...") and the color each space belongs to
 const roundOf = new Map();
 if (board && existsSync(board)) for (const l of readFileSync(board, 'utf8').split('\n')) { const m = l.match(/^\s+(I{1,3})\s+([^:]+):/); if (m) roundOf.set(low(m[2]), m[1]); }
-const bar = r => r.med >= 13 && r.q[0] > 0 && r.q[2] > 0 && r.q[3] > 0 && r.fails.length < 2;
+// one plain "+N of its color" space per color is the color's fuel anchor and may score 0 on Fun (principles.md v2):
+// the plain-est space per color (shortest text among its spaces with a median 0 on Fun) is exempt from that rule only
+const fuel = new Set();
+for (const c of new Set(rows.filter(r => r.kind === 'space').map(r => r.color))) {
+  const zero = rows.filter(r => r.kind === 'space' && r.color === c && r.q[3] === 0 && !plants.has(low(r.name)));
+  // "plain fuel": a space that opens with a scaling gain of its own color ("+2 gold in round I, +4 in round II, +6 in round III")
+  const line = r => board ? (readFileSync(board, 'utf8').split('\n').find(l => l.includes(` ${r.name}:`)) || '') : '';
+  const plain = zero.filter(r => /:\s*\+\d+ \w+ in round I, \+\d+ in round II, \+\d+ in round III\./.test(line(r)));
+  if (plain.length) fuel.add([...plain].sort((a, b) => line(a).length - line(b).length)[0].key);
+}
+const bar = r => r.med >= 13 && r.q[0] > 0 && r.q[2] > 0 && (r.q[3] > 0 || fuel.has(r.key)) && r.fails.length < 2;
 const L = [], J = { label, judges: files, members: [], spaces: [], checks: {} };
 
 // --- agreement
@@ -117,7 +127,7 @@ for (const kind of ['member', 'space']) {
   L.push(`## ${kind === 'member' ? 'Members' : 'Wheel spaces'} (${rs.length}; ${under} under the bar)`, '');
   L.push('| # | Card | Color | Median | Judges | Bar | Flags | Why (judge nearest the median) |', '|---|---|---|---|---|---|---|---|');
   rs.forEach((r, i) => {
-    const flags = [prot.has(low(r.name)) ? 'protected' : '', kind === 'space' && roundOf.get(low(r.name)) ? (roundOf.get(low(r.name)) === 'III' ? 'round III (rework only under 10)' : `round ${roundOf.get(low(r.name))}`) : '', r.fails.length ? `hard fail x${r.fails.length}: ${r.fails[0]}` : '', [0, 2, 3].filter(k => r.q[k] === 0).map(k => `0 on C${k + 1}`).join(' ')].filter(Boolean);
+    const flags = [prot.has(low(r.name)) ? 'protected' : '', fuel.has(r.key) ? 'fuel anchor (0 on Fun allowed)' : '', kind === 'space' && roundOf.get(low(r.name)) ? (roundOf.get(low(r.name)) === 'III' ? 'round III (rework only under 10)' : `round ${roundOf.get(low(r.name))}`) : '', r.fails.length ? `hard fail x${r.fails.length}: ${r.fails[0]}` : '', [0, 2, 3].filter(k => r.q[k] === 0).map(k => `0 on C${k + 1}`).join(' ')].filter(Boolean);
     L.push(`| ${i + 1} | ${r.name} | ${r.color} | ${r.med} | ${r.totals.join('/')} | ${bar(r) ? 'over' : 'UNDER'} | ${[...new Set(flags)].join('; ')} | ${String(r.why || '').replace(/\|/g, '/')} |`);
     J[kind === 'member' ? 'members' : 'spaces'].push({ rank: i + 1, name: r.name, color: r.color, median: r.med, totals: r.totals, q: r.q, overBar: bar(r), protected: prot.has(low(r.name)), round: roundOf.get(low(r.name)) || null, hardFails: r.fails, why: r.why });
   });
