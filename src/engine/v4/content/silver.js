@@ -9,7 +9,7 @@
 import { defById } from './index.js';
 import { add2, old2, handlers2 } from './replace2.js';
 import { add6, old6 } from './replace6.js';
-import { add8, old8 } from './replace8.js';
+import { add8, old8, handlers8 } from './replace8.js';
 import { swap11, handlers11 } from './replace11.js';
 import { see, endsAhead, SEE_SPITE } from './botsee.js';
 
@@ -22,7 +22,6 @@ const HOSTESS_TEXT = {
   B: 'On Recruit and Round Start: give each rival 1 silver in round I, 2 in round II, 3 in round III. +1 follower per silver you give.',
   C: 'On Recruit and Round Start: give each rival 1 silver. +1 follower for each.', // Cory's pick 1, Nov 3 9:47pm
 };
-const CATERER_F = globalThis.process?.env?.CATERER === 'follower';
 const others = (ctx, p) => ctx.rivals(p);
 const otherColors = ctx => ctx.state.resources.filter(c => c !== S);
 
@@ -270,6 +269,16 @@ const silver = {
       p.bonus += k;
       ctx.log(`${p.name}'s Godparent: gives ${name} to ${o.name}: +${k} followers.`);
     },
+    ...handlers8({
+      usher(ctx, p, id) {
+        const o = ctx.player(id);
+        if (!o || o === p) return;
+        giveTo(ctx, p, o, S, 2);
+        afterGive(ctx, p, S);
+        p.bonus += 3;
+        ctx.log(`${p.name}'s Usher: gives ${o.name} 2 silver: +3 followers.`);
+      },
+    }),
     ...handlers2({
       hush(ctx, victim, answer, data) {
         const thief = ctx.player(data.thief);
@@ -410,15 +419,11 @@ const silver = {
     }),
     // Cory, Nov 1: "whenever a player is gifted silver +1 silver", then +2 after the test read −4; one gift per space counts once
     // words and +1 (Cory, Nov 1, 2:25pm: "Whenever silver is gifted, +1 silver."), once per gift event
-    // CATERER=follower: bot test only (Nov 4, quality loop lane B, /mnt/project-files/quality/pitches/B-silvercloak.md):
-    // the same trigger pays 1 follower instead of 1 silver.
-    m('caterer', 'Caterer', 2, 2, CATERER_F ? 'Whenever silver is gifted, +1 follower.' : 'Whenever silver is gifted, +1 silver.', {
+    m('caterer', 'Caterer', 2, 2, 'Whenever silver is gifted, +1 silver.', {
       onAnyGifted(ctx, owner, card, giver, once) {
         const k = once || `${ctx.state.moves}:${giver.id}`;
         if (card.catered === k) return;
-        card.catered = k;
-        if (CATERER_F) { owner.bonus += 1; ctx.log(`${owner.name}'s Caterer: +1 follower (silver was gifted).`); return; }
-        ctx.gain(owner, S, Number(globalThis.process?.env?.CATERER || 1)); // CATERER=n: bot test only (Nov 3)
+        card.catered = k; ctx.gain(owner, S, Number(globalThis.process?.env?.CATERER || 1)); // CATERER=n: bot test only (Nov 3)
       },
     }),
     m('majordomo', 'Majordomo', 4, 2, 'Whenever you take a Silver space, +2 silver.', {
@@ -467,6 +472,17 @@ const silver = {
       botActivate: (ctx, owner) => ctx.state.round === 3 && owner.res[S] >= 6,
     }),
     m('dowager', 'Dowager', 2, 2, 'Worth 3 followers.', { f: 3 }),
+    // REPLACE8 bot test (Nov 4, quality loop lane B, pitches/B-polisher.md 4, passed paper gates b5/b6 at 15 vs 11):
+    // Polisher's place, same price. The 2 silver comes from the bank and is a gift (gift hooks fire, as for Hostesses).
+    ...add8(m('usher', 'Usher', 1, 1, 'On Recruit: give a rival 2 silver. +3 followers.', {
+      onRecruited(ctx, owner) {
+        ctx.choose(owner, 'Usher: which rival gains 2 silver? You get 3 followers', others(ctx, owner).map(o => ({
+          id: `player:${o.id}`, label: `${o.name} (${o.res[S] || 0} silver)`, kind: 'player', value: o.id,
+          // bots hand it to whoever it helps least in the Silver contest
+          hint: -(o.res[S] || 0) - (leadIn(ctx, o, S) >= -2 ? 3 : 0),
+        })), 'silver.usher');
+      },
+    })),
     // REPLACE8 bot test (Nov 4, quality loop lane B, pitches/B-debtcollectors.md R5, passed paper gate b3 at 18): Debt
     // Collectors' place, same price. Any of your members moved into a rival's cult (your Godparent's gift, a rival's
     // Promote or Demote, a steal, a swap), while you still hold Well-Wishers; to the shop or the pile doesn't count.
@@ -533,7 +549,7 @@ const silver = {
     m('philanthropists', 'Philanthropist', 3, 2, 'On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.', {
       onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropist', max: 4, per: 1 }); },
     }),
-    m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', {
+    m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', { ...old8,
       activate: 'game',
       onActivate(ctx, owner) {
         const k = Math.min(3, owner.res[S] || 0);

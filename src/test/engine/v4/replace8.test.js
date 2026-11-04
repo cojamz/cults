@@ -1,19 +1,16 @@
 // @vitest-environment node
-// Quality loop lane B (Nov 4; /mnt/project-files/quality/pitches/B-*.md), the REPLACE8=1 bot-test switch and the
-// CATERER=follower Silver Cloak candidate: a test per sentence of each new card, the turn played in its pitch, and the
+// Quality loop lane B (Nov 4; /mnt/project-files/quality/pitches/B-*.md), the REPLACE8=1 bot-test switch: a test per sentence of each new card, the turn played in its pitch, and the
 // old card no longer dealt. The switches are read when the engine loads, so they are set before the engine is imported
 // (dynamic imports below), then cleared.
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE8 = '1';
-process.env.CATERER = 'follower';
 const { resume, contextFor } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move, take } = await import('./helpers.js');
 const { sceneQ, linesNaming } = await import('./cards-helpers.js');
 const { uidIn } = await import('./cards-helpers-b.js');
 delete process.env.REPLACE8;
-delete process.env.CATERER;
 
 const sc = o => sceneQ({ quadrants: ['gold', 'red', 'silver', 'green'], ...o });
 const pass = s => move(s, s.pending.options.find(o => o.kind === 'pass').id);
@@ -23,9 +20,9 @@ describe('REPLACE8: the switch', () => {
   it("keeps the old cards' prices, worth and count, and retires the old cards", () => {
     const card = id => { const d = defById(id); return [d.s, d.w, d.f, d.n]; };
     expect(card('silver.wellwishers')).toEqual(card('silver.debtcollector'));
-    for (const id of ['silver.debtcollector']) expect(defById(id).retired).toBe(true);
+    expect(card('silver.usher')).toEqual(card('silver.polisher'));
+    for (const id of ['silver.debtcollector', 'silver.polisher']) expect(defById(id).retired).toBe(true);
     expect(defById('silver.gala').retired).toBeFalsy();
-    expect(defById('silver.caterer').text).toBe('Whenever silver is gifted, +1 follower.');
   });
 });
 
@@ -54,11 +51,17 @@ describe('Well-Wishers: "Whenever one of your members goes to a rival\'s cult, +
   });
 });
 
-describe('Silver Cloak, CATERER=follower: "Whenever silver is gifted, +1 follower."', () => {
-  it('a gift reaching every rival pays the wearer once', () => {
-    let s = sc({ n: 4, round: 2, members: [[], [], ['silver.caterer']], queue: [{ t: 'turn', p: 0 }] });
-    s = take(s, 'silver.toast');
-    expect(s.players[2].bonus).toBe(1);
-    expect(linesNaming(s.log, 'Caterer')).toContain("P3's Caterer: +1 follower (silver was gifted).");
+describe('Usher: "On Recruit: give a rival 2 silver. +3 followers."', () => {
+  it('on recruit you choose a rival; they gain 2 silver from the bank and you +3 followers (the pitched turn, round I)', () => {
+    let s = sc({ n: 4, res: [{ silver: 2, gold: 1 }], shop: ['silver.usher'], queue: [{ t: 'buy', p: 0 }] });
+    const before = s.players[0].res.silver;
+    s = move(s, s.pending.options.find(o => /Usher/.test(o.label || '')).id);
+    if (s.pending?.prompt?.startsWith('Pay')) s = move(s, s.pending.options[0].id);
+    expect(s.pending.prompt).toBe('Usher: which rival gains 2 silver? You get 3 followers');
+    s = move(s, 'player:2');
+    expect(s.players[2].res.silver).toBe(2);
+    expect(s.players[0].bonus).toBe(3);
+    expect(s.players[0].res.silver).toBeLessThan(before);
+    expect(linesNaming(s.log, 'Usher')).toContain("P1's Usher: gives P3 2 silver: +3 followers.");
   });
 });
