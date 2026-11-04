@@ -439,16 +439,6 @@ const silver = {
       },
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.04 * 3),
     })),
-    // REPLACE8 bot test (Nov 4, quality loop lane B, pitches/B-polisher.md 1): Polisher's place, same price. Once per gift
-    // (a space or card gives each receiver once), however much silver it brings.
-    ...add8(m('freeloader', 'Freeloader', 1, 1, 'Whenever a rival gives you silver, +1 follower.', {
-      onGiven(ctx, owner, card, giver, color, n) {
-        if (color !== S || giver === owner || !(n > 0)) return;
-        owner.bonus += 1;
-        ctx.log(`${owner.name}'s Freeloader: +1 follower (${giver.name} gave silver).`);
-      },
-      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r] * 0.06, 0)),
-    })),
     // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
     m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2 }),
     // REPLACE2 bot test (Nov 3, replacement batch 2): Debutantes' place. 6 silver + 3 any as a player sees it. The +2 each is
@@ -504,7 +494,7 @@ const silver = {
     m('philanthropists', 'Philanthropist', 3, 2, 'On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.', {
       onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropist', max: 4, per: 1 }); },
     }),
-    m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', { ...old8,
+    m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', {
       activate: 'game',
       onActivate(ctx, owner) {
         const k = Math.min(3, owner.res[S] || 0);

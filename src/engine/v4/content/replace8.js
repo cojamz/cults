@@ -1,6 +1,6 @@
 // Quality loop, lane B (Silver; Nov 4 overnight; /mnt/project-files/quality/pitches/B-*.md), bot games only. REPLACE8=1
 // deals the new members in their old cards' places (the old card is retired, so never dealt):
-//   silver.debtcollector (Debt Collectors) -> silver.wellwishers, silver.polisher (Polisher) -> silver.freeloader.
+//   silver.debtcollector (Debt Collectors) -> silver.wellwishers.
 // CATERER=follower (silver.js) is the Silver Cloak candidate, a separate switch so it trials on its own.
 // Unset, the new cards are never defined and nothing in the game changes.
 export const REPLACE8 = globalThis.process?.env?.REPLACE8 === '1';

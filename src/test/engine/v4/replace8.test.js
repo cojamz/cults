@@ -23,8 +23,7 @@ describe('REPLACE8: the switch', () => {
   it("keeps the old cards' prices, worth and count, and retires the old cards", () => {
     const card = id => { const d = defById(id); return [d.s, d.w, d.f, d.n]; };
     expect(card('silver.wellwishers')).toEqual(card('silver.debtcollector'));
-    expect(card('silver.freeloader')).toEqual(card('silver.polisher'));
-    for (const id of ['silver.debtcollector', 'silver.polisher']) expect(defById(id).retired).toBe(true);
+    for (const id of ['silver.debtcollector']) expect(defById(id).retired).toBe(true);
     expect(defById('silver.gala').retired).toBeFalsy();
     expect(defById('silver.caterer').text).toBe('Whenever silver is gifted, +1 follower.');
   });
@@ -52,27 +51,6 @@ describe('Well-Wishers: "Whenever one of your members goes to a rival\'s cult, +
     s = move(s, `give:${host}:1`);
     expect(s.players[1].members).toContain(host);
     expect(s.players[0].bonus).toBe(d.s + d.w + 3);
-  });
-});
-
-describe('Freeloader: "Whenever a rival gives you silver, +1 follower."', () => {
-  it('a rival gives you silver (Toast): +1 follower, once per gift however much silver it brings', () => {
-    let s = sc({ n: 3, round: 2, members: [[], ['silver.freeloader']], queue: [{ t: 'turn', p: 0 }] });
-    s = take(s, 'silver.toast');
-    expect(s.players[1].res.silver).toBe(2);
-    expect(s.players[1].bonus).toBe(1);
-    expect(linesNaming(s.log, 'Freeloader')).toContain("P2's Freeloader: +1 follower (P1 gave silver).");
-  });
-  it('your own Silver space pays you silver but is no gift: nothing', () => {
-    let s = sc({ n: 3, round: 2, members: [['silver.freeloader']], queue: [{ t: 'turn', p: 0 }] });
-    s = take(s, 'silver.toast');
-    expect(s.players[0].bonus).toBe(0);
-  });
-  it('the pitched turn: Hostesses at round start gives you 1 silver: +1', () => {
-    let s = sc({ n: 3, round: 1, members: [['silver.hostesses'], ['silver.freeloader']], queue: [] });
-    s.queue = [{ t: 'endRound' }, { t: 'afterRound' }]; s = resume(s);
-    while (s.pending && s.round === 1) s = move(s, s.pending.options[0].id);
-    expect(linesNaming(s.log, 'Freeloader').length).toBeGreaterThanOrEqual(1);
   });
 });
 
