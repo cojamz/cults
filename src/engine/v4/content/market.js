@@ -10,6 +10,7 @@ import { add4, old4, handlers4 } from './replace4.js';
 import { add9, old9, handlers9 } from './replace9.js';
 import { add11, old11, handlers11 } from './replace11.js';
 import { on12, handlers12 } from './replace12.js';
+import { add14, old14 } from './replace14.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -615,7 +616,11 @@ const market = {
     // Blue's artifact only, never dealt (Cory, 2026-10-24: "whenever shop members go to the bottom of the pile, gain 1
     // blue… one per batch"). Name is Claude's fill-in.
     m('bargainbin', 'Bargain Bin', 0, 0, 'Whenever members go to the bottom of the pile, +1 blue.', { artifact: true, bottomBlue: true }),
-    m('patroness', 'Patroness', 5, 2, 'Whenever shop members go to the bottom of the pile, +1 follower.', { bottomFollowers: true, ...old3 }),
+    m('patroness', 'Patroness', 5, 2, 'Whenever shop members go to the bottom of the pile, +1 follower.', { bottomFollowers: true, ...old3, ...old14('ragpicker') }),
+    // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-redo1.md, paper 18 vs 16; a play A/B under "paper
+    // filters, play ranks"): Patroness' place, same price. Core offers the pile's bottom card beside the shop (flag pileBottom).
+    ...add14(m('ragpicker', 'Ragpicker', 5, 2, 'You may recruit the bottom member of the pile as if it were in the shop.', { pileBottom: true,
+      ...see(i => 1.5 * endsAhead(i).length) })), // BOTSEE: about one good buried member a round to pick from
     // REPLACE3 bot test (Nov 3, replacement batch 3): Patroness' place. 6 blue + 3 any as a player sees it. The color's
     // members are the ones face up when it's used (a refill drawn meanwhile isn't one of them), each paid at its price
     // the usual way (the pay sheet when there's more than one way); one you can't pay for when its turn comes stays in

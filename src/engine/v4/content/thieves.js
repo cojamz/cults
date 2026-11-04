@@ -787,11 +787,32 @@ const thieves = {
     }),
     // Cory's #26 "Steal when you buy a member - should be essential to magenta" (Cory's yes, Oct 21)
     m('shoplifter', 'Shoplifter', 3, 3, // 7 (Cory, Oct 30: balance run)
-      'Whenever you recruit, steal 1 resource.', { ...old5,
+      'Whenever you recruit, steal 1 resource.', { ...old5, ...old14('shopcolor'), ...old14('shoptwo'),
       onRecruit(ctx, owner, card, by, what) {
         if (by === owner && what.member?.uid !== card.uid) startSteal(ctx, owner, 'Shoplifter', 1 + stickyMore(ctx, owner), { fromAction: false });
       },
     }),
+    // REPLACE14 bot tests (Members E lane, Nov 4; quality/pitches/E-redo1.md and E-batch2.md, paper 18 vs 17; play A/Bs under
+    // "paper filters, play ranks"): Shoplifter's place, same price. Members only (a follower buy isn't one); a grey member
+    // has no color, so nothing.
+    ...add14(m('shopcolor', 'Shoplifter', 3, 3, 'Whenever you recruit a member, steal 1 of its color from each rival.', {
+      onRecruit(ctx, owner, card, by, what) {
+        if (by !== owner || !what.member || what.member.uid === card.uid) return;
+        const q = ctx.defOf(what.member).quadrant, i = ctx.state.quadrants.indexOf(q), color = i >= 0 ? ctx.state.resources[i] : null;
+        if (!color) { ctx.log(`${owner.name}'s Shoplifter: ${ctx.defOf(what.member).name} has no color.`); return; }
+        const n = ctx.stealCount(owner, 1, { say: true });
+        for (const o of ctx.rivals(owner)) {
+          if (!(o.res[color] > 0)) continue;
+          const got = commit(ctx, owner, o, { [color]: Math.min(n, o.res[color]) }, false, false);
+          if (got) ctx.log(`${owner.name}'s Shoplifter: took ${got} ${color} from ${o.name}.`);
+        }
+      },
+    })),
+    ...add14(m('shoptwo', 'Shoplifter', 3, 3, 'Whenever you recruit a member, steal 2 resources.', {
+      onRecruit(ctx, owner, card, by, what) {
+        if (by === owner && what.member && what.member.uid !== card.uid) startSteal(ctx, owner, 'Shoplifter', 2 + stickyMore(ctx, owner), { fromAction: false });
+      },
+    })),
     // REPLACE5 bot test (Nov 3, replacement batch 5): Shoplifter's place. 4 magenta + 2 any as a player sees it. Once per
     // steal (a steal from several rivals counts once, as Fence pays once), of resources only (a member or loose
     // followers isn't one), any rival's steal, from you too. The 1 is of a color the thief took, the one they took most

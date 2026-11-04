@@ -78,6 +78,22 @@ const newInShop = (ctx, p) => ctx.shopCards().some(c => newColor(ctx, p, c, { gr
  */
 const hwCost = c => c.def.s + c.def.w;
 const hwList = (ctx, p) => ctx.shopCards().filter(c => hwCost(c) <= 5 && newColor(ctx, p, c, { grey: true }));
+/** Open House (REPLACE14=openhouse, Members E lane, Nov 4; quality/pitches/E-redo1.md, paper 17 vs 15; a play A/B under
+ *  "paper filters, play ranks"), in Melting Pot's place: a free extra recruit costing up to 2 per member color. */
+const ohList = (ctx, p) => { const cap = 2 * memberColors(ctx, p).length; return ctx.shopCards().filter(c => hwCost(c) <= cap); };
+const OPEN_HOUSE = {
+  key: 'openhouse', ring: 2, name: 'Open House', copyDoesIt: true,
+  text: '+2 yellow. Recruit a shop member costing up to 2 per color among your members, for free.',
+  estimate: (ctx, p) => 2 + Math.max(0, ...ohList(ctx, p).map(c => c.def.f + hwCost(c) * 0.6)),
+  resolve(ctx, p) {
+    ctx.gain(p, Y, 2, { fromAction: true });
+    const list = ohList(ctx, p);
+    if (!list.length) { ctx.log(`${p.name}'s Open House: no shop member costs ${2 * memberColors(ctx, p).length} or less.`); return; }
+    ctx.choose(p, 'Open House: recruit which member for free?', list.map(c => ({
+      id: `card:${c.uid}`, label: `${c.def.name} (${hwCost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + hwCost(c),
+    })), 'yellow.openHouse');
+  },
+};
 const HOUSEWARMING = {
   key: 'housewarming', ring: 2, name: 'Housewarming', copyDoesIt: true,
   text: '+2 yellow. Recruit a shop member of a color none of your members have, costing up to 5, for free.',
@@ -185,7 +201,7 @@ export default {
     // Housewarming in Big New Blood's place, live since Nov 4 (Claude, under Cory's go-with-your-gut, overnight quality
     // loop): paper 18 vs 14, A/B +0.42, Lab 120 games a side. Big New Blood's text: design/archive/spaces/retired-2026-11-04.md
     HOUSEWARMING,
-    swap14({
+    swap14(swap14({
       // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 4 new words only (Claude, under Cory's
       // go-with-your-gut: "worded strangely"), the same effect
       key: 'meltingpot', ring: 2, name: 'Melting Pot', text: '+2 yellow. Count the different colors of your members, and gain that many in colors you choose.',
@@ -196,7 +212,7 @@ export default {
         if (k) pickColors(ctx, p, k, 'Melting Pot', true);
         else ctx.log(`${p.name}'s Melting Pot: no members yet, so only the yellow.`);
       },
-    }, GRAND_TOUR),
+    }, GRAND_TOUR), OPEN_HOUSE),
     {
       // Cory, 2026-10-30: "let's stick with launderers effect round III", "+3 or +4 yellow". Name: Claude's fill-in.
       // Nov 2: "oh no i like makeover as is" (the per-contest follower version was live briefly in v0.99.505)
@@ -208,6 +224,12 @@ export default {
 
   handlers: {
     ...handlers14({
+      openHouse(ctx, p, uid) {
+        const c = ctx.card(uid);
+        if (!c || !ctx.state.shop.includes(uid)) return;
+        ctx.log(`${p.name}'s Open House: recruits ${c.def.name} for free.`);
+        ctx.recruit(p, uid, { free: true });
+      },
       grandTour(ctx, p, oid) {
         const o = ctx.player(oid);
         if (!o) return;

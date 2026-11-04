@@ -13,6 +13,10 @@
 //   member trading.broker (Brokers) -> trading.brokerage (Brokers, round-end cash-out)
 //   member thieves.accomplice (Accomplice) -> thieves.partners (Accomplice, +1 follower per rival)
 //   member trading.shopkeeper (Landlord) -> trading.barker (Barker; Cory's extra follower buy, Nov 4)
+//   member market.patroness (Patroness) -> market.ragpicker (Ragpicker)
+//   member thieves.shoplifter (Shoplifter) -> thieves.shopcolor (Shoplifter, its color from each rival)
+//   member thieves.shoplifter (Shoplifter) -> thieves.shoptwo (Shoplifter, steal 2)
+//   space yellow.meltingpot (Melting Pot) -> yellow.openhouse (Open House)
 // REPLACE14=1 swaps every one; REPLACE14=grandtour (or a comma list of new keys) swaps only those, so each card gets
 // its own trial. Unset, nothing in the game changes.
 const RAW = globalThis.process?.env?.REPLACE14 || '';

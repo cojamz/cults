@@ -640,6 +640,9 @@ function inputFor(state, task) {
       // the top of the pile, for a player who can reach it (Insider: flag pileReach)
       for (const uid of state.pile.slice(0, pileReach(state, p))) if (memberPrice(state, p, uid).afford)
         opts.push({ id: `card:${uid}`, label: `${cardDef(state, uid).name} (from the pile)`, kind: 'card', uid, fromPile: true });
+      // the bottom of the pile (Ragpicker, REPLACE14 bot test: flag pileBottom)
+      { const b = state.pile.length > pileReach(state, p) && sumMemberFlag(state, p, 'pileBottom') > 0 ? state.pile[state.pile.length - 1] : null;
+        if (b != null && memberPrice(state, p, b).afford) opts.push({ id: `card:${b}`, label: `${cardDef(state, b).name} (bottom of the pile)`, kind: 'card', uid: b, fromPile: true }); }
       // a rival's Peddlers stall (REPLACE6 bot test)
       if (REPLACE6 || REPLACE9) for (const [uid, o, by] of stallCards(state, p)) if (memberPrice(state, p, uid).afford)
         opts.push({ id: `card:${uid}`, label: `${cardDef(state, uid).name} (${o === p ? 'your' : `${o.name}'s`} ${by})`, kind: 'card', uid, stall: o.id });
@@ -1463,7 +1466,8 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   const idx = state.shop.indexOf(uid);
   const fromPile = idx < 0 ? state.pile.indexOf(uid) : -1;
   // top: Red's round I space takes the deck's top member (Cory, 2026-10-27)
-  if (idx < 0 && (fromPile < 0 || (fromPile >= pileReach(state, p) && !(top && fromPile === 0)))) throw new Error(`Card ${uid} is not in the shop`);
+  const bottom = idx < 0 && fromPile >= 0 && fromPile === state.pile.length - 1 && fromPile >= pileReach(state, p) && sumMemberFlag(state, p, 'pileBottom') > 0;
+  if (idx < 0 && (fromPile < 0 || (fromPile >= pileReach(state, p) && !(top && fromPile === 0) && !bottom))) throw new Error(`Card ${uid} is not in the shop`);
   let paid = 'free', spent = null;
   if (!free) {
     const spend = chosen || paymentPlan(state, p, uid, how);
@@ -1515,7 +1519,7 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   refill(state);
   p.members.push(uid);
   const def = cardDef(state, uid);
-  log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
+  log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : bottom ? ` from the bottom of the pile with ${p.name}'s ${flagName(state, p, 'pileBottom')}` : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
   memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 && !stall });
   // an arrival like any other (Saboteur: "whenever this joins your cult"); swaps and moves fire it in their own code
   memberJoined(state, p, uid);
