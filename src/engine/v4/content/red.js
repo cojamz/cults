@@ -262,8 +262,9 @@ export default {
     m('recruiter', 'Recruiter', 4, 1, 'Whenever you recruit a member, +1 red.', {
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what.member) return;
-        // RECRUITER=once: bot test only (Nov 4, Cory "nerf red a little"): once per turn
-        if (globalThis.process?.env?.RECRUITER === 'once') { const k = ctx.turnKey(); if (owner.recruiterTurn === k) return; owner.recruiterTurn = k; }
+        // RECRUITER=once|twice: bot test only (Nov 4, Cory "nerf red a little"): at most once (twice) per turn
+        const cap = { once: 1, twice: 2 }[globalThis.process?.env?.RECRUITER];
+        if (cap) { const k = ctx.turnKey(); if (owner.recruiterTurn !== k) { owner.recruiterTurn = k; owner.recruiterN = 0; } if (owner.recruiterN >= cap) return; owner.recruiterN += 1; }
         ctx.gain(owner, 'red', 1); ctx.log(`${owner.name}'s Recruiter: +1 red.`);
       },
     }),
