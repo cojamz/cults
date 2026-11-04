@@ -10,6 +10,7 @@ import { pileRules } from './piles.js';
 import { startEffects, stopEffects, abandonEffects, underCause, markEffect } from './effects.js';
 import { REPLACE4 } from './content/replace4.js';
 import { REPLACE6 } from './content/replace6.js';
+import { REPLACE9 } from './content/replace9.js';
 import { REPLACE7 } from './content/replace7.js';
 import { REPLACE10 } from './content/replace10.js';
 import { isNewColor } from './content/yellow.js';
@@ -552,6 +553,13 @@ function inputFor(state, task) {
         options: (state.startPool || state.quadrants).map(q => ({ id: `color:${q}`, label: quadrant(q).name, kind: 'color', value: q })),
       };
     case 'place': {
+      // Hypnotist (REPLACE9 bot test): the next minion after its owner's turn must take the space it named, if still open
+      const hyp = REPLACE9 && state.hypno?.armed && state.hypno.round === state.round ? state.hypno : null;
+      if (hyp && state.slots[hyp.key] === undefined) {
+        const [hq, hi] = hyp.key.split('-').map(Number);
+        return { kind: 'place', prompt: `${p.name}: place a minion (${state.players[hyp.by].name}'s Hypnotist: it must go on ${actionAt(state, hq, hi).name})`,
+          options: [{ id: `slot:${hq}-${hi}`, label: actionAt(state, hq, hi).name, kind: 'slot', q: hq, i: hi }] };
+      }
       const slots = [
         ...openSlots(state).filter(([q, i]) => !task.ring || actionAt(state, q, i).ring <= task.ring)
           .map(([q, i]) => ({ id: `slot:${q}-${i}`, label: actionAt(state, q, i).name, kind: 'slot', q, i })),
@@ -748,6 +756,7 @@ function resolveTask(state, task, optionId) {
     case 'place': {
       // using a member first: its whole effect resolves, then this placement comes back with fresh options
       if (optionId.startsWith('use:')) { useMember(state, p, Number(optionId.slice(4)), { ...task }); return; }
+      if (REPLACE9 && state.hypno?.armed) delete state.hypno; // Hypnotist's one placement is this one, or it lapsed
       const squat = optionId.startsWith('squat:');
       const [q, i] = optionId.slice(optionId.indexOf(':') + 1).split('-').map(Number);
       const key = `${q}-${i}`;
@@ -921,6 +930,7 @@ function runTask(state, task) {
     }
     case 'endTurn': {
       const ctx = ctxFor(state);
+      if (REPLACE9 && state.hypno && state.hypno.by === p.id && !state.hypno.armed) state.hypno.armed = true;
       eachMember(state, (owner, card, def) => { if (def.onTurnEnd) def.onTurnEnd(ctx, owner, card, p); }, ['onTurnEnd']);
       state.current = null;
       return;
@@ -952,6 +962,7 @@ function runTask(state, task) {
 
 function startRound(state, r) {
   state.round = r;
+  if (REPLACE9) delete state.hypno; // Hypnotist's pick never carries into the next round
   // Fresh face-up market between rounds; old cards remain in the deck, at the bottom.
   if (r > 1) {
     const old = state.shop.splice(0);

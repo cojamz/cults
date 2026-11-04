@@ -1,7 +1,7 @@
 // Members C (overnight quality loop, Nov 4; /mnt/project-files/quality/pitches/C-*.md), bot games only. REPLACE9=1
 // deals each new member in its old card's place (the old card is retired, so never dealt):
 //   yellow.customs -> yellow.tollkeeper, yellow.dyer -> yellow.quilter, market.critic -> market.lastminute,
-//   market.regular -> market.bargainhunter.
+//   market.regular -> market.bargainhunter, benders.extrahand -> benders.hypnotist.
 // Unset, the new cards are never defined and nothing in the game changes.
 export const REPLACE9 = globalThis.process?.env?.REPLACE9 === '1';
 /** The new card, in its color's member list only under the switch. */

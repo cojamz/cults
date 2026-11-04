@@ -17,6 +17,15 @@ import { startSteal } from './thieves.js';
 import { toBottom, scavenge } from './market.js';
 import { REPLACE1, add1, old1, handlers1 } from './replace1.js';
 import { add6, old6 } from './replace6.js';
+import { add9, old9, handlers9 } from './replace9.js';
+/** Hypnotist (REPLACE9 bot test): the open spaces now, as [q, i, action]. */
+const hypnoSpaces = ctx => {
+  const out = [];
+  ctx.state.quadrants.forEach((qid, q) => ctx.quadrant(qid).actions.forEach((a, i) => {
+    if (!(a.ring > ctx.state.round || (a.lastRound && ctx.state.round > a.lastRound)) && ctx.state.slots[`${q}-${i}`] === undefined) out.push([q, i, a]);
+  }));
+  return out;
+};
 import { startLaunder, launderPick, launderAmount } from './launder.js';
 
 // Prices: member-value sim (scripts/v4-member-value.mjs, 4 normal bots, Release off, handed over at round II),
@@ -135,11 +144,27 @@ const members = [
   // (Poach and swaps moving an unplaced grant, copies, a full board) keep it as their fixture
   m('extrahand3', 'Extra Hand', 'purple', 5, 4, '+1 minion in round III.', { extraWorkers: [0, 0, 1], retired: true }),
   // Cory, 2026-10-28: "probably needs to be a Use Once… it had to have some category, and On Recruit would be broken"
-  m('extrahand', 'Extra Hand', 'purple', 5, 3, 'On Use, once per game: +1 minion this round.', { from: 2,
+  m('extrahand', 'Extra Hand', 'purple', 5, 3, 'On Use, once per game: +1 minion this round.', { from: 2, ...old9,
     activate: 'game',
     onActivate(ctx, owner, card) { if (!extraMinion(ctx, owner, 'Extra Hand')) card.used = false; },
     botActivate: ctx => ctx.state.round === 3 && spareSpace(ctx),
   }),
+  // REPLACE9 bot test (Members C, Nov 4): Extra Hand's place. 6 any as a player sees it. The owner picks an open space now;
+  // the next minion placed after the owner's turn ends (anyone's, the owner's own on a snake double) must go there
+  // (core: state.hypno). If that space is taken by then, or the round ends first, nothing happens.
+  ...add9(m('hypnotist', 'Hypnotist', 'purple', 0, 5, 'On Use, once per game: whoever places next puts their minion on an open space you choose.', { from: 2,
+    activate: 'game',
+    onActivate(ctx, owner, card) {
+      const open = hypnoSpaces(ctx);
+      if (open.length < 2 || ctx.state.hypno) { card.used = false; ctx.log(`${owner.name}'s Hypnotist: no open space to choose.`); return; }
+      ctx.choose(owner, 'Hypnotist: whoever places next must put their minion on which open space?', open.map(([q, i, a]) => ({
+        id: `slot:${q}-${i}`, label: `${a.name} (${ctx.quadrant(ctx.state.quadrants[q]).name})`, kind: 'choice', value: `${q}-${i}`,
+        // bots send the next player to the space worth least to them (the smallest printed estimate)
+        hint: -(typeof a.estimate === 'function' ? (() => { try { return a.estimate(ctx, owner) || 0; } catch { return 0; } })() : 0),
+      })), 'benders.hypno');
+    },
+    botActivate: ctx => ctx.state.round >= 2 && hypnoSpaces(ctx).length >= 3,
+  })),
   m('frontrunner', 'Line Cutters', 'purple', 1, 0, 'You go first every round.', { pickFirst: true, f: 3, n: 3, ...old1 }), // worth 3 (Cory, Nov 1: "maybe we make it 3 members?"), renamed (Cory, Nov 1: "make front runner worth more followers. figure out a better name") // Cory, Oct 21: 5; Oct 27: 4; Oct 28 "could probably be cheaper": 3 with the +1 wild (Claude's price, the floor); Oct 29 "I'm okay with front runners at 2": 2
   // REPLACE1 bot test (Nov 3, replacement batch 1): Line Cutters' place. 4 any as a player sees it. The rival chosen is
   // kept on the card (card.grudge: a marker on that rival's board). Scores after every other game-end bonus, and only
@@ -295,6 +320,13 @@ const members = [
 ];
 
 export const handlers = {
+  ...handlers9({
+    hypno(ctx, p, key) {
+      const [q, i] = String(key).split('-').map(Number);
+      ctx.state.hypno = { key, by: p.id, round: ctx.state.round, armed: false };
+      ctx.log(`${p.name}'s Hypnotist: whoever places next must take ${ctx.quadrant(ctx.state.quadrants[q]).actions[i].name}.`);
+    },
+  }),
   pickColor(ctx, p, r, data) { // gainColorOf (color-of.js): Dabblers' owner picks its color
     if (!ctx.state.resources.includes(r)) return;
     ctx.gain(p, r, 1);

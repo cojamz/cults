@@ -178,3 +178,44 @@ describe('Bargain Hunter: "While you have the fewest followers (ties count), buy
     expect(s.pending?.options?.some(o => o.id.startsWith('tier:'))).not.toBe(true);
   });
 });
+
+describe('Hypnotist: "On Use, once per game: whoever places next puts their minion on an open space you choose."', () => {
+  const Q4 = ['red', 'market', 'purple', 'silver'];
+  it('price and retirement', () => {
+    expect([defById('benders.hypnotist').s, defById('benders.hypnotist').w]).toEqual([0, 6]);
+    expect(defById('benders.extrahand').retired).toBe(true);
+  });
+  it('On Use: the owner names an open space; after the owner\'s turn, the next minion placed must go there; then it is spent', () => {
+    let s = table(Q4, { n: 3, round: 2, members: [['benders.hypnotist']], queue: [{ t: 'place', p: 0 }, { t: 'endTurn', p: 0 }, { t: 'place', p: 1 }, { t: 'endTurn', p: 1 }, { t: 'place', p: 2 }] });
+    s.current = 0;
+    s = move(s, `use:${uidIn(s, 'benders.hypnotist', 0)}`);
+    expect(s.pending.prompt).toBe('Hypnotist: whoever places next must put their minion on which open space?');
+    const pick = s.pending.options[s.pending.options.length - 1];
+    s = answer(s, pick.id);
+    expect(named(s, 'Hypnotist')[0]).toMatch(/^P1's Hypnotist: whoever places next must take /);
+    // the owner's own placement this turn is free
+    const own = s.pending.options.find(o => o.id.startsWith('slot:') && o.id !== pick.id);
+    expect(s.pending.options.filter(o => o.id.startsWith('slot:')).length).toBeGreaterThan(1);
+    s = move(s, own.id);
+    while (s.pending && s.pending.player === 0) s = answer(s, s.pending.options[0].id);
+    // P2 must take the named space
+    expect(s.pending.player).toBe(1);
+    expect(s.pending.options.map(o => o.id)).toEqual([pick.id]);
+    s = move(s, pick.id);
+    while (s.pending && s.pending.player === 1) s = answer(s, s.pending.options[0].id);
+    // P3 places freely again
+    expect(s.pending.player).toBe(2);
+    expect(s.pending.options.filter(o => o.id.startsWith('slot:')).length).toBeGreaterThan(1);
+  });
+  it('if the named space is taken first (by the owner), the next player places as usual', () => {
+    let s = table(Q4, { n: 3, round: 2, members: [['benders.hypnotist']], queue: [{ t: 'place', p: 0 }, { t: 'endTurn', p: 0 }, { t: 'place', p: 1 }] });
+    s.current = 0;
+    s = move(s, `use:${uidIn(s, 'benders.hypnotist', 0)}`);
+    const pick = s.pending.options[0];
+    s = answer(s, pick.id);
+    s = move(s, pick.id); // the owner takes it
+    while (s.pending && s.pending.player === 0) s = answer(s, s.pending.options[0].id);
+    expect(s.pending.player).toBe(1);
+    expect(s.pending.options.filter(o => o.id.startsWith('slot:')).length).toBeGreaterThan(1);
+  });
+});
