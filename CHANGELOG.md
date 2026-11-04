@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.579 — 2026-11-04
+
+- Clearer words for first-time players: hovers explain rivals' gains, copies with nothing to copy, steals and each space's limits; the shop says pile and how many you can afford; the round card and final bars label every number; setup switches have a hint. Silver, magenta and grey members are easier to tell apart.
+
 ## v0.99.578 — 2026-11-04
 
 - White: Barker reads "Each time you recruit a member, you may also recruit followers." and stacks with Spree. Runs on React 19 (no visible change).
