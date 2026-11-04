@@ -427,7 +427,7 @@ const CALLS = {
   // a low little voice singing "pizza pizza", up then down, a touch quick (Cor: "Pizza C, but sped up just a touch",
   // Nov 4, after turning down crunches, a sizzle, a ding and gibberish). It's a slogan: swap it before printing.
   pizza(ctx, dest, t, r) {
-    const pitch = 0.7, k = 1 / 1.15; // k: every length, sped up
+    const pitch = 0.7, k = 1 / 1.5; // k: every length, sped up (Cor, Nov 4 11:31pm: "Pizza Pizza needs to be sped up")
     const src = ctx.createOscillator(); src.type = 'sawtooth';
     const mouth = ctx.createGain(); mouth.gain.value = 0.0001;
     const fs = [[10, 1], [12, 0.7], [14, 0.3]].map(([q, a]) => { const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = q; const g = ctx.createGain(); g.gain.value = a * 3; src.connect(bp); bp.connect(g); g.connect(mouth); return bp; });
