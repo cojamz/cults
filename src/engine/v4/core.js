@@ -1141,6 +1141,13 @@ export function scoringOf(state, qid) {
     // cards, not member weight, so one card that counts as 4 can't lock it). contestFix.red 'held' tries most red held.
     if (fix.red === 'cards') by.red = { label: 'Most red members', counts: 'your red member cards when the round ends (each card counts 1)',
       score: (ctx, p) => countMembersOfColor(state, p, 'red', { cards: true }) };
+    // Blue (Actions lane, Nov 4, quality loop; /mnt/project-files/quality/pitches/actions-contest-blue.md): contestFix.market
+    // 'cards' counts member cards (each counts 1, as Red's), 'blue' blue member cards, 'held' the blue you hold
+    if (fix.market === 'cards') by.market = { label: 'Most member cards', counts: 'your member cards when the round ends (each card counts 1)',
+      score: (ctx, p) => p.members.length };
+    if (fix.market === 'blue') by.market = { label: 'Most blue members', counts: 'your blue member cards when the round ends (each card counts 1)',
+      score: (ctx, p) => countMembersOfColor(state, p, 'market', { cards: true }) };
+    if (fix.market === 'held') by.market = { label: 'Most blue', counts: 'the blue you hold when the round ends', score: (ctx, p) => p.res.blue || 0 };
     const greenScore = by.echo.score, onGreen = p => greenScore(null, p);
     if (fix.green === 'tb') by.echo = { ...by.echo, tiebreak: { unit: 'green', text: 'ties go to the most green held' },
       score: (ctx, p) => { const n = onGreen(p); return n > 0 ? n * 1000 + (p.res.green || 0) : 0; }, show: (ctx, p) => ({ count: onGreen(p), tiebreak: p.res.green || 0 }) };

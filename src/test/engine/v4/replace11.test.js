@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE11 = '1';
-const { createGame, applyMove } = await import('../../../engine/v4/core.js');
+const { createGame, applyMove, contestTable } = await import('../../../engine/v4/core.js');
 const { quadrant } = await import('../../../engine/v4/content/index.js');
 const { table } = await import('./cards-helpers-b.js');
 delete process.env.REPLACE11;
@@ -213,5 +213,22 @@ describe('REPLACE11: Gift Shop', () => {
     // Host's On Recruit ("+1 red per 2 members you have") doesn't fire on a gift
     expect(s.log.join('\n')).not.toMatch(/P3's Host/);
     expect(s.log.join('\n')).toContain("P1's Gift Shop: gives Host to P3.");
+  });
+});
+
+describe('Blue contest settings (contestFix.market)', () => {
+  const blueRow = (fix, members) => {
+    const s = table(['red', 'market'], { n: 2, members, rules: { contests: 'byColor', contestFix: { market: fix } } });
+    return contestTable(s).find(c => c.qid === 'market');
+  };
+  it("'cards' counts member cards, one each, so a counts-as-4 card is 1", () => {
+    const c = blueRow('cards', [['red.mob'], ['red.volunteer', 'red.recruiter']]);
+    expect(c.label).toBe('Most member cards');
+    expect(c.winners).toEqual([1]);
+  });
+  it("'blue' counts blue member cards", () => {
+    const c = blueRow('blue', [['market.regular'], ['red.volunteer', 'red.recruiter']]);
+    expect(c.label).toBe('Most blue members');
+    expect(c.winners).toEqual([0]);
   });
 });
