@@ -72,7 +72,11 @@ function checkout(sha) {
     rmSync(wt, { recursive: true, force: true });
     try { git('cat-file', '-e', `${sha}^{commit}`); } catch { git('fetch', 'origin', sha); }
     try { git('worktree', 'prune'); } catch {}
-    git('worktree', 'add', '-q', '--detach', wt, sha);
+    // sparse (src, scripts and the root files): a full checkout is ~1.6 GB of design pictures, and a night of trials on
+    // a dozen commits filled runner disks (Nov 4). Games read only src/ and scripts/.
+    git('worktree', 'add', '-q', '--detach', '--no-checkout', wt, sha);
+    execFileSync('git', ['sparse-checkout', 'set', 'src', 'scripts'], { cwd: wt, stdio: 'ignore' });
+    execFileSync('git', ['checkout', '-q', '--detach', sha], { cwd: wt, stdio: 'ignore' });
   }
   if (!existsSync(join(wt, 'node_modules')) && existsSync(join(REPO, 'node_modules'))) symlinkSync(join(REPO, 'node_modules'), join(wt, 'node_modules'));
   return wt;
