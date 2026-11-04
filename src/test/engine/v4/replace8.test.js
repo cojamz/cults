@@ -72,32 +72,31 @@ describe('Usher: "On Recruit: give a rival 2 silver from the bank. +3 followers.
   });
 });
 
-describe('Guest of Honor: "Whenever you take a Silver space, you may give a rival one of your members costing 3 or less for +4 followers."', () => {
+describe('Guest of Honor: "On Use, once per round: give a rival one of your members costing 3 or less for +4 followers."', () => {
   const at = members => sc({ n: 4, round: 2, members: [members], queue: [{ t: 'turn', p: 0 }] });
-  it('taking a Silver space: you may give a member costing 3 or less to a rival; it moves and you +4', () => {
-    let s = take(at(['silver.guestofhonor', 'silver.usher']), 'silver.toast');
-    expect(s.pending.prompt).toBe('Guest of Honor: give one of your members costing 3 or less to a rival, for +4 followers?');
+  const use = s => move(s, `use:${uidIn(s, 'silver.guestofhonor', 0)}`);
+  it('on your turn, Use: give a member costing 3 or less to a rival; it moves and you +4', () => {
+    let s = use(at(['silver.guestofhonor', 'silver.usher']));
+    expect(s.pending.prompt).toBe('Guest of Honor: give which member costing 3 or less, to which rival? +4 followers');
     const usher = uidIn(s, 'silver.usher', 0);
     s = move(s, `give:${usher}:2`);
     expect(s.players[2].members).toContain(usher);
     expect(s.players[0].bonus).toBe(4);
     expect(linesNaming(s.log, 'Guest of Honor')).toContain("P1's Guest of Honor: gives Usher to P3: +4 followers.");
   });
-  it('"you may": giving nothing keeps your members; members costing more than 3 are not offered', () => {
-    let s = take(at(['silver.guestofhonor', 'silver.godparents']), 'silver.toast');
+  it('members costing more than 3 are not offered', () => {
+    const s = use(at(['silver.guestofhonor', 'silver.godparents']));
     expect(s.pending.options.some(o => o.label.startsWith('Godparent'))).toBe(false);
-    s = move(s, 'none');
-    expect(s.players[0].members.length).toBe(2);
-    expect(s.players[0].bonus).toBe(0);
   });
-  it('a space of another color: nothing offered', () => {
-    let s = take(at(['silver.guestofhonor', 'silver.usher']), 'Gather');
+  it('taking a Silver space no longer asks anything', () => {
+    const s = take(at(['silver.guestofhonor', 'silver.usher']), 'silver.toast');
     expect(s.pending?.prompt || '').not.toMatch(/Guest of Honor/);
   });
-  it('the pitched turn: Toast, give your Usher to Ben; with Well-Wishers +4 and +3', () => {
-    let s = take(at(['silver.guestofhonor', 'silver.usher', 'silver.wellwishers']), 'silver.toast');
+  it('once per round: after a use, no second Use this round', () => {
+    let s = use(at(['silver.guestofhonor', 'silver.usher', 'silver.wellwishers']));
     s = move(s, `give:${uidIn(s, 'silver.usher', 0)}:1`);
-    expect(s.players[0].bonus).toBe(7);
+    expect(s.players[0].bonus).toBe(7); // with Well-Wishers +4 and +3
+    expect((s.pending?.options || []).some(o => o.id === `use:${uidIn(s, 'silver.guestofhonor', 0)}`)).toBe(false);
   });
 });
 

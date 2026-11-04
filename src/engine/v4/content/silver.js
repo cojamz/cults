@@ -54,6 +54,20 @@ function giveAll(ctx, giver, color, n) {
   afterGive(ctx, giver, color);
 }
 /** One gift from giver to one player, as any sphere gives (Gold's Kickback): receiver's and giver's gift hooks fire. */
+/** Guest of Honor's gifts: each of the owner's members costing 3 or less (as a player sees the cost), to each rival. */
+function goh(ctx, owner, card) {
+  const cheap = ctx.membersOf(owner).filter(c => c.def.s + c.def.w <= 3);
+  const ww = ctx.membersOf(owner).some(c => c.def.id === 'silver.wellwishers' || c.def.key === 'wellwishers') ? WW_N : 0;
+  const opts = [];
+  // bots shed a used-up or plain cheap member, never one still paying; the rival it helps least;
+  // giving Guest of Honor itself ends its run: bots do that only in round III
+  for (const c of cheap) for (const o of others(ctx, owner)) opts.push({
+    id: `give:${c.uid}:${o.id}`, label: `${c.def.name} (${c.def.s + c.def.w}) to ${o.name}`, kind: 'choice', value: [c.uid, o.id],
+    hint: 4 + ww - (c.def.f || 1) * 1.5 - (c.used || c.def.vanilla || !(c.def.afterAction || c.def.activate) ? 0 : 3) - (card && c.uid === card.uid && ctx.state.round < 3 ? 6 : 0) - ctx.followers(o) * 0.01,
+  });
+  return opts;
+}
+
 export function give(ctx, giver, to, color, n) {
   if (!(n > 0)) return;
   giveTo(ctx, giver, to, color, n);
@@ -563,22 +577,18 @@ const silver = {
     // "you may": giving none is fine. A gift, as Godparent's (Well-Wishers hears it). Pitch: quality/pitches/B-toastmaster.md.
     // Quality loop (Nov 4), live since Nov 4 (Claude, under Cory's go-with-your-gut): Polisher's place (paper 16 vs 11; balance trial
     // owners won 24% vs Toastmaster's 22%; blind play +0.34 vs Toastmaster, +0.66 vs Polisher; 1.4 fires per owner game).
-    m('guestofhonor', 'Guest of Honor', 1, 1, 'Whenever you take a Silver space, you may give a rival one of your members costing 3 or less for +4 followers.', {
-      afterAction(ctx, owner, card, qid) {
-        if (qid !== S) return;
-        const cheap = ctx.membersOf(owner).filter(c => c.def.s + c.def.w <= 3);
-        if (!cheap.length) return;
-        const ww = ctx.membersOf(owner).some(c => c.def.id === 'silver.wellwishers' || c.def.key === 'wellwishers') ? WW_N : 0;
-        const opts = [];
-        for (const c of cheap) for (const o of others(ctx, owner)) opts.push({
-          id: `give:${c.uid}:${o.id}`, label: `${c.def.name} (${c.def.s + c.def.w}) to ${o.name}`, kind: 'choice', value: [c.uid, o.id],
-          // bots shed a used-up or plain cheap member, never one still paying; the rival it helps least
-          // giving Guest of Honor itself ends its run: bots do that only in round III
-          hint: 4 + ww - (c.def.f || 1) * 1.5 - (c.used || c.def.vanilla || !c.def.afterAction ? 0 : 3) - (c.uid === card.uid && ctx.state.round < 3 ? 6 : 0) - ctx.followers(o) * 0.01,
-        });
-        opts.push({ id: 'none', label: 'Give nothing', kind: 'pass', value: 'none', hint: 0 });
-        ctx.choose(owner, 'Guest of Honor: give one of your members costing 3 or less to a rival, for +4 followers?', opts, 'silver.guestofhonor');
+    // Cory, Nov 4 4:05pm Eastern: "i like the concept of it. maybe on use once per round?" (no choice popped by taking a
+    // space). Was "Whenever you take a Silver space, you may give ..."; the gift and the +4 are unchanged.
+    m('guestofhonor', 'Guest of Honor', 1, 1, 'On Use, once per round: give a rival one of your members costing 3 or less for +4 followers.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const opts = goh(ctx, owner, card);
+        if (!opts.length) { card.used = false; ctx.log(`${owner.name}'s Guest of Honor: no member costing 3 or less to give.`); return; }
+        ctx.log(`${owner.name} uses Guest of Honor.`);
+        ctx.choose(owner, 'Guest of Honor: give which member costing 3 or less, to which rival? +4 followers', opts, 'silver.guestofhonor');
       },
+      botActivate: (ctx, p, card) => goh(ctx, p, card || ctx.membersOf(p).find(c => c.def.key === 'guestofhonor')).some(o => o.hint > 0),
     }),
     // Lane B scale-up (Nov 4, paper b54: 17 vs 11): Toastmaster's place, still Silver's cheap way in. Any silver held, never "more than you".
     ...add8(m('chaperone', 'Chaperone', 1, 1, 'Round Start: +1 follower per rival holding silver.', {
