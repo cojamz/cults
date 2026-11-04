@@ -436,77 +436,92 @@
  "considered|space|turf": {
   "verdict": "untested",
   "replaces": "Stash",
-  "reason": "Cory's own Stash idea. Small edge in blind judging (+0.09). Waiting for Cory, since Magenta steals are on hold."
+  "reason": "Cory's own Stash idea. Small edge in blind judging (+0.09). Waiting for Cory, since Magenta steals are on hold.",
+  "cory": "Short list: \"Yeah, maybe.\""
  },
  "considered|space|racket": {
   "verdict": "untested",
   "replaces": "Stash",
-  "reason": "Cory's Oct 31 pick, reworded. Small edge in blind judging (+0.25). Waiting for Cory."
+  "reason": "Cory's Oct 31 pick, reworded. Small edge in blind judging (+0.25). Waiting for Cory.",
+  "cory": "Test: \"It's cool. Yeah. ... I thought we said heist and something else were double, so maybe it could replace squeeze.\""
  },
  "considered|space|call back": {
   "verdict": "untested",
   "replaces": "Right Away",
-  "reason": "Built; no result yet."
+  "reason": "Built; no result yet.",
+  "cory": "Replace or reword: \"What does that mean? What does that fucking mean?\""
  },
  "considered|space|gift shop": {
   "verdict": "cut",
   "replaces": "Polish",
-  "reason": "Balance was fine (takers 26%), but small cults won less with it, and the blind judges rated it low (7 of 12)."
+  "reason": "Balance was fine (takers 26%), but small cults won less with it, and the blind judges rated it low (7 of 12).",
+  "cory": "Short list: \"I think gift shop's interesting. But I think we still haven't quite hit on, like, the right silver theme.\""
  },
  "considered|space|sweet nothings": {
   "verdict": "keep",
   "replaces": "Sweet Talk",
-  "reason": "Ready, waiting for Cory, who said he doesn't love Sweet Talk. Beat it in blind judging (+0.92) and passed 120 bot games: takers won 27% (Sweet Talk 19%)."
+  "reason": "Ready, waiting for Cory, who said he doesn't love Sweet Talk. Beat it in blind judging (+0.92) and passed 120 bot games: takers won 27% (Sweet Talk 19%).",
+  "cory": "Keep: \"Why even get the plus three silver? ... Oh, I guess you don't have to, right? Yeah. This is okay.\""
  },
  "considered|space|yard sale": {
   "verdict": "cut",
   "replaces": "Estate Sale",
-  "reason": "Cory dropped it."
+  "reason": "Cory dropped it.",
+  "cory": "No: \"I don't like yard sale either.\""
  },
  "considered|space|cash out": {
   "verdict": "cut",
   "replaces": "Estate Sale",
-  "reason": "Lost blind judging; the slot was closed."
+  "reason": "Lost blind judging; the slot was closed.",
+  "cory": "No: \"Nope.\""
  },
  "considered|space|dumpster dive": {
   "verdict": "untested",
   "replaces": "Bury",
-  "reason": "Built; no result yet."
+  "reason": "Built; no result yet.",
+  "cory": "Test: \"Ooh, dumpster dive is smart in blue. But costing up to five is a little much. You have to consider that's five free resources. So, I mean, maybe that's good.\""
  },
  "considered|space|pawnshop": {
   "verdict": "untested",
   "replaces": "Allowance",
-  "reason": "Built; no result yet. Low Profile is ahead of it for the slot."
+  "reason": "Built; no result yet. Low Profile is ahead of it for the slot.",
+  "cory": "Short list: \"That's interesting. Like, the reverse of the other one. It's cool.\""
  },
  "considered|space|tag along": {
   "verdict": "cut",
   "replaces": "Leaders' Tax",
-  "reason": "Lost blind judging (-0.03). Leaders' Tax stays."
+  "reason": "Lost blind judging (-0.03). Leaders' Tax stays.",
+  "cory": "Short list: \"Oh, tag along's cool. I like tag along. That should be on a short list.\""
  },
  "considered|space|clean out": {
   "verdict": "cut",
   "replaces": "Shake Down",
-  "reason": "Small cults won much less with it (17% vs 25%); takers won 21%."
+  "reason": "Small cults won much less with it (17% vs 25%); takers won 21%.",
+  "cory": "No: \"I don't like clean out, but maybe we'll see how it tests.\""
  },
  "considered|space|mugging": {
   "verdict": "cut",
   "replaces": "Shake Down",
-  "reason": "Small cults won much less with it (15% vs 25%)."
+  "reason": "Small cults won much less with it (15% vs 25%).",
+  "cory": "Test: \"I actually do like this one. I think this should be a default that we consider. It's, like, so elemental and interesting.\""
  },
  "considered|space|squeeze": {
   "verdict": "untested",
   "replaces": "Shake Down",
-  "reason": "The third try for Shake Down's slot; its bot games are next."
+  "reason": "The third try for Shake Down's slot; its bot games are next.",
+  "cory": "Short list: \"Yeah, maybe.\""
  },
  "considered|space|grand tour": {
   "verdict": "untested",
   "replaces": "Melting Pot",
-  "reason": "Built; no result yet. Cory called Melting Pot worded strangely."
+  "reason": "Built; no result yet. Cory called Melting Pot worded strangely.",
+  "cory": "No: \"That seems too similar to Melting Pot.\""
  },
  "considered|space|pawn shop": {
   "verdict": "cut",
   "replaces": "Exchange",
-  "reason": "Cory refused cash-in-a-card spaces on Oct 20, and nobody else at the table feels it."
+  "reason": "Cory refused cash-in-a-card spaces on Oct 20, and nobody else at the table feels it.",
+  "cory": "No: \"No, I don't like it. This is just the white one. It's like a better, it's all like a better version of a round three.\""
  },
  "considered|member|executor": {
   "verdict": "untested",
@@ -600,7 +615,8 @@
  "considered|space|open house": {
   "verdict": "watch",
   "reason": "Beat Melting Pot in blind judging of bot games (+0.47, +0.81 with misplays dropped). Its balance trial is still playing.",
-  "replaces": "Melting Pot"
+  "replaces": "Melting Pot",
+  "cory": "Short list: \"That's cool. I like it. That's an interesting idea.\""
  },
  "live|space|help yourself": {
   "cory": "Change to test: \"We should make help yourself a single rival, and then heist any rivals. Like, we should swap those. Why is help yourself so bad?\""
@@ -670,5 +686,53 @@
  },
  "live|space|sleep in": {
   "cory": "Fine as is: \"Yep. That's okay.\""
+ },
+ "live|space|demote": {
+  "cory": "Test: \"I like demote. Again, maybe it should be like three less, up to three less.\""
+ },
+ "live|space|shake down": {
+  "cory": "Keep: \"I kind of like Shakedown, actually. ... I think maybe it should stay. Directly stealing a member is, like, pretty cool.\""
+ },
+ "live|space|gather": {
+  "cory": "Keep: \"I don't love it, but sure. ... Gather is maybe one of the better ones here on the cut list.\""
+ },
+ "live|space|new blood": {
+  "cory": "Keep: \"That's pretty good. I like that.\""
+ },
+ "live|space|polish": {
+  "cory": "Keep: \"I like polish.\""
+ },
+ "live|space|sweet talk": {
+  "cory": "Keep: \"I like sweet talk.\""
+ },
+ "live|space|potluck": {
+  "cory": "Replace or reword: \"I don't like potluck, to be honest. And it does break a standing rule, so we should probably look for something else there.\""
+ },
+ "live|space|stash": {
+  "cory": "Replace or reword: \"I don't like stash. There's too many, like, if you buy a member, get some followers. So stash is pretty bad.\""
+ },
+ "live|space|leaders' tax": {
+  "cory": "Replace or reword: \"This is too complicated. How did this get a 15?\""
+ },
+ "live|space|tryout": {
+  "cory": "Seems weak: \"This seems a little weak.\""
+ },
+ "live|space|estate sale": {
+  "cory": "Seems weak: \"Seems weak.\""
+ },
+ "live|space|harvest": {
+  "cory": "Seems weak: \"Seems weak.\""
+ },
+ "live|space|right away": {
+  "cory": "Seems weak: \"Right away is a little weak.\""
+ },
+ "live|space|savings": {
+  "cory": "Seems weak: \"What was this before? That's interesting. This seems pretty weak.\""
+ },
+ "live|space|allowance": {
+  "cory": "No: \"Allowance. Yeah, I don't like this.\""
+ },
+ "live|space|build up": {
+  "cory": "No: \"I don't like this either. But I'm okay with it. But yeah, I think defer to cutting. But if our other ones, like, are a little confusing or bad, we should bring it back as the default.\""
  }
 }
