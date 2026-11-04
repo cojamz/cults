@@ -1157,8 +1157,8 @@ export function scoringOf(state, qid) {
       score: (ctx, p) => p.members.length };
     if (fix.market === 'blue') by.market = { label: 'Most blue members', counts: 'your blue member cards when the round ends (each card counts 1)',
       score: (ctx, p) => countMembersOfColor(state, p, 'market', { cards: true }) };
-    if (fix.market === 'recruits') by.market = { label: 'Most recruits this round', counts: 'your sideways member cards, each card counts 1 (every member you recruit, swap for or take comes in sideways and turns upright when the round ends)',
-      score: (ctx, p) => p.members.filter(uid => { const w = state.cards[uid].sideways; return w && w.round === state.round && w.pid === p.id; }).length };
+    if (fix.market === 'recruits') by.market = { label: 'Most recruits this round', counts: 'your sideways member cards, each card counts 1 (every member you recruit, swap for or take comes in sideways and turns upright when the round ends; buying followers is not a member; a sideways card counts for whoever holds it)',
+      score: (ctx, p) => p.members.filter(uid => { const w = state.cards[uid].sideways; return w && w.round === state.round; }).length };
     if (fix.market === 'held') by.market = { label: 'Most blue', counts: 'the blue you hold when the round ends', score: (ctx, p) => p.res.blue || 0 };
     // Green (Actions lane, Nov 4, quality loop; /mnt/project-files/quality/pitches/actions-contest-green.md): contestFix.green
     // 'onrecruit' counts your members whose card says On Recruit (what Greatest Hits and Sample copy), 'held' the green
