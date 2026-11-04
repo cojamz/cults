@@ -30,7 +30,7 @@ concurrency:
 jobs:
   verdict:
     runs-on: ubuntu-latest
-    timeout-minutes: 80
+    timeout-minutes: 110
     steps:
       - uses: actions/checkout@v4
         with:
@@ -61,6 +61,9 @@ jobs:
           V4_LOGS: ${{ runner.temp }}/v4-logs
           # the unit tests after the browser gates: beside them, this box timed out on plain clicks (Nov 1-3)
           V4_UNIT_AFTER: '1'
+          # three browsers at once, not four: with four, a different handful of gates timed out each run (Nov 4: 9 reds at
+          # 2:46am, every one green alone on the same commit and on a 4-CPU box here)
+          V4_E2E_TOKENS: '3'
           V4_SHOTS: ${{ runner.temp }}/v4-shots
         run: npm run check:v4 -- --commit HEAD 2>&1 | tee check.log
       - name: Keep the logs and screenshots (7 days)
