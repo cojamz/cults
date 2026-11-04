@@ -504,7 +504,7 @@ const silver = {
     m('dowager', 'Dowager', 2, 2, 'Worth 3 followers.', { f: 3 }),
     // REPLACE8 bot test (Nov 4, quality loop lane B, pitches/B-polisher.md 4, passed paper gates b5/b6 at 15 vs 11):
     // Polisher's place, same price. The 2 silver comes from the bank and is a gift (gift hooks fire, as for Hostesses).
-    ...add8(m('usher', 'Usher', 1, 1, 'On Recruit: give a rival 2 silver. +3 followers.', {
+    ...add8(m('usher', 'Usher', 1, 1, 'On Recruit: give a rival 2 silver from the bank. +3 followers.', {
       onRecruited(ctx, owner) {
         ctx.choose(owner, 'Usher: which rival gains 2 silver? You get 3 followers', others(ctx, owner).map(o => ({
           id: `player:${o.id}`, label: `${o.name} (${o.res[S] || 0} silver)`, kind: 'player', value: o.id,

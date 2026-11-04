@@ -53,7 +53,7 @@ describe('Well-Wishers: "Whenever one of your members goes to a rival\'s cult, +
   });
 });
 
-describe('Usher: "On Recruit: give a rival 2 silver. +3 followers."', () => {
+describe('Usher: "On Recruit: give a rival 2 silver from the bank. +3 followers."', () => {
   it('on recruit you choose a rival; they gain 2 silver from the bank and you +3 followers (the pitched turn, round I)', () => {
     let s = sc({ n: 4, res: [{ silver: 2, gold: 1 }], shop: ['silver.usher'], queue: [{ t: 'buy', p: 0 }] });
     const before = s.players[0].res.silver;
