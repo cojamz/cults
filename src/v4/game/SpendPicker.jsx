@@ -8,11 +8,12 @@ import { TurnOf } from './parts.jsx';
 import { ResourceGlyph } from './Glyphs.jsx';
 import { CostDots } from './Info.jsx';
 import { stackStep, rowStep } from './PayPicker.jsx';
+import { useTakeRun } from './takeRun.js';
 import './pay.css';
 
 const STACK_MAX = 12;
 // a turn-in being answered, one question at a time (kept outside the card, so a re-render between two picks never loses it)
-let run = null;
+const store = { run: null };
 const keyOf = (state, g) => `${g.actor}|${g.title}|${state.round}`;
 
 /** The engine's suggestion (as the bots pick): from your biggest pile, white kept for last. */
@@ -30,12 +31,18 @@ export default function SpendPicker({ state, g, onAnswer, busy, place = null, tu
   const pend = state.pending;
   const me = state.players[g.actor];
   const key = keyOf(state, g);
-  const taking = !!run && run.key === key;
+  const box = useRef(null);
+  const { taking, start } = useTakeRun(store, key, state, busy, id => {
+    const o = pend && (pend.options || []).find(x => x.id === id);
+    if (!o) return false;
+    const c = o.kind === 'color' ? o.value : null;
+    onAnswer(o.id, c && box.current ? box.current.querySelector(`[data-spend-stack="${c}"]`) : null, null, 'automatic');
+    return true;
+  });
   const colors = g.spends.map(o => o.value);
   const white = state.resources.includes('white') ? 'white' : null;
-  const limit = taking ? run.total : g.left;
-  const [out, setOut] = useState(() => (taking ? run.plan : suggest(colors, me.res, g.left, white)));
-  const box = useRef(null);
+  const limit = taking ? store.run.total : g.left;
+  const [out, setOut] = useState(() => (taking ? store.run.plan : suggest(colors, me.res, g.left, white)));
   const n = colors.reduce((a, c) => a + (out[c] || 0), 0);
 
   const add = c => {
@@ -46,31 +53,13 @@ export default function SpendPicker({ state, g, onAnswer, busy, place = null, tu
     if (busy || taking || !out[c]) return;
     setOut({ ...out, [c]: out[c] - 1 });
   };
-  const next = () => {
-    if (!run || run.key !== key || run.done === pend || busy) return;
-    const id = run.ids.shift();
-    const o = id && pend && (pend.options || []).find(x => x.id === id);
-    if (!o) { run = null; return; }
-    run.done = pend;
-    if (!run.ids.length) run = null;
-    const c = o.kind === 'color' ? o.value : null;
-    onAnswer(o.id, c && box.current ? box.current.querySelector(`[data-spend-stack="${c}"]`) : null, null);
-  };
   const take = () => {
     if (busy || taking) return;
     const ids = colors.flatMap(c => Array.from({ length: out[c] || 0 }, () => `color:${c}`));
     // stopping early answers Done (the engine asks again while any are left)
     if (ids.length < g.left) ids.push(g.stop.id);
-    run = { key, ids, plan: out, total: limit, done: null };
-    next();
+    start(ids, { plan: out, total: limit });
   };
-  // the next question of a turn-in being answered: a beat after the last coin left, so each flight reads on its own
-  useEffect(() => {
-    if (!taking) return undefined;
-    const t = setTimeout(next, 140);
-    return () => clearTimeout(t);
-  }, [pend, busy]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => () => { if (run && run.done !== state.pending) run = null; }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const b = box.current && box.current.querySelector('.pay-go');
     if (b && (!document.hasFocus || document.hasFocus())) b.focus({ preventScroll: true });

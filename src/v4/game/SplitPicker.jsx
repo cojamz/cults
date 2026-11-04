@@ -9,14 +9,15 @@ import { TurnOf } from './parts.jsx';
 import { ResourceGlyph } from './Glyphs.jsx';
 import { CostDots } from './Info.jsx';
 import { stackStep, rowStep } from './PayPicker.jsx';
+import { liveRun, useTakeRun } from './takeRun.js';
 import './pay.css';
 
 const STACK_MAX = 12;
 // a split being taken, one question at a time (kept outside the card, so a re-render between two picks never loses it)
-let run = null;
+const store = { run: null };
 export const splitKey = (state, g) => `${g.actor}|${g.title}|${state.round}`;
 /** A split is being taken for this card: the card stays up for its last questions too. */
-export const splitRunning = (state, g) => !!run && run.key === splitKey(state, g);
+export const splitRunning = (state, g) => !!liveRun(store, splitKey(state, g), state.moves);
 
 /** The engine's suggestion: one coin at a time to the color its hint likes best (fewest held, as the bots pick). */
 function suggest(colors, held, n) {
@@ -34,10 +35,15 @@ export default function SplitPicker({ state, g, onAnswer, busy, place = null, tu
   const key = splitKey(state, g);
   const colors = g.seconds.map(x => x.b).filter(c => c !== 'neutral');
   const optOf = c => (g.seconds.find(x => x.b === c) || {}).o || null;
-  const total = run && run.key === key ? run.total : g.toPick;
-  const [got, setGot] = useState(() => (run && run.key === key ? run.plan : suggest(colors, me.res, g.toPick)));
   const box = useRef(null);
-  const taking = !!run && run.key === key;
+  const { taking, start } = useTakeRun(store, key, state, busy, c => {
+    const o = optOf(c);
+    if (!o) return false;
+    onAnswer(o.id, box.current && box.current.querySelector(`[data-split-stack="${c}"]`), null, 'automatic');
+    return true;
+  });
+  const total = taking ? store.run.total : g.toPick;
+  const [got, setGot] = useState(() => (taking ? store.run.plan : suggest(colors, me.res, g.toPick)));
 
   // a coin more of c: it comes from the color you're getting most of (never c itself)
   const add = c => {
@@ -53,28 +59,11 @@ export default function SplitPicker({ state, g, onAnswer, busy, place = null, tu
     if (!to) return;
     setGot({ ...got, [c]: got[c] - 1, [to]: got[to] + 1 });
   };
-  const next = () => {
-    if (!run || run.key !== key || run.done === pend || busy) return;
-    const c = run.picks.shift();
-    const o = c && optOf(c);
-    if (!o) { run = null; return; }
-    run.done = pend;
-    if (!run.picks.length) run = null;
-    onAnswer(o.id, box.current && box.current.querySelector(`[data-split-stack="${c}"]`), null);
-  };
   const take = () => {
     if (busy || taking) return;
     const picks = colors.flatMap(c => Array.from({ length: got[c] }, () => c));
-    run = { key, picks, plan: got, total, done: null };
-    next();
+    start(picks, { plan: got, total });
   };
-  // the next question of a split being taken: a beat after the last coin left, so each flight reads on its own
-  useEffect(() => {
-    if (!taking) return undefined;
-    const t = setTimeout(next, 140);
-    return () => clearTimeout(t);
-  }, [pend, busy]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => () => { if (run && run.done !== state.pending) run = null; }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const b = box.current && box.current.querySelector('.pay-go');
     if (b && (!document.hasFocus || document.hasFocus())) b.focus({ preventScroll: true });

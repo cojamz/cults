@@ -1518,10 +1518,11 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   }, [options, onPick, pickKey, interactionState, physicalState, session]);
   // the gift card: a first lifts (or is put back); nothing goes to the engine until the second
   const onGiftFirst = useCallback(a => setPickFirst({ pend, v: a, seq: swapSeq }), [pend, swapSeq]);
-  const onGiftAnswer = useCallback((id, el, b) => {
-    if (interactionState !== physicalState || session.getState() !== physicalState) return;
+  // mode 'automatic': a card answering its own queued questions (Take on Harvest, Exchange), never a double-click
+  const onGiftAnswer = useCallback((id, el, b, mode) => {
+    if (interactionState !== physicalState || session.getState() !== physicalState) { why('gift: presenting'); return; }
     const g = gift;
-    if (!g || !options.has(id)) return;
+    if (!g || !options.has(id)) { why(`gift: no option ${id}`); return; }
     // a gift: its coins fly from the card to the rival's stack of that color, as many as they get (up to 3)
     const color = g.kind === 'gift' ? g.color : g.kind === 'give' ? g.chosen : null;
     if (color && Number.isInteger(b) && el && root.current) {
@@ -1530,7 +1531,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
       const html = `<span class="pick-coin">${(from.querySelector('svg') || { outerHTML: '' }).outerHTML}</span>`;
       if (to) for (let k = 0; k < Math.max(1, Math.min(3, g.n || 1)); k++) setTimeout(() => flyToken(from, to, html, { tag: 'pick-flight', duration: 460 }), k * 70);
     }
-    onPick(id);
+    onPick(id, mode);
   }, [gift, options, onPick, interactionState, physicalState, session]);
   const onSeatDenied = useCallback((why, el) => {
     if (why) say(why);
