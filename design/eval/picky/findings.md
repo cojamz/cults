@@ -39,3 +39,14 @@ publish, so they go live with the next site update.
   all 117 members in both looks is clean on v0.99.563. **fixed (v0.99.563)**
 - **Two-trigger cards print their effect twice** (Host, Roadie, Cutpurse, Extortionist: "On Recruit: …" and
   "Round Start: …" with the same words). **by design**: one line per trigger is how the card text says it does both.
+
+## First-time readers' list (98 items, design/eval/picky/first-time-readers-2026-11-04.md): status Nov 4, 3:15pm Eastern
+- Bugs B1-B27: fixed in v0.99.574 and v0.99.576, except B19 (not reproduced), B21 (only on small boards; numeral now scales), B10's
+  "pairs only your own members" (open question for Cory in decisions.md), B17's hover over the header (left).
+- Wording W1-W42: fixed in v0.99.579 and v0.99.580, except W24 and W37 (Cory's logged calls), W32 (card text: his words),
+  W9's heading names (his mockup 13 call), W19's minion position, W22's pre-filled Getting row, W33's narrow bars, W40's
+  "use Creditor first" (not reproduced).
+- Rulebook R1-R8: pushed. DESIGN items (D-list): not started; Cory's.
+- Open from the fix passes: the cloak popup shows the artifact's picture (Cory, Nov 1: "don't use the artifact pictures");
+  Impersonator's round III hover runs off the screen bottom (long "Could choose" list).
+- Next run: `node scripts/picky/picky.mjs --album` then fresh reader agents (scripts/picky/README.md); paused for the token budget.

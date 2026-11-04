@@ -38,3 +38,5 @@ Last updated 2026-11-03 7:05pm Eastern by the "Plan and run today's autonomous i
 - Ship: quick check on the exact commit, push to the game branch (rebase, never force), bash scripts/v4-play.sh <sha>, confirm the stamp, go-live note with a screenshot.
 - Bot games: the balance system on DECK=10 when a balance question is on the table; open the game only for UI checks.
 - About 50 old thread branches (Oct 14 to 23) are stale; this box can't push tags or delete branches, so they stay. List: design/in-flight.md.
+
+- Picky UI bot (Nov 4): first-time-reader fixes live through v0.99.580; what's left and how to rerun: design/eval/picky/findings.md (bottom). Paused for the week's token budget.
