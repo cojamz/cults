@@ -1,9 +1,8 @@
 // A saved hot-seat game for the members gate (e2e/v4/members.mjs): P1 (the only person) is about to place in round I
 // on a table of Gold, Echo, Trading and Magenta, holding a full spread of members: use-once ones ready (Lottery Winner,
-// Heiresses), one worth nothing now (Safecracker: no rival holds 2 magenta), one already used (Speculator), switches
+// Heiresses), one worth nothing now (Safecracker: the rivals hold nothing), one already used (Speculator), switches
 // (Midas on, Translator off), reactions (Prospector, Impressionist), a game-end scorer
-// (Tycoon) and one the engine would refuse now (Pawnbroker: nothing to sell). P2 holds gold, so Lottery Winner has
-// something to win, and Raider (a use still in hand; Stunt Double's copy is a recruit trigger now, not a use);
+// (Tycoon) and one the engine would refuse now (Pawnbroker: nothing to sell). P2 holds Raider (a use still in hand; Stunt Double's copy is a recruit trigger now, not a use);
 // P3 lies low (safe this round), and only P3; P4 holds 13
 // members (its card scrolls inside the window). The round-start snapshot
 // is saved too. No round-start income, so the seat has room for six figures.
@@ -49,9 +48,7 @@ export function membersSave(from = 1) {
     s.cards[uids[HAND.indexOf('echo.translator')]].on = false;
     s.cards[uids[HAND.indexOf('gold.speculator')]].used = true;
     for (const r of s.resources) s.players[0].res[r] = 3;
-    s.players[1].res.gold = 7;
-    // Safecracker would find no rival with 2+ magenta: a use worth nothing now (w2b #19); P3 lies low (w2b #21)
-    for (const o of s.players.slice(1)) o.res.magenta = Math.min(1, o.res.magenta || 0);
+    // P3 lies low (w2b #21)
     s.players[2].hideout = 1;
     resume(s); // the step waiting now sees the new hands (its use options)
     const roundStart = s;
@@ -60,8 +57,12 @@ export function membersSave(from = 1) {
     // P2 still holds the 7 gold Lottery Winner wins (the gate's "Use: +7"), and Raider still in hand (m9): a bot
     // that spent gold or used Raider before P1's turn moves to the next seed
     const raider = s.players[1].members.find(u => s.cards[u].def === 'trading.raider');
-    if (s.players[1].res.gold !== 7 || raider == null || s.cards[raider].used) continue;
-    if (s.players.slice(1).some(o => (o.res.magenta || 0) >= 2) || s.players[2].hideout !== 1) continue;
+    if (raider == null || s.cards[raider].used || s.players[2].hideout !== 1) continue;
+    // Safecracker ("steal 2 resources from each rival", v0.99.546) finds nothing to take: the rivals hold nothing now
+    // (a use worth nothing now, w2b #19; before the new text it was "no rival holds 2 magenta")
+    for (const o of s.players.slice(1)) for (const r of Object.keys(o.res)) o.res[r] = 0;
+    // and P1 holds 3 of each, whatever the bots took on the way (Lottery Winner's "+7": 3 gold, +2, doubled)
+    for (const r of s.resources) s.players[0].res[r] = 3;
     // only P3 lies low (a bot that took a hideout of its own on the way would light a second "safe this round")
     if ([0, 1, 3].some(k => s.players[k].hideout)) continue;
     return {

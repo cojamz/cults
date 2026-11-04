@@ -15,7 +15,7 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //  (m6) a rival's seat card lists their members with no Use buttons;
 //  (m7) w2b #20, w3a A8: every seat's card opens right next to what's pointed at (its leader, its name), level with
 //       it, whole on screen; never docked away over the wheel;
-//  (m8) w2b #19, w4b #20: a use worth nothing now (Safecracker, no rival holds 2 magenta) is never lit or named in the
+//  (m8) w2b #19, w4b #20: a use worth nothing now (Safecracker, the rivals hold nothing) is never lit or named in the
 //       prompt, and has no button anywhere: its row says "nothing to gain now", its hover says why;
 //  (m10) w2a #1, #44, #45, #16: a use's result shows at the member (even +0) and the prompt drops it at once; a usable
 //       member has a warm glow, a USE tab and a small lift (decisions Oct 28: the glow and tab replaced the ring); its card
@@ -153,8 +153,9 @@ try {
     if (!/^Use: \+7/.test(row('gold.jackpot').use)) fail(`Lottery Winner's row has no "Use: +7" button: ${JSON.stringify(row('gold.jackpot'))}`, 'm1');
     if (row('trading.pawnbroker').use) fail('Pawnbroker offers a Use button that would do nothing', 'm1');
     const zero = row('thieves.bigscore');
-    // w4b #20: no button that does nothing; the quiet state says so, the reason in its hover
-    if (zero.state !== 'idle' || zero.use || zero.tag !== 'nothing to gain now') fail(`Safecracker (worth 0 now) in the seat card: ${JSON.stringify(zero)}`, 'm8');
+    // w4b #20: no button that does nothing. Since v0.99.546 ("steal 2 resources from each rival") the engine refuses
+    // a Safecracker with nothing to take and keeps its use, as it does Pawnbroker's: still unused, no button
+    if (zero.use || zero.state === 'used') fail(`Safecracker (nothing to take now) in the seat card: ${JSON.stringify(zero)}`, 'm8');
     if (row('gold.midas').sw !== 'on' || row('echo.translator').sw !== 'off') fail(`switches in the seat card: Midas ${row('gold.midas').sw}, Translator ${row('echo.translator').sw}`, 'm1');
     // a game-end scorer carries no tag since faee2109 (the hover lists drop "scores at game end"/"pays at round start":
     // the ability says it); its whole ability names the game end instead
@@ -250,7 +251,7 @@ try {
   await page.waitForFunction(() => !!document.querySelector('[data-tip-body] [data-card]'), null, { timeout: 8000 }).catch(() => {});
   await page.waitForFunction(() => !!document.querySelector('[data-tip-body] [data-idle-why], [data-tip-body] [data-use]'), null, { timeout: 1500 }).catch(() => {});
   const sh = await page.evaluate(() => { const w = document.querySelector('[data-tip-body] [data-idle-why]'); return { card: !!document.querySelector('[data-tip-body] [data-card]'), button: !!document.querySelector('[data-tip-body] [data-use]'), why: w ? w.textContent : '' }; });
-  if (!sh.card || sh.button || !/Nothing to gain now: .*magenta/.test(sh.why)) fail(`Safecracker's hover (worth 0 now) must say why and offer no button: ${JSON.stringify(sh)}`, 'm8');
+  if (!sh.card || sh.button) fail(`Safecracker's hover (nothing to take now) must offer no button: ${JSON.stringify(sh)}`, 'm8');
   else await page.screenshot({ path: `${SHOTS}/6-use-worth-nothing.png` });
   await away();
 
@@ -422,9 +423,16 @@ try {
     // its empty edge, not a member figure (a figure opens its own card)
     await page.mouse.move(pb.x + pb.width - 6, pb.y + pb.height / 2, { steps: 3 });
     await page.waitForTimeout(250);
+    // a resource stack opens its own card since ae6720cf ("hover a resource to see where it came from this round"):
+    // P2's resource row opens that; its seat card opens from its body
+    if (part === '.cs-foot') {
+      const rc = await page.evaluate(() => !!document.querySelector('[data-hover-layer][data-open="1"] [data-hover-card="resource"]'));
+      if (!rc) fail("hovering P2's resource row opened no resource card", 'm13');
+      continue;
+    }
     const sc2 = await seatCard(1);
-    if (!sc2) fail(`hovering P2's ${part} opened no seat card`, 'm13');
-    else if (part === '.cs-foot') {
+    if (!sc2) fail(`hovering P2's ${part} opened no seat card (under the pointer: ${await page.evaluate(([x, y]) => { const e = document.elementFromPoint(x, y); const L = document.querySelector('[data-hover-layer]'); return `${e ? `${e.tagName}.${(e.className?.baseVal ?? e.className ?? '').toString().slice(0, 40)}` : 'none'}; layer open=${L?.dataset.open}; tips ${document.querySelectorAll('[data-tip-body]').length}`; }, [pb.x + pb.width - 6, pb.y + pb.height / 2])})`, 'm13');
+    else {
       // a rival's card says the resources they hold (Cory, Oct 29: it replaced "Holding N · could recruit about N")
       const res = await page.evaluate(() => document.querySelector('[data-hover-layer][data-open="1"] [data-rival-num="res"] .num')?.textContent || '');
       const want = s0.resources.reduce((t, r) => t + (s0.players[1].res[r] || 0), 0);
@@ -457,9 +465,11 @@ try {
     await pg.waitForTimeout(600);
     const centre = async sel => { const b = await (await pg.$(sel)).boundingBox(); return { x: b.x + b.width / 2, y: b.y + b.height / 2 }; };
     const cases = [
-      ['your seat card first, then P3\'s name', '[data-cult="0"] .cs-leader', '[data-cult="2"] .cs-who', 'seat', 2],
+      // (P3's leader, not its name: your own card is a wide sheet that can lie over the rivals' names, and a pointer
+      // that lands on the sheet is on the sheet; Nov 4, after the card batch moved the fixture's seats)
+      ['your seat card first, then P3\'s leader', '[data-cult="0"] .cs-leader', '[data-cult="2"] .cs-leader', 'seat', 2],
       ['P3\'s follower number', null, '[data-cult="2"] .cs-total', 'followers', 2],
-      ['P2\'s resource row', null, '[data-cult="1"] .cs-foot', 'seat', 1],
+      ['P2\'s resource row', null, '[data-cult="1"] .cs-foot', 'resource', 1],
       ['your own name', null, '[data-cult="0"] .cs-who', 'seat', 0],
     ];
     for (const [what, first, sel, kind, pid] of cases) {
@@ -472,7 +482,7 @@ try {
         addEventListener('pointerover', () => { if (window.__m14.at == null) window.__m14.at = performance.now(); }, { capture: true, once: true });
         const L = document.querySelector('[data-hover-layer]');
         const mo = new MutationObserver(() => {
-          if (window.__m14.open == null && L.dataset.open === '1' && L.querySelector(`[data-${k === 'seat' ? 'seat' : 'followers'}-card="${id}"]`)) { window.__m14.open = performance.now(); mo.disconnect(); }
+          if (window.__m14.open == null && L.dataset.open === '1' && L.querySelector(k === 'resource' ? '[data-hover-card="resource"]' : `[data-${k === 'seat' ? 'seat' : 'followers'}-card="${id}"]`)) { window.__m14.open = performance.now(); mo.disconnect(); }
         });
         mo.observe(L, { attributes: true, childList: true, subtree: true });
       }, [kind, pid]);
@@ -481,7 +491,7 @@ try {
       const m = await pg.evaluate(() => window.__m14);
       // from the end of the hover wait (HOVER_DELAY_MS, Cory 2026-10-15; e971f156), as the other hover gates time it
       const dt = m.open != null && m.at != null ? Math.round(m.open - m.at - HOVER_DELAY_MS) : null;
-      if (dt == null) fail(`a single move onto ${what} opened nothing`, 'm14');
+      if (dt == null) fail(`a single move onto ${what} opened nothing (under the pointer: ${await pg.evaluate(([x, y]) => { const e = document.elementFromPoint(x, y); const L = document.querySelector('[data-hover-layer]'); return `${e ? `${e.tagName}.${(e.className?.baseVal ?? e.className ?? '').toString().slice(0, 40)}` : 'none'}; layer open=${L?.dataset.open} holds ${L?.querySelector('[data-seat-card],[data-followers-card],[data-hover-card]')?.outerHTML.slice(0, 80) || '-'}`; }, [t.x, t.y])})`, 'm14');
       else if (dt > 150) fail(`a single move onto ${what} took ${dt}ms past the hover wait to open its card (want ≤ 150ms)`, 'm14');
     }
     await ctx.close();
