@@ -99,7 +99,9 @@ const box = (left, top, width, height) => ({ left, top, width, height, right: le
  */
 export function stageShow(item) {
   // the last chain's pieces go home; a lingering bubble stays to be read unless this one takes its seat's spot
-  for (const it of items) if (it.chain !== item.chain && !it.leaving && (!it.lingering || (item.kind === 'member' && !item.recruit && item.pid === it.pid))) leave(it, Math.round(MO.stageOut * 0.7));
+  // (and a new action card sends every lingering bubble home: a member's note never sits beside the next player's
+  // card, the motion audit Nov 4: P4's Tourists note read as part of P2's turn)
+  for (const it of items) if (it.chain !== item.chain && !it.leaving && (!it.lingering || item.kind === 'space' || (item.kind === 'member' && !item.recruit && item.pid === it.pid))) leave(it, Math.round(MO.stageOut * 0.7));
   const had = items.find(it => it.id === item.id && !it.leaving);
   if (had) { had.again = (had.again || 0) + 1; emit(); return; }
   items.push({ ...item, uid: ++uids, born: Date.now() });

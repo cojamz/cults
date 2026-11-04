@@ -1705,7 +1705,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
             {/* the artifacts on the table, what each does, for the whole starting pick (ArtifactDraft.jsx) */}
             {wide && setupNow && Object.keys(state.artifacts || {}).length > 0 && <ArtifactDraft state={state} onPick={onPick} mine={showChoice} busy={busy} />}
             {/* your own starting pick lives in your seat on a laptop (CultSeat .cs-setup); only phones keep it here */}
-            <AfterChain value={setupNow} hold={holdStory && !(setupNow && showChoice)} step={state.moves}>{v => v && !(wide && v === state && (showChoice || Object.keys(state.artifacts || {}).length > 0)) && (
+            <AfterChain value={setupNow} hold={holdStory && !(setupNow && showChoice)} step={state.moves}>{v => v && !(wide && ((v === state && showChoice) || Object.keys(v.artifacts || {}).length > 0)) && (
               <ChoicePrompt state={v} onPick={v === state && showChoice ? onPick : NOOP} busy={busy || !(v === state && showChoice)} watching={v === state && showChoice ? null : v.players[v.pending.player]} turnOf={v === state && humansHere && handedIn === pend.player ? state.players[pend.player] : null} />
             )}</AfterChain>
           </section>

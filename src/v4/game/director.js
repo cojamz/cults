@@ -22,7 +22,7 @@ import { gainsBetween } from './gains.js';
 import { seatOrder } from './seats.js';
 import { stageRect, hubRect, stageShow, stageRelease, stageClear, stageBusy, subscribeStage, stageItems, stagePlace, spaceRect, bubbleRect, stageLeave, HUB_MEMBER } from './stage.js';
 import { panelText } from './panelText.js';
-import { quadrant, defById, spacesOf } from '../../engine/v4/index.js';
+import { quadrant, defById, spacesOf, memberCount } from '../../engine/v4/index.js';
 import { seatEmoji } from '../format.js';
 import { spriteId } from '../art/index.js';
 import { motionOK, flyPath, pulse, tug, settle, flyMinionsHome, slideShop, holdStack, bump, track, landAll, expectArrival, clearArrivals, clearFlights, aim, safetyNet, arcFrames, bezier, onScreenBow, relative, motionPending, onMotionChange } from './flight.js';
@@ -1238,6 +1238,22 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
   // it showed before, so no number flashes its new value first
   root.dataset.chain = '1';
   for (const [el, w] of toHold) holdOf(el, w.pid, w.r);
+  // a recruit's seat keeps its old member count until the card lands there (the motion audit, Nov 4: P3's seat said
+  // "1 member" while Timekeepers was still big at the hub): cause before effect
+  const memberHolds = new Map();
+  for (const a of plan.atoms) {
+    if (a.op !== 'card' || memberHolds.has(a.to)) continue;
+    const b = root.querySelector(`.lt-cult-seat[data-seat="${a.to}"] .cs-mc-n`), p = before.players[a.to];
+    if (!b || !p) continue;
+    let was = 0; try { was = memberCount(before, p); } catch { continue; }
+    if (was === memberCount(ctx.state, ctx.state.players[a.to])) continue;
+    const h = holdStack({ querySelector: () => b }, was);
+    if (!h) continue;
+    memberHolds.set(a.to, h);
+    // (a chain's end or skip lets go of it with the other holds)
+    chain.holds.set(b, { h });
+    schedule(base + a.at + a.lift + a.toHub + a.show + a.fromHub, sk => { h.done(!!sk); if (chain.holds.get(b)?.h === h) chain.holds.delete(b); });
+  }
   const epoch = chain.epoch || 0;
   const land = (a, B, skip) => {
     if ((chain.epoch || 0) !== epoch) return; // the chain was skipped: its numbers are already final
