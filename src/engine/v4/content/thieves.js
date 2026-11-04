@@ -7,7 +7,7 @@ import { registerQuadrant, defById } from './index.js';
 import { add1, old1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
 import { add5, old5, handlers5 } from './replace5.js';
-import { add10, old10 } from './replace10.js';
+import { add10, old10, REPLACE10 } from './replace10.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -30,6 +30,13 @@ function ledBefore(ctx, { thief, victim, uid }) {
   const c = ctx.card(uid), f = c.copy ? Math.max(c.def.f, defById(c.copy).f) : c.def.f;
   const before = o => ctx.followers(o) + (o === victim ? f : o === thief ? -f : 0);
   return ctx.state.players.every(o => before(o) <= before(victim));
+}
+/** Inside Job (REPLACE10): rivals with a minion on a Magenta space (joined spots count) that p can steal from now. */
+function insideTargets(ctx, p) {
+  const st = ctx.state, qi = st.quadrants.indexOf('thieves'), ids = new Set();
+  for (const [key, pid] of Object.entries(st.slots || {})) if (key.startsWith(`${qi}-`)) ids.add(pid);
+  for (const [key, list] of Object.entries(st.squats || {})) if (key.startsWith(`${qi}-`)) for (const pid of list) ids.add(pid);
+  return ctx.rivals(p).filter(o => ids.has(o.id) && stealable(ctx, p, o) > 0);
 }
 const rankOf = (ctx, p) => ctx.state.players.filter(o => ctx.followers(o) > ctx.followers(p)).length;
 
@@ -218,7 +225,20 @@ const thieves = {
         startSteal(ctx, p, 'Help Yourself', ctx.stealCount(p, ctx.state.round + 2, { say: true }));
       },
     },
-    {
+    // REPLACE10 bot test (Nov 4, quality loop lane D): Stash's slot (Cory cut Stash Oct 31; it stays live until a pick).
+    // Each rival with a minion on any Magenta space (joined spots count) loses 2 resources to you through the shared steal,
+    // their biggest piles first (Lie Low and Bodyguards block it; Desperado adds). Copied by Green, the copier steals.
+    ...(REPLACE10 ? [{
+      key: 'insidejob', ring: 1, name: 'Inside Job', copyDoesIt: true,
+      text: 'Steal 2 resources from each rival with a minion on a Magenta space. +1 magenta.',
+      estimate: (ctx, p) => insideTargets(ctx, p).reduce((a, o) => a + Math.min(ctx.stealCount(p, 2), stealable(ctx, p, o)), 0) * 0.9,
+      resolve(ctx, p) {
+        const list = insideTargets(ctx, p);
+        if (!list.length) { ctx.log(`${p.name}'s Inside Job: no rival on a Magenta space to steal from.`); return; }
+        const n = ctx.stealCount(p, 2, { say: true });
+        for (const o of list) autoSteal(ctx, p, o, 'Inside Job', n);
+      },
+    }] : [    {
       // every color's 3/4/5 (Cory, 2026-10-27), counting the +1 magenta every Magenta action gives; name Claude's fill-in
       key: 'tipoff', ring: 1, name: 'Stash', copyDoesIt: true,
       text: '+2 magenta in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.',
@@ -231,7 +251,7 @@ const thieves = {
         ctx.gain(p, 'magenta', ctx.state.round, { fromAction: true });
         (p.recruitFollowers ||= []).push({ n: ctx.state.round, name: 'Stash' });
       },
-    },
+    }]),
     {
       // Cory, Nov 1 morning: "so steal 1, +1 magenta, rivals can't steal or recruit from you this round" (was the protection only)
       key: 'hideout', ring: 1, name: 'Lie Low', text: 'Steal 1 resource. Rivals can’t steal from you this round. +1 magenta.',

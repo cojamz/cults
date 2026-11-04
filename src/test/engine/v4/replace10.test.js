@@ -8,6 +8,7 @@ process.env.REPLACE10 = '1';
 const { applyMove, contextFor, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { table, named } = await import('./cards-helpers-b.js');
+const { move, uidOf, take } = await import('./helpers.js');
 // read once at load: cleared again so a later test file in this worker loads the engine without the switch
 delete process.env.REPLACE10;
 
@@ -19,7 +20,7 @@ describe('REPLACE10: the switch', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
     expect(price('thieves.racketeer')).toEqual([4, 3, 1]);
     expect(price('trading.pauper')).toEqual([4, 3, 1]);
-    expect(price('echo.wannabe')).toEqual([4, 4, 1]);
+    expect(price('echo.bootlegger')).toEqual([4, 3, 1]);
     for (const id of ['thieves.grifter', 'trading.oldmoney', 'echo.chronicler']) expect(defById(id).retired).toBe(true);
   });
 });
@@ -48,54 +49,65 @@ describe('REPLACE10: each card fires', () => {
   });
 });
 
-describe('REPLACE10: Wannabe', () => {
-  it('right after a rival recruits a member, may recruit a shop member costing no more, paying its cost; once a round', () => {
-    let s = table(['red', 'echo', 'market', 'yellow'], { round: 2, res: [{ red: 9 }, { green: 9, red: 9 }], members: [[], ['echo.wannabe']], shop: ['red.patriarch', 'red.recruitbonus', 'echo.evergreen'] });
-    const ctx = contextFor(s);
-    const pat = s.shop.find(u => s.cards[u].def === 'red.patriarch');
-    ctx.recruit(s.players[0], pat, { spend: payFor(s, 0, pat), how: {}, paid: true });
-    s = resume(s);
-    expect(s.pending.player).toBe(1);
-    expect(s.pending.prompt).toMatch(/^Wannabe: P1 recruited Patriarch \(\d+\)\. Recruit a shop member costing up to \d+, paying its cost\?$/);
-    const pick = s.pending.options.find(o => o.value != null && s.cards[o.value].def === 'echo.evergreen');
-    s = answer(s, pick.id);
-    while (s.pending?.player === 1 && /^Wannabe: how/.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
-    expect(s.players[1].members.some(u => s.cards[u].def === 'echo.evergreen')).toBe(true);
-    expect(named(s, 'Wannabe').some(l => /^P2's Wannabe: pays .* for Busker\.$/.test(l))).toBe(true);
+describe('REPLACE10: Bootlegger', () => {
+  it('On Use, once per round: copies the On Recruit of another of your members; turned until the next round', () => {
+    let s = table(['red', 'echo', 'trading', 'thieves'], { round: 2, members: [['echo.bootlegger', 'echo.evergreen']] });
+    const u = uidOf(s, 'echo.bootlegger', 0), g = s.players[0].res.green;
+    s = move(s, `use:${u}`);
+    // Busker is the only other member with an On Recruit: asked anyway, so the choice is seen
+    if (s.pending?.prompt?.startsWith('Bootlegger')) s = answer(s, s.pending.options[0].id);
+    expect(s.players[0].res.green).toBe(g + 2);
+    expect(s.cards[u].used).toBe(true);
+    expect(s.pending.options.map(o => o.id)).not.toContain(`use:${u}`);
+    expect(named(s, 'Bootlegger')).toContain('P1 uses Bootlegger.');
   });
 
-  it('offers only members costing no more than the rival\'s, and only once a round', () => {
-    let s = table(['red', 'echo', 'market', 'yellow'], { n: 3, round: 2, res: [{ red: 20 }, { green: 20, red: 20 }, { red: 20, green: 20 }], members: [[], ['echo.wannabe']], shop: ['red.recruitbonus', 'red.patriarch', 'echo.evergreen'] });
-    const ctx = contextFor(s);
-    const cheap = s.shop.find(u => s.cards[u].def === 'red.recruitbonus');
-    const k = ctx.card(cheap).def.s + ctx.card(cheap).def.w;
-    ctx.recruit(s.players[0], cheap, { spend: payFor(s, 0, cheap), how: {}, paid: true });
-    s = resume(s);
-    for (const o of s.pending.options) if (o.value != null) expect(contextFor(s).card(o.value).def.s + contextFor(s).card(o.value).def.w).toBeLessThanOrEqual(k); // (.def.s + ctx.card(o.value).def.w).toBeLessThanOrEqual(k);
-    s = answer(s, s.pending.options.find(o => o.value != null).id);
-    while (s.pending?.player === 1 && /^Wannabe: how/.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
-    // a second rival recruit this round: not asked again
-    const ctx2 = contextFor(s);
-    const next = s.shop.find(u => s.cards[u].def === 'echo.evergreen');
-    ctx2.recruit(s.players[2], next, { spend: payFor(s, 2, next), how: {}, paid: true });
-    s = resume(s);
-    expect(s.pending?.prompt ?? '').not.toMatch(/^Wannabe/);
+  it('not usable without another member that has an On Recruit; can\'t copy itself', () => {
+    let s = table(['red', 'echo', 'trading', 'thieves'], { round: 2, members: [['echo.bootlegger', 'echo.agents']] });
+    const u = uidOf(s, 'echo.bootlegger', 0);
+    s = move(s, `use:${u}`);
+    expect(s.cards[u].used).toBe(false);
+    expect(named(s, 'Bootlegger')).toEqual(["P1's Bootlegger: no other member with an On Recruit."]);
+  });
+});
+
+describe('REPLACE10: Inside Job (Stash\'s slot)', () => {
+  it('steals 2 resources from each rival with a minion on a Magenta space, +1 magenta; Stash is gone', () => {
+    // thieves is quadrant 1: Help Yourself 1-0, Inside Job 1-1, Lie Low 1-2
+    let s = table(['red', 'thieves', 'trading', 'yellow'], { n: 4, round: 1, res: [{}, { red: 3 }, { white: 3 }, { yellow: 3 }] });
+    s.slots = { '1-0': 1, '1-2': 2, '0-0': 3 };
+    expect(s.pending.options.some(o => o.label === 'Stash')).toBe(false);
+    s = take(s, 'thieves.insidejob');
+    while (s.pending?.player === 0 && s.pending.kind === 'choose' && /Inside Job/.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
+    expect(s.players[1].res.red).toBe(1);
+    expect(s.players[2].res.white).toBe(1);
+    expect(s.players[3].res.yellow).toBe(3); // on Red, not Magenta
+    expect(s.players[0].res.magenta).toBe(1);
+    expect(s.players[0].res.red + s.players[0].res.white).toBe(4);
   });
 });
 
 // The pitched turns (pitches/D-*.md), set up and checked: the Lab's scripted scenarios.
 describe('REPLACE10: the pitched turns', () => {
-  it('Wannabe: round III, Ben recruits Tribute Band (14); you recruit Brokers (5) from your pile right after', () => {
-    let s = table(['red', 'echo', 'trading', 'thieves'], { n: 4, round: 3, res: [{}, { green: 14, red: 6 }, {}, { white: 5, red: 5 }], members: [[], [], [], ['echo.wannabe']], shop: ['echo.dejavu', 'trading.broker'] });
-    const tb = s.shop.find(u => s.cards[u].def === 'echo.dejavu');
-    contextFor(s).recruit(s.players[1], tb, { spend: payFor(s, 1, tb), how: {}, paid: true });
-    s = resume(s);
-    expect(s.pending.player).toBe(3);
-    expect(s.pending.prompt).toBe('Wannabe: P2 recruited Tribute Band (14). Recruit a shop member costing up to 14, paying its cost?');
-    s = answer(s, s.pending.options.find(o => o.value != null && s.cards[o.value].def === 'trading.broker').id);
-    while (s.pending?.player === 3 && /^Wannabe: how/.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
-    expect(s.players[3].members.map(u => s.cards[u].def)).toContain('trading.broker');
-    expect(s.players[3].res.white + s.players[3].res.red).toBe(5); // paid 5 of 10
+  it('Bootlegger: you own Busker; each round you fire it again: +2 green', () => {
+    let s = table(['red', 'echo', 'trading', 'thieves'], { n: 4, round: 2, members: [['echo.bootlegger', 'echo.evergreen', 'thieves.accomplice']] });
+    const u = uidOf(s, 'echo.bootlegger', 0), g = s.players[0].res.green;
+    s = move(s, `use:${u}`);
+    expect(s.pending.prompt).toBe("Bootlegger: copy which member's On Recruit?");
+    expect(s.pending.options.map(o => o.label.split(':')[0]).sort()).toEqual(['Accomplice', 'Busker']);
+    s = answer(s, s.pending.options.find(o => o.label.startsWith('Busker')).id);
+    expect(s.players[0].res.green).toBe(g + 2);
+  });
+
+  it('Inside Job: round I, Ben took Help Yourself, Cleo took Lie Low: you steal 2 from Ben only, +1 magenta (3 in all)', () => {
+    let s = table(['red', 'thieves', 'trading', 'yellow'], { n: 4, round: 1, res: [{}, { red: 4 }, { white: 4 }, {}] });
+    s.slots = { '1-0': 1, '1-2': 2 };
+    s.players[2].hideout = 1; // Cleo lies low this round
+    s = take(s, 'thieves.insidejob');
+    while (s.pending?.player === 0 && s.pending.kind === 'choose' && /Inside Job/.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
+    expect(s.players[1].res.red).toBe(2);
+    expect(s.players[2].res.white).toBe(4);
+    expect(Object.values(s.players[0].res).reduce((a, b) => a + b, 0)).toBe(3);
   });
 
   it('Pauper: round II ends, you have 14 followers, rivals 18, 21, 25; your 9 white become 9 followers', () => {
