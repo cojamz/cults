@@ -5,7 +5,8 @@
 // and the pair is shuffled into A and B. Judges score both with .claude/agents/play-judge.md; play-ab-score below.
 //
 //   node scripts/quality/play-ab.mjs <newDir> <baseDir> "<new name>" "<new text>" "<old name>" "<old text>" --out <dir>
-//   node scripts/quality/play-ab.mjs score <dir>      (new card must win by 0.3 or more, with no 0 on Clear outcome)
+//   node scripts/quality/play-ab.mjs score <dir> [--old-hard-fail "<why>"]   (new card must win by 0.3 or more, with no 0 on
+//   Clear outcome; when the old card hard-fails, 1.0 or more on its own instead)
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { trim } from './trim.mjs';
@@ -32,11 +33,16 @@ if (args[0] === 'score') {
     const pair = key.pairs.find(p => p.seed === seed), pick = String(v).trim().match(/^(A|B|same)\b/i)?.[1];
     if (pair && pick) pref[/same/i.test(pick) ? 'same' : pair[pick.toUpperCase()]]++;
   }
-  const pass = gap != null && gap >= 0.3 && clear > 0;
-  const lines = [`# Blind A/B play: ${key.new.name} against ${key.old.name}`, '', `${judges.length} judges, ${key.pairs.length} seeds. New card ${n} vs old ${o} (average of the six medians, 0 to 2): ${gap >= 0 ? '+' : ''}${gap}. Clear outcome for the new card ${clear}.`, '', `**${pass ? 'PASS' : 'no'}**: ship needs +0.3 or more and no 0 on Clear outcome.`, '', `Judges preferred the new card ${pref.new} times, the old ${pref.old}, same ${pref.same} (a tiebreak note; the gate is the gap).`, '',
+  // Old card hard-fails (director, Nov 4 7:14am): the new card needs its own play average of 1.0 or more and no 0 on
+  // Clear outcome; the A/B gap is for information. A hard fail of the "rivals choose on the owner's turn" shape (Hawker,
+  // Potluck, Shake Down) waits on Cory's ruling before it ships, so the result says so.
+  const hi = args.indexOf('--old-hard-fail'), hard = hi >= 0 ? (args[hi + 1] || 'yes') : key.old.hardFail || null;
+  const pass = hard ? n != null && n >= 1 && clear > 0 : gap != null && gap >= 0.3 && clear > 0;
+  const waits = hard && /rival/i.test(hard) ? "Waits on Cory's ruling on rivals choosing during the owner's turn before it ships." : null;
+  const lines = [`# Blind A/B play: ${key.new.name} against ${key.old.name}`, '', `${judges.length} judges, ${key.pairs.length} seeds. New card ${n} vs old ${o} (average of the six medians, 0 to 2): ${gap >= 0 ? '+' : ''}${gap}. Clear outcome for the new card ${clear}.`, '', hard ? `**${pass ? 'PASS' : 'no'}**: the old card hard-fails (${hard}), so the new card needs 1.0 or more on its own and no 0 on Clear outcome; the gap is for information.${waits ? ' ' + waits : ''}` : `**${pass ? 'PASS' : 'no'}**: ship needs +0.3 or more and no 0 on Clear outcome.`, '', `Judges preferred the new card ${pref.new} times, the old ${pref.old}, same ${pref.same} (a tiebreak note; the gate is the gap).`, '',
     ...P.map((k, i) => `- ${k}: new ${median(side.new.map(r => r[i]))}, old ${median(side.old.map(r => r[i]))}`)];
   writeFileSync(join(dir, 'result.md'), lines.join('\n') + '\n');
-  writeFileSync(join(dir, 'result.json'), JSON.stringify({ new: key.new.name, old: key.old.name, newAvg: n, oldAvg: o, gap, clearNew: clear, prefer: pref, pass }, null, 1));
+  writeFileSync(join(dir, 'result.json'), JSON.stringify({ new: key.new.name, old: key.old.name, newAvg: n, oldAvg: o, gap, clearNew: clear, prefer: pref, oldHardFail: hard, waitsOnCory: !!waits, pass }, null, 1));
   console.log(lines.join('\n'));
   process.exit(0);
 }

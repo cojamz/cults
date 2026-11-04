@@ -37,6 +37,8 @@ instruction file in .claude/agents/ and a folder; scripts make the folders and a
 3. Two or three fresh judges read <dir>/brief.md and .claude/agents/play-judge.md, never key.json, and write play-judge-<n>.json at the root.
 4. `node scripts/quality/play-ab.mjs score <dir>`: the new card ships on play when the average of its six medians beats the old card's by 0.3
    or more and its Clear outcome median is above 0. Pairs with Last-Minute Shopper or Seat Filler count only on runs pinned at or after 91c72004.
+   When the old card hard-fails, add `--old-hard-fail "<why>"`: the new card needs 1.0 or more on its own and no 0 on Clear outcome,
+   and the gap is for information. A hard fail on rivals choosing during the owner's turn (Hawker, Potluck, Shake Down) waits on Cory's ruling before it ships.
 
 ## The ranking (every live card, worst first)
 `node scripts/quality/ranking.mjs <dir with judge-*.json> ...` (bash scripts/quality/r1-ranking.sh rebuilds the
