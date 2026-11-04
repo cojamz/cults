@@ -132,6 +132,14 @@ describe('Yellow members', () => {
     expect(R(s, 1).yellow || 0).toBe(0);
     expect(named(s, 'Customs Officer')).toHaveLength(0);
   });
+  it('Customs Officer: a rival\'s Heist taking your followers pays nothing (followers are not resources; Nov 4)', () => {
+    let s = sceneQ({ quadrants: ['gold', 'yellow', 'thieves', 'echo'], n: 2, round: 2, bonus: [0, 5], members: [[], ['yellow.customs']] });
+    s = take(s, 'thieves.rob');
+    if (s.pending?.options?.some(o => o.id === 'player:1')) s = move(s, 'player:1');
+    expect(s.players[1].bonus).toBe(2);
+    expect(R(s, 1).yellow || 0).toBe(0);
+    expect(named(s, 'Customs Officer')).toHaveLength(0);
+  });
   it('Customs Officer: once per change, however many of your resources it changes (Cory, Nov 1: "Yes")', () => {
     let s = agitate({ red: 3 });
     s = move(s, 'res:1:red'); s = move(s, 'color:gold');

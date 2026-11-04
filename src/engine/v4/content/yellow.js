@@ -294,8 +294,12 @@ export default {
     }),
     // Cory, 2026-10-31: "maybe just +1 yellow when any of your resources are stolen or moved"
     m('customs', 'Customs Officer', 2, 3, 'Whenever a rival steals or changes any of your resources, +1 yellow.', { round: 1, ...old9('yellow.customs'), // 6 but still a round I member (Claude, balance Nov 1: strong at 4; Yellow keeps 4 round I members)
-      // a member taken (Poach, Shake Down) is a steal for Lie Low and Bodyguards, but not a resource (Nov 4)
-      onSteal(ctx, owner, card, info) { if (info.victim === owner && info.thief !== owner && info.uid === undefined) { ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs Officer: +1 yellow.`); } },
+      // a member taken (Poach, Shake Down) is a steal for Lie Low and Bodyguards, but not a resource (Nov 4); nor are
+      // followers taken (Heist, Nov 4): it pays only when the steal took resources
+      onSteal(ctx, owner, card, info) {
+        const res = info.n - (info.followers || 0) - (info.uid !== undefined ? 1 : 0);
+        if (info.victim === owner && info.thief !== owner && res > 0) { ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs Officer: +1 yellow.`); }
+      },
       // once per change, however many of your resources it changes (Cory, Nov 1: "Yes"), as once per steal
       onChanged(ctx, owner, card, by, instance) {
         if (by === owner || (instance != null && card.changed === instance)) return;
