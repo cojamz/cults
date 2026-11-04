@@ -477,7 +477,11 @@ const trading = {
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.membersOf(owner).some(c => c.def.key !== 'moneylender' && cost(ctx, c.uid) <= 3 && c.def.f <= 1),
     })),
-    m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true, ...old10('almoner'), ...old8('trading.shopkeeper'), ...old11('landlord2'), ...old9('trading.shopkeeper'),
+    // Cory, Nov 4 11:53am: "White should definitely have a member that gives an extra buy each turn ... limit the bonus
+    // recruit to followers"; 12:45pm: "landlord is easily the worst white card". Landlord's place. Name, price and worth 1
+    // are Claude's fill-ins. REPLACE14=barker.
+    ...add14(m('barker', 'Barker', 2, 3, 'Each turn, you may recruit followers one extra time.', { followersTwice: true })),
+    m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true, ...old14('barker'), ...old10('almoner'), ...old8('trading.shopkeeper'), ...old11('landlord2'), ...old9('trading.shopkeeper'),
       onRoundStart(ctx, owner) { ctx.gain(owner, W, 2); },
     }),
     // REPLACE10 bot test (Nov 4, quality loop lane D): Heiresses' place. 5 white + 4 any as a player sees it, worth 2.
@@ -488,12 +492,8 @@ const trading = {
         ctx.log(`${owner.name}'s Widows: ${gone.def.name} left: +2 followers.`);
       },
     })),
-    // Cory, Nov 4 11:53am: "White should definitely have a member that gives an extra buy each turn ... limit the bonus
-    // recruit to followers"; 12:36pm: Hoarder stays, "figure out something else to replace". Heiresses' place (the
-    // lowest-rated White member). Name, price (3 white + 2 any) and worth 1 are Claude's fill-ins. REPLACE14=barker.
-    ...add14(m('barker', 'Barker', 3, 2, 'Each turn, you may recruit followers one extra time.', { followersTwice: true })),
     m('heiress', 'Heiresses', 4, 4, // 9 (Cory, Oct 30: balance run)
-      'On Use, once per game: +1 white per member you have.', { f: 2, ...old10('widows'), ...old9('trading.heiress'), ...old14('barker'),
+      'On Use, once per game: +1 white per member you have.', { f: 2, ...old10('widows'), ...old9('trading.heiress'),
       activate: 'game',
       onActivate(ctx, owner) {
         const n = ctx.memberCount(owner);

@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Barker (REPLACE14=barker, Cory Nov 4: "White should definitely have a member that gives an extra buy each turn ...
-// limit the bonus recruit to followers"): "Each turn, you may recruit followers one extra time." In Heiresses' place.
+// limit the bonus recruit to followers"): "Each turn, you may recruit followers one extra time." In Landlord's place.
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE14 = 'barker';
@@ -14,9 +14,9 @@ const slot = (s, q, name) => `${s.quadrants.indexOf(q)}-${quadrant(q).actions.fi
 const payAll = s => { while (s.pending && s.pending.kind !== 'buy' && s.pending.player === 0 && s.pending.kind !== 'place') s = answer(s, s.pending.options[0].id); return s; };
 
 describe('REPLACE14: Barker', () => {
-  it("is dealt in Heiresses' place, with Cory's words", () => {
+  it("is dealt in Landlord's place, with Cory's words", () => {
     expect(defById('trading.barker').text).toBe('Each turn, you may recruit followers one extra time.');
-    expect(defById('trading.heiress').retired).toBe(true);
+    expect(defById('trading.shopkeeper').retired).toBe(true);
   });
   it('after recruiting a member, the owner may also recruit followers, and only followers', () => {
     let s = table(['red', 'trading'], { n: 2, round: 2, res: [{ red: 9, white: 9 }], members: [['trading.barker']], shop: ['red.recruiter', 'trading.cashier'] });
