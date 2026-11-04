@@ -43,6 +43,7 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 9. Seat pass: minions, follower number, resources and rivals' engines readable at a glance. Show Cory 2 mockups first.
 
 ## Lag and motion (ours: engineering never waits on Cory; judge on the freeze probe in Chrome and Firefox)
+- Wheel, Firefox: v0.99.552 cut the spin stall 0.37 s to 0.17 s (rim words as canvas pictures, src/v4/game/rimPictures.js). Left: 0.1-0.17 s frames on the first spin to a new facing, likely the rim's leader emojis and follower marks redrawn per angle; mouse drags still ~15-20 frames over 50 ms (software compositing on this box). Probe: node scripts/v4-spin-deep.mjs <url> --firefox --round=2 --only=two,keys,drags.
 - Click speed bar: answer first shipped v0.99.519 (choose clicks p90 211 → 162 ms; notes "Nov 3" in the plan file). Clicks p95 ~200 ms at 4x CPU vs the 100 ms bar. Next steps in order: design/notes/click-speed-plan-2026-11-01.md "Status, Nov 1 5:50am" (answer first in your own click; endless animations need Cory's call). Also fix or retire scripts/v4-perf.mjs (stale).
 - Wheel in Firefox: one ~180 ms hitch the first time the rim's words flip; 100-130 ms frames as a spin starts on slowed Firefox. Only if Cory says it still drags.
 - Smoothness panel leftovers (/mnt/project-files/smooth-panel/plan.md): the wheel's landing re-lay (lay out only panels whose upright side flips), scoringSnapshot cache, income line keyed by members, preview cap by time.
