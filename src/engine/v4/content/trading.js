@@ -235,7 +235,7 @@ const trading = {
       },
     }, PAWN_SHOP),
     {
-      key: 'farewell', copyDoesIt: true, ring: 2, name: 'Farewell', text: 'You may cast out one of your members to the bottom of the pile, gain followers equal to its cost. +1 white.', // "cast out": Cory, 2026-10-24
+      key: 'farewell', copyDoesIt: true, ring: 2, name: 'Farewell', text: 'Cast out one of your members to the bottom of the pile, gain followers equal to its cost. +1 white.', // "cast out": Cory, 2026-10-24
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, fv(ctx)))),
       resolve(ctx, p) {
         ctx.gain(p, W, 1, { fromAction: true });
@@ -243,7 +243,7 @@ const trading = {
       },
     },
     swap11({
-      key: 'estatesale', copyDoesIt: true, ring: 2, name: 'Estate Sale', text: 'You may cast out one of your members to the bottom of the pile, gain white equal to its cost. +1 white.',
+      key: 'estatesale', copyDoesIt: true, ring: 2, name: 'Estate Sale', text: 'Cast out one of your members to the bottom of the pile, gain white equal to its cost. +1 white.',
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, 1))),
       resolve(ctx, p) {
         ctx.gain(p, W, 1, { fromAction: true });
@@ -745,7 +745,7 @@ function buryChoice(ctx, p, what, gain) {
   if (!list.length) { ctx.log(`${p.name}'s ${what}: no members to send away.`); return; }
   const each = gain === 'white' ? 1 : fv(ctx);
   const opts = list.map(c => ({ id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: buryValue(ctx, p, c, each) }));
-  opts.push({ id: 'done', label: 'Keep them all', kind: 'done', value: 'done', hint: 0 });
+  // no "Keep them all": casting out is mandatory (Cory, Nov 4 11:42am: "should farewell and estate sale be mandatory?" ... "yes")
   ctx.choose(p, `${what}: cast out which member?`, opts, 'trading.buryPick', { gain, what });
 }
 // Exchange: one resource at a time (you pick the color), 2 followers each, up to the round's limit or Done

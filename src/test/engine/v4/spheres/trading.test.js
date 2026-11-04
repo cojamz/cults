@@ -138,13 +138,13 @@ describe('White actions', () => {
     expect(() => take(scene({ members: [['gold.midas']] }), 'trading.farewell')).toThrow();
     let s = take(scene({ round: 2, members: [['red.bigfamily', 'red.twins']] }), 'trading.farewell');
     const u = uidOf(s, 'red.bigfamily', 0);
-    expect(ids(s)).toEqual([`card:${u}`, `card:${uidOf(s, 'red.twins', 0)}`, 'done']);
+    expect(ids(s)).toEqual([`card:${u}`, `card:${uidOf(s, 'red.twins', 0)}`]); // mandatory: no keep (Cory, Nov 4)
     s = move(s, `card:${u}`);
     expect([B(s), R(s).white]).toEqual([4, 1]); // Big Family costs 2 + 2
     expect(has(s, 'red.bigfamily')).toBe(false);
     expect(s.pile.at(-1)).toBe(u);
-    const keep = move(take(scene({ round: 2, members: [['red.bigfamily']] }), 'trading.farewell'), 'done');
-    expect([B(keep), has(keep, 'red.bigfamily')]).toEqual([0, true]);
+    const one = take(scene({ round: 2, members: [['red.bigfamily']] }), 'trading.farewell');
+    expect(() => move(one, 'done')).toThrow();
     const none = take(scene({ round: 2 }), 'trading.farewell');
     expect([none.pending.kind, R(none).white]).toEqual(['buy', 1]);
   });
