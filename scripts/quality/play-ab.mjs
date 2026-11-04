@@ -57,6 +57,7 @@ const oi = args.indexOf('--out'), out = oi >= 0 ? args.splice(oi, 2)[1] : null;
 const si = args.indexOf('--seeds'), only = si >= 0 ? args.splice(si, 2)[1].split(',').map(x => x.trim()) : null;
 // --show-new "<text>": a hidden placebo (Process critic, Nov 4 9:12): the new side is the same card, but its sheets print
 // this reworded text (same effect) in the header and wherever the real text appears, so judges can't spot the twin.
+const space = args.includes('--space'); if (space) args.splice(args.indexOf('--space'), 1);
 const shi = args.indexOf('--show-new'), showNew = shi >= 0 ? args.splice(shi, 2)[1] : null;
 const [newDir, baseDir, newName, newText, oldName, oldText] = args.filter(a => a !== '--loose');
 if (!out || !oldText) { console.error('usage: play-ab.mjs <newDir> <baseDir> "<new name>" "<new text>" "<old name>" "<old text>" --out <dir>'); process.exit(2); }
@@ -87,7 +88,9 @@ for (const [si, s] of seeds.entries()) {
   };
   // Guard (Nov 4, Night Manager): a wrong printed text in the header misleads judges. The sheet lists each card's real
   // text, so refuse when the given text is nowhere in its sheet (case-insensitive).
-  for (const [f, src, t] of [[N[s], newDir, newText], [B[s], baseDir, oldText]]) {
+  // Space sheets (--space) print the board by name only, so check the name there instead of the text.
+  for (const [f, src, t0, nm] of [[N[s], newDir, newText, newName], [B[s], baseDir, oldText, oldName]]) {
+    const t = space ? nm : t0;
     const norm = x => x.toLowerCase().replace(/[’‘]/g, "'").replace(/[“”]/g, '"');
     if (!norm(readFileSync(join(src, f), 'utf8')).includes(norm(t))) { console.error(`text not found in ${join(src, f)}: "${t}"`); process.exit(3); }
   }
