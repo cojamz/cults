@@ -245,6 +245,22 @@ export default {
       ctx.recruit(p, uid, { free: true });
     },
     ...handlers9({
+      // Sign Painters (REPLACE9): the member picked, then its color
+      signpick(ctx, p, uid) {
+        const card = ctx.card(uid), o = ctx.state.players.find(x => x.members.includes(uid));
+        if (!card || !o) return;
+        const cur = card.asColor || ctx.defOf(card).quadrant;
+        ctx.choose(p, `Sign Painters: ${ctx.defOf(card).name} becomes which color?`, ctx.state.quadrants.filter(q => q !== cur).map(q => ({
+          id: `color:${q}`, label: ctx.quadrant(q).name, kind: 'color', value: q,
+          hint: o === p ? ctx.countMembersOfColor(p, q) : -ctx.countMembersOfColor(o, q),
+        })), 'yellow.signcolor', { uid });
+      },
+      signcolor(ctx, p, q, data) {
+        const card = ctx.card(data.uid), o = ctx.state.players.find(x => x.members.includes(data.uid));
+        if (!card || !o) return;
+        card.asColor = q;
+        ctx.log(`${p.name}'s Sign Painters: ${o.name}'s ${ctx.defOf(card).name} counts as a ${ctx.quadrant(q).name} member.`);
+      },
       toll(ctx, o, color, data) {
         const host = ctx.player(data.host);
         if (!host || !(o.res[color] > 0)) return;
@@ -578,6 +594,22 @@ export default {
       onRoundStart(ctx, owner) { startChange(ctx, owner, { who: 'Puppeteers', left: 3 }); },
     }),
     // Cory, Nov 1 (in place of Puppeteers): "Make it 'On Recruit' as well"
+    // REPLACE9 (Members C, Caravan batch: paper 15 vs 12; Cory's "paper filters, play ranks", Nov 4): Caravan's place,
+    // same price. The member keeps the new color (as Drifters keeps its own) until painted again.
+    ...add9(m('signpainters', 'Sign Painters', 4, 4, 'On Use, once per round: a member in any cult becomes a member of a color you choose.', { f: 3,
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const lead = Math.max(...ctx.rivals(owner).map(o => ctx.followers(o)));
+        const opts = ctx.state.players.flatMap(o => ctx.membersOf(o).filter(c => !ctx.defOf(c).everyColor).map(c => ({
+          id: `card:${c.uid}`, label: `${o.name}'s ${ctx.defOf(c).name}`, kind: 'card', value: c.uid,
+          hint: o === owner ? 0 : (ctx.followers(o) === lead ? 2 : 1),
+        })));
+        if (!opts.length) { card.used = false; ctx.log(`${owner.name}'s Sign Painters: no member to paint.`); return; }
+        ctx.choose(owner, 'Sign Painters: which member changes color?', opts, 'yellow.signpick');
+      },
+      botActivate: (ctx, owner) => ctx.rivals(owner).some(o => ctx.membersOf(o).length > 0),
+    })),
     m('caravan', 'Caravan', 4, 4, 'On Recruit: +1 of each color you hold. Round Start: +1 of each color you hold.', { f: 3, now: true, ...old9('yellow.caravan'),
       onRoundStart(ctx, owner) { for (const c of held(ctx, owner)) ctx.gain(owner, c, 1); },
     }),
