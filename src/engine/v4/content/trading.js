@@ -238,7 +238,7 @@ const trading = {
         (p.recruitFollowers ||= []).push({ n: ctx.state.round, name: 'Allowance', broker: true });
       },
     }]),
-    {
+    swap11({
       key: 'splurge', copyDoesIt: true, ring: 1, name: 'Splurge', text: 'This turn, if you recruit a member, +1 follower for every 2 resources you pay for it (every 1 in round II). +1 white.', // members only: Claude's default, 2026-10-27; +1 (Cory, Oct 28); per 1 in round II (Cory, Nov 1 1:39pm)
       byRound: { lines: ['+1 white. This turn, if you recruit a member, +1 follower for every 2 resources you pay for it.', '+1 white. This turn, if you recruit a member, +1 follower for every resource you pay for it.', '+1 white. This turn, if you recruit a member, +1 follower for every 2 resources you pay for it.'] },
       estimate: (ctx, p) => 1 + Math.floor(Math.min(totalRes(p) + 1, 7) / (ctx.state.round === 2 ? 1 : 2)) * fv(ctx) * 0.8,
@@ -246,7 +246,16 @@ const trading = {
         ctx.gain(p, W, 1, { fromAction: true });
         p.perSpend = true;
       },
-    },
+    }, {
+      // Patron (REPLACE11=patron, Actions lane r4 batch, Nov 4): Splurge's place. Paid on the turn's first member recruit
+      // (core.js recruitFollowersBonus); followers, not resources.
+      key: 'patron', copyDoesIt: true, ring: 1, name: 'Patron', text: '+1 white. This turn, if you recruit a member, each rival with more followers than you gives you 1 follower.',
+      estimate: (ctx, p) => 1 + 1.6 * ctx.rivals(p).filter(o => ctx.followers(o) > ctx.followers(p)).length,
+      resolve(ctx, p) {
+        ctx.gain(p, W, 1, { fromAction: true });
+        (p.recruitFollowers ||= []).push({ patron: true, name: 'Patron' });
+      },
+    }),
     swap11(swap14({
       key: 'exchange', copyDoesIt: true, ring: 1, name: 'Exchange', text: '+1 white. Then turn up to 1 resource (2 in round II, 3 in round III) into 2 followers each.', // Cory, 2026-10-23: "up to", you can stop early
       byRound: { lead: '+1 white. Then:', lines: ['Turn up to 1 resource into 2 followers.', 'Turn up to 2 resources into 2 followers each.', 'Turn up to 3 resources into 2 followers each.'] }, // white first (Cory, Nov 1 text audit)

@@ -98,7 +98,7 @@ export default {
         })), 'red.borrow');
       },
     },
-    {
+    swap11({
       key: 'turnout', ring: 1, name: 'Gather', copyDoesIt: true,
       text: '+2 red in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.',
       // Cory, 2026-10-31: fuel tied to the recruit ("B": 2/3/4 red, 1/2/3 followers). Core pays it on the turn's first member recruit.
@@ -108,7 +108,18 @@ export default {
         ctx.gain(p, 'red', ctx.state.round + 1, { fromAction: true });
         (p.recruitFollowers ||= []).push({ n: ctx.state.round, name: 'Gather' });
       },
-    },
+    }, {
+      // Rally (REPLACE11=rally, Actions lane r4 batch, Nov 4): Gather's place. Members as the board counts them.
+      key: 'rally', ring: 1, name: 'Rally', copyDoesIt: true,
+      text: '+2 red in round I, +3 in round II, +4 in round III, +1 more for each rival with more members than you.',
+      byRound: { lines: ['+2 red', '+3 red', '+4 red'], rest: '+1 more for each rival with more members than you.' },
+      estimate: (ctx, p) => ctx.state.round + 1 + ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).length,
+      resolve(ctx, p) {
+        const k = ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).length;
+        ctx.gain(p, 'red', ctx.state.round + 1 + k, { fromAction: true });
+        if (k) ctx.log(`${p.name}'s Rally: ${k} rival${k > 1 ? 's' : ''} with more members, +${k} red.`);
+      },
+    }),
     swap11(swap11({
       // Cory, 2026-10-27: "recruit the top member of the deck. each rival gets 1 red". Name and the +2 are Claude's fill-ins.
       key: 'hire', ring: 1, name: 'Walk-In', text: 'Recruit the top member of the pile. Each rival +1 red. +1 red.', copyDoesIt: true,

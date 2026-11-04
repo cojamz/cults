@@ -8,7 +8,7 @@ import { add2, old2 } from './replace2.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add4, old4, handlers4 } from './replace4.js';
 import { add9, old9, handlers9 } from './replace9.js';
-import { add11, old11, handlers11 } from './replace11.js';
+import { add11, old11, handlers11, swap11 } from './replace11.js';
 import { on12, handlers12 } from './replace12.js';
 import { add14, old14 } from './replace14.js';
 import { on13, add13, old13, handlers13 } from './replace13.js';
@@ -272,7 +272,7 @@ const market = {
   // Cory's Blue (2026-10-20, decisions.md): churn the shop, dig into the pile, buy more than once. Every action gives
   // +1 blue (the economy call). Names are working names. A copy (Echo) does the action itself: the doing is the value.
   actions: [
-    {
+    swap11({
       // every color's 3/4/5 (Cory, 2026-10-27); Churn's sweep goes (Claude's default: Out of Style keeps Blue's sweep).
       // Name is Claude's fill-in.
       key: 'bargain', ring: 1, name: 'Savings', copyDoesIt: true,
@@ -288,7 +288,15 @@ const market = {
           id: `card:${c.uid}`, label: c.def.name, kind: 'card', value: c.uid, hint: 0,
         })).concat({ id: 'none', label: 'Keep the shop', kind: 'pass', value: null, hint: 1 }), `${Q}.savings`);
       },
-    },
+    }, {
+      // Clearance (REPLACE11=clearance, Actions lane r4 batch, Nov 4): Savings' place. The price rule is core.js
+      // clearanceFree (p.clearance, cleared at turn start or on the free recruit).
+      key: 'clearance', ring: 1, name: 'Clearance', copyDoesIt: true,
+      text: '+2 blue in round I, +3 in round II, +4 in round III. This turn the cheapest shop member costs you nothing.',
+      byRound: { lines: ['+2 blue', '+3 blue', '+4 blue'], rest: 'This turn the cheapest shop member costs you nothing.' },
+      estimate: ctx => ctx.state.round + 1 + Math.min(...ctx.shopCards().map(c => c.def.s + c.def.w), 4),
+      resolve(ctx, p) { ctx.gain(p, B, ctx.state.round + 1, { fromAction: true }); p.clearance = true; },
+    }),
     {
       key: 'restock', ring: 1, name: 'Out of Style', text: 'Send every shop member of one color to the bottom of the pile, then refill. +1 blue per member sent. +1 blue.', copyDoesIt: true, // per member sent: Cory, Oct 28 ("it's actually rather good that way")
       estimate: ctx => 1 + Math.max(0, ...shopColors(ctx).map(([, n]) => n)),

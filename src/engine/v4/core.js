@@ -282,6 +282,12 @@ const colorPartFree = (state, p, def) => !state.resources.includes(colorOf(def))
  */
 // Punch Card: each of 3, 6 and 9 pays once a game (a token on the card marks it), so dropping a member never re-earns one
 const punchCardOf = (state, p) => p.members.find(u => effectiveDefs(state.cards[u]).some(d => d.punchCard));
+// Clearance (REPLACE11=clearance, flag p.clearance for this turn): the cheapest shop member (any of them, if tied) is free
+function clearanceFree(state, p, uid) {
+  if (!p.clearance || uid == null || !state.shop.includes(uid)) return false;
+  const price = u => { const d = cardDef(state, u); return d.s + d.w; };
+  return price(uid) === Math.min(...state.shop.map(price));
+}
 function punchFree(state, p) {
   const u = punchCardOf(state, p), n = p.members.length + 1;
   return u != null && [3, 6, 9].includes(n) && !(state.cards[u].punched || []).includes(n);
@@ -291,7 +297,7 @@ function priceParts(state, p, def, how = {}) {
   if (how.half) { w = Math.floor((s + w) / 2); s = 0; }
   if (how.anyColors || colorPartFree(state, p, def)) { w += s; s = 0; }
   // Punch Card (REPLACE11=punchcard, flag punchCard): the member that would be your 3rd, 6th or 9th card costs nothing
-  const punch = punchFree(state, p);
+  const punch = punchFree(state, p) || clearanceFree(state, p, how.uid);
   // Duty Free (REPLACE11=dutyfree, flag dutyFree): a member of a color none of your members have costs 3 less per copy
   const duty = how.uid != null && sumMemberFlag(state, p, 'dutyFree') > 0 && isNewColor(ctxFor(state), p, wrap(state, state.cards[how.uid])) ? 3 * sumMemberFlag(state, p, 'dutyFree') : 0;
   const off = punch ? Infinity : (p.discount || 0) + sumMemberFlag(state, p, 'costReduction') + duty;
@@ -935,6 +941,7 @@ function runTask(state, task) {
       p.turnBuys = 0;
       delete p.peekReach;
       delete p.perSpend;
+      delete p.clearance;
       delete p.recruitFollowers;
       // task.ring: a turn limited to spaces of that ring or lower (a weaker extra worker)
       const source = workerSourceOf(task);
@@ -1121,7 +1128,7 @@ function startRound(state, r) {
   // Doorbusters (REPLACE2 bot test: flag roundStartBuy): one recruit each, in this round's order, before anyone places
   const doors = [];
   for (const id of base) for (let k = sumMemberFlag(state, state.players[id], 'roundStartBuy'); k > 0; k--) doors.push({ t: 'buy', p: id, doorbuster: true });
-  for (const t of doors) { const p = state.players[t.p]; p.turnRecruits = 0; p.turnBuys = 0; delete p.peekReach; delete p.perSpend; delete p.recruitFollowers; }
+  for (const t of doors) { const p = state.players[t.p]; p.turnRecruits = 0; p.turnBuys = 0; delete p.peekReach; delete p.perSpend; delete p.clearance; delete p.recruitFollowers; }
   if (doors.length) log(state, [...new Set(doors.map(t => t.p))].map(id => `${state.players[id].name}'s ${flagName(state, state.players[id], 'roundStartBuy')}: recruits once before anyone places.`).join(' '));
   state.queue.push(...doors, ...snake, { t: 'allPlaced' }, { t: 'endRound' }, { t: 'afterRound' });
   // Round Start effects that act on the round's turns (Wake-Up Caller, REPLACE7) run once the turns are queued
@@ -1159,7 +1166,7 @@ function endRound(state) {
   if (REPLACE4) {
     const late = [];
     for (const id of turnOrder(state)) for (let k = sumMemberFlag(state, state.players[id], 'roundEndBuy'); k > 0; k--) late.push({ t: 'buy', p: id, lateShop: true });
-    for (const t of late) { const p = state.players[t.p]; p.turnRecruits = 0; p.turnBuys = 0; delete p.peekReach; delete p.perSpend; delete p.recruitFollowers; }
+    for (const t of late) { const p = state.players[t.p]; p.turnRecruits = 0; p.turnBuys = 0; delete p.peekReach; delete p.perSpend; delete p.clearance; delete p.recruitFollowers; }
     if (late.length) {
       log(state, [...new Set(late.map(t => t.p))].map(id => `${state.players[id].name}'s ${flagName(state, state.players[id], 'roundEndBuy')}: recruits once after the contests.`).join(' '));
       const at = state.queue.findIndex(t => !t._fresh);
@@ -1482,10 +1489,12 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
     const def0 = cardDef(state, uid);
     // each note says what it actually took off this price (a discount of 4 on a member costing 2 saves 2; Sponsor
     // saves nothing on a member that costs nothing): the discount first, then the cost reductions, in member order
-    const punched = punchFree(state, p);
+    const cleared = clearanceFree(state, p, uid);
+    if (cleared) { delete p.clearance; notes.push('Clearance: the cheapest shop member is free'); }
+    const punched = !cleared && punchFree(state, p);
     if (punched) { const c = state.cards[punchCardOf(state, p)]; c.punched = [...(c.punched || []), p.members.length + 1]; }
     if (punched) notes.push(`${flagName(state, p, 'punchCard')}: card ${p.members.length + 1} is free`);
-    let room = punched ? 0 : how.half ? Math.floor((def0.s + def0.w) / 2) : def0.s + def0.w;
+    let room = punched || cleared ? 0 : how.half ? Math.floor((def0.s + def0.w) / 2) : def0.s + def0.w;
     const off = n => { const x = Math.min(n, room); room -= x; return x; };
     if (p.discount && def0.s + def0.w > 0) { const x = off(p.discount); if (x) notes.push(`discount −${x}`); }
     for (const flag of ['costReduction', 'goldPaysDouble']) {
@@ -1510,7 +1519,7 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
     if (notes.length) paid += `; ${notes.join(', ')}`;
     if (stall) { for (const r in spend) stall.res[r] = (stall.res[r] || 0) + spend[r]; paid += `, paid to ${stall.name}'s ${stallAt[2]}`; }
     // a discount waits for a member that actually costs something
-    if (!punched && cardDef(state, uid).s + cardDef(state, uid).w > 0) { p.discount = 0; p.discountSources = []; }
+    if (!punched && !cleared && cardDef(state, uid).s + cardDef(state, uid).w > 0) { p.discount = 0; p.discountSources = []; }
   }
   // Peek's reach is one recruit from the cards it showed; Insider's stays
   const peeked = idx < 0 && fromPile < (p.peekReach || 0);
@@ -1783,7 +1792,12 @@ function recruitFollowersBonus(state, p, member) {
   const fresh = list.some(x => x.newColor) && member ? isNewColor(ctxFor(state), p, member) : false;
   const pay = list.filter(x => !x.newColor || fresh), wait = list.filter(x => x.newColor && !fresh);
   if (wait.length) p.recruitFollowers = wait; else delete p.recruitFollowers;
-  for (const { n, name, broker, color } of pay) {
+  for (const { n, name, broker, color, patron } of pay) {
+    // Patron (REPLACE11=patron): each rival with more followers than you gives you 1
+    if (patron) {
+      for (const o of state.players) if (o !== p && followers(state, o) > followers(state, p)) { o.bonus -= 1; p.bonus += 1; log(state, `${p.name}'s Patron: ${o.name} gives 1 follower.`); }
+      continue;
+    }
     // New Blood pays its color instead of followers (Cory, Nov 4)
     if (color) {
       log(state, `${p.name}'s ${name}: +${n} ${color} for recruiting a member of a new color.`);
