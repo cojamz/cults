@@ -221,10 +221,10 @@ describe('Yellow members', () => {
     const s = sc({ members: [['yellow.bigtent', 'red.twins', 'red.intern', 'gold.banker']] });
     expect(cardDef(s, uidOf(s, 'yellow.bigtent', 0)).onGameEnd({ state: s, countMembersOfColor: (p, q) => ({ yellow: 1, red: 2, gold: 1 })[q] || 0 }, s.players[0])).toBe(4);
   });
-  it('Gardener: round start +1 of each color you have none of, named; Midas leaves member income alone', () => {
+  it('Gardeners: round start +1 of each color you have none of, named; Midas leaves member income alone', () => {
     const s = sc({ res: [{ gold: 2 }], members: [['yellow.gardener', 'gold.midas']], queue: [{ t: 'round', r: 2 }] });
     expect(R(s)).toEqual({ gold: 2, red: 1, yellow: 1, green: 1 });
-    expect(named(s, 'Gardener')).toHaveLength(1);
+    expect(named(s, 'Gardeners')).toHaveLength(1);
   });
   it('Peddler: round start +1 of each color, named', () => {
     const s = sc({ members: [['yellow.peddler']], queue: [{ t: 'round', r: 2 }] });

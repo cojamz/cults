@@ -105,7 +105,7 @@ const M = {
   'smooth-talkers': ['😏', '♾️ Your silver pays for any color'],
   // Yellow
   drifters: ['🎒', '✨ Pick a color; these count as that color'],
-  gardener: ['🌱', '✨🌅 +1 of each color you have none of'],
+  gardeners: ['🌱', '✨🌅 +1 of each color you have none of'],
   'go-between': ['🔀', '♾️ A space gives you resources: change 1 to any color'],
   'customs-officer': ['🛃', '♾️ A rival steals or changes yours: +1 yellow'],
   tourist: ['📷', '✨🌅 +1 follower per color you hold'],
