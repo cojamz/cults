@@ -1,5 +1,7 @@
 # In flight (updated 2026-11-03 10:20am Eastern)
 
+Catch up on design/desk.md first (Cory's words, every open workstream, the bot-game queue). This file keeps the longer notes per workstream.
+
 Live: v0.99.510 (main:play/build.json, source a2432c4). The list before this tidy-up: design/archive/in-flight-2026-10-28-to-29.md. Long-term goals live in design/todo.md under "Backlog initiatives".
 
 Running now
