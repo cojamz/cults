@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 // every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,daylaborers,nightmanager,pacesetters';
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,sprinter,earlyrisers,daylaborers,nightmanager,pacesetters';
 const { applyMove, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
@@ -31,6 +31,8 @@ describe('REPLACE7: the switch', () => {
     expect(card('red.drillsergeant')).toEqual(['Drill Sergeant', 4, 4, 1, 1]);
     expect(card('red.converts')).toEqual(['Converts', 4, 4, 2, 2]);
     expect(card('purple.snoozers')).toEqual(['Snoozers', 3, 1, 3, 3]);
+    expect(card('purple.sprinter')).toEqual(['Sprinter', 2, 2, 1, 1]);
+    expect(card('purple.earlyrisers')).toEqual(['Early Risers', 2, 2, 2, 2]);
     expect(card('purple.daylaborers')).toEqual(['Day Laborers', 3, 2, 3, 3]);
     expect(card('purple.nightmanager')).toEqual(['Night Manager', 2, 2, 1, 1]);
     expect(card('purple.pacesetters')).toEqual(['Pace-Setters', 3, 2, 2, 2]);
@@ -376,6 +378,25 @@ describe('Snoozers: "Whenever you take the Goes Last token, +1 purple per minion
     s = take(s, 'purple.lastcall');
     const line = s.log.find(l => l.startsWith("P1's Snoozers: +"));
     expect(line).toMatch(/^P1's Snoozers: \+(\d) purple \(\1 minions? on the Goes Last token\)\.$/);
+  });
+});
+
+describe('Sprinter and Early Risers', () => {
+  it('Sprinter: "On Use, once per game: your next two turns come right after this one." your last two turns move up', () => {
+    let s = table(['purple', 'red', 'market', 'yellow'], { n: 4, round: 3, members: [['purple.sprinter']],
+      queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 2 }, { t: 'turn', p: 3 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
+    const uid = uidIn(s, 'purple.sprinter', 0);
+    s = move(s, `use:${uid}`);
+    expect(s.cards[uid].used).toBe(true);
+    const turns = s.queue.filter(t => t.t === 'turn').map(t => t.p);
+    expect(turns.slice(0, 2)).toEqual([0, 0]);
+    expect(turns.filter(p => p === 0).length).toBe(2);
+  });
+  it('Early Risers: round II starts and the owner has the fewest followers: first two turns in a row; not fewest: no', () => {
+    let s = table(['purple', 'red', 'market', 'yellow'], { n: 4, round: 1, bonus: [0, 4, 5, 6], members: [['purple.earlyrisers']], queue: [{ t: 'round', r: 2 }] });
+    expect(s.log.some(l => l.includes("P1's Early Risers: P1's first two turns come in a row."))).toBe(true);
+    s = table(['purple', 'red', 'market', 'yellow'], { n: 4, round: 1, bonus: [9, 0, 5, 6], members: [['purple.earlyrisers']], queue: [{ t: 'round', r: 2 }] });
+    expect(s.log.some(l => l.includes('Early Risers'))).toBe(false);
   });
 });
 

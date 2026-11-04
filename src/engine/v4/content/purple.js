@@ -731,6 +731,19 @@ export default {
       },
       ...see(info => 1.2 * endsAhead(info).length),
     })),
+    // Purple's round I extra-turn gap (director, Nov 4 12:40pm), Timekeeper's place. 2 purple + 2 any.
+    // Sprinter (paper 16 vs 11): Crunch Time's turn rule, once a game, when you choose (turnsNow, as Crunch Time).
+    ...add7(m('sprinter', 'Sprinter', 1, 2, 'On Use, once per game: your next two turns come right after this one.', { round: 1,
+      activate: 'game',
+      onActivate(ctx, owner, card) { if (!turnsNow(ctx, owner, 2, 'Sprinter')) card.used = false; },
+      // bots: round III, when pulling two turns up jumps rivals' turns
+      botActivate: (ctx, owner) => ctx.state.round === 3 && turnsNowEstimate(ctx, owner, 2) > 0,
+    })),
+    // Early Risers (paper 15 vs 11, 2 on catch-up): Clockmakers' rule while you have the fewest followers at Round Start
+    // (core: flag firstTwoIfFewest). Counts as 2, so a group name (judges: "Head Start" read as one member).
+    ...add7(m('earlyrisers', 'Early Risers', 1, 2, 'Round Start: if you have the fewest followers (ties count), your first two turns come in a row.', { f: 2, n: 2, round: 1, firstTwoIfFewest: true,
+      ...see(info => (info.round < 3 ? 1.5 : 0)),
+    })),
     // Snoozers (scale-up 1, Shift Crew's place: paper 14 vs 8, Purple's set 15 vs 10). Same price as Shift Crew (3 purple
     // + 1 any), worth 3, counts as 3. Pays on Sleep In and Last Call (core: toToken), per minion they put on the token.
     ...add7(m('snoozers', 'Snoozers', 2, 1, 'Whenever you take the Goes Last token, +1 purple per minion on it.', { f: 3, n: 3, round: 1, tokenPurple: true,

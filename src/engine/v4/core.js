@@ -1049,12 +1049,16 @@ function startRound(state, r) {
   const snake = state.order.map(id => ({ t: 'turn', p: id }));
   // Clockmakers (flag firstTwoInRow, Cory 2026-10-29): your first two turns of the round come in a row. Your last snake
   // turn moves up to right after your first, as Right Away moves one (your turns between stay where they are)
-  for (const id of base) if (sumMemberFlag(state, state.players[id], 'firstTwoInRow') > 0) {
+  // Early Risers (REPLACE7, flag firstTwoIfFewest): the same, while you have the fewest followers (ties count)
+  const fewest = Math.min(...state.players.map(o => followers(state, o)));
+  const rowFlag = id => sumMemberFlag(state, state.players[id], 'firstTwoInRow') > 0 ? 'firstTwoInRow'
+    : sumMemberFlag(state, state.players[id], 'firstTwoIfFewest') > 0 && followers(state, state.players[id]) === fewest ? 'firstTwoIfFewest' : null;
+  for (const id of base) if (rowFlag(id)) {
     const f = snake.findIndex(t => t.p === id), l = snake.findLastIndex(t => t.p === id);
     if (f < 0 || l <= f + 1 || snake[f + 1].p === id) continue; // already two in a row (a snake end)
     const [t] = snake.splice(l, 1);
     snake.splice(f + 1, 0, t);
-    const why = flagName(state, state.players[id], 'firstTwoInRow');
+    const why = flagName(state, state.players[id], rowFlag(id));
     if (!state.early || state.early.round !== r) state.early = { round: r, moves: [] };
     state.early.moves.push({ p: id, from: l, to: f + 1, why });
     rowNotes.push(`${state.players[id].name}'s ${why}: ${state.players[id].name}'s first two turns come in a row.`);
