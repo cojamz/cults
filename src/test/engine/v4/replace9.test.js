@@ -72,19 +72,21 @@ describe('Toll Keeper: "Round End: each rival who doesn\'t hold a full set gives
   });
 });
 
-describe('Quilter: "On Use, once per round: turn one full set into 8 followers."', () => {
+describe('Quilter: "On Use, once per game: turn each full set you hold into 6 followers."', () => {
   const Q4 = ['red', 'yellow', 'market', 'silver'];
-  it('On Use: pays 1 of each color on the table and gains 8 followers', () => {
-    let s = table(Q4, { n: 3, round: 2, res: [{ red: 3, yellow: 4, blue: 3, silver: 3 }], members: [['yellow.quilter']], queue: [{ t: 'buy', p: 0 }] });
+  it('On Use: every full set held becomes 6 followers, paying 1 of each color per set', () => {
+    let s = table(Q4, { n: 3, round: 3, res: [{ red: 3, yellow: 4, blue: 2, silver: 3 }], members: [['yellow.quilter']], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `use:${uidIn(s, 'yellow.quilter', 0)}`);
-    expect(s.players[0].res).toMatchObject({ red: 2, yellow: 3, blue: 2, silver: 2 });
-    expect(s.players[0].bonus).toBe(8);
-    expect(named(s, 'Quilter')).toContain("P1's Quilter: turns a full set (1 of each color) into 8 followers.");
+    expect(s.players[0].res).toMatchObject({ red: 1, yellow: 2, blue: 0, silver: 1 });
+    expect(s.players[0].bonus).toBe(12);
+    expect(named(s, 'Quilter')).toContain("P1's Quilter: turns 2 full sets (2 of each color) into 12 followers.");
   });
-  it('once per round: a second use the same round is not offered', () => {
+  it('once per game: not offered again, next round included', () => {
     let s = table(Q4, { n: 3, round: 2, res: [{ red: 3, yellow: 4, blue: 3, silver: 3 }], members: [['yellow.quilter']], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `use:${uidIn(s, 'yellow.quilter', 0)}`);
     expect(s.pending.options.some(o => o.id === `use:${uidIn(s, 'yellow.quilter', 0)}`)).toBe(false);
+    expect(s.cards[uidIn(s, 'yellow.quilter', 0)].used).toBeTruthy();
+    expect(defById('yellow.quilter').activate).toBe('game');
   });
   it('no full set: nothing is paid or gained, and the use comes back', () => {
     let s = table(Q4, { n: 3, round: 2, res: [{ red: 3, yellow: 4, blue: 3 }], members: [['yellow.quilter']], queue: [{ t: 'buy', p: 0 }] });
@@ -93,16 +95,15 @@ describe('Quilter: "On Use, once per round: turn one full set into 8 followers."
       s = move(s, id);
       expect(s.players[0].res).toMatchObject({ red: 3, yellow: 4, blue: 3, silver: 0 });
       expect(s.players[0].bonus).toBe(0);
+      expect(s.cards[uidIn(s, 'yellow.quilter', 0)].used).toBeFalsy();
     }
   });
-  it('pitched turn: round II, 4 players; 13 resources and the recruit still free', () => {
-    // 4 yellow, 3 red, 3 blue, 3 silver after Harvest-sized gains: quilt (8 followers), then the turn's recruit
-    // buys a 5-follower card from what's left (12 resources -> 4 left... the recruit is untouched by the quilt)
-    let s = table(Q4, { n: 4, round: 2, res: [{ red: 3, yellow: 4, blue: 3, silver: 3 }], members: [['yellow.quilter']], queue: [{ t: 'buy', p: 0 }] });
+  it('pitched turn: round III, 4 players, 3 sets held: 18 followers, the recruit still free, and Most full sets is gone', () => {
+    let s = table(Q4, { n: 4, round: 3, res: [{ red: 3, yellow: 4, blue: 3, silver: 3 }], members: [['yellow.quilter']], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `use:${uidIn(s, 'yellow.quilter', 0)}`);
-    expect(s.players[0].bonus).toBe(8);
+    expect(s.players[0].bonus).toBe(18);
+    expect(s.players[0].res).toMatchObject({ red: 0, yellow: 1, blue: 0, silver: 0 });
     expect(s.pending.player).toBe(0); // still P1's recruit
-    expect(Object.values(s.players[0].res).reduce((a, b) => a + b, 0)).toBe(9);
   });
 });
 

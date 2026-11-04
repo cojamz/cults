@@ -60,8 +60,8 @@ function matchmaker(ctx, owner, member) {
 // every recruit of Drifters (a steal too) runs its On Recruit color pick, and the pick settles color-reading cards
 const unpickedDrifters = (ctx, member) => ctx.defOf(member).key === 'drifters';
 const touchable = (ctx, p) => ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'change'));
-/** Quilter (REPLACE9 bot test): followers for one full set. */
-const QUILT = 8;
+/** Quilter (REPLACE9 bot test): followers per full set. */
+const QUILT = 6;
 /** Toll Keeper (REPLACE9 bot test): rival o gives host 1 resource of their choice, `left` in all (asked one at a time). */
 function askToll(ctx, host, o, left, key) {
   const have = colors(ctx).filter(c => (o.res[c] || 0) > 0);
@@ -311,18 +311,19 @@ export default {
       onRoundStart(ctx, owner) { ctx.gain(owner, Y, held(ctx, owner).length); },
     }),
     // REPLACE9 bot test (Members C, Nov 4): Dyer's place. 5 yellow + 2 any as a player sees it. A full set is 1 of each
-    // color on the table (setsOf); using it pays 1 of each and gains 8 followers. No full set: nothing happens and the use
-    // comes back.
-    ...add9(m('quilter', 'Quilter', 4, 2, 'On Use, once per round: turn one full set into 8 followers.', {
-      activate: 'round',
+    // color on the table (setsOf). Once per game (Cory, Nov 4 12:35am: "Once per round is really strong"): every full set
+    // you hold becomes 6 followers, paying 1 of each color per set. No full set: nothing happens and the use comes back.
+    ...add9(m('quilter', 'Quilter', 4, 2, 'On Use, once per game: turn each full set you hold into 6 followers.', {
+      activate: 'game',
       onActivate(ctx, owner, card) {
-        if (setsOf(ctx, owner) < 1) { card.used = false; ctx.log(`${owner.name}'s Quilter: no full set to turn in.`); return; }
-        for (const c of colors(ctx)) owner.res[c] -= 1;
-        owner.bonus += QUILT;
-        ctx.log(`${owner.name}'s Quilter: turns a full set (1 of each color) into ${QUILT} followers.`);
+        const k = setsOf(ctx, owner);
+        if (k < 1) { card.used = false; ctx.log(`${owner.name}'s Quilter: no full set to turn in.`); return; }
+        for (const c of colors(ctx)) owner.res[c] -= k;
+        owner.bonus += QUILT * k;
+        ctx.log(`${owner.name}'s Quilter: turns ${k === 1 ? 'a full set' : `${k} full sets`} (${k} of each color) into ${QUILT * k} followers.`);
       },
-      // bots quilt once they hold a set, keeping one back for the full-sets contest only when they'd lead it by exactly one
-      botActivate: (ctx, owner) => setsOf(ctx, owner) >= 1,
+      // bots quilt in round III once they hold 2 sets, or on their last turn with any
+      botActivate: (ctx, owner) => ctx.state.round === 3 && (setsOf(ctx, owner) >= 2 || (owner.left || 0) <= 1) && setsOf(ctx, owner) >= 1,
     })),
     // REPLACE1 bot test (Nov 3, replacement batch 1): Dyer's place. 4 yellow + 2 any as a player sees it. Pick a rival
     // (Bodyguards blocks, as it blocks Dilute), then up to 3 swaps of 1 of yours for 1 of theirs. Customs Officer and Tastemaker
