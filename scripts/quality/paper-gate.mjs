@@ -276,7 +276,7 @@ function setcheck(id, names = []) {
 // Gate lines from steering (principles.md, "Process changes after batch 1"; director, Nov 4 6:31am): enforced, not advice.
 // Each color keeps a cheap way-in member (total cost 3 or less) after the swap. (The Magenta steal hold was lifted
 // Nov 4 2:09pm, director's call via Members D: the Magenta Cloak won 21% in 120 Hard games, evals/magenta-run/summary.md.)
-function costOf(price) { const p = String(price || ''), m = p.match(/(\d+)\s+[a-z]+\s*\+\s*(\d+)\s+any/i); if (m) return +m[1] + +m[2]; const g = p.match(/^\s*(\d+)\s+any/i); return g ? +g[1] : null; }
+function costOf(price) { const p = String(price || ''), m = p.match(/(\d+)\s+[a-z]+\s*\+\s*(\d+)\s+any/i); if (m) return +m[1] + +m[2]; const g = p.match(/^\s*(\d+)\s+any/i); if (g) return +g[1]; const one = p.match(/^\s*(\d+)\s+[a-z]+\b(?!\s*\+)/i); return one ? +one[1] : null; }
 function gateLines(spec, old, cand) {
   const out = [];
   if (spec.kind !== 'space' && spec.color) {
