@@ -201,7 +201,7 @@ async function cmdWork() {
   // interleave the two sides so a half-played trial is still a fair game-for-game comparison
   const queue = blockStarts(spec.games).flatMap(s => [['trial', s], ['base', s]]);
   const order = queue; // lowest games first, so a half-played trial is the first N games of both sides
-  const mine = new Set(), times = [];
+  const mine = new Set(), playing = new Set(), times = [];
   let played = 0, failed = 0;
   const beat = setInterval(() => { const t = new Date(); for (const f of mine) try { writeFileSync(f, JSON.stringify({ ...me, beat: t.toISOString() })); utimesSync(f, t, t); } catch {} }, BEAT_MS);
   // A block's games stop before its claim is let go: an orphaned game still appending to a block that another worker
@@ -220,15 +220,18 @@ async function cmdWork() {
     for (const [side, s] of order) {
       const id = spec.arms[side];
       if (isDone(id, s)) continue;
+      // never take over a block this worker is already playing: on the shared mount a slow block's heartbeat can read
+      // stale, and a second lane here would replay it into the same file (blocks of 3 and 7 games, Nov 4)
+      if (playing.has(`${id}/${s}`)) continue;
       const f = claim(id, s, me);
       if (f) return { side, id, s, f };
     }
     return null;
   };
   const play = ({ side, id, s, f }) => new Promise(done => {
-    mine.add(f);
+    mine.add(f); playing.add(`${id}/${s}`);
     const dir = join(local, id); mkdirSync(dir, { recursive: true });
-    const part = join(dir, `${s}.${process.pid}.part`); // one writer per file, even if an old worker's game is still running
+    const part = join(dir, `${s}.${process.pid}.${Math.random().toString(36).slice(2, 8)}.part`); // one writer per file, even if an old worker's game is still running
     try { unlinkSync(part); } catch {}
     // only the arm's settings reach the games: a REPLACE or PRICE left in this shell's env must not leak into a side
     const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !GAME_KEYS.test(k)));
@@ -251,7 +254,7 @@ async function cmdWork() {
         console.log(`${side} games ${s}-${s + BLOCK - 1} FAILED (exit ${code}, ${n} games): ${err.split('\n').slice(-4).join(' | ')}`);
       }
       try { unlinkSync(f); } catch {}
-      mine.delete(f); done();
+      mine.delete(f); playing.delete(`${id}/${s}`); done();
     });
   });
   const lane = async () => { for (let b; (b = next()) && failed < 3;) await play(b); };
