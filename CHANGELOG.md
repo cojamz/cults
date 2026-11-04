@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.543 — 2026-11-03
+
+- Four more new members: Night Watch (Purple) replaces Clockmakers, Second-Story Man (Magenta) replaces Sticky Fingers, Hawker (Blue) replaces Connoisseurs, and Sore Loser (Grey) replaces HR. Each shows up in the same round as the card it replaces.
+
 ## v0.99.542 — 2026-11-03
 
 - Wallflower doubles every action it copies, as its card says; a cult's Members row shows Dabblers once as 2 any-color, so the color counts add up
