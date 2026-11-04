@@ -29,6 +29,7 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 11. Rival members hover, more polish later (Cory, Oct 29: "in the backlog, i think we could improve this more in the future"). Shipped as mockup 13: cards in columns by the card's keyword, priciest first, heading with artifact, Round Start, Game End now, resources, members by color.
 
 ## Ours, open (no call needed)
+- Blind panel Nov 1 leftovers (design/eval/panel-2026-11-01/, ranked list in /mnt/project-files/blind-panel-nov1/findings.md): log "You skips their next turn"; Peek panel should say you can recruit one of the top 4; rulebook line for Magenta's +1 magenta on every space and the spare-minion pool; previews leave out rivals' gains; pay sheet position; seats re-sort each round; re-time hovers on a quiet box.
 - Portraits: wider skin-tone variation across the scene set (Cory, Oct 29: "maybe need wider variations in skin tones but these are good for now"). Kit has 6 tones; add in-between tones and spread them.
 0. Confirm two browsers in one online room see each other's table-talk bubbles on the live build (v0.9.2 shipped it).
 0b. Known-red browser checks: hotseat and layout green Nov 1 (v0.9.900), travel t5 too. Left: shop-sizing at 1100x700 with details on, where the longest abilities (Trendsetter, Cutpurse, Restocker) push the price off the card; a taller shop there shrank the wheel past reading. Needs a narrow-laptop layout idea (ability scrolls, or a smaller step).
