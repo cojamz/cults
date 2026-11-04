@@ -121,7 +121,8 @@ export function toNotation(input) {
     const ranked = state.players.map(p => ({ name: p.name, f: followers(state, p) })).sort((a, b) => b.f - a.f);
     out.splice(head, 0, tag('Result', ranked.map(r => `${r.name} ${r.f}`).join(', ')));
   } else out.splice(head, 0, tag('Result', `unfinished, ${state.round ? `round ${roman(state.round)}` : 'artifacts'}`));
-  out.splice(head + 1, 0, tag('Moves', rec.moves.length), tag('Content', rec.build?.content || '?'));
+  // Build: the commit that played it, so a game from an older build can be replayed on that build (scripts/v4-critique.mjs)
+  out.splice(head + 1, 0, tag('Moves', rec.moves.length), tag('Content', rec.build?.content || '?'), ...(rec.build?.id ? [tag('Build', rec.build.id)] : []));
   return out.join('\n') + '\n';
 }
 
@@ -147,7 +148,7 @@ export function fromNotation(text) {
   if (!tags.Seed || !tags.Colors || !seats.length) throw new Error('The game is missing its Seed, Colors or Seat lines.');
   const rec = {
     kind: RECORD_KIND, schema: SCHEMA,
-    build: tags.Content && tags.Content === BUILD.content ? { ...BUILD } : { schema: SCHEMA, content: tags.Content || null, id: null, version: tags.Version || null },
+    build: tags.Content && tags.Content === BUILD.content ? { ...BUILD } : { schema: SCHEMA, content: tags.Content || null, id: tags.Build || null, version: tags.Version || null },
     made: BUILD, seed: /^\d+$/.test(tags.Seed) ? Number(tags.Seed) : tags.Seed,
     quadrants: tags.Colors.split(',').map(colorId), rules: parseRules(tags.Rules || ''),
     seats: seats.filter(Boolean), moves: [],

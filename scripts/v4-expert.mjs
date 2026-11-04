@@ -12,7 +12,7 @@
 //   data <dir>                        one JSON line of the game's numbers (for balance reads)
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
   createGame, applyMove, followers, memberCount, memberPrice, cardDef, contestTable, turnRail, previewSpace,
   quadrant, shopSize, TIERS, roundWorkers, openSlots,
@@ -135,7 +135,7 @@ function youdWords(s, pid, q, i) {
   return bits.join('; ');
 }
 
-function renderOption(s, p, o, taskKind) {
+export function renderOption(s, p, o, taskKind) {
   if (o.kind === 'slot') {
     const a = quadrant(s.quadrants[o.q]).actions[o.i];
     const joined = s.slots[`${o.q}-${o.i}`] !== undefined ? ' (taken: you would join it)' : '';
@@ -164,7 +164,7 @@ function renderOption(s, p, o, taskKind) {
   return `${o.label}${extra.length ? ` — ${extra.join('; ')}` : ''}`;
 }
 
-function tableView(s, meId, full = false) {
+export function tableView(s, meId, full = false) {
   const L = [];
   const round = s.round;
   L.push(round ? `ROUND ${ROMAN[round] || round}${s.over ? " — GAME OVER" : ""}   (leading a color's contest this round pays +${[4, 6, 10][Math.min(3, Math.max(1, round)) - 1]} followers, split if tied)` : "SETUP: pick artifacts");
@@ -465,4 +465,5 @@ export function gameData(dir) {
   };
 }
 
-main().catch(e => { console.error(e.stack || String(e)); process.exit(1); });
+// run as a command; imported (v4-critique.mjs reuses the table view), do nothing
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) main().catch(e => { console.error(e.stack || String(e)); process.exit(1); });
