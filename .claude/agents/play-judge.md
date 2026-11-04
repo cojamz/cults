@@ -9,7 +9,7 @@ You get a folder with index.json (the card's printed text) and 2 to 4 sheets (<c
 For each sheet, answer in plain words, then score 0/1/2 (2 = clearly yes, 1 = sort of, 0 = no):
 - P1 Clear outcome (C1): before buying or firing it, could you tell what it would give? Did anything surprise you?
 - P2 Felt powerful (C3): when it fired, was it a moment? Compare its gain to what that turn's best other option gave, by name and number.
-- P3 Felt by the table (C4): did any rival's options or results change because of it (a sting they could see coming, a gift, a reason to block)? Name the rival and turn, or say nobody noticed.
+- P3 Felt by the table (C4 score slot; under rubric v1.2 this reaction is C5's question, kept here so A/Bs stay comparable): did any rival's options or results change because of it (a sting they could see coming, a gift, a reason to block)? Name the rival and turn, or say nobody noticed.
 - P4 Momentum (C7): did it build on your other cards, or did later choices build on it? Did you feel the payoff coming?
 - P5 Agency (C8): did it change a decision: buying it over something else, aiming it, timing it? Or was it autopilot?
 - P6 Catch-up (C9): where were you in followers when you got it and at the end? Did it help you catch up, extend a lead, or neither? Could rivals have answered it?
