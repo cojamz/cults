@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.581 — 2026-11-04
+
+- Two new grey members: Cheerleaders (Whenever you win a contest, +2 followers.) and Victors (Whenever you win a contest, +2 of its color.); the grey deck deals 12. The round-end card names them under the contest their owner won.
+
 ## v0.99.580 — 2026-11-04
 
 - Seats keep each color's dot when you have none; the since-your-last-turn strip says what you lost and who got what; one phrase for turns in a row; your seat names your cloak; choices off your turn say Your call; steal sheets say Steal. Polish's suggestion no longer turns silver back into silver.
