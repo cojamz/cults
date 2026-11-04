@@ -22,7 +22,8 @@ describe('REPLACE8: the switch', () => {
     expect(card('silver.wellwishers')).toEqual(card('silver.debtcollector'));
     expect(card('silver.usher')).toEqual(card('silver.polisher'));
     expect(card('silver.guestofhonor')).toEqual(card('silver.toastmaster'));
-    for (const id of ['silver.debtcollector', 'silver.polisher', 'silver.toastmaster']) expect(defById(id).retired).toBe(true);
+    expect(card('silver.socialites')).toEqual(card('silver.highsociety'));
+    for (const id of ['silver.debtcollector', 'silver.polisher', 'silver.toastmaster', 'silver.highsociety']) expect(defById(id).retired).toBe(true);
     expect(defById('silver.gala').retired).toBeFalsy();
   });
 });
@@ -93,5 +94,28 @@ describe('Guest of Honor: "Whenever you take a Silver space, you may give a riva
     let s = take(at(['silver.guestofhonor', 'silver.usher', 'silver.wellwishers']), 'silver.toast');
     s = move(s, `give:${uidIn(s, 'silver.usher', 0)}:1`);
     expect(s.players[0].bonus).toBe(7);
+  });
+});
+
+describe('Socialites: "Whenever a rival recruits paying silver, +2 followers."', () => {
+  const buyOne = s => { s = move(s, s.pending.options.find(o => o.kind === 'tier' && /1/.test(o.label || o.id)).id); if (s.pending?.player === 1 && s.pending.kind === 'choose') s = move(s, s.pending.options[0].id); return s; };
+  it('a rival recruits paying silver: +2; paying without silver: nothing; your own recruits: nothing', () => {
+    let s = buyOne(sc({ res: [{}, { silver: 5 }], members: [['silver.socialites']], queue: [{ t: 'buy', p: 1 }] }));
+    expect(s.players[0].bonus).toBe(2);
+    expect(linesNaming(s.log, 'Socialites')).toContain("P1's Socialites: +2 followers (P2 paid silver).");
+    let u = buyOne(sc({ res: [{}, { red: 5 }], members: [['silver.socialites']], queue: [{ t: 'buy', p: 1 }] }));
+    expect(u.players[0].bonus).toBe(0);
+    let v = sc({ res: [{ silver: 5 }], members: [['silver.socialites']], queue: [{ t: 'buy', p: 0 }] });
+    v = move(v, v.pending.options.find(o => o.kind === 'tier' && /1/.test(o.label || o.id)).id);
+    if (v.pending?.player === 0 && v.pending.kind === 'choose') v = move(v, v.pending.options[0].id);
+    expect(v.players[0].bonus).toBe(1); // the follower bought, nothing from Socialites
+  });
+  it('the pitched turn: you Toast (each rival +2 silver), then Ben buys a follower card paying silver: +2', () => {
+    let s = sc({ n: 4, round: 2, members: [['silver.socialites']], queue: [{ t: 'turn', p: 0 }, { t: 'buy', p: 1 }] });
+    s = take(s, 'silver.toast');
+    if (s.pending?.player === 0) s = pass(s);
+    s = buyOne(s);
+    expect(s.players[1].res.silver).toBe(1);
+    expect(s.players[0].bonus).toBe(2);
   });
 });
