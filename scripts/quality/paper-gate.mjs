@@ -74,7 +74,7 @@ function bundle(spec, extra = []) {
 // self scored among the anchors. Disguised minus real is how much "looks new" is worth; 2 or more voids the batch.
 // Double Down (Gold) left the list on b3: Gold isn't on any live table. b2 and b3 printed Recluse with an old Blue stand-in's
 // price (fixed in findCard), so those two are left out of the anchor check for b2 and b3 (BAD_ANCHORS).
-const ANCHORS = ['Impressionist', 'Makeover', 'Overtime', 'Con Men', 'Recluse', 'Peek', 'Spree', 'Initiation', 'Largesse', 'Poach'];
+const ANCHORS = ['Impressionist', 'Makeover', 'Overtime', 'Con Men', 'Recluse', 'Toast', 'Spree', 'Initiation', 'Largesse', 'Poach']; // Peek left Nov 4 6:05am (a judge hard-failed it for randomness); Toast in
 const BAD_ANCHORS = { b2: ['Recluse', 'Double Down'], b3: ['Recluse', 'Double Down'] };
 const DISGUISE = { 1: ['Newcomer', 'Lodger', 'Stranger', 'Tenant'], 2: ['Newcomers', 'Lodgers', 'Strangers', 'Tenants'] };
 const rubricHash = () => { const t = readFileSync(join(ROOT, 'principles.md'), 'utf8'); const a = t.indexOf('## The rubric'), b = t.indexOf('\n## ', a + 5); let h = 7; for (const c of t.slice(a, b)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h.toString(36); };
@@ -277,6 +277,9 @@ function setmulti(ids, combos) {
   const id = ids.join('+'), rand = rng([...id].reduce((x, c) => x * 37 + c.charCodeAt(0), 3));
   const sh = shuffle(vers, rand).map((v, i) => ({ ...v, label: String.fromCharCode(65 + i), name: v.cards.map(c => c.name).join(' + ') }));
   const old = findCard(ks[0].old, ks[0].spec.color), dir = join(GATE, `set-${id}`); mkdirSync(dir, { recursive: true });
+  // older keys kept no prices: fall back to the spec's candidate list, then the live card
+  const priceOf = (k, o) => o.price || (k.spec.candidates || []).find(c => c.name === o.name)?.price || (o.role === 'old' ? k.spec.oldPrice : null) || findCard(o.name, k.spec.color)?.price;
+  for (const v of sh) v.cards = v.cards.map((c, i) => ({ ...c, price: priceOf(ks[i], c) }));
   const card = o => `**${o.name}**${o.price ? ` [${o.price}]` : ''}: ${o.text}`;
   // every slot's cards (old and new) leave the board; bot-test extras stay only if no slot holds them
   const inSlots = new Set(vers.flatMap(v => v.cards.map(c => c.name.toLowerCase())));
