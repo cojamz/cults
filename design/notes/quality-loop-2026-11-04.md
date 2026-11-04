@@ -91,3 +91,11 @@ The loop stops working a color when all hold, and stops altogether when every co
 3. The game dashboard hits its targets two batches running: round I leader wins under 40% at 4 seats, last after round II wins at least 10%, wins with 5 or fewer members at least 20%, no must-buy or dead card per color beyond one, play-judge averages at 1.5 of 2 or better on clear outcome, momentum, agency and catch-up.
 4. Diminishing returns: two batches running where even explore mode passes under 1 in 5 and the dashboard doesn't move.
 When done, the loop stops instead of churning. It writes a final report (what changed, the before-and-after dashboard, and the cards the judges still doubt), ships nothing more, and frees the runners. If only rule 4 is met and the others aren't, the report says the remaining gap is a design question for Cory, not more card swaps.
+
+## Done, tightened (Process critic, 12:11am, director adopted)
+- **Frozen anchors:** 10 live cards that never change are scored in every judge run. If their median moves more than 0.5, that run's scale has drifted and it counts toward no pass and no "done". The Evaluators pick the 10 and list them in evals/anchors.md.
+- **Strategy diversity** joins the dashboard and rule 3: count distinct winning plans; no single plan over about 30% of wins (today mixed-wide plus red-wide take 40%). Cory's 1.0 line is "confident in the strategy/fun", not card scores.
+- **Table load** joins the dashboard: per cult at the end of a typical game, words of card text on the table and the number of "whenever" triggers; and once a night, one fresh agent reads a full game as a first-time player and says what it lost track of.
+- **Rule 3 is relative:** today's game numbers already pass the absolute bars (round I leader wins 32%, last after round II wins 21%, small cults 30%; Nov 3 fast run), so rule 3 means "no worse than the 12:10am baseline on every number, and diversity met".
+- **Rule 4 can't be met by giving up:** only explore candidates with a shape not already in their color count toward it.
+- **Rules 1 and 2 need stable anchors** on the run that declares done.
