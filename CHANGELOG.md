@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.563 — 2026-11-04
+
+- Fixes: a member's Round Start no longer fires twice when a Kidnapper takes it; Early Birds keeps your turn even if you recruit it after Sleep In; a once-per-game member stays used after it changes hands; Dabblers counts as 2 in every color count; Farewell and Estate Sale say you may cast out.
+
 ## v0.99.562 — 2026-11-04
 
 - Member cards show only their written rule again: the emoji symbol line is gone, so hovers no longer say it twice
