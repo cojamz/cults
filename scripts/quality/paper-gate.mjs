@@ -274,13 +274,13 @@ function setcheck(id, names = []) {
   return `${dir}/set.md: ${sh.length} versions (${sh.map(o => `${o.label} ${o.name}`).join(', ')}); judges: .claude/agents/set-judge.md`;
 }
 // Gate lines from steering (principles.md, "Process changes after batch 1"; director, Nov 4 6:31am): enforced, not advice.
-// Each color keeps a cheap way-in member (total cost 3 or less) after the swap; Magenta gets no new steals.
+// Each color keeps a cheap way-in member (total cost 3 or less) after the swap. (The Magenta steal hold was lifted
+// Nov 4 2:09pm, director's call via Members D: the Magenta Cloak won 21% in 120 Hard games, evals/magenta-run/summary.md.)
 function costOf(price) { const p = String(price || ''), m = p.match(/(\d+)\s+[a-z]+\s*\+\s*(\d+)\s+any/i); if (m) return +m[1] + +m[2]; const g = p.match(/^\s*(\d+)\s+any/i); return g ? +g[1] : null; }
 function gateLines(spec, old, cand) {
   const out = [];
   if (spec.kind !== 'space' && spec.color) {
     const color = String(spec.color).toLowerCase();
-    if (color === 'magenta' && /\bsteal/i.test(cand.text) && !/\bsteal/i.test(old.text)) out.push('Magenta gets no new steals');
     const board = boardText([color], { without: [old.name, ...(spec.dropFromBoard || [])], spaces: false, extra: (spec.extraMembers || []).filter(e => String(e.color).toLowerCase() === color) });
     const cheap = [...board.matchAll(/· ([^[]+) \[([^\]]+)\]/g)].filter(m => (costOf(m[2]) ?? 99) <= 3).map(m => m[1].trim());
     if (!cheap.length && (costOf(cand.price) ?? 99) > 3) out.push(`${spec.color} would have no member costing 3 or less`);
