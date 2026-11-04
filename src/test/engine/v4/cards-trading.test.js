@@ -221,10 +221,10 @@ describe('White members', () => {
     expect(named(s, 'Martyrs')).toEqual(["P2's Martyrs left: +4 followers."]);
   });
 
-  it('Hoarder: once per game, every resource becomes white (named)', () => {
+  it('Magpie (was Hoarder): once per game, every resource becomes white (named)', () => {
     const s = use(table(Q, { res: [{ gold: 3, red: 2, white: 1, magenta: 1 }], members: [['trading.hoarder']], shop: ROW, ...buy }), 'trading.hoarder');
     expect(R(s).white).toBe(7);
     expect(Object.entries(R(s)).filter(([r, n]) => r !== 'white' && n).length).toBe(0);
-    expect(named(s, 'Hoarder')).toEqual(["P1's Hoarder: 6 resources became white."]);
+    expect(named(s, 'Magpie')).toEqual(["P1's Magpie: 6 resources became white."]);
   });
 });

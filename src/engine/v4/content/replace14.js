@@ -9,6 +9,7 @@
 //   member thieves.cutpurse (Cutpurse) -> thieves.taxman (Tax Collector)
 //   member thieves.extortionist (Extortionist) -> thieves.boss (The Boss)
 //   member thieves.extortionist (Extortionist) -> thieves.mobboss (Mob Boss)
+//   member trading.heiress (Heiresses) -> trading.barker (Barker; Cory's extra follower buy, Nov 4)
 // REPLACE14=1 swaps every one; REPLACE14=grandtour (or a comma list of new keys) swaps only those, so each card gets
 // its own trial. Unset, nothing in the game changes.
 const RAW = globalThis.process?.env?.REPLACE14 || '';

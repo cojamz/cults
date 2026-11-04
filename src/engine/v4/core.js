@@ -623,7 +623,8 @@ function inputFor(state, task) {
           options: uses.length ? [...uses, { id: 'pass', label: 'Done', kind: 'pass' }] : [] };
       }
       // a second buy (Big Spender) is offered only after a real first buy, while an unspent one is held
-      if (task.extra && !(p.turnBuys > 0 && (allowance(state, p, 'extraBuy') || alwaysBuysTwice(state, p) || p.buyTwiceNow))) return { kind: 'buy', prompt: '', options: [] };
+      if (task.extra && !(p.turnBuys > 0 && (otherSecondBuy(state, p) || followersTwiceCard(state, p) !== undefined))) return { kind: 'buy', prompt: '', options: [] };
+      const barkerOnly = task.extra && !otherSecondBuy(state, p);
       const opts = [];
       // which members and tiers can be paid for at all: an existence check, not the ranked list of every way to pay
       // (the list scores each way against the contests: most of a round III step's engine time, run for every shop card,
@@ -656,12 +657,15 @@ function inputFor(state, task) {
       if (task.doorbuster || task.lateShop) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'card' || o.kind === 'tier'));
       // Ushers' recruit (REPLACE7 bot test): a member costing task.cheap or less, nothing else
       if (task.cheap) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'card' && cardDef(state, o.uid).s + cardDef(state, o.uid).w <= task.cheap));
+      // Barker's extra recruit: followers only
+      if (barkerOnly) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'tier'));
       const real = opts.filter(o => o.kind === 'card' || o.kind === 'tier' || o.kind === 'use' || o.kind === 'release' || o.kind === 'swapcard');
       if (!real.length) return { kind: 'buy', prompt: '', options: [], onEmpty: task.extra ? undefined : () => log(state, `${p.name} couldn't afford anything.`) };
       opts.push({ id: 'pass', label: 'Pass', kind: 'pass' });
       if (task.doorbuster) return { kind: 'buy', prompt: `${p.name}: Doorbusters: recruit once before anyone places, or pass`, options: opts };
       if (task.lateShop) return { kind: 'buy', prompt: `${p.name}: Late Shoppers: recruit once after the contests, or pass`, options: opts };
       if (task.cheap) return { kind: 'buy', prompt: `${p.name}: Ushers: also recruit a member costing ${task.cheap} or less, or pass`, options: opts };
+      if (barkerOnly) return { kind: 'buy', extra: true, prompt: `${p.name}: recruit followers again (${cardDef(state, followersTwiceCard(state, p)).name}), or pass`, options: opts };
       return { kind: 'buy', extra: !!task.extra, prompt: task.extra ? `${p.name}: recruit again (Big Spender), or pass` : `${p.name}: recruit a member or followers${more ? ` (${more + 1} recruits left)` : ''}, or pass`, options: opts };
     }
     case 'choose': {
@@ -1903,6 +1907,10 @@ function allowanceCards(state, p, flag) {
 const allowance = (state, p, flag) => allowanceCards(state, p, flag).length;
 // Shopaholics (concept): the second buy every turn, never spent
 const alwaysBuysTwice = (state, p) => p.members.some(uid => effectiveDefs(state.cards[uid]).some(d => d.buyTwice));
+// Barker (REPLACE14=barker, Cory Nov 4: "a member that gives an extra buy each turn", "limit the bonus recruit to
+// followers"): "Each turn, you may recruit followers one extra time." The turn's extra buy step, followers only.
+const followersTwiceCard = (state, p) => p.members.find(uid => effectiveDefs(state.cards[uid]).some(d => d.followersTwice));
+const otherSecondBuy = (state, p) => allowance(state, p, 'extraBuy') || alwaysBuysTwice(state, p) || p.buyTwiceNow;
 function spendAllowance(state, p, flag) {
   const card = allowanceCards(state, p, flag)[0];
   if (!card) throw new Error(`${p.name} has no ${flag} left this round`);
@@ -1933,7 +1941,9 @@ function boughtOnce(state, p, task) {
   if (task.extra) {
     // Shopaholics' second buy is named like any other member's use (the fire audit wants every effect in the log)
     const always = p.members.find(uid => effectiveDefs(state.cards[uid]).some(d => d.buyTwice));
+    const barker = task.uid === undefined ? followersTwiceCard(state, p) : undefined; // a follower buy uses Barker first
     if (always !== undefined) log(state, `${p.name} uses ${defById(state.cards[always].def).name}.`);
+    else if (barker !== undefined) log(state, `${p.name} uses ${defById(state.cards[barker].def).name}.`);
     else if (p.buyTwiceNow) delete p.buyTwiceNow; // Big Spender, used this turn (One Time Use since Oct 28)
     else spendAllowance(state, p, 'extraBuy');
   }

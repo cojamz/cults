@@ -331,7 +331,7 @@ describe('White members', () => {
     expect(B(s)).toBe(2 + 2 + 2);
   });
 
-  it('Hoarder: once per game, turn all your resources into white', () => {
+  it('Magpie (was Hoarder): once per game, turn all your resources into white', () => {
     let s = scene({ res: [{ gold: 2, red: 3, blue: 1, white: 1 }], members: [['trading.hoarder']], ...buyTurn });
     const u = uidOf(s, 'trading.hoarder', 0);
     s = move(s, `use:${u}`);

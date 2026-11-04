@@ -20,7 +20,7 @@ import { add3, old3, handlers3 } from './replace3.js';
 import { add6, old6, handlers6 } from './replace6.js';
 import { add9, old9 } from './replace9.js';
 import { swap11, handlers11, add11, old11 } from './replace11.js';
-import { swap14, handlers14 } from './replace14.js';
+import { swap14, handlers14, add14, old14 } from './replace14.js';
 import { see, endsAhead, resAt } from './botsee.js';
 import { add10, old10, handlers10 } from './replace10.js';
 import { add8, old8 } from './replace8.js';
@@ -488,8 +488,12 @@ const trading = {
         ctx.log(`${owner.name}'s Widows: ${gone.def.name} left: +2 followers.`);
       },
     })),
+    // Cory, Nov 4 11:53am: "White should definitely have a member that gives an extra buy each turn ... limit the bonus
+    // recruit to followers"; 12:36pm: Hoarder stays, "figure out something else to replace". Heiresses' place (the
+    // lowest-rated White member). Name, price (3 white + 2 any) and worth 1 are Claude's fill-ins. REPLACE14=barker.
+    ...add14(m('barker', 'Barker', 3, 2, 'Each turn, you may recruit followers one extra time.', { followersTwice: true })),
     m('heiress', 'Heiresses', 4, 4, // 9 (Cory, Oct 30: balance run)
-      'On Use, once per game: +1 white per member you have.', { f: 2, ...old10('widows'), ...old9('trading.heiress'),
+      'On Use, once per game: +1 white per member you have.', { f: 2, ...old10('widows'), ...old9('trading.heiress'), ...old14('barker'),
       activate: 'game',
       onActivate(ctx, owner) {
         const n = ctx.memberCount(owner);
@@ -649,14 +653,15 @@ const trading = {
     m('oldmoney', 'Old Money', 1, 4, /* 6 (Cory, Oct 30) */ 'Game End: +1 follower per white member you have.', { ...old6, ...old10('pauper'), ...old8('trading.oldmoney'),
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'trading'),
     }),
-    m('hoarder', 'Hoarder', 4, 3, 'On Use, once per game: turn all your resources into white.', { ...old3,
+    // was Hoarder; new name (Cory, Nov 4: "I like hoarder! it should have a different name/image")
+    m('hoarder', 'Magpie', 4, 3, 'On Use, once per game: turn all your resources into white.', { ...old3,
       activate: 'game',
       onActivate(ctx, owner, card) {
         let n = 0;
         for (const r of ctx.state.resources) if (r !== W && owner.res[r]) { n += owner.res[r]; owner.res[r] = 0; }
-        if (!n) { card.used = false; ctx.log(`${owner.name}'s Hoarder: nothing but white already.`); return; }
+        if (!n) { card.used = false; ctx.log(`${owner.name}'s Magpie: nothing but white already.`); return; }
         owner.res[W] = (owner.res[W] || 0) + n;
-        ctx.log(`${owner.name}'s Hoarder: ${n} resources became white.`);
+        ctx.log(`${owner.name}'s Magpie: ${n} resources became white.`);
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 && totalRes(owner) - (owner.res[W] || 0) >= 3,
     }),

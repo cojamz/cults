@@ -112,7 +112,7 @@ for (const [key, name, source] of [
 // White's new members (Cory, 2026-10-22) reuse cut White portraits while names and artwork settle.
 for (const [key, name, source] of [
   ['cashier', 'Cashier', 'dealer'], ['undertaker', 'Undertaker', 'lender'], ['appraiser', 'Appraiser', 'pawnbroker'],
-  ['martyr', 'Martyrs', 'safetynet'], ['hoarder', 'Hoarder', 'magnate'], ['changer', 'Money Changers', 'tipster'],
+  ['martyr', 'Martyrs', 'safetynet'], ['hoarder', 'Magpie', 'magnate'], ['changer', 'Money Changers', 'tipster'],
 ]) {
   const art = BY_ID.get(`trading.${source}`);
   if (art) BY_ID.set(`trading.${key}`, { ...art, id: `trading.${key}`, name });
