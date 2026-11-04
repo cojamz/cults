@@ -1062,6 +1062,8 @@ function startRound(state, r) {
   for (const t of doors) { const p = state.players[t.p]; p.turnRecruits = 0; p.turnBuys = 0; delete p.peekReach; delete p.perSpend; delete p.recruitFollowers; }
   if (doors.length) log(state, [...new Set(doors.map(t => t.p))].map(id => `${state.players[id].name}'s ${flagName(state, state.players[id], 'roundStartBuy')}: recruits once before anyone places.`).join(' '));
   state.queue.push(...doors, ...snake, { t: 'allPlaced' }, { t: 'endRound' }, { t: 'afterRound' });
+  // Round Start effects that act on the round's turns (Wake-Up Caller, REPLACE7) run once the turns are queued
+  eachMember(state, (owner, card, def) => { if (def.onRoundQueued) def.onRoundQueued(ctx, owner, card); }, ['onRoundQueued']);
 }
 
 function endRound(state) {

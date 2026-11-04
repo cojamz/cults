@@ -716,6 +716,16 @@ export default {
       },
       ...see(info => 1.5 * endsAhead(info).length),
     })),
+    // Wake-Up Caller (paper 17, set 14): the leader's first turn of the round is passed (skipNext, as Hold Up; Early Birds
+    // blocks it). Ties: each of them. If the owner leads, the owner skips too. Runs once the round's turns are queued.
+    ...add7(m('wakeupcaller', 'Wake-Up Caller', 1, 2, 'Round Start: the player with the most followers skips their first turn (each of them, if tied).', { round: 1,
+      onRoundQueued(ctx, owner, card) {
+        const top = Math.max(...ctx.state.players.map(o => ctx.followers(o)));
+        if (!(top > 0)) return;
+        for (const o of ctx.state.players.filter(o => ctx.followers(o) === top)) skipNext(ctx, o, card.def.name, owner);
+      },
+      ...see(info => 1.2 * endsAhead(info).length),
+    })),
     // Sleepyheads (paper 17, set 17): pays whenever its owner's space or card takes the token (keeping it, by taking it
     // again, counts: the space says "Take the Goes Last token"); Early Birds stops the take, so no pay (core: takeToken).
     ...add7(m('sleepyheads', 'Sleepyheads', 1, 2, 'Whenever you take the Goes Last token, +2 followers.', { f: 2, n: 2, round: 1, tokenPay: 2,

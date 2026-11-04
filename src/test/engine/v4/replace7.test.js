@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 // every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,daylaborers,nightmanager,pacesetters';
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,daylaborers,nightmanager,pacesetters';
 const { applyMove, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
@@ -328,6 +328,18 @@ describe('scale-up round 1: Sleepyheads, Night Shift, Drill Sergeant', () => {
     expect(s.log.some(l => l.includes('Mentor & Protégés: the cheapest face-up member comes along free'))).toBe(true);
     expect(s.players[0].bonus).toBe(3);
     expect(s.log.filter(l => l.includes("P1's Drill Sergeant")).length).toBe(1);
+  });
+});
+
+describe('Wake-Up Caller: "Round Start: the player with the most followers skips their first turn (each of them, if tied)."', () => {
+  it('round II starts, P3 leads: P3 first turn is passed (Hold Up\'s skip)', () => {
+    const s = table(['purple', 'red', 'market', 'yellow'], { n: 4, round: 1, bonus: [0, 0, 9, 3], members: [['purple.wakeupcaller']], queue: [{ t: 'round', r: 2 }] });
+    expect(s.log).toContain("P1's Wake-Up Caller: P3 skips their next turn.");
+    expect(s.queue.some(t => t.t === 'content' && t.h === 'purple.skipped' && t.p === 2)).toBe(true);
+  });
+  it('Early Birds keeps the leader\'s turn', () => {
+    const s = table(['purple', 'red', 'market', 'yellow'], { n: 4, round: 1, bonus: [0, 0, 9, 3], members: [['purple.wakeupcaller'], [], ['purple.earlybird']], queue: [{ t: 'round', r: 2 }] });
+    expect(s.log.some(l => l.includes("P3's Early Birds: P3's turn can't be skipped."))).toBe(true);
   });
 });
 
