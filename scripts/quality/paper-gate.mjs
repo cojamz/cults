@@ -65,7 +65,7 @@ function bundle(spec, extra = []) {
     `## The board around it (live; the slot being judged and one other card left out)`, boardText([old.qid === 'guests' ? 'guests' : old.qid], { without }),
     `## The other colors' spaces (for cross-color reads)`, boardText([], { members: false }).split('\n').filter(l => !l.includes(old.color + ' ·') || true).join('\n')].join('\n');
   writeFileSync(join(dir, 'cards.md'), md);
-  writeFileSync(join(dir, 'key.json'), JSON.stringify({ spec, kind, round, old: old.name, options: shuffled.map(o => ({ label: o.label, role: o.role, name: o.name, text: o.text, ...(o.real ? { real: o.real } : {}) })) }, null, 1));
+  writeFileSync(join(dir, 'key.json'), JSON.stringify({ spec, kind, round, old: old.name, options: shuffled.map(o => ({ label: o.label, role: o.role, name: o.name, text: o.text, ...(o.price ? { price: o.price } : {}), ...(o.real ? { real: o.real } : {}) })) }, null, 1));
   return { dir, old, q, kind, others, n: shuffled.length };
 }
 
@@ -235,7 +235,7 @@ function setcheck(id, names = []) {
   const dir = join(GATE, `set-${id}`); mkdirSync(dir, { recursive: true });
   const spec = key.spec, slot = key.kind === 'space' ? `its round ${R[key.round]} space` : 'one member';
   writeFileSync(join(dir, 'set.md'), [`# Whole-set check: ${old.color}, ${slot}`, '', `The board below is ${old.color} with the slot open. Each lettered version puts a different card in the slot. Score each version as a whole set.`, '',
-    ...sh.map(o => `- **${o.label}.** the slot holds **${o.name}**: ${o.text}`), '', spec.rules ? `Rules the cards refer to: ${spec.rules}\n` : '',
+    ...sh.map(o => `- **${o.label}.** the slot holds **${o.name}**${o.price ? ` [${o.price}]` : ""}: ${o.text}`), '', spec.rules ? `Rules the cards refer to: ${spec.rules}\n` : '',
     `## ${old.color} with the slot open`, boardText([old.qid === 'guests' ? 'guests' : old.qid], { without: [old.name] }),
     `## The other colors' spaces`, boardText([], { members: false })].join('\n'));
   writeFileSync(join(dir, 'key.json'), JSON.stringify({ gate: id, options: sh.map(o => ({ label: o.label, role: o.role, name: o.name })) }, null, 1));

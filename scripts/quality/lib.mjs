@@ -56,7 +56,7 @@ export function calibration(file) {
     const names = [...l.matchAll(/\*\*([^*]+)\*\*/g)].map(m => m[1]);
     const alts = names.flatMap(n => n.split(/\s*\/\s*|\s*\(now\s+|\)\s*|\s+\(.*/)).map(x => x.replace(/\(s\)$/, '').replace(/\(.*$/, '').trim()).filter(Boolean);
     const now = (l.match(/Now:([^·]*)/) || [])[1] || '';
-    const stale = /\bClaude\b|replaced|reworked|reworded|Replaced/.test(now) || /\(replaced/.test(l);
+    const stale = /\bClaude\b|replaced|reworked|reworded|now:? "|Now Overtime/i.test(now) || /\(replaced|reworded to|\bold (version|text)\b|^- \*\*(Overtime|Crowd In)\*\* \(old/i.test(l);
     return { names: [...new Set(alts)], line: l, stale };
   });
   return { disliked: grab(sec('### 1a.', '### 1b.')), liked: grab(sec('## 2. LIKED', '## 3.')) };
