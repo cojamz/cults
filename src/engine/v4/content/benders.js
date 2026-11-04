@@ -266,7 +266,7 @@ const members = [
     onContestWin(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Cheerleader: +1 follower.`); },
   }),
   // REPLACE15 bot test (Cory, Nov 4: "when you win a contest, get x y z", then "the member should give resources for
-  // winning contests", "though cheerleaders is kinda cool too"): Spoilsport's place (director, Nov 4). A shared contest
+  // winning contests", "though cheerleaders is kinda cool too"): added, nothing retired (Cory: Spoilsport and Dabblers stay). A shared contest
   // counts as a win, as for Cheerleader and Sore Loser. Each pays the moment its contest is scored. Prices are guesses.
   ...add15(m('cheerleaders', 'Cheerleaders', null, 0, 5, 'Whenever you win a contest, +2 followers.', {
     onContestWin(ctx, owner) { owner.bonus += 2; ctx.log(`${owner.name}'s Cheerleaders: +2 followers.`); },
@@ -321,7 +321,7 @@ const members = [
   // keeps 4). 6 any as a player sees it. Chosen after the round's last placement, before anything is scored (core's
   // allPlaced step), among the contests a rival leads and its owner doesn't (a tie for the lead counts as leading);
   // core's contest table then gives that contest no winner this round (state.spoiled).
-  m('spoilsports', 'Spoilsport', null, 0, 5, "Round End: choose a contest you don't lead; nobody wins it this round.", { round: 1, ...old15('benders.spoilsports'),
+  m('spoilsports', 'Spoilsport', null, 0, 5, "Round End: choose a contest you don't lead; nobody wins it this round.", { round: 1,
     onAllPlaced(ctx, owner) {
       const led = new Map(ctx.state.players.map(o => [o.id, ctx.contestsLed(o)]));
       const opts = ctx.state.quadrants.filter(q => !led.get(owner.id).includes(q)).map(q => {

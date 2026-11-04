@@ -1,6 +1,6 @@
 // @vitest-environment node
 // Contest-win members (REPLACE15, Nov 4; Cory: "when you win a contest, get x y z", "the member should give resources
-// for winning contests"), in Spoilsport's place. One test per sentence.
+// for winning contests") added to the grey deck. One test per sentence.
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE15 = '1';
@@ -12,13 +12,13 @@ delete process.env.REPLACE15;
 // P1 wins Red and Blue in round II (+6 each), P3 wins White
 const scene = (member, extra = {}) => table(['red', 'market', 'trading', 'yellow'], { n: 3, round: 2, res: [{ red: 4, blue: 3 }, { red: 2, blue: 1 }, { white: 2, red: 1 }], members: [[member]], queue: [{ t: 'endRound' }], ...extra });
 
-describe('REPLACE15: contest-win members in Spoilsport\'s place', () => {
-  it('all are dealt; Spoilsport is retired; Dabblers stays (Cory, Nov 4)', () => {
+describe('REPLACE15: contest-win members added to the grey deck', () => {
+  it('all are dealt; Spoilsport stays; Dabblers stays (Cory, Nov 4)', () => {
     expect(defById('benders.cheerleaders').text).toBe('Whenever you win a contest, +2 followers.');
     expect(defById('benders.victors').text).toBe('Whenever you win a contest, +2 of its color.');
     expect(defById('benders.warchest').text).toBe('Whenever you win a contest, +3 resources in any colors.');
     expect(defById('benders.gloaters').text).toBe('Whenever you win a contest, take 1 of its color from each rival.');
-    expect(defById('benders.spoilsports').retired).toBe(true);
+    expect(defById('benders.spoilsports').retired).toBeFalsy(); // Spoilsport stays (Cory, Nov 4)
     expect(defById('benders.dabblers').retired).toBeFalsy();
   });
 
