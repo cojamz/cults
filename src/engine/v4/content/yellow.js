@@ -171,12 +171,14 @@ export default {
       // resources one for one"). Gather's shape: core pays it on the turn's first recruit of a member of a color none of
       // your other members have (newColor below, as Guest Book reads it). Keys kept for old saves and records.
       key: 'dilute', ring: 1, name: 'New Blood', copyDoesIt: true,
-      text: '+2 yellow. This turn, if you recruit a member of a color none of your members have, +2 followers in round I, +3 in round II, +4 in round III.',
-      byRound: { lines: ['+2 yellow. This turn, if you recruit a member of a color none of your members have, +2 followers.', '+2 yellow. This turn, if you recruit a member of a color none of your members have, +3 followers.', '+2 yellow. This turn, if you recruit a member of a color none of your members have, +4 followers.'] },
+      // Cory, Nov 4: "New Blood Should give additional yellow rather than followers": the new-color recruit pays yellow,
+      // same numbers (a follower buys at 1 of anything, so 1 yellow for 1 follower)
+      text: '+2 yellow. This turn, if you recruit a member of a color none of your members have, +2 yellow in round I, +3 in round II, +4 in round III.',
+      byRound: { lines: ['+2 yellow. This turn, if you recruit a member of a color none of your members have, +2 yellow.', '+2 yellow. This turn, if you recruit a member of a color none of your members have, +3 yellow.', '+2 yellow. This turn, if you recruit a member of a color none of your members have, +4 yellow.'] },
       estimate: (ctx, p) => 2 + (newInShop(ctx, p) ? 0.6 * (ctx.state.round + 1) : 0),
       resolve(ctx, p) {
         ctx.gain(p, Y, 2, { fromAction: true });
-        (p.recruitFollowers ||= []).push({ n: ctx.state.round + 1, name: 'New Blood', newColor: true });
+        (p.recruitFollowers ||= []).push({ n: ctx.state.round + 1, name: 'New Blood', newColor: true, color: Y });
       },
     },
     // Housewarming in Big New Blood's place, live since Nov 4 (Claude, under Cory's go-with-your-gut, overnight quality

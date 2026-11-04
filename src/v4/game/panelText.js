@@ -97,7 +97,7 @@ const P = {
     // yellow of Dilute, Big Dilute and Makeover; Melting Pot's long sentence ran off its panel (Claude, gut call, Nov 1)
     harvest: r => ({ main: `+${r + 2} any`, second: 'colors you choose', note: run(n => `+${n + 2}`) }),
     // New Blood and Big New Blood (Nov 4): Gather's shape, the condition in line 2
-    dilute: r => ({ main: '+2 yellow', second: `+${r + 1} @f if you recruit a new color` }),
+    dilute: r => ({ main: '+2 yellow', second: `+${r + 1} yellow if you recruit a new color` }),
     // Housewarming took Big New Blood's place (Nov 4, overnight quality loop)
     housewarming: { main: '+2 yellow', second: 'free new-color member, up to 5' },
     meltingpot: { verb: '+1 any per member color', note: '+2 yellow' },

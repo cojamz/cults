@@ -1728,7 +1728,13 @@ function recruitFollowersBonus(state, p, member) {
   const fresh = list.some(x => x.newColor) && member ? isNewColor(ctxFor(state), p, member) : false;
   const pay = list.filter(x => !x.newColor || fresh), wait = list.filter(x => x.newColor && !fresh);
   if (wait.length) p.recruitFollowers = wait; else delete p.recruitFollowers;
-  for (const { n, name, broker } of pay) {
+  for (const { n, name, broker, color } of pay) {
+    // New Blood pays its color instead of followers (Cory, Nov 4)
+    if (color) {
+      log(state, `${p.name}'s ${name}: +${n} ${color} for recruiting a member of a new color.`);
+      gain(state, p, color, n, { fromAction: true, again: true });
+      continue;
+    }
     const extra = broker ? sumMemberFlag(state, p, 'brokerBonus') : 0, mark = fMark(state);
     p.bonus += n + extra;
     fCredit(state, mark, name);

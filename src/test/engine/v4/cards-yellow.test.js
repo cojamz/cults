@@ -40,11 +40,13 @@ describe('Yellow actions', () => {
     s = move(s, `card:${uidOf(s, buyDef, 'shop')}`);
     return { s, y, paid: s.players[0].bonus - b };
   };
-  it.each([[1, 2], [2, 3], [3, 4]])('New Blood in round %i: +2 yellow; recruiting a member of a new color, +%i followers', (round, n) => {
+  // Cory, Nov 4: the new-color recruit pays yellow, not followers
+  it.each([[1, 2], [2, 3], [3, 4]])('New Blood in round %i: +2 yellow; recruiting a member of a new color, +%i yellow', (round, n) => {
     const { s, y, paid } = newBlood(round, 'yellow.dilute', ['red.volunteer'], 'gold.banker');
     expect(y).toBe(30 + 2);
-    expect(paid).toBe(n);
-    expect(named(s, 'New Blood')).toContain(`P1's New Blood: +${n} followers for recruiting a member.`);
+    expect(paid).toBe(0);
+    expect(R(s).yellow).toBe(y + n); // the banker is paid in gold
+    expect(named(s, 'New Blood')).toContain(`P1's New Blood: +${n} yellow for recruiting a member of a new color.`);
   });
   it('New Blood: a member of a color you already have pays nothing, and the promise ends with the turn', () => {
     let s = take(sc({ res: [rich], members: [['red.volunteer']], shop: ['red.intern', 'gold.banker'] }), 'yellow.dilute');
@@ -52,11 +54,11 @@ describe('Yellow actions', () => {
     s = move(s, `card:${uidOf(s, 'red.intern', 'shop')}`);
     expect(s.players[0].bonus).toBe(b);
     expect(s.players[0].recruitFollowers).toBeUndefined();
-    expect(named(s, 'New Blood').filter(l => /followers/.test(l))).toEqual([]);
+    expect(named(s, 'New Blood').filter(l => /for recruiting/.test(l))).toEqual([]);
   });
   it('New Blood: your first member is always a new color', () => {
-    const { paid } = newBlood(1, 'yellow.dilute', [], 'red.intern');
-    expect(paid).toBe(2);
+    const { s } = newBlood(1, 'yellow.dilute', [], 'red.intern');
+    expect(named(s, 'New Blood')).toContain("P1's New Blood: +2 yellow for recruiting a member of a new color.");
   });
   it("Housewarming is on the wheel in Big New Blood's place (Nov 4)", async () => {
     const { quadrant } = await import('../../../engine/v4/content/index.js');
