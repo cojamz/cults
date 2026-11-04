@@ -613,7 +613,7 @@ const silver = {
     // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-smoothtalkers.md; paper 19 vs 13): Smooth Talkers'
     // place, same price. Every silver you hand a rival counts (Toast, Party Gifts, Potluck, Largesse, Hostesses, Creditor):
     // the gift's silver is added up as it lands, then paid out once the gift is done, one color pick at a time.
-    ...add14(m('charmers', 'Charmers', 5, 5, 'Whenever you give silver to rivals, +1 of any color per silver given.', { f: 2, n: 2,
+    ...add14(m('charmers', 'Charmers', 5, 5, 'Whenever you gift silver to rivals, +1 of any color per silver gifted.', { f: 2, n: 2,
       onAnyGifted(ctx, owner, card, giver, once, n) {
         if (giver === owner && n > 0) card.charm = (card.charm || 0) + n;
       },
@@ -621,7 +621,7 @@ const silver = {
         const k = card.charm || 0;
         if (color !== S || !k) return;
         card.charm = 0;
-        ctx.log(`${owner.name}'s Charmers: ${k} silver given, +${k} of any colors.`);
+        ctx.log(`${owner.name}'s Charmers: ${k} silver gifted, +${k} of any colors.`);
         charmPick(ctx, owner, k);
       },
       // BOTSEE: a silver player gives about 4 a round from here (Toast gives 2 or 3 to each rival, Party Gifts 3,

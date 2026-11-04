@@ -62,7 +62,7 @@ describe('REPLACE14: Early Birds reworked ("If you place the round’s first min
   });
 });
 
-describe('REPLACE14: Charmers ("Whenever you give silver to rivals, +1 of any color per silver given.")', () => {
+describe('REPLACE14: Charmers ("Whenever you gift silver to rivals, +1 of any color per silver gifted.")', () => {
   it("is dealt in Smooth Talkers' place", () => {
     expect(defById('silver.charmers').name).toBe('Charmers');
     expect(defById('silver.smoothtalker').retired).toBe(true);
@@ -70,7 +70,7 @@ describe('REPLACE14: Charmers ("Whenever you give silver to rivals, +1 of any co
   it('Toast in round I: each of 3 rivals +1 silver, so +3 of any colors, picked one at a time (the pitched turn)', () => {
     let s = table(['red', 'silver', 'market'], { n: 4, round: 1, members: [['silver.charmers']] });
     s = answer(s, `slot:${slot(s, 'silver', 'Toast')}`);
-    expect(log(s)).toContain("P1's Charmers: 3 silver given, +3 of any colors.");
+    expect(log(s)).toContain("P1's Charmers: 3 silver gifted, +3 of any colors.");
     s = answer(s, 'color:red'); s = answer(s, 'color:red'); s = answer(s, 'color:blue');
     expect(s.players[0].res).toMatchObject({ red: 2, blue: 1, silver: 3 });
     expect([1, 2, 3].map(i => s.players[i].res.silver)).toEqual([1, 1, 1]);
@@ -79,13 +79,21 @@ describe('REPLACE14: Charmers ("Whenever you give silver to rivals, +1 of any co
     let s = table(['red', 'silver'], { n: 3, round: 1, members: [['silver.charmers']] });
     s = answer(s, `slot:${slot(s, 'silver', 'Party Gifts')}`);
     s = answer(s, 'player:1'); s = answer(s, 'player:2'); s = answer(s, 'done');
-    expect(log(s)).toContain("P1's Charmers: 2 silver given, +2 of any colors.");
+    expect(log(s)).toContain("P1's Charmers: 2 silver gifted, +2 of any colors.");
     s = answer(s, 'color:silver'); s = answer(s, 'color:red');
     expect(s.players[0].res).toMatchObject({ silver: 1, red: 1 });
     expect(s.players[0].bonus).toBe(4);
     let t = table(['red', 'silver'], { n: 2, round: 1, members: [[], ['silver.charmers']] });
     t = answer(t, `slot:${slot(t, 'silver', 'Toast')}`);
     expect(log(t)).not.toContain('Charmers');
+  });
+  it("paying a rival's Potluck in silver is a payment, not a gift: no pick (the host's 2 silver back is the host's gift)", () => {
+    let s = table(['red', 'silver'], { n: 2, round: 2, res: [{}, { silver: 3 }], members: [[], ['silver.charmers']] });
+    s = answer(s, `slot:${slot(s, 'silver', 'Potluck')}`);
+    while (s.pending && s.pending.player === 1 && s.pending.options.some(o => o.value === 'silver')) s = answer(s, s.pending.options.find(o => o.value === 'silver').id);
+    expect(log(s)).toContain('P2 gave P1 1 silver');
+    expect(log(s)).not.toContain('Charmers');
+    expect(s.pending?.prompt || '').not.toContain('Charmers');
   });
 });
 
