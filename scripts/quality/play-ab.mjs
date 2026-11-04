@@ -34,14 +34,14 @@ const P = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6'];
 if (args[0] === 'score') {
   const dir = args[1], key = JSON.parse(readFileSync(join(dir, 'key.json'), 'utf8'));
   const judges = readdirSync(dir).filter(f => /^play-judge-\d+\.json$/.test(f)).map(f => JSON.parse(readFileSync(join(dir, f), 'utf8')));
-  const side = { new: [], old: [] }, sideM = { new: [], old: [] }, clearNew = [], misuse = { new: [], old: [] }, judged = { new: 0, old: 0 }, oldRows = [], oldMis = new Set(), rowsM = [], misDirs = new Set();
+  const side = { new: [], old: [] }, sideM = { new: [], old: [] }, clearNew = [], misuse = { new: [], old: [] }, judged = { new: 0, old: 0 }, oldRows = [], oldMis = new Set(), rowsM = [], misDirs = new Set(), noCall = [];
   for (const j of judges) for (const s of j.sheets || []) {
     const pair = key.pairs.find(p => s.file.includes(`${p.dir}/`));
     if (!pair) continue;
     const label = /\bA\.md$/.test(s.file) ? 'A' : /\bB\.md$/.test(s.file) ? 'B' : null; if (!label) continue;
     const role = pair[label], sc = P.map(k => s.scores?.[k] ?? 0);
     side[role].push(sc); if (!pair.seed.includes('x')) { sideM[role].push(sc); rowsM.push({ dir: pair.dir, role, sc }); if (role === 'old') oldRows.push({ file: s.file, sc }); } if (role === 'new') clearNew.push(sc[0]);
-    judged[role]++; if (s.sensibleUse === false) { misDirs.add(pair.dir); misuse[role].push(`${s.file}: ${s.misuse || 'misused'}`); if (role === 'old') oldMis.add(s.file); }
+    judged[role]++; if (typeof s.sensibleUse !== 'boolean') noCall.push(s.file); if (s.sensibleUse === false) { misDirs.add(pair.dir); misuse[role].push(`${s.file}: ${s.misuse || 'misused'}`); if (role === 'old') oldMis.add(s.file); }
   }
   // The gate statistic is the MEAN (director, Nov 4 2:41pm: the 0.3 margin is a bar for the mean gap; the median of
   // 0-to-2 scores was too coarse and was never the gate). Per-criterion medians are still printed below, for reading.
@@ -64,7 +64,10 @@ if (args[0] === 'score') {
   // loose pairs needs +0.5. Too few matched pairs: ask the Lab for more seeds.
   const matched = key.pairs.filter(p => !p.seed.includes('x')).length, looseN = key.pairs.length - matched;
   const nm = avg(sideM.new), om = avg(sideM.old), gapM = nm != null && om != null ? +(nm - om).toFixed(2) : null;
-  const abPass = matched >= 2 && clear > 0 && ((gapM != null && gapM >= 0.3) || (looseN > 0 && gap != null && gap >= 0.5));
+  // Two-pair bar (director, Nov 4 2:31pm, meta check): until both placebos have been through the drop-misplay rule,
+  // a result resting on only 2 pairs needs +0.35 (the placebo margin at 2 pairs was 0.34). key.twoPairBar overrides.
+  const BAR2 = key.twoPairBar ?? 0.35, barFor = k => (k === 2 ? BAR2 : 0.3);
+  const abPass = matched >= 2 && clear > 0 && ((gapM != null && gapM >= barFor(matched)) || (looseN > 0 && gap != null && gap >= 0.5));
   const superseded = key.superseded || null; // a folder a later run replaced never passes (director, 2:43pm)
   const rawPass = superseded ? false : hard ? nMed != null && nMed >= 1 && clear > 0 : abPass;
   // Bot misuse (change 14, director 10:45am; Cory, Nov 4, on Encore: "you fundamentally weren't testing the card
@@ -91,9 +94,12 @@ if (args[0] === 'score') {
   const keptRows = rowsM.filter(r => !misDirs.has(r.dir)), pairsLeft = new Set(keptRows.map(r => r.dir)).size;
   const nD = avg(keptRows.filter(r => r.role === 'new').map(r => r.sc)), oD = avg(keptRows.filter(r => r.role === 'old').map(r => r.sc));
   const gapDrop = misDirs.size && nD != null && oD != null ? +(nD - oD).toFixed(2) : null;
-  const dropPass = !superseded && !hard && misDirs.size > 0 && pairsLeft >= 2 && clear > 0 && gapDrop != null && gapDrop >= 0.3;
+  // Misplay calls first (director, Nov 4 2:31pm): every sheet must carry the judge's sensibleUse call before any gap
+  // counts; a folder with a missing call neither passes nor fails (INCOMPLETE) until the judge is rerun.
+  const incomplete = noCall.length > 0 && !key.legacyNoCalls;
+  const dropPass = !superseded && !hard && !incomplete && misDirs.size > 0 && pairsLeft >= 2 && clear > 0 && gapDrop != null && gapDrop >= barFor(pairsLeft);
   const botBug = !superseded && (misuse.new.length + misuse.old.length) > 0 && !oldOnlyPass && !capPass && !dropPass;
-  const pass = oldOnlyPass || capPass || dropPass || (rawPass && !botBug);
+  const pass = !incomplete && (oldOnlyPass || capPass || dropPass || (rawPass && !botBug));
   const looseLine = looseN ? `${matched} matched pair(s), ${looseN} across games; matched only: new ${nm} vs old ${om} (${gapM >= 0 ? '+' : ''}${gapM}). ${matched < 2 ? 'Too few matched pairs to pass: ask the Lab for more seeds.' : 'A pass on all pairs needs +0.5.'}` : null;
   const waits = hard && /rival/i.test(hard) ? "Waits on Cory's ruling on rivals choosing during the owner's turn before it ships." : null;
   const lines = [`# Blind A/B play: ${key.new.name} against ${key.old.name}`, '', `${judges.length} judges, ${key.pairs.length} seeds. New card ${n} vs old ${o} (mean of the six scores over every sheet, 0 to 2): ${gap >= 0 ? '+' : ''}${gap}. Clear outcome for the new card ${clear}.`, '', hard ? `**${pass ? 'PASS' : 'no'}**: the old card hard-fails (${hard}), so the new card needs 1.0 or more on its own and no 0 on Clear outcome; the gap is for information.${waits ? ' ' + waits : ''}` : `**${pass ? 'PASS' : 'no'}**: ship needs +0.3 or more and no 0 on Clear outcome.`, '', ...(looseLine ? [looseLine, ''] : []), `Judges preferred the new card ${pref.new} times, the old ${pref.old}, same ${pref.same} (a tiebreak note; the gate is the gap).`, '',
@@ -104,10 +110,12 @@ if (args[0] === 'score') {
   if (misuse.new.length || misuse.old.length) lines.push('', `Bot misuse (judges): new card ${misuse.new.length} of ${judged.new} sheets, old card ${misuse.old.length} of ${judged.old}.`, ...[...misuse.new.map(m => `- new: ${m}`), ...misuse.old.map(m => `- old: ${m}`)]);
   if (capPass && !oldOnlyPass && (misuse.new.length + misuse.old.length)) lines.splice(lines.findIndex(l => /^\*\*(PASS|no)\*\*/.test(l)), 1, `**PASS** (rerun cap: ${priors.length} earlier bot-fix runs of this pair all cleared the bar, and this one does too; the misplays below can't flip it; director, Nov 4 5:03pm).`);
   if (oldOnlyPass) lines.splice(lines.findIndex(l => /^\*\*(PASS|no)\*\*/.test(l)), 1, `**PASS** (every misplay was on the old card; with its ${oldMis.size} misplayed sheet(s) dropped the matched gap is ${gapClean >= 0 ? '+' : ''}${gapClean}, bar +0.3; director, Nov 4 4:18pm).`);
-  if (dropPass && !oldOnlyPass && !capPass) lines.splice(lines.findIndex(l => /^\*\*(PASS|no)\*\*/.test(l)), 1, `**PASS** (misplayed pairs dropped: ${misDirs.size} game(s) with a misplay on either side left out; over the ${pairsLeft} pairs left the matched gap is ${gapDrop >= 0 ? '+' : ''}${gapDrop}, bar +0.3; director, Nov 4 1:55pm). Bot version ${bv.bot || 'unknown'}.`);
+  if (dropPass && !oldOnlyPass && !capPass) lines.splice(lines.findIndex(l => /^\*\*(PASS|no)\*\*/.test(l)), 1, `**PASS** (misplayed pairs dropped: ${misDirs.size} game(s) with a misplay on either side left out; over the ${pairsLeft} pairs left the matched gap is ${gapDrop >= 0 ? '+' : ''}${gapDrop}, bar +${barFor(pairsLeft)}; director, Nov 4 1:55pm). Bot version ${bv.bot || 'unknown'}.`);
   if (botBug) lines.splice(lines.findIndex(l => /^\*\*(PASS|no)\*\*/.test(l)), 1, `**BOT BUG** (neither pass nor fail): a judge says the bot did not use a card sensibly (new card ${misuse.new.length} of ${judged.new} sheets, old card ${misuse.old.length} of ${judged.old}). Fix how the bot plays it, then one fresh run decides. Without this the gap would read ${rawPass ? 'PASS' : 'no'}.${gapDrop != null ? ` With the misplayed pairs dropped: ${gapDrop >= 0 ? "+" : ""}${gapDrop} over ${pairsLeft} pair(s) (passes at +0.3 with 2 or more).` : ""}`);
+  if (incomplete) lines.splice(lines.findIndex(l => /^\*\*(PASS|no|BOT BUG)/.test(l)), 1, `**INCOMPLETE** (neither pass nor fail): ${noCall.length} sheet(s) have no misplay call (sensibleUse), and the calls come before any gap counts (director, Nov 4 2:31pm). Rerun those judges: ${noCall.slice(0, 6).join(', ')}${noCall.length > 6 ? ', ...' : ''}.`);
+  if (matched === 2 || (dropPass && pairsLeft === 2)) lines.push('', `Two-pair bar: a result resting on 2 pairs needs +${BAR2} (director, Nov 4 2:31pm, until both placebos have been through the drop-misplay rule).`);
   writeFileSync(join(dir, 'result.md'), lines.join('\n') + '\n');
-  writeFileSync(join(dir, 'result.json'), JSON.stringify({ new: key.new.name, old: key.old.name, newAvg: n, oldAvg: o, gap, clearNew: clear, matched, loose: looseN, gapMatched: gapM, prefer: pref, oldHardFail: hard, waitsOnCory: !!waits, superseded, botBug, misuse, botVersion: bv, rawPass, oldOnlyPass, gapClean, capPass, dropPass, gapDrop, pairsLeft, misplayedGames: [...misDirs], pass }, null, 1));
+  writeFileSync(join(dir, 'result.json'), JSON.stringify({ new: key.new.name, old: key.old.name, newAvg: n, oldAvg: o, gap, clearNew: clear, matched, loose: looseN, gapMatched: gapM, prefer: pref, oldHardFail: hard, waitsOnCory: !!waits, superseded, botBug, misuse, botVersion: bv, rawPass, oldOnlyPass, gapClean, capPass, dropPass, gapDrop, pairsLeft, misplayedGames: [...misDirs], incomplete, missingCalls: noCall.length, pass }, null, 1));
   console.log(lines.join('\n'));
   process.exit(0);
 }
