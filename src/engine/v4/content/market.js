@@ -470,6 +470,18 @@ const market = {
       },
       botActivate: ctx => ctx.shopCards().length > 0,
     }),
+    // REPLACE9 bot test (Members C, Nov 4): Hawker reworded to Round Start, so every rival's choice comes in a Round Start
+    // resolved one player at a time (Cory's turn-flow rule, Nov 4 12:35am). Same price and handlers (hawk, hawkAnswer). Not a
+    // turn: a rival's buy here doesn't use up their recruit, and "this turn" effects don't pay on it.
+    ...add9(m('hawker2', 'Hawker', 4, 3, 'Round Start: choose a shop member. Starting on your left, each rival may recruit it, paying its cost plus 2 to you. If none does, you recruit it for free.', { round: 1,
+      onRoundStart(ctx, owner) {
+        const shop = ctx.shopCards();
+        if (!shop.length) { ctx.log(`${owner.name}'s Hawker: the shop is empty.`); return; }
+        ctx.choose(owner, 'Hawker: offer which shop member?', shop.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: botWorth(c),
+        })), `${Q}.hawk`);
+      },
+    })),
     m('reseller', 'Reseller', 4, 2, 'Whenever you recruit, +1 of that member’s color.', {
       onAnyRecruit(ctx, owner, card, by, rec) { if (by === owner && rec.uid !== card.uid) gainColorOf(ctx, owner, ctx.defOf(rec), 'Reseller'); },
     }),

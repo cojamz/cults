@@ -4,7 +4,7 @@
 // switch is read when the engine loads, so it is set before the engine is imported (dynamic imports below), then cleared.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE9 = 'tollkeeper,quilter,lastminute,bargainhunter,hypnotist,jack,ambassadors,mannequin,stallholder';
+process.env.REPLACE9 = 'tollkeeper,quilter,lastminute,bargainhunter,hypnotist,jack,ambassadors,mannequin,stallholder,hawker2';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move } = await import('./helpers.js');
@@ -330,6 +330,35 @@ describe('Stallholder: "On Use, once per round: move a shop member beside this c
     s = answer(s, 'pass');
     expect(s.pile.at(-1) === vol || s.pile.includes(vol)).toBe(true);
     expect(s.stalls[uidIn(s, 'market.stallholder', 0)]).toEqual([]);
+  });
+});
+
+describe('Hawker at Round Start: "Round Start: choose a shop member. Starting on your left, each rival may recruit it, paying its cost plus 2 to you. If none does, you recruit it for free."', () => {
+  const Q4 = ['red', 'market', 'purple', 'silver'];
+  const start = res => {
+    let s = table(Q4, { n: 3, round: 1, res, members: [['market.hawker2']], queue: [{ t: 'round', r: 2 }] });
+    expect(s.pending.prompt).toBe('Hawker: offer which shop member?');
+    expect(s.pending.player).toBe(0);
+    return answer(s, s.pending.options[0].id);
+  };
+  it('price, round I, retires the old Hawker, and no On Use', () => {
+    const d = defById('market.hawker2');
+    expect([d.s, d.w, d.f, d.round, d.activate]).toEqual([5, 3, 1, 1, undefined]);
+    expect(defById('market.hawkers').retired).toBe(true);
+  });
+  it('the rival on the left who can pay is asked first, at Round Start; buying pays the owner 2 more', () => {
+    let s = start([{}, { red: 20, blue: 20, purple: 20, silver: 20 }, { red: 20, blue: 20, purple: 20, silver: 20 }]);
+    expect(s.pending.player).toBe(1);
+    expect(s.pending.prompt).toMatch(/^Hawker: recruit .*, paying its cost and 2 more to P1\?$/);
+    const mine = Object.values(s.players[0].res).reduce((a, b) => a + b, 0);
+    s = answer(s, 'buy');
+    expect(Object.values(s.players[0].res).reduce((a, b) => a + b, 0)).toBe(mine + 2);
+    expect(s.players[1].members.length).toBe(1);
+  });
+  it('nobody can or will pay: the owner recruits it for free', () => {
+    let s = start([{}, {}, {}]);
+    expect(s.players[0].members.length).toBe(2);
+    expect(named(s, 'Hawker').some(l => l.includes('so P1 recruits it for free'))).toBe(true);
   });
 });
 
