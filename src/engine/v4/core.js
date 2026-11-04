@@ -14,6 +14,16 @@ import { REPLACE9 } from './content/replace9.js';
 import { REPLACE7 } from './content/replace7.js';
 import { REPLACE10 } from './content/replace10.js';
 import { isNewColor, setsOf } from './content/yellow.js';
+// PIN="purple.crew,purple.daylaborers" (test-only, for A/B sheet games; Lab, Nov 4, director's change 10): any listed
+// member in the game goes to the top of the deck when its deck round starts, so it shows in that round's shop. Listing
+// the old and the new card gives both sides of a trial the same setting. Off unless set; balance trials never set it.
+const PIN = (globalThis.process?.env?.PIN || '').split(',').map(x => x.trim()).filter(Boolean);
+function pinToTop(state) {
+  if (!PIN.length) return;
+  const hit = state.pile.filter(u => PIN.includes(state.cards[u].def));
+  if (!hit.length) return;
+  state.pile = [...hit, ...state.pile.filter(u => !hit.includes(u))];
+}
 
 export const RING_VALUE = [4, 6, 10];
 export const WORKERS = [3, 4, 5];
@@ -114,6 +124,7 @@ export function createGame({ seats, seed = 1, quadrants, rules = {} }) {
     if (r > 1) { (state.waiting[r] ||= []).push(u); state.pile.splice(state.pile.indexOf(u), 1); }
   }
   shuffleInPlace(state, state.pile);
+  pinToTop(state);
   refill(state);
   // Round I's turn order is drawn now, before the starting picks, and the picks run in it (Cory, 2026-10-15: "it had us
   // pick resources THEN it randomized the order???"). Everyone is tied at round I, so it's random (Cory, 2026-10-14);
@@ -987,6 +998,7 @@ function startRound(state, r) {
       state.joined = { round: r, uids: [...join] };
       shuffleInPlace(state, state.pile);
       log(state, `Round ${roman(r)} members (${join.length}) are shuffled into the deck.`);
+      if (PIN.length) { const hit = state.pile.filter(u => join.includes(u) && PIN.includes(state.cards[u].def)); state.pile = [...hit, ...state.pile.filter(u => !hit.includes(u))]; } // PIN: this round's own members only
     }
     refill(state);
     log(state, `The member market refreshes for round ${roman(r)}.`);
