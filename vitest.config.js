@@ -23,7 +23,7 @@ export default defineConfig({
     // 33 workers on 4 CPUs (2026-10-15). check:v4 passes its own --maxWorkers.
     maxWorkers: Number(process.env.V4_VITEST_WORKERS) || 2,
     // build snapshots, freeze worktrees and agents' worktrees are never test sources
-    exclude: ['**/node_modules/**', '**/dist/**', '.v4-wt/**', '.v4-panel/**', '.v4-build*/**', '.claude/worktrees/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', '.v4-wt/**', '.v4-panel/**', '.v4-build*/**', '.claude/worktrees/**', '.trial-wt/**'],
     // No wall-clock budgets on deterministic work: engine and fuzz tests are bounded by game and move counts, session
     // tests by fake-timer steps (helpers.js untilFake). A slow, loaded box must not turn green into red. This is only
     // a backstop for a test that truly hangs (an awaited promise that never settles).
