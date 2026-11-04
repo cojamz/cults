@@ -10,6 +10,7 @@ import { add5, old5, handlers5 } from './replace5.js';
 import { add10, old10, on10 } from './replace10.js';
 import { on11 } from './replace11.js';
 import { swap13, handlers13 } from './replace13.js';
+import { add14, old14 } from './replace14.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -550,8 +551,29 @@ const thieves = {
 
   members: [
     m('cutpurse', 'Cutpurse', 1, 1, 'On Recruit: steal 1 resource from the rival with the most resources. Round Start: steal 1 resource from the rival with the most resources.', { now: true,
+      ...old14('filcher'), ...old14('taxman'),
       onRoundStart(ctx, owner) { startSteal(ctx, owner, 'Cutpurse', 1 + stickyMore(ctx, owner), { fromAction: false, richest: true }); },
     }),
+    // REPLACE14 bot tests (Members E lane, Nov 4; quality/pitches/E-batch2.md), Cutpurse's place, same price: its aim read
+    // rivals' piles (Cory, Nov 3: rework those). Pickpocket aims by followers (Mole's tested rule); Tax Collector steals
+    // from contest winners after scoring (ties are winners). Both take the steal the way Mole does (biggest pile first).
+    ...add14(m('filcher', 'Pickpocket', 1, 1, 'On Recruit and Round Start: steal 1 resource from each rival with more followers than you.', { now: true,
+      onRoundStart(ctx, owner) {
+        const ahead = ctx.rivals(owner).filter(o => ctx.followers(o) > ctx.followers(owner));
+        if (!ahead.length) { ctx.log(`${owner.name}'s Pickpocket: no rival has more followers.`); return; }
+        for (const o of ahead) autoSteal(ctx, owner, o, 'Pickpocket');
+      },
+      // BOTSEE: about 1.5 steals a Round Start for a player behind, each a resource the victim loses too
+      ...see(info => endsAhead(info).length * 1.5 * (resAt(info.round) + SEE_SPITE)),
+    })),
+    ...add14(m('taxman', 'Tax Collector', 1, 1, 'Round End: after contests are scored, steal 1 resource from each rival who won one.', {
+      afterContests(ctx, owner, card, table) {
+        const won = ctx.rivals(owner).filter(o => table.some(c => c.winners.includes(o.id)));
+        if (!won.length) { ctx.log(`${owner.name}'s Tax Collector: no rival won a contest.`); return; }
+        for (const o of won) autoSteal(ctx, owner, o, 'Tax Collector');
+      },
+      ...see(info => [1, 2].filter(r => r >= info.round).length * 2 * (1 + SEE_SPITE)),
+    })),
     m('mole', 'Mole', 2, 2, 'On Recruit: steal 1 resource from each rival with more followers than you. Round Start: steal 1 resource from each rival with more followers than you.', { now: true,
       onRoundStart(ctx, owner) {
         for (const o of ctx.rivals(owner)) if (ctx.followers(o) > ctx.followers(owner)) autoSteal(ctx, owner, o, 'Mole');

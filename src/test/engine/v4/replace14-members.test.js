@@ -2,7 +2,7 @@
 // Members E lane (REPLACE14, Nov 4): members. One test per sentence, plus the pitched turn.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE14 = 'bigspenders,firstbirds,charmers';
+process.env.REPLACE14 = 'bigspenders,firstbirds,charmers,filcher,taxman';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { quadrant, defById } = await import('../../../engine/v4/content/index.js');
 const { table, uidIn } = await import('./cards-helpers-b.js');
@@ -86,5 +86,31 @@ describe('REPLACE14: Charmers ("Whenever you give silver to rivals, +1 of any co
     let t = table(['red', 'silver'], { n: 2, round: 1, members: [[], ['silver.charmers']] });
     t = answer(t, `slot:${slot(t, 'silver', 'Toast')}`);
     expect(log(t)).not.toContain('Charmers');
+  });
+});
+
+describe('REPLACE14: Cutpurse replacements', () => {
+  const Q = ['gold', 'red', 'thieves', 'market'];
+  it("Pickpocket and Tax Collector are dealt in Cutpurse's place", () => {
+    expect(defById('thieves.filcher').name).toBe('Pickpocket');
+    expect(defById('thieves.taxman').name).toBe('Tax Collector');
+    expect(defById('thieves.cutpurse').retired).toBe(true);
+  });
+  it('Pickpocket, Round Start: steal 1 from each rival with more followers than you; none from an equal one (its own worth counts)', () => {
+    const s = table(Q, { n: 4, queue: [{ t: 'round', r: 2 }], res: [{}, { gold: 2 }, { red: 3 }, { blue: 4 }], bonus: [0, 3, 2, 1], members: [['thieves.filcher']] });
+    expect([s.players[1].res.gold, s.players[2].res.red, s.players[3].res.blue]).toEqual([1, 2, 4]);
+    expect(log(s)).toContain("P1's Pickpocket: took 1 from P2.");
+    expect(log(s)).toContain("P1's Pickpocket: took 1 from P3.");
+  });
+  it('Pickpocket while leading: nothing', () => {
+    const s = table(Q, { n: 3, queue: [{ t: 'round', r: 2 }], res: [{}, { gold: 2 }, { red: 3 }], bonus: [9, 2, 0], members: [['thieves.filcher']] });
+    expect(log(s)).toContain("P1's Pickpocket: no rival has more followers.");
+  });
+  it('Tax Collector, Round End: after scoring, steal 1 from each rival who won a contest (ties count)', () => {
+    let s = table(Q, { n: 3, round: 1, queue: [{ t: 'endRound' }], res: [{}, { gold: 3, red: 2 }, { red: 2 }], members: [['thieves.taxman']] });
+    const won = s.contests.at(-1).results.filter(c => c.winners.length);
+    const winners = [1, 2].filter(i => won.some(c => c.winners.includes(i)));
+    for (const i of winners) expect(log(s)).toContain(`P1's Tax Collector: took 1 from P${i + 1}.`);
+    expect(winners.length).toBeGreaterThan(0);
   });
 });
