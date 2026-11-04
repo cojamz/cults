@@ -45,6 +45,7 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
     // as the engine's placement does: the act reads it (ctx.placement.joined: Redistribute counts the space it joins)
     base.players[pid].lastSlot = { key, joined };
     base.players[pid].left -= 1;
+    base.lastPlaced = { round: base.round, pid }; // as the engine's placement does: Purple's "Went last" (Racket's preview counted it as a rival's, Nov 4)
     base.current = pid;
     // the round's turns still to come wait behind a stop that never runs them: Crunch Time moves yours up, and an
     // extra turn counts them for its spare space

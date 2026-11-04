@@ -33,3 +33,24 @@ describe('REPLACE11: Racket', () => {
     expect(s.log.join('\n')).toContain("P1's Racket: took 1 from P2.");
   });
 });
+
+describe('REPLACE11: Racket, order and preview (Evaluators, Nov 4)', () => {
+  it('steals before the +1 magenta, so the +1 never ties you into a lead first', () => {
+    // P2 leads Magenta by 1: with the +1 first, P1 would tie and lose that steal
+    let s = table(['red', 'thieves'], { n: 2, round: 1, res: [{ magenta: 2 }, { magenta: 3 }] });
+    s = answer(s, `slot:${slot(s, 'Racket')}`);
+    expect(s.log.join('\n')).toContain("P1's Racket: took 1 from P2.");
+    expect(s.players[0].res.magenta).toBe(2 + 1 + 1);
+  });
+  it("the preview counts you as Went last's leader, as you will be", async () => {
+    const { previewSpace } = await import('../../../engine/v4/preview.js');
+    let s = table(['purple', 'thieves'], { n: 2, round: 1, res: [{}, { blue: 5 }] });
+    s.lastPlaced = { round: 1, pid: 1 };
+    const [q, i] = slot(s, 'Racket').split('-').map(Number);
+    const pv = previewSpace(s, 0, q, i);
+    s = answer(s, `slot:${slot(s, 'Racket')}`);
+    const got = Object.values(s.players[0].res).reduce((a, b) => a + b, 0);
+    const said = Object.values(pv.likely.res).reduce((a, b) => a + b, 0);
+    expect(said).toBe(got);
+  });
+});

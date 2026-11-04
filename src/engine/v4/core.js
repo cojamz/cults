@@ -2121,7 +2121,7 @@ function ctxFor(state) {
     leadsLost: (p, v) => { const g = rimCost(state, p)(v); return [...g.colors, ...g.cuts.map(c => c.member)]; },
     /** The contests p leads or ties for now, as if the round ended (contestTable's winners): quadrant ids. */
     /** Each contest's leaders now, as if the round ended: [{ qid, winners: [ids] }]. */
-    contestLeaders: () => contestTable(state).map(c => ({ qid: c.qid, winners: c.winners })),
+    contestLeaders: () => contestTable(state).map(c => ({ qid: c.qid, label: c.label, winners: c.winners })),
     contestsLed: p => contestTable(state).filter(c => c.winners.includes(p.id)).map(c => c.qid),
     log: text => log(state, text),
     /** A preview's reason for a member's effect content applies itself (Grand Host's double): the "Why" row. */

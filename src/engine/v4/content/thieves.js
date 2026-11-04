@@ -83,9 +83,10 @@ function commit(ctx, thief, victim, pick, reaction = false, fromAction = true, l
 }
 // Automatic small steal used by members: from the victim's biggest pile, one at a time.
 /** Racket (REPLACE11=racket): [[rival, steals]] for each contest p doesn't lead; a tie picks the biggest pile. */
-function racketPlan(ctx, p) {
+function racketPlan(ctx, p, placing = false) {
   const owed = new Map();
   for (const c of ctx.contestLeaders()) {
+    if (placing && c.label === 'Went last') continue;
     if (!c.winners.length || c.winners.includes(p.id)) continue;
     const o = c.winners.map(id => ctx.player(id)).sort((a, b) => stealable(ctx, p, b) - stealable(ctx, p, a))[0];
     owed.set(o, (owed.get(o) || 0) + 1);
@@ -305,7 +306,11 @@ const thieves = {
       // gives one steal, from the tied leader with the biggest pile (no choice). Through the shared steal.
       key: 'racket', ring: 1, name: 'Racket', copyDoesIt: true,
       text: "Steal 1 resource from the leader of each contest you aren't leading. +1 magenta.",
-      estimate: (ctx, p) => racketPlan(ctx, p).reduce((a, [o, n]) => a + Math.min(n, stealable(ctx, p, o)), 0) * 0.9,
+      // the steal comes first, as printed, then the +1 magenta (Evaluators, Nov 4: the +1 first could tie you into
+      // Magenta's lead and cost that steal)
+      magentaAfter: true,
+      // before placing, the preview counts you as the round's last placer ("Went last"), as you will be when it resolves
+      estimate: (ctx, p) => racketPlan(ctx, p, true).reduce((a, [o, n]) => a + Math.min(n, stealable(ctx, p, o)), 0) * 0.9,
       resolve(ctx, p) {
         const plan = racketPlan(ctx, p);
         if (!plan.length) { ctx.log(`${p.name}'s Racket: no contest led by a rival.`); return; }
@@ -705,7 +710,9 @@ for (const action of thieves.actions) {
   const resolve = action.resolve, estimate = action.estimate;
   action.copyDoesIt = true;
   if (action.noMagenta) continue;
-  action.resolve = (ctx, p) => { ctx.gain(p, 'magenta', 1, { fromAction: true }); return resolve(ctx, p); };
+  action.resolve = action.magentaAfter
+    ? (ctx, p) => { const out = resolve(ctx, p); ctx.gain(p, 'magenta', 1, { fromAction: true }); return out; }
+    : (ctx, p) => { ctx.gain(p, 'magenta', 1, { fromAction: true }); return resolve(ctx, p); };
   action.estimate = (ctx, p) => 1 + estimate(ctx, p);
 }
 export default thieves;
