@@ -134,7 +134,7 @@ const M = {
   anarchist: ['Ⓐ', '🔁 Swap any 2 members within 2 cost'],
   spoilsport: ['🙅', '🌙 Nobody wins a contest you don’t lead'],
   'con-men': ['🎰', '✨ Steal 5'],
-  hr: ['🗂️', '🏁 +2 followers per color with 3 members'],
+  'sore-loser': ['😤', '🌙 You win no contest: steal 3 followers from the rival who wins most'],
   coach: ['🧢', '✨ Use one of your On Use members again, free'],
   tiebreaker: ['🎲', '♾️ You win every contest tie you’re in'],
   straggler: ['🐢', '🔁 After the last minion: move yours to an open space'],
