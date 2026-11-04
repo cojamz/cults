@@ -1258,8 +1258,9 @@ function refillPiles(state) {
   // all piles: the piles are the whole shop, so the deck (if kept) deals no face-up row
   const rowSize = state.rules?.piles?.only ? 0 : shopSize(state);
   while (row.length < rowSize && state.pile.length) row.push(state.pile.shift());
-  // a row card left over (it can't happen with no row, but a swap can push a deck member into the shop): back on the deck
-  while (row.length > rowSize && state.rules?.piles?.only) state.pile.push(row.pop());
+  // a row card left over (a member swapped for a pile's top lands in the shop): to the bottom of the deck, so the row
+  // stays its size (Grey piles grew it to 9; Claude, under Cory's "make judgement calls", Nov 3, setup audit)
+  while (row.length > rowSize) state.pile.push(row.pop());
   const tops = [];
   for (const d of Object.keys(state.supply)) {
     if (!pileOpen(state, d)) continue;
@@ -1554,6 +1555,9 @@ function swapMembers(state, actor, aUid, bUid) {
     // Extra minions are entitlements rather than Recruit effects; a gifted Extra Hand still owns its grant.
     for (const def of effectiveDefs(state.cards[uid])) workersNow(state, dest.owner, def, uid);
   }
+  // piles: a member swapped into the shop settles at once (a pile's copy goes back under its pile, the next copy turns
+  // up), so a choice queued after this swap (a copy's second Demote) never offers a copy that is about to go under
+  if (state.supply && (!a.owner || !b.owner)) refillPiles(state);
   return true;
 }
 

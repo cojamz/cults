@@ -45,13 +45,19 @@ export function checkInvariants(s, ctx) {
   s.shop.forEach(u => put(u, 'shop'));
   Object.entries(s.waiting || {}).forEach(([r, w]) => { if (Number(r) <= s.round) fail(`round ${r} members still waiting`, s, ctx); w.forEach(u => put(u, `waiting ${r}`)); });
   s.players.forEach(p => p.members.forEach(u => put(u, p.name)));
+  // piles shops (rules.shop grey/all): each pile's copies under its top; stalls (Market Stall) hold set-aside members
+  Object.entries(s.supply || {}).forEach(([d, w]) => w.forEach(u => put(u, `pile ${d}`)));
+  Object.entries(s.stalls || {}).forEach(([k, w]) => w.forEach(u => put(u, `stall ${k}`)));
   // artifacts: each held by the player who picked it, or waiting unpicked (a color nobody took yet)
   s.players.forEach(p => { if (p.artifact !== undefined) put(p.artifact, `${p.name}'s artifact`); });
   Object.values(s.artifacts || {}).forEach(u => { if (!seen.has(u)) put(u, 'artifact'); });
   const all = Object.keys(s.cards).map(Number);
   if (seen.size !== all.length || all.some(u => !seen.has(u))) fail(`cards lost: ${seen.size} of ${all.length}`, s, ctx);
   // the shop is full while the pile lasts (Churn refills once, after its last pick)
-  if (!['market.churn', 'benders.scoutPick'].includes(s.queue[0]?.h) && s.shop.length !== Math.min(shopSize(s), s.shop.length + s.pile.length)) fail(`shop ${s.shop.length} with pile ${s.pile.length}`, s, ctx);
+  // piles shops: the shop is the face-up row plus each open pile's top; All piles has no row (the rest stay face down)
+  const row = s.supply ? s.shop.filter(u => s.supply[s.cards[u].def] === undefined) : s.shop;
+  const rowSize = s.supply && s.rules?.piles?.only ? 0 : shopSize(s);
+  if (!['market.churn', 'benders.scoutPick'].includes(s.queue[0]?.h) && row.length !== Math.min(rowSize, row.length + (rowSize ? s.pile.length : 0))) fail(`shop row ${row.length} with pile ${s.pile.length}`, s, ctx);
   // pending exists exactly while the game runs
   if (!s.pending !== !!s.over) fail(`pending ${!!s.pending} but over ${s.over}`, s, ctx);
   if (s.pending) {

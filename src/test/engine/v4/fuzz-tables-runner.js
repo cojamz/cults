@@ -166,11 +166,11 @@ export const pickers = {
 
 /** Play one game on a table, checking everything after every move. Returns { state, moves, stats }. */
 // allOptions: at every decision, also apply every other legal option once and check the result.
-export function runTable({ quadrants, n, seed, kind, deep = false, allOptions = false, soft = null }) {
+export function runTable({ quadrants, n, seed, kind, deep = false, allOptions = false, soft = null, rules, levels, onMove }) {
   const ctx = `[${quadrants.join(',')}] ${kind} n=${n} seed=${seed}`;
   const rand = seededRandom(seed * 7919 + n * 31 + kind.length);
   const pick = pickers[kind](rand);
-  let s = createGame({ seats: Array.from({ length: n }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed, quadrants });
+  let s = createGame({ seats: Array.from({ length: n }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot', ...(levels?.[i] ? { bot: levels[i] } : {}) })), seed, quadrants, ...(rules ? { rules } : {}) });
   const moves = [];
   const verified = new Set();
   const stats = { kinds: new Set(), optionKinds: new Set(), extraTurns: 0, copies: 0, thefts: 0 };
@@ -206,6 +206,7 @@ export function runTable({ quadrants, n, seed, kind, deep = false, allOptions = 
     checkInvariants(next, ctx);
     checkSphereInvariants(next, s, ctx, verified, soft || failHard);
     checkLedger(books, next, s, newLines(s, next), ctx, soft || failHard);
+    if (onMove) onMove(s, next, m);
     moves.push(m);
     s = next;
   }
