@@ -3,7 +3,7 @@
 // REPLACE10=copyist,copyist2 (+2 followers a copy) and warmup,warmupcheap (2 green + 2 any).
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE10 = 'copyist,copyist2,warmup,warmupcheap,encore,encorenext';
+process.env.REPLACE10 = 'copyist,copyist2,warmup,warmupcheap,encore,encorenext,songrequest,songrequest2';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { table } = await import('./cards-helpers-b.js');
@@ -40,5 +40,10 @@ describe('REPLACE10 second versions', () => {
     while (s.pending?.player === 0 && s.pending.kind === 'choose' && /steal|Accomplice/i.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
     expect(named(s, 'Encore')).toContain("P1's Encore: Accomplice's On Recruit again.");
     expect(s.players[0].encoreTurn).toBeUndefined();
+  });
+
+  it('Song Request at 4 green + 3 any (songrequest2)', () => {
+    const d = defById('echo.songrequest');
+    expect([d.s, d.w]).toEqual([4, 3]);
   });
 });

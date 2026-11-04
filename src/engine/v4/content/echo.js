@@ -618,7 +618,8 @@ const echoQ = {
     // REPLACE10 bot test (Nov 4 noon, scale-up batch 2, pitches/D-scale2.md): Busker's place. 3 green + 2 any as a player
     // sees it. On your turn (placing or buying), once a round: one action a rival has a minion on, done for you as Echo
     // copies (Agents blocks it). The card is turned until the next round starts.
-    ...add10(m('songrequest', 'Song Request', 2, 2, 'On Use, once per round: copy an action a rival has a minion on.', {
+    // REPLACE10=songrequest,songrequest2: 4 green + 3 any (its first trial: owners won 39% at 3 + 2, Busker 31%)
+    ...add10(m('songrequest', 'Song Request', on10('songrequest2') ? 3 : 2, on10('songrequest2') ? 3 : 2, 'On Use, once per round: copy an action a rival has a minion on.', {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
