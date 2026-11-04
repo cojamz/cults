@@ -9,7 +9,7 @@ You get a folder with index.json (the card's printed text) and 2 to 4 sheets (<c
 For each sheet, answer in plain words, then score 0/1/2 (2 = clearly yes, 1 = sort of, 0 = no):
 - P1 Clear outcome (C1): before buying or firing it, could you tell what it would give? Did anything surprise you?
 - P2 Felt powerful (C3): when it fired, was it a moment? Compare its gain to what that turn's best other option gave, by name and number.
-- P3 Felt by the table (C4): did any rival's options or results change because of it (a sting they could see coming, a gift, a reason to block)? Name the rival and turn, or say nobody noticed.
+- P3 Felt by the table (C4 score slot; under rubric v1.2 this reaction is C5's question, kept here so A/Bs stay comparable): did any rival's options or results change because of it (a sting they could see coming, a gift, a reason to block)? Name the rival and turn, or say nobody noticed.
 - P4 Momentum (C7): did it build on your other cards, or did later choices build on it? Did you feel the payoff coming?
 - P5 Agency (C8): did it change a decision: buying it over something else, aiming it, timing it? Or was it autopilot?
 - P6 Catch-up (C9): where were you in followers when you got it and at the end? Did it help you catch up, extend a lead, or neither? Could rivals have answered it?
@@ -17,4 +17,8 @@ For each sheet, answer in plain words, then score 0/1/2 (2 = clearly yes, 1 = so
 
 Before calling anything built wrong on timing: a sheet prints a move's results through the start of the next turn, so a "Round Start", "start of turn" or "whenever you take a turn" line can sit under the turn before the one it belongs to. Check the turn after before you call a timing mismatch (Pace-Setters, Nov 4: a judge called it built wrong from this; the code was right).
 
+Score every sheet and write your preferences first; only then, and only for a suspected mismatch, grep (the code names each version, so grepping earlier unblinds you; Nov 4, a Stagehand judge saw the names). Only after your scores are written, and only for a sheet you are about to call a bug or built wrong: grep design/decisions.md and the card's code comments (src/engine/v4/content/) for the card's name and quote the latest line in your report. If any line of Cory's covers that behavior, report it as "a question for Cory: <his line> vs <what the sheet shows>", never as a bug (Nov 4: Panel and Go-Between "bugs" were his logged calls and had to be reverted). Never read decisions.md before scoring: Cory's opinions there would steer your scores.
+
 Write JSON to <folder>/play-judge-<your number>.json: {"card":name,"sheets":[{"file":name,"scores":{"P1":n,"P2":n,"P3":n,"P4":n,"P5":n,"P6":n},"builtRight":true|false,"mismatch":"quote or null","notes":"3 plain sentences: what happened with the card in this game"}],"verdict":"one plain line on how the card plays"}. Return the verdict line and any mismatch.
+
+Prices: a member's printed price (on the sheet and board) is the number in its card file plus 1, Cory's Oct 27 call applied once in src/engine/v4/content/index.js (EXTRA_WILD, COLOR_SHIFT). Judge the printed price; a code comment or decisions line from before Oct 27 quoting a lower cost is not a mismatch.
