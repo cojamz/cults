@@ -30,6 +30,14 @@ instruction file in .claude/agents/ and a folder; scripts make the folders and a
    table, momentum, agency, catch-up, and whether every log line matches the printed text.
 3. `node scripts/quality/play-score.mjs <folder>`: medians and any built-wrong line. Built wrong blocks the card.
 
+## Blind A/B play (the ship gate, director Nov 4)
+1. The Lab's trial gives sheet-<seed>-*.md for the new card and, in base/, the same seeds with the switch off from the seat that held the old card.
+2. `node scripts/quality/play-ab.mjs <newDir> <baseDir> "<new name>" "<new text>" "<old name>" "<old text>" --out <dir>` trims each
+   sheet around its own card, names both "the slot card", and shuffles each seed into pair-<seed>/A.md and B.md (key.json holds the answer).
+3. Two or three fresh judges read <dir>/brief.md and .claude/agents/play-judge.md, never key.json, and write play-judge-<n>.json at the root.
+4. `node scripts/quality/play-ab.mjs score <dir>`: the new card ships on play when the average of its six medians beats the old card's by 0.3
+   or more and its Clear outcome median is above 0. Pairs with Last-Minute Shopper or Seat Filler count only on runs pinned at or after 91c72004.
+
 ## The ranking (every live card, worst first)
 `node scripts/quality/ranking.mjs <dir with judge-*.json> ...` (bash scripts/quality/r1-ranking.sh rebuilds the
 published one): median of the judges, the bar, protected and fuel-anchor flags, and the checks on the judges
