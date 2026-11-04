@@ -19,6 +19,8 @@ Last updated 2026-11-03 7:05pm Eastern by the "Plan and run today's autonomous i
 - Bots were blind to most new cards when buying (/mnt/project-files/replacements/why-unbought.md). BOTSEE=1 (src/engine/v4/content/botsee.js, bots.js seeUse) fixes it as a bot test only; with it eight cards are too strong as priced (Turncoats, Defectors, Outbidders, Fundraisers, Mirror Image, Social Climbers, Evictors, Tithe Takers).
 - Next: live set 3 (Night Watch, Second-Story Men, Hawkers, Sore Losers; pictures done 120c6fb4); decide whether BOTSEE goes into the live bots; reprice the strong eight and retest; cut the real misses (list in batch7 results). Runners: .bt/run.sh pattern, shard script /mnt/project-files/replacements/runs/shard.sh, analyzer .bt/cards2.py (local, not committed; copy in /mnt/project-files/replacements/runs/).
 
+- Lane F (Nov 4 quality loop, REPLACE13 in src/engine/v4/content/replace13.js): stopped for the token budget. Built and paper-passed: Pickers, Night Porter (A/Bs played, not judged), Tastemakers, Last Orders, Fashion Police, Closing Act, Busybody. Shake Down stays (three steal spaces failed the small-cult bar). Next steps and new ideas: /mnt/project-files/quality/brainstorm-next/F.md.
+
 ## The game now
 - Eight 2.0 colors live: Red, Green, Magenta, Purple, Blue, White, Yellow, Silver (each with a cloak). Gold is backlog. Decks: 10 per color is the game (Cory, Nov 1); 15 is an untested setting.
 - Contest prizes +4/+6/+10; members pay +1 any on top of the printed cost, and since v0.99.510 one of the "any" is the member's own color (grey members keep the wild).
