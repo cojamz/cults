@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.547 — 2026-11-03
+
+- Since your last turn shows one line per rival move and stays up when your turn starts; recruits play one step at a time (coins in, to the middle, then to the buyer); Heist steals 3 followers; Leaders' Tax pays +1 per rival with a minion on the color; starting a new game keeps the unfinished one in Past games; Grey piles row keeps its size after a pile swap; Scouts never re-picks a member; setup screen notes for piles
+
 ## v0.99.546 — 2026-11-03
 
 - Pizza's minion sings "pizza pizza" when it's placed
