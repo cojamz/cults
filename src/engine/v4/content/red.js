@@ -196,7 +196,7 @@ export default {
     // REPLACE7 bot test (Nov 4, quality loop, Members A): Volunteer's place. 2 red + 1 any as a player sees it, a round I
     // member. At round start (II and III; it can't be bought before round I's) the owner may give it to the shop and
     // recruit a shop member costing up to 3 more, for free: Promote's trade, done by the card itself.
-    ...add7(m('seatfiller', 'Seat Filler', 1, 1, 'Round Start: you may give this to the shop and recruit a shop member costing up to 3 more.', {
+    ...add7(m('seatfiller', 'Seat Filler', 1, 1, 'Round Start: you may give this to the shop and recruit a shop member costing up to 3 more, for free.', {
       onRoundStart(ctx, owner, card) {
         const list = ctx.shopCards().filter(x => cost(x) <= cost(card) + 3);
         if (!list.length) { ctx.log(`${owner.name}'s ${card.def.name}: no shop member costs ${cost(card) + 3} or less.`); return; }

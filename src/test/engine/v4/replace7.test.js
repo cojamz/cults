@@ -32,7 +32,7 @@ describe('REPLACE7: the switch', () => {
   });
 });
 
-describe('Seat Filler: "Round Start: you may give this to the shop and recruit a shop member costing up to 3 more."', () => {
+describe('Seat Filler: "Round Start: you may give this to the shop and recruit a shop member costing up to 3 more, for free."', () => {
   const start = () => table(['red', 'market', 'trading', 'yellow'], { round: 1, members: [['red.seatfiller']],
     pileFirst: ['red.bodysnatchers', 'red.panel', 'red.crowd'], queue: [{ t: 'round', r: 2 }] }); // round II's row
 
