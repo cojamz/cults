@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.554 — 2026-11-04
+
+- Emoji members: every member is now a pixel drawing of its emoji, in the same style as the minions
+
 ## v0.99.553 — 2026-11-04
 
 - Smoother play: the strip of rival moves no longer measures itself on every step
