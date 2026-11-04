@@ -34,6 +34,9 @@ const MEMBER_BIAS = 2, BIAS_FLOOR = 0.3, SPITE = 0.4;
 // judge when to use a member by what it gains, played out. A use that only pays on the next buy is measured on that buy
 // (followUpGain), and Hard plays a once-per-game use against holding it to the end of the game (thinker.js holdOrUse).
 export const SMART = globalThis.process?.env?.BOTSMART === '1';
+// BOTHOLD=1: a once-a-game use must also beat holdValue. Off: with it smart Hard trailed today's Hard by 2.2 followers a
+// game (48 games, design/eval/bots-smart/duel-3.jsonl); it held uses too long.
+const HOLD_BAR = globalThis.process?.env?.BOTHOLD === '1';
 // LIQUID=<share> (bot test only): see buysAt in rateOptions
 const LIQUID_SHARE = globalThis.process?.env?.LIQUID ? Number(globalThis.process.env.LIQUID) : 1;
 // Easy and casual are normal with other options (see scoreOptions): noise = random spread on placements, buyNoise
@@ -437,7 +440,7 @@ function useOption(state, pend, ctx, p, smart = SMART) {
       let gain = g ? g.gain : 0;
       if (Math.abs(gain) <= 0.05) { const f = followUpGain(state, c.uid); gain = f ? f.gain : 0; }
       if (gain <= 0.05) return false;
-      return gain >= Math.max(useBar(state, def, p), holdValue(state, c.uid, p));
+      return gain >= Math.max(useBar(state, def, p), HOLD_BAR ? holdValue(state, c.uid, p) : 0);
     }
     if (!g || Math.abs(g.gain) <= 0.05) return rule;
     if (g.gain < useBar(state, def, p)) return false;
@@ -471,7 +474,7 @@ export function placeUse(state) {
     if (!f || f.gain <= 0.05) continue;
     const def = defById(state.cards[o.uid].def);
     const last = p.left <= 1 && state.round >= 3;
-    if (f.gain >= Math.max(last ? 0.05 : useBar(state, def, p), holdValue(state, o.uid, { ...p, left: p.left - 1 }))) return o;
+    if (f.gain >= Math.max(last ? 0.05 : useBar(state, def, p), HOLD_BAR ? holdValue(state, o.uid, { ...p, left: p.left - 1 }) : 0)) return o;
   }
   return null;
 }
