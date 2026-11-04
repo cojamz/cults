@@ -11,7 +11,7 @@ From your clone of cojamz/patrons (any branch; your checkout is never moved):
 node /mnt/project-files/queue/queue.mjs work --label="<your thread title>" --jobs=4
 ```
 
-Run it as a background command. It plays the oldest highest-priority open job, in 5-game blocks, 4 at a time, from a worktree at the job's commit next to your clone (`../q-<sha>`; node_modules is shared when the lockfile matches, else `npm ci` runs once). When every job is finished or being played, it checks once a minute for 90 minutes (`--wait=<min>`) and then exits printing `QUEUE IDLE`. When it exits, post one line to your thread and end your turn; run `work` again when the coordinator or the work desk wakes you.
+Run it as a background command. It plays the oldest highest-priority open job, in 5-game blocks, 4 at a time, from a worktree at the job's commit next to your clone (`../q-<sha>`; node_modules is shared when the lockfile matches, else `npm ci` runs once). When every job is finished or being played, it checks once a minute for 90 minutes (`--wait=<min>`) and then exits printing `QUEUE IDLE`. Background commands stop at a 2-hour limit: if `work` ends without printing `QUEUE IDLE`, run it again at once (pass a long timeout). When it exits with `QUEUE IDLE`, post one line to your thread and end your turn; run `work` again when the coordinator or the work desk wakes you.
 
 Restart-safe: if your box restarts, just run `work` again. Finished blocks are never replayed; a block you were playing becomes free 10 minutes after your box stopped refreshing it.
 
