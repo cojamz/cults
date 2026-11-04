@@ -11,7 +11,7 @@ import { add2, old2, handlers2 } from './replace2.js';
 import { add6, old6 } from './replace6.js';
 import { add8, old8, handlers8 } from './replace8.js';
 import { swap11, handlers11 } from './replace11.js';
-import { add14, old14 } from './replace14.js';
+import { add14, old14, handlers14 } from './replace14.js';
 import { see, endsAhead, SEE_SPITE } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -43,7 +43,7 @@ function giveTo(ctx, giver, to, color, n, once = null) {
   ctx.gain(to, color, n);
   // run as the member, so what it gives traces to it (Guest)
   for (const [c, d] of hooks(ctx, to, 'onGiven')) ctx.asMember(to, d.name, () => d.onGiven(ctx, to, c, giver, color, n));
-  if (color === S) for (const o of ctx.state.players) for (const [c, d] of hooks(ctx, o, 'onAnyGifted')) ctx.asMember(o, d.name, () => d.onAnyGifted(ctx, o, c, giver, once));
+  if (color === S) for (const o of ctx.state.players) for (const [c, d] of hooks(ctx, o, 'onAnyGifted')) ctx.asMember(o, d.name, () => d.onAnyGifted(ctx, o, c, giver, once, n));
 }
 /** Give n of a color to every other player. One gift for the giver's onGive hooks. */
 function giveAll(ctx, giver, color, n) {
@@ -134,6 +134,12 @@ function polisherTurn(ctx, p, x) {
   p.res[S] -= x;
   ctx.log(`${p.name}'s Polisher: ${x} silver into ${2 * x} of any colors.`);
   polishPick(ctx, p, 2 * x, 'Polisher');
+}
+/** Charmers (REPLACE14): +1 of any color, one pick at a time. */
+function charmPick(ctx, p, left) {
+  ctx.choose(p, `Charmers: +1 of which color? (${left} to pick)`, ctx.state.resources.map(c => ({
+    id: `color:${c}`, label: `+1 ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0) + (c === S ? 0.5 : 0),
+  })), 'silver.charm', { left });
 }
 function polishPick(ctx, p, left, who = 'Polish') {
   ctx.choose(p, `${who}: +1 of which color? (${left} to pick)`, otherColors(ctx).map(c => ({
@@ -378,6 +384,12 @@ const silver = {
       shareStep(ctx, p, { ...data, given });
     },
     polisher(ctx, p, x) { polisherTurn(ctx, p, x); },
+    ...handlers14({
+      charm(ctx, p, c, data) {
+        ctx.gain(p, c, 1);
+        if (data.left > 1) charmPick(ctx, p, data.left - 1);
+      },
+    }),
     polish(ctx, p, c, data) {
       const who = data.who || 'Polish';
       ctx.gain(p, c, 1);
@@ -585,11 +597,11 @@ const silver = {
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.08 * WW_N),
     })),
     // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
-    m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2, ...old14('bigspenders') }),
+    m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2, ...old14('bigspenders'), ...old14('charmers') }),
     // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-smoothtalkers.md): Smooth Talkers' place, same price.
     // The silver you pay for a member (its own recruit not included: it isn't in your cult yet) is handed to rivals you
     // choose, all of it, and pays a follower each, as Party Gifts pays from the bank. Follower buys don't count.
-    ...add14(m('bigspenders', 'Big Spenders', 5, 5, 'When you pay silver for a member, it goes to rivals you choose instead of the bank. +1 follower per silver.', { f: 2, n: 2,
+    ...add14(m('bigspenders', 'Big Spenders', 5, 5, 'Silver you pay for members goes to rivals you choose, +1 follower each.', { f: 2, n: 2,
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what.member || what.member.uid === card.uid) return;
         const k = what.spent?.silver || 0;
@@ -597,6 +609,23 @@ const silver = {
       },
       // BOTSEE: about two silver-paid buys a game after it, about 3 silver each
       ...see(info => 3 * Math.max(0, 3 - info.round)),
+    })),
+    // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-smoothtalkers.md; paper 19 vs 13): Smooth Talkers'
+    // place, same price. Every silver you hand a rival counts (Toast, Party Gifts, Potluck, Largesse, Hostesses, Creditor):
+    // the gift's silver is added up as it lands, then paid out once the gift is done, one color pick at a time.
+    ...add14(m('charmers', 'Charmers', 5, 5, 'Whenever you give silver to rivals, +1 of any color per silver given.', { f: 2, n: 2,
+      onAnyGifted(ctx, owner, card, giver, once, n) {
+        if (giver === owner && n > 0) card.charm = (card.charm || 0) + n;
+      },
+      onGive(ctx, owner, card, color) {
+        const k = card.charm || 0;
+        if (color !== S || !k) return;
+        card.charm = 0;
+        ctx.log(`${owner.name}'s Charmers: ${k} silver given, +${k} of any colors.`);
+        charmPick(ctx, owner, k);
+      },
+      // BOTSEE: about 6 silver given a game by a silver player (Toast, Party Gifts), one resource each
+      ...see(info => 2.5 * endsAhead(info).length),
     })),
     // REPLACE2 bot test (Nov 3, replacement batch 2): Debutantes' place. 6 silver + 3 any as a player sees it. The +2 each is
     // a gift (Caterer, Hangers-On); the count is all the silver rivals hold after it.

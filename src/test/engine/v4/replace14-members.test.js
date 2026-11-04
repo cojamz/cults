@@ -2,7 +2,7 @@
 // Members E lane (REPLACE14, Nov 4): members. One test per sentence, plus the pitched turn.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE14 = 'bigspenders,firstbirds';
+process.env.REPLACE14 = 'bigspenders,firstbirds,charmers';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { quadrant, defById } = await import('../../../engine/v4/content/index.js');
 const { table, uidIn } = await import('./cards-helpers-b.js');
@@ -59,5 +59,32 @@ describe('REPLACE14: Early Birds reworked ("If you place the round’s first min
     s = plain(s); // P2's first minion is the round's second
     expect(s.log.join('\n')).not.toContain('Early Birds');
     expect(s.pending.player).toBe(2);
+  });
+});
+
+describe('REPLACE14: Charmers ("Whenever you give silver to rivals, +1 of any color per silver given.")', () => {
+  it("is dealt in Smooth Talkers' place", () => {
+    expect(defById('silver.charmers').name).toBe('Charmers');
+    expect(defById('silver.smoothtalker').retired).toBe(true);
+  });
+  it('Toast in round I: each of 3 rivals +1 silver, so +3 of any colors, picked one at a time (the pitched turn)', () => {
+    let s = table(['red', 'silver', 'market'], { n: 4, round: 1, members: [['silver.charmers']] });
+    s = answer(s, `slot:${slot(s, 'silver', 'Toast')}`);
+    expect(log(s)).toContain("P1's Charmers: 3 silver given, +3 of any colors.");
+    s = answer(s, 'color:red'); s = answer(s, 'color:red'); s = answer(s, 'color:blue');
+    expect(s.players[0].res).toMatchObject({ red: 2, blue: 1, silver: 3 });
+    expect([1, 2, 3].map(i => s.players[i].res.silver)).toEqual([1, 1, 1]);
+  });
+  it('Party Gifts giving 2: +2 of any colors on top of its 4 followers; silver a rival gives you pays nothing', () => {
+    let s = table(['red', 'silver'], { n: 3, round: 1, members: [['silver.charmers']] });
+    s = answer(s, `slot:${slot(s, 'silver', 'Party Gifts')}`);
+    s = answer(s, 'player:1'); s = answer(s, 'player:2'); s = answer(s, 'done');
+    expect(log(s)).toContain("P1's Charmers: 2 silver given, +2 of any colors.");
+    s = answer(s, 'color:silver'); s = answer(s, 'color:red');
+    expect(s.players[0].res).toMatchObject({ silver: 1, red: 1 });
+    expect(s.players[0].bonus).toBe(4);
+    let t = table(['red', 'silver'], { n: 2, round: 1, members: [[], ['silver.charmers']] });
+    t = answer(t, `slot:${slot(t, 'silver', 'Toast')}`);
+    expect(log(t)).not.toContain('Charmers');
   });
 });
