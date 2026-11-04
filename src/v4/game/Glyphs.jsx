@@ -153,7 +153,9 @@ export function LeaderRing({ state, id, size = 32, minion = 16, compact = false,
   const label = `${name}'s leader${left ? ` and ${left} minion${left === 1 ? '' : 's'} still to place` : ', every minion placed'}`;
   return (
     <span className={`lt-ring${compact ? ' compact' : ''}`} style={{ width: W, height: H }} data-hint={label} aria-label={label} role="img" data-leader-ring={id} data-left={left}>
-      <span className="lead" data-leader={id} style={{ left: cx - size / 2, top: cy - size / 2 }}>
+      {/* each leader blinks on its own beat: in step, every hood went dark at once and the four chairs read as padlocks
+          (picky bot, Nov 4) */}
+      <span className="lead" data-leader={id} style={{ left: cx - size / 2, top: cy - size / 2, '--blink': `${(-((id * 1.9) % 4.7)).toFixed(2)}s` }}>
         {/* every seat shows the robed leader (Cory, 2026-10-15: "every block should show a robed leader") */}
         <Leader color={playerColor(id)} emoji={seatEmoji(state, id)} sigil={seatSigil(id)} size={size} tall={isMax(state, id)} robe={cloak && cloakOf(state, id) ? CLOAK_HEX[cloakOf(state, id)] : undefined} />
       </span>
