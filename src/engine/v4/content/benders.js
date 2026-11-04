@@ -274,8 +274,8 @@ const members = [
   ...add15(m('victors', 'Victors', null, 0, 4, 'Whenever you win a contest, +2 of its color.', {
     onContestWin(ctx, owner, card, c) {
       const color = ctx.quadrant(c.qid).resource;
-      const got = ctx.gain(owner, color, 2);
-      if (got) ctx.log(`${owner.name}'s Victors: +${got.n} ${got.color}.`);
+      // named on the resource ledger as Victors
+      ctx.asMember(owner, 'Victors', () => { const got = ctx.gain(owner, color, 2); if (got) ctx.log(`${owner.name}'s Victors: +${got.n} ${got.color}.`); }, card.uid);
     },
   })),
   ...add15(m('warchest', 'War Chest', null, 0, 4, 'Whenever you win a contest, +3 resources in any colors.', {

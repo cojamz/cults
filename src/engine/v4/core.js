@@ -2619,6 +2619,8 @@ function settle(state, f) {
       if (m) { rlabel = `Recruited ${m[1]}`; break; }
       if (/ bought \d+ followers?/.test(l)) { rlabel = 'Bought followers'; break; }
       if (/ drafts /.test(l)) { rlabel = 'Starting pick'; break; }
+      const used = / used (.+?):/.exec(l); // an On Use whose card logs "P3 used Lottery Winner: …"
+      if (used) { rlabel = used[1]; break; }
       const cloak = / takes the (.+? Cloak)/.exec(l);
       if (cloak) { rlabel = cloak[1]; break; }
     }
