@@ -1157,6 +1157,14 @@ export function scoringOf(state, qid) {
       score: (ctx, p) => Math.max(0, (p.res.white || 0) - memberCount(state, p)), show: (ctx, p) => ({ count: (p.res.white || 0) - memberCount(state, p) }) };
     if (fix.white === 'followers') by.trading = { label: 'Fewest followers', counts: 'your followers when the round ends',
       score: (ctx, p) => 100000 - followers(state, p), show: (ctx, p) => ({ count: followers(state, p) }) };
+    // Contest candidates for White and Silver (lane B, Nov 4, after Cory: contests "might be a little too confining"); bot trials only
+    if (fix.white === 'held') by.trading = { label: 'Most white', counts: 'the white you hold when the round ends', score: (ctx, p) => p.res.white || 0 };
+    if (fix.white === 'leanWhite') by.trading = { ...fewest, label: 'Fewest members, ties to most white', tiebreak: { unit: 'white', text: 'ties go to the most white held' },
+      score: (ctx, p) => { const n = memberCount(state, p); return n > 0 ? (1000 - n) * 1000 + (p.res.white || 0) : 0; }, show: (ctx, p) => ({ count: memberCount(state, p), tiebreak: p.res.white || 0 }) };
+    if (fix.silver === 'fewest') by.silver = { label: 'Fewest silver, at least 1', counts: 'the silver you hold when the round ends (at least 1)',
+      score: (ctx, p) => { const n = p.res.silver || 0; return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: p.res.silver || 0 }) };
+    if (fix.silver === 'present') by.silver = { label: 'Most silver, if on silver', counts: 'the silver you hold, if you have a minion on a Silver space when the round ends',
+      score: (ctx, p) => (onIt(p) ? (p.res.silver || 0) : 0), show: (ctx, p) => ({ count: p.res.silver || 0 }) };
     if (fix.white === 'notTwice') {
       const last = (state.contests || []).at(-1)?.results.find(c => c.qid === 'trading')?.winners || [];
       by.trading = { ...fewest, label: 'Fewest members, not last round\'s winner', score: (ctx, p) => (last.includes(p.id) ? 0 : fewest.score(ctx, p)) };

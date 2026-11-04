@@ -49,3 +49,33 @@ describe('By color: Green and White (Cory, Nov 3)', () => {
     expect(s.players.filter(p => w.score(ctx, p) === best).map(p => p.id)).toEqual([3]);
   });
 });
+
+describe('By color: White and Silver contest candidates (bot trials only, contestFix)', () => {
+  const g2 = fix => createGame({ seats: Array.from({ length: 4 }, () => ({ kind: 'bot' })), seed: 4, quadrants: ['silver', 'trading', 'red', 'echo'], rules: { contests: 'byColor', contestFix: fix } });
+  it('White most white; fewest members with ties to most white', () => {
+    let s = g2({ white: 'held' }); const ctx = contextFor(s);
+    s.players[0].res.white = 5; s.players[1].res.white = 2;
+    const w = scoringOf(s, 'trading');
+    expect(w.label).toBe('Most white');
+    expect(w.score(ctx, s.players[0])).toBe(5);
+    s = g2({ white: 'leanWhite' });
+    const l = scoringOf(s, 'trading');
+    // nobody has members at the start: nobody scores
+    expect(s.players.map(p => l.score(contextFor(s), p))).toEqual([0, 0, 0, 0]);
+  });
+  it('Silver fewest (at least 1): 0 silver scores nothing, 1 beats 3; on-silver needs a minion there', () => {
+    let s = g2({ silver: 'fewest' }); const ctx = contextFor(s);
+    s.players.forEach((p, i) => { p.res.silver = [0, 1, 3, 1][i]; });
+    const f = scoringOf(s, 'silver');
+    const sc = s.players.map(p => f.score(ctx, p));
+    expect(sc[0]).toBe(0);
+    expect(sc[1]).toBeGreaterThan(sc[2]);
+    expect(sc[1]).toBe(sc[3]);
+    s = g2({ silver: 'present' });
+    s.players[0].res.silver = 4; s.players[1].res.silver = 9;
+    s.slots[`${s.quadrants.indexOf('silver')}-0`] = 0;
+    const pr = scoringOf(s, 'silver');
+    expect(pr.score(contextFor(s), s.players[0])).toBe(4);
+    expect(pr.score(contextFor(s), s.players[1])).toBe(0);
+  });
+});
