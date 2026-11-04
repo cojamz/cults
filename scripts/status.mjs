@@ -94,6 +94,14 @@ if (cmd === 'set') {
   const thread = args.thread || prev?.thread;
   if (!thread) { console.error('First call needs --thread "<this thread\'s title>"'); process.exit(2); }
   if (args.state && !STATES.includes(args.state)) { console.error(`--state is one of ${STATES.join(', ')}`); process.exit(2); }
+  // Cory, Nov 4: a thread waits on him only for a question only he can answer (a design or feel call); publishing never waits.
+  if (typeof args.cory === 'string' && args.cory.trim()) {
+    const c = args.cory;
+    if (/\b(publish|ship|go[- ]?ahead|approv|sign[- ]?off|merge|ok to|okay to|review|look at|screenshot|deploy|run )/i.test(c) || !c.includes('?')) {
+      console.error('--cory is only for a design or feel question only Cory can answer, written as a question ("Keep Loyalists as is, or add a counter?"). Publishing, reviews and approvals never wait on him: set --state working and go on.');
+      process.exit(2);
+    }
+  }
   const rec = { ...(prev || {}), id: prev?.id || slug(thread), thread, session };
   for (const k of ['state', 'doing', 'next', 'eta', 'cory']) if (args[k] !== undefined) rec[k] = args[k] === true ? '' : args[k];
   rec.state ||= 'working';
