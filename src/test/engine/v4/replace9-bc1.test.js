@@ -205,4 +205,11 @@ describe('Moneylender: "On Use, once per round: cast out one of your members cos
     expect(s.pile[s.pile.length - 1]).toBe(vol);
     expect(s.players[0].res.white).toBe(4);
   });
+  it('once per round: usable again the next round', () => {
+    const s = table(Q, { n: 2, round: 2, members: [['trading.moneylender', 'red.volunteer']] });
+    const ml = uidIn(s, 'trading.moneylender', 0);
+    s.cards[ml].used = true;
+    defById('trading.moneylender').onRoundStart({}, s.players[0], s.cards[ml]);
+    expect(s.cards[ml].used).toBe(false);
+  });
 });

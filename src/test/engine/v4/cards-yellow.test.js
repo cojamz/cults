@@ -231,6 +231,13 @@ describe('Yellow members', () => {
     s = move(s, 'color:green');
     expect(R(s, 1)).toMatchObject({ red: 2, green: 1, gold: 1 });
   });
+  it('Leveler: once per round, so it can be used again next round', () => {
+    let s = sc({ members: [['yellow.leveler']] });
+    s.cards[uidOf(s, 'yellow.leveler', 0)].used = true;
+    s.queue = [{ t: 'round', r: 2 }];
+    s = resume(s);
+    expect(s.cards[uidOf(s, 'yellow.leveler', 0)].used).toBeFalsy();
+  });
   it('Big Tent: game end, +2 followers per color you have exactly one member of', () => {
     const s = sc({ members: [['yellow.bigtent', 'red.twins', 'red.intern', 'gold.banker']] });
     expect(cardDef(s, uidOf(s, 'yellow.bigtent', 0)).onGameEnd({ state: s, countMembersOfColor: (p, q) => ({ yellow: 1, red: 2, gold: 1 })[q] || 0 }, s.players[0])).toBe(4);

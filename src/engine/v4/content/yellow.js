@@ -514,6 +514,7 @@ export default {
     // Cory, 2026-10-31: "Make this Use Once Per Round"
     m('leveler', 'Leveler', 4, 3, "On Use, once per round: choose a color; 1 of each rival's biggest color becomes it.", {
       activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner) {
         ctx.choose(owner, 'Leveler: change 1 of each rival\'s biggest color into which color?', colors(ctx).map(b => ({
           id: `color:${b}`, label: b, kind: 'color', value: b, hint: -Math.max(0, ...ctx.rivals(owner).map(o => o.res[b] || 0)),

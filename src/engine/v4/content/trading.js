@@ -466,6 +466,7 @@ const trading = {
     // none, the use comes back. Bots cast out their cheapest-worth member, from round II.
     ...add9(m('moneylender', 'Moneylender', 2, 1, 'On Use, once per round: cast out one of your members costing 3 or less to the bottom of the pile. +4 white.', {
       activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
         const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid && cost(ctx, c.uid) <= 3);
         if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Moneylender: no member costing 3 or less to cast out.`); return; }
