@@ -255,6 +255,20 @@ describe('Jack-of-All-Trades: "Your yellow counts as any color in your full sets
   });
 });
 
+describe('Ambassadors: "On Recruit: +1 of each color you have a member of. Round Start: +1 of each color you have a member of."', () => {
+  const Q4 = ['red', 'yellow', 'market', 'purple'];
+  it('price and retirement', () => {
+    const d = defById('yellow.ambassadors');
+    expect([d.s, d.w, d.f, d.n, d.now]).toEqual([5, 4, 3, 3, true]);
+    expect(defById('yellow.caravan').retired).toBe(true);
+  });
+  it('Round Start: +1 of each color you have a member of (itself yellow), not the colors you hold', () => {
+    const s = table(Q4, { n: 2, round: 1, res: [{ purple: 5 }], members: [['yellow.ambassadors', 'red.volunteer']], queue: [{ t: 'round', r: 2 }] });
+    expect(s.players[0].res).toEqual({ red: 1, yellow: 1, blue: 0, purple: 5 });
+    expect(named(s, 'Ambassadors')).toContain("P1's Ambassadors: +1 red, +1 yellow.");
+  });
+});
+
 describe('REPLACE9 by card key', () => {
   it('a key switches on only that card and retires only its old card', async () => {
     const { execFileSync } = await import('node:child_process');

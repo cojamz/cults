@@ -423,9 +423,16 @@ export default {
       onRoundStart(ctx, owner) { startChange(ctx, owner, { who: 'Puppeteers', left: 3 }); },
     }),
     // Cory, Nov 1 (in place of Puppeteers): "Make it 'On Recruit' as well"
-    m('caravan', 'Caravan', 4, 4, 'On Recruit: +1 of each color you hold. Round Start: +1 of each color you hold.', { f: 3, now: true,
+    m('caravan', 'Caravan', 4, 4, 'On Recruit: +1 of each color you hold. Round Start: +1 of each color you hold.', { f: 3, now: true, ...old9('yellow.caravan'),
       onRoundStart(ctx, owner) { for (const c of held(ctx, owner)) ctx.gain(owner, c, 1); },
     }),
+    // REPLACE9 bot test (Members C, Nov 4): Caravan's place, reworded (plural, as it counts as 3). Same price. "Each color
+    // you have a member of": the table's colors with a member of yours (memberColors; Drifters counts as its chosen color).
+    ...add9(m('ambassadors', 'Ambassadors', 4, 4, 'On Recruit: +1 of each color you have a member of. Round Start: +1 of each color you have a member of.', { f: 3, n: 3, now: true,
+      onRoundStart(ctx, owner) {
+        for (const q of memberColors(ctx, owner)) { const c = ctx.quadrant(q).resource; if (colors(ctx).includes(c)) ctx.gain(owner, c, 1); }
+      },
+    })),
     // Cory, Nov 1 (in place of Explorer): a payoff for changing rivals' resources
     m('tastemaker', 'Tastemaker', 3, 2, "Whenever you change rivals' resources, +1 follower.", { ...old9('yellow.tastemaker') }),
     // REPLACE9 bot test (Members C, Nov 4): Tastemaker's place. 3 yellow + 1 any as a player sees it. Every full-set count
