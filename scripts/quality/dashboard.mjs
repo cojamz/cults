@@ -93,6 +93,14 @@ if (rep) {
   L.push(`- Moves a game that take from a rival: ${games.takes ?? '-'}. Wins with 5 or fewer members: ${pct(games.small)}.`);
   L.push(`- How winners won (Hard): ${(games.plans || []).map(([p, v]) => `${p} ${pct(v)}`).join('; ')}.`);
 } else L.push('- Pending: the fast By color bot run on this build.');
+// ---- funnel, from board.md items ----
+{
+  const items = ((read(`${Q}/board.md`, '') || '').split('## Items')[1] || '').split('\n').filter(l => l.startsWith('| ') && !/^\| (Card|---)/.test(l));
+  const st = l => /live|shipped/i.test(l) ? 'live' : /to director|handed/i.test(l) ? 'handed over' : /pulled/i.test(l) ? 'pulled' : /FAIL|NO:|failed|kept off|dropped|: kept|parked/i.test(l) ? 'stopped' : /trial|Lab/i.test(l) ? 'at the Lab' : /built|REPLACE/i.test(l) ? 'built' : /paper/i.test(l) ? 'paper' : 'pitched';
+  const order = ['pitched', 'paper', 'built', 'at the Lab', 'handed over', 'live', 'stopped', 'pulled'];
+  const n = Object.fromEntries(order.map(k => [k, items.filter(l => st(l) === k).length]));
+  L.push('', '## Funnel (from board.md items)', '', `- ${items.length} items: ${order.map(k => `${k} ${n[k]}`).join(', ')}.`);
+}
 L.push('', '## History', '', '| Snapshot | Build | Card median | Over bar | Overlap | Stings | Words | Plain members |', '|---|---|---|---|---|---|---|---|');
 for (const h of hist.slice(-12)) L.push(`| ${h.label} | ${h.sha} | ${h.set.medianScore} | ${pct(h.set.overBar)} | ${h.identity.meanOverlap} | ${pct(h.set.stings)} | ${h.set.medianWords} | ${h.set.plainCards.length} |`);
 fs.writeFileSync(out, L.join('\n') + '\n');
