@@ -224,7 +224,14 @@ async function runTrial(job, slots) {
   // trial.mjs pins its own sha (its own worktree); it only needs to run from a recent branch tip.
   const cwd = path.join(path.dirname(repo), 'q-tip');
   if (!fs.existsSync(path.join(cwd, '.git'))) sh(`git worktree add -q -f --detach "${cwd}" origin/${BRANCH}`, repo);
-  else sh(`git checkout -q --detach origin/${BRANCH}`, cwd);
+  else { try { sh(`git fetch -q origin ${BRANCH}`, repo); } catch {} sh(`git checkout -q --detach origin/${BRANCH}`, cwd); } // every trial run takes the latest trial.mjs (Nov 4)
+  // Old trial checkouts fill the disk (a new commit every few minutes tonight): keep only this trial's (Nov 4).
+  try {
+    const keep = String(JSON.parse(fs.readFileSync(path.join('/mnt/project-files/trials/trials', job.name, 'spec.json'), 'utf8')).sha || '').slice(0, 12);
+    const wts = path.join(cwd, '.trial-wt');
+    for (const d of fs.existsSync(wts) ? fs.readdirSync(wts) : []) if (d !== keep) { try { sh(`git worktree remove --force "${path.join(wts, d)}"`, cwd); } catch { fs.rmSync(path.join(wts, d), { recursive: true, force: true }); } }
+    try { sh('git worktree prune', cwd); } catch {}
+  } catch {}
   if (!fs.existsSync(path.join(cwd, 'node_modules')) && fs.existsSync(path.join(repo, 'node_modules'))) fs.symlinkSync(path.join(repo, 'node_modules'), path.join(cwd, 'node_modules'));
   runnerDoing = `trial ${job.name}`; beatRunner();
   const code = await new Promise((r) => { trialChild = spawn(process.execPath, ['scripts/trial/trial.mjs', 'work', job.name, `--jobs=${slots}`], { cwd, stdio: 'inherit' }); trialChild.on('exit', (c) => { trialChild = null; r(c); }); });
