@@ -119,3 +119,8 @@ The loop ends only on success: rules 1 to 3 all holding for the whole game at on
 - **Calibration:** these verdicts join calibration as a new held-out set (half B), so the next judge run is tested on calls they've never seen.
 
 - **Failing batches feed the meta loop** (Cory, 12:38am): after any batch where under 1 in 3 candidates pass, or Cory rejects most of a batch, the Process critic must name the cause in writing and change at least one thing (brief, rubric line, judge prompt, shape rules) before the next batch starts. Cory's 12:35am verdicts are the first such input.
+
+## Color contests are in scope (Cory, Nov 4 12:39am: "feel free to update like the color objective competitions ... those might be a little too confining or ... not quite right with the direction")
+- Each color's By color contest (printed at the top of each color by scripts/quality/board.mjs) is judged like a card on the rubric and in the whole-set check: does it pull the color's cards together, give a real hold-or-spend call, and leave room for more than one plan?
+- A contest change goes through the same paper gate (old contest against 4 to 5 candidates), a built-right proof, and a trial at 120 games a side (it touches every game with that color). Old versions are archived in quality/archive/ and logged in the morning note.
+- Owner: the Actions lane.
