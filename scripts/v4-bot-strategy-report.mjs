@@ -9,8 +9,12 @@ for (const g of games) for (const r of Object.values(g.cards)) {
   if (r.activate !== 'game') continue;
   const row = (by[r.name] ||= { holders: 0, uses: 0, poor: 0, never: 0, neverGood: 0, lost: 0 });
   row.holders++; held++;
+  // the best moment this holder had: any buy step, before the use (held) or after it (the card tried unused again)
   const best = Math.max(0, ...r.chances.map(c => c.gain));
-  if (r.used.length) {
+  const usedHere = r.used.length > 0;
+  const usedBefore = !usedHere && r.chances.length && !r.chances[0].held; // used by a previous owner: not this holder's call
+  if (usedBefore) { row.holders--; held--; continue; }
+  if (usedHere) {
     const got = r.used[0].gain ?? 0;
     row.uses++; uses++;
     // used at under half of the best moment it had, and that moment was worth at least 2 followers more

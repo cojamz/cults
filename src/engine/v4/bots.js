@@ -409,13 +409,14 @@ export function useGain(state, uid) {
  */
 export function followUpGain(state, uid) {
   const pend = state.pending;
-  if (pend?.kind !== 'buy') return null;
+  if (pend?.kind !== 'buy' && pend?.kind !== 'place') return null;
   const me = pend.player;
   const opt = pend.options.find(o => o.kind === 'use' && o.uid === uid);
   if (!opt) return null;
   let after;
   try { after = applyMove(state, { player: me, option: opt.id }); } catch { return null; }
-  if (after.over || after.pending?.player !== me || after.pending.kind !== 'buy') return null;
+  // beside the spaces, a use is followed by this turn's placement (Party Crasher opens the spaces rivals took)
+  if (after.over || after.pending?.player !== me || after.pending.kind !== pend.kind) return null;
   const flat = { noise: 0, buyNoise: 0, memberBias: 0 };
   const best = s => { const r = scoreOptions(s, () => 0, flat); return r.length ? r[0] : null; };
   const a = best(after), b = best(state);
@@ -428,11 +429,15 @@ function useOption(state, pend, ctx, p, smart = SMART) {
     const def = defById(c.def);
     const g = useGain(state, c.uid);
     const rule = [c.def, c.copy, c.ability].some(id => id && defById(id).botActivate?.(ctx, p));
-    if (smart && (!g || Math.abs(g.gain) <= 0.05)) {
+    if (smart) {
       // a use that changes nothing until you buy (Encore, a discount, a second buy): judged by the buy it makes better,
-      // never by the card's rule (Encore's rule fired on any 5-cost member in the shop and doubled whatever came next)
-      const f = followUpGain(state, c.uid);
-      if (f) return f.gain >= useBar(state, def, p);
+      // never by the card's rule (Encore's rule fired on any 5-cost member in the shop and doubled whatever came next).
+      // One that pays only on a placement (Party Crasher) is left for the place step (placeUse). A once-a-game use must
+      // also beat what keeping it is worth (holdValue): Hot Streak was cashed for +3 at its first chance in 88% of uses.
+      let gain = g ? g.gain : 0;
+      if (Math.abs(gain) <= 0.05) { const f = followUpGain(state, c.uid); gain = f ? f.gain : 0; }
+      if (gain <= 0.05) return false;
+      return gain >= Math.max(useBar(state, def, p), holdValue(state, c.uid, p));
     }
     if (!g || Math.abs(g.gain) <= 0.05) return rule;
     if (g.gain < useBar(state, def, p)) return false;
@@ -442,6 +447,33 @@ function useOption(state, pend, ctx, p, smart = SMART) {
     return def.activate === 'round' || last || !def.botActivate || rule;
   };
   return pend.options.find(o => o.kind === 'use' && canUse(state.cards[o.uid]));
+}
+
+/** BOTSMART: what keeping an unused once-a-game member is worth, in followers: the end-of-game value's own price for an
+ *  ability with the placements left (abilityValue), 0 on the game's last buy. Round uses come back, so they keep nothing. */
+function holdValue(state, uid, p) {
+  const c = state.cards[uid];
+  const act = [c.def, c.copy, c.ability].filter(Boolean).map(defById).find(d => d.onActivate);
+  if (!act || act.activate !== 'game' || (p.left === 0 && state.round >= 3)) return 0;
+  const { turns } = horizon(state);
+  const left = turns[p.id] + laterTurns(state).turns;
+  return K_ABILITY * (act.s + act.w) * Math.min(1, left / 12);
+}
+/** BOTSMART, beside the spaces: a once-a-game use whose payoff is this turn's placement, taken when the best placement
+ *  after it beats the best one without it by more than keeping it is worth. */
+export function placeUse(state) {
+  const pend = state.pending;
+  if (pend?.kind !== 'place') return null;
+  const p = state.players[pend.player];
+  for (const o of pend.options) {
+    if (o.kind !== 'use') continue;
+    const f = followUpGain(state, o.uid);
+    if (!f || f.gain <= 0.05) continue;
+    const def = defById(state.cards[o.uid].def);
+    const last = p.left <= 1 && state.round >= 3;
+    if (f.gain >= Math.max(last ? 0.05 : useBar(state, def, p), holdValue(state, o.uid, { ...p, left: p.left - 1 }))) return o;
+  }
+  return null;
 }
 
 // ---------- normal: greedy on an end-of-game value ----------
@@ -951,7 +983,10 @@ export function chooseNormalMove(state, rand = Math.random, opts = {}) {
   const move = o => ({ player: pend.player, option: o.id });
   switch (pend.kind) {
     case 'setup': return setupPick(pend, rand);
-    case 'place': return move(scoreOptions(state, rand, opts)[0].o);
+    case 'place': {
+      const use = (opts.smart ?? SMART) ? placeUse(state) : null;
+      return move(use || scoreOptions(state, rand, opts)[0].o);
+    }
     case 'buy': {
       const p = state.players[pend.player];
       const short = buyShortcut(state, opts);

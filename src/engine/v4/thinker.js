@@ -3,7 +3,7 @@
 // best average result. Work is counted in simulated moves, not wall time, so a seed always gives the same move;
 // chooseBotMove also caps a move at 250ms of wall time for the UI (see opts.maxMs).
 import { applyMove, followers } from './core.js';
-import { chooseNormalMove, chooseGreedyMove, scoreOptions, buyShortcut, rankRivalChoice, boundaryParts, SMART, useGain, followUpGain } from './bots.js';
+import { chooseNormalMove, chooseGreedyMove, scoreOptions, buyShortcut, rankRivalChoice, boundaryParts, SMART, useGain, followUpGain, placeUse } from './bots.js';
 import { defById } from './content/index.js';
 import { seededRandom } from './rng.js';
 import { planProfile, planNudge, lessonNudge, modelValues } from './mind.js';
@@ -35,7 +35,7 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   // an activation or a Release normal would take: nothing to think about
   const smart = opts.smart ?? SMART;
   const policy = smart ? { ...ROLLOUT, smart } : ROLLOUT;
-  let short = pend.kind === 'buy' ? buyShortcut(state, { smart }) : null;
+  let short = pend.kind === 'buy' ? buyShortcut(state, { smart }) : smart && pend.kind === 'place' ? placeUse(state) : null;
   if (smart && pend.kind === 'buy' && (!short || short.kind === 'use')) {
     const held = holdOrUse(state, rand, opts, short);
     if (held === HOLD) short = short && !onceUse(state, short) ? short : null;

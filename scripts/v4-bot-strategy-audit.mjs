@@ -54,7 +54,7 @@ for (let g = first; g < first + count; g++) {
   let moves = 0;
   while (!s.over && ++moves < 4000) {
     const pend = s.pending, me = pend.player;
-    if (pend.kind === 'buy' && me !== buyer && !pend.afterPurchase) {
+    if (pend.kind === 'buy' && me !== buyer) {
       const p = s.players[me];
       for (const uid of p.members) {
         const c = s.cards[uid], act = actOf(c);
@@ -70,10 +70,14 @@ for (let g = first; g < first + count; g++) {
       }
     }
     const m = me === buyer ? chooseBotMove(s, rand, { level: 'normal' }) : chooseBotMove(s, rand, botOpts);
-    if (pend.kind === 'buy' && String(m.option).startsWith('use:')) {
+    // a use at any step (a buy, or beside the spaces), with what it gained when taken
+    if (me !== buyer && String(m.option).startsWith('use:')) {
       const uid = Number(m.option.slice(4));
-      const row = cards[`${me}:${uid}`];
-      if (row) row.used.push({ round: s.round, left: s.players[me].left, gain: row.chances.at(-1)?.gain ?? null });
+      const act = actOf(s.cards[uid]);
+      const row = (cards[`${me}:${uid}`] ||= { name: cardDef(s, uid).name, activate: act?.activate, chances: [], used: [] });
+      let gain = null;
+      try { gain = pend.kind === 'buy' ? measure(s, uid) : useGain(s, uid)?.gain ?? null; } catch { /* skip */ }
+      row.used.push({ round: s.round, left: s.players[me].left, kind: pend.kind, gain: gain === null ? null : +gain.toFixed(2) });
     }
     const before = s.players.map(p => new Set(p.members));
     const turn = (s.turns || []).length;
