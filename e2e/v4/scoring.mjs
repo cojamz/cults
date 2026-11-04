@@ -16,7 +16,8 @@ import { countMembersOfColor } from '../../src/engine/v4/core.js';
 function scoringSave() {
   const save = lateSave(21, 3);
   const s = save.state;
-  for (const def of ['red.mob', 'gold.tycoon']) {
+  // a game-end source per kind: Chronicler counts members of a color (Mob was this until it became Round End, Nov 4); Tycoon reads held gold
+  for (const def of ['echo.chronicler', 'gold.tycoon']) {
     const uid = freeCard(s, def);
     s.shop = s.shop.filter(u => u !== uid); s.pile = s.pile.filter(u => u !== uid);
     s.players[0].members.push(uid); s.cards[uid].recruitedRound = 0; s.cards[uid].recruitedBy = 0;
@@ -91,7 +92,7 @@ async function toReckoning() {
   page.on('pageerror', e => errors.push(`pageerror: ${e.message}`));
   page.on('console', m => { if (m.type() === 'error') errors.push(`console: ${m.text()}`); });
   const save = scoringSave();
-  const sources = ['red.mob', 'gold.tycoon'].map(def => ({ uid: save.state.players[0].members.find(u => save.state.cards[u].def === def), def }));
+  const sources = ['echo.chronicler', 'gold.tycoon'].map(def => ({ uid: save.state.players[0].members.find(u => save.state.cards[u].def === def), def }));
   await page.addInitScript(WATCH);
   await seedSave(page, save);
   await page.goto(`${base}/?botDelay=20&intro=0&speed=steady`);
@@ -137,7 +138,7 @@ try {
   const expected = state.players.flatMap(p => (p.final?.cards || []).filter(g => g.n).map(g => ({ ...g, pid: String(p.id), uid: String(g.uid) })));
   for (const source of sources) {
     const grant = expected.find(g => g.uid === String(source.uid) && g.pid === '0');
-    const amount = source.def === 'gold.tycoon' ? Math.floor(state.players[0].res.gold / 2) : countMembersOfColor(state, state.players[0], 'red');
+    const amount = source.def === 'gold.tycoon' ? Math.floor(state.players[0].res.gold / 2) : countMembersOfColor(state, state.players[0], 'green');
     if (!grant || grant.n <= 0 || grant.n !== amount) errors.push(`fixture: ${source.def} should grant ${amount}, engine recorded ${grant?.n}`);
   }
   if (fs.bonuses.length !== expected.length) errors.push(`showed ${fs.bonuses.length} bonus steps; engine granted ${expected.length}`);
