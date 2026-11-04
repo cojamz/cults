@@ -266,19 +266,17 @@ const members = [
   }),
   // REPLACE15 bot test (Cory, Nov 4: "when you win a contest, get x y z"): Dabblers' place. A shared contest counts as a win,
   // as for Cheerleader and Sore Loser. Cheerleaders: 6 any as a player sees it. Gloaters: 8 any; loose followers only,
-  // through the shared steal (Bodyguards blocks it), after every contest is scored, as Sore Loser takes.
+  // through the shared steal (Bodyguards blocks it), the moment each contest is won.
   ...add15(m('cheerleaders', 'Cheerleaders', null, 0, 5, 'Whenever you win a contest, +2 followers.', {
     onContestWin(ctx, owner) { owner.bonus += 2; ctx.log(`${owner.name}'s Cheerleaders: +2 followers.`); },
   })),
   ...add15(m('gloaters', 'Gloaters', null, 0, 7, 'Whenever you win a contest, steal 1 follower from each rival.', {
-    afterContests(ctx, owner, card, table) {
-      const wins = table.filter(c => c.winners.includes(owner.id)).length;
-      for (let k = 0; k < wins; k++) {
-        const inst = ctx.stealInstance();
-        let got = 0;
-        for (const o of ctx.state.players) if (o !== owner) got += ctx.steal(owner, o, { followers: 1, instance: inst });
-        if (got) ctx.log(`${owner.name}'s Gloaters: a contest won; steals ${got} follower${got === 1 ? '' : 's'}.`);
-      }
+    // right at each win, so with contests scored one at a time (Cory, Nov 4: cloak order) a later contest reads the new counts
+    onContestWin(ctx, owner) {
+      const inst = ctx.stealInstance();
+      let got = 0;
+      for (const o of ctx.state.players) if (o !== owner) got += ctx.steal(owner, o, { followers: 1, instance: inst });
+      if (got) ctx.log(`${owner.name}'s Gloaters: a contest won; steals ${got} follower${got === 1 ? '' : 's'}.`);
     },
   })),
   // Cory, 2026-10-28: Anarchist, 7, once per round (it stands in for Red's swaps)
