@@ -2,6 +2,8 @@
 // REPLACE14 puts each new card in its old card's place (the old card stays in code, off the wheel or retired):
 //   space yellow.meltingpot (Melting Pot) -> yellow.grandtour (Grand Tour)
 //   space trading.exchange (Exchange) -> trading.pawnshop (Pawn Shop)
+//   member silver.smoothtalker (Smooth Talkers) -> silver.bigspenders (Big Spenders)
+//   member purple.earlybird (Early Birds) -> purple.firstbirds (Early Birds, reworked)
 // REPLACE14=1 swaps every one; REPLACE14=grandtour (or a comma list of new keys) swaps only those, so each card gets
 // its own trial. Unset, nothing in the game changes.
 const RAW = globalThis.process?.env?.REPLACE14 || '';

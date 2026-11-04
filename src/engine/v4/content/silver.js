@@ -11,6 +11,7 @@ import { add2, old2, handlers2 } from './replace2.js';
 import { add6, old6 } from './replace6.js';
 import { add8, old8, handlers8 } from './replace8.js';
 import { swap11, handlers11 } from './replace11.js';
+import { add14, old14 } from './replace14.js';
 import { see, endsAhead, SEE_SPITE } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -101,7 +102,7 @@ function shareStep(ctx, p, data) {
     // bots spread to whoever trails
     hint: (ctx.followers(o) === low ? 1 : 0) - 0.2 * (given[o.id] || 0),
   }));
-  opts.push({ id: 'done', label: total ? 'Done' : 'Give nothing', kind: 'done', value: 'done', hint: -5 });
+  if (!data.must) opts.push({ id: 'done', label: total ? 'Done' : 'Give nothing', kind: 'done', value: 'done', hint: -5 });
   ctx.choose(p, `${data.who}: which rival gains 1 silver? You get ${data.per} ${data.per === 1 ? 'follower' : 'followers'} for each, ${left} more at most`, opts, 'silver.share', { ...data, given });
 }
 function shareDone(ctx, p, data) {
@@ -584,7 +585,19 @@ const silver = {
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.08 * WW_N),
     })),
     // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
-    m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2 }),
+    m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2, ...old14('bigspenders') }),
+    // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-smoothtalkers.md): Smooth Talkers' place, same price.
+    // The silver you pay for a member (its own recruit not included: it isn't in your cult yet) is handed to rivals you
+    // choose, all of it, and pays a follower each, as Party Gifts pays from the bank. Follower buys don't count.
+    ...add14(m('bigspenders', 'Big Spenders', 5, 5, 'When you pay silver for a member, it goes to rivals you choose instead of the bank. +1 follower per silver.', { f: 2, n: 2,
+      onRecruit(ctx, owner, card, by, what) {
+        if (by !== owner || !what.member || what.member.uid === card.uid) return;
+        const k = what.spent?.silver || 0;
+        if (k > 0) shareStep(ctx, owner, { who: 'Big Spenders', max: k, per: 1, must: true });
+      },
+      // BOTSEE: about two silver-paid buys a game after it, about 3 silver each
+      ...see(info => 3 * Math.max(0, 3 - info.round)),
+    })),
     // REPLACE2 bot test (Nov 3, replacement batch 2): Debutantes' place. 6 silver + 3 any as a player sees it. The +2 each is
     // a gift (Caterer, Hangers-On); the count is all the silver rivals hold after it.
     // REPLACE6 bot test (Nov 3, replacement batch 6): the Debutantes slot (Fundraisers' under REPLACE2). 6 silver + 3 any as

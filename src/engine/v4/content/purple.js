@@ -16,6 +16,7 @@ import { defById, spacesOf } from './index.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add5, old5 } from './replace5.js';
 import { swap11, handlers11 } from './replace11.js';
+import { add14, old14 } from './replace14.js';
 import { add7, old7, REPLACE7 } from './replace7.js';
 import { REPLACE3 } from './replace3.js';
 import { see, endsAhead } from './botsee.js';
@@ -648,7 +649,21 @@ export default {
       onGameEnd: (ctx, owner) => Math.floor((owner.res[P] || 0) / 3),
     }),
     // Cory's Purple members (2026-10-22); names are Claude's fill-ins; prices are the pricing thread's educated guesses
-    m('earlybird', 'Early Birds', 2, 0, 'Your turns can’t be skipped.', { f: 2, noSkip: true }), // (Cory, Oct 29, balance run: +1 follower)
+    m('earlybird', 'Early Birds', 2, 0, 'Your turns can’t be skipped.', { f: 2, noSkip: true, ...old14('firstbirds') }),
+    // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-earlybirds.md): Early Birds reworked (Cory, Nov 1: "a
+    // full rework"), same price. The round's first minion is the first space taken this round; Right Away's turn rule.
+    ...add14(m('firstbirds', 'Early Birds', 2, 0, 'If you place the round’s first minion, your next turn comes right after it.', { f: 2, n: 2,
+      afterAction(ctx, owner, card) {
+        const s = ctx.state;
+        if (card.paidRound === s.round) return;
+        const placed = Object.keys(s.slots || {}).length + Object.values(s.squats || {}).reduce((a, l) => a + l.length, 0);
+        if (placed !== 1 || s.slots[ctx.placement?.key] !== owner.id) return;
+        card.paidRound = s.round;
+        turnsNow(ctx, owner, 1, 'Early Birds');
+      },
+      // BOTSEE: first in the round about once in four (more when trailing), a pick ahead of the table each time
+      ...see(info => 1.5 * endsAhead(info).length * 0.35),
+    })), // (Cory, Oct 29, balance run: +1 follower)
     // REPLACE5 bot test (Nov 3, replacement batch 5): Bouncers' place. 6 purple + 3 any as a player sees it. Every +1
     // minion a rival gets (Overtime, Night Owls, Go-Getter, Extra Hand, Overtime…: the purple helpers' onRivalExtraTurn)
     // gives you one, placed after everyone else's, while the board has a spare space (none in round I). A minion from
