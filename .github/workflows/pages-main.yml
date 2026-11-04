@@ -4,7 +4,7 @@
 # Ships, harness mirrors and status pushes land minutes apart, so that happened several times a day.
 # Here the concurrency group lets one deploy run while only the newest push waits; skipped pushes end "cancelled",
 # which sends no email, and the newest commit always goes live.
-# It only deploys once Settings > Pages > Source is "GitHub Actions"; until then it checks and ends green.
+# It only deploys while Settings > Pages > Source is "GitHub Actions" (Cory switched it Nov 4); otherwise it checks and ends green.
 # Lives on main (workflows run from the branch pushed); scripts/harness-sync-main.sh mirrors it from the game branch.
 name: pages deploy (main)
 

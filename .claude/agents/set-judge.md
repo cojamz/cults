@@ -9,6 +9,6 @@ You get a folder with set.md: one color's live board with one slot left open, th
 - S2 Links: cards feed each other and other colors; name the pairs. Check whether any card on the board loses its partner when the slot changes (a card that many others lean on is a connector; replacing it must keep or replace those links).
 - S3 A plan: a player who goes into this color can see a plan to win with it, and rivals can see it coming and answer it.
 - S4 One idea: the color reads as one theme a new player could say in a sentence, and this slot's card fits it.
-Then a total out of 20. Score the versions against each other honestly: if the slot barely matters to the set, give versions the same or nearly the same score. Never reward a version for looking new.
+Then a total out of 20. A color with several once-per-game cards loses points (Cory, Nov 4: "we shouldnt have too many of them"): count them in each version and mark a version down when it adds one to a color that already has two or more. Score the versions against each other honestly: if the slot barely matters to the set, give versions the same or nearly the same score. Never reward a version for looking new.
 
 Write JSON to <folder>/judge-<your number>.json: an array of {"label":"A","set":[S1,S2,S3,S4],"total":int,"lost":"cards that lose a partner with this version, or none","why":"one plain line"}. Return one line: labels best to worst with totals.
