@@ -615,8 +615,22 @@ const echoQ = {
         })), 'echo.warmupDo');
       },
     })),
+    // REPLACE10 bot test (Nov 4 noon, scale-up batch 2, pitches/D-scale2.md): Busker's place. 3 green + 2 any as a player
+    // sees it. On your turn (placing or buying), once a round: one action a rival has a minion on, done for you as Echo
+    // copies (Agents blocks it). The card is turned until the next round starts.
+    ...add10(m('songrequest', 'Song Request', 2, 2, 'On Use, once per round: copy an action a rival has a minion on.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const list = targets(ctx, owner, 'rival');
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Song Request: no rival action to copy.`); return; }
+        ctx.log(`${owner.name} uses Song Request.`);
+        offer(ctx, owner, list, 'Song Request: copy which rival action?', 'now', 'Song Request');
+      },
+      botActivate: (ctx, p) => targets(ctx, p, 'rival').some(e => entryValue(ctx, e, p) >= 3),
+    })),
     m('evergreen', 'Busker', 1, 2, // Cory, 2026-10-25: cost 3 (was 4)
-      'On Recruit: +2 green. Round Start: +2 green.', { ...old10('warmup'),
+      'On Recruit: +2 green. Round Start: +2 green.', { ...old10('warmup'), ...old10('songrequest'),
       onRecruited(ctx, owner) { ctx.gain(owner, 'green', 2); },
       onRoundStart(ctx, owner) { ctx.gain(owner, 'green', 2); },
     }),
@@ -701,7 +715,17 @@ const echoQ = {
     // Choir does: each copy of an action you make (Echo, Reprise, Cover, a member's copy), once per copy.
     // REPLACE10=copyist,copyist2: the +2 version (pitches/D-green-4.md), for a trial beside the +1
     ...add10(m('copyist', 'Copyist', 1, 1, `Whenever you copy an action, +${COPYIST} follower${COPYIST > 1 ? 's' : ''}.`)),
-    m('roadie', 'Roadie', 1, 1, 'On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.', { now: true, ...old4, ...old10('copyist'),
+    // REPLACE10 bot test (Nov 4 noon, scale-up batch 2): Roadie's place (pitched in D-roadie.md, passed in D-scale2). 2 green +
+    // 1 any as a player sees it. At round end, before the minions go home: your minions on Green's spaces (joined spots count).
+    ...add10(m('stagehand', 'Stagehand', 1, 1, 'Round End: +1 follower per minion you have on Green spaces.', {
+      onRoundEnd(ctx, owner) {
+        const n = minionsOnGreen(ctx, owner);
+        if (!n) return;
+        owner.bonus += n;
+        ctx.log(`${owner.name}'s Stagehand: ${n} minion${n === 1 ? '' : 's'} on Green spaces: +${n} follower${n === 1 ? '' : 's'}.`);
+      },
+    })),
+    m('roadie', 'Roadie', 1, 1, 'On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.', { now: true, ...old4, ...old10('copyist'), ...old10('stagehand'),
       onRoundStart(ctx, owner) {
         const g = ctx.countMembersOfColor(owner, 'echo');
         if (g) ctx.gain(owner, 'green', g);
@@ -841,6 +865,14 @@ export function justTook(ctx, p) {
   return e && e.p === p.id && copyable(e) && !protectedAction(ctx, e, p) ? e : null;
 }
 
+/** Stagehand (REPLACE10): p's minions on Green spaces, joined spots counted. */
+function minionsOnGreen(ctx, p) {
+  const st = ctx.state, qi = st.quadrants.indexOf('echo');
+  let n = 0;
+  for (const [key, pid] of Object.entries(st.slots || {})) if (key.startsWith(`${qi}-`) && pid === p.id) n++;
+  for (const [key, list] of Object.entries(st.squats || {})) if (key.startsWith(`${qi}-`)) n += list.filter(id => id === p.id).length;
+  return n;
+}
 const nonGreenMembers = (ctx, p) => ctx.membersOf(p).reduce((n, c) => n + (c.def.quadrant === 'echo' ? 0 : ctx.memberWeight(c)), 0);
 const greenOccupied = ctx => {
   const q = ctx.state.quadrants.indexOf('echo');
