@@ -117,7 +117,7 @@ describe('REPLACE11: Yard Sale', () => {
     expect(names).not.toContain('Estate Sale');
   });
 
-  // "After you recruit this turn, cast out one of your members face up into the shop, gain white equal to twice its
+  // "At the end of your turn, cast out one of your members face up into the shop, gain white equal to twice its
   // cost. +1 white."
   it('after your recruit, puts your member face up in the shop, fresh, and pays twice its cost in white plus 1', () => {
     let s = table(['red', 'trading'], { round: 2, members: [['trading.raider', 'trading.undertaker']] });

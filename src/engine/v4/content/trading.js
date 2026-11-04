@@ -75,14 +75,14 @@ const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 /**
  * Yard Sale (REPLACE11, Actions lane, Nov 4; /mnt/project-files/quality/pitches/actions-estate-sale.md), in Estate
- * Sale's place: "After you recruit this turn, cast out one of your members face up into the shop, gain white equal to
+ * Sale's place: "At the end of your turn, cast out one of your members face up into the shop, gain white equal to
  * twice its cost. +1 white." The sale waits for the end of your recruits (so you can't buy it straight back: bots sold
  * and rebought for a profit when it came first). The member leaves as a cast-out does (Undertaker, Martyrs, Recruiter
  * hear it), fresh, and sits at the end of the shop row (one card over the row's size until the row goes under the pile
  * at round end), so anyone can recruit it.
  */
 const YARD_SALE = {
-  key: 'yardsale', copyDoesIt: true, ring: 2, name: 'Yard Sale', text: 'After you recruit this turn, cast out one of your members face up into the shop, gain white equal to twice its cost. +1 white.',
+  key: 'yardsale', copyDoesIt: true, ring: 2, name: 'Yard Sale', text: 'At the end of your turn, cast out one of your members face up into the shop, gain white equal to twice its cost. +1 white.',
   // a rival may buy it off the row: bots count a little less than the full twice
   estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, 2) - 1)),
   resolve(ctx, p) {
