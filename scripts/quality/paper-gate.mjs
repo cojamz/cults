@@ -51,7 +51,7 @@ function bundle(spec, extra = []) {
   // the in-folder decoy pair (a card beside its own copy) is only for a lone bundle; a batch uses one disguised decoy (batch)
   const decoy = spec.decoy === true ? others[Math.floor(rand() * others.length)] : null;
   const round = kind === 'space' ? old.round : null;
-  const opts = [{ role: 'old', name: old.name, text: old.text, price: old.price }, ...spec.candidates.map((c, i) => ({ role: `cand${i + 1}`, ...c, price: c.price ?? old.price })), ...extra];
+  const opts = [{ role: 'old', name: old.name, text: old.text, price: spec.oldPrice ?? old.price }, ...spec.candidates.map((c, i) => ({ role: `cand${i + 1}`, ...c, price: c.price ?? old.price })), ...extra];
   if (decoy) opts.push({ role: 'decoy', ...decoy }, { role: 'decoy-copy', ...decoy });
   const labels = 'ABCDEFGHIJ'.split('');
   const shuffled = shuffle(opts, rand).map((o, i) => ({ ...o, label: labels[i] }));
@@ -72,7 +72,10 @@ function bundle(spec, extra = []) {
 // ---- batches: every gate of a batch judged by the same 3 judges, plus the anchors folder (fixed cards whose medians
 // must hold still) and one disguised decoy: a live card renamed and slipped into one gate as a candidate, its real
 // self scored among the anchors. Disguised minus real is how much "looks new" is worth; 2 or more voids the batch.
-const ANCHORS = ['Impressionist', 'Makeover', 'Overtime', 'Con Men', 'Recluse', 'Double Down', 'Spree', 'Initiation', 'Largesse', 'Poach'];
+// Double Down (Gold) left the list on b3: Gold isn't on any live table. b2 and b3 printed Recluse with an old Blue stand-in's
+// price (fixed in findCard), so those two are left out of the anchor check for b2 and b3 (BAD_ANCHORS).
+const ANCHORS = ['Impressionist', 'Makeover', 'Overtime', 'Con Men', 'Recluse', 'Peek', 'Spree', 'Initiation', 'Largesse', 'Poach'];
+const BAD_ANCHORS = { b2: ['Recluse', 'Double Down'], b3: ['Recluse', 'Double Down'] };
 const DISGUISE = { 1: ['Newcomer', 'Lodger', 'Stranger', 'Tenant'], 2: ['Newcomers', 'Lodgers', 'Strangers', 'Tenants'] };
 const rubricHash = () => { const t = readFileSync(join(ROOT, 'principles.md'), 'utf8'); const a = t.indexOf('## The rubric'), b = t.indexOf('\n## ', a + 5); let h = 7; for (const c of t.slice(a, b)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h.toString(36); };
 function batch(id, specFiles) {
@@ -127,7 +130,7 @@ if (cmd === 'bundle') {
   const anc = judgeMedians(join(GATE, `anchors-${arg}`));
   const baseFile = join(GATE, 'anchors-baseline.json'), base = existsSync(baseFile) ? JSON.parse(readFileSync(baseFile, 'utf8')) : {};
   let shift = null, baseNote;
-  const now = Object.fromEntries(Object.entries(anc).filter(([, v]) => v.role === 'anchor').map(([k, v]) => [k, v.med]));
+  const now = Object.fromEntries(Object.entries(anc).filter(([k, v]) => v.role === 'anchor' && !(BAD_ANCHORS[arg] || []).includes(k) && ANCHORS.includes(k)).map(([k, v]) => [k, v.med]));
   if (!base[meta.rubric]) { base[meta.rubric] = { from: arg, medians: now }; writeFileSync(baseFile, JSON.stringify(base, null, 1)); baseNote = `first run on this rubric (${meta.rubric}): it sets the anchors' baseline`; }
   else { const b = base[meta.rubric].medians, ks = Object.keys(now).filter(k => b[k] != null); shift = ks.reduce((a, k) => a + now[k] - b[k], 0) / ks.length; baseNote = `mean shift ${shift.toFixed(2)} against batch ${base[meta.rubric].from}`; }
   let decoyGap = null;

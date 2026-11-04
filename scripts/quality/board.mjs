@@ -35,12 +35,17 @@ export function boardText(colors = [], { without = [], members = true, spaces = 
 export function findCard(name, colorHint) {
   const n = name.toLowerCase().trim(), hint = colorHint && (ALIAS[colorHint.toLowerCase()] || colorHint.toLowerCase());
   const hits = [];
-  for (const id of allQuadrantIds()) { let q; try { q = quadrant(id); } catch { continue; }
+  // 2.0 colors first (the live game); the old test stand-ins (blue, green, guest) and off-table colors only as a fallback
+  const order = [...allQuadrantIds().filter(q => sphereVersion(q) === '2.0'), ...allQuadrantIds().filter(q => sphereVersion(q) !== '2.0' && !['blue', 'green', 'guest'].includes(q))];
+  for (const id of order) { let q; try { q = quadrant(id); } catch { continue; }
     for (const a of q.actions) if (a.name.toLowerCase() === n) hits.push({ kind: 'space', name: a.name, text: a.text, color: q.name, qid: id, round: a.ring });
     for (const m of q.members) if (m.name.toLowerCase() === n && !m.retired) hits.push({ kind: 'member', name: m.name, text: m.text, color: q.name, qid: id, def: m, price: `${m.s ? `${m.s} ${q.resource} + ` : ''}${m.w} any, worth ${m.f}${m.n > 1 ? `, counts as ${m.n}` : ''}` });
   }
   for (const m of guestMembers()) if (m.name.toLowerCase() === n && !m.retired) hits.push({ kind: 'member', name: m.name, text: m.text, color: 'Guests', qid: 'guests', def: m, price: `${m.w} any, worth ${m.f}${m.n > 1 ? `, counts as ${m.n}` : ''}` });
-  return (hint ? hits.filter(h => h.qid === hint || h.color.toLowerCase() === hint) : hits)[0] || hits[0] || null;
+  // a card in the live 10-card deck beats a cut or stand-in card of the same name
+  const live = h => h.kind === 'space' || (!CUT.has(h.def.id) && !CUT10.has(h.def.id) && !h.def.artifact);
+  const pool = hint ? hits.filter(h => h.qid === hint || h.color.toLowerCase() === hint) : hits;
+  return pool.find(live) || pool[0] || hits.find(live) || hits[0] || null;
 }
 if (import.meta.url === `file://${process.argv[1]}`) {
   const a = process.argv.slice(2), i = a.indexOf('--without'); const without = i >= 0 ? a.splice(i, 2)[1].split(',') : [];
