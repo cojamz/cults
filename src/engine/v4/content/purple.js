@@ -216,6 +216,16 @@ function toToken(ctx, p, n, why) {
   for (const t of rest.slice(-(n - put) || rest.length)) if (put < n) { t.token = true; put++; }
   if (put) ctx.log(`${p.name}'s ${why}: ${put === 1 ? '1 minion waits' : `${put} minions wait`} on the Goes Last token.`);
   if (!kept) nightWatch(ctx, p, put);
+  // Lamplighters (REPLACE9, Members C bC11): "Whenever you take the Goes Last token, +1 follower per color you have a
+  // minion on." Counts the space just taken; pays on a take, not on keeping it.
+  if (!kept) for (const c of ctx.membersOf(p)) if (c.def.lampColors) ctx.asMember(p, c.def.name, () => {
+    const st = ctx.state, qs = new Set();
+    for (const [key, pid] of Object.entries(st.slots || {})) if (pid === p.id) qs.add(key.split('-')[0]);
+    for (const [key, list] of Object.entries(st.squats || {})) if (list.includes(p.id)) qs.add(key.split('-')[0]);
+    if (!qs.size) return;
+    p.bonus += qs.size;
+    ctx.log(`${p.name}'s ${c.def.name}: +${qs.size} follower${qs.size === 1 ? '' : 's'} (minions on ${qs.size} color${qs.size === 1 ? '' : 's'}).`);
+  }, c.uid);
   // Snoozers (REPLACE7): "Whenever you take the Goes Last token, +1 purple per minion on it."
   if (put > 0) for (const c of ctx.membersOf(p)) if (c.def.tokenPurple) ctx.asMember(p, c.def.name, () => {
     ctx.gain(p, 'purple', put);
@@ -624,6 +634,8 @@ export default {
     m('nightwatch', 'Night Watch', 2, 2, 'Whenever a rival takes the Goes Last token, +1 follower per minion on it.', { f: 2, watchToken: true, ...old7('purple.nightwatch'), ...old9('purple.nightwatch') }),
     // REPLACE9 (Members C, Nov 4, batch bC12: paper 18 vs 12, quality/evals/gate/C-nightwatch3): Night Watch, any
     // player's take, its owner's included. Same price.
+    // REPLACE9 (Members C, bC11: paper 17 vs 14; Cory's "paper filters, play ranks", Nov 4): Night Watch's place. Same price.
+    ...add9(m('lamplighters', 'Lamplighters', 2, 2, 'Whenever you take the Goes Last token, +1 follower per color you have a minion on.', { f: 2, lampColors: true })),
     ...add9(m('nightwatch9', 'Night Watch', 2, 2, 'Whenever any player takes the Goes Last token, +1 follower per minion on it.', { f: 2, watchToken: 'any' })),
     // REPLACE7 (Nov 4, quality loop, Members A batch 3): Night Watch's place (paper 17, Purple's set 13 -> 16). Cory's
     // Pace-Setter ("could be a good idea for a different batch"), in his Courier words. 3 purple + 2 any, counts as 2.

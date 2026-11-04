@@ -8,8 +8,8 @@
 //   (yellow.customs -> yellow.dutycollector is live since Nov 4: Customs Officer always retired, Duty Collector always on)
 //   market.windowdresser -> market.windowdressers9 (Window Dressers, reworded)
 //   trading.shopkeeper -> trading.moneylender (Moneylender, Landlord's place)
-//   echo.roadie -> echo.roadie9 (Roadie, reworked: green per green member on every copy)
-//   purple.nightwatch -> purple.nightwatch9 (Night Watch, any player's take, the owner's too)
+//   echo.roadie -> echo.roadie9 (Roadie, reworked: green per green member on every copy), or echo.setlist
+//   purple.nightwatch -> purple.nightwatch9 (Night Watch, any player's take, the owner's too), or purple.lamplighters
 //   market.critic -> market.lastminute (or market.lastminute2, the +2-resources alternate; not part of REPLACE9=1)
 //   market.regular -> market.bargainhunter
 //   benders.extrahand -> benders.hypnotist (too strong in its trial), or benders.standin (Stand-In; not part of REPLACE9=1)
@@ -22,8 +22,8 @@
 // Unset, the new cards are never defined and nothing in the game changes.
 const VAL = globalThis.process?.env?.REPLACE9 || '';
 /** new card key -> the old card id it takes the place of */
-const REPLACES = { tollkeeper: 'yellow.customs', quilter: 'yellow.dyer', lastminute: 'market.critic', lastminute2: 'market.critic', bargainhunter: 'market.regular', hypnotist: 'benders.extrahand', ambassadors: 'yellow.caravan', mannequin: 'market.hawkers', stallholder: 'market.hawkers', hawker2: 'market.hawkers', powershoppers: 'market.snob', standin: 'benders.extrahand', tailor: 'yellow.dyer', dabbler: 'benders.dabblers', latebloomers: 'trading.heiress', dowagers: 'trading.heiress', windowdressers9: 'market.windowdresser', moneylender: 'trading.shopkeeper', roadie9: 'echo.roadie', nightwatch9: 'purple.nightwatch' };
-export const ON9 = VAL === '1' ? Object.keys(REPLACES).filter(k => !['lastminute2', 'mannequin', 'stallholder', 'ambassadors', 'hypnotist', 'standin', 'quilter', 'tailor', 'dowagers', 'windowdressers9', 'moneylender', 'roadie9', 'nightwatch9'].includes(k)) : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
+const REPLACES = { tollkeeper: 'yellow.customs', quilter: 'yellow.dyer', lastminute: 'market.critic', lastminute2: 'market.critic', bargainhunter: 'market.regular', hypnotist: 'benders.extrahand', ambassadors: 'yellow.caravan', mannequin: 'market.hawkers', stallholder: 'market.hawkers', hawker2: 'market.hawkers', powershoppers: 'market.snob', standin: 'benders.extrahand', tailor: 'yellow.dyer', dabbler: 'benders.dabblers', latebloomers: 'trading.heiress', dowagers: 'trading.heiress', windowdressers9: 'market.windowdresser', moneylender: 'trading.shopkeeper', roadie9: 'echo.roadie', nightwatch9: 'purple.nightwatch', lamplighters: 'purple.nightwatch', setlist: 'echo.roadie' };
+export const ON9 = VAL === '1' ? Object.keys(REPLACES).filter(k => !['lastminute2', 'mannequin', 'stallholder', 'ambassadors', 'hypnotist', 'standin', 'quilter', 'tailor', 'dowagers', 'windowdressers9', 'moneylender', 'roadie9', 'nightwatch9', 'lamplighters', 'setlist'].includes(k)) : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
 export const REPLACE9 = ON9.length > 0;
 /** The new card, in its color's member list only when it is switched on. */
 export const add9 = card => (ON9.includes(card.key) ? [card] : []);

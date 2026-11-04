@@ -753,6 +753,18 @@ const echoQ = {
     // price. Pays on every action copy (Echo, Reprise, Cover, Understudy, Stunt Double, Fan Club, Tribute Band), not
     // on copied On Recruits (Sample, Greatest Hits); counts itself, as the old Roadie did.
     ...add9(m('roadie9', 'Roadie', 1, 1, 'Whenever you copy an action, +1 green per green member you have.', {})),
+    // REPLACE9 (Members C, bC11: paper 16 vs 14; Cory's "paper filters, play ranks", Nov 4): Roadie's place, same price.
+    // "Your last turn": your latest space this round (Stunt Double's read); none yet, the use comes back.
+    ...add9(m('setlist', 'Setlist', 1, 1, 'On Use, once per round: copy the action you took on your last turn.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const e = justTook(ctx, owner);
+        if (!e) { card.used = false; ctx.log(`${owner.name}'s Setlist: nothing to copy yet this round.`); return; }
+        withPath(ctx, [], () => copy(ctx, owner, e, { by: 'Setlist' }), e.key);
+      },
+      botActivate: (ctx, owner) => !!justTook(ctx, owner),
+    })),
     // REPLACE4 bot test (Nov 3, replacement batch 4): Roadie's place. 3 green + 1 any as a player sees it. Core scores it
     // (contestTable, flag copycat): in each contest, a holder whose count is exactly the winner's minus 1, and at least 1,
     // is one of its winners, so the prize splits as any tie's. A spoiled contest has no winner to tie.
