@@ -11,6 +11,9 @@ How to update: pull, edit, commit, push in one go. Cory's words go in verbatim w
 Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?thread=<id>, shortened below to the id.
 
 ## Cory's words, newest first
+- 2026-11-04 04:59Z (cmsg_01PySa5gYMfCiexiWTLrWgo37fNvkATcs7Kdd9UTW3VzLc): "I don't think you understand the breadth of this. This shouldn't be the job of one agent. ... there should be a whole harness here working together to do this and develop the merchants and the action." → the overnight card quality team (director cmsg_01PySa5gYMfCiexiWTLrWgo37EYuQVWmhgYAdrKFzAiAm1, /mnt/project-files/quality/board.md); its passing cards ship through the desk.
+- 2026-11-04 03:14Z (cmsg_01PySa5gYMfCiexiWTLrWgo3YaZV6zDrdFo7G5Akt9PYXA): "I may step away for the rest of the night. A lot of work left, you make it happen" → every call ours tonight; morning summary in /mnt/project-files/desk/morning.md.
+- 2026-11-04 03:03Z (cmsg_01PySa5gYMfCiexiWTLrWgo3FKdemneDoaHUhLaHBkNd3H): "make judgement calls for stuff you might stop me fore. Use whatever the crunchy bites sound update is for pizza and ship the minion sounds."
 
 - **Nov 3, 9:28pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3HmycJV22699pRwTgmNAhoZ), on an 11pm estimate for the Wallflower fix: "11pm???? for one mmeber fix?? no you need to coordinate better" → shipped v0.99.542 at 9:34pm; every fix now ships as it passes (harness.md Shipping).
 - **Nov 3, 9:27pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3Th2umKN7EJKPZYgcgYkkeu): "How long until all of the current and fixes and changes in flight are in the game"
@@ -58,6 +61,7 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 https://claude.ai/artifact/Wur73WcxCPaeZmhmhuUg79 ("Cults Workstreams"), built by `node scripts/desk/tracker.mjs <out.html>` from the thread board (/mnt/project-files/status/board.md) and main's play/build.json. The desk republishes it (same file path, same URL) after every progress report or ship. It is only as true as each thread's `node scripts/status.mjs set …` line: keep yours current, with `--cory "…"` only for a real decision.
 
 ## Publishing (one at a time; ask the desk for go or wait)
+Live: v0.99.552 (bf42a005), Nov 4 04:52Z. Tonight .544 to .552 shipped; one line each in /mnt/project-files/desk/morning.md.
 
 - Live: v0.99.543 (5eacf01c): set 3 members, plus the wheel redraw skip (78b95946) that rode along. Publish lock: free.
 - Held back from shipping until Cory says yes: the animations thread's Relaxed pacing change (not pushed).
