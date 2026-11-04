@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.553 — 2026-11-04
+
+- Smoother play: the strip of rival moves no longer measures itself on every step
+
 ## v0.99.552 — 2026-11-03
 
 - Spinning the wheel in Firefox no longer stalls: the rim's words are drawn once and turn as a picture. The chair whose turn it is lights up more smoothly.
