@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 // every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,daylaborers,nightmanager,pacesetters';
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,daylaborers,nightmanager,pacesetters';
 const { applyMove, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
@@ -30,6 +30,7 @@ describe('REPLACE7: the switch', () => {
     expect(card('purple.sleepyheads')).toEqual(['Sleepyheads', 2, 2, 2, 2]);
     expect(card('red.drillsergeant')).toEqual(['Drill Sergeant', 4, 4, 1, 1]);
     expect(card('red.converts')).toEqual(['Converts', 4, 4, 2, 2]);
+    expect(card('purple.snoozers')).toEqual(['Snoozers', 3, 1, 3, 3]);
     expect(card('purple.daylaborers')).toEqual(['Day Laborers', 3, 2, 3, 3]);
     expect(card('purple.nightmanager')).toEqual(['Night Manager', 2, 2, 1, 1]);
     expect(card('purple.pacesetters')).toEqual(['Pace-Setters', 3, 2, 2, 2]);
@@ -365,6 +366,16 @@ describe('Converts: "On Recruit: recruit a rival\'s member costing 3 or less, fo
     s.current = 0;
     contextFor(s).recruit(s.players[0], uidIn(s, 'red.converts', 'shop'), { free: true });
     expect(s.log.some(l => l.includes("P1's Converts: no rival's member costing 3 or less to recruit."))).toBe(true);
+  });
+});
+
+describe('Snoozers: "Whenever you take the Goes Last token, +1 purple per minion on it."', () => {
+  it('Last Call with 2 minions left: +2 purple on top of the space', () => {
+    const turns = [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }];
+    let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 2, members: [['purple.snoozers']], queue: turns });
+    s = take(s, 'purple.lastcall');
+    const line = s.log.find(l => l.startsWith("P1's Snoozers: +"));
+    expect(line).toMatch(/^P1's Snoozers: \+(\d) purple \(\1 minions? on the Goes Last token\)\.$/);
   });
 });
 

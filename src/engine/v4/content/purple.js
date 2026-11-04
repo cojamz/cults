@@ -214,6 +214,11 @@ function toToken(ctx, p, n, why) {
   for (const t of rest.slice(-(n - put) || rest.length)) if (put < n) { t.token = true; put++; }
   if (put) ctx.log(`${p.name}'s ${why}: ${put === 1 ? '1 minion waits' : `${put} minions wait`} on the Goes Last token.`);
   if (!kept) nightWatch(ctx, p, put);
+  // Snoozers (REPLACE7): "Whenever you take the Goes Last token, +1 purple per minion on it."
+  if (put > 0) for (const c of ctx.membersOf(p)) if (c.def.tokenPurple) ctx.asMember(p, c.def.name, () => {
+    ctx.gain(p, 'purple', put);
+    ctx.log(`${p.name}'s ${c.def.name}: +${put} purple (${put} minion${put === 1 ? '' : 's'} on the Goes Last token).`);
+  }, c.uid);
   return put;
 }
 /** Night Watch (live since Nov 4): p just took the Goes Last token with n minions on it; each rival's Night
@@ -725,6 +730,11 @@ export default {
         for (const o of ctx.state.players.filter(o => ctx.followers(o) === top)) skipNext(ctx, o, card.def.name, owner);
       },
       ...see(info => 1.2 * endsAhead(info).length),
+    })),
+    // Snoozers (scale-up 1, Shift Crew's place: paper 14 vs 8, Purple's set 15 vs 10). Same price as Shift Crew (3 purple
+    // + 1 any), worth 3, counts as 3. Pays on Sleep In and Last Call (core: toToken), per minion they put on the token.
+    ...add7(m('snoozers', 'Snoozers', 2, 1, 'Whenever you take the Goes Last token, +1 purple per minion on it.', { f: 3, n: 3, round: 1, tokenPurple: true,
+      ...see(info => 1.5 * endsAhead(info).length),
     })),
     // Sleepyheads (paper 17, set 17): pays whenever its owner's space or card takes the token (keeping it, by taking it
     // again, counts: the space says "Take the Goes Last token"); Early Birds stops the take, so no pay (core: takeToken).
