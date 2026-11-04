@@ -17,6 +17,7 @@ import { add3, old3, handlers3 } from './replace3.js';
 import { add5, old5 } from './replace5.js';
 import { swap11, handlers11 } from './replace11.js';
 import { add14, old14 } from './replace14.js';
+import { add13, old13 } from './replace13.js';
 import { add7, old7, REPLACE7 } from './replace7.js';
 import { REPLACE3 } from './replace3.js';
 import { add9, old9 } from './replace9.js';
@@ -761,9 +762,13 @@ export default {
     m('pocketwatch', 'Pocket Watch', 0, 0, 'Whenever a player’s turn is skipped, +2 purple.', { artifact: true,
       onSkip(ctx, owner) { const got = ctx.gain(owner, 'purple', 2); if (got) ctx.log(`${owner.name}'s Pocket Watch: +${got.n} ${got.color}.`); },
     }),
-    m('gossip', 'Gossip', 3, 2, 'Whenever a player’s turn is skipped, +1 follower.', {
+    m('gossip', 'Gossip', 3, 2, 'Whenever a player’s turn is skipped, +1 follower.', { ...old13('busybody'),
       onSkip(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Gossip: +1 follower.`); },
     }),
+    // REPLACE13=busybody (lane F, Nov 4): Gossip's lifted control, A/B only; a number change on a live card is Cory's call
+    ...add13(m('busybody', 'Busybody', 3, 2, 'Whenever a player’s turn is skipped, +2 followers.', {
+      onSkip(ctx, owner) { owner.bonus += 2; ctx.log(`${owner.name}'s Busybody: +2 followers.`); },
+    })),
     m('extrashift', 'Extra Shift', 5, 3, 'On Recruit: +1 minion this round.', { from: 2,
       // the snake carries on until every minion is placed, so the new one goes after everyone else's
       onRecruited(ctx, owner) {
@@ -876,7 +881,35 @@ export default {
       },
       ...see(info => endsAhead(info).length), // about 3 followers a round it fires, a third of the rounds
     })),
-    m('closer', 'Closer', 2, 2, 'When you place the last minion of the round: +4 purple.', {
+    // REPLACE13 (lane F, Nov 4; quality/pitches/F-batch2.md): candidates for Closer's slot, bot games only
+    ...add13(m('lastorders', 'Last Orders', 2, 2, 'When you place the last minion of the round, recruit once more.', {
+      afterAction(ctx, owner, card) {
+        if (card.paidRound === ctx.state.round || ctx.state.players.some(o => o.left > 0)) return;
+        card.paidRound = ctx.state.round;
+        const q = ctx.state.queue;
+        let at = 0;
+        for (let i = 0; i < q.length; i++) { if (q[i].p !== owner.id) continue; if (q[i].t === 'endTurn') break; if (q[i].t === 'buy') { at = i; break; } }
+        q.splice(at, 0, { t: 'buy', p: owner.id });
+        ctx.log(`${owner.name}'s Last Orders: the round's last minion, so ${owner.name} recruits once more this turn.`);
+      },
+    })),
+    ...add13(m('nightporter', 'Night Porter', 2, 2, 'Each minion you place once all rivals are out of minions: +2 followers.', {
+      afterAction(ctx, owner) {
+        if (ctx.rivals(owner).some(o => o.left > 0)) return;
+        owner.bonus += 2;
+        ctx.log(`${owner.name}'s Night Porter: every rival is out of minions, +2 followers.`);
+      },
+    })),
+    ...add13(m('closingact', 'Closing Act', 2, 2, 'When you place the last minion of the round: +2 followers in round I, +4 in round II, +6 in round III.', {
+      afterAction(ctx, owner, card) {
+        if (card.paidRound === ctx.state.round || ctx.state.players.some(o => o.left > 0)) return;
+        card.paidRound = ctx.state.round;
+        const k = 2 * ctx.state.round;
+        owner.bonus += k;
+        ctx.log(`${owner.name}'s Closing Act: the round's last minion, +${k} followers.`);
+      },
+    })),
+    m('closer', 'Closer', 2, 2, 'When you place the last minion of the round: +4 purple.', { ...old13('lastorders', 'nightporter', 'closingact'),
       afterAction(ctx, owner, card) {
         if (card.paidRound === ctx.state.round || ctx.state.players.some(o => o.left > 0)) return;
         card.paidRound = ctx.state.round;

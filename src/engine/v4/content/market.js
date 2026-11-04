@@ -11,6 +11,7 @@ import { add9, old9, handlers9 } from './replace9.js';
 import { add11, old11, handlers11 } from './replace11.js';
 import { on12, handlers12 } from './replace12.js';
 import { add14, old14 } from './replace14.js';
+import { on13, add13, old13, handlers13 } from './replace13.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -128,13 +129,20 @@ function wd9Step(ctx, p, data) {
     id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: broke || ctx.payChoices(p, c.uid, {}).length ? -1 : 1,
   })), { id: 'done', label: data.n ? 'Done' : 'Keep the shop', kind: 'done', value: 'done', hint: 0 }], `${Q}.wd9`, data);
 }
-function churnStep(ctx, p, { left, who = 'Churn' }) {
+function churnStep(ctx, p, { left, who = 'Churn', sent }) {
   const shop = ctx.shopCards();
   if (left <= 0 || !shop.length) return;
   ctx.choose(p, `${who}: send which member to the bottom? (${left} to go)`, shop.map(c => ({
     // bots send away the priciest (what a rival would buy next)
     id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: priceOf(c),
-  })), `${Q}.churn`, { left, who });
+  })), `${Q}.churn`, { left, who, ...(sent ? { sent } : {}) });
+}
+/** Tastemakers (REPLACE13=trendsetters2): up to 2 sends after a recruit, one at a time, or stop; one refill after. */
+function trendStep(ctx, p, data) {
+  const shop = ctx.shopCards();
+  ctx.choose(p, `Tastemakers: send a member to the bottom (+1 blue)? (${2 - data.n} to go)`, [...shop.map(c => ({
+    id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: priceOf(c) + 1,
+  })), { id: 'done', label: 'Send no more', kind: 'pass', value: 'done', hint: 0 }], `${Q}.trend13`, data);
 }
 /** Peek: the player sets the order of the top cards, top first; the last one falls in place. */
 function peekStep(ctx, p, { left, placed }) {
@@ -159,6 +167,8 @@ function peekStep(ctx, p, { left, placed }) {
 // Out of Style's colors: neutral (colorless guests) is one of them (Cory, 2026-10-28: "you should be able to chose
 // neutral as a color you send to the bottom")
 const styleOf = (ctx, c) => colorOf(ctx, c) || 'neutral';
+// the members a turn's sends put at the bottom, kept for Scavengers (REPLACE1) and Pickers (REPLACE13=pickers)
+const TRACK = REPLACE1 || on13('pickers');
 // said "grey" to players (Cory: neutral members are "grey"); the id stays 'neutral'
 const styleWord = c => (c === 'neutral' ? 'grey' : c);
 function shopColors(ctx) {
@@ -181,7 +191,7 @@ function windowPick(ctx, owner, left, sent = []) {
   if (!shop.length) { scavenge(ctx, owner, sent); return; }
   ctx.choose(owner, left > 1 ? `Window Shopper: send which member to the bottom? (${left} to go)` : 'Window Shopper: send which member to the bottom?', shop.map(c => ({
     id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: priceOf(c),
-  })), `${Q}.windowShop`, { left, ...(REPLACE1 ? { sent } : {}) });
+  })), `${Q}.windowShop`, { left, ...(TRACK ? { sent } : {}) });
 }
 
 export function toBottom(ctx, k) {
@@ -198,7 +208,18 @@ export function toBottom(ctx, k) {
  *  holding Scavengers may recruit one of them, paying its cost (asked on the actor's turn, as Shake Down asks its victim).
  *  Unset, never called with anything to do. */
 export function scavenge(ctx, actor, uids) {
-  if (!REPLACE1 || !actor || !uids?.length) return;
+  if (!actor || !uids?.length) return;
+  // Pickers (REPLACE13=pickers): its owner just sent these down on their own turn; they may also recruit one, paying its cost
+  if (on13('pickers') && ctx.membersOf(actor).some(c => c.def.pickers)) {
+    const opts = uids.filter(u => ctx.state.pile.includes(u)).filter(u => ctx.payChoices(actor, u, {}).length).map(u => ctx.card(u)).map(x => ({
+      id: `card:${x.uid}`, label: `${x.def.name} · pay ${ctx.price(actor, x.uid, {}).total}`, kind: 'card', value: x.uid, hint: botWorth(x),
+    }));
+    if (opts.length) {
+      opts.push({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: -1 });
+      ctx.choose(actor, `Pickers: you sent ${uids.length === 1 ? 'a member' : `${uids.length} members`} to the bottom of the pile. Also recruit one of them, paying its cost?`, opts, `${Q}.pickers13`);
+    }
+  }
+  if (!REPLACE1) return;
   for (const o of ctx.rivals(actor)) for (const c of ctx.membersOf(o)) {
     if (!c.def.scavenge) continue;
     const opts = uids.filter(u => ctx.state.pile.includes(u) || ctx.state.shop.includes(u)).filter(u => ctx.payChoices(o, u, {}).length).map(u => ctx.card(u)).map(x => ({
@@ -400,7 +421,7 @@ const market = {
       ctx.log(`${p.name}'s Window Shopper sends ${c.def.name} to the bottom of the pile${col ? `: +1 ${col}` : ''}.`);
       if (c.def.everyColor) gainColorOf(ctx, p, c.def, 'Window Shopper');
       ctx.refillShop(); toBottom(ctx, 1);
-      if (data?.left > 1) windowPick(ctx, p, data.left - 1, REPLACE1 ? [...(data.sent || []), uid] : []);
+      if (data?.left > 1) windowPick(ctx, p, data.left - 1, TRACK ? [...(data.sent || []), uid] : []);
       else scavenge(ctx, p, [...(data?.sent || []), uid]);
     },
     churn(ctx, p, uid, data) {
@@ -410,9 +431,9 @@ const market = {
         ctx.state.pile.push(uid);
         ctx.log(`${data.who === 'Churn' || !data.who ? 'Churn' : `${p.name}'s ${data.who}`}: ${p.name} sends ${ctx.card(uid).def.name} to the bottom of the pile.`);
       }
-      const sent = REPLACE1 && ctx.state.pile.includes(uid) ? [...(data.sent || []), uid] : data.sent || [];
+      const sent = TRACK && ctx.state.pile.includes(uid) ? [...(data.sent || []), uid] : data.sent || [];
       if (data.left - 1 <= 0 || !ctx.state.shop.length) scavenge(ctx, p, sent);
-      churnStep(ctx, p, { left: data.left - 1, who: data.who, ...(REPLACE1 ? { sent } : {}) });
+      churnStep(ctx, p, { left: data.left - 1, who: data.who, ...(TRACK ? { sent } : {}) });
     },
     wd9(ctx, p, uid, data) {
       if (uid === 'done') {
@@ -519,6 +540,29 @@ const market = {
         ctx.gain(p, color, 1);
         ctx.log(`${p.name}'s Last-Minute Shopper: +1 ${color}.`);
         if (data.left > 1) lmGainAsk(ctx, p, data.left - 1); else lmOffer(ctx, p);
+      },
+    }),
+    ...handlers13({
+      pickers13(ctx, p, uid) {
+        if (uid == null) { ctx.log(`${p.name}'s Pickers: recruits nothing.`); return; }
+        if (!ctx.state.pile.includes(uid) || !ctx.payChoices(p, uid, {}).length) return;
+        askPay(ctx, p, `Pickers: how do you pay for ${ctx.card(uid).def.name}?`, { uid, why: 'Pickers', fromPile: true, how: {} });
+      },
+      trend13(ctx, p, uid, data) {
+        if (uid !== 'done' && ctx.state.shop.includes(uid)) {
+          ctx.state.shop.splice(ctx.state.shop.indexOf(uid), 1);
+          ctx.state.pile.push(uid);
+          ctx.log(`${p.name}'s Tastemakers: ${p.name} sends ${ctx.card(uid).def.name} to the bottom of the pile.`);
+          data = { ...data, n: data.n + 1, sent: [...data.sent, uid] };
+          if (data.n < 2 && ctx.state.shop.length) { trendStep(ctx, p, data); return; }
+        }
+        ctx.refillShop();
+        if (data.n) {
+          toBottom(ctx, 1);
+          const got = ctx.gain(p, B, data.n);
+          if (got) ctx.log(`${p.name}'s Tastemakers: +${got.n} ${got.color}.`);
+          scavenge(ctx, p, data.sent);
+        }
       },
     }),
     ...handlers1({
@@ -827,6 +871,7 @@ const market = {
     })),
     // Cory's pick for Blue's 12th, Oct 21 ("trendsetter is good!")
     m('trendsetter', 'Trendsetters', 2, 1, 'Whenever you recruit a member, send 1 shop member to the bottom of the pile, then refill.', { f: 3,
+      ...old13('pickers', 'trendsetters2', 'fashionpolice'),
       // members only, not follower buys (Cory, Oct 27: it was paying Bargain Bin and Patroness on every follower buy)
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what.member || what.member.uid === card.uid || !ctx.state.shop.length) return;
@@ -834,6 +879,27 @@ const market = {
         ctx.defer(owner, `${Q}.churnRefill`);
       },
     }),
+    // REPLACE13 (lane F, Nov 4; quality/pitches/F-batch2.md): candidates for Trendsetters' slot, bot games only
+    ...add13(m('pickers', 'Pickers', 2, 1, 'Whenever you send shop members to the bottom of the pile, you may also recruit one of them, paying its cost.', { f: 2, n: 2, pickers: true })),
+    ...add13(m('trendsetters2', 'Tastemakers', 3, 2, 'Whenever you recruit a member, send up to 2 shop members to the bottom of the pile, then refill. +1 blue each.', { f: 3, n: 3,
+      onRecruit(ctx, owner, card, by, what) {
+        if (by !== owner || !what.member || what.member.uid === card.uid || !ctx.state.shop.length) return;
+        trendStep(ctx, owner, { n: 0, sent: [] });
+      },
+    })),
+    ...add13(m('fashionpolice', 'Fashion Police', 2, 1, 'Whenever you recruit a member, send every shop member of its color to the bottom of the pile, then refill.', { f: 3, n: 3,
+      onRecruit(ctx, owner, card, by, what) {
+        if (by !== owner || !what.member || what.member.uid === card.uid) return;
+        const col = styleOf(ctx, ctx.card(what.member.uid));
+        const out = ctx.shopCards().filter(c => styleOf(ctx, c) === col);
+        if (!out.length) return;
+        for (const c of out) { ctx.state.shop.splice(ctx.state.shop.indexOf(c.uid), 1); ctx.state.pile.push(c.uid); }
+        ctx.refillShop();
+        ctx.log(`${owner.name}'s Fashion Police: sends ${out.length} ${styleWord(col)} member${out.length === 1 ? '' : 's'} to the bottom of the pile.`);
+        toBottom(ctx, 1);
+        scavenge(ctx, owner, out.map(c => c.uid));
+      },
+    })),
     // Cory's yes, Oct 21
     m('critic', 'Critic', 1, 1, 'Whenever a rival recruits a blue member, +1 follower.', { ...old1, ...old9('market.critic'),
       onAnyRecruit(ctx, owner, card, by, rec) {
