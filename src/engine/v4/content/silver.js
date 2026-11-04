@@ -487,7 +487,7 @@ const silver = {
         ctx.choose(owner, 'Guest of Honor: give one of your members costing 3 or less to a rival, for +4 followers?', opts, 'silver.guestofhonor');
       },
     })),
-    m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', { ...old8,
+    m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', { ...old8('silver.toastmaster'),
       afterAction(ctx, owner, card, qid) { if (qid === S) owner.bonus += 1; },
     }),
     m('gala', 'Debutantes', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, ...old2, ...old6, // worth 2 (Cory, Nov 1)
@@ -577,7 +577,7 @@ const silver = {
     m('philanthropists', 'Philanthropist', 3, 2, 'On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.', {
       onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropist', max: 4, per: 1 }); },
     }),
-    m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', { ...old8,
+    m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', { ...old8('silver.polisher'),
       activate: 'game',
       onActivate(ctx, owner) {
         const k = Math.min(3, owner.res[S] || 0);
@@ -614,7 +614,7 @@ const silver = {
       },
       botActivate: (ctx, owner) => others(ctx, owner).some(o => ctx.followers(o) >= 2),
     }),
-    m('debtcollector', 'Debt Collectors', 4, 3, 'On Use, once per game: each rival gives you 2 silver, if they have it.', { f: 2, n: 2, ...old8, // worth 2 (Cory, Nov 1)
+    m('debtcollector', 'Debt Collectors', 4, 3, 'On Use, once per game: each rival gives you 2 silver, if they have it.', { f: 2, n: 2, ...old8('silver.debtcollector'), // worth 2 (Cory, Nov 1)
       activate: 'game',
       onActivate(ctx, owner) {
         let n = 0;
