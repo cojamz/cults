@@ -73,3 +73,6 @@ path.hn-locate,rect.hn-locate,polygon.hn-locate{filter:drop-shadow(0 0 5px rgba(
    into "N earlier" (Cory, 2026-10-27: the one-line log opened over the fourth chair) */
 .lt-since.compact .since-head{gap:6px}
 .lt-since.compact .since-title{margin-right:auto}
+.lt-since .since-row .lost{color:#f0a49a}
+/* a move from the round before (picky bot, Nov 4) */
+.lt-since .since-round{display:inline-block;margin-right:4px;padding:0 4px;border-radius:4px;background:rgba(243,230,200,.1);color:rgba(243,230,200,.7);font-size:12px;line-height:15px;font-weight:700;letter-spacing:.04em;text-indent:0;vertical-align:1px}

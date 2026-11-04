@@ -54,3 +54,7 @@
 .rc .card-name{color:inherit;text-decoration:none}
 .rc .card-name:hover{text-decoration:underline;text-underline-offset:3px}
 .rc-why{display:block;font-size:12px;opacity:.75;margin-top:2px}
+/* how many members a row counts, as on the shop card's corner (picky bot, Nov 4) */
+.rc-count{flex:none;display:inline-flex;align-items:center;gap:2px;height:16px;padding:0 4px;border-radius:4px;background:#fbf5e6;color:#2b2018;text-shadow:none;font-size:11px;line-height:16px;font-weight:800}
+.rc-count .member-glyph{display:block;flex:none}
+.rc-chip .rc-count{background:rgba(43,32,24,.08)}

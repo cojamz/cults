@@ -50,7 +50,7 @@ export function turnPlaces(state, me = null) {
  * What each seat says about the turns, in plain words (Cory, 2026-10-16: "the turn-order rail is confusing"; the rail is
  * gone and the seats say it): your own seat counts the turns until yours. A rival's seat says nothing (Cory, 2026-10-15:
  * "next" on the seat after the current player is dropped; the glow and the header say whose turn it is):
- * "your turn", an arrow for next, "your turn in 3", or "done this round". Read off the engine's queue (turnPlaces), so
+ * "your turn", "your turn next" (an arrow read as a stray mark, picky bot, Nov 4), "your turn in 3", or "done this round". Read off the engine's queue (turnPlaces), so
  * extra turns, extra minions and seats with nothing left to place are counted as the turns they are.
  * Returns { [me]: { say, kind: 'now'|'soon'|'in'|'done', n, title } }; empty outside the placing rounds or without a me.
  */
@@ -65,11 +65,14 @@ export function seatTurns(state, me = null) {
     if (k < 0) out[me] = { say: 'done this round', kind: 'done', n: null, title: 'You have no placements left this round.' };
     else if (k === 0 && playing === me) {
       // stacked turns count down (Cory, Nov 4: "when i stack a bunch of turns in a row its not clear to me how many
-      // turns i have remaining"): "your turn, 3 left" counts this one, then "2 left", then "last in a row"
+      // turns i have remaining"): "3 turns in a row" counts this one, then "2 turns in a row", then "last turn in a
+      // row"; the header says the same words, and both go once this turn's minion is down (picky bot, Nov 4: "2 left"
+      // read as minions, and "last in a row" stayed up through the recruit step)
       const run = turnRun(state, me);
-      const say = !run || run.total < 2 ? 'your turn' : run.left >= 2 ? `your turn, ${run.left} left` : 'your last in a row';
+      const placing = state.pending && state.pending.kind === 'place';
+      const say = !run || run.total < 2 || !placing ? 'your turn' : runSay(run);
       out[me] = { say, kind: 'now', n: 0, title: run && run.total >= 2 ? `${runTitle(run)}${tail}` : 'Your turn now.' };
-    } else if (k === 0 || (k === 1 && playing != null)) out[me] = { say: '→', kind: 'soon', n: 1, title: `Your turn comes right after this one.${tail}` };
+    } else if (k === 0 || (k === 1 && playing != null)) out[me] = { say: 'your turn next', kind: 'soon', n: 1, title: `Your turn comes right after this one.${tail}` };
     else out[me] = { say: `your turn in ${k}`, kind: 'in', n: k, title: `${k} turns before yours.${tail}` };
   }
   return out;
@@ -89,6 +92,8 @@ export function turnRun(state, me) {
   for (let i = at - 1; i >= 0 && seq[i].pid === me; i--) before++;
   return { left, before, total: left + before };
 }
+/** The run in a few words, on your seat and in the header alike: "3 turns in a row", "last turn in a row". */
+export const runSay = run => (run.left >= 2 ? `${run.left} turns in a row` : 'last turn in a row');
 /** The run in words: "This turn and 2 more right after it, before anyone else goes." */
 export function runTitle(run) {
   const more = run.left - 1;

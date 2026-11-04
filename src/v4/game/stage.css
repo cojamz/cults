@@ -38,6 +38,7 @@
 /* a seat's follower change, on its count's top right corner for a while (director.js linger) */
 .seat-delta{position:fixed;transform:translate(-100%,-80%);z-index:55;pointer-events:none;padding:1px 5px;border-radius:4px;font:800 12px/1.25 var(--sans);background:var(--walnut-2,#271d16);box-shadow:0 1px 3px rgba(0,0,0,.5);animation:seatdelta var(--ld,2.6s) ease-out both}
 .seat-delta.up{color:#bfe6a8}.seat-delta.down{color:#f0a49a}
+.seat-delta{display:inline-flex;align-items:center;gap:2px}.seat-delta svg{display:block;flex:none;color:currentColor}
 /* what a steal takes, on the victim's pile the moment it's taken (director.js takeTag) */
 .take-tag{position:fixed;transform:translate(-50%,-100%);z-index:62;pointer-events:none;display:flex;align-items:center;gap:2px;padding:1px 5px 1px 4px;border-radius:4px;
   font:800 12px/1.25 var(--sans);color:#f0a49a;background:var(--walnut-2,#271d16);box-shadow:0 1px 3px rgba(0,0,0,.5);white-space:nowrap;animation:taketag var(--tl,900ms) ease-out both}

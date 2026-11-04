@@ -432,6 +432,19 @@ describe('v4 format helpers', () => {
     expect(promptFor(at('Bo: take 6 more from the release, in any colors'), true).text).toBe('take 6 more from the release, in any colors');
   });
 
+  it('a choice on someone else\'s turn is your call, and names the rival\'s move that asks it (picky bot, Nov 4)', () => {
+    const s = createGame({ seats, seed: 3 });
+    const [, b, c] = s.players;
+    const at = (prompt, current, log = []) => ({ ...s, round: 2, current, log: [...s.log, 'Round II begins.', ...log], pending: { kind: 'choose', player: b.id, prompt, options: [{ id: 'a', label: 'red' }, { id: 'b', label: 'gold' }] } });
+    const pot = promptFor(at(`Potluck: give ${c.name} 1 resource, then you gain 2 silver`, c.id, [`${c.name} took Potluck (Silver).`]), true);
+    expect(pot.lead).toBe('Your call — ');
+    expect(pot.text).toBe(`${c.name} took Potluck: choose one`);
+    // at the round's end (nobody's turn) it's your call too, never "Your turn"
+    expect(promptFor(at('Spoilsport: choose a contest', null), true).lead).toBe('Your call — ');
+    // on your own turn the headline keeps its usual lead
+    expect(promptFor(at('Window Shopper: send which member to the bottom?', b.id), true).lead).toBeUndefined();
+  });
+
   it('who picks first says why: the member that makes them, else fewest followers; round I is drawn (w3a A2)', () => {
     const s = createGame({ seats, seed: 5 });
     const uid = Object.keys(s.cards).map(Number).find(u => s.cards[u].def === 'benders.frontrunner');

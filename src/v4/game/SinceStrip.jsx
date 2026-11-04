@@ -3,10 +3,10 @@
 // on hover (a tap on the line pins it); every space and member named opens its own card, like on the board. The whole
 // log is one tap away (the Log button), not buried in the menu. Self-contained: the layout places the box.
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { playerColor, seatEmoji } from '../format.js';
+import { playerColor, seatEmoji, roman } from '../format.js';
 import { Minion } from '../art/Leader.jsx';
 import { Tip } from './Info.jsx';
-import { HoverName, HoverNames } from './HoverNames.jsx';
+import { HoverName, HoverNames, locate } from './HoverNames.jsx';
 import { Rich } from './Rich.jsx';
 import { quadrant, spacesOf } from '../../engine/v4/index.js';
 import { panelWords } from './panelText.js';
@@ -14,6 +14,11 @@ import './since.css';
 import { holdFlag } from './bodyFlag.js';
 
 const MAX = 6;
+/** What a move took from your seat, short enough to lead a one-line row: "took your Recluse", "took your 2 silver 1 follower". */
+const lostSay = l => {
+  const amounts = [...Object.entries(l.res).map(([r, n]) => `${n} ${r}`), ...(l.f ? [`${l.f} follower${l.f === 1 ? '' : 's'}`] : [])].join(' ');
+  return `took your ${[l.gone.join(', '), amounts].filter(Boolean).join(' and ')}`;
+};
 /** The words the board prints on a space ("+3 gold, +1 to anyone"), for this round: the panel's own lines. */
 const words = (state, key) => {
   if (!key) return '';
@@ -176,6 +181,7 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
   const shown = base.slice(cut);
   const more = entries.length - shown.length;
   const name = id => (id === me ? 'You' : state.players[id].name);
+  const lead = e => !!(e.lost && me != null && !/\byour\b|\byou gave\b/.test(e.short || ''));
   // a tap anywhere on a line that isn't a name pins its card (the name's own tap opens the name's card)
   const pinLine = e => { const t = e.currentTarget.querySelector('[data-since-line]'); if (t && !e.target.closest('[data-hover-name], [data-since-line]')) t.click(); };
   // nothing to tell (before your first turn, or your second turn in a row): the strip says nothing at all, only the Log
@@ -203,7 +209,12 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
           {/* "2 more: open the log" (picky bot, Nov 4: the ellipsis read as cut-off text) */}
           {more > 0 && !bare && <li className="since-more"><button type="button" onClick={onLog}>{more} more: open the log</button></li>}
           {shown.map(e => (
-            <li key={e.n} className={`since-row${e.hit ? ' hit' : ''}${lvl === 1 ? ' brief' : ''}`} hidden={lvl >= 2 || undefined} data-clip-ok={compact || undefined} style={{ '--pc': playerColor(e.actor) }} onClick={pinLine}>
+            // the space the line names lights on the wheel while any of the line is pointed at, not only its name (picky
+            // bot, Nov 4: the wheel prints no names, so readers couldn't find the space a rival took)
+            <li key={e.n} className={`since-row${e.hit ? ' hit' : ''}${lvl === 1 ? ' brief' : ''}`} hidden={lvl >= 2 || undefined} data-clip-ok={compact || undefined} style={{ '--pc': playerColor(e.actor) }} onClick={pinLine}
+              onPointerEnter={e.spaceKey ? () => locate(e.spaceKey, true) : undefined} onPointerLeave={e.spaceKey ? () => locate(e.spaceKey, false) : undefined}>
+              {/* a move from the round before says so (picky bot, Nov 4: a round I Peek read against round II's faces) */}
+              {e.round && e.round !== state.round ? <small className="since-round" data-since-round={e.round}>Round {roman(e.round)}</small> : null}
               <Tip className="since-line" data-since-line={e.n} label={`${e.head}: show what happened`}
                 content={() => <StoryCard story={e} color={playerColor(e.actor)} state={state} hover={hover} />}>
                 <Minion color={playerColor(e.actor)} emoji={seatEmoji(state, e.actor)} size={14} /><b className="who">{name(e.actor)}</b>
@@ -212,9 +223,14 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
                 : <span className="sp">{e.space || 'turn'}</span>}
               {/* the space's own words from the board, so the name needs no lookup */}
               {words(state, e.spaceKey) ? <span className="sp-words"> (<Rich text={words(state, e.spaceKey)} />)</span> : null}
+              {/* what this move took from your own seat leads the line (picky bot, Nov 4: Line Cutters taken and 5
+                  followers down to 1, and the line said only "P3 Reprise"): "took your Line Cutters and 4 followers",
+                  short, so it shows on a one-line row,
+                  unless the line already says what it took of yours */}
+              {lead(e) ? <span className="big part first lost" data-since-lost={e.n}>: <Rich text={lostSay(e.lost)} /></span> : null}
               {e.short && compact ? e.short.split(' · ').map((part, k) => (
-                <span key={k} className={`big part${k ? '' : ' first'}`}>{k ? '· ' : ': '}<HoverNames state={state} hover={hover} text={part} uids={e.uids} /></span>
-              )) : e.short ? <span className="big">: <HoverNames state={state} hover={hover} text={e.short} uids={e.uids} /></span> : null}
+                <span key={k} className={`big part${k || lead(e) ? '' : ' first'}`}>{k || lead(e) ? '· ' : ': '}<HoverNames state={state} hover={hover} text={part} uids={e.uids} /></span>
+              )) : e.short ? <span className="big">{lead(e) ? ' · ' : ': '}<HoverNames state={state} hover={hover} text={e.short} uids={e.uids} /></span> : null}
             </li>
           ))}
         </ol>

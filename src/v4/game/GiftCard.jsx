@@ -402,7 +402,8 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
       </span>
     </span>
   ));
-  const headOf = g.halfPile ? <>{g.head}</> : g.kind === 'steal' ? <>Take <b className="num">{g.n}</b>{g.color ? <Pip color={g.color} /> : null}</>
+  // a steal says the card's own verb, as the wheel prints it (picky bot, Nov 4: Lie Low's sheet said "Take 1")
+  const headOf = g.halfPile ? <>{g.head}</> : g.kind === 'steal' ? <>Steal <b className="num">{g.n}</b>{g.color ? <Pip color={g.color} /> : null}</>
     : g.kind === 'move' || g.kind === 'recruit' || g.kind === 'change' ? <>{g.head}</> : head;
   const sub = g.kind === 'share' ? <>One per click, from the bank. +{g.per} {g.per === 1 ? 'follower' : 'followers'} per silver you give{g.total ? <>: <b className="num">+{g.total * g.per}</b> so far</> : null}.</>
     : g.kind === 'move' ? <>{g.from ? <>It’s on {g.from}. </> : null}{g.sub}</>

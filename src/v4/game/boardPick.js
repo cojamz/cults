@@ -292,7 +292,8 @@ function stealModel(state, pend, title, question, base, takes) {
   const owed = owedNames ? owedNames.split(', ').map(nm => (state.players.find(o => o.name === nm) || {}).id).filter(Number.isInteger) : [];
   const plan = stealPlan(rivals, Math.min(count.left, avail), owed, /^1 each from/.test(limit || ''));
   return { ...base, kind: 'steal', board: 'seats', n, color, chosen: null, left: taken > 0 ? Math.min(count.left, avail) : null,
-    head: `Take ${n}${color ? ` ${color}` : ''}`, sub: limit ? `${limit[0].toUpperCase()}${limit.slice(1)}.` : '',
+    // the card's own verb: the wheel says "Steal 1", so the sheet does too (picky bot, Nov 4: "Take 1" on Lie Low's sheet)
+    head: `Steal ${n}${color ? ` ${color}` : ''}`, sub: limit ? `${limit[0].toUpperCase()}${limit.slice(1)}.` : '',
     rivals, plan, firsts: [], seconds: takes.map(o => ({ o, b: `${o.target.pid}:${o.target.res}` })), others: takes.map(o => `${o.target.pid}:${o.target.res}`), rest: [] };
 }
 /**
@@ -352,9 +353,21 @@ export function leadsLost(breaks, ties = [], join = l => l.join(' and ')) {
  * moves to the line under it when it's too long to be a headline. what may hold { dot: color } parts.
  */
 export function pickCaption(state, pk) {
-  const cap = captionOf(state, pk);
+  const cap = whose(state, pk, captionOf(state, pk));
   const warn = leadWarning(pk.options);
   return warn ? { ...cap, how: `${cap.how} · ${warn}`, warn } : cap;
+}
+/** A choice you answer on someone else's turn names the move that asks it (picky bot, Nov 4: "Potluck: give P2 1
+ *  resource" with no word that P2 took Potluck): "P2 took Potluck: give them 1 resource". */
+function whose(state, pk, cap) {
+  const cur = state.current != null && state.current !== pk.actor ? state.players[state.current] : null;
+  if (!cur || !cap.title) return cap;
+  const took = lastSpace(state, cur.id);
+  if (!took || took.name !== cap.title) return cap;
+  const them = w => (typeof w === 'string' ? w.replace(new RegExp(`\\b${cur.name}\\b`, 'g'), 'them').replace(/, then .*$/, '') : w);
+  const asked = !cap.what && cap.how && !/^Click /.test(cap.how) ? them(cap.how[0].toLowerCase() + cap.how.slice(1)) : null;
+  const what = cap.what ? cap.what.map(them) : asked && asked.length <= 40 ? [asked] : null;
+  return { ...cap, title: `${cur.name} took ${cap.title}`, what };
 }
 function captionOf(state, pk) {
   if (pk.title === 'Straggler' && pk.kinds.has('space')) return { title: 'Straggler', what: ['move your minion'], how: 'Inspect a space, then move there.' };
@@ -370,7 +383,7 @@ function captionOf(state, pk) {
     // never more than the lit stacks hold (blind testers, 2026-10-15: "take 3 gold" with 2 on the table)
     const lit = Object.entries(pk.seats).reduce((t, [pid, x]) => t + Object.keys(x.res).reduce((u, r) => u + ((state.players[pid] && state.players[pid].res[r]) || 0), 0), 0);
     const of = Math.min(pk.count.of, pk.count.of - pk.count.left + lit);
-    return { title: pk.title, what: [`take ${of}${pk.only ? ` ${pk.only}` : ''}`], left: pk.count.left < pk.count.of ? Math.min(pk.count.left, lit) : null, how: `${limit ? `${limit[0].toUpperCase()}${limit.slice(1)}. ` : ''}${pickHow(pk)}` };
+    return { title: pk.title, what: [`steal ${of}${pk.only ? ` ${pk.only}` : ''}`], left: pk.count.left < pk.count.of ? Math.min(pk.count.left, lit) : null, how: `${limit ? `${limit[0].toUpperCase()}${limit.slice(1)}. ` : ''}${pickHow(pk)}` };
   }
   const q = pk.title ? pk.question : state.pending.prompt;
   // a member of yours asking (Double Agent just recruited): its rule goes under the headline, so you see why
@@ -381,7 +394,7 @@ function captionOf(state, pk) {
   if (asker && q.length > 30) {
     const rest = asker.text.replace(/^(?:When recruited|On Recruit)[,:]\s*/i, '').replace(/^(?:you choose|pick) an? \w+\.\s*/i, '');
     const how = `${pickHow(pk)}. ${rest[0].toUpperCase()}${rest.slice(1)}`;
-    return { title: pk.title, what: [shortAsk(pk)], left: pk.count ? pk.count.left : null, how: how.length <= 64 ? how : pickHow(pk), rule: asker.text };
+    return { title: pk.title, what: [askWords(q) || shortAsk(pk)], left: pk.count ? pk.count.left : null, how: how.length <= 64 ? how : pickHow(pk), rule: asker.text };
   }
   if (asker) return { title: pk.title, what: [q], left: pk.count ? pk.count.left : null, how: asker.text };
   if (q.length > 30) return { title: pk.title, what: null, left: pk.count ? pk.count.left : null, how: q[0].toUpperCase() + q.slice(1) };
@@ -397,6 +410,13 @@ export function askerOf(state, pk) {
   return uid == null ? null : { uid, text: defById(state.cards[uid].def).text };
 }
 
+/** The question's own words, short: "send which member to the bottom? (2 to go)" is "send a member to the bottom", so
+ *  the caption says what the pick is for (picky bot, Nov 4: "Window Shopper: pick a member", for what?). Else null. */
+export function askWords(q) {
+  const m = String(q || '').match(/^(\w+) which (\w+)\b([^?(]*)\??\s*(?:\([^)]*\))?$/i);
+  const w = m ? `${m[1].toLowerCase()} a ${m[2]}${m[3].trimEnd()}` : null;
+  return w && w.length <= 34 ? w : null;
+}
 /** What a choice wants, in two words, from what it lights ("pick a color"). */
 function shortAsk(pk) {
   const k = pk.kinds;

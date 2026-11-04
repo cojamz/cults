@@ -177,24 +177,40 @@ export function promptFor(state, mine) {
       // Launderers' rearranging is its own card (LaunderCard.jsx)
       // Makeover too (bug bash, Nov 1: its card said "Makeover: pick on the board", with nothing on the board to pick)
       if (asker && pend.options.some(o => o.id === 'split' || o.kind === 'amount')) return { who: p, text: `${asker}: rearrange your resources`, keepCase: true };
+      // a choice that isn't on your own turn (a rival's Potluck, Spoilsport at the round's end) is your call, not your
+      // turn, and a rival's space that asks it is named as their move (picky bot, Nov 4)
+      const call = state.current !== pend.player ? { lead: 'Your call — ' } : {};
       // "+N in colors you choose" (Polish, Harvest) is asked one coin at a time, "+1 of which color? (4 to pick)", but the
       // card by the space takes the whole split: the headline says the whole job (picky bot, Nov 4: "+1 of which color?"
       // over a card that said "+4 in colors you choose")
       const toPick = String(pend.prompt || '').match(/^([^:]{2,28}): \+1 of which color\? \((\d+) to pick\)$/);
-      if (toPick) return { who: p, text: `${toPick[1]}: pick ${toPick[2]} color${toPick[2] === '1' ? '' : 's'}`, keepCase: true };
+      if (toPick) return { who: p, text: `${toPick[1]}: pick ${toPick[2]} color${toPick[2] === '1' ? '' : 's'}`, keepCase: true, ...call };
       if (asker && asker !== name) {
+        const cur = state.current != null && state.current !== pend.player ? state.players[state.current] : null;
+        const took = cur && lastTakenName(state, cur.name) === asker ? `${cur.name} took ${asker}` : asker;
         // options that all point at seats are answered on the cults (the seat selector, game/seatPick.js)
-        return { who: p, text: `${asker}: ${pend.options.some(o => o.target) ? 'pick on the board' : 'choose one'}`, keepCase: true };
+        return { who: p, text: `${took}: ${pend.options.some(o => o.target) ? 'pick on the board' : 'choose one'}`, keepCase: true, ...call };
       }
-      if (short) return { who: p, text: pend.prompt };
+      if (short) return { who: p, text: pend.prompt, ...call };
       // your own name before the question goes ("P2: take 6 more from the release, in any colors")
       const pr = String(pend.prompt || '');
       const own = pr.startsWith(`${name}: `) ? pr.slice(name.length + 2) : pr;
-      return { who: p, text: own.length <= 46 ? own : 'answer the question below' };
+      return { who: p, text: own.length <= 46 ? own : 'answer the question below', ...call };
     }
     default:
       return { who: p, text: pend.prompt };
   }
+}
+
+/** The space a player took last this round, by name ("P2 took Potluck (Silver)."), or null. */
+function lastTakenName(state, who) {
+  for (let i = state.log.length - 1; i >= 0; i--) {
+    const l = state.log[i];
+    if (/^Round \S+ begins\./.test(l)) return null;
+    const m = l.match(/^(.+?) took (.+?) \((\w+)\)\.$/);
+    if (m && m[1] === who) return m[2];
+  }
+  return null;
 }
 
 // ---------- this round's turns: the snake, extra minions, extra turns ----------
@@ -1135,6 +1151,10 @@ export function effectStory(start, end, actor, me = null, fx = []) {
   // a member cause by the name its seat shows: a worn cloak is "Green Cloak", never its card's "Impressionist" (picky bot, Nov 4)
   const worn = u => u != null && [end, start].some(s => s.artifacts && Object.values(s.artifacts).includes(u));
   const causeName = c => (worn(c.uid) ? cardName(c.uid) : c.def ? defById(c.def)?.name : c.uid != null ? cardName(c.uid) : null);
+  // a rival who handed the actor something by their own choice (Potluck: "P3 gave P2 1 blue") gave it; nobody took it
+  // (picky bot, Nov 4: "P2 took 1 of your blue" after the reader chose to give it)
+  const newLog = (end.log || []).slice((start.log || []).length);
+  const gaveByChoice = pid => newLog.some(l => l.startsWith(`${P[pid].name} gave ${P[actor].name} `) && l.endsWith(`(${P[actor].name}'s Potluck).`));
   const groups = new Map();
   const groupOf = c => {
     const key = !c ? 'space' : c.kind === 'space' || c.kind === 'move' ? 'space' : c.kind === 'member' ? `member:${c.uid}:${c.def || ''}` : c.kind === 'recruit' ? `recruit:${c.uid}` : c.kind === 'buy' ? `buy:${c.tier}` : c.kind === 'release' ? `release:${c.uid}` : null;
@@ -1202,14 +1222,17 @@ export function effectStory(start, end, actor, me = null, fx = []) {
       if (p.id === owner || toldInGift(g, p.id)) continue;
       const lost = Object.entries(g.res[p.id]).filter(([, d]) => d < 0), got = Object.entries(g.res[p.id]).filter(([, d]) => d > 0);
       // the actor's own doing reads "from you 3 gold"; a member's reads as its changes ("Raider: you −3 followers")
-      if (told) { /* said in the steal's line */ } else if (lost.length && owner === actor && g.cause && g.cause.kind !== 'member' && !got.length && !g.fol[p.id]) bits.push(`${lost.map(([r, d]) => `${-d} ${r}`).join(', ')} from ${nm(p.id)}`);
+      const gaveIt = owner === actor && g.key === 'space' && gaveByChoice(p.id);
+      if (told) { /* said in the steal's line */ } else if (gaveIt && lost.length && !g.fol[p.id]) bits.push(`${nm(p.id)} gave ${lost.map(([r, d]) => `${-d} ${r}`).join(', ')}${got.length && p.id !== me ? `, then ${got.map(([r, d]) => `+${d} ${r}`).join(' ')}` : ''}`);
+      else if (lost.length && owner === actor && g.cause && g.cause.kind !== 'member' && !got.length && !g.fol[p.id]) bits.push(`${lost.map(([r, d]) => `${-d} ${r}`).join(', ')} from ${nm(p.id)}`);
       else if (lost.length || got.length || g.fol[p.id]) bits.push(`${nm(p.id)} ${signedOf(g, p.id)}`);
       if (p.id === me) {
         const c = g.cause || {};
         const who = c.kind === 'member' && c.def ? causeName(c) : (c.kind === 'recruit' || c.kind === 'release') ? cardName(c.uid) : null;
         const why = who ? `${owner === actor || c.kind !== 'member' ? '' : `${P[owner].name}'s `}${who} took` : 'took';
         const what = [...lost.map(([r, d]) => `${-d} of your ${r}`), ...(g.fol[p.id] < 0 ? [`${-g.fol[p.id]} of your followers`] : [])];
-        if (what.length) hits.push(`${why} ${what.join(', ')}`);
+        if (gaveIt && lost.length && !g.fol[p.id]) hits.push(`you gave ${lost.map(([r, d]) => `${-d} ${r}`).join(', ')}`);
+        else if (what.length) hits.push(`${why} ${what.join(', ')}`);
       }
     }
     // a rival's member exchanged for the shop's (or another rival's) is one swap, both named: "swapped your Recruiter
@@ -1237,7 +1260,9 @@ export function effectStory(start, end, actor, me = null, fx = []) {
     const c = g.cause || {};
     if (g.key === 'space') {
       const as = stolen(g, actor);
-      const mine = as || signedOf(g, actor);
+      // followers taken from a rival say whose they were (picky bot, Nov 4: "P2 Heist: +1 magenta +3 followers", from whom?)
+      const folFrom = as || !(g.fol[actor] > 0) ? [] : P.filter(p => p.id !== actor && g.fol[p.id] < 0);
+      const mine = as || (folFrom.length ? `${signedOf(g, actor)} from ${folFrom.map(p => nm(p.id)).join(', ')}` : signedOf(g, actor));
       if (mine) { gain = mine; out.push(mine); }
       out.push(...others(g, actor, !!as));
       if (g.disc) out.push(`next member costs ${g.disc} less`);
@@ -1279,7 +1304,10 @@ export function effectStory(start, end, actor, me = null, fx = []) {
   const conv = base && base.conv && base.conv.length ? base.conv : [];
   // the strip's one line: what hit you, then what you got, then the biggest thing the turn did
   const hitSaid = hit && !(big && big.includes(hit)) && !(gain && gain.includes('from you')) ? hit : null;
-  const short = [hitSaid, gift || null, gain && conv.length ? `${gain} (${conv.join(', ')})` : gain, big && !(hitSaid && hitSaid.includes(big)) && big.replace(/ \((paid .*|free)\)$/, '')].filter(Boolean).slice(0, 2).join(' · ');
+  // one owner per part: beside what you got (or gave), the mover's own gain names the mover ("you +1 red (Red Cloak) · P4 +1 red";
+  // picky bot, Nov 4: "you +1 red · +1 red" read as yours twice)
+  const gainOwn = gain && (gift || /^you /.test(hitSaid || '')) && actor !== me ? `${P[actor].name} ${gain}` : gain;
+  const short = [hitSaid, gift || null, gainOwn && conv.length ? `${gainOwn} (${conv.join(', ')})` : gainOwn, big && !(hitSaid && hitSaid.includes(big)) && big.replace(/ \((paid .*|free)\)$/, '')].filter(Boolean).slice(0, 2).join(' · ');
   const head = base ? base.head : (actor === me ? 'You' : P[actor].name);
   const touched = base ? base.touched : [];
   return { ...(base || {}), text: [head, ...out].join(' · '), head, lines: out, actor, touched, short, hit, gift, fx: true };

@@ -129,7 +129,7 @@ try {
     const wantIds = save.state.pending.options.map(o => o.id).sort();
     if (onCard.join() !== wantIds.join()) errors.push(`(s1) the card's stacks answer ${onCard.join(' ')}, the engine offers ${wantIds.join(' ')}`);
     const cap = await page.$eval('.gift-card', e => `${e.querySelector('.gc-title').textContent}: ${e.querySelector('.gc-what').textContent}`.replace(/\s+/g, ' ').trim());
-    if (!/^Help Yourself: Take 3$/i.test(cap)) errors.push(`(s1) the card reads "${cap}"`);
+    if (!/^Help Yourself: Steal 3$/i.test(cap)) errors.push(`(s1) the card reads "${cap}"`);
     const gap = await gapToSpace(page, save.state.players[0].lastSlot.key);
     if (gap == null || gap > 40) errors.push(`(s1) the card sits ${gap}px from the space you took (want ≤ 40)`);
     if (await page.$('.prompt.choice.seat-pick')) errors.push('(s1) the steal still asks in the header too');

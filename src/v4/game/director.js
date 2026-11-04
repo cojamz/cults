@@ -1634,6 +1634,11 @@ function linger(el, n, r = el && !el.rectOnly ? el.getBoundingClientRect() : nul
   const b = document.createElement('b');
   b.className = `seat-delta ${n > 0 ? 'up' : 'down'}`;
   b.textContent = `${n > 0 ? '+' : '−'}${Math.abs(n)}`;
+  // it carries the follower mark, so it reads "+3 followers", not a stray number (picky bot, Nov 4: "+3", "+26" chips
+  // beside the scores, unlabeled); the seat's own mark, copied
+  const mark = ((el.closest && el.closest('.cs-total')) || el).querySelector('svg');
+  if (mark) { const m = mark.cloneNode(true); m.removeAttribute('id'); m.setAttribute('aria-hidden', 'true'); m.setAttribute('width', '11'); m.setAttribute('height', '11'); b.appendChild(m); }
+  b.setAttribute('aria-label', `${n > 0 ? '+' : '−'}${Math.abs(n)} follower${Math.abs(n) === 1 ? '' : 's'}`);
   // on the count's top right corner, over the chair's top edge: to its left it covered the turn words ("your last in a
   // row") and, as the count grew a digit, the count itself ("+2 0"); under it, it read as "+19 purple" (picky bot, Nov 4)
   Object.assign(b.style, { left: `${Math.round(r.right + 2)}px`, top: `${Math.round(r.top)}px` });

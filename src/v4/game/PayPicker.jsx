@@ -277,17 +277,19 @@ export default function PayPicker({ state, onPick, busy, turnOf = null }) {
           <div className="pay-row keeping" role="group" aria-label="Keeping">
             <span className="pr-lbl">Keeping</span>
             <div className="pay-stacks">
-              {/* only the colors you hold (blind tester B: a faint coin for a color you hold none of read as "this pays") */}
-              {res.filter(r => (p.res[r] || 0) > 0).map(r => {
+              {/* every color, in the table's order, so the row never changes its slots (picky bot, Nov 4: four slots, then
+                  three); a color you hold none of, or that all pays, keeps one dim coin of its color (dashed rings read as
+                  colorless) */}
+              {res.map(r => {
                 const have = p.res[r] || 0, out = spend[r] || 0, keep = have - out;
                 const drawn = Math.min(have, STACK_MAX), lifted = Math.min(out, drawn), base = have - drawn;
                 const sayAdd = `${have} ${r}: ${out ? `${out} pay${out === 1 ? 's' : ''} this, ` : ''}you keep ${keep}. Click to pay with one more ${r}.`;
                 return (
                   <div key={r} className={`pay-stack${out ? ' paying' : ''}${keep ? '' : ' spent'}`} data-stack={r} data-keep={keep} data-out={out}>
-                    <button type="button" className="ps-add" data-pay-add={r} data-keep={keep} disabled={busy} aria-disabled={!keep || undefined} title={keep ? sayAdd : `All your ${r} pays this.`} aria-label={keep ? sayAdd : `All your ${r} pays this`} onClick={() => add(r)} />
+                    <button type="button" className="ps-add" data-pay-add={r} data-keep={keep} disabled={busy} aria-disabled={!keep || undefined} title={keep ? sayAdd : have ? `All your ${r} pays this.` : `You have no ${r}.`} aria-label={keep ? sayAdd : have ? `All your ${r} pays this` : `You have no ${r}`} onClick={() => add(r)} />
                     <span className="ps-coins" data-dense={drawn - lifted > 6 || undefined} style={{ '--step': `${stackStep(drawn - lifted)}px` }}>
                       {/* tinted its color, so a fully paying stack still says which color it was (picky UI bot, Nov 4: two grey rings over "0 0") */}
-                      {drawn - lifted === 0 && <i className="ps-socket" aria-hidden="true" style={{ '--sock': r === 'white' ? 'var(--white, #e6dcc6)' : `var(--q-${r}, var(--${r}))` }} />}
+                      {drawn - lifted === 0 && <i className="ps-socket" aria-hidden="true"><ResourceGlyph r={r} size={24} decorative /></i>}
                       {Array.from({ length: drawn - lifted }, (_, k) => (
                         <i key={k} className="ps-coin" data-coin={`${r}-${k + base}`} style={{ '--k': k }} aria-hidden="true"><ResourceGlyph r={r} size={24} decorative /></i>
                       ))}

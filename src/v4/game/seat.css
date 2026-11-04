@@ -17,6 +17,9 @@
   /* the column's share for each chair (read by GameScreen layColumn): what stands under the chairs is reserved first */
   .app.game.lt > .lt-snake{--seat-min:118px;--seat-max:184px;--seats-reserve:0px}
   .app.game.lt > .lt-seat{height:var(--seat-h, auto);padding:7px 14px;box-sizing:border-box;container:seat / inline-size}
+  /* the column's caption, over the chair that goes first (picky bot, Nov 4: the seats reorder between rounds with no
+     word why) */
+  .app.game.lt > .lt-seat[data-slot="0"]::after{content:'Turn order';position:absolute;z-index:1;left:12px;top:-7px;padding:0 5px;border-radius:3px;background:var(--walnut-2,#271d16);font-family:var(--sans);font-size:12px;line-height:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pl-cream-3,#7d6e5a);pointer-events:none}
   .app.game.lt > .lt-seat > .lt-cult-seat{position:relative;display:flex;flex-direction:column;height:100%;min-height:0;gap:0;padding:0;background:none;box-shadow:none;max-width:none}
 
   /* the top: leader, name over minions, total */
@@ -46,7 +49,7 @@
   .app.game.lt > .lt-seat .cs-stack{display:flex;flex-direction:row-reverse;align-items:center;justify-content:center;gap:5px;min-width:0;font-family:var(--sans);font-size:15px;font-weight:800;line-height:22px}
   .app.game.lt > .lt-seat .cs-stack + .cs-stack{box-shadow:inset 1px 0 0 var(--hair, rgba(242,232,210,.10))}
   .app.game.lt > .lt-seat .cs-stack .res-glyph{width:12px;height:12px;flex:none}
-  /* a zero: its number quiet, its hollow ring kept visible (layout.css) */
+  /* a zero: its number quiet, its dot kept in its color, dimmed (layout.css) */
   .app.game.lt > .lt-seat .cs-stack.zero{opacity:.62}
   .app.game.lt > .lt-seat .cs-stack.zero .num{opacity:.5;font-weight:700}
   /* a stack that's a pick (a steal, a gift) is its own pill inside its box */
@@ -134,6 +137,10 @@
 @media (min-width:861px) and (min-height:500px){
   .app.game.lt > .lt-seat[data-cloak]{box-shadow:inset 0 0 0 2px var(--cloak)}
   .app.game.lt > .lt-seat[data-cloak].now{box-shadow:inset 0 0 0 2px var(--cloak),0 0 0 2px rgba(var(--lamp),.55),0 0 18px rgba(var(--lamp),.22)}
+  /* the cloak's line stays its own color on your turn: the lit layer's lamp hairline sat over it, so your seat read as
+     gold-edged, not as your cloak (picky bot, Nov 4); the turn shows by the glow outside it and the warm ground */
+  .app.game.lt > .lt-seat[data-cloak]::before{box-shadow:none}
+  .app.game.lt > .lt-seat > .seat-cloak{position:absolute;z-index:1;right:12px;bottom:-7px;padding:0 5px;border-radius:3px;background:var(--walnut-2,#271d16);font-family:var(--sans);font-size:12px;line-height:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--cloak);pointer-events:none}
 }
 .lt-cult-seat .cs-leader{position:relative}
 .lt-cult-seat .cs-leader > .cs-cloak-on{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}

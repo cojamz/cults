@@ -31,7 +31,7 @@ export function nameIndex(state) {
 /** One name that opens its card: target { kind: 'space', key } or { kind: 'member', uid }. */
 // a space named anywhere off the wheel (the strip, a card, the log) lights where it is on the wheel while it's pointed
 // at (wave-2: "following a move means hovering panel after panel")
-const locate = (key, on) => {
+export const locate = (key, on) => {
   if (typeof document === 'undefined') return;
   for (const el of document.querySelectorAll(`[data-slot="${key}"], [data-cell="${key}"]`)) el.classList.toggle('hn-locate', on);
 };

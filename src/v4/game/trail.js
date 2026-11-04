@@ -50,6 +50,33 @@ export function seatLoss(a, b, me) {
 }
 
 /**
+ * What rivals took from your seat since your last turn, one clause per rival, oldest first: "P4 took 1 green 1 follower
+ * · P2 swapped your Busker for Doormen" (Rich turns the amounts into dots and the follower mark). '' when nothing.
+ */
+export function lossWords(list, players) {
+  const by = new Map();
+  for (const { actor, lost } of list || []) {
+    const m = by.get(actor) || { res: {}, f: 0, gone: [], came: [] };
+    for (const [r, n] of Object.entries(lost.res)) m.res[r] = (m.res[r] || 0) + n;
+    m.f += lost.f; m.gone.push(...lost.gone); m.came.push(...lost.came);
+    by.set(actor, m);
+  }
+  const out = [];
+  for (const [actor, m] of by) {
+    const name = players[actor] ? players[actor].name : 'A rival';
+    const amounts = [...Object.entries(m.res).map(([r, n]) => `${n} ${r}`), ...(m.f ? [`${m.f} follower${m.f === 1 ? '' : 's'}`] : [])].join(' ');
+    const names = l => l.join(', ');
+    const swap = m.gone.length && m.came.length;
+    const parts = [
+      swap ? `swapped your ${names(m.gone)} for ${names(m.came)}` : m.gone.length ? `took your ${names(m.gone)}` : null,
+      amounts ? `${swap ? 'and took ' : m.gone.length ? 'and ' : 'took '}${amounts}` : null,
+    ].filter(Boolean);
+    out.push(`${name} ${parts.join(' ')}`);
+  }
+  return out.join(' · ');
+}
+
+/**
  * A turn's story: from the engine's effect stream when every move of the turn carried one (one source of truth, each
  * cause summed once), else from the log and the states. `last`: the state that ended the turn (its move's effects
  * after the round was scored belong to the round, not the turn).

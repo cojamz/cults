@@ -1,12 +1,12 @@
 // The game table. Renders engine state from a session and turns clicks into { player, option } moves.
-import { turnRun, runTitle } from './seats.js';
+import { turnRun, runTitle, runSay } from './seats.js';
 import { cloakOf } from './cloak.js';
 // What's clickable is exactly state.pending.options, and only for seats this client controls.
 import { memo, startTransition, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { tierLeft, quadrant } from '../../engine/v4/index.js';
+import { tierLeft, quadrant, cardDef } from '../../engine/v4/index.js';
 import { useAnyDot } from './Glyphs.jsx';
 import { isRoundEnd, newLogLines, parseRoundEnd, playerColor, promptFor, roman, tierCostText, scoringSnapshot, explainLine, plainLine, latestRivalMove, movesSinceYourTurn } from '../format.js';
-import { TouchTips, useIdleSpaces } from './Info.jsx';
+import { TouchTips, useIdleSpaces, Tip } from './Info.jsx';
 import Wheel from './Wheel.jsx';
 import ShopCards from './ShopCards.jsx';
 import CultSeatRaw from './CultSeat.jsx';
@@ -33,10 +33,10 @@ const NO_OPTIONS = () => null;
 import { useHoverCards, HoverCardLayer, usePreviewWarmup } from './HoverCards.jsx';
 import { replayIntro } from '../Intro.jsx';
 import Chronicle from './Chronicle.jsx';
-import SinceStrip from './SinceStrip.jsx';
+import SinceStrip, { StoryCard } from './SinceStrip.jsx';
 import { MinionPool } from './MinionPool.jsx';
 import { useTalk, TalkBubble, TalkPicker, useEnterToTalk } from './Talk.jsx';
-import { createTrail, feed, liveStory, sinceYourTurn, seatLoss } from './trail.js';
+import { createTrail, feed, liveStory, sinceYourTurn, seatLoss, lossWords } from './trail.js';
 import Results from './Results.jsx';
 import FinalScore from './FinalScore.jsx';
 import RoundEnd from './RoundEnd.jsx';
@@ -562,12 +562,17 @@ function TurnCard({ card, root, state }) {
   if (gone) return null;
   // at most a few lines, the rest summed up (every line stays in the strip's card and the log)
   const [head, ...all] = card.text.split(' · ');
-  const rest = all.length > MAXL ? [...all.slice(0, MAXL - 1), `and ${all.length - MAXL + 1} more`] : all; // never "+4 more": it read as a gain of 4 (picky UI bot, Nov 4)
+  const rest = all.length > MAXL ? all.slice(0, MAXL - 1) : all; // never "+4 more": it read as a gain of 4 (picky UI bot, Nov 4)
+  const more = all.length - rest.length;
   return (
     <div ref={box} className={`turn-card${card.live ? ' live' : ''}${card.folding || life === 'folding' ? ' folding' : ''}`} data-turn-story={card.text} role="status" aria-live="polite"
       style={{ '--pc': playerColor(card.pid) }}>
       <b className="tc-head">{head}</b>
       {rest.map((l, k) => <span key={`${k}:${l}`} className="tc-line"><Rich text={l} /></span>)}
+      {/* what didn't fit opens on the "and N more" line, every line in its card (picky bot, Nov 4: "+3 more" with no way
+          to see them) */}
+      {more > 0 && <Tip className="tc-line tc-more" data-tc-more={more} label={`${head}: every line`}
+        content={() => <StoryCard story={{ head, lines: all, uids: {} }} color={playerColor(card.pid)} state={state} hover={null} />}>and {more} more</Tip>}
     </div>
   );
 }
@@ -646,32 +651,8 @@ function PromptActions({ optionFor, onPick, afterPurchase = false }) {
   );
 }
 
-/**
- * What rivals took from your seat since your last turn, one clause per rival, oldest first: "P4 took 1 green 1 follower
- * · P2 swapped your Busker for Doormen" (Rich turns the amounts into dots and the follower mark). '' when nothing.
- */
-export function lossWords(list, players) {
-  const by = new Map();
-  for (const { actor, lost } of list || []) {
-    const m = by.get(actor) || { res: {}, f: 0, gone: [], came: [] };
-    for (const [r, n] of Object.entries(lost.res)) m.res[r] = (m.res[r] || 0) + n;
-    m.f += lost.f; m.gone.push(...lost.gone); m.came.push(...lost.came);
-    by.set(actor, m);
-  }
-  const out = [];
-  for (const [actor, m] of by) {
-    const name = players[actor] ? players[actor].name : 'A rival';
-    const amounts = [...Object.entries(m.res).map(([r, n]) => `${n} ${r}`), ...(m.f ? [`${m.f} follower${m.f === 1 ? '' : 's'}`] : [])].join(' ');
-    const names = l => l.join(', ');
-    const swap = m.gone.length && m.came.length;
-    const parts = [
-      swap ? `swapped your ${names(m.gone)} for ${names(m.came)}` : m.gone.length ? `took your ${names(m.gone)}` : null,
-      amounts ? `${swap ? 'and took ' : m.gone.length ? 'and ' : 'took '}${amounts}` : null,
-    ].filter(Boolean);
-    out.push(`${name} ${parts.join(' ')}`);
-  }
-  return out.join(' · ');
-}
+// (lossWords lives in trail.js beside seatLoss, so the strip can say it too; kept exported here for its callers)
+export { lossWords };
 
 /** The spotlight on the table: data-spot on the root while a rival's step plays, data-spot-in on each seat it touches
  *  (written straight to the DOM: a React render per step for a dim would cost a commit mid-flight). */
@@ -1635,7 +1616,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     lastDown.current = { x: null, y: null, t: 0 };
     say(k === 'buy' ? 'Recruit undone — choose again' : k === 'setup' ? 'Pick undone — pick again' : 'Placement undone — place again', 'info', 1800);
   };
-  const undoWord = undoKind === 'buy' ? 'recruit' : undoKind === 'setup' ? 'pick' : 'placement';
+  // a recruit still undoable at your next placement (turns in a row) is the last one, not this turn's (picky bot, Nov 4:
+  // "Undo recruit" beside "place a minion")
+  const undoWord = undoKind === 'buy' ? (pend && pend.kind === 'place' ? 'last recruit' : 'recruit') : undoKind === 'setup' ? 'pick' : 'placement';
 
   // The lamp follows the decision; the furniture never moves (fixed regions, phase only re-lights them).
   const memberPicking = mine && !needHandoff && pend?.kind === 'choose' && pend.options.some(o => o.kind === 'card');
@@ -1696,9 +1679,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
             </span>
           )}
           {/* stacked turns count down (Cory, Nov 4: "when i stack a bunch of turns in a row its not clear to me how many
-              turns i have remaining"): "3 turns left in a row", then 2, then "last one". On this second row, so the
+              turns i have remaining"): "3 turns in a row", then 2, then "last turn in a row" (the seat's words). On this second row, so the
               question above stays one line beside Undo (picky bot, Nov 4: it wrapped and was cut at 1270x700) */}
-          {yours && !state.over && myRun && myRun.total >= 2 && <span className="say-run" data-run-left={myRun.left} title={runTitle(myRun)}>{myRun.left >= 2 ? `${myRun.left} turns left in a row` : 'last one in a row'}</span>}
+          {yours && !state.over && myRun && myRun.total >= 2 && pend.kind === 'place' && <span className="say-run" data-run-left={myRun.left} title={runTitle(myRun)}>{runSay(myRun)}</span>}
         </div>
         {/* who's winning lives on the chairs (each total, its place, the margin on hover): no score row (Cory, 2026-10-15) */}
         <Menu onRules={() => setRules(true)} onLog={openLog} getState={() => session.getState()} onLeave={onHome ? () => (state.over ? onHome() : setLeaving(true)) : null} />
@@ -1753,6 +1736,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
                 <CultSeat state={pid === me ? seatState : tSeats} pid={pid} me={me} mine={pid === me} now={!!(pend && pend.player === pid && !state.over)} hover={hover} optionFor={pid === me ? live : undefined} onPick={shopPick} pick={pickParts[pid] || null}
                   onLeader={pid === me && canTalk ? openTalkAt : null} talking={pid === me && talkOpen} />
               )}
+              {/* your cloak by name, on your chair's lower edge in its color (picky bot, Nov 4: readers learned their
+                  cloak only from a WHY row) */}
+              {pid != null && pid === me && cloakOf(state, pid) && <span className="seat-cloak" aria-hidden="true">{cardDef(state, state.players[pid].artifact).name}</span>}
               {pid != null && pid === me && lostText && <div key={lostText} className="seat-stolen" role="status" data-stolen={pid} data-brief=""><Rich text={lostText} /></div>}
               {pid != null && <TalkBubble talk={talk} pid={pid} />}
               {pid != null && !(pid === me && lostText) && stolen.filter(x => x.pid === pid).map(x => <div key={x.n} className="seat-stolen" role="status" data-stolen={pid}><Rich text={x.text} /></div>)}

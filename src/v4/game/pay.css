@@ -57,8 +57,9 @@
 .ps-coins > .ps-coin{position:absolute;left:0;bottom:calc(var(--k) * var(--step, 6px))}
 /* the top coin rises a little under the pointer: it's the one a click would move up to Paying */
 .pay-stack:has(.ps-add:hover:not(:disabled)) .ps-coins > .ps-coin:nth-last-child(1 of .ps-coin){transform:translateY(-3px)}
-/* every coin of a color paying: an empty ring where the stack was */
-.ps-socket{position:absolute;left:0;bottom:0;width:24px;height:24px;box-sizing:border-box;border-radius:50%;border:1.5px dashed var(--sock,var(--pl-ink-3,#a39078))}
+/* every coin of a color paying, or none held: one dim coin of its color where the stack was (picky bot, Nov 4) */
+.ps-socket{position:absolute;left:0;bottom:0;display:block;width:24px;height:24px;opacity:.3}
+.ps-socket > svg{display:block}
 .ps-n{position:relative;z-index:1;pointer-events:none;font-size:18px;line-height:24px;font-weight:700;font-variant-numeric:tabular-nums lining-nums}
 .pay-stack.spent .ps-n{color:var(--pl-ink-3,#a39078)}
 .pay-card .pay-was{font-size:12px;font-weight:600;color:var(--pl-ink-3,#a39078);text-decoration:line-through;text-decoration-thickness:1px;margin-right:2px}

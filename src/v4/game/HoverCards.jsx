@@ -750,7 +750,8 @@ export function SeatCard({ state, pid, meId = null, optionFor = () => null, onPi
   // playtest, Nov 1: "hover on your own player card should show same format it shows for opponents"); Use stays on your
   // seat's figures
   const you = pid === meId;
-  const who = <><SeatFigure id={pid} state={state} size={32} face={!you} /><h4>{you ? 'You' : p.name}{lvl ? <small><span data-bot-level={lvl.level} title={lvl.blurb}>{lvl.name} bot</span></small> : null}{safeThisRound(state, pid) ? <small className="seat-safe" data-safe="1">No one can steal members or resources from {you ? 'you' : p.name} this round.</small> : null}</h4></>;
+  // your own card says which seat number you are, so the P2, P3, P4 around you add up (picky bot, Nov 4: "there is no P1")
+  const who = <><SeatFigure id={pid} state={state} size={32} face={!you} /><h4>{you ? 'You' : p.name}{you && /^P\d+$/.test(p.name) ? ` (${p.name})` : ''}{lvl ? <small><span data-bot-level={lvl.level} title={lvl.blurb}>{lvl.name} bot</span></small> : null}{safeThisRound(state, pid) ? <small className="seat-safe" data-safe="1">No one can steal members or resources from {you ? 'you' : p.name} this round.</small> : null}</h4></>;
   return <div className="lt-card-body seat-card rival" data-seat-card={pid} style={{ '--pc': playerColor(pid) }}><RivalCard state={state} pid={pid} who={who} me={meId} optionFor={optionFor} onPick={you ? onPick : null} /></div>;
 }
 

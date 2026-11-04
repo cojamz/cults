@@ -82,7 +82,7 @@ describe('turn order on the cults', () => {
     const r = turnRail(s);
     const seq = [r.current, ...r.next].filter(p => p != null);
     const k = seq.indexOf(0);
-    const want = { 0: k < 0 ? 'done this round' : k === 1 ? '→' : `your turn in ${k}` };
+    const want = { 0: k < 0 ? 'done this round' : k === 1 ? 'your turn next' : `your turn in ${k}` };
     const words = seatTurns(s, 0);
     expect(Object.fromEntries(Object.entries(words).map(([p, w]) => [p, w.say]))).toEqual(want);
     for (const p of s.players) {
@@ -94,11 +94,11 @@ describe('turn order on the cults', () => {
       expect(container.querySelector('.cs-order')).toBeNull();
       cleanup();
     }
-    // your own turn: "your turn" ("your turn, 2 left" when the snake turns on you); no rival's seat says anything
+    // your own turn: "your turn" ("2 turns in a row" when the snake turns on you); no rival's seat says anything
     let t = until(s, x => x.pending && x.pending.kind === 'place' && x.current === 0);
     const tr = turnRail(t);
     const mine = seatTurns(t, 0);
-    expect(mine[0].say).toBe(tr.next[0] === 0 ? 'your turn, 2 left' : 'your turn');
+    expect(mine[0].say).toBe(tr.next[0] === 0 ? '2 turns in a row' : 'your turn');
     expect(Object.keys(mine)).toEqual(['0']);
     expect(Object.values(mine).some(w => w.say === 'next' || w.kind === 'next')).toBe(false);
     // before round I and with no viewer: nothing on yours
@@ -115,7 +115,7 @@ describe('turn order on the cults', () => {
     expect(seq.slice(0, 3).map(t => t.pid)).toEqual([me, me, me]);
     expect(seq.slice(1, 3).map(t => t.early)).toEqual(['Crunch Time', 'Crunch Time']);
     // three in a row counts down (Cory, Nov 4: "its not clear to me how many turns i have remaining")
-    expect(seatTurns(s, me)[me].say).toBe('your turn, 3 left');
+    expect(seatTurns(s, me)[me].say).toBe('3 turns in a row');
     expect(seatTurns(s, me)[me].title).toMatch(/This turn and 2 more right after it/);
     expect(turnPlaces(s, me).places[me].title).toMatch(/taken early \(Crunch Time\), not an extra one/);
     // the seat after the early turns counts them right
@@ -128,9 +128,9 @@ describe('turn order on the cults', () => {
     const c = currentTurn(s);
     expect(c.again).toBe(true);
     expect(c.early).toBe('Crunch Time');
-    expect(seatTurns(s, me)[me].say).toBe('your turn, 2 left');
+    expect(seatTurns(s, me)[me].say).toBe('2 turns in a row');
     s = until(s, t => t.pending && t.pending.kind === 'place' && (t.turns || []).length === 3);
-    expect(seatTurns(s, me)[me].say).toBe('your last in a row');
+    expect(seatTurns(s, me)[me].say).toBe('last turn in a row');
     expect(turnRun(s, me)).toMatchObject({ left: 1, before: 2, total: 3 });
   });
 });

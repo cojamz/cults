@@ -11,7 +11,7 @@ import { projectedEndGame } from '../format.js';
 import { memberTimingWords } from './memberTiming.js';
 import { onTable, CardName } from './Info.jsx';
 import { Rich } from './Rich.jsx';
-import { MemberGlyph } from './Glyphs.jsx';
+import { MemberGlyph, ResourceGlyph } from './Glyphs.jsx';
 import { ArtifactTile } from './ArtifactDraft.jsx';
 import { memberRows } from './memberUse.js';
 import { UseButton, MemberSwitch } from './MemberUse.jsx';
@@ -24,12 +24,15 @@ export const RIVAL_CARD_WIDTH = 920;
 // the card's own keywords, in the order a turn meets them
 const TYPES = [
   ['once-game', 'Once per Game'], ['once-round', 'Once per Round'], ['round', 'Round Start'], ['whenever', 'Whenever'],
-  ['always', 'Always'], ['end', 'Game End'], ['recruit', 'On Recruit'], ['plain', 'No ability'],
+  ['round-end', 'Round End'], ['always', 'Always'], ['end', 'Game End'], ['recruit', 'On Recruit'], ['plain', 'No ability'],
 ];
-const COLS = [['Uses', ['once-game', 'once-round']], ['Every round', ['round', 'whenever']], ['Standing and scoring', ['always', 'end']], ['Done or plain', ['recruit', 'plain']]];
+// the columns as Cory picked them (mockup 13, decisions Oct 29); a column with nothing in it is left out (picky bot,
+// Nov 4: empty headings stood over nothing)
+const COLS = [['Uses', ['once-game', 'once-round']], ['Every round', ['round', 'whenever', 'round-end']], ['Standing and scoring', ['always', 'end']], ['Done or plain', ['recruit', 'plain']]];
+// filed by the card's own timing word: a "Round End:" card (Mob) went under Always (picky bot, Nov 4)
 const typeOf = r => (r.kind === 'use' ? (r.def.activate === 'round' ? 'once-round' : 'once-game')
   : r.kind === 'income' ? 'round' : r.kind === 'reacts' ? 'whenever' : r.kind === 'end' ? 'end' : r.kind === 'joined' ? 'recruit'
-    : r.kind === 'worth' ? 'plain' : 'always');
+    : r.kind === 'worth' ? 'plain' : /^Round End\b/i.test(r.text || '') ? 'round-end' : 'always');
 const price = r => (r.def.s || 0) + (r.def.w || 0);
 const sumText = (state, m) => [...state.resources.filter(c => m[c] > 0).map(c => `+${m[c]} ${c}`), ...(m.followers > 0 ? [`+${m.followers} follower${m.followers === 1 ? '' : 's'}`] : [])].join(' ');
 const madeOf = (state, uids) => {
@@ -65,9 +68,11 @@ function Heading({ state, pid, who }) {
   if (wild) byColor.push([null, wild]);
   const nums = [
     ['Each Round Start', 'round', income ? <Rich text={income} /> : <span className="rc-nil">nothing</span>],
-    [state.over ? 'Game End' : 'Game End, if it ended now', 'end', end ? <Rich text={`${end > 0 ? '+' : '−'}${Math.abs(end)} followers`} /> : <span className="rc-nil">nothing</span>],
-    ['Resources', 'res', <><span className="num">{total}</span>{held.length ? <span className="rc-split"><Rich text={held.map(c => `${p.res[c]} ${c}`).join(' ')} /></span> : null}</>],
-    ['Members', 'members', <><span className="num">{memberCount(state, p)}</span>{byColor.length ? <span className="rc-split">{byColor.map(([r, n]) => <span key={r || 'any'} className="rc-bust"><b className="num">{n}</b><MemberGlyph r={r} n={n} size={14} /></span>)}</span> : null}{wild ? <span className="rc-anynote"><MemberGlyph size={12} decorative /> counts as any color</span> : null}</>],
+    // "nothing" here read as scoring zero (picky bot, Nov 4): it means no game-end bonus
+    [state.over ? 'Game End' : 'Game End, if it ended now', 'end', end ? <Rich text={`${end > 0 ? '+' : '−'}${Math.abs(end)} followers`} /> : <span className="rc-nil">no game-end bonus</span>],
+    // one color held: its dot beside the total, not the same number twice ("1" over "1●", picky bot, Nov 4)
+    ['Resources', 'res', <><span className="num">{total}</span>{held.length === 1 ? <> <ResourceGlyph r={held[0]} size={16} /></> : held.length ? <span className="rc-split"><Rich text={held.map(c => `${p.res[c]} ${c}`).join(' ')} /></span> : null}</>],
+    ['Members', 'members', <><span className="num">{memberCount(state, p)}</span>{byColor.length === 1 && !wild ? <> <MemberGlyph r={byColor[0][0]} n={byColor[0][1]} size={16} /></> : byColor.length ? <span className="rc-split">{byColor.map(([r, n]) => <span key={r || 'any'} className="rc-bust"><b className="num">{n}</b><MemberGlyph r={r} n={n} size={14} /></span>)}</span> : null}{wild ? <span className="rc-anynote"><MemberGlyph size={12} decorative /> counts as any color</span> : null}</>],
   ];
   return (
     <header className="rc-head">
@@ -85,6 +90,13 @@ function Heading({ state, pid, who }) {
   );
 }
 
+// how many members the row counts, with the member mark as on the shop card, so the rows add up to the Members total
+// (picky bot, Nov 4: "MEMBERS 8" over three cards)
+function Count({ state, r }) {
+  const n = r.uids.reduce((t, u) => t + memberWeight(state, u), 0);
+  return <span className="rc-count" data-member-count={n} title={`Counts as ${n} member${n === 1 ? '' : 's'}`}><b className="num">{n}</b><MemberGlyph r={r.def.everyColor ? null : onTable(state, r.def) ? sphereOf(state, r.def) : 'colorless'} size={12} decorative /></span>;
+}
+
 function Card({ state, r, onPick = null }) {
   const use = r.kind === 'use';
   const idle = !!(onPick && use && r.loaded && r.use && r.use.idle);
@@ -96,6 +108,7 @@ function Card({ state, r, onPick = null }) {
       <span className="rc-bar">
         <span className="rc-disc num" title={`Costs ${price(r)}`}>{price(r)}</span>
         <span className="rc-bar-n"><CardName state={state} uid={r.uid} />{r.n > 1 ? ` ×${r.n}` : ''}</span>
+        <Count state={state} r={r} />
         {use ? <span className="rc-usetag">{idle ? 'Nothing to gain now' : r.loaded ? 'Not used yet' : 'Used'}</span> : r.used ? <span className="rc-usetag">Used this round</span> : null}
       </span>
       <span className="rc-body">
@@ -124,7 +137,7 @@ export function RivalCard({ state, pid, who, me = null, optionFor = () => null, 
       <Heading state={state} pid={pid} who={who} />
       {rows.length ? (
         <div className="rc-cols" data-member-list={pid}>
-          {COLS.map(([label, ts]) => (
+          {COLS.filter(([, ts]) => groups.some(g => ts.includes(g.t))).map(([label, ts]) => (
             <div key={label} className="rc-col">
               <h5>{label}</h5>
               {groups.filter(g => ts.includes(g.t)).map(g => (
@@ -132,7 +145,7 @@ export function RivalCard({ state, pid, who, me = null, optionFor = () => null, 
                   {g.t === 'plain'
                     ? <div className="rc-chips">{g.rows.map(r => (
                       <span key={r.key} className="rc-chip" data-member-row={r.def.id} title={r.text}>
-                        <span className="rc-disc num">{price(r)}</span><Pic state={state} def={r.def} name={r.name} size={20} /><b className="rc-name"><CardName state={state} uid={r.uid} />{r.n > 1 ? ` ×${r.n}` : ''}</b>
+                        <span className="rc-disc num">{price(r)}</span><Pic state={state} def={r.def} name={r.name} size={20} /><b className="rc-name"><CardName state={state} uid={r.uid} />{r.n > 1 ? ` ×${r.n}` : ''}</b><Count state={state} r={r} />
                         <span className="rc-hide" data-ability>{r.text}</span>
                       </span>
                     ))}</div>

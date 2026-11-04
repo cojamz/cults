@@ -297,9 +297,10 @@
 
 /* a zero is a hollow ring in its own color (w3a A4, w3b #40: a dimmed dot went grey, like silver or white): "hollow"
    always means none; the number stays quiet */
-.cs-stack.zero .res-glyph path{fill:none}
+/* picky bot, Nov 4: the hollow rings lost their color (four zeros read alike, and white's ring read as "none"), so a zero
+   keeps its filled dot in its color, dimmed (mockup A, Cory Oct 21: "zeros dimmed") */
+.cs-stack.zero .res-glyph path{fill-opacity:.85}
 .cs-stack.zero .res-glyph .any-cross{display:none}
-.cs-stack.zero .res-glyph .res-ring{stroke:currentColor;stroke-width:1.25}
 /* a zero is clearly dimmer than any resource (final panel A#72: white's filled pearl and an empty cream ring read alike) */
 .lt > .lt-seat .cs-stack.zero,.lt-cult-seat .cs-stack.zero{opacity:.42}
 .lt > .lt-seat .cs-stack.zero .num,.lt-cult-seat .cs-stack.zero .num{opacity:.6}
@@ -423,10 +424,9 @@
 
 
 
-/* an empty stack's hollow ring stays visible on the dark seat in every color (live panel r1: purple's and magenta's
-   rings all but vanished): the ring is its color lifted toward cream, and the dim is lighter; the number stays quiet */
+/* an empty stack stays visible on the dark seat in every color (live panel r1: purple's and magenta's rings all but
+   vanished): the dim is lighter; the number stays quiet */
 .lt > .lt-seat .cs-stack.zero,.lt-cult-seat .cs-stack.zero{opacity:.62}
-.cs-stack.zero .res-glyph .res-ring{stroke:color-mix(in srgb,currentColor 55%,var(--cream,#f2e8d2));stroke-width:1.5}
 .lt > .lt-seat .cs-stack.zero .num,.lt-cult-seat .cs-stack.zero .num{opacity:.5}
 
 /* what a use just did ("extra turn", "+7 ●") rises over the row above it: it stands on its own dark ground, so it never

@@ -707,3 +707,4 @@ h1,h2,h3{font-family:var(--serif)}
 .lt [data-spaces="panels"] .stage svg.wheel-paper .rim-rule,.lt [data-spaces="panels"] .stage svg.wheel-paper .rim-rule .rim-prize,
 .lt [data-spaces="panels"] .stage .slot .face .main b.n{font-family:'Cults Pixel',var(--sans);font-weight:800;font-variation-settings:'ELSH' 12,'ELGR' 1.5}
 .lt [data-spaces="panels"] .stage svg.wheel-paper .rim-rule .rim-tie{font-family:var(--sans);font-variation-settings:normal}
+.turn-card .tc-more{pointer-events:auto;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}

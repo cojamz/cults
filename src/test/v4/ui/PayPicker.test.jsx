@@ -84,12 +84,14 @@ describe('v4 payment picker', () => {
       const out = vec(state, chosen)[c], group = paying.querySelector(`[data-pay-coin="${c}"]`);
       if (out) expect(group.querySelectorAll('.ps-coin').length).toBe(Math.min(12, out));
       else expect(group).toBeNull();
-      if (p.res[c] > 0) expect(keeping.querySelector(`[data-stack="${c}"] [data-keep-label]`).textContent).toBe(String(p.res[c] - out));
+      expect(keeping.querySelector(`[data-stack="${c}"] [data-keep-label]`).textContent).toBe(String((p.res[c] || 0) - out));
     }
     expect(dlg.querySelector('[data-pay-legend]')).toBeNull();
     expect(dlg.textContent).not.toContain('more than one way');
-    // a color you hold none of has no stack at all (blind tester B, aminus r1: its faint coin read as "this pays")
-    for (const c of res) expect(!!dlg.querySelector(`[data-stack="${c}"]`)).toBe(p.res[c] > 0);
+    // every color keeps its slot, in the table's order (picky bot, Nov 4: four slots, then three); one you hold none of
+    // shows a dim coin of its color, never a coin that counts
+    expect([...keeping.querySelectorAll('[data-stack]')].map(e => e.dataset.stack)).toEqual(res);
+    for (const c of res) if (!p.res[c]) expect(keeping.querySelectorAll(`[data-stack="${c}"] .ps-coin`).length).toBe(0);
     expect(dlg.querySelector('.ps-none')).toBeNull();
     fireEvent.click(dlg.querySelector('.pay-go'));
     expect(ss.submit).toHaveBeenCalledWith({ player: me, option: chosen });
