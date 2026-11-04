@@ -8,6 +8,21 @@ Status words: **fixed (version)**, **fixing**, **sent** (to the thread that owns
 **Cory** (a question only he can answer), **by design** (with the reason; the check got an exception).
 
 ## 2026-11-04
+Run at 1:42pm Eastern on v0.99.574 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
+emoji; raw list /mnt/project-files/picky/2026-11-04-18-42/). Fixes pushed in 39af1154; this run's box couldn't
+publish, so they go live with the next site update.
+
+- **Final score bars: thin parts still empty.** The earlier fix only labeled parts over 3.5% of the longest bar, so a
+  2-follower part (your Members with 1 member, your Prizes) and P2's 3-follower Play were blank slivers 10-16px wide.
+  Every part is now at least 22px and always shows its number. **fixed (39af1154, awaiting publish)**
+- **Paying sheet: a color you pay all of shows a grey dashed ring over "0".** Paying 2 blue and 3 silver left two
+  identical grey rings in Keeping: no way to tell which color is gone. The ring now wears its color.
+  **fixed (39af1154, awaiting publish)**
+- **Turn card: "+4 more" under "You took Toast +3 silver".** The folded lines read like a gain of 4. Now "and 4 more".
+  **fixed (39af1154, awaiting publish)**
+- **Rival's line "P3 Toast: you +3 silver · +9 silver".** The second gain has no name: it's P3's, but a reader has to
+  work that out. **open**
+- **Seat badge "−2" beside a 1-follower total** (P4, round II) reads at a glance as "−21". **open** (looks off)
 
 - **Final score bars: a thin part is an empty box.** A 2 or 3 follower part (P3's Play, your Prizes) showed no number
   until pointed at. Now a thin part shows its number alone. **fixed (v0.99.565)**
