@@ -564,7 +564,13 @@ const thieves = {
         for (const o of ahead) autoSteal(ctx, owner, o, 'Pickpocket');
       },
       // BOTSEE: about 1.5 steals a Round Start for a player behind, each a resource the victim loses too
-      ...see(info => endsAhead(info).length * 1.5 * (resAt(info.round) + SEE_SPITE)),
+      // BOTSEE: the On Recruit steal counts only the rivals ahead right now (e-pickpocket-ab2: bought while tied for the
+      // lead, it hit no one), then about 1.5 a later round start
+      ...see(info => {
+        const s = info.s, fol = p => p.bonus + p.members.reduce((a, u) => a + (defById(s.cards[u].def)?.f ?? 1), 0);
+        const ahead = info.rivals.filter(o => fol(o) > fol(info.owner)).length;
+        return (ahead + 1.5 * [1, 2, 3].filter(r => r > info.round).length) * (resAt(info.round) + SEE_SPITE);
+      }),
     })),
     ...add14(m('taxman', 'Tax Collector', 1, 1, 'Round End: after contests are scored, steal 1 resource from each rival who won one.', {
       afterContests(ctx, owner, card, table) {
