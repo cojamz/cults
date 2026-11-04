@@ -8,7 +8,11 @@
 const RAW = globalThis.process?.env?.REPLACE15 || '';
 const REPLACES = { cheerleaders: null, victors: null, warchest: null, gloaters: null };
 const ON = RAW === '1' ? Object.keys(REPLACES) : RAW.split(',').map(s => s.trim()).filter(k => k in REPLACES);
-export const REPLACE15 = ON.length > 0;
+// Live since Nov 4 (Cory, 3:45pm: "i think just add them in the grey deck will be the first to go to 12 for now"):
+// Cheerleaders and Victors are always dealt; War Chest and Gloaters stay behind the switch.
+const LIVE = ['cheerleaders', 'victors'];
+for (const k of LIVE) if (!ON.includes(k)) ON.push(k);
+export const REPLACE15 = ON.some(k => !LIVE.includes(k));
 /** The new card, in its list only when switched on. */
 export const add15 = card => (ON.includes(card.key) ? [card] : []);
 /** The old card's extra fields: retired when a card that replaces it is on. */

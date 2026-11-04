@@ -3,7 +3,7 @@
 // for winning contests") added to the grey deck. One test per sentence.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE15 = '1';
+process.env.REPLACE15 = 'warchest,gloaters'; // Cheerleaders and Victors are live
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { table, named } = await import('./cards-helpers-b.js');
