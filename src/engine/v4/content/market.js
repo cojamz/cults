@@ -567,9 +567,28 @@ const market = {
         })), `${Q}.snobReserve`);
       },
     })),
-    m('snob', 'Snobs', 3, 2, 'Game End: +1 follower per blue member you have.', { f: 2, ...old11('snob2'),
+    m('snob', 'Snobs', 3, 2, 'Game End: +1 follower per blue member you have.', { f: 2, ...old11('snob2'), ...old9('market.snob'),
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, Q),
     }),
+    // REPLACE9 bot test (Members C, Nov 4, batch bC1: paper 17 vs Snobs' 12, Blue's set 13 -> 17): Snobs' place. 4 blue
+    // + 3 any as a player sees it. Pays once a turn, on the owner's second member recruit of that turn (Recruit Twice,
+    // Spree, Shopaholics); buying followers isn't a member. Recruiting Power Shoppers itself counts as the first.
+    ...add9(m('powershoppers', 'Power Shoppers', 3, 3, 'Whenever you recruit your second member in a turn, +2 followers.', { f: 2,
+      onRecruit(ctx, owner, card, by, what) {
+        if (by !== owner || !what?.member || what.member.uid === card.uid) return; // itself: onRecruited counts it
+        const key = `${ctx.state.round}:${(ctx.state.turns || []).length}`;
+        if (card.shopTurn !== key) { card.shopTurn = key; card.shopN = 0; }
+        card.shopN += 1;
+        if (card.shopN !== 2) return;
+        owner.bonus += 2;
+        ctx.log(`${owner.name}'s Power Shoppers: a second member this turn, +2 followers.`);
+      },
+      onRecruited(ctx, owner, card) {
+        const key = `${ctx.state.round}:${(ctx.state.turns || []).length}`;
+        if (card.shopTurn !== key) { card.shopTurn = key; card.shopN = 1; }
+      },
+      ...see(i => endsAhead(i).length * 2), // BOTSEE: about one double-recruit turn a round still ahead
+    })),
     // REPLACE9 bot test (Members C, Nov 4): Hawker's place (Hawker asked rivals to choose on its owner's turn). 3 blue + 2 any as a
     // player sees it. The shop's blue members count toward the owner's members in every contest that counts them (core
     // contestMembers: Most members, and Fewest members against the owner). Rivals answer by sending blue members to the bottom.

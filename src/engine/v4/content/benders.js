@@ -18,6 +18,7 @@ import { toBottom, scavenge } from './market.js';
 import { REPLACE1, add1, old1, handlers1 } from './replace1.js';
 import { add6, old6 } from './replace6.js';
 import { add9, old9, handlers9 } from './replace9.js';
+import { see, endsAhead } from './botsee.js';
 /** Hypnotist (REPLACE9 bot test): the open spaces now, as [q, i, action]. */
 const hypnoSpaces = ctx => {
   const out = [];
@@ -149,6 +150,17 @@ const members = [
     onActivate(ctx, owner, card) { if (!extraMinion(ctx, owner, 'Extra Hand')) card.used = false; },
     botActivate: ctx => ctx.state.round === 3 && spareSpace(ctx),
   }),
+  // REPLACE9 bot test (Members C, Nov 4, batch bC1: paper 17 vs Extra Hand's 14, the guests' set 10 -> 14): Extra
+  // Hand's place. 6 any as a player sees it. Fewest followers when its Round Start comes up (ties count); no extra
+  // minions in round I, the game's rule (extraMinion).
+  ...add9(m('standin', 'Stand-In', 'purple', 0, 5, 'Round Start: if you have the fewest followers (ties count), +1 minion this round.', {
+    onRoundStart(ctx, owner) {
+      const mine = ctx.followers(owner);
+      if (!ctx.state.players.every(o => o === owner || ctx.followers(o) >= mine)) return;
+      extraMinion(ctx, owner, 'Stand-In');
+    },
+    ...see(i => endsAhead(i).filter(r => r > 1 && r > i.round).length * 2), // BOTSEE: about every other later round start, a minion worth about 4
+  })),
   // REPLACE9 bot test (Members C, Nov 4): Extra Hand's place. 6 any as a player sees it. The owner picks an open space now;
   // the next minion placed after the owner's turn ends (anyone's, the owner's own on a snake double) must go there
   // (core: state.hypno). If that space is taken by then, or the round ends first, nothing happens.
