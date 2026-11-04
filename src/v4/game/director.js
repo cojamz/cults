@@ -1313,10 +1313,11 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
           const size = Math.max(16, a.landed ? a.toRect.width : 18);
           const html = a.landed ? a.landed.innerHTML : `<i style="background:${playerColor(a.pid)}"></i>`;
           if (a.own) {
-            // yours stands in the door at once (the stamp); the trail from your column fades onto it
-            play('place', { who: seatEmoji(state, a.pid) });
+            // yours stands in the door at once (the stamp); the trail from your column fades onto it, and its sound
+            // plays as the trail lands, not as it leaves (Cor, Nov 4: "hearing the emoji sounds play before they land")
             if (a.landed && a.landed.animate) track(a.landed.animate([{ transform: 'scale(1.25)', opacity: 0.6 }, { transform: 'scale(1)', opacity: 1 }], { duration: MO.ownStamp, easing: 'cubic-bezier(.3,1.5,.5,1)' }));
-            flyPath(html, 'worker-flight minion-flight trail', square(F, size), square(a.toRect, size), { path: 'arc', duration: a.dur, fade: true });
+            const trail = flyPath(html, 'worker-flight minion-flight trail', square(F, size), square(a.toRect, size), { path: 'arc', duration: a.dur, fade: true });
+            onFinish(trail, () => play('place', { who: seatEmoji(state, a.pid) }));
           } else {
             chain.flying++;
             const anim = flyPath(html, 'worker-flight minion-flight', square(F, size), square(a.toRect, size), { path: 'arc', duration: a.dur });
