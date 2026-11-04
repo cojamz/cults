@@ -61,6 +61,9 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 https://claude.ai/artifact/Wur73WcxCPaeZmhmhuUg79 ("Cults Workstreams"), built by `node scripts/desk/tracker.mjs <out.html>` from the thread board (/mnt/project-files/status/board.md) and main's play/build.json. The desk republishes it (same file path, same URL) after every progress report or ship. It is only as true as each thread's `node scripts/status.mjs set …` line: keep yours current, with `--cory "…"` only for a real decision.
 
 ## Publishing (one at a time; ask the desk for go or wait)
+Waiting on Cory's OK (boxes refuse publishing without it since Nov 4 ~2:50am): ship 2a575f49 (Foster Parents in Greeters' place; Night Watch no pay when its holder keeps the Goes Last token) with
+`bash scripts/v4-ship-ui.sh "Foster Parents takes Greeters' place in Red's round I: Whenever a member joins your cult from a rival's, +2 followers. Night Watch no longer pays when you keep the Goes Last token." src/engine/v4/content/red.js src/engine/v4/content/replace7.js src/v4/art/index.js src/engine/v4/content/purple.js src/test/engine/v4/replace7.test.js src/test/engine/v4/red-members-pressure.test.js src/test/engine/v4/night-watch.test.js`
+Live is v0.99.559 (8c414368).
 Live: v0.99.552 (bf42a005), Nov 4 04:52Z. Tonight .544 to .552 shipped; one line each in /mnt/project-files/desk/morning.md.
 
 - Live: v0.99.543 (5eacf01c): set 3 members, plus the wheel redraw skip (78b95946) that rode along. Publish lock: free.
