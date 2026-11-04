@@ -40,7 +40,8 @@ instruction file in .claude/agents/ and a folder; scripts make the folders and a
    `--seeds a,b,c` keeps only those seeds (the Lab's same-round list). `--loose` also pairs leftover seeds in order (different games). Director, Nov 4: it takes 2 matched pairs before loose ones count,
    and a pass that needs the loose pairs needs +0.5; with fewer matched pairs, ask the Lab for more seeds.
    When the old card hard-fails, add `--old-hard-fail "<why>"`: the new card needs 1.0 or more on its own and no 0 on Clear outcome,
-   and the gap is for information. A hard fail on rivals choosing during the owner's turn (Hawker, Potluck, Shake Down) waits on Cory's ruling before it ships.
+   and the gap is for information. A hidden placebo (the same card on both sides): add `--show-new "<reworded text, same effect>"`
+   so the new side's sheets print the rewording and judges can't spot the twin. A hard fail on rivals choosing during the owner's turn (Hawker, Potluck, Shake Down) waits on Cory's ruling before it ships.
 
 ## The ranking (every live card, worst first)
 `node scripts/quality/ranking.mjs <dir with judge-*.json> ...` (bash scripts/quality/r1-ranking.sh rebuilds the

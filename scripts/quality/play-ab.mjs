@@ -55,6 +55,9 @@ if (args[0] === 'score') {
 const oi = args.indexOf('--out'), out = oi >= 0 ? args.splice(oi, 2)[1] : null;
 // --seeds a,b,c: only these seeds (the Lab's same-round list in rounds.json).
 const si = args.indexOf('--seeds'), only = si >= 0 ? args.splice(si, 2)[1].split(',').map(x => x.trim()) : null;
+// --show-new "<text>": a hidden placebo (Process critic, Nov 4 9:12): the new side is the same card, but its sheets print
+// this reworded text (same effect) in the header and wherever the real text appears, so judges can't spot the twin.
+const shi = args.indexOf('--show-new'), showNew = shi >= 0 ? args.splice(shi, 2)[1] : null;
 const [newDir, baseDir, newName, newText, oldName, oldText] = args.filter(a => a !== '--loose');
 if (!out || !oldText) { console.error('usage: play-ab.mjs <newDir> <baseDir> "<new name>" "<new text>" "<old name>" "<old text>" --out <dir>'); process.exit(2); }
 // Lab sheets are sheet-<seed>-<seat>.md; sheets.mjs writes <card>-g<seed>-<seat>.md (and a .full.md, skipped).
@@ -88,10 +91,11 @@ for (const [si, s] of seeds.entries()) {
     const norm = x => x.toLowerCase().replace(/[’‘]/g, "'").replace(/[“”]/g, '"');
     if (!norm(readFileSync(join(src, f), 'utf8')).includes(norm(t))) { console.error(`text not found in ${join(src, f)}: "${t}"`); process.exit(3); }
   }
-  const nw = make(N[s], newDir, newName, newText), ol = make(B[s], baseDir, oldName, oldText);
+  const swap = (t) => showNew ? t.split(newText).join(showNew).split(newText.replace(/'/g, '’')).join(showNew) : t;
+  const nw = swap(make(N[s], newDir, newName, newText)), ol = make(B[s], baseDir, oldName, oldText);
   writeFileSync(join(pd, 'A.md'), flip ? ol : nw); writeFileSync(join(pd, 'B.md'), flip ? nw : ol);
   pairs.push({ seed: s, dir, A: flip ? 'old' : 'new', B: flip ? 'new' : 'old', newSheet: N[s], oldSheet: B[s] });
 }
-writeFileSync(join(out, 'key.json'), JSON.stringify({ new: { name: newName, text: newText, dir: newDir }, old: { name: oldName, text: oldText, dir: baseDir }, pairs }, null, 1));
+writeFileSync(join(out, 'key.json'), JSON.stringify({ new: { name: newName, text: newText, shown: showNew || undefined, dir: newDir }, old: { name: oldName, text: oldText, dir: baseDir }, pairs }, null, 1));
 writeFileSync(join(out, 'brief.md'), [`# Blind A/B play judging`, '', `Each pair-<seed>/ folder holds A.md and B.md: the same seeded game, played once with one version of a card in a cult and once with another, each written from the seat that held it. The card is called "the slot card"; each sheet's header prints that version's text.`, `Score every sheet with .claude/agents/play-judge.md (P1 to P6, 0 to 2), on its own. Write play-judge-<your number>.json in THIS folder (not in the pair folders), with one entry per sheet whose "file" is "pair-<seed>/A.md" or "pair-<seed>/B.md". Then add "prefer": {"<seed>": "A"|"B"|"same"} with one plain line why. Do not open key.json.`].join('\n') + '\n');
 console.log(`${out}: ${pairs.length} pairs (${seeds.join(', ')}); judges read brief.md`);
