@@ -50,9 +50,19 @@ describe('Seat Filler: "Round Start: you may give this to the shop and recruit a
     s = answer(s, `card:${uidIn(s, 'red.bodysnatchers', 'shop')}`);
     expect(owns(s, 0, 'red.bodysnatchers')).toBe(true);
     expect(owns(s, 0, 'red.seatfiller')).toBe(false);
-    expect(s.shop.some(u => s.cards[u].def === 'red.seatfiller')).toBe(true); // in the slot Body Snatchers left
+    expect(s.shop.some(u => s.cards[u].def === 'red.seatfiller')).toBe(true); // face up in the row
     expect(s.players[0].res.red).toBe(red); // free
     expect(named(s, 'Seat Filler')).toContain("P1's Seat Filler goes to the shop; P1 recruits Body Snatchers for free.");
+  });
+
+  it("its owner's Loyalists doesn't stop it (no swap in its text), and the row stays its size", () => {
+    let s = table(['red', 'market', 'trading', 'yellow'], { round: 1, members: [['red.seatfiller', 'red.loyalists']],
+      pileFirst: ['red.bodysnatchers', 'red.panel', 'red.crowd'], queue: [{ t: 'round', r: 2 }] });
+    const size = s.shop.length;
+    s = answer(s, `card:${uidIn(s, 'red.bodysnatchers', 'shop')}`);
+    expect(owns(s, 0, 'red.bodysnatchers')).toBe(true);
+    expect(owns(s, 0, 'red.seatfiller')).toBe(false);
+    expect(s.shop.length).toBe(size);
   });
 
   it('"you may": keeping it changes nothing', () => {

@@ -155,7 +155,11 @@ export default {
         const me = ctx.card(data.uid);
         if (!p.members.includes(data.uid) || !ctx.state.shop.includes(uid) || cost(ctx.card(uid)) > cost(me) + 3) return;
         const names = [me.def.name, ctx.card(uid).def.name];
-        if (ctx.swapMembers(p, data.uid, uid)) ctx.log(`${p.name}'s ${names[0]} goes to the shop; ${p.name} recruits ${names[1]} for free.`);
+        // not a swap (its text names none, so Loyalists doesn't stop it): it goes face up into the row, then the free
+        // recruit takes the chosen card's place (the row ends the size it was, nothing new is dealt)
+        ctx.buryMember(p, data.uid, p, { shop: true });
+        ctx.log(`${p.name}'s ${names[0]} goes to the shop; ${p.name} recruits ${names[1]} for free.`);
+        ctx.recruit(p, uid, { free: true });
       },
     }),
     panelMode(ctx, p, mode, data) {
