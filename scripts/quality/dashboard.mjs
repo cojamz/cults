@@ -22,7 +22,7 @@ const now = hist[hist.length - 1], first = hist[0];
 const sj = [1, 2, 3].map(i => json(`${Q}/steering/set-judge-${i}.json`)).filter(Boolean);
 const setScore = {}, carriers = {}, plans = {};
 for (const k of COLORS) {
-  const rows = sj.map(j => j.find(r => norm(r.color) === k)).filter(Boolean);
+  const rows = sj.map(j => j.find(r => norm(r.color) === k)).filter(r => r && Array.isArray(r.scores));
   if (!rows.length) continue;
   const tots = rows.map(r => r.total ?? r.scores.reduce((a, b) => a + b, 0)).sort((a, b) => a - b);
   setScore[k] = { median: tots[Math.floor((tots.length - 1) / 2)], all: tots, q: Array.from({ length: 10 }, (_, i) => +(rows.reduce((a, r) => a + r.scores[i], 0) / rows.length).toFixed(1)) };
