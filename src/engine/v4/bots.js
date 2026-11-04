@@ -28,6 +28,7 @@ export const BOT_LEVELS = ['easy', 'normal', 'hard', 'veryhard'];
 // as the game runs out. The valuation alone under-recruits: with it, normal beat the old normal 37% to 21% and
 // recruits ~7 members instead of ~4 (400 games each; design/eval/bots.md). SPITE: how much the best rival's
 // expected total counts against the bot's own (1 = pure margin; 0.4 measured stronger than 1 and than 0).
+const HELD_PULL = 3; // Place Holders: how much a bot leans to its held space (in the followers its margin counts)
 const MEMBER_BIAS = 2, BIAS_FLOOR = 0.3, SPITE = 0.4;
 // BOTSMART=1 (bot test, Nov 4; Cory: "It's the bots making good decisions in general, like strategic decisions"): bots
 // judge when to use a member by what it gains, played out. A use that only pays on the next buy is measured on that buy
@@ -780,6 +781,10 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
       } catch {
         v = -50 + actionAt(state, o.q, o.i).estimate(contextFor(state), state.players[me]);
       }
+      // Place Holders (REPLACE11=placeholders): a bot takes the space it held early, as a player would (Evaluators,
+      // Nov 4: bots held a space at Round Start and then never took it)
+      const held = state.held;
+      if (held && held.round === state.round && held.pid === state.players[me].id && held.key === `${o.q}-${o.i}`) v += HELD_PULL;
       out.push({ o, v: v + rand() * (opts.noise ?? 0.3) });
     }
   } else if (pend.kind === 'buy' || pend.kind === 'pay') {
