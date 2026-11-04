@@ -16,7 +16,8 @@ instruction file in .claude/agents/ and a folder; scripts make the folders and a
    looking new. Either failing voids the batch.
    A candidate passes when the run is steady, its median clears the bar, it beats the old card by 3 (GATE_BEAT), and
    it fits the text budget (or every judge gave it Clear 2).
-5. `node scripts/quality/paper-gate.mjs setcheck <slot id> [names]` then 3 judges with .claude/agents/set-judge.md, then
+5. Two linked slots of one color: `setpair <gate A> <gate B> "A+B" ...` (old+old always in), scored with `setscore <A>+<B>`. Board tweaks in a spec: `boards` (extra colors), `extraMembers` and `dropFromBoard` (bot-test cards). Set judges run as separate agents, one per judge.
+5b. `node scripts/quality/paper-gate.mjs setcheck <slot id> [names]` then 3 judges with .claude/agents/set-judge.md, then
    `setscore <slot id>`: the color scored as a whole set with each version in the slot. A swap that lowers the set fails.
 6. The lane's pick: `node scripts/quality/paper-gate.mjs claim <slot id> <name>` takes its shapes ("whenever a rival",
    "+1 follower per X"...) for the batch; it refuses a shape another pick already took.

@@ -169,6 +169,9 @@ if (cmd === 'bundle') {
 } else if (cmd === 'setcheck') {
   // node scripts/quality/paper-gate.mjs setcheck <gate id> [names...]: a set folder for the old card and the named (or every passing) candidate
   console.log(setcheck(arg, process.argv.slice(4)));
+} else if (cmd === 'setpair') {
+  // node scripts/quality/paper-gate.mjs setpair <gate A> <gate B> "<A name>+<B name>" ...: two linked slots of one color scored as pairs (old+old always in)
+  console.log(setpair(arg, process.argv[4], process.argv.slice(5)));
 } else if (cmd === 'setscore') {
   console.log(setscore(arg));
 } else if (cmd === 'claim') {
@@ -253,6 +256,23 @@ function setcheck(id, names = []) {
     `## The other colors' spaces`, otherSpaces(old.qid)].join('\n'));
   writeFileSync(join(dir, 'key.json'), JSON.stringify({ gate: id, options: sh.map(o => ({ label: o.label, role: o.role, name: o.name })) }, null, 1));
   return `${dir}/set.md: ${sh.length} versions (${sh.map(o => `${o.label} ${o.name}`).join(', ')}); judges: .claude/agents/set-judge.md`;
+}
+function setpair(idA, idB, pairs) {
+  const kA = JSON.parse(readFileSync(join(GATE, idA, 'key.json'), 'utf8')), kB = JSON.parse(readFileSync(join(GATE, idB, 'key.json'), 'utf8'));
+  const find = (k, n) => k.options.find(o => o.name.toLowerCase() === n.trim().toLowerCase()) || (() => { throw new Error(`${n} not in ${k.spec.id}`); })();
+  const oA = kA.options.find(o => o.role === 'old'), oB = kB.options.find(o => o.role === 'old');
+  const vers = [{ role: 'old', a: oA, b: oB }, ...pairs.map(p => { const [a, b] = p.split('+'); return { role: 'cand', a: find(kA, a), b: find(kB, b) }; })];
+  const id = `${idA}+${idB}`, rand = rng([...id].reduce((x, c) => x * 37 + c.charCodeAt(0), 3));
+  const sh = shuffle(vers, rand).map((v, i) => ({ ...v, label: String.fromCharCode(65 + i), name: `${v.a.name} + ${v.b.name}` }));
+  const old = findCard(kA.old, kA.spec.color), dir = join(GATE, `set-${id}`); mkdirSync(dir, { recursive: true });
+  const card = o => `**${o.name}**${o.price ? ` [${o.price}]` : ''}: ${o.text}`;
+  const extra = [...(kA.spec.extraMembers || []), ...(kB.spec.extraMembers || [])], drop = [kA.old, kB.old, ...(kA.spec.dropFromBoard || []), ...(kB.spec.dropFromBoard || [])];
+  writeFileSync(join(dir, 'set.md'), [`# Whole-set check: ${old.color}, two linked members`, '', `The board below is ${old.color} with two member slots open. Each lettered version fills both slots. Score each version as a whole set.`, '',
+    ...sh.map(v => `- **${v.label}.** the slots hold ${card(v.a)} and ${card(v.b)}`), '', kA.spec.rules ? `Rules the cards refer to: ${kA.spec.rules}\n` : '',
+    `## ${old.color} with both slots open`, boardText([old.qid, ...(kA.spec.boards || [])], { without: drop, extra }),
+    `## The other colors' spaces`, otherSpaces(old.qid)].join('\n'));
+  writeFileSync(join(dir, 'key.json'), JSON.stringify({ gate: id, options: sh.map(v => ({ label: v.label, role: v.role, name: v.name })) }, null, 1));
+  return `${dir}/set.md: ${sh.length} versions (${sh.map(v => `${v.label} ${v.name}`).join(', ')}); judges: .claude/agents/set-judge.md; score with setscore ${id}`;
 }
 function setscore(id) {
   const dir = join(GATE, `set-${id}`), key = JSON.parse(readFileSync(join(dir, 'key.json'), 'utf8'));
