@@ -338,6 +338,7 @@ function heard(ctx, p, e, taker) {
   // any player's copy, +2 (Cory, Nov 1)
   for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(e.color).resource, IMPRESSION));
   each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
+  each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += 1; }); // REPLACE10
   for (const owner of ctx.rivals(p)) each(ctx, owner, 'muse', 'Muse', () => ctx.gain(owner, 'green', 1));
   if (taker === p) each(ctx, p, 'ensemble', 'Ensemble', () => { p.bonus += 1; });
   // −1 for the copier, +1 for Bait's owner, so copying your own is even (Cory, Oct 29: "clearly neutral for the
@@ -543,6 +544,7 @@ const echoQ = {
         ctx.log(`${p.name} copies ${hit.a.name}: doing it.`);
         for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(hit.qid).resource, IMPRESSION));
         each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
+        each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += 1; }); // REPLACE10
         withPath(ctx, pathNow(ctx), () => (hit.a.resolve.__orig || hit.a.resolve).call(hit.a, ctx, p), undefined, copierOf(ctx, p));
       });
     },
@@ -686,7 +688,10 @@ const echoQ = {
     }),
     // Cory, 2026-10-28: "Roadie is good" (Green's 16th); cost 3 is Claude's
     // Cory, 2026-11-01 playtest: "roadie should be On Recruit as well" (now: its round-start part fires once on recruit)
-    m('roadie', 'Roadie', 1, 1, 'On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.', { now: true, ...old4,
+    // REPLACE10 bot test (Nov 4, quality loop lane D): Roadie's place. 2 green + 1 any as a player sees it. Fires where
+    // Choir does: each copy of an action you make (Echo, Reprise, Cover, a member's copy), once per copy.
+    ...add10(m('copyist', 'Copyist', 1, 1, 'Whenever you copy an action, +1 follower.')),
+    m('roadie', 'Roadie', 1, 1, 'On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.', { now: true, ...old4, ...old10('copyist'),
       onRoundStart(ctx, owner) {
         const g = ctx.countMembersOfColor(owner, 'echo');
         if (g) ctx.gain(owner, 'green', g);
@@ -775,6 +780,17 @@ const echoQ = {
     }),
     m('agents', 'Agents', 1, 1, 'Rivals can’t copy your actions.', { f: 2, n: 2 }),
     m('bait', 'Bait', 1, 1, 'Whenever anyone copies one of your actions, they −1 follower and you +1 follower.'),
+    // REPLACE10 bot test (Nov 4): Chronicler's place, Cory's idea ("use once per game and the next on-recruit is doubled").
+    // 2 green + 3 any as a player sees it. Used on your turn; the member you recruit later this same turn has its On
+    // Recruit (or now-and-round-start effect) done twice (core's recruit). A recruit on another turn doesn't count.
+    ...add10(m('encore', 'Encore', 1, 3, 'On Use, once per game: this turn, the On Recruit of the member you recruit happens twice.', {
+      activate: 'game',
+      onActivate(ctx, owner) {
+        owner.encoreTurn = (ctx.state.turns || []).length;
+        ctx.log(`${owner.name} uses Encore: this turn's recruit's On Recruit happens twice.`);
+      },
+      botActivate: (ctx, p) => ctx.state.round >= 2 && ctx.shopCards().some(c => (c.def.onRecruited || c.def.now) && ctx.payChoices(p, c.uid, {}).length && c.def.s + c.def.w >= 5),
+    })),
     // REPLACE10 bot test (Nov 4, quality loop lane D): Chronicler's place. 4 green + 3 any as a player sees it. On your
     // turn, once a round: another of your members' On Recruit (or now-and-round-start effect, as Greatest Hits reads it)
     // runs again for you, as one Greatest Hits copy does; the card is turned until the next round starts.
@@ -792,7 +808,7 @@ const echoQ = {
       },
       botActivate: (ctx, p) => ownRecruits(ctx, p).some(c => recruitDef(c).key !== 'bootlegger'),
     })),
-    m('chronicler', 'Chronicler', 1, 3, 'Game End: +1 follower per green member you have.', { ...old10('bootlegger'),
+    m('chronicler', 'Chronicler', 1, 3, 'Game End: +1 follower per green member you have.', { ...old10('bootlegger'), ...old10('encore'),
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'echo'),
     }),
   ],

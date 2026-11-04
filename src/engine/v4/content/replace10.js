@@ -1,6 +1,7 @@
 // Quality loop, lane D (Magenta, White, Green; Nov 4 overnight, /mnt/project-files/quality/pitches/D-*.md), bot games
 // only. The new members take their old cards' places (the old card is retired, so never dealt):
-//   thieves.grifter -> thieves.racketeer, trading.oldmoney -> trading.pauper, echo.chronicler -> echo.bootlegger, echo.evergreen (Busker) -> echo.warmup,
+//   thieves.grifter -> thieves.racketeer, trading.oldmoney -> trading.pauper, echo.chronicler -> echo.bootlegger, echo.evergreen (Busker) -> echo.warmup, echo.roadie -> echo.copyist,
+//   echo.chronicler -> echo.encore (Cory's idea; the other candidate for Chronicler's place),
 //   trading.shopkeeper (Landlord) -> trading.almoner, trading.heiress (Heiresses) -> trading.widows
 //   space: thieves.tipoff (Stash) -> thieves.turf (Turf, Cory's idea), thieves.insidejob (Inside Job) or thieves.mug, in Stash's place
 // REPLACE10=1 turns every one on; REPLACE10=pauper (or a comma list of new keys) only those, so each card gets its own

@@ -1381,6 +1381,13 @@ function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop 
   // a when-recruited effect leaves a trace like any other member hook (Seed Money, Pilgrim, Retinue…)
   if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));
   joinNow(state, p, w, [def]);
+  // Encore (REPLACE10 bot test): used this turn, the recruited member's On Recruit happens a second time
+  if (REPLACE10 && p.encoreTurn === (state.turns || []).length && (def.onRecruited || def.now)) {
+    delete p.encoreTurn;
+    log(state, `${p.name}'s Encore: ${def.name}'s On Recruit again.`);
+    if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));
+    joinNow(state, p, w, [def]);
+  }
   workersNow(state, p, def, uid);
 }
 /**
