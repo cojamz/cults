@@ -50,7 +50,7 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 
 ## Publishing (one at a time; ask the desk for go or wait)
 
-- Live: v0.99.540 (0f470fd), stamp confirmed Nov 3 9:08pm by the animations thread. Publish lock: held by "Make game logs critiqueable" for 4dbcbe0b (pay warnings read the By color contest; "0 members" rides along), given 9:17pm.
+- Live: v0.99.541 (261fb219, main 19200c6), shipped Nov 3 9:20pm by "Make game logs critiqueable": pay warnings read the By color contest, "0 members", wheel words for Leaders' Tax, Potluck, Heist. Publish lock: free.
 - Held back from shipping until Cory says yes: the animations thread's Relaxed pacing change (not pushed).
 | Make game logs critiqueable (KbyWRuwuvJ21rjZetXFU2e) | Cory, Nov 4 9:01pm: send Claude a game log and get a critique of his play; not player-facing, copy/save at the end; replay from a point later | Save game already keeps every pick (seed plus moves replays exactly). Added scripts/v4-critique.mjs (each decision with the table, shop and every option) and a Build tag on saved games. Sample critique: /mnt/project-files/game-critique/. Found and fixed: pay warnings read the printed contest under By color (21130bba, pushed, not published) | Cory's read of the sample; the desk's go to publish the pay-warning fix |
 
