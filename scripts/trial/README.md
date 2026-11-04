@@ -25,7 +25,7 @@ node scripts/trial/trial.mjs report <name>                # writes trials/<name>
 - `arms/<id>/`: one side's games (`games/<first>.jsonl`, 5 games each) and the claims. The id is the bot level plus a hash of the env and the rules files (src/engine, tables.js, v4-balance.mjs, scripts/lib). Trials with the same base share it, so it gets played once.
 
 ## Why it's safe to run in parallel
-- **Claim:** `claims/<first>` is created with O_EXCL. The worker touches it every minute. Nobody touching it for 10 minutes, or a dead pid on the same box, frees the block.
+- **Claim:** `claims/<first>` is created with O_EXCL. The worker rewrites it every minute with the time (`beat`); other boxes read that time, since a bare mtime touch never reaches them through the shared folder. No beat for 15 minutes, or a dead pid on the same box, frees the block.
 - **Write:** the 5 games go to a fresh local `.trial-runs/<arm>/<first>.part`. Only when all 5 are there does it copy to a tmp file and rename that into place. Nothing is ever appended in the shared folder, which is what used to cause shard.sh's duplicates after a restart.
 - **Read:** the report reads each game number once and leaves out stuck games. It compares only games both sides have played, so a half-finished trial is still a fair comparison.
 - **Exit codes:** `work` exits 0 when nothing is left to claim and 1 after a failed block (it stops after 3).

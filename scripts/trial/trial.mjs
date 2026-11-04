@@ -12,7 +12,7 @@
 // - Defaults: 10-card deck, By color contests, bots that see what cards do (BOTSEE=1). A trial's env can override them.
 // - The base (same games without the change) is part of the trial and shared: two trials with the same base settings
 //   on the same rules code play it once.
-// - No hand-assigned ranges: workers claim 5-game blocks themselves; a claim nobody has touched for 10 minutes is free
+// - No hand-assigned ranges: workers claim 5-game blocks themselves; a claim with no heartbeat for 15 minutes is free
 //   again. Blocks are keyed by game number and a game number always plays the same game, so a rare double claim
 //   (two boxes) only wastes time; the report reads each game once.
 // - Restart-safe: a block is played into a fresh local file, checked for 5 games, then renamed into place in one step.
@@ -32,7 +32,11 @@ const colorName = q => { try { return quadrant(q).name; } catch { return q; } };
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const ROOT = process.env.TRIALS_DIR || '/mnt/project-files/trials';
-const BLOCK = 5, STALE_MS = 10 * 60e3, BEAT_MS = 60e3;
+// a claim is stale after 15 min with no heartbeat. The heartbeat rewrites the claim's text with the time (beat): the
+// shared folder doesn't carry a bare mtime change to other boxes, so a long block (Very Hard: over 10 min) read as
+// stalled elsewhere while its worker ran, and two boxes played it (Nov 3). The clock is read from the text, mtime is
+// the fallback for old claims.
+const BLOCK = 5, STALE_MS = 15 * 60e3, BEAT_MS = 60e3;
 const DEFAULTS = { DECK: '10', CONTESTS: 'byColor', BOTSEE: '1' };
 // the files the games depend on: a trial's arms are keyed by these, so a commit that changes only the screen reuses them
 const RULES_PATHS = ['src/engine', 'src/v4/tables.js', 'scripts/v4-balance.mjs', 'scripts/lib', 'scripts/trial/cards.mjs'];
@@ -156,16 +160,18 @@ const blocksDone = (id, games) => blockStarts(games).filter(s => isDone(id, s)).
 
 function claimState(id, s) {
   const f = join(armDir(id), 'claims', String(s));
-  let st;
+  let st, c = null;
   try { st = statSync(f); } catch { return 'free'; }
-  if (Date.now() - st.mtimeMs >= STALE_MS) return 'stale';
+  try { c = JSON.parse(readFileSync(f, 'utf8')); } catch {}
+  const last = Math.max(st.mtimeMs, Date.parse(c?.beat || c?.at || 0) || 0);
+  if (Date.now() - last >= STALE_MS) return 'stale';
   // a claim from this box whose worker is gone (killed, or the box restarted with the same name) is free at once
-  try { const c = JSON.parse(readFileSync(f, 'utf8')); if (c.host === hostname() && c.pid !== process.pid && !alive(c.pid)) return 'stale'; } catch {}
+  if (c && c.host === hostname() && c.pid !== process.pid && !alive(c.pid)) return 'stale';
   return 'live';
 }
 const alive = pid => { try { process.kill(pid, 0); return true; } catch (e) { return e.code === 'EPERM'; } };
 
-/** Claim a block: create its claim file exclusively. A stale claim (no heartbeat for 10 min) is taken over. */
+/** Claim a block: create its claim file exclusively. A stale claim (no heartbeat for 15 min) is taken over. */
 function claim(id, s, me) {
   const f = join(armDir(id), 'claims', String(s));
   for (let tries = 0; tries < 2; tries++) {
@@ -192,7 +198,7 @@ async function cmdWork() {
   const order = queue; // lowest games first, so a half-played trial is the first N games of both sides
   const mine = new Set(), times = [];
   let played = 0, failed = 0;
-  const beat = setInterval(() => { const t = new Date(); for (const f of mine) try { utimesSync(f, t, t); } catch {} }, BEAT_MS);
+  const beat = setInterval(() => { const t = new Date(); for (const f of mine) try { writeFileSync(f, JSON.stringify({ ...me, beat: t.toISOString() })); utimesSync(f, t, t); } catch {} }, BEAT_MS);
   const release = () => { for (const f of mine) try { unlinkSync(f); } catch {} };
   process.on('SIGINT', () => { release(); process.exit(130); });
   process.on('SIGTERM', () => { release(); process.exit(143); });
