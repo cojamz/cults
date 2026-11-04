@@ -90,15 +90,14 @@ No color is ever done on its own (Cory, Nov 4: "it all needs to happen together.
 1. Every card in the color clears the bar (protected cards Cory praised count as clear, and are listed for him if the judges disagree).
 2. The color's set score meets its target (3 judges, at least 15 of 20, no missing role).
 3. The game dashboard hits its targets two batches running: round I leader wins under 40% at 4 seats, last after round II wins at least 10%, wins with 5 or fewer members at least 20%, no must-buy or dead card per color beyond one, play-judge averages at 1.5 of 2 or better on clear outcome, momentum, agency and catch-up.
-4. Diminishing returns: two batches running where even explore mode passes under 1 in 5 and the dashboard doesn't move.
-When done, the loop stops instead of churning. It writes a final report (what changed, the before-and-after dashboard, and the cards the judges still doubt), ships nothing more, and frees the runners. If only rule 4 is met and the others aren't, the report says the remaining gap is a design question for Cory, not more card swaps.
+4. (Removed by Cory, Nov 4 12:38am: "the loop should not stall ... That's like a ton of information to bake back into the loop.") Low pass rates never stop the loop: they go to the Process critic, who works out why (designer brief, rubric, judges, shapes, flow rules), changes the process, and the loop keeps going.
+The loop ends only on success: rules 1 to 3 all holding for the whole game at once on one run. Then it stops instead of churning. It writes a final report (what changed, the before-and-after dashboard, and the cards the judges still doubt), ships nothing more, and frees the runners.
 
 ## Done, tightened (Process critic, 12:11am, director adopted)
 - **Frozen anchors:** 10 live cards that never change are scored in every judge run. If their median moves more than 0.5, that run's scale has drifted and it counts toward no pass and no "done". The Evaluators pick the 10 and list them in evals/anchors.md.
 - **Strategy diversity** joins the dashboard and rule 3: count distinct winning plans; no single plan over about 30% of wins (today mixed-wide plus red-wide take 40%). Cory's 1.0 line is "confident in the strategy/fun", not card scores.
 - **Table load** joins the dashboard: per cult at the end of a typical game, words of card text on the table and the number of "whenever" triggers; and once a night, one fresh agent reads a full game as a first-time player and says what it lost track of.
 - **Rule 3 is relative:** today's game numbers already pass the absolute bars (round I leader wins 32%, last after round II wins 21%, small cults 30%; Nov 3 fast run), so rule 3 means "no worse than the 12:10am baseline on every number, and diversity met".
-- **Rule 4 can't be met by giving up:** only explore candidates with a shape not already in their color count toward it.
 - **Rules 1 and 2 need stable anchors** on the run that declares done.
 
 - **C12 Elegant** (Cory, Nov 4, 12:16am: "is it clever slash like elegant ... copy the previous action is like top tier elegance"): full weight, 0 to 2. Totals are now out of 23 (C11 counts 0 or 1); the bar stays at 13 because C12 rewards what Cory values most and shouldn't lower old passes. Echo is the one quoted example and moves to calibration half A (prompt-side), so taste checks stay on half B. Judges must explain an Elegant 2 by what the card plays off, not by matching Echo.
@@ -118,3 +117,5 @@ When done, the loop stops instead of churning. It writes a final report (what ch
 - **"Once per round" on a big effect is a power flag:** check it against once per game.
 - **A reword of the old card is a valid candidate** in every slot.
 - **Calibration:** these verdicts join calibration as a new held-out set (half B), so the next judge run is tested on calls they've never seen.
+
+- **Failing batches feed the meta loop** (Cory, 12:38am): after any batch where under 1 in 3 candidates pass, or Cory rejects most of a batch, the Process critic must name the cause in writing and change at least one thing (brief, rubric line, judge prompt, shape rules) before the next batch starts. Cory's 12:35am verdicts are the first such input.
