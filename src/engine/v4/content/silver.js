@@ -481,7 +481,8 @@ const silver = {
         for (const c of cheap) for (const o of others(ctx, owner)) opts.push({
           id: `give:${c.uid}:${o.id}`, label: `${c.def.name} (${c.def.s + c.def.w}) to ${o.name}`, kind: 'choice', value: [c.uid, o.id],
           // bots shed a used-up or plain cheap member, never one still paying; the rival it helps least
-          hint: 4 + ww - (c.def.f || 1) * 1.5 - (c.used || c.def.vanilla || !c.def.afterAction ? 0 : 3) - ctx.followers(o) * 0.01,
+          // giving Guest of Honor itself ends its run: bots do that only in round III
+          hint: 4 + ww - (c.def.f || 1) * 1.5 - (c.used || c.def.vanilla || !c.def.afterAction ? 0 : 3) - (c.uid === card.uid && ctx.state.round < 3 ? 6 : 0) - ctx.followers(o) * 0.01,
         });
         opts.push({ id: 'none', label: 'Give nothing', kind: 'pass', value: 'none', hint: 0 });
         ctx.choose(owner, 'Guest of Honor: give one of your members costing 3 or less to a rival, for +4 followers?', opts, 'silver.guestofhonor');
