@@ -4,7 +4,7 @@
 // switch is read when the engine loads, so it is set before the engine is imported (dynamic imports below), then cleared.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE9 = '1';
+process.env.REPLACE9 = 'tollkeeper,quilter,lastminute,bargainhunter,hypnotist,jack,ambassadors,mannequin,stallholder';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move } = await import('./helpers.js');
@@ -283,6 +283,47 @@ describe('Mannequin: "Blue members in the shop count as your members when contes
     };
     expect(won(['market.mannequin'])).toEqual([0]);
     expect(won(['market.lastminute'])).toEqual([1]);
+  });
+});
+
+describe('Stallholder: "On Use, once per round: move a shop member beside this card, then refill. Until round end, anyone may recruit it there; a rival pays its cost to you."', () => {
+  const Q4 = ['red', 'market', 'purple', 'silver'];
+  const stalled = (queue = [{ t: 'buy', p: 0 }, { t: 'endTurn', p: 0 }, { t: 'turn', p: 1 }]) => {
+    let s = table(Q4, { n: 3, round: 1, res: [{ blue: 2 }, { red: 6 }], members: [['market.stallholder']], shop: ['red.volunteer', 'market.curator'], queue });
+    const vol = uidIn(s, 'red.volunteer', 'shop'), shopLen = s.shop.length;
+    s = move(s, `use:${uidIn(s, 'market.stallholder', 0)}`);
+    s = answer(s, `card:${vol}`);
+    return { s, vol, shopLen };
+  };
+  it('price, retirement, and the old Hawker', () => {
+    const d = defById('market.stallholder');
+    expect([d.s, d.w, d.f, d.n, d.round, d.activate]).toEqual([4, 1, 1, 1, 1, 'round']);
+    expect(defById('market.hawkers').retired).toBe(true);
+  });
+  it('On Use: the member moves beside the card and the shop refills', () => {
+    const { s, vol, shopLen } = stalled();
+    expect(s.shop).not.toContain(vol);
+    expect(s.shop.length).toBe(shopLen);
+    expect(s.stalls[uidIn(s, 'market.stallholder', 0)]).toEqual([vol]);
+  });
+  it('a rival recruits it on their own turn and pays its cost to the owner', () => {
+    let { s, vol } = stalled();
+    s = answer(s, 'pass');
+    while (s.pending && s.pending.player !== 1) s = answer(s, s.pending.options[0].id);
+    while (s.pending?.kind !== 'buy' && s.pending?.player === 1 && !s.pending.options.some(o => o.id === `card:${vol}`)) s = answer(s, s.pending.options[0].id);
+    const opt = s.pending.options.find(o => o.id === `card:${vol}`);
+    expect(opt.label).toMatch(/P1's Stallholder/);
+    const before = s.players[0].res.red || 0;
+    s = answer(s, opt.id);
+    while (s.pending?.prompt?.startsWith('P2: choose how to pay')) s = answer(s, s.pending.options[0].id);
+    expect(owns(s, 1, 'red.volunteer')).toBe(true);
+    expect((s.players[0].res.red || 0)).toBeGreaterThan(before);
+  });
+  it('unsold, it goes to the bottom of the pile after contests', () => {
+    let { s, vol } = stalled([{ t: 'buy', p: 0 }, { t: 'endRound' }]);
+    s = answer(s, 'pass');
+    expect(s.pile.at(-1) === vol || s.pile.includes(vol)).toBe(true);
+    expect(s.stalls[uidIn(s, 'market.stallholder', 0)]).toEqual([]);
   });
 });
 

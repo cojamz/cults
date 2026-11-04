@@ -609,8 +609,8 @@ function inputFor(state, task) {
       for (const uid of state.pile.slice(0, pileReach(state, p))) if (memberPrice(state, p, uid).afford)
         opts.push({ id: `card:${uid}`, label: `${cardDef(state, uid).name} (from the pile)`, kind: 'card', uid, fromPile: true });
       // a rival's Peddlers stall (REPLACE6 bot test)
-      if (REPLACE6) for (const [uid, o] of stallCards(state, p)) if (memberPrice(state, p, uid).afford)
-        opts.push({ id: `card:${uid}`, label: `${cardDef(state, uid).name} (${o.name}'s Peddlers)`, kind: 'card', uid, stall: o.id });
+      if (REPLACE6 || REPLACE9) for (const [uid, o, by] of stallCards(state, p)) if (memberPrice(state, p, uid).afford)
+        opts.push({ id: `card:${uid}`, label: `${cardDef(state, uid).name} (${o === p ? 'your' : `${o.name}'s`} ${by})`, kind: 'card', uid, stall: o.id });
       TIERS.forEach(t => { if (canBuyTier(state, p, t)) opts.push({ id: `tier:${t.key}`, label: `+${t.get} followers`, kind: 'tier', tier: t.key }); });
       // the swap card, a table setting (Cory, Nov 1 3:01pm), beside the follower cards
       if (swapCardPairs(state, p).length) opts.push({ id: 'swapcard', label: 'Swap card', kind: 'swapcard' });
@@ -1342,8 +1342,11 @@ function recruit(state, p, uid, opts) {
 }
 function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false }) {
   // a rival's Peddlers stall (REPLACE6 bot test): taken from beside the card, paid to its owner
-  const stall = REPLACE6 && state.shop.indexOf(uid) < 0 ? stallCards(state, p).find(([u]) => u === uid)?.[1] : null;
-  if (stall) for (const list of Object.values(state.stalls)) if (list.includes(uid)) { list.splice(list.indexOf(uid), 1); state.shop.push(uid); }
+  // (or the owner's own Stallholder stall, REPLACE9: the owner recruits from it paying the bank, as from the shop)
+  const stallAt = (REPLACE6 || REPLACE9) && state.shop.indexOf(uid) < 0 ? stallCards(state, p).find(([u]) => u === uid) : null;
+  const stallOf = stallAt?.[1] || null;
+  if (stallOf) for (const list of Object.values(state.stalls)) if (list.includes(uid)) { list.splice(list.indexOf(uid), 1); state.shop.push(uid); }
+  const stall = stallOf && stallOf !== p ? stallOf : null;
   const idx = state.shop.indexOf(uid);
   const fromPile = idx < 0 ? state.pile.indexOf(uid) : -1;
   // top: Red's round I space takes the deck's top member (Cory, 2026-10-27)
@@ -1384,7 +1387,7 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
       if ((spend[q0] || 0) < needS && spend.silver > 0) notes.push(`${flagName(state, p, 'silverPaysColor')}: silver paid for ${q0}`);
     }
     if (notes.length) paid += `; ${notes.join(', ')}`;
-    if (stall) { for (const r in spend) stall.res[r] = (stall.res[r] || 0) + spend[r]; paid += `, paid to ${stall.name}'s Peddlers`; }
+    if (stall) { for (const r in spend) stall.res[r] = (stall.res[r] || 0) + spend[r]; paid += `, paid to ${stall.name}'s ${stallAt[2]}`; }
     // a discount waits for a member that actually costs something
     if (cardDef(state, uid).s + cardDef(state, uid).w > 0) { p.discount = 0; p.discountSources = []; }
   }
@@ -1925,8 +1928,13 @@ function againBuy(state, p, extra) {
 function stallCards(state, p) {
   const out = [];
   if (!state.stalls) return out;
-  for (const o of state.players) if (o !== p) for (const u of o.members) if (state.stalls[u]?.length && effectiveDefs(state.cards[u]).some(d => d.stall))
-    for (const uid of state.stalls[u]) out.push([uid, o]);
+  for (const o of state.players) for (const u of o.members) {
+    if (!state.stalls[u]?.length) continue;
+    const d = effectiveDefs(state.cards[u]).find(e => e.stall);
+    // Peddlers sells to rivals only; Stallholder (REPLACE9: stall 'anyone') to its owner too
+    if (!d || (o === p && d.stall !== 'anyone')) continue;
+    for (const uid of state.stalls[u]) out.push([uid, o, d.name]);
+  }
   return out;
 }
 /** How many cards off the top of the pile p may recruit from (Insider: flag pileReach; copies don't stack). */

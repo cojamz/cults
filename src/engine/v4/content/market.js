@@ -410,6 +410,14 @@ const market = {
         if (!ctx.state.shop.includes(uid) || !ctx.payChoices(p, uid, {}).length) return;
         askPay(ctx, p, `Last-Minute Shopper: how do you pay for ${ctx.card(uid).def.name}?`, { uid, why: 'Last-Minute Shopper', fromPile: true, how: {} });
       },
+      stallhold(ctx, p, uid, data) {
+        const st = ctx.state, i = st.shop.indexOf(uid);
+        if (i < 0) return;
+        // the slot refills from the top of the pile, in place
+        if (st.pile.length) st.shop.splice(i, 1, st.pile.shift()); else st.shop.splice(i, 1);
+        ((st.stalls ||= {})[data.card] ||= []).push(uid);
+        ctx.log(`${p.name}'s Stallholder: ${ctx.card(uid).def.name} goes beside it until round end; a rival who recruits it pays ${p.name}.`);
+      },
       lastMinuteGain(ctx, p, color, data) {
         ctx.gain(p, color, 1);
         ctx.log(`${p.name}'s Last-Minute Shopper: +1 ${color}.`);
@@ -532,6 +540,28 @@ const market = {
     // player sees it. The shop's blue members count toward the owner's members in every contest that counts them (core
     // contestMembers: Most members, and Fewest members against the owner). Rivals answer by sending blue members to the bottom.
     ...add9(m('mannequin', 'Mannequin', 2, 2, 'Blue members in the shop count as your members when contests are scored.', { round: 1 })),
+    // REPLACE9 bot test (Members C, Nov 4): Hawker's place, second try (Mannequin lost its blind A/B). 4 blue + 1 any as a
+    // player sees it. The stall is the Peddlers list (state.stalls[uid], flag stall 'anyone'): core's recruit step offers it to
+    // everyone; a rival pays its cost to the owner, the owner pays the bank. After contests an unsold member goes to the
+    // bottom of the pile (Claude's ruling, pitch file). Red's free recruits and Promote don't reach it: it isn't in the shop.
+    ...add9(m('stallholder', 'Stallholder', 3, 1, 'On Use, once per round: move a shop member beside this card, then refill. Until round end, anyone may recruit it there; a rival pays its cost to you.', { round: 1, stall: 'anyone',
+      activate: 'round',
+      onActivate(ctx, owner, card) {
+        const shop = ctx.shopCards();
+        if (!shop.length || ctx.state.stalls?.[card.uid]?.length) { card.used = false; ctx.log(`${owner.name}'s Stallholder: nothing to move.`); return; }
+        // bots stall the priciest member they can't pay for themselves (a rival may, and pays them)
+        ctx.choose(owner, 'Stallholder: move which shop member beside it?', shop.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid,
+          hint: priceOf(c) + (ctx.payChoices(owner, c.uid, {}).length ? -3 : 0),
+        })), `${Q}.stallhold`, { card: card.uid });
+      },
+      botActivate: ctx => ctx.state.round >= 1,
+      afterContests(ctx, owner, card) {
+        const list = ctx.state.stalls?.[card.uid];
+        if (!list?.length) return;
+        for (const uid of list.splice(0)) { ctx.state.pile.push(uid); ctx.log(`${owner.name}'s Stallholder: ${ctx.card(uid).def.name} goes unsold to the bottom of the pile.`); }
+      },
+    })),
     m('recluse', 'Recluse', 2, 2, 'Game End: +2 followers per rival with more members than you.', {
       onGameEnd: (ctx, owner) => 2 * rivalsBigger(ctx, owner),
     }),
