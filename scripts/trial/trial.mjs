@@ -265,13 +265,17 @@ const owns = (p, n) => Object.keys(p.gotRound || {}).some(k => k.startsWith(`${n
 const seatsOf = r => r.players.filter(p => p.seat !== r.buyer);
 
 function cardLine(rows, n) {
-  let shown = 0, own = 0, win = 0, even = 0;
+  // taken: games where some cult recruited it, per game it showed up; owners: every cult that held it (a card can
+  // change hands, so one game can have two owners)
+  let shown = 0, takenIn = 0, own = 0, win = 0, even = 0;
   for (const r of rows) {
     if (!r.shop.some(x => x.startsWith(`${n} (`))) continue;
     shown++;
-    for (const p of seatsOf(r)) if (owns(p, n)) { own++; win += p.win ? 1 : 0; even += 1 / r.seats; }
+    let any = false;
+    for (const p of seatsOf(r)) if (owns(p, n)) { any = true; own++; win += p.win ? 1 : 0; even += 1 / r.seats; }
+    if (any) takenIn++;
   }
-  return { shown, own, win, even, taken: shown ? own / shown : 0, wr: own ? win / own : 0, evenWr: own ? even / own : 0 };
+  return { shown, own, win, even, taken: shown ? takenIn / shown : 0, wr: own ? win / own : 0, evenWr: own ? even / own : 0 };
 }
 
 function verdict(c) {
@@ -280,7 +284,7 @@ function verdict(c) {
   if (c.own < 30) return c.wr >= 0.37 ? 'looks strong (few owners)' : 'too few owners to tell';
   if (c.wr >= 0.37) return 'too strong as priced';
   if (c.wr < 0.2) return 'weak: owners lose';
-  if (c.taken > 1) return 'fair, but an auto-buy';
+  if (c.taken > 0.9) return 'fair, but an auto-buy';
   return 'fair and wanted';
 }
 
@@ -330,7 +334,7 @@ function cmdReport() {
   if (spec.note) say(spec.note);
   say('');
   say('## The cards');
-  say(`"Taken": owned per game it showed up. "Owners won": an even share is ${pct(1 / spec.seats)}. Under 30 owners is too few to tell.`);
+  say(`"Taken": games some cult recruited it, per game it showed up. "Owners won": an even share is ${pct(1 / spec.seats)}. Under 30 owners is too few to tell.`);
   for (const [n, o, why] of spec.pairs) {
     const a = n ? cardLine(t, n) : null, c = o ? cardLine(b, o) : null;
     const f = x => `taken ${pct(x.taken)}, owners won ${pct(x.wr)} (${x.own} owners)`;
