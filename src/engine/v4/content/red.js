@@ -416,10 +416,12 @@ export default {
     // REPLACE12 bot tests (Nov 4, quality loop, lane D2; pitches/D2-batch1.md): Deprogrammers' place, prices Claude's fill-ins.
     // Exit Counselor (3 red + 1 any as a player sees it): when its owner's own card or space hands one of their members
     // to a rival or the shop (Promote, Demote, Panel, Body Snatchers' swap, Godparent, Guest of Honor), the owner uses
-    // that member's On Recruit. Never for a member a rival takes, and not for Exit Counselor itself.
+    // that member's On Recruit. Never for a member a rival takes, one cast out to the pile (given to nobody; play judge,
+    // Nov 4), or Exit Counselor itself.
     ...add12(m('exitcounselor', 'Exit Counselor', 2, 1, 'Whenever you give one of your members away, use its On Recruit.', {
       onCultMove(ctx, owner, card, { uid, from, to, actor }) {
         if (from !== owner || actor !== owner || to === owner || uid === card.uid) return;
+        if (ctx.state.pile.includes(uid)) return; // cast out to the pile (Farewell, Estate Sale): given to nobody
         const gone = ctx.card(uid), d = gone.def;
         if (!d.onRecruited && !(d.now && (d.onRoundStart || d.onRoundStartLate))) { ctx.log(`${owner.name}'s Exit Counselor: ${d.name} has no On Recruit to use.`); return; }
         ctx.log(`${owner.name}'s Exit Counselor: ${d.name} leaves, and ${owner.name} uses its On Recruit.`);

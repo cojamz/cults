@@ -45,6 +45,17 @@ describe('Exit Counselor: "Whenever you give one of your members away, use its O
   });
 });
 
+describe('Exit Counselor: a member cast out to the pile is given to nobody', () => {
+  it('Estate Sale casts out Mentor & Protégés: no On Recruit', () => {
+    let s = table(['trading', 'red', 'market', 'yellow'], { round: 2, members: [['red.exitcounselor', 'red.mentor'], []], shop: ['red.volunteer'] });
+    s = take(s, 'trading.estatesale');
+    if (s.pending?.options?.some(o => String(o.id).includes(String(uidIn(s, 'red.mentor', 0))))) s = answer(s, s.pending.options.find(o => String(o.id).includes(String(uidIn(s, 'red.mentor', 0)))).id);
+    expect(owns(s, 0, 'red.mentor')).toBe(false);
+    expect(owns(s, 0, 'red.volunteer')).toBe(false);
+    expect(named(s, 'Exit Counselor')).toEqual([]);
+  });
+});
+
 describe('Foundling: "Round Start: if you have the fewest members (ties count), recruit the top member of the pile for free."', () => {
   it('fewest members at Round Start: the top member of the pile joins, free', () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 1, members: [['red.foundling'], ['red.loyalists', 'red.volunteer']],
