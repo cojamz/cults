@@ -113,6 +113,14 @@ function bestRowValue(ctx, p, how) {
 
 /** Churn: pick shop members one at a time; the row refills once, after the last (churnRefill, queued behind the picks). */
 // who: the space or member doing it (Churn, or Trendsetters), named in the prompt and the log
+// Window Dressers (REPLACE9 rework): one shop member at a time, or Done; with the shop empty it's Done at once
+function wd9Step(ctx, p, data) {
+  const shop = ctx.shopCards();
+  if (!shop.length) { market.handlers.wd9(ctx, p, 'done', data); return; }
+  ctx.choose(p, `Window Dressers: send which member to the bottom? (${data.n} so far)`, [...shop.map(c => ({
+    id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: ctx.payChoices(p, c.uid, {}).length ? -1 : 1,
+  })), { id: 'done', label: data.n ? 'Done' : 'Keep the shop', kind: 'done', value: 'done', hint: 0 }], `${Q}.wd9`, data);
+}
 function churnStep(ctx, p, { left, who = 'Churn' }) {
   const shop = ctx.shopCards();
   if (left <= 0 || !shop.length) return;
@@ -339,6 +347,20 @@ const market = {
       const sent = REPLACE1 && ctx.state.pile.includes(uid) ? [...(data.sent || []), uid] : data.sent || [];
       if (data.left - 1 <= 0 || !ctx.state.shop.length) scavenge(ctx, p, sent);
       churnStep(ctx, p, { left: data.left - 1, who: data.who, ...(REPLACE1 ? { sent } : {}) });
+    },
+    wd9(ctx, p, uid, data) {
+      if (uid === 'done') {
+        ctx.refillShop();
+        extraBuys(ctx, p, 1);
+        ctx.log(`${p.name}'s Window Dressers: ${data.n} sent to the bottom of the pile, the shop refills; recruit again this turn.`);
+        return;
+      }
+      if (ctx.state.shop.includes(uid)) {
+        ctx.state.shop.splice(ctx.state.shop.indexOf(uid), 1);
+        ctx.state.pile.push(uid);
+        ctx.log(`${p.name}'s Window Dressers: ${p.name} sends ${ctx.card(uid).def.name} to the bottom of the pile.`);
+      }
+      wd9Step(ctx, p, { n: data.n + 1 });
     },
     churnRefill(ctx) { ctx.refillShop(); toBottom(ctx, 1); },
     outOfStyle(ctx, p, color) {
@@ -648,7 +670,13 @@ const market = {
     // REPLACE4 bot test (Nov 3, replacement batch 4): Window Dressers' place. 3 blue + 1 any as a player sees it. Core asks
     // it in the recruit step (askOutbid, core.js): a rival's shop member chosen and paid for there.
     ...add4(m('outbidders', 'Outbidders', 2, 1, 'Whenever a rival recruits a shop member, you may pay its cost plus 2 to recruit it instead. They get back what they paid and recruit again.', { outbids: true })),
-    m('windowdresser', 'Window Dressers', 2, 1, 'On Recruit: send 3 shop members to the bottom of the pile, then refill.', { f: 3, ...old4,
+    // REPLACE9 bot test (Members C, Nov 4, batch bC7b: paper 19 vs 11, raised bar): Window Dressers reworded, same price
+    // and worth. Shop members one at a time to the bottom of the pile until Done (the row refills once, after), then one
+    // more recruit this turn (as Plus-Ones). Bots send away what they can't afford.
+    ...add9(m('windowdressers9', 'Window Dressers', 2, 1, 'On Recruit: send any shop members to the bottom of the pile, then refill. Recruit again this turn.', { f: 3,
+      onRecruited(ctx, owner) { wd9Step(ctx, owner, { n: 0 }); },
+    })),
+    m('windowdresser', 'Window Dressers', 2, 1, 'On Recruit: send 3 shop members to the bottom of the pile, then refill.', { f: 3, ...old4, ...old9('market.windowdresser'),
       onRecruited(ctx, owner) {
         ctx.log(`${owner.name}'s Window Dressers: send 3 shop members to the bottom of the pile.`);
         churnStep(ctx, owner, { left: Math.min(3, ctx.state.shop.length) });

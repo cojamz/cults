@@ -3,7 +3,7 @@
 // Hand's place), Tailor (Dyer's place), Dabbler (Dabblers' place).
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler,latebloomers,dowagers,dutycollector';
+process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler,latebloomers,dowagers,dutycollector,windowdressers9';
 const { applyMove, countMembersOfColor } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move } = await import('./helpers.js');
@@ -146,5 +146,26 @@ describe('Duty Collector: "Whenever a rival recruits a member of a color you hav
     expect(named(s, 'Duty Collector')[0]).toContain("P1's Duty Collector: P2 recruited");
     s = pay(move(s, `card:${uidIn(s, 'market.regular', 'shop')}`));
     expect(s.players[0].res.blue || 0).toBe(0);
+  });
+});
+
+describe('Window Dressers (reworded): "On Recruit: send any shop members to the bottom of the pile, then refill. Recruit again this turn."', () => {
+  it('same price and worth, and the old Window Dressers retired', () => {
+    const d = defById('market.windowdressers9'), o = defById('market.windowdresser');
+    expect([d.s, d.w, d.f]).toEqual([o.s, o.w, o.f]);
+    expect(o.retired).toBe(true);
+  });
+  it('sends chosen shop members to the bottom, refills once, then offers another recruit', () => {
+    let s = table(Q4, { n: 2, res: [{ red: 20, yellow: 20, blue: 20, purple: 20 }], shop: ['market.windowdressers9', 'red.volunteer', 'yellow.gardener', 'purple.crew'], queue: [{ t: 'buy', p: 0 }] });
+    const vol = uidIn(s, 'red.volunteer', 'shop');
+    s = pay(move(s, `card:${uidIn(s, 'market.windowdressers9', 'shop')}`));
+    expect(s.pending.prompt).toContain('Window Dressers: send which member to the bottom?');
+    s = move(s, `card:${vol}`);
+    expect(s.pile[s.pile.length - 1]).toBe(vol);
+    s = move(s, 'done');
+    expect(s.shop).not.toContain(vol);
+    expect(s.pending.kind).toBe('buy');
+    expect(s.pending.player).toBe(0);
+    expect(named(s, 'Window Dressers').some(l => l.includes('recruit again this turn'))).toBe(true);
   });
 });
