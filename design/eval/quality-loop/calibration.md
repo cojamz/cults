@@ -218,3 +218,6 @@ Liked and live (for contrast): Gather "+1/2/3 followers if you recruit" ("B", Oc
 - **HR** (his Archivist idea, Oct 28) replaced by Sore Loser; **Kingpin** ("1 yea", Oct 21) by Kidnapper; **Triplets** (his Twins → Triplets) by Body Snatchers.
 - **Night Owls** placement he chose ("fits the name better") reverted on bot data (Nov 3).
 - All ran under "use your judgement" / "make judgement calls", but they break "build his calls exactly" and "a test… calling one of his logged calls a bug is a question for him". A loop judge should hold any change to a card he named positively for his eyes.
+
+## Play scores depend on when the card was bought (evaluators, Nov 4 7:10am)
+On the four play anchors, Godparent scored 1.58 and Mentor 1.50 (both bought early), while Extortionist scored 0.83 and Proselytizers 0.58 (both bought by Hard bots in round III). Those two cards are not weaker on paper; the late buy left the sheet only a turn or two to show the card working. So an absolute play score tracks purchase timing as much as the card itself. That is why the ship gate is now blind A/B play against the old card from the same seeded seat (scripts/quality/play-ab.mjs), and why absolute play scores only rank cards.
