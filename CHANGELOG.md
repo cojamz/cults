@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.551 — 2026-11-03
+
+- Pizza's "pizza pizza" is faster
+
 ## v0.99.550 — 2026-11-03
 
 - Exchange picks its turn-in whole, like a payment, on the same card as Harvest
