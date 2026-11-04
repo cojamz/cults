@@ -17,11 +17,12 @@
 //   purple.timekeepers (alt: scale-up 1, paper 17) -> purple.sleepyheads
 //   purple.timekeepers (alt: scale-up 1, paper 17, set 14) -> purple.wakeupcaller
 //   red.proselytizer (alt: scale-up 1, paper 19) -> red.drillsergeant
+//   red.proselytizer (alt: scale-up 1, paper +4 pooled) -> red.converts
 // Unset, the new cards are never defined and nothing in the game changes.
 const VAL = globalThis.process?.env?.REPLACE7 || '';
 const PICKS = ['seatfiller', 'godfather', 'daylaborers', 'nightmanager', 'pacesetters'];
 /** new card key -> the old card id it takes the place of */
-const REPLACES = { seatfiller: 'red.volunteer', interrupter: 'purple.courier', runner: 'purple.courier', ushers: 'red.recruitbonus', godfather: 'red.patriarch', crimefamily: 'red.patriarch', gobetween: 'purple.timekeepers', nightshift: 'purple.timekeepers', sleepyheads: 'purple.timekeepers', wakeupcaller: 'purple.timekeepers', drillsergeant: 'red.proselytizer', daylaborers: 'purple.crew', nightmanager: 'purple.timekeepers', pacesetters: 'purple.nightwatch' };
+const REPLACES = { seatfiller: 'red.volunteer', interrupter: 'purple.courier', runner: 'purple.courier', ushers: 'red.recruitbonus', godfather: 'red.patriarch', crimefamily: 'red.patriarch', gobetween: 'purple.timekeepers', nightshift: 'purple.timekeepers', sleepyheads: 'purple.timekeepers', wakeupcaller: 'purple.timekeepers', drillsergeant: 'red.proselytizer', converts: 'red.proselytizer', daylaborers: 'purple.crew', nightmanager: 'purple.timekeepers', pacesetters: 'purple.nightwatch' };
 export const ON7 = VAL === '1' ? PICKS : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
 export const REPLACE7 = ON7.length > 0;
 /** The new card, in its color's member list only when it is switched on. */

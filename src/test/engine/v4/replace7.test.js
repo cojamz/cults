@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 // every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,daylaborers,nightmanager,pacesetters';
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,daylaborers,nightmanager,pacesetters';
 const { applyMove, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
@@ -29,6 +29,7 @@ describe('REPLACE7: the switch', () => {
     expect(card('purple.nightshift')).toEqual(['Night Shift', 2, 2, 1, 1]);
     expect(card('purple.sleepyheads')).toEqual(['Sleepyheads', 2, 2, 2, 2]);
     expect(card('red.drillsergeant')).toEqual(['Drill Sergeant', 4, 4, 1, 1]);
+    expect(card('red.converts')).toEqual(['Converts', 4, 4, 2, 2]);
     expect(card('purple.daylaborers')).toEqual(['Day Laborers', 3, 2, 3, 3]);
     expect(card('purple.nightmanager')).toEqual(['Night Manager', 2, 2, 1, 1]);
     expect(card('purple.pacesetters')).toEqual(['Pace-Setters', 3, 2, 2, 2]);
@@ -340,6 +341,30 @@ describe('Wake-Up Caller: "Round Start: the player with the most followers skips
   it('Early Birds keeps the leader\'s turn', () => {
     const s = table(['purple', 'red', 'market', 'yellow'], { n: 4, round: 1, bonus: [0, 0, 9, 3], members: [['purple.wakeupcaller'], [], ['purple.earlybird']], queue: [{ t: 'round', r: 2 }] });
     expect(s.log.some(l => l.includes("P3's Early Birds: P3's turn can't be skipped."))).toBe(true);
+  });
+});
+
+describe('Converts: "On Recruit: recruit a rival\'s member costing 3 or less, for free; that rival recruits the shop\'s cheapest, for free."', () => {
+  it('the pitched turn: P1 takes P2\'s Deprogrammers (3); P2 recruits the shop\'s cheapest; Foster Parents pays', async () => {
+    const { contextFor } = await import('../../../engine/v4/core.js');
+    let s = table(['red', 'market', 'trading', 'yellow'], { n: 2, round: 3, members: [['red.fosterparents'], ['red.movementpenalty', 'red.mob']], shop: ['red.converts', 'red.volunteer', 'red.mentor'] });
+    s.current = 0;
+    contextFor(s).recruit(s.players[0], uidIn(s, 'red.converts', 'shop'), { free: true });
+    s = resume(JSON.parse(JSON.stringify(s)));
+    expect(s.pending.options.map(o => o.label)).toEqual(['P2: Deprogrammers (3)']);
+    s = answer(s, `card:${uidIn(s, 'red.movementpenalty', 1)}`);
+    expect(owns(s, 0, 'red.movementpenalty')).toBe(true);
+    expect(s.players[0].bonus).toBe(2); // Foster Parents
+    expect(s.log).toContain("P1's Converts: P1 recruits P2's Deprogrammers.");
+    expect(s.log.some(l => /^P2 recruits .* from the shop, for free \(Converts\)\.$/.test(l))).toBe(true);
+    expect(s.players[1].members.length).toBe(2); // Mob and the shop's cheapest
+  });
+  it('a rival with Loyalists keeps its members (a trade, as a swap)', async () => {
+    const { contextFor } = await import('../../../engine/v4/core.js');
+    let s = table(['red', 'market', 'trading', 'yellow'], { n: 2, round: 3, members: [[], ['red.movementpenalty', 'red.loyalists']], shop: ['red.converts', 'red.mentor'] });
+    s.current = 0;
+    contextFor(s).recruit(s.players[0], uidIn(s, 'red.converts', 'shop'), { free: true });
+    expect(s.log.some(l => l.includes("P1's Converts: no rival's member costing 3 or less to recruit."))).toBe(true);
   });
 });
 

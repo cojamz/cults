@@ -150,6 +150,20 @@ export default {
     },
     takeFree(ctx, p, uid) { ctx.recruit(p, uid, { free: true }); },
     ...handlers7({
+      convert(ctx, p, uid) {
+        const v = ctx.ownerOf(uid), c = ctx.card(uid);
+        if (!v || v === p || cost(c) > 3 || !ctx.canSteal(p, v, 'swap') || !ctx.canSwapMember(uid)) return;
+        if (!ctx.moveMember(uid, v, p, { recruit: true })) return;
+        ctx.log(`${p.name}'s Converts: ${p.name} recruits ${v.name}'s ${c.def.name}.`);
+        const shop = ctx.shopCards();
+        if (!shop.length) return;
+        const low = Math.min(...shop.map(cost)), tied = shop.filter(x => cost(x) === low);
+        if (tied.length === 1) { convertGive(ctx, v, tied[0].uid); return; }
+        ctx.choose(p, `Converts: which of the shop's cheapest does ${v.name} recruit?`, tied.map(x => ({
+          id: `card:${x.uid}`, label: x.def.name, kind: 'card', value: x.uid, hint: 0,
+        })), 'red.convertGive', { pid: v.id });
+      },
+      convertGive(ctx, p, uid, data) { convertGive(ctx, ctx.player(data.pid), uid); },
       drift(ctx, p, uid, data) {
         if (uid == null) { ctx.log(`${p.name} keeps ${ctx.card(data.uid)?.def.name || 'Seat Filler'}.`); return; }
         const me = ctx.card(data.uid);
@@ -253,6 +267,21 @@ export default {
       // a recruit is a member or a follower purchase (Cory, 2026-10-21); not its own arrival
       onRecruit(ctx, owner, card, by, what) { if (by === owner && what.member?.uid !== card.uid) owner.bonus += 1; },
     }),
+    // REPLACE7 (Nov 4, scale-up round 1, Members A): Proselytizers' place (paper 17 and 16, pooled +4 on the old card;
+    // Red's set 16 vs 13). 4 red + 4 any, worth 2, counts as 2. A trade, so swap protection holds (Loyalists' cult, a
+    // rival who can't be swapped with), as Double Agent's; the taken member is recruited (its On Recruit fires), the
+    // rival's free one is too. Ties for the shop's cheapest: the owner picks, on the owner's turn.
+    ...add7(m('converts', 'Converts', 3, 4, 'On Recruit: recruit a rival’s member costing 3 or less, for free; that rival recruits the shop’s cheapest, for free.', { f: 2, n: 2,
+      onRecruited(ctx, owner, card) {
+        const list = ctx.rivals(owner).filter(o => ctx.canSteal(owner, o, 'swap'))
+          .flatMap(o => ctx.membersOf(o).filter(c => cost(c) <= 3 && ctx.canSwapMember(c.uid)).map(c => ({ c, o })));
+        if (!list.length) { ctx.log(`${owner.name}'s Converts: no rival's member costing 3 or less to recruit.`); return; }
+        ctx.choose(owner, 'Converts: recruit which rival’s member (costing 3 or less) for free?', list.map(({ c, o }) => ({
+          id: `card:${c.uid}`, label: `${o.name}: ${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f + cost(c),
+        })), 'red.convert');
+      },
+      ...see(info => 3 + endsAhead(info).length),
+    })),
     // REPLACE7 (Nov 4, scale-up round 1, Members A): Proselytizers' place (paper 19 vs 11, Red's set 16 vs 13). 4 red + 4
     // any, worth 1. Pied Piper's trigger: pays the moment your second recruit of your own turn lands (Mentor & Protégés'
     // free one counts; a member counted as several still lands once).
@@ -421,6 +450,11 @@ function godfatherUse(ctx, owner, card) {
   ctx.choose(owner, `${card.def.name}: recruit which shop member (costing up to ${k}) for free?`, list.map(x => ({
     id: `card:${x.uid}`, label: `${x.def.name} (${cost(x)})`, kind: 'card', value: x.uid, hint: x.def.f * 1.5 + cost(x),
   })), 'red.takeFree');
+}
+function convertGive(ctx, v, uid) {
+  if (!ctx.state.shop.includes(uid)) return;
+  ctx.log(`${v.name} recruits ${ctx.card(uid).def.name} from the shop, for free (Converts).`);
+  ctx.recruit(v, uid, { free: true });
 }
 /** Body Snatchers (REPLACE2): [one of p's members, a rival's member of the same cost], both swappable. */
 function snatchPairs(ctx, p) {
