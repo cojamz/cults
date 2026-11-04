@@ -624,8 +624,9 @@ const silver = {
         ctx.log(`${owner.name}'s Charmers: ${k} silver given, +${k} of any colors.`);
         charmPick(ctx, owner, k);
       },
-      // BOTSEE: about 6 silver given a game by a silver player (Toast, Party Gifts), one resource each
-      ...see(info => 2.5 * endsAhead(info).length),
+      // BOTSEE: a silver player gives about 4 a round from here (Toast gives 2 or 3 to each rival, Party Gifts 3,
+      // Potluck 2 each), one resource each. 2.5 a round had bots pass on it until round III in 32 pinned seeds.
+      ...see(info => 4 * endsAhead(info).length),
     })),
     // REPLACE2 bot test (Nov 3, replacement batch 2): Debutantes' place. 6 silver + 3 any as a player sees it. The +2 each is
     // a gift (Caterer, Hangers-On); the count is all the silver rivals hold after it.
