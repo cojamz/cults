@@ -2,7 +2,7 @@
 
 Rules (director, 12:21pm): every card under the v1.2 bar, plus every card Cory has called weak or disliked (calibration-split.md, cory-verdicts-2026-11-04.md) whatever it scores. Out: cards he praised, Grifter (he likes it), fillers and each color's way-in (Volunteer, Toastmaster, Shift Crew), Recruiter (his card), plants and cards on trial. Batches already out finish (Shift Crew, Toastmaster in b54).
 
-Disagreements with the director's note, resolved by the files: Makeover ("oh no i like makeover as is", Nov 2) and Estate Sale ("yeah 3 is good improves on mine", Oct 22) are liked, so they are out. Sweet Talk is in (split: disliked), though calibration.md line 211 lists it as liked "(his words)". Overtime is in (split: disliked) though line 211 calls it his idea. Both are questions for the director.
+Disagreements with the director's note, resolved by the files: Makeover ("oh no i like makeover as is", Nov 2) and Estate Sale ("yeah 3 is good improves on mine", Oct 22) are liked, so they are out. Sweet Talk is in (split: disliked), though calibration.md line 211 lists it as liked "(his words)". Overtime is out (director 12:24pm: his idea, nothing recent says he dislikes it). Sweet Talk stays in (his latest word, tonight: "doesn't love").
 
 ## Blue
 - **Critic** (member, median 10, under the bar, Cory disliked it)
@@ -34,7 +34,6 @@ Disagreements with the director's note, resolved by the files: Makeover ("oh no 
 
 ## Purple
 - **Timekeeper** (member, median 12, under the bar)
-- **Overtime** (space, median 19, Cory disliked it)
 
 ## Red
 - **Mob** (member, median 17, Cory disliked it)
