@@ -305,6 +305,13 @@ export function turnsNow(ctx, p, n, why) {
   return k;
 }
 /** Playing your own turns sooner: each one that jumps rivals gets first pick of the spaces they'd have taken. */
+/** p's next turn this round is the very next turn after this one (nothing between). */
+const nextIsMine = (ctx, p) => {
+  const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn' || t.t === 'previewHold');
+  const close = q.findIndex(t => t.t === 'allPlaced');
+  const next = q.slice(end + 1, close < 0 ? q.length : close).find(t => t.t === 'turn');
+  return !!(next && next.p === p.id);
+};
 const turnsNowEstimate = (ctx, p, n) => {
   const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn');
   const close = q.findIndex(t => t.t === 'allPlaced');
@@ -705,9 +712,14 @@ export default {
     ...add7(m('gobetween', 'Go-Between', 1, 2, 'On Use, once per round: your next turn comes right after this one.', { round: 1,
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
-      onActivate(ctx, owner, card) { if (!turnsNow(ctx, owner, 1, 'Go-Between')) card.used = false; },
+      onActivate(ctx, owner, card) {
+        // your next turn already comes right after this one (a snake end, Right Away, Crunch Time): nothing to move, so it
+        // stays unused (an A/B judge saw it pull a later turn up for 3 in a row)
+        if (nextIsMine(ctx, owner)) { card.used = false; ctx.log(`${owner.name}'s Go-Between: ${owner.name}'s next turn already comes right after this one.`); return; }
+        if (!turnsNow(ctx, owner, 1, 'Go-Between')) card.used = false;
+      },
       // bots: when pulling a turn up jumps at least one rival's turn
-      botActivate: (ctx, owner) => turnsNowEstimate(ctx, owner, 1) > 0,
+      botActivate: (ctx, owner) => !nextIsMine(ctx, owner) && turnsNowEstimate(ctx, owner, 1) > 0,
     })),
     // REPLACE7 (Nov 4, quality loop, Members A batch 2): Timekeeper's place (paper 19, 18 on a second gate). 2 purple + 2
     // any as a player sees it. "Placed the round's last minion" is the By color Purple contest's own measure (lastPlaced).
