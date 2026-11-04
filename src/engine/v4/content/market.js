@@ -839,12 +839,12 @@ const market = {
     })),
     // REPLACE9 (Members C, bC7b: paper 14 vs 11; Cory's "paper filters, play ranks", Nov 4): Window Dressers' place,
     // same price. Its own recruit counts (it is a blue member by then).
-    ...add9(m('buyersclub', "Buyers' Club", 2, 1, 'Whenever you recruit, +1 blue per blue member you have, up to 3.', { f: 3, n: 3,
+    ...add9(m('buyersclub', "Buyers' Club", 2, 1, 'Whenever you recruit, +3 blue.', { f: 3, n: 3,
       // "Whenever you recruit": a member or a follower purchase (Cory, 2026-10-21), so onRecruit, not onAnyRecruit.
       onRecruit(ctx, owner, card, by) {
         if (by !== owner) return;
-        const k = Math.min(3, ctx.countMembersOfColor(owner, Q));
-        if (k) { ctx.gain(owner, B, k); ctx.log(`${owner.name}'s Buyers' Club: +${k} blue.`); }
+        // Was "+1 blue per blue member, up to 3": it counts as 3 blue members itself, so that always read +3 (Hard A/B judges, Nov 4).
+        ctx.gain(owner, B, 3); ctx.log(`${owner.name}'s Buyers' Club: +3 blue.`);
       },
     })),
     m('windowdresser', 'Window Dressers', 2, 1, 'On Recruit: send 3 shop members to the bottom of the pile, then refill.', { f: 3, ...old4, ...old9('market.windowdresser'),

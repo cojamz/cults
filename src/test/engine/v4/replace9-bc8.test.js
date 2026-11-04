@@ -35,7 +35,7 @@ describe("REPLACE9: Buyers' Club", () => {
     expect([d.s, d.w, d.f]).toEqual([o.s, o.w, o.f]);
     expect(o.retired).toBe(true);
   });
-  it('whenever you recruit: +1 blue per blue member, up to 3', () => {
+  it('whenever you recruit: +3 blue', () => {
     const s0 = table(['red', 'yellow', 'market', 'thieves'], { n: 2, round: 2, members: [['market.buyersclub']] });
     const fire = (s, k) => defById('market.buyersclub').onRecruit;
     expect(fire()).toBeTypeOf('function');
