@@ -13,3 +13,5 @@ You are given one or more gate folders. Each has cards.md: several lettered card
 3. Write JSON to <folder>/judge-<your number>.json: an array of {"label":"A","scores":[C1..C12 in order, C11 included],"total":int (as principles.md counts it),"hardFail":null|"reason","fires":{"perRound":number (how often it fires for its owner per round in a normal 4-player game; 0.5 = every other round),"turn":"whose turn it fires on (owner's, a rival's, round start, round end, game end)","decides":"who makes the choice when it fires (owner, rival, nobody)"},"why":"one plain line"}. The fire rate is a prediction the Lab checks against real games: a card whose real rate comes in under half of it has Feels good (C3) and Worth it (C10) capped at 1.
 
 Return one line per folder: the labels from best to worst with totals.
+
+Prices: a member's printed price (on the sheet and board) is the number in its card file plus 1, Cory's Oct 27 call applied once in src/engine/v4/content/index.js (EXTRA_WILD, COLOR_SHIFT). Judge the printed price; a code comment or decisions line from before Oct 27 quoting a lower cost is not a mismatch.
