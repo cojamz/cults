@@ -626,7 +626,8 @@ const silver = {
       },
       // BOTSEE: a silver player gives about 4 a round from here (Toast gives 2 or 3 to each rival, Party Gifts 3,
       // Potluck 2 each), one resource each. 2.5 a round had bots pass on it until round III in 32 pinned seeds.
-      ...see(info => 4 * endsAhead(info).length),
+      // This round counts only for the turns still left in it (ab3: bought with one minion left and no gift space open).
+      ...see(info => 4 * ([1, 2, 3].filter(r => r > info.round).length + Math.min(1, (info.myNow || 0) / 3))),
     })),
     // REPLACE2 bot test (Nov 3, replacement batch 2): Debutantes' place. 6 silver + 3 any as a player sees it. The +2 each is
     // a gift (Caterer, Hangers-On); the count is all the silver rivals hold after it.
