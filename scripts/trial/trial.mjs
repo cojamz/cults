@@ -64,7 +64,7 @@ function checkout(sha) {
     rmSync(wt, { recursive: true, force: true });
     try { git('cat-file', '-e', `${sha}^{commit}`); } catch { git('fetch', 'origin', sha); }
     try { git('worktree', 'prune'); } catch {}
-    git('worktree', 'add', '--detach', wt, sha);
+    git('worktree', 'add', '-q', '--detach', wt, sha);
   }
   if (!existsSync(join(wt, 'node_modules')) && existsSync(join(REPO, 'node_modules'))) symlinkSync(join(REPO, 'node_modules'), join(wt, 'node_modules'));
   return wt;
@@ -77,7 +77,7 @@ function cardsUnder(wt, env) {
 /** new card -> old card, from the "old.id -> new.id" lines atop content/replace*.js, then same color, then --pairs. */
 function pairCards(wt, added, retired, extra) {
   const text = readdirSync(join(wt, 'src/engine/v4/content')).filter(f => /^replace\d+\.js$/.test(f))
-    .map(f => readFileSync(join(wt, 'src/engine/v4/content', f), 'utf8').split('\n').filter(l => l.startsWith('//')).join(' ')).join(' ');
+    .map(f => readFileSync(join(wt, 'src/engine/v4/content', f), 'utf8').split('\n').filter(l => l.startsWith('//')).map(l => l.slice(2)).join(' ')).join(' ');
   const arrows = [...text.matchAll(/([a-z]+\.[a-z]+)(?:\s*\([^)]*\))?\s*->\s*([a-z]+\.[a-z]+)/g)].map(m => [m[2], m[1]]);
   const pairs = [], used = new Set();
   for (const n of added) {
