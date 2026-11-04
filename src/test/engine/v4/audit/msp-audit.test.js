@@ -28,11 +28,11 @@ describe('audit', () => {
   });
 
   it('Bury: half of a 3-cost member rounds down to 1, plus its own +1', () => {
-    // Shift Crew: printed 1 purple + 1 any, 3 with the extra wild every member pays
-    const restore = pinCosts({ 'purple.crew': [1, 1] }); // Shift Crew costs 4 since Nov 1: pinned at its old 3
+    // Picket Line (Shift Crew's place since Nov 4): pinned at printed 1 purple + 1 any, 3 with the extra wild every member pays
+    const restore = pinCosts({ 'purple.picketline': [1, 1] }); // it costs 4: pinned at 3, as Shift Crew was
     try {
-      let s = take(sc(QM, { round: 2, shop: ['purple.crew'] }), 'market.pricecheck');
-      const u = s.shop.find(x => s.cards[x].def === 'purple.crew');
+      let s = take(sc(QM, { round: 2, shop: ['purple.picketline'] }), 'market.pricecheck');
+      const u = s.shop.find(x => s.cards[x].def === 'purple.picketline');
       s = move(s, `card:${u}`);
       expect(s.players[0].res.blue).toBe(1 + 1);
     } finally { restore(); }

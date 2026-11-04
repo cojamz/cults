@@ -103,7 +103,8 @@ for (const [key, name, source] of [
 // Purple's new members (Cory, 2026-10-22) reuse cut Purple portraits while names and artwork settle.
 for (const [key, name, source] of [
   ['earlybird', 'Early Birds', 'bookkeeper'], ['bouncer', 'Bouncers', 'overseer'], ['gossip', 'Gossip', 'apprentice'],
-  ['extrashift', 'Extra Shift', 'errand'], ['closer', 'Closer', 'lamplighter'], ['streak', 'Hot Streak', 'taskmaster'],
+  ['extrashift', 'Extra Shift', 'errand'], ['picketline', 'Picket Line', 'crew'], // Nov 4: takes Shift Crew's place and drawing
+  ['closer', 'Closer', 'lamplighter'], ['streak', 'Hot Streak', 'taskmaster'],
 ]) {
   const art = BY_ID.get(`purple.${source}`);
   if (art) BY_ID.set(`purple.${key}`, { ...art, id: `purple.${key}`, name });

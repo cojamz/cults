@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 // every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,sprinter,earlyrisers,daylaborers,nightmanager,pacesetters,lifers,floorcrew,timekeeperlift,picketline';
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,sprinter,earlyrisers,daylaborers,nightmanager,pacesetters,lifers,floorcrew,timekeeperlift';
 const { applyMove, resume, followers } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
@@ -41,8 +41,8 @@ describe('REPLACE7: the switch', () => {
     expect(card('purple.picketline')).toEqual(['Picket Line', 3, 1, 3, 3]);
     expect(card('purple.timekeeperlift')).toEqual(['Head Timekeeper', 2, 2, 1, 1]);
     expect(defById('purple.timekeeperlift').onGameEnd({ countMembersOfColor: () => 3 })).toBe(6);
-    for (const id of ['red.patriarch', 'purple.crew', 'purple.timekeepers', 'purple.nightwatch']) expect(defById(id).retired).toBe(true);
-    for (const id of ['red.volunteer', 'red.recruitbonus', 'purple.courier']) expect(defById(id).retired).toBe(true);
+    for (const id of ['red.patriarch', 'purple.timekeepers', 'purple.nightwatch']) expect(defById(id).retired).toBe(true);
+    for (const id of ['red.volunteer', 'red.recruitbonus', 'purple.courier', 'purple.crew']) expect(defById(id).retired).toBe(true);
   });
 });
 
