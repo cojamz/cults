@@ -239,7 +239,7 @@ describe('Green contest settings (contestFix.green)', () => {
     return contestTable(s).find(c => c.qid === 'echo');
   };
   it("'onrecruit' counts the cards that say On Recruit", () => {
-    // Busker "On Recruit: +2 green. Round Start: +2 green."; Mob has no On Recruit
+    // Understudy "On Recruit: copy the action taken the previous turn."; Mob has no On Recruit
     const c = greenRow('onrecruit', [['echo.understudy'], ['red.mob']]);
     expect(c.label).toBe('Most On Recruit members');
     expect(c.winners).toEqual([0]);
@@ -247,5 +247,12 @@ describe('Green contest settings (contestFix.green)', () => {
   it("'held' counts green held", () => {
     const s = table(['red', 'echo'], { n: 2, res: [{ green: 1 }, { green: 3 }], rules: { contests: 'byColor', contestFix: { green: 'held' } } });
     expect(contestTable(s).find(c => c.qid === 'echo').winners).toEqual([1]);
+  });
+  it("'memberscards' counts each green card once (Fan Club counts as 3 under 'members', 1 here)", () => {
+    const m = [['echo.mirror'], ['echo.understudy', 'echo.hourglass']];
+    expect(greenRow('members', m).winners).toEqual([0]);
+    const c = greenRow('memberscards', m);
+    expect(c.label).toBe('Most minions on green, plus green members');
+    expect(c.winners).toEqual([1]);
   });
 });

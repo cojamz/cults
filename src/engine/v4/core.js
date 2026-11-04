@@ -1161,6 +1161,9 @@ export function scoringOf(state, qid) {
       score: (ctx, p) => { const n = onGreen(p); return n > 0 ? n * 1000 + (p.res.green || 0) : 0; }, show: (ctx, p) => ({ count: onGreen(p), tiebreak: p.res.green || 0 }) };
     if (fix.green === 'members') by.echo = { ...by.echo, label: 'Most minions on green, plus green members', counts: 'your minions on Green spaces plus your green members, when the round ends',
       score: (ctx, p) => onGreen(p) + countMembersOfColor(state, p, 'echo') };
+    // Actions lane, Nov 4 (green-r1 judges: "does Fan Club count 1 or 3?"): each green card counts 1, as in Red's contest.
+    if (fix.green === 'memberscards') by.echo = { ...by.echo, label: 'Most minions on green, plus green members', counts: 'your minions on Green spaces plus your green member cards (each counts 1), when the round ends',
+      score: (ctx, p) => onGreen(p) + countMembersOfColor(state, p, 'echo', { cards: true }) };
     if (fix.white === 'net') by.trading = { label: 'Most white, minus 1 per member', counts: 'the white you hold minus your members, when the round ends',
       score: (ctx, p) => Math.max(0, (p.res.white || 0) - memberCount(state, p)), show: (ctx, p) => ({ count: (p.res.white || 0) - memberCount(state, p) }) };
     if (fix.white === 'followers') by.trading = { label: 'Fewest followers', counts: 'your followers when the round ends',
