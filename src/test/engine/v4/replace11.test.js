@@ -351,3 +351,16 @@ describe('Red contest settings (contestFix.red)', () => {
     expect(c.winners).toEqual([1]);
   });
 });
+
+describe("Blue contest setting 'recruits' (Most recruits this round)", () => {
+  it('counts only this round’s recruits, and two cheap recruits beat one', () => {
+    let s = table(['red', 'market'], { n: 2, res: [{ red: 20, blue: 20 }, { red: 20, blue: 20 }], shop: ['red.volunteer', 'red.intern', 'red.host'],
+      members: [['red.mob', 'red.sponsor'], []], rules: { contests: 'byColor', contestFix: { market: 'recruits' } } });
+    const row = () => contestTable(s).find(c => c.qid === 'market');
+    expect(row().label).toBe('Most recruits this round');
+    expect(row().winners).toEqual([]); // members held from before don't count
+    s.players[1].recruitsIn = { round: s.round, n: 2 };
+    s.players[0].recruitsIn = { round: s.round - 1, n: 5 }; // last round's recruits don't count
+    expect(row().winners).toEqual([1]);
+  });
+});
