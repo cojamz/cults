@@ -113,3 +113,4 @@
 /* the split card (SplitPicker.jsx): a color you hold none of shows as a faint coin, so every stack says its color */
 .split-card .ps-coin.split-ghost{opacity:.28}
 .split-card .pay-stack:has(.ps-add:hover:not(:disabled)) .ps-coin.split-ghost{opacity:.6}
+.spend-card .spend-none{align-self:center;font-size:13px;color:var(--pl-ink-3,#8a7860)}

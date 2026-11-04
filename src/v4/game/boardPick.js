@@ -118,6 +118,14 @@ export function giftPick(state, pend, first = null) {
       head: `Give rivals up to ${share.max} silver`, firsts: [], seconds: players.map(o => ({ o, b: o.target.pid })), others: players.map(o => o.target.pid),
       rest: pend.options.filter(o => !players.includes(o)) };
   }
+  // "turn up to N of your resources into followers, one at a time" (Exchange): picked whole, like a payment (SpendPicker.jsx)
+  const spend = question.match(/^turn which resource into (\d+) followers\?\s*\((\d+) left\)/i);
+  const spends = pend.options.filter(o => o.kind === 'color' && o.spend && state.resources.includes(o.value));
+  const stop = pend.options.find(o => o.kind === 'done');
+  if (spend && spends.length && stop && spends.length + 1 === pend.options.length) {
+    const per = Number(spend[1]), left = Number(spend[2]);
+    return { ...base, kind: 'spend', per, left, head: `Turn up to ${left} into ${per} followers each`, chosen: null, stop, spends, firsts: [], seconds: [], others: [], rest: [] };
+  }
   const change = changePick(state, pend, base);
   if (change) return change;
   const far = farPick(state, pend, title, question, base);

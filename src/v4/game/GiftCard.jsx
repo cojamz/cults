@@ -5,6 +5,7 @@
 // The second row is there from the start, quiet, so the card never changes shape; it lights once a first is picked. The
 // picked one stays pressed, and a click on another switches it. Every answer is the engine's own option id.
 import SplitPicker, { splitRunning } from './SplitPicker.jsx';
+import SpendPicker from './SpendPicker.jsx';
 import { useEffect, useRef, useState } from 'react';
 import { cardDef, quadrant } from '../../engine/v4/index.js';
 import { costParts, playerColor, seatEmoji } from '../format.js';
@@ -43,6 +44,8 @@ export default function GiftCard(props) {
   const { state, gift: g } = props;
   // several coins in colors you choose (Harvest): picked whole, like a payment
   if (g.kind === 'color' && !g.pay && (g.toPick > 1 || splitRunning(state, g))) return <SplitPicker state={state} g={g} onAnswer={props.onAnswer} busy={props.busy} place={props.place} turnOf={props.turnOf} onBack={props.onBack} />;
+  // your resources turned into followers, up to a limit (Exchange): picked whole, like a payment
+  if (g.kind === 'spend') return <SpendPicker state={state} g={g} onAnswer={props.onAnswer} busy={props.busy} place={props.place} turnOf={props.turnOf} onBack={props.onBack} />;
   return <GiftCardBody {...props} />;
 }
 function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, turnOf = null, hover = null, onBack = null }) {

@@ -43,6 +43,8 @@ function unreachable(state) {
       for (const r of g.rivals) for (const st of r.stacks) if (st.o) { if (!engine.has(st.o.id)) bad.push(`the card's ${st.o.id} is not an engine answer`); reach.add(st.o.id); }
       for (const o of Object.values(g.colorOpts)) reach.add(o.id);
     }
+    // turning resources in (Exchange): a stack per color held, and "Turn in nothing" answers Done
+    if (g.kind === 'spend') for (const o of [...g.spends, g.stop]) { if (!engine.has(o.id)) bad.push(`the card's ${o.id} is not an engine answer`); reach.add(o.id); }
     if (g.kind === 'gift' && g.seconds.some(x => x.b === pend.player)) bad.push('a gift offers your own face');
     if (g.kind === 'steal' && g.seconds.some(x => x.o.target.pid === pend.player)) bad.push('a steal offers your own stack');
     // what the card shows is what the engine offers: every steal stack on the card is an answer (and none is missing)
