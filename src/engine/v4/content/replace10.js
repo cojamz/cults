@@ -1,7 +1,7 @@
 // Quality loop, lane D (Magenta, White, Green; Nov 4 overnight, /mnt/project-files/quality/pitches/D-*.md), bot games
 // only. The new members take their old cards' places (the old card is retired, so never dealt):
-//   thieves.grifter -> thieves.racketeer, trading.oldmoney -> trading.pauper, echo.chronicler -> echo.bootlegger
-//   space: thieves.tipoff (Stash) -> thieves.insidejob (Inside Job), in Stash's place on the wheel
+//   thieves.grifter -> thieves.racketeer, trading.oldmoney -> trading.pauper, echo.chronicler -> echo.bootlegger, echo.evergreen (Busker) -> echo.warmup
+//   space: thieves.tipoff (Stash) -> thieves.mug (Mug the Leader), or thieves.insidejob (Inside Job), in Stash's place
 // REPLACE10=1 turns every one on; REPLACE10=pauper (or a comma list of new keys) only those, so each card gets its own
 // trial. Unset, the new cards are never defined and their old cards stay.
 const RAW = globalThis.process?.env?.REPLACE10 || '';

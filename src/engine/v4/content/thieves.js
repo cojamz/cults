@@ -38,6 +38,12 @@ function insideTargets(ctx, p) {
   for (const [key, list] of Object.entries(st.squats || {})) if (key.startsWith(`${qi}-`)) for (const pid of list) ids.add(pid);
   return ctx.rivals(p).filter(o => ids.has(o.id) && stealable(ctx, p, o) > 0);
 }
+/** Mug the Leader (REPLACE10): the rivals tied for the most followers among p's rivals, if p can steal from them. */
+function mugTargets(ctx, p) {
+  const rivals = ctx.rivals(p), top = Math.max(...rivals.map(o => ctx.followers(o)));
+  return rivals.filter(o => ctx.followers(o) === top && stealable(ctx, p, o) > 0);
+}
+function mugDo(ctx, p, o) { autoSteal(ctx, p, o, 'Mug the Leader', ctx.stealCount(p, ctx.state.round + 1, { say: true })); }
 const rankOf = (ctx, p) => ctx.state.players.filter(o => ctx.followers(o) > ctx.followers(p)).length;
 
 // What a thief could lift from `o` right now, minus what this action already picked: [[pile, n]].
@@ -228,7 +234,22 @@ const thieves = {
     // REPLACE10 bot test (Nov 4, quality loop lane D): Stash's slot (Cory cut Stash Oct 31; it stays live until a pick).
     // Each rival with a minion on any Magenta space (joined spots count) loses 2 resources to you through the shared steal,
     // their biggest piles first (Lie Low and Bodyguards block it; Desperado adds). Copied by Green, the copier steals.
-    ...(on10('insidejob') ? [{
+    // REPLACE10 bot test (Nov 4, quality loop lane D): Stash's slot, second pick. From the rival with the most followers
+    // (tied: you choose), 2/3/4 by round, their biggest piles first, through the shared steal.
+    ...(on10('mug') ? [{
+      key: 'mug', ring: 1, name: 'Mug the Leader', copyDoesIt: true,
+      text: 'Steal 2 resources from the rival with the most followers in round I, 3 in round II, 4 in round III. +1 magenta.',
+      byRound: { lines: ['Steal 2 resources from the rival with the most followers.', 'Steal 3 resources from the rival with the most followers.', 'Steal 4 resources from the rival with the most followers.'] },
+      estimate: (ctx, p) => Math.min(ctx.stealCount(p, ctx.state.round + 1), Math.max(0, ...mugTargets(ctx, p).map(o => stealable(ctx, p, o)))) * 0.9,
+      resolve(ctx, p) {
+        const list = mugTargets(ctx, p);
+        if (!list.length) { ctx.log(`${p.name}'s Mug the Leader: nothing to steal.`); return; }
+        if (list.length === 1) return mugDo(ctx, p, list[0]);
+        ctx.choose(p, 'Mug the Leader: steal from which tied leader?', list.map(o => ({
+          id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers)`, kind: 'player', value: o.id, hint: stealable(ctx, p, o) * 0.1,
+        })), 'thieves.mug');
+      },
+    }] : on10('insidejob') ? [{
       key: 'insidejob', ring: 1, name: 'Inside Job', copyDoesIt: true,
       text: 'Steal 2 resources from each rival with a minion on a Magenta space. +1 magenta.',
       estimate: (ctx, p) => insideTargets(ctx, p).reduce((a, o) => a + Math.min(ctx.stealCount(p, 2), stealable(ctx, p, o)), 0) * 0.9,
@@ -309,6 +330,7 @@ const thieves = {
   ],
 
   handlers: {
+    mug(ctx, p, id) { mugDo(ctx, p, ctx.player(id)); },
     secondStory(ctx, p, id) {
       const o = ctx.player(id);
       if (!o || !stealable(ctx, p, o)) return;

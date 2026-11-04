@@ -592,8 +592,20 @@ const echoQ = {
 
   members: [
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 4 → 8
+    // REPLACE10 bot test (Nov 4, quality loop lane D): Busker's place. 3 green + 2 any as a player sees it. At round start
+    // (before anyone places): one round I space of any color, done for its owner as Cover does an empty one (Green's own
+    // copy spaces left out: at round start there is nothing for them to copy). Nothing to remember after.
+    ...add10(m('warmup', 'Warm-Up Act', 2, 2, 'Round Start: copy a round I action.', {
+      onRoundStart(ctx, owner) {
+        const list = emptyTargets(ctx).filter(x => x.a.ring === 1 && !(x.qid === 'echo' && x.a.key !== 'chant'));
+        if (!list.length) return;
+        ctx.choose(owner, 'Warm-Up Act: copy which round I action?', list.map(x => ({
+          id: `slot:${x.key}`, label: `${x.a.name}: ${x.a.text}`, kind: 'action', value: x.key, hint: emptyValue(ctx, x.a, owner),
+        })), 'echo.copyEmpty');
+      },
+    })),
     m('evergreen', 'Busker', 1, 2, // Cory, 2026-10-25: cost 3 (was 4)
-      'On Recruit: +2 green. Round Start: +2 green.', {
+      'On Recruit: +2 green. Round Start: +2 green.', { ...old10('warmup'),
       onRecruited(ctx, owner) { ctx.gain(owner, 'green', 2); },
       onRoundStart(ctx, owner) { ctx.gain(owner, 'green', 2); },
     }),

@@ -4,7 +4,7 @@
 // when the engine loads, so it is set before the engine is imported (dynamic imports below), then cleared.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE10 = '1';
+process.env.REPLACE10 = 'racketeer,pauper,bootlegger,warmup,insidejob';
 const { applyMove, contextFor, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { table, named } = await import('./cards-helpers-b.js');
@@ -51,12 +51,13 @@ describe('REPLACE10: each card fires', () => {
 
 describe('REPLACE10: Bootlegger', () => {
   it('On Use, once per round: copies the On Recruit of another of your members; turned until the next round', () => {
-    let s = table(['red', 'echo', 'trading', 'thieves'], { round: 2, members: [['echo.bootlegger', 'echo.evergreen']] });
-    const u = uidOf(s, 'echo.bootlegger', 0), g = s.players[0].res.green;
+    let s = table(['red', 'echo', 'trading', 'thieves'], { round: 2, members: [['echo.bootlegger', 'thieves.accomplice']], res: [{}, { red: 5 }] });
+    const u = uidOf(s, 'echo.bootlegger', 0);
     s = move(s, `use:${u}`);
-    // Busker is the only other member with an On Recruit: asked anyway, so the choice is seen
+    // Accomplice is the only other member with an On Recruit: asked anyway, so the choice is seen
     if (s.pending?.prompt?.startsWith('Bootlegger')) s = answer(s, s.pending.options[0].id);
-    expect(s.players[0].res.green).toBe(g + 2);
+    while (s.pending?.player === 0 && s.pending.kind === 'choose' && /Accomplice|steal/i.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
+    expect(s.players[1].res.red).toBe(2); // Accomplice's steal 3, again
     expect(s.cards[u].used).toBe(true);
     expect(s.pending.options.map(o => o.id)).not.toContain(`use:${u}`);
     expect(named(s, 'Bootlegger')).toContain('P1 uses Bootlegger.');
@@ -89,14 +90,14 @@ describe('REPLACE10: Inside Job (Stash\'s slot)', () => {
 
 // The pitched turns (pitches/D-*.md), set up and checked: the Lab's scripted scenarios.
 describe('REPLACE10: the pitched turns', () => {
-  it('Bootlegger: you own Busker; each round you fire it again: +2 green', () => {
-    let s = table(['red', 'echo', 'trading', 'thieves'], { n: 4, round: 2, members: [['echo.bootlegger', 'echo.evergreen', 'thieves.accomplice']] });
+  it('Bootlegger: you own Roadie and Accomplice; each round you fire one again: Roadie\'s +1 green per green member', () => {
+    let s = table(['red', 'echo', 'trading', 'thieves'], { n: 4, round: 2, members: [['echo.bootlegger', 'echo.roadie', 'thieves.accomplice']] });
     const u = uidOf(s, 'echo.bootlegger', 0), g = s.players[0].res.green;
     s = move(s, `use:${u}`);
     expect(s.pending.prompt).toBe("Bootlegger: copy which member's On Recruit?");
-    expect(s.pending.options.map(o => o.label.split(':')[0]).sort()).toEqual(['Accomplice', 'Busker']);
-    s = answer(s, s.pending.options.find(o => o.label.startsWith('Busker')).id);
-    expect(s.players[0].res.green).toBe(g + 2);
+    expect(s.pending.options.map(o => o.label.split(':')[0]).sort()).toEqual(['Accomplice', 'Roadie']);
+    s = answer(s, s.pending.options.find(o => o.label.startsWith('Roadie')).id);
+    expect(s.players[0].res.green).toBe(g + 2); // two green members: Bootlegger and Roadie
   });
 
   it('Inside Job: round I, Ben took Help Yourself, Cleo took Lie Low: you steal 2 from Ben only, +1 magenta (3 in all)', () => {
@@ -126,5 +127,18 @@ describe('REPLACE10: the pitched turns', () => {
     const total = p => Object.values(p.res).reduce((a, b) => a + b, 0);
     expect(total(s.players[3])).toBe(6);
     expect(named(s, 'Racketeer')).toEqual(["P4's Racketeer: took 2 from P1.", "P4's Racketeer: took 2 from P3.", "P4's Racketeer: took 2 from P2."]);
+  });
+});
+
+describe('REPLACE10: Warm-Up Act', () => {
+  it('Round Start: copies a round I action of any color, Green\'s copy spaces left out', () => {
+    let s = table(['red', 'echo', 'thieves', 'trading'], { n: 3, round: 1, res: [{}, { red: 4 }, { red: 4 }], members: [['echo.warmup']], queue: [{ t: 'round', r: 2 }] });
+    expect(s.pending.prompt).toBe('Warm-Up Act: copy which round I action?');
+    const names = s.pending.options.map(o => o.label.split(':')[0]);
+    expect(names).toContain('Help Yourself');
+    expect(names).toContain('Build Up');
+    expect(names).not.toContain('Echo');
+    s = answer(s, s.pending.options.find(o => o.label.startsWith('Build Up')).id);
+    expect(s.players[0].res.green).toBeGreaterThanOrEqual(3);
   });
 });
