@@ -6,7 +6,7 @@
 - **Settings by default:** 10-card deck, By color contests, Hard bots that can see what On Use and On Recruit cards do.
 - **Any thread can help:** each helper takes the next 5 games nobody has taken yet. Nobody hands out game ranges.
 - **Safe to stop:** a restart loses at most the 5 games that were being played, and never adds duplicate games.
-- **Report:** each new card next to the card it replaces (how often it's taken, how often its owners win), then how winners won: how wide, how deep in one color, where their followers came from, which member pairs win together, and how each color did.
+- **Report:** each new card next to the card it replaces (how often it's taken, how often its owners win), then how winners won: how wide, how deep in one color (and whether it was their cloak's), where their followers came from, which member pairs win together, and how each cloak did.
 
 ## Commands (for threads)
 ```
