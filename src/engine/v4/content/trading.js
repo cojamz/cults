@@ -480,7 +480,7 @@ const trading = {
     // Cory, Nov 4 11:53am: "White should definitely have a member that gives an extra buy each turn ... limit the bonus
     // recruit to followers"; 12:45pm: "landlord is easily the worst white card". Landlord's place. Name, price and worth 1
     // are Claude's fill-ins. REPLACE14=barker.
-    ...add14(m('barker', 'Barker', 2, 3, 'Each turn, you may recruit followers one extra time.', { followersTwice: true })),
+    ...add14(m('barker', 'Barker', 2, 2, 'Each turn, you may recruit followers one extra time.', { followersTwice: true })),
     m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true, ...old14('barker'), ...old10('almoner'), ...old8('trading.shopkeeper'), ...old11('landlord2'), ...old9('trading.shopkeeper'),
       onRoundStart(ctx, owner) { ctx.gain(owner, W, 2); },
     }),
