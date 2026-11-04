@@ -160,7 +160,8 @@ function polishPick(ctx, p, left, who = 'Polish') {
  */
 const OPEN_BAR = {
   key: 'openbar', copyDoesIt: true, ring: 1, name: 'Open Bar', text: '+2 silver. This round, whenever a rival takes a Silver space, +1 follower.',
-  estimate: ctx => 2 + 0.4 * ctx.state.players.length,
+  // the tab pays only on Silver spaces still open for rivals this round (Evaluators, Nov 4: bots took it last, for +2 silver)
+  estimate: (ctx, p) => 2 + 0.8 * Math.min(ctx.rivals(p).length, ctx.openSpaces().filter(sp => sp.qid === 'silver' && !/^Open Bar$/.test(sp.name)).length),
   resolve(ctx, p) {
     const got = hostGain(ctx, p, 2);
     (ctx.state.openBar ||= []).push({ pid: p.id, round: ctx.state.round });
