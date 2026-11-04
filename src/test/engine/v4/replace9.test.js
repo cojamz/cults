@@ -245,7 +245,7 @@ describe('Jack-of-All-Trades: "Your yellow counts as any color in your full sets
   it('only your own yellow and only in full sets: a rival\'s Toll Keeper sees 3 yellow and 1 red as a full set', () => {
     let s = table(Q4, { n: 2, round: 1, res: [{}, { yellow: 3, red: 1 }], members: [['yellow.tollkeeper'], ['yellow.jack']], queue: [{ t: 'allPlaced' }] });
     expect(s.pending?.prompt || '').not.toMatch(/Toll Keeper/);
-    expect(named(s, 'Toll Keeper')).toContain("P1's Toll Keeper: every rival holds a full set or nothing.");
+    expect(named(s, 'Toll Keeper')).toContain("P1's Toll Keeper: nobody pays: each rival holds a full set or has no resources.");
   });
   it('pitched turn: Quilter with Jack-of-All-Trades turns 2 sets in, yellow paying for the missing purple', () => {
     let s = table(Q4, { n: 4, round: 3, res: [{ red: 2, yellow: 5, blue: 3 }], members: [['yellow.quilter', 'yellow.jack']], queue: [{ t: 'buy', p: 0 }] });

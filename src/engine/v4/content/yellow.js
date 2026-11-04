@@ -311,7 +311,7 @@ export default {
       ...see(i => endsAhead(i).reduce((a, r) => a + 3 * resAt(r) * (1 + SEE_SPITE), 0)), // BOTSEE: about 3 a round end, and the rivals' loss
       onAllPlaced(ctx, owner) {
         const payers = ctx.rivals(owner).filter(o => setsOf(ctx, o) < 1 && total(ctx, o) > 0);
-        if (!payers.length) { ctx.log(`${owner.name}'s Toll Keeper: every rival holds a full set or nothing.`); return; }
+        if (!payers.length) { ctx.log(`${owner.name}'s Toll Keeper: nobody pays: each rival holds a full set or has no resources.`); return; }
         const key = `toll:${ctx.state.moves}:${owner.id}`;
         for (const o of payers.sort((a, b) => (a.kind === 'bot' ? 0 : 1) - (b.kind === 'bot' ? 0 : 1))) askToll(ctx, owner, o, 2, key);
       },
