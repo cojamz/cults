@@ -2,7 +2,7 @@
 // Actions lane r4 batch (Nov 4): Rally (Gather's place), Clearance (Savings'), Patron (Splurge's).
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE11 = 'rally,clearance,patron';
+process.env.REPLACE11 = 'rally,clearancesale,patron';
 const { applyMove, memberPrice, followers } = await import('../../../engine/v4/core.js');
 const { quadrant } = await import('../../../engine/v4/content/index.js');
 const { table } = await import('./cards-helpers-b.js');

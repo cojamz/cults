@@ -289,9 +289,9 @@ const market = {
         })).concat({ id: 'none', label: 'Keep the shop', kind: 'pass', value: null, hint: 1 }), `${Q}.savings`);
       },
     }, {
-      // Clearance (REPLACE11=clearance, Actions lane r4 batch, Nov 4): Savings' place. The price rule is core.js
+      // Clearance (REPLACE11=clearancesale; Recruit Twice already has the key 'clearance'), Actions lane r4 batch, Nov 4): Savings' place. The price rule is core.js
       // clearanceFree (p.clearance, cleared at turn start or on the free recruit).
-      key: 'clearance', ring: 1, name: 'Clearance', copyDoesIt: true,
+      key: 'clearancesale', ring: 1, name: 'Clearance', copyDoesIt: true,
       text: '+2 blue in round I, +3 in round II, +4 in round III. This turn the cheapest shop member costs you nothing.',
       byRound: { lines: ['+2 blue', '+3 blue', '+4 blue'], rest: 'This turn the cheapest shop member costs you nothing.' },
       estimate: ctx => ctx.state.round + 1 + Math.min(...ctx.shopCards().map(c => c.def.s + c.def.w), 4),
