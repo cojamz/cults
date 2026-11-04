@@ -19,7 +19,7 @@ The game was called Patrons; since 2026-10-14 it's **Cults** (v0.5). Code ids an
 ## Branches and shipping (current)
 - Work on `claude/gifted-newton-3lcy3i`; PR #1 already exists. Do not create a replacement PR.
 - Check each increment, push source, then `bash scripts/v4-play.sh <checked-sha>` publishes the immutable commit to main/play and verifies the served build stamp and HTML.
-- Live: https://cojamz.github.io/cults/ redirects to https://cojamz.github.io/cults/play/. GitHub Pages serves main, not gh-pages. Historical Netlify instructions are superseded. Old cojamz.github.io/patrons/... links forward to /cults/... from the cojamz/cojamz.github.io repo (scripts/forward-site/).
+- Live: https://cojamz.github.io/cults/ redirects to https://cojamz.github.io/cults/play/. GitHub Pages serves main, not gh-pages. Historical Netlify instructions are superseded. Old /patrons links are dead on purpose (Cory, Nov 4: forwarding "seems overly complex"); scripts/forward-site/ is there if he ever wants it.
 - main outside play/ contains the old v3 game plus a mirror of this harness (CLAUDE.md, AGENTS.md, .claude/) so new threads start right; v4-play.sh refreshes the mirror. Preserve the v3 game and the root redirect. Do not merge v4 source over main wholesale.
 
 ## Code map (v4)
