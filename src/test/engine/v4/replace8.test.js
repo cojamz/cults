@@ -7,10 +7,11 @@ import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE8 = '1';
 process.env.CATERER = 'follower';
-const { resume } = await import('../../../engine/v4/core.js');
+const { resume, contextFor } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move, take } = await import('./helpers.js');
 const { sceneQ, linesNaming } = await import('./cards-helpers.js');
+const { uidIn } = await import('./cards-helpers-b.js');
 delete process.env.REPLACE8;
 delete process.env.CATERER;
 
@@ -21,7 +22,7 @@ const opt = (s, re) => s.pending.options.find(o => re.test(o.id) || re.test(o.la
 describe('REPLACE8: the switch', () => {
   it("keeps the old cards' prices, worth and count, and retires the old cards", () => {
     const card = id => { const d = defById(id); return [d.s, d.w, d.f, d.n]; };
-    expect(card('silver.patronesses')).toEqual(card('silver.debtcollector'));
+    expect(card('silver.wellwishers')).toEqual(card('silver.debtcollector'));
     expect(card('silver.freeloader')).toEqual(card('silver.polisher'));
     for (const id of ['silver.debtcollector', 'silver.polisher']) expect(defById(id).retired).toBe(true);
     expect(defById('silver.gala').retired).toBeFalsy();
@@ -29,34 +30,28 @@ describe('REPLACE8: the switch', () => {
   });
 });
 
-describe('Patronesses: "Round End: you may give rivals any of your silver, split as you choose. +1 follower per silver you give."', () => {
-  const end = o => sc({ n: 3, members: [['silver.patronesses']], queue: [{ t: 'allPlaced' }, { t: 'endRound' }], ...o });
-  it('at round end, before contests: you may give any of your silver, split as you choose, from your own pile', () => {
-    let s = end({ res: [{ silver: 3 }, { silver: 2 }, {}] });
-    expect(s.pending.player).toBe(0);
-    expect(s.pending.prompt).toMatch(/^Patronesses: which rival gains 1 silver of yours\?/);
-    s = move(s, 'player:2'); s = move(s, 'player:2'); s = move(s, 'player:1');
-    expect(s.players.map(p => p.res.silver)).toEqual([0, 3, 2]);
+describe('Well-Wishers: "Whenever one of your members goes to a rival\'s cult, +3 followers."', () => {
+  it("a member moved into a rival's cult by anyone: +3; Well-Wishers itself leaving pays nothing", () => {
+    let s = sc({ n: 3, members: [['silver.wellwishers', 'silver.toastmaster']], queue: [] });
+    const ctx = contextFor(s);
+    ctx.moveMember(uidIn(s, 'silver.toastmaster', 0), s.players[0], s.players[1], { actor: s.players[1], recruit: true });
+    expect(s.players[0].bonus).toBe(3);
+    expect(linesNaming(s.log, 'Well-Wishers')).toContain("P1's Well-Wishers: Toastmaster goes to P2: +3 followers.");
+    ctx.moveMember(uidIn(s, 'silver.wellwishers', 0), s.players[0], s.players[2], { actor: s.players[2], recruit: true });
+    expect(s.players[0].bonus).toBe(3);
   });
-  it('+1 follower per silver you give', () => {
-    let s = end({ res: [{ silver: 3 }, {}, {}] });
-    s = move(s, 'player:1'); s = move(s, 'player:2'); s = move(s, 'done');
-    expect(s.players[0].res.silver).toBe(1);
-    expect(linesNaming(s.log, 'Patronesses').join(' ')).toContain('+2 followers');
+  it('a member sent to the bottom of the pile is not a rival\'s cult: nothing', () => {
+    let s = sc({ n: 3, members: [['silver.wellwishers', 'silver.toastmaster']], queue: [] });
+    contextFor(s).buryMember(s.players[0], uidIn(s, 'silver.toastmaster', 0));
+    expect(s.players[0].bonus).toBe(0);
   });
-  it('"you may": giving nothing keeps your silver for the contest', () => {
-    let s = end({ res: [{ silver: 3 }, { silver: 1 }, {}] });
-    s = move(s, 'done');
-    expect(s.players.map(p => p.res.silver)).toEqual([3, 1, 0]);
-    expect(s.players[0].bonus).toBe(4); // Silver's round I prize, kept
-  });
-  it('the pitched turn: round III, you hold 9 and Cleo 11; give 5 to Dev and 4 to Ben: +9 followers, Cleo still wins Silver', () => {
-    let s = sc({ n: 4, round: 3, res: [{ silver: 9 }, { silver: 0 }, { silver: 11 }, { silver: 2 }], members: [['silver.patronesses']], queue: [{ t: 'allPlaced' }, { t: 'endRound' }] });
-    for (let k = 0; k < 5; k++) s = move(s, 'player:3');
-    for (let k = 0; k < 4; k++) s = move(s, 'player:1');
-    expect(s.players.map(p => p.res.silver)).toEqual([0, 4, 11, 7]);
-    expect(s.players[0].bonus).toBe(9);
-    expect(s.players[2].bonus).toBe(10); // Cleo wins Silver's round III +10
+  it('the pitched turn: Godparent gives your Hostesses to Ben: its cost from Godparent, +3 from Well-Wishers', () => {
+    let s = sc({ n: 4, round: 2, members: [['silver.godparents', 'silver.wellwishers', 'silver.hostesses']], queue: [{ t: 'buy', p: 0 }] });
+    const host = uidIn(s, 'silver.hostesses', 0), d = defById('silver.hostesses');
+    s = move(s, `use:${uidIn(s, 'silver.godparents', 0)}`);
+    s = move(s, `give:${host}:1`);
+    expect(s.players[1].members).toContain(host);
+    expect(s.players[0].bonus).toBe(d.s + d.w + 3);
   });
 });
 

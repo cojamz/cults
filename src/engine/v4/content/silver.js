@@ -91,7 +91,7 @@ const lowest = (ctx, p) => Math.min(...others(ctx, p).map(o => ctx.followers(o))
 function shareStep(ctx, p, data) {
   const given = data.given || {};
   const total = Object.values(given).reduce((s, n) => s + n, 0);
-  const left = (data.pile ? Math.min(data.max, p.res[S] || 0) : data.max) - total;
+  const left = data.max - total;
   if (left <= 0) return shareDone(ctx, p, data);
   const low = lowest(ctx, p);
   const opts = others(ctx, p).map(o => ({
@@ -99,16 +99,13 @@ function shareStep(ctx, p, data) {
     // bots spread to whoever trails
     hint: (ctx.followers(o) === low ? 1 : 0) - 0.2 * (given[o.id] || 0),
   }));
-  // a gift from your own pile (Patronesses): bots keep it while they lead Silver before round III
-  const keep = data.pile && ctx.state.round < 3 && leadIn(ctx, p, S) - total > 0 ? 3 : -5;
-  opts.push({ id: 'done', label: total ? 'Done' : 'Give nothing', kind: 'done', value: 'done', hint: keep });
-  ctx.choose(p, `${data.who}: which rival gains 1 silver${data.pile ? ' of yours' : ''}? You get ${data.per} ${data.per === 1 ? 'follower' : 'followers'} for each, ${left} more at most`, opts, 'silver.share', { ...data, given });
+  opts.push({ id: 'done', label: total ? 'Done' : 'Give nothing', kind: 'done', value: 'done', hint: -5 });
+  ctx.choose(p, `${data.who}: which rival gains 1 silver? You get ${data.per} ${data.per === 1 ? 'follower' : 'followers'} for each, ${left} more at most`, opts, 'silver.share', { ...data, given });
 }
 function shareDone(ctx, p, data) {
   const given = data.given || {};
   const total = Object.values(given).reduce((s, n) => s + n, 0);
   if (!total) { ctx.log(`${p.name}'s ${data.who}: gave nothing.`); return; }
-  if (data.pile) p.res[S] -= total; // from the giver's own silver, not the bank
   for (const [id, n] of Object.entries(given)) giveTo(ctx, p, ctx.player(Number(id)), S, n);
   afterGive(ctx, p, S);
   p.bonus += total * data.per;
@@ -431,15 +428,16 @@ const silver = {
       botActivate: (ctx, owner) => ctx.state.round === 3 && owner.res[S] >= 6,
     }),
     m('dowager', 'Dowager', 2, 2, 'Worth 3 followers.', { f: 3 }),
-    // REPLACE8 bot test (Nov 4, quality loop lane B, pitches/B-debtcollectors.md R4): Debt Collectors' place, same price.
-    // Chosen after the round's last placement, before anything is scored (core's allPlaced step, as Spoilsport), so the
-    // gift can move the Silver contest. From the owner's own silver, split one at a time; +1 follower per silver given.
-    ...add8(m('patronesses', 'Patronesses', 4, 3, 'Round End: you may give rivals any of your silver, split as you choose. +1 follower per silver you give.', { f: 2, n: 2,
-      onAllPlaced(ctx, owner) {
-        if (!(owner.res[S] > 0)) { ctx.log(`${owner.name}'s Patronesses: no silver to give.`); return; }
-        shareStep(ctx, owner, { who: 'Patronesses', max: owner.res[S], per: 1, pile: true });
+    // REPLACE8 bot test (Nov 4, quality loop lane B, pitches/B-debtcollectors.md R5, passed paper gate b3 at 18): Debt
+    // Collectors' place, same price. Any of your members moved into a rival's cult (your Godparent's gift, a rival's
+    // Promote or Demote, a steal, a swap), while you still hold Well-Wishers; to the shop or the pile doesn't count.
+    ...add8(m('wellwishers', 'Well-Wishers', 4, 3, "Whenever one of your members goes to a rival's cult, +3 followers.", { f: 2, n: 2,
+      onCultMove(ctx, owner, card, { uid, from, to }) {
+        if (from !== owner || !to || to === owner) return;
+        owner.bonus += 3;
+        ctx.log(`${owner.name}'s Well-Wishers: ${ctx.card(uid).def.name} goes to ${to.name}: +3 followers.`);
       },
-      ...see(i => endsAhead(i).reduce((a, r) => a + [1, 2, 4][r - 1] * (r < 3 ? 0.3 : 0.7), 0)),
+      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.04 * 3),
     })),
     // REPLACE8 bot test (Nov 4, quality loop lane B, pitches/B-polisher.md 1): Polisher's place, same price. Once per gift
     // (a space or card gives each receiver once), however much silver it brings.
