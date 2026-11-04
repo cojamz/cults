@@ -832,7 +832,8 @@ const market = {
     // REPLACE9 (Members C, bC7b: paper 14 vs 11; Cory's "paper filters, play ranks", Nov 4): Window Dressers' place,
     // same price. Its own recruit counts (it is a blue member by then).
     ...add9(m('buyersclub', "Buyers' Club", 2, 1, 'Whenever you recruit, +1 blue per blue member you have, up to 3.', { f: 3, n: 3,
-      onAnyRecruit(ctx, owner, card, by) {
+      // "Whenever you recruit": a member or a follower purchase (Cory, 2026-10-21), so onRecruit, not onAnyRecruit.
+      onRecruit(ctx, owner, card, by) {
         if (by !== owner) return;
         const k = Math.min(3, ctx.countMembersOfColor(owner, Q));
         if (k) { ctx.gain(owner, B, k); ctx.log(`${owner.name}'s Buyers' Club: +${k} blue.`); }

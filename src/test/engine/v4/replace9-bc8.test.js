@@ -37,14 +37,17 @@ describe("REPLACE9: Buyers' Club", () => {
   });
   it('whenever you recruit: +1 blue per blue member, up to 3', () => {
     const s0 = table(['red', 'yellow', 'market', 'thieves'], { n: 2, round: 2, members: [['market.buyersclub']] });
-    const fire = (s, k) => defById('market.buyersclub').onAnyRecruit;
+    const fire = (s, k) => defById('market.buyersclub').onRecruit;
     expect(fire()).toBeTypeOf('function');
     let got = 0;
     const ctx = { countMembersOfColor: () => 5, gain: (p, c, n) => { got += n; }, log: () => {} };
-    defById('market.buyersclub').onAnyRecruit(ctx, s0.players[0], null, s0.players[0]);
+    defById('market.buyersclub').onRecruit(ctx, s0.players[0], null, s0.players[0], { member: {} });
+    expect(got).toBe(3);
+    got = 0; // a follower purchase is a recruit too (Cory, 2026-10-21)
+    defById('market.buyersclub').onRecruit(ctx, s0.players[0], null, s0.players[0], { followers: 5, tier: 'mid' });
     expect(got).toBe(3);
     got = 0;
-    defById('market.buyersclub').onAnyRecruit(ctx, s0.players[0], null, s0.players[1]);
+    defById('market.buyersclub').onRecruit(ctx, s0.players[0], null, s0.players[1], { member: {} });
     expect(got).toBe(0);
   });
 });
