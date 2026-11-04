@@ -20,6 +20,7 @@ import { add6, old6 } from './replace6.js';
 import { add9, old9, handlers9 } from './replace9.js';
 import { see, endsAhead } from './botsee.js';
 import { add11, old11, handlers11 } from './replace11.js';
+import { add15, old15 } from './replace15.js';
 const holdWorth = (ctx, who, sp) => {
   const [q, i] = sp.key.split('-').map(Number), a = spacesOf(ctx.state, ctx.state.quadrants[q])[i];
   try { return typeof a.estimate === 'function' ? a.estimate(ctx, who) || 0 : sp.ring; } catch { return sp.ring; }
@@ -255,7 +256,7 @@ const members = [
     },
   }),
   // Cory, 2026-10-28: Dabblers (Turncoat, then Groupies), 3, "give 2 members, and count as every color"
-  m('dabblers', 'Dabblers', null, 0, 2, 'Counts as 2 wild members.', { n: 2, everyColor: true, ...old9('benders.dabblers') }),
+  m('dabblers', 'Dabblers', null, 0, 2, 'Counts as 2 wild members.', { n: 2, everyColor: true, ...old9('benders.dabblers'), ...old15('benders.dabblers') }),
   // REPLACE9 bot test (Members C, Nov 4, batch bC2: paper 17 vs Dabblers' 12, the guests' set 12 -> 14): Dabblers' place,
   // the single version. 2 any as a player sees it, worth 1, counts as 1 member of every color on the table.
   ...add9(m('dabbler', 'Dabbler', null, 0, 1, 'Counts as a member of every color.', { everyColor: true })),
@@ -263,6 +264,23 @@ const members = [
   m('cheerleader', 'Cheerleader', null, 0, 3, 'Whenever you win a contest, +1 follower.', {
     onContestWin(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Cheerleader: +1 follower.`); },
   }),
+  // REPLACE15 bot test (Cory, Nov 4: "when you win a contest, get x y z"): Dabblers' place. A shared contest counts as a win,
+  // as for Cheerleader and Sore Loser. Cheerleaders: 6 any as a player sees it. Gloaters: 8 any; loose followers only,
+  // through the shared steal (Bodyguards blocks it), after every contest is scored, as Sore Loser takes.
+  ...add15(m('cheerleaders', 'Cheerleaders', null, 0, 5, 'Whenever you win a contest, +2 followers.', {
+    onContestWin(ctx, owner) { owner.bonus += 2; ctx.log(`${owner.name}'s Cheerleaders: +2 followers.`); },
+  })),
+  ...add15(m('gloaters', 'Gloaters', null, 0, 7, 'Whenever you win a contest, steal 1 follower from each rival.', {
+    afterContests(ctx, owner, card, table) {
+      const wins = table.filter(c => c.winners.includes(owner.id)).length;
+      for (let k = 0; k < wins; k++) {
+        const inst = ctx.stealInstance();
+        let got = 0;
+        for (const o of ctx.state.players) if (o !== owner) got += ctx.steal(owner, o, { followers: 1, instance: inst });
+        if (got) ctx.log(`${owner.name}'s Gloaters: a contest won; steals ${got} follower${got === 1 ? '' : 's'}.`);
+      }
+    },
+  })),
   // Cory, 2026-10-28: Anarchist, 7, once per round (it stands in for Red's swaps)
   m('anarchist', 'Anarchist', null, 0, 5, /* 6 with the +1 wild (Cory, Nov 1 3:03pm: "maybe we make it a touch cheaper? yes to 1"; was 7) */ 'On Use, once per round: swap any 2 members, in any cult or the shop, that cost within 2 of each other.', {
     activate: 'round',
