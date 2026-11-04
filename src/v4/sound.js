@@ -269,15 +269,17 @@ const wobble = (ctx, param, t, dur, rate, depth, type = 'sine') => {
 };
 
 const CALLS = {
-  // sleigh bells, two shakes
+  // sleigh bells: three shakes, each a cluster of small bells and their rattle (Cor's redo, Nov 4)
   santa(ctx, dest, t, r) {
-    for (let i = 0; i < 6; i++) {
-      const at = t + (i < 3 ? i * 0.03 : 0.16 + (i - 3) * 0.03) + r() * 0.01;
-      const f = 3100 * (1 + (r() - 0.5) * 0.1);
-      [[1, 0.1], [1.47, 0.06], [2.3, 0.03]].forEach(([m, a]) => tone(ctx, 'sine', f * m, at, 0.12, env(ctx, dest, at, a, 0.002, 0.1)));
-      hiss(ctx, dest, at, 0.04, r, { type: 'highpass', f: 7000, peak: 0.06 });
-    }
-    return 0.34;
+    [0, 0.11, 0.22].forEach((at0, k) => {
+      for (let i = 0; i < 4; i++) {
+        const at = t + at0 + i * 0.012 + r() * 0.008;
+        const f = 2500 + r() * 1400;
+        [[1, 0.07, 0.16], [1.73, 0.04, 0.1], [2.62, 0.025, 0.06]].forEach(([m, a, d]) => tone(ctx, 'sine', f * m, at, d, env(ctx, dest, at, a * (k === 2 ? 1.2 : 1), 0.001, d)));
+      }
+      hiss(ctx, dest, t + at0, 0.06, r, { f: 7500, q: 1.5, peak: 0.1, attack: 0.002 });
+    });
+    return 0.45;
   },
   // a little harp run upward
   unicorn(ctx, dest, t) {
@@ -288,13 +290,16 @@ const CALLS = {
     });
     return 0.5;
   },
-  // a wave rolling in and breaking
+  // a splash: water breaking, then a few droplets (Cor's redo, Nov 4)
   surfer(ctx, dest, t, r) {
-    const bp = hiss(ctx, dest, t, 0.42, r, { f: 400, q: 1.2, peak: 0.45, attack: 0.16 });
-    bp.frequency.setValueAtTime(400, t);
-    bp.frequency.exponentialRampToValueAtTime(1900, t + 0.18);
-    bp.frequency.exponentialRampToValueAtTime(700, t + 0.42);
-    return 0.45;
+    const bp = hiss(ctx, dest, t, 0.3, r, { f: 3200, q: 0.9, peak: 0.5, attack: 0.008 });
+    bp.frequency.setValueAtTime(3200, t);
+    bp.frequency.exponentialRampToValueAtTime(700, t + 0.3);
+    for (let i = 0; i < 3; i++) {
+      const at = t + 0.12 + i * 0.05 + r() * 0.03, f = 1400 + r() * 900;
+      sweep(ctx, 'sine', f, f * 1.8, at, 0.03, held(ctx, dest, at, 0.08, 0.003, 0.03));
+    }
+    return 0.34;
   },
   // a cricket's chirp: three quick high pulses
   bug(ctx, dest, t) {
@@ -392,30 +397,28 @@ const CALLS = {
     tone(ctx, 'sawtooth', 130, t, d, bp);
     return d + 0.02;
   },
-  // a crunch and a "nom"
+  // a hot slice: a short sizzle and crackle (Cor: not the follower voice, Nov 4)
   pizza(ctx, dest, t, r) {
-    hiss(ctx, dest, t, 0.05, r, { type: 'highpass', f: 2500, peak: 0.12, attack: 0.002 });
-    return 0.04 + follower(ctx, dest, t + 0.04, r, { word: [['n', 'o'], ['m', 'u']], pitch: 0.7, rise: false });
+    hiss(ctx, dest, t, 0.32, r, { type: 'highpass', f: 5000, peak: 0.07, attack: 0.02 });
+    for (let i = 0; i < 14; i++) {
+      const at = t + r() * 0.3;
+      hiss(ctx, dest, at, 0.006, r, { f: 2500 + r() * 4000, q: 3, peak: 0.12 + r() * 0.12, attack: 0.001 });
+    }
+    return 0.34;
   },
-  // a little roar
+  // a big foot coming down: a deep stomp and the ground shaking (Cor's redo, Nov 4)
   dino(ctx, dest, t, r) {
-    const d = 0.38;
-    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1100; lp.Q.value = 3;
-    const g = held(ctx, dest, t, 0.32, 0.04, d);
-    const trem = ctx.createGain(); trem.gain.value = 0.8;
-    wobble(ctx, trem.gain, t, d, 28, 0.2);
-    lp.connect(trem); trem.connect(g);
-    sweep(ctx, 'sawtooth', 190, 95, t, d, lp);
-    hiss(ctx, lp, t, d, r, { f: 700, q: 1.5, peak: 0.25, attack: 0.04 });
-    return d + 0.02;
+    sweep(ctx, 'sine', 95, 38, t, 0.28, env(ctx, dest, t, 0.9, 0.004, 0.26));
+    sweep(ctx, 'triangle', 180, 60, t, 0.08, env(ctx, dest, t, 0.25, 0.002, 0.07));
+    hiss(ctx, dest, t, 0.25, r, { type: 'lowpass', f: 260, q: 0.7, peak: 0.5, attack: 0.004 });
+    return 0.3;
   },
-  // a quick swish and a thin blade's ring
+  // a quick swish (Cor: "can just be swish", Nov 4)
   ninja(ctx, dest, t, r) {
-    const bp = hiss(ctx, dest, t, 0.13, r, { f: 900, q: 2.2, peak: 0.35, attack: 0.04 });
+    const bp = hiss(ctx, dest, t, 0.14, r, { f: 900, q: 2.2, peak: 0.35, attack: 0.05 });
     bp.frequency.setValueAtTime(900, t);
-    bp.frequency.exponentialRampToValueAtTime(5500, t + 0.13);
-    [[3520, 0.03], [5280, 0.018]].forEach(([f, a]) => tone(ctx, 'sine', f, t + 0.1, 0.3, env(ctx, dest, t + 0.1, a, 0.003, 0.28)));
-    return 0.42;
+    bp.frequency.exponentialRampToValueAtTime(5500, t + 0.14);
+    return 0.16;
   },
   // a spell rising, then a sparkle
   wizard(ctx, dest, t) {
@@ -434,33 +437,37 @@ const CALLS = {
     });
     return 0.16;
   },
-  // a springy "boing"
-  mushroom(ctx, dest, t) {
-    const d = 0.32;
-    const o = sweep(ctx, 'triangle', 260, 520, t, 0.08, env(ctx, dest, t, 0.22, 0.004, d));
-    o.frequency.setValueAtTime(520, t + 0.08);
-    const w = wobble(ctx, o.frequency, t + 0.08, d - 0.08, 16, 70);
-    w.gain.setValueAtTime(70, t + 0.08);
-    w.gain.exponentialRampToValueAtTime(2, t + d);
-    return d + 0.02;
+  // a soft pop and a puff of spores (Cor's redo, Nov 4)
+  mushroom(ctx, dest, t, r) {
+    sweep(ctx, 'sine', 950, 320, t, 0.05, env(ctx, dest, t, 0.35, 0.002, 0.05));
+    hiss(ctx, dest, t, 0.008, r, { f: 2000, q: 1, peak: 0.15, attack: 0.001 });
+    const bp = hiss(ctx, dest, t + 0.03, 0.26, r, { f: 1200, q: 0.8, peak: 0.12, attack: 0.04 });
+    bp.frequency.setValueAtTime(1200, t + 0.03);
+    bp.frequency.exponentialRampToValueAtTime(3500, t + 0.29);
+    return 0.32;
   },
-  // a bee buzzing past
-  bee(ctx, dest, t) {
-    const d = 0.36;
-    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1700; lp.connect(held(ctx, dest, t, 0.12, 0.06, d));
-    [-8, 9].forEach(det => {
-      const o = tone(ctx, 'sawtooth', 215, t, d, lp); o.detune.value = det;
-      o.frequency.linearRampToValueAtTime(255, t + d * 0.45);
-      o.frequency.linearRampToValueAtTime(205, t + d);
-      wobble(ctx, o.frequency, t, d, 11, 9);
-    });
+  // a bee flying past, left to right: a fluttering buzz that swells and fades (Cor's redo, Nov 4)
+  bee(ctx, dest, t, r) {
+    const d = 0.42;
+    let out = held(ctx, dest, t, 0.16, 0.12, d);
+    if (ctx.createStereoPanner) {
+      const pan = ctx.createStereoPanner(); pan.pan.setValueAtTime(-0.6, t); pan.pan.linearRampToValueAtTime(0.6, t + d);
+      pan.connect(out); out = pan;
+    }
+    const nasal = ctx.createBiquadFilter(); nasal.type = 'bandpass'; nasal.frequency.value = 1300; nasal.Q.value = 1.2; nasal.connect(out);
+    const flutter = ctx.createGain(); flutter.gain.value = 0.75; flutter.connect(nasal);
+    wobble(ctx, flutter.gain, t, d, 37, 0.25, 'triangle');
+    const o = tone(ctx, 'sawtooth', 235, t, d, flutter);
+    o.frequency.linearRampToValueAtTime(262, t + d * 0.5);
+    o.frequency.linearRampToValueAtTime(222, t + d);
+    wobble(ctx, o.frequency, t, d, 7 + r() * 2, 6);
     return d + 0.02;
   },
 };
 /** The emoji ids that have a call. */
 export const CALL_IDS = Object.keys(CALLS);
 // each call's loudness against the others (set by peak and rms, scripts/v4-sounds.mjs); a call sits under the place knock
-const CALL_LEVEL = { santa: 1.21, unicorn: 1.23, surfer: 1.88, bug: 0.64, ghost: 0.44, alien: 0.61, robot: 1.35, cat: 0.71, frog: 0.93, octopus: 0.65, pumpkin: 0.22, skull: 1.41, cactus: 2.82, pizza: 0.19, dino: 0.54, ninja: 4.03, wizard: 1.33, crab: 1.34, mushroom: 1.02, bee: 0.99 };
+const CALL_LEVEL = { santa: 1.16, unicorn: 1.23, surfer: 1.24, bug: 0.64, ghost: 0.44, alien: 0.61, robot: 1.35, cat: 0.71, frog: 0.93, octopus: 0.65, pumpkin: 0.22, skull: 1.41, cactus: 2.82, pizza: 3.09, dino: 0.31, ninja: 2.57, wizard: 1.33, crab: 1.34, mushroom: 1.3, bee: 3.55 };
 const CALL_MASTER = 0.6;
 /** Render emoji `id`'s call into ctx at time t. Returns its length in seconds (0 for an emoji with no call). */
 export function call(ctx, dest, id, t, seed = Math.floor(Math.random() * 1e9)) {
