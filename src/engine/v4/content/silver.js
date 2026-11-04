@@ -147,7 +147,7 @@ function charmPick(ctx, p, left) {
 function polishPick(ctx, p, left, who = 'Polish') {
   // any color, silver included (Cory, Nov 4 1:14pm: "yeah allow silver i guess"; the words already said "any colors")
   ctx.choose(p, `${who}: +1 of which color? (${left} to pick)`, ctx.state.resources.map(c => ({
-    id: `color:${c}`, label: `+1 ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0) - (c === S ? 1 : 0),
+    id: `color:${c}`, label: `+1 ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0) - (c === S ? 5 : 0), // silver back for silver is rarely the pick; the sheet's suggestion and bots skip it
   })), 'silver.polish', { left, who });
 }
 
