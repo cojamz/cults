@@ -7,6 +7,7 @@ import { registerQuadrant, defById } from './index.js';
 import { add1, old1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
 import { add5, old5, handlers5 } from './replace5.js';
+import { add10, old10 } from './replace10.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -403,13 +404,25 @@ const thieves = {
     m('accomplice', 'Accomplice', 1, 1, 'On Recruit: steal 3 resources.', {
       onRecruited(ctx, owner) { startSteal(ctx, owner, 'Accomplice', 3 + stickyMore(ctx, owner), { fromAction: false }); },
     }),
-    m('grifter', 'Grifter', 2, 5, /* 6 (Cory, Oct 30) */ 'On Recruit: steal 1 resource per 2 members you have.', {
+    m('grifter', 'Grifter', 2, 5, /* 6 (Cory, Oct 30) */ 'On Recruit: steal 1 resource per 2 members you have.', { ...old10,
       // first sentence only (Cory, 2026-10-18): the picks split freely among rivals, like any steal
       onRecruited(ctx, owner) {
         const n = Math.floor(ctx.memberCount(owner) / 2);
         startSteal(ctx, owner, 'Grifter', n + (n > 0 ? stickyMore(ctx, owner) : 0), { fromAction: false });
       },
     }),
+    // REPLACE10 bot test (Nov 4, quality loop lane D): Grifter's place. 4 magenta + 3 any as a player sees it. Read right
+    // after the contests are scored: for each contest a rival wins (tied winners each count), 2 resources from that rival,
+    // their biggest piles first, through the shared steal (Bodyguards and Lie Low block it; Desperado adds). Racketeers'
+    // shape (batch 1), but any resources, so a contest that counts minions or followers still pays.
+    ...add10(m('racketeer', 'Racketeer', 3, 3, 'Whenever a rival wins a contest, steal 2 resources from them.', {
+      // BOTSEE: each round end still ahead, rivals win (seats − 1)/seats of the contests, 2 resources from each
+      ...see(i => endsAhead(i).reduce((a, r) => a + i.s.quadrants.length * ((i.n - 1) / i.n) * 2 * resAt(r) * (1 + SEE_SPITE), 0)),
+      onRivalContestWin(ctx, owner, card, winner) {
+        if (!ctx.canSteal(owner, winner) || !stealable(ctx, owner, winner)) return;
+        autoSteal(ctx, owner, winner, 'Racketeer', 2);
+      },
+    })),
     // every steal, a member's too (Cory, 2026-10-22 playtest: "it should proc on member recruits (like grifter)")
     m('sticky', 'Sticky Fingers', 2, 1, 'Your steals take 1 more resource.', { stealMore: 1, retired: true }), // Second-Story Man takes its place (Claude, under Cory's "use your judgement", 2026-11-04)
     // Replacement batch 5 (Nov 3), live since Nov 4 (Claude, under Cory's "use your judgement"): Sticky Fingers' place. 4 magenta + 3 any as a player sees it. Asked

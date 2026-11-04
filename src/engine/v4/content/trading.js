@@ -19,6 +19,7 @@ import { registerQuadrant, defById } from './index.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add6, old6, handlers6 } from './replace6.js';
 import { swap11, handlers11 } from './replace11.js';
+import { add10, old10, handlers10 } from './replace10.js';
 
 const W = 'white';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -181,6 +182,15 @@ const trading = {
 
   handlers: {
     ...handlers11({ yardSale, yardSaleAsk }),
+    ...handlers10({
+      pauper(ctx, p, yes) {
+        const n = p.res[W] || 0;
+        if (!yes || !n) { ctx.log(`${p.name}'s Pauper: keeps ${n} white.`); return; }
+        p.res[W] = 0; p.bonus += n;
+        ctx.log(`${p.name}'s Pauper: ${n} white became ${plural(n, 'follower')}.`);
+        turned(ctx, p);
+      },
+    }),
     ...handlers6({
       successor(ctx, p, uid, data) {
         if (!ctx.state.shop.includes(uid) || cost(ctx, uid) > data.max) return;
@@ -396,7 +406,20 @@ const trading = {
         ctx.log(`${owner.name}'s Pallbearers: ${actor.name} cast out ${name} (${k}): +${n} followers.`);
       },
     })),
-    m('oldmoney', 'Old Money', 1, 4, /* 6 (Cory, Oct 30) */ 'Game End: +1 follower per white member you have.', { ...old6,
+    // REPLACE10 bot test (Nov 4, quality loop lane D): Old Money's place. 4 white + 3 any as a player sees it. Asked after
+    // the round's last placement and before anything is scored (core's allPlaced step), only while the owner has the fewest
+    // followers (ties count) and holds white: turning it in gives up the white it would have held for the contests.
+    ...add10(m('pauper', 'Pauper', 3, 3, 'Round End: before contests are scored, if you have the fewest followers (ties count), you may turn all your white into followers.', {
+      onAllPlaced(ctx, owner) {
+        const n = owner.res[W] || 0;
+        if (!n || !ctx.state.players.every(o => ctx.followers(o) >= ctx.followers(owner))) return;
+        ctx.choose(owner, `Pauper: turn your ${n} white into ${plural(n, 'follower')}?`, [
+          { id: 'yes', label: `Turn ${n} white into ${plural(n, 'follower')}`, kind: 'choice', value: true, hint: n },
+          { id: 'no', label: `Keep the ${n} white`, kind: 'pass', value: false, hint: 0 },
+        ], 'trading.pauper');
+      },
+    })),
+    m('oldmoney', 'Old Money', 1, 4, /* 6 (Cory, Oct 30) */ 'Game End: +1 follower per white member you have.', { ...old6, ...old10,
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'trading'),
     }),
     m('hoarder', 'Hoarder', 4, 3, 'On Use, once per game: turn all your resources into white.', { ...old3,
