@@ -357,6 +357,7 @@
 .seat-card .seat-rank{font-size:12px;color:var(--paper-ink-3)}
 /* the rim's standings card opens with what its prize pays, in words */
 .lt-prize-line{margin:0 0 6px;font-size:15px;line-height:1.35;font-weight:700}
+.lt-order-line{margin:0 0 6px;font-size:14px;line-height:1.35}
 
 /* a chair's build row (the plate's rival panel): what its members make each round, and what it just took */
 .lt-cult-seat .cs-build{display:flex;align-items:center;gap:14px;min-width:0;white-space:nowrap}

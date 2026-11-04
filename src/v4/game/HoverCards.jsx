@@ -5,7 +5,7 @@
 // cards are mine. GameScreen mounts <HoverCardLayer> once.
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
-import { quadrant, roman, spaceOpen, contestTable, cardDef, botLevel, BOT_LEVEL_INFO, RING_VALUE, spacesOf } from '../../engine/v4/index.js';
+import { quadrant, roman, spaceOpen, contestTable, contestOrder, cardDef, botLevel, BOT_LEVEL_INFO, RING_VALUE, spacesOf } from '../../engine/v4/index.js';
 import { ruleWords } from '../shorts.js';
 import { playerColor, standings } from '../format.js';
 import { Popover } from './parts.jsx';
@@ -670,8 +670,24 @@ export function StandingsCard({ state, qid, meId = null }) {
   return (
     <>
       <p className="lt-prize-line" data-prize-line={qid}>A bonus every round, not the final score: at this round’s end, whoever has the {ruleWords(qid, st.rule).replace(/^Most /i, 'most ')} gets {st.prize} follower{st.prize === 1 ? '' : 's'} ({RING_VALUE.map(v => `+${v}`).join(' / ')} in rounds I / II / III; ties pay half each, rounded up).</p>
+      <ContestOrderLine state={state} qid={qid} />
       <ContestStandings state={state} st={st} meId={meId} brief />
     </>
+  );
+}
+/** "Scored 2nd of 4, in cloak order: Red, White, Blue, Purple": contests score one at a time in this round's turn
+ *  order, each player's cloak color in turn, every prize landing before the next counts (Cory, 2026-11-04). */
+function ContestOrderLine({ state, qid }) {
+  let order;
+  try { order = contestOrder(state); } catch { return null; }
+  const k = order.indexOf(qid);
+  if (k < 0 || order.length < 2) return null;
+  const nth = ['1st', '2nd', '3rd', '4th', '5th', '6th'][k] || `${k + 1}th`;
+  return (
+    <p className="lt-order-line" data-contest-order={order.join(',')}>
+      Scored {nth} of {order.length}, in cloak order:{' '}
+      {order.map((q, i) => <span key={q}>{i ? ', ' : ''}{q === qid ? <b>{quadrant(q).name}</b> : quadrant(q).name}</span>)}. Each prize is paid before the next contest is counted.
+    </p>
   );
 }
 

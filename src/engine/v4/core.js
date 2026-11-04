@@ -786,6 +786,7 @@ function resolveTask(state, task, optionId) {
     case 'setupPick': {
       const q = optionId.slice('color:'.length);
       p.res[quadrant(q).resource] += 1;
+      p.startColor = q; // the color this player brings to the contest order (contestOrder)
       if (state.startPool) state.startPool = state.startPool.filter(id => id !== q);
       const art = state.artifacts?.[q];
       if (art !== undefined) {
@@ -1116,18 +1117,18 @@ function endRound(state) {
   const ctx = ctxFor(state);
   eachMember(state, (owner, card, def) => { if (def.onRoundEnd) def.onRoundEnd(ctx, owner, card); }, ['onRoundEnd']);
   const v = RING_VALUE[state.round - 1];
-  const table = contestTable(state, ctx);
   const msg = [];
-  for (const c of table) {
+  // one contest at a time, in cloak order: each prize (and Cheerleader's +1) lands before the next contest counts
+  const table = contestTable(state, ctx, c => {
     if (c.spoiled !== undefined) msg.push(`${c.label}: spoiled by ${state.players[c.spoiled].name}'s Spoilsport, nobody wins`);
-    if (!c.winners.length) continue;
+    if (!c.winners.length) return;
     if (c.copycats) msg.push(`${c.label}: ${c.copycats.map(id => `${state.players[id].name}'s Copycats`).join(' & ')} ${c.copycats.length > 1 ? 'tie' : 'ties'} for it, 1 short`);
     const winners = c.winners.map(id => state.players[id]);
     underCause({ kind: 'contest', qid: c.qid, round: state.round }, () => { for (const w of winners) { w.bonus += c.prize; w.contest += c.prize; fBump(state, w, c.prize); } });
     // members that answer a contest won (Cheerleader)
     for (const w of winners) eachMemberOf(state, w, (card, def) => { if (def.onContestWin) def.onContestWin(ctx, w, card, c); }, ['onContestWin']);
     msg.push(`${c.label}: ${winners.map(w => w.name).join(' & ')} +${c.prize}`);
-  }
+  });
   // the round's scoring, kept as decided: the round-end card and the results read it back (never re-derived)
   state.contests = [...(state.contests || []), { round: state.round, prize: v, results: table }];
   log(state, `Round ${roman(state.round)} ends. ${msg.join(' · ') || 'No one scored.'}`);
@@ -1262,9 +1263,43 @@ export function scoringOf(state, qid) {
     score: (ctx, p) => { const n = contestMembers(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: contestMembers(state, p) }) };
   return q.scoring;
 }
-export function contestTable(state, ctx = ctxFor(state)) {
+/**
+ * The order the contests are scored in: cloak order (Cory, 2026-11-04: "it kind of has to have an inherent order. and
+ * I think cloak order makes most sense (so basically player turn order)"). Each player in this round's turn order
+ * brings the contest of the color whose cloak they picked (or whose resource they drafted, with cloaks off); a color
+ * nobody picked (an old save, a test table) follows in wheel order.
+ */
+export function contestOrder(state) {
+  const colorOf = p => {
+    if (p.startColor && state.quadrants.includes(p.startColor)) return p.startColor;
+    if (p.artifact !== undefined && state.artifacts) for (const q in state.artifacts) if (state.artifacts[q] === p.artifact && state.quadrants.includes(q)) return q;
+    return null;
+  };
+  const out = [];
+  for (const id of turnOrder(state)) { const q = colorOf(state.players[id]); if (q && !out.includes(q)) out.push(q); }
+  for (const q of state.quadrants) if (!out.includes(q)) out.push(q);
+  return out;
+}
+/**
+ * Every contest, scored one at a time in cloak order (contestOrder), each on the table as the earlier prizes left it.
+ * pay(c), given by endRound, pays each contest for real before the next is counted; without it (every preview, as if
+ * the round ended now) each prize is added to its winners' followers for the later contests and taken back after.
+ */
+export function contestTable(state, ctx = ctxFor(state), pay = null) {
   const prize = RING_VALUE[Math.min(3, Math.max(1, state.round)) - 1];
-  return state.quadrants.map(qid => {
+  const lent = state.players.map(() => 0);
+  try {
+    return contestOrder(state).map(qid => {
+      const c = scoreContest(state, ctx, qid, prize);
+      if (pay) pay(c); else for (const id of c.winners) { state.players[id].bonus += c.prize; lent[id] += c.prize; }
+      return c;
+    });
+  } finally {
+    state.players.forEach((p, i) => { if (lent[i]) p.bonus -= lent[i]; });
+  }
+}
+function scoreContest(state, ctx, qid, prize) {
+  {
     const q = quadrant(qid);
     const sc = scoringOf(state, qid);
     const scores = state.players.map(p => sc.score(ctx, p));
@@ -1292,7 +1327,7 @@ export function contestTable(state, ctx = ctxFor(state)) {
       prize: winners.length > 1 ? Math.ceil(prize / 2) : prize, fullPrize: prize, rows, winners, ...(spoiled ? { spoiled: spoiled.by } : {}),
       ...(copycats && copycats.some(id => winners.includes(id)) ? { copycats: copycats.filter(id => winners.includes(id)) } : {}),
     };
-  });
+  }
 }
 
 function finish(state) {
