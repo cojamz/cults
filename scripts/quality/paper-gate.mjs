@@ -275,7 +275,7 @@ function setcheck(id, names = []) {
 }
 // Gate lines from steering (principles.md, "Process changes after batch 1"; director, Nov 4 6:31am): enforced, not advice.
 // Each color keeps a cheap way-in member (total cost 3 or less) after the swap; Magenta gets no new steals.
-function costOf(price) { const m = String(price || '').match(/(\d+)\s+[a-z]+\s*\+\s*(\d+)\s+any/i); return m ? +m[1] + +m[2] : null; }
+function costOf(price) { const p = String(price || ''), m = p.match(/(\d+)\s+[a-z]+\s*\+\s*(\d+)\s+any/i); if (m) return +m[1] + +m[2]; const g = p.match(/^\s*(\d+)\s+any/i); return g ? +g[1] : null; }
 function gateLines(spec, old, cand) {
   const out = [];
   if (spec.kind !== 'space' && spec.color) {
