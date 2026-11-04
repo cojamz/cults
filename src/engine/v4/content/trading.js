@@ -19,6 +19,7 @@ import { registerQuadrant, defById } from './index.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add6, old6, handlers6 } from './replace6.js';
 import { swap11, handlers11, add11, old11 } from './replace11.js';
+import { see, endsAhead, resAt } from './botsee.js';
 import { add10, old10, handlers10 } from './replace10.js';
 import { add8, old8 } from './replace8.js';
 
@@ -342,6 +343,9 @@ const trading = {
           hint: sp.ring + ctx.rivals(owner).filter(o => ctx.countMembersOfColor(o, sp.qid) > 0).length,
         })), 'trading.landlordToken');
       },
+      // BOTSEE: a token each round still ahead (this one too: On Recruit), taken by a rival about half the rounds (4 of 8 tokens in the A/B
+      // games, seeds 501-512), 3 white each. Without it Hard bots bought it in 6 of 12 games against the old card's 11.
+      ...see(i => endsAhead(i).reduce((a, r) => a + 0.5 * 3 * resAt(r), 0)),
       afterRivalAction(ctx, owner, card) {
         const t = ctx.state.cards[card.uid]?.landToken;
         if (!t || t.round !== ctx.state.round || ctx.placement?.key !== t.key) return;
