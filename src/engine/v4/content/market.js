@@ -9,6 +9,7 @@ import { add3, old3, handlers3 } from './replace3.js';
 import { add4, old4, handlers4 } from './replace4.js';
 import { add9, old9, handlers9 } from './replace9.js';
 import { add11, old11, handlers11 } from './replace11.js';
+import { on12, handlers12 } from './replace12.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -292,6 +293,38 @@ const market = {
       estimate: (ctx, p) => 3 + Math.min(10, Math.max(0, totalRes(p) - 2)) * 0.4, // +3 blue (Cory, Nov 1)
       resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); extraBuys(ctx, p, 1); ctx.log(`${p.name} recruits twice this turn.`); },
     },
+    // REPLACE12 bot tests (Nov 4, quality loop, lane D2; pitches/D2-batch1.md), one at a time in Bury's place.
+    // Dumpster Dive: the bottom 3 members of the pile (the last ones sent down), one recruited free if it costs 5 or less;
+    // the turn's own recruit stays. Delivery: a shop member goes straight into a rival's cult (an arrival, not their
+    // recruit: Old Maid's −5 lands on them), and the row refills.
+    ...(on12('dumpsterdive') ? [{
+      key: 'dumpsterdive', ring: 2, name: 'Dumpster Dive', text: 'Look at the bottom 3 members of the pile and recruit one of them for free, costing up to 5. +1 blue.', copyDoesIt: true,
+      estimate: ctx => 1 + Math.max(0, ...ctx.state.pile.slice(-3).map(u => ctx.card(u)).filter(c => priceOf(c) <= 5).map(c => priceOf(c) * 0.8 + c.def.f * 0.5)),
+      resolve(ctx, p) {
+        ctx.gain(p, B, 1, { fromAction: true });
+        const bottom = ctx.state.pile.slice(-3).reverse().map(u => ctx.card(u));
+        ctx.log(`${p.name}'s Dumpster Dive: the bottom of the pile is ${bottom.map(c => `${c.def.name} (${priceOf(c)})`).join(', ') || 'empty'}.`);
+        const fit = bottom.filter(c => priceOf(c) <= 5);
+        if (!fit.length) { ctx.log(`${p.name}'s Dumpster Dive: none of them costs 5 or less.`); return; }
+        ctx.choose(p, 'Dumpster Dive: recruit which of the bottom 3 for free (costing up to 5)?', fit.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: priceOf(c) + c.def.f * 1.5,
+        })).concat({ id: 'none', label: 'Take none', kind: 'pass', value: null, hint: -1 }), `${Q}.dive`);
+      },
+    }] : []),
+    ...(on12('delivery') ? [{
+      key: 'delivery', ring: 2, name: 'Delivery', text: 'Give a shop member to a rival; gain blue equal to its cost. +1 blue.', copyDoesIt: true,
+      estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().map(priceOf)),
+      resolve(ctx, p) {
+        ctx.gain(p, B, 1, { fromAction: true });
+        const shop = ctx.shopCards();
+        if (!shop.length) return;
+        // bots: the dearest card, or a member that costs its new owner followers (Old Maid), aimed below
+        ctx.choose(p, 'Delivery: give which shop member to a rival?', shop.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name} (+${priceOf(c)} blue)`, kind: 'card', value: c.uid, hint: priceOf(c) + (c.def.f < 0 ? 4 : 0),
+        })), `${Q}.deliverCard`);
+      },
+    }] : []),
+    ...(on12('dumpsterdive') || on12('delivery') ? [] : [
     {
       key: 'pricecheck', ring: 2, name: 'Bury', text: 'Send a shop member to the bottom of the pile, then refill. Gain blue equal to half its cost, rounded down. +1 blue.', copyDoesIt: true,
       estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().map(c => Math.floor(priceOf(c) / 2))),
@@ -303,7 +336,7 @@ const market = {
           id: `card:${c.uid}`, label: `${c.def.name} (+${Math.floor(priceOf(c) / 2)} blue)`, kind: 'card', value: c.uid, hint: Math.floor(priceOf(c) / 2),
         })), `${Q}.bury`);
       },
-    },
+    }]),
     {
       key: 'spree', ring: 3, name: 'Spree', text: 'Recruit 3 times this turn. +5 blue.', copyDoesIt: true,
       estimate: (ctx, p) => 5 + Math.min(10, Math.max(0, totalRes(p) - 3)) * 0.8, // +5 blue (Cory, Nov 1)
@@ -312,6 +345,33 @@ const market = {
   ],
 
   handlers: {
+    ...handlers12({
+      dive(ctx, p, uid) {
+        if (uid == null) { ctx.log(`${p.name}'s Dumpster Dive: takes none.`); return; }
+        const k = ctx.state.pile.indexOf(uid);
+        if (k < 0) return;
+        ctx.state.pile.splice(k, 1); ctx.state.shop.push(uid); // up from the bottom, then recruited as from the row
+        ctx.log(`${p.name}'s Dumpster Dive: recruits ${ctx.card(uid).def.name} from the bottom of the pile, for free.`);
+        ctx.recruit(p, uid, { free: true });
+      },
+      deliverCard(ctx, p, uid) {
+        const c = ctx.card(uid);
+        if (!c || !ctx.state.shop.includes(uid)) return;
+        const bad = c.def.f < 0, top = Math.max(...ctx.rivals(p).map(o => ctx.followers(o))), low = Math.min(...ctx.rivals(p).map(o => ctx.followers(o)));
+        ctx.choose(p, `Delivery: give ${c.def.name} to which rival?`, ctx.rivals(p).map(o => ({
+          id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers)`, kind: 'player', value: o.id,
+          hint: bad ? (ctx.followers(o) === top ? 3 : 0) : (ctx.followers(o) === low ? 2 : 0),
+        })), `${Q}.deliverTo`, { uid });
+      },
+      deliverTo(ctx, p, oid, data) {
+        const o = ctx.player(oid), c = ctx.card(data.uid);
+        if (!o || !c || !ctx.state.shop.includes(data.uid)) return;
+        const k = priceOf(c);
+        ctx.log(`${p.name}'s Delivery: ${c.def.name} goes to ${o.name}'s cult; ${p.name} +${k} blue.`);
+        ctx.giveFromShop(o, data.uid, p);
+        if (k) ctx.gain(p, B, k, { fromAction: true });
+      },
+    }),
     ...handlers11({
       snobReserve(ctx, p, uid) {
         if (!ctx.state.shop.includes(uid)) return;

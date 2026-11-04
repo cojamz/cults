@@ -24,8 +24,12 @@ import { swap14, handlers14 } from './replace14.js';
 import { see, endsAhead, resAt } from './botsee.js';
 import { add10, old10, handlers10 } from './replace10.js';
 import { add8, old8 } from './replace8.js';
+import { on12, handlers12 } from './replace12.js';
 
 const W = 'white';
+/** No rival has fewer followers than p (ties count): Low Profile (REPLACE12). */
+const richer = (ctx, p) => ctx.rivals(p).filter(o => ctx.followers(o) > ctx.followers(p)).length;
+const fewestFollowers = (ctx, p) => !ctx.rivals(p).some(o => ctx.followers(o) < ctx.followers(p));
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
 /** Followers you can sell: your loose followers (the ones you've won or bought). */
@@ -163,7 +167,46 @@ const trading = {
   // White, reworked by Cory (2026-10-22, design/spheres/white-actions-draft-2026-10-22.md): "basically better
   // exchange for followers". The names are Claude's fill-ins.
   actions: [
-    {
+    // REPLACE12 bot tests (Nov 4, quality loop, lane D2; pitches/D2-batch1.md), one at a time in Allowance's place.
+    // Pawnshop: only followers you recruited or won can be turned in (the ones a steal can take; members' printed
+    // followers stay), up to the round's number.
+    ...(on12('pawnshop') ? [{
+      key: 'pawnshop', copyDoesIt: true, ring: 1, name: 'Pawnshop', text: 'Turn up to 1 of your followers (2 in round II, 3 in round III) into 2 white each. +1 white.',
+      byRound: { lines: ['Turn up to 1 of your followers into 2 white. +1 white.', 'Turn up to 2 of your followers into 2 white each. +1 white.', 'Turn up to 3 of your followers into 2 white each. +1 white.'] },
+      estimate: (ctx, p) => 1 + Math.min(ctx.state.round, Math.max(0, p.bonus)) * (ctx.state.round < 3 ? 1 : 0.5),
+      resolve(ctx, p) {
+        const most = Math.min(ctx.state.round, Math.max(0, p.bonus));
+        if (!most) { ctx.log(`${p.name}'s Pawnshop: no recruited or won followers to turn in.`); ctx.gain(p, W, 1, { fromAction: true }); return; }
+        // bots: worth it before round III's buys run out, or to get under a rival for White's fewest-followers contest
+        const opts = [];
+        for (let k = most; k >= 0; k--) opts.push({ id: `n:${k}`, label: k ? `Turn ${k} follower${k > 1 ? 's' : ''} into ${2 * k} white` : 'Turn in none', kind: k ? 'choice' : 'pass', value: k, hint: k * (ctx.state.round < 3 ? 0.9 : 0.2) });
+        ctx.choose(p, `Pawnshop: turn up to ${most} of your followers into 2 white each?`, opts, 'trading.pawnshop');
+      },
+    }] : []),
+    // Low Profile: "fewest followers" as White's contest counts them (ties count).
+    ...(on12('lowprofile') ? [{
+      key: 'lowprofile', copyDoesIt: true, ring: 1, name: 'Low Profile', text: '+2 white in round I, +3 in round II, +4 in round III, doubled if you have the fewest followers (ties count).',
+      byRound: { lines: ['+2 white, doubled if you have the fewest followers (ties count).', '+3 white, doubled if you have the fewest followers (ties count).', '+4 white, doubled if you have the fewest followers (ties count).'] },
+      estimate: (ctx, p) => (ctx.state.round + 1) * (fewestFollowers(ctx, p) ? 2 : 1),
+      resolve(ctx, p) {
+        const low = fewestFollowers(ctx, p), n = (ctx.state.round + 1) * (low ? 2 : 1);
+        ctx.gain(p, W, n, { fromAction: true });
+        ctx.log(`${p.name}'s Low Profile: +${n} white${low ? ' (doubled: the fewest followers)' : ''}.`);
+      },
+    }] : []),
+    // Pocket Money: rivals with more followers than you, as the score track shows them.
+    ...(on12('pocketmoney') ? [{
+      key: 'pocketmoney', copyDoesIt: true, ring: 1, name: 'Pocket Money', text: '+1 white per rival with more followers than you in round I, +2 per rival in round II, +3 in round III. +1 white.',
+      byRound: { lines: ['+1 white per rival with more followers than you. +1 white.', '+2 white per rival with more followers than you. +1 white.', '+3 white per rival with more followers than you. +1 white.'] },
+      estimate: (ctx, p) => 1 + ctx.state.round * richer(ctx, p),
+      resolve(ctx, p) {
+        const k = richer(ctx, p), n = ctx.state.round * k;
+        if (n) ctx.gain(p, W, n, { fromAction: true });
+        ctx.log(`${p.name}'s Pocket Money: ${k} rival${k === 1 ? '' : 's'} with more followers, +${n} white.`);
+        ctx.gain(p, W, 1, { fromAction: true });
+      },
+    }] : []),
+    ...(on12('pawnshop') || on12('lowprofile') || on12('pocketmoney') ? [] : [{
       key: 'stipend', copyDoesIt: true, ring: 1, name: 'Allowance',
       text: '+2 white in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.',
       // Gather's shape (Cory, 2026-10-31: "just default to gather style for now for the rest"); was +1/2/3 followers and +2/3/4 white
@@ -173,7 +216,7 @@ const trading = {
         ctx.gain(p, W, ctx.state.round + 1, { fromAction: true });
         (p.recruitFollowers ||= []).push({ n: ctx.state.round, name: 'Allowance', broker: true });
       },
-    },
+    }]),
     {
       key: 'splurge', copyDoesIt: true, ring: 1, name: 'Splurge', text: 'This turn, if you recruit a member, +1 follower for every 2 resources you pay for it (every 1 in round II). +1 white.', // members only: Claude's default, 2026-10-27; +1 (Cory, Oct 28); per 1 in round II (Cory, Nov 1 1:39pm)
       estimate: (ctx, p) => 1 + Math.floor(Math.min(totalRes(p) + 1, 7) / (ctx.state.round === 2 ? 1 : 2)) * fv(ctx) * 0.8,
@@ -224,6 +267,14 @@ const trading = {
   ],
 
   handlers: {
+    ...handlers12({
+      pawnshop(ctx, p, k) {
+        const n = Math.min(Number(k) || 0, Math.max(0, p.bonus));
+        if (n) { p.bonus -= n; ctx.gain(p, W, 2 * n, { fromAction: true }); }
+        ctx.log(n ? `${p.name}'s Pawnshop: ${n} follower${n > 1 ? 's' : ''} turned into ${2 * n} white.` : `${p.name}'s Pawnshop: turned in no followers.`);
+        ctx.gain(p, W, 1, { fromAction: true });
+      },
+    }),
     ...handlers11({ yardSale, yardSaleAsk,
       landlordToken(ctx, p, v) {
         if (!v || !ctx.state.cards[v.uid]) return;

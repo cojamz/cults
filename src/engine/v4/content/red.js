@@ -5,6 +5,7 @@ import { add3, old3, handlers3 } from './replace3.js';
 import { add4, old4, handlers4 } from './replace4.js';
 import { see, endsAhead } from './botsee.js';
 import { add7, old7, handlers7 } from './replace7.js';
+import { add12, old12 } from './replace12.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
 
@@ -409,9 +410,38 @@ export default {
       // about one cheap member a turn in round I, fewer later (the row holds few of them after round I)
       ...see(info => (info.round === 1 ? 0.6 * info.myNow + 2 : info.round === 2 ? 0.3 * info.myNow : 0)),
     })),
-    m('movementpenalty', 'Deprogrammers', 1, 1, 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 4, n: 2, // +1 (Cory, Oct 30)
+    m('movementpenalty', 'Deprogrammers', 1, 1, 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 4, n: 2, ...old12('red.movementpenalty'), // +1 (Cory, Oct 30)
       onMoveMember(ctx, owner, card, info) { if (info.from !== owner && ctx.followers(info.from) > 0) info.from.bonus -= 1; },
     }),
+    // REPLACE12 bot tests (Nov 4, quality loop, lane D2; pitches/D2-batch1.md): Deprogrammers' place, prices Claude's fill-ins.
+    // Exit Counselor (3 red + 1 any as a player sees it): when its owner's own card or space hands one of their members
+    // to a rival or the shop (Promote, Demote, Panel, Body Snatchers' swap, Godparent, Guest of Honor), the owner uses
+    // that member's On Recruit. Never for a member a rival takes, and not for Exit Counselor itself.
+    ...add12(m('exitcounselor', 'Exit Counselor', 2, 1, 'Whenever you give one of your members away, use its On Recruit.', {
+      onCultMove(ctx, owner, card, { uid, from, to, actor }) {
+        if (from !== owner || actor !== owner || to === owner || uid === card.uid) return;
+        const gone = ctx.card(uid), d = gone.def;
+        if (!d.onRecruited && !(d.now && (d.onRoundStart || d.onRoundStartLate))) { ctx.log(`${owner.name}'s Exit Counselor: ${d.name} has no On Recruit to use.`); return; }
+        ctx.log(`${owner.name}'s Exit Counselor: ${d.name} leaves, and ${owner.name} uses its On Recruit.`);
+        ctx.borrowOnRecruit(owner, uid);
+      },
+      // about one give-away a round for a Red player, an On Recruit worth about 2
+      ...see(info => 1.5 * endsAhead(info).length),
+    })),
+    // Foundling (2 red + 1 any as a player sees it): at each Round Start, if no rival has fewer members than its owner
+    // (members counted as the table counts them, ties count), the owner recruits the top member of the pile for free.
+    ...add12(m('foundling', 'Foundling', 1, 1, 'Round Start: if you have the fewest members (ties count), recruit the top member of the pile for free.', {
+      onRoundStart(ctx, owner, card) {
+        const mine = ctx.memberCount(owner);
+        if (ctx.rivals(owner).some(o => ctx.memberCount(o) < mine)) return;
+        const top = ctx.state.pile[0];
+        if (top === undefined) { ctx.log(`${owner.name}'s Foundling: the pile is empty.`); return; }
+        ctx.log(`${owner.name}'s Foundling: ${owner.name} has the fewest members, so the top member of the pile joins free.`);
+        ctx.recruit(owner, top, { free: true, top: true });
+      },
+      // a free member (about 4) at each Round Start still ahead when behind on members: about half of them
+      ...see(info => 2 * (3 - info.round)),
+    })),
     m('panel', 'Panel', 4, 2, 'On Recruit: promote or demote another of your members.', { f: 3, n: 3,
       onRecruited(ctx, owner, card) {
         const options = ['promote', 'demote'].filter(mode => swapPairs(ctx, owner, mode, card.uid).length).map(mode => ({

@@ -8,6 +8,7 @@ import { add1, old1, handlers1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
 import { add5, old5 } from './replace5.js';
 import { add9, old9, handlers9, ON9 } from './replace9.js';
+import { on12, handlers12 } from './replace12.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 import { swap14, handlers14 } from './replace14.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -143,7 +144,20 @@ export default {
       estimate: ctx => ctx.state.round + 2.5,
       resolve(ctx, p) { pickColors(ctx, p, ctx.state.round + 2, 'Harvest', true); },
     },
-    {
+    // REPLACE12=tagalong bot test (Nov 4, quality loop, lane D2; pitches/D2-batch1.md): Tag Along in Leaders' Tax's place.
+    // Counts the colors whose spaces hold at least one of the chosen rival's minions (joined spots count), as the table
+    // sees them; nothing of the rival's changes.
+    ...(on12('tagalong') ? [{
+      key: 'tagalong', ring: 1, name: 'Tag Along', text: 'Choose a rival: +1 of each color they have a minion on. +1 yellow.',
+      estimate: (ctx, p) => 1 + Math.max(0, ...ctx.rivals(p).map(o => colorsWith(ctx, o).length)),
+      resolve(ctx, p) {
+        ctx.choose(p, 'Tag Along: which rival? +1 of each color they have a minion on.', ctx.rivals(p).map(o => {
+          const cs = colorsWith(ctx, o);
+          return { id: `player:${o.id}`, label: `${o.name} (+${cs.length}${cs.length ? `: ${cs.join(', ')}` : ''})`, kind: 'player', value: o.id, hint: cs.length * 2 };
+        }), 'yellow.tagAlong');
+      },
+    }] : []),
+    ...(on12('tagalong') ? [] : [{
       // Cory, Nov 2-3: Trade Seeds "never felt useful"; Leaders' Tax replaces it (his "coordinator figure this shit out":
       // the better of two candidates in bot games, Normal 400 and Hard). Key kept for old saves and records.
       // Nov 4 (Claude, under Cory's go-with-your-gut, after his "anything that relies on a rival having more of resources
@@ -151,7 +165,7 @@ export default {
       key: 'transmute', ring: 1, name: "Leaders' Tax", text: 'Choose a color: +1 of it per rival with a minion on its spaces. +1 yellow.',
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.state.quadrants.map((q, qi) => rivalsOn(ctx, p, qi))),
       resolve(ctx, p) { leadersTax(ctx, p); },
-    },
+    }]),
     {
       // New Blood (Claude, under Cory's go-with-your-gut, Nov 4; was Dilute, "+2 yellow, then change up to 3 of rivals'
       // resources one for one"). Gather's shape: core pays it on the turn's first recruit of a member of a color none of
@@ -212,6 +226,15 @@ export default {
         o.res[color] -= 1; ctx.gain(host, color, 1);
         ctx.log(`${o.name} gave ${host.name} 1 ${color} (${host.name}'s Toll Keeper).`);
         if (data.left > 1) askToll(ctx, host, o, data.left - 1, data.key);
+      },
+    }),
+    ...handlers12({
+      tagAlong(ctx, p, oid) {
+        const o = ctx.player(oid);
+        const cs = o ? colorsWith(ctx, o) : [];
+        for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
+        ctx.log(`${p.name}'s Tag Along: follows ${o ? o.name : 'nobody'}, +1 of each color they have a minion on (${cs.length ? cs.join(', ') : 'none yet'}).`);
+        ctx.gain(p, Y, 1, { fromAction: true });
       },
     }),
     taxColor(ctx, p, c) {
@@ -650,6 +673,13 @@ function barterStep(ctx, p, data) {
   ctx.choose(p, `Barterers: swap with ${o.name} one for one, or stop (${data.done} swapped so far)`, opts, 'yellow.barter', data);
 }
 // Trade Seeds (and Tinker): up to 3 one-for-one swaps of your own, with Done at any time.
+/** Tag Along (REPLACE12): the colors whose spaces hold at least one of o's minions (joined spots count). */
+function colorsWith(ctx, o) {
+  const st = ctx.state, qs = new Set();
+  for (const [key, pid] of Object.entries(st.slots || {})) if (pid === o.id) qs.add(Number(key.split('-')[0]));
+  for (const [key, list] of Object.entries(st.squats || {})) if (list.includes(o.id)) qs.add(Number(key.split('-')[0]));
+  return [...qs].sort((a, b) => a - b).map(qi => st.resources[qi]);
+}
 /** Leaders' Tax: rivals with at least one minion on the qi-th color's spaces (joined spots count). */
 function rivalsOn(ctx, p, qi) {
   const st = ctx.state, ids = new Set();
