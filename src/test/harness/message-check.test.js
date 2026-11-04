@@ -21,8 +21,10 @@ describe('message check hook (Cory voice gate)', () => {
     }
   });
   it('bounces a long message once, then lets the identical resend through', () => {
-    const t = `long ${Date.now()}\n` + 'line\n'.repeat(10) + 'Nothing needed from you.';
-    expect(check(t)).toMatch(/lines/);
+    // over 3 prose lines is a hard bounce since Cory's second brevity ask (Nov 1), so the once-only length check is the
+    // word count: three lines, over 90 words
+    const t = `long ${Date.now()} ` + 'word '.repeat(95) + '\nShipped the wheel fix.\nNothing needed from you.';
+    expect(check(t)).toMatch(/words/);
     expect(check(t)).toBeNull();
     rmSync('/tmp/cults-message-check', { recursive: true, force: true });
   });
