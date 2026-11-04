@@ -88,7 +88,7 @@ const P = {
     polish: { verb: '2 silver → 4 any', second: 'colors you choose' },
     // "+2 per silver" read as per silver you hold (Cory, Nov 1: "VERY misleading"): the giving leads
     partygifts: { verb: 'Give rivals up to 3 silver', second: '+2 @f each', note: 'from the bank' },
-    favors: { main: '+2 silver', second: 'each rival gives you 1', note: 'then gains 2 silver' },
+    favors: { main: '+2 silver', second: 'rivals give you 1, get 2 silver' }, // their 2 silver dropped with line 3 (wheel fit, Nov 3)
     tongue: { main: '+3 silver', second: 'then turn silver into colors' },
     largesse: { verb: 'Give rivals up to 10 silver', second: '+1 @f each', note: 'from the bank' },
   },
@@ -102,7 +102,9 @@ const P = {
     makeover: { verb: '+4 yellow, then rearrange all', second: 'into any colors' },
     bloom: r => ({ main: `+${r} yellow`, second: '+1 of each fewest color', note: run(n => `+${n}`, 'yellow: ') }),
     // Match the current rule: the yellow arrives before the optional swaps.
-    transmute: { main: '+1 yellow', second: 'pick a color: each rival', note: 'with more gives you 1' },
+    // the condition sat in line 3, which the wheel drops: the board read "pick a color: each rival" (Cory, Nov 3: "wtf is
+    // this action text"). Whole in line 1 now.
+    transmute: { verb: 'Choose a color: rivals with more give 1', note: '+1 yellow' },
     prism: { verb: '+1 each other color', second: 'per 3 yellow', note: 'you keep the yellow' },
     // "Members pay out" was all a tight ring II showed: the gain first, whole in line 1
     gather: { verb: '+1 per member', second: 'in its own color' },
@@ -113,7 +115,7 @@ const P = {
     pickpocket: r => ({ verb: `Steal ${r + 2}`, second: 'split among rivals', note: run(n => `${n + 2}`) }),
     tipoff: r => ({ main: `+${r + 1} magenta`, second: `+${r} @f if you recruit a member` }), // Gather's shape (Cory, Oct 31)
     hideout: { verb: 'Steal 1, then safe from steals', second: 'this round', note: '+1 magenta' },
-    rob: { verb: 'Steal half a rival’s pile', second: 'one color, rounded down', note: '+1 magenta' },
+    rob: { verb: 'Steal half of one color from a rival', second: 'rounded down', note: '+1 magenta' }, // line 2 dropped on ring II and "half a rival's pile" read as all of it (wheel fit, Nov 3)
     ransom: { verb: 'Rival pays or loses a member costing 5 or less', note: '+1 magenta' },
     heist: { verb: 'Recruit a rival’s member', note: '+1 magenta' },
   },

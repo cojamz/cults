@@ -55,10 +55,10 @@ describe('panel words (w3)', () => {
     expect(panelText('purple', { key: 'windup' }).second).toBe('per minion you placed');
   });
 
-  it("Leaders' Tax shows its yellow first, and Churn its round gain before the 3 it sends", () => {
+  it("Leaders' Tax says its whole rule in line 1 (the wheel drops line 3), and Churn its round gain before the 3 it sends", () => {
     const seeds = panelText('yellow', { key: 'transmute' });
-    expect(seeds.main).toBe('+1 yellow');
-    expect(seeds.second).toBe('pick a color: each rival');
+    expect(seeds.verb).toBe('Choose a color: rivals with more give 1');
+    expect(seeds.second).toBe('+1 yellow');
     // Savings (Oct 31): +2/+3/+4 and one shop member to the bottom, if you like
     const savings = panelText('market', { key: 'bargain' }, 2);
     expect(savings.main).toBe('+3 blue');
