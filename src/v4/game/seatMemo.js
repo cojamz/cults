@@ -8,6 +8,10 @@ import { lastSpace, seatTurns } from './seats.js';
 import { seatRanks } from './RankRow.jsx';
 import { incomeOf } from './build.js';
 
+// the Goes Last token's pill: whether this chair holds it and how many of its turns wait on it. Taking the token
+// changes the old holder's chair through no field of its own (picky bot, Nov 4: two seats showed the moon at once)
+const tokenOf = (state, pid) => (state.goesLast && state.goesLast.round === state.round && state.goesLast.pid === pid
+  ? (state.queue || []).filter(t => t.t === 'turn' && t.p === pid && t.token && !t.now).length + 1 : 0);
 const cache = new WeakMap(); // state → Map(me → { places, ranks, sig: Map(pid → string) })
 function sigOf(state, pid, me) {
   let m = cache.get(state);
@@ -18,7 +22,7 @@ function sigOf(state, pid, me) {
   if (s === undefined) {
     const p = state.players[pid];
     s = JSON.stringify([p, p.members.map(u => state.cards[u]), v.places[pid] || null, v.ranks[pid] || null, incomeOf(state, pid),
-      lastSpace(state, pid), followers(state, p), state.round, !!state.over, state.resources, state.quadrants]);
+      lastSpace(state, pid), followers(state, p), state.round, !!state.over, state.resources, state.quadrants, tokenOf(state, pid)]);
     v.sig.set(pid, s);
   }
   return s;
