@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.542 — 2026-11-03
+
+- Wallflower doubles every action it copies, as its card says; a cult's Members row shows Dabblers once as 2 any-color, so the color counts add up
+
 ## v0.99.541 — 2026-11-03
 
 - Under By color, the pay screen's warning about giving up a contest lead now reads that color's real contest (Green: minions, not green held)
