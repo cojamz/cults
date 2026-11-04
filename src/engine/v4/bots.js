@@ -29,6 +29,8 @@ export const BOT_LEVELS = ['easy', 'normal', 'hard', 'veryhard'];
 // recruits ~7 members instead of ~4 (400 games each; design/eval/bots.md). SPITE: how much the best rival's
 // expected total counts against the bot's own (1 = pure margin; 0.4 measured stronger than 1 and than 0).
 const MEMBER_BIAS = 2, BIAS_FLOOR = 0.3, SPITE = 0.4;
+// LIQUID=<share> (bot test only): see buysAt in rateOptions
+const LIQUID_SHARE = globalThis.process?.env?.LIQUID ? Number(globalThis.process.env.LIQUID) : 1;
 // Easy and casual are normal with other options (see scoreOptions): noise = random spread on placements, buyNoise
 // on buys, memberBias = followers added to every recruit (biasFloor: what's left of it at game end), k = weight of
 // member abilities, spite = how much the best rival's total counts. Easy is sloppy and blind to engines.
@@ -697,9 +699,13 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
   const { turns, roundLeft } = horizon(state);
   const nowIncome = INCOME[state.round - 1] * (opts.income ?? INCOME_SCALE);
   // buys and income still ahead; extraNow: this turn's buy is still ahead for the deciding player
+  // the buys still ahead that can turn leftovers into followers. liquidShare < 1 (bot test, LIQUID): only that share of
+  // the buys after the next one is counted, since most of them go to members, so a pile kept for "later" isn't
+  // treated as already spent on followers (Hard games ended on 11 resources a player, some on 40+; Nov 3)
+  const share = opts.liquidShare ?? LIQUID_SHARE;
   const buysAt = (s, extraNow) => {
     const lt = laterTurns(s).turns;
-    return state.players.map((_, i) => turns[i] + lt + (i === me ? extraNow : 0));
+    return state.players.map((_, i) => { const b = turns[i] + lt + (i === me ? extraNow : 0); return share === 1 || b <= 1 ? b : 1 + Math.round(share * (b - 1)); });
   };
   // extra: placements still ahead for the decider that this move adds (extra turns), each worth a placement's income
   const incomeAt = (s, extra = 0) => { const li = laterTurns(s).income * (opts.income ?? INCOME_SCALE); return turns.map((t, i) => (t + (i === me ? extra : 0)) * nowIncome + li); };
