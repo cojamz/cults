@@ -82,6 +82,12 @@ for (const [si, s] of seeds.entries()) {
     const full = readFileSync(join(src, file), 'utf8');
     return `# Seed ${s.replace('x', ' (paired with a different game, seed ')}${s.includes('x') ? ')' : ''}: one Hard-bot game from the seat that held the slot card\n\nThe slot card's printed text: "${text}"\n\n` + blind(trim(full, name), name);
   };
+  // Guard (Nov 4, Night Manager): a wrong printed text in the header misleads judges. The sheet lists each card's real
+  // text, so refuse when the given text is nowhere in its sheet (case-insensitive).
+  for (const [f, src, t] of [[N[s], newDir, newText], [B[s], baseDir, oldText]]) {
+    const norm = x => x.toLowerCase().replace(/[’‘]/g, "'").replace(/[“”]/g, '"');
+    if (!norm(readFileSync(join(src, f), 'utf8')).includes(norm(t))) { console.error(`text not found in ${join(src, f)}: "${t}"`); process.exit(3); }
+  }
   const nw = make(N[s], newDir, newName, newText), ol = make(B[s], baseDir, oldName, oldText);
   writeFileSync(join(pd, 'A.md'), flip ? ol : nw); writeFileSync(join(pd, 'B.md'), flip ? nw : ol);
   pairs.push({ seed: s, dir, A: flip ? 'old' : 'new', B: flip ? 'new' : 'old', newSheet: N[s], oldSheet: B[s] });
