@@ -150,8 +150,8 @@ try {
   await page.screenshot({ path: `${SHOTS}/1-resumed.png` });
   // (t1)
   const me = v.chips['0'];
-  // your seat says "again" (w3b #42: "twice" alone took a decode), its hover the snake order
-  if (!me || me.order !== 'now' || me.text !== 'two turns in a row' || !/snake order/.test(me.title)) fail(`P1's turn words at the turnaround: ${JSON.stringify(me)}`, 't1');
+  // your seat counts the run down (w3b #42: "twice" alone took a decode; Cory, Nov 4: how many turns remain), its hover the snake order
+  if (!me || me.order !== 'now' || me.text !== 'your turn, 2 left' || !/snake order/.test(me.title)) fail(`P1's turn words at the turnaround: ${JSON.stringify(me)}`, 't1');
   const nexts = Object.entries(v.chips).filter(([pid, c]) => pid !== '0' && c && c.order === 'next');
   if (nexts.length) fail(`another seat reads "next" while P1 places twice: ${JSON.stringify(nexts)}`, 't1');
   // (t2)
@@ -282,7 +282,7 @@ try {
   v = await view();
   // (t4)
   if (!/^Your turn again \(snake order\)/.test(v.prompt) || /Extra turn/i.test(v.prompt)) fail(`the snake turnaround reads "${v.prompt}"`, 't4');
-  if (!v.chips['0'] || v.chips['0'].text !== 'your turn') fail(`P1's turn words on the second of two placements: ${JSON.stringify(v.chips['0'])}`, 't4');
+  if (!v.chips['0'] || v.chips['0'].text !== 'your last in a row') fail(`P1's turn words on the second of two placements: ${JSON.stringify(v.chips['0'])}`, 't4');
   await page.screenshot({ path: `${SHOTS}/4-again.png` });
   // (t5) the second placement: its own card
   { const before = await cardNow(); await page.locator('.lt-wheel .slot.can').first().click(); await settle(before); }

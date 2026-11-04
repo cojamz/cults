@@ -72,7 +72,15 @@ try {
   await p1.click('[data-home="local"]');
   await p1.click('[data-start]');
   await p1.waitForSelector('.lt-seat[data-pid]');
-  await playUntil(p1, async () => (await moves(p1)) >= 14 && !!(await p1.$('.app.game[data-yours="1"]')), { label: 'a few moves in, your turn' });
+  // your turn, settled: the screen and the save agree and stay put (a click the last act sent can still be in flight
+  // while the seat reads "yours", and the bots after it then ran past the count read below: 24 saved → 27 shown)
+  const settled = async () => {
+    if ((await moves(p1)) < 14 || !(await p1.$('.app.game[data-yours="1"]:not([data-animating])'))) return false;
+    const a = await savedMoves(p1);
+    await p1.waitForTimeout(500);
+    return a === (await savedMoves(p1)) && a === (await moves(p1)) && !!(await p1.$('.app.game[data-yours="1"]'));
+  };
+  await playUntil(p1, settled, { label: 'a few moves in, your turn' });
 
   // ---- (t) a second page opens the same game ----
   const p2 = await ctx.newPage(); watch(p2, 'tab 2');

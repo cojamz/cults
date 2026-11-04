@@ -16,8 +16,11 @@ import { answerChoice } from './lib/answer.mjs';
 const base = process.env.V4_URL;
 if (!base) { console.error('step-hold: set V4_URL'); process.exit(2); }
 // stepHoldCap at Relaxed: 2400 × 3 + 400 ≈ 7.6s (Steady's 4.3s until Cory, Nov 3: "On relaxed speed things are still
-// quite fast"). The margin covers the landing, the next step's commit and a loaded box.
-const LIMIT = 8800;
+// quite fast"). After a rival's step lands it holds a read before the next move (MO.rivalRead: 620 × 3.75 ≈ 2.3s at
+// Relaxed, b0a22885, Nov 4 "one rival move at a time"), outside the cap: a show that fits the cap plus its read held
+// 9.3–9.6s once the deck changed (seed 21, moves 82 and 92: plans 6.8s and 7.3s, then the read). The margin (1.2s)
+// covers the landing, the next step's commit and a loaded box.
+const LIMIT = 7600 + 2325 + 1200;
 // a saved hot-seat game at P1's first placement of round `round` (bots elsewhere): the whole round to watch
 function roundSave(seed, round) {
   const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];

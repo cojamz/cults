@@ -110,7 +110,7 @@ export function loadRoundStart(st, online = false) {
   return null;
 }
 
-const CAP_GRACE = 900; // (e2e/v4/step-hold.mjs allows the cap plus 1.2s)
+const CAP_GRACE = 900; // (e2e/v4/step-hold.mjs allows the cap, a rival step's read and 1.2s)
 export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null) {
   const first = session.getState();
   // a local game reloaded while its round summary was up reopens it (session/moment.js; the session holds its bots)
