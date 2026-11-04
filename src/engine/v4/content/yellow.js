@@ -247,7 +247,7 @@ export default {
       onRoundStart(ctx, owner) { for (const c of missing(ctx, owner)) ctx.gain(owner, c, 1); },
     }),
     // Cory, 2026-10-31: "maybe just +1 yellow when any of your resources are stolen or moved"
-    m('customs', 'Customs Officer', 2, 3, 'Whenever a rival steals or changes any of your resources, +1 yellow.', { round: 1, ...old9, // 6 but still a round I member (Claude, balance Nov 1: strong at 4; Yellow keeps 4 round I members)
+    m('customs', 'Customs Officer', 2, 3, 'Whenever a rival steals or changes any of your resources, +1 yellow.', { round: 1, ...old9('yellow.customs'), // 6 but still a round I member (Claude, balance Nov 1: strong at 4; Yellow keeps 4 round I members)
       onSteal(ctx, owner, card, info) { if (info.victim === owner && info.thief !== owner) { ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs Officer: +1 yellow.`); } },
       // once per change, however many of your resources it changes (Cory, Nov 1: "Yes"), as once per steal
       onChanged(ctx, owner, card, by, instance) {
@@ -307,7 +307,7 @@ export default {
       onColorChosen(ctx, owner, card, member) { matchmaker(ctx, owner, member); },
     }),
     // Cory, 2026-10-31: "i dont like round end. i like on recruit and round start"
-    m('dyer', 'Dyer', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true, ...old1, ...old5, ...old9,
+    m('dyer', 'Dyer', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true, ...old1, ...old5, ...old9('yellow.dyer'),
       onRoundStart(ctx, owner) { ctx.gain(owner, Y, held(ctx, owner).length); },
     }),
     // REPLACE9 bot test (Members C, Nov 4): Dyer's place. 5 yellow + 2 any as a player sees it. A full set is 1 of each

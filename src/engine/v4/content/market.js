@@ -571,7 +571,7 @@ const market = {
       onRecruited(ctx, owner) { sweepRow(ctx, owner); },
     }),
     // Cory's, Oct 21: "when you buy followers +1 blue"; his Oct 21 definition makes buying followers a recruit
-    m('regular', 'Regular', 1, 1, 'Whenever you buy followers, +1 blue.', { ...old9,
+    m('regular', 'Regular', 1, 1, 'Whenever you buy followers, +1 blue.', { ...old9('market.regular'),
       onBuyFollowers(ctx, owner, card, by) { if (by.id === owner.id && ctx.gain(owner, B, 1)) ctx.log(`${owner.name}'s Regular: +1 blue.`); },
     }),
     // REPLACE9 bot test (Members C, Nov 4): Regular's place. 3 blue + 1 any as a player sees it. "Fewest" is read at each
@@ -597,7 +597,7 @@ const market = {
       },
     }),
     // Cory's yes, Oct 21
-    m('critic', 'Critic', 1, 1, 'Whenever a rival recruits a blue member, +1 follower.', { ...old1, ...old9,
+    m('critic', 'Critic', 1, 1, 'Whenever a rival recruits a blue member, +1 follower.', { ...old1, ...old9('market.critic'),
       onAnyRecruit(ctx, owner, card, by, rec) {
         if (by !== owner && isBlue(ctx.defOf(rec))) { owner.bonus += 1; ctx.log(`${owner.name}'s Critic: +1 follower.`); }
       },

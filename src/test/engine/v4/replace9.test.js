@@ -219,3 +219,15 @@ describe('Hypnotist: "On Use, once per game: whoever places next puts their mini
     expect(s.pending.options.filter(o => o.id.startsWith('slot:')).length).toBeGreaterThan(1);
   });
 });
+
+describe('REPLACE9 by card key', () => {
+  it('a key switches on only that card and retires only its old card', async () => {
+    const { execFileSync } = await import('node:child_process');
+    const out = execFileSync(process.execPath, ['--input-type=module', '-e', `
+      const { defById } = await import('${new URL('../../../engine/v4/content/index.js', import.meta.url).pathname}');
+      const has = id => { try { return !!defById(id); } catch { return false; } };
+      console.log(JSON.stringify([has('yellow.quilter'), has('yellow.tollkeeper'), !!defById('yellow.dyer').retired, !!defById('yellow.customs').retired]));
+    `], { env: { ...process.env, REPLACE9: 'quilter' } }).toString().trim().split('\n').pop();
+    expect(JSON.parse(out)).toEqual([true, false, true, false]);
+  });
+});
