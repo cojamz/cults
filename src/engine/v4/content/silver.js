@@ -472,7 +472,7 @@ const silver = {
     // REPLACE8 bot test (Nov 4, quality loop lane B, pitches/B-toastmaster.md 2, passed paper gate b8 at 19 vs 10):
     // Toastmaster's place, same price. After the Silver space is done; any member of yours costing 3 or less (as a
     // player sees the cost), itself included; "you may": giving none is fine. A gift, as Godparent's (Well-Wishers hears it).
-    ...add8(m('guestofhonor', 'Guest of Honor', 1, 1, 'Whenever you take a Silver space, you may give a rival one of your members costing 3 or less. +4 followers.', {
+    ...add8(m('guestofhonor', 'Guest of Honor', 1, 1, 'Whenever you take a Silver space, you may give a rival one of your members costing 3 or less for +4 followers.', {
       afterAction(ctx, owner, card, qid) {
         if (qid !== S) return;
         const cheap = ctx.membersOf(owner).filter(c => c.def.s + c.def.w <= 3);

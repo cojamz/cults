@@ -68,7 +68,7 @@ describe('Usher: "On Recruit: give a rival 2 silver from the bank. +3 followers.
   });
 });
 
-describe('Guest of Honor: "Whenever you take a Silver space, you may give a rival one of your members costing 3 or less. +4 followers."', () => {
+describe('Guest of Honor: "Whenever you take a Silver space, you may give a rival one of your members costing 3 or less for +4 followers."', () => {
   const at = members => sc({ n: 4, round: 2, members: [members], queue: [{ t: 'turn', p: 0 }] });
   it('taking a Silver space: you may give a member costing 3 or less to a rival; it moves and you +4', () => {
     let s = take(at(['silver.guestofhonor', 'silver.usher']), 'silver.toast');

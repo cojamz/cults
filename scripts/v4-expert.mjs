@@ -157,7 +157,7 @@ export function renderOption(s, p, o, taskKind) {
   if (o.kind === 'pay') return `Pay ${o.label}${o.default ? ' (suggested)' : ''}${o.breaks?.length ? ` — spending this gives up your contest lead in ${o.breaks.join(', ')}` : ''}${o.cuts?.length ? ` — lowers a game-end bonus` : ''}`;
   if (o.id?.startsWith('use:')) { const uid = Number(o.id.slice(4)); return `Use ${memberName(s, uid)} — ${cardDef(s, uid).text}`; }
   if (o.kind === 'color' && taskKind === 'setup') return `${o.label}'s artifact: ${nm(s, s.artifacts[o.value])} — ${cardDef(s, s.artifacts[o.value]).text}`;
-  if (o.kind === 'pass') return 'Pass (recruit nothing)';
+  if (o.kind === 'pass') return taskKind === 'buy' || !o.label || /^pass$/i.test(o.label) ? 'Pass (recruit nothing)' : `Pass (${o.label.toLowerCase()})`; // a card's own decline label, e.g. "Give nothing"
   const extra = [];
   if (o.uid !== undefined && s.cards[o.uid]) extra.push(`${memberName(s, o.uid)}: ${cardDef(s, o.uid).text}`);
   if (o.hint !== undefined && typeof o.hint !== 'object') extra.push(`value hint ${o.hint}`);
