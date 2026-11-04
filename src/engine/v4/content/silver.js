@@ -152,6 +152,20 @@ function polishPick(ctx, p, left, who = 'Polish') {
  * "Give a shop member to a rival. +3 silver in round I, +5 in round II, +7 in round III." The member arrives in the
  * rival's cult as a gift, not their recruit (no On Recruit, as a member a rival's move brings in), and the row refills.
  */
+/**
+ * Open Bar (REPLACE11=openbar, Actions lane, Nov 4, requalified under "paper filters, play ranks"; pitches/actions-polish-r2.md),
+ * in Polish's place: "+2 silver. This round, whenever a rival takes a Silver space, +1 follower." The tab is
+ * state.openBar [{ pid, round }], read where a space is taken (core.js 'act'); it closes at Round End.
+ */
+const OPEN_BAR = {
+  key: 'openbar', copyDoesIt: true, ring: 1, name: 'Open Bar', text: '+2 silver. This round, whenever a rival takes a Silver space, +1 follower.',
+  estimate: ctx => 2 + 0.4 * ctx.state.players.length,
+  resolve(ctx, p) {
+    const got = hostGain(ctx, p, 2);
+    (ctx.state.openBar ||= []).push({ pid: p.id, round: ctx.state.round });
+    ctx.log(`${p.name}'s Open Bar: +${got} silver; a rival taking a Silver space this round gives them +1 follower.`);
+  },
+};
 const giftSilver = ctx => 2 * ctx.state.round + 1;
 const GIFT_SHOP = {
   key: 'giftshop', copyDoesIt: true, ring: 1, name: 'Gift Shop', text: 'Give a shop member to a rival. +3 silver in round I, +5 in round II, +7 in round III.',
@@ -236,7 +250,7 @@ export const silverActions = [
       ctx.log(`${p.name} raised a toast: +${got} silver, +${ctx.state.round} silver to everyone else.`);
     },
   },
-  swap11({
+  swap11(swap11({
     key: 'polish', copyDoesIt: true, ring: 1, name: 'Polish', text: 'Turn 2 of your silver into 4 of any colors.',
     estimate: (ctx, p) => Math.min(2, p.res[S] || 0) * 1 + 0.5,
     resolve(ctx, p) {
@@ -247,7 +261,7 @@ export const silverActions = [
       ctx.log(`${p.name}'s Polish: ${k} silver into ${2 * k} of any colors.`);
       polishPick(ctx, p, 2 * k);
     },
-  }, GIFT_SHOP),
+  }, GIFT_SHOP), OPEN_BAR),
   {
     key: 'partygifts', ring: 1, name: 'Party Gifts', copyDoesIt: true, text: 'Give rivals up to 3 silver from the bank, split as you choose. +2 followers per silver you give.',
     estimate: ctx => 2 * 6 - spillCost(ctx, 1) * 3,

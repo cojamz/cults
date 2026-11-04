@@ -11,6 +11,7 @@ import { add9, old9, handlers9, ON9 } from './replace9.js';
 import { on12, handlers12 } from './replace12.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 import { swap14, handlers14 } from './replace14.js';
+import { add11, old11 } from './replace11.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
 const Y = 'yellow';
@@ -389,7 +390,11 @@ export default {
     }),
     // Cory, Nov 1 3:14pm: "I like tourists. maybe on recruit and round start?" Replaces Go-Between in the 10-card deck.
     // Price 3 yellow + 4 any and worth 1 are the design thread's fill-ins
-    m('tourists', 'Tourist', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { now: true, round: 1, // a round I member like Go-Between, so Yellow keeps 4 (Claude's fill-in)
+    // REPLACE11 bot test (Actions lane, Nov 4; C's Duty Free from C-tourist3, requalified under "paper filters, play ranks"):
+    // Tourist's place. The price rule is core.js priceParts (flag dutyFree, read with isNewColor, grey a color).
+    ...add11(m('dutyfree', 'Duty Free', 3, 3, 'Members of a color none of your members have cost you 3 less.', { round: 1, dutyFree: true,
+      ...see(i => endsAhead(i).length * 2) })), // BOTSEE: about one new-color recruit a round, 3 off, some of it spent anyway
+    m('tourists', 'Tourist', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { ...old11('dutyfree'), now: true, round: 1, // a round I member like Go-Between, so Yellow keeps 4 (Claude's fill-in)
       onRoundStart(ctx, owner) {
         const k = held(ctx, owner).length;
         if (k) { owner.bonus += k; ctx.log(`${owner.name}'s Tourist: +${k} follower${k === 1 ? '' : 's'}.`); }

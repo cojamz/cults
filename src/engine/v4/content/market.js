@@ -655,7 +655,16 @@ const market = {
         })), `${Q}.snobReserve`);
       },
     })),
-    m('snob', 'Snobs', 3, 2, 'Game End: +1 follower per blue member you have.', { f: 2, ...old11('snob2'), ...old9('market.snob'),
+    // REPLACE11 bot test (Actions lane, Nov 4, requalified under "paper filters, play ranks"): Snobs' place, disdain.
+    // A member's cost is its printed cost (colored + any).
+    ...add11(m('snobs3', 'Snobs', 3, 2, 'Whenever a rival recruits a member costing 3 or less, +1 follower.', { f: 2,
+      ...see(i => endsAhead(i).length * 1.5),
+      onAnyRecruit(ctx, owner, card, by, rec) {
+        const d = ctx.defOf(rec);
+        if (by !== owner && d.s + d.w <= 3) { owner.bonus += 1; ctx.log(`${owner.name}'s Snobs: ${by.name} recruited ${d.name}, +1 follower.`); }
+      },
+    })),
+    m('snob', 'Snobs', 3, 2, 'Game End: +1 follower per blue member you have.', { f: 2, ...old11('snob2'), ...old11('snobs3'), ...old9('market.snob'),
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, Q),
     }),
     // REPLACE9 bot test (Members C, Nov 4, batch bC1: paper 17 vs Snobs' 12, Blue's set 13 -> 17): Snobs' place. 4 blue

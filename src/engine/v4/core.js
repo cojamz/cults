@@ -292,7 +292,9 @@ function priceParts(state, p, def, how = {}) {
   if (how.anyColors || colorPartFree(state, p, def)) { w += s; s = 0; }
   // Punch Card (REPLACE11=punchcard, flag punchCard): the member that would be your 3rd, 6th or 9th card costs nothing
   const punch = punchFree(state, p);
-  const off = punch ? Infinity : (p.discount || 0) + sumMemberFlag(state, p, 'costReduction');
+  // Duty Free (REPLACE11=dutyfree, flag dutyFree): a member of a color none of your members have costs 3 less per copy
+  const duty = how.uid != null && sumMemberFlag(state, p, 'dutyFree') > 0 && isNewColor(ctxFor(state), p, wrap(state, state.cards[how.uid])) ? 3 * sumMemberFlag(state, p, 'dutyFree') : 0;
+  const off = punch ? Infinity : (p.discount || 0) + sumMemberFlag(state, p, 'costReduction') + duty;
   const colored = Math.max(0, s - off), total = Math.max(0, s + w - off);
   const goldDouble = sumMemberFlag(state, p, 'goldPaysDouble') > 0;
   const q = colored > 0 ? colorOf(def) : null;
@@ -316,6 +318,7 @@ function memberPayOk(state, p, def, v, how) {
 /** Snobs (REPLACE11=snob2): a shop member reserved this round for another player. Off, state.reserved never exists. */
 const reservedFor = (state, p, uid) => !!(state.reserved && state.reserved.uid === uid && state.reserved.pid !== p.id && state.shop.includes(uid));
 export function memberPrice(state, p, uid, how = {}) {
+  how = { ...how, uid };
   const def = cardDef(state, uid);
   const { q, alt, colored, total, worth } = priceParts(state, p, def, how);
   const res = p.res;
@@ -333,6 +336,7 @@ export function memberPrice(state, p, uid, how = {}) {
 /** A way p can pay for member uid now ({ color: n }), or null if p can't: the colored part from its color, the rest
  *  from the colors p holds most of, gold last (gold scores the Crown). */
 export function paymentPlan(state, p, uid, how = {}) {
+  how = { ...how, uid };
   const { q, alt, colored, total, worth } = priceParts(state, p, cardDef(state, uid), how);
   const res = { ...p.res };
   const spend = Object.fromEntries(Object.keys(res).map(r => [r, 0]));
@@ -370,6 +374,7 @@ function vectors(res, keys, maxTotal, exactTotal) {
 const vecKey = (state, v) => state.resources.map(r => v[r] || 0).join('-');
 /** Every way p can pay for member uid now (no coin wasted), the default way first. how: as memberPrice. */
 export function paymentChoices(state, p, uid, how = {}) {
+  how = { ...how, uid };
   const def = cardDef(state, uid);
   const keys = state.resources;
   if (!memberPrice(state, p, uid, how).afford) return [];
@@ -957,6 +962,10 @@ function runTask(state, task) {
           if (owner === p && def.afterAction) def.afterAction(ctx, owner, card, qid);
           if (owner !== p && def.afterRivalAction) def.afterRivalAction(ctx, owner, card, qid, p);
         }, ['afterAction', 'afterRivalAction']);
+        // Open Bar (REPLACE11=openbar): each open tab on Silver pays its owner when a rival takes a Silver space
+        if (state.openBar && qid === 'silver') for (const t of state.openBar) if (t.round === state.round && t.pid !== p.id) {
+          const o = state.players.find(x => x.id === t.pid); o.bonus += 1; log(state, `${o.name}'s Open Bar: ${p.name} took a Silver space, +1 follower.`);
+        }
         a.resolve(ctx, p);
       });
       fCredit(state, mark, a.name);
@@ -1032,6 +1041,7 @@ function startRound(state, r) {
   state.squats = {};
   delete state.reserved; // Snobs' token comes off when the round ends
   delete state.held; // Place Holders' token too
+  delete state.openBar; // and Open Bar's tab
   state.recruits = 0;
   state.turns = [];
   const n = WORKERS[r - 1];
@@ -1458,7 +1468,7 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   if (!free) {
     const spend = chosen || paymentPlan(state, p, uid, how);
     spent = spend;
-    if (!spend || !memberPayOk(state, p, cardDef(state, uid), spend, how) || Object.keys(spend).some(r => spend[r] > (p.res[r] || 0))) throw new Error('Cannot afford');
+    if (!spend || !memberPayOk(state, p, cardDef(state, uid), spend, { ...how, uid }) || Object.keys(spend).some(r => spend[r] > (p.res[r] || 0))) throw new Error('Cannot afford');
     for (const r in spend) p.res[r] -= spend[r];
     spendBonus(state, p, spend);
     paid = payString(spend);
@@ -2027,7 +2037,7 @@ function askOutbid(state, buyer, uid, spend, extra, asked = []) {
 function outbidLet(state, data) {
   const buyer = state.players[data.pid];
   if (askOutbid(state, buyer, data.uid, data.spend, data.extra, data.asked)) return;
-  const ok = state.shop.includes(data.uid) && Object.keys(data.spend).every(r => (data.spend[r] || 0) <= (buyer.res[r] || 0)) && memberPayOk(state, buyer, cardDef(state, data.uid), data.spend);
+  const ok = state.shop.includes(data.uid) && Object.keys(data.spend).every(r => (data.spend[r] || 0) <= (buyer.res[r] || 0)) && memberPayOk(state, buyer, cardDef(state, data.uid), data.spend, { uid: data.uid });
   if (!ok) { againBuy(state, buyer, data.extra); return; }
   boughtOnce(state, buyer, { t: 'buy', p: buyer.id, ...data.extra, uid: data.uid });
   recruit(state, buyer, data.uid, { free: false, spend: data.spend });
