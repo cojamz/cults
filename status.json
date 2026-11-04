@@ -1,70 +1,55 @@
 {
- "updated": "9:58 PM Eastern",
+ "updated": "9:59 PM Eastern",
  "rows": [
   {
-   "workstream": "Wheel",
+   "workstream": "Next release: Harvest picker, resource hover, emoji members option, slower Relaxed",
    "blocked": "No",
-   "eta": "10:30pm"
+   "eta": "~10:20pm"
   },
   {
-   "workstream": "Animations and info tracking",
+   "workstream": "Wheel freeze fix (edge words drawn once)",
    "blocked": "No",
-   "eta": "11:00pm"
+   "eta": "~11:00pm"
   },
   {
-   "workstream": "Harvest picker",
+   "workstream": "Animations: step-by-step recruits, one line per rival move",
    "blocked": "No",
-   "eta": "built; goes live ~10:30pm"
+   "eta": "~11:30pm"
   },
   {
-   "workstream": "Red and White Cloaks",
+   "workstream": "Improvements: Hostesses rework (your pick 1)",
    "blocked": "No",
-   "eta": "numbers to you ~12:00am"
+   "eta": "~11:00pm"
   },
   {
-   "workstream": "Hostesses rework",
-   "blocked": "Yes",
-   "eta": "after your pick"
-  },
-  {
-   "workstream": "Melting Pot, Dilute, Mob",
-   "blocked": "Yes",
-   "eta": "after your pick"
-  },
-  {
-   "workstream": "Action changes",
-   "blocked": "Yes",
-   "eta": "after your picks"
-  },
-  {
-   "workstream": "New members",
+   "workstream": "Balance: Red and White Cloak tests",
    "blocked": "No",
-   "eta": "next set ~11:30pm"
+   "eta": "~12:00am"
   },
   {
-   "workstream": "Emoji minion sounds",
-   "blocked": "Yes",
-   "eta": "after keep or redo"
-  },
-  {
-   "workstream": "Emoji-style members",
-   "blocked": "Yes",
-   "eta": "after your pick"
-  },
-  {
-   "workstream": "Game log critiques",
-   "blocked": "Yes",
-   "eta": "after Copy game yes/no"
+   "workstream": "Sounds: Surfer and Pizza from real recordings",
+   "blocked": "No",
+   "eta": "~10:45pm"
   },
   {
    "workstream": "Setup modes audit",
    "blocked": "No",
-   "eta": "11:00pm"
+   "eta": "~11:00pm"
+  },
+  {
+   "workstream": "Melting Pot, Dilute, Mob",
+   "blocked": "Yes",
+   "eta": "options sent 8:40pm, waiting on your pick"
+  },
+  {
+   "workstream": "Action changes",
+   "blocked": "Yes",
+   "eta": "list sent, waiting on your picks"
   },
   {
    "workstream": "Test gates",
    "blocked": "No",
-   "eta": "12:30am"
+   "eta": "~12:30am"
   }
  ]
 }
