@@ -98,7 +98,8 @@ function batch(id, specFiles) {
     }
     const b = bundle({ ...spec, decoy: false }, extra); folders.push(spec.id);
   }
-  // anchors folder: the anchors and the decoy's real card, on the whole live board
+  // anchors folder: the anchors and the decoy's real card, on the whole live board (without the decoy's real card when
+  // it isn't scored here: b18 judge 3 spotted the disguised Tourist by its twin on this board)
   const dir = join(GATE, `anchors-${id}`); mkdirSync(dir, { recursive: true });
   // the decoy's real self is scored here only when no ranking round exists to compare with: the same judges seeing
   // both recognised the copy (gap 0 in b2 to b4), so the reference is now the latest ranking round's median
@@ -107,7 +108,7 @@ function batch(id, specFiles) {
   const cards = [...ANCHORS, ...(decoy && ref == null ? [decoy.real] : [])].map(n => findCard(n)).filter(Boolean);
   const sh = shuffle(cards, rand).map((c, i) => ({ ...c, label: String.fromCharCode(65 + i) }));
   writeFileSync(join(dir, 'cards.md'), [`# Reference cards: score every card below`, '', 'These are live cards from different colors. Score each one on its own, in its own color, against the whole board below.', '',
-    ...sh.map(c => `- **${c.label}. ${c.name}** (${c.color} ${c.kind === 'space' ? `round ${R[c.round]} space` : `member [${c.price}]`}): ${c.text}`), '', '## The whole live board', boardText([])].join('\n'));
+    ...sh.map(c => `- **${c.label}. ${c.name}** (${c.color} ${c.kind === 'space' ? `round ${R[c.round]} space` : `member [${c.price}]`}): ${c.text}`), '', '## The whole live board', boardText([], { without: decoy && ref != null ? [decoy.real] : [] })].join('\n'));
   writeFileSync(join(dir, 'key.json'), JSON.stringify({ options: sh.map(c => ({ label: c.label, name: c.name, role: decoy && c.name === decoy.real ? 'decoy-real' : 'anchor' })) }, null, 1));
   const meta = { id, folders: [...folders, `anchors-${id}`], decoy, rubric: rubricHash(), made: new Date().toISOString() };
   writeFileSync(join(GATE, `batch-${id}.json`), JSON.stringify(meta, null, 1));
