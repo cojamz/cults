@@ -15,6 +15,12 @@ describe('REPLACE11: Punch Card', () => {
     s = table(['market', 'red'], { n: 2, members: [['market.punchcard', 'market.stylist', 'market.curator']], shop: ['market.reseller'] });
     expect(memberPrice(s, s.players[0], s.shop[0]).afford).toBe(false);
   });
+  it('each of 3, 6 and 9 pays once a game', () => {
+    const s = table(['market', 'red'], { n: 2, members: [['market.punchcard', 'market.stylist']], shop: ['market.reseller'] });
+    const p = s.players[0], pc = p.members[0];
+    s.cards[pc].punched = [3];
+    expect(memberPrice(s, p, s.shop[0]).afford).toBe(false);
+  });
 });
 
 describe('REPLACE11: Place Holders', () => {

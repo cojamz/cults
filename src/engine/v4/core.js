@@ -278,12 +278,18 @@ const colorPartFree = (state, p, def) => !state.resources.includes(colorOf(def))
  * counts double with Penny Pincher (flag goldPaysDouble), toward either part. how.anyColors: the colored part in any
  * colors (Snap Up); how.half: half the printed cost, rounded down, in any colors (Half Price).
  */
+// Punch Card: each of 3, 6 and 9 pays once a game (a token on the card marks it), so dropping a member never re-earns one
+const punchCardOf = (state, p) => p.members.find(u => effectiveDefs(state.cards[u]).some(d => d.punchCard));
+function punchFree(state, p) {
+  const u = punchCardOf(state, p), n = p.members.length + 1;
+  return u != null && [3, 6, 9].includes(n) && !(state.cards[u].punched || []).includes(n);
+}
 function priceParts(state, p, def, how = {}) {
   let s = def.s, w = def.w;
   if (how.half) { w = Math.floor((s + w) / 2); s = 0; }
   if (how.anyColors || colorPartFree(state, p, def)) { w += s; s = 0; }
   // Punch Card (REPLACE11=punchcard, flag punchCard): the member that would be your 3rd, 6th or 9th card costs nothing
-  const punch = sumMemberFlag(state, p, 'punchCard') > 0 && [2, 5, 8].includes(p.members.length);
+  const punch = punchFree(state, p);
   const off = punch ? Infinity : (p.discount || 0) + sumMemberFlag(state, p, 'costReduction');
   const colored = Math.max(0, s - off), total = Math.max(0, s + w - off);
   const goldDouble = sumMemberFlag(state, p, 'goldPaysDouble') > 0;
@@ -1406,7 +1412,8 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
     const def0 = cardDef(state, uid);
     // each note says what it actually took off this price (a discount of 4 on a member costing 2 saves 2; Sponsor
     // saves nothing on a member that costs nothing): the discount first, then the cost reductions, in member order
-    const punched = sumMemberFlag(state, p, 'punchCard') > 0 && [2, 5, 8].includes(p.members.length);
+    const punched = punchFree(state, p);
+    if (punched) { const c = state.cards[punchCardOf(state, p)]; c.punched = [...(c.punched || []), p.members.length + 1]; }
     if (punched) notes.push(`${flagName(state, p, 'punchCard')}: card ${p.members.length + 1} is free`);
     let room = punched ? 0 : how.half ? Math.floor((def0.s + def0.w) / 2) : def0.s + def0.w;
     const off = n => { const x = Math.min(n, room); room -= x; return x; };

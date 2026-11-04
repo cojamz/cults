@@ -709,7 +709,8 @@ const market = {
     }),
     // Cory's, Oct 21: "when you buy followers +1 blue"; his Oct 21 definition makes buying followers a recruit
     // REPLACE11 bot test (Actions lane, Nov 4): Regular's place. Counted in member cards you hold (a counts-as member is
-    // one card; a member who leaves lowers the count), read when you pay: the recruit that makes 3, 6 or 9 cards is free.
+    // one card; a member who leaves lowers the count), read when you pay: the recruit that makes 3, 6 or 9 cards is free,
+    // each number once a game (Evaluators, Nov 4: else dropping to 2 cards earns a second free 3rd).
     ...add11(m('punchcard', 'Punch Card', 1, 1, 'Your 3rd, 6th and 9th members cost nothing.', { punchCard: true, ...see(() => 3) })),
     m('regular', 'Regular', 1, 1, 'Whenever you buy followers, +1 blue.', { ...old9('market.regular'), ...old11('punchcard'),
       onBuyFollowers(ctx, owner, card, by) { if (by.id === owner.id && ctx.gain(owner, B, 1)) ctx.log(`${owner.name}'s Regular: +1 blue.`); },
