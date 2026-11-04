@@ -16,6 +16,7 @@ import { Tip } from '../game/Info.jsx';
 import { EmojiButton, EmojiFace, emojiName } from './EmojiPicker.jsx';
 import { settleEmojis, takeEmoji, lastEmoji, rememberEmoji } from '../emojiPick.js';
 import { SPEEDS, SPEED_NAMES, motionSpeed, setMotionSpeed } from '../motion.js';
+import { memberLook, setMemberLook } from '../memberLook.js';
 
 const KINDS = [['human', 'Person'], ['bot', 'Bot'], ['empty', 'Empty']];
 const NAME_MAX = 14;
@@ -211,6 +212,14 @@ export function SwapPick({ value, onChange, readOnly }) {
       : <Seg label="Swap card" value={value ? 'on' : 'off'} options={SWAP_OPTS} onChange={v => onChange(v === 'on')} />}
   </div>;
 }
+// Emoji members (Cory, Nov 3: "lets create an alt mode for it? in the setup?"): how members look to you; rules unchanged,
+// your own setting even at an online table
+const LOOK_OPTS = [['pictures', 'Pictures', 'Members show their pictures and full rules'], ['emoji', 'Emoji', 'Members show as one emoji with a one-line rule; the full rule stays under it on each card']];
+export function MemberLookPick() {
+  const [v, setV] = useState(memberLook);
+  return <div className="seat" data-member-look={v}><span>Members look</span>
+    <Seg label="Members look" value={v} options={LOOK_OPTS} onChange={x => { setV(x); setMemberLook(x); }} /></div>;
+}
 const CONTEST_OPTS = [['', 'As printed', 'Each color: most of its color held'], ['byColor', 'By color', 'A different contest per color: Red most red members, Blue most members, White fewest followers, Magenta most resources, Yellow most full sets of every color, Green most minions on Green, Purple whoever placed the last minion, Silver most silver']];
 export function ContestPick({ value, onChange, readOnly }) {
   const opt = CONTEST_OPTS.find(o => o[0] === (value || '')) || CONTEST_OPTS[0];
@@ -391,6 +400,7 @@ export function LocalSetup({ initial, onStart, onBack }) {
         <ContestPick value={contests} onChange={setContests} />
         <ShopPick value={shop} onChange={setShop} />
         <LatePick value={late} onChange={setLate} />
+        <MemberLookPick />
         <div className="row-btns">
           {/* why Start is off, said beside it (RC1 #8: it dimmed at 3 of 4 with nothing near it) */}
           {startWhy && <span className="hint start-why" data-start-why>{startWhy}</span>}
@@ -478,6 +488,7 @@ export function Lobby({ lobby, myId, onLeave }) {
         <ContestPick value={view.contests || ''} onChange={v => act(() => lobby.setContests(v))} readOnly={!isHost || !lobby.setContests} />
         <ShopPick value={view.shop || 'deck'} onChange={v => act(() => lobby.setShop(v))} readOnly={!isHost || !lobby.setShop} />
         <LatePick value={view.roundDecks === 3 ? 3 : 2} onChange={v => act(() => lobby.setRoundDecks(v))} readOnly={!isHost || !lobby.setRoundDecks} />
+        <MemberLookPick />
         {err && <p className="error">{err}</p>}
         {!isHost && <p className="hint">Waiting for {view.hostName || 'the host'} to start…</p>}
         {isHost && view.startHint && <p className="hint" data-start-hint>{view.startHint}</p>}

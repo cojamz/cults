@@ -17,6 +17,8 @@ import { Rich, Pip } from './Rich.jsx';
 import { Follower } from '../art/Follower.jsx';
 import { Sprite } from '../art/Sprite.jsx';
 import { spriteId } from '../art/index.js';
+import { emojiMember } from '../art/emojiMembers.js';
+import { emojiLook } from '../memberLook.js';
 import { HOVER_DELAY_MS, HOVER_OPEN_MS } from './hoverDelay.js';
 import { MO } from '../motion.js';
 import { withRace } from './race.js';
@@ -292,6 +294,8 @@ export function MemberCard({ state, uid, def: d0 = null, me = null, onFace = fal
   const weight = uid != null ? memberWeight(state, uid) : Math.max(d.n || 1, d.f || 1);
   const sphere = onTable(state, d) ? (() => { try { return quadrant(d.quadrant).resource; } catch { return 'colorless'; } })() : 'colorless';
   // a discount on you (the shop face shows the price, the list price struck beside it): its reason
+  const em = emojiLook() ? emojiMember(spriteId((copied || d).name)) : null;
+  const short = em && em[1] ? (m => (m ? [m[1], m[2]] : ['', em[1]]))(em[1].match(/^(\S+)\s+(.*)$/u)) : null;
   const paid = where === 'In the shop' && me != null && state.players[me] ? paidParts(state, state.players[me], uid, d) : null;
   return (
     <div className="card-face mc" style={{ '--c': cardColor(state, d) }} data-card={d.id} data-pale={cardGround(state, d) ? '' : undefined} data-long={ability.length > 110 ? '' : undefined}>
@@ -307,7 +311,9 @@ export function MemberCard({ state, uid, def: d0 = null, me = null, onFace = fal
       {/* a member with no ability says so, never an empty card (w2a #36: Twins and Intern showed only a header) */}
       {/* a member you use (once a game, once a round) says so first (w3a #5: "you can't find out which members you use");
           in the shop, also how: on your turn, from your seat */}
-      {ability ? <p className="mc-text">{(copied || d).from > 1 && <span className="mc-round-tag" data-round-tag="" title="Works from round II on">II+</span>}{(copied || d).activate && !/\bOn Use\b/.test(ability) && <span className="mc-use-tag" data-use-tag="">Use</span>}<RuleText def={copied || d} text={ability} round={state.round} lines /></p> : <p className="mc-text mc-none" data-no-ability="">No ability.</p>}
+      {/* Emoji members: the one-line rule first, its trigger as an icon; the card's full rule stays under it */}
+      {short && <p className="mc-line" data-emoji-line=""><span className="mc-trig" aria-hidden="true">{short[0]}</span><Rich text={short[1]} /></p>}
+      {ability && short && ability.split(/\s+/).length <= 10 ? null : ability ? <p className={`mc-text${short ? ' mc-full' : ''}`}>{(copied || d).from > 1 && <span className="mc-round-tag" data-round-tag="" title="Works from round II on">II+</span>}{(copied || d).activate && !/\bOn Use\b/.test(ability) && <span className="mc-use-tag" data-use-tag="">Use</span>}<RuleText def={copied || d} text={ability} round={state.round} lines /></p> : <p className="mc-text mc-none" data-no-ability="">No ability.</p>}
       {d.activate && where && !state.over && <small className="mc-live" data-use-how="">Once it’s yours, use it on your turn: it lights up in your seat.</small>}
       {!(owner && card && card.used) && poolNote(state, (copied || d).text) && <small className="mc-live" data-pool-out="">{poolNote(state, (copied || d).text)}</small>}
       {/* Drifters' chosen color, said on its card (Cory's playtest, Nov 1: "no indication or reminder of which color i picked") */}

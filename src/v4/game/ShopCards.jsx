@@ -12,7 +12,9 @@ import { spriteId } from '../art/index.js';
 import { realHover } from '../hover.js';
 import { cardColor, cardGround, onTable, usePreview, Tip, CostDots, paidParts, discountWhy, RuleText } from './Info.jsx';
 import { FollowerGlyph, MemberGlyph } from './Glyphs.jsx';
-import { Pip } from './Rich.jsx';
+import { Pip, Rich } from './Rich.jsx';
+import { emojiMember } from '../art/emojiMembers.js';
+import { emojiLook } from '../memberLook.js';
 import { timingOf, unlockedBy, surely } from './cards.js';
 void timingOf;
 import { useHoverSpace } from './HoverCards.jsx';
@@ -310,6 +312,8 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
                 {stack > 0 && <span className="lt-pile-left num" data-stack={stack} title={stack === 1 ? 'The last one in this pile' : `${stack} left in this pile`}>×{stack}</span>}
               </span>
               {/* a rule that grows by round reads by round, this round lit, as in every hover (RuleText; compact on the small card) */}
+              {/* Emoji members: the one-line rule on the face, under the emoji (Details shows the full rule instead) */}
+              {!detailed && emojiLook() && (em => em && em[1] ? <span className="lt-emoji-line" data-emoji-line=""><Rich text={em[1]} /></span> : null)(emojiMember(spriteId(d.name)))}
               {detailed && <span className="lt-pick-ability"><RuleText def={d} round={state.round} plain compact /></span>}
               <span className="ft" data-discount={paid ? '' : undefined}>
                 {paid ? (
