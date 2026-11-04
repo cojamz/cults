@@ -109,3 +109,12 @@ When done, the loop stops instead of churning. It writes a final report (what ch
 - **Cheap filler has a role.** Each color keeps one or two cheap, simple members whose job is to be cheap: they fire On Recruit and recruit triggers (Proselytizers, Recruiter, Greeters) and count toward members-at-game-end. Judge them by that role in the set check, not on C3/C4 alone. A replacement of the last filler in a color must be filler too, or the set check tests the color without it.
 - **Bursts are catch-up.** A round III burst a trailing player can grab (Spree: recruit 3 times) is catch-up (C9=2), not a 0. Doubled turns (Crunch Time) are elegant: few words, big change to the snake. Judges explain any 0 on C9 or C12 by naming the player who can't use it.
 - **Only live cards are ranked.** The first ranking listed about 50 members and 6 spaces not in the 10-card game (retired and cut cards, plus Gold). The rescore uses scripts/quality/board.mjs, which lists only live 10-card-deck cards.
+
+## Cory's verdicts on the first batches (Nov 4, 12:35am): new rules (full text: cory-verdicts-2026-11-04.md)
+- **Hard fail, turn flow:** nothing acts during another player's turn or asks anyone to respond mid-turn. Cards act on their owner's turn or at Round Start / Round End, resolved one player at a time in turn order.
+- **C6 and C10 are 0 when it's already doable another way** (a space, a recruit or a follower buy gives the same thing), or when it's another color's job.
+- **C1=2 only if a friend could explain it in one breath** and it moves pieces the way the game already does.
+- **A space must do something for a taker with no members.**
+- **"Once per round" on a big effect is a power flag:** check it against once per game.
+- **A reword of the old card is a valid candidate** in every slot.
+- **Calibration:** these verdicts join calibration as a new held-out set (half B), so the next judge run is tested on calls they've never seen.
