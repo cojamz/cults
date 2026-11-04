@@ -61,7 +61,7 @@ function matchmaker(ctx, owner, member) {
 const unpickedDrifters = (ctx, member) => ctx.defOf(member).key === 'drifters';
 const touchable = (ctx, p) => ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'change'));
 /** Quilter (REPLACE9 bot test): followers per full set. */
-const QUILT = 6;
+const QUILT = 6, QUILT_MAX = 3;
 /** Toll Keeper (REPLACE9 bot test): rival o gives host 1 resource of their choice, `left` in all (asked one at a time). */
 function askToll(ctx, host, o, left, key) {
   const have = colors(ctx).filter(c => (o.res[c] || 0) > 0);
@@ -311,12 +311,12 @@ export default {
       onRoundStart(ctx, owner) { ctx.gain(owner, Y, held(ctx, owner).length); },
     }),
     // REPLACE9 bot test (Members C, Nov 4): Dyer's place. 5 yellow + 2 any as a player sees it. A full set is 1 of each
-    // color on the table (setsOf). Once per game (Cory, Nov 4 12:35am: "Once per round is really strong"): every full set
-    // you hold becomes 6 followers, paying 1 of each color per set. No full set: nothing happens and the use comes back.
-    ...add9(m('quilter', 'Quilter', 4, 2, 'On Use, once per game: turn each full set you hold into 6 followers.', {
+    // color on the table (setsOf). Once per game (Cory, Nov 4 12:35am: "Once per round is really strong"): up to 3 full
+    // sets become 6 followers each, paying 1 of each color per set (uncapped, a bot turned 6 sets into 36). No full set: nothing happens and the use comes back.
+    ...add9(m('quilter', 'Quilter', 4, 2, 'On Use, once per game: turn up to 3 full sets into 6 followers each.', {
       activate: 'game',
       onActivate(ctx, owner, card) {
-        const k = setsOf(ctx, owner);
+        const k = Math.min(QUILT_MAX, setsOf(ctx, owner));
         if (k < 1) { card.used = false; ctx.log(`${owner.name}'s Quilter: no full set to turn in.`); return; }
         for (const c of colors(ctx)) owner.res[c] -= k;
         owner.bonus += QUILT * k;

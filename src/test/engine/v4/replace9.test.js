@@ -72,7 +72,7 @@ describe('Toll Keeper: "Round End: each rival who doesn\'t hold a full set gives
   });
 });
 
-describe('Quilter: "On Use, once per game: turn each full set you hold into 6 followers."', () => {
+describe('Quilter: "On Use, once per game: turn up to 3 full sets into 6 followers each."', () => {
   const Q4 = ['red', 'yellow', 'market', 'silver'];
   it('On Use: every full set held becomes 6 followers, paying 1 of each color per set', () => {
     let s = table(Q4, { n: 3, round: 3, res: [{ red: 3, yellow: 4, blue: 2, silver: 3 }], members: [['yellow.quilter']], queue: [{ t: 'buy', p: 0 }] });
@@ -80,6 +80,12 @@ describe('Quilter: "On Use, once per game: turn each full set you hold into 6 fo
     expect(s.players[0].res).toMatchObject({ red: 1, yellow: 2, blue: 0, silver: 1 });
     expect(s.players[0].bonus).toBe(12);
     expect(named(s, 'Quilter')).toContain("P1's Quilter: turns 2 full sets (2 of each color) into 12 followers.");
+  });
+  it('up to 3: with 5 sets held, 3 are turned in (18 followers)', () => {
+    let s = table(Q4, { n: 3, round: 3, res: [{ red: 5, yellow: 6, blue: 5, silver: 5 }], members: [['yellow.quilter']], queue: [{ t: 'buy', p: 0 }] });
+    s = move(s, `use:${uidIn(s, 'yellow.quilter', 0)}`);
+    expect(s.players[0].res).toMatchObject({ red: 2, yellow: 3, blue: 2, silver: 2 });
+    expect(s.players[0].bonus).toBe(18);
   });
   it('once per game: not offered again, next round included', () => {
     let s = table(Q4, { n: 3, round: 2, res: [{ red: 3, yellow: 4, blue: 3, silver: 3 }], members: [['yellow.quilter']], queue: [{ t: 'buy', p: 0 }] });
