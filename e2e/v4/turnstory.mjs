@@ -328,22 +328,37 @@ try {
     const p2 = await browser.newPage({ viewport: { width, height: 700 } });
     p2.on('pageerror', e => errors.push(`[${tag}] pageerror: ${e.message}`));
     await watchStrip(p2);
+    // the resumed turn's card is the last rival's (P3's): it folds 2.6s after it comes up (TurnCard, wave-4 B #19), so
+    // the page measures the strip itself, 800ms after the card came up and while it's still up; on a busy box (GitHub,
+    // under the unit tests) the test's own reads landed after the fold and saw no card at all (Nov 3-4, both widths)
+    await p2.addInitScript(() => {
+      const M = window.__t2b = { upAt: null, s2: null };
+      const measure = () => {
+        const l = document.querySelector('[data-since] .since-list'), card = document.querySelector('.lt > .turn-card');
+        if (!l) return null;
+        const b = l.getBoundingClientRect();
+        return { lines: l.querySelectorAll('[data-since-line]').length, folded: Number((l.querySelector('.since-more')?.textContent.match(/\d+/) || [0])[0]),
+          part: [...l.children].filter(x => { const a = x.getBoundingClientRect(); return a.height && getComputedStyle(x).visibility !== 'hidden' && (a.top < b.top - 1 || a.bottom > b.bottom + 1); }).map(x => x.textContent.slice(0, 50)),
+          cover: card ? Math.max(0, b.bottom - card.getBoundingClientRect().top) : 0 };
+      };
+      const tick = () => {
+        const card = document.querySelector('.lt > .turn-card');
+        const up = card && !card.classList.contains('folding');
+        if (up && M.upAt == null) M.upAt = performance.now();
+        if (M.upAt != null && !M.s2 && (!up || performance.now() - M.upAt >= 800)) M.s2 = { ...measure(), heldMs: Math.round(performance.now() - M.upAt), up: !!up };
+        if (!M.s2) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
     await seedSave(p2, full.save, { roundStart: full.roundStart });
     await p2.goto(`${base}/?botDelay=300&intro=0`);
     await p2.click('[data-home="resume"]', { timeout: 30000 });
     await p2.waitForSelector('.lt-wheel .slot.can');
-    // the resumed turn's card comes up under the strip; then the strip has settled with it
     // (15s: GitHub's box, under the unit tests, took longer than 6s to bring it up at 1100 once, Nov 3)
-    if (!(await p2.waitForSelector('.lt > .turn-card', { timeout: 15000 }).catch(() => null))) fail('no turn card came up on the resumed round-II turn', tag);
-    await p2.waitForTimeout(800);
-    const s2 = await p2.evaluate(() => {
-      const l = document.querySelector('[data-since] .since-list'), card = document.querySelector('.lt > .turn-card');
-      if (!l) return null;
-      const b = l.getBoundingClientRect();
-      return { lines: l.querySelectorAll('[data-since-line]').length, folded: Number((l.querySelector('.since-more')?.textContent.match(/\d+/) || [0])[0]),
-        part: [...l.children].filter(x => { const a = x.getBoundingClientRect(); return a.height && getComputedStyle(x).visibility !== 'hidden' && (a.top < b.top - 1 || a.bottom > b.bottom + 1); }).map(x => x.textContent.slice(0, 50)),
-        cover: card ? Math.max(0, b.bottom - card.getBoundingClientRect().top) : 0 };
-    });
+    const got = await p2.waitForFunction(() => window.__t2b && window.__t2b.s2, null, { timeout: 15000 }).then(h => h.jsonValue(), () => null);
+    if (!got) fail(`no turn card came up on the resumed round-II turn (${JSON.stringify(await p2.evaluate(() => window.__t2b))})`, tag);
+    else if (!got.up) console.log(`turnstory ${tag}: note, the card folded ${got.heldMs}ms after it came up, before the 800ms settle; measured at its last frame`);
+    const s2 = got && got.lines != null ? got : null;
     await p2.screenshot({ path: `${SHOTS}/7-full-strip-${width}.png` });
     if (!s2) fail('the resumed round-II turn shows no strip', tag);
     else {
