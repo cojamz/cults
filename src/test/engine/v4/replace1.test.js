@@ -110,7 +110,7 @@ describe('REPLACE1: each card fires', () => {
     expect(named(s, 'Barterers')).toEqual(["P1's Barterers: P1 gives P2 1 red for 1 blue.", "P1's Barterers: P1 gives P2 1 red for 1 blue."]);
   });
 
-  it('Hostesses: On Recruit, each rival +1 silver from the bank, then +1 follower per rival holding more silver', () => {
+  it('Hostesses: On Recruit, each rival +1 silver from the bank, then +1 follower for each (Cory, Nov 3)', () => {
     let s = table(['red', 'silver', 'market', 'yellow'], { n: 3, round: 2, res: [{ silver: 4, red: 2 }, {}, { silver: 5 }], shop: ['silver.hostesses'], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `card:${uidIn(s, 'silver.hostesses', 'shop')}`);
     expect(s.players[1].res.silver).toBe(1);

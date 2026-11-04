@@ -12,7 +12,8 @@ import { add6, old6 } from './replace6.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const S = 'silver';
-const HOSTESS_TEST = globalThis.process?.env?.HOSTESSES;
+// Live: C (Cory's pick 1, Nov 3 9:47pm). HOSTESSES=old plays the earlier card for comparison.
+const HOSTESS_TEST = globalThis.process?.env?.HOSTESSES || 'C';
 const HOSTESS_TEXT = {
   A: 'On Recruit and Round Start: give each rival 1 silver. +2 followers for each.',
   B: 'On Recruit and Round Start: give each rival 1 silver in round I, 2 in round II, 3 in round III. +1 follower per silver you give.',
