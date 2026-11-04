@@ -595,10 +595,10 @@ const market = {
     m('regular', 'Regular', 1, 1, 'Whenever you buy followers, +1 blue.', { ...old9('market.regular'),
       onBuyFollowers(ctx, owner, card, by) { if (by.id === owner.id && ctx.gain(owner, B, 1)) ctx.log(`${owner.name}'s Regular: +1 blue.`); },
     }),
-    // REPLACE9 bot test (Members C, Nov 4): Regular's place. 3 blue + 1 any as a player sees it. "Fewest" is read at each
+    // REPLACE9 bot test (Members C, Nov 4): Regular's place. 2 blue + 1 any as a player sees it (Blue's cheap way in once Regular and Critic are gone; paper gate, Nov 4). "Fewest" is read at each
     // purchase, before it lands (ties count): the buy that lifts you past a rival is still free, the next one isn't. A
     // free purchase hands the owner this turn's recruit step again (a member or more followers).
-    ...add9(m('bargainhunter', 'Bargain Hunter', 2, 1, "While you have the fewest followers (ties count), buying followers doesn't use up your recruit.", { round: 1,
+    ...add9(m('bargainhunter', 'Bargain Hunter', 1, 1, "While you have the fewest followers (ties count), buying followers doesn't use up your recruit.", { round: 1,
       ...see(i => endsAhead(i).length * 1.5), // BOTSEE: about one free recruit a round while behind
       onBuyFollowers(ctx, owner, card, by, tier) {
         if (by.id !== owner.id) return;

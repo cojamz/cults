@@ -159,7 +159,7 @@ describe('Bargain Hunter: "While you have the fewest followers (ties count), buy
   const Q4 = ['red', 'market', 'purple', 'silver'];
   const buy1 = s => { s = move(s, 'followers:1'); while (s.pending?.kind === 'pay' || s.pending?.prompt?.includes('pay for')) s = answer(s, s.pending.options[0].id); return s; };
   it('price and retirement', () => {
-    expect([defById('market.bargainhunter').s, defById('market.bargainhunter').w]).toEqual([3, 1]);
+    expect([defById('market.bargainhunter').s, defById('market.bargainhunter').w]).toEqual([2, 1]);
     expect(defById('market.regular').retired).toBe(true);
   });
   it('fewest followers: a follower purchase hands back the recruit; once past a rival, the next buy uses it up', () => {
