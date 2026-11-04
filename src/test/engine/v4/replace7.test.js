@@ -197,6 +197,15 @@ describe('Foster Parents: "Whenever a member joins your cult from a rival’s, +
     expect(s.players[1].bonus).toBe(2);
   });
 
+  it("Foster Parents itself, taken into a rival's cult by their Promote, pays its new owner", () => {
+    let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.crowd'], ['red.fosterparents']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
+    s = take(s, 'red.hireup'); // P1 gives Crowd-Pleaser and takes P2's Foster Parents
+    s = answer(s, `trade:${uidIn(s, 'red.crowd', 0)}:${uidIn(s, 'red.fosterparents', 1)}`);
+    expect(owns(s, 0, 'red.fosterparents')).toBe(true);
+    expect(s.players[0].bonus).toBe(2);
+    expect(s.players[1].bonus).toBe(0);
+  });
+
   it('a member from the shop pays nothing', () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.fosterparents', 'red.crowd']], shop: ['red.loyalists'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
     s = take(s, 'red.hireup');

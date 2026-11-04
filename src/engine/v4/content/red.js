@@ -353,10 +353,11 @@ export default {
     // Quality loop (Nov 4), live since Nov 4 (Claude, under Cory's go-with-your-gut): Greeters' place (paper 15, Red's set 13 -> 15; trial owners 33% vs 30%; blind play 1.50 vs 0.33). 2 red +
     // 2 any as a player sees it, counts as 2, a round I member as Greeters is. Pays when a member comes into its owner's
     // cult out of a rival's, whoever moves it (Promote, Demote, Panel, Body Snatchers, Poach, Shake Down, Kidnapper, a
-    // rival's Promote that trades with you); not for the shop, and not for itself arriving.
+    // rival's Promote that trades with you); not for the shop. Itself arriving from a rival's counts (Evaluators, Nov 4: a
+    // table reads it that way, as Old Maid's own joining counts).
     m('fosterparents', 'Foster Parents', 1, 2, 'Whenever a member joins your cult from a rival’s, +2 followers.', { f: 2, n: 2, round: 1,
       onCultMove(ctx, owner, card, { uid, from, to }) {
-        if (to !== owner || !from || from === owner || uid === card.uid) return;
+        if (to !== owner || !from || from === owner) return; // itself too, arriving from a rival's (as Old Maid's "this member joins" counts)
         owner.bonus += 2;
         ctx.log(`${owner.name}'s ${card.def.name}: ${ctx.card(uid).def.name} joins from ${from.name}'s cult, +2 followers.`);
       },
