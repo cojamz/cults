@@ -268,14 +268,19 @@ const members = [
   // REPLACE15 bot test (Cory, Nov 4: "when you win a contest, get x y z", then "the member should give resources for
   // winning contests", "though cheerleaders is kinda cool too"): added, nothing retired (Cory: Spoilsport and Dabblers stay). A shared contest
   // counts as a win, as for Cheerleader and Sore Loser. Each pays the moment its contest is scored. Prices are guesses.
+  // Both pay after every contest is scored (contests score at once at round end), so a +2 never changes another contest's count.
   ...add15(m('cheerleaders', 'Cheerleaders', null, 0, 5, 'Whenever you win a contest, +2 followers.', { f: 2, // worth 2 (owners won 19% at worth 1, 30% at 2: cw3-cheerleaders). Cory, Nov 4: "maybe we can bump cheerleaders to 3 members", then "but for now they go in as-is"
-    onContestWin(ctx, owner) { owner.bonus += 2; ctx.log(`${owner.name}'s Cheerleaders: +2 followers.`); },
+    afterContests(ctx, owner, card, table) {
+      for (const c of table) if (c.winners.includes(owner.id)) { owner.bonus += 2; ctx.log(`${owner.name}'s Cheerleaders: +2 followers.`); }
+    },
   })),
   ...add15(m('victors', 'Victors', null, 0, 4, 'Whenever you win a contest, +2 of its color.', {
-    onContestWin(ctx, owner, card, c) {
-      const color = ctx.quadrant(c.qid).resource;
-      // named on the resource ledger as Victors
-      ctx.asMember(owner, 'Victors', () => { const got = ctx.gain(owner, color, 2); if (got) ctx.log(`${owner.name}'s Victors: +${got.n} ${got.color}.`); }, card.uid);
+    afterContests(ctx, owner, card, table) {
+      for (const c of table) if (c.winners.includes(owner.id)) {
+        const color = ctx.quadrant(c.qid).resource;
+        // named on the resource ledger as Victors
+        ctx.asMember(owner, 'Victors', () => { const got = ctx.gain(owner, color, 2); if (got) ctx.log(`${owner.name}'s Victors: +${got.n} ${got.color}.`); }, card.uid);
+      }
     },
   })),
   ...add15(m('warchest', 'War Chest', null, 0, 4, 'Whenever you win a contest, +3 resources in any colors.', {
