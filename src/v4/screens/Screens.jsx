@@ -202,7 +202,7 @@ export function SwapPick({ value, onChange, readOnly }) {
 }
 // Emoji members (Cory, Nov 3: "lets create an alt mode for it? in the setup?"): how members look to you; rules unchanged,
 // your own setting even at an online table
-const LOOK_OPTS = [['pictures', 'Pictures', 'Members show their pictures and full rules'], ['emoji', 'Emoji', 'Members show as one emoji with a one-line rule; the full rule stays under it on each card']];
+const LOOK_OPTS = [['pictures', 'Pictures', 'Members show their pictures and full rules'], ['emoji', 'Emoji', 'Members show as one emoji picture with their full rules']];
 export function MemberLookPick() {
   const [v, setV] = useState(memberLook);
   return <div className="seat" data-member-look={v}><span>Members look</span>
