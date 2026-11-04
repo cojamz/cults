@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.560 — 2026-11-04
+
+- New cards: Foster Parents (Red I) for Greeters, Guest of Honor (Silver I) for Polisher, Jack-of-All-Trades (Yellow I) for Tastemaker; Housewarming (Yellow II space) for Big New Blood. Fixes: Night Watch and Customs Officer pay only as printed. Setup: the Shop, Member deck and Round III members choices are gone.
+
 ## v0.99.559 — 2026-11-04
 
 - Fix: a space's 'this turn, if you recruit a member' followers (Gather, Stash, Allowance, New Blood) no longer pay out on a recruit made off your turn.
