@@ -1,40 +1,35 @@
 {
- "updated": "10:04 PM Eastern",
+ "updated": "10:20 PM Eastern",
  "rows": [
-  {
-   "workstream": "Next release: Harvest picker, resource hover, emoji members option, slower Relaxed, minion sounds",
-   "blocked": "No",
-   "eta": "shipping now, live ~10:20pm"
-  },
-  {
-   "workstream": "Hostesses rework",
-   "blocked": "No",
-   "eta": "~10:25pm"
-  },
   {
    "workstream": "Rival moves, one line each",
    "blocked": "No",
    "eta": "~10:45pm"
   },
   {
-   "workstream": "Wheel freeze fix",
+   "workstream": "Setup modes audit and fixes",
    "blocked": "No",
-   "eta": "~11:00pm"
+   "eta": "~11:15pm"
   },
   {
-   "workstream": "Setup modes audit",
+   "workstream": "Melting Pot, Dilute, Mob, Creditor, Fan Club (our calls)",
    "blocked": "No",
-   "eta": "~11:00pm"
-  },
-  {
-   "workstream": "Melting Pot, Dilute, Mob, Creditor, Fan Club",
-   "blocked": "No (our call, per you)",
    "eta": "~11:30pm"
   },
   {
-   "workstream": "Red and White Cloak numbers",
+   "workstream": "Wheel lag, real fix",
    "blocked": "No",
-   "eta": "12:30am (full results 3:00am)"
+   "eta": "~11:45pm"
+  },
+  {
+   "workstream": "Action changes (our calls)",
+   "blocked": "No",
+   "eta": "ETA coming"
+  },
+  {
+   "workstream": "Red and White Cloak results, then ship",
+   "blocked": "No",
+   "eta": "12:30am (full 3:00am)"
   },
   {
    "workstream": "Step-by-step recruits",
@@ -42,9 +37,9 @@
    "eta": "12:30am"
   },
   {
-   "workstream": "Test gates",
+   "workstream": "Shipped tonight: v0.99.544 to .546 (Harvest picker, hover, emoji option, slower Relaxed, sounds, Hostesses, wheel fixes, Pizza pizza)",
    "blocked": "No",
-   "eta": "~12:30am"
+   "eta": "live"
   }
  ]
 }
