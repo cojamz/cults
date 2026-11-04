@@ -141,3 +141,29 @@ it('keeps Squatter targets fully lit and marks their occupied-space color distin
     expect(el.classList.contains('idle')).toBe(false);
   }
 });
+
+// The rim's words drawn as pictures (rimPictures.js, wheel pass Nov 4): each rim also keeps, hidden, its words the other
+// way up, so the picture is ready before the board first turns it over. That only works if the hidden copy is the
+// very text the rim shows once it's turned: same key, from a board that starts turned half way round.
+describe('rim pictures', () => {
+  it('a rim\'s other-way-up copy is the same text the rim shows once the board has turned it over', async () => {
+    const { pictureKey } = await import('../../../v4/game/rimPictures.js');
+    const s = createGame({ seats, seed: 3, quadrants: ['red', 'yellow', 'market', 'gold'] });
+    const props = facing => ({ state: s, legal: new Map(), onPick: () => {}, flash: new Set(), facing, onFacing: () => {}, look: 'panels' });
+    const a = render(<Wheel {...props(0)} />);
+    const altKeys = [0, 1, 2, 3].map(q => pictureKey(a.container.querySelector(`[data-rim-alt="${q}"]`), a.container.querySelector(`#rim-arc-${q}-alt`), 2));
+    const liveKeys0 = [0, 1, 2, 3].map(q => pictureKey(a.container.querySelector(`[data-rim-text="${q}"]`), a.container.querySelector(`#rim-arc-${q}`), 2));
+    a.unmount();
+    const b = render(<Wheel {...props(2)} />);
+    const liveKeys2 = [0, 1, 2, 3].map(q => pictureKey(b.container.querySelector(`[data-rim-text="${q}"]`), b.container.querySelector(`#rim-arc-${q}`), 2));
+    // (the top and bottom rims flip at a half turn; the side ones read bottom-up either way, at ±90°)
+    for (const q of [0, 2]) {
+      expect(liveKeys2[q]).toBe(altKeys[q]);
+      expect(liveKeys2[q]).not.toBe(liveKeys0[q]);
+    }
+    for (const q of [1, 3]) expect(liveKeys2[q]).toBe(liveKeys0[q]);
+    // the hidden copies aren't rims of their own: four rims' words, as before
+    expect(b.container.querySelectorAll('[data-rim-text]').length).toBe(4);
+    expect(b.container.querySelectorAll('[data-rim-tie]').length).toBe(b.container.querySelectorAll('[data-rim-text] [data-rim-tie]').length);
+  });
+});

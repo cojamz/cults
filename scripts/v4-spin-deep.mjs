@@ -30,7 +30,11 @@ const st = () => page.evaluate(() => { const e = document.querySelector('.app.ga
 for (;;) {
   const s = await st();
   if (s && s.round >= ROUND && s.yours === '1' && s.phase === 'place' && !s.anim && s.lit) break;
-  if (Date.now() - t0 > 600000) { console.log('never reached round', ROUND, s); process.exit(1); }
+  if (flag('trace', false) && clicks % 10 === 0) console.log(Math.round((Date.now() - t0) / 1000), JSON.stringify(s));
+  if (Date.now() - t0 > Number(flag('maxs', 600)) * 1000) { console.log('never reached round', ROUND, s); await page.screenshot({ path: '/tmp/claude-0/stuck.png' }); console.log(await page.evaluate(() => [...document.querySelectorAll('[data-option]')].map(e => `${e.dataset.option}${e.disabled ? '(off)' : ''}`).join(' '))); process.exit(1); }
+  // every sixth try, pass if the table offers it (a random clicker can circle a buy or a long choice forever)
+  const pass = clicks % 6 === 5 ? await page.$('[data-option="pass"]:not([disabled])') : null;
+  if (pass) { await pass.click({ timeout: 1500 }).catch(() => {}); clicks++; await sleep(150); continue; }
   const els = await page.$$('.lt-wheel [data-slot][data-option], [data-option]:not([data-slot])');
   if (els.length) { await els[(clicks * 7) % els.length].click({ timeout: 1500 }).catch(() => {}); clicks++; }
   else { const b = await page.$('[data-next-round], .round-end button, button.primary'); if (b) await b.click({ timeout: 800 }).catch(() => {}); }

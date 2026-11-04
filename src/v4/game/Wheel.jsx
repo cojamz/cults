@@ -16,6 +16,7 @@
 // shakes it and says why at the pointer ("Taken by P3", "Opens in round II"), never silence.
 // Each quadrant's contest is engraved on its rim (rule, prize, tiebreak, leaders), with the standings on hover/tap.
 // Hover or focus (mouse) or a first tap (touch) shows a space's card; on touch, placing takes a second tap.
+import { showPictures, picturesOn } from './rimPictures.js';
 import { memo, startTransition, useEffect, useLayoutEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { quadrant, roman, spaceOpen, RING_VALUE, spacesOf } from '../../engine/v4/index.js';
@@ -98,8 +99,7 @@ function cellPath(a0, a1, r0, r1, pad = 0) {
 }
 
 /** An arc for text that reads upright wherever it sits once the wheel is turned by `rot`. */
-function textArc(center, half, r, rot) {
-  const top = Math.abs(norm(center + rot)) < 90;
+function textArc(center, half, r, rot, top = Math.abs(norm(center + rot)) < 90) {
   const [ax, ay] = polar(top ? center - half : center + half, r);
   const [bx, by] = polar(top ? center + half : center - half, r);
   return `M${ax},${ay} A${r},${r} 0 0 ${top ? 1 : 0} ${bx},${by}`;
@@ -887,7 +887,8 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   // the prize comes every round, not once at the game's end (Cory, 2026-10-15: "each round: most gold +4")
   const EACH = 'Each round: ';
   const tieWords = tb => (!tb ? null : / /.test(tb.unit) ? tb.unit : `most ${tb.unit}`);
-  const rimLabel = (qid, q, leaders) => {
+  const facingTop = q => Math.abs(norm(qCenter(q, nq) + rot)) < 90;
+  const rimLabel = (qid, q, leaders, top = facingTop(q)) => {
     const st = stdById[qid];
     const sc = quadrant(qid).scoring;
     // the prize ends the line with the follower mark after it (Cory, 2026-10-15: "+2" alone didn't say followers; he
@@ -895,7 +896,6 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     const rule = `${EACH}${ruleWords(qid, st ? st.rule : shortLabel(sc.label))}`.toUpperCase();
     const prize = `  ·  +${RING_VALUE[paying - 1]}`;
     const tb = (st && st.tiebreak) || sc.tiebreak || null;
-    const top = Math.abs(norm(qCenter(q, nq) + rot)) < 90;
     const rr = top ? RIM.r - 3.6 : RIM.r + 3.6;
     // the arc, less air at each end (clear of the dividers, w2a #52) and the leaders' emojis
     const room = (2 * rimHalf * Math.PI / 180) * rr - 26 - leaders.length * EMOJI_ROOM;
@@ -916,7 +916,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   // a size up, the follower mark and whoever leads: "MOST BLUE · +2 👤 🐸", "MOST MEMBERS · ties: red · +2 👤". Each
   // run's width comes from the font (rimWidth), never from the page.
   const RIM_LS = 0.02;
-  const rimRuns = (qid, q, leaders) => {
+  const rimRuns = (qid, q, leaders, top = facingTop(q)) => {
     const st = stdById[qid];
     const sc = quadrant(qid).scoring;
     const tb = (st && st.tiebreak) || sc.tiebreak || null;
@@ -931,7 +931,6 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       }
       return runs.reduce((a, r) => a + r.gap + r.w, 0);
     };
-    const top = Math.abs(norm(qCenter(q, nq) + rot)) < 90;
     const rr = top ? RIM.r + 2.2 : RIM.r + 1.6; // the pixel face sits low in its box: the top half goes out further (Cory, Oct 29)
     const room = (2 * rimHalf * Math.PI / 180) * rr - 26 - leaders.length * EMOJI_ROOM;
     const tailK = RIM_MARK + (leaders.length ? 0.45 : 0);
@@ -1036,39 +1035,58 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     }
   }
   const drawRims = () => {
-    const rimArt = [], rimHits = [];
+    const rimArt = [], rimHits = [], rimAlt = [];
     state.quadrants.forEach((qid, q) => {
       const c = qCenter(q, nq), a0 = c - SEC / 2, a1 = c + SEC / 2;
       // the quadrant's rule, engraved along its rim, upright wherever the wheel is turned, with whoever leads it as
       // their pixel emoji inline at the end of the line, on the same arc and baseline: "MOST BLUE · +2 · 🐱"
       const st = stdById[qid];
       const leaders = st && st.leaders.length ? st.leaders : [];
+      const EM = EMOJI_ROOM; // one emoji's room on the line
+      const tail = F => F * RIM_MARK + (leaders.length ? F * 0.45 + leaders.length * EM : 0);
+      const startOf = lab => Math.max(0, ((2 * arcHalf * Math.PI / 180) * lab.rr - lab.textW - tail(lab.font)) / 2);
       const lab = panels ? rimRuns(qid, q, leaders) : rimLabel(qid, q, leaders);
       const rr = lab.rr, F = lab.font, textW = lab.textW;
-      const arcLen = (2 * arcHalf * Math.PI / 180) * rr;
-      const EM = EMOJI_ROOM; // one emoji's room on the line
-      const tail = F * RIM_MARK + (leaders.length ? F * 0.45 + leaders.length * EM : 0);
-      const startS = Math.max(0, (arcLen - textW - tail) / 2);
+      const startS = startOf(lab);
       rimArt.push(<path key={`ra${q}`} id={`rim-arc-${q}`} d={textArc(c, arcHalf, rr, rot)} fill="none" />);
       const lit = lampQid === qid ? ' lit' : lampQid ? ' wait' : '';
+      // the rule's words as a <text> on its arc: the live one, and (alt) the same rim read the other way up, never shown,
+      // kept so its picture is ready before the board first turns it over (rimPictures below)
+      const rimText = (lab, startS, alt) => {
+        const F = lab.font, arcId = alt ? `rim-arc-${q}-alt` : `rim-arc-${q}`;
+        const tag = alt ? { 'data-rim-alt': q, 'data-rim-res': quadrant(qid).resource } : { 'data-plaque': qid, 'data-rim-text': q, 'data-rim-res': quadrant(qid).resource };
+        if (lab.runs) return (
+          <text key={alt ? `rta${q}` : `rt${q}`} className={`rim-rule${lit}`} fontSize={F.toFixed(2)} style={{ letterSpacing: `${lab.ls.toFixed(3)}em` }} {...tag}>
+            {lab.runs.filter(r => r.kind !== 'dot').map((r, k) => (
+              <textPath key={k} href={`#${arcId}`} startOffset={(startS + r.s).toFixed(1)}>
+                {r.kind === 'prize' ? <tspan className="rim-prize" fontSize={(F * 1.3).toFixed(2)} style={{ letterSpacing: 0 }}>{r.text}</tspan> : r.text}
+                {r.tie ? <tspan className="rim-tie" {...(alt ? {} : { 'data-rim-tie': r.tie })}>{`  ·  ties: ${r.tie}`}</tspan> : null}
+              </textPath>
+            ))}
+          </text>
+        );
+        return (
+          <text key={alt ? `rta${q}` : `rt${q}`} className={`rim-rule${lit}`} fontSize={F.toFixed(2)} style={{ letterSpacing: `${lab.ls.toFixed(3)}em` }} {...tag}>
+            <textPath href={`#${arcId}`} startOffset={startS.toFixed(1)}>
+              {lab.rule}
+              {lab.tie ? <tspan className="rim-tie" {...(alt ? {} : { 'data-rim-tie': lab.tie })}>{`  ·  ties: ${lab.tie}`}</tspan> : null}
+              {lab.prize}
+            </textPath>
+          </text>
+        );
+      };
+      {
+        const other = panels ? rimRuns(qid, q, leaders, !lab.top) : rimLabel(qid, q, leaders, !lab.top);
+        rimAlt.push(<path key={`raa${q}`} id={`rim-arc-${q}-alt`} d={textArc(c, arcHalf, other.rr, rot, other.top)} fill="none" />, rimText(other, startOf(other), true));
+      }
       // a point on the line, s along it from its start: where it sits and which way is up
       const onLine = sAt => {
         const deg = (sAt / rr) * 180 / Math.PI;
         const a = lab.top ? c - arcHalf + deg : c + arcHalf - deg;
         return { xy: polar(a, rr), up: lab.top ? a : a + 180 };
       };
+      rimArt.push(rimText(lab, startS, false));
       if (lab.runs) {
-        // panels: each run of words on its own stretch of the arc, the color as its dot between them, the prize a size up
-        rimArt.push(
-          <text key={`rt${q}`} className={`rim-rule${lit}`} fontSize={F.toFixed(2)} style={{ letterSpacing: `${lab.ls.toFixed(3)}em` }} data-plaque={qid} data-rim-text={q} data-rim-res={quadrant(qid).resource}>
-            {lab.runs.filter(r => r.kind !== 'dot').map((r, k) => (
-              <textPath key={k} href={`#rim-arc-${q}`} startOffset={(startS + r.s).toFixed(1)}>
-                {r.kind === 'prize' ? <tspan className="rim-prize" fontSize={(F * 1.3).toFixed(2)} style={{ letterSpacing: 0 }}>{r.text}</tspan> : r.text}
-                {r.tie ? <tspan className="rim-tie" data-rim-tie={r.tie}>{`  ·  ties: ${r.tie}`}</tspan> : null}
-              </textPath>
-            ))}
-          </text>,
-        );
         lab.runs.filter(r => r.kind === 'dot').forEach((r, k) => {
           const { xy: [x, y], up } = onLine(startS + r.s + (r.w * F) / 2);
           const D = F * 1.1;
@@ -1080,15 +1098,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
             </g>,
           );
         });
-      } else rimArt.push(
-        <text key={`rt${q}`} className={`rim-rule${lit}`} fontSize={F.toFixed(2)} style={{ letterSpacing: `${lab.ls.toFixed(3)}em` }} data-plaque={qid} data-rim-text={q}>
-          <textPath href={`#rim-arc-${q}`} startOffset={startS.toFixed(1)}>
-            {lab.rule}
-            {lab.tie ? <tspan className="rim-tie" data-rim-tie={lab.tie}>{`  ·  ties: ${lab.tie}`}</tspan> : null}
-            {lab.prize}
-          </textPath>
-        </text>,
-      );
+      }
       // the follower mark right after the prize, on the same arc, upright like the letters, centred on the line (the
       // text's dominant-baseline is middle, so the line's middle is rr itself)
       {
@@ -1145,7 +1155,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
         </path>,
       );
     });
-    return { art: rimArt, hits: rimHits };
+    return { art: rimArt, hits: rimHits, alt: rimAlt };
   };
   // the rims (their words, marks and leaders, and their hover targets) are drawn again only when something they show
   // changes: their elements are the same objects otherwise, and React passes over them (wheel pass, Nov 4: drawing them
@@ -1155,6 +1165,25 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   const rimMemo = useRef(null);
   if (!rimMemo.current || rimMemo.current.sig !== rimSig || rimMemo.current.hover !== hover) rimMemo.current = { sig: rimSig, hover, ...drawRims() };
   const { hits: rimHits } = rimMemo.current;
+  // where a quadrant's rim words can reach on the unturned board (either way up): its picture's box
+  const rimBox = q => {
+    const c = qCenter(q, nq), h = Math.min(arcHalf, 180 / nq) + 2, r0 = RIM.r0 - 7, r1 = RIM.r1 + 7;
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (let a = c - h; a <= c + h + 0.01; a += 2) for (const r of [r0, r1]) { const [x, y] = polar(a, r); x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+    return [Math.floor(x0), Math.floor(y0), Math.ceil(x1 - x0) + 1, Math.ceil(y1 - y0) + 1];
+  };
+  const picLayer = useRef(null);
+  const picsShown = useRef(null);
+  const picPx = (scale || 1) * (typeof devicePixelRatio === 'number' && devicePixelRatio > 0 ? devicePixelRatio : 1);
+  const showPics = useRef(null);
+  showPics.current = () => { if (fontsIn && picturesOn()) showPictures(stage.current, picLayer.current, rimBox, picPx, () => showPics.current()); };
+  // in the commit itself: a rim turned over at a landing must show its picture in that same frame, or Firefox draws
+  // its letters at the new angle once more
+  useLayoutEffect(() => {
+    if (picsShown.current === rimMemo.current) return;
+    picsShown.current = rimMemo.current;
+    showPics.current();
+  });
   paper.push(...rimMemo.current.art);
   const hubR = panels ? rings[3].r0 - 3 : rings[3].r0;
   if (!panels) for (const r of [RIM.r0, rings[1].r0, rings[2].r0, hubR]) paper.push(<circle key={`c${r}`} cx={CX} cy={CY} r={r} fill="none" className="ring-line" />);
@@ -1340,6 +1369,10 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
               something you can turn (w2a #42: "nothing says the wheel can spin") */}
           <g className="knurl" aria-hidden="true"><circle cx={CX} cy={CY} r="203" fill="none" /></g>
           <g className="wheel">{paper}</g>
+          {/* the rims' words the other way up (never shown: their pictures are drawn ahead), and the rims' words as
+              pictures, laid over the hidden live words (rimPictures.js) */}
+          <g className="rim-alt" style={{ display: 'none' }} aria-hidden="true">{rimMemo.current.alt}</g>
+          <g className="rim-pics" ref={picLayer} style={{ pointerEvents: 'none' }} aria-hidden="true" />
           <circle cx={CX} cy={CY} r="199.5" fill="none" className="edge" />
           <circle cx={CX} cy={CY} r={hubR} className="hub" />
         </svg></div>
