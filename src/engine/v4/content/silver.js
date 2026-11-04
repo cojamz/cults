@@ -316,16 +316,17 @@ const silver = {
       p.bonus += k;
       ctx.log(`${p.name}'s Godparent: gives ${name} to ${o.name}: +${k} followers.`);
     },
+    // live since Nov 4 (quality loop): Polisher's place
+    guestofhonor(ctx, p, value) {
+      if (value === 'none') return;
+      const [uid, oid] = value, o = ctx.player(oid);
+      if (!p.members.includes(uid) || !o || o === p) return;
+      const name = ctx.card(uid).def.name;
+      if (!ctx.moveMember(uid, p, o, { actor: p })) return;
+      p.bonus += 4;
+      ctx.log(`${p.name}'s Guest of Honor: gives ${name} to ${o.name}: +4 followers.`);
+    },
     ...handlers8({
-      guestofhonor(ctx, p, value) {
-        if (value === 'none') return;
-        const [uid, oid] = value, o = ctx.player(oid);
-        if (!p.members.includes(uid) || !o || o === p) return;
-        const name = ctx.card(uid).def.name;
-        if (!ctx.moveMember(uid, p, o, { actor: p })) return;
-        p.bonus += 4;
-        ctx.log(`${p.name}'s Guest of Honor: gives ${name} to ${o.name}: +4 followers.`);
-      },
       usher(ctx, p, id) {
         const o = ctx.player(id);
         if (!o || o === p) return;
@@ -515,10 +516,11 @@ const silver = {
       },
     }),
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 8 → 4
-    // REPLACE8 bot test (Nov 4, quality loop lane B, pitches/B-toastmaster.md 2, passed paper gate b8 at 19 vs 10):
-    // Toastmaster's place, same price. After the Silver space is done; any member of yours costing 3 or less (as a
-    // player sees the cost), itself included; "you may": giving none is fine. A gift, as Godparent's (Well-Wishers hears it).
-    ...add8(m('guestofhonor', 'Guest of Honor', 1, 1, 'Whenever you take a Silver space, you may give a rival one of your members costing 3 or less for +4 followers.', {
+    // After the Silver space is done; any member of yours costing 3 or less (as a player sees the cost), itself included;
+    // "you may": giving none is fine. A gift, as Godparent's (Well-Wishers hears it). Pitch: quality/pitches/B-toastmaster.md.
+    // Quality loop (Nov 4), live since Nov 4 (Claude, under Cory's go-with-your-gut): Polisher's place (paper 16 vs 11; balance trial
+    // owners won 24% vs Toastmaster's 22%; blind play +0.34 vs Toastmaster, +0.66 vs Polisher; 1.4 fires per owner game).
+    m('guestofhonor', 'Guest of Honor', 1, 1, 'Whenever you take a Silver space, you may give a rival one of your members costing 3 or less for +4 followers.', {
       afterAction(ctx, owner, card, qid) {
         if (qid !== S) return;
         const cheap = ctx.membersOf(owner).filter(c => c.def.s + c.def.w <= 3);
@@ -534,7 +536,7 @@ const silver = {
         opts.push({ id: 'none', label: 'Give nothing', kind: 'pass', value: 'none', hint: 0 });
         ctx.choose(owner, 'Guest of Honor: give one of your members costing 3 or less to a rival, for +4 followers?', opts, 'silver.guestofhonor');
       },
-    })),
+    }),
     // Lane B scale-up (Nov 4, paper b54: 17 vs 11): Toastmaster's place, still Silver's cheap way in. Any silver held, never "more than you".
     ...add8(m('chaperone', 'Chaperone', 1, 1, 'Round Start: +1 follower per rival holding silver.', {
       onRoundStart(ctx, owner) {
@@ -646,7 +648,8 @@ const silver = {
     m('philanthropists', 'Philanthropist', 3, 2, 'On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.', { ...old8('silver.philanthropists'),
       onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropist', max: 4, per: 1 }); },
     }),
-    m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', { ...old8('silver.polisher'),
+    // Guest of Honor takes its place (Claude, under Cory's go-with-your-gut, overnight quality loop, 2026-11-04)
+    m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', { retired: true,
       activate: 'game',
       onActivate(ctx, owner) {
         const k = Math.min(3, owner.res[S] || 0);
