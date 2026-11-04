@@ -19,10 +19,10 @@ for (const id of ids) {
   console.log(`\n## ${q.name} (${id}) · resource: ${q.resource}`);
   if (q.contest || q.scoring) console.log(`contest: ${JSON.stringify(q.contest?.text ?? q.contest?.label ?? q.scoring?.text ?? q.contest ?? q.scoring)}`);
   for (const a of [...q.actions].sort((x, y) => x.ring - y.ring)) console.log(`  ${ROMAN[a.ring] || a.ring}  ${a.name}: ${a.text}`);
-  if (showMembers) for (const m of q.members.filter(m => !CUT.has(m.id))) console.log(`    · ${m.name} [${card(m, q.resource)}] ${m.text ?? ''}`);
+  if (showMembers) for (const m of q.members.filter(m => !CUT.has(m.id) && !m.retired)) console.log(`    · ${m.name} [${card(m, q.resource)}] ${m.text ?? ''}`);
 }
 
 if (showMembers && !want.length) {
   console.log('\n## Guests (no color, cost only "any")');
-  for (const m of guestMembers().filter(m => !CUT.has(m.id))) console.log(`    · ${m.name} [${m.w} any, worth ${m.f}] ${m.text ?? ''}`);
+  for (const m of guestMembers().filter(m => !CUT.has(m.id) && !m.retired)) console.log(`    · ${m.name} [${m.w} any, worth ${m.f}] ${m.text ?? ''}`);
 }
