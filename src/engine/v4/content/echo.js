@@ -89,7 +89,7 @@ function wrapAction(qid, a, idx) {
     // a copy does the action itself, as it did when Overtime was paid for
     if (a.copyDoesIt) e.redo = true;
     track(ctx, e);
-    withPath(ctx, [actionKey(key)], () => orig.call(this, ctx, p), key);
+    withPath(ctx, [actionKey(key)], () => orig.call(this, ctx, p), key, null);
     settle(ctx.state, e);
     // mark the taker's buy step that follows: the window stays open until it starts (windowOpen)
     const next = ctx.state.queue.find(t => t.t !== 'choose' && t.t !== 'content');
@@ -107,7 +107,7 @@ function wrapHandler(q, k) {
     const e = L && L.open && L.now[L.open];
     const open = e && windowOpen(ctx.state, e);
     if (open) track(ctx, e);
-    if (data?.__echoPath) withPath(ctx, data.__echoPath, () => orig.call(this, ctx, p, value, data), data.__echoOrigin);
+    if (data?.__echoPath) withPath(ctx, data.__echoPath, () => orig.call(this, ctx, p, value, data), data.__echoOrigin, data.__echoCopier ?? null);
     else orig.call(this, ctx, p, value, data);
     if (open) settle(ctx.state, e);
   };
@@ -133,7 +133,8 @@ export function entryValue(ctx, e, p = null) {
   return v;
 }
 const copyable = e => e.echo || e.redo || spaceTotal(e) > 0 || e.discount > 0 || e.members.length > 0;
-const has = (ctx, p, key) => (key === 'tuningfork' ? ctx.abilitiesOf(p) : ctx.membersOf(p)).filter(c => c.def.id === `echo.${key}` || c.copy === `echo.${key}`).length;
+// c.ability: an Impersonator holding the member's ability counts as it
+const has = (ctx, p, key) => (key === 'tuningfork' ? ctx.abilitiesOf(p) : ctx.membersOf(p)).filter(c => [c.def.id, c.copy, c.ability].includes(`echo.${key}`)).length;
 const actionKey = key => key.split('+')[0];
 const pathNow = ctx => ledger(ctx.state).path || [];
 // Agents (Cory, 2026-10-29: "your actions can't be copied"): rivals can't copy its owner's actions; the owner still can
@@ -141,20 +142,34 @@ const protectedAction = (ctx, e, by) => e.p !== by?.id && has(ctx, ctx.player(e.
 const allowed = (ctx, e, by, path = pathNow(ctx)) => copyable(e) && !protectedAction(ctx, e, by) && !path.includes(actionKey(e.key));
 // The active context exists only while content resolves. Every queued choice/continuation gets its
 // own immutable path, so siblings don't poison each other's targets and save/load needs no closures.
-function withPath(ctx, path, fn, origin = ledger(ctx.state).origin) {
-  const L = ledger(ctx.state), previous = { path: L.path, origin: L.origin };
-  const choose = ctx.choose, defer = ctx.defer;
+// copier: while a copy does a space itself (a redo, Cover, a copied Echo), the copier's Wallflower and Translator act on
+// every resource that space hands them ({ p, x, green }); it rides on queued choices like the path, so Polish's
+// four picks, made one at a time, are each doubled. Null outside such a copy; a nested copy() starts fresh.
+function withPath(ctx, path, fn, origin = ledger(ctx.state).origin, copier = ledger(ctx.state).copier ?? null) {
+  const L = ledger(ctx.state), previous = { path: L.path, origin: L.origin, copier: L.copier };
+  // base: ctx.gain without any copier's change, so a fresh copy inside a copy is doubled once, not twice
+  const choose = ctx.choose, defer = ctx.defer, gain = ctx.gain, base = gain.__copyBase || gain;
   L.path = path; L.origin = origin;
-  const stamp = data => data?.__echoPath ? data : ({ ...(data || {}), __echoPath: [...path], __echoOrigin: origin ?? null });
+  if (copier) L.copier = copier; else delete L.copier;
+  const stamp = data => data?.__echoPath ? data : ({ ...(data || {}), __echoPath: [...path], __echoOrigin: origin ?? null, ...(copier ? { __echoCopier: copier } : {}) });
   ctx.choose = (p, prompt, options, h, data, extra) => choose(p, prompt, options, h, stamp(data), extra);
   ctx.defer = (p, h, data, cause) => defer(p, h, stamp(data), cause);
+  if (copier) ctx.gain = Object.assign((t, c, n, o) => (t.id === copier.p && n > 0 ? base(t, copier.green ? 'green' : c, n * copier.x, o) : base(t, c, n, o)), { __copyBase: base });
+  else ctx.gain = base;
   try { return fn(); }
   finally {
-    ctx.choose = choose; ctx.defer = defer;
+    ctx.choose = choose; ctx.defer = defer; ctx.gain = gain;
     if (previous.path === undefined) delete L.path; else L.path = previous.path;
     if (previous.origin === undefined) delete L.origin; else L.origin = previous.origin;
+    if (previous.copier === undefined) delete L.copier; else L.copier = previous.copier;
   }
 }
+/** What p's copy-changing members do to a copy that does its space itself; null when nothing changes. */
+function copierOf(ctx, p) {
+  const x = has(ctx, p, 'wallflower') ? 2 : 1, green = translating(ctx, p);
+  return x > 1 || green ? { p: p.id, x, green } : null;
+}
+const translating = (ctx, p) => ctx.membersOf(p).some(c => [c.def.id, c.copy, c.ability].includes('echo.translator') && c.on !== false);
 /** The chip on a taken space: exactly what a copy gives. */
 export const describe = (ctx, e) => {
   if (e.echo) return `${actionOf(e, ctx?.state).text} Choose again.`;
@@ -291,7 +306,7 @@ function offer(ctx, p, list, prompt, from, by = null) {
 /** p copies entry e: same resources, same discount, and a free face-up member (cost ≤ theirs) per member. */
 export function copy(ctx, p, e, { later = null, by = null, asker = null } = {}) {
   if (!allowed(ctx, e, p)) return;
-  return withPath(ctx, [...pathNow(ctx), actionKey(e.key)], () => copyResolved(ctx, p, e, { later, by, asker }));
+  return withPath(ctx, [...pathNow(ctx), actionKey(e.key)], () => copyResolved(ctx, p, e, { later, by, asker }), undefined, null);
 }
 function copyResolved(ctx, p, e, { later, by, asker }) {
   const taker = ctx.player(e.p);
@@ -300,11 +315,14 @@ function copyResolved(ctx, p, e, { later, by, asker }) {
     // a space that took or traded: the copy does the action itself
     ctx.log(`${who} copies ${e.name}${taker !== p ? ` (${taker.name}'s)` : ''}: doing it again.`);
     heard(ctx, p, e, taker);
-    (actionOf(e, ctx.state).resolve.__orig || actionOf(e, ctx.state).resolve).call(actionOf(e, ctx.state), ctx, p);
+    // Wallflower doubles, and Translator greens, what the space hands the copier here too (Cory, Nov 3: copying
+    // Polish wasn't doubled)
+    const a = actionOf(e, ctx.state);
+    withPath(ctx, pathNow(ctx), () => (a.resolve.__orig || a.resolve).call(a, ctx, p), undefined, copierOf(ctx, p));
     return;
   }
   const mult = has(ctx, p, 'wallflower') ? 2 : 1;
-  const asGreen = ctx.membersOf(p).some(c => (c.def.id === 'echo.translator' || c.copy === 'echo.translator') && c.on !== false);
+  const asGreen = translating(ctx, p);
   for (const [c, n] of Object.entries(e.res)) ctx.gain(p, asGreen ? 'green' : c, n * mult, { fromAction: true });
   if (e.discount) ctx.discount(p, e.discount, `Copy of ${e.name}`);
   const notes = [mult > 1 ? `doubled by ${p.name}'s Wallflower` : '', asGreen && Object.keys(e.res).length ? `as green by ${p.name}'s Translator` : ''].filter(Boolean);
@@ -331,7 +349,7 @@ function heard(ctx, p, e, taker) {
 // Run fn once per card of p's that is (or copies) the member `key`, each as its own source: a Doppelganger copying
 // Muse pays its +1 beside Muse's, named "Doppelganger (as Muse)" (Cory, Oct 28). An artifact has no uid among members.
 function each(ctx, p, key, name, fn) {
-  const cards = (key === 'tuningfork' ? ctx.abilitiesOf(p) : ctx.membersOf(p)).filter(c => c.def.id === `echo.${key}` || c.copy === `echo.${key}`);
+  const cards = (key === 'tuningfork' ? ctx.abilitiesOf(p) : ctx.membersOf(p)).filter(c => [c.def.id, c.copy, c.ability].includes(`echo.${key}`));
   for (const c of cards) {
     const own = c.def.id === `echo.${key}`;
     // a worn cloak logs as itself ("P1's Green Cloak: +2 red."), like every other cloak, and is its own source
@@ -517,7 +535,7 @@ const echoQ = {
         ctx.log(`${p.name} copies ${hit.a.name}: doing it.`);
         for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(hit.qid).resource, IMPRESSION));
         each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
-        (hit.a.resolve.__orig || hit.a.resolve).call(hit.a, ctx, p);
+        withPath(ctx, pathNow(ctx), () => (hit.a.resolve.__orig || hit.a.resolve).call(hit.a, ctx, p), undefined, copierOf(ctx, p));
       });
     },
     continueCopy(ctx, p, _, data) {
