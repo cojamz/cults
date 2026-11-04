@@ -7,6 +7,7 @@ import { add4, old4, handlers4 } from './replace4.js';
 import { see, endsAhead } from './botsee.js';
 import { add7, old7, handlers7 } from './replace7.js';
 import { add12, old12, on12 } from './replace12.js';
+import { swap11, handlers11 } from './replace11.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
 
@@ -16,6 +17,67 @@ function usesRecruit(ctx, p) {
   for (let i = 0; i < q.length; i++) { if (q[i].p !== p.id) continue; if (q[i].t === 'endTurn') break; if (q[i].t === 'buy' && !q[i].extra) { q.splice(i, 1); return; } }
 }
 const ACT = new Set((globalThis.process?.env?.ACT || '').split(',').filter(Boolean)); // action bot tests (Nov 4): env only, never live
+
+/**
+ * Actions lane r4 batch (Nov 4; pitches/actions-r4-batch.md), REPLACE11 by own key, in Walk-In's place.
+ * Blind Date: "Flip the top 2 of the pile. Recruit one; give the other to a rival. +1 red."
+ * No Thanks: "Recruit the top member of the pile, or give it to a rival and +3 red. +1 red."
+ * The recruit is free, as Walk-In's; a given member arrives without a recruit (ctx.giveFromPile).
+ */
+const worthOf = (ctx, uid) => { const d = ctx.card(uid).def; return d.s + d.w + 2 * (d.f || 0); };
+const BLIND_DATE = {
+  key: 'blinddate', ring: 1, name: 'Blind Date', text: 'Flip the top 2 of the pile. Recruit one; give the other to a rival. +1 red.', copyDoesIt: true,
+  estimate: ctx => 1 + (ctx.state.pile.length ? 3 : 0),
+  resolve(ctx, p) {
+    ctx.gain(p, 'red', 1, { fromAction: true });
+    const two = ctx.state.pile.slice(0, 2);
+    if (!two.length) { ctx.log(`${p.name}: the deck is empty.`); return; }
+    ctx.log(`${p.name}'s Blind Date flips ${two.map(u => ctx.card(u).def.name).join(' and ')}.`);
+    ctx.choose(p, 'Blind Date: recruit which?', two.map(u => ({ id: `card:${u}`, label: `${ctx.card(u).def.name} (${ctx.card(u).def.s + ctx.card(u).def.w})`, kind: 'card', value: u, hint: worthOf(ctx, u) })), 'red.blindDate', { two });
+  },
+};
+function blindDate(ctx, p, uid, data) {
+  if (!ctx.state.pile.includes(uid)) return;
+  const other = data.two.find(u => u !== uid);
+  // the other waits at the bottom, so a refill after the recruit can't draw it into the shop
+  ctx.state.pile = [uid, ...ctx.state.pile.filter(u => u !== uid && u !== other), ...(other !== undefined && ctx.state.pile.includes(other) ? [other] : [])];
+  ctx.recruit(p, uid, { free: true, top: true });
+  if (other !== undefined && ctx.state.pile.includes(other)) pileGiftAsk(ctx, p, other, 'Blind Date');
+}
+const NO_THANKS = {
+  key: 'nothanks', ring: 1, name: 'No Thanks', text: 'Recruit the top member of the pile, or give it to a rival and +3 red. +1 red.', copyDoesIt: true,
+  estimate: ctx => 1 + (ctx.state.pile.length ? 3.5 : 3),
+  resolve(ctx, p) {
+    ctx.gain(p, 'red', 1, { fromAction: true });
+    const top = ctx.state.pile[0];
+    if (top === undefined) { ctx.log(`${p.name}: the deck is empty.`); return; }
+    const d = ctx.card(top).def;
+    ctx.log(`${p.name}'s No Thanks flips ${d.name}.`);
+    ctx.choose(p, `No Thanks: recruit ${d.name}, or give it to a rival and +3 red?`, [
+      { id: 'keep', label: `Recruit ${d.name}`, kind: 'yes', value: 'keep', hint: worthOf(ctx, top) },
+      { id: 'give', label: `Give it away, +3 red`, kind: 'no', value: 'give', hint: 3 },
+    ], 'red.nothanks', { uid: top });
+  },
+};
+function nothanks(ctx, p, v, data) {
+  if (!ctx.state.pile.includes(data.uid)) return;
+  if (v === 'keep') { ctx.state.pile = [data.uid, ...ctx.state.pile.filter(u => u !== data.uid)]; ctx.recruit(p, data.uid, { free: true, top: true }); return; }
+  ctx.gain(p, 'red', 3);
+  pileGiftAsk(ctx, p, data.uid, 'No Thanks');
+}
+function pileGiftAsk(ctx, p, uid, who) {
+  const rivals = ctx.rivals(p);
+  if (!rivals.length) return;
+  ctx.choose(p, `${who}: give ${ctx.card(uid).def.name} to which rival?`, rivals.map(o => ({
+    id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers)`, kind: 'player', value: o.id,
+    hint: -ctx.followers(o), // bots help the rival furthest behind
+  })), 'red.pileGiftTo', { uid, who });
+}
+function pileGiftTo(ctx, p, oid, data) {
+  const o = ctx.player(oid), name = ctx.card(data.uid)?.def.name;
+  if (!o || o === p || !ctx.giveFromPile(o, data.uid, p)) return;
+  ctx.log(`${p.name}'s ${data.who}: gives ${name} to ${o.name}.`);
+}
 export default {
   id: 'red',
   name: 'Red',
@@ -47,7 +109,7 @@ export default {
         (p.recruitFollowers ||= []).push({ n: ctx.state.round, name: 'Gather' });
       },
     },
-    {
+    swap11(swap11({
       // Cory, 2026-10-27: "recruit the top member of the deck. each rival gets 1 red". Name and the +2 are Claude's fill-ins.
       key: 'hire', ring: 1, name: 'Walk-In', text: 'Recruit the top member of the pile. Each rival +1 red. +1 red.', copyDoesIt: true,
       estimate: ctx => 1 + (ctx.state.pile.length ? 3 : 0),
@@ -65,7 +127,7 @@ export default {
         estimate: ctx => 1 + cheapValue(ctx),
         resolve(ctx, p) { ctx.gain(p, 'red', 1, { fromAction: true }); hireCheapest(ctx, p, 'Open Door'); },
       },
-    },
+    }, BLIND_DATE), NO_THANKS),
     {
       key: 'hireup', ring: 2, name: 'Promote', text: 'Give one of your members to a rival or the shop, and recruit one of theirs costing up to 2 more. +3 red.', copyDoesIt: true, // +3 red (Cory, Oct 30: balance run)
       estimate: (ctx, p) => 3 + (swapPairs(ctx, p, 'promote').length ? 2 : 0),
@@ -95,6 +157,7 @@ export default {
   ],
 
   handlers: {
+    ...handlers11({ blindDate, nothanks, pileGiftTo }),
     ...handlers4({
       defect(ctx, p, id) {
         const o = ctx.player(id);

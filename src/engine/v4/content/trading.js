@@ -37,6 +37,27 @@ export const sellable = p => Math.max(0, p.bonus);
 const ahead = (ctx, p) => ctx.rivals(p).filter(o => ctx.followers(o) > ctx.followers(p)).length;
 // How bots value a follower against one resource, by round (resources compound early, followers are the score late).
 const fv = ctx => [1.6, 1.3, 1.2][ctx.state.round - 1] ?? 1.2;
+/**
+ * White Exchange (REPLACE11=whiteexchange, Actions lane r4 batch, Nov 4; pitches/actions-r4-batch.md), in Exchange's
+ * place: "+1 white. Then turn up to 2 white (3 in round II, 4 in round III) into 3 followers each." White only, so
+ * spending it weighs against the White contest. One at a time, until the limit or Done.
+ */
+const WHITE_EXCHANGE = {
+  key: 'whiteexchange', copyDoesIt: true, ring: 1, name: 'White Exchange', text: '+1 white. Then turn up to 2 white (3 in round II, 4 in round III) into 3 followers each.',
+  byRound: { lead: '+1 white. Then:', lines: ['Turn up to 2 white into 3 followers each.', 'Turn up to 3 white into 3 followers each.', 'Turn up to 4 white into 3 followers each.'] },
+  estimate: (ctx, p) => 1 + Math.min(ctx.state.round + 1, (p.res[W] || 0) + 1) * (3 * fv(ctx) - 1),
+  resolve(ctx, p) {
+    ctx.gain(p, W, 1, { fromAction: true });
+    whiteExchangeStep(ctx, p, { left: ctx.state.round + 1, done: 0 });
+  },
+};
+function whiteExchangeStep(ctx, p, data) {
+  if (data.left <= 0 || !(p.res[W] > 0)) return;
+  ctx.choose(p, `White Exchange: turn 1 white into 3 followers? (${data.left} left)`, [
+    { id: 'white', label: '1 white → 3 followers', kind: 'color', value: W, spend: { [W]: 1 }, hint: 3 * fv(ctx) - 1 },
+    { id: 'done', label: data.done ? 'Done' : 'Turn nothing', kind: 'done', value: 'done', hint: 0.1 },
+  ], 'trading.whiteExchange', data);
+}
 const lastTurn = (ctx, p) => ctx.state.round === 3 && p.left === 0;
 
 export const SELL_HIGH = { most: 2, each: 3 };
@@ -226,7 +247,7 @@ const trading = {
         p.perSpend = true;
       },
     },
-    swap14({
+    swap11(swap14({
       key: 'exchange', copyDoesIt: true, ring: 1, name: 'Exchange', text: '+1 white. Then turn up to 1 resource (2 in round II, 3 in round III) into 2 followers each.', // Cory, 2026-10-23: "up to", you can stop early
       byRound: { lead: '+1 white. Then:', lines: ['Turn up to 1 resource into 2 followers.', 'Turn up to 2 resources into 2 followers each.', 'Turn up to 3 resources into 2 followers each.'] }, // white first (Cory, Nov 1 text audit)
       estimate: (ctx, p) => 1 + Math.min(ctx.state.round, totalRes(p) + 1) * (2 * fv(ctx) - 1),
@@ -234,7 +255,7 @@ const trading = {
         ctx.gain(p, W, 1, { fromAction: true });
         exchangeStep(ctx, p, { left: ctx.state.round, done: 0 });
       },
-    }, PAWN_SHOP),
+    }, PAWN_SHOP), WHITE_EXCHANGE),
     {
       key: 'farewell', copyDoesIt: true, ring: 2, name: 'Farewell', text: 'Cast out one of your members to the bottom of the pile, gain followers equal to its cost. +1 white.', // "cast out": Cory, 2026-10-24
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, fv(ctx)))),
@@ -353,6 +374,14 @@ const trading = {
         ctx.gain(p, W, 1, { fromAction: true });
       },
     }),
+    whiteExchange(ctx, p, value, data) {
+      if (value === 'done' || !(p.res[W] > 0)) return;
+      p.res[W] -= 1;
+      if (data.done === 0) actionFollowers(ctx, p, 3); else p.bonus += 3;
+      ctx.log(`${p.name}'s White Exchange: 1 white became 3 followers.`);
+      if (data.done === 0) turned(ctx, p);
+      whiteExchangeStep(ctx, p, { left: data.left - 1, done: data.done + 1 });
+    },
     exchange(ctx, p, value, data) {
       if (value === 'done') return;
       p.res[value] -= 1;

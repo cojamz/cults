@@ -1045,6 +1045,7 @@ function startRound(state, r) {
   delete state.reserved; // Snobs' token comes off when the round ends
   delete state.held; // Place Holders' token too
   delete state.openBar; // and Open Bar's tab
+  delete state.royalties; // and Royalties'
   state.recruits = 0;
   state.turns = [];
   const n = WORKERS[r - 1];
@@ -2292,6 +2293,19 @@ function ctxFor(state) {
       wipeCard(state, uid);
       p.members.push(uid);
       refill(state);
+      cultMove(state, uid, null, p, actor);
+      memberJoined(state, p, uid);
+      workersNow(state, p, cardDef(state, uid), uid);
+      return true;
+    },
+    /** A pile member goes into p's cult without a recruit (Blind Date and No Thanks, REPLACE11 bot tests: "give it to a
+     *  rival"): as giveFromShop, with no refill. */
+    giveFromPile(p, uid, actor = null) {
+      const i = state.pile.indexOf(uid);
+      if (i < 0) return false;
+      state.pile.splice(i, 1);
+      wipeCard(state, uid);
+      p.members.push(uid);
       cultMove(state, uid, null, p, actor);
       memberJoined(state, p, uid);
       workersNow(state, p, cardDef(state, uid), uid);

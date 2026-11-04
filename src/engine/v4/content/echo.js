@@ -20,6 +20,7 @@ import { add4, old4, handlers4 } from './replace4.js';
 import { add10, old10, handlers10, on10 } from './replace10.js';
 import { add9, old9 } from './replace9.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
+import { swap11, handlers11 } from './replace11.js';
 
 // IMPRESSIONIST=n: bot test only; the game pays 1 (Claude, under Cory's "use your judgement", Nov 3; was 2, Cory Nov 1)
 const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 1);
@@ -193,6 +194,29 @@ export const describe = (ctx, e) => {
  * 'since' remains for legacy callers. skip excludes the current placement while a copy action or recruit resolves.
  */
 export const VARIANT = { plus: 1 }; // Every Green action pays its inherent green, including each traversal in a chain.
+/**
+ * Actions lane r4 batch (Nov 4; pitches/actions-r4-batch.md), REPLACE11 by own key, in Build Up's place:
+ * Crowd "+2/3/4 green, +1 more per minion on Green spaces" (this one counts; a joined spot is a minion there too), and
+ * Royalties "+3/4/5 green. This round, whenever a rival copies this space, +2 green" (a tab state.royalties
+ * [{ pid, round }], paid in heard() when a rival's copy is of Royalties; closed at Round End in core.js).
+ */
+const greenMinions = ctx => Object.entries(ctx.state.slots).filter(([k]) => ctx.state.quadrants[+k.split('-')[0]] === 'echo').length
+  + Object.entries(ctx.state.squats || {}).filter(([k]) => ctx.state.quadrants[+k.split('-')[0]] === 'echo').reduce((a, [, v]) => a + v.length, 0);
+const CROWD = {
+  key: 'crowd', ring: 1, name: 'Crowd', text: '+2 green in round I, +3 in round II, +4 in round III, +1 more per minion on Green spaces.',
+  byRound: { lines: ['+2 green', '+3 green', '+4 green'], rest: '+1 more per minion on Green spaces.' },
+  estimate: ctx => 1 + ctx.state.round + greenMinions(ctx) + 1,
+  resolve(ctx, p) { plus(ctx, p); const n = greenMinions(ctx); ctx.gain(p, 'green', ctx.state.round + n, { fromAction: true }); ctx.log(`${p.name}'s Crowd: ${n} minion${n === 1 ? '' : 's'} on Green spaces.`); },
+};
+const ROYALTIES = {
+  key: 'royalties', ring: 1, name: 'Royalties', text: '+3 green in round I, +4 in round II, +5 in round III. This round, whenever a rival copies this space, +2 green.',
+  byRound: { lines: ['+3 green', '+4 green', '+5 green'], rest: 'This round, whenever a rival copies this space, +2 green.' },
+  estimate: ctx => 2 + ctx.state.round + 1,
+  resolve(ctx, p) {
+    plus(ctx, p); ctx.gain(p, 'green', ctx.state.round + 1, { fromAction: true });
+    (ctx.state.royalties ||= []).push({ pid: p.id, round: ctx.state.round });
+  },
+};
 const plus = (ctx, p) => { if (VARIANT.plus) ctx.gain(p, 'green', VARIANT.plus, { fromAction: true }); };
 export function targets(ctx, p, which, skip = null) {
   const L = ledger(ctx.state);
@@ -339,6 +363,10 @@ function heard(ctx, p, e, taker) {
   // each runs as its member, so the log names it ("P1's Choir: +1 green.")
   // any player's copy, +2 (Cory, Nov 1)
   for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(e.color).resource, IMPRESSION));
+  // Royalties (REPLACE11=royalties): a rival copying Royalties pays its taker's tab +2 green
+  if (e.name === 'Royalties') for (const t of ctx.state.royalties || []) if (t.round === ctx.state.round && t.pid !== p.id) {
+    const o = ctx.player(t.pid); ctx.gain(o, 'green', 2); ctx.log(`${o.name}'s Royalties: ${p.name} copied it, +2 green.`);
+  }
   each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
   each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += COPYIST; }); // REPLACE10
   each(ctx, p, 'roadie9', 'Roadie', () => { const g = ctx.countMembersOfColor(p, 'echo'); if (g) ctx.gain(p, 'green', g); }); // REPLACE9
@@ -427,12 +455,12 @@ const echoQ = {
   scoring: { label: 'Most green', counts: 'the green you hold when the round ends', score: (ctx, p) => p.res.green },
 
   actions: [
-    {
+    swap11(swap11({
       key: 'chant', ring: 1, name: 'Build Up', text: '+3 green in round I, +4 in round II, +5 in round III.', // every color's 3/4/5 (Cory, 2026-10-27)
       byRound: { lines: ['+3 green', '+4 green', '+5 green'] },
       estimate: ctx => 2 + ctx.state.round,
       resolve(ctx, p) { plus(ctx, p); ctx.gain(p, 'green', ctx.state.round + 1, { fromAction: true }); },
-    },
+    }, CROWD), ROYALTIES),
     {
       // The previous placement can be your own on a snake double turn.
       key: 'echo', ring: 1, name: 'Echo', echo: true, text: 'Copy the previous action. +1 green.', // back to +1 (Cory, Oct 28)
