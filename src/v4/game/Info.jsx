@@ -188,9 +188,13 @@ function sharedTail(lines) {
  */
 export const effectLines = text => String(text || '').split(/(?<=[.!?])\s+(?=[^\sa-z])/u).filter(Boolean);
 // lines: each effect on its own line (the hover cards); a space between keeps the text one sentence run when read whole
+// a lone flat gain after the rule ("+1 blue.") read as a stray or a repeat of the line above it ("+1 blue per member sent."),
+// and after "Each rival +1 red." as the rivals' too (picky bot, Nov 4): its own line still, said as yours, no period
+const FLAT = /^\+(\d+) ([a-z]+)\.$/;
+const flatWords = (t, k) => { const m = k > 0 && FLAT.exec(t); return m ? `You also get +${m[1]} ${m[2]}` : t; };
 function Lines({ text, Text, className = 'fx-line' }) {
   const parts = effectLines(text);
-  return <>{parts.map((t, k) => <Fragment key={k}>{k ? ' ' : null}<span className={className} data-effect-line=""><Text text={t} /></span></Fragment>)}</>;
+  return <>{parts.map((t, k) => <Fragment key={k}>{k ? ' ' : null}<span className={className} data-effect-line=""><Text text={flatWords(t, k)} /></span></Fragment>)}</>;
 }
 // a member's ongoing benefit opens with a bold Passive (Cory, Oct 29: "For those that are a passive benefit, add Passive as
 // a bold keyword"): any rule that doesn't open with a timing, a use or what the card counts as
@@ -405,7 +409,8 @@ export function ContestStandings({ state, st, meId = null, scored = false, brief
   return (
     <div className="pop-card contest-card" style={{ '--c': `var(--${st.qid})` }} data-contest={st.qid}>
       {!brief && <div className="row"><b>{st.rule}</b><span className="num">+{st.prize}{scored ? '' : ' at round end'}</span></div>}
-      <small>{brief && plainCount ? ties : `Counts ${st.counts || st.rule.toLowerCase()}. ${ties}`}</small>
+      {/* brief: the rim card's prize line says the tie rule; a tiebreak still says itself (picky bot, Nov 4) */}
+      {brief && plainCount && !st.tiebreak ? null : <small>{brief && plainCount ? ties : `Counts ${st.counts || st.rule.toLowerCase()}. ${ties}`}</small>}
       <ol className="contest-rows">
         {st.rows.map(r => {
           const tb = tiebreakNote(st, r);
@@ -723,9 +728,13 @@ export function changeWords(d, state) {
   const gain = [], loss = [];
   for (const r of state.resources) if (d.res[r] > 0) gain.push(`+${d.res[r]} ${r}`);
   // the member by name when the branch brings one or two (w4 skeptic #31: "+1 member … your best pick" named none)
-  const who = d.joined && d.joined.length && d.joined.length <= 2 && d.members > 0 ? (() => { try { return ` (${d.joined.map(u => cardDef(state, u).name).join(', ')})`; } catch { return ''; } })() : '';
+  const names = d.joined && d.joined.length && d.joined.length <= 2 && d.members > 0 ? (() => { try { return d.joined.map(u => cardDef(state, u).name); } catch { return null; } })() : null;
+  const who = names ? ` (${names.join(', ')})` : '';
   const went = d.members === -1 && d.lost > 0 ? d.lost : 0;
-  if (d.members > 0) gain.push(n(d.members, 'member') + who);
+  // cards that count as more than one member: the cards by name, then the count ("+5 members (Stunt Double,
+  // Deprogrammers)" read as five cards: picky bot, Nov 4)
+  if (d.members > 0 && names && names.length !== d.members) gain.push(`${names.join(' and ')} (${n(d.members, 'member')})`);
+  else if (d.members > 0) gain.push(n(d.members, 'member') + who);
   if (d.followers + went > 0) gain.push(n(d.followers + went, 'follower'));
   if (d.turns > 0) gain.push(n(d.turns, 'minion'));
   if (d.early > 0) gain.push(earlyWords(d.early));
@@ -780,15 +789,20 @@ function mixWords(pv, state, own) {
   const one = mix.map(d => loose.filter(r => d.res[r]).map(r => d.res[r]));
   if (one.every(v => v.length === 1 && v[0] === one[0][0] && v[0] > 0) && mix.every(d => same('followers', d, mix[0]) && same('members', d, mix[0])))
     return { text: `${sure ? `${sure}, ` : ''}+${one[0][0]} of a color you pick`, note: null };
-  // the same amount, only recolored (swaps): the plain outcome, then "swaps are your pick" (Sweet Talk, Trade Seeds)
+  // the same amount, only recolored: what every pick gives, then the rest "in colors you choose", the wheel's words
+  // (picky bot, Nov 4: Harvest's "+3 magenta, swaps are your pick" and Melting Pot's "+3 yellow" named one pick's colors
+  // as if they were the gain; Makeover's "+5 yellow, −1 blue" was one rearrangement of many)
   const total = d => state.resources.reduce((t, r) => t + d.res[r], 0);
   if (mix.every(d => total(d) === total(mix[0]) && same('followers', d, mix[0]) && same('members', d, mix[0]))) {
-    // the fewest colors moved, nothing lost, and the space's own color kept (Trade Seeds: "+1 yellow", not "+1 magenta")
-    const size = d => state.resources.filter(r => d.res[r]).length + (state.resources.some(r => d.res[r] < 0) ? 9 : 0) + (own && !(d.res[own] > 0) ? 0.5 : 0);
-    const plain = mix.reduce((a, d) => (size(d) < size(a) ? d : a));
-    const t = total(plain);
-    if (own && !(plain.res[own] > 0) && t > 0 && !plain.followers && !plain.members) return { text: `+${t} in colors you pick`, note: null };
-    return { text: changeWords(plain, state), note: 'swaps are your pick' };
+    const lo = r => Math.min(...mix.map(d => d.res[r])), hi = r => Math.max(...mix.map(d => d.res[r]));
+    const fixedRes = state.resources.filter(r => lo(r) === hi(r) && lo(r) !== 0);
+    // a color some pick spends (Sweet Talk's silver, Makeover's whole pile): yours to turn into others
+    const spent = state.resources.filter(r => lo(r) !== hi(r) && lo(r) < 0);
+    const free = total(mix[0]) - fixedRes.reduce((t, r) => t + lo(r), 0);
+    const parts = [...fixedRes.map(r => `${signed(lo(r))} ${r}`), free > 0 ? `+${free} in colors you choose` : null,
+      mix[0].followers ? `${signed(mix[0].followers)} follower${Math.abs(mix[0].followers) === 1 ? '' : 's'}` : null].filter(Boolean);
+    const list = spent.length > 1 ? `${spent.slice(0, -1).join(', ')} and ${spent[spent.length - 1]}` : spent[0];
+    return { text: parts.join(', ') || 'nothing', note: spent.length ? `rearranging your ${list}` : null };
   }
   // different kinds: the two ends of the choice, "+2 followers or +4 white" (Your Call)
   return { text: `${changeWords(mix[0], state)} or ${changeWords(mix[mix.length - 1], state)}`, note: 'your pick' };
@@ -812,7 +826,16 @@ export function youdWords(pv, state, own = null) {
   const best = changeWords(pv.best, state), likely = changeWords(pv.likely, state);
   // a rival decides, after your own pick (Shake Down: which member, then pay its cost or lose it): the amount depends
   // on what you pick, so it's "up to", never a promise (blind tester: "+4 or +1 member" paid +2 for a cost-2 member)
-  if (pv.best && pv.likely && likely !== best) return { text: null, likely: pv.asks && pv.asks.length && /^\+/.test(likely) ? `up to ${likely}` : likely, best };
+  // what both cases give is said once, ahead of them (picky bot, Nov 4: Shake Down's "up to +3 magenta, or +3 magenta,
+  // +1 member…" said its +1 magenta in each case and read as an option twice)
+  if (pv.best && pv.likely && likely !== best) {
+    const lp = likely.split(', '), bp = best.split(', ');
+    const both = lp.filter(x => bp.includes(x));
+    const lr = lp.filter(x => !both.includes(x)).join(', '), br = bp.filter(x => !both.includes(x)).join(', ');
+    const upTo = t => (pv.asks && pv.asks.length && /^\+/.test(t) ? `up to ${t}` : t);
+    if (both.length && lr && br) return { text: both.join(', '), likely: upTo(lr), best: br };
+    return { text: null, likely: upTo(likely), best };
+  }
   // your pick decides: what's sure as it is, and the best pick's gains as "up to", never as a promise (w4 skeptic #10:
   // Even Swap's "+1 follower" read as promised, and a different swap gave none)
   if (pv.best && !pv.tied) {
@@ -828,7 +851,17 @@ export function youdWords(pv, state, own = null) {
       const paid = state.resources.reduce((t, r) => t + Math.max(0, (w0.res[r] || 0) - (pv.best.res[r] || 0)), 0);
       const kept = Object.fromEntries(state.resources.map(r => [r, Math.max(0, (pv.best.res[r] || 0) - (w0.res[r] || 0))]));
       const gets = changeWords({ ...pv.best, res: kept }, state);
-      return { text: paid > 0 && gets !== 'nothing' ? `${worst}, or ${gets} for ${paid}` : `${worst} or ${best}`, note: 'your pick' };
+      // each branch on its own line (picky bot, Nov 4: Cover's "…right after this one, or +2 …, +3 followers for 6" ran on)
+      return { text: worst, or: paid > 0 && gets !== 'nothing' ? `${gets} for ${paid}` : best, note: 'your pick' };
+    }
+    // the best pick keeps the space's own gain and pays from what you held (Exchange: "+1 white", then followers for 2
+    // resources): the gain, then the pick on its own line (picky bot, Nov 4: "up to +1 white, +4 followers, −2 resources")
+    // (the least pick, turning nothing, is the space’s own gain; never on a copy space, whose least pick is another space)
+    const base = pv.worst;
+    if (base && !pv.copies && !spends(base) && state.resources.some(r => base.res[r] > 0) && (pv.best.followers > base.followers || pv.best.members > base.members) && state.resources.some(r => pv.best.res[r] < base.res[r])) {
+      const paid = state.resources.reduce((t, r) => t + Math.max(0, (base.res[r] || 0) - (pv.best.res[r] || 0)), 0);
+      const gets = changeWords({ ...pv.best, res: Object.fromEntries(state.resources.map(r => [r, Math.max(0, (pv.best.res[r] || 0) - (base.res[r] || 0))])), followers: pv.best.followers - base.followers, members: pv.best.members - base.members }, state);
+      if (paid > 0 && gets !== 'nothing') return { text: changeWords(base, state), or: `up to ${gets} for ${paid} resource${paid === 1 ? '' : 's'}`, orWord: 'then', note: 'your pick' };
     }
     const sure = named(sureWords(pv, state));
     const sureParts = sure ? sure.split(', ') : [];
@@ -877,6 +910,13 @@ function idleAt(state, pid, k) {
   const y = youdWords(pv, state, own);
   return !y.likely && !y.note && y.text === 'nothing right now';
 }
+/** "+2 followers if you recruit a member" / "+1 follower per 2 resources you pay, if you recruit a member". */
+export function ifRecruitWords(x) {
+  const parts = [];
+  if (x.followers) parts.push(`+${x.followers} follower${x.followers === 1 ? '' : 's'}`);
+  if (x.per) parts.push(`+1 follower per ${x.per === 1 ? 'resource' : `${x.per} resources`} you pay`);
+  return `${parts.join(' and ')}${x.per ? ',' : ''} if you recruit a member this turn`;
+}
 /** "You'd get: +3 ●, +1 member" for player pid on space (q, i), computed just after it shows. */
 export function YoudGet({ state, pid, q, i, now = false }) {
   const pv = usePreview(state, pid, q, i, { now });
@@ -894,8 +934,11 @@ export function YoudGet({ state, pid, q, i, now = false }) {
       {/* a rival decides (Shake Down: pay, or lose the member): one plain line, what they'd likely do first, the other
           after "or", and whose call it is (w4b #12: "+4 likely / +1 member, +1 at best" read like an engine dump) */}
       {y.likely
-        ? <span data-youd-cases><Rich text={y.likely} />{', or '}<Rich text={y.best} /><em className="yd-note">their choice</em></span>
-        : <>{y.text ? <Rich text={y.text} /> : null}{y.note ? <em className="yd-note">{y.note}</em> : null}</>}
+        ? <span data-youd-cases>{y.text ? <><Rich text={y.text} />{', and '}</> : null}<Rich text={y.likely} />{', or '}<Rich text={y.best} /><em className="yd-note">their choice</em></span>
+        : <>{y.text ? <Rich text={y.text} /> : null}{y.or ? <span className="yd-or" data-youd-or="">{y.orWord || 'or'} <Rich text={y.or} /></span> : null}{y.note ? <em className="yd-note">{y.note}</em> : null}</>}
+      {/* the followers a later recruit this turn would add (Gather, Stash, Allowance, Splurge): the dry run stops before
+          the recruit, so its own line says them (picky bot, Nov 4: "+3 red" alone left the follower part out) */}
+      {pv.ifRecruit ? <small className="youd-others youd-if" data-youd-if=""><Rich text={ifRecruitWords(pv.ifRecruit)} /></small> : null}
       {w.others ? <small className="youd-others"><Rich text={w.others} /></small> : null}
     </span>
   );

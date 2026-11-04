@@ -37,7 +37,14 @@ describe('panel words (w3)', () => {
       const gold = panelText('gold', { key: 'rush' }, r);
       // "+2 gold × round" made a round III player do the math (text review, 2026-10-23)
       expect(gold.main).toBe(`+${2 * r} gold`);
-      expect(gold.second).toBe('I\u00a0+2\u00a0· II\u00a0+4\u00a0· III\u00a0+6');
+      // the schedule in line 3, as every growing space has it; line 2 repeated line 1's number (picky bot, Nov 4)
+      expect(gold.note).toBe('I\u00a0+2\u00a0· II\u00a0+4\u00a0· III\u00a0+6');
+      expect(gold.second).toBeNull();
+      expect(panelText('echo', { key: 'chant' }, r).second).toBeNull();
+    }
+    // every space that grows carries its schedule (W18: only some did, and readers took the rest as flat)
+    for (const [qid, key] of [['red', 'turnout'], ['thieves', 'tipoff'], ['trading', 'stipend'], ['market', 'bargain'], ['purple', 'skip'], ['purple', 'holdup'], ['purple', 'again'], ['yellow', 'dilute']]) {
+      expect(lines(panelText(qid, { key }, 2)).join(' '), `${qid}.${key}`).toMatch(/I\u00a0\+\d+\u00a0· II\u00a0\+\d+\u00a0· III\u00a0\+\d+/);
     }
   });
 

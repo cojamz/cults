@@ -26,7 +26,7 @@ describe('the hover delay', () => {
     act(() => { vi.advanceTimersByTime(HOVER_OPEN_MS); });
     expect(hover.card && hover.card.qid).toBe(s.quadrants[0]);
     expect(layer.dataset.open).toBe('1');
-    expect(layer.querySelector('.lt-note').textContent).toMatch(/at this round’s end/);
+    expect(layer.querySelector('.lt-note').textContent).toMatch(/At the end of round I: \+\d+ followers/); // the prize line, said once (picky bot, Nov 4)
     hover.dispose();
   });
 

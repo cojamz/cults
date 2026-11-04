@@ -22,6 +22,7 @@ import { MO } from '../motion.js';
 import { HOVER_DELAY_MS, HOVER_OPEN_MS } from './hoverDelay.js';
 import { aimAt, arrived, heading, aimedAt, over, overControls, busyWith, claim, unclaim, stillOn, pointer, scrolledList } from './hoverIntent.js';
 import { poolNote } from './poolNote.js';
+import { seatOrder, turnPlaces } from './seats.js';
 
 const RINGS = ['outer ring', 'middle ring', 'inner ring'];
 const sphereOf = qid => quadrant(qid).resource;
@@ -532,7 +533,7 @@ export function CopyChoices({ state, viewer, text, self = null, box = false }) {
           <span key={x.uid} className="lt-copy-choice" data-copy-choice={x.uid}>
             {whose(x.owner)}<b><CardName state={state} uid={x.uid} def={x.def}>{x.def.name}</CardName></b>: <Rich text={x.def.text} />
           </span>
-        )) : 'nobody yet'}
+        )) : cc.none}
       </span>
     </Row>
   );
@@ -556,6 +557,16 @@ function cardBody(c, state, me, optionFor, pick) {
 // ---------- the cards ----------
 function Row({ k, children }) { return <div className="lt-yd-row"><span className="k">{k}</span><span className="v">{children}</span></div>; }
 
+// A limit the rulebook states and the card's words don't (picky bot, Nov 4: readers couldn't tell from the hover), one
+// line under the rule, in the rulebook's own words; the card text stays as printed.
+const LIMITS = {
+  'thieves.hideout': 'Trades still work on you: a rival can give you a member and recruit one of yours.',
+  'thieves.rob': 'Only followers they recruited or won can be stolen.',
+  'thieves.heist': 'This doesn’t use up your recruit.',
+  'red.hire': 'This doesn’t use up your recruit.',
+  'red.take': 'This doesn’t use up your recruit.',
+  'purple.crowdin': 'The extra minion is placed after everyone else’s, if a spare minion is left.',
+};
 /** A board space: full text, YOU GET (engine dry run), how it moves its contest, the cards it unlocks, Place here. */
 // past: named in the strip or the log (a move already made): the rule and who holds it, never today's "You'd get" (w2a #26)
 export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick, pinned = false, past = false, fresh = false }) {
@@ -576,18 +587,27 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
       {/* plate 1b: the name, its one-sentence rule, then "You'd get" (the picture lives on the space itself) */}
       <h4 className="sc-name" title={`${Q.name} · ${RINGS[a.ring - 1]}`}>{a.name}</h4>
       <p className="sc-rule"><RuleText def={a} round={round} lines /></p>
+      {LIMITS[`${qid}.${a.key}`] ? <p className="sc-limit" data-limit=""><Rich text={LIMITS[`${qid}.${a.key}`]} /></p> : null}
       <div className="lt-yd">
-        {pv && pv.copies && !all ? <Row k="Can copy">{pv.copies.length ? pv.copies.map(k => spaceName(state, k)).join(', ') : 'nothing yet'}</Row> : null}
+        {/* nothing to copy: the space pays only its flat gain, and says so (picky bot, Nov 4: Reprise's "You'd get +1 green"
+            with no minion of yours on the wheel read as the copy's) */}
+        {pv && pv.copies && pv.copies.length && !all ? <Row k="Can copy">{pv.copies.map(k => spaceName(state, k)).join(', ')}</Row>
+          : pv && !all && /^Copy (?:an|the previous) action\b/.test(a.text) && onlyFlat(pv, a.text) ? <Row k="Can copy"><span data-copy-none=""><Rich text={nothingToCopy(a.text)} /></span></Row> : null}
         {all ? <Row k="Copies"><span data-copies-all>{all.names.length ? all.names.join(', ') : 'nothing yet'}</span></Row> : null}
         {all && all.skips ? <Row k="Skips"><span data-copies-skip>{all.skips}</span></Row> : null}
         {open && viewer != null && !state.over ? <div className="lt-yd-row youd"><span className="k">You’d get</span><span className="v"><YoudGet state={state} pid={viewer} q={q} i={i} now /></span></div> : null}
         {/* why a member changed the number, or stayed off ("Underdog: no ×2 (Hustler’s +3 lands first)"), from the dry run */}
-        {open && pv && pv.reasons && pv.reasons.length ? <Row k="Why"><span data-reasons><Rich text={whyLine(pv.reasons)} /></span></Row> : null}
+        {/* a rival's gain says why too (picky bot, Nov 4: "rivals +1 blue in all" was a rival's cloak, unnamed) */}
+        {open && pv && ((pv.reasons && pv.reasons.length) || (pv.theirReasons && pv.theirReasons.length)) ? <Row k="Why"><span data-reasons><Rich text={whyLine([...(pv.reasons || []), ...(pv.theirReasons || [])])} /></span></Row> : null}
         {/* a few by name; the whole row is said as one (it listed all ten names, the row you can already see) */}
         {pv && pv.swept && pv.swept.length ? <Row k="Sweeps away">{pv.swept.length > 3
           ? <span data-swept={pv.swept.join(' ')}>{pv.swept.length === state.shop.length ? `the whole row (${pv.swept.length})` : `${pv.swept.length} face-up members`}</span>
           : pv.swept.map((u, k) => <span key={u} data-swept={u}>{k ? ', ' : ''}<CardName state={state} uid={u} /></span>)}<small className="lt-swept-note"> back under the deck</small></Row> : null}
         {open && viewer != null && !state.over ? <CopyChoices state={state} viewer={viewer} text={a.text} /> : null}
+        {/* the number that decides the space, before you take it (picky bot, Nov 4): who Hold Up would skip, and what each
+            color pays on Leaders' Tax */}
+        {open && viewer != null && !state.over && /Whoever’s turn is next skips/.test(a.text) ? <Row k="Skips"><span data-skips>{nextAfter(state, viewer)}</span></Row> : null}
+        {open && pv && pv.colorPays ? <Row k="Pays"><span data-color-pays><Rich text={pv.colorPays.map(x => `+${x.n} ${x.color}`).join(' · ')} /></span></Row> : null}
         {/* the members the space lights, named (Cory, 2026-10-16: the lit cards say why) */}
         {open && pv ? targetLines(state, viewer, pv.targets, a.text).map(l => <Row key={l.k} k={l.k}><span data-aims={l.uids.join(' ')}>{l.text}</span></Row>) : null}
         {/* a second minion on it says why (w4 skeptic #13: two minions on one space, no reason): Squatter's join */}
@@ -603,6 +623,22 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
     </div>
   );
 }
+/** Whose turn comes after viewer's next one (Hold Up's "whoever's turn is next"), from the engine's queue. */
+export function nextAfter(state, viewer) {
+  const { order } = turnPlaces(state, viewer);
+  const k = order.indexOf(viewer);
+  const id = k < 0 ? undefined : order[k + 1];
+  return id === undefined ? 'nobody: no turns left this round' : id === viewer ? 'you (your next turn)' : state.players[id].name;
+}
+/** Whether the dry run gives exactly the rule's own flat gain ("… +1 green.") and nothing else: a copy with nothing to copy. */
+const onlyFlat = (pv, text) => {
+  const m = /\+(\d+) ([a-z]+)\.\s*$/.exec(String(text || ''));
+  if (!m || !pv.exact || !pv.you) return false;
+  const res = Object.entries(pv.you.res || {});
+  return res.every(([r, v]) => v[0] === (r === m[2] ? Number(m[1]) : 0)) && pv.you.followers[0] === 0 && pv.you.members[0] === 0;
+};
+/** "Nothing yet: only its +1 green", from the rule's own flat gain ("… +1 green."), else "Nothing yet". */
+export const nothingToCopy = text => { const m = /\+(\d+) ([a-z]+)\.\s*$/.exec(String(text || '')); return m ? `Nothing yet: only its +${m[1]} ${m[2]}` : 'Nothing yet'; };
 /**
  * The dry run's reasons, one per member: a choice runs one branch per pick, so the same member came back once per
  * branch ("Gardener: +1●, +1● · Gardener: +1●, +1● · Gardener: …", Snap Up). A member whose part differs by pick says so.
@@ -669,14 +705,19 @@ const spaceName = (state, key) => { const [q, i] = key.split('-').map(Number); c
 export function StandingsCard({ state, qid, meId = null }) {
   const st = standings(state).find(x => x.qid === qid);
   if (!st) return null;
+  // the whole prize, as the rim prints it (st.prize is already halved when the lead is tied)
+  const now = Math.min(3, Math.max(1, state.round || 1));
+  const seats = seatOrder(state);
   // the rim is the contest only: a sphere's own rule ("Copies never reach the center…") read as a scoring rule there and
   // is general besides (w4b #33, w3a #29); the rulebook says it, and a copy space's "Can copy" row lists only what's legal
   // what the rim's prize pays, in words (Cory, 2026-10-15): "Round end: whoever has the most white gets 2 followers"
   return (
     <>
-      <p className="lt-prize-line" data-prize-line={qid}>A bonus every round, not the final score: at this round’s end, whoever has the {ruleWords(qid, st.rule).replace(/^Most /i, 'most ')} gets {st.prize} follower{st.prize === 1 ? '' : 's'} ({RING_VALUE.map(v => `+${v}`).join(' / ')} in rounds I / II / III; ties pay half each, rounded up).</p>
+      {/* the prize once, the other rounds' once, the tie rule once (picky bot, Nov 4: it said the prize three ways and
+          the tie rule twice); the rows in the seats' order, so a player is found where their seat is */}
+      <p className="lt-prize-line" data-prize-line={qid}>At the end of round {roman(now)}: +{RING_VALUE[now - 1]} followers to whoever has the {ruleWords(qid, st.rule).replace(/^Most /i, 'most ')} (round {RING_VALUE.map((v, k) => [k, v]).filter(([k]) => k + 1 !== now).map(([k, v]) => `${roman(k + 1)} +${v}`).join(', ')}). Tied leaders get half each, rounded up.</p>
       <ContestOrderLine state={state} qid={qid} />
-      <ContestStandings state={state} st={st} meId={meId} brief />
+      <ContestStandings state={state} st={{ ...st, rows: [...st.rows].sort((a, b) => seats.indexOf(a.id) - seats.indexOf(b.id)) }} meId={meId} brief />
     </>
   );
 }

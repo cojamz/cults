@@ -20,6 +20,10 @@ import { contextFor } from '../../engine/v4/core.js';
 // wrong"): a growing space says next round's number instead, and nothing in round III
 // "+4 next round" then read as a promise to the taker (Cory, Oct 24): the growth is said as the space's schedule,
 // round by round, no verb (/card-words: a schedule, not a promise)
+// One rule for every space that grows (picky bot, Nov 4: Build Up printed "+3 green / I +3 · II +4 · III +5", saying its
+// number twice, while Gather, Stash, Savings, Hold Up, Sleep In and Right Away printed one number and read as flat):
+// line 1 is this round's number, the schedule sits in line 3 wherever the panel has room, and the hover's I / II / III
+// rows say it on every space.
 const run = (f, unit = '') => `${unit}${[1, 2, 3].map(n => `${['I', 'II', 'III'][n - 1]}\u00a0${f(n)}`).join('\u00a0· ')}`;
 // Line 2 stays within about 16 letters a line: at 1270×700 a narrow panel holds two short lines of it (Cory: "cut words
 // or step the size down. Never clip and never abbreviate into code"); a line 2 that doesn't fit drops whole. A condition
@@ -32,7 +36,7 @@ const P = {
     // "+1 to anyone" (w3): the gift goes to a rival only, never to you. "1 of what?" says gold; "you pick who" read
     // awkwardly (live panel r1): the note runs on from line 2 ("…to a rival / of your choice")
     jv: { main: '+3 gold', second: '+1 gold to a rival', note: 'of your choice' },
-    rush: r => ({ main: `+${2 * r} gold`, second: run(n => `+${2 * n}`) }),
+    rush: r => ({ main: `+${2 * r} gold`, note: run(n => `+${2 * n}`) }),
     // "Save 4" read as keeping 4 resources (blind testers, 2026-10-15): it's money off, said as a shop says it
     discount: { verb: '4 off', second: 'your next member' },
     steal: { main: '+3 gold', second: 'from rivals' },
@@ -44,15 +48,17 @@ const P = {
   red: {
     // the +2 red sat in line 3, which drops on the outer ring (round I review, Oct 25): it takes line 2, as Right Away's purple
     evenswap: { verb: 'Use a shop member’s On Recruit', second: '+2 red', note: 'it stays in the shop' },
-    turnout: r => ({ main: `+${r + 1} red`, second: `+${r} @f if you recruit a member` }), // Cory, Oct 31
+    turnout: r => ({ main: `+${r + 1} red`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 1}`, 'red: ') }), // Cory, Oct 31
     opendoor: { verb: 'Recruit the cheapest', second: 'in the shop, free', note: '+1 red' }, // all piles' Walk-In (Open Door's old words)
-    hire: { verb: 'Recruit the top of the deck', second: '+1 red to all' }, // the rivals' red sat in line 3, which drops on the outer ring (blind panel, Nov 1)
+    // "+1 red to all" read as everyone, you too, or not (picky bot, Nov 4): yours, then the rivals'; "each rival +1"
+    // took a second line and dropped on the outer ring
+    hire: { verb: 'Recruit the top of the deck', second: '+1 red, rivals +1' }, // the rivals' red sat in line 3, which drops on the outer ring (blind panel, Nov 1)
     hireup: { verb: 'Promote to one costing up to 2 more +3 red' },
     trade: { verb: 'Demote to one costing up to 2 less +3 red' },
     take: { verb: 'Free member costing 8 or less', second: '+1 red' },
   },
   market: {
-    bargain: r => ({ main: `+${r + 1} blue`, second: '1 shop member to the bottom' }), // Cory, Oct 31 ("may" made line 2 too long; it dropped)
+    bargain: r => ({ main: `+${r + 1} blue`, second: '1 shop member to the bottom', note: run(n => `+${n + 1}`, 'blue: ') }), // Cory, Oct 31 ("may" made line 2 too long; it dropped)
     restock: { verb: 'Send one color to the bottom', second: '+1 blue per member sent', note: '+1 blue' },
     // line 2 was too long and dropped whole at the wheel's bottom, taking the blue with it (round I review, Oct 25)
     showroom: r => ({ main: `+${2 * r} blue`, second: 'peek at the top 4', note: run(n => `+${2 * n}`, 'blue: ') }),
@@ -74,23 +80,26 @@ const P = {
     // the center drops line 2, so it's whole in line 1. Your own next turns, moved up, not extra ones (Cory, 2026-10-15)
     // Cory, 2026-10-22: place on taken spaces for the rest of the round
     // Cory, 2026-10-22: the old game's "Gain 4 purple, skip next turn"
-    skip: r => ({ main: `+${r + 3} purple`, second: 'take the Goes Last token' }),
-    holdup: r => ({ main: `+${r + 1} purple`, second: 'whoever is next skips, even you' }),
+    skip: r => ({ main: `+${r + 3} purple`, second: 'take the Goes Last token', note: run(n => `+${n + 3}`, 'purple: ') }),
+    holdup: r => ({ main: `+${r + 1} purple`, second: 'whoever is next skips, even you', note: run(n => `+${n + 1}`, 'purple: ') }),
     // the center ring can drop line 2 (round III since Oct 22): line 1 says it whole
     // Cory, 2026-10-28: +5 purple and a minion this round
     crowdin: { verb: '+1 minion this round', note: '+3 purple' },
     rally: { verb: 'Your next two turns, now', note: '+2 purple' },
-    again: r => ({ verb: 'Your next turn, now', note: `+${r} purple` }),
+    again: r => ({ verb: 'Your next turn, now', second: `+${r} purple`, note: run(n => `+${n}`, 'purple: ') }),
   },
   silver: {
     // "others get 1" left "1 of what?" (live panel r1): silver
     toast: r => ({ main: `+${3 * r} silver`, second: `others get ${r} silver`, note: run(n => `+${3 * n}`) }),
     polish: { verb: '2 silver → 4 any', second: 'colors you choose' },
     // "+2 per silver" read as per silver you hold (Cory, Nov 1: "VERY misleading"): the giving leads
-    partygifts: { verb: 'Give rivals up to 3 silver', second: '+2 @f each', note: 'from the bank' },
+    // "+2 @f each" read as each rival (picky bot, Nov 4): per silver given, never "per silver" alone (Cory, Nov 1)
+    partygifts: { verb: 'Give rivals up to 3 silver', second: '+2 @f per silver given', note: 'from the bank' },
     favors: { main: '+2 silver', second: 'rivals give you 1, get 2 silver' }, // their 2 silver dropped with line 3 (wheel fit, Nov 3)
     // ring II's line 2 drops at some turns of the wheel and left a bare "+3 silver" (picky bot, Nov 4): whole in line 1
     tongue: { verb: '+3 silver, then turn silver into colors' },
+    // Largesse keeps "+1 @f each": the center ring holds about ten letters there, and "per silver given" dropped line 2
+    // whole (picky bot, Nov 4); its hover says per silver you give
     largesse: { verb: 'Give rivals up to 10 silver', second: '+1 @f each', note: 'from the bank' },
   },
   yellow: {
@@ -98,7 +107,7 @@ const P = {
     // yellow of Dilute, Big Dilute and Makeover; Melting Pot's long sentence ran off its panel (Claude, gut call, Nov 1)
     harvest: r => ({ main: `+${r + 2} any`, second: 'colors you choose', note: run(n => `+${n + 2}`) }),
     // New Blood and Big New Blood (Nov 4): Gather's shape, the condition in line 2
-    dilute: r => ({ main: '+2 yellow', second: `+${r + 1} yellow if you recruit a new color` }),
+    dilute: r => ({ main: '+2 yellow', second: `+${r + 1} yellow if you recruit a new color`, note: run(n => `+${n + 1}`, 'new color: ') }),
     // Housewarming took Big New Blood's place (Nov 4, overnight quality loop)
     housewarming: { main: '+2 yellow', second: 'free new-color member, up to 5' },
     meltingpot: { verb: '+1 any per member color', note: '+2 yellow' },
@@ -116,7 +125,7 @@ const P = {
   },
   thieves: {
     pickpocket: r => ({ verb: `Steal ${r + 2}`, second: 'split among rivals', note: run(n => `${n + 2}`) }),
-    tipoff: r => ({ main: `+${r + 1} magenta`, second: `+${r} @f if you recruit a member` }), // Gather's shape (Cory, Oct 31)
+    tipoff: r => ({ main: `+${r + 1} magenta`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 1}`, 'magenta: ') }), // Gather's shape (Cory, Oct 31)
     hideout: { verb: 'Steal 1, then safe from steals', second: 'this round', note: '+1 magenta' },
     rob: { verb: 'Steal 3 @f from a rival', note: '+1 magenta' }, // Nov 4: followers, not half a pile
     ransom: { verb: 'Rival pays or loses a member costing 5 or less', note: '+1 magenta' },
@@ -134,7 +143,7 @@ const P = {
     // "All for followers" hid that you pay (tester A, live panel r1; the charge is Cory's call): it says so in line 1
     boom: { verb: 'Pay all your resources: +1 @f each', second: 'you may keep your white' },
     // White's Oct 22 spaces (Cory's set): they had no panel words, so the board cut each to its first four words
-    stipend: r => ({ main: `+${r + 1} white`, second: `+${r} @f if you recruit a member` }), // Gather's shape (Cory, Oct 31)
+    stipend: r => ({ main: `+${r + 1} white`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 1}`, 'white: ') }), // Gather's shape (Cory, Oct 31)
     // White's three round I spaces lead with their white, then the follower part (Cory, Nov 4: "the white actions are hard
     // to understand what they do at a glance"): Splurge's +1 white sat on line 3, which most rings drop
     splurge: r => ({ main: '+1 white', second: r === 2 ? '+1 @f per resource spent on a member' : '+1 @f per 2 spent on a member' }), // per 1 in round II (Cory, Nov 1)
@@ -148,7 +157,7 @@ const P = {
   },
   echo: {
     hum: { verb: 'Copy an action', second: 'with no minion on it', note: '+1 green' },
-    chant: r => ({ main: `+${r + 2} green`, second: run(n => `+${n + 2}`) }),
+    chant: r => ({ main: `+${r + 2} green`, note: run(n => `+${n + 2}`) }),
     // the hover's own words, "since your last turn" (w4b #22: "a rival just took" said it two ways)
     echo: { verb: 'Copy previous action', note: '+1 green' },
     // Cory, 2026-10-28: a rival member's On Recruit, not a space

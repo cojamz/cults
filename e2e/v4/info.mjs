@@ -258,7 +258,7 @@ async function rimCheck(page, step) {
     await page.mouse.move(p.x, p.y); await page.waitForTimeout(150 + HOVER_DELAY_MS);
     const kind = await page.evaluate(() => { const c = document.querySelector('[data-hover-layer][data-open="1"] [data-hover-card]'); return c ? c.dataset.hoverCard : null; });
     if (kind !== 'plaque') fail(`(o) hovering ${p.what} opened ${kind || 'nothing'}, not the standings`, step);
-    else if (!(await page.evaluate(() => /A bonus every round, not the final score: at this round’s end, whoever has the .+ gets \d+ followers?/.test(document.querySelector('[data-hover-layer][data-open="1"]').innerText)))) fail(`(o) the standings for ${p.what} never say the prize is followers, every round ("A bonus every round… gets N followers")`, step);
+    else if (!(await page.evaluate(() => /At the end of round I{1,3}: \+\d+ followers to whoever has the .+ \(round I{1,3} \+\d+, I{1,3} \+\d+\)/.test(document.querySelector('[data-hover-layer][data-open="1"]').innerText)))) fail(`(o) the standings for ${p.what} never say the prize is followers, every round ("At the end of round I: +4 followers to… (round II +6, III +10)"; picky bot, Nov 4)`, step);
   }
   await page.mouse.move(4, 690); await page.waitForTimeout(200);
 }

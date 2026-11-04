@@ -161,6 +161,41 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
   // its sum ("Prospector: +2 gold"), never one firing's amount (blind tester B: the Why said +1 where each paid +2).
   const reasons = [];
   const resWords = res => Object.entries(res).filter(([, d]) => d).map(([r, d]) => `${d > 0 ? '+' : '−'}${Math.abs(d)} ${r}`).join(', ');
+  // what the space leaves standing for a recruit later this turn (Gather, Stash, Allowance: "+2 followers if you recruit a
+  // member"; Splurge: per resource paid), which no branch has paid yet: "You'd get" left it out (picky bot, Nov 4)
+  const ifRecruit = (() => {
+    const s = leaves[0];
+    if (!s) return null;
+    const me = s.players[pid], had = (me0.recruitFollowers || []).length;
+    const added = (me.recruitFollowers || []).slice(had).filter(x => x.n > 0 && !x.color && !x.patron);
+    const followersIf = added.reduce((t, x) => t + x.n, 0);
+    const per = me.perSpend && !me0.perSpend ? (state.round === 2 ? 1 : 2) : 0;
+    return followersIf || per ? { followers: followersIf, per } : null;
+  })();
+  // a first pick of a color whose engine label carries what it pays ("red (+2)": Leaders' Tax), for the hover to list
+  // every color's amount, the number that decides the pick (picky bot, Nov 4)
+  const colorPays = first && first.length > 1 && first.every(o => o.kind === 'color' && /\(\+\d+\)$/.test(o.label || ''))
+    ? first.map(o => { const m = /^(.*?)\s*\(\+(\d+)\)$/.exec(o.label); return { color: m[1], n: Number(m[2]) }; }) : null;
+  // a rival's gain needs its reason too: "rivals +1 blue in all" with nothing in the space giving rivals anything was a
+  // rival's cloak paying (picky bot, Nov 4: Blue Cloak on Out of Style, Purple Cloak on Hold Up): "P4's Blue Cloak: +1 blue"
+  const theirReasons = [];
+  // a member is a reason only when every branch has it (picky bot, Nov 4: the Why named Stunt Double and Roadie, which
+  // only one pick brings, beside a "You'd get" of every pick)
+  const inLeaves = new Map(), reasonOf = new Map();
+  // only what every branch pays them, as the rivals' line says only their sure gains
+  const theirCount = new Map();
+  for (const s of leaves) {
+    const seen = new Set();
+    for (const n of s.notes || []) {
+      if (n.p === pid || !n.res || !s.players[n.p]) continue;
+      const words = resWords(n.res);
+      const line = words && `${s.players[n.p].name}’s ${n.member}: ${words}`;
+      if (!line || seen.has(line)) continue;
+      seen.add(line);
+      theirCount.set(line, (theirCount.get(line) || 0) + 1);
+      if (!theirReasons.includes(line)) theirReasons.push(line);
+    }
+  }
   for (const s of leaves) {
     const by = new Map();
     for (const n of s.notes || []) {
@@ -172,9 +207,10 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
       by.set(n.member, g);
     }
     for (const [member, g] of by) {
+      inLeaves.set(member, (inLeaves.get(member) || 0) + 1);
       const text = g.all && g.texts.length > 1 && resWords(g.res) ? resWords(g.res) : [...new Set(g.texts)].join('; ');
       const line = `${member}: ${text}`;
-      if (!reasons.includes(line)) reasons.push(line);
+      if (!reasons.includes(line)) { reasons.push(line); reasonOf.set(line, member); }
     }
   }
   // one branch's change for you, as the screen words it ("likely +4 magenta · at best +1 member")
@@ -202,7 +238,7 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
   const keepLeaf = leaves.filter(spendsNothing).reduce((a, s) => (!a || worth(s, pid) > worth(a, pid) ? s : a), null);
   // every member some branch brings you (Open Door's tied cheapest: all four, not the best one's name)
   const joins = [...new Set(leaves.flatMap(s => s.players[pid].members.filter(u => !me0.members.includes(u) && s.cards[u].def !== FACE_DOWN)))];
-  return { exact, partial, capped, made, leaves: leaves.length, keep: keepLeaf ? change(keepLeaf) : null, you, others, asks: [...asks], theirAsks: [...theirAsks], copies, swept, reasons: reasons.slice(0, 6), sample: leaves[0], samples: leaves.slice(0, 16),
+  return { exact, partial, capped, made, leaves: leaves.length, keep: keepLeaf ? change(keepLeaf) : null, you, others, asks: [...asks], theirAsks: [...theirAsks], copies, swept, reasons: reasons.filter(l => inLeaves.get(reasonOf.get(l)) === leaves.length).slice(0, 6), theirReasons: theirReasons.filter(l => theirCount.get(l) === leaves.length).slice(0, 4), ifRecruit, colorPays, sample: leaves[0], samples: leaves.slice(0, 16),
     best: change(top.best), likely: change(top.likely), worst: change(top.worst), tied, mix,
     joins, targets: spaceTargets(state, pid, first, joins, leaves, capped || partial ? tried : null) };
 }

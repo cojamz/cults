@@ -98,13 +98,14 @@ export function copyAllPlan(state, pid, text) {
 }
 
 // A card or space that copies a member's On Recruit (or a member itself): which list its choice offers, from its words.
+// the fourth: what an empty list says, in the card's terms ("nobody yet" read as no players: picky bot, Nov 4)
 const COPY_KINDS = [
-  [/copy the On Recruit of a rival[’']s member/i, 'rival', 'Could copy'],
-  [/copy the On Recruit of (?:each of your members|another of your members)/i, 'own', 'Could copy'],
-  [/use the On Recruit effect of a shop member/i, 'shop', 'Could use'],
-  [/becomes a copy of a rival[’']s member/i, 'rivalMember', 'Could copy'],
-  [/becomes a copy of another of your members/i, 'ownMember', 'Could copy'],
-  [/choose a rival[’']s member\. Until you choose again/i, 'rivalMember', 'Could choose'],
+  [/copy the On Recruit of a rival[’']s member/i, 'rival', 'Could copy', 'No rival member has an On Recruit yet'],
+  [/copy the On Recruit of (?:each of your members|another of your members)/i, 'own', 'Could copy', 'None of your members has an On Recruit yet'],
+  [/use the On Recruit effect of a shop member/i, 'shop', 'Could use', 'No shop member has an On Recruit'],
+  [/becomes a copy of a rival[’']s member/i, 'rivalMember', 'Could copy', 'No rival has a member yet'],
+  [/becomes a copy of another of your members/i, 'ownMember', 'Could copy', 'You have no other member yet'],
+  [/choose a rival[’']s member\. Until you choose again/i, 'rivalMember', 'Could choose', 'No rival has a member yet'],
 ];
 /**
  * The members a copy card or space (Sample, Greatest Hits, Tryout, Bootlegger, Impostors, Doppelganger, Impersonator)
@@ -119,6 +120,6 @@ export function copyChoices(state, pid, text, self = null) {
     const ctx = contextFor(state), p = state.players[pid];
     const raw = hit[1] === 'shop' ? borrowable(ctx).map(c => ({ uid: c.uid, def: c.def })) : copyOptions(ctx, p, hit[1], self);
     const ownerOf = u => state.players.find(o => o.members.includes(u));
-    return { label: hit[2], list: raw.map(x => ({ ...x, owner: ownerOf(x.uid) || null })) };
+    return { label: hit[2], none: hit[3], list: raw.map(x => ({ ...x, owner: ownerOf(x.uid) || null })) };
   } catch { return null; }
 }
