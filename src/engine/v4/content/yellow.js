@@ -370,6 +370,18 @@ export default {
     m('dyer', 'Dyer', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true, ...old1, ...old5, ...old9('yellow.dyer'),
       onRoundStart(ctx, owner) { ctx.gain(owner, Y, held(ctx, owner).length); },
     }),
+    // REPLACE9 bot test (Members C, Nov 4, batch bC2: paper 14 vs Dyer's 11, Yellow's set 14 -> 15): Dyer's place. 5 yellow
+    // + 2 any as a player sees it. Counts full sets as its Round Start comes up (setsOf: Jack-of-All-Trades' yellow fills
+    // gaps); keeps nothing, pays nothing.
+    ...add9(m('tailor', 'Tailor', 4, 2, 'Round Start: +1 follower per full set you hold.', {
+      onRoundStart(ctx, owner) {
+        const k = setsOf(ctx, owner);
+        if (!k) return;
+        owner.bonus += k;
+        ctx.log(`${owner.name}'s Tailor: ${k} full ${k === 1 ? 'set' : 'sets'}, +${k} ${k === 1 ? 'follower' : 'followers'}.`);
+      },
+      ...see(i => endsAhead(i).filter(r => r > i.round).length * 1.5), // BOTSEE: about 1 or 2 sets at each later round start
+    })),
     // REPLACE9 bot test (Members C, Nov 4): Dyer's place. 5 yellow + 2 any as a player sees it. A full set is 1 of each
     // color on the table (setsOf). Once per game (Cory, Nov 4 12:35am: "Once per round is really strong"): up to 3 full
     // sets become 6 followers each, paying 1 of each color per set (uncapped, a bot turned 6 sets into 36). No full set: nothing happens and the use comes back.

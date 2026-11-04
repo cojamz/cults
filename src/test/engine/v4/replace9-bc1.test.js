@@ -1,9 +1,10 @@
 // @vitest-environment node
-// Members C, batch bC1 (Nov 4 scale-up): Power Shoppers (Snobs' place) and Stand-In (Extra Hand's place), under REPLACE9.
+// Members C, batches bC1 and bC2 (Nov 4 scale-up), under REPLACE9: Power Shoppers (Snobs' place), Stand-In (Extra
+// Hand's place), Tailor (Dyer's place), Dabbler (Dabblers' place).
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE9 = 'powershoppers,standin';
-const { applyMove } = await import('../../../engine/v4/core.js');
+process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler';
+const { applyMove, countMembersOfColor } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move } = await import('./helpers.js');
 const { table, named, uidIn } = await import('./cards-helpers-b.js');
@@ -57,5 +58,32 @@ describe('Stand-In: "Round Start: if you have the fewest followers (ties count),
   it('not the fewest: nothing', () => {
     const s = start([5, 3, 6]);
     expect(named(s, 'Stand-In')).toEqual([]);
+  });
+});
+
+describe('Tailor: "Round Start: +1 follower per full set you hold."', () => {
+  it('price, and Dyer retired', () => {
+    const d = defById('yellow.tailor');
+    expect([d.s, d.w]).toEqual([5, 2]);
+    expect(defById('yellow.dyer').retired).toBe(true);
+  });
+  it('2 full sets at round II start: +2 followers; none: nothing', () => {
+    const go = res => table(Q4, { n: 2, round: 1, res: [res], members: [['yellow.tailor']], queue: [{ t: 'round', r: 2 }] });
+    let s = go({ red: 2, yellow: 3, blue: 2, purple: 2 });
+    expect(named(s, 'Tailor')).toContain("P1's Tailor: 2 full sets, +2 followers.");
+    s = go({ red: 2, yellow: 3, blue: 2 });
+    expect(named(s, 'Tailor')).toEqual([]);
+  });
+});
+
+describe('Dabbler: "Counts as a member of every color."', () => {
+  it('price, and Dabblers retired', () => {
+    const d = defById('benders.dabbler');
+    expect([d.s + d.w]).toEqual([2]);
+    expect(defById('benders.dabblers').retired).toBe(true);
+  });
+  it('one member of each color on the table', () => {
+    const s = table(Q4, { n: 2, members: [['benders.dabbler']] });
+    for (const q of Q4) expect(countMembersOfColor(s, s.players[0], q)).toBe(1);
   });
 });

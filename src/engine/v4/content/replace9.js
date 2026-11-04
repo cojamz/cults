@@ -1,7 +1,8 @@
 // Members C (overnight quality loop, Nov 4; /mnt/project-files/quality/pitches/C-*.md), bot games only. REPLACE9=1
 // deals each new member in its old card's place (the old card is retired, so never dealt):
 //   yellow.customs -> yellow.tollkeeper
-//   yellow.dyer -> yellow.quilter
+//   yellow.dyer -> yellow.quilter (rarely bought in its trial), or yellow.tailor (Tailor; not part of REPLACE9=1)
+//   benders.dabblers -> benders.dabbler (Dabbler, the single version)
 //   market.critic -> market.lastminute (or market.lastminute2, the +2-resources alternate; not part of REPLACE9=1)
 //   market.regular -> market.bargainhunter
 //   benders.extrahand -> benders.hypnotist (too strong in its trial), or benders.standin (Stand-In; not part of REPLACE9=1)
@@ -14,8 +15,8 @@
 // Unset, the new cards are never defined and nothing in the game changes.
 const VAL = globalThis.process?.env?.REPLACE9 || '';
 /** new card key -> the old card id it takes the place of */
-const REPLACES = { tollkeeper: 'yellow.customs', quilter: 'yellow.dyer', lastminute: 'market.critic', lastminute2: 'market.critic', bargainhunter: 'market.regular', hypnotist: 'benders.extrahand', ambassadors: 'yellow.caravan', seamstress: 'yellow.harmonist', mannequin: 'market.hawkers', stallholder: 'market.hawkers', hawker2: 'market.hawkers', powershoppers: 'market.snob', standin: 'benders.extrahand' };
-export const ON9 = VAL === '1' ? Object.keys(REPLACES).filter(k => !['lastminute2', 'mannequin', 'stallholder', 'ambassadors', 'hypnotist', 'standin'].includes(k)) : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
+const REPLACES = { tollkeeper: 'yellow.customs', quilter: 'yellow.dyer', lastminute: 'market.critic', lastminute2: 'market.critic', bargainhunter: 'market.regular', hypnotist: 'benders.extrahand', ambassadors: 'yellow.caravan', seamstress: 'yellow.harmonist', mannequin: 'market.hawkers', stallholder: 'market.hawkers', hawker2: 'market.hawkers', powershoppers: 'market.snob', standin: 'benders.extrahand', tailor: 'yellow.dyer', dabbler: 'benders.dabblers' };
+export const ON9 = VAL === '1' ? Object.keys(REPLACES).filter(k => !['lastminute2', 'mannequin', 'stallholder', 'ambassadors', 'hypnotist', 'standin', 'quilter', 'tailor'].includes(k)) : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
 export const REPLACE9 = ON9.length > 0;
 /** The new card, in its color's member list only when it is switched on. */
 export const add9 = card => (ON9.includes(card.key) ? [card] : []);
