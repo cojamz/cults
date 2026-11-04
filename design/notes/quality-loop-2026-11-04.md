@@ -8,19 +8,19 @@ Each card scores 0, 1 or 2 on ten questions. 0 = fails it, 1 = fine, 2 = a reaso
 | # | Question | 2 looks like | 0 looks like |
 |---|---|---|---|
 | C1 Clear | Can a table read it cold and say what will happen before choosing it? | One sentence in card words; outcome known in advance | Needs a rules lookup, hidden math, or surprises its owner |
-| C2 Trackable | Could a physical table run it with cards and tokens? | Visible state only | Memory of earlier turns, hidden counts |
+| C2 Trackable | Does it translate to the board game: nothing written down, nothing held in your head, the state easy to look up on the table? | Everything it needs is visible on the board or the card | Players must remember or write something down, even if they technically could track it |
 | C3 Feels good | Does it feel powerful when it fires? | A big moment, a rule bent, a relative amount | +1 of something, forgettable |
 | C4 Fun | Does someone at the table react, and does it feel fair to the person it hits? | A sting the victim shrugs off or can see coming and block, a gift, a block, a "nice" | Nobody notices, or the victim feels robbed: losing a member before round III, choosing their own punishment, being singled out with no answer (Cory on Shake Down: "just feels too bad") |
 | C5 Interacts | Does it care about its color's spaces/members or other colors (implicit beats "rival")? | Combos named in two or more cards / colors | Works the same in any cult |
-| C6 Its color | Is it a recognizable, new way into its color's theme? | Adds an angle the color lacks, unmistakably this color | Off-theme, or a copy of a sibling |
+| C6 Its color | Is it a natural fit in its color, or does it play with the color's neighboring members? It need not use the keyword literally (a green card needn't copy). | Feels like it belongs and adds an angle or a link the color lacks | Feels pasted in from another color, or repeats a sibling |
 | C7 Momentum | Do choices stack: does it build an engine or answer one, with a payoff you can see coming? | Gets better with the cards around it | Same value in any game |
 | C8 Agency | Is there a real decision in buying, aiming or timing it? | Two sides worth weighing (target, timing, when to buy) | Always buy / never buy; autopilot |
 | C9 Catch-up | Can a trailing player use it cleverly, or does it only reward the leader? | Pays more to the player behind, or punishes runaway | Pure rich-get-richer, no counterplay |
-| C10 Worth it | At its price/slot, is it a real option against the best alternative, with an answer at the table? | Often the right pick, and rivals have a counter | Dead, must-buy, or strong with no counter (Cory on Loyalists: "too strong… just have no counter") |
+| C10 Worth it | At its price, is it a real option against the best alternative, with an answer at the table, and would a first-time player understand it and where it fits after reading it once or twice? | Often the right pick, rivals have a counter, and a new player gets it | Dead, must-buy, strong with no counter, or a new player can't see what it's for |
 
-Hard fails (the card is at the bottom whatever it scores): relies on a rival having more resources than you (Cory, Nov 4); needs tracking a table can't do (Nov 1); a single-member card with a plural name or a multi-member card with a singular name; text that restricts beyond Cory's call.
+Hard fails (the card is at the bottom whatever it scores): any randomness (only Red recruiting from the top of the pile is allowed; Cory, Nov 4: "a big thing is we avoid randomness"); relies on a rival having more resources than you (Cory, Nov 4); needs tracking a table can't do (Nov 1); a single-member card with a plural name or a multi-member card with a singular name; text that restricts beyond Cory's call.
 
-The bar: 13 of 20 or more, no 0 on C1, C3 or C4, no hard fail. A redesign must clear the bar and beat the card it replaces by at least 2 points with paper judges, then pass the play gate.
+The bar: 13 of 20 or more, no 0 on C1, C3 or C4, no hard fail. A redesign must clear the bar and beat the card it replaces by at least 3 points with paper judges (Cory, Nov 4), then pass the play gate.
 
 Round III spaces are judged on the same rubric but only reworked when they score under 10.
 
@@ -67,3 +67,17 @@ Chat threads load no skills: read each SKILL.md by path from .claude/skills/<nam
 - Shape budget: at most one card per shape per batch ("per rival with more/fewer X", "whenever a rival ...", "+1 follower per X").
 - Not adopted: making "counts a rival's followers or members" a hard fail. Cory's rule is about resources, and followers and members aren't resources (rival-resources-audit.md); such cards still answer C9 honestly.
 - The play gate's win rate (about 20 owner games, about plus or minus 20 points) is a "nothing broken" check, not a quality score; quality comes from the judges.
+
+## v2 changes from Cory's notes (Nov 4, 12:08am)
+- **Bigger batches:** each slot gets 4 to 5 candidates, not 3. Each designer runs up to 3 slots at once.
+- **Built right before it's tested** (Cory: "you need to check that like what you actually implemented is working correctly"): before any bot game, every new card passes (a) a unit test per sentence of its text, (b) a scripted scenario that sets up the turn from its pitch and checks the state after, (c) a read of 3 bot games' logs where it fired, checking the log line says what the card says. The Lab refuses a trial without all three. A bug found later voids that card's trial.
+- **Beat the old card by 3**, so a replacement wins on at least two questions.
+- **Whole-set check against local minima** (Cory: "the previous card maybe fit better into the set overall, or was less obvious how it was a connector"): the paper gate also scores the color as a set, with and without the swap: does each card have a role, do the combos still connect, is any role now missing. A replacement that lowers the set score fails even if it beats the old card. A card named in two or more other cards' combo lines is a connector: its replacement must keep those links or make new ones, and the judges see the cards it connects to.
+
+## Steering: the meta harness (owned by the Process critic)
+The Process critic checks the judges and designers; steering checks whether the whole game is moving toward the feel Cory wants, and changes the plan when it isn't.
+- **The dashboard, after every batch** (/mnt/project-files/quality/dashboard.md): per color, the median card score, the share of cards over the bar, and a set score (judges score each color as a whole: distinct roles, combos that connect, a clear plan to win with it). Per game, from a fast bot run on the current build: choices per turn, how often a turn touches a rival, whether the round I leader just wins (catch-up), wins by 5 or fewer members (at least 20%), the round-by-round climb in what a turn gives, and dead or must-buy cards. From the play judge, the average answers to Cory's questions: could I tell what would happen, did my choices stack into momentum, could I change my chances, could I catch up.
+- **Predictions first:** before each batch, the Process critic writes what the batch should move on the dashboard; after, it scores the prediction. Two misses in a row from the same steering rule and the rule is rewritten.
+- **What steering can change, each batch:** which colors get designer time (largest gap from the bar first; a color with every card over the bar and a good set score is done and its lane moves on); rubric weights (a question whose paper score doesn't predict the play judge's loses weight; when a game metric lags, the question tied to it counts double next batch, e.g. catch-up lagging doubles C9); the designer brief; batch size; and explore against exploit.
+- **Explore against exploit:** when fewer than 1 in 5 candidates pass two batches running, the next batch explores (wilder briefs, at least one rule-bending idea per slot, the game-feel skill's step 6 wild alternatives). When more than 3 in 5 pass, the bar was too easy: raise it by 1 and log why. Every third batch, one slot per lane is an exploration slot regardless.
+- **Every steering change** is logged in process/log.md and the morning note with the dashboard numbers that caused it.
