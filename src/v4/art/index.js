@@ -94,6 +94,7 @@ for (const [key, name, source] of [
 // Red's redesign reuses retired portraits while names and final artwork settle.
 for (const [key, name, source] of [
   ['recruitbonus', 'Greeters', 'crowd'], ['movementpenalty', 'Movement Penalty', 'drive'],
+  ['fosterparents', 'Foster Parents', 'crowd'], // Nov 4: takes Greeters' place and its drawing (Greeters is retired)
   ['panel', 'Panel', 'bigfamily'], ['loyalists', 'Loyalists', 'twins'],
 ]) {
   const art = BY_ID.get(`red.${source}`);

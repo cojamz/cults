@@ -343,17 +343,18 @@ export default {
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 && ctx.membersOf(owner).filter(c => c.def.key !== 'missionaries').length >= ctx.state.players.length - 1,
     })),
-    m('recruitbonus', 'Greeters', 1, 1, 'Your On Recruits also give +1 of that member’s color.', { f: 2, ...old7('red.recruitbonus'),
+    // Foster Parents takes its place (Claude, under Cory's go-with-your-gut, overnight quality loop, 2026-11-04)
+    m('recruitbonus', 'Greeters', 1, 1, 'Your On Recruits also give +1 of that member’s color.', { f: 2, retired: true,
       onRecruitAbility(ctx, owner, card, recruited) { gainColorOf(ctx, owner, recruited.def, 'Greeters'); }, // a guest: nothing; Dabblers: pick
     }),
     // REPLACE7 bot test (Nov 4, quality loop, Members A): Greeters' place, a round I member as Greeters is. 2 red + 2 any
     // as a player sees it, counts as 2. Each of the owner's turns gets one more recruit step that offers only shop (or
     // reachable pile) members costing 3 or less (core: flag cheapBuy, the most any of the owner's cards prints).
-    // REPLACE7 (Nov 4, quality loop, Members A): Greeters' place, the lane's pick (paper 15, Red's set 13 -> 15). 2 red +
+    // Quality loop (Nov 4), live since Nov 4 (Claude, under Cory's go-with-your-gut): Greeters' place (paper 15, Red's set 13 -> 15; trial owners 33% vs 30%; blind play 1.50 vs 0.33). 2 red +
     // 2 any as a player sees it, counts as 2, a round I member as Greeters is. Pays when a member comes into its owner's
     // cult out of a rival's, whoever moves it (Promote, Demote, Panel, Body Snatchers, Poach, Shake Down, Kidnapper, a
     // rival's Promote that trades with you); not for the shop, and not for itself arriving.
-    ...add7(m('fosterparents', 'Foster Parents', 1, 2, 'Whenever a member joins your cult from a rival’s, +2 followers.', { f: 2, n: 2, round: 1,
+    m('fosterparents', 'Foster Parents', 1, 2, 'Whenever a member joins your cult from a rival’s, +2 followers.', { f: 2, n: 2, round: 1,
       onCultMove(ctx, owner, card, { uid, from, to }) {
         if (to !== owner || !from || from === owner || uid === card.uid) return;
         owner.bonus += 2;
@@ -361,7 +362,7 @@ export default {
       },
       // about one member in from a rival per round for a Red player (Promote, Demote, Body Snatchers)
       ...see(info => 2 * endsAhead(info).length),
-    })),
+    }),
     ...add7(m('ushers', 'Ushers', 1, 2, 'Each turn, you may also recruit one member costing 3 or less.', { f: 2, n: 2, round: 1, cheapBuy: 3,
       // about one cheap member a turn in round I, fewer later (the row holds few of them after round I)
       ...see(info => (info.round === 1 ? 0.6 * info.myNow + 2 : info.round === 2 ? 0.3 * info.myNow : 0)),
@@ -441,17 +442,21 @@ function swapSides(ctx, p, mode) {
 }
 const pairOk = (mode, excludeUid, a, b) => a.uid !== b.uid && a.id !== b.id /* two copies of one member (piles): no swap */ && a.uid !== excludeUid && b.uid !== excludeUid && !(b.owner && b.owner === a.owner) && (mode === 'even' ? a.cost === b.cost
   : mode === 'promote' ? b.cost <= a.cost + 2 : mode === 'rival' ? b.cost >= a.cost : b.cost <= a.cost && b.cost >= a.cost - 2);
+// Panel ("promote or demote another of your members") always gives one of the owner's own members; it never trades a
+// rival's member with the shop or with another rival's. Panel is the only caller that names a card to leave out
+// (itself). Promote and Demote keep reaching any cult (Cory, Nov 1 12:45pm), a question for him with their trade wording.
+const tradeOk = (p, excludeUid, a, b) => excludeUid == null || a.owner === p || b.owner === p;
 function swapPairs(ctx, p, mode, excludeUid = null) {
   const { first, second } = swapSides(ctx, p, mode);
   const out = [];
-  for (const a of first) for (const b of second) if (pairOk(mode, excludeUid, a, b)) out.push([a.c, b.c]);
+  for (const a of first) for (const b of second) if (pairOk(mode, excludeUid, a, b) && tradeOk(p, excludeUid, a, b)) out.push([a.c, b.c]);
   return out;
 }
 /** Is (a, b) one of swapPairs' pairs, as it stands now? */
 function swapAllowed(ctx, p, mode, excludeUid, ua, ub) {
   const { first, second } = swapSides(ctx, p, mode);
   const a = first.find(e => e.uid === ua), b = second.find(e => e.uid === ub);
-  return !!(a && b && pairOk(mode, excludeUid, a, b));
+  return !!(a && b && pairOk(mode, excludeUid, a, b) && tradeOk(p, excludeUid, a, b));
 }
 function swap(ctx, p, mode, prompt, excludeUid = null) {
   const pairs = swapPairs(ctx, p, mode, excludeUid);

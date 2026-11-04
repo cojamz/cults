@@ -84,7 +84,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
   it('the normal Red deck contains thirteen approved members (Body Snatchers in Triplets’ place, Nov 3), all priced at twelve or less (Mob 12, Cory Oct 24)', () => {
     const s = createGame({ seats: [{}, {}], quadrants: ['red', 'echo'], rules: { cull: true, guests: false } });
     const red = Object.values(s.cards).map(c => defById(c.def)).filter(d => d.quadrant === 'red');
-    expect(red.map(d => d.key).sort()).toEqual(['host', 'loyalists', 'mentor', 'mob', 'movementpenalty', 'panel', 'patriarch', 'proselytizer', 'recruitbonus', 'recruiter', 'bodysnatchers', 'volunteer', 'headhunter'].sort());
+    expect(red.map(d => d.key).sort()).toEqual(['host', 'loyalists', 'mentor', 'mob', 'movementpenalty', 'panel', 'patriarch', 'proselytizer', 'fosterparents', 'recruiter', 'bodysnatchers', 'volunteer', 'headhunter'].sort());
     expect(red.every(d => d.s + d.w <= 12 + EXTRA_WILD)).toBe(true); // printed 12 or less, plus the extra wild
     expect(['red.bigfamily', 'red.intern', 'red.drive', 'red.sponsor', 'red.crowd', 'red.reserve'].every(id => CUT.has(id))).toBe(true);
   });
