@@ -236,7 +236,7 @@ describe('REPLACE11: Sweet Nothings', () => {
     expect(s.players[0].res.silver).toBe(1);
     expect(s.players[2].res.silver).toBe(2);
     expect(s.players[1].res.silver).toBe(1);
-    expect(s.log.join('\n')).toContain("P1's Sweet Nothings: gives P2 +1, P3 +2 silver of their own, for 6 of any colors.");
+    expect(s.log.join('\n')).toContain("P1's Sweet Nothings: P1 hands over 3 of P1's silver (P2 +1, P3 +2), for 6 of any colors.");
     for (let i = 0; i < 6; i++) s = answer(s, 'color:red');
     expect(s.players[0].res.red).toBe(6);
   });

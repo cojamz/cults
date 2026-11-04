@@ -211,7 +211,7 @@ function sweetDone(ctx, p, data) {
   for (const [id, n] of Object.entries(given)) { p.res[S] -= n; giveTo(ctx, p, ctx.player(Number(id)), S, n); }
   afterGive(ctx, p, S);
   const list = Object.entries(given).map(([id, n]) => `${ctx.player(Number(id)).name} +${n}`).join(', ');
-  ctx.log(`${p.name}'s Sweet Nothings: gives ${list} silver of their own, for ${2 * total} of any colors.`);
+  ctx.log(`${p.name}'s Sweet Nothings: ${p.name} hands over ${total} of ${p.name}'s silver (${list}), for ${2 * total} of any colors.`);
   polishPick(ctx, p, 2 * total, 'Sweet Nothings');
 }
 
