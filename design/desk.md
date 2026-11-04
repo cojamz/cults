@@ -30,16 +30,16 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 | Run the project's work desk (Txef8sqacLxDEbLxdogRXq) | This page and the bot-game queue | Queue live; jobs strong8 and all-see posted | Runners switching to the queue as their shards finish |
 | Build a sturdier card-testing harness (QWRxpDneAqYbePDz7fWNJp) | One runner for card trials (scripts/trial/trial.mjs) | Pushed 80039f4d; real Hard check running | Its own results, then a plain write-up for Cory |
 | Find actions worth changing (37SKCeREcm1SMwDZUrcm4ch) | Short list of action changes (Cory: "spin that up") | Reading bot data on every action, By color | Its list; then Cory's picks |
-| Plan and run today's autonomous improvements (333bSCwXiSbXsUYNhenCzTk) | Member replacements in batches; strong8 and all-see runs | Batches 4-6 results pending; Impersonators, Creditors, Kidnappers next to go live | strong8 and all-see games (queue) |
+| Plan and run today's autonomous improvements (333bSCwXiSbXsUYNhenCzTk) | Member replacements | Live v0.99.525: Hostesses, Misers, Spoilsports, Body Snatchers. Set 2 (Impersonators, Creditors, Kidnappers, Godparents) in checks; set 3 (Night Watch, Second-Story Men, Hawkers, Sore Losers) building. strong8 and all-see games running | Nothing from Cory |
 | Rebuild the balance testing system (WndbGQVXTYkmTbch5utY89 / board line) | One balance command and report | By color comparison sent | Cory's read |
 | Build a sturdier card-testing harness (QWRxpDneAqYbePDz7fWNJp) | Fix red browser gates turnstory and members (verdict on 5402746) | Assigned Nov 3 8:06pm | Its fix |
 | Add sounds for each emoji (36p8Ui2WnqFNgW799SHmH7e) | Sounds for each emoji and for events like placing a minion | Starting | Its first pass; screen files: tell the animations thread |
 | Check how Dabblers count toward colors (3919oDSeUD78uBik4UEbwGf) | Check how Dabblers count toward colors | Starting | Its finding |
 | Revamp animations and info tracking (MNYf8WAC6G3t45GjNDaCkA) | Deep expert audit and revamp of animations and info tracking; Relaxed is still too fast (Cory, 8:03pm) | Starting | Its audit; merges coordinated through the desk |
 | Engineer a better wheel (AQfac66Psrms76zJQ6yhtS) | Engineering pass on the wheel (Cory, 8:03pm) | Starting | Its plan; merges coordinated through the desk (shares screen files with the animations thread) |
-| Plan and run today's autonomous improvements (333bSCwXiSbXsUYNhenCzTk): Melting Pot words | Reword so it reads clearly (Cory, 8:01pm) | Assigned Nov 3 8:06pm | Options to Cory before shipping |
-| Plan and run today's autonomous improvements (333bSCwXiSbXsUYNhenCzTk): Dilute | Rework or replace (Cory, 8:01pm: "I still don't like Dilute") | Assigned Nov 3 8:06pm | Options to Cory before shipping |
-| Plan and run today's autonomous improvements (333bSCwXiSbXsUYNhenCzTk): Mob | Rework; ties to the wide-cult pattern (Patriarch plus Mob holders win 64-87%) | Assigned Nov 3 8:06pm | Options to Cory before shipping |
+| Plan and run today's autonomous improvements (333bSCwXiSbXsUYNhenCzTk): Melting Pot words | Reword so it reads clearly (Cory, 8:01pm) | Options being written, to Cory ~8:45pm | Options to Cory before shipping |
+| Plan and run today's autonomous improvements (333bSCwXiSbXsUYNhenCzTk): Dilute | Rework or replace (Cory, 8:01pm: "I still don't like Dilute") | Options being written, to Cory ~8:45pm | Options to Cory before shipping |
+| Plan and run today's autonomous improvements (333bSCwXiSbXsUYNhenCzTk): Mob | Rework; ties to the wide-cult pattern (Patriarch plus Mob holders win 64-87%) | Options being written, to Cory ~8:45pm | Options to Cory before shipping |
 | Unowned: Silver and White Cloaks, maybe Red and Blue | Fix Silver and White, maybe tone down Red and Blue | Held | Very Hard results shown to Cory first |
 
 ## Runner threads (play bot games from the queue)
