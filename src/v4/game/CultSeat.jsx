@@ -250,7 +250,7 @@ export default function CultSeat({ state, pid, me = null, mine = false, now = fa
         </div>
       )}
       <div className="cs-crowd" {...bodyHover} role="group" aria-label={`${mine ? 'Your' : `${p.name}'s`} members: ${nMembers}`}>
-        <b className="cs-member-count num" data-members={nMembers} title="Members: each card counts its printed follower value, or its stated member count if higher"><b className="num cs-mc-n">{nMembers}</b><span> member{nMembers === 1 ? '' : 's'}</span></b>
+        <b className="cs-member-count num" data-members={nMembers} data-one={nMembers === 1 ? '1' : undefined} title="Members: each card counts its printed follower value, or its stated member count if higher"><b className="num cs-mc-n">{nMembers}</b><span> member<i className="cs-mc-s">s</i></span></b>
         {/* Lie Low and the like: no one can steal from this seat this round (w2b #21). A small shield under the member
             count (Cory's todo: the words crowded the row); its hover says it in words, the seat card too */}
         {safe && <small className="cs-safe" data-safe="1" role="img" aria-label="safe this round" title={`Safe this round: no one can steal members or resources from ${mine ? 'you' : p.name} until it ends`}><SafeShield /></small>}

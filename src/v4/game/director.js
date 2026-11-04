@@ -1247,8 +1247,13 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
     if (!b || !p) continue;
     let was = 0; try { was = memberCount(before, p); } catch { continue; }
     if (was === memberCount(ctx.state, ctx.state.players[a.to])) continue;
-    const h = holdStack({ querySelector: () => b }, was);
-    if (!h) continue;
+    // (its word follows the number it shows: "1 member", "2 members")
+    const box = b.parentElement, one = n => { if (!box) return; if (n === 1) box.dataset.one = '1'; else delete box.dataset.one; };
+    const now = memberCount(ctx.state, ctx.state.players[a.to]);
+    one(was);
+    const held = holdStack({ querySelector: () => b }, was);
+    if (!held) continue;
+    const h = { ...held, done: x => { held.done(x); one(now); } };
     memberHolds.set(a.to, h);
     // (a chain's end or skip lets go of it with the other holds)
     chain.holds.set(b, { h });
