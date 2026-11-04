@@ -14,7 +14,8 @@ export const STRAYS = new Set(['echo.doppel', 'benders.extrahand3', 'benders.big
   'yellow.customs', // Customs Officer, retired Nov 4 (Duty Collector)
   'echo.chronicler', // Chronicler, retired Nov 4 (Encore, Cory's call)
   'echo.evergreen', // Busker, retired Nov 4 (Song Request)
-  'trading.shopkeeper']); // Landlord, retired Nov 4 (Barker, Cory's extra follower buy)
+  'trading.shopkeeper', // Landlord, retired Nov 4 (Barker, Cory's extra follower buy)
+  'echo.roadie']); // Roadie (On Recruit / Round Start green), retired Nov 4 (Roadie reworked: green on every copy)
 export function stray(s, def) {
   const uid = Math.max(...Object.keys(s.cards).map(Number)) + 1;
   s.cards[uid] = { uid, def };

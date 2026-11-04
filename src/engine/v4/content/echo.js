@@ -796,7 +796,7 @@ const echoQ = {
         ctx.log(`${owner.name}'s Stagehand: ${n} minion${n === 1 ? '' : 's'} on Green spaces: +${n} follower${n === 1 ? '' : 's'}.`);
       },
     })),
-    m('roadie', 'Roadie', 1, 1, 'On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.', { now: true, ...old4, ...old10('copyist'), ...old10('stagehand'), ...old9('echo.roadie'),
+    m('roadie', 'Roadie', 1, 1, 'On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.', { now: true, retired: true, ...old4, ...old10('copyist'), ...old10('stagehand'),
       onRoundStart(ctx, owner) {
         const g = ctx.countMembersOfColor(owner, 'echo');
         if (g) ctx.gain(owner, 'green', g);
@@ -805,7 +805,8 @@ const echoQ = {
     // REPLACE9 (Members C, Nov 4, batch bC11: paper 17 vs 14, quality/evals/gate/C-roadie2): Roadie's place, same
     // price. Pays on every action copy (Echo, Reprise, Cover, Understudy, Stunt Double, Fan Club, Tribute Band), not
     // on copied On Recruits (Sample, Greatest Hits); counts itself, as the old Roadie did.
-    ...add9(m('roadie9', 'Roadie', 1, 1, 'Whenever you copy an action, +1 green per green member you have.', {})),
+    // trial q-c-roadie9-c2 (120 Hard games a side): taken 75%, owners won 31% (130 owners; old Roadie 31%). Live Nov 4.
+    m('roadie9', 'Roadie', 1, 1, 'Whenever you copy an action, +1 green per green member you have.', {}),
     // REPLACE9 (Members C, bC11: paper 16 vs 14; Cory's "paper filters, play ranks", Nov 4): Roadie's place, same price.
     // "Your last turn": your latest space this round (Stunt Double's read); none yet, the use comes back.
     ...add9(m('setlist', 'Setlist', 1, 1, 'On Use, once per round: copy the last action you took this round.', {

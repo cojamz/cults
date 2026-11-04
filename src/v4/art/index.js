@@ -87,6 +87,7 @@ for (const [key, name, source] of [
   ['impostor', 'Impostors', 'mirror'], ['connector', 'Connector', 'groupie'],
   ['agents', 'Agents', 'choir'], ['bait', 'Bait', 'understudy'],
   ['roadie', 'Roadie', 'translator'], // Oct 28: Green's 16th borrows the cut Translator's drawing
+  ['roadie9', 'Roadie', 'translator'], // Nov 4: the Roadie rework keeps Roadie's picture
 ]) {
   const art = BY_ID.get(`echo.${source}`);
   if (art) BY_ID.set(`echo.${key}`, { ...art, id: `echo.${key}`, name });

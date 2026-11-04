@@ -1,20 +1,18 @@
 // @vitest-environment node
 // Members C, batch bC11 (Nov 4): Roadie reworked, "Whenever you copy an action, +1 green per green member you have.",
-// under REPLACE9=roadie9 (set before the engine loads, then cleared).
+// Live Nov 4 in the old Roadie's place (trial q-c-roadie9-c2).
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE9 = 'roadie9';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { table } = await import('./cards-helpers-b.js');
 const { take } = await import('./helpers.js');
-delete process.env.REPLACE9;
 
 const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
 const Q = ['red', 'echo', 'thieves', 'trading'];
 
-describe('REPLACE9: Roadie (reworked)', () => {
-  it('same price as the old Roadie, which is retired under the switch', () => {
+describe('Roadie (reworked, live)', () => {
+  it('same price as the old Roadie, which is retired', () => {
     const d = defById('echo.roadie9');
     expect([d.s, d.w]).toEqual([defById('echo.roadie').s, defById('echo.roadie').w]);
     expect(defById('echo.roadie').retired).toBe(true);
