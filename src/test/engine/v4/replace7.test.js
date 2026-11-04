@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 // every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,fosterparents,godfather,daylaborers,nightmanager';
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,fosterparents,godfather,daylaborers,nightmanager,pacesetters';
 const { applyMove, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
@@ -26,7 +26,8 @@ describe('REPLACE7: the switch', () => {
     expect(card('red.godfather')).toEqual(['Godfather', 4, 2, 1, 1]);
     expect(card('purple.daylaborers')).toEqual(['Day Laborers', 3, 2, 3, 3]);
     expect(card('purple.nightmanager')).toEqual(['Night Manager', 2, 2, 1, 1]);
-    for (const id of ['red.patriarch', 'purple.crew', 'purple.timekeepers']) expect(defById(id).retired).toBe(true);
+    expect(card('purple.pacesetters')).toEqual(['Pace-Setters', 3, 2, 2, 2]);
+    for (const id of ['red.patriarch', 'purple.crew', 'purple.timekeepers', 'purple.nightwatch']) expect(defById(id).retired).toBe(true);
     for (const id of ['red.volunteer', 'red.recruitbonus', 'purple.courier']) expect(defById(id).retired).toBe(true);
   });
 });
@@ -251,5 +252,33 @@ describe('Night Manager: "Round End: if you placed the round’s last minion, +1
     s = { ...s, lastPlaced: { round: 2, pid: 1 }, queue: [{ t: 'endRound' }], pending: null };
     s = resume(s);
     expect(named(s, 'Night Manager')).toEqual([]);
+  });
+});
+
+describe('Pace-Setters: "Whenever you take a consecutive turn, the next player skips their turn."', () => {
+  it('the pitched turn: your second turn in a row skips the next rival, whose minion places after the others', () => {
+    const turns = [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 2 }, { t: 'allPlaced' }];
+    let s = table(['red', 'purple', 'market', 'yellow'], { n: 3, round: 2, members: [['purple.pacesetters']], queue: turns });
+    s = take(s, 'red.turnout');
+    s = passBuys(s, 0);
+    expect(s.pending.player).toBe(0); // the consecutive turn
+    expect(s.log.some(l => l.includes('P2') && l.includes('Pace-Setters'))).toBe(true);
+    expect(s.queue.filter(t => t.t === 'turn').map(t => t.p)).toEqual([2, 1]);
+  });
+
+  it("Early Birds stops it", () => {
+    const turns = [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 2 }, { t: 'allPlaced' }];
+    let s = table(['red', 'purple', 'market', 'yellow'], { n: 3, round: 2, members: [['purple.pacesetters'], ['purple.earlybird']], queue: turns });
+    s = take(s, 'red.turnout');
+    s = passBuys(s, 0);
+    expect(s.queue.filter(t => t.t === 'turn').map(t => t.p)).toEqual([1, 2]);
+  });
+
+  it('a turn that is not consecutive skips nobody', () => {
+    const turns = [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 2 }, { t: 'allPlaced' }];
+    let s = table(['red', 'purple', 'market', 'yellow'], { n: 3, round: 2, members: [['purple.pacesetters']], queue: turns });
+    s = take(s, 'red.turnout');
+    s = passBuys(s, 0);
+    expect(s.pending.player).toBe(1);
   });
 });

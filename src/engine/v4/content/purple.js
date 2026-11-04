@@ -585,7 +585,20 @@ export default {
     m('clockmaker', 'Clockmakers', 2, 2, 'Round Start: take your first two turns in a row.', { f: 2, firstTwoInRow: true, retired: true }), // (Cory, Oct 29, balance run: +1 follower); Night Watch takes its place (Claude, under Cory's "use your judgement", 2026-11-04)
     // Replacement batch 1 (Nov 3), live since Nov 4 (Claude, under Cory's "use your judgement"): Clockmakers' place. 3 purple + 2 any as a player sees it. Last Call
     // and Sleep In pay for the minions they put on the token, Night Owls for its 1.
-    m('nightwatch', 'Night Watch', 2, 2, 'Whenever a rival takes the Goes Last token, +1 follower per minion on it.', { f: 2, watchToken: true }),
+    m('nightwatch', 'Night Watch', 2, 2, 'Whenever a rival takes the Goes Last token, +1 follower per minion on it.', { f: 2, watchToken: true, ...old7('purple.nightwatch') }),
+    // REPLACE7 (Nov 4, quality loop, Members A batch 3): Night Watch's place (paper 17, Purple's set 13 -> 16). Cory's
+    // Pace-Setter ("could be a good idea for a different batch"), in his Courier words. 3 purple + 2 any, counts as 2.
+    // On each turn that comes right after your own, the next rival's turn (the first one still queued) is skipped, as
+    // Hold Up skips it; automatic, nobody chooses. Early Birds stops it; Gossip and Pocket Watch pay.
+    ...add7(m('pacesetters', 'Pace-Setters', 2, 2, 'Whenever you take a consecutive turn, the next player skips their turn.', { f: 2, n: 2,
+      onTurnInRow(ctx, owner, card) {
+        const q = ctx.state.queue, close = q.findIndex(t => t.t === 'allPlaced');
+        const t = q.slice(0, close < 0 ? q.length : close).find(x => x.t === 'turn' && x.p !== owner.id);
+        if (!t) return;
+        skipNext(ctx, ctx.player(t.p), card.def.name, owner);
+      },
+      ...see(info => 1.2 * endsAhead(info).length), // a skip a round, about a space to the rival behind
+    })),
     // balance pass 2 (pooled bench, both bots agree; design/eval/balance-pass-2.md): 8 → 12
     m('lamplighter', 'Lamplighter', 6, 2,'On Recruit: +1 purple per minion you get this round (3 / 4 / 5). Round Start: +1 purple per minion you get this round (3 / 4 / 5).', { now: true,
       // Cory, 2026-10-15: every minion you get counts (Extra Hand's too)
