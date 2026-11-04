@@ -19,3 +19,5 @@ vite.config.js.timestamp-*
 .status/
 .v4-playtest/
 .balance-runs/
+.trial-wt/
+.trial-runs/
