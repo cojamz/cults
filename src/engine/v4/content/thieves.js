@@ -38,6 +38,14 @@ function insideTargets(ctx, p) {
   for (const [key, list] of Object.entries(st.squats || {})) if (key.startsWith(`${qi}-`)) for (const pid of list) ids.add(pid);
   return ctx.rivals(p).filter(o => ids.has(o.id) && stealable(ctx, p, o) > 0);
 }
+/** Turf (REPLACE10): how many minions o has on Magenta spaces (joined spots count). */
+function onMagenta(ctx, o) {
+  const st = ctx.state, qi = st.quadrants.indexOf('thieves');
+  let n = 0;
+  for (const [key, pid] of Object.entries(st.slots || {})) if (key.startsWith(`${qi}-`) && pid === o.id) n++;
+  for (const [key, list] of Object.entries(st.squats || {})) if (key.startsWith(`${qi}-`)) n += list.filter(id => id === o.id).length;
+  return n;
+}
 /** Mug the Leader (REPLACE10): the rivals tied for the most followers among p's rivals, if p can steal from them. */
 function mugTargets(ctx, p) {
   const rivals = ctx.rivals(p), top = Math.max(...rivals.map(o => ctx.followers(o)));
@@ -236,7 +244,19 @@ const thieves = {
     // their biggest piles first (Lie Low and Bodyguards block it; Desperado adds). Copied by Green, the copier steals.
     // REPLACE10 bot test (Nov 4, quality loop lane D): Stash's slot, second pick. From the rival with the most followers
     // (tied: you choose), 2/3/4 by round, their biggest piles first, through the shared steal.
-    ...(on10('mug') ? [{
+    // REPLACE10 bot test (Nov 4): Cory's own idea for Stash's slot ("for each minion on a magenta space, steal one ... per
+    // number of minions they have on magenta spaces"): 1 resource per such minion from each rival, biggest piles first,
+    // through the shared steal (Lie Low and Bodyguards block it). Name Claude's fill-in.
+    ...(on10('turf') ? [{
+      key: 'turf', ring: 1, name: 'Turf', copyDoesIt: true,
+      text: 'Steal 1 resource from each rival per minion they have on Magenta spaces. +1 magenta.',
+      estimate: (ctx, p) => insideTargets(ctx, p).reduce((a, o) => a + Math.min(onMagenta(ctx, o), stealable(ctx, p, o)), 0) * 0.9,
+      resolve(ctx, p) {
+        const list = insideTargets(ctx, p);
+        if (!list.length) { ctx.log(`${p.name}'s Turf: no rival on a Magenta space to steal from.`); return; }
+        for (const o of list) autoSteal(ctx, p, o, 'Turf', onMagenta(ctx, o));
+      },
+    }] : on10('mug') ? [{
       key: 'mug', ring: 1, name: 'Mug the Leader', copyDoesIt: true,
       text: 'Steal 2 resources from the rival with the most followers in round I, 3 in round II, 4 in round III. +1 magenta.',
       byRound: { lines: ['Steal 2 resources from the rival with the most followers.', 'Steal 3 resources from the rival with the most followers.', 'Steal 4 resources from the rival with the most followers.'] },
