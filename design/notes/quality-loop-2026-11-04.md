@@ -17,6 +17,7 @@ Each card scores 0, 1 or 2 on ten questions. 0 = fails it, 1 = fine, 2 = a reaso
 | C8 Agency | Is there a real decision in buying, aiming or timing it? | Two sides worth weighing (target, timing, when to buy) | Always buy / never buy; autopilot |
 | C9 Catch-up | Can a trailing player use it cleverly, or does it only reward the leader? | Pays more to the player behind, or punishes runaway | Pure rich-get-richer, no counterplay |
 | C10 Worth it | At its price, is it a real option against the best alternative, with an answer at the table, and would a first-time player understand it and where it fits after reading it once or twice? | Often the right pick, rivals have a counter, and a new player gets it | Dead, must-buy, strong with no counter, or a new player can't see what it's for |
+| C11 Defendable (half weight: 0 or 1) | Can rivals answer it if it gets going? Some snowball is fine; nothing that grows in a vacuum. | 1: the table can block, take, swap or race it (a cost low enough to Promote, Demote or Poach counts) | 0: once it runs, nobody can touch it (Cory, Nov 4: "a 20-cost member ... very difficult to promote it or demote it") |
 
 Hard fails (the card is at the bottom whatever it scores): any randomness (only Red recruiting from the top of the pile is allowed; Cory, Nov 4: "a big thing is we avoid randomness"); relies on a rival having more resources than you (Cory, Nov 4); needs tracking a table can't do (Nov 1); a single-member card with a plural name or a multi-member card with a singular name; text that restricts beyond Cory's call.
 
@@ -81,3 +82,12 @@ The Process critic checks the judges and designers; steering checks whether the 
 - **What steering can change, each batch:** which colors get designer time (largest gap from the bar first; a color with every card over the bar and a good set score is done and its lane moves on); rubric weights (a question whose paper score doesn't predict the play judge's loses weight; when a game metric lags, the question tied to it counts double next batch, e.g. catch-up lagging doubles C9); the designer brief; batch size; and explore against exploit.
 - **Explore against exploit:** when fewer than 1 in 5 candidates pass two batches running, the next batch explores (wilder briefs, at least one rule-bending idea per slot, the game-feel skill's step 6 wild alternatives). When more than 3 in 5 pass, the bar was too easy: raise it by 1 and log why. Every third batch, one slot per lane is an exploration slot regardless.
 - **Every steering change** is logged in process/log.md and the morning note with the dashboard numbers that caused it.
+- **Plain fuel spaces** (director, 12:12am, on the Evaluators' note that 21 of 54 spaces fail the bar mostly on C4): each color keeps one plain "+N of its color" space as an anchor (the game-feel lens allows one zero-spread space per color). That one space is exempt from the no-0-on-C4 rule; a color's second plain space is not.
+
+## Done: exit criteria (Cory, Nov 4: "maybe like an exit criteria for when you're done?")
+The loop stops working a color when all hold, and stops altogether when every color does:
+1. Every card in the color clears the bar (protected cards Cory praised count as clear, and are listed for him if the judges disagree).
+2. The color's set score meets its target (3 judges, at least 15 of 20, no missing role).
+3. The game dashboard hits its targets two batches running: round I leader wins under 40% at 4 seats, last after round II wins at least 10%, wins with 5 or fewer members at least 20%, no must-buy or dead card per color beyond one, play-judge averages at 1.5 of 2 or better on clear outcome, momentum, agency and catch-up.
+4. Diminishing returns: two batches running where even explore mode passes under 1 in 5 and the dashboard doesn't move.
+When done, the loop stops instead of churning. It writes a final report (what changed, the before-and-after dashboard, and the cards the judges still doubt), ships nothing more, and frees the runners. If only rule 4 is met and the others aren't, the report says the remaining gap is a design question for Cory, not more card swaps.
