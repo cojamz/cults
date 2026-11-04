@@ -752,6 +752,29 @@ function settle(s, ctx, seen) {
   }
 }
 
+// BOTSMART: what player me's Round End members (Mob, set counters, Night Manager…) would pay if the round ended in
+// position s, in followers (resources at RES_AT_ROUND_END each), times the round ends still ahead (later ones at 0.7).
+// A recruit or a space is credited with how it changes that: buying a red member when you hold Mob now counts Mob's
+// extra +2. Until now only Game End payouts were in the bots' forecast.
+const RES_AT_ROUND_END = 0.6;
+function roundEndPay(s, me) {
+  const p0 = s.players[me];
+  if (!p0.members.some(u => [s.cards[u].def, s.cards[u].copy, s.cards[u].ability].some(id => id && defById(id).onRoundEnd))) return 0;
+  try {
+    const c = lightClone(s);
+    const ctx = contextFor(c);
+    const p = c.players[me];
+    const f0 = followers(c, p), r0 = sum(p.res);
+    for (const uid of [...p.members]) for (const id of [c.cards[uid]?.def, c.cards[uid]?.copy, c.cards[uid]?.ability]) {
+      if (!id) continue;
+      const d = defById(id);
+      if (d.onRoundEnd) try { d.onRoundEnd(ctx, p, ctx.card(uid)); } catch { /* estimate only */ }
+    }
+    const once = followers(c, p) - f0 + (s.round >= 3 ? 0.2 : RES_AT_ROUND_END) * (sum(p.res) - r0);
+    return once * (1 + 0.7 * Math.max(0, 3 - s.round));
+  } catch { return 0; }
+}
+
 /**
  * Every buy or placement option of the pending decision with its value to the deciding player:
  * the expected final follower margin over the best rival, after that option. Sorted best first.
@@ -781,6 +804,9 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
   const floor = opts.biasFloor ?? BIAS_FLOOR;
   const memberBias = (opts.memberBias ?? MEMBER_BIAS) * (floor + (1 - floor) * Math.min(1, placesLeft / 12));
   const out = [];
+  const smart = opts.smart ?? SMART;
+  const endBase = smart ? roundEndPay(state, me) : 0;
+  const endDelta = s => (smart ? roundEndPay(s, me) - endBase : 0);
   if (pend.kind === 'place') {
     // spaces only: a member's activation is also offered here (Cory, 2026-10-15), but bots use members in the buy
     // step, where their botActivate rules are tuned (buyShortcut), so they rate only where to place
@@ -807,7 +833,7 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
         settle(s, ctx, t => { undo = undo || undoesSwap(state, s, me, t); });
         // members the action brought in (Open Door, Hand-pick…) bring their abilities too
         const gained = p.members.filter(u => !had.has(u)).reduce((a, u) => a + abilityValue(cardDef(s, u), placesLeft, opts.k, s, me), 0);
-        v = marginOf(evaluate(s, buysAt(s, 1 + moreBuys + moreTurns), incomeAt(s, moreTurns), roundLeft, { [me]: gained }, opts.future), me, opts.spite);
+        v = marginOf(evaluate(s, buysAt(s, 1 + moreBuys + moreTurns), incomeAt(s, moreTurns), roundLeft, { [me]: gained + endDelta(s) }, opts.future), me, opts.spite);
         if (opts.noMembers && memberCount(s, p) > before) v -= 100;
         if (undo) v -= UNDO_SWAP;
       } catch {
@@ -846,6 +872,7 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
           if (tier.limited) s.stock[tier.key] -= 1;
         }
         const moreTurns = Math.max(0, turnsQueued(s) - turns0);
+        if (smart && what.uid !== undefined) extraAbility[me] = (extraAbility[me] || 0) + endDelta(s);
         return marginOf(evaluate(s, buysAt(s, moreTurns), incomeAt(s, moreTurns), roundLeft, extraAbility, opts.future), me, opts.spite);
       } catch {
         return -1e6;

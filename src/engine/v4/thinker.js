@@ -36,7 +36,10 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   const smart = opts.smart ?? SMART;
   const policy = smart ? { ...ROLLOUT, smart } : ROLLOUT;
   let short = pend.kind === 'buy' ? buyShortcut(state, { smart }) : smart && pend.kind === 'place' ? placeUse(state) : null;
-  if (smart && pend.kind === 'buy' && (!short || short.kind === 'use')) {
+  // holdRollouts (on by default under BOTSMART): 6 rollouts to game end are noisy for a now-or-later of 2 to 6 followers,
+  // but without them smart Hard did worse head to head (12 seats to 13, -2.7 followers, 23 games; with them 15 to 9,
+  // +0.6, 24 games; design/eval/bots-smart/)
+  if (smart && (opts.holdRollouts ?? true) && pend.kind === 'buy' && (!short || short.kind === 'use')) {
     const held = holdOrUse(state, rand, opts, short);
     if (held === HOLD) short = short && !onceUse(state, short) ? short : null;
     else if (held) return { player: me, option: held.id };
