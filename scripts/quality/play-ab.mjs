@@ -53,12 +53,14 @@ if (args[0] === 'score') {
   process.exit(0);
 }
 const oi = args.indexOf('--out'), out = oi >= 0 ? args.splice(oi, 2)[1] : null;
+// --seeds a,b,c: only these seeds (the Lab's same-round list in rounds.json).
+const si = args.indexOf('--seeds'), only = si >= 0 ? args.splice(si, 2)[1].split(',').map(x => x.trim()) : null;
 const [newDir, baseDir, newName, newText, oldName, oldText] = args.filter(a => a !== '--loose');
 if (!out || !oldText) { console.error('usage: play-ab.mjs <newDir> <baseDir> "<new name>" "<new text>" "<old name>" "<old text>" --out <dir>'); process.exit(2); }
 // Lab sheets are sheet-<seed>-<seat>.md; sheets.mjs writes <card>-g<seed>-<seat>.md (and a .full.md, skipped).
 const seedOf = f => (f.match(/^sheet-(\d+)-/) || f.match(/-g(\d+)-[^.]+\.md$/) || [])[1];
 const sheets = d => Object.fromEntries(readdirSync(d).filter(f => f.endsWith('.md') && !f.endsWith('.full.md') && seedOf(f)).map(f => [seedOf(f), f]));
-const N = sheets(newDir), B = sheets(baseDir), seeds = Object.keys(N).filter(s => B[s]).sort();
+const N = sheets(newDir), B = sheets(baseDir), seeds = Object.keys(N).filter(s => B[s] && (!only || only.includes(s))).sort();
 // --loose: also pair the leftover seeds in order (different games, so weaker evidence; result.md counts them apart).
 const loose = args.includes('--loose') || process.argv.includes('--loose');
 if (loose) {

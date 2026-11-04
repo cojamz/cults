@@ -37,7 +37,7 @@ instruction file in .claude/agents/ and a folder; scripts make the folders and a
 3. Two or three fresh judges read <dir>/brief.md and .claude/agents/play-judge.md, never key.json, and write play-judge-<n>.json at the root.
 4. `node scripts/quality/play-ab.mjs score <dir>`: the new card ships on play when the average of its six medians beats the old card's by 0.3
    or more and its Clear outcome median is above 0. Pairs with Last-Minute Shopper or Seat Filler count only on runs pinned at or after 91c72004.
-   `--loose` also pairs leftover seeds in order (different games). Director, Nov 4: it takes 2 matched pairs before loose ones count,
+   `--seeds a,b,c` keeps only those seeds (the Lab's same-round list). `--loose` also pairs leftover seeds in order (different games). Director, Nov 4: it takes 2 matched pairs before loose ones count,
    and a pass that needs the loose pairs needs +0.5; with fewer matched pairs, ask the Lab for more seeds.
    When the old card hard-fails, add `--old-hard-fail "<why>"`: the new card needs 1.0 or more on its own and no 0 on Clear outcome,
    and the gap is for information. A hard fail on rivals choosing during the owner's turn (Hawker, Potluck, Shake Down) waits on Cory's ruling before it ships.
