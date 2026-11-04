@@ -16,6 +16,7 @@ const HOSTESS_TEST = globalThis.process?.env?.HOSTESSES;
 const HOSTESS_TEXT = {
   A: 'On Recruit and Round Start: give each rival 1 silver. +2 followers for each.',
   B: 'On Recruit and Round Start: give each rival 1 silver in round I, 2 in round II, 3 in round III. +1 follower per silver you give.',
+  C: 'On Recruit and Round Start: give each rival 1 silver. +1 follower for each.', // Cory's pick 1, Nov 3 9:47pm
 };
 const others = (ctx, p) => ctx.rivals(p);
 const otherColors = ctx => ctx.state.resources.filter(c => c !== S);
@@ -342,7 +343,7 @@ const silver = {
     m('hostesses', 'Hostesses', 3, 2, HOSTESS_TEXT[HOSTESS_TEST] || 'On Recruit and Round Start: give each rival 1 silver. +1 follower per rival who then holds more silver than you.', { f: 2, now: true,
       onRoundStart(ctx, owner) {
         if (HOSTESS_TEXT[HOSTESS_TEST]) {
-          const n = HOSTESS_TEST === 'A' ? 1 : Math.min(3, Math.max(1, ctx.state.round || 1)), rivals = others(ctx, owner);
+          const n = HOSTESS_TEST !== 'B' ? 1 : Math.min(3, Math.max(1, ctx.state.round || 1)), rivals = others(ctx, owner);
           giveAll(ctx, owner, S, n);
           const k = (HOSTESS_TEST === 'A' ? 2 : n) * rivals.length;
           ctx.log(`${owner.name}'s Hostesses: ${rivals.map(o => o.name).join(', ')} +${n} silver each; ${owner.name} +${k} followers.`);
