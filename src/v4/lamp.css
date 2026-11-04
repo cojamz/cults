@@ -354,6 +354,10 @@ h1,h2,h3{font-family:var(--serif)}
    (the minions' shadows, a contest rim lit during the Reckoning) rest while it turns. Turning every filter on the
    board off and on again re-drew the whole board as each spin started and landed */
 .lt .stage.turning .slot.sel,.lt .stage.turning .worker-fig,.lt .stage.turning .worker,.lt .stage.turning .rim.lit,.lt .stage.turning .rim-rule.lit{filter:none!important}
+/* ...and while it turns (and until it's still a moment) its spaces and rims don't take the pointer: a space sliding under a
+   resting pointer lit its panel, redrawing the whole printed board in Firefox, and asked for its card (wheel pass, Nov 4).
+   The stage itself keeps the pointer, so a drag carries on */
+.lt .stage.turning .slot,.lt .stage.turning .slot *,.lt .stage.turning svg *{pointer-events:none!important}
 .lt [data-spaces="panels"] .stage .hub-label small{display:none}
 /* a serif numeral: "II" in a heavy sans inside the dark disc read as a pause button */
 .lt [data-spaces="panels"] .stage .hub-label b{font-family:var(--serif);font-weight:700;font-size:18px}

@@ -39,6 +39,7 @@ import { createGame, applyMove, chooseBotMove } from '../../../engine/v4/index.j
 import { createLocalSession } from '../../../v4/session/local.js';
 import { createEmitter } from '../../../v4/session/emitter.js';
 import GameScreen from '../../../v4/game/GameScreen.jsx';
+import Wheel from '../../../v4/game/Wheel.jsx';
 import { seatRanks } from '../../../v4/game/RankRow.jsx';
 import Tick, { countMs } from '../../../v4/game/Tick.jsx';
 import { saveLocalSoon, flushLocalSave, clearLocal, claimLocal, loadLocal } from '../../../v4/saved.js';
@@ -344,5 +345,30 @@ describe('render budget', () => {
       expect(onRoot).toEqual([]);
       expect(onStory.length).toBeGreaterThan(0); // the paths did run: they write where the value is read
     } finally { restore.forEach(f => f()); }
+  });
+  // (wheel pass, Nov 4: 43% of the table's commits at 4x CPU redrew the whole wheel, a fifth of them for a new onDenied
+  // alone) fresh callbacks and collections that hold the same things don't redraw the board, and a click still reaches
+  // the newest callback
+  it('the wheel skips a table render that hands it new callbacks and equal collections, and calls the newest callback', () => {
+    const state = advanceTo(createGame({ seats: SEATS, seed: 21 }), 'place', 0);
+    const legalOf = () => { const m = new Map(); for (const o of state.pending.options) if (o.kind === 'slot' && o.q != null && o.i != null) m.set(`${o.q}-${o.i}`, o.id); return m; };
+    const props = onPick => ({ state, legal: legalOf(), onPick, onDenied: () => {}, onTouched: () => {}, onFacing: () => {}, flash: new Set(), idle: new Set(), recentMoves: [{ key: '0-0', pid: 1, mine: false, action: 'X' }], lastMove: { n: Math.random() }, facing: 0, meId: 0 });
+    const first = vi.fn(() => true), second = vi.fn(() => true);
+    const { container, rerender } = render(<Wheel {...props(first)} />);
+    R.reset();
+    for (let k = 0; k < 3; k++) act(() => { rerender(<Wheel {...props(second)} />); });
+    expect(R.n('Wheel')).toBe(0);
+    expect(R.n('WheelSpace')).toBe(0);
+    const lit = container.querySelector('.slot.can[data-slot]');
+    expect(lit).toBeTruthy();
+    act(() => { fireEvent.click(lit); });
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledTimes(1);
+    // a real change (one space fewer to take) does redraw it
+    R.reset();
+    const fewer = props(second);
+    fewer.legal.delete(lit.getAttribute('data-slot'));
+    act(() => { rerender(<Wheel {...fewer} />); });
+    expect(R.n('Wheel')).toBe(1);
   });
 });

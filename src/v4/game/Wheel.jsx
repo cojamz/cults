@@ -42,12 +42,23 @@ const Space = memo(function WheelSpace({ el }) { return el; });
 // and a handler made inside one held that render's whole game state, one per space (leak pass, 2026-10-28). They read
 // the wheel's latest through its live ref.
 const placeFn = (live, key, opt) => () => live.current.place(key, opt);
+// While the board turns (a spin, a drag, and until it has been still a moment) its spaces take no hover: a space sliding
+// under a resting pointer, or the pointer crossing spaces in a drag, lit its panel (which redraws the whole printed board
+// in Firefox) and asked for its hover card, every space it met (wheel pass, Nov 4: Firefox at round II dropped 26 frames
+// in six mouse drags, 5 with the spaces ignoring the pointer). The stage's .turning class also takes their pointer
+// events away in CSS (lamp.css); this is the same rule for an event already on its way.
+const startTurning = root => {
+  if (!root || root.classList.contains('turning')) return;
+  root.classList.add('turning');
+  for (const c of root.querySelectorAll('.hot')) c.classList.remove('hot');
+};
+const turningAt = el => !!(el && el.closest && el.closest('.stage.turning'));
 function slotHandlers(live, touchTapped, s, key, opt, panels) {
   const hot = (e, on) => { if (!panels) return; const c = e.currentTarget.parentNode.querySelector(`[data-cell="${key}"]`); if (c) c.classList.toggle('hot', on); };
   return {
     onClick: e => { if (Date.now() - touchTapped.current > 500) live.current.tap(s, e.currentTarget, { x: e.clientX, y: e.clientY }); },
     onKeyDown: e => { if (opt && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); live.current.place(key, opt); } },
-    onPointerEnter: e => { const h = live.current.hover; hot(e, true); if (h && realHover(e)) h.onSpaceHover(key, live.current.anchorOf(key, e.currentTarget)); },
+    onPointerEnter: e => { if (turningAt(e.currentTarget)) return; const h = live.current.hover; hot(e, true); if (h && realHover(e)) h.onSpaceHover(key, live.current.anchorOf(key, e.currentTarget)); },
     onPointerLeave: e => { const h = live.current.hover; hot(e, false); if (h && e.pointerType === 'mouse') h.onSpaceHover(key, null); },
     onFocus: e => { const h = live.current.hover; if (h && keyboardLed() && e.currentTarget.matches(':focus-visible')) h.onSpaceHover(key, live.current.anchorOf(key, e.currentTarget)); },
     onBlur: () => { const h = live.current.hover; if (h) h.onSpaceHover(key, null); },
@@ -107,7 +118,15 @@ export function spacesLook() {
 }
 
 /** Where each space sits on the (unturned) wheel: its angle, the half-width of its cell, and its centre. */
+// (kept per state: a state never changes, and the board asks on every render and every touch tap)
+const geoCache = new WeakMap();
 export function spaceGeometry(state, look = 'sockets') {
+  const key = look === 'panels' ? 'panels' : 'sockets';
+  let per = geoCache.get(state);
+  if (!per) geoCache.set(state, (per = {}));
+  return per[key] || (per[key] = layGeometry(state, look));
+}
+function layGeometry(state, look) {
   const rings = ringsOf(look);
   const out = [];
   const nq = state.quadrants.length, k = sector(nq) / 90; // a ring's spans are drawn for a quarter; k scales them to the sector
@@ -125,6 +144,11 @@ export function spaceGeometry(state, look = 'sockets') {
 }
 
 // ---------- the rim's text: its width from the font itself (a canvas measure, cached), never from the page ----------
+// a panel layout's part of its space's signature (the same layout object is asked again on every render)
+const laySigs = new WeakMap();
+const laySig = lay => { let t = laySigs.get(lay); if (t == null) laySigs.set(lay, (t = JSON.stringify(lay))); return t; };
+const standCache = new WeakMap();
+const standingsOf = state => { let st = standCache.get(state); if (!st) standCache.set(state, (st = standings(state))); return st; };
 const collapse = t => String(t).replace(/\s+/g, ' ');
 const rimWidths = new Map();
 // a panel's layout for where it sits (panelLayout): pure in its inputs and the widths above, so it's kept until the
@@ -591,7 +615,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     const from = rotRef.current, dur = reduced() ? 1 : MO.spin;
     geo.current = null;
     const root = stage.current;
-    root?.classList.add('turning');
+    startTurning(root);
     setPeek(p => (p && !p.pinned ? null : p)); // a hover card doesn't ride along on a turning board
     if (hoverRef.current && hoverRef.current.card && !hoverRef.current.card.pinned) hoverRef.current.close();
     const sp = { from, to, t0: performance.now(), dur, anims: [], start: null };
@@ -686,8 +710,9 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     return () => clearTimeout(t);
   }, [deny]);
 
-  const local = e => {
-    const b = stage.current.getBoundingClientRect();
+  // (a drag reads the stage's place once, at its press: a layout read on every pointer move forced a layout each time,
+  // after the move before it had written the board's turn)
+  const local = (e, b = stage.current.getBoundingClientRect()) => {
     const x = VB0 + (e.clientX - b.left) / b.width * VBS, y = VB0 + (e.clientY - b.top) / b.height * VBS;
     return { x, y, a: Math.atan2(y - CY, x - CX) * 180 / Math.PI, d: Math.hypot(x - CX, y - CY) };
   };
@@ -695,10 +720,11 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     lastPointer.current = e.pointerType || 'mouse';
     if (onTouched) onTouched();
     if (e.target.closest('button')) return;
-    const p = local(e);
+    const rect = stage.current.getBoundingClientRect();
+    const p = local(e, rect);
     if (p.d > 205 || p.d < 30) return; // only drags that start on the ring
     stop();
-    drag.current = { a: p.a, x: e.clientX, y: e.clientY, touch: e.pointerType === 'touch', start: rotRef.current, home: Math.round(rotRef.current / SEC) * SEC, acc: 0, goal: null, t: performance.now(), v: 0 };
+    drag.current = { rect, a: p.a, x: e.clientX, y: e.clientY, touch: e.pointerType === 'touch', start: rotRef.current, home: Math.round(rotRef.current / SEC) * SEC, acc: 0, goal: null, t: performance.now(), v: 0 };
     geo.current = null;
     moved.current = false;
   };
@@ -718,10 +744,10 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       if (hoverRef.current && hoverRef.current.card && !hoverRef.current.card.pinned) hoverRef.current.close();
       if (dr.touch) { dr.swipe = true; dr.lastX = e.clientX; return; }
       try { stage.current.setPointerCapture(e.pointerId); } catch { /* ignore */ }
-      stage.current.classList.add('turning');
+      startTurning(stage.current);
     }
     if (dr.swipe) { dr.lastX = e.clientX; return; }
-    const a = local(e).a;
+    const a = local(e, dr.rect).a;
     const d = norm(a - dr.a);
     dr.a = a;
     // angular speed (deg/ms), smoothed, so a quick flick can carry the wheel on to the next quadrant
@@ -836,7 +862,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     return [CX + (x0 - CX) * Math.cos(r) - (y0 - CY) * Math.sin(r), CY + (x0 - CX) * Math.sin(r) + (y0 - CY) * Math.cos(r)];
   };
 
-  const stand = standings(state);
+  const stand = standingsOf(state);
   const stdById = Object.fromEntries(stand.map(x => [x.qid, x]));
   // The engraved rule: "MOST MEMBERS · +2 · ties: red members", at least 12px on screen. Its length is worked out
   // from the font (rimWidth: a canvas measure, cached per text), never read back from the drawn page, so drawing it
@@ -995,7 +1021,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       paper.push(
         <g key={`pc${s.key}`} className={cls} data-cell={s.key} style={{ '--c': `var(--${s.qid})` }}
           onClick={e => { if (Date.now() - touchTapped.current > 500) live.current.tap(s, stage.current && stage.current.querySelector(`[data-slot="${s.key}"]`), { x: e.clientX, y: e.clientY }); }}
-          onPointerEnter={e => { const h = live.current.hover; e.currentTarget.classList.add('hot'); if (h && realHover(e)) h.onSpaceHover(s.key, e.currentTarget.querySelector('.wash')); }}
+          onPointerEnter={e => { if (turningAt(e.currentTarget)) return; const h = live.current.hover; e.currentTarget.classList.add('hot'); if (h && realHover(e)) h.onSpaceHover(s.key, e.currentTarget.querySelector('.wash')); }}
           onPointerLeave={e => { const h = live.current.hover; e.currentTarget.classList.remove('hot'); if (h && e.pointerType === 'mouse') h.onSpaceHover(s.key, null); }}>
           {/* the lamp's glow as three soft strokes, not a blur filter: Firefox draws SVG filters on the CPU, and a lit panel
               is on every space you can take while you turn the board (Cory, Oct 28: the spin "megga draggy") */}
@@ -1009,115 +1035,127 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       );
     }
   }
-  const rimHits = [];
-  state.quadrants.forEach((qid, q) => {
-    const c = qCenter(q, nq), a0 = c - SEC / 2, a1 = c + SEC / 2;
-    // the quadrant's rule, engraved along its rim, upright wherever the wheel is turned, with whoever leads it as
-    // their pixel emoji inline at the end of the line, on the same arc and baseline: "MOST BLUE · +2 · 🐱"
-    const st = stdById[qid];
-    const leaders = st && st.leaders.length ? st.leaders : [];
-    const lab = panels ? rimRuns(qid, q, leaders) : rimLabel(qid, q, leaders);
-    const rr = lab.rr, F = lab.font, textW = lab.textW;
-    const arcLen = (2 * arcHalf * Math.PI / 180) * rr;
-    const EM = EMOJI_ROOM; // one emoji's room on the line
-    const tail = F * RIM_MARK + (leaders.length ? F * 0.45 + leaders.length * EM : 0);
-    const startS = Math.max(0, (arcLen - textW - tail) / 2);
-    paper.push(<path key={`ra${q}`} id={`rim-arc-${q}`} d={textArc(c, arcHalf, rr, rot)} fill="none" />);
-    const lit = lampQid === qid ? ' lit' : lampQid ? ' wait' : '';
-    // a point on the line, s along it from its start: where it sits and which way is up
-    const onLine = sAt => {
-      const deg = (sAt / rr) * 180 / Math.PI;
-      const a = lab.top ? c - arcHalf + deg : c + arcHalf - deg;
-      return { xy: polar(a, rr), up: lab.top ? a : a + 180 };
-    };
-    if (lab.runs) {
-      // panels: each run of words on its own stretch of the arc, the color as its dot between them, the prize a size up
-      paper.push(
-        <text key={`rt${q}`} className={`rim-rule${lit}`} fontSize={F.toFixed(2)} style={{ letterSpacing: `${lab.ls.toFixed(3)}em` }} data-plaque={qid} data-rim-text={q} data-rim-res={quadrant(qid).resource}>
-          {lab.runs.filter(r => r.kind !== 'dot').map((r, k) => (
-            <textPath key={k} href={`#rim-arc-${q}`} startOffset={(startS + r.s).toFixed(1)}>
-              {r.kind === 'prize' ? <tspan className="rim-prize" fontSize={(F * 1.3).toFixed(2)} style={{ letterSpacing: 0 }}>{r.text}</tspan> : r.text}
-              {r.tie ? <tspan className="rim-tie" data-rim-tie={r.tie}>{`  ·  ties: ${r.tie}`}</tspan> : null}
-            </textPath>
-          ))}
+  const drawRims = () => {
+    const rimArt = [], rimHits = [];
+    state.quadrants.forEach((qid, q) => {
+      const c = qCenter(q, nq), a0 = c - SEC / 2, a1 = c + SEC / 2;
+      // the quadrant's rule, engraved along its rim, upright wherever the wheel is turned, with whoever leads it as
+      // their pixel emoji inline at the end of the line, on the same arc and baseline: "MOST BLUE · +2 · 🐱"
+      const st = stdById[qid];
+      const leaders = st && st.leaders.length ? st.leaders : [];
+      const lab = panels ? rimRuns(qid, q, leaders) : rimLabel(qid, q, leaders);
+      const rr = lab.rr, F = lab.font, textW = lab.textW;
+      const arcLen = (2 * arcHalf * Math.PI / 180) * rr;
+      const EM = EMOJI_ROOM; // one emoji's room on the line
+      const tail = F * RIM_MARK + (leaders.length ? F * 0.45 + leaders.length * EM : 0);
+      const startS = Math.max(0, (arcLen - textW - tail) / 2);
+      rimArt.push(<path key={`ra${q}`} id={`rim-arc-${q}`} d={textArc(c, arcHalf, rr, rot)} fill="none" />);
+      const lit = lampQid === qid ? ' lit' : lampQid ? ' wait' : '';
+      // a point on the line, s along it from its start: where it sits and which way is up
+      const onLine = sAt => {
+        const deg = (sAt / rr) * 180 / Math.PI;
+        const a = lab.top ? c - arcHalf + deg : c + arcHalf - deg;
+        return { xy: polar(a, rr), up: lab.top ? a : a + 180 };
+      };
+      if (lab.runs) {
+        // panels: each run of words on its own stretch of the arc, the color as its dot between them, the prize a size up
+        rimArt.push(
+          <text key={`rt${q}`} className={`rim-rule${lit}`} fontSize={F.toFixed(2)} style={{ letterSpacing: `${lab.ls.toFixed(3)}em` }} data-plaque={qid} data-rim-text={q} data-rim-res={quadrant(qid).resource}>
+            {lab.runs.filter(r => r.kind !== 'dot').map((r, k) => (
+              <textPath key={k} href={`#rim-arc-${q}`} startOffset={(startS + r.s).toFixed(1)}>
+                {r.kind === 'prize' ? <tspan className="rim-prize" fontSize={(F * 1.3).toFixed(2)} style={{ letterSpacing: 0 }}>{r.text}</tspan> : r.text}
+                {r.tie ? <tspan className="rim-tie" data-rim-tie={r.tie}>{`  ·  ties: ${r.tie}`}</tspan> : null}
+              </textPath>
+            ))}
+          </text>,
+        );
+        lab.runs.filter(r => r.kind === 'dot').forEach((r, k) => {
+          const { xy: [x, y], up } = onLine(startS + r.s + (r.w * F) / 2);
+          const D = F * 1.1;
+          rimArt.push(
+            <g key={`rd${q}-${k}`} className={`rim-dot${lit}`} data-rim-dot={r.color} transform={`translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${up.toFixed(2)}) translate(${(-D / 2).toFixed(2)} ${(-D * 0.55).toFixed(2)})`}>
+              <title>{r.color}</title>
+              <circle cx={D / 2} cy={D / 2} r={D / 2} className="rim-dot-ring" />
+              <g transform={`translate(${(D * 0.12).toFixed(2)} ${(D * 0.12).toFixed(2)}) scale(${((D * 0.76) / 16).toFixed(4)})`}><ResourceGlyph r={r.color} decorative /></g>
+            </g>,
+          );
+        });
+      } else rimArt.push(
+        <text key={`rt${q}`} className={`rim-rule${lit}`} fontSize={F.toFixed(2)} style={{ letterSpacing: `${lab.ls.toFixed(3)}em` }} data-plaque={qid} data-rim-text={q}>
+          <textPath href={`#rim-arc-${q}`} startOffset={startS.toFixed(1)}>
+            {lab.rule}
+            {lab.tie ? <tspan className="rim-tie" data-rim-tie={lab.tie}>{`  ·  ties: ${lab.tie}`}</tspan> : null}
+            {lab.prize}
+          </textPath>
         </text>,
       );
-      lab.runs.filter(r => r.kind === 'dot').forEach((r, k) => {
-        const { xy: [x, y], up } = onLine(startS + r.s + (r.w * F) / 2);
-        const D = F * 1.1;
-        paper.push(
-          <g key={`rd${q}-${k}`} className={`rim-dot${lit}`} data-rim-dot={r.color} transform={`translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${up.toFixed(2)}) translate(${(-D / 2).toFixed(2)} ${(-D * 0.55).toFixed(2)})`}>
-            <title>{r.color}</title>
-            <circle cx={D / 2} cy={D / 2} r={D / 2} className="rim-dot-ring" />
-            <g transform={`translate(${(D * 0.12).toFixed(2)} ${(D * 0.12).toFixed(2)}) scale(${((D * 0.76) / 16).toFixed(4)})`}><ResourceGlyph r={r.color} decorative /></g>
+      // the follower mark right after the prize, on the same arc, upright like the letters, centred on the line (the
+      // text's dominant-baseline is middle, so the line's middle is rr itself)
+      {
+        const sAt = startS + textW + (F * RIM_MARK) / 2;
+        const deg = (sAt / rr) * 180 / Math.PI;
+        const a = lab.top ? c - arcHalf + deg : c + arcHalf - deg;
+        const [mx, my] = polar(a, rr);
+        const cap = F * 0.95;
+        rimArt.push(
+          <g key={`rf${q}`} className={`rim-mark${lit}`} data-rim-prize={qid} data-rim-res={quadrant(qid).resource} transform={`translate(${mx.toFixed(2)} ${my.toFixed(2)}) rotate(${(lab.top ? a : a + 180).toFixed(2)}) translate(${(-cap / 2).toFixed(2)} ${(-cap / 2).toFixed(2)})`}>
+            <circle className="rim-halo" cx={(cap / 2).toFixed(2)} cy={(cap / 2).toFixed(2)} r={(cap * 0.58).toFixed(2)} fill="url(#ltHalo)" aria-hidden="true" />
+            <Follower size={cap} title={`${RING_VALUE[paying - 1]} followers`} />
+          </g>,
+        );
+      }
+      // each leader's emoji, along the same arc right after the text, in the middle of the band and upright on the screen
+      // (a face, not a letter: tilted with the arc it read as out of line, Cory 2026-10-15), so the wheel's turn is undone
+      leaders.forEach((id, k) => {
+        const art = emojiArt(seatEmoji(state, id));
+        if (!art) return;
+        const sAt = startS + textW + F * RIM_MARK + F * 0.45 + k * EM + EM / 2;
+        const deg = (sAt / rr) * 180 / Math.PI;
+        const a = lab.top ? c - arcHalf + deg : c + arcHalf - deg;
+        // centred on the text line (Cory: the followers mark and emoji centred on the text), which runs 3.6 units off the
+        // band's middle; at most 62% of the band tall, it stays inside the band (w2a #52: past it, it rose onto the divider)
+        // (an upright square's corners reach (cap/2)(|cos|+|sin|) along the radius, so near the diagonals it gives up
+        // just enough of the offset to stay inside)
+        const cap = EMOJI_U;
+        const t = (a + rot - 90) * Math.PI / 180;
+        const room = Math.max(0, (RIM.r1 - RIM.r0) / 2 - (cap / 2) * (Math.abs(Math.cos(t)) + Math.abs(Math.sin(t))) - 0.3);
+        const [ex, ey] = polar(a, RIM.r + Math.max(-room, Math.min(room, rr - RIM.r)));
+        rimArt.push(
+          <g key={`re${q}-${id}`} className={`rim-emoji${lit}`} data-rim-leader={id} shapeRendering="crispEdges" transform={`translate(${ex.toFixed(2)} ${ey.toFixed(2)}) rotate(${(-rot).toFixed(2)}) translate(${(-cap / 2).toFixed(2)} ${(-cap / 2).toFixed(2)}) scale(${(cap / art.size).toFixed(4)})`}>
+            <title>{`${state.players[id].name} leads`}</title>
+            {art.paths}
           </g>,
         );
       });
-    } else paper.push(
-      <text key={`rt${q}`} className={`rim-rule${lit}`} fontSize={F.toFixed(2)} style={{ letterSpacing: `${lab.ls.toFixed(3)}em` }} data-plaque={qid} data-rim-text={q}>
-        <textPath href={`#rim-arc-${q}`} startOffset={startS.toFixed(1)}>
-          {lab.rule}
-          {lab.tie ? <tspan className="rim-tie" data-rim-tie={lab.tie}>{`  ·  ties: ${lab.tie}`}</tspan> : null}
-          {lab.prize}
-        </textPath>
-      </text>,
-    );
-    // the follower mark right after the prize, on the same arc, upright like the letters, centred on the line (the
-    // text's dominant-baseline is middle, so the line's middle is rr itself)
-    {
-      const sAt = startS + textW + (F * RIM_MARK) / 2;
-      const deg = (sAt / rr) * 180 / Math.PI;
-      const a = lab.top ? c - arcHalf + deg : c + arcHalf - deg;
-      const [mx, my] = polar(a, rr);
-      const cap = F * 0.95;
-      paper.push(
-        <g key={`rf${q}`} className={`rim-mark${lit}`} data-rim-prize={qid} data-rim-res={quadrant(qid).resource} transform={`translate(${mx.toFixed(2)} ${my.toFixed(2)}) rotate(${(lab.top ? a : a + 180).toFixed(2)}) translate(${(-cap / 2).toFixed(2)} ${(-cap / 2).toFixed(2)})`}>
-          <circle className="rim-halo" cx={(cap / 2).toFixed(2)} cy={(cap / 2).toFixed(2)} r={(cap * 0.58).toFixed(2)} fill="url(#ltHalo)" aria-hidden="true" />
-          <Follower size={cap} title={`${RING_VALUE[paying - 1]} followers`} />
-        </g>,
-      );
-    }
-    // each leader's emoji, along the same arc right after the text, in the middle of the band and upright on the screen
-    // (a face, not a letter: tilted with the arc it read as out of line, Cory 2026-10-15), so the wheel's turn is undone
-    leaders.forEach((id, k) => {
-      const art = emojiArt(seatEmoji(state, id));
-      if (!art) return;
-      const sAt = startS + textW + F * RIM_MARK + F * 0.45 + k * EM + EM / 2;
-      const deg = (sAt / rr) * 180 / Math.PI;
-      const a = lab.top ? c - arcHalf + deg : c + arcHalf - deg;
-      // centred on the text line (Cory: the followers mark and emoji centred on the text), which runs 3.6 units off the
-      // band's middle; at most 62% of the band tall, it stays inside the band (w2a #52: past it, it rose onto the divider)
-      // (an upright square's corners reach (cap/2)(|cos|+|sin|) along the radius, so near the diagonals it gives up
-      // just enough of the offset to stay inside)
-      const cap = EMOJI_U;
-      const t = (a + rot - 90) * Math.PI / 180;
-      const room = Math.max(0, (RIM.r1 - RIM.r0) / 2 - (cap / 2) * (Math.abs(Math.cos(t)) + Math.abs(Math.sin(t))) - 0.3);
-      const [ex, ey] = polar(a, RIM.r + Math.max(-room, Math.min(room, rr - RIM.r)));
-      paper.push(
-        <g key={`re${q}-${id}`} className={`rim-emoji${lit}`} data-rim-leader={id} shapeRendering="crispEdges" transform={`translate(${ex.toFixed(2)} ${ey.toFixed(2)}) rotate(${(-rot).toFixed(2)}) translate(${(-cap / 2).toFixed(2)} ${(-cap / 2).toFixed(2)}) scale(${(cap / art.size).toFixed(4)})`}>
-          <title>{`${state.players[id].name} leads`}</title>
-          {art.paths}
-        </g>,
+      // the whole rim of a quadrant is its hover target: the standings (and the sphere's own rule, in words). It lives in
+      // its own layer above the spaces (rimHits) and reaches past the paper's edge, so a pointer on the rule or on a
+      // leader's emoji always opens the standings, never the ring-I space whose round hit area pokes into the rim
+      // (RC1 panel: three tries to reach the standings)
+      const label = st ? st.label : quadrant(qid).scoring.label;
+      const tieLine = lab.tieText ? ` ${lab.tieText[0].toUpperCase()}${lab.tieText.slice(1)}.` : '';
+      const ruleLine = quadrant(qid).rule ? ` ${quadrant(qid).rule}` : '';
+      rimHits.push(
+        <path key={`rh${q}`} className="rim-hit" d={arc(a0 + 1, a1 - 1, RIM_HIT.r0, RIM_HIT.r1)} data-rim={qid}
+          role="button" tabIndex={0} aria-haspopup="dialog"
+          aria-label={`Each round: ${ruleWords(qid, shortLabel(label)).replace(/^Most /, 'most ')}, +${RING_VALUE[paying - 1]} followers at this round's end.${tieLine}${leaders.length ? ` ${leaders.map(id => (id === meId ? 'You' : state.players[id].name)).join(' & ')} ${leaders.length > 1 || leaders[0] === meId ? 'lead' : 'leads'}.` : ' No one leads yet.'}${ruleLine} Show the standings.`}
+          onPointerEnter={e => { if (hover && realHover(e) && !turningAt(stage.current)) hover.onPlaqueHover(qid, rimAnchor(qid) || e.currentTarget); }}
+          onPointerLeave={e => { if (hover && e.pointerType === 'mouse') hover.onPlaqueHover(qid, null); }}
+          onClick={e => { e.stopPropagation(); if (moved.current) return; if (hover) hover.onPlaqueHover(qid, rimAnchor(qid) || e.currentTarget, { pinned: true }); }}
+          onKeyDown={e => { if (hover && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); hover.onPlaqueHover(qid, rimAnchor(qid) || e.currentTarget, { pinned: true }); } }}>
+        </path>,
       );
     });
-    // the whole rim of a quadrant is its hover target: the standings (and the sphere's own rule, in words). It lives in
-    // its own layer above the spaces (rimHits) and reaches past the paper's edge, so a pointer on the rule or on a
-    // leader's emoji always opens the standings, never the ring-I space whose round hit area pokes into the rim
-    // (RC1 panel: three tries to reach the standings)
-    const label = st ? st.label : quadrant(qid).scoring.label;
-    const tieLine = lab.tieText ? ` ${lab.tieText[0].toUpperCase()}${lab.tieText.slice(1)}.` : '';
-    const ruleLine = quadrant(qid).rule ? ` ${quadrant(qid).rule}` : '';
-    rimHits.push(
-      <path key={`rh${q}`} className="rim-hit" d={arc(a0 + 1, a1 - 1, RIM_HIT.r0, RIM_HIT.r1)} data-rim={qid}
-        role="button" tabIndex={0} aria-haspopup="dialog"
-        aria-label={`Each round: ${ruleWords(qid, shortLabel(label)).replace(/^Most /, 'most ')}, +${RING_VALUE[paying - 1]} followers at this round's end.${tieLine}${leaders.length ? ` ${leaders.map(id => (id === meId ? 'You' : state.players[id].name)).join(' & ')} ${leaders.length > 1 || leaders[0] === meId ? 'lead' : 'leads'}.` : ' No one leads yet.'}${ruleLine} Show the standings.`}
-        onPointerEnter={e => { if (hover && realHover(e)) hover.onPlaqueHover(qid, rimAnchor(qid) || e.currentTarget); }}
-        onPointerLeave={e => { if (hover && e.pointerType === 'mouse') hover.onPlaqueHover(qid, null); }}
-        onClick={e => { e.stopPropagation(); if (moved.current) return; if (hover) hover.onPlaqueHover(qid, rimAnchor(qid) || e.currentTarget, { pinned: true }); }}
-        onKeyDown={e => { if (hover && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); hover.onPlaqueHover(qid, rimAnchor(qid) || e.currentTarget, { pinned: true }); } }}>
-      </path>,
-    );
-  });
+    return { art: rimArt, hits: rimHits };
+  };
+  // the rims (their words, marks and leaders, and their hover targets) are drawn again only when something they show
+  // changes: their elements are the same objects otherwise, and React passes over them (wheel pass, Nov 4: drawing them
+  // was the board's biggest cost on a move that changed no contest)
+  const rimSig = [rot.toFixed(2), paying, lampQid || '', scale, fontsIn, look, meId ?? '', state.quadrants.join(','), hover ? 1 : 0,
+    ...state.quadrants.map(qid => { const st = stdById[qid]; return st ? `${st.rule}/${st.label}/${st.tiebreak ? `${st.tiebreak.unit}:${st.tiebreak.text}` : ''}/${st.leaders.map(id => `${id}:${state.players[id].name}:${seatEmoji(state, id)}`).join(',')}` : '-'; })].join('|');
+  const rimMemo = useRef(null);
+  if (!rimMemo.current || rimMemo.current.sig !== rimSig || rimMemo.current.hover !== hover) rimMemo.current = { sig: rimSig, hover, ...drawRims() };
+  const { hits: rimHits } = rimMemo.current;
+  paper.push(...rimMemo.current.art);
   const hubR = panels ? rings[3].r0 - 3 : rings[3].r0;
   if (!panels) for (const r of [RIM.r0, rings[1].r0, rings[2].r0, hubR]) paper.push(<circle key={`c${r}`} cx={CX} cy={CY} r={r} fill="none" className="ring-line" />);
   state.quadrants.forEach((qid, q) => {
@@ -1134,13 +1172,20 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   // needs
   const shopSig = (state.shop || []).join(',');
   // live faces (this turn's gain): the memo turns over when one of their numbers does
-  const liveSig = panels ? spaces.filter(s => s.ring <= Math.max(1, round)).map(s => { try { return panelText(s.qid, s.a, round, state, meId).main || ''; } catch { return ''; } }).join(',') : '';
+  // every panel's words for this state, worked out once (they were worked out twice: once for this signature, and again
+  // for each panel whenever the layouts turned over)
+  // for this state, on first asking (only the open ones are asked on most renders)
+  const saidOf = useMemo(() => {
+    const m = new Map();
+    return s => { let v = m.get(s.key); if (!v) m.set(s.key, (v = panelText(s.qid, s.a, round, state, meId))); return v; };
+  }, [state, round, meId]);
+  const liveSig = panels ? spaces.filter(s => s.ring <= Math.max(1, round)).map(s => { try { return saidOf(s).main || ''; } catch { return ''; } }).join(',') : '';
   const panelLays = useMemo(() => {
     if (!panels) return null;
     const k = scale || 1;
     // a taken panel keeps its lines (faded) and its minion stands over them, so taking a space never reflows the wheel
     // a live face (Name Drop: what it pays this turn) reads the state; the memo turns over when the shop does (shopSig)
-    const said = s => panelText(s.qid, s.a, round, state, meId);
+    const said = saidOf;
     const lay = (s, need) => panelLayout({ s, R: rings[s.ring], rot, k, said: said(s), taken: false, need });
     const out = new Map();
     for (const s of spaces) out.set(s.key, { said: said(s), lay: lay(s) });
@@ -1156,7 +1201,6 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   useEffect(() => {
     if (!panelLays || typeof requestIdleCallback !== 'function') return undefined;
     const k = scale || 1;
-    const said = new Map();
     const todo = [];
     for (const d of [SEC, -SEC, 2 * SEC]) for (const s of spaces) todo.push([s, rot + d]);
     let i = 0, h = null;
@@ -1164,8 +1208,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       while (i < todo.length && deadline.timeRemaining() > 2) {
         const [s, r] = todo[i++];
         try {
-          if (!said.has(s.key)) said.set(s.key, panelText(s.qid, s.a, round, state, meId));
-          panelLayout({ s, R: rings[s.ring], rot: r, k, said: said.get(s.key), taken: false });
+          panelLayout({ s, R: rings[s.ring], rot: r, k, said: saidOf(s), taken: false });
         } catch { /* only a warm-up */ }
       }
       h = i < todo.length ? requestIdleCallback(run, { timeout: 2000 }) : null;
@@ -1199,7 +1242,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     // everything this space shows, as one string: the same string, the same element (Space skips it)
     const crewIds = owner !== undefined ? [owner, ...joiners] : [];
     const sig = [X.toFixed(2), Y.toFixed(2), owner ?? '', shadeOwner ?? '', joiners.join(','), open ? 1 : 0, opt || '', quiet ? 1 : 0, selected ? 1 : 0, fresh ? `${fresh.pid}:${fresh.newest ? 1 : 0}:${fresh.action}` : '',
-      flashV.has(key) ? 1 : 0, lay ? JSON.stringify(lay) : '', said ? `${said.main || said.verb}/${said.second || ''}` : '', (opt && pickNotes && pickNotes.get(key)) || '', crewIds.map(id => `${state.players[id].name}:${seatEmoji(state, id)}`).join(','),
+      flashV.has(key) ? 1 : 0, lay ? laySig(lay) : '', said ? `${said.main || said.verb}/${said.second || ''}` : '', (opt && pickNotes && pickNotes.get(key)) || '', crewIds.map(id => `${state.players[id].name}:${seatEmoji(state, id)}`).join(','),
       fresh ? state.players[fresh.pid].name : '', meId ?? '', round, look, custom ? `${Face ? 1 : 0}:${scale}:${rot}` : '', panels ? `${scale}:${fontsIn}` : ''].join('|');
     const had = built.current.get(key);
     if (had && had.sig === sig) return <Space key={key} el={had.el} />;
@@ -1274,7 +1317,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     );
     built.current.set(key, { sig, el });
     return <Space key={key} el={el} />;
-  }), [state, interactionState, rot, legalKey, ghostKey, idleKey, flashKey, recentKey, pinnedKey, sent, round, look, Face, custom || panels ? scale : 0, fontsIn]); // eslint-disable-line react-hooks/exhaustive-deps
+  }), [state, interactionState, rot, legalKey, ghostKey, idleKey, flashKey, recentKey, pinnedKey, sent, round, look, Face, custom || panels ? scale : 0, fontsIn, panelLays, pickNotes]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="wheel-wrap" data-spaces={look} data-face={custom ? look : undefined}>
@@ -1318,5 +1361,42 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   );
 }
 
-// the board re-renders only when what it shows changes (online room chatter that doesn't touch the table doesn't)
-export default memo(Wheel);
+// The board re-renders only when what it shows changes (online room chatter that doesn't touch the table doesn't).
+// The table hands it fresh callbacks, Maps, Sets and move lists on most of its own renders (wheel pass, Nov 4: 43% of
+// the table's commits redrew the wheel at 4x CPU, a fifth of those for a new onDenied alone): the callbacks reach it
+// through stable stand-ins that always call the latest, and the collections are compared by what they hold.
+const FN_PROPS = ['onPick', 'onDenied', 'onTouched', 'onSpacePeek', 'onFacing'];
+const sameMap = (a, b) => {
+  if (a === b) return true;
+  if (!a || !b || a.size !== b.size) return false;
+  for (const [k, v] of a) if (!b.has(k) || b.get(k) !== v) return false;
+  return true;
+};
+const sameSet = (a, b) => {
+  if (a === b) return true;
+  if (!a || !b || a.size !== b.size) return false;
+  for (const k of a) if (!b.has(k)) return false;
+  return true;
+};
+const moveSig = ms => (ms || []).map(m => `${m.key}:${m.pid}:${m.mine ? 1 : 0}:${m.action}`).join('|');
+const BY_CONTENT = { legal: sameMap, pickNotes: sameMap, flash: sameSet, idle: sameSet, recentMoves: (a, b) => a === b || moveSig(a) === moveSig(b) };
+// lastMove is the table's; the wheel draws nothing from it
+const IGNORED = new Set(['lastMove']);
+export function sameWheelProps(a, b) {
+  for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) {
+    if (IGNORED.has(k) || a[k] === b[k]) continue;
+    const eq = BY_CONTENT[k];
+    if (!eq || !eq(a[k], b[k])) return false;
+  }
+  return true;
+}
+const Board = memo(Wheel, sameWheelProps);
+function WheelShell(props) {
+  const fns = useRef({});
+  for (const k of FN_PROPS) fns.current[k] = props[k];
+  const stable = useMemo(() => Object.fromEntries(FN_PROPS.map(k => [k, (...args) => (fns.current[k] ? fns.current[k](...args) : undefined)])), []);
+  const given = {};
+  for (const k of FN_PROPS) if (props[k]) given[k] = stable[k];
+  return <Board {...props} {...given} />;
+}
+export default WheelShell;
