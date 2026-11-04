@@ -5,7 +5,7 @@
 //   market.critic -> market.lastminute (or market.lastminute2, the +2-resources alternate; not part of REPLACE9=1)
 //   market.regular -> market.bargainhunter
 //   benders.extrahand -> benders.hypnotist
-//   yellow.tastemaker -> yellow.jack (Jack-of-All-Trades)
+//   (yellow.tastemaker -> yellow.jack is live since Nov 4: Tastemaker always retired, Jack-of-All-Trades always on)
 //   yellow.caravan -> yellow.ambassadors
 //   yellow.harmonist -> yellow.seamstress
 //   market.hawkers -> market.mannequin (or market.stallholder, or market.hawker2: Hawker at Round Start)
@@ -13,7 +13,7 @@
 // Unset, the new cards are never defined and nothing in the game changes.
 const VAL = globalThis.process?.env?.REPLACE9 || '';
 /** new card key -> the old card id it takes the place of */
-const REPLACES = { tollkeeper: 'yellow.customs', quilter: 'yellow.dyer', lastminute: 'market.critic', lastminute2: 'market.critic', bargainhunter: 'market.regular', hypnotist: 'benders.extrahand', jack: 'yellow.tastemaker', ambassadors: 'yellow.caravan', seamstress: 'yellow.harmonist', mannequin: 'market.hawkers', stallholder: 'market.hawkers', hawker2: 'market.hawkers' };
+const REPLACES = { tollkeeper: 'yellow.customs', quilter: 'yellow.dyer', lastminute: 'market.critic', lastminute2: 'market.critic', bargainhunter: 'market.regular', hypnotist: 'benders.extrahand', ambassadors: 'yellow.caravan', seamstress: 'yellow.harmonist', mannequin: 'market.hawkers', stallholder: 'market.hawkers', hawker2: 'market.hawkers' };
 export const ON9 = VAL === '1' ? Object.keys(REPLACES).filter(k => !['lastminute2', 'mannequin', 'stallholder', 'ambassadors'].includes(k)) : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
 export const REPLACE9 = ON9.length > 0;
 /** The new card, in its color's member list only when it is switched on. */

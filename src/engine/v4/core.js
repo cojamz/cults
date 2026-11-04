@@ -1142,7 +1142,7 @@ export function scoringOf(state, qid) {
       market: { label: 'Most members', counts: 'your members when the round ends', score: (ctx, p) => contestMembers(state, p) },
       trading: fewest,
       thieves: { label: 'Most resources', counts: 'all the resources you hold when the round ends, every color together', score: (ctx, p) => state.resources.reduce((n, r) => n + (p.res[r] || 0), 0) },
-      yellow: { label: 'Most full sets', counts: 'your full sets of one of every color in play, when the round ends', score: (ctx, p) => (REPLACE9 ? setsOf(ctx, p) : Math.min(...state.resources.map(r => p.res[r] || 0))) },
+      yellow: { label: 'Most full sets', counts: 'your full sets of one of every color in play, when the round ends', score: (ctx, p) => setsOf(ctx, p) }, // setsOf: the plain min, or Jack-of-All-Trades' yellow filling gaps
       echo: { label: 'Most minions on green', counts: 'your minions on Green spaces when the round ends', score: (ctx, p) => q.actions.reduce((n, a, i) => n + (state.slots[`${qi}-${i}`] === p.id ? 1 : 0) + (state.squats?.[`${qi}-${i}`] || []).filter(id => id === p.id).length, 0) },
       purple: { label: 'Went last', counts: "whoever placed the round's last minion", tiebreak: null,
         score: (ctx, p) => (state.lastPlaced && state.lastPlaced.round === state.round && state.lastPlaced.pid === p.id ? 1 : 0) },

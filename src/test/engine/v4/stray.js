@@ -6,7 +6,8 @@ export const STRAYS = new Set(['echo.doppel', 'benders.extrahand3', 'benders.big
   'red.twins', 'trading.exporter', 'silver.giftwrapper', 'benders.scout',
   'echo.muse', 'silver.collector', 'thieves.kingpin', 'silver.guest', // and the four retired later Nov 3 (Impersonator, Creditors, Kidnapper, Godparent)
   'purple.clockmaker', 'thieves.sticky', 'market.connoisseur', 'benders.hr', // and the four retired Nov 4 (Night Watch, Second-Story Man, Hawker, Sore Loser)
-  'red.recruitbonus']); // Greeters, retired Nov 4 (Foster Parents)
+  'red.recruitbonus', // Greeters, retired Nov 4 (Foster Parents)
+  'yellow.tastemaker']); // Tastemaker, retired Nov 4 (Jack-of-All-Trades)
 export function stray(s, def) {
   const uid = Math.max(...Object.keys(s.cards).map(Number)) + 1;
   s.cards[uid] = { uid, def };

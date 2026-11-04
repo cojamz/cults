@@ -18,9 +18,8 @@ const others = ctx => colors(ctx).filter(c => c !== Y);
 /** Full sets: one of each color on the table. */
 const ACT = new Set((globalThis.process?.env?.ACT || '').split(',').filter(Boolean)); // action bot tests (Nov 4): env only, never live
 const plainSets = (ctx, p) => Math.min(...colors(ctx).map(c => p.res[c] || 0));
-/** Jack-of-All-Trades (REPLACE9 bot test): "Your yellow counts as any color in your full sets." (a Doppelganger copying it too) */
-const JACK = ON9.includes('jack');
-const hasJack = (ctx, p) => JACK && colors(ctx).includes(Y) && ctx.membersOf(p).some(c => ctx.defOf(c).key === 'jack' || c.copy === 'yellow.jack');
+/** Jack-of-All-Trades (live since Nov 4): "Your yellow counts as any color in your full sets." (a Doppelganger copying it too) */
+const hasJack = (ctx, p) => colors(ctx).includes(Y) && ctx.membersOf(p).some(c => ctx.defOf(c).key === 'jack' || c.copy === 'yellow.jack');
 /** Yellow p spends filling the gaps in k sets, beyond the k yellow the sets need themselves. */
 const jackGap = (ctx, p, k) => others(ctx).reduce((a, c) => a + Math.max(0, k - (p.res[c] || 0)), 0);
 /** Full sets: one of each color on the table (with Jack-of-All-Trades, yellow fills any gap). */
@@ -477,16 +476,19 @@ export default {
       },
     })),
     // Cory, Nov 1 (in place of Explorer): a payoff for changing rivals' resources
-    m('tastemaker', 'Tastemaker', 3, 2, "Whenever you change rivals' resources, +1 follower.", { ...old9('yellow.tastemaker') }),
-    // REPLACE9 bot test (Members C, Nov 4): Tastemaker's place. 3 yellow + 1 any as a player sees it. Every full-set count
-    // (Most full sets, Harmonist, Toll Keeper, Quilter) reads setsOf, which lets the owner's yellow fill any color's gap.
-    ...add9(m('jack', 'Jack-of-All-Trades', 2, 1, 'Your yellow counts as any color in your full sets.', { round: 1,
+    // Jack-of-All-Trades takes its place (Claude, under Cory's go-with-your-gut, overnight quality loop, 2026-11-04)
+    m('tastemaker', 'Tastemaker', 3, 2, "Whenever you change rivals' resources, +1 follower.", { retired: true }),
+    // Quality loop (Members C, Nov 4), live since Nov 4 (Claude, under Cory's go-with-your-gut): Tastemaker's place (paper
+    // and set check passed; trial taken 58%, owners won 27%; 1.6 fires per owner game; blind play 1.08 vs 0.33). 3 yellow +
+    // 1 any as a player sees it. Every full-set count (Most full sets, Harmonist, Toll Keeper, Quilter) reads setsOf, which
+    // lets the owner's yellow fill any color's gap.
+    m('jack', 'Jack-of-All-Trades', 2, 1, 'Your yellow counts as any color in your full sets.', { round: 1,
       // a log line only (the rule is in setsOf): says what the yellow is doing as contests come up
       onAllPlaced(ctx, owner) {
         const k = setsOf(ctx, owner), plain = plainSets(ctx, owner);
         if (k > plain) ctx.log(`${owner.name}'s Jack-of-All-Trades: yellow fills the gaps, so ${owner.name} holds ${k} full ${k === 1 ? 'set' : 'sets'} (${plain} without it).`);
       },
-    })),
+    }),
     // Cory, Nov 1 (in place of Agitator, 15-card deck only)
     m('spiceroute', 'Spice Route', 3, 2, 'Game End: +1 follower per color you hold 3 or more of.', {
       onGameEnd: (ctx, owner) => colors(ctx).filter(c => (owner.res[c] || 0) >= 3).length,
