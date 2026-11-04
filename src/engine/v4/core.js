@@ -2221,6 +2221,9 @@ function ctxFor(state) {
     countMembersOfColor: (p, q, opts) => countMembersOfColor(state, p, q, opts),
     card: uid => wrap(state, state.cards[uid]),
     defOf: c => (typeof c === 'number' ? cardDef(state, c) : c.def),
+    /** the name a hook's own log line gives card: a worn cloak's ("Red Cloak"), else the name it prints, so the log
+     *  says one name and the member's ledger line isn't said again under the other (picky bot, Nov 4) */
+    cloakOr: (card, name) => (card && state.artifacts && Object.values(state.artifacts).includes(card.uid) ? cardDef(state, card.uid).name : name),
     membersOf: p => p.members.map(u => wrap(state, state.cards[u])),
     /** p's members and p's artifact: for ability hooks only (an artifact is not a member) */
     abilitiesOf: p => [...p.members, ...(p.artifact !== undefined ? [p.artifact] : [])].map(u => wrap(state, state.cards[u])),

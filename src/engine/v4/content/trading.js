@@ -734,7 +734,7 @@ const trading = {
         if (globalThis.process?.env?.CHANGER === 'self' && buyer?.id !== owner.id) return; // CHANGER=self: bot test only (Nov 3)
         const k = buyer?.id === owner.id && globalThis.process?.env?.CHANGER !== 'one' ? 2 : 1; // CHANGER=one: +1 on every buy, bot test only (Nov 4, with Most white)
         ctx.gain(owner, W, k);
-        ctx.log(`${owner.name}'s Money Changers: +${k} white.`);
+        ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Money Changers')}: +${k} white.`);
       },
     }),
     m('martyr', 'Martyrs', 2, 1, 'Whenever this member leaves your cult, gain followers equal to its cost.', { f: 3,

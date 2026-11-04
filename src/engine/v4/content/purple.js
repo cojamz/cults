@@ -763,7 +763,7 @@ export default {
     // Name is Claude's fill-in.
     // +2 (Cory, Nov 1 8:25pm: option A; 19.5% held in the 200-game test, against 11% at +1)
     m('pocketwatch', 'Pocket Watch', 0, 0, 'Whenever a player’s turn is skipped, +2 purple.', { artifact: true,
-      onSkip(ctx, owner) { const got = ctx.gain(owner, 'purple', 2); if (got) ctx.log(`${owner.name}'s Pocket Watch: +${got.n} ${got.color}.`); },
+      onSkip(ctx, owner, card) { const got = ctx.gain(owner, 'purple', 2); if (got) ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Pocket Watch')}: +${got.n} ${got.color}.`); },
     }),
     m('gossip', 'Gossip', 3, 2, 'Whenever a player’s turn is skipped, +1 follower.', { ...old13('busybody'),
       onSkip(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Gossip: +1 follower.`); },

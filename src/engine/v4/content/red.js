@@ -434,7 +434,7 @@ export default {
         // RECRUITER=once|twice: bot test only (Nov 4, Cory "nerf red a little"): at most once (twice) per turn
         const cap = { once: 1, twice: 2 }[globalThis.process?.env?.RECRUITER];
         if (cap) { const k = ctx.turnKey(); if (owner.recruiterTurn !== k) { owner.recruiterTurn = k; owner.recruiterN = 0; } if (owner.recruiterN >= cap) return; owner.recruiterN += 1; }
-        ctx.gain(owner, 'red', 1); ctx.log(`${owner.name}'s Recruiter: +1 red.`);
+        ctx.gain(owner, 'red', 1); ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Recruiter')}: +1 red.`);
       },
     }),
     m('drive', 'Pied Piper', 2, 2, 'Whenever you recruit 2 or more members in one turn, +2 red.', {

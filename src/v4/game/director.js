@@ -22,7 +22,7 @@ import { gainsBetween } from './gains.js';
 import { seatOrder } from './seats.js';
 import { stageRect, hubRect, stageShow, stageRelease, stageClear, stageBusy, subscribeStage, stageItems, stagePlace, spaceRect, bubbleRect, stageLeave, HUB_MEMBER } from './stage.js';
 import { panelText } from './panelText.js';
-import { quadrant, defById, spacesOf, memberCount } from '../../engine/v4/index.js';
+import { quadrant, defById, cardDef, spacesOf, memberCount } from '../../engine/v4/index.js';
 import { seatEmoji } from '../format.js';
 import { spriteId } from '../art/index.js';
 import { motionOK, flyPath, pulse, tug, settle, flyMinionsHome, slideShop, holdStack, bump, track, landAll, expectArrival, clearArrivals, clearFlights, aim, safetyNet, arcFrames, bezier, onScreenBow, relative, motionPending, onMotionChange } from './flight.js';
@@ -1708,8 +1708,11 @@ function stageOut(root, a, ctx, where, chainId, mine = [], pre = null) {
   if (!at) return;
   let sphere = 'colorless', color = 'var(--colorless)';
   try { if (st.quadrants.includes(d.quadrant)) { sphere = quadrant(d.quadrant).resource; color = `var(--${d.quadrant})`; } } catch { /* colorless */ }
+  // a cloak pays under its cloak's name, as its seat says ("Green Cloak", not "Impressionist"; picky bot, Nov 4)
+  let shown = d.name;
+  try { if (card) shown = cardDef(st, uid).name; } catch { /* its card's own name */ }
   stageShow({ id: `member:${pid}:${uid}`, chain: chainId, kind: 'member', uid, pid, at, from, homeEl: el && !el.rectOnly ? el : null, dur: a.dur, color, pc: playerColor(pid),
-    name: d.name, sprite: [d.id, spriteId(d.name)], sphere, text: d.text || '', got: a.got || '' });
+    name: shown, sprite: [d.id, spriteId(d.name)], sphere, text: d.text || '', got: a.got || '' });
 }
 
 /** Install the skip: a press anywhere, or Space (when it isn't pressing a button), lands the chain on screen. */

@@ -51,10 +51,10 @@ const isWild = (ctx, card) => !!(ctx.defOf(card).everyColor || (card.copy && ctx
 /** Guest Book: +2 yellow when member is the only member of its color in owner's cult. Dabblers always works in its
  *  owner's favor (Cory, 2026-11-01: "Dabblers always works optimally for the player"): it never blocks a new color,
  *  and recruiting it pays when its owner lacks any color on the table. */
-function guestBook(ctx, owner, member) {
+function guestBook(ctx, owner, member, card = null) {
   if (!newColor(ctx, owner, member, { grey: true })) return;
   ctx.gain(owner, Y, 2);
-  ctx.log(`${owner.name}'s Guest Book: a new member color, +2 yellow.`);
+  ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Guest Book')}: a new member color, +2 yellow.`);
 }
 /** member is of a color none of owner's other members have (Guest Book, Matchmaker). Dabblers never blocks, and
  *  Dabblers itself is new while owner lacks any color on the table; Drifters reads as its chosen color. */
@@ -656,9 +656,9 @@ export default {
         if (by !== owner || !what.member || what.member.uid === card.uid) return;
         // Drifters has no color until its On Recruit pick lands: the pick checks Guest Book itself (drift)
         if (unpickedDrifters(ctx, what.member)) return;
-        guestBook(ctx, owner, what.member);
+        guestBook(ctx, owner, what.member, card);
       },
-      onColorChosen(ctx, owner, card, member) { guestBook(ctx, owner, member); },
+      onColorChosen(ctx, owner, card, member) { guestBook(ctx, owner, member, card); },
     }),
     // ---- out of the deck since Yellow 2.0 (cull.js); kept so old records still read ----
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 4 → 8

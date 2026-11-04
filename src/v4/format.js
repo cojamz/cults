@@ -1126,6 +1126,8 @@ export function effectStory(start, end, actor, me = null, fx = []) {
   const whose = id => (id === 'shop' ? "the shop's" : id === me ? 'your' : `${P[id].name}'s`);
   const fword = n => `${Math.abs(n)} follower${Math.abs(n) === 1 ? '' : 's'}`;
   const cardName = u => (end.cards[u] ? cardDef(end, u).name : start.cards[u] ? cardDef(start, u).name : 'a member');
+  // a member cause by the name its seat shows: a worn cloak is "Green Cloak", never its card's "Impressionist" (picky bot, Nov 4)
+  const causeName = c => (c.uid != null && (end.cards[c.uid] || start.cards[c.uid]) ? cardName(c.uid) : c.def ? defById(c.def)?.name : null);
   const groups = new Map();
   const groupOf = c => {
     const key = !c ? 'space' : c.kind === 'space' || c.kind === 'move' ? 'space' : c.kind === 'member' ? `member:${c.uid}:${c.def || ''}` : c.kind === 'recruit' ? `recruit:${c.uid}` : c.kind === 'buy' ? `buy:${c.tier}` : c.kind === 'release' ? `release:${c.uid}` : null;
@@ -1172,7 +1174,7 @@ export function effectStory(start, end, actor, me = null, fx = []) {
       if (g.fol[me] > 0) giftRes[' followers'] = (giftRes[' followers'] || 0) + g.fol[me];
       const c = g.cause || {};
       const owner = c.pid ?? actor;
-      const name = c.kind === 'member' ? (c.def ? defById(c.def)?.name : cardName(c.uid)) : (c.kind === 'recruit' || c.kind === 'release') ? cardName(c.uid) : null;
+      const name = c.kind === 'member' ? causeName(c) : (c.kind === 'recruit' || c.kind === 'release') ? cardName(c.uid) : null;
       if (name) { const why = owner === me || owner === actor ? name : `${P[owner].name}'s ${name}`; if (!giftWhy.includes(why)) giftWhy.push(why); }
     }
   }
@@ -1197,7 +1199,7 @@ export function effectStory(start, end, actor, me = null, fx = []) {
       else if (lost.length || got.length || g.fol[p.id]) bits.push(`${nm(p.id)} ${signedOf(g, p.id)}`);
       if (p.id === me) {
         const c = g.cause || {};
-        const who = c.kind === 'member' && c.def ? defById(c.def)?.name : (c.kind === 'recruit' || c.kind === 'release') ? cardName(c.uid) : null;
+        const who = c.kind === 'member' && c.def ? causeName(c) : (c.kind === 'recruit' || c.kind === 'release') ? cardName(c.uid) : null;
         const why = who ? `${owner === actor || c.kind !== 'member' ? '' : `${P[owner].name}'s `}${who} took` : 'took';
         const what = [...lost.map(([r, d]) => `${-d} of your ${r}`), ...(g.fol[p.id] < 0 ? [`${-g.fol[p.id]} of your followers`] : [])];
         if (what.length) hits.push(`${why} ${what.join(', ')}`);
@@ -1234,8 +1236,7 @@ export function effectStory(start, end, actor, me = null, fx = []) {
       if (g.disc) out.push(`next member costs ${g.disc} less`);
     } else if (c.kind === 'member') {
       const owner = c.pid ?? actor;
-      const def = c.def ? defById(c.def) : null;
-      const label = `${owner === actor ? '' : `${whose(owner)} `}${def ? def.name : cardName(c.uid)}`;
+      const label = `${owner === actor ? '' : `${whose(owner)} `}${causeName(c) || cardName(c.uid)}`;
       const as = toldInGift(g, owner) ? null : stolen(g, owner);
       const bits = [as || (toldInGift(g, owner) ? '' : signedOf(g, owner)), ...others(g, owner, !!as)].filter(Boolean);
       if (g.disc) bits.push(`next member costs ${g.disc} less`);
