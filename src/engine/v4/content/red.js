@@ -323,15 +323,16 @@ export default {
     // a player sees it. Members counted as the table counts them (a card that counts as 3 is 3), this one included.
     ...add7(m('godfather', 'Godfather', 3, 2, 'On Use, once per game: recruit a shop member costing up to the number of members you have, for free.', {
       activate: 'game',
-      onActivate(ctx, owner, card) {
-        const k = ctx.memberCount(owner), list = ctx.shopCards().filter(x => cost(x) <= k);
-        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s ${card.def.name}: no shop member costs ${k} or less.`); return; }
-        ctx.log(`${owner.name} uses ${card.def.name}: ${k} members, so a shop member costing up to ${k}, for free.`);
-        ctx.choose(owner, `${card.def.name}: recruit which shop member (costing up to ${k}) for free?`, list.map(x => ({
-          id: `card:${x.uid}`, label: `${x.def.name} (${cost(x)})`, kind: 'card', value: x.uid, hint: x.def.f * 1.5 + cost(x),
-        })), 'red.takeFree');
-      },
+      onActivate: (...a) => godfatherUse(...a),
       // bots: late, or once the count reaches the row's priciest card
+      botActivate: (ctx, owner) => ctx.state.round === 3 || ctx.shopCards().some(x => cost(x) >= 7 && cost(x) <= ctx.memberCount(owner)),
+    })),
+    // Godfather's trial (q-a-godfather-c1): owners won 25% vs Patriarch's 33%, so the retune lifts it with followers before
+    // touching the price (Cory's price rule): worth 3, so it counts as 3 (worth equals count) and is named as a group,
+    // which also raises its own allowance by 2. Same price, same rule.
+    ...add7(m('crimefamily', 'Crime Family', 3, 2, 'On Use, once per game: recruit a shop member costing up to the number of members you have, for free.', { f: 3, n: 3,
+      activate: 'game',
+      onActivate: (...a) => godfatherUse(...a),
       botActivate: (ctx, owner) => ctx.state.round === 3 || ctx.shopCards().some(x => cost(x) >= 7 && cost(x) <= ctx.memberCount(owner)),
     })),
     ...add3(m('missionaries', 'Missionaries', 5, 3, 'On Use, once per game: give one of your members to each rival, then recruit a shop member costing up to 2 more for each one given, for free.', { f: 2,
@@ -394,6 +395,15 @@ export default {
   ],
 };
 
+// Godfather and Crime Family (REPLACE7): the free recruit, costing up to the owner's member count
+function godfatherUse(ctx, owner, card) {
+  const k = ctx.memberCount(owner), list = ctx.shopCards().filter(x => cost(x) <= k);
+  if (!list.length) { card.used = false; ctx.log(`${owner.name}'s ${card.def.name}: no shop member costs ${k} or less.`); return; }
+  ctx.log(`${owner.name} uses ${card.def.name}: ${k} members, so a shop member costing up to ${k}, for free.`);
+  ctx.choose(owner, `${card.def.name}: recruit which shop member (costing up to ${k}) for free?`, list.map(x => ({
+    id: `card:${x.uid}`, label: `${x.def.name} (${cost(x)})`, kind: 'card', value: x.uid, hint: x.def.f * 1.5 + cost(x),
+  })), 'red.takeFree');
+}
 /** Body Snatchers (REPLACE2): [one of p's members, a rival's member of the same cost], both swappable. */
 function snatchPairs(ctx, p) {
   const mine = ctx.membersOf(p).filter(c => ctx.canSwapMember(c.uid));

@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 // every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,daylaborers,nightmanager,pacesetters';
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,daylaborers,nightmanager,pacesetters';
 const { applyMove, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
@@ -24,6 +24,7 @@ describe('REPLACE7: the switch', () => {
     expect(card('purple.interrupter')).toEqual(['Interrupter', 4, 2, 1, 1]);
     expect(card('red.fosterparents')).toEqual(['Foster Parents', 2, 2, 2, 2]);
     expect(card('red.godfather')).toEqual(['Godfather', 4, 2, 1, 1]);
+    expect(card('red.crimefamily')).toEqual(['Crime Family', 4, 2, 3, 3]);
     expect(card('purple.daylaborers')).toEqual(['Day Laborers', 3, 2, 3, 3]);
     expect(card('purple.nightmanager')).toEqual(['Night Manager', 2, 2, 1, 1]);
     expect(card('purple.pacesetters')).toEqual(['Pace-Setters', 3, 2, 2, 2]);
@@ -224,6 +225,20 @@ describe('Godfather: "On Use, once per game: recruit a shop member costing up to
     const uid = uidIn(s, 'red.godfather', 0);
     s = move(s, `use:${uid}`);
     expect(s.cards[uid].used).toBe(false);
+  });
+});
+
+describe('Crime Family (Godfather retuned): worth 3, counts as 3, "On Use, once per game: recruit a shop member costing up to the number of members you have, for free."', () => {
+  it('the pitched turn: Crime Family (3) and Panel (3) make 6, so Host (5) comes free and Mob (12) does not', () => {
+    let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [['red.crimefamily', 'red.panel']], shop: ['red.host', 'red.mob'], queue: [{ t: 'buy', p: 0 }] });
+    const uid = uidIn(s, 'red.crimefamily', 0);
+    s = move(s, `use:${uid}`);
+    expect(s.pending.prompt).toBe('Crime Family: recruit which shop member (costing up to 6) for free?');
+    expect(s.pending.options.map(o => o.label)).toEqual(['Host (5)']);
+    s = answer(s, `card:${uidIn(s, 'red.host', 'shop')}`);
+    expect(owns(s, 0, 'red.host')).toBe(true);
+    expect(s.cards[uid].used).toBe(true);
+    expect(named(s, 'Crime Family')).toContain('P1 uses Crime Family: 6 members, so a shop member costing up to 6, for free.');
   });
 });
 

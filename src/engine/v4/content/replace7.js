@@ -11,11 +11,12 @@
 //   purple.courier (alt: lowered Purple's set score; Cory Nov 4: "I don't like interrupter. That's bad.") -> purple.interrupter
 //   purple.courier (alt; Cory Nov 4 said no, he keeps Courier reworded) -> purple.runner
 //   red.recruitbonus (alt: paper 14, read as a must-buy) -> red.ushers
+//   red.patriarch (alt: Godfather retuned after its trial, worth 3 and counts as 3) -> red.crimefamily
 // Unset, the new cards are never defined and nothing in the game changes.
 const VAL = globalThis.process?.env?.REPLACE7 || '';
 const PICKS = ['seatfiller', 'godfather', 'daylaborers', 'nightmanager', 'pacesetters'];
 /** new card key -> the old card id it takes the place of */
-const REPLACES = { seatfiller: 'red.volunteer', interrupter: 'purple.courier', runner: 'purple.courier', ushers: 'red.recruitbonus', godfather: 'red.patriarch', daylaborers: 'purple.crew', nightmanager: 'purple.timekeepers', pacesetters: 'purple.nightwatch' };
+const REPLACES = { seatfiller: 'red.volunteer', interrupter: 'purple.courier', runner: 'purple.courier', ushers: 'red.recruitbonus', godfather: 'red.patriarch', crimefamily: 'red.patriarch', daylaborers: 'purple.crew', nightmanager: 'purple.timekeepers', pacesetters: 'purple.nightwatch' };
 export const ON7 = VAL === '1' ? PICKS : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
 export const REPLACE7 = ON7.length > 0;
 /** The new card, in its color's member list only when it is switched on. */
