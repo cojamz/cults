@@ -53,6 +53,10 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 | Plan and run today's autonomous improvements (333bSCwXiSbXsUYNhenCzTk): rival-resources rule | Cory, 8:56pm: "anything that relies on a rival having more of resources should be reworked". 8 members to rework, plus Creditor and Fan Club options sent | Audit done: /mnt/project-files/replacements/rival-resources-audit.md; Leaders' Tax and Heist handed to the actions thread | Cory's yes on the 8 picks, then build and ship |
 | Fix what Wallflower doubles (JzfAPuxoWpRdixRXuDSdQY) | Wallflower doubles every copied action, per its text (Cory, 9:58pm) | Fixed with tests (audit: design/eval/wallflower-2026-11-03/audit.md): do-it-again copies (Polish…) and Cover now doubled, Translator greens them, Impersonator works as Green copy members. Two defaults asked (copied steals, copied conversions) | Full check, then the desk's go to publish |
 
+## Cor's live tracker
+
+https://claude.ai/artifact/Wur73WcxCPaeZmhmhuUg79 ("Cults Workstreams"), built by `node scripts/desk/tracker.mjs <out.html>` from the thread board (/mnt/project-files/status/board.md) and main's play/build.json. The desk republishes it (same file path, same URL) after every progress report or ship. It is only as true as each thread's `node scripts/status.mjs set …` line: keep yours current, with `--cory "…"` only for a real decision.
+
 ## Publishing (one at a time; ask the desk for go or wait)
 
 - Live: v0.99.542 (cef8f924), shipped Nov 3 9:34pm by the desk: Wallflower doubles every copied action; Dabblers show once as 2 any-color. Next: set 3 members (plan thread, v0.99.543). Rule: ship each fix the moment it passes; no time slots.
