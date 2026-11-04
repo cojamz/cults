@@ -1182,8 +1182,14 @@ function finish(state) {
     } else owner.final.zero.push({ uid: card.uid, name: def.name });
   };
   eachMember(state, score(false), ['onGameEnd']);
-  // a game-end loss a member deals rivals (Creditors, REPLACE3 bot test), before the bonuses that read final counts
-  eachMember(state, (owner, card, def) => { if (def.onGameEndHit) def.onGameEndHit(ctx, owner, card); }, ['onGameEndHit']);
+  // a game-end loss a member deals rivals (Creditors, live Nov 3), before the bonuses that read final counts. It lands
+  // in the rival's final (end-game) total, so it's credited here and the play ledger doesn't count it a second time
+  eachMember(state, (owner, card, def) => {
+    if (!def.onGameEndHit) return;
+    const was = state.players.map(o => o.bonus);
+    def.onGameEndHit(ctx, owner, card);
+    state.players.forEach((o, i) => fBump(state, o, o.bonus - was[i]));
+  }, ['onGameEndHit']);
   eachMember(state, score(true), ['endLast']);
   const ranked = [...state.players].sort((a, b) => followers(state, b) - followers(state, a) || memberCount(state, b) - memberCount(state, a));
   state.ranking = ranked.map(p => p.id);
