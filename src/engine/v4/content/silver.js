@@ -103,7 +103,7 @@ function shareStep(ctx, p, data) {
     hint: (ctx.followers(o) === low ? 1 : 0) - 0.2 * (given[o.id] || 0),
   }));
   if (!data.must) opts.push({ id: 'done', label: total ? 'Done' : 'Give nothing', kind: 'done', value: 'done', hint: -5 });
-  ctx.choose(p, `${data.who}: which rival gains 1 silver? You get ${data.per} ${data.per === 1 ? 'follower' : 'followers'} for each, ${left} more at most`, opts, 'silver.share', { ...data, given });
+  ctx.choose(p, `${data.who}: which rival gains 1 silver? You get ${data.per} ${data.per === 1 ? 'follower' : 'followers'} for each, ${left} more ${data.must ? 'to give' : 'at most'}`, opts, 'silver.share', { ...data, given });
 }
 function shareDone(ctx, p, data) {
   const given = data.given || {};
