@@ -13,7 +13,7 @@ const payAll = s => { while (s.pending && s.pending.kind !== 'buy' && s.pending.
 
 describe('Barker', () => {
   it("is dealt in Landlord's place, with Cory's words", () => {
-    expect(defById('trading.barker').text).toBe('You may recruit followers even after you recruit a member.');
+    expect(defById('trading.barker').text).toBe('Each time you recruit a member, you may also recruit followers.');
     expect(defById('trading.shopkeeper').retired).toBe(true);
   });
   it('after recruiting a member, the owner may also recruit followers, and only followers', () => {
@@ -34,6 +34,30 @@ describe('Barker', () => {
     s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
     s = payAll(answer(s, 'tier:small'));
     expect(!!(s.pending && s.pending.player === 0 && s.pending.kind === 'buy' && s.pending.options.some(o => o.kind === 'tier'))).toBe(false);
+  });
+  it('stacks with Spree: each member recruited brings its own followers recruit', () => {
+    let s = table(['market', 'trading'], { n: 2, round: 3, res: [{ blue: 30, white: 30 }], members: [['trading.barker']],
+      shop: ['market.regular', 'trading.martyr', 'trading.cashier'] });
+    s = answer(s, `slot:${slot(s, 'market', 'Spree')}`);
+    let followerSteps = 0;
+    for (const def of ['market.regular', 'trading.martyr', 'trading.cashier']) {
+      while (s.pending && s.pending.player === 0 && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
+      s = payAll(answer(s, `card:${uidIn(s, def, 'shop')}`));
+      expect(s.pending.prompt).toContain('recruit followers again (Barker)');
+      followerSteps += 1;
+      s = payAll(answer(s, 'tier:small'));
+    }
+    expect(followerSteps).toBe(3);
+    expect(s.log.join('\n').match(/P1 uses Barker\./g).length).toBe(3);
+  });
+  it('passing on the followers recruit keeps the rest of a Spree', () => {
+    let s = table(['market', 'trading'], { n: 2, round: 3, res: [{ blue: 30, white: 30 }], members: [['trading.barker']],
+      shop: ['market.regular', 'market.windowdresser'] });
+    s = answer(s, `slot:${slot(s, 'market', 'Spree')}`);
+    s = payAll(answer(s, `card:${uidIn(s, 'market.regular', 'shop')}`));
+    s = answer(s, 'pass');
+    expect(s.pending.kind).toBe('buy');
+    expect(s.pending.options.some(o => o.kind === 'card')).toBe(true);
   });
   it('without Barker there is no second recruit', () => {
     let s = table(['red', 'trading'], { n: 2, round: 2, res: [{ red: 9, white: 9 }] });
