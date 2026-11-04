@@ -777,7 +777,10 @@ const market = {
     // REPLACE11 bot test (Actions lane, Nov 4): Regular's place. Counted in member cards you hold (a counts-as member is
     // one card; a member who leaves lowers the count), read when you pay: the recruit that makes 3, 6 or 9 cards is free,
     // each number once a game (Evaluators, Nov 4: else dropping to 2 cards earns a second free 3rd).
-    ...add11(m('punchcard', 'Punch Card', 1, 1, 'Your 3rd, 6th and 9th members cost nothing.', { punchCard: true, ...see(() => 3) })),
+    ...add11(m('punchcard', 'Punch Card', 1, 1, 'Your 3rd, 6th and 9th member cards cost nothing.', { punchCard: true,
+      // BOTSEE: about 4 resources for each of 3, 6, 9 still ahead of its member cards and in reach (about 0.6 cards a
+      // placement); worth nothing bought as the 9th card (Evaluators, Nov 4: a bot bought it as its 9th)
+      ...see(i => { const c = i.owner.members.length; return [3, 6, 9].filter(n => n > c && n - c <= i.placesLeft * 0.6).length * 4 * resAt(Math.min(3, i.round + 1)); }) })),
     m('regular', 'Regular', 1, 1, 'Whenever you buy followers, +1 blue.', { ...old9('market.regular'), ...old11('punchcard'),
       onBuyFollowers(ctx, owner, card, by) { if (by.id === owner.id && ctx.gain(owner, B, 1)) ctx.log(`${owner.name}'s Regular: +1 blue.`); },
     }),
