@@ -1,0 +1,149 @@
+// @vitest-environment node
+// Members C (overnight quality loop, Nov 4; /mnt/project-files/quality/pitches/C-*.md), the REPLACE9=1 bot-test
+// switch: a test per sentence of each new card, its pitched turn played out, and the old card no longer dealt. The
+// switch is read when the engine loads, so it is set before the engine is imported (dynamic imports below), then cleared.
+import { describe, it, expect } from 'vitest';
+
+process.env.REPLACE9 = '1';
+const { applyMove } = await import('../../../engine/v4/core.js');
+const { defById } = await import('../../../engine/v4/content/index.js');
+const { move } = await import('./helpers.js');
+const { table, named, uidIn, owns } = await import('./cards-helpers-b.js');
+delete process.env.REPLACE9;
+
+const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
+const BY = { contests: 'byColor' };
+/** Answer every pending ask whose prompt starts with `head`, picking the option `pick(options)` returns. */
+const answerAll = (s, head, pick) => { while (s.pending?.prompt?.startsWith(head)) s = answer(s, pick(s.pending.options, s.pending.player).id); return s; };
+
+describe('REPLACE9: the switch', () => {
+  it('prints the draft prices (as a player sees them) and retires the old cards', () => {
+    const price = id => { const d = defById(id); return [d.s, d.w, d.f, d.n]; };
+    expect(price('yellow.tollkeeper')).toEqual([3, 3, 1, 1]);
+    expect(price('yellow.quilter')).toEqual([5, 2, 1, 1]);
+    expect(price('market.lastminute')).toEqual([3, 1, 1, 1]);
+    for (const id of ['yellow.customs', 'yellow.dyer', 'market.critic']) expect(defById(id).retired).toBe(true);
+    expect(defById('yellow.tollkeeper').round).toBe(1);
+    expect(defById('market.lastminute').round).toBe(1);
+  });
+});
+
+describe('Toll Keeper: "Round End: each rival who doesn\'t hold a full set gives you 2 resources of their choice."', () => {
+  const Q4 = ['red', 'yellow', 'market', 'purple'];
+  it('Round End, before contests: a rival with no full set gives 2 of their choice; one with a set gives nothing', () => {
+    // P2 has no purple (no set), P3 holds one of each (a set)
+    let s = table(Q4, { n: 3, round: 1, res: [{}, { red: 3, blue: 2 }, { red: 1, yellow: 1, blue: 1, purple: 1 }], members: [['yellow.tollkeeper']], queue: [{ t: 'allPlaced' }] });
+    expect(s.pending.player).toBe(1);
+    expect(s.pending.prompt).toBe('Toll Keeper: you hold no full set. Give P1 2 resources: which color?');
+    expect(s.pending.options.map(o => o.value).sort()).toEqual(['blue', 'red']);
+    s = answer(s, 'color:red');
+    expect(s.pending.prompt).toBe('Toll Keeper: you hold no full set. Give P1 1 more resource: which color?');
+    s = answer(s, 'color:blue');
+    expect(s.pending).toBeFalsy();
+    expect(s.players[0].res).toMatchObject({ red: 1, blue: 1 });
+    expect(s.players[1].res).toMatchObject({ red: 2, blue: 1 });
+    expect(s.players[2].res).toMatchObject({ red: 1, yellow: 1, blue: 1, purple: 1 });
+    expect(named(s, 'Toll Keeper')).toEqual(expect.arrayContaining(["P2 gave P1 1 red (P1's Toll Keeper).", "P2 gave P1 1 blue (P1's Toll Keeper)."]));
+  });
+  it('a rival with only 1 resource gives that one; a rival with nothing gives nothing', () => {
+    let s = table(Q4, { n: 3, round: 1, res: [{}, { purple: 1 }, {}], members: [['yellow.tollkeeper']], queue: [{ t: 'allPlaced' }] });
+    s = answer(s, 'color:purple');
+    expect(s.pending).toBeFalsy();
+    expect(s.players[0].res.purple).toBe(1);
+    expect(s.players[1].res.purple).toBe(0);
+  });
+  it('it is a gift, not a steal: a rival\'s Bodyguards does not stop it', () => {
+    let s = table(['red', 'yellow', 'market', 'thieves'], { n: 2, round: 1, res: [{}, { red: 4 }], members: [['yellow.tollkeeper'], ['thieves.watchdog']], queue: [{ t: 'allPlaced' }] });
+    s = answerAll(s, 'Toll Keeper', o => o[0]);
+    expect(s.players[0].res.red).toBe(2);
+  });
+  it('pitched turn: round II end, 4 players; the toll lands before contests, so it can win Most full sets', () => {
+    // Ana (P1) owns Toll Keeper and holds red, blue, yellow but no purple. Cleo (P3) holds only purple and gives 2 of it:
+    // Ana now holds a full set and wins Yellow's Most full sets (+6 in round II). Ben (P2) holds a set: he gives nothing.
+    let s = table(Q4, { n: 4, round: 2, rules: BY, res: [{ red: 2, blue: 2, yellow: 2 }, { red: 1, yellow: 1, blue: 1, purple: 1 }, { purple: 5 }, { red: 3, blue: 2 }],
+      members: [['yellow.tollkeeper']], queue: [{ t: 'allPlaced' }, { t: 'endRound' }] });
+    s = answerAll(s, 'Toll Keeper', o => o.find(x => x.value === 'purple') || o[0]);
+    expect(s.players[0].res.purple).toBe(2); // Cleo's purple
+    expect(s.players[2].res.purple).toBe(3);
+    expect(s.players[1].res).toMatchObject({ red: 1, yellow: 1, blue: 1, purple: 1 });
+    // Ana: 2 sets (2 each of 4 colors) against Ben's 1: she wins Most full sets
+    const yellowWin = (s.contests || []).at(-1).results.find(c => c.qid === 'yellow');
+    expect(yellowWin.winners).toEqual([0]);
+  });
+});
+
+describe('Quilter: "On Use, once per round: turn one full set into 8 followers."', () => {
+  const Q4 = ['red', 'yellow', 'market', 'silver'];
+  it('On Use: pays 1 of each color on the table and gains 8 followers', () => {
+    let s = table(Q4, { n: 3, round: 2, res: [{ red: 3, yellow: 4, blue: 3, silver: 3 }], members: [['yellow.quilter']], queue: [{ t: 'buy', p: 0 }] });
+    s = move(s, `use:${uidIn(s, 'yellow.quilter', 0)}`);
+    expect(s.players[0].res).toMatchObject({ red: 2, yellow: 3, blue: 2, silver: 2 });
+    expect(s.players[0].bonus).toBe(8);
+    expect(named(s, 'Quilter')).toContain("P1's Quilter: turns a full set (1 of each color) into 8 followers.");
+  });
+  it('once per round: a second use the same round is not offered', () => {
+    let s = table(Q4, { n: 3, round: 2, res: [{ red: 3, yellow: 4, blue: 3, silver: 3 }], members: [['yellow.quilter']], queue: [{ t: 'buy', p: 0 }] });
+    s = move(s, `use:${uidIn(s, 'yellow.quilter', 0)}`);
+    expect(s.pending.options.some(o => o.id === `use:${uidIn(s, 'yellow.quilter', 0)}`)).toBe(false);
+  });
+  it('no full set: nothing is paid or gained, and the use comes back', () => {
+    let s = table(Q4, { n: 3, round: 2, res: [{ red: 3, yellow: 4, blue: 3 }], members: [['yellow.quilter']], queue: [{ t: 'buy', p: 0 }] });
+    const id = `use:${uidIn(s, 'yellow.quilter', 0)}`;
+    if (s.pending.options.some(o => o.id === id)) {
+      s = move(s, id);
+      expect(s.players[0].res).toMatchObject({ red: 3, yellow: 4, blue: 3, silver: 0 });
+      expect(s.players[0].bonus).toBe(0);
+    }
+  });
+  it('pitched turn: round II, 4 players; 13 resources and the recruit still free', () => {
+    // 4 yellow, 3 red, 3 blue, 3 silver after Harvest-sized gains: quilt (8 followers), then the turn's recruit
+    // buys a 5-follower card from what's left (12 resources -> 4 left... the recruit is untouched by the quilt)
+    let s = table(Q4, { n: 4, round: 2, res: [{ red: 3, yellow: 4, blue: 3, silver: 3 }], members: [['yellow.quilter']], queue: [{ t: 'buy', p: 0 }] });
+    s = move(s, `use:${uidIn(s, 'yellow.quilter', 0)}`);
+    expect(s.players[0].bonus).toBe(8);
+    expect(s.pending.player).toBe(0); // still P1's recruit
+    expect(Object.values(s.players[0].res).reduce((a, b) => a + b, 0)).toBe(9);
+  });
+});
+
+describe('Last-Minute Shopper: "Round End: you may recruit a shop member, paying its cost."', () => {
+  const Q4 = ['red', 'market', 'purple', 'silver'];
+  it('Round End, before contests: offers each shop member the owner can pay for, and "Recruit nothing"', () => {
+    let s = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminute']], shop: ['red.volunteer', 'market.snob'], queue: [{ t: 'allPlaced' }] });
+    expect(s.pending.prompt).toBe('Last-Minute Shopper: before contests are scored, recruit a shop member, paying its cost?');
+    const labels = s.pending.options.map(o => o.label);
+    expect(labels.some(l => l.startsWith('Volunteer'))).toBe(true);
+    expect(labels.some(l => l.startsWith('Snobs'))).toBe(false); // needs blue
+    expect(labels).toContain('Recruit nothing');
+  });
+  it('recruiting pays its cost; "Recruit nothing" keeps the resources', () => {
+    let s = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminute']], shop: ['red.volunteer'], queue: [{ t: 'allPlaced' }] });
+    const vol = s.pending.options.find(o => o.label.startsWith('Volunteer'));
+    s = answer(s, vol.id);
+    s = answerAll(s, 'Last-Minute Shopper: how do you pay', o => o[0]);
+    expect(owns(s, 0, 'red.volunteer')).toBe(true);
+    expect(s.players[0].res.red).toBeLessThan(4);
+    let t = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminute']], shop: ['red.volunteer'], queue: [{ t: 'allPlaced' }] });
+    t = answer(t, 'none');
+    expect(owns(t, 0, 'red.volunteer')).toBe(false);
+    expect(t.players[0].res.red).toBe(4);
+  });
+  it('nothing affordable: no ask', () => {
+    const s = table(Q4, { n: 3, round: 1, res: [{}], members: [['market.lastminute']], shop: ['market.snob'], queue: [{ t: 'allPlaced' }] });
+    expect(s.pending).toBeFalsy();
+    expect(named(s, 'Last-Minute Shopper')).toContain("P1's Last-Minute Shopper: nothing in the shop they can pay for.");
+  });
+  it('pitched turn: round I end, the recruit counts in Blue\'s Most members before it is scored', () => {
+    // P1: Last-Minute Shopper + 1 member (2), P2: 3 members. P1 buys Window Dressers (counts as 3) at round end: 5 to 3.
+    let s = table(Q4, { n: 3, round: 1, rules: BY, res: [{ blue: 3, red: 1 }], members: [['market.lastminute', 'red.volunteer'], ['red.bodysnatchers', 'purple.gossip', 'silver.godparents']],
+      shop: ['market.windowdresser'], queue: [{ t: 'allPlaced' }, { t: 'endRound' }] });
+    const wd = s.pending.options.find(o => o.label.startsWith('Window Dressers'));
+    expect(wd).toBeTruthy();
+    s = answer(s, wd.id);
+    s = answerAll(s, 'Last-Minute Shopper: how do you pay', o => o[0]);
+    s = answerAll(s, 'Churn', o => o[0]);
+    expect(owns(s, 0, 'market.windowdresser')).toBe(true);
+    const blue = (s.contests || []).at(-1).results.find(c => c.qid === 'market');
+    expect(blue.winners).toEqual([0]);
+  });
+});

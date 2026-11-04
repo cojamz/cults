@@ -7,6 +7,7 @@ import { REPLACE1, add1, old1, handlers1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add4, old4, handlers4 } from './replace4.js';
+import { add9, old9, handlers9 } from './replace9.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -387,6 +388,13 @@ const market = {
       if (!scoutChoices(ctx, p, uid).length) return;
       askPay(ctx, p, `Talent Scout: how do you pay for ${c.def.name}?`, { uid, why: 'Talent Scout', fromPile: true, how: {} });
     },
+    ...handlers9({
+      lastMinute(ctx, p, uid) {
+        if (uid == null) { ctx.log(`${p.name}'s Last-Minute Shopper: recruits nothing.`); return; }
+        if (!ctx.state.shop.includes(uid) || !ctx.payChoices(p, uid, {}).length) return;
+        askPay(ctx, p, `Last-Minute Shopper: how do you pay for ${ctx.card(uid).def.name}?`, { uid, why: 'Last-Minute Shopper', fromPile: true, how: {} });
+      },
+    }),
     ...handlers1({
       scavenge(ctx, p, uid) {
         if (uid == null) { ctx.log(`${p.name}'s Scavengers: recruits nothing.`); return; }
@@ -576,11 +584,26 @@ const market = {
       },
     }),
     // Cory's yes, Oct 21
-    m('critic', 'Critic', 1, 1, 'Whenever a rival recruits a blue member, +1 follower.', { ...old1,
+    m('critic', 'Critic', 1, 1, 'Whenever a rival recruits a blue member, +1 follower.', { ...old1, ...old9,
       onAnyRecruit(ctx, owner, card, by, rec) {
         if (by !== owner && isBlue(ctx.defOf(rec))) { owner.bonus += 1; ctx.log(`${owner.name}'s Critic: +1 follower.`); }
       },
     }),
+    // REPLACE9 bot test (Members C, Nov 4): Critic's place. 3 blue + 1 any as a player sees it. After the round's last
+    // placement, before contests are scored (onAllPlaced, as Second-Story Man), the owner may recruit one face-up member,
+    // paying its cost the usual way; the new member counts in this round's contests. A member recruited then doesn't use
+    // its own Round End that round (the round's round-end members have already been asked).
+    ...add9(m('lastminute', 'Last-Minute Shopper', 2, 1, 'Round End: you may recruit a shop member, paying its cost.', { round: 1,
+      ...see(i => endsAhead(i).length * 2), // BOTSEE: an extra paid recruit each round end still ahead
+      onAllPlaced(ctx, owner) {
+        const opts = ctx.shopCards().filter(c => ctx.payChoices(owner, c.uid, {}).length).map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name} · pay ${ctx.price(owner, c.uid, {}).total}`, kind: 'card', value: c.uid, hint: botWorth(c),
+        }));
+        if (!opts.length) { ctx.log(`${owner.name}'s Last-Minute Shopper: nothing in the shop they can pay for.`); return; }
+        opts.push({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: 0 });
+        ctx.choose(owner, 'Last-Minute Shopper: before contests are scored, recruit a shop member, paying its cost?', opts, `${Q}.lastMinute`);
+      },
+    })),
     // REPLACE1 bot test (Nov 3, replacement batch 1): Critic's place. 4 blue + 2 any as a player sees it. Every turn send of
     // shop members to the bottom (Savings, Out of Style, Bury, Window Shopper, Window Dressers, Trendsetters, Restockers,
     // Makeover, Scouts, Doormen's sent member) asks it; the round-start refresh doesn't (nobody sends those).

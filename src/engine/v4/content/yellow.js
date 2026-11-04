@@ -7,6 +7,7 @@ import { startLaunder } from './launder.js';
 import { add1, old1, handlers1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
 import { add5, old5 } from './replace5.js';
+import { add9, old9, handlers9 } from './replace9.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
@@ -59,6 +60,18 @@ function matchmaker(ctx, owner, member) {
 // every recruit of Drifters (a steal too) runs its On Recruit color pick, and the pick settles color-reading cards
 const unpickedDrifters = (ctx, member) => ctx.defOf(member).key === 'drifters';
 const touchable = (ctx, p) => ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'change'));
+/** Quilter (REPLACE9 bot test): followers for one full set. */
+const QUILT = 8;
+/** Toll Keeper (REPLACE9 bot test): rival o gives host 1 resource of their choice, `left` in all (asked one at a time). */
+function askToll(ctx, host, o, left, key) {
+  const have = colors(ctx).filter(c => (o.res[c] || 0) > 0);
+  if (!have.length) return;
+  ctx.choose(o, `Toll Keeper: you hold no full set. Give ${host.name} ${left === 1 ? '1 more resource' : `${left} resources`}: which color?`, have.map(c => ({
+    id: `color:${c}`, label: `Give 1 ${c}`, kind: 'color', value: c,
+    // bots give from their biggest pile, and keep a color they lead or tie the host in by 1 or less
+    hint: 0.3 * (o.res[c] || 0) - ((o.res[c] || 0) - (host.res[c] || 0) <= 1 && (o.res[c] || 0) >= (host.res[c] || 0) ? 1 : 0),
+  })), 'yellow.toll', { host: host.id, left, key }, { together: key });
+}
 
 export default {
   id: 'yellow',
@@ -129,6 +142,15 @@ export default {
   ],
 
   handlers: {
+    ...handlers9({
+      toll(ctx, o, color, data) {
+        const host = ctx.player(data.host);
+        if (!host || !(o.res[color] > 0)) return;
+        o.res[color] -= 1; ctx.gain(host, color, 1);
+        ctx.log(`${o.name} gave ${host.name} 1 ${color} (${host.name}'s Toll Keeper).`);
+        if (data.left > 1) askToll(ctx, host, o, data.left - 1, data.key);
+      },
+    }),
     taxColor(ctx, p, c) {
       const n = rivalsOn(ctx, p, ctx.state.resources.indexOf(c));
       if (n) ctx.gain(p, c, n, { fromAction: true });
@@ -225,7 +247,7 @@ export default {
       onRoundStart(ctx, owner) { for (const c of missing(ctx, owner)) ctx.gain(owner, c, 1); },
     }),
     // Cory, 2026-10-31: "maybe just +1 yellow when any of your resources are stolen or moved"
-    m('customs', 'Customs Officer', 2, 3, 'Whenever a rival steals or changes any of your resources, +1 yellow.', { round: 1, // 6 but still a round I member (Claude, balance Nov 1: strong at 4; Yellow keeps 4 round I members)
+    m('customs', 'Customs Officer', 2, 3, 'Whenever a rival steals or changes any of your resources, +1 yellow.', { round: 1, ...old9, // 6 but still a round I member (Claude, balance Nov 1: strong at 4; Yellow keeps 4 round I members)
       onSteal(ctx, owner, card, info) { if (info.victim === owner && info.thief !== owner) { ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs Officer: +1 yellow.`); } },
       // once per change, however many of your resources it changes (Cory, Nov 1: "Yes"), as once per steal
       onChanged(ctx, owner, card, by, instance) {
@@ -234,6 +256,19 @@ export default {
         ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs Officer: +1 yellow.`);
       },
     }),
+    // REPLACE9 bot test (Members C, Nov 4): Customs Officer's place. 3 yellow + 3 any as a player sees it. Acts after the
+    // round's last placement, before contests (onAllPlaced, as Second-Story Man). Each rival with no full set gives 2 of
+    // their choice (all they have, if less), answering together as Potluck's rivals do. A gift, not a steal: Bodyguards
+    // doesn't stop it.
+    ...add9(m('tollkeeper', 'Toll Keeper', 2, 3, "Round End: each rival who doesn't hold a full set gives you 2 resources of their choice.", { round: 1,
+      ...see(i => endsAhead(i).reduce((a, r) => a + 3 * resAt(r) * (1 + SEE_SPITE), 0)), // BOTSEE: about 3 a round end, and the rivals' loss
+      onAllPlaced(ctx, owner) {
+        const payers = ctx.rivals(owner).filter(o => setsOf(ctx, o) < 1 && total(ctx, o) > 0);
+        if (!payers.length) { ctx.log(`${owner.name}'s Toll Keeper: every rival holds a full set or nothing.`); return; }
+        const key = `toll:${ctx.state.moves}:${owner.id}`;
+        for (const o of payers.sort((a, b) => (a.kind === 'bot' ? 0 : 1) - (b.kind === 'bot' ? 0 : 1))) askToll(ctx, owner, o, 2, key);
+      },
+    })),
     // Claude's fill-in (Cory, 2026-10-31: "whenever you recruit, +1 of its color" may become Red's artifact)
     m('gobetween', 'Go-Between', 2, 1, 'Whenever a space gives you resources, you may change 1 of them to any color.', {
       afterGain(ctx, owner, card, g) {
@@ -272,9 +307,23 @@ export default {
       onColorChosen(ctx, owner, card, member) { matchmaker(ctx, owner, member); },
     }),
     // Cory, 2026-10-31: "i dont like round end. i like on recruit and round start"
-    m('dyer', 'Dyer', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true, ...old1, ...old5,
+    m('dyer', 'Dyer', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true, ...old1, ...old5, ...old9,
       onRoundStart(ctx, owner) { ctx.gain(owner, Y, held(ctx, owner).length); },
     }),
+    // REPLACE9 bot test (Members C, Nov 4): Dyer's place. 5 yellow + 2 any as a player sees it. A full set is 1 of each
+    // color on the table (setsOf); using it pays 1 of each and gains 8 followers. No full set: nothing happens and the use
+    // comes back.
+    ...add9(m('quilter', 'Quilter', 4, 2, 'On Use, once per round: turn one full set into 8 followers.', {
+      activate: 'round',
+      onActivate(ctx, owner, card) {
+        if (setsOf(ctx, owner) < 1) { card.used = false; ctx.log(`${owner.name}'s Quilter: no full set to turn in.`); return; }
+        for (const c of colors(ctx)) owner.res[c] -= 1;
+        owner.bonus += QUILT;
+        ctx.log(`${owner.name}'s Quilter: turns a full set (1 of each color) into ${QUILT} followers.`);
+      },
+      // bots quilt once they hold a set, keeping one back for the full-sets contest only when they'd lead it by exactly one
+      botActivate: (ctx, owner) => setsOf(ctx, owner) >= 1,
+    })),
     // REPLACE1 bot test (Nov 3, replacement batch 1): Dyer's place. 4 yellow + 2 any as a player sees it. Pick a rival
     // (Bodyguards blocks, as it blocks Dilute), then up to 3 swaps of 1 of yours for 1 of theirs. Customs Officer and Tastemaker
     // read it as changing a rival's resources.
