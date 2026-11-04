@@ -11,7 +11,7 @@ describe('REPLACE15: contest-win members in Dabblers\' place', () => {
   it('both are dealt; Dabblers is retired', () => {
     expect(defById('benders.cheerleaders').text).toBe('Whenever you win a contest, +2 followers.');
     expect(defById('benders.gloaters').text).toBe('Whenever you win a contest, steal 1 follower from each rival.');
-    expect(defById('benders.dabblers').retired).toBe(true);
+    expect(defById('benders.dabblers').retired).toBeFalsy(); // Dabblers is protected (Cory, Nov 4)
   });
 
   it('Cheerleaders: +2 followers per contest won', () => {
