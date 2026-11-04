@@ -7,7 +7,7 @@ import { registerQuadrant, defById } from './index.js';
 import { add1, old1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
 import { add5, old5, handlers5 } from './replace5.js';
-import { add10, old10, on10 } from './replace10.js';
+import { add10, old10, on10, handlers10 } from './replace10.js';
 import { on11 } from './replace11.js';
 import { swap13, handlers13 } from './replace13.js';
 import { add14, old14 } from './replace14.js';
@@ -450,6 +450,25 @@ const thieves = {
         if (ctx.claimMember(p, uid)) ctx.log(`${p.name}'s Vultures: steals ${ctx.player(data.from).name}'s ${name} on its way out.`);
       },
     }),
+    ...handlers10({
+      hoardBreak(ctx, p, v) {
+        if (!v) return;
+        const [vid, color] = v, o = ctx.player(vid);
+        const x = hoardPiles(ctx, p).find(y => y.owner === o && y.color === color);
+        if (!x) return;
+        const got = commit(ctx, p, o, { [color]: x.n }, false, false);
+        if (got) ctx.log(`${p.name}'s Hoard Breaker: took ${got} ${color} from ${o.name}.`);
+      },
+      poach(ctx, p, uid) {
+        if (uid == null) return;
+        const hit = poachList(ctx, p).find(([, c]) => c.uid === uid);
+        if (!hit) return;
+        const [o, c] = hit, pay = ctx.payChoices(p, uid, {})[0];
+        if (!pay) return;
+        for (const [r, n] of Object.entries(pay)) if (n) { p.res[r] -= n; o.res[r] = (o.res[r] || 0) + n; }
+        if (ctx.moveMember(uid, o, p, { recruit: true })) ctx.log(`${p.name}'s Poacher: recruits ${o.name}'s ${c.def.name}, paying ${o.name} ${Object.entries(pay).filter(([, n]) => n).map(([r, n]) => `${n} ${r}`).join(', ')}.`);
+      },
+    }),
     kidnap(ctx, p, uid) {
       const v = ctx.ownerOf(uid);
       if (!v || v === p || !kidnapList(ctx, p).some(([, c]) => c.uid === uid)) return;
@@ -694,11 +713,32 @@ const thieves = {
         for (const o of ctx.rivals(owner)) autoSteal(ctx, owner, o, 'Mob Boss', k);
       },
     })),
-    m('watchdog', 'Bodyguards', 5, 2, 'Rivals can’t steal from you.', { f: 2, // +1 follower (Cory, 2026-10-25)
+    m('watchdog', 'Bodyguards', 5, 2, 'Rivals can’t steal from you.', { f: 2, ...old10('watchman'), ...old10('hoardbreaker'), // +1 follower (Cory, 2026-10-25)
       // steals, not swaps (Cory, 2026-11-01: "balance wise it works best if it blocks steals, not swaps"): Promote, Demote,
       // Panel, Anarchist, Headhunter and Double Agent go through, as they do through Lie Low
       guardSteal: (ctx, victim, card, thief, kind) => kind !== 'swap',
     }),
+    // REPLACE10 bot tests (Nov 4, Members D, requalified paper candidates; gate D-bodyguards-1/-2): Bodyguards' place.
+    // Night Watchman: 5 magenta + 2 any as a player sees it. Blocks what Bodyguards blocks, while one of your minions
+    // (or a joined spot) is on a Magenta space.
+    ...add10(m('watchman', 'Night Watchman', 4, 2, "While you have a minion on a Magenta space, rivals can't steal from you.", {
+      guardSteal: (ctx, victim, card, thief, kind) => kind !== 'swap' && onMagenta(ctx, victim) > 0,
+    })),
+    // Hoard Breaker: 6 magenta + 2 any. A rival's biggest pile (ties: you pick the color), half of it rounded down,
+    // through the shared steal (Bodyguards and Lie Low block it; Sticky Fingers and Desperado add).
+    ...add10(m('hoardbreaker', 'Hoard Breaker', 5, 2, "On Use, once per round: steal half of a rival's biggest pile, rounded down.", {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const list = hoardPiles(ctx, owner);
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Hoard Breaker: no rival pile of 2 or more to break.`); return; }
+        ctx.log(`${owner.name} uses Hoard Breaker.`);
+        ctx.choose(owner, 'Hoard Breaker: steal half of which pile?', list.map(x => ({
+          id: `pile:${x.owner.id}:${x.color}`, label: `${x.owner.name}'s ${x.color}: take ${x.n}`, kind: 'pile', value: [x.owner.id, x.color], hint: x.n,
+        })), 'thieves.hoardBreak');
+      },
+      botActivate: (ctx, p) => hoardPiles(ctx, p).some(x => x.n >= 2),
+    })),
     m('crew', 'Crew', 1, 1, 'Worth 2 followers.', { f: 2, n: 2, ...old1 }), // 2 members (Cory, Oct 29)
     // REPLACE1 bot test (Nov 3, replacement batch 1): Crew's place. 4 magenta + 2 any as a player sees it. At round end,
     // for each contest a rival wins (tied winners each count), 2 of that contest's color from that rival, through the
@@ -770,7 +810,7 @@ const thieves = {
     // members" counts as members count (Counts as N). A tie for the most members, or for the cheapest, is the owner's
     // pick; a rival who can't be stolen from (Bodyguards, Lie Low) is passed over only inside such a tie. A steal of a
     // member: the member is the owner's recruit (its On Recruit fires), as Heist's is.
-    m('kidnappers', 'Kidnapper', 5, 2, 'On Recruit and Round Start: steal the cheapest member of the rival with the most members.', { now: true, round: 1, // a round I member as Kingpin was (bot-tested in a later round; Nov 3)
+    m('kidnappers', 'Kidnapper', 5, 2, 'On Recruit and Round Start: steal the cheapest member of the rival with the most members.', { now: true, round: 1, ...old10('poacher'), ...old10('poacher5'), // a round I member as Kingpin was (bot-tested in a later round; Nov 3)
       onRoundStart(ctx, owner) {
         const list = kidnapList(ctx, owner);
         if (!list.length) { ctx.log(`${owner.name}'s Kidnapper: no member to steal.`); return; }
@@ -778,6 +818,19 @@ const thieves = {
         pickMember(ctx, owner, list, 'Kidnapper: steal which cheapest member?', 'thieves.kidnap');
       },
     }),
+    // REPLACE10 bot tests (Nov 4, Members D; gate D-kidnapper "Talent Scout", renamed here because Blue's Talent Scout
+    // exists, the name is Claude's fill-in): Kidnapper's place, 6 magenta + 2 any, a round I member as Kidnapper is.
+    // Not a steal (Bodyguards doesn't stop it): you pay its cost, by the usual pay rule, and the rival gets what you pay.
+    // You may pass. poacher: costing 4 or less ("recruit"); poacher5: 5 or less ("buy").
+    ...add10(m(on10('poacher5') ? 'poacher5' : 'poacher', 'Poacher', 5, 2, on10('poacher5') ? "Round Start: buy a rival's member costing 5 or less, paying that rival its cost." : "Round Start: recruit a rival's member costing 4 or less, paying its cost to that rival.", { round: 1,
+      onRoundStart(ctx, owner) {
+        const list = poachList(ctx, owner);
+        if (!list.length) { ctx.log(`${owner.name}'s Poacher: no rival member it can afford.`); return; }
+        ctx.choose(owner, 'Poacher: recruit which rival member, paying its cost to them?', list.map(([o, c]) => ({
+          id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${cost(c)})`, kind: 'member', value: c.uid, hint: c.def.f * 1.5 + 1 - cost(c) * 0.3,
+        })).concat({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: 0 }), 'thieves.poach');
+      },
+    })),
     // Cory's yes, Oct 21: a counter in Bait's shape, and a weak card for "magenta doesn't gain enough"
     m('snitch', 'Snitch', 2, 1, 'Whenever a rival steals from you, they lose 1 follower.', {
       onSteal(ctx, owner, card, info) {
@@ -864,6 +917,19 @@ export function install() {
 }
 
 /** Kidnapper (REPLACE3): the cheapest members of the rivals with the most members ([rival, card] pairs; several on a tie). */
+/** Hoard Breaker (REPLACE10): each rival's biggest pile (every color tied for it), half rounded down, 1 or more. */
+function hoardPiles(ctx, p) {
+  return ctx.rivals(p).flatMap(owner => {
+    const ps = piles(ctx, p, owner), top = Math.max(0, ...ps.map(([, n]) => n));
+    const half = Math.floor(top / 2);
+    return half > 0 ? ps.filter(([, n]) => n === top).map(([color, held]) => ({ owner, color, n: Math.min(held, ctx.stealCount(p, half)) })) : [];
+  });
+}
+/** Poacher (REPLACE10): [rival, card] for each rival member at or under the cap that p can pay for. */
+function poachList(ctx, p) {
+  const cap = on10('poacher5') ? 5 : 4;
+  return ctx.rivals(p).flatMap(o => ctx.membersOf(o).filter(c => cost(c) <= cap && ctx.payChoices(p, c.uid, {}).length).map(c => [o, c]));
+}
 function kidnapList(ctx, p) {
   const rivals = ctx.rivals(p).filter(o => ctx.membersOf(o).length);
   if (!rivals.length) return [];

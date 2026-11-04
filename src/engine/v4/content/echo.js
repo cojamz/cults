@@ -694,7 +694,32 @@ const echoQ = {
     }),
     m('tuningfork', 'Impressionist', 1, 2, 'Whenever any player copies an action, +1 of its color.'),
     // Cory, 2026-10-28: back as a big card at 10 (6 green + 3 any + the +1 wild); no follower condition any more
-    m('wallflower', 'Wallflower', 6, 3, 'Whenever you copy an action, double the resources it gives you.', old2),
+    m('wallflower', 'Wallflower', 6, 3, 'Whenever you copy an action, double the resources it gives you.', { ...old2, ...old10('bigfinish'), ...old10('coverband') }),
+    // REPLACE10 bot tests (Nov 4, Members D, requalified paper candidates; gate D-wallflower): Wallflower's place, 7 green
+    // + 3 any as a player sees it. Big Finish: every space your minions are on right now, each copied once, as Greatest
+    // Hits copies (Agents and copy loops stop what they stop).
+    ...add10(m('bigfinish', 'Big Finish', 6, 3, 'On Use, once per game: copy every action you have a minion on.', {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const list = targets(ctx, owner, 'own');
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Big Finish: no action of theirs to copy yet.`); return; }
+        ctx.log(`${owner.name} uses Big Finish.`);
+        copyAll(ctx, owner, list, 'Big Finish');
+      },
+      botActivate: (ctx, p) => targets(ctx, p, 'own').reduce((n, e) => n + entryValue(ctx, e, p), 0) >= 6,
+    })),
+    // Cover Band: Echo without a minion, once a round, as Echo copies.
+    ...add10(m('coverband', 'Cover Band', 6, 3, 'On Use, once per round: copy the previous action.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const list = previousNow(ctx, owner);
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Cover Band: no previous action to copy.`); return; }
+        ctx.log(`${owner.name} uses Cover Band.`);
+        offer(ctx, owner, list, 'Cover Band: copy the previous action?', 'now', 'Cover Band');
+      },
+      botActivate: (ctx, p) => previousNow(ctx, p).some(e => entryValue(ctx, e, p) >= 3),
+    })),
     // REPLACE2 bot test (Nov 3, replacement batch 2): Wallflower's place. 6 green + 3 any as a player sees it. Any color on
     // the table; a pile isn't an action, so Agents doesn't stop it.
     ...add2(m('mirrorimage', 'Mirror Image', 5, 3, 'On Use, once per game: choose a rival and a color; gain that color until you hold as much of it as they do.', {
