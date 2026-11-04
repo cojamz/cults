@@ -1,6 +1,6 @@
 # Cults — handoff (current state; update in place, don't stack sections)
 
-Last updated 2026-11-03 10:15am Eastern by the "Plan and run today's autonomous improvements" thread. Before this: design/archive/handoff-2026-10-24-to-28.md (the Nov 1 section is in git history).
+Last updated 2026-11-03 7:05pm Eastern by the "Plan and run today's autonomous improvements" thread. Before this: design/archive/handoff-2026-10-24-to-28.md (the Nov 1 section is in git history).
 - Revert point (Cory, Nov 3 2:31pm: "branch for us so it's easy to revert to the version we had before we kicked off today's work"): branch `snapshot/pre-nov3` = 56ea45c (v0.99.510, color cost and By color contests live, before Nov 3's day of work). Before the color cost: v0.99.509 is 4e192d5.
 - Live: https://cojamz.github.io/patrons/play/ is v0.99.510 (a2432c4, Nov 3 1:15am Eastern; main play/build.json is the truth).
 - Since v0.99.0 (Nov 1): cloaks named "<Color> Cloak" and picked before round I, the Goes Last token, the swap card (2 any), piles modes, Splurge per resource in round II, members pay 1 more of their own color and 1 less any (v0.99.510), and the Contests setting (As printed or By color, one goal per color). CHANGELOG.md has each.
@@ -10,6 +10,12 @@ Last updated 2026-11-03 10:15am Eastern by the "Plan and run today's autonomous 
 - Versions: small publishes are sub-steps (`npm run version:v4 -- patch`); v1.0 when the bar in design/1.0.md is met.
 - Our own open work, no call needed: design/todo.md ("Ours"). Ship freeze rule: while Cory says a game is running, push to the branch only.
 - Firefox: every gate and the freeze probe run in it (`npm run check:v4 -- --firefox`); the perf rig stays Chrome-only (CDP).
+
+## Replacement members (Nov 3, thread "Plan and run today's autonomous improvements")
+- 44 new members on the six principles (design/notes/replacements-principles-2026-11-03.md), built behind bot-test switches REPLACE1..REPLACE6 (src/engine/v4/content/replace1-6.js; specs design/notes/replacements-batch1..6-2026-11-03.md). Results: design/eval/replacements/ (batch1..batch4-6-results.md, batch7-fixed-bots-results.md is the one to trust).
+- Live (Claude, under Cory's "use your judgement"): v0.99.525 Hostesses, Misers (was Heirs), Spoilsports, Body Snatchers. Ship 2 Impersonators, Creditors, Kidnappers (6 magenta + 2 any), Godparents, all round I: see the live stamp; if not live, finish it from worktree .claude/worktrees/agent-ac7f1bae013c8e3cc (commits through cf2c800c) rebased on the tip.
+- Bots were blind to most new cards when buying (/mnt/project-files/replacements/why-unbought.md). BOTSEE=1 (src/engine/v4/content/botsee.js, bots.js seeUse) fixes it as a bot test only; with it eight cards are too strong as priced (Turncoats, Defectors, Outbidders, Fundraisers, Mirror Image, Social Climbers, Evictors, Tithe Takers).
+- Next: live set 3 (Night Watch, Second-Story Men, Hawkers, Sore Losers; pictures done 120c6fb4); decide whether BOTSEE goes into the live bots; reprice the strong eight and retest; cut the real misses (list in batch7 results). Runners: .bt/run.sh pattern, shard script /mnt/project-files/replacements/runs/shard.sh, analyzer .bt/cards2.py (local, not committed; copy in /mnt/project-files/replacements/runs/).
 
 ## The game now
 - Eight 2.0 colors live: Red, Green, Magenta, Purple, Blue, White, Yellow, Silver (each with a cloak). Gold is backlog. Decks: 10 per color is the game (Cory, Nov 1); 15 is an untested setting.
