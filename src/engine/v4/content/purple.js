@@ -806,10 +806,11 @@ export default {
       onRoundEnd(ctx, owner, card) { card.time = (card.time || 0) + 1; ctx.log(`${owner.name}'s Lifers: a time token (worth ${2 + card.time}).`); },
       ...see(info => endsAhead(info).length),
     })),
-    // Floor Crew (paper 13, set 12 vs 10): each member its owner recruits pays +1 purple per 2 of their minions on the board.
+    // Floor Crew (paper 13, set 12 vs 10; A/B +0.41): each recruit (a member or a follower purchase, Cory 2026-10-21) pays
+    // +1 purple per 2 of its owner's minions on the board; not its own arrival (as Proselytizers).
     ...add7(m('floorcrew', 'Floor Crew', 2, 1, 'Whenever you recruit, +1 purple per 2 of your minions on the board.', { f: 3, n: 3, round: 1,
-      onAnyRecruit(ctx, owner, card, by) {
-        if (by !== owner) return;
+      onRecruit(ctx, owner, card, by, what) {
+        if (by !== owner || what.member?.uid === card.uid) return;
         const n = Math.floor(onBoard(ctx, owner) / 2);
         if (n) { ctx.gain(owner, P, n); ctx.log(`${owner.name}'s Floor Crew: +${n} purple.`); }
       },

@@ -479,10 +479,12 @@ describe('Lifers and Floor Crew (Shift Crew\'s place, scale-up 3)', () => {
     const p = s.players[0], logs = [], def = defById('purple.floorcrew'), uid = uidIn(s, 'purple.floorcrew', 0);
     s.slots = { ...s.slots, t1: p.id, t2: p.id, t3: p.id }; // 3 minions on the board
     const had = p.res.purple || 0;
-    def.onAnyRecruit(stub(s, logs), p, s.cards[uid], s.players[1]);
+    def.onRecruit(stub(s, logs), p, s.cards[uid], s.players[1], { member: { uid: 'x' } });
+    def.onRecruit(stub(s, logs), p, s.cards[uid], p, { member: s.cards[uid] }); // its own arrival
     expect(p.res.purple || 0).toBe(had);
-    def.onAnyRecruit(stub(s, logs), p, s.cards[uid], p);
-    expect(p.res.purple).toBe(had + 1);
-    expect(logs).toEqual(["P1's Floor Crew: +1 purple."]);
+    def.onRecruit(stub(s, logs), p, s.cards[uid], p, { member: { uid: 'x' } });
+    def.onRecruit(stub(s, logs), p, s.cards[uid], p, { followers: 3, tier: 0 }); // a follower purchase is a recruit
+    expect(p.res.purple).toBe(had + 2);
+    expect(logs).toEqual(["P1's Floor Crew: +1 purple.", "P1's Floor Crew: +1 purple."]);
   });
 });
