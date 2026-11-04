@@ -28,14 +28,14 @@ describe('PIN', () => {
     expect(shopDefs(a)).toEqual(shopDefs(b));
   });
   it('a listed round I member is in the round I shop on every seed where it is in the game', async () => {
-    const core = await engine('purple.crew');
+    const core = await engine('purple.picketline');
     let seen = 0;
     for (let seed = 1; seed <= 20; seed++) {
       const s = core.createGame({ seats: seats(4), seed, quadrants: TABLE, rules: { deck: 10 } });
-      const inGame = Object.values(s.cards).some(c => c.def === 'purple.crew');
+      const inGame = Object.values(s.cards).some(c => c.def === 'purple.picketline');
       if (!inGame) continue;
       seen++;
-      expect(shopDefs(s)).toContain('purple.crew');
+      expect(shopDefs(s)).toContain('purple.picketline');
     }
     expect(seen).toBeGreaterThan(0);
   });
