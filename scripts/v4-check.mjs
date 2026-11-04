@@ -52,6 +52,7 @@ const HELP = `npm run check:v4 [-- options]
   V4_CHECK_SLOTS=${String(SLOTS).padEnd(13)}capacity in units: a full gate takes 2, --quick/--fast or a bare whole-suite vitest 1 (/tmp/v4-check-slots)
   V4_E2E_TOKENS=${String(E2E_TOKENS).padEnd(14)}browser e2e in flight at once across every run on the box
   V4_UNIT_WORKERS=<n>         vitest workers (default: every core; they run at nice 10)
+  V4_UNIT_AFTER=1             the unit tests start after every browser gate (GitHub's verdict: its box times out clicks beside them)
   V4_PHONE=1                  include the phone gates (touch.mjs, phone-smoke.mjs; phone is out of scope)
   V4_LOGS=<dir>               where each stage's full output goes (default /tmp/v4-check-logs/<run>)`;
 
@@ -196,7 +197,13 @@ const unitArgs = tests ? [VITEST, 'run', ...tests, `--maxWorkers=${workers}`] : 
   ? [VITEST, 'related', '--run', ...related, `--maxWorkers=${workers}`, '--passWithNoTests']
   : unitFiles ? [VITEST, 'run', ...unitFiles, `--maxWorkers=${workers}`, '--passWithNoTests']
   : [VITEST, 'run', 'src/test/engine/v4', 'src/test/v4', `--maxWorkers=${workers}`, ...(quick ? QUICK_SKIP.flatMap(g => ['--exclude', g]) : [])];
-const unit = (unitFiles && !unitFiles.length
+// V4_UNIT_AFTER=1 (GitHub's verdict): the unit tests start once every browser gate is done. GitHub's box, with the
+// unit tests on every core beside the browsers, timed out on plain clicks (Resume, Start: 10-30s) in gates that pass
+// here every time, run after run (Nov 1-3); there the verdict is worth more than the ~20 min it adds.
+const UNIT_AFTER = process.env.V4_UNIT_AFTER === '1';
+let kickUnit = null;
+const unitStart = UNIT_AFTER ? new Promise(r => { kickUnit = r; }) : Promise.resolve();
+const unit = unitStart.then(() => unitFiles && !unitFiles.length
   ? Promise.resolve((() => { const r = { name: 'unit tests', ok: true, s: 0, start: 0, output: `all ${reused.length} files reused` }; results.push(r); console.log(`\n── PASS unit tests (all ${reused.length} files reused) ──`); return r; })())
   : run('unit tests', unitArgs, { nice: 10, env: games ? { V4_GAMES: games } : {}, tail: 2500, limitS: full ? 7200 : 2400 }))
   .then(r => {
@@ -259,7 +266,7 @@ if (wantE2E && existsSync(join(root, 'e2e/v4'))) {
     // ~4 min alone) in one, the rest one after another in the other. Two browsers on an otherwise idle box: 3 of 3
     // rounds all green, 342 s against ~790 s one at a time (Nov 3). Nothing else runs beside them.
     const parJobs = par.map(f => one(f, HEAVY[f] || 1));
-    const quiet = Promise.all([unit, ...parJobs].map(j => j.then(() => {}, () => {})));
+    const quiet = Promise.all([UNIT_AFTER ? Promise.resolve() : unit, ...parJobs].map(j => j.then(() => {}, () => {})));
     const LANE_A = new Set(['motion.mjs']);
     const lane = files => { let chain = quiet; return files.map(f => { const j = chain.then(() => one(f, Math.max(1, Math.floor(E2E_TOKENS / 2)))); chain = j.then(() => {}, () => {}); return j; }); };
     const soloJobs = [...lane(solo.filter(f => LANE_A.has(f))), ...lane(solo.filter(f => !LANE_A.has(f)))];
@@ -279,6 +286,7 @@ for (const r of results) {
   else { r.ok = true; r.knownRed = true; console.log(`\nKNOWN RED: ${f} ${typeof k === 'string' ? k : `was already red on live ${k.live} (since ${k.since}; owner ${k.owner}: ${k.why})`}. Not your change; not counted.`); }
 }
 
+if (kickUnit) kickUnit();
 const u = await unit;
 // the slowest unit files, for the run history (vitest prints "✓ path (N tests) 1234ms")
 const slowFiles = [...(u.output || '').replace(/\x1b\[[0-9;]*m/g, '').matchAll(/^ [✓❯×] (src\/\S+) \(\d+ tests?[^)]*\)\s+(\d+)ms/gm)]

@@ -59,6 +59,8 @@ jobs:
         # shows only each stage's tail, and a gate red only here (load, Chromium's headless shell) needs its pictures
         env:
           V4_LOGS: ${{ runner.temp }}/v4-logs
+          # the unit tests after the browser gates: beside them, this box timed out on plain clicks (Nov 1-3)
+          V4_UNIT_AFTER: '1'
           V4_SHOTS: ${{ runner.temp }}/v4-shots
         run: npm run check:v4 -- --commit HEAD 2>&1 | tee check.log
       - name: Keep the logs and screenshots (7 days)
