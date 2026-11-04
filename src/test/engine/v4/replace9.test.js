@@ -227,6 +227,34 @@ describe('Hypnotist: "On Use, once per game: whoever places next puts their mini
   });
 });
 
+describe('Jack-of-All-Trades: "Your yellow counts as any color in your full sets."', () => {
+  const Q4 = ['red', 'yellow', 'market', 'purple'];
+  it('price and retirement', () => {
+    const d = defById('yellow.jack');
+    expect([d.s, d.w, d.f, d.n, d.round]).toEqual([3, 1, 1, 1, 1]);
+    expect(defById('yellow.tastemaker').retired).toBe(true);
+  });
+  it('Most full sets: yellow fills a missing color (no purple, 4 yellow: 2 sets, beating a rival\'s 1)', () => {
+    const won = jack => {
+      const s = table(Q4, { n: 2, round: 1, rules: BY, res: [{ red: 2, yellow: 4, blue: 2 }, { red: 1, yellow: 1, blue: 1, purple: 1 }], members: [[jack]], queue: [{ t: 'endRound' }] });
+      return (s.contests || []).at(-1).results.find(c => c.qid === 'yellow').winners;
+    };
+    expect(won('yellow.jack')).toEqual([0]);
+    expect(won('yellow.harmonist')).toEqual([1]);
+  });
+  it('only your own yellow and only in full sets: a rival\'s Toll Keeper sees 3 yellow and 1 red as a full set', () => {
+    let s = table(Q4, { n: 2, round: 1, res: [{}, { yellow: 3, red: 1 }], members: [['yellow.tollkeeper'], ['yellow.jack']], queue: [{ t: 'allPlaced' }] });
+    expect(s.pending?.prompt || '').not.toMatch(/Toll Keeper/);
+    expect(named(s, 'Toll Keeper')).toContain("P1's Toll Keeper: every rival holds a full set or nothing.");
+  });
+  it('pitched turn: Quilter with Jack-of-All-Trades turns 2 sets in, yellow paying for the missing purple', () => {
+    let s = table(Q4, { n: 4, round: 3, res: [{ red: 2, yellow: 5, blue: 3 }], members: [['yellow.quilter', 'yellow.jack']], queue: [{ t: 'buy', p: 0 }] });
+    s = move(s, `use:${uidIn(s, 'yellow.quilter', 0)}`);
+    expect(s.players[0].bonus).toBe(12);
+    expect(s.players[0].res).toMatchObject({ red: 0, yellow: 1, blue: 1, purple: 0 });
+  });
+});
+
 describe('REPLACE9 by card key', () => {
   it('a key switches on only that card and retires only its old card', async () => {
     const { execFileSync } = await import('node:child_process');

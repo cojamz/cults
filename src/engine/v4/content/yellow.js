@@ -7,7 +7,7 @@ import { startLaunder } from './launder.js';
 import { add1, old1, handlers1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
 import { add5, old5 } from './replace5.js';
-import { add9, old9, handlers9 } from './replace9.js';
+import { add9, old9, handlers9, ON9 } from './replace9.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
@@ -16,7 +16,25 @@ const colors = ctx => ctx.state.resources;
 const others = ctx => colors(ctx).filter(c => c !== Y);
 /** Full sets: one of each color on the table. */
 const ACT = new Set((globalThis.process?.env?.ACT || '').split(',').filter(Boolean)); // action bot tests (Nov 4): env only, never live
-export const setsOf = (ctx, p) => Math.min(...colors(ctx).map(c => p.res[c] || 0));
+const plainSets = (ctx, p) => Math.min(...colors(ctx).map(c => p.res[c] || 0));
+/** Jack-of-All-Trades (REPLACE9 bot test): "Your yellow counts as any color in your full sets." (a Doppelganger copying it too) */
+const JACK = ON9.includes('jack');
+const hasJack = (ctx, p) => JACK && colors(ctx).includes(Y) && ctx.membersOf(p).some(c => ctx.defOf(c).key === 'jack' || c.copy === 'yellow.jack');
+/** Yellow p spends filling the gaps in k sets, beyond the k yellow the sets need themselves. */
+const jackGap = (ctx, p, k) => others(ctx).reduce((a, c) => a + Math.max(0, k - (p.res[c] || 0)), 0);
+/** Full sets: one of each color on the table (with Jack-of-All-Trades, yellow fills any gap). */
+export const setsOf = (ctx, p) => {
+  if (!hasJack(ctx, p)) return plainSets(ctx, p);
+  let k = plainSets(ctx, p);
+  while ((p.res[Y] || 0) >= (k + 1) + jackGap(ctx, p, k + 1)) k += 1;
+  return k;
+};
+/** Pay k full sets: k of each color, yellow covering what's missing (Jack-of-All-Trades). */
+const paySets = (ctx, p, k) => {
+  const gap = colors(ctx).includes(Y) ? jackGap(ctx, p, k) : 0;
+  for (const c of others(ctx)) p.res[c] -= Math.min(k, p.res[c] || 0);
+  if (colors(ctx).includes(Y)) p.res[Y] -= k + gap;
+};
 const held = (ctx, p) => colors(ctx).filter(c => (p.res[c] || 0) > 0);
 const missing = (ctx, p) => colors(ctx).filter(c => !(p.res[c] > 0));
 const total = (ctx, p) => colors(ctx).reduce((a, c) => a + (p.res[c] || 0), 0);
@@ -318,7 +336,7 @@ export default {
       onActivate(ctx, owner, card) {
         const k = Math.min(QUILT_MAX, setsOf(ctx, owner));
         if (k < 1) { card.used = false; ctx.log(`${owner.name}'s Quilter: no full set to turn in.`); return; }
-        for (const c of colors(ctx)) owner.res[c] -= k;
+        paySets(ctx, owner, k);
         owner.bonus += QUILT * k;
         ctx.log(`${owner.name}'s Quilter: turns ${k === 1 ? 'a full set' : `${k} full sets`} (${k} of each color) into ${QUILT * k} followers.`);
       },
@@ -409,7 +427,10 @@ export default {
       onRoundStart(ctx, owner) { for (const c of held(ctx, owner)) ctx.gain(owner, c, 1); },
     }),
     // Cory, Nov 1 (in place of Explorer): a payoff for changing rivals' resources
-    m('tastemaker', 'Tastemaker', 3, 2, "Whenever you change rivals' resources, +1 follower."),
+    m('tastemaker', 'Tastemaker', 3, 2, "Whenever you change rivals' resources, +1 follower.", { ...old9('yellow.tastemaker') }),
+    // REPLACE9 bot test (Members C, Nov 4): Tastemaker's place. 3 yellow + 1 any as a player sees it. Every full-set count
+    // (Most full sets, Harmonist, Toll Keeper, Quilter) reads setsOf, which lets the owner's yellow fill any color's gap.
+    ...add9(m('jack', 'Jack-of-All-Trades', 2, 1, 'Your yellow counts as any color in your full sets.', { round: 1 })),
     // Cory, Nov 1 (in place of Agitator, 15-card deck only)
     m('spiceroute', 'Spice Route', 3, 2, 'Game End: +1 follower per color you hold 3 or more of.', {
       onGameEnd: (ctx, owner) => colors(ctx).filter(c => (owner.res[c] || 0) >= 3).length,

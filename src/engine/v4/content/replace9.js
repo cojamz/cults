@@ -5,11 +5,12 @@
 //   market.critic -> market.lastminute
 //   market.regular -> market.bargainhunter
 //   benders.extrahand -> benders.hypnotist
+//   yellow.tastemaker -> yellow.jack (Jack-of-All-Trades)
 // One card at a time: REPLACE9=<key> or a comma list of keys (REPLACE9=quilter,hypnotist); 1 means all of them.
 // Unset, the new cards are never defined and nothing in the game changes.
 const VAL = globalThis.process?.env?.REPLACE9 || '';
 /** new card key -> the old card id it takes the place of */
-const REPLACES = { tollkeeper: 'yellow.customs', quilter: 'yellow.dyer', lastminute: 'market.critic', bargainhunter: 'market.regular', hypnotist: 'benders.extrahand' };
+const REPLACES = { tollkeeper: 'yellow.customs', quilter: 'yellow.dyer', lastminute: 'market.critic', bargainhunter: 'market.regular', hypnotist: 'benders.extrahand', jack: 'yellow.tastemaker' };
 export const ON9 = VAL === '1' ? Object.keys(REPLACES) : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
 export const REPLACE9 = ON9.length > 0;
 /** The new card, in its color's member list only when it is switched on. */
