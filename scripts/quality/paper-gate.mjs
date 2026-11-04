@@ -222,7 +222,9 @@ function scoreGate(arg, batchVoid, print, shift = 0, rankOffset = null) {
     const ranked = key.kind === 'space' || rankOffset == null ? null : rankingRef(old.name);
     const beatRanked = ranked == null ? null : +(med10 - (ranked + rankOffset)).toFixed(1);
     const lines = gateLines(key.spec, old, o);
-    const pass = !voided && o.over && beat >= BEAT && textOk && !lines.length && (beatRanked == null || process.env.GATE_RANKED === '0' || beatRanked >= BEAT); // a shape clash is reported, and blocks only at claim // BEAT: 3 since Cory's v2 notes
+    // an old card that hard-fails (2+ judges) has to go anyway: a candidate then needs only the bar, not the margin (Nov 4, Hawker)
+    const oldFails = old.fails.length >= 2;
+    const pass = !voided && o.over && textOk && !lines.length && (oldFails || (beat >= BEAT && (beatRanked == null || process.env.GATE_RANKED === '0' || beatRanked >= BEAT))); // a shape clash is reported, and blocks only at claim // BEAT: 3 since Cory's v2 notes
     return { name: o.name, label: o.label, text: o.text, median: o.med, totals: o.totals, q: o.q, overBar: o.over, beatsOldBy: beat, words: w, wordBudget: budget, textOk, shapes, shapeClash: clash, hardFails: o.fails, pass, beatRanked, gateLines: lines,
       why: o.entries.map(e => e.why) };
   });
