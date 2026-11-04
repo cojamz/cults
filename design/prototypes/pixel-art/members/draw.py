@@ -114,7 +114,15 @@ def extortionist():
 SAMPLES=[('critic',critic),('regular',regular),('early-birds',early_birds),('night-owls',night_owls),('shift-crew',shift_crew),('mob',mob),('landlord',landlord),('extortionist',extortionist)]
 from more import REG
 for name,f in SAMPLES+REG:
-  c,pal=f(); S[name]={'px':c.rows(),'pal':pal}
+  c,pal=f()
+  for i in range(24):
+    for (x,y) in ((i,0),(i,23),(0,i),(23,i)): c.p(x,y,'.')  # keep the 1px margin the outline needs
+  S[name]={'px':c.rows(),'pal':pal}
+for n,v in S.items():
+  P=pal_of(v['pal']); bad={ch for r in v['px'] for ch in r if ch!='.' and ch not in P}
+  assert not bad, f'{n}: unknown keys {bad}'
+  assert len(v['px'])==24 and all(len(r)==24 for r in v['px']), n
+  if any(ch!='.' for ch in v['px'][0]+v['px'][23]+''.join(r[0]+r[23] for r in v['px'])): print('edge:',n)
 ONLY=os.environ.get('ONLY')
 OUT=os.path.join(os.path.dirname(os.path.abspath(__file__)),'../../../../src/v4/art/icons/memberEmojis.js')
 data={k:{'px':v['px'],'palette':pal_of(v['pal'])} for k,v in S.items()}
