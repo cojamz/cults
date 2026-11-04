@@ -1575,7 +1575,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     }
     return out;
   }, [gift, onGiftAnswer, picker, seatPicks, pickKey, state, onSeatPick, onSeatDenied]);
-  const roundText = state.over ? 'Final' : state.round ? <>Round {roman(state.round)} of 3</> : 'Setup';
+  const roundText = state.over ? 'Final' : state.round ? <>Round {roman(state.round)} of III</> : 'Setup';
   const someoneHere = mySeats.length > 0;
   const lastLine = state.log.length ? plainLine(state.log, state.log.length - 1) : '';
   // The latest rival placement, marked on the wheel; read from the state so it survives a reload.

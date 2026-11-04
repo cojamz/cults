@@ -13,7 +13,7 @@ describe('Magenta action wording and one-stack theft', () => {
       const pick = panelText('thieves', { key: 'pickpocket' }, round);
       // the followers are stolen too, not gained from the bank (Cory, 2026-10-22)
       // round I rework (Cory, Oct 27): resources only, 3/4/5, split among rivals
-      expect(pick.verb).toBe(`Steal ${round + 2}`);
+      expect(pick.verb).toBe(`Steal ${round + 2} resources`); // what is stolen, said (picky bot, Nov 4: a taken "Steal 4" read as followers)
       expect(pick.second).toBe('split among rivals');
       const safe = panelText('thieves', { key: 'hideout' }, round);
       expect(safe.verb).toBe('Steal 1, then safe from steals'); // Cory, Nov 1; the protection in line 1 (line 2 dropped every round, text audit Nov 1)

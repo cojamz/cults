@@ -385,7 +385,7 @@ b.num[data-hold]::after{content:attr(data-hold);visibility:visible;position:abso
 .re-rows{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .re-rows li{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) auto;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;background:var(--table);border-left:3px solid var(--c)}
 .re-rows li.none{opacity:.6}
-.re-q{display:flex;align-items:center;gap:7px;color:var(--c);font-weight:600;font-size:var(--fs-3);min-width:0}
+.re-q{display:flex;align-items:center;gap:7px;color:color-mix(in srgb,var(--c) 70%,var(--cream,#f3e6c8));font-weight:600;font-size:var(--fs-3);min-width:0}
 /* no bullet dot: the row's colored edge and name already say the quadrant (a dot only ever means a resource) */
 .re-q i{display:none}
 .re-w{font-size:var(--fs-3);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

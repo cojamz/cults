@@ -300,7 +300,9 @@ export default function PayPicker({ state, onPick, busy, turnOf = null }) {
           </div>
         </div>
 
-        {nudge && <p key={nudge.n} className="pay-nudge" role="status">{nudge.text}</p>}
+        {/* with more than one way to pay, say that the payment can change (picky bot, Nov 4: readers never knew) */}
+        {nudge ? <p key={nudge.n} className="pay-nudge" role="status">{nudge.text}</p>
+          : ways.length > 1 && <p className="pay-hint" data-pay-hint>Click a color you keep to pay with it instead.</p>}
 
         <div className="pay-foot">
           {back && <button type="button" className="pay-cancel" data-option="back" disabled={busy} onClick={() => onPick('back')}>Cancel</button>}

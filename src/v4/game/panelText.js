@@ -51,8 +51,8 @@ const P = {
     turnout: r => ({ main: `+${r + 1} red`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 1}`, 'red: ') }), // Cory, Oct 31
     opendoor: { verb: 'Recruit the cheapest', second: 'in the shop, free', note: '+1 red' }, // all piles' Walk-In (Open Door's old words)
     // "+1 red to all" read as everyone, you too, or not (picky bot, Nov 4): yours, then the rivals'; "each rival +1"
-    // took a second line and dropped on the outer ring
-    hire: { verb: 'Recruit the top of the deck', second: '+1 red, rivals +1' }, // the rivals' red sat in line 3, which drops on the outer ring (blind panel, Nov 1)
+    // took a second line and dropped on the outer ring; "pile" as its card says
+    hire: { verb: 'Recruit the top of the pile', second: '+1 red, rivals +1' }, // the rivals' red sat in line 3, which drops on the outer ring (blind panel, Nov 1)
     hireup: { verb: 'Promote to one costing up to 2 more +3 red' },
     trade: { verb: 'Demote to one costing up to 2 less +3 red' },
     take: { verb: 'Free member costing 8 or less', second: '+1 red' },
@@ -124,7 +124,7 @@ const P = {
     flourish: { verb: '+1 each other color, per full set' },
   },
   thieves: {
-    pickpocket: r => ({ verb: `Steal ${r + 2}`, second: 'split among rivals', note: run(n => `${n + 2}`) }),
+    pickpocket: r => ({ verb: `Steal ${r + 2} resources`, second: 'split among rivals', note: run(n => `${n + 2}`) }),
     tipoff: r => ({ main: `+${r + 1} magenta`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 1}`, 'magenta: ') }), // Gather's shape (Cory, Oct 31)
     hideout: { verb: 'Steal 1, then safe from steals', second: 'this round', note: '+1 magenta' },
     rob: { verb: 'Steal 3 @f from a rival', note: '+1 magenta' }, // Nov 4: followers, not half a pile

@@ -21,6 +21,7 @@
    wins): what you get is the tile's hero (18px, full ink), the price before the arrow steps down to 14px and a quieter ink.
    No rule and no layout change. */
 .lt-shop-cards .lt-rates .rt-trade{gap:3px}
+.lt-rates .rt-cap{display:none} /* shown on the laptop grid only (below) */
 .lt-shop-cards .lt-rates .rt-trade b{font-size:15px;color:var(--pl-ink-2,#6e5c49)}
 .lt-shop-cards .lt-rates .rt-trade b.get{font-size:18px;font-weight:800;color:var(--pl-ink,#2b2018)}
 .lt-shop-cards .lt-rates .rt-trade b.get + .follower-mark{width:16px;height:16px;color:var(--pl-ink,#2b2018)}
@@ -172,7 +173,9 @@
 /* The "affordable" toggle (Cory, 2026-10-18): members you can't pay for right now fade, in every phase. A card the space
    under your pointer would unlock (data-after) or aims at (data-aim) comes back, so the hover's answer still reads. */
 .lt-shop .lt-shop-cards .lt-card.card.paper{transition:transform .12s ease,filter .15s,box-shadow .12s ease-out,background-color .12s ease-out,opacity .2s ease-out}
-.lt-shop .lt-shop-cards[data-fade="on"] .lt-card.card.paper[data-unaffordable]:not([data-after]):not([data-aim]){opacity:.4}
+/* the picture and the price fade, the name stays readable (picky bot, Nov 4: faded names were hard to read) */
+.lt-shop .lt-shop-cards[data-fade="on"] .lt-card.card.paper[data-unaffordable]:not([data-after]):not([data-aim]) > :is(.art,.ft,.lt-pick-ability){opacity:.35;transition:opacity .2s ease-out}
+.lt-shop .lt-shop-cards[data-fade="on"] .lt-card.card.paper[data-unaffordable]:not([data-after]):not([data-aim]) > .lt-hd{opacity:.85}
 /* Ordering Peek's 4 (Mike's playtest, 2026-10-26: with "affordable" on, the shop stayed bright beside the 4 and it was
    unclear what to click): everything but the 4 steps well back, toggle or not, and stays readable */
 .lt-shop .lt-shop-cards[data-peek] .lt-card.card.paper:not(.can){opacity:.4}
@@ -229,6 +232,8 @@
   .app.game.lt .lt-shop-cards .lt-rate .art{background:color-mix(in srgb,var(--colorless,#8d9693) 22%,#fff8eb)}
   .app.game.lt .lt-shop-cards .lt-rate .rt-trade .get{font-size:22px}
   .app.game.lt .lt-shop-cards .lt-rate .rt-trade .follower-mark{width:20px;height:20px}
+  .app.game.lt .lt-shop-cards .lt-rate .rt-art{position:relative;padding-top:10px;box-sizing:border-box}
+  .app.game.lt .lt-shop-cards .lt-rate .rt-cap{display:block;position:absolute;top:3px;left:0;right:0;text-align:center;font:700 10px/11px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--pl-ink-2,#6e5c49)}
   .app.game.lt .lt-shop-cards .lt-rate .nm,.app.game.lt .lt-shop-cards[data-view] .lt-rate.card .nm{display:none}
   .app.game.lt .lt-shop-cards .lt-cards > .lt-card:is([data-uid],[data-pile-ghost]){grid-column:span 4}
   .app.game.lt .lt-shop-cards .lt-cards > .lt-card:is([data-uid],[data-pile-ghost]):last-child:nth-child(3n){grid-column:5 / 9}

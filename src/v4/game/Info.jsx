@@ -198,7 +198,9 @@ function Lines({ text, Text, className = 'fx-line' }) {
 }
 // a member's ongoing benefit opens with a bold Passive (Cory, Oct 29: "For those that are a passive benefit, add Passive as
 // a bold keyword"): any rule that doesn't open with a timing, a use or what the card counts as
-const OPENS = /^(?:on use\b|on recruit|(?:at )?round start|round end|game end|once per (?:game|round)|one time use|use\b|counts as|worth \d|no (?:ability|effect)|passive|free\b)/i;
+// (a card's own arrival or leaving, "Whenever this member joins your cult", is a trigger, never Passive: Old Maid read as
+// an ongoing effect, picky bot, Nov 4)
+const OPENS = /^(?:whenever this member (?:joins|leaves)\b|on use\b|on recruit|(?:at )?round start|round end|game end|once per (?:game|round)|one time use|use\b|counts as|worth \d|no (?:ability|effect)|passive|free\b)/i;
 // a member's "Worth N followers." never prints: the number at the card's top right says it (Cory, Oct 29)
 const unworth = (def, text) => (def && def.f != null && text ? String(text).replace(/^\s*Worth \d+ followers?\.\s*/i, '') : text);
 export const passiveText = (def, given) => { const text = unworth(def, given); return def && def.f != null && text && !OPENS.test(String(text).trim()) ? `Passive: ${String(text).trim()}` : text; };
@@ -243,7 +245,8 @@ export const onTable = (state, def) => state.quadrants.includes(def.quadrant);
 export const cardColor = (state, def) => (onTable(state, def) ? `var(--${def.quadrant})` : 'var(--colorless)');
 /** The pale colors' own card ground (shop.css [data-ground]): silver, white and colorless all tinted a near-cream picture
  *  field and looked alike at card size, so each gets a ground of its own: steel with a sheen, clean white, plain grey. */
-export const cardGround = (state, def) => (!onTable(state, def) ? 'colorless' : def.quadrant === 'silver' ? 'silver' : def.quadrant === 'trading' ? 'white' : undefined);
+// (yellow: no ground of its own, but pale, so its name is set dark on the bar: picky bot, Nov 4)
+export const cardGround = (state, def) => (!onTable(state, def) ? 'colorless' : def.quadrant === 'silver' ? 'silver' : def.quadrant === 'trading' ? 'white' : def.quadrant === 'yellow' ? 'yellow' : undefined);
 
 /** A cost as the plate prints it: "2● 2◐" (the number before its dot, colored part first, then any; no color names). */
 export function CostDots({ parts }) {
@@ -298,7 +301,7 @@ export function MemberCard({ state, uid, def: d0 = null, me = null, onFace = fal
   // a discount on you (the shop face shows the price, the list price struck beside it): its reason
   const paid = where === 'In the shop' && me != null && state.players[me] ? paidParts(state, state.players[me], uid, d) : null;
   return (
-    <div className="card-face mc" style={{ '--c': cardColor(state, d) }} data-card={d.id} data-pale={cardGround(state, d) ? '' : undefined} data-long={ability.length > 110 ? '' : undefined}>
+    <div className="card-face mc" style={{ '--c': cardColor(state, d) }} data-card={d.id} data-pale={cardGround(state, d) && cardGround(state, d) !== 'yellow' ? '' : undefined} data-ground={cardGround(state, d)} data-long={ability.length > 110 ? '' : undefined}>
       {/* a trading card (Cory, Oct 29: "Header is good"): the name on a bar in the color, the price in a dark disc at
           its left and the worth at its right, the picture under it; the price's colors sit at the foot */}
       <div className="mc-head mc-hd">

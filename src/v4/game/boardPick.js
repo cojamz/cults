@@ -146,7 +146,9 @@ export function giftPick(state, pend, first = null) {
     // rest of it the line under it ("Which color?" / "You get 2, everyone else gets 1.")
     const payFor = ask.match(/^pay which \w+ for (\d+ \w+)\?\s*(.*)$/i);
     const [q1, ...more] = ask.split('?');
-    const head = payFor ? `Pay 1 for ${payFor[1]}` : `${q1[0].toUpperCase()}${q1.slice(1)}${more.length ? '?' : ''}`;
+    // a split's headline says the whole job, never the one coin the engine asks (picky bot, Nov 4: "Polish: +1 of which
+    // color?" over a card that said "+4 in colors you choose")
+    const head = payFor ? `Pay 1 for ${payFor[1]}` : toPick ? `Pick ${toPick} color${toPick === 1 ? '' : 's'}` : `${q1[0].toUpperCase()}${q1.slice(1)}${more.length ? '?' : ''}`;
     const sub = payFor ? payFor[2] : more.join('?').trim();
     return { ...base, kind: 'color', n: null, color: null, chosen: null, pay: !!payFor, left: left == null ? null : Number(left), toPick,
       head, sub, firsts: [], seconds: own.map(o => ({ o, b: neutral(o) ? 'neutral' : o.target.res })), others: own.map(o => (neutral(o) ? 'neutral' : o.target.res)), rest: pend.options.filter(o => !o.target && !neutral(o)) };

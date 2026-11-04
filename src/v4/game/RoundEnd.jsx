@@ -60,7 +60,7 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
   const zeroParts = after.over && !finalParts.length ? after.players.filter(p => zeroOf(p).length) : [];
   const first = !after.over && after.order && after.order.length ? after.players[after.order[0]] : null;
   const why = first ? firstPickWhy(after, first.id) : null;
-  const whyFirst = !why || why === 'fewest followers' ? why : `${first.id === meId ? 'you have' : 'they have'} ${why}, a member who always picks first`;
+  const whyFirst = !why || why === 'fewest followers' ? why : `${first.id === meId ? 'you have' : 'they have'} ${why}, a member who always goes first`;
   return (
     <div className="overlay moment" role="dialog" aria-modal="true" aria-label={`Round ${result.round} scoring`}>
       <div className="dialog roundend" ref={box} data-seats={after.players.length}>
@@ -105,7 +105,7 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
           ))}
         </ul>
         <div className="re-totals" role="table" aria-label="Followers after this round">
-          <div className="re-head" role="row"><span role="columnheader">By followers</span><span role="columnheader" title="The rims' prizes this round (above)">Prizes</span><span role="columnheader" title="Followers gained this round otherwise: what new members are worth, followers bought, and followers won or lost during play (members' abilities, spaces, sales and raids), as the results count them">This round</span><span role="columnheader">Followers</span></div>
+          <div className="re-head" role="row"><span role="columnheader">By followers</span><span role="columnheader" title="The rims' prizes this round (above)">Contests</span><span role="columnheader" title="Followers gained this round otherwise: what new members are worth, followers bought, and followers won or lost during play (members' abilities, spaces, sales and raids), as the results count them">This round</span><span role="columnheader">Followers</span></div>
           {ranked.map(p => {
             const now = shownTotal(p);
             const was = start && start.players[p.id] ? followers(start, start.players[p.id]) : now;
@@ -120,23 +120,24 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
             const eb = start && start.players[p.id] && typeof at.players[p.id].bought === 'number' ? at.players[p.id].bought - (start.players[p.id].bought || 0) : null;
             if (g && eb != null && eb !== g.bought) g = { ...g, effects: g.effects + g.bought - eb, bought: eb };
             // RC1 sweep 84: "+2 from members" (they hold 4) meant the members recruited this round; "+1 effects" had no source
+            // the rulebook's words: followers are recruited, play wins or loses them (picky bot, Nov 4: "+1 bought · +10 gained")
             const play = g && g.effects ? `${g.effects > 0 ? '+' : '−'}${Math.abs(g.effects)}` : null;
             const endGame = fin ? `${fin > 0 ? '+' : '−'}${Math.abs(fin)}` : null;
             // short in the cell (w4b #30: it wrapped to three lines), whole in its hover, as the results' numbers open (w4b #10)
             // "+2 in play" was jargon (blind testers, 2026-10-15): gained or lost, in plain words; the sources are in its hover
             // ("won" read as contest prizes, panel Oct 26: a steal or Exchange's followers aren't won)
             // "+1 new members" read as a count of members (live panel r1): it's followers, so "from new members"
-            const why = g ? [...membersParts(g).map(t => t.replace(/ that left$/, ' who left')), g.bought && `+${g.bought} bought`, play && `${play} ${g.effects > 0 ? 'gained' : 'lost'}`, endGame && `${endGame} end-game`].filter(Boolean).join(' · ') : '';
-            const whyLong = g ? [...membersParts(g).map(t => t.replace(/ that left$/, ' who left')), g.bought && `+${g.bought} followers bought`, play && `${play} ${g.effects > 0 ? 'gained' : 'lost'} from spaces and members' abilities (steals, trades and the like), not prizes`, endGame && `${endGame} from end-game bonuses`].filter(Boolean) : [];
+            const why = g ? [...membersParts(g).map(t => t.replace(/ that left$/, ' who left')), g.bought && `+${g.bought} recruited followers`, play && `${play} ${g.effects > 0 ? 'won' : 'lost'} in play`, endGame && `${endGame} end-game`].filter(Boolean).join(' · ') : '';
+            const whyLong = g ? [...membersParts(g).map(t => t.replace(/ that left$/, ' who left')), g.bought && `+${g.bought} followers recruited with resources`, play && `${play} ${g.effects > 0 ? 'won' : 'lost'} in play, from spaces and members' abilities (steals, trades and the like), not prizes`, endGame && `${endGame} from end-game bonuses`].filter(Boolean) : [];
             // your row sticks to the card's foot while the rows above it scroll: round III's card hid it under "More below"
             // when you placed last (picky bot, Nov 4)
             return (
               <div key={p.id} className="re-p" role="row" style={{ '--pc': playerColor(p.id) }} data-total={`${p.id}:${now}`} data-me={p.id === meId ? '' : undefined}>
                 <span className="nm" role="cell"><Who state={after} id={p.id} meId={meId} /></span>
-                <span className="re-d num" role="cell">{c ? `+${c}` : '—'}</span>
+                <span className="re-d num" role="cell">{c ? `+${c}` : '0'}</span>
                 {/* the parts whenever there are any, even when they cancel out (live panel r1: P4 recruited 3 and lost 3 to a
                     sale, and the cell said "—") */}
-                <span className="re-d num" role="cell" data-this-round={p.id}>{other || whyLong.length ? (whyLong.length ? <Tip label={`${p.id === meId ? 'Your' : `${p.name}’s`} followers this round`} content={() => <div className="pop-card"><b>{p.id === meId ? 'Your' : `${p.name}’s`} followers this round, besides prizes: {other > 0 ? '+' : other < 0 ? '−' : ''}{Math.abs(other)}</b>{whyLong.map(t => <span key={t}>{t}</span>)}</div>}>{why}</Tip> : `${other > 0 ? '+' : '−'}${Math.abs(other)}`) : '—'}</span>
+                <span className="re-d num" role="cell" data-this-round={p.id}>{other || whyLong.length ? (whyLong.length ? <Tip label={`${p.id === meId ? 'Your' : `${p.name}’s`} followers this round`} content={() => <div className="pop-card"><b>{p.id === meId ? 'Your' : `${p.name}’s`} followers this round, besides prizes: {other > 0 ? '+' : other < 0 ? '−' : ''}{Math.abs(other)}</b>{whyLong.map(t => <span key={t}>{t}</span>)}</div>}>{why}</Tip> : `${other > 0 ? '+' : '−'}${Math.abs(other)}`) : '0'}</span>
                 <Tick value={now} from={now} color="var(--ink)" className="re-f num" dur={0} float={false} />
               </div>
             );
@@ -147,11 +148,11 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
             {zeroParts.map((p, k) => <span key={p.id} data-final-zero={p.id}>{k ? ' · ' : ''}<b>{name(p.id)}</b> <NamedText state={after} text={zeroOf(p).join(', ')} /></span>)}. These totals are final.</p>
           : <p className="hint re-final" data-final-bonuses="0">No end-game bonuses: these totals are final.</p>)}
         {/* why they pick first, in words (live panel r1: "P3 picks first: Front-runner" never said what Front-runner was) */}
-        {first && <p className="hint" data-first-pick>Round {roman(after.round)} · <span className="num">{workersNote(after)}</span> · {first.id === meId ? 'You pick' : `${first.name} picks`} first{whyFirst ? <>: <NamedText state={after} text={whyFirst} /></> : ''}</p>}
+        {first && <p className="hint" data-first-pick>Round {roman(after.round)} · <span className="num">{workersNote(after)}</span> · {first.id === meId ? 'You go' : `${first.name} goes`} first{whyFirst ? <>: <NamedText state={after} text={whyFirst} /></> : ''}</p>}
         {/* the round's turn order as the snake it is, in names (Cory's todo: "make it clear the turn order is a snake draft") */}
         {first && <p className="hint" data-snake-order>{snakeWords(after, meId)}</p>}
         {/* the spaces change with the round: say so as it happens (live panel r1: "faces change by round without saying so") */}
-        {first && after.round >= 2 && <p className="hint" data-round-news>New this round: the {after.round === 2 ? 'middle' : 'inner'} ring opens, and spaces with I, II and III numbers pay more.</p>}
+        {first && after.round >= 2 && <p className="hint" data-round-news>New this round: the {after.round === 2 ? 'middle ring' : 'center'} opens, and spaces that grow by round pay more.</p>}
         </div>
         {more && <span className="re-more" aria-hidden="true">More below</span>}
         <div className="re-foot">

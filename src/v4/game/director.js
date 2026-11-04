@@ -1012,7 +1012,7 @@ function shuffleIn(root, n, round, delay) {
   const tag = document.createElement('b');
   tag.className = 'deck-join-tag ghost-layer';
   tag.dataset.born = String(Date.now());
-  tag.textContent = `+${n} round ${roman(round)}`;
+  tag.textContent = `+${n} shuffled in for round ${roman(round)}`; // what the number is (picky bot, Nov 4: "+28 round II")
   Object.assign(tag.style, { left: `${Math.round(D.left + D.width / 2)}px`, top: `${Math.round(D.top - 4)}px` });
   document.body.appendChild(tag);
   const life = riffle + slowed(900);

@@ -28,8 +28,11 @@
   --paper-ink:#2a1f17; --paper-ink-2:#5f4e3d; --paper-ink-3:#8a7760;
   --lamp:255,206,140; --lamp-ink:#ffd99a;
   /* quadrant inks: muted, printed */
-  --gold:#d49b27; --red:#c4533f; --blue:#4a80b8; --green:#3f9467; --magenta:#b2386c; --thieves:var(--magenta);
-  --silver:#94a3b2; /* steel with a coin edge, clearly not white, not a grey zero, not blue (w3a A4) */
+  /* magenta a step pinker and lighter, away from purple: the two read as one at dot size (picky bot, Nov 4) */
+  --gold:#d49b27; --red:#c4533f; --blue:#4a80b8; --green:#3f9467; --magenta:#c8407f; --thieves:var(--magenta);
+  /* steel with a coin edge, clearly not white, not a grey zero, not blue (w3a A4); its blue cast drained to a metal grey
+     (picky bot, Nov 4: silver dots and headers read as a pale blue) */
+  --silver:#a0a8b0;
   --yellow:#ead844; /* warm lemon: less green than the old #d2d23a; brighter than amber gold on the dark wheel rim */
   --purple:#7d5ba6; --white:#e6dcc6; --any:#a8977a;
   --serif:'Alegreya', Georgia, serif; --sans:'Alegreya Sans', system-ui, sans-serif;
@@ -340,7 +343,7 @@ h1,h2,h3{font-family:var(--serif)}
 .lt [data-spaces="panels"] .stage svg.wheel-paper .pcell.lit.idle:not(.hot):not(.sel) .edge-lit{opacity:.35}
 .lt .stage .slot.lit.idle:not(:hover):not(.sel) .face{opacity:.6}
 .lt .stage .slot.lit.idle .base::after{display:none}
-.lt [data-spaces="panels"] .stage svg.wheel-paper .pcell.taken .wash{fill:color-mix(in srgb,color-mix(in srgb,var(--c) var(--tint,11%),var(--paper-taken,#cfc2a6)) 52%,var(--board,#2b2119))}
+.lt [data-spaces="panels"] .stage svg.wheel-paper .pcell.taken .wash{fill:color-mix(in srgb,color-mix(in srgb,var(--c) var(--tint,11%),var(--paper-taken,#cfc2a6)) 66%,var(--board,#2b2119))}
 .lt [data-spaces="panels"] .stage svg.wheel-paper .pcell.taken.lit .wash{fill:color-mix(in srgb,var(--c) var(--tint,11%),var(--paper-lit,#fbf6ea))}
 .lt [data-spaces="panels"] .stage svg.wheel-paper .pcell.locked .wash{fill:rgba(242,232,210,.03);stroke:rgba(242,232,210,.16);stroke-width:1}
 /* calm: a fine dotted edge that reads as "someone was here", never as the lit edge of a space you can take (w2a #30) */
@@ -417,6 +420,8 @@ h1,h2,h3{font-family:var(--serif)}
 @keyframes panelland{0%{transform:translate(-50%,calc(-50% - 5px))}60%{transform:translate(-50%,calc(-50% + 1px))}100%{transform:translate(-50%,-50%)}}
 .lt [data-spaces="panels"] .stage .slot.taken .face{opacity:1}
 .lt [data-spaces="panels"] .stage .slot.taken:not(.lit) .face .main,.lt [data-spaces="panels"] .stage .slot.taken:not(.lit) .face .second,.lt [data-spaces="panels"] .stage .slot.taken:not(.lit) .face .note{opacity:.35}
+/* the gain a taken space keeps stays readable on the darker paper (picky bot, Nov 4: 35% ink on dark brown) */
+.lt [data-spaces="panels"] .stage .slot.taken:not(.lit) .face .main{opacity:.78}
 /* emojis never cover words (Cory, 2026-10-15; blind testers saw minions on a taken space's words, bigger than them): a
    taken space keeps its gain, faded, and the minion stands where its small print was (that print hides, the panel
    keeps its size), no taller than that print */
@@ -427,10 +432,10 @@ h1,h2,h3{font-family:var(--serif)}
 .lt [data-spaces="panels"] .stage .slot.taken.flash:not(.lit) .face .worker-fig{animation-name:panelland-under}
 @keyframes panelland-under{0%{transform:translate(-50%,-5px)}60%{transform:translate(-50%,1px)}100%{transform:translate(-50%,0)}}
 .lt [data-spaces="panels"] .stage .slot.can:hover .face{transform:translateY(-1px);transition:transform var(--mo-quick,.12s)}
-/* locked: faint on the board */
+/* locked: faint on the board, but readable (picky bot, Nov 4: grey on dark brown before the rings open) */
 .lt [data-spaces="panels"] .stage .slot.locked .face{color:var(--pl-cream-2,#b9a98c)}
-.lt [data-spaces="panels"] .stage .slot.locked .face > *{opacity:.55}
-.lt [data-spaces="panels"] .stage .slot.locked .face .second,.lt [data-spaces="panels"] .stage .slot.locked .face .note,.lt [data-spaces="panels"] .stage .slot.locked .face .note .now{color:var(--pl-cream-3,#7d6e5a)}
+.lt [data-spaces="panels"] .stage .slot.locked .face > *{opacity:.8}
+.lt [data-spaces="panels"] .stage .slot.locked .face .second,.lt [data-spaces="panels"] .stage .slot.locked .face .note,.lt [data-spaces="panels"] .stage .slot.locked .face .note .now{color:color-mix(in srgb,var(--pl-cream-2,#b9a98c) 70%,var(--pl-cream-3,#7d6e5a))}
 .lt[data-yours="1"][data-phase="place"] [data-spaces="panels"] .stage .slot.open:not(.lit):not(.taken) .face,.lt[data-yours="1"][data-phase="choose"] [data-spaces="panels"] .stage .slot.open:not(.lit):not(.taken) .face{opacity:.6}
 
 /* the hover card on a space: paper */
@@ -568,6 +573,7 @@ h1,h2,h3{font-family:var(--serif)}
 .lt .stage svg.rim-layer .rim-hit:focus-visible{stroke:var(--lamp-ink);stroke-width:2;fill:rgba(255,250,238,.1)}
 /* the tiebreak, quieter than the rule: "· ties: red members" */
 .lt .stage svg.wheel-paper .rim-rule .rim-tie{letter-spacing:.04em;font-weight:600;fill-opacity:.9}
+.lt .stage svg.wheel-paper .rim-rule .rim-leads{fill-opacity:.8} /* the word before the leaders' faces (picky bot, Nov 4) */
 /* the chairs: yours only a little larger than the rivals' (same layout) */
 /* (your chair was zoomed 1.15×; in the ordered column every chair has the same slot, so yours is marked by its edge
    and its larger type instead) */

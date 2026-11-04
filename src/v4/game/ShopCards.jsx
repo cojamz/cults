@@ -244,12 +244,13 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
       <div className="lt-shop-main">
       {/* one header line: the members' title and the sort; the follower buys stand beside the cards, as findable */}
       <div className="lt-shop-head">
-        {/* a discount is said once, here, beside the struck prices (w4 A#23: its sentence was on all ten hovers) */}
-        <h3 className="lt-h">{tray ? 'Top of the pile' : 'Shop'}<small>{tray ? `${tray.filter(u => optionFor(`card:${u}`)).length} you can pay for` : peeking ? 'Put the top of the pile in order' : discount > 0 ? <Tip label="Discount sources" content={<p>{discountWhy(state, viewer)}.</p>}><span data-shop-discount>{viewer.discount ? 'your next one' : 'your members'} {discount} less</span></Tip> : buying && affordable ? `${affordable} member${affordable === 1 ? '' : 's'} affordable` : ghosts.length || (state.supply && state.rules?.piles?.only) ? `${state.shop.length} pile${state.shop.length === 1 ? '' : 's'} open` : `${state.shop.length} members`}</small></h3>
+        {/* a discount is said once, here, beside the struck prices (w4 A#23: its sentence was on all ten hovers); else one
+            count in every phase, "N of 7 affordable" (picky bot, Nov 4: it flipped between affordable and the row's size) */}
+        <h3 className="lt-h">{tray ? 'Top of the pile' : 'Shop'}<small>{tray ? `${tray.filter(u => optionFor(`card:${u}`)).length} you can pay for` : peeking ? 'Put the top of the pile in order' : discount > 0 ? <Tip label="Discount sources" content={<p>{discountWhy(state, viewer)}.</p>}><span data-shop-discount>{viewer.discount ? 'your next one' : 'your members'} {discount} less</span></Tip> : ghosts.length || (state.supply && state.rules?.piles?.only) ? `${state.shop.length} pile${state.shop.length === 1 ? '' : 's'} open` : viewer ? `${affordable} of ${uids.length} affordable` : `${state.shop.length} members`}</small></h3>
         <span className="lt-shop-controls">
           {viewer && <button type="button" className="lt-view-btn" aria-label="Fade members you can't afford" title="Fade members you can't afford right now" aria-pressed={fade} onClick={toggleFade}>affordable</button>}
-          <button type="button" className="lt-view-btn" aria-label="Show member abilities" aria-pressed={detailed} onClick={toggleView}>details</button>
-          <button type="button" className="lt-sort" role="switch" aria-label="Group members by color" aria-checked={sort === 'color'} title="Switch cost / color order" onClick={() => setSort(sort === 'cost' ? 'color' : 'cost')}>
+          <button type="button" className="lt-view-btn" aria-label="Show member abilities" title="Show every card's ability" aria-pressed={detailed} onClick={toggleView}>details</button>
+          <button type="button" className="lt-sort" role="switch" aria-label="Group members by color" aria-checked={sort === 'color'} title="Sort by cost or by color" onClick={() => setSort(sort === 'cost' ? 'color' : 'cost')}>
             <span className={sort === 'cost' ? 'on' : ''}>cost</span><span className={sort === 'color' ? 'on' : ''}>color</span>
           </button>
         </span>
@@ -300,7 +301,8 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
                   dark disc at its left and the worth at its right; the picture; the price's colors along the foot. What
                   it does is the hover's (or Details') sentence. The price is what you'd pay, so it agrees with the dots. */}
               <span className="lt-hd">
-                <span className="lt-corner-cost num" aria-hidden="true" data-corner-cost={(paid || parts).reduce((t, c) => t + c.n, 0)}>{(paid || parts).reduce((t, c) => t + c.n, 0)}</span>
+                {/* the disc is the price in all, named on hover (picky bot, Nov 4: readers took it for an id or a level) */}
+                <span className="lt-corner-cost num" aria-hidden="true" title={`Costs ${(paid || parts).reduce((t, c) => t + c.n, 0)} in all`} data-corner-cost={(paid || parts).reduce((t, c) => t + c.n, 0)}>{(paid || parts).reduce((t, c) => t + c.n, 0)}</span>
                 {/* the worth is what the member brings, not part of its price (live panel r1: "1 follower" read as a third cost) */}
                 <WorthTag d={d} sphere={sphere} />
                 {/* a long single word sets tighter, so it fits its line whole before it ever breaks (w3a A26: "DOPPEL-/GANGER") */}
@@ -591,6 +593,7 @@ export function FollowerRates({ state, me = null, optionFor = () => null, onPick
             aria-haspopup="dialog" data-rate={t.key}
             aria-label={`Recruit ${t.get} follower${t.get > 1 ? 's' : ''}: pay ${t.cost} resources of any colors${t.limited ? ` (${left} left in this game)` : ''}`}
             onClick={e => (opt ? onPick(opt.id) : onDenied && onDenied({ type: 'tier', tier: t }, e.currentTarget))}>
+            {/* "recruit" over the count: the tiles read as blank cards (picky bot, Nov 4) */}
             {/* your buy closes it (keyed by what you hold): after a buy it stayed open and flipped to "You hold 0: 10 short"
                 (w2b #47); a rival's step no longer remounts it (snappy pair Q4) */}
             <Tip key={`${held}:${viewer ? viewer.bonus : ''}`} className="fb-tip" beside=".lt-rate" hint={`Recruit ${t.get} follower${t.get > 1 ? 's' : ''}: pay ${t.cost} resources of any colors`} content={() => (
@@ -601,7 +604,7 @@ export function FollowerRates({ state, me = null, optionFor = () => null, onPick
                 {t.limited && <span>{left} left at this table (2 per player at the start).</span>}
                 <small data-pays={opt ? 'tier' : undefined}>{when(t, opt)}</small>
               </div>
-            )}><span className="art rt-art"><span className="rt-trade"><b className="num get">{t.get}</b><FollowerGlyph size={28} /></span></span>
+            )}><span className="art rt-art"><span className="rt-cap" aria-hidden="true">recruit</span><span className="rt-trade"><b className="num get">{t.get}</b><FollowerGlyph size={28} /></span></span>
               <span className="nm">Followers</span><span className="ft"><CostShapes parts={[{ color: 'any', n: t.cost }]} />{t.limited ? <small className="rt-left num">{left} left</small> : null}</span><span className="hitbox" aria-hidden="true" /></Tip>
           </button>
         );
@@ -622,7 +625,7 @@ export function FollowerRates({ state, me = null, optionFor = () => null, onPick
                 <span>Costs 2 resources in any colors. Nothing pays the price difference.</span>
                 <small>{opt ? 'Choose the two members' : 'You can use it after placing a minion, if a swap fits.'}</small>
               </div>
-            )}><span className="art rt-art"><span className="rt-trade"><b className="num get">⇄</b></span></span>
+            )}><span className="art rt-art"><span className="rt-cap" aria-hidden="true">recruit</span><span className="rt-trade"><b className="num get">⇄</b></span></span>
               <span className="nm">Swap</span><span className="ft"><CostShapes parts={[{ color: 'any', n: swapCardCost(state) }]} /></span><span className="hitbox" aria-hidden="true" /></Tip>
           </button>
         );

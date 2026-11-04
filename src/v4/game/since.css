@@ -1,7 +1,7 @@
 /* "Since your last turn" (SinceStrip.jsx): a quiet list, one line per rival placement, each name opening its card.
    Self-contained: the layout (lamp.css) places the box; inside it nothing runs past its edges. */
 .lt-since{display:flex;flex-direction:column;gap:4px;box-sizing:border-box;min-width:0;max-width:100%;padding:2px 3px;overflow:hidden;font-family:var(--sans);color:var(--cream-2,#d9cbb0)}
-.lt-since .since-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;padding:1px 2px 1px 0;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--cream-3)}
+.lt-since .since-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;padding:1px 2px 1px 0;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:color-mix(in srgb,var(--cream-3) 50%,var(--cream-2))} /* a step lighter on the wood (picky bot, Nov 4) */
 .lt-since .since-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lt-since .since-log{flex:none;font:inherit;letter-spacing:.06em;text-transform:uppercase;color:var(--lamp-ink);background:none;border:0;border-radius:7px;padding:2px 8px;box-shadow:inset 0 0 0 1px rgba(var(--lamp),.45);cursor:pointer;min-height:22px}
 .lt-since .since-log:hover,.lt-since .since-log:focus-visible{background:rgba(var(--lamp),.12)}
@@ -21,7 +21,7 @@
 .lt-since .big{color:var(--cream-2,#d9cbb0)}
 .lt-since .since-row .pip{width:.95em;height:.95em;vertical-align:-.15em}
 .lt-since .since-row.hit{background:rgba(232,120,100,.1);box-shadow:inset 2px 0 0 rgba(232,120,100,.7)}
-.lt-since .since-more button{font:inherit;font-size:12px;color:var(--cream-3);background:none;border:0;padding:1px 7px;cursor:pointer;text-decoration:underline dotted}
+.lt-since .since-more button{font:inherit;font-size:12px;color:var(--cream-2);background:none;border:0;padding:1px 7px;cursor:pointer;text-decoration:underline dotted}
 /* under the chairs, one line per move (Cory, Nov 4: "yes" to one line per rival move, still up when your turn starts):
    the row's parts wrap as whole pieces, and only the first line shows, so what doesn't fit drops out whole, never cut
    mid-word; the name opens the full card */

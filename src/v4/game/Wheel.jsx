@@ -888,6 +888,10 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   // band's height, centred in it. Its room on the line (units) is taken off the room the words have
   const EMOJI_U = (8 * Math.max(1, Math.min(2, Math.floor((0.62 * (RIM.r1 - RIM.r0) * (scale || 1)) / 8)))) / (scale || 1);
   const EMOJI_ROOM = EMOJI_U + 2;
+  // "leads" before the leaders' faces (picky bot, Nov 4: small faces on the rims read as minions or cloak wearers): its
+  // room per unit of font size, the space before it included, in the rim's own face and case
+  const LEADS = 'leads';
+  const LEAD_K = 0.45 + (panels ? rimWidth(LEADS, 800, 0, PIXEL) + 0.02 * LEADS.length : rimWidth(LEADS.toUpperCase(), 700, 0.11)) + 0.6;
   // the tiebreak's words on the rim name a count, never a lone color: "ties: red" was read as the red player (blind
   // testers, 2026-10-15), so it's "ties: red members" or "ties: most yellow", never cut to one word
   // the prize comes every round, not once at the game's end (Cory, 2026-10-15: "each round: most gold +4")
@@ -906,7 +910,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     // the arc, less air at each end (clear of the dividers, w2a #52) and the leaders' emojis
     const room = (2 * rimHalf * Math.PI / 180) * rr - 26 - leaders.length * EMOJI_ROOM;
     // the follower mark, and the space before the emojis, per unit of font size
-    const tailK = RIM_MARK + (leaders.length ? 0.45 : 0);
+    const tailK = RIM_MARK + (leaders.length ? LEAD_K : 0);
     const head = `${rule}${prize}`;
     const base = rimWidth(head, 700, 0), n = collapse(head).length;
     const tieW = t => (t ? rimWidth(`  ·  ties: ${t}`, 600, 0.04) : 0);
@@ -939,7 +943,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     };
     const rr = top ? RIM.r + 2.2 : RIM.r + 1.6; // the pixel face sits low in its box: the top half goes out further (Cory, Oct 29)
     const room = (2 * rimHalf * Math.PI / 180) * rr - 26 - leaders.length * EMOJI_ROOM;
-    const tailK = RIM_MARK + (leaders.length ? 0.45 : 0);
+    const tailK = RIM_MARK + (leaders.length ? LEAD_K : 0);
     let lineK = measure();
     // a rim too short for the whole line even at the smallest size (six colors: neighbours' words ran into each other,
     // playtest Nov 3) drops "Each round:" and keeps the rule and the prize
@@ -1059,7 +1063,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       const st = stdById[qid];
       const leaders = st && st.leaders.length ? st.leaders : [];
       const EM = EMOJI_ROOM; // one emoji's room on the line
-      const tail = F => F * RIM_MARK + (leaders.length ? F * 0.45 + leaders.length * EM : 0);
+      const tail = F => F * RIM_MARK + (leaders.length ? F * LEAD_K + leaders.length * EM : 0);
       const startOf = lab => Math.max(0, ((2 * arcHalf * Math.PI / 180) * lab.rr - lab.textW - tail(lab.font)) / 2);
       const lab = panels ? rimRuns(qid, q, leaders) : rimLabel(qid, q, leaders);
       const rr = lab.rr, F = lab.font, textW = lab.textW;
@@ -1068,6 +1072,10 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       const lit = lampQid === qid ? ' lit' : lampQid ? ' wait' : '';
       // the rule's words as a <text> on its arc: the live one, and (alt) the same rim read the other way up, never shown,
       // kept so its picture is ready before the board first turns it over (rimPictures below)
+      // the word before the leaders' faces, after the follower mark, on the same line
+      const lead = (lab, startS, arcId) => (leaders.length ? (
+        <textPath className="rim-leads" data-rim-leads="" href={`#${arcId}`} startOffset={(startS + lab.textW + lab.font * (RIM_MARK + 0.45)).toFixed(1)}>{lab.runs ? LEADS : LEADS.toUpperCase()}</textPath>
+      ) : null);
       const rimText = (lab, startS, alt) => {
         const F = lab.font, arcId = alt ? `rim-arc-${q}-alt` : `rim-arc-${q}`;
         const tag = alt ? { 'data-rim-alt': q, 'data-rim-res': quadrant(qid).resource } : { 'data-plaque': qid, 'data-rim-text': q, 'data-rim-res': quadrant(qid).resource };
@@ -1079,6 +1087,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
                 {r.tie ? <tspan className="rim-tie" {...(alt ? {} : { 'data-rim-tie': r.tie })}>{`  ·  ties: ${r.tie}`}</tspan> : null}
               </textPath>
             ))}
+            {lead(lab, startS, arcId)}
           </text>
         );
         return (
@@ -1088,6 +1097,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
               {lab.tie ? <tspan className="rim-tie" {...(alt ? {} : { 'data-rim-tie': lab.tie })}>{`  ·  ties: ${lab.tie}`}</tspan> : null}
               {lab.prize}
             </textPath>
+            {lead(lab, startS, arcId)}
           </text>
         );
       };
@@ -1155,7 +1165,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       leaders.forEach((id, k) => {
         const art = emojiArt(seatEmoji(state, id));
         if (!art) return;
-        const sAt = startS + textW + F * RIM_MARK + F * 0.45 + k * EM + EM / 2;
+        const sAt = startS + textW + F * (RIM_MARK + LEAD_K) + k * EM + EM / 2;
         const deg = (sAt / rr) * 180 / Math.PI;
         const a = lab.top ? c - arcHalf + deg : c + arcHalf - deg;
         // centred on the text line (Cory: the followers mark and emoji centred on the text), which runs 3.6 units off the

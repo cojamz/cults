@@ -35,6 +35,12 @@ describe('a resource is a plain dot, and always says its name', () => {
         const grad = g.querySelector(`radialGradient[id="${id}"]`);
         expect(grad, 'the gradient lives in the glyph').not.toBeNull();
         expect(grad.querySelector('stop').getAttribute('stop-color')).toBe('#ffffff');
+      } else if (r === 'silver') {
+        // silver is a coin, lit like the pearl and metal grey in its own color (picky bot, Nov 4: flat, it read as blue)
+        const id = (g.querySelector('path').getAttribute('fill').match(/^url\(#(.+)\)$/) || [])[1];
+        const grad = id && g.querySelector(`radialGradient[id="${id}"]`);
+        expect(grad, 'silver fills with its own gradient').toBeTruthy();
+        expect([...grad.querySelectorAll('stop')].some(st => (st.getAttribute('style') || '').includes('var(--silver'))).toBe(true);
       } else expect(g.querySelector('path').getAttribute('fill')).toContain(`var(--${r})`);
       fills.set(r, g.querySelector('path').getAttribute('fill'));
       cleanup();

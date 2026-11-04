@@ -98,7 +98,7 @@ describe('round summary and results (live panel r1)', () => {
     expect(fr).toBeTruthy();
     info.after.players[first].members.push(fr.uid);
     const { container } = render(<RoundEnd info={info} onNext={() => {}} autoMs={0} />);
-    expect(container.querySelector('[data-first-pick]').textContent).toMatch(/picks? first: (they|you) have Line Cutters, a member who always picks first/);
+    expect(container.querySelector('[data-first-pick]').textContent).toMatch(/(goes|go) first: (they|you) have Line Cutters, a member who always goes first/);
     expect(container.querySelector('[data-round-news]').textContent).toMatch(/middle ring opens/);
   });
 
@@ -131,8 +131,8 @@ describe('round summary and results (live panel r1)', () => {
     at.log.push(`${p.name} bought 1 follower (2 gold).`); // a line the engine's count doesn't hold
     const { container } = render(<RoundEnd info={info} onNext={() => {}} autoMs={0} />);
     const cell = container.querySelector(`[data-this-round="${p.id}"]`).textContent;
-    if (eb) expect(cell).toMatch(new RegExp(`\\+${eb} bought`));
-    else expect(cell).not.toMatch(/bought/);
+    if (eb) expect(cell).toMatch(new RegExp(`\\+${eb} recruited followers`));
+    else expect(cell).not.toMatch(/recruited followers/);
   });
 
   it('a rule that counts a resource says so; one that counts members or sets keeps its words', () => {

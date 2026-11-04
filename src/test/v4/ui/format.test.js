@@ -382,7 +382,7 @@ describe('v4 format helpers', () => {
         const pr = promptFor(s, pend.player === 0);
         const first = !Object.values(s.slots).includes(pend.player);
         if (pend.player === 0 && !/use/.test(pr.sub || '')) {
-          expect(pr.text).toBe('Place a minion on a glowing space');
+          expect(pr.text).toBe('Place a minion on an open space');
           if (first) { expect(pr.sub).toBe(RING_NOTE[s.round]); seen[s.round] = true; } else expect(pr.sub).toBeUndefined();
         }
         if (pend.player !== 0) expect(pr.sub).toBeUndefined();

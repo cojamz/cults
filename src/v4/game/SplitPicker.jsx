@@ -118,7 +118,9 @@ export default function SplitPicker({ state, g, onAnswer, busy, place = null, tu
       </div>
       <div className="pay-foot">
         {onBack && <button type="button" className="pay-cancel" data-option="back" disabled={busy || taking} onClick={onBack}>Cancel</button>}
-        <button type="button" className="pay-go" data-split-take={parts.map(x => `${x.n}${x.color}`).join(' ')} disabled={busy || taking} onClick={take}>
+        {/* while the split is being taken it stays as it was, its dots in their colors (picky bot, Nov 4: greyed, its blue
+            dot read as silver) */}
+        <button type="button" className="pay-go" data-split-take={parts.map(x => `${x.n}${x.color}`).join(' ')} data-taking={taking || undefined} disabled={busy || taking} onClick={take}>
           Take <CostDots parts={parts} />
         </button>
       </div>

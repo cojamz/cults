@@ -18,8 +18,12 @@
   font:700 13px/15px var(--serif);letter-spacing:0;text-transform:none;color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.2);overflow-wrap:normal;hyphens:manual}
 .lt-card.card .lt-hd .nm[data-long]{font-size:12px;letter-spacing:-.02em}
 .lt-card.card .lt-hd .nm[data-wide]{white-space:normal;font-size:12px;line-height:13px;letter-spacing:-.01em}
-/* the pale colors: dark words on the bar */
-.lt-card.card:is([data-ground="white"],[data-ground="silver"]) .lt-hd .nm{color:#2a1f17;text-shadow:none}
+/* the pale colors: dark words on the bar (yellow too: Drifters' white name on lemon was hard to read, picky bot, Nov 4) */
+.lt-card.card:is([data-ground="white"],[data-ground="silver"],[data-ground="yellow"]) .lt-hd .nm{color:#2a1f17;text-shadow:none}
+/* look-alikes told apart (picky bot, Nov 4): silver's bar is metal, a sheen across it; a member of no color's grey bar is
+   hatched, so it never reads as silver */
+.lt-card.card[data-ground="silver"] .lt-hd{background:linear-gradient(105deg,var(--q) 0%,color-mix(in srgb,var(--q) 35%,#fbfcfd) 42%,var(--q) 62%,color-mix(in srgb,var(--q) 80%,#5f6870) 100%)}
+.lt-card.card[data-ground="colorless"] .lt-hd{background:repeating-linear-gradient(135deg,rgba(255,255,255,.13) 0 2px,transparent 2px 6px),var(--q)}
 /* the picture: the lab's tinted field, lit from below */
 .lt-shop .lt-card.card .lt-hd + .art,.lt-card.card .lt-hd + .art{margin:0 2px;border-radius:0;flex:1 1 0;min-height:0;height:auto;box-shadow:none;
   background:radial-gradient(circle at 50% 75%,color-mix(in srgb,var(--q) 34%,#f4ebd7),color-mix(in srgb,var(--q) 14%,#eadfc4) 75%)}
@@ -56,7 +60,7 @@
 .card-face.mc .mc-cost .mc-n{font-size:14px;white-space:nowrap;color:#8a7760}
 .card-face.mc .mc-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 /* the pale colors: dark words on a pale bar */
-.card-face.mc[data-pale] .mc-hd .mc-name{color:#2b2018;text-shadow:none}
+.card-face.mc:is([data-pale],[data-ground="yellow"]) .mc-hd .mc-name{color:#2b2018;text-shadow:none}
 .card-face.mc[data-pale]{box-shadow:inset 0 0 0 2px #cfc3a8}
 /* the portrait fits its field; Details gives the field to the rule */
 .lt-card.card .lt-hd + .art{overflow:hidden;flex:1 1 0}

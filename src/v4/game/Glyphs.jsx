@@ -41,12 +41,14 @@ export function ResourceGlyph({ r, size = 16, n = null, decorative = false }) {
   // as a white thing, never as an empty ring or a zero; every other dot is flat. Its own gradient id (useId): a shared id
   // would break wherever the first copy sits hidden.
   const pearl = `pearl${useId().replace(/:/g, '')}`;
-  const fill = r === 'white' ? `url(#${pearl})` : `var(--q-${r}, var(--${r}))`;
+  // silver is a coin (picky bot, Nov 4: flat, it read as a pale blue): lit from the top left like the pearl, metal grey
+  const fill = r === 'white' || r === 'silver' ? `url(#${pearl})` : `var(--q-${r}, var(--${r}))`;
   return (
     <svg className={`res-glyph${r === 'any' ? ' any' : ''}`} data-res-glyph={r} viewBox="0 0 16 16" width={size} height={size} role={decorative ? undefined : 'img'} aria-label={decorative ? undefined : label} aria-hidden={decorative ? 'true' : undefined}
       style={{ color: r === 'any' ? undefined : r === 'white' ? 'var(--white, #e6dcc6)' : `var(--q-${r}, var(--${r}))` }}>
       {decorative ? null : <title>{label}</title>}
       {r === 'white' && <defs><radialGradient id={pearl} cx="40%" cy="35%" r="70%"><stop offset="0" stopColor="#ffffff" /><stop offset="1" stopColor="#cdc5b6" /></radialGradient></defs>}
+      {r === 'silver' && <defs><radialGradient id={pearl} cx="38%" cy="32%" r="72%"><stop offset="0" stopColor="#f4f6f8" /><stop offset=".55" style={{ stopColor: 'var(--silver, #a0a8b0)' }} /><stop offset="1" stopColor="#6f7880" /></radialGradient></defs>}
       {r === 'any'
         ? (anyCount === 4 ? ANY_WEDGES.map(([k, d]) => <path key={k} d={d} fill={`var(--any-${k})`} />)
           : anyWedges(anyCount).map(([k, d]) => <path key={k} d={d} fill={`var(--any-q${k})`} />))

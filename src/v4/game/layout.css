@@ -215,6 +215,8 @@
   .app.narrow > .dialog.page:has(> .table-pick.editable) .sphere-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 .setup-settings{display:flex;flex-direction:column;gap:12px}
+.setup-settings .set-hint,.table-chips .set-hint{margin-top:-8px;font-size:12px;line-height:16px;color:var(--muted,#b09f82)}
+.table-chips .set-hint{flex-basis:100%;margin-top:0}
 .table-chip .chip-line{display:none}
 /* a fifth sphere with four picked: dim like a tile you can't take, but it answers a click with a quiet note by the count */
 .sphere.over{opacity:.72} /* with four picked, a click swaps it in for the last one picked (its hover says so) */

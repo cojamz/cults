@@ -133,7 +133,8 @@ export function promptFor(state, mine) {
       // once a round, one short line, and a usable member's line wins the room
       const first = !Object.values(state.slots || {}).includes(p.id);
       const sub = use ? `…or use ${use} first` : first ? RING_NOTE[state.round] : null;
-      return { who: p, text: `Place a minion on a glowing space`, ...(sub ? { sub } : {}), ...(sub && !use ? { brief: true } : {}) };
+      // "open", the word the rulebook and the board use (picky bot, Nov 4: nothing obviously glows)
+      return { who: p, text: `Place a minion on an open space`, ...(sub ? { sub } : {}), ...(sub && !use ? { brief: true } : {}) };
     }
     // the headline is a verb phrase that fits one line at 1270×700; the details go in the line under it (sub)
     case 'buy':
@@ -176,6 +177,11 @@ export function promptFor(state, mine) {
       // Launderers' rearranging is its own card (LaunderCard.jsx)
       // Makeover too (bug bash, Nov 1: its card said "Makeover: pick on the board", with nothing on the board to pick)
       if (asker && pend.options.some(o => o.id === 'split' || o.kind === 'amount')) return { who: p, text: `${asker}: rearrange your resources`, keepCase: true };
+      // "+N in colors you choose" (Polish, Harvest) is asked one coin at a time, "+1 of which color? (4 to pick)", but the
+      // card by the space takes the whole split: the headline says the whole job (picky bot, Nov 4: "+1 of which color?"
+      // over a card that said "+4 in colors you choose")
+      const toPick = String(pend.prompt || '').match(/^([^:]{2,28}): \+1 of which color\? \((\d+) to pick\)$/);
+      if (toPick) return { who: p, text: `${toPick[1]}: pick ${toPick[2]} color${toPick[2] === '1' ? '' : 's'}`, keepCase: true };
       if (asker && asker !== name) {
         // options that all point at seats are answered on the cults (the seat selector, game/seatPick.js)
         return { who: p, text: `${asker}: ${pend.options.some(o => o.target) ? 'pick on the board' : 'choose one'}`, keepCase: true };

@@ -200,7 +200,8 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
       {!empty && pool && lvl < 2 && <div className="since-own"><span className="since-title own-line">Since your last turn</span>{count}</div>}
       {shown.length ? (
         <ol className="since-list" ref={listRef}>
-          {more > 0 && !bare && <li className="since-more"><button type="button" onClick={onLog}>{more} earlier… open the log</button></li>}
+          {/* "2 more: open the log" (picky bot, Nov 4: the ellipsis read as cut-off text) */}
+          {more > 0 && !bare && <li className="since-more"><button type="button" onClick={onLog}>{more} more: open the log</button></li>}
           {shown.map(e => (
             <li key={e.n} className={`since-row${e.hit ? ' hit' : ''}${lvl === 1 ? ' brief' : ''}`} hidden={lvl >= 2 || undefined} data-clip-ok={compact || undefined} style={{ '--pc': playerColor(e.actor) }} onClick={pinLine}>
               <Tip className="since-line" data-since-line={e.n} label={`${e.head}: show what happened`}

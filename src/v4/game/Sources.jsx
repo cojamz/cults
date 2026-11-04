@@ -21,7 +21,9 @@ function parts(state, p, s, meId) {
   const n = memberCount(state, p);
   const playLines = b.play.filter(l => l.n);
   const all = [
-    { key: 'members', n: b.members + b.self, label: 'Members', card: <>
+    // the part is the members' followers and the leader's 1, so it says so beside the count under the name (picky bot,
+    // Nov 4: "Members 12" beside "11 members")
+    { key: 'members', n: b.members + b.self, label: 'Members', long: `Members + ${p.id === meId ? 'you' : 'leader'}`, card: <>
       <b>{poss} members: {b.members + b.self}</b>
       <span>{plural(n, 'member')}: +{b.members}, and 1 for {p.id === meId ? 'you' : 'the leader'}</span>
       {s.colors.filter(c => c.count).map(c => <span key={c.qid}>{plural(c.count, `${cname(c.qid).toLowerCase()} member`)}: +{c.members}</span>)}
@@ -32,7 +34,8 @@ function parts(state, p, s, meId) {
       {contestLines(state, p).map(l => <span key={l.rule}>{l.text}</span>)}
     </> },
     { key: 'bought', n: b.bought, label: 'Bought', card: <b>{poss} follower buys: {b.bought}</b> },
-    { key: 'play', n: b.effects, label: 'Play', card: <>
+    // won or lost, said (picky bot, Nov 4: "Play −4" floated outside the bar with no verb)
+    { key: 'play', n: b.effects, label: b.effects < 0 ? 'Lost in play' : 'Won in play', card: <>
       <b>{poss} followers won in play: {sign(b.effects)}</b>
       {playLines.map(l => <span key={l.label}>{l.label} {sign(l.n)}</span>)}
     </> },
@@ -65,9 +68,12 @@ export default function FollowerBars({ state, meId, ranks = null }) {
                   data-seg={g.key} data-n={g.n} content={() => <div className="pop-card">{g.card}</div>}>
                   {/* a thin part still says its number, and is never narrower than it (picky UI bot, Nov 4: 2- and 3-follower
                       parts were empty boxes) */}
-                  {g.n / max >= (g.label.length > 4 ? 0.13 : 0.075)
-                    ? <span className="src-lab">{`${g.label} `}<b className="num">{g.n}</b></span>
-                    : <span className="src-lab bare"><b className="num">{g.n}</b></span>}
+                  {/* the longest words that fit the part: its long name, its name, else the number alone (its hover names it) */}
+                  {(() => {
+                    const fits = t => g.n / max >= Math.max(0.075, (t.length + 4) * 0.0135);
+                    const words = [g.long, g.label].find(t => t && fits(t));
+                    return words ? <span className="src-lab">{`${words} `}<b className="num">{g.n}</b></span> : <span className="src-lab bare"><b className="num">{g.n}</b></span>;
+                  })()}
                 </Tip>
               ))}
             </span>

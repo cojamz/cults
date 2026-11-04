@@ -24,7 +24,7 @@ export const sphereName = id => `${quadrant(id).name}${quadrant(id).standIn ? ' 
  */
 const LINES = {
   gold: 'Piles up gold, and saves on your next member.',
-  red: 'Recruits: free members, and swaps with rivals.',
+  red: 'Recruits: free members, and swaps with shop and rival members.', // the rulebook's words (picky bot, Nov 4)
   purple: 'Turns: go twice in a row, skip, +1 minion.',
   silver: 'Gifts to rivals that pay you back.',
   yellow: 'Goes broad: picks its colors, and changes rivals’ resources.',

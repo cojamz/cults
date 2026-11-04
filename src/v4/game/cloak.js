@@ -5,7 +5,7 @@ import { quadrant } from '../../engine/v4/index.js';
 
 // lamp.css's quadrant inks, for the leader's pixel robe (an SVG fill can't read a CSS variable per shade)
 export const CLOAK_HEX = {
-  gold: '#d49b27', red: '#c4533f', blue: '#4a80b8', green: '#3f9467', magenta: '#b2386c', silver: '#94a3b2',
+  gold: '#d49b27', red: '#c4533f', blue: '#4a80b8', green: '#3f9467', magenta: '#c8407f', silver: '#a0a8b0', // (the Nov 4 magenta and silver, picky bot)
   yellow: '#ead844', purple: '#7d5ba6', white: '#e6dcc6',
 };
 

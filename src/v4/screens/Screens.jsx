@@ -60,7 +60,7 @@ export function Home({ onLocal, onHost, onJoin, onlineReady, saved, onResume, la
         </svg>
         <h1>{GAME_NAME}</h1>
         <p className="version" data-version>{VERSION_LABEL}</p>
-        <p className="tag">Draft the wheel. Recruit members. Win followers.</p>
+        <p className="tag">Send minions to the wheel. Recruit members. Win followers.</p>
       </div>
       <div className="menu">
         {error && <p className="error" role="alert">{error}</p>}
@@ -251,6 +251,7 @@ export function TablePicker({ value, onChange, readOnly = false, n = 4 }) {
           {/* Reroll first, so it stays under the pointer while the names after it change width (w2b #33) */}
           {mode === 'random' && !readOnly && <button type="button" className="btn ghost" data-reroll onClick={() => { let t; do { t = randomTable(); } while (sameTable(t.slice(0, n), quadrants)); onChange({ mode, quadrants: t }); }}>Reroll</button>}
           {quadrants.map(id => <TableChip key={id} id={id} />)}
+          {mode === 'random' && !readOnly && <small className="set-hint" data-set-hint="random">{n} colors drawn at random.</small>}
         </div>
       ) : (
         <>
@@ -369,11 +370,18 @@ export function LocalSetup({ initial, onStart, onBack }) {
         {/* the settings stand in their own column between the seats and the table on a laptop (Cory, Nov 4: "settings
             could be brought over to a third column here"); narrower, they stack under the seats */}
         <div className="setup-settings" data-setup-settings>
+          {/* each switch says what its choice does in one line under it (picky bot, Nov 4: "Swap card", "By color" and
+              "Very Hard" went unexplained; the words were only in hover titles) */}
           <div className="seat"><span>Bots</span><Seg label="Bot level" value={level} options={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} onChange={setLevel} /></div>
+          <small className="set-hint" data-set-hint="bots">{(BOT_LEVEL_INFO.find(l => l.level === level) || {}).blurb}</small>
           <div className="seat"><span>Speed</span><Seg label="Speed" value={speed} options={SPEED_OPTS} onChange={v => { setSpeed(v); setMotionSpeed(v); }} /></div>
+          <small className="set-hint" data-set-hint="speed">{SPEED_HINT[speed] ? `${SPEED_HINT[speed]}.` : null}</small>
           <SwapPick value={swapCard} onChange={setSwapCard} />
+          <small className="set-hint" data-set-hint="swap">{swapCard ? 'A recruit option: pay 2 resources to swap one of your members for a shop or rival member costing up to 2 more or less.' : 'No swap card.'}</small>
           <ContestPick value={contests} onChange={setContests} />
+          <small className="set-hint" data-set-hint="contests">{contests ? 'A different contest for each color, printed on its rim.' : 'Each color: most of its color held at round end.'}</small>
           <MemberLookPick />
+          <small className="set-hint" data-set-hint="look">How members look to you. The rules are the same.</small>
         </div>
         <TablePicker value={fitted} n={nSph} onChange={setTable} />
         <div className="row-btns">

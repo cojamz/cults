@@ -45,13 +45,13 @@ export function MemberDeck({ state, deckRef = null }) {
   const open = e => { if (e.detail > 1 || performance.now() - changedAt.current < 600) return; setBrowsing(true); };
   const n = state.pile.length;
   const edges = deckEdges(n);
-  const label = n ? `${n} member${n === 1 ? '' : 's'} left in the deck` : 'The deck is empty';
+  const label = n ? `${n} member${n === 1 ? '' : 's'} left in the pile` : 'The pile is empty';
   return (
     <>
     <button type="button" onClick={open}
       ref={deckRef} data-deck="" data-left={n} aria-haspopup="dialog"
       className={`lt-deck${n === 0 ? ' empty' : n <= 3 ? ' low last' : n <= DECK_LOW ? ' low' : ''}`}
-      aria-label={`Browse member deck: ${label}`}
+      aria-label={`Browse the members: ${label}`}
     >
       {/* a pile, not a card (live panel r1: at member size in the first slot it read as a member to buy): smaller than a
           card, its edges showing, named underneath */}
@@ -62,7 +62,8 @@ export function MemberDeck({ state, deckRef = null }) {
           <span className="n num">{n > 0 ? <Tick value={n} float={false} /> : 'empty'}</span>
         </span>
       </span>
-      {n > 0 && <span className="cap" aria-hidden="true">deck</span>}
+      {/* "pile", as the rulebook, Walk-In and the "Top of the pile" row say it (picky bot, Nov 4: DECK beside "pile") */}
+      {n > 0 && <span className="cap" aria-hidden="true">pile</span>}
     </button>
     {browsing && createPortal(<DeckBrowser state={state} onClose={() => setBrowsing(false)} />, document.body)}
     </>

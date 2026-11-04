@@ -584,6 +584,9 @@
 /* a rule that grows by round: one line per round, this round lit, the others stepped back (Cory, 2026-10-18) */
 .by-round .br-line{display:block;opacity:.42}
 .by-round .br-line.now{opacity:1}
+/* ...the words step back, the dots keep their color (picky bot, Nov 4: a blue dot at 42% read as silver) */
+.by-round .br-line:not(.now){opacity:1;color:var(--pl-ink-3,#a39078)}
+.by-round .br-line:not(.now) :is(.res-glyph,.pip){opacity:.8}
 .by-round .br-r{display:inline-block;min-width:2.1em;font-weight:700}
 .by-round .br-lead + .br-line{margin-top:2px}
 .by-round .br-rest{display:block;margin-top:2px}

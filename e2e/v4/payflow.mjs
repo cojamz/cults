@@ -176,7 +176,7 @@ try {
       return { pile: pile && pile.getBoundingClientRect().toJSON(), card: card.getBoundingClientRect().toJSON(), cap: document.querySelector('[data-deck] .cap')?.textContent || '' };
     });
     if (!d.pile || d.pile.height > d.card.height * 0.8 || d.pile.width > d.card.width * 0.8) errors.push(`(f6) the deck is as big as a member card (${d.pile && Math.round(d.pile.width)}×${d.pile && Math.round(d.pile.height)} vs ${Math.round(d.card.width)}×${Math.round(d.card.height)})`);
-    if (!/^deck$/i.test(d.cap.trim())) errors.push(`(f6) the deck is not named ("${d.cap}")`);
+    if (!/^pile$/i.test(d.cap.trim())) errors.push(`(f6) the pile is not named ("${d.cap}")`);
     await ctx.close();
   }
 } catch (e) {
