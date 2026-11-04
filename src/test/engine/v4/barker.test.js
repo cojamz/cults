@@ -13,7 +13,7 @@ const payAll = s => { while (s.pending && s.pending.kind !== 'buy' && s.pending.
 
 describe('Barker', () => {
   it("is dealt in Landlord's place, with Cory's words", () => {
-    expect(defById('trading.barker').text).toBe('Each turn, you may recruit followers one extra time.');
+    expect(defById('trading.barker').text).toBe('You may recruit followers even after you recruit a member.');
     expect(defById('trading.shopkeeper').retired).toBe(true);
   });
   it('after recruiting a member, the owner may also recruit followers, and only followers', () => {
@@ -29,12 +29,11 @@ describe('Barker', () => {
     expect(s.players[0].bonus).toBe(before + 1);
     expect(s.log.join('\n')).toContain('P1 uses Barker.');
   });
-  it('after buying followers first, the extra recruit is followers again', () => {
+  it('after buying followers first, there is no second recruit (the extra is for after a member)', () => {
     let s = table(['red', 'trading'], { n: 2, round: 2, res: [{ red: 9, white: 9 }], members: [['trading.barker']] });
     s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
     s = payAll(answer(s, 'tier:small'));
-    expect(s.pending.kind).toBe('buy');
-    expect(s.pending.options.every(o => o.kind === 'tier' || o.kind === 'pass')).toBe(true);
+    expect(!!(s.pending && s.pending.player === 0 && s.pending.kind === 'buy' && s.pending.options.some(o => o.kind === 'tier'))).toBe(false);
   });
   it('without Barker there is no second recruit', () => {
     let s = table(['red', 'trading'], { n: 2, round: 2, res: [{ red: 9, white: 9 }] });

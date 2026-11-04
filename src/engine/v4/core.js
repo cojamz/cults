@@ -637,7 +637,7 @@ function inputFor(state, task) {
           options: uses.length ? [...uses, { id: 'pass', label: 'Done', kind: 'pass' }] : [] };
       }
       // a second buy (Big Spender) is offered only after a real first buy, while an unspent one is held
-      if (task.extra && !(p.turnBuys > 0 && (otherSecondBuy(state, p) || followersTwiceCard(state, p) !== undefined))) return { kind: 'buy', prompt: '', options: [] };
+      if (task.extra && !(p.turnBuys > 0 && (otherSecondBuy(state, p) || (p.turnMember && followersTwiceCard(state, p) !== undefined)))) return { kind: 'buy', prompt: '', options: [] };
       const barkerOnly = task.extra && !otherSecondBuy(state, p);
       const opts = [];
       // which members and tiers can be paid for at all: an existence check, not the ranked list of every way to pay
@@ -940,7 +940,7 @@ function runTask(state, task) {
         eachMemberOf(state, p, (card, def) => { if (def.onTurnInRow) def.onTurnInRow(ctx, p, card); }, ['onTurnInRow']);
       }
       p.turnRecruits = 0;
-      p.turnBuys = 0;
+      p.turnBuys = 0; delete p.turnMember;
       delete p.peekReach;
       delete p.perSpend;
       delete p.clearance;
@@ -1982,8 +1982,8 @@ function allowanceCards(state, p, flag) {
 const allowance = (state, p, flag) => allowanceCards(state, p, flag).length;
 // Shopaholics (concept): the second buy every turn, never spent
 const alwaysBuysTwice = (state, p) => p.members.some(uid => effectiveDefs(state.cards[uid]).some(d => d.buyTwice));
-// Barker (REPLACE14=barker, Cory Nov 4: "a member that gives an extra buy each turn", "limit the bonus recruit to
-// followers"): "Each turn, you may recruit followers one extra time." The turn's extra buy step, followers only.
+// Barker (Cory Nov 4: "you can always recruit followers, even if you recruited a member using your one buy/recruit"):
+// "You may recruit followers even after you recruit a member." The turn's extra buy step, followers only, after a member.
 const followersTwiceCard = (state, p) => p.members.find(uid => effectiveDefs(state.cards[uid]).some(d => d.followersTwice));
 const otherSecondBuy = (state, p) => allowance(state, p, 'extraBuy') || alwaysBuysTwice(state, p) || p.buyTwiceNow;
 function spendAllowance(state, p, flag) {
@@ -2024,6 +2024,7 @@ function boughtOnce(state, p, task) {
   }
 
   p.turnBuys = (p.turnBuys || 0) + 1;
+  if (task.uid !== undefined) p.turnMember = true; // Barker: followers after a member recruit
   if (task.uid !== undefined && !task.doorbuster && !task.lateShop) state.queue.unshift({ t: 'buy', p: p.id, afterPurchase: true, ...workerSourceOf(task) });
 }
 // ---------- Outbidders (REPLACE4 bot test: flag outbids) ----------
