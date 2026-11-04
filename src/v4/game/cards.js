@@ -2,7 +2,8 @@
 // and which face-up cards a space would make affordable. All read off the engine; nothing here is a rule.
 import { paymentPlan, memberPrice } from '../../engine/v4/index.js';
 import { contextFor } from '../../engine/v4/core.js';
-import { ownPlan, skipWords, justTook, previousNow } from '../../engine/v4/content/echo.js';
+import { ownPlan, skipWords, justTook, previousNow, copyOptions } from '../../engine/v4/content/echo.js';
+import { borrowable } from '../../engine/v4/content/red.js';
 
 // The card's timing, from how its text opens (the tag above the name).
 const TIMINGS = [
@@ -93,5 +94,31 @@ export function copyAllPlan(state, pid, text) {
   try {
     const plans = state.players.filter(o => o.id !== pid).map(o => ownCopyPlan(state, o.id)).filter(Boolean);
     return plans.length ? { keys: [...new Set(plans.flatMap(x => x.keys))], names: plans.flatMap(x => x.names), skips: plans[0].skips } : null;
+  } catch { return null; }
+}
+
+// A card or space that copies a member's On Recruit (or a member itself): which list its choice offers, from its words.
+const COPY_KINDS = [
+  [/copy the On Recruit of a rival[’']s member/i, 'rival', 'Could copy'],
+  [/copy the On Recruit of (?:each of your members|another of your members)/i, 'own', 'Could copy'],
+  [/use the On Recruit effect of a shop member/i, 'shop', 'Could use'],
+  [/becomes a copy of a rival[’']s member/i, 'rivalMember', 'Could copy'],
+  [/becomes a copy of another of your members/i, 'ownMember', 'Could copy'],
+  [/choose a rival[’']s member\. Until you choose again/i, 'rivalMember', 'Could choose'],
+];
+/**
+ * The members a copy card or space (Sample, Greatest Hits, Tryout, Bootlegger, Impostors, Doppelganger, Impersonator)
+ * could pick for pid right now, from the engine's own lists (Cory, Nov 4: "hovering over copy a rival members on
+ * recruit should show you the available options"). self: the card's own uid (a member never copies itself).
+ * → { label, list: [{ uid, def, owner }] } or null when the text isn't a copy of a member.
+ */
+export function copyChoices(state, pid, text, self = null) {
+  const hit = COPY_KINDS.find(([re]) => re.test(text || ''));
+  if (!hit || pid == null || !state.players[pid]) return null;
+  try {
+    const ctx = contextFor(state), p = state.players[pid];
+    const raw = hit[1] === 'shop' ? borrowable(ctx).map(c => ({ uid: c.uid, def: c.def })) : copyOptions(ctx, p, hit[1], self);
+    const ownerOf = u => state.players.find(o => o.members.includes(u));
+    return { label: hit[2], list: raw.map(x => ({ ...x, owner: ownerOf(x.uid) || null })) };
   } catch { return null; }
 }

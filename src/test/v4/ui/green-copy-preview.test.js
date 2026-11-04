@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, it, expect } from 'vitest';
-import { defById } from '../../../engine/v4/index.js';
+import { defById, quadrant } from '../../../engine/v4/index.js';
 import { table } from '../../engine/v4/cards-helpers-b.js';
 import { take, move } from '../../engine/v4/helpers.js';
 import { memberCopyTargets, ownCopyPlan, copiesAll, copyAllPlan } from '../../../v4/game/cards.js';
@@ -28,5 +28,29 @@ describe('Green hover targets follow the current rules', () => {
     // Tribute Band lights every rival's actions it could pick (Cory, 2026-10-28), not the viewer's
     s.players[1].bonus = 5;
     expect(copyAllPlan(s, 0, defById('echo.dejavu').text).keys).toEqual(ownCopyPlan(s, 1).keys);
+  });
+});
+
+// Cory, Nov 4: "hovering over copy a rival members on recruit should show you the available options in the hover over"
+const act = (q, name) => quadrant(q).actions.find(a => a.name === name).text;
+describe('Copy-a-member hovers list the choices the card would offer', () => {
+  it('Sample lists exactly the rival members its choice offers', async () => {
+    const { copyChoices } = await import('../../../v4/game/cards.js');
+    const s0 = table(['gold', 'echo'], { round: 2, members: [[], ['echo.evergreen', 'echo.agents', 'echo.hourglass']] });
+    const cc = copyChoices(s0, 0, act('echo', 'Sample'));
+    expect(cc.label).toBe('Could copy');
+    expect(cc.list.map(x => x.def.name)).toEqual(['Busker']);
+    expect(cc.list[0].owner.id).toBe(1);
+    const s = take(s0, 'echo.encore');
+    expect(s.pending.options.map(o => o.value)).toEqual(cc.list.map(x => x.uid));
+  });
+  it('Greatest Hits, Tryout, Impostors and Doppelganger name their options; other cards none', async () => {
+    const { copyChoices } = await import('../../../v4/game/cards.js');
+    const s = table(['red', 'echo'], { round: 3, members: [['echo.evergreen'], ['echo.connector']], shop: ['echo.evergreen', 'echo.connector'] });
+    expect(copyChoices(s, 0, act('echo', 'Greatest Hits')).list.map(x => x.def.name)).toEqual(['Busker']);
+    expect(copyChoices(s, 0, act('red', 'Tryout')).label).toBe('Could use');
+    expect(copyChoices(s, 0, defById('echo.impostor').text).list.map(x => x.owner.id)).toEqual([1]);
+    expect(copyChoices(s, 0, defById('echo.doppel').text).list.map(x => x.def.name)).toEqual(['Busker']);
+    expect(copyChoices(s, 0, defById('echo.connector').text)).toBe(null);
   });
 });

@@ -390,6 +390,20 @@ const recruitDef = c => (c.copy ? defById(c.copy) : c.def);
 function ownRecruits(ctx, p) {
   return ctx.membersOf(p).filter(c => { const d = recruitDef(c); return !d.artifact && !d.recruitNote && (d.onRecruited || (d.now && (d.onRoundStart || d.onRoundStartLate))); });
 }
+/**
+ * The members a copy-an-On-Recruit card or space could pick for p right now, read from the same lists its choice
+ * uses, so a hover can name them before it's taken (Cory, Nov 4: "hovering over copy a rival members on recruit should
+ * show you the available options"). which: 'rival' (Sample), 'own' (Greatest Hits, Bootlegger: self left out),
+ * 'rivalMember' (Impostors, Impersonator), 'ownMember' (Doppelganger). → [{ uid, def }], def the one it would copy.
+ */
+export function copyOptions(ctx, p, which, self = null) {
+  const bad = ['doppel', 'impostor', 'impersonators'];
+  if (which === 'rival') return rivalRecruits(ctx, p).map(({ c }) => ({ uid: c.uid, def: c.def }));
+  if (which === 'own') return ownRecruits(ctx, p).filter(c => c.uid !== self && (self == null || recruitDef(c).key !== 'bootlegger')).map(c => ({ uid: c.uid, def: recruitDef(c) }));
+  if (which === 'rivalMember') return ctx.rivals(p).flatMap(o => ctx.membersOf(o)).filter(c => c.copy || !bad.includes(c.def.key)).map(c => ({ uid: c.uid, def: defById(c.copy || c.def.id) }));
+  if (which === 'ownMember') return ctx.membersOf(p).filter(c => c.uid !== self && (c.copy || !['doppel', 'impostor'].includes(c.def.key))).map(c => ({ uid: c.uid, def: defById(c.copy || c.def.id) }));
+  return [];
+}
 // Greatest Hits is a chain like any copy: an On Recruit it copies (Stunt Double's "copy the action you just took") stays
 // in that chain, so it can't copy Greatest Hits again (that looped forever in seeded games, Nov 1).
 const hitsKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => x.name === 'Greatest Hits').map(x => actionKey(x.key));

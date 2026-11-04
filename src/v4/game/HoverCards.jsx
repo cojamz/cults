@@ -12,7 +12,7 @@ import { Popover } from './parts.jsx';
 import { CardText, RuleText, ContestStandings, MemberCard, CardName, YoudGet, usePreview, requestPreviews, cancelPreviewFallback } from './Info.jsx';
 import { SeatFigure } from './Glyphs.jsx';
 import { Rich } from './Rich.jsx';
-import { memberCopyTargets, ownCopyPlan, copiesAll, copyAllPlan } from './cards.js';
+import { memberCopyTargets, ownCopyPlan, copiesAll, copyAllPlan, copyChoices } from './cards.js';
 import { DeckCard } from './MemberDeck.jsx';
 import { FollowersCard, ResourceCard } from './MemberUse.jsx';
 import { RivalCard, RIVAL_CARD_WIDTH } from './RivalCard.jsx';
@@ -503,6 +503,36 @@ export function targetLines(state, viewer, t) {
   }
   return out;
 }
+/**
+ * A copy card's or space's live options (Cory, Nov 4: "hovering over copy a rival members on recruit should show you
+ * the available options in the hover over"): each member it could copy right now, whose, and its whole text. The rival
+ * members named also light on their seats, as a steal's targets do.
+ */
+export function CopyChoices({ state, viewer, text, self = null, box = false }) {
+  const cc = useMemo(() => copyChoices(state, viewer, text, self), [state, viewer, text, self]);
+  const sig = cc ? cc.list.map(x => x.uid).join(',') : '';
+  useEffect(() => {
+    if (!sig) return undefined;
+    const els = sig.split(',').flatMap(u => [...document.querySelectorAll(`.cs-member[data-uids~="${u}"]`)]);
+    for (const el of els) el.setAttribute('data-aim', '');
+    const held = weakly(els);
+    return () => { for (const el of unheld(held)) el.removeAttribute('data-aim'); };
+  }, [sig]);
+  if (!cc) return null;
+  const whose = o => (!o ? '' : o.id === viewer ? 'Your ' : `${o.name}’s `);
+  const row = (
+    <Row k={cc.label}>
+      <span data-copy-choices={sig}>
+        {cc.list.length ? cc.list.map(x => (
+          <span key={x.uid} className="lt-copy-choice" data-copy-choice={x.uid}>
+            {whose(x.owner)}<b><CardName state={state} uid={x.uid} def={x.def}>{x.def.name}</CardName></b>: <Rich text={x.def.text} />
+          </span>
+        )) : 'nobody yet'}
+      </span>
+    </Row>
+  );
+  return box ? <div className="lt-yd">{row}</div> : row;
+}
 function cardBody(c, state, me, optionFor, pick) {
   // a rival's move since your last turn: its card says so (the wheel's dotted edge was removed, art director 10:40)
   if (c.kind === 'space') {
@@ -552,6 +582,7 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
         {pv && pv.swept && pv.swept.length ? <Row k="Sweeps away">{pv.swept.length > 3
           ? <span data-swept={pv.swept.join(' ')}>{pv.swept.length === state.shop.length ? `the whole row (${pv.swept.length})` : `${pv.swept.length} face-up members`}</span>
           : pv.swept.map((u, k) => <span key={u} data-swept={u}>{k ? ', ' : ''}<CardName state={state} uid={u} /></span>)}<small className="lt-swept-note"> back under the deck</small></Row> : null}
+        {open && viewer != null && !state.over ? <CopyChoices state={state} viewer={viewer} text={a.text} /> : null}
         {/* the members the space lights, named (Cory, 2026-10-16: the lit cards say why) */}
         {open && pv ? targetLines(state, viewer, pv.targets).map(l => <Row key={l.k} k={l.k}><span data-aims={l.uids.join(' ')}>{l.text}</span></Row>) : null}
         {/* a second minion on it says why (w4 skeptic #13: two minions on one space, no reason): Squatter's join */}
@@ -675,9 +706,13 @@ export const cardVerb = pending => {
  *  Cory (2026-10-15): nothing else about payment here: no "You pay", no "Leaves", no contest lines, no click hint. */
 export function ShopCardHover({ state, me = null, uid, optionFor = () => null, onPick, pinned = false }) {
   const opt = optionFor(`card:${uid}`);
+  // a member's copy choices are its owner's (a rival's Bootlegger copies their members); in the shop, the viewer's
+  const holder = state.players.find(p => p.members.includes(uid));
+  const viewer = holder ? holder.id : me != null ? me : state.pending ? state.pending.player : null;
   return (
     <div className="lt-card-body" data-card-hover={uid}>
       <MemberCard state={state} uid={uid} me={me} onFace={state.shop.includes(uid)} />
+      {!state.over && viewer != null ? <CopyChoices state={state} viewer={viewer} text={cardDef(state, uid).text} self={uid} box /> : null}
       {opt && onPick && pinned && <button type="button" className="lt-btn pri" data-recruit={uid} onClick={() => onPick(opt.id)}>{cardVerb(state.pending)}</button>}
     </div>
   );

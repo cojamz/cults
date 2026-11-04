@@ -586,3 +586,7 @@
 .by-round.compact .br-line.now{color:inherit;font-weight:700}
 .by-round.compact .br-line .br-sep{color:var(--pl-ink-3,#a39078);font-weight:500}
 .by-round.compact .br-r{display:inline;min-width:0;font-weight:700}
+
+/* a copy card's live options, one member a line (Cory, Nov 4) */
+.lt-copy-choice{display:block}
+.lt-copy-choice + .lt-copy-choice{margin-top:3px}
