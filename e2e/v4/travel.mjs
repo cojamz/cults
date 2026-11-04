@@ -44,6 +44,10 @@ const browser = await launchBrowser({ executablePath: browserPath });
 const INSTRUMENT = () => {
   window.__fl = [];
   const t0 = performance.now();
+  // frames drawn since the click setup: a flight and a landing in the same frame are the same moment on screen
+  window.__frame = 0;
+  const tickF = () => { window.__frame++; requestAnimationFrame(tickF); };
+  requestAnimationFrame(tickF);
   const read = el => {
     const r = el.getBoundingClientRect();
     const x0 = r.left + r.width / 2, y0 = r.top + r.height / 2;
@@ -53,7 +57,7 @@ const INSTRUMENT = () => {
       const m = ks.length && /translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/.exec(ks[ks.length - 1].transform || '');
       if (m) { dx = Number(m[1]); dy = Number(m[2]); break; }
     }
-    return { cls: el.className, t: performance.now() - t0, x0, y0, x1: x0 + dx, y1: y0 + dy };
+    return { cls: el.className, t: performance.now() - t0, frame: window.__frame, x0, y0, x1: x0 + dx, y1: y0 + dy };
   };
   // a card or member stepping onto the action stage (ActionStage.jsx): it rests at its own left/top and flies in from
   // its first keyframe's translate (the place on the board it left), so that's where its path starts
@@ -67,7 +71,7 @@ const INSTRUMENT = () => {
       if (m) { dx = Number(m[1]); dy = Number(m[2]); break; }
     }
     const hw = el.offsetWidth / 2, hh = el.offsetHeight / 2;
-    return { cls: 'stage ' + el.dataset.stage, t: performance.now() - t0, x0: x1 + dx, y0: y1 + dy, x1, y1, w: r.width, box: { l: x1 - hw, r: x1 + hw, t: y1 - hh, b: y1 + hh } };
+    return { cls: 'stage ' + el.dataset.stage, t: performance.now() - t0, frame: window.__frame, x0: x1 + dx, y0: y1 + dy, x1, y1, w: r.width, box: { l: x1 - hw, r: x1 + hw, t: y1 - hh, b: y1 + hh } };
   };
   new MutationObserver(list => {
     for (const m of list) for (const el of m.addedNodes) {
@@ -138,8 +142,8 @@ async function check(kind, label) {
           const was = to.kind === 'member' ? null : shown();
           const look = () => {
             if (window.__landed != null) return;
-            if (to.kind === 'member') { const c = seatOf().querySelector(`.cs-member[data-uids~="${to.uid}"]`); if (c && getComputedStyle(c).opacity === '1') window.__landed = window.__t(); return; }
-            if (shown() > was) window.__landed = window.__t();
+            if (to.kind === 'member') { const c = seatOf().querySelector(`.cs-member[data-uids~="${to.uid}"]`); if (c && getComputedStyle(c).opacity === '1') { window.__landed = window.__t(); window.__landedFrame = window.__frame; } return; }
+            if (shown() > was) { window.__landed = window.__t(); window.__landedFrame = window.__frame; }
           };
           new MutationObserver(look).observe(document.querySelector('.app.game') || document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['data-hold'] });
           const raf = () => { look(); if (window.__landed == null) requestAnimationFrame(raf); };
@@ -157,6 +161,7 @@ async function check(kind, label) {
     let landedAt = null;
     while (Date.now() - t0 < 12000 && landedAt == null) { landedAt = await page.evaluate(() => window.__landed); if (landedAt == null) await page.waitForTimeout(50); }
     const fl = await page.evaluate(() => window.__fl);
+    const landedFrame = await page.evaluate(() => window.__landedFrame);
     const clickAt = await page.evaluate(() => window.__clickAt);
     await page.screenshot({ path: `${SHOTS}/${label}.png` });
     if (landedAt == null) { errors.push(`(${label}) the move didn't land on screen within 12s (${to.kind}${to.r ? ' ' + to.r : ''}, want ${want ?? 'the chip'}, shows ${await page.evaluate(numAt, to)})`); return; }
@@ -168,11 +173,11 @@ async function check(kind, label) {
     const meet = (a, b) => Math.hypot(a.x1 - b.x0, a.y1 - b.y0) <= 48 || (!!a.box && near(b.x0, b.y0, a.box, 8));
     // a recruit off the deck (t7) flies its card to the hub, opens there and goes home from the stage: the card must
     // leave the deck before the member shows in your seat
-    const ok = from.kind === 'pile' ? fl.filter(f => /card-flight/.test(f.cls) && near(f.x0, f.y0, fromR) && f.t < landedAt) : fl.filter(f => near(f.x1, f.y1, toBox) && f.t <= landedAt + 5 &&
+    const ok = from.kind === 'pile' ? fl.filter(f => /card-flight/.test(f.cls) && near(f.x0, f.y0, fromR) && f.t < landedAt) : fl.filter(f => near(f.x1, f.y1, toBox) && (f.t <= landedAt + 5 || f.frame <= landedFrame) &&
       (near(f.x0, f.y0, fromR) || fl.some(a => a !== f && near(a.x0, a.y0, fromR) && !near(a.x0, a.y0, toBox, 0) && a.t <= f.t + 5 && meet(a, f))));
     console.log(`${label}: ${fl.length} flight(s) after the click, ${ok.length} from the source to the destination; landed ${Math.round(landedAt - clickAt)}ms after the click`);
     if (!fl.length) errors.push(`(${label}) nothing flew: the ${to.kind === 'member' ? 'member' : 'number'} changed with no flight in the air`);
-    else if (!ok.length) errors.push(`(${label}) no flight went from ${from.kind} to ${to.kind} (flights: ${fl.map(f => `${f.cls.split(' ')[1] || f.cls} ${Math.round(f.x0)},${Math.round(f.y0)}→${Math.round(f.x1)},${Math.round(f.y1)} at ${Math.round(f.t - clickAt)}ms`).join('; ')}; source ${JSON.stringify(fromR)}, destination ${JSON.stringify(toBox)})`);
+    else if (!ok.length) errors.push(`(${label}) no flight went from ${from.kind} to ${to.kind} (flights: ${fl.map(f => `${f.cls.split(' ')[1] || f.cls} ${Math.round(f.x0)},${Math.round(f.y0)}→${Math.round(f.x1)},${Math.round(f.y1)} at ${Math.round(f.t - clickAt)}ms, frame ${f.frame}`).join('; ')}; landed at frame ${landedFrame}; source ${JSON.stringify(fromR)}, destination ${JSON.stringify(toBox)})`);
   } catch (e) { errors.push(`(${label}) run: ${e.message.split('\n')[0]}`); await page.screenshot({ path: `${SHOTS}/${label}-fail.png` }).catch(() => {}); }
   finally { await ctx.close(); }
 }

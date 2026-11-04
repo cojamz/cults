@@ -61,13 +61,21 @@ const browser = await launchBrowser({ executablePath: browserPath });
 const fails = [];
 let checked = 0;
 try {
+  // one page per screen size, reloaded with each shop's save (a fresh context per shop made ~80 contexts: 8 min on
+  // GitHub's loaded box, and a 15-min stall once, Nov 3)
   for (const [tag, viewport] of [['laptop', { width: 1270, height: 700 }], ['tablet', { width: 1100, height: 700 }]]) {
+    const ctx = await browser.newContext({ viewport }), p = await ctx.newPage();
+    let errors = [];
+    p.on('pageerror', e => errors.push(e.message));
     for (const quads of GROUPS) for (const round of [1, 2, 3]) {
       let k = 0;
       for (const save of shops(quads, round)) {
-        const ctx = await browser.newContext({ viewport }), p = await ctx.newPage(), errors = [];
-        p.on('pageerror', e => errors.push(e.message));
-        await seedSave(p, save); await p.goto(`${base}/?intro=0`); await p.locator('[data-home="resume"]').click();
+        errors = [];
+        // after the first load the page is on the game's own address: the save goes straight into its storage (an init
+        // script per shop would pile up, each one carrying a whole save into every later load)
+        if (p.url().startsWith(base)) await p.evaluate(v => { for (const k of Object.keys(sessionStorage)) if (!k.startsWith('patrons.e2e.seed')) sessionStorage.removeItem(k); for (const k of Object.keys(localStorage)) if (k.startsWith('patrons.')) localStorage.removeItem(k); localStorage.setItem('patrons.v4.local', JSON.stringify(v)); }, save);
+        else await seedSave(p, save, { clear: true });
+        await p.goto(`${base}/?intro=0`); await p.locator('[data-home="resume"]').click();
         const hand = p.locator('[data-handoff]'); if (await hand.isVisible()) await hand.click();
         await p.locator('.app.game[data-phase="buy"]:not([data-animating])').waitFor();
         for (const details of [false, true]) {
@@ -84,9 +92,10 @@ try {
           if (k === 0) await p.screenshot({ path: `${out}/${tag}-${quads[1]}-r${round}${details ? '-details' : ''}.png` });
         }
         if (errors.length) fails.push(`${tag}: ${errors.join('; ')}`);
-        await ctx.close(); k++;
+        k++;
       }
     }
+    await ctx.close();
   }
 } finally { await browser.close(); }
 if (fails.length) { console.error(`shop names: ${fails.length} problem(s)\n  ${[...new Set(fails)].join('\n  ')}`); process.exit(1); }
