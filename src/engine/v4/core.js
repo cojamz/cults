@@ -210,7 +210,7 @@ export function resume(state) {
 // ---------- derived values (also used by the UI) ----------
 
 // A Doppelganger becomes a copy of the member card it copies: its follower value and member count too.
-const valueOf = card => (card.copy ? Math.max(defById(card.def).f, defById(card.copy).f) : defById(card.def).f);
+const valueOf = card => (card.copy ? Math.max(defById(card.def).f, defById(card.copy).f) : defById(card.def).f) + (card.time || 0); // + Lifers' time tokens
 // Bait can debit printed followers through a signed adjustment; a later member transfer cannot make the score negative.
 export const followers = (state, p) => Math.max(0, 1 + p.bonus + p.members.reduce((s, u) => s + valueOf(state.cards[u]), 0));
 // Printed followers also count as members; explicit member counts (Revelers) still apply.

@@ -698,6 +698,11 @@ export default {
     m('timekeepers', 'Timekeeper', 1, 2, 'Game End: +1 follower per purple member you have.', { ...old5, ...old7('purple.timekeepers'),
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'purple'),
     }),
+    // REPLACE7=timekeeperlift (Nov 4, director 9:36am Eastern): the lifted control, paper 16 vs 13. A number change on a
+    // live card is Cory's call: off by default, A/B only, never shipped without his yes. Named apart so sheets can pair it.
+    ...add7(m('timekeeperlift', 'Head Timekeeper', 1, 2, 'Game End: +2 followers per purple member you have.', { round: 1,
+      onGameEnd: (ctx, owner) => 2 * ctx.countMembersOfColor(owner, 'purple'),
+    })),
     // REPLACE5 bot test (Nov 3, replacement batch 5): Timekeeper' place. 4 purple + 2 any as a player sees it. Counted
     // at round end before the contests: every minion of yours on a space (one joining a rival's space too); a minion
     // that sat out for want of a space isn't on the wheel.
@@ -795,6 +800,21 @@ export default {
       },
       botActivate: (ctx, owner) => inARow(ctx, owner) >= 2 || (inARow(ctx, owner) >= 1 && ctx.state.round === 3),
     }),
+    // REPLACE7 (Nov 4, scale-up 3, Shift Crew's place): Lifers (paper 15, set 15 vs 10). A time token per round end sits
+    // on the card (card.time) and moves with it, so a rival who takes it keeps the tokens; core's valueOf adds them.
+    ...add7(m('lifers', 'Lifers', 2, 1, 'Round End: put a time token on this card. Worth 1 more follower per time token.', { f: 2, n: 2, round: 1,
+      onRoundEnd(ctx, owner, card) { card.time = (card.time || 0) + 1; ctx.log(`${owner.name}'s Lifers: a time token (worth ${2 + card.time}).`); },
+      ...see(info => endsAhead(info).length),
+    })),
+    // Floor Crew (paper 13, set 12 vs 10): each member its owner recruits pays +1 purple per 2 of their minions on the board.
+    ...add7(m('floorcrew', 'Floor Crew', 2, 1, 'Whenever you recruit, +1 purple per 2 of your minions on the board.', { f: 3, n: 3, round: 1,
+      onAnyRecruit(ctx, owner, card, by) {
+        if (by !== owner) return;
+        const n = Math.floor(onBoard(ctx, owner) / 2);
+        if (n) { ctx.gain(owner, P, n); ctx.log(`${owner.name}'s Floor Crew: +${n} purple.`); }
+      },
+      ...see(info => 0.5 * endsAhead(info).length),
+    })),
     m('crew', 'Shift Crew', 2, 1, 'Worth 4 followers.', { f: 4, n: 4, vanilla: true, round: 1, ...old3, ...old7('purple.crew') }),
     // REPLACE7 (Nov 4, quality loop, Members A batch 2): Shift Crew's place (paper 19; Purple's pair set check with Night
     // Manager 11 -> 17). Clockmakers' tested rule (core: firstTwoInRow). Worth and count are one number (rulebook), so 3

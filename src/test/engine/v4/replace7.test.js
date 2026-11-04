@@ -5,8 +5,8 @@
 import { describe, it, expect } from 'vitest';
 
 // every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,sprinter,earlyrisers,daylaborers,nightmanager,pacesetters';
-const { applyMove, resume } = await import('../../../engine/v4/core.js');
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,sprinter,earlyrisers,daylaborers,nightmanager,pacesetters,lifers,floorcrew,timekeeperlift';
+const { applyMove, resume, followers } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
 const { table, named, uidIn, owns } = await import('./cards-helpers-b.js');
@@ -36,6 +36,10 @@ describe('REPLACE7: the switch', () => {
     expect(card('purple.daylaborers')).toEqual(['Day Laborers', 3, 2, 3, 3]);
     expect(card('purple.nightmanager')).toEqual(['Night Manager', 2, 2, 1, 1]);
     expect(card('purple.pacesetters')).toEqual(['Pace-Setters', 3, 2, 2, 2]);
+    expect(card('purple.lifers')).toEqual(['Lifers', 3, 1, 2, 2]);
+    expect(card('purple.floorcrew')).toEqual(['Floor Crew', 3, 1, 3, 3]);
+    expect(card('purple.timekeeperlift')).toEqual(['Head Timekeeper', 2, 2, 1, 1]);
+    expect(defById('purple.timekeeperlift').onGameEnd({ countMembersOfColor: () => 3 })).toBe(6);
     for (const id of ['red.patriarch', 'purple.crew', 'purple.timekeepers', 'purple.nightwatch']) expect(defById(id).retired).toBe(true);
     for (const id of ['red.volunteer', 'red.recruitbonus', 'purple.courier']) expect(defById(id).retired).toBe(true);
   });
@@ -453,5 +457,32 @@ describe('Pace-Setters: "Whenever you take a consecutive turn, the next player s
     s = take(s, 'red.turnout');
     s = passBuys(s, 0);
     expect(s.pending.player).toBe(1);
+  });
+});
+
+describe('Lifers and Floor Crew (Shift Crew\'s place, scale-up 3)', () => {
+  const stub = (s, logs) => ({ state: s, log: l => logs.push(l), gain: (p, c, n) => { p.res[c] = (p.res[c] || 0) + n; } });
+  it('Lifers: "Round End: put a time token on this card. Worth 1 more follower per time token." the token stays on the card when it moves', () => {
+    const s = table(['purple', 'red', 'market', 'yellow'], { round: 1, members: [['purple.lifers'], []] });
+    const uid = uidIn(s, 'purple.lifers', 0), p = s.players[0], logs = [];
+    const before = followers(s, p);
+    defById('purple.lifers').onRoundEnd(stub(s, logs), p, s.cards[uid]);
+    defById('purple.lifers').onRoundEnd(stub(s, logs), p, s.cards[uid]);
+    expect(followers(s, p)).toBe(before + 2);
+    expect(logs[1]).toBe("P1's Lifers: a time token (worth 4).");
+    // a rival who takes it takes the tokens with it
+    p.members = p.members.filter(u => u !== uid); s.players[1].members.push(uid);
+    expect(followers(s, p)).toBe(before - 2); // its own 2 and the 2 tokens leave
+  });
+  it('Floor Crew: "Whenever you recruit, +1 purple per 2 of your minions on the board." 3 minions out: +1; a rival recruiting: nothing', () => {
+    const s = table(['purple', 'red', 'market', 'yellow'], { round: 2, members: [['purple.floorcrew'], []] });
+    const p = s.players[0], logs = [], def = defById('purple.floorcrew'), uid = uidIn(s, 'purple.floorcrew', 0);
+    s.slots = { ...s.slots, t1: p.id, t2: p.id, t3: p.id }; // 3 minions on the board
+    const had = p.res.purple || 0;
+    def.onAnyRecruit(stub(s, logs), p, s.cards[uid], s.players[1]);
+    expect(p.res.purple || 0).toBe(had);
+    def.onAnyRecruit(stub(s, logs), p, s.cards[uid], p);
+    expect(p.res.purple).toBe(had + 1);
+    expect(logs).toEqual(["P1's Floor Crew: +1 purple."]);
   });
 });

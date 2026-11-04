@@ -17,6 +17,9 @@
 //   purple.timekeepers (alt: scale-up 1, paper 17) -> purple.sleepyheads
 //   purple.timekeepers (alt: scale-up 1, paper 17, set 14) -> purple.wakeupcaller
 //   purple.crew (alt: scale-up 1, paper 14 vs 8) -> purple.snoozers
+//   purple.timekeepers (alt: lifted control, paper 16 vs 13, Cory's call) -> purple.timekeeperlift
+//   purple.crew (alt: scale-up 3, paper 15 vs 9) -> purple.lifers
+//   purple.crew (alt: scale-up 3, paper 13 vs 9) -> purple.floorcrew
 //   purple.timekeepers (alt: round I extra-turn gap, paper 16) -> purple.sprinter
 //   purple.timekeepers (alt: round I extra-turn gap, paper 15) -> purple.earlyrisers
 //   red.proselytizer (alt: scale-up 1, paper 19) -> red.drillsergeant
@@ -25,7 +28,7 @@
 const VAL = globalThis.process?.env?.REPLACE7 || '';
 const PICKS = ['seatfiller', 'godfather', 'daylaborers', 'nightmanager', 'pacesetters'];
 /** new card key -> the old card id it takes the place of */
-const REPLACES = { seatfiller: 'red.volunteer', interrupter: 'purple.courier', runner: 'purple.courier', ushers: 'red.recruitbonus', godfather: 'red.patriarch', crimefamily: 'red.patriarch', gobetween: 'purple.timekeepers', nightshift: 'purple.timekeepers', sleepyheads: 'purple.timekeepers', wakeupcaller: 'purple.timekeepers', snoozers: 'purple.crew', sprinter: 'purple.timekeepers', earlyrisers: 'purple.timekeepers', drillsergeant: 'red.proselytizer', converts: 'red.proselytizer', daylaborers: 'purple.crew', nightmanager: 'purple.timekeepers', pacesetters: 'purple.nightwatch' };
+const REPLACES = { seatfiller: 'red.volunteer', interrupter: 'purple.courier', runner: 'purple.courier', ushers: 'red.recruitbonus', godfather: 'red.patriarch', crimefamily: 'red.patriarch', gobetween: 'purple.timekeepers', nightshift: 'purple.timekeepers', sleepyheads: 'purple.timekeepers', wakeupcaller: 'purple.timekeepers', snoozers: 'purple.crew', lifers: 'purple.crew', timekeeperlift: 'purple.timekeepers', floorcrew: 'purple.crew', sprinter: 'purple.timekeepers', earlyrisers: 'purple.timekeepers', drillsergeant: 'red.proselytizer', converts: 'red.proselytizer', daylaborers: 'purple.crew', nightmanager: 'purple.timekeepers', pacesetters: 'purple.nightwatch' };
 export const ON7 = VAL === '1' ? PICKS : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
 export const REPLACE7 = ON7.length > 0;
 /** The new card, in its color's member list only when it is switched on. */
