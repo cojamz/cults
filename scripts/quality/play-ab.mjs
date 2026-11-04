@@ -47,13 +47,15 @@ if (args[0] === 'score') {
   const matched = key.pairs.filter(p => !p.seed.includes('x')).length, looseN = key.pairs.length - matched;
   const nm = avg(sideM.new), om = avg(sideM.old), gapM = nm != null && om != null ? +(nm - om).toFixed(2) : null;
   const abPass = matched >= 2 && clear > 0 && ((gapM != null && gapM >= 0.3) || (looseN > 0 && gap != null && gap >= 0.5));
-  const pass = hard ? nMed != null && nMed >= 1 && clear > 0 : abPass;
+  const superseded = key.superseded || null; // a folder a later run replaced never passes (director, 2:43pm)
+  const pass = superseded ? false : hard ? nMed != null && nMed >= 1 && clear > 0 : abPass;
   const looseLine = looseN ? `${matched} matched pair(s), ${looseN} across games; matched only: new ${nm} vs old ${om} (${gapM >= 0 ? '+' : ''}${gapM}). ${matched < 2 ? 'Too few matched pairs to pass: ask the Lab for more seeds.' : 'A pass on all pairs needs +0.5.'}` : null;
   const waits = hard && /rival/i.test(hard) ? "Waits on Cory's ruling on rivals choosing during the owner's turn before it ships." : null;
   const lines = [`# Blind A/B play: ${key.new.name} against ${key.old.name}`, '', `${judges.length} judges, ${key.pairs.length} seeds. New card ${n} vs old ${o} (mean of the six scores over every sheet, 0 to 2): ${gap >= 0 ? '+' : ''}${gap}. Clear outcome for the new card ${clear}.`, '', hard ? `**${pass ? 'PASS' : 'no'}**: the old card hard-fails (${hard}), so the new card needs 1.0 or more on its own and no 0 on Clear outcome; the gap is for information.${waits ? ' ' + waits : ''}` : `**${pass ? 'PASS' : 'no'}**: ship needs +0.3 or more and no 0 on Clear outcome.`, '', ...(looseLine ? [looseLine, ''] : []), `Judges preferred the new card ${pref.new} times, the old ${pref.old}, same ${pref.same} (a tiebreak note; the gate is the gap).`, '',
     ...P.map((k, i) => `- ${k}: new ${median(side.new.map(r => r[i]))}, old ${median(side.old.map(r => r[i]))}`)];
+  if (superseded) lines.splice(1, 0, '', `**SUPERSEDED**: ${superseded}`);
   writeFileSync(join(dir, 'result.md'), lines.join('\n') + '\n');
-  writeFileSync(join(dir, 'result.json'), JSON.stringify({ new: key.new.name, old: key.old.name, newAvg: n, oldAvg: o, gap, clearNew: clear, matched, loose: looseN, gapMatched: gapM, prefer: pref, oldHardFail: hard, waitsOnCory: !!waits, pass }, null, 1));
+  writeFileSync(join(dir, 'result.json'), JSON.stringify({ new: key.new.name, old: key.old.name, newAvg: n, oldAvg: o, gap, clearNew: clear, matched, loose: looseN, gapMatched: gapM, prefer: pref, oldHardFail: hard, waitsOnCory: !!waits, superseded, pass }, null, 1));
   console.log(lines.join('\n'));
   process.exit(0);
 }
