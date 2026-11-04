@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 // every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,sprinter,earlyrisers,daylaborers,nightmanager,pacesetters,lifers,floorcrew,timekeeperlift';
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,sprinter,earlyrisers,daylaborers,nightmanager,pacesetters,lifers,floorcrew,timekeeperlift,picketline';
 const { applyMove, resume, followers } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
@@ -38,6 +38,7 @@ describe('REPLACE7: the switch', () => {
     expect(card('purple.pacesetters')).toEqual(['Pace-Setters', 3, 2, 2, 2]);
     expect(card('purple.lifers')).toEqual(['Lifers', 3, 1, 2, 2]);
     expect(card('purple.floorcrew')).toEqual(['Floor Crew', 3, 1, 3, 3]);
+    expect(card('purple.picketline')).toEqual(['Picket Line', 3, 1, 3, 3]);
     expect(card('purple.timekeeperlift')).toEqual(['Head Timekeeper', 2, 2, 1, 1]);
     expect(defById('purple.timekeeperlift').onGameEnd({ countMembersOfColor: () => 3 })).toBe(6);
     for (const id of ['red.patriarch', 'purple.crew', 'purple.timekeepers', 'purple.nightwatch']) expect(defById(id).retired).toBe(true);
@@ -486,5 +487,16 @@ describe('Lifers and Floor Crew (Shift Crew\'s place, scale-up 3)', () => {
     def.onRecruit(stub(s, logs), p, s.cards[uid], p, { followers: 3, tier: 0 }); // a follower purchase is a recruit
     expect(p.res.purple).toBe(had + 2);
     expect(logs).toEqual(["P1's Floor Crew: +1 purple.", "P1's Floor Crew: +1 purple."]);
+  });
+});
+
+describe('Picket Line: "Whenever a rival takes a Purple space, +1 purple."', () => {
+  it('a rival takes Sleep In: +1 purple; a rival takes a Red space: nothing', () => {
+    const turns = [{ t: 'turn', p: 1 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }];
+    let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 1, members: [['purple.picketline'], []], queue: turns });
+    const had = s.players[0].res.purple || 0;
+    s = take(s, 'purple.skip');
+    expect(s.players[0].res.purple).toBe(had + 1);
+    expect(s.log.some(l => l === "P1's Picket Line: +1 purple.")).toBe(true);
   });
 });

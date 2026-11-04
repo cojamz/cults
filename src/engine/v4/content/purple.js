@@ -816,6 +816,12 @@ export default {
       },
       ...see(info => 0.5 * endsAhead(info).length),
     })),
+    // REPLACE7 (Nov 4, scale-up 4, Shift Crew's place): Picket Line (paper 13, set 13 vs 10). Silversmith's rule in purple,
+    // in its words ("takes a Silver space"), so the hook is the same (afterRivalAction).
+    ...add7(m('picketline', 'Picket Line', 2, 1, 'Whenever a rival takes a Purple space, +1 purple.', { f: 3, n: 3, round: 1,
+      afterRivalAction(ctx, owner, card, qid) { if (qid === P) { ctx.gain(owner, P, 1); ctx.log(`${owner.name}'s Picket Line: +1 purple.`); } },
+      ...see(info => 2 * endsAhead(info).length),
+    })),
     m('crew', 'Shift Crew', 2, 1, 'Worth 4 followers.', { f: 4, n: 4, vanilla: true, round: 1, ...old3, ...old7('purple.crew') }),
     // REPLACE7 (Nov 4, quality loop, Members A batch 2): Shift Crew's place (paper 19; Purple's pair set check with Night
     // Manager 11 -> 17). Clockmakers' tested rule (core: firstTwoInRow). Worth and count are one number (rulebook), so 3
