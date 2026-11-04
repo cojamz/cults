@@ -19,6 +19,7 @@ import { swap11, handlers11 } from './replace11.js';
 import { add14, old14 } from './replace14.js';
 import { add7, old7, REPLACE7 } from './replace7.js';
 import { REPLACE3 } from './replace3.js';
+import { add9, old9 } from './replace9.js';
 import { see, endsAhead } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -223,10 +224,11 @@ function toToken(ctx, p, n, why) {
   return put;
 }
 /** Night Watch (live since Nov 4): p just took the Goes Last token with n minions on it; each rival's Night
- *  Watch pays +1 follower per minion. */
+ *  Watch pays +1 follower per minion (the REPLACE9 rework pays its owner's own take as well). */
 function nightWatch(ctx, p, n) {
   if (!(n > 0)) return;
-  for (const o of ctx.rivals(p)) for (const c of ctx.membersOf(o)) if (c.def.watchToken) ctx.asMember(o, c.def.name, () => {
+  // watchToken 'any' (REPLACE9 rework, Members C bC12): pays on its owner's own take too
+  for (const o of ctx.state.players) for (const c of ctx.membersOf(o)) if (c.def.watchToken && (o !== p || c.def.watchToken === 'any')) ctx.asMember(o, c.def.name, () => {
     o.bonus += n;
     ctx.log(`${o.name}'s Night Watch: +${n} follower${n === 1 ? '' : 's'} (${p.name} took the Goes Last token with ${n} minion${n === 1 ? '' : 's'} on it).`);
   }, c.uid);
@@ -617,7 +619,10 @@ export default {
     m('clockmaker', 'Clockmakers', 2, 2, 'Round Start: take your first two turns in a row.', { f: 2, firstTwoInRow: true, retired: true }), // (Cory, Oct 29, balance run: +1 follower); Night Watch takes its place (Claude, under Cory's "use your judgement", 2026-11-04)
     // Replacement batch 1 (Nov 3), live since Nov 4 (Claude, under Cory's "use your judgement"): Clockmakers' place. 3 purple + 2 any as a player sees it. Last Call
     // and Sleep In pay for the minions they put on the token, Night Owls for its 1.
-    m('nightwatch', 'Night Watch', 2, 2, 'Whenever a rival takes the Goes Last token, +1 follower per minion on it.', { f: 2, watchToken: true, ...old7('purple.nightwatch') }),
+    m('nightwatch', 'Night Watch', 2, 2, 'Whenever a rival takes the Goes Last token, +1 follower per minion on it.', { f: 2, watchToken: true, ...old7('purple.nightwatch'), ...old9('purple.nightwatch') }),
+    // REPLACE9 (Members C, Nov 4, batch bC12: paper 18 vs 12, quality/evals/gate/C-nightwatch3): Night Watch, any
+    // player's take, its owner's included. Same price.
+    ...add9(m('nightwatch9', 'Night Watch', 2, 2, 'Whenever any player takes the Goes Last token, +1 follower per minion on it.', { f: 2, watchToken: 'any' })),
     // REPLACE7 (Nov 4, quality loop, Members A batch 3): Night Watch's place (paper 17, Purple's set 13 -> 16). Cory's
     // Pace-Setter ("could be a good idea for a different batch"), in his Courier words. 3 purple + 2 any, counts as 2.
     // On each turn that comes right after your own, the next rival's turn (the first one still queued) is skipped, as
