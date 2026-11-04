@@ -3,7 +3,7 @@
 ## In plain words
 - **What it does:** bots play the same games twice, once with the new cards and once without them, then compare.
 - **Same games:** game 17 always deals the same table and the same shuffle, so any difference comes from the cards.
-- **Settings by default:** 10-card deck, By color contests, Hard bots that can see what On Use and On Recruit cards do.
+- **Settings by default:** 10-card deck, By color contests, Hard bots that can see what On Use and On Recruit cards do and weigh using a once-a-game card now against later (BOTSMART, Nov 4).
 - **Any thread can help:** each helper takes the next 5 games nobody has taken yet. Nobody hands out game ranges.
 - **Safe to stop:** a restart loses at most the 5 games that were being played, and never adds duplicate games.
 - **Report:** each new card next to the card it replaces (how often it's taken, how often its owners win), then how winners won: how wide, how deep in one color (and whether it was their cloak's), where their followers came from, which member pairs win together, and how each cloak did.

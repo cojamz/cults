@@ -38,7 +38,9 @@ const ROOT = process.env.TRIALS_DIR || '/mnt/project-files/trials';
 // stalled elsewhere while its worker ran, and two boxes played it (Nov 3). The clock is read from the text, mtime is
 // the fallback for old claims.
 const BLOCK = 5, STALE_MS = 15 * 60e3, BEAT_MS = 60e3;
-const DEFAULTS = { DECK: '10', CONTESTS: 'byColor', BOTSEE: '1' };
+// BOTSMART (Nov 4): smarter On Use timing; head to head even with today's Hard (+0.25 ± 1.2 followers, 28 seats to 23 of 48;
+// design/eval/bots-smart/duel-4.jsonl) and it fixes the Encore, Party Crasher and Round End misplays. Older trials keep their arms.
+const DEFAULTS = { DECK: '10', CONTESTS: 'byColor', BOTSEE: '1', BOTSMART: '1' };
 // the files the games depend on: a trial's arms are keyed by these, so a commit that changes only the screen reuses them
 const RULES_PATHS = ['src/engine', 'src/v4/tables.js', 'scripts/v4-balance.mjs', 'scripts/lib', 'scripts/trial/cards.mjs'];
 // every env setting v4-balance.mjs or the rules read; the worker clears these from its own shell before a block
