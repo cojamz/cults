@@ -143,9 +143,9 @@ describe('Charity Ball: "Whenever a rival recruits a member, give them 1 silver 
 
 describe('Penny Pincher: "Round Start: if you have the fewest members, +3 white."', () => {
   it('fewest members (ties count) at round start: +3 white; more than a rival: nothing', () => {
-    const s = table(['red', 'echo', 'trading', 'silver'], { n: 3, round: 1, members: [['trading.pennypincher'], ['echo.roadie'], ['trading.shopkeeper', 'silver.godparent']], queue: [{ t: 'round', r: 2 }] });
+    const s = table(['red', 'echo', 'trading', 'silver'], { n: 3, round: 1, members: [['trading.pennypincher'], ['echo.roadie'], ['trading.shopkeeper', 'trading.cashier']], queue: [{ t: 'round', r: 2 }] });
     expect(named(s, 'Penny Pincher')).toContain("P1's Penny Pincher: fewest members: +3 white.");
-    const t = table(['red', 'echo', 'trading', 'silver'], { n: 3, round: 1, members: [['trading.pennypincher', 'silver.usher'], ['echo.roadie'], ['trading.shopkeeper', 'silver.godparent']], queue: [{ t: 'round', r: 2 }] });
+    const t = table(['red', 'echo', 'trading', 'silver'], { n: 3, round: 1, members: [['trading.pennypincher', 'silver.usher'], ['echo.roadie'], ['trading.shopkeeper', 'trading.cashier']], queue: [{ t: 'round', r: 2 }] });
     expect(named(t, 'Penny Pincher')).toEqual([]);
   });
 });
