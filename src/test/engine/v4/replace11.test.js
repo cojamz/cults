@@ -168,3 +168,14 @@ describe('REPLACE11: Yard Sale', () => {
     expect(s.log.join('\n')).toContain("P1's Yard Sale: no members to sell.");
   });
 });
+
+describe('REPLACE11: one space at a time', () => {
+  it('REPLACE11=yardsale swaps Estate Sale only', async () => {
+    const { execFileSync } = await import('node:child_process');
+    const out = execFileSync('node', ['-e', "import('./src/engine/v4/content/index.js').then(m => console.log(JSON.stringify(['purple', 'trading'].map(q => m.quadrant(q).actions.map(a => a.name)))))"],
+      { env: { ...process.env, REPLACE11: 'yardsale' }, encoding: 'utf8' });
+    const [purple, white] = JSON.parse(out);
+    expect(purple).toContain('Right Away');
+    expect(white).toContain('Yard Sale');
+  });
+});
