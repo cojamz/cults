@@ -15,3 +15,5 @@ Each line: the card's text, what the bot did, what a sensible player does, and t
 - **Night Watch** rework ("Whenever any player takes the Goes Last token, +1 follower per minion on it."): took Sleep In over an open Last Call showing +6.
 - **Early Birds** rework ("If you place the round's first minion, your next turn comes right after it."): swapped away the turn it fired. Gap: its value estimate is small.
 - **Dabblers** ("Counts as 2 wild members."): bots count it through the game's own counting; Round End payouts it feeds (Mob) weren't forecast for any recruit. BOTSMART adds them (roundEndPay).
+- **Lamplighters** ("Whenever you take the Goes Last token, +1 follower per color you have a minion on.") bought while holding old Early Birds ("Your turns can't be skipped"), which stops its owner from taking the token: a dead card (quality/evals/play/lamplighters-h1, game 4 B, moves 77/90). Gap: a recruit's value ignores conflicts with members already held.
+- **Night Watch**: paid 5 purple to keep it under Shake Down, then cast it out with Farewell the next turn (lamplighters-h1 game 2 A, moves 78 and 84). Gap: no consistency between turns.
