@@ -780,7 +780,12 @@ const market = {
     ...add11(m('punchcard', 'Punch Card', 1, 1, 'Your 3rd, 6th and 9th member cards cost nothing.', { punchCard: true,
       // BOTSEE: about 4 resources for each of 3, 6, 9 still ahead of its member cards and in reach (about 0.6 cards a
       // placement); worth nothing bought as the 9th card (Evaluators, Nov 4: a bot bought it as its 9th)
-      ...see(i => { const c = i.owner.members.length; return [3, 6, 9].filter(n => n > c && n - c <= i.placesLeft * 0.6).length * 4 * resAt(Math.min(3, i.round + 1)); }) })),
+      // a free recruit is a member, not leftover resources, so it keeps its worth in round III too; and a buy still queued
+      // this turn that would be the free card counts again, so a double recruit takes Punch Card first (Evaluators, Nov 4)
+      ...see(i => {
+        const c = i.owner.members.length, now = i.s.queue.filter(t => t.t === 'buy' && t.p === i.owner.id).length >= 2 && [3, 6, 9].includes(c + 1); // queue[0] is this buy
+        return [3, 6, 9].filter(n => n > c && n - c <= Math.max(1, i.placesLeft * 0.6)).length * 4 + (now ? 3 : 0);
+      }) })),
     m('regular', 'Regular', 1, 1, 'Whenever you buy followers, +1 blue.', { ...old9('market.regular'), ...old11('punchcard'),
       onBuyFollowers(ctx, owner, card, by) { if (by.id === owner.id && ctx.gain(owner, B, 1)) ctx.log(`${owner.name}'s Regular: +1 blue.`); },
     }),
