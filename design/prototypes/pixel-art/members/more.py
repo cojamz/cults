@@ -844,7 +844,7 @@ def drifters():
   pk=c.rect(7,13,16,19); c.shade(pk,'1','2','3'); c.fill({(x,13) for x in range(7,17)},'1'); c.fill({(11,14),(12,14)},'5')
   for x in (8,15): c.fill({(x,y) for y in range(7,12)},'1')
   return c,pal
-@reg('gardener')
+@reg('gardeners')
 def gardener():
   c=C(); pal=F['lime']+F['brown']
   c.fill(c.rect(11,10,12,20),'1'); 
@@ -1156,3 +1156,153 @@ def cutpurse5():
   c.fill(c.rect(10,9,14,14)-palm,'.')
   return c,pal
 REG.append(('cutpurse',cutpurse5))
+# ---------------- Nov 4: live members that had no emoji ----------------
+@reg('encore')
+def encore():
+  c=C(); pal=F['gold']
+  for (cx,cy,ang) in [(8,13,0),(15,11,1)]:
+    h=c.ell(cx,cy,4.4,6.5); c.shade(h,'1','2','3')
+  c.fill(line(c,11,8,11,19),'1'); c.fill({(6,9),(7,8),(13,6),(14,5)},'3')
+  for (a,b) in [((3,3),(5,6)),((1,9),(3,10)),((19,2),(18,5)),((22,8),(20,9)),((10,1),(10,3))]: c.fill(line(c,*a,*b),'o')
+  c.fill(c.rect(6,19,13,21),'2'); c.fill({(x,21) for x in range(6,14)},'1')
+  return c,pal
+@reg('impressionist')
+def impressionist():
+  c=C(); pal=F['brown']+F['sky'][:1]+['#6bb24d','#f2c94a','#d4473a']
+  f=c.rect(2,3,21,20); c.shade(f,'1','2','3'); c.fill(c.rect(4,5,19,18),'4')
+  c.fill(poly(c,[(4,18),(9,11),(13,15),(16,12),(19.5,18)]),'5')
+  c.fill(c.disc(15,8,2),'6'); c.fill({(7,15),(10,16),(16,16)},'7')
+  return c,pal
+@reg('second-story-man')
+def second_story_man():
+  c=C(); pal=F['brown']
+  for x in (5,16): c.shade(c.rect(x,1,x+2,22),'1','2','3')
+  for y in range(4,22,4): c.fill(c.rect(7,y,15,y+1),'2'); c.fill({(x,y+1) for x in range(7,16)},'1')
+  return c,pal
+@reg('fence')
+def fence():
+  c=C(); pal=F['orange']+GREY
+  for x in (4,18): c.fill(c.rect(x,4,x+1,21),'5'); c.fill({(x+1,y) for y in range(4,22)},'4'); c.fill(c.rect(x-1,20,x+2,21),'4')
+  for y0 in (6,13):
+    b=c.rect(2,y0,21,y0+4); c.fill(b,'w')
+    for x,y in b:
+      if (x+y-y0)%6<3: c.p(x,y,'2')
+    c.fill({(x,y0+4) for x in range(2,22)},'1')
+  for x in (4,18): c.shade(c.disc(x+.5,2.5,1.6),'1','2','3')
+  return c,pal
+@reg('night-watch')
+def night_watch():
+  c=C(); pal=GREY+['#f6e7a6']
+  beam=poly(c,[(9,11),(23,3),(23,19)]); c.fill(beam,'4'); c.fill(poly(c,[(10,11),(23,7),(23,15)]),'o')
+  body=c.rect(2,8,9,14); c.shade(body,'1','2','3'); c.fill(c.rect(9,7,11,15),'2'); c.fill({(11,y) for y in range(7,16)},'1')
+  c.fill(c.rect(4,10,5,11),'x')
+  return c,pal
+@reg('pocket-watch')
+def pocket_watch():
+  c=C(); pal=F['gold']
+  c.fill(c.disc(12,2.5,2)-c.disc(12,2.5,0.9),'1'); c.fill(c.rect(11,4,13,5),'2')
+  b=c.disc(12,13.5,8.6); c.shade(b,'1','2','3')
+  fc=c.disc(12,13.5,6.4); c.fill(fc,'w'); c.fill({(x,y) for x,y in fc if x>=16 or y>=18},'c')
+  for (x,y) in [(12,8),(17,13),(12,19),(6,13)]: c.p(x,y,'1')
+  c.fill(line(c,12,13,12,9),'k'); c.fill(line(c,12,13,15,15),'k')
+  return c,pal
+@reg('picket-line')
+def picket_line():
+  c=C(); pal=F['gold']+F['purple']
+  arm=c.rect(9,15,15,22); c.shade(arm,'4','5','6')
+  fist=c.rect(7,4,17,15)|c.ell(12,4.5,5,2.2); c.shade(fist,'1','2','3')
+  for x in (9,12,15): c.fill({(x,y) for y in range(3,9)},'1')
+  c.fill(c.rect(6,9,8,13),'2'); c.fill({(6,13),(7,13),(8,13),(8,11),(8,12)},'1')
+  return c,pal
+@reg('hawker')
+def hawker():
+  c=C(); pal=F['red']+F['sage']+F['brown']
+  a=c.disc(9,13.5,6.2)|c.disc(15,13.5,6.2)|c.ell(12,18,7,3.8); c.shade(a,'1','2','3')
+  c.fill({(8,10),(8,11),(9,9),(7,12)},'w')
+  c.fill(c.rect(11,4,12,8),'7'); c.fill({(12,4)},'8')
+  lf=c.ell(16,4,3.2,1.6); c.shade(lf,'4','5','6')
+  return c,pal
+@reg('bargain-bin')
+def bargain_bin():
+  c=C(); pal=GREY
+  lid=c.rect(3,4,20,6); c.shade(lid,'1','2','3'); c.fill(c.rect(9,2,14,3),'2')
+  bin_=poly(c,[(4,7),(20,7),(18.5,22),(5.5,22)]); c.shade(bin_,'1','2','3')
+  for x in (8,12,16): c.fill(line(c,x,9,x if x==12 else x+(-1 if x<12 else 1)*0,20),'1')
+  return c,pal
+@reg('money-changers')
+def money_changers():
+  c=C(); pal=F['sage']+F['gold']
+  b1=c.rect(2,3,14,10); c.shade(b1,'1','2','3'); c.fill(c.disc(8,6.5,1.6),'1')
+  b2=c.disc(15.5,15.5,6.4); c.shade(b2,'4','5','6'); c.fill(c.disc(15.5,15.5,4.4)-c.disc(15.5,15.5,3.4),'4')
+  c.fill(line(c,17,4,21,7)|poly(c,[(20,5),(22,8),(19,9)]),'x'); c.fill(line(c,7,19,3,15)|poly(c,[(2,13),(2,17),(5,16)]),'x')
+  return c,pal
+@reg('caterer')
+def caterer():
+  c=C(); pal=F['pink']+['#c49a5c','#e6c991']
+  base=c.rect(3,13,20,20); c.shade(base,'4','5','5'); c.fill({(x,20) for x in range(3,21)},'4')
+  top=c.rect(3,10,20,13)|c.ell(11.5,10,8.5,2); c.fill(top,'w'); c.fill({(x,14) for x in range(3,21) if x%3==0},'w')
+  c.fill(c.rect(3,16,20,16),'2')
+  c.shade(c.disc(11.5,6,2.4),'1','2','3'); c.fill(c.rect(12,2,12,4),'7' if False else 'x')
+  return c,pal
+@reg('guest-of-honor')
+def guest_of_honor():
+  c=C(); pal=F['red']+F['blue']+F['gold']
+  c.fill(poly(c,[(6,1),(11,1),(12,10),(9,12)]),'2'); c.fill(poly(c,[(13,1),(18,1),(15,12),(12,10)]),'5')
+  c.fill(line(c,9,1,11,9),'3'); c.fill(line(c,15,1,14,9),'6')
+  m=c.disc(12,16,5.8); c.shade(m,'7','8','9'); c.fill(c.disc(12,16,3.6),'8')
+  c.fill({(12,13),(11,15),(12,15),(13,15),(10,16),(14,16),(12,17),(11,18),(13,18)},'9')
+  return c,pal
+@reg('duty-collector')
+def duty_collector():
+  c=C(); pal=F['gold']+F['red']
+  t=poly(c,[(3,9),(11,2),(21,12),(13,21.5)]); c.shade(t,'1','2','3')
+  c.fill(c.disc(9,8,1.6),'x'); c.fill(line(c,8,8,3,3),'5')
+  c.fill(line(c,10,13,14,17)|line(c,12,11,16,15),'1')
+  return c,pal
+@reg('seamstress')
+def seamstress():
+  c=C(); pal=F['red']+GREY
+  sp=c.rect(5,5,15,18); c.fill(sp,'2')
+  for y in range(6,18,2): c.fill({(x,y) for x in range(5,16)},'1')
+  c.fill({(x,y) for x,y in sp if x==5},'3')
+  for y0 in (3,19): c.shade(c.rect(3,y0,17,y0+1),'O' if False else 'x','x','x')
+  for y0 in (3,19): c.fill(c.rect(3,y0,17,y0+1),'5'); c.fill({(x,y0+1) for x in range(3,18)},'4')
+  c.fill(line(c,15,10,21,16)|line(c,21,16,20,21),'2')
+  c.fill(line(c,19,4,21,1),'6')
+  return c,pal
+@reg('jack-of-all-trades')
+def jack_of_all_trades():
+  c=C(); pal=GREY+F['brown']+F['red']
+  w=set()
+  for d in (0,1,2): w|=line(c,4+d,20,17+d,7)
+  c.shade(w,'1','2','3'); c.shade(c.disc(18,6,3.6)-c.disc(20,4,1.8),'1','2','3')
+  h=set()
+  for d in (0,1): h|=line(c,6+d,4,19+d,17)
+  c.fill(h,'5'); c.fill(line(c,6,5,19,18),'4')
+  hd=c.rect(2,2,8,6); c.shade(hd,'7','8','9')
+  return c,pal
+@reg('guest-book')
+def guest_book():
+  c=C(); pal=F['blue']+F['gold']
+  cov=c.rect(2,5,21,20); c.shade(cov,'1','2','3')
+  for x0 in (3,12): c.fill(c.rect(x0,6,x0+8,18),'w'); c.fill({(x0+8,y) for y in range(6,19)} if x0==3 else {(x0,y) for y in range(6,19)},'c')
+  for y in (8,10,12,14,16): c.fill({(x,y) for x in range(5,10)}|{(x,y) for x in range(14,19)},'c')
+  c.fill(c.rect(16,3,17,9),'5')
+  return c,pal
+@reg('recruiter')
+def recruiter():
+  c=C(); pal=F['gold']+['#c88b62','#f1c49b']
+  a=poly(c,[(1,10),(7,7),(14,10),(13,16),(6,16),(1,14)]); c.shade(a,'1','2','3')
+  b=poly(c,[(22,10),(16,7),(9,10),(10,16),(17,16),(22,14)]); c.shade(b,'4','5','4')
+  for x in (9,11,13): c.fill({(x,y) for y in range(11,16)},'4')
+  c.fill(c.rect(1,9,3,15),'x'); c.fill(c.rect(20,9,22,15),'x')
+  return c,pal
+@reg('foster-parents')
+def foster_parents():
+  c=C(); pal=F['brown']+['#b04a4a']
+  for cx,cy in [(5.5,4.5),(17.5,4.5)]: c.shade(c.disc(cx,cy,2.8),'1','2','3')
+  hd=c.disc(11.5,9,6.4); c.shade(hd,'1','2','3'); c.fill(c.ell(11.5,11,3.2,2.4),'3')
+  c.fill({(9,8),(14,8)},'k'); c.fill({(11,10),(12,10)},'k'); c.fill({(11,12),(12,12)},'1')
+  bd=c.ell(11.5,18.5,6,4.2); c.shade(bd,'1','2','3'); c.fill(c.ell(11.5,18.5,3,2.6),'3')
+  c.fill({(x,15) for x in range(8,16)},'4')
+  return c,pal

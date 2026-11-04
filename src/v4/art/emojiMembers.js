@@ -11,6 +11,8 @@ export const TRIGGERS = [
 
 const M = {
   // Red
+  recruiter: ['🤝', '♾️ You recruit: +1 red'],
+  'foster-parents': ['🧸', '♾️ A member joins you from a rival’s cult: +2 followers'],
   volunteer: ['🙋', ''],
   deprogrammers: ['📋', '♾️ You take a rival’s member: they −1 follower'],
   greeters: ['👋', '♾️ Your On Recruits also give +1 of that member’s color'],
@@ -24,6 +26,8 @@ const M = {
   'mentor-proteges': ['🧑‍🏫', '✨ Recruit the cheapest shop member'],
   mob: ['🔥', '🌙 +2 followers per rival with fewer red members'],
   // Green
+  encore: ['👏', '☝️ Your next On Recruit happens twice'],
+  impressionist: ['🖼️', '♾️ Anyone copies an action: +1 of its color'],
   agents: ['🕶️', '♾️ Rivals can’t copy your actions'],
   bait: ['🪝', '♾️ Anyone copies your action: they −1 follower, you +1 follower'],
   roadie: ['🎚️', '✨🌅 +1 green per green member'],
@@ -39,6 +43,8 @@ const M = {
   wallflower: ['🌼', '♾️ Your copied actions give double'],
   'tribute-band': ['🎸', '☝️ Do every action one rival is on this round'],
   // Magenta
+  'second-story-man': ['🪜', '🌙 Before contests: steal 2 from a rival'],
+  fence: ['🚧', '♾️ A rival steals from you: +2 magenta'],
   accomplice: ['🦹', '✨ Steal 3'],
   crew: ['🏴‍☠️', ''],
   cutpurse: ['🤏', '✨🌅 Steal 1 from the richest rival'],
@@ -54,6 +60,9 @@ const M = {
   extortionist: ['💰', '✨🌅 Steal 2 from the richest rival'],
   grifter: ['🎩', '✨ Steal 1 per 2 members'],
   // Purple
+  'night-watch': ['🔦', '♾️ A rival takes the Goes Last token: +1 follower per minion on it'],
+  'pocket-watch': ['⌚', '♾️ Anyone’s turn is skipped: +2 purple'],
+  'picket-line': ['✊', '♾️ A rival takes a Purple space: +1 purple'],
   'early-birds': ['🐦', '♾️ Your turns can’t be skipped'],
   bouncers: ['🚫', '✨ Skip the next two rivals’ turns'],
   'shift-crew': ['👷', ''],
@@ -68,6 +77,8 @@ const M = {
   'night-owls': ['🦉', '♾️ From round II: +1 minion after your last'],
   'extra-shift': ['⏰', '✨ +1 minion this round'],
   // Blue
+  hawker: ['🍎', '🔁 Offer a shop member: rivals may buy it for its cost +2 to you; if none does, it’s yours free'],
+  'bargain-bin': ['🗑️', '♾️ Members go to the bottom: +1 blue'],
   critic: ['🧐', '♾️ A rival recruits a blue member: +1 follower'],
   regular: ['☕', '♾️ You buy followers: +1 blue'],
   connoisseurs: ['🍷', '♾️ You recruit a blue member: +1 blue'],
@@ -81,6 +92,7 @@ const M = {
   patroness: ['👒', '♾️ Shop members go to the bottom: +1 follower'],
   shopaholics: ['🛒', '♾️ Recruit twice each turn'],
   // White
+  'money-changers': ['💱', '♾️ Anyone buys followers: +1 white (+2 if it’s you)'],
   cashier: ['🧾', '✨ Turn all your white into followers'],
   landlord: ['🏠', '✨🌅 +2 white'],
   martyrs: ['🕯️', '♾️ Leaves your cult: followers equal to its cost'],
@@ -93,6 +105,8 @@ const M = {
   hoarder: ['🐿️', '☝️ Turn all your resources into white'],
   heiresses: ['💎', '☝️ +1 white per member'],
   // Silver
+  caterer: ['🍰', '♾️ Silver is gifted: +1 silver'],
+  'guest-of-honor': ['🎖️', '♾️ You take a Silver space: you may give a rival a member costing 3 or less for +4 followers'],
   polisher: ['🧽', '☝️ Turn up to 3 silver into 2 any each'],
   toastmaster: ['🥂', '♾️ You take a Silver space: +1 follower'],
   godparent: ['🎁', '☝️ Give a rival a member; followers equal to its cost'],
@@ -104,6 +118,10 @@ const M = {
   debutantes: ['💃', '☝️ Double your silver; each rival +2 silver'],
   'smooth-talkers': ['😏', '♾️ Your silver pays for any color'],
   // Yellow
+  'duty-collector': ['🏷️', '♾️ A rival recruits a color you have: +1 of that color'],
+  seamstress: ['🧵', '☝️ Double your full sets'],
+  'jack-of-all-trades': ['🛠️', '♾️ Your yellow counts as any color in your full sets'],
+  'guest-book': ['📖', '♾️ You recruit a color none of your members have: +2 yellow'],
   drifters: ['🎒', '✨ Pick a color; these count as that color'],
   gardeners: ['🌱', '✨🌅 +1 of each color you have none of'],
   'go-between': ['🔀', '♾️ A space gives you resources: change 1 to any color'],
