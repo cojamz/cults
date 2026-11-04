@@ -62,8 +62,7 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 https://claude.ai/artifact/Wur73WcxCPaeZmhmhuUg79 ("Cults Workstreams"), built by `node scripts/desk/tracker.mjs <out.html>` from the thread board (/mnt/project-files/status/board.md) and main's play/build.json. The desk republishes it (same file path, same URL) after every progress report or ship. It is only as true as each thread's `node scripts/status.mjs set …` line: keep yours current, with `--cory "…"` only for a real decision.
 
 ## Publishing (one at a time; ask the desk for go or wait)
-Live: v0.99.560 (a23719eb), shipped by the quality director on Cory's "ship it", Nov 4 10:40am Eastern.
-Live: v0.99.552 (bf42a005), Nov 4 04:52Z. Tonight .544 to .552 shipped; one line each in /mnt/project-files/desk/morning.md.
+Live: v0.99.580 (be7702ef), Nov 4 3:11pm Eastern. Today .561 to .580 shipped through the desk; one line each in /mnt/project-files/desk/morning.md. Repo is cojamz/cults; live at cojamz.github.io/cults/play/. No box reaches github.io: main's play/build.json is the stamp. Token budget low for the week (Cory, 3:12pm): ship only finished passes, start nothing new.
 
 - Live: v0.99.543 (5eacf01c): set 3 members, plus the wheel redraw skip (78b95946) that rode along. Publish lock: free.
 - Held back from shipping until Cory says yes: the animations thread's Relaxed pacing change (not pushed).
