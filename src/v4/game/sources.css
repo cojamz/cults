@@ -8,7 +8,7 @@
 .src-who small{color:var(--muted);font-size:var(--fs-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .src-track{display:flex;align-items:center;gap:8px;min-width:0}
 .src-bar{display:flex;height:32px;border-radius:6px;overflow:hidden;gap:2px;min-width:0}
-.src-seg{display:flex;align-items:center;min-width:0;flex-basis:0;overflow:hidden;cursor:default;color:var(--cream)}
+.src-seg{display:flex;align-items:center;min-width:22px;flex-basis:0;overflow:hidden;cursor:default;color:var(--cream)}
 .src-lab{padding:0 8px;font-size:var(--fs-2);white-space:nowrap;overflow:hidden}
 .src-lab b{font-weight:700;margin-left:2px}
 .src-lab.bare{padding:0 3px;margin:0 auto}.src-lab.bare b{margin-left:0}

@@ -286,7 +286,8 @@ export default function PayPicker({ state, onPick, busy, turnOf = null }) {
                   <div key={r} className={`pay-stack${out ? ' paying' : ''}${keep ? '' : ' spent'}`} data-stack={r} data-keep={keep} data-out={out}>
                     <button type="button" className="ps-add" data-pay-add={r} data-keep={keep} disabled={busy} aria-disabled={!keep || undefined} title={keep ? sayAdd : `All your ${r} pays this.`} aria-label={keep ? sayAdd : `All your ${r} pays this`} onClick={() => add(r)} />
                     <span className="ps-coins" data-dense={drawn - lifted > 6 || undefined} style={{ '--step': `${stackStep(drawn - lifted)}px` }}>
-                      {drawn - lifted === 0 && <i className="ps-socket" aria-hidden="true" />}
+                      {/* tinted its color, so a fully paying stack still says which color it was (picky UI bot, Nov 4: two grey rings over "0 0") */}
+                      {drawn - lifted === 0 && <i className="ps-socket" aria-hidden="true" style={{ '--sock': r === 'white' ? 'var(--white, #e6dcc6)' : `var(--q-${r}, var(--${r}))` }} />}
                       {Array.from({ length: drawn - lifted }, (_, k) => (
                         <i key={k} className="ps-coin" data-coin={`${r}-${k + base}`} style={{ '--k': k }} aria-hidden="true"><ResourceGlyph r={r} size={24} decorative /></i>
                       ))}

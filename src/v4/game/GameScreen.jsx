@@ -562,7 +562,7 @@ function TurnCard({ card, root, state }) {
   if (gone) return null;
   // at most a few lines, the rest summed up (every line stays in the strip's card and the log)
   const [head, ...all] = card.text.split(' · ');
-  const rest = all.length > MAXL ? [...all.slice(0, MAXL - 1), `+${all.length - MAXL + 1} more`] : all;
+  const rest = all.length > MAXL ? [...all.slice(0, MAXL - 1), `and ${all.length - MAXL + 1} more`] : all; // never "+4 more": it read as a gain of 4 (picky UI bot, Nov 4)
   return (
     <div ref={box} className={`turn-card${card.live ? ' live' : ''}${card.folding || life === 'folding' ? ' folding' : ''}`} data-turn-story={card.text} role="status" aria-live="polite"
       style={{ '--pc': playerColor(card.pid) }}>

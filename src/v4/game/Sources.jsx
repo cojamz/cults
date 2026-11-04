@@ -63,10 +63,11 @@ export default function FollowerBars({ state, meId, ranks = null }) {
               {bars.map(g => (
                 <Tip key={g.key} as="span" className={`src-seg kind-${g.key}`} style={{ flexGrow: g.n }} label={`${poss} ${g.label.toLowerCase()}`}
                   data-seg={g.key} data-n={g.n} content={() => <div className="pop-card">{g.card}</div>}>
-                  {/* a thin part still says its number (picky UI bot, Nov 4: a 3-follower part was an empty box) */}
-                  {g.n / max >= 0.035 && (g.n / max >= (g.label.length > 4 ? 0.13 : 0.075)
+                  {/* a thin part still says its number, and is never narrower than it (picky UI bot, Nov 4: 2- and 3-follower
+                      parts were empty boxes) */}
+                  {g.n / max >= (g.label.length > 4 ? 0.13 : 0.075)
                     ? <span className="src-lab">{`${g.label} `}<b className="num">{g.n}</b></span>
-                    : <span className="src-lab bare"><b className="num">{g.n}</b></span>)}
+                    : <span className="src-lab bare"><b className="num">{g.n}</b></span>}
                 </Tip>
               ))}
             </span>
