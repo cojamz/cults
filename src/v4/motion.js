@@ -199,6 +199,8 @@ const TABLE = {
   // a recruit holds at the hub, its rule readable, before it flies on to its buyer (Cory, 2026-10-18)
   // (Cory, live, Oct 27: "the card should fly up, show what it does"): long enough to read the whole card
   recruitShow: [600,   500],
+  // a recruit's coins have all landed in the lifted card: a beat before it flies, so paying and leaving read as two steps
+  paidBeat:    [140,   140],
   // a member's bubble stays this long after its chain to be read, without holding the next move (Cory, live, Oct 27)
   memberLinger:[600,   500],
 };

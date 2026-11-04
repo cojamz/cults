@@ -385,11 +385,14 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
       // (Cory, 2026-10-18) the recruit flies to the middle, shows what it does, then goes to its buyer: it leaves its
       // slot as it lifts, its coins drop meanwhile, it holds at the hub a beat to be read, then flies to the crowd
       const hubW = { kind: 'stage', slot: 'hub' };
+      // one step at a time (Cory, Nov 4: "yes" to the audit's pick): the coins land in the lifted card first, then it
+      // flies to the middle, then on to its buyer
       const toHub = fly(card.from, hubW), fromHub = fly(hubW, card.to);
-      const atHub = s + MO.cardLift + hold + toHub;
-      const leave = Math.max(atHub + MO.recruitShow, paid);
+      const lifted = Math.max(s + MO.cardLift + hold, paid + (m.pays.length ? MO.paidBeat : 0));
+      const atHub = lifted + toHub;
+      const leave = atHub + MO.recruitShow;
       hand = Math.max(hand, leave + fromHub * (2 / 3));
-      at(s, { op: 'card', uid: card.what.uid, to: card.to.pid, from: card.from, lift: MO.cardLift + hold, toHub, show: leave - atHub, fromHub });
+      at(s, { op: 'card', uid: card.what.uid, to: card.to.pid, from: card.from, lift: lifted - s, rise: MO.cardLift, toHub, show: leave - atHub, fromHub });
       const landed = ends(leave + fromHub);
       if (card.what.worth > 0) {
         // its worth: follower marks hop from the new chip to the count, which ticks as they land
@@ -540,7 +543,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     const W = rivalClock(keep);
     for (const a of atoms) {
       const t0 = a.at, w0 = W(t0);
-      if (a.op === 'card') { let x = t0; for (const f of ['lift', 'toHub', 'show', 'fromHub']) { const y = x + a[f]; a[f] = W(y) - W(x); x = y; } }
+      if (a.op === 'card') { if (a.rise) a.rise = W(t0 + a.rise) - W(t0); let x = t0; for (const f of ['lift', 'toHub', 'show', 'fromHub']) { const y = x + a[f]; a[f] = W(y) - W(x); x = y; } }
       if (a.dur) a.dur = W(t0 + a.dur) - w0;
       if (a.stream) a.stream = W(t0 + a.stream) - w0;
       a.at = w0;
@@ -560,7 +563,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   // (a new round's opening isn't a turn: its beats keep their own pace, outside the turn's cap)
   if (end > room && !roundAdvance) {
     const k = Math.max(room < cap ? Math.min(0.5, SPEEDS.quick / speedScale()) : 0.5, room / end);
-    for (const a of atoms) { a.at = Math.round(a.at * k); if (a.dur) a.dur = Math.round(a.dur * k); if (a.lift) a.lift = Math.round(a.lift * k); if (a.wait) a.wait = Math.round(a.wait * k); for (const f of ['toHub', 'show', 'fromHub']) if (a[f]) a[f] = Math.round(a[f] * k); }
+    for (const a of atoms) { a.at = Math.round(a.at * k); if (a.dur) a.dur = Math.round(a.dur * k); if (a.lift) a.lift = Math.round(a.lift * k); if (a.rise) a.rise = Math.round(a.rise * k); if (a.wait) a.wait = Math.round(a.wait * k); for (const f of ['toHub', 'show', 'fromHub']) if (a[f]) a[f] = Math.round(a[f] * k); }
     end *= k; hand *= k; t *= k;
   }
   return { atoms: atoms.sort((a, b) => a.at - b.at), total: end ? Math.round(end + (turnPasses ? MO.breath * pace : 0)) : 0, handoff: end ? Math.round(Math.max(hand, t)) : 0, turnPasses, pace };
@@ -1380,8 +1383,11 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
           chain.flying++;
           // lift, then a true arc to the hub, fading as the member's card opens out of it there
           const bow = onScreenBow(sn.rect, hub, Math.max(16, Math.min(70, Math.hypot(dx, dy) * 0.18)));
+          // it rises quickly, then waits lifted while its coins land, then flies
+          const kr = Math.min(k1, (a.rise || a.lift) / total);
           const path = [
             { transform: 'translate(0px,0px) scale(1)', offset: 0, easing: 'ease-out' },
+            ...(kr < k1 ? [{ transform: 'translate(0px,-10px) scale(1.06)', offset: kr }] : []),
             { transform: 'translate(0px,-10px) scale(1.06)', offset: k1 },
             ...arcFrames(dx, dy, bow, { from: k1, s0: 1.06, s1: 1.2, y0: -10, ease: CARD_EASE }),
           ];
@@ -1400,6 +1406,7 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
           onFinish(anim, () => ring.remove());
           track(ring.animate([
             { opacity: 0, offset: 0 },
+            ...(kr < k1 ? [{ opacity: 1, offset: kr }] : []),
             { opacity: 1, offset: k1 },
             { opacity: 0, offset: Math.min(0.99, k1 + (1 - k1) * 0.4) },
             { opacity: 0, offset: 1 },
