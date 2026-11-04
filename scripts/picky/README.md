@@ -18,21 +18,6 @@ here, since a cloud box can't reach github.io. `--url http://127.0.0.1:5173/` pl
    the way the e2e drivers do (e2e/v4/lib/answer.mjs). Table screenshots every few turns and the results screen go
    in `shots/` for a look by eye.
 
-## First-time-player readers (the main catch)
-
-Cory, Nov 4: "this isnt nearly enough issues ... The bot needs to approach it as a player learning the game for the
-first time. or at least not have expert context." The checks below catch only what code can measure; most issues
-are found by eye. So:
-
-1. `node scripts/picky/picky.mjs --album --games 1 --tables <4 colors> --looks pictures|emoji --out <dir>` saves a
-   picture of every screen a player meets, in play order (`<dir>/album/`: home, setup, every table turn, every hover
-   card, every sheet and payment, the recruit phase, round cards, results). Two games in parallel cover all 8 colors.
-2. Split the list into ~40-picture batches (`split -n l/5 -d`) and give each to a fresh Agent (general-purpose) with
-   only scripts/picky/reader-brief.md: the rulebook and the pictures, no code, no project files.
-3. One more fresh Agent merges the notes and checks each against the engine, the screen code and
-   design/decisions.md: BUG, WORDING, RULEBOOK, DESIGN (Cory's), NOT AN ISSUE. Fix BUG and WORDING; RULEBOOK
-   fixes go in design/rulebook.md; DESIGN goes to the coordinator.
-
 ## What it checks (checks.mjs)
 
 | check | what |

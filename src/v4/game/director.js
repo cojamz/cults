@@ -297,13 +297,18 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   const who = id => (mine.length === 1 && mine[0] === id ? 'you' : state.players[id] ? state.players[id].name : '');
   const did = (m, pid) => {
     const out = [];
-    const sum = (list, key) => { const g = new Map(); for (const e of list) { const k = `${key(e)}|${e.r ?? e.what.r}`; g.set(k, (g.get(k) || 0) + (e.n ?? e.what.n)); } for (const [k, n] of g) if (!n) g.delete(k); return g; };
+    // a stream effect's n is its place in the stream, its amount is what.n; takes and gives carry their amount as n
+    // (picky bot, Nov 4: Fence's +2 read "P2: +1", its place in the stream)
+    const sum = (list, key) => { const g = new Map(); for (const e of list) { const k = `${key(e)}|${e.r ?? e.what.r}`; g.set(k, (g.get(k) || 0) + (e.what ? e.what.n : e.n)); } for (const [k, n] of g) if (!n) g.delete(k); return g; };
     for (const [k, n] of sum(m.gains, e => e.to.pid)) { const [to, r] = k.split('|'); out.push(`${Number(to) === pid ? '' : `${who(Number(to))} `}+${n} ${r}`); }
     for (const [k, n] of sum(m.takes, e => e.from.pid)) { const [from, r] = k.split('|'); out.push(`+${n} ${r} from ${who(Number(from))}`); }
     for (const [k, n] of sum(m.gives, e => e.to.pid)) { const [to, r] = k.split('|'); out.push(`${who(Number(to))} +${n} ${r}`); }
     for (const [k, n] of sum(m.pays, e => e.from.pid)) { const [, r] = k.split('|'); out.push(`paid ${n} ${r}`); }
-    const f = m.fols.reduce((t, e) => t + (e.to && e.to.pid === pid ? e.what.n : 0), 0);
-    if (f) out.push(`${f > 0 ? '+' : '−'}${Math.abs(f)} follower${Math.abs(f) === 1 ? '' : 's'}`);
+    // followers by whose count moved: a loss runs from the loser's count to the card (picky bot, Nov 4: Deprogrammers'
+    // rival's −1 read as its owner's, "P3: −1 follower")
+    const fol = new Map();
+    for (const e of m.fols) { const at = e.what.n > 0 ? e.to : e.from; if (at && at.kind === 'count') fol.set(at.pid, (fol.get(at.pid) || 0) + e.what.n); }
+    for (const [id, f] of fol) if (f) out.push(`${id === pid ? '' : `${who(id)} `}${f > 0 ? '+' : '−'}${Math.abs(f)} follower${Math.abs(f) === 1 ? '' : 's'}`);
     const lead = who(pid);
     return out.length ? `${lead === 'you' ? 'You' : lead}: ${out.join(', ')}` : '';
   };
