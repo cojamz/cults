@@ -419,8 +419,9 @@ export default {
     // that member's On Recruit. Never for a member a rival takes, one cast out to the pile (given to nobody; play judge,
     // Nov 4), or Exit Counselor itself.
     ...add12(m('exitcounselor', 'Exit Counselor', 2, 1, 'Whenever you give one of your members away, use its On Recruit.', {
-      onCultMove(ctx, owner, card, { uid, from, to, actor }) {
-        if (from !== owner || actor !== owner || to === owner || uid === card.uid) return;
+      onCultMove(ctx, owner, card, { uid, from, to, actor, swappedWith }) {
+        // (an Exit Counselor that arrives in the same swap wasn't yours when the member left, as with Turncoats)
+        if (from !== owner || actor !== owner || to === owner || uid === card.uid || swappedWith === card.uid) return;
         if (ctx.state.pile.includes(uid)) return; // cast out to the pile (Farewell, Estate Sale): given to nobody
         const gone = ctx.card(uid), d = gone.def;
         if (!d.onRecruited && !(d.now && (d.onRoundStart || d.onRoundStartLate))) { ctx.log(`${owner.name}'s Exit Counselor: ${d.name} has no On Recruit to use.`); return; }
