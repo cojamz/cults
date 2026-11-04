@@ -1,7 +1,7 @@
 // Round end as a moment: each quadrant's winner with a +N chip, follower totals ticking up (contests split from
 // everything else gained this round), then the button that starts the next round.
 import { useEffect, useRef, useState } from 'react';
-import { followers } from '../../engine/v4/index.js';
+import { followers, quadrant, cardDef } from '../../engine/v4/index.js';
 import { snakeWords } from './order.js';
 import { playerColor, roman, standings, scoredStandings, roundGains, membersParts, tiebreakNote, workersNote, firstPickWhy } from '../format.js';
 import Tick from './Tick.jsx';
@@ -87,7 +87,7 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
               <span className="re-w">
                 <span className="re-win">
                   {r.winners.length
-                    ? r.winners.map((id, k) => <b key={id}>{k ? ' & ' : ''}<Who state={after} id={id} meId={meId} /></b>)
+                    ? r.winners.map((id, k) => <b key={id}>{k ? ' & ' : ''}<Who state={after} id={id} meId={meId} />{winPerks(at, id, r.qid).map(t => <small key={t} className="re-tb" data-win-perk>{t}</small>)}</b>)
                     : r.spoiled != null
                       ? <em data-spoiled>nobody: <Who state={after} id={r.spoiled} meId={meId} /> spoiled it (Spoilsport)</em>
                       : <em>no one scored</em>}
@@ -163,4 +163,12 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
       </div>
     </div>
   );
+}
+
+// Members that pay on a contest win (Cheerleaders, Victors; Cory, Nov 4: "is there UI to clearly show when they trigger?"),
+// named under the winner of each contest, read from the cult at scoring
+const PERKS = { 'benders.cheerleaders': () => 'Cheerleaders: +2 followers', 'benders.victors': (st, qid) => `Victors: +2 ${quadrant(qid).resource}` };
+function winPerks(state, id, qid) {
+  const p = state.players[id];
+  return (p?.members || []).map(u => { const d = cardDef(state, u); return PERKS[d?.id]?.(state, qid); }).filter(Boolean);
 }
