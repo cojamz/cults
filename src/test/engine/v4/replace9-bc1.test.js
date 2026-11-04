@@ -168,4 +168,13 @@ describe('Window Dressers (reworded): "On Recruit: send any shop members to the 
     expect(s.pending.player).toBe(0);
     expect(named(s, 'Window Dressers').some(l => l.includes('recruit again this turn'))).toBe(true);
   });
+  it('the batch sent to the bottom pays Patroness once, as Churn does', () => {
+    let s = table(Q4, { n: 2, res: [{ red: 20, yellow: 20, blue: 20, purple: 20 }], members: [['market.patroness']], shop: ['market.windowdressers9', 'red.volunteer', 'yellow.gardener', 'purple.crew'], queue: [{ t: 'buy', p: 0 }] });
+    s = pay(move(s, `card:${uidIn(s, 'market.windowdressers9', 'shop')}`));
+    const b0 = s.players[0].bonus;
+    s = move(s, `card:${uidIn(s, 'red.volunteer', 'shop')}`);
+    s = move(s, `card:${uidIn(s, 'yellow.gardener', 'shop')}`);
+    s = move(s, 'done');
+    expect(s.players[0].bonus).toBe(b0 + 1);
+  });
 });

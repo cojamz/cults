@@ -351,6 +351,7 @@ const market = {
     wd9(ctx, p, uid, data) {
       if (uid === 'done') {
         ctx.refillShop();
+        if (data.n) toBottom(ctx, 1); // one batch, as Churn: Patroness and the Blue Cloak pay once
         extraBuys(ctx, p, 1);
         ctx.log(`${p.name}'s Window Dressers: ${data.n} sent to the bottom of the pile, the shop refills; recruit again this turn.`);
         return;
