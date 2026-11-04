@@ -1,35 +1,25 @@
 {
- "updated": "9:59 PM Eastern",
+ "updated": "10:04 PM Eastern",
  "rows": [
   {
-   "workstream": "Next release: Harvest picker, resource hover, emoji members option, slower Relaxed",
+   "workstream": "Next release: Harvest picker, resource hover, emoji members option, slower Relaxed, minion sounds",
    "blocked": "No",
-   "eta": "~10:20pm"
+   "eta": "shipping now, live ~10:20pm"
   },
   {
-   "workstream": "Wheel freeze fix (edge words drawn once)",
+   "workstream": "Hostesses rework",
    "blocked": "No",
-   "eta": "~11:00pm"
+   "eta": "~10:25pm"
   },
   {
-   "workstream": "Animations: step-by-step recruits, one line per rival move",
-   "blocked": "No",
-   "eta": "~11:30pm"
-  },
-  {
-   "workstream": "Improvements: Hostesses rework (your pick 1)",
-   "blocked": "No",
-   "eta": "~11:00pm"
-  },
-  {
-   "workstream": "Balance: Red and White Cloak tests",
-   "blocked": "No",
-   "eta": "~12:00am"
-  },
-  {
-   "workstream": "Sounds: Surfer and Pizza from real recordings",
+   "workstream": "Rival moves, one line each",
    "blocked": "No",
    "eta": "~10:45pm"
+  },
+  {
+   "workstream": "Wheel freeze fix",
+   "blocked": "No",
+   "eta": "~11:00pm"
   },
   {
    "workstream": "Setup modes audit",
@@ -37,14 +27,19 @@
    "eta": "~11:00pm"
   },
   {
-   "workstream": "Melting Pot, Dilute, Mob",
-   "blocked": "Yes",
-   "eta": "options sent 8:40pm, waiting on your pick"
+   "workstream": "Melting Pot, Dilute, Mob, Creditor, Fan Club",
+   "blocked": "No (our call, per you)",
+   "eta": "~11:30pm"
   },
   {
-   "workstream": "Action changes",
-   "blocked": "Yes",
-   "eta": "list sent, waiting on your picks"
+   "workstream": "Red and White Cloak numbers",
+   "blocked": "No",
+   "eta": "12:30am (full results 3:00am)"
+  },
+  {
+   "workstream": "Step-by-step recruits",
+   "blocked": "No",
+   "eta": "12:30am"
   },
   {
    "workstream": "Test gates",
