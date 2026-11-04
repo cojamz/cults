@@ -98,7 +98,8 @@ const P = {
     harvest: r => ({ main: `+${r + 2} any`, second: 'colors you choose', note: run(n => `+${n + 2}`) }),
     // New Blood and Big New Blood (Nov 4): Gather's shape, the condition in line 2
     dilute: r => ({ main: '+2 yellow', second: `+${r + 1} @f if you recruit a new color` }),
-    bigdilute: { main: '+4 yellow', second: '+5 @f if you recruit a new color' },
+    // Housewarming took Big New Blood's place (Nov 4, overnight quality loop)
+    housewarming: { main: '+2 yellow', second: 'free new-color member, up to 5' },
     meltingpot: { verb: '+1 any per member color', note: '+2 yellow' },
     makeover: { verb: '+4 yellow, then rearrange all', second: 'into any colors' },
     bloom: r => ({ main: `+${r} yellow`, second: '+1 of each fewest color', note: run(n => `+${n}`, 'yellow: ') }),

@@ -9,7 +9,6 @@ import { add2, old2 } from './replace2.js';
 import { add5, old5 } from './replace5.js';
 import { add9, old9, handlers9, ON9 } from './replace9.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
-import { swap11, handlers11 } from './replace11.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
 const Y = 'yellow';
@@ -147,17 +146,9 @@ export default {
         (p.recruitFollowers ||= []).push({ n: ctx.state.round + 1, name: 'New Blood', newColor: true });
       },
     },
-    swap11({
-      // Big New Blood (Claude, under Cory's go-with-your-gut, Nov 4; was Big Dilute, "+4 yellow, then change up to 6 of
-      // rivals' resources one for one")
-      key: 'bigdilute', ring: 2, name: 'Big New Blood', copyDoesIt: true,
-      text: '+4 yellow. This turn, if you recruit a member of a color none of your members have, +5 followers.',
-      estimate: (ctx, p) => 4 + (newInShop(ctx, p) ? 0.6 * 5 : 0),
-      resolve(ctx, p) {
-        ctx.gain(p, Y, 4, { fromAction: true });
-        (p.recruitFollowers ||= []).push({ n: 5, name: 'Big New Blood', newColor: true });
-      },
-    }, HOUSEWARMING),
+    // Housewarming in Big New Blood's place, live since Nov 4 (Claude, under Cory's go-with-your-gut, overnight quality
+    // loop): paper 18 vs 14, A/B +0.42, Lab 120 games a side. Big New Blood's text: design/archive/spaces/retired-2026-11-04.md
+    HOUSEWARMING,
     {
       // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 4 new words only (Claude, under Cory's
       // go-with-your-gut: "worded strangely"), the same effect
@@ -180,14 +171,12 @@ export default {
   ],
 
   handlers: {
-    ...handlers11({
-      housewarming(ctx, p, uid) {
-        const c = ctx.card(uid);
-        if (!c || !ctx.state.shop.includes(uid)) return;
-        ctx.log(`${p.name}'s Housewarming: recruits ${c.def.name} for free.`);
-        ctx.recruit(p, uid, { free: true });
-      },
-    }),
+    housewarming(ctx, p, uid) {
+      const c = ctx.card(uid);
+      if (!c || !ctx.state.shop.includes(uid)) return;
+      ctx.log(`${p.name}'s Housewarming: recruits ${c.def.name} for free.`);
+      ctx.recruit(p, uid, { free: true });
+    },
     ...handlers9({
       toll(ctx, o, color, data) {
         const host = ctx.player(data.host);

@@ -200,6 +200,9 @@ const ALLOW = {
   'yellow.rainmaker': 'pays only when used, and bots wait for a big catch-up or their last buy (cards-yellow: Rainmaker)',
   // members counting their followers (Nov 1) moved the seeded games: recruited in one game with no 5+ follower buy after
   'yellow.weaver': 'pays only on a buy of 5 or more followers; cut from the deck (cards-yellow: Weaver)',
+  // Housewarming in Big New Blood's place (Nov 4) moved the seeded games: recruited in 4 games where no rival stole from
+  // or changed its holder's resources (no Magenta in this audit's colors)
+  'yellow.customs': 'pays only when a rival steals or changes your resources (cards-yellow: Customs Officer)',
 };
 
 describe('namesCard: what counts as a line naming a card', () => {

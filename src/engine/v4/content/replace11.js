@@ -4,7 +4,7 @@
 //   space trading.estatesale (Estate Sale) -> trading.yardsale (Yard Sale)
 //   space silver.polish (Polish) -> silver.giftshop (Gift Shop)
 //   space silver.tongue (Sweet Talk) -> silver.sweetnothings (Sweet Nothings)
-//   space yellow.bigdilute (Big New Blood) -> yellow.housewarming (Housewarming)
+//   (Housewarming went live in Big New Blood's place, Nov 4: no longer behind the switch)
 //   space trading.estatesale (Estate Sale) -> trading.cashout (Cash Out), only by REPLACE11=cashout
 //   member market.snob (Snobs, Game End scorer) -> market.snob2 (Snobs, the reserved token)
 //   member trading.shopkeeper (Landlord) -> trading.landlord2 (Landlord, rent on a space)

@@ -58,12 +58,11 @@ describe('Yellow actions', () => {
     const { paid } = newBlood(1, 'yellow.dilute', [], 'red.intern');
     expect(paid).toBe(2);
   });
-  it('Big New Blood (round II): +4 yellow; recruiting a member of a new color, +5 followers', () => {
-    const { s, y, paid } = newBlood(2, 'yellow.bigdilute', ['red.volunteer'], 'gold.banker');
-    expect(y).toBe(30 + 4);
-    expect(paid).toBe(5);
-    expect(named(s, 'Big New Blood')).toContain("P1's Big New Blood: +5 followers for recruiting a member.");
-    expect(newBlood(2, 'yellow.bigdilute', ['gold.tycoon'], 'gold.banker').paid).toBe(0);
+  it("Housewarming is on the wheel in Big New Blood's place (Nov 4)", async () => {
+    const { quadrant } = await import('../../../engine/v4/content/index.js');
+    const names = quadrant('yellow').actions.map(a => a.name);
+    expect(names).toContain('Housewarming');
+    expect(names).not.toContain('Big New Blood');
   });
   it('Melting Pot (round II): +2 yellow; count the different colors of your members, and gain that many in colors you choose', () => {
     let s = take(sc({ round: 2, members: [['red.twins', 'gold.banker', 'yellow.explorer']] }), 'yellow.meltingpot');
