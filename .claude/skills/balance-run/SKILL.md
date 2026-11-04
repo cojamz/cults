@@ -7,7 +7,7 @@ description: The one balance system (Cory, Nov 2). Run it for any balance, win-r
 Cory, Nov 2: "an overhaul of the entire balance infrastructure, such that we can evaluate win rates, playfeel, exploitable mechanics, overall game feedback, and possibly more ... all in one efficient system that takes <2 hours"; "if we need a more intensive option that runs overnight that's fine by me". Plan: /mnt/project-files/balance-bots/plan.md.
 
 ## 1. Run it (the machine part)
-`DECK=10 node scripts/balance/run.mjs --size=fast` (about 1 hour on 4 CPUs) or `--size=deep` (overnight). `--size=smoke` checks the pipe in 5 minutes. A variant: `--env='{"SWAP":"1"}'` (any v4-balance.mjs setting) and `--id=<name>`. A stopped run picks up where it stopped (re-run the same command with the same --id). Nothing else should run on the box meanwhile.
+By color contests are the primary setting (Cory, Nov 3): add `--env='{"CONTESTS":"byColor"}'` to every run; As printed gets no runs. `DECK=10 node scripts/balance/run.mjs --size=fast` (about 1 hour on 4 CPUs) or `--size=deep` (overnight). `--size=smoke` checks the pipe in 5 minutes. A variant: `--env='{"SWAP":"1"}'` (any v4-balance.mjs setting) and `--id=<name>`. A stopped run picks up where it stopped (re-run the same command with the same --id). Nothing else should run on the box meanwhile.
 
 It writes .balance-runs/<id>/report.md (also design/eval/balance-runs/<id>.md and /mnt/project-files/balance-runs/<id>/) with: trust verdict, flags, win rates (Normal, Hard, Very Hard), card classes (dominant, trap, dead, skill), real choices, catch-up, interaction, kingmaking, length, winning plans, skill by color, the abuse hunt, and members never seen acting.
 
