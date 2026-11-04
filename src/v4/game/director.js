@@ -20,7 +20,7 @@ import { playerColor, roman } from '../format.js';
 import { play } from '../sound.js';
 import { gainsBetween } from './gains.js';
 import { seatOrder } from './seats.js';
-import { stageRect, hubRect, stageShow, stageRelease, stageClear, stageBusy, subscribeStage, stageItems, stagePlace, spaceRect, bubbleRect, stageLeave, HUB_MEMBER } from './stage.js';
+import { stageRect, hubRect, stageShow, stageRelease, stageClear, stageDismiss, stageBusy, subscribeStage, stageItems, stagePlace, spaceRect, bubbleRect, stageLeave, HUB_MEMBER } from './stage.js';
 import { panelText } from './panelText.js';
 import { quadrant, defById, cardDef, spacesOf, memberCount } from '../../engine/v4/index.js';
 import { seatEmoji } from '../format.js';
@@ -1634,8 +1634,9 @@ function linger(el, n, r = el && !el.rectOnly ? el.getBoundingClientRect() : nul
   const b = document.createElement('b');
   b.className = `seat-delta ${n > 0 ? 'up' : 'down'}`;
   b.textContent = `${n > 0 ? '+' : '−'}${Math.abs(n)}`;
-  // beside the count, to its left: under it, it sat on the resource row's corner and read as "+19 purple" (polish, Nov 3)
-  Object.assign(b.style, { left: `${Math.round(r.left - 4)}px`, top: `${Math.round(r.top + r.height / 2)}px` });
+  // on the count's top right corner, over the chair's top edge: to its left it covered the turn words ("your last in a
+  // row") and, as the count grew a digit, the count itself ("+2 0"); under it, it read as "+19 purple" (picky bot, Nov 4)
+  Object.assign(b.style, { left: `${Math.round(r.right + 2)}px`, top: `${Math.round(r.top)}px` });
   b.style.setProperty('--ld', `${MO.lingerDelta}ms`);
   document.body.appendChild(b);
   const t = setTimeout(() => { b.remove(); lingering.delete(el); }, MO.lingerDelta);
@@ -1721,6 +1722,7 @@ export function installChainSkip() {
   // a click on a live choice's target (a seat or space to pick, an answer) is an answer, not a skip: the beats playing
   // finish and the answer's chain follows them (grammar S3). A click anywhere else, or Space, skips.
   const down = e => {
+    stageDismiss();
     if (!chainRunning()) return;
     const t = e && e.target;
     const app = t && t.closest && t.closest('.app.game');

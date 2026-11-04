@@ -1,7 +1,8 @@
 // A member's stage caption says what this firing did, with the real numbers (picky bot, Nov 4): Fence's +2 read
 // "P2: +1" (the effect's place in the stream, not its amount), and Deprogrammers' rival's −1 follower read as its owner's.
-import { afterEach, expect, it } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 import { planChain } from '../../../v4/game/director.js';
+import { stageShow, stageRelease, stageItems, stageDismiss, stageClear } from '../../../v4/game/stage.js';
 import { motionSpeed, setMotionSpeed } from '../../../v4/motion.js';
 import { sceneQ } from '../../engine/v4/cards-helpers.js';
 
@@ -28,4 +29,18 @@ it('names whose followers a member took, not its owner', () => {
   expect(captions([
     { n: 4, cause: dep, type: 'followers', from: { kind: 'count', pid: 0 }, to: { kind: 'member', pid: 1, uid: 60 }, what: { n: -1 } },
   ])).toEqual(['P2: you −1 follower']);
+});
+
+it("sends a lingering member's bubble home at the viewer's next press", () => {
+  vi.useFakeTimers();
+  try {
+    stageClear();
+    stageShow({ id: 'member:1:52', chain: 1, kind: 'member', uid: 52, pid: 1, at: { left: 0, top: 0 } });
+    stageRelease(10, 1);
+    vi.advanceTimersByTime(20);
+    expect(stageItems()[0].lingering).toBe(true);
+    expect(stageItems()[0].leaving).toBeFalsy();
+    stageDismiss();
+    expect(stageItems()[0].leaving).toBe(true);
+  } finally { stageClear(); vi.useRealTimers(); }
 });

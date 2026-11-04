@@ -137,6 +137,14 @@ export function stageRelease(hold = MO.stageHold, chain = null) {
   releaseTimers.add(t);
   if (chain == null) holdT = t;
 }
+/** A press anywhere is the viewer's next move: a member's bubble still lingering beside its seat goes home now, so it
+ *  never sits over the seats while they choose (picky bot, Nov 4: a Fence note still open over a rival's seat into the
+ *  next turn, a Money Changers note fading over P2 while a choice was up). */
+export function stageDismiss() {
+  let any = false;
+  for (const it of items) if (it.lingering && !it.leaving) { leave(it, Math.round(MO.stageOut * 0.7)); any = true; }
+  if (any) emit();
+}
 /** Everything off the stage at once (a skip, a new round, the game leaving the screen). */
 export function stageClear() {
   clearTimeout(holdT);
