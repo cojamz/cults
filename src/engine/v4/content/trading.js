@@ -531,7 +531,7 @@ const trading = {
     // recruit to followers"; 12:45pm: "landlord is easily the worst white card". Landlord's place. Name, price and worth 1
     // are Claude's fill-ins. REPLACE14=barker.
     // trial barker-landlord (120 Hard games a side): taken 38%, owners won 46% (28 owners); White Cloak 24% -> 31%. Live.
-    m('barker', 'Barker', 2, 2, 'Each turn, you may recruit followers one extra time.', { followersTwice: true }),
+    m('barker', 'Barker', 2, 2, 'Each turn, you may recruit followers one extra time.', { followersTwice: true, round: 1 }), // a round I member as Landlord was
     m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true, retired: true, ...old10('almoner'), ...old8('trading.shopkeeper'), ...old11('landlord2'), ...old9('trading.shopkeeper'),
       onRoundStart(ctx, owner) { ctx.gain(owner, W, 2); },
     }),
