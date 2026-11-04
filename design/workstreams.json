@@ -1,67 +1,12 @@
 [
- [
-  "Wheel",
-  "No",
-  "10:30pm"
- ],
- [
-  "Animations and info tracking",
-  "No",
-  "11:00pm"
- ],
- [
-  "Harvest picker",
-  "No",
-  "built; goes live ~10:30pm"
- ],
- [
-  "Red and White Cloaks",
-  "No",
-  "numbers to you ~12:00am"
- ],
- [
-  "Hostesses rework",
-  "Yes",
-  "after your pick"
- ],
- [
-  "Melting Pot, Dilute, Mob",
-  "Yes",
-  "after your pick"
- ],
- [
-  "Action changes",
-  "Yes",
-  "after your picks"
- ],
- [
-  "New members",
-  "No",
-  "next set ~11:30pm"
- ],
- [
-  "Emoji minion sounds",
-  "Yes",
-  "after keep or redo"
- ],
- [
-  "Emoji-style members",
-  "Yes",
-  "after your pick"
- ],
- [
-  "Game log critiques",
-  "Yes",
-  "after Copy game yes/no"
- ],
- [
-  "Setup modes audit",
-  "No",
-  "11:00pm"
- ],
- [
-  "Test gates",
-  "No",
-  "12:30am"
- ]
+ ["Next release: Harvest picker, resource hover, emoji members option, slower Relaxed", "No", "~10:20pm"],
+ ["Wheel freeze fix (edge words drawn once)", "No", "~11:00pm"],
+ ["Animations: step-by-step recruits, one line per rival move", "No", "~11:30pm"],
+ ["Improvements: Hostesses rework (your pick 1)", "No", "~11:00pm"],
+ ["Balance: Red and White Cloak tests", "No", "~12:00am"],
+ ["Sounds: Surfer and Pizza from real recordings", "No", "~10:45pm"],
+ ["Setup modes audit", "No", "~11:00pm"],
+ ["Melting Pot, Dilute, Mob", "Yes", "options sent 8:40pm, waiting on your pick"],
+ ["Action changes", "Yes", "list sent, waiting on your picks"],
+ ["Test gates", "No", "~12:30am"]
 ]
