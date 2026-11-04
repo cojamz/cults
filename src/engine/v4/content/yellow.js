@@ -19,7 +19,7 @@ const others = ctx => colors(ctx).filter(c => c !== Y);
 const ACT = new Set((globalThis.process?.env?.ACT || '').split(',').filter(Boolean)); // action bot tests (Nov 4): env only, never live
 const plainSets = (ctx, p) => Math.min(...colors(ctx).map(c => p.res[c] || 0));
 /** Jack-of-All-Trades (live since Nov 4): "Your yellow counts as any color in your full sets." (a Doppelganger copying it too) */
-const hasJack = (ctx, p) => colors(ctx).includes(Y) && ctx.membersOf(p).some(c => ctx.defOf(c).key === 'jack' || c.copy === 'yellow.jack');
+const hasJack = (ctx, p) => colors(ctx).includes(Y) && (p.members || []).some(u => { const c = ctx.state.cards?.[u]; return !!c && (c.def === 'yellow.jack' || c.copy === 'yellow.jack'); });
 /** Yellow p spends filling the gaps in k sets, beyond the k yellow the sets need themselves. */
 const jackGap = (ctx, p, k) => others(ctx).reduce((a, c) => a + Math.max(0, k - (p.res[c] || 0)), 0);
 /** Full sets: one of each color on the table (with Jack-of-All-Trades, yellow fills any gap). */
