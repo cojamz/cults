@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 // every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,daylaborers,nightmanager,pacesetters';
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,daylaborers,nightmanager,pacesetters';
 const { applyMove, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
@@ -26,6 +26,9 @@ describe('REPLACE7: the switch', () => {
     expect(card('red.godfather')).toEqual(['Godfather', 4, 2, 1, 1]);
     expect(card('red.crimefamily')).toEqual(['Crime Family', 4, 2, 3, 3]);
     expect(card('purple.gobetween')).toEqual(['Go-Between', 2, 2, 1, 1]);
+    expect(card('purple.nightshift')).toEqual(['Night Shift', 2, 2, 1, 1]);
+    expect(card('purple.sleepyheads')).toEqual(['Sleepyheads', 2, 2, 2, 2]);
+    expect(card('red.drillsergeant')).toEqual(['Drill Sergeant', 4, 4, 1, 1]);
     expect(card('purple.daylaborers')).toEqual(['Day Laborers', 3, 2, 3, 3]);
     expect(card('purple.nightmanager')).toEqual(['Night Manager', 2, 2, 1, 1]);
     expect(card('purple.pacesetters')).toEqual(['Pace-Setters', 3, 2, 2, 2]);
@@ -290,6 +293,41 @@ describe('Go-Between: "On Use, once per round: your next turn comes right after 
     const uid = uidIn(s, 'purple.gobetween', 0);
     s = move(s, `use:${uid}`);
     expect(s.cards[uid].used).toBe(false);
+  });
+});
+
+describe('scale-up round 1: Sleepyheads, Night Shift, Drill Sergeant', () => {
+  const turns = [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }];
+  it('Sleepyheads: "Whenever you take the Goes Last token, +2 followers." Sleep In takes it: +2', () => {
+    let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 1, members: [['purple.sleepyheads']], queue: turns });
+    s = take(s, 'purple.skip');
+    expect(s.players[0].bonus).toBe(2);
+    expect(named(s, 'Sleepyheads')).toContain("P1's Sleepyheads: P1 takes the Goes Last token, +2 followers.");
+  });
+  it('Sleepyheads with Early Birds: no take, no pay', () => {
+    let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 1, members: [['purple.sleepyheads', 'purple.earlybird']], queue: turns });
+    s = take(s, 'purple.skip');
+    expect(s.players[0].bonus).toBe(0);
+  });
+  it('Night Shift: "Round End: if you hold the Goes Last token, +1 follower per purple member you have." holder: +3 (Early Birds counts 2); not holder: 0', async () => {
+    const { contextFor } = await import('../../../engine/v4/core.js');
+    const s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 2, members: [['purple.nightshift', 'purple.earlybird'], []] });
+    const d = defById('purple.nightshift'), card = { uid: uidIn(s, 'purple.nightshift', 0), def: d };
+    d.onRoundEnd(contextFor(s), s.players[0], card);
+    expect(s.players[0].bonus).toBe(0);
+    s.goesLast = { round: s.round, pid: 0 };
+    d.onRoundEnd(contextFor(s), s.players[0], card);
+    expect(s.players[0].bonus).toBe(3);
+    expect(s.log.some(l => l.includes("P1's Night Shift: P1 holds the Goes Last token, +3 followers (3 purple members)."))).toBe(true);
+  });
+  it('Drill Sergeant: "Whenever you recruit 2 or more members in one turn, +3 followers." Mentor & Protégés brings a second: +3, once', async () => {
+    const { contextFor } = await import('../../../engine/v4/core.js');
+    const s = table(['red', 'market', 'trading', 'yellow'], { n: 2, round: 3, members: [['red.drillsergeant'], []], shop: ['red.mentor', 'red.volunteer'] });
+    s.current = 0; s.players[0].turnRecruits = 0;
+    contextFor(s).recruit(s.players[0], uidIn(s, 'red.mentor', 'shop'), { free: true });
+    expect(s.log.some(l => l.includes('Mentor & Protégés: the cheapest face-up member comes along free'))).toBe(true);
+    expect(s.players[0].bonus).toBe(3);
+    expect(s.log.filter(l => l.includes("P1's Drill Sergeant")).length).toBe(1);
   });
 });
 

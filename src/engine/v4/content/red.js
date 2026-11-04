@@ -253,6 +253,18 @@ export default {
       // a recruit is a member or a follower purchase (Cory, 2026-10-21); not its own arrival
       onRecruit(ctx, owner, card, by, what) { if (by === owner && what.member?.uid !== card.uid) owner.bonus += 1; },
     }),
+    // REPLACE7 (Nov 4, scale-up round 1, Members A): Proselytizers' place (paper 19 vs 11, Red's set 16 vs 13). 4 red + 4
+    // any, worth 1. Pied Piper's trigger: pays the moment your second recruit of your own turn lands (Mentor & Protégés'
+    // free one counts; a member counted as several still lands once).
+    ...add7(m('drillsergeant', 'Drill Sergeant', 3, 4, 'Whenever you recruit 2 or more members in one turn, +3 followers.', {
+      onAnyRecruit(ctx, owner, card, by, recruited) {
+        if (by === owner && ctx.state.current === owner.id && owner.turnRecruits >= 2 && owner.turnRecruits - ctx.memberWeight(recruited) < 2) {
+          owner.bonus += 3;
+          ctx.log(`${owner.name}'s Drill Sergeant: a second recruit this turn, +3 followers.`);
+        }
+      },
+      ...see(info => 3 * endsAhead(info).length * 0.7),
+    })),
     // REPLACE4 bot test (Nov 3, replacement batch 4): Proselytizers' place. 6 red + 3 any as a player sees it. Red members
     // are the ones of the red color (Drifters set to red too; Dabblers isn't one). Any rival may be chosen; one whose
     // members can't be swapped (Loyalists: only Loyalists itself moves) keeps those, as a swap would, and the owner's own

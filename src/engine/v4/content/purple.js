@@ -170,6 +170,11 @@ export const tokenHolder = s => (s.goesLast && s.goesLast.round === s.round ? s.
 function takeToken(ctx, p, why, what = '') {
   const s = ctx.state, was = tokenHolder(s);
   s.goesLast = { round: s.round, pid: p.id };
+  // Sleepyheads (REPLACE7): "Whenever you take the Goes Last token, +2 followers."
+  for (const c of ctx.membersOf(p)) if (c.def.tokenPay) ctx.asMember(p, c.def.name, () => {
+    p.bonus += c.def.tokenPay;
+    ctx.log(`${p.name}'s ${c.def.name}: ${p.name} takes the Goes Last token, +${c.def.tokenPay} followers.`);
+  }, c.uid);
   if (was === null || was === p.id) { ctx.log(`${p.name}'s ${why}: ${p.name} ${was === p.id ? 'keeps' : 'takes'} the Goes Last token${what}.`); return; }
   const o = ctx.player(was), q = s.queue;
   const close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
@@ -698,6 +703,23 @@ export default {
         owner.bonus += mine;
         ctx.log(`${owner.name}'s Full House: ${mine} minions on the wheel, more than every rival: +${mine} followers.`);
       },
+    })),
+    // REPLACE7 (Nov 4, scale-up round 1, Members A): Timekeeper's place, two candidates that passed paper. 2 purple + 2 any.
+    // Night Shift (paper 15, set 16): the token holder at Round End, the round's own token (Sleep In, Last Call, Call Back).
+    ...add7(m('nightshift', 'Night Shift', 1, 2, 'Round End: if you hold the Goes Last token, +1 follower per purple member you have.', { round: 1,
+      onRoundEnd(ctx, owner, card) {
+        if (tokenHolder(ctx.state) !== owner.id) return;
+        const k = ctx.countMembersOfColor(owner, 'purple');
+        if (!k) return;
+        owner.bonus += k;
+        ctx.log(`${owner.name}'s ${card.def.name}: ${owner.name} holds the Goes Last token, +${k} follower${k === 1 ? '' : 's'} (${k} purple member${k === 1 ? '' : 's'}).`);
+      },
+      ...see(info => 1.5 * endsAhead(info).length),
+    })),
+    // Sleepyheads (paper 17, set 17): pays whenever its owner's space or card takes the token (keeping it, by taking it
+    // again, counts: the space says "Take the Goes Last token"); Early Birds stops the take, so no pay (core: takeToken).
+    ...add7(m('sleepyheads', 'Sleepyheads', 1, 2, 'Whenever you take the Goes Last token, +2 followers.', { f: 2, n: 2, round: 1, tokenPay: 2,
+      ...see(info => 2 * endsAhead(info).length),
     })),
     // REPLACE7 (Nov 4, quality loop, Members A batch 5): Timekeeper's place, a round I first taste of the extra-turn plan
     // (director's ask; paper 18 vs 9, Purple's set 18 vs 9). Right Away's turn rule, carried, once a round, on your own
