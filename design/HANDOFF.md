@@ -26,7 +26,7 @@ Last updated 2026-11-03 7:05pm Eastern by the "Plan and run today's autonomous i
 - Contest prizes +4/+6/+10; members pay +1 any on top of the printed cost, and since v0.99.510 one of the "any" is the member's own color (grey members keep the wild).
 - Core principle (Cory, Oct 22): synergy and engine building, not value in a vacuum. Rule for any member idea: a table must be able to track it.
 - Text review skill (/review-text): run after any card text change.
-- Smoothness: freeze bar scripts/v4-freeze.mjs (Chrome and Firefox), perf rig scripts/v4-rig.mjs. Clicks p95 about 160 ms at 4x CPU against the 100 ms bar.
+- Smoothness: freeze bar scripts/v4-freeze.mjs (Chrome and Firefox), perf rig scripts/v4-rig.mjs. Freezes pass in both (Firefox worst press 28 ms, Nov 4). Clicks median ~150 ms, p95 ~200-250 ms at 4x CPU (React 19 + compiler since v0.99.579; every thread needs `npm ci` after pulling it). No rewrite planned: the table's redraws are ~3% of the page's work (design/eval/perf/refactor-nov4/plan.md).
 
 ## Known not-green
 - Browser verdict on ccf5bdf (Nov 3): RED, 11 gates (unit tests stalling on GitHub, plus shop-names, hotseat, benders, backlog-ui, caption-linger, landing, pay, turn-skip, turnstory, motion), most likely seeded games moved by the color cost. Owner: the "Get every test passing again" thread (Nov 3). Known red: shop-sizing.mjs.

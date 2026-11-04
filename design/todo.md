@@ -52,7 +52,7 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 - Smoothness panel leftovers (/mnt/project-files/smooth-panel/plan.md): the wheel's landing re-lay (lay out only panels whose upright side flips), scoringSnapshot cache, income line keyed by members, preview cap by time.
 - Snappy pair next (Claude's; bots in a worker and the frame loop are done since Oct 25): acknowledgment/frame bars in the snappy gate, cult-hop filter. design/eval/snappy-pair/README.md.
 - React commits 80-130ms at 4x CPU; seat re-renders as cards land; hover "a tiny bit wonky"; linger motion starts late. Leftovers: design/eval/perf/lag-2026-10-21.md.
-- Smooth play, next (ours, no call needed): tuning pass (structural sharing after applyMove, keep idle loops through shows instead of the data-chain rule, rect reads once per chain), then the staged show layer (design/eval/perf/smooth-proposal.md). Measure each with scripts/v4-rig.mjs.
+- Smooth play (Nov 4, thread "Make the game feel snappier"): React 19 + compiler live (v0.99.579), idle motion 1.6x slower (v0.99.571). The staged show layer is shelved: measured, the table's redraws are ~3% of the page's work over a game; the rest is the browser drawing the motion (design/eval/perf/refactor-nov4/plan.md). Left, small: shadow-animated glows (director.js recruit landing, flight.js press ring) and 19 SVG fill animations per round that can't run off the main thread. Online instant own move: Cory "nah". Game canvas: "keep in pocket".
 - Re-port minion-on-press and the compositor wheel spin (/mnt/project-files/handoff/speed/) onto today's wheel.
 - Round I resource draft animated, once the perf items are in.
 
