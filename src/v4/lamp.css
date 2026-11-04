@@ -118,7 +118,7 @@ h1,h2,h3{font-family:var(--serif)}
   /* each chair is as tall as its content (the plate's panels) and stands at its place in the order: GameScreen stacks
      them (--y), centred in the column; a new round's order slides them there */
   .lt > .lt-seat{grid-area:seats;align-self:start;margin-left:44px;transform:translateY(var(--y, calc(var(--slot, 0) * 108px)));
-    transition:transform calc(.35s * var(--mo-slow, 1)) cubic-bezier(.3,.7,.4,1);
+    transition:transform calc(.35s * var(--mo-slow, 1)) cubic-bezier(.3,.7,.4,1),opacity calc(.2s * var(--mo-slow, 1)) ease-out;
     min-height:0;min-width:0;overflow:visible;border-radius:8px}
   .lt > .lt-seat:empty{visibility:hidden}
   /* each chair as the approved plate's seat panel (design/prototypes/language/plate1b.png): the seat ground, an 8px
@@ -130,6 +130,9 @@ h1,h2,h3{font-family:var(--serif)}
   .lt > .lt-seat::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;opacity:0;
     background:color-mix(in srgb,rgb(var(--lamp)) 12%,transparent);box-shadow:inset 0 0 0 1px rgba(var(--lamp),.45);transition:opacity var(--mo-dim, .3s)}
   .lt > .lt-seat.now::before{opacity:1}
+  /* the spotlight (Cory, Nov 4, "make judgement calls"): while a rival's move plays, the seats it doesn't touch step
+     back, so the eye goes to the one that moves (GameScreen setSpot; a layer's opacity, nothing repaints) */
+  .app.game.lt[data-spot] > .lt-seat:not([data-spot-in]){opacity:.4}
   .lt > .lt-seat.mine::before{box-shadow:inset 0 0 0 1.5px rgba(var(--lamp),.6)}
   /* the chair inside (leader, name, minions, total; resources; members) is laid out in game/seat.css (mockup A) */
   /* what a rival just took from this seat, short, on the seat's lower edge (Cory, 2026-10-18: "shorter, near your

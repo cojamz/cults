@@ -82,8 +82,11 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     expect(usual.length).toBeGreaterThan(10);
     expect(h3p50).toBeLessThanOrEqual(2000 * K);
     // 3100 (Claude, Nov 1): the Nov 1 balance numbers and Greatest Hits copying rivals' round I spaces moved the seeded turns; content, not slower motion
-    expect(h3p95).toBeLessThanOrEqual(3100 * K);
-    expect(h2p50).toBeLessThanOrEqual(6500 * K);
+    // 3500, 7000 and 19000 (Claude, Nov 4, under Cory's "make judgement calls" after "Things are still going too fast to
+    // make sense of"): a rival's move lands in full, then holds 1s before the next (MO.rivalRead). Measured: rival turn
+    // p50 1.36s to 2.52s, p95 4.28s to 5.51s; the usual wait 7.4s to 10.7s; the longest run of six 24.9s to 30.0s
+    expect(h3p95).toBeLessThanOrEqual(3500 * K);
+    expect(h2p50).toBeLessThanOrEqual(7000 * K);
     // 13.5s (was 13s; Claude, 2026-10-29): HR at 4 members moved seed 2's bots into a run of six turns holding a Walk-In
     // 14s (Claude, 2026-10-29): members counting their printed number moved a seeded run of six to 13.76s; same shows, longer chain
     // free recruit, a Con Men steal of 5, an Anarchist swap and three recruits (21.2s vs 21.1s); content, not slower motion
@@ -92,7 +95,7 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     // Tryout on Treasurer plus two Anarchist swaps, a Coach and a Mentor protégé (14.95s); content, not slower motion
     // 15.5s (Claude, Nov 4): recruits play one step at a time, coins in, then to the middle, then to the buyer (Cory's
     // "yes" to the audit's pick): seed 2's run of six holds three recruits, 21.5s to 24.9s at Steady; slower by his call
-    expect(h2max).toBeLessThanOrEqual(15500 * K);
+    expect(h2max).toBeLessThanOrEqual(19000 * K);
   });
   it('Relaxed plays a rival\'s turn about twice as long as Steady, and Steady a little slower than the first table', () => {
     const steady = rivalTurnsAt('steady'), relaxed = rivalTurnsAt('relaxed'), quick = rivalTurnsAt('quick');

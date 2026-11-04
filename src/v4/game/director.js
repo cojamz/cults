@@ -145,6 +145,20 @@ function roundSegment(before, state) {
  * What a change of state plays: { atoms: [{ at, op, ... }], total } in ms at the viewer's speed. Pure when `measure`
  * is left out (the table's pacing calls it before anything is on screen); playChain passes the screen's distances.
  */
+/** The spotlight (Cory, Nov 4, "make judgement calls" on "Things are still going too fast to make sense of"): the seats
+ *  a rival's step touches, its own first. Every seat a piece, card or minion of the chain leaves or lands on. */
+export function spotSeats(plan, actor) {
+  const seats = new Set([actor]);
+  const walk = (v, depth) => {
+    if (!v || typeof v !== 'object' || depth > 3) return;
+    for (const [k, x] of Object.entries(v)) {
+      if ((k === 'pid' || k === 'owner' || (k === 'to' && typeof x === 'number')) && Number.isInteger(x)) seats.add(x);
+      else if (x && typeof x === 'object') walk(x, depth + 1);
+    }
+  };
+  for (const a of plan.atoms || []) walk(a, 0);
+  return seats;
+}
 export function planChain(before, state, { mine = [], measure = null } = {}) {
   const atoms = [];
   if (!before || !state || before === state || before.seed !== state.seed) return { atoms, total: 0, handoff: 0 };
@@ -672,12 +686,16 @@ export function holdAfter(plan, { sameNext, rivalStep, floor = 400, base = 0, ne
   // the turn passing to another player (panel r1: rival turns overlapped your own coins still flying, and each other):
   // this turn's pieces all land before the next player's turn begins, so every turn is its own beat; only the closing
   // breath overlaps the next minion's quiet departure (the wait budget, pacing.test.js H2, has no room for more)
+  // one rival move at a time (Cory, Nov 4: "Things are still going too fast to make sense of", and "make judgement
+  // calls"): a rival's step lands in full before anything else moves, then holds a read (MO.rivalRead, 1s at Steady)
+  // when the turn moves on or the rival places again; its own sub-steps (a choice, the pay after a pick) follow at once
+  if (plan.total && rivalStep) return Math.max(plan.total + (!sameNext || nextPlaces ? MO.rivalRead : 0), floored);
   if (plan.total && !sameNext) return Math.max(passes, floored);
   if (plan.total) return Math.max(sameNext || (placing && rivalStep) ? plan.handoff : passes, floored);
   return rivalStep ? (sameNext ? 0 : MO.passHold) : base;
 }
 /** The longest a step may hold on screen: the chain's cap plus its breath and the floor (re-timing never goes past it). */
-export const holdCap = () => Math.round(2400 * speedScale()) + MO.breath + 400;
+export const holdCap = () => Math.round(2400 * speedScale()) + MO.breath + 400 + MO.rivalRead;
 /** The longest a step in a round may hold the table before the rest of its chain lands at once: the speed's own cap,
  *  up to RELAXED_CAP's pace (about 7.6s at Relaxed), and half that while the table is `behind` (3+ steps waiting).
  *  A late-game recruit that sets off 4–6 members one by one held 7–9s at Relaxed, and the table fell minutes behind the

@@ -46,7 +46,7 @@ import PayPicker, { payChoice, PayReceipt, receiptFor } from './PayPicker.jsx';
 import { Rich } from './Rich.jsx';
 import HowToPlay from '../HowToPlay.jsx';
 import { motionOK, snapshotShop, clearFlights, snapshotMinions, flyMinionsHome, flyToken, flyGains, snapshotChips, snapshotArtifacts } from './flight.js';
-import { playChain, planChain, holdAfter, holdCap, stepHoldCap, installChainSkip, noteBehind, skipChain, chainLeft, onChainSkip, onChainEnd, onChainLanded, chainRunning, chainState, noteTable, foldBuys, foldWait, notePick } from './director.js';
+import { playChain, planChain, holdAfter, holdCap, stepHoldCap, installChainSkip, noteBehind, skipChain, chainLeft, onChainSkip, onChainEnd, onChainLanded, chainRunning, chainState, noteTable, foldBuys, foldWait, notePick, spotSeats } from './director.js';
 import { soundOn, onSound, setSound, soundVolume, onVolume, setVolume } from '../sound.js';
 import { MO, BOT, SPEEDS, SPEED_NAMES, motionSpeed, setMotionSpeed, onMotionSpeed, speedScale, slowed } from '../motion.js';
 import { PERF_ON } from '../perf.js';
@@ -173,6 +173,8 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
   }, []);
 
   const pump = useCallback(() => {
+    // caught up: the last step's hold is over, so nothing is in the spotlight any more
+    if (!queue.current.length && !timer.current && !waiting.current) setSpot(null, null);
     // Show queued states in order. A rival's placement holds on screen long enough to read (the worker travels,
     // the card shows its delta); after the round-end card, the backlog replays at a readable pace too.
     while (!held.current && !timer.current && !waiting.current && queue.current.length) {
@@ -211,6 +213,9 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
       noteBehind(queue.current.length >= 3); // (the same reading stepHoldCap gets below, so the show fits the cap it gets)
       const plan = planChain(prev, next, { mine });
       waiting.current = motionOK() && plan.total > 0 ? next : null;
+      // the spotlight: while a rival's step plays, the seats it doesn't touch step back (cleared once the table is
+      // caught up, below; your own steps never dim anything)
+      setSpot(null, rivalStep && plan.total > 0 && motionOK() ? spotSeats(plan, actor) : null);
       clearTimeout(capTimer.current);
       capFor.current = waiting.current && next.round >= 1 && next.round === prev.round ? next : null;
       show(next, !!waiting.current);
@@ -665,6 +670,20 @@ export function lossWords(list, players) {
     out.push(`${name} ${parts.join(' ')}`);
   }
   return out.join(' · ');
+}
+
+/** The spotlight on the table: data-spot on the root while a rival's step plays, data-spot-in on each seat it touches
+ *  (written straight to the DOM: a React render per step for a dim would cost a commit mid-flight). */
+function setSpot(root, seats) {
+  root = root || (typeof document !== 'undefined' ? document.querySelector('.app.game.lt') : null);
+  if (!root) return;
+  const on = !!(seats && seats.size);
+  if (!on && !root.hasAttribute('data-spot')) return;
+  if (on) root.setAttribute('data-spot', ''); else root.removeAttribute('data-spot');
+  for (const el of root.querySelectorAll(':scope > .lt-seat[data-pid]')) {
+    const inIt = on && seats.has(Number(el.dataset.pid));
+    if (inIt !== el.hasAttribute('data-spot-in')) { if (inIt) el.setAttribute('data-spot-in', ''); else el.removeAttribute('data-spot-in'); }
+  }
 }
 
 const verbFor = kind => ({ setup: 'drafting a resource', place: 'placing a minion', buy: 'shopping', pay: 'paying', choose: 'deciding' }[kind] || 'deciding');

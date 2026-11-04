@@ -129,6 +129,7 @@ const TABLE = {
   trail:       [140,   180],  // your minion's trail from the column
   minionFly:   [220,   280],  // a rival's minion flight
   readHold:    [60,    90],   // after a rival places: which space, before anything flies
+  rivalRead:   [300,   620],  // a rival's move has fully landed: it holds this long before the next move starts (1s at Steady; Cory's go-with-your-judgment, Nov 4)
   pulse:       [50,    90],   // a source about to give
   hop:         [120,   180],  // a member acts
   choicePoint: [100,   160],  // a rival's choice: what they chose lights before its effect flies (grammar S3)
