@@ -223,3 +223,26 @@ export function FollowersCard({ state, pid, meId = null }) {
     </div>
   );
 }
+
+/**
+ * Where a player's resource of one color came from this round, like an accounting (Cory, Nov 4: "If you mouse over a
+ * resource it should show the sources of where that resource came from"): what was carried in from earlier rounds, then
+ * every space, member, recruit and buy that added or spent it this round (the engine's state.rledger), adding up to
+ * what they hold.
+ */
+export function ResourceCard({ state, pid, r, meId = null }) {
+  const p = state.players[pid];
+  const held = p.res[r] || 0;
+  const led = state.rledger && state.rledger.round === state.round ? ((state.rledger.rows[pid] || {})[r] || {}) : {};
+  const lines = Object.entries(led).filter(([, n]) => n);
+  const carried = held - lines.reduce((t, [, n]) => t + n, 0);
+  const rows = [...(carried || !lines.length ? [[state.round > 1 ? 'From earlier rounds' : 'At the start', carried, true]] : []), ...lines];
+  return (
+    <div className="lt-card-body fol-card" data-resource-card={`${pid}:${r}`}>
+      <h4>{pid === meId ? 'Your' : `${p.name}’s`} {r} <b className="num" data-total={held}>{held}</b></h4>
+      <ul className="fol-rows">
+        {rows.map(([label, n, base], k) => <li key={k} data-res-row={label}><span>{label === 'other' ? 'Other' : label}</span><b className="num">{!base && n > 0 ? '+' : ''}{n < 0 ? `−${-n}` : n}</b></li>)}
+      </ul>
+    </div>
+  );
+}

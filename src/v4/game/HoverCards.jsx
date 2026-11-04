@@ -14,7 +14,7 @@ import { SeatFigure } from './Glyphs.jsx';
 import { Rich } from './Rich.jsx';
 import { memberCopyTargets, ownCopyPlan, copiesAll, copyAllPlan } from './cards.js';
 import { DeckCard } from './MemberDeck.jsx';
-import { FollowersCard } from './MemberUse.jsx';
+import { FollowersCard, ResourceCard } from './MemberUse.jsx';
 import { RivalCard, RIVAL_CARD_WIDTH } from './RivalCard.jsx';
 import { safeThisRound } from './memberUse.js';
 import './lamp-b.css';
@@ -54,7 +54,7 @@ export function useHoverCards() {
 }
 const LAYER = Symbol('hover layer');
 // the same target (a seat or its follower total: any part of that seat)
-const sameTarget = (a, b) => !!a && !!b && a.kind === b.kind && ((b.kind === 'seat' || b.kind === 'followers') ? a.pid === b.pid
+const sameTarget = (a, b) => !!a && !!b && a.kind === b.kind && (b.kind === 'resource' ? a.pid === b.pid && a.r === b.r : (b.kind === 'seat' || b.kind === 'followers') ? a.pid === b.pid
   : a.el === b.el && a.pid === b.pid && a.key === b.key && a.uid === b.uid && a.qid === b.qid);
 export function createHover() {
   let card = null, openT = null, closeT = null, want = null, heldBack = null, retryT = null;
@@ -147,7 +147,7 @@ export function createHover() {
     if (card && card.pinned) return; // a pinned card stays until it's closed
     // a seat's card is a big one you can use: with another card up it still waits out the rest (a seat only passed over
     // on the way somewhere never pops a card over that place); the card that's up stays meanwhile
-    if (card && (next.kind === 'seat' || next.kind === 'followers')) { later(next, false); return; }
+    if (card && (next.kind === 'seat' || next.kind === 'followers' || next.kind === 'resource')) { later(next, false); return; }
     if (card) { set(next); return; } // a card is up: swap its content in place, no delay, no flicker
     later(next, true); // nothing up: it opens after the rest, drawn hidden meanwhile
   };
@@ -168,6 +168,8 @@ export function createHover() {
     onSeatHover: (pid, el, o = {}) => show({ kind: 'seat', pid, el, pinned: !!o.pinned }),
     /** a seat's follower total: where its followers came from (w3b #39) */
     onFollowersHover: (pid, el, o = {}) => show({ kind: 'followers', pid, el, pinned: !!o.pinned }),
+    /** a seat's resource: where it came from this round (Cory, Nov 4) */
+    onResourceHover: (pid, r, el, o = {}) => show({ kind: 'resource', pid, r, el, pinned: !!o.pinned }),
     onCardHover: (uid, el, o = {}) => show({ kind: 'card', uid, el, pinned: !!o.pinned }),
     onDeckHover: (el, o = {}) => show({ kind: 'deck', el, pinned: !!o.pinned }),
     dispose() { clearTimeout(openT); clearTimeout(closeT); clearTimeout(retryT); subs.clear(); },
@@ -269,7 +271,7 @@ export function HoverCardLayer({ hover, state, me, optionFor = () => null, onPic
     }
     const w = cardWidth(c, me);
     const h = h0 || 160;
-    const p = (holder && besideSeat({ ...a, top: a.top - 12 }, w, h)) || ((c.kind === 'seat' || c.kind === 'followers') && besideSeat({ ...a, top: a.top - 12 }, w, h)) || placeBeside(a, w, h, side.current && side.current.el === el ? side.current.side : null);
+    const p = (holder && besideSeat({ ...a, top: a.top - 12 }, w, h)) || ((c.kind === 'seat' || c.kind === 'followers' || c.kind === 'resource') && besideSeat({ ...a, top: a.top - 12 }, w, h)) || placeBeside(a, w, h, side.current && side.current.el === el ? side.current.side : null);
     // the nub points at the middle of what the card explains (for a seat, the part pointed at), clear of the corners
     const t = holder ? r0 : a;
     const across = p.side === 'right' || p.side === 'left';
@@ -345,7 +347,7 @@ export function HoverCardLayer({ hover, state, me, optionFor = () => null, onPic
 }
 
 // a rival's seat card is the wide one (RivalCard.jsx): their whole cult in columns
-const cardWidth = (c, me) => Math.min(c.kind === 'seat' ? RIVAL_CARD_WIDTH : c.kind === 'followers' ? 260 : 280, innerWidth - 16);
+const cardWidth = (c, me) => Math.min(c.kind === 'seat' ? RIVAL_CARD_WIDTH : c.kind === 'followers' || c.kind === 'resource' ? 260 : 280, innerWidth - 16);
 
 // where the pointer last was: a hover card whose target was re-drawn re-links only while the pointer is still on it
 let lastPt = null;
@@ -373,7 +375,7 @@ function anchorFor(c, held = false) {
     return again.find(e => under(e.getBoundingClientRect())) || (c.pinned || held ? again[again.length - 1] || null : null);
   }
   const sel = c.kind === 'space' ? `[data-slot="${c.key}"]` : c.kind === 'plaque' ? `[data-plaque="${c.qid}"]`
-    : c.kind === 'seat' ? `[data-cult="${c.pid}"] .cs-head` : c.kind === 'followers' ? `[data-cult="${c.pid}"] .cs-total` : c.kind === 'card' ? `[data-region="shop"] [data-uid="${c.uid}"]` : c.kind === 'deck' ? '[data-deck]' : null;
+    : c.kind === 'seat' ? `[data-cult="${c.pid}"] .cs-head` : c.kind === 'followers' ? `[data-cult="${c.pid}"] .cs-total` : c.kind === 'resource' ? `[data-cult="${c.pid}"] .cs-stack[data-res="${c.r}"]` : c.kind === 'card' ? `[data-region="shop"] [data-uid="${c.uid}"]` : c.kind === 'deck' ? '[data-deck]' : null;
   const el = sel && document.querySelector(sel);
   if (!el) return null;
   if (c.pinned || held) return el;
@@ -510,6 +512,7 @@ function cardBody(c, state, me, optionFor, pick) {
   if (c.kind === 'plaque') return <StandingsCard state={state} qid={c.qid} meId={me} />;
   if (c.kind === 'seat') return <SeatCard state={state} pid={c.pid} meId={me} optionFor={optionFor} onPick={pick} />;
   if (c.kind === 'followers') return <FollowersCard state={state} pid={c.pid} meId={me} />;
+  if (c.kind === 'resource') return <ResourceCard state={state} pid={c.pid} r={c.r} meId={me} />;
   if (c.kind === 'deck') return <DeckCard state={state} />;
   if (c.kind === 'card') return state.cards[c.uid] ? <ShopCardHover state={state} me={me} uid={c.uid} optionFor={optionFor} onPick={pick} pinned={c.pinned} /> : null;
   return null;

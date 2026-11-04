@@ -122,6 +122,8 @@ export default function CultSeat({ state, pid, me = null, mine = false, now = fa
     if (!hover || talking) return; // the Say card is open over your seat
     const el = pointed(e);
     if (el.classList && el.classList.contains('cs-total')) hover.onFollowersHover(pid, el, { pinned });
+    // a resource opens where it came from this round (Cory, Nov 4: "Kind of like an accounting")
+    else if (el.classList && el.classList.contains('cs-stack') && el.dataset.res && hover.onResourceHover) hover.onResourceHover(pid, el.dataset.res, el, { pinned });
     else hover.onSeatHover(pid, el, { pinned });
   };
   // the seat's body and resource row open its card too (w3b #47), but a member figure opens its own card
@@ -321,7 +323,7 @@ export default function CultSeat({ state, pid, me = null, mine = false, now = fa
             const shown = Math.max(0, (p.res[r] || 0) - took);
             const say = o ? (pick.give || mine ? `${pick.title ? `${pick.title}: ` : ''}${o.label}` : `Take ${o.take || 1} ${r} from ${p.name} (${took ? `${shown} left, ${took} picked` : shown})`) : sp ? sp.why : `${p.res[r] || 0} ${r}`;
             return (
-              <span key={r} className={`cs-stack${p.res[r] ? '' : ' zero'}${sp ? (o ? ' pick-on' : ' pick-off') : ''}`} data-res={r} title={say}
+              <span key={r} className={`cs-stack${p.res[r] ? '' : ' zero'}${sp ? (o ? ' pick-on' : ' pick-off') : ''}`} data-res={r} title={sp ? say : undefined} aria-label={sp ? undefined : say}
                 {...(o ? { role: 'button', tabIndex: -1, 'data-option': o.id, 'aria-label': say, onClick: e => pick.onPick(o.id, e.currentTarget) } : sp ? { 'data-why': sp.why, onClick: e => pick.onDenied && pick.onDenied(sp.why, e.currentTarget) } : {})}>
                 <ResourceGlyph r={r} size={mine ? 16 : 13} n={shown} /><b className="num">{shown}</b>
                 {took > 0 && <i className="cs-took num" aria-hidden="true">−{took}</i>}

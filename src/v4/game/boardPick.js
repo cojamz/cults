@@ -131,14 +131,16 @@ export function giftPick(state, pend, first = null) {
   const fromSpace = title && state.quadrants.some(q => spacesOf(state, q).some(a => a.name === title));
   if (fromSpace && own.length >= 2 && own.length + pend.options.filter(o => !o.target && !neutral(o)).length === pend.options.length) {
     const left = (question.match(/\((\d+) left\)/) || [])[1];
-    const ask = question.replace(/\s*\(\d+ left\)\s*/, ' ').trim();
+    // "+1 of which color? (3 to pick)" (Harvest): the whole gain split at once, like a payment (SplitPicker.jsx)
+    const toPick = Number((question.match(/\((\d+) to pick\)/) || [])[1] || 0);
+    const ask = question.replace(/\s*\(\d+ left\)\s*/, ' ').replace(/\s*\(\d+ to pick\)\s*/, ' ').trim();
     // "pay which resource for 1 follower?" reads "Pay 1 for 1 follower"; any other question is its first sentence, the
     // rest of it the line under it ("Which color?" / "You get 2, everyone else gets 1.")
     const payFor = ask.match(/^pay which \w+ for (\d+ \w+)\?\s*(.*)$/i);
     const [q1, ...more] = ask.split('?');
     const head = payFor ? `Pay 1 for ${payFor[1]}` : `${q1[0].toUpperCase()}${q1.slice(1)}${more.length ? '?' : ''}`;
     const sub = payFor ? payFor[2] : more.join('?').trim();
-    return { ...base, kind: 'color', n: null, color: null, chosen: null, pay: !!payFor, left: left == null ? null : Number(left),
+    return { ...base, kind: 'color', n: null, color: null, chosen: null, pay: !!payFor, left: left == null ? null : Number(left), toPick,
       head, sub, firsts: [], seconds: own.map(o => ({ o, b: neutral(o) ? 'neutral' : o.target.res })), others: own.map(o => (neutral(o) ? 'neutral' : o.target.res)), rest: pend.options.filter(o => !o.target && !neutral(o)) };
   }
   const res = state.resources, pairs = [], rest = [];

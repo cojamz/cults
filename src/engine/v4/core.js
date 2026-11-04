@@ -1651,7 +1651,7 @@ function eachMemberOf(state, p, fn, keys) {
     for (const def of effectiveDefs(card, state)) {
       if (keys && !keys.some(k => def[k] !== undefined)) continue;
       const before = traceSnapshot(state);
-      accounted(state, null, () => { underCause({ kind: 'member', pid: p.id, uid, def: card.def }, () => tallied(state, p, uid, () => fn(wrap(state, card), def))); traceChanges(state, before, p, def); });
+      accounted(state, null, () => { underCause({ kind: 'member', pid: p.id, uid, def: card.def }, () => tallied(state, p, uid, () => fn(wrap(state, card), def))); traceChanges(state, before, p, def); }, p.id, def.name);
     }
   }
 }
@@ -2294,8 +2294,8 @@ function note(state, p, member, text, res = null) {
 // followers or members that no line of its own said (and no member hook inside it said) is logged under what caused it
 // ("Tide: P2 +2 blue."), and cards new in the shop are named. New cards log themselves this way.
 const frames = [];
-function accounted(state, cause, fn, actor = null) {
-  const f = { cause, actor, n: logCount(state), shop: [...state.shop], players: state.players.map(o => ({ res: { ...o.res }, bonus: o.bonus, members: [...o.members] })), inner: state.players.map(() => ({ res: {}, bonus: 0 })), innerLines: [] };
+function accounted(state, cause, fn, actor = null, label = null) {
+  const f = { cause, actor, label, n: logCount(state), shop: [...state.shop], players: state.players.map(o => ({ res: { ...o.res }, bonus: o.bonus, members: [...o.members] })), inner: state.players.map(() => ({ res: {}, bonus: 0 })), innerLines: [] };
   frames.push(f);
   let ok = false;
   try { const out = fn(); ok = true; return out; } finally {
@@ -2306,6 +2306,27 @@ function accounted(state, cause, fn, actor = null) {
 const freshSince = (state, f) => logSince(state, f.n);
 function settle(state, f) {
   const parent = frames[frames.length - 1];
+  // the resource ledger: what changed in this frame and no frame inside it, credited to this frame's cause (a member's
+  // own frame logs under no cause but credits the member; a recruit or a buy reads its name off its own log line)
+  let rlabel = f.label || f.cause;
+  if (!rlabel) {
+    for (const l of freshSince(state, f)) {
+      const m = /recruited (.+?) \(/.exec(l);
+      if (m) { rlabel = `Recruited ${m[1]}`; break; }
+      if (/ bought \d+ followers?/.test(l)) { rlabel = 'Bought followers'; break; }
+      if (/ drafts /.test(l)) { rlabel = 'Starting pick'; break; }
+      const cloak = / takes the (.+? Cloak)/.exec(l);
+      if (cloak) { rlabel = cloak[1]; break; }
+    }
+  }
+  state.players.forEach((o, i) => {
+    const b = f.players[i], inn = f.inner[i];
+    if (!b) return;
+    for (const r of Object.keys({ ...b.res, ...o.res })) {
+      const d = (o.res[r] || 0) - (b.res[r] || 0) - (inn.res[r] || 0);
+      if (d) rCredit(state, o, r, rlabel && f.actor != null && f.actor !== o.id && state.players[f.actor] ? `${state.players[f.actor].name}'s ${rlabel}` : rlabel, d);
+    }
+  });
   if (f.cause !== null) {
     let own = freshSince(state, f);
     for (const l of f.innerLines) { const i = own.indexOf(l); if (i >= 0) own = [...own.slice(0, i), ...own.slice(i + 1)]; }
@@ -2352,6 +2373,20 @@ function settle(state, f) {
     inn.bonus += o.bonus - b.bonus;
   });
   parent.innerLines.push(...freshSince(state, f));
+}
+// ---------- the resource ledger: where each resource held this round came from (Cory, Nov 4: "If you mouse over a
+// resource it should show the sources of where that resource came from. Kind of like an accounting") ----------
+// state.rledger = { round, rows: { pid: { r: { label: n } } } }: every change to a player's resources this round,
+// credited once to its innermost cause (a space, a member, a buy); spends are negative. A new round starts a fresh
+// page: what was held before it reads as carried over (held minus this round's rows).
+function rCredit(state, o, r, label, d) {
+  if (!d) return;
+  if (!state.rledger || state.rledger.round !== state.round) state.rledger = { round: state.round, rows: {} };
+  const row = (state.rledger.rows[o.id] = state.rledger.rows[o.id] || {});
+  const col = (row[r] = row[r] || {});
+  const key = label || 'other';
+  col[key] = (col[key] || 0) + d;
+  if (!col[key]) delete col[key];
 }
 /** What a task's changes are logged under: the space it resolves, or the card that asked the question. */
 function causeOf(state, task) {

@@ -4,6 +4,7 @@
 // row (your colors, or your members), then the second (the rivals' faces, the color you get, how many, their members).
 // The second row is there from the start, quiet, so the card never changes shape; it lights once a first is picked. The
 // picked one stays pressed, and a click on another switches it. Every answer is the engine's own option id.
+import SplitPicker, { splitRunning } from './SplitPicker.jsx';
 import { useEffect, useRef, useState } from 'react';
 import { cardDef, quadrant } from '../../engine/v4/index.js';
 import { costParts, playerColor, seatEmoji } from '../format.js';
@@ -38,7 +39,13 @@ const sphereOf = (state, d) => { if (!onTable(state, d)) return 'colorless'; try
  * onFirst(a | null, el): lift a first (null puts it down); onAnswer(id, el, b): the engine's option. place: where
  * GameScreen puts the card beside the space ({ left, top, up }), as for any plain question.
  */
-export default function GiftCard({ state, gift: g, onFirst, onAnswer, busy, place = null, turnOf = null, hover = null, onBack = null }) {
+export default function GiftCard(props) {
+  const { state, gift: g } = props;
+  // several coins in colors you choose (Harvest): picked whole, like a payment
+  if (g.kind === 'color' && !g.pay && (g.toPick > 1 || splitRunning(state, g))) return <SplitPicker state={state} g={g} onAnswer={props.onAnswer} busy={props.busy} place={props.place} turnOf={props.turnOf} onBack={props.onBack} />;
+  return <GiftCardBody {...props} />;
+}
+function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, turnOf = null, hover = null, onBack = null }) {
   const pend = state.pending;
   const me = state.players[g.actor];
   const box = useRef(null);

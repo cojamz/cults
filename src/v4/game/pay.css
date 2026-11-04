@@ -109,3 +109,7 @@
 .pay-card .ps-coin{box-shadow:0 0 0 1px rgba(43,32,24,.24)}
 .pay-card .ps-socket{box-shadow:none}
 .ps-add[aria-disabled]{cursor:default}
+
+/* the split card (SplitPicker.jsx): a color you hold none of shows as a faint coin, so every stack says its color */
+.split-card .ps-coin.split-ghost{opacity:.28}
+.split-card .pay-stack:has(.ps-add:hover:not(:disabled)) .ps-coin.split-ghost{opacity:.6}
