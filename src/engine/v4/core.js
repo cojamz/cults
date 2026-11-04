@@ -1103,8 +1103,9 @@ export function scoringOf(state, qid) {
     };
     // Green ties go to the most green held, White is fewest followers (Cory, Nov 3: "use your judgement", after the
     // balance run found Green shared 80% of rounds and White staying with one player). rules.contestFix tries others in sims.
-    const fix = { white: 'followers', ...(state.rules?.contestFix || {}) }; // Green ties split like every contest (Cory, Nov 3: "ties are split… like they already were…")
-    // rules.contestFix.red 'cards' (bot test, Nov 3, Cory: "maybe most red members?"): most red member cards, one each
+    const fix = { white: 'followers', red: 'cards', ...(state.rules?.contestFix || {}) }; // Green ties split like every contest (Cory, Nov 3: "ties are split… like they already were…")
+    // Red: most red member cards, one each (Cory, Nov 3: "we should avoid a simply color held. maybe most red members?";
+    // cards, not member weight, so one card that counts as 4 can't lock it). contestFix.red 'held' tries most red held.
     if (fix.red === 'cards') by.red = { label: 'Most red members', counts: 'your red member cards when the round ends (each card counts 1)',
       score: (ctx, p) => countMembersOfColor(state, p, 'red', { cards: true }) };
     const greenScore = by.echo.score, onGreen = p => greenScore(null, p);
