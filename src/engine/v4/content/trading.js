@@ -20,6 +20,7 @@ import { add3, old3, handlers3 } from './replace3.js';
 import { add6, old6, handlers6 } from './replace6.js';
 import { add9, old9 } from './replace9.js';
 import { swap11, handlers11, add11, old11 } from './replace11.js';
+import { swap14, handlers14 } from './replace14.js';
 import { see, endsAhead, resAt } from './botsee.js';
 import { add10, old10, handlers10 } from './replace10.js';
 import { add8, old8 } from './replace8.js';
@@ -132,6 +133,26 @@ function yardSale(ctx, p, uid) {
   gotRidOf(ctx, p);
 }
 
+// Pawn Shop (REPLACE14, Members E lane, Nov 4; quality/pitches/E-exchange.md), in Exchange's place: one whole color
+// into followers, one for one, without spending the turn's recruit; then the white. Brokers pays as on Exchange.
+const pawnBest = (ctx, p) => Math.max(0, ...ctx.state.resources.map(r => p.res[r] || 0));
+const PAWN_SHOP = {
+  key: 'pawnshop', copyDoesIt: true, ring: 1, name: 'Pawn Shop', text: 'Turn all of one color you hold into followers, one for one. +1 white.',
+  estimate: (ctx, p) => 1 + pawnBest(ctx, p) * (fv(ctx) - 1) + (pawnBest(ctx, p) ? 0.5 : 0),
+  resolve(ctx, p) {
+    const held = ctx.state.resources.filter(r => p.res[r] > 0);
+    if (!held.length) { ctx.log(`${p.name}'s Pawn Shop: nothing to turn in.`); ctx.gain(p, W, 1, { fromAction: true }); return; }
+    const v = fv(ctx);
+    const opts = held.map(r => ({
+      id: `color:${r}`, label: `All ${p.res[r]} ${r} → ${p.res[r]} follower${p.res[r] === 1 ? '' : 's'}`, kind: 'color', value: r, spend: { [r]: p.res[r] },
+      // bots cash their biggest pile, white last (it scores on Cash In); late in the game every pile is worth cashing
+      hint: p.res[r] * (v - 1) + 0.01 * p.res[r] - (r === W && ctx.state.round < 3 ? 0.3 * p.res[r] : 0),
+    }));
+    opts.push({ id: 'done', label: 'Turn nothing in', kind: 'done', value: 'done', hint: 0.1 });
+    ctx.choose(p, 'Pawn Shop: turn all of which color into followers?', opts, 'trading.pawnShop', {});
+  },
+};
+
 const trading = {
   id: 'trading',
   name: 'White',
@@ -161,7 +182,7 @@ const trading = {
         p.perSpend = true;
       },
     },
-    {
+    swap14({
       key: 'exchange', copyDoesIt: true, ring: 1, name: 'Exchange', text: '+1 white. Then turn up to 1 resource (2 in round II, 3 in round III) into 2 followers each.', // Cory, 2026-10-23: "up to", you can stop early
       byRound: { lead: '+1 white. Then:', lines: ['Turn up to 1 resource into 2 followers.', 'Turn up to 2 resources into 2 followers each.', 'Turn up to 3 resources into 2 followers each.'] }, // white first (Cory, Nov 1 text audit)
       estimate: (ctx, p) => 1 + Math.min(ctx.state.round, totalRes(p) + 1) * (2 * fv(ctx) - 1),
@@ -169,7 +190,7 @@ const trading = {
         ctx.gain(p, W, 1, { fromAction: true });
         exchangeStep(ctx, p, { left: ctx.state.round, done: 0 });
       },
-    },
+    }, PAWN_SHOP),
     {
       key: 'farewell', copyDoesIt: true, ring: 2, name: 'Farewell', text: 'Cast out one of your members to the bottom of the pile, gain followers equal to its cost. +1 white.', // "cast out": Cory, 2026-10-24
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, fv(ctx)))),
@@ -254,6 +275,20 @@ const trading = {
       const t = raidTargets(ctx, p).find(o => o.id === id);
       if (t && (p.res[W] || 0) >= 2) raidersSteal(ctx, p, t);
     },
+    ...handlers14({
+      pawnShop(ctx, p, value) {
+        if (value !== 'done') {
+          const k = p.res[value] || 0;
+          if (k > 0) {
+            p.res[value] = 0;
+            actionFollowers(ctx, p, k);
+            ctx.log(`${p.name}'s Pawn Shop: ${k} ${value} became ${k} follower${k === 1 ? '' : 's'}.`);
+            turned(ctx, p);
+          }
+        } else ctx.log(`${p.name}'s Pawn Shop: turned nothing in.`);
+        ctx.gain(p, W, 1, { fromAction: true });
+      },
+    }),
     exchange(ctx, p, value, data) {
       if (value === 'done') return;
       p.res[value] -= 1;

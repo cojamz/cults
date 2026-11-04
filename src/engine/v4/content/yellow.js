@@ -9,6 +9,7 @@ import { add2, old2 } from './replace2.js';
 import { add5, old5 } from './replace5.js';
 import { add9, old9, handlers9, ON9 } from './replace9.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
+import { swap14, handlers14 } from './replace14.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
 const Y = 'yellow';
@@ -110,6 +111,24 @@ function askToll(ctx, host, o, left, key) {
   })), 'yellow.toll', { host: host.id, left, key }, { together: key });
 }
 
+// Grand Tour (REPLACE14, Members E lane, Nov 4; quality/pitches/E-meltingpot.md), in Melting Pot's place: read a
+// rival's cult instead of your own, so a narrow player borrows a wide rival's spread. Colors on this table only.
+const memberRes = (ctx, p) => memberColors(ctx, p).map(q => ctx.state.resources[ctx.state.quadrants.indexOf(q)]);
+const GRAND_TOUR = {
+  key: 'grandtour', ring: 2, name: 'Grand Tour', text: '+2 yellow. Choose a rival: gain 1 of each color among their members.',
+  estimate: (ctx, p) => 2 + Math.max(0, ...ctx.rivals(p).map(o => memberRes(ctx, o).length)),
+  resolve(ctx, p) {
+    ctx.gain(p, Y, 2, { fromAction: true });
+    const opts = ctx.rivals(p).map(o => ({ o, cs: memberRes(ctx, o) })).filter(x => x.cs.length);
+    if (!opts.length) { ctx.log(`${p.name}'s Grand Tour: no rival has members yet, so only the yellow.`); return; }
+    ctx.choose(p, 'Grand Tour: gain 1 of each color among which rival\'s members?', opts.map(({ o, cs }) => ({
+      id: `player:${o.id}`, label: `${o.name}: +1 ${cs.join(', +1 ')}`, kind: 'player', value: o.id,
+      // bots take the most colors, a little more for colors they hold none of (sets, new members)
+      hint: cs.length + 0.3 * cs.filter(c => !(p.res[c] > 0)).length,
+    })), 'yellow.grandTour', {});
+  },
+};
+
 export default {
   id: 'yellow',
   name: 'Yellow',
@@ -149,7 +168,7 @@ export default {
     // Housewarming in Big New Blood's place, live since Nov 4 (Claude, under Cory's go-with-your-gut, overnight quality
     // loop): paper 18 vs 14, A/B +0.42, Lab 120 games a side. Big New Blood's text: design/archive/spaces/retired-2026-11-04.md
     HOUSEWARMING,
-    {
+    swap14({
       // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 4 new words only (Claude, under Cory's
       // go-with-your-gut: "worded strangely"), the same effect
       key: 'meltingpot', ring: 2, name: 'Melting Pot', text: '+2 yellow. Count the different colors of your members, and gain that many in colors you choose.',
@@ -160,7 +179,7 @@ export default {
         if (k) pickColors(ctx, p, k, 'Melting Pot', true);
         else ctx.log(`${p.name}'s Melting Pot: no members yet, so only the yellow.`);
       },
-    },
+    }, GRAND_TOUR),
     {
       // Cory, 2026-10-30: "let's stick with launderers effect round III", "+3 or +4 yellow". Name: Claude's fill-in.
       // Nov 2: "oh no i like makeover as is" (the per-contest follower version was live briefly in v0.99.505)
@@ -171,6 +190,15 @@ export default {
   ],
 
   handlers: {
+    ...handlers14({
+      grandTour(ctx, p, oid) {
+        const o = ctx.player(oid);
+        if (!o) return;
+        const cs = memberRes(ctx, o);
+        for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
+        ctx.log(`${p.name}'s Grand Tour: ${o.name}'s members: +1 ${cs.join(', +1 ')}.`);
+      },
+    }),
     housewarming(ctx, p, uid) {
       const c = ctx.card(uid);
       if (!c || !ctx.state.shop.includes(uid)) return;
