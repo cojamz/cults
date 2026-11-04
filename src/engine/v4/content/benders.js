@@ -268,7 +268,7 @@ const members = [
   // REPLACE15 bot test (Cory, Nov 4: "when you win a contest, get x y z", then "the member should give resources for
   // winning contests", "though cheerleaders is kinda cool too"): added, nothing retired (Cory: Spoilsport and Dabblers stay). A shared contest
   // counts as a win, as for Cheerleader and Sore Loser. Each pays the moment its contest is scored. Prices are guesses.
-  ...add15(m('cheerleaders', 'Cheerleaders', null, 0, 5, 'Whenever you win a contest, +2 followers.', { f: 2, // worth 2 (Claude, under Cory's go-with-your-gut: owners won 19% at worth 1, cw2-cheerleaders)
+  ...add15(m('cheerleaders', 'Cheerleaders', null, 0, 5, 'Whenever you win a contest, +2 followers.', { f: 3, // worth 3, counts as 3 members (Cory, Nov 4 3:46pm: "maybe we can bump cheerleaders to 3 members"; worth 2 tested fair, cw3-cheerleaders)
     onContestWin(ctx, owner) { owner.bonus += 2; ctx.log(`${owner.name}'s Cheerleaders: +2 followers.`); },
   })),
   ...add15(m('victors', 'Victors', null, 0, 4, 'Whenever you win a contest, +2 of its color.', {
