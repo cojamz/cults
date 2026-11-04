@@ -72,8 +72,12 @@ const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const blind = (t, name) => t.replace(new RegExp(esc(name), 'g'), 'the slot card');
 mkdirSync(out, { recursive: true });
 const pairs = [];
-for (const s of seeds) {
-  const dir = `pair-${s}`, flip = rand() < 0.5, pd = join(out, dir); mkdirSync(pd, { recursive: true });
+// Balanced slots: the new card sits in A in half the pairs (Guest of Honor, Nov 4: both pairs put it in B by chance,
+// and both judges picked B both times). Shuffle a half-and-half list instead of flipping a coin per pair.
+const flips = seeds.map((_, i) => i % 2 === 0); if (rand() < 0.5) flips.forEach((f, i) => flips[i] = !f);
+for (let i = flips.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [flips[i], flips[j]] = [flips[j], flips[i]]; }
+for (const [si, s] of seeds.entries()) {
+  const dir = `pair-${s}`, flip = flips[si], pd = join(out, dir); mkdirSync(pd, { recursive: true });
   const make = (file, src, name, text) => {
     const full = readFileSync(join(src, file), 'utf8');
     return `# Seed ${s.replace('x', ' (paired with a different game, seed ')}${s.includes('x') ? ')' : ''}: one Hard-bot game from the seat that held the slot card\n\nThe slot card's printed text: "${text}"\n\n` + blind(trim(full, name), name);
