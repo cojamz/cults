@@ -54,3 +54,23 @@ def render(rows,pal,scale,bg=None):
         for dy in range(scale):
           for dx in range(scale): im.putpixel((x*scale+dx,y*scale+dy),c)
   return im
+
+def tri(c,a,b,d):
+  (ax,ay),(bx,by),(cx,cy)=a,b,d
+  def f(x,y):
+    d1=(x-bx)*(ay-by)-(ax-bx)*(y-by); d2=(x-cx)*(by-cy)-(bx-cx)*(y-cy); d3=(x-ax)*(cy-ay)-(cx-ax)*(y-ay)
+    return not ((d1<0 or d2<0 or d3<0) and (d1>0 or d2>0 or d3>0))
+  return c.mask(f)
+
+def poly(c,pts):
+  # point-in-polygon fill
+  def f(x,y):
+    ins=False; n=len(pts)
+    for i in range(n):
+      (x1,y1),(x2,y2)=pts[i],pts[(i+1)%n]
+      if (y1>y)!=(y2>y) and x < (x2-x1)*(y-y1)/(y2-y1)+x1: ins=not ins
+    return ins
+  return c.mask(f)
+def line(c,x0,y0,x1,y1):
+  n=max(abs(x1-x0),abs(y1-y0)) or 1
+  return {(round(x0+(x1-x0)*i/n),round(y0+(y1-y0)*i/n)) for i in range(n+1)}
