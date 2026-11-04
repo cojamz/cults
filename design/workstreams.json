@@ -1,12 +1,47 @@
 [
- ["Next release: Harvest picker, resource hover, emoji members option, slower Relaxed", "No", "~10:20pm"],
- ["Wheel freeze fix (edge words drawn once)", "No", "~11:00pm"],
- ["Animations: step-by-step recruits, one line per rival move", "No", "~11:30pm"],
- ["Improvements: Hostesses rework (your pick 1)", "No", "~11:00pm"],
- ["Balance: Red and White Cloak tests", "No", "~12:00am"],
- ["Sounds: Surfer and Pizza from real recordings", "No", "~10:45pm"],
- ["Setup modes audit", "No", "~11:00pm"],
- ["Melting Pot, Dilute, Mob", "Yes", "options sent 8:40pm, waiting on your pick"],
- ["Action changes", "Yes", "list sent, waiting on your picks"],
- ["Test gates", "No", "~12:30am"]
+ [
+  "Next release: Harvest picker, resource hover, emoji members option, slower Relaxed, minion sounds",
+  "No",
+  "shipping now, live ~10:20pm"
+ ],
+ [
+  "Hostesses rework",
+  "No",
+  "~10:25pm"
+ ],
+ [
+  "Rival moves, one line each",
+  "No",
+  "~10:45pm"
+ ],
+ [
+  "Wheel freeze fix",
+  "No",
+  "~11:00pm"
+ ],
+ [
+  "Setup modes audit",
+  "No",
+  "~11:00pm"
+ ],
+ [
+  "Melting Pot, Dilute, Mob, Creditor, Fan Club",
+  "No (our call, per you)",
+  "~11:30pm"
+ ],
+ [
+  "Red and White Cloak numbers",
+  "No",
+  "12:30am (full results 3:00am)"
+ ],
+ [
+  "Step-by-step recruits",
+  "No",
+  "12:30am"
+ ],
+ [
+  "Test gates",
+  "No",
+  "~12:30am"
+ ]
 ]
