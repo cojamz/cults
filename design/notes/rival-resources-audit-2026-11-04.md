@@ -51,3 +51,6 @@ Bot-test cards that won't go live as written (not rewording; dropping them from 
 
 ## Related, not in his rule: game-end scoring on your own pile
 The same logic applies here: buying followers beats saving to the end. **Misers** ("Game End: +1 follower per 2 white you hold."), **Harmonist** ("Game End: +1 follower per full set you hold."), **Spice Route** ("Game End: +1 follower per color you hold 3 or more of."). Flagged only; nothing changed.
+
+## Bot note (engineering, not a design call)
+In one Hard bot game, Creditors took 11 followers at game end because bots ended holding 20 and 10 silver (/mnt/project-files/game-critique/). People would have spent that on followers. So bot results overrate any card that scores on held resources. To do: make bots spend their leftovers on followers in round III before trusting those cards' numbers.
