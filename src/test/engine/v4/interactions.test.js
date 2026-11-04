@@ -430,13 +430,13 @@ describe('member colors across spheres', () => {
     expect(R(s, 0)).toMatchObject({ gold: 2, yellow: 2 });
   });
   it('Green members pay their colored part in green', () => {
-    let s = scene({ quads: ['gold', 'red', 'yellow', 'echo'], res: [{ green: 1, gold: 1 }], shop: ['echo.evergreen', ...SHOP.slice(1)] });
-    restore(); restore = pinCosts({ ...PINNED, 'echo.evergreen': [1, 1] });
+    let s = scene({ quads: ['gold', 'red', 'yellow', 'echo'], res: [{ green: 1, gold: 1 }], shop: ['echo.agents', ...SHOP.slice(1)] });
+    restore(); restore = pinCosts({ ...PINNED, 'echo.agents': [1, 1] });
     s = take(s, 'gold.rush');
-    s = move(s, `card:${uidOf(s, 'echo.evergreen', 'shop')}`);
-    expect(defs(s, 0)).toEqual(['echo.evergreen']);
-    // Paid its 1 green, then Busker's recruit income pays +2 green.
-    expect(R(s, 0).green).toBe(2);
+    s = move(s, `card:${uidOf(s, 'echo.agents', 'shop')}`);
+    expect(defs(s, 0)).toEqual(['echo.agents']);
+    // Paid its 1 green (Busker, used here before, retired Nov 4).
+    expect(R(s, 0).green).toBe(0);
   });
 });
 

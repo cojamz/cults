@@ -622,7 +622,7 @@ const echoQ = {
     // copies (Agents blocks it). The card is turned until the next round starts.
     // Live Nov 4 (director, under Cory's "you dont need my permission"): 4 green + 3 any. Trials: at 3 + 2 owners won 39%
     // (Busker 31%); at 4 + 3 taken 84% (Busker 85%), owners won 35% (Busker 32%).
-    m('songrequest', 'Song Request', 3, 3, 'On Use, once per round: copy an action a rival has a minion on.', {
+    m('songrequest', 'Song Request', 3, 3, 'On Use, once per round: copy an action a rival has a minion on.', { round: 1, // a round I member as Busker was (bot-tested in round II; Nov 4)
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
