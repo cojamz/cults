@@ -556,7 +556,9 @@ const market = {
     // Actions lane (Nov 4; /mnt/project-files/quality/pitches/actions-snobs.md), REPLACE11=snob2 in Snobs' place: the
     // velvet rope. The token is state.reserved; core keeps every rival recruit (buy, swap, free) off the card until the
     // round ends or the card leaves the shop.
-    ...add11(m('snob2', 'Snobs', 3, 2, 'Round Start: put a token on a shop member. Until the round ends, only you may recruit it.', { f: 2, round: 1,
+    // On Recruit too (Nov 4, A/B: bought in round III after its Round Start, it never fired)
+    ...add11(m('snob2', 'Snobs', 3, 2, 'On Recruit and Round Start: put a token on a shop member. Until the round ends, only you may recruit it.', { f: 2, round: 1, now: true,
+      onRecruited(ctx, owner) { this.onRoundStart(ctx, owner); },
       onRoundStart(ctx, owner) {
         const shop = ctx.shopCards();
         if (!shop.length) return;

@@ -375,7 +375,7 @@ describe('REPLACE11: Snobs, the reserved token', () => {
   const gatherSlot = s => `${s.quadrants.indexOf('red')}-${quadrant('red').actions.findIndex(a => a.name === 'Gather')}`;
   it('replaces the Game End Snobs', async () => {
     const { defById } = await import('../../../engine/v4/content/index.js');
-    expect(defById('market.snob2').text).toBe('Round Start: put a token on a shop member. Until the round ends, only you may recruit it.');
+    expect(defById('market.snob2').text).toBe('On Recruit and Round Start: put a token on a shop member. Until the round ends, only you may recruit it.');
     expect(defById('market.snob').retired).toBe(true);
   });
   // "Round Start: put a token on a shop member."
@@ -401,6 +401,18 @@ describe('REPLACE11: Snobs, the reserved token', () => {
     const mobId = st => `card:${st.reserved.uid}`;
     expect(blocked.pending.options.map(o => o.id)).not.toContain(mobId(blocked));
     expect(open.pending.options.map(o => o.id)).toContain(mobId(open));
+  });
+  // "On Recruit": a round III buy still reserves a card
+  it('asks for a token when recruited, too', () => {
+    let s = table(['red', 'market'], { n: 2, round: 3, res: [{ blue: 30, red: 30 }], shop: ['market.snob2', 'red.mob'] });
+    const snob = s.shop.find(u => s.cards[u].def === 'market.snob2');
+    s = answer(s, `slot:${gatherSlot(s)}`);
+    while (s.pending && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
+    s = answer(s, `card:${snob}`);
+    while (s.pending && !s.pending.prompt?.startsWith('Snobs:') && s.pending.kind !== 'place') s = answer(s, s.pending.options[0].id);
+    expect(s.pending.prompt).toBe('Snobs: reserve which shop member this round?');
+    s = answer(s, s.pending.options[0].id);
+    expect(s.reserved.pid).toBe(0);
   });
   it('the token comes off when the next round starts', async () => {
     const { resume } = await import('../../../engine/v4/core.js');
