@@ -1157,7 +1157,7 @@ export function scoringOf(state, qid) {
       score: (ctx, p) => p.members.length };
     if (fix.market === 'blue') by.market = { label: 'Most blue members', counts: 'your blue member cards when the round ends (each card counts 1)',
       score: (ctx, p) => countMembersOfColor(state, p, 'market', { cards: true }) };
-    if (fix.market === 'recruits') by.market = { label: 'Most recruits this round', counts: 'the members you recruited this round (each card counts 1; keep them apart until the round ends)',
+    if (fix.market === 'recruits') by.market = { label: 'Most recruits this round', counts: 'your sideways members (each card counts 1): a member you recruit comes in sideways and turns upright when the round ends',
       score: (ctx, p) => (p.recruitsIn?.round === state.round ? p.recruitsIn.n : 0) };
     if (fix.market === 'held') by.market = { label: 'Most blue', counts: 'the blue you hold when the round ends', score: (ctx, p) => p.res.blue || 0 };
     // Green (Actions lane, Nov 4, quality loop; /mnt/project-files/quality/pitches/actions-contest-green.md): contestFix.green
