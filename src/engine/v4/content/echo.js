@@ -780,7 +780,7 @@ const echoQ = {
       },
       botActivate: (ctx, p) => ownRecruits(ctx, p).some(c => recruitDef(c).key !== 'bootlegger'),
     })),
-    m('chronicler', 'Chronicler', 1, 3, 'Game End: +1 follower per green member you have.', { ...old10,
+    m('chronicler', 'Chronicler', 1, 3, 'Game End: +1 follower per green member you have.', { ...old10('bootlegger'),
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'echo'),
     }),
   ],

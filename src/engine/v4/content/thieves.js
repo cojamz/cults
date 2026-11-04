@@ -7,7 +7,7 @@ import { registerQuadrant, defById } from './index.js';
 import { add1, old1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
 import { add5, old5, handlers5 } from './replace5.js';
-import { add10, old10, REPLACE10 } from './replace10.js';
+import { add10, old10, on10 } from './replace10.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -228,7 +228,7 @@ const thieves = {
     // REPLACE10 bot test (Nov 4, quality loop lane D): Stash's slot (Cory cut Stash Oct 31; it stays live until a pick).
     // Each rival with a minion on any Magenta space (joined spots count) loses 2 resources to you through the shared steal,
     // their biggest piles first (Lie Low and Bodyguards block it; Desperado adds). Copied by Green, the copier steals.
-    ...(REPLACE10 ? [{
+    ...(on10('insidejob') ? [{
       key: 'insidejob', ring: 1, name: 'Inside Job', copyDoesIt: true,
       text: 'Steal 2 resources from each rival with a minion on a Magenta space. +1 magenta.',
       estimate: (ctx, p) => insideTargets(ctx, p).reduce((a, o) => a + Math.min(ctx.stealCount(p, 2), stealable(ctx, p, o)), 0) * 0.9,
@@ -424,7 +424,7 @@ const thieves = {
     m('accomplice', 'Accomplice', 1, 1, 'On Recruit: steal 3 resources.', {
       onRecruited(ctx, owner) { startSteal(ctx, owner, 'Accomplice', 3 + stickyMore(ctx, owner), { fromAction: false }); },
     }),
-    m('grifter', 'Grifter', 2, 5, /* 6 (Cory, Oct 30) */ 'On Recruit: steal 1 resource per 2 members you have.', { ...old10,
+    m('grifter', 'Grifter', 2, 5, /* 6 (Cory, Oct 30) */ 'On Recruit: steal 1 resource per 2 members you have.', { ...old10('racketeer'),
       // first sentence only (Cory, 2026-10-18): the picks split freely among rivals, like any steal
       onRecruited(ctx, owner) {
         const n = Math.floor(ctx.memberCount(owner) / 2);
