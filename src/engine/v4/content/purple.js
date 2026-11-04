@@ -689,7 +689,10 @@ export default {
         const first = o.members.some(u => defById(s.cards[u].def)?.pickFirst) ? 1
           : Math.min(...s.players.map(x => x.bonus)) === o.bonus ? 0.6 : 0.15;
         const placed = Object.keys(s.slots || {}).length > 0;
-        return 5 * first * ([1, 2, 3].filter(r => r > info.round).length + (placed ? 0 : 1));
+        // this round: nobody has placed and you're first in its order, so it fires for sure (e-firstbirds-ab4, 1130:
+        // the bot first in round II swapped it away before placing)
+        const now = placed ? 0 : (s.order?.[0] === o.id ? 1 : first);
+        return 5 * (first * [1, 2, 3].filter(r => r > info.round).length + now);
       }),
     })), // (Cory, Oct 29, balance run: +1 follower)
     // REPLACE5 bot test (Nov 3, replacement batch 5): Bouncers' place. 6 purple + 3 any as a player sees it. Every +1
