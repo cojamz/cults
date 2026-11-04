@@ -27,19 +27,25 @@ if (args[0] === 'score') {
   const avg = rows => rows.length ? +(P.map((_, i) => median(rows.map(r => r[i]))).reduce((a, b) => a + b, 0) / P.length).toFixed(2) : null;
   const n = avg(side.new), o = avg(side.old), gap = n != null && o != null ? +(n - o).toFixed(2) : null;
   const clear = clearNew.length ? median(clearNew) : null;
+  const pref = { new: 0, old: 0, same: 0 };
+  for (const j of judges) for (const [seed, v] of Object.entries(j.prefer || {})) {
+    const pair = key.pairs.find(p => p.seed === seed), pick = String(v).trim().match(/^(A|B|same)\b/i)?.[1];
+    if (pair && pick) pref[/same/i.test(pick) ? 'same' : pair[pick.toUpperCase()]]++;
+  }
   const pass = gap != null && gap >= 0.3 && clear > 0;
-  const lines = [`# Blind A/B play: ${key.new.name} against ${key.old.name}`, '', `${judges.length} judges, ${key.pairs.length} seeds. New card ${n} vs old ${o} (average of the six medians, 0 to 2): ${gap >= 0 ? '+' : ''}${gap}. Clear outcome for the new card ${clear}.`, '', `**${pass ? 'PASS' : 'no'}**: ship needs +0.3 or more and no 0 on Clear outcome.`, '',
+  const lines = [`# Blind A/B play: ${key.new.name} against ${key.old.name}`, '', `${judges.length} judges, ${key.pairs.length} seeds. New card ${n} vs old ${o} (average of the six medians, 0 to 2): ${gap >= 0 ? '+' : ''}${gap}. Clear outcome for the new card ${clear}.`, '', `**${pass ? 'PASS' : 'no'}**: ship needs +0.3 or more and no 0 on Clear outcome.`, '', `Judges preferred the new card ${pref.new} times, the old ${pref.old}, same ${pref.same} (a tiebreak note; the gate is the gap).`, '',
     ...P.map((k, i) => `- ${k}: new ${median(side.new.map(r => r[i]))}, old ${median(side.old.map(r => r[i]))}`)];
   writeFileSync(join(dir, 'result.md'), lines.join('\n') + '\n');
-  writeFileSync(join(dir, 'result.json'), JSON.stringify({ new: key.new.name, old: key.old.name, newAvg: n, oldAvg: o, gap, clearNew: clear, pass }, null, 1));
+  writeFileSync(join(dir, 'result.json'), JSON.stringify({ new: key.new.name, old: key.old.name, newAvg: n, oldAvg: o, gap, clearNew: clear, prefer: pref, pass }, null, 1));
   console.log(lines.join('\n'));
   process.exit(0);
 }
 const oi = args.indexOf('--out'), out = oi >= 0 ? args.splice(oi, 2)[1] : null;
 const [newDir, baseDir, newName, newText, oldName, oldText] = args;
 if (!out || !oldText) { console.error('usage: play-ab.mjs <newDir> <baseDir> "<new name>" "<new text>" "<old name>" "<old text>" --out <dir>'); process.exit(2); }
-const seedOf = f => (f.match(/^sheet-(\d+)-/) || [])[1];
-const sheets = d => Object.fromEntries(readdirSync(d).filter(f => /^sheet-\d+-.*\.md$/.test(f)).map(f => [seedOf(f), f]));
+// Lab sheets are sheet-<seed>-<seat>.md; sheets.mjs writes <card>-g<seed>-<seat>.md (and a .full.md, skipped).
+const seedOf = f => (f.match(/^sheet-(\d+)-/) || f.match(/-g(\d+)-[^.]+\.md$/) || [])[1];
+const sheets = d => Object.fromEntries(readdirSync(d).filter(f => f.endsWith('.md') && !f.endsWith('.full.md') && seedOf(f)).map(f => [seedOf(f), f]));
 const N = sheets(newDir), B = sheets(baseDir), seeds = Object.keys(N).filter(s => B[s]).sort();
 const rand = rng(seeds.reduce((a, s) => a * 31 + +s, 7));
 const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
