@@ -9,6 +9,7 @@ import { add2, old2 } from './replace2.js';
 import { add5, old5, handlers5 } from './replace5.js';
 import { add10, old10, on10 } from './replace10.js';
 import { on11 } from './replace11.js';
+import { swap13, handlers13 } from './replace13.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -227,6 +228,11 @@ function pickMember(ctx, p, list, prompt, handler, data = null) {
     id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${cost(c)})`, kind: 'member', value: c.uid, hint: memberHint(c),
   })), handler, data);
 }
+// Lane F (REPLACE13): Clean Out's piles (all of one color, up to 5) and Squeeze's targets (more members than you).
+function cleanPiles(ctx, p) {
+  return ctx.rivals(p).flatMap(owner => piles(ctx, p, owner).map(([color, held]) => ({ owner, color, n: Math.min(held, ctx.stealCount(p, Math.min(5, held))) })));
+}
+const squeezeTargets = (ctx, p) => ctx.rivals(p).filter(o => ctx.canSteal(p, o) && ctx.memberCount(o) > ctx.memberCount(p) && stealable(ctx, p, o) > 0);
 // ---------- the quadrant ----------
 const thieves = {
   id: 'thieves',
@@ -356,7 +362,7 @@ const thieves = {
         })), 'thieves.heistFollowers');
       },
     },
-    {
+    swap13({
       // Cory, 2026-10-28: the rival picks which of their members is at stake ("yes good idea"; wording Claude's)
       key: 'ransom', ring: 2, name: 'Shake Down', text: 'Choose a rival. They choose one of their members costing 5 or less, then pay you its cost or you steal it. +1 magenta.',
       estimate: (ctx, p) => {
@@ -375,6 +381,40 @@ const thieves = {
         }), 'thieves.ransomRival');
       },
     },
+    // Lane F (Nov 4, bot games only): three candidates for Shake Down's slot, no choice on a rival's part (turn flow)
+    {
+      key: 'cleanout', ring: 2, name: 'Clean Out', text: 'Steal all of one color from a rival, up to 5. +1 magenta.',
+      estimate: (ctx, p) => Math.max(0, ...cleanPiles(ctx, p).map(x => x.n)) * 1.33,
+      resolve(ctx, p) {
+        const list = cleanPiles(ctx, p);
+        if (!list.length) { ctx.log(`${p.name} found nothing to clean out.`); return; }
+        ctx.choose(p, 'Clean Out: steal all of which color, from whom? (up to 5)', list.map(({ owner, color, n }) => ({
+          id: `take:${owner.id}:${color}`, label: `${owner.name}'s ${color} (${n})`, kind: 'take', value: [owner.id, color], hint: n,
+        })), 'thieves.cleanOut');
+      },
+    },
+    {
+      key: 'mugging', ring: 2, name: 'Mugging', text: "Steal half of one rival's resources, rounded down. +1 magenta.",
+      estimate: (ctx, p) => Math.max(0, ...ctx.rivals(p).map(o => Math.min(stealable(ctx, p, o), ctx.stealCount(p, Math.floor(holding(o) / 2))))) * 1.33,
+      resolve(ctx, p) {
+        const list = ctx.rivals(p).filter(o => ctx.canSteal(p, o) && Math.floor(holding(o) / 2) > 0);
+        if (!list.length) { ctx.log(`${p.name} found no one worth mugging.`); return; }
+        ctx.choose(p, "Mugging: steal half of which rival's resources?", list.map(o => ({
+          id: `player:${o.id}`, kind: 'player', value: o.id, label: `${o.name} (${holding(o)} resources: steal ${Math.floor(holding(o) / 2)})`,
+          hint: Math.floor(holding(o) / 2),
+        })), 'thieves.mug13');
+      },
+    },
+    {
+      key: 'squeeze', ring: 2, name: 'Squeeze', text: 'Steal 2 resources from each rival with more members than you. +1 magenta.',
+      estimate: (ctx, p) => squeezeTargets(ctx, p).reduce((s, o) => s + Math.min(stealable(ctx, p, o), ctx.stealCount(p, 2)), 0) * 1.33,
+      resolve(ctx, p) {
+        const list = squeezeTargets(ctx, p);
+        if (!list.length) { ctx.log(`${p.name}'s Squeeze: no rival has more members.`); return; }
+        const each = ctx.stealCount(p, 2, { say: true });
+        startSteal(ctx, p, 'Squeeze', each * list.length, { only: list.map(o => o.id), each: list.map(o => o.id), cap: each });
+      },
+    }),
     {
       key: 'heist', ring: 3, name: 'Poach', text: 'Recruit a rival’s member you choose, for free. +1 magenta.', // "recruit", not "steal" (Cory, Oct 31); still a steal for Bodyguards, Lie Low and Fence
       estimate: (ctx, p) => { const l = takeable(ctx, p, ACT.has('poach8') ? 8 : Infinity); return l.length ? Math.max(...l.map(([, c]) => memberHint(c))) : 0; },
@@ -412,6 +452,24 @@ const thieves = {
       const n = ctx.steal(p, v, { followers: 3 });
       ctx.log(n ? `${p.name}'s Heist: stole ${n} follower${n > 1 ? 's' : ''} from ${v.name}.` : `${p.name}'s Heist: ${v.name} had no followers to steal.`);
     },
+    ...handlers13({
+      cleanOut(ctx, p, [vid, color]) {
+        const victim = ctx.player(vid);
+        if (!victim || !ctx.canSteal(p, victim)) return;
+        const held = victim.res[color] || 0;
+        if (held < 1) return;
+        const n = Math.min(held, ctx.stealCount(p, Math.min(5, held), { say: true }));
+        const got = commit(ctx, p, victim, { [color]: n });
+        ctx.log(`${p.name}'s Clean Out: stole ${got} ${color} from ${victim.name}.`);
+      },
+      mug13(ctx, p, vid) {
+        const victim = ctx.player(vid);
+        if (!victim || !ctx.canSteal(p, victim)) return;
+        const base = Math.floor(holding(victim) / 2);
+        if (base < 1) return;
+        startSteal(ctx, p, 'Mugging', ctx.stealCount(p, base, { say: true }), { only: [vid] });
+      },
+    }),
     halfPile(ctx, p, [vid, color]) {
       const victim = ctx.player(vid);
       if (!victim || !ctx.canSteal(p, victim)) return;
