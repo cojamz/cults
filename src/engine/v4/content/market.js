@@ -366,14 +366,14 @@ const market = {
       hawk(ctx, p, uid) {
         if (!ctx.state.shop.includes(uid)) return;
         const n = ctx.state.players.length;
-        ctx.log(`${p.name}'s Hawkers: offers ${ctx.card(uid).def.name}.`);
+        ctx.log(`${p.name}'s Hawker: offers ${ctx.card(uid).def.name}.`);
         hawkAsk(ctx, p, uid, Array.from({ length: n - 1 }, (_, k) => (p.id + 1 + k) % n));
       },
       hawkAnswer(ctx, o, value, data) {
         const owner = ctx.player(data.owner), plan = value === 'buy' && ctx.state.shop.includes(data.uid) ? hawkPlan(ctx, o, data.uid) : null;
         if (!plan) { hawkAsk(ctx, owner, data.uid, data.left); return; }
         for (const [c, k] of Object.entries(plan.extra)) { o.res[c] -= k; owner.res[c] = (owner.res[c] || 0) + k; }
-        ctx.log(`${owner.name}'s Hawkers: ${o.name} recruits ${ctx.card(data.uid).def.name} and pays ${payLabel(plan.extra)} to ${owner.name}.`);
+        ctx.log(`${owner.name}'s Hawker: ${o.name} recruits ${ctx.card(data.uid).def.name} and pays ${payLabel(plan.extra)} to ${owner.name}.`);
         ctx.recruit(o, data.uid, { free: false, spend: plan.spend });
       },
     }),
@@ -421,13 +421,13 @@ const market = {
     // seat order from the owner's left is offered it if they can pay: its cost goes to the bank as any recruit's, and 2
     // more (from the piles they hold most of) to the owner (the draft's reading of "paying its cost plus 2 to you"). The
     // rival's recruit is theirs (its On Recruit fires) and doesn't use their turn's recruit.
-    ...add4(m('hawkers', 'Hawkers', 4, 3, 'On Use, once per round: choose a shop member. Starting on your left, each rival may recruit it, paying its cost plus 2 to you. If none does, you recruit it for free.', {
+    ...add4(m('hawkers', 'Hawker', 4, 3, 'On Use, once per round: choose a shop member. Starting on your left, each rival may recruit it, paying its cost plus 2 to you. If none does, you recruit it for free.', {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
         const shop = ctx.shopCards();
-        if (!shop.length) { card.used = false; ctx.log(`${owner.name}'s Hawkers: the shop is empty.`); return; }
-        ctx.choose(owner, 'Hawkers: offer which shop member?', shop.map(c => ({
+        if (!shop.length) { card.used = false; ctx.log(`${owner.name}'s Hawker: the shop is empty.`); return; }
+        ctx.choose(owner, 'Hawker: offer which shop member?', shop.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: botWorth(c),
         })), `${Q}.hawk`);
       },
@@ -637,8 +637,8 @@ function completeStep(ctx, p, left) {
   }
 }
 
-// ---------- REPLACE4 bot test (Nov 3, replacement batch 4): Hawkers ----------
-/** What rival o pays for Hawkers' uid: { spend } (its price, the usual way, to the bank) and { extra } (2 more, from the
+// ---------- REPLACE4 bot test (Nov 3, replacement batch 4): Hawker ----------
+/** What rival o pays for Hawker' uid: { spend } (its price, the usual way, to the bank) and { extra } (2 more, from the
  *  piles o holds most of, to the owner); null when o can't pay both. */
 function hawkPlan(ctx, o, uid) {
   const spend = ctx.payChoices(o, uid, {})[0];
@@ -654,17 +654,17 @@ function hawkPlan(ctx, o, uid) {
 }
 /** The next rival in `left` (seat order) who can pay is asked; when none is left, the owner recruits it for free. */
 function hawkAsk(ctx, owner, uid, left) {
-  if (!ctx.state.shop.includes(uid)) { ctx.log(`${owner.name}'s Hawkers: that member left the shop.`); return; }
+  if (!ctx.state.shop.includes(uid)) { ctx.log(`${owner.name}'s Hawker: that member left the shop.`); return; }
   const c = ctx.card(uid);
   for (let i = 0; i < left.length; i++) {
     const o = ctx.player(left[i]), plan = hawkPlan(ctx, o, uid);
     if (!plan) continue;
-    ctx.choose(o, `Hawkers: recruit ${c.def.name}, paying its cost and 2 more to ${owner.name}?`, [
+    ctx.choose(o, `Hawker: recruit ${c.def.name}, paying its cost and 2 more to ${owner.name}?`, [
       { id: 'buy', label: `Recruit it (${payLabel(plan.spend)}, and ${payLabel(plan.extra)} to ${owner.name})`, kind: 'choice', value: 'buy', hint: botWorth(c) - (priceOf(c) + 2) * 0.6 },
       { id: 'pass', label: 'Pass', kind: 'pass', value: 'pass', hint: 0 },
     ], `${Q}.hawkAnswer`, { owner: owner.id, uid, left: left.slice(i + 1) });
     return;
   }
-  ctx.log(`${owner.name}'s Hawkers: no rival recruits ${c.def.name}, so ${owner.name} recruits it for free.`);
+  ctx.log(`${owner.name}'s Hawker: no rival recruits ${c.def.name}, so ${owner.name} recruits it for free.`);
   ctx.recruit(owner, uid, { free: true });
 }

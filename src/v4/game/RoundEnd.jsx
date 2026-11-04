@@ -89,7 +89,7 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
                   {r.winners.length
                     ? r.winners.map((id, k) => <b key={id}>{k ? ' & ' : ''}<Who state={after} id={id} meId={meId} /></b>)
                     : r.spoiled != null
-                      ? <em data-spoiled>nobody: <Who state={after} id={r.spoiled} meId={meId} /> spoiled it (Spoilsports)</em>
+                      ? <em data-spoiled>nobody: <Who state={after} id={r.spoiled} meId={meId} /> spoiled it (Spoilsport)</em>
                       : <em>no one scored</em>}
                 </span>
                 {/* "P2: 2", never "P2 2" (w3b: it read as "P22") */}

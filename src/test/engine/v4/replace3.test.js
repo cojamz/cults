@@ -71,16 +71,16 @@ describe('REPLACE3: each card fires', () => {
     expect(s.pending.kind).toBe('place');
   });
 
-  it('Kidnappers: at round start, steal the cheapest member of the rival with the most members', () => {
+  it('Kidnapper: at round start, steal the cheapest member of the rival with the most members', () => {
     let s = table(['red', 'thieves', 'market', 'trading'], { n: 3, round: 1, members: [['thieves.kidnappers'], ['red.recruitbonus', 'trading.martyr'], ['market.snob']], queue: [{ t: 'round', r: 2 }] });
     expect(owns(s, 0, 'red.recruitbonus')).toBe(true);
     expect(owns(s, 1, 'red.recruitbonus')).toBe(false);
-    expect(named(s, 'Kidnappers')).toContain("P1's Kidnappers: stole P2's Greeters.");
+    expect(named(s, 'Kidnapper')).toContain("P1's Kidnapper: stole P2's Greeters.");
   });
 
-  it('Kidnappers: a tie for the most members is the owner’s pick', () => {
+  it('Kidnapper: a tie for the most members is the owner’s pick', () => {
     let s = table(['red', 'thieves', 'market', 'trading'], { n: 3, round: 1, members: [['thieves.kidnappers'], ['red.crowd'], ['market.regular']], queue: [{ t: 'round', r: 2 }] });
-    expect(s.pending.prompt).toBe('Kidnappers: steal which cheapest member?');
+    expect(s.pending.prompt).toBe('Kidnapper: steal which cheapest member?');
     s = answer(s, `card:${uidIn(s, 'market.regular', 2)}`);
     expect(owns(s, 0, 'market.regular')).toBe(true);
   });
@@ -99,16 +99,16 @@ describe('REPLACE3: each card fires', () => {
     expect(s.pending.options.some(o => o.kind === 'tier' || o.kind === 'card')).toBe(true);
   });
 
-  it("Impersonators: choose a rival's member; this member has its ability until you choose again", () => {
+  it("Impersonator: choose a rival's member; this member has its ability until you choose again", () => {
     let s = table(['red', 'echo', 'market', 'yellow'], { round: 1, members: [['echo.impersonators', 'market.regular'], ['market.snob', 'red.crowd']], queue: [{ t: 'round', r: 2 }] });
-    expect(s.pending.prompt).toBe("Impersonators: choose a rival's member; until you choose again, Impersonators has that member's ability");
+    expect(s.pending.prompt).toBe("Impersonator: choose a rival's member; until you choose again, Impersonator has that member's ability");
     s = answer(s, `card:${uidIn(s, 'market.snob', 1)}`);
     const me = s.cards[uidIn(s, 'echo.impersonators', 0)];
     expect(me.ability).toBe('market.snob');
-    expect(named(s, 'Impersonators')).toContain('P1\'s Impersonators: has the ability of P2\'s Snobs ("Game End: +1 follower per blue member you have.").');
+    expect(named(s, 'Impersonator')).toContain('P1\'s Impersonator: has the ability of P2\'s Snobs ("Game End: +1 follower per blue member you have.").');
   });
 
-  it('Impersonators: a copied game-end count scores for its owner', async () => {
+  it('Impersonator: a copied game-end count scores for its owner', async () => {
     const { resume } = await import('../../../engine/v4/core.js');
     let s = table(['red', 'echo', 'market', 'yellow'], { round: 1, members: [['echo.impersonators', 'market.regular'], ['market.snob']], queue: [{ t: 'round', r: 2 }] });
     s = answer(s, `card:${uidIn(s, 'market.snob', 1)}`);

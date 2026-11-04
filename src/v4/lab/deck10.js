@@ -125,7 +125,7 @@ export const DECK10 = {
   }
  },
  "purple": {
-  "head": "cut Go-Getter, Late Risers and Gossip; Early Birds and Timekeepers get cheaper so round I has 4.",
+  "head": "cut Go-Getter, Late Risers and Gossip; Early Birds and Timekeeper get cheaper so round I has 4.",
   "cards": {
    "purple.crew": {},
    "purple.bouncer": {

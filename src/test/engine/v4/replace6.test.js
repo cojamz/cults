@@ -30,22 +30,22 @@ describe('REPLACE6: the switch', () => {
 });
 
 describe('REPLACE6: each card fires', () => {
-  it('Social Climbers: gain followers equal to the silver of the rival who holds the most', () => {
+  it('Social Climber: gain followers equal to the silver of the rival who holds the most', () => {
     let s = table(['red', 'silver', 'market', 'trading'], { n: 3, round: 3, res: [{}, { silver: 12 }, { silver: 4 }], members: [['silver.socialclimbers']], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `use:${uidIn(s, 'silver.socialclimbers', 0)}`);
     expect(s.players[0].bonus).toBe(12);
     expect(s.players[1].res.silver).toBe(12);
-    expect(named(s, 'Social Climbers')).toContain("P1's Social Climbers: P2 holds 12 silver, the most: +12 followers.");
+    expect(named(s, 'Social Climber')).toContain("P1's Social Climber: P2 holds 12 silver, the most: +12 followers.");
   });
 
-  it('Godparents: give one of your members to a rival; gain followers equal to its cost', () => {
+  it('Godparent: give one of your members to a rival; gain followers equal to its cost', () => {
     let s = table(['red', 'silver', 'market', 'trading'], { n: 3, round: 3, members: [['silver.godparents', 'trading.martyr']], queue: [{ t: 'buy', p: 0 }] });
     const martyr = uidIn(s, 'trading.martyr', 0);
     s = move(s, `use:${uidIn(s, 'silver.godparents', 0)}`);
-    expect(s.pending.prompt).toBe('Godparents: give which of your members to which rival?');
+    expect(s.pending.prompt).toBe('Godparent: give which of your members to which rival?');
     s = answer(s, `give:${martyr}:2`);
     expect(owns(s, 2, 'trading.martyr')).toBe(true);
-    expect(s.players[0].bonus).toBe(8); // Godparents 4, and Martyrs' own 4 as it leaves
+    expect(s.players[0].bonus).toBe(8); // Godparent 4, and Martyrs' own 4 as it leaves
   });
 
   it('Successors: cast out one of your members; recruit a shop member costing up to its cost, for free', () => {
@@ -82,12 +82,12 @@ describe('REPLACE6: each card fires', () => {
     expect(named(s, 'Pallbearers')).toContain("P1's Pallbearers: P2 cast out Snobs (6): +3 followers.");
   });
 
-  it('Sore Losers: win no contest, steal 3 followers from the rival who wins the most', () => {
+  it('Sore Loser: win no contest, steal 3 followers from the rival who wins the most', () => {
     const s = table(['red', 'market', 'trading', 'yellow'], { n: 3, round: 2, res: [{}, { red: 4, blue: 3 }, { white: 2 }], bonus: [0, 5, 5], members: [['benders.sorelosers']], queue: [{ t: 'endRound' }] });
     // P2 wins Red and Blue (+12), P3 wins White (+6); P1 nothing: 3 from P2
     expect(s.players[0].bonus).toBe(3);
     expect(s.players[1].bonus).toBe(5 + 12 - 3);
-    expect(named(s, 'Sore Losers')).toContain("P1's Sore Losers: P1 won no contest; steals 3 followers from P2.");
+    expect(named(s, 'Sore Loser')).toContain("P1's Sore Loser: P1 won no contest; steals 3 followers from P2.");
   });
 
   it("Peddlers: the pile's top member sits beside it; rivals may recruit it, paying you", () => {

@@ -605,10 +605,10 @@ export default {
     }),
     // Cory, 2026-10-23: "its when you place THE last minion of the round. so it benefits folks going last"
     // Cory, 2026-10-24: "go deep card for every color" ("sure for now"); name and price Claude's fill-in, priced like Chronicler
-    m('timekeepers', 'Timekeepers', 1, 2, 'Game End: +1 follower per purple member you have.', { ...old5,
+    m('timekeepers', 'Timekeeper', 1, 2, 'Game End: +1 follower per purple member you have.', { ...old5,
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'purple'),
     }),
-    // REPLACE5 bot test (Nov 3, replacement batch 5): Timekeepers' place. 4 purple + 2 any as a player sees it. Counted
+    // REPLACE5 bot test (Nov 3, replacement batch 5): Timekeeper' place. 4 purple + 2 any as a player sees it. Counted
     // at round end before the contests: every minion of yours on a space (one joining a rival's space too); a minion
     // that sat out for want of a space isn't on the wheel.
     ...add5(m('fullhouse', 'Full House', 3, 2, 'Round End: if you have more minions on the wheel than every rival, +1 follower per minion you have there.', {

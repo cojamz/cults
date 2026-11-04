@@ -1,6 +1,6 @@
 [
- {"id": "echo.impersonators", "name": "Impersonators", "sphere": "green", "n": 1, "text": "On Recruit and Round Start: choose a rival's member. Until you choose again, this member has its ability."},
+ {"id": "echo.impersonators", "name": "Impersonator", "sphere": "green", "n": 1, "text": "On Recruit and Round Start: choose a rival's member. Until you choose again, this member has its ability."},
  {"id": "silver.creditors", "name": "Creditors", "sphere": "silver", "n": 2, "text": "Game End: each rival loses 1 follower per 3 silver they hold."},
- {"id": "thieves.kidnappers", "name": "Kidnappers", "sphere": "magenta", "n": 1, "text": "On Recruit and Round Start: steal the cheapest member of the rival with the most members."},
- {"id": "silver.godparents", "name": "Godparents", "sphere": "silver", "n": 1, "text": "On Use, once per game: give one of your members to a rival. Gain followers equal to its cost."}
+ {"id": "thieves.kidnappers", "name": "Kidnapper", "sphere": "magenta", "n": 1, "text": "On Recruit and Round Start: steal the cheapest member of the rival with the most members."},
+ {"id": "silver.godparents", "name": "Godparent", "sphere": "silver", "n": 1, "text": "On Use, once per game: give one of your members to a rival. Gain followers equal to its cost."}
 ]

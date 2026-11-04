@@ -106,7 +106,7 @@ export function giftPick(state, pend, first = null) {
     const n = Number(gift[1]), color = state.resources.includes(gift[2]) ? gift[2] : null;
     return { ...base, kind: 'gift', n, color, head: 'Give', chosen: color, firsts: [], seconds: players.map(o => ({ o, b: o.target.pid })), others: players.map(o => o.target.pid), rest: [] };
   }
-  // rivals gain silver from the bank, split one at a time (Party Gifts, Largesse, Philanthropists; Cory, 2026-11-01:
+  // rivals gain silver from the bank, split one at a time (Party Gifts, Largesse, Philanthropist; Cory, 2026-11-01:
   // "not clear how many times you've clicked / what's remaining"): the rivals' faces, each with what you've sent them
   // so far, and "N given · M left" on the card. The engine hands the silver out at Done, so the tally is the card's.
   const share = state.queue?.[0]?.h === 'silver.share' ? state.queue[0].data : null;

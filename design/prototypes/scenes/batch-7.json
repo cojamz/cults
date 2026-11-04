@@ -9,7 +9,7 @@
  },
  {
   "id": "yellow.customs",
-  "name": "Customs",
+  "name": "Customs Officer",
   "sphere": "yellow",
   "n": 1,
   "text": "Whenever a rival steals or changes any of your resources, +1 yellow.",
@@ -145,7 +145,7 @@
  },
  {
   "id": "silver.philanthropists",
-  "name": "Philanthropists",
+  "name": "Philanthropist",
   "sphere": "silver",
   "n": 1,
   "text": "On Recruit: rivals gain up to 4 silver, split as you choose. +1 follower for each.",

@@ -114,26 +114,26 @@ describe('REPLACE4: each card fires', () => {
     expect(s.players[1].res.red).toBe(6);
   });
 
-  it('Hawkers: each rival in turn may recruit it, paying its cost and 2 more to you', () => {
+  it('Hawker: each rival in turn may recruit it, paying its cost and 2 more to you', () => {
     let s = table(['red', 'market', 'echo', 'yellow'], { n: 3, round: 2, res: [{}, { red: 10 }, {}], members: [['market.hawkers']], shop: ['red.crowd'], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `use:${uidIn(s, 'market.hawkers', 0)}`);
-    expect(s.pending.prompt).toBe('Hawkers: offer which shop member?');
+    expect(s.pending.prompt).toBe('Hawker: offer which shop member?');
     s = answer(s, `card:${uidIn(s, 'red.crowd', 'shop')}`);
     expect(s.pending.player).toBe(1);
-    expect(s.pending.prompt).toBe('Hawkers: recruit Crowd-Pleaser, paying its cost and 2 more to P1?');
+    expect(s.pending.prompt).toBe('Hawker: recruit Crowd-Pleaser, paying its cost and 2 more to P1?');
     s = answer(s, 'buy');
     expect(owns(s, 1, 'red.crowd')).toBe(true);
     expect(s.players[1].res.red).toBe(5);
     expect(s.players[0].res.red).toBe(2);
   });
 
-  it('Hawkers: if no rival recruits it, you recruit it for free', () => {
+  it('Hawker: if no rival recruits it, you recruit it for free', () => {
     let s = table(['red', 'market', 'echo', 'yellow'], { n: 3, round: 2, res: [{}, { red: 10 }, {}], members: [['market.hawkers']], shop: ['red.crowd'], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `use:${uidIn(s, 'market.hawkers', 0)}`);
     s = answer(s, `card:${uidIn(s, 'red.crowd', 'shop')}`);
     s = answer(s, 'pass'); // P3 can't pay, so isn't asked
     expect(owns(s, 0, 'red.crowd')).toBe(true);
-    expect(named(s, 'Hawkers')).toContain("P1's Hawkers: no rival recruits Crowd-Pleaser, so P1 recruits it for free.");
+    expect(named(s, 'Hawker')).toContain("P1's Hawker: no rival recruits Crowd-Pleaser, so P1 recruits it for free.");
   });
 
   it('Late Shoppers: after the contests are scored, recruit once', () => {

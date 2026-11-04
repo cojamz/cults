@@ -203,7 +203,7 @@ const members = [
     botActivate: (ctx, p) => anarchyPairs(ctx, p).some(([a, b]) => gainFor(ctx, p, a, b) >= 2),
   }),
   // Cory, 2026-10-28: Scout, 4, once per round (it stands in for Blue's shop work)
-  m('scout', 'Scouts', null, 0, 2, 'On Use, once per round: send any shop members to the bottom of the pile, then refill.', { f: 2, n: 2, retired: true, // Spoilsports takes its place (Claude, under Cory's "use your judgement", 2026-11-03); worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
+  m('scout', 'Scouts', null, 0, 2, 'On Use, once per round: send any shop members to the bottom of the pile, then refill.', { f: 2, n: 2, retired: true, // Spoilsport takes its place (Claude, under Cory's "use your judgement", 2026-11-03); worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
     activate: 'round',
     onRoundStart(ctx, owner, card) { card.used = false; },
     onActivate(ctx, owner, card) {
@@ -216,7 +216,7 @@ const members = [
   // keeps 4). 6 any as a player sees it. Chosen after the round's last placement, before anything is scored (core's
   // allPlaced step), among the contests a rival leads and its owner doesn't (a tie for the lead counts as leading);
   // core's contest table then gives that contest no winner this round (state.spoiled).
-  m('spoilsports', 'Spoilsports', null, 0, 5, "Round End: choose a contest you don't lead; nobody wins it this round.", { round: 1,
+  m('spoilsports', 'Spoilsport', null, 0, 5, "Round End: choose a contest you don't lead; nobody wins it this round.", { round: 1,
     onAllPlaced(ctx, owner) {
       const led = new Map(ctx.state.players.map(o => [o.id, ctx.contestsLed(o)]));
       const opts = ctx.state.quadrants.filter(q => !led.get(owner.id).includes(q)).map(q => {
@@ -227,8 +227,8 @@ const members = [
         // bots spoil the contest of the rival furthest ahead
         hint: Math.max(...winners.map(o => ctx.followers(o))) / winners.length,
       }));
-      if (!opts.length) { ctx.log(`${owner.name}'s Spoilsports: no contest a rival leads without ${owner.name}.`); return; }
-      ctx.choose(owner, 'Spoilsports: which contest does nobody win this round?', opts, 'benders.spoil');
+      if (!opts.length) { ctx.log(`${owner.name}'s Spoilsport: no contest a rival leads without ${owner.name}.`); return; }
+      ctx.choose(owner, 'Spoilsport: which contest does nobody win this round?', opts, 'benders.spoil');
     },
   }),
   // Cory, 2026-10-28: Con Men, 6, counts as 2 members; On Recruit (was One Time Use), split among rivals like Help Yourself
@@ -257,7 +257,7 @@ const members = [
   // REPLACE6 bot test (Nov 3, replacement batch 6): HR's place. 5 any as a player sees it. Read right after the contests
   // are scored (core's afterContests): a shared contest counts as a win; rivals tied for the most wins (at least 1):
   // the owner chooses. Loose followers only, through the shared steal (Bodyguards blocks it), as Raiders takes.
-  ...add6(m('sorelosers', 'Sore Losers', null, 0, 4, 'Round End: if you win no contest, steal 3 followers from the rival who wins the most.', {
+  ...add6(m('sorelosers', 'Sore Loser', null, 0, 4, 'Round End: if you win no contest, steal 3 followers from the rival who wins the most.', {
     afterContests(ctx, owner, card, table) {
       const wins = o => table.filter(c => c.winners.includes(o.id)).length;
       if (wins(owner)) return;
@@ -266,7 +266,7 @@ const members = [
       const most = Math.max(...rivals.map(wins));
       const top = rivals.filter(o => wins(o) === most);
       if (top.length === 1) return soreSteal(ctx, owner, top[0]);
-      ctx.choose(owner, 'Sore Losers: steal 3 followers from which rival?', top.map(o => ({
+      ctx.choose(owner, 'Sore Loser: steal 3 followers from which rival?', top.map(o => ({
         id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers)`, kind: 'player', value: o.id, hint: ctx.followers(o),
       })), 'benders.sore');
     },
@@ -353,7 +353,7 @@ export const handlers = {
     const s = ctx.state;
     if (!s.spoiled || s.spoiled.round !== s.round) s.spoiled = { round: s.round, list: [] };
     s.spoiled.list.push({ qid: q, by: p.id });
-    ctx.log(`${p.name}'s Spoilsports: nobody wins the ${ctx.quadrant(q).name} contest this round.`);
+    ctx.log(`${p.name}'s Spoilsport: nobody wins the ${ctx.quadrant(q).name} contest this round.`);
   },
   ...handlers6({
     sore(ctx, p, id) { soreSteal(ctx, p, ctx.player(id)); },
@@ -368,10 +368,10 @@ export const handlers = {
   }),
 };
 
-/** Sore Losers (REPLACE6): 3 loose followers from t. */
+/** Sore Loser (REPLACE6): 3 loose followers from t. */
 function soreSteal(ctx, owner, t) {
   const got = ctx.steal(owner, t, { followers: 3 });
-  if (got) ctx.log(`${owner.name}'s Sore Losers: ${owner.name} won no contest; steals ${got} follower${got === 1 ? '' : 's'} from ${t.name}.`);
+  if (got) ctx.log(`${owner.name}'s Sore Loser: ${owner.name} won no contest; steals ${got} follower${got === 1 ? '' : 's'} from ${t.name}.`);
 }
 
 const group = { id: 'benders', members, handlers };

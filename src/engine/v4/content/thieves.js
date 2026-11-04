@@ -284,7 +284,7 @@ const thieves = {
       secondStory(ctx, p, id) {
         const o = ctx.player(id);
         if (!o || !stealable(ctx, p, o)) return;
-        startSteal(ctx, p, 'Second-Story Men', 2 + stickyMore(ctx, p), { fromAction: false, only: [o.id] });
+        startSteal(ctx, p, 'Second-Story Man', 2 + stickyMore(ctx, p), { fromAction: false, only: [o.id] });
       },
       vulture(ctx, p, uid, data) {
         if (uid == null) { ctx.log(`${p.name}'s Vultures: lets it go.`); return; }
@@ -296,7 +296,7 @@ const thieves = {
       const v = ctx.ownerOf(uid);
       if (!v || v === p || !kidnapList(ctx, p).some(([, c]) => c.uid === uid)) return;
       const name = ctx.card(uid).def.name;
-      if (ctx.steal(p, v, { uid })) ctx.log(`${p.name}'s Kidnappers: stole ${v.name}'s ${name}.`);
+      if (ctx.steal(p, v, { uid })) ctx.log(`${p.name}'s Kidnapper: stole ${v.name}'s ${name}.`);
     },
     halfPile(ctx, p, [vid, color]) {
       const victim = ctx.player(vid);
@@ -402,14 +402,14 @@ const thieves = {
     // after the round's last placement and before anything is scored (core's allPlaced step, in this round's turn
     // order): one rival, then which 2 of theirs, through the shared steal (Bodyguards, Lie Low and Hush Money apply;
     // Desperado adds). Stolen resources keep their color.
-    ...add5(m('secondstory', 'Second-Story Men', 3, 3, 'Round End: before contests are scored, steal 2 resources from one rival.', {
+    ...add5(m('secondstory', 'Second-Story Man', 3, 3, 'Round End: before contests are scored, steal 2 resources from one rival.', {
       // BOTSEE: each round end still ahead, 2 resources taken from a rival, plus a quarter chance it swings a contest
       ...see(i => (i.rivals.some(o => Object.values(o.res).some(v => v > 0)) ? endsAhead(i).reduce((a, r) => a + 2 * resAt(r) * (1 + SEE_SPITE) + 0.25 * SEE_RING[r - 1], 0) : 0)),
       onAllPlaced(ctx, owner) {
         const list = ctx.rivals(owner).filter(o => stealable(ctx, owner, o) > 0);
-        if (!list.length) { ctx.log(`${owner.name}'s Second-Story Men: no rival to steal from.`); return; }
+        if (!list.length) { ctx.log(`${owner.name}'s Second-Story Man: no rival to steal from.`); return; }
         if (list.length === 1) { thieves.handlers.secondStory(ctx, owner, list[0].id); return; }
-        ctx.choose(owner, 'Second-Story Men: steal 2 resources from which rival?', list.map(o => ({
+        ctx.choose(owner, 'Second-Story Man: steal 2 resources from which rival?', list.map(o => ({
           id: `player:${o.id}`, label: `${o.name} (${stealable(ctx, owner, o)} resources)`, kind: 'player', value: o.id, hint: stealable(ctx, owner, o) * 0.1,
         })), 'thieves.secondStory');
       },
@@ -516,7 +516,7 @@ const thieves = {
       botActivate: (ctx, owner) => ctx.state.round >= 2 && takeable(ctx, owner, owner.res.magenta || 0).some(([, c]) => cost(c) >= 4),
     }),
     // Cory's #69 "King of Thieves… based more on members… shouldn't compete with ring competition" (Cory's yes, Oct 21)
-    m('kingpin', 'Kingpin', 1, 2, 'Game End: +1 follower per magenta member you have.', { retired: true, // Kidnappers takes its place (Claude, under Cory's "use your judgement", 2026-11-03)
+    m('kingpin', 'Kingpin', 1, 2, 'Game End: +1 follower per magenta member you have.', { retired: true, // Kidnapper takes its place (Claude, under Cory's "use your judgement", 2026-11-03)
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'thieves'),
     }),
     // Replacement batch 3 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Kingpin's place. 6 magenta + 2 any as a player sees it
@@ -524,12 +524,12 @@ const thieves = {
     // members" counts as members count (Counts as N). A tie for the most members, or for the cheapest, is the owner's
     // pick; a rival who can't be stolen from (Bodyguards, Lie Low) is passed over only inside such a tie. A steal of a
     // member: the member is the owner's recruit (its On Recruit fires), as Heist's is.
-    m('kidnappers', 'Kidnappers', 5, 2, 'On Recruit and Round Start: steal the cheapest member of the rival with the most members.', { now: true, round: 1, // a round I member as Kingpin was (bot-tested in a later round; Nov 3)
+    m('kidnappers', 'Kidnapper', 5, 2, 'On Recruit and Round Start: steal the cheapest member of the rival with the most members.', { now: true, round: 1, // a round I member as Kingpin was (bot-tested in a later round; Nov 3)
       onRoundStart(ctx, owner) {
         const list = kidnapList(ctx, owner);
-        if (!list.length) { ctx.log(`${owner.name}'s Kidnappers: no member to steal.`); return; }
-        if (list.length === 1) { const [v, c] = list[0]; if (ctx.steal(owner, v, { uid: c.uid })) ctx.log(`${owner.name}'s Kidnappers: stole ${v.name}'s ${c.def.name}.`); return; }
-        pickMember(ctx, owner, list, 'Kidnappers: steal which cheapest member?', 'thieves.kidnap');
+        if (!list.length) { ctx.log(`${owner.name}'s Kidnapper: no member to steal.`); return; }
+        if (list.length === 1) { const [v, c] = list[0]; if (ctx.steal(owner, v, { uid: c.uid })) ctx.log(`${owner.name}'s Kidnapper: stole ${v.name}'s ${c.def.name}.`); return; }
+        pickMember(ctx, owner, list, 'Kidnapper: steal which cheapest member?', 'thieves.kidnap');
       },
     }),
     // Cory's yes, Oct 21: a counter in Bait's shape, and a weak card for "magenta doesn't gain enough"
@@ -594,7 +594,7 @@ export function install() {
   return thieves;
 }
 
-/** Kidnappers (REPLACE3): the cheapest members of the rivals with the most members ([rival, card] pairs; several on a tie). */
+/** Kidnapper (REPLACE3): the cheapest members of the rivals with the most members ([rival, card] pairs; several on a tie). */
 function kidnapList(ctx, p) {
   const rivals = ctx.rivals(p).filter(o => ctx.membersOf(o).length);
   if (!rivals.length) return [];

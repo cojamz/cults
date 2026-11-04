@@ -1,5 +1,5 @@
 [
  {"id": "red.bodysnatchers", "name": "Body Snatchers", "sphere": "red", "n": 2, "text": "Round Start: swap one of your members with a rival's member of the same cost."},
  {"id": "silver.hostesses", "name": "Hostesses", "sphere": "silver", "n": 2, "text": "On Recruit and Round Start: give each rival 1 silver. +1 follower per rival who then holds more silver than you."},
- {"id": "benders.spoilsports", "name": "Spoilsports", "sphere": "colorless", "n": 1, "text": "Round End: choose a contest you don't lead; nobody wins it this round."}
+ {"id": "benders.spoilsports", "name": "Spoilsport", "sphere": "colorless", "n": 1, "text": "Round End: choose a contest you don't lead; nobody wins it this round."}
 ]

@@ -119,7 +119,7 @@ for (const [key, name, source] of [
 for (const [id, name, source] of [
   ['red.headhunter', 'Headhunter', 'red.sponsor'], ['thieves.fixer', 'Fixer', 'thieves.bigscore'],
   ['market.windowshopper', 'Window Shopper', 'market.curator'], ['market.restocker', 'Restockers', 'market.makeover'],
-  ['purple.timekeepers', 'Timekeepers', 'purple.patience'], ['trading.oldmoney', 'Old Money', 'trading.shareholder'],
+  ['purple.timekeepers', 'Timekeeper', 'purple.patience'], ['trading.oldmoney', 'Old Money', 'trading.shareholder'],
   ['trading.recluse', 'Recluse', 'market.recluse'], // Recluse moves to White (Cory, 2026-10-25)
 ]) {
   const art = BY_ID.get(source);
@@ -127,7 +127,7 @@ for (const [id, name, source] of [
 }
 // Yellow 2.0's new members (Cory, 2026-10-31) reuse cut Yellow portraits while names and artwork settle.
 for (const [key, name, source] of [
-  ['customs', 'Customs', 'gleaner'], ['tinker', 'Tinker', 'sower'], ['matchmaker', 'Matchmaker', 'admirer'],
+  ['customs', 'Customs Officer', 'gleaner'], ['tinker', 'Tinker', 'sower'], ['matchmaker', 'Matchmaker', 'admirer'],
   ['agitator', 'Agitator', 'farmer'], ['ringleader', 'Meddler', 'latebloomer'], ['drifters', 'Drifters', 'weaver'],
   ['leveler', 'Leveler', 'rainmaker'], ['bigtent', 'Big Tent', 'pilgrim'], ['bookcooker', 'Book Cookers', 'peddler'],
   ['puppeteer', 'Puppeteers', 'feastmaker'], ['caravan', 'Caravan', 'peddler'], ['tastemaker', 'Tastemaker', 'admirer'], ['spiceroute', 'Spice Route', 'gleaner'], ['guestbook', 'Guest Book', 'farmer'],
@@ -137,7 +137,7 @@ for (const [key, name, source] of [
 }
 // Silver 2.0's new members (Cory, 2026-11-01) reuse cut Silver portraits while names and artwork settle.
 for (const [key, name, source] of [
-  ['smoothtalker', 'Smooth Talker', 'spoon'], ['philanthropists', 'Philanthropists', 'benefactor'],
+  ['smoothtalker', 'Smooth Talker', 'spoon'], ['philanthropists', 'Philanthropist', 'benefactor'],
   ['polisher', 'Polisher', 'steward'], ['collector', 'Collector', 'silversmith'], ['debtcollector', 'Debt Collector', 'majordomo'],
   ['highsociety', 'High Society', 'revelers'], ['giftwrapper', 'Gift Wrapper', 'heir'],
 ]) {
@@ -158,9 +158,9 @@ for (const i of PORTRAITS4) PORTRAIT.set(i.id, { ...i, portrait: true, scene: tr
 // while their own pictures are drawn.
 for (const [id, name, source] of [
   ['silver.hostesses', 'Hostesses', 'silver.giftwrapper'], ['trading.heirs', 'Misers', 'trading.exporter'],
-  ['red.bodysnatchers', 'Body Snatchers', 'red.twins'], ['benders.spoilsports', 'Spoilsports', 'benders.scout'],
-  ['echo.impersonators', 'Impersonators', 'echo.muse'], ['silver.creditors', 'Creditors', 'silver.collector'],
-  ['thieves.kidnappers', 'Kidnappers', 'thieves.kingpin'], ['silver.godparents', 'Godparents', 'silver.guest'],
+  ['red.bodysnatchers', 'Body Snatchers', 'red.twins'], ['benders.spoilsports', 'Spoilsport', 'benders.scout'],
+  ['echo.impersonators', 'Impersonator', 'echo.muse'], ['silver.creditors', 'Creditors', 'silver.collector'],
+  ['thieves.kidnappers', 'Kidnapper', 'thieves.kingpin'], ['silver.godparents', 'Godparent', 'silver.guest'],
 ]) {
   const art = PORTRAIT.get(source);
   if (art && !PORTRAIT.has(id)) PORTRAIT.set(id, { ...art, id, name });

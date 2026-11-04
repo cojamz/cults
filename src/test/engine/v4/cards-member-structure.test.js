@@ -65,7 +65,7 @@ describe('member structure: the new members', () => {
     expect(s.pending?.prompt || '').not.toMatch(/Window Shopper/);
   });
 
-  it('Timekeepers and Old Money: game end, +1 follower per member of their color', () => {
+  it('Timekeeper and Old Money: game end, +1 follower per member of their color', () => {
     const s = table(['purple', 'trading', 'red', 'gold'], { members: [['purple.timekeepers', 'purple.closer', 'trading.oldmoney', 'trading.shopkeeper', 'red.twins']] });
     const ctx = contextFor(s), p = s.players[0];
     expect(defById('purple.timekeepers').onGameEnd(ctx, p)).toBe(2);

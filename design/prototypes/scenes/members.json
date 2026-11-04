@@ -484,7 +484,7 @@
  },
  {
   "id": "purple.timekeepers",
-  "name": "Timekeepers",
+  "name": "Timekeeper",
   "quadrant": "purple",
   "n": 1,
   "text": "Game end: +1 follower per purple member you have."

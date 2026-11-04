@@ -551,7 +551,7 @@ function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null) 
     if (!(mine > 0)) continue;
     const certain = mine >= other ? 1 : 0;
     const rough = mine > other ? 0.75 : mine === other ? 0.55 : 0.15;
-    // a contest spoiled this round (Spoilsports, REPLACE2 bot test) pays nobody this round
+    // a contest spoiled this round (Spoilsport, REPLACE2 bot test) pays nobody this round
     const now = s.spoiled && s.spoiled.round === s.round && s.spoiled.list.some(x => x.qid === qid) ? 0 : 1;
     out += now * v * (certain * (1 - roundLeft) + rough * roundLeft) + later * rough;
   }

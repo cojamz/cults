@@ -1028,7 +1028,7 @@ function endRound(state) {
   const table = contestTable(state, ctx);
   const msg = [];
   for (const c of table) {
-    if (c.spoiled !== undefined) msg.push(`${c.label}: spoiled by ${state.players[c.spoiled].name}'s Spoilsports, nobody wins`);
+    if (c.spoiled !== undefined) msg.push(`${c.label}: spoiled by ${state.players[c.spoiled].name}'s Spoilsport, nobody wins`);
     if (!c.winners.length) continue;
     if (c.copycats) msg.push(`${c.label}: ${c.copycats.map(id => `${state.players[id].name}'s Copycats`).join(' & ')} ${c.copycats.length > 1 ? 'tie' : 'ties'} for it, 1 short`);
     const winners = c.winners.map(id => state.players[id]);
@@ -1042,7 +1042,7 @@ function endRound(state) {
   log(state, `Round ${roman(state.round)} ends. ${msg.join(' · ') || 'No one scored.'}`);
   // members that answer a rival winning a contest (Racketeers, REPLACE1 bot test), each winner of each contest
   for (const c of table) for (const id of c.winners) eachMember(state, (owner, card, def) => { if (def.onRivalContestWin && owner.id !== id) def.onRivalContestWin(ctx, owner, card, state.players[id], c); }, ['onRivalContestWin']);
-  // members that read the scored contests (Second Fiddles, REPLACE5; Sore Losers, REPLACE6: bot tests), in this round's turn order
+  // members that read the scored contests (Second Fiddles, REPLACE5; Sore Loser, REPLACE6: bot tests), in this round's turn order
   if (REPLACE5 || REPLACE6) for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.afterContests) def.afterContests(ctx, state.players[id], card, table); }, ['afterContests']);
   // Late Shoppers (REPLACE4 bot test: flag roundEndBuy): one recruit each, in this round's order, after the contests
   // and before the row goes to the bottom (in round III, before the Game End cards count)
@@ -1135,7 +1135,7 @@ export function contestTable(state, ctx = ctxFor(state)) {
     const scores = state.players.map(p => sc.score(ctx, p));
     const top = Math.max(...scores);
     let winners = top > 0 ? state.players.filter((p, i) => scores[i] === top).map(p => p.id) : [];
-    // Spoilsports (REPLACE2 bot test): a contest spoiled this round pays nobody
+    // Spoilsport (REPLACE2 bot test): a contest spoiled this round pays nobody
     const spoiled = state.spoiled && state.spoiled.round === state.round && state.spoiled.list.find(x => x.qid === qid);
     if (spoiled) winners = [];
     // Copycats (REPLACE4 bot test: flag copycat): a holder of exactly 1 less than the winner (at least 1) ties for it
@@ -1627,7 +1627,7 @@ function effectiveDefs(card, state = null) {
   const out = [own];
   for (const id of [card.copy, card.ability]) {
     if (!id) continue;
-    // card.ability: a rival member's ability only, no worth or member count (Impersonators, REPLACE3 bot test)
+    // card.ability: a rival member's ability only, no worth or member count (Impersonator, REPLACE3 bot test)
     const { onRecruited, ...hooks } = defById(id); void onRecruited;
     out.push(hooks);
   }

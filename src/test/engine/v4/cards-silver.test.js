@@ -130,7 +130,7 @@ describe('Silver members', () => {
     const s2 = sc({ res: [{ silver: 9 }], shop: ['red.patriarch'] });
     expect(paymentPlan(s2, s2.players[0], s2.shop.find(u => s2.cards[u].def === 'red.patriarch'))).toBe(null);
   });
-  it('Philanthropists: On Recruit, rivals gain up to 4 silver, +1 follower each', () => {
+  it('Philanthropist: On Recruit, rivals gain up to 4 silver, +1 follower each', () => {
     let s = sc({ n: 3, round: 2, res: [rich], shop: ['silver.philanthropists'], queue: [{ t: 'buy', p: 0 }] });
     s = buy(s, 'silver.philanthropists');
     if (s.pending?.kind === 'choose' && /pay|Pay/.test(s.pending.prompt || '')) s = move(s, s.pending.options[0].id);

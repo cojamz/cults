@@ -120,15 +120,15 @@ describe('REPLACE2: each card fires', () => {
     expect(named(s, 'Fundraisers')).toContain("P1's Fundraisers: each rival +2 silver; rivals hold 18 silver, so P1 +9 followers.");
   });
 
-  it('Spoilsports: choose a contest you don’t lead; nobody wins it this round', () => {
+  it('Spoilsport: choose a contest you don’t lead; nobody wins it this round', () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, res: [{ blue: 3 }, { white: 9, red: 1 }], members: [['benders.spoilsports']], queue: [{ t: 'allPlaced' }, { t: 'endRound' }] });
-    expect(s.pending.prompt).toBe('Spoilsports: which contest does nobody win this round?');
+    expect(s.pending.prompt).toBe('Spoilsport: which contest does nobody win this round?');
     // Blue is P1's own lead: not offered
     expect(s.pending.options.map(o => o.value).sort()).toEqual(['red', 'trading']);
     s = answer(s, 'spoil:trading');
     expect(s.players[1].contest).toBe(6); // red only, white spoiled
     expect(s.players[0].contest).toBe(6);
     expect(s.contests.at(-1).results.find(c => c.qid === 'trading').winners).toEqual([]);
-    expect(s.log.some(l => /Most white: spoiled by P1's Spoilsports, nobody wins/.test(l))).toBe(true);
+    expect(s.log.some(l => /Most white: spoiled by P1's Spoilsport, nobody wins/.test(l))).toBe(true);
   });
 });

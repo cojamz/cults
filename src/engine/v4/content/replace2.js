@@ -3,7 +3,7 @@
 //   red.twins (Triplets) -> red.bodysnatchers, echo.wallflower -> echo.mirrorimage, thieves.desperado -> thieves.skimmers,
 //   market.shopaholic -> market.doorbusters, yellow.ringleader -> yellow.nightmarket, silver.gala (Debutantes) ->
 //   silver.fundraisers, silver.smoothtalker -> silver.hushmoney, benders.scout (Scouts) -> benders.spoilsports.
-// Live since Nov 3 (Claude, under Cory's "use your judgement"): Body Snatchers and Spoilsports are always on and
+// Live since Nov 3 (Claude, under Cory's "use your judgement"): Body Snatchers and Spoilsport are always on and
 // Triplets and Scouts always retired, with or without the switch (red.js and benders.js print them without add2/old2).
 // Unset, the other six new cards are never defined and their old cards stay.
 export const REPLACE2 = globalThis.process?.env?.REPLACE2 === '1';

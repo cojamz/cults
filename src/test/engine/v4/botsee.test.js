@@ -56,7 +56,7 @@ describe('BOTSEE: a bot sees what a member does when it weighs buying it', () =>
       expect(Number.isFinite(v)).toBe(true);
       expect(v).toBeGreaterThanOrEqual(0);
     }
-    // Second-Story Men in round II: two round ends of steals ahead, worth more than one
+    // Second-Story Man in round II: two round ends of steals ahead, worth more than one
     const ssm = on.defById('thieves.secondstory');
     expect(on.abilityValue(ssm, 7, undefined, s, 0)).toBeGreaterThan(on.abilityValue(ssm, 3, undefined, { ...s, round: 3 }, 0));
   });

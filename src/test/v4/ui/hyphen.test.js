@@ -6,7 +6,7 @@ const shown = n => breakable(n).replace('­', '-');
 describe('breakable', () => {
   it('keeps a syllable-starting pair together (playtest, Nov 3)', () => {
     expect(shown('Deprogrammers')).toBe('Deprogram-mers');
-    expect(shown('Philanthropists')).toBe('Philan-thropists');
+    expect(shown('Philanthropist')).toBe('Philan-thropist');
   });
   it('keeps the seams it had', () => {
     for (const w of ['Doppel-ganger', 'Bench-warmer', 'Impres-sionist', 'Toast-master', 'Prosely-tizers']) expect(shown(w.replace('-', ''))).toBe(w);

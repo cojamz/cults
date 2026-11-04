@@ -219,7 +219,7 @@ const silver = {
       const c = ctx.card(uid), k = c.def.s + c.def.w, name = c.def.name;
       if (!ctx.moveMember(uid, p, o, { actor: p })) return;
       p.bonus += k;
-      ctx.log(`${p.name}'s Godparents: gives ${name} to ${o.name}: +${k} followers.`);
+      ctx.log(`${p.name}'s Godparent: gives ${name} to ${o.name}: +${k} followers.`);
     },
     ...handlers2({
       hush(ctx, victim, answer, data) {
@@ -290,14 +290,14 @@ const silver = {
   },
 
   members: [
-    m('guest', 'Hangers-On', 4, 4, 'Whenever a rival gives you something, +1 more of it.', { f: 2, n: 2, retired: true, // Godparents takes its place (Claude, under Cory's "use your judgement", 2026-11-03) // worth 2 (Cory, Nov 1)
+    m('guest', 'Hangers-On', 4, 4, 'Whenever a rival gives you something, +1 more of it.', { f: 2, n: 2, retired: true, // Godparent takes its place (Claude, under Cory's "use your judgement", 2026-11-03) // worth 2 (Cory, Nov 1)
       onGiven(ctx, owner, card, giver, color) { if (giver !== owner) ctx.gain(owner, color, 1); },
     }),
     // Replacement batch 6 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Hangers-On's place. 4 silver + 1 any as a player sees it. Any of your
-    // members (Godparents itself too) to any rival; its cost is its printed price. A gift, not a steal or a swap
+    // members (Godparent itself too) to any rival; its cost is its printed price. A gift, not a steal or a swap
     // (Loyalists and Bodyguards don't stop it): an arrival for the rival (Old Maid's −5 lands on them), and Martyrs pays
     // you as it leaves. A used card stays used.
-    m('godparents', 'Godparents', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain followers equal to its cost.', { round: 1, // a round I member as Hangers-On was (bot-tested in a later round; Nov 3)
+    m('godparents', 'Godparent', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain followers equal to its cost.', { round: 1, // a round I member as Hangers-On was (bot-tested in a later round; Nov 3)
       activate: 'game',
       onActivate(ctx, owner, card) {
         const opts = [];
@@ -305,7 +305,7 @@ const silver = {
           id: `give:${c.uid}:${o.id}`, label: `${c.def.name} (${c.def.s + c.def.w}) to ${o.name}`, kind: 'choice', value: [c.uid, o.id],
           hint: c.def.s + c.def.w - (c.def.f || 1) * 1.5 - (c.used || c.def.vanilla ? 0 : 1) + (c.def.onJoined ? 5 : 0) - ctx.followers(o) * 0.01,
         });
-        ctx.choose(owner, 'Godparents: give which of your members to which rival?', opts, 'silver.godparents');
+        ctx.choose(owner, 'Godparent: give which of your members to which rival?', opts, 'silver.godparents');
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 || (ctx.state.round === 2 && ctx.membersOf(owner).some(c => c.used && c.def.activate === 'game')),
     }),
@@ -396,14 +396,14 @@ const silver = {
     // a gift (Caterer, Hangers-On); the count is all the silver rivals hold after it.
     // REPLACE6 bot test (Nov 3, replacement batch 6): the Debutantes slot (Fundraisers' under REPLACE2). 6 silver + 3 any as
     // a player sees it. The rival who holds the most silver when it's used; their silver stays theirs.
-    ...add6(m('socialclimbers', 'Social Climbers', 5, 3, 'On Use, once per game: gain followers equal to the silver of the rival who holds the most.', {
+    ...add6(m('socialclimbers', 'Social Climber', 5, 3, 'On Use, once per game: gain followers equal to the silver of the rival who holds the most.', {
       activate: 'game',
       onActivate(ctx, owner, card) {
         const top = others(ctx, owner).reduce((a, b) => ((b.res[S] || 0) > (a.res[S] || 0) ? b : a));
         const k = top.res[S] || 0;
-        if (!k) { card.used = false; ctx.log(`${owner.name}'s Social Climbers: no rival holds silver.`); return; }
+        if (!k) { card.used = false; ctx.log(`${owner.name}'s Social Climber: no rival holds silver.`); return; }
         owner.bonus += k;
-        ctx.log(`${owner.name}'s Social Climbers: ${top.name} holds ${k} silver, the most: +${k} followers.`);
+        ctx.log(`${owner.name}'s Social Climber: ${top.name} holds ${k} silver, the most: +${k} followers.`);
       },
       botActivate: (ctx, owner) => { const k = Math.max(0, ...others(ctx, owner).map(o => o.res[S] || 0)); return k >= 8 || (ctx.state.round === 3 && (k >= 5 || owner.left === 0)); },
     })),
@@ -442,8 +442,8 @@ const silver = {
         return true;
       },
     })), // worth 2 (Cory, Nov 1)
-    m('philanthropists', 'Philanthropists', 3, 2, 'On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.', {
-      onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropists', max: 4, per: 1 }); },
+    m('philanthropists', 'Philanthropist', 3, 2, 'On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.', {
+      onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropist', max: 4, per: 1 }); },
     }),
     m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', {
       activate: 'game',

@@ -128,7 +128,7 @@ export default {
         p.res[a] -= 1; o.res[a] = (o.res[a] || 0) + 1;
         o.res[b] -= 1; p.res[b] = (p.res[b] || 0) + 1;
         ctx.log(`${p.name}'s Barterers: ${p.name} gives ${o.name} 1 ${a} for 1 ${b}.`);
-        // a change of the rival's resources: Customs pays once per Barterers use
+        // a change of the rival's resources: Customs Officer pays once per Barterers use
         for (const card of ctx.membersOf(o)) { const def = ctx.defOf(card); if (def.onChanged) def.onChanged(ctx, o, card, p, data.instance); }
         const next = { ...data, left: data.left - 1, done: data.done + 1 };
         if (next.left > 0) barterStep(ctx, p, next); else tastemaker(ctx, p);
@@ -205,13 +205,13 @@ export default {
       onRoundStart(ctx, owner) { for (const c of missing(ctx, owner)) ctx.gain(owner, c, 1); },
     }),
     // Cory, 2026-10-31: "maybe just +1 yellow when any of your resources are stolen or moved"
-    m('customs', 'Customs', 2, 3, 'Whenever a rival steals or changes any of your resources, +1 yellow.', { round: 1, // 6 but still a round I member (Claude, balance Nov 1: strong at 4; Yellow keeps 4 round I members)
-      onSteal(ctx, owner, card, info) { if (info.victim === owner && info.thief !== owner) { ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs: +1 yellow.`); } },
+    m('customs', 'Customs Officer', 2, 3, 'Whenever a rival steals or changes any of your resources, +1 yellow.', { round: 1, // 6 but still a round I member (Claude, balance Nov 1: strong at 4; Yellow keeps 4 round I members)
+      onSteal(ctx, owner, card, info) { if (info.victim === owner && info.thief !== owner) { ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs Officer: +1 yellow.`); } },
       // once per change, however many of your resources it changes (Cory, Nov 1: "Yes"), as once per steal
       onChanged(ctx, owner, card, by, instance) {
         if (by === owner || (instance != null && card.changed === instance)) return;
         if (instance != null) card.changed = instance;
-        ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs: +1 yellow.`);
+        ctx.gain(owner, Y, 1); ctx.log(`${owner.name}'s Customs Officer: +1 yellow.`);
       },
     }),
     // Claude's fill-in (Cory, 2026-10-31: "whenever you recruit, +1 of its color" may become Red's artifact)
@@ -228,10 +228,10 @@ export default {
     }),
     // Cory, Nov 1 3:14pm: "I like tourists. maybe on recruit and round start?" Replaces Go-Between in the 10-card deck.
     // Price 3 yellow + 4 any and worth 1 are the design thread's fill-ins
-    m('tourists', 'Tourists', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { now: true, round: 1, // a round I member like Go-Between, so Yellow keeps 4 (Claude's fill-in)
+    m('tourists', 'Tourist', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { now: true, round: 1, // a round I member like Go-Between, so Yellow keeps 4 (Claude's fill-in)
       onRoundStart(ctx, owner) {
         const k = held(ctx, owner).length;
-        if (k) { owner.bonus += k; ctx.log(`${owner.name}'s Tourists: +${k} follower${k === 1 ? '' : 's'}.`); }
+        if (k) { owner.bonus += k; ctx.log(`${owner.name}'s Tourist: +${k} follower${k === 1 ? '' : 's'}.`); }
       },
     }),
     // Cory, 2026-10-31: "make it 3 and add on recruit as well"
@@ -256,7 +256,7 @@ export default {
       onRoundStart(ctx, owner) { ctx.gain(owner, Y, held(ctx, owner).length); },
     }),
     // REPLACE1 bot test (Nov 3, replacement batch 1): Dyer's place. 4 yellow + 2 any as a player sees it. Pick a rival
-    // (Bodyguards blocks, as it blocks Dilute), then up to 3 swaps of 1 of yours for 1 of theirs. Customs and Tastemaker
+    // (Bodyguards blocks, as it blocks Dilute), then up to 3 swaps of 1 of yours for 1 of theirs. Customs Officer and Tastemaker
     // read it as changing a rival's resources.
     ...add1(m('barterers', 'Barterers', 3, 2, "On Recruit and Round Start: swap up to 3 of your resources with one rival's, one for one.", { now: true, ...old5,
       onRoundStart(ctx, owner) {
@@ -519,7 +519,7 @@ function tastemaker(ctx, p) {
     ctx.log(`${p.name}'s Tastemaker: +1 follower.`);
   }
 }
-/** One change of rivals' resources (a space or card, however many it changes): Customs pays once per change. */
+/** One change of rivals' resources (a space or card, however many it changes): Customs Officer pays once per change. */
 const newChange = ctx => (ctx.state.changeSeq = (ctx.state.changeSeq || 0) + 1);
 function changeOne(ctx, p, o, a, b, who, instance = newChange(ctx)) {
   o.res[a] -= 1; o.res[b] = (o.res[b] || 0) + 1;

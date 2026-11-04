@@ -93,7 +93,7 @@ describe('REPLACE1: each card fires', () => {
     expect(named(s, 'Night Watch')).toEqual(["P2's Night Watch: +2 followers (P1 took the Goes Last token with 2 minions on it)."]);
   });
 
-  it('Barterers: On Recruit, swap up to 3 of your resources with one rival’s, one for one (Customs hears it)', () => {
+  it('Barterers: On Recruit, swap up to 3 of your resources with one rival’s, one for one (Customs Officer hears it)', () => {
     let s = table(['red', 'yellow', 'market', 'thieves'], { round: 2, res: [{ yellow: 4, red: 4 }, { blue: 3 }], members: [[], ['yellow.customs']], shop: ['yellow.barterers'], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `card:${uidIn(s, 'yellow.barterers', 'shop')}`);
     expect(s.pending.prompt).toBe('Barterers: swap with which rival?');
@@ -105,7 +105,7 @@ describe('REPLACE1: each card fires', () => {
     expect(s.players[0].res.blue).toBe(2);
     expect(s.players[1].res.red).toBe(2);
     expect(s.players[1].res.blue).toBe(1);
-    // Customs: +1 yellow once for the whole Barterers use
+    // Customs Officer: +1 yellow once for the whole Barterers use
     expect(s.players[1].res.yellow).toBe(1);
     expect(named(s, 'Barterers')).toEqual(["P1's Barterers: P1 gives P2 1 red for 1 blue.", "P1's Barterers: P1 gives P2 1 red for 1 blue."]);
   });

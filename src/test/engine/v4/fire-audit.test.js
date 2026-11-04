@@ -116,7 +116,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'thieves.shoplifter', 'echo.translator', // under 3 holds when Green grew to 16 (Oct 28) moved the games; recruit-definition (Shoplifter) and cards-echo (Translator, cut) cover them
       'thieves.snitch', // under 3 holds when the Oct 29 balance prices moved the games; cards-thieves (Snitch) covers it
       'market.blackmarket', // under 3 holds when the color cost (Nov 2: 1 of the wild paid in the member's color) moved the games; cards-market covers it
-      'market.plusone', // under 3 holds when the Nov 3 live replacements (Impersonators, Creditors, Kidnappers, Godparents) moved the games; cards-market-concepts covers it
+      'market.plusone', // under 3 holds when the Nov 3 live replacements (Impersonator, Creditors, Kidnapper, Godparent) moved the games; cards-market-concepts covers it
       'echo.bait']); // under 3 holds when bots began rating every choice over every option (Nov 2) moved the games; green-bait-trading covers it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);
@@ -169,7 +169,7 @@ const ALLOW = {
   'purple.doubletime': 'halves only Taskmaster’s paid turn now (cards-purple: Corner-Cutter); cut from the deck',
   // like Bodyguards and Agents above: a pure restriction (its cult's members drop out of every swap's options) that
   // changes no number, so there is no payout line to name it (v0.8.2 Red deck)
-  // the Nov 1 balance numbers (Last Call, Customs, Loyalists…) moved the seeded games: recruited in 1, as its owner's last
+  // the Nov 1 balance numbers (Last Call, Customs Officer, Loyalists…) moved the seeded games: recruited in 1, as its owner's last
   // Silver's Nov 1 members: bots use it only when rivals together hold 2 silver each, which these games rarely gave (thread told)
   'silver.debtcollector': 'On Use, once per game; a bot waits for rivals to hold silver (cards-silver: Debt Collectors)',
   'yellow.puppeteer': 'new Nov 1; recruited in 2 seeded games without its moment (cards-yellow: Puppeteers)',

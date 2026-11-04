@@ -475,7 +475,7 @@ const echoQ = {
       self.ability = target.copy || target.def.id;
       const d = defById(self.ability);
       self.used = (d.activate === 'game' && !!self.gameUsed) || (d.activate === 'round' && self.roundUsed === ctx.state.round);
-      ctx.log(`${p.name}'s Impersonators: has the ability of ${ctx.ownerOf(uid).name}'s ${d.name} ("${d.text}").`);
+      ctx.log(`${p.name}'s Impersonator: has the ability of ${ctx.ownerOf(uid).name}'s ${d.name} ("${d.text}").`);
     },
     ...handlers2({
       mirrorImage(ctx, p, [oid, c]) {
@@ -572,18 +572,18 @@ const echoQ = {
       onRoundStart(ctx, owner) { ctx.gain(owner, 'green', 2); },
     }),
     m('choir', 'Choir', 4, 2, 'Whenever you copy a space, +1 green.', { n: 2 }), // 2 members (Cory, Oct 29: "choir and raiders can be more"; 2 is Claude's start)
-    m('muse', 'Muse', 1, 2, 'Whenever a rival copies an action, +1 green.', { retired: true }), // Impersonators takes its place (Claude, under Cory's "use your judgement", 2026-11-03)
+    m('muse', 'Muse', 1, 2, 'Whenever a rival copies an action, +1 green.', { retired: true }), // Impersonator takes its place (Claude, under Cory's "use your judgement", 2026-11-03)
     // Replacement batch 3 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Muse's place. 4 green + 2 any as a player sees it. The chosen
     // member's ability rides on the card (card.ability: core's effectiveDefs), never its worth or member count. Its On
     // Recruit does nothing (nothing is being recruited). At round start the ability it holds still does its Round Start,
     // then the owner chooses again; the new one's Round Start waits for the next round. One On Use a game (and one a
-    // round) across every ability it holds. Another Impersonators, or an uncopied Doppelganger or Impostors, has no
+    // round) across every ability it holds. Another Impersonator, or an uncopied Doppelganger or Impostors, has no
     // ability of its own to lend, so it isn't offered.
-    m('impersonators', 'Impersonators', 3, 2, "On Recruit and Round Start: choose a rival's member. Until you choose again, Impersonators has that member's ability.", { now: true, round: 1, // a round I member as Muse was (bot-tested in a later round; Nov 3)
+    m('impersonators', 'Impersonator', 3, 2, "On Recruit and Round Start: choose a rival's member. Until you choose again, Impersonator has that member's ability.", { now: true, round: 1, // a round I member as Muse was (bot-tested in a later round; Nov 3)
       onRoundStart(ctx, owner, card) {
         const list = ctx.rivals(owner).flatMap(o => ctx.membersOf(o)).filter(c => c.copy || !['doppel', 'impostor', 'impersonators'].includes(c.def.key));
-        if (!list.length) { ctx.log(`${owner.name}'s Impersonators: no rival member to choose.`); return; }
-        ctx.choose(owner, "Impersonators: choose a rival's member; until you choose again, Impersonators has that member's ability", list.map(c => ({
+        if (!list.length) { ctx.log(`${owner.name}'s Impersonator: no rival member to choose.`); return; }
+        ctx.choose(owner, "Impersonator: choose a rival's member; until you choose again, Impersonator has that member's ability", list.map(c => ({
           id: `card:${c.uid}`, label: `${ctx.ownerOf(c.uid).name}: ${c.def.name}`, kind: 'member', value: c.uid,
           hint: impersonateHint(ctx, owner, card, defById(c.copy || c.def.id)),
         })), 'echo.impersonate', { uid: card.uid });
@@ -782,7 +782,7 @@ function mirrorOptions(ctx, p) {
   return out;
 }
 
-/** Impersonators (REPLACE3): a rough worth of holding def's ability, for bots' near ties (an On Recruit or a plain card
+/** Impersonator (REPLACE3): a rough worth of holding def's ability, for bots' near ties (an On Recruit or a plain card
  *  lends nothing; a game-end count is read now). */
 function impersonateHint(ctx, owner, card, def) {
   const keys = Object.keys(def).filter(k => !['key', 'name', 's', 'w', 'text', 'f', 'n', 'id', 'quadrant', 'copies', 'vanilla', 'round', 'onRecruited', 'extraColor', 'extraWild', 'retired'].includes(k));

@@ -95,18 +95,18 @@ describe('Yellow members', () => {
     expect(run([['benders.dabblers', 'red.volunteer']], 'red.intern')).toEqual({ n: 0, y: 0 }); // a real red member does
     expect(run([['red.volunteer']], 'benders.dabblers')).toEqual({ n: 1, y: 2 }); // Dabblers itself: you had no gold, yellow or green
   });
-  it('Customs: +1 yellow when a rival changes or steals your resources, named', () => {
+  it('Customs Officer: +1 yellow when a rival changes or steals your resources, named', () => {
     let s = take(sc({ res: [{}, { red: 2 }], members: [[], ['yellow.customs']] }), 'yellow.dilute');
     s = move(s, 'res:1:red'); s = move(s, 'color:gold'); s = move(s, 'done');
     expect(R(s, 1)).toMatchObject({ red: 1, gold: 1, yellow: 1 });
-    expect(named(s, 'Customs')).toHaveLength(1);
+    expect(named(s, 'Customs Officer')).toHaveLength(1);
   });
-  it('Customs: once per change, however many of your resources it changes (Cory, Nov 1: "Yes")', () => {
+  it('Customs Officer: once per change, however many of your resources it changes (Cory, Nov 1: "Yes")', () => {
     let s = take(sc({ res: [{}, { red: 3 }], members: [[], ['yellow.customs']] }), 'yellow.dilute');
     s = move(s, 'res:1:red'); s = move(s, 'color:gold');
     s = move(s, 'res:1:red'); s = move(s, 'color:green');
     s = move(s, 'done');
-    expect(named(s, 'Customs')).toHaveLength(1);
+    expect(named(s, 'Customs Officer')).toHaveLength(1);
     expect(R(s, 1).yellow).toBe(1);
   });
   it('Guest Book: a first grey member is a new color; a second grey is not (Cory, Nov 1: "Yes")', () => {
@@ -144,10 +144,10 @@ describe('Yellow members', () => {
     const s = sc({ members: [['yellow.dyer']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
     expect(R(s).yellow).toBe(2);
   });
-  it('Tourists: round start, +1 follower per color you hold (Cory, Nov 1 3:14pm)', () => {
+  it('Tourist: round start, +1 follower per color you hold (Cory, Nov 1 3:14pm)', () => {
     const s = sc({ members: [['yellow.tourists']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
     expect(s.players[0].bonus).toBe(2);
-    expect(s.log).toContain("P1's Tourists: +2 followers.");
+    expect(s.log).toContain("P1's Tourist: +2 followers.");
   });
   it('Caravan: worth 3 followers; round start +1 of each color you hold', () => {
     const s = sc({ members: [['yellow.caravan']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
