@@ -5,9 +5,9 @@
   "ships as each passes, through the night"
  ],
  [
-  "Rival moves one at a time, spotlight",
+  "Fix test gates hit by the Harvest picker and resource hover",
   "No",
-  "~1:00am"
+  "~2:00am"
  ],
  [
   "Wheel: remaining small pauses",
@@ -15,12 +15,12 @@
   "~1:30am"
  ],
  [
-  "Red and White Cloak results, then ship",
+  "Red Cloak: held, already near fair after the Mob change",
   "No",
-  "full results ~3:00am"
+  "done"
  ],
  [
-  "Shipped tonight: v0.99.544 to .554 (pickers, rival-move lines, step-by-step recruits, 11 card reworks, sounds, setup fixes, wheel Firefox fix, pixel emoji members)",
+  "Shipped tonight: v0.99.544 to .556 (pickers, rival moves one at a time, step-by-step recruits, 12 card reworks incl. White Cloak, sounds, setup fixes, wheel Firefox fix, pixel emoji members)",
   "No",
   "live"
  ]
