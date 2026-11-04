@@ -167,7 +167,7 @@ async function play(g) {
   await page.click('[data-start]');
   await page.waitForSelector('.app.game', { timeout: 20000 });
   const t0 = Date.now();
-  let dead = 0, lastMoves = -1, turns = 0, stalls = 0, stillAt = { moves: -1, t: Date.now() };
+  let dead = 0, lastMoves = -1, turns = 0, stalls = 0, sheets = 0, sheetAt = -1, stillAt = { moves: -1, t: Date.now() };
   const looked = new Set(); // (round, what) already rested on
   while (Date.now() - t0 < MAX_MIN * 60000) {
     if (await page.$('.results')) break;
@@ -208,10 +208,10 @@ async function play(g) {
           ...(await page.$$('.lt-wheel [data-slot]')).map(el => ['space', el]),
           ...(await page.$$('[data-plaque]')).map(el => ['plaque', el]),
           ...(await page.$$('.lt-shop .card[data-uid]')).map(el => ['shop', el]),
-          ...(await page.$$('.cs-member')).map(el => ['member', el]),
+          ...(await page.$$('section.lt-cult-seat .cs-head')).map(el => ['seat', el]),
         ];
         for (const [kind, el] of targets) {
-          const id = await el.evaluate(e => e.getAttribute('data-slot') || e.getAttribute('data-plaque') || e.getAttribute('data-member') || e.getAttribute('data-uid') || '').catch(() => '');
+          const id = await el.evaluate(e => e.getAttribute('data-slot') || e.getAttribute('data-plaque') || e.getAttribute('data-uid') || e.closest('[data-seat]')?.getAttribute('data-seat') || '').catch(() => '');
           const k = `${s.round}|${kind}|${id}`;
           if (looked.has(k)) continue;
           looked.add(k);
@@ -220,7 +220,7 @@ async function play(g) {
           if (!got) { stats.missedKinds[kind] = (stats.missedKinds[kind] || 0) + 1; continue; }
           // a wheel space: every number its panel prints is on its hover card too
           if (kind === 'space') {
-            const face = await el.evaluate(e => (e.querySelector('[data-face], .face') || e).textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
+            const face = await el.evaluate(e => { const r = e.querySelector('[data-face], .face') || e, w = document.createTreeWalker(r, NodeFilter.SHOW_TEXT), t = []; while (w.nextNode()) t.push(w.currentNode.textContent); return t.join(' ').replace(/\s+/g, ' ').trim(); }).catch(() => '');
             for (const f of judgeFace(face, got)) await note(page, { ...f, where: `${where}, space ${id}` }, el);
           }
         }
@@ -237,7 +237,9 @@ async function play(g) {
       const pick = cards[s.moves % Math.max(1, cards.length)] || rates[rates.length - 1] || await page.$('[data-option="pass"]');
       if (pick) await pick.click({ timeout: 1500 }).catch(() => {});
     } else {
-      // a choice: read the prompt and any open sheet first, then answer like the e2e drivers do
+      // a choice: read the prompt and any open sheet first, then answer like the e2e drivers do; the first few sheets
+      // of a game are kept as pictures for a look by eye
+      if (s.moves !== sheetAt && sheets < 6 && await page.$('.prompt.choice, .dialog.pay')) { sheetAt = s.moves; sheets++; await sleep(400); await page.screenshot({ path: join(SHOTS, `choice-g${g + 1}-${String(sheets).padStart(2, '0')}.png`) }); }
       for (const f of judgeClip(await page.evaluate(TEXT_CLIP).catch(() => []))) await note(page, { ...f, where: `${where}, choosing (${s.phase})` });
       const a = await answerChoice(page, { last: ['pass'], skip: dead }).catch(() => null);
       if (!a) await sleep(250);

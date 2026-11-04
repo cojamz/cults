@@ -31,7 +31,7 @@ export function judgeCard(card) {
   const text = card.text || '';
   if (/\bundefined\b|\bNaN\b|\[object |\bnull\b|\{\{|\}\}/.test(text)) f('junk text', 1, `shows "${text.match(/.{0,20}(undefined|NaN|\[object |null|\{\{|\}\}).{0,20}/)?.[0]}"`);
   // a word printed twice in a row ("the the"), not numbers ("2 2" is a by-round list)
-  const dbl = text.match(/\b([A-Za-z]{2,})\s+\1\b/i);
+  const dbl = text.match(/\b([A-Za-z]{2,})[ \t]+\1\b/i);
   if (dbl && !/^(very|ha|no)$/i.test(dbl[1])) f('doubled word', 2, `"${dbl[0]}"`);
   // a sentence said twice on one card
   // (a rule with two triggers, "On Recruit and Round Start: +1 red per 2 members", prints one line per trigger by
@@ -138,7 +138,9 @@ export const judgeClip = lines => (lines || []).map(l => {
 /** A wheel space's panel against its hover card: a number on the panel the card never says. */
 export function judgeFace(face, card) {
   if (!face || !card || !card.text) return [];
-  const have = new Set(nums(card.text));
-  const extra = [...new Set(nums(face))].filter(n => !have.has(n));
+  const WORDS = { a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6 };
+  const have = new Set([...nums(card.text), ...(String(card.text).toLowerCase().match(/\b(one|two|three|four|five|six)\b/g) || []).map(w => WORDS[w])]);
+  // ("+1 per member color" on a panel is the card's "gain that many": a 1 before "per" needs no 1 on the card)
+  const extra = [...new Set(nums(face))].filter(n => !have.has(n) && !(n === 1 && new RegExp(`\\b1 (?:\\S+ )?per\\b`).test(face)));
   return extra.length ? [{ check: 'number mismatch', severity: 2, subject: card.title || 'space', detail: `the wheel panel says ${extra.join(', ')} ("${face.slice(0, 80)}"), its hover card never does` }] : [];
 }

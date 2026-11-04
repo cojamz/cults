@@ -6,7 +6,8 @@
 // picked one stays pressed, and a click on another switches it. Every answer is the engine's own option id.
 import SplitPicker, { splitRunning } from './SplitPicker.jsx';
 import SpendPicker from './SpendPicker.jsx';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { holdFlag } from './bodyFlag.js';
 import { cardDef, quadrant } from '../../engine/v4/index.js';
 import { costParts, playerColor, seatEmoji } from '../format.js';
 import { ResourceGlyph, anyParts } from './Glyphs.jsx';
@@ -42,6 +43,9 @@ const sphereOf = (state, d) => { if (!onTable(state, d)) return 'colorless'; try
  */
 export default function GiftCard(props) {
   const { state, gift: g } = props;
+  // the space being resolved waits on the hub as a card (ActionStage.jsx), drawn above the board: while this sheet (or the split or spend card) is
+  // up it sat over the sheet's own choices (picky UI bot, Nov 4: Promote's card covered P2's members), so it steps away
+  useLayoutEffect(() => holdFlag(document.body, 'giftCard'), []);
   // several coins in colors you choose (Harvest): picked whole, like a payment
   if (g.kind === 'color' && !g.pay && (g.toPick > 1 || splitRunning(state, g))) return <SplitPicker state={state} g={g} onAnswer={props.onAnswer} busy={props.busy} place={props.place} turnOf={props.turnOf} onBack={props.onBack} />;
   // your resources turned into followers, up to a limit (Exchange): picked whole, like a payment
