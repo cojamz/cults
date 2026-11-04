@@ -661,8 +661,16 @@ export default {
         card.paidRound = s.round;
         turnsNow(ctx, owner, 1, 'Early Birds');
       },
-      // BOTSEE: first in the round about once in four (more when trailing), a pick ahead of the table each time
-      ...see(info => 1.5 * endsAhead(info).length * 0.35),
+      // BOTSEE (fixed after the Evaluators' read, Nov 4: bots swapped it away while holding Line Cutters): about 3 per
+      // fire, for each Round Start still ahead (this round too while nobody has placed), sure with Line Cutters, likely
+      // with the fewest followers (who goes first from round II), rare otherwise.
+      ...see(info => {
+        const s = info.s, o = info.owner;
+        const first = o.members.some(u => defById(s.cards[u].def)?.pickFirst) ? 1
+          : Math.min(...s.players.map(x => x.bonus)) === o.bonus ? 0.6 : 0.15;
+        const placed = Object.keys(s.slots || {}).length > 0;
+        return 3 * first * ([1, 2, 3].filter(r => r > info.round).length + (placed ? 0 : 1));
+      }),
     })), // (Cory, Oct 29, balance run: +1 follower)
     // REPLACE5 bot test (Nov 3, replacement batch 5): Bouncers' place. 6 purple + 3 any as a player sees it. Every +1
     // minion a rival gets (Overtime, Night Owls, Go-Getter, Extra Hand, Overtime…: the purple helpers' onRivalExtraTurn)
