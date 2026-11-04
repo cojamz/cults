@@ -95,6 +95,11 @@ export const defById = id => {
   if (!d) throw new Error(`Unknown member: ${id}`);
   return d;
 };
+// "You'd get" only (preview.js): a pile card nobody may look at runs as this blank, so Walk-In's hover never names the
+// face-down top card or counts its worth (picky bot, Nov 4). In no deck, sphere or guest list: never dealt. Its price is
+// out of reach, so a dry run never has anyone buy a card that only a refill would show.
+export const FACE_DOWN = 'preview.facedown';
+DEFS[FACE_DOWN] = { id: FACE_DOWN, key: 'facedown', name: 'a face-down member', quadrant: 'guest', s: 0, w: 99, f: 1, n: 1, copies: 1, round: 1, text: '' };
 export const handlerById = id => {
   const h = HANDLERS[id];
   if (!h) throw new Error(`Unknown handler: ${id}`);

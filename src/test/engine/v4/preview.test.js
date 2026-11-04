@@ -3,6 +3,7 @@
 // is previewed exactly. The preview never changes the state it reads.
 import { describe, it, expect } from 'vitest';
 import { applyMove, followers, memberCount, previewSpace } from '../../../engine/v4/index.js';
+import { pileReach } from '../../../engine/v4/core.js';
 import { playMixedGames } from './contest-oracle.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
 
@@ -33,7 +34,12 @@ describe('v4 previewSpace', () => {
           // the space was the round's last placement and the real path ran on through the round's end: rivals' round-end
           // members (Straggler doing Kickback for you) are in t, and no space preview covers them
           const pastRound = t.over || t.round !== s.round || t.log.slice(s.log.length).some(l => /^Round \S+ ends\./.test(l));
-          if (!pv.partial && !pastRound) {
+          // a card from the face-down pile (Walk-In): the preview doesn't look at it (it runs as a blank, picky bot Nov 4),
+          // so its worth and On Recruit are the real path's alone; it never names it either
+          const hidden = s.pile.slice(pileReach(s, me0));
+          const fromPile = me.members.some(u => hidden.includes(u));
+          for (const u of hidden) expect(pv.joins || [], `${o.label}: names a face-down card`).not.toContain(u);
+          if (!pv.partial && !pastRound && !fromPile) {
             for (const r of s.resources) expect(inRange(pv.you.res[r], (me.res[r] || 0) - (me0.res[r] || 0)), `${o.label}: ${r} ${JSON.stringify(pv.you.res[r])}`).toBe(true);
             expect(inRange(pv.you.members, memberCount(t, me) - memberCount(s, me0)), `${o.label}: members`).toBe(true);
             // followers: the buy step can't have run yet (we stop at the next decision), so it's the space's own

@@ -249,7 +249,7 @@ export function CostDots({ parts }) {
 
 /**
  * The full card (plate 1b): the picture, name and worth, "costs 2● 2◐", the sentence big with its marks inline, then
- * one quiet line tying it to the table (whose it is, or what you're short of to recruit it). Nothing about paying.
+ * one quiet line tying it to the table (whose it is, or where it waits). Nothing about paying (Cory cut "you're short", Oct 15).
  */
 /**
  * What a member costs p while a discount applies (Intro Offer's "next member costs 4 less", Sponsor's 2 off…), as cost
@@ -671,13 +671,27 @@ const span = (r, unit, plural = unit + 's') => {
   const u = Math.max(Math.abs(r[0]), Math.abs(r[1])) === 1 ? unit : plural;
   return r[0] === r[1] ? `${signed(r[0])} ${u}` : `${signed(r[0])} to ${signed(r[1])} ${u}`;
 };
+// Right Away moves your next turn up; Sleep In and Last Call send minions after everyone else's. All three said "a turn
+// after this one", which read as extra turns (picky bot, Nov 4): the card's own words instead.
+// a member cast out or taken goes with its followers: said on the member ("−1 member and its 2 followers"), the followers
+// line keeps the rest (Farewell "+7 followers", not a net +5 beside Estate Sale's "−1 follower": picky bot, Nov 4)
+const lostTail = n => (n > 0 ? ` and its ${n === 1 ? 'follower' : `${n} followers`}` : '');
+function lostSpans(y) {
+  const lost = y.lost && y.lost[0] === y.lost[1] && y.lost[0] > 0 && y.members[0] === y.members[1] && y.members[0] === -1 ? y.lost[0] : 0;
+  if (!lost) return [span(y.followers, 'follower'), span(y.members, 'member')];
+  return [span([y.followers[0] + lost, y.followers[1] + lost], 'follower'), `${span(y.members, 'member')}${lostTail(lost)}`];
+}
+const earlyWords = n => (n === 1 ? 'your next turn right after this one' : `your next ${n} turns right after this one`);
+const lateWords = n => (n === 1 ? 'your next minion goes last' : `your other ${n} minions go last`);
 /** The preview as words: { you: "+3 gold, +1 member", others: "rivals +1 gold" | null, choose: bool, partial }. */
 export function previewWords(pv, state) {
   const you = [
     ...state.resources.map(r => span(pv.you.res[r], r, r)),
-    span(pv.you.followers, 'follower'), span(pv.you.members, 'member'), span(pv.you.turns, 'minion'),
-    // your own turns moved up (Crunch Time): sooner, not extra
-    pv.you.early && pv.you.early[1] > 0 ? (pv.you.early[0] === pv.you.early[1] ? `${pv.you.early[1] === 1 ? 'a turn' : `${pv.you.early[1]} turns`} after this one` : `up to ${pv.you.early[1]} turns after this one`) : null,
+    ...lostSpans(pv.you), span(pv.you.turns, 'minion'),
+    // your own turns moved up (Right Away): sooner, not extra
+    pv.you.early && pv.you.early[1] > 0 ? (pv.you.early[0] === pv.you.early[1] ? earlyWords(pv.you.early[1]) : `up to ${earlyWords(pv.you.early[1])}`) : null,
+    // your minions sent to the end (the Goes Last token: Sleep In, Last Call)
+    pv.you.late && pv.you.late[1] > 0 ? (pv.you.late[0] === pv.you.late[1] ? lateWords(pv.you.late[1]) : `up to ${lateWords(pv.you.late[1])}`) : null,
     // a discount gained ("next member −4"); one used up isn't a gain, and printed "next member −-6" (w3 words pass)
     pv.you.discount && pv.you.discount[1] > 0 ? `next member −${Math.max(0, pv.you.discount[0]) === pv.you.discount[1] ? pv.you.discount[1] : `${Math.max(0, pv.you.discount[0])}–${pv.you.discount[1]}`}` : null,
   ].filter(Boolean);
@@ -692,8 +706,10 @@ export function previewWords(pv, state) {
 /** Only what you'd surely get (the parts no pick changes), or '' when every part hangs on the pick. */
 function sureWords(pv, state) {
   const fixed = (r, unit, plural = unit + 's') => (r[0] === r[1] ? span(r, unit, plural) : null);
-  return [...state.resources.map(r => fixed(pv.you.res[r], r, r)), fixed(pv.you.followers, 'follower'), fixed(pv.you.members, 'member'), fixed(pv.you.turns, 'minion'),
-    pv.you.early && pv.you.early[0] > 0 && pv.you.early[0] === pv.you.early[1] ? `${pv.you.early[0] === 1 ? 'a turn' : `${pv.you.early[0]} turns`} after this one` : null,
+  const [fl, mb] = lostSpans(pv.you);
+  return [...state.resources.map(r => fixed(pv.you.res[r], r, r)), pv.you.followers[0] === pv.you.followers[1] ? fl : null, pv.you.members[0] === pv.you.members[1] ? mb : null, fixed(pv.you.turns, 'minion'),
+    pv.you.early && pv.you.early[0] > 0 && pv.you.early[0] === pv.you.early[1] ? earlyWords(pv.you.early[0]) : null,
+    pv.you.late && pv.you.late[0] > 0 && pv.you.late[0] === pv.you.late[1] ? lateWords(pv.you.late[0]) : null,
     pv.you.discount && pv.you.discount[0] > 0 && pv.you.discount[0] === pv.you.discount[1] ? `next member −${pv.you.discount[0]}` : null]
     .filter(Boolean).join(', ');
 }
@@ -708,18 +724,20 @@ export function changeWords(d, state) {
   for (const r of state.resources) if (d.res[r] > 0) gain.push(`+${d.res[r]} ${r}`);
   // the member by name when the branch brings one or two (w4 skeptic #31: "+1 member … your best pick" named none)
   const who = d.joined && d.joined.length && d.joined.length <= 2 && d.members > 0 ? (() => { try { return ` (${d.joined.map(u => cardDef(state, u).name).join(', ')})`; } catch { return ''; } })() : '';
+  const went = d.members === -1 && d.lost > 0 ? d.lost : 0;
   if (d.members > 0) gain.push(n(d.members, 'member') + who);
-  if (d.followers > 0) gain.push(n(d.followers, 'follower'));
+  if (d.followers + went > 0) gain.push(n(d.followers + went, 'follower'));
   if (d.turns > 0) gain.push(n(d.turns, 'minion'));
-  if (d.early > 0) gain.push(`${d.early === 1 ? 'a turn' : `${d.early} turns`} after this one`);
+  if (d.early > 0) gain.push(earlyWords(d.early));
+  if (d.late > 0) gain.push(lateWords(d.late));
   if (d.discount > 0) gain.push(`next member −${d.discount}`);
   // a member traded for another (Swap Sides, Even Swap): the count stays, so say it, never "nothing"
   if (d.swapped > 0) gain.push(`${d.swapped} member${d.swapped === 1 ? '' : 's'} swapped`);
   const lost = state.resources.filter(r => d.res[r] < 0);
   if (lost.length === 1) loss.push(`−${-d.res[lost[0]]} ${lost[0]}`);
   else if (lost.length > 1) loss.push(`−${lost.reduce((t, r) => t - d.res[r], 0)} resources`);
-  if (d.members < 0) loss.push(n(d.members, 'member'));
-  if (d.followers < 0) loss.push(n(d.followers, 'follower'));
+  if (d.members < 0) loss.push(n(d.members, 'member') + lostTail(went));
+  if (d.followers + went < 0) loss.push(n(d.followers + went, 'follower'));
   return [...gain, ...loss].join(', ') || 'nothing';
 }
 /** Every pick worth the same, only the mix differs: say which mix in numbers (Goody Bags, Your Call, Sweet Talk). */
@@ -746,11 +764,16 @@ function mixWords(pv, state, own) {
     && state.resources.every(r => pv.you.res[r][0] >= 0);
   const resTotal = d => state.resources.reduce((n, r) => n + d.res[r], 0);
   if (theft && mix.every(d => resTotal(d) === resTotal(mix[0]) && same('followers', d, mix[0]) && same('members', d, mix[0]))) {
-    const fixed = state.resources.reduce((n, r) => n + pv.you.res[r][0], 0);
+    // a rival's choice (Potluck: each rival gives you 1 of their choice): never "steal, you pick" (picky bot, Nov 4)
+    const theirs = !(pv.asks && pv.asks.length) && pv.theirAsks && pv.theirAsks.length;
+    // what came into the table (the space's own gain, a member's), per color; the rest is the steal, said whole
+    const made = pv.made && !theirs && state.resources.every(r => pv.made[r] && pv.made[r][0] === pv.made[r][1] && pv.made[r][0] >= 0) ? pv.made : null;
+    const fixed = made ? state.resources.reduce((n, r) => n + made[r][0], 0) : state.resources.reduce((n, r) => n + pv.you.res[r][0], 0);
     const n = resTotal(mix[0]) - fixed;
-    const minimums = state.resources.filter(r => pv.you.res[r][0] > 0 && pv.you.res[r][0] !== pv.you.res[r][1])
-      .map(r => `+${pv.you.res[r][0]} ${r}`);
-    const guaranteed = [...minimums, sure].filter(Boolean).join(', ');
+    const minimums = made ? state.resources.filter(r => made[r][0] > 0).map(r => `+${made[r][0]} ${r}`)
+      : state.resources.filter(r => pv.you.res[r][0] > 0 && pv.you.res[r][0] !== pv.you.res[r][1]).map(r => `+${pv.you.res[r][0]} ${r}`);
+    const guaranteed = (made ? minimums : [...minimums, sure].filter(Boolean)).join(', ');
+    if (n > 0 && theirs) return { text: `${guaranteed ? `${guaranteed}, ` : ''}+${n} resource${n === 1 ? '' : 's'}`, note: 'their pick' };
     if (n > 0) return { text: `${guaranteed ? `${guaranteed}; ` : ''}steal ${n} in colors you pick`, note: null };
   }
   // one color of your choosing on top of the sure part: "+2 silver, +2 of a color you pick"

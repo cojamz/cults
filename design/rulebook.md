@@ -60,7 +60,7 @@ You can use a member's ability any time during your own turn, as often as its ca
 - The pay sheet suggests a payment; tap one of your resources to swap it in.
 - A discount ("your next member costs 4 less") waits until your next member that costs something, comes off the colored part first, and is used up by that member. While you hold one, each card shows what you'd pay, with its list price struck above it, or "free".
 - The number in a card's dark circle is its total price (what you'd pay); its colors run along the foot.
-- Point at a card to see what you're short of. The "affordable" switch fades the members you can't pay for, "details" shows every card's ability, and "cost / color" sorts the row by price or by color.
+- The "affordable" switch fades the members you can't pay for, "details" shows every card's ability, and "cost / color" sorts the row by price or by color.
 
 ## Recruiting
 To **recruit** is to bring a member or followers into your cult by your own doing: recruit from the shop (paid or free), take a member from a rival, swap one in with your own Red action (Promote, Demote, Panel), or recruit followers (each purchase is one recruit). A member a rival moves into your cult is not your recruit.

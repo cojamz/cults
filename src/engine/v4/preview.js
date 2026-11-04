@@ -2,8 +2,9 @@
 // Display only. The engine's own action runs (with every member hook that reacts), so the preview can't drift
 // from the rules. Choices the action asks for (yours or a rival's) are explored as branches and summarized as
 // ranges. Nothing hidden leaks: it reports the player's own changes and rivals' totals, never the refilled shop.
-import { applyMove, resume, followers, memberCount } from './core.js';
+import { applyMove, resume, followers, memberCount, pileReach } from './core.js';
 import { plainCopy } from './copy.js';
+import { FACE_DOWN } from './content/index.js';
 
 const NODE_BUDGET = 36; // states explored per preview (a counted pick branches a lot; past the budget only the extremes are kept)
 // Past the budget a branch keeps to one side: the first option's branch takes the first option at every later choice and
@@ -25,11 +26,21 @@ const NODE_CAP = 120;
  * shown: a resource 1, a follower 2 (Cory's anchor, design/eval/value-model.md), a member 4 besides its followers, an
  * extra turn 3, a discount 1 a point. Display only, like the rest: the "You'd get" line (Info.jsx youdWords).
  */
-/** How many of p's turns this round were taken early (moved up by Crunch Time): the engine's roundOrder record. */
-const earlyMoves = (s, pid) => {
+/** How many of p's turns this round were taken early (moved up by Crunch Time): the engine's roundOrder record.
+ *  late: the ones sent to the end instead (the Goes Last token: Sleep In, Last Call), which used to count as moved up
+ *  and read "a turn after this one" (picky bot, Nov 4). */
+const earlyMoves = (s, pid, late = false) => {
   const e = s.early;
   if (!e || e.round !== s.round) return 0;
-  return e.moves.filter(m => m.p === pid).length;
+  return e.moves.filter(m => m.p === pid && !m.late === !late).length;
+};
+/** The followers that went with p's members cast out or taken (none when one came in: a swap), so a hover can say
+ *  "−1 member and its 2 followers" on Farewell and Estate Sale alike; Farewell's net "+5 followers" hid the 2 it lost
+ *  beside Estate Sale's "−1 follower" (picky bot, Nov 4). */
+const lostWorth = (state, me0, me) => {
+  if (me.members.some(u => !me0.members.includes(u))) return 0;
+  const gone = me0.members.filter(u => !me.members.includes(u));
+  return gone.length ? Math.max(0, followers(state, { bonus: 0, members: gone }) - 1) : 0;
 };
 /** opts.cap: explore at most this many states (a hover drawn on the page asks for a small one); the result says `capped`. */
 export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
@@ -47,6 +58,9 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
     base.players[pid].left -= 1;
     base.lastPlaced = { round: base.round, pid }; // as the engine's placement does: Purple's "Went last" (Racket's preview counted it as a rival's, Nov 4)
     base.current = pid;
+    // the pile is face down: the cards past what pid may look at (Insider, Peek) run as a blank stand-in, so a recruit
+    // from the top (Walk-In, a copy of it) never shows the real card's worth, name or On Recruit (picky bot, Nov 4)
+    for (const u of base.pile.slice(pileReach(state, state.players[pid]))) base.cards[u] = { uid: u, def: FACE_DOWN };
     // the round's turns still to come wait behind a stop that never runs them: Crunch Time moves yours up, and an
     // extra turn counts them for its spare space
     base.queue = [{ t: 'act', p: pid, q, i }, { t: 'previewHold', p: pid }, ...state.queue.filter(t => t.t === 'turn').map(t => ({ ...t }))];
@@ -59,6 +73,8 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
   let copies = null;
   // your first pick's options (the engine's own list): which face-up or seat members the space acts on (targets below)
   let first = null;
+  // which of those options the walk really followed (a capped walk stops before the rest)
+  const tried = new Set();
   let nodes = 0, partial = false;
   // worth of a branch to a player (see above); the extra turns only for pid (a rival's minions don't move here)
   const worthOf = new Map();
@@ -95,6 +111,7 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
       try { next = applyMove(s, { player: chooser, option: o.id }); } catch { partial = true; continue; }
       const got = walk(next, side || (over ? (o === opts[0] ? 'first' : 'last') : null));
       if (!got) continue;
+      if (s === base && first === opts) tried.add(o.id);
       if (!best || worth(got.best, pid) > worth(best, pid)) best = got.best;
       if (!likely || worth(got.likely, chooser) > worth(likely, chooser)) likely = got.likely;
       if (!worst || worth(got.worst, pid) < worth(worst, pid)) worst = got.worst;
@@ -106,21 +123,29 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
   if (!leaves.length || !top) return null;
   const range = () => [Infinity, -Infinity];
   const put = (r, v) => { r[0] = Math.min(r[0], v); r[1] = Math.max(r[1], v); };
-  const you = { res: {}, followers: range(), members: range(), turns: range(), early: range(), discount: range() };
+  const you = { res: {}, followers: range(), members: range(), lost: range(), turns: range(), early: range(), late: range(), discount: range() };
   const others = { res: {}, followers: range(), members: range() };
+  // made: per color, what came into the table rather than moved between players (your change plus the rivals'): a steal's
+  // part is what's left of your gain, so "You'd get" can say the whole steal (Help Yourself's 5 read as "+1 green; steal
+  // 4" when every pick took a green: picky bot, Nov 4)
+  const made = {};
   const me0 = state.players[pid];
   for (const s of leaves) {
     const me = s.players[pid];
     for (const r of state.resources) put(you.res[r] = you.res[r] || range(), (me.res[r] || 0) - (me0.res[r] || 0));
     put(you.followers, followers(s, me) - followers(state, me0));
     put(you.members, memberCount(s, me) - memberCount(state, me0));
+    put(you.lost, lostWorth(state, me0, me));
     put(you.discount, (me.discount || 0) - (me0.discount || 0)); // "your next member costs N less"
     // an extra turn shows up as a worker given back (left grows past the one just placed)
     put(you.turns, Math.max(0, me.left - (me0.left - 1)));
     // your own turns moved up (Crunch Time): not extra, but sooner
     put(you.early, earlyMoves(s, pid) - earlyMoves(state, pid));
+    // your minions sent to go last (the Goes Last token)
+    put(you.late, earlyMoves(s, pid, true) - earlyMoves(state, pid, true));
     const rivals = s.players.filter(o => o.id !== pid);
     for (const r of state.resources) put(others.res[r] = others.res[r] || range(), rivals.reduce((t, o) => t + (o.res[r] || 0) - (state.players[o.id].res[r] || 0), 0));
+    for (const r of state.resources) put(made[r] = made[r] || range(), s.players.reduce((t, o) => t + (o.res[r] || 0) - (state.players[o.id].res[r] || 0), 0));
     put(others.followers, rivals.reduce((t, o) => t + followers(s, o) - followers(state, state.players[o.id]), 0));
     put(others.members, rivals.reduce((t, o) => t + memberCount(s, o) - memberCount(state, state.players[o.id]), 0));
   }
@@ -129,7 +154,7 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
   const sweptIn = s => state.shop.filter(u => !s.shop.includes(u) && !s.players.some(o => o.members.includes(u)));
   const swept = leaves.map(sweptIn).reduce((a, b) => a.filter(u => b.includes(u)));
   const same = r => r[0] === r[1];
-  const exact = Object.values(you.res).every(same) && same(you.followers) && same(you.members) && same(you.turns) && same(you.early) && same(you.discount);
+  const exact = Object.values(you.res).every(same) && same(you.followers) && same(you.members) && same(you.turns) && same(you.early) && same(you.late) && same(you.discount);
   // reasons: one short line per member effect on your numbers ("Hustler: +3 gold", "Underdog: gold gain 3 → 6"), or
   // a member that stayed off and why ("Underdog: no ×2 (Hustler’s +3 lands first)"), from every branch, for the hover
   // A member that fires more than once in one branch (Greatest Hits copying two gold spaces: Prospector +1 each) says
@@ -157,12 +182,12 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
     const me = s.players[pid];
     return {
       res: Object.fromEntries(state.resources.map(r => [r, (me.res[r] || 0) - (me0.res[r] || 0)])),
-      followers: followers(s, me) - followers(state, me0), members: memberCount(s, me) - memberCount(state, me0),
-      turns: Math.max(0, me.left - (me0.left - 1)), early: earlyMoves(s, pid) - earlyMoves(state, pid), discount: (me.discount || 0) - (me0.discount || 0),
+      followers: followers(s, me) - followers(state, me0), members: memberCount(s, me) - memberCount(state, me0), lost: lostWorth(state, me0, me),
+      turns: Math.max(0, me.left - (me0.left - 1)), early: earlyMoves(s, pid) - earlyMoves(state, pid), late: earlyMoves(s, pid, true) - earlyMoves(state, pid, true), discount: (me.discount || 0) - (me0.discount || 0),
       // members that came in while the count didn't rise by as many: traded for (a swap)
       swapped: Math.max(0, me.members.filter(u => !me0.members.includes(u)).length - Math.max(0, me.members.length - me0.members.length)),
-      // which members this branch brings you (display: "+1 member (Planner)", w4 skeptic #31)
-      joined: me.members.filter(u => !me0.members.includes(u)),
+      // which members this branch brings you (display: "+1 member (Planner)", w4 skeptic #31); never a face-down one
+      joined: me.members.filter(u => !me0.members.includes(u) && s.cards[u].def !== FACE_DOWN),
     };
   };
   const worths = leaves.map(s => worth(s, pid));
@@ -176,10 +201,10 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
   const spendsNothing = s => state.resources.every(r => (s.players[pid].res[r] || 0) >= (me0.res[r] || 0)) && s.players[pid].members.length === me0.members.length;
   const keepLeaf = leaves.filter(spendsNothing).reduce((a, s) => (!a || worth(s, pid) > worth(a, pid) ? s : a), null);
   // every member some branch brings you (Open Door's tied cheapest: all four, not the best one's name)
-  const joins = [...new Set(leaves.flatMap(s => s.players[pid].members.filter(u => !me0.members.includes(u))))];
-  return { exact, partial, capped, leaves: leaves.length, keep: keepLeaf ? change(keepLeaf) : null, you, others, asks: [...asks], theirAsks: [...theirAsks], copies, swept, reasons: reasons.slice(0, 6), sample: leaves[0], samples: leaves.slice(0, 16),
+  const joins = [...new Set(leaves.flatMap(s => s.players[pid].members.filter(u => !me0.members.includes(u) && s.cards[u].def !== FACE_DOWN)))];
+  return { exact, partial, capped, made, leaves: leaves.length, keep: keepLeaf ? change(keepLeaf) : null, you, others, asks: [...asks], theirAsks: [...theirAsks], copies, swept, reasons: reasons.slice(0, 6), sample: leaves[0], samples: leaves.slice(0, 16),
     best: change(top.best), likely: change(top.likely), worst: change(top.worst), tied, mix,
-    joins, targets: spaceTargets(state, pid, first, joins, leaves) };
+    joins, targets: spaceTargets(state, pid, first, joins, leaves, capped || partial ? tried : null) };
 }
 
 /**
@@ -192,11 +217,15 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
  * → { shop: [uid], seats: [uid], pairs: [[yours, theirs]], sure } or null. sure: the one face-up member comes to you
  * whatever happens ("Would recruit" rather than "Could").
  */
-export function spaceTargets(state, pid, first, joins, leaves) {
+export function spaceTargets(state, pid, first, joins, leaves, tried = null) {
   const inShop = u => state.shop.includes(u);
   const ownerOf = u => state.players.find(o => o.members.includes(u));
   const opts = first || [];
-  const picked = opts.filter(o => o.kind === 'card' && inShop(o.value) && joins.includes(o.value)).map(o => o.value);
+  const brings = o => o.kind === 'card' && inShop(o.value) && joins.includes(o.value);
+  // tried: the options a capped walk followed. One it never reached counts when the ones it did reach were recruits:
+  // Initiation's eight-or-less row lit four of seven when a small hover preview ran out (picky bot, Nov 4)
+  const unseen = o => tried && !tried.has(o.id) && o.kind === 'card' && inShop(o.value) && opts.some(brings);
+  const picked = opts.filter(o => brings(o) || unseen(o)).map(o => o.value);
   const shop = [...new Set(picked.length ? picked : joins.filter(inShop))];
   const seats = [...new Set(opts.filter(o => o.kind === 'member' && ownerOf(o.value) && ownerOf(o.value).id !== pid).map(o => o.value))];
   const pairs = opts.filter(o => o.kind === 'trade' && Array.isArray(o.value) && o.value.length === 2).map(o => [...o.value]);

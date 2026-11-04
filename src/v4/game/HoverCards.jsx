@@ -474,7 +474,7 @@ function useCopyTargets(c, state, me) {
  * Intern (cheapest, 1)", "Could recruit: Intern or Benchwarmer (cheapest, 1)", "Could take: Bo's Twins (2)", "Could
  * swap: your Banker for Bo's Twins". Past three, the count (the lit cards name themselves). { k, text } rows, or [].
  */
-export function targetLines(state, viewer, t) {
+export function targetLines(state, viewer, t, ruleText = '') {
   if (!t) return [];
   const def = u => cardDef(state, u);
   const cost = u => (def(u).s || 0) + (def(u).w || 0);
@@ -499,7 +499,11 @@ export function targetLines(state, viewer, t) {
     const firsts = new Set(t.pairs.map(([a]) => a)), seconds = new Set(t.pairs.map(([, b]) => b));
     const allShop = [...seconds].every(u => state.shop.includes(u));
     const many = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
-    const text = t.pairs.length > 2 ? `${many(firsts.size, 'member')} for ${allShop ? many(seconds.size, 'shop member') : `${many(seconds.size, 'member')} of the same cost`}` : t.pairs.map(([a, b]) => `your ${def(a).name} for ${whose(b)} ${def(b).name}`).join(', or ');
+    // the price the rule allows, in its own words (Promote "costing up to 2 more"); "of the same cost" only when every
+    // pair is (it said so for Promote and Demote, whose pairs differ by up to 2: picky bot, Nov 4)
+    const reach = (/costing (up to \d+ (?:more|less))/.exec(ruleText) || [])[1];
+    const price = reach ? `, each costing ${reach}` : t.pairs.every(([a, b]) => cost(a) === cost(b)) ? ' of the same cost' : '';
+    const text = t.pairs.length > 2 ? `${many(firsts.size, 'member')} for ${allShop ? many(seconds.size, 'shop member') : many(seconds.size, 'member')}${price}` : t.pairs.map(([a, b]) => `${whose(a)} ${def(a).name} for ${whose(b) || 'the shop’s'} ${def(b).name}`.trim()).join(', or ');
     out.push({ k: 'Could swap', text, uids: [...new Set(t.pairs.flat())] });
   }
   return out;
@@ -585,7 +589,7 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
           : pv.swept.map((u, k) => <span key={u} data-swept={u}>{k ? ', ' : ''}<CardName state={state} uid={u} /></span>)}<small className="lt-swept-note"> back under the deck</small></Row> : null}
         {open && viewer != null && !state.over ? <CopyChoices state={state} viewer={viewer} text={a.text} /> : null}
         {/* the members the space lights, named (Cory, 2026-10-16: the lit cards say why) */}
-        {open && pv ? targetLines(state, viewer, pv.targets).map(l => <Row key={l.k} k={l.k}><span data-aims={l.uids.join(' ')}>{l.text}</span></Row>) : null}
+        {open && pv ? targetLines(state, viewer, pv.targets, a.text).map(l => <Row key={l.k} k={l.k}><span data-aims={l.uids.join(' ')}>{l.text}</span></Row>) : null}
         {/* a second minion on it says why (w4 skeptic #13: two minions on one space, no reason): Squatter's join */}
         {owner !== undefined && <Row k="Taken">{owner === viewer ? 'You' : state.players[owner].name}{fresh ? ', since your last turn' : ''}{((state.squats && state.squats[spaceKey]) || []).map(j => `; ${j === viewer ? 'you' : state.players[j].name} joined (Squatter)`).join('')}{opt ? ' — you can join it' : ''}</Row>}
         {/* a value that grows by round: its run is the rule sentence's ("+2● in round I, +4 in round II…"), said once
