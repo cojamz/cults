@@ -73,7 +73,7 @@ export function loanDue(ctx) {
     const p = ctx.player(l.pid);
     if ((p.res[W] || 0) < 3) { p.bonus -= 3; ctx.log(`${p.name}'s Loan: not 3 white to pay back, so -3 followers.`); continue; }
     ctx.choose(p, 'Loan: pay back 3 white, or lose 3 followers?', [
-      { id: 'pay', label: 'Pay back 3 white', kind: 'yes', value: 'pay', spend: { [W]: 3 }, hint: -3 * 0.9 },
+      { id: 'pay', label: 'Pay back 3 white', kind: 'yes', value: 'pay', spend: { [W]: 3 }, hint: -3 * (ctx.state.round >= 3 ? 0.3 : 0.9) }, // white left after round III buys nothing (Evaluators, Nov 4)
       { id: 'lose', label: 'Lose 3 followers', kind: 'no', value: 'lose', hint: -3 * fv(ctx) },
     ], 'trading.loanPay');
   }
