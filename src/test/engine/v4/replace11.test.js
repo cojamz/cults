@@ -359,8 +359,13 @@ describe("Blue contest setting 'recruits' (Most recruits this round)", () => {
     const row = () => contestTable(s).find(c => c.qid === 'market');
     expect(row().label).toBe('Most recruits this round');
     expect(row().winners).toEqual([]); // members held from before don't count
-    s.players[1].recruitsIn = { round: s.round, n: 2 };
-    s.players[0].recruitsIn = { round: s.round - 1, n: 5 }; // last round's recruits don't count
+    const [mob, sponsor] = s.players[0].members;
+    s.cards[mob].sideways = { round: s.round - 1, pid: 0 }; // last round's recruit doesn't count
+    for (const def of ['red.volunteer', 'red.intern']) {
+      const u = s.shop.find(x => s.cards[x].def === def);
+      s.shop.splice(s.shop.indexOf(u), 1); s.players[1].members.push(u); s.cards[u].sideways = { round: s.round, pid: 1 };
+    }
+    expect(s.cards[sponsor].sideways).toBeUndefined();
     expect(row().winners).toEqual([1]);
   });
 });

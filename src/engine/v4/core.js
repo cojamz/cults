@@ -1157,8 +1157,8 @@ export function scoringOf(state, qid) {
       score: (ctx, p) => p.members.length };
     if (fix.market === 'blue') by.market = { label: 'Most blue members', counts: 'your blue member cards when the round ends (each card counts 1)',
       score: (ctx, p) => countMembersOfColor(state, p, 'market', { cards: true }) };
-    if (fix.market === 'recruits') by.market = { label: 'Most recruits this round', counts: 'your sideways members (each card counts 1): a member you recruit comes in sideways and turns upright when the round ends',
-      score: (ctx, p) => (p.recruitsIn?.round === state.round ? p.recruitsIn.n : 0) };
+    if (fix.market === 'recruits') by.market = { label: 'Most recruits this round', counts: 'your sideways member cards, each card counts 1 (every member you recruit, swap for or take comes in sideways and turns upright when the round ends)',
+      score: (ctx, p) => p.members.filter(uid => { const w = state.cards[uid].sideways; return w && w.round === state.round && w.pid === p.id; }).length };
     if (fix.market === 'held') by.market = { label: 'Most blue', counts: 'the blue you hold when the round ends', score: (ctx, p) => p.res.blue || 0 };
     // Green (Actions lane, Nov 4, quality loop; /mnt/project-files/quality/pitches/actions-contest-green.md): contestFix.green
     // 'onrecruit' counts your members whose card says On Recruit (what Greatest Hits and Sample copy), 'held' the green
@@ -1413,8 +1413,6 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   else state.pile.splice(fromPile, 1);
   refill(state);
   p.members.push(uid);
-  // Blue contest candidate (contestFix.market 'recruits', Actions lane): count this round's recruits; off, nothing is kept
-  if (state.rules?.contestFix?.market === 'recruits') p.recruitsIn = { round: state.round, n: (p.recruitsIn?.round === state.round ? p.recruitsIn.n : 0) + 1 };
   const def = cardDef(state, uid);
   log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
   memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 && !stall });
@@ -1429,6 +1427,9 @@ function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop 
   // who recruited it and when: a member can't be released in the round its owner recruited it. A stolen member
   // can be (decisions.md, dead-window audit: "You can still release a member you stole that round").
   if (!stolen) { card.recruitedRound = state.round; card.recruitedBy = p.id; }
+  // Blue contest candidate (contestFix.market 'recruits', Actions lane): every recruit, swap or take of your own doing
+  // comes in sideways until the round ends (the rulebook's recruits). Off, nothing is kept.
+  if (state.rules?.contestFix?.market === 'recruits') card.sideways = { round: state.round, pid: p.id };
   const ctx = ctxFor(state);
   const w = wrap(state, card);
   // spent: what the recruit paid (Collector reads silver in it); null when free
