@@ -1,15 +1,15 @@
 {
- "updated": "2:50 AM Eastern",
+ "updated": "10:49 AM Eastern",
  "rows": [
-  {
-   "workstream": "Ship Foster Parents (ready; publishing needs your OK)",
-   "blocked": "Yes",
-   "eta": "minutes after your OK"
-  },
   {
    "workstream": "Card quality team: more members and spaces in testing",
    "blocked": "No",
-   "eta": "queued behind Foster Parents for one morning ship"
+   "eta": "ships as each passes"
+  },
+  {
+   "workstream": "Shipped: v0.99.560 this morning (Foster Parents, Jack-of-All-Trades, Housewarming, Guest of Honor art, Night Watch and Customs fixes)",
+   "blocked": "No",
+   "eta": "live"
   },
   {
    "workstream": "Shipped overnight: v0.99.544 to .559",
