@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.577 — 2026-11-04
+
+- Barker and Magpie have their own pictures.
+
 ## v0.99.576 — 2026-11-04
 
 - Seat popups show the real payout and whose follower was lost, cloaks go by their cloak name everywhere, the Goes Last token shows on the right seat, leaders blink one at a time, and the Party Gifts badge no longer covers the silver count. Thin score-bar parts always show their number.
