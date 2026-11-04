@@ -83,7 +83,9 @@ function gainFor(ctx, p, a, b) {
   return oa === p ? worth(b) - worth(a) : ob === p ? worth(a) - worth(b) : 0;
 }
 function scoutStep(ctx, p, data) {
-  const left = ctx.shopCards().filter(c => data.start.includes(c.uid));
+  // a card already sent stays sent: with a piles shop the row refills at once, and a short deck dealt the same card
+  // straight back, so a bot sent it round forever (setup audit, Nov 3: 2 players, Grey piles)
+  const left = ctx.shopCards().filter(c => data.start.includes(c.uid) && !(data.sentUids || []).includes(c.uid));
   if (!left.length) return scoutDone(ctx, p, data);
   ctx.choose(p, data.sent.length ? 'Scout: send another to the bottom of the pile, or done' : 'Scout: send which shop members to the bottom of the pile?', [
     ...left.map(c => ({ id: `card:${c.uid}`, label: c.def.name, kind: 'card', value: c.uid, hint: cost(c) > Object.values(p.res).reduce((x, y) => x + y, 0) ? 1 : -1 })),
@@ -311,7 +313,7 @@ export const handlers = {
     const i = ctx.state.shop.indexOf(uid);
     ctx.state.shop.splice(i, 1);
     ctx.state.pile.push(uid);
-    scoutStep(ctx, p, { ...data, sent: [...data.sent, ctx.card(uid).def.name] });
+    scoutStep(ctx, p, { ...data, sent: [...data.sent, ctx.card(uid).def.name], sentUids: [...(data.sentUids || []), uid] });
   },
   rewind(ctx, p, uid) {
     if (!coachable(ctx, p).some(x => x.uid === uid)) return;
