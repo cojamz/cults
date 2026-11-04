@@ -174,3 +174,25 @@ describe('Live since Nov 4: Charity Ball and Socialites with no switch', () => {
     expect(defById('silver.socialites').text).toBe('Whenever a rival recruits paying silver, +1 follower.');
   });
 });
+
+describe('Executor: "Whenever a member leaves a rival\'s cult, +1 follower."', () => {
+  const d = () => defById('trading.executor');
+  const run = (from, to) => {
+    const me = { name: 'P1', bonus: 0 }, ben = { name: 'P2', bonus: 0 }, log = [];
+    const ctx = { card: () => ({ def: { name: 'Usher' } }), log: l => log.push(l) };
+    const who = { me, ben, none: null };
+    d().onCultMove(ctx, me, {}, { uid: 9, from: who[from], to: who[to] });
+    return { me, log };
+  };
+  it("keeps Old Money's price and worth", () => {
+    const card = id => { const x = defById(id); return [x.s, x.w, x.f, x.n]; };
+    expect(card('trading.executor')).toEqual(card('trading.oldmoney'));
+  });
+  it("a rival's member leaves (to a cult or the shop): +1; your own leaving: nothing", () => {
+    const a = run('ben', 'me');
+    expect(a.me.bonus).toBe(1);
+    expect(a.log).toEqual(["P1's Executor: Usher leaves P2's cult: +1 follower."]);
+    expect(run('ben', 'none').me.bonus).toBe(1);
+    expect(run('me', 'ben').me.bonus).toBe(0);
+  });
+});

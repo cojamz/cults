@@ -681,6 +681,17 @@ const trading = {
         ctx.log(`${owner.name}'s Penny Pincher: fewest members: +3 white.`);
       },
     })),
+    // REPLACE8=executor bot test (Nov 4, lane B; paper gate B-oldmoney-w at 14 vs 12, requalified under "paper filters,
+    // play ranks"): Old Money's place, same price. Any member that moves out of a rival's cult (to any cult or the shop).
+    ...add8(m('executor', 'Executor', 1, 4, 'Whenever a member leaves a rival\'s cult, +1 follower.', {
+      onCultMove(ctx, owner, card, { uid, from }) {
+        if (!from || from === owner) return;
+        owner.bonus += 1;
+        ctx.log(`${owner.name}'s Executor: ${ctx.card(uid).def.name} leaves ${from.name}'s cult: +1 follower.`);
+      },
+      // BOTSEE: about one rival member moved per 8 rival placements at a table with steals and swaps
+      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.12),
+    })),
     m('oldmoney', 'Old Money', 1, 4, /* 6 (Cory, Oct 30) */ 'Game End: +1 follower per white member you have.', { ...old6, ...old10('pauper'), ...old8('trading.oldmoney'),
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'trading'),
     }),
