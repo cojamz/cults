@@ -176,6 +176,45 @@ function giftShopTo(ctx, p, oid, data) {
   ctx.log(`${p.name}'s Gift Shop: gives ${name} to ${o.name}.`);
 }
 
+/**
+ * Sweet Nothings (REPLACE11, Actions lane, Nov 4; /mnt/project-files/quality/pitches/actions-sweet-talk.md), in Sweet
+ * Talk's place: "+3 silver. Give rivals up to 3 of your silver, split as you choose. Gain 2 of any colors for each."
+ * Your own silver (not the bank's, as Party Gifts), one at a time; then the colors, as Polish picks them.
+ */
+const SWEET_NOTHINGS = {
+  key: 'sweetnothings', copyDoesIt: true, ring: 2, name: 'Sweet Nothings',
+  text: '+3 silver. Give rivals up to 3 of your silver, split as you choose. Gain 2 of any colors for each.',
+  estimate: ctx => 3 + 3 - spillCost(ctx, 1),
+  resolve(ctx, p) {
+    hostGain(ctx, p, 3);
+    sweetStep(ctx, p, { given: {} });
+  },
+};
+function sweetStep(ctx, p, data) {
+  const given = data.given || {};
+  const total = Object.values(given).reduce((s, n) => s + n, 0);
+  const left = Math.min(3 - total, (p.res[S] || 0) - total); // given silver leaves at Done
+  if (left <= 0) return sweetDone(ctx, p, data);
+  const low = lowest(ctx, p);
+  const opts = others(ctx, p).map(o => ({
+    id: `player:${o.id}`, label: `Give ${o.name} 1 of your silver`, kind: 'player', value: o.id, spend: { silver: 1 },
+    // bots give to whoever trails, and keep 2 silver
+    hint: (ctx.followers(o) === low ? 1 : 0) - 0.2 * (given[o.id] || 0) - ((p.res[S] || 0) - total <= 2 ? 3 : 0),
+  }));
+  opts.push({ id: 'done', label: total ? 'Done' : 'Give nothing', kind: 'done', value: 'done', hint: 0 });
+  ctx.choose(p, `Sweet Nothings: give a rival 1 of your silver for 2 of any colors? (${left} more at most)`, opts, 'silver.sweetStep', { ...data, given });
+}
+function sweetDone(ctx, p, data) {
+  const given = data.given || {};
+  const total = Object.values(given).reduce((s, n) => s + n, 0);
+  if (!total) { ctx.log(`${p.name}'s Sweet Nothings: gave nothing.`); return; }
+  for (const [id, n] of Object.entries(given)) { p.res[S] -= n; giveTo(ctx, p, ctx.player(Number(id)), S, n); }
+  afterGive(ctx, p, S);
+  const list = Object.entries(given).map(([id, n]) => `${ctx.player(Number(id)).name} +${n}`).join(', ');
+  ctx.log(`${p.name}'s Sweet Nothings: gives ${list} silver of their own, for ${2 * total} of any colors.`);
+  polishPick(ctx, p, 2 * total, 'Sweet Nothings');
+}
+
 export const silverActions = [
   {
     key: 'toast', ring: 1, name: 'Toast', text: '+3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III.',
@@ -214,14 +253,14 @@ export const silverActions = [
       favorAll(ctx, p);
     },
   },
-  {
+  swap11({
     key: 'tongue', copyDoesIt: true, ring: 2, name: 'Sweet Talk', text: '+3 silver. Then turn as many of your silver as you want into other colors.',
     estimate: () => 3.5,
     resolve(ctx, p) {
       hostGain(ctx, p, 3);
       turnStep(ctx, p, { who: 'Sweet Talk', max: null, each: 1, done: 0 });
     },
-  },
+  }, SWEET_NOTHINGS),
   {
     key: 'largesse', copyDoesIt: true, ring: 3, name: 'Largesse', text: 'Give rivals up to 10 silver from the bank, split as you choose. +1 follower per silver you give.',
     estimate: ctx => { const n = ACT.has('largesse6') ? 6 : 10; return 2 * n - spillCost(ctx, 1) * n; },
@@ -261,7 +300,13 @@ const silver = {
   actions: silverActions,
 
   handlers: {
-    ...handlers11({ giftShopCard, giftShopTo }),
+    ...handlers11({ giftShopCard, giftShopTo,
+      sweetStep(ctx, p, value, data) {
+        if (value === 'done') return sweetDone(ctx, p, data);
+        const given = { ...(data.given || {}) }; given[value] = (given[value] || 0) + 1;
+        sweetStep(ctx, p, { ...data, given });
+      },
+    }),
     godparents(ctx, p, value) {
       const [uid, oid] = value, o = ctx.player(oid);
       if (!p.members.includes(uid) || !o || o === p) return;

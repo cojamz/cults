@@ -216,6 +216,49 @@ describe('REPLACE11: Gift Shop', () => {
   });
 });
 
+describe('REPLACE11: Sweet Nothings', () => {
+  const slot = (s, name) => { const q = s.quadrants.indexOf('silver'); return `${q}-${quadrant('silver').actions.findIndex(a => a.name === name)}`; };
+  it("is on the wheel in Sweet Talk's place", () => {
+    const names = quadrant('silver').actions.map(a => a.name);
+    expect(names).toContain('Sweet Nothings');
+    expect(names).not.toContain('Sweet Talk');
+  });
+  // "+3 silver. Give rivals up to 3 of your silver, split as you choose. Gain 2 of any colors for each."
+  it('gives +3 silver, then up to 3 of your own silver to rivals you pick, and 2 of any colors for each', () => {
+    let s = table(['red', 'silver'], { n: 3, round: 2, res: [{ silver: 1 }] });
+    s = answer(s, `slot:${slot(s, 'Sweet Nothings')}`);
+    expect(s.players[0].res.silver).toBe(4);
+    expect(s.pending.options.map(o => o.id).sort()).toEqual(['done', 'player:1', 'player:2']);
+    s = answer(s, 'player:2');
+    s = answer(s, 'player:2');
+    s = answer(s, 'player:1');
+    // 3 given: no more asks, the colors come next
+    expect(s.players[0].res.silver).toBe(1);
+    expect(s.players[2].res.silver).toBe(2);
+    expect(s.players[1].res.silver).toBe(1);
+    expect(s.log.join('\n')).toContain("P1's Sweet Nothings: gives P2 +1, P3 +2 silver of their own, for 6 of any colors.");
+    for (let i = 0; i < 6; i++) s = answer(s, 'color:red');
+    expect(s.players[0].res.red).toBe(6);
+  });
+  it('stops at the silver you hold, and Done gives fewer', () => {
+    let s = table(['red', 'silver'], { n: 2, round: 2 });
+    s = answer(s, `slot:${slot(s, 'Sweet Nothings')}`);
+    s = answer(s, 'player:1');
+    s = answer(s, 'done');
+    expect(s.players[0].res.silver).toBe(2);
+    expect(s.players[1].res.silver).toBe(1);
+    s = answer(s, 'color:red'); s = answer(s, 'color:red');
+    expect(s.players[0].res.red).toBe(2);
+  });
+  it('Give nothing keeps the 3 silver', () => {
+    let s = table(['red', 'silver'], { n: 2, round: 2 });
+    s = answer(s, `slot:${slot(s, 'Sweet Nothings')}`);
+    s = answer(s, 'done');
+    expect(s.players[0].res.silver).toBe(3);
+    expect(s.log.join('\n')).toContain("P1's Sweet Nothings: gave nothing.");
+  });
+});
+
 describe('Blue contest settings (contestFix.market)', () => {
   const blueRow = (fix, members) => {
     const s = table(['red', 'market'], { n: 2, members, rules: { contests: 'byColor', contestFix: { market: fix } } });
