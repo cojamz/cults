@@ -13,6 +13,10 @@ import { on12, handlers12 } from './replace12.js';
 import { add14, old14 } from './replace14.js';
 import { on13, add13, old13, handlers13 } from './replace13.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
+/** Bury's blue for a card: half its cost rounded down, or its whole cost under REPLACE12=buryfull. */
+const SNOBS_TEXT = on12('snobsup') ? 'Whenever you recruit a member costing more than each of your others, +2 followers.'
+  : on12('snobsround') ? 'Round End: +1 follower per blue member you have.' : 'Game End: +1 follower per blue member you have.';
+const buryGain = c => (on12('buryfull') ? priceOf(c) : Math.floor(priceOf(c) / 2));
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const B = 'blue';
@@ -321,7 +325,9 @@ const market = {
     // recruit: Old Maid's −5 lands on them), and the row refills.
     ...(on12('dumpsterdive') ? [{
       key: 'dumpsterdive', ring: 2, name: 'Dumpster Dive', text: 'Look at the bottom 3 members of the pile and recruit one of them for free, costing up to 5. +1 blue.', copyDoesIt: true,
-      estimate: ctx => 1 + Math.max(0, ...ctx.state.pile.slice(-3).map(u => ctx.card(u)).filter(c => priceOf(c) <= 5).map(c => priceOf(c) * 0.8 + c.def.f * 0.5)),
+      // a table can't see the bottom of the pile before the look, so bots value the pull blind: a free member worth
+      // about 3 while there are rounds for it to work, less in round III (play judges, Nov 4: the old peek gave it away)
+      estimate: ctx => 1 + (ctx.state.round < 3 ? 3.5 : 2),
       resolve(ctx, p) {
         ctx.gain(p, B, 1, { fromAction: true });
         const bottom = ctx.state.pile.slice(-3).reverse().map(u => ctx.card(u));
@@ -348,14 +354,14 @@ const market = {
     }] : []),
     ...(on12('dumpsterdive') || on12('delivery') ? [] : [
     {
-      key: 'pricecheck', ring: 2, name: 'Bury', text: 'Send a shop member to the bottom of the pile, then refill. Gain blue equal to half its cost, rounded down. +1 blue.', copyDoesIt: true,
-      estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().map(c => Math.floor(priceOf(c) / 2))),
+      key: 'pricecheck', ring: 2, name: 'Bury', text: on12('buryfull') ? 'Send a shop member to the bottom of the pile, then refill. Gain blue equal to its cost. +1 blue.' : 'Send a shop member to the bottom of the pile, then refill. Gain blue equal to half its cost, rounded down. +1 blue.', copyDoesIt: true,
+      estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().map(c => buryGain(c))),
       resolve(ctx, p) {
         ctx.gain(p, B, 1, { fromAction: true });
         const shop = ctx.shopCards();
         if (!shop.length) return;
         ctx.choose(p, 'Bury: send which member to the bottom?', shop.map(c => ({
-          id: `card:${c.uid}`, label: `${c.def.name} (+${Math.floor(priceOf(c) / 2)} blue)`, kind: 'card', value: c.uid, hint: Math.floor(priceOf(c) / 2),
+          id: `card:${c.uid}`, label: `${c.def.name} (+${buryGain(c)} blue)`, kind: 'card', value: c.uid, hint: buryGain(c),
         })), `${Q}.bury`);
       },
     }]),
@@ -475,7 +481,7 @@ const market = {
     },
     bury(ctx, p, uid) {
       if (!ctx.state.shop.includes(uid)) return;
-      const c = ctx.card(uid), k = Math.floor(priceOf(c) / 2);
+      const c = ctx.card(uid), k = buryGain(c);
       ctx.buryFromShop(uid);
       ctx.log(`Bury: ${p.name} sends ${c.def.name} to the bottom of the pile.`);
       toBottom(ctx, 1);
@@ -713,8 +719,31 @@ const market = {
         if (by !== owner && d.s + d.w <= 3) { owner.bonus += 1; ctx.log(`${owner.name}'s Snobs: ${by.name} recruited ${d.name}, +1 follower.`); }
       },
     })),
-    m('snob', 'Snobs', 3, 2, 'Game End: +1 follower per blue member you have.', { f: 2, ...old11('snob2'), ...old11('snobs3'), ...old9('market.snob'),
-      onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, Q),
+    m('snob', 'Snobs', 3, 2, SNOBS_TEXT, { f: 2, ...old11('snob2'), ...old11('snobs3'), ...old9('market.snob'),
+      // REPLACE12 rewords (lane D2, Nov 4, pitches/D2-batch2.md, passed paper): snobsup "trading up", snobsround the
+      // same count at every Round End. Unset: the live Game End count.
+      ...(on12('snobsup') ? {
+        // the recruit that costs more than each of your other members (Snobs' own arrival isn't one; no others yet counts)
+        onRecruit(ctx, owner, card, by, what) {
+          const c = what?.member;
+          if (by !== owner || !c || c.uid === card.uid) return;
+          const others = ctx.membersOf(owner).filter(x => x.uid !== c.uid);
+          if (others.some(x => priceOf(x) >= priceOf(c))) return;
+          owner.bonus += 2;
+          ctx.log(`${owner.name}'s Snobs: ${c.def.name} (${priceOf(c)}) costs more than each of their other members, +2 followers.`);
+        },
+        ...see(i => endsAhead(i).length * 2),
+      } : on12('snobsround') ? {
+        onRoundEnd(ctx, owner) {
+          const n = ctx.countMembersOfColor(owner, Q);
+          if (!n) return;
+          owner.bonus += n;
+          ctx.log(`${owner.name}'s Snobs: ${n} blue member${n === 1 ? '' : 's'}, +${n} follower${n === 1 ? '' : 's'}.`);
+        },
+        ...see(i => (endsAhead(i).length + 1) * 2),
+      } : {
+        onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, Q),
+      }),
     }),
     // REPLACE9 bot test (Members C, Nov 4, batch bC1: paper 17 vs Snobs' 12, Blue's set 13 -> 17): Snobs' place. 4 blue
     // + 3 any as a player sees it. Pays once a turn, on the owner's second member recruit of that turn (Recruit Twice,

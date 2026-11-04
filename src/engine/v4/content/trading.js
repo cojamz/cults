@@ -24,7 +24,7 @@ import { swap14, handlers14, add14, old14 } from './replace14.js';
 import { see, endsAhead, resAt } from './botsee.js';
 import { add10, old10, handlers10 } from './replace10.js';
 import { add8, old8 } from './replace8.js';
-import { on12, handlers12 } from './replace12.js';
+import { on12, handlers12, add12, old12 } from './replace12.js';
 
 const W = 'white';
 /** No rival has fewer followers than p (ties count): Low Profile (REPLACE12). */
@@ -269,6 +269,12 @@ const trading = {
 
   handlers: {
     ...handlers12({
+      pawnbrokers(ctx, p, k) {
+        const n = Math.min(Number(k) || 0, 5, Math.max(0, p.bonus));
+        if (!n) return;
+        p.bonus -= n; ctx.gain(p, W, 2 * n);
+        ctx.log(`${p.name}'s Pawnbrokers: ${n} follower${n > 1 ? 's' : ''} turned into ${2 * n} white.`);
+      },
       pawnshop(ctx, p, k) {
         const n = Math.min(Number(k) || 0, Math.max(0, p.bonus));
         if (n) { p.bonus -= n; ctx.gain(p, W, 2 * n, { fromAction: true }); }
@@ -588,7 +594,7 @@ const trading = {
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).filter(o => o.members.length).length >= 2,
     })),
-    m('raider', 'Raiders', 2, 2, /* Claude's fill-in price 4, was 5 (Cory, 2026-10-22: "probably too expensive") */ 'On Use, once per game: steal 4 followers from a rival. Pay them 2 white.', { n: 2, ...old6, // 2 members (Cory, Oct 29: "choir and raiders can be more"; 2 is Claude's start)
+    m('raider', 'Raiders', 2, 2, /* Claude's fill-in price 4, was 5 (Cory, 2026-10-22: "probably too expensive") */ 'On Use, once per game: steal 4 followers from a rival. Pay them 2 white.', { n: 2, ...old6, ...old12('trading.raider'), // 2 members (Cory, Oct 29: "choir and raiders can be more"; 2 is Claude's start)
       activate: 'game',
       // any rival, the owner's pick (Cory, Nov 1: "Raiders shouldnt have to be from the leader")
       onActivate(ctx, owner, card) {
@@ -601,6 +607,20 @@ const trading = {
       },
       botActivate: (ctx, owner) => { const t = raidTarget(ctx, owner, true); return !!t && sellable(t) >= 3 && (owner.res[W] || 0) >= 2; }, // bots still raid the leader
     }),
+    // REPLACE12=pawnbrokers (lane D2, Nov 4, pitches/D2-batch2.md; paper 21, White's set 8 -> 15): Raiders' place, its
+    // price and count. The followers turned in are the ones you recruited or won (Pawnshop's and Liquidator's rule), the
+    // owner's pick of how many, on their own turn.
+    ...add12(m('pawnbrokers', 'Pawnbrokers', 2, 2, 'On Use, once per game: turn up to 5 of your followers into 2 white each.', { n: 2, ...old6,
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const most = Math.min(5, Math.max(0, owner.bonus));
+        if (!most) { card.used = false; ctx.log(`${owner.name}'s Pawnbrokers: no recruited or won followers to turn in.`); return; }
+        const opts = [];
+        for (let k = most; k >= 1; k--) opts.push({ id: `n:${k}`, label: `Turn ${k} follower${k > 1 ? 's' : ''} into ${2 * k} white`, kind: 'choice', value: k, hint: k * (ctx.state.round < 3 ? 0.9 : 0.2) });
+        ctx.choose(owner, `Pawnbrokers: turn up to ${most} of your followers into 2 white each?`, opts, 'trading.pawnbrokers', { uid: card.uid });
+      },
+      botActivate: (ctx, owner) => ctx.state.round === 2 && owner.bonus >= 3,
+    })),
     // new (Claude's names from here down)
     // REPLACE6 bot test (Nov 3, replacement batch 6): Cashier's place. 4 white + 1 any as a player sees it. Your own
     // cast-out of your own member (Farewell, Estate Sale, Appraiser; one Inquisitors makes you do): a shop member costing up

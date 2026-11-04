@@ -6,7 +6,7 @@ import { add3, old3, handlers3 } from './replace3.js';
 import { add4, old4, handlers4 } from './replace4.js';
 import { see, endsAhead } from './botsee.js';
 import { add7, old7, handlers7 } from './replace7.js';
-import { add12, old12 } from './replace12.js';
+import { add12, old12, on12 } from './replace12.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
 
@@ -445,9 +445,34 @@ export default {
       // about one cheap member a turn in round I, fewer later (the row holds few of them after round I)
       ...see(info => (info.round === 1 ? 0.6 * info.myNow + 2 : info.round === 2 ? 0.3 * info.myNow : 0)),
     })),
-    m('movementpenalty', 'Deprogrammers', 1, 1, 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 4, n: 2, ...old12('red.movementpenalty'), // +1 (Cory, Oct 30)
-      onMoveMember(ctx, owner, card, info) { if (info.from !== owner && ctx.followers(info.from) > 0) info.from.bonus -= 1; },
+    m('movementpenalty', 'Deprogrammers', 1, 1, on12('deprog2') ? 'Whenever a member joins your cult from a rival’s, steal 1 follower from that rival.' : 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 4, n: 2, ...old12('red.movementpenalty'), // +1 (Cory, Oct 30)
+      ...(on12('deprog2') ? {
+        // REPLACE12=deprog2 reword (paper requalified, Nov 4): any member that comes to you from a rival's cult (your take,
+        // their give, either side of a swap), and the follower comes to you. Not for Deprogrammers' own arrival.
+        onCultMove(ctx, owner, card, { uid, from, to, swappedWith }) {
+          if (to !== owner || !from || from === owner || uid === card.uid || swappedWith === card.uid) return;
+          if (ctx.followers(from) <= 0) { ctx.log(`${owner.name}'s Deprogrammers: ${from.name} has no followers to steal.`); return; }
+          from.bonus -= 1; owner.bonus += 1;
+          ctx.log(`${owner.name}'s Deprogrammers: ${ctx.card(uid).def.name} joins from ${from.name}'s cult, so ${owner.name} steals 1 follower from ${from.name}.`);
+        },
+      } : {
+        onMoveMember(ctx, owner, card, info) { if (info.from !== owner && ctx.followers(info.from) > 0) info.from.bonus -= 1; },
+      }),
     }),
+    // Turncoat (3 red + 1 any as a player sees it; REPLACE12=turncoat, paper requalified Nov 4): Cory's back-pocket
+    // Turncoats (Nov 4, 12:35am: "I also like Turncoat") with the free recruit from the top of the pile, so nobody chooses
+    // on the thief's turn. Same trigger as Turncoats: a rival's card or space takes one of yours into their cult.
+    ...add12(m('turncoat', 'Turncoat', 2, 1, 'Whenever a rival takes one of your members, recruit the top member of the pile for free.', { f: 2,
+      onCultMove(ctx, owner, card, { uid, from, to, actor, swappedWith }) {
+        if (from !== owner || !to || to !== actor || actor === owner || uid === card.uid || swappedWith === card.uid) return;
+        const top = ctx.state.pile[0];
+        if (top === undefined) { ctx.log(`${owner.name}'s Turncoat: ${actor.name} took ${ctx.card(uid).def.name}, but the pile is empty.`); return; }
+        ctx.log(`${owner.name}'s Turncoat: ${actor.name} took ${ctx.card(uid).def.name}, so the top member of the pile joins ${owner.name} free.`);
+        ctx.recruit(owner, top, { free: true, top: true });
+      },
+      // a counter: about one take a game against a Red player
+      ...see(info => 1.5 * endsAhead(info).length / 3),
+    })),
     // REPLACE12 bot tests (Nov 4, quality loop, lane D2; pitches/D2-batch1.md): Deprogrammers' place, prices Claude's fill-ins.
     // Exit Counselor (3 red + 1 any as a player sees it): when its owner's own card or space hands one of their members
     // to a rival or the shop (Promote, Demote, Panel, Body Snatchers' swap, Godparent, Guest of Honor), the owner uses

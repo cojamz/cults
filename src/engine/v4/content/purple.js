@@ -16,6 +16,9 @@ import { defById, spacesOf } from './index.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add5, old5 } from './replace5.js';
 import { swap11, handlers11 } from './replace11.js';
+import { on12 } from './replace12.js';
+/** Right Away +2/3/4 under REPLACE12=rightaway2 (paper requalified, Nov 4). */
+const RA2 = on12('rightaway2');
 import { add14, old14 } from './replace14.js';
 import { add13, old13 } from './replace13.js';
 import { add7, old7, REPLACE7 } from './replace7.js';
@@ -499,10 +502,10 @@ export default {
       // Cory, 2026-10-22: "+1 purple, take another turn right after this one", in Roll Call's spot. One of your own
       // turns, moved up (his yes: you still place the same minions that round), like Crunch Time's two. Name: fill-in.
       // Cory, 2026-10-23: "Right Away should scale. +1 +2 +3" (Hold Up's wording).
-      key: 'again', copyDoesIt: true, ring: 1, name: 'Right Away', text: '+1 purple in round I, +2 in round II, +3 in round III. Your next turn comes right after this one.',
-      byRound: { lines: ['+1 purple', '+2 purple', '+3 purple'], rest: 'Your next turn comes right after this one.' },
-      estimate: (ctx, p) => ctx.state.round + turnsNowEstimate(ctx, p, 1),
-      resolve(ctx, p) { ctx.gain(p, P, ctx.state.round, { fromAction: true }); turnsNow(ctx, p, relayRunners(ctx, p) ? 2 : 1, 'Right Away'); },
+      key: 'again', copyDoesIt: true, ring: 1, name: 'Right Away', text: RA2 ? '+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one.' : '+1 purple in round I, +2 in round II, +3 in round III. Your next turn comes right after this one.',
+      byRound: { lines: RA2 ? ['+2 purple', '+3 purple', '+4 purple'] : ['+1 purple', '+2 purple', '+3 purple'], rest: 'Your next turn comes right after this one.' },
+      estimate: (ctx, p) => ctx.state.round + (RA2 ? 1 : 0) + turnsNowEstimate(ctx, p, 1),
+      resolve(ctx, p) { ctx.gain(p, P, ctx.state.round + (RA2 ? 1 : 0), { fromAction: true }); turnsNow(ctx, p, relayRunners(ctx, p) ? 2 : 1, 'Right Away'); },
     }, CALL_BACK),
     {
       // Cory, 2026-10-22: "+1 purple, you can play on occupied spaces this round" (+2 with the inherent +1; he may

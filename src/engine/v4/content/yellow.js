@@ -9,6 +9,7 @@ import { add2, old2 } from './replace2.js';
 import { add5, old5 } from './replace5.js';
 import { add9, old9, handlers9, ON9 } from './replace9.js';
 import { on12, handlers12 } from './replace12.js';
+const LT2 = on12('leaderstax2');
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 import { swap14, handlers14 } from './replace14.js';
 import { add11, old11 } from './replace11.js';
@@ -174,13 +175,23 @@ export default {
         }), 'yellow.tagAlong');
       },
     }] : []),
-    ...(on12('tagalong') ? [] : [{
+    ...(on12('commonground') ? [{
+      key: 'commonground', ring: 1, name: 'Common Ground', text: '+1 of each color where both you and a rival have a minion. +1 yellow.',
+      estimate: (ctx, p) => 1 + commonColors(ctx, p).length,
+      resolve(ctx, p) {
+        const cs = commonColors(ctx, p);
+        for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
+        ctx.log(`${p.name}'s Common Ground: +1 of each color where both they and a rival have a minion (${cs.length ? cs.join(', ') : 'none'}).`);
+        ctx.gain(p, Y, 1, { fromAction: true });
+      },
+    }] : []),
+    ...(on12('tagalong') || on12('commonground') ? [] : [{
       // Cory, Nov 2-3: Trade Seeds "never felt useful"; Leaders' Tax replaces it (his "coordinator figure this shit out":
       // the better of two candidates in bot games, Normal 400 and Hard). Key kept for old saves and records.
       // Nov 4 (Claude, under Cory's go-with-your-gut, after his "anything that relies on a rival having more of resources
       // should be reworked"): it counts rivals' minions on a color's spaces, which the table always shows, not their piles.
-      key: 'transmute', ring: 1, name: "Leaders' Tax", text: 'Choose a color: +1 of it per rival with a minion on its spaces. +1 yellow.',
-      estimate: (ctx, p) => 1 + Math.max(0, ...ctx.state.quadrants.map((q, qi) => rivalsOn(ctx, p, qi))),
+      key: 'transmute', ring: 1, name: "Leaders' Tax", text: LT2 ? 'Choose a color: +1 of it per minion on its spaces. +1 yellow.' : 'Choose a color: +1 of it per rival with a minion on its spaces. +1 yellow.',
+      estimate: (ctx, p) => 1 + Math.max(0, ...ctx.state.quadrants.map((q, qi) => taxCount(ctx, p, qi))),
       resolve(ctx, p) { leadersTax(ctx, p); },
     }]),
     {
@@ -279,9 +290,10 @@ export default {
       },
     }),
     taxColor(ctx, p, c) {
-      const n = rivalsOn(ctx, p, ctx.state.resources.indexOf(c));
+      const n = taxCount(ctx, p, ctx.state.resources.indexOf(c));
       if (n) ctx.gain(p, c, n, { fromAction: true });
-      ctx.log(`${p.name}'s Leaders' Tax: +${n} ${c} (${n === 1 ? '1 rival' : `${n} rivals`} on its spaces).`);
+      const who = LT2 ? ['minion', 'minions'] : ['rival', 'rivals'];
+      ctx.log(`${p.name}'s Leaders' Tax: +${n} ${c} (${n === 1 ? `1 ${who[0]}` : `${n} ${who[1]}`} on its spaces).`);
       ctx.gain(p, Y, 1, { fromAction: true });
     },
     ...handlers1({
@@ -753,6 +765,19 @@ function colorsWith(ctx, o) {
   for (const [key, list] of Object.entries(st.squats || {})) if (list.includes(o.id)) qs.add(Number(key.split('-')[0]));
   return [...qs].sort((a, b) => a - b).map(qi => st.resources[qi]);
 }
+/** Leaders' Tax's count for a color: rivals on it, or every minion on it under REPLACE12=leaderstax2. */
+function taxCount(ctx, p, qi) {
+  if (!LT2) return rivalsOn(ctx, p, qi);
+  const st = ctx.state; let n = 0;
+  for (const key of Object.keys(st.slots || {})) if (key.startsWith(`${qi}-`)) n++;
+  for (const [key, list] of Object.entries(st.squats || {})) if (key.startsWith(`${qi}-`)) n += list.length;
+  return n;
+}
+/** Common Ground: colors where you and at least one rival both have a minion. */
+function commonColors(ctx, p) {
+  const mine = colorsWith(ctx, p), theirs = new Set(ctx.rivals(p).flatMap(o => colorsWith(ctx, o)));
+  return mine.filter(c => theirs.has(c));
+}
 /** Leaders' Tax: rivals with at least one minion on the qi-th color's spaces (joined spots count). */
 function rivalsOn(ctx, p, qi) {
   const st = ctx.state, ids = new Set();
@@ -761,8 +786,8 @@ function rivalsOn(ctx, p, qi) {
   return ctx.rivals(p).filter(o => ids.has(o.id)).length;
 }
 function leadersTax(ctx, p) {
-  ctx.choose(p, "Leaders' Tax: which color? +1 of it per rival with a minion on its spaces.", ctx.state.quadrants.map((q, qi) => {
-    const c = ctx.state.resources[qi], n = rivalsOn(ctx, p, qi);
+  ctx.choose(p, `Leaders' Tax: which color? +1 of it per ${LT2 ? 'minion' : 'rival with a minion'} on its spaces.`, ctx.state.quadrants.map((q, qi) => {
+    const c = ctx.state.resources[qi], n = taxCount(ctx, p, qi);
     return { id: `color:${c}`, label: `${c} (+${n})`, kind: 'color', value: c, hint: n * 2 - (p.res[c] || 0) * 0.1 };
   }), 'yellow.taxColor');
 }
