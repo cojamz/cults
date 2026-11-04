@@ -140,6 +140,27 @@ const M = {
   straggler: ['🐢', '🔁 After the last minion: move yours to an open space'],
 };
 
+// Pixel versions (Cory, Nov 4: "match more the art style of the game ... pixel but with detail and recognizeable"): a
+// 24×24 drawing of the member's emoji in the player minions' family (design/prototypes/pixel-art/members/draw.py). A
+// member drawn there shows its pixel emoji; one not drawn yet keeps the system emoji.
+import PIXEL from './icons/memberEmojis.js';
+import { withOutline } from './index.js';
+const pixelUrls = new Map();
+/** A data URL for the member's pixel emoji, or null when it isn't drawn yet. */
+export function emojiPixelUrl(id) {
+  if (!PIXEL[id]) return null;
+  let u = pixelUrls.get(id);
+  if (u) return u;
+  const { px, palette } = PIXEL[id], n = px.length, by = new Map();
+  withOutline(px).forEach((r, y) => { let x = 0; while (x < r.length) { const ch = r[x]; let w = 1; while (r[x + w] === ch) w++; if (ch !== '.' && palette[ch]) by.set(palette[ch], (by.get(palette[ch]) || '') + `M${x} ${y}h${w}v1h${-w}z`); x += w; } });
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges">${[...by].map(([f, d]) => `<path fill="${f}" d="${d}"/>`).join('')}</svg>`;
+  u = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  pixelUrls.set(id, u);
+  return u;
+}
+/** The first of these ids that has a pixel emoji, or null. */
+export const emojiPixelId = ids => (Array.isArray(ids) ? ids : [ids]).find(i => PIXEL[i]) || null;
+
 /** [emoji, line] for a member's sprite id, or null. line '' means the card has no ability (it just counts). */
 export const emojiMember = id => M[id] || null;
 export const EMOJI_MEMBER_COUNT = Object.keys(M).length;

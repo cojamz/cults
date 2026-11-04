@@ -3,7 +3,7 @@
 // yet shows the member or action template.
 import { memo } from 'react';
 import { iconFor, rectsFor } from './index.js';
-import { emojiMember } from './emojiMembers.js';
+import { emojiMember, emojiPixelId, emojiPixelUrl } from './emojiMembers.js';
 import { emojiLook } from '../memberLook.js';
 
 // id is often a fresh [engine id, kebab name] array each render: compare it by content, so an unchanged figure never
@@ -43,6 +43,12 @@ function spriteUrl(icon, sphere, rects, look) {
 export const Sprite = memo(function Sprite({ id, sphere = 'colorless', size = 48, kind = 'member', title = null, className = '', look = null }) {
   // Emoji members (a look this viewer chose in setup): the member's emoji in place of its picture, same box
   if (kind === 'member' && emojiLook()) {
+    const pid = emojiPixelId(id);
+    if (pid) {
+      // whole pixels: the 24-pixel drawing at the multiple of 24 nearest 80% of the box, at most 72
+      const px = Math.max(24, Math.round(Math.min(size * 0.8, 76) / 24) * 24);
+      return <img className={`sprite emoji-member emoji-pixel${className ? ` ${className}` : ''}`} src={emojiPixelUrl(pid)} width={px} height={px} draggable={false} style={{ width: px, height: px }} alt={title || ''} title={title || undefined} aria-hidden={title ? undefined : 'true'} data-emoji-member="" data-sprite={`emoji:${pid}`} decoding="sync" />;
+    }
     const em = (Array.isArray(id) ? id : [id]).map(emojiMember).find(Boolean);
     if (em) return <span className={`sprite emoji-member${className ? ` ${className}` : ''}`} style={{ '--em': `${size}px` }} role={title ? 'img' : undefined} aria-label={title || undefined} aria-hidden={title ? undefined : 'true'} title={title || undefined} data-emoji-member="">{em[0]}</span>;
   }
