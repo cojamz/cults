@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.571 — 2026-11-04
+
+- Charity Ball replaces Philanthropist and Socialites replaces High Society. Contests now score one at a time in turn order, each prize paid before the next counts. Idle animations run slower to save work.
+
 ## v0.99.570 — 2026-11-04
 
 - New Blood: recruiting a member of a new color now gives +2/+3/+4 yellow instead of followers. Picking your emoji on the setup screen plays its sound, and so does another player picking theirs in an online room.
