@@ -787,8 +787,8 @@ const silver = {
     // check 17 vs 11): High Society's place, same price and worth. Once per recruit (a member or a follower card) whose
     // payment has any silver in it.
     // SOCIALITES_N=1: the +1 version (paper 15), a second trial in case +2 runs away (16 hits in a seat-1 Normal game).
-    // Live at +1 since Nov 4 (Claude, under Cory's go-with-your-gut, overnight quality loop): balance passed at 120 (c2b).
-    m('socialites', 'Socialites', 4, 3, `Whenever a rival recruits paying silver, +${SOC_N} follower${SOC_N === 1 ? '' : 's'}.`, { f: 2,
+    // Was live in v0.99.571-572 in High Society's place; back to a bot test Nov 4 (Cory, 12:36pm: High Society stays).
+    ...add8(m('socialites', 'Socialites', 4, 3, `Whenever a rival recruits paying silver, +${SOC_N} follower${SOC_N === 1 ? '' : 's'}.`, { f: 2,
       onRecruit(ctx, owner, card, by, what) {
         if (by === owner || !(what?.spent?.[S] > 0)) return;
         owner.bonus += SOC_N;
@@ -796,9 +796,9 @@ const silver = {
       },
       // BOTSEE: rivals pay some silver on about a quarter of their recruits once gifts are flowing
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r] * [0.1, 0.25, 0.3][r - 1], 0) * SOC_N),
-    }),
-    // Socialites takes its place (Claude, under Cory's go-with-your-gut, overnight quality loop, 2026-11-04)
-    m('highsociety', 'High Society', 4, 3, 'Whenever a rival takes a Silver space, +1 follower.', { f: 2, retired: true, // Nov 4 (Claude, under Cory's go-with-your-gut; was a game-end count of rivals with more silver)
+    })),
+    // Stays (Cory, 2026-11-04 12:36pm: "No to both", Creditor and High Society stay in Silver)
+    m('highsociety', 'High Society', 4, 3, 'Whenever a rival takes a Silver space, +1 follower.', { f: 2, ...old8('silver.highsociety'), // Nov 4 (Claude, under Cory's go-with-your-gut; was a game-end count of rivals with more silver)
       afterRivalAction(ctx, owner, card, qid) { if (qid === S) { owner.bonus += 1; ctx.log(`${owner.name}'s High Society: +1 follower.`); } },
       // BOTSEE: about a quarter of the rival placements still to come land on a Silver space
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.25),

@@ -101,7 +101,7 @@ describe('Guest of Honor: "Whenever you take a Silver space, you may give a riva
   });
 });
 
-describe('Socialites (live at +1, Nov 4): "Whenever a rival recruits paying silver, +1 follower."', () => {
+describe('Socialites (+1 by default, Nov 4): "Whenever a rival recruits paying silver, +1 follower."', () => {
   const buyOne = s => { s = move(s, s.pending.options.find(o => o.kind === 'tier' && /1/.test(o.label || o.id)).id); if (s.pending?.player === 1 && s.pending.kind === 'choose') s = move(s, s.pending.options[0].id); return s; };
   it('a rival recruits paying silver: +1; paying without silver: nothing; your own recruits: nothing', () => {
     let s = buyOne(sc({ res: [{}, { silver: 5 }], members: [['silver.socialites']], queue: [{ t: 'buy', p: 1 }] }));
@@ -167,10 +167,9 @@ describe('Squire: "On Recruit and Round Start: +2 white, or +6 white if you have
   });
 });
 
-describe('Live since Nov 4: Charity Ball and Socialites with no switch', () => {
-  it('both are always defined and dealt (no add8)', () => {
+describe('Live since Nov 4: Charity Ball with no switch; Socialites at +1 under the switch', () => {
+  it('Charity Ball is always defined (no add8); Socialites reads +1', () => {
     expect(defById('silver.charityball').retired).toBeFalsy();
-    expect(defById('silver.socialites').retired).toBeFalsy();
     expect(defById('silver.socialites').text).toBe('Whenever a rival recruits paying silver, +1 follower.');
   });
 });

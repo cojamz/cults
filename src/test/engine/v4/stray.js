@@ -9,7 +9,7 @@ export const STRAYS = new Set(['echo.doppel', 'benders.extrahand3', 'benders.big
   'red.recruitbonus', // Greeters, retired Nov 4 (Foster Parents)
   'yellow.tastemaker', // Tastemaker, retired Nov 4 (Jack-of-All-Trades)
   'silver.polisher', // Polisher, retired Nov 4 (Guest of Honor)
-  'silver.philanthropists', 'silver.highsociety', // Philanthropist and High Society, retired Nov 4 (Charity Ball, Socialites)
+  'silver.philanthropists', // Philanthropist, retired Nov 4 (Charity Ball)
   'yellow.harmonist', // Harmonist, retired Nov 4 (Seamstress)
   'yellow.customs', // Customs Officer, retired Nov 4 (Duty Collector)
   'echo.chronicler', // Chronicler, retired Nov 4 (Encore, Cory's call)
