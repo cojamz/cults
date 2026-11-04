@@ -11,7 +11,7 @@ import { friendlyError, OFFLINE } from './errors.js';
 import { oldBuildUrl } from './oldBuild.js';
 import { Home, LocalSetup, Lobby, initialTable } from './screens/Screens.jsx';
 import OnlineBar from './screens/OnlineBar.jsx';
-import { tableProblem, fitTable, shopRule } from './tables.js';
+import { tableProblem, fitTable } from './tables.js';
 import { Recovered } from './Recovery.jsx';
 import { IntroGate, introOnGameStart } from './Intro.jsx';
 import { BOT, motionSpeed, onMotionSpeed } from './motion.js';
@@ -129,11 +129,11 @@ function App() {
     const seats = cfg.seats.filter(s => s.kind !== 'empty').map((s, i) => ({ name: s.name.trim() || `P${i + 1}`, kind: s.kind, ...(s.emoji ? { emoji: s.emoji } : {}) }));
     const botDelayMs = () => urlBotDelay() || BOT_DELAY[motionSpeed()] || 650;
     // one sphere per player (Cory, 2026-10-15): the table fitted to the seats that play
-    const fit = cfg.table || cfg.shop === 'grey' || cfg.shop === 'all' ? fitTable(cfg.table || { mode: 'classic' }, seats.length, cfg.shop) : null;
-    const quadrants = fit && !tableProblem(fit.quadrants, seats.length, cfg.shop) ? fit.quadrants : undefined;
+    const fit = cfg.table ? fitTable(cfg.table, seats.length) : null;
+    const quadrants = fit && !tableProblem(fit.quadrants, seats.length) ? fit.quadrants : undefined;
     // this tab takes the one local save (any other tab holding a game lets go), then starts over in it
     claimLocal(); clearLocal(); clearLast(); setLast(null);
-    begin(createLocalSession({ seats, seed: Math.floor(Math.random() * 1e9), botDelayMs, quadrants, rules: cfg.roundDecks === 3 || cfg.deck !== 15 || cfg.swapCard || cfg.contests || cfg.shop === 'grey' || cfg.shop === 'all' ? { ...(cfg.roundDecks === 3 ? { roundDecks: 3 } : {}), ...(cfg.deck !== 15 ? { deck: 10 } : {}), ...(cfg.swapCard ? { swapCard: true } : {}), ...(cfg.contests ? { contests: cfg.contests } : {}), ...shopRule(cfg.shop) } : undefined, botLevel: cfg.level, holdRoundEnds: true, isOwner: ownsLocal }), cfg);
+    begin(createLocalSession({ seats, seed: Math.floor(Math.random() * 1e9), botDelayMs, quadrants, rules: { deck: 10, ...(cfg.swapCard ? { swapCard: true } : {}), ...(cfg.contests ? { contests: cfg.contests } : {}) }, botLevel: cfg.level, holdRoundEnds: true, isOwner: ownsLocal }), cfg);
     introOnGameStart(); // this browser's first game: the intro, on this screen only (Intro.jsx)
   }, [begin]);
 

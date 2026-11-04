@@ -17,7 +17,7 @@
 import { createTalkLog, cleanTalk, TALK_GAP_MS } from './talk.js';
 import { isLegal, askFor, chooseBotMove, setBotLevels, BOT_LEVELS, MAX_PLAYERS } from '../../engine/v4/index.js';
 import { seededRandom } from '../../engine/v4/rng.js';
-import { parseTable, fitTable, tableProblem, shopRule } from '../tables.js';
+import { parseTable, fitTable, tableProblem } from '../tables.js';
 import { randomFreeEmoji, settleEmojis } from '../emojiPick.js';
 import { createEmitter, randomId } from './emitter.js';
 import { moveProblem, normalizeMove } from './local.js';
@@ -143,11 +143,8 @@ function lobbyView(room, code, playerId, { awaySince = new Map(), subAfterMs = S
   return {
     code, hostId: room.hostId ?? null, hostName: list.find(s => s.id === room.hostId)?.name || '', status, seed: room.seed ?? null,
     table: parseTable(room.table) ? { mode: room.tableMode || 'custom', quadrants: parseTable(room.table) } : null,
-    roundDecks: room.roundDecks === 3 ? 3 : 2,
-    deck: room.deck === 15 ? 15 : 10,
     swapCard: room.swapCard === true,
     contests: CONTEST_MODES.includes(room.contests) ? room.contests : '',
-    shop: room.shop === 'grey' || room.shop === 'all' ? room.shop : 'deck',
     players, seats: players.length, maxSeats: MAX_SEATS,
     canStart: isHost && status === 'lobby' && players.length >= MIN_SEATS, startHint,
     me: { playerId, seat: mine ? mine.seat : null }, isHost, subAfterMs,
@@ -567,21 +564,6 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
       if (!t.table) throw new Error('That table can’t be played.');
       await transport.update(base, t);
     },
-    /** Host: round III members arrive with round II (2, the default) or in round III (3). */
-    async setRoundDecks(n) {
-      await hostOnly('pick when round III members arrive');
-      await transport.update(base, { roundDecks: n === 3 ? 3 : 2 });
-    },
-    /** Host: the shop, as it is ('deck', the default), grey piles or all piles (rules.shop). */
-    async setShop(v) {
-      await hostOnly('pick the shop');
-      await transport.update(base, { shop: v === 'grey' || v === 'all' ? v : 'deck' });
-    },
-    /** Host: the member deck, 10 per color (the default) or 15 (rules.deck). */
-    async setDeck(n) {
-      await hostOnly('pick the member deck');
-      await transport.update(base, { deck: n === 15 ? 15 : 10 });
-    },
     /** Host: the swap card table setting (off by default). */
     async setSwapCard(on) {
       await hostOnly('pick the swap card');
@@ -605,10 +587,10 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
         const seats = {};
         list.forEach((s, i) => { seats[`s${i}`] = { kind: s.kind, name: s.name, ...(s.id ? { id: s.id } : {}), ...withEmoji(s.emoji), ...withBot(s.bot) }; });
         // one sphere per player (Cory, 2026-10-15): the room's table fitted to the seats that play
-        const quadrants = fitTable({ mode: r.table ? r.tableMode || 'custom' : 'classic', quadrants: parseTable(r.table) || [] }, list.length, r.shop).quadrants;
-        tableWhy = tableProblem(quadrants, list.length, r.shop);
+        const quadrants = fitTable({ mode: r.table ? r.tableMode || 'custom' : 'classic', quadrants: parseTable(r.table) || [] }, list.length).quadrants;
+        tableWhy = tableProblem(quadrants, list.length);
         if (tableWhy) return undefined;
-        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, ...((r.roundDecks === 2 || r.roundDecks === 3 || r.deck !== 15 || r.swapCard === true || CONTEST_MODES.includes(r.contests) || r.shop === 'grey' || r.shop === 'all') ? { rules: { ...(r.roundDecks === 2 || r.roundDecks === 3 ? { roundDecks: r.roundDecks } : {}), ...(r.deck !== 15 ? { deck: 10 } : {}), ...(r.swapCard === true ? { swapCard: true } : {}), ...(CONTEST_MODES.includes(r.contests) ? { contests: r.contests } : {}), ...shopRule(r.shop) } } : {}) });
+        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, rules: { roundDecks: 2, deck: 10, ...(r.swapCard === true ? { swapCard: true } : {}), ...(CONTEST_MODES.includes(r.contests) ? { contests: r.contests } : {}) } });
         setBotLevels(game, list.map(s => (s.kind === 'bot' ? s.bot : null))); // the level the host picked for each bot
         return {
           ...r, seats, seed, status: 'playing', startedAt: Date.now(), build: { ...BUILD },

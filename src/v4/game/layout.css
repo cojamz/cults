@@ -190,9 +190,6 @@
   .app.narrow > .dialog.page:has(> .table-pick.editable) > *{grid-column:1}
   .app.narrow > .dialog.page:has(> .table-pick.editable) > .table-pick{grid-column:2;grid-row:1 / 9;align-self:start;padding-left:32px;margin-left:-16px;
     box-shadow:inset 1px 0 0 var(--hair, rgba(242,232,210,.10))}
-  /* the deck and when round III joins sit under the table, in its column (Oct 31: the deck pick made the left column run off a laptop) */
-  .app.narrow > .dialog.page:has(> .table-pick.editable) > [data-deck-pick]{grid-column:2;grid-row:9;padding-left:32px;margin-left:-16px}
-  .app.narrow > .dialog.page:has(> .table-pick.editable) > [data-late-pick]{grid-column:2;grid-row:10;padding-left:32px;margin-left:-16px}
   /* Back and Start after every setting, held at the bottom of the screen as the page scrolls (Nov 4: six seats and the
      swap, contests, shop and member-look rows outgrew a laptop's height; Start sat at row 11 with four settings under it,
      and moved when Custom's table ran taller than the seats) */

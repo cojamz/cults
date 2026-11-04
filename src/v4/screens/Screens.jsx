@@ -6,7 +6,7 @@ import HowToPlay from '../HowToPlay.jsx';
 import { friendlyError } from '../errors.js';
 import { quadrant, defById, BOT_LEVEL_INFO, DEFAULT_BOT_LEVEL } from '../../engine/v4/index.js';
 import { ARTIFACTS, cloakName } from '../../engine/v4/core.js';
-import { CLASSIC, spheres, sphereName, sphereLine, sphereVersion, sphereVersionWords, tableProblem, randomTable, urlTable, fitTable, sphereCount, SHOP_OPTS, piled, NO_PILES } from '../tables.js';
+import { CLASSIC, spheres, sphereName, sphereLine, sphereVersion, sphereVersionWords, tableProblem, randomTable, urlTable, fitTable, sphereCount } from '../tables.js';
 import { panelWords } from '../game/panelText.js';
 import { GAME_NAME, VERSION_LABEL } from '../version.js';
 import { copyText } from '../Recovery.jsx';
@@ -192,18 +192,6 @@ const sameTable = (a, b) => a.length === b.length && a.every((x, i) => x === b[i
 
 /** Pick the spheres, one per player (`n`): Classic, random, or your own. `value` = { mode, quadrants }, already fitted
  *  to n (fitTable); a change hands back the whole pick. */
-// Round decks (Cory, 2026-10-25): whether round III members wait for round III or arrive with round II's.
-// Round II is the default (Cory, 2026-10-27: "round 1 deck one, round 2 and 3 all three decks")
-const LATE_OPTS = [['2', 'Round II', 'Round III members are shuffled in with round II members'], ['3', 'Round III', 'Round III members are shuffled in when round III starts']];
-// the deck (Cory, 2026-10-31: two versions, 10 and 15 members per color; rules.deck). 10 is the default (Cory, Nov 1:
-// "keep the 15 available as a mode when setting up a game… just not the default mode")
-const DECK_OPTS = [['10', '10 per color', 'The standard decks: 10 members per color and 10 grey'], ['15', '15 per color', 'Every member of each color (about 15)']];
-export function DeckPick({ value, onChange, readOnly }) {
-  return <div className="seat" data-deck-pick={value}><span>Member deck</span>
-    {readOnly ? <span className="hint">{value === 10 ? '10 per color' : '15 per color'}</span>
-      : <Seg label="Member deck" value={String(value)} options={DECK_OPTS} onChange={v => onChange(Number(v))} />}
-  </div>;
-}
 // the swap card (Cory, Nov 1 3:01pm: "add it as a setting, let's try it!"), off by default
 const SWAP_OPTS = [['off', 'Off', 'No swap card'], ['on', 'On', 'As your recruit, for 2 resources in any colors: swap one of your members with a shop or rival member costing up to 2 more or less']];
 export function SwapPick({ value, onChange, readOnly }) {
@@ -228,24 +216,7 @@ export function ContestPick({ value, onChange, readOnly }) {
       : <Seg label="Contests" value={opt[0]} options={CONTEST_OPTS} onChange={onChange} />}
   </div>;
 }
-export function ShopPick({ value, onChange, readOnly }) {
-  const opt = SHOP_OPTS.find(o => o[0] === value) || SHOP_OPTS[0];
-  return <div className="seat" data-shop-pick={opt[0]}><span>Shop</span>
-    {readOnly ? <span className="hint">{opt[1]}</span>
-      : <Seg label="Shop" value={opt[0]} options={SHOP_OPTS} onChange={onChange} />}
-  </div>;
-}
-// All piles: every pile is open from round I (Cory, Nov 1: "there should be no limit on when you can buy"), so the
-// setting would change nothing a player sees; it says so instead of offering a choice (setup audit, Nov 3)
-function LatePick({ value, onChange, readOnly, shop = 'deck' }) {
-  if (shop === 'all') return <div className="seat" data-late-pick="piles"><span>Round III members join in</span><span className="hint">Round I: every pile is open from the start</span></div>;
-  return <div className="seat" data-late-pick={value}><span>Round III members join in</span>
-    {readOnly ? <span className="hint">{value === 2 ? 'Arrive in round II' : 'Arrive in round III'}</span>
-      : <Seg label="Round III members arrive" value={String(value)} options={LATE_OPTS} onChange={v => onChange(Number(v))} />}
-  </div>;
-}
-
-export function TablePicker({ value, onChange, readOnly = false, n = 4, shop = 'deck' }) {
+export function TablePicker({ value, onChange, readOnly = false, n = 4 }) {
   const { mode, quadrants } = value;
   const setMode = m => {
     if (m === 'classic') onChange({ mode: m, quadrants: [...CLASSIC] });
@@ -266,7 +237,7 @@ export function TablePicker({ value, onChange, readOnly = false, n = 4, shop = '
   const clear = () => { setSwapped(null); onChange({ mode, quadrants: [] }); };
   // a sphere clashes with a color already on the table; with four picked, the last one is the one a click swaps out
   const usedRes = (full ? quadrants.slice(0, -1) : quadrants).map(id => quadrant(id).resource);
-  const problem = quadrants.length === n ? tableProblem(quadrants, null, shop) : '';
+  const problem = quadrants.length === n ? tableProblem(quadrants, null) : '';
   return (
     <div className={`table-pick${readOnly ? '' : ' editable'}`} data-table={quadrants.join(',')}>
       <div className="seat">
@@ -289,12 +260,12 @@ export function TablePicker({ value, onChange, readOnly = false, n = 4, shop = '
             {spheres().map(id => {
               const on = quadrants.includes(id);
               // Blue sits out the piles shops (Cory, Nov 1); greyed here like a color clash, not found only at Start
-              const clash = !on && (usedRes.includes(quadrant(id).resource) || (piled(shop) && id === NO_PILES));
+              const clash = !on && usedRes.includes(quadrant(id).resource);
               const over = !on && !clash && full;
               return (
                 <button key={id} type="button" className={`sphere${on ? ' on' : ''}${over ? ' over' : ''}`} aria-pressed={on} data-sphere={id}
                   disabled={clash} style={{ '--c': `var(--${id})` }} onClick={() => toggle(id)}
-                  title={clash ? (piled(shop) && id === NO_PILES ? `${sphereName(id)} doesn't play with piles.` : `Another sphere on this table already uses ${quadrant(id).resource}.`) : over ? `Swap ${sphereName(id)} in for ${sphereName(last)} (the last one picked). ${sphereHint(id)}` : sphereHint(id)}>
+                  title={clash ? `Another sphere on this table already uses ${quadrant(id).resource}.` : over ? `Swap ${sphereName(id)} in for ${sphereName(last)} (the last one picked). ${sphereHint(id)}` : sphereHint(id)}>
                   <i className="dot" />{on && <span className="ord num">{quadrants.indexOf(id) + 1}</span>}
                   <b>{sphereName(id)}</b><span className={`ver num${sphereVersion(id) === '2.0' ? ' new' : ''}`} data-version={sphereVersion(id)} title={sphereVersionWords(id)}>{sphereVersion(id)}</span><small>{lowColor(quadrant(id).scoring.label)}</small><small className="sphere-line">{sphereLine(id)}</small>
                 </button>
@@ -351,18 +322,16 @@ export function LocalSetup({ initial, onStart, onBack }) {
   const [speed, setSpeed] = useState(motionSpeed);
   const [level, setLevel] = useState(initial?.level || DEFAULT_BOT_LEVEL);
   const [table, setTable] = useState(() => initialTable(initial?.table));
-  const [late, setLate] = useState(initial?.roundDecks === 3 ? 3 : 2);
-  const [deck, setDeck] = useState(initial?.deck === 15 ? 15 : 10);
   const [swapCard, setSwapCard] = useState(!!initial?.swapCard);
   const [contests, setContests] = useState(initial?.contests || '');
-  const [shop, setShop] = useState(initial?.shop === 'grey' || initial?.shop === 'all' ? initial.shop : 'deck');
+  // Shop, Member deck and Round III members rows cut (Cory, Nov 4: "drop the piles modes. drop 15 members. drop 'wait for round III'")
   const filled = seats.filter(s => s.kind !== 'empty');
   // one sphere per player (Cory, 2026-10-15): the table follows the seats as they're filled or emptied
   const nSph = sphereCount(filled.length);
-  const fitted = fitTable(table, filled.length, shop);
-  const tableOk = !tableProblem(fitted.quadrants, nSph, shop);
+  const fitted = fitTable(table, filled.length);
+  const tableOk = !tableProblem(fitted.quadrants, nSph);
   const short = nSph - fitted.quadrants.length;
-  const startWhy = filled.length < 2 ? 'Needs at least 2 seats' : short > 0 ? `Pick ${short} more sphere${short === 1 ? '' : 's'}` : tableOk ? '' : tableProblem(fitted.quadrants, nSph, shop);
+  const startWhy = filled.length < 2 ? 'Needs at least 2 seats' : short > 0 ? `Pick ${short} more sphere${short === 1 ? '' : 's'}` : tableOk ? '' : tableProblem(fitted.quadrants, nSph);
   const set = (i, patch) => setSeats(settleEmojis(seats.map((s, k) => (k === i ? { ...s, ...patch } : s))));
   const pickEmoji = (i, id) => {
     const next = takeEmoji(seats, i, id);
@@ -398,18 +367,15 @@ export function LocalSetup({ initial, onStart, onBack }) {
         ))}
         <div className="seat"><span>Bots</span><Seg label="Bot level" value={level} options={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} onChange={setLevel} /></div>
         <div className="seat"><span>Speed</span><Seg label="Speed" value={speed} options={SPEED_OPTS} onChange={v => { setSpeed(v); setMotionSpeed(v); }} /></div>
-        <TablePicker value={fitted} n={nSph} onChange={setTable} shop={shop} />
-        <DeckPick value={deck} onChange={setDeck} />
+        <TablePicker value={fitted} n={nSph} onChange={setTable} />
         <SwapPick value={swapCard} onChange={setSwapCard} />
         <ContestPick value={contests} onChange={setContests} />
-        <ShopPick value={shop} onChange={setShop} />
-        <LatePick value={late} onChange={setLate} shop={shop} />
         <MemberLookPick />
         <div className="row-btns">
           {/* why Start is off, said beside it (RC1 #8: it dimmed at 3 of 4 with nothing near it) */}
           {startWhy && <span className="hint start-why" data-start-why>{startWhy}</span>}
           <button type="button" className="btn" onClick={onBack}>Back</button>
-          <button type="button" className="btn pri" data-start disabled={!!startWhy} title={startWhy || undefined} onClick={() => onStart({ seats: named(), speed, level, table: fitted, roundDecks: late, deck, swapCard, shop, contests })}>Start</button>
+          <button type="button" className="btn pri" data-start disabled={!!startWhy} title={startWhy || undefined} onClick={() => onStart({ seats: named(), speed, level, table: fitted, roundDecks: 2, deck: 10, swapCard, contests })}>Start</button>
         </div>
       </div>
     </div>
@@ -446,7 +412,7 @@ export function Lobby({ lobby, myId, onLeave }) {
   const roomTable = view.table && view.table.quadrants ? view.table : { mode: 'classic', quadrants: [...CLASSIC] };
   // one sphere per player (Cory, 2026-10-15): everyone sees the room's table fitted to the seats taken now
   const nSph = sphereCount(players.length);
-  const shownTable = fitTable(isHost && draft ? draft : roomTable, players.length, view.shop);
+  const shownTable = fitTable(isHost && draft ? draft : roomTable, players.length);
   const pickTable = t => { setDraft(t); if (!tableProblem(t.quadrants) && lobby.setTable) act(() => lobby.setTable(t)); };
   // one emoji per table: another person's is dimmed; a bot's can be taken (the bot picks another)
   const held = kind => new Map(players.filter(p => p.id !== me && p.kind === kind && p.emoji).map(p => [p.emoji, p.name]));
@@ -486,12 +452,9 @@ export function Lobby({ lobby, myId, onLeave }) {
             <Seg label="Bot level" value={botLevel} options={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} onChange={setBotLevel} />
           </div>
         )}
-        <TablePicker value={shownTable} n={nSph} onChange={pickTable} readOnly={!isHost || !lobby.setTable} shop={view.shop || 'deck'} />
-        <DeckPick value={view.deck === 15 ? 15 : 10} onChange={v => act(() => lobby.setDeck(v))} readOnly={!isHost || !lobby.setDeck} />
+        <TablePicker value={shownTable} n={nSph} onChange={pickTable} readOnly={!isHost || !lobby.setTable} />
         <SwapPick value={!!view.swapCard} onChange={v => act(() => lobby.setSwapCard(v))} readOnly={!isHost || !lobby.setSwapCard} />
         <ContestPick value={view.contests || ''} onChange={v => act(() => lobby.setContests(v))} readOnly={!isHost || !lobby.setContests} />
-        <ShopPick value={view.shop || 'deck'} onChange={v => act(() => lobby.setShop(v))} readOnly={!isHost || !lobby.setShop} />
-        <LatePick value={view.roundDecks === 3 ? 3 : 2} onChange={v => act(() => lobby.setRoundDecks(v))} readOnly={!isHost || !lobby.setRoundDecks} shop={view.shop || 'deck'} />
         <MemberLookPick />
         {err && <p className="error">{err}</p>}
         {!isHost && <p className="hint">Waiting for {view.hostName || 'the host'} to start…</p>}
@@ -499,7 +462,7 @@ export function Lobby({ lobby, myId, onLeave }) {
         {/* Leave beside Start, as Back sits beside Start on the setup page (one footer, one pattern) */}
         <div className="row-btns">
           <button type="button" className="btn" onClick={onLeave}>Leave</button>
-          {isHost && <button type="button" className="btn pri" disabled={view.canStart === false || players.length < 2 || !!tableProblem(shownTable.quadrants, nSph, view.shop)} onClick={() => act(() => lobby.start())}>Start game</button>}
+          {isHost && <button type="button" className="btn pri" disabled={view.canStart === false || players.length < 2 || !!tableProblem(shownTable.quadrants, nSph)} onClick={() => act(() => lobby.start())}>Start game</button>}
         </div>
       </div>
     </div>

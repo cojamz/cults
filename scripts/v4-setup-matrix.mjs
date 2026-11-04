@@ -29,8 +29,9 @@ const LIMIT = Number(arg('limit', 0)) || Infinity;
 const OUT = arg('out', '');
 
 const combos = [];
-for (const n of PLAYERS) for (const deck of [10, 15]) for (const swapCard of [false, true]) for (const contests of ['', 'byColor'])
-  for (const shop of ['deck', 'grey', 'all']) for (const late of [2, 3]) for (const tbl of TABLES) combos.push({ n, deck, swapCard, contests, shop, late, tbl });
+// the screen's settings since Nov 4 (Cory cut the piles shops, the 15 deck and round III waiting): deck 10, Current shop, round II
+for (const n of PLAYERS) for (const deck of [10]) for (const swapCard of [false, true]) for (const contests of ['', 'byColor'])
+  for (const shop of ['deck']) for (const late of [2]) for (const tbl of TABLES) combos.push({ n, deck, swapCard, contests, shop, late, tbl });
 
 // the rules App.jsx startLocal hands a new game for this setup (the same expression, so the matrix plays what the screen starts)
 const rulesFor = cfg => (cfg.late === 3 || cfg.deck !== 15 || cfg.swapCard || cfg.contests || cfg.shop === 'grey' || cfg.shop === 'all'
