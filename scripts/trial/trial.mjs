@@ -211,7 +211,12 @@ async function cmdWork() {
   process.on('SIGINT', () => { release(); process.exit(130); });
   process.on('SIGTERM', () => { release(); process.exit(143); });
   process.on('SIGHUP', () => { release(); process.exit(129); });
+  // a trial cancelled in the queue (queue.mjs cancel <name>) stops taking blocks; the ones playing finish (Nov 4: five
+  // runners played a cancelled trial to the end)
+  const jobFile = join(process.env.QUEUE_DIR || '/mnt/project-files/queue/jobs', `trial-${spec.name}.json`);
+  const cancelled = () => { try { return readJson(jobFile)?.state === 'cancelled'; } catch { return false; } };
   const next = () => {
+    if (cancelled()) return null;
     for (const [side, s] of order) {
       const id = spec.arms[side];
       if (isDone(id, s)) continue;
