@@ -126,3 +126,10 @@ The loop ends only on success: rules 1 to 3 all holding for the whole game at on
 - Owner: the Actions lane.
 
 - **Small-cult gate, read relatively** (director, 1:05am, after the Lab found the base under 20% on trial tables): a change may not lower wins by 5-or-fewer-member cults below the base arm on the same games. The 20% bar stays a whole-game dashboard target.
+
+## Process changes after batch 1 (Process critic, 1:31am, director adopted)
+- **Designer brief: ride on what already happens.** What Cory liked shares a shape: a simple trigger on something the table already does often (Socialites, Well-Wishers, Last-Minute Shopper, Drifter), or the old card reworded. Every pitch walks the card through one real turn: whose turn, who clicks, what the owner would have done instead.
+- **Predict, then check, the fire rate.** Every pitch and every paper judge writes how often the card fires for its owner in a normal 4-player game (per round), on whose turn, and who decides. The Lab counts real fires from the trial logs. Under half the prediction: C3 and C10 capped at 1. A member that fires under once per owner game counts as dead.
+- **Ship on play against the old card.** The trial's base arm has the old card in the same seats; the play judge scores both sheets blind as A and B. The new card must win by 0.3 or more with no 0 on clear outcome. This is relative, so it needs no calibrated play bar.
+- **Gate lines from steering** (enforced at the paper gate, not advice): each color keeps at least one cheap, simple way-in member (Drifter-like is fine); Magenta gets no new steals until a bigger run clears its +33.
+- **Scale:** r2 moved the live median from 13 to 16 with no card changed; compare batches only through the anchors.
