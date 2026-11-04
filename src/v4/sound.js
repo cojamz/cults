@@ -424,7 +424,34 @@ const CALLS = {
     wobble(ctx, o.frequency, t, d, 6, 3);
     return d + 0.02;
   },
-  // (Pizza has no call for now: Cor turned down every crunch, sizzle, voice and ding, Nov 4; its minion lands with the knock)
+  // a low little voice singing "pizza pizza", up then down, a touch quick (Cor: "Pizza C, but sped up just a touch",
+  // Nov 4, after turning down crunches, a sizzle, a ding and gibberish). It's a slogan: swap it before printing.
+  pizza(ctx, dest, t, r) {
+    const pitch = 0.7, k = 1 / 1.15; // k: every length, sped up
+    const src = ctx.createOscillator(); src.type = 'sawtooth';
+    const mouth = ctx.createGain(); mouth.gain.value = 0.0001;
+    const fs = [[10, 1], [12, 0.7], [14, 0.3]].map(([q, a]) => { const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = q; const g = ctx.createGain(); g.gain.value = a * 3; src.connect(bp); bp.connect(g); g.connect(mouth); return bp; });
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 6000; mouth.connect(lp); lp.connect(dest);
+    const vib = ctx.createOscillator(); vib.frequency.value = 5.5; const va = ctx.createGain(); va.gain.value = 4 * pitch; vib.connect(va); va.connect(src.frequency);
+    const I = [320, 2400, 3000], A = [780, 1250, 2600];
+    for (const [w0, p1, p2, p3] of [[0, 300, 330, 250], [0.36, 300, 320, 200]]) {
+      const at = t + w0 * k;
+      hiss(ctx, dest, at, 0.015 * k, r, { f: 1100, q: 1.2, peak: 0.22, attack: 0.001 }); // p
+      const i0 = at + 0.012 * k, i1 = i0 + 0.1 * k; // i
+      src.frequency.setValueAtTime(p1 * pitch, i0); src.frequency.linearRampToValueAtTime(p2 * pitch, i1);
+      fs.forEach((bp, j) => bp.frequency.setValueAtTime(I[j], i0));
+      mouth.gain.setValueAtTime(0.0001, i0); mouth.gain.exponentialRampToValueAtTime(0.6, i0 + 0.015 * k); mouth.gain.setValueAtTime(0.55, i1 - 0.02 * k); mouth.gain.exponentialRampToValueAtTime(0.0001, i1);
+      const s0 = i1 + 0.025 * k; // ts
+      hiss(ctx, dest, s0, 0.008 * k, r, { f: 4000, q: 1.5, peak: 0.18, attack: 0.001 });
+      hiss(ctx, dest, s0 + 0.004 * k, 0.065 * k, r, { f: 6500, q: 1.6, peak: 0.16, attack: 0.01 });
+      const a0 = s0 + 0.06 * k, a1 = a0 + 0.14 * k; // a, falling
+      src.frequency.setValueAtTime(p2 * 0.95 * pitch, a0); src.frequency.linearRampToValueAtTime(p3 * pitch, a1);
+      fs.forEach((bp, j) => { bp.frequency.setValueAtTime(A[j] * 0.85, a0); bp.frequency.linearRampToValueAtTime(A[j], a0 + 0.03 * k); });
+      mouth.gain.setValueAtTime(0.0001, a0); mouth.gain.exponentialRampToValueAtTime(0.7, a0 + 0.02 * k); mouth.gain.setValueAtTime(0.6, a1 - 0.04 * k); mouth.gain.exponentialRampToValueAtTime(0.0001, a1);
+    }
+    src.start(t); vib.start(t); src.stop(t + 0.9 * k); vib.stop(t + 0.9 * k);
+    return 0.85 * k;
+  },
   // a cartoon "rawr": a raspy mid-pitched growl that opens and falls (Cor: the stomp couldn't be heard, Nov 4)
   dino(ctx, dest, t, r) {
     const d = 0.36;
@@ -505,7 +532,7 @@ const CALLS = {
 /** The emoji ids that have a call. */
 export const CALL_IDS = Object.keys(CALLS);
 // each call's loudness against the others (set by peak and rms, scripts/v4-sounds.mjs); a call sits under the place knock
-const CALL_LEVEL = { santa: 1.16, unicorn: 1.23, surfer: 1, bug: 0.64, ghost: 0.44, alien: 0.61, robot: 1.35, cat: 0.71, frog: 0.93, octopus: 0.65, pumpkin: 0.22, skull: 1.41, cactus: 3.4, dino: 1, ninja: 3.05, wizard: 1.33, crab: 1.34, mushroom: 1.3, bee: 3.67 };
+const CALL_LEVEL = { santa: 1.16, unicorn: 1.23, surfer: 1, bug: 0.64, ghost: 0.44, alien: 0.61, robot: 1.35, cat: 0.71, frog: 0.93, octopus: 0.65, pumpkin: 0.22, skull: 1.41, cactus: 3.4, dino: 1, pizza: 0.45, ninja: 3.05, wizard: 1.33, crab: 1.34, mushroom: 1.3, bee: 3.67 };
 const CALL_MASTER = 0.6;
 /** Render emoji `id`'s call into ctx at time t. Returns its length in seconds (0 for an emoji with no call). */
 export function call(ctx, dest, id, t, seed = Math.floor(Math.random() * 1e9)) {
