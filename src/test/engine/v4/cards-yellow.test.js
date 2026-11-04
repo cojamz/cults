@@ -356,3 +356,14 @@ describe('Yellow members', () => {
     expect(followers(s, s.players[0]) - followers(sc({}), sc({}).players[0])).toBe(2);
   });
 });
+
+it('Book Cookers: once per game, On Use rearranges every resource into one chosen color, and the log names it', () => {
+  let s = sceneQ({ quadrants: ['yellow', 'gold', 'red', 'echo'], res: [{ gold: 3, red: 1 }], members: [['yellow.bookcooker']] });
+  const use = `use:${uidOf(s, 'yellow.bookcooker', 0)}`;
+  s = move(s, use);
+  expect(s.pending.prompt).toMatch(/Book Cookers: pick a color for all 4/);
+  s = move(s, 'color:green');
+  expect(s.players[0].res).toMatchObject({ green: 4, gold: 0, red: 0 });
+  expect(linesNaming(s.log, 'Book Cookers').length).toBeGreaterThan(0);
+  expect(s.pending.options.some(o => o.id === use)).toBe(false);
+});

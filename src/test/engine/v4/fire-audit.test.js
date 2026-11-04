@@ -147,6 +147,8 @@ const ALLOW = {
   // the Nov 3 card words (Doormen's price, Night Owls, Sleep In, Last Call) moved the seeded games: recruited once, never changing a rival's resources after
   'yellow.tastemaker': 'pays only when its owner changes a rival\'s resources (cards-yellow: Tastemaker)',
   'yellow.matchmaker': 'pays only for a recruit in a new member color; its 2 owners in the Yellow 2.0 sample (Oct 31) recruited none (cards-yellow)',
+  // Heist steals followers (Nov 4) moved the seeded games: recruited in 1, and its bot holds On Use for a round III with no minions left
+  'yellow.bookcooker': 'fires only On Use, once per game (cards-yellow: Book Cookers)',
   'silver.dowager': 'a plain worth-3 member the audit counts (cards-silver)',
   'silver.revelers': 'a plain counts-as-3 member with nothing to name; recruited in the sample once the color cost (Nov 2) moved the games (cards-silver)',
   // the color cost (Nov 2) moved the seeded games: recruited once without its trigger coming up

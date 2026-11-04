@@ -90,18 +90,20 @@ describe('Magenta actions', () => {
     }
   });
 
-  it('Heist takes half of a chosen color stack, rounded down', () => {
-    let s = table(Q, { n: 3, round: 2, res: [{}, { gold: 7, red: 9 }, { red: 1 }], shop: ROW });
-    s = move(take(s, 'thieves.rob'), 'take:1:gold');
-    expect(R(s)).toMatchObject({ magenta: 1, gold: 3, red: 0 });
-    expect(R(s, 1)).toMatchObject({ gold: 4, red: 9 });
-    expect(R(s, 2).red).toBe(1);
+  it('Heist steals 3 of a chosen rival\'s loose followers', () => {
+    let s = table(Q, { n: 3, round: 2, res: [{}, {}, {}], bonus: [0, 7, 1], shop: ROW });
+    s = move(take(s, 'thieves.rob'), 'player:1');
+    expect(R(s).magenta).toBe(1);
+    expect(s.players[0].bonus).toBe(3);
+    expect(s.players[1].bonus).toBe(4);
+    expect(s.players[2].bonus).toBe(1);
   });
   it('Lookout takes an original-color resource back, only once per round', () => {
-    let s = table(Q, { n: 3, round: 2, res: [{}, { gold: 7 }, { red: 3 }], members: [[], [], ['thieves.lookout']], shop: ROW, queue: turns(0, 0) });
-    s = pass(play(take(s, 'thieves.rob'), 'take:1:gold'));
-    expect(R(s)).toMatchObject({ magenta: 1, gold: 2 });
-    expect(R(s, 2)).toMatchObject({ magenta: 0, gold: 1 });
+    let s = table(Q, { n: 3, round: 2, res: [{ gold: 2 }, { gold: 7 }, { red: 3 }], bonus: [0, 5, 0], members: [[], [], ['thieves.lookout']], shop: ROW, queue: turns(0, 0) });
+    s = pass(play(take(s, 'thieves.rob'), 'player:1')); // Heist steals followers, and Lookout still answers it
+    expect(s.players[0].bonus).toBe(3);
+    expect(R(s)).toMatchObject({ magenta: 1, gold: 1 });
+    expect(R(s, 2)).toMatchObject({ gold: 1 });
     expect(named(s, 'Lookout').length).toBe(1);
     s = take(s, 'thieves.pickpocket');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);

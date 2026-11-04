@@ -34,17 +34,18 @@ describe('#6 Help Yourself: a rival lying low is never offered', () => {
   });
 });
 
-describe('#7 Heist: half of one rival\'s one-color stack, and the choice says so', () => {
-  it('offers each rival stack of 2 or more at half, rounded down; a singleton or a rival lying low is not offered', () => {
-    let s = sceneQ({ quadrants: MAG, n: 4, round: 2, res: [{}, { gold: 5 }, { gold: 5, red: 1 }, { gold: 4 }] });
+describe('#7 Heist: 3 followers from one rival, and the choice says so', () => {
+  it('offers each rival with loose followers; a rival with none or lying low is not offered', () => {
+    let s = sceneQ({ quadrants: MAG, n: 4, round: 2, res: [{}, {}, {}, {}] });
+    s.players[1].bonus = 0; s.players[2].bonus = 5; s.players[3].bonus = 5;
     s.players[3].hideout = s.round; // P4 lies low
     s = take(s, 'thieves.rob');
-    expect(s.pending.prompt).toMatch(/Heist: choose a pile to halve\./);
-    expect(s.pending.options.map(o => [o.id, o.take]).sort()).toEqual([['take:1:gold', 2], ['take:2:gold', 2]]);
-    s = move(s, 'take:2:gold');
-    expect(s.players[0].res).toMatchObject({ gold: 2, magenta: 1 });
-    expect(s.players[2].res).toMatchObject({ gold: 3, red: 1 });
-    expect(s.players[1].res.gold).toBe(5);
+    expect(s.pending.prompt).toMatch(/Heist: steal 3 followers from which rival\?/);
+    expect(s.pending.options.map(o => o.id)).toEqual(['player:2']);
+    s = move(s, 'player:2');
+    expect(s.players[0].bonus).toBe(3);
+    expect(s.players[2].bonus).toBe(2);
+    expect(s.players[0].res.magenta).toBe(1);
   });
 });
 

@@ -72,20 +72,21 @@ describe('Magenta redesign edge cases', () => {
     expect(s.players[0].bonus).toBe(0);
     expect(s.players[0].res).toMatchObject({ gold: 5, magenta: 0 });
   });
-  it('half-stack theft allows a smaller chosen color and excludes singletons and protected rivals', () => {
-    let s = table(Q, { round: 2, n: 3, res: [{}, { gold: 9, red: 5 }, { gold: 12, red: 1 }], members: [[], [], ['thieves.watchdog']], shop });
+  it('Heist offers only rivals with followers to steal, never a protected one, and takes 3', () => {
+    let s = table(Q, { round: 2, n: 4, res: [{}, {}, {}, {}], bonus: [0, 5, 0, 6], members: [[], [], [], ['thieves.watchdog']], shop });
     s = take(s, 'thieves.rob');
-    expect(ids(s).sort()).toEqual(['take:1:gold', 'take:1:red']);
-    s = move(restored(s), 'take:1:red');
-    expect(s.players[0].res).toMatchObject({ magenta: 1, red: 2, gold: 0 });
-    expect(s.players[1].res).toMatchObject({ red: 3, gold: 9 });
-    expect(s.players[2].res).toMatchObject({ red: 1, gold: 12 });
+    expect(ids(s)).toEqual(['player:1']);
+    s = move(restored(s), 'player:1');
+    expect(s.players[0].bonus).toBe(3);
+    expect(s.players[1].bonus).toBe(2);
+    expect(s.players[3].bonus).toBe(6);
+    expect(s.players[0].res.magenta).toBe(1);
   });
-  it('half-stack theft modifiers apply after rounding but never take more than the selected pile', () => {
-    let s = table(Q, { round: 2, res: [{}, { gold: 5 }], members: [['thieves.sticky', 'thieves.desperado']], bonus: [0, 20], shop });
-    s = move(take(s, 'thieves.rob'), 'take:1:gold');
-    expect(s.players[0].res).toMatchObject({ magenta: 1, gold: 5 });
-    expect(s.players[1].res.gold).toBe(0);
+  it('Heist never takes more followers than the rival has loose', () => {
+    let s = table(Q, { round: 2, res: [{}, {}], bonus: [0, 2], shop });
+    s = move(take(s, 'thieves.rob'), 'player:1');
+    expect(s.players[0].bonus).toBe(2);
+    expect(s.players[1].bonus).toBe(0);
   });
   it('Bodyguards blocks resource theft as well as member taking and ransom', () => {
     for (const key of ['pickpocket', 'hideout', 'rob', 'ransom', 'heist']) {
