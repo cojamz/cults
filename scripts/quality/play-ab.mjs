@@ -47,13 +47,19 @@ if (args[0] === 'score') {
   process.exit(0);
 }
 const oi = args.indexOf('--out'), out = oi >= 0 ? args.splice(oi, 2)[1] : null;
-const [newDir, baseDir, newName, newText, oldName, oldText] = args;
+const [newDir, baseDir, newName, newText, oldName, oldText] = args.filter(a => a !== '--loose');
 if (!out || !oldText) { console.error('usage: play-ab.mjs <newDir> <baseDir> "<new name>" "<new text>" "<old name>" "<old text>" --out <dir>'); process.exit(2); }
 // Lab sheets are sheet-<seed>-<seat>.md; sheets.mjs writes <card>-g<seed>-<seat>.md (and a .full.md, skipped).
 const seedOf = f => (f.match(/^sheet-(\d+)-/) || f.match(/-g(\d+)-[^.]+\.md$/) || [])[1];
 const sheets = d => Object.fromEntries(readdirSync(d).filter(f => f.endsWith('.md') && !f.endsWith('.full.md') && seedOf(f)).map(f => [seedOf(f), f]));
 const N = sheets(newDir), B = sheets(baseDir), seeds = Object.keys(N).filter(s => B[s]).sort();
-const rand = rng(seeds.reduce((a, s) => a * 31 + +s, 7));
+// --loose: also pair the leftover seeds in order (different games, so weaker evidence; result.md counts them apart).
+const loose = args.includes('--loose') || process.argv.includes('--loose');
+if (loose) {
+  const ln = Object.keys(N).filter(s => !B[s]).sort(), lb = Object.keys(B).filter(s => !N[s]).sort();
+  for (let i = 0; i < Math.min(ln.length, lb.length); i++) { const k = `${ln[i]}x${lb[i]}`; N[k] = N[ln[i]]; B[k] = B[lb[i]]; seeds.push(k); }
+}
+const rand = rng(seeds.reduce((a, s) => a * 31 + parseInt(s, 10), 7));
 const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const blind = (t, name) => t.replace(new RegExp(esc(name), 'g'), 'the slot card');
 mkdirSync(out, { recursive: true });
@@ -62,7 +68,7 @@ for (const s of seeds) {
   const dir = `pair-${s}`, flip = rand() < 0.5, pd = join(out, dir); mkdirSync(pd, { recursive: true });
   const make = (file, src, name, text) => {
     const full = readFileSync(join(src, file), 'utf8');
-    return `# Seed ${s}: one Hard-bot game from the seat that held the slot card\n\nThe slot card's printed text: "${text}"\n\n` + blind(trim(full, name), name);
+    return `# Seed ${s.replace('x', ' (paired with a different game, seed ')}${s.includes('x') ? ')' : ''}: one Hard-bot game from the seat that held the slot card\n\nThe slot card's printed text: "${text}"\n\n` + blind(trim(full, name), name);
   };
   const nw = make(N[s], newDir, newName, newText), ol = make(B[s], baseDir, oldName, oldText);
   writeFileSync(join(pd, 'A.md'), flip ? ol : nw); writeFileSync(join(pd, 'B.md'), flip ? nw : ol);
