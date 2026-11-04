@@ -643,3 +643,15 @@ function sound(name, delay, n, who) {
     setTimeout(() => { ringing = Math.max(0, ringing - 1); }, (delay + len) * 1000 + 50);
   } catch { /* a sound is never worth an error */ }
 }
+
+/** Emoji `id`'s own call, alone: a player picking that emoji in setup or the room (Cor, 2026-11-04). Never throws. */
+export function playCall(id) {
+  if (!on || !CALLS[id]) return;
+  try { const c = (globalThis.__patronsPicks ||= {}); c[id] = (c[id] || 0) + 1; } catch { /* no global */ }
+  if (!ctx || ctx.state !== 'running') return;
+  try {
+    const len = call(ctx, master, id, ctx.currentTime + 0.005);
+    ringing++;
+    setTimeout(() => { ringing = Math.max(0, ringing - 1); }, len * 1000 + 50);
+  } catch { /* a sound is never worth an error */ }
+}

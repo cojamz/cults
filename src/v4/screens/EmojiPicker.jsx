@@ -5,6 +5,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Minion } from '../art/Leader.jsx';
 import { emojiIds, emojiInfo } from '../art/emojis.js';
+import { playCall } from '../sound.js';
 import './emoji.css';
 
 export const emojiName = id => emojiInfo(id)?.name || 'Emoji';
@@ -39,7 +40,8 @@ export function EmojiButton({ value, taken = new Map(), bots = new Map(), onPick
     return () => removeEventListener('keydown', onKey);
   }, [open]);
   const name = emojiName(value);
-  const pick = id => { setOpen(false); btn.current?.focus(); if (id !== value) onPick(id); };
+  // picking plays that emoji's call, the one its minions make landing on a space (Cor, 2026-11-04)
+  const pick = id => { setOpen(false); btn.current?.focus(); playCall(id); if (id !== value) onPick(id); };
   return (
     <>
       <button ref={btn} type="button" className={`emoji-btn${open ? ' open' : ''}`} data-emoji-btn={value || ''} aria-expanded={open} aria-controls={gridId}

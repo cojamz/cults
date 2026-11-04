@@ -15,6 +15,7 @@ import { useDialog } from '../game/parts.jsx';
 import { Tip } from '../game/Info.jsx';
 import { EmojiButton, EmojiFace, emojiName } from './EmojiPicker.jsx';
 import { settleEmojis, takeEmoji, lastEmoji, rememberEmoji } from '../emojiPick.js';
+import { playCall } from '../sound.js';
 import { SPEEDS, SPEED_NAMES, motionSpeed, setMotionSpeed } from '../motion.js';
 import { memberLook, setMemberLook } from '../memberLook.js';
 
@@ -395,6 +396,19 @@ export function inviteLink(code) {
   return `${location.origin}${location.pathname}?${q}`;
 }
 
+/** Another person in the room changing their emoji plays its call here too (Cor, 2026-11-04). Joining and bots don't. */
+function useOthersPicks(view, me) {
+  const seen = useRef(null);
+  useEffect(() => {
+    if (!view) return;
+    const now = new Map(view.players.filter(p => p.kind !== 'bot').map(p => [p.id, p.emoji]));
+    const before = seen.current;
+    seen.current = now;
+    if (!before) return;
+    for (const [id, e] of now) if (id !== me && e && before.has(id) && before.get(id) !== e) playCall(e);
+  }, [view, me]);
+}
+
 /** Online lobby, built against the lobby contract: subscribe(fn) -> {code, hostId, status, players}; host: addBot, removeSeat, start. */
 export function Lobby({ lobby, myId, onLeave }) {
   const [view, setView] = useState(() => (lobby && lobby.getView ? lobby.getView() : null));
@@ -403,6 +417,7 @@ export function Lobby({ lobby, myId, onLeave }) {
   const [draft, setDraft] = useState(null);
   const [botLevel, setBotLevel] = useState(DEFAULT_BOT_LEVEL);
   useEffect(() => (lobby ? lobby.subscribe(setView) : undefined), [lobby]);
+  useOthersPicks(view, view?.me?.playerId ?? myId);
   if (!lobby || !view) return <div className="app narrow"><div className="dialog page"><h2>Connecting…</h2><button type="button" className="btn" onClick={onLeave}>Back</button></div></div>;
   const me = view.me?.playerId ?? myId;
   const isHost = view.isHost ?? view.hostId === me;

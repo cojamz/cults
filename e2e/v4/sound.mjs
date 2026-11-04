@@ -1,6 +1,7 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E: the game's sounds (src/v4/sound.js; Cory, 2026-10-15: a click when you place a minion, coins as resources
 // land, a fanfare for the round winner, a little voice when followers join; a mute toggle).
+//  (s0) picking an emoji on the setup screen asks for its call (Cor, 2026-11-04);
 //  (s1) from a save at P1's last placement of round I, played to the round's summary, the game asks for every sound:
 //       place, coin, follower and fanfare; and a minion landing asks for its emoji's own call (Cor, 2026-11-04);
 //  (s2) the ☰ menu's "Sound on" turns it off; then the game asks for no sound at all, and "Sound off" survives a reload;
@@ -58,6 +59,13 @@ try {
     if (st.pending.options.some(o => { const m = /^slot:(\d+)-(\d+)$/.exec(o.id); return m && /^\+\d+ (?!followers?\b)[a-z]/.test(actionAt(st, +m[1], +m[2]).text); })) save = sv;
   }
   if (!save) throw new Error('no late save with a gain space open');
+  // (s0) the setup screen's emoji picker
+  await page.goto(`${base}/?intro=0`);
+  await page.click('[data-home="local"]');
+  await page.click('[data-seat-row="0"] [data-emoji-btn]');
+  await page.click('[data-emoji-grid] [data-pick="bee"]');
+  const picks = await page.evaluate(() => ({ ...(window.__patronsPicks || {}) }));
+  if (!picks.bee) errors.push(`(s0) picking the bee on setup never asked for its call (${JSON.stringify(picks)})`);
   await seedSave(page, save);
   await page.goto(`${base}/?botDelay=40&intro=0&speed=quick`);
   await page.click('[data-home="resume"]');
