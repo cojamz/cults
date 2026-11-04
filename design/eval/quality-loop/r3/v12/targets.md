@@ -4,22 +4,32 @@ Rules (director, 12:21pm): every card under the v1.2 bar, plus every card Cory h
 
 Disagreements with the director's note, resolved by the files: Makeover ("oh no i like makeover as is", Nov 2) and Estate Sale ("yeah 3 is good improves on mine", Oct 22) are liked, so they are out. Sweet Talk is in (split: disliked), though calibration.md line 211 lists it as liked "(his words)". Overtime is out (director 12:24pm: his idea, nothing recent says he dislikes it). Sweet Talk stays in (his latest word, tonight: "doesn't love").
 
+## Taken off at 1:00pm (director 12:55pm: Cory praised or set these himself, or they are stopped)
+- Party Gifts: "Party Gifts is a good idea. Can I got 5 more?" (Oct 31)
+- Big Tent: "I like the big tent suggestion" (Oct 31)
+- Sample: his On Recruit idea (calibration.md, liked and live)
+- Greatest Hits: his own Nov 1 text, "Copy the On Recruit of each of your members"
+- Fan Club: his call to bring Mime back as Fan Club ("sure", Oct 28)
+- Lie Low: "Lie Low stays" (Oct 27), his steal block
+- Largesse: his own swap from High Tide to Largesse
+- Harvest: his own text (Oct 30, "give the harvest like actions a little flavor")
+- Anarchist: "Keep Anarchist" (Nov 1)
+- Old Maid: his idea (Oct 27), renamed by him Oct 31
+- Peek: "peek the top of the pile and reorder: yes" (Oct 20)
+- Mob: stopped by the director; on Cory's morning list as a numbers question
+- Loyalists: stopped after two batches; on Cory's morning list
+- Kept, but worth a look: Caterer (he chose to keep it in the 10-card deck, Nov 1, no praise); Sweet Talk (director: his latest word is "doesn't love"); Cash In ("something to reconsider").
+
 ## Blue
 - **Critic** (member, median 10, under the bar, Cory disliked it)
 - **Regular** (member, median 10, under the bar)
 - **Hawker** (member, median 15, under the bar)
-- **Peek** (space, median 15, Cory disliked it)
 
 ## Green
 - **Busker** (member, median 12, under the bar)
-- **Sample** (space, median 18, Cory disliked it)
-- **Fan Club** (member, median 20, Cory disliked it)
-- **Greatest Hits** (space, median 20, Cory disliked it)
 
 ## Guests
 - **Line Cutters** (member, median 14, Cory disliked it)
-- **Old Maid** (member, median 16, under the bar)
-- **Anarchist** (member, median 17, under the bar)
 - **Spoilsport** (member, median 17, under the bar)
 
 ## Magenta
@@ -27,7 +37,6 @@ Disagreements with the director's note, resolved by the files: Makeover ("oh no 
 - **Stash** (space, median 11, under the bar, Cory disliked it)
 - **Extortionist** (member, median 15, Cory disliked it)
 - **Kidnapper** (member, median 16, under the bar)
-- **Lie Low** (space, median 16, Cory disliked it)
 - **Double Agent** (member, median 17, under the bar)
 - **Heist** (space, median 18, Cory disliked it)
 
@@ -36,13 +45,9 @@ Disagreements with the director's note, resolved by the files: Makeover ("oh no 
 - **Timekeeper** (member, median 12, under the bar)
 
 ## Red
-- **Mob** (member, median 17, Cory disliked it)
-- **Loyalists** (member, median 18, Cory disliked it)
 
 ## Silver
 - **Caterer** (member, median 13, under the bar)
-- **Party Gifts** (space, median 19, Cory disliked it)
-- **Largesse** (space, median 21, Cory disliked it)
 - **Sweet Talk** (space, live; not ranked in r3 because the board carried Sweet Nothings in its place; Cory disliked it)
 
 ## White
@@ -55,7 +60,5 @@ Disagreements with the director's note, resolved by the files: Makeover ("oh no 
 ## Yellow
 - **Customs Officer** (member, median 10, under the bar)
 - **Dyer** (member, median 12, under the bar)
-- **Harvest** (space, median 16, Cory disliked it)
 - **Leaders' Tax** (space, median 16, Cory disliked it)
 - **Melting Pot** (space, median 16, Cory disliked it)
-- **Big Tent** (member, median 18, Cory disliked it)
