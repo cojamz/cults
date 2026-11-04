@@ -134,8 +134,10 @@ const P = {
     boom: { verb: 'Pay all your resources: +1 @f each', second: 'you may keep your white' },
     // White's Oct 22 spaces (Cory's set): they had no panel words, so the board cut each to its first four words
     stipend: r => ({ main: `+${r + 1} white`, second: `+${r} @f if you recruit a member` }), // Gather's shape (Cory, Oct 31)
-    splurge: r => ({ verb: r === 2 ? '+1 @f per 1 you pay' : '+1 @f per 2 you pay', second: 'for a member this turn', note: '+1 white' }), // per 1 in round II (Cory, Nov 1)
-    exchange: r => ({ verb: r === 1 ? 'Turn 1 resource into 2 @f' : `Turn up to ${r} resources into 2 @f each`, note: '+1 white' }),
+    // White's three round I spaces lead with their white, then the follower part (Cory, Nov 4: "the white actions are hard
+    // to understand what they do at a glance"): Splurge's +1 white sat on line 3, which most rings drop
+    splurge: r => ({ main: '+1 white', second: r === 2 ? '+1 @f per resource spent on a member' : '+1 @f per 2 spent on a member' }), // per 1 in round II (Cory, Nov 1)
+    exchange: r => ({ main: '+1 white', second: r === 1 ? 'then turn 1 resource into 2 @f' : `then turn up to ${r} resources into 2 @f each` }),
     // the gain leads: on ring II only one line fits, and the two read the same as "Bury one of your members"
     farewell: { verb: 'Cast out a member for its cost in @f', note: '+1 white' },
     estatesale: { verb: 'Cast out a member for its cost in white', note: '+1 white' },
