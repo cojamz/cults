@@ -119,7 +119,7 @@ describe('REPLACE11: Yard Sale', () => {
 
   // "At the end of your turn, cast out one of your members face up into the shop, gain white equal to twice its
   // cost. +1 white."
-  it('after your recruit, puts your member face up in the shop, fresh, and pays twice its cost in white plus 1', () => {
+  it('after your recruit, puts your member face up in the shop and pays twice its cost in white plus 1', () => {
     let s = table(['red', 'trading'], { round: 2, members: [['trading.raider', 'trading.undertaker']] });
     const raiders = s.players[0].members.find(u => s.cards[u].def === 'trading.raider');
     s.cards[raiders].used = true;
@@ -135,7 +135,7 @@ describe('REPLACE11: Yard Sale', () => {
     expect(s.shop).toContain(raiders);
     expect(s.shop.at(-1)).toBe(raiders); // laid at the end of the row
     expect(s.pile).not.toContain(raiders);
-    expect(s.cards[raiders].used).toBeFalsy(); // fresh for its next owner
+    expect(s.cards[raiders].used).toBeTruthy(); // once per game is once for the card (Cory, Nov 4 11:07am): it stays spent
     expect(s.players[0].res.white).toBe(2 * 5 + 1); // Raiders costs 5
     const log = s.log.join('\n');
     expect(log).toContain("P1's Yard Sale: Raiders paid 10 white.");
