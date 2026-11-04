@@ -157,10 +157,13 @@ const members = [
     onActivate(ctx, owner, card) {
       const open = hypnoSpaces(ctx);
       if (open.length < 2 || ctx.state.hypno) { card.used = false; ctx.log(`${owner.name}'s Hypnotist: no open space to choose.`); return; }
+      // the bots' guess at who places next: the first rival turn still queued (the owner's own, on a snake double, is rare)
+      const nxt = ctx.state.queue.find(t => (t.t === 'turn' || t.t === 'place') && t.p !== undefined && t.p !== owner.id);
+      const who = nxt ? ctx.player(nxt.p) : owner;
       ctx.choose(owner, 'Hypnotist: whoever places next must put their minion on which open space?', open.map(([q, i, a]) => ({
         id: `slot:${q}-${i}`, label: `${a.name} (${ctx.quadrant(ctx.state.quadrants[q]).name})`, kind: 'choice', value: `${q}-${i}`,
-        // bots send the next player to the space worth least to them (the smallest printed estimate)
-        hint: -(typeof a.estimate === 'function' ? (() => { try { return a.estimate(ctx, owner) || 0; } catch { return 0; } })() : 0),
+        // bots send the next player to the space worth least to that player (the smallest estimate for them)
+        hint: -(typeof a.estimate === 'function' ? (() => { try { return a.estimate(ctx, who) || 0; } catch { return 0; } })() : 0),
       })), 'benders.hypno');
     },
     botActivate: ctx => ctx.state.round >= 2 && hypnoSpaces(ctx).length >= 3,
