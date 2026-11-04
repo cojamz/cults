@@ -406,7 +406,7 @@ const trading = {
     m('changer', 'Money Changers', 2, 1, 'Whenever any player buys followers, +1 white (+2 if it\'s you).', { f: 2,
       onBuyFollowers(ctx, owner, card, buyer) {
         if (globalThis.process?.env?.CHANGER === 'self' && buyer?.id !== owner.id) return; // CHANGER=self: bot test only (Nov 3)
-        const k = buyer?.id === owner.id ? 2 : 1;
+        const k = buyer?.id === owner.id && globalThis.process?.env?.CHANGER !== 'one' ? 2 : 1; // CHANGER=one: +1 on every buy, bot test only (Nov 4, with Most white)
         ctx.gain(owner, W, k);
         ctx.log(`${owner.name}'s Money Changers: +${k} white.`);
       },
