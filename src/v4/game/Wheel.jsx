@@ -1073,9 +1073,9 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
         const tag = alt ? { 'data-rim-alt': q, 'data-rim-res': quadrant(qid).resource } : { 'data-plaque': qid, 'data-rim-text': q, 'data-rim-res': quadrant(qid).resource };
         if (lab.runs) return (
           <text key={alt ? `rta${q}` : `rt${q}`} className={`rim-rule${lit}`} fontSize={F.toFixed(2)} style={{ letterSpacing: `${lab.ls.toFixed(3)}em` }} {...tag}>
-            {lab.runs.filter(r => r.kind !== 'dot').map((r, k) => (
+            {lab.runs.filter(r => r.kind !== 'dot' && r.kind !== 'prize').map((r, k) => (
               <textPath key={k} href={`#${arcId}`} startOffset={(startS + r.s).toFixed(1)}>
-                {r.kind === 'prize' ? <tspan className="rim-prize" fontSize={(F * 1.3).toFixed(2)} style={{ letterSpacing: 0 }}>{r.text}</tspan> : r.text}
+                {r.text}
                 {r.tie ? <tspan className="rim-tie" {...(alt ? {} : { 'data-rim-tie': r.tie })}>{`  ·  ties: ${r.tie}`}</tspan> : null}
               </textPath>
             ))}
@@ -1103,6 +1103,25 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
         return { xy: polar(a, rr), up: lab.top ? a : a + 180 };
       };
       if (wordsUp) rimArt.push(rimText(lab, startS, false));
+      // the prize, upright on the screen wherever its rim sits: set along a side rim it read "9+" for +6 and "01+" for +10
+      // (picky bot, Nov 4). It keeps its place on the line, a size up, and steps down only where a side rim's band is
+      // narrower than the number is wide
+      const prize = lab.runs && lab.runs.find(r => r.kind === 'prize');
+      if (prize && wordsUp) {
+        const sAt = startS + prize.s + (prize.w * F) / 2;
+        const deg = (sAt / rr) * 180 / Math.PI;
+        const a = lab.top ? c - arcHalf + deg : c + arcHalf - deg;
+        const t = (a + rot) * Math.PI / 180;
+        const wEm = rimWidth(prize.text, 800, 0, PIXEL), hEm = 0.66; // the face's digits are .65em tall
+        const fs = Math.min(F * 1.3, (RIM.r1 - RIM.r0 - 3) / (wEm * Math.abs(Math.sin(t)) + hEm * Math.abs(Math.cos(t))));
+        const half = (fs / 2) * (wEm * Math.abs(Math.sin(t)) + hEm * Math.abs(Math.cos(t)));
+        const room = Math.max(0, (RIM.r1 - RIM.r0) / 2 - half - 0.8);
+        const [px, py] = polar(a, RIM.r + Math.max(-room, Math.min(room, rr - RIM.r)));
+        rimArt.push(
+          <text key={`rp${q}`} className={`rim-rule rim-prize${lit}`} data-rim-prize-text={qid} data-rim-res={quadrant(qid).resource} fontSize={fs.toFixed(2)} textAnchor="middle"
+            style={{ letterSpacing: 0, dominantBaseline: 'central' }} transform={`translate(${px.toFixed(2)} ${py.toFixed(2)}) rotate(${(-rot).toFixed(2)})`}>{prize.text}</text>,
+        );
+      }
       if (lab.runs) {
         lab.runs.filter(r => r.kind === 'dot').forEach((r, k) => {
           const { xy: [x, y], up } = onLine(startS + r.s + (r.w * F) / 2);
@@ -1116,7 +1135,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
           );
         });
       }
-      // the follower mark right after the prize, on the same arc, upright like the letters, centred on the line (the
+      // the follower mark right after the prize, on the same arc, upright on the screen like the prize (panels; picky bot, Nov 4), centred on the line (the
       // text's dominant-baseline is middle, so the line's middle is rr itself)
       {
         const sAt = startS + textW + (F * RIM_MARK) / 2;
@@ -1125,7 +1144,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
         const [mx, my] = polar(a, rr);
         const cap = F * 0.95;
         rimArt.push(
-          <g key={`rf${q}`} className={`rim-mark${lit}`} data-rim-prize={qid} data-rim-res={quadrant(qid).resource} transform={`translate(${mx.toFixed(2)} ${my.toFixed(2)}) rotate(${(lab.top ? a : a + 180).toFixed(2)}) translate(${(-cap / 2).toFixed(2)} ${(-cap / 2).toFixed(2)})`}>
+          <g key={`rf${q}`} className={`rim-mark${lit}`} data-rim-prize={qid} data-rim-res={quadrant(qid).resource} transform={`translate(${mx.toFixed(2)} ${my.toFixed(2)}) rotate(${(lab.runs ? -rot : lab.top ? a : a + 180).toFixed(2)}) translate(${(-cap / 2).toFixed(2)} ${(-cap / 2).toFixed(2)})`}>
             <circle className="rim-halo" cx={(cap / 2).toFixed(2)} cy={(cap / 2).toFixed(2)} r={(cap * 0.58).toFixed(2)} fill="url(#ltHalo)" aria-hidden="true" />
             <Follower size={cap} title={`${RING_VALUE[paying - 1]} followers`} />
           </g>,

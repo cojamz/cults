@@ -15,6 +15,7 @@
 @font-face{font-family:'Alegreya';src:url(./fonts/al-700-normal.woff2) format('woff2');font-weight:600 900;font-display:swap}
 @font-face{font-family:'Alegreya';src:url(./fonts/al-500-italic.woff2) format('woff2');font-weight:400 500;font-style:italic;font-display:swap}
 @font-face{font-family:'Alegreya';src:url(./fonts/al-700-italic.woff2) format('woff2');font-weight:600 900;font-style:italic;font-display:swap}
+/* its zero is mapped to its plain O: Handjet's 0 has a mark inside that read as an 8 at wheel size ("+10" read "+18": picky bot, Nov 4) */
 @font-face{font-family:'Cults Pixel';src:url(./fonts/handjet.woff2) format('woff2');font-weight:100 900;font-display:swap}
 
 /* ---------- tokens: walnut, cream paper, muted inks, Alegreya ---------- */
@@ -368,7 +369,8 @@ h1,h2,h3{font-family:var(--serif)}
 .lt .stage.turning .slot,.lt .stage.turning .slot *,.lt .stage.turning svg *{pointer-events:none!important}
 .lt [data-spaces="panels"] .stage .hub-label small{display:none}
 /* a serif numeral: "II" in a heavy sans inside the dark disc read as a pause button */
-.lt [data-spaces="panels"] .stage .hub-label b{font-family:var(--serif);font-weight:700;font-size:18px}
+/* a size down on a smaller board, so the medallion stays inside its disc and off the center spaces' words (picky bot, Nov 4) */
+.lt [data-spaces="panels"] .stage .hub-label b{font-family:var(--serif);font-weight:700;font-size:clamp(12px, calc(var(--wheel-px) * .03), 18px)}
 .lt [data-spaces="panels"] .stage .hub-label .pips{gap:3px;margin-top:2px}
 .lt [data-spaces="panels"] .stage .hub-label .pips i{width:5px;height:5px}
 /* the print: an upright box over its panel (its width from the room the panel has where it sits now) */
@@ -686,6 +688,10 @@ h1,h2,h3{font-family:var(--serif)}
 /* Squatter's occupied legal targets remain bright, with a cooler edge than empty spaces. */
 .lt [data-spaces="panels"] .stage svg.wheel-paper .pcell.squat.lit .wash{fill:color-mix(in srgb,#d2c0eb 18%,var(--paper-lit,#fbf6ea))}
 .lt [data-spaces="panels"] .stage svg.wheel-paper .pcell.squat.lit .edge-lit{stroke:#d7baff}
+/* a space a hovered copy would take (Cover, Greatest Hits) lights along its own wedge, not as a box around its print (picky
+   bot, Nov 4: square boxes inside the curved spaces) */
+.lt [data-spaces="panels"] .stage .slot.copy-target .base{box-shadow:none!important}
+.lt [data-spaces="panels"] .stage svg.wheel-paper .pcell.copy-target .slice-outline{stroke:#ffc24d;stroke-width:3.6;opacity:1}
 .lt .stage .slot.squat.lit .base{box-shadow:inset 0 0 0 2px #d7baff}
 
 /* the pixel face on the wheel (Cory, 2026-10-28: "number 3"): the ring's rule and prize, and a space's big numbers */

@@ -53,7 +53,8 @@ describe('Wheel', () => {
     expect(rim('red')).not.toMatch(/members/i);
     expect(rim('yellow')).toMatch(/most yellow resources/i); // Yellow 2.0 (Oct 31)
     for (const q of s.quadrants) {
-      expect(rim(q)).toMatch(/\+4/);
+      // the prize is its own upright text beside the rim's words (picky bot, Nov 4: set along a side rim "+6" read "9+")
+      expect(container.querySelector(`[data-rim-prize-text="${q}"]`).textContent).toBe('+4');
       expect(rim(q)).not.toMatch(/ties:/i);
       expect(container.querySelector(`[data-rim="${q}"]`).getAttribute('aria-label')).not.toMatch(/break ties/i);
     }

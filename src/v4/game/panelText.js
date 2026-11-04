@@ -89,7 +89,8 @@ const P = {
     // "+2 per silver" read as per silver you hold (Cory, Nov 1: "VERY misleading"): the giving leads
     partygifts: { verb: 'Give rivals up to 3 silver', second: '+2 @f each', note: 'from the bank' },
     favors: { main: '+2 silver', second: 'rivals give you 1, get 2 silver' }, // their 2 silver dropped with line 3 (wheel fit, Nov 3)
-    tongue: { main: '+3 silver', second: 'then turn silver into colors' },
+    // ring II's line 2 drops at some turns of the wheel and left a bare "+3 silver" (picky bot, Nov 4): whole in line 1
+    tongue: { verb: '+3 silver, then turn silver into colors' },
     largesse: { verb: 'Give rivals up to 10 silver', second: '+1 @f each', note: 'from the bank' },
   },
   yellow: {
@@ -137,7 +138,9 @@ const P = {
     // White's three round I spaces lead with their white, then the follower part (Cory, Nov 4: "the white actions are hard
     // to understand what they do at a glance"): Splurge's +1 white sat on line 3, which most rings drop
     splurge: r => ({ main: '+1 white', second: r === 2 ? '+1 @f per resource spent on a member' : '+1 @f per 2 spent on a member' }), // per 1 in round II (Cory, Nov 1)
-    exchange: r => ({ main: '+1 white', second: r === 1 ? 'then turn 1 resource into 2 @f' : `then turn up to ${r} resources into 2 @f each` }),
+    // rounds II and III: "then turn up to 2 resources into 2 @f each" was too long for line 2, which dropped whole and
+    // left a bare "+1 white" (picky bot, Nov 4): the same rule in fewer words
+    exchange: r => ({ main: '+1 white', second: r === 1 ? 'then turn 1 resource into 2 @f' : `turn up to ${r} into 2 @f each` }),
     // the gain leads: on ring II only one line fits, and the two read the same as "Bury one of your members"
     farewell: { verb: 'Cast out a member for its cost in @f', note: '+1 white' },
     estatesale: { verb: 'Cast out a member for its cost in white', note: '+1 white' },

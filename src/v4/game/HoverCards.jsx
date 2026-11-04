@@ -450,7 +450,8 @@ function useCopyTargets(c, state, me) {
   // lit in the same frame the card opens (a layout effect), not a frame after it
   useLayoutEffect(() => {
     if (!sig) return undefined;
-    const els = sig.split(',').flatMap(k => [...document.querySelectorAll(`[data-slot="${k}"]`)]);
+    // the space's print and, on panels, its wedge (the outline follows the wedge: picky bot, Nov 4)
+    const els = sig.split(',').flatMap(k => [...document.querySelectorAll(`[data-slot="${k}"], .pcell[data-cell="${k}"]`)]);
     for (const el of els) el.classList.add('copy-target');
     // held weakly: a space re-drawn while lit is never kept alive by its cleanup (leak pass, 2026-10-28)
     const held = weakly(els);

@@ -251,6 +251,7 @@ const RIM_EMOJI = () => {
     }
   }
   for (const g of stage.querySelectorAll('[data-rim-prize] svg')) { const x = g.getBoundingClientRect(); words.push({ what: 'a rim follower mark', x }); }
+  for (const t of stage.querySelectorAll('[data-rim-prize-text]')) { const x = t.getBoundingClientRect(); words.push({ what: `rim prize "${t.textContent}"`, x: { left: x.left + x.width * 0.1, right: x.right - x.width * 0.1, top: x.top + x.height * 0.2, bottom: x.bottom - x.height * 0.2 } }); }
   for (const el of stage.querySelectorAll('.slot .face .nm, .slot .face .yl, .slot .face .note')) {
     const r = document.createRange(); r.selectNodeContents(el);
     for (const x of r.getClientRects()) if (x.width > 2 && x.height > 2) words.push({ what: `"${el.textContent.trim().slice(0, 20)}"`, x: { left: x.left, right: x.right, top: x.top + x.height * 0.25, bottom: x.bottom - x.height * 0.16 } });

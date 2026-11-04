@@ -245,7 +245,8 @@ async function rimCheck(page, step) {
   if (pts.length < 8) fail(`(o) found only ${pts.length} rim points to check`, step);
   // the prize says what it pays: "+2 FOLLOWERS", not a bare "+2"
   // the prize is "+N" followed by the follower mark (Cory, 2026-10-15: the symbol, not the word), or "+N FOLLOWERS"
-  for (const r of await page.$$eval('[data-rim-text]', els => els.map(e => ({ t: e.textContent.trim(), mark: !!document.querySelector(`[data-rim-prize="${e.getAttribute('data-plaque')}"] svg`) })))) {
+  // (the prize is its own upright <text> since Nov 4, picky bot: set along a side rim "+6" read "9+")
+  for (const r of await page.$$eval('[data-rim-text]', els => els.map(e => { const q = e.getAttribute('data-plaque'), p = document.querySelector(`[data-rim-prize-text="${q}"]`); return { t: `${e.textContent.trim()} ${p ? p.textContent.trim() : ''}`.trim(), mark: !!document.querySelector(`[data-rim-prize="${q}"] svg`) }; }))) {
     const ok = /\+\d+ FOLLOWERS?/i.test(r.t) || (/\+\d+$/.test(r.t) && r.mark);
     if (!ok) fail(`(o) the rim "${r.t}" doesn't show its prize as followers (+N and the follower mark)`, step);
   }
