@@ -211,7 +211,9 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
                 : <span className="sp">{e.space || 'turn'}</span>}
               {/* the space's own words from the board, so the name needs no lookup */}
               {words(state, e.spaceKey) ? <span className="sp-words"> (<Rich text={words(state, e.spaceKey)} />)</span> : null}
-              {e.short ? <span className="big">: <HoverNames state={state} hover={hover} text={e.short} uids={e.uids} /></span> : null}
+              {e.short && compact ? e.short.split(' · ').map((part, k) => (
+                <span key={k} className={`big part${k ? '' : ' first'}`}>{k ? '· ' : ': '}<HoverNames state={state} hover={hover} text={part} uids={e.uids} /></span>
+              )) : e.short ? <span className="big">: <HoverNames state={state} hover={hover} text={e.short} uids={e.uids} /></span> : null}
             </li>
           ))}
         </ol>

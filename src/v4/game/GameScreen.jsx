@@ -918,13 +918,17 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // the card on screen: this turn's, as it builds; else the one that just passed, until it has held and folded
   const toldShown = story.live ? null : story.told || lastTold.current;
   const toldCard = !toldShown ? null : turnCard && turnCard.n === toldShown.n ? (turnCard.gone ? null : turnCard) : toldShown;
-  const cardNow = story.live || toldCard;
   const since = story.since;
   // the note clears once your turn comes, and stays cleared after it even when your turn told no story of its own
   // (Cory, playtest Oct 28: "notification about swapping members wont go away")
   const lostSeen = useRef(0);
   const myTurn = !!(pend && mySeats.length === 1 && pend.player === mySeats[0]);
   if (myTurn) lostSeen.current = trail.current.n;
+  // on your turn the turn that just passed folds away at once: its line is in "Since your last turn", which gets the
+  // room back to show every rival's move (Cory, Nov 4: "yes" to the info audit's one line per rival move, still up when
+  // your turn starts; at 1270x700 the card left the strip no room for a single line)
+  const placing = myTurn && pend.kind === 'place';
+  const cardNow = placing ? null : story.live || (myTurn ? null : toldCard);
   const lostText = myTurn ? '' : lossWords(story.lost.filter(x => x.n > lostSeen.current), state.players);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -1739,7 +1743,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
             pool={physicalState.round >= 2 && !physicalState.over ? <MinionPool state={physicalState} /> : null} />}
         </>
       )}
-      <AfterChain value={cardNow} hold={holdStory}>{c => (c && !moment && !(state.over && !moment) ? <TurnCard card={c} root={rootEl} state={state} /> : null)}</AfterChain>
+      <AfterChain value={cardNow} hold={holdStory && !placing}>{c => (c && !moment && !(state.over && !moment) ? <TurnCard card={c} root={rootEl} state={state} /> : null)}</AfterChain>
       {toast && <div key={toast.n} className="toast" role="status">{toast.text}</div>}
       <TouchTips />
       {cardDetail && state.cards[cardDetail.uid] && (

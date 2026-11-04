@@ -22,6 +22,15 @@
 .lt-since .since-row .pip{width:.95em;height:.95em;vertical-align:-.15em}
 .lt-since .since-row.hit{background:rgba(232,120,100,.1);box-shadow:inset 2px 0 0 rgba(232,120,100,.7)}
 .lt-since .since-more button{font:inherit;font-size:12px;color:var(--cream-3);background:none;border:0;padding:1px 7px;cursor:pointer;text-decoration:underline dotted}
+/* under the chairs, one line per move (Cory, Nov 4: "yes" to one line per rival move, still up when your turn starts):
+   the row's parts wrap as whole pieces, and only the first line shows, so what doesn't fit drops out whole, never cut
+   mid-word; the name opens the full card */
+.lt-since.compact .since-row{display:flex;flex-wrap:wrap;align-items:baseline;height:1.3em;overflow:hidden;padding-left:7px;text-indent:0;white-space:nowrap}
+.lt-since.compact .since-row > *{flex:none}
+.lt-since.compact .since-row > * + *{margin-left:.3em}
+.lt-since.compact .since-row > .big.part.first{margin-left:0}
+.lt-since.compact .since-row .big.part{display:inline}
+.lt-since.compact .since-row .sp-words{order:2}
 /* the newest line in little room (SinceStrip level 1): without the space's board words, whole */
 .lt-since .since-row.brief .sp-words{display:none}
 /* nothing since your last turn: only the Log, at the head's right */
