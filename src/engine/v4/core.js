@@ -1688,7 +1688,7 @@ function swapMembers(state, actor, aUid, bUid) {
   // out of a cult into another cult or the shop (Recruiter pays for a rival's member going to the shop too; Cory, Nov 1)
   for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner && from.owner !== to.owner) cultMove(state, uid, from.owner, to.owner || null, actor, uid === aUid ? bUid : aUid);
   // A member swapped into the shop goes back wiped clean, as a released one does (no old owner's copy or flags).
-  for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner && !to.owner) state.cards[uid] = { uid, def: state.cards[uid].def };
+  for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner && !to.owner) wipeCard(state, uid);
   for (const [uid, dest] of [[bUid, a], [aUid, b]]) if (dest.owner) {
     if (dest.owner === actor) memberAcquired(state, actor, uid);
     memberJoined(state, dest.owner, uid);
@@ -2076,7 +2076,7 @@ function releaseNow(state, p, uid) {
   const def = cardDef(state, uid), back = releaseRefund(state, uid);
   cardLeaves(state, p, uid);
   p.members.splice(p.members.indexOf(uid), 1);
-  state.cards[uid] = { uid, def: state.cards[uid].def };
+  wipeCard(state, uid);
   state.pile.push(uid);
   bottomBlue(state);
   p.releasedRound = state.round;
@@ -2092,6 +2092,14 @@ function releaseNow(state, p, uid) {
 function cultMove(state, uid, from, to, actor = null, swappedWith = null) {
   const ctx = ctxFor(state);
   eachMember(state, (owner, card, def) => { if (def.onCultMove) def.onCultMove(ctx, owner, wrap(state, card), { uid, from, to, actor, swappedWith }); }, ['onCultMove']);
+}
+/** A member back in the shop or the pile goes wiped clean (no old owner's copy or flags), except a once-per-game use:
+ *  "once per game is once for the card - the idea is you can try to poach it before its used, or use it and swap it out
+ *  for better stuff" (Cory, Nov 4 11:07am). A used one stays used whoever recruits it next. */
+function wipeCard(state, uid) {
+  const old = state.cards[uid];
+  const spent = old.used && effectiveDefs(old, state).some(d => d.activate === 'game');
+  state.cards[uid] = { uid, def: old.def, ...(spent ? { used: true } : {}) };
 }
 function cardLeaves(state, p, uid) {
   const card = state.cards[uid], ctx = ctxFor(state);
@@ -2185,7 +2193,7 @@ function ctxFor(state) {
       const def = cardDef(state, uid), c = def.s + def.w;
       cardLeaves(state, p, uid);
       p.members.splice(p.members.indexOf(uid), 1);
-      state.cards[uid] = { uid, def: state.cards[uid].def };
+      wipeCard(state, uid);
       // shop: cast out face up into the shop row instead (Yard Sale, REPLACE11 bot test), at the end of the row
       if (shop) {
         state.shop.push(uid);
@@ -2212,7 +2220,7 @@ function ctxFor(state) {
       const i = state.shop.indexOf(uid);
       if (i < 0) return false;
       state.shop.splice(i, 1);
-      state.cards[uid] = { uid, def: state.cards[uid].def };
+      wipeCard(state, uid);
       p.members.push(uid);
       refill(state);
       cultMove(state, uid, null, p, actor);
@@ -2257,7 +2265,7 @@ function ctxFor(state) {
       const lists = [state.shop, state.pile, ...Object.values(state.supply || {})], list = lists.find(l => l.includes(uid));
       if (!list) return false;
       list.splice(list.indexOf(uid), 1);
-      state.cards[uid] = { uid, def: state.cards[uid].def };
+      wipeCard(state, uid);
       p.members.push(uid);
       if (list === state.shop) refill(state);
       memberAcquired(state, p, uid, { stolen: true });
