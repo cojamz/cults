@@ -224,3 +224,5 @@ On the four play anchors, Godparent scored 1.58 and Mentor 1.50 (both bought ear
 
 ## The old card's paper score moves with the field beside it (evaluators, Nov 4 8:40am)
 Live Proselytizers ("Whenever you recruit, +1 follower.") scored 12 (b29, beside Evangelists, Zealots, Revivalists), 13 (b30, beside lifted Evangelists) and 17 (b31, same field as b30) with the same text and board, while the anchors held steady (-0.35, -0.23, -0.22). Director's ruling: the gap counts only within a run (b30 +4, b31 +1, mean +2.5, so lifted Evangelists fails); never pool the old card over runs the new card wasn't in; a margin case gets exactly one second run. If this keeps happening, the fix is seating the same anchors beside every pair, not pooling.
+
+- Nov 4, 10:05am (Evaluators): a short A/B can't see a card that never fires. Snobs (token, Round Start) lost -0.5 on 6 pairs because 5 were round III buys after Round Start; Toll Keeper's 2 pairs were late round III buys (+0.08, unclear). Before building an A/B, check the buy rounds: a Round Start or per-round card needs pairs bought in round I or II, or the result measures timing, not the card.
