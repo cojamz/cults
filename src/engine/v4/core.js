@@ -933,6 +933,9 @@ function runTask(state, task) {
       const ctx = ctxFor(state);
       if (REPLACE9 && state.hypno && state.hypno.by === p.id && !state.hypno.armed) state.hypno.armed = true;
       eachMember(state, (owner, card, def) => { if (def.onTurnEnd) def.onTurnEnd(ctx, owner, card, p); }, ['onTurnEnd']);
+      // "This turn, if you recruit a member, +N followers" (Gather, Stash, Allowance, New Blood) ends with the turn, so a
+      // recruit off your turn (a Round End or Round Start recruit) never collects it
+      delete p.recruitFollowers;
       state.current = null;
       return;
     }
@@ -1638,7 +1641,7 @@ function spendBonus(state, p, spend) {
 }
 // Gather-style fuel spaces (Cory, 2026-10-31: Gather, then Allowance and Stash "gather style"): "This turn, if you recruit
 // a member, +1 follower (+2 in round II, +3 in round III)". Each space taken this turn adds { n, name, broker } to
-// p.recruitFollowers (cleared at turn start); all of them pay once, on the turn's first member recruit. A White space's
+// p.recruitFollowers (cleared at turn end and turn start); all of them pay once, on the turn's first member recruit. A White space's
 // followers also get Brokers' +1. New Blood's ({ newColor: true }) waits for a member of a color none of p's other
 // members have, so a recruit of a color p already has leaves it standing for the turn's next recruit.
 function recruitFollowersBonus(state, p, member) {

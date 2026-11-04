@@ -46,12 +46,12 @@ describe('Yellow actions', () => {
     expect(paid).toBe(n);
     expect(named(s, 'New Blood')).toContain(`P1's New Blood: +${n} followers for recruiting a member.`);
   });
-  it('New Blood: a member of a color you already have pays nothing; the promise stands for a later recruit this turn', () => {
+  it('New Blood: a member of a color you already have pays nothing, and the promise ends with the turn', () => {
     let s = take(sc({ res: [rich], members: [['red.volunteer']], shop: ['red.intern', 'gold.banker'] }), 'yellow.dilute');
     const b = s.players[0].bonus;
     s = move(s, `card:${uidOf(s, 'red.intern', 'shop')}`);
     expect(s.players[0].bonus).toBe(b);
-    expect(s.players[0].recruitFollowers).toEqual([{ n: 2, name: 'New Blood', newColor: true }]);
+    expect(s.players[0].recruitFollowers).toBeUndefined();
     expect(named(s, 'New Blood').filter(l => /followers/.test(l))).toEqual([]);
   });
   it('New Blood: your first member is always a new color', () => {

@@ -36,9 +36,16 @@ describe('locked Red action progression', () => {
     s.players[0].res.gold = 5;
     s = take(s, 'red.turnout');
     s = move(s, 'tier:mid');
-    expect(s.players[0].recruitFollowers).toEqual([{ n: 1, name: 'Gather' }]);
     expect(s.log.join('\n')).not.toContain('for recruiting a member');
-    s.queue = [{ t: 'turn', p: 0 }]; s.pending = null;
+    expect(s.players[0].recruitFollowers).toBeUndefined();
+  });
+
+  it('Gather wears off when the turn ends, so a recruit off your turn never collects it', () => {
+    let s = table(Q, { shop: ROW });
+    s.players[0].res.gold = 5;
+    s = take(s, 'red.turnout');
+    expect(s.players[0].recruitFollowers).toEqual([{ n: 1, name: 'Gather' }]);
+    s.pending = null; s.queue = [{ t: 'endTurn', p: 0 }];
     s = resume(s);
     expect(s.players[0].recruitFollowers).toBeUndefined();
   });
