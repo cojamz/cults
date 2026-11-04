@@ -354,7 +354,15 @@ const trading = {
         ctx.log(`${owner.name}'s Landlord: rent on the token's space, +3 white.`);
       },
     })),
-    m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true, ...old10('almoner'), ...old11('landlord2'),
+    // Lane B scale-up (Nov 4, paper b62: 17 vs 10): Landlord's place, still White's cheap starter. Fewest members, ties count.
+    ...add8(m('squire', 'Squire', 2, 1, 'On Recruit and Round Start: +2 white, or +6 white if you have the fewest members (ties count).', { now: true,
+      onRoundStart(ctx, owner) {
+        const fewest = ctx.state.players.every(o => ctx.memberCount(o) >= ctx.memberCount(owner)), n = fewest ? 6 : 2;
+        ctx.gain(owner, W, n);
+        ctx.log(`${owner.name}'s Squire: +${n} white${fewest ? ' (fewest members)' : ''}.`);
+      },
+    })),
+    m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true, ...old10('almoner'), ...old8('trading.shopkeeper'), ...old11('landlord2'),
       onRoundStart(ctx, owner) { ctx.gain(owner, W, 2); },
     }),
     // REPLACE10 bot test (Nov 4, quality loop lane D): Heiresses' place. 5 white + 4 any as a player sees it, worth 2.
