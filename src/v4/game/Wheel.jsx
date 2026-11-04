@@ -166,6 +166,12 @@ let rimCtx, rimEarly = false; // rimEarly: something was measured before the web
 // The faces the wheel measures its print in, asked for at once (a face loads only when something first uses it, after
 // the wheel had measured with the fallback: wave-4 B #32, panel text reflowed ~1s after setup loaded). Until they're in,
 // the wheel's print stays hidden; then it's laid out once, in its own font.
+// The rims' words come in after the board first shows, one rim per task (Nov 4: opening a saved game blocked the page in
+// one ~4 s task at 4x CPU, 2.5 s of it laying out the pixel face's letters on their arcs: each rim's line is shaped glyph by
+// glyph with the face's own settings, ~0.5 s a rim at 4x). Only the first board of a page waits; a browser keeps the
+// shapes, so a later board lays its words out in the same frame. Tests (jsdom) and ?rimstage=0 draw them at once.
+let rimsStaged = typeof document === 'undefined' || typeof requestAnimationFrame !== 'function'
+  || /jsdom/i.test((typeof navigator !== 'undefined' && navigator.userAgent) || '') || /[?&]rimstage=0\b/.test(location.search);
 let wheelFontsIn = typeof document === 'undefined' || !document.fonts || typeof document.fonts.load !== 'function';
 const wheelFonts = wheelFontsIn ? Promise.resolve() : Promise.all([...['500', '700', '800'].map(w => document.fonts.load(`${w} 16px "Alegreya Sans"`).catch(() => null)), document.fonts.load(`800 16px ${PIXEL}`).catch(() => null)])
   .then(() => { wheelFontsIn = true; if (rimEarly || rimWidths.size) { rimEarly = false; clearMeasures(); } });
@@ -957,6 +963,16 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     return () => { on = false; };
   }, []);
 
+  // the rims' words, staged (rimsStaged above): how many rims show their words so far
+  const [rimsUp, setRimsUp] = useState(() => (rimsStaged ? Infinity : 0));
+  useEffect(() => {
+    if (rimsUp >= state.quadrants.length) { if (rimsUp !== Infinity) { rimsStaged = true; setRimsUp(Infinity); } return undefined; }
+    // the first after the board's first frame is painted, then one a task
+    let t = 0;
+    const f = requestAnimationFrame(() => { t = setTimeout(() => setRimsUp(n => n + 1), 0); });
+    return () => { cancelAnimationFrame(f); clearTimeout(t); };
+  }, [rimsUp, state.quadrants.length]);
+
   // the newest rival moves since your last turn (a dotted ring in the mover's color)
   const freshOf = key => {
     const owner = state.slots[key];
@@ -1075,7 +1091,8 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
           </text>
         );
       };
-      {
+      const wordsUp = q < rimsUp;
+      if (wordsUp) {
         const other = panels ? rimRuns(qid, q, leaders, !lab.top) : rimLabel(qid, q, leaders, !lab.top);
         rimAlt.push(<path key={`raa${q}`} id={`rim-arc-${q}-alt`} d={textArc(c, arcHalf, other.rr, rot, other.top)} fill="none" />, rimText(other, startOf(other), true));
       }
@@ -1085,7 +1102,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
         const a = lab.top ? c - arcHalf + deg : c + arcHalf - deg;
         return { xy: polar(a, rr), up: lab.top ? a : a + 180 };
       };
-      rimArt.push(rimText(lab, startS, false));
+      if (wordsUp) rimArt.push(rimText(lab, startS, false));
       if (lab.runs) {
         lab.runs.filter(r => r.kind === 'dot').forEach((r, k) => {
           const { xy: [x, y], up } = onLine(startS + r.s + (r.w * F) / 2);
@@ -1160,7 +1177,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   // the rims (their words, marks and leaders, and their hover targets) are drawn again only when something they show
   // changes: their elements are the same objects otherwise, and React passes over them (wheel pass, Nov 4: drawing them
   // was the board's biggest cost on a move that changed no contest)
-  const rimSig = [rot.toFixed(2), paying, lampQid || '', scale, fontsIn, look, meId ?? '', state.quadrants.join(','), hover ? 1 : 0,
+  const rimSig = [rot.toFixed(2), Math.min(rimsUp, 99), paying, lampQid || '', scale, fontsIn, look, meId ?? '', state.quadrants.join(','), hover ? 1 : 0,
     ...state.quadrants.map(qid => { const st = stdById[qid]; return st ? `${st.rule}/${st.label}/${st.tiebreak ? `${st.tiebreak.unit}:${st.tiebreak.text}` : ''}/${st.leaders.map(id => `${id}:${state.players[id].name}:${seatEmoji(state, id)}`).join(',')}` : '-'; })].join('|');
   const rimMemo = useRef(null);
   if (!rimMemo.current || rimMemo.current.sig !== rimSig || rimMemo.current.hover !== hover) rimMemo.current = { sig: rimSig, hover, ...drawRims() };
