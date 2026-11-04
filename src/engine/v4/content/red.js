@@ -248,7 +248,12 @@ export default {
     // Red Cloak. Cory, Nov 1 5:06pm (version 1 of two tested): "Whenever you recruit a member, +1 red." Swaps and
     // steals count (your own doing: memberAcquired); follower buys don't. 31% of wins off, 28% with the swap card on.
     m('recruiter', 'Recruiter', 4, 1, 'Whenever you recruit a member, +1 red.', {
-      onRecruit(ctx, owner, card, by, what) { if (by === owner && what.member) { ctx.gain(owner, 'red', 1); ctx.log(`${owner.name}'s Recruiter: +1 red.`); } },
+      onRecruit(ctx, owner, card, by, what) {
+        if (by !== owner || !what.member) return;
+        // RECRUITER=once: bot test only (Nov 4, Cory "nerf red a little"): once per turn
+        if (globalThis.process?.env?.RECRUITER === 'once') { const k = ctx.turnKey(); if (owner.recruiterTurn === k) return; owner.recruiterTurn = k; }
+        ctx.gain(owner, 'red', 1); ctx.log(`${owner.name}'s Recruiter: +1 red.`);
+      },
     }),
     m('drive', 'Pied Piper', 2, 2, 'Whenever you recruit 2 or more members in one turn, +2 red.', {
       // pays the moment your second recruit of the turn lands, so the red can still be spent this turn

@@ -12,6 +12,7 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 
 ## Cory's words, newest first
 
+- **Nov 3, 8:52pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3Y35C9dLW75QteS3fazB8WA, on the cloak table): "creditors doesn't make sense, nobody would ever have extra silver laying around. you just buy followers. Based on that chart, we need to nerf red a little and buff white a touch. otherwise looks real good" → Red and White Cloak trials (balance thread); Creditors to the replacements thread.
 - **Nov 3, 8:48pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo341dxyqMQgQ14AMEH9oWmha): "maybe the members should be more emoji like? and simpler concepts? then it would I think be easier to learn and track what they do. idk" → thread "Explore simpler, emoji-like members" (mockup only, no game code).
 - **Nov 3, 8:09pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3AcRtproQUuXNK94Z1iiiE5, his playtest of live v0.99.537): "I finished my test game. Everything worked as expected. Things are feeling good!"
 - **Nov 3, 8:03pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3AhARsjDR95E6bBn2mnugS9): "we'll also need a big design audit on animations. are things intuitive? On relaxed speed thigns are still quite fast. I want a deep expert audit and revamp here, maybe new animations or UI where needed. UI upgrade! mostly for animations and info tracking\n\nand as always Id love an engineering pass on the wheel." → threads "Revamp animations and info tracking" and "Engineer a better wheel"; both merge through the desk.
@@ -44,7 +45,7 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 | Plan and run today's autonomous improvements (333bSCwXiSbXsUYNhenCzTk): Dilute | Rework or replace (Cory, 8:01pm: "I still don't like Dilute") | Options being written, to Cory ~8:45pm | Options to Cory before shipping |
 | Plan and run today's autonomous improvements (333bSCwXiSbXsUYNhenCzTk): Mob | Rework; ties to the wide-cult pattern (Patriarch plus Mob holders win 64-87%) | Options being written, to Cory ~8:45pm | Options to Cory before shipping |
 | Find actions worth changing (7SKCeREcm1SMwDZUrcm4ch): actions, and the counts-as-several rule | Cory, Nov 3 8:45pm: "did you not try many? any contenders?". 5 action changes bot-tested, none shrank wide cults; width comes from red members that count as 2-4 (list: /mnt/project-files/action-review/list.md) | Picks sent 8:45pm: (1) fix going wide via counts-as-several members [yes], (2) new Purple speed spaces [yes], (3) Largesse 6 [no]; Hard check of Red changes running | Cory's picks. If (1) yes: this thread owns which members stop counting as several and tells the Mob thread (333bSCwX…) before either ships |
-| Unowned: Silver and White Cloaks, maybe Red and Blue | Fix Silver and White, maybe tone down Red and Blue | Held | Very Hard results shown to Cory first |
+| Balance test the current game (this thread): Red and White Cloaks | Cory, Nov 3 8:52pm: "nerf red a little and buff white a touch". Trying Red Cloak once per turn and White Cloak +2 on your own buys | Trials at Normal, Hard and Very Hard (By color, Red and White on every table) | Trial results, then before/after to Cory, then the desk's go to publish |
 
 ## Runner threads (play bot games from the queue)
 
