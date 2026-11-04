@@ -117,8 +117,13 @@ function bestRowValue(ctx, p, how) {
 function wd9Step(ctx, p, data) {
   const shop = ctx.shopCards();
   if (!shop.length) { market.handlers.wd9(ctx, p, 'done', data); return; }
+  // bots: send away what they can't afford, but keep the shop when they can afford nothing and hold under 3 resources,
+  // since a refill they can't use is a fresh row for the next rival (Nov 4 A/B: bots cleared it broke in 4 of 12 games)
+  const held = Object.values(p.res).reduce((a, b) => a + b, 0);
+  const canBuy = shop.some(c => ctx.payChoices(p, c.uid, {}).length);
+  const broke = !canBuy && held < 3;
   ctx.choose(p, `Window Dressers: send which member to the bottom? (${data.n} so far)`, [...shop.map(c => ({
-    id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: ctx.payChoices(p, c.uid, {}).length ? -1 : 1,
+    id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: broke || ctx.payChoices(p, c.uid, {}).length ? -1 : 1,
   })), { id: 'done', label: data.n ? 'Done' : 'Keep the shop', kind: 'done', value: 'done', hint: 0 }], `${Q}.wd9`, data);
 }
 function churnStep(ctx, p, { left, who = 'Churn' }) {
