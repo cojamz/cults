@@ -4,7 +4,7 @@
 // switch is read when the engine loads, so it is set before the engine is imported (dynamic imports below), then cleared.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE9 = 'tollkeeper,quilter,lastminute,bargainhunter,hypnotist,jack,ambassadors,mannequin,stallholder,hawker2,seamstress';
+process.env.REPLACE9 = 'tollkeeper,quilter,lastminute,bargainhunter,hypnotist,jack,ambassadors,mannequin,stallholder,hawker2,seamstress,ambassadors';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move } = await import('./helpers.js');

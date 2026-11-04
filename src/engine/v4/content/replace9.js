@@ -14,7 +14,7 @@
 const VAL = globalThis.process?.env?.REPLACE9 || '';
 /** new card key -> the old card id it takes the place of */
 const REPLACES = { tollkeeper: 'yellow.customs', quilter: 'yellow.dyer', lastminute: 'market.critic', lastminute2: 'market.critic', bargainhunter: 'market.regular', hypnotist: 'benders.extrahand', jack: 'yellow.tastemaker', ambassadors: 'yellow.caravan', seamstress: 'yellow.harmonist', mannequin: 'market.hawkers', stallholder: 'market.hawkers', hawker2: 'market.hawkers' };
-export const ON9 = VAL === '1' ? Object.keys(REPLACES).filter(k => !['lastminute2', 'mannequin', 'stallholder'].includes(k)) : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
+export const ON9 = VAL === '1' ? Object.keys(REPLACES).filter(k => !['lastminute2', 'mannequin', 'stallholder', 'ambassadors'].includes(k)) : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
 export const REPLACE9 = ON9.length > 0;
 /** The new card, in its color's member list only when it is switched on. */
 export const add9 = card => (ON9.includes(card.key) ? [card] : []);
