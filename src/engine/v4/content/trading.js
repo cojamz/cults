@@ -82,6 +82,25 @@ const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
  * hear it), fresh, and sits at the end of the shop row (one card over the row's size until the row goes under the pile
  * at round end), so anyone can recruit it.
  */
+/**
+ * Cash Out (REPLACE11=cashout, Actions lane, Nov 4; /mnt/project-files/quality/pitches/actions-estate-sale-r2.md), in
+ * Estate Sale's place: "+1 white. Turn up to 4 of your followers into 2 white each." The mirror of Cash In. Only loose
+ * followers turn (Cory: followers attached to members can't be sold), through sell(), so Dealer and the like still hear it.
+ */
+const CASH_OUT = {
+  key: 'cashout', copyDoesIt: true, ring: 2, name: 'Cash Out', text: '+1 white. Turn up to 4 of your followers into 2 white each.',
+  estimate: (ctx, p) => 1 + Math.min(4, sellable(p)) * (2 - fv(ctx)) * 0.5,
+  resolve(ctx, p) {
+    ctx.gain(p, W, 1, { fromAction: true });
+    const most = Math.min(4, sellable(p));
+    if (!most) { ctx.log(`${p.name}'s Cash Out: ${NOTHING_TO_SELL}.`); return; }
+    const opts = [];
+    for (let k = most; k >= 0; k--) opts.push({ id: `n:${k}`, label: k ? `Turn ${k} follower${k > 1 ? 's' : ''} into ${2 * k} white` : 'Keep my followers', kind: k ? 'n' : 'done', value: k,
+      // bots: lean on the contest and Cash In; a middle amount
+      hint: k === 2 ? 1 : k === 0 ? 0.2 : 0.5 - 0.1 * k });
+    ctx.choose(p, `Cash Out: turn how many followers into 2 white each? (up to ${most})`, opts, 'trading.cashOut');
+  },
+};
 const YARD_SALE = {
   key: 'yardsale', copyDoesIt: true, ring: 2, name: 'Yard Sale', text: 'At the end of your turn, cast out one of your members face up into the shop, gain white equal to twice its cost. +1 white.',
   // a rival may buy it off the row: bots count a little less than the full twice
@@ -163,7 +182,7 @@ const trading = {
         ctx.gain(p, W, 1, { fromAction: true });
         buryChoice(ctx, p, 'Estate Sale', 'white');
       },
-    }, YARD_SALE),
+    }, swap11(YARD_SALE, CASH_OUT)),
     {
       key: 'cashin', copyDoesIt: true, ring: 3, name: 'Cash In', text: 'Turn all your white into followers. +1 white.',
       estimate: (ctx, p) => (p.res[W] || 0) * fv(ctx) + 1,
@@ -181,7 +200,9 @@ const trading = {
   ],
 
   handlers: {
-    ...handlers11({ yardSale, yardSaleAsk }),
+    ...handlers11({ yardSale, yardSaleAsk,
+      cashOut(ctx, p, k) { if (k > 0) sell(ctx, p, k, 2, { fromAction: true, why: 'cashed out', by: 'Cash Out' }); },
+    }),
     ...handlers10({
       pauper(ctx, p, yes) {
         const n = p.res[W] || 0;
