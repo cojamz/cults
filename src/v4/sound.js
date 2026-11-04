@@ -268,6 +268,38 @@ const wobble = (ctx, param, t, dur, rate, depth, type = 'sine') => {
   return d;
 };
 
+/** Play samples drawn in JS (a plucked string, a crunch) at t. Returns their length in seconds. */
+const bufPlay = (ctx, dest, t, data) => {
+  const b = ctx.createBuffer(1, data.length, ctx.sampleRate); b.getChannelData(0).set(data);
+  const s = ctx.createBufferSource(); s.buffer = b; s.connect(dest); s.start(t); return data.length / ctx.sampleRate;
+};
+/** A plucked string (Karplus-Strong), drawn sample by sample: a burst of noise one period long, fed back through a
+ *  two-point average, so it rings at f and mellows as it dies, like a real string. */
+function pluckString(sr, dur, f, r, { decay = 0.994, bright = 0.55, amp = 0.5 } = {}) {
+  const n = Math.round(sr * dur), y = new Float32Array(n);
+  const D = sr / f, P = Math.round(D), k0 = Math.floor(D), fr = D - k0;
+  let lp = 0;
+  for (let i = 0; i < n; i++) {
+    const a = i - k0 >= 0 ? y[i - k0] : 0, b = i - k0 - 1 >= 0 ? y[i - k0 - 1] : 0, c = i - k0 - 2 >= 0 ? y[i - k0 - 2] : 0;
+    const back = (1 - fr) * a + fr * b, back1 = (1 - fr) * b + fr * c;
+    let x = 0;
+    if (i < P) { lp = bright * (r() * 2 - 1) + (1 - bright) * lp; x = lp * amp; }
+    y[i] = x + decay * 0.5 * (back + back1);
+  }
+  const fade = Math.round(sr * 0.04); for (let i = 0; i < fade; i++) y[n - 1 - i] *= i / fade;
+  return y;
+}
+/** Cracks: short bursts of noise, each [at, length, loudness, brightness 0-1], highpassed and dying fast. */
+function cracks(sr, dur, hits, r) {
+  const y = new Float32Array(Math.round(sr * dur));
+  for (const [at, len, amp, bright] of hits) {
+    const s = Math.round(at * sr), L = Math.max(1, Math.round(len * sr)); let lp = 0, prev = 0;
+    for (let i = 0; i < L && s + i < y.length; i++) { lp = bright * (r() * 2 - 1) + (1 - bright) * lp; const hp = lp - prev; prev = lp; y[s + i] += hp * amp * Math.exp(-5 * i / L); }
+  }
+  return y;
+}
+const strum = new WeakMap(); // the ukulele's strings, drawn once per audio context
+
 const CALLS = {
   // sleigh bells: three shakes, each a cluster of small bells and their rattle (Cor's redo, Nov 4)
   santa(ctx, dest, t, r) {
@@ -290,18 +322,16 @@ const CALLS = {
     });
     return 0.5;
   },
-  // a "whoo-hoo" whistle, up and then higher (Cor: the wave, splash and guitar were bad, Nov 4)
-  surfer(ctx, dest, t, r) {
-    [[0, 0.16, 1100, 1650, 1400], [0.2, 0.2, 1500, 2300, 1900]].forEach(([at0, d, f0, f1, f2]) => {
-      const at = t + at0;
-      const g = held(ctx, dest, at, 0.16, 0.02, d);
-      const o = tone(ctx, 'sine', f0, at, d, g);
-      o.frequency.exponentialRampToValueAtTime(f1, at + d * 0.55);
-      o.frequency.exponentialRampToValueAtTime(f2, at + d);
-      wobble(ctx, o.frequency, at, d, 6, 18);
-      hiss(ctx, dest, at, d, r, { f: f1, q: 8, peak: 0.025, attack: 0.02 });
-    });
-    return 0.42;
+  // a ukulele strum, G C E A from the top string down (Cor picked it, Nov 4, after a wave, splash, guitar and whistle)
+  surfer(ctx, dest, t) {
+    let y = strum.get(ctx);
+    if (!y) {
+      const sr = ctx.sampleRate, r = rng(5);
+      y = new Float32Array(Math.round(sr * 0.75));
+      [392, 262, 330, 440].forEach((f, i) => { const s = pluckString(sr, 0.7, f, r); const o = Math.round(sr * i * 0.022); for (let k = 0; k < s.length && o + k < y.length; k++) y[o + k] += s[k] * 0.6; });
+      strum.set(ctx, y);
+    }
+    return bufPlay(ctx, dest, t, y);
   },
   // a cricket's chirp: three quick high pulses
   bug(ctx, dest, t) {
@@ -403,18 +433,15 @@ const CALLS = {
     wobble(ctx, o.frequency, t, d, 6, 3);
     return d + 0.02;
   },
-  // licking its lips: a short "mm" and two wet smacks (Cor: "maybe for pizza like a licks lips?", Nov 4)
+  // two crunchy bites: a tooth's snap, then dozens of small cracks (Cor liked the bites, "could be crunchier", Nov 4)
   pizza(ctx, dest, t, r) {
-    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 500; lp.connect(held(ctx, dest, t, 0.35, 0.02, 0.16));
-    const hum = tone(ctx, 'triangle', 200, t, 0.16, lp);
-    hum.frequency.linearRampToValueAtTime(240, t + 0.16);
-    [0.17, 0.27].forEach((at0, k) => {
-      const at = t + at0, a = k ? 0.6 : 1;
-      // the lips parting: a quick rising pop over a wet click
-      sweep(ctx, 'sine', 500, 1500, at, 0.025, env(ctx, dest, at, 0.3 * a, 0.001, 0.025));
-      hiss(ctx, dest, at, 0.02, r, { f: 1800, q: 2.5, peak: 0.25 * a, attack: 0.001 });
+    const hits = [];
+    [[0, 1], [0.17, 0.75]].forEach(([b0, a]) => {
+      hits.push([b0, 0.004, 1.6 * a, 0.97]);
+      for (let i = 0; i < 45; i++) hits.push([b0 + 0.004 + Math.pow(r(), 1.3) * 0.12, 0.0015 + r() * 0.004, (0.45 + r() * 0.7) * a, 0.55 + r() * 0.4]);
+      for (let i = 0; i < 4; i++) hits.push([b0 + 0.01 + r() * 0.1, 0.002, 1.5 * a, 0.97]);
     });
-    return 0.32;
+    return bufPlay(ctx, dest, t, cracks(ctx.sampleRate, 0.34, hits, r));
   },
   // a cartoon "rawr": a raspy mid-pitched growl that opens and falls (Cor: the stomp couldn't be heard, Nov 4)
   dino(ctx, dest, t, r) {
@@ -496,7 +523,7 @@ const CALLS = {
 /** The emoji ids that have a call. */
 export const CALL_IDS = Object.keys(CALLS);
 // each call's loudness against the others (set by peak and rms, scripts/v4-sounds.mjs); a call sits under the place knock
-const CALL_LEVEL = { santa: 1.16, unicorn: 1.23, surfer: 1, bug: 0.64, ghost: 0.44, alien: 0.61, robot: 1.35, cat: 0.71, frog: 0.93, octopus: 0.65, pumpkin: 0.22, skull: 1.41, cactus: 3.4, pizza: 0.5, dino: 1, ninja: 3.05, wizard: 1.33, crab: 1.34, mushroom: 1.3, bee: 3.67 };
+const CALL_LEVEL = { santa: 1.16, unicorn: 1.23, surfer: 1, bug: 0.64, ghost: 0.44, alien: 0.61, robot: 1.35, cat: 0.71, frog: 0.93, octopus: 0.65, pumpkin: 0.22, skull: 1.41, cactus: 3.4, pizza: 0.25, dino: 1, ninja: 3.05, wizard: 1.33, crab: 1.34, mushroom: 1.3, bee: 3.67 };
 const CALL_MASTER = 0.6;
 /** Render emoji `id`'s call into ctx at time t. Returns its length in seconds (0 for an emoji with no call). */
 export function call(ctx, dest, id, t, seed = Math.floor(Math.random() * 1e9)) {
