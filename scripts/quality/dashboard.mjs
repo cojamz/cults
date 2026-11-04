@@ -96,8 +96,8 @@ if (rep) {
 // ---- funnel, from board.md items ----
 {
   const items = ((read(`${Q}/board.md`, '') || '').split('## Items')[1] || '').split('\n').filter(l => l.startsWith('| ') && !/^\| (Card|---)/.test(l));
-  const st = l => /live|shipped/i.test(l) ? 'live' : /to director|handed/i.test(l) ? 'handed over' : /pulled/i.test(l) ? 'pulled' : /FAIL|NO:|failed|kept off|dropped|: kept|parked/i.test(l) ? 'stopped' : /trial|Lab/i.test(l) ? 'at the Lab' : /built|REPLACE/i.test(l) ? 'built' : /paper/i.test(l) ? 'paper' : 'pitched';
-  const order = ['pitched', 'paper', 'built', 'at the Lab', 'handed over', 'live', 'stopped', 'pulled'];
+  const st = l => /live|shipped/i.test(l) ? 'live' : /to director|handed|ready to publish|waiting on Cory/i.test(l) ? 'ready to publish' : /pulled/i.test(l) ? 'pulled' : /FAIL|NO:|failed|kept off|dropped|: kept|parked/i.test(l) ? 'stopped' : /trial|Lab/i.test(l) ? 'at the Lab' : /built|REPLACE/i.test(l) ? 'built' : /paper/i.test(l) ? 'paper' : 'pitched';
+  const order = ['pitched', 'paper', 'built', 'at the Lab', 'ready to publish', 'live', 'stopped', 'pulled'];
   const n = Object.fromEntries(order.map(k => [k, items.filter(l => st(l) === k).length]));
   L.push('', '## Funnel (from board.md items)', '', `- ${items.length} items: ${order.map(k => `${k} ${n[k]}`).join(', ')}.`);
 }
