@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.574 — 2026-11-04
+
+- Clearer screen for first-time players: round III rims read +10, rim prizes stand upright, Exchange and Sweet Talk say their whole rule on the wheel, the pay sheet shows the member count, your row stays in view on the round card, hover previews never name a face-down card and say steals and gifts plainly. Polish may now pick silver too. The version line is off the home screen.
+
 ## v0.99.573 — 2026-11-04
 
 - High Society is back in Silver's members; Socialites comes out (Cory: High Society stays).
