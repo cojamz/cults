@@ -3,7 +3,7 @@
 // Hand's place), Tailor (Dyer's place), Dabbler (Dabblers' place).
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler,latebloomers,dowagers,windowdressers9';
+process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler,latebloomers,dowagers,windowdressers9,moneylender';
 const { applyMove, countMembersOfColor } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move } = await import('./helpers.js');
@@ -182,5 +182,27 @@ describe('Window Dressers (reworded): "On Recruit: send any shop members to the 
     s = move(s, `card:${uidIn(s, 'yellow.gardener', 'shop')}`);
     s = move(s, 'done');
     expect(s.players[0].bonus).toBe(b0 + 1);
+  });
+});
+
+describe('Moneylender: "On Use, once per round: cast out one of your members costing 3 or less to the bottom of the pile. +4 white."', () => {
+  const Q = ['red', 'trading', 'market', 'purple'];
+  it('price, and Landlord retired', () => {
+    const d = defById('trading.moneylender');
+    expect([d.s, d.w]).toEqual([3, 1]);
+    expect(defById('trading.shopkeeper').retired).toBe(true);
+  });
+  it('offers only other members costing 3 or less; the one cast out goes to the bottom, +4 white', () => {
+    let s = table(Q, { n: 2, round: 2, members: [['trading.moneylender', 'red.volunteer', 'market.shopaholic']] });
+    const ml = uidIn(s, 'trading.moneylender', 0), vol = uidIn(s, 'red.volunteer', 0);
+    s = move(s, `use:${ml}`);
+    const ids = s.pending.options.map(o => o.id);
+    expect(ids).toContain(`card:${vol}`);
+    expect(ids).not.toContain(`card:${ml}`);
+    expect(ids).not.toContain(`card:${uidIn(s, 'market.shopaholic', 0)}`);
+    s = move(s, `card:${vol}`);
+    expect(s.players[0].members).not.toContain(vol);
+    expect(s.pile[s.pile.length - 1]).toBe(vol);
+    expect(s.players[0].res.white).toBe(4);
   });
 });

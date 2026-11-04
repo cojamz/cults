@@ -363,6 +363,12 @@ const trading = {
       };
       if (data.by) ctx.asMember(p, data.by, run); else run();
     },
+    moneylender(ctx, p, uid) {
+      if (!p.members.includes(uid)) return;
+      const name = ctx.card(uid).def.name;
+      ctx.asMember(p, 'Moneylender', () => { ctx.buryMember(p, uid); ctx.gain(p, W, 4); ctx.log(`${p.name}'s Moneylender: cast out ${name}, +4 white.`); });
+      gotRidOf(ctx, p);
+    },
     dowagers(ctx, p, value, data) {
       if (value === 'done' || !p.members.includes(value)) return;
       const name = ctx.card(value).def.name;
@@ -455,7 +461,21 @@ const trading = {
         ctx.log(`${owner.name}'s Squire: +${n} white${fewest ? ' (fewest members)' : ''}.`);
       },
     })),
-    m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true, ...old10('almoner'), ...old8('trading.shopkeeper'), ...old11('landlord2'),
+    // REPLACE9 bot test (Members C, Nov 4, batch bC9: paper 15 vs Landlord's 11): Landlord's place. 3 white + 1 any as a
+    // player sees it. One of your other members costing 3 or less to the bottom of the pile (as Farewell), +4 white; with
+    // none, the use comes back. Bots cast out their cheapest-worth member, from round II.
+    ...add9(m('moneylender', 'Moneylender', 2, 1, 'On Use, once per round: cast out one of your members costing 3 or less to the bottom of the pile. +4 white.', {
+      activate: 'round',
+      onActivate(ctx, owner, card) {
+        const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid && cost(ctx, c.uid) <= 3);
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Moneylender: no member costing 3 or less to cast out.`); return; }
+        ctx.choose(owner, 'Moneylender: cast out which member for 4 white?', list.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: -(c.def.f + (c.def.onLeave ? -cost(ctx, c.uid) : 0)),
+        })), 'trading.moneylender');
+      },
+      botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.membersOf(owner).some(c => c.def.key !== 'moneylender' && cost(ctx, c.uid) <= 3 && c.def.f <= 1),
+    })),
+    m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true, ...old10('almoner'), ...old8('trading.shopkeeper'), ...old11('landlord2'), ...old9('trading.shopkeeper'),
       onRoundStart(ctx, owner) { ctx.gain(owner, W, 2); },
     }),
     // REPLACE10 bot test (Nov 4, quality loop lane D): Heiresses' place. 5 white + 4 any as a player sees it, worth 2.
