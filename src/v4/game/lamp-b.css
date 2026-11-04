@@ -138,6 +138,7 @@
 .lt-member .fig{display:inline-block;position:relative;border-radius:4px}
 .lt-member .x{position:absolute;right:-4px;bottom:-2px;font-size:12px;color:var(--cream);background:var(--walnut,#1d1611);border-radius:6px;padding:0 3px}
 .lt-member.used .sprite{opacity:.45}
+.lt-card.used .art .sprite{opacity:.45}
 .lt-cult-foot{display:flex;align-items:center;gap:10px}
 .fol-mark{display:inline-flex;align-items:center;gap:6px;color:var(--cream)}
 .fol-mark b{font-family:var(--serif);font-size:18px}

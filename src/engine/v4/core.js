@@ -186,7 +186,7 @@ function wipeUnowned(state) {
   if (state.supply) refillPiles(state);
   for (const u of [...state.pile, ...state.shop, ...Object.values(state.supply || {}).flat()]) {
     const c = state.cards[u];
-    if (Object.keys(c).length > 2) state.cards[u] = { uid: c.uid, def: c.def };
+    if (Object.keys(c).length > 2) wipeCard(state, u); // a used once-per-game member stays used (wipeCard)
   }
 }
 function moveCause(state, task, move) {
@@ -1196,13 +1196,13 @@ export function scoringOf(state, qid) {
     const fix = { white: 'followers', red: 'cards', ...(state.rules?.contestFix || {}) }; // Green ties split like every contest (Cory, Nov 3: "ties are split… like they already were…")
     // Red: most red member cards, one each (Cory, Nov 3: "we should avoid a simply color held. maybe most red members?";
     // cards, not member weight, so one card that counts as 4 can't lock it). contestFix.red 'held' tries most red held.
-    if (fix.red === 'cards') by.red = { label: 'Most red members', counts: 'your red member cards when the round ends (each card counts 1)',
+    if (fix.red === 'cards') by.red = { label: 'Most red members', counts: 'your red member cards when the round ends (each card counts 1, Dabblers 2)',
       score: (ctx, p) => countMembersOfColor(state, p, 'red', { cards: true }) };
     // Blue (Actions lane, Nov 4, quality loop; /mnt/project-files/quality/pitches/actions-contest-blue.md): contestFix.market
     // 'cards' counts member cards (each counts 1, as Red's), 'blue' blue member cards, 'held' the blue you hold
     if (fix.market === 'cards') by.market = { label: 'Most member cards', counts: 'your member cards when the round ends (each card counts 1)',
       score: (ctx, p) => p.members.length };
-    if (fix.market === 'blue') by.market = { label: 'Most blue members', counts: 'your blue member cards when the round ends (each card counts 1)',
+    if (fix.market === 'blue') by.market = { label: 'Most blue members', counts: 'your blue member cards when the round ends (each card counts 1, Dabblers 2)',
       score: (ctx, p) => countMembersOfColor(state, p, 'market', { cards: true }) };
     if (fix.market === 'recruits') by.market = { label: 'Most recruits this round', counts: 'your sideways member cards, each card counts 1 (every member you recruit, swap for or take comes in sideways and turns upright when the round ends; buying followers is not a member; a sideways card counts for whoever holds it)',
       score: (ctx, p) => p.members.filter(uid => { const w = state.cards[uid].sideways; return w && w.round === state.round; }).length };
@@ -1213,7 +1213,7 @@ export function scoringOf(state, qid) {
     if (fix.green === 'onrecruit') by.echo = { label: 'Most On Recruit members', counts: 'your member cards that say "On Recruit", when the round ends (each card counts 1)',
       score: (ctx, p) => p.members.filter(u => { const c = state.cards[u], d = defById(c.copy || c.def); return /On Recruit/.test(d.text || ''); }).length };
     if (fix.green === 'held') by.echo = { label: 'Most green', counts: 'the green you hold when the round ends', score: (ctx, p) => p.res.green || 0 };
-    if (fix.green === 'greencards') by.echo = { label: 'Most green members', counts: 'your green member cards when the round ends (each card counts 1)',
+    if (fix.green === 'greencards') by.echo = { label: 'Most green members', counts: 'your green member cards when the round ends (each card counts 1, Dabblers 2)',
       score: (ctx, p) => countMembersOfColor(state, p, 'echo', { cards: true }) };
     const greenScore = by.echo.score, onGreen = p => greenScore(null, p);
     if (fix.green === 'tb') by.echo = { ...by.echo, tiebreak: { unit: 'green', text: 'ties go to the most green held' },
@@ -1368,7 +1368,7 @@ export const pileOpen = () => true;
 /** Piles: a pile member sent "to the bottom of the pile" (or into the deck between rounds) goes back to its own pile;
  *  the shop row fills from the deck as usual, then every open pile shows its top copy after the row. */
 function refillPiles(state) {
-  const back = u => { const c = state.cards[u]; state.cards[u] = { uid: c.uid, def: c.def }; state.supply[c.def].push(u); };
+  const back = u => { wipeCard(state, u); state.supply[state.cards[u].def].push(u); };
   for (const list of [state.pile, ...Object.values(state.waiting || {})])
     for (let i = list.length - 1; i >= 0; i--) if (isPileCard(state, list[i])) back(list.splice(i, 1)[0]);
   // one face-up copy per pile: an extra copy that landed in the shop (a swap) goes back under its pile

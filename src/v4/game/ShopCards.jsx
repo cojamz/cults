@@ -277,16 +277,19 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
           // the copies under it show as card edges, as the deck's do: two for three or more, one for two, none for the last
           const edges = stack >= 3 ? 2 : stack === 2 ? 1 : 0;
           const color = cardColor(state, d), ground = cardGround(state, d), sphere = sphereOf(state, d);
-          const sig = [d.id, d.name, d.f, d.n, d.text, optId ?? '', dim ? 1 : 0, looking ? 1 : 0, lit ? 1 : 0, short ? 1 : 0, buying || picking ? 1 : 0, JSON.stringify(parts), JSON.stringify(paid), fromPile ? 1 : 0, stack, tray ? 1 : 0, detailed ? 1 : 0, state.round, color, ground, sphere].join('|');
+          // a once-per-game member already used stays used for its next owner (Cory, Nov 4: "once per game is once for the
+          // card"): marked on its face, as a table would turn the card
+          const spent = !!(state.cards[uid] && state.cards[uid].used) && !state.over;
+          const sig = [d.id, d.name, d.f, d.n, d.text, optId ?? '', dim ? 1 : 0, looking ? 1 : 0, lit ? 1 : 0, short ? 1 : 0, buying || picking ? 1 : 0, JSON.stringify(parts), JSON.stringify(paid), fromPile ? 1 : 0, spent ? 1 : 0, stack, tray ? 1 : 0, detailed ? 1 : 0, state.round, color, ground, sphere].join('|');
           const had = built.current.get(uid);
           if (had && had.sig === sig) return <Kept key={uid} el={had.el} />;
           const el = (
             <button
               key={uid} type="button" data-uid={uid} data-option={opt ? opt.id : undefined}
-              className={`card lt-card paper${opt ? ' can' : ''}${dim ? ((buying || picking) && !looking ? ' recede' : ' dim') : ''}${lit ? ' lit' : ''}`}
+              className={`card lt-card paper${opt ? ' can' : ''}${dim ? ((buying || picking) && !looking ? ' recede' : ' dim') : ''}${lit ? ' lit' : ''}${spent ? ' used' : ''}`}
               style={{ '--q': color }} data-ground={ground} aria-disabled={!opt} data-unaffordable={short || undefined}
               data-stack={stack || undefined} data-stack-edges={stack ? edges : undefined}
-              aria-label={`${d.name}, ${timingOf(d)}, worth ${d.f}, costs ${parts.map(c => `${c.n} ${c.color}`).join(' + ') || 'nothing'}${stack ? `, a pile of ${stack}` : ''}`}
+              aria-label={`${d.name}${spent ? ', already used' : ''}, ${timingOf(d)}, worth ${d.f}, costs ${parts.map(c => `${c.n} ${c.color}`).join(' + ') || 'nothing'}${stack ? `, a pile of ${stack}` : ''}`}
               data-hint={`${d.name} · worth ${d.f} · ${d.text}`}
               {...cardHandlers(refs, uid, d.name, optId)}
             >
@@ -305,6 +308,7 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
                 {/* works from round II on (Cory, 2026-10-22: "a better way to denote round II/round III only"): a corner tag, not words */}
                 {d.from > 1 && <span className="lt-round-tag" data-round-tag="" title="Works from round II on">II+</span>}
                 {fromPile && !tray && <span className="need from-pile" title="From the top of the pile">pile</span>}
+                {spent && !fromPile && <span className="need spent" data-spent="" title="Already used: it can't be used again this game">used</span>}
                 {/* how many are left in the pile, this one included: a small tab in the picture's corner, over the stack's edges
                     (at the foot's end a "×10" pushed the price off a narrow card) */}
                 {stack > 0 && <span className="lt-pile-left num" data-stack={stack} title={stack === 1 ? 'The last one in this pile' : `${stack} left in this pile`}>×{stack}</span>}
