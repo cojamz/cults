@@ -3,7 +3,7 @@
 // sphere invariants (turn accounting, extra turns never squeeze a space, honest copy chips, clean cards
 // in the pile, steals that move exactly what they report) and replay determinism.
 import { createGame, applyMove, legalMoves, openSlots, followers, TIERS } from '../../../engine/v4/core.js';
-import { allQuadrantIds, quadrant } from '../../../engine/v4/content/index.js';
+import { allQuadrantIds, quadrant, defById } from '../../../engine/v4/content/index.js';
 import { chooseBotMove } from '../../../engine/v4/bots.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
 import { checkInvariants } from './fuzz-runner.js';
@@ -61,7 +61,9 @@ function checkSphereInvariants(s, prev, ctx, verified, fail = failHard) {
   for (const c of Object.values(s.cards)) for (const k of ['invested', 'sown']) if ((c[k] || 0) < 0) fail(`card ${c.uid} ${k} ${c[k]}`, s, ctx);
   // a card in the pile or face up carries no state from an earlier owner (copies, used flags, invested gold…)
   for (const u of [...s.pile, ...s.shop]) {
-    const extra = Object.keys(s.cards[u]).filter(k => !CLEAN_KEYS.has(k));
+    // except a once-per-game use: it stays with the card (Cory, Nov 4: "once per game is once for the card")
+    const spentOnce = k => k === 'used' && s.cards[u].used === true && defById(s.cards[u].def).activate === 'game';
+    const extra = Object.keys(s.cards[u]).filter(k => !CLEAN_KEYS.has(k) && !spentOnce(k));
     if (extra.length) fail(`card ${u} (${s.cards[u].def}) in the pile/shop still has ${extra.map(k => `${k}=${JSON.stringify(s.cards[u][k])}`).join(', ')}`, s, ctx);
   }
   // turn accounting: workers left = turns still queued + placements still queued, for every player

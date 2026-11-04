@@ -2100,7 +2100,8 @@ function cultMove(state, uid, from, to, actor = null, swappedWith = null) {
  *  for better stuff" (Cory, Nov 4 11:07am). A used one stays used whoever recruits it next. */
 function wipeCard(state, uid) {
   const old = state.cards[uid];
-  const spent = old.used && effectiveDefs(old, state).some(d => d.activate === 'game');
+  // its own once-per-game use only: a Doppelganger's copy comes off with the wipe, and its use with it
+  const spent = old.used === true && defById(old.def).activate === 'game';
   state.cards[uid] = { uid, def: old.def, ...(spent ? { used: true } : {}) };
 }
 function cardLeaves(state, p, uid) {
