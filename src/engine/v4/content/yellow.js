@@ -46,6 +46,10 @@ function newColor(ctx, owner, member, { grey = false } = {}) {
   const q = member.asColor || def.quadrant;
   return pool.includes(q) && !has(q);
 }
+/** New Blood's test, read by core when a member is recruited (recruitFollowersBonus). */
+export const isNewColor = (ctx, owner, member) => newColor(ctx, owner, member, { grey: true });
+/** Bots: a face-up member that would be a new color for p. */
+const newInShop = (ctx, p) => ctx.shopCards().some(c => newColor(ctx, p, c, { grey: true }));
 function matchmaker(ctx, owner, member) {
   if (!newColor(ctx, owner, member)) return;
   owner.bonus += 1;
@@ -80,20 +84,33 @@ export default {
       resolve(ctx, p) { leadersTax(ctx, p); },
     },
     {
-      // Cory, 2026-10-31: "does the same thing as trade seeds but you do it for opponents", no selector
-      key: 'dilute', ring: 1, name: 'Dilute', text: "+2 yellow, then change up to 3 of rivals' resources one for one.",
-      estimate: (ctx, p) => 2 + 0.6 * Math.min(3, touchable(ctx, p).reduce((a, o) => a + total(ctx, o), 0)),
-      resolve(ctx, p) { ctx.gain(p, Y, 2, { fromAction: true }); startChange(ctx, p, { who: 'Dilute', left: 3 }); },
+      // New Blood (Claude, under Cory's go-with-your-gut, Nov 4; was Dilute, "+2 yellow, then change up to 3 of rivals'
+      // resources one for one"). Gather's shape: core pays it on the turn's first recruit of a member of a color none of
+      // your other members have (newColor below, as Guest Book reads it). Keys kept for old saves and records.
+      key: 'dilute', ring: 1, name: 'New Blood', copyDoesIt: true,
+      text: '+2 yellow. This turn, if you recruit a member of a color none of your members have, +2 followers in round I, +3 in round II, +4 in round III.',
+      byRound: { lines: ['+2 yellow. This turn, if you recruit a member of a color none of your members have, +2 followers.', '+2 yellow. This turn, if you recruit a member of a color none of your members have, +3 followers.', '+2 yellow. This turn, if you recruit a member of a color none of your members have, +4 followers.'] },
+      estimate: (ctx, p) => 2 + (newInShop(ctx, p) ? 0.6 * (ctx.state.round + 1) : 0),
+      resolve(ctx, p) {
+        ctx.gain(p, Y, 2, { fromAction: true });
+        (p.recruitFollowers ||= []).push({ n: ctx.state.round + 1, name: 'New Blood', newColor: true });
+      },
     },
     {
-      // Cory, 2026-10-30: "maybe it should just be a bigger dilute? like +4 rearrange 6? for opponent". Name: Claude's.
-      key: 'bigdilute', ring: 2, name: 'Big Dilute', text: "+4 yellow, then change up to 6 of rivals' resources one for one.",
-      estimate: (ctx, p) => 4 + 0.6 * Math.min(6, touchable(ctx, p).reduce((a, o) => a + total(ctx, o), 0)),
-      resolve(ctx, p) { ctx.gain(p, Y, 4, { fromAction: true }); startChange(ctx, p, { who: 'Big Dilute', left: 6 }); },
+      // Big New Blood (Claude, under Cory's go-with-your-gut, Nov 4; was Big Dilute, "+4 yellow, then change up to 6 of
+      // rivals' resources one for one")
+      key: 'bigdilute', ring: 2, name: 'Big New Blood', copyDoesIt: true,
+      text: '+4 yellow. This turn, if you recruit a member of a color none of your members have, +5 followers.',
+      estimate: (ctx, p) => 4 + (newInShop(ctx, p) ? 0.6 * 5 : 0),
+      resolve(ctx, p) {
+        ctx.gain(p, Y, 4, { fromAction: true });
+        (p.recruitFollowers ||= []).push({ n: 5, name: 'Big New Blood', newColor: true });
+      },
     },
     {
-      // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"
-      key: 'meltingpot', ring: 2, name: 'Melting Pot', text: '+1 per color among your members, in colors you choose. +2 yellow.',
+      // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 4 new words only (Claude, under Cory's
+      // go-with-your-gut: "worded strangely"), the same effect
+      key: 'meltingpot', ring: 2, name: 'Melting Pot', text: '+2 yellow. Count the different colors of your members, and gain that many in colors you choose.',
       estimate: (ctx, p) => memberColors(ctx, p).length + 2,
       resolve(ctx, p) {
         ctx.gain(p, Y, 2, { fromAction: true });

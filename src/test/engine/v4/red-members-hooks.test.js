@@ -19,7 +19,7 @@ describe('new Red member hooks', () => {
     const s = fixture({ members: [['red.mob', 'red.panel']] });
     expect(memberCount(s, s.players[0])).toBe(7); // Mob 4 (worth 4, Nov 1, 2:16pm), Panel 3
     expect(countMembersOfColor(s, s.players[0], 'red')).toBe(7);
-    expect(defById('red.mob').onGameEnd(contextFor(s), s.players[0])).toBe(7);
+    expect(typeof defById('red.mob').onRoundEnd).toBe('function'); // Round End since Nov 4 (cards-red covers what it pays)
   });
 
   it('Greeters rewards actual explicit and Now abilities, not a vanilla acquisition', () => {

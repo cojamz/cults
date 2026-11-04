@@ -2,7 +2,7 @@
 // Card-by-card: every Red action and member, through real moves, against the printed text, with a log line naming
 // the card whenever it changes a number. Plus one cross-sphere case per member.
 import { describe, it, expect } from 'vitest';
-import { followers, memberCount, resume } from '../../../engine/v4/core.js';
+import { followers, memberCount, resume, countMembersOfColor } from '../../../engine/v4/core.js';
 import { defById } from '../../../engine/v4/content/index.js';
 import { take, move, uidOf, pinCosts } from './helpers.js';
 import { sceneQ, buy, linesNaming, settle } from './cards-helpers.js';
@@ -54,13 +54,17 @@ describe('Red members', () => {
     expect(named(s, 'Proselytizers')[0]).toMatch(/P1's Proselytizers: \+1 follower/);
   });
 
-  it('Mob: game end +1 follower per red member; a Doppelganger (green since 2026-10-15) is a second Mob', () => {
-    let s = sceneQ({ members: [['red.mob', 'red.intern', 'echo.doppel']], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.parts).toEqual(['Mob +5']) // Mob is worth 4, so counts as 4 (Nov 1, 2:16pm; member count = follower count);
-    s = sceneQ({ members: [['red.mob', 'red.intern', 'echo.doppel']], queue: [] });
-    s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'red.mob';
-    s.queue = [{ t: 'finish' }]; s = resume(s);
-    expect(s.players[0].final.parts).toEqual(['Mob +5', 'Mob +5']);
+  it('Mob: round end +2 followers per rival with fewer red members (Nov 4); a Doppelganger is a second Mob', () => {
+    // P1: Mob (counts as 4) + Intern = 5 red; P2: Panel (counts as 3) + Recruiter + Volunteer = 5 (a tie: not fewer); P3: none
+    const M = [['red.mob', 'red.intern', 'echo.doppel'], ['red.panel', 'red.recruiter', 'red.volunteer'], []];
+    let s = sceneQ({ n: 3, members: M, queue: [{ t: 'endRound' }] });
+    expect(s.players.map(p => countMembersOfColor(s, p, 'red'))).toEqual([5, 5, 0]);
+    expect(named(s, 'Mob')).toEqual(["P1's Mob: 1 rival has fewer red members: +2 followers."]);
+    s = sceneQ({ n: 3, members: M, queue: [] });
+    s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'red.mob'; // the copy pays too; it isn't red, so P1 still holds 5
+    s.queue = [{ t: 'endRound' }]; s = resume(s);
+    expect(named(s, 'Mob').filter(l => l.startsWith("P1's"))).toHaveLength(2);
+    expect(defById('red.mob').onGameEnd).toBeUndefined();
   });
 
   it('Recruiter: a rival’s Poach of another rival’s member pays its holder nothing (shop recruits only, Nov 1)', () => {

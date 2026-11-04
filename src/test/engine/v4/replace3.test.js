@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE3 = '1';
-const { applyMove } = await import('../../../engine/v4/core.js');
+const { applyMove, followers, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
 const { table, named, uidIn, owns } = await import('./cards-helpers-b.js');
@@ -25,7 +25,7 @@ describe('REPLACE3: the switch', () => {
     expect(price('market.completists')).toEqual([6, 3, 2]);
     expect(price('echo.impersonators')).toEqual([4, 2, 1]);
     expect(price('red.missionaries')).toEqual([6, 3, 2]);
-    expect(price('silver.creditors')).toEqual([4, 2, 2]);
+    expect(price('silver.creditors')).toEqual([4, 2, 1]); // Creditor: 1 member, worth 1 (Nov 4)
     expect(price('purple.pacers')).toEqual([6, 3, 2]);
     for (const id of ['trading.hoarder', 'purple.courier', 'thieves.kingpin', 'market.patroness', 'echo.muse', 'red.patriarch', 'silver.collector', 'purple.crew'])
       expect(defById(id).retired).toBe(true);
@@ -135,12 +135,38 @@ describe('REPLACE3: each card fires', () => {
     expect(s.players[0].res).toEqual(expect.objectContaining({ red: 0, blue: 0 }));
   });
 
-  it('Creditors: at game end each rival loses 1 follower per 3 silver they hold', () => {
-    const s = table(['red', 'silver', 'market', 'yellow'], { n: 3, round: 3, res: [{}, { silver: 7 }, { silver: 3 }], bonus: [0, 5, 5], members: [['silver.creditors']], queue: [{ t: 'finish' }] });
-    expect(s.players[1].bonus).toBe(3);
-    expect(s.players[2].bonus).toBe(4);
-    expect(s.players[1].final.parts).toContain("P1's Creditors −2");
-    expect(named(s, 'Creditors')).toContain("P1's Creditors: P2 holds 7 silver and loses 2 followers.");
+  it('Creditor: once per round, a rival you choose gives you 2 followers, then gains 3 silver (Nov 4)', () => {
+    let s = table(['red', 'silver', 'market', 'yellow'], { n: 3, round: 2, bonus: [0, 5, 0], members: [['silver.creditors'], ['silver.retinue']], queue: [{ t: 'buy', p: 0 }] });
+    const uid = uidIn(s, 'silver.creditors', 0);
+    expect(defById('silver.creditors')).toMatchObject({ name: 'Creditor', f: 1, n: 1, activate: 'round' });
+    const f2 = followers(s, s.players[1]);
+    s = move(s, `use:${uid}`);
+    expect(s.pending.prompt).toBe('Creditor: which rival gives you 2 followers, then gains 3 silver?');
+    s = answer(s, 'player:1');
+    expect(s.players[0].bonus).toBe(2);
+    expect(followers(s, s.players[1])).toBe(f2 - 2);
+    expect(s.players[1].res.silver).toBe(3);
+    expect(named(s, 'Creditor')).toContain("P1's Creditor: P2 gives P1 2 followers, then gains 3 silver.");
+    expect(s.cards[uid].used).toBe(true); // once this round
+    // next round it is back
+    s.queue = [{ t: 'round', r: 3 }]; s.pending = null; s = resume(s);
+    expect(s.cards[uid].used).toBe(false);
+  });
+
+  it('Creditor: a rival gives only the followers it has, never going below 0', () => {
+    let s = table(['red', 'silver', 'market', 'yellow'], { n: 2, round: 2, members: [['silver.creditors']], queue: [{ t: 'buy', p: 0 }] });
+    const have = followers(s, s.players[1]);
+    s = answer(move(s, `use:${uidIn(s, 'silver.creditors', 0)}`), 'player:1');
+    expect(followers(s, s.players[1])).toBe(Math.max(0, have - 2));
+    expect(s.players[0].bonus).toBe(Math.min(2, have));
+    expect(s.players[1].res.silver).toBe(3);
+  });
+
+  it('Creditor × Caterer: the 3 silver is a gift, so the gift hooks fire', () => {
+    let s = table(['red', 'silver', 'market', 'yellow'], { n: 2, round: 2, bonus: [0, 3], members: [['silver.creditors', 'silver.caterer']], queue: [{ t: 'buy', p: 0 }] });
+    const before = s.players[0].res.silver;
+    s = answer(move(s, `use:${uidIn(s, 'silver.creditors', 0)}`), 'player:1');
+    expect(s.players[0].res.silver).toBe(before + 1); // Caterer: whenever silver is gifted, +1 silver
   });
 
   it('Pacers: once per round, move a minion to an open space and do that action', () => {

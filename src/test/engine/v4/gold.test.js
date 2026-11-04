@@ -255,13 +255,13 @@ describe('Gold members', () => {
     expect(s.cards[uidOf(s, 'gold.investor', 0)].invested).toBe(0);
   });
 
-  it('Lottery Winner: once per game, gain the richest rival\'s gold', () => {
+  it('Lottery Winner: once per game, +2 gold, then double your gold', () => {
     let s = scene({ n: 3, members: [['gold.jackpot']], res: [{}, { gold: 4 }, { gold: 6 }] });
     s = take(s, 'blue.a1');
     const uid = uidOf(s, 'gold.jackpot', 0);
     expect(hasOpt(s, `use:${uid}`)).toBe(true);
     s = move(s, `use:${uid}`);
-    expect(R(s)[0].gold).toBe(6);
+    expect(R(s)[0].gold).toBe(4); // 0 + 2, doubled; rivals' 4 and 6 play no part (Nov 4)
     expect(s.pending.kind).toBe('buy');
     expect(hasOpt(s, `use:${uid}`)).toBe(false);
   });

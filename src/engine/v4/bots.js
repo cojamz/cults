@@ -573,7 +573,7 @@ function gameEndPay(s, ctx, p) {
       try { out += d.onGameEnd(ctx, p, ctx.card(uid)) || 0; } catch { /* estimate only */ }
     }
   }
-  // what rivals' members take from p at game end (Creditors, live Nov 3: endHit reads it), read straight from the state
+  // what rivals' members take from p at game end (endHit; Creditors read it until it became Creditor, Nov 4), read straight from the state
   for (const o of s.players) if (o !== p) for (const uid of o.members) {
     const card = s.cards[uid];
     for (const id of [cardDef(s, uid).id, card.copy, card.ability]) {

@@ -9,6 +9,7 @@
 import { defById } from './index.js';
 import { add2, old2, handlers2 } from './replace2.js';
 import { add6, old6 } from './replace6.js';
+import { see } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const S = 'silver';
@@ -288,6 +289,15 @@ const silver = {
       afterGive(ctx, host, S, data.key);
       ctx.log(`${o.name} gave ${host.name} 1 ${color}, then +2 silver (${host.name}'s Potluck).`);
     },
+    creditor(ctx, p, id) {
+      const o = ctx.player(id);
+      if (!o || o === p) return;
+      const k = Math.min(2, Math.max(0, ctx.followers(o)));
+      o.bonus -= k; p.bonus += k;
+      giveTo(ctx, p, o, S, 3);
+      afterGive(ctx, p, S);
+      ctx.log(`${p.name}'s Creditor: ${o.name} gives ${p.name} ${k} follower${k === 1 ? '' : 's'}, then gains 3 silver.`);
+    },
     benefactor(ctx, p, id) {
       const t = ctx.player(id);
       giveTo(ctx, p, t, S, 1);
@@ -390,9 +400,13 @@ const silver = {
       onRecruited(ctx, owner) { ctx.gain(owner, S, ctx.memberCount(owner)); },
       onRoundStart(ctx, owner) { if (ctx.state.round === 3) ctx.gain(owner, S, ctx.memberCount(owner)); },
     }),
-    // Cory, 2026-10-15 (balance pass 1, #2): half of it, Rising Tide's rule (both bots read the old card at 12+ for 6)
-    m('spoon', 'Upstart', 4, 2, 'On Recruit: gain half the silver of the rival with the most, rounded up.', {
-      onRecruited(ctx, owner) { ctx.gain(owner, S, Math.ceil(Math.max(0, ...others(ctx, owner).map(o => o.res[S] || 0)) / 2)); },
+    // Nov 4 (Claude, under Cory's go-with-your-gut): a fixed 2 per rival ahead, never a share of a rival's silver
+    m('spoon', 'Upstart', 4, 2, 'On Recruit: +2 silver per rival with more followers than you.', {
+      onRecruited(ctx, owner) {
+        const k = others(ctx, owner).filter(o => ctx.followers(o) > ctx.followers(owner)).length;
+        if (k) ctx.gain(owner, S, 2 * k);
+        else ctx.log(`${owner.name}'s Upstart: no rival has more followers.`);
+      },
     }),
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 8 → 4
     m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', {
@@ -484,21 +498,21 @@ const silver = {
         ctx.log(`${owner.name}'s Collector: +1 silver (${by.name} paid silver).`);
       },
     }),
-    // Replacement batch 3 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Collector's place. 4 silver + 2 any as a player sees it. Read at game
-    // end after the other game-end bonuses (core's onGameEndHit), never below 0 followers; it isn't a steal, so nothing
-    // blocks it. Two Creditors each take their own.
-    m('creditors', 'Creditors', 3, 2, 'Game End: each rival loses 1 follower per 3 silver they hold.', { f: 2, round: 1, // a round I member as Collector was (bot-tested in a later round; Nov 3)
-      // a pure read for bots: what it takes from victim if the game ended now
-      endHit: (ctx, owner, victim) => Math.min(Math.floor((victim.res[S] || 0) / 3), Math.max(0, ctx.followers(victim))),
-      onGameEndHit(ctx, owner) {
-        for (const o of others(ctx, owner)) {
-          const k = Math.min(Math.floor((o.res[S] || 0) / 3), Math.max(0, ctx.followers(o)));
-          if (!k) continue;
-          o.bonus -= k;
-          if (o.final) { o.final.total -= k; o.final.parts.push(`${owner.name}'s Creditors −${k}`); }
-          ctx.log(`${owner.name}'s Creditors: ${o.name} holds ${o.res[S]} silver and loses ${k} follower${k === 1 ? '' : 's'}.`);
-        }
+    // Replacement batch 3 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Collector's place. 4 silver + 2 any as a player sees it.
+    // Creditor (Claude, under Cory's go-with-your-gut, Nov 4; was Creditors' game-end loss): the rival gives only the
+    // followers it has (never below 0); the 3 silver is a gift from the bank, so the gift hooks fire as for Hostesses.
+    m('creditors', 'Creditor', 3, 2, 'On Use, once per round: a rival you choose gives you 2 followers, then gains 3 silver.', { round: 1, // a round I member as Collector was (bot-tested in a later round; Nov 3)
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner) {
+        const top = Math.max(...others(ctx, owner).map(o => ctx.followers(o)));
+        ctx.choose(owner, 'Creditor: which rival gives you 2 followers, then gains 3 silver?', others(ctx, owner).map(o => ({
+          id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers, ${o.res[S] || 0} silver)`, kind: 'player', value: o.id,
+          // bots take from a rival who has 2 to give, the leader first, and mind handing silver to a rival who leads it
+          hint: Math.min(2, Math.max(0, ctx.followers(o))) * 2 + (ctx.followers(o) === top ? 1 : 0) - (leadIn(ctx, o, S) >= 0 ? 0.5 : 0),
+        })), 'silver.creditor');
       },
+      botActivate: (ctx, owner) => others(ctx, owner).some(o => ctx.followers(o) >= 2),
     }),
     m('debtcollector', 'Debt Collectors', 4, 3, 'On Use, once per game: each rival gives you 2 silver, if they have it.', { f: 2, n: 2, // worth 2 (Cory, Nov 1)
       activate: 'game',
@@ -515,8 +529,10 @@ const silver = {
       botActivate: (ctx, owner) => others(ctx, owner).reduce((t, o) => t + Math.min(2, o.res[S] || 0), 0) >= 2 * Math.max(1, ctx.state.players.length - 2),
     }),
     // "should be multiple members" (Cory): worth 2 followers, so it counts as 2 members (Claude's fill-in)
-    m('highsociety', 'High Society', 4, 3, 'Game End: +2 followers per rival with more silver than you.', { f: 2,
-      onGameEnd: (ctx, owner) => 2 * others(ctx, owner).filter(o => (o.res[S] || 0) > (owner.res[S] || 0)).length,
+    m('highsociety', 'High Society', 4, 3, 'Whenever a rival takes a Silver space, +1 follower.', { f: 2, // Nov 4 (Claude, under Cory's go-with-your-gut; was a game-end count of rivals with more silver)
+      afterRivalAction(ctx, owner, card, qid) { if (qid === S) { owner.bonus += 1; ctx.log(`${owner.name}'s High Society: +1 follower.`); } },
+      // BOTSEE: about a quarter of the rival placements still to come land on a Silver space
+      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.25),
     }),
     m('grandhost', 'Grand Host', 8, 4, 'Double the silver you gain from Silver spaces.', { hostDouble: true }),
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 12 → 6 (the most one pass moves);

@@ -10,6 +10,7 @@ import { pileRules } from './piles.js';
 import { startEffects, stopEffects, abandonEffects, underCause, markEffect } from './effects.js';
 import { REPLACE4 } from './content/replace4.js';
 import { REPLACE6 } from './content/replace6.js';
+import { isNewColor } from './content/yellow.js';
 
 export const RING_VALUE = [4, 6, 10];
 export const WORKERS = [3, 4, 5];
@@ -1367,7 +1368,7 @@ function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop 
  */
 function recruited(state, p, what) {
   const ctx = ctxFor(state);
-  if (what.member) recruitFollowersBonus(state, p);
+  if (what.member) recruitFollowersBonus(state, p, what.member);
   eachMember(state, (owner, c, d) => {
     if (what.member && d.onAnyRecruit) d.onAnyRecruit(ctx, owner, c, p, what.member);
     if (d.onRecruit) d.onRecruit(ctx, owner, c, p, what);
@@ -1578,12 +1579,15 @@ function spendBonus(state, p, spend) {
 // Gather-style fuel spaces (Cory, 2026-10-31: Gather, then Allowance and Stash "gather style"): "This turn, if you recruit
 // a member, +1 follower (+2 in round II, +3 in round III)". Each space taken this turn adds { n, name, broker } to
 // p.recruitFollowers (cleared at turn start); all of them pay once, on the turn's first member recruit. A White space's
-// followers also get Brokers' +1.
-function recruitFollowersBonus(state, p) {
+// followers also get Brokers' +1. New Blood's ({ newColor: true }) waits for a member of a color none of p's other
+// members have, so a recruit of a color p already has leaves it standing for the turn's next recruit.
+function recruitFollowersBonus(state, p, member) {
   const list = p.recruitFollowers;
   if (!list?.length) return;
-  delete p.recruitFollowers;
-  for (const { n, name, broker } of list) {
+  const fresh = list.some(x => x.newColor) && member ? isNewColor(ctxFor(state), p, member) : false;
+  const pay = list.filter(x => !x.newColor || fresh), wait = list.filter(x => x.newColor && !fresh);
+  if (wait.length) p.recruitFollowers = wait; else delete p.recruitFollowers;
+  for (const { n, name, broker } of pay) {
     const extra = broker ? sumMemberFlag(state, p, 'brokerBonus') : 0, mark = fMark(state);
     p.bonus += n + extra;
     fCredit(state, mark, name);

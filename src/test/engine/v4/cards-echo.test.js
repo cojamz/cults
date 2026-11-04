@@ -142,12 +142,29 @@ describe('Green current members', () => {
       expect(R(s).green).toBe(7); // Echo's own +1, Build Up's +3 doubled
     }
   });
-  it('Fan Club: +1 green per Green space with a minion when recruited', () => {
-    let s = table(Q, { n: 3, shop: ['echo.mirror', ...ROW], res: [{ green: 1, red: 2 }], queue: turns(1, 2, 0) });
+  it('Fan Club: when recruited, copy an action the player with the most followers has a minion on (Nov 4)', () => {
+    let s = table(Q, { n: 3, shop: ['echo.mirror', ...ROW], res: [{ green: 1, red: 2 }], bonus: [0, 5, 0], queue: turns(1, 2, 0) });
     s = go(s, 'echo.chant'); s = go(s, 'echo.echo', sp('echo.chant'));
     s = move(take(s, 'gold.rush'), cardOpt(s, 'echo.mirror'));
     expect(s.players[0].members).toContain(uidIn(s, 'echo.mirror', 0));
-    expect(R(s).green).toBe(2);
+    expect(s.pending.prompt).toBe("Fan Club: copy which of P2's actions?");
+    expect(s.pending.options.map(o => o.label)).toEqual([expect.stringMatching(/^Build Up \(P2\)/)]); // P3's Echo isn't the leader's
+    const g = R(s).green;
+    s = move(s, s.pending.options[0].id);
+    expect(R(s).green).toBe(g + 3); // Build Up's +3 (Green's own +1 belongs to a Green space, not to a copy)
+  });
+  it('Fan Club: holding the most yourself, it copies the rival with the most; nothing when they have no minion out', () => {
+    let s = table(Q, { n: 3, shop: ['echo.mirror', ...ROW], res: [{ green: 1, red: 2 }], bonus: [9, 0, 3], queue: turns(1, 2, 0) });
+    s = go(s, 'echo.chant'); s = go(s, 'gold.rush');
+    s = move(take(s, 'red.turnout'), cardOpt(s, 'echo.mirror'));
+    expect(s.pending.prompt).toBe("Fan Club: copy which of P3's actions?");
+    let t = table(Q, { n: 3, shop: ['echo.mirror', ...ROW], res: [{ green: 1, red: 2 }], bonus: [0, 5, 0], queue: turns(2, 0) });
+    t = go(t, 'echo.chant');
+    const g = R(t).green;
+    t = move(take(t, 'gold.rush'), cardOpt(t, 'echo.mirror'));
+    expect(t.players[0].members).toContain(uidIn(t, 'echo.mirror', 0));
+    expect(named(t, 'Fan Club')).toContain("P1's Fan Club: P2 has no minion on an action to copy.");
+    expect(t.pending?.prompt || '').not.toMatch(/Fan Club/);
   });
   it('Roadie: round start, +1 green per Green member you have', () => {
     const start = members => { let s = table(Q, { members: [members] }); s.queue = [{ t: 'round', r: 2 }]; return R(resume(s)).green || 0; };

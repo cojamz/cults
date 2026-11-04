@@ -97,9 +97,11 @@ describe('Red members', () => {
     expect(fol(s, 0)).toBe(2 + 1 + 2); // Proselytizers is worth 2 (Cory, 2026-10-25)
   });
 
-  it('Mob: game end +1 follower per red member', () => {
-    const s = scene({ members: [['red.mob', 'red.twins', 'red.intern', 'gold.banker']], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.total).toBe(8); // Mob 4 (worth 4, Nov 1, 2:16pm), Triplets 3, Intern 1
+  it('Mob: round end +2 followers per rival with fewer red members (Nov 4); nothing at game end', () => {
+    let s = scene({ members: [['red.mob', 'red.twins', 'red.intern', 'gold.banker']], queue: [{ t: 'endRound' }] });
+    expect(s.log).toContain("P1's Mob: 1 rival has fewer red members: +2 followers.");
+    s = scene({ members: [['red.mob', 'red.twins', 'red.intern', 'gold.banker']], queue: [{ t: 'finish' }] });
+    expect(s.players[0].final.parts.some(x => /Mob/.test(x))).toBe(false);
   });
 
   it('Recruiter: a recruit from the deck is a recruit, +1 red; a rival’s pays nothing', () => {
@@ -190,10 +192,10 @@ describe('Red members', () => {
     s = beginBuy(s);
     expect(hasOpt(s, `use:${dop}`)).toBe(true);
     s = move(s, `use:${dop}`);
-    expect(R(s)[0].gold).toBe(4);
+    expect(R(s)[0].gold).toBe(4); // 0 + 2, doubled
     expect(hasOpt(s, `use:${dop}`)).toBe(false);
     s = move(s, `use:${jack}`);
-    expect(R(s)[0].gold).toBe(8);
+    expect(R(s)[0].gold).toBe(12); // 4 + 2, doubled
   });
 
   it('Doppelganger copying Midas can be switched off', () => {

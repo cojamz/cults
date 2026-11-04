@@ -173,11 +173,13 @@ describe('Gold members', () => {
     expect(named(s, 'Investor').at(-1)).toMatch(/returns 8 gold/);
   });
 
-  it('Lottery Winner: once per game, gold equal to the richest rival’s, named; then it is gone', () => {
+  it('Lottery Winner: once per game, +2 gold, then double your gold, named; then it is gone', () => {
     let s = sceneQ({ n: 3, res: [{}, { gold: 4 }, { gold: 7 }], members: [['gold.jackpot']] });
     s = take(s, 'gold.rush');
+    const g = G(s)[0];
     s = move(s, `use:${uidOf(s, 'gold.jackpot', 0)}`);
-    expect(G(s)[0]).toBe(2 + 7);
+    expect(G(s)[0]).toBe(2 * (g + 2)); // rivals' gold plays no part (Nov 4)
+    expect(G(s).slice(1)).toEqual([4, 7]);
     expect(named(s, 'Lottery Winner')).toHaveLength(1);
     expect(s.pending.options.some(o => o.id.startsWith('use:'))).toBe(false);
   });

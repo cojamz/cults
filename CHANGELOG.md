@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.548 — 2026-11-03
+
+- Nine cards change: Creditor (was Creditors) makes a rival give you 2 followers and gives them 3 silver, once a round; Fan Club copies an action of the player with the most followers; Dilute and Big Dilute become New Blood and Big New Blood (followers when you recruit a member of a new color); Melting Pot reads more plainly; Mob pays each round for every rival with fewer red members; High Society pays a follower whenever a rival takes a Silver space; Lottery Winner gives 2 gold, then doubles your gold; Upstart gives 2 silver per rival with more followers; Safecracker steals 2 from each rival
+
 ## v0.99.547 — 2026-11-03
 
 - Since your last turn shows one line per rival move and stays up when your turn starts; recruits play one step at a time (coins in, to the middle, then to the buyer); Heist steals 3 followers; Leaders' Tax pays +1 per rival with a minion on the color; starting a new game keeps the unfinished one in Past games; Grey piles row keeps its size after a pile swap; Scouts never re-picks a member; setup screen notes for piles

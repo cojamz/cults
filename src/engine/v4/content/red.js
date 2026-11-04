@@ -3,6 +3,7 @@ import { gainColorOf } from './color-of.js';
 import { add1, old1 } from './replace1.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add4, old4, handlers4 } from './replace4.js';
+import { see, endsAhead } from './botsee.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
 
@@ -240,9 +241,20 @@ export default {
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).some(o => ctx.canSteal(owner, o, 'swap') && defectWorth(ctx, o) - defectWorth(ctx, owner) >= 4),
     })),
-    m('mob', 'Mob', 7, 4, /* 12, 4 members (Cory, Oct 30); worth 4 (Cory, Nov 1: "Just make mob four") */ 'Game End: +1 follower per red member you have.', { f: 4, n: 4,
-      // MOB=cards: bot test only (Nov 3): one per red member card, not per member it counts as
-      onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'red', { cards: globalThis.process?.env?.MOB === 'cards' }),
+    // Nov 4 (Claude, under Cory's go-with-your-gut; was "Game End: +1 follower per red member you have."): it pays for
+    // out-redding rivals, not for width. Red members counted as everywhere (Mob itself counts as 4), at each round's end
+    // before the contests.
+    m('mob', 'Mob', 7, 4, /* 12, 4 members (Cory, Oct 30); worth 4 (Cory, Nov 1: "Just make mob four") */ 'Round End: +2 followers per rival with fewer red members than you.', { f: 4, n: 4,
+      onRoundEnd(ctx, owner) {
+        // MOB=cards: bot test only (Nov 3): one per red member card, not per member it counts as
+        const reds = o => ctx.countMembersOfColor(o, 'red', { cards: globalThis.process?.env?.MOB === 'cards' });
+        const k = ctx.rivals(owner).filter(o => reds(o) < reds(owner)).length;
+        if (!k) return;
+        owner.bonus += 2 * k;
+        ctx.log(`${owner.name}'s Mob: ${k} rival${k === 1 ? ' has' : 's have'} fewer red members: +${2 * k} followers.`);
+      },
+      // BOTSEE: each round end still ahead, +2 for about half the rivals
+      ...see(i => endsAhead(i).length * 2 * i.rivals.length * 0.5),
     }),
     // members only, never a follower buy (Cory, 2026-10-29: "red recruit should only work for gaining members")
     // Red Cloak. Cory, Nov 1 5:06pm (version 1 of two tested): "Whenever you recruit a member, +1 red." Swaps and

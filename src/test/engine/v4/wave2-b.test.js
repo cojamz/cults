@@ -111,8 +111,8 @@ describe('#18 the results breakdown adds up', () => {
 describe('#19 a member Use that would change nothing is marked idle', () => {
   // a person's seat (bots don't read it, so their seats skip the dry run)
   const human = s => { s.players[0].kind = 'human'; return resume(s); };
-  it('Safecracker with a rival holding 1 magenta: half of 1 is 0, so its use option is idle', () => {
-    const s = human(sceneQ({ quadrants: MAG, n: 2, round: 3, res: [{ gold: 2 }, { magenta: 1 }], members: [['thieves.bigscore']] }));
+  it('Safecracker with a rival holding nothing: its use option is idle', () => {
+    const s = human(sceneQ({ quadrants: MAG, n: 2, round: 3, res: [{ gold: 2 }, {}], members: [['thieves.bigscore']] }));
     const o = s.pending.options.find(x => x.kind === 'use');
     expect(o).toBeTruthy();
     expect(o.idle).toBe(true);
@@ -124,7 +124,7 @@ describe('#19 a member Use that would change nothing is marked idle', () => {
     expect(o.idle).toBeFalsy();
     expect(s.players[0].crashNext).toBeFalsy();
   });
-  it('Safecracker with a rival holding 4 magenta is not idle', () => {
+  it('Safecracker with a rival holding 4 magenta is not idle (Nov 4: it steals 2 resources from each rival)', () => {
     const s = human(sceneQ({ quadrants: MAG, n: 2, round: 3, res: [{ gold: 2 }, { magenta: 4 }], members: [['thieves.bigscore']] }));
     const o = s.pending.options.find(x => x.kind === 'use');
     expect(o.idle).toBeFalsy();

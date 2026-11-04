@@ -94,7 +94,8 @@ describe('Red members: bounded acquisition and body invariants', () => {
     const ctx = contextFor(s), mob = ctx.membersOf(s.players[0]).find(c => c.def.id === 'red.mob');
     expect(memberCount(s, s.players[0])).toBe(11); // Panel 3, Mob 4 (Nov 1, 2:16pm), Triplets 3, Volunteer 1 (member count = follower count, Nov 1)
     expect(followers(s, s.players[0])).toBe(12); // leader + printed bodies
-    expect(mob.def.onGameEnd(ctx, s.players[0], mob)).toBe(11);
+    expect(mob.def.onGameEnd).toBeUndefined(); // Round End since Nov 4: it compares this count with each rival's
+    expect(ctx.countMembersOfColor(s.players[0], 'red')).toBe(11);
   });
 
   it('Panel save/load retains mode and exact swap targets without inherent action red', () => {

@@ -119,9 +119,18 @@ describe('Silver members', () => {
     s = move(s, s.pending.options.find(o => o.kind === 'use').id);
     expect(s.players.map(p => p.res.silver)).toEqual([3, 3, 0]);
   });
-  it('High Society: counts as 2 members; game end +2 followers per rival with more silver', () => {
-    const s = sc({ n: 3, res: [{ silver: 1 }, { silver: 5 }, { silver: 1 }], members: [['silver.highsociety']] });
+  it('High Society: counts as 2 members; whenever a rival takes a Silver space, +1 follower (Nov 4)', () => {
+    let s = sc({ n: 3, res: [{ silver: 1 }, { silver: 5 }, { silver: 1 }], members: [['silver.highsociety']], queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 2 }, { t: 'turn', p: 0 }] });
     expect(memberCount(s, s.players[0])).toBe(2);
+    s = take(s, 'silver.toast');
+    expect(s.players[0].bonus).toBe(1);
+    expect(named(s, 'High Society')).toEqual(["P1's High Society: +1 follower."]);
+    while (s.pending?.player === 1) s = move(s, 'pass');
+    s = take(s, 'red.turnout'); // not a Silver space
+    expect(s.players[0].bonus).toBe(1);
+    while (s.pending?.player === 2) s = move(s, 'pass');
+    s = take(s, 'silver.polish'); // its owner's own Silver space: nothing
+    expect(s.players[0].bonus).toBe(1);
   });
   it('Smooth Talkers: your silver pays a member’s colored part', () => {
     const s = sc({ res: [{ silver: 9 }], members: [['silver.smoothtalker']], shop: ['red.patriarch'] });
@@ -268,11 +277,15 @@ describe('Silver members', () => {
     expect(named(s, 'Heir')).toHaveLength(1);
   });
 
-  it('Upstart: when recruited, half the silver of the richest rival (rounded up), named', () => {
-    let s = sc({ n: 3, round: 3, res: [{}, { silver: 4 }, { silver: 9 }], shop: ['silver.spoon'] });
+  it('Upstart: when recruited, +2 silver per rival with more followers than you, named', () => {
+    let s = sc({ n: 3, round: 3, res: [{}, { silver: 4 }, { silver: 9 }], bonus: [0, 2, 5], shop: ['silver.spoon'] });
     s = move(take(s, 'red.take'), `card:${uidOf(s, 'silver.spoon', 'shop')}`);
-    expect(S(s)).toBe(5); // half of 9, rounded up
+    expect(S(s)).toBe(4); // two rivals ahead
     expect(named(s, 'Upstart')).toHaveLength(1);
+    s = sc({ n: 3, round: 3, res: [{}, { silver: 4 }, { silver: 9 }], bonus: [5, 2, 5], shop: ['silver.spoon'] });
+    s = move(take(s, 'red.take'), `card:${uidOf(s, 'silver.spoon', 'shop')}`);
+    expect(S(s)).toBe(0);
+    expect(named(s, 'Upstart')).toEqual(["P1's Upstart: no rival has more followers."]);
   });
 
   it('Toastmaster: +1 follower per Silver space, named; Straggler onto Silver counts', () => {

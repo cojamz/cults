@@ -75,7 +75,9 @@ function stealStep(ctx, p, data) {
   const picked = id => data.picked[id] || {};
   const remaining = o => holding(o) - Object.values(picked(o.id)).reduce((a, n) => a + n, 0);
   const top = data.richest ? Math.max(0, ...ctx.rivals(p).filter(o => stealable(ctx, p, o, picked(o.id)) > 0).map(remaining)) : 0;
-  const can = o => stealable(ctx, p, o, picked(o.id)) > 0 && (!data.richest || remaining(o) === top);
+  // data.cap: the most it takes from any one rival (Safecracker: 2 from each)
+  const takenFrom = o => Object.values(picked(o.id)).reduce((a, n) => a + n, 0);
+  const can = o => stealable(ctx, p, o, picked(o.id)) > 0 && (!data.richest || remaining(o) === top) && (!data.cap || takenFrom(o) < data.cap);
   const owed = data.each.map(id => ctx.player(id)).filter(can);
   const free = data.left - owed.length > 0 ? ctx.rivals(p).filter(o => can(o) && (!data.only || data.only.includes(o.id))) : [];
   const pool = data.left > 0 ? (owed.length && data.left <= owed.length ? owed : [...new Set([...owed, ...free])]) : [];
@@ -94,6 +96,7 @@ function stealStep(ctx, p, data) {
       if (pool.includes(o)) continue;
       const why = !ctx.canSteal(p, o) ? `${o.name} can’t be stolen from now.`
         : data.richest && stealable(ctx, p, o, picked(o.id)) > 0 && remaining(o) < top ? `${data.name}: choose a rival holding ${top} resources.`
+        : data.cap && takenFrom(o) >= data.cap ? `${data.name} takes ${data.cap} from each rival, and ${o.name} already gave theirs.`
         : !can(o) ? `${o.name} has nothing left to take.`
         : data.only && !data.only.includes(o.id) ? (data.rich && holding(o) <= holding(p) ? `${o.name} holds no more resources than you (${holding(o)} vs your ${holding(p)}).` : `${data.name} can’t take from ${o.name}.`)
         : data.only && data.picked[o.id] ? `${data.name} takes 1 from each rival, and ${o.name} already gave theirs.`
@@ -505,16 +508,18 @@ const thieves = {
         ], 'thieves.vulture', { from: from.id });
       },
     })),
-    m('bigscore', 'Safecracker', 2, 2, 'On Use, once per game: steal half the magenta of the rival with the most, rounded down.', {
+    // Nov 4 (Claude, under Cory's go-with-your-gut): a fixed 2 from each rival (was half the magenta of the rival with the
+    // most). One shared steal (Fence pays once), the thief picking each resource; at most 2 from each rival, and a rival
+    // who can't be stolen from (Bodyguards) or holds less gives what it can. Desperado's extra picks come from anyone.
+    m('bigscore', 'Safecracker', 2, 2, 'On Use, once per game: steal 2 resources from each rival.', {
       activate: 'game',
-      onActivate(ctx, owner) {
-        const list = ctx.rivals(owner).filter(o => ctx.canSteal(owner, o) && (o.res.magenta || 0) >= 2);
-        if (!list.length) { ctx.log(`${owner.name}'s Safecracker found no magenta worth taking.`); return; }
-        const o = list.reduce((a, b) => (b.res.magenta > a.res.magenta ? b : a));
-        const got = commit(ctx, owner, o, { magenta: Math.floor(o.res.magenta / 2) }, false, false);
-        ctx.log(`${owner.name}'s Safecracker: ${got} magenta from ${o.name}.`);
+      onActivate(ctx, owner, card) {
+        const left = ctx.rivals(owner).reduce((a, o) => a + Math.min(2, stealable(ctx, owner, o)), 0);
+        if (!left) { card.used = false; ctx.log(`${owner.name}'s Safecracker: no rival has anything to take.`); return; }
+        const more = stickyMore(ctx, owner);
+        startSteal(ctx, owner, 'Safecracker', left + more, { fromAction: false, cap: 2 + more });
       },
-      botActivate: (ctx, owner) => ctx.state.round === 3 && ctx.rivals(owner).some(o => ctx.canSteal(owner, o) && (o.res.magenta || 0) >= 4),
+      botActivate: (ctx, owner) => ctx.rivals(owner).reduce((a, o) => a + Math.min(2, stealable(ctx, owner, o)), 0) >= 2 * ctx.rivals(owner).length,
     }),
     // Cory, 2026-10-24: Magenta's once per game (spend the magenta, not pay the rival: Claude's, his "ok"); name and price Claude's fill-in
     m('fixer', 'Fixer', 3, 2, 'On Use, once per game: spend magenta equal to a rival’s member’s cost to steal it.', {

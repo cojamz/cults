@@ -377,13 +377,20 @@ describe('Magenta members', () => {
     expect(defs(s, 1)).toEqual(['thieves.doubleagent']);
   });
 
-  it('Safecracker: once per game, take half the magenta of the rival with the most magenta', () => {
-    let s = scene({ res: [{}, { magenta: 7, gold: 9 }, { magenta: 5 }], members: [['thieves.bigscore']] });
+  it('Safecracker: once per game, steal 2 resources from each rival, the thief picking each (Nov 4)', () => {
+    let s = scene({ res: [{}, { magenta: 7, gold: 9 }, { magenta: 1 }], members: [['thieves.bigscore']] });
     s = take(s, 'gold.rush');
-    const b = uidOf(s, 'thieves.bigscore', 0);
+    const b = uidOf(s, 'thieves.bigscore', 0), g = R(s)[0].gold;
     s = move(s, `use:${b}`);
-    expect(R(s).map(r => r.magenta)).toEqual([3, 4, 5]);
-    expect(R(s)[1].gold).toBe(9);
+    expect(s.pending.prompt).toMatch(/^Safecracker: choose a resource to steal\. \(3 left/); // 2 from P2, the 1 P3 has
+    s = move(s, 'take:1:gold'); s = move(s, 'take:1:gold');
+    // P2 gave its 2: only P3's magenta is left to choose
+    expect(s.pending.options.map(o => o.id)).toEqual(['take:2:magenta']);
+    expect(s.pending.blocked[1]).toBe('Safecracker takes 2 from each rival, and P2 already gave theirs.');
+    s = move(s, 'take:2:magenta');
+    expect(R(s).map(r => r.magenta)).toEqual([1, 7, 0]);
+    expect(R(s)[0].gold - g).toBe(2);
+    expect(R(s)[1].gold).toBe(7);
     expect(s.cards[b].used).toBe(true);
   });
 

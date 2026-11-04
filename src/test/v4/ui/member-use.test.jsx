@@ -86,7 +86,7 @@ describe('the seat card list', () => {
     expect(costs).toEqual([...costs].sort((a, b) => a - b));
     const by = id => container.querySelector(`[data-member-row="${id}"]`);
     expect(by('gold.jackpot').dataset.state).toBe('ready');
-    expect(by('gold.jackpot').querySelector('[data-use]').textContent).toMatch(/^Use: \+7/);
+    expect(by('gold.jackpot').querySelector('[data-use]').textContent).toMatch(/^Use: \+6/); // 2 gold + 2, doubled
     expect(by('gold.speculator').dataset.state).toBe('used');
     expect(by('gold.speculator').textContent).toContain('used');
     expect(by('trading.pawnbroker').dataset.state).toBe('blocked'); // nothing to sell: no button
@@ -134,23 +134,28 @@ describe('the seat card list', () => {
     const uid = uidIn(s, 'gold.jackpot', 0);
     const after = applyMove(s, { player: 0, option: `use:${uid}` });
     const moves = gainsBetween(s, after);
-    expect(moves.some(m => m.what === 'res' && m.r === 'gold' && m.n === 7 && m.from.kind === 'member' && m.from.def === 'gold.jackpot')).toBe(true);
+    expect(moves.some(m => m.what === 'res' && m.r === 'gold' && m.n === 6 && m.from.kind === 'member' && m.from.def === 'gold.jackpot')).toBe(true);
   });
 });
 
 describe('threats you can see coming (w2b #19, #21)', () => {
   it('a use worth nothing now is muted with its reason; Lie Low reads "safe this round"', () => {
-    const s = table(['gold', 'echo', 'trading', 'thieves'], { members: [['thieves.bigscore'], ['echo.hourglass']], res: [{ magenta: 0 }, { magenta: 1 }] });
-    const uid = uidIn(s, 'thieves.bigscore', 0);
+    // Speculator with no gold to double (Safecracker, its example until Nov 4, now keeps its use when there is nothing to
+    // take: "Can't use now", below)
+    const s = table(['gold', 'echo', 'trading', 'thieves'], { members: [['gold.speculator', 'thieves.bigscore'], ['echo.hourglass']], res: [{ magenta: 0 }, {}] });
+    const uid = uidIn(s, 'gold.speculator', 0);
     const u = useNow(s, 0, uid);
     expect(u.idle).toBe(true);
     expect(u.label).toBe('Use: +0');
-    expect(u.why).toMatch(/Safecracker found no magenta/);
-    expect(promptFor(s, true).sub || '').not.toMatch(/Safecracker/);
+    expect(u.why).toBe('it would give you nothing right now');
+    expect(promptFor(s, true).sub || '').not.toMatch(/Speculator|Safecracker/);
     const { container } = render(<MemberActions state={s} uid={uid} me={0} optionFor={optionsOf(s)} onPick={() => {}} />);
     expect(container.querySelector('[data-use]')).toBeNull(); // no button that does nothing (w4b #20)
-    expect(container.textContent).toMatch(/Nothing to gain now: Safecracker found no magenta/);
+    expect(container.textContent).toMatch(/Nothing to gain now: it would give you nothing right now/);
     cleanup();
+    const safe = useNow(s, 0, uidIn(s, 'thieves.bigscore', 0));
+    expect(safe.blocked).toBe(true);
+    expect(safe.why).toBe('no rival has anything to take');
     expect(safeThisRound(s, 1)).toBe(false);
     s.players[1].hideout = s.round;
     const t = structuredClone(s);

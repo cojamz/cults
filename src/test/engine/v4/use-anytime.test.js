@@ -24,8 +24,8 @@ describe('using a member any time on your turn', () => {
     expect(ids(s)).toContain(use);
     expect(slots(s).length).toBeGreaterThan(0);
     expect(promptFor(s, true).sub).toBe('…or use Lottery Winner first'); // the line under the headline names it
-    s = move(s, use); // Lottery Winner: gold equal to the richest rival's
-    expect(R(s).gold).toBe(5);
+    s = move(s, use); // Lottery Winner: +2 gold, then double your gold
+    expect(R(s).gold).toBe(4);
     expect(named(s, 'Lottery Winner').length).toBe(1);
     expect(s.pending.kind).toBe('place'); // the turn resumes where it was
     expect(ids(s)).not.toContain(use);

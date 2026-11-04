@@ -649,12 +649,19 @@ const echoQ = {
     })),
     // Keepsake ("When recruited: copy one of your spaces from this round") is cut: Reprise does the same on a space.
     // Cory, 2026-10-28: Mime returns renamed ("yes but needs a different name"); text and cost 3 are Claude's
-    m('mirror', 'Fan Club', 2, 3, 'On Recruit: +1 green per Green space with anyone’s minion.', { n: 3, // 3 members, 3 to 6 (Cory, Oct 29: yes to "counts as 3 members, price 3 to 6")
+    // Nov 4 (Claude, under Cory's go-with-your-gut; was "+1 green per Green space with anyone's minion"): fans copy the
+    // leader. Holding the most yourself, or tying for it, it reads the rival with the most; rivals tied for the most:
+    // any of their actions (Claude's reading). Nothing when that player has no minion on the board.
+    m('mirror', 'Fan Club', 2, 3, 'On Recruit: copy an action the player with the most followers has a minion on.', { n: 3, // 3 members, 3 to 6 (Cory, Oct 29: yes to "counts as 3 members, price 3 to 6")
       onRecruited(ctx, owner) {
-        const q = ctx.state.quadrants.indexOf('echo');
-        const g = q < 0 ? 0 : Object.keys(ctx.state.slots).filter(k => Number(k.split('-')[0]) === q).length;
-        if (g) { ctx.gain(owner, 'green', g); ctx.log(`${owner.name}'s Fan Club: +${g} green.`); }
-        else ctx.log(`${owner.name}'s Fan Club: no minion on a Green space, so no green.`); // never "+0 green" (bug bash, Nov 1)
+        const rivals = ctx.rivals(owner);
+        if (!rivals.length) return;
+        const most = Math.max(...rivals.map(o => ctx.followers(o)));
+        const leaders = rivals.filter(o => ctx.followers(o) === most).map(o => o.id);
+        const list = targets(ctx, owner, 'any').filter(e => leaders.includes(e.p));
+        const names = leaders.map(id => ctx.player(id).name).join(' and ');
+        if (!list.length) { ctx.log(`${owner.name}'s Fan Club: ${names} has no minion on an action to copy.`); return; }
+        offer(ctx, owner, list, `Fan Club: copy which of ${names}'s actions?`, 'now', 'Fan Club');
       },
     }),
     // Cory, 2026-10-28: "Roadie is good" (Green's 16th); cost 3 is Claude's

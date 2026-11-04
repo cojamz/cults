@@ -297,14 +297,24 @@ describe('Magenta members', () => {
     expect(named(s, 'Double Agent').length).toBe(1);
   });
 
-  it('Safecracker: once per game, half (rounded down) of the magenta of the rival holding the most (named)', () => {
+  it('Safecracker: once per game, steal 2 resources from each rival (named; Nov 4)', () => {
     let s = table(Q, { n: 3, res: [{ gold: 20 }, { magenta: 7 }, { magenta: 3 }], members: [['thieves.bigscore']], shop: ROW });
     s = take(s, 'thieves.tipoff');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
     s = move(s, `use:${uidIn(s, 'thieves.bigscore', 0)}`);
-    expect([R(s).magenta, R(s, 1).magenta, R(s, 2).magenta]).toEqual([5, 4, 3]); // Stash's +2 first, then half of 7
+    for (const id of ['take:1:magenta', 'take:2:magenta', 'take:1:magenta', 'take:2:magenta']) s = move(s, id);
+    expect([R(s).magenta, R(s, 1).magenta, R(s, 2).magenta]).toEqual([6, 5, 1]); // Stash's +2 first, then 2 from each
     expect(named(s, 'Safecracker').length).toBe(1);
     expect(ids(s)).not.toContain(`use:${uidIn(s, 'thieves.bigscore', 0)}`);
+  });
+  it('× Safecracker: Bodyguards keeps its owner out of the steal; Fence pays its owner once', () => {
+    let s = table(Q, { n: 3, res: [{ gold: 20 }, { magenta: 7 }, { gold: 3 }], members: [['thieves.bigscore'], ['thieves.watchdog'], ['thieves.fence']], shop: ROW });
+    s = take(s, 'gold.rush');
+    s = move(s, `use:${uidIn(s, 'thieves.bigscore', 0)}`);
+    expect(s.pending.options.map(o => o.id)).toEqual(['take:2:gold']); // 2 from P3 only
+    s = move(move(s, 'take:2:gold'), 'take:2:gold');
+    expect(R(s, 1).magenta).toBe(7);
+    expect(R(s, 2)).toMatchObject({ gold: 1, magenta: 2 }); // Fence: +2 magenta
   });
   it('× Doppelganger copying Safecracker: a second use (the copy\'s own once-per-game)', () => {
     let s = table(Q, { res: [{ gold: 20 }, { magenta: 8 }], members: [['thieves.bigscore', 'echo.doppel']], shop: ROW });
@@ -312,8 +322,10 @@ describe('Magenta members', () => {
     s = take(s, 'thieves.tipoff');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
     s = move(s, `use:${uidIn(s, 'thieves.bigscore', 0)}`);
+    s = move(move(s, 'take:1:magenta'), 'take:1:magenta');
     s = move(s, `use:${uidIn(s, 'echo.doppel', 0)}`);
-    expect([R(s).magenta, R(s, 1).magenta]).toEqual([8, 2]); // Stash 2, +4 of 8, +2 of 4
+    s = move(move(s, 'take:1:magenta'), 'take:1:magenta');
+    expect([R(s).magenta, R(s, 1).magenta]).toEqual([6, 4]); // Stash 2, then 2 and 2 more
   });
 
   it('Kingpin: game end, +1 follower per magenta member you have (itself included)', () => {
