@@ -15,7 +15,13 @@ T0=$SECONDS; t() { echo "[$(( SECONDS - T0 ))s] $*"; }
 t "pull"; git pull -q --rebase origin "$BRANCH"
 t "check: related tests + build"
 FILES=$(IFS=,; echo "$*")
-V4_QUICK_E2E=none V4_OUTDIR=.v4-build-ship V4_PORT=${V4_PORT:-5299} npm run -s check:v4:quick -- --related "$FILES" | tail -4
+# the whole log is kept; on a failure its failing tests are printed, not just the last lines (a red hid behind tail -4, Nov 4)
+CHECKLOG=$(mktemp "${TMPDIR:-/tmp}/ship-check.XXXXXX")
+if ! V4_QUICK_E2E=none V4_OUTDIR=.v4-build-ship V4_PORT=${V4_PORT:-5299} npm run -s check:v4:quick -- --related "$FILES" > "$CHECKLOG" 2>&1; then
+  grep -E 'FAIL|×|AssertionError|Error:' "$CHECKLOG" | head -40 >&2; tail -6 "$CHECKLOG" >&2
+  echo "Check failed: nothing was bumped or published. Full log: $CHECKLOG" >&2; exit 1
+fi
+tail -4 "$CHECKLOG"
 t "version"; npm run -s version:v4 -- patch "$NOTE"
 git add src/v4/version.js CHANGELOG.md
 git commit -qm "Release $(node -p "require('fs').readFileSync('src/v4/version.js','utf8').match(/v[\d.]+/)[0]"): $NOTE"
