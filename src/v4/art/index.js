@@ -131,7 +131,7 @@ for (const [key, name, source] of [
   ['customs', 'Customs Officer', 'gleaner'], ['tinker', 'Tinker', 'sower'], ['matchmaker', 'Matchmaker', 'admirer'],
   ['agitator', 'Agitator', 'farmer'], ['ringleader', 'Meddler', 'latebloomer'], ['drifters', 'Drifters', 'weaver'],
   ['leveler', 'Leveler', 'rainmaker'], ['bigtent', 'Big Tent', 'pilgrim'], ['bookcooker', 'Book Cookers', 'peddler'],
-  ['puppeteer', 'Puppeteers', 'feastmaker'], ['caravan', 'Caravan', 'peddler'], ['tastemaker', 'Tastemaker', 'admirer'], ['jack', 'Jack-of-All-Trades', 'admirer'], ['seamstress', 'Seamstress', 'harmonist'], ['spiceroute', 'Spice Route', 'gleaner'], ['guestbook', 'Guest Book', 'farmer'],
+  ['puppeteer', 'Puppeteers', 'feastmaker'], ['caravan', 'Caravan', 'peddler'], ['tastemaker', 'Tastemaker', 'admirer'], ['jack', 'Jack-of-All-Trades', 'admirer'], ['seamstress', 'Seamstress', 'harmonist'], ['dutycollector', 'Duty Collector', 'gleaner'], ['spiceroute', 'Spice Route', 'gleaner'], ['guestbook', 'Guest Book', 'farmer'],
 ]) {
   const art = BY_ID.get(`yellow.${source}`);
   if (art) BY_ID.set(`yellow.${key}`, { ...art, id: `yellow.${key}`, name });

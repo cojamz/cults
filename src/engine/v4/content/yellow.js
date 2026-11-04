@@ -310,7 +310,8 @@ export default {
       onRoundStart(ctx, owner) { for (const c of missing(ctx, owner)) ctx.gain(owner, c, 1); },
     }),
     // Cory, 2026-10-31: "maybe just +1 yellow when any of your resources are stolen or moved"
-    m('customs', 'Customs Officer', 2, 3, 'Whenever a rival steals or changes any of your resources, +1 yellow.', { round: 1, ...old9('yellow.customs'), // 6 but still a round I member (Claude, balance Nov 1: strong at 4; Yellow keeps 4 round I members)
+    // Duty Collector takes its place (Claude, under Cory's go-with-your-gut, overnight quality loop, 2026-11-04)
+    m('customs', 'Customs Officer', 2, 3, 'Whenever a rival steals or changes any of your resources, +1 yellow.', { round: 1, retired: true, // 6 but still a round I member (Claude, balance Nov 1: strong at 4; Yellow keeps 4 round I members)
       // a member taken (Poach, Shake Down) is a steal for Lie Low and Bodyguards, but not a resource (Nov 4); nor are
       // followers taken (Heist, Nov 4): it pays only when the steal took resources
       onSteal(ctx, owner, card, info) {
@@ -338,17 +339,18 @@ export default {
       },
     })),
     // Claude's fill-in (Cory, 2026-10-31: "whenever you recruit, +1 of its color" may become Red's artifact)
-    // REPLACE9 bot test (Members C, Nov 4, batch bC6: paper 16 vs Customs Officer's 10, Yellow's set 9 -> 16): Customs
-    // Officer's place, round I. 3 yellow + 3 any as a player sees it. The recruited member's color, if you have a member of
-    // it (Dabblers and Drifters count, as everywhere); automatic, on the rival's recruit.
-    ...add9(m('dutycollector', 'Duty Collector', 2, 3, 'Whenever a rival recruits a member of a color you have a member of, +1 of that color.', { round: 1,
+    // Quality loop (Members C, Nov 4), live since Nov 4 (Claude, under Cory's go-with-your-gut): Customs Officer's place,
+    // round I (paper 16 vs 10, Yellow's set 9 -> 16; blind play +0.34; trial on tables with Yellow: taken 28% vs 27%, owners
+    // won 40% vs 35%). 3 yellow + 3 any as a player sees it. The recruited member's color, if you have a member of it
+    // (Dabblers and Drifters count, as everywhere); automatic, on the rival's recruit.
+    m('dutycollector', 'Duty Collector', 2, 3, 'Whenever a rival recruits a member of a color you have a member of, +1 of that color.', { round: 1,
       onAnyRecruit(ctx, owner, card, by, recruited) {
         const c = colorOf(ctx, recruited);
         if (!c || by === owner || !(ctx.countMembersOfColor(owner, ctx.defOf(recruited).quadrant) > 0)) return;
         ctx.gain(owner, c, 1);
         ctx.log(`${owner.name}'s Duty Collector: ${by.name} recruited ${ctx.defOf(recruited).name}, +1 ${c}.`);
       },
-    })),
+    }),
     m('gobetween', 'Go-Between', 2, 1, 'Whenever a space gives you resources, you may change 1 of them to any color.', {
       afterGain(ctx, owner, card, g) {
         if (!g.fromAction || !(g.n > 0) || card.gbTurn === ctx.turnKey()) return;

@@ -397,7 +397,7 @@ describe('REPLACE9 by card key', () => {
     const out = execFileSync(process.execPath, ['--input-type=module', '-e', `
       const { defById } = await import('${new URL('../../../engine/v4/content/index.js', import.meta.url).pathname}');
       const has = id => { try { return !!defById(id); } catch { return false; } };
-      console.log(JSON.stringify([has('yellow.quilter'), has('yellow.tollkeeper'), !!defById('yellow.dyer').retired, !!defById('yellow.customs').retired]));
+      console.log(JSON.stringify([has('yellow.quilter'), has('yellow.tollkeeper'), !!defById('yellow.dyer').retired, !!defById('market.critic').retired]));
     `], { env: { ...process.env, REPLACE9: 'quilter' } }).toString().trim().split('\n').pop();
     expect(JSON.parse(out)).toEqual([true, false, true, false]);
   });

@@ -3,7 +3,7 @@
 // Hand's place), Tailor (Dyer's place), Dabbler (Dabblers' place).
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler,latebloomers,dowagers,dutycollector,windowdressers9';
+process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler,latebloomers,dowagers,windowdressers9';
 const { applyMove, countMembersOfColor } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move } = await import('./helpers.js');
