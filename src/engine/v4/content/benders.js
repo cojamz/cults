@@ -328,7 +328,7 @@ const members = [
   // Replacement batch 6 (Nov 3), live since Nov 4 (Claude, under Cory's "use your judgement"): HR's place. 5 any as a player sees it. Read right after the contests
   // are scored (core's afterContests): a shared contest counts as a win; rivals tied for the most wins (at least 1):
   // the owner chooses. Loose followers only, through the shared steal (Bodyguards blocks it), as Raiders takes.
-  m('sorelosers', 'Sore Loser', null, 0, 4, 'Round End: if you win no contest, steal 3 followers from the rival who wins the most.', { round: 3, // a round III member as HR was (bot-tested in round II; Nov 4)
+  m('sorelosers', 'Sore Loser', null, 0, 4, 'Round End: if you win no contest, steal 5 followers from the rival who wins the most.', { round: 3, // a round III member as HR was (bot-tested in round II; Nov 4)
     afterContests(ctx, owner, card, table) {
       const wins = o => table.filter(c => c.winners.includes(o.id)).length;
       if (wins(owner)) return;
@@ -337,7 +337,7 @@ const members = [
       const most = Math.max(...rivals.map(wins));
       const top = rivals.filter(o => wins(o) === most);
       if (top.length === 1) return soreSteal(ctx, owner, top[0]);
-      ctx.choose(owner, 'Sore Loser: steal 3 followers from which rival?', top.map(o => ({
+      ctx.choose(owner, 'Sore Loser: steal 5 followers from which rival?', top.map(o => ({
         id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers)`, kind: 'player', value: o.id, hint: ctx.followers(o),
       })), 'benders.sore');
     },
@@ -453,7 +453,7 @@ export const handlers = {
 
 /** Sore Loser (live since Nov 4): 3 loose followers from t. */
 function soreSteal(ctx, owner, t) {
-  const got = ctx.steal(owner, t, { followers: 3 });
+  const got = ctx.steal(owner, t, { followers: 5 });
   if (got) ctx.log(`${owner.name}'s Sore Loser: ${owner.name} won no contest; steals ${got} follower${got === 1 ? '' : 's'} from ${t.name}.`);
 }
 

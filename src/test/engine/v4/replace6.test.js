@@ -82,12 +82,12 @@ describe('REPLACE6: each card fires', () => {
     expect(named(s, 'Pallbearers')).toContain("P1's Pallbearers: P2 cast out Snobs (6): +3 followers.");
   });
 
-  it('Sore Loser: win no contest, steal 3 followers from the rival who wins the most', () => {
+  it('Sore Loser: win no contest, steal 5 followers from the rival who wins the most', () => {
     const s = table(['red', 'market', 'trading', 'yellow'], { n: 3, round: 2, res: [{}, { red: 4, blue: 3 }, { white: 2 }], bonus: [0, 5, 5], members: [['benders.sorelosers']], queue: [{ t: 'endRound' }] });
-    // P2 wins Red and Blue (+12), P3 wins White (+6); P1 nothing: 3 from P2
-    expect(s.players[0].bonus).toBe(3);
-    expect(s.players[1].bonus).toBe(5 + 12 - 3);
-    expect(named(s, 'Sore Loser')).toContain("P1's Sore Loser: P1 won no contest; steals 3 followers from P2.");
+    // P2 wins Red and Blue (+12), P3 wins White (+6); P1 nothing: 5 from P2 (Cory, Nov 4: "sore loser should steal more followers")
+    expect(s.players[0].bonus).toBe(5);
+    expect(s.players[1].bonus).toBe(5 + 12 - 5);
+    expect(named(s, 'Sore Loser')).toContain("P1's Sore Loser: P1 won no contest; steals 5 followers from P2.");
   });
 
   it("Peddlers: the pile's top member sits beside it; rivals may recruit it, paying you", () => {
