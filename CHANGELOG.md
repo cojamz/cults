@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.569 — 2026-11-04
+
+- White's Splurge and Exchange on the wheel lead with their +1 white, then the follower part.
+
 ## v0.99.568 — 2026-11-04
 
 - Hovering a copy space or member (Sample, Greatest Hits, Tryout, Bootlegger, Impostors, Doppelganger, Impersonator) lists the members it could copy right now, with whose they are and their text.
