@@ -15,6 +15,7 @@
 import { defById, spacesOf } from './index.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add5, old5 } from './replace5.js';
+import { swap11, handlers11 } from './replace11.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const P = 'purple';
@@ -326,12 +327,57 @@ export const RETIRED_OVERTIME = {
   resolve(ctx, p) { freeTurns(ctx, p, 1, 'Overtime'); },
 };
 
+/**
+ * Call Back (REPLACE11, Actions lane, Nov 4; Cory's Nov 3 yes to "new Purple speed spaces that fit going last"):
+ * "+1 purple in round I, +2 in round II, +3 in round III. Take the Goes Last token: move another of your minions from
+ * the wheel onto it, and its space opens." The minion leaves its space (what it did stays done) and waits on the
+ * token like Sleep In's: placed once every hand is empty. With no other minion on the wheel, you still take the token.
+ */
+const callBackKeys = (ctx, p) => myWorkers(ctx, p).filter(w => !(ctx.placement && w.key === ctx.placement.key && w.joined === !!ctx.placement.joined));
+const CALL_BACK = {
+  key: 'callback', copyDoesIt: true, ring: 1, name: 'Call Back',
+  text: '+1 purple in round I, +2 in round II, +3 in round III. Take the Goes Last token: move another of your minions from the wheel onto it, and its space opens.',
+  byRound: { lines: ['+1 purple', '+2 purple', '+3 purple'], rest: 'Take the Goes Last token: move another of your minions from the wheel onto it, and its space opens.' },
+  // a placement back (worth most of a turn: the leftover space plus its recruit) and the round's last minion
+  estimate: (ctx, p) => ctx.state.round + (callBackKeys(ctx, p).length ? Math.round(turnValue(ctx) * 0.6) + 1 : 0),
+  resolve(ctx, p) {
+    ctx.gain(p, P, ctx.state.round, { fromAction: true });
+    // no turn is skipped (the called-back minion is a new turn at the end), so Early Birds doesn't stop it
+    const mine = callBackKeys(ctx, p);
+    if (!mine.length) { takeToken(ctx, p, 'Call Back', ' (no other minion of theirs on the wheel to move onto it)'); return; }
+    if (mine.length === 1) { callBack(ctx, p, `${mine[0].key}${mine[0].joined ? '+j' : ''}`); return; }
+    ctx.choose(p, 'Call Back: move which minion onto the Goes Last token?', mine.map(w => ({
+      id: `from:${w.key}${w.joined ? '+j' : ''}`, label: `${pacerSpace(ctx, w.key).name}${w.joined ? ' (joined)' : ''}`, kind: 'slot',
+      value: `${w.key}${w.joined ? '+j' : ''}`,
+      // bots free the space worth least to the rivals who could take it next
+      hint: -pacerSpace(ctx, w.key).estimate(ctx, p),
+    })), 'purple.callBack');
+  },
+};
+function callBack(ctx, p, from) {
+  const [key, j] = String(from).split('+');
+  const w = myWorkers(ctx, p).find(x => x.key === key && x.joined === (j === 'j'));
+  if (!w) return;
+  if (w.joined) {
+    const list = ctx.state.squats[key];
+    list.splice(list.indexOf(p.id), 1);
+    if (!list.length) delete ctx.state.squats[key];
+  } else delete ctx.state.slots[key];
+  takeToken(ctx, p, 'Call Back');
+  ctx.log(`${p.name}'s Call Back: ${p.name} moves their minion from ${pacerSpace(ctx, key).name} onto the Goes Last token, and ${pacerSpace(ctx, key).name} is open again.`);
+  const q = ctx.state.queue, close = q.findIndex(t => t.t === 'allPlaced');
+  q.splice(close < 0 ? q.length : close, 0, { t: 'turn', p: p.id, token: true });
+  p.left += 1;
+  nightWatch(ctx, p, 1);
+}
+
 export default {
   id: 'purple',
   name: 'Purple',
   resource: P,
   handlers: {
     skipped,
+    ...handlers11({ callBack }),
     ...handlers3({
       interrupt(ctx, owner, answer, data) {
         const mover = ctx.player(data.pid);
@@ -396,7 +442,7 @@ export default {
         skipNext(ctx, ctx.player(who), 'Hold Up', p);
       },
     },
-    {
+    swap11({
       // Cory, 2026-10-22: "+1 purple, take another turn right after this one", in Roll Call's spot. One of your own
       // turns, moved up (his yes: you still place the same minions that round), like Crunch Time's two. Name: fill-in.
       // Cory, 2026-10-23: "Right Away should scale. +1 +2 +3" (Hold Up's wording).
@@ -404,7 +450,7 @@ export default {
       byRound: { lines: ['+1 purple', '+2 purple', '+3 purple'], rest: 'Your next turn comes right after this one.' },
       estimate: (ctx, p) => ctx.state.round + turnsNowEstimate(ctx, p, 1),
       resolve(ctx, p) { ctx.gain(p, P, ctx.state.round, { fromAction: true }); turnsNow(ctx, p, 1, 'Right Away'); },
-    },
+    }, CALL_BACK),
     {
       // Cory, 2026-10-22: "+1 purple, you can play on occupied spaces this round" (+2 with the inherent +1; he may
       // raise it to +3 after play). Any taken space, yours or a rival's, for the rest of this round. Name is Claude's fill-in.

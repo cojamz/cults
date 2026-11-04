@@ -318,6 +318,26 @@ function cardLine(rows, n) {
   return { shown, own, win, even, taken: shown ? takenIn / shown : 0, wr: own ? win / own : 0, evenWr: own ? even / own : 0 };
 }
 
+
+/** A wheel space ("<color id>: <name>", as v4-balance names it): in how many games it was on the table, how often a
+ *  table used it, and how its takers did. Spaces a trial adds or removes are found by comparing the two sides' rows. */
+function spaceLine(rows, key) {
+  const color = key.split(':')[0];
+  let shown = 0, uses = 0, own = 0, win = 0, even = 0;
+  for (const r of rows) {
+    if (!(r.table || []).includes(color)) continue;
+    shown++;
+    for (const p of seatsOf(r)) { const k = (p.places || {})[key] || 0; uses += k; if (k) { own++; win += p.win ? 1 : 0; even += 1 / r.seats; } }
+  }
+  return { shown, uses, own, win, perGame: shown ? uses / shown : 0, wr: own ? win / own : 0, evenWr: own ? even / own : 0 };
+}
+function spacePairs(t, b) {
+  const keys = rows => new Set(rows.flatMap(r => r.players.flatMap(p => Object.keys(p.places || {}))));
+  const T = keys(t), B = keys(b);
+  const added = [...T].filter(k => !B.has(k)), gone = [...B].filter(k => !T.has(k));
+  return added.map(k => [k, gone.find(g => g.split(':')[0] === k.split(':')[0]) || null]);
+}
+
 function verdict(c) {
   if (c.shown < 10) return 'barely dealt';
   if (c.taken < 0.35) return 'rarely bought';
@@ -394,6 +414,17 @@ function cmdReport() {
     const f = x => `taken ${pct(x.taken)}, owners won ${pct(x.wr)} (${x.own} owners)`;
     if (a) say(`- **${n}**${why ? ` (${why})` : ''}: ${f(a)}: ${verdict(a)}.${c ? ` Without the change, **${o}**: ${f(c)}.` : ''}${ownerPlan(t, n)}`);
     else if (c) say(`- **${o}** retired with nothing in its place: it was ${f(c)}.`);
+  }
+  const sp = spacePairs(t, b);
+  if (sp.length) {
+    say('');
+    say('## The spaces');
+    say(`"Used": times a table took it, per game it was on the table. "Takers won": players who took it at least once; an even share is ${pct(1 / spec.seats)}.`);
+    const g = x => `used ${x.perGame.toFixed(1)} a game, takers won ${pct(x.wr)} (${x.own} takers in ${x.shown} games)`;
+    for (const [n, o] of sp) {
+      const a = spaceLine(t, n), c = o ? spaceLine(b, o) : null;
+      say(`- **${n}**: ${g(a)}.${c ? ` Without the change, **${o}**: ${g(c)}.` : ''}`);
+    }
   }
   say('');
   const P = patterns(t), Q = patterns(b);
