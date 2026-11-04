@@ -162,7 +162,7 @@ export function LeaderRing({ state, id, size = 32, minion = 16, compact = false,
         const f = ((id * 3 + k) * 0.618034) % 1;
         return (
           <span key={k} className="orbit" data-minion={id} data-k={k}
-            style={{ ...at(k), width: minion, height: minion, animationDuration: `${(3.6 + f * 1.6).toFixed(2)}s`, animationDelay: `${(-f * 5).toFixed(2)}s` }}>
+            style={{ ...at(k), width: minion, height: minion, animationDuration: `calc(${(3.6 + f * 1.6).toFixed(2)}s * var(--idle-slow, 1))`, animationDelay: `calc(${(-f * 5).toFixed(2)}s * var(--idle-slow, 1))` }}>
             <Minion color={playerColor(id)} emoji={seatEmoji(state, id)} size={minion} />
           </span>
         );
