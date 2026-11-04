@@ -150,7 +150,9 @@
 .gift-card .gc-why{text-align:left}
 /* giving silver one at a time (Party Gifts, Largesse): each face's "+N" so far sits beside what they hold, read at
    a glance (Cory, 2026-11-01: "not clear how many times you've clicked") */
-.gift-card .gc-share .gc-tally{margin-left:4px;padding:0 5px;border-radius:8px;background:var(--paper-ink,#2a1f17);color:var(--paper,#f4ebd7);font:700 13px/17px var(--sans);font-style:normal}
+/* (on the tile's top right corner, a badge: beside the count it crowded "12 ●" and read as part of it; picky bot, Nov 4;
+   4px in, so the items row's scroller, padded 4px, never cuts it) */
+.gift-card .gc-share .gc-tally{position:absolute;top:-4px;right:-4px;min-width:20px;padding:0 5px;border-radius:8px;background:var(--paper-ink,#2a1f17);color:var(--paper,#f4ebd7);font:700 13px/17px var(--sans);font-style:normal;text-align:center}
 .gift-card .gc-share[data-given]{border-color:var(--paper-ink,#2a1f17)}
 .gift-card[data-gift="share"] .gc-title .num{font-weight:800;color:var(--paper-ink,#2a1f17)}
 /* a crowd (GiftCard CROWD: round III Demote with rivals' members, 85+ tiles): one-line name chips, the price after the
