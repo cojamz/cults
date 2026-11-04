@@ -1186,6 +1186,19 @@ export function scoringOf(state, qid) {
       score: (ctx, p) => { const n = p.res.silver || 0; return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: p.res.silver || 0 }) };
     if (fix.silver === 'present') by.silver = { label: 'Most silver, if on silver', counts: 'the silver you hold, if you have a minion on a Silver space when the round ends',
       score: (ctx, p) => (onIt(p) ? (p.res.silver || 0) : 0), show: (ctx, p) => ({ count: p.res.silver || 0 }) };
+    // Red (Actions lane, Nov 4, quality loop; /mnt/project-files/quality/pitches/actions-contest-red.md): contestFix.red
+    // 'allcards' the biggest cult (member cards, each counts 1), 'reign' red member cards with last round's Red winner
+    // counting 2 fewer, 'cheap' member cards costing 3 or less.
+    if (fix.red === 'allcards') by.red = { label: 'Most member cards', counts: 'your member cards when the round ends (each card counts 1)',
+      score: (ctx, p) => p.members.length };
+    if (fix.red === 'reign') {
+      const last = (state.contests || []).at(-1)?.results.find(c => c.qid === 'red')?.winners || [];
+      const reds = p => countMembersOfColor(state, p, 'red', { cards: true });
+      by.red = { label: 'Most red members, last winner −2', counts: "your red member cards when the round ends (each counts 1); last round's winner counts 2 fewer",
+        score: (ctx, p) => Math.max(0, reds(p) - (last.includes(p.id) ? 2 : 0)) };
+    }
+    if (fix.red === 'cheap') by.red = { label: 'Most cheap members', counts: 'your member cards costing 3 or less when the round ends (each counts 1)',
+      score: (ctx, p) => p.members.filter(uid => { const d = cardDef(state, uid); return d.s + d.w <= 3; }).length };
     if (fix.white === 'notTwice') {
       const last = (state.contests || []).at(-1)?.results.find(c => c.qid === 'trading')?.winners || [];
       by.trading = { ...fewest, label: 'Fewest members, not last round\'s winner', score: (ctx, p) => (last.includes(p.id) ? 0 : fewest.score(ctx, p)) };

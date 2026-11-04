@@ -299,3 +299,28 @@ describe('Green contest settings (contestFix.green)', () => {
     expect(c.winners).toEqual([1]);
   });
 });
+
+describe('Red contest settings (contestFix.red)', () => {
+  const redRow = (fix, members, extra = {}) => {
+    const s = table(['red', 'echo'], { n: 2, members, rules: { contests: 'byColor', contestFix: { red: fix } } });
+    Object.assign(s, extra);
+    return contestTable(s).find(c => c.qid === 'red');
+  };
+  it("'allcards' counts every member card once: two cheap cards beat one Mob", () => {
+    const c = redRow('allcards', [['red.mob'], ['echo.understudy', 'red.volunteer']]);
+    expect(c.label).toBe('Most member cards');
+    expect(c.winners).toEqual([1]);
+  });
+  it("'cheap' counts member cards costing 3 or less", () => {
+    // Volunteer costs 0, Intern 1; Mob 11 and Sponsor 10 don't count
+    const c = redRow('cheap', [['red.mob', 'red.sponsor'], ['red.volunteer']]);
+    expect(c.label).toBe('Most cheap members');
+    expect(c.winners).toEqual([1]);
+  });
+  it("'reign': last round's Red winner counts 2 fewer", () => {
+    const m = [['red.volunteer', 'red.intern', 'red.recruiter'], ['red.host', 'red.drive']];
+    expect(redRow('reign', m).winners).toEqual([0]);
+    const c = redRow('reign', m, { contests: [{ round: 1, prize: 4, results: [{ qid: 'red', winners: [0] }] }] });
+    expect(c.winners).toEqual([1]);
+  });
+});
