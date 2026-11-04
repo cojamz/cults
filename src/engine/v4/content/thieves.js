@@ -139,6 +139,7 @@ export const startSteal = (ctx, p, name, n, extra = {}) => stealStep(ctx, p, { n
 const estimateSteal = (ctx, p, n, who = ctx.rivals(p)) => Math.min(n, who.reduce((s, o) => s + stealable(ctx, p, o), 0)) * 1.33;
 
 // Members a thief may take.
+const ACT = new Set((globalThis.process?.env?.ACT || '').split(',').filter(Boolean)); // action bot tests (Nov 4): env only, never live
 function takeable(ctx, p, maxCost = Infinity, kind = 'member') {
   const out = [];
   for (const o of ctx.rivals(p)) {
@@ -269,9 +270,9 @@ const thieves = {
     },
     {
       key: 'heist', ring: 3, name: 'Poach', text: 'Recruit a rival’s member you choose, for free. +1 magenta.', // "recruit", not "steal" (Cory, Oct 31); still a steal for Bodyguards, Lie Low and Fence
-      estimate: (ctx, p) => { const l = takeable(ctx, p); return l.length ? Math.max(...l.map(([, c]) => memberHint(c))) : 0; },
+      estimate: (ctx, p) => { const l = takeable(ctx, p, ACT.has('poach8') ? 8 : Infinity); return l.length ? Math.max(...l.map(([, c]) => memberHint(c))) : 0; },
       resolve(ctx, p) {
-        const list = takeable(ctx, p);
+        const list = takeable(ctx, p, ACT.has('poach8') ? 8 : Infinity);
         if (!list.length) { ctx.log(`${p.name} found nothing worth a heist.`); return; }
         pickMember(ctx, p, list, 'Poach: recruit which member?', 'thieves.heist');
       },

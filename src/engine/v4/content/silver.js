@@ -176,11 +176,12 @@ export const silverActions = [
   },
   {
     key: 'largesse', copyDoesIt: true, ring: 3, name: 'Largesse', text: 'Give rivals up to 10 silver from the bank, split as you choose. +1 follower per silver you give.',
-    estimate: ctx => 2 * 10 - spillCost(ctx, 1) * 10,
-    resolve(ctx, p) { shareStep(ctx, p, { who: 'Largesse', max: 10, per: 1 }); },
+    estimate: ctx => { const n = ACT.has('largesse6') ? 6 : 10; return 2 * n - spillCost(ctx, 1) * n; },
+    resolve(ctx, p) { shareStep(ctx, p, { who: 'Largesse', max: ACT.has('largesse6') ? 6 : 10, per: 1 }); },
   },
 ];
 
+const ACT = new Set((globalThis.process?.env?.ACT || '').split(',').filter(Boolean)); // action bot tests (Nov 4): env only, never live
 /** Potluck: every rival gives the host 1 resource of their choice, then gains 2 silver. They answer at the same
  *  time (Cory, Oct 31: "they SHOULD be able to do at the same time otherwise takes forever"): one ask each, asked
  *  together (pending.also); bots are queued first so they answer at once and people never wait on them. */

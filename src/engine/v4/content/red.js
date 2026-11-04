@@ -6,6 +6,12 @@ import { add4, old4, handlers4 } from './replace4.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
 
+// bot test (ACT=walkin/initiation): the free member is this turn's recruit, so the turn's own recruit is gone
+function usesRecruit(ctx, p) {
+  const q = ctx.state.queue;
+  for (let i = 0; i < q.length; i++) { if (q[i].p !== p.id) continue; if (q[i].t === 'endTurn') break; if (q[i].t === 'buy' && !q[i].extra) { q.splice(i, 1); return; } }
+}
+const ACT = new Set((globalThis.process?.env?.ACT || '').split(',').filter(Boolean)); // action bot tests (Nov 4): env only, never live
 export default {
   id: 'red',
   name: 'Red',
@@ -45,7 +51,7 @@ export default {
         ctx.gain(p, 'red', 1, { fromAction: true });
         const top = ctx.state.pile[0];
         if (top === undefined) ctx.log(`${p.name}: the deck is empty.`);
-        else ctx.recruit(p, top, { free: true, top: true });
+        else { ctx.recruit(p, top, { free: true, top: true }); if (ACT.has('walkin')) usesRecruit(ctx, p); }
         for (const o of ctx.rivals(p)) ctx.gain(o, 'red', 1);
       },
       // All piles (Cory, 2026-11-01: "for the piles mode, we may need to change red round 1 action back to recruit the
@@ -60,14 +66,14 @@ export default {
       key: 'hireup', ring: 2, name: 'Promote', text: 'Give one of your members to a rival or the shop, and recruit one of theirs costing up to 2 more. +3 red.', copyDoesIt: true, // +3 red (Cory, Oct 30: balance run)
       estimate: (ctx, p) => 3 + (swapPairs(ctx, p, 'promote').length ? 2 : 0),
       resolve(ctx, p) {
-        ctx.gain(p, 'red', 3, { fromAction: true });
+        ctx.gain(p, 'red', ACT.has('promote1') ? 1 : 3, { fromAction: true });
         swap(ctx, p, 'promote', 'Promote: choose a member and its replacement');
       },
     },
     {
       key: 'trade', ring: 2, name: 'Demote', text: 'Give one of your members to a rival or the shop, and recruit one of theirs costing up to 2 less. +3 red.', copyDoesIt: true, // +3 red (Cory, Oct 30: balance run)
       estimate: (ctx, p) => 3 + (swapPairs(ctx, p, 'demote').length ? 2 : 0),
-      resolve(ctx, p) { ctx.gain(p, 'red', 3, { fromAction: true }); swap(ctx, p, 'demote', 'Demote: choose a member and its replacement'); },
+      resolve(ctx, p) { ctx.gain(p, 'red', ACT.has('promote1') ? 1 : 3, { fromAction: true }); swap(ctx, p, 'demote', 'Demote: choose a member and its replacement'); },
     },
     {
       key: 'take', ring: 3, name: 'Initiation', text: 'Recruit a member in the shop costing 8 or less, for free. +1 red.', // the cap (Cory, 2026-10-24: "8 or less")
@@ -76,6 +82,7 @@ export default {
         const shop = ctx.shopCards().filter(c => cost(c) <= 8);
         ctx.gain(p, 'red', 1, { fromAction: true });
         if (!shop.length) { ctx.log(`${p.name}: no shop member costs 8 or less.`); return; }
+        if (ACT.has('initiation')) usesRecruit(ctx, p);
         ctx.choose(p, 'Initiation: which member?', shop.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + cost(c),
         })), 'red.takeFree');

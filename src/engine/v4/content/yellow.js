@@ -14,6 +14,7 @@ const Y = 'yellow';
 const colors = ctx => ctx.state.resources;
 const others = ctx => colors(ctx).filter(c => c !== Y);
 /** Full sets: one of each color on the table. */
+const ACT = new Set((globalThis.process?.env?.ACT || '').split(',').filter(Boolean)); // action bot tests (Nov 4): env only, never live
 export const setsOf = (ctx, p) => Math.min(...colors(ctx).map(c => p.res[c] || 0));
 const held = (ctx, p) => colors(ctx).filter(c => (p.res[c] || 0) > 0);
 const missing = (ctx, p) => colors(ctx).filter(c => !(p.res[c] > 0));
@@ -104,7 +105,7 @@ export default {
       // Nov 2: "oh no i like makeover as is" (the per-contest follower version was live briefly in v0.99.505)
       key: 'makeover', ring: 3, name: 'Makeover', text: '+4 yellow, then rearrange your resources into any mix of colors.',
       estimate: () => 5,
-      resolve(ctx, p) { ctx.gain(p, Y, 4, { fromAction: true }); startLaunder(ctx, p, 'Makeover'); },
+      resolve(ctx, p) { ctx.gain(p, Y, ACT.has('makeover1') ? 1 : 4, { fromAction: true }); startLaunder(ctx, p, 'Makeover'); },
     },
   ],
 
