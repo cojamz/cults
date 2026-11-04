@@ -136,6 +136,12 @@ function cmdNew() {
   console.log(`Trial ${name}: ${games} ${level} games a side on ${sha.slice(0, 8)}, ${seats} players.`);
   console.log(`  Change: ${JSON.stringify(change)}. Base shares arm ${spec.arms.base}${blocksDone(spec.arms.base, games) ? ` (${blocksDone(spec.arms.base, games) * BLOCK} games already played)` : ''}.`);
   console.log(`  Cards: ${pairs.map(([n, o, why]) => `${n || '(none)'} for ${o || '(nothing)'}${why ? ` (${why})` : ''}`).join('; ')}`);
+  // the work desk's queue (/mnt/project-files/queue): a job there lets any idle runner pick the trial up
+  const jobs = process.env.QUEUE_DIR || '/mnt/project-files/queue/jobs';
+  if (!flags['no-queue'] && !process.env.TRIALS_DIR && existsSync(jobs)) {
+    writeFileSync(join(jobs, `trial-${name}.json`), JSON.stringify({ kind: 'trial', name, by: hostname(), at: spec.created }));
+    console.log(`Queued for the runners: ${jobs}/trial-${name}.json`);
+  }
   console.log(`Play it from any thread: node scripts/trial/trial.mjs work ${name}`);
 }
 
@@ -147,8 +153,14 @@ const blocksDone = (id, games) => blockStarts(games).filter(s => isDone(id, s)).
 
 function claimState(id, s) {
   const f = join(armDir(id), 'claims', String(s));
-  try { const st = statSync(f); return Date.now() - st.mtimeMs < STALE_MS ? 'live' : 'stale'; } catch { return 'free'; }
+  let st;
+  try { st = statSync(f); } catch { return 'free'; }
+  if (Date.now() - st.mtimeMs >= STALE_MS) return 'stale';
+  // a claim from this box whose worker is gone (killed, or the box restarted with the same name) is free at once
+  try { const c = JSON.parse(readFileSync(f, 'utf8')); if (c.host === hostname() && c.pid !== process.pid && !alive(c.pid)) return 'stale'; } catch {}
+  return 'live';
 }
+const alive = pid => { try { process.kill(pid, 0); return true; } catch (e) { return e.code === 'EPERM'; } };
 
 /** Claim a block: create its claim file exclusively. A stale claim (no heartbeat for 10 min) is taken over. */
 function claim(id, s, me) {
@@ -222,6 +234,7 @@ async function cmdWork() {
   clearInterval(beat);
   const left = ['trial', 'base'].map(k => blockStarts(spec.games).length - blocksDone(spec.arms[k], spec.games));
   console.log(`Played ${played} blocks here${failed ? `, ${failed} failed` : ''}. Left: trial ${left[0]}, base ${left[1]} blocks${left[0] + left[1] ? ' (claimed by other workers, or failed)' : ''}.`);
+  if (!left[0] && !left[1]) writeFileSync(join(trialDir(spec.name), 'complete'), new Date().toISOString());
   if (!left[0] && !left[1]) console.log(`TRIALDONE ${spec.name}: node scripts/trial/trial.mjs report ${spec.name}`);
   if (failed) process.exit(1);
 }
@@ -236,6 +249,17 @@ function loadSpec(name) {
 // ---------- status ----------
 function cmdStatus() {
   const names = pos[0] ? [pos[0]] : (existsSync(join(ROOT, 'trials')) ? readdirSync(join(ROOT, 'trials')) : []);
+  if (flags.json) {
+    const out = names.map(n => {
+      const spec = loadSpec(n), total = blockStarts(spec.games).length;
+      const side = k => { const st = blockStarts(spec.games).map(s => isDone(spec.arms[k], s) ? 'done' : claimState(spec.arms[k], s));
+        return { blocks: total, done: st.filter(x => x === 'done').length, playing: st.filter(x => x === 'live').length, stale: st.filter(x => x === 'stale').length }; };
+      const trial = side('trial'), base = side('base');
+      return { name: n, sha: spec.sha, games: spec.games, level: spec.level, trial, base, done: trial.done === total && base.done === total };
+    });
+    console.log(JSON.stringify(pos[0] ? out[0] : out));
+    return;
+  }
   if (!names.length) console.log('No trials yet.');
   for (const n of names) {
     const spec = loadSpec(n), total = blockStarts(spec.games).length;
