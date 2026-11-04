@@ -1,0 +1,157 @@
+<title>Cults Card Menu</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: one ranked column of paper cards on the game's walnut table; controls in a sticky rail at the top. */
+:root{
+  --bg:#efe6d2; --surface:#fbf6ea; --surface-2:#f3ead6; --fg:#2b2018; --fg-2:#6e5c49; --fg-3:#a39078; --hair:rgba(43,32,24,.14);
+  --accent:#9a6a1c;
+  --keep:#2f7a52; --watch:#a8741b; --cut:#b04a37; --out:#8a7d6c; --prot:#6b4f99; --new:#3e6fa3;
+  --c-red:#c4533f; --c-purple:#7d5ba6; --c-silver:#8695a4; --c-yellow:#c9b21f; --c-market:#4a80b8; --c-thieves:#b2386c; --c-trading:#b8ab90; --c-echo:#3f9467; --c-guests:#8f8576; --c-gold:#d49b27;
+  --serif:'Alegreya',Georgia,serif; --sans:'Alegreya Sans',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1d1611; --surface:#2b2119; --surface-2:#33271e; --fg:#f3e6c8; --fg-2:#cbb894; --fg-3:#8f7f66; --hair:rgba(242,232,210,.12);
+  --accent:#ffd99a; --keep:#5fbf8a; --watch:#e0a948; --cut:#e07a64; --out:#9d917f; --prot:#a98bd6; --new:#7fb0e0; --c-trading:#e6dcc6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1d1611; --surface:#2b2119; --surface-2:#33271e; --fg:#f3e6c8; --fg-2:#cbb894; --fg-3:#8f7f66; --hair:rgba(242,232,210,.12);
+  --accent:#ffd99a; --keep:#5fbf8a; --watch:#e0a948; --cut:#e07a64; --out:#9d917f; --prot:#a98bd6; --new:#7fb0e0; --c-trading:#e6dcc6; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.45 var(--sans);margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+header h1{font:800 30px/1.1 var(--serif);margin:0;text-wrap:balance}
+header p{margin:6px 0 0;color:var(--fg-2);max-width:68ch}
+.rail{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px;border-bottom:1px solid var(--hair);display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:14px}
+.seg{display:inline-flex;border:1px solid var(--hair);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{font:500 15px var(--sans);color:var(--fg-2);background:none;border:0;padding:6px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.seg button:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 14px var(--sans);border:1px solid var(--hair);background:var(--surface);color:var(--fg-2);border-radius:99px;padding:3px 10px 3px 8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{border-color:var(--fg);color:var(--fg)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
+input[type=search],select{font:15px var(--sans);color:var(--fg);background:var(--surface);border:1px solid var(--hair);border-radius:8px;padding:6px 10px}
+input[type=search]{flex:1 1 180px;min-width:0}
+.summary{display:flex;flex-wrap:wrap;gap:6px 18px;margin:14px 0 4px;color:var(--fg-2);font-size:15px}
+.summary b{font-variant-numeric:tabular-nums;color:var(--fg)}
+.legend{font-size:14px;color:var(--fg-3);margin:2px 0 12px;max-width:80ch}
+ol{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+li.card{display:grid;grid-template-columns:52px 1fr;gap:10px 12px;background:var(--surface);border:1px solid var(--hair);border-left:5px solid var(--cc);border-radius:8px;padding:9px 14px}
+li.card.out{background:var(--surface-2);opacity:.86}
+.score{text-align:center;font:800 26px/1 var(--serif);font-variant-numeric:tabular-nums}
+.score small{display:block;font:500 12px var(--sans);color:var(--fg-3);margin-top:3px}
+.score .na{color:var(--fg-3);font-size:20px}
+.body{min-width:0}
+.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.name{font:700 19px/1.2 var(--serif)}
+.meta{color:var(--fg-3);font-size:14px}
+.pill{font:700 12px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;padding:4px 7px;border-radius:5px;color:var(--surface);background:var(--out)}
+.pill.keep{background:var(--keep)}.pill.watch{background:var(--watch)}.pill.cut{background:var(--cut)}.pill.untested{background:var(--new)}.pill.out{background:var(--out)}
+.tag{font:500 12px/1 var(--sans);letter-spacing:.05em;text-transform:uppercase;padding:3px 6px;border-radius:5px;border:1px solid var(--hair);color:var(--fg-2)}
+.tag.prot{border-color:var(--prot);color:var(--prot)}
+.text{margin:3px 0 0;font-style:italic;color:var(--fg)}
+.reason{margin:3px 0 0;color:var(--fg-2)}
+.ev{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:4px;font-size:14px;color:var(--fg-2)}
+.ev span::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px;background:var(--fg-3)}
+.ev .good::before{background:var(--keep)}.ev .bad::before{background:var(--cut)}.ev .hot::before{background:var(--watch)}
+.empty{padding:30px;text-align:center;color:var(--fg-3)}
+footer{margin-top:24px;color:var(--fg-3);font-size:13px}
+@media (max-width:560px){li.card{grid-template-columns:40px 1fr;padding:10px}.score{font-size:21px}header h1{font-size:25px}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Cults Card Menu</h1>
+    <p id="sub">Every member and wheel space, ranked, with the reason for each score.</p>
+  </header>
+
+  <div class="rail" role="toolbar" aria-label="Filters">
+    <div class="seg" id="kind" aria-label="Card kind">
+      <button id="k-member" data-v="member" aria-pressed="true">Members</button>
+      <button id="k-space" data-v="space" aria-pressed="false">Actions</button>
+    </div>
+    <div class="seg" id="view" aria-label="Which cards">
+      <button id="v-live" data-v="live" aria-pressed="true">Live + in testing</button>
+      <button id="v-all" data-v="all" aria-pressed="false">Everything, archived too</button>
+    </div>
+    <select id="sort" aria-label="Sort">
+      <option value="rank">Best first</option>
+      <option value="worst">Worst first</option>
+      <option value="color">By color</option>
+      <option value="name">A to Z</option>
+    </select>
+    <input type="search" id="q" placeholder="Find a card or a word in its text" aria-label="Search">
+    <div class="chips" id="colors" aria-label="Colors"></div>
+  </div>
+
+  <div class="summary" id="summary"></div>
+  <p class="legend" id="legend"></p>
+  <ol id="list"></ol>
+  <footer id="foot"></footer>
+</div>
+
+<script>
+const DATA = /*DATA*/null;
+const COLORS = {red:'Red',purple:'Purple',silver:'Silver',yellow:'Yellow',market:'Blue',thieves:'Magenta',trading:'White',echo:'Green',guests:'Grey',gold:'Gold'};
+const VERDICT = {keep:'Keep',watch:'Watch',cut:'Cut',untested:'Untested',out:'Archived'};
+const ORDER = {keep:0,watch:1,untested:2,cut:3,out:4};
+const STATUS = {live:'Live',considered:'In testing',archived:'Archived'};
+const st = {kind:'member', view:'live', sort:'rank', q:'', colors:new Set()};
+try { const s = JSON.parse(localStorage.getItem('menu-state')||'null'); if (s) { Object.assign(st, s, {colors:new Set(s.colors||[])}); } } catch {}
+if (location.hash === '#actions') st.kind = 'space'; if (location.hash === '#members') st.kind = 'member';
+const save = () => { try { localStorage.setItem('menu-state', JSON.stringify({...st, colors:[...st.colors]})); } catch {} };
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+
+function seg(id, key){ $(id).addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; st[key] = b.dataset.v; if (key==='kind') history.replaceState(null,'', st.kind==='space'?'#actions':'#members'); render(); }); }
+seg('kind','kind'); seg('view','view');
+$('sort').addEventListener('change', e => { st.sort = e.target.value; render(); });
+$('q').addEventListener('input', e => { st.q = e.target.value.toLowerCase(); render(); });
+window.addEventListener('hashchange', () => { st.kind = location.hash === '#actions' ? 'space' : 'member'; render(); });
+
+function pool(){
+  return DATA.cards.filter(c => c.kind === st.kind && (st.view === 'all' || c.status !== 'archived'));
+}
+function render(){
+  for (const b of document.querySelectorAll('#kind button')) b.setAttribute('aria-pressed', b.dataset.v === st.kind);
+  for (const b of document.querySelectorAll('#view button')) b.setAttribute('aria-pressed', b.dataset.v === st.view);
+  $('sort').value = st.sort; if ($('q').value !== st.q) $('q').value = st.q;
+  const all = pool();
+  const present = [...new Set(all.map(c => c.color))].sort((a,b) => Object.keys(COLORS).indexOf(a) - Object.keys(COLORS).indexOf(b));
+  $('colors').innerHTML = present.map(c => `<button class="chip" id="col-${c}" data-c="${c}" aria-pressed="${st.colors.has(c)}"><span class="dot" style="background:var(--c-${c})"></span>${COLORS[c]||c}</button>`).join('');
+  let cs = all.filter(c => !st.colors.size || st.colors.has(c.color));
+  if (st.q) cs = cs.filter(c => (c.name+' '+c.text+' '+c.reason).toLowerCase().includes(st.q));
+  const sc = c => c.score ?? -1;
+  const cmp = {
+    rank:(a,b) => ORDER[a.verdict]-ORDER[b.verdict] || sc(b)-sc(a) || a.name.localeCompare(b.name),
+    worst:(a,b) => ORDER[b.verdict]-ORDER[a.verdict] || sc(a)-sc(b) || a.name.localeCompare(b.name),
+    color:(a,b) => Object.keys(COLORS).indexOf(a.color)-Object.keys(COLORS).indexOf(b.color) || (a.round||'').localeCompare(b.round||'') || ORDER[a.verdict]-ORDER[b.verdict] || sc(b)-sc(a),
+    name:(a,b) => a.name.localeCompare(b.name),
+  }[st.sort];
+  cs.sort(cmp);
+  const count = v => cs.filter(c => c.verdict === v).length;
+  $('summary').innerHTML = `<span><b>${cs.length}</b> ${st.kind==='space'?'actions':'members'}</span>` + ['keep','watch','untested','cut','out'].filter(v=>count(v)).map(v => `<span><b>${count(v)}</b> ${VERDICT[v].toLowerCase()}</span>`).join('');
+  $('list').innerHTML = cs.length ? cs.map(row).join('') : `<li class="empty">No cards match.</li>`;
+  save();
+}
+function row(c){
+  const where = c.kind === 'space' ? `${COLORS[c.color]||c.color}${c.round ? ', round '+c.round : ''}` : `${COLORS[c.color]||c.color}${c.price ? ' · '+c.price : ''}`;
+  const score = c.score != null ? `${c.score}<small>of ${c.paper.of}</small>` : `<span class="na">–</span><small>no score</small>`;
+  const ev = (c.evidence||[]).map(e => `<span class="${e.tone}">${esc(e.t)}</span>`).join('');
+  return `<li class="card ${c.verdict==='out'?'out':''}" style="--cc:var(--c-${c.color})">
+    <div class="score" title="Card team score">${score}</div>
+    <div class="body">
+      <div class="top"><span class="name">${esc(c.name)}</span><span class="pill ${c.verdict}">${VERDICT[c.verdict]}</span>${c.status!=='live'&&c.verdict!=='out'?`<span class="tag">${STATUS[c.status]}</span>`:''}${c.protected?'<span class="tag prot">Protected</span>':''}<span class="meta">${esc(where)}</span></div>
+      <p class="text">“${esc(c.text)}”</p>
+      <p class="reason">${esc(c.reason)}</p>
+      ${ev?`<div class="ev">${ev}</div>`:''}
+    </div></li>`;
+}
+$('colors').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; const c = b.dataset.c; st.colors.has(c) ? st.colors.delete(c) : st.colors.add(c); render(); });
+const built = new Date(DATA.built);
+$('legend').textContent = 'Score: the card team\'s judges, out of 20 (13 is the bar). Keep: over the bar and bot games agree, or it beat the card it replaced. Watch: the judges and the bot games disagree. Cut: under the bar or breaks a standing rule. Untested: built, waiting on games. Bot games outrank the judges wherever both exist.';
+$('foot').textContent = `Updated ${built.toLocaleString('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})} Eastern. Scores from ranking ${DATA.ranking||'–'}; bot numbers from ${DATA.bots||'–'}.`;
+render();
+</script>
