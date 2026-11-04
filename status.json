@@ -1,0 +1,70 @@
+{
+ "updated": "9:55pm Eastern",
+ "rows": [
+  {
+   "workstream": "Wheel",
+   "blocked": "No",
+   "eta": "10:30pm"
+  },
+  {
+   "workstream": "Animations and info tracking",
+   "blocked": "Yes",
+   "eta": "after your 3 picks and Relaxed yes"
+  },
+  {
+   "workstream": "Harvest picker",
+   "blocked": "No",
+   "eta": "picture to you ~10:30pm"
+  },
+  {
+   "workstream": "Red and White Cloaks",
+   "blocked": "No",
+   "eta": "numbers to you ~12:00am"
+  },
+  {
+   "workstream": "Hostesses rework",
+   "blocked": "Yes",
+   "eta": "after your pick"
+  },
+  {
+   "workstream": "Melting Pot, Dilute, Mob",
+   "blocked": "Yes",
+   "eta": "after your pick"
+  },
+  {
+   "workstream": "Action changes",
+   "blocked": "Yes",
+   "eta": "after your picks"
+  },
+  {
+   "workstream": "New members",
+   "blocked": "No",
+   "eta": "next set ~11:30pm"
+  },
+  {
+   "workstream": "Emoji minion sounds",
+   "blocked": "Yes",
+   "eta": "after keep or redo"
+  },
+  {
+   "workstream": "Emoji-style members",
+   "blocked": "Yes",
+   "eta": "after your pick"
+  },
+  {
+   "workstream": "Game log critiques",
+   "blocked": "Yes",
+   "eta": "after Copy game yes/no"
+  },
+  {
+   "workstream": "Setup modes audit",
+   "blocked": "No",
+   "eta": "11:00pm"
+  },
+  {
+   "workstream": "Test gates",
+   "blocked": "No",
+   "eta": "12:30am"
+  }
+ ]
+}
