@@ -143,8 +143,9 @@ function charmPick(ctx, p, left) {
   })), 'silver.charm', { left });
 }
 function polishPick(ctx, p, left, who = 'Polish') {
-  ctx.choose(p, `${who}: +1 of which color? (${left} to pick)`, otherColors(ctx).map(c => ({
-    id: `color:${c}`, label: `+1 ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0),
+  // any color, silver included (Cory, Nov 4 1:14pm: "yeah allow silver i guess"; the words already said "any colors")
+  ctx.choose(p, `${who}: +1 of which color? (${left} to pick)`, ctx.state.resources.map(c => ({
+    id: `color:${c}`, label: `+1 ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0) - (c === S ? 1 : 0),
   })), 'silver.polish', { left, who });
 }
 

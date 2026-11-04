@@ -1532,3 +1532,7 @@ svg.sigil{display:inline-block;vertical-align:-1px;flex:none}
 .menu-sound{display:flex;align-items:center;gap:8px;padding-right:8px}
 .menu-sound .sound-vol{flex:1;min-width:90px;accent-color:var(--lamp-ink,#ffd99a);cursor:pointer}
 .menu-sound .sound-vol:disabled{opacity:.4;cursor:default}
+
+/* off player screens (first-time readers took them for debug text; default taken Nov 4): the home title's version
+   (How to play still prints it) and the color tiles' 2.0 tags; both stay in the page for tests and screen readers */
+.home .version[data-version],.sphere .ver{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
