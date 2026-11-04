@@ -153,7 +153,8 @@ const members = [
   // REPLACE9 bot test (Members C, Nov 4, batch bC1: paper 17 vs Extra Hand's 14, the guests' set 10 -> 14): Extra
   // Hand's place. 6 any as a player sees it. Fewest followers when its Round Start comes up (ties count); no extra
   // minions in round I, the game's rule (extraMinion).
-  ...add9(m('standin', 'Stand-In', 'purple', 0, 5, 'Round Start: if you have the fewest followers (ties count), +1 minion this round.', {
+  // c2 (Nov 4, A/B c1: bots only ever met it in round III, after the last Round Start): joins in round I.
+  ...add9(m('standin', 'Stand-In', 'purple', 0, 5, 'Round Start: if you have the fewest followers (ties count), +1 minion this round.', { round: 1,
     onRoundStart(ctx, owner) {
       const mine = ctx.followers(owner);
       if (!ctx.state.players.every(o => o === owner || ctx.followers(o) >= mine)) return;

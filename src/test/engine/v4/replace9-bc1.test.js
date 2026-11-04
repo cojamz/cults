@@ -41,6 +41,7 @@ describe('Stand-In: "Round Start: if you have the fewest followers (ties count),
   it('price, and Extra Hand retired', () => {
     const d = defById('benders.standin');
     expect(d.s + d.w).toBe(6);
+    expect(d.round).toBe(1);
     expect(defById('benders.extrahand').retired).toBe(true);
   });
   const start = bonus => {
