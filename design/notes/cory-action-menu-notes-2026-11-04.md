@@ -36,3 +36,9 @@ His words, sorted. No tests run yet (tokens tight). Test items are also in /mnt/
 - **Sleep In** ("+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your next minion is placed after everyone else’s."): "Yep. That's okay."
 
 Also: "I don't understand this X points over even. I'm a little suspicious of it." Answered in the menu thread.
+
+## Bot read on the four he asked about (hard bots, 120 games, live deck)
+- **Crunch Time** "+2 purple. Your next two turns come right after this one.": likely the bots. They take it about 1 time in 100 when it's open, so its -7 (give or take 8) rests on almost no games.
+- **Peek** "Look at the top 4 of the pile and put them back in any order. This turn your recruit may be one of them. +2 blue in round I, +4 in round II, +6 in round III.": likely the bots. They pick it 9% of the times it's open and rarely plan the recruit it sets up; -7 give or take 4 (weaker bots: -2).
+- **Promote** "Give one of your members to a rival or the shop, and recruit one of theirs costing up to 2 more. +3 red.": may really be a little weak. Hard -6 give or take 4, and the weaker bots also have it below average (-3).
+- **Help Yourself** "Steal 3 resources in round I, 4 in round II, 5 in round III, split among rivals as you choose.": borderline. Hard -4 give or take 3; the weaker bots have it at exactly average.
