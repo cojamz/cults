@@ -29,7 +29,7 @@ describe('the curated member decks', () => {
   // Silver deals 10 besides Caterer, its artifact (Cory, Nov 1: "on silver - it should be 10"; Gift Wrapper)
   // Yellow 16 on the 15-card deck: Tourist joined (Cory, Nov 1); it replaces Go-Between only in the 10-card deck
   const DEALT = { echo: 15, red: 13, thieves: 15, purple: 13, market: 12, trading: 12, yellow: 16, silver: 11 };
-  it('Green deals 15, Blue 12, Red and Purple 13, Magenta 15, White 12, Yellow 15, other spheres 10, guests 15; no cut card is dealt', () => {
+  it('Green deals 15, Blue 12, Red and Purple 13, Magenta 15, White 12, Yellow 15, other spheres 10, guests 17; no cut card is dealt', () => {
     for (const q of SPHERES) {
       const s = createGame({ seats: seats(4), quadrants: [q, ...SPHERES.filter(x => x !== q).slice(0, 3)] });
       // artifacts are picked, never dealt (Cory, 2026-10-24): their cards don't count here
@@ -39,7 +39,7 @@ describe('the curated member decks', () => {
       const fromDeck = ARTIFACTS[q] && !CUT.has(ARTIFACTS[q]) && !defById(ARTIFACTS[q]).artifact ? 1 : 0;
       expect(dealt.filter(d => d.startsWith(`${q}.`)).length, q).toBe((DEALT[q] ?? 10) - fromDeck);
       expect(dealt.filter(d => CUT.has(d))).toEqual([]);
-      expect(dealt.filter(d => d.startsWith('benders.')).length).toBe(15); // Cory's 15 guests (Oct 28)
+      expect(dealt.filter(d => d.startsWith('benders.')).length).toBe(17); // Cory's 15 guests (Oct 28), plus Cheerleaders and Victors (Nov 4)
     }
   });
 

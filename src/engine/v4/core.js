@@ -639,6 +639,8 @@ function inputFor(state, task) {
       // a second buy (Big Spender) is offered only after a real first buy, while an unspent one is held
       if (task.extra && !(p.turnBuys > 0 && otherSecondBuy(state, p))) return { kind: 'buy', prompt: '', options: [] };
       const barkerOnly = !!task.barker;
+      // Barker left the cult after its extra recruit was queued (a swap or steal in the same turn): nothing to recruit
+      if (barkerOnly && followersTwiceCard(state, p) === undefined) return { kind: 'buy', prompt: '', options: [] };
       const opts = [];
       // which members and tiers can be paid for at all: an existence check, not the ranked list of every way to pay
       // (the list scores each way against the contests: most of a round III step's engine time, run for every shop card,

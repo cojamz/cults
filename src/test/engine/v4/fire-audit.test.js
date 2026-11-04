@@ -119,6 +119,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'market.plusone', // under 3 holds when the Nov 3 live replacements (Impersonator, Creditors, Kidnapper, Godparent) moved the games; cards-market-concepts covers it
       'thieves.kidnappers', // under 3 holds (2) when Wallflower doubling every copied action (Nov 3) moved the games; replace3.test.js covers it
       'echo.bait', // under 3 holds when bots began rating every choice over every option (Nov 2) moved the games; green-bait-trading covers it
+      'market.underbidder', 'echo.encore', // under 3 holds when Cheerleaders and Victors joined the grey deck (Nov 4) moved the games; cards-market and cards-echo / replace tests cover them
       'market.hawkers']); // new Nov 4 (Connoisseurs' place), held in 2 of these games, fired in both; replace4.test.js (Hawker) covers its lines
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);
@@ -136,6 +137,8 @@ const SPHERES = ['gold', 'red', 'purple', 'silver', 'yellow'];
 // Members that may stay unnamed on bot tables, with why (see design/eval/card-ledger-a.md).
 // Conditional cards that can go a whole bot game without their condition; each has a named test of its own.
 const ALLOW = {
+  // Cheerleaders and Victors joining the grey deck (Nov 4) moved the seeded games: recruited in 1 game, never named there
+  'purple.extrashift': 'cut from the 10 deck; purple-members-oct22 (Extra Shift) covers it',
   // bots rating every choice over every option (Nov 2) moved the seeded games: recruited in 1, and no turn was skipped after
   'purple.gossip': 'fires only when a turn is skipped; purple-members-oct22 (Gossip) covers it',
   // Lie Low steals 1 (Nov 1) moved the seeded games: Apprentice recruited in 4 without an extra turn coming after
