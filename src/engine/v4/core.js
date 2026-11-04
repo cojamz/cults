@@ -306,7 +306,8 @@ function priceParts(state, p, def, how = {}) {
   const goldDouble = sumMemberFlag(state, p, 'goldPaysDouble') > 0;
   const q = colored > 0 ? colorOf(def) : null;
   // Smooth Talker (flag silverPaysColor): your silver pays a colored part too
-  const alt = q && q !== 'silver' && sumMemberFlag(state, p, 'silverPaysColor') > 0 ? 'silver' : null;
+  // Silver Tongues (REPLACE16=tongues, flag tableSilverPaysColor): everyone's silver pays a colored part
+  const alt = q && q !== 'silver' && (sumMemberFlag(state, p, 'silverPaysColor') > 0 || tableFlag(state, 'tableSilverPaysColor')) ? 'silver' : null;
   return { q, alt, colored, total, worth: c => (c === 'gold' && goldDouble ? 2 : 1) };
 }
 const unitsOf = (v, worth) => Object.entries(v).reduce((t, [c, n]) => t + (n || 0) * worth(c), 0);
@@ -1478,7 +1479,7 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   // top: Red's round I space takes the deck's top member (Cory, 2026-10-27)
   const bottom = idx < 0 && fromPile >= 0 && fromPile === state.pile.length - 1 && fromPile >= pileReach(state, p) && sumMemberFlag(state, p, 'pileBottom') > 0;
   if (idx < 0 && (fromPile < 0 || (fromPile >= pileReach(state, p) && !(top && fromPile === 0) && !bottom))) throw new Error(`Card ${uid} is not in the shop`);
-  let paid = 'free', spent = null;
+  let paid = 'free', spent = null, silverForColor = false;
   if (!free) {
     const spend = chosen || paymentPlan(state, p, uid, how);
     spent = spend;
@@ -1513,10 +1514,13 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
       const needS = Math.max(0, def0.s - p.discount - sumMemberFlag(state, p, 'costReduction'));
       const worth = q0 === 'gold' && sumMemberFlag(state, p, 'goldPaysDouble') > 0 ? 2 : 1;
       if ((spend[q0] || 0) * worth < needS) notes.push(`${flagName(state, p, 'anyColorPart')}: colored part in any colors`);
-    } else if (!how.anyColors && !how.half && q0 !== 'silver' && state.resources.includes(q0) && sumMemberFlag(state, p, 'silverPaysColor') > 0) {
-      // Smooth Talker: say so when silver paid some of the colored part
+    } else if (!how.anyColors && !how.half && q0 !== 'silver' && state.resources.includes(q0) && (sumMemberFlag(state, p, 'silverPaysColor') > 0 || tableFlag(state, 'tableSilverPaysColor'))) {
+      // Smooth Talker (or anyone's Silver Tongues): say so when silver paid some of the colored part
       const needS = Math.max(0, def0.s - p.discount - sumMemberFlag(state, p, 'costReduction'));
-      if ((spend[q0] || 0) < needS && spend.silver > 0) notes.push(`${flagName(state, p, 'silverPaysColor')}: silver paid for ${q0}`);
+      if ((spend[q0] || 0) < needS && spend.silver > 0) {
+        silverForColor = true;
+        notes.push(`${sumMemberFlag(state, p, 'silverPaysColor') > 0 ? flagName(state, p, 'silverPaysColor') : 'Silver Tongues'}: silver paid for ${q0}`);
+      }
     }
     if (notes.length) paid += `; ${notes.join(', ')}`;
     if (stall) { for (const r in spend) stall.res[r] = (stall.res[r] || 0) + spend[r]; paid += `, paid to ${stall.name}'s ${stallAt[2]}`; }
@@ -1532,12 +1536,12 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   p.members.push(uid);
   const def = cardDef(state, uid);
   log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : bottom ? ` from the bottom of the pile with ${p.name}'s ${flagName(state, p, 'pileBottom')}` : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
-  memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 && !stall });
+  memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 && !stall, silverForColor });
   // an arrival like any other (Saboteur: "whenever this joins your cult"); swaps and moves fire it in their own code
   memberJoined(state, p, uid);
 }
 /** A member recruit: p took it (shop, free, a steal) or swapped it in with their own red action (see recruited). */
-function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop = false } = {}) {
+function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop = false, silverForColor = false } = {}) {
   state.recruits += memberWeight(state, uid);
   p.turnRecruits += memberWeight(state, uid);
   const card = state.cards[uid], def = defById(card.def);
@@ -1551,7 +1555,7 @@ function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop 
   const w = wrap(state, card);
   // spent: what the recruit paid (Collector reads silver in it); null when free
   // fromShop: a member taken from the face-up shop (Red Cloak, Cory Nov 1)
-  recruited(state, p, { member: w, spent, fromShop });
+  recruited(state, p, { member: w, spent, fromShop, silverForColor });
   // a when-recruited effect leaves a trace like any other member hook (Seed Money, Pilgrim, Retinue…)
   if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));
   joinNow(state, p, w, [def]);
@@ -1948,6 +1952,10 @@ function eachMember(state, fn, keys) {
 function flagName(state, p, flag) {
   for (const uid of p.members) for (const def of effectiveDefs(state.cards[uid])) if (def[flag]) return def.name;
   return 'member';
+}
+/** Does any player's cult hold a member with this flag? (rules that bend the table for everyone, e.g. Silver Tongues) */
+function tableFlag(state, flag) {
+  return state.players.some(o => sumMemberFlag(state, o, flag) > 0);
 }
 function sumMemberFlag(state, p, flag, map) {
   let s = 0;

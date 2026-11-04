@@ -12,6 +12,8 @@ import { add6, old6 } from './replace6.js';
 import { add8, old8, handlers8 } from './replace8.js';
 import { swap11, handlers11 } from './replace11.js';
 import { add14, old14, handlers14 } from './replace14.js';
+import { add16, old16, on16 } from './replace16.js';
+import { ON8 } from './replace8.js';
 import { see, endsAhead, SEE_SPITE } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -588,7 +590,7 @@ const silver = {
       },
       ...see(i => [2, 3].filter(r => r > i.round).length * (i.n - 1) * 0.6),
     })),
-    m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', { ...old8('silver.toastmaster'),
+    m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', { ...old8('silver.toastmaster'), ...old16('silver.toastmaster'),
       afterAction(ctx, owner, card, qid) { if (qid === S) owner.bonus += 1; },
     }),
     m('gala', 'Debutantes', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, ...old2, ...old6, // worth 2 (Cory, Nov 1)
@@ -625,7 +627,19 @@ const silver = {
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.08 * WW_N),
     })),
     // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
-    m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2, ...old14('bigspenders'), ...old14('charmers') }),
+    m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2, ...old14('bigspenders'), ...old14('charmers'), ...old16('silver.smoothtalker') }),
+    // REPLACE16 bot test (thread "Make Silver cards more communal", Nov 4; silver-communal/paper.md 3): Smooth Talkers'
+    // place, same price. Everyone's silver pays a colored part (core.js tableFlag); a rival's recruit whose colored part
+    // took silver pays the owner 1 follower, once per recruit. Your own recruits pay nothing extra.
+    ...add16(m('tongues', 'Silver Tongues', 5, 5, "Everyone's silver pays for any color. Whenever a rival pays for a member's color with silver, +1 follower.", { tableSilverPaysColor: true, f: 2, n: 2,
+      onRecruit(ctx, owner, card, by, what) {
+        if (by === owner || !what?.member || !what.silverForColor) return;
+        owner.bonus += 1;
+        ctx.log(`${owner.name}'s Silver Tongues: +1 follower (${by.name} paid for a member's color with silver).`);
+      },
+      // BOTSEE: a rival's silver covers a colored part on about one recruit in eight once gifts are flowing
+      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r] * [0.05, 0.12, 0.15][r - 1], 0)),
+    })),
     // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-smoothtalkers.md): Smooth Talkers' place, same price.
     // The silver you pay for a member (its own recruit not included: it isn't in your cult yet) is handed to rivals you
     // choose, all of it, and pays a follower each, as Party Gifts pays from the bank. Follower buys don't count.
@@ -790,7 +804,7 @@ const silver = {
     // payment has any silver in it.
     // SOCIALITES_N=1: the +1 version (paper 15), a second trial in case +2 runs away (16 hits in a seat-1 Normal game).
     // Was live in v0.99.571-572 in High Society's place; back to a bot test Nov 4 (Cory, 12:36pm: High Society stays).
-    ...add8(m('socialites', 'Socialites', 4, 3, `Whenever a rival recruits paying silver, +${SOC_N} follower${SOC_N === 1 ? '' : 's'}.`, { f: 2,
+    ...(on16('socialites') && !ON8.includes('socialites') ? (c => [c]) : add8)(m('socialites', 'Socialites', 4, 3, `Whenever a rival recruits paying silver, +${SOC_N} follower${SOC_N === 1 ? '' : 's'}.`, { f: 2,
       onRecruit(ctx, owner, card, by, what) {
         if (by === owner || !(what?.spent?.[S] > 0)) return;
         owner.bonus += SOC_N;
