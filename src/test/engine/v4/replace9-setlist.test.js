@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Members C (bC11, Nov 4): Setlist, "On Use, once per round: copy the action you took on your last turn.", Roadie's
+// Members C (bC11, Nov 4): Setlist, "On Use, once per round: copy the last action you took this round." (reworded after the Hard A/B: it copies this round's latest space)", Roadie's
 // place under REPLACE9=setlist.
 import { describe, it, expect } from 'vitest';
 
