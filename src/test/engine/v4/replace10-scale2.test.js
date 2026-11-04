@@ -15,7 +15,7 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 describe('REPLACE10: Song Request and Stagehand', () => {
   it('prices as pitched; Busker and Roadie are retired', () => {
     const sr = defById('echo.songrequest'), st = defById('echo.stagehand');
-    expect([sr.s, sr.w]).toEqual([3, 2]); // defById prints the colored part
+    expect([sr.s, sr.w]).toEqual([4, 3]); // defById prints the colored part (live price, Nov 4)
     expect([st.s, st.w]).toEqual([2, 1]);
     expect(defById('echo.evergreen').retired).toBe(true);
     expect(defById('echo.roadie').retired).toBe(true);

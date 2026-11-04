@@ -620,8 +620,9 @@ const echoQ = {
     // REPLACE10 bot test (Nov 4 noon, scale-up batch 2, pitches/D-scale2.md): Busker's place. 3 green + 2 any as a player
     // sees it. On your turn (placing or buying), once a round: one action a rival has a minion on, done for you as Echo
     // copies (Agents blocks it). The card is turned until the next round starts.
-    // REPLACE10=songrequest,songrequest2: 4 green + 3 any (its first trial: owners won 39% at 3 + 2, Busker 31%)
-    ...add10(m('songrequest', 'Song Request', on10('songrequest2') ? 3 : 2, on10('songrequest2') ? 3 : 2, 'On Use, once per round: copy an action a rival has a minion on.', {
+    // Live Nov 4 (director, under Cory's "you dont need my permission"): 4 green + 3 any. Trials: at 3 + 2 owners won 39%
+    // (Busker 31%); at 4 + 3 taken 84% (Busker 85%), owners won 35% (Busker 32%).
+    m('songrequest', 'Song Request', 3, 3, 'On Use, once per round: copy an action a rival has a minion on.', {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
@@ -631,9 +632,9 @@ const echoQ = {
         offer(ctx, owner, list, 'Song Request: copy which rival action?', 'now', 'Song Request');
       },
       botActivate: (ctx, p) => targets(ctx, p, 'rival').some(e => entryValue(ctx, e, p) >= 3),
-    })),
+    }),
     m('evergreen', 'Busker', 1, 2, // Cory, 2026-10-25: cost 3 (was 4)
-      'On Recruit: +2 green. Round Start: +2 green.', { ...old10('warmup'), ...old10('songrequest'),
+      'On Recruit: +2 green. Round Start: +2 green.', { retired: true, // Song Request takes its place (Nov 4)
       onRecruited(ctx, owner) { ctx.gain(owner, 'green', 2); },
       onRoundStart(ctx, owner) { ctx.gain(owner, 'green', 2); },
     }),
