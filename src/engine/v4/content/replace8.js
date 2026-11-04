@@ -1,6 +1,6 @@
 // Quality loop, lane B (Silver; Nov 4 overnight; /mnt/project-files/quality/pitches/B-*.md), bot games only. REPLACE8=1
 // deals the new members in their old cards' places (the old card is retired, so never dealt):
-//   silver.debtcollector (Debt Collectors) -> silver.wellwishers, silver.polisher (Polisher) -> silver.usher.
+//   silver.debtcollector (Debt Collectors) -> silver.wellwishers, silver.polisher (Polisher) -> silver.usher, silver.toastmaster (Toastmaster) -> silver.guestofhonor.
 // Unset, the new cards are never defined and nothing in the game changes.
 export const REPLACE8 = globalThis.process?.env?.REPLACE8 === '1';
 /** The new card, in its color's member list only under the switch. */
