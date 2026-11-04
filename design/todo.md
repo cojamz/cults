@@ -54,6 +54,7 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 - Round I resource draft animated, once the perf items are in.
 
 ## Later
+- A better visual language for actions on the wheel, after actions and members are more locked in (Cory, Nov 4 11:44am: "eventually we need a better visual language here, but lets wait until we're more lokked in on actions and members"). Until then White's clarity work is wording only.
 - Engineering: structured events instead of log parsing; shared verbs for copies; online auth rules; type checking.
 - Fresh balance run: done Oct 29 afternoon (design/eval/balance-oct29b); Cory's five calls in the report are open. Go-Between Yellow batch still running.
 - Backlog (Cory, Oct 29: "yes but not right now"): rework Greatest Hits ("Copy every action with your minion"), which wins two games in three for its taker in every bot run; bring 5 ideas when he picks it up.
