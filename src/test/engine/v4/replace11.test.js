@@ -232,3 +232,20 @@ describe('Blue contest settings (contestFix.market)', () => {
     expect(c.winners).toEqual([0]);
   });
 });
+
+describe('Green contest settings (contestFix.green)', () => {
+  const greenRow = (fix, members) => {
+    const s = table(['red', 'echo'], { n: 2, members, rules: { contests: 'byColor', contestFix: { green: fix } } });
+    return contestTable(s).find(c => c.qid === 'echo');
+  };
+  it("'onrecruit' counts the cards that say On Recruit", () => {
+    // Busker "On Recruit: +2 green. Round Start: +2 green."; Mob has no On Recruit
+    const c = greenRow('onrecruit', [['echo.understudy'], ['red.mob']]);
+    expect(c.label).toBe('Most On Recruit members');
+    expect(c.winners).toEqual([0]);
+  });
+  it("'held' counts green held", () => {
+    const s = table(['red', 'echo'], { n: 2, res: [{ green: 1 }, { green: 3 }], rules: { contests: 'byColor', contestFix: { green: 'held' } } });
+    expect(contestTable(s).find(c => c.qid === 'echo').winners).toEqual([1]);
+  });
+});

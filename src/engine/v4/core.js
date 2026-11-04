@@ -1148,6 +1148,14 @@ export function scoringOf(state, qid) {
     if (fix.market === 'blue') by.market = { label: 'Most blue members', counts: 'your blue member cards when the round ends (each card counts 1)',
       score: (ctx, p) => countMembersOfColor(state, p, 'market', { cards: true }) };
     if (fix.market === 'held') by.market = { label: 'Most blue', counts: 'the blue you hold when the round ends', score: (ctx, p) => p.res.blue || 0 };
+    // Green (Actions lane, Nov 4, quality loop; /mnt/project-files/quality/pitches/actions-contest-green.md): contestFix.green
+    // 'onrecruit' counts your members whose card says On Recruit (what Greatest Hits and Sample copy), 'held' the green
+    // you hold, 'greencards' your green member cards
+    if (fix.green === 'onrecruit') by.echo = { label: 'Most On Recruit members', counts: 'your member cards that say "On Recruit", when the round ends (each card counts 1)',
+      score: (ctx, p) => p.members.filter(u => { const c = state.cards[u], d = defById(c.copy || c.def); return /On Recruit/.test(d.text || ''); }).length };
+    if (fix.green === 'held') by.echo = { label: 'Most green', counts: 'the green you hold when the round ends', score: (ctx, p) => p.res.green || 0 };
+    if (fix.green === 'greencards') by.echo = { label: 'Most green members', counts: 'your green member cards when the round ends (each card counts 1)',
+      score: (ctx, p) => countMembersOfColor(state, p, 'echo', { cards: true }) };
     const greenScore = by.echo.score, onGreen = p => greenScore(null, p);
     if (fix.green === 'tb') by.echo = { ...by.echo, tiebreak: { unit: 'green', text: 'ties go to the most green held' },
       score: (ctx, p) => { const n = onGreen(p); return n > 0 ? n * 1000 + (p.res.green || 0) : 0; }, show: (ctx, p) => ({ count: onGreen(p), tiebreak: p.res.green || 0 }) };
