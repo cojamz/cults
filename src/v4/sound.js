@@ -324,14 +324,14 @@ const CALLS = {
     }
     return bufPlay(ctx, dest, t, y);
   },
-  // a cricket's chirp: three quick high pulses
+  // a cricket chirping twice: two bursts of three quick high pulses (Cor, Nov 4: "should maybe do two chirps")
   bug(ctx, dest, t) {
-    for (let i = 0; i < 3; i++) {
-      const at = t + i * 0.035;
+    for (let i = 0; i < 6; i++) {
+      const at = t + (i % 3) * 0.035 + (i >= 3 ? 0.17 : 0);
       const o = tone(ctx, 'sine', 4300, at, 0.025, held(ctx, dest, at, 0.13, 0.004, 0.025));
       wobble(ctx, o.frequency, at, 0.025, 90, 250);
     }
-    return 0.15;
+    return 0.32;
   },
   // a soft wavering "oooo" that drifts down
   ghost(ctx, dest, t) {
@@ -376,13 +376,14 @@ const CALLS = {
   // "rib-bit": two croaks, the second a little higher
   frog(ctx, dest, t) {
     const lp = ctx.createBiquadFilter(); lp.type = 'bandpass'; lp.frequency.value = 600; lp.Q.value = 2; lp.connect(dest);
-    [[0, 118, 4], [0.13, 140, 3]].forEach(([at0, f, k]) => {
+    // (Cor, Nov 4: "slightly longer"): a few more pulses in each croak
+    [[0, 118, 6], [0.18, 140, 5]].forEach(([at0, f, k]) => {
       for (let i = 0; i < k; i++) {
-        const at = t + at0 + i * 0.022;
+        const at = t + at0 + i * 0.024;
         tone(ctx, 'sawtooth', f, at, 0.016, held(ctx, lp, at, 0.5, 0.003, 0.016));
       }
     });
-    return 0.25;
+    return 0.32;
   },
   // bubbles rising
   octopus(ctx, dest, t, r) {
@@ -483,22 +484,29 @@ const CALLS = {
     bp.frequency.exponentialRampToValueAtTime(4800, t + d);
     return d + 0.02;
   },
-  // a spell rising, then a sparkle
-  wizard(ctx, dest, t) {
-    const o = sweep(ctx, 'triangle', 330, 1320, t, 0.22, held(ctx, dest, t, 0.12, 0.02, 0.22));
-    wobble(ctx, o.frequency, t, 0.22, 14, 25);
-    [2637, 3136, 2349].forEach((f, i) => { const at = t + 0.2 + i * 0.04; tone(ctx, 'sine', f, at, 0.2, env(ctx, dest, at, 0.05, 0.002, 0.18)); });
-    return 0.5;
+  // a spell cast: a rush of air rising, then a shimmering chord with falling twinkles (Cor, Nov 4: "needs something a
+  // little better"; picked by Claude while he was away; the other two tries are on the sounds page)
+  wizard(ctx, dest, t, r) {
+    const bp = hiss(ctx, dest, t, 0.18, r, { f: 700, q: 1.5, peak: 0.12, attack: 0.14 });
+    bp.frequency.setValueAtTime(700, t); bp.frequency.exponentialRampToValueAtTime(4000, t + 0.18);
+    const c = t + 0.15;
+    [1318.5, 1661.2, 1975.5].forEach((f, i) => {
+      const g = env(ctx, dest, c, 0.06, 0.005, 0.5); const trem = ctx.createGain(); trem.gain.value = 0.7; trem.connect(g);
+      wobble(ctx, trem.gain, c, 0.5, 9 + i * 1.3, 0.3);
+      [-7, 7].forEach(det => { const o = tone(ctx, 'sine', f, c, 0.5, trem); o.detune.value = det; });
+    });
+    [3520, 3136, 2637, 2349, 1976].forEach((f, i) => { const at = c + 0.05 + i * 0.045 + r() * 0.01; tone(ctx, 'sine', f, at, 0.16, env(ctx, dest, at, 0.045, 0.002, 0.15)); });
+    return 0.7;
   },
-  // "snip snip": two pinches of a claw
+  // "snip snip snip": three pinches of a claw (Cor, Nov 4: "should do three snips")
   crab(ctx, dest, t, r) {
-    [0, 0.09].forEach(at0 => {
+    [0, 0.09, 0.18].forEach(at0 => {
       const at = t + at0;
       hiss(ctx, dest, at, 0.012, r, { type: 'highpass', f: 4000, peak: 0.22, attack: 0.001 });
       tone(ctx, 'triangle', 2700, at, 0.03, env(ctx, dest, at, 0.12, 0.001, 0.025));
       tone(ctx, 'triangle', 1900, at + 0.018, 0.03, env(ctx, dest, at + 0.018, 0.08, 0.001, 0.025));
     });
-    return 0.16;
+    return 0.25;
   },
   // a soft pop and a puff of spores (Cor's redo, Nov 4)
   mushroom(ctx, dest, t, r) {
@@ -532,7 +540,7 @@ const CALLS = {
 /** The emoji ids that have a call. */
 export const CALL_IDS = Object.keys(CALLS);
 // each call's loudness against the others (set by peak and rms, scripts/v4-sounds.mjs); a call sits under the place knock
-const CALL_LEVEL = { santa: 1.16, unicorn: 1.23, surfer: 1, bug: 0.64, ghost: 0.44, alien: 0.61, robot: 1.35, cat: 0.71, frog: 0.93, octopus: 0.65, pumpkin: 0.22, skull: 1.41, cactus: 3.4, dino: 1, pizza: 0.45, ninja: 3.05, wizard: 1.33, crab: 1.34, mushroom: 1.3, bee: 3.67 };
+const CALL_LEVEL = { santa: 1.16, unicorn: 1.23, surfer: 1, bug: 0.64, ghost: 0.44, alien: 0.61, robot: 1.35, cat: 0.71, frog: 0.93, octopus: 0.65, pumpkin: 0.22, skull: 1.41, cactus: 3.4, dino: 1, pizza: 0.45, ninja: 3.05, wizard: 1.8, crab: 1.34, mushroom: 1.3, bee: 3.67 };
 const CALL_MASTER = 0.6;
 /** Render emoji `id`'s call into ctx at time t. Returns its length in seconds (0 for an emoji with no call). */
 export function call(ctx, dest, id, t, seed = Math.floor(Math.random() * 1e9)) {
