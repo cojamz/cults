@@ -168,6 +168,11 @@ function stealStep(ctx, p, data) {
     if (x) { got += x; hit.push([v, x]); from.push(x === Object.values(pick).reduce((a, b) => a + b, 0) ? `${what} from ${v.name}` : `${x} from ${v.name}`); }
   }
   ctx.log(got ? `${p.name}${data.fromAction === false ? "'s " + data.name : ""} stole ${got} (${from.join(', ')}).` : `${p.name} found nothing to steal.`);
+  // Accomplice (REPLACE14=partners): +1 follower per rival actually stolen from
+  if (data.perVictim && hit.length) {
+    p.bonus += data.perVictim * hit.length;
+    ctx.log(`${p.name}'s ${data.name}: +${data.perVictim * hit.length} follower${data.perVictim * hit.length === 1 ? '' : 's'} (${hit.length} rival${hit.length === 1 ? '' : 's'} stolen from).`);
+  }
   if (data.followers) {
     p.bonus += data.followers;
     ctx.log(`${p.name}'s ${data.name}: +${data.followers} follower${data.followers === 1 ? '' : 's'}.`);
@@ -590,9 +595,14 @@ const thieves = {
       },
     }),
     // Cory, 2026-10-28: back as "On Recruit: steal 3 resources", "maybe a 2 cost?" (1 magenta + the +1 wild)
-    m('accomplice', 'Accomplice', 1, 1, 'On Recruit: steal 3 resources.', {
+    m('accomplice', 'Accomplice', 1, 1, 'On Recruit: steal 3 resources.', { ...old14('partners'),
       onRecruited(ctx, owner) { startSteal(ctx, owner, 'Accomplice', 3 + stickyMore(ctx, owner), { fromAction: false }); },
     }),
+    // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-misers-accomplice.md, paper 15 vs 12; BOTSMART A/B of an
+    // above-bar idea): Accomplice's place, same price. Spread the steal for followers, or focus it on one rival.
+    ...add14(m('partners', 'Accomplice', 1, 1, 'On Recruit: steal 3 resources. +1 follower per rival you stole from.', {
+      onRecruited(ctx, owner) { startSteal(ctx, owner, 'Accomplice', 3 + stickyMore(ctx, owner), { fromAction: false, perVictim: 1 }); },
+    })),
     m('grifter', 'Grifter', 2, 5, /* 6 (Cory, Oct 30) */ 'On Recruit: steal 1 resource per 2 members you have.', { ...old10('racketeer'),
       // first sentence only (Cory, 2026-10-18): the picks split freely among rivals, like any steal
       onRecruited(ctx, owner) {

@@ -9,6 +9,9 @@
 //   member thieves.cutpurse (Cutpurse) -> thieves.taxman (Tax Collector)
 //   member thieves.extortionist (Extortionist) -> thieves.boss (The Boss)
 //   member thieves.extortionist (Extortionist) -> thieves.mobboss (Mob Boss)
+//   member trading.heirs (Misers) -> trading.interest (Misers, interest)
+//   member trading.broker (Brokers) -> trading.brokerage (Brokers, round-end cash-out)
+//   member thieves.accomplice (Accomplice) -> thieves.partners (Accomplice, +1 follower per rival)
 //   member trading.shopkeeper (Landlord) -> trading.barker (Barker; Cory's extra follower buy, Nov 4)
 // REPLACE14=1 swaps every one; REPLACE14=grandtour (or a comma list of new keys) swaps only those, so each card gets
 // its own trial. Unset, nothing in the game changes.

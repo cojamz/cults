@@ -328,6 +328,12 @@ const trading = {
       if (t && (p.res[W] || 0) >= 2) raidersSteal(ctx, p, t);
     },
     ...handlers14({
+      brokerage(ctx, p, value) {
+        const k = Math.min(Number(value) || 0, p.res[W] || 0);
+        if (!k) { ctx.log(`${p.name}'s Brokers: kept their white.`); return; }
+        p.res[W] -= k; p.bonus += 2 * k;
+        ctx.log(`${p.name}'s Brokers: ${k} white into ${2 * k} followers.`);
+      },
       pawnShop(ctx, p, value) {
         if (value !== 'done') {
           const k = p.res[value] || 0;
@@ -528,7 +534,7 @@ const trading = {
         if (buyer === owner && tier?.get >= 5) { owner.bonus += 1; ctx.log(`${owner.name}'s Bulk Buyer: +1 follower.`); }
       },
     }),
-    m('broker', 'Brokers', 2, 2, 'Whenever a White action gives you followers, +1 follower.', { f: 3, brokerBonus: 1 }), // (Cory, Oct 29, balance run: +1 follower)
+    m('broker', 'Brokers', 2, 2, 'Whenever a White action gives you followers, +1 follower.', { f: 3, brokerBonus: 1, ...old14('brokerage') }), // (Cory, Oct 29, balance run: +1 follower)
     m('exporter', 'Exporters', 2, 4, 'Whenever you recruit a non-white member, +1 white.', { f: 2, retired: true, // Misers takes its place (Claude, under Cory's "use your judgement", 2026-11-03)
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (by === owner && recruited.uid !== card.uid && ctx.defOf(recruited).quadrant !== 'trading') ctx.gain(owner, W, 1);
@@ -536,9 +542,34 @@ const trading = {
     }),
     // Replacement batch 1 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Exporters' place.
     // 4 white + 3 any as a player sees it.
-    m('heirs', 'Misers', 3, 3, 'Game End: +1 follower per 2 white you hold.', { f: 2,
+    m('heirs', 'Misers', 3, 3, 'Game End: +1 follower per 2 white you hold.', { f: 2, ...old14('interest'),
       onGameEnd: (ctx, owner) => Math.floor((owner.res[W] || 0) / 2),
     }),
+    // REPLACE14 bot tests (Members E lane, Nov 4, BOTSMART A/Bs of above-bar paper ideas, Cory's yes to play them all):
+    // Misers with interest (paper 15 vs 13, quality/pitches/E-misers-accomplice.md), same price.
+    ...add14(m('interest', 'Misers', 3, 3, 'Round Start: +1 white per 3 white you hold.', { f: 2,
+      onRoundStart(ctx, owner) {
+        const k = Math.floor((owner.res[W] || 0) / 3);
+        if (!k) { ctx.log(`${owner.name}'s Misers: under 3 white, no interest.`); return; }
+        ctx.gain(owner, W, k);
+        ctx.log(`${owner.name}'s Misers: +${k} white.`);
+      },
+      // BOTSEE: about 6 white held at each later round start, 2 white each, worth a follower each before round III ends
+      ...see(info => 2 * [1, 2, 3].filter(r => r > info.round).length),
+    })),
+    // Brokers with a round-end cash-out (paper 14 vs 13, quality/pitches/E-brokers.md), same price. After the round's last
+    // placement and before contests, as Night Market's swap.
+    ...add14(m('brokerage', 'Brokers', 2, 2, 'Round End: before contests are scored, you may turn up to 2 of your white into 2 followers each.', { f: 3,
+      onAllPlaced(ctx, owner) {
+        const max = Math.min(2, owner.res[W] || 0);
+        if (!max) { ctx.log(`${owner.name}'s Brokers: no white to turn in.`); return; }
+        ctx.choose(owner, 'Brokers: turn how many white into 2 followers each?', Array.from({ length: max + 1 }, (_, i) => max - i).map(n => ({
+          id: `n:${n}`, label: n ? `${n} white → ${2 * n} followers` : 'Keep the white', kind: 'number', value: n, hint: n,
+        })), 'trading.brokerage');
+      },
+      // BOTSEE: about 2 white each round end still ahead, 2 followers each
+      ...see(info => 4 * endsAhead(info).length * 0.75),
+    })),
     // REPLACE6 bot test (Nov 3, replacement batch 6): Raiders' place. 4 white + 1 any as a player sees it. Each rival with a
     // member, in seat order from your left, picks one of theirs; it goes to the bottom of the pile as their own cast-out
     // (Martyrs pays them, their Successors answers it, Pallbearers hears it). Not a steal, so Bodyguards doesn't stop it.

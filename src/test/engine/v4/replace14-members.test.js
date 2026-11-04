@@ -2,7 +2,7 @@
 // Members E lane (REPLACE14, Nov 4): members. One test per sentence, plus the pitched turn.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE14 = 'bigspenders,firstbirds,charmers,filcher,taxman,boss,mobboss';
+process.env.REPLACE14 = 'bigspenders,firstbirds,charmers,filcher,taxman,boss,mobboss,interest,brokerage,partners';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { quadrant, defById } = await import('../../../engine/v4/content/index.js');
 const { table, uidIn } = await import('./cards-helpers-b.js');
@@ -131,7 +131,7 @@ describe('REPLACE14: Extortionist replacements (lane F paper passers)', () => {
     expect(defById('thieves.extortionist').retired).toBe(true);
   });
   it('The Boss with 2 other Magenta members: Help Yourself in round I takes 3 + 2 (the pitched turn)', () => {
-    let s = table(Q, { n: 2, round: 1, res: [{}, { gold: 9 }], members: [['thieves.boss', 'thieves.accomplice', 'thieves.secondstory']] });
+    let s = table(Q, { n: 2, round: 1, res: [{}, { gold: 9 }], members: [['thieves.boss', 'thieves.fence', 'thieves.secondstory']] });
     s = answer(s, `slot:${slot(s, 'thieves', 'Help Yourself')}`);
     let k = 0;
     while (s.pending?.player === 0 && s.pending.options.some(o => String(o.id).includes('gold')) && k < 9) { s = answer(s, s.pending.options.find(o => String(o.id).includes('gold')).id); k++; }
@@ -145,11 +145,48 @@ describe('REPLACE14: Extortionist replacements (lane F paper passers)', () => {
     expect(9 - s.players[1].res.gold).toBe(3);
   });
   it('Mob Boss with 1 other Magenta member: On Recruit steals 2 from each rival', () => {
-    let s = table(Q, { n: 3, round: 2, res: [{ magenta: 9, gold: 9 }, { red: 5 }, { blue: 5 }], members: [['thieves.accomplice']], shop: ['thieves.mobboss'] });
+    let s = table(Q, { n: 3, round: 2, res: [{ magenta: 9, gold: 9 }, { red: 5 }, { blue: 5 }], members: [['thieves.fence']], shop: ['thieves.mobboss'] });
     s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
     s = answer(s, `card:${uidIn(s, 'thieves.mobboss', 'shop')}`);
     while (s.pending && s.pending.player === 0 && s.pending.prompt?.includes('pay')) s = answer(s, s.pending.options[0].id);
     expect(log(s)).toContain("P1's Mob Boss: took 2 from P2.");
     expect(log(s)).toContain("P1's Mob Boss: took 2 from P3.");
+  });
+});
+
+describe('REPLACE14: Misers (interest), Brokers (cash-out), Accomplice (per rival)', () => {
+  it('each is dealt in its old card’s place', () => {
+    expect(defById('trading.interest').name).toBe('Misers');
+    expect(defById('trading.heirs').retired).toBe(true);
+    expect(defById('trading.brokerage').name).toBe('Brokers');
+    expect(defById('trading.broker').retired).toBe(true);
+    expect(defById('thieves.partners').name).toBe('Accomplice');
+    expect(defById('thieves.accomplice').retired).toBe(true);
+  });
+  it('Misers, Round Start: 9 white held gives +3; 2 held gives nothing', () => {
+    const s = table(['red', 'trading'], { n: 2, queue: [{ t: 'round', r: 2 }], res: [{ white: 9 }, {}], members: [['trading.interest']] });
+    expect(s.players[0].res.white).toBe(12);
+    expect(log(s)).toContain("P1's Misers: +3 white.");
+    const t = table(['red', 'trading'], { n: 2, queue: [{ t: 'round', r: 2 }], res: [{ white: 2 }, {}], members: [['trading.interest']] });
+    expect(t.players[0].res.white).toBe(2);
+  });
+  it('Brokers, Round End before contests: up to 2 white into 2 followers each, or keep it', () => {
+    let s = table(['red', 'trading'], { n: 2, round: 1, queue: [{ t: 'allPlaced' }], res: [{ white: 5 }, {}], members: [['trading.brokerage']] });
+    expect(s.pending.options.map(o => o.id)).toEqual(['n:2', 'n:1', 'n:0']);
+    const b = s.players[0].bonus;
+    s = answer(s, 'n:2');
+    expect(s.players[0].res.white).toBe(3);
+    expect(s.players[0].bonus).toBe(b + 4);
+    expect(log(s)).toContain("P1's Brokers: 2 white into 4 followers.");
+  });
+  it('Accomplice: steal 3 split 1-1-1 across 3 rivals gives +3 followers', () => {
+    let s = table(['red', 'thieves'], { n: 4, round: 2, res: [{ magenta: 9, red: 9 }, { red: 3 }, { blue: 3 }, { gold: 3 }], shop: ['thieves.partners'] });
+    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `card:${uidIn(s, 'thieves.partners', 'shop')}`);
+    while (s.pending && s.pending.player === 0 && s.pending.prompt?.includes('pay')) s = answer(s, s.pending.options[0].id);
+    const b = s.players[0].bonus;
+    for (const c of ['red', 'blue', 'gold']) s = answer(s, s.pending.options.find(o => String(o.id).includes(c) && !o.disabled).id);
+    expect(s.players[0].bonus).toBe(b + 3);
+    expect(log(s)).toContain("P1's Accomplice: +3 followers (3 rivals stolen from).");
   });
 });
