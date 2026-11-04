@@ -12,6 +12,7 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 
 ## Cory's words, newest first
 
+- **Nov 3, 8:09pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3AcRtproQUuXNK94Z1iiiE5, his playtest of live v0.99.537): "I finished my test game. Everything worked as expected. Things are feeling good!"
 - **Nov 3, 8:03pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3AhARsjDR95E6bBn2mnugS9): "we'll also need a big design audit on animations. are things intuitive? On relaxed speed thigns are still quite fast. I want a deep expert audit and revamp here, maybe new animations or UI where needed. UI upgrade! mostly for animations and info tracking\n\nand as always Id love an engineering pass on the wheel." → threads "Revamp animations and info tracking" and "Engineer a better wheel"; both merge through the desk.
 - **Nov 3, 8:01pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3YaDacNWS8y198tHoQiFHEm, playtest feedback): "Melting Pot is worded strangely. I still don't like Dilute. Mob is probably just too strong needs rework?" → three open items below (Melting Pot words, Dilute, Mob). Options go to Cory before anything ships; more feedback is coming, batch it.
 - **Nov 3, 7:54pm** (msg cmsg_01PySa5gYMfCiexiWTLrWgo3Txef8sqacLxDEbLxdogRXq): "by the way we are going to have a LOT of different parallel things going on. You may need a secondary helper or something, and oyu begin managing on a more meta level. BUt setup needs to be such that nothing gets lost in translation." → this page and the bot-game queue.
