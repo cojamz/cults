@@ -2,7 +2,7 @@
 // deals each new member in its old card's place (the old card is retired, so never dealt):
 //   yellow.customs -> yellow.tollkeeper
 //   yellow.dyer -> yellow.quilter
-//   market.critic -> market.lastminute
+//   market.critic -> market.lastminute (or market.lastminute2, the +2-resources alternate; not part of REPLACE9=1)
 //   market.regular -> market.bargainhunter
 //   benders.extrahand -> benders.hypnotist
 //   yellow.tastemaker -> yellow.jack (Jack-of-All-Trades)
@@ -11,8 +11,8 @@
 // Unset, the new cards are never defined and nothing in the game changes.
 const VAL = globalThis.process?.env?.REPLACE9 || '';
 /** new card key -> the old card id it takes the place of */
-const REPLACES = { tollkeeper: 'yellow.customs', quilter: 'yellow.dyer', lastminute: 'market.critic', bargainhunter: 'market.regular', hypnotist: 'benders.extrahand', jack: 'yellow.tastemaker', ambassadors: 'yellow.caravan' };
-export const ON9 = VAL === '1' ? Object.keys(REPLACES) : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
+const REPLACES = { tollkeeper: 'yellow.customs', quilter: 'yellow.dyer', lastminute: 'market.critic', lastminute2: 'market.critic', bargainhunter: 'market.regular', hypnotist: 'benders.extrahand', jack: 'yellow.tastemaker', ambassadors: 'yellow.caravan' };
+export const ON9 = VAL === '1' ? Object.keys(REPLACES).filter(k => k !== 'lastminute2') : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
 export const REPLACE9 = ON9.length > 0;
 /** The new card, in its color's member list only when it is switched on. */
 export const add9 = card => (ON9.includes(card.key) ? [card] : []);

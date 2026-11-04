@@ -206,6 +206,22 @@ function extraBuys(ctx, p, k) {
   q.splice(at, 0, ...adds);
 }
 
+/** Last-Minute Shopper's round-end offer: every shop member the owner can pay for, or nothing. */
+function lmOffer(ctx, owner) {
+  const opts = ctx.shopCards().filter(c => ctx.payChoices(owner, c.uid, {}).length).map(c => ({
+    id: `card:${c.uid}`, label: `${c.def.name} · pay ${ctx.price(owner, c.uid, {}).total}`, kind: 'card', value: c.uid, hint: botWorth(c),
+  }));
+  if (!opts.length) { ctx.log(`${owner.name}'s Last-Minute Shopper: nothing in the shop they can pay for.`); return; }
+  opts.push({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: 0 });
+  ctx.choose(owner, 'Last-Minute Shopper: before contests are scored, recruit a shop member, paying its cost?', opts, `${Q}.lastMinute`);
+}
+/** The alternate's "+2 of any colors": one color at a time; bots take the color they hold least of. */
+function lmGainAsk(ctx, owner, left) {
+  ctx.choose(owner, `Last-Minute Shopper: +1 of which color${left > 1 ? ' (1 of 2)' : ' (2 of 2)'}?`, ctx.state.resources.map(c => ({
+    id: `color:${c}`, label: c, kind: 'color', value: c, hint: -(owner.res[c] || 0),
+  })), `${Q}.lastMinuteGain`, { left });
+}
+
 const market = {
   id: Q,
   name: 'Blue',
@@ -393,6 +409,11 @@ const market = {
         if (uid == null) { ctx.log(`${p.name}'s Last-Minute Shopper: recruits nothing.`); return; }
         if (!ctx.state.shop.includes(uid) || !ctx.payChoices(p, uid, {}).length) return;
         askPay(ctx, p, `Last-Minute Shopper: how do you pay for ${ctx.card(uid).def.name}?`, { uid, why: 'Last-Minute Shopper', fromPile: true, how: {} });
+      },
+      lastMinuteGain(ctx, p, color, data) {
+        ctx.gain(p, color, 1);
+        ctx.log(`${p.name}'s Last-Minute Shopper: +1 ${color}.`);
+        if (data.left > 1) lmGainAsk(ctx, p, data.left - 1); else lmOffer(ctx, p);
       },
     }),
     ...handlers1({
@@ -608,14 +629,13 @@ const market = {
     // its own Round End that round (the round's round-end members have already been asked).
     ...add9(m('lastminute', 'Last-Minute Shopper', 2, 1, 'Round End: you may recruit a shop member, paying its cost.', { round: 1,
       ...see(i => endsAhead(i).length * 2), // BOTSEE: an extra paid recruit each round end still ahead
-      onAllPlaced(ctx, owner) {
-        const opts = ctx.shopCards().filter(c => ctx.payChoices(owner, c.uid, {}).length).map(c => ({
-          id: `card:${c.uid}`, label: `${c.def.name} · pay ${ctx.price(owner, c.uid, {}).total}`, kind: 'card', value: c.uid, hint: botWorth(c),
-        }));
-        if (!opts.length) { ctx.log(`${owner.name}'s Last-Minute Shopper: nothing in the shop they can pay for.`); return; }
-        opts.push({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: 0 });
-        ctx.choose(owner, 'Last-Minute Shopper: before contests are scored, recruit a shop member, paying its cost?', opts, `${Q}.lastMinute`);
-      },
+      onAllPlaced(ctx, owner) { lmOffer(ctx, owner); },
+    })),
+    // Alternate (director, Nov 4: numbers for Cory on both): REPLACE9=lastminute2. The same card, first +2 resources of the
+    // owner's choice (one color at a time), so the round-end recruit has something to pay with.
+    ...add9(m('lastminute2', 'Last-Minute Shopper', 2, 1, 'Round End: +2 of any colors, then you may recruit a shop member, paying its cost.', { round: 1,
+      ...see(i => endsAhead(i).length * 3), // BOTSEE: 2 resources and an extra paid recruit each round end still ahead
+      onAllPlaced(ctx, owner) { lmGainAsk(ctx, owner, 2); },
     })),
     // REPLACE1 bot test (Nov 3, replacement batch 1): Critic's place. 4 blue + 2 any as a player sees it. Every turn send of
     // shop members to the bottom (Savings, Out of Style, Bury, Window Shopper, Window Dressers, Trendsetters, Restockers,
