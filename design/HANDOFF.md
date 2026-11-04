@@ -14,12 +14,7 @@ Last updated 2026-11-03 7:05pm Eastern by the "Plan and run today's autonomous i
 - Firefox: every gate and the freeze probe run in it (`npm run check:v4 -- --firefox`); the perf rig stays Chrome-only (CDP).
 
 ## Contest-win greys (Nov 4)
-- Cheerleaders "Whenever you win a contest, +2 followers." (6 any, worth 2) and Victors "Whenever you win a contest, +2 of its color." (5 any) test fair; built behind REPLACE15 (content/replace15.js), off in the game. Waiting on Cory to name which grey leaves (Spoilsport and Dabblers stay). Then switch on, retire, ship. design/todo.md has the line.
-
-## Actions redesign lane (Nov 4, thread "Redesign weak actions", wound down 3:45pm)
-- Switch REPLACE11 (src/engine/v4/content/replace11.js); every candidate is built and tested there. Live from this lane: Housewarming (v0.99.560).
-- Unfinished items, one line each with next step: /mnt/project-files/desk/backlog-tests.md ("Actions lane" lines). Pitches and results: /mnt/project-files/quality/pitches/actions-*.md; verdicts in design/pitch-ledger.md.
-- A/B scripts (scratchpad copies of the Lab's abspace.sh with 480 s limits): /mnt/project-files/quality/lab/abspace.sh is the original.
+- Live in v0.99.581: Cheerleaders "Whenever you win a contest, +2 followers." (6 any, worth 2) and Victors "Whenever you win a contest, +2 of its color." (5 any) join the grey deck (12). Cory: prices maybe a little high and Cheerleaders maybe 3 members, "we will revisit that later". War Chest and Gloaters stay behind REPLACE15.
 
 ## Replacement members (Nov 3, thread "Plan and run today's autonomous improvements")
 - 44 new members on the six principles (design/notes/replacements-principles-2026-11-03.md), built behind bot-test switches REPLACE1..REPLACE6 (src/engine/v4/content/replace1-6.js; specs design/notes/replacements-batch1..6-2026-11-03.md). Results: design/eval/replacements/ (batch1..batch4-6-results.md, batch7-fixed-bots-results.md is the one to trust).

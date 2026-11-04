@@ -5,7 +5,7 @@ The road to 1.0 (bar, gaps, order, Cory's calls): design/1.0.md. It sets the ord
 Done items and the old lists: design/archive/todo-2026-10-20-to-23.md and design/archive/todo-before-2026-10-20.md.
 
 ## Cory's calls
-- Contest-win greys (Nov 4): **Cheerleaders** "Whenever you win a contest, +2 followers." (6 any, worth 2) and **Victors** "Whenever you win a contest, +2 of its color." (5 any) both bot-fair (owners won 30% / 28%), built behind REPLACE15 (content/replace15.js). Cory: "we'll decide later what to drop" (Spoilsport and Dabblers stay). When he names the grey(s) to drop: make them always on, retire his pick, ship.
+- Contest-win greys (live v0.99.581): revisit prices and Cheerleaders at 3 members (Cory, Nov 4: "we will revisit that later"); later pick which greys drop back to 10.
 - Decision backlog (Cory, Nov 4 12:36pm): member decks of 12 per color instead of 10 ("maybe we need to increase the member decks to 12...... but we'll talk more about that later"); this also covers fewer, more strategic cults (item 2 under Backlog initiatives, merged Nov 4 12:39pm, Cory: "agreed with all"). The full parked list Cory sees: /mnt/project-files/desk/backlog-for-cory.md.
 - Refactor for snappier play: approved and in progress in its own thread (Cory, Nov 4 12:52pm).
 - Cleared Nov 4 12:39pm (Cory: "yup those can all go"): contests away from "most of a resource" (they stay fewest followers), the emoji-style members pick (pixel-art redraw went that way), the White rework as a parked item (being built in "Shift White to follower gain").
