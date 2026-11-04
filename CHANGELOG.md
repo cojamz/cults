@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.559 — 2026-11-04
+
+- Fix: a space's 'this turn, if you recruit a member' followers (Gather, Stash, Allowance, New Blood) no longer pay out on a recruit made off your turn.
+
 ## v0.99.558 — 2026-11-04
 
 - Harvest's and Exchange's Take no longer gets stuck when you take two of one color.
