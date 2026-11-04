@@ -124,3 +124,5 @@ The loop ends only on success: rules 1 to 3 all holding for the whole game at on
 - Each color's By color contest (printed at the top of each color by scripts/quality/board.mjs) is judged like a card on the rubric and in the whole-set check: does it pull the color's cards together, give a real hold-or-spend call, and leave room for more than one plan?
 - A contest change goes through the same paper gate (old contest against 4 to 5 candidates), a built-right proof, and a trial at 120 games a side (it touches every game with that color). Old versions are archived in quality/archive/ and logged in the morning note.
 - Owner: the Actions lane.
+
+- **Small-cult gate, read relatively** (director, 1:05am, after the Lab found the base under 20% on trial tables): a change may not lower wins by 5-or-fewer-member cults below the base arm on the same games. The 20% bar stays a whole-game dashboard target.
