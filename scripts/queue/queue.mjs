@@ -6,7 +6,7 @@
 //
 //   post --name=<n> --commit=<sha> --first=1 --last=120 --env="BOTSEE=1 REPLACE1=1" [--level=hard] [--priority=0] [--by="<thread>"]
 //   post --kind=trial --name=<trial>            (a card trial from scripts/trial/trial.mjs; it hands out its own games)
-//   work [--jobs=4] [--wait=90] [--repo=.]      (run from a clone of cojamz/patrons; plays until the queue is empty,
+//   work [--jobs=4] [--wait=90] [--repo=.]      (run from a clone of cojamz/cults; plays until the queue is empty,
 //                                                then checks every minute for --wait minutes before exiting)
 //   status [--json]                             (every job: games done / being played / open, runners alive)
 //   cancel <name> | reopen <name>
@@ -247,7 +247,7 @@ function openJobs() {
 }
 
 async function work() {
-  if (!fs.existsSync(path.join(repo, '.git'))) die(`run work from a clone of cojamz/patrons (or pass --repo=<path>); ${repo} isn't one`);
+  if (!fs.existsSync(path.join(repo, '.git'))) die(`run work from a clone of cojamz/cults (or pass --repo=<path>); ${repo} isn't one`);
   const slots = Number(opt.jobs || 4), waitMin = Number(opt.wait ?? 90);
   const hb = setInterval(beatRunner, BEAT_MS); beatRunner();
   // Stopping the runner stops its trial worker too, which stops its games and lets its claims go (Nov 4).

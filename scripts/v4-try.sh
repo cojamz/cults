@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Publish one commit as a try build at https://cojamz.github.io/patrons/try/<name>/, beside the live game.
+# Publish one commit as a try build at https://cojamz.github.io/cults/try/<name>/, beside the live game.
 # Usage: bash scripts/v4-try.sh <name> [commit] (defaults to HEAD). Only try/<name>/ changes on main; play/ and the
 # old game stay as they are, so a game running on the play link is never interrupted.
 set -euo pipefail
@@ -9,7 +9,7 @@ NAME=${1:?usage: v4-try.sh <name> [commit]}
 case "$NAME" in *[!a-z0-9-]*|'') echo 'name: lowercase letters, digits and dashes' >&2; exit 2 ;; esac
 SHA=$(git rev-parse --verify "${2:-HEAD}^{commit}")
 SHORT=${SHA:0:7}
-URL=https://cojamz.github.io/patrons/try/$NAME
+URL=https://cojamz.github.io/cults/try/$NAME
 [ -x "$ROOT/node_modules/.bin/vite" ] || { echo 'Install project dependencies first.' >&2; exit 2; }
 TMP=$(mktemp -d "${TMPDIR:-/tmp}/patrons-try.XXXXXX")
 WT="$TMP/main"

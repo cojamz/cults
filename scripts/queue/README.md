@@ -5,7 +5,7 @@ One shared list of bot-game jobs. Any thread posts a job; any runner thread pull
 Tool: `node /mnt/project-files/queue/queue.mjs <command>` (source: `scripts/queue/queue.mjs` on `claude/gifted-newton-3lcy3i`; `node scripts/queue/queue.mjs install` refreshes this copy).
 
 ## Runner threads: how to pull work
-From your clone of cojamz/patrons (any branch; your checkout is never moved):
+From your clone of cojamz/cults (any branch; your checkout is never moved):
 
 ```
 node /mnt/project-files/queue/queue.mjs work --label="<your thread title>" --jobs=4

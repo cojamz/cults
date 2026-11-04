@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Pushes design/workstreams.json to main's status.json, which https://cojamz.github.io/patrons/tracker.html polls
+# Pushes design/workstreams.json to main's status.json, which https://cojamz.github.io/cults/tracker.html polls
 # every 30 s (Cor, Nov 3 9:54pm: "I NEED A WORKSTREAM TRACKER ... it needs to be realtime"). Run after every edit.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"

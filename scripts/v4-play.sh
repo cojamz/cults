@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Publish one checked commit to https://cojamz.github.io/patrons/play/.
+# Publish one checked commit to https://cojamz.github.io/cults/play/.
 # Usage: bash scripts/v4-play.sh [checked-commit] (defaults to HEAD).
 # Only play/ and rules/ change on main; the old v3 game stays intact.
 set -euo pipefail
@@ -7,8 +7,8 @@ cd "$(git rev-parse --show-toplevel)"
 ROOT=$(pwd)
 SHA=$(git rev-parse --verify "${1:-HEAD}^{commit}")
 SHORT=${SHA:0:7}
-REPO=cojamz/patrons
-URL=https://cojamz.github.io/patrons/play
+REPO=cojamz/cults
+URL=https://cojamz.github.io/cults/play
 WAIT=${V4_PAGES_WAIT_SECONDS:-600}
 case "$WAIT" in ''|*[!0-9]*) echo 'V4_PAGES_WAIT_SECONDS must be an integer' >&2; exit 2 ;; esac
 for command in git node curl gh; do command -v "$command" >/dev/null || { echo "Missing $command" >&2; exit 2; }; done
@@ -58,7 +58,7 @@ import {pathToFileURL} from 'node:url';
 const {VERSION}=await import(pathToFileURL(process.argv[4]));
 writeFileSync(process.argv[2],JSON.stringify({version:VERSION,commit:process.argv[3],builtAt:new Date().toISOString()})+'\n');
 MANIFEST
-# The members page (https://cojamz.github.io/patrons/play/members/): the same app, one folder down (src/main.jsx picks it by path)
+# The members page (https://cojamz.github.io/cults/play/members/): the same app, one folder down (src/main.jsx picks it by path)
 mkdir -p "$TMP/play/members" && sed 's#"\./assets/#"../assets/#g' "$TMP/play/index.html" > "$TMP/play/members/index.html"
 
 git fetch -q origin '+main:refs/remotes/origin/main'
@@ -88,7 +88,7 @@ if [ -n "$(ls "$TMP/old")" ]; then mkdir "$WT/play/v"; cp -R "$TMP/old/." "$WT/p
 # Pages serves main as plain files: skipping Jekyll makes each publish deploy faster.
 [ -f "$WT/.nojekyll" ] || { touch "$WT/.nojekyll"; git -C "$WT" add .nojekyll; }
 git -C "$WT" add --all -- play
-# The rules page (https://cojamz.github.io/patrons/rules/): this build's rulebook and glossary as a plain page.
+# The rules page (https://cojamz.github.io/cults/rules/): this build's rulebook and glossary as a plain page.
 if [ -f "$TMP/source/scripts/v4-rules-page.mjs" ]; then
   node "$TMP/source/scripts/v4-rules-page.mjs" "$TMP/rules" "$TMP/source" >/dev/null
   rm -rf "$WT/rules"; mkdir "$WT/rules"; cp -R "$TMP/rules/." "$WT/rules/"

@@ -1,4 +1,4 @@
-// The rules as a page of their own (https://cojamz.github.io/patrons/rules/): the same rulebook and glossary the
+// The rules as a page of their own (https://cojamz.github.io/cults/rules/): the same rulebook and glossary the
 // game's "How to play" shows (design/rulebook.md, src/v4/glossary.js, drawn by HowToPlay's renderRules), rendered
 // once to static HTML. v4-play.sh runs it on every ship, so the page always matches the build that's live.
 // Usage: node scripts/v4-rules-page.mjs <out-dir> [source-root]

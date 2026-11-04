@@ -16,7 +16,7 @@ import { followers, chooseBotMove } from '../src/engine/v4/index.js';
 const SMART = Number(process.env.PT_SMART ?? 0.75);
 
 const [name, colors, seatSpec, level = 'Normal', seedArg = '1'] = process.argv.slice(2);
-const URL0 = process.env.PT_URL || 'https://cojamz.github.io/patrons/play/';
+const URL0 = process.env.PT_URL || 'https://cojamz.github.io/cults/play/';
 const OUT = `${process.env.PT_OUT || '.v4-playtest'}/${name}`;
 mkdirSync(OUT, { recursive: true });
 let seed = Number(seedArg) >>> 0 || 1;

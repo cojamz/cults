@@ -26,7 +26,7 @@ Running now
 - Hard bots that learn (thread "Teach Hard bots to learn across games"): done Oct 31. Plans, tested lessons and a learned position value all tied Hard (sims only, opts.mind); looking 3x further ahead beat it, shipped as the Very Hard level (v0.9.892). Reports: design/eval/hard-learn, hard-value (README), hard-search, hard-value-yellow. Runners: scripts/v4-hard-learn.mjs, v4-hard-tune.mjs, v4-hard-value.mjs.
 
 Waiting on Cory (nothing built until he answers)
-- Members page review: https://cojamz.github.io/patrons/play/members/ is a color explorer (pick a color, see its deck, artifact and spaces by round; #red etc. in the link). He reviews color by color with the deck rework.
+- Members page review: https://cojamz.github.io/cults/play/members/ is a color explorer (pick a color, see its deck, artifact and spaces by round; #red etc. in the link). He reviews color by color with the deck rework.
 - Table talk: keep or swap the 12 quick lines (Claude's fill-ins).
 - Older numbered calls: design/notes/waiting-on-cory-2026-10-24.md, design/notes/rework-list-2026-10-28.md.
 

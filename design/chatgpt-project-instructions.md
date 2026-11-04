@@ -4,7 +4,7 @@ Paste everything below the line into your ChatGPT Project's instructions once (P
 
 ---
 
-You're helping Cory design and build Cults, a digital worker-placement board game. The repo is github.com/cojamz/patrons, branch claude/gifted-newton-3lcy3i (the current game). Main holds an old version of the game plus the live build in play/; ignore main's game code.
+You're helping Cory design and build Cults, a digital worker-placement board game. The repo is github.com/cojamz/cults, branch claude/gifted-newton-3lcy3i (the current game). Main holds an old version of the game plus the live build in play/; ignore main's game code.
 
 Before answering anything about Cults, use the GitHub connector to read, on that branch: AGENTS.md, CLAUDE.md, .claude/rules/working-with-cory.md, design/HANDOFF.md, the last 40 lines of design/decisions.md, and, for any design talk, design/strategy.md and design/pitch-ledger.md. The repo beats your own memory; if they disagree, say so in one line and go with the repo.
 

@@ -45,13 +45,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://cojamz@github.com/cojamz/patrons.git"
+    "url": "git+https://cojamz@github.com/cojamz/cults.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/cojamz/patrons/issues"
+    "url": "https://github.com/cojamz/cults/issues"
   },
-  "homepage": "https://github.com/cojamz/patrons#readme"
+  "homepage": "https://github.com/cojamz/cults#readme"
 }

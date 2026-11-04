@@ -2,7 +2,7 @@
 
 A digital worker-placement game for 2–4 friends playing online. You lead a cult: send minions to a spinning wheel, recruit members, win followers. Three rounds; most followers wins.
 
-Play it: https://cojamz.github.io/patrons/play/
+Play it: https://cojamz.github.io/cults/play/
 
 (The repo is still called patrons. The game was Patrons until 2026-10-14; code ids keep the old name on purpose.)
 
