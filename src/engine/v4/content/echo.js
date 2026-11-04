@@ -25,6 +25,7 @@ const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 1);
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const costOf = def => def.s + def.w;
 const COPYIST = on10('copyist2') ? 2 : 1; // REPLACE10
+const ENCORE_NEXT = on10('encorenext'); // REPLACE10
 
 // ---------- the yield ledger ----------
 // state.echo = { round, now: { 'q-i': entry }, last: { ... } (last round's chips, kept for the board), open: key | null }
@@ -792,12 +793,17 @@ const echoQ = {
     // REPLACE10 bot test (Nov 4): Chronicler's place, Cory's idea ("use once per game and the next on-recruit is doubled").
     // 2 green + 3 any as a player sees it. Used on your turn; the member you recruit later this same turn has its On
     // Recruit (or now-and-round-start effect) done twice (core's recruit). A recruit on another turn doesn't count.
-    ...add10(m('encore', 'Encore', 1, 3, 'On Use, once per game: this turn, the On Recruit of the member you recruit happens twice.', {
+    // REPLACE10=encore,encorenext: Cory's own words ("once per game, your next On Recruit is doubled"; director, Nov 4:
+    // he picks between the two). The next member you recruit that has an On Recruit, on any turn; the card stays
+    // turned until then, so a table can see it's waiting.
+    ...add10(m('encore', 'Encore', 1, 3, ENCORE_NEXT ? 'On Use, once per game: your next On Recruit happens twice.'
+      : 'On Use, once per game: this turn, the On Recruit of the member you recruit happens twice.', {
       activate: 'game',
-      beforeRecruit: true, // not offered after this turn's recruit (Lab play judges, Nov 4: it could be wasted)
+      // not offered after this turn's recruit (Lab play judges, Nov 4: it could be wasted); the "next" wording carries over
+      beforeRecruit: !ENCORE_NEXT,
       onActivate(ctx, owner) {
-        owner.encoreTurn = (ctx.state.turns || []).length;
-        ctx.log(`${owner.name} uses Encore: this turn's recruit's On Recruit happens twice.`);
+        owner.encoreTurn = ENCORE_NEXT ? 'next' : (ctx.state.turns || []).length;
+        ctx.log(ENCORE_NEXT ? `${owner.name} uses Encore: their next On Recruit happens twice.` : `${owner.name} uses Encore: this turn's recruit's On Recruit happens twice.`);
       },
       botActivate: (ctx, p) => ctx.state.round >= 2 && ctx.shopCards().some(c => (c.def.onRecruited || c.def.now) && ctx.payChoices(p, c.uid, {}).length && c.def.s + c.def.w >= 5),
     })),

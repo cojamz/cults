@@ -46,4 +46,29 @@ describe('REPLACE10: Encore', () => {
     expect(ids(after)).toContain(`use:${sq}`);
     expect(ids(after)).not.toContain(`use:${uidOf(after, 'echo.encore', 0)}`);
   });
+
+  it('a free recruit counts: Encore, then Walk-In recruits the top of the pile; its On Recruit happens twice', () => {
+    let s = table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, left: 4, res: [{}, { red: 9 }], members: [['echo.encore']] });
+    const top = s.pile.find(u => s.cards[u].def === 'thieves.accomplice');
+    if (top) s.pile = [top, ...s.pile.filter(u => u !== top)];
+    else { const acc = Object.keys(s.cards).map(Number).find(u => s.cards[u].def === 'thieves.accomplice' && !s.shop.includes(u) && !s.players.some(p => p.members.includes(u))); s.pile = [acc, ...s.pile.filter(u => u !== acc)]; }
+    const u = uidOf(s, 'echo.encore', 0);
+    s = move(s, `use:${u}`);
+    s = take(s, 'red.hire');
+    while (s.pending?.player === 0 && s.pending.kind === 'choose' && /steal|Accomplice/i.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
+    expect(named(s, 'Encore')).toContain("P1's Encore: Accomplice's On Recruit again.");
+  });
+
+  it('recruited this turn: not offered in the same turn once the recruit is spent (A/B judges, Nov 4)', () => {
+    let s = table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, left: 4, res: [{ green: 9, red: 9 }, {}], members: [['benders.squatter']], shop: ['echo.encore'] });
+    s = take(s, 'red.turnout');
+    const enc = s.shop.find(x => s.cards[x].def === 'echo.encore');
+    s = move(s, `card:${enc}`);
+    while (s.pending?.player === 0 && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
+    expect(s.players[0].members).toContain(enc);
+    expect(s.pending.afterPurchase).toBe(true);
+    const ids = s.pending.options.map(o => o.id);
+    expect(ids).toContain(`use:${uidOf(s, 'benders.squatter', 0)}`); // the step is shown (Party Crasher can be used)
+    expect(ids).not.toContain(`use:${enc}`);
+  });
 });
