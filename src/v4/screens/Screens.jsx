@@ -365,12 +365,16 @@ export function LocalSetup({ initial, onStart, onBack }) {
             <Seg label={`Seat ${i + 1}`} value={s.kind} options={KINDS} onChange={v => set(i, { kind: v })} />
           </div>
         ))}
-        <div className="seat"><span>Bots</span><Seg label="Bot level" value={level} options={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} onChange={setLevel} /></div>
-        <div className="seat"><span>Speed</span><Seg label="Speed" value={speed} options={SPEED_OPTS} onChange={v => { setSpeed(v); setMotionSpeed(v); }} /></div>
+        {/* the settings stand in their own column between the seats and the table on a laptop (Cory, Nov 4: "settings
+            could be brought over to a third column here"); narrower, they stack under the seats */}
+        <div className="setup-settings" data-setup-settings>
+          <div className="seat"><span>Bots</span><Seg label="Bot level" value={level} options={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} onChange={setLevel} /></div>
+          <div className="seat"><span>Speed</span><Seg label="Speed" value={speed} options={SPEED_OPTS} onChange={v => { setSpeed(v); setMotionSpeed(v); }} /></div>
+          <SwapPick value={swapCard} onChange={setSwapCard} />
+          <ContestPick value={contests} onChange={setContests} />
+          <MemberLookPick />
+        </div>
         <TablePicker value={fitted} n={nSph} onChange={setTable} />
-        <SwapPick value={swapCard} onChange={setSwapCard} />
-        <ContestPick value={contests} onChange={setContests} />
-        <MemberLookPick />
         <div className="row-btns">
           {/* why Start is off, said beside it (RC1 #8: it dimmed at 3 of 4 with nothing near it) */}
           {startWhy && <span className="hint start-why" data-start-why>{startWhy}</span>}
@@ -452,10 +456,12 @@ export function Lobby({ lobby, myId, onLeave }) {
             <Seg label="Bot level" value={botLevel} options={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} onChange={setBotLevel} />
           </div>
         )}
+        <div className="setup-settings" data-setup-settings>
+          <SwapPick value={!!view.swapCard} onChange={v => act(() => lobby.setSwapCard(v))} readOnly={!isHost || !lobby.setSwapCard} />
+          <ContestPick value={view.contests || ''} onChange={v => act(() => lobby.setContests(v))} readOnly={!isHost || !lobby.setContests} />
+          <MemberLookPick />
+        </div>
         <TablePicker value={shownTable} n={nSph} onChange={pickTable} readOnly={!isHost || !lobby.setTable} />
-        <SwapPick value={!!view.swapCard} onChange={v => act(() => lobby.setSwapCard(v))} readOnly={!isHost || !lobby.setSwapCard} />
-        <ContestPick value={view.contests || ''} onChange={v => act(() => lobby.setContests(v))} readOnly={!isHost || !lobby.setContests} />
-        <MemberLookPick />
         {err && <p className="error">{err}</p>}
         {!isHost && <p className="hint">Waiting for {view.hostName || 'the host'} to start…</p>}
         {isHost && view.startHint && <p className="hint" data-start-hint>{view.startHint}</p>}

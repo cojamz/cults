@@ -201,6 +201,20 @@
   .app.narrow > .dialog.page > .table-pick.editable .table-chip .chip-line{display:block;grid-column:2;font-weight:400;font-size:var(--fs-1);line-height:1.3;color:var(--muted)}
   .app.narrow > .dialog.page > .table-pick.editable .table-chips > .btn{align-self:flex-start}
 }
+/* Three columns on a wide enough screen (Cory, Nov 4: "settings could be brought over to a third column here"): who
+   plays, then the settings, then the table; Back and Start under all three. Narrower, the settings stack under the seats
+   (one column under 1100px wide). */
+@media (min-width:1100px) and (min-height:500px){
+  .app.narrow:has(> .dialog.page > .table-pick.editable){max-width:1200px}
+  .app.narrow > .dialog.page:has(> .table-pick.editable){max-width:1200px;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
+    min-height:600px} /* Custom's two-wide sphere grid runs taller: Back and Start hold still when it opens */
+  .app.narrow > .dialog.page:has(> .table-pick.editable) > .setup-settings{grid-column:2;grid-row:1 / 9;align-self:start;padding-left:32px;margin-left:-16px;
+    box-shadow:inset 1px 0 0 var(--hair, rgba(242,232,210,.10))}
+  .app.narrow > .dialog.page:has(> .table-pick.editable) > .table-pick{grid-column:3}
+  .app.narrow > .dialog.page:has(> .table-pick.editable) > .row-btns:last-child{grid-row:10;align-self:end} /* at the page's foot, whichever column runs tallest */
+  .app.narrow > .dialog.page:has(> .table-pick.editable) .sphere-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+.setup-settings{display:flex;flex-direction:column;gap:12px}
 .table-chip .chip-line{display:none}
 /* a fifth sphere with four picked: dim like a tile you can't take, but it answers a click with a quiet note by the count */
 .sphere.over{opacity:.72} /* with four picked, a click swaps it in for the last one picked (its hover says so) */
