@@ -671,7 +671,7 @@ export default {
     }),
     // Cory, 2026-10-23: "its when you place THE last minion of the round. so it benefits folks going last"
     // Cory, 2026-10-24: "go deep card for every color" ("sure for now"); name and price Claude's fill-in, priced like Chronicler
-    m('timekeepers', 'Timekeeper', 1, 2, 'Game End: +1 follower per purple member you have.', { ...old5,
+    m('timekeepers', 'Timekeeper', 1, 2, 'Game End: +1 follower per purple member you have.', { ...old5, ...old7('purple.timekeepers'),
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'purple'),
     }),
     // REPLACE5 bot test (Nov 3, replacement batch 5): Timekeeper' place. 4 purple + 2 any as a player sees it. Counted
@@ -684,6 +684,19 @@ export default {
         owner.bonus += mine;
         ctx.log(`${owner.name}'s Full House: ${mine} minions on the wheel, more than every rival: +${mine} followers.`);
       },
+    })),
+    // REPLACE7 (Nov 4, quality loop, Members A batch 2): Timekeeper's place (paper 19, 18 on a second gate). 2 purple + 2
+    // any as a player sees it. "Placed the round's last minion" is the By color Purple contest's own measure (lastPlaced).
+    ...add7(m('nightmanager', 'Night Manager', 1, 2, 'Round End: if you placed the round’s last minion, +1 follower per purple member you have.', {
+      onRoundEnd(ctx, owner, card) {
+        const last = ctx.state.lastPlaced;
+        if (!last || last.round !== ctx.state.round || last.pid !== owner.id) return;
+        const k = ctx.countMembersOfColor(owner, 'purple');
+        if (!k) return;
+        owner.bonus += k;
+        ctx.log(`${owner.name}'s ${card.def.name}: ${owner.name} placed the round's last minion, +${k} follower${k === 1 ? '' : 's'} (${k} purple member${k === 1 ? '' : 's'}).`);
+      },
+      ...see(info => endsAhead(info).length), // about 3 followers a round it fires, a third of the rounds
     })),
     m('closer', 'Closer', 2, 2, 'When you place the last minion of the round: +4 purple.', {
       afterAction(ctx, owner, card) {
@@ -703,7 +716,11 @@ export default {
       },
       botActivate: (ctx, owner) => inARow(ctx, owner) >= 2 || (inARow(ctx, owner) >= 1 && ctx.state.round === 3),
     }),
-    m('crew', 'Shift Crew', 2, 1, 'Worth 4 followers.', { f: 4, n: 4, vanilla: true, round: 1, ...old3 }), // 2 members (Cory, Oct 29); 4 (Cory, Nov 1: "shift crew is just bad. should be 4 members?"), price 4 Claude's
+    m('crew', 'Shift Crew', 2, 1, 'Worth 4 followers.', { f: 4, n: 4, vanilla: true, round: 1, ...old3, ...old7('purple.crew') }),
+    // REPLACE7 (Nov 4, quality loop, Members A batch 2): Shift Crew's place (paper 19; Purple's pair set check with Night
+    // Manager 11 -> 17). Clockmakers' tested rule (core: firstTwoInRow). Worth and count are one number (rulebook), so 3
+    // and 3 at 3 purple + 2 any, a round I member as Shift Crew is (Claude's fill-in; pitched as worth 2, counts as 4).
+    ...add7(m('daylaborers', 'Day Laborers', 2, 2, 'Round Start: take your first two turns in a row.', { f: 3, n: 3, round: 1, firstTwoInRow: true })), // 2 members (Cory, Oct 29); 4 (Cory, Nov 1: "shift crew is just bad. should be 4 members?"), price 4 Claude's
     // REPLACE3 bot test (Nov 3, replacement batch 3): Shift Crew's place. 6 purple + 3 any as a player sees it. On your
     // turn, any of your minions on the board (a joined one too) moves to a space with no minion on it, and that space's
     // action happens, as Straggler's move does; the old space's action stays done and the space opens. No recruit comes

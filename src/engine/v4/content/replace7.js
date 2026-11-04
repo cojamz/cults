@@ -3,15 +3,18 @@
 // cards' places (the old card is retired, so never dealt); independent of REPLACE1 to REPLACE6:
 //   red.volunteer -> red.seatfiller
 //   red.recruitbonus -> red.fosterparents
+//   red.patriarch -> red.godfather
+//   purple.crew -> purple.daylaborers
+//   purple.timekeepers -> purple.nightmanager
 // Alternates, by name instead of 1 (REPLACE7=interrupter, REPLACE7=ushers, or a comma list of card keys):
 //   purple.courier (alt: lowered Purple's set score; Cory Nov 4: "I don't like interrupter. That's bad.") -> purple.interrupter
 //   purple.courier (alt; Cory Nov 4 said no, he keeps Courier reworded) -> purple.runner
 //   red.recruitbonus (alt: paper 14, read as a must-buy) -> red.ushers
 // Unset, the new cards are never defined and nothing in the game changes.
 const VAL = globalThis.process?.env?.REPLACE7 || '';
-const PICKS = ['seatfiller', 'fosterparents'];
+const PICKS = ['seatfiller', 'fosterparents', 'godfather', 'daylaborers', 'nightmanager'];
 /** new card key -> the old card id it takes the place of */
-const REPLACES = { seatfiller: 'red.volunteer', interrupter: 'purple.courier', runner: 'purple.courier', ushers: 'red.recruitbonus', fosterparents: 'red.recruitbonus' };
+const REPLACES = { seatfiller: 'red.volunteer', interrupter: 'purple.courier', runner: 'purple.courier', ushers: 'red.recruitbonus', fosterparents: 'red.recruitbonus', godfather: 'red.patriarch', daylaborers: 'purple.crew', nightmanager: 'purple.timekeepers' };
 export const ON7 = VAL === '1' ? PICKS : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
 export const REPLACE7 = ON7.length > 0;
 /** The new card, in its color's member list only when it is switched on. */

@@ -307,7 +307,7 @@ export default {
     m('crowd', 'Crowd-Pleaser', 2, 0, 'Whenever you buy followers, +1 red.', {
       onBuyFollowers(ctx, owner, card, buyer) { if (buyer === owner) ctx.gain(owner, 'red', 1); },
     }),
-    m('patriarch', 'Patriarch', 3, 2, 'Game End: +1 follower per 2 members you have.', { ...old3,
+    m('patriarch', 'Patriarch', 3, 2, 'Game End: +1 follower per 2 members you have.', { ...old3, ...old7('red.patriarch'),
       onGameEnd: (ctx, owner) => Math.floor(ctx.memberCount(owner) / 2),
     }),
     // REPLACE3 bot test (Nov 3, replacement batch 3): Patriarch's place. 6 red + 3 any as a player sees it. Every rival
@@ -315,6 +315,21 @@ export default {
     // itself too. A give is an arrival, not their recruit (Old Maid's −5 lands on them, Martyrs pays the giver). Then one
     // free recruit per member given, each costing up to 2 more than one of them (any order; the smallest allowance that
     // fits is used); an allowance nothing in the shop fits is lost.
+    // REPLACE7 (Nov 4, quality loop, Members A batch 2): Patriarch's place (paper 18, Red's set 12 -> 15). 4 red + 2 any as
+    // a player sees it. Members counted as the table counts them (a card that counts as 3 is 3), this one included.
+    ...add7(m('godfather', 'Godfather', 3, 2, 'On Use, once per game: recruit a shop member costing up to the number of members you have, for free.', {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const k = ctx.memberCount(owner), list = ctx.shopCards().filter(x => cost(x) <= k);
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s ${card.def.name}: no shop member costs ${k} or less.`); return; }
+        ctx.log(`${owner.name} uses ${card.def.name}: ${k} members, so a shop member costing up to ${k}, for free.`);
+        ctx.choose(owner, `${card.def.name}: recruit which shop member (costing up to ${k}) for free?`, list.map(x => ({
+          id: `card:${x.uid}`, label: `${x.def.name} (${cost(x)})`, kind: 'card', value: x.uid, hint: x.def.f * 1.5 + cost(x),
+        })), 'red.takeFree');
+      },
+      // bots: late, or once the count reaches the row's priciest card
+      botActivate: (ctx, owner) => ctx.state.round === 3 || ctx.shopCards().some(x => cost(x) >= 7 && cost(x) <= ctx.memberCount(owner)),
+    })),
     ...add3(m('missionaries', 'Missionaries', 5, 3, 'On Use, once per game: give one of your members to each rival, then recruit a shop member costing up to 2 more for each one given, for free.', { f: 2,
       activate: 'game',
       onActivate(ctx, owner) {

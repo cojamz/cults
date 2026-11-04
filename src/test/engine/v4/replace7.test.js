@@ -4,9 +4,9 @@
 // so it is set before the engine is imported (dynamic imports below), then cleared.
 import { describe, it, expect } from 'vitest';
 
-// every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Runner, Foster Parents)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,fosterparents';
-const { applyMove } = await import('../../../engine/v4/core.js');
+// every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,fosterparents,godfather,daylaborers,nightmanager';
+const { applyMove, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
 const { table, named, uidIn, owns } = await import('./cards-helpers-b.js');
@@ -23,6 +23,10 @@ describe('REPLACE7: the switch', () => {
     expect(card('purple.runner')).toEqual(['Runner', 4, 2, 1, 1]);
     expect(card('purple.interrupter')).toEqual(['Interrupter', 4, 2, 1, 1]);
     expect(card('red.fosterparents')).toEqual(['Foster Parents', 2, 2, 2, 2]);
+    expect(card('red.godfather')).toEqual(['Godfather', 4, 2, 1, 1]);
+    expect(card('purple.daylaborers')).toEqual(['Day Laborers', 3, 2, 3, 3]);
+    expect(card('purple.nightmanager')).toEqual(['Night Manager', 2, 2, 1, 1]);
+    for (const id of ['red.patriarch', 'purple.crew', 'purple.timekeepers']) expect(defById(id).retired).toBe(true);
     for (const id of ['red.volunteer', 'red.recruitbonus', 'purple.courier']) expect(defById(id).retired).toBe(true);
   });
 });
@@ -187,5 +191,55 @@ describe('Foster Parents: "Whenever a member joins your cult from a rival’s, +
     s = answer(s, `trade:${uidIn(s, 'red.crowd', 0)}:${uidIn(s, 'red.loyalists', 'shop')}`);
     expect(owns(s, 0, 'red.loyalists')).toBe(true);
     expect(s.players[0].bonus).toBe(0);
+  });
+});
+
+describe('Godfather: "On Use, once per game: recruit a shop member costing up to the number of members you have, for free."', () => {
+  it('the pitched turn: 8 members (Panel counts as 3, Deprogrammers as 4, Godfather 1) recruit Proselytizers (8) free, not Mob (12)', () => {
+    let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [['red.godfather', 'red.panel', 'red.movementpenalty']], shop: ['red.proselytizer', 'red.mob'], queue: [{ t: 'buy', p: 0 }] });
+    const uid = uidIn(s, 'red.godfather', 0);
+    s = move(s, `use:${uid}`);
+    expect(s.pending.prompt).toBe('Godfather: recruit which shop member (costing up to 8) for free?');
+    expect(s.pending.options.map(o => o.label)).toEqual(['Proselytizers (8)']);
+    s = answer(s, `card:${uidIn(s, 'red.proselytizer', 'shop')}`);
+    expect(owns(s, 0, 'red.proselytizer')).toBe(true);
+    expect(s.players[0].res.red).toBe(0);
+    expect(s.cards[uid].used).toBe(true);
+    expect(named(s, 'Godfather')).toContain("P1 uses Godfather: 8 members, so a shop member costing up to 8, for free.");
+  });
+
+  it('with nothing in reach it stays unused', () => {
+    let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.godfather']], shop: ['red.mob'], queue: [{ t: 'buy', p: 0 }] });
+    const uid = uidIn(s, 'red.godfather', 0);
+    s = move(s, `use:${uid}`);
+    expect(s.cards[uid].used).toBe(false);
+  });
+});
+
+describe('Day Laborers: "Round Start: take your first two turns in a row."', () => {
+  it('round II: the owner, second in order, takes its first two turns back to back', () => {
+    // fewest followers first: P1 0, P2 3 (Day Laborers' worth), P3 5, P4 6
+    let s = table(['red', 'purple', 'market', 'yellow'], { n: 4, round: 1, bonus: [0, 0, 5, 6], members: [[], ['purple.daylaborers']] , queue: [{ t: 'round', r: 2 }] });
+    expect(s.log.some(l => l.includes("P2's Day Laborers: P2's first two turns come in a row."))).toBe(true);
+    // P1 is placing now; the queue's next turns are P2's two
+    expect(s.queue.filter(t => t.t === 'turn').map(t => t.p).slice(0, 2)).toEqual([1, 1]);
+  });
+});
+
+describe('Night Manager: "Round End: if you placed the round’s last minion, +1 follower per purple member you have."', () => {
+  const end = last => table(['red', 'purple', 'market', 'yellow'], { round: 2, members: [['purple.nightmanager', 'purple.earlybird']], queue: [{ t: 'endRound' }] });
+  it('the owner placed the last minion: +1 per purple member (Early Birds counts as 2, Night Manager 1)', () => {
+    let s = table(['red', 'purple', 'market', 'yellow'], { round: 2, members: [['purple.nightmanager', 'purple.earlybird']], queue: [] });
+    s = { ...s, lastPlaced: { round: 2, pid: 0 }, queue: [{ t: 'endRound' }], pending: null };
+    const before = s.players[0].bonus;
+    s = resume(s);
+    expect(s.players[0].bonus - before).toBe(3);
+    expect(named(s, 'Night Manager')).toContain("P1's Night Manager: P1 placed the round's last minion, +3 followers (3 purple members).");
+  });
+  it('a rival placed it: nothing', () => {
+    let s = table(['red', 'purple', 'market', 'yellow'], { round: 2, members: [['purple.nightmanager']], queue: [] });
+    s = { ...s, lastPlaced: { round: 2, pid: 1 }, queue: [{ t: 'endRound' }], pending: null };
+    s = resume(s);
+    expect(named(s, 'Night Manager')).toEqual([]);
   });
 });
