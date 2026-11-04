@@ -15,7 +15,7 @@ const scene = (member, extra = {}) => table(['red', 'market', 'trading', 'yellow
 describe('REPLACE15: contest-win members in Spoilsport\'s place', () => {
   it('all are dealt; Spoilsport is retired; Dabblers stays (Cory, Nov 4)', () => {
     expect(defById('benders.cheerleaders').text).toBe('Whenever you win a contest, +2 followers.');
-    expect(defById('benders.victors').text).toBe('Whenever you win a contest, +3 of its color.');
+    expect(defById('benders.victors').text).toBe('Whenever you win a contest, +2 of its color.');
     expect(defById('benders.warchest').text).toBe('Whenever you win a contest, +3 resources in any colors.');
     expect(defById('benders.gloaters').text).toBe('Whenever you win a contest, take 1 of its color from each rival.');
     expect(defById('benders.spoilsports').retired).toBe(true);
@@ -28,10 +28,10 @@ describe('REPLACE15: contest-win members in Spoilsport\'s place', () => {
     expect(named(s, 'Cheerleaders')).toContain("P1's Cheerleaders: +2 followers.");
   });
 
-  it("Victors: +3 of each won contest's color", () => {
+  it("Victors: +2 of each won contest's color", () => {
     const s = scene('benders.victors');
-    expect(s.players[0].res.red).toBe(7);
-    expect(s.players[0].res.blue).toBe(6);
+    expect(s.players[0].res.red).toBe(6);
+    expect(s.players[0].res.blue).toBe(5);
   });
 
   it('War Chest: +3 in colors you choose, per contest won', () => {

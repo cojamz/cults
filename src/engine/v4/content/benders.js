@@ -271,10 +271,10 @@ const members = [
   ...add15(m('cheerleaders', 'Cheerleaders', null, 0, 5, 'Whenever you win a contest, +2 followers.', {
     onContestWin(ctx, owner) { owner.bonus += 2; ctx.log(`${owner.name}'s Cheerleaders: +2 followers.`); },
   })),
-  ...add15(m('victors', 'Victors', null, 0, 4, 'Whenever you win a contest, +3 of its color.', {
+  ...add15(m('victors', 'Victors', null, 0, 4, 'Whenever you win a contest, +2 of its color.', {
     onContestWin(ctx, owner, card, c) {
       const color = ctx.quadrant(c.qid).resource;
-      const got = ctx.gain(owner, color, 3);
+      const got = ctx.gain(owner, color, 2);
       if (got) ctx.log(`${owner.name}'s Victors: +${got.n} ${got.color}.`);
     },
   })),
