@@ -1,5 +1,6 @@
 // Red builds and moves members; held red resources decide its round-end contest.
 import { gainColorOf } from './color-of.js';
+import { defById as defOf } from './index.js';
 import { add1, old1 } from './replace1.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add4, old4, handlers4 } from './replace4.js';
@@ -286,6 +287,29 @@ export default {
     // REPLACE7 (Nov 4, scale-up round 1, Members A): Proselytizers' place (paper 19 vs 11, Red's set 16 vs 13). 4 red + 4
     // any, worth 1. Pied Piper's trigger: pays the moment your second recruit of your own turn lands (Mentor & Protégés'
     // free one counts; a member counted as several still lands once).
+    // Proselytizers' place (paper 18 vs 17 and 13 vs 12): Evangelists (lifted), Zealots.
+    ...add7(m('evangelists', 'Evangelists', 3, 4, 'Whenever any player recruits a red member, +2 followers (+3 if it’s you).', { f: 2, n: 2,
+      onAnyRecruit(ctx, owner, card, by, member) {
+        if (!member || member.uid === card.uid) return;
+        const d = typeof member.def === 'string' ? defOf(member.def) : member.def;
+        if ((member.asColor || d.quadrant) !== 'red') return;
+        const n = by === owner ? 3 : 2;
+        owner.bonus += n; ctx.log(`${owner.name}'s Evangelists: ${by.name} recruits a red member, +${n} followers.`);
+      },
+      ...see(info => 4 * endsAhead(info).length),
+    })),
+    ...add7(m('zealots', 'Zealots', 3, 4, 'Whenever you recruit, +1 follower and the player with the most followers loses 1 (unless it’s you).', { f: 2, n: 2,
+      onRecruit(ctx, owner, card, by, what) {
+        if (by !== owner || what.member?.uid === card.uid) return;
+        owner.bonus += 1;
+        const top = Math.max(...ctx.state.players.map(o => ctx.followers(o)));
+        if (ctx.followers(owner) >= top) { ctx.log(`${owner.name}'s Zealots: +1 follower.`); return; }
+        const leaders = ctx.rivals(owner).filter(o => ctx.followers(o) === top);
+        for (const o of leaders) o.bonus -= 1;
+        ctx.log(`${owner.name}'s Zealots: +1 follower; ${leaders.map(o => o.name).join(' & ')} −1.`);
+      },
+      ...see(info => 2 * endsAhead(info).length),
+    })),
     ...add7(m('drillsergeant', 'Drill Sergeant', 3, 4, 'Whenever you recruit 2 or more members in one turn, +3 followers.', {
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (by === owner && ctx.state.current === owner.id && owner.turnRecruits >= 2 && owner.turnRecruits - ctx.memberWeight(recruited) < 2) {
@@ -353,6 +377,17 @@ export default {
     m('crowd', 'Crowd-Pleaser', 2, 0, 'Whenever you buy followers, +1 red.', {
       onBuyFollowers(ctx, owner, card, buyer) { if (buyer === owner) ctx.gain(owner, 'red', 1); },
     }),
+    // Nov 4, "paper filters, play ranks" (Cory's yes): paper passers at or over the old card go to a play A/B.
+    // Patriarch's place: Shepherd (paper 14 vs 10). Ties for the shop's cheapest: its owner picks, at Round Start.
+    ...add7(m('shepherd', 'Shepherd', 3, 2, 'Round Start: if you have the fewest members (ties count), recruit the cheapest shop member for free.', { round: 1,
+      onRoundStart(ctx, owner) {
+        const mine = ctx.memberCount(owner);
+        if (ctx.rivals(owner).some(o => ctx.memberCount(o) < mine) || !ctx.shopCards().length) return;
+        ctx.log(`${owner.name}'s Shepherd: ${owner.name} has the fewest members, so the cheapest shop member joins free.`);
+        hireCheapest(ctx, owner, 'Shepherd');
+      },
+      ...see(info => 2 * endsAhead(info).length),
+    })),
     m('patriarch', 'Patriarch', 3, 2, 'Game End: +1 follower per 2 members you have.', { ...old3, ...old7('red.patriarch'),
       onGameEnd: (ctx, owner) => Math.floor(ctx.memberCount(owner) / 2),
     }),

@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 // every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,sprinter,earlyrisers,daylaborers,nightmanager,pacesetters,lifers,floorcrew,timekeeperlift,oldtimer,lookouts,errandboy,moonlighters';
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,sprinter,earlyrisers,daylaborers,nightmanager,pacesetters,lifers,floorcrew,timekeeperlift,oldtimer,lookouts,errandboy,moonlighters,relayrunners,shepherd,evangelists,zealots';
 const { applyMove, resume, followers } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
@@ -44,6 +44,10 @@ describe('REPLACE7: the switch', () => {
     expect(card('purple.lookouts')).toEqual(['Lookouts', 2, 2, 2, 2]);
     expect(card('purple.errandboy')).toEqual(['Errand Boy', 2, 2, 1, 1]);
     expect(card('purple.moonlighters')).toEqual(['Moonlighters', 7, 1, 2, 2]);
+    expect(card('purple.relayrunners')).toEqual(['Relay Runners', 2, 2, 2, 2]);
+    expect(card('red.shepherd')).toEqual(['Shepherd', 4, 2, 1, 1]);
+    expect(card('red.evangelists')).toEqual(['Evangelists', 4, 4, 2, 2]);
+    expect(card('red.zealots')).toEqual(['Zealots', 4, 4, 2, 2]);
     expect(defById('purple.nightowl').retired).toBe(true);
     expect(defById('purple.timekeeperlift').onGameEnd({ countMembersOfColor: () => 3 })).toBe(6);
     for (const id of ['red.patriarch', 'purple.timekeepers', 'purple.nightwatch']) expect(defById(id).retired).toBe(true);
@@ -369,6 +373,7 @@ describe('Converts: "On Recruit: recruit a rival\'s member costing 3 or less, fo
     expect(owns(s, 0, 'red.movementpenalty')).toBe(true);
     expect(s.players[0].bonus).toBe(2); // Foster Parents
     expect(s.log).toContain("P1's Converts: P1 recruits P2's Deprogrammers.");
+    if (s.pending?.options?.length && /cheapest/.test(s.pending.prompt || '')) s = answer(s, s.pending.options[0].id); // a tie in the refilled shop: the owner picks
     expect(s.log.some(l => /^P2 recruits .* from the shop, for free \(Converts\)\.$/.test(l))).toBe(true);
     expect(s.players[1].members.length).toBe(2); // Mob and the shop's cheapest
   });
@@ -534,5 +539,31 @@ describe('"Paper filters, play ranks" cards (Nov 4)', () => {
     const slots = s.pending.options.filter(o => o.kind === 'slot');
     expect(slots.length).toBeGreaterThan(0);
     expect(slots.every(o => o.squat)).toBe(true);
+  });
+});
+
+describe('Evangelists, Zealots, Relay Runners (Nov 4)', () => {
+  const stub = (s, logs) => ({ state: s, log: l => logs.push(l), followers: p => followers(s, p), rivals: p => s.players.filter(o => o !== p) });
+  it('Evangelists: a rival recruits a red member +2, you +3, a non-red member nothing', () => {
+    const s = table(['red', 'purple', 'market', 'yellow'], { round: 2, members: [['red.evangelists'], []] });
+    const p = s.players[0], r = s.players[1], uid = uidIn(s, 'red.evangelists', 0), logs = [], b = p.bonus, def = defById('red.evangelists');
+    def.onAnyRecruit(stub(s, logs), p, s.cards[uid], r, { uid: 'x', def: 'red.panel' });
+    def.onAnyRecruit(stub(s, logs), p, s.cards[uid], p, { uid: 'y', def: 'red.panel' });
+    def.onAnyRecruit(stub(s, logs), p, s.cards[uid], r, { uid: 'z', def: 'purple.courier' });
+    expect(p.bonus).toBe(b + 5);
+  });
+  it('Zealots: +1 follower and the leader loses 1; nothing taken when you lead', () => {
+    const s = table(['red', 'purple', 'market', 'yellow'], { round: 2, members: [['red.zealots'], []] });
+    const p = s.players[0], r = s.players[1], uid = uidIn(s, 'red.zealots', 0), logs = [], def = defById('red.zealots');
+    r.bonus = 20; const pb = p.bonus;
+    def.onRecruit(stub(s, logs), p, s.cards[uid], p, { followers: 3 });
+    expect(p.bonus).toBe(pb + 1); expect(r.bonus).toBe(19);
+  });
+  it('Relay Runners: its owner\'s Right Away gives two turns right after', () => {
+    let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 2, members: [['purple.relayrunners'], []],
+      queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
+    s = take(s, 'purple.again');
+    const turns = s.queue.filter(t => t.t === 'turn').map(t => t.p);
+    expect(turns.slice(0, 2)).toEqual([0, 0]);
   });
 });

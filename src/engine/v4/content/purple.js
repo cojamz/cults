@@ -350,6 +350,8 @@ const turnsNowEstimate = (ctx, p, n) => {
 
 /** Overtime, off the board since 2026-10-15 (Rush Hour took its space). Kept for the extra-turn member tests only:
  *  test/engine/v4/retired-overtime.js puts it back on Purple's quadrant for one test file. */
+/** Relay Runners (REPLACE7 bot test): its owner's Right Away gives two turns right after. */
+const relayRunners = (ctx, p) => ctx.membersOf(p).some(c => c.def && c.def.relayRunners);
 /** Roll Call left the board on 2026-10-22 (Right Away took its space); tests that need a plain purple space keep it
  *  in that space (test/engine/v4/retired-overtime.js useRetiredRollCall). */
 export const RETIRED_ROLLCALL = {
@@ -489,7 +491,7 @@ export default {
       key: 'again', copyDoesIt: true, ring: 1, name: 'Right Away', text: '+1 purple in round I, +2 in round II, +3 in round III. Your next turn comes right after this one.',
       byRound: { lines: ['+1 purple', '+2 purple', '+3 purple'], rest: 'Your next turn comes right after this one.' },
       estimate: (ctx, p) => ctx.state.round + turnsNowEstimate(ctx, p, 1),
-      resolve(ctx, p) { ctx.gain(p, P, ctx.state.round, { fromAction: true }); turnsNow(ctx, p, 1, 'Right Away'); },
+      resolve(ctx, p) { ctx.gain(p, P, ctx.state.round, { fromAction: true }); turnsNow(ctx, p, relayRunners(ctx, p) ? 2 : 1, 'Right Away'); },
     }, CALL_BACK),
     {
       // Cory, 2026-10-22: "+1 purple, you can play on occupied spaces this round" (+2 with the inherent +1; he may
@@ -803,6 +805,10 @@ export default {
     // Sprinter (paper 16 vs 11): Crunch Time's turn rule, once a game, when you choose (turnsNow, as Crunch Time).
     // Nov 4, "paper filters, play ranks" (Cory's yes; director 12:47pm): paper passers at or over the bar and the old
     // card go straight to a play A/B. Timekeeper's place: Old Timer (14), Lookouts (15), Errand Boy (14).
+    // Relay Runners (paper 14 vs 11): Right Away's own turn rule, two turns for its owner (the space reads the flag).
+    ...add7(m('relayrunners', 'Relay Runners', 1, 2, 'Your Right Away gives your next two turns right after it.', { f: 2, n: 2, round: 1, relayRunners: true,
+      ...see(info => 1.5 * endsAhead(info).length),
+    })),
     ...add7(m('oldtimer', 'Old Timer', 1, 2, 'Round End: put a time token on this card. Worth 1 more follower per time token.', { round: 1,
       onRoundEnd(ctx, owner, card) { card.time = (card.time || 0) + 1; ctx.log(`${owner.name}'s Old Timer: a time token (worth ${1 + card.time}).`); },
       ...see(info => endsAhead(info).length),
