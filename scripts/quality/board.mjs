@@ -20,6 +20,7 @@ export function boardText(colors = [], { without = [], members = true, spaces = 
       if (!members) continue;
       L.push('', '## Guests (no color; cost only "any"; can join any cult)');
       for (const m of guestMembers().filter(inDeck)) if (!drop.has(m.name.toLowerCase())) L.push(`    · ${m.name} [${m.w} any, worth ${m.f}${m.n > 1 ? `, counts as ${m.n}` : ''}] ${m.text ?? ''}`);
+      for (const m of extra.filter(x => /^guests?$|^grey$|^gray$/i.test(x.color))) L.push(`    · ${m.name} [${m.price}] ${m.text}`);
       continue;
     }
     const q = quadrant(id);
