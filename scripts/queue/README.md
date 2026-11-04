@@ -29,6 +29,9 @@ node /mnt/project-files/queue/queue.mjs post --name=strong8 --commit=66593480 --
 - Card trials from `scripts/trial/trial.mjs`: `post --kind=trial --name=<trial>`. The trial tool hands out its own games; runners just run `trial.mjs work <name>`.
 - Higher `--priority` runs first; ties go oldest first.
 
+## After posting
+Runner threads sleep between jobs and nothing wakes them on its own. After you post a job (or `trial.mjs new` posts one), message the work desk thread ("Run the project's work desk"); it wakes the runners.
+
 ## Seeing where things stand
 - `node /mnt/project-files/queue/queue.mjs status`: per job, games done, being played and open; which runners are alive and what they're on.
 - `log.jsonl`: one line per post, finished block, failure, takeover and finished job.
