@@ -546,6 +546,7 @@ const market = {
     // bottom of the pile (Claude's ruling, pitch file). Red's free recruits and Promote don't reach it: it isn't in the shop.
     ...add9(m('stallholder', 'Stallholder', 3, 1, 'On Use, once per round: move a shop member beside this card, then refill. Until round end, anyone may recruit it there; a rival pays its cost to you.', { round: 1, stall: 'anyone',
       activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; }, // once per round: each round's use comes back (as Doormen)
       onActivate(ctx, owner, card) {
         const shop = ctx.shopCards();
         if (!shop.length || ctx.state.stalls?.[card.uid]?.length) { card.used = false; ctx.log(`${owner.name}'s Stallholder: nothing to move.`); return; }

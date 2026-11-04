@@ -319,6 +319,12 @@ describe('Stallholder: "On Use, once per round: move a shop member beside this c
     expect(owns(s, 1, 'red.volunteer')).toBe(true);
     expect((s.players[0].res.red || 0)).toBeGreaterThan(before);
   });
+  it('once per round: the use comes back next round', () => {
+    let { s } = stalled([{ t: 'buy', p: 0 }, { t: 'allPlaced' }, { t: 'endRound' }, { t: 'afterRound' }]);
+    s = answer(s, 'pass');
+    expect(s.round).toBe(2);
+    expect(s.cards[uidIn(s, 'market.stallholder', 0)].used).toBe(false);
+  });
   it('unsold, it goes to the bottom of the pile after contests', () => {
     let { s, vol } = stalled([{ t: 'buy', p: 0 }, { t: 'endRound' }]);
     s = answer(s, 'pass');
