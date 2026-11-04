@@ -366,7 +366,7 @@ describe('Seamstress: "On Use, once per game: double your full sets."', () => {
   const Q4 = ['red', 'yellow', 'market', 'purple'];
   it('price and retirement', () => {
     const d = defById('yellow.seamstress');
-    expect([d.s, d.w, d.f, d.activate]).toEqual([6, 3, 1, 'game']);
+    expect([d.s, d.w, d.f, d.activate]).toEqual([4, 2, 1, 'game']);
     expect(defById('yellow.harmonist').retired).toBe(true);
   });
   it('On Use: 2 full sets become 4 (+2 of each color); once per game', () => {

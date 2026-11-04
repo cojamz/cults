@@ -315,9 +315,9 @@ export default {
     m('harmonist', 'Harmonist', 4, 2, 'Game End: +1 follower per full set you hold.', { ...old9('yellow.harmonist'),
       onGameEnd: (ctx, owner) => setsOf(ctx, owner),
     }),
-    // REPLACE9 bot test (Members C, Nov 4): Harmonist's place. 6 yellow + 3 any as a player sees it. "Double": +1 of each
+    // REPLACE9 bot test (Members C, Nov 4): Harmonist's place. 4 yellow + 2 any as a player sees it (was 6 + 3: A/B judges, its price ate the sets it doubled). "Double": +1 of each
     // color on the table per full set held (setsOf, so Jack-of-All-Trades' yellow sets count). No set: the use comes back.
-    ...add9(m('seamstress', 'Seamstress', 5, 3, 'On Use, once per game: double your full sets.', {
+    ...add9(m('seamstress', 'Seamstress', 3, 2, 'On Use, once per game: double your full sets.', {
       activate: 'game',
       onActivate(ctx, owner, card) {
         const k = setsOf(ctx, owner);
@@ -325,8 +325,8 @@ export default {
         for (const c of colors(ctx)) ctx.gain(owner, c, k);
         ctx.log(`${owner.name}'s Seamstress: doubles ${k === 1 ? 'a full set' : `${k} full sets`}: +${k} of each color.`);
       },
-      // bots double 2 or more sets, or any set on their last turn
-      botActivate: (ctx, owner) => { const k = setsOf(ctx, owner); return k >= 2 || (k >= 1 && ctx.state.round === 3 && (owner.left || 0) <= 1); },
+      // bots wait for 3 sets, or take 2 in round III, or any set on their last turn (A/B, Nov 4: early on 2 sets it paid back 8 for 9)
+      botActivate: (ctx, owner) => { const k = setsOf(ctx, owner), r3 = ctx.state.round === 3; return k >= 3 || (r3 && k >= 2) || (k >= 1 && r3 && (owner.left || 0) <= 1); },
     })),
     // Cory, 2026-10-31: "also give followers… like side quests"
     m('matchmaker', 'Matchmaker', 3, 2, 'Whenever you recruit a member of a color none of your members have, +2 in colors you choose and +1 follower.', {
