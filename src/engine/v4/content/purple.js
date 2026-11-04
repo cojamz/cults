@@ -96,8 +96,12 @@ function extraHooks(ctx, p) {
 export function extraMinion(ctx, p, what) {
   if (ctx.state.round === 1) { ctx.log(`No extra minions in round I: ${p.name} gets no extra minion from ${what}.`); return 0; }
   if (!spareSpace(ctx)) { ctx.log(`${p.name}'s ${what}: no free space this round, so no extra minion.`); return 0; }
-  const q = ctx.state.queue, close = q.findIndex(t => t.t === 'allPlaced');
-  q.splice(close < 0 ? q.length : close, 0, { t: 'turn', p: p.id });
+  // before the round closes: ahead of allPlaced, or, once that has run (a recruit during Straggler's after-the-last-minion
+  // step), ahead of the round's end; never after it (a seeded game placed a minion after the game was over, Nov 4)
+  const q = ctx.state.queue, close = q.findIndex(t => t.t === 'allPlaced'), end = q.findIndex(t => t.t === 'endRound');
+  const at = close >= 0 ? close : end;
+  if (at < 0) { ctx.log(`${p.name}'s ${what}: the round is over, so no extra minion.`); return 0; }
+  q.splice(at, 0, { t: 'turn', p: p.id });
   p.left += 1;
   ctx.log(`${p.name}'s ${what}: ${p.name} gets 1 more minion this round.`);
   extraHooks(ctx, p);

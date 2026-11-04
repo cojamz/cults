@@ -47,10 +47,12 @@ describe('member structure: the new members', () => {
     const Q = ['gold', 'red', 'market', 'thieves'];
     let s = table(Q, { round: 1, members: [['market.windowshopper']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending?.player).toBe(0);
-    const uid = Number(s.pending.options[0].id.split(':')[1]);
+    // a colored member (a grey one has no color to pay; the 12-card grey deck, Nov 4, put one first on this seed)
+    const pick = s.pending.options.find(o => !s.cards[Number(o.id.split(':')[1])].def.startsWith('benders.'));
+    const uid = Number(pick.id.split(':')[1]);
     const color = quadrant(s.cards[uid].def.split('.')[0]).resource;
     const before = s.players[0].res[color] || 0;
-    s = move(s, s.pending.options[0].id);
+    s = move(s, pick.id);
     expect(s.pile[s.pile.length - 1]).toBe(uid);
     expect(s.shop.includes(uid)).toBe(false);
     if (s.resources.includes(color)) expect(s.players[0].res[color]).toBe(before + 1);
