@@ -9,6 +9,7 @@ import { add2, old2 } from './replace2.js';
 import { add5, old5 } from './replace5.js';
 import { add9, old9, handlers9, ON9 } from './replace9.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
+import { swap11, handlers11 } from './replace11.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
 const Y = 'yellow';
@@ -69,6 +70,26 @@ function newColor(ctx, owner, member, { grey = false } = {}) {
 export const isNewColor = (ctx, owner, member) => newColor(ctx, owner, member, { grey: true });
 /** Bots: a face-up member that would be a new color for p. */
 const newInShop = (ctx, p) => ctx.shopCards().some(c => newColor(ctx, p, c, { grey: true }));
+/**
+ * Housewarming (REPLACE11, Actions lane, Nov 4; /mnt/project-files/quality/pitches/actions-big-new-blood.md), in Big New
+ * Blood's place: "+2 yellow. Recruit a shop member of a color none of your members have, costing up to 5, for free."
+ * An extra recruit, as Initiation's (On Recruit fires); your turn's own recruit is still yours.
+ */
+const hwCost = c => c.def.s + c.def.w;
+const hwList = (ctx, p) => ctx.shopCards().filter(c => hwCost(c) <= 5 && newColor(ctx, p, c, { grey: true }));
+const HOUSEWARMING = {
+  key: 'housewarming', ring: 2, name: 'Housewarming', copyDoesIt: true,
+  text: '+2 yellow. Recruit a shop member of a color none of your members have, costing up to 5, for free.',
+  estimate: (ctx, p) => 2 + Math.max(0, ...hwList(ctx, p).map(c => c.def.f + hwCost(c) * 0.6)),
+  resolve(ctx, p) {
+    ctx.gain(p, Y, 2, { fromAction: true });
+    const list = hwList(ctx, p);
+    if (!list.length) { ctx.log(`${p.name}'s Housewarming: no shop member of a new color costs 5 or less.`); return; }
+    ctx.choose(p, 'Housewarming: recruit which member for free?', list.map(c => ({
+      id: `card:${c.uid}`, label: `${c.def.name} (${hwCost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + hwCost(c),
+    })), 'yellow.housewarming');
+  },
+};
 function matchmaker(ctx, owner, member) {
   if (!newColor(ctx, owner, member)) return;
   owner.bonus += 1;
@@ -127,7 +148,7 @@ export default {
         (p.recruitFollowers ||= []).push({ n: ctx.state.round + 1, name: 'New Blood', newColor: true });
       },
     },
-    {
+    swap11({
       // Big New Blood (Claude, under Cory's go-with-your-gut, Nov 4; was Big Dilute, "+4 yellow, then change up to 6 of
       // rivals' resources one for one")
       key: 'bigdilute', ring: 2, name: 'Big New Blood', copyDoesIt: true,
@@ -137,7 +158,7 @@ export default {
         ctx.gain(p, Y, 4, { fromAction: true });
         (p.recruitFollowers ||= []).push({ n: 5, name: 'Big New Blood', newColor: true });
       },
-    },
+    }, HOUSEWARMING),
     {
       // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 4 new words only (Claude, under Cory's
       // go-with-your-gut: "worded strangely"), the same effect
@@ -160,6 +181,14 @@ export default {
   ],
 
   handlers: {
+    ...handlers11({
+      housewarming(ctx, p, uid) {
+        const c = ctx.card(uid);
+        if (!c || !ctx.state.shop.includes(uid)) return;
+        ctx.log(`${p.name}'s Housewarming: recruits ${c.def.name} for free.`);
+        ctx.recruit(p, uid, { free: true });
+      },
+    }),
     ...handlers9({
       toll(ctx, o, color, data) {
         const host = ctx.player(data.host);

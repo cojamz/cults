@@ -259,6 +259,33 @@ describe('REPLACE11: Sweet Nothings', () => {
   });
 });
 
+describe('REPLACE11: Housewarming', () => {
+  const slot = (s, name) => { const q = s.quadrants.indexOf('yellow'); return `${q}-${quadrant('yellow').actions.findIndex(a => a.name === name)}`; };
+  it("is on the wheel in Big New Blood's place", () => {
+    const names = quadrant('yellow').actions.map(a => a.name);
+    expect(names).toContain('Housewarming');
+    expect(names).not.toContain('Big New Blood');
+  });
+  // "+2 yellow. Recruit a shop member of a color none of your members have, costing up to 5, for free."
+  it('gives +2 yellow and recruits, for free, a new-color shop member costing up to 5 (not your colors, not dearer)', () => {
+    let s = table(['red', 'yellow'], { round: 2, members: [['red.volunteer']], shop: ['red.intern', 'yellow.pilgrim', 'yellow.peddler'] });
+    const pilgrim = s.shop.find(u => s.cards[u].def === 'yellow.pilgrim');
+    s = answer(s, `slot:${slot(s, 'Housewarming')}`);
+    expect(s.players[0].res.yellow).toBe(2);
+    expect(s.pending.prompt).toBe('Housewarming: recruit which member for free?');
+    expect(s.pending.options.map(o => o.id)).toEqual([`card:${pilgrim}`]);
+    s = answer(s, `card:${pilgrim}`);
+    expect(s.players[0].members).toContain(pilgrim);
+    expect(s.players[0].res.yellow).toBe(2 + 1); // Pilgrim's On Recruit "+1 of each color" fires
+    expect(s.log.join('\n')).toContain("P1's Housewarming: recruits Pilgrim for free.");
+  });
+  it('with no new-color member at 5 or less, only the yellow', () => {
+    let s = table(['red', 'yellow'], { round: 2, members: [['red.volunteer']], shop: ['red.intern'] });
+    s = answer(s, `slot:${slot(s, 'Housewarming')}`);
+    expect(s.players[0].res.yellow).toBe(2);
+  });
+});
+
 describe('Blue contest settings (contestFix.market)', () => {
   const blueRow = (fix, members) => {
     const s = table(['red', 'market'], { n: 2, members, rules: { contests: 'byColor', contestFix: { market: fix } } });
