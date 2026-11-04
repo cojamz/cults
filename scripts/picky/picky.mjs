@@ -35,6 +35,15 @@ const MAX_MIN = Number(flag('max-min', 25));
 const LOOKS = String(flag('looks', 'pictures,emoji')).split(',');
 const TABLES = String(flag('tables', 'red,echo,thieves,purple;market,trading,silver,yellow')).split(';');
 const SWEEP = !flag('no-sweep', false);
+// --album: a picture of every screen a player meets (each hover card open, each sheet, each round card, home, setup,
+// results), numbered in play order, for first-time-player readers who see only pictures and the rulebook
+const ALBUM = !!flag('album', false);
+let albumN = 0;
+async function snap(page, label) {
+  if (!ALBUM) return;
+  mkdirSync(join(OUT, 'album'), { recursive: true });
+  await page.screenshot({ path: join(OUT, 'album', `${String(++albumN).padStart(4, '0')}-${label.replace(/[^a-z0-9]+/gi, '-').slice(0, 60)}.png`) }).catch(() => {});
+}
 const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
 const OUT = resolve(String(flag('out', `/mnt/project-files/picky/${stamp}`)));
 const SHOTS = join(OUT, 'shots');
@@ -47,7 +56,7 @@ if (!base) {
   const dir = join(OUT, '.live');
   rmSync(dir, { recursive: true, force: true });
   mkdirSync(join(dir, 'patrons'), { recursive: true });
-  execSync('git fetch -q origin main', { stdio: 'inherit' });
+  for (let k = 0; k < 4; k++) { try { execSync('git fetch -q origin main', { stdio: 'inherit' }); break; } catch { execSync('sleep 3'); } } // two bots starting together race on the ref
   execSync(`git archive origin/main play | tar -x -C ${join(dir, 'patrons')}`);
   build = JSON.parse(readFileSync(join(dir, 'patrons/play/build.json'), 'utf8'));
   const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.webp': 'image/webp', '.mp3': 'audio/mpeg', '.ogg': 'audio/ogg', '.wav': 'audio/wav' };
@@ -108,6 +117,7 @@ async function inspectHover(page, where) {
   const card = await page.evaluate(READ_CARD).catch(e => { console.log('  read failed: ' + String(e).slice(0, 200)); return null; });
   if (!card) return null;
   stats.cards++;
+  await snap(page, `hover ${where.split(', ').slice(1).join(' ')}`);
   appendFileSync(join(OUT, 'cards.jsonl'), JSON.stringify({ where, ...card }) + '\n');
   for (const f of judgeCard(card)) await note(page, { ...f, where }, layer);
   for (const f of judgeClip(await page.evaluate(TEXT_CLIP).catch(() => []))) await note(page, { ...f, where }, null);
@@ -117,9 +127,11 @@ async function inspectHover(page, where) {
 async function restOn(page, el) {
   const b = await el.boundingBox().catch(() => null);
   if (!b || b.width < 2) return false;
+  // a rim's hit area is a curved band: its box's middle is inside the wheel, over a space, so aim at the band itself
+  const onArc = await el.evaluate(e => { if (!(e instanceof SVGPathElement)) return null; const L = e.getTotalLength(), p = e.getPointAtLength(L / 4), m = e.getScreenCTM(); return m ? { x: p.x * m.a + p.y * m.c + m.e, y: p.x * m.b + p.y * m.d + m.f } : null; }).catch(() => null);
   await page.mouse.move(6, 694);
   await sleep(60);
-  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 3 });
+  await page.mouse.move(onArc ? onArc.x : b.x + b.width / 2, onArc ? onArc.y : b.y + b.height / 2, { steps: 3 });
   await page.waitForSelector('[data-hover-layer][data-open="1"]', { timeout: 1200 }).catch(() => null);
   await sleep(200);
   return true;
@@ -162,18 +174,21 @@ async function play(g) {
   const tag = `game ${g + 1} (${table}, ${look})`;
   console.log(`${tag}: starting`);
   await page.goto(`${base}?intro=0&sound=off&speed=quick&members=${look}&table=${table}`);
+  await sleep(1500); await snap(page, `g${g + 1} home`);
   await page.click('[data-home="local"]');
   await page.waitForSelector('[data-start]');
+  await sleep(600); await snap(page, `g${g + 1} setup`);
   await page.click('[data-start]');
   await page.waitForSelector('.app.game', { timeout: 20000 });
   const t0 = Date.now();
-  let dead = 0, lastMoves = -1, turns = 0, stalls = 0, sheets = 0, sheetAt = -1, stillAt = { moves: -1, t: Date.now() };
+  let dead = 0, lastMoves = -1, turns = 0, stalls = 0, sheets = 0, sheetAt = -1, buyAt = -1, stillAt = { moves: -1, t: Date.now() };
   const looked = new Set(); // (round, what) already rested on
   while (Date.now() - t0 < MAX_MIN * 60000) {
     if (await page.$('.results')) break;
     const hand = await page.$('[data-handoff]'); if (hand) { await hand.click().catch(() => {}); continue; }
     const next = await page.$('[data-next-round]');
     if (next) {
+      await sleep(900); await snap(page, `g${g + 1} round card`);
       // the round card: its own text checked once per round
       for (const f of judgeClip(await page.evaluate(TEXT_CLIP).catch(() => []))) await note(page, { ...f, where: `${tag}, round card` });
       await next.click().catch(() => {}); await sleep(600); continue;
@@ -202,16 +217,17 @@ async function play(g) {
         const faces = await page.evaluate(READ_SHOP_FACES).catch(() => []);
         for (const f of faces.flatMap(judgeShopFace)) await note(page, { ...f, where });
         for (const f of judgeClip(await page.evaluate(TEXT_CLIP).catch(() => []))) await note(page, { ...f, where });
+        await snap(page, `g${g + 1} table turn ${turns}`);
         if (turns <= 3 || turns % 4 === 0) await page.screenshot({ path: join(SHOTS, `table-g${g + 1}-t${String(turns).padStart(2, '0')}.png`) });
         // every space, plaque, shop card and seat member, once per round each
         const targets = [
           ...(await page.$$('.lt-wheel [data-slot]')).map(el => ['space', el]),
-          ...(await page.$$('[data-plaque]')).map(el => ['plaque', el]),
+          ...(await page.$$('path.rim-hit[data-rim]')).map(el => ['plaque', el]),
           ...(await page.$$('.lt-shop .card[data-uid]')).map(el => ['shop', el]),
           ...(await page.$$('section.lt-cult-seat .cs-head')).map(el => ['seat', el]),
         ];
         for (const [kind, el] of targets) {
-          const id = await el.evaluate(e => e.getAttribute('data-slot') || e.getAttribute('data-plaque') || e.getAttribute('data-uid') || e.closest('[data-seat]')?.getAttribute('data-seat') || '').catch(() => '');
+          const id = await el.evaluate(e => e.getAttribute('data-slot') || e.getAttribute('data-rim') || e.getAttribute('data-plaque') || e.getAttribute('data-uid') || e.closest('[data-seat]')?.getAttribute('data-seat') || '').catch(() => '');
           const k = `${s.round}|${kind}|${id}`;
           if (looked.has(k)) continue;
           looked.add(k);
@@ -232,6 +248,7 @@ async function play(g) {
       const confirm = await page.waitForSelector('[data-place]', { timeout: 500 }).catch(() => null);
       if (confirm) await confirm.click({ timeout: 1500 }).catch(() => {});
     } else if (s.phase === 'buy') {
+      if (s.moves !== buyAt) { buyAt = s.moves; await sleep(400); await snap(page, `g${g + 1} recruit phase`); }
       const cards = await page.$$('.lt-shop .card[data-option]');
       const rates = await page.$$('.lt-rates [data-rate][data-option]');
       const pick = cards[s.moves % Math.max(1, cards.length)] || rates[rates.length - 1] || await page.$('[data-option="pass"]');
@@ -239,7 +256,7 @@ async function play(g) {
     } else {
       // a choice: read the prompt and any open sheet first, then answer like the e2e drivers do; the first few sheets
       // of a game are kept as pictures for a look by eye
-      if (s.moves !== sheetAt && sheets < 6 && await page.$('.prompt.choice, .dialog.pay')) { sheetAt = s.moves; sheets++; await sleep(400); await page.screenshot({ path: join(SHOTS, `choice-g${g + 1}-${String(sheets).padStart(2, '0')}.png`) }); }
+      if (s.moves !== sheetAt && (ALBUM || sheets < 6) && await page.$('.prompt.choice, .dialog.pay')) { sheetAt = s.moves; sheets++; await sleep(400); await page.screenshot({ path: join(SHOTS, `choice-g${g + 1}-${String(sheets).padStart(2, '0')}.png`) }); await snap(page, `g${g + 1} sheet ${s.phase}`); }
       for (const f of judgeClip(await page.evaluate(TEXT_CLIP).catch(() => []))) await note(page, { ...f, where: `${where}, choosing (${s.phase})` });
       const a = await answerChoice(page, { last: ['pass'], skip: dead }).catch(() => null);
       if (!a) await sleep(250);
@@ -256,6 +273,8 @@ async function play(g) {
     await sleep(1500);
     for (const f of judgeClip(await page.evaluate(TEXT_CLIP).catch(() => []))) await note(page, { ...f, where: `${tag}, results` });
     await page.screenshot({ path: join(SHOTS, `results-g${g + 1}.png`) });
+    await snap(page, `g${g + 1} results`);
+    await page.mouse.wheel(0, 700); await sleep(500); await snap(page, `g${g + 1} results scrolled`); await page.mouse.wheel(0, -700);
     // the score bars: a part with no words or number is an empty box until you point at it
     const blank = await page.$$eval('.src-seg', els => els.filter(e => e.getBoundingClientRect().width >= 8 && !e.textContent.trim()).map(e => ({ label: e.getAttribute('aria-label') || e.getAttribute('data-hint') || '', w: Math.round(e.getBoundingClientRect().width) }))).catch(() => []);
     for (const b of blank) await note(page, { check: 'unlabeled', severity: 3, subject: 'final score bars', detail: `a part ${b.w}px wide shows no label or number (${b.label || 'pointing at it says what it is'})`, where: `${tag}, results` }, await page.$('.src-seg:empty'));
