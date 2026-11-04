@@ -16,6 +16,20 @@
 // played into a local .part file, its line count checked, then copied to a tmp name and renamed into place. Nothing
 // appends to the shared folder. Reports dedupe by game number, so a double claim only wastes time.
 import fs from 'node:fs';
+// One id per box: every cloud box is called "vm", so the hostname made another box's live claim look dead (Nov 4).
+// Inlined (same as scripts/lib/box-id.mjs) because the installed copy runs alone from the shared folder.
+let boxIdCache = null;
+const boxId = () => {
+  if (boxIdCache) return boxIdCache;
+  const f = path.join(os.tmpdir(), '.patrons-box-id');
+  try { boxIdCache = fs.readFileSync(f, 'utf8').trim(); } catch {}
+  if (!boxIdCache) {
+    const t = `${f}.${process.pid}`;
+    try { fs.writeFileSync(t, `${os.hostname()}-${crypto.randomBytes(6).toString('hex')}`, { flag: 'wx' }); fs.renameSync(t, f); } catch {}
+    try { boxIdCache = fs.readFileSync(f, 'utf8').trim(); } catch { boxIdCache = `${os.hostname()}-${process.pid}`; }
+  }
+  return boxIdCache;
+};
 import path from 'node:path';
 import os from 'node:os';
 import crypto from 'node:crypto';
@@ -37,8 +51,8 @@ const opt = Object.fromEntries(argv.filter((a) => a.startsWith('--')).map((a) =>
 
 const now = () => new Date().toISOString();
 const readJSON = (f, d = null) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
-const writeAtomic = (f, s) => { const t = `${f}.tmp-${os.hostname()}-${process.pid}`; fs.writeFileSync(t, s); fs.renameSync(t, f); };
-const log = (ev) => { try { fs.appendFileSync(dirs.log, JSON.stringify({ at: now(), host: os.hostname(), ...ev }) + '\n'); } catch {} };
+const writeAtomic = (f, s) => { const t = `${f}.tmp-${boxId()}-${process.pid}`; fs.writeFileSync(t, s); fs.renameSync(t, f); };
+const log = (ev) => { try { fs.appendFileSync(dirs.log, JSON.stringify({ at: now(), host: boxId(), ...ev }) + '\n'); } catch {} };
 const lines = (f) => { try { return fs.readFileSync(f, 'utf8').split('\n').filter((l) => l.trim()).length; } catch { return 0; } };
 const sanitize = (s) => String(s).replace(/[^A-Za-z0-9._-]/g, '-');
 for (const d of [dirs.jobs, dirs.claims, dirs.runners]) fs.mkdirSync(d, { recursive: true });
@@ -55,7 +69,7 @@ const claimFile = (job, b) => path.join(dirs.claims, job.name, String(b.first));
 const claimAge = (f) => { try { return Date.now() - fs.statSync(f).mtimeMs; } catch { return Infinity; } };
 const pidAlive = (pid) => { try { process.kill(pid, 0); return true; } catch (e) { return e.code === 'EPERM'; } };
 // Same rule as trial.mjs: a claim from this box whose process is gone is stale at once.
-const claimLive = (f) => { if (claimAge(f) >= STALE_MS) return false; const c = readJSON(f); return !(c && c.host === os.hostname() && c.pid && !pidAlive(c.pid)); };
+const claimLive = (f) => { if (claimAge(f) >= STALE_MS) return false; const c = readJSON(f); return !(c && c.host === boxId() && c.pid && !pidAlive(c.pid)); };
 const jobs = () => fs.readdirSync(dirs.jobs).filter((f) => f.endsWith('.json')).map((f) => { const j = readJSON(path.join(dirs.jobs, f)); return j && { ...j, _file: path.join(dirs.jobs, f) }; }).filter(Boolean);
 const saveJob = (j) => { const { _file, ...body } = j; writeAtomic(_file, JSON.stringify(body, null, 1) + '\n'); };
 const reload = (j) => { const n = readJSON(j._file); return n && { ...n, _file: j._file }; };
@@ -125,15 +139,15 @@ function status() {
 }
 
 // ---- work
-const runnerId = sanitize(opt.label || process.env.QUEUE_LABEL || `${os.hostname()}-${process.pid}`);
+const runnerId = sanitize(opt.label || process.env.QUEUE_LABEL || `${boxId()}-${process.pid}`);
 const runnerFile = path.join(dirs.runners, `${runnerId}.json`);
 let runnerDoing = 'starting';
-const beatRunner = () => { try { writeAtomic(runnerFile, JSON.stringify({ label: runnerId, host: os.hostname(), pid: process.pid, doing: runnerDoing, at: now() })); } catch {} };
+const beatRunner = () => { try { writeAtomic(runnerFile, JSON.stringify({ label: runnerId, host: boxId(), pid: process.pid, doing: runnerDoing, at: now() })); } catch {} };
 const offset = (key, n) => n ? parseInt(crypto.createHash('sha1').update(runnerId + key).digest('hex').slice(0, 8), 16) % n : 0;
 
 function claim(job, b) {
   const f = claimFile(job, b); fs.mkdirSync(path.dirname(f), { recursive: true });
-  const body = JSON.stringify({ runner: runnerId, host: os.hostname(), pid: process.pid, at: now() });
+  const body = JSON.stringify({ runner: runnerId, host: boxId(), pid: process.pid, at: now() });
   try { fs.writeFileSync(f, body, { flag: 'wx' }); return f; } catch (e) { if (e.code !== 'EEXIST') throw e; }
   if (claimLive(f)) return null;
   // Stale: take it over. Rename our own claim over it, then re-read to see who won.

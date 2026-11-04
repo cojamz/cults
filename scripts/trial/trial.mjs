@@ -23,7 +23,8 @@ import { spawn, execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, openSync, closeSync, writeSync,
   unlinkSync, renameSync, copyFileSync, utimesSync, symlinkSync, rmSync } from 'node:fs';
-import { hostname } from 'node:os';
+import { boxId } from '../lib/box-id.mjs';
+const hostname = boxId; // claims compare this: a per-box id, not the shared "vm" hostname
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { quadrant } from '../../src/engine/v4/index.js';
