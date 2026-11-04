@@ -717,7 +717,7 @@ function finishTransmute(ctx, p, data) {
 }
 
 // "+N in colors you choose": one color at a time (bots lean to their fewest)
-function pickColors(ctx, p, n, who, fromAction = false, got = 0) {
+export function pickColors(ctx, p, n, who, fromAction = false, got = 0) {
   ctx.choose(p, `${who}: +1 of which color? (${n} to pick)`, colors(ctx).map(c => ({
     id: `color:${c}`, label: `+1 ${c}`, kind: 'color', value: c, hint: -(p.res[c] || 0),
   })), 'yellow.wild', { left: n, who, fromAction, got });

@@ -21,6 +21,7 @@ import { add9, old9, handlers9 } from './replace9.js';
 import { see, endsAhead } from './botsee.js';
 import { add11, old11, handlers11 } from './replace11.js';
 import { add15, old15 } from './replace15.js';
+import { pickColors } from './yellow.js';
 const holdWorth = (ctx, who, sp) => {
   const [q, i] = sp.key.split('-').map(Number), a = spacesOf(ctx.state, ctx.state.quadrants[q])[i];
   try { return typeof a.estimate === 'function' ? a.estimate(ctx, who) || 0 : sp.ring; } catch { return sp.ring; }
@@ -264,19 +265,30 @@ const members = [
   m('cheerleader', 'Cheerleader', null, 0, 3, 'Whenever you win a contest, +1 follower.', {
     onContestWin(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Cheerleader: +1 follower.`); },
   }),
-  // REPLACE15 bot test (Cory, Nov 4: "when you win a contest, get x y z"): slot pending his pick (Dabblers is protected). A shared contest counts as a win,
-  // as for Cheerleader and Sore Loser. Cheerleaders: 6 any as a player sees it. Gloaters: 8 any; loose followers only,
-  // through the shared steal (Bodyguards blocks it), the moment each contest is won.
+  // REPLACE15 bot test (Cory, Nov 4: "when you win a contest, get x y z", then "the member should give resources for
+  // winning contests", "though cheerleaders is kinda cool too"): Spoilsport's place (director, Nov 4). A shared contest
+  // counts as a win, as for Cheerleader and Sore Loser. Each pays the moment its contest is scored. Prices are guesses.
   ...add15(m('cheerleaders', 'Cheerleaders', null, 0, 5, 'Whenever you win a contest, +2 followers.', {
     onContestWin(ctx, owner) { owner.bonus += 2; ctx.log(`${owner.name}'s Cheerleaders: +2 followers.`); },
   })),
-  ...add15(m('gloaters', 'Gloaters', null, 0, 7, 'Whenever you win a contest, steal 1 follower from each rival.', {
-    // right at each win, so with contests scored one at a time (Cory, Nov 4: cloak order) a later contest reads the new counts
-    onContestWin(ctx, owner) {
+  ...add15(m('victors', 'Victors', null, 0, 4, 'Whenever you win a contest, +3 of its color.', {
+    onContestWin(ctx, owner, card, c) {
+      const color = ctx.quadrant(c.qid).resource;
+      const got = ctx.gain(owner, color, 3);
+      if (got) ctx.log(`${owner.name}'s Victors: +${got.n} ${got.color}.`);
+    },
+  })),
+  ...add15(m('warchest', 'War Chest', null, 0, 4, 'Whenever you win a contest, +3 resources in any colors.', {
+    onContestWin(ctx, owner) { pickColors(ctx, owner, 3, 'War Chest'); },
+  })),
+  // resources of the contest's color, through the shared steal (Bodyguards blocks it)
+  ...add15(m('gloaters', 'Gloaters', null, 0, 5, 'Whenever you win a contest, take 1 of its color from each rival.', {
+    onContestWin(ctx, owner, card, c) {
+      const color = ctx.quadrant(c.qid).resource;
       const inst = ctx.stealInstance();
       let got = 0;
-      for (const o of ctx.state.players) if (o !== owner) got += ctx.steal(owner, o, { followers: 1, instance: inst });
-      if (got) ctx.log(`${owner.name}'s Gloaters: a contest won; steals ${got} follower${got === 1 ? '' : 's'}.`);
+      for (const o of ctx.state.players) if (o !== owner) got += ctx.steal(owner, o, { take: { [color]: 1 }, instance: inst, give: n => { owner.res[color] = (owner.res[color] || 0) + n; } });
+      if (got) ctx.log(`${owner.name}'s Gloaters: takes ${got} ${color} from rivals.`);
     },
   })),
   // Cory, 2026-10-28: Anarchist, 7, once per round (it stands in for Red's swaps)
@@ -309,7 +321,7 @@ const members = [
   // keeps 4). 6 any as a player sees it. Chosen after the round's last placement, before anything is scored (core's
   // allPlaced step), among the contests a rival leads and its owner doesn't (a tie for the lead counts as leading);
   // core's contest table then gives that contest no winner this round (state.spoiled).
-  m('spoilsports', 'Spoilsport', null, 0, 5, "Round End: choose a contest you don't lead; nobody wins it this round.", { round: 1,
+  m('spoilsports', 'Spoilsport', null, 0, 5, "Round End: choose a contest you don't lead; nobody wins it this round.", { round: 1, ...old15('benders.spoilsports'),
     onAllPlaced(ctx, owner) {
       const led = new Map(ctx.state.players.map(o => [o.id, ctx.contestsLed(o)]));
       const opts = ctx.state.quadrants.filter(q => !led.get(owner.id).includes(q)).map(q => {
