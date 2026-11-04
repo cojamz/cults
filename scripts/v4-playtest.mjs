@@ -257,6 +257,9 @@ while (!(await page.$('.results'))) {
 }
 await page.waitForTimeout(1500);
 await shot('results');
+// the whole game's log, so a result can be explained afterwards (Nov 4: the 34-member game's log was lost)
+const fin = await page.evaluate(() => { for (const k of ['patrons.v4.local', 'patrons.v4.last']) { try { const v = JSON.parse(localStorage.getItem(k)); if (v && v.state) return v.state; } catch { /* */ } } return null; }).catch(() => null);
+if (fin) { writeFileSync(`${OUT}/log.txt`, (fin.log || []).map(l => (typeof l === 'string' ? l : l.text || JSON.stringify(l))).join('\n')); writeFileSync(`${OUT}/state.json`, JSON.stringify(fin)); }
 const res = await page.$eval('.results', e => e.innerText.slice(0, 1500)).catch(() => '');
 writeFileSync(`${OUT}/stories.txt`, stories.join('\n'));
 writeFileSync(`${OUT}/results.txt`, res);
