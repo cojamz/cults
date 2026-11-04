@@ -70,6 +70,8 @@ if (args[0] === 'score') {
   // Bot misuse (change 14, director 10:45am; Cory, Nov 4, on Encore: "you fundamentally weren't testing the card
   // correctly"): a judge's "the bot used it sensibly: no" on any sheet, for either card, makes the run a bot bug. It
   // neither passes nor fails; one fresh run after the bot fix decides.
+  // key.botMisuse: misuse the judges described in words before the sensibleUse field existed, entered by hand.
+  for (const m of key.botMisuse || []) misuse[m.side === 'old' ? 'old' : 'new'].push(`${m.file}: ${m.what}`);
   const botBug = !superseded && (misuse.new.length + misuse.old.length) > 0;
   const pass = rawPass && !botBug;
   const looseLine = looseN ? `${matched} matched pair(s), ${looseN} across games; matched only: new ${nm} vs old ${om} (${gapM >= 0 ? '+' : ''}${gapM}). ${matched < 2 ? 'Too few matched pairs to pass: ask the Lab for more seeds.' : 'A pass on all pairs needs +0.5.'}` : null;
