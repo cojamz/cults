@@ -18,6 +18,7 @@ import { registerQuadrant, allQuadrantIds, quadrant, defById, spacesOf } from '.
 import { add2, old2, handlers2 } from './replace2.js';
 import { add4, old4, handlers4 } from './replace4.js';
 import { add10, old10, handlers10, on10 } from './replace10.js';
+import { add9, old9 } from './replace9.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 // IMPRESSIONIST=n: bot test only; the game pays 1 (Claude, under Cory's "use your judgement", Nov 3; was 2, Cory Nov 1)
@@ -340,6 +341,7 @@ function heard(ctx, p, e, taker) {
   for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(e.color).resource, IMPRESSION));
   each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
   each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += COPYIST; }); // REPLACE10
+  each(ctx, p, 'roadie9', 'Roadie', () => { const g = ctx.countMembersOfColor(p, 'echo'); if (g) ctx.gain(p, 'green', g); }); // REPLACE9
   for (const owner of ctx.rivals(p)) each(ctx, owner, 'muse', 'Muse', () => ctx.gain(owner, 'green', 1));
   if (taker === p) each(ctx, p, 'ensemble', 'Ensemble', () => { p.bonus += 1; });
   // −1 for the copier, +1 for Bait's owner, so copying your own is even (Cory, Oct 29: "clearly neutral for the
@@ -549,6 +551,7 @@ const echoQ = {
         for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(hit.qid).resource, IMPRESSION));
         each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
         each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += COPYIST; }); // REPLACE10
+        each(ctx, p, 'roadie9', 'Roadie', () => { const g = ctx.countMembersOfColor(p, 'echo'); if (g) ctx.gain(p, 'green', g); }); // REPLACE9
         const run = () => withPath(ctx, pathNow(ctx), () => (hit.a.resolve.__orig || hit.a.resolve).call(hit.a, ctx, p), undefined, copierOf(ctx, p));
         if (data?.as) ctx.asMember(p, data.as, run); else run();
       });
@@ -725,12 +728,16 @@ const echoQ = {
         ctx.log(`${owner.name}'s Stagehand: ${n} minion${n === 1 ? '' : 's'} on Green spaces: +${n} follower${n === 1 ? '' : 's'}.`);
       },
     })),
-    m('roadie', 'Roadie', 1, 1, 'On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.', { now: true, ...old4, ...old10('copyist'), ...old10('stagehand'),
+    m('roadie', 'Roadie', 1, 1, 'On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.', { now: true, ...old4, ...old10('copyist'), ...old10('stagehand'), ...old9('echo.roadie'),
       onRoundStart(ctx, owner) {
         const g = ctx.countMembersOfColor(owner, 'echo');
         if (g) ctx.gain(owner, 'green', g);
       },
     }),
+    // REPLACE9 (Members C, Nov 4, batch bC11: paper 17 vs 14, quality/evals/gate/C-roadie2): Roadie's place, same
+    // price. Pays on every action copy (Echo, Reprise, Cover, Understudy, Stunt Double, Fan Club, Tribute Band), not
+    // on copied On Recruits (Sample, Greatest Hits); counts itself, as the old Roadie did.
+    ...add9(m('roadie9', 'Roadie', 1, 1, 'Whenever you copy an action, +1 green per green member you have.', {})),
     // REPLACE4 bot test (Nov 3, replacement batch 4): Roadie's place. 3 green + 1 any as a player sees it. Core scores it
     // (contestTable, flag copycat): in each contest, a holder whose count is exactly the winner's minus 1, and at least 1,
     // is one of its winners, so the prize splits as any tie's. A spoiled contest has no winner to tie.
