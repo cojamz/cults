@@ -14,6 +14,7 @@ import { REPLACE9 } from './content/replace9.js';
 import { REPLACE7 } from './content/replace7.js';
 import { REPLACE10 } from './content/replace10.js';
 import { isNewColor, setsOf } from './content/yellow.js';
+import { loanDue } from './content/trading.js';
 // PIN="purple.crew,purple.daylaborers" (test-only, for A/B sheet games; Lab, Nov 4, director's change 10): any listed
 // member in the game goes to the top of the deck when its deck round starts, so it shows in that round's shop. Listing
 // the old and the new card gives both sides of a trial the same setting. Off unless set; balance trials never set it.
@@ -1004,6 +1005,7 @@ function runTask(state, task) {
       // after the round's last placement, before its contests: members that act then (Straggler), in turn order
       const ctx = ctxFor(state);
       for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.onAllPlaced) def.onAllPlaced(ctx, state.players[id], card); }, ['onAllPlaced']);
+      if (state.loans?.length) loanDue(ctx); // Loan (REPLACE11=loan): the debts fall due
       return;
     }
     case 'released': {

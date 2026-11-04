@@ -51,6 +51,33 @@ const WHITE_EXCHANGE = {
     whiteExchangeStep(ctx, p, { left: ctx.state.round + 1, done: 0 });
   },
 };
+/**
+ * Loan (REPLACE11=loan, Actions lane r4 batch, Nov 4), in Exchange's place: "+4 white in round I, +5 in round II, +6 in
+ * round III. Round End: pay back 3 white or lose 3 followers." The debt is state.loans [{ pid, round }], asked after the
+ * round's last placement and before its contests (core.js allPlaced), so paying it back weighs against the White contest.
+ */
+const LOAN = {
+  key: 'loan', copyDoesIt: true, ring: 1, name: 'Loan', text: '+4 white in round I, +5 in round II, +6 in round III. Round End: pay back 3 white or lose 3 followers.',
+  byRound: { lines: ['+4 white', '+5 white', '+6 white'], rest: 'Round End: pay back 3 white or lose 3 followers.' },
+  estimate: ctx => ctx.state.round + 3 - 2.5,
+  resolve(ctx, p) {
+    ctx.gain(p, W, ctx.state.round + 3, { fromAction: true });
+    (ctx.state.loans ||= []).push({ pid: p.id, round: ctx.state.round });
+    ctx.log(`${p.name}'s Loan: pay back 3 white at Round End, or lose 3 followers.`);
+  },
+};
+export function loanDue(ctx) {
+  const due = (ctx.state.loans || []).filter(l => l.round === ctx.state.round);
+  ctx.state.loans = (ctx.state.loans || []).filter(l => l.round !== ctx.state.round);
+  for (const l of due) {
+    const p = ctx.player(l.pid);
+    if ((p.res[W] || 0) < 3) { p.bonus -= 3; ctx.log(`${p.name}'s Loan: not 3 white to pay back, so -3 followers.`); continue; }
+    ctx.choose(p, 'Loan: pay back 3 white, or lose 3 followers?', [
+      { id: 'pay', label: 'Pay back 3 white', kind: 'yes', value: 'pay', spend: { [W]: 3 }, hint: -3 * 0.9 },
+      { id: 'lose', label: 'Lose 3 followers', kind: 'no', value: 'lose', hint: -3 * fv(ctx) },
+    ], 'trading.loanPay');
+  }
+}
 function whiteExchangeStep(ctx, p, data) {
   if (data.left <= 0 || !(p.res[W] > 0)) return;
   ctx.choose(p, `White Exchange: turn 1 white into 3 followers? (${data.left} left)`, [
@@ -256,7 +283,7 @@ const trading = {
         (p.recruitFollowers ||= []).push({ patron: true, name: 'Patron' });
       },
     }),
-    swap11(swap14({
+    swap11(swap11(swap14({
       key: 'exchange', copyDoesIt: true, ring: 1, name: 'Exchange', text: '+1 white. Then turn up to 1 resource (2 in round II, 3 in round III) into 2 followers each.', // Cory, 2026-10-23: "up to", you can stop early
       byRound: { lead: '+1 white. Then:', lines: ['Turn up to 1 resource into 2 followers.', 'Turn up to 2 resources into 2 followers each.', 'Turn up to 3 resources into 2 followers each.'] }, // white first (Cory, Nov 1 text audit)
       estimate: (ctx, p) => 1 + Math.min(ctx.state.round, totalRes(p) + 1) * (2 * fv(ctx) - 1),
@@ -264,7 +291,7 @@ const trading = {
         ctx.gain(p, W, 1, { fromAction: true });
         exchangeStep(ctx, p, { left: ctx.state.round, done: 0 });
       },
-    }, PAWN_SHOP), WHITE_EXCHANGE),
+    }, PAWN_SHOP), WHITE_EXCHANGE), LOAN),
     {
       key: 'farewell', copyDoesIt: true, ring: 2, name: 'Farewell', text: 'Cast out one of your members to the bottom of the pile, gain followers equal to its cost. +1 white.', // "cast out": Cory, 2026-10-24
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, fv(ctx)))),
@@ -383,6 +410,10 @@ const trading = {
         ctx.gain(p, W, 1, { fromAction: true });
       },
     }),
+    loanPay(ctx, p, value) {
+      if (value === 'pay' && (p.res[W] || 0) >= 3) { p.res[W] -= 3; ctx.log(`${p.name} paid back the Loan: -3 white.`); }
+      else { p.bonus -= 3; ctx.log(`${p.name} didn't pay back the Loan: -3 followers.`); }
+    },
     whiteExchange(ctx, p, value, data) {
       if (value === 'done' || !(p.res[W] > 0)) return;
       p.res[W] -= 1;
