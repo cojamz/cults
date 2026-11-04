@@ -9,7 +9,8 @@
 import { defById } from './index.js';
 import { add2, old2, handlers2 } from './replace2.js';
 import { add6, old6 } from './replace6.js';
-import { see } from './botsee.js';
+import { add8, old8 } from './replace8.js';
+import { see, endsAhead, SEE_SPITE } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const S = 'silver';
@@ -20,6 +21,7 @@ const HOSTESS_TEXT = {
   B: 'On Recruit and Round Start: give each rival 1 silver in round I, 2 in round II, 3 in round III. +1 follower per silver you give.',
   C: 'On Recruit and Round Start: give each rival 1 silver. +1 follower for each.', // Cory's pick 1, Nov 3 9:47pm
 };
+const CATERER_F = globalThis.process?.env?.CATERER === 'follower';
 const others = (ctx, p) => ctx.rivals(p);
 const otherColors = ctx => ctx.state.resources.filter(c => c !== S);
 
@@ -89,7 +91,7 @@ const lowest = (ctx, p) => Math.min(...others(ctx, p).map(o => ctx.followers(o))
 function shareStep(ctx, p, data) {
   const given = data.given || {};
   const total = Object.values(given).reduce((s, n) => s + n, 0);
-  const left = data.max - total;
+  const left = (data.pile ? Math.min(data.max, p.res[S] || 0) : data.max) - total;
   if (left <= 0) return shareDone(ctx, p, data);
   const low = lowest(ctx, p);
   const opts = others(ctx, p).map(o => ({
@@ -97,13 +99,16 @@ function shareStep(ctx, p, data) {
     // bots spread to whoever trails
     hint: (ctx.followers(o) === low ? 1 : 0) - 0.2 * (given[o.id] || 0),
   }));
-  opts.push({ id: 'done', label: total ? 'Done' : 'Give nothing', kind: 'done', value: 'done', hint: -5 });
-  ctx.choose(p, `${data.who}: which rival gains 1 silver? You get ${data.per} ${data.per === 1 ? 'follower' : 'followers'} for each, ${left} more at most`, opts, 'silver.share', { ...data, given });
+  // a gift from your own pile (Patronesses): bots keep it while they lead Silver before round III
+  const keep = data.pile && ctx.state.round < 3 && leadIn(ctx, p, S) - total > 0 ? 3 : -5;
+  opts.push({ id: 'done', label: total ? 'Done' : 'Give nothing', kind: 'done', value: 'done', hint: keep });
+  ctx.choose(p, `${data.who}: which rival gains 1 silver${data.pile ? ' of yours' : ''}? You get ${data.per} ${data.per === 1 ? 'follower' : 'followers'} for each, ${left} more at most`, opts, 'silver.share', { ...data, given });
 }
 function shareDone(ctx, p, data) {
   const given = data.given || {};
   const total = Object.values(given).reduce((s, n) => s + n, 0);
   if (!total) { ctx.log(`${p.name}'s ${data.who}: gave nothing.`); return; }
+  if (data.pile) p.res[S] -= total; // from the giver's own silver, not the bank
   for (const [id, n] of Object.entries(given)) giveTo(ctx, p, ctx.player(Number(id)), S, n);
   afterGive(ctx, p, S);
   p.bonus += total * data.per;
@@ -369,11 +374,15 @@ const silver = {
     }),
     // Cory, Nov 1: "whenever a player is gifted silver +1 silver", then +2 after the test read −4; one gift per space counts once
     // words and +1 (Cory, Nov 1, 2:25pm: "Whenever silver is gifted, +1 silver."), once per gift event
-    m('caterer', 'Caterer', 2, 2, 'Whenever silver is gifted, +1 silver.', {
+    // CATERER=follower: bot test only (Nov 4, quality loop lane B, /mnt/project-files/quality/pitches/B-silvercloak.md):
+    // the same trigger pays 1 follower instead of 1 silver.
+    m('caterer', 'Caterer', 2, 2, CATERER_F ? 'Whenever silver is gifted, +1 follower.' : 'Whenever silver is gifted, +1 silver.', {
       onAnyGifted(ctx, owner, card, giver, once) {
         const k = once || `${ctx.state.moves}:${giver.id}`;
         if (card.catered === k) return;
-        card.catered = k; ctx.gain(owner, S, Number(globalThis.process?.env?.CATERER || 1)); // CATERER=n: bot test only (Nov 3)
+        card.catered = k;
+        if (CATERER_F) { owner.bonus += 1; ctx.log(`${owner.name}'s Caterer: +1 follower (silver was gifted).`); return; }
+        ctx.gain(owner, S, Number(globalThis.process?.env?.CATERER || 1)); // CATERER=n: bot test only (Nov 3)
       },
     }),
     m('majordomo', 'Majordomo', 4, 2, 'Whenever you take a Silver space, +2 silver.', {
@@ -422,6 +431,26 @@ const silver = {
       botActivate: (ctx, owner) => ctx.state.round === 3 && owner.res[S] >= 6,
     }),
     m('dowager', 'Dowager', 2, 2, 'Worth 3 followers.', { f: 3 }),
+    // REPLACE8 bot test (Nov 4, quality loop lane B, pitches/B-debtcollectors.md R4): Debt Collectors' place, same price.
+    // Chosen after the round's last placement, before anything is scored (core's allPlaced step, as Spoilsport), so the
+    // gift can move the Silver contest. From the owner's own silver, split one at a time; +1 follower per silver given.
+    ...add8(m('patronesses', 'Patronesses', 4, 3, 'Round End: you may give rivals any of your silver, split as you choose. +1 follower per silver you give.', { f: 2, n: 2,
+      onAllPlaced(ctx, owner) {
+        if (!(owner.res[S] > 0)) { ctx.log(`${owner.name}'s Patronesses: no silver to give.`); return; }
+        shareStep(ctx, owner, { who: 'Patronesses', max: owner.res[S], per: 1, pile: true });
+      },
+      ...see(i => endsAhead(i).reduce((a, r) => a + [1, 2, 4][r - 1] * (r < 3 ? 0.3 : 0.7), 0)),
+    })),
+    // REPLACE8 bot test (Nov 4, quality loop lane B, pitches/B-polisher.md 1): Polisher's place, same price. Once per gift
+    // (a space or card gives each receiver once), however much silver it brings.
+    ...add8(m('freeloader', 'Freeloader', 1, 1, 'Whenever a rival gives you silver, +1 follower.', {
+      onGiven(ctx, owner, card, giver, color, n) {
+        if (color !== S || giver === owner || !(n > 0)) return;
+        owner.bonus += 1;
+        ctx.log(`${owner.name}'s Freeloader: +1 follower (${giver.name} gave silver).`);
+      },
+      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r] * 0.06, 0)),
+    })),
     // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
     m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2 }),
     // REPLACE2 bot test (Nov 3, replacement batch 2): Debutantes' place. 6 silver + 3 any as a player sees it. The +2 each is
@@ -477,7 +506,7 @@ const silver = {
     m('philanthropists', 'Philanthropist', 3, 2, 'On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.', {
       onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropist', max: 4, per: 1 }); },
     }),
-    m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', {
+    m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', { ...old8,
       activate: 'game',
       onActivate(ctx, owner) {
         const k = Math.min(3, owner.res[S] || 0);
@@ -514,7 +543,7 @@ const silver = {
       },
       botActivate: (ctx, owner) => others(ctx, owner).some(o => ctx.followers(o) >= 2),
     }),
-    m('debtcollector', 'Debt Collectors', 4, 3, 'On Use, once per game: each rival gives you 2 silver, if they have it.', { f: 2, n: 2, // worth 2 (Cory, Nov 1)
+    m('debtcollector', 'Debt Collectors', 4, 3, 'On Use, once per game: each rival gives you 2 silver, if they have it.', { f: 2, n: 2, ...old8, // worth 2 (Cory, Nov 1)
       activate: 'game',
       onActivate(ctx, owner) {
         let n = 0;
