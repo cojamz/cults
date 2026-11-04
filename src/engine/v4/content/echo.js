@@ -17,13 +17,14 @@
 import { registerQuadrant, allQuadrantIds, quadrant, defById, spacesOf } from './index.js';
 import { add2, old2, handlers2 } from './replace2.js';
 import { add4, old4, handlers4 } from './replace4.js';
-import { add10, old10, handlers10 } from './replace10.js';
+import { add10, old10, handlers10, on10 } from './replace10.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 // IMPRESSIONIST=n: bot test only; the game pays 1 (Claude, under Cory's "use your judgement", Nov 3; was 2, Cory Nov 1)
 const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 1);
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const costOf = def => def.s + def.w;
+const COPYIST = on10('copyist2') ? 2 : 1; // REPLACE10
 
 // ---------- the yield ledger ----------
 // state.echo = { round, now: { 'q-i': entry }, last: { ... } (last round's chips, kept for the board), open: key | null }
@@ -338,7 +339,7 @@ function heard(ctx, p, e, taker) {
   // any player's copy, +2 (Cory, Nov 1)
   for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(e.color).resource, IMPRESSION));
   each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
-  each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += 1; }); // REPLACE10
+  each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += COPYIST; }); // REPLACE10
   for (const owner of ctx.rivals(p)) each(ctx, owner, 'muse', 'Muse', () => ctx.gain(owner, 'green', 1));
   if (taker === p) each(ctx, p, 'ensemble', 'Ensemble', () => { p.bonus += 1; });
   // −1 for the copier, +1 for Bait's owner, so copying your own is even (Cory, Oct 29: "clearly neutral for the
@@ -547,7 +548,7 @@ const echoQ = {
         ctx.log(`${p.name} copies ${hit.a.name}: doing it.`);
         for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(hit.qid).resource, IMPRESSION));
         each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
-        each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += 1; }); // REPLACE10
+        each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += COPYIST; }); // REPLACE10
         const run = () => withPath(ctx, pathNow(ctx), () => (hit.a.resolve.__orig || hit.a.resolve).call(hit.a, ctx, p), undefined, copierOf(ctx, p));
         if (data?.as) ctx.asMember(p, data.as, run); else run();
       });
@@ -603,7 +604,8 @@ const echoQ = {
     // copy spaces left out: at round start there is nothing for them to copy). Nothing to remember after.
     // Spaces whose text says "this turn" (Gather, Allowance, Splurge, Peek) are left off: at round start there is no turn
     // for that half to apply to (Lab's play judge, Nov 4). Done as the member, so a copied Build Up's +5 says so.
-    ...add10(m('warmup', 'Warm-Up Act', 2, 2, 'Round Start: copy a round I action without “this turn” in it.', {
+    // REPLACE10=warmup,warmupcheap: 2 green + 2 any (pitches/D-green-4.md), for a trial beside 3 + 2
+    ...add10(m('warmup', 'Warm-Up Act', on10('warmupcheap') ? 1 : 2, 2, 'Round Start: copy a round I action without “this turn” in it.', {
       onRoundStart(ctx, owner) {
         const list = emptyTargets(ctx).filter(x => x.a.ring === 1 && !(x.qid === 'echo' && x.a.key !== 'chant') && !/this turn/i.test(x.a.text || ''));
         if (!list.length) return;
@@ -696,7 +698,8 @@ const echoQ = {
     // Cory, 2026-11-01 playtest: "roadie should be On Recruit as well" (now: its round-start part fires once on recruit)
     // REPLACE10 bot test (Nov 4, quality loop lane D): Roadie's place. 2 green + 1 any as a player sees it. Fires where
     // Choir does: each copy of an action you make (Echo, Reprise, Cover, a member's copy), once per copy.
-    ...add10(m('copyist', 'Copyist', 1, 1, 'Whenever you copy an action, +1 follower.')),
+    // REPLACE10=copyist,copyist2: the +2 version (pitches/D-green-4.md), for a trial beside the +1
+    ...add10(m('copyist', 'Copyist', 1, 1, `Whenever you copy an action, +${COPYIST} follower${COPYIST > 1 ? 's' : ''}.`)),
     m('roadie', 'Roadie', 1, 1, 'On Recruit: +1 green per green member you have. Round Start: +1 green per green member you have.', { now: true, ...old4, ...old10('copyist'),
       onRoundStart(ctx, owner) {
         const g = ctx.countMembersOfColor(owner, 'echo');
