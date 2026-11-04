@@ -3,17 +3,15 @@
 // limit the bonus recruit to followers"): "Each turn, you may recruit followers one extra time." In Landlord's place.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE14 = 'barker';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { quadrant, defById } = await import('../../../engine/v4/content/index.js');
 const { table, uidIn } = await import('./cards-helpers-b.js');
-delete process.env.REPLACE14;
 
 const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
 const slot = (s, q, name) => `${s.quadrants.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.name === name)}`;
 const payAll = s => { while (s.pending && s.pending.kind !== 'buy' && s.pending.player === 0 && s.pending.kind !== 'place') s = answer(s, s.pending.options[0].id); return s; };
 
-describe('REPLACE14: Barker', () => {
+describe('Barker', () => {
   it("is dealt in Landlord's place, with Cory's words", () => {
     expect(defById('trading.barker').text).toBe('Each turn, you may recruit followers one extra time.');
     expect(defById('trading.shopkeeper').retired).toBe(true);
