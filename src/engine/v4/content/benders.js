@@ -166,7 +166,18 @@ const members = [
         hint: -(typeof a.estimate === 'function' ? (() => { try { return a.estimate(ctx, who) || 0; } catch { return 0; } })() : 0),
       })), 'benders.hypno');
     },
-    botActivate: ctx => ctx.state.round >= 2 && hypnoSpaces(ctx).length >= 3,
+    // bots use it only when a rival still places after them and the open spaces differ for that rival by 3 or more
+    // (play judges, Nov 4: one use came on the game's last placement, with nobody left to place)
+    botActivate: (ctx, owner) => {
+      if (ctx.state.round < 2 || ctx.state.hypno) return false;
+      const open = hypnoSpaces(ctx);
+      if (open.length < 3) return false;
+      const nxt = ctx.state.queue.find(t => (t.t === 'turn' || t.t === 'place') && t.p !== undefined && t.p !== owner.id);
+      const who = nxt && ctx.player(nxt.p);
+      if (!who || !(who.left > 0)) return false;
+      const est = open.map(([, , a]) => { try { return typeof a.estimate === 'function' ? a.estimate(ctx, who) || 0 : 0; } catch { return 0; } });
+      return Math.max(...est) - Math.min(...est) >= 3;
+    },
   })),
   m('frontrunner', 'Line Cutters', 'purple', 1, 0, 'You go first every round.', { pickFirst: true, f: 3, n: 3, ...old1 }), // worth 3 (Cory, Nov 1: "maybe we make it 3 members?"), renamed (Cory, Nov 1: "make front runner worth more followers. figure out a better name") // Cory, Oct 21: 5; Oct 27: 4; Oct 28 "could probably be cheaper": 3 with the +1 wild (Claude's price, the floor); Oct 29 "I'm okay with front runners at 2": 2
   // REPLACE1 bot test (Nov 3, replacement batch 1): Line Cutters' place. 4 any as a player sees it. The rival chosen is
