@@ -34,14 +34,14 @@ const P = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6'];
 if (args[0] === 'score') {
   const dir = args[1], key = JSON.parse(readFileSync(join(dir, 'key.json'), 'utf8'));
   const judges = readdirSync(dir).filter(f => /^play-judge-\d+\.json$/.test(f)).map(f => JSON.parse(readFileSync(join(dir, f), 'utf8')));
-  const side = { new: [], old: [] }, sideM = { new: [], old: [] }, clearNew = [], misuse = { new: [], old: [] }, judged = { new: 0, old: 0 };
+  const side = { new: [], old: [] }, sideM = { new: [], old: [] }, clearNew = [], misuse = { new: [], old: [] }, judged = { new: 0, old: 0 }, oldRows = [], oldMis = new Set();
   for (const j of judges) for (const s of j.sheets || []) {
     const pair = key.pairs.find(p => s.file.includes(`${p.dir}/`));
     if (!pair) continue;
     const label = /\bA\.md$/.test(s.file) ? 'A' : /\bB\.md$/.test(s.file) ? 'B' : null; if (!label) continue;
     const role = pair[label], sc = P.map(k => s.scores?.[k] ?? 0);
-    side[role].push(sc); if (!pair.seed.includes('x')) sideM[role].push(sc); if (role === 'new') clearNew.push(sc[0]);
-    judged[role]++; if (s.sensibleUse === false) misuse[role].push(`${s.file}: ${s.misuse || 'misused'}`);
+    side[role].push(sc); if (!pair.seed.includes('x')) { sideM[role].push(sc); if (role === 'old') oldRows.push({ file: s.file, sc }); } if (role === 'new') clearNew.push(sc[0]);
+    judged[role]++; if (s.sensibleUse === false) { misuse[role].push(`${s.file}: ${s.misuse || 'misused'}`); if (role === 'old') oldMis.add(s.file); }
   }
   // The gate statistic is the MEAN (director, Nov 4 2:41pm: the 0.3 margin is a bar for the mean gap; the median of
   // 0-to-2 scores was too coarse and was never the gate). Per-criterion medians are still printed below, for reading.
@@ -72,8 +72,15 @@ if (args[0] === 'score') {
   // neither passes nor fails; one fresh run after the bot fix decides.
   // key.botMisuse: misuse the judges described in words before the sensibleUse field existed, entered by hand.
   for (const m of key.botMisuse || []) misuse[m.side === 'old' ? 'old' : 'new'].push(`${m.file}: ${m.what}`);
-  const botBug = !superseded && (misuse.new.length + misuse.old.length) > 0;
-  const pass = rawPass && !botBug;
+  // Old side only (director, Nov 4 4:18pm, on Mob Boss): when every misplay is on the old card, drop the old card's
+  // misplayed sheets (every judge's score of them) and re-test the matched gap; clearing the bar there is a pass.
+  for (const m of key.botMisuse || []) if (m.side === 'old') oldMis.add(m.file);
+  const oldOnly = !superseded && misuse.new.length === 0 && misuse.old.length > 0;
+  const omClean = avg(oldRows.filter(r => ![...oldMis].some(f => r.file.endsWith(f) || f.endsWith(r.file))).map(r => r.sc));
+  const gapClean = oldOnly && nm != null && omClean != null ? +(nm - omClean).toFixed(2) : null;
+  const oldOnlyPass = oldOnly && !hard && matched >= 2 && clear > 0 && gapClean != null && gapClean >= 0.3;
+  const botBug = !superseded && (misuse.new.length + misuse.old.length) > 0 && !oldOnlyPass;
+  const pass = oldOnlyPass || (rawPass && !botBug);
   const looseLine = looseN ? `${matched} matched pair(s), ${looseN} across games; matched only: new ${nm} vs old ${om} (${gapM >= 0 ? '+' : ''}${gapM}). ${matched < 2 ? 'Too few matched pairs to pass: ask the Lab for more seeds.' : 'A pass on all pairs needs +0.5.'}` : null;
   const waits = hard && /rival/i.test(hard) ? "Waits on Cory's ruling on rivals choosing during the owner's turn before it ships." : null;
   const lines = [`# Blind A/B play: ${key.new.name} against ${key.old.name}`, '', `${judges.length} judges, ${key.pairs.length} seeds. New card ${n} vs old ${o} (mean of the six scores over every sheet, 0 to 2): ${gap >= 0 ? '+' : ''}${gap}. Clear outcome for the new card ${clear}.`, '', hard ? `**${pass ? 'PASS' : 'no'}**: the old card hard-fails (${hard}), so the new card needs 1.0 or more on its own and no 0 on Clear outcome; the gap is for information.${waits ? ' ' + waits : ''}` : `**${pass ? 'PASS' : 'no'}**: ship needs +0.3 or more and no 0 on Clear outcome.`, '', ...(looseLine ? [looseLine, ''] : []), `Judges preferred the new card ${pref.new} times, the old ${pref.old}, same ${pref.same} (a tiebreak note; the gate is the gap).`, '',
@@ -82,9 +89,10 @@ if (args[0] === 'score') {
   lines.push('', `Bot version ${bv.bot || 'unknown'} (last bots.js/thinker.js commit as of ${bv.at || '?'}, ${bv.how}).${!pass && gap != null && gap >= 0 && gap < 0.3 ? ' A close loss: rerun once the bots change.' : ''}`);
   if (superseded) lines.splice(1, 0, '', `**SUPERSEDED**: ${superseded}`);
   if (misuse.new.length || misuse.old.length) lines.push('', `Bot misuse (judges): new card ${misuse.new.length} of ${judged.new} sheets, old card ${misuse.old.length} of ${judged.old}.`, ...[...misuse.new.map(m => `- new: ${m}`), ...misuse.old.map(m => `- old: ${m}`)]);
+  if (oldOnlyPass) lines.splice(lines.findIndex(l => /^\*\*(PASS|no)\*\*/.test(l)), 1, `**PASS** (every misplay was on the old card; with its ${oldMis.size} misplayed sheet(s) dropped the matched gap is ${gapClean >= 0 ? '+' : ''}${gapClean}, bar +0.3; director, Nov 4 4:18pm).`);
   if (botBug) lines.splice(lines.findIndex(l => /^\*\*(PASS|no)\*\*/.test(l)), 1, `**BOT BUG** (neither pass nor fail): a judge says the bot did not use a card sensibly (new card ${misuse.new.length} of ${judged.new} sheets, old card ${misuse.old.length} of ${judged.old}). Fix how the bot plays it, then one fresh run decides. Without this the gap would read ${rawPass ? 'PASS' : 'no'}.`);
   writeFileSync(join(dir, 'result.md'), lines.join('\n') + '\n');
-  writeFileSync(join(dir, 'result.json'), JSON.stringify({ new: key.new.name, old: key.old.name, newAvg: n, oldAvg: o, gap, clearNew: clear, matched, loose: looseN, gapMatched: gapM, prefer: pref, oldHardFail: hard, waitsOnCory: !!waits, superseded, botBug, misuse, botVersion: bv, rawPass, pass }, null, 1));
+  writeFileSync(join(dir, 'result.json'), JSON.stringify({ new: key.new.name, old: key.old.name, newAvg: n, oldAvg: o, gap, clearNew: clear, matched, loose: looseN, gapMatched: gapM, prefer: pref, oldHardFail: hard, waitsOnCory: !!waits, superseded, botBug, misuse, botVersion: bv, rawPass, oldOnlyPass, gapClean, pass }, null, 1));
   console.log(lines.join('\n'));
   process.exit(0);
 }
