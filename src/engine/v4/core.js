@@ -586,7 +586,8 @@ function inputFor(state, task) {
       if (task.afterPurchase) {
         // recruits still to come this turn (Spree's): their step offers the same uses, and its Done would drop them
         if (more) return { kind: 'buy', afterPurchase: true, prompt: '', options: [] };
-        const uses = useOptions(state, p).filter(o => !useIdle(state, p, o.uid));
+        // a use that only pays off on this turn's recruit (Encore, REPLACE10) is not offered once the recruit is spent
+        const uses = useOptions(state, p).filter(o => !useIdle(state, p, o.uid) && !effectiveDefs(state.cards[o.uid]).some(e => e.beforeRecruit));
         return { kind: 'buy', afterPurchase: true, prompt: `${p.name}: use a member, or finish your turn`,
           options: uses.length ? [...uses, { id: 'pass', label: 'Done', kind: 'pass' }] : [] };
       }

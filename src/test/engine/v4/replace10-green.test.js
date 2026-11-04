@@ -35,4 +35,15 @@ describe('REPLACE10: Encore', () => {
     expect(s.players[1].res.red).toBe(3); // stole 3, twice
     expect(named(s, 'Encore')).toContain("P1's Encore: Accomplice's On Recruit again.");
   });
+
+  it('is not offered once the turn\'s recruit is spent (Lab play judge, Nov 4)', () => {
+    const at = after => table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, members: [['echo.encore', 'benders.squatter']], queue: [{ t: 'buy', p: 0, ...(after ? { afterPurchase: true } : {}) }] });
+    const ids = s => s.pending.options.map(o => o.id);
+    const before = at(false), after = at(true);
+    const enc = uidOf(before, 'echo.encore', 0), sq = uidOf(after, 'benders.squatter', 0);
+    expect(ids(before)).toContain(`use:${enc}`);
+    expect(after.pending.afterPurchase).toBe(true);
+    expect(ids(after)).toContain(`use:${sq}`);
+    expect(ids(after)).not.toContain(`use:${uidOf(after, 'echo.encore', 0)}`);
+  });
 });

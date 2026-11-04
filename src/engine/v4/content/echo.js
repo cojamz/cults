@@ -537,7 +537,10 @@ const echoQ = {
       ctx.log(`${p.name} copies ${o.name}'s ${ctx.defOf(uid).name}: its On Recruit.`);
       ctx.borrowOnRecruit(p, uid);
     },
-    copyEmpty(ctx, p, key) {
+    warmupDo(ctx, p, key) { echoQ.handlers.copyEmpty(ctx, p, key, { as: 'Warm-Up Act' }); },
+    // data.as: a member doing the copy (Warm-Up Act), so the copied action's gain is said under its name; Choir's and
+    // Impressionist's lines stay their own
+    copyEmpty(ctx, p, key, data) {
       const hit = emptyTargets(ctx).find(x => x.key === key);
       if (!hit) { ctx.log(`${p.name}: that action has a minion now.`); return; }
       withPath(ctx, [...pathNow(ctx), key], () => {
@@ -545,7 +548,8 @@ const echoQ = {
         for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(hit.qid).resource, IMPRESSION));
         each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
         each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += 1; }); // REPLACE10
-        withPath(ctx, pathNow(ctx), () => (hit.a.resolve.__orig || hit.a.resolve).call(hit.a, ctx, p), undefined, copierOf(ctx, p));
+        const run = () => withPath(ctx, pathNow(ctx), () => (hit.a.resolve.__orig || hit.a.resolve).call(hit.a, ctx, p), undefined, copierOf(ctx, p));
+        if (data?.as) ctx.asMember(p, data.as, run); else run();
       });
     },
     continueCopy(ctx, p, _, data) {
@@ -597,13 +601,15 @@ const echoQ = {
     // REPLACE10 bot test (Nov 4, quality loop lane D): Busker's place. 3 green + 2 any as a player sees it. At round start
     // (before anyone places): one round I space of any color, done for its owner as Cover does an empty one (Green's own
     // copy spaces left out: at round start there is nothing for them to copy). Nothing to remember after.
-    ...add10(m('warmup', 'Warm-Up Act', 2, 2, 'Round Start: copy a round I action.', {
+    // Spaces whose text says "this turn" (Gather, Allowance, Splurge, Peek) are left off: at round start there is no turn
+    // for that half to apply to (Lab's play judge, Nov 4). Done as the member, so a copied Build Up's +5 says so.
+    ...add10(m('warmup', 'Warm-Up Act', 2, 2, 'Round Start: copy a round I action without “this turn” in it.', {
       onRoundStart(ctx, owner) {
-        const list = emptyTargets(ctx).filter(x => x.a.ring === 1 && !(x.qid === 'echo' && x.a.key !== 'chant'));
+        const list = emptyTargets(ctx).filter(x => x.a.ring === 1 && !(x.qid === 'echo' && x.a.key !== 'chant') && !/this turn/i.test(x.a.text || ''));
         if (!list.length) return;
         ctx.choose(owner, 'Warm-Up Act: copy which round I action?', list.map(x => ({
           id: `slot:${x.key}`, label: `${x.a.name}: ${x.a.text}`, kind: 'action', value: x.key, hint: emptyValue(ctx, x.a, owner),
-        })), 'echo.copyEmpty');
+        })), 'echo.warmupDo');
       },
     })),
     m('evergreen', 'Busker', 1, 2, // Cory, 2026-10-25: cost 3 (was 4)
@@ -785,6 +791,7 @@ const echoQ = {
     // Recruit (or now-and-round-start effect) done twice (core's recruit). A recruit on another turn doesn't count.
     ...add10(m('encore', 'Encore', 1, 3, 'On Use, once per game: this turn, the On Recruit of the member you recruit happens twice.', {
       activate: 'game',
+      beforeRecruit: true, // not offered after this turn's recruit (Lab play judges, Nov 4: it could be wasted)
       onActivate(ctx, owner) {
         owner.encoreTurn = (ctx.state.turns || []).length;
         ctx.log(`${owner.name} uses Encore: this turn's recruit's On Recruit happens twice.`);

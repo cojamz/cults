@@ -29,4 +29,13 @@ describe('REPLACE10: Turf (Stash\'s slot, Cory\'s idea)', () => {
     expect(s.players[0].res.magenta).toBe(1);
     expect(named(s, 'Turf')).toContain("P1's Turf: no rival on a Magenta space to steal from.");
   });
+
+  it('when the only rival there is lying low, the log says they can\'t be stolen from (Lab, seed 143)', () => {
+    let s = table(['red', 'thieves', 'trading', 'yellow'], { n: 3, round: 2, left: 4, res: [{}, { red: 5 }, {}] });
+    s.slots = { '1-2': 1 };
+    s.players[1].hideout = 2;
+    s = take(s, 'thieves.turf');
+    expect(s.players[1].res.red).toBe(5);
+    expect(named(s, 'Turf')).toContain("P1's Turf: P2 can't be stolen from right now.");
+  });
 });

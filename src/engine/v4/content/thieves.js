@@ -38,6 +38,13 @@ function insideTargets(ctx, p) {
   for (const [key, list] of Object.entries(st.squats || {})) if (key.startsWith(`${qi}-`)) for (const pid of list) ids.add(pid);
   return ctx.rivals(p).filter(o => ids.has(o.id) && stealable(ctx, p, o) > 0);
 }
+/** Inside Job and Turf's empty-handed line: no rival there, or the ones there can't be stolen from (Lie Low, an empty
+ *  pile). The Lab's play judge, Nov 4 (seed 143): the log said "no rival" when the only one there was on Lie Low. */
+function insideNone(ctx, p, name) {
+  const qi = ctx.state.quadrants.indexOf('thieves');
+  const there = ctx.rivals(p).filter(o => onMagenta(ctx, o) > 0 || Object.keys(ctx.state.slots || {}).some(k => k.startsWith(`${qi}-`) && ctx.state.slots[k] === o.id));
+  ctx.log(there.length ? `${p.name}'s ${name}: ${there.map(o => o.name).join(' and ')} can't be stolen from right now.` : `${p.name}'s ${name}: no rival on a Magenta space to steal from.`);
+}
 /** Turf (REPLACE10): how many minions o has on Magenta spaces (joined spots count). */
 function onMagenta(ctx, o) {
   const st = ctx.state, qi = st.quadrants.indexOf('thieves');
@@ -253,7 +260,7 @@ const thieves = {
       estimate: (ctx, p) => insideTargets(ctx, p).reduce((a, o) => a + Math.min(onMagenta(ctx, o), stealable(ctx, p, o)), 0) * 0.9,
       resolve(ctx, p) {
         const list = insideTargets(ctx, p);
-        if (!list.length) { ctx.log(`${p.name}'s Turf: no rival on a Magenta space to steal from.`); return; }
+        if (!list.length) { insideNone(ctx, p, 'Turf'); return; }
         for (const o of list) autoSteal(ctx, p, o, 'Turf', onMagenta(ctx, o));
       },
     }] : on10('mug') ? [{
@@ -275,7 +282,7 @@ const thieves = {
       estimate: (ctx, p) => insideTargets(ctx, p).reduce((a, o) => a + Math.min(ctx.stealCount(p, 2), stealable(ctx, p, o)), 0) * 0.9,
       resolve(ctx, p) {
         const list = insideTargets(ctx, p);
-        if (!list.length) { ctx.log(`${p.name}'s Inside Job: no rival on a Magenta space to steal from.`); return; }
+        if (!list.length) { insideNone(ctx, p, 'Inside Job'); return; }
         const n = ctx.stealCount(p, 2, { say: true });
         for (const o of list) autoSteal(ctx, p, o, 'Inside Job', n);
       },

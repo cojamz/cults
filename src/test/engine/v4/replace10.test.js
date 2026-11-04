@@ -141,6 +141,17 @@ describe('REPLACE10: Warm-Up Act', () => {
     s = answer(s, s.pending.options.find(o => o.label.startsWith('Build Up')).id);
     expect(s.players[0].res.green).toBeGreaterThanOrEqual(3);
   });
+
+  it('leaves off spaces that say "this turn", and says the copied gain under its own name (Lab play judge, Nov 4)', () => {
+    let s = table(['red', 'echo', 'thieves', 'trading'], { n: 4, round: 2, members: [[], ['echo.warmup'], [], []], queue: [{ t: 'round', r: 3 }] });
+    const names = s.pending.options.map(o => o.label.split(':')[0]);
+    expect(names).not.toContain('Gather');
+    expect(names).not.toContain('Allowance');
+    expect(names).not.toContain('Splurge');
+    s = answer(s, s.pending.options.find(o => o.label.startsWith('Build Up')).id);
+    expect(s.players[1].res.green).toBe(5);
+    expect(s.log).toContain("P2's Warm-Up Act: +5 green.");
+  });
 });
 
 describe('REPLACE10: Almoner and Widows', () => {
@@ -176,7 +187,8 @@ describe('REPLACE10: Warm-Up Act copies Walk-In (Lab, game 84)', () => {
     let s = table(['red', 'echo', 'thieves', 'trading'], { n: 4, round: 2, members: [[], ['echo.warmup'], [], ['echo.tuningfork']], queue: [{ t: 'round', r: 3 }] });
     s = answer(s, s.pending.options.find(o => o.label.startsWith('Walk-In')).id);
     expect(s.players.map(p => p.res.red)).toEqual([1, 1, 1, 2]); // P4: Walk-In's +1 and Impressionist's +1
-    expect(s.log).toContain('Warm-Up Act: P1 +1 red; P2 +1 red; P3 +1 red; P4 +1 red.');
+    expect(s.log).toContain("P1 +1 red (P2's Warm-Up Act).");
+    expect(s.log).toContain("P4 +1 red (P2's Warm-Up Act).");
     expect(s.log).toContain("P4's Impressionist: +1 red.");
   });
 });
