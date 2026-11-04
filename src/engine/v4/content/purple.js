@@ -534,7 +534,9 @@ export default {
     // Cory, 2026-10-29: pays on two turns in a row ("the former"), not on a new minion; "courier doesnt seem to work right"
     // (Right Away and Crunch Time never paid). Price 6 (was 5): Claude, under Cory's go-with-your-gut, since the snake's
     // turnarounds now pay too
-    m('courier', 'Courier', 3, 2, 'Whenever you take two turns in a row, +1 of each other color.', { ...old3, ...old7('purple.courier'),
+    // Cory, Nov 4 12:35am: reworded, same rule ("whenever you take a consecutive turn... it benefits you to stack your turns all
+    // together"): each turn that comes right after your own pays, so Crunch Time's three in a row pays twice
+    m('courier', 'Courier', 3, 2, 'Whenever you take a consecutive turn, +1 of each other color.', { ...old3, ...old7('purple.courier'),
       onTurnInRow(ctx, owner) { for (const c of ctx.state.resources) if (c !== P) ctx.gain(owner, c, 1); },
     }),
     // REPLACE7 bot test (Nov 4, quality loop, Members A): Courier's place. 4 purple + 2 any as a player sees it. On the

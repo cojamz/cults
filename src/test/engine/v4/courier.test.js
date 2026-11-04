@@ -21,7 +21,7 @@ describe('Courier', () => {
     const s = scene([0, 1, 2]);
     const c = Object.values(s.cards).find(x => x.def === 'purple.courier');
     expect(s.players[0].members).toContain(c.uid);
-    expect(quadrant('purple').members.find(d => d.id === 'purple.courier' || d.key === 'courier')?.text).toBe('Whenever you take two turns in a row, +1 of each other color.');
+    expect(quadrant('purple').members.find(d => d.id === 'purple.courier' || d.key === 'courier')?.text).toBe('Whenever you take a consecutive turn, +1 of each other color.'); // reworded, Cory Nov 4
   });
   it('Right Away: your next turn comes now, and Courier pays +1 of each other color', () => {
     let s = scene([0, 1, 2, 2, 1, 0]);

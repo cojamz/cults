@@ -2,14 +2,14 @@
 // gate in /mnt/project-files/quality/evals/gate/A-*/), bot games only. REPLACE7=1 deals the lane's picks in their old
 // cards' places (the old card is retired, so never dealt); independent of REPLACE1 to REPLACE6:
 //   red.volunteer -> red.seatfiller
-//   purple.courier -> purple.runner
 //   red.recruitbonus -> red.fosterparents
 // Alternates, by name instead of 1 (REPLACE7=interrupter, REPLACE7=ushers, or a comma list of card keys):
-//   purple.courier (alt: lowered Purple's set score, Right Away and Crunch Time lose their payoff) -> purple.interrupter
+//   purple.courier (alt: lowered Purple's set score; Cory Nov 4: "I don't like interrupter. That's bad.") -> purple.interrupter
+//   purple.courier (alt; Cory Nov 4 said no, he keeps Courier reworded) -> purple.runner
 //   red.recruitbonus (alt: paper 14, read as a must-buy) -> red.ushers
 // Unset, the new cards are never defined and nothing in the game changes.
 const VAL = globalThis.process?.env?.REPLACE7 || '';
-const PICKS = ['seatfiller', 'runner', 'fosterparents'];
+const PICKS = ['seatfiller', 'fosterparents'];
 /** new card key -> the old card id it takes the place of */
 const REPLACES = { seatfiller: 'red.volunteer', interrupter: 'purple.courier', runner: 'purple.courier', ushers: 'red.recruitbonus', fosterparents: 'red.recruitbonus' };
 export const ON7 = VAL === '1' ? PICKS : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
