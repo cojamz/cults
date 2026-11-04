@@ -717,12 +717,17 @@ const thieves = {
       // steals, not swaps (Cory, 2026-11-01: "balance wise it works best if it blocks steals, not swaps"): Promote, Demote,
       // Panel, Anarchist, Headhunter and Double Agent go through, as they do through Lie Low
       guardSteal: (ctx, victim, card, thief, kind) => kind !== 'swap',
+      // BOTSEE (Nov 4, Members D, so its A/B against Night Watchman isn't two blind cards): about 1 rival placement in 7
+      // steals, about 1.5 resources from you
+      ...see(i => [1, 2, 3].filter(r => r >= i.round).reduce((a, r) => a + i.rivalByRound[r] * 0.15 * 1.5 * resAt(r), 0)),
     }),
     // REPLACE10 bot tests (Nov 4, Members D, requalified paper candidates; gate D-bodyguards-1/-2): Bodyguards' place.
     // Night Watchman: 5 magenta + 2 any as a player sees it. Blocks what Bodyguards blocks, while one of your minions
     // (or a joined spot) is on a Magenta space.
     ...add10(m('watchman', 'Night Watchman', 4, 2, "While you have a minion on a Magenta space, rivals can't steal from you.", {
       guardSteal: (ctx, victim, card, thief, kind) => kind !== 'swap' && onMagenta(ctx, victim) > 0,
+      // BOTSEE: Bodyguards' estimate, about half the time (a minion on Magenta for part of each round)
+      ...see(i => [1, 2, 3].filter(r => r >= i.round).reduce((a, r) => a + i.rivalByRound[r] * 0.15 * 1.5 * resAt(r), 0) * 0.5),
     })),
     // Hoard Breaker: 6 magenta + 2 any. A rival's biggest pile (ties: you pick the color), half of it rounded down,
     // through the shared steal (Bodyguards and Lie Low block it; Sticky Fingers and Desperado add).
@@ -823,6 +828,8 @@ const thieves = {
     // Not a steal (Bodyguards doesn't stop it): you pay its cost, by the usual pay rule, and the rival gets what you pay.
     // You may pass. poacher: costing 4 or less ("recruit"); poacher5: 5 or less ("buy").
     ...add10(m(on10('poacher5') ? 'poacher5' : 'poacher', 'Poacher', 5, 2, on10('poacher5') ? "Round Start: buy a rival's member costing 5 or less, paying that rival its cost." : "Round Start: recruit a rival's member costing 4 or less, paying its cost to that rival.", { round: 1,
+      // BOTSEE: each Round Start still ahead recruits about a 3-cost member worth 1, its ability ~1, paid for at cost
+      ...see(i => [1, 2, 3].filter(r => r > i.round).length * 1.2),
       onRoundStart(ctx, owner) {
         const list = poachList(ctx, owner);
         if (!list.length) { ctx.log(`${owner.name}'s Poacher: no rival member it can afford.`); return; }
