@@ -61,9 +61,7 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 https://claude.ai/artifact/Wur73WcxCPaeZmhmhuUg79 ("Cults Workstreams"), built by `node scripts/desk/tracker.mjs <out.html>` from the thread board (/mnt/project-files/status/board.md) and main's play/build.json. The desk republishes it (same file path, same URL) after every progress report or ship. It is only as true as each thread's `node scripts/status.mjs set …` line: keep yours current, with `--cory "…"` only for a real decision.
 
 ## Publishing (one at a time; ask the desk for go or wait)
-Waiting on Cory's OK (boxes refuse publishing without it since Nov 4 ~2:50am). Publish point: the branch tip, 2fff40b1 or later (hot-seat green again at 9:31am Eastern after Housewarming's name-size fix). Run hot-seat on the sha that ships. Earlier note: ship the branch tip (0aafd821 or later). It carries Foster Parents in Greeters' place, Night Watch no pay when its holder keeps the Goes Last token, Customs Officer no pay when a rival takes a member; everything else is behind REPLACE switches (check with `node scripts/card-diff.mjs 8c414368 HEAD`). Command:
-`bash scripts/v4-ship-ui.sh "Foster Parents takes Greeters' place in Red's round I; Night Watch and Customs Officer pay only as printed" $(git diff --name-only 8c414368 HEAD -- src)`
-Live is v0.99.559 (8c414368).
+Live: v0.99.560 (a23719eb), shipped by the quality director on Cory's "ship it", Nov 4 10:40am Eastern.
 Live: v0.99.552 (bf42a005), Nov 4 04:52Z. Tonight .544 to .552 shipped; one line each in /mnt/project-files/desk/morning.md.
 
 - Live: v0.99.543 (5eacf01c): set 3 members, plus the wheel redraw skip (78b95946) that rode along. Publish lock: free.
