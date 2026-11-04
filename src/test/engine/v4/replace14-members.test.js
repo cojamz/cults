@@ -2,7 +2,7 @@
 // Members E lane (REPLACE14, Nov 4): members. One test per sentence, plus the pitched turn.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE14 = 'bigspenders,firstbirds,charmers,filcher,taxman';
+process.env.REPLACE14 = 'bigspenders,firstbirds,charmers,filcher,taxman,boss,mobboss';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { quadrant, defById } = await import('../../../engine/v4/content/index.js');
 const { table, uidIn } = await import('./cards-helpers-b.js');
@@ -120,5 +120,36 @@ describe('REPLACE14: Cutpurse replacements', () => {
     const winners = [1, 2].filter(i => won.some(c => c.winners.includes(i)));
     for (const i of winners) expect(log(s)).toContain(`P1's Tax Collector: took 1 from P${i + 1}.`);
     expect(winners.length).toBeGreaterThan(0);
+  });
+});
+
+describe('REPLACE14: Extortionist replacements (lane F paper passers)', () => {
+  const Q = ['gold', 'red', 'thieves', 'market'];
+  it("The Boss and Mob Boss are dealt in Extortionist's place", () => {
+    expect(defById('thieves.boss').name).toBe('The Boss');
+    expect(defById('thieves.mobboss').name).toBe('Mob Boss');
+    expect(defById('thieves.extortionist').retired).toBe(true);
+  });
+  it('The Boss with 2 other Magenta members: Help Yourself in round I takes 3 + 2 (the pitched turn)', () => {
+    let s = table(Q, { n: 2, round: 1, res: [{}, { gold: 9 }], members: [['thieves.boss', 'thieves.accomplice', 'thieves.secondstory']] });
+    s = answer(s, `slot:${slot(s, 'thieves', 'Help Yourself')}`);
+    let k = 0;
+    while (s.pending?.player === 0 && s.pending.options.some(o => String(o.id).includes('gold')) && k < 9) { s = answer(s, s.pending.options.find(o => String(o.id).includes('gold')).id); k++; }
+    expect(9 - s.players[1].res.gold).toBe(5);
+  });
+  it('The Boss alone: no other Magenta member, no extra', () => {
+    let s = table(Q, { n: 2, round: 1, res: [{}, { gold: 9 }], members: [['thieves.boss']] });
+    s = answer(s, `slot:${slot(s, 'thieves', 'Help Yourself')}`);
+    let k = 0;
+    while (s.pending?.player === 0 && s.pending.options.some(o => String(o.id).includes('gold')) && k < 9) { s = answer(s, s.pending.options.find(o => String(o.id).includes('gold')).id); k++; }
+    expect(9 - s.players[1].res.gold).toBe(3);
+  });
+  it('Mob Boss with 1 other Magenta member: On Recruit steals 2 from each rival', () => {
+    let s = table(Q, { n: 3, round: 2, res: [{ magenta: 9, gold: 9 }, { red: 5 }, { blue: 5 }], members: [['thieves.accomplice']], shop: ['thieves.mobboss'] });
+    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    s = answer(s, `card:${uidIn(s, 'thieves.mobboss', 'shop')}`);
+    while (s.pending && s.pending.player === 0 && s.pending.prompt?.includes('pay')) s = answer(s, s.pending.options[0].id);
+    expect(log(s)).toContain("P1's Mob Boss: took 2 from P2.");
+    expect(log(s)).toContain("P1's Mob Boss: took 2 from P3.");
   });
 });

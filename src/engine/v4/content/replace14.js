@@ -7,6 +7,8 @@
 //   member purple.earlybird (Early Birds) -> purple.firstbirds (Early Birds, reworked)
 //   member thieves.cutpurse (Cutpurse) -> thieves.filcher (Pickpocket)
 //   member thieves.cutpurse (Cutpurse) -> thieves.taxman (Tax Collector)
+//   member thieves.extortionist (Extortionist) -> thieves.boss (The Boss)
+//   member thieves.extortionist (Extortionist) -> thieves.mobboss (Mob Boss)
 // REPLACE14=1 swaps every one; REPLACE14=grandtour (or a comma list of new keys) swaps only those, so each card gets
 // its own trial. Unset, nothing in the game changes.
 const RAW = globalThis.process?.env?.REPLACE14 || '';

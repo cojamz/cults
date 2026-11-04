@@ -100,7 +100,11 @@ function autoSteal(ctx, thief, victim, why, n = 1, reaction = false) {
   if (!victim || victim === thief) return 0;
   // Desperado's +2 reaches these 1-resource steals too (Cory, Nov 1 3:11pm: "yes i think"), named in the log
   const more = desperadoMore(ctx, thief);
-  if (more) { n += more; ctx.log(`${thief.name}'s ${why}: takes ${n}, not ${n - more} (${thief.name}'s Desperado: +${more}).`); }
+  if (more) {
+    n += more;
+    const by = ctx.membersOf(thief).filter(c => c.def.stealMoreIf && c.def.stealMoreIf(ctx, thief)).map(c => `${thief.name}'s ${c.def.name}: +${c.def.stealMoreIf(ctx, thief)}`).join(', ');
+    ctx.log(`${thief.name}'s ${why}: takes ${n}, not ${n - more} (${by}).`);
+  }
   const pick = {};
   for (let k = 0; k < n; k++) {
     const top = piles(ctx, thief, victim, pick).sort((a, b) => b[1] - a[1])[0];
@@ -660,8 +664,26 @@ const thieves = {
     }),
     // Cory, 2026-10-28: "lets just make it a bigger cutpurse for now" (was: a steal when a rival buys 5+ followers)
     m('extortionist', 'Extortionist', 5, 2, 'On Recruit: steal 2 resources from the rival with the most resources. Round Start: steal 2 resources from the rival with the most resources.', { now: true,
+      ...old14('boss'), ...old14('mobboss'),
       onRoundStart(ctx, owner) { startSteal(ctx, owner, 'Extortionist', 2 + stickyMore(ctx, owner), { fromAction: false, richest: true }); },
     }),
+    // REPLACE14 bot tests (Members E lane, Nov 4; lane F's paper passers, quality/pitches/F-*.md, set check 17 vs 12):
+    // Extortionist's place, same price (its aim read rivals' piles). Members count by how many they count as; The Boss
+    // leaves itself out ("other"), Mob Boss counts itself.
+    ...add14(m('boss', 'The Boss', 5, 2, 'Your steals take 1 more resource per other Magenta member you have.', {
+      stealMoreIf: (ctx, owner) => Math.max(0, ctx.countMembersOfColor(owner, 'thieves') - 1),
+      // BOTSEE: about 2 steals a round from here for a Magenta player, each 1 more per other Magenta member
+      ...see(info => {
+        const k = Math.max(0, info.owner.members.filter(u => defById(info.s.cards[u].def)?.quadrant === 'thieves').length);
+        return 2 * endsAhead(info).length * Math.max(1, k) * (resAt(info.round) + SEE_SPITE);
+      }),
+    })),
+    ...add14(m('mobboss', 'Mob Boss', 5, 2, 'On Recruit: steal 1 resource from each rival per Magenta member you have.', {
+      onRecruited(ctx, owner) {
+        const k = ctx.countMembersOfColor(owner, 'thieves');
+        for (const o of ctx.rivals(owner)) autoSteal(ctx, owner, o, 'Mob Boss', k);
+      },
+    })),
     m('watchdog', 'Bodyguards', 5, 2, 'Rivals can’t steal from you.', { f: 2, // +1 follower (Cory, 2026-10-25)
       // steals, not swaps (Cory, 2026-11-01: "balance wise it works best if it blocks steals, not swaps"): Promote, Demote,
       // Panel, Anarchist, Headhunter and Double Agent go through, as they do through Lie Low
