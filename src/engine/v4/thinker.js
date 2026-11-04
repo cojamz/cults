@@ -34,7 +34,7 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   if (!rival && !['place', 'buy'].includes(pend.kind)) return chooseNormalMove(state, rand);
   // an activation or a Release normal would take: nothing to think about
   const smart = opts.smart ?? SMART;
-  const policy = smart ? { ...ROLLOUT, smart } : ROLLOUT;
+  const policy = { ...ROLLOUT, ...(smart ? { smart } : {}), ...(opts.future !== undefined ? { future: opts.future } : {}) };
   let short = pend.kind === 'buy' ? buyShortcut(state, { smart }) : smart && pend.kind === 'place' ? placeUse(state) : null;
   // holdRollouts (on by default under BOTSMART): 6 rollouts to game end are noisy for a now-or-later of 2 to 6 followers,
   // but without them smart Hard did worse head to head (12 seats to 13, -2.7 followers, 23 games; with them 15 to 9,
@@ -47,7 +47,7 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   if (short) return { player: me, option: short.id };
   const { plan = null, memory = null, lessons = null } = opts;
   const nudge = o => planNudge(state, plan, memory, o) + lessonNudge(state, lessons, o);
-  const ranked = rival || scoreOptions(state, rand, planProfile(plan, lessons)).map(r => ({ ...r, v: r.v + nudge(r.o) })).sort((a, b) => b.v - a.v);
+  const ranked = rival || scoreOptions(state, rand, opts.future !== undefined ? { ...planProfile(plan, lessons), future: opts.future, smart } : { ...planProfile(plan, lessons), smart }).map(r => ({ ...r, v: r.v + nudge(r.o) })).sort((a, b) => b.v - a.v);
   if (!ranked.length) return chooseNormalMove(state, rand);
   if (ranked.length === 1) return { player: me, option: ranked[0].o.id };
   const { candidates = 3, budget = 100, full = false, maxMs = Infinity } = opts;
@@ -83,7 +83,7 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
         if (counted) steps++;
       }
       // at a round boundary, value what's left the way normal does (followers + resources' worth)
-      value = s.over ? margin(s, me) : valueAtBoundary(s, me, opts.valueModel);
+      value = s.over ? margin(s, me) : valueAtBoundary(s, me, opts.valueModel, opts.future);
     } catch (err) {
       // an engine error down a hypothetical line must never break the real move: count it as a very bad line
       // (the real game would crash there too), and keep a copy for a repro when THINKER_DUMP is set
@@ -148,10 +148,10 @@ function rollout(state, me, o, seed, { full, cap, round, late, opts }) {
     s = applyMove(state, { player: me, option: o.id });
     while (!s.over && (full || (s.round === round && steps < cap)) && steps < 800 && !late()) {
       const counted = s.pending && (s.pending.kind === 'place' || s.pending.kind === 'buy');
-      s = applyMove(s, opts.rollout === 'greedy' ? chooseGreedyMove(s, r, { noise: 1 }) : chooseNormalMove(s, r, (opts.smart ?? SMART) ? { ...ROLLOUT, smart: true } : ROLLOUT));
+      s = applyMove(s, opts.rollout === 'greedy' ? chooseGreedyMove(s, r, { noise: 1 }) : chooseNormalMove(s, r, { ...ROLLOUT, ...((opts.smart ?? SMART) ? { smart: true } : {}), ...(opts.future !== undefined ? { future: opts.future } : {}) }));
       if (counted) steps++;
     }
-    value = s.over ? margin(s, me) : valueAtBoundary(s, me, opts.valueModel);
+    value = s.over ? margin(s, me) : valueAtBoundary(s, me, opts.valueModel, opts.future);
   } catch (err) {
     if (globalThis.process?.env?.THINKER_DUMP) rolloutCrash(state, o.id, err);
     value = -100;
@@ -200,14 +200,14 @@ function searchPaired(state, rand, pool, opts, { me, rival, nudge, now, until, f
 
 // A position mid-game, scored the way normal scores a pass: followers, contests, and what resources can still become.
 // With a learned value model (mind.js) at a round's end, every player's expected final followers come from it instead.
-function valueAtBoundary(s, me, model = null) {
+function valueAtBoundary(s, me, model = null, future) {
   if (!s.pending) return margin(s, me);
   if (model && s.round !== undefined) {
     const vals = modelValues(model, s.round, boundaryParts(s));
     if (vals) return vals[me] - Math.max(...vals.filter((_, i) => i !== me));
   }
   const probe = { ...s, pending: { player: me, kind: 'buy', options: [{ id: 'pass', kind: 'pass' }] } };
-  return scoreOptions(probe, () => 0, { spite: 1 })[0].v; // the same yardstick as a finished game's margin
+  return scoreOptions(probe, () => 0, future !== undefined ? { spite: 1, future } : { spite: 1 })[0].v; // the same yardstick as a finished game's margin
 }
 
 let dumped = 0;

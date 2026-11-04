@@ -1043,4 +1043,4 @@ export const chooseFollowerBuyerMove = (state, rand = Math.random) => {
 };
 
 /** For audits (scripts/v4-bot-choice-audit.mjs): the pieces bots choose with. Not used by the game. */
-export const botInternals = { rateOnCopy: (...a) => rateOnCopy(...a), avoidUndo: (...a) => avoidUndo(...a), lightClone: s => lightClone(s), settle: (...a) => settle(...a), givenAway: (...a) => givenAway(...a) };
+export const botInternals = { evaluate: (...a) => evaluate(...a), horizon: s => horizon(s), laterTurns: s => laterTurns(s), contests: (...a) => contests(...a), rateOnCopy: (...a) => rateOnCopy(...a), avoidUndo: (...a) => avoidUndo(...a), lightClone: s => lightClone(s), settle: (...a) => settle(...a), givenAway: (...a) => givenAway(...a) };
