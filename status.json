@@ -1,15 +1,10 @@
 {
- "updated": "10:20 PM Eastern",
+ "updated": "10:53 PM Eastern",
  "rows": [
   {
-   "workstream": "Rival moves, one line each",
+   "workstream": "Exchange picker on the Harvest card",
    "blocked": "No",
-   "eta": "~10:45pm"
-  },
-  {
-   "workstream": "Setup modes audit and fixes",
-   "blocked": "No",
-   "eta": "~11:15pm"
+   "eta": "~11:30pm"
   },
   {
    "workstream": "Melting Pot, Dilute, Mob, Creditor, Fan Club (our calls)",
@@ -22,9 +17,9 @@
    "eta": "~11:45pm"
   },
   {
-   "workstream": "Action changes (our calls)",
+   "workstream": "More action changes (our calls)",
    "blocked": "No",
-   "eta": "ETA coming"
+   "eta": "~12:00am"
   },
   {
    "workstream": "Red and White Cloak results, then ship",
@@ -32,12 +27,7 @@
    "eta": "12:30am (full 3:00am)"
   },
   {
-   "workstream": "Step-by-step recruits",
-   "blocked": "No",
-   "eta": "12:30am"
-  },
-  {
-   "workstream": "Shipped tonight: v0.99.544 to .546 (Harvest picker, hover, emoji option, slower Relaxed, sounds, Hostesses, wheel fixes, Pizza pizza)",
+   "workstream": "Shipped tonight: v0.99.544 to .547",
    "blocked": "No",
    "eta": "live"
   }
