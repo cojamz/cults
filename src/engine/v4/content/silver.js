@@ -535,7 +535,17 @@ const silver = {
         ctx.choose(owner, 'Guest of Honor: give one of your members costing 3 or less to a rival, for +4 followers?', opts, 'silver.guestofhonor');
       },
     })),
-    m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', {
+    // Lane B scale-up (Nov 4, paper b54: 17 vs 11): Toastmaster's place, still Silver's cheap way in. Any silver held, never "more than you".
+    ...add8(m('chaperone', 'Chaperone', 1, 1, 'Round Start: +1 follower per rival holding silver.', {
+      onRoundStart(ctx, owner) {
+        const n = others(ctx, owner).filter(o => (o.res[S] || 0) > 0).length;
+        if (!n) return;
+        owner.bonus += n;
+        ctx.log(`${owner.name}'s Chaperone: ${n} ${n === 1 ? 'rival holds' : 'rivals hold'} silver: +${n} ${n === 1 ? 'follower' : 'followers'}.`);
+      },
+      ...see(i => [2, 3].filter(r => r > i.round).length * (i.n - 1) * 0.6),
+    })),
+    m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', { ...old8('silver.toastmaster'),
       afterAction(ctx, owner, card, qid) { if (qid === S) owner.bonus += 1; },
     }),
     m('gala', 'Debutantes', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, ...old2, ...old6, // worth 2 (Cory, Nov 1)
