@@ -164,15 +164,15 @@ From 3 blind paper judges (judge-1.json, judge-2.json, judge-3.json), median tot
 
 | # | Card | Color | Median | Judges | Bar | Flags | Why (judge nearest the median) |
 |---|---|---|---|---|---|---|---|
-| 1 | Golden Years | gold | 8 | 8/10/8 | UNDER | round I; 0 on C4 | Pure flat 2/4/6 income; nobody at the table notices who took it. |
-| 2 | Build Up | green | 8 | 8/10/8 | UNDER | round I; 0 on C4 | Flat scaling green; nothing to react to. |
+| 1 | Golden Years | gold | 8 | 8/10/8 | UNDER | fuel anchor (0 on Fun allowed); round I; 0 on C4 | Pure flat 2/4/6 income; nobody at the table notices who took it. |
+| 2 | Build Up | green | 8 | 8/10/8 | UNDER | fuel anchor (0 on Fun allowed); round I; 0 on C4 | Flat scaling green; nothing to react to. |
 | 3 | Sweet Talk | silver | 10 | 10/10/11 | UNDER | round II; 0 on C4 | Silver into other colors; a converter that nobody notices. |
 | 4 | Makeover | yellow | 10 | 10/14/10 | UNDER | protected; round III (rework only under 10); 0 on C4 | Round III rearrange; useful for contests but a weak burst. |
-| 5 | Savings | blue | 10 | 10/13/10 | UNDER | round I; 0 on C4 | Scaling blue plus an optional bury; fine anchor. |
-| 6 | Stash | magenta | 10 | 9/10/10 | UNDER | round I; 0 on C4 | The same template as Gather and Allowance; nothing about theft. |
-| 7 | Allowance | white | 10 | 8/10/10 | UNDER | round I; 0 on C4 | The same resource-plus-follower template as Gather and Stash; nothing white about it. |
+| 5 | Savings | blue | 10 | 10/13/10 | UNDER | fuel anchor (0 on Fun allowed); round I; 0 on C4 | Scaling blue plus an optional bury; fine anchor. |
+| 6 | Stash | magenta | 10 | 9/10/10 | UNDER | fuel anchor (0 on Fun allowed); round I; 0 on C4 | The same template as Gather and Allowance; nothing about theft. |
+| 7 | Allowance | white | 10 | 8/10/10 | UNDER | fuel anchor (0 on Fun allowed); round I; 0 on C4 | The same resource-plus-follower template as Gather and Stash; nothing white about it. |
 | 8 | Tithe | gold | 11 | 11/11/11 | UNDER | round II; 0 on C4 | Scales with your cult so it rewards building, but it is quiet income nobody reacts to. |
-| 9 | Gather | red | 11 | 10/11/12 | UNDER | round I; 0 on C4 | Resources plus followers on a recruit; the plain anchor. |
+| 9 | Gather | red | 11 | 10/11/12 | UNDER | fuel anchor (0 on Fun allowed); round I; 0 on C4 | Resources plus followers on a recruit; the plain anchor. |
 | 10 | Polish | silver | 11 | 10/11/12 | UNDER | round I; 0 on C4 | A plain conversion; useful, no story. |
 | 11 | Estate Sale | white | 11 | 11/12/11 | UNDER | round II; 0 on C4 | Farewell for white instead of followers; weaker twin. |
 | 12 | Reprise | green | 11 | 11/14/11 | UNDER | round I; 0 on C4 | Copy your own action; self-contained. |
