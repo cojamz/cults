@@ -294,7 +294,11 @@ function rateOnCopy(state, pend, options, { base = false } = {}) {
   const { turns, roundLeft } = horizon(state);
   const lt = laterTurns(state);
   const places = state.players.map((_, i) => turns[i] + lt.turns);
-  const buys = state.players.map((_, i) => turns[i] + lt.turns + (i === me ? 1 : 0));
+  // the chooser's own buy this turn, if one is still ahead. BOTSMART: only when the queue holds it; a choice after the
+  // round's last placement (Loan's payback in round III) has no buy left, and counting one made 3 white look worth a
+  // follower buy, so a bot lost 3 followers to keep white it could never spend (play judges, Nov 4, lab/a-loan2)
+  const ownBuy = !SMART || state.queue.some(t => t.t === 'buy' && t.p === me) ? 1 : 0;
+  const buys = state.players.map((_, i) => turns[i] + lt.turns + (i === me ? ownBuy : 0));
   const income = turns.map(t => (t * INCOME[Math.max(1, state.round) - 1] + lt.income) * INCOME_SCALE);
   // the queued choice carries its handler and data (Even Swap's mode, Swap Sides'); without them every trade threw and fell back to its hint
   const task = pend.task || state.queue.find(t => t.t === 'choose' && t.p === me);
