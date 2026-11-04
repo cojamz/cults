@@ -26,7 +26,8 @@ export function spearman(a, b) {
 export function loadJudge(file) {
   const raw = JSON.parse(readFileSync(file, 'utf8'));
   const arr = Array.isArray(raw) ? raw : raw.cards || raw.scores;
-  return arr.map(x => ({ ...x, color: color(x.color), total: x.total ?? x.scores.reduce((a, b) => a + b, 0) }));
+  // total as principles.md counts it now: C1-C10 plus C12 Elegant when scored; C11 Defendable is a watch note, not counted
+  return arr.map(x => ({ ...x, color: color(x.color), total: x.scores.slice(0, 10).reduce((a, b) => a + b, 0) + (x.scores.length >= 12 ? x.scores[11] : 0) }));
 }
 
 /** Join judges on kind+name+color, falling back to kind+name when a name is unique. Returns Map key -> [entry per judge]. */

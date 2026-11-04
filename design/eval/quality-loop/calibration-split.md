@@ -1,8 +1,9 @@
 # Cory's past calls, split for the taste check
 
-Seeded coin flip (seed 20261104) over the live cards named in design/eval/quality-loop/calibration.md sections 1a and 2. Shake Down and Loyalists forced into half A (rubric v1.1 quotes them). Rubric and prompt examples may come from half A only; the taste check is scored on half B only. Both halves are reported.
+Seeded coin flip (seed 20261104) over the live cards named in design/eval/quality-loop/calibration.md sections 1a and 2. Shake Down and Loyalists forced into half A (rubric v1.1 quotes them). Rubric and prompt examples may come from half A only; the taste check is scored on half B only. Both halves are reported. Echo moved to half A at 12:30am (rubric C12 quotes it).
 
 ## Half A (may be quoted)
+- echo · liked
 - con men · liked
 - estate sale · liked
 - exchange · liked
@@ -40,7 +41,6 @@ Seeded coin flip (seed 20261104) over the live cards named in design/eval/qualit
 - coach · liked
 - crunch time · liked
 - doppelganger · liked
-- echo · liked
 - fan club · disliked
 - fence · liked
 - gardener · liked
