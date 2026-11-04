@@ -390,13 +390,17 @@ const CALLS = {
   },
   // a jaw harp's "boing" from the desert
   cactus(ctx, dest, t) {
-    const d = 0.36;
-    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 9;
+    // (Cor: longer and more pronounced): two boings, the mouth opening and closing on each, with a wobble
+    const d = 0.6;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 12;
     bp.frequency.setValueAtTime(450, t);
-    bp.frequency.exponentialRampToValueAtTime(1700, t + 0.12);
-    bp.frequency.exponentialRampToValueAtTime(600, t + d);
-    bp.connect(env(ctx, dest, t, 0.55, 0.004, d));
-    tone(ctx, 'sawtooth', 130, t, d, bp);
+    bp.frequency.exponentialRampToValueAtTime(1900, t + 0.13);
+    bp.frequency.exponentialRampToValueAtTime(550, t + 0.3);
+    bp.frequency.exponentialRampToValueAtTime(1500, t + 0.43);
+    bp.frequency.exponentialRampToValueAtTime(500, t + d);
+    bp.connect(env(ctx, dest, t, 0.7, 0.004, d));
+    const o = tone(ctx, 'sawtooth', 130, t, d, bp);
+    wobble(ctx, o.frequency, t, d, 6, 3);
     return d + 0.02;
   },
   // licking its lips: a short "mm" and two wet smacks (Cor: "maybe for pizza like a licks lips?", Nov 4)
@@ -434,12 +438,14 @@ const CALLS = {
     src.start(t); src.stop(t + d + 0.02);
     return d + 0.02;
   },
-  // a quick swish (Cor: "can just be swish", Nov 4)
+  // a swish (Cor: "can just be swish", Nov 4)
   ninja(ctx, dest, t, r) {
-    const bp = hiss(ctx, dest, t, 0.14, r, { f: 900, q: 2.2, peak: 0.35, attack: 0.05 });
-    bp.frequency.setValueAtTime(900, t);
-    bp.frequency.exponentialRampToValueAtTime(5500, t + 0.14);
-    return 0.16;
+    // (Cor: "could be a little longer/more pronounced"): a longer sweep that peaks two thirds in, like a blade going past
+    const d = 0.3;
+    const bp = hiss(ctx, dest, t, d, r, { f: 600, q: 3, peak: 0.45, attack: 0.19 });
+    bp.frequency.setValueAtTime(600, t);
+    bp.frequency.exponentialRampToValueAtTime(4800, t + d);
+    return d + 0.02;
   },
   // a spell rising, then a sparkle
   wizard(ctx, dest, t) {
@@ -469,9 +475,10 @@ const CALLS = {
   },
   // a bee flying past, left to right: a fluttering buzz that starts at once and fades (Cor's redo, Nov 4)
   bee(ctx, dest, t, r) {
-    const d = 0.42;
-    // loud from the first moment, then fading as it flies off (Cor: "feels like its on a delay" with a slow swell)
-    let out = env(ctx, dest, t, 0.14, 0.008, d);
+    const d = 0.5;
+    // loud from the first moment, held, then fading as it flies off (Cor: a slow swell "feels like its on a delay";
+    // fading from the start was "too short")
+    let out = held(ctx, dest, t, 0.14, 0.01, d);
     if (ctx.createStereoPanner) {
       const pan = ctx.createStereoPanner(); pan.pan.setValueAtTime(-0.2, t); pan.pan.linearRampToValueAtTime(0.6, t + d);
       pan.connect(out); out = pan;
@@ -489,7 +496,7 @@ const CALLS = {
 /** The emoji ids that have a call. */
 export const CALL_IDS = Object.keys(CALLS);
 // each call's loudness against the others (set by peak and rms, scripts/v4-sounds.mjs); a call sits under the place knock
-const CALL_LEVEL = { santa: 1.16, unicorn: 1.23, surfer: 1, bug: 0.64, ghost: 0.44, alien: 0.61, robot: 1.35, cat: 0.71, frog: 0.93, octopus: 0.65, pumpkin: 0.22, skull: 1.41, cactus: 2.82, pizza: 0.5, dino: 1, ninja: 2.57, wizard: 1.33, crab: 1.34, mushroom: 1.3, bee: 3.55 };
+const CALL_LEVEL = { santa: 1.16, unicorn: 1.23, surfer: 1, bug: 0.64, ghost: 0.44, alien: 0.61, robot: 1.35, cat: 0.71, frog: 0.93, octopus: 0.65, pumpkin: 0.22, skull: 1.41, cactus: 3.4, pizza: 0.5, dino: 1, ninja: 3.05, wizard: 1.33, crab: 1.34, mushroom: 1.3, bee: 3.67 };
 const CALL_MASTER = 0.6;
 /** Render emoji `id`'s call into ctx at time t. Returns its length in seconds (0 for an emoji with no call). */
 export function call(ctx, dest, id, t, seed = Math.floor(Math.random() * 1e9)) {
