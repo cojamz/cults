@@ -23,7 +23,7 @@ const HOSTESS_TEXT = {
   B: 'On Recruit and Round Start: give each rival 1 silver in round I, 2 in round II, 3 in round III. +1 follower per silver you give.',
   C: 'On Recruit and Round Start: give each rival 1 silver. +1 follower for each.', // Cory's pick 1, Nov 3 9:47pm
 };
-const SOC_N = Number(globalThis.process?.env?.SOCIALITES_N || 2);
+const SOC_N = Number(globalThis.process?.env?.SOCIALITES_N || 1); // live at +1 since Nov 4 (trial switch kept)
 const WW_N = Number(globalThis.process?.env?.WELLWISHERS_N || 3); // trial switch: Well-Wishers' followers per move (Nov 4, c1 read weak)
 const others = (ctx, p) => ctx.rivals(p);
 const otherColors = ctx => ctx.state.resources.filter(c => c !== S);
@@ -680,7 +680,8 @@ const silver = {
       },
     })), // worth 2 (Cory, Nov 1)
     // Lane B scale-up (Nov 4, paper b46: 18 vs 10): Philanthropist's place. Rides every rival recruit of a member.
-    ...add8(m('charityball', 'Charity Ball', 3, 2, 'Whenever a rival recruits a member, give them 1 silver from the bank. +1 follower.', {
+    // Live since Nov 4 (Claude, under Cory's go-with-your-gut, overnight quality loop): A/B +0.30, balance passed at 120.
+    m('charityball', 'Charity Ball', 3, 2, 'Whenever a rival recruits a member, give them 1 silver from the bank. +1 follower.', {
       onAnyRecruit(ctx, owner, card, by) {
         if (by === owner) return;
         giveTo(ctx, owner, by, S, 1); afterGive(ctx, owner, S);
@@ -688,8 +689,9 @@ const silver = {
         ctx.log(`${owner.name}'s Charity Ball: gives ${by.name} 1 silver: +1 follower.`);
       },
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.5),
-    })),
-    m('philanthropists', 'Philanthropist', 3, 2, 'On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.', { ...old8('silver.philanthropists'),
+    }),
+    // Charity Ball takes its place (Claude, under Cory's go-with-your-gut, overnight quality loop, 2026-11-04)
+    m('philanthropists', 'Philanthropist', 3, 2, 'On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.', { retired: true,
       onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropist', max: 4, per: 1 }); },
     }),
     // Guest of Honor takes its place (Claude, under Cory's go-with-your-gut, overnight quality loop, 2026-11-04)
@@ -749,7 +751,8 @@ const silver = {
     // check 17 vs 11): High Society's place, same price and worth. Once per recruit (a member or a follower card) whose
     // payment has any silver in it.
     // SOCIALITES_N=1: the +1 version (paper 15), a second trial in case +2 runs away (16 hits in a seat-1 Normal game).
-    ...add8(m('socialites', 'Socialites', 4, 3, `Whenever a rival recruits paying silver, +${SOC_N} follower${SOC_N === 1 ? '' : 's'}.`, { f: 2,
+    // Live at +1 since Nov 4 (Claude, under Cory's go-with-your-gut, overnight quality loop): balance passed at 120 (c2b).
+    m('socialites', 'Socialites', 4, 3, `Whenever a rival recruits paying silver, +${SOC_N} follower${SOC_N === 1 ? '' : 's'}.`, { f: 2,
       onRecruit(ctx, owner, card, by, what) {
         if (by === owner || !(what?.spent?.[S] > 0)) return;
         owner.bonus += SOC_N;
@@ -757,8 +760,9 @@ const silver = {
       },
       // BOTSEE: rivals pay some silver on about a quarter of their recruits once gifts are flowing
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r] * [0.1, 0.25, 0.3][r - 1], 0) * SOC_N),
-    })),
-    m('highsociety', 'High Society', 4, 3, 'Whenever a rival takes a Silver space, +1 follower.', { f: 2, ...old8('silver.highsociety'), // Nov 4 (Claude, under Cory's go-with-your-gut; was a game-end count of rivals with more silver)
+    }),
+    // Socialites takes its place (Claude, under Cory's go-with-your-gut, overnight quality loop, 2026-11-04)
+    m('highsociety', 'High Society', 4, 3, 'Whenever a rival takes a Silver space, +1 follower.', { f: 2, retired: true, // Nov 4 (Claude, under Cory's go-with-your-gut; was a game-end count of rivals with more silver)
       afterRivalAction(ctx, owner, card, qid) { if (qid === S) { owner.bonus += 1; ctx.log(`${owner.name}'s High Society: +1 follower.`); } },
       // BOTSEE: about a quarter of the rival placements still to come land on a Silver space
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.25),

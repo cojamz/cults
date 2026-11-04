@@ -4,17 +4,16 @@
 //   silver.debtcollector -> silver.wellwishers
 //   silver.polisher -> silver.usher
 //   (silver.polisher -> silver.guestofhonor is live since Nov 4: Polisher always retired, Guest of Honor always on)
-//   silver.highsociety -> silver.socialites
-//   silver.philanthropists -> silver.charityball
+//   (silver.highsociety -> silver.socialites and silver.philanthropists -> silver.charityball are live since Nov 4)
 //   trading.oldmoney -> trading.pennypincher
 //   silver.toastmaster -> silver.chaperone
 //   trading.shopkeeper -> trading.squire
 // One card at a time by key (REPLACE8=wellwishers, =usher, =guestofhonor, =socialites, or a comma list of keys), so each trials on its own.
 // Unset, the new cards are never defined and nothing in the game changes.
 const VAL = globalThis.process?.env?.REPLACE8 || '';
-const PICKS = ['wellwishers', 'usher', 'socialites', 'charityball', 'pennypincher', 'chaperone', 'squire'];
+const PICKS = ['wellwishers', 'usher', 'pennypincher', 'chaperone', 'squire'];
 /** new card key -> the old card id it takes the place of */
-const REPLACES = { wellwishers: 'silver.debtcollector', usher: 'silver.polisher', socialites: 'silver.highsociety', charityball: 'silver.philanthropists', pennypincher: 'trading.oldmoney', chaperone: 'silver.toastmaster', squire: 'trading.shopkeeper' };
+const REPLACES = { wellwishers: 'silver.debtcollector', usher: 'silver.polisher', pennypincher: 'trading.oldmoney', chaperone: 'silver.toastmaster', squire: 'trading.shopkeeper' };
 export const ON8 = VAL === '1' ? PICKS : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
 export const REPLACE8 = ON8.length > 0;
 /** The new card, in its color's member list only when it is switched on. */
@@ -24,4 +23,4 @@ export const old8 = oldId => (ON8.some(k => REPLACES[k] === oldId) ? { retired: 
 /** Handlers the new cards use, registered under the switch. */
 export const handlers8 = hs => (REPLACE8 ? hs : {});
 /** The new cards of this batch that are in the live game (none until one ships). */
-export const LIVE8 = ['silver.guestofhonor'];
+export const LIVE8 = ['silver.guestofhonor', 'silver.charityball', 'silver.socialites'];

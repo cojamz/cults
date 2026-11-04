@@ -27,7 +27,7 @@ describe('REPLACE8: the switch', () => {
     expect(card('trading.pennypincher')).toEqual(card('trading.oldmoney'));
     expect(card('silver.chaperone')).toEqual(card('silver.toastmaster'));
     expect(card('trading.squire')).toEqual(card('trading.shopkeeper'));
-    for (const id of ['silver.debtcollector', 'silver.polisher', 'silver.highsociety']) expect(defById(id).retired).toBe(true);
+    for (const id of ['silver.debtcollector', 'silver.polisher', 'silver.highsociety', 'silver.philanthropists']) expect(defById(id).retired).toBe(true);
     expect(defById('silver.gala').retired).toBeFalsy();
   });
 });
@@ -101,12 +101,12 @@ describe('Guest of Honor: "Whenever you take a Silver space, you may give a riva
   });
 });
 
-describe('Socialites: "Whenever a rival recruits paying silver, +2 followers."', () => {
+describe('Socialites (live at +1, Nov 4): "Whenever a rival recruits paying silver, +1 follower."', () => {
   const buyOne = s => { s = move(s, s.pending.options.find(o => o.kind === 'tier' && /1/.test(o.label || o.id)).id); if (s.pending?.player === 1 && s.pending.kind === 'choose') s = move(s, s.pending.options[0].id); return s; };
-  it('a rival recruits paying silver: +2; paying without silver: nothing; your own recruits: nothing', () => {
+  it('a rival recruits paying silver: +1; paying without silver: nothing; your own recruits: nothing', () => {
     let s = buyOne(sc({ res: [{}, { silver: 5 }], members: [['silver.socialites']], queue: [{ t: 'buy', p: 1 }] }));
-    expect(s.players[0].bonus).toBe(2);
-    expect(linesNaming(s.log, 'Socialites')).toContain("P1's Socialites: +2 followers (P2 paid silver).");
+    expect(s.players[0].bonus).toBe(1);
+    expect(linesNaming(s.log, 'Socialites')).toContain("P1's Socialites: +1 follower (P2 paid silver).");
     let u = buyOne(sc({ res: [{}, { red: 5 }], members: [['silver.socialites']], queue: [{ t: 'buy', p: 1 }] }));
     expect(u.players[0].bonus).toBe(0);
     let v = sc({ res: [{ silver: 5 }], members: [['silver.socialites']], queue: [{ t: 'buy', p: 0 }] });
@@ -114,13 +114,13 @@ describe('Socialites: "Whenever a rival recruits paying silver, +2 followers."',
     if (v.pending?.player === 0 && v.pending.kind === 'choose') v = move(v, v.pending.options[0].id);
     expect(v.players[0].bonus).toBe(1); // the follower bought, nothing from Socialites
   });
-  it('the pitched turn: you Toast (each rival +2 silver), then Ben buys a follower card paying silver: +2', () => {
+  it('the pitched turn: you Toast (each rival +2 silver), then Ben buys a follower card paying silver: +1', () => {
     let s = sc({ n: 4, round: 2, members: [['silver.socialites']], queue: [{ t: 'turn', p: 0 }, { t: 'buy', p: 1 }] });
     s = take(s, 'silver.toast');
     if (s.pending?.player === 0) s = pass(s);
     s = buyOne(s);
     expect(s.players[1].res.silver).toBe(1);
-    expect(s.players[0].bonus).toBe(2);
+    expect(s.players[0].bonus).toBe(1);
   });
 });
 
@@ -164,5 +164,13 @@ describe('Squire: "On Recruit and Round Start: +2 white, or +6 white if you have
     expect(named(s, 'Squire')).toContain("P1's Squire: +6 white (fewest members).");
     const t = table(['red', 'echo', 'trading', 'silver'], { n: 3, round: 1, members: [['trading.squire', 'silver.usher'], ['echo.roadie'], ['trading.cashier', 'echo.evergreen']], queue: [{ t: 'round', r: 2 }] });
     expect(named(t, 'Squire')).toContain("P1's Squire: +2 white.");
+  });
+});
+
+describe('Live since Nov 4: Charity Ball and Socialites with no switch', () => {
+  it('both are always defined and dealt (no add8)', () => {
+    expect(defById('silver.charityball').retired).toBeFalsy();
+    expect(defById('silver.socialites').retired).toBeFalsy();
+    expect(defById('silver.socialites').text).toBe('Whenever a rival recruits paying silver, +1 follower.');
   });
 });
