@@ -11,6 +11,7 @@ import { startEffects, stopEffects, abandonEffects, underCause, markEffect } fro
 import { REPLACE4 } from './content/replace4.js';
 import { REPLACE6 } from './content/replace6.js';
 import { REPLACE7 } from './content/replace7.js';
+import { REPLACE10 } from './content/replace10.js';
 import { isNewColor } from './content/yellow.js';
 
 export const RING_VALUE = [4, 6, 10];
@@ -1966,6 +1967,8 @@ function cultMove(state, uid, from, to, actor = null, swappedWith = null) {
 function cardLeaves(state, p, uid) {
   const card = state.cards[uid], ctx = ctxFor(state);
   for (const def of effectiveDefs(card)) if (def.onLeave) def.onLeave(ctx, p, wrap(state, card));
+  // "Whenever another of your members leaves your cult" (Widows, REPLACE10 bot test)
+  if (REPLACE10) for (const u of p.members) if (u !== uid) for (const def of effectiveDefs(state.cards[u])) if (def.onOtherLeave) def.onOtherLeave(ctx, p, wrap(state, state.cards[u]), wrap(state, card));
 }
 /** This round's turn order (its first pass). */
 const turnOrder = state => (state.order.length ? state.order.slice(0, state.players.length) : state.players.map(p => p.id));

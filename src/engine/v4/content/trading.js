@@ -293,11 +293,28 @@ const trading = {
       onGameEnd: (ctx, owner) => 2 * ctx.rivals(owner).filter(o => ctx.memberCount(o) > ctx.memberCount(owner)).length,
     }),
     // Cory, 2026-10-25: cost 3 (was 4), so White has a cheap starter
-    m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true,
+    // REPLACE10 bot test (Nov 4, quality loop lane D): Landlord's place. 3 white + 1 any as a player sees it. "Fewest
+    // followers" read at that moment, ties count, as Pauper and Desperado read it.
+    ...add10(m('almoner', 'Almoner', 2, 1, 'On Recruit and Round Start: +2 white, or +4 if you have the fewest followers (ties count).', { now: true,
+      onRoundStart(ctx, owner) {
+        const last = ctx.state.players.every(o => ctx.followers(o) >= ctx.followers(owner)), n = last ? 4 : 2;
+        ctx.gain(owner, W, n);
+        ctx.log(`${owner.name}'s Almoner: +${n} white${last ? ' (fewest followers)' : ''}.`);
+      },
+    })),
+    m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true, ...old10('almoner'),
       onRoundStart(ctx, owner) { ctx.gain(owner, W, 2); },
     }),
+    // REPLACE10 bot test (Nov 4, quality loop lane D): Heiresses' place. 5 white + 4 any as a player sees it, worth 2.
+    // Any other member of yours leaving your cult (stolen, swapped, given, cast out, traded in): core's cardLeaves.
+    ...add10(m('widows', 'Widows', 4, 4, 'Whenever another of your members leaves your cult, +2 followers.', { f: 2,
+      onOtherLeave(ctx, owner, card, gone) {
+        owner.bonus += 2;
+        ctx.log(`${owner.name}'s Widows: ${gone.def.name} left: +2 followers.`);
+      },
+    })),
     m('heiress', 'Heiresses', 4, 4, // 9 (Cory, Oct 30: balance run)
-      'On Use, once per game: +1 white per member you have.', { f: 2,
+      'On Use, once per game: +1 white per member you have.', { f: 2, ...old10('widows'),
       activate: 'game',
       onActivate(ctx, owner) {
         const n = ctx.memberCount(owner);
@@ -415,7 +432,7 @@ const trading = {
         if (!n || !ctx.state.players.every(o => ctx.followers(o) >= ctx.followers(owner))) return;
         ctx.choose(owner, `Pauper: turn your ${n} white into ${plural(n, 'follower')}?`, [
           { id: 'yes', label: `Turn ${n} white into ${plural(n, 'follower')}`, kind: 'choice', value: true, hint: n },
-          { id: 'no', label: `Keep the ${n} white`, kind: 'pass', value: false, hint: 0 },
+          { id: 'no', label: `Keep the ${n} white`, kind: 'done', value: false, hint: 0 },
         ], 'trading.pauper');
       },
     })),

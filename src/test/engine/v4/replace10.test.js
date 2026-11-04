@@ -4,7 +4,7 @@
 // when the engine loads, so it is set before the engine is imported (dynamic imports below), then cleared.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE10 = 'racketeer,pauper,bootlegger,warmup,insidejob';
+process.env.REPLACE10 = 'racketeer,pauper,bootlegger,warmup,insidejob,almoner,widows';
 const { applyMove, contextFor, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { table, named } = await import('./cards-helpers-b.js');
@@ -140,5 +140,33 @@ describe('REPLACE10: Warm-Up Act', () => {
     expect(names).not.toContain('Echo');
     s = answer(s, s.pending.options.find(o => o.label.startsWith('Build Up')).id);
     expect(s.players[0].res.green).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe('REPLACE10: Almoner and Widows', () => {
+  it('Almoner: On Recruit and Round Start +2 white, +4 with the fewest followers (ties count)', () => {
+    let s = table(['red', 'echo', 'trading', 'thieves'], { n: 3, round: 1, bonus: [0, 4, 4], members: [['trading.almoner'], [], []], queue: [{ t: 'round', r: 2 }] });
+    expect(named(s, 'Almoner')).toContain("P1's Almoner: +4 white (fewest followers).");
+    let t = table(['red', 'echo', 'trading', 'thieves'], { n: 3, round: 1, bonus: [9, 4, 4], members: [['trading.almoner'], [], []], queue: [{ t: 'round', r: 2 }] });
+    expect(named(t, 'Almoner')).toContain("P1's Almoner: +2 white.");
+  });
+
+  it('Widows: another of your members cast out or stolen: +2 followers each; Widows itself leaving pays nothing', () => {
+    const s = table(['red', 'echo', 'trading', 'thieves'], { n: 2, round: 2, members: [['trading.widows', 'thieves.accomplice', 'echo.roadie'], []] });
+    const ctx = contextFor(s), me = s.players[0], b0 = me.bonus;
+    ctx.buryMember(me, uidOf(s, 'thieves.accomplice', 0));
+    expect(me.bonus).toBe(b0 + 2);
+    ctx.moveMember(uidOf(s, 'echo.roadie', 0), me, s.players[1], { recruit: true });
+    expect(me.bonus).toBe(b0 + 4);
+    ctx.moveMember(uidOf(s, 'trading.widows', 0), me, s.players[1], { recruit: true });
+    expect(me.bonus).toBe(b0 + 4);
+    expect(named(s, 'Widows')).toEqual(["P1's Widows: Accomplice left: +2 followers.", "P1's Widows: Roadie left: +2 followers."]);
+  });
+
+  it('Widows, the pitched turn: Ben\'s Kidnapper takes your cheapest member at round start: +2', () => {
+    let s = table(['red', 'echo', 'trading', 'thieves'], { n: 4, round: 1, members: [['trading.widows', 'echo.roadie'], ['thieves.kidnappers'], ['echo.agents'], []], queue: [{ t: 'round', r: 2 }] });
+    // P1 has the most members (Widows counts 2, Roadie 1): Kidnapper takes the cheapest, Roadie
+    expect(named(s, 'Kidnapper')).toEqual(["P2's Kidnapper: stole P1's Roadie."]);
+    expect(named(s, 'Widows')).toEqual(["P1's Widows: Roadie left: +2 followers."]);
   });
 });
