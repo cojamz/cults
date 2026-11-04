@@ -324,6 +324,16 @@ function plan(r, p) {
   return { size, focus, source, key: `${focus}, ${size}`, fromM, fromC, other: Math.max(0, p.followers - fromM - fromC) };
 }
 
+/** How the card's winning owners played, when 3+ of them won: their most common plan. */
+function ownerPlan(rows, n) {
+  const k = {};
+  let w = 0;
+  for (const r of rows) for (const p of seatsOf(r)) if (p.win && owns(p, n)) { w++; const x = plan(r, p).key; k[x] = (k[x] || 0) + 1; }
+  if (w < 3) return '';
+  const [best, c] = Object.entries(k).sort((a, b) => b[1] - a[1])[0];
+  return ` Owners who won: ${c} of ${w} were ${best}.`;
+}
+
 function patterns(rows) {
   const plans = {}, sources = { win: [0, 0, 0, 0], lose: [0, 0, 0, 0] }, colors = {}, pairs = {};
   let wins = 0;
@@ -362,7 +372,7 @@ function cmdReport() {
   for (const [n, o, why] of spec.pairs) {
     const a = n ? cardLine(t, n) : null, c = o ? cardLine(b, o) : null;
     const f = x => `taken ${pct(x.taken)}, owners won ${pct(x.wr)} (${x.own} owners)`;
-    if (a) say(`- **${n}**${why ? ` (${why})` : ''}: ${f(a)}: ${verdict(a)}.${c ? ` Without the change, **${o}**: ${f(c)}.` : ''}`);
+    if (a) say(`- **${n}**${why ? ` (${why})` : ''}: ${f(a)}: ${verdict(a)}.${c ? ` Without the change, **${o}**: ${f(c)}.` : ''}${ownerPlan(t, n)}`);
     else if (c) say(`- **${o}** retired with nothing in its place: it was ${f(c)}.`);
   }
   say('');
