@@ -118,7 +118,7 @@ function agg(list) {
     random: list.filter(c => c.random).map(c => c.name),
     memory: list.filter(c => c.memory).map(c => c.name),
     medianWords: med(list.map(c => c.words)),
-    plainCards: list.filter(c => c.kind === 'member' && c.words <= 6).map(c => c.name),
+    plainCards: list.filter(c => c.kind === 'member' && (!c.text.trim() || /^worth \d+ followers?\.?$/i.test(c.text.trim()) || /^\+\d+ \w+\.?$/.test(c.text.trim()))).map(c => c.name),
     shapeCount,
   };
 }
