@@ -20,6 +20,7 @@ import { add3, old3, handlers3 } from './replace3.js';
 import { add6, old6, handlers6 } from './replace6.js';
 import { swap11, handlers11 } from './replace11.js';
 import { add10, old10, handlers10 } from './replace10.js';
+import { add8, old8 } from './replace8.js';
 
 const W = 'white';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -463,7 +464,15 @@ const trading = {
         ], 'trading.pauper');
       },
     })),
-    m('oldmoney', 'Old Money', 1, 4, /* 6 (Cory, Oct 30) */ 'Game End: +1 follower per white member you have.', { ...old6, ...old10('pauper'),
+    // Lane B scale-up (Nov 4, paper b46: 15 vs 11): Old Money's place. Fewest members read at round start, ties count.
+    ...add8(m('pennypincher', 'Penny Pincher', 1, 4, 'Round Start: if you have the fewest members, +3 white.', {
+      onRoundStart(ctx, owner) {
+        if (!ctx.state.players.every(o => ctx.memberCount(o) >= ctx.memberCount(owner))) return;
+        ctx.gain(owner, W, 3);
+        ctx.log(`${owner.name}'s Penny Pincher: fewest members: +3 white.`);
+      },
+    })),
+    m('oldmoney', 'Old Money', 1, 4, /* 6 (Cory, Oct 30) */ 'Game End: +1 follower per white member you have.', { ...old6, ...old10('pauper'), ...old8('trading.oldmoney'),
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, 'trading'),
     }),
     m('hoarder', 'Hoarder', 4, 3, 'On Use, once per game: turn all your resources into white.', { ...old3,

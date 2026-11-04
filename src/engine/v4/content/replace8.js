@@ -5,12 +5,14 @@
 //   silver.polisher -> silver.usher
 //   silver.polisher -> silver.guestofhonor (Toastmaster stays: Silver's cheap way-in, director Nov 4)
 //   silver.highsociety -> silver.socialites
+//   silver.philanthropists -> silver.charityball
+//   trading.oldmoney -> trading.pennypincher
 // One card at a time by key (REPLACE8=wellwishers, =usher, =guestofhonor, =socialites, or a comma list of keys), so each trials on its own.
 // Unset, the new cards are never defined and nothing in the game changes.
 const VAL = globalThis.process?.env?.REPLACE8 || '';
-const PICKS = ['wellwishers', 'usher', 'guestofhonor', 'socialites'];
+const PICKS = ['wellwishers', 'usher', 'guestofhonor', 'socialites', 'charityball', 'pennypincher'];
 /** new card key -> the old card id it takes the place of */
-const REPLACES = { wellwishers: 'silver.debtcollector', usher: 'silver.polisher', guestofhonor: 'silver.polisher', socialites: 'silver.highsociety' };
+const REPLACES = { wellwishers: 'silver.debtcollector', usher: 'silver.polisher', guestofhonor: 'silver.polisher', socialites: 'silver.highsociety', charityball: 'silver.philanthropists', pennypincher: 'trading.oldmoney' };
 export const ON8 = VAL === '1' ? PICKS : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
 export const REPLACE8 = ON8.length > 0;
 /** The new card, in its color's member list only when it is switched on. */

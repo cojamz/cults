@@ -623,7 +623,17 @@ const silver = {
         return true;
       },
     })), // worth 2 (Cory, Nov 1)
-    m('philanthropists', 'Philanthropist', 3, 2, 'On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.', {
+    // Lane B scale-up (Nov 4, paper b46: 18 vs 10): Philanthropist's place. Rides every rival recruit of a member.
+    ...add8(m('charityball', 'Charity Ball', 3, 2, 'Whenever a rival recruits a member, give them 1 silver from the bank. +1 follower.', {
+      onAnyRecruit(ctx, owner, card, by) {
+        if (by === owner) return;
+        giveTo(ctx, owner, by, S, 1); afterGive(ctx, owner, S);
+        owner.bonus += 1;
+        ctx.log(`${owner.name}'s Charity Ball: gives ${by.name} 1 silver: +1 follower.`);
+      },
+      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.5),
+    })),
+    m('philanthropists', 'Philanthropist', 3, 2, 'On Recruit: give rivals up to 4 silver from the bank, split as you choose. +1 follower per silver you give.', { ...old8('silver.philanthropists'),
       onRecruited(ctx, owner) { shareStep(ctx, owner, { who: 'Philanthropist', max: 4, per: 1 }); },
     }),
     m('polisher', 'Polisher', 1, 1, 'On Use, once per game: turn up to 3 silver into 2 of any colors each.', { ...old8('silver.polisher'),

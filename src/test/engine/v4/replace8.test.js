@@ -9,7 +9,7 @@ const { resume, contextFor } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move, take } = await import('./helpers.js');
 const { sceneQ, linesNaming } = await import('./cards-helpers.js');
-const { uidIn } = await import('./cards-helpers-b.js');
+const { uidIn, table, named } = await import('./cards-helpers-b.js');
 delete process.env.REPLACE8;
 
 const sc = o => sceneQ({ quadrants: ['gold', 'red', 'silver', 'green'], ...o });
@@ -23,6 +23,8 @@ describe('REPLACE8: the switch', () => {
     expect(card('silver.usher')).toEqual(card('silver.polisher'));
     expect(card('silver.guestofhonor')).toEqual(card('silver.polisher'));
     expect(card('silver.socialites')).toEqual(card('silver.highsociety'));
+    expect(card('silver.charityball')).toEqual(card('silver.philanthropists'));
+    expect(card('trading.pennypincher')).toEqual(card('trading.oldmoney'));
     for (const id of ['silver.debtcollector', 'silver.polisher', 'silver.highsociety']) expect(defById(id).retired).toBe(true);
     expect(defById('silver.toastmaster').retired).toBeFalsy();
     expect(defById('silver.gala').retired).toBeFalsy();
@@ -118,5 +120,32 @@ describe('Socialites: "Whenever a rival recruits paying silver, +2 followers."',
     s = buyOne(s);
     expect(s.players[1].res.silver).toBe(1);
     expect(s.players[0].bonus).toBe(2);
+  });
+});
+
+describe('Charity Ball: "Whenever a rival recruits a member, give them 1 silver from the bank. +1 follower."', () => {
+  it('a rival buys a shop member: they +1 silver, you +1; a follower buy or your own recruit: nothing', () => {
+    let s = sc({ n: 3, res: [{}, { silver: 2, gold: 1 }], members: [['silver.charityball']], shop: ['silver.usher'], queue: [{ t: 'buy', p: 1 }] });
+    s = move(s, s.pending.options.find(o => /Usher/.test(o.label || '')).id);
+    if (s.pending?.prompt?.startsWith('Pay')) s = move(s, s.pending.options[0].id);
+    if (s.pending?.player === 1 && /Usher/.test(s.pending.prompt || '')) s = move(s, 'player:2');
+    expect(s.players[0].bonus).toBe(1);
+    expect(s.players[1].res.silver).toBe(1);
+    expect(linesNaming(s.log, 'Charity Ball')).toContain("P1's Charity Ball: gives P2 1 silver: +1 follower.");
+    let f = sc({ n: 3, res: [{}, { red: 5 }], members: [['silver.charityball']], queue: [{ t: 'buy', p: 1 }] });
+    f = move(f, f.pending.options.find(o => o.kind === 'tier' && /1/.test(o.label || o.id)).id);
+    expect(f.players[0].bonus).toBe(0);
+    let m = sc({ n: 3, res: [{ silver: 2, gold: 1 }], members: [['silver.charityball']], shop: ['silver.usher'], queue: [{ t: 'buy', p: 0 }] });
+    m = move(m, m.pending.options.find(o => /Usher/.test(o.label || '')).id);
+    expect(linesNaming(m.log, 'Charity Ball')).toEqual([]);
+  });
+});
+
+describe('Penny Pincher: "Round Start: if you have the fewest members, +3 white."', () => {
+  it('fewest members (ties count) at round start: +3 white; more than a rival: nothing', () => {
+    const s = table(['red', 'echo', 'trading', 'silver'], { n: 3, round: 1, members: [['trading.pennypincher'], ['echo.roadie'], ['trading.shopkeeper', 'silver.toastmaster']], queue: [{ t: 'round', r: 2 }] });
+    expect(named(s, 'Penny Pincher')).toContain("P1's Penny Pincher: fewest members: +3 white.");
+    const t = table(['red', 'echo', 'trading', 'silver'], { n: 3, round: 1, members: [['trading.pennypincher', 'silver.usher'], ['echo.roadie'], ['trading.shopkeeper', 'silver.toastmaster']], queue: [{ t: 'round', r: 2 }] });
+    expect(named(t, 'Penny Pincher')).toEqual([]);
   });
 });
