@@ -15,7 +15,7 @@
 // Every level is deterministic for a given state and rand.
 import {
   contextFor, actionAt, cardDef, TIERS, followers, memberCount, RING_VALUE, WORKERS, tierLeft,
-  paymentChoices, followerChoices, releaseRefund, liveOptions, swapCardPairs, paySwapCard, scoringOf,
+  paymentChoices, followerChoices, releaseRefund, liveOptions, swapCardPairs, paySwapCard, scoringOf, applyMove,
 } from './core.js';
 import { defById, quadrant, handlerById } from './content/index.js';
 import { BOTSEE } from './content/botsee.js';
@@ -29,6 +29,10 @@ export const BOT_LEVELS = ['easy', 'normal', 'hard', 'veryhard'];
 // recruits ~7 members instead of ~4 (400 games each; design/eval/bots.md). SPITE: how much the best rival's
 // expected total counts against the bot's own (1 = pure margin; 0.4 measured stronger than 1 and than 0).
 const MEMBER_BIAS = 2, BIAS_FLOOR = 0.3, SPITE = 0.4;
+// BOTSMART=1 (bot test, Nov 4; Cory: "It's the bots making good decisions in general, like strategic decisions"): bots
+// judge when to use a member by what it gains, played out. A use that only pays on the next buy is measured on that buy
+// (followUpGain), and Hard plays a once-per-game use against holding it to the end of the game (thinker.js holdOrUse).
+export const SMART = globalThis.process?.env?.BOTSMART === '1';
 // LIQUID=<share> (bot test only): see buysAt in rateOptions
 const LIQUID_SHARE = globalThis.process?.env?.LIQUID ? Number(globalThis.process.env.LIQUID) : 1;
 // Easy and casual are normal with other options (see scoreOptions): noise = random spread on placements, buyNoise
@@ -397,11 +401,38 @@ export function useGain(state, uid) {
   } catch { return null; }
 }
 
-function useOption(state, pend, ctx, p) {
+/**
+ * A use whose effect shows only in what you buy next (Encore's doubled On Recruit, a discount, a second buy): the use is
+ * played on a copy of the real game, then this buy step's best buy is valued with and without it. null when the use
+ * leads anywhere but back to this player's buy (a choice it asks: useGain plays those out).
+ */
+export function followUpGain(state, uid) {
+  const pend = state.pending;
+  if (pend?.kind !== 'buy') return null;
+  const me = pend.player;
+  const opt = pend.options.find(o => o.kind === 'use' && o.uid === uid);
+  if (!opt) return null;
+  let after;
+  try { after = applyMove(state, { player: me, option: opt.id }); } catch { return null; }
+  if (after.over || after.pending?.player !== me || after.pending.kind !== 'buy') return null;
+  const flat = { noise: 0, buyNoise: 0, memberBias: 0 };
+  const best = s => { const r = scoreOptions(s, () => 0, flat); return r.length ? r[0] : null; };
+  const a = best(after), b = best(state);
+  if (!a || !b) return null;
+  return { gain: a.v - b.v, with: a.o, without: b.o };
+}
+
+function useOption(state, pend, ctx, p, smart = SMART) {
   const canUse = c => {
     const def = defById(c.def);
     const g = useGain(state, c.uid);
     const rule = [c.def, c.copy, c.ability].some(id => id && defById(id).botActivate?.(ctx, p));
+    if (smart && (!g || Math.abs(g.gain) <= 0.05)) {
+      // a use that changes nothing until you buy (Encore, a discount, a second buy): judged by the buy it makes better,
+      // never by the card's rule (Encore's rule fired on any 5-cost member in the shop and doubled whatever came next)
+      const f = followUpGain(state, c.uid);
+      if (f) return f.gain >= useBar(state, def, p);
+    }
     if (!g || Math.abs(g.gain) <= 0.05) return rule;
     if (g.gain < useBar(state, def, p)) return false;
     // when, for a once-a-game use: the copy can't see that waiting may pay more (Rainmaker grows with your yellow),
@@ -905,7 +936,7 @@ function releaseOption(state, opts) {
 /** A buy decision normal takes before weighing purchases: an activation worth using, or a Release worth taking. */
 export function buyShortcut(state, opts = {}) {
   const pend = state.pending;
-  return useOption(state, pend, contextFor(state), state.players[pend.player]) || releaseOption(state, opts);
+  return useOption(state, pend, contextFor(state), state.players[pend.player], opts.smart ?? SMART) || releaseOption(state, opts);
 }
 
 /** The fixed greedy bot. */

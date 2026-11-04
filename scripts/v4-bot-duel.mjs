@@ -19,7 +19,7 @@ async function playOne({ g, side, A, B }) {
   const rand = seededRandom(g * 7717 + 3 + 4 * 101);
   const pool = allQuadrantIds().filter(q => sphereVersion(q) === '2.0'), quads = [];
   while (quads.length < 4) quads.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
-  let s = createGame({ seats: [0, 1, 2, 3].map(() => ({ kind: 'bot' })), seed: g, quadrants: quads, rules: deckRules() });
+  let s = createGame({ seats: [0, 1, 2, 3].map(() => ({ kind: 'bot' })), seed: g, quadrants: quads, rules: { ...deckRules(), ...(process.env.CONTESTS ? { contests: process.env.CONTESTS } : {}) } });
   const who = [0, 1, 2, 3].map(i => (i % 2 === side ? 'A' : 'B'));
   let moves = 0;
   const t0 = Date.now();

@@ -42,10 +42,10 @@ const DEFAULTS = { DECK: '10', CONTESTS: 'byColor', BOTSEE: '1' };
 // the files the games depend on: a trial's arms are keyed by these, so a commit that changes only the screen reuses them
 const RULES_PATHS = ['src/engine', 'src/v4/tables.js', 'scripts/v4-balance.mjs', 'scripts/lib', 'scripts/trial/cards.mjs'];
 // every env setting v4-balance.mjs or the rules read; the worker clears these from its own shell before a block
-const GAME_KEYS = /^(REPLACE\d*|PRICE|BOTSEE|DECK|CONTESTS|CONTESTFIX|LEVEL|SEATS|ONLY|MUST|SWAP|SWAPCOST|BUDGET|BOTOPTS|STRONGSEAT|GAMES|CHOICES|LOGS|COLORSHIFT|MOB|PT_GIVE|CATERER|CHANGER|IMPRESSIONIST|NIGHTOWL|THINKER_DUMP)$/;
+const GAME_KEYS = /^(REPLACE\d*|PRICE|BOTSEE|DECK|CONTESTS|CONTESTFIX|LEVEL|SEATS|ONLY|MUST|SWAP|SWAPCOST|BUDGET|BOTOPTS|BOTSMART|STRONGSEAT|GAMES|CHOICES|LOGS|COLORSHIFT|MOB|PT_GIVE|CATERER|CHANGER|IMPRESSIONIST|NIGHTOWL|THINKER_DUMP)$/;
 // table and bot settings both sides share; every other key (REPLACE*, PRICE, NIGHTOWL, MOB, ...) is the change under
 // test, and the base drops it
-const SHARED = new Set(['DECK', 'CONTESTS', 'CONTESTFIX', 'BOTSEE', 'LEVEL', 'SEATS', 'ONLY', 'MUST', 'SWAP', 'SWAPCOST', 'BUDGET', 'BOTOPTS', 'COLORSHIFT']);
+const SHARED = new Set(['DECK', 'CONTESTS', 'CONTESTFIX', 'BOTSEE', 'LEVEL', 'SEATS', 'ONLY', 'MUST', 'SWAP', 'SWAPCOST', 'BUDGET', 'BOTOPTS', 'BOTSMART', 'COLORSHIFT']);
 const isChange = k => !SHARED.has(k);
 
 const [cmd, ...rest] = process.argv.slice(2);
@@ -413,7 +413,7 @@ function cmdReport() {
   const t = both.map(g => T.get(g)), b = both.map(g => B.get(g));
   const L = [];
   const say = s => L.push(s);
-  const settings = [`${spec.level === 'hard' ? 'Hard' : spec.level} bots`, spec.env.BOTSEE === '1' ? 'that see what cards do' : 'that can\'t see On Use cards',
+  const settings = [`${spec.level === 'hard' ? 'Hard' : spec.level} bots`, spec.env.BOTSEE === '1' ? 'that see what cards do' : 'that can\'t see On Use cards', ...(spec.env.BOTSMART === '1' ? ['that weigh using a once-a-game card now against later'] : []),
     `${spec.env.DECK}-card deck`, spec.env.CONTESTS === 'byColor' ? 'By color contests' : `contests: ${spec.env.CONTESTS || 'as printed'}`, `${spec.seats} players`];
   say(`# Card trial: ${spec.name}`);
   say(`${both.length} games with the change and the same ${both.length} games without it (${settings.join(', ')}; commit ${spec.sha.slice(0, 8)}).${both.length < spec.games ? ` Not finished: ${spec.games} planned.` : ''}`);

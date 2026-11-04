@@ -3,7 +3,8 @@
 // best average result. Work is counted in simulated moves, not wall time, so a seed always gives the same move;
 // chooseBotMove also caps a move at 250ms of wall time for the UI (see opts.maxMs).
 import { applyMove, followers } from './core.js';
-import { chooseNormalMove, chooseGreedyMove, scoreOptions, buyShortcut, rankRivalChoice, boundaryParts } from './bots.js';
+import { chooseNormalMove, chooseGreedyMove, scoreOptions, buyShortcut, rankRivalChoice, boundaryParts, SMART, useGain, followUpGain } from './bots.js';
+import { defById } from './content/index.js';
 import { seededRandom } from './rng.js';
 import { planProfile, planNudge, lessonNudge, modelValues } from './mind.js';
 
@@ -32,7 +33,14 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   const rival = ['place', 'buy'].includes(pend.kind) ? null : rankRivalChoice(state);
   if (!rival && !['place', 'buy'].includes(pend.kind)) return chooseNormalMove(state, rand);
   // an activation or a Release normal would take: nothing to think about
-  const short = pend.kind === 'buy' ? buyShortcut(state) : null;
+  const smart = opts.smart ?? SMART;
+  const policy = smart ? { ...ROLLOUT, smart } : ROLLOUT;
+  let short = pend.kind === 'buy' ? buyShortcut(state, { smart }) : null;
+  if (smart && pend.kind === 'buy' && (!short || short.kind === 'use')) {
+    const held = holdOrUse(state, rand, opts, short);
+    if (held === HOLD) short = short && !onceUse(state, short) ? short : null;
+    else if (held) return { player: me, option: held.id };
+  }
   if (short) return { player: me, option: short.id };
   const { plan = null, memory = null, lessons = null } = opts;
   const nudge = o => planNudge(state, plan, memory, o) + lessonNudge(state, lessons, o);
@@ -68,7 +76,7 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
         // same turn, and counting it ended rollouts mid-turn (Hard-20 fell from 41% to 33% against 3 Normal when Blue
         // became a held-color contest, where those mid-turn endings misjudge the line; counting only turns: 43%)
         const counted = s.pending && (s.pending.kind === 'place' || s.pending.kind === 'buy');
-        s = applyMove(s, opts.rollout === 'greedy' ? chooseGreedyMove(s, r, { noise: 1 }) : chooseNormalMove(s, r, ROLLOUT));
+        s = applyMove(s, opts.rollout === 'greedy' ? chooseGreedyMove(s, r, { noise: 1 }) : chooseNormalMove(s, r, policy));
         if (counted) steps++;
       }
       // at a round boundary, value what's left the way normal does (followers + resources' worth)
@@ -92,6 +100,43 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   return { player: me, option: pool[best].o.id };
 }
 
+// BOTSMART: a once-per-game use is a card you can play once, so a person asks "now, or later?" before using it. The best
+// such use on offer (what it gains now, measured as bots.js does, including what it adds to this turn's buy) is played
+// against the best buy without it, each to the end of the game on the same seeds; in the line that holds the card the
+// rollout bots may still use it later. Returns the option to take, or null to leave the decision to the usual path.
+// Not on the game's last buy (anything gained beats nothing) or when no use gains half a follower now.
+const HOLD_SEEDS = 6;
+const HOLD = Symbol('hold');
+function onceUse(state, o) {
+  if (o?.kind !== 'use') return false;
+  const c = state.cards[o.uid];
+  const act = [c.def, c.copy, c.ability].filter(Boolean).map(defById).find(d => d.onActivate);
+  return !!act && act.activate === 'game';
+}
+// Returns the use to take, HOLD (keep every once-per-game use for later; the buy is looked ahead as usual), or null.
+function holdOrUse(state, rand, opts, short) {
+  const pend = state.pending, me = pend.player, p = state.players[me];
+  if (p.left === 0 && state.round >= 3) return null;
+  let use = null, top = 0.5;
+  for (const o of pend.options) {
+    if (!onceUse(state, o)) continue;
+    const g = useGain(state, o.uid), f = followUpGain(state, o.uid);
+    const gain = Math.max(g ? g.gain : -Infinity, f ? f.gain : -Infinity);
+    if (gain > top) { top = gain; use = o; }
+  }
+  if (!use) return onceUse(state, short) ? HOLD : null;
+  const alt = scoreOptions(state, rand)[0]?.o;
+  if (!alt) return use;
+  const late = () => false;
+  const t = [0, 0];
+  for (let j = 0; j < HOLD_SEEDS; j++) {
+    const seed = Math.floor(rand() * 2 ** 31);
+    [use, alt].forEach((o, i) => { t[i] += rollout(state, me, o, seed, { full: true, cap: 0, round: state.round, late, opts: { ...opts, smart: true } }).value; });
+  }
+  opts.onHold?.({ round: state.round, use: use.uid, gain: top, useMean: t[0] / HOLD_SEEDS, holdMean: t[1] / HOLD_SEEDS });
+  return t[0] >= t[1] ? use : HOLD;
+}
+
 // One rollout of option o from state, played by normal bots with seed `seed`: the margin it ends at (static past the cap).
 function rollout(state, me, o, seed, { full, cap, round, late, opts }) {
   const r = seededRandom(seed);
@@ -100,7 +145,7 @@ function rollout(state, me, o, seed, { full, cap, round, late, opts }) {
     s = applyMove(state, { player: me, option: o.id });
     while (!s.over && (full || (s.round === round && steps < cap)) && steps < 800 && !late()) {
       const counted = s.pending && (s.pending.kind === 'place' || s.pending.kind === 'buy');
-      s = applyMove(s, opts.rollout === 'greedy' ? chooseGreedyMove(s, r, { noise: 1 }) : chooseNormalMove(s, r, ROLLOUT));
+      s = applyMove(s, opts.rollout === 'greedy' ? chooseGreedyMove(s, r, { noise: 1 }) : chooseNormalMove(s, r, (opts.smart ?? SMART) ? { ...ROLLOUT, smart: true } : ROLLOUT));
       if (counted) steps++;
     }
     value = s.over ? margin(s, me) : valueAtBoundary(s, me, opts.valueModel);
