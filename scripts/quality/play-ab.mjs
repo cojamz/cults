@@ -9,9 +9,26 @@
 //   Clear outcome; when the old card hard-fails, 1.0 or more on its own instead)
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { trim } from './trim.mjs';
 import { rng, median } from './lib.mjs';
 
+
+// Bot version (change 14 as Cory corrected it, Nov 4): the short hash of the last commit to the bots (bots.js, thinker.js)
+// as of the games' commit, so close losses (0 to +0.3) can be rerun once better bots land. The games' commit comes from
+// --commit at build time; without it, the commit that set the games' version tag (a guess, and labelled so).
+function botVersion(key) {
+  const git = (...a) => { try { return execFileSync('git', a, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim(); } catch { return ''; } };
+  let at = key.commit, how = 'games commit';
+  if (!at) {
+    const f = existsSync(key.new.dir) ? readdirSync(key.new.dir).find(x => /^game-.*\.txt$/.test(x)) : null;
+    const v = f && (readFileSync(join(key.new.dir, f), 'utf8').match(/\[Version "v?([\d.]+)"\]/) || [])[1];
+    at = v ? git('log', '-1', '--format=%h', `-S${v}`, '--', 'src/', 'scripts/', 'package.json') : '';
+    how = v ? `guessed from version v${v}` : 'unknown';
+  }
+  const bot = at ? git('log', '-1', '--format=%h', at, '--', 'src/engine/v4/bots.js', 'src/engine/v4/thinker.js') : '';
+  return { bot: bot || null, at: at || null, how };
+}
 const args = process.argv.slice(2);
 const P = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6'];
 if (args[0] === 'score') {
@@ -59,15 +76,18 @@ if (args[0] === 'score') {
   const waits = hard && /rival/i.test(hard) ? "Waits on Cory's ruling on rivals choosing during the owner's turn before it ships." : null;
   const lines = [`# Blind A/B play: ${key.new.name} against ${key.old.name}`, '', `${judges.length} judges, ${key.pairs.length} seeds. New card ${n} vs old ${o} (mean of the six scores over every sheet, 0 to 2): ${gap >= 0 ? '+' : ''}${gap}. Clear outcome for the new card ${clear}.`, '', hard ? `**${pass ? 'PASS' : 'no'}**: the old card hard-fails (${hard}), so the new card needs 1.0 or more on its own and no 0 on Clear outcome; the gap is for information.${waits ? ' ' + waits : ''}` : `**${pass ? 'PASS' : 'no'}**: ship needs +0.3 or more and no 0 on Clear outcome.`, '', ...(looseLine ? [looseLine, ''] : []), `Judges preferred the new card ${pref.new} times, the old ${pref.old}, same ${pref.same} (a tiebreak note; the gate is the gap).`, '',
     ...P.map((k, i) => `- ${k}: new ${median(side.new.map(r => r[i]))}, old ${median(side.old.map(r => r[i]))}`)];
+  const bv = botVersion(key);
+  lines.push('', `Bot version ${bv.bot || 'unknown'} (last bots.js/thinker.js commit as of ${bv.at || '?'}, ${bv.how}).${!pass && gap != null && gap >= 0 && gap < 0.3 ? ' A close loss: rerun once the bots change.' : ''}`);
   if (superseded) lines.splice(1, 0, '', `**SUPERSEDED**: ${superseded}`);
   if (misuse.new.length || misuse.old.length) lines.push('', `Bot misuse (judges): new card ${misuse.new.length} of ${judged.new} sheets, old card ${misuse.old.length} of ${judged.old}.`, ...[...misuse.new.map(m => `- new: ${m}`), ...misuse.old.map(m => `- old: ${m}`)]);
   if (botBug) lines.splice(lines.findIndex(l => /^\*\*(PASS|no)\*\*/.test(l)), 1, `**BOT BUG** (neither pass nor fail): a judge says the bot did not use a card sensibly (new card ${misuse.new.length} of ${judged.new} sheets, old card ${misuse.old.length} of ${judged.old}). Fix how the bot plays it, then one fresh run decides. Without this the gap would read ${rawPass ? 'PASS' : 'no'}.`);
   writeFileSync(join(dir, 'result.md'), lines.join('\n') + '\n');
-  writeFileSync(join(dir, 'result.json'), JSON.stringify({ new: key.new.name, old: key.old.name, newAvg: n, oldAvg: o, gap, clearNew: clear, matched, loose: looseN, gapMatched: gapM, prefer: pref, oldHardFail: hard, waitsOnCory: !!waits, superseded, botBug, misuse, rawPass, pass }, null, 1));
+  writeFileSync(join(dir, 'result.json'), JSON.stringify({ new: key.new.name, old: key.old.name, newAvg: n, oldAvg: o, gap, clearNew: clear, matched, loose: looseN, gapMatched: gapM, prefer: pref, oldHardFail: hard, waitsOnCory: !!waits, superseded, botBug, misuse, botVersion: bv, rawPass, pass }, null, 1));
   console.log(lines.join('\n'));
   process.exit(0);
 }
 const oi = args.indexOf('--out'), out = oi >= 0 ? args.splice(oi, 2)[1] : null;
+const ci = args.indexOf('--commit'), commit = ci >= 0 ? args.splice(ci, 2)[1] : null; // the commit the games were played at
 // --seeds a,b,c: only these seeds (the Lab's same-round list in rounds.json).
 const si = args.indexOf('--seeds'), only = si >= 0 ? args.splice(si, 2)[1].split(',').map(x => x.trim()) : null;
 // --show-new "<text>": a hidden placebo (Process critic, Nov 4 9:12): the new side is the same card, but its sheets print
@@ -117,6 +137,6 @@ for (const [si, s] of seeds.entries()) {
   writeFileSync(join(pd, 'A.md'), flip ? ol : nw); writeFileSync(join(pd, 'B.md'), flip ? nw : ol);
   pairs.push({ seed: s, label, dir, A: flip ? 'old' : 'new', B: flip ? 'new' : 'old', newSheet: N[s], oldSheet: B[s] });
 }
-writeFileSync(join(out, 'key.json'), JSON.stringify({ new: { name: newName, text: newText, shown: showNew || undefined, dir: newDir }, old: { name: oldName, text: oldText, dir: baseDir }, pairs }, null, 1));
+writeFileSync(join(out, 'key.json'), JSON.stringify({ new: { name: newName, text: newText, shown: showNew || undefined, dir: newDir }, old: { name: oldName, text: oldText, dir: baseDir }, commit: commit || undefined, pairs }, null, 1));
 writeFileSync(join(out, 'brief.md'), [`# Blind A/B play judging`, '', `Each game-<n>/ folder holds A.md and B.md: a seeded game played with one version of a card in a cult, and a game played with another, each written from the seat that held it. The card is called "the slot card"; each sheet's header prints that version's text.`, `Score every sheet with .claude/agents/play-judge.md (P1 to P6, 0 to 2), on its own. Write play-judge-<your number>.json in THIS folder (not in the pair folders), with one entry per sheet whose "file" is "game-<n>/A.md" or "game-<n>/B.md". Then add "prefer": {"<n>": "A"|"B"|"same"} with one plain line why. Do not open key.json.`].join('\n') + '\n');
 console.log(`${out}: ${pairs.length} pairs (${seeds.join(', ')}); judges read brief.md`);
