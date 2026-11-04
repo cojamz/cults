@@ -430,7 +430,13 @@ export default {
     m('tastemaker', 'Tastemaker', 3, 2, "Whenever you change rivals' resources, +1 follower.", { ...old9('yellow.tastemaker') }),
     // REPLACE9 bot test (Members C, Nov 4): Tastemaker's place. 3 yellow + 1 any as a player sees it. Every full-set count
     // (Most full sets, Harmonist, Toll Keeper, Quilter) reads setsOf, which lets the owner's yellow fill any color's gap.
-    ...add9(m('jack', 'Jack-of-All-Trades', 2, 1, 'Your yellow counts as any color in your full sets.', { round: 1 })),
+    ...add9(m('jack', 'Jack-of-All-Trades', 2, 1, 'Your yellow counts as any color in your full sets.', { round: 1,
+      // a log line only (the rule is in setsOf): says what the yellow is doing as contests come up
+      onAllPlaced(ctx, owner) {
+        const k = setsOf(ctx, owner), plain = plainSets(ctx, owner);
+        if (k > plain) ctx.log(`${owner.name}'s Jack-of-All-Trades: yellow fills the gaps, so ${owner.name} holds ${k} full ${k === 1 ? 'set' : 'sets'} (${plain} without it).`);
+      },
+    })),
     // Cory, Nov 1 (in place of Agitator, 15-card deck only)
     m('spiceroute', 'Spice Route', 3, 2, 'Game End: +1 follower per color you hold 3 or more of.', {
       onGameEnd: (ctx, owner) => colors(ctx).filter(c => (owner.res[c] || 0) >= 3).length,
