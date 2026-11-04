@@ -413,6 +413,9 @@ describe('REPLACE11: Snobs, the reserved token', () => {
     expect(s.pending.prompt).toBe('Snobs: reserve which shop member this round?');
     s = answer(s, s.pending.options[0].id);
     expect(s.reserved.pid).toBe(0);
+    // once, not twice (play judge, seed 328: the reserve was asked twice on the recruit turn)
+    expect(s.pending?.prompt).not.toBe('Snobs: reserve which shop member this round?');
+    expect(s.log.filter(l => l.includes("P1's Snobs: a token on")).length).toBe(1);
   });
   it('the token comes off when the next round starts', async () => {
     const { resume } = await import('../../../engine/v4/core.js');
