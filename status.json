@@ -1,15 +1,15 @@
 {
- "updated": "10:53 PM Eastern",
+ "updated": "10:59 PM Eastern",
  "rows": [
   {
-   "workstream": "Exchange picker on the Harvest card",
+   "workstream": "Fix cut-off text in 'since your last turn' rows",
    "blocked": "No",
    "eta": "~11:30pm"
   },
   {
-   "workstream": "Melting Pot, Dilute, Mob, Creditor, Fan Club (our calls)",
+   "workstream": "Exchange picker on the Harvest card",
    "blocked": "No",
-   "eta": "~11:30pm"
+   "eta": "~11:45pm"
   },
   {
    "workstream": "Wheel lag, real fix",
@@ -27,7 +27,7 @@
    "eta": "12:30am (full 3:00am)"
   },
   {
-   "workstream": "Shipped tonight: v0.99.544 to .547",
+   "workstream": "Shipped tonight: v0.99.544 to .548 (incl. 9 card reworks: Creditor, Fan Club, New Blood, Melting Pot, Mob, High Society, Lottery Winner, Upstart, Safecracker)",
    "blocked": "No",
    "eta": "live"
   }
