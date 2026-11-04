@@ -20,6 +20,10 @@ import { add6, old6 } from './replace6.js';
 import { add9, old9, handlers9 } from './replace9.js';
 import { see, endsAhead } from './botsee.js';
 import { add11, old11, handlers11 } from './replace11.js';
+const holdWorth = (ctx, who, sp) => {
+  const [q, i] = sp.key.split('-').map(Number), a = spacesOf(ctx.state, ctx.state.quadrants[q])[i];
+  try { return typeof a.estimate === 'function' ? a.estimate(ctx, who) || 0 : sp.ring; } catch { return sp.ring; }
+};
 /** Hypnotist (REPLACE9 bot test): the open spaces now, as [q, i, action]. */
 const hypnoSpaces = ctx => {
   const out = [];
@@ -194,6 +198,8 @@ const members = [
     },
   })),
   m('frontrunner', 'Line Cutters', 'purple', 1, 0, 'You go first every round.', { pickFirst: true, f: 3, n: 3, ...old1, ...old11('placeholders') }), // worth 3 (Cory, Nov 1: "maybe we make it 3 members?"), renamed (Cory, Nov 1: "make front runner worth more followers. figure out a better name") // Cory, Oct 21: 5; Oct 27: 4; Oct 28 "could probably be cheaper": 3 with the +1 wild (Claude's price, the floor); Oct 29 "I'm okay with front runners at 2": 2
+  // Place Holders' bot pick (Evaluators, Nov 4: bots held Last Call by ring and never took it): hold the space worth
+  // most to the holder right now, which is also the one its own placement takes first
   // REPLACE11 bot test (Actions lane, Nov 4; quality/pitches/actions-line-cutters.md): Line Cutters' place, same cost,
   // worth 3, counts as 3. The token is state.held {key, pid, round}; the place step leaves that space out for everyone
   // else this round. Only Round Start (no On Recruit). Off the switch, state.held never exists.
@@ -203,7 +209,7 @@ const members = [
       const open = ctx.openSpaces();
       if (!open.length) return;
       ctx.choose(owner, 'Place Holders: hold which space for yourself this round?', open.map(sp => ({
-        id: `space:${sp.key}`, label: sp.name, kind: 'space', value: sp.key, hint: sp.ring,
+        id: `space:${sp.key}`, label: sp.name, kind: 'space', value: sp.key, hint: holdWorth(ctx, owner, sp),
       })), 'benders.holdSpace');
     },
   })),
