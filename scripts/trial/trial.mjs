@@ -200,9 +200,13 @@ async function cmdWork() {
   const mine = new Set(), times = [];
   let played = 0, failed = 0;
   const beat = setInterval(() => { const t = new Date(); for (const f of mine) try { writeFileSync(f, JSON.stringify({ ...me, beat: t.toISOString() })); utimesSync(f, t, t); } catch {} }, BEAT_MS);
-  const release = () => { for (const f of mine) try { unlinkSync(f); } catch {} };
+  // A block's games stop before its claim is let go: an orphaned game still appending to a block that another worker
+  // has reclaimed gave blocks of 1-2 and 7+ games (Nov 4).
+  const kids = new Set();
+  const release = () => { for (const ch of kids) try { ch.kill('SIGKILL'); } catch {} for (const f of mine) try { unlinkSync(f); } catch {} };
   process.on('SIGINT', () => { release(); process.exit(130); });
   process.on('SIGTERM', () => { release(); process.exit(143); });
+  process.on('SIGHUP', () => { release(); process.exit(129); });
   const next = () => {
     for (const [side, s] of order) {
       const id = spec.arms[side];
@@ -215,16 +219,18 @@ async function cmdWork() {
   const play = ({ side, id, s, f }) => new Promise(done => {
     mine.add(f);
     const dir = join(local, id); mkdirSync(dir, { recursive: true });
-    const part = join(dir, `${s}.part`);
+    const part = join(dir, `${s}.${process.pid}.part`); // one writer per file, even if an old worker's game is still running
     try { unlinkSync(part); } catch {}
     // only the arm's settings reach the games: a REPLACE or PRICE left in this shell's env must not leak into a side
     const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !GAME_KEYS.test(k)));
     Object.assign(env, readJson(join(armDir(id), 'arm.json')).env);
     const t0 = Date.now();
     const ch = spawn('node', ['scripts/v4-balance.mjs', String(s), String(BLOCK), part], { cwd: wt, env, stdio: ['ignore', 'ignore', 'pipe'] });
+    kids.add(ch);
     let err = '';
     ch.stderr.on('data', d => { err = (err + d).slice(-2000); });
     ch.on('close', code => {
+      kids.delete(ch);
       const n = lines(part);
       if (code === 0 && n === BLOCK) {
         const out = join(armDir(id), 'games', `${s}.jsonl`), tmp = `${out}.${me.host}-${me.pid}.tmp`;

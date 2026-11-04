@@ -186,7 +186,7 @@ function playBlock(job, b, c) {
   return new Promise((resolve) => {
     const cwd = treeFor(job.commit);
     const partDir = path.join(cwd, '.queue', job.name); fs.mkdirSync(partDir, { recursive: true });
-    const part = path.join(partDir, `${job.level}-${b.first}.jsonl.part`); fs.rmSync(part, { force: true });
+    const part = path.join(partDir, `${job.level}-${b.first}.${process.pid}.jsonl.part`); // one writer per file (Nov 4) fs.rmSync(part, { force: true });
     const beat = setInterval(() => { try { const t = new Date(); fs.utimesSync(c, t, t); } catch {} }, BEAT_MS);
     // Like trial.mjs: drop game settings from this shell so only the job's env reaches the games.
     const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !GAME_KEYS.test(k)));
@@ -227,11 +227,12 @@ async function runTrial(job, slots) {
   else sh(`git checkout -q --detach origin/${BRANCH}`, cwd);
   if (!fs.existsSync(path.join(cwd, 'node_modules')) && fs.existsSync(path.join(repo, 'node_modules'))) fs.symlinkSync(path.join(repo, 'node_modules'), path.join(cwd, 'node_modules'));
   runnerDoing = `trial ${job.name}`; beatRunner();
-  const code = await new Promise((r) => spawn(process.execPath, ['scripts/trial/trial.mjs', 'work', job.name, `--jobs=${slots}`], { cwd, stdio: 'inherit' }).on('exit', r));
+  const code = await new Promise((r) => { trialChild = spawn(process.execPath, ['scripts/trial/trial.mjs', 'work', job.name, `--jobs=${slots}`], { cwd, stdio: 'inherit' }); trialChild.on('exit', (c) => { trialChild = null; r(c); }); });
   log({ ev: 'trial-exit', job: job.name, code, runner: runnerId });
   trialSkip.set(job.name, Date.now() + (code === 0 ? STALE_MS : 30 * 60e3));
 }
 
+let trialChild = null;
 function openJobs() {
   return jobs().filter((j) => (j.state ?? 'open') === 'open')
     .filter((j) => j.kind === 'trial' ? (trialSkip.get(j.name) || 0) < Date.now() && !trialDone(j.name) : blocksOf(j).some((b) => !blockDone(j, b) && !claimLive(claimFile(j, b))))
@@ -242,7 +243,9 @@ async function work() {
   if (!fs.existsSync(path.join(repo, '.git'))) die(`run work from a clone of cojamz/patrons (or pass --repo=<path>); ${repo} isn't one`);
   const slots = Number(opt.jobs || 4), waitMin = Number(opt.wait ?? 90);
   const hb = setInterval(beatRunner, BEAT_MS); beatRunner();
-  process.on('SIGINT', () => { try { fs.unlinkSync(runnerFile); } catch {} process.exit(130); });
+  // Stopping the runner stops its trial worker too, which stops its games and lets its claims go (Nov 4).
+  const stop = (code) => () => { try { trialChild?.kill('SIGTERM'); } catch {} try { fs.unlinkSync(runnerFile); } catch {} process.exit(code); };
+  process.on('SIGINT', stop(130)); process.on('SIGTERM', stop(143)); process.on('SIGHUP', stop(129));
   try { sh(`git fetch -q origin ${BRANCH}`, repo); } catch {}
   let idleSince = null;
   for (;;) {
