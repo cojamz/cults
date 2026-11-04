@@ -63,7 +63,7 @@ function bundle(spec, extra = []) {
     ...shuffled.map(o => `- **${o.label}. ${o.name}**${o.price ? ` [${o.price}]` : ''}${o.round ? ` (round ${R[o.round]} space)` : round ? ` (round ${R[round]} space)` : ''}: ${o.text}`), '',
     spec.rules ? `Rules the cards refer to: ${spec.rules}\n` : '',
     `## The board around it (live; the slot being judged and one other card left out)`, boardText([old.qid === 'guests' ? 'guests' : old.qid], { without }),
-    `## The other colors' spaces (for cross-color reads)`, boardText([], { members: false }).split('\n').filter(l => !l.includes(old.color + ' ·') || true).join('\n')].join('\n');
+    `## The other colors' spaces (for cross-color reads)`, otherSpaces(old.qid)].join('\n');
   writeFileSync(join(dir, 'cards.md'), md);
   writeFileSync(join(dir, 'key.json'), JSON.stringify({ spec, kind, round, old: old.name, options: shuffled.map(o => ({ label: o.label, role: o.role, name: o.name, text: o.text, ...(o.price ? { price: o.price } : {}), ...(o.real ? { real: o.real } : {}) })) }, null, 1));
   return { dir, old, q, kind, others, n: shuffled.length };
@@ -135,18 +135,31 @@ if (cmd === 'bundle') {
   const baseFile = join(GATE, 'anchors-baseline.json'), base = existsSync(baseFile) ? JSON.parse(readFileSync(baseFile, 'utf8')) : {};
   let shift = null, baseNote;
   const now = Object.fromEntries(Object.entries(anc).filter(([k, v]) => v.role === 'anchor' && !(BAD_ANCHORS[arg] || []).includes(k) && ANCHORS.includes(k)).map(([k, v]) => [k, v.med]));
-  if (!base[meta.rubric]) { base[meta.rubric] = { from: arg, medians: now }; writeFileSync(baseFile, JSON.stringify(base, null, 1)); baseNote = `first run on this rubric (${meta.rubric}): it sets the anchors' baseline`; }
-  else { const b = base[meta.rubric].medians, ks = Object.keys(now).filter(k => b[k] != null); shift = ks.reduce((a, k) => a + now[k] - b[k], 0) / ks.length; baseNote = `mean shift ${shift.toFixed(2)} against batch ${base[meta.rubric].from}`; }
-  let decoyGap = null;
-  let decoyRef = null;
+  // anchors: pooled over every earlier batch on this rubric (one batch's 3-judge medians moved up to 0.9 on their own:
+  // b4 to b5). The shift is subtracted before the bar test (beating the old card is within one run, so drift cancels);
+  // a run is void only when it moves more than 1.5, or its decoy gains 2 or more.
+  const entry = base[meta.rubric] ||= { runs: {} };
+  if (entry.medians && !entry.runs) entry.runs = { [entry.from]: entry.medians };
+  entry.runs ||= {};
+  const prior = Object.entries(entry.runs).filter(([b]) => b !== arg).map(([, m]) => m);
+  if (!prior.length) baseNote = `first run on this rubric (${meta.rubric}): it starts the anchors' baseline`;
+  else {
+    const ks = Object.keys(now).filter(k => prior.every(m => m[k] != null));
+    const pooled = k => prior.reduce((a, m) => a + m[k], 0) / prior.length;
+    shift = ks.reduce((a, k) => a + now[k] - pooled(k), 0) / ks.length;
+    baseNote = `mean shift ${shift.toFixed(2)} against the ${prior.length} earlier run(s) on this rubric (${Object.keys(entry.runs).filter(b => b !== arg).join(', ')}); the bar test subtracts it`;
+  }
+  entry.runs[arg] = now; delete entry.medians; delete entry.from;
+  writeFileSync(baseFile, JSON.stringify(base, null, 1));
+  let decoyRef = null, decoyGap = null;
   if (meta.decoy) { const g = judgeMedians(join(GATE, meta.decoy.gate)); decoyRef = meta.decoy.ref ?? anc[meta.decoy.real].med; decoyGap = g[meta.decoy.name].med - decoyRef; }
-  const void_ = (shift != null && Math.abs(shift) > 0.5) || (decoyGap != null && decoyGap >= 2);
+  const void_ = (shift != null && Math.abs(shift) > 1.5) || (decoyGap != null && decoyGap >= 2);
   const lines = [`# Batch ${arg}: paper gate`, '', `Anchors (C1 to C10, median): ${Object.entries(now).map(([k, v]) => `${k} ${v}`).join(', ')}; ${baseNote}.`,
     meta.decoy ? `Decoy: live ${meta.decoy.real} slipped into ${meta.decoy.gate} as "${meta.decoy.name}": ${decoyRef + decoyGap} disguised vs ${decoyRef} as itself${meta.decoy.ref != null ? ' in the latest ranking round' : ''} (gap ${decoyGap}).` : 'No decoy.',
     void_ ? '**VOID: the run moved or rewarded newness; fix the judge prompt and rerun before trusting any pass.**' : 'Run is steady.', ''];
   for (const g of meta.folders.filter(f => !f.startsWith('anchors-'))) {
     process.env.GATE_VOID = void_ ? '1' : '';
-    const r = scoreGate(g, void_);
+    const r = scoreGate(g, void_, false, shift || 0);
     lines.push(`- ${g} (old ${r.old.name} ${r.old.median}): ${r.candidates.map(c => `${c.name} ${c.median}${c.pass ? ' PASS' : ''}`).join(', ')}`);
   }
   writeFileSync(join(GATE, `batch-${arg}.md`), lines.join('\n') + '\n');
@@ -162,7 +175,7 @@ if (cmd === 'bundle') {
   claim();
 } else { console.error('usage: paper-gate.mjs bundle <spec.json> | batch <id> <spec.json...> | batchscore <id> | score <id> | claim <id> <name>'); process.exit(2); }
 
-function scoreGate(arg, batchVoid, print) {
+function scoreGate(arg, batchVoid, print, shift = 0) {
   const dir = join(GATE, arg), key = JSON.parse(readFileSync(join(dir, 'key.json'), 'utf8'));
   const files = readdirSync(dir).filter(f => /^judge-.*\.json$/.test(f)).sort();
   const js = files.map(f => JSON.parse(readFileSync(join(dir, f), 'utf8')));
@@ -176,7 +189,7 @@ function scoreGate(arg, batchVoid, print) {
     o.med = median(o.totals); o.q = Array.from({ length: K }, (_, i) => median(o.entries.map(e => e.scores[i])));
     o.fails = o.entries.filter(e => e.hardFail).map(e => e.hardFail);
     o.clear2 = o.entries.length && o.entries.every(e => e.scores[0] === 2);
-    o.over = o.med >= 13 && o.q[0] > 0 && o.q[2] > 0 && o.q[3] > 0 && o.fails.length < 2;
+    o.over = o.med - shift >= 13 && o.q[0] > 0 && o.q[2] > 0 && o.q[3] > 0 && o.fails.length < 2;
   }
   const opts = Object.values(by).filter(o => o.role !== 'decoy' || !o.real), old = opts.find(o => o.role === 'old');
   const d1 = opts.find(o => o.role === 'decoy'), d2 = opts.find(o => o.role === 'decoy-copy');
@@ -237,7 +250,7 @@ function setcheck(id, names = []) {
   writeFileSync(join(dir, 'set.md'), [`# Whole-set check: ${old.color}, ${slot}`, '', `The board below is ${old.color} with the slot open. Each lettered version puts a different card in the slot. Score each version as a whole set.`, '',
     ...sh.map(o => `- **${o.label}.** the slot holds **${o.name}**${o.price ? ` [${o.price}]` : ""}: ${o.text}`), '', spec.rules ? `Rules the cards refer to: ${spec.rules}\n` : '',
     `## ${old.color} with the slot open`, boardText([old.qid === 'guests' ? 'guests' : old.qid], { without: [old.name] }),
-    `## The other colors' spaces`, boardText([], { members: false })].join('\n'));
+    `## The other colors' spaces`, otherSpaces(old.qid)].join('\n'));
   writeFileSync(join(dir, 'key.json'), JSON.stringify({ gate: id, options: sh.map(o => ({ label: o.label, role: o.role, name: o.name })) }, null, 1));
   return `${dir}/set.md: ${sh.length} versions (${sh.map(o => `${o.label} ${o.name}`).join(', ')}); judges: .claude/agents/set-judge.md`;
 }
@@ -269,3 +282,9 @@ function rankingRef(name) {
   }
   return null;
 }
+
+/** Every other live color's spaces, never the slot's own color (it would show the old card a second time). */
+function otherSpaces(qid) {
+  return boardText([], { members: false }).split('\n## ').filter(sec => !sec.startsWith(quadrantName(qid) + ' ·')).join('\n## ');
+}
+function quadrantName(qid) { try { return quadrant(qid).name; } catch { return 'Guests'; } }
