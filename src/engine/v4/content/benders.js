@@ -19,6 +19,7 @@ import { REPLACE1, add1, old1, handlers1 } from './replace1.js';
 import { add6, old6 } from './replace6.js';
 import { add9, old9, handlers9 } from './replace9.js';
 import { see, endsAhead } from './botsee.js';
+import { add11, old11, handlers11 } from './replace11.js';
 /** Hypnotist (REPLACE9 bot test): the open spaces now, as [q, i, action]. */
 const hypnoSpaces = ctx => {
   const out = [];
@@ -192,7 +193,20 @@ const members = [
       return Math.max(...est) - Math.min(...est) >= 3;
     },
   })),
-  m('frontrunner', 'Line Cutters', 'purple', 1, 0, 'You go first every round.', { pickFirst: true, f: 3, n: 3, ...old1 }), // worth 3 (Cory, Nov 1: "maybe we make it 3 members?"), renamed (Cory, Nov 1: "make front runner worth more followers. figure out a better name") // Cory, Oct 21: 5; Oct 27: 4; Oct 28 "could probably be cheaper": 3 with the +1 wild (Claude's price, the floor); Oct 29 "I'm okay with front runners at 2": 2
+  m('frontrunner', 'Line Cutters', 'purple', 1, 0, 'You go first every round.', { pickFirst: true, f: 3, n: 3, ...old1, ...old11('placeholders') }), // worth 3 (Cory, Nov 1: "maybe we make it 3 members?"), renamed (Cory, Nov 1: "make front runner worth more followers. figure out a better name") // Cory, Oct 21: 5; Oct 27: 4; Oct 28 "could probably be cheaper": 3 with the +1 wild (Claude's price, the floor); Oct 29 "I'm okay with front runners at 2": 2
+  // REPLACE11 bot test (Actions lane, Nov 4; quality/pitches/actions-line-cutters.md): Line Cutters' place, same cost,
+  // worth 3, counts as 3. The token is state.held {key, pid, round}; the place step leaves that space out for everyone
+  // else this round. Only Round Start (no On Recruit). Off the switch, state.held never exists.
+  ...add11(m('placeholders', 'Place Holders', 'purple', 1, 0, 'Round Start: put a token on a space; only you may take it this round.', { f: 3, n: 3,
+    ...see(i => endsAhead(i).length * 1.5),
+    onRoundStart(ctx, owner, card) {
+      const open = ctx.openSpaces();
+      if (!open.length) return;
+      ctx.choose(owner, 'Place Holders: hold which space for yourself this round?', open.map(sp => ({
+        id: `space:${sp.key}`, label: sp.name, kind: 'space', value: sp.key, hint: sp.ring,
+      })), 'benders.holdSpace');
+    },
+  })),
   // REPLACE1 bot test (Nov 3, replacement batch 1): Line Cutters' place. 4 any as a player sees it. The rival chosen is
   // kept on the card (card.grudge: a marker on that rival's board). Scores after every other game-end bonus, and only
   // loose followers can be taken (as Raiders); Bodyguards and Lie Low block it like any steal.
@@ -350,6 +364,13 @@ const members = [
 ];
 
 export const handlers = {
+  ...handlers11({
+    holdSpace(ctx, p, key) {
+      if (!key) return;
+      ctx.state.held = { key, pid: p.id, round: ctx.state.round };
+      ctx.log(`${p.name}'s Place Holders: only they may take ${ctx.openSpaces().find(s => s.key === key)?.name || 'that space'} this round.`);
+    },
+  }),
   ...handlers9({
     hypno(ctx, p, key) {
       const [q, i] = String(key).split('-').map(Number);

@@ -708,7 +708,10 @@ const market = {
       onRecruited(ctx, owner) { sweepRow(ctx, owner); },
     }),
     // Cory's, Oct 21: "when you buy followers +1 blue"; his Oct 21 definition makes buying followers a recruit
-    m('regular', 'Regular', 1, 1, 'Whenever you buy followers, +1 blue.', { ...old9('market.regular'),
+    // REPLACE11 bot test (Actions lane, Nov 4): Regular's place. Counted in member cards you hold (a counts-as member is
+    // one card; a member who leaves lowers the count), read when you pay: the recruit that makes 3, 6 or 9 cards is free.
+    ...add11(m('punchcard', 'Punch Card', 1, 1, 'Your 3rd, 6th and 9th members cost nothing.', { punchCard: true, ...see(() => 3) })),
+    m('regular', 'Regular', 1, 1, 'Whenever you buy followers, +1 blue.', { ...old9('market.regular'), ...old11('punchcard'),
       onBuyFollowers(ctx, owner, card, by) { if (by.id === owner.id && ctx.gain(owner, B, 1)) ctx.log(`${owner.name}'s Regular: +1 blue.`); },
     }),
     // REPLACE9 bot test (Members C, Nov 4): Regular's place. 2 blue + 1 any as a player sees it (Blue's cheap way in once Regular and Critic are gone; paper gate, Nov 4). "Fewest" is read at each

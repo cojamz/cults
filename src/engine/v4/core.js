@@ -282,7 +282,9 @@ function priceParts(state, p, def, how = {}) {
   let s = def.s, w = def.w;
   if (how.half) { w = Math.floor((s + w) / 2); s = 0; }
   if (how.anyColors || colorPartFree(state, p, def)) { w += s; s = 0; }
-  const off = (p.discount || 0) + sumMemberFlag(state, p, 'costReduction');
+  // Punch Card (REPLACE11=punchcard, flag punchCard): the member that would be your 3rd, 6th or 9th card costs nothing
+  const punch = sumMemberFlag(state, p, 'punchCard') > 0 && [2, 5, 8].includes(p.members.length);
+  const off = punch ? Infinity : (p.discount || 0) + sumMemberFlag(state, p, 'costReduction');
   const colored = Math.max(0, s - off), total = Math.max(0, s + w - off);
   const goldDouble = sumMemberFlag(state, p, 'goldPaysDouble') > 0;
   const q = colored > 0 ? colorOf(def) : null;
@@ -580,7 +582,9 @@ function inputFor(state, task) {
           options: [{ id: `slot:${hq}-${hi}`, label: actionAt(state, hq, hi).name, kind: 'slot', q: hq, i: hi }] };
       }
       const slots = [
-        ...openSlots(state).filter(([q, i]) => !task.ring || actionAt(state, q, i).ring <= task.ring)
+        // Place Holders (REPLACE11=placeholders): the held space is only its holder's this round
+        ...openSlots(state).filter(([q, i]) => !(state.held && state.held.round === state.round && state.held.pid !== p.id && state.held.key === `${q}-${i}`))
+          .filter(([q, i]) => !task.ring || actionAt(state, q, i).ring <= task.ring)
           .map(([q, i]) => ({ id: `slot:${q}-${i}`, label: actionAt(state, q, i).name, kind: 'slot', q, i })),
         ...squatSlots(state, p).filter(([q, i]) => !task.ring || actionAt(state, q, i).ring <= task.ring)
           .map(([q, i]) => ({ id: `squat:${q}-${i}`, label: `${actionAt(state, q, i).name} (join ${state.players[state.slots[`${q}-${i}`]].name})`, kind: 'slot', squat: true, q, i })),
@@ -1008,6 +1012,7 @@ function startRound(state, r) {
   state.slots = {};
   state.squats = {};
   delete state.reserved; // Snobs' token comes off when the round ends
+  delete state.held; // Place Holders' token too
   state.recruits = 0;
   state.turns = [];
   const n = WORKERS[r - 1];
@@ -1401,7 +1406,9 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
     const def0 = cardDef(state, uid);
     // each note says what it actually took off this price (a discount of 4 on a member costing 2 saves 2; Sponsor
     // saves nothing on a member that costs nothing): the discount first, then the cost reductions, in member order
-    let room = how.half ? Math.floor((def0.s + def0.w) / 2) : def0.s + def0.w;
+    const punched = sumMemberFlag(state, p, 'punchCard') > 0 && [2, 5, 8].includes(p.members.length);
+    if (punched) notes.push(`${flagName(state, p, 'punchCard')}: card ${p.members.length + 1} is free`);
+    let room = punched ? 0 : how.half ? Math.floor((def0.s + def0.w) / 2) : def0.s + def0.w;
     const off = n => { const x = Math.min(n, room); room -= x; return x; };
     if (p.discount && def0.s + def0.w > 0) { const x = off(p.discount); if (x) notes.push(`discount −${x}`); }
     for (const flag of ['costReduction', 'goldPaysDouble']) {
@@ -1426,7 +1433,7 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
     if (notes.length) paid += `; ${notes.join(', ')}`;
     if (stall) { for (const r in spend) stall.res[r] = (stall.res[r] || 0) + spend[r]; paid += `, paid to ${stall.name}'s ${stallAt[2]}`; }
     // a discount waits for a member that actually costs something
-    if (cardDef(state, uid).s + cardDef(state, uid).w > 0) { p.discount = 0; p.discountSources = []; }
+    if (!punched && cardDef(state, uid).s + cardDef(state, uid).w > 0) { p.discount = 0; p.discountSources = []; }
   }
   // Peek's reach is one recruit from the cards it showed; Insider's stays
   const peeked = idx < 0 && fromPile < (p.peekReach || 0);
