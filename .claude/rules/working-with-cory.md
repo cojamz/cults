@@ -42,6 +42,7 @@ Current rules only, short on purpose: every line here loads into every thread. W
 
 ## Never make him ask
 - Post on every state change (live, ready to look at, ETA slipped), with a screenshot when the screen changed; never ~30 minutes without a post. Ship each fix as it passes; no batching.
+- Mark a thread as waiting on Cory only when it holds a question only he can answer; publishing, reruns and process never wait on him (Cory, Nov 4: "you dont need my permission", "theres so many convos flagged as waiting on me that really arent"). Clear the flag the moment the question is answered or gone.
 - Keep this thread's board line current (`node scripts/status.mjs set …`); a quiet thread says why.
 - Calls to design/decisions.md, pitch verdicts to design/pitch-ledger.md, strategy to design/strategy.md, corrections here, the same turn, committed and pushed.
 - Before a thread ends or fills: design/HANDOFF.md, in-flight.md and todo.md true for a fresh thread. At most one scheduled check-in.
