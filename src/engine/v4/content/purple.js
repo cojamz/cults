@@ -197,6 +197,7 @@ function takeToken(ctx, p, why, what = '') {
  */
 function toToken(ctx, p, n, why) {
   if (noSkip(ctx, p)) { ctx.log(`${p.name}'s Early Birds: ${p.name}'s turns can't be skipped, so ${p.name} doesn't go last.`); return 0; }
+  const kept = tokenHolder(ctx.state) === p.id; // already theirs: they keep it, they don't take it (Night Watch pays on a take)
   takeToken(ctx, p, why);
   let put = 0;
   // Last Call: the next turns are the ones passed while the rivals still place; Sleep In: the hand empties at the end
@@ -207,7 +208,7 @@ function toToken(ctx, p, n, why) {
   const q = ctx.state.queue, rest = turnsAhead(ctx, p).map(i => q[i]).filter(t => !t.token && !t.now);
   for (const t of rest.slice(-(n - put) || rest.length)) if (put < n) { t.token = true; put++; }
   if (put) ctx.log(`${p.name}'s ${why}: ${put === 1 ? '1 minion waits' : `${put} minions wait`} on the Goes Last token.`);
-  nightWatch(ctx, p, put);
+  if (!kept) nightWatch(ctx, p, put);
   return put;
 }
 /** Night Watch (live since Nov 4): p just took the Goes Last token with n minions on it; each rival's Night
