@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 // every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,daylaborers,nightmanager,pacesetters';
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,daylaborers,nightmanager,pacesetters';
 const { applyMove, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
@@ -25,6 +25,7 @@ describe('REPLACE7: the switch', () => {
     expect(card('red.fosterparents')).toEqual(['Foster Parents', 2, 2, 2, 2]);
     expect(card('red.godfather')).toEqual(['Godfather', 4, 2, 1, 1]);
     expect(card('red.crimefamily')).toEqual(['Crime Family', 4, 2, 3, 3]);
+    expect(card('purple.gobetween')).toEqual(['Go-Between', 2, 2, 1, 1]);
     expect(card('purple.daylaborers')).toEqual(['Day Laborers', 3, 2, 3, 3]);
     expect(card('purple.nightmanager')).toEqual(['Night Manager', 2, 2, 1, 1]);
     expect(card('purple.pacesetters')).toEqual(['Pace-Setters', 3, 2, 2, 2]);
@@ -261,6 +262,34 @@ describe('Godfather and Crime Family: a bot never takes the use with nothing in 
       s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [[id, 'red.panel', 'red.movementpenalty']], shop: ['red.host'] });
       expect(defById(id).botActivate(contextFor(s), s.players[0])).toBe(true);
     }
+  });
+});
+
+describe('Go-Between: "On Use, once per round: your next turn comes right after this one."', () => {
+  const four = () => table(['purple', 'red', 'market', 'yellow'], { n: 4, round: 2, members: [['purple.gobetween']],
+    queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 2 }, { t: 'turn', p: 3 }, { t: 'turn', p: 0 }] });
+  it('the pitched turn: used on your turn, your last turn of the round comes right after this one, before P2', () => {
+    let s = four();
+    const uid = uidIn(s, 'purple.gobetween', 0);
+    s = move(s, `use:${uid}`);
+    expect(s.cards[uid].used).toBe(true);
+    s = take(s, 'red.turnout'); // Gather
+    while (s.pending && s.pending.kind !== 'place') s = move(s, s.pending.options.find(o => /pass|done|skip|end/i.test(o.id + o.label))?.id ?? s.pending.options[0].id);
+    expect(s.pending.player).toBe(0);
+  });
+  it('once per round: used, it is not offered again this round; Round Start makes it ready', () => {
+    let s = four();
+    const uid = uidIn(s, 'purple.gobetween', 0);
+    s = move(s, `use:${uid}`);
+    expect(s.pending.options.some(o => o.id === `use:${uid}`)).toBe(false);
+    defById('purple.gobetween').onRoundStart(null, s.players[0], s.cards[uid]);
+    expect(s.cards[uid].used).toBe(false);
+  });
+  it('with no turn left to pull, it stays unused', () => {
+    let s = table(['purple', 'red', 'market', 'yellow'], { n: 4, round: 2, members: [['purple.gobetween']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
+    const uid = uidIn(s, 'purple.gobetween', 0);
+    s = move(s, `use:${uid}`);
+    expect(s.cards[uid].used).toBe(false);
   });
 });
 

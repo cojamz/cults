@@ -699,6 +699,16 @@ export default {
         ctx.log(`${owner.name}'s Full House: ${mine} minions on the wheel, more than every rival: +${mine} followers.`);
       },
     })),
+    // REPLACE7 (Nov 4, quality loop, Members A batch 5): Timekeeper's place, a round I first taste of the extra-turn plan
+    // (director's ask; paper 18 vs 9, Purple's set 18 vs 9). Right Away's turn rule, carried, once a round, on your own
+    // turn: your last turn of the round moves up to right after this one (turnsNow, as Right Away). 2 purple + 2 any.
+    ...add7(m('gobetween', 'Go-Between', 1, 2, 'On Use, once per round: your next turn comes right after this one.', { round: 1,
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) { if (!turnsNow(ctx, owner, 1, 'Go-Between')) card.used = false; },
+      // bots: when pulling a turn up jumps at least one rival's turn
+      botActivate: (ctx, owner) => turnsNowEstimate(ctx, owner, 1) > 0,
+    })),
     // REPLACE7 (Nov 4, quality loop, Members A batch 2): Timekeeper's place (paper 19, 18 on a second gate). 2 purple + 2
     // any as a player sees it. "Placed the round's last minion" is the By color Purple contest's own measure (lastPlaced).
     ...add7(m('nightmanager', 'Night Manager', 1, 2, 'Round End: if you placed the round’s last minion, +1 follower per purple member you have.', {
