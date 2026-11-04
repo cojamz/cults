@@ -19,7 +19,7 @@ if (args[0] === 'score') {
   const judges = readdirSync(dir).filter(f => /^play-judge-\d+\.json$/.test(f)).map(f => JSON.parse(readFileSync(join(dir, f), 'utf8')));
   const side = { new: [], old: [] }, sideM = { new: [], old: [] }, clearNew = [];
   for (const j of judges) for (const s of j.sheets || []) {
-    const pair = key.pairs.find(p => s.file.includes(p.dir));
+    const pair = key.pairs.find(p => s.file.includes(`${p.dir}/`));
     if (!pair) continue;
     const label = /\bA\.md$/.test(s.file) ? 'A' : /\bB\.md$/.test(s.file) ? 'B' : null; if (!label) continue;
     const role = pair[label], sc = P.map(k => s.scores?.[k] ?? 0);
@@ -30,7 +30,7 @@ if (args[0] === 'score') {
   const clear = clearNew.length ? median(clearNew) : null;
   const pref = { new: 0, old: 0, same: 0 };
   for (const j of judges) for (const [seed, v] of Object.entries(j.prefer || {})) {
-    const pair = key.pairs.find(p => p.seed === seed), pick = String(v).trim().match(/^(A|B|same)\b/i)?.[1];
+    const pair = key.pairs.find(p => (p.label || p.seed) === seed), pick = String(v).trim().match(/^(A|B|same)\b/i)?.[1];
     if (pair && pick) pref[/same/i.test(pick) ? 'same' : pair[pick.toUpperCase()]]++;
   }
   // Old card hard-fails (director, Nov 4 7:14am): the new card needs its own play average of 1.0 or more and no 0 on
@@ -80,11 +80,14 @@ const pairs = [];
 // and both judges picked B both times). Shuffle a half-and-half list instead of flipping a coin per pair.
 const flips = seeds.map((_, i) => i % 2 === 0); if (rand() < 0.5) flips.forEach((f, i) => flips[i] = !f);
 for (let i = flips.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [flips[i], flips[j]] = [flips[j], flips[i]]; }
+// Neutral labels (Process critic, Nov 4): folders and headers say "game-<n>", numbered at random per folder, and the
+// sheet's own "Seed <n>." line is dropped, so judges can't tell which pairs share a game or come from different ones.
+const order = seeds.map((_, i) => i + 1); for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
 for (const [si, s] of seeds.entries()) {
-  const dir = `pair-${s}`, flip = flips[si], pd = join(out, dir); mkdirSync(pd, { recursive: true });
+  const label = String(order[si]), dir = `game-${label}`, flip = flips[si], pd = join(out, dir); mkdirSync(pd, { recursive: true });
   const make = (file, src, name, text) => {
     const full = readFileSync(join(src, file), 'utf8');
-    return `# Seed ${s.replace('x', ' (paired with a different game, seed ')}${s.includes('x') ? ')' : ''}: one Hard-bot game from the seat that held the slot card\n\nThe slot card's printed text: "${text}"\n\n` + blind(trim(full, name), name);
+    return `# Game ${label}: one Hard-bot game from the seat that held the slot card\n\nThe slot card's printed text: "${text}"\n\n` + blind(trim(full, name), name).replace(/ ?\bSeed \d+\./g, '');
   };
   // Guard (Nov 4, Night Manager): a wrong printed text in the header misleads judges. The sheet lists each card's real
   // text, so refuse when the given text is nowhere in its sheet (case-insensitive).
@@ -97,8 +100,8 @@ for (const [si, s] of seeds.entries()) {
   const swap = (t) => showNew ? t.split(newText).join(showNew).split(newText.replace(/'/g, '’')).join(showNew) : t;
   const nw = swap(make(N[s], newDir, newName, newText)), ol = make(B[s], baseDir, oldName, oldText);
   writeFileSync(join(pd, 'A.md'), flip ? ol : nw); writeFileSync(join(pd, 'B.md'), flip ? nw : ol);
-  pairs.push({ seed: s, dir, A: flip ? 'old' : 'new', B: flip ? 'new' : 'old', newSheet: N[s], oldSheet: B[s] });
+  pairs.push({ seed: s, label, dir, A: flip ? 'old' : 'new', B: flip ? 'new' : 'old', newSheet: N[s], oldSheet: B[s] });
 }
 writeFileSync(join(out, 'key.json'), JSON.stringify({ new: { name: newName, text: newText, shown: showNew || undefined, dir: newDir }, old: { name: oldName, text: oldText, dir: baseDir }, pairs }, null, 1));
-writeFileSync(join(out, 'brief.md'), [`# Blind A/B play judging`, '', `Each pair-<seed>/ folder holds A.md and B.md: the same seeded game, played once with one version of a card in a cult and once with another, each written from the seat that held it. The card is called "the slot card"; each sheet's header prints that version's text.`, `Score every sheet with .claude/agents/play-judge.md (P1 to P6, 0 to 2), on its own. Write play-judge-<your number>.json in THIS folder (not in the pair folders), with one entry per sheet whose "file" is "pair-<seed>/A.md" or "pair-<seed>/B.md". Then add "prefer": {"<seed>": "A"|"B"|"same"} with one plain line why. Do not open key.json.`].join('\n') + '\n');
+writeFileSync(join(out, 'brief.md'), [`# Blind A/B play judging`, '', `Each game-<n>/ folder holds A.md and B.md: a seeded game played with one version of a card in a cult, and a game played with another, each written from the seat that held it. The card is called "the slot card"; each sheet's header prints that version's text.`, `Score every sheet with .claude/agents/play-judge.md (P1 to P6, 0 to 2), on its own. Write play-judge-<your number>.json in THIS folder (not in the pair folders), with one entry per sheet whose "file" is "game-<n>/A.md" or "game-<n>/B.md". Then add "prefer": {"<n>": "A"|"B"|"same"} with one plain line why. Do not open key.json.`].join('\n') + '\n');
 console.log(`${out}: ${pairs.length} pairs (${seeds.join(', ')}); judges read brief.md`);
