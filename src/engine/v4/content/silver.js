@@ -178,12 +178,12 @@ function giftShopTo(ctx, p, oid, data) {
 
 /**
  * Sweet Nothings (REPLACE11, Actions lane, Nov 4; /mnt/project-files/quality/pitches/actions-sweet-talk.md), in Sweet
- * Talk's place: "+3 silver, then give rivals up to 3 of your silver, split as you choose. +2 of any colors for each."
+ * Talk's place: "+3 silver. Give rivals up to 3 of your silver, split as you choose: +2 of any colors each."
  * Your own silver (not the bank's, as Party Gifts), one at a time; then the colors, as Polish picks them.
  */
 const SWEET_NOTHINGS = {
   key: 'sweetnothings', copyDoesIt: true, ring: 2, name: 'Sweet Nothings',
-  text: '+3 silver, then give rivals up to 3 of your silver, split as you choose. +2 of any colors for each.',
+  text: '+3 silver. Give rivals up to 3 of your silver, split as you choose: +2 of any colors each.',
   estimate: ctx => 3 + 3 - spillCost(ctx, 1),
   resolve(ctx, p) {
     hostGain(ctx, p, 3);
