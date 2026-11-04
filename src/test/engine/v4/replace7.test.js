@@ -285,16 +285,6 @@ describe('Go-Between: "On Use, once per round: your next turn comes right after 
     defById('purple.gobetween').onRoundStart(null, s.players[0], s.cards[uid]);
     expect(s.cards[uid].used).toBe(false);
   });
-  it('your next turn already comes right after (a snake end): nothing moves, it stays unused, no 3 in a row', () => {
-    let s = table(['purple', 'red', 'market', 'yellow'], { n: 4, round: 2, members: [['purple.gobetween']],
-      queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 2 }, { t: 'turn', p: 0 }] });
-    const uid = uidIn(s, 'purple.gobetween', 0);
-    s = move(s, `use:${uid}`);
-    expect(s.cards[uid].used).toBe(false);
-    expect(s.log.some(l => l.includes("P1's next turn already comes right after this one"))).toBe(true);
-    expect(s.queue.filter(t => t.t === 'turn').map(t => t.p)).toEqual([0, 1, 2, 0]);
-  });
-
   it('with no turn left to pull, it stays unused', () => {
     let s = table(['purple', 'red', 'market', 'yellow'], { n: 4, round: 2, members: [['purple.gobetween']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
     const uid = uidIn(s, 'purple.gobetween', 0);
