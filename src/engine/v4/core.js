@@ -292,6 +292,8 @@ function memberPayOk(state, p, def, v, how) {
  * { [color]: coins of that color, any: coins of any color, total, text: "4 green" | "2 gold, 1 any" }.
  * The buy step, the pay choices, Snap Up, Half Price, Talent Scout and the shop's "need" all read this.
  */
+/** Snobs (REPLACE11=snob2): a shop member reserved this round for another player. Off, state.reserved never exists. */
+const reservedFor = (state, p, uid) => !!(state.reserved && state.reserved.uid === uid && state.reserved.pid !== p.id && state.shop.includes(uid));
 export function memberPrice(state, p, uid, how = {}) {
   const def = cardDef(state, uid);
   const { q, alt, colored, total, worth } = priceParts(state, p, def, how);
@@ -603,7 +605,7 @@ function inputFor(state, task) {
       // which members and tiers can be paid for at all: an existence check, not the ranked list of every way to pay
       // (the list scores each way against the contests: most of a round III step's engine time, run for every shop card,
       // in every bot step and every "You'd get" branch; freeze probe, 2026-10-28). The pay step still lists them all.
-      for (const uid of state.shop) if (memberPrice(state, p, uid).afford)
+      for (const uid of state.shop) if (!reservedFor(state, p, uid) && memberPrice(state, p, uid).afford)
         opts.push({ id: `card:${uid}`, label: cardDef(state, uid).name, kind: 'card', uid });
       // the top of the pile, for a player who can reach it (Insider: flag pileReach)
       for (const uid of state.pile.slice(0, pileReach(state, p))) if (memberPrice(state, p, uid).afford)
@@ -993,6 +995,7 @@ function startRound(state, r) {
   }
   state.slots = {};
   state.squats = {};
+  delete state.reserved; // Snobs' token comes off when the round ends
   state.recruits = 0;
   state.turns = [];
   const n = WORKERS[r - 1];
@@ -1362,6 +1365,7 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   const stallOf = stallAt?.[1] || null;
   if (stallOf) for (const list of Object.values(state.stalls)) if (list.includes(uid)) { list.splice(list.indexOf(uid), 1); state.shop.push(uid); }
   const stall = stallOf && stallOf !== p ? stallOf : null;
+  if (reservedFor(state, p, uid)) throw new Error(`Card ${uid} is reserved by Snobs`);
   const idx = state.shop.indexOf(uid);
   const fromPile = idx < 0 ? state.pile.indexOf(uid) : -1;
   // top: Red's round I space takes the deck's top member (Cory, 2026-10-27)
@@ -1601,7 +1605,7 @@ export function swapCardPairs(state, p) {
   const ctx = ctxFor(state);
   const price = uid => { const d = cardDef(state, uid); return d.s + d.w; };
   const mine = p.members.filter(u => ctx.canSwapMember(u));
-  const theirs = [...state.shop, ...state.players.filter(o => o !== p && ctx.canSteal(p, o, 'swap')).flatMap(o => o.members.filter(u => ctx.canSwapMember(u)))];
+  const theirs = [...state.shop.filter(u => !reservedFor(state, p, u)), ...state.players.filter(o => o !== p && ctx.canSteal(p, o, 'swap')).flatMap(o => o.members.filter(u => ctx.canSwapMember(u)))];
   const out = [];
   for (const a of mine) for (const b of theirs) if (Math.abs(price(a) - price(b)) <= 2) out.push([a, b]);
   return out;
@@ -2082,7 +2086,8 @@ function ctxFor(state) {
     /** p's members and p's artifact: for ability hooks only (an artifact is not a member) */
     abilitiesOf: p => [...p.members, ...(p.artifact !== undefined ? [p.artifact] : [])].map(u => wrap(state, state.cards[u])),
     ownerOf: uid => state.players.find(o => o.members.includes(uid)),
-    shopCards: () => state.shop.map(u => wrap(state, state.cards[u])),
+    // a card Snobs reserved for someone else is not offered to the player whose turn it is
+    shopCards: () => state.shop.filter(u => state.current == null || !reservedFor(state, state.players[state.current], u)).map(u => wrap(state, state.cards[u])),
     gain: (p, color, n, opts) => gain(state, p, color, n, opts),
     discount: grantDiscount,
     recruit: (p, uid, opts) => recruit(state, p, uid, opts),

@@ -8,6 +8,7 @@ import { add2, old2 } from './replace2.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add4, old4, handlers4 } from './replace4.js';
 import { add9, old9, handlers9 } from './replace9.js';
+import { add11, old11, handlers11 } from './replace11.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -298,6 +299,13 @@ const market = {
   ],
 
   handlers: {
+    ...handlers11({
+      snobReserve(ctx, p, uid) {
+        if (!ctx.state.shop.includes(uid)) return;
+        ctx.state.reserved = { uid, pid: p.id };
+        ctx.log(`${p.name}'s Snobs: a token on ${ctx.card(uid).def.name}; only ${p.name} may recruit it this round.`);
+      },
+    }),
     doormen(ctx, p, value) {
       if (!Array.isArray(value)) { ctx.log(`${p.name} chose not to use Doormen.`); return; }
       const [a, b] = value;
@@ -545,7 +553,19 @@ const market = {
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && totalRes(owner) >= 8,
     }),
-    m('snob', 'Snobs', 3, 2, 'Game End: +1 follower per blue member you have.', { f: 2,
+    // Actions lane (Nov 4; /mnt/project-files/quality/pitches/actions-snobs.md), REPLACE11=snob2 in Snobs' place: the
+    // velvet rope. The token is state.reserved; core keeps every rival recruit (buy, swap, free) off the card until the
+    // round ends or the card leaves the shop.
+    ...add11(m('snob2', 'Snobs', 3, 2, 'Round Start: put a token on a shop member. Until the round ends, only you may recruit it.', { f: 2, round: 1,
+      onRoundStart(ctx, owner) {
+        const shop = ctx.shopCards();
+        if (!shop.length) return;
+        ctx.choose(owner, 'Snobs: reserve which shop member this round?', shop.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: botWorth(c),
+        })), `${Q}.snobReserve`);
+      },
+    })),
+    m('snob', 'Snobs', 3, 2, 'Game End: +1 follower per blue member you have.', { f: 2, ...old11('snob2'),
       onGameEnd: (ctx, owner) => ctx.countMembersOfColor(owner, Q),
     }),
     // REPLACE9 bot test (Members C, Nov 4): Hawker's place (Hawker asked rivals to choose on its owner's turn). 3 blue + 2 any as a

@@ -369,3 +369,45 @@ describe("Blue contest setting 'recruits' (Most recruits this round)", () => {
     expect(row().winners).toEqual([1]);
   });
 });
+
+describe('REPLACE11: Snobs, the reserved token', () => {
+  const rich = { red: 30, blue: 30 };
+  const gatherSlot = s => `${s.quadrants.indexOf('red')}-${quadrant('red').actions.findIndex(a => a.name === 'Gather')}`;
+  it('replaces the Game End Snobs', async () => {
+    const { defById } = await import('../../../engine/v4/content/index.js');
+    expect(defById('market.snob2').text).toBe('Round Start: put a token on a shop member. Until the round ends, only you may recruit it.');
+    expect(defById('market.snob').retired).toBe(true);
+  });
+  // "Round Start: put a token on a shop member."
+  it('asks its owner at Round Start, and the token sits on that card', () => {
+    let s = table(['red', 'market'], { n: 2, round: 1, members: [['market.snob2'], []], shop: ['red.mob', 'red.volunteer'], queue: [{ t: 'round', r: 2 }] });
+    expect(s.pending.prompt).toBe('Snobs: reserve which shop member this round?');
+    expect(s.pending.player).toBe(0);
+    const pick = s.pending.options[0], name = s.cards[pick.value] && (pick.label.split(' (')[0]);
+    s = answer(s, pick.id);
+    expect(s.reserved).toEqual({ uid: pick.value, pid: 0 });
+    expect(s.log.join('\n')).toContain(`P1's Snobs: a token on ${name}; only P1 may recruit it this round.`);
+  });
+  // "Until the round ends, only you may recruit it."
+  it("a rival can't recruit the reserved card; its owner can", () => {
+    const make = pid => {
+      let s = table(['red', 'market'], { n: 2, round: 1, res: [rich, rich], shop: ['red.mob', 'red.volunteer'] });
+      s.reserved = { uid: s.shop.find(u => s.cards[u].def === 'red.mob'), pid };
+      s = answer(s, `slot:${gatherSlot(s)}`);
+      while (s.pending && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
+      return s;
+    };
+    const blocked = make(1), open = make(0);
+    const mobId = st => `card:${st.reserved.uid}`;
+    expect(blocked.pending.options.map(o => o.id)).not.toContain(mobId(blocked));
+    expect(open.pending.options.map(o => o.id)).toContain(mobId(open));
+  });
+  it('the token comes off when the next round starts', async () => {
+    const { resume } = await import('../../../engine/v4/core.js');
+    let s = table(['red', 'market'], { n: 2, round: 1, shop: ['red.mob'] });
+    s.reserved = { uid: s.shop[0], pid: 1 };
+    Object.assign(s, { queue: [{ t: 'round', r: 2 }], pending: null });
+    s = resume(s) || s;
+    expect(s.reserved).toBeUndefined();
+  });
+});
