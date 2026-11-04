@@ -195,14 +195,14 @@ async function runShards(job, slots) {
   let fails = 0;
   const lane = async () => {
     for (;;) {
-      const j = reload(job); if (!j || j.state !== 'open') return;
+      const j = reload(job); if (!j || (j.state ?? 'open') !== 'open') return;
       const nb = nextBlock(j); if (!nb) return;
       runnerDoing = `${j.name} games ${nb.b.first}-${nb.b.first + nb.b.count - 1}`; beatRunner();
       if (!(await playBlock(j, nb.b, nb.c)) && ++fails >= 3) { console.error(`${j.name}: 3 blocks failed on this box; leaving it for others. See ${dirs.log}`); return; }
     }
   };
   await Promise.all(Array.from({ length: slots }, lane));
-  if (blocksOf(job).every((b) => blockDone(job, b))) { const j = reload(job); if (j && j.state === 'open') { j.state = 'done'; j.done_at = now(); saveJob(j); log({ ev: 'done', job: job.name }); console.log(`DONE ${job.name}`); } }
+  if (blocksOf(job).every((b) => blockDone(job, b))) { const j = reload(job); if (j && (j.state ?? 'open') === 'open') { j.state = 'done'; j.done_at = now(); saveJob(j); log({ ev: 'done', job: job.name }); console.log(`DONE ${job.name}`); } }
 }
 const trialSkip = new Map();
 async function runTrial(job, slots) {
@@ -219,7 +219,7 @@ async function runTrial(job, slots) {
 }
 
 function openJobs() {
-  return jobs().filter((j) => j.state === 'open')
+  return jobs().filter((j) => (j.state ?? 'open') === 'open')
     .filter((j) => j.kind === 'trial' ? (trialSkip.get(j.name) || 0) < Date.now() && !trialDone(j.name) : blocksOf(j).some((b) => !blockDone(j, b) && !claimLive(claimFile(j, b))))
     .sort((a, b) => (b.priority - a.priority) || String(a.posted_at).localeCompare(String(b.posted_at)));
 }
