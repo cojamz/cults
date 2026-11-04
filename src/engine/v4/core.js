@@ -2401,7 +2401,13 @@ function settle(state, f) {
       const parts = [];
       for (const r of Object.keys({ ...b.res, ...o.res })) {
         const d = (o.res[r] || 0) - (b.res[r] || 0) - (inn.res[r] || 0);
-        if (d && !says(o, new RegExp(`\\d ${r}\\b`))) parts.push(`${d > 0 ? '+' : '−'}${Math.abs(d)} ${r}`);
+        if (!d) continue;
+        // a line naming the player and an amount of this color says that much of it; a remainder is still said (a copied
+        // Walk-In's +1 red beside the copier's Impressionist +1 red: "P4 +1 red", not nothing; Lab, Nov 4)
+        const told = own.filter(l => l.includes(o.name) || /everyone|each player|all players/i.test(l))
+          .reduce((a, l) => a + [...l.matchAll(new RegExp(`(\\d+) ${r}\\b`, 'g'))].reduce((x, m) => x + Number(m[1]), 0), 0);
+        if (!told) parts.push(`${d > 0 ? '+' : '−'}${Math.abs(d)} ${r}`);
+        else if (told < Math.abs(d) && own.filter(l => l.includes(o.name) && new RegExp(`\\d ${r}\\b`).test(l)).every(l => /\+\d/.test(l) === d > 0)) parts.push(`${d > 0 ? '+' : '−'}${Math.abs(d) - told} ${r}`);
       }
       const fd = o.bonus - b.bonus - inn.bonus;
       if (fd && !says(o, /\d followers?\b|[+−-]\d/)) parts.push(`${fd > 0 ? '+' : '−'}${Math.abs(fd)} follower${Math.abs(fd) === 1 ? '' : 's'}`);
