@@ -112,3 +112,7 @@ Source: blind tester panel, 2026-10-26 (v0.8.86); fixed in v0.8.87 to v0.8.91.
 - Guest Book didn't pay for Drifters (it read Drifters as Yellow before the color was picked).
 - Party Crasher's (and Big Spender's) Use was dimmed as if it would do nothing.
 - Front-runner seemed not to work: recruited mid-round, it only moves you first from the next round (as designed; card unchanged).
+
+## Cory's card calls, 2026-11-04 (paper judges missed or underrated these)
+- Heiresses ("On Use, once per game: +1 white per member you have."): "dont change heiresses ... It combos really nicely with the round III white action" (Cash In). r3 ranked it near the bottom (11). Credit the Cash In combo, and score the once-per-game timing fairly, with no bonus for the shape ("we shouldnt have too many of them").
+- Landlord ("On Recruit: +2 white. Round Start: +2 white."): "landlord is easily the worst white card"; "Those type of resource gain members can basically all go if they're just flat monocolor gains". A flat one-color gain scores 0 on Feels good and 0 on Its color.

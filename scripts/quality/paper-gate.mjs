@@ -224,7 +224,9 @@ function scoreGate(arg, batchVoid, print, shift = 0, rankOffset = null) {
     const lines = gateLines(key.spec, old, o);
     // an old card that hard-fails (2+ judges) has to go anyway: a candidate then needs only the bar, not the margin (Nov 4, Hawker)
     const oldFails = old.fails.length >= 2 || !!key.spec.oldHardFail; // spec.oldHardFail: a rule the old card breaks by its printed text (turn flow), named by the lane
-    const pass = !voided && o.over && textOk && !lines.length && (oldFails || (beat >= BEAT && (beatRanked == null || process.env.GATE_RANKED === '0' || beatRanked >= BEAT))); // a shape clash is reported, and blocks only at claim // BEAT: 3 since Cory's v2 notes
+    // Paper filters, play ranks (Cory, Nov 4 ~12:47pm via the director): over the bar, no hard fail, within the text budget and
+    // not below the old card on paper goes to the play A/B. The beat-by-3 and ranked margins are reported only.
+    const pass = !voided && o.over && textOk && !lines.length && (oldFails || beat >= 0); // a shape clash is reported, and blocks only at claim // BEAT: 3 since Cory's v2 notes
     return { name: o.name, label: o.label, text: o.text, median: o.med, totals: o.totals, q: o.q, overBar: o.over, beatsOldBy: beat, words: w, wordBudget: budget, textOk, sentences: sentences(o.text), sentenceBudget: Math.max(1, oldSent), shapes, shapeClash: clash, hardFails: o.fails, pass, beatRanked, gateLines: lines,
       why: o.entries.map(e => e.why) };
   });
@@ -237,7 +239,7 @@ function scoreGate(arg, batchVoid, print, shift = 0, rankOffset = null) {
     d1 ? `Decoy **${d1.name}** scored ${d1.med} and ${d2.med} as two labels (gap ${decoyGap}; per judge ${judgeGaps.join('/')}). ${voided ? 'VOID: the gate is inflated or noisy; fix the prompt before trusting this.' : 'Gate is steady.'}` : 'No decoy.', '',
     ...res.flatMap(c => [`## ${c.pass ? 'PASS' : 'no'}: ${c.name} (median ${c.median}, ${c.totals.join('/')}; ${c.beatsOldBy >= 0 ? '+' : ''}${c.beatsOldBy} on the old card)`,
       `"${c.text}"`, `- ${qline(c.q)}.`,
-      `- Bar: ${c.overBar ? 'over' : 'under'}. Beats old by ${BEAT}: ${c.beatsOldBy >= BEAT ? 'yes' : 'no'}${c.beatRanked != null ? ` (and its ranking score: ${c.beatRanked >= 0 ? '+' : ''}${c.beatRanked})` : ''}. Words ${c.words} of ${c.wordBudget}, sentences ${c.sentences} of ${c.sentenceBudget}: ${c.textOk ? 'ok' : 'over budget'}. Shapes: ${c.shapes.join(', ') || 'none'}${c.shapeClash.length ? ` (already used this batch: ${c.shapeClash.join(', ')})` : ''}.${c.hardFails.length ? ` Hard fail from ${c.hardFails.length}: ${c.hardFails[0]}` : ''}${c.gateLines.length ? ` Blocked by a gate line: ${c.gateLines.join('; ')}.` : ''}`,
+      `- Bar: ${c.overBar ? 'over' : 'under'}. Not below the old card: ${c.beatsOldBy >= 0 ? 'yes' : 'no'} (by ${c.beatsOldBy}; the old +${BEAT} margin, now for information: ${c.beatsOldBy >= BEAT ? 'yes' : 'no'})${c.beatRanked != null ? ` (and its ranking score: ${c.beatRanked >= 0 ? '+' : ''}${c.beatRanked})` : ''}. Words ${c.words} of ${c.wordBudget}, sentences ${c.sentences} of ${c.sentenceBudget}: ${c.textOk ? 'ok' : 'over budget'}. Shapes: ${c.shapes.join(', ') || 'none'}${c.shapeClash.length ? ` (already used this batch: ${c.shapeClash.join(', ')})` : ''}.${c.hardFails.length ? ` Hard fail from ${c.hardFails.length}: ${c.hardFails[0]}` : ''}${c.gateLines.length ? ` Blocked by a gate line: ${c.gateLines.join('; ')}.` : ''}`,
       ...c.why.map(w => `- Judge: ${w}`), ''])].join('\n');
   writeFileSync(join(dir, 'result.md'), md);
   // shapes are claimed only when a lane picks its card (claim), so scoring order never decides who gets a shape
