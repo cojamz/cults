@@ -312,9 +312,22 @@ export default {
       onRoundStart(ctx, owner) { transmuteStep(ctx, owner, { who: 'Tinker', left: Math.min(3, total(ctx, owner)), done: 0 }); },
     }),
     // Cory, 2026-10-31: "needs to be more expensive" (was 4)
-    m('harmonist', 'Harmonist', 4, 2, 'Game End: +1 follower per full set you hold.', {
+    m('harmonist', 'Harmonist', 4, 2, 'Game End: +1 follower per full set you hold.', { ...old9('yellow.harmonist'),
       onGameEnd: (ctx, owner) => setsOf(ctx, owner),
     }),
+    // REPLACE9 bot test (Members C, Nov 4): Harmonist's place. 6 yellow + 3 any as a player sees it. "Double": +1 of each
+    // color on the table per full set held (setsOf, so Jack-of-All-Trades' yellow sets count). No set: the use comes back.
+    ...add9(m('seamstress', 'Seamstress', 5, 3, 'On Use, once per game: double your full sets.', {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const k = setsOf(ctx, owner);
+        if (k < 1) { card.used = false; ctx.log(`${owner.name}'s Seamstress: no full set to double.`); return; }
+        for (const c of colors(ctx)) ctx.gain(owner, c, k);
+        ctx.log(`${owner.name}'s Seamstress: doubles ${k === 1 ? 'a full set' : `${k} full sets`}: +${k} of each color.`);
+      },
+      // bots double 2 or more sets, or any set on their last turn
+      botActivate: (ctx, owner) => { const k = setsOf(ctx, owner); return k >= 2 || (k >= 1 && ctx.state.round === 3 && (owner.left || 0) <= 1); },
+    })),
     // Cory, 2026-10-31: "also give followers… like side quests"
     m('matchmaker', 'Matchmaker', 3, 2, 'Whenever you recruit a member of a color none of your members have, +2 in colors you choose and +1 follower.', {
       // Dabblers never blocks a new color and Drifters counts once its color is chosen, as Guest Book (Cory, Nov 1)

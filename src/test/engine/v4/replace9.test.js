@@ -4,7 +4,7 @@
 // switch is read when the engine loads, so it is set before the engine is imported (dynamic imports below), then cleared.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE9 = 'tollkeeper,quilter,lastminute,bargainhunter,hypnotist,jack,ambassadors,mannequin,stallholder,hawker2';
+process.env.REPLACE9 = 'tollkeeper,quilter,lastminute,bargainhunter,hypnotist,jack,ambassadors,mannequin,stallholder,hawker2,seamstress';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move } = await import('./helpers.js');
@@ -240,7 +240,7 @@ describe('Jack-of-All-Trades: "Your yellow counts as any color in your full sets
       return (s.contests || []).at(-1).results.find(c => c.qid === 'yellow').winners;
     };
     expect(won('yellow.jack')).toEqual([0]);
-    expect(won('yellow.harmonist')).toEqual([1]);
+    expect(won('yellow.gardener')).toEqual([1]);
   });
   it('only your own yellow and only in full sets: a rival\'s Toll Keeper sees 3 yellow and 1 red as a full set', () => {
     let s = table(Q4, { n: 2, round: 1, res: [{}, { yellow: 3, red: 1 }], members: [['yellow.tollkeeper'], ['yellow.jack']], queue: [{ t: 'allPlaced' }] });
@@ -359,6 +359,35 @@ describe('Hawker at Round Start: "Round Start: choose a shop member. Starting on
     let s = start([{}, {}, {}]);
     expect(s.players[0].members.length).toBe(2);
     expect(named(s, 'Hawker').some(l => l.includes('so P1 recruits it for free'))).toBe(true);
+  });
+});
+
+describe('Seamstress: "On Use, once per game: double your full sets."', () => {
+  const Q4 = ['red', 'yellow', 'market', 'purple'];
+  it('price and retirement', () => {
+    const d = defById('yellow.seamstress');
+    expect([d.s, d.w, d.f, d.activate]).toEqual([6, 3, 1, 'game']);
+    expect(defById('yellow.harmonist').retired).toBe(true);
+  });
+  it('On Use: 2 full sets become 4 (+2 of each color); once per game', () => {
+    let s = table(Q4, { n: 3, round: 3, res: [{ red: 3, yellow: 2, blue: 2, purple: 5 }], members: [['yellow.seamstress']], queue: [{ t: 'buy', p: 0 }] });
+    const u = uidIn(s, 'yellow.seamstress', 0);
+    s = move(s, `use:${u}`);
+    expect(s.players[0].res).toMatchObject({ red: 5, yellow: 4, blue: 4, purple: 7 });
+    expect(named(s, 'Seamstress')).toContain("P1's Seamstress: doubles 2 full sets: +2 of each color.");
+    expect(s.pending.options.map(o => o.id)).not.toContain(`use:${u}`);
+  });
+  it('no full set: nothing, and the use comes back', () => {
+    let s = table(Q4, { n: 3, round: 3, res: [{ red: 3, yellow: 2, blue: 2 }], members: [['yellow.seamstress']], queue: [{ t: 'buy', p: 0 }] });
+    const u = uidIn(s, 'yellow.seamstress', 0);
+    if (s.pending.options.some(o => o.id === `use:${u}`)) s = move(s, `use:${u}`);
+    expect(s.players[0].res.red).toBe(3);
+    expect(s.cards[u].used).toBeFalsy();
+  });
+  it('pitched turn: with Jack-of-All-Trades, 4 yellow and nothing else is 1 set on 4 colors: +1 of each', () => {
+    let s = table(Q4, { n: 3, round: 3, res: [{ yellow: 4 }], members: [['yellow.seamstress', 'yellow.jack']], queue: [{ t: 'buy', p: 0 }] });
+    s = move(s, `use:${uidIn(s, 'yellow.seamstress', 0)}`);
+    expect(s.players[0].res).toMatchObject({ red: 1, yellow: 5, blue: 1, purple: 1 });
   });
 });
 
