@@ -102,16 +102,10 @@ function yardSaleAsk(ctx, p) {
 function yardSale(ctx, p, uid) {
   if (uid === 'done') { ctx.log(`${p.name}'s Yard Sale: keeps every member.`); return; }
   if (!p.members.includes(uid)) return;
-  const s = ctx.state, name = ctx.card(uid).def.name;
-  const c = ctx.buryMember(p, uid);
-  // it goes into the shop, not under the pile: the cast-out's "to the bottom of the pile" line is replaced (the log
-  // keeps only its newest lines, so look from the end)
-  const k = s.log.lastIndexOf(`${p.name} sent ${name} to the bottom of the pile.`);
-  if (k >= 0) s.log.splice(k, 1);
-  const i = s.pile.indexOf(uid);
-  if (i >= 0) { s.pile.splice(i, 1); s.shop.push(uid); }
+  const name = ctx.card(uid).def.name;
+  const c = ctx.buryMember(p, uid, p, { shop: true });
   ctx.gain(p, W, 2 * c, { fromAction: true });
-  ctx.log(`${p.name}'s Yard Sale: ${name} goes face up into the shop and paid ${2 * c} white.`);
+  ctx.log(`${p.name}'s Yard Sale: ${name} paid ${2 * c} white.`);
   gotRidOf(ctx, p);
 }
 

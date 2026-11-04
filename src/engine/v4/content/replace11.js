@@ -2,6 +2,7 @@
 // puts new wheel spaces in their old spaces' places (the old space stays in code, off the wheel):
 //   space purple.again (Right Away) -> purple.callback (Call Back)
 //   space trading.estatesale (Estate Sale) -> trading.yardsale (Yard Sale)
+//   space silver.polish (Polish) -> silver.giftshop (Gift Shop)
 // REPLACE11=1 swaps every one; REPLACE11=yardsale (or a comma list of new keys) swaps only those, so each space gets
 // its own trial. Pitches: /mnt/project-files/quality/pitches/actions-*.md. Unset, the wheel is unchanged.
 const RAW = globalThis.process?.env?.REPLACE11 || '';

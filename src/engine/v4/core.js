@@ -2030,12 +2030,20 @@ function ctxFor(state) {
     refillShop: () => refill(state),
     /** Send one of p's members to the bottom of the pile, wiped clean (White: "get rid of"). Returns its printed cost. */
     // actor: whose card did it (Evictors, REPLACE3 bot test, casts out a rival's member); p's own by default
-    buryMember(p, uid, actor = p) {
+    buryMember(p, uid, actor = p, { shop = false } = {}) {
       if (!p.members.includes(uid)) return 0;
       const def = cardDef(state, uid), c = def.s + def.w;
       cardLeaves(state, p, uid);
       p.members.splice(p.members.indexOf(uid), 1);
       state.cards[uid] = { uid, def: state.cards[uid].def };
+      // shop: cast out face up into the shop row instead (Yard Sale, REPLACE11 bot test), at the end of the row
+      if (shop) {
+        state.shop.push(uid);
+        log(state, `${p.name} put ${def.name} face up into the shop.`);
+        cultMove(state, uid, p, null, actor);
+        if (REPLACE6) eachMember(state, (owner, card, d) => { if (d.onCastOut) d.onCastOut(ctx, owner, wrap(state, card), { uid, from: p, actor, cost: c, name: def.name }); }, ['onCastOut']);
+        return c;
+      }
       // (piles: refill puts a pile member back under its own pile, as the card says, and it can be bought again; Cory, Nov 1)
       state.pile.push(uid);
       log(state, `${p.name} sent ${def.name} to the bottom of the pile.`);
@@ -2047,6 +2055,20 @@ function ctxFor(state) {
       // a shop short of its size (the pile ran out) takes it back up, as every other way to the bottom does
       refill(state);
       return c;
+    },
+    /** A shop member goes into p's cult without a recruit (Gift Shop, REPLACE11 bot test: "Give a shop member to a
+     *  rival"): it arrives as a member a rival's move brings in (memberJoined, no On Recruit), and the row refills. */
+    giveFromShop(p, uid, actor = null) {
+      const i = state.shop.indexOf(uid);
+      if (i < 0) return false;
+      state.shop.splice(i, 1);
+      state.cards[uid] = { uid, def: state.cards[uid].def };
+      p.members.push(uid);
+      refill(state);
+      cultMove(state, uid, null, p, actor);
+      memberJoined(state, p, uid);
+      workersNow(state, p, cardDef(state, uid), uid);
+      return true;
     },
     buryFromShop(uid) {
       const i = state.shop.indexOf(uid);

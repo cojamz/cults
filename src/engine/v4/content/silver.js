@@ -10,6 +10,7 @@ import { defById } from './index.js';
 import { add2, old2, handlers2 } from './replace2.js';
 import { add6, old6 } from './replace6.js';
 import { add8, old8 } from './replace8.js';
+import { swap11, handlers11 } from './replace11.js';
 import { see, endsAhead, SEE_SPITE } from './botsee.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
@@ -138,6 +139,43 @@ function polishPick(ctx, p, left, who = 'Polish') {
   })), 'silver.polish', { left, who });
 }
 
+/**
+ * Gift Shop (REPLACE11, Actions lane, Nov 4; /mnt/project-files/quality/pitches/actions-polish.md), in Polish's place:
+ * "Give a shop member to a rival. +3 silver in round I, +5 in round II, +7 in round III." The member arrives in the
+ * rival's cult as a gift, not their recruit (no On Recruit, as a member a rival's move brings in), and the row refills.
+ */
+const giftSilver = ctx => 2 * ctx.state.round + 1;
+const GIFT_SHOP = {
+  key: 'giftshop', copyDoesIt: true, ring: 1, name: 'Gift Shop', text: 'Give a shop member to a rival. +3 silver in round I, +5 in round II, +7 in round III.',
+  byRound: { lines: ['+3 silver', '+5 silver', '+7 silver'], rest: 'Give a shop member to a rival.' },
+  estimate: ctx => giftSilver(ctx) - 1,
+  resolve(ctx, p) {
+    const got = hostGain(ctx, p, giftSilver(ctx));
+    ctx.log(`${p.name}'s Gift Shop: +${got} silver.`);
+    const shop = ctx.shopCards(), rivals = ctx.rivals(p);
+    if (!shop.length || !rivals.length) { ctx.log(`${p.name}'s Gift Shop: no shop member to give.`); return; }
+    ctx.choose(p, 'Gift Shop: give which shop member?', shop.map(c => ({
+      id: `card:${c.uid}`, label: `${c.def.name} (${c.def.s + c.def.w})`, kind: 'card', value: c.uid,
+      // bots give away the least: the cheapest, lowest-worth card
+      hint: -(c.def.s + c.def.w) - 2 * (c.def.f || 0),
+    })), 'silver.giftShopCard');
+  },
+};
+function giftShopCard(ctx, p, uid) {
+  const c = ctx.card(uid);
+  if (!c || !ctx.state.shop.includes(uid)) return;
+  ctx.choose(p, `Gift Shop: give ${c.def.name} to which rival?`, ctx.rivals(p).map(o => ({
+    id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers)`, kind: 'player', value: o.id,
+    // bots gift the rival furthest behind
+    hint: -ctx.followers(o),
+  })), 'silver.giftShopTo', { uid });
+}
+function giftShopTo(ctx, p, oid, data) {
+  const o = ctx.player(oid), name = ctx.card(data.uid)?.def.name;
+  if (!o || o === p || !ctx.giveFromShop(o, data.uid, p)) return;
+  ctx.log(`${p.name}'s Gift Shop: gives ${name} to ${o.name}.`);
+}
+
 export const silverActions = [
   {
     key: 'toast', ring: 1, name: 'Toast', text: '+3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III.',
@@ -151,7 +189,7 @@ export const silverActions = [
       ctx.log(`${p.name} raised a toast: +${got} silver, +${ctx.state.round} silver to everyone else.`);
     },
   },
-  {
+  swap11({
     key: 'polish', copyDoesIt: true, ring: 1, name: 'Polish', text: 'Turn 2 of your silver into 4 of any colors.',
     estimate: (ctx, p) => Math.min(2, p.res[S] || 0) * 1 + 0.5,
     resolve(ctx, p) {
@@ -162,7 +200,7 @@ export const silverActions = [
       ctx.log(`${p.name}'s Polish: ${k} silver into ${2 * k} of any colors.`);
       polishPick(ctx, p, 2 * k);
     },
-  },
+  }, GIFT_SHOP),
   {
     key: 'partygifts', ring: 1, name: 'Party Gifts', copyDoesIt: true, text: 'Give rivals up to 3 silver from the bank, split as you choose. +2 followers per silver you give.',
     estimate: ctx => 2 * 6 - spillCost(ctx, 1) * 3,
@@ -223,6 +261,7 @@ const silver = {
   actions: silverActions,
 
   handlers: {
+    ...handlers11({ giftShopCard, giftShopTo }),
     godparents(ctx, p, value) {
       const [uid, oid] = value, o = ctx.player(oid);
       if (!p.members.includes(uid) || !o || o === p) return;

@@ -138,8 +138,9 @@ describe('REPLACE11: Yard Sale', () => {
     expect(s.cards[raiders].used).toBeFalsy(); // fresh for its next owner
     expect(s.players[0].res.white).toBe(2 * 5 + 1); // Raiders costs 5
     const log = s.log.join('\n');
-    expect(log).toContain("P1's Yard Sale: Raiders goes face up into the shop and paid 10 white.");
+    expect(log).toContain("P1's Yard Sale: Raiders paid 10 white.");
     expect(log).not.toContain('sent Raiders to the bottom of the pile');
+    expect(log).toContain('P1 put Raiders face up into the shop.');
     // a cast-out, so Undertaker ("Whenever you cast out one of your members, +2 followers.") pays
     expect(log).toMatch(/Undertaker/);
   });
@@ -177,5 +178,40 @@ describe('REPLACE11: one space at a time', () => {
     const [purple, white] = JSON.parse(out);
     expect(purple).toContain('Right Away');
     expect(white).toContain('Yard Sale');
+  });
+});
+
+describe('REPLACE11: Gift Shop', () => {
+  const slot = (s, name) => { const q = s.quadrants.indexOf('silver'); return `${q}-${quadrant('silver').actions.findIndex(a => a.name === name)}`; };
+  it("is on the wheel in Polish's place", () => {
+    const names = quadrant('silver').actions.map(a => a.name);
+    expect(names).toContain('Gift Shop');
+    expect(names).not.toContain('Polish');
+  });
+
+  // sentence 2: "+3 silver in round I, +5 in round II, +7 in round III."
+  for (const round of [1, 2, 3]) it(`gives +${2 * round + 1} silver in round ${'I'.repeat(round)}`, () => {
+    let s = table(['red', 'silver'], { round, shop: ['red.volunteer'] });
+    s = answer(s, `slot:${slot(s, 'Gift Shop')}`);
+    expect(s.players[0].res.silver).toBe(2 * round + 1);
+  });
+
+  // sentence 1: "Give a shop member to a rival."
+  it('gives the shop member you pick to the rival you pick, as a gift (no On Recruit), and the row refills', () => {
+    let s = table(['red', 'silver'], { n: 3, shop: ['red.volunteer', 'red.host'] });
+    const host = s.shop.find(u => s.cards[u].def === 'red.host');
+    s = answer(s, `slot:${slot(s, 'Gift Shop')}`);
+    expect(s.pending.prompt).toBe('Gift Shop: give which shop member?');
+    s = answer(s, `card:${host}`);
+    expect(s.pending.prompt).toBe('Gift Shop: give Host to which rival?');
+    expect(s.pending.options.map(o => o.id).sort()).toEqual(['player:1', 'player:2']);
+    s = answer(s, 'player:2');
+    expect(s.players[2].members).toContain(host);
+    expect(s.players[0].members).not.toContain(host);
+    expect(s.shop).not.toContain(host);
+    expect(s.shop.length).toBe(6); // round I's row, refilled
+    // Host's On Recruit ("+1 red per 2 members you have") doesn't fire on a gift
+    expect(s.log.join('\n')).not.toMatch(/P3's Host/);
+    expect(s.log.join('\n')).toContain("P1's Gift Shop: gives Host to P3.");
   });
 });
