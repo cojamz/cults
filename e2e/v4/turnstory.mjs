@@ -201,10 +201,17 @@ try {
     await page.mouse.move(5, 5);
     await page.waitForTimeout(300);
   };
-  // (under the chairs each move is one line: a piece that doesn't fit is hidden whole, data-wrapped, Nov 4)
-  await nameCard('[data-since] .since-row > :not([data-wrapped]) [data-hover-name="space"], [data-since] .since-row > [data-hover-name="space"]:not([data-wrapped])', 'space', 't8');
+  // (under the chairs each move is one line: a piece that doesn't fit wraps out of sight whole, Nov 4): the names in
+  // sight are tagged, and those are hovered
+  await page.evaluate(() => {
+    for (const k of ['space', 'member']) {
+      const el = [...document.querySelectorAll(`[data-since] [data-hover-name="${k}"]`)].find(e => { const row = e.closest('.since-row'); const a = e.getBoundingClientRect(), b = row ? row.getBoundingClientRect() : a; return a.width > 0 && a.top >= b.top - 1 && a.bottom <= b.bottom + 1; });
+      if (el) el.setAttribute('data-t8', k);
+    }
+  });
+  await nameCard('[data-since] [data-t8="space"]', 'space', 't8');
   // a member's name is often the piece that drops on a one-line row; when none shows, the log's check below covers it
-  if (await page.locator('[data-since] .since-row > :not([data-wrapped]) [data-hover-name="member"]').count()) await nameCard('[data-since] .since-row > :not([data-wrapped]) [data-hover-name="member"]', 'card', 't8');
+  if (await page.locator('[data-since] [data-t8="member"]').count()) await nameCard('[data-since] [data-t8="member"]', 'card', 't8');
   else console.log('turnstory t8: note, no member name in sight on the strip; checked in the log');
   // (t7) the log, one tap from the strip; (t8) its names open their cards too, above the drawer
   await page.click('[data-since] [data-open-log]');
