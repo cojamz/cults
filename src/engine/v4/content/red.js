@@ -442,21 +442,17 @@ function swapSides(ctx, p, mode) {
 }
 const pairOk = (mode, excludeUid, a, b) => a.uid !== b.uid && a.id !== b.id /* two copies of one member (piles): no swap */ && a.uid !== excludeUid && b.uid !== excludeUid && !(b.owner && b.owner === a.owner) && (mode === 'even' ? a.cost === b.cost
   : mode === 'promote' ? b.cost <= a.cost + 2 : mode === 'rival' ? b.cost >= a.cost : b.cost <= a.cost && b.cost >= a.cost - 2);
-// Panel ("promote or demote another of your members") always gives one of the owner's own members; it never trades a
-// rival's member with the shop or with another rival's. Panel is the only caller that names a card to leave out
-// (itself). Promote and Demote keep reaching any cult (Cory, Nov 1 12:45pm), a question for him with their trade wording.
-const tradeOk = (p, excludeUid, a, b) => excludeUid == null || a.owner === p || b.owner === p;
 function swapPairs(ctx, p, mode, excludeUid = null) {
   const { first, second } = swapSides(ctx, p, mode);
   const out = [];
-  for (const a of first) for (const b of second) if (pairOk(mode, excludeUid, a, b) && tradeOk(p, excludeUid, a, b)) out.push([a.c, b.c]);
+  for (const a of first) for (const b of second) if (pairOk(mode, excludeUid, a, b)) out.push([a.c, b.c]);
   return out;
 }
 /** Is (a, b) one of swapPairs' pairs, as it stands now? */
 function swapAllowed(ctx, p, mode, excludeUid, ua, ub) {
   const { first, second } = swapSides(ctx, p, mode);
   const a = first.find(e => e.uid === ua), b = second.find(e => e.uid === ub);
-  return !!(a && b && pairOk(mode, excludeUid, a, b) && tradeOk(p, excludeUid, a, b));
+  return !!(a && b && pairOk(mode, excludeUid, a, b));
 }
 function swap(ctx, p, mode, prompt, excludeUid = null) {
   const pairs = swapPairs(ctx, p, mode, excludeUid);
