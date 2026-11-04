@@ -16,7 +16,7 @@ import { extraMinion, spareSpace } from './purple.js';
 import { startSteal } from './thieves.js';
 import { toBottom, scavenge } from './market.js';
 import { REPLACE1, add1, old1, handlers1 } from './replace1.js';
-import { add6, old6, handlers6 } from './replace6.js';
+import { add6, old6 } from './replace6.js';
 import { startLaunder, launderPick, launderAmount } from './launder.js';
 
 // Prices: member-value sim (scripts/v4-member-value.mjs, 4 normal bots, Release off, handed over at round II),
@@ -238,7 +238,7 @@ const members = [
     onRecruited(ctx, owner) { startSteal(ctx, owner, 'Con Men', 5, { fromAction: false }); },
   }),
   // Cory, 2026-10-28: HR (Archivist), 9, worth 3 (so it counts as 3 members)
-  m('hr', 'HR', null, 0, 9, /* price 10 and +2 per color (Cory, Nov 1: "we can try +2. then price it at 10 to start") */ 'Game End: +2 followers per color you have 3 members of.', { f: 4, n: 4, ...old6,
+  m('hr', 'HR', null, 0, 9, /* price 10 and +2 per color (Cory, Nov 1: "we can try +2. then price it at 10 to start") */ 'Game End: +2 followers per color you have 3 members of.', { f: 4, n: 4, retired: true, // Sore Loser takes its place (Claude, under Cory's "use your judgement", 2026-11-04)
     // guests count as a color here, they just have no resource (Cory, 2026-10-30: "should they count for the purposes of HR? they should")
     onGameEnd: (ctx, owner) => 2 * [...ctx.state.quadrants, 'guest'].filter(q => ctx.countMembersOfColor(owner, q) >= 3).length,
   }),
@@ -254,10 +254,10 @@ const members = [
       })), 'benders.rewind');
     },
   }),
-  // REPLACE6 bot test (Nov 3, replacement batch 6): HR's place. 5 any as a player sees it. Read right after the contests
+  // Replacement batch 6 (Nov 3), live since Nov 4 (Claude, under Cory's "use your judgement"): HR's place. 5 any as a player sees it. Read right after the contests
   // are scored (core's afterContests): a shared contest counts as a win; rivals tied for the most wins (at least 1):
   // the owner chooses. Loose followers only, through the shared steal (Bodyguards blocks it), as Raiders takes.
-  ...add6(m('sorelosers', 'Sore Loser', null, 0, 4, 'Round End: if you win no contest, steal 3 followers from the rival who wins the most.', {
+  m('sorelosers', 'Sore Loser', null, 0, 4, 'Round End: if you win no contest, steal 3 followers from the rival who wins the most.', { round: 3, // a round III member as HR was (bot-tested in round II; Nov 4)
     afterContests(ctx, owner, card, table) {
       const wins = o => table.filter(c => c.winners.includes(o.id)).length;
       if (wins(owner)) return;
@@ -270,7 +270,7 @@ const members = [
         id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers)`, kind: 'player', value: o.id, hint: ctx.followers(o),
       })), 'benders.sore');
     },
-  })),
+  }),
   // REPLACE6 bot test: Alchemists' place. 5 any as a player sees it. The stall is a list beside this card
   // (state.stalls[uid]); core's recruit step offers it to rivals and pays them the cost (stallCards in core.js).
   // Unsold members stay beside the card; a card that leaves its owner keeps its stall unsold (Claude's reading).
@@ -355,9 +355,7 @@ export const handlers = {
     s.spoiled.list.push({ qid: q, by: p.id });
     ctx.log(`${p.name}'s Spoilsport: nobody wins the ${ctx.quadrant(q).name} contest this round.`);
   },
-  ...handlers6({
-    sore(ctx, p, id) { soreSteal(ctx, p, ctx.player(id)); },
-  }),
+  sore(ctx, p, id) { soreSteal(ctx, p, ctx.player(id)); },
   ...handlers1({
     grudge(ctx, p, pid, data) {
       const card = ctx.card(data.uid);
@@ -368,7 +366,7 @@ export const handlers = {
   }),
 };
 
-/** Sore Loser (REPLACE6): 3 loose followers from t. */
+/** Sore Loser (live since Nov 4): 3 loose followers from t. */
 function soreSteal(ctx, owner, t) {
   const got = ctx.steal(owner, t, { followers: 3 });
   if (got) ctx.log(`${owner.name}'s Sore Loser: ${owner.name} won no contest; steals ${got} follower${got === 1 ? '' : 's'} from ${t.name}.`);

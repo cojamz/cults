@@ -5,7 +5,8 @@
 //   trading.inquisitors, trading.oldmoney -> trading.pallbearers, benders.hr -> benders.sorelosers,
 //   benders.freelancer (Alchemists) -> benders.peddlers.
 // Live since Nov 3 (Claude, under Cory's "use your judgement"): Godparent is always on and Hangers-On always retired,
-// with or without the switch (silver.js prints them without add6/old6). Unset, the other six new cards are never defined.
+// with or without the switch (silver.js prints them without add6/old6); Sore Loser likewise since Nov 4, HR retired
+// (benders.js), and core reads afterContests without the switch. Unset, the other five new cards are never defined.
 export const REPLACE6 = globalThis.process?.env?.REPLACE6 === '1';
 /** The new card, in its color's member list only under the switch. */
 export const add6 = card => (REPLACE6 ? [card] : []);
@@ -14,4 +15,4 @@ export const old6 = REPLACE6 ? { retired: true } : {};
 /** Handlers the new cards use, registered only under the switch. */
 export const handlers6 = hs => (REPLACE6 ? hs : {});
 /** The new cards of this batch that are in the live game (always on, their old cards always retired). */
-export const LIVE6 = ['silver.godparents'];
+export const LIVE6 = ['silver.godparents', 'benders.sorelosers'];

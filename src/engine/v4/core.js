@@ -9,7 +9,6 @@ import { CUT, CUT10, FULL_DECK } from './content/cull.js';
 import { pileRules } from './piles.js';
 import { startEffects, stopEffects, abandonEffects, underCause, markEffect } from './effects.js';
 import { REPLACE4 } from './content/replace4.js';
-import { REPLACE5 } from './content/replace5.js';
 import { REPLACE6 } from './content/replace6.js';
 
 export const RING_VALUE = [4, 6, 10];
@@ -1046,8 +1045,8 @@ function endRound(state) {
   log(state, `Round ${roman(state.round)} ends. ${msg.join(' · ') || 'No one scored.'}`);
   // members that answer a rival winning a contest (Racketeers, REPLACE1 bot test), each winner of each contest
   for (const c of table) for (const id of c.winners) eachMember(state, (owner, card, def) => { if (def.onRivalContestWin && owner.id !== id) def.onRivalContestWin(ctx, owner, card, state.players[id], c); }, ['onRivalContestWin']);
-  // members that read the scored contests (Second Fiddles, REPLACE5; Sore Loser, REPLACE6: bot tests), in this round's turn order
-  if (REPLACE5 || REPLACE6) for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.afterContests) def.afterContests(ctx, state.players[id], card, table); }, ['afterContests']);
+  // members that read the scored contests (Sore Loser, live Nov 4; Second Fiddles, REPLACE5 bot test), in this round's turn order
+  for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.afterContests) def.afterContests(ctx, state.players[id], card, table); }, ['afterContests']);
   // Late Shoppers (REPLACE4 bot test: flag roundEndBuy): one recruit each, in this round's order, after the contests
   // and before the row goes to the bottom (in round III, before the Game End cards count)
   if (REPLACE4) {

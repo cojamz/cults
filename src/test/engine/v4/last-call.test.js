@@ -22,9 +22,9 @@ function plain(s, rand) {
 
 describe('Last Call', () => {
   it('round II, 4 players: B on their first turn gets +3 followers and places their other 3 after everyone', () => {
-    // seed 8 since bots play out every choice (Nov 2); seed 17 since Last Call's purple per minion, Recruiter and Tryout +2 (Nov 1); seed 13 since Shift Crew worth 4 and Old Maid −5 (Nov 1); seed 7 since Last Call's +1 per minion (Nov 1); seed 44 since the deck-of-10 price moves (Oct 31); seed 12 since Gather's recruit followers (Oct 31); seed 88 since the Oct 30 prices and bodies; seed 61 since Promote +3 red and Recruiter's color (Oct 30); seed 17 since the Oct 29 balance-run followers (Broker, Clockmaker…); seed 10 since Clockmaker, Courier and Help Yourself changed (Oct 29); seed 7 since bots rate Cover's empty actions (Oct 29; seed 3 before); seed 2 since +1 wild and the round I rework (Oct 28; seed 5 since Oct 27; seed 7 since Gather's +3, Oct 25; seed 11 since the Oct 24 member structure) (seed 6 since Even Swap's +2 red): on other seeds a second bot took Last Call too
-    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 8, quadrants: Q });
-    const rand = seededRandom(8);
+    // seed 3 since Night Watch, Second-Story Man, Hawker and Sore Loser went live (Nov 4); seed 8 since bots play out every choice (Nov 2); seed 17 since Last Call's purple per minion, Recruiter and Tryout +2 (Nov 1); seed 13 since Shift Crew worth 4 and Old Maid −5 (Nov 1); seed 7 since Last Call's +1 per minion (Nov 1); seed 44 since the deck-of-10 price moves (Oct 31); seed 12 since Gather's recruit followers (Oct 31); seed 88 since the Oct 30 prices and bodies; seed 61 since Promote +3 red and Recruiter's color (Oct 30); seed 17 since the Oct 29 balance-run followers (Broker, Clockmaker…); seed 10 since Clockmaker, Courier and Help Yourself changed (Oct 29); seed 7 since bots rate Cover's empty actions (Oct 29; seed 3 before); seed 2 since +1 wild and the round I rework (Oct 28; seed 5 since Oct 27; seed 7 since Gather's +3, Oct 25; seed 11 since the Oct 24 member structure) (seed 6 since Even Swap's +2 red): on other seeds a second bot took Last Call too
+    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 3, quadrants: Q });
+    const rand = seededRandom(3);
     while (!(s.round === 2 && s.pending?.kind === 'place')) s = applyMove(s, plain(s, rand));
     const base = s.order.slice(0, 4), [A, B] = base;
     const placed = [];

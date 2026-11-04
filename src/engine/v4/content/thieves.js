@@ -280,12 +280,12 @@ const thieves = {
   ],
 
   handlers: {
+    secondStory(ctx, p, id) {
+      const o = ctx.player(id);
+      if (!o || !stealable(ctx, p, o)) return;
+      startSteal(ctx, p, 'Second-Story Man', 2 + stickyMore(ctx, p), { fromAction: false, only: [o.id] });
+    },
     ...handlers5({
-      secondStory(ctx, p, id) {
-        const o = ctx.player(id);
-        if (!o || !stealable(ctx, p, o)) return;
-        startSteal(ctx, p, 'Second-Story Man', 2 + stickyMore(ctx, p), { fromAction: false, only: [o.id] });
-      },
       vulture(ctx, p, uid, data) {
         if (uid == null) { ctx.log(`${p.name}'s Vultures: lets it go.`); return; }
         const name = ctx.card(uid).def.name;
@@ -397,12 +397,12 @@ const thieves = {
       },
     }),
     // every steal, a member's too (Cory, 2026-10-22 playtest: "it should proc on member recruits (like grifter)")
-    m('sticky', 'Sticky Fingers', 2, 1, 'Your steals take 1 more resource.', { stealMore: 1, ...old5 }),
-    // REPLACE5 bot test (Nov 3, replacement batch 5): Sticky Fingers' place. 4 magenta + 3 any as a player sees it. Asked
+    m('sticky', 'Sticky Fingers', 2, 1, 'Your steals take 1 more resource.', { stealMore: 1, retired: true }), // Second-Story Man takes its place (Claude, under Cory's "use your judgement", 2026-11-04)
+    // Replacement batch 5 (Nov 3), live since Nov 4 (Claude, under Cory's "use your judgement"): Sticky Fingers' place. 4 magenta + 3 any as a player sees it. Asked
     // after the round's last placement and before anything is scored (core's allPlaced step, in this round's turn
     // order): one rival, then which 2 of theirs, through the shared steal (Bodyguards, Lie Low and Hush Money apply;
     // Desperado adds). Stolen resources keep their color.
-    ...add5(m('secondstory', 'Second-Story Man', 3, 3, 'Round End: before contests are scored, steal 2 resources from one rival.', {
+    m('secondstory', 'Second-Story Man', 3, 3, 'Round End: before contests are scored, steal 2 resources from one rival.', { round: 1, // a round I member as Sticky Fingers was (bot-tested in a later round; Nov 4)
       // BOTSEE: each round end still ahead, 2 resources taken from a rival, plus a quarter chance it swings a contest
       ...see(i => (i.rivals.some(o => Object.values(o.res).some(v => v > 0)) ? endsAhead(i).reduce((a, r) => a + 2 * resAt(r) * (1 + SEE_SPITE) + 0.25 * SEE_RING[r - 1], 0) : 0)),
       onAllPlaced(ctx, owner) {
@@ -413,7 +413,7 @@ const thieves = {
           id: `player:${o.id}`, label: `${o.name} (${stealable(ctx, owner, o)} resources)`, kind: 'player', value: o.id, hint: stealable(ctx, owner, o) * 0.1,
         })), 'thieves.secondStory');
       },
-    })),
+    }),
     // +2 to every steal, spaces and members, no longer double (Cory, Nov 1, 2:27pm: "Yeah, number one is fine")
     m('desperado', 'Desperado', 2, 2, 'While you have the fewest followers (ties count), your steals take 2 more resources.', { ...old2,
       stealMoreIf: (ctx, owner) => (fewestFollowers(ctx, owner) ? 2 : 0),

@@ -13,7 +13,6 @@
 //   so they never squeeze anyone out of the last space (round I fills every space).
 // - onExtraTurn / onRivalExtraTurn are purple-only member hooks, fired by the helpers below.
 import { defById, spacesOf } from './index.js';
-import { REPLACE1, add1, old1 } from './replace1.js';
 import { add3, old3, handlers3 } from './replace3.js';
 import { add5, old5 } from './replace5.js';
 
@@ -207,10 +206,10 @@ function toToken(ctx, p, n, why) {
   nightWatch(ctx, p, put);
   return put;
 }
-/** Night Watch (REPLACE1 bot test, Nov 3): p just took the Goes Last token with n minions on it; each rival's Night
+/** Night Watch (live since Nov 4): p just took the Goes Last token with n minions on it; each rival's Night
  *  Watch pays +1 follower per minion. */
 function nightWatch(ctx, p, n) {
-  if (!REPLACE1 || !(n > 0)) return;
+  if (!(n > 0)) return;
   for (const o of ctx.rivals(p)) for (const c of ctx.membersOf(o)) if (c.def.watchToken) ctx.asMember(o, c.def.name, () => {
     o.bonus += n;
     ctx.log(`${o.name}'s Night Watch: +${n} follower${n === 1 ? '' : 's'} (${p.name} took the Goes Last token with ${n} minion${n === 1 ? '' : 's'} on it).`);
@@ -516,10 +515,10 @@ export default {
     // Cory, 2026-10-29: "clock maker doesnt feel good" (was +1 purple per 2 purple you have, on recruit and at round start).
     // Price 5 (was 4): Claude, under Cory's go-with-your-gut ("will likely need to rebalance cost"): first pick of two spaces
     // every round beats the old trickle. Core builds the order (firstTwoInRow).
-    m('clockmaker', 'Clockmakers', 2, 2, 'Round Start: take your first two turns in a row.', { f: 2, firstTwoInRow: true, ...old1 }), // (Cory, Oct 29, balance run: +1 follower)
-    // REPLACE1 bot test (Nov 3, replacement batch 1): Clockmakers' place. 3 purple + 2 any as a player sees it. Last Call
+    m('clockmaker', 'Clockmakers', 2, 2, 'Round Start: take your first two turns in a row.', { f: 2, firstTwoInRow: true, retired: true }), // (Cory, Oct 29, balance run: +1 follower); Night Watch takes its place (Claude, under Cory's "use your judgement", 2026-11-04)
+    // Replacement batch 1 (Nov 3), live since Nov 4 (Claude, under Cory's "use your judgement"): Clockmakers' place. 3 purple + 2 any as a player sees it. Last Call
     // and Sleep In pay for the minions they put on the token, Night Owls for its 1.
-    ...add1(m('nightwatch', 'Night Watch', 2, 2, 'Whenever a rival takes the Goes Last token, +1 follower per minion on it.', { f: 2, watchToken: true })),
+    m('nightwatch', 'Night Watch', 2, 2, 'Whenever a rival takes the Goes Last token, +1 follower per minion on it.', { f: 2, watchToken: true }),
     // balance pass 2 (pooled bench, both bots agree; design/eval/balance-pass-2.md): 8 → 12
     m('lamplighter', 'Lamplighter', 6, 2,'On Recruit: +1 purple per minion you get this round (3 / 4 / 5). Round Start: +1 purple per minion you get this round (3 / 4 / 5).', { now: true,
       // Cory, 2026-10-15: every minion you get counts (Extra Hand's too)

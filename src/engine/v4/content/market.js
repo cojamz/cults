@@ -363,20 +363,20 @@ const market = {
     ...handlers4({
       // Outbidders: core asks (askOutbid) and settles it either way
       outbid(ctx, p, value, data) { if (value === 'outbid') ctx.outbidTake(p, data); else ctx.outbidLet(data); },
-      hawk(ctx, p, uid) {
-        if (!ctx.state.shop.includes(uid)) return;
-        const n = ctx.state.players.length;
-        ctx.log(`${p.name}'s Hawker: offers ${ctx.card(uid).def.name}.`);
-        hawkAsk(ctx, p, uid, Array.from({ length: n - 1 }, (_, k) => (p.id + 1 + k) % n));
-      },
-      hawkAnswer(ctx, o, value, data) {
-        const owner = ctx.player(data.owner), plan = value === 'buy' && ctx.state.shop.includes(data.uid) ? hawkPlan(ctx, o, data.uid) : null;
-        if (!plan) { hawkAsk(ctx, owner, data.uid, data.left); return; }
-        for (const [c, k] of Object.entries(plan.extra)) { o.res[c] -= k; owner.res[c] = (owner.res[c] || 0) + k; }
-        ctx.log(`${owner.name}'s Hawker: ${o.name} recruits ${ctx.card(data.uid).def.name} and pays ${payLabel(plan.extra)} to ${owner.name}.`);
-        ctx.recruit(o, data.uid, { free: false, spend: plan.spend });
-      },
     }),
+    hawk(ctx, p, uid) {
+      if (!ctx.state.shop.includes(uid)) return;
+      const n = ctx.state.players.length;
+      ctx.log(`${p.name}'s Hawker: offers ${ctx.card(uid).def.name}.`);
+      hawkAsk(ctx, p, uid, Array.from({ length: n - 1 }, (_, k) => (p.id + 1 + k) % n));
+    },
+    hawkAnswer(ctx, o, value, data) {
+      const owner = ctx.player(data.owner), plan = value === 'buy' && ctx.state.shop.includes(data.uid) ? hawkPlan(ctx, o, data.uid) : null;
+      if (!plan) { hawkAsk(ctx, owner, data.uid, data.left); return; }
+      for (const [c, k] of Object.entries(plan.extra)) { o.res[c] -= k; owner.res[c] = (owner.res[c] || 0) + k; }
+      ctx.log(`${owner.name}'s Hawker: ${o.name} recruits ${ctx.card(data.uid).def.name} and pays ${payLabel(plan.extra)} to ${owner.name}.`);
+      ctx.recruit(o, data.uid, { free: false, spend: plan.spend });
+    },
     pay(ctx, p, v, data) {
       if (!v) { ctx.log(`${data.why}: ${p.name} recruits nothing.`); return; }
       payAndRecruit(ctx, p, v, data);
@@ -413,15 +413,15 @@ const market = {
       onAnyRecruit(ctx, owner, card, by, rec) { if (by !== owner && isBlue(ctx.defOf(rec))) ctx.gain(owner, B, 2); },
     }),
     // your own Dabblers counts as blue and Drifters once it picks Blue (Cory, Nov 1: they always work in the owner's favor)
-    m('connoisseur', 'Connoisseurs', 1, 2, 'Whenever you recruit a blue member, +1 blue.', { f: 2, ...old4,
+    m('connoisseur', 'Connoisseurs', 1, 2, 'Whenever you recruit a blue member, +1 blue.', { f: 2, retired: true, // Hawker takes its place (Claude, under Cory's "use your judgement", 2026-11-04)
       onAnyRecruit(ctx, owner, card, by, rec) { if (by === owner && rec.uid !== card.uid && ctx.defOf(rec).key !== 'drifters' && (isBlue(ctx.defOf(rec)) || ctx.defOf(rec).everyColor)) ctx.gain(owner, B, 1); },
       onColorChosen(ctx, owner, card, member) { if (member.asColor === Q) ctx.gain(owner, B, 1); },
     }),
-    // REPLACE4 bot test (Nov 3, replacement batch 4): Connoisseurs' place. 5 blue + 3 any as a player sees it. Each rival in
+    // Replacement batch 4 (Nov 3), live since Nov 4 (Claude, under Cory's "use your judgement"): Connoisseurs' place. 5 blue + 3 any as a player sees it. Each rival in
     // seat order from the owner's left is offered it if they can pay: its cost goes to the bank as any recruit's, and 2
     // more (from the piles they hold most of) to the owner (the draft's reading of "paying its cost plus 2 to you"). The
     // rival's recruit is theirs (its On Recruit fires) and doesn't use their turn's recruit.
-    ...add4(m('hawkers', 'Hawker', 4, 3, 'On Use, once per round: choose a shop member. Starting on your left, each rival may recruit it, paying its cost plus 2 to you. If none does, you recruit it for free.', {
+    m('hawkers', 'Hawker', 4, 3, 'On Use, once per round: choose a shop member. Starting on your left, each rival may recruit it, paying its cost plus 2 to you. If none does, you recruit it for free.', { round: 1, // a round I member as Connoisseurs was (bot-tested in a later round; Nov 4)
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
@@ -432,7 +432,7 @@ const market = {
         })), `${Q}.hawk`);
       },
       botActivate: ctx => ctx.shopCards().length > 0,
-    })),
+    }),
     m('reseller', 'Reseller', 4, 2, 'Whenever you recruit, +1 of that member’s color.', {
       onAnyRecruit(ctx, owner, card, by, rec) { if (by === owner && rec.uid !== card.uid) gainColorOf(ctx, owner, ctx.defOf(rec), 'Reseller'); },
     }),
@@ -637,7 +637,7 @@ function completeStep(ctx, p, left) {
   }
 }
 
-// ---------- REPLACE4 bot test (Nov 3, replacement batch 4): Hawker ----------
+// ---------- Hawker (replacement batch 4, live since Nov 4) ----------
 /** What rival o pays for Hawker' uid: { spend } (its price, the usual way, to the bank) and { extra } (2 more, from the
  *  piles o holds most of, to the owner); null when o can't pay both. */
 function hawkPlan(ctx, o, uid) {
