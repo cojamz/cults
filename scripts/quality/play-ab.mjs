@@ -25,7 +25,12 @@ if (args[0] === 'score') {
     const role = pair[label], sc = P.map(k => s.scores?.[k] ?? 0);
     side[role].push(sc); if (!pair.seed.includes('x')) sideM[role].push(sc); if (role === 'new') clearNew.push(sc[0]);
   }
-  const avg = rows => rows.length ? +(P.map((_, i) => median(rows.map(r => r[i]))).reduce((a, b) => a + b, 0) / P.length).toFixed(2) : null;
+  // The gate statistic is the MEAN (director, Nov 4 2:41pm: the 0.3 margin is a bar for the mean gap; the median of
+  // 0-to-2 scores was too coarse and was never the gate). Per-criterion medians are still printed below, for reading.
+  const mean = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const avg = rows => rows.length ? +(P.map((_, i) => mean(rows.map(r => r[i]))).reduce((a, b) => a + b, 0) / P.length).toFixed(2) : null;
+  const medAvg = rows => rows.length ? +(P.map((_, i) => median(rows.map(r => r[i]))).reduce((a, b) => a + b, 0) / P.length).toFixed(2) : null;
+  const nMed = medAvg(side.new); // the oldHardFail route judges the card's own play score on medians (director, 2:41pm)
   const n = avg(side.new), o = avg(side.old), gap = n != null && o != null ? +(n - o).toFixed(2) : null;
   const clear = clearNew.length ? median(clearNew) : null;
   const pref = { new: 0, old: 0, same: 0 };
@@ -42,10 +47,10 @@ if (args[0] === 'score') {
   const matched = key.pairs.filter(p => !p.seed.includes('x')).length, looseN = key.pairs.length - matched;
   const nm = avg(sideM.new), om = avg(sideM.old), gapM = nm != null && om != null ? +(nm - om).toFixed(2) : null;
   const abPass = matched >= 2 && clear > 0 && ((gapM != null && gapM >= 0.3) || (looseN > 0 && gap != null && gap >= 0.5));
-  const pass = hard ? n != null && n >= 1 && clear > 0 : abPass;
+  const pass = hard ? nMed != null && nMed >= 1 && clear > 0 : abPass;
   const looseLine = looseN ? `${matched} matched pair(s), ${looseN} across games; matched only: new ${nm} vs old ${om} (${gapM >= 0 ? '+' : ''}${gapM}). ${matched < 2 ? 'Too few matched pairs to pass: ask the Lab for more seeds.' : 'A pass on all pairs needs +0.5.'}` : null;
   const waits = hard && /rival/i.test(hard) ? "Waits on Cory's ruling on rivals choosing during the owner's turn before it ships." : null;
-  const lines = [`# Blind A/B play: ${key.new.name} against ${key.old.name}`, '', `${judges.length} judges, ${key.pairs.length} seeds. New card ${n} vs old ${o} (average of the six medians, 0 to 2): ${gap >= 0 ? '+' : ''}${gap}. Clear outcome for the new card ${clear}.`, '', hard ? `**${pass ? 'PASS' : 'no'}**: the old card hard-fails (${hard}), so the new card needs 1.0 or more on its own and no 0 on Clear outcome; the gap is for information.${waits ? ' ' + waits : ''}` : `**${pass ? 'PASS' : 'no'}**: ship needs +0.3 or more and no 0 on Clear outcome.`, '', ...(looseLine ? [looseLine, ''] : []), `Judges preferred the new card ${pref.new} times, the old ${pref.old}, same ${pref.same} (a tiebreak note; the gate is the gap).`, '',
+  const lines = [`# Blind A/B play: ${key.new.name} against ${key.old.name}`, '', `${judges.length} judges, ${key.pairs.length} seeds. New card ${n} vs old ${o} (mean of the six scores over every sheet, 0 to 2): ${gap >= 0 ? '+' : ''}${gap}. Clear outcome for the new card ${clear}.`, '', hard ? `**${pass ? 'PASS' : 'no'}**: the old card hard-fails (${hard}), so the new card needs 1.0 or more on its own and no 0 on Clear outcome; the gap is for information.${waits ? ' ' + waits : ''}` : `**${pass ? 'PASS' : 'no'}**: ship needs +0.3 or more and no 0 on Clear outcome.`, '', ...(looseLine ? [looseLine, ''] : []), `Judges preferred the new card ${pref.new} times, the old ${pref.old}, same ${pref.same} (a tiebreak note; the gate is the gap).`, '',
     ...P.map((k, i) => `- ${k}: new ${median(side.new.map(r => r[i]))}, old ${median(side.old.map(r => r[i]))}`)];
   writeFileSync(join(dir, 'result.md'), lines.join('\n') + '\n');
   writeFileSync(join(dir, 'result.json'), JSON.stringify({ new: key.new.name, old: key.old.name, newAvg: n, oldAvg: o, gap, clearNew: clear, matched, loose: looseN, gapMatched: gapM, prefer: pref, oldHardFail: hard, waitsOnCory: !!waits, pass }, null, 1));
