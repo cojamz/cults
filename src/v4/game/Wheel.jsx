@@ -1371,7 +1371,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
           <g className="wheel">{paper}</g>
           {/* the rims' words the other way up (never shown: their pictures are drawn ahead), and the rims' words as
               pictures, laid over the hidden live words (rimPictures.js) */}
-          <g className="rim-alt" style={{ display: 'none' }} aria-hidden="true">{rimMemo.current.alt}</g>
+          <g className="rim-alt" style={{ visibility: 'hidden' }} aria-hidden="true">{rimMemo.current.alt}</g>
           <g className="rim-pics" ref={picLayer} style={{ pointerEvents: 'none' }} aria-hidden="true" />
           <circle cx={CX} cy={CY} r="199.5" fill="none" className="edge" />
           <circle cx={CX} cy={CY} r={hubR} className="hub" />

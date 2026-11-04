@@ -1,26 +1,18 @@
 // The rim's words as pictures (wheel pass, Nov 4). Firefox draws text letter by letter for each angle it sits at: the
 // rims' words are on curved paths inside the turning board, so a board stopping at a facing it hadn't shown yet re-drew
 // every rim letter, a 0.2-0.4 s stall at round II in Firefox (gone with the words hidden; Cor: "spinning the wheel lags
-// the game hard"). Here each rim's words, as React laid them out, are drawn once onto a canvas at the screen's own
-// resolution, in idle time, for both ways up; the board shows that picture over the hidden <text>, and a turn only moves
-// a picture. The <text> stays in place (its words, its box for the hover card, its tests); it shows again whenever its
-// picture isn't ready (a new rule, a new size), so nothing is ever missing, only drawn the old way for a moment.
-import as500 from '../fonts/as-500.woff2?url';
-import as700 from '../fonts/as-700.woff2?url';
-import as800 from '../fonts/as-800.woff2?url';
-import pixel from '../fonts/handjet.woff2?url';
-
+// the game hard"). Here each rim's words are painted once onto a canvas at the screen's own resolution, in idle time,
+// for both ways up, letter by letter from where the browser itself laid each letter out on its arc (so spacing, kerning
+// and the arc match the live text), in the page's own loaded fonts; the board shows that picture over the hidden <text>,
+// and a turn only moves a picture. (The first version drew an SVG copy with the fonts embedded as an image: each one
+// cost ~0.2 s of main thread to rasterize at 4x CPU and doubled a game's busy time; this costs a few ms.)
+// The <text> stays in place (its words, its box for the hover card, its tests); it shows again whenever its picture
+// isn't ready or can't be painted (a new rule, a new size, letters the walk below can't account for), so nothing is
+// ever missing, only drawn the old way for a moment.
 const SVGNS = 'http://www.w3.org/2000/svg';
-const FONTS = [['Alegreya Sans', as500, '500'], ['Alegreya Sans', as700, '700'], ['Alegreya Sans', as800, '800'], ['Cults Pixel', pixel, '100 900']];
-// the styles a rim's words take from the page's CSS, written onto the copy drawn as a picture (an image sees no page CSS)
-const PROPS = ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-opacity', 'paint-order', 'font-family', 'font-weight', 'font-style', 'font-variation-settings', 'font-feature-settings', 'dominant-baseline', 'text-transform', 'opacity', 'letter-spacing'];
 
 export const picturesOn = () => typeof document !== 'undefined' && typeof requestIdleCallback === 'function' && typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function'
   && !/jsdom/i.test((typeof navigator !== 'undefined' && navigator.userAgent) || '') && !/[?&]rimpics=0\b/.test(location.search);
-
-let fontCss = null;
-const toData = url => fetch(url).then(r => r.blob()).then(b => new Promise((ok, no) => { const f = new FileReader(); f.onload = () => ok(f.result); f.onerror = no; f.readAsDataURL(b); }));
-const fontsCss = () => fontCss || (fontCss = Promise.all(FONTS.map(([fam, url, w]) => toData(url).then(d => `@font-face{font-family:'${fam}';src:url(${d}) format('woff2');font-weight:${w}}`))).then(xs => xs.join('')));
 
 // key → { url, box } once drawn, or a promise while drawing
 const cache = new Map();
@@ -30,22 +22,6 @@ const remember = (key, v) => {
   while (cache.size > MAX) { const [k, old] = cache.entries().next().value; cache.delete(k); if (old && old.url) URL.revokeObjectURL(old.url); }
 };
 
-/** The words of one rim <text> (with the arc it runs on), styled as the page shows them, as an SVG document's source. */
-function source(textEl, arcEl, box, fonts) {
-  const copy = textEl.cloneNode(true);
-  const from = [textEl, ...textEl.querySelectorAll('*')], to = [copy, ...copy.querySelectorAll('*')];
-  from.forEach((el, i) => {
-    const cs = getComputedStyle(el);
-    const own = PROPS.map(p => `${p}:${cs.getPropertyValue(p)}`).join(';');
-    const ls = el.style && el.style.letterSpacing;
-    to[i].setAttribute('style', `${own}${ls !== '' && ls != null ? `;letter-spacing:${ls}` : ''}`);
-    for (const a of [...to[i].attributes]) if (a.name.startsWith('data-')) to[i].removeAttribute(a.name);
-    if (to[i].localName === 'textPath') { to[i].setAttribute('href', '#a'); to[i].removeAttribute('xlink:href'); }
-  });
-  const [x, y, w, h] = box;
-  return `<svg xmlns="${SVGNS}" viewBox="${x} ${y} ${w} ${h}"><style>${fonts}</style><path id="a" d="${arcEl.getAttribute('d')}" fill="none"/>${new XMLSerializer().serializeToString(copy)}</svg>`;
-}
-
 /** The text's own identity: what it says, how it's set and where it runs, whichever copy (live or other-way-up) it is. */
 export function pictureKey(textEl, arcEl, px) {
   // (no style read here: it runs in the commit; the classes that change the look are in the markup)
@@ -53,24 +29,76 @@ export function pictureKey(textEl, arcEl, px) {
   return `${px.toFixed(3)}|${arcEl.getAttribute('d')}|${t}`;
 }
 
-async function draw(textEl, arcEl, box, px) {
-  const fonts = await fontsCss();
-  const svg = source(textEl, arcEl, box, fonts);
-  const W = Math.max(1, Math.ceil(box[2] * px)), H = Math.max(1, Math.ceil(box[3] * px));
-  const img = new Image();
-  img.width = W; img.height = H;
-  img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-  await img.decode();
-  // fonts inside an SVG image can arrive a beat after it decodes: draw once they're in (a second decode is cheap)
-  await new Promise(r => setTimeout(r, 30));
+// the text's letters in the order the browser counts them (its addressable characters), each with the element whose
+// style it wears; spaces collapse the CSS way across the whole <text>. Null when the count disagrees with the browser's.
+function letters(textEl) {
+  const out = [];
+  let space = true;
+  const walk = node => {
+    for (const c of node.childNodes) {
+      if (c.nodeType === 3) {
+        for (const ch of c.data.replace(/[\n\t\r]/g, ' ')) {
+          if (ch === ' ') { if (space) continue; space = true; } else space = false;
+          for (let i = 0; i < ch.length; i++) out.push({ ch: i ? '' : ch, el: node });
+        }
+      } else if (c.nodeType === 1) walk(c);
+    }
+  };
+  walk(textEl);
+  while (out.length && out[out.length - 1].ch === ' ') out.pop();
+  let n;
+  try { n = textEl.getNumberOfChars(); } catch { return null; }
+  return n === out.length ? out : null;
+}
+
+const BASE = { middle: 'middle', central: 'middle', hanging: 'hanging', 'text-before-edge': 'top', 'text-top': 'top', 'text-after-edge': 'bottom', 'text-bottom': 'bottom', ideographic: 'ideographic' };
+const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
+
+function draw(textEl, box, px) {
+  const ls = letters(textEl);
+  if (!ls) throw new Error('letters');
+  const [x0, y0, w, h] = box;
+  const W = Math.max(1, Math.ceil(w * px)), H = Math.max(1, Math.ceil(h * px));
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const g = cv.getContext('2d');
   if (!g) throw new Error('no canvas');
-  g.drawImage(img, 0, 0, W, H);
-  const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
-  if (!blob) throw new Error('no picture');
-  return URL.createObjectURL(blob);
+  g.setTransform(W / w, 0, 0, H / h, -x0 * W / w, -y0 * H / h);
+  const looks = new Map();
+  const look = el => {
+    let l = looks.get(el);
+    if (l) return l;
+    const cs = getComputedStyle(el), up = cs.textTransform;
+    l = {
+      font: `${cs.fontStyle} ${cs.fontWeight} ${num(cs.fontSize, 12)}px ${cs.fontFamily}`,
+      fill: cs.fill && cs.fill !== 'none' ? cs.fill : null, fillA: num(cs.fillOpacity, 1),
+      stroke: cs.stroke && cs.stroke !== 'none' ? cs.stroke : null, strokeA: num(cs.strokeOpacity, 1), sw: num(cs.strokeWidth, 1),
+      strokeFirst: /^stroke/.test(cs.paintOrder || ''),
+      base: BASE[cs.dominantBaseline] || 'alphabetic',
+      tf: up === 'uppercase' ? c => c.toUpperCase() : up === 'lowercase' ? c => c.toLowerCase() : c => c,
+    };
+    looks.set(el, l);
+    return l;
+  };
+  const alpha = num(getComputedStyle(textEl).opacity, 1);
+  for (let i = 0; i < ls.length; i++) {
+    const { ch, el } = ls[i];
+    if (!ch || ch === ' ') continue;
+    let p, r;
+    try { p = textEl.getStartPositionOfChar(i); r = textEl.getRotationOfChar(i); } catch { continue; }
+    const l = look(el);
+    g.save();
+    g.translate(p.x, p.y); g.rotate(r * Math.PI / 180);
+    g.font = l.font; g.textBaseline = l.base; g.textAlign = 'left';
+    const c = l.tf(ch);
+    const paint = which => {
+      if (which === 'stroke' && l.stroke && l.sw > 0) { g.globalAlpha = alpha * l.strokeA; g.strokeStyle = l.stroke; g.lineWidth = l.sw; g.lineJoin = 'round'; g.strokeText(c, 0, 0); }
+      if (which === 'fill' && l.fill) { g.globalAlpha = alpha * l.fillA; g.fillStyle = l.fill; g.fillText(c, 0, 0); }
+    };
+    if (l.strokeFirst) { paint('stroke'); paint('fill'); } else { paint('fill'); paint('stroke'); }
+    g.restore();
+  }
+  return new Promise((ok, no) => cv.toBlob(b => (b ? ok(URL.createObjectURL(b)) : no(new Error('no picture'))), 'image/png'));
 }
 
 /** Start drawing a rim text's picture (in idle time) unless it's drawn or on its way; onReady when it lands. */
@@ -81,7 +109,7 @@ export function want(textEl, arcEl, box, px, onReady) {
   // drawn in idle time, and never while the board is turning (a picture costs a frame of its own; it waits for a still board)
   const idle = () => new Promise(ok => { const go = () => requestIdleCallback(d => (textEl.closest('.stage.turning') ? setTimeout(go, 400) : ok(d)), { timeout: 3000 }); go(); });
   const p = idle()
-    .then(() => draw(textEl, arcEl, box, px))
+    .then(() => draw(textEl, box, px))
     .then(url => { remember(key, { url, box }); onReady(); }, () => { cache.set(key, { url: null, box, failed: true }); });
   remember(key, { url: null, box, pending: p });
   return null;
