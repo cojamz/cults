@@ -153,13 +153,18 @@ if (cmd === 'bundle') {
   writeFileSync(baseFile, JSON.stringify(base, null, 1));
   let decoyRef = null, decoyGap = null;
   if (meta.decoy) { const g = judgeMedians(join(GATE, meta.decoy.gate)); decoyRef = meta.decoy.ref ?? anc[meta.decoy.real].med; decoyGap = g[meta.decoy.name].med - decoyRef; }
+  // contrast check (b10 vs b11: Timekeeper 9 against four strong candidates, 12 against two): the old card is also
+  // measured by its ranking-round median, carried onto this run's scale by the anchors' gap to their own ranking medians
+  const offs = Object.entries(now).map(([k, v]) => { const r = rankingRef(k); return r == null ? null : v - r; }).filter(x => x != null);
+  const rankOffset = offs.length >= 5 ? offs.reduce((a, b) => a + b, 0) / offs.length : null;
   const void_ = (shift != null && Math.abs(shift) > 1.5) || (decoyGap != null && decoyGap >= 2);
   const lines = [`# Batch ${arg}: paper gate`, '', `Anchors (C1 to C10, median): ${Object.entries(now).map(([k, v]) => `${k} ${v}`).join(', ')}; ${baseNote}.`,
     meta.decoy ? `Decoy: live ${meta.decoy.real} slipped into ${meta.decoy.gate} as "${meta.decoy.name}": ${decoyRef + decoyGap} disguised vs ${decoyRef} as itself${meta.decoy.ref != null ? ' in the latest ranking round' : ''} (gap ${decoyGap}).` : 'No decoy.',
     void_ ? '**VOID: the run moved or rewarded newness; fix the judge prompt and rerun before trusting any pass.**' : 'Run is steady.', ''];
+  if (rankOffset != null) lines.splice(lines.length - 1, 0, `Ranking scale: anchors run ${rankOffset >= 0 ? '+' : ''}${rankOffset.toFixed(2)} against their ranking-round medians (C1 to C10); each old member's ranking median, moved by that, is a second card it must beat by ${BEAT}.`);
   for (const g of meta.folders.filter(f => !f.startsWith('anchors-'))) {
     process.env.GATE_VOID = void_ ? '1' : '';
-    const r = scoreGate(g, void_, false, shift || 0);
+    const r = scoreGate(g, void_, false, shift || 0, rankOffset);
     lines.push(`- ${g} (old ${r.old.name} ${r.old.median}): ${r.candidates.map(c => `${c.name} ${c.median}${c.pass ? ' PASS' : ''}`).join(', ')}`);
   }
   writeFileSync(join(GATE, `batch-${arg}.md`), lines.join('\n') + '\n');
@@ -178,7 +183,7 @@ if (cmd === 'bundle') {
   claim();
 } else { console.error('usage: paper-gate.mjs bundle <spec.json> | batch <id> <spec.json...> | batchscore <id> | score <id> | claim <id> <name>'); process.exit(2); }
 
-function scoreGate(arg, batchVoid, print, shift = 0) {
+function scoreGate(arg, batchVoid, print, shift = 0, rankOffset = null) {
   const dir = join(GATE, arg), key = JSON.parse(readFileSync(join(dir, 'key.json'), 'utf8'));
   const files = readdirSync(dir).filter(f => /^judge-.*\.json$/.test(f)).sort();
   const js = files.map(f => JSON.parse(readFileSync(join(dir, f), 'utf8')));
@@ -208,8 +213,12 @@ function scoreGate(arg, batchVoid, print, shift = 0) {
     const w = words(o.text), budget = Math.max(oldWords + 4, 20), textOk = (w <= budget && sentences(o.text) <= Math.max(1, oldSent)) || o.clear2;
     const shapes = shapesOf(o.text), clash = shapes.filter(s => ledger[s] && ledger[s] !== `${key.spec.id}:${o.name}`);
     const beat = o.med - old.med;
-    const pass = !voided && o.over && beat >= BEAT && textOk; // a shape clash is reported, and blocks only at claim // BEAT: 3 since Cory's v2 notes
-    return { name: o.name, label: o.label, text: o.text, median: o.med, totals: o.totals, q: o.q, overBar: o.over, beatsOldBy: beat, words: w, wordBudget: budget, textOk, shapes, shapeClash: clash, hardFails: o.fails, pass,
+    // second margin: the candidate's C1-C10 median against the old card's ranking-round median on this run's scale
+    const med10 = median(o.entries.map(e => e.scores.slice(0, 10).reduce((a, b) => a + b, 0)));
+    const ranked = key.kind === 'space' || rankOffset == null ? null : rankingRef(old.name);
+    const beatRanked = ranked == null ? null : +(med10 - (ranked + rankOffset)).toFixed(1);
+    const pass = !voided && o.over && beat >= BEAT && textOk && (beatRanked == null || process.env.GATE_RANKED === '0' || beatRanked >= BEAT); // a shape clash is reported, and blocks only at claim // BEAT: 3 since Cory's v2 notes
+    return { name: o.name, label: o.label, text: o.text, median: o.med, totals: o.totals, q: o.q, overBar: o.over, beatsOldBy: beat, words: w, wordBudget: budget, textOk, shapes, shapeClash: clash, hardFails: o.fails, pass, beatRanked,
       why: o.entries.map(e => e.why) };
   });
   const out = { questions: K, id: key.spec.id, lane: key.spec.lane, batch: key.spec.batch, old: { name: old.name, median: old.med, totals: old.totals, q: old.q }, decoy: d1 ? { name: d1.name, medians: [d1.med, d2.med], gap: decoyGap, judgeGaps } : null, voided, judges: files.length, candidates: res };
@@ -221,7 +230,7 @@ function scoreGate(arg, batchVoid, print, shift = 0) {
     d1 ? `Decoy **${d1.name}** scored ${d1.med} and ${d2.med} as two labels (gap ${decoyGap}; per judge ${judgeGaps.join('/')}). ${voided ? 'VOID: the gate is inflated or noisy; fix the prompt before trusting this.' : 'Gate is steady.'}` : 'No decoy.', '',
     ...res.flatMap(c => [`## ${c.pass ? 'PASS' : 'no'}: ${c.name} (median ${c.median}, ${c.totals.join('/')}; ${c.beatsOldBy >= 0 ? '+' : ''}${c.beatsOldBy} on the old card)`,
       `"${c.text}"`, `- ${qline(c.q)}.`,
-      `- Bar: ${c.overBar ? 'over' : 'under'}. Beats old by ${BEAT}: ${c.beatsOldBy >= BEAT ? 'yes' : 'no'}. Words ${c.words} of ${c.wordBudget}: ${c.textOk ? 'ok' : 'over budget'}. Shapes: ${c.shapes.join(', ') || 'none'}${c.shapeClash.length ? ` (already used this batch: ${c.shapeClash.join(', ')})` : ''}.${c.hardFails.length ? ` Hard fail from ${c.hardFails.length}: ${c.hardFails[0]}` : ''}`,
+      `- Bar: ${c.overBar ? 'over' : 'under'}. Beats old by ${BEAT}: ${c.beatsOldBy >= BEAT ? 'yes' : 'no'}${c.beatRanked != null ? ` (and its ranking score: ${c.beatRanked >= 0 ? '+' : ''}${c.beatRanked})` : ''}. Words ${c.words} of ${c.wordBudget}: ${c.textOk ? 'ok' : 'over budget'}. Shapes: ${c.shapes.join(', ') || 'none'}${c.shapeClash.length ? ` (already used this batch: ${c.shapeClash.join(', ')})` : ''}.${c.hardFails.length ? ` Hard fail from ${c.hardFails.length}: ${c.hardFails[0]}` : ''}`,
       ...c.why.map(w => `- Judge: ${w}`), ''])].join('\n');
   writeFileSync(join(dir, 'result.md'), md);
   // shapes are claimed only when a lane picks its card (claim), so scoring order never decides who gets a shape
