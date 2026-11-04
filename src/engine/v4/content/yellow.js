@@ -73,8 +73,10 @@ export default {
     {
       // Cory, Nov 2-3: Trade Seeds "never felt useful"; Leaders' Tax replaces it (his "coordinator figure this shit out":
       // the better of two candidates in bot games, Normal 400 and Hard). Key kept for old saves and records.
-      key: 'transmute', ring: 1, name: "Leaders' Tax", text: '+1 yellow. Choose a color: each rival with more of it than you gives you 1 of it.',
-      estimate: (ctx, p) => 1 + Math.max(0, ...colors(ctx).map(c => touchable(ctx, p).filter(o => (o.res[c] || 0) > (p.res[c] || 0)).length)),
+      // Nov 4 (Claude, under Cory's go-with-your-gut, after his "anything that relies on a rival having more of resources
+      // should be reworked"): it counts rivals' minions on a color's spaces, which the table always shows, not their piles.
+      key: 'transmute', ring: 1, name: "Leaders' Tax", text: 'Choose a color: +1 of it per rival with a minion on its spaces. +1 yellow.',
+      estimate: (ctx, p) => 1 + Math.max(0, ...ctx.state.quadrants.map((q, qi) => rivalsOn(ctx, p, qi))),
       resolve(ctx, p) { leadersTax(ctx, p); },
     },
     {
@@ -111,9 +113,10 @@ export default {
 
   handlers: {
     taxColor(ctx, p, c) {
-      let got = 0;
-      for (const o of touchable(ctx, p)) if ((o.res[c] || 0) > (p.res[c] || 0)) { o.res[c] -= 1; p.res[c] = (p.res[c] || 0) + 1; got++; ctx.log(`${p.name}'s Leaders' Tax: ${o.name} gives 1 ${c}.`); }
-      if (!got) ctx.log(`${p.name}'s Leaders' Tax: nobody holds more ${c}.`);
+      const n = rivalsOn(ctx, p, ctx.state.resources.indexOf(c));
+      if (n) ctx.gain(p, c, n, { fromAction: true });
+      ctx.log(`${p.name}'s Leaders' Tax: +${n} ${c} (${n === 1 ? '1 rival' : `${n} rivals`} on its spaces).`);
+      ctx.gain(p, Y, 1, { fromAction: true });
     },
     ...handlers1({
       barterWith(ctx, p, oid) {
@@ -452,13 +455,18 @@ function barterStep(ctx, p, data) {
   ctx.choose(p, `Barterers: swap with ${o.name} one for one, or stop (${data.done} swapped so far)`, opts, 'yellow.barter', data);
 }
 // Trade Seeds (and Tinker): up to 3 one-for-one swaps of your own, with Done at any time.
-// Leaders' Tax: a protected rival (Bodyguards, lying low) gives nothing, as for a steal or a change
+/** Leaders' Tax: rivals with at least one minion on the qi-th color's spaces (joined spots count). */
+function rivalsOn(ctx, p, qi) {
+  const st = ctx.state, ids = new Set();
+  for (const [key, pid] of Object.entries(st.slots || {})) if (key.startsWith(`${qi}-`)) ids.add(pid);
+  for (const [key, list] of Object.entries(st.squats || {})) if (key.startsWith(`${qi}-`)) for (const pid of list) ids.add(pid);
+  return ctx.rivals(p).filter(o => ids.has(o.id)).length;
+}
 function leadersTax(ctx, p) {
-  ctx.gain(p, Y, 1, { fromAction: true });
-  const rivals = touchable(ctx, p);
-  ctx.choose(p, "Leaders' Tax: which color? Each rival with more of it than you gives you 1.", colors(ctx).map(c => ({
-    id: `color:${c}`, label: c, kind: 'color', value: c, hint: rivals.filter(o => (o.res[c] || 0) > (p.res[c] || 0)).length * 2 - (p.res[c] || 0) * 0.1,
-  })), 'yellow.taxColor');
+  ctx.choose(p, "Leaders' Tax: which color? +1 of it per rival with a minion on its spaces.", ctx.state.quadrants.map((q, qi) => {
+    const c = ctx.state.resources[qi], n = rivalsOn(ctx, p, qi);
+    return { id: `color:${c}`, label: `${c} (+${n})`, kind: 'color', value: c, hint: n * 2 - (p.res[c] || 0) * 0.1 };
+  }), 'yellow.taxColor');
 }
 function transmuteStep(ctx, p, data) {
   const cs = colors(ctx);

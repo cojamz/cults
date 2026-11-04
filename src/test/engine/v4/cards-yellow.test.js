@@ -22,13 +22,16 @@ describe('Yellow actions', () => {
     for (let i = 0; i < 5; i++) s = move(s, 'color:gold');
     expect(R(s).gold).toBe(5);
   });
-  it("Leaders' Tax: +1 yellow, then each rival with more of the chosen color gives you 1 (Cory, Nov 3)", () => {
-    let s = take(sc({ n: 4, res: [{ gold: 1 }, { gold: 3 }, { gold: 1 }, { gold: 5, red: 2 }] }), 'yellow.transmute');
-    expect(R(s).yellow).toBe(1);
+  it("Leaders' Tax: choose a color, +1 of it per rival with a minion on its spaces, then +1 yellow (Nov 4)", () => {
+    let s = sc({ n: 4 });
+    // rivals 1 and 2 sit on gold's spaces (quadrant 0), rival 3 on red's; your own minion on gold doesn't count
+    s.slots = { '0-0': 1, '0-1': 2, '0-2': 0, '1-0': 3 };
+    s = take(s, 'yellow.transmute');
+    expect(s.pending.options.map(o => o.label)).toEqual(['gold (+2)', 'red (+1)', 'yellow (+0)', 'green (+0)']);
     s = move(s, 'color:gold');
-    expect(R(s).gold).toBe(3);
-    expect([R(s, 1).gold, R(s, 2).gold, R(s, 3).gold]).toEqual([2, 1, 4]);
-    expect(named(s, "Leaders' Tax").filter(l => /gives 1 gold/.test(l))).toHaveLength(2);
+    expect(R(s).gold).toBe(2);
+    expect(R(s).yellow).toBe(1);
+    expect(named(s, "Leaders' Tax").some(l => /\+2 gold \(2 rivals on its spaces\)/.test(l))).toBe(true);
   });
   it("Dilute: +2 yellow, then change up to 3 of rivals' resources one for one, each named", () => {
     let s = take(sc({ res: [{}, { red: 3 }] }), 'yellow.dilute');

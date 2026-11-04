@@ -57,7 +57,7 @@ describe('panel words (w3)', () => {
 
   it("Leaders' Tax says its whole rule in line 1 (the wheel drops line 3), and Churn its round gain before the 3 it sends", () => {
     const seeds = panelText('yellow', { key: 'transmute' });
-    expect(seeds.verb).toBe('Choose a color: rivals with more give 1');
+    expect(seeds.verb).toBe('Choose a color: +1 per rival on it');
     expect(seeds.second).toBe('+1 yellow');
     // Savings (Oct 31): +2/+3/+4 and one shop member to the bottom, if you like
     const savings = panelText('market', { key: 'bargain' }, 2);

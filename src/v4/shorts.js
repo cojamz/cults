@@ -31,13 +31,13 @@ const S = {
     toast: r => `+${3 * r} silver · others +${r} silver`, polish: '2 silver → 4 any', partygifts: 'give rivals up to 3 silver, +2 followers each', favors: '+2 silver · each rival gives 1', tongue: '+3 silver · turn into colors', largesse: 'give rivals up to 10 silver, +1 follower each',
   },
   yellow: {
-    harvest: r => `+${r + 2} any, colors you choose`, bloom: r => `+${r} yellow · +1 of your fewest`, transmute: '+1 yellow · rivals with more of a color give you 1', prism: '+1 each per 3 yellow', gather: '1 per member', flourish: '+1 each per set',
+    harvest: r => `+${r + 2} any, colors you choose`, bloom: r => `+${r} yellow · +1 of your fewest`, transmute: 'choose a color: +1 per rival with a minion on its spaces · +1 yellow', prism: '+1 each per 3 yellow', gather: '1 per member', flourish: '+1 each per set',
   },
   market: {
     bargain: r => `+${r + 1} blue; may send a shop member to the bottom, then refill`, restock: 'one color to the bottom; +1 blue each, +1', showroom: r => `peek at 4, may recruit one; +${2 * r} blue`, clearance: 'recruit twice; +3 blue', pricecheck: 'bury one, half its cost in blue; +1', spree: 'recruit 3 times; +5 blue',
   },
   thieves: {
-    pickpocket: r => `steal ${r + 2}, split among rivals`, tipoff: r => `+${r + 1} magenta; +${r} followers if you recruit a member this turn`, hideout: 'steal 1; rivals can’t steal from you this round; +1 magenta', rob: 'steal half a rival’s one-color pile, round down; +1 magenta', ransom: 'a rival picks a member costing 5 or less, then pays its cost or loses it; +1 magenta', heist: 'recruit a rival’s member; +1 magenta',
+    pickpocket: r => `steal ${r + 2}, split among rivals`, tipoff: r => `+${r + 1} magenta; +${r} followers if you recruit a member this turn`, hideout: 'steal 1; rivals can’t steal from you this round; +1 magenta', rob: 'steal 3 followers from a rival; +1 magenta', ransom: 'a rival picks a member costing 5 or less, then pays its cost or loses it; +1 magenta', heist: 'recruit a rival’s member; +1 magenta',
   },
   trading: {
     stipend: r => `+${r + 1} white; +${r} followers if you recruit a member this turn`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid for a member this turn; +1 white`, exchange: r => `turn ${r} into ${2 * r} followers; +1 white`, farewell: 'cast out a member for its cost in followers; +1 white', estatesale: 'cast out a member for its cost in white; +1 white', cashin: 'all your white into followers; +1 white',
@@ -55,7 +55,7 @@ const PIPS = {
   silver: { partygifts: 'give rivals up to 3 silver, +2 followers each', largesse: 'give rivals up to 10 silver, +1 follower each' },
   yellow: { gather: '+1 per member' },
   market: { clearance: 'recruit twice', pricecheck: 'bury for half its cost', spree: 'recruit 3 times' },
-  thieves: { rob: 'steal half a one-color pile', ransom: 'rival pays or loses a member', heist: 'recruit a rival’s member' },
+  thieves: { rob: 'steal 3 followers', ransom: 'rival pays or loses a member', heist: 'recruit a rival’s member' },
   trading: { stipend: r => `+${r + 1} white; +${r} if you recruit a member`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid`, exchange: r => `${r} into ${2 * r} followers`, farewell: 'cast out one for followers', estatesale: 'cast out one for white', cashin: 'all white for followers', sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower', boom: 'all for followers' },
   echo: { refrain: 'copy yours', eternity: 'copy your On Recruits' },
 };

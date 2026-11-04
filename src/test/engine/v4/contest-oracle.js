@@ -55,7 +55,7 @@ const randomMove = (s, rand) => { const o = s.pending.options; return { player: 
 /** The table exactly when a round was scored: `move` replayed onto `before`, stopping right after endRound. */
 export function scoringMoment(before, move) {
   const cut = before.queue.findIndex(t => t.t === 'endRound');
-  return applyMove({ ...before, queue: before.queue.slice(0, cut + 1) }, move);
+  return applyMove({ ...before, queue: before.queue.slice(0, cut + 1), stopAtScoring: true }, move);
 }
 
 /**

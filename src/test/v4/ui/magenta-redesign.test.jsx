@@ -25,8 +25,8 @@ describe('Magenta action wording and one-stack theft', () => {
     expect(stash.main).toBe('+2 magenta'); // Gather's shape (Oct 31)
     expect(stash.second).toBe('+1 @f if you recruit a member');
     expect(panelText('thieves', { key: 'ransom' }, 2).verb).toContain('costing 5 or less');
-    expect(panelText('thieves', { key: 'rob' }, 2).second).toBe('rounded down');
-    expect(pipEffect('thieves', { key: 'rob' }, 2)).toBe('steal half a one-color pile');
+    expect(panelText('thieves', { key: 'rob' }, 2).verb).toBe('Steal 3 @f from a rival'); // Heist takes followers (Nov 4)
+    expect(pipEffect('thieves', { key: 'rob' }, 2)).toBe('steal 3 followers');
   });
 
   it('shows each exact half-stack amount without a Take All or coin-by-coin plan', () => {

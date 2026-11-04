@@ -129,21 +129,26 @@ describe('Magenta actions', () => {
     expect(R(s)[0].gold).toBe(5);
   });
 
-  it('Heist: steal half (rounded down) of one rival’s pile of one color, +1 magenta', () => {
-    let s = scene({ n: 3, round: 2, res: [{}, { gold: 5, red: 3 }, { blue: 4, red: 1 }] });
+  it('Heist: steal 3 followers from a rival you choose (Nov 4), +1 magenta', () => {
+    let s = scene({ n: 3, round: 2, bonus: [0, 5, 2] });
+    const f0 = s.players.map(p => followers(s, p));
     s = take(s, 'thieves.rob');
-    // one color's pile, not the rival's whole holding; a pile of 1 halves to nothing
-    expect(ids(s)).toEqual(['take:1:gold', 'take:1:red', 'take:2:blue']);
-    expect(s.pending.options.map(o => o.take)).toEqual([2, 1, 2]);
-    s = move(s, 'take:1:gold');
-    expect(s.pending?.kind).not.toBe('choose');
-    expect(R(s)).toEqual([{ ...Z, gold: 2, magenta: 1 }, { ...Z, gold: 3, red: 3 }, { ...Z, blue: 4, red: 1 }]);
+    expect(ids(s)).toEqual(['player:1', 'player:2']);
+    s = move(s, 'player:1');
+    expect(s.players.map(p => followers(s, p))).toEqual([f0[0] + 3, f0[1] - 3, f0[2]]);
+    expect(R(s)[0].magenta).toBe(1);
   });
 
-  it('Heist: no pile of 2 or more anywhere means nothing to steal, just the magenta', () => {
-    const s = take(scene({ n: 3, round: 2, res: [{}, { gold: 1, red: 1 }, { blue: 1 }] }), 'thieves.rob');
-    expect(s.pending?.kind).not.toBe('choose');
-    expect(R(s)).toEqual([{ ...Z, magenta: 1 }, { ...Z, gold: 1, red: 1 }, { ...Z, blue: 1 }]);
+  it('Heist: a rival with fewer than 3 loose followers gives what they have; nobody with any means just the magenta', () => {
+    let s = scene({ n: 3, round: 2, bonus: [0, 0, 2] });
+    const f2 = followers(s, s.players[2]);
+    s = take(s, 'thieves.rob');
+    expect(ids(s)).toEqual(['player:2']);
+    s = move(s, 'player:2');
+    expect(followers(s, s.players[2])).toBe(f2 - 2);
+    const t = take(scene({ n: 3, round: 2, bonus: [0, 0, 0] }), 'thieves.rob');
+    expect(t.pending?.kind).not.toBe('choose');
+    expect(R(t)[0].magenta).toBe(1);
   });
 
   it('Shake Down: the owner pays its cost (from their biggest piles, colors kept) to keep it', () => {

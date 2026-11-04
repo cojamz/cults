@@ -104,7 +104,7 @@ const P = {
     // Match the current rule: the yellow arrives before the optional swaps.
     // the condition sat in line 3, which the wheel drops: the board read "pick a color: each rival" (Cory, Nov 3: "wtf is
     // this action text"). Whole in line 1 now.
-    transmute: { verb: 'Choose a color: rivals with more give 1', note: '+1 yellow' },
+    transmute: { verb: 'Choose a color: +1 per rival on it', note: '+1 yellow' }, // Nov 4: counts rivals' minions on that color's spaces
     prism: { verb: '+1 each other color', second: 'per 3 yellow', note: 'you keep the yellow' },
     // "Members pay out" was all a tight ring II showed: the gain first, whole in line 1
     gather: { verb: '+1 per member', second: 'in its own color' },
@@ -115,7 +115,7 @@ const P = {
     pickpocket: r => ({ verb: `Steal ${r + 2}`, second: 'split among rivals', note: run(n => `${n + 2}`) }),
     tipoff: r => ({ main: `+${r + 1} magenta`, second: `+${r} @f if you recruit a member` }), // Gather's shape (Cory, Oct 31)
     hideout: { verb: 'Steal 1, then safe from steals', second: 'this round', note: '+1 magenta' },
-    rob: { verb: 'Steal half of one color from a rival', second: 'rounded down', note: '+1 magenta' }, // line 2 dropped on ring II and "half a rival's pile" read as all of it (wheel fit, Nov 3)
+    rob: { verb: 'Steal 3 @f from a rival', note: '+1 magenta' }, // Nov 4: followers, not half a pile
     ransom: { verb: 'Rival pays or loses a member costing 5 or less', note: '+1 magenta' },
     heist: { verb: 'Recruit a rival’s member', note: '+1 magenta' },
   },

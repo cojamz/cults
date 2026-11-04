@@ -148,6 +148,7 @@ function takeable(ctx, p, maxCost = Infinity, kind = 'member') {
   }
   return out;
 }
+const heistTargets = (ctx, p) => ctx.rivals(p).filter(o => o.bonus > 0 && ctx.canSteal(p, o));
 function halfPiles(ctx, p) {
   return ctx.rivals(p).flatMap(owner => piles(ctx, p, owner).flatMap(([color, held]) => {
     const base = Math.floor(held / 2);
@@ -238,15 +239,19 @@ const thieves = {
       },
     },
     {
-      key: 'rob', ring: 2, name: 'Heist', text: 'Steal half of one rival’s pile of one color, rounded down. +1 magenta.',
-      estimate: (ctx, p) => Math.max(0, ...halfPiles(ctx, p).map(({ n }) => n * 1.33)),
+      // Nov 4 (Claude, under Cory's go-with-your-gut, after his "anything that relies on a rival having more of resources
+      // should be reworked"): half a pile was often 1 or 2 once players spend down; it takes followers now. Only
+      // followers a rival recruited or won can be stolen (rulebook), as with Raiders.
+      key: 'rob', ring: 2, name: 'Heist', text: 'Steal 3 followers from a rival. +1 magenta.',
+      estimate: (ctx, p) => Math.max(0, ...heistTargets(ctx, p).map(o => Math.min(3, o.bonus) * 2)),
       resolve(ctx, p) {
-        const list = halfPiles(ctx, p);
-        if (!list.length) { ctx.log(`${p.name} found no resource pile worth halving.`); return; }
-        ctx.choose(p, 'Heist: choose a pile to halve.', list.map(({ owner, color, n }) => ({
-          id: `take:${owner.id}:${color}`, kind: 'take', value: [owner.id, color], target: { pid: owner.id, res: color },
-          label: `${owner.name}: steal ${n} ${color}`, take: n, hint: n * 1.33,
-        })), 'thieves.halfPile');
+        const list = heistTargets(ctx, p);
+        if (!list.length) { ctx.log(`${p.name} found no rival with followers to steal.`); return; }
+        const top = Math.max(...ctx.state.players.map(o => ctx.followers(o)));
+        ctx.choose(p, 'Heist: steal 3 followers from which rival?', list.map(o => ({
+          id: `player:${o.id}`, kind: 'player', value: o.id, label: `${o.name} (${ctx.followers(o)} followers)`,
+          hint: Math.min(3, o.bonus) * 2 + (ctx.followers(o) === top ? 1 : 0),
+        })), 'thieves.heistFollowers');
       },
     },
     {
@@ -297,6 +302,12 @@ const thieves = {
       if (!v || v === p || !kidnapList(ctx, p).some(([, c]) => c.uid === uid)) return;
       const name = ctx.card(uid).def.name;
       if (ctx.steal(p, v, { uid })) ctx.log(`${p.name}'s Kidnapper: stole ${v.name}'s ${name}.`);
+    },
+    heistFollowers(ctx, p, vid) {
+      const v = ctx.player(vid);
+      if (!v || !ctx.canSteal(p, v)) return;
+      const n = ctx.steal(p, v, { followers: 3 });
+      ctx.log(n ? `${p.name}'s Heist: stole ${n} follower${n > 1 ? 's' : ''} from ${v.name}.` : `${p.name}'s Heist: ${v.name} had no followers to steal.`);
     },
     halfPile(ctx, p, [vid, color]) {
       const victim = ctx.player(vid);

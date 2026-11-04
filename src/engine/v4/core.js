@@ -1043,6 +1043,9 @@ function endRound(state) {
   // the round's scoring, kept as decided: the round-end card and the results read it back (never re-derived)
   state.contests = [...(state.contests || []), { round: state.round, prize: v, results: table }];
   log(state, `Round ${roman(state.round)} ends. ${msg.join(' · ') || 'No one scored.'}`);
+  // a test's "table at scoring" stops here, before members that act on the scored contests (Sore Loser's follower steal
+  // paid Fence's magenta after Most magenta was scored, and the oracle read the later pile)
+  if (state.stopAtScoring) return;
   // members that answer a rival winning a contest (Racketeers, REPLACE1 bot test), each winner of each contest
   for (const c of table) for (const id of c.winners) eachMember(state, (owner, card, def) => { if (def.onRivalContestWin && owner.id !== id) def.onRivalContestWin(ctx, owner, card, state.players[id], c); }, ['onRivalContestWin']);
   // members that read the scored contests (Sore Loser, live Nov 4; Second Fiddles, REPLACE5 bot test), in this round's turn order
