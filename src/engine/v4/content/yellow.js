@@ -393,7 +393,7 @@ export default {
     // REPLACE11 bot test (Actions lane, Nov 4; C's Duty Free from C-tourist3, requalified under "paper filters, play ranks"):
     // Tourist's place. The price rule is core.js priceParts (flag dutyFree, read with isNewColor, grey a color).
     ...add11(m('dutyfree', 'Duty Free', 3, 3, 'Members of a color none of your members have cost you 3 less.', { round: 1, dutyFree: true,
-      ...see(i => endsAhead(i).length * 2) })), // BOTSEE: about one new-color recruit a round, 3 off, some of it spent anyway
+      ...see(i => endsAhead(i).length * 3.5) })), // BOTSEE: about one new-color recruit a round, 3 off, plus the member it makes room for (0 of 9 bought at 2 a round)
     m('tourists', 'Tourist', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { ...old11('dutyfree'), now: true, round: 1, // a round I member like Go-Between, so Yellow keeps 4 (Claude's fill-in)
       onRoundStart(ctx, owner) {
         const k = held(ctx, owner).length;
