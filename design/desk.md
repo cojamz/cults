@@ -11,6 +11,7 @@ How to update: pull, edit, commit, push in one go. Cory's words go in verbatim w
 Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?thread=<id>, shortened below to the id.
 
 ## Cory's words, newest first
+- 2026-11-04 ~11:15am Eastern (relayed by the quality director, unverified-id): "you dont need my permission" for publishes. Ships go through the desk for go or wait (one at a time), never to Cory.
 - 2026-11-04 04:59Z (cmsg_01PySa5gYMfCiexiWTLrWgo37fNvkATcs7Kdd9UTW3VzLc): "I don't think you understand the breadth of this. This shouldn't be the job of one agent. ... there should be a whole harness here working together to do this and develop the merchants and the action." → the overnight card quality team (director cmsg_01PySa5gYMfCiexiWTLrWgo37EYuQVWmhgYAdrKFzAiAm1, /mnt/project-files/quality/board.md); its passing cards ship through the desk.
 - 2026-11-04 03:14Z (cmsg_01PySa5gYMfCiexiWTLrWgo3YaZV6zDrdFo7G5Akt9PYXA): "I may step away for the rest of the night. A lot of work left, you make it happen" → every call ours tonight; morning summary in /mnt/project-files/desk/morning.md.
 - 2026-11-04 03:03Z (cmsg_01PySa5gYMfCiexiWTLrWgo3FKdemneDoaHUhLaHBkNd3H): "make judgement calls for stuff you might stop me fore. Use whatever the crunchy bites sound update is for pizza and ship the minion sounds."
