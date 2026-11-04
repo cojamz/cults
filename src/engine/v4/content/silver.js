@@ -521,7 +521,8 @@ const silver = {
         owner.bonus += 3;
         ctx.log(`${owner.name}'s Well-Wishers: ${ctx.card(uid).def.name} goes to ${to.name}: +3 followers.`);
       },
-      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.04 * 3),
+      // BOTSEE: about one of your members moved to a rival per 12 rival placements (seat-1 games, Nov 4), 3 followers each
+      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.08 * 3),
     })),
     // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
     m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2 }),
