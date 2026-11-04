@@ -270,6 +270,15 @@ const silver = {
       ctx.log(`${p.name}'s Godparent: gives ${name} to ${o.name}: +${k} followers.`);
     },
     ...handlers8({
+      guestofhonor(ctx, p, value) {
+        if (value === 'none') return;
+        const [uid, oid] = value, o = ctx.player(oid);
+        if (!p.members.includes(uid) || !o || o === p) return;
+        const name = ctx.card(uid).def.name;
+        if (!ctx.moveMember(uid, p, o, { actor: p })) return;
+        p.bonus += 4;
+        ctx.log(`${p.name}'s Guest of Honor: gives ${name} to ${o.name}: +4 followers.`);
+      },
       usher(ctx, p, id) {
         const o = ctx.player(id);
         if (!o || o === p) return;
@@ -459,7 +468,26 @@ const silver = {
       },
     }),
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 8 → 4
-    m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', {
+    // REPLACE8 bot test (Nov 4, quality loop lane B, pitches/B-toastmaster.md 2, passed paper gate b8 at 19 vs 10):
+    // Toastmaster's place, same price. After the Silver space is done; any member of yours costing 3 or less (as a
+    // player sees the cost), itself included; "you may": giving none is fine. A gift, as Godparent's (Well-Wishers hears it).
+    ...add8(m('guestofhonor', 'Guest of Honor', 1, 1, 'Whenever you take a Silver space, you may give a rival one of your members costing 3 or less. +4 followers.', {
+      afterAction(ctx, owner, card, qid) {
+        if (qid !== S) return;
+        const cheap = ctx.membersOf(owner).filter(c => c.def.s + c.def.w <= 3);
+        if (!cheap.length) return;
+        const ww = ctx.membersOf(owner).some(c => c.def.id === 'silver.wellwishers' || c.def.key === 'wellwishers') ? 3 : 0;
+        const opts = [];
+        for (const c of cheap) for (const o of others(ctx, owner)) opts.push({
+          id: `give:${c.uid}:${o.id}`, label: `${c.def.name} (${c.def.s + c.def.w}) to ${o.name}`, kind: 'choice', value: [c.uid, o.id],
+          // bots shed a used-up or plain cheap member, never one still paying; the rival it helps least
+          hint: 4 + ww - (c.def.f || 1) * 1.5 - (c.used || c.def.vanilla || !c.def.afterAction ? 0 : 3) - ctx.followers(o) * 0.01,
+        });
+        opts.push({ id: 'none', label: 'Give nothing', kind: 'pass', value: 'none', hint: 0 });
+        ctx.choose(owner, 'Guest of Honor: give one of your members costing 3 or less to a rival, for +4 followers?', opts, 'silver.guestofhonor');
+      },
+    })),
+    m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', { ...old8,
       afterAction(ctx, owner, card, qid) { if (qid === S) owner.bonus += 1; },
     }),
     m('gala', 'Debutantes', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, ...old2, ...old6, // worth 2 (Cory, Nov 1)
