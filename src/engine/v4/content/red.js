@@ -324,8 +324,7 @@ export default {
     ...add7(m('godfather', 'Godfather', 3, 2, 'On Use, once per game: recruit a shop member costing up to the number of members you have, for free.', {
       activate: 'game',
       onActivate: (...a) => godfatherUse(...a),
-      // bots: late, or once the count reaches the row's priciest card
-      botActivate: (ctx, owner) => ctx.state.round === 3 || ctx.shopCards().some(x => cost(x) >= 7 && cost(x) <= ctx.memberCount(owner)),
+      botActivate: godfatherBot,
     })),
     // Godfather's trial (q-a-godfather-c1): owners won 25% vs Patriarch's 33%, so the retune lifts it with followers before
     // touching the price (Cory's price rule): worth 3, so it counts as 3 (worth equals count) and is named as a group,
@@ -333,7 +332,7 @@ export default {
     ...add7(m('crimefamily', 'Crime Family', 3, 2, 'On Use, once per game: recruit a shop member costing up to the number of members you have, for free.', { f: 3, n: 3,
       activate: 'game',
       onActivate: (...a) => godfatherUse(...a),
-      botActivate: (ctx, owner) => ctx.state.round === 3 || ctx.shopCards().some(x => cost(x) >= 7 && cost(x) <= ctx.memberCount(owner)),
+      botActivate: godfatherBot,
     })),
     ...add3(m('missionaries', 'Missionaries', 5, 3, 'On Use, once per game: give one of your members to each rival, then recruit a shop member costing up to 2 more for each one given, for free.', { f: 2,
       activate: 'game',
@@ -396,6 +395,12 @@ export default {
 };
 
 // Godfather and Crime Family (REPLACE7): the free recruit, costing up to the owner's member count
+// bots: only when some shop member fits (the Lab's c1 void: an empty fit leaves it unused, and a bot re-taking it looped
+// to the move cap); then late, or once the count reaches a pricey card
+function godfatherBot(ctx, owner) {
+  const k = ctx.memberCount(owner), fits = ctx.shopCards().filter(x => cost(x) <= k);
+  return fits.length > 0 && (ctx.state.round === 3 || fits.some(x => cost(x) >= 7));
+}
 function godfatherUse(ctx, owner, card) {
   const k = ctx.memberCount(owner), list = ctx.shopCards().filter(x => cost(x) <= k);
   if (!list.length) { card.used = false; ctx.log(`${owner.name}'s ${card.def.name}: no shop member costs ${k} or less.`); return; }

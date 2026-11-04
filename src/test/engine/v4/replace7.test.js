@@ -242,6 +242,19 @@ describe('Crime Family (Godfather retuned): worth 3, counts as 3, "On Use, once 
   });
 });
 
+describe('Godfather and Crime Family: a bot never takes the use with nothing in reach (Lab, c1 game 8 looped)', () => {
+  it('round III, no shop member costs the count or less: botActivate says no; once one fits, yes', async () => {
+    const { contextFor } = await import('../../../engine/v4/core.js');
+    for (const id of ['red.godfather', 'red.crimefamily']) {
+      let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [[id]], shop: ['red.mob'] });
+      const ctx = contextFor(s), p = s.players[0];
+      expect(defById(id).botActivate(ctx, p)).toBe(false);
+      s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [[id, 'red.panel', 'red.movementpenalty']], shop: ['red.host'] });
+      expect(defById(id).botActivate(contextFor(s), s.players[0])).toBe(true);
+    }
+  });
+});
+
 describe('Day Laborers: "Round Start: take your first two turns in a row."', () => {
   it('round II: the owner, second in order, takes its first two turns back to back', () => {
     // fewest followers first: P1 0, P2 3 (Day Laborers' worth), P3 5, P4 6
