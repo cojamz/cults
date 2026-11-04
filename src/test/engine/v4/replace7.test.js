@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 // every card the lane built (REPLACE7=1 deals only the picks: Seat Filler, Foster Parents, Godfather, Day Laborers, Night Manager)
-process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,sprinter,earlyrisers,daylaborers,nightmanager,pacesetters,lifers,floorcrew,timekeeperlift';
+process.env.REPLACE7 = 'seatfiller,interrupter,runner,ushers,godfather,crimefamily,gobetween,nightshift,sleepyheads,drillsergeant,wakeupcaller,converts,snoozers,sprinter,earlyrisers,daylaborers,nightmanager,pacesetters,lifers,floorcrew,timekeeperlift,oldtimer,lookouts,errandboy,moonlighters';
 const { applyMove, resume, followers } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
@@ -40,6 +40,11 @@ describe('REPLACE7: the switch', () => {
     expect(card('purple.floorcrew')).toEqual(['Floor Crew', 3, 1, 3, 3]);
     expect(card('purple.picketline')).toEqual(['Picket Line', 3, 1, 3, 3]);
     expect(card('purple.timekeeperlift')).toEqual(['Head Timekeeper', 2, 2, 1, 1]);
+    expect(card('purple.oldtimer')).toEqual(['Old Timer', 2, 2, 1, 1]);
+    expect(card('purple.lookouts')).toEqual(['Lookouts', 2, 2, 2, 2]);
+    expect(card('purple.errandboy')).toEqual(['Errand Boy', 2, 2, 1, 1]);
+    expect(card('purple.moonlighters')).toEqual(['Moonlighters', 7, 1, 2, 2]);
+    expect(defById('purple.nightowl').retired).toBe(true);
     expect(defById('purple.timekeeperlift').onGameEnd({ countMembersOfColor: () => 3 })).toBe(6);
     for (const id of ['red.patriarch', 'purple.timekeepers', 'purple.nightwatch']) expect(defById(id).retired).toBe(true);
     for (const id of ['red.volunteer', 'red.recruitbonus', 'purple.courier', 'purple.crew']) expect(defById(id).retired).toBe(true);
@@ -498,5 +503,36 @@ describe('Picket Line: "Whenever a rival takes a Purple space, +1 purple."', () 
     s = take(s, 'purple.skip');
     expect(s.players[0].res.purple).toBe(had + 1);
     expect(s.log.some(l => l === "P1's Picket Line: +1 purple.")).toBe(true);
+  });
+});
+
+describe('"Paper filters, play ranks" cards (Nov 4)', () => {
+  const stub = (s, logs) => ({ state: s, log: l => logs.push(l), gain: (p, c, n) => { p.res[c] = (p.res[c] || 0) + n; } });
+  it('Old Timer: a time token each round end, +1 worth each', () => {
+    const s = table(['purple', 'red', 'market', 'yellow'], { round: 1, members: [['purple.oldtimer'], []] });
+    const uid = uidIn(s, 'purple.oldtimer', 0), p = s.players[0], logs = [], before = followers(s, p);
+    defById('purple.oldtimer').onRoundEnd(stub(s, logs), p, s.cards[uid]);
+    expect(followers(s, p)).toBe(before + 1);
+    expect(logs).toEqual(["P1's Old Timer: a time token (worth 2)."]);
+  });
+  it('Lookouts: "Whenever you take a consecutive turn, +1 follower."', () => {
+    const s = table(['purple', 'red', 'market', 'yellow'], { round: 1, members: [['purple.lookouts'], []] });
+    const p = s.players[0], logs = [], b = p.bonus;
+    defById('purple.lookouts').onTurnInRow(stub(s, logs), p);
+    expect(p.bonus).toBe(b + 1);
+  });
+  it('Moonlighters: after the last minion in round II, the extra turn may only join a taken space', () => {
+    let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 2, members: [['purple.moonlighters'], []],
+      queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
+    s.players[0].left = 1;
+    s = move(s, s.pending.options.find(o => o.kind === 'slot').id); // P2 takes a space
+    s = passBuys(s, 1);
+    s = move(s, s.pending.options.find(o => o.kind === 'slot' && !o.squat && o.q === 1).id); // P1's last minion, on a Red space
+    s = passBuys(s, 0);
+    expect(s.log.some(l => l.startsWith("P1's Moonlighters: P1 gets 1 more minion"))).toBe(true);
+    expect(s.pending.player).toBe(0);
+    const slots = s.pending.options.filter(o => o.kind === 'slot');
+    expect(slots.length).toBeGreaterThan(0);
+    expect(slots.every(o => o.squat)).toBe(true);
   });
 });

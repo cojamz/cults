@@ -645,7 +645,7 @@ export default {
     // (Normal bots, n=320), so 8+2 (design/eval/purple-members.md). At 4 players round I has no space to spare, so it
     // pays from round II. Fires once per round (owlRound), whether or not the board had room.
     // Cory, Nov 1 2:35pm: the Goes Last token; the extra minion waits on it
-    m('nightowl', 'Night Owls', 6, 1, 'From round II: after your last minion, +1 minion, placed right away.', { f: 2, from: 2,
+    m('nightowl', 'Night Owls', 6, 1, 'From round II: after your last minion, +1 minion, placed right away.', { f: 2, from: 2, ...old7('purple.nightowl'),
       // its onRecruited only says when the extra minion starts: no On Recruit for Tryout or Sample to borrow
       recruitNote: true,
       // recruited after your last minion of the round (its buy step): it waits for next round, and says so
@@ -670,6 +670,18 @@ export default {
         if (t) nightWatch(ctx, owner, 1);
       },
     }),
+    // Night Owls' place (paper 19 vs 18; "paper filters, play ranks"). Night Owls' extra minion, which may only join a
+    // space a rival already took (Party Crasher's join): the queued turn carries join, and core offers only joins for it.
+    ...add7(m('moonlighters', 'Moonlighters', 6, 1, 'From round II: after your last minion, +1 minion, placed right away on a space a rival already took.', { f: 2, n: 2, from: 2,
+      afterAction(ctx, owner, card) {
+        if (owner.left !== 0 || card.owlRound === ctx.state.round || ctx.state.round < 2) return;
+        card.owlRound = ctx.state.round;
+        const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn');
+        if (!extraTurns(ctx, owner, 1, 'Moonlighters')) return;
+        const t = q[end < 0 ? 0 : end + 1];
+        if (t && t.t === 'turn' && t.p === owner.id) { t.join = true; owner.crashNext = true; }
+      },
+    })),
     m('patience', 'Timekeeper', 4, 2, 'Game end: +1 follower per 3 purple.', {
       onGameEnd: (ctx, owner) => Math.floor((owner.res[P] || 0) / 3),
     }),
@@ -789,6 +801,19 @@ export default {
     })),
     // Purple's round I extra-turn gap (director, Nov 4 12:40pm), Timekeeper's place. 2 purple + 2 any.
     // Sprinter (paper 16 vs 11): Crunch Time's turn rule, once a game, when you choose (turnsNow, as Crunch Time).
+    // Nov 4, "paper filters, play ranks" (Cory's yes; director 12:47pm): paper passers at or over the bar and the old
+    // card go straight to a play A/B. Timekeeper's place: Old Timer (14), Lookouts (15), Errand Boy (14).
+    ...add7(m('oldtimer', 'Old Timer', 1, 2, 'Round End: put a time token on this card. Worth 1 more follower per time token.', { round: 1,
+      onRoundEnd(ctx, owner, card) { card.time = (card.time || 0) + 1; ctx.log(`${owner.name}'s Old Timer: a time token (worth ${1 + card.time}).`); },
+      ...see(info => endsAhead(info).length),
+    })),
+    ...add7(m('lookouts', 'Lookouts', 1, 2, 'Whenever you take a consecutive turn, +1 follower.', { f: 2, n: 2, round: 1,
+      onTurnInRow(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Lookouts: a turn in a row, +1 follower.`); },
+      ...see(info => 1.5 * endsAhead(info).length),
+    })),
+    ...add7(m('errandboy', 'Errand Boy', 1, 2, 'On Recruit: your next turn comes right after this one.', { round: 1,
+      onRecruited(ctx, owner) { turnsNow(ctx, owner, 1, 'Errand Boy'); },
+    })),
     ...add7(m('sprinter', 'Sprinter', 1, 2, 'On Use, once per game: your next two turns come right after this one.', { round: 1,
       activate: 'game',
       onActivate(ctx, owner, card) { if (!turnsNow(ctx, owner, 2, 'Sprinter')) card.used = false; },

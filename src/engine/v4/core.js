@@ -591,7 +591,8 @@ function inputFor(state, task) {
       }
       const slots = [
         // Place Holders (REPLACE11=placeholders): the held space is only its holder's this round
-        ...openSlots(state).filter(([q, i]) => !(state.held && state.held.round === state.round && state.held.pid !== p.id && state.held.key === `${q}-${i}`))
+        // Moonlighters (REPLACE7 bot test): its minion only joins a rival's taken space, while one can be joined
+        ...(task.join && squatSlots(state, p).length ? [] : openSlots(state)).filter(([q, i]) => !(state.held && state.held.round === state.round && state.held.pid !== p.id && state.held.key === `${q}-${i}`))
           .filter(([q, i]) => !task.ring || actionAt(state, q, i).ring <= task.ring)
           .map(([q, i]) => ({ id: `slot:${q}-${i}`, label: actionAt(state, q, i).name, kind: 'slot', q, i })),
         ...squatSlots(state, p).filter(([q, i]) => !task.ring || actionAt(state, q, i).ring <= task.ring)
@@ -929,7 +930,7 @@ function runTask(state, task) {
       delete p.recruitFollowers;
       // task.ring: a turn limited to spaces of that ring or lower (a weaker extra worker)
       const source = workerSourceOf(task);
-      state.queue.unshift({ t: 'place', p: p.id, ...source, ...(task.ring ? { ring: task.ring } : {}) }, { t: 'buy', p: p.id, ...source }, { t: 'buy', p: p.id, ...source, extra: true }, { t: 'endTurn', p: p.id, ...source });
+      state.queue.unshift({ t: 'place', p: p.id, ...source, ...(task.ring ? { ring: task.ring } : {}), ...(task.join ? { join: true } : {}) }, { t: 'buy', p: p.id, ...source }, { t: 'buy', p: p.id, ...source, extra: true }, { t: 'endTurn', p: p.id, ...source });
       // REPLACE7 bot test: Runner's recruit once more (set by its onTurnInRow above), then Ushers' recruit of a member
       // costing 3 or less, each a recruit step right after the turn's own
       if (REPLACE7) {
