@@ -13,7 +13,9 @@ function buildId() {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  // React's compiler memoizes the screen's components and values for us (Cory, Nov 4: yes to React 19 and its
+  // optimizer). Screen code only: the engine is plain functions, and old v3 code stays as it was.
+  plugins: [react({ babel: { plugins: [['babel-plugin-react-compiler', { sources: f => /src\/v4\//.test(f) && !/\/lab\//.test(f) && !/Info|faces/.test(f) }]] } })],
   // __V4_SRC__: a hash of the rules source, part of the content stamp (record.js), so effect changes refuse old rooms/saves
   define: { __V4_BUILD__: JSON.stringify(buildId()), __V4_SRC__: JSON.stringify(engineSourceHashSafe()) },
   // agents' worktrees, frozen builds, build dirs and design notes are not app source: watching and dep-scanning them made a

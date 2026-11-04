@@ -10,7 +10,7 @@ import { engineSourceHashSafe } from './scripts/v4-src-hash.mjs'
 try { const nice = Number(process.env.V4_VITEST_NICE ?? 10); if (getPriority() < nice) setPriority(nice) } catch { /* not permitted: run as is */ }
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react({ babel: { plugins: [['babel-plugin-react-compiler', { sources: f => /src\/v4\//.test(f) && !/\/lab\//.test(f) && !/Info|faces/.test(f) }]] } })], // as vite.config.js: tests run what ships
   // the rules-source hash in the content stamp, as in the build (vite.config.js; src/v4/session/record.js)
   define: { __V4_SRC__: JSON.stringify(engineSourceHashSafe()) },
   test: {
