@@ -40,10 +40,11 @@ function fixture(name) {
     // Help Yourself steals 3 / 4 / 5 by round, split as you choose (Cory, Oct 27); Cy lay low this round
     action = 'pickpocket'; picks = ['take:1:gold', 'take:1:red', 'take:1:gold', 'take:1:gold', 'take:1:red'];
     s.players[2].hideout = round;
-  } else if (name.startsWith('half-')) {
-    action = 'rob'; picks = [name === 'half-small' ? 'take:1:red' : 'take:1:gold'];
-    s.players[2].res.gold = 1;
-    deal('thieves.watchdog', 3); s.players[3].res.gold = 40;
+  } else if (name === 'followers') {
+    // Heist steals 3 followers from a rival (Nov 4, Cory's rival-resources rule): Bo has 5 to take, Cy none, Di is guarded
+    action = 'rob'; picks = ['player:1'];
+    s.players.forEach((p, i) => { p.bonus = [0, 5, 0, 6][i]; });
+    deal('thieves.watchdog', 3);
   } else if (name === 'ransom') {
     action = 'ransom'; member = deal('red.host', 1);
     // Host costs 5, the ceiling (Patriarch did until every member cost 1 more wild, Oct 27, now 6); the old <=4
@@ -66,12 +67,9 @@ function fixture(name) {
   if (name === 'scaling-resume') {
     assert(own.res.gold === 3 && own.res.red === 2 && own.bonus === initial.players[0].bonus && victim.res.gold === 6 && victim.res.red === 2, 'Round III must steal 5 in their original colors and no followers');
     assert(expected.players[2].res.red === 6 && !placed.pending.options.some(o => /^take:2:/.test(o.id)), 'A rival who lay low must not be offered');
-  } else if (name.startsWith('half-')) {
-    const color = name === 'half-small' ? 'red' : 'gold', n = color === 'red' ? 2 : 4;
-    assert(own.res[color] === n && victim.res[color] === initial.players[1].res[color] - n, 'Half-stack transfer must round down and keep its color');
-    assert(!placed.pending.options.some(o => o.target?.pid === 3 || o.id === 'take:2:gold'), 'Protected rivals and one-resource piles must not be offered');
-    const offered = placed.pending.options.find(o => o.id === picks[0]);
-    assert(offered.take === n, `Half-stack option must name the full ${n}-resource transfer`);
+  } else if (name === 'followers') {
+    assert(own.bonus === 3 && victim.bonus === 2 && victim.res.gold === 9 && victim.res.red === 4, 'Heist must move exactly 3 followers and no resources');
+    assert(placed.pending.options.map(o => o.id).join() === 'player:1', 'Only a rival with followers to steal and no guard may be offered');
   } else if (name === 'ransom') {
     assert(own.res.gold === 5 && victim.res.gold === 4 && victim.members.includes(member), 'Ransom payment must preserve colors and ownership');
   } else if (name === 'heist') {
@@ -81,7 +79,7 @@ function fixture(name) {
 }
 // (occupied and safe went with Tip Off and Lie Low's steal: Stash and a steal-free Lie Low in the round I rework, Cory
 // Oct 27; scaling-resume now checks that a rival who lay low is never offered)
-const names = ['scaling-resume', 'half-small', 'half-large', 'ransom', 'heist']
+const names = ['scaling-resume', 'followers', 'ransom', 'heist']
   .filter(name => !process.env.V4_SCENES || process.env.V4_SCENES.split(',').includes(name));
 assert(names.length, 'V4_SCENES did not match a known scene');
 if (process.argv.includes('--fixtures-only')) {
@@ -136,11 +134,6 @@ try {
       }
       await page.locator(`[data-option=${JSON.stringify(t.picks[0])}]:not([disabled])`).first().waitFor();
       await page.screenshot({ path: `${out}/${tag}-choice.png` });
-      if (name.startsWith('half-')) {
-        const chosen = page.locator(`.gc-stack[data-option=${JSON.stringify(t.picks[0])}]`);
-        await chosen.waitFor();
-        assert(new RegExp(`Take ${name === 'half-small' ? 2 : 4} `).test(await chosen.getAttribute('aria-label')), `${tag}: half choice hides amount`);
-      }
       for (const [i, id] of t.picks.entries()) {
         await press(id);
         if (name === 'scaling-resume' && i === 0) {
@@ -163,8 +156,8 @@ try {
       const flights = await page.evaluate(() => window.__magentaFlights);
       assert(flights.length > 0, `${tag}: no visible motion`);
       assert(!flights.some(f => f.colorTurn), `${tag}: theft still changes color in flight`);
-      if (name !== 'heist') {
-        const color = name === 'half-small' ? 'red' : 'gold';
+      if (name === 'scaling-resume' || name === 'ransom') {
+        const color = 'gold';
         assert(flights.some(f => /piece-res|pick-flight/.test(f.className) && f.sources.includes(`1:${color}`)), `${tag}: resource motion never starts at the chosen rival pile`);
       }
       assert(!await page.evaluate(() => document.body.scrollWidth > innerWidth + 1), `${tag}: horizontal overflow`);
