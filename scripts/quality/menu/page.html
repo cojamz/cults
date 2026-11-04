@@ -56,6 +56,8 @@ li.card.out{background:var(--surface-2);opacity:.86}
 .ev{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:4px;font-size:14px;color:var(--fg-2)}
 .ev span::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px;background:var(--fg-3)}
 .ev .good::before{background:var(--keep)}.ev .bad::before{background:var(--cut)}.ev .hot::before{background:var(--watch)}
+.cory{margin:4px 0 0;font-size:14px;color:var(--prot)}
+.cory b{font-weight:700}
 .empty{padding:30px;text-align:center;color:var(--fg-3)}
 footer{margin-top:24px;color:var(--fg-3);font-size:13px}
 @media (max-width:560px){li.card{grid-template-columns:40px 1fr;padding:10px}.score{font-size:21px}header h1{font-size:25px}}
@@ -145,7 +147,7 @@ function row(c){
     <div class="body">
       <div class="top"><span class="name">${esc(c.name)}</span><span class="pill ${c.verdict}">${VERDICT[c.verdict]}</span>${c.status!=='live'&&c.verdict!=='out'?`<span class="tag">${STATUS[c.status]}</span>`:''}${c.protected?'<span class="tag prot">Protected</span>':''}<span class="meta">${esc(where)}</span></div>
       <p class="text">“${esc(c.text)}”</p>
-      <p class="reason">${esc(c.reason)}</p>
+      <p class="reason">${esc(c.reason)}</p>${c.cory?`<p class="cory"><b>You said</b> ${esc(c.cory)}</p>`:''}
       ${ev?`<div class="ev">${ev}</div>`:''}
     </div></li>`;
 }

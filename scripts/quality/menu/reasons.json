@@ -601,5 +601,74 @@
   "verdict": "watch",
   "reason": "Beat Melting Pot in blind judging of bot games (+0.47, +0.81 with misplays dropped). Its balance trial is still playing.",
   "replaces": "Melting Pot"
+ },
+ "live|space|help yourself": {
+  "cory": "Change to test: \"We should make help yourself a single rival, and then heist any rivals. Like, we should swap those. Why is help yourself so bad?\""
+ },
+ "live|space|heist": {
+  "cory": "Change to test: \"heist and help yourself are so, like, these are the same thing ... make help yourself a single rival, and then heist any rivals.\""
+ },
+ "live|space|promote": {
+  "cory": "Balance test: \"promote, I think, is relatively good and strong. Maybe we should make a note to balance test it, costing up to 3 more or something like that.\""
+ },
+ "live|space|spree": {
+  "cory": "Balance test: \"I like spree. Honestly, we could even make this, like, maybe plus 6 blue. Like, it could be buffed a little bit.\""
+ },
+ "live|space|melting pot": {
+  "cory": "Balance test: \"Let's just make this plus 2 resources per each different color you have, color member. And then we gotta figure out something clever for gray ... maybe ... gray doesn't count.\""
+ },
+ "live|space|peek": {
+  "cory": "Balance test: \"+2, +4, +6. Should probably be +3, +4, +5 or something. But it seems weak ... I suspect bots aren't using it.\""
+ },
+ "live|space|overtime": {
+  "cory": "Balance test: \"Maybe you should give a little more purple. Plus 1 minion this round is pretty good.\""
+ },
+ "live|space|bury": {
+  "cory": "Watch list: \"I think we play around with the number there ... Maybe we just give it, like, resources equal to the non-wild cost or something. So, watch list for that one.\""
+ },
+ "live|space|cover": {
+  "cory": "Watch list: \"I don't like cover, actually. Copy an action with no minion on it is so weird. Like, why wouldn't you just take that action? ... that one's on our watch list.\""
+ },
+ "live|space|walk-in": {
+  "cory": "Watch list: \"walk-in's okay for now. This is the only thing in the game that comes down to, like, chance ... We keep that on our watch list.\""
+ },
+ "live|space|lie low": {
+  "cory": "Watch list: \"I'm not loving it. I don't like this, like, giving you a passive for the round. This is, like, the only part that does it. So lie low might actually need to change.\""
+ },
+ "live|space|housewarming": {
+  "cory": "Watch list: \"This leans on, like, red territory. I don't super love this, but... but maybe.\""
+ },
+ "live|space|toast": {
+  "cory": "Watch list: \"Toast is good. I don't love it, honestly. And it seems a little weak in the hard bots.\""
+ },
+ "live|space|largesse": {
+  "cory": "Watch list: \"Largesse is okay. A little too strong, it looks like.\""
+ },
+ "live|space|crunch time": {
+  "cory": "Suspect the bots: \"this is a super strategic space, and so my suspicion is that, like, bots just don't know what the fuck they're doing when it comes to this.\""
+ },
+ "live|space|hold up": {
+  "cory": "Fine as is: \"Hold up's good.\""
+ },
+ "live|space|initiation": {
+  "cory": "Fine as is: \"Initiation, yep.\""
+ },
+ "live|space|recruit twice": {
+  "cory": "Fine as is: \"good.\""
+ },
+ "live|space|cash in": {
+  "cory": "Fine as is: \"Cash in, good.\""
+ },
+ "live|space|makeover": {
+  "cory": "Fine as is: \"Makeover. Plus 4 yellow. Yeah.\""
+ },
+ "live|space|sample": {
+  "cory": "Fine as is: \"I do like sample, actually.\""
+ },
+ "live|space|last call": {
+  "cory": "Fine as is: \"This is pretty good. Surprised that it's 8 points over even.\""
+ },
+ "live|space|sleep in": {
+  "cory": "Fine as is: \"Yep. That's okay.\""
  }
 }
