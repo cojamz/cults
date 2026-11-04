@@ -118,14 +118,19 @@ h1,h2,h3{font-family:var(--serif)}
   /* each chair is as tall as its content (the plate's panels) and stands at its place in the order: GameScreen stacks
      them (--y), centred in the column; a new round's order slides them there */
   .lt > .lt-seat{grid-area:seats;align-self:start;margin-left:44px;transform:translateY(var(--y, calc(var(--slot, 0) * 108px)));
-    transition:transform calc(.35s * var(--mo-slow, 1)) cubic-bezier(.3,.7,.4,1),box-shadow var(--mo-dim, .3s),background var(--mo-dim, .3s);
+    transition:transform calc(.35s * var(--mo-slow, 1)) cubic-bezier(.3,.7,.4,1);
     min-height:0;min-width:0;overflow:visible;border-radius:8px}
   .lt > .lt-seat:empty{visibility:hidden}
   /* each chair as the approved plate's seat panel (design/prototypes/language/plate1b.png): the seat ground, an 8px
      corner, a hairline; the leader beside the name and what it holds (number, then dot), the total big on the right;
      then its members, then what they make each round and what it just took */
   .lt > .lt-seat{background:var(--seat, #221a15);box-shadow:inset 0 0 0 1px var(--hair, rgba(242,232,210,.10));border-radius:8px;padding:10px 14px}
-  .lt > .lt-seat.now{background:color-mix(in srgb,var(--seat, #221a15) 88%,rgb(var(--lamp)));box-shadow:inset 0 0 0 1px rgba(var(--lamp),.45)}
+  /* the chair whose turn it is lights by a layer's fade, not by changing the chair's own ground and ring: those
+     repainted the whole chair every frame of the .3s (Firefox hitched 10-12% of frames while a chair lit, Nov 4) */
+  .lt > .lt-seat::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;opacity:0;
+    background:color-mix(in srgb,rgb(var(--lamp)) 12%,transparent);box-shadow:inset 0 0 0 1px rgba(var(--lamp),.45);transition:opacity var(--mo-dim, .3s)}
+  .lt > .lt-seat.now::before{opacity:1}
+  .lt > .lt-seat.mine::before{box-shadow:inset 0 0 0 1.5px rgba(var(--lamp),.6)}
   /* the chair inside (leader, name, minions, total; resources; members) is laid out in game/seat.css (mockup A) */
   /* what a rival just took from this seat, short, on the seat's lower edge (Cory, 2026-10-18: "shorter, near your
      player card"); the seat's own resource stacks flash with it */
@@ -139,7 +144,6 @@ h1,h2,h3{font-family:var(--serif)}
   .app.game.lt > .lt-since{grid-column:3;grid-row:1 / 4;align-self:center;max-height:calc(100% - 140px)}
   /* you, wherever you land: a cream edge */
   .lt > .lt-seat.mine{box-shadow:inset 0 0 0 1.5px rgba(243,230,200,.32)}
-  .lt > .lt-seat.mine.now{box-shadow:inset 0 0 0 1.5px rgba(var(--lamp),.6)}
   /* the column the chairs stack in (GameScreen measures it); no rail is drawn in it any more (Cory, 2026-10-16): each
      chair says its turn in words under its name. Its gutter holds the round's counts while a round is scored. */
   .lt > .lt-snake{grid-area:seats;justify-self:start;align-self:stretch;width:44px;position:relative;pointer-events:none}

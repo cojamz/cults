@@ -1,4 +1,4 @@
-import { browserPath, launchBrowser } from '../e2e/v4/lib/browser.mjs';
+import { browserPath, launchBrowser, engine } from '../e2e/v4/lib/browser.mjs';
 // Frame probe: how smooth the shows are, early and late in a game, at 4x CPU (a mid laptop).
 //   node scripts/v4-frames.mjs <url> <label> [--cpu=4] [--secs=40] [--late=III] [--speed=relaxed] [--out=design/eval/perf]
 // Four Normal bots play on this device (no one to wait for). "early" watches round I from the start; "late" fast-forwards
@@ -52,7 +52,10 @@ const RECORDER = () => {
 };
 
 const browser = await launchBrowser({ executablePath: browserPath });
-const metrics = async cdp => Object.fromEntries((await cdp.send('Performance.getMetrics')).metrics.map(m => [m.name, m.value]));
+const metrics = async cdp => (cdp.stub ? {} : Object.fromEntries((await cdp.send('Performance.getMetrics')).metrics.map(m => [m.name, m.value])));
+// Firefox has no CDP: frame gaps and the animations running are still recorded in the page; the main-thread split and
+// the CPU throttle are Chrome-only (V4_ENGINE=firefox runs unthrottled, like Cory's Mac)
+const cdpOf = async (ctx, page) => (engine === 'firefox' ? { stub: true, send: async () => ({}) } : ctx.newCDPSession(page));
 
 async function startAllBots(page, q) {
   await page.goto(url(q));
@@ -110,6 +113,8 @@ for (const phase of PHASES) {
   // running animation each frame, so an idle table would look busy only because it's being watched
   if (phase !== 'idle') await ctx.addInitScript(RECORDER);
   await ctx.addInitScript(s => { try { localStorage.setItem('patrons.v4.motionSpeed', s); } catch { /* */ } }, SPEED);
+  // --css="<rules>": an experiment, the same game with these styles added (what a candidate fix is worth)
+  if (flag('css', '')) await ctx.addInitScript(css => { addEventListener('DOMContentLoaded', () => { const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st); }); }, flag('css', ''));
   const page = await ctx.newPage();
   const errs = [];
   page.on('pageerror', e => errs.push(e.message));
@@ -227,7 +232,7 @@ for (const phase of PHASES) {
     await sleep(1500);
     report.phases[phase] = await watch(page, cdp, SECS);
   } else {
-    const cdp = await ctx.newCDPSession(page);
+    const cdp = await cdpOf(ctx, page);
     await cdp.send('Performance.enable');
     if (CPU > 1) await cdp.send('Emulation.setCPUThrottlingRate', { rate: CPU });
     await startAllBots(page, '');
