@@ -59,7 +59,7 @@ https://claude.ai/artifact/Wur73WcxCPaeZmhmhuUg79 ("Cults Workstreams"), built b
 
 ## Publishing (one at a time; ask the desk for go or wait)
 
-- Live: v0.99.542 (cef8f924), shipped Nov 3 9:34pm by the desk: Wallflower doubles every copied action; Dabblers show once as 2 any-color. Next: set 3 members (plan thread, v0.99.543). Rule: ship each fix the moment it passes; no time slots.
+- Live: v0.99.543 (5eacf01c), set 3 members (plan thread). Publish lock: FREE. Next in line: the wheel thread (redraw skip + no board hover while turning): go, no need to ask again.
 - Held back from shipping until Cory says yes: the animations thread's Relaxed pacing change (not pushed).
 | Make game logs critiqueable (KbyWRuwuvJ21rjZetXFU2e) | Cory, Nov 4 9:01pm: send Claude a game log and get a critique of his play; not player-facing, copy/save at the end; replay from a point later | Save game already keeps every pick (seed plus moves replays exactly). Added scripts/v4-critique.mjs (each decision with the table, shop and every option) and a Build tag on saved games. Sample critique: /mnt/project-files/game-critique/. Found and fixed: pay warnings read the printed contest under By color (21130bba, pushed, not published) | Cory's read of the sample; the desk's go to publish the pay-warning fix |
 
