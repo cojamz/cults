@@ -22,3 +22,10 @@ Cory, Nov 4: "It's the bots making good decisions in general, like strategic dec
 scripts/v4-bot-strategy-audit.mjs + v4-bot-strategy-report.mjs. Its "best moment" is the best of many noisy measures after the fact, so it overstates poor timing on both sides; the head to head is the real test.
 
 Open misplays from other threads: misplays.md.
+
+## Later rounds' contests (Nov 4 afternoon)
+- Splurge probe: bots skipped a round I recruit with Splurge's bonus because spending 3 resources cut their forecast of later rounds' contests by up to 16 followers (FUTURE_CONTESTS 0.4).
+- duel-5 (smart with future 0.1 vs smart): 48 games, 24 seats to 25, +1.8 ± 1.9 followers, recruits 13.5 members vs 11.6. Not clear enough to switch; opts.future stays a test setting.
+
+## Loan payback (a9d5de76)
+- Choices valued as if the chooser still had a buy this turn; under BOTSMART only when it's queued.
