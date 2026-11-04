@@ -48,6 +48,12 @@ Thread links: https://claude.ai/code/project/chan_01PySa5gYMfCiexiWTLrWgo3?threa
 | Balance test the current game (this thread): Red and White Cloaks | Cory, Nov 3 8:52pm: "nerf red a little and buff white a touch". Trying Red Cloak once per turn and White Cloak +2 on your own buys | Trials at Normal, Hard and Very Hard (By color, Red and White on every table) | Trial results, then before/after to Cory, then the desk's go to publish |
 | Plan and run today's autonomous improvements (333bSCwXiSbXsUYNhenCzTk): rival-resources rule | Cory, 8:56pm: "anything that relies on a rival having more of resources should be reworked". 8 members to rework, plus Creditor and Fan Club options sent | Audit done: /mnt/project-files/replacements/rival-resources-audit.md; Leaders' Tax and Heist handed to the actions thread | Cory's yes on the 8 picks, then build and ship |
 
+## Publishing (one at a time; ask the desk for go or wait)
+
+- Live: v0.99.540 (0f470fd), stamp confirmed Nov 3 9:08pm by the animations thread. Publish lock: free.
+- Pushed, rides the next ship: 8e106341 ("0 members" wording, animations thread).
+- Held back from shipping until Cory says yes: the animations thread's Relaxed pacing change (not pushed).
+
 ## Runner threads (play bot games from the queue)
 
 Each runs `node /mnt/project-files/queue/queue.mjs work --label="<title>"` in the background and reports when it prints QUEUE IDLE. `node /mnt/project-files/queue/queue.mjs status` shows every job and runner.
