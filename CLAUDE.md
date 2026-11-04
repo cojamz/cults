@@ -9,6 +9,7 @@ The game was called Patrons; since 2026-10-14 it's **Cults** (v0.5). Code ids an
 - Project instructions and these files load once, when a thread starts. Rules added later reach you through presend's NEW RULES lines and the coordinator.
 - `.claude/rules/working-with-cory.md` and `.claude/output-styles/foreman.md`: how to work with Cory and the voice for every message. Follow strictly.
 - `.claude/rules/harness.md`: hooks, where every kind of file goes, skills, agents, checks, shipping.
+- `design/desk.md` first: Cory's words verbatim, every open workstream with its owner and what it waits on, the runner threads. Bot games go through the queue (/mnt/project-files/queue/README.md), card trials through scripts/trial/; never hand out game ranges by message.
 - `design/HANDOFF.md`, `design/in-flight.md`, `design/todo.md`: current state, what's running, the ordered list.
 - `design/decisions.md`: every design call (append-only). The game is whatever this says.
 - `design/strategy.md` and `design/pitch-ledger.md`: how the game wins and what Cory has said yes and no to. Required before any design pitch (`/brainstorm`).
