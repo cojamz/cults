@@ -663,6 +663,11 @@ function inputFor(state, task) {
       return { kind: 'buy', extra: !!task.extra, prompt: task.extra ? `${p.name}: recruit again (Big Spender), or pass` : `${p.name}: recruit a member or followers${more ? ` (${more + 1} recruits left)` : ''}, or pass`, options: opts };
     }
     case 'choose': {
+      // a Round Start's choice whose card has left its owner since it was queued does nothing (see startRound)
+      if (task.rsSrc && !state.players[task.rsSrc.pid]?.members.includes(task.rsSrc.uid)) {
+        const name = String(task.prompt).split(':')[0];
+        return { kind: 'choose', prompt: task.prompt, options: [], onEmpty: () => log(state, `${name} has left ${p.name}'s cult, so ${p.name}'s Round Start ${name} does nothing.`) };
+      }
       // only the options whose cards are still where they were when the choice was queued (see liveOptions)
       // an answer that spends your coins (option.spend, or a pay option's value) says which leads it gives up (breaks),
       // worked out when it's shown, so a space's payment warns like the pay sheet does (panel tester C #1)
@@ -1026,9 +1031,17 @@ function startRound(state, r) {
   const more = id => sumMemberFlag(state, state.players[id], 'extraWorkers', v => v[r - 1] || 0);
   for (const p of state.players) { p.left = n + more(p.id); p.workers = p.left; }
   const ctx = ctxFor(state);
-  eachMember(state, (owner, card, def) => { if (def.onRoundStart) def.onRoundStart(ctx, owner, card); }, ['onRoundStart']);
+  // A choice a Round Start queues remembers whose card asked (rsSrc): if the card has changed cults before the choice
+  // comes up (a Kidnapper took it), it does nothing, so a card's Round Start fires once a round, for whoever holds it
+  // (Cory, Nov 4: "Round Start / Round End effects resolve in turn order"; Lab bug, Tax Collector A/B game 1).
+  const fromCard = hook => (owner, card, def) => {
+    if (!def[hook]) return;
+    state._rsSrc = { pid: owner.id, uid: card.uid };
+    try { def[hook](ctx, owner, card); } finally { delete state._rsSrc; }
+  };
+  eachMember(state, fromCard('onRoundStart'), ['onRoundStart']);
   // late hooks see everything the round-start income gave (Investor sets aside after Banker pays)
-  eachMember(state, (owner, card, def) => { if (def.onRoundStartLate) def.onRoundStartLate(ctx, owner, card); }, ['onRoundStartLate']);
+  eachMember(state, fromCard('onRoundStartLate'), ['onRoundStartLate']);
   // Fewest followers picks first. Ties: whoever was later in last round's turn order.
   // The first pass of last round's snake is its turn order (the last pass is reversed in even rounds).
   const prev = state.order.length ? state.order.slice(0, state.players.length) : [...state.players.map(p => p.id)];
@@ -2326,7 +2339,7 @@ function ctxFor(state) {
       if (!options.length) return;
       // follow-up choices queued during one resolution keep their call order
       const at = state.queue.findIndex(t => !t._fresh);
-      const task = { t: 'choose', p: p.id, prompt, options: (() => { const where = options.length > 1 ? whereAll(state) : null; return withTargets(state, options).map(o => pinCards(state, o, where)); })(), h: handler, data, ...(extra.count ? { count: extra.count } : {}), ...(extra.blocked && Object.keys(extra.blocked).length ? { blocked: extra.blocked } : {}), ...(extra.show ? { show: extra.show } : {}), ...(extra.together ? { together: extra.together } : {}), _fresh: true };
+      const task = { t: 'choose', p: p.id, prompt, options: (() => { const where = options.length > 1 ? whereAll(state) : null; return withTargets(state, options).map(o => pinCards(state, o, where)); })(), h: handler, data, ...(state._rsSrc ? { rsSrc: { ...state._rsSrc } } : {}), ...(extra.count ? { count: extra.count } : {}), ...(extra.blocked && Object.keys(extra.blocked).length ? { blocked: extra.blocked } : {}), ...(extra.show ? { show: extra.show } : {}), ...(extra.together ? { together: extra.together } : {}), _fresh: true };
       state.queue.splice(at < 0 ? state.queue.length : at, 0, task);
     },
     defer(p, handler, data = null, cause = null) {

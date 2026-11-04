@@ -241,6 +241,26 @@ const lastWaits = (ctx, p) => {
 /** The skip marker reached: p's turn is passed over now. Gossip (Cory, 2026-10-22: "+1 follower every time a players
  *  turn is skipped", anyone's, yours too; Oct 23: "should pay when turn is actually skipped"). */
 function skipped(ctx, p, value, data) {
+  // Early Birds checked when the skipped turn comes, not when the skip was set (Cory, 2026-10-22: "your turns cannot be
+  // skipped, your own Sleep In and Last Call too"): one recruited after the skip was set (Sleep In, then Early Birds on
+  // the same turn) gives the turn back; the minion waiting on the token, if any, comes off it and places now.
+  if (noSkip(ctx, p)) {
+    const q = ctx.state.queue, close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
+    let k = stop - 1;
+    while (k >= 0 && !(q[k].t === 'turn' && q[k].p === p.id && !!q[k].token === !!data?.token)) k--;
+    if (k >= 0) {
+      const [t] = q.splice(k, 1);
+      delete t.token;
+      q.unshift(t);
+      const s = ctx.state;
+      if (s.early && s.early.round === s.round) {
+        const m = s.early.moves.findIndex(mv => mv.p === p.id && mv.late && (data?.at === undefined || mv.from === data.at));
+        if (m >= 0) s.early.moves.splice(m, 1);
+      }
+      ctx.log(`${p.name}'s Early Birds: ${p.name}'s turn can't be skipped, so ${p.name} takes it now.`);
+      return;
+    }
+  }
   ctx.skipBeat(p, data?.why, () => {
     ctx.log(`${p.name}'s turn is skipped${data?.why ? ` (${data.why})` : ''}.`);
     for (const o of ctx.state.players) for (const c of ctx.abilitiesOf(o)) if (c.def.onSkip) ctx.asMember(o, c.def.name, () => c.def.onSkip(ctx, o, c, p));

@@ -18,6 +18,16 @@ describe('Purple members, Oct 22', () => {
     expect(upcoming(s)).toEqual([1, 0, 1]);
     expect(s.log).toContain("P1's Early Birds: P1's turns can't be skipped, so P1 doesn't go last.");
   });
+  it('Early Birds recruited after Sleep In on the same turn: the skip set earlier doesn\u2019t land (checked when the turn comes)', () => {
+    // Cory, 2026-10-22: "your turns cannot be skipped, your own Sleep In and Last Call too" (firstbirds-ab2 games 2 and 4)
+    let s = sc({ round: 2, res: [rich], shop: ['purple.earlybird'], queue: turns(0, 1, 0, 1) });
+    s = buy(take(s, 'purple.skip'), 'purple.earlybird');
+    s = passBuys(take(passBuys(s), 'gold.rush'));
+    expect(s.log).not.toContain("P1's turn is skipped (Sleep In).");
+    expect(s.log).toContain("P1's Early Birds: P1's turn can't be skipped, so P1 takes it now.");
+    expect(s.pending.player).toBe(0);
+    expect(upcoming(s)).toEqual([1]);
+  });
   it('Early Birds: Last Call still pays its followers, and you keep your turns', () => {
     const s = take(sc({ round: 2, left: 3, members: [['purple.earlybird']], queue: turns(0, 1, 0, 1, 0) }), 'purple.lastcall');
     expect(s.players[0].bonus).toBe(2);
