@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.589 — 2026-11-04
+
+- Round I's deck deals only members costing 4 or less; pricier ones wait for later rounds
+
 ## v0.99.588 — 2026-11-04
 
 - Rules: glossary trimmed to words the deck uses
