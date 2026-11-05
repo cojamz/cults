@@ -785,7 +785,8 @@ const echoQ = {
     // REPLACE10 bot test (Nov 4, quality loop lane D): Roadie's place. 2 green + 1 any as a player sees it. Fires where
     // Choir does: each copy of an action you make (Echo, Reprise, Cover, a member's copy), once per copy.
     // REPLACE10=copyist,copyist2: the +2 version (pitches/D-green-4.md), for a trial beside the +1
-    ...add10(m('copyist', 'Copyist', 1, 1, `Whenever you copy an action, +${COPYIST} follower${COPYIST > 1 ? 's' : ''}.`)),
+    // Live Nov 5 in Roadie's place (Cory: "swap roadie out for shortlist green"); Roadie's price, 2 green + 1 any.
+    m('copyist', 'Copyist', 1, 1, `Whenever you copy an action, +${COPYIST} follower${COPYIST > 1 ? 's' : ''}.`),
     // REPLACE10 bot test (Nov 4 noon, scale-up batch 2): Roadie's place (pitched in D-roadie.md, passed in D-scale2). 2 green +
     // 1 any as a player sees it. At round end, before the minions go home: your minions on Green's spaces (joined spots count).
     ...add10(m('stagehand', 'Stagehand', 1, 1, 'Round End: +1 follower per minion you have on Green spaces.', {
@@ -806,7 +807,8 @@ const echoQ = {
     // price. Pays on every action copy (Echo, Reprise, Cover, Understudy, Stunt Double, Fan Club, Tribute Band), not
     // on copied On Recruits (Sample, Greatest Hits); counts itself, as the old Roadie did.
     // trial q-c-roadie9-c2 (120 Hard games a side): taken 75%, owners won 31% (130 owners; old Roadie 31%). Live Nov 4.
-    m('roadie9', 'Roadie', 1, 1, 'Whenever you copy an action, +1 green per green member you have.', {}),
+    // Retired Nov 5 (Cory flagged it far too strong; Copyist takes its place).
+    m('roadie9', 'Roadie', 1, 1, 'Whenever you copy an action, +1 green per green member you have.', { retired: true }),
     // REPLACE9 (Members C, bC11: paper 16 vs 14; Cory's "paper filters, play ranks", Nov 4): Roadie's place, same price.
     // "Your last turn": your latest space this round (Stunt Double's read); none yet, the use comes back.
     ...add9(m('setlist', 'Setlist', 1, 1, 'On Use, once per round: copy the last action you took this round.', {
@@ -843,7 +845,7 @@ const echoQ = {
       },
     }),
     // Cory, 2026-10-28: "lets shift tribute band into this", then "should maybe get to pick the rival they copy"
-    m('dejavu', 'Tribute Band', 10, 3, /* Cory, Oct 27: "tribute band at 12" (with the +1 wild); 14 (Cory, Nov 1: "just raise it to 14") */ 'On Use, once per game: choose a rival. Do every action they have a minion on this round.', { n: 3, // 3 members, still 12 (Cory, Oct 29: "Tribute Band at least 3. its cost should still be 12")
+    m('dejavu', 'Tribute Band', 8, 3, /* Cory, Nov 5: "get tribute band back in at 12" (9 green + 3 any as seen) */ /* Cory, Oct 27: "tribute band at 12" (with the +1 wild); 14 (Cory, Nov 1: "just raise it to 14") */ 'On Use, once per game: choose a rival. Do every action they have a minion on this round.', { n: 3, // 3 members, still 12 (Cory, Oct 29: "Tribute Band at least 3. its cost should still be 12")
       activate: 'game',
       onActivate(ctx, owner, card) {
         const list = ctx.rivals(owner).filter(o => ownPlan(ctx, o).take.length);
