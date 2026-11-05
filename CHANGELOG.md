@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.587 — 2026-11-04
+
+- Copyist (whenever you copy an action, +1 follower) replaces Roadie in green; Tribute Band costs 12 (9 green + 3 any)
+
 ## v0.99.586 — 2026-11-04
 
 - Bouncers now skips the next rival when the first one has Early Birds
