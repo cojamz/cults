@@ -13,7 +13,7 @@ Every member you rated, by color. "In the deck" means it is live now.
 - **Archive/cut:** Night Watch (in the deck); Early Birds (in the deck); Last Orders; Busybody; Interrupters; Full House; Pace-Setters; Day Laborers
 
 ## Silver: 5 short list, 4 consideration, 11 archive/cut
-- **Short list:** Godparent (in the deck); Debutantes (in the deck); Smooth Talkers (in the deck); Socialites; Usher
+- **Short list:** Godparent (in the deck); Debutantes (in the deck); Smooth Talkers (in the deck); Socialites; Usher; Silver Barons ("Round End: +1 follower per 3 silver all players hold together.", Cory Nov 5)
 - **Consideration:** Toastmaster (in the deck); Debt Collectors (in the deck); High Society (in the deck); Well-Wishers
 - **Archive/cut:** Hostesses (in the deck); Guest of Honor (in the deck); Charity Ball (in the deck); Creditor (in the deck); Big Spenders; Charmers; Patronesses; Silver Tongues; Hush Money; Social Climber; Chaperone
 
