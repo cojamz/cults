@@ -147,3 +147,20 @@ Also: "I don't understand this X points over even. I'm a little suspicious of it
 - **Heiresses** ("Eris"): really like; rated low is bonkers; big member engine into white victory points; a little win more, leave it in for now.
 - **Line Cutters**: fine.
 - **Patriarch**: quite good; people would vie for it with red's swapping.
+
+## Members, part 4 (voice note, Nov 5 00:26Z, his words)
+- **Snobs**: fine; "maybe each color should have one of these".
+- **Second-Story Man**: like; should just be "steal two resources", maybe even three, maybe a little cheaper; "should be considered for going in".
+- **Debutantes**: pretty good; maybe raise the silver rivals get.
+- **Desperado**: like; surprised bots can't use it.
+- **Creditor**: "No. Absolutely no."
+- **Shoplifter**: like; should stack, so many magenta members make a big steal engine.
+- **Tribute Band**: should stack with other stuff or not be included, but defaults to including it; "should be in"; hard bots may misuse it; a little too expensive, "make it 12".
+- **Bodyguards**: on the fence; need to sort it out.
+- **Doormen**: a little confusing, lean away.
+- **Early Birds** ("can't be skipped"): can stay out, not very good.
+- **Proselytizers**: like; anybody can grab it on a recruit spree.
+- **Wallflower**: interesting but a little confusing; maybe too expensive; pays for itself quickly, could be busted; on his short list for staying in green.
+- **Window Shopper**: like; maybe 3 (shop members), a little more expensive.
+- **Hostesses**: don't like.
+- **Jack-of-All-Trades**: doesn't understand "in your full sets"; if it means any color, say so.
