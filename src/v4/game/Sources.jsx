@@ -36,7 +36,9 @@ function parts(state, p, s, meId) {
     </> },
     { key: 'bought', n: b.bought, label: 'Bought', card: <b>{poss} follower buys: {b.bought}</b> },
     // won or lost, said (picky bot, Nov 4: "Play −4" floated outside the bar with no verb)
-    { key: 'play', n: b.effects, label: b.effects < 0 ? 'Lost in play' : 'Won in play', card: <>
+    { key: 'play', n: b.effects, label: b.effects < 0 ? 'Lost in play' : 'Won in play',
+      // a part too narrow for "Won in play" still names itself (picky UI bot, Nov 5: a bare "22" on a 100px part)
+      short: 'Play', card: <>
       <b>{poss} followers won in play: {sign(b.effects)}</b>
       {playLines.map(l => <span key={l.label}>{l.label} {sign(l.n)}</span>)}
     </> },
@@ -87,7 +89,7 @@ export default function FollowerBars({ state, meId, ranks = null }) {
                   {(() => {
                     const fits = t => g.n / max >= Math.max(0.075, (t.length + 4) * 0.0135);
                     const key = `${p.id}:${g.key}`;
-                    const words = [g.long, g.label].filter(t => t && fits(t)).slice(tight[key] || 0)[0];
+                    const words = [g.long, g.label, g.short].filter(t => t && fits(t)).slice(tight[key] || 0)[0];
                     return words ? <span className="src-lab" data-lab={key}>{`${words} `}<b className="num">{g.n}</b></span> : <span className="src-lab bare"><b className="num">{g.n}</b></span>;
                   })()}
                 </Tip>
