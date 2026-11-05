@@ -64,7 +64,7 @@ details.cutbox .sec{padding:4px 0 0}
 
 <div class="wrap">
   <h1>Your member piles</h1>
-  <p class="sub">Every member you've rated in your voice notes (Nov 4 and 5), one column per color. Hover or tap a card to see what you said. "In the deck" is what's live now; a live card you put on the cut pile sits under Archive/cut.</p>
+  <p class="sub">Every member you've rated in your voice notes (Nov 4 and 5), one column per color. Hover or tap a card to see what you said. "In the deck" is every card live now: 10 per color, 12 grey. A live card you said to cut keeps its place there with a red tag; Archive/cut holds the out-of-deck cards you said no to.</p>
   <div class="bar">
     <div class="seg" id="pileSeg" role="group" aria-label="Show piles">
       <button data-p="all" aria-pressed="true">All piles</button>
@@ -85,7 +85,7 @@ details.cutbox .sec{padding:4px 0 0}
 const DATA = /*DATA*/null;
 const COLORS = [['red','Red'],['purple','Purple'],['silver','Silver'],['yellow','Yellow'],['market','Blue'],['thieves','Magenta'],['trading','White'],['echo','Green'],['guests','Grey']];
 const PILES = [['deck','In the deck'],['short','Short list'],['consider','Consideration'],['cut','Archive/cut']];
-const BLAB = {short:'short list',consider:'consider',cut:'cut'};
+const BLAB = {short:'short list',consider:'consider',cut:'you said cut'};
 const st = {pile:'all', q:''};
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -112,7 +112,7 @@ function render(){
     for (const [p, lab] of PILES){
       if (st.pile !== 'all' && st.pile !== p) continue;
       const xs = vis.filter(x => x.pile === p);
-      if (p === 'deck') xs.sort((a,b) => ({short:0,'':1,consider:2}[a.b] ?? 1) - ({short:0,'':1,consider:2}[b.b] ?? 1));
+      if (p === 'deck') xs.sort((a,b) => ({short:0,'':1,consider:2,cut:3}[a.b] ?? 1) - ({short:0,'':1,consider:2,cut:3}[b.b] ?? 1));
       const inner = xs.length ? xs.map(cardHtml).join('') : '<div class="empty">None</div>';
       if (p === 'cut' && st.pile === 'all') body += `<details class="cutbox"><summary>Archive/cut (${xs.length})</summary><div class="sec p-cut">${inner}</div></details>`;
       else body += `<div class="sec p-${p}"><h3>${lab} <span>${xs.length}</span></h3>${inner}</div>`;

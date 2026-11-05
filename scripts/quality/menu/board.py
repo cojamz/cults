@@ -12,7 +12,7 @@ seen = set()
 for x in cards:
     if x['kind'] != 'member' or x['color'] not in COLORS: continue
     b = x.get('bucket')
-    if x['status'] == 'live': pile = 'cut' if b == 'cut' else 'deck'
+    if x['status'] == 'live': pile = 'deck'  # every live card stays in its deck list; his pile shows as a tag
     elif b in ('short', 'consider', 'cut'): pile = b
     else: continue
     k = (x['name'], x['text'])
