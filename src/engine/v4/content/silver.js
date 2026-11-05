@@ -637,7 +637,7 @@ const silver = {
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.08 * WW_N),
     })),
     // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
-    m('smoothtalker', 'Smooth Talkers', 5, 5, 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2, ...old14('bigspenders'), ...old14('charmers'), ...old16('silver.smoothtalker') }),
+    m('smoothtalker', 'Smooth Talkers', 5, 4, /* Cory, Nov 5 backlog price yes */ 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2, ...old14('bigspenders'), ...old14('charmers'), ...old16('silver.smoothtalker') }),
     // REPLACE16 bot test (thread "Make Silver cards more communal", Nov 4; silver-communal/paper.md 3): Smooth Talkers'
     // place, same price. Everyone's silver pays a colored part (core.js tableFlag); a rival's recruit whose colored part
     // took silver pays the owner 1 follower, once per recruit. Your own recruits pay nothing extra.
@@ -824,7 +824,7 @@ const silver = {
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r] * [0.1, 0.25, 0.3][r - 1], 0) * SOC_N),
     })),
     // Stays (Cory, 2026-11-04 12:36pm: "No to both", Creditor and High Society stay in Silver)
-    m('highsociety', 'High Society', 4, 3, 'Whenever a rival takes a Silver space, +1 follower.', { f: 2, ...old8('silver.highsociety'), // Nov 4 (Claude, under Cory's go-with-your-gut; was a game-end count of rivals with more silver)
+    m('highsociety', 'High Society', 4, 2, /* Cory, Nov 5 backlog price yes */ 'Whenever a rival takes a Silver space, +1 follower.', { f: 2, ...old8('silver.highsociety'), // Nov 4 (Claude, under Cory's go-with-your-gut; was a game-end count of rivals with more silver)
       afterRivalAction(ctx, owner, card, qid) { if (qid === S) { owner.bonus += 1; ctx.log(`${owner.name}'s High Society: +1 follower.`); } },
       // BOTSEE: about a quarter of the rival placements still to come land on a Silver space
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.25),

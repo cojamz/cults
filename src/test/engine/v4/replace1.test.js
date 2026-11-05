@@ -39,12 +39,12 @@ describe('REPLACE1: each card fires', () => {
     s = move(s, `card:${uidIn(s, 'red.patriarch', 1)}`);
     expect(owns(s, 0, 'red.patriarch')).toBe(true);
     expect(s.pending.player).toBe(1);
-    expect(s.pending.prompt).toMatch(/^Turncoats: recruit which shop member \(costing up to 6\)/);
+    expect(s.pending.prompt).toMatch(/^Turncoats: recruit which shop member \(costing up to 8\)/);
     // Mob costs 12: not offered
     expect(s.pending.options.map(o => s.cards[o.value].def)).toEqual(['red.recruitbonus']);
     s = answer(s, s.pending.options[0].id);
     expect(owns(s, 1, 'red.recruitbonus')).toBe(true);
-    expect(named(s, 'Turncoats')).toEqual(["P2's Turncoats: P1 took Patriarch, so P2 recruits a shop member costing up to 6, for free."]);
+    expect(named(s, 'Turncoats')).toEqual(["P2's Turncoats: P1 took Patriarch, so P2 recruits a shop member costing up to 8, for free."]);
   });
 
   it('Turncoats: taking Turncoats itself does not fire it', () => {

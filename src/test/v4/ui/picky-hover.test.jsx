@@ -61,7 +61,7 @@ describe('picky hover (Nov 4)', () => {
     for (const key of ['hireup', 'trade']) {
       const rule = spacesOf(s, 'red').find(x => x.key === key).text;
       const [line] = targetLines(s, a.id, t, rule);
-      expect(line.text).toMatch(/, each costing up to 2 (more|less)$/);
+      expect(line.text).toMatch(/, each costing up to 3 (more|less)$/); // 3 since Nov 5
       expect(line.text).not.toMatch(/same cost/);
     }
     // two pairs or fewer are named, with whose member each side is (a rival's member is never "your")

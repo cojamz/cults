@@ -18,7 +18,7 @@ describe('Overtime', () => {
     const who = s.pending.player;
     const before = s.players[who].res.purple || 0, left = s.players[who].left;
     s = applyMove(s, { player: who, option: `slot:${q}-${i}` });
-    expect(s.players[who].res.purple).toBe(before + 3);
+    expect(s.players[who].res.purple).toBe(before + 4); // +4 (Cory, Nov 5)
     expect(s.players[who].squatAll).not.toBe(3); // no longer opens taken spaces
     // the minion just placed is spent, the new one takes its place
     expect(s.players[who].left).toBe(left);

@@ -23,7 +23,7 @@ describe('REPLACE12: the switch', () => {
 });
 
 describe('Exit Counselor: "Whenever you give one of your members away, use its On Recruit."', () => {
-  it("the pitched turn: Demote gives Mentor & Protégés to a rival, and its On Recruit (the cheapest shop member, free) is yours", () => {
+  it("the pitched turn: Demote gives Mentor to a rival, and its On Recruit (the cheapest shop member, free) is yours", () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.exitcounselor', 'red.mentor'], ['red.panel']],
       shop: ['red.volunteer', 'red.loyalists'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
     s = take(s, 'red.trade'); // Demote
@@ -31,7 +31,7 @@ describe('Exit Counselor: "Whenever you give one of your members away, use its O
     expect(owns(s, 1, 'red.mentor')).toBe(true);
     expect(owns(s, 0, 'red.panel')).toBe(true);
     expect(owns(s, 0, 'red.volunteer')).toBe(true); // Mentor's cheapest shop member, for P1
-    expect(named(s, 'Exit Counselor').join(' ')).toContain('Mentor & Protégés leaves, and P1 uses its On Recruit.');
+    expect(named(s, 'Exit Counselor').join(' ')).toContain('Mentor leaves, and P1 uses its On Recruit.');
   });
 
   it("a member a rival takes from you doesn't count (you didn't give it)", () => {
@@ -46,7 +46,7 @@ describe('Exit Counselor: "Whenever you give one of your members away, use its O
 });
 
 describe('Exit Counselor: a member cast out to the pile is given to nobody', () => {
-  it('Estate Sale casts out Mentor & Protégés: no On Recruit', () => {
+  it('Estate Sale casts out Mentor: no On Recruit', () => {
     let s = table(['trading', 'red', 'market', 'yellow'], { round: 2, members: [['red.exitcounselor', 'red.mentor'], []], shop: ['red.volunteer'] });
     s = take(s, 'trading.estatesale');
     if (s.pending?.options?.some(o => String(o.id).includes(String(uidIn(s, 'red.mentor', 0))))) s = answer(s, s.pending.options.find(o => String(o.id).includes(String(uidIn(s, 'red.mentor', 0)))).id);

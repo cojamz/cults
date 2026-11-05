@@ -18,7 +18,7 @@ describe('REPLACE5: the switch', () => {
   it('prints the draft prices (as a player sees them) and retires the old cards', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
     expect(price('yellow.secondfiddles')).toEqual([5, 3, 1]);
-    expect(price('thieves.secondstory')).toEqual([4, 3, 1]);
+    expect(price('thieves.secondstory')).toEqual([4, 2, 1]); // cheaper (Cory, Nov 5)
     expect(price('thieves.jackals')).toEqual([4, 2, 1]);
     expect(price('thieves.vultures')).toEqual([5, 3, 1]);
     expect(price('purple.tagalongs')).toEqual([6, 3, 1]);

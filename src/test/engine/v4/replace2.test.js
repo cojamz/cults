@@ -17,7 +17,7 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 describe('REPLACE2: the switch', () => {
   it('prints the spec prices (as a player sees them) and retires the old cards', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
-    expect(price('red.bodysnatchers')).toEqual([4, 2, 2]);
+    expect(price('red.bodysnatchers')).toEqual([3, 2, 2]); // cheaper (Cory, Nov 5)
     expect(price('echo.mirrorimage')).toEqual([6, 3, 1]);
     expect(price('thieves.skimmers')).toEqual([4, 2, 1]);
     expect(price('market.doorbusters')).toEqual([5, 3, 2]);

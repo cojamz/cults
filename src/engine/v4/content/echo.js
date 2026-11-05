@@ -688,11 +688,11 @@ const echoQ = {
     // then the owner chooses again; the new one's Round Start waits for the next round. One On Use a game (and one a
     // round) across every ability it holds. Another Impersonator, or an uncopied Doppelganger or Impostors, has no
     // ability of its own to lend, so it isn't offered.
-    m('impersonators', 'Impersonator', 3, 2, "On Recruit and Round Start: choose a rival's member. Until you choose again, Impersonator has that member's ability.", { now: true, // a round I member as Muse was (bot-tested in a later round; Nov 3)
-      onRoundStart(ctx, owner, card) {
+    m('impersonators', 'Impersonator', 3, 2, "On Recruit: choose a rival's member. Impersonator has that member's ability.", { // On Recruit only (Cory, Nov 5 backlog yes) // a round I member as Muse was (bot-tested in a later round; Nov 3)
+      onRecruited(ctx, owner, card) {
         const list = ctx.rivals(owner).flatMap(o => ctx.membersOf(o)).filter(c => c.copy || !['doppel', 'impostor', 'impersonators'].includes(c.def.key));
         if (!list.length) { ctx.log(`${owner.name}'s Impersonator: no rival member to choose.`); return; }
-        ctx.choose(owner, "Impersonator: choose a rival's member; until you choose again, Impersonator has that member's ability", list.map(c => ({
+        ctx.choose(owner, "Impersonator: choose a rival's member; Impersonator has that member's ability", list.map(c => ({
           id: `card:${c.uid}`, label: `${ctx.ownerOf(c.uid).name}: ${c.def.name}`, kind: 'member', value: c.uid,
           hint: impersonateHint(ctx, owner, card, defById(c.copy || c.def.id)),
         })), 'echo.impersonate', { uid: card.uid });
@@ -878,7 +878,7 @@ const echoQ = {
       },
     })),
     // Cory, 2026-10-15: moved here from Red (same card; its rename and recruit-time pick wait for his redesign)
-    m('doppel', 'Doppelganger', 2, 2, 'On Recruit: this member becomes a copy of another of your members.', { round: 3, // joins in round III (Cory, 2026-10-25)
+    m('doppel', 'Doppelganger', 3, 2, /* Cory, Nov 5 backlog price yes */ 'On Recruit: this member becomes a copy of another of your members.', { round: 3, // joins in round III (Cory, 2026-10-25)
       onRecruited(ctx, owner, card) {
         const own = ctx.membersOf(owner).filter(c => c.uid !== card.uid && (c.copy || !['doppel', 'impostor'].includes(c.def.key)));
         if (!own.length) return;
@@ -911,7 +911,7 @@ const echoQ = {
     // your next On Recruit is doubled"). Used on any turn; the next member you recruit that has an On Recruit, on any turn,
     // has it happen twice; the card stays turned until then, so a table can see it's waiting. Price 2 green + 3 any.
     // Archived: the "this turn" wording (REPLACE10=encore, Nov 4 trials q-d-encore-c1, A/B +0.28).
-    m('encore', 'Encore', 1, 3, 'On Use, once per game: your next On Recruit happens twice.', {
+    m('encore', 'Encore', 2, 2, /* Cory, Nov 5 backlog price yes */ 'On Use, once per game: your next On Recruit happens twice.', {
       activate: 'game',
       onActivate(ctx, owner) {
         owner.encoreTurn = 'next';

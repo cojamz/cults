@@ -32,7 +32,7 @@ describe('REPLACE9: Meddler, once per round', () => {
 describe("REPLACE9: Buyers' Club", () => {
   it('same price as Window Dressers, which is retired', () => {
     const d = defById('market.buyersclub'), o = defById('market.windowdresser');
-    expect([d.s, d.w, d.f]).toEqual([o.s, o.w, o.f]);
+    expect([d.s, d.w, d.f]).toEqual([o.s, o.w + 1, o.f]); // the old Window Dressers is 1 cheaper since Nov 5
     expect(o.retired).toBe(true);
   });
   it('whenever you recruit: +3 blue', () => {

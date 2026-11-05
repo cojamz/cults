@@ -168,6 +168,7 @@ for (const [id, name, source] of [
   ['echo.encore', 'Encore', 'echo.chronicler'], ['echo.songrequest', 'Song Request', 'echo.evergreen'], // Nov 4: Chronicler's and Busker's places
   ['benders.cheerleaders', 'Cheerleaders', 'benders.cheerleader'], ['benders.victors', 'Victors', 'benders.tiebreaker'], // Nov 4: new greys (both off the 10 deck's cut cards)
   ['market.mannequin', 'Mannequin', 'market.connoisseur'], // Nov 4 night: Hawker's place, on Connoisseurs' retired scene until its own is drawn
+  ['red.seatfiller', 'Seat Filler', 'red.volunteer'], // Nov 5: Volunteer's place, on its scene until its own is drawn
 ]) {
   const art = PORTRAIT.get(source);
   if (art && !PORTRAIT.has(id)) PORTRAIT.set(id, { ...art, id, name });

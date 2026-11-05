@@ -86,7 +86,7 @@ describe('Blue actions', () => {
     let s = table(Q, { res: [{ gold: 9, red: 9, blue: 9 }], shop: ROW5, pileFirst: ['market.stylist', 'gold.banker', 'market.curator', 'red.mentor', 'market.planner'] });
     const top = s.pile.slice(0, 4), fifth = s.pile[4];
     s = take(s, 'market.showroom');
-    expect(R(s).blue).toBe(11); // 9, +2 in round I (Peek scales, Cory 2026-10-22)
+    expect(R(s).blue).toBe(12); // 9, +3 in round I (Peek +3/+4/+5, Cory Nov 5)
     // put them back bottom-to-top reversed: the 4th on top
     for (const u of [top[3], top[2], top[1]]) { expect(s.pending.prompt).toMatch(/^Peek: which goes/); s = move(s, `card:${u}`); }
     expect(s.pile.slice(0, 5)).toEqual([top[3], top[2], top[1], top[0], fifth]);
@@ -152,10 +152,10 @@ describe('Blue actions', () => {
     expect(R(s).blue).toBe(1 + 5);
   });
 
-  it('Spree: +5 blue and you buy 3 times this turn', () => {
+  it('Spree: +6 blue and you buy 3 times this turn', () => {
     let s = table(Q, { round: 3, res: [{ gold: 2, red: 2 }], shop: ROW, left: 5 });
     s = take(s, 'market.spree');
-    expect(R(s).blue).toBe(5); // +5 blue since Nov 1 (was +3)
+    expect(R(s).blue).toBe(6); // +6 blue since Nov 5 (+5 Nov 1)
     expect(s.log).toContain('P1 goes on a spree: two extra recruits this turn.');
     for (let k = 0; k < 3; k++) { expect(s.pending.kind).toBe('buy'); s = move(s, 'tier:small'); }
     expect(s.players[0].bonus).toBe(3);

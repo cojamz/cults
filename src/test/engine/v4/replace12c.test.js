@@ -46,7 +46,7 @@ describe('Deprogrammers, reworded: "Whenever a member joins your cult from a riv
     s = answer(s, `trade:${uidIn(s, 'red.panel', 0)}:${uidIn(s, 'red.mentor', 1)}`);
     expect(s.players[0].bonus).toBe(1);
     expect(s.players[1].bonus).toBe(2);
-    expect(named(s, 'Deprogrammers').join(' ')).toContain('Mentor & Protégés joins from P2\'s cult, so P1 steals 1 follower from P2.');
+    expect(named(s, 'Deprogrammers').join(' ')).toContain('Mentor joins from P2\'s cult, so P1 steals 1 follower from P2.');
   });
   it("a rival's Demote hands you their member: it joins from their cult, so you steal 1 too", () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.mentor'], ['red.movementpenalty', 'red.panel']],

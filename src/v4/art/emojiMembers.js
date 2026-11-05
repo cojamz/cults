@@ -23,7 +23,7 @@ const M = {
   patriarch: ['👴', '🏁 +1 follower per 2 members'],
   panel: ['🪧', '✨ Promote or demote another of your members'],
   proselytizers: ['📣', '♾️ You recruit: +1 follower'],
-  'mentor-proteges': ['🧑‍🏫', '✨ Recruit the cheapest shop member'],
+  'mentor': ['🧑‍🏫', '✨ Recruit the cheapest shop member'],
   mob: ['🔥', '🌙 +2 followers per rival with fewer red members'],
   // Green
   encore: ['👏', '☝️ Your next On Recruit happens twice'],
@@ -120,7 +120,7 @@ const M = {
   // Yellow
   'duty-collector': ['🏷️', '♾️ A rival recruits a color you have: +1 of that color'],
   seamstress: ['🧵', '☝️ Double your full sets'],
-  'jack-of-all-trades': ['🛠️', '♾️ Your yellow counts as any color in your full sets'],
+  'jack-of-all-trades': ['🛠️', '♾️ Your yellow can stand in for any missing color in a full set'],
   'guest-book': ['📖', '♾️ You recruit a color none of your members have: +2 yellow'],
   drifters: ['🎒', '✨ Pick a color; these count as that color'],
   gardeners: ['🌱', '✨🌅 +1 of each color you have none of'],
@@ -146,7 +146,7 @@ const M = {
   'extra-hand': ['✋', '☝️ +1 minion this round'],
   'line-cutters': ['🏎️', '♾️ You go first every round'],
   launderers: ['🧺', '✨ Rearrange your resources any way'],
-  'old-maid': ['👵', '♾️ Joins your cult: −5 followers'],
+  'ghost': ['👻', '♾️ Worth 0 members. Joins your cult: −5 followers'],
   dabblers: ['🌈', ''],
   cheerleader: ['📯', '♾️ You win a contest: +1 follower'],
   anarchist: ['Ⓐ', '🔁 Swap any 2 members within 2 cost'],

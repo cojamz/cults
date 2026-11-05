@@ -53,15 +53,15 @@ describe('Magenta redesign edge cases', () => {
     expect(s.players[1].res).toMatchObject({ magenta: 0, gold: 4 });
     expect(s.players.map(p => p.bonus)).toEqual([0, 0, 5]);
   });
-  it('JSON resume in a split theft neither repeats base grants nor loses the chosen colors', () => {
+  it('JSON resume mid-theft neither repeats base grants nor loses the chosen colors', () => {
     let s = table(Q, { round: 3, n: 3, res: [{}, { gold: 7 }, { red: 7 }], bonus: [0, 5, 5], shop });
     s = move(take(s, 'thieves.pickpocket'), 'take:1:gold');
     const before = JSON.stringify(s);
-    const finish = x => ['take:2:red', 'take:1:gold', 'take:2:red', 'take:1:gold'].reduce(move, x);
+    const finish = x => ['take:1:gold', 'take:1:gold', 'take:1:gold', 'take:1:gold'].reduce(move, x); // one rival (Nov 5)
     const direct = finish(s), loaded = finish(restored(s));
     expect(JSON.stringify(s)).toBe(before);
     expect(loaded.players.map(p => p.res)).toEqual(direct.players.map(p => p.res));
-    expect(loaded.players[0].res).toMatchObject({ magenta: 0, gold: 3, red: 2 });
+    expect(loaded.players[0].res).toMatchObject({ magenta: 0, gold: 5, red: 0 });
     expect(loaded.players[0].bonus).toBe(0);
   });
   it('Desperado adds 2 to Help Yourself\'s 3 while tied for fewest followers', () => {
@@ -76,7 +76,8 @@ describe('Magenta redesign edge cases', () => {
     let s = table(Q, { round: 2, n: 4, res: [{}, {}, {}, {}], bonus: [0, 5, 0, 6], members: [[], [], [], ['thieves.watchdog']], shop });
     s = take(s, 'thieves.rob');
     expect(ids(s)).toEqual(['player:1']);
-    s = move(restored(s), 'player:1');
+    s = restored(s);
+    for (let k = 0; k < 3 && s.pending?.options?.some(o => o.id === 'player:1'); k++) s = move(s, 'player:1'); // Heist: one follower a pick (Nov 5)
     expect(s.players[0].bonus).toBe(3);
     expect(s.players[1].bonus).toBe(2);
     expect(s.players[3].bonus).toBe(6);
@@ -84,7 +85,8 @@ describe('Magenta redesign edge cases', () => {
   });
   it('Heist never takes more followers than the rival has loose', () => {
     let s = table(Q, { round: 2, res: [{}, {}], bonus: [0, 2], shop });
-    s = move(take(s, 'thieves.rob'), 'player:1');
+    s = take(s, 'thieves.rob');
+    for (let k = 0; k < 3 && s.pending?.options?.some(o => o.id === 'player:1'); k++) s = move(s, 'player:1'); // Heist: one follower a pick (Nov 5)
     expect(s.players[0].bonus).toBe(2);
     expect(s.players[1].bonus).toBe(0);
   });

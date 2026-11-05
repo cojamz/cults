@@ -140,7 +140,7 @@ export default {
       },
     }, BLIND_DATE), NO_THANKS),
     {
-      key: 'hireup', ring: 2, name: 'Promote', text: 'Give one of your members to a rival or the shop, and recruit one of theirs costing up to 2 more. +3 red.', copyDoesIt: true, // +3 red (Cory, Oct 30: balance run)
+      key: 'hireup', ring: 2, name: 'Promote', text: 'Swap any member with one in another cult or the shop costing up to 3 more. +3 red.', copyDoesIt: true, // any cult, up to 3 (Cory, Nov 5; words Claude's); // +3 red (Cory, Oct 30: balance run)
       estimate: (ctx, p) => 3 + (swapPairs(ctx, p, 'promote').length ? 2 : 0),
       resolve(ctx, p) {
         ctx.gain(p, 'red', ACT.has('promote1') ? 1 : 3, { fromAction: true });
@@ -148,7 +148,7 @@ export default {
       },
     },
     {
-      key: 'trade', ring: 2, name: 'Demote', text: 'Give one of your members to a rival or the shop, and recruit one of theirs costing up to 2 less. +3 red.', copyDoesIt: true, // +3 red (Cory, Oct 30: balance run)
+      key: 'trade', ring: 2, name: 'Demote', text: 'Swap any member with one in another cult or the shop costing up to 3 less. +3 red.', copyDoesIt: true, // any cult, up to 3 (Cory, Nov 5; words Claude's); // +3 red (Cory, Oct 30: balance run)
       estimate: (ctx, p) => 3 + (swapPairs(ctx, p, 'demote').length ? 2 : 0),
       resolve(ctx, p) { ctx.gain(p, 'red', ACT.has('promote1') ? 1 : 3, { fromAction: true }); swap(ctx, p, 'demote', 'Demote: choose a member and its replacement'); },
     },
@@ -228,7 +228,7 @@ export default {
       ctx.borrowOnRecruit(p, uid);
     },
     takeFree(ctx, p, uid) { ctx.recruit(p, uid, { free: true }); },
-    ...handlers7({
+    ...({ // always registered: Seat Filler (red.drift) is live since Nov 5; the rest are harmless when unused
       convert(ctx, p, uid) {
         const v = ctx.ownerOf(uid), c = ctx.card(uid);
         if (!v || v === p || cost(c) > 3 || !ctx.canSteal(p, v, 'swap') || !ctx.canSwapMember(uid)) return;
@@ -274,7 +274,7 @@ export default {
     // 4 red + 2 any as a player sees it. Its swap is a choice with "Don't swap" (Red's swaps can be skipped: Cory,
     // 2026-10-22, "You shouldnt HAVE to swap"); a rival's member it can take is one that may be swapped (Loyalists,
     // Bodyguards). The member you get is your recruit (its On Recruit fires), as with Promote.
-    m('bodysnatchers', 'Body Snatchers', 3, 2, "Round Start: swap one of your members with a rival's member of the same cost.", { f: 2,
+    m('bodysnatchers', 'Body Snatchers', 2, 2, /* Cory, Nov 5 backlog price yes */ "Round Start: swap one of your members with a rival's member of the same cost.", { f: 2,
       onRoundStart(ctx, owner, card) {
         const pairs = snatchPairs(ctx, owner);
         if (!pairs.length) { ctx.log(`${owner.name}'s Body Snatchers: no rival holds a member at the cost of one of yours.`); return; }
@@ -285,11 +285,11 @@ export default {
       },
     }),
     m('bigfamily', 'Big Family', 2, 3, 'Worth 4 followers.', { f: 4, n: 4 }), // 4 members (Cory, Oct 29: "maybe make it 4 members"); 5 to 6, Claude's price
-    m('volunteer', 'Volunteer', 0, 0, 'Worth 1 follower.', { ...old1, ...old7('red.volunteer') }),
+    m('volunteer', 'Volunteer', 0, 0, 'Worth 1 follower.', { ...old1, ...old7('red.volunteer') }), // out of the deck (cull.js), Seat Filler in (Cory, Nov 5 backlog yes: "Swap out volunteer for Seat Filler")
     // REPLACE7 bot test (Nov 4, quality loop, Members A): Volunteer's place. 2 red + 1 any as a player sees it, a round I
     // member. At round start (II and III; it can't be bought before round I's) the owner may give it to the shop and
     // recruit a shop member costing up to 3 more, for free: Promote's trade, done by the card itself.
-    ...add7(m('seatfiller', 'Seat Filler', 1, 1, 'Round Start: you may give this to the shop and recruit a shop member costing up to 3 more, for free.', {
+    m('seatfiller', 'Seat Filler', 1, 1, 'Round Start: you may give this to the shop and recruit a shop member costing up to 3 more, for free.', {
       onRoundStart(ctx, owner, card) {
         const list = ctx.shopCards().filter(x => cost(x) <= cost(card) + 3);
         if (!list.length) { ctx.log(`${owner.name}'s ${card.def.name}: no shop member costs ${cost(card) + 3} or less.`); return; }
@@ -300,7 +300,7 @@ export default {
       },
       // a free member up to 3 dearer at each round start still ahead (it leaves after one)
       ...see(info => (info.round < 3 ? 3 : 0)),
-    })),
+    }),
     // REPLACE1 bot test (Nov 3, replacement batch 1): Volunteer's place. Fires only when a rival's card or space moves
     // one of your members into that rival's own cult (Promote, Demote, Panel, Poach, Shake Down, Double Agent,
     // Anarchist), never for one you give away yourself, and not for Turncoats itself. 3 red + 1 any as a player sees it.
@@ -317,11 +317,12 @@ export default {
       },
     })),
     m('intern', 'Intern', 1, 0, 'Worth 1 follower.'),
-    m('mentor', 'Mentor & Protégés', 5, 3, 'On Recruit: recruit the cheapest member in the shop.', { f: 3, n: 3, // 3 members (Cory, Oct 30: +1 follower, "change the names accordingly")
+    m('mentor', 'Mentor', 5, 3, 'On Recruit: recruit the cheapest member in the shop.', { f: 1, n: 1, // Mentor, counts as 1 member (Cory, Nov 5 backlog yes)
+      // 3 members (Cory, Oct 30: +1 follower, "change the names accordingly")
       // +1 follower (Cory, 2026-10-25)
       // card: this Mentor, or a Doppelganger copying it (its free pick says so)
       onRecruited(ctx, owner, card) {
-        const who = card && card.def && card.def.key === 'doppel' ? 'Doppelganger (as Mentor & Protégés)' : 'Mentor & Protégés';
+        const who = card && card.def && card.def.key === 'doppel' ? 'Doppelganger (as Mentor)' : 'Mentor';
         if (ctx.shopCards().length) ctx.log(`${owner.name}'s ${who}: the cheapest face-up member comes along free.`);
         hireCheapest(ctx, owner, who);
       },
@@ -465,7 +466,7 @@ export default {
       },
       ...see(info => 2 * endsAhead(info).length),
     })),
-    m('patriarch', 'Patriarch', 3, 2, 'Game End: +1 follower per 2 members you have.', { ...old3, ...old7('red.patriarch'),
+    m('patriarch', 'Patriarch', 5, 2, /* Cory, Nov 5 backlog price yes */ 'Game End: +1 follower per 2 members you have.', { ...old3, ...old7('red.patriarch'),
       onGameEnd: (ctx, owner) => Math.floor(ctx.memberCount(owner) / 2),
     }),
     // REPLACE3 bot test (Nov 3, replacement batch 3): Patriarch's place. 6 red + 3 any as a player sees it. Every rival
@@ -582,8 +583,11 @@ export default {
       // a free member (about 4) at each Round Start still ahead when behind on members: about half of them
       ...see(info => 2 * (3 - info.round)),
     })),
-    m('panel', 'Panel', 4, 2, 'On Recruit: promote or demote another of your members.', { f: 3, n: 3,
-      onRecruited(ctx, owner, card) {
+    m('panel', 'Panel', 4, 2, 'On Use, once per round: promote or demote another of your members.', { f: 3, n: 3, // On Use (Cory, Nov 5 backlog yes)
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        if (!['promote', 'demote'].some(mode => swapPairs(ctx, owner, mode, card.uid).length)) { card.used = false; ctx.log(`${owner.name}'s Panel: nothing to promote or demote.`); return; }
         const options = ['promote', 'demote'].filter(mode => swapPairs(ctx, owner, mode, card.uid).length).map(mode => ({
           id: mode, label: mode === 'promote' ? 'Promote' : 'Demote', kind: 'choice', value: mode,
         }));
@@ -682,7 +686,7 @@ function swapSides(ctx, p, mode) {
 const pairOk = (mode, excludeUid, a, b) => a.uid !== b.uid && a.id !== b.id /* two copies of one member (piles): no swap */ && a.uid !== excludeUid && b.uid !== excludeUid && !(b.owner && b.owner === a.owner) && (mode === 'even' ? a.cost === b.cost
   // Promote never reaches cheaper (Cory, Nov 4 night: "i like it better as any. its just that the rules weren't being obeyed":
   // a copied Promote swapped his Extra Hand, 8, for a rival's Line Cutters, 1); any cult, as before
-  : mode === 'promote' ? b.cost <= a.cost + 2 && b.cost >= a.cost : mode === 'rival' ? b.cost >= a.cost : b.cost <= a.cost && b.cost >= a.cost - 2);
+  : mode === 'promote' ? b.cost <= a.cost + 3 && b.cost >= a.cost : mode === 'rival' ? b.cost >= a.cost : b.cost <= a.cost && b.cost >= a.cost - 3); // 3, not 2 (Cory, Nov 5 backlog yes)
 function swapPairs(ctx, p, mode, excludeUid = null) {
   const { first, second } = swapSides(ctx, p, mode);
   const out = [];

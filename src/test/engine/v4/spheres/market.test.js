@@ -127,9 +127,9 @@ describe('Blue actions', () => {
     s = move(s, card(s, 'gold.midas')); // 5
     expect(R(s).blue).toBe(2 + 1);
   });
-  it('Spree (ring III): +5 blue and three buys this turn', () => {
+  it('Spree (ring III): +6 blue and three buys this turn', () => {
     let s = take(scene({ round: 3, res: [{ red: 10, gold: 8, green: 8 }], shop: CHEAP }), 'market.spree');
-    expect(R(s).blue).toBe(5); // +5 since Nov 1
+    expect(R(s).blue).toBe(6); // +6 since Nov 5
     s = move(s, card(s, 'red.intern'));
     expect(s.pending.kind).toBe('buy');
     s = move(s, 'tier:mid');

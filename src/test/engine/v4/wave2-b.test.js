@@ -34,15 +34,15 @@ describe('#6 Help Yourself: a rival lying low is never offered', () => {
   });
 });
 
-describe('#7 Heist: 3 followers from one rival, and the choice says so', () => {
+describe('#7 Heist: 3 followers, one a pick from any rival (Nov 5), and the choice says so', () => {
   it('offers each rival with loose followers; a rival with none or lying low is not offered', () => {
     let s = sceneQ({ quadrants: MAG, n: 4, round: 2, res: [{}, {}, {}, {}] });
     s.players[1].bonus = 0; s.players[2].bonus = 5; s.players[3].bonus = 5;
     s.players[3].hideout = s.round; // P4 lies low
     s = take(s, 'thieves.rob');
-    expect(s.pending.prompt).toMatch(/Heist: steal 3 followers from which rival\?/);
+    expect(s.pending.prompt).toMatch(/Heist: steal a follower from which rival\? \(3 left\)/);
     expect(s.pending.options.map(o => o.id)).toEqual(['player:2']);
-    s = move(s, 'player:2');
+    for (let k = 0; k < 3 && s.pending?.options?.some(o => o.id === 'player:2'); k++) s = move(s, 'player:2');
     expect(s.players[0].bonus).toBe(3);
     expect(s.players[2].bonus).toBe(2);
     expect(s.players[0].res.magenta).toBe(1);
@@ -50,25 +50,26 @@ describe('#7 Heist: 3 followers from one rival, and the choice says so', () => {
 });
 
 describe('#38 a dim rival says the true reason', () => {
-  it('Help Yourself: a rival you already emptied says they have nothing left, not that they are protected', () => {
+  it('Help Yourself: one rival only (Nov 5); emptying them ends the steal', () => {
     let s = sceneQ({ quadrants: MAG, n: 3, round: 2, res: [{}, { gold: 1 }, { gold: 2 }] });
     s = take(s, 'thieves.pickpocket');
     s = takeFrom(s, 1);
-    expect(s.pending.options.every(o => o.value[0] === 2)).toBe(true);
-    expect(s.pending.blocked[1]).toMatch(/P2 has nothing left to take/);
+    expect(s.pending?.prompt || '').not.toMatch(/Help Yourself/);
+    expect(s.players[0].res.gold).toBe(1);
+    expect(s.players[2].res.gold).toBe(2);
   });
-  it('Help Yourself: a rival holding no more than you is still available, and may give both', () => {
+  it('Help Yourself: a rival holding no more than you is still available; after the first pick, only that rival', () => {
     let s = sceneQ({ quadrants: MAG, n: 3, round: 2, res: [{ gold: 2 }, { gold: 5 }, { gold: 2 }] });
     s = take(s, 'thieves.pickpocket');
     expect(s.pending.options.some(o => o.value[0] === 2)).toBe(true);
     s = takeFrom(s, 2);
     expect(s.players[2].res.gold).toBe(2); // chosen piles move together once all picks are complete
-    expect(s.pending.options.some(o => o.value[0] === 2)).toBe(true);
-    expect(s.pending.options.some(o => o.value[0] === 1)).toBe(true);
-    s = takeFrom(takeFrom(takeFrom(s, 2), 1), 1); // round II: steal 4
+    expect(s.pending.options.every(o => o.value[0] === 2)).toBe(true);
+    expect(s.pending.blocked[1]).toMatch(/one rival only/);
+    s = takeFrom(s, 2); // P3 had 2: emptied, so the steal ends at 2
     expect(s.players[2].res.gold).toBe(0);
-    expect(s.players[1].res.gold).toBe(3);
-    expect(s.players[0].res).toMatchObject({ gold: 6, magenta: 0 });
+    expect(s.players[1].res.gold).toBe(5);
+    expect(s.players[0].res).toMatchObject({ gold: 4, magenta: 0 });
   });
 });
 

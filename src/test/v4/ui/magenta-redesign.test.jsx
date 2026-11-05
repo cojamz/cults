@@ -12,9 +12,9 @@ describe('Magenta action wording and one-stack theft', () => {
     for (const round of [1, 2, 3]) {
       const pick = panelText('thieves', { key: 'pickpocket' }, round);
       // the followers are stolen too, not gained from the bank (Cory, 2026-10-22)
-      // round I rework (Cory, Oct 27): resources only, 3/4/5, split among rivals
+      // round I rework (Cory, Oct 27): resources only, 3/4/5, from one rival since Nov 5
       expect(pick.verb).toBe(`Steal ${round + 2} resources`); // what is stolen, said (picky bot, Nov 4: a taken "Steal 4" read as followers)
-      expect(pick.second).toBe('split among rivals');
+      expect(pick.second).toBe('from one rival');
       const safe = panelText('thieves', { key: 'hideout' }, round);
       expect(safe.verb).toBe('Steal 1, then safe from steals'); // Cory, Nov 1; the protection in line 1 (line 2 dropped every round, text audit Nov 1)
       expect(safe.second).toBe('this round');
@@ -25,7 +25,7 @@ describe('Magenta action wording and one-stack theft', () => {
     expect(stash.main).toBe('+2 magenta'); // Gather's shape (Oct 31)
     expect(stash.second).toBe('+1 @f if you recruit a member');
     expect(panelText('thieves', { key: 'ransom' }, 2).verb).toContain('costing 5 or less');
-    expect(panelText('thieves', { key: 'rob' }, 2).verb).toBe('Steal 3 @f from a rival'); // Heist takes followers (Nov 4)
+    expect(panelText('thieves', { key: 'rob' }, 2).verb).toBe('Steal 3 @f'); // Heist takes followers (Nov 4), from any rivals (Nov 5)
     expect(pipEffect('thieves', { key: 'rob' }, 2)).toBe('steal 3 followers');
   });
 

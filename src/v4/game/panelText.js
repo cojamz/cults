@@ -53,18 +53,18 @@ const P = {
     // "+1 red to all" read as everyone, you too, or not (picky bot, Nov 4): yours, then the rivals'; "each rival +1"
     // took a second line and dropped on the outer ring; "pile" as its card says
     hire: { verb: 'Recruit the top of the pile', second: '+1 red, rivals +1' }, // the rivals' red sat in line 3, which drops on the outer ring (blind panel, Nov 1)
-    hireup: { verb: 'Promote to one costing up to 2 more +3 red' },
-    trade: { verb: 'Demote to one costing up to 2 less +3 red' },
+    hireup: { verb: 'Promote to one costing up to 3 more +3 red' },
+    trade: { verb: 'Demote to one costing up to 3 less +3 red' },
     take: { verb: 'Free member costing 8 or less', second: '+1 red' },
   },
   market: {
     bargain: r => ({ main: `+${r + 1} blue`, second: '1 shop member to the bottom', note: run(n => `+${n + 1}`, 'blue: ') }), // Cory, Oct 31 ("may" made line 2 too long; it dropped)
     restock: { verb: 'Send one color to the bottom', second: '+1 blue per member sent', note: '+1 blue' },
     // line 2 was too long and dropped whole at the wheel's bottom, taking the blue with it (round I review, Oct 25)
-    showroom: r => ({ main: `+${2 * r} blue`, second: 'peek at the top 4', note: run(n => `+${2 * n}`, 'blue: ') }),
+    showroom: r => ({ main: `+${r + 2} blue`, second: 'peek at the top 4', note: run(n => `+${n + 2}`, 'blue: ') }), // +3/+4/+5 (Nov 5)
     clearance: { verb: 'Recruit an extra time +3 blue', second: 'this turn' },
     pricecheck: { verb: 'Bury a shop member for half its cost in blue', note: '+1 blue' },
-    spree: { verb: 'Recruit two extra times +5 blue', second: 'this turn' },
+    spree: { verb: 'Recruit two extra times +6 blue', second: 'this turn' },
   },
   purple: {
     hourly: r => ({ main: `+${3 + r} purple`, second: run(n => `+${3 + n}`) }),
@@ -84,7 +84,7 @@ const P = {
     holdup: r => ({ main: `+${r + 1} purple`, second: 'whoever is next skips, even you', note: run(n => `+${n + 1}`, 'purple: ') }),
     // the center ring can drop line 2 (round III since Oct 22): line 1 says it whole
     // Cory, 2026-10-28: +5 purple and a minion this round
-    crowdin: { verb: '+1 minion this round', note: '+3 purple' },
+    crowdin: { verb: '+1 minion this round', note: '+4 purple' },
     rally: { verb: 'Your next two turns, now', note: '+2 purple' },
     again: r => ({ verb: 'Your next turn, now', second: `+${r} purple`, note: run(n => `+${n}`, 'purple: ') }),
   },
@@ -110,7 +110,7 @@ const P = {
     dilute: r => ({ main: '+2 yellow', second: `+${r + 1} yellow if you recruit a new color`, note: run(n => `+${n + 1}`, 'new color: ') }),
     // Housewarming took Big New Blood's place (Nov 4, overnight quality loop)
     housewarming: { main: '+2 yellow', second: 'free new-color member, up to 5' },
-    meltingpot: { verb: '+1 any per member color', note: '+2 yellow' },
+    meltingpot: { verb: '+1 of each member color', note: '+2 yellow' },
     makeover: { verb: '+4 yellow, then rearrange all', second: 'into any colors' },
     bloom: r => ({ main: `+${r} yellow`, second: '+1 of each fewest color', note: run(n => `+${n}`, 'yellow: ') }),
     // Match the current rule: the yellow arrives before the optional swaps.
@@ -124,10 +124,10 @@ const P = {
     flourish: { verb: '+1 each other color, per full set' },
   },
   thieves: {
-    pickpocket: r => ({ verb: `Steal ${r + 2} resources`, second: 'split among rivals', note: run(n => `${n + 2}`) }),
+    pickpocket: r => ({ verb: `Steal ${r + 2} resources`, second: 'from one rival', note: run(n => `${n + 2}`) }), // one rival (Nov 5)
     tipoff: r => ({ main: `+${r + 1} magenta`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 1}`, 'magenta: ') }), // Gather's shape (Cory, Oct 31)
     hideout: { verb: 'Steal 1, then safe from steals', second: 'this round', note: '+1 magenta' },
-    rob: { verb: 'Steal 3 @f from a rival', note: '+1 magenta' }, // Nov 4: followers, not half a pile
+    rob: { verb: 'Steal 3 @f', second: 'split among rivals', note: '+1 magenta' }, // any rivals (Nov 5) // Nov 4: followers, not half a pile
     ransom: { verb: 'Rival pays or loses a member costing 5 or less', note: '+1 magenta' },
     heist: { verb: 'Recruit a rival’s member', note: '+1 magenta' },
   },

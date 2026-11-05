@@ -213,15 +213,16 @@ export default {
     // loop): paper 18 vs 14, A/B +0.42, Lab 120 games a side. Big New Blood's text: design/archive/spaces/retired-2026-11-04.md
     HOUSEWARMING,
     swap14(swap14({
-      // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 4 new words only (Claude, under Cory's
-      // go-with-your-gut: "worded strangely"), the same effect
-      key: 'meltingpot', ring: 2, name: 'Melting Pot', text: '+2 yellow. Count the different colors of your members, and gain that many in colors you choose.',
+      // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 5: "melting pot should give 1 color for each
+      // different member color. And when i have dabblers it should give me 1 of every color": 1 of each of your member
+      // colors, no choosing (memberColors: Dabblers counts as every color on the table, Drifters as its chosen color)
+      key: 'meltingpot', ring: 2, name: 'Melting Pot', text: '+2 yellow, and +1 of each color among your members.',
       estimate: (ctx, p) => memberColors(ctx, p).length + 2,
       resolve(ctx, p) {
         ctx.gain(p, Y, 2, { fromAction: true });
-        const k = memberColors(ctx, p).length;
-        if (k) pickColors(ctx, p, k, 'Melting Pot', true);
-        else ctx.log(`${p.name}'s Melting Pot: no members yet, so only the yellow.`);
+        const cs = memberRes(ctx, p).filter(c => colors(ctx).includes(c));
+        for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
+        ctx.log(cs.length ? `${p.name}'s Melting Pot: +1 ${cs.join(', +1 ')}.` : `${p.name}'s Melting Pot: no members yet, so only the yellow.`);
       },
     }, GRAND_TOUR), OPEN_HOUSE),
     {
@@ -622,8 +623,8 @@ export default {
       },
       botActivate: (ctx, owner) => ctx.rivals(owner).some(o => ctx.membersOf(o).length > 0),
     })),
-    m('caravan', 'Caravan', 4, 4, 'On Recruit: +1 of each color you hold. Round Start: +1 of each color you hold.', { f: 3, now: true, ...old9('yellow.caravan'),
-      onRoundStart(ctx, owner) { for (const c of held(ctx, owner)) ctx.gain(owner, c, 1); },
+    m('caravan', 'Caravan', 4, 4, 'On Recruit: +1 of each color. Round Start: +1 of each color.', { f: 3, now: true, ...old9('yellow.caravan'), // every color, not only held (Cory, Nov 5 backlog yes)
+      onRoundStart(ctx, owner) { for (const c of colors(ctx)) ctx.gain(owner, c, 1); },
     }),
     // REPLACE9 bot test (Members C, Nov 4): Caravan's place, reworded (plural, as it counts as 3). Same price. "Each color
     // you have a member of": the table's colors with a member of yours (memberColors; Drifters counts as its chosen color).
@@ -639,7 +640,7 @@ export default {
     // and set check passed; trial taken 58%, owners won 27%; 1.6 fires per owner game; blind play 1.08 vs 0.33). 3 yellow +
     // 1 any as a player sees it. Every full-set count (Most full sets, Harmonist, Toll Keeper, Quilter) reads setsOf, which
     // lets the owner's yellow fill any color's gap.
-    m('jack', 'Jack-of-All-Trades', 2, 1, 'Your yellow counts as any color in your full sets.', { round: 1,
+    m('jack', 'Jack-of-All-Trades', 2, 1, 'When counting your full sets (1 of each color), your yellow can stand in for any missing color.', { round: 1,
       // a log line only (the rule is in setsOf): says what the yellow is doing as contests come up
       onAllPlaced(ctx, owner) {
         const k = setsOf(ctx, owner), plain = plainSets(ctx, owner);

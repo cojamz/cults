@@ -41,14 +41,13 @@ describe('Yellow', () => {
     const Q = ['gold', 'red', 'yellow', 'trading']; // no purple: Front-runner leans purple
     let s = table(Q, { round: 2, members: [['benders.frontrunner', 'yellow.explorer']], shop: ROW });
     s = take(s, 'yellow.meltingpot');
-    // Explorer is yellow: one pick; Front-runner: nothing
-    s = move(s, 'color:red');
-    expect(R(s)).toEqual({ gold: 0, red: 1, yellow: 2, white: 0 });
+    // Explorer is yellow: +1 yellow; Front-runner: nothing
+    expect(R(s)).toEqual({ gold: 0, red: 0, yellow: 3, white: 0 });
   });
 });
 
 describe('Magenta', () => {
-  it('Robin Hood: two rivals tied for most followers, both robbed in one Help Yourself; the first payout un-leads the second', () => {
+  it('Robin Hood: Help Yourself robs one of two tied leaders (one rival since Nov 5): +1', () => {
     const Q = ['gold', 'red', 'thieves', 'trading'];
     let s = table(Q, { n: 4, round: 2, res: [{}, { gold: 2 }, { gold: 2 }, { gold: 2 }], bonus: [3, 3, 3, 0], members: [['thieves.robinhood']], shop: ROW });
     // P1 4+1(Robin Hood)=5 followers? Robin Hood is worth 1: P1 = 1+3+1 = 5. Make P2, P3 equal at 5.
@@ -56,10 +55,9 @@ describe('Magenta', () => {
     expect([0, 1, 2].map(i => followers(s, s.players[i]))).toEqual([5, 5, 5]);
     // Help Yourself in round II steals 4, split among rivals (no followers since 2026-10-27)
     s = take(s, 'thieves.pickpocket');
-    s = play(s, 'take:1:gold', 'take:2:gold', 'take:1:gold', 'take:2:gold');
+    s = play(s, 'take:1:gold', 'take:1:gold'); // P2 holds 2: emptied, the steal ends
     expect(s.pending?.kind).not.toBe('choose');
-    // P2 and P3 both had the most followers when the steal began: the card says +1 each time
-    expect(s.players[0].bonus - 3).toBe(2); // Robin Hood +1 twice
+    expect(s.players[0].bonus - 3).toBe(1); // Robin Hood +1 once
   });
 });
 

@@ -18,8 +18,8 @@ describe('hover honesty (live panel r1)', () => {
   it('Help Yourself with Desperado: the Why names Desperado', () => {
     const s = sceneQ({ quadrants: T, round: 3, n: 3, res: [{}, { gold: 5, red: 4 }, { blue: 3 }], bonus: [0, 3, 3], members: [['thieves.desperado'], [], []] });
     const { pv, y } = words(s, 'Help Yourself');
-    // round III steals 5, +2 with Desperado (Cory, Nov 1, 2:27pm): 7, all your pick
-    expect(y.text).toBe('steal 7 in colors you pick');
+    // round III steals 5, +2 with Desperado (Cory, Nov 1, 2:27pm): 7, all your pick; from one rival since Nov 5, so "up to"
+    expect(y.text).toBe('steal up to 7 in colors you pick');
     expect(whyLine(pv.reasons)).toBe('Desperado: +2 to steal (5 → 7)');
   });
 

@@ -775,18 +775,20 @@ function mixWords(pv, state, own) {
   const theft = state.resources.some(r => pv.others?.res?.[r]?.[0] < 0)
     && state.resources.every(r => pv.you.res[r][0] >= 0);
   const resTotal = d => state.resources.reduce((n, r) => n + d.res[r], 0);
-  if (theft && mix.every(d => resTotal(d) === resTotal(mix[0]) && same('followers', d, mix[0]) && same('members', d, mix[0]))) {
+  // totals that differ by pick (Help Yourself from one rival since Nov 5: each rival has their own most) say "up to" the best
+  const eqTotal = mix.every(d => resTotal(d) === resTotal(mix[0]));
+  if (theft && mix.every(d => same('followers', d, mix[0]) && same('members', d, mix[0]))) {
     // a rival's choice (Potluck: each rival gives you 1 of their choice): never "steal, you pick" (picky bot, Nov 4)
     const theirs = !(pv.asks && pv.asks.length) && pv.theirAsks && pv.theirAsks.length;
     // what came into the table (the space's own gain, a member's), per color; the rest is the steal, said whole
     const made = pv.made && !theirs && state.resources.every(r => pv.made[r] && pv.made[r][0] === pv.made[r][1] && pv.made[r][0] >= 0) ? pv.made : null;
     const fixed = made ? state.resources.reduce((n, r) => n + made[r][0], 0) : state.resources.reduce((n, r) => n + pv.you.res[r][0], 0);
-    const n = resTotal(mix[0]) - fixed;
+    const n = Math.max(...mix.map(resTotal)) - fixed;
     const minimums = made ? state.resources.filter(r => made[r][0] > 0).map(r => `+${made[r][0]} ${r}`)
       : state.resources.filter(r => pv.you.res[r][0] > 0 && pv.you.res[r][0] !== pv.you.res[r][1]).map(r => `+${pv.you.res[r][0]} ${r}`);
     const guaranteed = (made ? minimums : [...minimums, sure].filter(Boolean)).join(', ');
-    if (n > 0 && theirs) return { text: `${guaranteed ? `${guaranteed}, ` : ''}+${n} resource${n === 1 ? '' : 's'}`, note: 'their pick' };
-    if (n > 0) return { text: `${guaranteed ? `${guaranteed}; ` : ''}steal ${n} in colors you pick`, note: null };
+    if (n > 0 && theirs && eqTotal) return { text: `${guaranteed ? `${guaranteed}, ` : ''}+${n} resource${n === 1 ? '' : 's'}`, note: 'their pick' };
+    if (n > 0 && !theirs) return { text: `${guaranteed ? `${guaranteed}; ` : ''}steal ${eqTotal ? '' : 'up to '}${n} in colors you pick`, note: null };
   }
   // one color of your choosing on top of the sure part: "+2 silver, +2 of a color you pick"
   const one = mix.map(d => loose.filter(r => d.res[r]).map(r => d.res[r]));
@@ -842,6 +844,17 @@ export function youdWords(pv, state, own = null) {
   // your pick decides: what's sure as it is, and the best pick's gains as "up to", never as a promise (w4 skeptic #10:
   // Even Swap's "+1 follower" read as promised, and a different swap gave none)
   if (pv.best && !pv.tied) {
+    // a steal whose picks differ only in how much each rival holds (Help Yourself from one rival, Nov 5): the most you
+    // could take, in colors you pick, never one pick's colors as if promised ("up to +5 gold, +2 red")
+    const total = d => state.resources.reduce((t, r) => t + d.res[r], 0);
+    if (!pv.copies && !(pv.theirAsks && pv.theirAsks.length) && pv.worst
+      && state.resources.some(r => pv.others?.res?.[r]?.[0] < 0) && state.resources.every(r => pv.you.res[r][0] >= 0)
+      && pv.best.followers === pv.worst.followers && pv.best.members === pv.worst.members) {
+      const mins = state.resources.filter(r => pv.you.res[r][0] > 0);
+      const n = total(pv.best) - mins.reduce((t, r) => t + pv.you.res[r][0], 0);
+      const sure = mins.map(r => `+${pv.you.res[r][0]} ${r}`).join(', ');
+      if (n > 0) return { text: `${sure ? `${sure}; ` : ''}steal up to ${n} in colors you pick`, note: null };
+    }
     // your best pick spends what the space just gave (Snap Up: +2 blue, then pay for a member): the two ends, so the
     // space's own gain is never dropped (blind tester B: Snap Up's hover left out its +2 blue)
     const spends = d => state.resources.some(r => d.res[r] < 0);

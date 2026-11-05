@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE3 = '1';
-const { applyMove, followers, resume } = await import('../../../engine/v4/core.js');
+const { applyMove, contextFor, followers, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
 const { table, named, uidIn, owns } = await import('./cards-helpers-b.js');
@@ -99,9 +99,12 @@ describe('REPLACE3: each card fires', () => {
     expect(s.pending.options.some(o => o.kind === 'tier' || o.kind === 'card')).toBe(true);
   });
 
-  it("Impersonator: choose a rival's member; this member has its ability until you choose again", () => {
-    let s = table(['red', 'echo', 'market', 'yellow'], { round: 1, members: [['echo.impersonators', 'market.regular'], ['market.snob', 'red.crowd']], queue: [{ t: 'round', r: 2 }] });
-    expect(s.pending.prompt).toBe("Impersonator: choose a rival's member; until you choose again, Impersonator has that member's ability");
+  it("Impersonator: On Recruit, choose a rival's member; Impersonator has its ability (Cory, Nov 5)", () => {
+    let s = table(['red', 'echo', 'market', 'yellow'], { round: 1, members: [['market.regular'], ['market.snob', 'red.crowd']], shop: ['echo.impersonators'] });
+    s.queue = []; s.pending = null;
+    contextFor(s).recruit(s.players[0], uidIn(s, 'echo.impersonators', 'shop'), { free: true });
+    s = resume(s);
+    expect(s.pending.prompt).toBe("Impersonator: choose a rival's member; Impersonator has that member's ability");
     s = answer(s, `card:${uidIn(s, 'market.snob', 1)}`);
     const me = s.cards[uidIn(s, 'echo.impersonators', 0)];
     expect(me.ability).toBe('market.snob');
@@ -110,7 +113,10 @@ describe('REPLACE3: each card fires', () => {
 
   it('Impersonator: a copied game-end count scores for its owner', async () => {
     const { resume } = await import('../../../engine/v4/core.js');
-    let s = table(['red', 'echo', 'market', 'yellow'], { round: 1, members: [['echo.impersonators', 'market.regular'], ['market.snob']], queue: [{ t: 'round', r: 2 }] });
+    let s = table(['red', 'echo', 'market', 'yellow'], { round: 1, members: [['market.regular'], ['market.snob']], shop: ['echo.impersonators'] });
+    s.queue = []; s.pending = null;
+    contextFor(s).recruit(s.players[0], uidIn(s, 'echo.impersonators', 'shop'), { free: true });
+    s = resume(s);
     s = answer(s, `card:${uidIn(s, 'market.snob', 1)}`);
     s = resume({ ...s, queue: [{ t: 'finish' }], pending: null });
     expect(s.players[0].final.parts).toContain('Snobs +1');

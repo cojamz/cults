@@ -77,7 +77,7 @@ describe('Red members', () => {
     expect(fol(s, 0)).toBe(2);
   });
 
-  it('Mentor & Protégés: also take the cheapest face-up member free', () => {
+  it('Mentor: also take the cheapest face-up member free', () => {
     let s = scene({ res: [{ red: 3, gold: 2 }], shop: ['red.mentor', 'red.intern', 'gold.midas', 'gold.jackpot', 'red.bigfamily'], pileFirst: ['red.volunteer'] });
     s = beginBuy(s);
     s = move(s, `card:${uidOf(s, 'red.mentor', 'shop')}`);

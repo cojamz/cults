@@ -13,7 +13,7 @@ const acquire = (s, id) => contextFor(s).recruit(s.players[0], uidIn(s, id, 'sho
 describe('new Red member hooks', () => {
   it('deals exactly thirteen ordinary Red members, with the approved printed bodies and prices', () => {
     expect(quadrant('red').members.filter(d => !CUT.has(d.id) && !d.retired)).toHaveLength(13);
-    for (const [id, s, w, f] of [['volunteer', 0, 0, 1], ['bodysnatchers', 3, 2, 2], ['panel', 4, 2, 3], ['mob', 7, 4, 4], ['loyalists', 2, 2, 3]]) {
+    for (const [id, s, w, f] of [['volunteer', 0, 0, 1], ['bodysnatchers', 2, 2, 2], ['panel', 4, 2, 3], ['mob', 7, 4, 4], ['loyalists', 2, 2, 3]]) {
       expect(defById(`red.${id}`)).toMatchObject({ s: s + COLOR_SHIFT, w: w + EXTRA_WILD - COLOR_SHIFT, f }); // Nov 2: 1 of the wild is paid in the member's color
     }
     const s = fixture({ members: [['red.mob', 'red.panel']] });
@@ -78,17 +78,15 @@ describe('new Red member hooks', () => {
     expect(c.steal(rival, p, { uid: uidIn(s, 'red.twins', 0) })).toBe(1);
   });
 
-  it('Panel promotes another member to Mentor, who recruits the cheapest member, without inherent action red', () => {
+  it('Panel (On Use, once per round) promotes another member to Mentor, who recruits the cheapest member, without inherent action red', () => {
     // Merchant (6) promotes to Mentor (8)
-    let s = fixture({ members: [['gold.merchant']], shop: ['red.panel', 'red.mentor', 'red.volunteer'] });
-    acquire(s, 'red.panel');
-    s = resume(s);
+    let s = table(Q, { members: [['red.panel', 'gold.merchant']], shop: ['red.mentor', 'red.volunteer'] });
+    const panel = uidIn(s, 'red.panel', 0), host = uidIn(s, 'gold.merchant', 0), mentor = uidIn(s, 'red.mentor', 'shop');
+    s = move(s, `use:${panel}`);
     expect(s.pending.options.map(o => o.id)).toContain('promote');
     s = move(s, 'promote');
-    const panel = uidIn(s, 'red.panel', 0), host = uidIn(s, 'gold.merchant', 0), mentor = uidIn(s, 'red.mentor', 'shop');
     expect(s.pending.options.every(o => !o.value?.includes(panel))).toBe(true);
     s = move(s, `trade:${host}:${mentor}`);
-    // oldest to newest (Cory, 2026-10-22): the promoted Mentor joins the end of the row, after Panel
     expect(s.players[0].members.map(u => s.cards[u].def)).toEqual(['red.panel', 'red.mentor', 'red.volunteer']);
     expect(s.players[0].res.red).toBe(0);
     expect(s.shop).toContain(host);

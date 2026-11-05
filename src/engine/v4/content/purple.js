@@ -519,9 +519,9 @@ export default {
       // raise it to +3 after play). Any taken space, yours or a rival's, for the rest of this round. Name is Claude's fill-in.
       // Cory, 2026-10-28 9:31pm Eastern: "It should just be like, +5 purple and gain a minion this round" (placing on
       // taken spaces copied too much with Greatest Hits). Extra minions stop when the round's spare spaces run out.
-      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Overtime', text: '+3 purple. +1 minion this round.', // back to +3 (Cory, Oct 30: balance run)
-      estimate: ctx => 3 + (spareSpace(ctx) ? turnValue(ctx) : 0),
-      resolve(ctx, p) { ctx.gain(p, P, 3, { fromAction: true }); extraMinion(ctx, p, 'Overtime'); },
+      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Overtime', text: '+4 purple. +1 minion this round.', // +4 (Cory, Nov 5: "give a little more purple")
+      estimate: ctx => 4 + (spareSpace(ctx) ? turnValue(ctx) : 0),
+      resolve(ctx, p) { ctx.gain(p, P, 4, { fromAction: true }); extraMinion(ctx, p, 'Overtime'); },
     },
     {
       // Cory, 2026-10-22: a follower bonus for taking the rest of your turns last ("YES now you're cooking"), in his
@@ -773,7 +773,7 @@ export default {
     m('pocketwatch', 'Pocket Watch', 0, 0, 'Whenever a player’s turn is skipped, +2 purple.', { artifact: true,
       onSkip(ctx, owner, card) { const got = ctx.gain(owner, 'purple', 2); if (got) ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Pocket Watch')}: +${got.n} ${got.color}.`); },
     }),
-    m('gossip', 'Gossip', 3, 2, 'Whenever a player’s turn is skipped, +1 follower.', { ...old13('busybody'),
+    m('gossip', 'Gossip', 2, 2, /* Cory, Nov 5 backlog price yes */ 'Whenever a player’s turn is skipped, +1 follower.', { ...old13('busybody'),
       onSkip(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Gossip: +1 follower.`); },
     }),
     // REPLACE13=busybody (lane F, Nov 4): Gossip's lifted control, A/B only; a number change on a live card is Cory's call

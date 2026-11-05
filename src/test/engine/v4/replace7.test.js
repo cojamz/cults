@@ -63,7 +63,7 @@ describe('Seat Filler: "Round Start: you may give this to the shop and recruit a
     const s = start();
     expect(s.pending.prompt).toBe('Seat Filler: give it to the shop and recruit a shop member costing up to 6?');
     const labels = s.pending.options.map(o => o.label);
-    expect(labels.some(l => l.includes('Body Snatchers (6)'))).toBe(true);
+    expect(labels.some(l => l.includes('Body Snatchers (5)'))).toBe(true);
     expect(labels.some(l => l.includes('Panel'))).toBe(false); // 7 is 4 more
     expect(labels).toContain('Keep it');
   });
@@ -338,12 +338,12 @@ describe('scale-up round 1: Sleepyheads, Night Shift, Drill Sergeant', () => {
     expect(s.players[0].bonus).toBe(3);
     expect(s.log.some(l => l.includes("P1's Night Shift: P1 holds the Goes Last token, +3 followers (3 purple members)."))).toBe(true);
   });
-  it('Drill Sergeant: "Whenever you recruit 2 or more members in one turn, +3 followers." Mentor & Protégés brings a second: +3, once', async () => {
+  it('Drill Sergeant: "Whenever you recruit 2 or more members in one turn, +3 followers." Mentor brings a second: +3, once', async () => {
     const { contextFor } = await import('../../../engine/v4/core.js');
     const s = table(['red', 'market', 'trading', 'yellow'], { n: 2, round: 3, members: [['red.drillsergeant'], []], shop: ['red.mentor', 'red.volunteer'] });
     s.current = 0; s.players[0].turnRecruits = 0;
     contextFor(s).recruit(s.players[0], uidIn(s, 'red.mentor', 'shop'), { free: true });
-    expect(s.log.some(l => l.includes('Mentor & Protégés: the cheapest face-up member comes along free'))).toBe(true);
+    expect(s.log.some(l => l.includes('Mentor: the cheapest face-up member comes along free'))).toBe(true);
     expect(s.players[0].bonus).toBe(3);
     expect(s.log.filter(l => l.includes("P1's Drill Sergeant")).length).toBe(1);
   });

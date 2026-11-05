@@ -34,10 +34,10 @@ const S = {
     harvest: r => `+${r + 2} any, colors you choose`, bloom: r => `+${r} yellow · +1 of your fewest`, transmute: 'choose a color: +1 per rival with a minion on its spaces · +1 yellow', prism: '+1 each per 3 yellow', gather: '1 per member', flourish: '+1 each per set',
   },
   market: {
-    bargain: r => `+${r + 1} blue; may send a shop member to the bottom, then refill`, restock: 'one color to the bottom; +1 blue each, +1', showroom: r => `peek at 4, may recruit one; +${2 * r} blue`, clearance: 'recruit twice; +3 blue', pricecheck: 'bury one, half its cost in blue; +1', spree: 'recruit 3 times; +5 blue',
+    bargain: r => `+${r + 1} blue; may send a shop member to the bottom, then refill`, restock: 'one color to the bottom; +1 blue each, +1', showroom: r => `peek at 4, may recruit one; +${r + 2} blue`, clearance: 'recruit twice; +3 blue', pricecheck: 'bury one, half its cost in blue; +1', spree: 'recruit 3 times; +6 blue',
   },
   thieves: {
-    pickpocket: r => `steal ${r + 2}, split among rivals`, tipoff: r => `+${r + 1} magenta; +${r} followers if you recruit a member this turn`, hideout: 'steal 1; rivals can’t steal from you this round; +1 magenta', rob: 'steal 3 followers from a rival; +1 magenta', ransom: 'a rival picks a member costing 5 or less, then pays its cost or loses it; +1 magenta', heist: 'recruit a rival’s member; +1 magenta',
+    pickpocket: r => `steal ${r + 2} from one rival`, tipoff: r => `+${r + 1} magenta; +${r} followers if you recruit a member this turn`, hideout: 'steal 1; rivals can’t steal from you this round; +1 magenta', rob: 'steal 3 followers, split among rivals; +1 magenta', ransom: 'a rival picks a member costing 5 or less, then pays its cost or loses it; +1 magenta', heist: 'recruit a rival’s member; +1 magenta',
   },
   trading: {
     stipend: r => `+${r + 1} white; +${r} followers if you recruit a member this turn`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid for a member this turn; +1 white`, exchange: r => `turn ${r} into ${2 * r} followers; +1 white`, farewell: 'cast out a member for its cost in followers; +1 white', estatesale: 'cast out a member for its cost in white; +1 white', cashin: 'all your white into followers; +1 white',

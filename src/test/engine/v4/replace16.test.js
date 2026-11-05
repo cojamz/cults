@@ -22,7 +22,7 @@ const canBuy = (s, re) => s.pending.options.some(o => re.test(o.label || ''));
 describe('REPLACE16: the switch', () => {
   it("keeps the old cards' prices, worth and count, and retires Toastmaster and Smooth Talkers", () => {
     const card = id => { const d = defById(id); return [d.s, d.w, d.f, d.n]; };
-    expect(card('silver.tongues')).toEqual(card('silver.smoothtalker'));
+    expect(card('silver.tongues')).toEqual([6, 5, 2, 2]); // Smooth Talkers' old price (it's 6 + 4 since Nov 5)
     expect(defById('silver.socialites').text).toBe('Whenever a rival recruits paying silver, +1 follower.');
     expect(defById('silver.toastmaster').retired).toBe(true);
     expect(defById('silver.smoothtalker').retired).toBe(true);

@@ -125,7 +125,9 @@ function stealStep(ctx, p, data) {
   const top = data.richest ? Math.max(0, ...ctx.rivals(p).filter(o => stealable(ctx, p, o, picked(o.id)) > 0).map(remaining)) : 0;
   // data.cap: the most it takes from any one rival (Safecracker: 2 from each)
   const takenFrom = o => Object.values(picked(o.id)).reduce((a, n) => a + n, 0);
-  const can = o => stealable(ctx, p, o, picked(o.id)) > 0 && (!data.richest || remaining(o) === top) && (!data.cap || takenFrom(o) < data.cap);
+  // data.oneRival: every pick from the rival of the first (Help Yourself, Cory Nov 5: "make help yourself a single rival")
+  const first = data.oneRival ? Object.keys(data.picked).map(Number)[0] : undefined;
+  const can = o => stealable(ctx, p, o, picked(o.id)) > 0 && (!data.richest || remaining(o) === top) && (!data.cap || takenFrom(o) < data.cap) && (first === undefined || o.id === first);
   const owed = data.each.map(id => ctx.player(id)).filter(can);
   const free = data.left - owed.length > 0 ? ctx.rivals(p).filter(o => can(o) && (!data.only || data.only.includes(o.id))) : [];
   const pool = data.left > 0 ? (owed.length && data.left <= owed.length ? owed : [...new Set([...owed, ...free])]) : [];
@@ -143,6 +145,7 @@ function stealStep(ctx, p, data) {
     for (const o of ctx.rivals(p)) {
       if (pool.includes(o)) continue;
       const why = !ctx.canSteal(p, o) ? `${o.name} can’t be stolen from now.`
+        : first !== undefined && o.id !== first ? `${data.name} takes from one rival only.`
         : data.richest && stealable(ctx, p, o, picked(o.id)) > 0 && remaining(o) < top ? `${data.name}: choose a rival holding ${top} resources.`
         : data.cap && takenFrom(o) >= data.cap ? `${data.name} takes ${data.cap} from each rival, and ${o.name} already gave theirs.`
         : !can(o) ? `${o.name} has nothing left to take.`
@@ -205,6 +208,17 @@ function takeable(ctx, p, maxCost = Infinity, kind = 'member') {
   return out;
 }
 const heistTargets = (ctx, p) => ctx.rivals(p).filter(o => o.bonus > 0 && ctx.canSteal(p, o));
+/** Heist: one follower a pick, from any rival with stealable followers, until 3 are taken or none is left. */
+function heistPick(ctx, p, left) {
+  const list = heistTargets(ctx, p);
+  if (!list.length) { if (left === 3) ctx.log(`${p.name} found no rival with followers to steal.`); return; }
+  if (left < 1) return;
+  const top = Math.max(...ctx.state.players.map(o => ctx.followers(o)));
+  ctx.choose(p, `Heist: steal a follower from which rival? (${left} left)`, list.map(o => ({
+    id: `player:${o.id}`, kind: 'player', value: o.id, label: `${o.name} (${ctx.followers(o)} followers)`,
+    hint: 2 + (ctx.followers(o) === top ? 1 : 0) + 0.01 * ctx.followers(o),
+  })), 'thieves.heistSplit', { left });
+}
 function halfPiles(ctx, p) {
   return ctx.rivals(p).flatMap(owner => piles(ctx, p, owner).flatMap(([color, held]) => {
     const base = Math.floor(held / 2);
@@ -268,11 +282,11 @@ const thieves = {
   actions: [
     {
       // Cory, 2026-10-27: "steal 3/4/5", split among rivals as you choose; the follower steal is gone
-      key: 'pickpocket', ring: 1, name: 'Help Yourself', text: 'Steal 3 resources in round I, 4 in round II, 5 in round III, split among rivals as you choose.', noMagenta: true, // no +1 magenta (Cory, 2026-10-29: "Help Yourself shouldnt give a magenta")
-      byRound: { lines: ['Steal 3 resources.', 'Steal 4 resources.', 'Steal 5 resources.'], rest: 'Split among rivals as you choose.' },
+      key: 'pickpocket', ring: 1, name: 'Help Yourself', text: 'Steal 3 resources in round I, 4 in round II, 5 in round III from one rival.', noMagenta: true, // one rival (Cory, Nov 5: swap with Heist's "any rivals"); // no +1 magenta (Cory, 2026-10-29: "Help Yourself shouldnt give a magenta")
+      byRound: { lines: ['Steal 3 resources.', 'Steal 4 resources.', 'Steal 5 resources.'], rest: 'From one rival.' },
       estimate: (ctx, p) => estimateSteal(ctx, p, ctx.stealCount(p, ctx.state.round + 2)),
       resolve(ctx, p) {
-        startSteal(ctx, p, 'Help Yourself', ctx.stealCount(p, ctx.state.round + 2, { say: true }));
+        startSteal(ctx, p, 'Help Yourself', ctx.stealCount(p, ctx.state.round + 2, { say: true }), { oneRival: true });
       },
     },
     // REPLACE10 bot test (Nov 4, quality loop lane D): Stash's slot (Cory cut Stash Oct 31; it stays live until a pick).
@@ -360,17 +374,10 @@ const thieves = {
       // Nov 4 (Claude, under Cory's go-with-your-gut, after his "anything that relies on a rival having more of resources
       // should be reworked"): half a pile was often 1 or 2 once players spend down; it takes followers now. Only
       // followers a rival recruited or won can be stolen (rulebook), as with Raiders.
-      key: 'rob', ring: 2, name: 'Heist', text: 'Steal 3 followers from a rival. +1 magenta.',
-      estimate: (ctx, p) => Math.max(0, ...heistTargets(ctx, p).map(o => Math.min(3, o.bonus) * 2)),
-      resolve(ctx, p) {
-        const list = heistTargets(ctx, p);
-        if (!list.length) { ctx.log(`${p.name} found no rival with followers to steal.`); return; }
-        const top = Math.max(...ctx.state.players.map(o => ctx.followers(o)));
-        ctx.choose(p, 'Heist: steal 3 followers from which rival?', list.map(o => ({
-          id: `player:${o.id}`, kind: 'player', value: o.id, label: `${o.name} (${ctx.followers(o)} followers)`,
-          hint: Math.min(3, o.bonus) * 2 + (ctx.followers(o) === top ? 1 : 0),
-        })), 'thieves.heistFollowers');
-      },
+      // any rivals (Cory, Nov 5: "make help yourself a single rival, and then heist any rivals"): one follower a pick
+      key: 'rob', ring: 2, name: 'Heist', text: 'Steal 3 followers, split among rivals as you choose. +1 magenta.',
+      estimate: (ctx, p) => Math.min(3, heistTargets(ctx, p).reduce((a, o) => a + o.bonus, 0)) * 2,
+      resolve(ctx, p) { heistPick(ctx, p, 3); },
     },
     swap13({
       // Cory, 2026-10-28: the rival picks which of their members is at stake ("yes good idea"; wording Claude's)
@@ -474,6 +481,13 @@ const thieves = {
       if (!v || v === p || !kidnapList(ctx, p).some(([, c]) => c.uid === uid)) return;
       const name = ctx.card(uid).def.name;
       if (ctx.steal(p, v, { uid })) ctx.log(`${p.name}'s Kidnapper: stole ${v.name}'s ${name}.`);
+    },
+    heistSplit(ctx, p, vid, data) {
+      const v = ctx.player(vid);
+      if (!v || !ctx.canSteal(p, v)) return;
+      const n = ctx.steal(p, v, { followers: 1 });
+      ctx.log(n ? `${p.name}'s Heist: stole 1 follower from ${v.name}.` : `${p.name}'s Heist: ${v.name} had no follower to steal.`);
+      heistPick(ctx, p, data.left - 1);
     },
     heistFollowers(ctx, p, vid) {
       const v = ctx.player(vid);
@@ -650,7 +664,7 @@ const thieves = {
     // after the round's last placement and before anything is scored (core's allPlaced step, in this round's turn
     // order): one rival, then which 2 of theirs, through the shared steal (Bodyguards, Lie Low and Hush Money apply;
     // Desperado adds). Stolen resources keep their color.
-    m('secondstory', 'Second-Story Man', 3, 3, 'Round End: before contests are scored, steal 2 resources from one rival.', { // a round I member as Sticky Fingers was (bot-tested in a later round; Nov 4)
+    m('secondstory', 'Second-Story Man', 3, 2, /* Cory, Nov 5 backlog price yes */ 'Round End: before contests are scored, steal 2 resources from one rival.', { // a round I member as Sticky Fingers was (bot-tested in a later round; Nov 4)
       // BOTSEE: each round end still ahead, 2 resources taken from a rival, plus a quarter chance it swings a contest
       ...see(i => (i.rivals.some(o => Object.values(o.res).some(v => v > 0)) ? endsAhead(i).reduce((a, r) => a + 2 * resAt(r) * (1 + SEE_SPITE) + 0.25 * SEE_RING[r - 1], 0) : 0)),
       onAllPlaced(ctx, owner) {
@@ -695,7 +709,7 @@ const thieves = {
       },
     }),
     // Cory, 2026-10-28: "lets just make it a bigger cutpurse for now" (was: a steal when a rival buys 5+ followers)
-    m('extortionist', 'Extortionist', 5, 2, 'On Recruit: steal 2 resources from the rival with the most resources. Round Start: steal 2 resources from the rival with the most resources.', { now: true,
+    m('extortionist', 'Extortionist', 4, 2, /* Cory, Nov 5 backlog price yes */ 'On Recruit: steal 2 resources from the rival with the most resources. Round Start: steal 2 resources from the rival with the most resources.', { now: true,
       ...old14('boss'), ...old14('mobboss'),
       onRoundStart(ctx, owner) { startSteal(ctx, owner, 'Extortionist', 2 + stickyMore(ctx, owner), { fromAction: false, richest: true }); },
     }),

@@ -22,7 +22,7 @@ describe('REPLACE8: the switch', () => {
     expect(card('silver.wellwishers')).toEqual(card('silver.debtcollector'));
     expect(card('silver.usher')).toEqual(card('silver.polisher'));
     expect(card('silver.guestofhonor')).toEqual(card('silver.polisher'));
-    expect(card('silver.socialites')).toEqual(card('silver.highsociety'));
+    expect(card('silver.socialites')).toEqual([5, 3, 2, 2]); // High Society's old price (5 + 2 since Nov 5)
     expect(card('silver.charityball')).toEqual(card('silver.philanthropists'));
     expect(card('trading.pennypincher')).toEqual(card('trading.oldmoney'));
     expect(card('silver.chaperone')).toEqual(card('silver.toastmaster'));

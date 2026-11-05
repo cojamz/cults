@@ -28,7 +28,8 @@ describe('the curated member decks', () => {
   // Green grows to 16 (Cory, 2026-10-29: Understudy, Wallflower, Fan Club, Roadie), then 15 (Connector cut)
   // Silver deals 10 besides Caterer, its artifact (Cory, Nov 1: "on silver - it should be 10"; Gift Wrapper)
   // Yellow 16 on the 15-card deck: Tourist joined (Cory, Nov 1); it replaces Go-Between only in the 10-card deck
-  const DEALT = { echo: 15, red: 13, thieves: 15, purple: 13, market: 12, trading: 12, yellow: 16, silver: 11 };
+  // Nov 5 cuts (Cory): Magenta −2, Purple −1, Blue −1, White −1, Yellow −2, Silver −3; Seat Filler in for Volunteer
+  const DEALT = { echo: 15, red: 13, thieves: 13, purple: 12, market: 11, trading: 11, yellow: 14, silver: 8 };
   it('Green deals 15, Blue 12, Red and Purple 13, Magenta 15, White 12, Yellow 15, other spheres 10, guests 17; no cut card is dealt', () => {
     for (const q of SPHERES) {
       const s = createGame({ seats: seats(4), quadrants: [q, ...SPHERES.filter(x => x !== q).slice(0, 3)] });

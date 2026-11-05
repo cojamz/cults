@@ -152,7 +152,7 @@ const members = [
   // (Poach and swaps moving an unplaced grant, copies, a full board) keep it as their fixture
   m('extrahand3', 'Extra Hand', 'purple', 5, 4, '+1 minion in round III.', { extraWorkers: [0, 0, 1], retired: true }),
   // Cory, 2026-10-28: "probably needs to be a Use Once… it had to have some category, and On Recruit would be broken"
-  m('extrahand', 'Extra Hand', 'purple', 5, 3, 'On Use, once per game: +1 minion this round.', { from: 2, ...old9('benders.extrahand'),
+  m('extrahand', 'Extra Hand', 'purple', 5, 2, /* Cory, Nov 5 backlog price yes */ 'On Use, once per game: +1 minion this round.', { from: 2, ...old9('benders.extrahand'),
     activate: 'game',
     onActivate(ctx, owner, card) { if (!extraMinion(ctx, owner, 'Extra Hand')) card.used = false; },
     botActivate: ctx => ctx.state.round === 3 && spareSpace(ctx),
@@ -249,11 +249,11 @@ const members = [
   }),
   // Cory, 2026-10-28: "a 5 cost Saboteur… gives -3 Followers each time it enters somebody's cult (swapped in OR recruited etc)"
   // Cory, 2026-10-31: renamed Old Maid (the card nobody wants stuck with), same card; the id stays 'saboteur'
-  m('saboteur', 'Old Maid', null, 0, 4, 'Whenever this member joins your cult, −5 followers.', {
+  m('saboteur', 'Ghost', null, 0, 4, 'Worth 0 members. Whenever this member joins your cult, −5 followers.', { f: 0, n: 0, // was Old Maid (Cory, Nov 5 backlog yes)
     botValue: 0,
     onJoined(ctx, owner) {
       owner.bonus -= 5; // −5 (Cory, Nov 1 playtest: "old maid might need to be -5 followers")
-      ctx.log(`${owner.name}'s Old Maid: −5 followers.`);
+      ctx.log(`${owner.name}'s Ghost: −5 followers.`);
     },
   }),
   // Cory, 2026-10-28: Dabblers (Turncoat, then Groupies), 3, "give 2 members, and count as every color"
@@ -269,7 +269,7 @@ const members = [
   // winning contests", "though cheerleaders is kinda cool too"): added, nothing retired (Cory: Spoilsport and Dabblers stay). A shared contest
   // counts as a win, as for Cheerleader and Sore Loser. Each pays the moment its contest is scored. Prices are guesses.
   // Both pay after every contest is scored (contests score at once at round end), so a +2 never changes another contest's count.
-  ...add15(m('cheerleaders', 'Cheerleaders', null, 0, 5, 'Whenever you win a contest, +2 followers.', { f: 2, // worth 2 (owners won 19% at worth 1, 30% at 2: cw3-cheerleaders). Cory, Nov 4: "maybe we can bump cheerleaders to 3 members", then "but for now they go in as-is"
+  ...add15(m('cheerleaders', 'Cheerleaders', null, 0, 4, 'Whenever you win a contest, +2 followers.', { f: 3, n: 3, /* Cory, Nov 5: cheaper, counts as 3 */ // worth 2 (owners won 19% at worth 1, 30% at 2: cw3-cheerleaders). Cory, Nov 4: "maybe we can bump cheerleaders to 3 members", then "but for now they go in as-is"
     afterContests(ctx, owner, card, table) {
       for (const c of table) if (c.winners.includes(owner.id)) { owner.bonus += 2; ctx.log(`${owner.name}'s Cheerleaders: +2 followers.`); }
     },

@@ -204,14 +204,13 @@ describe('v4 payment picker', () => {
     const p = state.players[me];
     const uid = state.pending.uid ?? state.shop.find(u => memberPrice(state, p, u).total > 0);
     // exactly the price in one color the cost takes: one legal way
-    const pr = memberPrice(state, p, uid);
-    p.res = Object.fromEntries(state.resources.map(r => [r, 0]));
-    p.res[pr.color || state.resources[0]] = pr.total;
-    // and no lead or tie given up by paying it (that one way would ask first: decisions.md, 2026-10-15 17:55)
-    for (const o of state.players) if (o !== p) o.res[pr.color || state.resources[0]] = pr.total + 5;
     p.discount = 0;
-    // a rival out-holds that color, so paying gives up no lead (that warning keeps the sheet open on purpose)
-    for (const o of state.players) if (o !== p) o.res[pr.color || state.resources[0]] = pr.total + 3;
+    const col = memberPrice(state, p, uid).color || state.resources[0];
+    // a rival out-holds that color, so paying gives up no lead (that warning keeps the sheet open on purpose; decisions.md,
+    // 2026-10-15 17:55); set first, since what rivals hold can move the price (a cost that reads the table)
+    for (const o of state.players) if (o !== p) o.res[col] = 20;
+    p.res = Object.fromEntries(state.resources.map(r => [r, 0]));
+    p.res[col] = memberPrice(state, p, uid).total;
     state.queue[0] = { t: 'pay', p: me, uid };
     state = resume(state);
     expect(payIds(state).length).toBe(1);

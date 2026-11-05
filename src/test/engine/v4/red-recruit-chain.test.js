@@ -6,7 +6,7 @@ import { move, take } from './helpers.js';
 
 const reload = s => resume(JSON.parse(JSON.stringify(s)));
 
-it.each(['echo.impostor', 'echo.doppel'])('%s copies Panel; only Doppelganger does its Recruit ability (Cory, 2026-10-28)', id => {
+it.each(['echo.impostor', 'echo.doppel'])('%s copies Panel, whose ability is On Use, so nothing fires on recruit (Cory, Nov 5)', id => {
   let s = table(['red', 'echo', 'gold', 'thieves'], { members: id.endsWith('doppel') ? [['red.panel']] : [[], ['red.panel']], shop: [id, 'red.mentor'] });
   s.queue = []; s.pending = null; s.pile = [];
   const copier = uidIn(s, id, 'shop'), panel = uidIn(s, 'red.panel', id.endsWith('doppel') ? 0 : 1);
@@ -14,7 +14,6 @@ it.each(['echo.impostor', 'echo.doppel'])('%s copies Panel; only Doppelganger do
   s = reload(s);
   s = reload(move(s, `card:${panel}`));
   expect(s.cards[copier].copy).toBe('red.panel');
-  if (id.endsWith('doppel')) { expect(s.pending.prompt).toBe('Panel: Promote or Demote?'); return; }
   expect(s.pending).toBe(null);
   expect(s.shop.map(u => s.cards[u].def)).toEqual(['red.mentor']);
 });

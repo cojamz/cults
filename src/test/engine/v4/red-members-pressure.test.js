@@ -81,10 +81,10 @@ describe('Green exact action targets alongside Red recruitment', () => {
 });
 
 describe('Red members: bounded acquisition and body invariants', () => {
-  it('the normal Red deck contains thirteen approved members (Body Snatchers in Triplets’ place, Nov 3), all priced at twelve or less (Mob 12, Cory Oct 24)', () => {
+  it('the normal Red deck contains thirteen approved members (Body Snatchers in Triplets’ place, Nov 3; Seat Filler in Volunteer’s, Nov 5), all priced at twelve or less (Mob 12, Cory Oct 24)', () => {
     const s = createGame({ seats: [{}, {}], quadrants: ['red', 'echo'], rules: { cull: true, guests: false } });
     const red = Object.values(s.cards).map(c => defById(c.def)).filter(d => d.quadrant === 'red');
-    expect(red.map(d => d.key).sort()).toEqual(['host', 'loyalists', 'mentor', 'mob', 'movementpenalty', 'panel', 'patriarch', 'proselytizer', 'fosterparents', 'recruiter', 'bodysnatchers', 'volunteer', 'headhunter'].sort());
+    expect(red.map(d => d.key).sort()).toEqual(['host', 'loyalists', 'mentor', 'mob', 'movementpenalty', 'panel', 'patriarch', 'proselytizer', 'fosterparents', 'recruiter', 'bodysnatchers', 'seatfiller', 'headhunter'].sort());
     expect(red.every(d => d.s + d.w <= 12 + EXTRA_WILD)).toBe(true); // printed 12 or less, plus the extra wild
     expect(['red.bigfamily', 'red.intern', 'red.drive', 'red.sponsor', 'red.crowd', 'red.reserve'].every(id => CUT.has(id))).toBe(true);
   });
@@ -100,8 +100,8 @@ describe('Red members: bounded acquisition and body invariants', () => {
 
   it('Panel save/load retains mode and exact swap targets without inherent action red', () => {
     // Merchant (6) can promote to Mentor (8) but not to Mob (10)
-    let s = table(Q, { round: 3, members: [['gold.merchant']], shop: ['red.panel', 'red.mentor', 'red.mob'], queue: turns(0, 0) });
-    s = move(take(s, 'red.take'), `card:${uidIn(s, 'red.panel', 'shop')}`);
+    let s = table(Q, { round: 3, members: [['red.panel', 'gold.merchant']], shop: ['red.mentor', 'red.mob'], queue: turns(0, 0) });
+    s = move(s, `use:${uidIn(s, 'red.panel', 0)}`); // On Use, once per round (Cory, Nov 5)
     expect(s.pending.prompt).toMatch(/Panel/);
     expect(s.pending.options.map(o => o.id)).toContain('promote');
     const direct = move(s, 'promote'), reload = move(saved(s), 'promote');
@@ -111,7 +111,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(reload.pending.options.map(o => o.id)).not.toContain(pair(host, uidIn(reload, 'red.mob', 'shop')));
     expect(reload.pending.options.every(o => !o.value?.includes(panel))).toBe(true);
     expect(saved(reload).pending.options.every(o => !o.value?.includes(panel))).toBe(true);
-    expect(reload.players[0].res.red).toBe(1); // Red space only; Panel itself pays no inherent red.
+    expect(reload.players[0].res.red).toBe(0); // Panel itself pays no inherent red.
   });
 
   it('Greeters pays per ability, never for an effectless active acquisition or a gift', () => {
@@ -124,8 +124,8 @@ describe('Red members: bounded acquisition and body invariants', () => {
   });
 
   it('Panel exclusion survives a saved mode choice even if Panel has moved into the shop', () => {
-    let s = table(Q, { round: 3, members: [['red.host']], shop: ['red.panel', 'red.mentor'], queue: turns(0, 0) });
-    s = move(take(s, 'red.take'), `card:${uidIn(s, 'red.panel', 'shop')}`);
+    let s = table(Q, { round: 3, members: [['red.panel', 'gold.merchant']], shop: ['red.mentor'], queue: turns(0, 0) });
+    s = move(s, `use:${uidIn(s, 'red.panel', 0)}`);
     const panel = uidIn(s, 'red.panel', 0);
     s.players[0].members.splice(s.players[0].members.indexOf(panel), 1);
     s.shop.push(panel);
@@ -190,10 +190,14 @@ describe('Red members: bounded acquisition and body invariants', () => {
   });
 
   // Cory, 2026-10-28: Doppelganger does the copied member's On Recruit, so a copied Panel promotes or demotes once
-  it('a Doppelganger copying Panel adopts its body and does Panel\'s Promote or Demote once', () => {
+  it('a Doppelganger copying Panel adopts its body and can use Panel\'s Promote or Demote', () => {
     let s = table(Q, { round: 3, members: [['red.panel']], shop: ['echo.doppel', 'red.mentor'], queue: turns(0, 0) });
     s = move(take(s, 'red.take'), `card:${uidIn(s, 'echo.doppel', 'shop')}`);
     s = move(saved(s), `card:${uidIn(s, 'red.panel', 0)}`);
+    expect(s.pending.prompt).not.toBe('Panel: Promote or Demote?'); // Panel is On Use now (Cory, Nov 5): nothing on recruit
+    s = pass(s);
+    while (s.pending?.kind !== 'place' && s.pending) s = move(s, s.pending.options.find(o => o.id === 'pass' || o.id === 'done')?.id ?? s.pending.options[0].id);
+    s = move(saved(s), `use:${uidIn(s, 'echo.doppel', 0)}`);
     expect(s.pending.prompt).toBe('Panel: Promote or Demote?');
     expect(s.queue.find(t => t.t === 'choose')?.data?.excludeUid).toBe(uidIn(s, 'echo.doppel', 0));
     expect(s.cards[uidIn(s, 'echo.doppel', 0)].copy).toBe('red.panel');
@@ -212,6 +216,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
     const impostor = uidIn(s, 'echo.impostor', 0), doppel = uidIn(s, 'echo.doppel', 0), panel = uidIn(s, 'red.panel', 'shop');
     s.cards[impostor].copy = 'red.panel'; s.cards[doppel].copy = 'red.panel';
     s = move(take(s, 'red.hireup'), pair(doppel, panel));
+    s = move(saved(s), `use:${panel}`); // On Use, once per round (Cory, Nov 5)
     s = move(saved(s), 'promote');
     expect(s.pending.options.every(o => !o.value?.includes(panel))).toBe(true);
     expect(() => move(saved(s), pair(panel, doppel))).toThrow();
@@ -221,8 +226,8 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(s.players[0].members).toContain(doppel);
     expect(s.players[0].members).toContain(panel);
     expect(s.shop).toContain(impostor);
-    // the copied Panel's Promote or Demote runs once (Cory, 2026-10-28), never on Doppelganger itself, and the chain ends
-    expect(s.pending.prompt).toBe('Panel: Promote or Demote?');
+    // the copied Panel is On Use (Cory, Nov 5): nothing fires on recruit, and the chain ends
+    expect(s.pending?.prompt).not.toBe('Panel: Promote or Demote?');
     for (let k = 0; k < 8 && s.pending?.kind === 'choose'; k++) {
       expect(s.pending.options.every(o => !(Array.isArray(o.value) && o.value.includes(doppel)))).toBe(true);
       s = move(saved(s), s.pending.options[0].id);

@@ -311,12 +311,12 @@ const market = {
       },
     },
     {
-      key: 'showroom', ring: 1, name: 'Peek', text: 'Look at the top 4 of the pile and put them back in any order. This turn your recruit may be one of them. +2 blue in round I, +4 in round II, +6 in round III.', copyDoesIt: true,
+      key: 'showroom', ring: 1, name: 'Peek', text: 'Look at the top 4 of the pile and put them back in any order. This turn your recruit may be one of them. +3 blue in round I, +4 in round II, +5 in round III.', copyDoesIt: true, // +3/+4/+5 (Cory, Nov 5)
       // scales, more blue (Cory, 2026-10-22 playtest: weak in round I, "should give more resource", "Peek should really really scale")
-      byRound: { lead: 'Look at the top 4 of the pile and put them back in any order. This turn your recruit may be one of them.', lines: ['+2 blue', '+4 blue', '+6 blue'] },
-      estimate: (ctx, p) => 2 * ctx.state.round + Math.max(0, ...ctx.state.pile.slice(0, 4).map(u => ctx.card(u)).filter(c => ctx.payChoices(p, c.uid, {}).length).map(botWorth)) * 0.3,
+      byRound: { lead: 'Look at the top 4 of the pile and put them back in any order. This turn your recruit may be one of them.', lines: ['+3 blue', '+4 blue', '+5 blue'] },
+      estimate: (ctx, p) => ctx.state.round + 2 + Math.max(0, ...ctx.state.pile.slice(0, 4).map(u => ctx.card(u)).filter(c => ctx.payChoices(p, c.uid, {}).length).map(botWorth)) * 0.3,
       resolve(ctx, p) {
-        ctx.gain(p, B, 2 * ctx.state.round, { fromAction: true });
+        ctx.gain(p, B, ctx.state.round + 2, { fromAction: true });
         const top = ctx.state.pile.slice(0, 4);
         p.peekReach = Math.max(p.peekReach || 0, top.length);
         ctx.log(`${p.name} peeks at the top ${top.length} of the pile.`);
@@ -375,9 +375,9 @@ const market = {
       },
     }]),
     {
-      key: 'spree', ring: 3, name: 'Spree', text: 'Recruit two extra times this turn. +5 blue.', copyDoesIt: true,
-      estimate: (ctx, p) => 5 + Math.min(10, Math.max(0, totalRes(p) - 3)) * 0.8, // +5 blue (Cory, Nov 1)
-      resolve(ctx, p) { ctx.gain(p, B, 5, { fromAction: true }); extraBuys(ctx, p, 2); ctx.log(`${p.name} goes on a spree: two extra recruits this turn.`); },
+      key: 'spree', ring: 3, name: 'Spree', text: 'Recruit two extra times this turn. +6 blue.', copyDoesIt: true,
+      estimate: (ctx, p) => 6 + Math.min(10, Math.max(0, totalRes(p) - 3)) * 0.8, // +6 blue (Cory, Nov 5; was +5 Nov 1)
+      resolve(ctx, p) { ctx.gain(p, B, 6, { fromAction: true }); extraBuys(ctx, p, 2); ctx.log(`${p.name} goes on a spree: two extra recruits this turn.`); },
     },
   ],
 
@@ -849,7 +849,7 @@ const market = {
         ctx.gain(owner, B, 3); ctx.log(`${owner.name}'s Buyers' Club: +3 blue.`);
       },
     })),
-    m('windowdresser', 'Window Dressers', 2, 1, 'On Recruit: send 3 shop members to the bottom of the pile, then refill.', { f: 3, ...old4, ...old9('market.windowdresser'),
+    m('windowdresser', 'Window Dressers', 2, 0, /* Cory, Nov 5 backlog price yes */ 'On Recruit: send 3 shop members to the bottom of the pile, then refill.', { f: 3, ...old4, ...old9('market.windowdresser'),
       onRecruited(ctx, owner) {
         ctx.log(`${owner.name}'s Window Dressers: send 3 shop members to the bottom of the pile.`);
         churnStep(ctx, owner, { left: Math.min(3, ctx.state.shop.length) });

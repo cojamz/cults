@@ -32,7 +32,7 @@ describe('Guest members (rule-benders)', () => {
     let s = sceneQ({ res: [rich], bonus: [5, 5], members: [[], ['gold.prospector']], shop: ['benders.saboteur'] });
     s = buy(take(s, 'gold.rush'), 'benders.saboteur');
     expect(s.players[0].bonus).toBe(0);
-    expect(named(s, 'Old Maid')).toHaveLength(1);
+    expect(named(s, 'Ghost')).toHaveLength(1); // Old Maid is Ghost (Nov 5)
     const u = uidOf(s, 'benders.saboteur', 0);
     expect(contextFor(s).swapMembers(s.players[0], u, uidOf(s, 'gold.prospector', 1))).toBe(true);
     expect(s.players[1].members).toContain(u);

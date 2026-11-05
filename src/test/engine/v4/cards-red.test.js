@@ -29,12 +29,12 @@ describe('Red action gains', () => {
 });
 
 describe('Red members', () => {
-  it('Mentor & Protégés: when recruited, also the cheapest face-up member free; the log names Mentor', () => {
+  it('Mentor: when recruited, also the cheapest face-up member free; the log names Mentor', () => {
     let s = sceneQ({ res: [rich], shop: ['red.mentor'] });
     s = take(s, 'gold.rush'); s = buy(s, 'red.mentor');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
     expect(s.players[0].members).toHaveLength(2);
-    expect(named(s, 'Mentor & Protégés')).toHaveLength(1);
+    expect(named(s, 'Mentor')).toHaveLength(1);
   });
   it('Mentor × Recruiter × Pied Piper: the free protégé is a second recruit this turn', () => {
     let s = sceneQ({ res: [rich], members: [['red.recruiter', 'red.drive']], shop: ['red.mentor'] });

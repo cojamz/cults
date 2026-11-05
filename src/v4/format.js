@@ -1099,7 +1099,13 @@ export function turnStory(start, end, actor, me = null, mid = null) {
     const n = defById(c.def).name, at = seg[0].findIndex(l => l.startsWith(`${A.name}'s ${n}`));
     if (at >= 0 && (placeAt < 0 || at < placeAt) && !usedFirst.includes(n)) usedFirst.push(n);
   }
-  for (const n of usedFirst) { const k = out.indexOf(`used ${n}`); if (k >= 0) out.splice(k, 1); } // said once, in the head
+  // said once, in the head; what the use did stays as its own line ("used Encore: their next On Recruit happens twice")
+  for (const n of usedFirst) {
+    const k = out.indexOf(`used ${n}`);
+    if (k >= 0) { out.splice(k, 1); continue; }
+    const j = out.findIndex(l => l.startsWith(`used ${n}: `));
+    if (j >= 0) out[j] = out[j].slice(`used ${n}: `.length);
+  }
   if (!place && !out.length && !usedFirst.length) return null;
   const did = place ? (joined ? `joined ${nm(joined.id)} on ${space} (Squatter)` : `took ${space}`) : null;
   const head = usedFirst.length ? `${who} used ${usedFirst.join(', ')}${did ? `, then ${did}` : ''}` : did ? `${who} ${did}` : who;

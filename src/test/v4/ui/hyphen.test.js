@@ -13,6 +13,6 @@ describe('breakable', () => {
   });
   it('leaves short words and spaced names alone', () => {
     expect(breakable('Roadie')).toBe('Roadie');
-    expect(breakable('Mentor & Protégés')).toBe('Mentor & Protégés');
+    expect(breakable('Mentor')).toBe('Mentor');
   });
 });

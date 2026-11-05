@@ -152,7 +152,7 @@ describe('Duty Collector: "Whenever a rival recruits a member of a color you hav
 describe('Window Dressers (reworded): "On Recruit: send any shop members to the bottom of the pile, then refill. Recruit again this turn."', () => {
   it('same price and worth, and the old Window Dressers retired', () => {
     const d = defById('market.windowdressers9'), o = defById('market.windowdresser');
-    expect([d.s, d.w, d.f]).toEqual([o.s, o.w, o.f]);
+    expect([d.s, d.w, d.f]).toEqual([o.s, o.w + 1, o.f]); // the old Window Dressers is 1 cheaper since Nov 5
     expect(o.retired).toBe(true);
   });
   it('sends chosen shop members to the bottom, refills once, then offers another recruit', () => {

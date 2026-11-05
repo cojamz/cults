@@ -66,10 +66,13 @@ describe('Yellow actions', () => {
     expect(names).toContain('Housewarming');
     expect(names).not.toContain('Big New Blood');
   });
-  it('Melting Pot (round II): +2 yellow; count the different colors of your members, and gain that many in colors you choose', () => {
-    let s = take(sc({ round: 2, members: [['red.twins', 'gold.banker', 'yellow.explorer']] }), 'yellow.meltingpot');
-    for (let i = 0; i < 3; i++) s = move(s, 'color:green');
-    expect(R(s)).toMatchObject({ yellow: 2, green: 3 });
+  it('Melting Pot (round II): +2 yellow, and +1 of each color among your members (Cory, Nov 5)', () => {
+    const s = take(sc({ round: 2, members: [['red.twins', 'gold.banker', 'yellow.explorer']] }), 'yellow.meltingpot');
+    expect(R(s)).toMatchObject({ red: 1, gold: 1, yellow: 3, green: 0 });
+  });
+  it('Melting Pot with Dabblers: Dabblers is wild, so +1 of every color (Cory, Nov 5)', () => {
+    const s = take(sc({ round: 2, members: [['benders.dabblers']] }), 'yellow.meltingpot');
+    expect(R(s)).toMatchObject({ red: 1, gold: 1, yellow: 3, green: 1 });
   });
   it('Makeover (round III): +4 yellow, then rearrange everything', () => {
     let s = take(sc({ round: 3, res: [{ gold: 2, red: 2 }] }), 'yellow.makeover');
@@ -136,7 +139,7 @@ describe('Yellow members', () => {
   it('Customs Officer: a rival\'s Heist taking your followers pays nothing (followers are not resources; Nov 4)', () => {
     let s = sceneQ({ quadrants: ['gold', 'yellow', 'thieves', 'echo'], n: 2, round: 2, bonus: [0, 5], members: [[], ['yellow.customs']] });
     s = take(s, 'thieves.rob');
-    if (s.pending?.options?.some(o => o.id === 'player:1')) s = move(s, 'player:1');
+    while (s.pending?.options?.some(o => o.id === 'player:1')) s = move(s, 'player:1'); // one follower a pick (Heist, Nov 5)
     expect(s.players[1].bonus).toBe(2);
     expect(R(s, 1).yellow || 0).toBe(0);
     expect(named(s, 'Customs Officer')).toHaveLength(0);
@@ -189,9 +192,9 @@ describe('Yellow members', () => {
     expect(s.players[0].bonus).toBe(2);
     expect(s.log).toContain("P1's Tourist: +2 followers.");
   });
-  it('Caravan: worth 3 followers; round start +1 of each color you hold', () => {
+  it('Caravan: worth 3 followers; round start +1 of each color (Cory, Nov 5: not only those you hold)', () => {
     const s = sc({ members: [['yellow.caravan']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
-    expect(R(s)).toMatchObject({ gold: 2, red: 3, yellow: 0, green: 0 });
+    expect(R(s)).toMatchObject({ gold: 2, red: 3, yellow: 1, green: 1 });
     expect(followers(s, s.players[0])).toBeGreaterThanOrEqual(3);
   });
   it("Tastemaker: +1 follower each time you change rivals' resources, once per card however many it changes", () => {
