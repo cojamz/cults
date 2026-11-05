@@ -3,7 +3,7 @@
  "live|member|charity ball": {
   "verdict": "keep",
   "reason": "Live since today in Philanthropist's place. Beat it in blind judging of bot games (+0.30), and 120 bot games passed balance: owners won 29%, it fires about 10 times a game.",
-  "cory": "Like."
+  "cory": "Don't like; probably shouldn't be in the deck."
  },
  "live|member|socialites": {
   "verdict": "keep",
@@ -830,7 +830,7 @@
   "cory": "Fine; code or bots may handle it wrong; strong early with the yellow cloak?"
  },
  "live|member|debt collectors": {
-  "cory": "Like, should give more."
+  "cory": "Kind of counter; doesn't make much sense."
  },
  "live|member|double agent": {
   "cory": "Like."
@@ -867,5 +867,32 @@
  },
  "live|member|barker": {
   "cory": "Like."
+ },
+ "live|member|cutpurse": {
+  "cory": "Don't like; cutting board."
+ },
+ "live|member|extortionist": {
+  "cory": "Okay, stays for now; maybe a little cheaper."
+ },
+ "live|member|high society": {
+  "cory": "Okay, probably a little too expensive."
+ },
+ "live|member|impersonator": {
+  "cory": "Like; make it On Recruit only; open questions on color and re-recruiting."
+ },
+ "live|member|meddler": {
+  "cory": "No."
+ },
+ "live|member|misers": {
+  "cory": "No; should be 1 follower per white, an alternative to buying followers."
+ },
+ "live|member|mob": {
+  "cory": "No, win more; needs a rework, cut as is."
+ },
+ "live|member|money changers": {
+  "cory": "Like it as the cloak; maybe as a member."
+ },
+ "live|member|picket line": {
+  "cory": "Fine."
  }
 }

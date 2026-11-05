@@ -118,3 +118,15 @@ Also: "I don't understand this X points over even. I'm a little suspicious of it
 - **Old Maid**: like; maybe rename to Ghost, worth 0 members.
 - **Raiders**: don't like, bottom of the list. **Agents**: maybe cut, but something is needed there.
 - **Caterer** (Silver Cloak): "Is that not the thing? Are you counting the robes and the members?"
+
+## Members, part 2 (voice note, Nov 5 00:20Z, his words)
+- **Charity Ball**: "I do not like charity ball. I think that probably should not be in the deck." (replaces his earlier "like")
+- **Cutpurse**: don't like; on the cutting board. **Extortionist**: okay, stays for now if either stays; maybe a little cheaper ("you're probably going to steal four resources, and this cost eight").
+- **Debt Collectors**: "kind of counter", doesn't make much sense.
+- **High Society**: okay, probably a little too expensive.
+- **Impersonator**: like; open questions (does it take that member's color? does it trigger again if someone recruits your Impersonator?); should be On Recruit only, not Round Start, simpler.
+- **Meddler**: no.
+- **Misers**: no; should be 1 follower per 1 white, an alternative to buying followers; feels like anti-synergy.
+- **Mob**: no, win more; needs a rework, cut as is.
+- **Money Changers**: likes it as the cloak; maybe as a member too.
+- **Picket Line**: fine.
