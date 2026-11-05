@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.599 — 2026-11-05
+
+- Every member costs 1 more (the extra any-color resource every member pays goes from 1 to 2), so fewer member cards per game
+
 ## v0.99.598 — 2026-11-05
 
 - Exchange's sheet says what you turn in: "Turn up to 1 resource into 2 followers"
