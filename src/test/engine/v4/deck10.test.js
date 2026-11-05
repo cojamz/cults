@@ -14,13 +14,16 @@ const count = (s, color) => {
   return { n: mine.length, r1: mine.filter(d => joinsRound(s, d) === 1).length };
 };
 
+// round I members by color since Nov 5 (only members at 3 or less before the +1 wild)
+const R1 = { red: 3, echo: 2, thieves: 2, purple: 4, market: 4, trading: 3, yellow: 3 };
+
 describe('10-card decks', () => {
-  it('deals 10 of each 2.0 color and 12 grey (Cheerleaders and Victors, Nov 4), 4 joining in round I (Blue and Yellow 5)', () => {
+  it('deals 10 of each 2.0 color and 12 grey (Cheerleaders and Victors, Nov 4); round I gets only the cheap ones (Cory, Nov 5)', () => {
     for (let i = 0; i < COLORS.length; i += 4) {
       const table = COLORS.slice(i, i + 4).concat(COLORS.slice(0, Math.max(0, 4 - COLORS.slice(i, i + 4).length)));
       const s = deal(table, 10);
-      for (const q of table) expect(count(s, q), q).toEqual({ n: 10, r1: q === 'market' || q === 'yellow' ? 5 : 4 });
-      expect(count(s, 'grey')).toEqual({ n: 12, r1: 4 });
+      for (const q of table) expect(count(s, q), q).toEqual({ n: 10, r1: R1[q] });
+      expect(count(s, 'grey')).toEqual({ n: 12, r1: 2 });
     }
   });
   it('without the rule a table deals the bigger decks', () => {

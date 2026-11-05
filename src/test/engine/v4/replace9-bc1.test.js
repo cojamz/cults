@@ -4,7 +4,7 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler,latebloomers,dowagers,windowdressers9,moneylender';
-const { applyMove, countMembersOfColor } = await import('../../../engine/v4/core.js');
+const { applyMove, countMembersOfColor, memberRound } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move } = await import('./helpers.js');
 const { table, named, uidIn } = await import('./cards-helpers-b.js');
@@ -134,7 +134,7 @@ describe('Dowagers: "On Use, once per game: cast out any of your other members; 
 describe('Duty Collector: "Whenever a rival recruits a member of a color you have a member of, +1 of that color."', () => {
   it('price, round I, and Customs Officer retired', () => {
     const d = defById('yellow.dutycollector');
-    expect([d.s, d.w, d.round]).toEqual([3, 3, 1]);
+    expect([d.s, d.w, memberRound(d)]).toEqual([3, 3, 3]); // joins by cost (Cory, Nov 5)
     expect(defById('yellow.customs').retired).toBe(true);
   });
   it('a rival recruits red while you hold a red member: +1 red; a color you have none of: nothing', () => {
