@@ -20,6 +20,14 @@ for x in cards:
     seen.add(k)
     data.append({'n': x['name'], 't': x['text'], 'c': x['color'], 'p': x.get('price') or '', 'pile': pile,
                  'live': x['status'] == 'live', 'b': b or '', 'cory': x.get('cory') or '', 'prot': bool(x.get('protected'))})
+# candidates the menu doesn't list yet (switch REPLACE7), with Cory's call
+EXTRA = [
+ {'n':'Moonlighters','t':'From round II: after your last minion, +1 minion, placed right away on a space a rival already took.','c':'purple','p':'6 purple + 1 any, counts as 2','cory':'WAY too strong.'},
+ {'n':'Evangelists','t':'Whenever any player recruits a red member, +2 followers (+3 if it’s you).','c':'red','p':'3 red + 4 any, counts as 2','cory':'No; cut pile.'},
+ {'n':'Zealots','t':'Whenever you recruit, +1 follower and the player with the most followers loses 1 (unless it’s you).','c':'red','p':'3 red + 4 any, counts as 2','cory':'No; cut pile.'},
+]
+for e in EXTRA:
+    if not any(d['n'] == e['n'] for d in data): data.append({**e, 'pile':'cut', 'live':False, 'b':'cut', 'prot':False})
 html = open(os.path.join(here, 'board.html')).read().replace('/*DATA*/null', json.dumps(data, ensure_ascii=False))
 open(OUT, 'w').write(html)
 print(f'board: {len(data)} members -> {OUT}')

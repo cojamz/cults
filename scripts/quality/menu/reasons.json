@@ -1331,5 +1331,17 @@
  "considered|member|set list": {
   "cory": "No.",
   "bucket": "cut"
+ },
+ "considered|member|moonlighters": {
+  "cory": "WAY too strong.",
+  "bucket": "cut"
+ },
+ "considered|member|evangelists": {
+  "cory": "No; cut pile.",
+  "bucket": "cut"
+ },
+ "considered|member|zealots": {
+  "cory": "No; cut pile.",
+  "bucket": "cut"
  }
 }

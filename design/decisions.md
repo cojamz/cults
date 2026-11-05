@@ -1840,3 +1840,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - (Cory, 2026-11-05) "get tribute band back in at 12": **Tribute Band** ("On Use, once per game: choose a rival. Do every action they have a minion on this round.") costs 12, 9 green + 3 any (was 11 green + 3 any). Still counts as 3 members; its copies already pay Copyist, Wallflower and Impressionist each.
 - 2026-11-05 01:37Z: Cory, to make later: swap Volunteer out for Seat Filler (red); Panel becomes On Use, once per round; maybe Body Snatchers cheaper ("the cost being limiting makes it bad as well"). Logged, not built yet.
 - 2026-11-04 (Cory) Moonlighters, Evangelists and Zealots are cut ("those are going in the cut pile"; Moonlighters "WAY too strong"). They stay switched off in code (REPLACE7) as a record; never ship.
+- 2026-11-05 01:40Z: Cory: Moonlighters ("WAY too fucking strong"), Evangelists and Zealots go in the cut pile.
