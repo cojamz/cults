@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.598 — 2026-11-05
+
+- Exchange's sheet says what you turn in: "Turn up to 1 resource into 2 followers"
+
 ## v0.99.597 — 2026-11-05
 
 - Your Nov 5 yeses: member changes and cuts, new prices, Help Yourself from one rival, Heist split among rivals, Spree +6, Overtime +4, Peek +3/+4/+5, Promote and Demote reach 3, Melting Pot by member colors
