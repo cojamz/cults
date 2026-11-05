@@ -26,7 +26,7 @@ import { swap11, handlers11 } from './replace11.js';
 const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 1);
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const costOf = def => def.s + def.w;
-const COPYIST = on10('copyist2') ? 2 : 1; // REPLACE10
+const COPYIST = 2; // +2, the version Cory short-listed (live Nov 5; was REPLACE10 copyist2)
 
 // ---------- the yield ledger ----------
 // state.echo = { round, now: { 'q-i': entry }, last: { ... } (last round's chips, kept for the board), open: key | null }

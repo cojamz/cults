@@ -13,12 +13,12 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 const payFor = (s, i, uid) => contextFor(s).payChoices(s.players[i], uid, {})[0];
 
 describe('REPLACE10: Copyist', () => {
-  it('Whenever you copy an action, +1 follower (Cover copying Build Up)', () => {
+  it('Whenever you copy an action, +2 followers (Cover copying Build Up)', () => {
     let s = table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, left: 4, members: [['echo.copyist']] });
     const b = s.players[0].bonus;
     s = take(s, 'echo.hum');
     while (s.pending?.player === 0 && s.pending.kind === 'choose') s = answer(s, (s.pending.options.find(o => /Build Up/.test(o.label)) || s.pending.options[0]).id);
-    expect(s.players[0].bonus).toBe(b + 1);
+    expect(s.players[0].bonus).toBe(b + 2);
   });
 });
 
