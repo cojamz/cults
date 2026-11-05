@@ -106,6 +106,11 @@ export function extraMinion(ctx, p, what) {
   return 1;
 }
 
+// where the current turn ends in the queue. A preview has no endTurn: its hold stands in, so an extra turn waits behind
+// it and never starts inside the preview (Errand Runner copied by Sample started the turn there and paid Courier's
+// "consecutive turn" +1 each, which the real turn only pays once the recruit step is done, Nov 5)
+const turnEnd = q => q.findIndex(t => t.t === 'endTurn' || t.t === 'previewHold');
+
 /** Give p up to n extra turns right after the current one. Returns how many it got. */
 export function extraTurns(ctx, p, n = 1, why = null, { quiet = false } = {}) {
   // no extra minions in round I (Cory, 2026-10-15): every space there is already spoken for
@@ -113,7 +118,7 @@ export function extraTurns(ctx, p, n = 1, why = null, { quiet = false } = {}) {
   let k = 0;
   for (; k < n && spareSpace(ctx); k++) {
     const q = ctx.state.queue;
-    const end = q.findIndex(t => t.t === 'endTurn');
+    const end = turnEnd(q);
     q.splice(end < 0 ? 0 : end + 1 + k, 0, { t: 'turn', p: p.id });
     p.left += 1;
   }
@@ -696,7 +701,7 @@ export default {
       afterAction(ctx, owner, card) {
         if (owner.left !== 0 || card.owlRound === ctx.state.round || ctx.state.round < 2) return;
         card.owlRound = ctx.state.round;
-        const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn');
+        const q = ctx.state.queue, end = turnEnd(q);
         if (!extraTurns(ctx, owner, 1, 'Moonlighters')) return;
         const t = q[end < 0 ? 0 : end + 1];
         if (t && t.t === 'turn' && t.p === owner.id) { t.join = true; owner.crashNext = true; }
