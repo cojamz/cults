@@ -17,7 +17,7 @@ describe('Last-Minute Shopper (alternate): "Round End: +2 of any colors, then yo
     const d = defById('market.lastminute2');
     expect([d.s, d.w, d.f, d.n, d.round]).toEqual([3, 2, 1, 1, 1]);
     expect(defById('market.critic').retired).toBe(true);
-    expect(() => defById('market.lastminute')).toThrow();
+    // the first version is in the live deck since Nov 5 (Cory: +2 blue at Round End), so it stays defined here
   });
   it('Round End: two colors, one at a time, then the recruit offer, which the 2 can pay for', () => {
     let s = table(Q4, { n: 3, round: 1, res: [{ red: 1 }], members: [['market.lastminute2']], shop: ['red.volunteer'], queue: [{ t: 'allPlaced' }] });

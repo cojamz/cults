@@ -457,7 +457,7 @@ const thieves = {
         if (ctx.claimMember(p, uid)) ctx.log(`${p.name}'s Vultures: steals ${ctx.player(data.from).name}'s ${name} on its way out.`);
       },
     }),
-    ...handlers10({
+    // Big Score is in the deck (Nov 5): its handler is always registered
       hoardBreak(ctx, p, v) {
         if (!v) return;
         const [vid, color] = v, o = ctx.player(vid);
@@ -466,6 +466,7 @@ const thieves = {
         const got = commit(ctx, p, o, { [color]: x.n }, false, false);
         if (got) ctx.log(`${p.name}'s Big Score: took ${got} ${color} from ${o.name}.`);
       },
+    ...handlers10({
       poach(ctx, p, uid) {
         if (uid == null) return;
         const hit = poachList(ctx, p).find(([, c]) => c.uid === uid);

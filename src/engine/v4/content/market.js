@@ -537,12 +537,13 @@ const market = {
       if (!scoutChoices(ctx, p, uid).length) return;
       askPay(ctx, p, `Talent Scout: how do you pay for ${c.def.name}?`, { uid, why: 'Talent Scout', fromPile: true, how: {} });
     },
+    // Last-Minute Shopper is in the deck (Nov 5): its handler is always registered
+    lastMinute(ctx, p, uid) {
+      if (uid == null) { ctx.log(`${p.name}'s Last-Minute Shopper: recruits nothing.`); return; }
+      if (!ctx.state.shop.includes(uid) || !ctx.payChoices(p, uid, {}).length) return;
+      askPay(ctx, p, `Last-Minute Shopper: how do you pay for ${ctx.card(uid).def.name}?`, { uid, why: 'Last-Minute Shopper', fromPile: true, how: {} });
+    },
     ...handlers9({
-      lastMinute(ctx, p, uid) {
-        if (uid == null) { ctx.log(`${p.name}'s Last-Minute Shopper: recruits nothing.`); return; }
-        if (!ctx.state.shop.includes(uid) || !ctx.payChoices(p, uid, {}).length) return;
-        askPay(ctx, p, `Last-Minute Shopper: how do you pay for ${ctx.card(uid).def.name}?`, { uid, why: 'Last-Minute Shopper', fromPile: true, how: {} });
-      },
       stallhold(ctx, p, uid, data) {
         const st = ctx.state, i = st.shop.indexOf(uid);
         if (i < 0) return;
