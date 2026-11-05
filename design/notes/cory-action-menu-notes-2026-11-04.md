@@ -236,3 +236,5 @@ Also: "I don't understand this X points over even. I'm a little suspicious of it
 - **Punch Card**: "No, absolutely not." **Outbidders**: no.
 - **Night Watch** (any-player version): "what the fuck does that mean?"
 - **Night Manager**: "I do like that one"; short list for purple.
+
+- **Peek**: "Maybe peak should end up being the bottom of the shop, actually, instead of the top. Might be more interesting. I don't know." (Nov 5 00:46Z)
