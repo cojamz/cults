@@ -8,12 +8,12 @@
 name: v4 browser verdict
 
 on:
-  schedule:
-    - cron: '23 */4 * * *'
-  # every ship: v4-play.sh rewrites main's play/build.json (also a fallback when GitHub delays schedules, as it did Nov 1)
+  # Major updates only (Cory, Nov 5: "move them to only happen after major updates in the project"). The 4-hourly schedule
+  # and the run after every ship are off. A major update writes its version into play/MAJOR on main
+  # (scripts/v4-major-verdict.sh does it), which starts this run.
   push:
     branches: [main]
-    paths: ['play/build.json']
+    paths: ['play/MAJOR']
   workflow_dispatch:
     inputs:
       ref:
