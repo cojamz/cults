@@ -650,7 +650,7 @@ const thieves = {
     // after the round's last placement and before anything is scored (core's allPlaced step, in this round's turn
     // order): one rival, then which 2 of theirs, through the shared steal (Bodyguards, Lie Low and Hush Money apply;
     // Desperado adds). Stolen resources keep their color.
-    m('secondstory', 'Second-Story Man', 3, 3, 'Round End: before contests are scored, steal 2 resources from one rival.', { round: 1, // a round I member as Sticky Fingers was (bot-tested in a later round; Nov 4)
+    m('secondstory', 'Second-Story Man', 3, 3, 'Round End: before contests are scored, steal 2 resources from one rival.', { // a round I member as Sticky Fingers was (bot-tested in a later round; Nov 4)
       // BOTSEE: each round end still ahead, 2 resources taken from a rival, plus a quarter chance it swings a contest
       ...see(i => (i.rivals.some(o => Object.values(o.res).some(v => v > 0)) ? endsAhead(i).reduce((a, r) => a + 2 * resAt(r) * (1 + SEE_SPITE) + 0.25 * SEE_RING[r - 1], 0) : 0)),
       onAllPlaced(ctx, owner) {
@@ -818,7 +818,7 @@ const thieves = {
     // members" counts as members count (Counts as N). A tie for the most members, or for the cheapest, is the owner's
     // pick; a rival who can't be stolen from (Bodyguards, Lie Low) is passed over only inside such a tie. A steal of a
     // member: the member is the owner's recruit (its On Recruit fires), as Heist's is.
-    m('kidnappers', 'Kidnapper', 5, 2, 'On Recruit and Round Start: steal the cheapest member of the rival with the most members.', { now: true, round: 1, ...old10('poacher'), ...old10('poacher5'), // a round I member as Kingpin was (bot-tested in a later round; Nov 3)
+    m('kidnappers', 'Kidnapper', 5, 2, 'On Recruit and Round Start: steal the cheapest member of the rival with the most members.', { now: true, ...old10('poacher'), ...old10('poacher5'), // a round I member as Kingpin was (bot-tested in a later round; Nov 3)
       onRoundStart(ctx, owner) {
         const list = kidnapList(ctx, owner);
         if (!list.length) { ctx.log(`${owner.name}'s Kidnapper: no member to steal.`); return; }

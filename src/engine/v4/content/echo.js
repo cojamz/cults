@@ -664,7 +664,7 @@ const echoQ = {
     // copies (Agents blocks it). The card is turned until the next round starts.
     // Live Nov 4 (director, under Cory's "you dont need my permission"): 4 green + 3 any. Trials: at 3 + 2 owners won 39%
     // (Busker 31%); at 4 + 3 taken 84% (Busker 85%), owners won 35% (Busker 32%).
-    m('songrequest', 'Song Request', 3, 3, 'On Use, once per round: copy an action a rival has a minion on.', { round: 1, // a round I member as Busker was (bot-tested in round II; Nov 4)
+    m('songrequest', 'Song Request', 3, 3, 'On Use, once per round: copy an action a rival has a minion on.', { // a round I member as Busker was (bot-tested in round II; Nov 4)
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
@@ -688,7 +688,7 @@ const echoQ = {
     // then the owner chooses again; the new one's Round Start waits for the next round. One On Use a game (and one a
     // round) across every ability it holds. Another Impersonator, or an uncopied Doppelganger or Impostors, has no
     // ability of its own to lend, so it isn't offered.
-    m('impersonators', 'Impersonator', 3, 2, "On Recruit and Round Start: choose a rival's member. Until you choose again, Impersonator has that member's ability.", { now: true, round: 1, // a round I member as Muse was (bot-tested in a later round; Nov 3)
+    m('impersonators', 'Impersonator', 3, 2, "On Recruit and Round Start: choose a rival's member. Until you choose again, Impersonator has that member's ability.", { now: true, // a round I member as Muse was (bot-tested in a later round; Nov 3)
       onRoundStart(ctx, owner, card) {
         const list = ctx.rivals(owner).flatMap(o => ctx.membersOf(o)).filter(c => c.copy || !['doppel', 'impostor', 'impersonators'].includes(c.def.key));
         if (!list.length) { ctx.log(`${owner.name}'s Impersonator: no rival member to choose.`); return; }

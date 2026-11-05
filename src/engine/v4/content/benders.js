@@ -124,7 +124,7 @@ const coachable = (ctx, p) => ctx.membersOf(p).filter(c => c.freeTurn !== ctx.tu
   && [c.def, c.copy && ctx.defOf(c.copy)].some(d => d?.activate && d.onActivate));
 const members = [
   // Party Crasher (was Squatter; id kept for old records): Cory, 2026-10-28, Once per game, cheaper; 5 with the +1 wild (Cory, Nov 1: "5"; was 4)
-  m('squatter', 'Party Crasher', 'thieves', 2, 2, 'On Use, once per game: your next minion can be placed on a space a rival already took.', { round: 1, // still joins in round I at 5, so grey keeps 4 (Claude's fill-in)
+  m('squatter', 'Party Crasher', 'thieves', 2, 2, 'On Use, once per game: your next minion can be placed on a space a rival already took.', { // still joins in round I at 5, so grey keeps 4 (Claude's fill-in)
     activate: 'game',
     onActivate(ctx, owner, card) {
       if (owner.crashNext) { card.used = false; return; }
@@ -326,7 +326,7 @@ const members = [
   // keeps 4). 6 any as a player sees it. Chosen after the round's last placement, before anything is scored (core's
   // allPlaced step), among the contests a rival leads and its owner doesn't (a tie for the lead counts as leading);
   // core's contest table then gives that contest no winner this round (state.spoiled).
-  m('spoilsports', 'Spoilsport', null, 0, 5, "Round End: choose a contest you don't lead; nobody wins it this round.", { round: 1,
+  m('spoilsports', 'Spoilsport', null, 0, 5, "Round End: choose a contest you don't lead; nobody wins it this round.", {
     onAllPlaced(ctx, owner) {
       const led = new Map(ctx.state.players.map(o => [o.id, ctx.contestsLed(o)]));
       const opts = ctx.state.quadrants.filter(q => !led.get(owner.id).includes(q)).map(q => {

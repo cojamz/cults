@@ -467,7 +467,7 @@ const silver = {
     // members (Godparent itself too) to any rival; its cost is its printed price. A gift, not a steal or a swap
     // (Loyalists and Bodyguards don't stop it): an arrival for the rival (Old Maid's −5 lands on them), and Martyrs pays
     // you as it leaves. A used card stays used.
-    m('godparents', 'Godparent', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain followers equal to its cost.', { round: 1, // a round I member as Hangers-On was (bot-tested in a later round; Nov 3)
+    m('godparents', 'Godparent', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain followers equal to its cost.', { // a round I member as Hangers-On was (bot-tested in a later round; Nov 3)
       activate: 'game',
       onActivate(ctx, owner, card) {
         const opts = [];
@@ -771,7 +771,7 @@ const silver = {
     // Replacement batch 3 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Collector's place. 4 silver + 2 any as a player sees it.
     // Creditor (Claude, under Cory's go-with-your-gut, Nov 4; was Creditors' game-end loss): the rival gives only the
     // followers it has (never below 0); the 3 silver is a gift from the bank, so the gift hooks fire as for Hostesses.
-    m('creditors', 'Creditor', 3, 2, 'On Use, once per round: a rival you choose gives you 2 followers, then gains 3 silver.', { round: 1, // a round I member as Collector was (bot-tested in a later round; Nov 3)
+    m('creditors', 'Creditor', 3, 2, 'On Use, once per round: a rival you choose gives you 2 followers, then gains 3 silver.', { // a round I member as Collector was (bot-tested in a later round; Nov 3)
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner) {

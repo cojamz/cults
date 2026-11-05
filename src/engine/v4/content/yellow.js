@@ -419,7 +419,7 @@ export default {
     // round I (paper 16 vs 10, Yellow's set 9 -> 16; blind play +0.34; trial on tables with Yellow: taken 28% vs 27%, owners
     // won 40% vs 35%). 3 yellow + 3 any as a player sees it. The recruited member's color, if you have a member of it
     // (Dabblers and Drifters count, as everywhere); automatic, on the rival's recruit.
-    m('dutycollector', 'Duty Collector', 2, 3, 'Whenever a rival recruits a member of a color you have a member of, +1 of that color.', { round: 1,
+    m('dutycollector', 'Duty Collector', 2, 3, 'Whenever a rival recruits a member of a color you have a member of, +1 of that color.', {
       onAnyRecruit(ctx, owner, card, by, recruited) {
         const c = colorOf(ctx, recruited);
         if (!c || by === owner || !(ctx.countMembersOfColor(owner, ctx.defOf(recruited).quadrant) > 0)) return;
@@ -444,7 +444,7 @@ export default {
     // Tourist's place. The price rule is core.js priceParts (flag dutyFree, read with isNewColor, grey a color).
     ...add11(m('dutyfree', 'Duty Free', 3, 3, 'Members of a color none of your members have cost you 3 less.', { round: 1, dutyFree: true,
       ...see(i => endsAhead(i).length * 3.5) })), // BOTSEE: about one new-color recruit a round, 3 off, plus the member it makes room for (0 of 9 bought at 2 a round)
-    m('tourists', 'Tourist', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { ...old11('dutyfree'), now: true, round: 1, // a round I member like Go-Between, so Yellow keeps 4 (Claude's fill-in)
+    m('tourists', 'Tourist', 3, 3, 'On Recruit: +1 follower per color you hold. Round Start: +1 follower per color you hold.', { ...old11('dutyfree'), now: true, // a round I member like Go-Between, so Yellow keeps 4 (Claude's fill-in)
       onRoundStart(ctx, owner) {
         const k = held(ctx, owner).length;
         if (k) { owner.bonus += k; ctx.log(`${owner.name}'s Tourist: +${k} follower${k === 1 ? '' : 's'}.`); }

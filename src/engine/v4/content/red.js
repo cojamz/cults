@@ -271,7 +271,7 @@ export default {
     // 4 red + 2 any as a player sees it. Its swap is a choice with "Don't swap" (Red's swaps can be skipped: Cory,
     // 2026-10-22, "You shouldnt HAVE to swap"); a rival's member it can take is one that may be swapped (Loyalists,
     // Bodyguards). The member you get is your recruit (its On Recruit fires), as with Promote.
-    m('bodysnatchers', 'Body Snatchers', 3, 2, "Round Start: swap one of your members with a rival's member of the same cost.", { f: 2, round: 1,
+    m('bodysnatchers', 'Body Snatchers', 3, 2, "Round Start: swap one of your members with a rival's member of the same cost.", { f: 2,
       onRoundStart(ctx, owner, card) {
         const pairs = snatchPairs(ctx, owner);
         if (!pairs.length) { ctx.log(`${owner.name}'s Body Snatchers: no rival holds a member at the cost of one of yours.`); return; }

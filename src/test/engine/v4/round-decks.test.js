@@ -3,7 +3,7 @@
 import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, cardDef, memberRound, DEFAULT_RULES } from '../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../engine/v4/bots.js';
-import { defById } from '../../../engine/v4/content/index.js';
+import { defById, allQuadrantIds, quadrant, guestMembers } from '../../../engine/v4/content/index.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
 import { runGame } from './fuzz-runner.js';
 
@@ -19,13 +19,19 @@ describe('round decks', () => {
     expect([2, 3, 4, 5, 6, 10].map(c => memberRound({ s: c, w: 0 }))).toEqual([1, 1, 2, 3, 3, 3]);
     expect(memberRound({ s: 8, w: 0, round: 1 })).toBe(1);
   });
+  it('no member joins earlier than its cost allows', () => {
+    const band = d => { const c = d.s + d.w - (d.extraWild || 0) - (d.extraColor || 0); return c <= 3 ? 1 : c <= 4 ? 2 : 3; };
+    const early = allQuadrantIds().flatMap(q => quadrant(q).members).concat(guestMembers())
+      .filter(d => !d.retired && !d.artifact && memberRound(d) < band(d)).map(d => d.id);
+    expect(early).toEqual([]);
+  });
   it('Impostors and Doppelganger join in round III', () => {
     for (const id of ['echo.impostor', 'echo.doppel']) expect(memberRound(defById(id))).toBe(3);
   });
   it('round I deals only round I members; the rest wait', () => {
     const s = start();
-    // a member pinned to round I joins there whatever its price (Party Crasher at 5, Tourist, Customs Officer: fill-ins, Nov 1)
-    for (const u of [...s.pile, ...s.shop]) expect(cost(s, u) <= 3 || memberRound(cardDef(s, u)) === 1, cardDef(s, u).name).toBe(true);
+    // round I's deck keeps to the cost limit: nothing over 3 before the +1 wild (Cory, Nov 5: the pinned fill-ins broke it)
+    for (const u of [...s.pile, ...s.shop]) expect(cost(s, u) <= 3, cardDef(s, u).name).toBe(true);
     expect(s.waiting[2].every(u => cost(s, u) === 4)).toBe(true);
     expect(s.waiting[3].every(u => cost(s, u) >= 5 || memberRound(cardDef(s, u)) === 3)).toBe(true);
   });

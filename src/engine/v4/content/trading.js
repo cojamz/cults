@@ -563,7 +563,7 @@ const trading = {
     // are Claude's fill-ins. REPLACE14=barker.
     // trial barker-landlord (120 Hard games a side): taken 38%, owners won 46% (28 owners); White Cloak 24% -> 31%. Live.
     m('barker', 'Barker', 2, 2, 'Each time you recruit a member, you may also recruit followers.', // Cory, Nov 4 2:27pm: "you can always recruit followers, even if you recruited a member"; 2:28pm: "it should stack with blue actions"
-      { followersTwice: true, round: 1 }), // a round I member as Landlord was
+      { followersTwice: true }), // a round I member as Landlord was
     m('shopkeeper', 'Landlord', 2, 1, 'On Recruit: +2 white. Round Start: +2 white.', { now: true, retired: true, ...old10('almoner'), ...old8('trading.shopkeeper'), ...old11('landlord2'), ...old9('trading.shopkeeper'),
       onRoundStart(ctx, owner) { ctx.gain(owner, W, 2); },
     }),
