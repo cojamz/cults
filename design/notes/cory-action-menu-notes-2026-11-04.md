@@ -229,3 +229,10 @@ Also: "I don't understand this X points over even. I'm a little suspicious of it
 - **Executor**: like; could be +1 white instead, as payment.
 - **Cover Band**: no, maybe; consideration. **Chaperone**, **Busybody**, **Brokers** (round-end version), **Big Spenders**, **Bargain Hunter**: no. **Big Finish**: "absolutely not".
 - **Tithe Takers**: next (stopped there).
+
+## Members, part 9 (voice note, Nov 5 00:45Z, his words; "I think I've covered everything now. Except for stuff that's archived.")
+- **Tithe Takers**: "I actually do like that quite a bit"; probably too good early (needs to be expensive) but too bad late; "should honestly be in magenta"; consideration pile for magenta.
+- **Skimmers**: seems an auto-buy; consideration, idea interesting, needs refinement.
+- **Punch Card**: "No, absolutely not." **Outbidders**: no.
+- **Night Watch** (any-player version): "what the fuck does that mean?"
+- **Night Manager**: "I do like that one"; short list for purple.

@@ -114,7 +114,9 @@
  "considered|member|punch card": {
   "verdict": "watch",
   "replaces": "Regular",
-  "reason": "Beat Regular in blind judging three times (+0.43 to +0.70). A 60-game balance test is running."
+  "reason": "Beat Regular in blind judging three times (+0.43 to +0.70). A 60-game balance test is running.",
+  "cory": "Absolutely not.",
+  "bucket": "cut"
  },
  "considered|member|exit counselor": {
   "verdict": "untested",
@@ -256,7 +258,9 @@
  "considered|member|skimmers": {
   "verdict": "watch",
   "replaces": "Desperado",
-  "reason": "Near an auto-buy when cheap: taken 82%, owners won 38%. Stings any rival buying followers. Parked with the other Magenta steals."
+  "reason": "Near an auto-buy when cheap: taken 82%, owners won 38%. Stings any rival buying followers. Parked with the other Magenta steals.",
+  "cory": "Seems an auto-buy; interesting idea, needs refinement.",
+  "bucket": "consider"
  },
  "considered|member|mirror image": {
   "verdict": "watch",
@@ -299,7 +303,9 @@
  "considered|member|tithe takers": {
   "verdict": "watch",
   "replaces": "Mentor & Protégés",
-  "reason": "Too strong at two prices: owners won 37% to 38%. Each rival hands you a member, a real sting."
+  "reason": "Too strong at two prices: owners won 37% to 38%. Each rival hands you a member, a real sting.",
+  "cory": "Like it quite a bit; too good early, too bad late; consideration for magenta.",
+  "bucket": "consider"
  },
  "considered|member|defectors": {
   "verdict": "watch",
@@ -316,7 +322,9 @@
  "considered|member|outbidders": {
   "verdict": "watch",
   "replaces": "Window Dressers",
-  "reason": "Too strong once bots could read it: owners won 46%. Lets you snatch a rival's buy, a real sting."
+  "reason": "Too strong once bots could read it: owners won 46%. Lets you snatch a rival's buy, a real sting.",
+  "cory": "No.",
+  "bucket": "cut"
  },
  "considered|member|copycats": {
   "verdict": "cut",
@@ -422,7 +430,9 @@
  "considered|member|night manager": {
   "verdict": "watch",
   "replaces": "Timekeeper",
-  "reason": "Passed balance right at the line (owners 37%, Timekeeper 31%); over the line next to Day Laborers. Waiting on a blind judging test."
+  "reason": "Passed balance right at the line (owners 37%, Timekeeper 31%); over the line next to Day Laborers. Waiting on a blind judging test.",
+  "cory": "I do like that one; short list for purple.",
+  "bucket": "short"
  },
  "considered|member|day laborers": {
   "verdict": "cut",
@@ -551,7 +561,9 @@
  "considered|member|night watch": {
   "verdict": "watch",
   "replaces": "Night Watch",
-  "reason": "Beat the live Night Watch in blind judging (+0.21, 10 to 2), but bots misplayed it. One more test after the smarter bots land."
+  "reason": "Beat the live Night Watch in blind judging (+0.21, 10 to 2), but bots misplayed it. One more test after the smarter bots land.",
+  "cory": "What does that mean?",
+  "bucket": "cut"
  },
  "considered|member|hypnotist": {
   "verdict": "cut",
