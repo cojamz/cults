@@ -353,6 +353,8 @@ export default {
       ctx.log(`${p.name}'s Go-Between: 1 ${a} becomes 1 ${b}.`);
     },
     sow(ctx, p, x, data) {
+      // what was asked may have changed since (Puppeteers at the same Round Start): plant only what's still held
+      x = Math.min(x, p.res[Y] || 0);
       if (!x) return;
       const card = ctx.card(data.uid);
       p.res[Y] -= x; card.sown = (card.sown || 0) + x;
@@ -367,6 +369,21 @@ export default {
       for (const c of ctx.abilitiesOf(p)) for (const d of ctx.defsOf(c)) {
         if (d.onColorChosen && c.uid !== card.uid) ctx.asMember(p, d.name, () => d.onColorChosen(ctx, p, c, card), p.members.includes(c.uid) ? c.uid : null);
       }
+    },
+    // Dye Job (Cory, Nov 5): a rival, then the color all of theirs becomes
+    dyeRival(ctx, p, oid) {
+      const o = ctx.state.players[oid];
+      ctx.choose(p, `Dye Job: turn all of ${o.name}'s resources into which color?`, colors(ctx).map(b => ({
+        id: `color:${b}`, label: b, kind: 'color', value: b, hint: -(o.res[b] || 0),
+      })), 'yellow.dyeColor', { o: oid });
+    },
+    dyeColor(ctx, p, b, data) {
+      const o = ctx.state.players[data.o];
+      const instance = newChange(ctx);
+      let n = 0;
+      for (const c of colors(ctx)) while (c !== b && (o.res[c] || 0) > 0) { changeOne(ctx, p, o, c, b, 'Dye Job', instance); n++; }
+      ctx.log(`${p.name}'s Dye Job: all of ${o.name}'s resources are ${b} now (${n} changed).`);
+      if (n) tastemaker(ctx, p);
     },
     level(ctx, p, b) {
       let any = false;
@@ -476,7 +493,7 @@ export default {
       botActivate: (ctx, owner) => { const k = setsOf(ctx, owner), r3 = ctx.state.round === 3; return k >= 3 || (r3 && k >= 2) || (k >= 1 && r3 && (owner.left || 0) <= 1); },
     }),
     // Cory, 2026-10-31: "also give followers… like side quests"
-    m('matchmaker', 'Matchmaker', 3, 2, 'Whenever you recruit a member of a color none of your members have, +2 in colors you choose and +1 follower.', {
+    m('matchmaker', 'Matchmaker', 3, 2, 'Whenever you recruit a member of a color none of your members have, +2 wild, +1 follower.', {
       // Dabblers never blocks a new color and Drifters counts once its color is chosen, as Guest Book (Cory, Nov 1)
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (by !== owner || recruited.uid === card.uid || unpickedDrifters(ctx, recruited)) return;
@@ -591,6 +608,21 @@ export default {
         })), 'yellow.level');
       },
       botActivate: (ctx, owner) => touchable(ctx, owner).some(o => total(ctx, o) > 0),
+    }),
+    // Cory, Nov 5 ("something aggressive, like once per round turn all of a rivals resources into one color"), in
+    // Drifters' slot; name Claude's (Cory: yes); 3 yellow + 2 any as a player sees it (Cory: "i like somebody being able to get it round 1")
+    m('dyejob', 'Dye Job', 2, 2, "On Use, once per round: turn all of a rival's resources into one color you choose.", {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const list = touchable(ctx, owner).filter(o => total(ctx, o) > 0);
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Dye Job: no rival has resources to change.`); return; }
+        ctx.log(`${owner.name} uses Dye Job.`);
+        ctx.choose(owner, 'Dye Job: whose resources?', list.map(o => ({
+          id: `player:${o.id}`, label: `${o.name} (${total(ctx, o)})`, kind: 'player', value: o.id, hint: total(ctx, o),
+        })), 'yellow.dyeRival');
+      },
+      botActivate: (ctx, owner) => touchable(ctx, owner).some(o => total(ctx, o) > 2),
     }),
     // Cory, 2026-10-31 (in place of HR's "+3 per color you have 3 members of")
     m('bigtent', 'Big Tent', 3, 3, 'Game End: +2 followers per color you have exactly one member of.', {

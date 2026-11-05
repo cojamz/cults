@@ -29,7 +29,7 @@ describe('the curated member decks', () => {
   // Silver deals 10 besides Caterer, its artifact (Cory, Nov 1: "on silver - it should be 10"; Gift Wrapper)
   // Yellow 16 on the 15-card deck: Tourist joined (Cory, Nov 1); it replaces Go-Between only in the 10-card deck
   // Nov 5 cuts (Cory): Magenta −2 then +1 (Big Score in; Snitch back in the 10 deck), Purple −1, Blue −1, White −1, Yellow −2, Silver −3; Seat Filler in for Volunteer
-  const DEALT = { echo: 15, red: 13, thieves: 14, purple: 12, market: 11, trading: 11, yellow: 14, silver: 8 };
+  const DEALT = { echo: 15, red: 13, thieves: 14, purple: 12, market: 11, trading: 11, yellow: 15, silver: 8 };
   it('Green deals 15, Blue 12, Red and Purple 13, Magenta 15, White 12, Yellow 15, other spheres 10, guests 17; no cut card is dealt', () => {
     for (const q of SPHERES) {
       const s = createGame({ seats: seats(4), quadrants: [q, ...SPHERES.filter(x => x !== q).slice(0, 3)] });
