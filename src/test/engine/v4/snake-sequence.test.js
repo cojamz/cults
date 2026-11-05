@@ -53,8 +53,8 @@ const others = (seq, who) => seq.filter(p => p !== who);
 
 describe('snake vs real sequence, 3 players, one seat taking turns out of it', () => {
   const crunch = at => {
-    // seed 39: no seat's members hand out an extra turn in this round III (seed 31 until Promote and Demote gave only your own member, Nov 4 night; seed 29, 30 until Cheerleaders and Victors joined the grey deck, Nov 4; seed 28 until Recruiter, Tryout and Last Call changed, Nov 1; seeds 11, 12, 14, 15 to 18, after the Oct 29 prices 19 to 23, and after members counting their followers (Nov 1) 24 to 27 did)
-    const { s, rand } = toRound(3, 39);
+    // seed 40: no seat's members hand out an extra turn in this round III (39 and 31 until Promote stopped reaching cheaper, Nov 4 night; seed 29, 30 until Cheerleaders and Victors joined the grey deck, Nov 4; seed 28 until Recruiter, Tryout and Last Call changed, Nov 1; seeds 11, 12, 14, 15 to 18, after the Oct 29 prices 19 to 23, and after members counting their followers (Nov 1) 24 to 27 did)
+    const { s, rand } = toRound(3, 40);
     const base = s.order.slice(0, 3), who = base[at];
     const seq = playRound(s, rand, st => {
       if (st.pending.player !== who || st.turns.filter(p => p === who).length !== 1) return null;
@@ -79,7 +79,7 @@ describe('snake vs real sequence, 3 players, one seat taking turns out of it', (
     expect(others(seq, who)).toEqual(others(plain, who));
   });
   for (const at of [0, 1]) it(`an extra turn (Go-Getter) for seat ${L[at]} in round II goes in; nobody else moves`, () => {
-    const { s, rand } = toRound(2, 17); // seed 16 handed seat B an extra turn once members counted their printed number (Oct 29)
+    const { s, rand } = toRound(2, 18); // seed 18 since Promote stopped reaching cheaper (Nov 4 night); seed 16 handed seat B an extra turn once members counted their printed number (Oct 29)
     const base = s.order.slice(0, 3), who = base[at];
     let done = false;
     const seq = playRound(s, rand, st => {

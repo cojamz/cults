@@ -204,6 +204,9 @@ describe('Red members: bounded acquisition and body invariants', () => {
     // the swaps below need Doppelganger at 5 (Promote reaches up to 2 more); its printed price moves with balance passes
     const dop = defById('echo.doppel'), was = { s: dop.s, w: dop.w };
     Object.assign(dop, { s: 3, w: 2 });
+    // and Impostors at 5 or less, since Promote never reaches cheaper (Cory, Nov 4 night)
+    const imp = defById('echo.impostor'), wasImp = { s: imp.s, w: imp.w };
+    Object.assign(imp, { s: 3, w: 1 });
     try {
     let s = table(Q, { round: 2, members: [['echo.impostor', 'echo.doppel', 'red.recruitbonus']], shop: ['red.panel'], queue: turns(0, 0) });
     const impostor = uidIn(s, 'echo.impostor', 0), doppel = uidIn(s, 'echo.doppel', 0), panel = uidIn(s, 'red.panel', 'shop');
@@ -225,6 +228,6 @@ describe('Red members: bounded acquisition and body invariants', () => {
       s = move(saved(s), s.pending.options[0].id);
     }
     expect(s.pending?.kind).not.toBe('choose');
-    } finally { Object.assign(dop, was); }
+    } finally { Object.assign(dop, was); Object.assign(imp, wasImp); }
   });
 });

@@ -673,16 +673,16 @@ function swapSides(ctx, p, mode) {
   const entry = (c, owner) => ({ c, uid: c.uid, id: c.def.id, owner, cost: cost(c) });
   const cult = ctx.state.players.flatMap(owner => (owner === p ? mode !== 'rival' : ctx.canSteal(p, owner, 'swap')) ? ctx.membersOf(owner).filter(c => ctx.canSwapMember(c.uid)).map(c => entry(c, owner)) : []);
   const shop = ctx.shopCards().map(c => entry(c, undefined));
-  // Promote and Demote give away one of YOUR members, as printed (Cory's playtest, Nov 4 9:38pm Eastern: "promote and demote
-  // rules arent being respected" after a copied Promote took his Extra Hand for a rival's Line Cutters)
-  const first = mode === 'even' ? [...cult, ...shop] : mode === 'promote' || mode === 'demote' ? cult.filter(e => e.owner === p) : cult;
+  const first = mode === 'even' ? [...cult, ...shop] : cult;
   // Promote and Demote reach other cults too, any member that can be swapped (Cory, 2026-10-29: "demote and promote
   // should work with rivals. if their members are able to be swapped"); never two members of the same cult
   const second = mode === 'even' ? first : mode === 'promote' || mode === 'demote' ? [...shop, ...cult] : shop;
   return { first, second };
 }
 const pairOk = (mode, excludeUid, a, b) => a.uid !== b.uid && a.id !== b.id /* two copies of one member (piles): no swap */ && a.uid !== excludeUid && b.uid !== excludeUid && !(b.owner && b.owner === a.owner) && (mode === 'even' ? a.cost === b.cost
-  : mode === 'promote' ? b.cost <= a.cost + 2 : mode === 'rival' ? b.cost >= a.cost : b.cost <= a.cost && b.cost >= a.cost - 2);
+  // Promote never reaches cheaper (Cory, Nov 4 night: "i like it better as any. its just that the rules weren't being obeyed":
+  // a copied Promote swapped his Extra Hand, 8, for a rival's Line Cutters, 1); any cult, as before
+  : mode === 'promote' ? b.cost <= a.cost + 2 && b.cost >= a.cost : mode === 'rival' ? b.cost >= a.cost : b.cost <= a.cost && b.cost >= a.cost - 2);
 function swapPairs(ctx, p, mode, excludeUid = null) {
   const { first, second } = swapSides(ctx, p, mode);
   const out = [];

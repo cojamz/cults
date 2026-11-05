@@ -68,30 +68,30 @@ describe('locked Red action progression', () => {
     expect(s.players[0].res.red).toBe(1);
   });
 
-  it('Promote uses total printed cost, includes cheaper members, and excludes cost +3', () => {
+  it('Promote uses total printed cost, never cheaper (Cory, Nov 4 night), and excludes cost +3', () => {
     const s = take(table(Q, { round: 2, members: [['red.twins']], shop: ROW }), 'red.hireup');
     const a = uidIn(s, 'red.twins', 0);
     const incoming = s.pending.options.filter(o => o.value?.[0] === a).map(o => s.cards[o.value[1]].def);
     expect(incoming).toContain('gold.banker'); // 2 -> 4, exact boundary
-    expect(incoming).toContain('red.intern');
+    expect(incoming).not.toContain('red.intern'); // cheaper
     expect(incoming).not.toContain('echo.chronicler'); // 5
     expect(s.players[0].res.red).toBe(3);
   });
 
-  it('Demote gives your member for anything costing the same down to 2 cheaper; never a rival\'s member (Cory, Nov 4)', () => {
-    const r = take(table(Q, { round: 2, members: [[], ['gold.tycoon']], shop: ROW }), 'red.trade');
-    expect(r.pending?.options?.some(o => o.value?.[0] === uidIn(r, 'gold.tycoon', 1)) || false).toBe(false);
-    let s = take(table(Q, { round: 2, members: [['gold.tycoon']], shop: ROW }), 'red.trade');
-    const a = uidIn(s, 'gold.tycoon', 0), b = uidIn(s, 'gold.banker', 'shop');
+  it('Demote permits a rival member and anything costing the same down to 2 cheaper', () => {
+    let s = take(table(Q, { round: 2, members: [[], ['gold.tycoon']], shop: ROW }), 'red.trade');
+    const a = uidIn(s, 'gold.tycoon', 1), b = uidIn(s, 'gold.banker', 'shop');
     const incoming = s.pending.options.filter(o => o.value?.[0] === a).map(o => s.cards[o.value[1]].def);
     expect(incoming).toContain('gold.banker'); // 6 -> 4
     expect(incoming).not.toContain('red.intern'); // 6 -> 1: more than 2 cheaper
     expect(incoming).toEqual(['gold.banker', 'red.volunteer', 'echo.evergreen', 'echo.muse']); // 6 -> 4..6 only
     const row = s.shop.length, pile = s.pile.length;
     s = move(s, swapId(a, b));
-    expect(defs(s, 0)).toEqual(['gold.banker']);
+    expect(defs(s, 1)).toEqual(['gold.banker']);
     expect(s.shop).toContain(a);
     expect(s.shop).toHaveLength(row); expect(s.pile).toHaveLength(pile);
+    expect(s.players[1].res.gold).toBe(0); // recipient did not Recruit
+    expect(s.recruits).toBe(0);
   });
 
   it('Tryout uses a shop member’s On Recruit; the member stays in the shop and nobody recruits', () => {
@@ -128,15 +128,15 @@ describe('locked Red action progression', () => {
     }
   });
 
-  it('Promote and Demote only give away your own member (Cory, Nov 4: "promote and demote rules arent being respected")', () => {
-    for (const key of ['red.hireup', 'red.trade']) {
-      const s = take(table(Q, { round: 2, members: [['red.twins'], ['benders.extrahand', 'red.intern']], shop: ['red.volunteer', 'gold.banker'] }), key);
-      const mine = s.players[0].members;
-      const swaps = s.pending.options.filter(o => o.kind === 'trade');
-      expect(swaps.length).toBeGreaterThan(0);
-      for (const o of swaps) expect(mine).toContain(o.value[0]);
-    }
+  it('Promote never reaches a cheaper member, any cult (Cory, Nov 4 night: a copied Promote swapped Extra Hand for Line Cutters)', () => {
+    const s = take(table(Q, { round: 2, members: [['red.twins'], ['benders.extrahand', 'red.intern']], shop: ['red.volunteer', 'gold.banker'] }), 'red.hireup');
+    const cost = u => { const d = s.cards[u].def; return d; };
+    const eh = uidIn(s, 'benders.extrahand', 1), twins = uidIn(s, 'red.twins', 0);
+    const swaps = s.pending.options.filter(o => o.kind === 'trade').map(o => o.value);
+    expect(swaps.some(([a, b]) => a === eh && b === twins)).toBe(false); // 8 for 4: cheaper
+    expect(swaps.some(([a]) => a === uidIn(s, 'red.intern', 1))).toBe(true); // a rival's member can go out
   });
+
 
   it('Tryout with no On Recruit member in the shop gives its red and says so', () => {
     const s = take(table(Q, { shop: ['red.twins', 'red.intern', 'red.volunteer'] }), 'red.evenswap');
@@ -160,10 +160,12 @@ describe('locked Red action progression', () => {
     expect(s.players[0].bonus).toBe(1);
   });
 
-  it('Promote never gives away a rival\'s member (Cory, Nov 4: "promote and demote rules arent being respected")', () => {
-    const s = take(table(Q, { round: 2, members: [[], ['red.twins', 'red.recruiter', 'red.proselytizer']], shop: ROW }), 'red.hireup');
-    const theirs = s.players[1].members;
-    expect((s.pending?.options || []).some(o => theirs.includes(o.value?.[0]))).toBe(false);
+  it('Promote can alter any rival cult without giving that recipient recruit passives or income', () => {
+    let s = take(table(Q, { round: 2, members: [[], ['red.twins', 'red.recruiter', 'red.proselytizer']], shop: ROW }), 'red.hireup');
+    const a = uidIn(s, 'red.twins', 1), b = uidIn(s, 'echo.evergreen', 'shop');
+    s = move(s, swapId(a, b));
+    expect(defs(s, 1)).toContain('echo.evergreen');
+    expect([s.players[1].res.green, s.players[1].res.red, s.players[1].bonus, s.recruits]).toEqual([0, 0, 0, 0]);
   });
 
   it('Demote swaps your member with a rival\'s, unless Loyalists keeps theirs (Cory, 2026-10-29)', () => {

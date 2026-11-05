@@ -29,16 +29,16 @@ describe('space targets', () => {
     expect(targetsAt(s, 'hire')).toBe(null);
   });
   // Open House left with the Red redesign (v0.8.0); round II's hireup space is Promote
-  it('Promote: the pairs of your member for a shop or rival\'s member costing up to 2 more (only your own goes out: Cory, Nov 4)', () => {
+  it('Promote: the pairs of a member (yours or a rival\'s) for a shop or other cult\'s member costing up to 2 more', () => {
     const s = table(Q, { round: 2, members: [['red.twins'], ['red.intern']], shop: ['gold.tycoon', 'red.bigfamily', 'gold.taxman', 'red.reserve', 'red.mentor'] });
     const t = targetsAt(s, 'hireup');
     const key = ([a, b]) => `${a}:${b}`;
     const twins = uidIn(s, 'red.twins', 0), intern = uidIn(s, 'red.intern', 1);
     expect(t.pairs.map(key).sort()).toEqual([
       [twins, uidIn(s, 'red.bigfamily', 'shop')], [twins, uidIn(s, 'gold.taxman', 'shop')],
-      [twins, uidIn(s, 'red.reserve', 'shop')],
-      // with a rival's member coming in (Cory, 2026-10-29)
-      [twins, intern],
+      [intern, uidIn(s, 'red.reserve', 'shop')],
+      // with a rival too (Cory, 2026-10-29), either way round; never cheaper (Cory, Nov 4 night), so not twins for intern
+      [intern, twins],
     ].map(key).sort());
   });
   it('Initiation: every face-up member costing 8 or less (Cory, 2026-10-25)', () => {
