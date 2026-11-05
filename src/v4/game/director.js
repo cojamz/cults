@@ -244,10 +244,14 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   const onStage = w => (!w ? w : w.kind === 'space' && stagedKeys.has(w.key) ? { kind: 'stage', slot: stagedKeys.get(w.key) }
     : w.kind === 'member' && w.uid != null && stagedUids.has(w.uid) && w.pid === stagedUids.get(w.uid).pid ? { kind: 'stage', slot: stagedUids.get(w.uid).spot, uid: w.uid } : w);
   const pieces = (time, from0, to0, n, opt = {}) => {
-    // Resources live at their matching wheel rim; members still give from their own portrait.
+    // Resources a space gives come from their matching wheel rim; members still give from their own portrait.
+    // (Cor, 2026-11-05: "when you pay for something, it should go towards that thing. Like the resources flying toward
+    // the minion cards, or towards the follower shop card that was chosen.") A payment flies into what it bought: the
+    // member card, the follower price, the space or member that charged it. Only a payment to nothing in particular
+    // (the bank) goes back to its color's rim.
     const rim = { kind: 'rim', r: opt.r };
     const from = opt.r && ['space', 'bank'].includes(from0.kind) ? rim : onStage(from0);
-    const to = opt.r && opt.pay ? rim : onStage(to0);
+    const to = opt.r && opt.pay && (!to0 || ['bank', 'rim'].includes(to0.kind)) ? rim : onStage(to0);
     // 1–3 single pieces, 60ms apart (Steady); 4 or more one bundle carrying its count
     // (Cory, 2026-10-18: "steals: make what's being stolen clear at once") a take of 2 or more leaves as one handful
     const bundle = n >= 4 || (opt.take && n >= 2);

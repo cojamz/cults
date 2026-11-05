@@ -34,7 +34,7 @@ it('lets each named payout land before the next member enters, including rival r
   }
 });
 
-it('routes ordinary resources through their matching rim while keeping member and rival transfers sourced', () => {
+it('gives ordinary resources from their matching rim, pays into what was bought, and keeps member and rival transfers sourced', () => {
   const action = { kind: 'space', pid: 0, key: '0-0' }, a = member(0, 101);
   const plan = chain([
     { type: 'gain', cause: action, from: action, to: stack(0, 'gold'), what: { r: 'gold', n: 1 } },
@@ -44,7 +44,8 @@ it('routes ordinary resources through their matching rim while keeping member an
   ]);
   const pieces = plan.atoms.filter(a => a.op === 'piece');
   expect(pieces.find(a => a.r === 'gold' && !a.take).from).toEqual({ kind: 'rim', r: 'gold' });
-  expect(pieces.find(a => a.pay).to).toEqual({ kind: 'rim', r: 'silver' });
+  // (Cor, Nov 5: "when you pay for something, it should go towards that thing") a space's cost flies into the space
+  expect(pieces.find(a => a.pay).to.kind).not.toBe('rim');
   expect(pieces.find(a => a.take).from).toEqual(stack(1, 'gold'));
   expect(pieces.find(a => a.from.uid === 101).from.kind).toBe('stage');
 });
@@ -261,4 +262,28 @@ it('flies a gain of 12 as 12 coins in one stream, its last landing when the sing
   const inner = [...document.querySelectorAll('.piece-flight .path-inner')];
   expect(inner).toHaveLength(12);
   expect(inner.every(e => !e.style.opacity || e.style.opacity === '1')).toBe(true);
+});
+
+// (Cor, 2026-11-05: "when you pay for something, it should go towards that thing. Like the resources flying toward the
+// minion cards, or towards the follower shop card that was chosen.") Yours and a rival's (a bot's) alike.
+for (const pid of [0, 1]) it(`a payment flies into what it bought: the recruited card, the follower price (${pid ? 'a rival' : 'you'})`, () => {
+  setMotionSpeed('steady');
+  const before = sceneQ({ quadrants: ['gold', 'silver'] });
+  const rec = { kind: 'recruit', pid, uid: 77, index: 0 };
+  const recruit = planChain(before, { ...before, moves: before.moves + 1, effects: [
+    { type: 'pay', cause: rec, from: stack(pid, 'gold'), to: { kind: 'shop', index: 0, uid: 77 }, what: { r: 'gold', n: 2 } },
+    { type: 'pay', cause: rec, from: stack(pid, 'silver'), to: { kind: 'shop', index: 0, uid: 77 }, what: { r: 'silver', n: 1 } },
+    { type: 'recruit', cause: rec, from: { kind: 'shop', index: 0, uid: 77 }, to: { kind: 'crowd', pid }, what: { uid: 77, worth: 1 } },
+  ] }, { mine: [0] });
+  const paid = recruit.atoms.filter(a => a.op === 'piece' && a.pay);
+  expect(paid.length).toBe(3);
+  for (const a of paid) expect(a.to).toMatchObject({ kind: 'shop', uid: 77 });
+  const buy = { kind: 'buy', pid, tier: 'mid', get: 5 };
+  const bought = planChain(before, { ...before, moves: before.moves + 1, effects: [
+    { type: 'pay', cause: buy, from: stack(pid, 'gold'), to: { kind: 'rate', tier: 'mid' }, what: { r: 'gold', n: 5 } },
+    { type: 'followers', cause: buy, from: { kind: 'rate', tier: 'mid' }, to: { kind: 'count', pid }, what: { n: 5 } },
+  ] }, { mine: [0] });
+  const coins = bought.atoms.filter(a => a.op === 'piece' && a.pay);
+  expect(coins.length).toBeGreaterThan(0);
+  for (const a of coins) expect(a.to).toMatchObject({ kind: 'rate', tier: 'mid' });
 });
