@@ -130,3 +130,20 @@ Also: "I don't understand this X points over even. I'm a little suspicious of it
 - **Mob**: no, win more; needs a rework, cut as is.
 - **Money Changers**: likes it as the cloak; maybe as a member too.
 - **Picket Line**: fine.
+
+## Members, part 3 (voice note, Nov 5 00:23Z, his words)
+- **Recruiter** (Red Cloak): "yep, I like that. That's a cloak, but I like it."
+- **Roadie**: "really fucking too strong. I don't know how this wasn't, like, way better in the testing."
+- **Smooth Talkers**: like; maybe a little cheaper.
+- **Stunt Double**: like; "a perfect green member", weird it ranks low.
+- **Caravan**: should be +1 of each color on recruit and round start (not only colors you hold); maybe a little cheaper.
+- **Con Men**: great; "a perfect neutral minion"; neutrals should represent other colors sometimes.
+- **Deprogrammers**: don't like.
+- **Night Watch**: makes no sense: "The goes last token... It's a token. The minions don't fucking go on it. All of the ones that say per minion on it or whatever are just stupid and bad." (Applies to Call Back's wording too.)
+- "On recruit, I don't really love this, to be honest. But maybe." (card unclear)
+- **Cheerleaders**: yes; cheaper, and 3 to 4 members; needs to win 4 contests to pay for itself, a little too much.
+- "On recruit, dire, no. Maybe, actually. But I think that's on the cut list... bottom of the stack for yellow." (card unclear)
+- **Grifter**: too much win-now reward; cut and archive.
+- **Heiresses** ("Eris"): really like; rated low is bonkers; big member engine into white victory points; a little win more, leave it in for now.
+- **Line Cutters**: fine.
+- **Patriarch**: quite good; people would vie for it with red's swapping.
