@@ -170,6 +170,7 @@ for (const [id, name, source] of [
   ['market.mannequin', 'Mannequin', 'market.connoisseur'], // Nov 4 night: Hawker's place, on Connoisseurs' retired scene until its own is drawn
   ['red.seatfiller', 'Seat Filler', 'red.volunteer'], // Nov 5: Volunteer's place, on its scene until its own is drawn
   ['thieves.hoardbreaker', 'Big Score', 'thieves.grifter'], // Nov 5: Grifter's place, on its scene until its own is drawn
+  ['yellow.nightmarket', 'Night Market', 'yellow.ringleader'], // Nov 5: Meddler's place, on its scene until its own is drawn
 ]) {
   const art = PORTRAIT.get(source);
   if (art && !PORTRAIT.has(id)) PORTRAIT.set(id, { ...art, id, name });

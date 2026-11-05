@@ -563,7 +563,8 @@ export default {
     })),
     // REPLACE2 bot test (Nov 3, replacement batch 2): Meddler's place. 4 yellow + 2 any as a player sees it. Trade
     // Seeds' own swaps, asked after the round's last placement and before anything is scored (core's allPlaced step).
-    ...add2(m('nightmarket', 'Night Market', 3, 2, 'Round End: before contests are scored, swap up to 3 of your resources for other colors, one for one.', {
+    // In the deck for Meddler's slot, 3 yellow + 1 any as a player sees it (Cory, Nov 5: "yes to night market. should be relatively cheap")
+    m('nightmarket', 'Night Market', 2, 1, 'Round End: before contests are scored, swap up to 3 of your resources for other colors, one for one.', {
       // BOTSEE: each round end still ahead, about a 30% chance the swap wins or saves a contest
       ...see(i => endsAhead(i).reduce((a, r) => a + 0.3 * SEE_RING[r - 1], 0)),
       onAllPlaced(ctx, owner) {
@@ -571,7 +572,7 @@ export default {
         if (!k) { ctx.log(`${owner.name}'s Night Market: nothing to swap.`); return; }
         transmuteStep(ctx, owner, { who: 'Night Market', left: k, done: 0 });
       },
-    })),
+    }),
     // Cory, 2026-10-31 ("Drifters is good"; worth 2)
     m('drifters', 'Drifters', 2, 0, 'On Recruit: choose a color; these count as a member of that color.', { f: 2,
       onRecruited(ctx, owner, card) {
