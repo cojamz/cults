@@ -57,6 +57,8 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 - Re-port minion-on-press and the compositor wheel spin (/mnt/project-files/handoff/speed/) onto today's wheel.
 - Round I resource draft animated, once the perf items are in.
 
+- Payments fly into what they bought (Cory, Nov 5: "when you pay for something, it should go towards that thing. Like the resources flying toward the minion cards, or towards the follower shop card that was chosen." Backlog for now). Today every payment flies to its color's wheel rim (director.js pieces(), since Oct 16). Started on branch claude/pay-flight-wip (7a65db2a): pays go to the card, price tile, space or member that charged them; rim only for the bank. New gate e2e/v4/pay-target.mjs: follower buys and rival buys pass; your own recruit's coins weren't seen yet (check the gate's recruit click first). Not shipped.
+
 ## Later
 - A better visual language for actions on the wheel, after actions and members are more locked in (Cory, Nov 4 11:44am: "eventually we need a better visual language here, but lets wait until we're more lokked in on actions and members"). Until then White's clarity work is wording only.
 - Engineering: structured events instead of log parsing; shared verbs for copies; online auth rules; type checking.
