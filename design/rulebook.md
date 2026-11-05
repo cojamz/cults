@@ -30,7 +30,7 @@ Use your members' abilities any time on your turn. "Once per round" comes back e
 Turns snake: 1-2-3-4, 4-3-2-1, 1-2-3-4, one minion each, until all are placed. From round II, fewest followers goes first.
 
 ## The shop
-6 members show in round I, 7 in round II, 8 in round III; gaps refill from the pile. Pricier members join the pile in round II. A cost's colored part must be that color; the rest is any color. Grey members cost any color.
+The deck has 10 members per color plus 12 grey. 6 show in round I, 7 in round II, 8 in round III; gaps refill from the pile. Pricier members join the pile in round II. A cost's colored part must be that color; the rest is any color. Grey members cost any color.
 
 ![The shop: total price in the dark circle, its colors along the foot](rules-img/shop.jpg)
 
@@ -57,7 +57,7 @@ After round III, add game-end bonuses. Most followers wins; a tie goes to more m
 ## Fine print
 - To **recruit** is to bring in a member or followers by your own doing. Each follower purchase is one recruit. A member a rival moves to you isn't your recruit.
 - To **copy** an action is to get its own printed gain, the amount on its chip. The taker's member bonuses and gifts to others are not copied. A copied steal or swap is done again. Copying a copy lets you choose again, but never an action already in that chain.
-- To **steal** is to take from a rival. Only followers a rival recruited or won can be stolen. Nothing drops below 0.
+- To **steal** is to take from a rival. The followers a rival's members are worth can't be stolen; their other followers can. Nothing drops below 0.
 - A **skipped** turn is placed later in the same round; nobody loses a minion. **+1 minion** never happens in round I.
 - Swapping members with a rival is a trade, not a steal.
 - Round down unless a card says otherwise.
