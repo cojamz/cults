@@ -7,6 +7,30 @@ each. One line per finding: what a player sees, what's wrong, status. Each run's
 Status words: **fixed (version)**, **fixing**, **sent** (to the thread that owns it), **open** (ours, not started),
 **Cory** (a question only he can answer), **by design** (with the reason; the check got an exception).
 
+## 2026-11-05
+Run at 7:42pm Eastern Nov 4 on v0.99.582 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
+emoji; raw list /mnt/project-files/picky/2026-11-05-00-42/). The bot flagged 3; the rest are by eye from the shots.
+
+- **Shake Down: "pay 3 (3 red)" says the number twice.** The headline read "P4 is taking your Deprogrammers: pay 3 (3
+  red) to keep it?" and the button "Pay P4 3 ( 3● ) to keep Deprogrammers", with stray spaces inside the brackets. One
+  color now reads "pay 3 red"; a mix keeps "4 (2 red, 2 gold)". **fixed (this run)**
+- **Final score: "Members 11" shows as "Members 1".** The label-fits estimate didn't know the screen's width, so P2's
+  last digit was cut. A label wider than its part now drops to the shorter name, then the number alone.
+  **fixed (this run)**
+- **Final score: wide parts show a bare number** ("22", "17", "18" on the "Won in play" part, about 100px wide): a
+  first-time player can't tell what the number is without pointing at it. Wants a shorter name ("Play"?) that fits.
+  **open**
+- **Round III header and your seat both say "2 turns in a row".** Said twice on one screen. **open** (looks off)
+- **Sample's pick: the chosen rival's seat grows an empty dark box under its members.** **open** (looks off)
+- **Shop header during the round II deal: "+30 shuffled in for round II" sits over "0 of 7 affordable".** Only while
+  cards fly in. **open** (looks off)
+- **Promote sheet: shop names cut ("Second-")** and the "Member" label spills 2-3px (already listed). **open**
+- **Members bar vs member count** (P4: 9 members, bar 10; every cult is off by one in game 2) is the open "12 members
+  beside Members 13" item: the bar counts the leader's 1 plus card worth for everyone, not only the leader. **open**
+- Gates already red without this run's changes (not ours; for the coordinator): src/test/v4/ui/turn-labels-truth.test.js
+  ("P1 again (snake order)" where a gap message was expected), and e2e/v4/scoring.mjs (Chronicler fixture grants 1, the
+  gate expects 8, since Chronicler's rework). **open**
+
 ## 2026-11-04
 Run at 1:42pm Eastern on v0.99.574 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
 emoji; raw list /mnt/project-files/picky/2026-11-04-18-42/). Fixes pushed in 39af1154; this run's box couldn't

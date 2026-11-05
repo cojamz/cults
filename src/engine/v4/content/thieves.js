@@ -526,7 +526,10 @@ const thieves = {
     ransomOffer(ctx, v, uid, data) { thieves.handlers.ransomPick(ctx, ctx.player(data.thief), uid); },
     ransomPick(ctx, p, uid) {
       const v = ctx.ownerOf(uid), c = ctx.card(uid), n = cost(c);
-      const can = total(v) >= n, colors = can ? ` (${takeWords(ransomTake(v.res, n))})` : '';
+      const can = total(v) >= n, take = can ? ransomTake(v.res, n) : {};
+      // one color reads "pay P4 3 red"; a mix "pay P2 4 (2 red, 2 gold)" (picky bot, Nov 5: "pay P4 3 (3 red)" said 3 twice)
+      const one = Object.keys(take).length === 1 ? Object.keys(take)[0] : null;
+      const colors = !can ? '' : one ? ` ${one}` : ` (${takeWords(take)})`;
       // can't pay: no question with one answer (skeptic r2: "keep it for 4?" offered only "Let it go"); it just goes
       if (!can) { thieves.handlers.ransomAnswer(ctx, v, 'let', { uid, thief: p.id }); return; }
       const opts = [{ id: 'let', label: `Let ${c.def.name} go`, kind: 'ransom', value: 'let', hint: 0 }];

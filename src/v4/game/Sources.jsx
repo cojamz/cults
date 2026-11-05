@@ -3,6 +3,7 @@
 // (members, prizes, bought, won during play, game-end bonuses) in the table's wood and cream tones. Every part opens
 // what it's made of; the color a cult leaned into is a quiet note under its name. Numbers: format.js breakdown and
 // sources.js (by color, for the lean and the members' hover).
+import { useLayoutEffect, useRef, useState } from 'react';
 import { quadrant, memberCount } from '../../engine/v4/index.js';
 import { Tip } from './Info.jsx';
 import { Who } from './Glyphs.jsx';
@@ -54,8 +55,22 @@ export default function FollowerBars({ state, meId, ranks = null }) {
   // one scale: the longest bar (a cult's gains before any loss) fills the track
   const rowsWithParts = rows.map(r => ({ ...r, ...parts(state, r.p, r.s, meId) }));
   const max = Math.max(1, ...rowsWithParts.map(r => r.bars.reduce((t, g) => t + g.n, 0)));
+  // the estimate below can't know the screen's width: a label still wider than its part drops to the next shorter one
+  // (picky UI bot, Nov 5: P2's "Members 11" showed as "Members 1", its last digit cut off)
+  const box = useRef(null);
+  const [tight, setTight] = useState({});
+  useLayoutEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const more = {};
+    for (const lab of el.querySelectorAll('[data-lab]')) {
+      const seg = lab.parentElement;
+      if (seg && lab.scrollWidth > seg.clientWidth + 1) more[lab.dataset.lab] = (tight[lab.dataset.lab] || 0) + 1;
+    }
+    if (Object.keys(more).length) setTight(t => ({ ...t, ...more }));
+  });
   return (
-    <div className="src-bars" data-sources="kinds">
+    <div className="src-bars" data-sources="kinds" ref={box}>
       {rowsWithParts.map(({ p, s, poss, n, bars, lost }, k) => (
         <div key={p.id} className={`src-row${k === 0 ? ' first' : ''}`} data-src-row={p.id} data-total={s.total}>
           <span className="rank num">{ranks ? ranks[k] : k + 1}</span>
@@ -71,8 +86,9 @@ export default function FollowerBars({ state, meId, ranks = null }) {
                   {/* the longest words that fit the part: its long name, its name, else the number alone (its hover names it) */}
                   {(() => {
                     const fits = t => g.n / max >= Math.max(0.075, (t.length + 4) * 0.0135);
-                    const words = [g.long, g.label].find(t => t && fits(t));
-                    return words ? <span className="src-lab">{`${words} `}<b className="num">{g.n}</b></span> : <span className="src-lab bare"><b className="num">{g.n}</b></span>;
+                    const key = `${p.id}:${g.key}`;
+                    const words = [g.long, g.label].filter(t => t && fits(t)).slice(tight[key] || 0)[0];
+                    return words ? <span className="src-lab" data-lab={key}>{`${words} `}<b className="num">{g.n}</b></span> : <span className="src-lab bare"><b className="num">{g.n}</b></span>;
                   })()}
                 </Tip>
               ))}

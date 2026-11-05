@@ -163,7 +163,7 @@ export function promptFor(state, mine) {
       // the question itself is in the note on the board; the headline names what's asking ("Kickback: choose below")
       // a ransom ("Shake Down: pay P2 4 (2 red, 2 gold) to keep Magnate?") is your call, said as "P2 is taking your Magnate: pay 4 to keep it?" (panel Oct 26: "P2 holds Magnate" read as if P2 owned it); was "P2 holds Magnate: keep it
       // for 4?" (RC1 round 3 #55), never "Shake Down: choose one"
-      const ransom = String(pend.prompt || '').match(/^Shake Down: pay (.+?) (\d+(?: \([^)]+\))?) to keep (.+)\?$/);
+      const ransom = String(pend.prompt || '').match(/^Shake Down: pay (.+?) (\d+(?: \([^)]+\)| [a-z]+)?) to keep (.+)\?$/);
       if (ransom) {
         // it's the thief's turn and your call (w3b #37: "Your turn — …" during P4's turn); with too little to pay,
         // say so, rather than leave "Let Middleman go" as the only button with no reason

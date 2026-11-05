@@ -429,6 +429,7 @@ describe('v4 format helpers', () => {
     const at = prompt => ({ ...s, pending: { kind: 'choose', player: 1, prompt, options: [{ id: 'a', label: 'Pay 4' }, { id: 'b', label: 'Let it go' }] } });
     expect(promptFor(at('Shake Down: pay Cy 4 to keep Magnate?'), true).text).toBe('Cy is taking your Magnate: pay 4 to keep it?');
     expect(promptFor(at('Shake Down: pay Cy 4 (2 red, 2 gold) to keep Magnate?'), true).text).toBe('Cy is taking your Magnate: pay 4 (2 red, 2 gold) to keep it?');
+    expect(promptFor(at('Shake Down: pay Cy 3 red to keep Magnate?'), true).text).toBe('Cy is taking your Magnate: pay 3 red to keep it?');
     expect(promptFor(at('Bo: take 6 more from the release, in any colors'), true).text).toBe('take 6 more from the release, in any colors');
   });
 
