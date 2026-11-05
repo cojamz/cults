@@ -14,7 +14,7 @@ both looks was clean. The rest are by eye from the shots.
 
 - **Exchange's sheet: "Turn up to 1 into 2 followers each".** Round I, the sheet never said what you turn in (any
   resource; the shot turns in a blue) and said "each" for one. Now "Turn up to 1 resource into 2 followers", and
-  "Turn up to 2 resources into 2 followers each" in round II. **fixed (this run)**
+  "Turn up to 2 resources into 2 followers each" in round II. **fixed (v0.99.598)**
 - **Shake Down's pick: your seat grows the same empty dark box under your members** (round II, "P2 is shaking you
   down. Which member is at stake?"), hiding the "3 members" line. Same as Sample's pick below. **open** (looks off)
 - **"Since your last turn" lines that say nothing happened:** "Round II · P3 Cover" and "Round II · P4 Farewell" carry
