@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.583 — 2026-11-04
+
+- The rulebook is rewritten to read easily: a one-minute overview, then short sections
+
 ## v0.99.582 — 2026-11-04
 
 - Fixes: a game could place a minion after it ended (an extra minion given after the last placement), and a recruit could freeze when Barker had left your cult.
