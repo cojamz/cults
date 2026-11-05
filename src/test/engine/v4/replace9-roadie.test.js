@@ -11,7 +11,7 @@ const { take } = await import('./helpers.js');
 const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
 const Q = ['red', 'echo', 'thieves', 'trading'];
 
-describe('Roadie (reworked, live)', () => {
+describe('Roadie (reworked; retired Nov 5 for Copyist)', () => {
   it('same price as the old Roadie, which is retired', () => {
     const d = defById('echo.roadie9');
     expect([d.s, d.w]).toEqual([defById('echo.roadie').s, defById('echo.roadie').w]);
