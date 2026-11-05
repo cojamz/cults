@@ -2,7 +2,8 @@
  "_note": "Hand-written reasons and verdicts. Key: <status>|<member|space>|<lowercase name>, or <member|space>|<name> for any status. Fields: reason, verdict (keep, watch, cut, untested), replaces. Sources: /mnt/project-files/replacements/*-results.md, /mnt/project-files/quality/lab/results.md, design/decisions.md.",
  "live|member|charity ball": {
   "verdict": "keep",
-  "reason": "Live since today in Philanthropist's place. Beat it in blind judging of bot games (+0.30), and 120 bot games passed balance: owners won 29%, it fires about 10 times a game."
+  "reason": "Live since today in Philanthropist's place. Beat it in blind judging of bot games (+0.30), and 120 bot games passed balance: owners won 29%, it fires about 10 times a game.",
+  "cory": "Like."
  },
  "live|member|socialites": {
   "verdict": "keep",
@@ -734,5 +735,137 @@
  },
  "live|space|build up": {
   "cory": "No: \"I don't like this either. But I'm okay with it. But yeah, I think defer to cutting. But if our other ones, like, are a little confusing or bad, we should bring it back as the default.\""
+ },
+ "live|member|martyrs": {
+  "cory": "Okay, not the best."
+ },
+ "live|member|bouncers": {
+  "cory": "Maybe; purple players would never buy it."
+ },
+ "live|member|foster parents": {
+  "cory": "Okay, cool."
+ },
+ "live|member|godparent": {
+  "cory": "Cool."
+ },
+ "live|member|guest of honor": {
+  "cory": "Too similar to Godparent, too complicated."
+ },
+ "live|member|spoilsport": {
+  "cory": "Like."
+ },
+ "live|member|big tent": {
+  "cory": "Interesting; want more conditions like this to mix and match."
+ },
+ "live|member|body snatchers": {
+  "cory": "Good."
+ },
+ "live|member|courier": {
+  "cory": "Like a lot (purple engine)."
+ },
+ "live|member|drifters": {
+  "cory": "Okay."
+ },
+ "live|member|fan club": {
+  "cory": "Don't love it, too much copying; keep for now, short list for replacement."
+ },
+ "live|member|party crasher": {
+  "cory": "Like."
+ },
+ "live|member|recluse": {
+  "cory": "Good."
+ },
+ "live|member|song request": {
+  "cory": "Too similar to Fan Club (too many copiers)."
+ },
+ "live|member|accomplice": {
+  "cory": "Like."
+ },
+ "live|member|anarchist": {
+  "cory": "Cool."
+ },
+ "live|member|closer": {
+  "cory": "Like; purple coming together nicely."
+ },
+ "live|member|doppelganger": {
+  "cory": "Great, should be top-ranked, maybe more expensive."
+ },
+ "live|member|encore": {
+  "cory": "Like; bots may misuse it; should cost 3 green + 2 any at least."
+ },
+ "live|member|gossip": {
+  "cory": "Like; too expensive, make it cheaper."
+ },
+ "live|member|loyalists": {
+  "cory": "Yep."
+ },
+ "live|member|magpie": {
+  "cory": "Good."
+ },
+ "live|member|mentor & protégés": {
+  "cory": "Like; count as 1 member not 3, rename to Mentor."
+ },
+ "live|member|panel": {
+  "cory": "Maybe On Use once per round; a little expensive."
+ },
+ "live|member|patroness": {
+  "cory": "Like."
+ },
+ "live|member|shopaholics": {
+  "cory": "On the cut list for blue."
+ },
+ "live|member|sore loser": {
+  "cory": "Confusing (most? ties? before contests?); like the spirit."
+ },
+ "live|member|window dressers": {
+  "cory": "Like, maybe cheaper."
+ },
+ "live|member|alchemists": {
+  "cory": "Great."
+ },
+ "live|member|brokers": {
+  "cory": "Like."
+ },
+ "live|member|dabblers": {
+  "cory": "Fine; code or bots may handle it wrong; strong early with the yellow cloak?"
+ },
+ "live|member|debt collectors": {
+  "cory": "Like, should give more."
+ },
+ "live|member|double agent": {
+  "cory": "Like."
+ },
+ "live|member|fence": {
+  "cory": "Cool; same as the cloak?"
+ },
+ "live|member|gardeners": {
+  "cory": "On the cut list for yellow."
+ },
+ "live|member|hot streak": {
+  "cory": "Love."
+ },
+ "live|member|impressionist": {
+  "cory": "All right."
+ },
+ "live|member|night owls": {
+  "cory": "Too strong, needs a rework."
+ },
+ "live|member|old maid": {
+  "cory": "Like; maybe rename to Ghost, worth 0 members."
+ },
+ "live|member|raiders": {
+  "cory": "Don't like, bottom of the list."
+ },
+ "live|member|tourist": {
+  "cory": "Close to the cut list."
+ },
+ "live|member|trendsetters": {
+  "cory": "Good (blue engine)."
+ },
+ "live|member|agents": {
+  "cory": "Maybe cut, but something is needed there."
+ },
+ "live|member|barker": {
+  "cory": "Like."
  }
 }

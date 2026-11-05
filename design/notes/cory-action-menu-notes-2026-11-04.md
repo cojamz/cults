@@ -93,3 +93,28 @@ Also: "I don't understand this X points over even. I'm a little suspicious of it
 - Silver theme: "there should be more stuff where you get things per, like, you know, with people having silver. Silver minions should count for, like, how many silver minions there are, stuff like that."
 - The bot number: "How are all of these minus X points over even? Like, it can't be that every action is weak." and "these things that say plus X points over even seem to be directly correlated with things that give points, so I feel like it's not really measuring it correctly."
 
+
+## Members, part 1 (voice note, Nov 5 ~00:17Z, his words)
+- **Martyrs**: okay, not the best.
+- **Bouncers**: maybe; purple players would never buy it.
+- **Foster Parents**: okay/cool. **Godparent**: cool. **Guest of Honor**: too similar to Godparent, too complicated.
+- **Spoilsport**: like. **Big Tent**: interesting; wants more conditions like it to mix and match.
+- **Body Snatchers**: good. **Courier**: like a lot (purple engine). **Drifters**: okay.
+- **Fan Club**: think about Dabblers with these (maybe cut Dabblers, but he likes it); don't love Fan Club, too much space copying; keep for now, short list for replacement.
+- **Party Crasher**: like. **Recluse**: good. **Song Request**: too similar to Fan Club (too many copiers).
+- **Accomplice**: like. **Anarchist**: cool. **Closer**: like; "purple coming together nicely".
+- **Doppelganger**: great, should be top-ranked, maybe more expensive.
+- **Encore**: like; suspects bots misuse it; should cost 3 green + 2 any at least (now 2 green + 3 any).
+- **Gossip**: like; 4 purple + 2 any too expensive, make it cheaper. **Loyalists**: yep. **Magpie**: good.
+- **Mentor & Protégés**: like; should count as 1 member not 3, rename to Mentor (also nerfs Mob).
+- **Panel**: maybe On Use once per round; a little expensive. **Patroness**: like.
+- **Shopaholics**: on the cut list for blue. **Window Dressers**: like, maybe cheaper. **Trendsetters**: good (blue engine).
+- **Sore Loser**: confusing (what is "most", ties, round end before contests?); likes the spirit.
+- **Alchemists**: great. **Brokers**: like. **Barker**: like. **Charity Ball**: like. **Impressionist**: all right.
+- **Dabblers**: fine; suspects code or bots handle it wrong; with the yellow cloak do you get all yellow up front, maybe too strong early. Analog: Hearthstone tribes, counting distinct tribes.
+- **Debt Collectors**: like, should give more. **Double Agent**: like. **Fence**: cool, same as the cloak?
+- **Gardeners**: on the cut list for yellow. **Tourist**: close to the cut list.
+- **Hot Streak**: love. **Night Owls**: too strong (8 for an extra minion every round), needs a rework.
+- **Old Maid**: like; maybe rename to Ghost, worth 0 members.
+- **Raiders**: don't like, bottom of the list. **Agents**: maybe cut, but something is needed there.
+- **Caterer** (Silver Cloak): "Is that not the thing? Are you counting the robes and the members?"
