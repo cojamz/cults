@@ -138,7 +138,7 @@ try {
   const expected = state.players.flatMap(p => (p.final?.cards || []).filter(g => g.n).map(g => ({ ...g, pid: String(p.id), uid: String(g.uid) })));
   for (const source of sources) {
     const grant = expected.find(g => g.uid === String(source.uid) && g.pid === '0');
-    const amount = source.def === 'gold.tycoon' ? Math.floor(state.players[0].res.gold / 2) : countMembersOfColor(state, state.players[0], 'green');
+    const amount = source.def === 'gold.tycoon' ? Math.floor(state.players[0].res.gold / 2) : countMembersOfColor(state, state.players[0], 'echo'); // Chronicler counts its own color, Green (echo), not the old test table's 'green' sphere
     if (!grant || grant.n <= 0 || grant.n !== amount) errors.push(`fixture: ${source.def} should grant ${amount}, engine recorded ${grant?.n}`);
   }
   if (fs.bonuses.length !== expected.length) errors.push(`showed ${fs.bonuses.length} bonus steps; engine granted ${expected.length}`);

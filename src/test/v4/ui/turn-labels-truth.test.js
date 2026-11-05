@@ -98,8 +98,9 @@ describe('turn labels agree with the engine', () => {
           // (from last round's end: an extra turn first, like Late Risers', is logged before "Round … begins")
           const since = s.log.slice(Math.max(0, s.log.findLastIndex(l => /^Round \S+ ends\./.test(l))));
           const nm = s.players[pend.player].name;
+          // (Overtime's minion, placed after everyone else's, is an extra turn too: Nov 5, seed 6 of 3 players)
           // (the log says "+1 minion" since Oct 29: "P1's Night Owls: P1 gets 1 more minion, placed now.", Late Risers "1 more minion, placed first.")
-          const hadExtra = since.some(l => l.startsWith(`${nm} gets`) && /more minions?, placed now/.test(l) || l.startsWith(`${nm}'s`) && /: (\S+ gets )?(1 more minion|\d+ more minions), placed (now|first)/.test(l));
+          const hadExtra = since.some(l => l.startsWith(`${nm} gets`) && /more minions?, placed now/.test(l) || l.startsWith(`${nm}'s`) && /: (\S+ gets )?(1 more minion|\d+ more minions), placed (now|first)/.test(l) || l.startsWith(`${nm}'s`) && l.endsWith(`${nm} gets 1 more minion this round.`));
           // (so is a seat that took its own turns early: its last turns moved up, so its k-th turn isn't its k-th planned)
           const tookEarly = s.early && s.early.round === s.round && s.early.moves.some(m => m.p === pend.player);
           if (t && t.again && t.kind === 'snake' && !t.early && !hadExtra && !tookEarly) {
