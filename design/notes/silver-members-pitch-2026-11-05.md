@@ -56,3 +56,30 @@ Cut: Round End dump of any silver (that's Patronesses, "round end way too strong
 - **Well-Wishers** (consideration, "so good", "kind of strong"): "Whenever one of your members goes to a rival's cult, +3 followers."
 
 Claude's default: Well-Wishers, Socialites, Freeloaders. Socialites and Freeloaders each pay when rivals act and can be played around (his two notes). Well-Wishers builds on Godparent and Guest of Honor.
+
+## Round 2 (Cory: "we need an idea that's more about communal silver"; "these should be MEMBERS not buildings or things")
+Ballroom is renamed to people: **Ballroom Dancers** (Claude's fill-in; plural, so counts as 2, as priced). Kingmakers already people.
+Cut on paper: Chaperone ("Round Start: +1 follower per rival holding silver", in his archive pile), Silver Tongues (his no), a pot on the card that collects spent silver (nobody loses anything, so nobody feels it), give-and-take-back silver (nets zero).
+
+### A. Bartenders [4 silver + 2 any, worth 2]
+"Rivals may pay with your silver as if it were theirs. Whenever they do, +1 follower per silver."
+- Played, round II, 4 players: you hold 6 silver. Dee, behind, buys 5 followers with 3 of yours and 2 of hers: you +3 followers, she saved 3. Ben, leading, pays his own way so you get nothing from him.
+- Both sides (rival): free resource for them vs +1 follower for you, one for one. Behind players take it, leaders don't. A real choice. Yours: hold silver for the rivals to drink from or spend it.
+- Who feels it: every rival on every recruit. Your silver pile is the table's.
+- Intuitive: one sentence. Fun: a rival decides whether to help themselves and you. Interacts: everyone's recruits; Toast fills your pile. Powerful: a few followers a round with no minion. Engine or counter: engine with Toast, Debutantes. Its color: silver literally shared.
+- Risk: you'll rarely win the silver contest; fine for a giver.
+
+### B. Commune Elders [5 silver + 3 any, worth 2]
+"On Use, once per game: every player puts their silver together, then it's split evenly; you keep what's left over. +1 follower per player."
+- Played, round III, before round end, 4 players: Ben 8 (about to win the +10), Cara 2, Dee 0, you 2. Pool 12, 3 each. Ben drops to 3; all four tie, each gets +5 from the silver contest. You +4 followers, and the +5 instead of 0.
+- Choice: when. Hoarders feel it; empty cults are glad.
+- Who feels it: the silver leader (sting), the broke (gift).
+- Intuitive: pool and split. Fun: the whole table's silver moves. Interacts: the silver contest, Toast, Largesse. Powerful: can swing a +10. Engine or counter: counter to hoarding. Its color: sharing out of everyone's pocket.
+
+### C. Revelers [3 silver + 2 any, worth 2]
+"Round End: if every player holds silver, each player +2 followers, and you +2 more."
+- Played, round II, 4 players: everyone holds some silver: you +4, each rival +2. Ben, leading, can spend his last silver to stop it, giving up his own +2 to deny you 4.
+- Both sides (rival): keep 1 silver (+2 each, and the silver contest needs at least 1 to score) or spend down to deny you. Usually keep; the leader may spoil.
+- Who feels it: everyone; a shared toast with one possible spoiler.
+- Intuitive: one count at round end. Fun: a table goal with a spoiler. Interacts: everyone's silver; Toast makes sure all have some. Powerful: +4 a round for you. Engine or counter: engine with Toast. Its color: the whole table celebrating together.
+- Risk: it hands the table followers (shapes that give rivals as much flopped); you get double.
