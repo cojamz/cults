@@ -54,7 +54,7 @@ const PIPS = {
   purple: { lastcall: '+1 follower, +1 purple per minion left; take the Goes Last token' },
   silver: { partygifts: 'give rivals up to 3 silver, +2 followers each', largesse: 'give rivals up to 10 silver, +1 follower each' },
   yellow: { gather: '+1 per member' },
-  market: { clearance: 'recruit twice', pricecheck: 'bury for half its cost', spree: 'recruit 3 times' },
+  market: { clearance: 'recruit an extra time', pricecheck: 'bury for half its cost', spree: 'recruit two extra times' },
   thieves: { rob: 'steal 3 followers', ransom: 'rival pays or loses a member', heist: 'recruit a rival’s member' },
   trading: { stipend: r => `+${r + 1} white; +${r} if you recruit a member`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid`, exchange: r => `${r} into ${2 * r} followers`, farewell: 'cast out one for followers', estatesale: 'cast out one for white', cashin: 'all white for followers', sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower', boom: 'all for followers' },
   echo: { refrain: 'copy yours', eternity: 'copy your On Recruits' },

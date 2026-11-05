@@ -62,9 +62,9 @@ const P = {
     restock: { verb: 'Send one color to the bottom', second: '+1 blue per member sent', note: '+1 blue' },
     // line 2 was too long and dropped whole at the wheel's bottom, taking the blue with it (round I review, Oct 25)
     showroom: r => ({ main: `+${2 * r} blue`, second: 'peek at the top 4', note: run(n => `+${2 * n}`, 'blue: ') }),
-    clearance: { verb: 'Recruit twice +3 blue', second: 'this turn' },
+    clearance: { verb: 'Recruit an extra time +3 blue', second: 'this turn' },
     pricecheck: { verb: 'Bury a shop member for half its cost in blue', note: '+1 blue' },
-    spree: { verb: 'Recruit 3 times +5 blue', second: 'this turn' },
+    spree: { verb: 'Recruit two extra times +5 blue', second: 'this turn' },
   },
   purple: {
     hourly: r => ({ main: `+${3 + r} purple`, second: run(n => `+${3 + n}`) }),

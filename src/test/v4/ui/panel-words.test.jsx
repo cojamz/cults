@@ -122,7 +122,7 @@ describe('panel words (w3)', () => {
   it('Spree prints its blue and says it is 3 buys (Name Drop, the live-payout space, left with Blue\'s Oct 20 rework)', () => {
     const a = quadrant('market').actions.find(x => x.key === 'spree');
     const t = panelText('market', a, 3);
-    expect([t.verb, t.second]).toEqual(['Recruit 3 times +5 blue', 'this turn']); // +5 since Nov 1; in line 1, line 3 dropped (text audit Nov 1)
+    expect([t.verb, t.second]).toEqual(['Recruit two extra times +5 blue', 'this turn']); // +5 since Nov 1; in line 1, line 3 dropped (text audit Nov 1)
   });
 
   it('"You\'d get" says the likely and the best case, or the best pick, or the mix, in numbers', () => {

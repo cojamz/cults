@@ -324,9 +324,9 @@ const market = {
       },
     },
     {
-      key: 'clearance', ring: 2, name: 'Recruit Twice', text: 'Recruit twice this turn. +3 blue.', copyDoesIt: true,
+      key: 'clearance', ring: 2, name: 'Recruit Twice', text: 'Recruit an extra time this turn. +3 blue.', copyDoesIt: true,
       estimate: (ctx, p) => 3 + Math.min(10, Math.max(0, totalRes(p) - 2)) * 0.4, // +3 blue (Cory, Nov 1)
-      resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); extraBuys(ctx, p, 1); ctx.log(`${p.name} recruits twice this turn.`); },
+      resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); extraBuys(ctx, p, 1); ctx.log(`${p.name} recruits an extra time this turn.`); },
     },
     // REPLACE12 bot tests (Nov 4, quality loop, lane D2; pitches/D2-batch1.md), one at a time in Bury's place.
     // Dumpster Dive: the bottom 3 members of the pile (the last ones sent down), one recruited free if it costs 5 or less;
@@ -375,9 +375,9 @@ const market = {
       },
     }]),
     {
-      key: 'spree', ring: 3, name: 'Spree', text: 'Recruit 3 times this turn. +5 blue.', copyDoesIt: true,
+      key: 'spree', ring: 3, name: 'Spree', text: 'Recruit two extra times this turn. +5 blue.', copyDoesIt: true,
       estimate: (ctx, p) => 5 + Math.min(10, Math.max(0, totalRes(p) - 3)) * 0.8, // +5 blue (Cory, Nov 1)
-      resolve(ctx, p) { ctx.gain(p, B, 5, { fromAction: true }); extraBuys(ctx, p, 2); ctx.log(`${p.name} goes on a spree: 3 recruits this turn.`); },
+      resolve(ctx, p) { ctx.gain(p, B, 5, { fromAction: true }); extraBuys(ctx, p, 2); ctx.log(`${p.name} goes on a spree: two extra recruits this turn.`); },
     },
   ],
 

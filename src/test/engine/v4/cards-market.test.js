@@ -128,7 +128,7 @@ describe('Blue actions', () => {
     let s = table(Q, { round: 2, res: [{ gold: 2, red: 2 }], shop: ROW5 });
     s = take(s, 'market.clearance');
     expect(R(s).blue).toBe(3); // +3 blue since Nov 1 (was +1)
-    expect(s.log).toContain('P1 recruits twice this turn.');
+    expect(s.log).toContain('P1 recruits an extra time this turn.');
     for (let k = 0; k < 2; k++) { expect(s.pending.kind).toBe('buy'); s = move(s, 'tier:small'); }
     expect(s.players[0].bonus).toBe(2);
     expect(s.pending?.kind).not.toBe('buy');
@@ -156,7 +156,7 @@ describe('Blue actions', () => {
     let s = table(Q, { round: 3, res: [{ gold: 2, red: 2 }], shop: ROW, left: 5 });
     s = take(s, 'market.spree');
     expect(R(s).blue).toBe(5); // +5 blue since Nov 1 (was +3)
-    expect(s.log).toContain('P1 goes on a spree: 3 recruits this turn.');
+    expect(s.log).toContain('P1 goes on a spree: two extra recruits this turn.');
     for (let k = 0; k < 3; k++) { expect(s.pending.kind).toBe('buy'); s = move(s, 'tier:small'); }
     expect(s.players[0].bonus).toBe(3);
     expect(s.pending?.kind).not.toBe('buy');
