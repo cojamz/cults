@@ -25,7 +25,7 @@ export const CUT = new Set([
   'trading.safetynet', 'trading.magnate', 'trading.shareholder', 'trading.reinvestor', // Cory, 2026-10-22: his White set of 12
   'benders.insider', 'benders.straggler', // Straggler: Cory, 2026-10-28, to the bench (design/bench.md)
   // Cory, Nov 5 backlog ("Yes to the member changes"): his cut list from the member notes; replacements are his pick
-  'thieves.grifter', 'thieves.cutpurse', 'yellow.drifters', /* Dye Job in its slot, Nov 5 */ 'silver.charityball', 'silver.creditors', 'silver.hostesses', 'yellow.ringleader',
+  'thieves.grifter', 'thieves.cutpurse', 'yellow.drifters', /* Counterfeiters in its slot, Nov 5 */ 'market.doorman', /* Power Shoppers in its slot, Nov 5 */ 'silver.charityball', 'silver.creditors', 'silver.hostesses', 'yellow.ringleader',
   'yellow.gardener', 'market.shopaholic', 'trading.raider', 'purple.earlybird', 'red.volunteer', // Seat Filler takes Volunteer's place
   'trading.bulkbuyer', 'trading.appraiser', 'market.makeover', 'market.stylist', // Cory, 2026-10-24 / Stylist 2026-10-25: thinning ("I like Closer rest can go"); Restockers replaces Makeover
 ]);

@@ -173,6 +173,7 @@ for (const [id, name, source] of [
   ['yellow.nightmarket', 'Night Traders', 'yellow.ringleader'], // Nov 5: Meddler's place, on its scene until its own is drawn
   ['yellow.dyejob', 'Counterfeiters', 'yellow.drifters'], // Nov 5: Drifters' place, on its scene until its own is drawn
   ['market.lastminute', 'Last-Minute Shopper', 'market.shopaholic'], // Nov 5: Shopaholics' place, on its scene until its own is drawn
+  ['market.powershoppers', 'Power Shoppers', 'market.doorman'], // Nov 5: Doormen's place, on its scene until its own is drawn
 ]) {
   const art = PORTRAIT.get(source);
   if (art && !PORTRAIT.has(id)) PORTRAIT.set(id, { ...art, id, name });
