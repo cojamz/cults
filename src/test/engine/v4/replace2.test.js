@@ -101,7 +101,7 @@ describe('REPLACE2: each card fires', () => {
 
   it('Night Market: after the last placement, swap up to 3 before contests are scored', () => {
     let s = table(['red', 'market', 'purple', 'yellow'], { round: 2, res: [{ blue: 7, purple: 2 }, { blue: 4 }], members: [['yellow.nightmarket']], queue: [{ t: 'allPlaced' }, { t: 'endRound' }] });
-    expect(s.pending.prompt).toMatch(/^Night Market: swap one for one/);
+    expect(s.pending.prompt).toMatch(/^Night Traders: swap one for one/);
     s = answer(s, 'swap:blue:purple');
     s = answer(s, 'swap:blue:purple');
     s = answer(s, 'swap:blue:purple');
@@ -109,7 +109,7 @@ describe('REPLACE2: each card fires', () => {
     expect(s.players[0].res.purple).toBe(5);
     // a tie for Blue (+3 each) and Purple alone (+6)
     expect(s.players[0].contest).toBe(9);
-    expect(s.log.filter(l => /\(Night Market\)/.test(l))).toHaveLength(3);
+    expect(s.log.filter(l => /\(Night Traders\)/.test(l))).toHaveLength(3);
   });
 
   it('Fundraisers: once per game, each rival +2 silver, then +1 follower per 2 silver rivals hold', () => {

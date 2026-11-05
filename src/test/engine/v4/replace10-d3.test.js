@@ -38,11 +38,11 @@ describe('REPLACE10: lane D requalified cards', () => {
     expect(g(ctx, victim, null, thief, 'res')).toBe(false);
   });
 
-  it("Big Score: steals half of a rival's biggest pile, rounded down, once a game (5 red: takes 2)", () => {
+  it("Heist Crew: steals half of a rival's biggest pile, rounded down, once a game (5 red: takes 2)", () => {
     let s = table(Q, { n: 2, round: 2, left: 4, members: [['thieves.hoardbreaker']], res: [{}, { red: 5, gold: 2 }] });
     const u = uidOf(s, 'thieves.hoardbreaker', 0);
     s = move(s, `use:${u}`);
-    expect(s.pending.prompt).toBe('Big Score: steal half of which pile?');
+    expect(s.pending.prompt).toBe('Heist Crew: steal half of which pile?');
     expect(s.pending.options.map(o => o.label)).toEqual(["P2's red: take 2"]);
     s = answer(s, s.pending.options[0].id);
     expect(s.players[0].res.red).toBe(2);
@@ -50,12 +50,12 @@ describe('REPLACE10: lane D requalified cards', () => {
     expect(s.cards[u].used).toBe(true);
   });
 
-  it("Big Score: no rival pile of 2 or more: nothing happens and it stays ready", () => {
+  it("Heist Crew: no rival pile of 2 or more: nothing happens and it stays ready", () => {
     let s = table(Q, { n: 2, round: 2, left: 4, members: [['thieves.hoardbreaker']], res: [{}, { red: 1 }] });
     const u = uidOf(s, 'thieves.hoardbreaker', 0);
     s = move(s, `use:${u}`);
     expect(s.cards[u].used).toBe(false);
-    expect(named(s, 'Big Score')).toContain("P1's Big Score: no rival pile of 2 or more to break.");
+    expect(named(s, 'Heist Crew')).toContain("P1's Heist Crew: no rival pile of 2 or more to break.");
   });
 
   it("Poacher: at Round Start, recruits a rival's member costing 4 or less, and the rival gets the payment", () => {

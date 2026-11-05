@@ -373,7 +373,7 @@ export default {
     // Dye Job (Cory, Nov 5): a rival, then the color all of theirs becomes
     dyeRival(ctx, p, oid) {
       const o = ctx.state.players[oid];
-      ctx.choose(p, `Dye Job: turn all of ${o.name}'s resources into which color?`, colors(ctx).map(b => ({
+      ctx.choose(p, `Counterfeiters: turn all of ${o.name}'s resources into which color?`, colors(ctx).map(b => ({
         id: `color:${b}`, label: b, kind: 'color', value: b, hint: -(o.res[b] || 0),
       })), 'yellow.dyeColor', { o: oid });
     },
@@ -381,8 +381,8 @@ export default {
       const o = ctx.state.players[data.o];
       const instance = newChange(ctx);
       let n = 0;
-      for (const c of colors(ctx)) while (c !== b && (o.res[c] || 0) > 0) { changeOne(ctx, p, o, c, b, 'Dye Job', instance); n++; }
-      ctx.log(`${p.name}'s Dye Job: all of ${o.name}'s resources are ${b} now (${n} changed).`);
+      for (const c of colors(ctx)) while (c !== b && (o.res[c] || 0) > 0) { changeOne(ctx, p, o, c, b, 'Counterfeiters', instance); n++; }
+      ctx.log(`${p.name}'s Counterfeiters: all of ${o.name}'s resources are ${b} now (${n} changed).`);
       if (n) tastemaker(ctx, p);
     },
     level(ctx, p, b) {
@@ -581,13 +581,13 @@ export default {
     // REPLACE2 bot test (Nov 3, replacement batch 2): Meddler's place. 4 yellow + 2 any as a player sees it. Trade
     // Seeds' own swaps, asked after the round's last placement and before anything is scored (core's allPlaced step).
     // In the deck for Meddler's slot, 3 yellow + 1 any as a player sees it (Cory, Nov 5: "yes to night market. should be relatively cheap")
-    m('nightmarket', 'Night Market', 2, 1, 'Round End: before contests are scored, swap up to 3 of your resources for other colors, one for one.', {
+    m('nightmarket', 'Night Traders', 2, 1, 'Round End: before contests are scored, swap up to 3 of your resources for other colors, one for one.', {
       // BOTSEE: each round end still ahead, about a 30% chance the swap wins or saves a contest
       ...see(i => endsAhead(i).reduce((a, r) => a + 0.3 * SEE_RING[r - 1], 0)),
       onAllPlaced(ctx, owner) {
         const k = Math.min(3, total(ctx, owner));
-        if (!k) { ctx.log(`${owner.name}'s Night Market: nothing to swap.`); return; }
-        transmuteStep(ctx, owner, { who: 'Night Market', left: k, done: 0 });
+        if (!k) { ctx.log(`${owner.name}'s Night Traders: nothing to swap.`); return; }
+        transmuteStep(ctx, owner, { who: 'Night Traders', left: k, done: 0 });
       },
     }),
     // Cory, 2026-10-31 ("Drifters is good"; worth 2)
@@ -611,14 +611,14 @@ export default {
     }),
     // Cory, Nov 5 ("something aggressive, like once per round turn all of a rivals resources into one color"), in
     // Drifters' slot; name Claude's (Cory: yes); 3 yellow + 2 any as a player sees it (Cory: "i like somebody being able to get it round 1")
-    m('dyejob', 'Dye Job', 2, 2, "On Use, once per round: turn all of a rival's resources into one color you choose.", {
+    m('dyejob', 'Counterfeiters', 2, 2, "On Use, once per round: turn all of a rival's resources into one color you choose.", {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
         const list = touchable(ctx, owner).filter(o => total(ctx, o) > 0);
-        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Dye Job: no rival has resources to change.`); return; }
-        ctx.log(`${owner.name} uses Dye Job.`);
-        ctx.choose(owner, 'Dye Job: whose resources?', list.map(o => ({
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Counterfeiters: no rival has resources to change.`); return; }
+        ctx.log(`${owner.name} uses Counterfeiters.`);
+        ctx.choose(owner, 'Counterfeiters: whose resources?', list.map(o => ({
           id: `player:${o.id}`, label: `${o.name} (${total(ctx, o)})`, kind: 'player', value: o.id, hint: total(ctx, o),
         })), 'yellow.dyeRival');
       },
