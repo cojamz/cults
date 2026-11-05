@@ -18,7 +18,7 @@ emoji; raw list /mnt/project-files/picky/2026-11-05-12-43/). The bot flagged onl
 - **Demote's sheet offers rivals' members to give away** (round II, "Demote a member": P2's Line Cutters, Foster
   Parents, Deprogrammers, Cutpurse and P3's four lit beside your Cheerleaders). Cory's Nov 4 9:38pm call says Promote
   and Demote give away only your own member; a later commit (011ef83d, "reach any cult again … pending his confirm")
-  put the old reach back with no line in decisions.md. A card rule, not ours: **open** for the coordinator.
+  put the old reach back with no line in decisions.md. **closed**: Cory reversed his own call (Nov 5, "i like it better as any"); now logged in decisions.md. The live reach is his.
 - **Taken spaces lose their second line, so two read the same.** Round III with both taken: the outer "Copy an action
   with your minion" and the middle "Copy an action with no minion on it" both read "Copy an action"; "Steal 4 resources
   split among rivals" reads "Steal 4 resources"; "Copy previous action +1" drops its +1. **open** (wording)
