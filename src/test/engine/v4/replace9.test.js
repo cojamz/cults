@@ -273,7 +273,7 @@ describe('Mannequin: "Blue members in the shop count as your members when contes
   const Q4 = ['red', 'market', 'purple', 'silver'];
   it('price and retirement', () => {
     const d = defById('market.mannequin');
-    expect([d.s, d.w, d.f, d.n, d.round]).toEqual([3, 2, 1, 1, 1]);
+    expect([d.s, d.w, d.f, d.n, d.round]).toEqual([3, 2, 1, 1, undefined]); // joins by cost (round II), live since Nov 4 night
     expect(defById('market.hawkers').retired).toBe(true);
   });
   it('pitched turn: round I end, Most members: 1 member plus 2 blue shop members (one counts as 3) beats a rival\'s 3', () => {
