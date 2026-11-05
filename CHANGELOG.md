@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.596 — 2026-11-05
+
+- Members list: scrolling on a Mac is smooth again
+
 ## v0.99.595 — 2026-11-05
 
 - Recruit Twice and Spree now say how many extra recruits they give
