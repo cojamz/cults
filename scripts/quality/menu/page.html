@@ -58,6 +58,7 @@ li.card.out{background:var(--surface-2);opacity:.86}
 .ev .good::before{background:var(--keep)}.ev .bad::before{background:var(--cut)}.ev .hot::before{background:var(--watch)}
 .cory{margin:4px 0 0;font-size:14px;color:var(--prot)}
 .cory b{font-weight:700}
+.hide{font:15px var(--sans);display:flex;gap:6px;align-items:center;white-space:nowrap}
 .empty{padding:30px;text-align:center;color:var(--fg-3)}
 footer{margin-top:24px;color:var(--fg-3);font-size:13px}
 @media (max-width:560px){li.card{grid-template-columns:40px 1fr;padding:10px}.score{font-size:21px}header h1{font-size:25px}}
@@ -84,6 +85,7 @@ footer{margin-top:24px;color:var(--fg-3);font-size:13px}
       <option value="color">By color</option>
       <option value="name">A to Z</option>
     </select>
+    <label class="hide"><input type="checkbox" id="hideSaid"> Hide ones I've rated</label>
     <input type="search" id="q" placeholder="Find a card or a word in its text" aria-label="Search">
     <div class="chips" id="colors" aria-label="Colors"></div>
   </div>
@@ -100,7 +102,7 @@ const COLORS = {red:'Red',purple:'Purple',silver:'Silver',yellow:'Yellow',market
 const VERDICT = {keep:'Keep',watch:'Watch',cut:'Cut',untested:'Untested',out:'Archived'};
 const ORDER = {keep:0,watch:1,untested:2,cut:3,out:4};
 const STATUS = {live:'Live',considered:'In testing',archived:'Archived'};
-const st = {kind:'member', view:'live', sort:'rank', q:'', colors:new Set()};
+const st = {kind:'member', view:'live', sort:'rank', q:'', colors:new Set(), hideSaid:false};
 try { const s = JSON.parse(localStorage.getItem('menu-state')||'null'); if (s) { Object.assign(st, s, {colors:new Set(s.colors||[])}); } } catch {}
 if (location.hash === '#actions') st.kind = 'space'; if (location.hash === '#members') st.kind = 'member';
 const save = () => { try { localStorage.setItem('menu-state', JSON.stringify({...st, colors:[...st.colors]})); } catch {} };
@@ -110,6 +112,7 @@ const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;
 function seg(id, key){ $(id).addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; st[key] = b.dataset.v; if (key==='kind') history.replaceState(null,'', st.kind==='space'?'#actions':'#members'); render(); }); }
 seg('kind','kind'); seg('view','view');
 $('sort').addEventListener('change', e => { st.sort = e.target.value; render(); });
+$('hideSaid').addEventListener('change', e => { st.hideSaid = e.target.checked; render(); });
 $('q').addEventListener('input', e => { st.q = e.target.value.toLowerCase(); render(); });
 window.addEventListener('hashchange', () => { st.kind = location.hash === '#actions' ? 'space' : 'member'; render(); });
 
@@ -124,6 +127,7 @@ function render(){
   const present = [...new Set(all.map(c => c.color))].sort((a,b) => Object.keys(COLORS).indexOf(a) - Object.keys(COLORS).indexOf(b));
   $('colors').innerHTML = present.map(c => `<button class="chip" id="col-${c}" data-c="${c}" aria-pressed="${st.colors.has(c)}"><span class="dot" style="background:var(--c-${c})"></span>${COLORS[c]||c}</button>`).join('');
   let cs = all.filter(c => !st.colors.size || st.colors.has(c.color));
+  if (st.hideSaid) cs = cs.filter(c => !c.cory);
   if (st.q) cs = cs.filter(c => (c.name+' '+c.text+' '+c.reason).toLowerCase().includes(st.q));
   const sc = c => c.score ?? -1;
   const cmp = {

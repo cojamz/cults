@@ -164,3 +164,17 @@ Also: "I don't understand this X points over even. I'm a little suspicious of it
 - **Window Shopper**: like; maybe 3 (shop members), a little more expensive.
 - **Hostesses**: don't like.
 - **Jack-of-All-Trades**: doesn't understand "in your full sets"; if it means any color, say so.
+
+## Members, part 5 (voice note, Nov 5 00:30Z, his words)
+- Menu: "I have to scroll all the way every time... It's so hard to scroll through this."
+- **Widows**: "really interesting"; back on consideration for white. **Well-Wishers**: combine with Widows somehow; interesting, kind of strong.
+- **Warm-Up Act**: "No. What the fuck is that?" **War Chest**: stay cut. **Vultures**: no.
+- **Usher**: interesting; keep on the silver short list.
+- **Toll Keeper**: too aggressive. **The Boss**: "absolutely not. Too strong."
+- **Tax Collector** (round end, after contests): no; round-end text implies before contests, so "after contests" makes no sense how we're building it; open to it only for a mechanic good enough.
+- **Tagalongs**: "super interesting. I like it"; needs balancing.
+- **Successors**: interesting, maybe too good with an engine; consider it, would be cool in white.
+- **Squire**: don't like (white is about getting rid of members).
+- **Socialites**: short list; more interesting than High Society because others can play around it.
+- **Social Climber**: no. **Snobs** (shop token version): no, "I don't like stuff that needs extra tokens".
+- **Shoplifter** (variants): "Don't we already have a version of that?" **Second Fiddles**: too hard to track. **Scavengers**: coming back to it.

@@ -47,7 +47,8 @@
  "considered|member|widows": {
   "verdict": "cut",
   "replaces": "Heiresses",
-  "reason": "Rarely fires in real games (under 1 a game), so it does nothing most of the time. Heiresses is protected anyway."
+  "reason": "Rarely fires in real games (under 1 a game), so it does nothing most of the time. Heiresses is protected anyway.",
+  "cory": "Really interesting; back on consideration for white."
  },
  "considered|member|pauper": {
   "verdict": "cut",
@@ -57,7 +58,8 @@
  "considered|member|warm-up act": {
   "verdict": "cut",
   "replaces": "Busker",
-  "reason": "Weak and rarely bought: taken in 32% of games (Busker 84%), owners won 14%."
+  "reason": "Weak and rarely bought: taken in 32% of games (Busker 84%), owners won 14%.",
+  "cory": "No."
  },
  "considered|member|copyist": {
   "verdict": "cut",
@@ -77,7 +79,8 @@
  "considered|member|snobs": {
   "verdict": "cut",
   "replaces": "Snobs",
-  "reason": "This version (reserve a shop member) lost blind judging; the live Snobs stays."
+  "reason": "This version (reserve a shop member) lost blind judging; the live Snobs stays.",
+  "cory": "No; no cards that need extra tokens."
  },
  "considered|member|landlord": {
   "verdict": "untested",
@@ -122,7 +125,8 @@
  "considered|member|tax collector": {
   "verdict": "cut",
   "replaces": "Cutpurse",
-  "reason": "Closed today without an edge in blind judging."
+  "reason": "Closed today without an edge in blind judging.",
+  "cory": "No; after-contests timing makes no sense."
  },
  "considered|member|accomplice": {
   "verdict": "cut",
@@ -132,7 +136,8 @@
  "considered|member|the boss": {
   "verdict": "cut",
   "replaces": "Extortionist",
-  "reason": "Bots bought it only 3 times in 24 games, so nothing could be read. Mob Boss took the slot."
+  "reason": "Bots bought it only 3 times in 24 games, so nothing could be read. Mob Boss took the slot.",
+  "cory": "Absolutely not. Too strong."
  },
  "considered|member|mob boss": {
   "verdict": "watch",
@@ -167,7 +172,8 @@
  "considered|member|war chest": {
   "verdict": "cut",
   "replaces": "an added grey",
-  "reason": "Cory dropped it today in favor of Cheerleaders and Victors."
+  "reason": "Cory dropped it today in favor of Cheerleaders and Victors.",
+  "cory": "Stay cut."
  },
  "considered|member|gloaters": {
   "verdict": "cut",
@@ -262,7 +268,8 @@
  "considered|member|tagalongs": {
   "verdict": "cut",
   "replaces": "a Purple member",
-  "reason": "Rarely bought, even by bots that could read it."
+  "reason": "Rarely bought, even by bots that could read it.",
+  "cory": "Super interesting, like it; needs balancing."
  },
  "considered|member|full house": {
   "verdict": "cut",
@@ -272,12 +279,14 @@
  "considered|member|second fiddles": {
   "verdict": "cut",
   "replaces": "Dyer",
-  "reason": "Almost never bought (8%), and owners won 0 of 3."
+  "reason": "Almost never bought (8%), and owners won 0 of 3.",
+  "cory": "Too hard to track."
  },
  "considered|member|vultures": {
   "verdict": "cut",
   "replaces": "a Magenta member",
-  "reason": "Rarely bought, even by bots that could read it."
+  "reason": "Rarely bought, even by bots that could read it.",
+  "cory": "No."
  },
  "considered|member|jackals": {
   "verdict": "cut",
@@ -287,7 +296,8 @@
  "considered|member|social climber": {
   "verdict": "cut",
   "replaces": "Debutantes",
-  "reason": "Cory cut Social Climber. Bots also rated this version too strong (owners 41%)."
+  "reason": "Cory cut Social Climber. Bots also rated this version too strong (owners 41%).",
+  "cory": "No."
  },
  "considered|member|inquisitors": {
   "verdict": "watch",
@@ -297,7 +307,8 @@
  "considered|member|successors": {
   "verdict": "cut",
   "replaces": "Cashier",
-  "reason": "Rarely bought, even by bots that could read it."
+  "reason": "Rarely bought, even by bots that could read it.",
+  "cory": "Interesting, maybe too good; consider for white."
  },
  "considered|member|pallbearers": {
   "verdict": "cut",
@@ -342,17 +353,20 @@
  "considered|member|usher": {
   "verdict": "cut",
   "replaces": "Polisher",
-  "reason": "Bots bought it almost every time (91%), an auto-buy. Guest of Honor took the slot."
+  "reason": "Bots bought it almost every time (91%), an auto-buy. Guest of Honor took the slot.",
+  "cory": "Interesting; silver short list."
  },
  "considered|member|well-wishers": {
   "verdict": "cut",
   "replaces": "Debt Collectors",
-  "reason": "Won a small blind judging test (+0.83), but bots skip it: taken in 19% of games, owners won 10% to 17%."
+  "reason": "Won a small blind judging test (+0.83), but bots skip it: taken in 19% of games, owners won 10% to 17%.",
+  "cory": "Combine with Widows somehow; kind of strong."
  },
  "considered|member|squire": {
   "verdict": "cut",
   "replaces": "Landlord",
-  "reason": "Another flat white gain, the kind Cory wants gone."
+  "reason": "Another flat white gain, the kind Cory wants gone.",
+  "cory": "Don't like."
  },
  "considered|member|penny pincher": {
   "verdict": "cut",
@@ -362,7 +376,8 @@
  "considered|member|toll keeper": {
   "verdict": "cut",
   "replaces": "a Yellow member",
-  "reason": "Lost its blind judging rerun (+0.17, needs +0.30)."
+  "reason": "Lost its blind judging rerun (+0.17, needs +0.30).",
+  "cory": "Too aggressive."
  },
  "considered|member|hawker": {
   "verdict": "untested",
@@ -592,7 +607,8 @@
  "considered|member|shoplifter": {
   "verdict": "cut",
   "reason": "Stopped unproven: no matched games after one smarter-bot run.",
-  "replaces": "Shoplifter"
+  "replaces": "Shoplifter",
+  "cory": "Don't we already have a version of that?"
  },
  "considered|member|silver tongues": {
   "verdict": "untested",
@@ -602,7 +618,8 @@
  "considered|member|socialites": {
   "verdict": "cut",
   "reason": "Socialites went live in High Society's place instead.",
-  "replaces": "Toastmaster"
+  "replaces": "Toastmaster",
+  "cory": "Short list; others can play around it."
  },
  "considered|member|meddler": {
   "verdict": "watch",
