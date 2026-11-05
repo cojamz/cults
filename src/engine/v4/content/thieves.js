@@ -464,7 +464,7 @@ const thieves = {
         const x = hoardPiles(ctx, p).find(y => y.owner === o && y.color === color);
         if (!x) return;
         const got = commit(ctx, p, o, { [color]: x.n }, false, false);
-        if (got) ctx.log(`${p.name}'s Hoard Breaker: took ${got} ${color} from ${o.name}.`);
+        if (got) ctx.log(`${p.name}'s Big Score: took ${got} ${color} from ${o.name}.`);
       },
       poach(ctx, p, uid) {
         if (uid == null) return;
@@ -748,19 +748,19 @@ const thieves = {
     })),
     // Hoard Breaker: 6 magenta + 2 any. A rival's biggest pile (ties: you pick the color), half of it rounded down,
     // through the shared steal (Bodyguards and Lie Low block it; Sticky Fingers and Desperado add).
-    ...add10(m('hoardbreaker', 'Hoard Breaker', 5, 2, "On Use, once per round: steal half of a rival's biggest pile, rounded down.", {
-      activate: 'round',
-      onRoundStart(ctx, owner, card) { card.used = false; },
+    // Big Score (Cory, Nov 5: "hoard breaker should be Big Score and it should be one time use"): in the deck for Grifter's slot
+    m('hoardbreaker', 'Big Score', 5, 2, "On Use, once per game: steal half of a rival's biggest pile, rounded down.", {
+      activate: 'game',
       onActivate(ctx, owner, card) {
         const list = hoardPiles(ctx, owner);
-        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Hoard Breaker: no rival pile of 2 or more to break.`); return; }
-        ctx.log(`${owner.name} uses Hoard Breaker.`);
-        ctx.choose(owner, 'Hoard Breaker: steal half of which pile?', list.map(x => ({
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Big Score: no rival pile of 2 or more to break.`); return; }
+        ctx.log(`${owner.name} uses Big Score.`);
+        ctx.choose(owner, 'Big Score: steal half of which pile?', list.map(x => ({
           id: `pile:${x.owner.id}:${x.color}`, label: `${x.owner.name}'s ${x.color}: take ${x.n}`, kind: 'pile', value: [x.owner.id, x.color], hint: x.n,
         })), 'thieves.hoardBreak');
       },
       botActivate: (ctx, p) => hoardPiles(ctx, p).some(x => x.n >= 2),
-    })),
+    }),
     m('crew', 'Crew', 1, 1, 'Worth 2 followers.', { f: 2, n: 2, ...old1 }), // 2 members (Cory, Oct 29)
     // REPLACE1 bot test (Nov 3, replacement batch 1): Crew's place. 4 magenta + 2 any as a player sees it. At round end,
     // for each contest a rival wins (tied winners each count), 2 of that contest's color from that rival, through the

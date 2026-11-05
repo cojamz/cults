@@ -15,9 +15,9 @@ const count = (s, color) => {
 };
 
 // round I members by color since Nov 5 (only members at 3 or less before the +1 wild)
-const R1 = { red: 3, echo: 2, thieves: 1, purple: 3, market: 4, trading: 3, yellow: 2 };
+const R1 = { red: 3, echo: 2, thieves: 2, purple: 3, market: 4, trading: 3, yellow: 2 };
 // fewer than 10 where Cory's Nov 5 cuts left holes (Grifter, Cutpurse; Early Birds; Shopaholics; Raiders; Meddler, Gardeners), until he picks their replacements
-const N = { red: 10, echo: 10, thieves: 8, purple: 9, market: 9, trading: 9, yellow: 8 };
+const N = { red: 10, echo: 10, thieves: 10, purple: 9, market: 9, trading: 9, yellow: 8 };
 
 describe('10-card decks', () => {
   it('deals 10 of each 2.0 color and 12 grey (Cheerleaders and Victors, Nov 4); round I gets only the cheap ones (Cory, Nov 5)', () => {

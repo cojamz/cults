@@ -37,7 +37,7 @@ export const CUT = new Set([
 export const CUT10 = new Set([
   'red.host', 'red.headhunter',
   'echo.bait', 'echo.understudy', 'echo.ensemble', 'echo.impostor',
-  'thieves.crew', 'thieves.robinhood', 'thieves.snitch', 'thieves.fixer',
+  'thieves.crew', 'thieves.robinhood', 'thieves.fixer', // Snitch back in for Cutpurse's slot (Cory, Nov 5)
   'purple.extrashift', 'purple.secondwind', 'purple.lateriser', // Gossip back in, Extra Shift out (Cory, Nov 1)
   'market.restocker', 'market.plusone',
   'trading.undertaker',
