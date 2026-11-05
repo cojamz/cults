@@ -16,8 +16,9 @@
  * Relaxed is twice Steady (×2.4). Quick keeps its own numbers. What answers your hand never reads this.
  * Cory, 2026-10-15 evening: "still just a touch slower on animations": Steady ×1.38 and Relaxed ×3.2, 15% slower each.
  * Cory, 2026-10-15 22:45: "animations are still too fast (but good)": Steady ×1.62 and Relaxed ×3.75, about a sixth slower.
+ * Cory, 2026-11-04 playtest: "the slowest speed is way too fast": Relaxed ×6 (was ×3.75), 60% slower.
  */
-export const SPEEDS = { quick: 0.5, steady: 1.62, relaxed: 3.75 };
+export const SPEEDS = { quick: 0.5, steady: 1.62, relaxed: 6 };
 export const SPEED_NAMES = { quick: 'Quick', steady: 'Steady', relaxed: 'Relaxed' };
 export const DEFAULT_SPEED = 'relaxed';
 const KEY = 'patrons.v4.motionSpeed';

@@ -82,12 +82,14 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     expect(usual.length).toBeGreaterThan(10);
     // 2100 and 3700 (Claude, Nov 4): Cheerleaders and Victors in the grey deck and the same day's card changes moved the seeded
     // turns on top of the 1s rival hold (p50 3.33s, p95 5.84s at Steady); content, not slower motion
-    expect(h3p50).toBeLessThanOrEqual(2100 * K);
+    // 2200 (Claude, Nov 4 night): Promote and Demote giving only your own member, Tryout's copiers and Mannequin moved the
+    // seeded turns (p50 3.48s at Steady); content, not slower motion
+    expect(h3p50).toBeLessThanOrEqual(2200 * K);
     // 3100 (Claude, Nov 1): the Nov 1 balance numbers and Greatest Hits copying rivals' round I spaces moved the seeded turns; content, not slower motion
     // 3500, 7000 and 19000 (Claude, Nov 4, under Cory's "make judgement calls" after "Things are still going too fast to
     // make sense of"): a rival's move lands in full, then holds 1s before the next (MO.rivalRead). Measured: rival turn
     // p50 1.36s to 2.52s, p95 4.28s to 5.51s; the usual wait 7.4s to 10.7s; the longest run of six 24.9s to 30.0s
-    expect(h3p95).toBeLessThanOrEqual(3700 * K);
+    expect(h3p95).toBeLessThanOrEqual(4000 * K); // 4000 (Nov 4 night, the same content move: 6.41s)
     expect(h2p50).toBeLessThanOrEqual(7300 * K); // 7300 (Nov 4, same content move: 11.5s)
     // 13.5s (was 13s; Claude, 2026-10-29): HR at 4 members moved seed 2's bots into a run of six turns holding a Walk-In
     // 14s (Claude, 2026-10-29): members counting their printed number moved a seeded run of six to 13.76s; same shows, longer chain
@@ -99,7 +101,7 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     // "yes" to the audit's pick): seed 2's run of six holds three recruits, 21.5s to 24.9s at Steady; slower by his call
     expect(h2max).toBeLessThanOrEqual(19000 * K);
   });
-  it('Relaxed plays a rival\'s turn about twice as long as Steady, and Steady a little slower than the first table', () => {
+  it('Relaxed plays a rival\'s turn about three times as long as Steady, and Steady a little slower than the first table', () => {
     const steady = rivalTurnsAt('steady'), relaxed = rivalTurnsAt('relaxed'), quick = rivalTurnsAt('quick');
     const [s, r, q] = [pct(steady, 0.5), pct(relaxed, 0.5), pct(quick, 0.5)];
     console.log(`[pacing] rival turn p50: Quick ${q}ms, Steady ${s}ms, Relaxed ${r}ms (Relaxed/Steady ${(r / s).toFixed(2)})`);
@@ -110,8 +112,9 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     // (Claude, Nov 2: the color cost moved two seeded rival turns to 0 ms; the real turns still run 2.31x)
     const pair = pct(steady.map((x, i) => relaxed[i] / x).filter(Number.isFinite), 0.5);
     console.log(`[pacing] the same turn, Relaxed/Steady p50 ${pair.toFixed(2)}`);
-    expect(pair).toBeGreaterThanOrEqual(1.8);
-    expect(pair).toBeLessThanOrEqual(2.6);
+    // Relaxed ×6 against Steady ×1.62 (Cory, Nov 4: "the slowest speed is way too fast"); fixed holds and floors keep it under 3.7
+    expect(pair).toBeGreaterThanOrEqual(2.8);
+    expect(pair).toBeLessThanOrEqual(4.2);
     // the old Steady's p50 on these games was 1541ms (2026-10-15); "a little slower" was about a fifth more, until rivals'
     // follower buys moved to the rival pace too (Cory, 2026-10-28: 1565ms): a floor so the table never collapses to a blur
     // (Claude, Nov 3: the four replacements that went live, Body Snatchers in Triplets' seat above all, moved these seeded
