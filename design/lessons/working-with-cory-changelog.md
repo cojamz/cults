@@ -60,3 +60,4 @@ Why each rule in .claude/rules/working-with-cory.md exists, in Cory's words. Mov
 - 2026-11-04 (emoji sounds thread): after one sound got a no, Claude sent single redos three rounds in a row and Cory got frustrated ("sigh. come on"); he then asked for "different directions. give me 3-4 for each". Fix: when a sound, look or wording gets a no, send 3 to 4 different directions to pick from, not one more guess.
 - 2026-11-04: Cory, "theres so many convos flagged as waiting on me that really arent" and "you dont need my permission": threads flag waiting-on-Cory only for his-only questions; publishing never waits.
 - 2026-11-04: Cory, tired of 'nothing needed from you' in threads listed as waiting on him: threads resolve themselves when nothing is left for him.
+- 2026-11-05: Member names are people, never places or things. Cory: "although please remember these should be MEMBERS not buildings or things" (Claude pitched Ballroom).
