@@ -221,10 +221,10 @@ const printedMembers = def => def.n ?? 1;
 const countOf = card => Math.max(printedMembers(defById(card.def)), card.copy ? printedMembers(defById(card.copy)) : 0);
 export const memberWeight = (state, uid) => countOf(state.cards[uid]);
 export const memberCount = (state, p) => p.members.reduce((s, u) => s + countOf(state.cards[u]), 0);
-/** Mannequin (REPLACE9 bot test): "Blue members in the shop count as your members when contests are scored." */
+/** Mannequin (live since Nov 5, Hawker's place): "Blue members in the shop count as your members when contests are scored." */
 const contestMembers = (state, p) => {
   const n = memberCount(state, p);
-  if (!REPLACE9 || !p.members.some(u => state.cards[u].def === 'market.mannequin' || state.cards[u].copy === 'market.mannequin')) return n;
+  if (!p.members.some(u => state.cards[u].def === 'market.mannequin' || state.cards[u].copy === 'market.mannequin')) return n;
   return n + state.shop.filter(u => defById(state.cards[u].def).quadrant === 'market').reduce((s, u) => s + countOf(state.cards[u]), 0);
 };
 // Dabblers (everyColor) counts for every color on the table (Cory, 2026-10-28)
@@ -2232,6 +2232,9 @@ function ctxFor(state) {
     countMembersOfColor: (p, q, opts) => countMembersOfColor(state, p, q, opts),
     card: uid => wrap(state, state.cards[uid]),
     defOf: c => (typeof c === 'number' ? cardDef(state, c) : c.def),
+    /** every def a card plays as: its own, a Doppelganger's copy, an Impersonator's borrowed ability (passives too; Cory's
+     *  playtest Nov 5: a Doppelganger copy of Patroness never paid) */
+    defsOf: c => effectiveDefs(state.cards[typeof c === 'number' ? c : c.uid], state),
     /** the name a hook's own log line gives card: a worn cloak's ("Red Cloak"), else the name it prints, so the log
      *  says one name and the member's ledger line isn't said again under the other (picky bot, Nov 4) */
     cloakOr: (card, name) => (card && state.artifacts && Object.values(state.artifacts).includes(card.uid) ? cardDef(state, card.uid).name : name),

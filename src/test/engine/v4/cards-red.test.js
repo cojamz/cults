@@ -91,13 +91,10 @@ describe('Red members', () => {
     expect(named(t, 'Recruiter')).toHaveLength(1);
   });
 
-  it('Recruiter: a rival’s member swapped into the shop pays nothing (shop recruits only, Nov 1 3:59pm)', () => {
-    let s = sceneQ({ round: 2, members: [['red.recruiter'], ['red.intern']], shop: ['red.volunteer'] });
-    s = take(s, 'red.hireup');
-    const swap = s.pending.options.find(o => o.id.startsWith(`trade:${uidOf(s, 'red.intern', 1)}:`));
-    s = settle(move(s, swap.id));
-    expect(R(s).red).toBe(3); // Promote's +3
-    expect(named(s, 'Recruiter')).toHaveLength(0);
+  // Promote can't swap a rival's member into the shop any more (Cory, Nov 4: only your own member goes out)
+  it('Promote offers no swap of a rival’s member into the shop', () => {
+    const s = take(sceneQ({ round: 2, members: [['red.recruiter'], ['red.intern']], shop: ['red.volunteer'] }), 'red.hireup');
+    expect((s.pending?.options || []).some(o => o.id.startsWith(`trade:${uidOf(s, 'red.intern', 1)}:`))).toBe(false);
   });
 
   it('Pied Piper: the second recruit in one turn pays +2 red at once, named; Big Spender makes it two buys', () => {

@@ -98,10 +98,10 @@ describe('a queued choice never offers a card that moved', () => {
   it('Promote drops a pair when its outgoing member changes cults', () => {
     let s = table(['gold', 'red', 'market', 'echo'], { n: 3, round: 2, members: [['red.twins'], ['red.bigfamily'], ['gold.taxman']], shop: ['red.volunteer'] });
     s = take(s, N('red', 'hireup'));
-    const outgoing = s.players[1].members[0];
+    const outgoing = s.players[0].members[0];
     const pair = s.pending.options.find(o => o.value[0] === outgoing);
     expect(pair).toBeTruthy();
-    s.players[1].members = [];
+    s.players[0].members = [];
     s.players[2].members.push(outgoing);
     s = resume(s);
     expect(s.pending.options.map(o => o.id)).not.toContain(pair.id);

@@ -102,7 +102,7 @@ function autoSteal(ctx, thief, victim, why, n = 1, reaction = false) {
   const more = desperadoMore(ctx, thief);
   if (more) {
     n += more;
-    const by = ctx.membersOf(thief).filter(c => c.def.stealMoreIf && c.def.stealMoreIf(ctx, thief)).map(c => `${thief.name}'s ${c.def.name}: +${c.def.stealMoreIf(ctx, thief)}`).join(', ');
+    const by = ctx.membersOf(thief).flatMap(c => ctx.defsOf(c).filter(d => d.stealMoreIf && d.stealMoreIf(ctx, thief)).map(d => `${thief.name}'s ${c.def.name}: +${d.stealMoreIf(ctx, thief)}`)).join(', ');
     ctx.log(`${thief.name}'s ${why}: takes ${n}, not ${n - more} (${by}).`);
   }
   const pick = {};
@@ -211,9 +211,9 @@ function halfPiles(ctx, p) {
     return base > 0 ? [{ owner, color, n: Math.min(held, ctx.stealCount(p, base)) }] : [];
   }));
 }
-const desperadoMore = (ctx, p) => ctx.membersOf(p).reduce((n, c) => n + (c.def.stealMoreIf ? c.def.stealMoreIf(ctx, p) : 0), 0);
+const desperadoMore = (ctx, p) => ctx.membersOf(p).flatMap(c => ctx.defsOf(c)).reduce((n, d) => n + (d.stealMoreIf ? d.stealMoreIf(ctx, p) : 0), 0);
 // Sticky Fingers and Desperado on a member's steal (spaces get them through ctx.stealCount)
-const stickyMore = (ctx, p) => ctx.membersOf(p).reduce((n, c) => n + (typeof c.def.stealMore === 'number' ? c.def.stealMore : 0) + (c.def.stealMoreIf ? c.def.stealMoreIf(ctx, p) : 0), 0);
+const stickyMore = (ctx, p) => ctx.membersOf(p).flatMap(c => ctx.defsOf(c)).reduce((n, d) => n + (typeof d.stealMore === 'number' ? d.stealMore : 0) + (d.stealMoreIf ? d.stealMoreIf(ctx, p) : 0), 0);
 const memberHint = c => c.def.f * 1.5 + cost(c) + (c.def.vanilla || c.used ? 0 : 1);
 // Shake Down: each rival's members it can put at stake (costing 5 or less, and more than 0), by rival id.
 function atStake(ctx, p) {

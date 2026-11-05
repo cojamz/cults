@@ -29,6 +29,14 @@ describe('Blue concepts', () => {
     expect(s.shop.some(u => old.includes(u))).toBe(false);
     expect(s.players[1].bonus).toBe(1);
   });
+  it('a Doppelganger copy and an Impersonator holding Patroness each pay too (Cory\'s playtest, Nov 5)', () => {
+    let s = table(['red', 'market', 'thieves', 'echo'], { members: [[], ['echo.doppel', 'echo.impersonators']], res: [{ blue: 9, gold: 9 }], shop: ['market.makeover', 'red.twins', 'red.intern', 'red.volunteer'] });
+    s.cards[uidIn(s, 'echo.doppel', 1)].copy = 'market.patroness';
+    s.cards[uidIn(s, 'echo.impersonators', 1)].ability = 'market.patroness';
+    s = move(take(s, 'thieves.tipoff'), card(s, 'market.makeover'));
+    while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
+    expect(s.players[1].bonus).toBe(2);
+  });
   it('Critic: a rival recruits blue, +1 follower, named', () => {
     let s = table(Q, { members: [[], ['market.critic']], res: [{ blue: 9, gold: 9 }], shop: ['market.makeover', ...ROW.slice(1)] });
     s = move(take(s, 'thieves.tipoff'), card(s, 'market.makeover'));

@@ -120,7 +120,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'thieves.kidnappers', // under 3 holds (2) when Wallflower doubling every copied action (Nov 3) moved the games; replace3.test.js covers it
       'echo.bait', // under 3 holds when bots began rating every choice over every option (Nov 2) moved the games; green-bait-trading covers it
       'market.underbidder', 'echo.encore', // under 3 holds when Cheerleaders and Victors joined the grey deck (Nov 4) moved the games; cards-market and cards-echo / replace tests cover them
-      'market.hawkers']); // new Nov 4 (Connoisseurs' place), held in 2 of these games, fired in both; replace4.test.js (Hawker) covers its lines
+      'market.mannequin']); // live Nov 5 in Hawker's place (Cory cut Hawker); under 3 holds in these games, and a quiet contest count; replace9.test.js (Mannequin) covers it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);
     expect(unseen).toEqual([]);

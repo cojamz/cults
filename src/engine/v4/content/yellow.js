@@ -310,7 +310,7 @@ export default {
         o.res[b] -= 1; p.res[b] = (p.res[b] || 0) + 1;
         ctx.log(`${p.name}'s Barterers: ${p.name} gives ${o.name} 1 ${a} for 1 ${b}.`);
         // a change of the rival's resources: Customs Officer pays once per Barterers use
-        for (const card of ctx.membersOf(o)) { const def = ctx.defOf(card); if (def.onChanged) def.onChanged(ctx, o, card, p, data.instance); }
+        for (const card of ctx.membersOf(o)) for (const def of ctx.defsOf(card)) if (def.onChanged) def.onChanged(ctx, o, card, p, data.instance);
         const next = { ...data, left: data.left - 1, done: data.done + 1 };
         if (next.left > 0) barterStep(ctx, p, next); else tastemaker(ctx, p);
       },
@@ -363,7 +363,7 @@ export default {
       ctx.log(`${p.name}'s Drifters count as a ${ctx.quadrant(q).name} member.`);
       // cards that read a recruit's color hear Drifters once its color is chosen (Cory's playtest, Nov 1: recruiting
       // Drifters never paid Guest Book): Guest Book, Matchmaker, Connoisseurs
-      for (const c of ctx.abilitiesOf(p)) for (const d of [ctx.defOf(c), ...(c.copy ? [ctx.defOf({ def: c.copy })] : [])]) {
+      for (const c of ctx.abilitiesOf(p)) for (const d of ctx.defsOf(c)) {
         if (d.onColorChosen && c.uid !== card.uid) ctx.asMember(p, d.name, () => d.onColorChosen(ctx, p, c, card), p.members.includes(c.uid) ? c.uid : null);
       }
     },

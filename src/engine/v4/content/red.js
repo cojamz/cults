@@ -633,12 +633,12 @@ function snatchPairs(ctx, p) {
 }
 // Tryout's shop members: an On Recruit or round-start effect that doesn't act on the card itself ("swap it",
 // "it becomes", or the card by its own name: "Impersonator has that member's ability"), which a member still in the
-// shop can't do. Tryout on Impersonator had you pick a rival's member for nothing (Cory's playtest, Nov 4).
+// shop can't do ("becomes a copy of"; copying an action is fine: Cory asked why Fan Club wasn't offered, Nov 5). Tryout on Impersonator had you pick a rival's member for nothing (Cory's playtest, Nov 4).
 export function borrowable(ctx) {
   return ctx.shopCards().filter(c => {
     if (c.def.recruitNote || !(c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate)))) return false;
     const t = c.def.text.replace(/^[^:]*:/, '');
-    return !/\bit\b|\bthese\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(t) && !t.toLowerCase().includes(c.def.name.toLowerCase());
+    return !/\bit\b|\bthese\b|\bthis member\b|\ba copy of\b/i.test(t) && !t.toLowerCase().includes(c.def.name.toLowerCase());
   });
 }
 function cheapValue(ctx) {
@@ -668,7 +668,9 @@ function swapSides(ctx, p, mode) {
   const entry = (c, owner) => ({ c, uid: c.uid, id: c.def.id, owner, cost: cost(c) });
   const cult = ctx.state.players.flatMap(owner => (owner === p ? mode !== 'rival' : ctx.canSteal(p, owner, 'swap')) ? ctx.membersOf(owner).filter(c => ctx.canSwapMember(c.uid)).map(c => entry(c, owner)) : []);
   const shop = ctx.shopCards().map(c => entry(c, undefined));
-  const first = mode === 'even' ? [...cult, ...shop] : cult;
+  // Promote and Demote give away one of YOUR members, as printed (Cory's playtest, Nov 4 9:38pm Eastern: "promote and demote
+  // rules arent being respected" after a copied Promote took his Extra Hand for a rival's Line Cutters)
+  const first = mode === 'even' ? [...cult, ...shop] : mode === 'promote' || mode === 'demote' ? cult.filter(e => e.owner === p) : cult;
   // Promote and Demote reach other cults too, any member that can be swapped (Cory, 2026-10-29: "demote and promote
   // should work with rivals. if their members are able to be swapped"); never two members of the same cult
   const second = mode === 'even' ? first : mode === 'promote' || mode === 'demote' ? [...shop, ...cult] : shop;

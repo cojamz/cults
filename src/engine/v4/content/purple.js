@@ -48,7 +48,7 @@ const scheduled = ctx => ctx.state.queue.filter(t => t.t === 'turn' || t.t === '
 export const spareSpace = ctx => openSpaces(ctx).length > scheduled(ctx);
 /** What extra turns that cost `base` purple cost p (Corner-Cutter halves it, rounded up). Only Taskmaster pays now:
  *  Overtime is free (Cory, 2026-10-15: "no board action should require spending"). */
-const priceFor = (ctx, p, base) => (ctx.membersOf(p).some(c => c.def.halfTurns || (c.copy && c.copy.endsWith('.doubletime'))) ? Math.ceil(base / 2) : base);
+const priceFor = (ctx, p, base) => (ctx.membersOf(p).some(c => ctx.defsOf(c).some(d => d.halfTurns)) ? Math.ceil(base / 2) : base);
 /** How many more turns the board has room for (open spaces beyond the turns still to come). */
 const room = ctx => openSpaces(ctx).length - scheduled(ctx);
 const canBuyTurn = (ctx, p, base, n = 1) => (p.res[P] || 0) >= priceFor(ctx, p, base) && room(ctx) >= n;
@@ -159,7 +159,7 @@ function skipNext(ctx, p, why, by = p, quiet = false, { token = false, last = fa
   if (!quiet) ctx.log(`${by.name}'s ${why}: ${p.name} skips their next turn.`);
   return true;
 }
-const noSkip = (ctx, p) => ctx.membersOf(p).some(c => c.def.noSkip || (c.copy && c.copy.endsWith('.earlybird')));
+const noSkip = (ctx, p) => ctx.membersOf(p).some(c => ctx.defsOf(c).some(d => d.noSkip));
 /** p's turns still to come this round (after the one now running), as queue indices. */
 const turnsAhead = (ctx, p) => {
   const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');
@@ -281,7 +281,7 @@ function skipped(ctx, p, value, data) {
   }
   ctx.skipBeat(p, data?.why, () => {
     ctx.log(`${p.name}'s turn is skipped${data?.why ? ` (${data.why})` : ''}.`);
-    for (const o of ctx.state.players) for (const c of ctx.abilitiesOf(o)) if (c.def.onSkip) ctx.asMember(o, c.def.name, () => c.def.onSkip(ctx, o, c, p));
+    for (const o of ctx.state.players) for (const c of ctx.abilitiesOf(o)) for (const d of ctx.defsOf(c)) if (d.onSkip) ctx.asMember(o, c.def.name, () => d.onSkip(ctx, o, c, p));
   });
 }
 /** How many turns p still has to come this round, after the one now running. */
@@ -367,7 +367,7 @@ const turnsNowEstimate = (ctx, p, n) => {
 /** Overtime, off the board since 2026-10-15 (Rush Hour took its space). Kept for the extra-turn member tests only:
  *  test/engine/v4/retired-overtime.js puts it back on Purple's quadrant for one test file. */
 /** Relay Runners (REPLACE7 bot test): its owner's Right Away gives two turns right after. */
-const relayRunners = (ctx, p) => ctx.membersOf(p).some(c => c.def && c.def.relayRunners);
+const relayRunners = (ctx, p) => ctx.membersOf(p).some(c => ctx.defsOf(c).some(d => d.relayRunners));
 /** Roll Call left the board on 2026-10-22 (Right Away took its space); tests that need a plain purple space keep it
  *  in that space (test/engine/v4/retired-overtime.js useRetiredRollCall). */
 export const RETIRED_ROLLCALL = {

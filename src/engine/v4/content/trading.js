@@ -861,7 +861,7 @@ const trading = {
 };
 
 const cost = (ctx, uid) => { const d = ctx.card(uid).def; return d.s + d.w; };
-const defsOf = (ctx, c) => [c.def, c.copy ? defById(c.copy) : null].filter(Boolean);
+const defsOf = (ctx, c) => ctx.defsOf(c);
 // Banker: "Whenever you turn resources or members into followers, +1 white" (once per turning)
 function turned(ctx, p) {
   for (const c of ctx.abilitiesOf(p)) for (const d of defsOf(ctx, c)) if (d.onTurned) { ctx.gain(p, W, d.onTurned); ctx.log(`${p.name}'s ${d.name}: +${d.onTurned} white.`); }

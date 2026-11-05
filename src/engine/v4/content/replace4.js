@@ -13,4 +13,4 @@ export const old4 = REPLACE4 ? { retired: true } : {};
 /** Handlers the new cards use, registered only under the switch. */
 export const handlers4 = hs => (REPLACE4 ? hs : {});
 /** The new cards of this batch that are in the live game (always on, their old cards always retired). */
-export const LIVE4 = ['market.hawkers'];
+export const LIVE4 = []; // Hawker cut Nov 5 (Cory); Mannequin took its place

@@ -31,7 +31,7 @@ const others = (ctx, p) => ctx.rivals(p);
 const otherColors = ctx => ctx.state.resources.filter(c => c !== S);
 
 // a Doppelganger runs the hooks of the member it copies too
-const effDefs = c => (c.copy ? [c.def, defById(c.copy)] : [c.def]);
+const effDefs = c => (c.copy || c.ability ? [c.def, ...[c.copy, c.ability].filter(Boolean).map(defById)] : [c.def]);
 // the artifact too: Silver's artifact is Caterer, whose gift hook never fired from the artifact (bug bash, Nov 1)
 function hooks(ctx, p, name) {
   const out = [];

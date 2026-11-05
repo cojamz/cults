@@ -201,11 +201,12 @@ function windowPick(ctx, owner, left, sent = []) {
 export function toBottom(ctx, k) {
   if (!(k > 0)) return;
   for (const p of ctx.state.players) for (const u of [...p.members, ...(p.artifact !== undefined ? [p.artifact] : [])]) {
-    const def = ctx.defOf(ctx.card(u));
-    // run as the card, so its hover's "gained this game" counts it (it read 0 for Bargain Bin: artifact audit, Nov 1)
-    if (def.bottomFollowers) ctx.asMember(p, def.name, () => { p.bonus += 1; ctx.log(`${p.name}'s ${def.name}: +1 follower.`); }, u);
+    const def = ctx.defOf(ctx.card(u)), defs = ctx.defsOf(u);
+    // run as the card, so its hover's "gained this game" counts it (it read 0 for Bargain Bin: artifact audit, Nov 1);
+    // a copy (Doppelganger, Impersonator) pays too
+    if (defs.some(d => d.bottomFollowers)) ctx.asMember(p, def.name, () => { p.bonus += 1; ctx.log(`${p.name}'s ${def.name}: +1 follower.`); }, u);
     // Blue's artifact (Cory, 2026-10-24): once per batch, turns only, as Patroness
-    if (def.bottomBlue) ctx.asMember(p, def.name, () => { const got = ctx.gain(p, B, 1); if (got) ctx.log(`${p.name}'s ${def.name}: +${got.n} ${got.color}.`); }, u);
+    if (defs.some(d => d.bottomBlue)) ctx.asMember(p, def.name, () => { const got = ctx.gain(p, B, 1); if (got) ctx.log(`${p.name}'s ${def.name}: +${got.n} ${got.color}.`); }, u);
   }
 }
 /** Scavengers (REPLACE1 bot test, Nov 3): `actor` just sent these shop members to the bottom of the pile; each rival
@@ -214,7 +215,7 @@ export function toBottom(ctx, k) {
 export function scavenge(ctx, actor, uids) {
   if (!actor || !uids?.length) return;
   // Pickers (REPLACE13=pickers): its owner just sent these down on their own turn; they may also recruit one, paying its cost
-  if (on13('pickers') && ctx.membersOf(actor).some(c => c.def.pickers)) {
+  if (on13('pickers') && ctx.membersOf(actor).some(c => ctx.defsOf(c).some(d => d.pickers))) {
     const opts = uids.filter(u => ctx.state.pile.includes(u)).filter(u => ctx.payChoices(actor, u, {}).length).map(u => ctx.card(u)).map(x => ({
       id: `card:${x.uid}`, label: `${x.def.name} · pay ${ctx.price(actor, x.uid, {}).total}`, kind: 'card', value: x.uid, hint: botWorth(x),
     }));
@@ -613,7 +614,7 @@ const market = {
     // seat order from the owner's left is offered it if they can pay: its cost goes to the bank as any recruit's, and 2
     // more (from the piles they hold most of) to the owner (the draft's reading of "paying its cost plus 2 to you"). The
     // rival's recruit is theirs (its On Recruit fires) and doesn't use their turn's recruit.
-    m('hawkers', 'Hawker', 4, 3, 'On Use, once per round: choose a shop member. Starting on your left, each rival may recruit it, paying its cost plus 2 to you. If none does, you recruit it for free.', { ...old9('market.hawkers'), // a round I member as Connoisseurs was (bot-tested in a later round; Nov 4)
+    m('hawkers', 'Hawker', 4, 3, 'On Use, once per round: choose a shop member. Starting on your left, each rival may recruit it, paying its cost plus 2 to you. If none does, you recruit it for free.', { retired: true, /* cut by Cory, Nov 4 playtest: "Hawker needs to get cut and replaced" */ // a round I member as Connoisseurs was (bot-tested in a later round; Nov 4)
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
@@ -775,7 +776,8 @@ const market = {
     // REPLACE9 bot test (Members C, Nov 4): Hawker's place (Hawker asked rivals to choose on its owner's turn). 3 blue + 2 any as a
     // player sees it. The shop's blue members count toward the owner's members in every contest that counts them (core
     // contestMembers: Most members, and Fewest members against the owner). Rivals answer by sending blue members to the bottom.
-    ...add9(m('mannequin', 'Mannequin', 2, 2, 'Blue members in the shop count as your members when contests are scored.', { round: 1 })),
+    // Live since Nov 5 in Hawker's place: the one blue card on Cory's short list ("Pretty cool; short list for blue").
+    m('mannequin', 'Mannequin', 2, 2, 'Blue members in the shop count as your members when contests are scored.', {}), // joins by cost (round II), per Cory's round I cost cutoffs
     // REPLACE9 bot test (Members C, Nov 4): Hawker's place, second try (Mannequin lost its blind A/B). 4 blue + 1 any as a
     // player sees it. The stall is the Peddlers list (state.stalls[uid], flag stall 'anyone'): core's recruit step offers it to
     // everyone; a rival pays its cost to the owner, the owner pays the bank. After contests an unsold member goes to the
