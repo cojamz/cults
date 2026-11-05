@@ -83,3 +83,21 @@ Cut on paper: Chaperone ("Round Start: +1 follower per rival holding silver", in
 - Who feels it: everyone; a shared toast with one possible spoiler.
 - Intuitive: one count at round end. Fun: a table goal with a spoiler. Interacts: everyone's silver; Toast makes sure all have some. Powerful: +4 a round for you. Engine or counter: engine with Toast. Its color: the whole table celebrating together.
 - Risk: it hands the table followers (shapes that give rivals as much flopped); you get double.
+
+## Round 3 (Cory: "something that scales with number of silver members players have or resources total. not just yours but the whole board")
+### A. Patron Saints [4 silver + 3 any, worth 2]
+"Round End: +1 follower per silver member, anyone's."
+- Played, round III, 4 players: you have 3 silver members, Ben 1, Cara 1: +5. About 2 + 4 + 5 = 11 a game.
+- Rivals' choice: a silver card in the shop now also feeds you; they weigh buying it. Who feels it: anyone recruiting silver.
+- Intuitive: one count. Fun: every silver recruit at the table pays you. Interacts: all of silver's members, anyone's. Powerful: about 11. Engine: silver members. Its color: the table's silver.
+- Close to the old Patron Saint ("Game End: +1 follower per 2 silver members, anyone's.", never pitched to him as a round-end card).
+### B. Silver Barons [4 silver + 2 any, worth 2]
+"Round End: +1 follower per 3 silver all players hold together."
+- Played, round II, 4 players: you 4, Ben 5 (going for the silver contest), Cara 2, Dee 1 = 12: +4. Toast and Largesse raise it.
+- Rivals' choice: hold silver for the contest (feeds you) or spend it (denies you). Real both ways.
+- Intuitive: count the table's silver. Fun: the contest race pays you. Interacts: every silver holder, Toast, Largesse. Powerful: 3 to 6 a round. Engine: silver's gifts. Its color: the table's silver.
+### C. Auctioneer [5 silver + 3 any, worth 2]
+"On Use, once per game: +1 follower per 2 silver all players hold together."
+- Played, round III: right after a Largesse hands out 10, the table holds 20: +10. Earlier, about +5.
+- Choice: when. Rivals who see it coming spend down.
+- Intuitive: one count, once. Fun: a burst the table can see coming. Interacts: Largesse, Toast, the silver contest. Powerful: up to about 10. Engine: Largesse. Its color: the table's silver.
