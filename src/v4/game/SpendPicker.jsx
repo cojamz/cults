@@ -69,13 +69,13 @@ export default function SpendPicker({ state, g, onAnswer, busy, place = null, tu
   const tall = Math.min(STACK_MAX, Math.max(1, ...colors.map(c => me.res[c] || 0)));
   const get = n * g.per;
   return (
-    <section ref={box} className={`prompt choice plain gift-card split-card spend-card${place ? ` at-space ${place.up ? 'below' : 'above'}` : ''}`} role="group" aria-label={`${g.title}: turn up to ${limit} into ${g.per} followers each`}
+    <section ref={box} className={`prompt choice plain gift-card split-card spend-card${place ? ` at-space ${place.up ? 'below' : 'above'}` : ''}`} role="group" aria-label={`${g.title}: turn up to ${limit} ${limit === 1 ? 'resource' : 'resources'} into ${g.per} followers${limit === 1 ? '' : ' each'}`}
       data-gift="spend" data-spend={limit} style={place ? { left: place.left, top: place.top } : undefined}
       onKeyDown={e => { if (e.key === 'Enter' && !e.target.closest('[data-option="back"]')) { e.preventDefault(); take(); } }}>
       {turnOf && <TurnOf player={turnOf} />}
       <header className="gc-head">
         {g.title && <small className="gc-title">{g.title}</small>}
-        <p className="gc-what">Turn up to <b className="num">{limit}</b> into <b className="num">{g.per}</b> followers each</p>
+        <p className="gc-what">Turn up to <b className="num">{limit}</b> {limit === 1 ? 'resource' : 'resources'} into <b className="num">{g.per}</b> followers{limit === 1 ? '' : ' each'}</p>
         <p className="gc-sub">Click a color to turn one more in.</p>
       </header>
       <div className="pay-rows" style={{ '--rise': `${Math.min(30, (tall - 1) * 6)}px` }}>

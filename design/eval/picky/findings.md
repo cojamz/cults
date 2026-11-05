@@ -7,6 +7,24 @@ each. One line per finding: what a player sees, what's wrong, status. Each run's
 Status words: **fixed (version)**, **fixing**, **sent** (to the thread that owns it), **open** (ours, not started),
 **Cory** (a question only he can answer), **by design** (with the reason; the check got an exception).
 
+## 2026-11-05 (fourth run)
+Run at 1:44pm Eastern Nov 5 on v0.99.597 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
+emoji; raw list /mnt/project-files/picky/2026-11-05-18-44/). The bot flagged nothing; the member sweep of 109 cards in
+both looks was clean. The rest are by eye from the shots.
+
+- **Exchange's sheet: "Turn up to 1 into 2 followers each".** Round I, the sheet never said what you turn in (any
+  resource; the shot turns in a blue) and said "each" for one. Now "Turn up to 1 resource into 2 followers", and
+  "Turn up to 2 resources into 2 followers each" in round II. **fixed (this run)**
+- **Shake Down's pick: your seat grows the same empty dark box under your members** (round II, "P2 is shaking you
+  down. Which member is at stake?"), hiding the "3 members" line. Same as Sample's pick below. **open** (looks off)
+- **"Since your last turn" lines that say nothing happened:** "Round II · P3 Cover" and "Round II · P4 Farewell" carry
+  no gain or effect, so a reader can't tell what the space did. **open** (wording)
+- **Final score: an 85px part shows a bare "14"** (P2's and P3's Members parts) and a 60px one a bare "10" (your
+  Prizes), while a wider one says "Members 18". "Members 14" doesn't fit; a shorter name for Members and Prizes would.
+  **open** (looks off)
+- Seen again, already listed: taken spaces lose their second line ("Steal 5 resources", "+9 silver"), minions over
+  middle-ring words (Promote, Demote, "+3 silver, then turn silver into colors"), bar Members one above the member count.
+
 ## 2026-11-05 (third run)
 Run at 7:43am Eastern Nov 5 on v0.99.593 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
 emoji; raw list /mnt/project-files/picky/2026-11-05-12-43/). The bot flagged only the Promote sheet's "Member" label

@@ -124,7 +124,7 @@ export function giftPick(state, pend, first = null) {
   const stop = pend.options.find(o => o.kind === 'done');
   if (spend && spends.length && stop && spends.length + 1 === pend.options.length) {
     const per = Number(spend[1]), left = Number(spend[2]);
-    return { ...base, kind: 'spend', per, left, head: `Turn up to ${left} into ${per} followers each`, chosen: null, stop, spends, firsts: [], seconds: [], others: [], rest: [] };
+    return { ...base, kind: 'spend', per, left, head: `Turn up to ${left} ${left === 1 ? 'resource' : 'resources'} into ${per} followers${left === 1 ? '' : ' each'}`, chosen: null, stop, spends, firsts: [], seconds: [], others: [], rest: [] };
   }
   const change = changePick(state, pend, base);
   if (change) return change;
