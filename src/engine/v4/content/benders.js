@@ -370,9 +370,10 @@ const members = [
   m('sorelosers', 'Sore Loser', null, 0, 4, 'Round End: if you win no contest, steal 5 followers from the rival who wins the most.', { round: 3, // a round III member as HR was (bot-tested in round II; Nov 4)
     afterContests(ctx, owner, card, table) {
       const wins = o => table.filter(c => c.winners.includes(o.id)).length;
-      if (wins(owner)) return;
+      // each quiet case says why in the log (Cory's playtest, Nov 4: "the sore loser didnt trigger")
+      if (wins(owner)) { ctx.log(`${owner.name}'s Sore Loser: ${owner.name} won or tied a contest, so no steal.`); return; }
       const rivals = ctx.state.players.filter(o => o !== owner && wins(o) > 0);
-      if (!rivals.length) return;
+      if (!rivals.length) { ctx.log(`${owner.name}'s Sore Loser: no rival won a contest, so no steal.`); return; }
       const most = Math.max(...rivals.map(wins));
       const top = rivals.filter(o => wins(o) === most);
       if (top.length === 1) return soreSteal(ctx, owner, top[0]);
@@ -494,6 +495,7 @@ export const handlers = {
 function soreSteal(ctx, owner, t) {
   const got = ctx.steal(owner, t, { followers: 5 });
   if (got) ctx.log(`${owner.name}'s Sore Loser: ${owner.name} won no contest; steals ${got} follower${got === 1 ? '' : 's'} from ${t.name}.`);
+  else ctx.log(`${owner.name}'s Sore Loser: can't steal from ${t.name}.`);
 }
 
 const group = { id: 'benders', members, handlers };
