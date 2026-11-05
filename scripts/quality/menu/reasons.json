@@ -13,7 +13,9 @@
  "considered|member|turncoats": {
   "verdict": "watch",
   "replaces": "Volunteer",
-  "reason": "Too strong as priced: bots that can read it bought it almost every game and owners won 55%. Cory liked the idea for Volunteer's slot. Needs a higher price."
+  "reason": "Too strong as priced: bots that can read it bought it almost every game and owners won 55%. Cory liked the idea for Volunteer's slot. Needs a higher price.",
+  "cory": "A good idea there; consideration for sure.",
+  "bucket": "consider"
  },
  "considered|member|barterers": {
   "verdict": "cut",
@@ -84,7 +86,9 @@
  "considered|member|stagehand": {
   "verdict": "untested",
   "replaces": null,
-  "reason": "Built; no games yet. Pays for stacking minions on Green, which the Green contest already rewards."
+  "reason": "Built; no games yet. Pays for stacking minions on Green, which the Green contest already rewards.",
+  "cory": "No; don't like rewards based on space usage.",
+  "bucket": "cut"
  },
  "considered|member|bootlegger": {
   "verdict": "cut",
@@ -103,7 +107,9 @@
  "considered|member|landlord": {
   "verdict": "untested",
   "replaces": "Landlord",
-  "reason": "A non-flat Landlord: rivals pay you to use your space. Built; no result yet. Barker is the other try for this slot."
+  "reason": "A non-flat Landlord: rivals pay you to use your space. Built; no result yet. Barker is the other try for this slot.",
+  "cory": "No; don't like tokens.",
+  "bucket": "cut"
  },
  "considered|member|punch card": {
   "verdict": "watch",
@@ -113,12 +119,16 @@
  "considered|member|exit counselor": {
   "verdict": "untested",
   "replaces": "Deprogrammers",
-  "reason": "Rerun playing. Combos with Red's give-away spaces (Promote, Demote) and Godparents."
+  "reason": "Rerun playing. Combos with Red's give-away spaces (Promote, Demote) and Godparents.",
+  "cory": "Really cool; short list; nice design.",
+  "bucket": "short"
  },
  "considered|member|foundling": {
   "verdict": "untested",
   "replaces": "Deprogrammers",
-  "reason": "A catch-up card for the smallest cult. Built; no result yet."
+  "reason": "A catch-up card for the smallest cult. Built; no result yet.",
+  "cory": "No.",
+  "bucket": "cut"
  },
  "considered|member|early birds": {
   "verdict": "cut",
@@ -130,7 +140,9 @@
  "considered|member|big spenders": {
   "verdict": "untested",
   "replaces": "Smooth Talkers",
-  "reason": "Built; no result yet. Turns every silver you spend into a gift and a follower."
+  "reason": "Built; no result yet. Turns every silver you spend into a gift and a follower.",
+  "cory": "No.",
+  "bucket": "cut"
  },
  "considered|member|charmers": {
   "verdict": "cut",
@@ -187,7 +199,9 @@
  "considered|member|brokers": {
   "verdict": "untested",
   "replaces": "Brokers",
-  "reason": "Bots misplayed it; one clean pair so far. A rerun was queued when the lane stopped."
+  "reason": "Bots misplayed it; one clean pair so far. A rerun was queued when the lane stopped.",
+  "cory": "No.",
+  "bucket": "cut"
  },
  "considered|member|cheerleaders": {
   "verdict": "untested",
@@ -387,7 +401,9 @@
  "considered|member|seat filler": {
   "verdict": "untested",
   "replaces": "Volunteer",
-  "reason": "Cory liked this idea (as Drifter) for Volunteer's slot. Second build passed its rules check; no result yet."
+  "reason": "Cory liked this idea (as Drifter) for Volunteer's slot. Second build passed its rules check; no result yet.",
+  "cory": "Like it quite a bit.",
+  "bucket": "short"
  },
  "considered|member|godfather": {
   "verdict": "cut",
@@ -418,7 +434,9 @@
  "considered|member|chaperone": {
   "verdict": "untested",
   "replaces": "High Society",
-  "reason": "Built; no games. Socialites took the slot."
+  "reason": "Built; no games. Socialites took the slot.",
+  "cory": "No.",
+  "bucket": "cut"
  },
  "considered|member|usher": {
   "verdict": "cut",
@@ -472,7 +490,9 @@
  "considered|member|bargain hunter": {
   "verdict": "untested",
   "replaces": "Regular",
-  "reason": "Passed balance (owners 31%, Regular 32%). Needs a blind judging test. Punch Card is ahead of it for the slot."
+  "reason": "Passed balance (owners 31%, Regular 32%). Needs a blind judging test. Punch Card is ahead of it for the slot.",
+  "cory": "No.",
+  "bucket": "cut"
  },
  "considered|member|last-minute shopper": {
   "verdict": "cut",
@@ -543,7 +563,9 @@
  "considered|member|mannequin": {
   "verdict": "untested",
   "replaces": "Hawker",
-  "reason": "Built; no result yet. Replaces Hawker, whose rivals-choose-on-your-turn breaks a standing rule."
+  "reason": "Built; no result yet. Replaces Hawker, whose rivals-choose-on-your-turn breaks a standing rule.",
+  "cory": "Pretty cool; short list for blue.",
+  "bucket": "short"
  },
  "considered|space|turf": {
   "verdict": "untested",
@@ -653,7 +675,9 @@
  "considered|member|executor": {
   "verdict": "untested",
   "replaces": "Old Money",
-  "reason": "Silver lane's pick for Old Money's place: a follower whenever a member leaves a rival's cult. A/B on the smarter bots is running."
+  "reason": "Silver lane's pick for Old Money's place: a follower whenever a member leaves a rival's cult. A/B on the smarter bots is running.",
+  "cory": "Like; could be +1 white instead.",
+  "bucket": "short"
  },
  "considered|member|night watchman": {
   "verdict": "cut",
@@ -679,34 +703,44 @@
  "considered|member|big finish": {
   "verdict": "untested",
   "reason": "Ahead in blind judging (+0.87) on too few matched games to count. Waiting on a rerun with the smarter bots.",
-  "replaces": "Wallflower"
+  "replaces": "Wallflower",
+  "cory": "Absolutely not.",
+  "bucket": "cut"
  },
  "considered|member|cover band": {
   "verdict": "untested",
   "reason": "Ahead in blind judging (+0.46 to +0.58), but bots misplayed it in every pair, so it doesn't count yet.",
-  "replaces": "Wallflower"
+  "replaces": "Wallflower",
+  "cory": "Maybe; consideration.",
+  "bucket": "consider"
  },
  "considered|member|turncoat": {
   "verdict": "untested",
   "reason": "A cheaper take on Turncoats, which was too strong. Built; no games yet.",
   "replaces": "Deprogrammers",
-  "cory": "Interesting; consider it.",
+  "cory": "Kind of like; backfilling taken members is good; consider somehow.",
   "bucket": "consider"
  },
  "considered|member|pickers": {
   "verdict": "untested",
   "reason": "Played but never judged; the lane stopped for the day.",
-  "replaces": "Trendsetters"
+  "replaces": "Trendsetters",
+  "cory": "Interesting; like buying from the bottom of the pile.",
+  "bucket": "consider"
  },
  "considered|member|last orders": {
   "verdict": "untested",
   "reason": "Built; no games yet.",
-  "replaces": "Closer"
+  "replaces": "Closer",
+  "cory": "No.",
+  "bucket": "cut"
  },
  "considered|member|busybody": {
   "verdict": "untested",
   "reason": "Built; no games yet. Pays off Purple's skip spaces.",
-  "replaces": "Gossip"
+  "replaces": "Gossip",
+  "cory": "No.",
+  "bucket": "cut"
  },
  "considered|member|hostesses": {
   "verdict": "cut",
@@ -739,7 +773,9 @@
  "considered|member|silver tongues": {
   "verdict": "untested",
   "reason": "Built; no games yet.",
-  "replaces": "Smooth Talkers"
+  "replaces": "Smooth Talkers",
+  "cory": "No.",
+  "bucket": "cut"
  },
  "considered|member|socialites": {
   "verdict": "cut",
@@ -1277,6 +1313,10 @@
   "bucket": "short"
  },
  "live|member|hawker": {
+  "cory": "No.",
+  "bucket": "cut"
+ },
+ "considered|member|set list": {
   "cory": "No.",
   "bucket": "cut"
  }

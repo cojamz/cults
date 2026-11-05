@@ -216,3 +216,16 @@ Also: "I don't understand this X points over even. I'm a little suspicious of it
 - **Seamstress**: kind of like; short list for yellow. **Kidnapper**: like; short list for magenta.
 - **Hawker**: no. **Window Dressers** (recruit-again version): no.
 - **Turncoat**: maybe, interesting; consider it.
+
+## Members, part 8 (voice note, Nov 5 00:43Z, his words)
+- Rules he stated: "I don't like recruiting the top member of the pile. We generally shouldn't do that." "I don't like things based on space usage... it's okay a little bit... in general, I feel like it's just gonna pay the same thing and adds variance for no reason." "I don't like tokens, shit like that." "remember, we need to balance tweak these, like the costs."
+- **Turncoat**: kind of like; something in protecting you when members get taken and backfilling them; consider somehow. **Turncoats**: good idea there; consideration for sure.
+- **Stagehand**: no (space usage). **Silver Tongues**: no. **Set List**: no.
+- **Seat Filler**: like quite a bit.
+- **Pickers**: interesting; likes buying from the bottom of the pile; "there should be some blue around that, but maybe we already have one."
+- **Mannequin**: pretty cool; short list for blue.
+- **Last Orders**: no. **Landlord** (token): no. **Hawker**: no. **Foundling**: no. 
+- **Exit Counselor**: "really cool"; short list; "nice design"; maybe red should focus on recruits.
+- **Executor**: like; could be +1 white instead, as payment.
+- **Cover Band**: no, maybe; consideration. **Chaperone**, **Busybody**, **Brokers** (round-end version), **Big Spenders**, **Bargain Hunter**: no. **Big Finish**: "absolutely not".
+- **Tithe Takers**: next (stopped there).
