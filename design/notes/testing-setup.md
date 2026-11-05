@@ -2,6 +2,8 @@
 
 Everything below already exists; this page puts it in one order so we can pick pieces per change.
 
+Every tool is one command: `node scripts/eval.mjs` lists them, `node scripts/eval.mjs <rules|words|trial|balance|ladder|feel> [args]` runs one.
+
 ## The six checks
 
 **1. Does it work (rules checks).** Automatic tests on every rule and card, a check that every card actually fires in real games, random-move games that hunt crashes, and the browser checks. About 6 minutes. Runs on every change, no exceptions. Answers: does the card do what its text says.
