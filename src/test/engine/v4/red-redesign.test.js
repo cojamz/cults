@@ -107,6 +107,13 @@ describe('locked Red action progression', () => {
     expect(s.recruits).toBe(0);
   });
 
+  it('Tryout never offers Impersonator: its On Recruit only changes the card itself', () => {
+    const s = take(table(Q, { shop: ['echo.impersonators', 'gold.banker', 'red.twins'] }), 'red.evenswap');
+    const ids = s.pending.options.map(o => o.id);
+    expect(ids).toContain(`card:${uidIn(s, 'gold.banker', 'shop')}`);
+    expect(ids).not.toContain(`card:${uidIn(s, 'echo.impersonators', 'shop')}`);
+  });
+
   it('Tryout with no On Recruit member in the shop gives its red and says so', () => {
     const s = take(table(Q, { shop: ['red.twins', 'red.intern', 'red.volunteer'] }), 'red.evenswap');
     expect(s.pending?.kind).not.toBe('choose');
