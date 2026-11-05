@@ -105,6 +105,14 @@ const spillCost = (ctx, n) => 0.25 * n * (ctx.state.players.length - 1);
 
 // Silver 2.0 (Cory, 2026-10-31): Toast, Polish, Party Gifts; Potluck, Sweet Talk; Largesse (design/decisions.md).
 // Party Gifts and Largesse hand rivals silver from the bank, never your own, and pay you followers per silver.
+/** Minions on Silver spaces, anyone's (Ballroom Dancers). */
+function onSilver(ctx) {
+  const st = ctx.state, qi = st.quadrants.indexOf(S);
+  if (qi < 0) return 0;
+  let n = Object.keys(st.slots || {}).filter(k => k.startsWith(`${qi}-`)).length;
+  for (const [key, list] of Object.entries(st.squats || {})) if (key.startsWith(`${qi}-`)) n += list.length;
+  return n;
+}
 const lowest = (ctx, p) => Math.min(...others(ctx, p).map(o => ctx.followers(o)));
 /** Rivals gain up to `left` silver from the bank, split as the giver picks one at a time. */
 function shareStep(ctx, p, data) {
@@ -365,6 +373,15 @@ const silver = {
       if (!ctx.moveMember(uid, p, o, { actor: p })) return;
       p.bonus += 4;
       ctx.log(`${p.name}'s Guest of Honor: gives ${name} to ${o.name}: +4 followers.`);
+    },
+    // Kingmakers (Cory, Nov 5): live in one of the slots Charity Ball, Creditor and Hostesses left
+    kingmakers(ctx, p, id) {
+      const o = ctx.player(id);
+      if (!o || o === p) return;
+      giveTo(ctx, p, o, S, 3);
+      afterGive(ctx, p, S);
+      p.bonus += 3;
+      ctx.log(`${p.name}'s Kingmakers: give ${o.name} 3 silver: +3 followers.`);
     },
     ...handlers8({
       usher(ctx, p, id) {
@@ -832,6 +849,42 @@ const silver = {
     m('grandhost', 'Grand Host', 8, 4, 'Double the silver you gain from Silver spaces.', { hostDouble: true }),
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 12 → 6 (the most one pass moves);
     // pass 2's pooled midpoint (5.2) rounds back to 6, so it stays (design/eval/balance-pass-2.md)
+    // Cory, Nov 5 ("I love ballroom!", "yes to kingmaker and ballroom", "yeah patron saints"): silver's three open
+    // slots, in the places Charity Ball, Creditor and Hostesses left. Prices and worth are Claude's fill-ins (silver thread).
+    m('ballroom', 'Ballroom Dancers', 3, 3, 'On Use, once per game: +2 followers per minion on Silver spaces.', { f: 2, n: 2,
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        const k = onSilver(ctx);
+        if (!k) { card.used = false; ctx.log(`${owner.name}'s Ballroom Dancers: no minions on Silver spaces yet.`); return; }
+        owner.bonus += 2 * k;
+        ctx.log(`${owner.name}'s Ballroom Dancers: ${k} minion${k === 1 ? '' : 's'} on Silver spaces: +${2 * k} followers.`);
+      },
+      // bots wait for a crowd: most of a round's worth of Silver spaces filled, or anything worth having in round III
+      botActivate: (ctx) => { const k = onSilver(ctx); return k >= Math.max(3, ctx.state.players.length) || (ctx.state.round === 3 && k >= 2 && ctx.state.players.every(o => o.left <= 1)); },
+      ...see(info => (endsAhead(info).length ? 7 : 0)),
+    }),
+    m('kingmakers', 'Kingmakers', 2, 2, 'Round End: give a rival 3 silver from the bank. +3 followers.', {
+      onAllPlaced(ctx, owner) {
+        const list = others(ctx, owner);
+        if (!list.length) return;
+        if (list.length === 1) { silver.handlers.kingmakers(ctx, owner, list[0].id); return; }
+        ctx.choose(owner, 'Kingmakers: which rival gains 3 silver? You get 3 followers', list.map(o => ({
+          id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers, ${o.res[S] || 0} silver)`, kind: 'player', value: o.id,
+          // bots hand it to whoever it helps least: off the Silver contest lead, and not the leader in followers
+          hint: -(o.res[S] || 0) - (leadIn(ctx, o, S) >= -3 ? 3 : 0) - ctx.followers(o) * 0.05,
+        })), 'silver.kingmakers');
+      },
+      ...see(info => 3 * endsAhead(info).length),
+    }),
+    m('patronsaints', 'Patron Saints', 3, 3, 'Round End: +1 follower per silver member, anyone’s.', { f: 2,
+      onAllPlaced(ctx, owner) {
+        const k = ctx.state.players.reduce((a, o) => a + ctx.countMembersOfColor(o, S), 0);
+        if (!k) return;
+        owner.bonus += k;
+        ctx.log(`${owner.name}'s Patron Saints: ${k} silver member${k === 1 ? '' : 's'} at the table: +${k} follower${k === 1 ? '' : 's'}.`);
+      },
+      ...see(info => 3 * endsAhead(info).length),
+    }),
     m('saint', 'Patron Saint', 4, 2, 'Game End: +1 follower per 2 silver members, anyone’s.', {
       onGameEnd: ctx => Math.floor(ctx.state.players.reduce((s, o) => s + ctx.countMembersOfColor(o, S), 0) / 2),
     }),

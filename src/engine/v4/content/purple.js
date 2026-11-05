@@ -879,9 +879,9 @@ export default {
       // bots: when pulling a turn up jumps at least one rival's turn
       botActivate: (ctx, owner) => turnsNowEstimate(ctx, owner, 1) > 0,
     })),
-    // REPLACE7 (Nov 4, quality loop, Members A batch 2): Timekeeper's place (paper 19, 18 on a second gate). 2 purple + 2
+    // Live in Early Birds' slot (Cory, Nov 5: "night manager yes"). Was REPLACE7 (Nov 4, Members A batch 2): Timekeeper's place (paper 19, 18 on a second gate). 2 purple + 2
     // any as a player sees it. "Placed the round's last minion" is the By color Purple contest's own measure (lastPlaced).
-    ...add7(m('nightmanager', 'Night Manager', 1, 2, 'Round End: if you placed the round’s last minion, +1 follower per purple member you have.', {
+    m('nightmanager', 'Night Manager', 1, 2, 'Round End: if you placed the round’s last minion, +1 follower per purple member you have.', {
       onRoundEnd(ctx, owner, card) {
         const last = ctx.state.lastPlaced;
         if (!last || last.round !== ctx.state.round || last.pid !== owner.id) return;
@@ -891,7 +891,7 @@ export default {
         ctx.log(`${owner.name}'s ${card.def.name}: ${owner.name} placed the round's last minion, +${k} follower${k === 1 ? '' : 's'} (${k} purple member${k === 1 ? '' : 's'}).`);
       },
       ...see(info => endsAhead(info).length), // about 3 followers a round it fires, a third of the rounds
-    })),
+    }),
     // REPLACE13 (lane F, Nov 4; quality/pitches/F-batch2.md): candidates for Closer's slot, bot games only
     ...add13(m('lastorders', 'Last Orders', 2, 2, 'When you place the last minion of the round, recruit once more.', {
       afterAction(ctx, owner, card) {
