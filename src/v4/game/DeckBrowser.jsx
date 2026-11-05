@@ -60,8 +60,12 @@ export default function DeckBrowser({ state, onClose }) {
   const sig = JSON.stringify([state.resources, selected?.def.id, rows.map(r => r.key), cards.map(c => [c.def.id, c.cost, c.color, c.later, tint(c.def), outIds.has(c.def.id) ? '' : cardGround(state, c.def), onTable(state, c.def) ? 1 : 0])]);
   const grid = useMemo(() => (
         <div className="deck-browser-grid" style={{ gridTemplateColumns: `90px repeat(${prices.length}, minmax(114px, 1fr))` }}>
-          <div className="db-corner">Price</div>
-          {prices.map(price => <div className="db-price num" key={price} data-price={price}>{price === 0 ? 'Free' : price}</div>)}
+          {/* one pinned header row, not a pinned box per price: a dozen separate pinned boxes made Firefox redraw the
+              whole list on every scroll step (Cory, Nov 5: "deck scrollin gis super laggy", on his Mac) */}
+          <div className="db-head">
+            <div className="db-corner">Price</div>
+            {prices.map(price => <div className="db-price num" key={price} data-price={price}>{price === 0 ? 'Free' : price}</div>)}
+          </div>
           {rows.map((row, i) => <Fragment key={row.key}>
             {row.out && !rows[i - 1]?.out && <div className="db-divider" style={{ gridColumn: '1 / -1' }}>Not in this game</div>}
             <h3 className={`db-color${row.out ? ' out' : ''}`} style={{ '--row-color': row.color }}>{row.name}</h3>
