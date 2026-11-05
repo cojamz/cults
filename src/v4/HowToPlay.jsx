@@ -26,7 +26,7 @@ function inline(text) {
     part.startsWith('**') && part.endsWith('**') ? <b key={k}>{part.slice(2, -2)}</b> : marked(part, k));
 }
 
-/** Tiny Markdown subset: #, ##, paragraphs, "- " lists (nested by indent) and "1. " lists. */
+/** Tiny Markdown subset: #, ##, paragraphs, "![caption](src)" pictures, "- " lists (nested by indent) and "1. " lists. */
 export function renderRules(md) {
   const out = [];
   const lines = md.split('\n');
@@ -46,6 +46,8 @@ export function renderRules(md) {
     if (!l.trim()) { i++; continue; }
     if (l.startsWith('## ')) { out.push(<h3 key={i}>{inline(l.slice(3))}</h3>); i++; continue; }
     if (l.startsWith('# ')) { out.push(<h2 key={i}>{inline(l.slice(2))}</h2>); i++; continue; }
+    const img = l.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (img) { out.push(<figure key={i} className="rules-fig"><img src={img[2]} alt={img[1]} loading="lazy" /><figcaption>{img[1]}</figcaption></figure>); i++; continue; }
     if (/^- /.test(l)) { out.push(list(/^- /, 'ul', 0)); continue; }
     if (/^\d+\. /.test(l)) { out.push(list(/^\d+\. /, 'ol', 0)); continue; }
     out.push(<p key={i}>{inline(l)}</p>); i++;

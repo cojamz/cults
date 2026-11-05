@@ -2,7 +2,7 @@
 // game's "How to play" shows (design/rulebook.md, src/v4/glossary.js, drawn by HowToPlay's renderRules), rendered
 // once to static HTML. v4-play.sh runs it on every ship, so the page always matches the build that's live.
 // Usage: node scripts/v4-rules-page.mjs <out-dir> [source-root]
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createElement as h, Fragment } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -48,6 +48,7 @@ li{margin:3px 0}
 b{color:var(--ink);font-weight:700}
 .rules-mark{white-space:nowrap}
 .rules-mark svg{vertical-align:-2px;margin-right:2px}
+.rules-fig{margin:14px 0}.rules-fig img{display:block;max-width:100%;max-height:440px;width:auto;height:auto;margin:0 auto;border:1px solid var(--edge);border-radius:4px}.rules-fig figcaption{font-size:14px;color:var(--ink-3);margin-top:4px}
 .glossary{margin:6px 0 0}
 .glossary dt{font-weight:700;margin-top:10px}
 .glossary dd{margin:2px 0 0 0;color:var(--ink-2)}
@@ -70,6 +71,8 @@ ${body}
 `;
   mkdirSync(out, { recursive: true });
   writeFileSync(`${out}/index.html`, html);
+  // the rulebook's pictures sit beside the page, at the same relative path the game uses (public/rules-img)
+  if (existsSync(`${root}/public/rules-img`)) cpSync(`${root}/public/rules-img`, `${out}/rules-img`, { recursive: true });
   console.log(`Rules page: ${out}/index.html (${VERSION})`);
 } finally {
   await vite.close();

@@ -370,6 +370,7 @@ b.num[data-hold]::after{content:attr(data-hold);visibility:visible;position:abso
 .rules-body h3{font-family:var(--display);font-weight:400;font-size:var(--fs-4);margin:16px 0 4px;color:var(--gold)}
 .rules-body p,.rules-body li{font-size:var(--fs-3);line-height:1.5;color:var(--ink)}
 .rules-body .rules-mark{white-space:nowrap}
+.rules-fig{margin:12px 0}.rules-fig img{display:block;max-width:100%;max-height:440px;width:auto;height:auto;margin:0 auto;border-radius:4px}.rules-fig figcaption{font-size:var(--fs-2);color:var(--ink-2);margin-top:4px}
 .rules-body .rules-mark svg{vertical-align:-2px;margin-right:2px}
 .rules-body p{margin:6px 0}
 .rules-body ul,.rules-body ol{margin:4px 0;padding-left:22px}
