@@ -7,6 +7,23 @@ each. One line per finding: what a player sees, what's wrong, status. Each run's
 Status words: **fixed (version)**, **fixing**, **sent** (to the thread that owns it), **open** (ours, not started),
 **Cory** (a question only he can answer), **by design** (with the reason; the check got an exception).
 
+## 2026-11-05 (second run)
+Run at 1:42am Eastern Nov 5 on v0.99.592 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
+emoji; raw list /mnt/project-files/picky/2026-11-05-06-42/). The bot flagged 1 (Impersonator's hover off the screen,
+already listed); the member sweep of 119 cards in both looks was clean. The rest are by eye from the shots.
+
+- **Final score: wide "Won in play" part showed a bare number.** A part too narrow for "Won in play" now says "Play 22".
+  **fixed (v0.99.593)**
+- **"P4 took 1 red" tag sits on the corner of P4's seat**, over the seat's "+2 followers" badge (round II, after
+  Promote). **open** (looks off)
+- **Middle ring, round III: a placed minion covers the space's words** ("Rival pays or loses a member costing 5 or
+  less" reads "costing … or less"; same on Copy a rival member's On Recruit, Free member costing 8 or less, Demote).
+  The outer ring's taken spaces keep their words clear. **open** (looks off)
+- **Final score sentence says "recruiting followers", the bar says "Bought".** ("P3 won by 2, mostly by recruiting
+  followers (+27)" beside "Bought 27".) One name for one thing; the shop's tiles say "Recruit". **open** (wording)
+- **Round III header and your seat both say "2 turns in a row"** (listed earlier): **by design**, the header and the
+  seat say the same words on purpose (Cory, Nov 4, wanting to see how many stacked turns are left).
+
 ## 2026-11-05
 Run at 7:42pm Eastern Nov 4 on v0.99.582 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
 emoji; raw list /mnt/project-files/picky/2026-11-05-00-42/). The bot flagged 3; the rest are by eye from the shots.
@@ -18,9 +35,8 @@ emoji; raw list /mnt/project-files/picky/2026-11-05-00-42/). The bot flagged 3; 
   last digit was cut. A label wider than its part now drops to the shorter name, then the number alone.
   **fixed (this run)**
 - **Final score: wide parts show a bare number** ("22", "17", "18" on the "Won in play" part, about 100px wide): a
-  first-time player can't tell what the number is without pointing at it. Wants a shorter name ("Play"?) that fits.
-  **open**
-- **Round III header and your seat both say "2 turns in a row".** Said twice on one screen. **open** (looks off)
+  first-time player can't tell what the number is without pointing at it. Now "Play 22". **fixed (v0.99.593)**
+- **Round III header and your seat both say "2 turns in a row".** Said twice on one screen. **by design** (see Nov 5 second run)
 - **Sample's pick: the chosen rival's seat grows an empty dark box under its members.** **open** (looks off)
 - **Shop header during the round II deal: "+30 shuffled in for round II" sits over "0 of 7 affordable".** Only while
   cards fly in. **open** (looks off)
