@@ -22,7 +22,8 @@ describe('contest-win members on the round-end card', () => {
     w.members = [...w.members, 9001, 9002];
     const { container } = render(<RoundEnd info={{ result, start: before, after: s, board: s }} onNext={() => {}} autoMs={0} />);
     const perks = [...container.querySelectorAll(`[data-qid="${row.qid}"] [data-win-perk]`)].map(e => e.textContent);
-    expect(perks[0]).toBe('Cheerleaders: +2 followers');
-    expect(perks[1]).toMatch(/^Victors: \+2 \w+$/);
+    // the seeded winner may already hold its own Cheerleaders (Nov 4 night's Promote change moved the game), so look for both
+    expect(perks).toContain('Cheerleaders: +2 followers');
+    expect(perks.some(t => /^Victors: \+2 \w+$/.test(t))).toBe(true);
   });
 });

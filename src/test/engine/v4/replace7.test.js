@@ -211,9 +211,9 @@ describe('Foster Parents: "Whenever a member joins your cult from a rival’s, +
     expect(named(s, 'Foster Parents')).toContain("P1's Foster Parents: Loyalists joins from P2's cult, +2 followers.");
   });
 
-  it("a rival's Promote that trades with you pays you too", () => {
+  it("a rival's Demote that trades with you pays you too", () => {
     let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.loyalists'], ['red.fosterparents', 'red.crowd']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
-    s = take(s, 'red.hireup'); // P1 gives Loyalists and takes P2's Crowd-Pleaser
+    s = take(s, 'red.trade'); // Demote (Promote never reaches cheaper, Nov 4 night): P1 gives Loyalists and takes P2's Crowd-Pleaser
     s = answer(s, `trade:${uidIn(s, 'red.loyalists', 0)}:${uidIn(s, 'red.crowd', 1)}`);
     expect(owns(s, 1, 'red.loyalists')).toBe(true);
     expect(s.players[1].bonus).toBe(2);

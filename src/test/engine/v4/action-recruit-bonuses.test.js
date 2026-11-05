@@ -1,3 +1,4 @@
+import { defById } from '../../../engine/v4/content/index.js';
 // Action-based recruits fire the same bonuses as shop recruits.
 import { it, expect } from 'vitest';
 import { sceneQ, settle } from './cards-helpers.js';
@@ -8,12 +9,17 @@ for (const [action, round] of [['red.hire', 1], ['red.hireup', 2], ['red.take', 
     before.shop = before.shop.filter(u => before.cards[u].def === 'red.volunteer');
     // Walk-In (round I rework, Oct 27) recruits the top member of the deck, not one from the shop
     if (action === 'red.hire') { before.pile.unshift(...before.shop); before.shop = []; }
-    let s = take(before, action);
+    // Taxman priced at Volunteer's for Promote's swap: Promote never reaches cheaper (Cory, Nov 4 night)
+    const tax = defById('gold.taxman'), was = { s: tax.s, w: tax.w };
+    if (action === 'red.hireup') Object.assign(tax, { s: 1, w: 0 });
+    let s;
+    try { s = take(before, action);
     if (action === 'red.hireup') {
       const incoming = s.shop.find(u => s.cards[u].def === 'red.volunteer');
       const outgoing = s.players[0].members.find(u => s.cards[u].def === 'gold.taxman');
       s = move(s, `trade:${outgoing}:${incoming}`);
     }
+    } finally { Object.assign(tax, was); }
     s = settle(s);
     expect(s.players[0].members.some(u => s.cards[u].def === 'red.volunteer')).toBe(true);
     // the space's red (Walk-In +1, Cory Oct 28; Promote +3, Cory Oct 30). Go-Between left this test with Yellow 2.0 (Oct 31).
