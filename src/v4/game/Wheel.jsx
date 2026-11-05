@@ -161,7 +161,7 @@ const ROOM_SHAPES_MAX = 512;
 const clearMeasures = () => { rimWidths.clear(); layCache.clear(); };
 // the rim's rule and prize and a space's big numbers are in the pixel face (Cory, 2026-10-28: "slightly pixelated,
 // still readable", then "number 3": the ring and the space numbers)
-export const PIXEL = '"Cults Pixel"';
+export const PIXEL = '"Cults Pixel Wheel"';
 let rimCtx, rimEarly = false; // rimEarly: something was measured before the web font arrived
 // The faces the wheel measures its print in, asked for at once (a face loads only when something first uses it, after
 // the wheel had measured with the fallback: wave-4 B #32, panel text reflowed ~1s after setup loaded). Until they're in,

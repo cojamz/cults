@@ -17,6 +17,9 @@
 @font-face{font-family:'Alegreya';src:url(./fonts/al-700-italic.woff2) format('woff2');font-weight:600 900;font-style:italic;font-display:swap}
 /* its zero is mapped to its plain O: Handjet's 0 has a mark inside that read as an 8 at wheel size ("+10" read "+18": picky bot, Nov 4) */
 @font-face{font-family:'Cults Pixel';src:url(./fonts/handjet.woff2) format('woff2');font-weight:100 900;font-display:swap}
+/* the wheel's pixel face: Handjet with its shape axes fixed (ELSH 12, ELGR 1.5) in the file itself, so the rim pictures
+   (drawn on a canvas, which can't set font-variation-settings) wear the same letters as the live words (Nov 5: Cor, "outer ring text is illegible") */
+@font-face{font-family:'Cults Pixel Wheel';src:url(./fonts/handjet-wheel.woff2) format('woff2');font-weight:100 900;font-display:swap}
 
 /* ---------- tokens: walnut, cream paper, muted inks, Alegreya ---------- */
 :root{
@@ -355,7 +358,7 @@ h1,h2,h3{font-family:var(--serif)}
 /* not your turn: the open panels rest a step below lit paper, so the lamp means something when it comes */
 .lt [data-spaces="panels"] .stage svg.wheel-paper .pcell.open:not(.lit):not(.taken) .wash{fill:color-mix(in srgb,var(--c) var(--tint,11%),var(--pl-paper,#f2e8d2))}
 /* the rim (plate 1b): light type on the quadrant's deep band; the color as its dot in a light ring; the prize a size up */
-.lt [data-spaces="panels"] .stage svg.wheel-paper .rim-rule{fill:#fff3dc;stroke:none;font-weight:800} /* plain case, a size up (Cory, 2026-10-27: "it feels ignorable") */
+.lt [data-spaces="panels"] .stage svg.wheel-paper .rim-rule{fill:#fff3dc;stroke:rgba(36,24,16,.55);stroke-width:1.1;stroke-linejoin:round;paint-order:stroke;font-weight:800} /* plain case, a size up (Cory, 2026-10-27: "it feels ignorable") */
 .lt [data-spaces="panels"] .stage svg.wheel-paper .rim-rule .rim-prize{font-weight:800}
 .lt [data-spaces="panels"] .stage svg.wheel-paper .rim-dot{pointer-events:none}
 .lt [data-spaces="panels"] .stage svg.wheel-paper .rim-dot .rim-dot-ring{fill:#f6deb0}
@@ -705,6 +708,6 @@ h1,h2,h3{font-family:var(--serif)}
 
 /* the pixel face on the wheel (Cory, 2026-10-28: "number 3"): the ring's rule and prize, and a space's big numbers */
 .lt [data-spaces="panels"] .stage svg.wheel-paper .rim-rule,.lt [data-spaces="panels"] .stage svg.wheel-paper .rim-rule .rim-prize,
-.lt [data-spaces="panels"] .stage .slot .face .main b.n{font-family:'Cults Pixel',var(--sans);font-weight:800;font-variation-settings:'ELSH' 12,'ELGR' 1.5}
+.lt [data-spaces="panels"] .stage .slot .face .main b.n{font-family:'Cults Pixel Wheel',var(--sans);font-weight:800}
 .lt [data-spaces="panels"] .stage svg.wheel-paper .rim-rule .rim-tie{font-family:var(--sans);font-variation-settings:normal}
 .turn-card .tc-more{pointer-events:auto;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
