@@ -1,0 +1,1 @@
+- 2026-11-05: Cory: trials didn't balance costs; liked cards (Quilter, Night Market, Poacher) lost because they were too pricey. Fix: before ranking a trial card weak, check whether bots ever bought it and retry it cheaper.

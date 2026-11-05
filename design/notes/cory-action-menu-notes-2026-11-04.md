@@ -178,3 +178,23 @@ Also: "I don't understand this X points over even. I'm a little suspicious of it
 - **Socialites**: short list; more interesting than High Society because others can play around it.
 - **Social Climber**: no. **Snobs** (shop token version): no, "I don't like stuff that needs extra tokens".
 - **Shoplifter** (variants): "Don't we already have a version of that?" **Second Fiddles**: too hard to track. **Scavengers**: coming back to it.
+
+## Members, part 6 (voice note, Nov 5 00:35Z, going up from the bottom, stopped at Hush Money; his words)
+- **Scavengers**: kind of cool, but don't like that it interrupts the turn. **Ragpicker**: don't like.
+- **Racketeer/Racketeers**: no.
+- **Quilter**: "kind of easy... you're not balance testing these right. just make it cheaper"; short list for yellow; likes members that give followers under special conditions; once per game, so rivals can watch for it and steal it.
+- **Power Shoppers**: meh.
+- **Poacher**: "Bots never bought this? ... probably because it's too fucking expensive"; consider maybe On Use once per game; a version on the short list to retry.
+- **Pickpocket**: meh. **Peddlers**: no, too complicated.
+- **Penny Pincher** (white): cool; should be On Recruit and end of round; short list to go back in white ("white is really revolving around having fewer members").
+- **Patronesses**: interesting, but round end is way too strong.
+- **Pallbearers**: maybe; think about what cast out means; probably triggers too rarely.
+- **Pacers**: too good (lets you go twice in round III right away); hold the thought for a future color that moves actions around.
+- **Pace-Setters**: no. **Opening Act**: no. **Night Watchman**: no.
+- **Night Market**: like it actually; a little cheaper; yellow short list.
+- **Moneylender**: white short list.
+- **Missionaries**: too much to read, no. **Misers** (all versions): no.
+- **Late Shoppers**: no. **Late Bloomers**: no.
+- **Last-Minute Shopper**: likes the idea; "didn't we have a version?"
+- **Jackals**: no. **Interrupters**: no. **Hypnotist**: way too strong and anti-fun, keep out.
+- **Hush Money**: would need silver and magenta both in the game, so probably no.

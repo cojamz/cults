@@ -22,12 +22,14 @@
  "considered|member|scavengers": {
   "verdict": "cut",
   "replaces": "Critic",
-  "reason": "Only works when a rival clears the shop, which rarely happens. Bought in 18% of games and still unbought by the better bots."
+  "reason": "Only works when a rival clears the shop, which rarely happens. Bought in 18% of games and still unbought by the better bots.",
+  "cory": "Kind of cool, but don't like that it interrupts the turn."
  },
  "considered|member|racketeers": {
   "verdict": "cut",
   "replaces": "Crew",
-  "reason": "Bought a lot when cheap, but owners won only 17%. Weak at every price tried."
+  "reason": "Bought a lot when cheap, but owners won only 17%. Weak at every price tried.",
+  "cory": "No."
  },
  "considered|member|grudge": {
   "verdict": "cut",
@@ -37,7 +39,8 @@
  "considered|member|racketeer": {
   "verdict": "cut",
   "replaces": "Grifter",
-  "reason": "Works as written, but the card team kept Grifter and parked this one. Magenta steals are on hold."
+  "reason": "Works as written, but the card team kept Grifter and parked this one. Magenta steals are on hold.",
+  "cory": "No."
  },
  "considered|member|almoner": {
   "verdict": "cut",
@@ -120,7 +123,8 @@
  "considered|member|pickpocket": {
   "verdict": "cut",
   "replaces": "Cutpurse",
-  "reason": "Closed after three bot runs: no real edge (+0.17)."
+  "reason": "Closed after three bot runs: no real edge (+0.17).",
+  "cory": "Meh."
  },
  "considered|member|tax collector": {
   "verdict": "cut",
@@ -152,7 +156,8 @@
  "considered|member|misers": {
   "verdict": "cut",
   "replaces": "Misers",
-  "reason": "Interest on hoarded white lost blind judging badly (-0.86)."
+  "reason": "Interest on hoarded white lost blind judging badly (-0.86).",
+  "cory": "No."
  },
  "considered|member|brokers": {
   "verdict": "untested",
@@ -188,12 +193,14 @@
  "considered|member|hush money": {
   "verdict": "cut",
   "replaces": "Smooth Talkers",
-  "reason": "A defensive card bots rarely bought, even after they learned to read it. Nobody feels it until a steal."
+  "reason": "A defensive card bots rarely bought, even after they learned to read it. Nobody feels it until a steal.",
+  "cory": "Needs silver and magenta both in; probably no."
  },
  "considered|member|night market": {
   "verdict": "cut",
   "replaces": "Meddler",
-  "reason": "Rarely bought, even by bots that could read it. Meddler stayed."
+  "reason": "Rarely bought, even by bots that could read it. Meddler stayed.",
+  "cory": "Like it; a little cheaper; yellow short list."
  },
  "considered|member|doorbusters": {
   "verdict": "cut",
@@ -213,17 +220,20 @@
  "considered|member|missionaries": {
   "verdict": "cut",
   "replaces": "Patriarch",
-  "reason": "Bots avoid giving members away; taken 23%, owners even. Still unbought by the better bots."
+  "reason": "Bots avoid giving members away; taken 23%, owners even. Still unbought by the better bots.",
+  "cory": "Too much to read, no."
  },
  "considered|member|interrupters": {
   "verdict": "cut",
   "replaces": "Courier",
-  "reason": "Cory said no (\"like interrupter. That's bad\"). Also rarely bought."
+  "reason": "Cory said no (\"like interrupter. That's bad\"). Also rarely bought.",
+  "cory": "No."
  },
  "considered|member|pacers": {
   "verdict": "cut",
   "replaces": "Shift Crew",
-  "reason": "Rarely bought at 9, even by bots that could read it."
+  "reason": "Rarely bought at 9, even by bots that could read it.",
+  "cory": "Too good; hold for a color that moves actions."
  },
  "considered|member|completists": {
   "verdict": "cut",
@@ -248,7 +258,8 @@
  "considered|member|late shoppers": {
   "verdict": "cut",
   "replaces": "a Blue member",
-  "reason": "Rarely bought, even by bots that could read it."
+  "reason": "Rarely bought, even by bots that could read it.",
+  "cory": "No."
  },
  "considered|member|outbidders": {
   "verdict": "watch",
@@ -263,7 +274,8 @@
  "considered|member|opening act": {
   "verdict": "cut",
   "replaces": "a Green member",
-  "reason": "Rarely bought, even by bots that could read it."
+  "reason": "Rarely bought, even by bots that could read it.",
+  "cory": "No."
  },
  "considered|member|tagalongs": {
   "verdict": "cut",
@@ -291,7 +303,8 @@
  "considered|member|jackals": {
   "verdict": "cut",
   "replaces": "Shoplifter",
-  "reason": "Fine when cheap (owners 33%), but still rarely bought at full price. Parked with the Magenta steals."
+  "reason": "Fine when cheap (owners 33%), but still rarely bought at full price. Parked with the Magenta steals.",
+  "cory": "No."
  },
  "considered|member|social climber": {
   "verdict": "cut",
@@ -313,12 +326,14 @@
  "considered|member|pallbearers": {
   "verdict": "cut",
   "replaces": "Old Money",
-  "reason": "Rarely bought, even by bots that could read it."
+  "reason": "Rarely bought, even by bots that could read it.",
+  "cory": "Maybe; probably triggers too rarely."
  },
  "considered|member|peddlers": {
   "verdict": "cut",
   "replaces": "Alchemists",
-  "reason": "Fair (owners 26%) but no better than Alchemists, with a rules bug left in it."
+  "reason": "Fair (owners 26%) but no better than Alchemists, with a rules bug left in it.",
+  "cory": "No, too complicated."
  },
  "considered|member|seat filler": {
   "verdict": "untested",
@@ -333,7 +348,8 @@
  "considered|member|pace-setters": {
   "verdict": "cut",
   "replaces": "Night Watch",
-  "reason": "Balanced, but it lost blind judging of bot games (-0.09)."
+  "reason": "Balanced, but it lost blind judging of bot games (-0.09).",
+  "cory": "No."
  },
  "considered|member|night manager": {
   "verdict": "watch",
@@ -371,7 +387,8 @@
  "considered|member|penny pincher": {
   "verdict": "cut",
   "replaces": "a White member",
-  "reason": "A flat white gain with a condition. Cory wants flat one-color gainers gone."
+  "reason": "A flat white gain with a condition. Cory wants flat one-color gainers gone.",
+  "cory": "Cool; On Recruit and Round End; white short list."
  },
  "considered|member|toll keeper": {
   "verdict": "cut",
@@ -387,7 +404,8 @@
  "considered|member|power shoppers": {
   "verdict": "cut",
   "replaces": "Shopaholics",
-  "reason": "Lost blind judging of bot games to Shopaholics (-0.75)."
+  "reason": "Lost blind judging of bot games to Shopaholics (-0.75).",
+  "cory": "Meh."
  },
  "considered|member|bargain hunter": {
   "verdict": "untested",
@@ -397,12 +415,14 @@
  "considered|member|last-minute shopper": {
   "verdict": "cut",
   "replaces": "Critic",
-  "reason": "Cory's text, but owners won 13% in 60 bot games. The alternate with +2 of any colors passed balance (30%)."
+  "reason": "Cory's text, but owners won 13% in 60 bot games. The alternate with +2 of any colors passed balance (30%).",
+  "cory": "Like the idea."
  },
  "considered|member|late bloomers": {
   "verdict": "cut",
   "replaces": "Heiresses",
-  "reason": "Lost blind judging to Heiresses (-0.75). A flat white gain, and Heiresses is protected."
+  "reason": "Lost blind judging to Heiresses (-0.75). A flat white gain, and Heiresses is protected.",
+  "cory": "No."
  },
  "considered|member|dabbler": {
   "verdict": "cut",
@@ -412,7 +432,8 @@
  "considered|member|quilter": {
   "verdict": "cut",
   "replaces": "Dyer",
-  "reason": "Cory liked it, but once made weaker it was rarely bought: taken 15% (Dyer 60%)."
+  "reason": "Cory liked it, but once made weaker it was rarely bought: taken 15% (Dyer 60%).",
+  "cory": "Short list for yellow; just make it cheaper."
  },
  "considered|member|dowagers": {
   "verdict": "cut",
@@ -427,7 +448,8 @@
  "considered|member|moneylender": {
   "verdict": "cut",
   "replaces": "Landlord",
-  "reason": "Lost both blind judging runs (-0.24 and -0.15)."
+  "reason": "Lost both blind judging runs (-0.24 and -0.15).",
+  "cory": "White short list."
  },
  "considered|member|roadie": {
   "verdict": "keep",
@@ -442,7 +464,8 @@
  "considered|member|hypnotist": {
   "verdict": "cut",
   "replaces": "a grey",
-  "reason": "Too strong: owners won 56%."
+  "reason": "Too strong: owners won 56%.",
+  "cory": "Way too strong and anti-fun; keep out."
  },
  "considered|member|mannequin": {
   "verdict": "untested",
@@ -547,7 +570,8 @@
  "considered|member|night watchman": {
   "verdict": "cut",
   "reason": "Bots never bought it (0 of 40 games). Parked.",
-  "replaces": "Bodyguards"
+  "replaces": "Bodyguards",
+  "cory": "No."
  },
  "considered|member|hoard breaker": {
   "verdict": "cut",
@@ -557,7 +581,8 @@
  "considered|member|poacher": {
   "verdict": "cut",
   "reason": "Bots almost never bought it (1 of 40 games). Parked.",
-  "replaces": "Kidnapper"
+  "replaces": "Kidnapper",
+  "cory": "Too expensive; retry a version, maybe once per game."
  },
  "considered|member|big finish": {
   "verdict": "untested",
@@ -597,12 +622,14 @@
  "considered|member|patronesses": {
   "verdict": "cut",
   "reason": "Stopped for the day with only 1 matched pair of games. Unproven.",
-  "replaces": "Debt Collectors"
+  "replaces": "Debt Collectors",
+  "cory": "Interesting, but round end is way too strong."
  },
  "considered|member|ragpicker": {
   "verdict": "cut",
   "reason": "Closed: bots never bought Patroness either, so the slot can't be read.",
-  "replaces": "Patroness"
+  "replaces": "Patroness",
+  "cory": "Don't like."
  },
  "considered|member|shoplifter": {
   "verdict": "cut",
