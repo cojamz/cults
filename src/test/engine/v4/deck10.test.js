@@ -15,7 +15,8 @@ const count = (s, color) => {
 };
 
 // round I members by color since Nov 5 (only members at 3 or less before the +1 wild)
-const R1 = { red: 3, echo: 2, thieves: 2, purple: 3, market: 4, trading: 3, yellow: 2 };
+// round I up to 5 as a player sees it (Cory, Nov 5 10:22pm UTC: "with the price increase, we should move it to 5")
+const R1 = { red: 5, echo: 4, thieves: 3, purple: 7, market: 6, trading: 5, yellow: 3 };
 // fewer than 10 where Cory's Nov 5 cuts left holes (Grifter, Cutpurse; Early Birds; Shopaholics; Raiders; Meddler, Gardeners), until he picks their replacements
 const N = { red: 10, echo: 10, thieves: 10, purple: 9, market: 9, trading: 9, yellow: 10 };
 
@@ -25,7 +26,7 @@ describe('10-card decks', () => {
       const table = COLORS.slice(i, i + 4).concat(COLORS.slice(0, Math.max(0, 4 - COLORS.slice(i, i + 4).length)));
       const s = deal(table, 10);
       for (const q of table) expect(count(s, q), q).toEqual({ n: N[q], r1: R1[q] });
-      expect(count(s, 'grey')).toEqual({ n: 12, r1: 2 });
+      expect(count(s, 'grey')).toEqual({ n: 12, r1: 7 });
     }
   });
   it('without the rule a table deals the bigger decks', () => {

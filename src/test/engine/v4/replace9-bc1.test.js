@@ -134,7 +134,7 @@ describe('Dowagers: "On Use, once per game: cast out any of your other members; 
 describe('Duty Collector: "Whenever a rival recruits a member of a color you have a member of, +1 of that color."', () => {
   it('price, round I, and Customs Officer retired', () => {
     const d = defById('yellow.dutycollector');
-    expect([d.s, d.w, memberRound(d)]).toEqual([3, 4, 3]); // joins by cost (Cory, Nov 5)
+    expect([d.s, d.w, memberRound(d)]).toEqual([3, 4, 2]); // joins by cost (Cory, Nov 5; round II up to printed 5 since 10:22pm)
     expect(defById('yellow.customs').retired).toBe(true);
   });
   it('a rival recruits red while you hold a red member: +1 red; a color you have none of: nothing', () => {

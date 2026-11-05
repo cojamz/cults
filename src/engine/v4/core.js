@@ -49,7 +49,8 @@ export const DEFAULT_RULES = { release: false, guests: true, cull: true, artifac
  *  Default 2 (Cory, 2026-10-27: "round 1 deck one, round 2 and 3 all three decks"). */
 /** Round cutoffs by printed cost (Cory, 2026-10-25: "3 or less / 4 / 5 and up"): the most a round I, then round II,
  *  member costs; anything pricier joins in round III. */
-export const ROUND_CUTOFFS = [3, 4];
+// Round I up to 5 as a player sees it, printed 4 (Cory, Nov 5 10:22pm UTC: "with the price increase, we should move it to 5", the deck limit)
+export const ROUND_CUTOFFS = [4, 5];
 /** Members that join in another round than their cost says (Cory, 2026-10-25: Impostors and Doppelganger, round III). */
 export const ROUND_OF = { 'echo.impostor': 3, 'echo.doppel': 3 };
 // (by the cost before the +1 wild every member pays, content/index.js EXTRA_WILD, so no member changes round)

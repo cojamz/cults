@@ -16,11 +16,11 @@ const playTo = (s, r, rand = seededRandom(1)) => { while (!s.over && s.round < r
 
 describe('round decks', () => {
   it('bands by cost, and a member can name its own round', () => {
-    expect([2, 3, 4, 5, 6, 10].map(c => memberRound({ s: c, w: 0 }))).toEqual([1, 1, 2, 3, 3, 3]);
+    expect([2, 3, 4, 5, 6, 10].map(c => memberRound({ s: c, w: 0 }))).toEqual([1, 1, 1, 2, 3, 3]); // round I up to printed 4 (Cory, Nov 5 10:22pm)
     expect(memberRound({ s: 8, w: 0, round: 1 })).toBe(1);
   });
   it('no member joins earlier than its cost allows', () => {
-    const band = d => { const c = d.s + d.w - (d.extraWild || 0) - (d.extraColor || 0); return c <= 3 ? 1 : c <= 4 ? 2 : 3; };
+    const band = d => { const c = d.s + d.w - (d.extraWild || 0) - (d.extraColor || 0); return c <= 4 ? 1 : c <= 5 ? 2 : 3; };
     const early = allQuadrantIds().flatMap(q => quadrant(q).members).concat(guestMembers())
       .filter(d => !d.retired && !d.artifact && memberRound(d) < band(d)).map(d => d.id);
     expect(early).toEqual([]);
@@ -30,16 +30,16 @@ describe('round decks', () => {
   });
   it('round I deals only round I members; the rest wait', () => {
     const s = start();
-    // round I's deck keeps to the cost limit: nothing over 3 before the +1 wild (Cory, Nov 5: the pinned fill-ins broke it)
-    for (const u of [...s.pile, ...s.shop]) expect(cost(s, u) <= 3, cardDef(s, u).name).toBe(true);
-    expect(s.waiting[2].every(u => cost(s, u) === 4)).toBe(true);
-    expect(s.waiting[3].every(u => cost(s, u) >= 5 || memberRound(cardDef(s, u)) === 3)).toBe(true);
+    // round I's deck keeps to the cost limit: nothing over 4 before the +1 wild, 5 as a player sees it (Cory, Nov 5 10:22pm)
+    for (const u of [...s.pile, ...s.shop]) expect(cost(s, u) <= 4, cardDef(s, u).name).toBe(true);
+    expect(s.waiting[2].every(u => cost(s, u) === 5)).toBe(true);
+    expect(s.waiting[3].every(u => cost(s, u) >= 6 || memberRound(cardDef(s, u)) === 3)).toBe(true);
   });
   it('each round shuffles its members in, with a log line', () => {
     let s = playTo(start(), 2);
     expect(s.waiting[2]).toBeUndefined();
     expect(s.waiting[3].length).toBeGreaterThan(0);
-    expect([...s.pile, ...s.shop].some(u => cost(s, u) === 4)).toBe(true);
+    expect([...s.pile, ...s.shop].some(u => cost(s, u) === 5)).toBe(true);
     expect(s.log.some(l => /^Round II members \(\d+\) are shuffled into the deck/.test(l))).toBe(true);
     s = playTo(s, 3);
     expect(Object.keys(s.waiting)).toEqual([]);
