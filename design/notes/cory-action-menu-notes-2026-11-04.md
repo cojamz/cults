@@ -198,3 +198,21 @@ Also: "I don't understand this X points over even. I'm a little suspicious of it
 - **Last-Minute Shopper**: likes the idea; "didn't we have a version?"
 - **Jackals**: no. **Interrupters**: no. **Hypnotist**: way too strong and anti-fun, keep out.
 - **Hush Money**: would need silver and magenta both in the game, so probably no.
+
+## Members, part 7 (voice note, Nov 5 00:40Z, his words)
+- Wants three piles per color: "a short list and a like live short list consideration, and then. Archive/cut." (now on the menu)
+- **Hostesses**: no. **Hoard Breaker**: consideration for magenta, not a hard cut.
+- **Grudge**: no ("you can't track that the whole game"); something there at round end, stealing a couple followers from somebody, could be a game winner.
+- **Godfather**, **Gloaters**, **Full House**: "No, absolutely not." **Early Birds** (first-minion version): no. **Dowagers**, **Doorbusters**: don't like (prefers the end-of-round recruit). **Day Laborers**: no.
+- **Dabbler**: maybe; short list for grey, maybe just in grey; "I don't understand what got cut for it".
+- **Copyist**: "How is copying only triggering once per game? Your bots are so fucking stupid." Short list for green.
+- **Completists**: "Absolutely not. That's so bad." **Charmers**: no. **Bootlegger**: no, maybe for barterers. **Almoner**: no.
+- **Accomplice**: like the On Recruit steal; short list to go back in.
+- **Volunteer**: likes it, but a valuable deck spot, probably not.
+- **Toastmaster**: could be good; consideration pile for silver.
+- **Extra Hand**: "What? You cut this? This is great. Maybe if it's a poor deal, just make it 8. You're not balance testing these? That was explicitly part of the instruction." Should be in grey for sure.
+- **Regular**: do not like. **Old Money**: maybe. **Critic**: don't like ("I never like it when it's in the shop"); wants a bit more "when rivals do something" in members.
+- **Victors**: maybe; plural name "can be changed easily. Like, why have that work against it?"
+- **Seamstress**: kind of like; short list for yellow. **Kidnapper**: like; short list for magenta.
+- **Hawker**: no. **Window Dressers** (recruit-again version): no.
+- **Turncoat**: maybe, interesting; consider it.

@@ -85,6 +85,7 @@ footer{margin-top:24px;color:var(--fg-3);font-size:13px}
       <option value="color">By color</option>
       <option value="name">A to Z</option>
     </select>
+    <select id="bucket" aria-label="Your pile"><option value="">All piles</option><option value="short">Your short list</option><option value="consider">Your consideration</option><option value="cut">Your archive/cut</option><option value="none">Not rated yet</option></select>
     <label class="hide"><input type="checkbox" id="hideSaid"> Hide ones I've rated</label>
     <input type="search" id="q" placeholder="Find a card or a word in its text" aria-label="Search">
     <div class="chips" id="colors" aria-label="Colors"></div>
@@ -102,7 +103,7 @@ const COLORS = {red:'Red',purple:'Purple',silver:'Silver',yellow:'Yellow',market
 const VERDICT = {keep:'Keep',watch:'Watch',cut:'Cut',untested:'Untested',out:'Archived'};
 const ORDER = {keep:0,watch:1,untested:2,cut:3,out:4};
 const STATUS = {live:'Live',considered:'In testing',archived:'Archived'};
-const st = {kind:'member', view:'live', sort:'rank', q:'', colors:new Set(), hideSaid:false};
+const st = {kind:'member', view:'live', sort:'rank', q:'', colors:new Set(), hideSaid:false, bucket:''};
 try { const s = JSON.parse(localStorage.getItem('menu-state')||'null'); if (s) { Object.assign(st, s, {colors:new Set(s.colors||[])}); } } catch {}
 if (location.hash === '#actions') st.kind = 'space'; if (location.hash === '#members') st.kind = 'member';
 const save = () => { try { localStorage.setItem('menu-state', JSON.stringify({...st, colors:[...st.colors]})); } catch {} };
@@ -112,6 +113,7 @@ const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;
 function seg(id, key){ $(id).addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; st[key] = b.dataset.v; if (key==='kind') history.replaceState(null,'', st.kind==='space'?'#actions':'#members'); render(); }); }
 seg('kind','kind'); seg('view','view');
 $('sort').addEventListener('change', e => { st.sort = e.target.value; render(); });
+$('bucket').addEventListener('change', e => { st.bucket = e.target.value; render(); });
 $('hideSaid').addEventListener('change', e => { st.hideSaid = e.target.checked; render(); });
 $('q').addEventListener('input', e => { st.q = e.target.value.toLowerCase(); render(); });
 window.addEventListener('hashchange', () => { st.kind = location.hash === '#actions' ? 'space' : 'member'; render(); });
@@ -128,6 +130,7 @@ function render(){
   $('colors').innerHTML = present.map(c => `<button class="chip" id="col-${c}" data-c="${c}" aria-pressed="${st.colors.has(c)}"><span class="dot" style="background:var(--c-${c})"></span>${COLORS[c]||c}</button>`).join('');
   let cs = all.filter(c => !st.colors.size || st.colors.has(c.color));
   if (st.hideSaid) cs = cs.filter(c => !c.cory);
+  if (st.bucket) cs = cs.filter(c => st.bucket === 'none' ? !c.bucket : c.bucket === st.bucket);
   if (st.q) cs = cs.filter(c => (c.name+' '+c.text+' '+c.reason).toLowerCase().includes(st.q));
   const sc = c => c.score ?? -1;
   const cmp = {
@@ -151,7 +154,7 @@ function row(c){
     <div class="body">
       <div class="top"><span class="name">${esc(c.name)}</span><span class="pill ${c.verdict}">${VERDICT[c.verdict]}</span>${c.status!=='live'&&c.verdict!=='out'?`<span class="tag">${STATUS[c.status]}</span>`:''}${c.protected?'<span class="tag prot">Protected</span>':''}<span class="meta">${esc(where)}</span></div>
       <p class="text">“${esc(c.text)}”</p>
-      <p class="reason">${esc(c.reason)}</p>${c.cory?`<p class="cory"><b>You said</b> ${esc(c.cory)}</p>`:''}
+      <p class="reason">${esc(c.reason)}</p>${c.cory?`<p class="cory"><b>${c.bucket?({short:'Short list',consider:'Consideration',cut:'Archive/cut'})[c.bucket]+' · ':''}You said</b> ${esc(c.cory)}</p>`:''}
       ${ev?`<div class="ev">${ev}</div>`:''}
     </div></li>`;
 }

@@ -1,1 +1,2 @@
 - 2026-11-05: Cory: trials didn't balance costs; liked cards (Quilter, Night Market, Poacher) lost because they were too pricey. Fix: before ranking a trial card weak, check whether bots ever bought it and retry it cheaper.
+- 2026-11-05: Cory: the trials were asked to balance-test and tweak cards and didn't (Extra Hand judged a poor deal at 9 instead of tried at 8; Victors marked down for a plural name instead of renamed; Copyist judged on bots that rarely copy). Fix: fix the cheap flaw (price, name, wording) and retry before scoring a card down.
