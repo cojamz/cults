@@ -750,14 +750,15 @@ export default {
         const who = q.slice(end + 1, close < 0 ? q.length : close).filter(x => x.t === 'turn' && x.p !== owner.id).slice(0, 2).map(x => x.p);
         if (!who.length) { ctx.log(`${owner.name}'s Bouncers: no rival has a turn left to skip this round.`); return; }
         // the second is the next rival turn after the first one moves to the end: skip in order
-        let n = 0;
-        while (n < 2) {
+        // a turn Early Birds keeps still counts as one of the two: the second is the rival turn after it (Nov 5: both
+        // tries had landed on the Early Birds seat, so the rival after it was never skipped)
+        let moved = 0, kept = 0;
+        while (moved + kept < 2) {
           const q2 = ctx.state.queue, e2 = q2.findIndex(t => t.t === 'endTurn'), c2 = q2.findIndex(t => t.t === 'allPlaced');
           const rest = q2.slice(e2 + 1, c2 < 0 ? q2.length : c2).filter(x => x.t === 'turn');
-          const next = rest.slice(0, rest.length - n).find(x => x.p !== owner.id);
+          const next = rest.slice(0, rest.length - moved).filter(x => x.p !== owner.id)[kept];
           if (!next) break;
-          skipNext(ctx, ctx.player(next.p), 'Bouncers', owner);
-          n++;
+          if (skipNext(ctx, ctx.player(next.p), 'Bouncers', owner)) moved++; else kept++;
         }
       },
     }),
