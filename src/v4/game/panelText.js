@@ -110,7 +110,7 @@ const P = {
     dilute: r => ({ main: '+2 yellow', second: `+${r + 1} yellow if you recruit a new color`, note: run(n => `+${n + 1}`, 'new color: ') }),
     // Housewarming took Big New Blood's place (Nov 4, overnight quality loop)
     housewarming: { main: '+2 yellow', second: 'free new-color member, up to 5' },
-    meltingpot: { verb: '+1 any per member color', note: '+2 yellow' },
+    meltingpot: { verb: '+1 of each member color', note: '+2 yellow' },
     makeover: { verb: '+4 yellow, then rearrange all', second: 'into any colors' },
     bloom: r => ({ main: `+${r} yellow`, second: '+1 of each fewest color', note: run(n => `+${n}`, 'yellow: ') }),
     // Match the current rule: the yellow arrives before the optional swaps.

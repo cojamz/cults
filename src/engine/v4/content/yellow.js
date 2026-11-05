@@ -213,15 +213,16 @@ export default {
     // loop): paper 18 vs 14, A/B +0.42, Lab 120 games a side. Big New Blood's text: design/archive/spaces/retired-2026-11-04.md
     HOUSEWARMING,
     swap14(swap14({
-      // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 4 new words only (Claude, under Cory's
-      // go-with-your-gut: "worded strangely"), the same effect
-      key: 'meltingpot', ring: 2, name: 'Melting Pot', text: '+2 yellow. Count the different colors of your members, and gain that many in colors you choose.',
+      // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 5: "melting pot should give 1 color for each
+      // different member color. And when i have dabblers it should give me 1 of every color": 1 of each of your member
+      // colors, no choosing (memberColors: Dabblers counts as every color on the table, Drifters as its chosen color)
+      key: 'meltingpot', ring: 2, name: 'Melting Pot', text: '+2 yellow, and +1 of each color among your members.',
       estimate: (ctx, p) => memberColors(ctx, p).length + 2,
       resolve(ctx, p) {
         ctx.gain(p, Y, 2, { fromAction: true });
-        const k = memberColors(ctx, p).length;
-        if (k) pickColors(ctx, p, k, 'Melting Pot', true);
-        else ctx.log(`${p.name}'s Melting Pot: no members yet, so only the yellow.`);
+        const cs = memberRes(ctx, p).filter(c => colors(ctx).includes(c));
+        for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
+        ctx.log(cs.length ? `${p.name}'s Melting Pot: +1 ${cs.join(', +1 ')}.` : `${p.name}'s Melting Pot: no members yet, so only the yellow.`);
       },
     }, GRAND_TOUR), OPEN_HOUSE),
     {

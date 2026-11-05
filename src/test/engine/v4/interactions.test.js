@@ -424,10 +424,9 @@ describe('gain changers on stolen goods', () => {
 describe('member colors across spheres', () => {
   it('Yellow’s Melting Pot counts Green members as a color', () => {
     let s = go(scene({ quads: ['gold', 'red', 'yellow', 'echo'], round: 2, members: [['echo.evergreen', 'echo.choir', 'red.twins']] }), 'yellow.meltingpot');
-    expect(s.pending?.options?.some(o => o.id === 'color:gold')).toBe(true);
-    s = move(move(s, 'color:gold'), 'color:gold'); // green and red: two colors among the members, so two picks
+    // green and red among the members: +1 of each
     expect(s.pending?.prompt || '').not.toMatch(/Melting Pot/);
-    expect(R(s, 0)).toMatchObject({ gold: 2, yellow: 2 });
+    expect(R(s, 0)).toMatchObject({ green: 1, red: 1, yellow: 2, gold: 0 });
   });
   it('Green members pay their colored part in green', () => {
     let s = scene({ quads: ['gold', 'red', 'yellow', 'echo'], res: [{ green: 1, gold: 1 }], shop: ['echo.agents', ...SHOP.slice(1)] });

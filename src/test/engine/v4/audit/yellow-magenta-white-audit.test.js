@@ -41,9 +41,8 @@ describe('Yellow', () => {
     const Q = ['gold', 'red', 'yellow', 'trading']; // no purple: Front-runner leans purple
     let s = table(Q, { round: 2, members: [['benders.frontrunner', 'yellow.explorer']], shop: ROW });
     s = take(s, 'yellow.meltingpot');
-    // Explorer is yellow: one pick; Front-runner: nothing
-    s = move(s, 'color:red');
-    expect(R(s)).toEqual({ gold: 0, red: 1, yellow: 2, white: 0 });
+    // Explorer is yellow: +1 yellow; Front-runner: nothing
+    expect(R(s)).toEqual({ gold: 0, red: 0, yellow: 3, white: 0 });
   });
 });
 
