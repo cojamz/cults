@@ -955,8 +955,10 @@ export function justTook(ctx, p) {
   const last = Object.values(L.now).filter(x => x.p === p.id).sort((a, b) => (b.seq || 0) - (a.seq || 0))[0];
   // Recruit hooks can run inside a still-resolving take/swap, before its wrapper settles the yield.
   // Read a settled copy so Stunt Double sees that action without mutating the ledger during UI previews.
+  // Only while the space's window is open: once its buy step has started, what the taker pays for a member there is
+  // a purchase, not the space taking (re-settling then made Stunt Double redo any space that gave less than the price).
   const e = last && { ...last };
-  if (e?.before) settle(ctx.state, e);
+  if (e?.before && windowOpen(ctx.state, last)) settle(ctx.state, e);
   return e && e.p === p.id && copyable(e) && !protectedAction(ctx, e, p) ? e : null;
 }
 

@@ -136,9 +136,9 @@ describe('REPLACE11: Yard Sale', () => {
     expect(s.shop.at(-1)).toBe(raiders); // laid at the end of the row
     expect(s.pile).not.toContain(raiders);
     expect(s.cards[raiders].used).toBeTruthy(); // once per game is once for the card (Cory, Nov 4 11:07am): it stays spent
-    expect(s.players[0].res.white).toBe(2 * 5 + 1); // Raiders costs 5
+    expect(s.players[0].res.white).toBe(2 * 6 + 1); // Raiders costs 6 (Nov 5: every member +1)
     const log = s.log.join('\n');
-    expect(log).toContain("P1's Yard Sale: Raiders paid 10 white.");
+    expect(log).toContain("P1's Yard Sale: Raiders paid 12 white.");
     expect(log).not.toContain('sent Raiders to the bottom of the pile');
     expect(log).toContain('P1 put Raiders face up into the shop.');
     // a cast-out, so Undertaker ("Whenever you cast out one of your members, +2 followers.") pays
@@ -268,16 +268,17 @@ describe('REPLACE11: Housewarming', () => {
   });
   // "+2 yellow. Recruit a shop member of a color none of your members have, costing up to 5, for free."
   it('gives +2 yellow and recruits, for free, a new-color shop member costing up to 5 (not your colors, not dearer)', () => {
-    let s = table(['red', 'yellow'], { round: 2, members: [['red.volunteer']], shop: ['red.intern', 'yellow.pilgrim', 'yellow.peddler'] });
-    const pilgrim = s.shop.find(u => s.cards[u].def === 'yellow.pilgrim');
+    // Gardeners (4) for Pilgrim, which costs 6 since every member +1 (Nov 5)
+    let s = table(['red', 'yellow'], { round: 2, members: [['red.volunteer']], shop: ['red.intern', 'yellow.gardener', 'yellow.peddler'] });
+    const pilgrim = s.shop.find(u => s.cards[u].def === 'yellow.gardener');
     s = answer(s, `slot:${slot(s, 'Housewarming')}`);
     expect(s.players[0].res.yellow).toBe(2);
     expect(s.pending.prompt).toBe('Housewarming: recruit which member for free?');
     expect(s.pending.options.map(o => o.id)).toEqual([`card:${pilgrim}`]);
     s = answer(s, `card:${pilgrim}`);
     expect(s.players[0].members).toContain(pilgrim);
-    expect(s.players[0].res.yellow).toBe(2 + 1); // Pilgrim's On Recruit "+1 of each color" fires
-    expect(s.log.join('\n')).toContain("P1's Housewarming: recruits Pilgrim for free.");
+    expect(s.players[0].res.red).toBe(1); // Gardeners' On Recruit "+1 of each color you have none of" fires
+    expect(s.log.join('\n')).toContain("P1's Housewarming: recruits Gardeners for free.");
   });
   it('with no new-color member at 5 or less, only the yellow', () => {
     let s = table(['red', 'yellow'], { round: 2, members: [['red.volunteer']], shop: ['red.intern'] });

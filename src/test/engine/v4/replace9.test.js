@@ -19,9 +19,9 @@ const answerAll = (s, head, pick) => { while (s.pending?.prompt?.startsWith(head
 describe('REPLACE9: the switch', () => {
   it('prints the draft prices (as a player sees them) and retires the old cards', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f, d.n]; };
-    expect(price('yellow.tollkeeper')).toEqual([3, 3, 1, 1]);
-    expect(price('yellow.quilter')).toEqual([5, 2, 1, 1]);
-    expect(price('market.lastminute')).toEqual([3, 1, 1, 1]);
+    expect(price('yellow.tollkeeper')).toEqual([3, 4, 1, 1]);
+    expect(price('yellow.quilter')).toEqual([5, 3, 1, 1]);
+    expect(price('market.lastminute')).toEqual([3, 2, 1, 1]);
     for (const id of ['yellow.customs', 'yellow.dyer', 'market.critic']) expect(defById(id).retired).toBe(true);
     expect(defById('yellow.tollkeeper').round).toBe(1);
     expect(defById('market.lastminute').round).toBe(1);
@@ -159,7 +159,7 @@ describe('Bargain Hunter: "While you have the fewest followers (ties count), buy
   const Q4 = ['red', 'market', 'purple', 'silver'];
   const buy1 = s => { s = move(s, 'followers:1'); while (s.pending?.kind === 'pay' || s.pending?.prompt?.includes('pay for')) s = answer(s, s.pending.options[0].id); return s; };
   it('price and retirement', () => {
-    expect([defById('market.bargainhunter').s, defById('market.bargainhunter').w]).toEqual([2, 1]);
+    expect([defById('market.bargainhunter').s, defById('market.bargainhunter').w]).toEqual([2, 2]);
     expect(defById('market.regular').retired).toBe(true);
   });
   it('fewest followers: a follower purchase hands back the recruit; once past a rival, the next buy uses it up', () => {
@@ -189,7 +189,7 @@ describe('Bargain Hunter: "While you have the fewest followers (ties count), buy
 describe('Hypnotist: "On Use, once per game: whoever places next puts their minion on an open space you choose."', () => {
   const Q4 = ['red', 'market', 'purple', 'silver'];
   it('price and retirement', () => {
-    expect([defById('benders.hypnotist').s, defById('benders.hypnotist').w]).toEqual([0, 6]);
+    expect([defById('benders.hypnotist').s, defById('benders.hypnotist').w]).toEqual([0, 7]);
     expect(defById('benders.extrahand').retired).toBe(true);
   });
   it('On Use: the owner names an open space; after the owner\'s turn, the next minion placed must go there; then it is spent', () => {
@@ -231,7 +231,7 @@ describe('Jack-of-All-Trades: "Your yellow counts as any color in your full sets
   const Q4 = ['red', 'yellow', 'market', 'purple'];
   it('price and retirement', () => {
     const d = defById('yellow.jack');
-    expect([d.s, d.w, d.f, d.n, d.round]).toEqual([3, 1, 1, 1, 1]);
+    expect([d.s, d.w, d.f, d.n, d.round]).toEqual([3, 2, 1, 1, 1]);
     expect(defById('yellow.tastemaker').retired).toBe(true);
   });
   it('Most full sets: yellow fills a missing color (no purple, 4 yellow: 2 sets, beating a rival\'s 1)', () => {
@@ -259,7 +259,7 @@ describe('Ambassadors: "On Recruit: +1 of each color you have a member of. Round
   const Q4 = ['red', 'yellow', 'market', 'purple'];
   it('price and retirement', () => {
     const d = defById('yellow.ambassadors');
-    expect([d.s, d.w, d.f, d.n, d.now]).toEqual([5, 4, 3, 3, true]);
+    expect([d.s, d.w, d.f, d.n, d.now]).toEqual([5, 5, 3, 3, true]);
     expect(defById('yellow.caravan').retired).toBe(true);
   });
   it('Round Start: +1 of each color you have a member of (itself yellow), not the colors you hold', () => {
@@ -273,7 +273,7 @@ describe('Mannequin: "Blue members in the shop count as your members when contes
   const Q4 = ['red', 'market', 'purple', 'silver'];
   it('price and retirement', () => {
     const d = defById('market.mannequin');
-    expect([d.s, d.w, d.f, d.n, d.round]).toEqual([3, 2, 1, 1, undefined]); // joins by cost (round II), live since Nov 4 night
+    expect([d.s, d.w, d.f, d.n, d.round]).toEqual([3, 3, 1, 1, undefined]); // joins by cost (round II), live since Nov 4 night
     expect(defById('market.hawkers').retired).toBe(true);
   });
   it('pitched turn: round I end, Most members: 1 member plus 2 blue shop members (one counts as 3) beats a rival\'s 3', () => {
@@ -297,7 +297,7 @@ describe('Stallholder: "On Use, once per round: move a shop member beside this c
   };
   it('price, retirement, and the old Hawker', () => {
     const d = defById('market.stallholder');
-    expect([d.s, d.w, d.f, d.n, d.round, d.activate]).toEqual([4, 1, 1, 1, 1, 'round']);
+    expect([d.s, d.w, d.f, d.n, d.round, d.activate]).toEqual([4, 2, 1, 1, 1, 'round']);
     expect(defById('market.hawkers').retired).toBe(true);
   });
   it('On Use: the member moves beside the card and the shop refills', () => {
@@ -343,7 +343,7 @@ describe('Hawker at Round Start: "Round Start: choose a shop member. Starting on
   };
   it('price, round I, retires the old Hawker, and no On Use', () => {
     const d = defById('market.hawker2');
-    expect([d.s, d.w, d.f, d.round, d.activate]).toEqual([5, 3, 1, 1, undefined]);
+    expect([d.s, d.w, d.f, d.round, d.activate]).toEqual([5, 4, 1, 1, undefined]);
     expect(defById('market.hawkers').retired).toBe(true);
   });
   it('the rival on the left who can pay is asked first, at Round Start; buying pays the owner 2 more', () => {
@@ -366,7 +366,7 @@ describe('Seamstress: "On Use, once per game: double your full sets."', () => {
   const Q4 = ['red', 'yellow', 'market', 'purple'];
   it('price and retirement', () => {
     const d = defById('yellow.seamstress');
-    expect([d.s, d.w, d.f, d.activate]).toEqual([4, 2, 1, 'game']);
+    expect([d.s, d.w, d.f, d.activate]).toEqual([4, 3, 1, 'game']);
     expect(defById('yellow.harmonist').retired).toBe(true);
   });
   it('On Use: 2 full sets become 4 (+2 of each color); once per game', () => {

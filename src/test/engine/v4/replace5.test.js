@@ -17,12 +17,12 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 describe('REPLACE5: the switch', () => {
   it('prints the draft prices (as a player sees them) and retires the old cards', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
-    expect(price('yellow.secondfiddles')).toEqual([5, 3, 1]);
-    expect(price('thieves.secondstory')).toEqual([4, 2, 1]); // cheaper (Cory, Nov 5)
-    expect(price('thieves.jackals')).toEqual([4, 2, 1]);
-    expect(price('thieves.vultures')).toEqual([5, 3, 1]);
-    expect(price('purple.tagalongs')).toEqual([6, 3, 1]);
-    expect(price('purple.fullhouse')).toEqual([4, 2, 1]);
+    expect(price('yellow.secondfiddles')).toEqual([5, 4, 1]);
+    expect(price('thieves.secondstory')).toEqual([4, 3, 1]); // cheaper (Cory, Nov 5)
+    expect(price('thieves.jackals')).toEqual([4, 3, 1]);
+    expect(price('thieves.vultures')).toEqual([5, 4, 1]);
+    expect(price('purple.tagalongs')).toEqual([6, 4, 1]);
+    expect(price('purple.fullhouse')).toEqual([4, 3, 1]);
     for (const id of ['yellow.dyer', 'thieves.sticky', 'thieves.shoplifter', 'thieves.doubleagent', 'purple.bouncer', 'purple.timekeepers'])
       expect(defById(id).retired).toBe(true);
   });

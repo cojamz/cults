@@ -15,7 +15,7 @@ const Q4 = ['red', 'market', 'purple', 'silver'];
 describe('Last-Minute Shopper (alternate): "Round End: +2 of any colors, then you may recruit a shop member, paying its cost."', () => {
   it('same price, retires Critic, and the first version is off', () => {
     const d = defById('market.lastminute2');
-    expect([d.s, d.w, d.f, d.n, d.round]).toEqual([3, 1, 1, 1, 1]);
+    expect([d.s, d.w, d.f, d.n, d.round]).toEqual([3, 2, 1, 1, 1]);
     expect(defById('market.critic').retired).toBe(true);
     expect(() => defById('market.lastminute')).toThrow();
   });

@@ -16,8 +16,8 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 describe('REPLACE12: the switch', () => {
   it('prints the pitched prices (as a player sees them) and retires Deprogrammers', () => {
     const card = id => { const d = defById(id); return [d.name, d.s, d.w, d.f, d.n]; };
-    expect(card('red.exitcounselor')).toEqual(['Exit Counselor', 3, 1, 1, 1]);
-    expect(card('red.foundling')).toEqual(['Foundling', 2, 1, 1, 1]);
+    expect(card('red.exitcounselor')).toEqual(['Exit Counselor', 3, 2, 1, 1]);
+    expect(card('red.foundling')).toEqual(['Foundling', 2, 2, 1, 1]);
     expect(defById('red.movementpenalty').retired).toBe(true);
   });
 });
@@ -168,7 +168,7 @@ describe('Delivery: "Give a shop member to a rival; gain blue equal to its cost.
     s = answer(s, opt(s, o => o.label.startsWith('Foster Parents')));
     s = answer(s, 'player:1');
     expect(owns(s, 1, 'red.fosterparents')).toBe(true);
-    expect(s.players[0].res.blue).toBe(5);
-    expect(named(s, 'Delivery').join(' ')).toContain("Foster Parents goes to P2's cult; P1 +4 blue.");
+    expect(s.players[0].res.blue).toBe(6); // Foster Parents costs 5 since every member +1 (Nov 5)
+    expect(named(s, 'Delivery').join(' ')).toContain("Foster Parents goes to P2's cult; P1 +5 blue.");
   });
 });

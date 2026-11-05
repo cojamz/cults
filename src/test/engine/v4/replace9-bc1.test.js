@@ -17,7 +17,7 @@ const Q4 = ['red', 'yellow', 'market', 'purple'];
 describe('Power Shoppers: "Whenever you recruit your second member in a turn, +2 followers."', () => {
   it('price, and Snobs retired', () => {
     const d = defById('market.powershoppers');
-    expect([d.s, d.w]).toEqual([4, 3]);
+    expect([d.s, d.w]).toEqual([4, 4]);
     expect(defById('market.snob').retired).toBe(true);
   });
   it('the second member of a turn pays +2, the first and third do not', () => {
@@ -40,7 +40,7 @@ describe('Power Shoppers: "Whenever you recruit your second member in a turn, +2
 describe('Stand-In: "Round Start: if you have the fewest followers (ties count), +1 minion this round."', () => {
   it('price, and Extra Hand retired', () => {
     const d = defById('benders.standin');
-    expect(d.s + d.w).toBe(6);
+    expect(d.s + d.w).toBe(7); // 6 until every member cost 1 more (Nov 5)
     expect(d.round).toBe(1);
     expect(defById('benders.extrahand').retired).toBe(true);
   });
@@ -65,7 +65,7 @@ describe('Stand-In: "Round Start: if you have the fewest followers (ties count),
 describe('Tailor: "Round Start: +1 follower per full set you hold."', () => {
   it('price, and Dyer retired', () => {
     const d = defById('yellow.tailor');
-    expect([d.s, d.w]).toEqual([5, 2]);
+    expect([d.s, d.w]).toEqual([5, 3]);
     expect(defById('yellow.dyer').retired).toBe(true);
   });
   it('2 full sets at round II start: +2 followers; none: nothing', () => {
@@ -80,7 +80,7 @@ describe('Tailor: "Round Start: +1 follower per full set you hold."', () => {
 describe('Dabbler: "Counts as a member of every color."', () => {
   it('price, and Dabblers retired', () => {
     const d = defById('benders.dabbler');
-    expect([d.s + d.w]).toEqual([2]);
+    expect([d.s + d.w]).toEqual([3]);
     expect(defById('benders.dabblers').retired).toBe(true);
   });
   it('one member of each color on the table', () => {
@@ -93,7 +93,7 @@ describe('Late Bloomers: "Round End: if you have the fewest followers (ties coun
   const Q = ['red', 'trading', 'market', 'purple'];
   it('price, and Heiresses retired', () => {
     const d = defById('trading.latebloomers');
-    expect([d.s, d.w]).toEqual([4, 3]);
+    expect([d.s, d.w]).toEqual([4, 4]);
     expect(defById('trading.heiress').retired).toBe(true);
   });
   const end = bonus => table(Q, { n: 3, round: 1, bonus, members: [['trading.latebloomers']], queue: [{ t: 'allPlaced' }] });
@@ -112,7 +112,7 @@ describe('Dowagers: "On Use, once per game: cast out any of your other members; 
   const Q = ['red', 'trading', 'market', 'purple'];
   it('price', () => {
     const d = defById('trading.dowagers');
-    expect([d.s, d.w]).toEqual([5, 4]);
+    expect([d.s, d.w]).toEqual([5, 5]);
   });
   it('casts out members one at a time to the bottom of the pile, +3 each, until Done', () => {
     let s = table(Q, { n: 2, round: 3, members: [['trading.dowagers', 'red.volunteer', 'market.regular']] });
@@ -134,7 +134,7 @@ describe('Dowagers: "On Use, once per game: cast out any of your other members; 
 describe('Duty Collector: "Whenever a rival recruits a member of a color you have a member of, +1 of that color."', () => {
   it('price, round I, and Customs Officer retired', () => {
     const d = defById('yellow.dutycollector');
-    expect([d.s, d.w, memberRound(d)]).toEqual([3, 3, 3]); // joins by cost (Cory, Nov 5)
+    expect([d.s, d.w, memberRound(d)]).toEqual([3, 4, 3]); // joins by cost (Cory, Nov 5)
     expect(defById('yellow.customs').retired).toBe(true);
   });
   it('a rival recruits red while you hold a red member: +1 red; a color you have none of: nothing', () => {
@@ -169,7 +169,7 @@ describe('Window Dressers (reworded): "On Recruit: send any shop members to the 
     expect(named(s, 'Window Dressers').some(l => l.includes('recruit again this turn'))).toBe(true);
   });
   it('a bot that can afford nothing and holds under 3 resources keeps the shop', () => {
-    let s = table(Q4, { n: 2, res: [{ blue: 4 }], shop: ['market.windowdressers9', 'red.volunteer', 'yellow.gardener', 'purple.crew'], queue: [{ t: 'buy', p: 0 }] });
+    let s = table(Q4, { n: 2, res: [{ blue: 5 }], shop: ['market.windowdressers9', 'red.volunteer', 'yellow.gardener', 'purple.crew'], queue: [{ t: 'buy', p: 0 }] }); // 5 blue (was 4): Window Dressers costs 1 more since Nov 5
     s = pay(move(s, `card:${uidIn(s, 'market.windowdressers9', 'shop')}`));
     const best = [...s.pending.options].sort((a, b) => b.hint - a.hint)[0];
     expect(best.id).toBe('done');
@@ -189,7 +189,7 @@ describe('Moneylender: "On Use, once per round: cast out one of your members cos
   const Q = ['red', 'trading', 'market', 'purple'];
   it('price, and Landlord retired', () => {
     const d = defById('trading.moneylender');
-    expect([d.s, d.w]).toEqual([3, 1]);
+    expect([d.s, d.w]).toEqual([3, 2]);
     expect(defById('trading.shopkeeper').retired).toBe(true);
   });
   it('offers only other members costing 3 or less; the one cast out goes to the bottom, +4 white', () => {

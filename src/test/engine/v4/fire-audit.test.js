@@ -88,6 +88,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
   const QUIET_RESTRICTIONS = new Set(['echo.agents', 'trading.cashier', 'echo.doppel', 'market.makeover', 'echo.wallflower', 'echo.translator',
     'market.snob', // Snobs pays only for blue members at game end; Shoplifter 7 and Heiresses 9 (Oct 30) moved the games so its owners had none. cards-market covers it
     'echo.bait', // Bait pays only when a rival copies its owner's space; the Nov 3 live replacements moved the games so its 3 holders were never copied. green-bait-trading covers it
+    'market.sommelier', // Sommelier (cut) pays only when its owner recruits a blue member; every member +1 (Nov 5) moved the games so its 4 holders never did. cards-market covers it
     'market.restocker']); // Restockers: bots held it in 4 seeded games without using it once Out of Style went back to per member (Oct 28); cards-member-structure covers it
   const TABLES = [
     ['thieves', 'market', 'trading', 'echo'], ['gold', 'thieves', 'trading', 'echo'], ['red', 'market', 'thieves', 'echo'],

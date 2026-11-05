@@ -22,7 +22,7 @@ const canBuy = (s, re) => s.pending.options.some(o => re.test(o.label || ''));
 describe('REPLACE16: the switch', () => {
   it("keeps the old cards' prices, worth and count, and retires Toastmaster and Smooth Talkers", () => {
     const card = id => { const d = defById(id); return [d.s, d.w, d.f, d.n]; };
-    expect(card('silver.tongues')).toEqual([6, 5, 2, 2]); // Smooth Talkers' old price (it's 6 + 4 since Nov 5)
+    expect(card('silver.tongues')).toEqual([6, 6, 2, 2]); // Smooth Talkers' old price (it's 6 + 4 since Nov 5)
     expect(defById('silver.socialites').text).toBe('Whenever a rival recruits paying silver, +1 follower.');
     expect(defById('silver.toastmaster').retired).toBe(true);
     expect(defById('silver.smoothtalker').retired).toBe(true);
@@ -35,7 +35,7 @@ describe('Silver Tongues: "Everyone\'s silver pays for any color. Whenever a riv
     let s = sc({ n: 3, res: [{}, { silver: 3 }], members: [['silver.tongues']], shop: ['red.volunteer'], queue: [{ t: 'buy', p: 1 }] });
     expect(canBuy(s, /Volunteer/)).toBe(true);
     s = buy(s, /Volunteer/);
-    expect(s.log).toContain('P2 recruited Volunteer (1 silver; Silver Tongues: silver paid for red).');
+    expect(s.log).toContain('P2 recruited Volunteer (2 silver; Silver Tongues: silver paid for red).');
     expect(s.players[0].bonus).toBe(1);
     expect(linesNaming(s.log, 'Silver Tongues').some(l => /P1's Silver Tongues: \+1 follower \(P2 paid/.test(l))).toBe(true);
   });
@@ -46,7 +46,7 @@ describe('Silver Tongues: "Everyone\'s silver pays for any color. Whenever a riv
     let m = sc({ n: 3, res: [{ silver: 3 }], members: [['silver.tongues']], shop: ['red.volunteer'], queue: [{ t: 'buy', p: 0 }] });
     expect(canBuy(m, /Volunteer/)).toBe(true);
     m = buy(m, /Volunteer/);
-    expect(m.log).toContain('P1 recruited Volunteer (1 silver; Silver Tongues: silver paid for red).');
+    expect(m.log).toContain('P1 recruited Volunteer (2 silver; Silver Tongues: silver paid for red).');
     expect(m.players[0].bonus).toBe(0);
   });
   it('without Silver Tongues at the table, silver does not pay a red part', () => {

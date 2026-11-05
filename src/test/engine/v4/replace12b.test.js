@@ -16,7 +16,7 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 describe('REPLACE12 rewords: the switch', () => {
   it('Turncoat at its pitched price, in retired Deprogrammers\' place', () => {
     const d = defById('red.turncoat');
-    expect([d.name, d.s, d.w, d.f]).toEqual(['Turncoat', 3, 1, 2]);
+    expect([d.name, d.s, d.w, d.f]).toEqual(['Turncoat', 3, 2, 2]);
     expect(defById('red.movementpenalty').retired).toBe(true);
   });
 });
@@ -41,11 +41,11 @@ describe('Turncoat: "Whenever a rival takes one of your members, recruit the top
 });
 
 describe('Bury, reworded: "...Gain blue equal to its cost. +1 blue."', () => {
-  it('buries Foster Parents (4): +4 blue and the +1', () => {
+  it('buries Foster Parents (5 since every member +1, Nov 5): +5 blue and the +1', () => {
     let s = table(['market', 'red', 'trading', 'yellow'], { round: 2, shop: ['red.fosterparents', 'red.volunteer'] });
     s = take(s, 'market.pricecheck');
     s = answer(s, s.pending.options.find(o => o.label.startsWith('Foster Parents')).id);
-    expect(s.players[0].res.blue).toBe(5);
+    expect(s.players[0].res.blue).toBe(6);
     expect(s.shop.some(u => s.cards[u].def === 'red.fosterparents')).toBe(false);
   });
 });
@@ -71,14 +71,14 @@ describe('Right Away, reworded: "+2 purple in round I, +3 in round II, +4 in rou
 
 describe('Snobs, trading up: "Whenever you recruit a member costing more than each of your others, +2 followers."', () => {
   const R = { red: 20, blue: 20, yellow: 20, white: 20 };
-  it('recruiting Mentor (9) over Snobs (5) and Volunteer: +2', () => {
+  it('recruiting Mentor (10) over Snobs (7) and Volunteer: +2', () => {
     let s = table(['yellow', 'red', 'market', 'trading'], { round: 2, res: [R], members: [['market.snob', 'red.volunteer']],
       shop: ['red.mentor', 'red.fosterparents'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }] });
     s = take(s, 'yellow.dilute');
     s = move(s, `card:${uidIn(s, 'red.mentor', 'shop')}`);
     while (s.pending?.player === 0 && s.pending.kind !== 'place') s = move(s, s.pending.options[0].id);
     expect(s.players[0].bonus).toBe(2);
-    expect(named(s, 'Snobs').join(' ')).toContain('Mentor (9) costs more than each of their other members, +2 followers.');
+    expect(named(s, 'Snobs').join(' ')).toContain('Mentor (10) costs more than each of their other members, +2 followers.');
   });
   it('a recruit cheaper than one of your members pays nothing', () => {
     let s = table(['yellow', 'red', 'market', 'trading'], { round: 2, res: [R], members: [['market.snob', 'red.mentor']],

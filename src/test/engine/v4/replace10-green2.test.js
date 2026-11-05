@@ -25,7 +25,7 @@ describe('REPLACE10 second versions', () => {
   });
   it('Warm-Up Act costs 2 green + 2 any', () => {
     const d = defById('echo.warmup');
-    expect([d.s, d.w]).toEqual([2, 2]);
+    expect([d.s, d.w]).toEqual([2, 3]);
   });
 
   it('Encore, Cory\'s wording: your next On Recruit happens twice, on a later turn too', () => {
@@ -44,6 +44,6 @@ describe('REPLACE10 second versions', () => {
 
   it('Song Request at 4 green + 3 any (songrequest2)', () => {
     const d = defById('echo.songrequest');
-    expect([d.s, d.w]).toEqual([4, 3]);
+    expect([d.s, d.w]).toEqual([4, 4]);
   });
 });

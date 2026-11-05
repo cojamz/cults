@@ -17,14 +17,14 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 describe('REPLACE2: the switch', () => {
   it('prints the spec prices (as a player sees them) and retires the old cards', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
-    expect(price('red.bodysnatchers')).toEqual([3, 2, 2]); // cheaper (Cory, Nov 5)
-    expect(price('echo.mirrorimage')).toEqual([6, 3, 1]);
-    expect(price('thieves.skimmers')).toEqual([4, 2, 1]);
-    expect(price('market.doorbusters')).toEqual([5, 3, 2]);
-    expect(price('yellow.nightmarket')).toEqual([4, 2, 1]);
-    expect(price('silver.fundraisers')).toEqual([6, 3, 2]);
-    expect(price('silver.hushmoney')).toEqual([4, 2, 1]);
-    expect(price('benders.spoilsports')).toEqual([0, 6, 1]);
+    expect(price('red.bodysnatchers')).toEqual([3, 3, 2]); // cheaper (Cory, Nov 5)
+    expect(price('echo.mirrorimage')).toEqual([6, 4, 1]);
+    expect(price('thieves.skimmers')).toEqual([4, 3, 1]);
+    expect(price('market.doorbusters')).toEqual([5, 4, 2]);
+    expect(price('yellow.nightmarket')).toEqual([4, 3, 1]);
+    expect(price('silver.fundraisers')).toEqual([6, 4, 2]);
+    expect(price('silver.hushmoney')).toEqual([4, 3, 1]);
+    expect(price('benders.spoilsports')).toEqual([0, 7, 1]);
     for (const id of ['red.twins', 'echo.wallflower', 'thieves.desperado', 'market.shopaholic', 'yellow.ringleader', 'silver.gala', 'silver.smoothtalker', 'benders.scout'])
       expect(defById(id).retired).toBe(true);
   });

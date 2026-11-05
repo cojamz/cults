@@ -11,7 +11,8 @@ const printed = def => def.n ?? 1;
 const members = (state, p, color = null) => p.members.reduce((n, uid) => {
   const card = state.cards[uid], def = defById(card.def);
   // Dabblers counts as every color on the table (Cory, 2026-10-28), itself or as a copy
-  const every = [def, card.copy && defById(card.copy)].some(d => d?.everyColor) && state.quadrants.includes(color);
+  // an Impersonator holding Dabblers' ability (card.ability) counts as it too, as the engine's effectiveDefs reads it
+  const every = [def, card.copy && defById(card.copy), card.ability && defById(card.ability)].some(d => d?.everyColor) && state.quadrants.includes(color);
   // Drifters counts as the color chosen when it was recruited (card.asColor, Oct 31)
   if (color && (card.asColor || def.quadrant) !== color && !every) return n;
   return n + Math.max(printed(def), card.copy ? printed(defById(card.copy)) : 0);

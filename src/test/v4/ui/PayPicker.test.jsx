@@ -172,7 +172,7 @@ describe('v4 payment picker', () => {
     p.discount = 4;
     p.res = { ...p.res, gold: 6, red: 6, blue: 6, green: 6 };
     // a gold member face up (its colored part is gold, so the discount and the double gold both bend it)
-    const target = state.pile.find(u => state.cards[u].def.startsWith('gold.') && state.cards[u].def !== 'gold.thrift' && memberPrice(state, p, u).total >= 2);
+    const target = state.pile.find(u => state.cards[u].def.startsWith('gold.') && state.cards[u].def !== 'gold.thrift' && memberPrice(state, p, u).total >= 3); // 3 (was 2) since every member +1 (Nov 5): a 2 left one way to pay, so no picker
     state.pile = state.pile.filter(u => u !== target); state.shop = [target, ...state.shop];
     expect(target).toBeDefined();
     state.queue[0] = { t: 'pay', p: me, uid: target };

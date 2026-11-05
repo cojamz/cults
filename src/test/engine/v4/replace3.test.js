@@ -19,14 +19,14 @@ const payAll = s => { while (s.pending?.kind === 'choose' && s.pending.options.s
 describe('REPLACE3: the switch', () => {
   it('prints the draft prices (as a player sees them) and retires the old cards', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
-    expect(price('trading.evictors')).toEqual([5, 3, 1]);
-    expect(price('purple.interrupters')).toEqual([4, 2, 1]);
-    expect(price('thieves.kidnappers')).toEqual([6, 2, 1]); // 2 more when it went live (Claude, Nov 3: owners won 44% at 4 + 2)
-    expect(price('market.completists')).toEqual([6, 3, 2]);
-    expect(price('echo.impersonators')).toEqual([4, 2, 1]);
-    expect(price('red.missionaries')).toEqual([6, 3, 2]);
-    expect(price('silver.creditors')).toEqual([4, 2, 1]); // Creditor: 1 member, worth 1 (Nov 4)
-    expect(price('purple.pacers')).toEqual([6, 3, 2]);
+    expect(price('trading.evictors')).toEqual([5, 4, 1]);
+    expect(price('purple.interrupters')).toEqual([4, 3, 1]);
+    expect(price('thieves.kidnappers')).toEqual([6, 3, 1]); // 2 more when it went live (Claude, Nov 3: owners won 44% at 4 + 2)
+    expect(price('market.completists')).toEqual([6, 4, 2]);
+    expect(price('echo.impersonators')).toEqual([4, 3, 1]);
+    expect(price('red.missionaries')).toEqual([6, 4, 2]);
+    expect(price('silver.creditors')).toEqual([4, 3, 1]); // Creditor: 1 member, worth 1 (Nov 4)
+    expect(price('purple.pacers')).toEqual([6, 4, 2]);
     for (const id of ['trading.hoarder', 'purple.courier', 'thieves.kingpin', 'market.patroness', 'echo.muse', 'red.patriarch', 'silver.collector', 'purple.crew'])
       expect(defById(id).retired).toBe(true);
   });
@@ -40,10 +40,10 @@ describe('REPLACE3: each card fires', () => {
     s = answer(s, `card:${uidIn(s, 'trading.martyr', 1)}`);
     expect(owns(s, 1, 'trading.martyr')).toBe(false);
     expect(s.cards[s.pile.at(-1)].def).toBe('trading.martyr');
-    expect(s.players[0].res.white).toBe(4);
-    expect(s.players[1].res.white).toBe(4);
-    expect(s.players[1].bonus).toBe(4); // Martyrs left its cult
-    expect(named(s, 'Evictors')).toContain("P1's Evictors: P1 and P2 each +4 white.");
+    expect(s.players[0].res.white).toBe(5);
+    expect(s.players[1].res.white).toBe(5);
+    expect(s.players[1].bonus).toBe(5); // Martyrs left its cult (costs 5 since every member +1, Nov 5)
+    expect(named(s, 'Evictors')).toContain("P1's Evictors: P1 and P2 each +5 white.");
   });
 
   it('Interrupters: a rival goes twice in a row; you may skip the second', () => {
@@ -93,7 +93,7 @@ describe('REPLACE3: each card fires', () => {
     expect(owns(s, 0, 'red.recruitbonus')).toBe(true);
     expect(owns(s, 0, 'red.crowd')).toBe(true);
     expect(owns(s, 0, 'market.snob')).toBe(false);
-    expect(s.players[0].res.red).toBe(20 - 3 - 3);
+    expect(s.players[0].res.red).toBe(20 - 4 - 4);
     // the turn's own recruit is still to come
     expect(s.pending.kind).toBe('buy');
     expect(s.pending.options.some(o => o.kind === 'tier' || o.kind === 'card')).toBe(true);
@@ -131,10 +131,10 @@ describe('REPLACE3: each card fires', () => {
     s = answer(s, `card:${uidIn(s, 'trading.martyr', 0)}`);
     expect(owns(s, 1, 'red.recruitbonus')).toBe(true);
     expect(owns(s, 2, 'trading.martyr')).toBe(true);
-    expect(s.players[0].bonus).toBe(4); // Martyrs left P1's cult
-    expect(s.pending.prompt).toMatch(/^Missionaries: recruit which member for free\? \(2 to go: up to 6, 5\)/);
+    expect(s.players[0].bonus).toBe(5); // Martyrs left P1's cult (costs 5 since every member +1, Nov 5)
+    expect(s.pending.prompt).toMatch(/^Missionaries: recruit which member for free\? \(2 to go: up to 7, 6\)/);
     s = answer(s, `card:${uidIn(s, 'market.snob', 'shop')}`);
-    expect(s.pending.prompt).toMatch(/^Missionaries: recruit which member for free\? \(1 to go: up to 5\)/);
+    expect(s.pending.prompt).toMatch(/^Missionaries: recruit which member for free\? \(1 to go: up to 6\)/);
     s = answer(s, `card:${uidIn(s, 'red.crowd', 'shop')}`);
     expect(owns(s, 0, 'market.snob')).toBe(true);
     expect(owns(s, 0, 'red.crowd')).toBe(true);

@@ -17,13 +17,13 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 describe('REPLACE6: the switch', () => {
   it('prints the draft prices (as a player sees them) and retires the old cards', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
-    expect(price('silver.socialclimbers')).toEqual([6, 3, 1]);
-    expect(price('silver.godparents')).toEqual([4, 1, 1]);
-    expect(price('trading.successors')).toEqual([4, 1, 1]);
-    expect(price('trading.inquisitors')).toEqual([4, 1, 1]);
-    expect(price('trading.pallbearers')).toEqual([4, 1, 1]);
-    expect(price('benders.sorelosers')).toEqual([0, 5, 1]);
-    expect(price('benders.peddlers')).toEqual([0, 5, 1]);
+    expect(price('silver.socialclimbers')).toEqual([6, 4, 1]);
+    expect(price('silver.godparents')).toEqual([4, 2, 1]);
+    expect(price('trading.successors')).toEqual([4, 2, 1]);
+    expect(price('trading.inquisitors')).toEqual([4, 2, 1]);
+    expect(price('trading.pallbearers')).toEqual([4, 2, 1]);
+    expect(price('benders.sorelosers')).toEqual([0, 6, 1]);
+    expect(price('benders.peddlers')).toEqual([0, 6, 1]);
     for (const id of ['silver.gala', 'silver.guest', 'trading.cashier', 'trading.raider', 'trading.oldmoney', 'benders.hr', 'benders.freelancer'])
       expect(defById(id).retired).toBe(true);
   });
@@ -45,14 +45,14 @@ describe('REPLACE6: each card fires', () => {
     expect(s.pending.prompt).toBe('Godparent: give which of your members to which rival?');
     s = answer(s, `give:${martyr}:2`);
     expect(owns(s, 2, 'trading.martyr')).toBe(true);
-    expect(s.players[0].bonus).toBe(8); // Godparent 4, and Martyrs' own 4 as it leaves
+    expect(s.players[0].bonus).toBe(10); // Godparent 5, and Martyrs' own 5 as it leaves (Martyrs 5 since every member +1, Nov 5)
   });
 
   it('Successors: cast out one of your members; recruit a shop member costing up to its cost, for free', () => {
     let s = table(['red', 'trading', 'market', 'yellow'], { round: 2, members: [['trading.successors', 'red.crowd']], shop: ['red.recruitbonus', 'market.snob'], queue: [] });
     contextFor(s).buryMember(s.players[0], uidIn(s, 'red.crowd', 0));
     s = resume(s);
-    expect(s.pending.prompt).toBe('Successors: recruit which shop member (costing up to 3) for free?');
+    expect(s.pending.prompt).toBe('Successors: recruit which shop member (costing up to 4) for free?');
     const rb = s.pending.options.find(o => o.uid === uidIn(s, 'red.recruitbonus', 'shop') || o.value === uidIn(s, 'red.recruitbonus', 'shop'));
     expect(rb).toBeTruthy();
     expect(s.pending.options.some(o => o.label.startsWith('Snobs'))).toBe(false);
@@ -70,7 +70,7 @@ describe('REPLACE6: each card fires', () => {
     s = answer(s, `card:${uidIn(s, 'trading.martyr', 2)}`);
     expect(owns(s, 1, 'red.crowd')).toBe(false);
     expect(owns(s, 2, 'trading.martyr')).toBe(false);
-    expect(s.players[2].bonus).toBe(4); // Martyrs pays as it goes
+    expect(s.players[2].bonus).toBe(5); // Martyrs pays as it goes (costs 5 since Nov 5)
     expect(s.players[0].bonus).toBe(4);
   });
 
@@ -78,8 +78,8 @@ describe('REPLACE6: each card fires', () => {
     let s = table(['red', 'trading', 'market', 'yellow'], { round: 2, members: [['trading.pallbearers'], ['market.snob']], queue: [] });
     contextFor(s).buryMember(s.players[1], uidIn(s, 'market.snob', 1));
     s = resume(s);
-    expect(s.players[0].bonus).toBe(3); // Snobs costs 6
-    expect(named(s, 'Pallbearers')).toContain("P1's Pallbearers: P2 cast out Snobs (6): +3 followers.");
+    expect(s.players[0].bonus).toBe(4); // Snobs costs 7 (Nov 5: every member +1)
+    expect(named(s, 'Pallbearers')).toContain("P1's Pallbearers: P2 cast out Snobs (7): +4 followers.");
   });
 
   it('Sore Loser: win no contest, steal 5 followers from the rival who wins the most', () => {
@@ -103,7 +103,7 @@ describe('REPLACE6: each card fires', () => {
     s = answer(s, opt.id);
     if (s.pending?.kind === 'pay') s = answer(s, s.pending.options.find(o => o.id.startsWith('pay:')).id);
     expect(owns(s, 1, 'red.crowd')).toBe(true);
-    expect((s.players[0].res.red || 0) - red).toBe(3);
+    expect((s.players[0].res.red || 0) - red).toBe(4);
     expect(s.stalls[ped]).toEqual([]);
     expect(named(s, 'Peddlers').some(l => l.includes("paid to P1's Peddlers"))).toBe(true);
   });

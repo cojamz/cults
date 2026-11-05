@@ -11,10 +11,10 @@ delete process.env.REPLACE11;
 
 describe('REPLACE11: Duty Free', () => {
   it('a member of a new color costs 3 less; one of a color you have does not', () => {
-    // Duty Free is yellow: a red member is new, a yellow one is not. Reseller (4 + 2) and a yellow card priced alike
-    const s = table(['yellow', 'red', 'market'], { n: 2, members: [['yellow.dutyfree']], shop: ['market.reseller'], res: [{ blue: 4 }] });
-    expect(memberPrice(s, s.players[0], s.shop[0]).afford).toBe(true); // 6 less 3 = 3 blue, has 4
-    const t = table(['yellow', 'red', 'market'], { n: 2, members: [['yellow.dutyfree', 'market.stylist']], shop: ['market.reseller'], res: [{ blue: 4 }] });
+    // Duty Free is yellow: a red member is new, a yellow one is not. Reseller (5 blue + 3, since every member +1 on Nov 5) and a yellow card priced alike
+    const s = table(['yellow', 'red', 'market'], { n: 2, members: [['yellow.dutyfree']], shop: ['market.reseller'], res: [{ blue: 5 }] });
+    expect(memberPrice(s, s.players[0], s.shop[0]).afford).toBe(true); // 8 less 3 = 5 blue, has 5
+    const t = table(['yellow', 'red', 'market'], { n: 2, members: [['yellow.dutyfree', 'market.stylist']], shop: ['market.reseller'], res: [{ blue: 5 }] });
     expect(memberPrice(t, t.players[0], t.shop[0]).afford).toBe(false);
   });
 });

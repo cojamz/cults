@@ -17,13 +17,13 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 describe('REPLACE4: the switch', () => {
   it('prints the draft prices (as a player sees them) and retires the old cards', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
-    expect(price('red.defectors')).toEqual([6, 3, 1]);
-    expect(price('red.tithetakers')).toEqual([4, 2, 2]);
-    expect(price('echo.openingact')).toEqual([7, 3, 2]);
-    expect(price('echo.copycats')).toEqual([3, 1, 1]);
-    expect(price('market.outbidders')).toEqual([3, 1, 1]);
-    expect(price('market.hawkers')).toEqual([5, 3, 1]);
-    expect(price('market.lateshoppers')).toEqual([5, 3, 1]);
+    expect(price('red.defectors')).toEqual([6, 4, 1]);
+    expect(price('red.tithetakers')).toEqual([4, 3, 2]);
+    expect(price('echo.openingact')).toEqual([7, 4, 2]);
+    expect(price('echo.copycats')).toEqual([3, 2, 1]);
+    expect(price('market.outbidders')).toEqual([3, 2, 1]);
+    expect(price('market.hawkers')).toEqual([5, 4, 1]);
+    expect(price('market.lateshoppers')).toEqual([5, 4, 1]);
     for (const id of ['red.proselytizer', 'red.mentor', 'echo.dejavu', 'echo.roadie', 'market.windowdresser', 'market.connoisseur', 'market.windowshopper'])
       expect(defById(id).retired).toBe(true);
   });
@@ -58,7 +58,7 @@ describe('REPLACE4: each card fires', () => {
     expect(s.pending.player).toBe(1);
     expect(s.pending.prompt).toBe('Tithe Takers: give which of your members to P1?');
     s = answer(s, `card:${uidIn(s, 'trading.martyr', 1)}`);
-    expect(s.players[1].bonus).toBe(4); // Martyrs left P2's cult
+    expect(s.players[1].bonus).toBe(5); // Martyrs left P2's cult (costs 5 since every member +1, Nov 5)
     expect(s.pending.player).toBe(2);
     s = answer(s, `card:${uidIn(s, 'red.crowd', 2)}`);
     expect(owns(s, 0, 'trading.martyr')).toBe(true);
@@ -94,10 +94,10 @@ describe('REPLACE4: each card fires', () => {
     let s = table(['red', 'market', 'echo', 'yellow'], { round: 1, res: [{ red: 6 }, { red: 6 }], members: [[], ['market.outbidders']], shop: ['red.crowd', 'red.recruitbonus'], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `card:${uidIn(s, 'red.crowd', 'shop')}`);
     expect(s.pending.player).toBe(1);
-    expect(s.pending.prompt).toBe('Outbidders: P1 recruits Crowd-Pleaser. Pay 5 red to recruit it instead?');
+    expect(s.pending.prompt).toBe('Outbidders: P1 recruits Crowd-Pleaser. Pay 6 red to recruit it instead?'); // Crowd-Pleaser 4 since every member +1 (Nov 5)
     s = answer(s, 'outbid');
     expect(owns(s, 1, 'red.crowd')).toBe(true);
-    expect(s.players[1].res.red).toBe(1);
+    expect(s.players[1].res.red).toBe(0);
     expect(s.players[0].res.red).toBe(6);
     expect(s.pending.player).toBe(0);
     expect(s.pending.kind).toBe('buy');
@@ -110,7 +110,7 @@ describe('REPLACE4: each card fires', () => {
     s = move(s, `card:${uidIn(s, 'red.crowd', 'shop')}`);
     s = answer(s, 'let');
     expect(owns(s, 0, 'red.crowd')).toBe(true);
-    expect(s.players[0].res.red).toBe(3);
+    expect(s.players[0].res.red).toBe(2);
     expect(s.players[1].res.red).toBe(6);
   });
 
@@ -120,6 +120,6 @@ describe('REPLACE4: each card fires', () => {
     expect(s.pending.prompt).toBe('P1: Late Shoppers: recruit once after the contests, or pass');
     s = move(s, `card:${uidIn(s, 'red.crowd', 'shop')}`);
     expect(owns(s, 0, 'red.crowd')).toBe(true);
-    expect(s.players[0].res.red).toBe(2);
+    expect(s.players[0].res.red).toBe(1);
   });
 });

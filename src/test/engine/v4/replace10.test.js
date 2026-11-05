@@ -18,9 +18,9 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 describe('REPLACE10: the switch', () => {
   it('prints the pitch prices (as a player sees them) and retires the old cards', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
-    expect(price('thieves.racketeer')).toEqual([4, 3, 1]);
-    expect(price('trading.pauper')).toEqual([4, 3, 1]);
-    expect(price('echo.bootlegger')).toEqual([4, 3, 1]);
+    expect(price('thieves.racketeer')).toEqual([4, 4, 1]);
+    expect(price('trading.pauper')).toEqual([4, 4, 1]);
+    expect(price('echo.bootlegger')).toEqual([4, 4, 1]);
     for (const id of ['thieves.grifter', 'trading.oldmoney', 'echo.chronicler']) expect(defById(id).retired).toBe(true);
   });
 });

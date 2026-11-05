@@ -22,7 +22,7 @@ describe('REPLACE8: the switch', () => {
     expect(card('silver.wellwishers')).toEqual(card('silver.debtcollector'));
     expect(card('silver.usher')).toEqual(card('silver.polisher'));
     expect(card('silver.guestofhonor')).toEqual(card('silver.polisher'));
-    expect(card('silver.socialites')).toEqual([5, 3, 2, 2]); // High Society's old price (5 + 2 since Nov 5)
+    expect(card('silver.socialites')).toEqual([5, 4, 2, 2]); // High Society's old price (5 + 2 since Nov 5)
     expect(card('silver.charityball')).toEqual(card('silver.philanthropists'));
     expect(card('trading.pennypincher')).toEqual(card('trading.oldmoney'));
     expect(card('silver.chaperone')).toEqual(card('silver.toastmaster'));
@@ -59,7 +59,7 @@ describe('Well-Wishers: "Whenever one of your members goes to a rival\'s cult, +
 
 describe('Usher: "On Recruit: give a rival 2 silver from the bank. +3 followers."', () => {
   it('on recruit you choose a rival; they gain 2 silver from the bank and you +3 followers (the pitched turn, round I)', () => {
-    let s = sc({ n: 4, res: [{ silver: 2, gold: 1 }], shop: ['silver.usher'], queue: [{ t: 'buy', p: 0 }] });
+    let s = sc({ n: 4, res: [{ silver: 2, gold: 2 }], shop: ['silver.usher'], queue: [{ t: 'buy', p: 0 }] });
     const before = s.players[0].res.silver;
     s = move(s, s.pending.options.find(o => /Usher/.test(o.label || '')).id);
     if (s.pending?.prompt?.startsWith('Pay')) s = move(s, s.pending.options[0].id);
@@ -76,25 +76,25 @@ describe('Guest of Honor: "On Use, once per round: give a rival one of your memb
   const at = members => sc({ n: 4, round: 2, members: [members], queue: [{ t: 'turn', p: 0 }] });
   const use = s => move(s, `use:${uidIn(s, 'silver.guestofhonor', 0)}`);
   it('on your turn, Use: give a member costing 3 or less to a rival; it moves and you +4', () => {
-    let s = use(at(['silver.guestofhonor', 'silver.usher']));
+    let s = use(at(['silver.guestofhonor', 'red.intern']));
     expect(s.pending.prompt).toBe('Guest of Honor: give which member costing 3 or less, to which rival? +4 followers');
-    const usher = uidIn(s, 'silver.usher', 0);
+    const usher = uidIn(s, 'red.intern', 0); // Intern (3): Usher costs 4 since every member +1 (Nov 5)
     s = move(s, `give:${usher}:2`);
     expect(s.players[2].members).toContain(usher);
     expect(s.players[0].bonus).toBe(4);
-    expect(linesNaming(s.log, 'Guest of Honor')).toContain("P1's Guest of Honor: gives Usher to P3: +4 followers.");
+    expect(linesNaming(s.log, 'Guest of Honor')).toContain("P1's Guest of Honor: gives Intern to P3: +4 followers.");
   });
   it('members costing more than 3 are not offered', () => {
     const s = use(at(['silver.guestofhonor', 'silver.godparents']));
     expect(s.pending.options.some(o => o.label.startsWith('Godparent'))).toBe(false);
   });
   it('taking a Silver space no longer asks anything', () => {
-    const s = take(at(['silver.guestofhonor', 'silver.usher']), 'silver.toast');
+    const s = take(at(['silver.guestofhonor', 'red.intern']), 'silver.toast');
     expect(s.pending?.prompt || '').not.toMatch(/Guest of Honor/);
   });
   it('once per round: after a use, no second Use this round', () => {
-    let s = use(at(['silver.guestofhonor', 'silver.usher', 'silver.wellwishers']));
-    s = move(s, `give:${uidIn(s, 'silver.usher', 0)}:1`);
+    let s = use(at(['silver.guestofhonor', 'red.intern', 'silver.wellwishers']));
+    s = move(s, `give:${uidIn(s, 'red.intern', 0)}:1`);
     expect(s.players[0].bonus).toBe(7); // with Well-Wishers +4 and +3
     expect((s.pending?.options || []).some(o => o.id === `use:${uidIn(s, 'silver.guestofhonor', 0)}`)).toBe(false);
   });
@@ -125,7 +125,7 @@ describe('Socialites (+1 by default, Nov 4): "Whenever a rival recruits paying s
 
 describe('Charity Ball: "Whenever a rival recruits a member, give them 1 silver from the bank. +1 follower."', () => {
   it('a rival buys a shop member: they +1 silver, you +1; a follower buy or your own recruit: nothing', () => {
-    let s = sc({ n: 3, res: [{}, { silver: 2, gold: 1 }], members: [['silver.charityball']], shop: ['silver.usher'], queue: [{ t: 'buy', p: 1 }] });
+    let s = sc({ n: 3, res: [{}, { silver: 2, gold: 2 }], members: [['silver.charityball']], shop: ['silver.usher'], queue: [{ t: 'buy', p: 1 }] });
     s = move(s, s.pending.options.find(o => /Usher/.test(o.label || '')).id);
     if (s.pending?.prompt?.startsWith('Pay')) s = move(s, s.pending.options[0].id);
     if (s.pending?.player === 1 && /Usher/.test(s.pending.prompt || '')) s = move(s, 'player:2');
@@ -135,7 +135,7 @@ describe('Charity Ball: "Whenever a rival recruits a member, give them 1 silver 
     let f = sc({ n: 3, res: [{}, { red: 5 }], members: [['silver.charityball']], queue: [{ t: 'buy', p: 1 }] });
     f = move(f, f.pending.options.find(o => o.kind === 'tier' && /1/.test(o.label || o.id)).id);
     expect(f.players[0].bonus).toBe(0);
-    let m = sc({ n: 3, res: [{ silver: 2, gold: 1 }], members: [['silver.charityball']], shop: ['silver.usher'], queue: [{ t: 'buy', p: 0 }] });
+    let m = sc({ n: 3, res: [{ silver: 2, gold: 2 }], members: [['silver.charityball']], shop: ['silver.usher'], queue: [{ t: 'buy', p: 0 }] });
     m = move(m, m.pending.options.find(o => /Usher/.test(o.label || '')).id);
     expect(linesNaming(m.log, 'Charity Ball')).toEqual([]);
   });

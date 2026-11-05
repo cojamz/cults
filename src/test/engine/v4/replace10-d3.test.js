@@ -18,11 +18,11 @@ const done = x => { while (x.pending && x.pending.kind !== 'place') x = move(x, 
 describe('REPLACE10: lane D requalified cards', () => {
   it('prices as pitched; Bodyguards, Kidnapper and Wallflower are retired', () => {
     const p = id => { const d = defById(id); return [d.s, d.w]; };
-    expect(p('thieves.watchman')).toEqual([5, 2]);
-    expect(p('thieves.hoardbreaker')).toEqual([6, 2]);
-    expect(p('thieves.poacher')).toEqual([6, 2]);
-    expect(p('echo.bigfinish')).toEqual([7, 3]);
-    expect(p('echo.coverband')).toEqual([7, 3]);
+    expect(p('thieves.watchman')).toEqual([5, 3]);
+    expect(p('thieves.hoardbreaker')).toEqual([6, 3]);
+    expect(p('thieves.poacher')).toEqual([6, 3]);
+    expect(p('echo.bigfinish')).toEqual([7, 4]);
+    expect(p('echo.coverband')).toEqual([7, 4]);
     for (const id of ['thieves.watchdog', 'thieves.kidnappers', 'echo.wallflower']) expect(defById(id).retired).toBe(true);
   });
 
@@ -70,8 +70,8 @@ describe('REPLACE10: lane D requalified cards', () => {
     expect(s.players[0].members).toContain(agents);
     expect(s.players[1].members).not.toContain(agents);
     const paid = Object.values(s.players[1].res).reduce((a, b) => a + b, 0);
-    expect(paid).toBe(3);
-    expect(Object.values(s.players[0].res).reduce((a, b) => a + b, 0)).toBe(2);
+    expect(paid).toBe(4); // Agents costs 4 since every member +1 (Nov 5)
+    expect(Object.values(s.players[0].res).reduce((a, b) => a + b, 0)).toBe(1);
   });
 
   it('Big Finish: once per game, copies every action you have a minion on (Build Up in round II: +4 green again)', () => {

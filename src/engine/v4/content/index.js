@@ -16,7 +16,9 @@ const QUADRANTS = { gold, red, blue, green };
 // Member defs get a global id "<quadrant>.<key>" and know their quadrant.
 // Every member costs this many wild more than its card file says (Cory, Oct 27: "+1 wild cost to every member"),
 // added once here so the shop, the pay sheet and the bots all read the same price.
-export const EXTRA_WILD = 1;
+// 2 since Cory, 2026-11-05 ("1 cards", "i'd rather things be more expensive"): one more on every member, so fewer
+// member cards per game. The color shift below still moves just 1 of it to the member's color; the rest is any color.
+export const EXTRA_WILD = 2;
 // Cory, 2026-11-02: "for every member, to shift 1 wild to 1 color cost". A colored member's +1 above is paid in its
 // own color instead (its colored part +1, its "any" part as printed), so what you hold decides what you can buy.
 // Grey members have no color and keep the wild. Live (Cory, Nov 2 7:39pm: "let's swing the cost towards the colors by 1 and keep that anyways"); COLORSHIFT=0 gives the old prices for comparison.
@@ -27,7 +29,8 @@ const SHIFT_MORE = globalThis.process?.env?.COLORSHIFT;
 const addWild = def => {
   if (def.extraWild || def.extraColor) return;
   if (COLOR_SHIFT && def.quadrant !== 'guest' && def.quadrant !== 'benders') {
-    def.s = (def.s || 0) + EXTRA_WILD; def.extraColor = EXTRA_WILD; def.w = def.w || 0;
+    def.s = (def.s || 0) + 1; def.extraColor = 1;
+    def.w = (def.w || 0) + EXTRA_WILD - 1; if (EXTRA_WILD > 1) def.extraWild = EXTRA_WILD - 1;
     const more = SHIFT_MORE === 'all' ? def.w : SHIFT_MORE === '2' && def.w >= 2 ? 1 : 0;
     if (more) { def.s += more; def.w -= more; def.shiftedMore = more; }
   }

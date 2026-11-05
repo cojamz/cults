@@ -19,14 +19,14 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 describe('REPLACE1: the switch', () => {
   it('prints the spec prices (as a player sees them) and retires the old cards', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
-    expect(price('red.turncoats')).toEqual([3, 1, 2]);
-    expect(price('market.scavengers')).toEqual([4, 2, 1]);
-    expect(price('thieves.racketeers')).toEqual([4, 2, 1]);
-    expect(price('purple.nightwatch')).toEqual([3, 2, 2]);
-    expect(price('yellow.barterers')).toEqual([4, 2, 1]);
-    expect(price('silver.hostesses')).toEqual([4, 2, 2]);
-    expect(price('benders.grudge')).toEqual([0, 4, 2]);
-    expect(price('trading.heirs')).toEqual([4, 3, 2]);
+    expect(price('red.turncoats')).toEqual([3, 2, 2]);
+    expect(price('market.scavengers')).toEqual([4, 3, 1]);
+    expect(price('thieves.racketeers')).toEqual([4, 3, 1]);
+    expect(price('purple.nightwatch')).toEqual([3, 3, 2]);
+    expect(price('yellow.barterers')).toEqual([4, 3, 1]);
+    expect(price('silver.hostesses')).toEqual([4, 3, 2]);
+    expect(price('benders.grudge')).toEqual([0, 5, 2]);
+    expect(price('trading.heirs')).toEqual([4, 4, 2]);
     for (const id of ['red.volunteer', 'market.critic', 'thieves.crew', 'purple.clockmaker', 'yellow.dyer', 'silver.giftwrapper', 'benders.frontrunner', 'trading.exporter'])
       expect(defById(id).retired).toBe(true);
   });
@@ -39,12 +39,12 @@ describe('REPLACE1: each card fires', () => {
     s = move(s, `card:${uidIn(s, 'red.patriarch', 1)}`);
     expect(owns(s, 0, 'red.patriarch')).toBe(true);
     expect(s.pending.player).toBe(1);
-    expect(s.pending.prompt).toMatch(/^Turncoats: recruit which shop member \(costing up to 8\)/);
-    // Mob costs 12: not offered
+    expect(s.pending.prompt).toMatch(/^Turncoats: recruit which shop member \(costing up to 9\)/);
+    // Mob costs 13: not offered
     expect(s.pending.options.map(o => s.cards[o.value].def)).toEqual(['red.recruitbonus']);
     s = answer(s, s.pending.options[0].id);
     expect(owns(s, 1, 'red.recruitbonus')).toBe(true);
-    expect(named(s, 'Turncoats')).toEqual(["P2's Turncoats: P1 took Patriarch, so P2 recruits a shop member costing up to 8, for free."]);
+    expect(named(s, 'Turncoats')).toEqual(["P2's Turncoats: P1 took Patriarch, so P2 recruits a shop member costing up to 9, for free."]);
   });
 
   it('Turncoats: taking Turncoats itself does not fire it', () => {
@@ -56,7 +56,7 @@ describe('REPLACE1: each card fires', () => {
   });
 
   it('Scavengers: a rival Buries a shop member, you may recruit it from the bottom of the pile, paying its cost', () => {
-    let s = table(['red', 'market', 'thieves', 'yellow'], { round: 2, left: 4, res: [{}, { red: 3 }], members: [[], ['market.scavengers']], shop: ['red.recruitbonus', 'red.mob'] });
+    let s = table(['red', 'market', 'thieves', 'yellow'], { round: 2, left: 4, res: [{}, { red: 4 }], members: [[], ['market.scavengers']], shop: ['red.recruitbonus', 'red.mob'] });
     s = take(s, 'market.pricecheck');
     const u = uidIn(s, 'red.recruitbonus', 'shop');
     s = move(s, `card:${u}`);
@@ -67,7 +67,7 @@ describe('REPLACE1: each card fires', () => {
     while (s.pending?.player === 1 && s.pending.kind === 'choose') s = answer(s, s.pending.options[0].id);
     expect(owns(s, 1, 'red.recruitbonus')).toBe(true);
     expect(s.players[1].res.red).toBe(0);
-    expect(s.log.some(l => /^P2's Scavengers: pays 3 red for Greeters\.$/.test(l))).toBe(true);
+    expect(s.log.some(l => /^P2's Scavengers: pays 4 red for Greeters\.$/.test(l))).toBe(true);
   });
 
   it('Racketeers: at round end, steals 2 of the contest color from each rival who won it', () => {
@@ -94,7 +94,7 @@ describe('REPLACE1: each card fires', () => {
   });
 
   it('Barterers: On Recruit, swap up to 3 of your resources with one rival’s, one for one (Customs Officer hears it)', () => {
-    let s = table(['red', 'yellow', 'market', 'thieves'], { round: 2, res: [{ yellow: 4, red: 4 }, { blue: 3 }], members: [[], ['yellow.customs']], shop: ['yellow.barterers'], queue: [{ t: 'buy', p: 0 }] });
+    let s = table(['red', 'yellow', 'market', 'thieves'], { round: 2, res: [{ yellow: 4, red: 5 }, { blue: 3 }], members: [[], ['yellow.customs']], shop: ['yellow.barterers'], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `card:${uidIn(s, 'yellow.barterers', 'shop')}`);
     expect(s.pending.prompt).toBe('Barterers: swap with which rival?');
     s = answer(s, 'player:1');
@@ -111,7 +111,7 @@ describe('REPLACE1: each card fires', () => {
   });
 
   it('Hostesses: On Recruit, each rival +1 silver from the bank, then +1 follower for each (Cory, Nov 3)', () => {
-    let s = table(['red', 'silver', 'market', 'yellow'], { n: 3, round: 2, res: [{ silver: 4, red: 2 }, {}, { silver: 5 }], shop: ['silver.hostesses'], queue: [{ t: 'buy', p: 0 }] });
+    let s = table(['red', 'silver', 'market', 'yellow'], { n: 3, round: 2, res: [{ silver: 4, red: 3 }, {}, { silver: 5 }], shop: ['silver.hostesses'], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `card:${uidIn(s, 'silver.hostesses', 'shop')}`);
     expect(s.players[1].res.silver).toBe(1);
     expect(s.players[2].res.silver).toBe(6);
@@ -121,7 +121,7 @@ describe('REPLACE1: each card fires', () => {
   });
 
   it('Grudge: On Recruit pick a rival; Game End steals 4 followers from them if they have more', () => {
-    let s = table(['red', 'silver', 'market', 'yellow'], { round: 3, res: [{ red: 4 }], bonus: [0, 9], shop: ['benders.grudge'], queue: [{ t: 'buy', p: 0 }, { t: 'finish' }] });
+    let s = table(['red', 'silver', 'market', 'yellow'], { round: 3, res: [{ red: 5 }], bonus: [0, 9], shop: ['benders.grudge'], queue: [{ t: 'buy', p: 0 }, { t: 'finish' }] });
     s = move(s, `card:${uidIn(s, 'benders.grudge', 'shop')}`);
     expect(s.pending.prompt).toBe('Grudge: choose a rival');
     s = answer(s, 'player:1');
