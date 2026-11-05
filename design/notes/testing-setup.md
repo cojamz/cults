@@ -12,7 +12,7 @@ Everything below already exists; this page puts it in one order so we can pick p
 
 **4. Whole-game balance run.** Every color and member across hundreds of games. Win rate per member, color, space and cloak; dead cards (never bought), dominant cards (owners win far above 25%), trap cards (bought but owners lose); whether players behind can catch up; whether one player can hand someone the win; game length; small-cult wins (bar: at least 20% of winners with 5 or fewer members); and an abuse hunt where one bot tries to break each card. Fast size about 1 hour, deep size overnight. Answers: is the whole game fair, and what's the next problem.
 
-**5. Skill check (bot ladder).** One stronger bot seated against weaker ones. If the better player wins clearly more, the game rewards good play and the weaker bots' numbers can be trusted less. About 30 minutes. Answers: does skill matter, and which bot level to believe.
+**5. Skill check (bot ladder).** Your goal (Nov 5): more thought should win drastically more often, so this leads every report. One stronger bot seated against weaker ones. If the better player wins clearly more, the game rewards good play and the weaker bots' numbers can be trusted less. About 30 minutes. Answers: does skill matter, and which bot level to believe.
 
 **6. Feel.** AI expert players play full games and talk at the table, then rate every space and member they touched for "a real choice" and "fun to pick" (1 to 5) and say whether it fits its color. Then a critic reads the games and a skeptic tries to knock down every finding. About 2 hours for 4 games. Answers: is it fun, is it a real decision, does it feel like its color. Your own playtests sit above all of this.
 
