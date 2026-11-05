@@ -234,6 +234,10 @@ describe('v4 format helpers', () => {
       expect(text.split('. ').length).toBe(1);
       const b = breakdown(s, w);
       expect(b.self + b.members + b.contests + b.bought + b.effects + b.endGame).toBe(followers(s, w));
+      // members are said with the table's Members number (members plus the leader's 1), and no second count (picky, Nov 5)
+      const m = text.match(/from members \(\+(\d+)\)/);
+      if (m) expect(Number(m[1])).toBe(b.members + b.self);
+      expect(text).not.toMatch(/recruiting \d+ members/);
     }
   });
 

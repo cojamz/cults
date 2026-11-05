@@ -444,11 +444,12 @@ export function winSentence(state) {
   const b = breakdown(state, w);
   const lead = ranked[1] ? `${w.name} won by ${f(w) - f(ranked[1])}` : `${w.name} won`;
   // Name the biggest real sources, in the words the results table uses.
-  const n = w.members.reduce((s2, u) => s2 + cardDef(state, u).n, 0);
   const swept = Object.entries(contestRounds(state)[w.id] || {}).sort((a2, c) => c[1].rounds - a2[1].rounds || c[1].v - a2[1].v)[0];
   // "P4 won by 17, mostly by holding Most members all three rounds (+20)." Biggest source first, in plain words.
   const say = {
-    members: v => `by recruiting ${n} members (+${v})`,
+    // the same number as the table's Members part (members' followers plus the leader's 1), never a second count
+    // (picky bot, Nov 5: "by recruiting 12 members (+13)" beside "13 members" and "Members 14")
+    members: v => `from members (+${v})`,
     bought: v => `by recruiting followers (+${v})`,
     effects: v => `from abilities and spaces during play (+${v})`,
     endGame: v => `from end-game bonuses (+${v})`,
@@ -459,7 +460,7 @@ export function winSentence(state) {
         : `from the rims' prizes (+${v}; ${swept[1].rule} ${swept[1].rounds === 3 ? 'all three rounds' : 'two rounds of three'}, +${swept[1].v})`)
       : `from the rims' prizes (+${v})`),
   };
-  const top = [['members', b.members], ['bought', b.bought], ['effects', b.effects], ['endGame', b.endGame], ['contests', b.contests]]
+  const top = [['members', b.members + b.self], ['bought', b.bought], ['effects', b.effects], ['endGame', b.endGame], ['contests', b.contests]]
     .filter(([, v]) => v > 0).sort((x, y) => y[1] - x[1]).slice(0, 2);
   if (!top.length) return `${lead}.`;
   // two equal sources are said as equal (w3a #19: "mostly by buying followers (+32), then from the rims' prizes (+32)")

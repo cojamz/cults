@@ -7,6 +7,26 @@ each. One line per finding: what a player sees, what's wrong, status. Each run's
 Status words: **fixed (version)**, **fixing**, **sent** (to the thread that owns it), **open** (ours, not started),
 **Cory** (a question only he can answer), **by design** (with the reason; the check got an exception).
 
+## 2026-11-05 (third run)
+Run at 7:43am Eastern Nov 5 on v0.99.593 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
+emoji; raw list /mnt/project-files/picky/2026-11-05-12-43/). The bot flagged only the Promote sheet's "Member" label
+(already listed); the member sweep of 119 cards in both looks was clean. The rest are by eye from the shots.
+
+- **Final score sentence counted members three ways.** "P4 won by 6, … then by recruiting 12 members (+13)" sat beside
+  "13 members" under P4's name and "Members 14" on the bar. The sentence now says "from members (+14)", the bar's own
+  number. **fixed (this run)**
+- **Demote's sheet offers rivals' members to give away** (round II, "Demote a member": P2's Line Cutters, Foster
+  Parents, Deprogrammers, Cutpurse and P3's four lit beside your Cheerleaders). Cory's Nov 4 9:38pm call says Promote
+  and Demote give away only your own member; a later commit (011ef83d, "reach any cult again … pending his confirm")
+  put the old reach back with no line in decisions.md. A card rule, not ours: **open** for the coordinator.
+- **Taken spaces lose their second line, so two read the same.** Round III with both taken: the outer "Copy an action
+  with your minion" and the middle "Copy an action with no minion on it" both read "Copy an action"; "Steal 4 resources
+  split among rivals" reads "Steal 4 resources"; "Copy previous action +1" drops its +1. **open** (wording)
+- **"RED CLOAK" tag under your seat is covered by the next seat's "+2 followers" float** (round I, P4 gaining from
+  Goes Last), while the float rises. Same family as the "P4 took 1 red" tag. **open** (looks off, brief)
+- **Emoji look: lit white and silver dots on a seat are nearly the same pale circle** (P4: "4 white", "1 silver" in
+  round III). Only the silver one's sheen tells them apart at seat size. **open** (looks off)
+
 ## 2026-11-05 (second run)
 Run at 1:42am Eastern Nov 5 on v0.99.592 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
 emoji; raw list /mnt/project-files/picky/2026-11-05-06-42/). The bot flagged 1 (Impersonator's hover off the screen,
