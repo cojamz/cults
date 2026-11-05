@@ -229,10 +229,10 @@ const desperadoMore = (ctx, p) => ctx.membersOf(p).flatMap(c => ctx.defsOf(c)).r
 // Sticky Fingers and Desperado on a member's steal (spaces get them through ctx.stealCount)
 const stickyMore = (ctx, p) => ctx.membersOf(p).flatMap(c => ctx.defsOf(c)).reduce((n, d) => n + (typeof d.stealMore === 'number' ? d.stealMore : 0) + (d.stealMoreIf ? d.stealMoreIf(ctx, p) : 0), 0);
 const memberHint = c => c.def.f * 1.5 + cost(c) + (c.def.vanilla || c.used ? 0 : 1);
-// Shake Down: each rival's members it can put at stake (costing 5 or less, and more than 0), by rival id.
+// Shake Down: each rival's members it can put at stake (costing 6 or less, and more than 0), by rival id.
 function atStake(ctx, p) {
   const by = new Map();
-  for (const [o, c] of takeable(ctx, p, 5).filter(([, c]) => cost(c) > 0)) by.set(o.id, [...(by.get(o.id) || []), c]);
+  for (const [o, c] of takeable(ctx, p, 6).filter(([, c]) => cost(c) > 0)) by.set(o.id, [...(by.get(o.id) || []), c]);
   return by;
 }
 // What a ransom costs its holder: n from their biggest piles, one at a time ({ color: count }). The prompt names it
@@ -381,7 +381,7 @@ const thieves = {
     },
     swap13({
       // Cory, 2026-10-28: the rival picks which of their members is at stake ("yes good idea"; wording Claude's)
-      key: 'ransom', ring: 2, name: 'Shake Down', text: 'Choose a rival. They choose one of their members costing 5 or less, then pay you its cost or you steal it. +1 magenta.',
+      key: 'ransom', ring: 2, name: 'Shake Down', text: 'Choose a rival. They choose one of their members costing 6 or less, then pay you its cost or you steal it. +1 magenta.',
       estimate: (ctx, p) => {
         // the rival gives up their cheapest: what the worst of each rival's list is worth, best rival
         const by = atStake(ctx, p);
@@ -703,9 +703,9 @@ const thieves = {
         if (autoSteal(ctx, owner, info.thief, 'Lookout', 1, true)) card.round = ctx.state.round;
       },
     }),
-    m('lightfingers', 'Light Fingers', 4, 4, 'Whenever a rival recruits a member costing 8 or more, steal 1 resource from that rival.', {
+    m('lightfingers', 'Light Fingers', 4, 4, 'Whenever a rival recruits a member costing 9 or more, steal 1 resource from that rival.', {
       onAnyRecruit(ctx, owner, card, by, recruited) {
-        if (by !== owner && cost(recruited) >= 8) autoSteal(ctx, owner, by, 'Light Fingers');
+        if (by !== owner && cost(recruited) >= 9) autoSteal(ctx, owner, by, 'Light Fingers');
       },
     }),
     // Cory, 2026-10-28: "lets just make it a bigger cutpurse for now" (was: a steal when a rival buys 5+ followers)

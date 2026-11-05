@@ -329,11 +329,11 @@ const market = {
       resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); extraBuys(ctx, p, 1); ctx.log(`${p.name} recruits an extra time this turn.`); },
     },
     // REPLACE12 bot tests (Nov 4, quality loop, lane D2; pitches/D2-batch1.md), one at a time in Bury's place.
-    // Dumpster Dive: the bottom 3 members of the pile (the last ones sent down), one recruited free if it costs 5 or less;
+    // Dumpster Dive: the bottom 3 members of the pile (the last ones sent down), one recruited free if it costs 6 or less;
     // the turn's own recruit stays. Delivery: a shop member goes straight into a rival's cult (an arrival, not their
     // recruit: Old Maid's −5 lands on them), and the row refills.
     ...(on12('dumpsterdive') ? [{
-      key: 'dumpsterdive', ring: 2, name: 'Dumpster Dive', text: 'Look at the bottom 3 members of the pile and recruit one of them for free, costing up to 5. +1 blue.', copyDoesIt: true,
+      key: 'dumpsterdive', ring: 2, name: 'Dumpster Dive', text: 'Look at the bottom 3 members of the pile and recruit one of them for free, costing up to 6. +1 blue.', copyDoesIt: true,
       // a table can't see the bottom of the pile before the look, so bots value the pull blind: a free member worth
       // about 3 while there are rounds for it to work, less in round III (play judges, Nov 4: the old peek gave it away)
       estimate: ctx => 1 + (ctx.state.round < 3 ? 3.5 : 2),
@@ -341,9 +341,9 @@ const market = {
         ctx.gain(p, B, 1, { fromAction: true });
         const bottom = ctx.state.pile.slice(-3).reverse().map(u => ctx.card(u));
         ctx.log(`${p.name}'s Dumpster Dive: the bottom of the pile is ${bottom.map(c => `${c.def.name} (${priceOf(c)})`).join(', ') || 'empty'}.`);
-        const fit = bottom.filter(c => priceOf(c) <= 5);
-        if (!fit.length) { ctx.log(`${p.name}'s Dumpster Dive: none of them costs 5 or less.`); return; }
-        ctx.choose(p, 'Dumpster Dive: recruit which of the bottom 3 for free (costing up to 5)?', fit.map(c => ({
+        const fit = bottom.filter(c => priceOf(c) <= 6);
+        if (!fit.length) { ctx.log(`${p.name}'s Dumpster Dive: none of them costs 6 or less.`); return; }
+        ctx.choose(p, 'Dumpster Dive: recruit which of the bottom 3 for free (costing up to 6)?', fit.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: priceOf(c) + c.def.f * 1.5,
         })).concat({ id: 'none', label: 'Take none', kind: 'pass', value: null, hint: -1 }), `${Q}.dive`);
       },
@@ -721,11 +721,11 @@ const market = {
     })),
     // REPLACE11 bot test (Actions lane, Nov 4, requalified under "paper filters, play ranks"): Snobs' place, disdain.
     // A member's cost is its printed cost (colored + any).
-    ...add11(m('snobs3', 'Snobs', 3, 2, 'Whenever a rival recruits a member costing 3 or less, +1 follower.', { f: 2,
+    ...add11(m('snobs3', 'Snobs', 3, 2, 'Whenever a rival recruits a member costing 4 or less, +1 follower.', { f: 2,
       ...see(i => endsAhead(i).length * 1.5),
       onAnyRecruit(ctx, owner, card, by, rec) {
         const d = ctx.defOf(rec);
-        if (by !== owner && d.s + d.w <= 3) { owner.bonus += 1; ctx.log(`${owner.name}'s Snobs: ${by.name} recruited ${d.name}, +1 follower.`); }
+        if (by !== owner && d.s + d.w <= 4) { owner.bonus += 1; ctx.log(`${owner.name}'s Snobs: ${by.name} recruited ${d.name}, +1 follower.`); }
       },
     })),
     m('snob', 'Snobs', 3, 2, SNOBS_TEXT, { f: 2, ...old11('snob2'), ...old11('snobs3'), ...old9('market.snob'),

@@ -72,12 +72,12 @@ describe('Usher: "On Recruit: give a rival 2 silver from the bank. +3 followers.
   });
 });
 
-describe('Guest of Honor: "On Use, once per round: give a rival one of your members costing 3 or less for +4 followers."', () => {
+describe('Guest of Honor: "On Use, once per round: give a rival one of your members costing 4 or less for +4 followers."', () => {
   const at = members => sc({ n: 4, round: 2, members: [members], queue: [{ t: 'turn', p: 0 }] });
   const use = s => move(s, `use:${uidIn(s, 'silver.guestofhonor', 0)}`);
-  it('on your turn, Use: give a member costing 3 or less to a rival; it moves and you +4', () => {
+  it('on your turn, Use: give a member costing 4 or less to a rival; it moves and you +4', () => {
     let s = use(at(['silver.guestofhonor', 'red.intern']));
-    expect(s.pending.prompt).toBe('Guest of Honor: give which member costing 3 or less, to which rival? +4 followers');
+    expect(s.pending.prompt).toBe('Guest of Honor: give which member costing 4 or less, to which rival? +4 followers');
     const usher = uidIn(s, 'red.intern', 0); // Intern (3): Usher costs 4 since every member +1 (Nov 5)
     s = move(s, `give:${usher}:2`);
     expect(s.players[2].members).toContain(usher);

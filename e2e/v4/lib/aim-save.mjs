@@ -1,5 +1,5 @@
 // A saved hot-seat game where P1 (the only person) is about to place in round III with Initiation ("Recruit a
-// member in the shop costing 8 or less.") open, and the face-up row holds exactly two members at 8 or less, the rest
+// member in the shop costing 9 or less.") open, and the face-up row holds exactly two members at 9 or less, the rest
 // pricier: hovering it should light exactly those two (Cory, 2026-10-16: a space's hover lights what it acts on).
 // It replaced Open Door (cut in the round I rework, Oct 27). The expected set is read off the card defs (cost = the
 // colored part plus the any part, the +1 wild included), independent of the screen's path.
@@ -8,7 +8,7 @@ import { seededRandom } from '../../../src/engine/v4/rng.js';
 import { buildStamp } from './stamp.mjs';
 
 const cost = (s, u) => { const d = defById(s.cards[u].def); return (d.s || 0) + (d.w || 0); };
-export const CAP = 8;
+export const CAP = 9; // 8 until Cory's Nov 5 "for named costs, yes go up by 1"
 
 /** { save, key: "q-i" of Initiation, lit: [uid] } */
 export function aimSave(seed = 4) {

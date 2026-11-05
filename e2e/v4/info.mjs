@@ -39,8 +39,8 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //      each rule-changer bending the price (Penny Pincher, a discount);
 //  (n) you are "You": the round summary and the Chronicle never use your seat's name; the summary keeps the type scale (caps labels 11, words 14 at least);
 //  (r) every hover card opened in (m) reads whole (lib/textclip.mjs) and keeps to the two marks (lib/legacy.mjs);
-//  (s) hovering Initiation ("Recruit a member in the shop costing 8 or less, for free.") in round III lights exactly the
-//      face-up members at 8 or less (two, both lit, the pricier ones not), its hover card names them ("Could recruit:
+//  (s) hovering Initiation ("Recruit a member in the shop costing 9 or less, for free.") in round III lights exactly the
+//      face-up members at 9 or less (two, both lit, the pricier ones not), its hover card names them ("Could recruit:
 //      A or B"), and the light leaves with the hover without moving any card (Cory, 2026-10-16; was Open Door, cut Oct 27);
 //  (a) also covers each chair's member count, its "+N" cell and its "each round" line (live panel r1, G4).
 // Screenshots go to $V4_SHOTS (default /tmp/patrons-shots/v4/info/).
@@ -630,7 +630,7 @@ try {
     await pg.close();
   }
 
-  // (s) hovering Initiation lights exactly the face-up members at 8 or less, names them, and lets go with the hover
+  // (s) hovering Initiation lights exactly the face-up members at 9 or less, names them, and lets go with the hover
   {
     const { save, key, lit: aimed } = aimSave();
     const pg = await browser.newPage({ viewport: { width: 1270, height: 700 } });
@@ -647,7 +647,7 @@ try {
     const want = aimed.map(String).sort().join(',');
     const lit = () => pg.$$eval('.lt-shop .card[data-uid][data-aim]', els => els.map(e => e.dataset.uid).sort().join(','));
     const ok = await pg.waitForFunction(w => [...document.querySelectorAll('.lt-shop .card[data-uid][data-aim]')].map(e => e.dataset.uid).sort().join(',') === w, want, { timeout: 6000 }).then(() => true, () => false);
-    if (!ok) fail(`(s) hovering Initiation lit [${await lit()}], not the face-up members at 8 or less [${want}]`, 'aim');
+    if (!ok) fail(`(s) hovering Initiation lit [${await lit()}], not the face-up members at 9 or less [${want}]`, 'aim');
     // the lit card looks lit: the lamp's ring, not a near-invisible change
     await pg.waitForTimeout(300); // the light's quick fade-in, done
     // the unified shop's aim ring (shop.css): a 3px outline in the lamp's warm light, the same light ringing it inside
@@ -657,7 +657,7 @@ try {
     const names = aimed.map(u => defById(save.state.cards[u].def).name);
     if (!line) fail('(s) the Initiation hover card has no line naming what it lights', 'aim');
     else {
-      if (line.aims.split(' ').sort().join(',') !== want) fail(`(s) the hover's line names [${line.aims}], the ones at 8 or less are [${want}]`, 'aim');
+      if (line.aims.split(' ').sort().join(',') !== want) fail(`(s) the hover's line names [${line.aims}], the ones at 9 or less are [${want}]`, 'aim');
       // why they're lit: the line reads as recruits you could make (two lit, so "Could", never "Would")
       if (!/^\s*Could recruit\b/i.test(line.text)) fail(`(s) the hover's line doesn't say they're the members you could recruit: ${JSON.stringify(line.text)}`, 'aim');
       for (const n of names) if (!line.text.includes(n)) fail(`(s) the hover's line doesn't name ${n}: ${JSON.stringify(line.text)}`, 'aim');

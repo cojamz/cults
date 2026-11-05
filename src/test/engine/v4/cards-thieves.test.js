@@ -112,11 +112,11 @@ describe('Magenta actions', () => {
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
     expect(named(s, 'Lookout').length).toBe(1);
   });
-  it('Shake Down: a rival\'s member costing 5 or less; they pay its cost to keep it, or it\'s yours', () => {
+  it('Shake Down: a rival\'s member costing 6 or less (5 until Cory\'s Nov 5 +1); they pay its cost to keep it, or it\'s yours', () => {
     let s = table(Q, { round: 2, res: [{}, { red: 3 }], members: [[], ['red.twins', 'red.bigfamily', 'red.intern', 'echo.doppel']], shop: ROW });
     s = take(s, 'thieves.ransom');
-    // Twins 4 and Intern 2; not Doppelganger (6) or Big Family (8)
-    expect(ids(s).sort()).toEqual([cardOpt(s, 'red.twins', 1), cardOpt(s, 'red.intern', 1)].sort());
+    // Twins, Intern and Doppelganger (6); not Big Family (8)
+    expect(ids(s).sort()).toEqual([cardOpt(s, 'red.twins', 1), cardOpt(s, 'red.intern', 1), cardOpt(s, 'echo.doppel', 1)].sort());
     // Twins (4): P2 holds only 3, so they can't pay
     // no question with one answer (skeptic r2): it simply goes, and the log says why
     let t = move(s, cardOpt(s, 'red.twins', 1));
@@ -251,21 +251,21 @@ describe('Magenta members', () => {
     expect(s.cards[uidIn(s, 'thieves.lookout', 0)].round).toBe(3);
   });
 
-  it('Light Fingers: whenever a rival recruits a member costing 8 or more, take 1 from them', () => {
-    let s = table(Q, { res: [{ red: 10 }], members: [[], ['thieves.lightfingers']], shop: ROW });
-    s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'red.bigfamily', 'shop')); // Stash: +2 magenta
+  it('Light Fingers: whenever a rival recruits a member costing 9 or more (8 until the Nov 5 +1), take 1 from them', () => {
+    let s = table(Q, { res: [{ red: 12 }], members: [[], ['thieves.lightfingers']], shop: ['red.patriarch', ...ROW.slice(1)] });
+    s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'red.patriarch', 'shop')); // Stash: +2 magenta
     s = s.pending?.kind === 'pay' ? move(s, s.pending.options[0].id) : s;
-    expect([R(s).red + R(s).magenta, (R(s, 1).red || 0) + (R(s, 1).magenta || 0)]).toEqual([3, 1]); // 10 red + Stash's 2, paid 8, it took 1
+    expect([R(s).red + R(s).magenta, (R(s, 1).red || 0) + (R(s, 1).magenta || 0)]).toEqual([4, 1]); // 12 red + Stash's 2, paid Patriarch's 9, it took 1
     expect(named(s, 'Light Fingers').length).toBe(1);
     s = table(Q, { res: [{ red: 10 }], members: [[], ['thieves.lightfingers']], shop: ROW });
     s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'red.twins', 'shop'));
     s = s.pending?.kind === 'pay' ? move(s, s.pending.options[0].id) : s;
-    expect(R(s, 1).magenta).toBe(0); // Twins costs 4
+    expect(R(s, 1).magenta).toBe(0); // Twins costs 5
   });
 
   it('Light Fingers with Desperado: its 1 takes 2 more while its owner has the fewest followers (Cory, Nov 1 3:11pm)', () => {
-    let s = table(Q, { res: [{ red: 10 }], bonus: [5, 0], members: [[], ['thieves.lightfingers', 'thieves.desperado']], shop: ROW });
-    s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'red.bigfamily', 'shop'));
+    let s = table(Q, { res: [{ red: 12 }], bonus: [5, 0], members: [[], ['thieves.lightfingers', 'thieves.desperado']], shop: ['red.patriarch', ...ROW.slice(1)] });
+    s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'red.patriarch', 'shop'));
     s = s.pending?.kind === 'pay' ? move(s, s.pending.options[0].id) : s;
     expect((R(s, 1).red || 0) + (R(s, 1).magenta || 0)).toBe(3);
     expect(s.log).toContain("P2's Light Fingers: takes 3, not 1 (P2's Desperado: +2).");

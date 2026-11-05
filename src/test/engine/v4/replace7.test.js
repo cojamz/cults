@@ -97,17 +97,17 @@ describe('Seat Filler: "Round Start: you may give this to the shop and recruit a
   });
 });
 
-describe('Ushers: "Each turn, you may also recruit one member costing 3 or less."', () => {
+describe('Ushers: "Each turn, you may also recruit one member costing 4 or less."', () => {
   const turn = () => table(['red', 'market', 'trading', 'yellow'], { round: 1, res: [{ red: 10 }], members: [['red.ushers']],
     shop: ['red.reserve', 'red.intern', 'red.loyalists', 'red.bodysnatchers'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
   const payAll = s => { while (s.pending?.kind === 'choose' && s.pending.options.some(o => o.kind === 'pay')) s = answer(s, s.pending.options.find(o => o.kind === 'pay').id); return s; };
 
-  it("after the turn's own recruit, one more recruit step that offers only members costing 3 or less", () => {
+  it("after the turn's own recruit, one more recruit step that offers only members costing 4 or less", () => {
     let s = take(turn(), 'red.turnout'); // Gather
     expect(s.pending.kind).toBe('buy');
     s = payAll(move(s, `card:${uidIn(s, 'red.loyalists', 'shop')}`)); // the turn's own recruit: a 5
     while (s.pending?.kind === 'buy' && s.pending.afterPurchase) s = move(s, 'pass');
-    expect(s.pending.prompt).toBe('P1: Ushers: also recruit a member costing 3 or less, or pass');
+    expect(s.pending.prompt).toBe('P1: Ushers: also recruit a member costing 4 or less, or pass');
     const ids = s.pending.options.map(o => o.id);
     expect(ids).toContain(`card:${uidIn(s, 'red.reserve', 'shop')}`);
     expect(ids).toContain(`card:${uidIn(s, 'red.intern', 'shop')}`);
@@ -362,9 +362,9 @@ describe('Wake-Up Caller: "Round Start: the player with the most followers skips
   });
 });
 
-describe('Converts: "On Recruit: recruit a rival\'s member costing 3 or less, for free; that rival recruits the shop\'s cheapest, for free."', () => {
+describe('Converts: "On Recruit: recruit a rival\'s member costing 4 or less, for free; that rival recruits the shop\'s cheapest, for free."', () => {
   it('the pitched turn: P1 takes P2\'s Intern (3); P2 recruits the shop\'s cheapest; Foster Parents pays', async () => {
-    // Intern for Deprogrammers when every member cost 1 more (Nov 5): Deprogrammers costs 4, past Converts' 3
+    // Intern for Deprogrammers when every member cost 1 more (Nov 5): Deprogrammers costs 4, Intern costs 3
     const { contextFor } = await import('../../../engine/v4/core.js');
     let s = table(['red', 'market', 'trading', 'yellow'], { n: 2, round: 3, members: [['red.fosterparents'], ['red.intern', 'red.mob']], shop: ['red.converts', 'red.volunteer', 'red.mentor'] });
     s.current = 0;
@@ -384,7 +384,7 @@ describe('Converts: "On Recruit: recruit a rival\'s member costing 3 or less, fo
     let s = table(['red', 'market', 'trading', 'yellow'], { n: 2, round: 3, members: [[], ['red.movementpenalty', 'red.loyalists']], shop: ['red.converts', 'red.mentor'] });
     s.current = 0;
     contextFor(s).recruit(s.players[0], uidIn(s, 'red.converts', 'shop'), { free: true });
-    expect(s.log.some(l => l.includes("P1's Converts: no rival's member costing 3 or less to recruit."))).toBe(true);
+    expect(s.log.some(l => l.includes("P1's Converts: no rival's member costing 4 or less to recruit."))).toBe(true);
   });
 });
 

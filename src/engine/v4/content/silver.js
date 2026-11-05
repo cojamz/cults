@@ -54,9 +54,9 @@ function giveAll(ctx, giver, color, n) {
   afterGive(ctx, giver, color);
 }
 /** One gift from giver to one player, as any sphere gives (Gold's Kickback): receiver's and giver's gift hooks fire. */
-/** Guest of Honor's gifts: each of the owner's members costing 3 or less (as a player sees the cost), to each rival. */
+/** Guest of Honor's gifts: each of the owner's members costing 4 or less (as a player sees the cost), to each rival. */
 function goh(ctx, owner, card) {
-  const cheap = ctx.membersOf(owner).filter(c => c.def.s + c.def.w <= 3);
+  const cheap = ctx.membersOf(owner).filter(c => c.def.s + c.def.w <= 4);
   const ww = ctx.membersOf(owner).some(c => c.def.id === 'silver.wellwishers' || c.def.key === 'wellwishers') ? WW_N : 0;
   const opts = [];
   // bots shed a used-up or plain cheap member, never one still paying; the rival it helps least;
@@ -573,20 +573,20 @@ const silver = {
       },
     }),
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 8 → 4
-    // After the Silver space is done; any member of yours costing 3 or less (as a player sees the cost), itself included;
+    // After the Silver space is done; any member of yours costing 4 or less (as a player sees the cost), itself included;
     // "you may": giving none is fine. A gift, as Godparent's (Well-Wishers hears it). Pitch: quality/pitches/B-toastmaster.md.
     // Quality loop (Nov 4), live since Nov 4 (Claude, under Cory's go-with-your-gut): Polisher's place (paper 16 vs 11; balance trial
     // owners won 24% vs Toastmaster's 22%; blind play +0.34 vs Toastmaster, +0.66 vs Polisher; 1.4 fires per owner game).
     // Cory, Nov 4 4:05pm Eastern: "i like the concept of it. maybe on use once per round?" (no choice popped by taking a
     // space). Was "Whenever you take a Silver space, you may give ..."; the gift and the +4 are unchanged.
-    m('guestofhonor', 'Guest of Honor', 1, 1, 'On Use, once per round: give a rival one of your members costing 3 or less for +4 followers.', {
+    m('guestofhonor', 'Guest of Honor', 1, 1, 'On Use, once per round: give a rival one of your members costing 4 or less for +4 followers.', {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
         const opts = goh(ctx, owner, card);
-        if (!opts.length) { card.used = false; ctx.log(`${owner.name}'s Guest of Honor: no member costing 3 or less to give.`); return; }
+        if (!opts.length) { card.used = false; ctx.log(`${owner.name}'s Guest of Honor: no member costing 4 or less to give.`); return; }
         ctx.log(`${owner.name} uses Guest of Honor.`);
-        ctx.choose(owner, 'Guest of Honor: give which member costing 3 or less, to which rival? +4 followers', opts, 'silver.guestofhonor');
+        ctx.choose(owner, 'Guest of Honor: give which member costing 4 or less, to which rival? +4 followers', opts, 'silver.guestofhonor');
       },
       botActivate: (ctx, p, card) => goh(ctx, p, card || ctx.membersOf(p).find(c => c.def.key === 'guestofhonor')).some(o => o.hint > 0),
     }),

@@ -153,12 +153,12 @@ export default {
       resolve(ctx, p) { ctx.gain(p, 'red', ACT.has('promote1') ? 1 : 3, { fromAction: true }); swap(ctx, p, 'demote', 'Demote: choose a member and its replacement'); },
     },
     {
-      key: 'take', ring: 3, name: 'Initiation', text: 'Recruit a member in the shop costing 8 or less, for free. +1 red.', // the cap (Cory, 2026-10-24: "8 or less")
-      estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().filter(c => cost(c) <= 8).map(c => c.def.f + cost(c) * 0.6)),
+      key: 'take', ring: 3, name: 'Initiation', text: 'Recruit a member in the shop costing 9 or less, for free. +1 red.', // the cap (Cory, 2026-10-24: "8 or less"; 9 since Nov 5, "for named costs, yes go up by 1")
+      estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().filter(c => cost(c) <= 9).map(c => c.def.f + cost(c) * 0.6)),
       resolve(ctx, p) {
-        const shop = ctx.shopCards().filter(c => cost(c) <= 8);
+        const shop = ctx.shopCards().filter(c => cost(c) <= 9);
         ctx.gain(p, 'red', 1, { fromAction: true });
-        if (!shop.length) { ctx.log(`${p.name}: no shop member costs 8 or less.`); return; }
+        if (!shop.length) { ctx.log(`${p.name}: no shop member costs 9 or less.`); return; }
         if (ACT.has('initiation')) usesRecruit(ctx, p);
         ctx.choose(p, 'Initiation: which member?', shop.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + cost(c),
@@ -351,12 +351,12 @@ export default {
     // Red's set 16 vs 13). 4 red + 4 any, worth 2, counts as 2. A trade, so swap protection holds (Loyalists' cult, a
     // rival who can't be swapped with), as Double Agent's; the taken member is recruited (its On Recruit fires), the
     // rival's free one is too. Ties for the shop's cheapest: the owner picks, on the owner's turn.
-    ...add7(m('converts', 'Converts', 3, 4, 'On Recruit: recruit a rival’s member costing 3 or less, for free; that rival recruits the shop’s cheapest, for free.', { f: 2, n: 2,
+    ...add7(m('converts', 'Converts', 3, 4, 'On Recruit: recruit a rival’s member costing 4 or less, for free; that rival recruits the shop’s cheapest, for free.', { f: 2, n: 2,
       onRecruited(ctx, owner, card) {
         const list = ctx.rivals(owner).filter(o => ctx.canSteal(owner, o, 'swap'))
-          .flatMap(o => ctx.membersOf(o).filter(c => cost(c) <= 3 && ctx.canSwapMember(c.uid)).map(c => ({ c, o })));
-        if (!list.length) { ctx.log(`${owner.name}'s Converts: no rival's member costing 3 or less to recruit.`); return; }
-        ctx.choose(owner, 'Converts: recruit which rival’s member (costing 3 or less) for free?', list.map(({ c, o }) => ({
+          .flatMap(o => ctx.membersOf(o).filter(c => cost(c) <= 4 && ctx.canSwapMember(c.uid)).map(c => ({ c, o })));
+        if (!list.length) { ctx.log(`${owner.name}'s Converts: no rival's member costing 4 or less to recruit.`); return; }
+        ctx.choose(owner, 'Converts: recruit which rival’s member (costing 4 or less) for free?', list.map(({ c, o }) => ({
           id: `card:${c.uid}`, label: `${o.name}: ${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f + cost(c),
         })), 'red.convert');
       },
@@ -504,7 +504,7 @@ export default {
     }),
     // REPLACE7 bot test (Nov 4, quality loop, Members A): Greeters' place, a round I member as Greeters is. 2 red + 2 any
     // as a player sees it, counts as 2. Each of the owner's turns gets one more recruit step that offers only shop (or
-    // reachable pile) members costing 3 or less (core: flag cheapBuy, the most any of the owner's cards prints).
+    // reachable pile) members costing 4 or less (core: flag cheapBuy, the most any of the owner's cards prints).
     // Quality loop (Nov 4), live since Nov 4 (Claude, under Cory's go-with-your-gut): Greeters' place (paper 15, Red's set 13 -> 15; trial owners 33% vs 30%; blind play 1.50 vs 0.33). 2 red +
     // 2 any as a player sees it, counts as 2, a round I member as Greeters is. Pays when a member comes into its owner's
     // cult out of a rival's, whoever moves it (Promote, Demote, Panel, Body Snatchers, Poach, Shake Down, Kidnapper, a
@@ -519,7 +519,7 @@ export default {
       // about one member in from a rival per round for a Red player (Promote, Demote, Body Snatchers)
       ...see(info => 2 * endsAhead(info).length),
     }),
-    ...add7(m('ushers', 'Ushers', 1, 2, 'Each turn, you may also recruit one member costing 3 or less.', { f: 2, n: 2, round: 1, cheapBuy: 3,
+    ...add7(m('ushers', 'Ushers', 1, 2, 'Each turn, you may also recruit one member costing 4 or less.', { f: 2, n: 2, round: 1, cheapBuy: 4,
       // about one cheap member a turn in round I, fewer later (the row holds few of them after round I)
       ...see(info => (info.round === 1 ? 0.6 * info.myNow + 2 : info.round === 2 ? 0.3 * info.myNow : 0)),
     })),

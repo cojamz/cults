@@ -22,7 +22,7 @@ describe('REPLACE11: Duty Free', () => {
 describe('REPLACE11: Snobs (disdain)', () => {
   it('is in the Blue list in place of the Game End Snobs', async () => {
     const { defById } = await import('../../../engine/v4/content/index.js');
-    expect(defById('market.snobs3').text).toBe('Whenever a rival recruits a member costing 3 or less, +1 follower.');
+    expect(defById('market.snobs3').text).toBe('Whenever a rival recruits a member costing 4 or less, +1 follower.');
     expect(defById('market.snob').retired).toBe(true);
   });
 });

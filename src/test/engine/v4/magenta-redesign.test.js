@@ -99,10 +99,10 @@ describe('Magenta redesign edge cases', () => {
       expect(s.players[0].res.magenta).toBe(key === 'pickpocket' ? 0 : 1);
     }
   });
-  it('ransom includes total cost five, excludes six, and resumes for the victim without repeating the grant', () => {
-    let s = table(Q, { round: 2, res: [{}, { gold: 3, red: 2 }], members: [[], ['red.mentor', 'red.panel']], shop });
+  it('ransom includes total cost five (the cap is 6 since the Nov 5 +1), excludes nine, and resumes for the victim without repeating the grant', () => {
+    let s = table(Q, { round: 2, res: [{}, { gold: 3, red: 2 }], members: [[], ['red.mentor', 'red.patriarch']], shop });
     s = take(s, 'thieves.ransom');
-    // one rival, one member at 5 or less: no picks, straight to the holder's answer
+    // one rival, one member at 6 or less: no picks, straight to the holder's answer
     expect(s.pending.player).toBe(1);
     expect(ids(s)).toEqual(['pay', 'let']);
     s = move(restored(s), 'pay');
