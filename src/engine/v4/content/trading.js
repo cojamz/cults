@@ -448,7 +448,7 @@ const trading = {
     moneylender(ctx, p, uid) {
       if (!p.members.includes(uid)) return;
       const name = ctx.card(uid).def.name;
-      ctx.asMember(p, 'Moneylender', () => { ctx.buryMember(p, uid); ctx.gain(p, W, 4); ctx.log(`${p.name}'s Moneylender: cast out ${name}, +4 white.`); });
+      ctx.asMember(p, 'Loan Sharks', () => { ctx.buryMember(p, uid); ctx.gain(p, W, 4); ctx.log(`${p.name}'s Loan Sharks: cast out ${name}, +4 white.`); });
       gotRidOf(ctx, p);
     },
     dowagers(ctx, p, value, data) {
@@ -546,18 +546,19 @@ const trading = {
     // REPLACE9 bot test (Members C, Nov 4, batch bC9: paper 15 vs Landlord's 11): Landlord's place. 3 white + 1 any as a
     // player sees it. One of your other members costing 3 or less to the bottom of the pile (as Farewell), +4 white; with
     // none, the use comes back. Bots cast out their cheapest-worth member, from round II.
-    ...add9(m('moneylender', 'Moneylender', 2, 1, 'On Use, once per round: cast out one of your members costing 3 or less to the bottom of the pile. +4 white.', {
+    // Live in Raiders' slot as Loan Sharks (Cory, Nov 5: "i like moneylender. needs a different name. maybe slightly cheap"; name Claude's fill-in, 3 white + 2 any as a player sees it)
+    m('moneylender', 'Loan Sharks', 2, 1, 'On Use, once per round: cast out one of your members costing 3 or less to the bottom of the pile. +4 white.', {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
         const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid && cost(ctx, c.uid) <= 3);
-        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Moneylender: no member costing 3 or less to cast out.`); return; }
-        ctx.choose(owner, 'Moneylender: cast out which member for 4 white?', list.map(c => ({
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Loan Sharks: no member costing 3 or less to cast out.`); return; }
+        ctx.choose(owner, 'Loan Sharks: cast out which member for 4 white?', list.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: -(c.def.f + (c.def.onLeave ? -cost(ctx, c.uid) : 0)),
         })), 'trading.moneylender');
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.membersOf(owner).some(c => c.def.key !== 'moneylender' && cost(ctx, c.uid) <= 3 && c.def.f <= 1),
-    })),
+    }),
     // Cory, Nov 4 11:53am: "White should definitely have a member that gives an extra buy each turn ... limit the bonus
     // recruit to followers"; 12:45pm: "landlord is easily the worst white card". Landlord's place. Name, price and worth 1
     // are Claude's fill-ins. REPLACE14=barker.

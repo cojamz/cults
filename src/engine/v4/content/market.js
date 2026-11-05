@@ -759,7 +759,7 @@ const market = {
     // + 3 any as a player sees it. Pays once a turn, on the owner's second member recruit of that turn (Recruit Twice,
     // Spree, Shopaholics); buying followers isn't a member. Recruiting Power Shoppers itself counts as the first.
     // In the deck for Doormen's slot (Cory, Nov 5: "i actually do like power shoppers", "doormen")
-    m('powershoppers', 'Power Shoppers', 3, 3, 'Whenever you recruit your second member in a turn, +2 followers.', { f: 2,
+    m('powershoppers', 'Power Shoppers', 3, 2, 'Whenever you recruit your second member in a turn, +2 followers.', { f: 2,
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what?.member || what.member.uid === card.uid) return; // itself: onRecruited counts it
         const key = `${ctx.state.round}:${(ctx.state.turns || []).length}`;
@@ -954,7 +954,7 @@ const market = {
     // its own Round End that round (the round's round-end members have already been asked).
     // In the deck for Shopaholics' slot (Cory, Nov 5: "Last minute shopper is good. it should also give one or 2 blue at
     // round end"; +2 is Claude's pick). The blue comes before contests are scored, so it counts for Most blue.
-    m('lastminute', 'Last-Minute Shopper', 2, 1, 'Round End: +2 blue, then you may recruit a shop member, paying its cost.', { round: 1,
+    m('lastminute', 'Last-Minute Shopper', 2, 0, 'Round End: +2 blue, then you may recruit a shop member, paying its cost.', { round: 1,
       ...see(i => endsAhead(i).length * 3), // BOTSEE: 2 blue and an extra paid recruit each round end still ahead
       onAllPlaced(ctx, owner) { const got = ctx.gain(owner, B, 2); if (got) ctx.log(`${owner.name}'s Last-Minute Shopper: +${got.n} ${got.color}.`); lmOffer(ctx, owner); },
     }),

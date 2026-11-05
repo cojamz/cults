@@ -21,7 +21,7 @@ describe('REPLACE2: the switch', () => {
     expect(price('echo.mirrorimage')).toEqual([6, 4, 1]);
     expect(price('thieves.skimmers')).toEqual([4, 3, 1]);
     expect(price('market.doorbusters')).toEqual([5, 4, 2]);
-    expect(price('yellow.nightmarket')).toEqual([3, 2, 1]);
+    expect(price('yellow.nightmarket')).toEqual([3, 1, 1]);
     expect(price('silver.fundraisers')).toEqual([6, 4, 2]);
     expect(price('silver.hushmoney')).toEqual([4, 3, 1]);
     expect(price('benders.spoilsports')).toEqual([0, 7, 1]);

@@ -176,6 +176,7 @@ for (const [id, name, source] of [
   ['market.powershoppers', 'Power Shoppers', 'market.doorman'], // Nov 5: Doormen's place, on its scene until its own is drawn
   ['purple.nightmanager', 'Night Manager', 'purple.earlybird'], // Nov 5: Early Birds' place, on its scene until its own is drawn
   ['silver.ballroom', 'Ballroom Dancers', 'silver.charityball'], ['silver.kingmakers', 'Kingmakers', 'silver.creditors'], ['silver.patronsaints', 'Patron Saints', 'silver.saint'], // Nov 5: silver's three open slots, on these scenes until their own are drawn
+  ['trading.moneylender', 'Loan Sharks', 'trading.raider'], // Nov 5: Raiders' place, on its scene until its own is drawn
 ]) {
   const art = PORTRAIT.get(source);
   if (art && !PORTRAIT.has(id)) PORTRAIT.set(id, { ...art, id, name });

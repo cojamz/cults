@@ -851,7 +851,7 @@ const silver = {
     // pass 2's pooled midpoint (5.2) rounds back to 6, so it stays (design/eval/balance-pass-2.md)
     // Cory, Nov 5 ("I love ballroom!", "yes to kingmaker and ballroom", "yeah patron saints"): silver's three open
     // slots, in the places Charity Ball, Creditor and Hostesses left. Prices and worth are Claude's fill-ins (silver thread).
-    m('ballroom', 'Ballroom Dancers', 3, 3, 'On Use, once per game: +2 followers per minion on Silver spaces.', { f: 2, n: 2,
+    m('ballroom', 'Ballroom Dancers', 3, 2, 'On Use, once per game: +2 followers per minion on Silver spaces.', { f: 2, n: 2,
       activate: 'game',
       onActivate(ctx, owner, card) {
         const k = onSilver(ctx);
@@ -863,7 +863,7 @@ const silver = {
       botActivate: (ctx) => { const k = onSilver(ctx); return k >= Math.max(3, ctx.state.players.length) || (ctx.state.round === 3 && k >= 2 && ctx.state.players.every(o => o.left <= 1)); },
       ...see(info => (endsAhead(info).length ? 7 : 0)),
     }),
-    m('kingmakers', 'Kingmakers', 2, 2, 'Round End: give a rival 3 silver from the bank. +3 followers.', {
+    m('kingmakers', 'Kingmakers', 2, 1, 'Round End: give a rival 3 silver from the bank. +3 followers.', {
       onAllPlaced(ctx, owner) {
         const list = others(ctx, owner);
         if (!list.length) return;
@@ -876,7 +876,7 @@ const silver = {
       },
       ...see(info => 3 * endsAhead(info).length),
     }),
-    m('patronsaints', 'Patron Saints', 3, 3, 'Round End: +1 follower per silver member, anyone’s.', { f: 2,
+    m('patronsaints', 'Patron Saints', 3, 2, 'Round End: +1 follower per silver member, anyone’s.', { f: 2,
       onAllPlaced(ctx, owner) {
         const k = ctx.state.players.reduce((a, o) => a + ctx.countMembersOfColor(o, S), 0);
         if (!k) return;

@@ -21,7 +21,7 @@ describe('REPLACE9: the switch', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f, d.n]; };
     expect(price('yellow.tollkeeper')).toEqual([3, 4, 1, 1]);
     expect(price('yellow.quilter')).toEqual([5, 3, 1, 1]);
-    expect(price('market.lastminute')).toEqual([3, 2, 1, 1]);
+    expect(price('market.lastminute')).toEqual([3, 1, 1, 1]);
     for (const id of ['yellow.customs', 'yellow.dyer', 'market.critic']) expect(defById(id).retired).toBe(true);
     expect(defById('yellow.tollkeeper').round).toBe(1);
     expect(defById('market.lastminute').round).toBe(1);

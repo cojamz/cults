@@ -8,7 +8,7 @@ describe('Duty Collector, live: "Whenever a rival recruits a member of a color y
   it("dealt without any switch, in Customs Officer's place, round I", () => {
     const d = defById('yellow.dutycollector');
     expect(d.retired).toBeFalsy();
-    expect([d.s, d.w, memberRound(d)]).toEqual([3, 4, 2]); // joins by cost (Cory, Nov 5; round II up to printed 5 since 10:22pm)
+    expect([d.s, d.w, memberRound(d)]).toEqual([3, 4, 3]); // joins by cost (Cory, Nov 5)
     expect(defById('yellow.customs').retired).toBe(true);
   });
 });
