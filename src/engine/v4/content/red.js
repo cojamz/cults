@@ -221,6 +221,9 @@ export default {
     },
     borrow(ctx, p, uid) {
       if (!ctx.state.shop.includes(uid)) { ctx.log(`${p.name}: that member left the shop.`); return; }
+      ctx.card(uid).borrowTurn = turnKey(ctx); // once a turn: Stunt Double copying the Tryout that borrowed it looped
+      // and one copying member a turn in all: Understudy, Echo, Cover and Tryout went round in a ring (bot games, Nov 4)
+      if (copiesAction(ctx.card(uid).def)) ctx.state.tryoutCopyTurn = turnKey(ctx);
       ctx.log(`${p.name} uses ${ctx.defOf(uid).name}’s On Recruit; it stays in the shop.`);
       ctx.borrowOnRecruit(p, uid);
     },
@@ -634,9 +637,11 @@ function snatchPairs(ctx, p) {
 // Tryout's shop members: an On Recruit or round-start effect that doesn't act on the card itself ("swap it",
 // "it becomes", or the card by its own name: "Impersonator has that member's ability"), which a member still in the
 // shop can't do ("becomes a copy of"; copying an action is fine: Cory asked why Fan Club wasn't offered, Nov 5). Tryout on Impersonator had you pick a rival's member for nothing (Cory's playtest, Nov 4).
+const copiesAction = def => /\bcop(?:y|ies)\b/i.test(def.text.replace(/^[^:]*:/, ''));
+const turnKey = ctx => `${ctx.state.round}:${(ctx.state.turns || []).length}`;
 export function borrowable(ctx) {
   return ctx.shopCards().filter(c => {
-    if (c.def.recruitNote || !(c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate)))) return false;
+    if (c.borrowTurn === turnKey(ctx) || (copiesAction(c.def) && ctx.state.tryoutCopyTurn === turnKey(ctx)) || c.def.recruitNote || !(c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate)))) return false;
     const t = c.def.text.replace(/^[^:]*:/, '');
     return !/\bit\b|\bthese\b|\bthis member\b|\ba copy of\b/i.test(t) && !t.toLowerCase().includes(c.def.name.toLowerCase());
   });

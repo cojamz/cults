@@ -120,7 +120,10 @@ describe('locked Red action progression', () => {
       const uid = uidIn(s, id, 'shop');
       expect(s.pending.options.map(o => o.id)).toContain(`card:${uid}`);
       s = move(s, `card:${uid}`);
-      for (let i = 0; s.pending?.kind === 'choose' && s.pending.p === 0 && i < 20; i++) s = move(s, s.pending.options[0].id);
+      let i = 0;
+      // always take the same member again when offered: Stunt Double copying the Tryout that borrowed it looped (bot games, Nov 4)
+      for (; s.pending?.kind === 'choose' && i < 20; i++) s = move(s, (s.pending.options.find(o => o.id === `card:${uid}`) || s.pending.options[0]).id);
+      expect(i).toBeLessThan(20);
       expect(s.shop).toContain(uid);
     }
   });

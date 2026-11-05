@@ -171,8 +171,10 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
     if (crowd) return (
       <>
         <span className="gc-name">{d.name}</span>
-        <span className="gc-cost" data-cost={total} aria-label={parts.length ? `costs ${parts.map(c => `${c.n} ${c.color === 'any' ? 'any' : c.color}`).join(' + ')}` : 'free'}>
-          {parts.length ? parts.map((c, k) => <span key={k} className="gc-cd num" data-res={c.color} data-any={c.color === 'any' ? anyParts() : undefined} style={c.color === 'any' ? undefined : { '--d': `var(--q-${c.color}, var(--${c.color}))` }}>{c.n}</span>) : <span className="gc-free">free</span>}
+        {/* just the total in a chip: Promote and Demote compare totals (Cory's playtest, Nov 4: "should just show total cost
+            when its in the condensed form") */}
+        <span className="gc-cost gc-total num" data-cost={total} aria-label={parts.length ? `costs ${total}` : 'free'}>
+          {parts.length ? total : <span className="gc-free">free</span>}
         </span>
       </>
     );

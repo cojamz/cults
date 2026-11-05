@@ -16,7 +16,7 @@ import CultSeat from '../../../v4/game/CultSeat.jsx';
 afterEach(cleanup);
 const optionsOf = s => { const m = new Map((s.pending ? s.pending.options : []).map(o => [o.id, o])); return id => m.get(id) || null; };
 // every use-once member on any table, with a table it can sit on (its own quadrant plus three others)
-const USE_ONCE = allQuadrantIds().flatMap(q => quadrant(q).members.filter(m => m.activate).map(m => ({ q, id: m.id, name: m.name, activate: m.activate })));
+const USE_ONCE = allQuadrantIds().flatMap(q => quadrant(q).members.filter(m => m.activate && !m.retired).map(m => ({ q, id: m.id, name: m.name, activate: m.activate })));
 const others = q => allQuadrantIds().filter(x => x !== q && ['gold', 'echo', 'trading', 'purple', 'silver', 'yellow'].includes(x)).slice(0, 3);
 
 describe('every use-once member goes through the one flow', () => {
