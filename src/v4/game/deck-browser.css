@@ -29,8 +29,10 @@
 .lt-sort .lt-sort-btn{border-radius:20px}
 @media(max-width:600px){.dialog.deck-browser{height:96dvh;width:100%;padding:12px}.deck-browser-head{align-items:flex-start}.deck-browser-head p{max-width:220px}.db-color{padding-left:6px;padding-right:6px}.db-selected{gap:8px;padding:9px 8px}.db-selected-art{flex-basis:40px}.db-selected p{font-size:15px;line-height:18px}.deck-browser-overlay{padding:6px}}
 .db-divider{padding:14px 12px 6px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--cream-2);border-top:1px solid var(--rim);background:var(--walnut-2,#241b15)}
-.db-color.out,.db-cell.out{opacity:.45}
-.db-cell.out .db-card:hover,.db-cell.out .db-card:focus-visible{opacity:1}
+/* dimmed rows: a veil of the sheet's own walnut over each, the same look as opacity .45 on the sheet, without the
+   ~80 separate see-through groups the browser had to redraw on every scroll step (Cory, Nov 5: "deck scrollin gis super laggy") */
+.db-cell.out{position:relative}
+.db-color.out::after,.db-cell.out::after{content:"";position:absolute;inset:-3px -1px 0 0;background:color-mix(in srgb,var(--walnut-2,#241b15) 55%,transparent);pointer-events:none}
 .db-selected.out{opacity:.8}
 .db-out-note{font-weight:600;font-size:15px;color:var(--pl-ink-2)}
 .db-card.later{filter:grayscale(1);opacity:.5}

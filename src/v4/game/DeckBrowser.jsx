@@ -55,15 +55,10 @@ export default function DeckBrowser({ state, onClose }) {
   const outIds = new Set(others.map(o => o.def.id));
   const tint = d => (outIds.has(d.id) ? `var(--${d.quadrant})` : cardColor(state, d));
   const art = d => <Sprite id={[d.id, spriteId(d.name)]} kind="member" sphere={onTable(state, d) || outIds.has(d.id) ? quadrant(d.quadrant).resource : 'colorless'} size={40} />;
-  return <div className="overlay top deck-browser-overlay" role="dialog" aria-modal="true" aria-label="Browse members" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-    <section className="dialog deck-browser" ref={dialog}>
-      <header className="deck-browser-head"><div><h2>Members</h2><p>Every member type in this game · color down, price across · dimmed rows are colors not in this game{Object.keys(state.waiting || {}).length > 0 && ' · greyed members join the deck in a later round'}</p></div><button type="button" className="btn ghost" data-autofocus onClick={onClose} aria-label="Close member browser">Close</button></header>
-      {selected && <article className={`db-selected${selected.out ? ' out' : ''}${selected.later ? ' later' : ''}`} data-deck-selected={selected.def.id} style={{ '--q': tint(selected.def) }}>
-        {/* the same card as everywhere (Cory, Oct 29: "why are the member cards in mixed style") */}
-        <MemberCard state={state} def={selected.def} />
-        {(selected.out || selected.later || selected.copies > 1) && <p className="db-out-note">{selected.out ? 'Not in this game' : selected.later ? `Joins the deck in round ${roman(selected.later)}` : `${selected.copies} copies in the deck`}</p>}
-      </article>}
-      <div className="deck-browser-scroll" tabIndex={0} role="region" aria-label="Member cards by color and price">
+  // the grid is the same while the table plays on under it: a rival's move re-renders it only when something it shows
+  // changed (Cory, Nov 5: "deck scrollin gis super laggy" while the bots moved behind it)
+  const sig = JSON.stringify([state.resources, selected?.def.id, rows.map(r => r.key), cards.map(c => [c.def.id, c.cost, c.color, c.later, tint(c.def), outIds.has(c.def.id) ? '' : cardGround(state, c.def), onTable(state, c.def) ? 1 : 0])]);
+  const grid = useMemo(() => (
         <div className="deck-browser-grid" style={{ gridTemplateColumns: `90px repeat(${prices.length}, minmax(114px, 1fr))` }}>
           <div className="db-corner">Price</div>
           {prices.map(price => <div className="db-price num" key={price} data-price={price}>{price === 0 ? 'Free' : price}</div>)}
@@ -78,6 +73,17 @@ export default function DeckBrowser({ state, onClose }) {
             </div>)}
           </Fragment>)}
         </div>
+  ), [sig]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <div className="overlay top deck-browser-overlay" role="dialog" aria-modal="true" aria-label="Browse members" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+    <section className="dialog deck-browser" ref={dialog}>
+      <header className="deck-browser-head"><div><h2>Members</h2><p>Every member type in this game · color down, price across · dimmed rows are colors not in this game{Object.keys(state.waiting || {}).length > 0 && ' · greyed members join the deck in a later round'}</p></div><button type="button" className="btn ghost" data-autofocus onClick={onClose} aria-label="Close member browser">Close</button></header>
+      {selected && <article className={`db-selected${selected.out ? ' out' : ''}${selected.later ? ' later' : ''}`} data-deck-selected={selected.def.id} style={{ '--q': tint(selected.def) }}>
+        {/* the same card as everywhere (Cory, Oct 29: "why are the member cards in mixed style") */}
+        <MemberCard state={state} def={selected.def} />
+        {(selected.out || selected.later || selected.copies > 1) && <p className="db-out-note">{selected.out ? 'Not in this game' : selected.later ? `Joins the deck in round ${roman(selected.later)}` : `${selected.copies} copies in the deck`}</p>}
+      </article>}
+      <div className="deck-browser-scroll" tabIndex={0} role="region" aria-label="Member cards by color and price">
+        {grid}
       </div>
     </section>
   </div>;
