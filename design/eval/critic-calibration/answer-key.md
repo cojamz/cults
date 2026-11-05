@@ -116,3 +116,8 @@ Source: blind tester panel, 2026-10-26 (v0.8.86); fixed in v0.8.87 to v0.8.91.
 ## Cory's card calls, 2026-11-04 (paper judges missed or underrated these)
 - Heiresses ("On Use, once per game: +1 white per member you have."): "dont change heiresses ... It combos really nicely with the round III white action" (Cash In). r3 ranked it near the bottom (11). Credit the Cash In combo, and score the once-per-game timing fairly, with no bonus for the shape ("we shouldnt have too many of them").
 - Landlord ("On Recruit: +2 white. Round Start: +2 white."): "landlord is easily the worst white card"; "Those type of resource gain members can basically all go if they're just flat monocolor gains". A flat one-color gain scores 0 on Feels good and 0 on Its color.
+
+## Cory's cuts, 2026-11-04 evening (all three passed the play A/B; relayed by Members A)
+- Moonlighters, "From round II: after your last minion, +1 minion, placed right away on a space a rival already took." (over Night Owls): Cory said "WAY too strong". The play A/B read +0.67 with judges preferring it 4 to 0, so the play judges scored power as a plus and never checked balance. A pass is only "plays better than the old card", and the balance trial has to catch too-strong.
+- Evangelists, "Whenever any player recruits a red member, +2 followers (+3 if it's you)." (over Proselytizers, A/B +0.42): Cory said "cut pile".
+- Zealots, "Whenever you recruit, +1 follower and the player with the most followers loses 1 (unless it's you)." (A/B +0.33): Cory said "cut pile".
