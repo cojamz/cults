@@ -4,7 +4,8 @@
 // (member, follower) out of the underlining while it stays in the glossary.
 import { RING_VALUE, WORKERS, allQuadrantIds, quadrant } from '../engine/v4/index.js';
 import { guestMembers } from '../engine/v4/content/index.js';
-import { CUT } from '../engine/v4/content/cull.js';
+import { CUT, CUT10 } from '../engine/v4/content/cull.js';
+import { spheres } from './tables.js';
 
 const rings = RING_VALUE.map(v => `+${v}`).join(' / ');
 
@@ -94,13 +95,14 @@ const BY_KEY = Object.fromEntries(GLOSSARY.map(t => [t.key, t]));
 // glossary's card lists can't lag a redesign (Cory, 2026-10-23: "has the glossary not been updated?").
 function liveCards() {
   const out = [];
-  for (const id of allQuadrantIds()) {
+  // only what a game deals today: offered colors (no backlog), the 10-card deck (Cory, Nov 5: the rules listed cut cards)
+  const gone = m => CUT.has(m.id) || CUT10.has(m.id) || m.retired;
+  for (const id of spheres()) {
     const q = quadrant(id);
-    if (q.standIn) continue;
     for (const a of q.actions.flatMap(x => (x.piles ? [x, x.piles] : [x]))) out.push({ name: a.name, text: a.text || '' });
-    for (const m of q.members) if (!CUT.has(m.id) && !m.retired) out.push({ name: m.name, text: m.text || '' });
+    for (const m of q.members) if (!gone(m)) out.push({ name: m.name, text: m.text || '' });
   }
-  for (const m of guestMembers()) if (!CUT.has(m.id)) out.push({ name: m.name, text: m.text || '' });
+  for (const m of guestMembers()) if (!gone(m)) out.push({ name: m.name, text: m.text || '' });
   return out;
 }
 /** Cards in the deck whose text uses a term, by name. */
@@ -112,10 +114,13 @@ export function cardsUsing(t) {
  *  it today ({ ...term, cards: [names], out }; common words list none). out: a card word no card in the deck uses
  *  right now (its cards were cut), kept and marked so (Cory, 2026-10-23: show what's in and what's not). */
 export function glossaryEntries() {
-  return GLOSSARY.filter(t => !t.legacy).map(t => {
+  // a card word no card in today's deck uses is left out (Cory, Nov 5: "some of the rules ... are for sure outdated",
+  // "the stuff about members costing less?"); the plain words of the game stay
+  const KEEP = new Set(['colorless', 'snake order']);
+  return GLOSSARY.filter(t => !t.legacy && t.key !== 'effect').map(t => {
     const cards = t.link === false ? [] : cardsUsing(t);
     return { ...t, cards, out: !!t.card && !cards.length };
-  });
+  }).filter(t => t.link === false || t.cards.length || KEEP.has(t.key));
 }
 /** "Sleep In, Hold Up, Last Call and 3 more" */
 export const cardList = (names, most = 6) => names.length <= most ? names.join(', ')

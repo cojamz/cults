@@ -10,7 +10,7 @@ import { SeatCard } from '../../../v4/game/HoverCards.jsx';
 import { Log, ChoicePrompt, CardFace } from '../../../v4/game/parts.jsx';
 import { MemberCard, NamedText, CardText } from '../../../v4/game/Info.jsx';
 import { memberTimingWords } from '../../../v4/game/memberTiming.js';
-import { GLOSSARY, splitTerms, term } from '../../../v4/glossary.js';
+import { GLOSSARY, splitTerms, term, glossaryEntries } from '../../../v4/glossary.js';
 
 afterEach(cleanup);
 const seats = [{ name: 'Ana', kind: 'human' }, { name: 'Bo', kind: 'bot' }, { name: 'Cy', kind: 'bot' }];
@@ -203,7 +203,9 @@ describe('How to play lists the glossary', () => {
     const { default: HowToPlay } = await import('../../../v4/HowToPlay.jsx');
     const { container } = render(<HowToPlay onClose={() => {}} />);
     const dts = [...container.querySelectorAll('[data-glossary] dt')].map(e => e.textContent);
-    expect(dts).toEqual(GLOSSARY.filter(t => !t.legacy).map(t => t.word));
+    // only words today's deck uses (Cory, Nov 5: the discount word stayed after its card was cut)
+    expect(dts).toEqual(glossaryEntries().map(t => t.word));
+    expect(dts).not.toContain('Next member costs less');
     expect(container.querySelector('[data-glossary]').textContent).toMatch(/Full set/);
     expect(dts).not.toContain('Release');
     expect(container.textContent).not.toContain('Released members');
