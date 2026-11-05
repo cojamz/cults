@@ -14,7 +14,7 @@ emoji; raw list /mnt/project-files/picky/2026-11-05-12-43/). The bot flagged onl
 
 - **Final score sentence counted members three ways.** "P4 won by 6, … then by recruiting 12 members (+13)" sat beside
   "13 members" under P4's name and "Members 14" on the bar. The sentence now says "from members (+14)", the bar's own
-  number. **fixed (this run)**
+  number. **fixed (v0.99.594)**
 - **Demote's sheet offers rivals' members to give away** (round II, "Demote a member": P2's Line Cutters, Foster
   Parents, Deprogrammers, Cutpurse and P3's four lit beside your Cheerleaders). Cory's Nov 4 9:38pm call says Promote
   and Demote give away only your own member; a later commit (011ef83d, "reach any cult again … pending his confirm")
