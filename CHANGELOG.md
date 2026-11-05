@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.600 — 2026-11-05
+
+- Cards that name a cost go up 1 with the new prices: Initiation 9 or less, Housewarming up to 6, Shake Down 6 or less, Guest of Honor 4 or less
+
 ## v0.99.599 — 2026-11-05
 
 - Every member costs 1 more (the extra any-color resource every member pays goes from 1 to 2), so fewer member cards per game
