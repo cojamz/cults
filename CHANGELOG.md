@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.601 — 2026-11-05
+
+- New members in the cut slots: Heist Crew, Night Traders, Counterfeiters, Last-Minute Shopper, Power Shoppers, Night Manager, Ballroom Dancers, Kingmakers, Patron Saints, Downsizers
+
 ## v0.99.600 — 2026-11-05
 
 - Cards that name a cost go up 1 with the new prices: Initiation 9 or less, Housewarming up to 6, Shake Down 6 or less, Guest of Honor 4 or less
