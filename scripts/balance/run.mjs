@@ -14,7 +14,8 @@
 // Raw files live in .balance-runs/<id>/ (not committed); report.md is copied to design/eval/balance-runs/<id>.md
 // and /mnt/project-files/balance-runs/<id>/.
 import { spawn, execSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, copyFileSync, appendFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, copyFileSync, appendFileSync, cpSync } from 'node:fs';
+import { basename } from 'node:path'; // (shards)
 import { deckRules } from '../lib/deck-choice.mjs';
 
 deckRules(); // refuses without DECK
@@ -98,6 +99,26 @@ const files = {
 // the first Normal 4-player shard keeps every game's log for the feel step
 groups.find(g => g.group === 'normal4').env.LOGS = `${dir}/logs`;
 for (const g of groups) if (existsSync(g.args[3]) && !existsSync(g.done)) writeFileSync(g.args[3], ''); // a stopped shard starts over
+
+// --shard=k/n (Cory, Nov 6: "cant we just do stuff in parallel?"): play only every n-th game block, starting at k, then copy
+// the blocks to /mnt/project-files/balance-runs/<id>/shards/ and stop. One box then runs the same command without --shard:
+// it pulls the shards in first (bash scripts/balance/shard.sh explains), finds every block done and goes straight to the numbers.
+const SHARD = flags.shard ? String(flags.shard).split('/').map(Number) : null;
+const SHARED = `/mnt/project-files/balance-runs/${id}/shards`;
+if (!SHARD && existsSync(SHARED)) {
+  for (const f of readdirSync(SHARED)) cpSync(`${SHARED}/${f}`, `${dir}/${f}`, { recursive: true, force: false }); // never over a local file
+}
+if (SHARD) {
+  const [k, n] = SHARD;
+  const mine = groups.filter((g, i) => i % n === k);
+  const extra = k === 0 ? [{ name: 'text-against-engine (members never seen acting)', args: ['scripts/v4-fire-audit.mjs', String(Z.fire), 'normal,normal,normal,normal', 'all'], stdout: `${dir}/fire-audit.txt`, done: `${dir}/fire-audit.done`, okExit: [1] }] : [];
+  await pool([...mine, ...extra]);
+  mkdirSync(SHARED, { recursive: true });
+  for (const g of mine) for (const f of [g.args[3], `${g.args[3]}.choices`, g.done]) if (existsSync(f)) cpSync(f, `${SHARED}/${basename(f)}`);
+  for (const f of ['fire-audit.txt', 'fire-audit.done', 'logs']) if (existsSync(`${dir}/${f}`)) cpSync(`${dir}/${f}`, `${SHARED}/${f}`, { recursive: true }); // logs: whichever shard has the first Normal block
+  note(`shard ${k}/${n}: ${mine.length} blocks copied to ${SHARED}`);
+  process.exit(0);
+}
 
 await stage('games', () => pool([
   ...groups,
