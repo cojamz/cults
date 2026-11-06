@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.656 — 2026-11-06
+
+- A note that says an action did nothing now reads "You have…", and the since-your-turn line no longer repeats a gain in brackets
+
 ## v0.99.655 — 2026-11-06
 
 - Round End's icon is a moon, so it no longer looks like Round Start's hourglass
