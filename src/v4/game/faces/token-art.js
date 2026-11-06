@@ -149,8 +149,8 @@ const S = {
     evenswap: [['m', 'swap', 'm'], ['tag:=']],
     turnout: r => [[`${r + 1}`, 'red']],
     hire: [['mlow', 'tag:0']],
-    hireup: [['m', 'swap', 'm'], ['tag:≤+2']],
-    trade: [['m', 'swap', 'm'], ['tag:≤−2']],
+    hireup: [['m', 'swap', 'm'], ['tag:≤+3']],
+    trade: [['m', 'swap', 'm'], ['tag:≤−3']],
     take: [['m', 'tag:0']],
   },
   purple: {

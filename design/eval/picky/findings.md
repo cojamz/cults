@@ -7,6 +7,24 @@ each. One line per finding: what a player sees, what's wrong, status. Each run's
 Status words: **fixed (version)**, **fixing**, **sent** (to the thread that owns it), **open** (ours, not started),
 **Cory** (a question only he can answer), **by design** (with the reason; the check got an exception).
 
+## 2026-11-06
+Run at 7:43pm Eastern Nov 5 on v0.99.602 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
+emoji; raw list /mnt/project-files/picky/2026-11-06-00-43/). The bot flagged 3 spaces; the member sweep of 117 cards in
+both looks was clean. The rest are by eye from the shots.
+
+- **Wheel kept the old named costs after every member went up 1.** Initiation's space read "Free member costing 8 or
+  less" (its card: 9 or less), Shake Down's "costing 5 or less" (card: 6), Housewarming's "up to 5" (card: up to 6).
+  The emoji look's one-liners said 8 and 5 too, and Promote and Demote's pictures and one-liners still said "up to 2
+  more/less" (card: up to 3, Cory Nov 5). All now match the cards. **fixed (this run)**
+- **A boxed "+0" sits over a rival's silver count** (P2, round III, at the start of your turn), hiding the number. A
+  gain of nothing shouldn't show. **open** (looks off)
+- **Mannequin is a thing, not a person** (blue, "Blue members in the shop count as your members when contests are
+  scored."). Cory, Nov 5: member names are people or groups. Name is the card owner's. **open** (for the coordinator)
+- **Emoji look: Recluse shows a house, Old Money a bank building.** Reads as a place, not a member. **open** (looks off)
+- Seen again, already listed: taken spaces lose their second line (Housewarming "+2"), minions over middle-ring words
+  (Initiation), final-score sentence "recruiting followers" beside "Bought", bare numbers on narrow score parts, bar
+  Members one above the member count, "Since your last turn" lines with no effect ("Round II · P2 New Blood").
+
 ## 2026-11-05 (fourth run)
 Run at 1:44pm Eastern Nov 5 on v0.99.597 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
 emoji; raw list /mnt/project-files/picky/2026-11-05-18-44/). The bot flagged nothing; the member sweep of 109 cards in

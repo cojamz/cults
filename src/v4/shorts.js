@@ -20,7 +20,7 @@ const S = {
     jv: '+3 gold · 1 gold to a rival', rush: r => `+${2 * r} gold`, discount: '−4 cost', steal: 'steal 3 gold', windfall: '+1 gold per member', strike: 'double gold',
   },
   red: {
-    evenswap: 'use a shop member’s On Recruit; +2 red', turnout: r => `+${r + 1} red; +${r} followers if you recruit a member this turn`, hire: 'recruit the top of the deck; each rival +1 red; +1 red', opendoor: 'recruit the cheapest in the shop, free; +1 red', hireup: 'promote: one costing up to 2 more; +3 red', trade: 'demote: one costing up to 2 less; +3 red', take: 'recruit one costing 8 or less, free; +1 red',
+    evenswap: 'use a shop member’s On Recruit; +2 red', turnout: r => `+${r + 1} red; +${r} followers if you recruit a member this turn`, hire: 'recruit the top of the deck; each rival +1 red; +1 red', opendoor: 'recruit the cheapest in the shop, free; +1 red', hireup: 'promote: one costing up to 3 more; +3 red', trade: 'demote: one costing up to 3 less; +3 red', take: 'recruit one costing 9 or less, free; +1 red',
   },
   blue: { a1: '+3 blue', a2: '+2 blue +1 red', a3: '+2 blue +1 green', a4: '+5 blue', a5: '+4 blue +1 gold', a6: '+8 blue' },
   green: { a1: '+3 green', a2: '+2 green +1 gold', a3: '+2 green +1 blue', a4: '+5 green', a5: '+4 green +1 red', a6: '+8 green' },
@@ -37,7 +37,7 @@ const S = {
     bargain: r => `+${r + 1} blue; may send a shop member to the bottom, then refill`, restock: 'one color to the bottom; +1 blue each, +1', showroom: r => `peek at 4, may recruit one; +${r + 2} blue`, clearance: 'recruit twice; +3 blue', pricecheck: 'bury one, half its cost in blue; +1', spree: 'recruit 3 times; +6 blue',
   },
   thieves: {
-    pickpocket: r => `steal ${r + 2} from one rival`, tipoff: r => `+${r + 1} magenta; +${r} followers if you recruit a member this turn`, hideout: 'steal 1; rivals can’t steal from you this round; +1 magenta', rob: 'steal 3 followers, split among rivals; +1 magenta', ransom: 'a rival picks a member costing 5 or less, then pays its cost or loses it; +1 magenta', heist: 'recruit a rival’s member; +1 magenta',
+    pickpocket: r => `steal ${r + 2} from one rival`, tipoff: r => `+${r + 1} magenta; +${r} followers if you recruit a member this turn`, hideout: 'steal 1; rivals can’t steal from you this round; +1 magenta', rob: 'steal 3 followers, split among rivals; +1 magenta', ransom: 'a rival picks a member costing 6 or less, then pays its cost or loses it; +1 magenta', heist: 'recruit a rival’s member; +1 magenta',
   },
   trading: {
     stipend: r => `+${r + 1} white; +${r} followers if you recruit a member this turn`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid for a member this turn; +1 white`, exchange: r => `turn ${r} into ${2 * r} followers; +1 white`, farewell: 'cast out a member for its cost in followers; +1 white', estatesale: 'cast out a member for its cost in white; +1 white', cashin: 'all your white into followers; +1 white',
@@ -50,7 +50,7 @@ const S = {
 // everywhere"): resource words become dots and "N followers" the follower mark; everything else is a plain word.
 const PIPS = {
   gold: { steal: 'steal 3 gold', windfall: '+1 gold per member', strike: 'double gold' },
-  red: { hireup: 'promote a member; +3 red', trade: 'demote a member; +3 red', take: 'recruit one costing 8 or less, free' },
+  red: { hireup: 'promote a member; +3 red', trade: 'demote a member; +3 red', take: 'recruit one costing 9 or less, free' },
   purple: { lastcall: '+1 follower, +1 purple per minion left; take the Goes Last token' },
   silver: { partygifts: 'give rivals up to 3 silver, +2 followers each', largesse: 'give rivals up to 10 silver, +1 follower each' },
   yellow: { gather: '+1 per member' },

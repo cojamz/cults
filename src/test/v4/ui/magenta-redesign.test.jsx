@@ -24,7 +24,7 @@ describe('Magenta action wording and one-stack theft', () => {
     const stash = panelText('thieves', { key: 'tipoff' }, 1);
     expect(stash.main).toBe('+2 magenta'); // Gather's shape (Oct 31)
     expect(stash.second).toBe('+1 @f if you recruit a member');
-    expect(panelText('thieves', { key: 'ransom' }, 2).verb).toContain('costing 5 or less');
+    expect(panelText('thieves', { key: 'ransom' }, 2).verb).toContain('costing 6 or less');
     expect(panelText('thieves', { key: 'rob' }, 2).verb).toBe('Steal 3 @f'); // Heist takes followers (Nov 4), from any rivals (Nov 5)
     expect(pipEffect('thieves', { key: 'rob' }, 2)).toBe('steal 3 followers');
   });

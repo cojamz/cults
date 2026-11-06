@@ -123,7 +123,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'market.underbidder', 'echo.encore', // under 3 holds when Cheerleaders and Victors joined the grey deck (Nov 4) moved the games; cards-market and cards-echo / replace tests cover them
       'echo.tuningfork', // under 3 holds when Promote and Demote began giving only your own member (Nov 4 night) moved the games; cards-echo covers it
       'market.mannequin', // live Nov 5 in Hawker's place (Cory cut Hawker); under 3 holds in these games, and a quiet contest count; replace9.test.js (Mannequin) covers it
-      'thieves.hoardbreaker', 'thieves.bigscore', 'thieves.fixer', 'echo.songrequest', 'echo.choir' // under 3 holds when Cory's Nov 5 cuts, prices and Big Score moved the games; replace10-d3 (Big Score), cards-thieves and cards-echo cover them
+      'thieves.hoardbreaker', 'thieves.bigscore', 'thieves.fixer', 'echo.songrequest', 'echo.choir', // under 3 holds when Cory's Nov 5 cuts, prices and Big Score moved the games; replace10-d3 (Big Score), cards-thieves and cards-echo cover them
       'thieves.secondstory', 'thieves.desperado']); // under 3 holds when Last-Minute Shopper and Power Shoppers (Nov 5) moved the games; cards-thieves covers them
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);

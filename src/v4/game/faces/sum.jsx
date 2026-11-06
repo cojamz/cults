@@ -68,8 +68,8 @@ const SUMS = {
   'red.evenswap': () => [MEM(), SWAP, MEM(), TAGT('=')],
   'red.turnout': ({ r }) => [R('red', plus(r + 1))],
   'red.hire': () => [MEM({ mod: 'low' }), TAGT('free')], //                                        ▾▢ [free]
-  'red.hireup': () => [MEM(), SWAP, MEM({ row: true }), TAGT('≤+2')],
-  'red.trade': () => [MEM(), SWAP, MEM({ row: true }), TAGT('≤−2')],
+  'red.hireup': () => [MEM(), SWAP, MEM({ row: true }), TAGT('≤+3')],
+  'red.trade': () => [MEM(), SWAP, MEM({ row: true }), TAGT('≤−3')],
   'red.take': () => [MEM(), TAGT('free')], //                                                      ▢ [free]      (any face-up member)
   // purple: tempo
   'purple.hourly': ({ n, r }) => [R('purple', plus(n(r - 1, 3 + r)))], //                   +5⧗
