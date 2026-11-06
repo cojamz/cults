@@ -3,15 +3,15 @@
  "schema": 1,
  "build": {
   "schema": 1,
-  "content": "1891s2nuqmy.eba5520eb5",
+  "content": "3rzvck9bds.2bd7a38951",
   "id": "dev",
-  "version": "v0.99.624"
+  "version": "v0.99.626"
  },
  "made": {
   "schema": 1,
-  "content": "1891s2nuqmy.eba5520eb5",
+  "content": "3rzvck9bds.2bd7a38951",
   "id": "dev",
-  "version": "v0.99.624"
+  "version": "v0.99.626"
  },
  "seed": 20261014,
  "quadrants": [
@@ -588,12 +588,12 @@
   "followers": [
    49,
    75,
-   59
+   60
   ]
  },
  "refreshed": {
-  "from": "zncmr0lpld.3db3be83a7",
-  "kept": 50,
-  "of": 146
+  "from": "1891s2nuqmy.eba5520eb5",
+  "kept": 133,
+  "of": 133
  }
 }
