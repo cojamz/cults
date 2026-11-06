@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.641 — 2026-11-06
+
+- The wheel's free-member and Shake Down costs match the cards again; a passing note no longer covers the paying sheet
+
 ## v0.99.640 — 2026-11-06
 
 - Every cloak now pays only for your own moves: Green +2 when you copy an action or member, Blue +2 of a member's color when you discard it, Magenta +1 when you steal, Purple +3 when you take the Goes Last token, Silver +3 when you gift silver, White +2 when you buy followers. A grey member counts as any color.
