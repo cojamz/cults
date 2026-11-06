@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.632 — 2026-11-05
+
+- Every member costs 2 more: 1 more of its own color and 1 more any. Cards that name a cost go up 2 with it (Initiation 11 or less, Housewarming up to 8, Shake Down 8 or less, Light Fingers 11 or more)
+
 ## v0.99.631 — 2026-11-05
 
 - Largesse: give rivals 12 silver from the bank, split as you choose, for +10 followers.
