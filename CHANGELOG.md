@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.624 — 2026-11-05
+
+- Shorter member text: Extortionist and Kidnapper pick the rival, Guest of Honor and Downsizers take any member, Anarchist swaps same cost; 'On Recruit and at Round Start'; the version shows in the in-game menu
+
 ## v0.99.623 — 2026-11-05
 
 - Bandwagon is renamed Survey (Cory)
