@@ -1033,7 +1033,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const momentChain = useChainRunning(!!moment);
   const chainOn = moment ? momentChain : physicalState !== interactionState;
   const tailOf = moment ? lastAny : lastDone;
-  const hubStory = liveRival || (chainOn && !story.live && tailOf && !mySeats.includes(tailOf.pid) ? tailOf : null) || (!chainOn ? story.waiting : null);
+  const hubStory = liveRival || (chainOn && !story.live && tailOf && !mySeats.includes(tailOf.pid) ? tailOf : null) || (!chainOn && (!moment || closedMoment === moment) ? story.waiting : null);
   // the same player again (a snake turnaround, an extra turn) says so on its card, so a second turn reads as new
   const prevStory = allStories[allStories.length - (hubStory && hubStory === tailOf ? 2 : 1)];
   const hubAgain = !!(hubStory && prevStory && prevStory.actor === hubStory.pid && prevStory.round === live0.round);
