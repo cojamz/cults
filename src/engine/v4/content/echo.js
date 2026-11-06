@@ -854,8 +854,11 @@ const echoQ = {
           return;
         }
         // A recruited member begins its own chain, even when an action recruited it for free; copied by Greatest Hits,
-        // it stays in Greatest Hits' chain.
-        withPath(ctx, hitsChain ? pathNow(ctx) : [], () => copy(ctx, owner, e, { by: 'Stunt Double' }), hitsChain ? undefined : e.key);
+        // it stays in Greatest Hits' chain. That includes a copy reached through a choice made later (Greatest Hits →
+        // Impersonator → a rival's Stunt Double), when hitsChain is already off but the path still holds Greatest Hits:
+        // starting fresh there copied Greatest Hits again, forever (seeded bot game, Nov 6).
+        const hits = hitsKeys(ctx), inHits = hitsChain || pathNow(ctx).some(k => hits.includes(k));
+        withPath(ctx, inHits ? pathNow(ctx) : [], () => copy(ctx, owner, e, { by: 'Stunt Double' }), inHits ? undefined : e.key);
       },
     }),
     // Cory, 2026-10-28: "lets shift tribute band into this", then "should maybe get to pick the rival they copy"

@@ -77,6 +77,15 @@ describe('hard combos (Nov 5)', () => {
     expect(s.pending.kind).toBe('buy');
   });
 
+  // Runner 6, Nov 6: a seeded bot game (cloaks-own4 base, game 17) looped forever here. Impersonator's choice is made
+  // after Greatest Hits' copy has returned, so Stunt Double started a fresh chain and copied Greatest Hits again.
+  it("Greatest Hits copying Impersonator, who takes a rival's Stunt Double, never loops back into Greatest Hits", () => {
+    const s = run({ members: [['echo.impersonators', 'echo.copyist'], ['echo.hourglass']] }, [/Greatest Hits/, /Stunt Double/]);
+    expect(s.log.filter(l => /Greatest Hits: \+1 green/.test(l))).toHaveLength(1);
+    expect(s.log.filter(l => /Impersonator does Stunt Double's On Recruit/.test(l))).toHaveLength(1);
+    expect(s.pending.kind).toBe('buy');
+  });
+
   it('Barker + Spree: a follower buy after each of the three recruits', () => {
     const s = run({ members: [['trading.barker']], shop: ['red.volunteer', 'red.host', 'red.recruiter'], res: [{ blue: 30, red: 30 }] },
       [/Spree/, /Volunteer/, /tier:small/, /Host/, /tier:small/, /Recruiter/, /tier:small/]);
