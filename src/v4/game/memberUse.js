@@ -97,7 +97,7 @@ export function useNow(state, pid, uid) {
 export function loadedUse(state, uid) {
   const c = state.cards[uid];
   if (!c || c.used) return false;
-  try { return !!(defById(c.def).activate || (c.copy && defById(c.copy).activate)); } catch { return false; }
+  try { return !!(defById(c.def).activate || ((c.copy || c.ability) && defById(c.copy || c.ability).activate)); } catch { return false; }
 }
 
 /** Has this card spent a once-a-round allowance (Squatter, Big Spender, Straggler) this round? */
@@ -117,7 +117,10 @@ export function memberRows(state, pid, viewer = null, optionFor = () => null) {
     const c = state.cards[uid];
     let d;
     try { d = cardDef(state, uid); } catch { continue; }
-    const copy = c.copy ? defById(c.copy) : null;
+    // an Impersonator's borrowed ability reads as a Doppelganger's copy does (Cory's playtest, Nov 5: "impersonator
+    // doesnt show what it copied?")
+    const copy = c.copy || c.ability ? defById(c.copy || c.ability) : null;
+    const copyWord = copy ? (c.copy ? `Copy of ${copy.name}` : `Has ${copy.name}’s ability`) : '';
     const eff = copy ? { ...d, activate: d.activate || copy.activate, toggle: d.toggle || copy.toggle } : d;
     const t = timingOf(copy || d);
     const kind = kindOf(eff, t);
@@ -142,12 +145,12 @@ export function memberRows(state, pid, viewer = null, optionFor = () => null) {
     // what the card became: once a Doppelganger has copied, its own "When recruited: becomes a copy…" is spent and only
     // the copy reads (Cory, 2026-10-15: "once doppelganger has copied, it doesnt need the extra text anymore")
     let text = memberTimingWords((d.text || '').trim());
-    if (copy) text = `Copy of ${copy.name}: ${memberTimingWords((copy.text || '').trim())}`;
+    if (copy) text = `${copyWord}: ${memberTimingWords((copy.text || '').trim())}`;
     let picked = '';
     if (c.color) { try { picked = `Picked: ${quadrant(c.color).name}.`; text = `${text} ${picked}`; } catch { /* no such quadrant */ } }
     // a rule that grows by round shows as I / II / III lines in the hover (Cory, 2026-10-18); text stays the whole rule
     const rule = copy || d;
-    const byRound = rule.byRound ? { def: rule, before: copy ? `Copy of ${copy.name}:` : '', after: picked } : null;
+    const byRound = rule.byRound ? { def: rule, before: copy ? `${copyWord}:` : '', after: picked } : null;
     const key = [d.id, c.used ? 'u' : '', c.on === false ? 'off' : '', c.copy || '', c.color || '', spentThisRound(state, c) ? 's' : '', ask ? 'ask' : ''].join('|');
     const row = rows.get(key);
     if (row) { row.uids.push(uid); row.n++; if (!row.use && use) row.use = use; continue; }

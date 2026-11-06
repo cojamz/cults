@@ -150,7 +150,7 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
   const peeking = picking && /^Peek: /.test(pend.prompt || '');
   const peekTop = peeking ? state.pile.slice(0, 4) : [];
   const pileTray = picking && !peeking && pend.options.some(o => o.kind === 'card' && state.pile.slice(0, 5).includes(o.value)) ? state.pile.slice(0, 5) : null;
-  // a copy of a member's On Recruit (Sample, Greatest Hits, Bootlegger): the members it can copy sit on the seats as
+  // a copy of a member's On Recruit (Sample, Greatest Hits, Bootlegger; Impersonator's rival member): the members it can copy sit on the seats as
   // small faces, so the strip lays them out as whole cards to pick, as Tryout's shop members are (Cory's playtest, Nov 5:
   // "Sample should show options like the other one does")
   const heldTray = picking && !peeking && !pileTray ? copyTray(state, pend) : null;
@@ -649,13 +649,13 @@ export function FollowerRates({ state, me = null, optionFor = () => null, onPick
 }
 
 /**
- * The members a copy-an-On-Recruit choice offers (Sample, Greatest Hits, Bootlegger), when every option is a member
+ * The members a copy-an-On-Recruit choice offers (Sample, Greatest Hits, Bootlegger; Impersonator's rival member), when every option is a member
  * someone holds: those uids in the order offered, plus a title and each card's holder ("P2’s", "Your") for its tag.
  * Null for any other choice.
  */
 export function copyTray(state, pend) {
-  if (!pend || pend.kind !== 'choose' || !/On Recruit/.test(String(pend.prompt || ''))) return null;
-  const opts = (pend.options || []).filter(o => o.kind === 'card');
+  if (!pend || pend.kind !== 'choose' || !/On Recruit|^Impersonator:/.test(String(pend.prompt || ''))) return null;
+  const opts = (pend.options || []).filter(o => o.kind === 'card' || o.kind === 'member');
   if (!opts.length) return null;
   const holder = uid => state.players.find(p => p.members.includes(uid));
   if (!opts.every(o => holder(o.value))) return null;

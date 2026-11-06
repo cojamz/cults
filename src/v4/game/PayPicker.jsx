@@ -24,7 +24,7 @@ import './pay.css';
 
 const vecOf = (res, v) => Object.fromEntries(res.map(r => [r, (v && v[r]) || 0]));
 const dist = (res, a, b) => res.reduce((s, r) => s + Math.abs((a[r] || 0) - (b[r] || 0)), 0);
-const defsOf = card => [defById(card.def), ...(card.copy ? [defById(card.copy)] : [])];
+const defsOf = card => [defById(card.def), ...[card.copy, card.ability].filter(Boolean).map(id => defById(id))];
 const STACK_MAX = 12; // coins drawn in one stack; more say so in their number
 const STEP = 6; // px between stacked coins
 // Density tiers (H14: stacks of 20+ looked out of proportion, a 12-coin tower beside a stack of 2): a stack rises 6px a

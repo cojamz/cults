@@ -3,7 +3,7 @@
 // (costReduction, goldPaysDouble, anyColorPart), named by the cards that carry them.
 import { cardDef, defById, quadrant, memberPrice } from '../../engine/v4/index.js';
 
-const defsOf = card => [defById(card.def), ...(card.copy ? [defById(card.copy)] : [])];
+const defsOf = card => [defById(card.def), ...[card.copy, card.ability].filter(Boolean).map(id => defById(id))];
 const colorOf = def => { try { return quadrant(def.quadrant).resource; } catch { return def.quadrant; } };
 
 /**

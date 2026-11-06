@@ -293,7 +293,8 @@ export function MemberCard({ state, uid, def: d0 = null, me = null, onFace = fal
   const where = uid == null ? null : owner ? null : state.shop.includes(uid) ? 'In the shop' : 'In the pile';
   // "Free. No effect." is no ability too (its cost line already says free)
   // a Doppelganger that has copied reads as the copy alone (Cory: its own recruit text is spent); "Copy of" says so below
-  const copied = card && card.copy ? (() => { try { return defById(card.copy); } catch { return null; } })() : null;
+  // an Impersonator's borrowed ability likewise reads as the ability alone, "Has X's ability" below (Cory, Nov 5)
+  const copied = card && (card.copy || card.ability) ? (() => { try { return defById(card.copy || card.ability); } catch { return null; } })() : null;
   const ability = String((copied || d).text || '').replace(/^Worth \d+ followers?\.\s*/i, '').replace(/^(Free\.\s*)?No effect\.?$/i, '').trim();
   const worth = d.f != null ? d.f : 1;
   const weight = uid != null ? memberWeight(state, uid) : Math.max(d.n || 1, d.f || 1);
@@ -320,7 +321,8 @@ export function MemberCard({ state, uid, def: d0 = null, me = null, onFace = fal
       {!(card && card.used) && poolNote(state, (copied || d).text) && <small className="mc-live" data-pool-out="">{poolNote(state, (copied || d).text)}</small>}
       {/* Drifters' chosen color, said on its card (Cory's playtest, Nov 1: "no indication or reminder of which color i picked") */}
       {card && card.asColor && state.quadrants.includes(card.asColor) && <small className="mc-live" data-counts-as={card.asColor}>Counts as a <MemberGlyph r={quadrant(card.asColor).resource} size={13} decorative /> <b>{quadrant(card.asColor).name}</b> member</small>}
-      {copied && <small className="mc-live" data-copy-of="">Copy of <CardName state={state} def={copied} /></small>}
+      {copied && card.copy && <small className="mc-live" data-copy-of="">Copy of <CardName state={state} def={copied} /></small>}
+      {copied && !card.copy && <small className="mc-live" data-ability-of="">Has the ability of <CardName state={state} def={copied} /></small>}
       {card && card.used && !state.over && <small className="mc-live" data-member-used="">{owner ? 'Used' : 'Already used: it can’t be used again this game'}</small>}
       {/* the cost and nothing else about paying (Cory, 03:40: cut "You pay"); a discount on you says only why the face's
           price is struck ("Your next member costs 4 less.") */}
