@@ -8,6 +8,8 @@
 # Nov 6: two deploys (main a265c8f, 2d75283) failed with GitHub stuck at "syncing_files" for 10 minutes, not a collision.
 # So the upload now leaves out what the site never serves (source, archive, scripts, harness), and a deploy that times out
 # is tried once more with a longer wait before the run fails and emails Cory.
+# Nov 6 later: 79ebe84 and c13cb07 failed the same way at 351 MB: GitHub held them 5+ minutes in deployment_queued and
+# updating_pages, then the 10-minute cap hit. The retry was dropped (it can't work) and play/v keeps 1 old release, not 3.
 # Lives on main (workflows run from the branch pushed); scripts/harness-sync-main.sh mirrors it from the game branch.
 name: pages deploy (main)
 
@@ -59,16 +61,7 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ runner.temp }}/site
-      - id: first
-        continue-on-error: true
-        uses: actions/deploy-pages@v4
-      - name: Wait before retrying a stuck deploy
-        if: steps.first.outcome == 'failure'
-        run: sleep 60
-      - id: retry
-        if: steps.first.outcome == 'failure'
-        uses: actions/deploy-pages@v4
-        with:
-          timeout: 1200000
+      # One try only: deploy-pages caps its wait at 10 minutes and cancels the deployment when it runs out, and a second
+      # try for the same commit gets "Deployment cancelled" at once (same deployment id), so the old retry never worked.
       - id: deployment
-        run: echo "page_url=${{ steps.retry.outputs.page_url || steps.first.outputs.page_url }}" >> "$GITHUB_OUTPUT"
+        uses: actions/deploy-pages@v4

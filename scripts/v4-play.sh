@@ -65,7 +65,7 @@ git fetch -q origin '+main:refs/remotes/origin/main'
 git worktree add -q --detach "$WT" origin/main
 # Keep the last few releases playable at play/v/<version>/, so a game started before this deploy can still be rejoined
 # on its own rules (src/v4/oldBuild.js sends a player there). The release being replaced joins them; older ones go.
-KEEP_OLD=${KEEP_OLD:-3}
+KEEP_OLD=${KEEP_OLD:-1}  # was 3; each release is ~47 MB and big uploads time out on Pages (Nov 6)
 mkdir -p "$TMP/old"
 [ -d "$WT/play/v" ] && cp -R "$WT/play/v/." "$TMP/old/"
 PREV_VERSION=$(node -e 'try{process.stdout.write(JSON.parse(require("fs").readFileSync(process.argv[1])).version||"")}catch{}' "$WT/play/build.json")
