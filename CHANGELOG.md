@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.645 — 2026-11-06
+
+- The deck view is compact: one row per color, cheapest first, with a check for bought members and a red cross for ones on the discard pile
+
 ## v0.99.644 — 2026-11-06
 
 - Night Managers now counts as 2 members (and scores 2 followers).
