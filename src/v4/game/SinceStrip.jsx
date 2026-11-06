@@ -25,6 +25,10 @@ const words = (state, key) => {
   try { const [q, i] = key.split('-').map(Number); const qid = state.quadrants[q]; return panelWords(qid, spacesOf(state, qid)[i], Math.max(1, state.round)) || ''; } catch { return ''; }
 };
 
+/** The board words and the move's gain say the same thing ("+3 green" both), so the brackets would repeat it. */
+const flat = t => String(t || '').toLowerCase().replace(/\s+/g, ' ').trim();
+export const saysSame = (board, short) => !!board && !!short && flat(short.split(' · ')[0]) === flat(board);
+
 /** The story stands under the chairs (the wide laptop layout, layout.css): there it's the compact log. */
 const UNDER_CHAIRS = '(min-width:1200px) and (min-height:500px)';
 function useCompact() {
@@ -222,7 +226,8 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
               {e.spaceKey && hover ? <HoverName hover={hover} target={{ kind: 'space', key: e.spaceKey }}><span className="sp">{e.space}</span></HoverName>
                 : <span className="sp">{e.space || 'turn'}</span>}
               {/* the space's own words from the board, so the name needs no lookup */}
-              {words(state, e.spaceKey) ? <span className="sp-words"> (<Rich text={words(state, e.spaceKey)} />)</span> : null}
+              {/* not when the gain already says it (picky bot, Nov 6: "P3 Build Up: +3 green (+3 green)") */}
+              {words(state, e.spaceKey) && !saysSame(words(state, e.spaceKey), e.short) ? <span className="sp-words"> (<Rich text={words(state, e.spaceKey)} />)</span> : null}
               {/* what this move took from your own seat leads the line (picky bot, Nov 4: Line Cutters taken and 5
                   followers down to 1, and the line said only "P3 Reprise"): "took your Line Cutters and 4 followers",
                   short, so it shows on a one-line row,

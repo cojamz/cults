@@ -16,12 +16,24 @@ export function fizzleNote(line, name, you = true) {
   if (/couldn't afford anything/.test(rest)) return null; // its own toast
   // "P1: no rival's…" / "P1's Pawn Shop: nothing to turn in." / "P1 found no empty action to copy."
   const body = rest.replace(/^:\s*/, '');
-  const said = /^['’]s /.test(rest) ? `${you ? 'Your' : `${name}’s`} ${rest.replace(/^['’]s /, '')}` : /^ /.test(rest) ? `${you ? 'You' : name}${rest}` : body.charAt(0).toUpperCase() + body.slice(1);
+  const said = /^['’]s /.test(rest) ? `${you ? 'Your' : `${name}’s`} ${rest.replace(/^['’]s /, '')}` : /^ /.test(rest) ? `${you ? 'You' : name}${you ? youVerb(rest) : rest}` : body.charAt(0).toUpperCase() + body.slice(1);
   // only the "nothing happened" part decides it: a line that also names a gain ("so only the yellow") still counts
-  if (!NOTHING.test(said)) return null;
+  if (!NOTHING.test(said) && !NOTHING.test(rest)) return null;
   return said.replace(new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}['’]s\\b`, 'g'), you ? 'your' : `${name}’s`)
     .replace(new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g'), you ? 'you' : name)
     .replace(/^you\b/, 'You').replace(/^your\b/, 'Your');
+}
+
+// "P1 has no minions…" said to you is "You have no minions…", not "You has" (picky run, Nov 6).
+const IRREGULAR = { has: 'have', is: 'are', was: 'were', does: 'do', goes: 'go' };
+function youVerb(rest) {
+  return rest.replace(/^ ([a-z]+)\b/, (all, v) => {
+    if (IRREGULAR[v]) return ` ${IRREGULAR[v]}`;
+    if (/[^aeiou]ies$/.test(v)) return ` ${v.slice(0, -3)}y`; // copies → copy
+    if (/(?:ches|shes|sses|xes)$/.test(v)) return ` ${v.slice(0, -2)}`;
+    if (/[^su]s$/.test(v)) return ` ${v.slice(0, -1)}`; // recruits → recruit, lies → lie
+    return all; // found, gave, used: already fine after "You"
+  });
 }
 
 const esc = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

@@ -11,6 +11,12 @@ describe('fizzleNote: an action that found nothing is told to its player (Cory, 
   it('found no', () => {
     expect(fizzleNote('P1 found no empty action to copy.', 'P1')).toBe('You found no empty action to copy.');
   });
+  it('says "You have", not "You has" (picky run, Nov 6)', () => {
+    expect(fizzleNote('P1 has no minions left to place: Right Away does nothing.', 'P1')).toBe('You have no minions left to place: Right Away does nothing.');
+    expect(fizzleNote('P1 has no member with an On Recruit to copy.', 'P1')).toBe('You have no member with an On Recruit to copy.');
+    expect(fizzleNote('P1 recruits nothing.', 'P1')).toBe('You recruit nothing.');
+    expect(fizzleNote('Ann has no minions left to place: Right Away does nothing.', 'Ann', false)).toBe('Ann has no minions left to place: Right Away does nothing.');
+  });
   it('keeps names at a hot seat', () => {
     expect(fizzleNote("Ann's Early Birds: Ann's turn can't be skipped.", 'Ann', false)).toBe(null);
     expect(fizzleNote('Ann found no one worth mugging.', 'Ann', false)).toBe('Ann found no one worth mugging.');

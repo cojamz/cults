@@ -517,7 +517,7 @@ const echoQ = {
       resolve(ctx, p) {
         plus(ctx, p);
         const list = ownRecruits(ctx, p);
-        if (!list.length) { ctx.log(`${p.name}: none of their members has an On Recruit to copy.`); return; }
+        if (!list.length) { ctx.log(`${p.name} has no member with an On Recruit to copy.`); return; }
         withPath(ctx, [...new Set([...pathNow(ctx), ...hitsKeys(ctx)])], () => hitsStep(ctx, p, list.map(c => c.uid)));
       },
     },
