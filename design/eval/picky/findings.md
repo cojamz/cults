@@ -7,6 +7,27 @@ each. One line per finding: what a player sees, what's wrong, status. Each run's
 Status words: **fixed (version)**, **fixing**, **sent** (to the thread that owns it), **open** (ours, not started),
 **Cory** (a question only he can answer), **by design** (with the reason; the check got an exception).
 
+## 2026-11-06 (third run)
+Run at 7:42am Eastern Nov 6 on v0.99.641 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
+emoji; raw list /mnt/project-files/picky/2026-11-06-12-42/). The bot flagged nothing; the member sweep of 117 cards in
+both looks was clean. The rest are by eye from the shots.
+
+- **A last note covers the results headline.** "Your Sore Loser: you won no contest; steals 5 followers from P2." sat
+  over "P3 wins with 96 followers" as the results opened. On the results screen the note now shows at the foot.
+  **fixed (this run)**
+- **Peek's header says "then Done" while the button reads "Keep this order".** The button only says Done once you've
+  moved a card. Now "then Done, or keep this order." **fixed (this run)**
+- **Sore Loser's note reads "you won no contest; steals 5 followers"** (no one doing the stealing). Its log line is
+  "<name>'s Sore Loser: <name> won no contest; steals …". **open** (wording)
+- **Emoji look: more members shown as things** (Cashier a receipt, Guest of Honor a medal, Martyrs a candle,
+  Jack-of-All-Trades tools, Dabblers a rainbow, Anarchist the Ⓐ sign, Toastmaster two glasses, Window Dressers a
+  window, Caravan a camel, Magpie a chipmunk). Same family as the second run's list. **open** (for the coordinator)
+- **Reprise placed with nothing to copy** (round I, your first minion): the wheel let you take it and only a note
+  afterwards said "You had nothing to copy." Rule is fine; a first-timer gets no warning before placing. **open**
+- Seen again, already listed: bar Members one above the member count (P3 "11 members", bar 12), bare numbers on
+  score parts ("5", "9", "7"), minions over middle-ring words (Copy a rival member's On Recruit), white and silver dots
+  alike in the emoji look, "2 turns in a row" in header and seat (by design).
+
 ## 2026-11-06 (second run)
 Run at 1:42am Eastern Nov 6 on v0.99.640 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
 emoji; raw list /mnt/project-files/picky/2026-11-06-06-42/). The bot flagged 3 spaces; the member sweep of 117 cards in

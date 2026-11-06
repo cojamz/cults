@@ -584,6 +584,9 @@ td.rank{font-weight:700}
 /* a sheet open below it (paying, a choice): the note drops to the foot of the screen instead of covering the sheet's
    header (picky bot, Nov 6: "Tryout: no shop member has an On Recruit effect." over the pay sheet's "5 followers") */
 .toast:has(~ .overlay.sheet){top:auto;bottom:24px}
+/* the results screen: a last note (Sore Loser's steal) drops to the foot instead of covering "P3 wins with 96 followers"
+   (picky bot, Nov 6) */
+.main.over ~ .toast{top:auto;bottom:24px}
 /* hover cards never block the board; a pinned card (touch: "Place here") does take taps */
 .peek{pointer-events:none}
 .peek.pinned{pointer-events:auto}
