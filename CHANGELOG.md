@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.638 — 2026-11-06
+
+- Tribute Band costs 10 green + 6 any; Sleepyheads gives +3 followers when you take the Goes Last token
+
 ## v0.99.637 — 2026-11-05
 
 - Foster Parents now joins from round II (its new price)
