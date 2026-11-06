@@ -1,5 +1,5 @@
-// A saved hot-seat game stopped on P1's buy, P1 holding Matchmaker ("Whenever you recruit a member of a color none of
-// your members have, +2 wild, +1 follower.") with a member of a new color face up and plenty to pay with. Used by the
+// A saved hot-seat game stopped on P1's buy, P1 holding Matchmaker ("Whenever you recruit a yellow member, +3 wild,
+// +1 follower.") with a yellow member face up and plenty to pay with. Used by the
 // Matchmaker probe (Cory, Nov 6: "Matchmaker resource selection is slow").
 import { createGame, applyMove, chooseBotMove } from '../../../src/engine/v4/index.js';
 import { resume } from '../../../src/engine/v4/core.js';
@@ -21,13 +21,13 @@ export function matchmakerSave(from = 3) {
     if (!mm) continue;
     for (const p of s.players) p.members = p.members.filter(u => u !== mm.uid);
     s.shop = s.shop.filter(u => u !== mm.uid); s.pile = s.pile.filter(u => u !== mm.uid);
-    // P1 holds Matchmaker only, so every other color in the shop is new
+    // P1 holds Matchmaker only; the target is a yellow member
     for (const u of s.players[0].members) s.pile.push(u);
     s.players[0].members = [mm.uid]; mm.recruitedRound = 0; mm.recruitedBy = 0;
     for (const r of s.resources) s.players[0].res[r] = 8;
     resume(s);
     if (s.pending?.player !== 0 || s.pending.kind !== 'buy') continue;
-    const target = s.shop.find(u => s.cards[u].def.split('.')[0] !== 'yellow' && s.pending.options.some(o => o.id === `card:${u}`));
+    const target = s.shop.find(u => s.cards[u].def.split('.')[0] === 'yellow' && s.pending.options.some(o => o.id === `card:${u}`));
     if (target == null) continue;
     return { save: wrap(s), seed, target };
   }

@@ -14,26 +14,26 @@ describe('Dabblers and Drifters audit', () => {
     // yellow (Big Tent) and red pay; Dabblers is left out of the count
     expect(cardDef(s, uidOf(s, 'yellow.bigtent', 0)).onGameEnd(contextFor(s), s.players[0])).toBe(4);
   });
-  it('Matchmaker: Dabblers never blocks a new color, and recruiting Dabblers pays while a color is missing', () => {
+  it('Matchmaker: recruiting Dabblers counts as a yellow member; red does not (Cory, Nov 6)', () => {
     const run = (members, buyDef) => {
       let s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], round: 3, res: [rich], members, shop: [buyDef] });
       s = move(take(s, 'red.take'), `card:${uidOf(s, buyDef, 'shop')}`);
-      return named(s, 'Matchmaker').filter(l => /new color/.test(l)).length;
+      return named(s, 'Matchmaker').filter(l => /yellow member/.test(l)).length;
     };
-    expect(run([['yellow.matchmaker', 'benders.dabblers']], 'red.intern')).toBe(1);
-    expect(run([['yellow.matchmaker', 'red.volunteer']], 'red.intern')).toBe(0);
+    expect(run([['yellow.matchmaker', 'benders.dabblers']], 'red.intern')).toBe(0);
+    expect(run([['yellow.matchmaker']], 'yellow.dyer')).toBe(1);
     expect(run([['yellow.matchmaker']], 'benders.dabblers')).toBe(1);
   });
-  it('Matchmaker: Drifters pays once its color is chosen, only for a new color', () => {
+  it('Matchmaker: Drifters pays once it picks Yellow, only then', () => {
     const run = pick => {
       let s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], round: 3, res: [rich], members: [['yellow.matchmaker', 'red.intern']], shop: ['yellow.drifters'] });
       s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.drifters', 'shop')}`);
       expect(named(s, 'Matchmaker')).toHaveLength(0);
       s = move(s, pick);
-      return named(s, 'Matchmaker').filter(l => /new color/.test(l)).length;
+      return named(s, 'Matchmaker').filter(l => /yellow member/.test(l)).length;
     };
-    expect(run('color:green')).toBe(1);
-    expect(run('color:red')).toBe(0);
+    expect(run('color:yellow')).toBe(1);
+    expect(run('color:green')).toBe(0);
   });
   it('Connoisseurs: recruiting your own Dabblers counts as a blue member; Drifters once it picks Blue', () => {
     const q = ['market', 'red', 'yellow', 'green'];

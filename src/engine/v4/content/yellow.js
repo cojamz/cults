@@ -108,11 +108,12 @@ const HOUSEWARMING = {
     })), 'yellow.housewarming');
   },
 };
-function matchmaker(ctx, owner, member) {
-  if (!newColor(ctx, owner, member, { grey: true })) return; // grey counts as a color (decisions, Nov 4 4:35am; rulebook)
+// Cory, Nov 6 11:13pm: "maybe it should just be any yellow member and should be 3 wild". A yellow member is the
+// card's own color, Dabblers (every color) or Drifters once it picks Yellow; Matchmaker itself doesn't count.
+function matchmaker(ctx, owner) {
   owner.bonus += 1;
-  ctx.log(`${owner.name}'s Matchmaker: a new color, +1 follower.`);
-  pickColors(ctx, owner, 2, 'Matchmaker');
+  ctx.log(`${owner.name}'s Matchmaker: a yellow member, +1 follower.`);
+  pickColors(ctx, owner, 3, 'Matchmaker');
 }
 // every recruit of Drifters (a steal too) runs its On Recruit color pick, and the pick settles color-reading cards
 const unpickedDrifters = (ctx, member) => ctx.defOf(member).key === 'drifters';
@@ -488,14 +489,14 @@ export default {
       // bots wait for 3 sets, or take 2 in round III, or any set on their last turn (A/B, Nov 4: early on 2 sets it paid back 8 for 9)
       botActivate: (ctx, owner) => { const k = setsOf(ctx, owner), r3 = ctx.state.round === 3; return k >= 3 || (r3 && k >= 2) || (k >= 1 && r3 && (owner.left || 0) <= 1); },
     }),
-    // Cory, 2026-10-31: "also give followers… like side quests"
-    m('matchmaker', 'Matchmaker', 3, 2, 'Whenever you recruit a member of a color none of your members have, +2 wild, +1 follower.', {
-      // Dabblers never blocks a new color and Drifters counts once its color is chosen, as Guest Book (Cory, Nov 1)
+    // Cory, 2026-10-31: "also give followers… like side quests"; Nov 6: "any yellow member and should be 3 wild"
+    m('matchmaker', 'Matchmaker', 3, 2, 'Whenever you recruit a yellow member, +3 wild, +1 follower.', {
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (by !== owner || recruited.uid === card.uid || unpickedDrifters(ctx, recruited)) return;
-        matchmaker(ctx, owner, recruited);
+        const d = ctx.defOf(recruited);
+        if (d.quadrant === 'yellow' || d.everyColor) matchmaker(ctx, owner);
       },
-      onColorChosen(ctx, owner, card, member) { matchmaker(ctx, owner, member); },
+      onColorChosen(ctx, owner, card, member) { if (member.asColor === 'yellow') matchmaker(ctx, owner); },
     }),
     // Cory, 2026-10-31: "i dont like round end. i like on recruit and round start"
     m('dyer', 'Dyer', 4, 2, 'On Recruit: +1 yellow per color you hold. Round Start: +1 yellow per color you hold.', { now: true, ...old1, ...old5, ...old9('yellow.dyer'),
