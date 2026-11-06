@@ -45,11 +45,11 @@ describe('Turncoat: "Whenever a rival takes one of your members, recruit the top
 });
 
 describe('Bury, reworded: "...Gain blue equal to its cost. +1 blue."', () => {
-  it('buries Foster Parents (6 since Cory\'s Nov 6 raise): +6 blue and the +1', () => {
+  it('buries Foster Parents (5 here since it went back to round I, Nov 6): +5 blue and the +1', () => {
     let s = table(['market', 'red', 'trading', 'yellow'], { round: 2, shop: ['red.fosterparents', 'red.volunteer'] });
     s = take(s, 'market.pricecheck');
     s = answer(s, s.pending.options.find(o => o.label.startsWith('Foster Parents')).id);
-    expect(s.players[0].res.blue).toBe(7);
+    expect(s.players[0].res.blue).toBe(6);
     expect(s.shop.some(u => s.cards[u].def === 'red.fosterparents')).toBe(false);
   });
 });

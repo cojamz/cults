@@ -861,7 +861,7 @@ const silver = {
     // pass 2's pooled midpoint (5.2) rounds back to 6, so it stays (design/eval/balance-pass-2.md)
     // Cory, Nov 5 ("I love ballroom!", "yes to kingmaker and ballroom", "yeah patron saints"): silver's three open
     // slots, in the places Charity Ball, Creditor and Hostesses left. Prices and worth are Claude's fill-ins (silver thread).
-    m('ballroom', 'Ballroom Dancers', 4, 2, /* 5 silver + 3 any as seen (Cory, Nov 6: "yes on ballroom dancers") */ 'On Use, once per game: +2 followers per minion on Silver spaces.', { f: 2, n: 2,
+    m('ballroom', 'Ballroom Dancers', 5, 2, /* 6 silver + 4 any as seen; 1 silver more (Cory, Nov 6: "yes on ballroom dancers", then "yes" to +1 silver: too strong at every bot level) */ 'On Use, once per game: +2 followers per minion on Silver spaces.', { f: 2, n: 2,
       activate: 'game',
       onActivate(ctx, owner, card) {
         const k = onSilver(ctx);

@@ -512,7 +512,7 @@ export default {
     // cult out of a rival's, whoever moves it (Promote, Demote, Panel, Body Snatchers, Poach, Shake Down, Kidnapper, a
     // rival's Promote that trades with you); not for the shop. Itself arriving from a rival's counts (Evaluators, Nov 4: a
     // table reads it that way, as Old Maid's own joining counts).
-    m('fosterparents', 'Foster Parents', 2, 2, /* 3 red + 3 any as seen (Cory, Nov 6: "increase the cost a tad") */ 'Whenever a member joins your cult from a rival’s, +2 followers.', { f: 2, n: 2,
+    m('fosterparents', 'Foster Parents', 2, 1, /* 2 red + 1 any printed, 3 red + 3 any as a player sees it: back to a round I price (Cory, Nov 6: "increase the cost a tad", then "lower" so it stays in round I; the split is Claude's fill-in) */ 'Whenever a member joins your cult from a rival’s, +2 followers.', { f: 2, n: 2,
       onCultMove(ctx, owner, card, { uid, from, to }) {
         if (to !== owner || !from || from === owner) return; // itself too, arriving from a rival's (as Old Maid's "this member joins" counts)
         owner.bonus += 2;

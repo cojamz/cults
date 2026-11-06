@@ -172,7 +172,7 @@ describe('Delivery: "Give a shop member to a rival; gain blue equal to its cost.
     s = answer(s, opt(s, o => o.label.startsWith('Foster Parents')));
     s = answer(s, 'player:1');
     expect(owns(s, 1, 'red.fosterparents')).toBe(true);
-    expect(s.players[0].res.blue).toBe(7); // Foster Parents costs 6 since Cory's Nov 6 raise
-    expect(named(s, 'Delivery').join(' ')).toContain("Foster Parents goes to P2's cult; P1 +6 blue.");
+    expect(s.players[0].res.blue).toBe(6); // Foster Parents costs 5 here (lowered back to round I, Nov 6)
+    expect(named(s, 'Delivery').join(' ')).toContain("Foster Parents goes to P2's cult; P1 +5 blue.");
   });
 });
