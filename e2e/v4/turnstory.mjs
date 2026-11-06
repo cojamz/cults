@@ -10,8 +10,8 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //       whole lines only is watched every frame of the run: no line (or the "N earlier" line) may show in part, cut by
 //       the strip's top or foot, for 3 frames running (a fold lands within a frame; a sliver that stays is the bug);
 //  (t2b) the same on a full strip: a ring-II resume on a table of long, two-line stories (silver, trading, thieves,
-//       red), at 1270×700 and 1100×700; on your own placement turn the turn card is gone and the strip has its room
-//       (Cory, Nov 4: "yes" to one line per rival move, still up when your turn starts);
+//       red), at 1270×700 and 1100×700; on your own placement turn only the log area's kept card stays (Cory, Nov 6),
+//       whole and clear of the strip's lines (Cory, Nov 4: "yes" to one line per rival move, still up when your turn starts);
 //  (t3) after a placement, the turn card names the space actually taken (the engine's log is the truth);
 //  (t4) the snake turnaround reads "Your turn again (snake order)", never "Extra turn";
 //  (t5) the second placement gets its own card: its space, and nothing from the first;
@@ -118,6 +118,8 @@ try {
       card: document.querySelector('.turn-card')?.dataset.turnStory || null,
       cardBox: r('.turn-card'),
       strip: [...document.querySelectorAll('[data-since] [data-since-line]')].map(e => e.textContent),
+      // the newest finished turn, kept whole in the log area under the strip (Cory, Nov 6), when it's a rival's
+      kept: (() => { const k = document.querySelector('.turn-card.kept'); const t = k && k.dataset.turnStory; return t && /^P[2-4]\b/.test(t) ? t : null; })(),
       // moves the strip folded into "N earlier… open the log" (whole lines only: it folds the oldest rather than show half
       // a line, design pod 08:50), and any line it shows only in part
       folded: Number((document.querySelector('[data-since] .since-more')?.textContent.match(/\d+/) || [0])[0]),
@@ -156,7 +158,7 @@ try {
   if (nexts.length) fail(`another seat reads "next" while P1 places twice: ${JSON.stringify(nexts)}`, 't1');
   // (t2)
   // every rival move since yours is accounted for: on a line, or folded into "N earlier" when the turn card takes the room
-  if (v.strip.length + v.folded < 3) fail(`the strip accounts for ${v.strip.length} rival moves + ${v.folded} folded (want 3: P2, P3 and P4 placed before P1): ${JSON.stringify(v.strip)}`, 't2');
+  if (v.strip.length + v.folded + (v.kept ? 1 : 0) < 3) fail(`the strip accounts for ${v.strip.length} rival moves + ${v.folded} folded + ${v.kept ? 1 : 0} on the log card (want 3: P2, P3 and P4 placed before P1): ${JSON.stringify(v.strip)}`, 't2');
   if (v.strip.length < 1) fail('the strip shows no rival move at all', 't2');
   if (v.partial) fail(`the strip shows ${v.partial} line(s) only in part (it should fold whole lines)`, 't2');
   for (const l of v.strip) if (!/^\s*P[234]\b/.test(l)) fail(`a strip line doesn't start with a rival's name: "${l}"`, 't2');
@@ -357,7 +359,7 @@ try {
         const card = document.querySelector('.lt > .turn-card');
         const up = !!card && !card.classList.contains('folding') && getComputedStyle(card).display !== 'none';
         if (M.upAt == null && document.querySelector('.lt-wheel .slot.can')) M.upAt = performance.now();
-        if (M.upAt != null && !M.s2 && performance.now() - M.upAt >= 800) M.s2 = { ...measure(), heldMs: Math.round(performance.now() - M.upAt), up };
+        if (M.upAt != null && !M.s2 && performance.now() - M.upAt >= 800) M.s2 = { ...measure(), heldMs: Math.round(performance.now() - M.upAt), up, kept: !!card && card.classList.contains('kept') };
         if (!M.s2) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
@@ -369,7 +371,9 @@ try {
     // (15s: GitHub's box, under the unit tests, took longer than 6s to bring it up at 1100 once, Nov 3)
     const got = await p2.waitForFunction(() => window.__t2b && window.__t2b.s2, null, { timeout: 15000 }).then(h => h.jsonValue(), () => null);
     if (!got) fail(`the resumed round-II turn never settled (${JSON.stringify(await p2.evaluate(() => window.__t2b))})`, tag);
-    else if (got.up) fail('a turn card is up on your own placement turn (the strip should have the room)', tag);
+    // the last finished turn stays whole in the log area through your turn (Cory, Nov 6: "the previous story card is
+    // always there while somebody else takes their turn"); any other card on your placement turn is the old bug
+    else if (got.up && !got.kept) fail('a turn card is up on your own placement turn (the strip should have the room)', tag);
     const s2 = got && got.lines != null ? got : null;
     await p2.screenshot({ path: `${SHOTS}/7-full-strip-${width}.png` });
     if (!s2) fail('the resumed round-II turn shows no strip', tag);
@@ -397,7 +401,8 @@ try {
     await p3.click('[data-home="resume"]', { timeout: 30000 });
     await p3.waitForSelector('.lt-wheel .slot.can');
     await p3.waitForTimeout(800);
-    const line = await p3.$$eval('[data-since] .since-row', els => (els.length ? els[els.length - 1].textContent.replace(/\s+/g, ' ').trim() : ''));
+    // the newest finished turn: the log area's kept card when one is up (Cory, Nov 6), else the strip's newest line
+    const line = await p3.evaluate(() => { const k = document.querySelector('.turn-card.kept'); if (k && k.dataset.turnStory) return k.dataset.turnStory; const els = document.querySelectorAll('[data-since] .since-row'); return els.length ? els[els.length - 1].textContent.replace(/\s+/g, ' ').trim() : ''; });
     // and it is in sight: on the strip's newest line, or (when the turn card takes the strip's room) on the card
     // (the card's text is its data-turn-story: its amounts draw as dots; it shows its first four lines)
     const seen = await p3.evaluate(() => [...document.querySelectorAll('[data-since] .since-row, .turn-card')].filter(e => {

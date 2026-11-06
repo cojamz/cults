@@ -287,7 +287,9 @@ describe('render budget', () => {
         act(() => { session.publish(next); });
         for (let w = 0; w < 200 && container.querySelector('.lt').getAttribute('data-moves') !== String(next.moves); w++) await act(() => new Promise(r => setTimeout(r, 10)));
         await settle(3);
-        perStep.push({ newCard: state.pending.player !== lastActor, ...Object.fromEntries(reads) });
+        // a step that ends a turn hands that turn to the log area's kept card (Cory, Nov 6): a new card, placed once
+        const ends = (next.turns || []).length !== (state.turns || []).length || next.round !== state.round;
+        perStep.push({ newCard: state.pending.player !== lastActor || ends, ...Object.fromEntries(reads) });
         lastActor = state.pending.player;
         state = next;
       }

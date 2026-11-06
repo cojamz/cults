@@ -48,7 +48,7 @@ describe('the header when your turn ends', () => {
     for (let w = 0; w < 100 && container.querySelector('.lt').getAttribute('data-moves') !== String(next.moves); w++) await wait(10);
     expect(container.querySelector('[data-prompt]').textContent).toBe('Your turn is over');
     await wait(Math.round(800 * speedScale()) + 100);
-    expect(container.querySelector('[data-prompt]').textContent).toMatch(new RegExp(`^${next.players[next.pending.player].name} `));
+    expect(container.querySelector('[data-prompt]').textContent).toMatch(new RegExp(`^${next.players[next.pending.player].name}[ ’]`)); // "Bo’s turn" with the story card (Cory, Nov 6)
     // the next step lands before the beat runs out: it shows at once
     state = next;
     const then = applyMove(state, chooseBotMove(state, () => 0.3));

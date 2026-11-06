@@ -20,7 +20,7 @@ import { playerColor, roman } from '../format.js';
 import { play } from '../sound.js';
 import { gainsBetween } from './gains.js';
 import { seatOrder } from './seats.js';
-import { stageRect, hubRect, stageShow, stageRelease, stageClear, stageDismiss, stageBusy, subscribeStage, stageItems, stagePlace, spaceRect, bubbleRect, stageLeave, HUB_MEMBER } from './stage.js';
+import { stageRect, hubRect, stageShow, stageRelease, stageClear, stageDismiss, stageBusy, subscribeStage, stageItems, stagePlace, spaceRect, bubbleRect, stageLeave, HUB_MEMBER, clearOfStory, storyAtHub } from './stage.js';
 import { panelText } from './panelText.js';
 import { quadrant, defById, cardDef, spacesOf, memberCount } from '../../engine/v4/index.js';
 import { seatEmoji } from '../format.js';
@@ -323,6 +323,8 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   // a rival's step in a round plays at RIVAL (motion.js), its beats overlapping; `keep` holds the spans of its recruit
   // beats, which keep their full timing
   const rival = mover != null && !mine.includes(mover) && sameRound && before.round >= 1;
+  // a rival's turn told on the story card: no space card, no member bubbles; the space lights and the coins fly from it
+  const told = rival && storyAtHub();
   const keep = [];
   let movePlace = null;
   let lastStart = null; // when the last beat that wasn't a rival's reaction began
@@ -360,7 +362,13 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     // action to players. same with members as they are contributing"). A member already out hops again.
     // (a blind tester, w5: "P4's Auctioneer +1 blue on each rival recruit … nearly invisible, all I saw was a seat
     // number changing"): it steps onto the stage too, in the same beat, and gives from there
-    if (c.kind === 'member' && c.uid != null) {
+    // on a told turn the member (or cloak) on its seat jiggles and lights up as its line shows on the story card (Cory,
+    // Nov 6: "when the thing shows up on the card, the relevant member or cloak or whatever does a little jiggle and
+    // lights up"); what it gives flies from it
+    if (c.kind === 'member' && c.uid != null && told) {
+      at(s, { op: 'jiggle', place: { kind: 'member', pid: c.pid, uid: c.uid, def: c.def }, dur: MO.jiggle });
+      s += MO.lead;
+    } else if (c.kind === 'member' && c.uid != null) {
       const was = stagedUids.get(c.uid);
       if (was && was.pid === c.pid) { at(s, { op: 'stage', kind: 'member', place: { kind: 'member', pid: c.pid, uid: c.uid, def: c.def }, spot: was.spot, dur: MO.hop, got: did(m, c.pid) }); s += MO.lead; }
       else {
@@ -377,9 +385,12 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
       else if (selectedAt != null) s0 = Math.max(0, selectedAt - MO.minionFly * 0.25);
       // a second space in one move is the one a copy runs (Echo, Sample): it lands on the first card, fanned, "copies"
       const slot = stagedKeys.size ? 'card2' : 'card';
-      at(s0, { op: 'stage', kind: 'space', place: { kind: 'space', key: c.key }, pid: c.pid, slot, dur: MO.stageIn });
-      s = Math.max(selectedAt != null ? selectedAt : s, s0 + MO.stageIn * 0.6);
-      stagedKeys.set(c.key, slot);
+      if (told) s = Math.max(selectedAt != null ? selectedAt : s, s0);
+      else {
+        at(s0, { op: 'stage', kind: 'space', place: { kind: 'space', key: c.key }, pid: c.pid, slot, dur: MO.stageIn });
+        s = Math.max(selectedAt != null ? selectedAt : s, s0 + MO.stageIn * 0.6);
+        stagedKeys.set(c.key, slot);
+      }
     }
     else if (c.kind === 'setup') {
       // a starting pick (wave 3: nobody saw what the bots picked): a rival's coin in the pick row lights (grammar S3, the
@@ -917,6 +928,7 @@ function placeEl(root, w, ctx) {
       if (!s) return null;
       if (w.uid != null) { const m = shown(s.querySelector(`.cs-member[data-uids~="${w.uid}"]`)); if (m) return m; }
       if (w.def) { const m = shown(s.querySelector(`.cs-member[data-member="${w.def}"]`)); if (m) return m; }
+      { const cl = s.querySelector('.cs-cloak-on'); if (cl && [String(w.uid), String(w.def)].includes(cl.dataset.artifact)) { const m = shown(cl); if (m) return m; } }
       return shown(s.querySelector('.cs-crowd')) || shown(s);
     }
     case 'shop': {
@@ -1400,6 +1412,7 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
         // the chairs re-sort into the new round's order now (GameScreen lays the column out; a skip sorts them too)
         case 'sort': try { dispatchEvent(new Event('patrons:seat-sort')); } catch { /* no window */ } return;
         case 'pulse': if (!skip) pulse(where(a.place), a.dur, { press: !!a.press }); return;
+        case 'jiggle': if (!skip) jiggle(where(a.place), a.dur); return;
         case 'point': {
           // a rival's choice (grammar S3): what they chose lights, then its effect leaves it; it stays lit until it lands
           const el = where(a.place);
@@ -1432,7 +1445,7 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
           if (skip || !sn || !sn.rect) return;
           // (the reads first: the chip and the hub, then the ghost goes in)
           const chip = root.querySelector(`.lt-seat[data-pid="${a.to}"] [data-uids~="${a.uid}"]`) || placeEl(root, { kind: 'crowd', pid: a.to }, ctx);
-          const hub = hubRect(HUB_MEMBER) || sn.rect;
+          const hub = clearOfStory(hubRect(HUB_MEMBER)) || sn.rect;
           const g = document.createElement('div');
           g.className = 'flight card-flight ghost-layer';
           g.dataset.born = String(Date.now());
@@ -1661,11 +1674,28 @@ function skipStamp(root, pid, dur) {
   setTimeout(() => { b.remove(); seat.classList.remove('turn-skipped'); }, life + 50);
 }
 
+/** A member or cloak on its seat says "this one": a little jiggle and a warm glow (Cory, Nov 6). */
+function jiggle(el, dur) {
+  if (!el || el.rectOnly || !el.animate) return;
+  // it lights up for the wiggle (a class, not a keyframed filter: keyframes move only transform and opacity)
+  el.classList.add('jig-lit');
+  setTimeout(() => el.classList.remove('jig-lit'), dur);
+  track(el.animate([
+    { transform: 'none' },
+    { transform: 'rotate(-10deg) scale(1.35)', offset: 0.15 },
+    { transform: 'rotate(9deg) scale(1.35)', offset: 0.32 },
+    { transform: 'rotate(-6deg) scale(1.28)', offset: 0.5 },
+    { transform: 'rotate(0) scale(1.2)', offset: 0.78 },
+    { transform: 'none' },
+  ], { duration: dur, easing: 'ease-out' }));
+}
 /** A space or member flies out of its place onto the stage (stage.js; ActionStage.jsx draws it). */
 // a seat's follower change, lingering under its count
 const lingering = new Map();
 function linger(el, n, r = el && !el.rectOnly ? el.getBoundingClientRect() : null) {
   if (!el || el.rectOnly || !r || typeof document === 'undefined') return;
+  // while a rival's turn is told on the story card, the card says the followers (the plan, Cory Nov 6: no +N chips)
+  if (document.querySelector('.turn-card.at-hub')) return;
   if (!r.width) return;
   const was = lingering.get(el);
   if (was) { clearTimeout(was.t); was.b.remove(); n += was.n; }

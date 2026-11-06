@@ -49,7 +49,7 @@ const placed = new Map();
  *  2…), or 'hub' (the wheel's middle: a recruit on its way, members changing hands). A DOMRect-like box. */
 export function stageRect(slot) {
   if (placed.has(slot)) return placed.get(slot);
-  if (slot === 'hub') return hubRect(CARD);
+  if (slot === 'hub') return clearOfStory(hubRect(CARD));
   const c = stageCenter();
   if (!c) return null;
   if (slot === 'card') return box(c.x - CARD.w / 2, c.y - CARD.h / 2 - 50, CARD.w, CARD.h);
@@ -60,6 +60,26 @@ export function stageRect(slot) {
 export function hubRect(size = CARD) {
   const c = stageCenter();
   return c ? box(c.x - size.w / 2, c.y - size.h / 2, size.w, size.h) : null;
+}
+// The rival's story card on the hub (GameScreen TurnCard, Cory Nov 6: "the story card in the middle is good but it
+// gets covered up by so much other stuff"): while it's up, the stage's own pieces (a space's card, a recruit's reveal,
+// members changing hands at the hub) stand clear of it, above it on the wheel.
+let storyZone = null;
+/** The story card is in use (laptop, not ?story=dock): a rival's turn is told on it, so the stage leaves out the space's
+ *  card and the members' bubbles for that turn (Cory, Nov 6: "an overhaul of our animations to be very clear whats
+ *  happening", the plan he was sent: one card tells a rival's turn). */
+export const storyAtHub = () => {
+  try { if (new URLSearchParams(globalThis.location?.search || '').get('story') === 'dock') return false; } catch { /* no location */ }
+  return typeof innerWidth === 'number' && innerWidth > 860 && innerHeight >= 500;
+};
+export const setStoryZone = r => { storyZone = r && r.width ? r : null; };
+/** The box moved up off the story card when the two would overlap (unchanged otherwise). */
+export function clearOfStory(b) {
+  const z = storyZone;
+  if (!b || !z) return b;
+  const overlaps = b.left < z.right && b.right > z.left && b.top < z.bottom && b.bottom > z.top;
+  if (!overlaps) return b;
+  return box(b.left, Math.max(4, z.top - b.height - 8), b.width, b.height);
 }
 /** Remember where a slot stands (the director places it when it plays). */
 export const stagePlace = (slot, rect) => { if (rect) placed.set(slot, rect); return rect; };
@@ -77,7 +97,7 @@ export function spaceRect(spaceRect0, slot = 'card') {
   const dx = c.x - sx, dy = c.y - sy, d = Math.hypot(dx, dy) || 1;
   // the card's centre moves in from the space by about its own half-depth, never past the hub
   const k = Math.min(d, 112) / d;
-  return clampView(box(sx + dx * k - CARD.w / 2, sy + dy * k - CARD.h / 2, CARD.w, CARD.h));
+  return clearOfStory(clampView(box(sx + dx * k - CARD.w / 2, sy + dy * k - CARD.h / 2, CARD.w, CARD.h)));
 }
 /** A member's bubble out of the right side of its seat, level with its own chip; a second one from the same seat
  *  stands under the first. */

@@ -58,7 +58,10 @@ async function run(size) {
           const key = `${lt ? lt.dataset.round : ''}:${head}`;
           if (head && !/^You\b/.test(head) && !seen.has(key)) { seen.add(key); D.turns.push(key); }
           const a = c.getBoundingClientRect(), sv = document.querySelector('.lt > .lt-since');
-          if (sv) { const b = sv.getBoundingClientRect(); const cover = Math.min(a.right, b.right) > Math.max(a.left, b.left) ? Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top)) : 0; if (cover > D.worst) D.worst = cover; }
+          // (the log area's card flying in from the hub crosses the strip on its way down, 420ms, Cory Nov 6: "move to the
+          // log area"): measured once it has landed
+          const flying = c.classList.contains('kept') && c.getAnimations && c.getAnimations().some(x => x.playState === 'running' && !x.animationName);
+          if (sv && !flying) { const b = sv.getBoundingClientRect(); const cover = Math.min(a.right, b.right) > Math.max(a.left, b.left) ? Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top)) : 0; if (cover > D.worst) D.worst = cover; }
           if (a.top < 0 || a.bottom > innerHeight + 1) D.off++;
         }
         requestAnimationFrame(scan);
