@@ -228,3 +228,16 @@ describe('White members', () => {
     expect(named(s, 'Magpie')).toEqual(["P1's Magpie: 6 resources became white."]);
   });
 });
+
+// Reinvestor had no test of its own; the fire audit judged it until Victors left the grey deck (Nov 6) moved the seeded games
+describe('Reinvestor', () => {
+  it('"Whenever you sell followers, your next member costs 2 less per follower sold." Selling 2 takes 4 off, named', async () => {
+    const { contextFor } = await import('../../../engine/v4/core.js');
+    const { sell } = await import('../../../engine/v4/content/trading.js');
+    const s = table(Q, { round: 2, members: [['trading.reinvestor']], bonus: [5] });
+    const ctx = contextFor(s);
+    expect(sell(ctx, s.players[0], 2, 1)).toBe(2);
+    expect(s.players[0].discount).toBe(4);
+    expect(named(s, 'Reinvestor')).toHaveLength(1);
+  });
+});

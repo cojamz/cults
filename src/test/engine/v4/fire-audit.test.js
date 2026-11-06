@@ -92,6 +92,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
     'market.restocker', // Restockers: bots held it in 4 seeded games without using it once Out of Style went back to per member (Oct 28); cards-member-structure covers it
     'thieves.fixer', // Fixer is On Use once per game; Victors leaving the grey deck (Nov 6) moved the games so its 3 holders never used it. cards-member-structure (Fixer) covers it
     'echo.encore', // Encore: held in 3 games without its copy coming up once Victors left the grey deck (Nov 6); cards-echo and replace4 cover it
+    'trading.reinvestor', // Reinvestor pays only on a sale; its 3 holders never sold once Victors left the grey deck (Nov 6). cards-trading (Reinvestor) covers it
     'market.mannequin']); // Mannequin only changes contest counts and writes no line of its own; held in 5 games after Nov 5's deck moved them. replace9.test.js covers it
   const TABLES = [
     ['thieves', 'market', 'trading', 'echo'], ['gold', 'thieves', 'trading', 'echo'], ['red', 'market', 'thieves', 'echo'],
@@ -147,6 +148,8 @@ const SPHERES = ['gold', 'red', 'purple', 'silver', 'yellow'];
 // Members that may stay unnamed on bot tables, with why (see design/eval/card-ledger-a.md).
 // Conditional cards that can go a whole bot game without their condition; each has a named test of its own.
 const ALLOW = {
+  // Sweet Nothings in Potluck's place (Nov 6) moved the seeded games: recruited in 1, and no rival recruited its color after
+  'yellow.dutycollector': 'pays only when a rival recruits a color you have a member of (dutycollector-live.test.js)',
   // Victors leaving the grey deck (Nov 6) moved the seeded games: recruited in 5 without placing the round's last minion
   'purple.nightmanager': 'pays only when its owner placed the round\'s last minion (replace7.test.js: Night Manager)',
   // Promote no longer reaching cheaper (Nov 4 night) moved the seeded games: recruited in 1 game, never named there
