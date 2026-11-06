@@ -5,6 +5,9 @@
 # Here the concurrency group lets one deploy run while only the newest push waits; skipped pushes end "cancelled",
 # which sends no email, and the newest commit always goes live.
 # It only deploys while Settings > Pages > Source is "GitHub Actions" (Cory switched it Nov 4); otherwise it checks and ends green.
+# Nov 6: two deploys (main a265c8f, 2d75283) failed with GitHub stuck at "syncing_files" for 10 minutes, not a collision.
+# So the upload now leaves out what the site never serves (source, archive, scripts, harness), and a deploy that times out
+# is tried once more with a longer wait before the run fails and emails Cory.
 # Lives on main (workflows run from the branch pushed); scripts/harness-sync-main.sh mirrors it from the game branch.
 name: pages deploy (main)
 
@@ -47,8 +50,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      - name: Stage only the files the site serves
+        run: |
+          mkdir -p "$RUNNER_TEMP/site"
+          rsync -a --exclude .git --exclude .github --exclude .claude --exclude src --exclude archive \
+            --exclude scripts --exclude node_modules --exclude 'package*.json' ./ "$RUNNER_TEMP/site/"
+          du -sh "$RUNNER_TEMP/site"
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
-      - id: deployment
+          path: ${{ runner.temp }}/site
+      - id: first
+        continue-on-error: true
         uses: actions/deploy-pages@v4
+      - name: Wait before retrying a stuck deploy
+        if: steps.first.outcome == 'failure'
+        run: sleep 60
+      - id: retry
+        if: steps.first.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        with:
+          timeout: 1200000
+      - id: deployment
+        run: echo "page_url=${{ steps.retry.outputs.page_url || steps.first.outputs.page_url }}" >> "$GITHUB_OUTPUT"
