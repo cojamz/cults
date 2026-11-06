@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.608 — 2026-11-05
+
+- Polish (and every pick-your-colors card) takes all its coins at once: they fly together instead of one every 2 seconds.
+
 ## v0.99.607 — 2026-11-05
 
 - Sample lays out the rival members you can copy as cards to pick; an action that finds nothing to do now says so on screen
