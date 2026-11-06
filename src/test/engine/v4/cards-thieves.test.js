@@ -255,7 +255,7 @@ describe('Magenta members', () => {
     let s = table(Q, { res: [{ red: 12 }], members: [[], ['thieves.lightfingers']], shop: ['red.patriarch', ...ROW.slice(1)] });
     s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'red.patriarch', 'shop')); // Stash: +2 magenta
     s = s.pending?.kind === 'pay' ? move(s, s.pending.options[0].id) : s;
-    expect([R(s).red + R(s).magenta, (R(s, 1).red || 0) + (R(s, 1).magenta || 0)]).toEqual([2, 1]); // 12 red + Stash's 2, paid Patriarch's 9, it took 1
+    expect([R(s).red + R(s).magenta, (R(s, 1).red || 0) + (R(s, 1).magenta || 0)]).toEqual([3, 1]); // 12 red + Stash's 2, paid Patriarch's 9, it took 1
     expect(named(s, 'Light Fingers').length).toBe(1);
     s = table(Q, { res: [{ red: 10 }], members: [[], ['thieves.lightfingers']], shop: ROW });
     s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'red.twins', 'shop'));

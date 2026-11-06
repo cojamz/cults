@@ -56,7 +56,7 @@ describe('hard combos (Nov 5)', () => {
   it('Encore + Stunt Double: the copy of the action you just took happens twice', () => {
     const s = run({ members: [['echo.encore']], shop: ['echo.hourglass'], res: [{ green: 20 }] }, [/Build Up/, /Encore/, /Stunt Double/]);
     expect(s.log.filter(l => /Stunt Double: P1 copied Build Up: \+5 green/.test(l))).toHaveLength(2);
-    expect(s.players[0].res.green).toBe(20 + 5 - 8 + 10); // Stunt Double costs 8 (Nov 5: every member +1)
+    expect(s.players[0].res.green).toBe(20 + 5 - 7 + 10); // Stunt Double costs 7 (Nov 5: every member +1)
   });
 
   it('Encore + Extra Shift: two more minions this round', () => {

@@ -14,15 +14,15 @@ useRetiredRollCall(); // Roll Call, a plain purple space, kept for these tests (
 
 const rich = { gold: 30, red: 30, purple: 30, green: 30 };
 describe('October 17 reported choices', () => {
-  it('Shake Down artwork and real member targets agree at the 8-cost limit (5 until Nov 5)', () => {
-    const restore = pinCosts({ 'red.twins': [2, 3], 'red.intern': [4, 5], 'red.bigfamily': [2, 2] });
+  it('Shake Down artwork and real member targets agree at the 7-cost limit (5 until Nov 5)', () => {
+    const restore = pinCosts({ 'red.twins': [2, 3], 'red.intern': [4, 4], 'red.bigfamily': [2, 2] });
     try {
       const s = take(sceneQ({ quadrants: ['gold', 'red', 'thieves', 'green'], round: 2,
         members: [[], ['red.twins', 'red.intern', 'red.bigfamily']] }), 'thieves.ransom');
       const action = quadrant('thieves').actions.find(a => a.key === 'ransom');
       const printed = Number(stripFor('thieves', action).flat().find(x => x.startsWith('tag:≤')).slice(5));
       const legal = s.pending.options.map(o => o.value);
-      expect(printed).toBe(8);
+      expect(printed).toBe(7);
       expect(legal).toContain(uidOf(s, 'red.twins', 1));
       expect(legal).not.toContain(uidOf(s, 'red.intern', 1));
       expect(legal.every(uid => { const d = cardDef(s, uid); return d.s + d.w <= printed; })).toBe(true);

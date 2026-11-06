@@ -299,7 +299,7 @@ describe('Yellow members', () => {
   });
   // "now" (dead-window audit, 2026-10-14): recruited in round III it used to give nothing
   it('Late Bloomers recruited with the fewest followers: +1 of each color right away, named', () => {
-    let s = sc({ round: 3, res: [{ yellow: 8 }], bonus: [0, 2], shop: ['yellow.latebloomer'], queue: [{ t: 'buy', p: 0 }] });
+    let s = sc({ round: 3, res: [{ yellow: 7 }], bonus: [0, 2], shop: ['yellow.latebloomer'], queue: [{ t: 'buy', p: 0 }] });
     s = buy(s, 'yellow.latebloomer');
     expect(R(s)).toEqual({ gold: 1, red: 1, yellow: 1, green: 1 });
     expect(named(s, 'Late Bloomers')).toHaveLength(1);
