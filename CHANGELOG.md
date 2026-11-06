@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.625 — 2026-11-05
+
+- Sweet Nothings replaces Potluck on Silver round II: +3 silver, give rivals up to 3 of your silver, +2 of any colors each (Cory)
+
 ## v0.99.624 — 2026-11-05
 
 - Shorter member text: Extortionist and Kidnapper pick the rival, Guest of Honor and Downsizers take any member, Anarchist swaps same cost; 'On Recruit and at Round Start'; the version shows in the in-game menu
