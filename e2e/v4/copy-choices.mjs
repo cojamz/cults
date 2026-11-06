@@ -18,6 +18,7 @@ const base = (process.env.V4_URL || 'http://localhost:5532/').replace(/\/$/, '')
 const QUADS = ['gold', 'red', 'purple', 'echo'];
 const key = (q, k) => `${QUADS.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.key === k)}`;
 const SAMPLE = key('echo', 'encore');
+let IMP = null;
 const HOLD = [[], ['gold.seed', 'gold.hustler'], ['echo.evergreen', 'gold.tycoon']];
 const WANT = ['Treasurer', 'Hustler', 'Busker'];
 
@@ -31,6 +32,7 @@ function save(stamp) {
     p.res = Object.fromEntries(s.resources.map(r => [r, 0])); p.left = 2; p.members = [];
     for (const def of HOLD[i]) { const u = Math.max(...Object.keys(s.cards).map(Number)) + 1; s.cards[u] = { uid: u, def }; p.members.push(u); }
   });
+  { const u = Math.max(...Object.keys(s.cards).map(Number)) + 1; s.cards[u] = { uid: u, def: 'echo.impersonators' }; s.shop.push(u); IMP = u; }
   s.queue = [0, 1, 2].map(p => ({ t: 'turn', p }));
   s = resume(s);
   if (!(s.pending?.player === 0 && s.pending.options.some(o => o.id === `slot:${SAMPLE}`))) throw new Error('copy-choices: setup never offered Sample');
@@ -59,6 +61,20 @@ try {
   await page.waitForSelector(`[data-slot="${SAMPLE}"]`);
   await page.waitForTimeout(900);
 
+  // (h0) Impersonator's shop hover names the rival members it could pick (Cory, Nov 5: "i mean like in the hover over")
+  {
+    const el = await page.$(`.lt-shop-cards .lt-card[data-uid="${IMP}"]`);
+    if (!el) fail('Impersonator not in the shop', 'h0');
+    else {
+      await el.hover();
+      const list = await page.waitForSelector('[data-copy-choices]', { timeout: 4000 }).catch(() => null);
+      await page.waitForTimeout(500);
+      await page.screenshot({ path: `${SHOTS}/00-impersonator-hover.png` });
+      const n = list ? await page.$$eval('[data-copy-choice]', els => els.length) : 0;
+      if (n !== 4) fail(`Impersonator's hover lists ${n} members, want the rivals' 4`, 'h0');
+      await page.mouse.move(5, 690); await page.waitForTimeout(400);
+    }
+  }
   // (h1) the hover names each option, whose, and its text
   const box = await (await page.$(`[data-slot="${SAMPLE}"]`)).boundingBox();
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);

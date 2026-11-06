@@ -106,6 +106,7 @@ const COPY_KINDS = [
   [/becomes a copy of a rival[’']s member/i, 'rivalMember', 'Could copy', 'No rival has a member yet'],
   [/becomes a copy of another of your members/i, 'ownMember', 'Could copy', 'You have no other member yet'],
   [/choose a rival[’']s member\. Until you choose again/i, 'rivalMember', 'Could choose', 'No rival has a member yet'],
+  [/choose a rival[’']s member\. Do its On Recruit/i, 'rivalMember', 'Could choose', 'No rival has a member yet'], // Impersonator (Cory, Nov 5: "i mean like in the hover over")
 ];
 /**
  * The members a copy card or space (Sample, Greatest Hits, Tryout, Bootlegger, Impostors, Doppelganger, Impersonator)

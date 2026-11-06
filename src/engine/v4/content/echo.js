@@ -413,7 +413,7 @@ function freeStep(ctx, p, data) {
 // it", "it becomes a copy"), which a card held by someone else can't do for you. Same test as Red's Tryout.
 function rivalRecruits(ctx, p) {
   return ctx.rivals(p).flatMap(o => ctx.membersOf(o).map(c => ({ c, o })))
-    .filter(({ c }) => !c.def.artifact && !c.def.recruitNote && (c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate)))
+    .filter(({ c }) => !c.def.artifact && !c.def.recruitNote && c.def.key !== 'impersonators' && (c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate)))
       && !/\bit\b|\bthese\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
 }
 
@@ -552,6 +552,12 @@ const echoQ = {
       const d = defById(self.ability);
       self.used = (d.activate === 'game' && !!self.gameUsed) || (d.activate === 'round' && self.roundUsed === ctx.state.round);
       ctx.log(`${p.name}'s Impersonator: has the ability of ${ctx.ownerOf(uid).name}'s ${d.name} ("${d.text}").`);
+      // and does its On Recruit now, on Impersonator (Cory, Nov 5)
+      if (!d.recruitNote && (d.onRecruited || (d.now && (d.onRoundStart || d.onRoundStartLate)))) {
+        ctx.log(`${p.name}'s Impersonator does ${d.name}'s On Recruit.`);
+        if (d.onRecruited) ctx.recruitAbility(p, self, d, () => d.onRecruited(ctx, p, self));
+        if (d.now) for (const hook of ['onRoundStart', 'onRoundStartLate']) if (d[hook]) ctx.recruitAbility(p, self, d, () => d[hook](ctx, p, self));
+      }
     },
     ...handlers2({
       mirrorImage(ctx, p, [oid, c]) {
@@ -692,7 +698,10 @@ const echoQ = {
     // then the owner chooses again; the new one's Round Start waits for the next round. One On Use a game (and one a
     // round) across every ability it holds. Another Impersonator, or an uncopied Doppelganger or Impostors, has no
     // ability of its own to lend, so it isn't offered.
-    m('impersonators', 'Impersonator', 3, 2, "On Recruit: choose a rival's member. Impersonator has that member's ability.", { // On Recruit only (Cory, Nov 5 backlog yes) // a round I member as Muse was (bot-tested in a later round; Nov 3)
+    // Cory, Nov 5 playtest: "Impersonator should impersontate the on recruit": the chosen member's On Recruit runs too,
+    // on Impersonator (as Greatest Hits runs one), answering Claude's question about members with only an On Recruit.
+    // Words Claude's fill-in.
+    m('impersonators', 'Impersonator', 3, 2, "On Recruit: choose a rival's member. Do its On Recruit, and Impersonator has its ability.", { // On Recruit only (Cory, Nov 5 backlog yes) // a round I member as Muse was (bot-tested in a later round; Nov 3)
       onRecruited(ctx, owner, card) {
         const list = ctx.rivals(owner).flatMap(o => ctx.membersOf(o)).filter(c => c.copy || !['doppel', 'impostor', 'impersonators'].includes(c.def.key));
         if (!list.length) { ctx.log(`${owner.name}'s Impersonator: no rival member to choose.`); return; }

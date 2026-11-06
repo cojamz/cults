@@ -111,6 +111,19 @@ describe('REPLACE3: each card fires', () => {
     expect(named(s, 'Impersonator')).toContain('P1\'s Impersonator: has the ability of P2\'s Snobs ("Game End: +1 follower per blue member you have.").');
   });
 
+  it("Impersonator does the chosen member's On Recruit too (Cory, Nov 5: \"Impersonator should impersontate the on recruit\")", () => {
+    let s = table(['gold', 'echo', 'market', 'yellow'], { round: 1, members: [['market.regular'], ['gold.seed', 'market.snob']], shop: ['echo.impersonators'] });
+    s.queue = []; s.pending = null;
+    contextFor(s).recruit(s.players[0], uidIn(s, 'echo.impersonators', 'shop'), { free: true });
+    s = resume(s);
+    const gold = s.players[0].res.gold;
+    s = answer(s, `card:${uidIn(s, 'gold.seed', 1)}`);
+    // Treasurer: "+1 gold per member you have, this one included": Regulars and Impersonator
+    expect(s.players[0].res.gold - gold).toBe(2);
+    expect(s.cards[uidIn(s, 'echo.impersonators', 0)].ability).toBe('gold.seed');
+    expect(named(s, 'Impersonator')).toContain("P1's Impersonator does Treasurer's On Recruit.");
+  });
+
   it('Impersonator: a copied game-end count scores for its owner', async () => {
     const { resume } = await import('../../../engine/v4/core.js');
     let s = table(['red', 'echo', 'market', 'yellow'], { round: 1, members: [['market.regular'], ['market.snob']], shop: ['echo.impersonators'] });
