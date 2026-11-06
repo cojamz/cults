@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.653 — 2026-11-06
+
+- Rival turns read clearer: the story card sits in the wheel's middle until their moves finish, recruits fly straight to the seat, round-start recruits get a card
+
 ## v0.99.652 — 2026-11-06
 
 - Overtime: Take the Goes Last token: its extra minion is placed after everyone else's.
