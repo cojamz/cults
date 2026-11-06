@@ -395,6 +395,8 @@
    head at 14 like the story's lines, so the members above are what the eye finds; it reads as a card by its paper */
 .app.game.lt > .turn-card{padding:7px 11px 8px;gap:1px}
 .app.game.lt > .turn-card .tc-head{font-size:var(--s);font-weight:700;line-height:1.25}
+.app.game.lt > .turn-card.at-hub{padding:10px 15px 12px;gap:3px}
+.app.game.lt > .turn-card.at-hub .tc-head{font-size:var(--m)}
 /* "each round" with three or four gains (wave-4 B #35: "+1● +1● +1● +1○" pushed into the member row): two to a line
    under the label, so the block stays a figure and a half wide */
 

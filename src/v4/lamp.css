@@ -619,6 +619,13 @@ h1,h2,h3{font-family:var(--serif)}
 @keyframes tcline{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .turn-card.folding{transform:scale(.15);opacity:0}
 @media (max-width:860px), (max-height:499px){ .turn-card{max-width:calc(100vw - 24px)} }
+/* a rival's turn on one story card in the wheel's middle (Cory, Nov 6: "1. One story card"): their name and minion on
+   top, a line per beat, edged and lit in their color; it flies to their seat when the turn has passed */
+.turn-card.at-hub{z-index:31;padding:10px 15px 12px;gap:3px;border-radius:14px;box-shadow:0 0 0 3px var(--pc),0 0 26px color-mix(in srgb,var(--pc) 55%,transparent),0 14px 34px rgba(0,0,0,.6)}
+.turn-card.at-hub .tc-who{display:flex;align-items:center;gap:7px;font-family:var(--serif);font-weight:700;font-size:var(--m);line-height:1.15;padding-bottom:6px;margin-bottom:3px;border-bottom:1px solid color-mix(in srgb,var(--paper-ink) 18%,transparent)}
+.turn-card.at-hub .tc-head{font-family:inherit;font-size:var(--m);font-weight:700;line-height:1.25}
+.turn-card.at-hub .tc-line{font-size:var(--m);line-height:1.3;color:var(--paper-ink)}
+.turn-card.at-hub.folding{transform:translate(var(--fx,0),var(--fy,0)) scale(.12);opacity:0}
 
 /* the leader's emoji inline on the engraved rim line; lit with the label during the Reckoning */
 .lt .stage svg.wheel-paper .rim-emoji{pointer-events:none}

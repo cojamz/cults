@@ -324,6 +324,10 @@ describe('render budget', () => {
     const setProp = CSSStyleDeclaration.prototype.setProperty;
     CSSStyleDeclaration.prototype.setProperty = function (name, ...a) { if (String(name).startsWith('--')) writes.push({ style: this, name }); return setProp.call(this, name, ...a); };
     restore.push(() => { CSSStyleDeclaration.prototype.setProperty = setProp; });
+    // rivals' turns are told on the wheel's hub now (Cory, Nov 6); this checks the dock under the story, so it asks for it
+    const href0 = location.href;
+    history.replaceState(null, '', '?story=dock');
+    restore.push(() => history.replaceState(null, '', href0));
     try {
       let state = advanceTo(createGame({ seats: SEATS, seed: 33 }), 'place', 1);
       const session = drivenSession(state, [0]);

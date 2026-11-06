@@ -4,10 +4,10 @@ import { fizzleNote, tookSpace } from './fizzle.js';
 import { turnRun, runTitle, runSay } from './seats.js';
 import { cloakOf } from './cloak.js';
 // What's clickable is exactly state.pending.options, and only for seats this client controls.
-import { memo, startTransition, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { memo, startTransition, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { tierLeft, quadrant, cardDef } from '../../engine/v4/index.js';
 import { useAnyDot } from './Glyphs.jsx';
-import { isRoundEnd, newLogLines, parseRoundEnd, playerColor, promptFor, roman, tierCostText, scoringSnapshot, explainLine, plainLine, latestRivalMove, movesSinceYourTurn } from '../format.js';
+import { isRoundEnd, newLogLines, parseRoundEnd, playerColor, seatEmoji, promptFor, roman, tierCostText, scoringSnapshot, explainLine, plainLine, latestRivalMove, movesSinceYourTurn } from '../format.js';
 import { TouchTips, useIdleSpaces, Tip } from './Info.jsx';
 import Wheel from './Wheel.jsx';
 import ShopCards from './ShopCards.jsx';
@@ -60,7 +60,8 @@ import LaunderCard, { launderChoice } from './LaunderCard.jsx';
 import SwapCard, { swapChoice } from './SwapCard.jsx';
 import ArtifactDraft from './ArtifactDraft.jsx';
 import ActionStage from './ActionStage.jsx';
-import { stageClear, stageRelease } from './stage.js';
+import { stageClear, stageRelease, stageCenter, subscribeStage, stageItems } from './stage.js';
+import { Minion } from '../art/Leader.jsx';
 import { sameSeat } from './seatMemo.js';
 import { holdFlag } from './bodyFlag.js';
 import { friendlyError, isNetworkError } from '../errors.js';
@@ -504,7 +505,27 @@ function Menu({ onRules, onLog, onLeave, getState }) {
  * The turn card: one turn, told where its cult sits, a line per beat (placed, gained, bought). It folds into the
  * chair when the turn has passed and had its moment.
  */
-function TurnCard({ card, root, state }) {
+// A rival's turn is told on one story card in the middle of the wheel, line by line as it plays, then the card flies
+// to their seat (Cory, 2026-11-06, picked "1. One story card" of three mockups: "yeah we can try 1"). Your own turns
+// keep the card under "Since your last turn". ?story=dock puts every turn back there.
+const HUB_W = 270;
+const storyAtHub = () => {
+  try { if (new URLSearchParams(globalThis.location?.search || '').get('story') === 'dock') return false; } catch { /* no location */ }
+  return typeof innerWidth === 'number' && innerWidth > 860 && innerHeight >= 500;
+};
+/** The story card's place over the wheel's hub, or null (no wheel on screen). */
+function hubCardPlace() {
+  const c = stageCenter();
+  if (!c) return null;
+  return { left: Math.round(c.x - HUB_W / 2), top: Math.round(c.y + 6), width: HUB_W };
+}
+/** True while the stage shows another player's space: the story card on the hub steps aside for the new move. */
+function useOtherOnStage(name, on) {
+  const items = useSyncExternalStore(subscribeStage, stageItems, stageItems);
+  return on && items.some(it => it.kind === 'space' && !it.leaving && it.who && !String(it.who).startsWith(name));
+}
+
+function TurnCard({ card, root, state, hub = false }) {
   // a card whose player isn't acting any more folds after its moment (wave-4 B #19: "You took X" stayed up ~10s through
   // the bots' whole sequence, stale, under the strip that already lists it): 2.6s after its last line, it folds, and at
   // 3.1s it's gone and gives the story its room back
@@ -537,11 +558,26 @@ function TurnCard({ card, root, state }) {
   // render after a resume, which left the flag and --turn-h unset until the next step, seconds later, so the story and
   // the card overlapped; design pod, 2026-10-15)
   const tableOf = () => root || (box.current && box.current.parentElement);
-  useLayoutEffect(() => (gone ? undefined : holdFlag(tableOf(), 'turnCard')), [root, gone]); // eslint-disable-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => (gone || hub ? undefined : holdFlag(tableOf(), 'turnCard')), [root, gone, hub]); // eslint-disable-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     const el = box.current;
     if (!el) return;
     const table = tableOf();
+    if (hub) {
+      const at = hubCardPlace();
+      if (!at) { el.style.display = 'none'; return; }
+      const z = parseFloat(getComputedStyle(el).zoom) || 1;
+      const px = v => `${z === 1 ? v : Math.round((v / z) * 10) / 10}px`;
+      Object.assign(el.style, { display: '', left: px(at.left), top: px(at.top), right: '', bottom: '', width: px(at.width), maxWidth: px(at.width), transformOrigin: '50% 50%' });
+      // a long turn rises to stay whole on screen
+      const h = el.offsetHeight * z;
+      if (at.top + h > innerHeight - 8) { at.top = Math.max(8, Math.round(innerHeight - 8 - h)); el.style.top = px(at.top); }
+      // it folds toward its own seat: the card flies home with the turn
+      const seat = table && table.querySelector(`.lt-seat[data-pid="${card.pid}"] .lt-cult-seat, .lt-seat[data-pid="${card.pid}"]`);
+      const r = seat && seat.getBoundingClientRect();
+      if (r && r.width) { el.style.setProperty('--fx', `${Math.round(r.left + r.width / 2 - (at.left + at.width / 2))}px`); el.style.setProperty('--fy', `${Math.round(r.top + r.height * 0.35 - (at.top + (el.offsetHeight * z) / 2))}px`); }
+      return;
+    }
     const pos = turnCardDock(card, table);
     if (!pos) { el.style.display = 'none'; return; }
     // a large screen zooms the card with the columns (layout.css --gz): its place is measured on screen, so it's written
@@ -568,16 +604,22 @@ function TurnCard({ card, root, state }) {
     // written on the story itself, its only reader (layout.css): on the table, an inherited custom property re-styled all
     // ~5,000 elements of the page every time it changed (perf, 2026-10-15)
     if (story && (h !== turnH.current || turnHOn.current !== story)) { turnH.current = h; turnHOn.current = story; story.style.setProperty('--turn-h', `${h}px`); }
-  }, [card.pid, card.n, card.text, root, gone, MAXL]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [card.pid, card.n, card.text, root, gone, MAXL, hub]); // eslint-disable-line react-hooks/exhaustive-deps
+  const pname = state && state.players[card.pid] ? state.players[card.pid].name : '';
+  // on the hub the card steps aside the moment someone else moves: a stale story under the next player's move was the
+  // audit's "the turn card names the wrong turn"
+  const otherActs = hub && !!(state && state.pending && state.pending.player != null && state.pending.player !== card.pid);
+  const aside = useOtherOnStage(pname, hub) || otherActs;
   if (gone) return null;
   // at most a few lines, the rest summed up (every line stays in the strip's card and the log)
   const [head, ...all] = card.text.split(' · ');
   const rest = all.length > MAXL ? all.slice(0, MAXL - 1) : all; // never "+4 more": it read as a gain of 4 (picky UI bot, Nov 4)
   const more = all.length - rest.length;
   return (
-    <div ref={box} className={`turn-card${card.live ? ' live' : ''}${card.folding || life === 'folding' ? ' folding' : ''}`} data-turn-story={card.text} role="status" aria-live="polite"
+    <div ref={box} className={`turn-card${hub ? ' at-hub' : ''}${card.live ? ' live' : ''}${card.folding || life === 'folding' || aside ? ' folding' : ''}`} data-turn-story={card.text} data-turn-at={hub ? 'hub' : 'dock'} role="status" aria-live="polite"
       style={{ '--pc': playerColor(card.pid) }}>
-      <b className="tc-head">{head}</b>
+      {hub && <span className="tc-who"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={16} /><span>{state.players[card.pid] ? `${state.players[card.pid].name}'s turn` : ''}</span></span>}
+      <b className="tc-head">{hub && pname && head.startsWith(`${pname} `) ? `${head.charAt(pname.length + 1).toUpperCase()}${head.slice(pname.length + 2)}` : head}</b>
       {rest.map((l, k) => <span key={`${k}:${l}`} className="tc-line"><Rich text={l} /></span>)}
       {/* what didn't fit opens on the "and N more" line, every line in its card (picky bot, Nov 4: "+3 more" with no way
           to see them) */}
@@ -1796,7 +1838,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
             pool={physicalState.round >= 2 && !physicalState.over ? <MinionPool state={physicalState} /> : null} />}
         </>
       )}
-      <AfterChain value={cardNow} hold={holdStory && !placing}>{c => (c && !moment && !(state.over && !moment) ? <TurnCard card={c} root={rootEl} state={state} /> : null)}</AfterChain>
+      <AfterChain value={cardNow} hold={holdStory && !placing}>{c => (c && !moment && !(state.over && !moment) ? <TurnCard card={c} root={rootEl} state={state} hub={storyAtHub() && !mySeats.includes(c.pid)} /> : null)}</AfterChain>
       {toast && <div key={toast.n} className="toast" role="status">{toast.text}</div>}
       <TouchTips />
       {cardDetail && state.cards[cardDetail.uid] && (
