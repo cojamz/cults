@@ -128,7 +128,8 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'thieves.hoardbreaker', 'thieves.bigscore', 'thieves.fixer', 'echo.songrequest', 'echo.choir', // under 3 holds when Cory's Nov 5 cuts, prices and Big Score moved the games; replace10-d3 (Big Score), cards-thieves and cards-echo cover them
       'thieves.secondstory', 'thieves.desperado', // under 3 holds when Last-Minute Shopper and Power Shoppers (Nov 5) moved the games; cards-thieves covers them
       'trading.tipster', // under 3 holds when the Nov 5 deck moved the games (hidden behind Mannequin's line until it was cleared); cards-skips-b covers it
-      'trading.pawnbroker']); // under 3 holds when Victors left the grey deck (Nov 6) moved the games; replace12c and member-use cover it
+      'trading.pawnbroker', // under 3 holds when Victors left the grey deck (Nov 6) moved the games; replace12c and member-use cover it
+      'thieves.robinhood']); // under 3 holds when Sleepyheads and Lookouts joined Purple and Victors left (Nov 6) moved the games; cards-thieves covers it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);
     expect(unseen).toEqual([]);
