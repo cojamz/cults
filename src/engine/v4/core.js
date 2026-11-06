@@ -2168,7 +2168,23 @@ function bottomBlue(state) {
   const ctx = ctxFor(state);
   // BARGAIN=self<n>: bot test only (Nov 6): pays only the player whose turn it is, +n
   const own = String(globalThis.process?.env?.BARGAIN || '').match(/^self(\d+)$/);
+  if (globalThis.process?.env?.BARGAIN === 'cost') { bargainCost(state, 1); return; }
   for (const p of state.players) for (const c of ctx.abilitiesOf(p)) if (c.def.bottomBlue && (!own || state.current === p.id)) ctx.asMember(p, c.def.name, () => { const got = ctx.gain(p, 'blue', own ? Number(own[1]) : 1); if (got) ctx.log(`${p.name}'s ${c.def.name}: +${got.n} ${got.color}.`); }, c.uid);
+}
+/** BARGAIN=cost, bot test only (Cory, Nov 6: "when you bury a member get 1 of its cost. and grey should be wild"):
+ *  the player whose turn it is, holding the Blue Cloak, gains 1 of each just-buried member's color; a grey member's is
+ *  wild (the bot takes the table color it has least of). The last k cards of the pile are the ones just buried. */
+function bargainCost(state, k) {
+  const p = state.current === null || state.current === undefined ? null : state.players[state.current];
+  if (!p || !(k > 0)) return;
+  const ctx = ctxFor(state);
+  const cloak = ctx.abilitiesOf(p).find(c => c.def.bottomBlue);
+  if (!cloak) return;
+  for (const uid of state.pile.slice(-k)) {
+    const c = colorOf(cardDef(state, uid));
+    const color = state.resources.includes(c) ? c : [...state.resources].sort((a, b) => (p.res[a] || 0) - (p.res[b] || 0))[0];
+    ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, 1); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
+  }
 }
 function release(state, p, uid) {
   return underCause({ kind: 'release', pid: p.id, uid }, () => releaseNow(state, p, uid));
@@ -2358,6 +2374,7 @@ function ctxFor(state) {
     },
     /** a cult's member went to the bottom of the pile outside buryMember (Doormen): Bargain Bin pays */
     memberBottomed: () => bottomBlue(state),
+    bargainCost: k => bargainCost(state, k),
     swapMembers: (actor, a, b) => swapMembers(state, actor, a, b),
     canSwapMembers: owner => !sumMemberFlag(state, owner, 'blockMemberSwaps'),
     // Loyalists shields its owner's other members, never a Loyalists (a copy of it included): Cory, 2026-10-27.
