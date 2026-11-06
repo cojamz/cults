@@ -250,14 +250,14 @@ function extraBuys(ctx, p, k) {
   q.splice(at, 0, ...adds);
 }
 
-/** Last-Minute Shopper's round-end offer: every shop member the owner can pay for, or nothing. */
+/** Last-Minute Shopper's round-end recruit (Cory, Nov 5: "should just be recruiting… it can let you buy followers"): one
+ *  ordinary recruit, a shop member or a follower card, before contests are scored. It isn't a turn: a fresh count of this
+ *  turn's recruits, as Late Shoppers' round-end recruit. */
 function lmOffer(ctx, owner) {
-  const opts = ctx.shopCards().filter(c => ctx.payChoices(owner, c.uid, {}).length).map(c => ({
-    id: `card:${c.uid}`, label: `${c.def.name} · pay ${ctx.price(owner, c.uid, {}).total}`, kind: 'card', value: c.uid, hint: botWorth(c),
-  }));
-  if (!opts.length) { ctx.log(`${owner.name}'s Last-Minute Shopper: nothing in the shop they can pay for.`); return; }
-  opts.push({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: 0 });
-  ctx.choose(owner, 'Last-Minute Shopper: before contests are scored, recruit a shop member, paying its cost?', opts, `${Q}.lastMinute`);
+  const st = ctx.state;
+  owner.turnRecruits = 0; owner.turnBuys = 0; delete owner.peekReach; delete owner.perSpend; delete owner.clearance; delete owner.recruitFollowers;
+  const at = st.queue.findIndex(t => !t._fresh);
+  st.queue.splice(at < 0 ? st.queue.length : at, 0, { t: 'buy', p: owner.id, lastMinute: true, _fresh: true });
 }
 /** The alternate's "+2 of any colors": one color at a time; bots take the color they hold least of. */
 function lmGainAsk(ctx, owner, left) {
@@ -956,13 +956,13 @@ const market = {
     // its own Round End that round (the round's round-end members have already been asked).
     // In the deck for Shopaholics' slot (Cory, Nov 5: "Last minute shopper is good. it should also give one or 2 blue at
     // round end"; +2 is Claude's pick). The blue comes before contests are scored, so it counts for Most blue.
-    m('lastminute', 'Last-Minute Shopper', 2, 0, 'Round End: +2 blue, then you may recruit a shop member, paying its cost.', { round: 1,
+    m('lastminute', 'Last-Minute Shopper', 2, 0, 'Round End: +2 blue, then you may recruit.', { round: 1,
       ...see(i => endsAhead(i).length * 3), // BOTSEE: 2 blue and an extra paid recruit each round end still ahead
       onAllPlaced(ctx, owner) { const got = ctx.gain(owner, B, 2); if (got) ctx.log(`${owner.name}'s Last-Minute Shopper: +${got.n} ${got.color}.`); lmOffer(ctx, owner); },
     }),
     // Alternate (director, Nov 4: numbers for Cory on both): REPLACE9=lastminute2. The same card, first +2 resources of the
     // owner's choice (one color at a time), so the round-end recruit has something to pay with.
-    ...add9(m('lastminute2', 'Last-Minute Shopper', 2, 1, 'Round End: +2 of any colors, then you may recruit a shop member, paying its cost.', { round: 1,
+    ...add9(m('lastminute2', 'Last-Minute Shopper', 2, 1, 'Round End: +2 of any colors, then you may recruit.', { round: 1,
       ...see(i => endsAhead(i).length * 3), // BOTSEE: 2 resources and an extra paid recruit each round end still ahead
       onAllPlaced(ctx, owner) { lmGainAsk(ctx, owner, 2); },
     })),

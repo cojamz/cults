@@ -674,7 +674,8 @@ function inputFor(state, task) {
       }
       // Doorbusters' round-start recruit: a member or followers only (it isn't a turn)
       // (Late Shoppers' round-end recruit, REPLACE4 bot test, likewise)
-      if (task.doorbuster || task.lateShop) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'card' || o.kind === 'tier'));
+      // (Last-Minute Shopper's round-end recruit, before contests are scored, likewise: Cory, Nov 5: "should just be recruiting… it can let you buy followers")
+      if (task.doorbuster || task.lateShop || task.lastMinute) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'card' || o.kind === 'tier'));
       // Ushers' recruit (REPLACE7 bot test): a member costing task.cheap or less, nothing else
       if (task.cheap) opts.splice(0, opts.length, ...opts.filter(o => o.kind === 'card' && cardDef(state, o.uid).s + cardDef(state, o.uid).w <= task.cheap));
       // Barker's extra recruit: followers only
@@ -683,6 +684,7 @@ function inputFor(state, task) {
       if (!real.length) return { kind: 'buy', prompt: '', options: [], onEmpty: task.extra ? undefined : () => log(state, `${p.name} couldn't afford anything.`) };
       opts.push({ id: 'pass', label: 'Pass', kind: 'pass' });
       if (task.doorbuster) return { kind: 'buy', prompt: `${p.name}: Doorbusters: recruit once before anyone places, or pass`, options: opts };
+      if (task.lastMinute) return { kind: 'buy', prompt: `${p.name}: Last-Minute Shopper: recruit once before contests are scored, or pass`, options: opts };
       if (task.lateShop) return { kind: 'buy', prompt: `${p.name}: Late Shoppers: recruit once after the contests, or pass`, options: opts };
       if (task.cheap) return { kind: 'buy', prompt: `${p.name}: Ushers: also recruit a member costing ${task.cheap} or less, or pass`, options: opts };
       if (barkerOnly) return { kind: 'buy', extra: true, prompt: `${p.name}: recruit followers again (${cardDef(state, followersTwiceCard(state, p)).name}), or pass`, options: opts };
@@ -2015,7 +2017,7 @@ function dropBuys(state, p) {
   const gone = new Set(turnBuys(state, p, 0));
   if (gone.size) state.queue = state.queue.filter(t => !gone.has(t));
 }
-const extraOf = task => ({ ...workerSourceOf(task), ...(task.extra ? { extra: true } : {}), ...(task.barker ? { barker: true } : {}), ...(task.afterPurchase ? { afterPurchase: true } : {}), ...(task.doorbuster ? { doorbuster: true } : {}), ...(task.lateShop ? { lateShop: true } : {}) });
+const extraOf = task => ({ ...workerSourceOf(task), ...(task.extra ? { extra: true } : {}), ...(task.barker ? { barker: true } : {}), ...(task.afterPurchase ? { afterPurchase: true } : {}), ...(task.doorbuster ? { doorbuster: true } : {}), ...(task.lateShop ? { lateShop: true } : {}), ...(task.lastMinute ? { lastMinute: true } : {}) });
 // A real buy (member or followers) in a buy step. The second one spends a Big Spender.
 function boughtOnce(state, p, task) {
   if (task.extra) {
@@ -2027,10 +2029,10 @@ function boughtOnce(state, p, task) {
   }
 
   p.turnBuys = (p.turnBuys || 0) + 1;
-  if (task.uid !== undefined && !task.doorbuster && !task.lateShop) state.queue.unshift({ t: 'buy', p: p.id, afterPurchase: true, ...workerSourceOf(task) });
+  if (task.uid !== undefined && !task.doorbuster && !task.lateShop && !task.lastMinute) state.queue.unshift({ t: 'buy', p: p.id, afterPurchase: true, ...workerSourceOf(task) });
   // Barker: each member recruited in a buy step brings a followers-only recruit right after it (Spree's three bring three)
   if (task.barker) { const b = followersTwiceCard(state, p); if (b !== undefined) log(state, `${p.name} uses ${defById(state.cards[b].def).name}.`); }
-  if (task.uid !== undefined && !task.doorbuster && !task.lateShop && followersTwiceCard(state, p) !== undefined) state.queue.unshift({ t: 'buy', p: p.id, barker: true, ...workerSourceOf(task) });
+  if (task.uid !== undefined && !task.doorbuster && !task.lateShop && !task.lastMinute && followersTwiceCard(state, p) !== undefined) state.queue.unshift({ t: 'buy', p: p.id, barker: true, ...workerSourceOf(task) });
 }
 // ---------- Outbidders (REPLACE4 bot test: flag outbids) ----------
 // "Whenever a rival recruits a shop member, you may pay its cost plus 2 to recruit it instead. They get back what they

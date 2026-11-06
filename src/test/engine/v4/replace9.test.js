@@ -113,41 +113,47 @@ describe('Quilter: "On Use, once per game: turn up to 3 full sets into 6 followe
   });
 });
 
-describe('Last-Minute Shopper: "Round End: you may recruit a shop member, paying its cost."', () => {
+describe('Last-Minute Shopper: "Round End: +2 blue, then you may recruit."', () => {
   const Q4 = ['red', 'market', 'purple', 'silver'];
-  it('Round End, before contests: offers each shop member the owner can pay for, and "Recruit nothing"', () => {
-    let s = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminute']], shop: ['red.volunteer', 'market.snob'], queue: [{ t: 'allPlaced' }] });
-    expect(s.pending.prompt).toBe('Last-Minute Shopper: before contests are scored, recruit a shop member, paying its cost?');
-    const labels = s.pending.options.map(o => o.label);
-    expect(labels.some(l => l.startsWith('Volunteer'))).toBe(true);
-    expect(labels.some(l => l.startsWith('Snobs'))).toBe(false); // needs blue
-    expect(labels).toContain('Recruit nothing');
+  const PROMPT = 'P1: Last-Minute Shopper: recruit once before contests are scored, or pass';
+  const pay = s => { while (s.pending?.kind === 'pay' || s.pending?.kind === 'choose' && /pay/.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id); return s; };
+  it('Round End, before contests: +2 blue, then one ordinary recruit: shop members it can pay for, the follower cards, or pass (Cory, Nov 5)', () => {
+    const s = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminute']], shop: ['red.volunteer', 'market.snob'], queue: [{ t: 'allPlaced' }] });
+    expect(s.players[0].res.blue).toBe(2);
+    expect(s.pending.prompt).toBe(PROMPT);
+    const ids = s.pending.options.map(o => o.id);
+    expect(s.pending.options.some(o => o.kind === 'card' && o.label.startsWith('Volunteer'))).toBe(true);
+    expect(ids).toContain('tier:small'); // the follower cards: "it can let you buy followers"
+    expect(ids).toContain('pass');
+    expect(s.pending.options.every(o => ['card', 'tier', 'pass'].includes(o.kind))).toBe(true); // a recruit only: no uses, no swap card
   });
-  it('recruiting pays its cost; "Recruit nothing" keeps the resources', () => {
+  it('recruiting a member pays its cost; passing keeps the resources', () => {
     let s = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminute']], shop: ['red.volunteer'], queue: [{ t: 'allPlaced' }] });
-    const vol = s.pending.options.find(o => o.label.startsWith('Volunteer'));
-    s = answer(s, vol.id);
-    s = answerAll(s, 'Last-Minute Shopper: how do you pay', o => o[0]);
+    s = pay(answer(s, s.pending.options.find(o => o.kind === 'card' && o.label.startsWith('Volunteer')).id));
     expect(owns(s, 0, 'red.volunteer')).toBe(true);
-    expect(s.players[0].res.red).toBeLessThan(4);
+    expect(s.players[0].res.red + s.players[0].res.blue).toBeLessThan(6);
     let t = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminute']], shop: ['red.volunteer'], queue: [{ t: 'allPlaced' }] });
-    t = answer(t, 'none');
+    t = answer(t, 'pass');
     expect(owns(t, 0, 'red.volunteer')).toBe(false);
-    expect(t.players[0].res.red).toBe(4);
+    expect(t.players[0].res).toMatchObject({ red: 4, blue: 2 });
+    expect(t.pending).toBeFalsy();
   });
-  it('nothing affordable: no ask', () => {
-    const s = table(Q4, { n: 3, round: 1, res: [{}], members: [['market.lastminute']], shop: ['market.snob'], queue: [{ t: 'allPlaced' }] });
+  it('it can buy followers: the 1-follower card for 1 resource', () => {
+    let s = table(Q4, { n: 3, round: 1, res: [{ red: 1 }], members: [['market.lastminute']], shop: ['market.snob'], queue: [{ t: 'allPlaced' }] });
+    const before = s.players[0].bonus;
+    s = pay(answer(s, 'tier:small'));
     expect(s.pending).toBeFalsy();
-    expect(named(s, 'Last-Minute Shopper')).toContain("P1's Last-Minute Shopper: nothing in the shop they can pay for.");
+    expect(s.players[0].bonus).toBe(before + 1);
+    expect(s.players[0].res.red + s.players[0].res.blue).toBe(2); // 1 red + 2 blue, less the 1 paid
+    expect(s.log.some(l => /P1 bought 1 follower/.test(typeof l === 'string' ? l : l.text))).toBe(true);
   });
   it('pitched turn: round I end, the recruit counts in Blue\'s Most members before it is scored', () => {
     // P1: Last-Minute Shopper + 1 member (2), P2: 3 members. P1 buys Window Dressers (counts as 3) at round end: 5 to 3.
     let s = table(Q4, { n: 3, round: 1, rules: BY, res: [{ blue: 3, red: 1 }], members: [['market.lastminute', 'red.volunteer'], ['red.bodysnatchers', 'purple.gossip', 'silver.godparents']],
       shop: ['market.windowdresser'], queue: [{ t: 'allPlaced' }, { t: 'endRound' }] });
-    const wd = s.pending.options.find(o => o.label.startsWith('Window Dressers'));
+    const wd = s.pending.options.find(o => o.kind === 'card' && o.label.startsWith('Window Dressers'));
     expect(wd).toBeTruthy();
-    s = answer(s, wd.id);
-    s = answerAll(s, 'Last-Minute Shopper: how do you pay', o => o[0]);
+    s = pay(answer(s, wd.id));
     s = answerAll(s, 'Churn', o => o[0]);
     expect(owns(s, 0, 'market.windowdresser')).toBe(true);
     const blue = (s.contests || []).at(-1).results.find(c => c.qid === 'market');

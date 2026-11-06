@@ -12,7 +12,7 @@ delete process.env.REPLACE9;
 const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
 const Q4 = ['red', 'market', 'purple', 'silver'];
 
-describe('Last-Minute Shopper (alternate): "Round End: +2 of any colors, then you may recruit a shop member, paying its cost."', () => {
+describe('Last-Minute Shopper (alternate): "Round End: +2 of any colors, then you may recruit."', () => {
   it('same price, retires Critic, and the first version is off', () => {
     const d = defById('market.lastminute2');
     expect([d.s, d.w, d.f, d.n, d.round]).toEqual([3, 2, 1, 1, 1]);
@@ -27,9 +27,9 @@ describe('Last-Minute Shopper (alternate): "Round End: +2 of any colors, then yo
     s = answer(s, 'color:red');
     expect(s.players[0].res.red).toBe(3);
     expect(named(s, 'Last-Minute Shopper')).toEqual(expect.arrayContaining(["P1's Last-Minute Shopper: +1 red."]));
-    expect(s.pending.prompt).toBe('Last-Minute Shopper: before contests are scored, recruit a shop member, paying its cost?');
-    s = answer(s, s.pending.options.find(o => o.label.startsWith('Volunteer')).id);
-    while (s.pending?.prompt?.startsWith('Last-Minute Shopper: how do you pay')) s = answer(s, s.pending.options[0].id);
+    expect(s.pending.prompt).toBe('P1: Last-Minute Shopper: recruit once before contests are scored, or pass');
+    s = answer(s, s.pending.options.find(o => o.kind === 'card' && o.label.startsWith('Volunteer')).id);
+    while (s.pending?.kind === 'pay') s = answer(s, s.pending.options[0].id);
     expect(owns(s, 0, 'red.volunteer')).toBe(true);
   });
 });
