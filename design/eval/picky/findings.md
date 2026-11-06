@@ -7,6 +7,36 @@ each. One line per finding: what a player sees, what's wrong, status. Each run's
 Status words: **fixed (version)**, **fixing**, **sent** (to the thread that owns it), **open** (ours, not started),
 **Cory** (a question only he can answer), **by design** (with the reason; the check got an exception).
 
+## 2026-11-06 (fourth run)
+Run at 1:50pm Eastern Nov 6 on v0.99.652 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
+emoji; raw list /mnt/project-files/picky/2026-11-06-18-50/). The bot flagged nothing; the member sweep of 116 cards in
+both looks was clean. The rest are by eye from the shots.
+
+- **"You has no minions left to place: Right Away does nothing."** The do-nothing note swapped the name for "You" but
+  kept "has". Notes said to you now turn the verb ("You have", "You recruit"). **fixed (v0.99.656)**
+- **Greatest Hits with nothing to copy: "None of their members has an On Recruit to copy."** "Their" named no one; the
+  space copies your own members. Now "You have no member with an On Recruit to copy." **fixed (v0.99.656)**
+- **Since your last turn: "P3 Build Up: +3 green (+3 green)".** The space's board words in brackets repeated the gain.
+  The brackets now drop when the gain says the same. **fixed (v0.99.656)**
+- **Round III, the magenta rim reads "most mag enta resources"** with a gap inside the word (shot table-g1-t12.png;
+  round I's rim was whole). The rims are drawn as pictures letter by letter since today's lag work (rimPictures.js),
+  so it is likely a letter placed off its spot there. **open** (for the coordinator: the lag thread's file)
+- **Exchange: the header and the sheet say the same line** ("Exchange: turn up to 2 resources into 2 followers each"
+  in the header, wrapped to two lines, and "Turn up to 2 resources into 2 followers each" on the sheet under it).
+  **open** (looks off)
+- **Emoji look: more members shown as things** (Regular a coffee cup, Trendsetters nail polish, Godparent a gift box,
+  Snobs a peacock, Patroness a hat, Critic a monocle face). Same family as the earlier lists. **open** (for the
+  coordinator)
+- **Rim plaques: about 9 of 12 pointer rests a game opened no card** (the bot's own count, both games). Not seen by
+  eye; may be the bot pointing at a rim during a turn. **open** (check)
+- Gate already red without this run's changes: e2e/v4/hotseat.mjs ("after undo and a new placement the pill still says
+  'Placement undone, place again'", and a 13px "This doesn't use up your recruit" off the type scale). Failed the same
+  on the branch with these changes stashed. **open** (for the coordinator)
+- Seen again, already listed: bar Members one above the member count (You "10 members", bar 11; "3 members", bar 4),
+  bare numbers on score parts ("4", "4", "7", "7"), "recruiting followers" beside "Bought", a rival's line with "you
+  +1 white · P4 +3 silver", "P2 took 1 silver" tag on your seat, white and silver dots alike in the emoji look,
+  "2 turns in a row" in header and seat (by design).
+
 ## 2026-11-06 (third run)
 Run at 7:42am Eastern Nov 6 on v0.99.641 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
 emoji; raw list /mnt/project-files/picky/2026-11-06-12-42/). The bot flagged nothing; the member sweep of 117 cards in
