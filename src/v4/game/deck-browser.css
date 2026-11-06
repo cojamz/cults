@@ -85,3 +85,42 @@
 .dialog.deck-browser.discard-browser{display:flex;flex-direction:column;height:auto;max-height:min(840px,94dvh)}
 .dialog.discard-browser .deck-browser-scroll{flex:1 1 auto}
 .discard-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+/* Compact rows (Cory, Nov 6: "The deck UI should be way cleaner/easy to see. You shouldnt have to scroll so much"):
+   one row per color, its members as small chips cheapest first; a check for bought, a cross for the discard pile */
+.deck-browser-head h2{font-size:30px}
+.db-legend{display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px}
+.db-legend > span{display:inline-flex;align-items:center;gap:6px}
+.db-rows{display:flex;flex-direction:column}
+.db-row{display:grid;grid-template-columns:76px minmax(0,1fr);border-top:1px solid var(--rim)}
+.db-row:first-child{border-top:0}
+.db-row > .db-color{position:static;padding:10px 8px;border-top:0;border-right:0;border-left:4px solid var(--row-color);font-size:14px;line-height:17px;background:none}
+.db-row > .db-color::before{display:none}
+.db-chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:6px;padding:7px 8px}
+.db-row.out{opacity:.5}
+.db-divider{border-top:1px solid var(--rim);padding:10px 12px 4px;background:none}
+.db-chip{position:relative;display:flex;align-items:center;gap:6px;min-width:0;height:44px;margin:0;padding:0 6px 0 0;border:0;border-radius:6px;background:#fff3da;color:var(--pl-ink,#2b2018);box-shadow:inset 4px 0 0 var(--q),0 1px 3px #0006;text-align:left;font:inherit;cursor:pointer;overflow:hidden}
+.db-chip:hover,.db-chip:focus-visible{background:#fffaf0;outline:2px solid #e9ba66;outline-offset:1px}
+.db-chip[aria-pressed="true"]{box-shadow:inset 4px 0 0 var(--q),0 0 0 2px #e9ba66}
+.db-chip-cost{flex:none;display:grid;place-items:center;width:22px;height:22px;margin-left:9px;border-radius:50%;background:#2b2018;color:#fff3da;font-size:12px;font-weight:800}
+.db-chip-art{flex:none;display:grid;place-items:center;width:30px;height:36px;border-radius:4px;background:color-mix(in srgb,var(--q) 18%,#fff8eb)}
+.db-chip-words{display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0;flex:1}
+.db-chip-name{min-width:0;font-weight:800;font-size:13px;line-height:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-chip-line{display:flex;align-items:center;gap:6px;min-width:0;font-size:12px;line-height:15px}
+.db-chip-line .lt-cost{display:inline-flex;gap:4px;flex:none}
+.db-chip-line .lt-res{display:inline-flex;align-items:center;gap:1px}
+.db-chip-line .val{flex:none;display:inline-flex;align-items:center;gap:1px;margin-left:auto;font-size:12px}
+.db-chip-line .val .worth-more{margin-left:3px}
+.db-marks{display:flex;gap:3px;margin-left:auto;flex:none}
+.db-mark,.db-copies{display:inline-flex;align-items:center;gap:2px;height:16px;padding:0 4px;border-radius:8px;font-size:11px;font-weight:800;line-height:16px}
+.db-copies{background:#e6d8b8;color:#2b2018}
+.db-mark.bought{background:#2b2018;color:#fff3da}
+.db-mark.discarded{background:#8f2a22;color:#fff3da}
+.db-mark i{display:inline-block;width:8px;height:8px;border-radius:50%;border:1px solid #fff3da}
+.db-mark b{font-weight:800}
+.db-chip.gone{background:#cfc4ad}
+.db-chip.gone :is(.db-chip-cost,.db-chip-art,.db-chip-name,.val,.lt-cost){opacity:.42;filter:saturate(.3)}
+.db-chip.gone:is(:hover,:focus-visible,[aria-pressed="true"]) :is(.db-chip-cost,.db-chip-art,.db-chip-name,.val,.lt-cost){opacity:.8}
+.db-chip.later{filter:grayscale(1);opacity:.55}
+.db-chip.later:hover,.db-chip.later:focus-visible{opacity:.85}
+@media(max-width:600px){.db-row{grid-template-columns:1fr}.db-row > .db-color{padding:8px 8px 0}.db-chips{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
+.db-legend .db-mark{box-shadow:0 0 0 1px #fff3da88}

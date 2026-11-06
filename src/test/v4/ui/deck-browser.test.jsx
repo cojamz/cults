@@ -53,3 +53,18 @@ it('marks members already bought, with whose they are (Cory, Nov 6: "deck isnt s
   fireEvent.click(el);
   expect(container.querySelector('[data-deck-bought-note]').textContent).toContain('Bo');
 });
+it('marks members on the discard pile (Cory, Nov 6: "deck should have a symbol for discarded just like it has one for bought")', () => {
+  const base = table();
+  const uid = base.pile[0], def = base.cards[uid].def;
+  const state = { ...base, pile: base.pile.slice(1), discard: [uid] };
+  const entry = deckCatalog(state).cards.find(c => c.def.id === def);
+  expect(entry.discarded).toBe(1);
+  expect(entry.allOut).toBe(entry.copies === 1);
+  const { container } = render(<DeckBrowser state={state} onClose={() => {}} />);
+  const el = container.querySelector(`[data-deck-member="${def}"]`);
+  expect(el.dataset.deckDiscarded).toBe('1');
+  expect(el.querySelector('.db-mark.discarded')).not.toBeNull();
+  expect(el.getAttribute('title')).toMatch(/discard pile/i);
+  fireEvent.click(el);
+  expect(container.querySelector('[data-deck-bought-note]').textContent).toMatch(/discard pile/i);
+});
