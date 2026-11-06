@@ -4,7 +4,8 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 // Treasurer and Hustler, P3 holds Busker and Tycoon (no On Recruit):
 //  (h1) Sample's hover lists exactly the rival members its choice would offer, each with its owner and whole text;
 //  (h2) those members light on their seats while the hover is up; Tycoon doesn't;
-//  (h3) taking Sample offers the same members the hover named.
+//  (h3) taking Sample offers the same members the hover named;
+//  (h4) and lays them out as whole cards to pick, rules showing.
 // Server: $V4_URL (a built preview). Shots: $V4_SHOTS/copy-choices.
 import { mkdirSync } from 'node:fs';
 import { createGame, quadrant, defById } from '../../src/engine/v4/index.js';
@@ -84,6 +85,23 @@ try {
     const offered = await page.evaluate(() => (JSON.parse(localStorage.getItem('patrons.v4.local')).state.pending?.options || []).map(o => o.value));
     await page.screenshot({ path: `${SHOTS}/02-sample-choice.png` });
     if (JSON.stringify([...offered].sort()) !== JSON.stringify(rows.map(r => r.uid).sort())) fail(`Sample offered ${JSON.stringify(offered)}, the hover named ${JSON.stringify(rows.map(r => r.uid))}`, 'h3');
+    // (h4) the choice lays those members out as whole cards in the shop's place, rules showing (Cory, Nov 5: "Sample
+    // should show options like the other one does", Tryout's shop cards)
+    await page.mouse.move(5, 690);
+    const tray = await page.waitForSelector('.lt-shop-cards[data-tray="members"]', { timeout: 4000 }).catch(() => null);
+    await page.screenshot({ path: `${SHOTS}/03-sample-tray.png` });
+    if (!tray) fail('taking Sample doesn\'t lay its members out as cards', 'h4');
+    else {
+      const laid = await page.$$eval('.lt-shop-cards[data-tray="members"] .lt-card[data-uid]', els => els.map(e => ({ uid: Number(e.dataset.uid), opt: e.dataset.option || '', rule: !!e.querySelector('.lt-pick-ability') })));
+      if (JSON.stringify(laid.map(x => x.uid).sort()) !== JSON.stringify([...offered].sort())) fail(`tray shows ${JSON.stringify(laid.map(x => x.uid))}, Sample offered ${JSON.stringify(offered)}`, 'h4');
+      // a click on a tray card answers the choice
+      if (laid[0]) {
+        await page.click(`.lt-shop-cards[data-tray="members"] .lt-card[data-uid="${laid[0].uid}"]`);
+        const moved = await page.waitForFunction(() => !/^Sample:/.test(JSON.parse(localStorage.getItem('patrons.v4.local')).state.pending?.prompt || ''), null, { timeout: 5000 }).then(() => true, () => false);
+        if (!moved) fail('clicking a tray card didn\'t pick it', 'h4');
+      }
+      if (laid.some(x => !x.opt || !x.rule)) fail(`a tray card is not pickable or hides its rule: ${JSON.stringify(laid)}`, 'h4');
+    }
   }
   await ctx.close();
 } finally { await browser.close(); }

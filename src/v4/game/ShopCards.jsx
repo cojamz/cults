@@ -149,7 +149,12 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
   // view while you order them (Cory, 2026-10-23: "with peek, player loses the ability to see the current shop")
   const peeking = picking && /^Peek: /.test(pend.prompt || '');
   const peekTop = peeking ? state.pile.slice(0, 4) : [];
-  const tray = picking && !peeking && pend.options.some(o => o.kind === 'card' && state.pile.slice(0, 5).includes(o.value)) ? state.pile.slice(0, 5) : null;
+  const pileTray = picking && !peeking && pend.options.some(o => o.kind === 'card' && state.pile.slice(0, 5).includes(o.value)) ? state.pile.slice(0, 5) : null;
+  // a copy of a member's On Recruit (Sample, Greatest Hits, Bootlegger): the members it can copy sit on the seats as
+  // small faces, so the strip lays them out as whole cards to pick, as Tryout's shop members are (Cory's playtest, Nov 5:
+  // "Sample should show options like the other one does")
+  const heldTray = picking && !peeking && !pileTray ? copyTray(state, pend) : null;
+  const tray = pileTray || heldTray;
   // your pick (a buy or a choice): if the shop offers any of it, the lit ones lead and everything else steps well back;
   // if it offers none, the whole shop steps back (Cory, live, Oct 27: "during churn and peek especially, things badly lit")
   const offers = (buying || picking) && pend.options.some(o => o.kind === 'card' || o.kind === 'tier' || /^(card|tier):/.test(String(o.id)));
@@ -172,7 +177,8 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
   const ghosts = state.supply && state.rules?.piles?.only && !tray && !pileRow ? pileGhosts(state) : [];
   const memberPick = picking && uids.some(uid => optionFor(`card:${uid}`));
   // Show abilities for a first member choice, but a reader's explicit preference always wins, in every phase.
-  const detailed = view === 'details' || (view === null && memberPick);
+  // a copy tray always shows the rules: the On Recruit is what's being picked
+  const detailed = view === 'details' || !!heldTray || (view === null && memberPick);
   const toggleView = () => { const next = detailed ? 'compact' : 'details'; setView(next); hover?.close?.(); try { localStorage.setItem(VIEW_KEY, next); } catch { /* this visit only */ } };
   useEffect(() => { onViewChange?.(detailed); }, [detailed, onViewChange]);
   // with details on, an ability that would run under the price sets one step tighter, so the card keeps its slot and
@@ -240,13 +246,13 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
   // state it was drawn with) for the rest of the game (leak pass, 2026-10-28)
   for (const uid of built.current.keys()) if (!uids.includes(uid)) built.current.delete(uid);
   return (
-    <section className="lt-shop-cards" data-phase={phase} data-sort={sort} data-member-pick={memberPick || undefined} data-view={detailed ? 'details' : 'compact'} data-tray={tray ? 'pile' : undefined} data-pile-extra={extra || undefined} data-fade={viewer && fade ? 'on' : undefined} data-peek={peeking || undefined} data-choosing={choosing} data-pile-row={pileRow ? '' : undefined} data-swap={state.rules?.swapCard ? '' : undefined} aria-label="Shop">
+    <section className="lt-shop-cards" data-phase={phase} data-sort={sort} data-member-pick={memberPick || undefined} data-view={detailed ? 'details' : 'compact'} data-tray={heldTray ? 'members' : tray ? 'pile' : undefined} data-pile-extra={extra || undefined} data-fade={viewer && fade ? 'on' : undefined} data-peek={peeking || undefined} data-choosing={choosing} data-pile-row={pileRow ? '' : undefined} data-swap={state.rules?.swapCard ? '' : undefined} aria-label="Shop">
       <div className="lt-shop-main">
       {/* one header line: the members' title and the sort; the follower buys stand beside the cards, as findable */}
       <div className="lt-shop-head">
         {/* a discount is said once, here, beside the struck prices (w4 A#23: its sentence was on all ten hovers); else one
             count in every phase, "N of 7 affordable" (picky bot, Nov 4: it flipped between affordable and the row's size) */}
-        <h3 className="lt-h">{tray ? 'Top of the pile' : 'Shop'}<small>{tray ? `${tray.filter(u => optionFor(`card:${u}`)).length} you can pay for` : peeking ? 'Put the top of the pile in order' : discount > 0 ? <Tip label="Discount sources" content={<p>{discountWhy(state, viewer)}.</p>}><span data-shop-discount>{viewer.discount ? 'your next one' : 'your members'} {discount} less</span></Tip> : ghosts.length || (state.supply && state.rules?.piles?.only) ? `${state.shop.length} pile${state.shop.length === 1 ? '' : 's'} open` : viewer ? `${affordable} of ${uids.length} affordable` : `${state.shop.length} members`}</small></h3>
+        <h3 className="lt-h">{heldTray ? heldTray.title : tray ? 'Top of the pile' : 'Shop'}<small>{heldTray ? `${heldTray.length} to choose from` : tray ? `${tray.filter(u => optionFor(`card:${u}`)).length} you can pay for` : peeking ? 'Put the top of the pile in order' : discount > 0 ? <Tip label="Discount sources" content={<p>{discountWhy(state, viewer)}.</p>}><span data-shop-discount>{viewer.discount ? 'your next one' : 'your members'} {discount} less</span></Tip> : ghosts.length || (state.supply && state.rules?.piles?.only) ? `${state.shop.length} pile${state.shop.length === 1 ? '' : 's'} open` : viewer ? `${affordable} of ${uids.length} affordable` : `${state.shop.length} members`}</small></h3>
         <span className="lt-shop-controls">
           {viewer && <button type="button" className="lt-view-btn" aria-label="Fade members you can't afford" title="Fade members you can't afford right now" aria-pressed={fade} onClick={toggleFade}>affordable</button>}
           <button type="button" className="lt-view-btn" aria-label="Show member abilities" title="Show every card's ability" aria-pressed={detailed} onClick={toggleView}>details</button>
@@ -284,7 +290,7 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
           // a once-per-game member already used stays used for its next owner (Cory, Nov 4: "once per game is once for the
           // card"): marked on its face, as a table would turn the card
           const spent = !!(state.cards[uid] && state.cards[uid].used) && !state.over;
-          const sig = [d.id, d.name, d.f, d.n, d.text, optId ?? '', dim ? 1 : 0, looking ? 1 : 0, lit ? 1 : 0, short ? 1 : 0, buying || picking ? 1 : 0, JSON.stringify(parts), JSON.stringify(paid), fromPile ? 1 : 0, spent ? 1 : 0, stack, tray ? 1 : 0, detailed ? 1 : 0, state.round, color, ground, sphere].join('|');
+          const sig = [d.id, d.name, d.f, d.n, d.text, optId ?? '', dim ? 1 : 0, looking ? 1 : 0, lit ? 1 : 0, short ? 1 : 0, buying || picking ? 1 : 0, JSON.stringify(parts), JSON.stringify(paid), fromPile ? 1 : 0, spent ? 1 : 0, stack, tray ? 1 : 0, heldTray ? heldTray.whose[uid] || '' : '', detailed ? 1 : 0, state.round, color, ground, sphere].join('|');
           const had = built.current.get(uid);
           if (had && had.sig === sig) return <Kept key={uid} el={had.el} />;
           const el = (
@@ -313,6 +319,7 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
                 {/* works from round II on (Cory, 2026-10-22: "a better way to denote round II/round III only"): a corner tag, not words */}
                 {d.from > 1 && <span className="lt-round-tag" data-round-tag="" title="Works from round II on">II+</span>}
                 {fromPile && !tray && <span className="need from-pile" title="From the top of the pile">pile</span>}
+                {heldTray && heldTray.whose[uid] && <span className="need from-pile" data-held-by="" title={`${heldTray.whose[uid]} member`}>{heldTray.whose[uid]}</span>}
                 {spent && !fromPile && <span className="need spent" data-spent="" title="Already used: it can't be used again this game">used</span>}
                 {/* how many are left in the pile, this one included: a small tab in the picture's corner, over the stack's edges
                     (at the foot's end a "×10" pushed the price off a narrow card) */}
@@ -639,4 +646,21 @@ export function FollowerRates({ state, me = null, optionFor = () => null, onPick
         title={stop ? 'Stop here' : done ? (state.pending?.afterPurchase ? 'Finish your turn' : 'End your turn without recruiting') : undefined} onClick={() => done && onPick(doneId)}>{stop ? 'Done' : state.pending?.afterPurchase ? 'End turn' : 'Done, no recruit'}</button>
     </div>
   );
+}
+
+/**
+ * The members a copy-an-On-Recruit choice offers (Sample, Greatest Hits, Bootlegger), when every option is a member
+ * someone holds: those uids in the order offered, plus a title and each card's holder ("P2’s", "Your") for its tag.
+ * Null for any other choice.
+ */
+export function copyTray(state, pend) {
+  if (!pend || pend.kind !== 'choose' || !/On Recruit/.test(String(pend.prompt || ''))) return null;
+  const opts = (pend.options || []).filter(o => o.kind === 'card');
+  if (!opts.length) return null;
+  const holder = uid => state.players.find(p => p.members.includes(uid));
+  if (!opts.every(o => holder(o.value))) return null;
+  const uids = [...new Set(opts.map(o => o.value))];
+  const whose = Object.fromEntries(uids.map(u => { const h = holder(u); return [u, h.id === pend.player ? 'Your' : `${h.name}’s`]; }));
+  const rivals = uids.every(u => holder(u).id !== pend.player);
+  return Object.assign(uids, { whose, title: rivals ? 'Rivals’ members' : 'Your members' });
 }

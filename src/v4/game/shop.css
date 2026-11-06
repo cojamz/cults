@@ -266,3 +266,10 @@
 .lt-pile-row .lt-card[data-orderable]{cursor:grab;touch-action:none;transition:transform 140ms ease-out}
 .lt-pile-row[data-dragging] .lt-card[data-orderable]{cursor:grabbing}
 .lt-pile-row .lt-card[data-drag]{position:relative;cursor:grabbing;box-shadow:0 10px 22px rgba(0,0,0,.55),0 0 0 2px #f4b860}
+/* A copy's tray (Sample, Greatest Hits, Bootlegger: the members it can copy, laid out to pick; Cory, Nov 5): two to a row
+   at a card's usual height, rules showing, an odd last one centered; never stretched to fill the column. */
+@media (min-width:1200px) and (min-height:500px){
+  .app.game.lt .lt-shop-cards[data-tray="members"] .lt-shop-body > .lt-cards[data-n]{grid-auto-rows:minmax(0,190px);align-content:start}
+  .app.game.lt .lt-shop-cards[data-tray="members"] .lt-cards > .lt-card[data-uid]{grid-column:span 6}
+  .app.game.lt .lt-shop-cards[data-tray="members"] .lt-cards > .lt-card[data-uid]:last-child:nth-child(odd){grid-column:4 / 10}
+}

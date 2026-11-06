@@ -523,5 +523,6 @@ export const shopLookup = pk => id => {
   const stop = pk.options.find(o => o.id === id && o.kind === 'pass');
   if (stop) return stop;
   const m = /^card:(\d+)$/.exec(id);
-  return m ? pk.cards.get(Number(m[1])) || null : null;
+  // a held member shows in the shop strip only in a copy's tray (Sample: ShopCards' copyTray), picked there as on its seat
+  return m ? pk.cards.get(Number(m[1])) || pk.where.get(`member:${m[1]}`) || null : null;
 };

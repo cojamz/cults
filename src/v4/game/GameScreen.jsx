@@ -1,4 +1,5 @@
 // The game table. Renders engine state from a session and turns clicks into { player, option } moves.
+import { fizzleNote, tookSpace } from './fizzle.js';
 import { turnRun, runTitle, runSay } from './seats.js';
 import { cloakOf } from './cloak.js';
 // What's clickable is exactly state.pending.options, and only for seats this client controls.
@@ -1115,6 +1116,11 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
       const msg = humansHere ? skipped.replace("couldn't afford anything.", 'can’t afford anything. Turn passes.') : 'Nothing you can afford. Turn passes.';
       setTimeout(() => showToast(msg, 2000), motionOK() ? played.total : 0);
     }
+    // An action or member of yours that found nothing to act on says so (Cory, Nov 5: "it needs to alert the player
+    // rather than just move on"), once the move has landed, long enough to read.
+    // "No rival's member…" says which space found nothing: "Sample: no rival's member…"
+    const fizzles = lines.flatMap(l => mySeats.map(id => { const f = fizzleNote(l, state.players[id].name, !humansHere), sp = f && tookSpace(lines, state.players[id].name); return f && sp && /^No\b/.test(f) ? `${sp}: ${f.charAt(0).toLowerCase()}${f.slice(1)}` : f; }).filter(Boolean));
+    if (fizzles.length && !skipped) setTimeout(() => showToast(fizzles.join(' '), 3800), motionOK() ? played.total : 0);
 
     // A new minion travels from its leader to the space. The board never turns itself: a rival's move is marked
     // where it happened (a dashed ring) and told in the turn's story.
