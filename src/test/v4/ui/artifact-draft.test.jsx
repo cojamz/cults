@@ -12,7 +12,7 @@ it('lists every artifact with its words, and only your pick makes them buttons',
   const { container, rerender } = render(<ArtifactDraft state={s} onPick={() => {}} />);
   expect(container.querySelectorAll('[data-art-color]')).toHaveLength(4);
   for (const q of Q) expect(container.textContent).toContain(cardDef(s, s.artifacts[q]).name);
-  expect(container.textContent).toContain('Whenever a player');
+  expect(container.textContent).toContain('Whenever you'); // every cloak pays on your own actions (Cory, Nov 6)
   expect(container.querySelector('button')).toBeNull();
   const onPick = vi.fn();
   rerender(<ArtifactDraft state={s} onPick={onPick} mine />);
