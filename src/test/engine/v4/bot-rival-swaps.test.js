@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { applyMove } from '../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../engine/v4/bots.js';
-import { take } from './helpers.js';
+import { take, pinCosts } from './helpers.js';
 import { sceneQ } from './cards-helpers.js';
 
 // Bots rate a swap for everyone it touches, not only their own cult (Cory, 2026-10-29: the bots "clearly aren't
@@ -11,6 +11,9 @@ const botMove = s => applyMove(s, chooseBotMove(s, () => 0.5, { level: 'normal' 
 
 describe('bots and rival swaps', () => {
   it('uses Anarchist to swap a shop Saboteur into the leader’s cult for their member', () => {
+    // Prospector priced like Ghost (5), so the two cost the same (Ghost 5 since Nov 6: "ghost should stay 5 cost")
+    const back = pinCosts({ 'gold.prospector': [2, 3] });
+    try {
     let s = sceneQ({ round: 2, bonus: [0, 20], members: [['benders.anarchist'], ['gold.prospector']], shop: ['benders.saboteur'] });
     s.shop = s.shop.filter(u => s.cards[u].def === 'benders.saboteur'); // nothing else to swap for
     s = take(s, 'gold.rush');
@@ -23,5 +26,6 @@ describe('bots and rival swaps', () => {
     expect(s.log.join('\n')).toMatch(/Anarchist swapped/);
     expect(s.players[1].members).toContain(sab);
     expect(s.players[1].bonus).toBe(15); // Old Maid −5 (Nov 1)
+    } finally { back(); }
   });
 });

@@ -250,7 +250,7 @@ const members = [
   }),
   // Cory, 2026-10-28: "a 5 cost Saboteur… gives -3 Followers each time it enters somebody's cult (swapped in OR recruited etc)"
   // Cory, 2026-10-31: renamed Old Maid (the card nobody wants stuck with), same card; the id stays 'saboteur'
-  m('saboteur', 'Ghost', null, 0, 4, 'Worth 0 members. Whenever this member joins your cult, −5 followers.', { f: 0, n: 0, // was Old Maid (Cory, Nov 5 backlog yes)
+  m('saboteur', 'Ghost', null, 0, 2, /* 5 any as a player sees it, round II as before (Cory, Nov 6: "ghost should stay 5 cost") */ 'Worth 0 members. Whenever this member joins your cult, −5 followers.', { f: 0, n: 0, round: 2, // was Old Maid (Cory, Nov 5 backlog yes)
     botValue: 0,
     onJoined(ctx, owner) {
       owner.bonus -= 5; // −5 (Cory, Nov 1 playtest: "old maid might need to be -5 followers")

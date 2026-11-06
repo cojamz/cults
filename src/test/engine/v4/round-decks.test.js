@@ -32,7 +32,7 @@ describe('round decks', () => {
     const s = start();
     // round I's deck keeps to the cost limit: nothing over 3 before the +1 wild (Cory, Nov 5: the pinned fill-ins broke it)
     for (const u of [...s.pile, ...s.shop]) expect(cost(s, u) <= 3, cardDef(s, u).name).toBe(true);
-    expect(s.waiting[2].every(u => cost(s, u) === 4)).toBe(true);
+    expect(s.waiting[2].every(u => cost(s, u) === 4 || memberRound(cardDef(s, u)) === 2)).toBe(true); // or a member that names round II (Ghost, Nov 6)
     expect(s.waiting[3].every(u => cost(s, u) >= 5 || memberRound(cardDef(s, u)) === 3)).toBe(true);
   });
   it('each round shuffles its members in, with a log line', () => {
