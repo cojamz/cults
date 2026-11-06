@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.607 — 2026-11-05
+
+- Sample lays out the rival members you can copy as cards to pick; an action that finds nothing to do now says so on screen
+
 ## v0.99.606 — 2026-11-05
 
 - Patron Saints scores at Game End (+1 follower per silver member, anyone's), back to 4 silver + 3 any
