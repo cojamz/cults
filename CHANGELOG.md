@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.628 — 2026-11-05
+
+- Debt Collectors can be used again each round (it was stuck at once per game)
+
 ## v0.99.627 — 2026-11-05
 
 - Victors is out of the grey deck (Cory: it's bad); the grey deck deals 11 again
