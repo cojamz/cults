@@ -53,3 +53,11 @@
 .db-cell .db-card.card.lt-card[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--q),0 0 0 3px #e9ba66}
 .db-cell .db-card.card.lt-card:hover,.db-cell .db-card.card.lt-card:focus-visible{background:#f4ebd7;outline:2px solid #e9ba66;outline-offset:2px}
 .db-cell:has(.db-card.lt-card){display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start}
+/* bought members (Cory, Nov 6: "deck isnt showing was has already been bought"): faded, with a tag and a dot per owner */
+.db-cell .db-card.card.lt-card{position:relative}
+.db-cell .db-card.card.lt-card.bought{background:#cfc4ad}
+.db-card.bought > :not(.db-bought){opacity:.4;filter:saturate(.3)}
+.db-card.bought:hover > :not(.db-bought),.db-card.bought:focus-visible > :not(.db-bought),.db-card.bought[aria-pressed="true"] > :not(.db-bought){opacity:.75}
+.db-bought{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%) rotate(-8deg);display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:4px;background:#2b2018;color:#fff3da;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;box-shadow:0 1px 3px #0008}
+.db-bought i{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid #fff3da}
+.db-bought-note{color:var(--cream,#f3e6c8)!important}

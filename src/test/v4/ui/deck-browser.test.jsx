@@ -38,3 +38,18 @@ it('places compact members by color and cost, shows selected abilities, and supp
   fireEvent.keyDown(document, { key: 'Escape' });
   expect(close).toHaveBeenCalledTimes(2);
 });
+it('marks members already bought, with whose they are (Cory, Nov 6: "deck isnt showing was has already been bought")', () => {
+  const base = table();
+  const uid = base.pile[0], def = base.cards[uid].def;
+  const state = { ...base, pile: base.pile.slice(1), players: base.players.map((p, i) => (i === 1 ? { ...p, members: [uid] } : p)) };
+  const entry = deckCatalog(state).cards.find(c => c.def.id === def);
+  expect(entry.owners).toEqual([1]);
+  expect(entry.bought).toBe(entry.copies === 1);
+  expect(deckCatalog(base).cards.every(c => c.owners.length === 0 && !c.bought)).toBe(true);
+  const { container } = render(<DeckBrowser state={state} onClose={() => {}} />);
+  const el = container.querySelector(`[data-deck-member="${def}"]`);
+  expect(el.dataset.deckBought).toBe('1');
+  expect(el.getAttribute('title')).toContain('Bo');
+  fireEvent.click(el);
+  expect(container.querySelector('[data-deck-bought-note]').textContent).toContain('Bo');
+});
