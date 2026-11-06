@@ -7,6 +7,25 @@ each. One line per finding: what a player sees, what's wrong, status. Each run's
 Status words: **fixed (version)**, **fixing**, **sent** (to the thread that owns it), **open** (ours, not started),
 **Cory** (a question only he can answer), **by design** (with the reason; the check got an exception).
 
+## 2026-11-06 (second run)
+Run at 1:42am Eastern Nov 6 on v0.99.640 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
+emoji; raw list /mnt/project-files/picky/2026-11-06-06-42/). The bot flagged 3 spaces; the member sweep of 117 cards in
+both looks was clean. The rest are by eye from the shots.
+
+- **Wheel's named costs one behind the cards again.** After the Nov 5 11:08pm price (members ease back to + 1 color
+  + 2 any), the engine's caps moved to 10 (Initiation), 7 (Shake Down) and 7 (Housewarming), but the wheel and short
+  lines still said 9, 6 and 6, hand-typed. They now read the same price setting the rule text does, so the next price
+  change moves them too. **fixed (v0.99.641)**
+- **A passing note covers the paying sheet's header.** "Tryout: no shop member has an On Recruit effect." sat over the
+  sheet for 5 followers, hiding "5 followers". While a sheet is open the note now shows at the foot of the screen.
+  **fixed (v0.99.641)**
+- **Emoji look: more members shown as things** (Window Shopper eyes, Brokers a chart, Seamstress a spool, Dyer a paint
+  swatch, Duty Collector a tag, Heiresses a diamond, Tourist a camera, Extra Hand a hand), same family as Recluse's
+  house and Old Money's bank above. **open** (looks off; for the coordinator, emoji members' owner)
+- Seen again, already listed: a boxed "+1 follower" float over your white count, taken spaces losing their second line
+  (Housewarming "+2 yellow"), bare numbers on narrow score parts ("4", "10"), bar "Members + leader 21" beside "20
+  members".
+
 ## 2026-11-06
 Run at 7:43pm Eastern Nov 5 on v0.99.602 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
 emoji; raw list /mnt/project-files/picky/2026-11-06-00-43/). The bot flagged 3 spaces; the member sweep of 117 cards in
