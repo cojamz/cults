@@ -143,6 +143,8 @@ const SPHERES = ['gold', 'red', 'purple', 'silver', 'yellow'];
 // Members that may stay unnamed on bot tables, with why (see design/eval/card-ledger-a.md).
 // Conditional cards that can go a whole bot game without their condition; each has a named test of its own.
 const ALLOW = {
+  // Sweet Nothings in Potluck's place (Nov 6) moved the seeded games: recruited in 1, and no rival recruited its color after
+  'yellow.dutycollector': 'pays only when a rival recruits a color you have a member of (dutycollector-live.test.js)',
   // Promote no longer reaching cheaper (Nov 4 night) moved the seeded games: recruited in 1 game, never named there
   'purple.errand': 'On Recruit: an extra turn; recruited once in the sample (cards-purple covers it)',
   // Cheerleaders and Victors joining the grey deck (Nov 4) moved the seeded games: recruited in 1 game, never named there
