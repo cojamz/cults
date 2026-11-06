@@ -876,7 +876,7 @@ const silver = {
       },
       ...see(info => 3 * endsAhead(info).length),
     }),
-    m('patronsaints', 'Patron Saints', 3, 2, 'Round End: +1 follower per silver member, anyone’s.', { f: 2,
+    m('patronsaints', 'Patron Saints', 5, 2, 'Round End: +1 follower per silver member, anyone’s.', { f: 2,
       onAllPlaced(ctx, owner) {
         const k = ctx.state.players.reduce((a, o) => a + ctx.countMembersOfColor(o, S), 0);
         if (!k) return;

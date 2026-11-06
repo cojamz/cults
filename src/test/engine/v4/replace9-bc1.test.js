@@ -14,13 +14,13 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 const pay = s => { while (s.pending?.kind === 'pay' || s.pending?.prompt?.includes('choose how to pay')) s = answer(s, s.pending.options[0].id); return s; };
 const Q4 = ['red', 'yellow', 'market', 'purple'];
 
-describe('Power Shoppers: "Whenever you recruit your second member in a turn, +2 followers."', () => {
+describe('Power Shoppers: "Whenever you recruit your second member in a turn, +4 followers."', () => {
   it('price, and Snobs retired', () => {
     const d = defById('market.powershoppers');
     expect([d.s, d.w]).toEqual([4, 3]);
     expect(defById('market.snob').retired).toBe(true);
   });
-  it('the second member of a turn pays +2, the first and third do not', () => {
+  it('the second member of a turn pays +4, the first and third do not', () => {
     let s = table(Q4, { n: 2, round: 2, res: [{ red: 20, yellow: 20, blue: 20, purple: 20 }], members: [['market.powershoppers']],
       shop: ['red.volunteer', 'yellow.gardener', 'purple.crew'], queue: [{ t: 'buy', p: 0 }, { t: 'buy', p: 0, extra: true }, { t: 'buy', p: 0, extra: true }] });
     s.players[0].buyTwiceNow = true;
@@ -28,11 +28,11 @@ describe('Power Shoppers: "Whenever you recruit your second member in a turn, +2
     s = pay(move(s, `card:${uidIn(s, 'red.volunteer', 'shop')}`));
     expect(s.players[0].bonus).toBe(b0);
     s = pay(move(s, `card:${uidIn(s, 'yellow.gardener', 'shop')}`));
-    expect(s.players[0].bonus).toBe(b0 + 2);
-    expect(named(s, 'Power Shoppers')).toContain("P1's Power Shoppers: a second member this turn, +2 followers.");
+    expect(s.players[0].bonus).toBe(b0 + 4);
+    expect(named(s, 'Power Shoppers')).toContain("P1's Power Shoppers: a second member this turn, +4 followers.");
     if (s.pending?.options?.some(o => o.id === `card:${uidIn(s, 'purple.crew', 'shop')}`)) {
       s = pay(move(s, `card:${uidIn(s, 'purple.crew', 'shop')}`));
-      expect(s.players[0].bonus).toBe(b0 + 2);
+      expect(s.players[0].bonus).toBe(b0 + 4);
     }
   });
 });

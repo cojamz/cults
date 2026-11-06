@@ -759,21 +759,21 @@ const market = {
     // + 3 any as a player sees it. Pays once a turn, on the owner's second member recruit of that turn (Recruit Twice,
     // Spree, Shopaholics); buying followers isn't a member. Recruiting Power Shoppers itself counts as the first.
     // In the deck for Doormen's slot (Cory, Nov 5: "i actually do like power shoppers", "doormen")
-    m('powershoppers', 'Power Shoppers', 3, 2, 'Whenever you recruit your second member in a turn, +2 followers.', { f: 2,
+    m('powershoppers', 'Power Shoppers', 3, 2, 'Whenever you recruit your second member in a turn, +4 followers.', { f: 2,
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what?.member || what.member.uid === card.uid) return; // itself: onRecruited counts it
         const key = `${ctx.state.round}:${(ctx.state.turns || []).length}`;
         if (card.shopTurn !== key) { card.shopTurn = key; card.shopN = 0; }
         card.shopN += 1;
         if (card.shopN !== 2) return;
-        owner.bonus += 2;
-        ctx.log(`${owner.name}'s Power Shoppers: a second member this turn, +2 followers.`);
+        owner.bonus += 4;
+        ctx.log(`${owner.name}'s Power Shoppers: a second member this turn, +4 followers.`);
       },
       onRecruited(ctx, owner, card) {
         const key = `${ctx.state.round}:${(ctx.state.turns || []).length}`;
         if (card.shopTurn !== key) { card.shopTurn = key; card.shopN = 1; }
       },
-      ...see(i => endsAhead(i).length * 2), // BOTSEE: about one double-recruit turn a round still ahead
+      ...see(i => endsAhead(i).length * 4), // BOTSEE: about one double-recruit turn a round still ahead
     }),
     // REPLACE9 bot test (Members C, Nov 4): Hawker's place (Hawker asked rivals to choose on its owner's turn). 3 blue + 2 any as a
     // player sees it. The shop's blue members count toward the owner's members in every contest that counts them (core
