@@ -54,6 +54,7 @@ import { PERF_ON } from '../perf.js';
 import { boardPicker, giftPick, seatPart, shopLookup, pickCaption } from './boardPick.js';
 import GiftCard from './GiftCard.jsx';
 import LaunderCard, { launderChoice } from './LaunderCard.jsx';
+import SwapCard, { swapChoice } from './SwapCard.jsx';
 import ArtifactDraft from './ArtifactDraft.jsx';
 import ActionStage from './ActionStage.jsx';
 import { stageClear, stageRelease } from './stage.js';
@@ -1358,7 +1359,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // A modal takes the stage: sweep the ghosts left over, so nothing lingers over it. A piece still on its way lands
   // first (at most a flight's length, 1.65s at Relaxed): Cory, Oct 28, "the follower or the money disappears well
   // before making it to its final destination" (landing.mjs caught the Reckoning, then a pay sheet, taking them, Nov 3).
-  const modalOpen = !!(moment || rules || leaving || logOpen || (needHandoff && !moment) || (mine && pend && pend.kind === 'pay' && !onlyPay) || (mine && !needHandoff && (payChoice(pend) || launderChoice(state, pend))));
+  const modalOpen = !!(moment || rules || leaving || logOpen || (needHandoff && !moment) || (mine && pend && pend.kind === 'pay' && !onlyPay) || (mine && !needHandoff && (payChoice(pend) || launderChoice(state, pend) || swapChoice(state, pend))));
   useEffect(() => { if (modalOpen) clearFlights(0, { spareFlying: true }); }, [modalOpen]);
   // and the page behind a modal doesn't scroll
   useEffect(() => {
@@ -1399,7 +1400,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const holdStory = !state.over && motionOK() && (chainRunning() || (prevState.current !== state && prevState.current.seed === state.seed && planChain(prevState.current, state, { mine: mySeats }).total > 0));
   // Launderers' rearranging is its own card (LaunderCard.jsx), never the plain question or the board
   const laundering = mine && !needHandoff && launderChoice(state, pend);
-  const showChoice = mine && !needHandoff && !laundering && (pend.kind === 'choose' || pend.kind === 'setup');
+  // Night Traders' and Tinker's swaps are the same card with a cap (SwapCard.jsx; Cory, Nov 5: "clunky")
+  const swapping = mine && !needHandoff && !laundering && swapChoice(state, pend);
+  const showChoice = mine && !needHandoff && !laundering && !swapping && (pend.kind === 'choose' || pend.kind === 'setup');
   // the starting picks' row (and the step right after the last pick, while its chain lands): see the AfterChain below
   const setupNow = pend && pend.kind === 'setup' && !state.over ? state : null;
   if (setupNow) lastSetupMoves.current = state.moves;
@@ -1764,6 +1767,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
         </Popover>
       )}
       {receipt && <PayReceipt key={receipt.key} receipt={receipt} onDone={() => setReceipt(r => (r && r.key === receipt.key ? null : r))} />}
+      {swapping && <SwapCard key={`${pend.player}|${state.round}|${state.queue?.[0]?.data?.who || ''}`} state={state} onPick={onPick} busy={busy} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />}
       {laundering && <LaunderCard key={`${pend.player}|${state.round}`} state={state} onPick={onPick} busy={busy} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />}
       {mine && !needHandoff && !paidAlready && ((pend.kind === 'pay' && !onlyPay) || payChoice(pend)) && <PayPicker key={pend.uid ?? pend.tier ?? 'swap'} state={state} onPick={onPick} busy={busy} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />}
       {moment && reckoned !== moment && <Reckoning key={moment.result.round + moment.after.moves} info={moment} root={rootEl} meId={mySeats.length === 1 ? mySeats[0] : null} onLamp={setLampQid} onPaid={n => setPaid({ moment, n })} onDone={() => setReckoned(moment)} />}

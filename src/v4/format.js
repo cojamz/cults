@@ -177,6 +177,8 @@ export function promptFor(state, mine) {
       // Launderers' rearranging is its own card (LaunderCard.jsx)
       // Makeover too (bug bash, Nov 1: its card said "Makeover: pick on the board", with nothing on the board to pick)
       if (asker && pend.options.some(o => o.id === 'split' || o.kind === 'amount')) return { who: p, text: `${asker}: rearrange your resources`, keepCase: true };
+      // Night Traders, Tinker: the swap card (SwapCard.jsx)
+      if (asker && pend.options.some(o => o.kind === 'swap' && Array.isArray(o.value) && typeof o.value[1] === 'string')) return { who: p, text: `${asker}: swap your resources`, keepCase: true };
       // a choice that isn't on your own turn (a rival's Potluck, Spoilsport at the round's end) is your call, not your
       // turn, and a rival's space that asks it is named as their move (picky bot, Nov 4)
       const call = state.current !== pend.player ? { lead: 'Your call — ' } : {};

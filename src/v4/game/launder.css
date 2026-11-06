@@ -16,3 +16,5 @@
 .ld-was{font-size:12px;color:var(--pl-ink-2,#6e5c49);white-space:nowrap}
 .ld-loose{min-height:20px;margin:12px 0 0;font-size:15px;line-height:20px}
 .ld-loose[data-loose="0"]{color:var(--paper-ink-2,#5f4e3d)}
+/* the swap card (SwapCard.jsx): the same rows with no All, so the "was" note sits right after + */
+.swap-card .ld-rows{grid-template-columns:24px 1fr 36px 32px 36px 56px}
