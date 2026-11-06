@@ -200,17 +200,17 @@ function windowPick(ctx, owner, left, sent = []) {
   })), `${Q}.windowShop`, { left, ...(TRACK ? { sent } : {}) });
 }
 
-const BARGAIN = String(globalThis.process?.env?.BARGAIN || 'cost2').match(/^self(\d+)$/); // BARGAIN=self<n>: bot test of "Whenever you send members to the bottom of the pile, +n blue." (on your turn; Nov 6; off in the game)
+const BARGAIN = String(globalThis.process?.env?.BARGAIN || 'cost1').match(/^self(\d+)$/); // BARGAIN=self<n>: bot test of "Whenever you send members to the bottom of the pile, +n blue." (on your turn; Nov 6; off in the game)
 export function toBottom(ctx, k) {
   if (!(k > 0)) return;
-  if (/^(cost|turn)\d*$/.test(globalThis.process?.env?.BARGAIN || 'cost2')) ctx.bargainCost(k);
+  if (/^(cost|turn)\d*$/.test(globalThis.process?.env?.BARGAIN || 'cost1')) ctx.bargainCost(k);
   for (const p of ctx.state.players) for (const u of [...p.members, ...(p.artifact !== undefined ? [p.artifact] : [])]) {
     const def = ctx.defOf(ctx.card(u)), defs = ctx.defsOf(u);
     // run as the card, so its hover's "gained this game" counts it (it read 0 for Bargain Bin: artifact audit, Nov 1);
     // a copy (Doppelganger, Impersonator) pays too
     if (defs.some(d => d.bottomFollowers)) ctx.asMember(p, def.name, () => { p.bonus += 1; ctx.log(`${p.name}'s ${def.name}: +1 follower.`); }, u);
     // Blue's artifact (Cory, 2026-10-24): once per batch, turns only, as Patroness
-    if (defs.some(d => d.bottomBlue) && !/^(cost|turn)\d*$/.test(globalThis.process?.env?.BARGAIN || 'cost2') && (!BARGAIN || ctx.state.current === p.id)) ctx.asMember(p, def.name, () => { const got = ctx.gain(p, B, BARGAIN ? Number(BARGAIN[1]) : 1); if (got) ctx.log(`${p.name}'s ${def.name}: +${got.n} ${got.color}.`); }, u);
+    if (defs.some(d => d.bottomBlue) && !/^(cost|turn)\d*$/.test(globalThis.process?.env?.BARGAIN || 'cost1') && (!BARGAIN || ctx.state.current === p.id)) ctx.asMember(p, def.name, () => { const got = ctx.gain(p, B, BARGAIN ? Number(BARGAIN[1]) : 1); if (got) ctx.log(`${p.name}'s ${def.name}: +${got.n} ${got.color}.`); }, u);
   }
 }
 /** Scavengers (REPLACE1 bot test, Nov 3): `actor` just sent these shop members to the bottom of the pile; each rival
@@ -678,7 +678,7 @@ const market = {
     // (Claude's fill-in: he called bottom-of-pile payouts "too strong between rounds" on Oct 20).
     // Blue's artifact only, never dealt (Cory, 2026-10-24: "whenever shop members go to the bottom of the pile, gain 1
     // blue… one per batch"). Name is Claude's fill-in.
-    m('bargainbin', 'Bargain Bin', 0, 0, 'Whenever you discard a member, +2 of its color (grey: any color).', { artifact: true, bottomBlue: true }),
+    m('bargainbin', 'Bargain Bin', 0, 0, 'Whenever you discard a member, +1 of its color (grey: any color).', { artifact: true, bottomBlue: true }),
     m('patroness', 'Patroness', 5, 2, 'Whenever shop members go to the discard pile, +1 follower.', { bottomFollowers: true, ...old3, ...old14('ragpicker') }),
     // REPLACE14 bot test (Members E lane, Nov 4; quality/pitches/E-redo1.md, paper 18 vs 16; a play A/B under "paper
     // filters, play ranks"): Patroness' place, same price. Core offers the pile's bottom card beside the shop (flag pileBottom).

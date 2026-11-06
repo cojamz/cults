@@ -49,15 +49,15 @@ describe('Dabblers and Drifters audit', () => {
       expect(t.players[0].res.blue - c0).toBe(want);
     }
   });
-  it('Bargain Bin: pays +2 of the member\'s color when Bury discards it, and its hover counts it (Cory, Nov 6)', () => {
+  it('Bargain Bin: pays +1 of the member\'s color when Bury discards it, and its hover counts it (Cory, Nov 7)', () => {
     let s = sceneQ({ quadrants: ['market', 'red', 'yellow', 'green'], round: 2, res: [rich], shop: ['red.intern', 'red.volunteer'] });
     const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
     s.cards[art] = { uid: art, def: 'market.bargainbin' }; s.players[0].artifact = art;
     const r0 = s.players[0].res.red || 0;
     s = move(take(s, 'market.pricecheck'), `card:${uidOf(s, 'red.intern', 'shop')}`);
     expect(named(s, 'Bargain Bin')).toHaveLength(1);
-    expect(s.cards[art].made?.red).toBe(2);
-    expect((s.players[0].res.red || 0) - r0).toBe(2); // Whenever you discard a member, +2 of its color
+    expect(s.cards[art].made?.red).toBe(1);
+    expect((s.players[0].res.red || 0) - r0).toBe(1); // Whenever you discard a member, +1 of its color
   });
   it('Bargain Bin: the shop refresh at a round start pays nothing (Cory, Nov 6: only your own discards)', () => {
     let s = sceneQ({ quadrants: ['market', 'red', 'yellow', 'green'], round: 1 });

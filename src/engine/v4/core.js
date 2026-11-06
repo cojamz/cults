@@ -2198,8 +2198,8 @@ export function releaseRefund(state, uid) {
 function bottomBlue(state) {
   const ctx = ctxFor(state);
   // BARGAIN=self<n>: bot test only (Nov 6): pays only the player whose turn it is, +n
-  const own = String(globalThis.process?.env?.BARGAIN || 'cost2').match(/^self(\d+)$/);
-  if (/^(cost|turn)\d*$/.test(globalThis.process?.env?.BARGAIN || 'cost2')) { bargainCost(state, 1); return; }
+  const own = String(globalThis.process?.env?.BARGAIN || 'cost1').match(/^self(\d+)$/);
+  if (/^(cost|turn)\d*$/.test(globalThis.process?.env?.BARGAIN || 'cost1')) { bargainCost(state, 1); return; }
   for (const p of state.players) for (const c of ctx.abilitiesOf(p)) if (c.def.bottomBlue && (!own || state.current === p.id)) ctx.asMember(p, c.def.name, () => { const got = ctx.gain(p, 'blue', own ? Number(own[1]) : 1); if (got) ctx.log(`${p.name}'s ${c.def.name}: +${got.n} ${got.color}.`); }, c.uid);
 }
 /** BARGAIN=cost, bot test only (Cory, Nov 6: "when you bury a member get 1 of its cost. and grey should be wild"):
@@ -2216,7 +2216,7 @@ function bargainCost(state, k) {
   if (!cloak) return;
   // BARGAIN=turn<n>, bot test (Nov 7, Cory: "2 resources for EVERY member sent to the bottom??"): once per turn, +n of
   // one discarded member's color
-  const mode = String(globalThis.process?.env?.BARGAIN || 'cost2');
+  const mode = String(globalThis.process?.env?.BARGAIN || 'cost1');
   if (mode.startsWith('turn')) {
     const key = `${state.round}:${(state.turns || []).length}`;
     if (p.bbTurn === key) return;
