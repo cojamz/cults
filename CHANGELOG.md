@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.622 — 2026-11-05
+
+- Cheerleader pays after every contest, with the other members that answer contests
+
 ## v0.99.621 — 2026-11-05
 
 - Round end plays in order: Round End cards, then the contests, then the members that answer them (Cheerleader, Cheerleaders, Victors, Sore Loser), then Game End members; the round card lists them the same way
