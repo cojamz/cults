@@ -14,7 +14,8 @@ const Glass = ({ full }) => (
 const ICONS = {
   recruit: ['On Recruit', () => <SVG><path d="M6.5 1.6a2.7 2.7 0 1 1 0 5.4a2.7 2.7 0 1 1 0-5.4ZM1.2 14.6c0-3.4 2.2-5.4 5.3-5.4s5.3 2 5.3 5.4Z" /><path d="M12.6 1.2v5.6M9.8 4h5.6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" fill="none" /></SVG>],
   start: ['Round Start', () => <Glass full />],
-  end: ['Round End', () => <Glass />],
+  // a moon, not a second hourglass: sand on the bottom read as the round's start (Cory, Nov 6: "spoilsport icon says beginning of round? but it happens end of round?")
+  end: ['Round End', () => <SVG><path d="M9.6 1.4A6.8 6.8 0 1 0 14.6 11.2A5.4 5.4 0 0 1 9.6 1.4Z" /></SVG>],
   game: ['Game End', () => <SVG><path d="M2.6 1v14.2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" fill="none" /><path d="M3.4 1.6h10.4v7.2H3.4Z" fill="none" stroke="currentColor" strokeWidth="1.1" /><path d="M3.4 1.6h2.6v2.4H3.4ZM8.6 1.6h2.6v2.4H8.6ZM6 4h2.6v2.4H6ZM11.2 4h2.6v2.4h-2.6ZM3.4 6.4h2.6v2.4H3.4ZM8.6 6.4h2.6v2.4H8.6Z" /></SVG>],
   round: ['On Use, once per round', () => <span className="tm-frac" aria-hidden="true"><span>1×</span><span>R</span></span>],
   once: ['On Use, once per game', () => <span className="tm-txt" aria-hidden="true">1×</span>],
