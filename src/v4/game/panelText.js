@@ -116,7 +116,7 @@ const P = {
     // Match the current rule: the yellow arrives before the optional swaps.
     // the condition sat in line 3, which the wheel drops: the board read "pick a color: each rival" (Cory, Nov 3: "wtf is
     // this action text"). Whole in line 1 now.
-    transmute: { verb: '+1 yellow per minion on busiest color', note: '+1 yellow' }, // Bandwagon (Cory, Nov 5): anyone's minions
+    transmute: { verb: '+1 yellow per minion on busiest color', note: '+1 yellow' }, // Survey (Cory, Nov 5): anyone's minions
     prism: { verb: '+1 each other color', second: 'per 3 yellow', note: 'you keep the yellow' },
     // "Members pay out" was all a tight ring II showed: the gain first, whole in line 1
     gather: { verb: '+1 per member', second: 'in its own color' },

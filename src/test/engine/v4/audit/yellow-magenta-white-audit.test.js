@@ -28,12 +28,12 @@ describe('Yellow', () => {
   it('Late Bloomers on recruit: excludes itself when checking tied for fewest', () => {
     const Q = ['gold', 'red', 'yellow', 'trading'];
     let s = table(Q, { res: [{ yellow: 6 }], shop: ['yellow.latebloomer', ...ROW] });
-    s = take(s, 'yellow.transmute'); // Bandwagon: +1 for its own minion on yellow, +1 yellow (New Blood's followers would break the tie, Nov 4)
+    s = take(s, 'yellow.transmute'); // Survey: +1 for its own minion on yellow, +1 yellow (New Blood's followers would break the tie, Nov 4)
     expect(followers(s, s.players[0])).toBe(followers(s, s.players[1])); // 1 v 1: tied for fewest
     s = move(s, `card:${uidIn(s, 'yellow.latebloomer', 'shop')}`);
     expect(s.players[0].members.length).toBe(1);
     // The two followers from the card do not stop the recruit income.
-    expect(R(s)).toEqual({ gold: 1, red: 1, yellow: 3, white: 1 }); // Bandwagon's 2 yellow, less the price
+    expect(R(s)).toEqual({ gold: 1, red: 1, yellow: 3, white: 1 }); // Survey's 2 yellow, less the price
   });
 
   it('Melting Pot: a guest member whose color is not on the table adds no color', () => {

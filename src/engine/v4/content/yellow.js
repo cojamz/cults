@@ -161,7 +161,7 @@ export default {
       estimate: ctx => ctx.state.round + 2.5,
       resolve(ctx, p) { pickColors(ctx, p, ctx.state.round + 2, 'Harvest', true); },
     },
-    // REPLACE12=tagalong bot test (Nov 4, quality loop, lane D2; pitches/D2-batch1.md): Tag Along in Leaders' Tax's (now Bandwagon's) place.
+    // REPLACE12=tagalong bot test (Nov 4, quality loop, lane D2; pitches/D2-batch1.md): Tag Along in Leaders' Tax's (now Survey's) place.
     // Counts the colors whose spaces hold at least one of the chosen rival's minions (joined spots count), as the table
     // sees them; nothing of the rival's changes.
     ...(on12('tagalong') ? [{
@@ -192,7 +192,7 @@ export default {
       // Nov 5 (Cory: "Leaders tax should be renamed and should be +1 yellow per minion on the most occupied color"): every
       // player's minions on the color whose spaces hold the most; a tie pays the same count. Your own minion counts,
       // this one included when yellow is the busiest. No choice left. Name Claude's fill-in (was Leaders' Tax).
-      key: 'transmute', ring: 1, name: 'Bandwagon', text: "+1 yellow per minion on the busiest color's spaces. +1 yellow.",
+      key: 'transmute', ring: 1, name: 'Survey', text: "+1 yellow per minion on the busiest color's spaces. +1 yellow.",
       estimate: (ctx, p) => 1 + busiest(ctx).n,
       resolve(ctx, p) { bandwagon(ctx, p); },
     }]),
@@ -802,7 +802,7 @@ function minionsOn(ctx, qi) {
   for (const [key, list] of Object.entries(st.squats || {})) if (key.startsWith(`${qi}-`)) n += list.length;
   return n;
 }
-/** Bandwagon: the busiest color (most minions on its spaces) and its count; tied colors are all named. */
+/** Survey: the busiest color (most minions on its spaces) and its count; tied colors are all named. */
 function busiest(ctx) {
   const counts = ctx.state.resources.map((c, qi) => ({ c, n: minionsOn(ctx, qi) }));
   const n = Math.max(0, ...counts.map(x => x.n));
@@ -816,7 +816,7 @@ function commonColors(ctx, p) {
 function bandwagon(ctx, p) {
   const { n, colors: cs } = busiest(ctx);
   if (n) ctx.gain(p, Y, n, { fromAction: true });
-  ctx.log(`${p.name}'s Bandwagon: +${n} yellow (${n} minion${n === 1 ? '' : 's'} on ${cs.join(' and ')}, the busiest).`);
+  ctx.log(`${p.name}'s Survey: +${n} yellow (${n} minion${n === 1 ? '' : 's'} on ${cs.join(' and ')}, the busiest).`);
   ctx.gain(p, Y, 1, { fromAction: true });
 }
 function transmuteStep(ctx, p, data) {

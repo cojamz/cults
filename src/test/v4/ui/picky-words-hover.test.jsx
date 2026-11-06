@@ -49,11 +49,11 @@ describe('picky words on hovers (Nov 4)', () => {
     expect(nothingToCopy(quadrant('echo').actions.find(x => x.key === 'refrain').text)).toBe('Nothing yet: only its +1 green');
   });
 
-  it("Bandwagon has no color pick to list; Gather says its followers if you recruit (W27, W28)", () => {
+  it("Survey has no color pick to list; Gather says its followers if you recruit (W27, W28)", () => {
     const s = start(['yellow', 'red', 'silver', 'trading']);
     const pid = s.pending.player;
     const tax = previewSpace(s, pid, ...space(s, 'yellow', 'transmute'));
-    expect(tax.colorPays).toBe(null); // Bandwagon (Nov 5): no pick, its yellow is in "You'd get"
+    expect(tax.colorPays).toBe(null); // Survey (Nov 5): no pick, its yellow is in "You'd get"
     const gather = previewSpace(s, pid, ...space(s, 'red', 'turnout'));
     expect(gather.ifRecruit).toEqual({ followers: s.round, per: 0 });
     expect(ifRecruitWords(gather.ifRecruit)).toBe(`+${s.round} follower${s.round === 1 ? '' : 's'} if you recruit a member this turn`);

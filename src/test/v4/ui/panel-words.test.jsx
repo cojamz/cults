@@ -62,7 +62,7 @@ describe('panel words (w3)', () => {
     expect(panelText('purple', { key: 'windup' }).second).toBe('per minion you placed');
   });
 
-  it("Bandwagon says its whole rule in line 1 (the wheel drops line 3), and Churn its round gain before the 3 it sends", () => {
+  it("Survey says its whole rule in line 1 (the wheel drops line 3), and Churn its round gain before the 3 it sends", () => {
     const seeds = panelText('yellow', { key: 'transmute' });
     expect(seeds.verb).toBe('+1 yellow per minion on busiest color');
     expect(seeds.second).toBe('+1 yellow');
