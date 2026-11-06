@@ -1,4 +1,5 @@
 // The game table. Renders engine state from a session and turns clicks into { player, option } moves.
+import { GAME_NAME, VERSION_LABEL } from '../version.js';
 import { fizzleNote, tookSpace } from './fizzle.js';
 import { turnRun, runTitle, runSay } from './seats.js';
 import { cloakOf } from './cloak.js';
@@ -491,6 +492,8 @@ function Menu({ onRules, onLog, onLeave, getState }) {
             <textarea className="record-text" readOnly value={copied} aria-label="Game record (copy it by hand)" onFocus={e => e.target.select()} autoFocus />
           )}
           {onLeave && <button type="button" role="menuitem" className="btn ghost leave-btn" onClick={pick(onLeave)}>Leave</button>}
+          {/* which build this is (Cory, Nov 5: "i dont see a version") */}
+          <p className="menu-version" data-version>{GAME_NAME} {VERSION_LABEL}</p>
         </div>
       )}
     </div>
