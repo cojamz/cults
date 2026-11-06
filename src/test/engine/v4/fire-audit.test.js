@@ -89,7 +89,8 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
     'market.snob', // Snobs pays only for blue members at game end; Shoplifter 7 and Heiresses 9 (Oct 30) moved the games so its owners had none. cards-market covers it
     'echo.bait', // Bait pays only when a rival copies its owner's space; the Nov 3 live replacements moved the games so its 3 holders were never copied. green-bait-trading covers it
     'market.sommelier', // Sommelier (cut) pays only when its owner recruits a blue member; every member +1 (Nov 5) moved the games so its 4 holders never did. cards-market covers it
-    'market.restocker']); // Restockers: bots held it in 4 seeded games without using it once Out of Style went back to per member (Oct 28); cards-member-structure covers it
+    'market.restocker', // Restockers: bots held it in 4 seeded games without using it once Out of Style went back to per member (Oct 28); cards-member-structure covers it
+    'market.mannequin']); // Mannequin only changes contest counts and writes no line of its own; held in 5 games after Nov 5's deck moved them. replace9.test.js covers it
   const TABLES = [
     ['thieves', 'market', 'trading', 'echo'], ['gold', 'thieves', 'trading', 'echo'], ['red', 'market', 'thieves', 'echo'],
     ['gold', 'market', 'trading', 'echo'], ['red', 'thieves', 'market', 'trading'],
@@ -124,7 +125,8 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'echo.tuningfork', // under 3 holds when Promote and Demote began giving only your own member (Nov 4 night) moved the games; cards-echo covers it
       'market.mannequin', // live Nov 5 in Hawker's place (Cory cut Hawker); under 3 holds in these games, and a quiet contest count; replace9.test.js (Mannequin) covers it
       'thieves.hoardbreaker', 'thieves.bigscore', 'thieves.fixer', 'echo.songrequest', 'echo.choir', // under 3 holds when Cory's Nov 5 cuts, prices and Big Score moved the games; replace10-d3 (Big Score), cards-thieves and cards-echo cover them
-      'thieves.secondstory', 'thieves.desperado']); // under 3 holds when Last-Minute Shopper and Power Shoppers (Nov 5) moved the games; cards-thieves covers them
+      'thieves.secondstory', 'thieves.desperado', // under 3 holds when Last-Minute Shopper and Power Shoppers (Nov 5) moved the games; cards-thieves covers them
+      'trading.tipster']); // under 3 holds when the Nov 5 deck moved the games (hidden behind Mannequin's line until it was cleared); cards-skips-b covers it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);
     expect(unseen).toEqual([]);
@@ -152,7 +154,7 @@ const ALLOW = {
   // cut since Yellow 2.0; the full-deck seeded games moved with the Nov 1 Yellow swaps and its owners planted nothing
   'yellow.sower': 'out of the deck; plants only when a bot holds spare yellow at round start (cards-yellow: Sower)',
   // seeded games moved with +1 wild and the round I rework (Oct 27-28): recruited in 4-5 games without the trigger coming up
-  'yellow.tinker': 'its swaps log as "swapped 1 x for 1 y (Tinker)"; recruited once in the sample (cards-yellow: Tinker)',
+  'yellow.tinker': 'recruited once in the sample (cards-yellow: Tinker)',
   // the Nov 3 card words (Doormen's price, Night Owls, Sleep In, Last Call) moved the seeded games: recruited once, never changing a rival's resources after
   'yellow.tastemaker': 'pays only when its owner changes a rival\'s resources (cards-yellow: Tastemaker)',
   'yellow.matchmaker': 'pays only for a recruit in a new member color; its 2 owners in the Yellow 2.0 sample (Oct 31) recruited none (cards-yellow)',

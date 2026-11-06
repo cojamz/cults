@@ -321,7 +321,7 @@ export default {
       const [from, to] = value;
       p.res[from] -= 1; p.res[to] += 1;
       // each swap said as it happens, so the log never lags the coins (Cory, 2026-10-22: every change and why)
-      ctx.log(`${p.name} swapped 1 ${from} for 1 ${to} (${data.who || 'Trade Seeds'}).`);
+      ctx.log(`${p.name}'s ${data.who || 'Trade Seeds'}: swapped 1 ${from} for 1 ${to}.`);
       const tally = { ...(data.tally || {}) };
       tally[`${from}>${to}`] = (tally[`${from}>${to}`] || 0) + 1;
       transmuteStep(ctx, p, { ...data, left: data.left - 1, done: data.done + 1, tally });
@@ -842,7 +842,8 @@ function transmuteStep(ctx, p, data) {
   ctx.choose(p, `${data.who || 'Trade Seeds'}: swap one for one, or stop (${data.done} swapped so far)`, opts, 'yellow.swap', data);
 }
 function finishTransmute(ctx, p, data) {
-  if (!data.done) ctx.log(`${p.name} swapped nothing.`);
+  // named either way, so the log says the card acted (fire audit, Nov 5)
+  if (!data.done) ctx.log(`${p.name}'s ${data.who || 'Trade Seeds'}: swapped nothing.`);
 }
 
 // "+N in colors you choose": one color at a time (bots lean to their fewest)

@@ -109,7 +109,7 @@ describe('REPLACE2: each card fires', () => {
     expect(s.players[0].res.purple).toBe(5);
     // a tie for Blue (+3 each) and Purple alone (+6)
     expect(s.players[0].contest).toBe(9);
-    expect(s.log.filter(l => /\(Night Traders\)/.test(l))).toHaveLength(3);
+    expect(s.log.filter(l => /^P1's Night Traders: swapped 1 blue for 1 purple\.$/.test(l))).toHaveLength(3);
   });
 
   it('Fundraisers: once per game, each rival +2 silver, then +1 follower per 2 silver rivals hold', () => {
