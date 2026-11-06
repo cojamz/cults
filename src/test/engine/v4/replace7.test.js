@@ -386,10 +386,14 @@ describe('Converts: "On Recruit: recruit a rival\'s member costing 4 or less, fo
   });
   it('a rival with Loyalists keeps its members (a trade, as a swap)', async () => {
     const { contextFor } = await import('../../../engine/v4/core.js');
+    // Loyalists guards its owner's other members; since Cory's Nov 6 price (2 red + 2 any) Loyalists itself costs 4, so
+    // Converts can take Loyalists but never the member it guards
     let s = table(['red', 'market', 'trading', 'yellow'], { n: 2, round: 3, members: [[], ['red.movementpenalty', 'red.loyalists']], shop: ['red.converts', 'red.mentor'] });
     s.current = 0;
     contextFor(s).recruit(s.players[0], uidIn(s, 'red.converts', 'shop'), { free: true });
-    expect(s.log.some(l => l.includes("P1's Converts: no rival's member costing 4 or less to recruit."))).toBe(true);
+    const guarded = uidIn(s, 'red.movementpenalty', 1);
+    expect((s.pending?.options || []).some(o => o.value === guarded || o.id?.includes(String(guarded)))).toBe(false);
+    expect(s.players[1].members).toContain(guarded);
   });
 });
 

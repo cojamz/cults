@@ -595,7 +595,7 @@ export default {
         ctx.choose(owner, 'Panel: Promote or Demote?', options, 'red.panelMode', { excludeUid: card.uid });
       },
     }),
-    m('loyalists', 'Loyalists', 2, 2, /* Claude's fill-in price 5, was 3 (Cory, 2026-10-22: "too cheap") */ 'Your other members can’t be swapped.', { f: 3, n: 2, blockMemberSwaps: true }),
+    m('loyalists', 'Loyalists', 1, 1, /* 2 red + 2 any as seen (Cory, Nov 6: "Maybe make it 2 and 2", then "yes") */ 'Your other members can’t be swapped.', { f: 3, n: 2, blockMemberSwaps: true }),
     // Cory, 2026-10-24: Red's once per game, "swap a rivals with the shop" (equal or greater cost); name and price Claude's fill-in
     m('headhunter', 'Headhunter', 3, 2, 'On Use, once per game: swap a rival’s member with a shop member that costs as much or more.', {
       activate: 'game',

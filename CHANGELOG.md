@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.634 — 2026-11-05
+
+- Loyalists costs 2 red + 2 any
+
 ## v0.99.633 — 2026-11-05
 
 - Ballroom Dancers 5 silver + 3 any; Last-Minute Shopper +3 blue; Night Traders swaps up to 4; Heist Crew counts as 4 members; Foster Parents 3 red + 3 any
