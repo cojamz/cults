@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.605 — 2026-11-05
+
+- Night Traders and Tinker: set your swaps with − and + on one card, then one press (was give, get, three times)
+
 ## v0.99.604 — 2026-11-05
 
 - Patron Saints costs 6 silver + 3 any; Power Shoppers gives +4 followers on your second member in a turn
