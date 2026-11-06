@@ -26,4 +26,5 @@ Version tested: v0.99.601 (tonight's cards as first published). Bots: 600 games 
 
 ## Whole game
 - Skill: one Hard bot among three Normals won 59% (even 25%), same as Nov 4.
-- Small cults: winners with 5 or fewer members went from 20% to 36% of games (bar: at least 20%). The +1 on every member price looks like the reason.
+- Small cults: winners with 5 or fewer members won 36% of 4-player games, the same as the version just before tonight (36%), so tonight's cards didn't change it (bar: at least 20%). [Corrected: an earlier draft compared against Nov 4 and credited the +1 member prices.]
+- Before vs after tonight (Normal bots, 4 players): a seat that only buys followers won 20% after, 4% before (even 25%).
