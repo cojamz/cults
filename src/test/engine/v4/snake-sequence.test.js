@@ -82,7 +82,7 @@ describe('snake vs real sequence, 3 players, one seat taking turns out of it', (
     expect(others(seq, who)).toEqual(others(plain, who));
   });
   for (const at of [0, 1]) it(`an extra turn (Go-Getter) for seat ${L[at]} in round II goes in; nobody else moves`, () => {
-    const { s, rand } = toRound(2, 23); // seed 23 since Victors left (Nov 6); seed 21 since Night Watch left (Nov 6); seed 18 since Promote stopped reaching cheaper (Nov 4 night); seed 16 handed seat B an extra turn once members counted their printed number (Oct 29)
+    const { s, rand } = toRound(2, 24); // seed 24 since Night Owls left (Nov 6); seed 23 since Victors left (Nov 6); seed 21 since Night Watch left (Nov 6); seed 18 since Promote stopped reaching cheaper (Nov 4 night); seed 16 handed seat B an extra turn once members counted their printed number (Oct 29)
     const base = s.order.slice(0, 3), who = base[at];
     let done = false;
     const seq = playRound(s, rand, st => {
