@@ -2194,6 +2194,9 @@ function bottomBlue(state) {
  *  the player whose turn it is, holding the Blue Cloak, gains 1 of each just-buried member's color; a grey member's is
  *  wild (the bot takes the table color it has least of). The last k cards of the pile are the ones just buried. */
 function bargainCost(state, k) {
+  // a batch (Churn, Window Dressers) reports once; pay for every member in it (Cory, Nov 6: "it should be per
+  // discarded member, not per batch")
+  k = Math.max(k || 0, state.bbBatch || 0); state.bbBatch = 0;
   const p = state.current === null || state.current === undefined ? null : state.players[state.current];
   if (!p || !(k > 0)) return;
   const ctx = ctxFor(state);

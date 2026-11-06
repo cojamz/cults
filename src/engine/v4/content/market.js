@@ -446,7 +446,7 @@ const market = {
       if (ctx.state.shop.includes(uid)) {
         const i = ctx.state.shop.indexOf(uid);
         ctx.state.shop.splice(i, 1);
-        ctx.state.pile.push(uid);
+        ctx.state.pile.push(uid); ctx.state.bbBatch = (ctx.state.bbBatch || 0) + 1; // BARGAIN=cost bot test counts each
         ctx.log(`${data.who === 'Churn' || !data.who ? 'Churn' : `${p.name}'s ${data.who}`}: ${p.name} sends ${ctx.card(uid).def.name} to the bottom of the pile.`);
       }
       const sent = TRACK && ctx.state.pile.includes(uid) ? [...(data.sent || []), uid] : data.sent || [];
@@ -463,7 +463,7 @@ const market = {
       }
       if (ctx.state.shop.includes(uid)) {
         ctx.state.shop.splice(ctx.state.shop.indexOf(uid), 1);
-        ctx.state.pile.push(uid);
+        ctx.state.pile.push(uid); ctx.state.bbBatch = (ctx.state.bbBatch || 0) + 1; // BARGAIN=cost bot test counts each
         ctx.log(`${p.name}'s Window Dressers: ${p.name} sends ${ctx.card(uid).def.name} to the bottom of the pile.`);
       }
       wd9Step(ctx, p, { n: data.n + 1 });
