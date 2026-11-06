@@ -310,7 +310,7 @@ describe('v4 format helpers', () => {
     // wave-2 blocker: P2's Raider bought 3 of the tester's followers and the strip never said so
     const four = [...seats, { name: 'Di', kind: 'bot' }];
     let found = null;
-    for (let seed = 1; seed < 60 && !found; seed++) {
+    for (let seed = 1; seed < 120 && !found; seed++) { // 120 since Victors left the grey deck (Nov 6): none of seeds 1 to 59 raided a lone victim
       let s = createGame({ seats: four, seed, quadrants: ['trading', 'gold', 'red', 'blue'] });
       const states = [s];
       while (!s.over) { s = applyMove(s, chooseBotMove(s, () => 0.4), { effects: true }); states.push(s); }
