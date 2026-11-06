@@ -165,6 +165,15 @@ function step(trail, s, replayedFx = null) {
     const choosing = s.pending && s.pending.kind === 'choose';
     c0.useBy = use ? (choosing ? use.cause : null) : choosing ? by : null;
   }
+  // a move made off any turn (a Round Start or Round End recruit, a member acting between turns): told live on the story
+  // card as it plays, never kept as a turn of its own (critic pass, Nov 6: a rival's round-start recruit came with no card)
+  const offBy = prev && !turnKey(prev) && prev.round >= 1 && !prev.over && prev.pending && prev.pending.player != null && s.moves === prev.moves + 1 ? prev.pending.player : null;
+  if (offBy != null) {
+    const o = trail.off;
+    if (!o || o.actor !== offBy || o.round !== prev.round) trail.off = { actor: offBy, round: prev.round, start: prev, fx: [], n: (trail.offN = (trail.offN || 0) + 1) };
+    if (fx && trail.off.fx) trail.off.fx.push(...fx); else trail.off.fx = null;
+    trail.off.end = s;
+  } else if (k && trail.cur && trail.cur.key === k && trail.cur.start !== s) trail.off = null; // the next turn has begun its moves
   if (trail.cur && k !== trail.cur.key) finish(trail, prev, s);
   if (k && !trail.cur) trail.cur = { key: k, actor: s.current, round: s.round, start: s, mid: null, fx: [], why: whyTurn(s) };
   const c = trail.cur;
@@ -233,6 +242,17 @@ export function liveStory(trail) {
   const c = trail.cur, s = trail.last;
   if (!c || !s || c.start === s || c.partial) return null;
   return tell(trail, c, s);
+}
+
+/** What a player did off any turn, while the table is still between turns: { actor, text, n }, or null. */
+export function offStory(trail) {
+  const o = trail.off, s = trail.last;
+  // (it stays up until the next turn's first move, so the card never hands back to an older story in between)
+  if (!o || !s || !o.end || (turnKey(s) && !(trail.cur && trail.cur.start === s && s.moves === o.end.moves))) return null;
+  let st = null;
+  try { st = o.fx ? effectStory(o.start, o.end, o.actor, trail.me, o.fx) : turnStory(o.start, o.end, o.actor, trail.me, null); } catch { return null; }
+  if (!st || !st.lines || !st.lines.length) return null;
+  return { actor: o.actor, text: [st.head, ...st.lines].join(' · '), n: o.n, when: (o.start.turns || []).length ? 'between turns' : 'round start' };
 }
 
 /**

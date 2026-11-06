@@ -39,7 +39,7 @@ import Chronicle from './Chronicle.jsx';
 import SinceStrip, { StoryCard } from './SinceStrip.jsx';
 import { MinionPool } from './MinionPool.jsx';
 import { useTalk, TalkBubble, TalkPicker, useEnterToTalk } from './Talk.jsx';
-import { createTrail, feed, liveStory, sinceYourTurn, seatLoss, lossWords } from './trail.js';
+import { createTrail, feed, liveStory, offStory, sinceYourTurn, seatLoss, lossWords } from './trail.js';
 import Results from './Results.jsx';
 import FinalScore from './FinalScore.jsx';
 import RoundEnd from './RoundEnd.jsx';
@@ -530,6 +530,19 @@ function hubCardPlace(table) {
 }
 // where the hub card last stood, so the log area's card can fly in from there
 let hubLast = null;
+// whether a chain is playing, kept as state while `on` (the round-end moment holds the table, so the shown and settled
+// states can't say it; the round's last turn plays out under the moment before the Reckoning opens)
+function useChainRunning(on) {
+  const [run, setRun] = useState(() => on && chainRunning());
+  useEffect(() => {
+    if (!on) { setRun(false); return undefined; }
+    const upd = () => setRun(chainRunning());
+    upd();
+    const a = onChainEnd(upd), b = onChainLanded(upd), t = setInterval(upd, 250);
+    return () => { a(); b(); clearInterval(t); };
+  }, [on]);
+  return on && run;
+}
 
 function TurnCard({ card, root, state, hub = false, keep = false }) {
   // a card whose player isn't acting any more folds after its moment (wave-4 B #19: "You took X" stayed up ~10s through
@@ -636,7 +649,7 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
       style={{ '--pc': playerColor(card.pid) }}>
       {keep && <b className="tc-head tc-row"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={13} /><span>{head}</span></b>}
       {keep && rest.length > 0 && <span className="tc-line"><Rich text={rest.join(' · ')} /></span>}
-      {hub && <span className="tc-who"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={hub ? 16 : 13} /><span>{pname === 'You' || /^You\b/.test(head) ? 'Your turn' : pname ? `${pname}’s turn` : ''}</span></span>}
+      {hub && <span className="tc-who"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={hub ? 16 : 13} /><span>{card.when ? `${pname === 'You' || /^You\b/.test(head) ? 'You' : pname}, ${card.when}` : pname === 'You' || /^You\b/.test(head) ? 'Your turn' : pname ? `${pname}’s turn` : ''}</span></span>}
       {!keep && <b className="tc-head">{(hub || keep) && /^You /.test(head) ? `${head.charAt(4).toUpperCase()}${head.slice(5)}` : (hub || keep) && pname && head.startsWith(`${pname} `) ? `${head.charAt(pname.length + 1).toUpperCase()}${head.slice(pname.length + 2)}` : head}</b>}
       {!keep && rest.map((l, k) => <span key={`${k}:${l}`} className="tc-line"><Rich text={l} /></span>)}
       {/* what didn't fit opens on the "and N more" line, every line in its card (picky bot, Nov 4: "+3 more" with no way
@@ -972,11 +985,12 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     const t = trail.current;
     feed(t, live0, roundStart0);
     const now = live0.round >= 1 && !live0.over ? liveStory(t) : null;
+    const off = !now && live0.round >= 1 && !live0.over ? offStory(t) : null;
     const fresh = t.stories.filter(st => st.n > toldUpTo.current);
     const tl = fresh[fresh.length - 1];
     return {
       since: sinceYourTurn(t, mySeats),
-      live: now ? { pid: now.actor, text: now.text, live: true, n: `c${t.cur.key}` } : null,
+      live: now ? { pid: now.actor, text: now.text, live: true, n: `c${t.cur.key}` } : off ? { pid: off.actor, text: off.text, live: true, n: `o${off.n}`, when: off.when } : null,
       told: tl && tl.round === live0.round && !live0.over ? { pid: tl.actor, text: tl.text, live: false, n: `t${tl.n}` } : null,
       touched: [...new Set(fresh.flatMap(st => st.touched))],
       // what rivals took from your seat since your last turn, the turn in play included (seatLoss, trail.js)
@@ -1010,11 +1024,16 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // a rival's turn stays on the hub until its own moves have finished playing (its recruit, its pay, its refill): the
   // game has already moved on to the next turn when that chain starts, which took the card away while the recruit was
   // still flying in (critic pass, Nov 6: a recruit told by nothing)
-  const chainOn = physicalState !== interactionState;
+  const momentChain = useChainRunning(!!moment);
+  const chainOn = moment ? momentChain : physicalState !== interactionState;
   const tailOf = moment ? lastAny : lastDone;
   const hubStory = liveRival || (chainOn && !story.live && tailOf && !mySeats.includes(tailOf.pid) ? tailOf : null);
   const prevDone = (() => { const tl = allStories[allStories.length - 2]; return tl && tl.round === live0.round && !live0.over ? asCard(tl) : null; })();
   const dockStory = story.live && !liveRival ? story.live : hubStory && hubStory === tailOf ? (moment ? null : prevDone) : lastDone;
+  // a rival's story card on the hub is never covered (Cory, Nov 6: "it gets covered up by so much other stuff"): a
+  // space's card left up from your own turn closes as theirs comes up (critic pass: Out of Style's card sat on the hub)
+  const hubKey = storyAtHub() && hubStory ? hubStory.n : null;
+  useEffect(() => { if (hubKey) hover.close(); }, [hubKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const lostText = myTurn ? '' : lossWords(story.lost.filter(x => x.n > lostSeen.current), state.players);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -1761,7 +1780,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
               // pay" stayed up, dotted like a rival's, while the bots moved): it gives way to the current line
               // (a rival's move already playing names them, never "Your turn is over" under their story card)
               const p = turnOver && !(storyAtHub() && hubStory) ? { who: turnOver, text: humansHere ? `${turnOver.name}’s turn is over` : 'Your turn is over', over: true }
-                : storyAtHub() && hubStory ? { who: state.players[hubStory.pid] ? { ...state.players[hubStory.pid], id: hubStory.pid } : null, text: `${state.players[hubStory.pid]?.name || ''}’s turn` }
+                : storyAtHub() && hubStory ? { who: state.players[hubStory.pid] ? { ...state.players[hubStory.pid], id: hubStory.pid } : null, text: hubStory.when ? `${state.players[hubStory.pid]?.name || ''}, ${hubStory.when}` : `${state.players[hubStory.pid]?.name || ''}’s turn` }
                 : held.forMe === pr.forMe || (!held.forMe && rivalPlaying) ? held : pr;
               // a rival's line held while their pieces land is said in their voice, never as "Your turn — p4 is paying"
               const voice = mine && (p === pr || !!p.forMe);
