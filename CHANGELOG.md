@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.647 — 2026-11-06
+
+- Spoilsport: choose any contest; nobody wins it this round
+
 ## v0.99.646 — 2026-11-06
 
 - Foster Parents is back in round I (3 red + 3 any); Ballroom Dancers costs 1 silver more (6 silver + 4 any)
