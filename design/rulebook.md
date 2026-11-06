@@ -56,7 +56,7 @@ After round III, add game-end bonuses. Most followers wins; a tie goes to more m
 
 ## Fine print
 - To **recruit** is to bring in a member or followers by your own doing. Each follower purchase is one recruit. A member a rival moves to you isn't your recruit.
-- To **copy** an action is to get its own printed gain, the amount on its chip. The taker's member bonuses and gifts to others are not copied. A copied steal or swap is done again. Copying a copy lets you choose again, but never an action already in that chain.
+- To **copy** an action is to get its own printed gain, the amount on its chip. The taker's member bonuses are not copied. A copied steal, swap or gift is done again. Copying a copy lets you choose again, but never an action already in that chain.
 - To **steal** is to take from a rival. The followers a rival's members are worth can't be stolen; their other followers can. Nothing drops below 0.
 - A **skipped** turn is placed later in the same round; nobody loses a minion. **+1 minion** never happens in round I.
 - Swapping members with a rival is a trade, not a steal.

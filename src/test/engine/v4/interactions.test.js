@@ -115,22 +115,23 @@ describe('Green copies the risky spaces', () => {
     expect(s.pending.prompt).toMatch(/^Out of Style: send which color/);
   });
 
-  it('a Silver space’s chip shows its own gain, not the host’s Caterer or Grand Host', () => {
+  it('a copied Toast is done again: it gifts the rivals too, without the host’s Caterer or Grand Host (Cory, Nov 6)', () => {
     const S = ['gold', 'red', 'silver', 'echo'];
     let s = scene({ quads: S, turns: [1, 0], members: [[], ['silver.caterer']] });
     s = go(s, 'silver.toast');
     expect(R(s, 1).silver).toBe(5); // 3 + the Silver Cloak's 2 on its holder's own gift (Cory, Nov 7)
     expect(R(s, 0).silver).toBe(1); // the toast's spill
     s = take(s, 'echo.echo');
-    expect(labels(s)).toEqual(['Toast (P2): +3 silver']);
+    expect(labels(s)).toEqual(['Toast (P2): do Toast yourself']);
     s = pass(move(s, s.pending.options[0].id));
     expect(R(s, 0).silver).toBe(4);
+    expect(R(s, 1).silver).toBe(6); // the copy's gift; P2's Caterer pays only on P2's own gifts
 
     let t = scene({ quads: S, turns: [1, 0], members: [[], ['silver.grandhost']] });
     t = go(t, 'silver.toast');
     expect(R(t, 1).silver).toBe(6);
     t = take(t, 'echo.echo');
-    expect(labels(t)).toEqual(['Toast (P2): +3 silver']);
+    expect(labels(t)).toEqual(['Toast (P2): do Toast yourself']);
   });
 
 

@@ -269,7 +269,8 @@ function sweetDone(ctx, p, data) {
 
 export const silverActions = [
   {
-    key: 'toast', ring: 1, name: 'Toast', text: '+3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III.',
+    // copyDoesIt: a copy gifts the rivals too, so the copier's Silver Cloak pays (Cory, Nov 6: "yes.")
+    key: 'toast', copyDoesIt: true, ring: 1, name: 'Toast', text: '+3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III.',
     byRound: { lines: ['+3 silver. Each rival +1 silver.', '+6 silver. Each rival +2 silver.', '+9 silver. Each rival +3 silver.'] },
     estimate: ctx => 3 * ctx.state.round - spillCost(ctx, ctx.state.round),
     resolve(ctx, p) {
@@ -300,7 +301,7 @@ export const silverActions = [
   // Sweet Nothings takes Potluck's place (Cory, Nov 6: "yeah 1"; Potluck had rivals choose on your turn). Potluck stays
   // in code, off the wheel; REPLACE11=favors puts it back for a comparison.
   swap11(SWEET_NOTHINGS, {
-    key: 'favors', ring: 2, name: 'Potluck', text: '+2 silver. Each rival gives you 1 resource of their choice, then gains 2 silver.',
+    key: 'favors', copyDoesIt: true, ring: 2, name: 'Potluck', text: '+2 silver. Each rival gives you 1 resource of their choice, then gains 2 silver.',
     estimate: ctx => 2 + (ctx.state.players.length - 1) - spillCost(ctx, 2),
     resolve(ctx, p) {
       hostGain(ctx, p, 2);
