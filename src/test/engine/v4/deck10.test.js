@@ -18,7 +18,7 @@ const count = (s, color) => {
 // round I is up to 5 as a player sees it (printed 3 plus the 2 every member adds; Cory, Nov 5 10:22pm UTC: "move it to 5")
 const R1 = { red: 3, echo: 2, thieves: 2, purple: 4, market: 5, trading: 4, yellow: 3 };
 // fewer than 10 where Cory's Nov 5 cuts left holes (Grifter, Cutpurse; Early Birds; Shopaholics; Raiders; Meddler, Gardeners), until he picks their replacements
-const N = { red: 10, echo: 10, thieves: 10, purple: 10, market: 10, trading: 10, yellow: 10 };
+const N = { red: 10, echo: 10, thieves: 10, purple: 9, market: 10, trading: 10, yellow: 10 }; // purple 9: Night Watch pulled Nov 6, its replacement pending Cory's pick
 
 describe('10-card decks', () => {
   it('deals 10 of each 2.0 color and 12 grey (Cheerleaders and Victors, Nov 4); round I gets only the cheap ones (Cory, Nov 5)', () => {

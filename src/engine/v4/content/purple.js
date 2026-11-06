@@ -642,7 +642,7 @@ export default {
     m('clockmaker', 'Clockmakers', 2, 2, 'Round Start: take your first two turns in a row.', { f: 2, firstTwoInRow: true, retired: true }), // (Cory, Oct 29, balance run: +1 follower); Night Watch takes its place (Claude, under Cory's "use your judgement", 2026-11-04)
     // Replacement batch 1 (Nov 3), live since Nov 4 (Claude, under Cory's "use your judgement"): Clockmakers' place. 3 purple + 2 any as a player sees it. Last Call
     // and Sleep In pay for the minions they put on the token, Night Owls for its 1.
-    m('nightwatch', 'Night Watch', 2, 2, 'Whenever a rival takes the Goes Last token, +1 follower per minion on it.', { f: 2, watchToken: true, ...old7('purple.nightwatch'), ...old9('purple.nightwatch') }),
+    m('nightwatch', 'Night Watch', 2, 2, 'Whenever a rival takes the Goes Last token, +1 follower per minion on it.', { f: 2, watchToken: true, retired: true, ...old7('purple.nightwatch'), ...old9('purple.nightwatch') }), // retired Nov 6 (Cory: "night watch makes no fucking sense and needs to be immediately replaced")
     // REPLACE9 (Members C, Nov 4, batch bC12: paper 18 vs 12, quality/evals/gate/C-nightwatch3): Night Watch, any
     // player's take, its owner's included. Same price.
     // REPLACE9 (Members C, bC11: paper 17 vs 14; Cory's "paper filters, play ranks", Nov 4): Night Watch's place. Same price.
