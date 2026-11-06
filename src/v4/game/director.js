@@ -15,7 +15,7 @@
 // and timers (no React state). A click or Space skips the rest of a chain to its end (skipChain). Every duration comes
 // from src/v4/motion.js at the viewer's speed. A state without an effect stream (an online guest, a catch-up) falls
 // back to gains.js, which reads the change of state.
-import { MO, RIVAL, SPEEDS, flightMs, nextBeatAt, speedScale, streamGap, slowed } from '../motion.js';
+import { MO, RIVAL, SPEEDS, flightMs, coinFlightMs, coinScale, nextBeatAt, speedScale, streamGap, slowed } from '../motion.js';
 import { playerColor, roman } from '../format.js';
 import { play } from '../sound.js';
 import { gainsBetween } from './gains.js';
@@ -173,6 +173,8 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   const dist = (a, b) => (measure ? measure(a, b) : TYPICAL);
   // Shorter travel replaces overlapping named causes, preserving the overall turn budget.
   const fly = (a, b) => Math.round(flightMs(dist(a, b)) * 0.65);
+  // coins and followers cross quicker than cards at Relaxed (motion.js COIN_CAP)
+  const coinFly = (a, b) => Math.round(coinFlightMs(dist(a, b)) * 0.65);
   let t = 0, end = 0;
   const at = (time, op) => { atoms.push({ at: Math.round(time), ...op }); return time; };
   const ends = x => { end = Math.max(end, x); return x; };
@@ -256,7 +258,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     // its tail (a rush of coins, never under 0.6 of the flight), so its last coin lands when the old single bundle did
     // and the turn's pace stays where it was (pacing.test.js)
     const tail = bundle && !opt.fol ? Math.round((n - 1) * streamGap(n)) : 0;
-    const d = opt.dur || Math.max(Math.round(fly(from, to) * 0.6), fly(from, to) - tail);
+    const d = opt.dur || Math.max(Math.round(coinFly(from, to) * 0.6), coinFly(from, to) - tail);
     hand = Math.max(hand, (bundle ? time + tail : time + (n - 1) * MO.pieceStagger) + d * (2 / 3));
     if (bundle) { at(time, { op: 'piece', from, to, n, bundle: true, dur: d, ...(tail ? { stream: tail } : {}), ...opt }); at(time + d, { op: 'land', to, by: n, bundle: true, ...(tail ? { stream: tail } : {}), ...opt }); return { last: time + tail, d }; }
     for (let k = 0; k < n; k++) { at(time + k * MO.pieceStagger, { op: 'piece', from, to, n: 1, dur: d, ...opt }); at(time + k * MO.pieceStagger + d, { op: 'land', to, by: 1, ...opt }); }
@@ -455,8 +457,10 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
       if (!list.length) return;
       let lastR = null, o = cur;
       for (const g of list) {
-        if (g.tug) at(o, { op: 'tug', place: g.from, toward: g.to, dur: MO.tug, n: g.n, r: g.opt && g.opt.r, owner: g.from.pid });
-        const r = pieces(o + (g.tug ? MO.tug : 0), g.from, g.to, g.n, g.opt);
+        // (a stack being taken from tugs at the coins' pace: COIN_CAP)
+        const tug = Math.round(MO.tug * coinScale() / speedScale());
+        if (g.tug) at(o, { op: 'tug', place: g.from, toward: g.to, dur: tug, n: g.n, r: g.opt && g.opt.r, owner: g.from.pid });
+        const r = pieces(o + (g.tug ? tug : 0), g.from, g.to, g.n, g.opt);
         ends(r.last + r.d);
         if (!lastR || r.last + r.d > lastR.last + lastR.d) lastR = r;
         o += MO.fan;

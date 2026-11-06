@@ -215,15 +215,22 @@ const TABLE = {
  * hand never read it.
  */
 export const RIVAL = 0.65;
+/**
+ * The gaps between the coins of one gain or payment, and between its colors, never stretch past Steady: at Relaxed the
+ * coins still fly at Relaxed's pace, but they leave together as a handful instead of one after the next (Cory, Nov 5:
+ * "currencies moving one by one in so many animations is so slow"; at x6 a +3 left 300 ms apart, a payment's colors 240).
+ */
+const TIGHT = new Set(['pieceStagger', 'streamSpread', 'bundleTrail', 'fan']);
+const tightScale = () => Math.min(speedScale(), SPEEDS.steady);
 /** A budget at the viewer's speed: Quick's own number, else the base times the speed. */
-const atSpeed = ([quick, base]) => (speed === 'quick' ? quick : Math.round(base * speedScale()));
+const atSpeed = ([quick, base], k) => (speed === 'quick' ? quick : Math.round(base * (TIGHT.has(k) ? tightScale() : speedScale())));
 
 /** MO.x reads the budget at the viewer's speed (read it when you use it, never keep a copy). */
 export const MO = {};
 for (const k of new Set([...Object.keys(BASE), ...Object.keys(TABLE)])) {
   Object.defineProperty(MO, k, {
     enumerable: true,
-    get: () => (TABLE[k] ? atSpeed(TABLE[k]) : SHOW.has(k) ? Math.round(BASE[k] * speedScale()) : BASE[k]),
+    get: () => (TABLE[k] ? atSpeed(TABLE[k], k) : SHOW.has(k) ? Math.round(BASE[k] * (TIGHT.has(k) ? tightScale() : speedScale())) : BASE[k]),
   });
 }
 /** The gap between the coins of a stream of n (a gain or take of 4 or more resources flies as n coins): the usual
@@ -235,6 +242,16 @@ export function flightMs(d) {
   if (speed === 'quick') return Math.round(Math.min(280, Math.max(160, 120 + 0.18 * x)));
   return Math.round(Math.min(440, Math.max(260, 200 + 0.30 * x)) * speedScale());
 }
+/**
+ * Coins and followers in flight stretch at most this far (Relaxed is 6): at Relaxed a coin took about 1.3 s to cross the
+ * table, and a turn's coins went by as a slow procession (Cory, Nov 5: "currencies moving one by one in so many
+ * animations is so slow"). Cards, minions, the stage and every read keep Relaxed's full pace. (Claude, under Cory's
+ * go-with-your-gut on fixes: half Relaxed's stretch, still nearly twice Steady.)
+ */
+export const COIN_CAP = 3;
+export const coinScale = () => Math.min(speedScale(), COIN_CAP);
+/** A coin's (or follower's) flight by its distance: flightMs, its stretch capped at COIN_CAP. */
+export const coinFlightMs = d => (speed === 'quick' ? flightMs(d) : Math.round(flightMs(d) * coinScale() / speedScale()));
 /** When the next beat starts, as a part of this beat's last flight: half (Quick), two-thirds (Steady and Relaxed). */
 export const nextBeatAt = flight => (speed === 'quick' ? flight * 0.5 : flight * (2 / 3));
 
