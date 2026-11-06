@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.602 — 2026-11-05
+
+- Downsizers reaches members costing 4 or less; Heist Crew 6 magenta + 2 any; Matchmaker counts grey as a color
+
 ## v0.99.601 — 2026-11-05
 
 - New members in the cut slots: Heist Crew, Night Traders, Counterfeiters, Last-Minute Shopper, Power Shoppers, Night Manager, Ballroom Dancers, Kingmakers, Patron Saints, Downsizers
