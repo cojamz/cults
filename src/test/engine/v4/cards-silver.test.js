@@ -54,7 +54,7 @@ describe('Silver actions', () => {
   });
   it.each([1, 2, 3])('Toast round %i scales each rival gift, with Guest, Caterer and Grand Host', round => {
     const s = take(sc({ n: 3, round, members: [['silver.grandhost', 'silver.caterer'], ['silver.guest']] }), 'silver.toast');
-    expect(s.players.map(p => p.res.silver)).toEqual([6 * round + 3, round + 1, round]); // Silver Cloak +3 on your own gift (Cory, Nov 6)
+    expect(s.players.map(p => p.res.silver)).toEqual([6 * round + 2, round + 1, round]); // Silver Cloak +2 on your own gift (Cory, Nov 7)
     expect(named(s, 'Caterer')).toHaveLength(1); // one gift, not one per recipient
     expect(s.log).toContain(`P1 raised a toast: +${6 * round} silver, +${round} silver to everyone else.`);
   });
@@ -69,10 +69,10 @@ describe('Silver members', () => {
     expect(s.players[0].bonus).toBe(1);
     expect(named(s, 'Gift Wrapper')).toHaveLength(1);
   });
-  it('Caterer: Sweet Nothings is one gift, +3 silver once however many rivals get silver (as Toast)', () => {
+  it('Caterer: Sweet Nothings is one gift, +2 silver once however many rivals get silver (as Toast)', () => {
     let s = take(sc({ n: 3, round: 2, members: [['silver.caterer']] }), 'silver.sweetnothings');
     s = move(move(move(s, 'player:1'), 'player:2'), 'done');
-    expect(S(s)).toBe(3 - 2 + 3);
+    expect(S(s)).toBe(3 - 2 + 2);
     expect(named(s, 'Caterer')).toHaveLength(1);
   });
   it('Polisher: once per game, up to 3 silver into 2 of any colors each', () => {
@@ -164,21 +164,21 @@ describe('Silver members', () => {
     expect(S(s, 1)).toBe(2);
   });
 
-  it('Caterer held as an artifact (Silver\u2019s artifact) pays its +3 too', () => {
+  it('Caterer held as an artifact (Silver\u2019s artifact) pays its +2 too', () => {
     let s = sc({ n: 4, members: [['silver.caterer']] });
     const uid = s.players[0].members[0];
     s.players[0].members = [];
     s.players[0].artifact = uid;
     s = take(s, 'silver.toast');
-    expect(S(s)).toBe(3 + 3);
-    expect(named(s, 'Caterer')[0]).toMatch(/P1's Caterer: \+3 silver/);
+    expect(S(s)).toBe(3 + 2);
+    expect(named(s, 'Caterer')[0]).toMatch(/P1's Caterer: \+2 silver/);
   });
-  it('Caterer: +3 silver per gift (not per player), named', () => {
+  it('Caterer: +2 silver per gift (not per player), named', () => {
     const s = take(sc({ n: 4, members: [['silver.caterer']] }), 'silver.toast');
-    expect(S(s)).toBe(3 + 3);
-    expect(named(s, 'Caterer')[0]).toMatch(/P1's Caterer: \+3 silver/);
+    expect(S(s)).toBe(3 + 2);
+    expect(named(s, 'Caterer')[0]).toMatch(/P1's Caterer: \+2 silver/);
   });
-  // Cory, Nov 6: the Silver Cloak pays only on your own gifts ("Whenever you gift silver, +3 silver."); gold doesn't count
+  // Cory, Nov 6: the Silver Cloak pays only on your own gifts ("Whenever you gift silver, +2 silver."); gold doesn't count
   it('Caterer: a gift of gold (Kickback) pays nothing; a rival gifting silver pays nothing', () => {
     const s = move(take(sc({ members: [['silver.caterer']] }), 'gold.jv'), 'player:1');
     expect(S(s)).toBe(0);

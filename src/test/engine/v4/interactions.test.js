@@ -119,7 +119,7 @@ describe('Green copies the risky spaces', () => {
     const S = ['gold', 'red', 'silver', 'echo'];
     let s = scene({ quads: S, turns: [1, 0], members: [[], ['silver.caterer']] });
     s = go(s, 'silver.toast');
-    expect(R(s, 1).silver).toBe(6); // 3 + the Silver Cloak's 3 on its holder's own gift (Cory, Nov 6)
+    expect(R(s, 1).silver).toBe(5); // 3 + the Silver Cloak's 2 on its holder's own gift (Cory, Nov 7)
     expect(R(s, 0).silver).toBe(1); // the toast's spill
     s = take(s, 'echo.echo');
     expect(labels(s)).toEqual(['Toast (P2): +3 silver']);

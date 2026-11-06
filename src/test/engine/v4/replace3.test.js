@@ -192,7 +192,7 @@ describe('REPLACE3: each card fires', () => {
     let s = table(['red', 'silver', 'market', 'yellow'], { n: 2, round: 2, bonus: [0, 3], members: [['silver.creditors', 'silver.caterer']], queue: [{ t: 'buy', p: 0 }] });
     const before = s.players[0].res.silver;
     s = answer(move(s, `use:${uidIn(s, 'silver.creditors', 0)}`), 'player:1');
-    expect(s.players[0].res.silver).toBe(before + 3); // Caterer: whenever you gift silver, +3 silver (Cory, Nov 6)
+    expect(s.players[0].res.silver).toBe(before + 2); // Caterer: whenever you gift silver, +2 silver (Cory, Nov 7)
   });
 
   it('Pacers: once per round, move a minion to an open space and do that action', () => {
