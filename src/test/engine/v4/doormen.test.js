@@ -50,16 +50,17 @@ describe('Doormen', () => {
 });
 
 describe('Bargain Bin', () => {
-  // Cory, Nov 1: "changes to B when any member goes to the bottom of the pile": a cult's member counts too
-  it('pays +1 blue when Doormen sends a rival member to the discard pile', () => {
+  // a cult's member counts too; the Blue Cloak pays +2 of the discarded member's color (Cory, Nov 6)
+  it('pays +2 red when Doormen sends a rival red member to the discard pile', () => {
     let s = table(Q, { members: [['market.doorman'], ['red.bigfamily']], shop: ['red.host'], ...buy() });
     const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
     s.cards[art] = { uid: art, def: 'market.bargainbin' }; s.players[0].artifact = art;
-    const b0 = s.players[0].res.blue;
+    s.current = 0; // P1's turn (the scene starts at its buy step); the cloak pays only on your own turn
+    const r0 = s.players[0].res.red || 0;
     s = move(s, `use:${uidIn(s, 'market.doorman', 0)}`);
     s = move(s, `trade:${uidIn(s, 'red.bigfamily', 1)}:${uidIn(s, 'red.host', 'shop')}`);
-    expect(s.players[0].res.blue - b0).toBe(1);
-    expect(s.log.join('\n')).toMatch(/P1's Bargain Bin: \+1 blue/);
+    expect((s.players[0].res.red || 0) - r0).toBe(2);
+    expect(s.log.join('\n')).toMatch(/P1's Bargain Bin: \+2 red/);
   });
 });
 

@@ -49,24 +49,24 @@ describe('Dabblers and Drifters audit', () => {
       expect(t.players[0].res.blue - c0).toBe(want);
     }
   });
-  it('Bargain Bin: pays +1 blue when Bury sends a shop member down, and its hover counts it', () => {
+  it('Bargain Bin: pays +2 of the member\'s color when Bury discards it, and its hover counts it (Cory, Nov 6)', () => {
     let s = sceneQ({ quadrants: ['market', 'red', 'yellow', 'green'], round: 2, res: [rich], shop: ['red.intern', 'red.volunteer'] });
     const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
     s.cards[art] = { uid: art, def: 'market.bargainbin' }; s.players[0].artifact = art;
-    const b0 = s.players[0].res.blue;
+    const r0 = s.players[0].res.red || 0;
     s = move(take(s, 'market.pricecheck'), `card:${uidOf(s, 'red.intern', 'shop')}`);
     expect(named(s, 'Bargain Bin')).toHaveLength(1);
-    expect(s.cards[art].made?.blue).toBe(1);
-    expect(s.players[0].res.blue - b0).toBeGreaterThanOrEqual(2); // Bury's +1 and Bargain Bin's +1
+    expect(s.cards[art].made?.red).toBe(2);
+    expect((s.players[0].res.red || 0) - r0).toBe(2); // Whenever you discard a member, +2 of its color
   });
-  it('Bargain Bin: the shop refresh at a round start pays +1 blue (Cory, Nov 1: "you count the refreshes")', () => {
+  it('Bargain Bin: the shop refresh at a round start pays nothing (Cory, Nov 6: only your own discards)', () => {
     let s = sceneQ({ quadrants: ['market', 'red', 'yellow', 'green'], round: 1 });
     const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
     s.cards[art] = { uid: art, def: 'market.bargainbin' }; s.players[1].artifact = art;
     const b0 = s.players[1].res.blue;
     s.pending = null; s.queue = [{ t: 'round', r: 2 }];
     s = resume(s);
-    expect(s.players[1].res.blue - b0).toBe(1);
-    expect(named(s, 'Bargain Bin')).toHaveLength(1);
+    expect(s.players[1].res.blue - b0).toBe(0);
+    expect(named(s, 'Bargain Bin')).toHaveLength(0);
   });
 });

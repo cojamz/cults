@@ -102,11 +102,11 @@ describe('Silver members', () => {
     expect(R(s, 1).silver).toBe(0);
   });
 
-  it('Caterer: whenever you give to other players, +1 silver (once per gift, not per player)', () => {
+  it('Caterer: whenever you gift silver, +3 silver (once per gift, not per player)', () => {
     let s = take(scene({ members: [['silver.caterer']] }), 'silver.toast');
-    expect(R(s).silver).toBe(4); // Caterer +1 (Cory, Nov 1, 2:25pm)
+    expect(R(s).silver).toBe(6); // the Silver Cloak +3 (Cory, Nov 6)
     s = move(move(move(take(scene({ members: [['silver.caterer']] }), 'silver.partygifts'), 'player:1'), 'player:2'), 'done');
-    expect(R(s).silver).toBe(1);
+    expect(R(s).silver).toBe(3);
   });
 
   it('Majordomo: whenever you take a Silver space, +2 silver (not elsewhere)', () => {

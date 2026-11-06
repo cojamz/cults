@@ -188,12 +188,12 @@ describe('REPLACE10: Almoner and Widows', () => {
 });
 
 describe('REPLACE10: Warm-Up Act copies Walk-In (Lab, game 84)', () => {
-  it('each rival +1 red, the Green Cloak holder included, and the log says so for every player', () => {
+  it('each rival +1 red; a rival\'s Green Cloak pays nothing for P2\'s copy (Cory, Nov 6: own copies only)', () => {
     let s = table(['red', 'echo', 'thieves', 'trading'], { n: 4, round: 2, members: [[], ['echo.warmup'], [], ['echo.tuningfork']], queue: [{ t: 'round', r: 3 }] });
     s = answer(s, s.pending.options.find(o => o.label.startsWith('Walk-In')).id);
-    expect(s.players.map(p => p.res.red)).toEqual([1, 1, 1, 2]); // P4: Walk-In's +1 and Impressionist's +1
+    expect(s.players.map(p => p.res.red)).toEqual([1, 1, 1, 1]); // P4's cloak pays only P4's own copies
     expect(s.log).toContain("P1 +1 red (P2's Warm-Up Act).");
     expect(s.log).toContain("P4 +1 red (P2's Warm-Up Act).");
-    expect(s.log).toContain("P4's Impressionist: +1 red.");
+    expect(s.log.some(l => /Impressionist/.test(l))).toBe(false);
   });
 });

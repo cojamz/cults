@@ -310,14 +310,14 @@ describe('Magenta members', () => {
     expect(named(s, 'Safecracker').length).toBe(1);
     expect(ids(s)).not.toContain(`use:${uidIn(s, 'thieves.bigscore', 0)}`);
   });
-  it('× Safecracker: Bodyguards keeps its owner out of the steal; Fence pays its owner once', () => {
+  it('× Safecracker: Bodyguards keeps its owner out of the steal; a victim\'s Fence pays nothing (own steals only, Nov 6)', () => {
     let s = table(Q, { n: 3, res: [{ gold: 20 }, { magenta: 7 }, { gold: 3 }], members: [['thieves.bigscore'], ['thieves.watchdog'], ['thieves.fence']], shop: ROW });
     s = take(s, 'gold.rush');
     s = move(s, `use:${uidIn(s, 'thieves.bigscore', 0)}`);
     expect(s.pending.options.map(o => o.id)).toEqual(['take:2:gold']); // 2 from P3 only
     s = move(move(s, 'take:2:gold'), 'take:2:gold');
     expect(R(s, 1).magenta).toBe(7);
-    expect(R(s, 2)).toMatchObject({ gold: 1, magenta: 2 }); // Fence: +2 magenta
+    expect(R(s, 2)).toMatchObject({ gold: 1, magenta: 0 }); // Fence pays only its holder's own steals (Cory, Nov 6)
   });
   it('× Doppelganger copying Safecracker: a second use (the copy\'s own once-per-game)', () => {
     let s = table(Q, { res: [{ gold: 20 }, { magenta: 8 }], members: [['thieves.bigscore', 'echo.doppel']], shop: ROW });

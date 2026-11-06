@@ -24,7 +24,7 @@ import { swap11, handlers11 } from './replace11.js';
 
 // IMPRESSIONIST=n: bot test only; the game pays 1 (Claude, under Cory's "use your judgement", Nov 3; was 2, Cory Nov 1)
 // IMPRESSIONIST=self2: bot test of "Whenever you copy an action, +2 of its color." (Cory, Nov 6 question; off in the game)
-const IMPRESSION_RAW = String(globalThis.process?.env?.IMPRESSIONIST || '1');
+const IMPRESSION_RAW = String(globalThis.process?.env?.IMPRESSIONIST || 'self2m'); // live since Cory's Nov 6 "ok"
 const IMPRESSION_SELF = IMPRESSION_RAW.startsWith('self');
 const IMPRESSION = parseInt(IMPRESSION_RAW.replace('self', ''), 10) || 1; // self2m: members copied pay too (Cory, Nov 6)
 const impressed = (ctx, p) => (IMPRESSION_SELF ? [p] : ctx.state.players);
@@ -734,7 +734,7 @@ const echoQ = {
       toggle: true,
       onRecruited(ctx, owner, card) { card.on = true; },
     }),
-    m('tuningfork', 'Impressionist', 1, 2, 'Whenever any player copies an action, +1 of its color.'),
+    m('tuningfork', 'Impressionist', 1, 2, 'Whenever you copy an action or a member, +2 of its color (grey: any color).'),
     // Cory, 2026-10-28: back as a big card at 10 (6 green + 3 any + the +1 wild); no follower condition any more
     m('wallflower', 'Wallflower', 6, 3, 'Whenever you copy an action, double the resources it gives you.', { ...old2, ...old10('bigfinish'), ...old10('coverband') }),
     // REPLACE10 bot tests (Nov 4, Members D, requalified paper candidates; gate D-wallflower): Wallflower's place, 7 green

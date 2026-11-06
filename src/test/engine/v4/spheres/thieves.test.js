@@ -316,19 +316,19 @@ describe('Magenta members', () => {
     expect(R(s)[2]).toEqual({ ...Z, gold: 1 });
   });
 
-  it('Fence (Magenta Cloak): when a rival steals from you, +2 magenta, once per steal; your own steals and others\' pay nothing', () => {
+  it('Fence (Magenta Cloak): whenever you steal, +1 magenta, once per steal; a rival stealing from you pays nothing (Cory, Nov 6)', () => {
     const run = members => {
       const s = scene({ round: 2, res: [{}, { gold: 5 }, { gold: 3 }], members }); // P2 keeps 1 gold for the later steal
       return play(take(s, 'thieves.pickpocket'), 'take:1:gold', 'take:1:gold', 'take:1:gold', 'take:1:gold'); // one rival (Nov 5): round II's 4 from P2
     };
     const without = run([]), mine = run([['thieves.fence']]), victim = run([[], ['thieves.fence']]);
-    expect(R(mine)[0].magenta).toBe(R(without)[0].magenta); // the thief's own cloak: nothing
-    expect(R(victim)[1].magenta || 0).toBe((R(without)[1].magenta || 0) + 2); // one steal of several resources: +2 once
-    // two more steals: each its own steal; only the one from the holder pays
-    const ctx = contextFor(victim), m1 = victim.players[1].res.magenta || 0;
-    ctx.steal(victim.players[0], victim.players[1], { take: { gold: 1 } });
-    ctx.steal(victim.players[0], victim.players[2], { take: { gold: 1 } });
-    expect(victim.players[1].res.magenta).toBe(m1 + 2);
+    expect(R(mine)[0].magenta).toBe(R(without)[0].magenta + 1); // one steal of several resources: +1 once
+    expect(R(victim)[1].magenta || 0).toBe(R(without)[1].magenta || 0); // the victim's cloak: nothing
+    // two more steals by the holder: each its own steal, +1 each
+    const ctx = contextFor(mine), m0 = mine.players[0].res.magenta || 0;
+    ctx.steal(mine.players[0], mine.players[1], { take: { gold: 1 } });
+    ctx.steal(mine.players[0], mine.players[2], { take: { gold: 1 } });
+    expect(mine.players[0].res.magenta).toBe(m0 + 2);
   });
 
   it('Light Fingers: when a rival recruits a member costing 11+ (8+ until Nov 5), take 1 from them', () => {

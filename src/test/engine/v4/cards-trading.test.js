@@ -148,13 +148,13 @@ describe('White members', () => {
     expect(named(s, 'Raiders')).toEqual(["P1's Raiders stole 4 followers from P2 and paid 2 white."]);
   });
 
-  it('Raiders counts as a steal for the Magenta Cloak (Cory, Nov 1: "Count raiders… that should count"): its victim gets +2', () => {
-    const s = move(use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider'], ['thieves.fence'], []], shop: ROW, ...buy }), 'trading.raider'), 'player:1');
-    expect(R(s, 1).magenta).toBe(2);
+  it('Raiders counts as a steal for the Magenta Cloak (Cory, Nov 1: "Count raiders… that should count"): the thief gets +1', () => {
+    const s = move(use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider', 'thieves.fence'], [], []], shop: ROW, ...buy }), 'trading.raider'), 'player:1');
+    expect(R(s).magenta).toBe(1); // "Whenever you steal, +1 magenta." (Cory, Nov 6)
     expect(named(s, 'Fence')).toHaveLength(1);
-    // a bystander's cloak pays nothing (option C, Nov 1 8:25pm: "Whenever a rival steals from you, +2 magenta.")
-    const t = move(use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider'], [], ['thieves.fence']], shop: ROW, ...buy }), 'trading.raider'), 'player:1');
-    expect(R(t, 2).magenta || 0).toBe(0);
+    // the victim's cloak pays nothing
+    const t = move(use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider'], ['thieves.fence'], []], shop: ROW, ...buy }), 'trading.raider'), 'player:1');
+    expect(R(t, 1).magenta || 0).toBe(0);
   });
 
   it('Farewell casting out pays a rival\'s Recruiter nothing (it pays for shop recruits since Cory, Nov 1 3:59pm)', () => {
@@ -187,11 +187,11 @@ describe('White members', () => {
     expect(named(s, 'Undertaker')).toEqual(["P1's Undertaker: +2 followers."]);
   });
 
-  it('Money Changers: whenever any player buys followers, +1 white, +2 if it\'s you (named); Cash In is no buy', () => {
+  it('Money Changers: whenever you buy followers, +2 white (named); a rival\'s buy and Cash In pay nothing', () => {
     let s = table(Q, { res: [{ gold: 5 }], members: [[], ['trading.changer']], shop: ROW, ...buy });
     s = move(s, 'tier:mid');
-    expect([B(s), R(s, 1).white]).toEqual([5, 1]); // a rival's buy pays the holder
-    expect(named(s, 'Money Changers')).toEqual(["P2's Money Changers: +1 white."]);
+    expect([B(s), R(s, 1).white || 0]).toEqual([5, 0]); // a rival's buy pays nothing (Cory, Nov 6: own actions only)
+    expect(named(s, 'Money Changers')).toEqual([]);
     let t = table(Q, { res: [{ gold: 1 }], members: [['trading.changer']], shop: ROW, ...buy });
     t = move(t, 'tier:small');
     expect([B(t), R(t).white]).toEqual([1, 2]); // its holder's own buy: +2

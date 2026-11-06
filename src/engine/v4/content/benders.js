@@ -426,8 +426,9 @@ export const handlers = {
   }),
   pickColor(ctx, p, r, data) { // gainColorOf (color-of.js): Dabblers' owner picks its color
     if (!ctx.state.resources.includes(r)) return;
-    ctx.gain(p, r, 1);
-    ctx.log(`${p.name}'s ${data.who}: +1 ${r}.`);
+    const n = data?.n || 1; // a cloak's grey pick can pay more than 1 (Cory, Nov 6)
+    ctx.gain(p, r, n);
+    ctx.log(`${p.name}'s ${data.who}: +${n} ${r}.`);
   },
   anarchy(ctx, p, value) {
     if (!Array.isArray(value)) { ctx.log(`${p.name} chose not to swap.`); return; }

@@ -556,12 +556,12 @@ const silver = {
     })),
     // Cory, Nov 1: "whenever a player is gifted silver +1 silver", then +2 after the test read −4; one gift per space counts once
     // words and +1 (Cory, Nov 1, 2:25pm: "Whenever silver is gifted, +1 silver."), once per gift event
-    m('caterer', 'Caterer', 2, 2, 'Whenever silver is gifted, +1 silver.', {
+    m('caterer', 'Caterer', 2, 2, 'Whenever you gift silver, +3 silver.', {
       onAnyGifted(ctx, owner, card, giver, once) {
         const k = once || `${ctx.state.moves}:${giver.id}`;
         if (card.catered === k) return;
         // CATERER=self<n>: bot test of "Whenever you gift silver, +n silver." (own gifts only; Nov 6; off in the game)
-        const raw = String(globalThis.process?.env?.CATERER || '1'), self = raw.startsWith('self');
+        const raw = String(globalThis.process?.env?.CATERER || 'self3'), self = raw.startsWith('self');
         if (self && giver?.id !== owner.id) return;
         card.catered = k; ctx.gain(owner, S, Number(raw.replace('self', '') || 1)); // CATERER=n: bot test only (Nov 3)
       },

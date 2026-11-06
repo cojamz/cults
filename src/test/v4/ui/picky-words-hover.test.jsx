@@ -14,13 +14,14 @@ const start = (quadrants, seed = 7) => toPlace(createGame({ seats: [0, 1, 2, 3].
 const space = (s, qid, key) => [s.quadrants.indexOf(qid), spacesOf(s, qid).findIndex(a => a.key === key)];
 
 describe('picky words on hovers (Nov 4)', () => {
-  it("a rival's gain names the rival's cloak (W6)", () => {
+  // since Nov 6 every cloak pays only for its holder's own actions (Cory), so your space never pays a rival's cloak
+  it("your Blue space pays no rival's cloak, and the hover names none (W6)", () => {
     const s = start(['market', 'purple', 'silver', 'trading']);
     const pid = s.pending.player;
     const owner = s.players.find(p => p.artifact === s.artifacts.market);
     if (owner.id === pid) return; // this seed deals the viewer the Blue Cloak
     const why = ['bargain', 'restock', 'pricecheck'].flatMap(k => previewSpace(s, pid, ...space(s, 'market', k)).theirReasons);
-    expect(why).toContain(`${owner.name}’s Blue Cloak: +1 blue`);
+    expect(why.filter(l => /Cloak/.test(l))).toEqual([]);
   });
 
   it('a lone flat gain after the rule reads as yours, without a period (W7)', () => {

@@ -739,9 +739,9 @@ const trading = {
     // Cory, Nov 1: artifacts fire on any player's move ("Whenever any player buys followers, +1 white"): −8 → +1 in 400 games
     // Cory, Nov 3 8:52pm ("buff white a touch"): +2 on your own buys (Claude, under his go-with-your-gut; trial
     // cloaks-rw, holders 22% → 27% Normal, 21% → 28% Hard, 22% → 34% Very Hard)
-    m('changer', 'Money Changers', 2, 1, 'Whenever any player buys followers, +1 white (+2 if it\'s you).', { f: 2,
+    m('changer', 'Money Changers', 2, 1, 'Whenever you buy followers, +2 white.', { f: 2,
       onBuyFollowers(ctx, owner, card, buyer) {
-        const CH = globalThis.process?.env?.CHANGER || '';
+        const CH = globalThis.process?.env?.CHANGER || 'self'; // live: own buys only, +2 (Cory, Nov 6 "ok")
         if (CH.startsWith('self') && buyer?.id !== owner.id) return; // CHANGER=self: bot test only (Nov 3); self3: +3 (Nov 6)
         const k = CH === 'self3' ? 3 : buyer?.id === owner.id && CH !== 'one' ? 2 : 1; // CHANGER=one: +1 on every buy, bot test only (Nov 4, with Most white)
         ctx.gain(owner, W, k);

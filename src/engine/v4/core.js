@@ -1617,13 +1617,22 @@ function joinNow(state, p, w, defs) {
 /** IMPRESSIONIST=self<n>m, bot test only (Cory, Nov 6: Green Cloak "Maybe needs to be Action or Member ... keep in mind
  *  the new grey rule"): copying a member pays its holder +n of the member's color; a grey member's is any color (the bot
  *  takes the table color it has least of). */
+/** A cloak paying "of its color" for a grey member: grey is wild, so its holder picks one of the table's colors. */
+function greyPick(ctx, p, cloak, n) {
+  const colors = ctx.state.resources;
+  ctx.asMember(p, cloak.def.name, () => ctx.choose(p, `${ctx.cloakOr ? ctx.cloakOr(cloak, cloak.def.name) : cloak.def.name}: +${n} of which color (grey is wild)?`,
+    colors.map(r => ({ id: r, label: r[0].toUpperCase() + r.slice(1), kind: 'choice', value: r })), 'benders.pickColor',
+    { who: ctx.cloakOr ? ctx.cloakOr(cloak, cloak.def.name) : cloak.def.name, n }), cloak.uid);
+}
 function impressMember(state, p, uid) {
-  const m = String(globalThis.process?.env?.IMPRESSIONIST || '').match(/^self(\d+)m$/);
+  const m = String(globalThis.process?.env?.IMPRESSIONIST || 'self2m').match(/^self(\d+)m$/);
   if (!m) return;
   const ctx = ctxFor(state), cloak = ctx.abilitiesOf(p).find(c => c.def.id === 'echo.tuningfork');
   if (!cloak) return;
   const c = colorOf(cardDef(state, uid));
-  const color = state.resources.includes(c) ? c : [...state.resources].sort((a, b) => (p.res[a] || 0) - (p.res[b] || 0))[0];
+  // grey is wild (Cory, Nov 6): its holder picks the color
+  if (!state.resources.includes(c)) { greyPick(ctx, p, cloak, Number(m[1])); return; }
+  const color = c;
   ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, Number(m[1])); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
 }
 function borrowOnRecruit(state, p, uid) {
@@ -2189,8 +2198,8 @@ export function releaseRefund(state, uid) {
 function bottomBlue(state) {
   const ctx = ctxFor(state);
   // BARGAIN=self<n>: bot test only (Nov 6): pays only the player whose turn it is, +n
-  const own = String(globalThis.process?.env?.BARGAIN || '').match(/^self(\d+)$/);
-  if (/^cost\d*$/.test(globalThis.process?.env?.BARGAIN || '')) { bargainCost(state, 1); return; }
+  const own = String(globalThis.process?.env?.BARGAIN || 'cost2').match(/^self(\d+)$/);
+  if (/^cost\d*$/.test(globalThis.process?.env?.BARGAIN || 'cost2')) { bargainCost(state, 1); return; }
   for (const p of state.players) for (const c of ctx.abilitiesOf(p)) if (c.def.bottomBlue && (!own || state.current === p.id)) ctx.asMember(p, c.def.name, () => { const got = ctx.gain(p, 'blue', own ? Number(own[1]) : 1); if (got) ctx.log(`${p.name}'s ${c.def.name}: +${got.n} ${got.color}.`); }, c.uid);
 }
 /** BARGAIN=cost, bot test only (Cory, Nov 6: "when you bury a member get 1 of its cost. and grey should be wild"):
@@ -2206,9 +2215,11 @@ function bargainCost(state, k) {
   const cloak = ctx.abilitiesOf(p).find(c => c.def.bottomBlue);
   if (!cloak) return;
   for (const uid of discardOf(state).slice(-k)) {
-    const c = colorOf(cardDef(state, uid));
-    const color = state.resources.includes(c) ? c : [...state.resources].sort((a, b) => (p.res[a] || 0) - (p.res[b] || 0))[0];
-    ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, Number(String(globalThis.process?.env?.BARGAIN).slice(4)) || 1); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
+    const c = colorOf(cardDef(state, uid)), n = Number(String(globalThis.process?.env?.BARGAIN || 'cost2').slice(4)) || 1;
+    // grey is wild (Cory, Nov 6): its holder picks the color
+    if (!state.resources.includes(c)) { greyPick(ctx, p, cloak, n); continue; }
+    const color = c;
+    ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, n); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
   }
 }
 function release(state, p, uid) {

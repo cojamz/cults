@@ -289,11 +289,11 @@ describe('White members', () => {
     expect([R(s).white, B(s)]).toEqual([3, 2]);
   });
 
-  it('Money Changers: whenever any player buys followers, +1 white (+2 if it\'s you); turning things into followers is no buy', () => {
+  it('Money Changers: whenever you buy followers, +2 white; a rival\'s buy and turning things into followers pay nothing', () => {
     const bk = 'trading.changer';
     let s = scene({ res: [{ gold: 5 }], members: [[], [bk]], ...buyTurn });
     s = move(s, 'tier:mid');
-    expect([B(s), R(s, 1).white]).toEqual([5, 1]);
+    expect([B(s), R(s, 1).white || 0]).toEqual([5, 0]); // own buys only (Cory, Nov 6)
     s = scene({ res: [{ gold: 1 }], members: [[bk]], ...buyTurn });
     s = move(s, 'tier:small');
     expect([B(s), R(s).white]).toEqual([1, 2]);
