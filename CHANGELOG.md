@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.639 — 2026-11-06
+
+- Greatest Hits no longer loops forever when your Impersonator takes a rival's Stunt Double
+
 ## v0.99.638 — 2026-11-06
 
 - Tribute Band costs 10 green + 6 any; Sleepyheads gives +3 followers when you take the Goes Last token
