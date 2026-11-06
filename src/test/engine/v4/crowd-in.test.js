@@ -9,8 +9,8 @@ import { quadrant } from '../../../engine/v4/index.js';
 
 describe('Overtime', () => {
   it('round III: +3 purple and one more minion this round; no taken spaces opened; not open before round III', () => {
-    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 6, quadrants: ['gold', 'red', 'purple', 'echo'] });
-    const rand = seededRandom(6);
+    let s = createGame({ seats: Array.from({ length: 4 }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 1, quadrants: ['gold', 'red', 'purple', 'echo'] }); // seed 1 since Right Away +2/3/4 (Nov 6; 6 before)
+    const rand = seededRandom(1);
     const q = s.quadrants.indexOf('purple'), i = quadrant('purple').actions.findIndex(a => a.key === 'crowdin');
     while (!(s.round === 2 && s.pending?.kind === 'place')) s = applyMove(s, chooseBotMove(s, rand));
     expect(s.pending.options.some(o => o.id === `slot:${q}-${i}`)).toBe(false);

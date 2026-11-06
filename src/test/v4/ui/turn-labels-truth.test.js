@@ -21,7 +21,7 @@ const earlyN = s => (s.early && s.early.round === s.round ? s.early.moves.length
  *  plan without moving any count above: read it from the log lines since s (the log is capped, so from s's last line). */
 // lines since s: by position while the log isn't capped yet (a repeated line, "P3's Tax Collector: +1 gold.", fooled lastIndexOf)
 const since = (s, t) => (t.log.length >= s.log.length && t.log[s.log.length - 1] === s.log.at(-1) ? t.log.slice(s.log.length) : t.log.slice(t.log.lastIndexOf(s.log.at(-1)) + 1));
-const moved = (s, t) => since(s, t).some(l => / skips their next turn\.|'s turn is skipped| takes (their next|an extra|\d+ extra)| goes last this round\.| the Goes Last token/.test(l));
+const moved = (s, t) => since(s, t).some(l => / skips their next turn\.|'s turn is skipped| takes (their next|an extra|\d+ extra)| goes last this round\.| the Goes Last token|: .+ takes it now\./.test(l)); // (Early Birds handing a skipped turn back is a plan change too: Nov 6, 4 players seed 1)
 function realNext(s, rand) {
   const r = s.round, n0 = (s.turns || []).length, p0 = planned(s), e0 = earlyN(s);
   let t = s;
