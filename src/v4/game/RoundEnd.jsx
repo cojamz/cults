@@ -1,7 +1,7 @@
 // Round end as a moment: each quadrant's winner with a +N chip, follower totals ticking up (contests split from
 // everything else gained this round), then the button that starts the next round.
 import { useEffect, useRef, useState } from 'react';
-import { followers, quadrant, cardDef } from '../../engine/v4/index.js';
+import { followers } from '../../engine/v4/index.js';
 import { snakeWords } from './order.js';
 import { playerColor, roman, standings, scoredStandings, roundGains, membersParts, tiebreakNote, workersNote, firstPickWhy } from '../format.js';
 import Tick from './Tick.jsx';
@@ -10,6 +10,7 @@ import { useDialog } from './parts.jsx';
 import { Tip, ContestStandings, NamedText } from './Info.jsx';
 import { Who } from './Glyphs.jsx';
 import { Follower } from '../art/Follower.jsx';
+import { afterContestSteps } from './Reckoning.jsx';
 
 export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
   const { result, start, after, board } = info;
@@ -61,20 +62,30 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
   const first = !after.over && after.order && after.order.length ? after.players[after.order[0]] : null;
   const why = first ? firstPickWhy(after, first.id) : null;
   const whyFirst = !why || why === 'fewest followers' ? why : `${first.id === meId ? 'you have' : 'they have'} ${why}, a member who always goes first`;
+  // what each Round End card and each member after the contests did, from the closing move's own record
+  const stepWords = st => st.rows.map(x => {
+    const res = Object.entries(st.res[x.id] || {}).filter(([, n]) => n).map(([r, n]) => `${n < 0 ? '−' : '+'}${Math.abs(n)} ${r}`);
+    const t = [x.shown ? `${x.shown < 0 ? '−' : '+'}${Math.abs(x.shown)} follower${Math.abs(x.shown) === 1 ? '' : 's'}` : null, ...res].filter(Boolean);
+    // the owner's own gain needs no name again ("P2's Cheerleader: +2 followers"); a rival's does ("P1 −5 followers")
+    return t.length ? (x.id === st.pid ? t.join(', ') : `${name(x.id)} ${t.join(', ')}`) : null;
+  }).filter(Boolean).join('; ');
+  const roundEndSteps = afterContestSteps(info, 'roundEnd');
+  const afterSteps = afterContestSteps(info, 'afterContests');
+  const phaseLine = (label, steps, key) => steps.length > 0 && (
+    <p className="re-next re-final" data-phase={key}>
+      <b className="re-phase-in">{label}</b>{' '}
+      {steps.map((st, k) => <span key={st.key}>{k ? ' · ' : ''}<b>{name(st.pid)}</b>’s <NamedText state={after} text={st.rule} />: {stepWords(st)}</span>)}
+    </p>
+  );
   return (
     <div className="overlay moment" role="dialog" aria-modal="true" aria-label={`Round ${result.round} scoring`}>
       <div className="dialog roundend" ref={box} data-seats={after.players.length}>
         <h2>Round {result.round} scored</h2>
         <div className={`re-body${more ? ' more' : ''}`} ref={body}>
-        {/* the last round: the end-game bonuses lead, so the lines that can decide a close game are never below the fold
-            (RC1 panel: "More below ↓" hid them in a one-point game) */}
-        {/* …and with none, a quiet line at the foot says the totals are final (w3a #49: "none this game" led the summary) */}
-        {after.over && finalParts.length > 0 && (
-          <p className="re-next re-final" data-final-bonuses={finalParts.length}>
-            <b>End-game bonuses</b>, in these totals:{' '}
-            {after.players.filter(p => p.final && (p.final.parts.length || zeroOf(p).length)).map((p, k) => <span key={p.id} data-final-bonus={p.id}>{k ? ' · ' : ''}<b>{name(p.id)}</b> <NamedText state={after} text={[...p.final.parts, ...zeroOf(p)].join(', ')} /></span>)}
-          </p>
-        )}
+        {/* one step at a time, in the order they happen (Cory, Nov 5: "round ends, contests, members."): Round End cards,
+            the contests, the members that answer them, then (round III) the Game End members */}
+        {phaseLine('Round End', roundEndSteps, 'round-end')}
+        <p className="re-phase" data-phase="contests">Contests</p>
         <ul className="re-rows">
           {rows.map(r => (
             <li key={r.qid} style={{ '--c': `var(--${r.qid})` }} className={r.winners.length ? '' : 'none'} data-qid={r.qid} data-winners={r.winners.join(',')}>
@@ -87,7 +98,7 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
               <span className="re-w">
                 <span className="re-win">
                   {r.winners.length
-                    ? r.winners.map((id, k) => <b key={id}>{k ? ' & ' : ''}<Who state={after} id={id} meId={meId} />{winPerks(at, id, r.qid).map(t => <small key={t} className="re-tb" data-win-perk>{t}</small>)}</b>)
+                    ? r.winners.map((id, k) => <b key={id}>{k ? ' & ' : ''}<Who state={after} id={id} meId={meId} /></b>)
                     : r.spoiled != null
                       ? <em data-spoiled>nobody: <Who state={after} id={r.spoiled} meId={meId} /> spoiled it (Spoilsport)</em>
                       : <em>no one scored</em>}
@@ -104,6 +115,16 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
             </li>
           ))}
         </ul>
+        {phaseLine('After contests', afterSteps, 'after-contests')}
+        {/* the last round: the end-game bonuses lead, so the lines that can decide a close game are never below the fold
+            (RC1 panel: "More below ↓" hid them in a one-point game) */}
+        {/* …and with none, a quiet line at the foot says the totals are final (w3a #49: "none this game" led the summary) */}
+        {after.over && finalParts.length > 0 && (
+          <p className="re-next re-final" data-final-bonuses={finalParts.length}>
+            <b className="re-phase-in">Game End</b>{' '}
+            {after.players.filter(p => p.final && (p.final.parts.length || zeroOf(p).length)).map((p, k) => <span key={p.id} data-final-bonus={p.id}>{k ? ' · ' : ''}<b>{name(p.id)}</b> <NamedText state={after} text={[...p.final.parts, ...zeroOf(p)].join(', ')} /></span>)}
+          </p>
+        )}
         <div className="re-totals" role="table" aria-label="Followers after this round">
           <div className="re-head" role="row"><span role="columnheader">By followers</span><span role="columnheader" title="The rims' prizes this round (above)">Contests</span><span role="columnheader" title="Followers gained this round otherwise: what new members are worth, followers bought, and followers won or lost during play (members' abilities, spaces, sales and raids), as the results count them">This round</span><span role="columnheader">Followers</span></div>
           {ranked.map(p => {
@@ -163,12 +184,4 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
       </div>
     </div>
   );
-}
-
-// Members that pay on a contest win (Cheerleaders, Victors; Cory, Nov 4: "is there UI to clearly show when they trigger?"),
-// named under the winner of each contest, read from the cult at scoring
-const PERKS = { 'benders.cheerleaders': () => 'Cheerleaders: +2 followers', 'benders.victors': (st, qid) => `Victors: +2 ${quadrant(qid).resource}` };
-function winPerks(state, id, qid) {
-  const p = state.players[id];
-  return (p?.members || []).map(u => { const d = cardDef(state, u); return PERKS[d?.id]?.(state, qid); }).filter(Boolean);
 }

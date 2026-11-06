@@ -217,7 +217,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   if (income.length) fx = fx.filter(e => !income.includes(e));
   const beats = [];
   for (const e of fx) {
-    if (!e || !e.cause || ['contest', 'final'].includes(e.cause.kind)) continue; // the Reckoning flies prizes and end-game member bonuses
+    if (!e || !e.cause || ['contest', 'final'].includes(e.cause.kind) || e.phase === 'afterContests') continue; // the Reckoning flies prizes, the members that answer them and end-game member bonuses
     if (['refill', 'shop-out', 'discount'].includes(e.type)) continue; // bookkeeping: the deck deals, the price shows it
     const k = causeKey(e.cause);
     if (!beats.length || beats[beats.length - 1].key !== k) beats.push({ key: k, cause: e.cause, effects: [] });

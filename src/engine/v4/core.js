@@ -7,7 +7,7 @@ import { quadrant, defById, handlerById, defaultQuadrants, guestMembers, MAX_PLA
 import { shuffleInPlace } from './rng.js';
 import { CUT, CUT10, FULL_DECK } from './content/cull.js';
 import { pileRules } from './piles.js';
-import { startEffects, stopEffects, abandonEffects, underCause, markEffect } from './effects.js';
+import { startEffects, stopEffects, abandonEffects, underCause, markEffect, inPhase } from './effects.js';
 import { REPLACE4 } from './content/replace4.js';
 import { REPLACE6 } from './content/replace6.js';
 import { REPLACE9 } from './content/replace9.js';
@@ -1010,7 +1010,7 @@ function runTask(state, task) {
     case 'allPlaced': {
       // after the round's last placement, before its contests: members that act then (Straggler), in turn order
       const ctx = ctxFor(state);
-      for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.onAllPlaced) def.onAllPlaced(ctx, state.players[id], card); }, ['onAllPlaced']);
+      inPhase('roundEnd', () => { for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.onAllPlaced) def.onAllPlaced(ctx, state.players[id], card); }, ['onAllPlaced']); });
       if (state.loans?.length) loanDue(ctx); // Loan (REPLACE11=loan): the debts fall due
       return;
     }
@@ -1145,7 +1145,8 @@ function startRound(state, r) {
 
 function endRound(state) {
   const ctx = ctxFor(state);
-  eachMember(state, (owner, card, def) => { if (def.onRoundEnd) def.onRoundEnd(ctx, owner, card); }, ['onRoundEnd']);
+  // Round End cards act in this round's turn order, as the ones before them (Cory, Nov 5: "round ends, contests, members.")
+  inPhase('roundEnd', () => { for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.onRoundEnd) def.onRoundEnd(ctx, state.players[id], card); }, ['onRoundEnd']); });
   const v = RING_VALUE[state.round - 1];
   const msg = [];
   // one contest at a time, in cloak order: each prize (and Cheerleader's +1) lands before the next contest counts
@@ -1155,8 +1156,8 @@ function endRound(state) {
     if (c.copycats) msg.push(`${c.label}: ${c.copycats.map(id => `${state.players[id].name}'s Copycats`).join(' & ')} ${c.copycats.length > 1 ? 'tie' : 'ties'} for it, 1 short`);
     const winners = c.winners.map(id => state.players[id]);
     underCause({ kind: 'contest', qid: c.qid, round: state.round }, () => { for (const w of winners) { w.bonus += c.prize; w.contest += c.prize; fBump(state, w, c.prize); } });
-    // members that answer a contest won (Cheerleader)
-    for (const w of winners) eachMemberOf(state, w, (card, def) => { if (def.onContestWin) def.onContestWin(ctx, w, card, c); }, ['onContestWin']);
+    // members that answer a contest won (Cheerleader); the screen shows them with the members after the contests
+    inPhase('afterContests', () => { for (const w of winners) eachMemberOf(state, w, (card, def) => { if (def.onContestWin) def.onContestWin(ctx, w, card, c); }, ['onContestWin']); });
     msg.push(`${c.label}: ${winners.map(w => w.name).join(' & ')} +${c.prize}`);
   });
   // the round's scoring, kept as decided: the round-end card and the results read it back (never re-derived)
@@ -1166,9 +1167,12 @@ function endRound(state) {
   // paid Fence's magenta after Most magenta was scored, and the oracle read the later pile)
   if (state.stopAtScoring) return;
   // members that answer a rival winning a contest (Racketeers, REPLACE1 bot test), each winner of each contest
-  for (const c of table) for (const id of c.winners) eachMember(state, (owner, card, def) => { if (def.onRivalContestWin && owner.id !== id) def.onRivalContestWin(ctx, owner, card, state.players[id], c); }, ['onRivalContestWin']);
-  // members that read the scored contests (Sore Loser, live Nov 4; Second Fiddles, REPLACE5 bot test), in this round's turn order
-  for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.afterContests) def.afterContests(ctx, state.players[id], card, table); }, ['afterContests']);
+  // (one step for the screen: the Reckoning shows these after the contests, never the closing move's chain before them)
+  inPhase('afterContests', () => {
+    for (const c of table) for (const id of c.winners) eachMember(state, (owner, card, def) => { if (def.onRivalContestWin && owner.id !== id) def.onRivalContestWin(ctx, owner, card, state.players[id], c); }, ['onRivalContestWin']);
+    // members that read the scored contests (Sore Loser, live Nov 4; Second Fiddles, REPLACE5 bot test), in this round's turn order
+    for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.afterContests) def.afterContests(ctx, state.players[id], card, table); }, ['afterContests']);
+  });
   // Late Shoppers (REPLACE4 bot test: flag roundEndBuy): one recruit each, in this round's order, after the contests
   // and before the row goes to the bottom (in round III, before the Game End cards count)
   if (REPLACE4) {

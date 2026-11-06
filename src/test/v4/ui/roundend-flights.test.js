@@ -7,7 +7,7 @@ import { expect, it } from 'vitest';
 import { createGame, applyMove, chooseBotMove, followers } from '../../../engine/v4/index.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
 import { planChain } from '../../../v4/game/director.js';
-import { scoringSeatState } from '../../../v4/game/Reckoning.jsx';
+import { scoringSeatState, afterContestSteps } from '../../../v4/game/Reckoning.jsx';
 import { scoringSnapshot, newLogLines, isRoundEnd, parseRoundEnd } from '../../../v4/format.js';
 
 const SEATS = [{ name: 'P1', kind: 'bot' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];
@@ -51,7 +51,11 @@ it('flies only the closing move\'s own followers, from their own sources, before
       const scored = next.contests[next.contests.length - 1];
       const prize = {};
       for (const c of scored.results) for (const id of c.winners) prize[id] = (prize[id] || 0) + c.prize;
-      const own = Object.fromEntries(next.players.map(p => [p.id, followers(next, p) - (prize[p.id] || 0) - followers(prev, prev.players[p.id])]));
+      // ...and less what the members that answer the contests give (Cory, Nov 5: "round ends, contests, members."):
+      // the Reckoning shows those after the contests, never the closing move's chain before them
+      const later = {};
+      for (const st of afterContestSteps(info)) for (const [id, n] of Object.entries(st.deltas)) later[id] = (later[id] || 0) + n;
+      const own = Object.fromEntries(next.players.map(p => [p.id, followers(next, p) - (prize[p.id] || 0) - (later[p.id] || 0) - followers(prev, prev.players[p.id])]));
       const got = flown(plan);
       const moved = (shown.effects || []).some(e => ['member-move', 'release'].includes(e.type));
       for (const p of next.players) {

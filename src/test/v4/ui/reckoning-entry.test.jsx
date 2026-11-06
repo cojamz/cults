@@ -25,7 +25,7 @@ describe('scoring enters directly', () => {
   it('shows the first competition immediately, with its round cue and no pre-screen', () => {
     vi.useFakeTimers();
     const { container } = render(<Reckoning info={info()} root={null} onDone={() => {}} />);
-    expect(container.textContent).toContain('Round I scoring');
+    expect(container.textContent).toContain('Round I contests');
     expect(container.textContent).toContain('Most gold');
     expect(container.textContent).not.toMatch(/Round I ends/);
     expect(container.querySelector('.waiting')).toBe(null);

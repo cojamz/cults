@@ -59,6 +59,20 @@ export function markEffect(e) {
   top().snap = snap();
   rec.list.push({ n: rec.n++, cause: top().cause, ...e });
 }
+/**
+ * Run fn inside a round-end step (Cory, Nov 5: "round ends, contests, members."): every effect it records carries
+ * `phase`, so the table can hold the members that answer the contests ('afterContests') until the contests have shown.
+ */
+export function inPhase(phase, fn) {
+  if (!rec) return fn();
+  flush(top());
+  top().snap = snap();
+  const was = rec.phase;
+  rec.phase = phase;
+  try { return fn(); } finally {
+    if (rec) { flush(top()); top().snap = snap(); rec.phase = was; }
+  }
+}
 /** Run fn under a cause: what it changes is that cause's doing (nested causes inside it keep their own). */
 export function underCause(cause, fn) {
   if (!rec) return fn();
@@ -169,5 +183,5 @@ function flush(f) {
   // what was paid goes before what it bought; a member arrives before the followers it's worth
   const rank = { pay: 0, transfer: 1, 'shop-out': 2, recruit: 3, 'member-move': 3, release: 3, refill: 4, gain: 5, minion: 5, discount: 6, followers: 7 };
   out.sort((a, b) => rank[a.type] - rank[b.type]);
-  for (const e of out) rec.list.push({ n: rec.n++, ...e });
+  for (const e of out) rec.list.push({ n: rec.n++, ...e, ...(rec.phase ? { phase: rec.phase } : {}) });
 }
