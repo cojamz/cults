@@ -876,8 +876,8 @@ export default {
     // Sleepyheads (paper 17, set 17): pays whenever its owner's space or card takes the token (keeping it, by taking it
     // again, counts: the space says "Take the Goes Last token"); Early Birds stops the take, so no pay (core: takeToken).
     // Live Nov 6 in Night Watch's place (Cory: "1 ok"), at Night Watch's price (Claude, under Cory's go-with-your-gut).
-    m('sleepyheads', 'Sleepyheads', 2, 2, 'Whenever you take the Goes Last token, +2 followers.', { f: 2, n: 2, tokenPay: 2,
-      ...see(info => 2 * endsAhead(info).length),
+    m('sleepyheads', 'Sleepyheads', 2, 2, 'Whenever you take the Goes Last token, +3 followers.', { f: 2, n: 2, tokenPay: 3, // +3 (Cory, Nov 6 12:24am: "yes to sleepyheads")
+      ...see(info => 3 * endsAhead(info).length),
     }),
     // REPLACE7 (Nov 4, quality loop, Members A batch 5): Timekeeper's place, a round I first taste of the extra-turn plan
     // (director's ask; paper 18 vs 9, Purple's set 18 vs 9). Right Away's turn rule, carried, once a round, on your own

@@ -321,11 +321,11 @@ describe('Go-Between: "On Use, once per round: your next turn comes right after 
 
 describe('scale-up round 1: Sleepyheads, Night Shift, Drill Sergeant', () => {
   const turns = [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }, { t: 'turn', p: 1 }];
-  it('Sleepyheads: "Whenever you take the Goes Last token, +2 followers." Sleep In takes it: +2', () => {
+  it('Sleepyheads: "Whenever you take the Goes Last token, +3 followers." Sleep In takes it: +3', () => {
     let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 1, members: [['purple.sleepyheads']], queue: turns });
     s = take(s, 'purple.skip');
-    expect(s.players[0].bonus).toBe(2);
-    expect(named(s, 'Sleepyheads')).toContain("P1's Sleepyheads: P1 takes the Goes Last token, +2 followers.");
+    expect(s.players[0].bonus).toBe(3);
+    expect(named(s, 'Sleepyheads')).toContain("P1's Sleepyheads: P1 takes the Goes Last token, +3 followers.");
   });
   it('Sleepyheads with Early Birds: no take, no pay', () => {
     let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 1, members: [['purple.sleepyheads', 'purple.earlybird']], queue: turns });
