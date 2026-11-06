@@ -27,7 +27,7 @@ describe('REPLACE7: the switch', () => {
     expect(card('red.crimefamily')).toEqual(['Crime Family', 4, 3, 3, 3]);
     expect(card('purple.gobetween')).toEqual(['Go-Between', 2, 3, 1, 1]);
     expect(card('purple.nightshift')).toEqual(['Night Shift', 2, 3, 1, 1]);
-    expect(card('purple.sleepyheads')).toEqual(['Sleepyheads', 2, 3, 2, 2]);
+    expect(card('purple.sleepyheads')).toEqual(['Sleepyheads', 3, 3, 2, 2]);
     expect(card('red.drillsergeant')).toEqual(['Drill Sergeant', 4, 5, 1, 1]);
     expect(card('red.converts')).toEqual(['Converts', 4, 5, 2, 2]);
     expect(card('purple.snoozers')).toEqual(['Snoozers', 3, 2, 3, 3]);
@@ -41,7 +41,7 @@ describe('REPLACE7: the switch', () => {
     expect(card('purple.picketline')).toEqual(['Picket Line', 3, 2, 3, 3]);
     expect(card('purple.timekeeperlift')).toEqual(['Head Timekeeper', 2, 3, 1, 1]);
     expect(card('purple.oldtimer')).toEqual(['Old Timer', 2, 3, 1, 1]);
-    expect(card('purple.lookouts')).toEqual(['Lookouts', 2, 3, 2, 2]);
+    expect(card('purple.lookouts')).toEqual(['Lookouts', 3, 3, 2, 2]);
     expect(card('purple.errandboy')).toEqual(['Errand Boy', 2, 3, 1, 1]);
     expect(card('purple.moonlighters')).toEqual(['Moonlighters', 7, 2, 2, 2]);
     expect(card('purple.relayrunners')).toEqual(['Relay Runners', 2, 3, 2, 2]);
@@ -522,11 +522,11 @@ describe('"Paper filters, play ranks" cards (Nov 4)', () => {
     expect(followers(s, p)).toBe(before + 1);
     expect(logs).toEqual(["P1's Old Timer: a time token (worth 2)."]);
   });
-  it('Lookouts: "Whenever you take a consecutive turn, +1 follower."', () => {
+  it('Lookouts: "Whenever you take a consecutive turn, +2 followers. (Cory, Nov 6)"', () => {
     const s = table(['purple', 'red', 'market', 'yellow'], { round: 1, members: [['purple.lookouts'], []] });
     const p = s.players[0], logs = [], b = p.bonus;
     defById('purple.lookouts').onTurnInRow(stub(s, logs), p);
-    expect(p.bonus).toBe(b + 1);
+    expect(p.bonus).toBe(b + 2);
   });
   it('Moonlighters: after the last minion in round II, the extra turn may only join a taken space', () => {
     let s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 2, members: [['purple.moonlighters'], []],

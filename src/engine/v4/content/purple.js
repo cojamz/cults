@@ -842,10 +842,12 @@ export default {
       onRoundEnd(ctx, owner, card) { card.time = (card.time || 0) + 1; ctx.log(`${owner.name}'s Old Timer: a time token (worth ${1 + card.time}).`); },
       ...see(info => endsAhead(info).length),
     })),
-    ...add7(m('lookouts', 'Lookouts', 1, 2, 'Whenever you take a consecutive turn, +1 follower.', { f: 2, n: 2, round: 1,
-      onTurnInRow(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Lookouts: a turn in a row, +1 follower.`); },
-      ...see(info => 1.5 * endsAhead(info).length),
-    })),
+    // Live Nov 6 (Cory: "2 yea but plus 2 followers. fuck it just add them both. we'll slowly start getting to 12 each"):
+    // +2 followers, joining Purple's deck beside Night Owls. Night Watch's price (Claude, under Cory's go-with-your-gut).
+    m('lookouts', 'Lookouts', 2, 2, 'Whenever you take a consecutive turn, +2 followers.', { f: 2, n: 2,
+      onTurnInRow(ctx, owner) { owner.bonus += 2; ctx.log(`${owner.name}'s Lookouts: a turn in a row, +2 followers.`); },
+      ...see(info => 3 * endsAhead(info).length),
+    }),
     ...add7(m('errandboy', 'Errand Boy', 1, 2, 'On Recruit: your next turn comes right after this one.', { round: 1,
       onRecruited(ctx, owner) { turnsNow(ctx, owner, 1, 'Errand Boy'); },
     })),
@@ -867,9 +869,10 @@ export default {
     })),
     // Sleepyheads (paper 17, set 17): pays whenever its owner's space or card takes the token (keeping it, by taking it
     // again, counts: the space says "Take the Goes Last token"); Early Birds stops the take, so no pay (core: takeToken).
-    ...add7(m('sleepyheads', 'Sleepyheads', 1, 2, 'Whenever you take the Goes Last token, +2 followers.', { f: 2, n: 2, round: 1, tokenPay: 2,
+    // Live Nov 6 in Night Watch's place (Cory: "1 ok"), at Night Watch's price (Claude, under Cory's go-with-your-gut).
+    m('sleepyheads', 'Sleepyheads', 2, 2, 'Whenever you take the Goes Last token, +2 followers.', { f: 2, n: 2, tokenPay: 2,
       ...see(info => 2 * endsAhead(info).length),
-    })),
+    }),
     // REPLACE7 (Nov 4, quality loop, Members A batch 5): Timekeeper's place, a round I first taste of the extra-turn plan
     // (director's ask; paper 18 vs 9, Purple's set 18 vs 9). Right Away's turn rule, carried, once a round, on your own
     // turn: your last turn of the round moves up to right after this one (turnsNow, as Right Away). 2 purple + 2 any.
