@@ -193,7 +193,7 @@ const TABLE = {
   // --mo-slow scaled to match)
   turnCardHold: [2600, 2600],
   turnCardFold: [500,  500],
-  storyFly:     [420,  420],
+  storyFly:     [250,  300],
   jiggle:       [900,  900], // a member or cloak on its seat as its line shows on the story card (Cory, Nov 6) // the story card from the hub to the log area (Cory: "lingers too long")
   // the action stage (stage.js): the space taken flies out to the hub as a card, a member steps off its seat beside it,
   // what they give flows from there; when the chain ends the stage holds a moment, then each flies home
