@@ -324,7 +324,9 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   // beats, which keep their full timing
   const rival = mover != null && !mine.includes(mover) && sameRound && before.round >= 1;
   // a rival's turn told on the story card: no space card, no member bubbles; the space lights and the coins fly from it
-  const told = rival && storyAtHub();
+  // every turn is told on the story card or the strip's live row (Cory, Nov 6: "the card should basically be a mini log"),
+  // yours too: its members jiggle on their seats instead of popping notes (art director pass: three overlays at once)
+  const told = storyAtHub();
   const keep = [];
   let movePlace = null;
   let lastStart = null; // when the last beat that wasn't a rival's reaction began

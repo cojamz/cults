@@ -631,6 +631,7 @@ h1,h2,h3{font-family:var(--serif)}
 .turn-card.kept .tc-para > :first-child{display:inline-block;vertical-align:-2px;margin-right:2px}
 .turn-card.kept .tc-para .tc-head{font-size:12px;font-family:inherit}
 .turn-card.kept .tc-row{display:flex;align-items:center;gap:6px}
+.turn-card.at-hub .tc-wait{font-style:italic;color:var(--paper-ink-2)}
 /* a member or cloak whose line just showed on the story card (director.js jiggle) */
 .jig-lit{filter:brightness(1.45) drop-shadow(0 0 9px #ffd76a);position:relative;z-index:3}
 .turn-card.kept .tc-who{display:flex;align-items:center;gap:6px;font-family:var(--serif);font-weight:700;font-size:var(--s);padding-bottom:3px;margin-bottom:2px;border-bottom:1px solid color-mix(in srgb,var(--paper-ink) 18%,transparent)}

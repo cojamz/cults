@@ -62,10 +62,16 @@ function FullRow({ e, state, hover, name }) {
     const sc = Math.max(0.5, Math.min(1.6, h.rect.width / r.width));
     const dx = h.rect.left + h.rect.width / 2 - (r.left + r.width / 2), dy = h.rect.top + h.rect.height / 2 - (r.top + r.height / 2);
     // a copy flies on the page's top layer (the list clips its own rows), and the row shows as it lands
-    const g = el.cloneNode(true);
-    g.removeAttribute('data-since-full');
-    g.classList.add('since-fly');
-    Object.assign(g.style, { position: 'fixed', left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, margin: '0', zIndex: '70', pointerEvents: 'none' });
+    // (inside a copy of the strip's own boxes, so the row keeps its look and width in flight: the bare copy reflowed
+    // and ran over the rim, art director pass)
+    const c = el.cloneNode(true);
+    c.removeAttribute('data-since-full');
+    c.removeAttribute('data-turn-story');
+    const g = document.createElement('section'), ol = document.createElement('ol');
+    g.className = 'lt-since since-fly'; ol.className = 'since-list';
+    ol.appendChild(c); g.appendChild(ol);
+    Object.assign(g.style, { position: 'fixed', left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: 'auto', maxHeight: 'none', margin: '0', padding: '0', zIndex: '70', pointerEvents: 'none', background: 'none', overflow: 'visible', transformOrigin: '50% 50%' });
+    Object.assign(ol.style, { margin: '0', padding: '0', listStyle: 'none', maxHeight: 'none', overflow: 'visible' });
     document.body.appendChild(g);
     el.style.opacity = '0';
     const a = g.animate([{ transform: `translate(${dx}px,${dy}px) scale(${sc})` }, { transform: 'none' }], { duration: Math.round(MO.storyFly), easing: 'cubic-bezier(.3,.7,.3,1)' });

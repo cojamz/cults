@@ -650,8 +650,9 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
       {/* the log area's card: the whole turn as one paragraph, the head in bold, so it stays whole and small enough to
           leave the strip its lines (Cory, Nov 6: "always show the full story card without having to expand or scroll") */}
       {keep && <span className="tc-line tc-para"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={13} /> <b className="tc-head">{head}</b>{rest.length > 0 && <> · <Rich text={rest.join(' · ')} /></>}</span>}
-      {hub && <span className="tc-who"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={hub ? 16 : 13} /><span>{card.when ? `${pname === 'You' || /^You\b/.test(head) ? 'You' : pname}, ${card.when}` : pname === 'You' || /^You\b/.test(head) ? 'Your turn' : pname ? `${pname}’s turn` : ''}</span></span>}
-      {!keep && <b className="tc-head">{(hub || keep) && /^You /.test(head) ? `${head.charAt(4).toUpperCase()}${head.slice(5)}` : (hub || keep) && pname && head.startsWith(`${pname} `) ? `${head.charAt(pname.length + 1).toUpperCase()}${head.slice(pname.length + 2)}` : head}</b>}
+      {hub && <span className="tc-who"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={hub ? 16 : 13} /><span>{card.when ? `${pname === 'You' || /^You\b/.test(head) ? 'You' : pname}, ${card.when}` : pname === 'You' || /^You\b/.test(head) ? 'Your turn' : pname ? `${pname}${card.again ? ' again' : '’s turn'}` : ''}</span></span>}
+      {hub && !card.text && <span className="tc-line tc-wait">{card.why ? `${card.why} · ` : ''}choosing a space…</span>}
+      {!keep && !!card.text && <b className="tc-head">{(hub || keep) && /^You /.test(head) ? `${head.charAt(4).toUpperCase()}${head.slice(5)}` : (hub || keep) && pname && head.startsWith(`${pname} `) ? `${head.charAt(pname.length + 1).toUpperCase()}${head.slice(pname.length + 2)}` : head}</b>}
       {!keep && rest.map((l, k) => <span key={hub ? k : `${k}:${l}`} className="tc-line"><Rich text={l} /></span>)}
       {/* what didn't fit opens on the "and N more" line, every line in its card (picky bot, Nov 4: "+3 more" with no way
           to see them) */}
@@ -992,6 +993,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     return {
       since: sinceYourTurn(t, mySeats),
       mineNow: now && mySeats.includes(now.actor) ? { ...now, n: -1 } : null,
+      // a rival's turn that has begun but made no move yet: its card comes up at once with only its header, and the
+      // lines arrive on the same card (art director pass: 3-4 s of an empty middle while a rival thought)
+      waiting: !now && t.cur && t.cur.start === t.last && !mySeats.includes(t.cur.actor) && live0.round >= 1 && !live0.over ? { pid: t.cur.actor, text: '', live: true, n: `c${t.cur.key}`, why: t.cur.why || null } : null,
       live: now ? { pid: now.actor, text: now.text, live: true, n: `c${t.cur.key}` } : off ? { pid: off.actor, text: off.text, live: true, n: `o${off.n}`, when: off.when } : null,
       told: tl && tl.round === live0.round && !live0.over ? { pid: tl.actor, text: tl.text, live: false, n: `t${tl.n}` } : null,
       touched: [...new Set(fresh.flatMap(st => st.touched))],
@@ -1029,7 +1033,10 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const momentChain = useChainRunning(!!moment);
   const chainOn = moment ? momentChain : physicalState !== interactionState;
   const tailOf = moment ? lastAny : lastDone;
-  const hubStory = liveRival || (chainOn && !story.live && tailOf && !mySeats.includes(tailOf.pid) ? tailOf : null);
+  const hubStory = liveRival || (chainOn && !story.live && tailOf && !mySeats.includes(tailOf.pid) ? tailOf : null) || (!chainOn ? story.waiting : null);
+  // the same player again (a snake turnaround, an extra turn) says so on its card, so a second turn reads as new
+  const prevStory = allStories[allStories.length - (hubStory && hubStory === tailOf ? 2 : 1)];
+  const hubAgain = !!(hubStory && prevStory && prevStory.actor === hubStory.pid && prevStory.round === live0.round);
   // a rival's story card on the hub is never covered (Cory, Nov 6: "it gets covered up by so much other stuff"): a
   // space's card left up from your own turn closes as theirs comes up (critic pass: Out of Style's card sat on the hub)
   const hubKey = storyAtHub() && hubStory ? hubStory.n : null;
@@ -1783,7 +1790,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
               // a held line addressed to someone else is never shown in this one's voice (w3b: your "Choose how to
               // pay" stayed up, dotted like a rival's, while the bots moved): it gives way to the current line
               // (a rival's move already playing names them, never "Your turn is over" under their story card)
-              const p = turnOver && !(storyAtHub() && hubStory) ? { who: turnOver, text: humansHere ? `${turnOver.name}’s turn is over` : 'Your turn is over', over: true }
+              const p = turnOver && !(storyAtHub() && hubStory && hubStory.text) ? { who: turnOver, text: humansHere ? `${turnOver.name}’s turn is over` : 'Your turn is over', over: true }
                 : storyAtHub() && hubStory ? { who: state.players[hubStory.pid] ? { ...state.players[hubStory.pid], id: hubStory.pid } : null, text: hubStory.when ? `${state.players[hubStory.pid]?.name || ''}, ${hubStory.when}` : `${state.players[hubStory.pid]?.name || ''}’s turn` }
                 : held.forMe === pr.forMe || (!held.forMe && rivalPlaying) ? held : pr;
               // a rival's line held while their pieces land is said in their voice, never as "Your turn — p4 is paying"
@@ -1902,7 +1909,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
         // (a rival's card stays until its own moves have played: hubStory)
         if (state.over || (moment && !hubStory)) return null;
         return <>
-          {hubStory && <TurnCard key={`hub${hubStory.k || hubStory.n}`} card={hubStory} root={rootEl} state={state} hub />}
+          {hubStory && <TurnCard key={`hub${hubStory.k || hubStory.n}`} card={hubAgain ? { ...hubStory, again: true } : hubStory} root={rootEl} state={state} hub />}
 
           
         </>;

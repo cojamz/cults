@@ -2,6 +2,11 @@ import { afterEach, expect, it } from 'vitest';
 import { planChain, rewindPlan, isUndo } from '../../../v4/game/director.js';
 import { motionSpeed, setMotionSpeed } from '../../../v4/motion.js';
 import { sceneQ } from '../../engine/v4/cards-helpers.js';
+import { beforeAll as dockOn, afterAll as dockOff } from 'vitest';
+// These check the older dock path (popping notes); the centre story card has its own gates (e2e turnstory, turndock).
+let dockHref = '';
+dockOn(() => { if (globalThis.history) { dockHref = location.href; history.replaceState(null, '', '?story=dock'); } });
+dockOff(() => { if (globalThis.history) history.replaceState(null, '', dockHref); });
 
 const speed = motionSpeed();
 afterEach(() => setMotionSpeed(speed));

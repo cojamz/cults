@@ -2,6 +2,11 @@ import { it, expect } from 'vitest';
 import { applyMove } from '../../../engine/v4/index.js';
 import { planChain } from '../../../v4/game/director.js';
 import { sceneQ, spaceOf } from '../../engine/v4/cards-helpers.js';
+import { beforeAll as dockOn, afterAll as dockOff } from 'vitest';
+// These check the older dock path (popping notes); the centre story card has its own gates (e2e turnstory, turndock).
+let dockHref = '';
+dockOn(() => { if (globalThis.history) { dockHref = location.href; history.replaceState(null, '', '?story=dock'); } });
+dockOff(() => { if (globalThis.history) history.replaceState(null, '', dockHref); });
 
 it('keeps the producing member as the source when its resources fly from the stage', () => {
   const before = sceneQ({ quadrants: ['silver', 'gold'], members: [['silver.majordomo']] });
