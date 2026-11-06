@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.626 — 2026-11-05
+
+- Debt Collectors: once per round (was once per game), and 1 any cheaper
+
 ## v0.99.625 — 2026-11-05
 
 - Sweet Nothings replaces Potluck on Silver round II: +3 silver, give rivals up to 3 of your silver, +2 of any colors each (Cory)
