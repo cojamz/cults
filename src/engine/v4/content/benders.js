@@ -278,7 +278,8 @@ const members = [
       for (const c of table) if (c.winners.includes(owner.id)) { owner.bonus += 2; ctx.log(`${owner.name}'s Cheerleaders: +2 followers.`); }
     },
   })),
-  ...add15(m('victors', 'Victors', null, 0, 4, 'Whenever you win a contest, +2 of its color.', {
+  // retired Nov 6 (Cory: "i said Victors is bad didnt we take that out??"); grey deals 11 again
+  ...add15(m('victors', 'Victors', null, 0, 4, 'Whenever you win a contest, +2 of its color.', { retired: true,
     afterContests(ctx, owner, card, table) {
       for (const c of table) if (c.winners.includes(owner.id)) {
         const color = ctx.quadrant(c.qid).resource;

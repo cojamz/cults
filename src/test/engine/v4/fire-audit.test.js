@@ -90,6 +90,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
     'echo.bait', // Bait pays only when a rival copies its owner's space; the Nov 3 live replacements moved the games so its 3 holders were never copied. green-bait-trading covers it
     'market.sommelier', // Sommelier (cut) pays only when its owner recruits a blue member; every member +1 (Nov 5) moved the games so its 4 holders never did. cards-market covers it
     'market.restocker', // Restockers: bots held it in 4 seeded games without using it once Out of Style went back to per member (Oct 28); cards-member-structure covers it
+    'thieves.fixer', // Fixer is On Use once per game; Victors leaving the grey deck (Nov 6) moved the games so its 3 holders never used it. cards-member-structure (Fixer) covers it
     'market.mannequin']); // Mannequin only changes contest counts and writes no line of its own; held in 5 games after Nov 5's deck moved them. replace9.test.js covers it
   const TABLES = [
     ['thieves', 'market', 'trading', 'echo'], ['gold', 'thieves', 'trading', 'echo'], ['red', 'market', 'thieves', 'echo'],
@@ -126,7 +127,8 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'market.mannequin', // live Nov 5 in Hawker's place (Cory cut Hawker); under 3 holds in these games, and a quiet contest count; replace9.test.js (Mannequin) covers it
       'thieves.hoardbreaker', 'thieves.bigscore', 'thieves.fixer', 'echo.songrequest', 'echo.choir', // under 3 holds when Cory's Nov 5 cuts, prices and Big Score moved the games; replace10-d3 (Big Score), cards-thieves and cards-echo cover them
       'thieves.secondstory', 'thieves.desperado', // under 3 holds when Last-Minute Shopper and Power Shoppers (Nov 5) moved the games; cards-thieves covers them
-      'trading.tipster']); // under 3 holds when the Nov 5 deck moved the games (hidden behind Mannequin's line until it was cleared); cards-skips-b covers it
+      'trading.tipster', // under 3 holds when the Nov 5 deck moved the games (hidden behind Mannequin's line until it was cleared); cards-skips-b covers it
+      'trading.pawnbroker']); // under 3 holds when Victors left the grey deck (Nov 6) moved the games; replace12c and member-use cover it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);
     expect(unseen).toEqual([]);
@@ -143,8 +145,8 @@ const SPHERES = ['gold', 'red', 'purple', 'silver', 'yellow'];
 // Members that may stay unnamed on bot tables, with why (see design/eval/card-ledger-a.md).
 // Conditional cards that can go a whole bot game without their condition; each has a named test of its own.
 const ALLOW = {
-  // Sweet Nothings in Potluck's place (Nov 6) moved the seeded games: recruited in 1, and no rival recruited its color after
-  'yellow.dutycollector': 'pays only when a rival recruits a color you have a member of (dutycollector-live.test.js)',
+  // Victors leaving the grey deck (Nov 6) moved the seeded games: recruited in 5 without placing the round's last minion
+  'purple.nightmanager': 'pays only when its owner placed the round\'s last minion (replace7.test.js: Night Manager)',
   // Promote no longer reaching cheaper (Nov 4 night) moved the seeded games: recruited in 1 game, never named there
   'purple.errand': 'On Recruit: an extra turn; recruited once in the sample (cards-purple covers it)',
   // Cheerleaders and Victors joining the grey deck (Nov 4) moved the seeded games: recruited in 1 game, never named there
@@ -190,7 +192,7 @@ const ALLOW = {
   // changes no number, so there is no payout line to name it (v0.8.2 Red deck)
   // the Nov 1 balance numbers (Last Call, Customs Officer, Loyalists…) moved the seeded games: recruited in 1, as its owner's last
   // Silver's Nov 1 members: bots use it only when rivals together hold 2 silver each, which these games rarely gave (thread told)
-  'silver.debtcollector': 'On Use, once per round; a bot waits for rivals to hold silver (cards-silver: Debt Collectors)',
+  'silver.debtcollector': 'On Use, once per game; a bot waits for rivals to hold silver (cards-silver: Debt Collectors)',
   'yellow.puppeteer': 'new Nov 1; recruited in 2 seeded games without its moment (cards-yellow: Puppeteers)',
   'silver.guest': 'Hangers-On pays only when a rival gives its owner something; recruited once after Collector went to 6 (cards-silver: Hangers-On)',
   'red.recruiter': 'pays only when a member leaves a rival’s cult (Poach, a rival swap, a steal); rare in the sample (cards-red: Recruiter)',

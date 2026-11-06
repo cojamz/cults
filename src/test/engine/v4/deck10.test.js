@@ -21,17 +21,17 @@ const R1 = { red: 3, echo: 2, thieves: 2, purple: 4, market: 5, trading: 4, yell
 const N = { red: 10, echo: 10, thieves: 10, purple: 11, market: 10, trading: 10, yellow: 10 }; // purple 11: Night Watch out, Sleepyheads and Lookouts in (Cory, Nov 6: "we'll slowly start getting to 12 each")
 
 describe('10-card decks', () => {
-  it('deals 10 of each 2.0 color and 12 grey (Cheerleaders and Victors, Nov 4); round I gets only the cheap ones (Cory, Nov 5)', () => {
+  it('deals 10 of each 2.0 color and 11 grey (Cheerleaders in Nov 4; Victors out Nov 6); round I gets only the cheap ones (Cory, Nov 5)', () => {
     for (let i = 0; i < COLORS.length; i += 4) {
       const table = COLORS.slice(i, i + 4).concat(COLORS.slice(0, Math.max(0, 4 - COLORS.slice(i, i + 4).length)));
       const s = deal(table, 10);
       for (const q of table) expect(count(s, q), q).toEqual({ n: N[q], r1: R1[q] });
-      expect(count(s, 'grey')).toEqual({ n: 12, r1: 2 });
+      expect(count(s, 'grey')).toEqual({ n: 11, r1: 2 });
     }
   });
   it('without the rule a table deals the bigger decks', () => {
     const s = deal(['red', 'echo', 'thieves', 'purple']);
     expect(count(s, 'echo').n).toBeGreaterThan(10);
-    expect(count(s, 'grey').n).toBe(17);
+    expect(count(s, 'grey').n).toBe(16);
   });
 });

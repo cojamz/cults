@@ -341,8 +341,9 @@ describe('scale-up round 1: Sleepyheads, Night Shift, Drill Sergeant', () => {
   });
   it('Drill Sergeant: "Whenever you recruit 2 or more members in one turn, +3 followers." Mentor brings a second: +3, once', async () => {
     const { contextFor } = await import('../../../engine/v4/core.js');
-    const s = table(['red', 'market', 'trading', 'yellow'], { n: 2, round: 3, members: [['red.drillsergeant'], []], shop: ['red.mentor', 'red.volunteer'] });
+    const s = table(['red', 'market', 'trading', 'yellow'], { n: 2, round: 3, members: [['red.drillsergeant'], []], shop: ['red.mentor', 'red.seatfiller'] });
     s.current = 0; s.players[0].turnRecruits = 0;
+    s.pile = []; // no refill: Seat Filler is the one shop member left (Volunteer left the deck Nov 5; the test rode on a refill until Victors left, Nov 6)
     contextFor(s).recruit(s.players[0], uidIn(s, 'red.mentor', 'shop'), { free: true });
     expect(s.log.some(l => l.includes('Mentor: the cheapest face-up member comes along free'))).toBe(true);
     expect(s.players[0].bonus).toBe(3);
