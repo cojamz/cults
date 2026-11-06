@@ -23,7 +23,11 @@ import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 import { swap11, handlers11 } from './replace11.js';
 
 // IMPRESSIONIST=n: bot test only; the game pays 1 (Claude, under Cory's "use your judgement", Nov 3; was 2, Cory Nov 1)
-const IMPRESSION = Number(globalThis.process?.env?.IMPRESSIONIST || 1);
+// IMPRESSIONIST=self2: bot test of "Whenever you copy an action, +2 of its color." (Cory, Nov 6 question; off in the game)
+const IMPRESSION_RAW = String(globalThis.process?.env?.IMPRESSIONIST || '1');
+const IMPRESSION_SELF = IMPRESSION_RAW.startsWith('self');
+const IMPRESSION = Number(IMPRESSION_RAW.replace('self', '') || 1);
+const impressed = (ctx, p) => (IMPRESSION_SELF ? [p] : ctx.state.players);
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const costOf = def => def.s + def.w;
 const COPYIST = 2; // +2, the version Cory short-listed (live Nov 5; was REPLACE10 copyist2)
@@ -362,7 +366,7 @@ function copyResolved(ctx, p, e, { later, by, asker }) {
 function heard(ctx, p, e, taker) {
   // each runs as its member, so the log names it ("P1's Choir: +1 green.")
   // any player's copy, +2 (Cory, Nov 1)
-  for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(e.color).resource, IMPRESSION));
+  for (const o of impressed(ctx, p)) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(e.color).resource, IMPRESSION));
   // Royalties (REPLACE11=royalties): a rival copying Royalties pays its taker's tab +2 green
   if (e.name === 'Royalties') for (const t of ctx.state.royalties || []) if (t.round === ctx.state.round && t.pid !== p.id) {
     const o = ctx.player(t.pid); ctx.gain(o, 'green', 2); ctx.log(`${o.name}'s Royalties: ${p.name} copied it, +2 green.`);
@@ -590,7 +594,7 @@ const echoQ = {
       if (!hit) { ctx.log(`${p.name}: that action has a minion now.`); return; }
       withPath(ctx, [...pathNow(ctx), key], () => {
         ctx.log(`${p.name} copies ${hit.a.name}: doing it.`);
-        for (const o of ctx.state.players) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(hit.qid).resource, IMPRESSION));
+        for (const o of impressed(ctx, p)) each(ctx, o, 'tuningfork', 'Impressionist', () => ctx.gain(o, ctx.quadrant(hit.qid).resource, IMPRESSION));
         each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
         each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += COPYIST; }); // REPLACE10
         each(ctx, p, 'roadie9', 'Roadie', () => { const g = ctx.countMembersOfColor(p, 'echo'); if (g) ctx.gain(p, 'green', g); }); // REPLACE9
