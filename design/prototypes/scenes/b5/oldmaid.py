@@ -1,79 +1,80 @@
 import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
 
-# Old Maid (was Saboteur; Cory, 2026-10-31): the card nobody wants stuck in their hand. A prim old lady in her
-# parlour, holding her hand of cards close, the cat at her feet, tea on the side table.
+# Ghost (was Old Maid, was Saboteur; Cory, Nov 5: "Ghost needs a new picture"). A pale lady ghost drifting down a
+# dark hallway, candle held out, her gown trailing off into wisps above the floor; the moonlit window and a
+# portrait on the wall say old house. The card costs its owner 5 followers: she's the one who scares them off.
 
 
-def oldmaid():
+def ghost():
     c = C(N)
-    pal = base(PALE, 'grey', p='#7a6572', P='#6d5966', f='#5b4234', F='#4c372b',
-               W='#c9d3d6', V='#a9b6bb', L='#e8dfcf', l='#cdbfa9',
-               o='#8a5b3c', O='#6e4630', t='#f4ede1', T='#c9c0b2',
-               H='#d8d8de', z='#a7a7b2', q='#6f7376', Q='#585c5f',
-               c='#d98a3e', C='#b36a2a', R='#b8423a', h='#4a3a33')
-    c.rect(0, 0, 63, 63, 'p'); c.rect(0, 36, 63, 53, 'P'); c.rect(0, 54, 63, 63, 'f')
+    pal = base(('#dfe7ea', '#b3c1c7'), 'grey',
+               p='#454a5a', P='#3d4252', f='#3a2f2c', F='#302725', g='#525870',
+               W='#c9d6e4', V='#93a6bf', o='#5a4636', O='#47372b',
+               H='#b4bfc6', z='#8f9ca5',
+               r='#40465a', y='#ffe27a', Y='#e09a3a', b='#b08a44', B='#8a6a32', t='#f4ede1')
+    pal['1'] = '#cdd4d6'; pal['2'] = '#9aa1a0'
+    # dim hallway: two close wall tones, a dark wood floor
+    c.rect(0, 0, 63, 63, 'p'); c.rect(0, 40, 63, 53, 'P'); c.rect(0, 54, 63, 63, 'f'); c.hl(0, 63, 54, 'F')
 
-    def window(l):                                  # small window, lace curtains drawn back
-        l.rect(4, 6, 19, 26, 'o'); l.rect(6, 8, 17, 24, 'W'); l.vl(11, 8, 24, 'o'); l.vl(12, 8, 24, 'o')
-        l.hl(6, 17, 16, 'o'); l.rect(13, 9, 17, 15, 'V')
-        l.poly([(3, 5), (8, 5), (6, 16), (4, 27), (3, 27)], 'L'); l.poly([(15, 5), (20, 5), (20, 27), (18, 27), (17, 16)], 'L')
-        l.pts('l', [(4, 9), (4, 10), (4, 11), (5, 19), (5, 20), (4, 23), (4, 24), (4, 25),
-                    (19, 9), (19, 10), (19, 11), (18, 19), (18, 20), (19, 23), (19, 24), (19, 25)])
+    def window(l):                                  # tall moonlit window, the brightest thing behind her
+        l.rect(4, 5, 17, 31, 'o'); l.rect(6, 7, 15, 29, 'W'); l.vl(10, 7, 29, 'o'); l.vl(11, 7, 29, 'o')
+        l.hl(6, 15, 18, 'o'); l.rect(12, 8, 15, 12, 'V'); l.rect(6, 20, 9, 29, 'V')
+        l.ell(6, 8, 9, 11, 't')                     # the moon, top left pane
     bg(c, window, None)
 
-    def table(l):                                   # little round side table, cup and saucer
-        l.rect(4, 40, 19, 40, 'o'); l.hl(5, 18, 41, 'O'); l.vl(11, 42, 54, 'o'); l.vl(12, 42, 54, 'O')
-        l.hl(8, 15, 55, 'O'); l.hl(9, 14, 54, 'o')
-        l.hl(7, 15, 39, 't'); l.rect(9, 35, 13, 38, 't'); l.pts('T', [(13, 36), (13, 37), (12, 38)])
-        l.pts('t', [(14, 36), (15, 36), (15, 37)]); l.hl(9, 13, 35, 'T')
-    bg(c, table, None)
+    def frame(l):                                   # a dark portrait on the wall, gold frame
+        l.rect(48, 9, 59, 24, 'B'); l.rect(50, 11, 57, 22, 'P')
+        l.ell(51, 13, 56, 19, 'o'); l.rect(51, 18, 56, 22, 'O')
+    bg(c, frame, None)
 
-    cx = 37
-    hy = 17
-    ty = hy + 15
-    DK = {'1': '2', 'q': 'Q', 'H': 'z', 'w': 'T', 't': 'T'}
+    def shadow(l):                                  # her cool shadow on the boards: she floats above it
+        l.ell(24, 57, 46, 60, 'F')
+    bg(c, shadow, None)
 
-    def front(f):                                   # long skirt over the legs, lace collar, a fold at the hem
-        f.poly([(cx - 7, 43), (cx + 8, 43), (cx + 11, 53), (cx - 10, 53)], 'q')
-        f.poly([(cx + 6, 47), (cx + 7, 47), (cx + 10, 53), (cx + 6, 53)], 'Q', only='q')
-        f.pts('h', [(cx - 6, 54), (cx - 5, 54), (cx - 4, 54), (cx + 3, 54), (cx + 4, 54), (cx + 5, 54)])
-        f.rect(cx - 3, ty, cx + 3, ty + 1, 'w'); f.pts('w', [(cx - 2, ty + 2), (cx + 2, ty + 2)]); f.px(cx, ty + 1, 'T')
+    cx = 34
+    hy = 9
+    ty = hy + 17
+    DK = {'1': '2', 'H': 'z', 's': 'S', 'b': 'B'}
 
-    def bun(f):                                     # a small round bun at the back of the head
-        x1 = cx - 7 + 13
-        f.rect(x1 - 3, hy - 4, x1, hy - 1, 'H'); f.pts('.', [(x1 - 3, hy - 4), (x1, hy - 4)])
-        f.pts('z', [(x1, hy - 2), (x1 - 1, hy - 1), (x1, hy - 1)])
+    def front(f):                                   # long gown, wider at the hem, three wisps trailing off
+        f.poly([(cx - 8, ty + 3), (cx + 8, ty + 3), (cx + 12, 48), (cx - 12, 48)], '1')
+        for wx, wy in ((cx - 10, 52), (cx - 1, 54), (cx + 8, 51)):
+            f.poly([(wx - 3, 47), (wx + 4, 47), (wx + 1, wy), (wx, wy)], '1')
+        f.poly([(cx + 6, ty + 9), (cx + 9, ty + 9), (cx + 12, 48), (cx + 6, 48)], '2', only='1')     # wedge under the far arm
+        f.poly([(cx + 6, 46), (cx + 10, 46), (cx + 8, 50)], '2', only='1')
 
-    def cards(f):                                   # her hand of cards, backs out: bottoms together in her hands, tops spread
+    def bun_hair(f, x0, y0):                        # hair pinned up in a bun, as she wore it in life
+        h = layer(); hair(h, x0, y0, 16, 'bun', 'H', 'z', side='L')
+        h.rect(x0 - 1, y0 + 5, x0, y0 + 11, 'H'); h.rect(x0 + 15, y0 + 5, x0 + 16, y0 + 11, 'z')   # locks past the cheeks
+        h.px(x0 - 1, y0 + 11, '.'); h.px(x0 + 16, y0 + 11, '.')
+        f.paste(h)
+
+    def candle(f):                                  # brass candlestick in her near hand, flame the one warm light
         l = layer()
-        for i, (bx, lean, top) in enumerate([(cx - 7, -4, 38), (cx - 5, -2, 36), (cx - 2, 0, 35), (cx + 1, 2, 36), (cx + 3, 4, 38)]):
-            for y in range(top, 45):
-                x = bx + round(lean * (44 - y) / (44 - top))
-                face = i == 4                       # the front card shows its face: one red pip
-                l.hl(x, x + 4, y, 't' if y == top or face else 'R')
-                l.px(x, y, 'T' if face else 't'); l.px(x + 4, y, 'T')
-                if face and y in (top + 2, top + 3):
-                    l.hl(x + 2, x + 3, y, 'R')
-        over(f, l, DK)
-        for hx, flip in ((cx - 8, False), (cx + 5, True)):    # thumbs over the front of the fan
-            hand(f, hx, 43, 'grip', 's', 'S', flip)
+        l.rect(cx - 17, ty + 9, cx - 12, ty + 10, 'b'); l.hl(cx - 16, cx - 13, ty + 11, 'B')
+        l.rect(cx - 15, ty + 1, cx - 14, ty + 8, 't'); l.px(cx - 14, ty + 8, 'z')
+        f.paste(l)
 
-    person(c, cx, hy, hs='short', hk='H', hdk='z', mouth='flat', brows='stern', brow='z',
-           shirt='1', sdk='2', sw=7, ww=6, th=11, pants='q', pdk='Q', shoe='h', lh=4, gap=2, front=front, DK=DK, slope=3,
-           arms=[([(cx - 6, ty + 4), (cx - 11, ty + 8), (cx - 7, ty + 12)], 4, '1'),
-                 ([(cx + 6, ty + 4), (cx + 11, ty + 8), (cx + 7, ty + 12)], 4, '1')],
-           hands=[], hat=bun, top=cards)
+    def flame(f):
+        f.pts('y', [(cx - 15, ty - 2), (cx - 14, ty - 2), (cx - 15, ty - 1), (cx - 14, ty - 1), (cx - 14, ty - 3)])
+        f.pts('Y', [(cx - 15, ty), (cx - 14, ty)])
 
-    def cat(l):                                     # ginger cat sitting, tail curled on the floor
-        l.ell(47, 47, 58, 56, 'c')
-        l.rect(50, 42, 55, 48, 'c'); l.hl(51, 54, 41, 'c')
-        l.pts('c', [(50, 39), (50, 40), (51, 40), (55, 39), (55, 40), (54, 40)])
-        l.pts('k', [(51, 44), (54, 44)]); l.pts('C', [(52, 46), (53, 46), (52, 48), (53, 48)])
-        l.pts('C', [(56, 51), (57, 51), (56, 52), (57, 52), (57, 53), (56, 54), (57, 54), (55, 54)])
-        l.hl(57, 61, 56, 'c'); l.vl(61, 52, 56, 'c'); l.px(60, 52, 'c')
-    bg(c, cat, 'C')
+    fig = person(c, cx, hy, size=16, hs=None, mouth='o', brows='soft', brow='z', eye='r', glint=None,
+           shirt='1', sdk='2', sw=7, ww=7, th=14, behind=True, front=front, DK=DK, slope=3,
+           arms=[([(cx - 6, ty + 4), (cx - 11, ty + 9), (cx - 13, ty + 7)], 4, '1'),
+                 ([(cx + 6, ty + 4), (cx + 11, ty + 10), (cx + 16, ty + 7)], 4, '1')],
+           hands=[(cx - 16, ty + 6, 'grip', False), (cx + 17, ty + 5, 'flat', True)],
+           hairfn=bun_hair, top=candle, post=flame)
     return c.rows(), pal
 
 
-PORTRAIT = ('benders.saboteur', oldmaid)
+def glow(c, fig):
+    """A faint cold halo one pixel out from her outline, on the wall only."""
+    for y in range(N):
+        for x in range(N):
+            if fig.get(x, y) == '.' and c.get(x, y) in 'pP' and any(fig.get(x + dx, y + dy) == 'k' for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                c.px(x, y, 'g')
+
+
+PORTRAIT = ('benders.saboteur', ghost)
