@@ -1,9 +1,9 @@
 import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _kit2 import *
 
-# Ghost (was Old Maid, was Saboteur; Cory, Nov 5: "Ghost needs a new picture"). A pale lady ghost drifting down a
-# dark hallway, candle held out, her gown trailing off into wisps above the floor; the moonlit window and a
-# portrait on the wall say old house. The card costs its owner 5 followers: she's the one who scares them off.
+# Ghost (was Old Maid, was Saboteur). Cory, Nov 6: "i dont want it to be an old woman. just more like a sheet with
+# eyes (and candle is ok)". A plain sheet ghost floating down a dark hallway, a candle held in one fold; the moonlit
+# window and a portrait on the wall say old house.
 
 
 def ghost():
@@ -12,7 +12,7 @@ def ghost():
                p='#454a5a', P='#3d4252', f='#3a2f2c', F='#302725', g='#525870',
                W='#c9d6e4', V='#93a6bf', o='#5a4636', O='#47372b',
                H='#b4bfc6', z='#8f9ca5',
-               r='#40465a', y='#ffe27a', Y='#e09a3a', b='#b08a44', B='#8a6a32', t='#f4ede1')
+               r='#40465a', y='#ffe27a', Y='#e09a3a', b='#b08a44', B='#8a6a32', t='#f4ede1', T='#c9c0b2')
     pal['1'] = '#cdd4d6'; pal['2'] = '#9aa1a0'
     # dim hallway: two close wall tones, a dark wood floor
     c.rect(0, 0, 63, 63, 'p'); c.rect(0, 40, 63, 53, 'P'); c.rect(0, 54, 63, 63, 'f'); c.hl(0, 63, 54, 'F')
@@ -32,49 +32,28 @@ def ghost():
         l.ell(24, 57, 46, 60, 'F')
     bg(c, shadow, None)
 
-    cx = 34
-    hy = 9
-    ty = hy + 17
-    DK = {'1': '2', 'H': 'z', 's': 'S', 'b': 'B'}
-
-    def front(f):                                   # long gown, wider at the hem, three wisps trailing off
-        f.poly([(cx - 8, ty + 3), (cx + 8, ty + 3), (cx + 12, 48), (cx - 12, 48)], '1')
-        for wx, wy in ((cx - 10, 52), (cx - 1, 54), (cx + 8, 51)):
-            f.poly([(wx - 3, 47), (wx + 4, 47), (wx + 1, wy), (wx, wy)], '1')
-        f.poly([(cx + 6, ty + 9), (cx + 9, ty + 9), (cx + 12, 48), (cx + 6, 48)], '2', only='1')     # wedge under the far arm
-        f.poly([(cx + 6, 46), (cx + 10, 46), (cx + 8, 50)], '2', only='1')
-
-    def bun_hair(f, x0, y0):                        # hair pinned up in a bun, as she wore it in life
-        h = layer(); hair(h, x0, y0, 16, 'bun', 'H', 'z', side='L')
-        h.rect(x0 - 1, y0 + 5, x0, y0 + 11, 'H'); h.rect(x0 + 15, y0 + 5, x0 + 16, y0 + 11, 'z')   # locks past the cheeks
-        h.px(x0 - 1, y0 + 11, '.'); h.px(x0 + 16, y0 + 11, '.')
-        f.paste(h)
-
-    def candle(f):                                  # brass candlestick in her near hand, flame the one warm light
-        l = layer()
-        l.rect(cx - 17, ty + 9, cx - 12, ty + 10, 'b'); l.hl(cx - 16, cx - 13, ty + 11, 'B')
-        l.rect(cx - 15, ty + 1, cx - 14, ty + 8, 't'); l.px(cx - 14, ty + 8, 'z')
-        f.paste(l)
-
-    def flame(f):
-        f.pts('y', [(cx - 15, ty - 2), (cx - 14, ty - 2), (cx - 15, ty - 1), (cx - 14, ty - 1), (cx - 14, ty - 3)])
-        f.pts('Y', [(cx - 15, ty), (cx - 14, ty)])
-
-    fig = person(c, cx, hy, size=16, hs=None, mouth='o', brows='soft', brow='z', eye='r', glint=None,
-           shirt='1', sdk='2', sw=7, ww=7, th=14, behind=True, front=front, DK=DK, slope=3,
-           arms=[([(cx - 6, ty + 4), (cx - 11, ty + 9), (cx - 13, ty + 7)], 4, '1'),
-                 ([(cx + 6, ty + 4), (cx + 11, ty + 10), (cx + 16, ty + 7)], 4, '1')],
-           hands=[(cx - 16, ty + 6, 'grip', False), (cx + 17, ty + 5, 'flat', True)],
-           hairfn=bun_hair, top=candle, post=flame)
+    # the ghost: a plain sheet with two eye holes, one fold of it wrapped round the candlestick
+    f = layer()
+    f.ell(27, 13, 49, 37, '1')                                  # rounded top
+    f.poly([(27, 25), (49, 25), (52, 50), (24, 50)], '1')       # the drape, a little wider at the hem
+    for x0 in (24, 31, 38, 45):                                 # four soft scallops on the hem
+        f.ell(x0, 47, x0 + 6, 54, '1')
+    f.ell(18, 33, 31, 41, '1')                                  # the fold reaching out to hold the candle
+    f.poly([(45, 18), (49, 25), (52, 50), (47, 50)], '2', only='1')    # shade on the far side, a wedge
+    f.ell(45, 49, 51, 54, '2', only='1')
+    f.poly([(21, 40), (30, 38), (31, 43), (25, 42)], '2', only='1')   # under the fold
+    for nx in (30, 37, 44):                                     # notches between the scallops
+        f.pts('.', [(nx, 54), (nx + 1, 54), (nx, 53), (nx + 1, 53), (nx, 52)])
+    for ex in (33, 41):                                         # eye holes
+        f.rect(ex, 23, ex + 1, 27, 'k'); f.rect(ex - 1, 24, ex + 2, 26, 'k')
+    outline_once(f)
+    l = layer()                                                 # candle in a brass holder, gripped in the fold
+    l.rect(22, 24, 23, 32, 't'); l.vl(23, 24, 32, 'T')
+    l.pts('y', [(22, 21), (23, 21), (22, 22), (23, 22), (22, 20)]); l.pts('Y', [(22, 23), (23, 23)])
+    under(f, l)
+    f.rect(20, 31, 25, 32, 'b'); f.hl(21, 24, 33, 'B'); f.pts('k', [(19, 31), (19, 32), (26, 31), (26, 32)])   # the brass holder sits in the fold
+    c.paste(f)
     return c.rows(), pal
-
-
-def glow(c, fig):
-    """A faint cold halo one pixel out from her outline, on the wall only."""
-    for y in range(N):
-        for x in range(N):
-            if fig.get(x, y) == '.' and c.get(x, y) in 'pP' and any(fig.get(x + dx, y + dy) == 'k' for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
-                c.px(x, y, 'g')
 
 
 PORTRAIT = ('benders.saboteur', ghost)
