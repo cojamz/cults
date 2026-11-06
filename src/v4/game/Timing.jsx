@@ -21,7 +21,7 @@ const ICONS = {
 };
 // the openers a member's rule can start with (after memberTimingWords), longest first
 const OPENERS = [
-  [/^On Recruit and (?:at )?Round Start[:,]\s*/i, ['recruit', 'start']],
+  [/^On Recruit (?:and (?:at )?|\/ (?:at )?)Round Start[:,]\s*/i, ['recruit', 'start']],
   [/^On Use, once per round[:,]\s*/i, ['round']],
   [/^On Use, once per game[:,]\s*/i, ['once']],
   [/^Once per round[:,]\s*/i, ['round']],
