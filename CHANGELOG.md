@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.637 — 2026-11-05
+
+- Foster Parents now joins from round II (its new price)
+
 ## v0.99.636 — 2026-11-05
 
 - Members cost 1 less than last night's raise: printed price + 1 of its color + 2 any. Cards that name a cost come down 1 with it (Initiation 10 or less, Housewarming up to 7, Shake Down 7 or less, Light Fingers 10 or more)
