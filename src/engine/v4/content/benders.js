@@ -330,20 +330,21 @@ const members = [
   }),
   // Replacement batch 2 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Scouts' place, and a round I member as Scouts was (round: 1, so grey
   // keeps 4). 6 any as a player sees it. Chosen after the round's last placement, before anything is scored (core's
-  // allPlaced step), among the contests a rival leads and its owner doesn't (a tie for the lead counts as leading);
+  // allPlaced step), among every contest, your own lead included (Cory, Nov 6: "lets just make spoilsport 'choose a
+  // contest' rather than one you dont lead. It doesnt make sense to exclude it, most players wouldnt do it anyways");
   // core's contest table then gives that contest no winner this round (state.spoiled).
-  m('spoilsports', 'Spoilsport', null, 0, 5, "Round End: choose a contest you don't lead; nobody wins it this round.", {
+  m('spoilsports', 'Spoilsport', null, 0, 5, 'Round End: choose a contest; nobody wins it this round.', {
     onAllPlaced(ctx, owner) {
       const led = new Map(ctx.state.players.map(o => [o.id, ctx.contestsLed(o)]));
-      const opts = ctx.state.quadrants.filter(q => !led.get(owner.id).includes(q)).map(q => {
+      const opts = ctx.state.quadrants.map(q => {
         const winners = ctx.state.players.filter(o => led.get(o.id).includes(q));
-        return { q, winners };
-      }).filter(x => x.winners.length).map(({ q, winners }) => ({
-        id: `spoil:${q}`, label: `${ctx.quadrant(q).name} (${winners.map(o => o.name).join(' & ')} lead${winners.length === 1 ? 's' : ''})`, kind: 'choice', value: q,
-        // bots spoil the contest of the rival furthest ahead
-        hint: Math.max(...winners.map(o => ctx.followers(o))) / winners.length,
-      }));
-      if (!opts.length) { ctx.log(`${owner.name}'s Spoilsport: no contest a rival leads without ${owner.name}.`); return; }
+        const mine = winners.some(o => o.id === owner.id);
+        return {
+          id: `spoil:${q}`, label: `${ctx.quadrant(q).name} (${winners.length ? `${winners.map(o => o.name).join(' & ')} lead${winners.length === 1 ? 's' : ''}` : 'nobody leads'})`, kind: 'choice', value: q,
+          // bots spoil the contest of the rival furthest ahead, never their own lead
+          hint: mine ? -1 : winners.length ? Math.max(...winners.map(o => ctx.followers(o))) / winners.length : 0,
+        };
+      });
       ctx.choose(owner, 'Spoilsport: which contest does nobody win this round?', opts, 'benders.spoil');
     },
   }),
