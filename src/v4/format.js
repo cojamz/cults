@@ -1098,7 +1098,11 @@ export function turnStory(start, end, actor, me = null, mid = null) {
   // a Use that logs only its own lines ("Ana's Tribute Band: +2 red.", no "Ana uses …") still leads the head
   for (const c of Object.values(end.cards)) {
     if (!c.used || start.cards[c.uid]?.used || !A.members.includes(c.uid)) continue;
-    const n = defById(c.def).name, at = seg[0].findIndex(l => l.startsWith(`${A.name}'s ${n}`));
+    const n = defById(c.def).name;
+    let at = seg[0].findIndex(l => l.startsWith(`${A.name}'s ${n}`));
+    // a Use whose only line is what it did ("Bo swapped Bo's Go-Between and Cy's Doppelganger.", Panel's swap) still
+    // happened before the placement: the head names it
+    if (at < 0) at = seg[0].findIndex((l, k) => k !== placeAt && (l.startsWith(`${A.name} `) || l.startsWith(`${A.name}'s `)));
     if (at >= 0 && (placeAt < 0 || at < placeAt) && !usedFirst.includes(n)) usedFirst.push(n);
   }
   // said once, in the head; what the use did stays as its own line ("used Encore: their next On Recruit happens twice")
