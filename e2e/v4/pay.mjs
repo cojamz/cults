@@ -133,7 +133,7 @@ try {
   // (p3) one way to pay: straight through, coins flying
   {
     // the rivals hold more gold and green, so the one way gives up no lead (p4: the one way that does asks)
-    const save = paySave({ res: { gold: 3, red: 0, blue: 0, green: 2 }, rivals: { gold: 4, green: 4 } });
+    const save = paySave({ res: { gold: 3, red: 0, blue: 0, green: 3 }, rivals: { gold: 4, green: 4 } });
     if (save.state.pending.options.filter(o => o.kind === 'pay').length !== 1) errors.push('(p3) the save has more than one way to pay');
     if (save.state.pending.options.some(o => o.breaks)) errors.push('(p3) the one way gives up a lead (the save should keep every lead)');
     const ctx = await browser.newContext({ viewport: { width: 1270, height: 700 } });
@@ -146,15 +146,15 @@ try {
     await page.click('[data-home="resume"]');
     await page.waitForFunction(m => Number(document.querySelector('.app.game')?.dataset.moves) > m, save.state.moves, { timeout: 10000 }).catch(() => errors.push('(p3) a single way to pay was not paid'));
     // the director plays the payment as a beat of its chain (the card lifts first), so wait for the coins themselves
-    await page.waitForFunction(() => window.__payPieces >= 5, null, { timeout: 3000 }).catch(() => {});
+    await page.waitForFunction(() => window.__payPieces >= 6, null, { timeout: 3000 }).catch(() => {});
     if (await page.evaluate(() => window.__sheet)) errors.push('(p3) the pay sheet showed for a single way to pay');
     const flown = await page.evaluate(() => window.__payPieces);
-    if (flown < 5) errors.push(`(p3) ${flown} coins flew for a 5-coin payment`);
+    if (flown < 6) errors.push(`(p3) ${flown} coins flew for a 6-coin payment`);
     await ctx.close();
   }
   // (p4) one way to pay that gives up a lead: the sheet asks, and says why
   {
-    const save = paySave({ res: { gold: 3, red: 2, blue: 0, green: 0 }, rivals: { gold: 1 } });
+    const save = paySave({ res: { gold: 3, red: 3, blue: 0, green: 0 }, rivals: { gold: 1 } });
     const ways = save.state.pending.options.filter(o => o.kind === 'pay');
     if (ways.length !== 1 || !(ways[0].breaks || []).includes('gold')) errors.push(`(p4) the save is not one way that gives up the gold lead (${ways.map(o => o.id).join(' ')})`);
     const { ctx, page } = await open('p4', save, '.dialog.pay');
@@ -425,7 +425,7 @@ try {
   // (a1) Wave-2 tester A: an instant buy flies its coins and closes the hover. The hover says the cost and nothing else
   //      about paying (Cory, 03:40: cut "You pay"; info.mjs (q) holds it too)
   {
-    const save = paySave({ res: { gold: 3, red: 0, blue: 0, green: 2 }, rivals: { gold: 4, green: 4 } }); // (no lead lost: p3)
+    const save = paySave({ res: { gold: 3, red: 0, blue: 0, green: 3 }, rivals: { gold: 4, green: 4 } }); // (no lead lost: p3)
     const st = save.state;
     st.queue[0] = { t: 'buy', p: 0 }; // back to the buy step: the card is clicked from the shop
     const { resume } = await import('../../src/engine/v4/core.js');

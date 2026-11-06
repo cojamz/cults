@@ -19,7 +19,7 @@ describe('REPLACE10: lane D requalified cards', () => {
   it('prices as pitched; Bodyguards, Kidnapper and Wallflower are retired', () => {
     const p = id => { const d = defById(id); return [d.s, d.w]; };
     expect(p('thieves.watchman')).toEqual([5, 3]);
-    expect(p('thieves.hoardbreaker')).toEqual([6, 3]);
+    expect(p('thieves.hoardbreaker')).toEqual([6, 2]);
     expect(p('thieves.poacher')).toEqual([6, 3]);
     expect(p('echo.bigfinish')).toEqual([7, 4]);
     expect(p('echo.coverband')).toEqual([7, 4]);

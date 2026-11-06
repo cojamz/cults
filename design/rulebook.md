@@ -30,7 +30,7 @@ Use your members' abilities any time on your turn. "Once per round" comes back e
 Turns snake: 1-2-3-4, 4-3-2-1, 1-2-3-4, one minion each, until all are placed. From round II, fewest followers goes first.
 
 ## The shop
-The deck has 10 members per color plus 12 grey. 6 show in round I, 7 in round II, 8 in round III; gaps refill from the pile. Pricier members join the pile in round II. A cost's colored part must be that color; the rest is any color. Grey members cost any color.
+The deck has 10 members per color plus 12 grey. 6 show in round I, 7 in round II, 8 in round III; gaps refill from the pile. Pricier members join the pile in round II. A cost's colored part must be that color; the rest is any color. Grey members cost any color. Where a card says "a color none of your members have", grey counts as a color.
 
 ![The shop: total price in the dark circle, its colors along the foot](rules-img/shop.jpg)
 

@@ -68,7 +68,8 @@ function scenario(name) {
   if (expected.pending?.kind !== 'buy') throw new Error(`${name}: did not return to buying`);
   return { save, action: `slot:${slot(name === 'copy-promote' ? 'echo' : 'red', action)}`, picks, a, b, pair, expected };
 }
-// Tryout: the shop keeps Banker after its On Recruit pays; Stunt Double (copies the action) is never offered.
+// Tryout: the shop keeps Banker after its On Recruit pays; Stunt Double (copies the action) is offered too since Nov 4
+// (decisions: Tryout offers members whose On Recruit copies an action, one such per turn).
 function tryoutScenario() {
   let s = fixture();
   s.shop.push(takeCard(s, 'echo.hourglass'));
@@ -81,7 +82,7 @@ function tryoutScenario() {
   const banker = uid(expected, 'gold.banker', 'shop'), stunt = uid(expected, 'echo.hourglass', 'shop');
   const ids = expected.pending?.options.map(o => o.id) || [];
   if (!ids.includes(`card:${banker}`)) throw new Error(`tryout: Banker not offered: ${ids}`);
-  if (ids.includes(`card:${stunt}`)) throw new Error('tryout: Stunt Double offered');
+  if (!ids.includes(`card:${stunt}`)) throw new Error('tryout: Stunt Double not offered');
   expected = move(expected, `card:${banker}`);
   if (expected.pending?.kind !== 'buy') throw new Error('tryout: did not return to buying');
   const me = expected.players[0], was = s.players[0];
@@ -95,7 +96,7 @@ const comparable = s => ({ players: s.players.map(p => ({ members: p.members, re
 if (process.argv.includes('--fixtures-only')) {
   // (rival-swap went with Even Swap: Tryout took its space in the round I rework, Cory Oct 27)
   for (const name of ['promote', 'copy-promote']) { scenario(name); console.log(`${name}: fixture resolves to buying.`); }
-  tryoutScenario(); console.log('tryout: Banker offered, Stunt Double not; +2 red, +3 gold, Banker stays in the shop, no recruit.');
+  tryoutScenario(); console.log('tryout: Banker and Stunt Double offered; +2 red, +3 gold, Banker stays in the shop, no recruit.');
   process.exit(0);
 }
 const browser = await launchBrowser({ executablePath: browserPath });
@@ -158,7 +159,7 @@ try {
       if (await place.isVisible()) await place.click();
       const pick = live(`card:${test.banker}`).first();
       await pick.waitFor();
-      if (await live(`card:${test.stunt}`).count()) throw new Error(`${tag}: Tryout offers Stunt Double`);
+      if (!(await live(`card:${test.stunt}`).count())) throw new Error(`${tag}: Tryout doesn't offer Stunt Double`);
       await page.screenshot({ path: `${out}/${tag}-tryout-choice.png` });
       await tapOrClick(pick);
       // on touch the tap pins the card's sheet; its button makes the pick
@@ -170,7 +171,7 @@ try {
       }, { want: comparable(test.expected), recruits: test.expected.recruits }, { timeout: 15000 });
       await page.locator('.app.game[data-phase="buy"]:not([data-animating])').waitFor({ timeout: 15000 });
       await page.screenshot({ path: `${out}/${tag}-tryout-settled.png` });
-      console.log(`${tag}: tryout; Banker offered (Stunt Double not), +1 red, Banker's +3 gold, Banker still in the shop, no recruit.`);
+      console.log(`${tag}: tryout; Banker and Stunt Double offered, +2 red, Banker's +3 gold, Banker still in the shop, no recruit.`);
       if (errors.length) throw new Error(`${tag}: ${errors.join('; ')}`);
       await ctx.close();
     }

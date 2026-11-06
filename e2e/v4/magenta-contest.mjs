@@ -14,7 +14,7 @@ let s=createGame({seats,seed:53,quadrants:['thieves','red','silver','echo']});
 Object.assign(s,{round:1,queue:[{t:'turn',p:0},{t:'endRound'},{t:'afterRound'}],pending:null,slots:{},squats:{},order:[0],log:[]});
 delete s.echo;
 s.players.forEach((p,i)=>{p.left=i===0?1:0;p.res=Object.fromEntries(s.resources.map(r=>[r,0]));});
-for(const def of ['thieves.crew','thieves.cutpurse','thieves.watchdog']){
+for(const def of ['thieves.crew','thieves.snitch','thieves.watchdog']){
  const uid=Object.keys(s.cards).map(Number).find(u=>s.cards[u].def===def);
  if(uid===undefined)throw Error(`Missing ${def}`);
  s.shop=s.shop.filter(u=>u!==uid);s.pile=s.pile.filter(u=>u!==uid);s.players[0].members.push(uid);

@@ -23,12 +23,12 @@ function scenario(name){
  if(name==='panel'){
   deal('red.recruitbonus',0);deal('red.recruiter',0);const host=deal('gold.merchant',0); // 6, so Promote (up to 2 more) reaches Mentor's 8
   const panel=deal('red.panel','shop'),mentor=deal('red.mentor','shop');
-  for(const d of ['red.volunteer','red.twins','red.loyalists','red.mob','red.movementpenalty','red.patriarch'])deal(d,'shop');
-  initial.push(action('take'),`card:${panel}`,'promote');pair=`trade:${host}:${mentor}`;picks.push(pair);
+  for(const d of ['red.seatfiller','red.twins','red.loyalists','red.mob','red.movementpenalty','red.patriarch'])deal(d,'shop');
+  initial.push(action('take'),`card:${panel}`,`use:${panel}`,'promote'); // Panel is On Use (Cory, Nov 5)pair=`trade:${host}:${mentor}`;picks.push(pair);
  }else if(name==='penalty'){
   // Poach moves a rival's member out of their cult; the owner's Deprogrammers costs that rival 1 follower.
   deal('red.movementpenalty',0);const target=deal('red.panel',1);deal('red.proselytizer',2);s.players[1].bonus=2;
-  for(const d of ['red.volunteer','red.twins','red.host','red.mentor','red.recruitbonus','red.loyalists','red.mob','red.patriarch'])deal(d,'shop');
+  for(const d of ['red.seatfiller','red.twins','red.host','red.mentor','red.recruitbonus','red.loyalists','red.mob','red.patriarch'])deal(d,'shop');
   initial.push(`slot:2-${quadrant('thieves').actions.findIndex(a=>a.key==='heist')}`,`card:${target}`);
  }else{
   for(const d of ['red.panel','red.twins','red.host','red.mentor','red.recruitbonus','red.loyalists','red.mob','red.movementpenalty'])deal(d,'shop');
@@ -69,7 +69,9 @@ try{
    const offers=page.locator('.lt-cards .lt-rate.lt-card');if(await offers.count()!==3)throw Error(`${tag}: follower cards not unified`);
    const footer=offers.nth(1).locator('.ft .lt-cost');if(await footer.getAttribute('aria-label')!=='5 any')throw Error(`${tag}: follower cost missing`);
   }
-  for(const id of t.initial)await press(id);
+  // a member's On Use goes through its hover's Use button, as a player does it (Panel, Nov 5)
+  const use=async id=>{await page.waitForFunction(u=>{try{return JSON.parse(localStorage.getItem('patrons.v4.local')).state.players[0].members.includes(u);}catch{return false;}},+id.slice(4),{timeout:8000});await page.locator('.app.game:not([data-animating])').waitFor();if(size==='phone')await page.waitForTimeout(450);const fig=page.locator('[data-cult="0"] .cs-member[data-member="red.panel"] .fig').first();if(size==='phone')await fig.tap();else await fig.hover();const b=page.locator('[data-tip-body] [data-use]').first();await b.waitFor();if(size==='phone')await b.tap();else await b.click();};
+  for(const id of t.initial)if(id.startsWith('use:'))await use(id);else await press(id);
   if(t.pair){const a=t.pair.split(':')[1];await page.locator(`.gift-card .gc-row[data-row="1"] [data-uid="${a}"]:not([disabled])`).click();await page.screenshot({path:`${out}/${tag}-choice.png`});await press(t.pair);}
   await page.waitForFunction(want=>{try{return JSON.stringify((s=>({players:s.players.map(p=>({members:p.members,res:p.res,bonus:p.bonus})),shop:s.shop,cards:s.cards}))(JSON.parse(localStorage.getItem('patrons.v4.local')).state))===JSON.stringify(want);}catch{return false;}},cmp(t.expected));
   await page.locator(`.app.game[data-phase="${t.expected.pending.kind}"]:not([data-animating])`).waitFor({timeout:18000});

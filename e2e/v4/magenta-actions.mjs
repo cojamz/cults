@@ -42,12 +42,12 @@ function fixture(name) {
     s.players[2].hideout = round;
   } else if (name === 'followers') {
     // Heist steals 3 followers from a rival (Nov 4, Cory's rival-resources rule): Bo has 5 to take, Cy none, Di is guarded
-    action = 'rob'; picks = ['player:1'];
+    action = 'rob'; picks = ['player:1', 'player:1', 'player:1']; // one follower at a time, split as you choose
     s.players.forEach((p, i) => { p.bonus = [0, 5, 0, 6][i]; });
     deal('thieves.watchdog', 3);
   } else if (name === 'ransom') {
     action = 'ransom'; member = deal('red.host', 1);
-    // Host costs 5, the ceiling (Patriarch did until every member cost 1 more wild, Oct 27, now 6); the old <=4
+    // Host costs 6, the ceiling, since every member cost 1 more (Nov 5; 5 before, Patriarch until Oct 27); the old <=4
     // ceiling would wrongly hide it.
     s.players[1].res.red = 0;
     picks = ['pay']; // one member at stake: no pick, straight to pay or let it go
@@ -59,7 +59,7 @@ function fixture(name) {
   const placed = move(s, `slot:${key(action)}`);
   let expected = placed;
   for (const id of picks) expected = move(expected, id);
-  assert(expected.pending?.kind === 'buy', `${name}: did not restore buying`);
+  assert(expected.pending?.kind === 'buy', `${name}: did not restore buying (${expected.pending?.prompt}: ${expected.pending?.options?.map(o => o.id).join(' ')})`);
   // Help Yourself gives no magenta (Cory, 2026-10-29); every other action gives exactly 1
   const inherent = action === 'pickpocket' ? 0 : 1;
   assert(expected.players[0].res.magenta === inherent, `${name}: the action gives exactly ${inherent} inherent Magenta`);
@@ -71,7 +71,7 @@ function fixture(name) {
     assert(own.bonus === 3 && victim.bonus === 2 && victim.res.gold === 9 && victim.res.red === 4, 'Heist must move exactly 3 followers and no resources');
     assert(placed.pending.options.map(o => o.id).join() === 'player:1', 'Only a rival with followers to steal and no guard may be offered');
   } else if (name === 'ransom') {
-    assert(own.res.gold === 5 && victim.res.gold === 4 && victim.members.includes(member), 'Ransom payment must preserve colors and ownership');
+    assert(own.res.gold === 6 && victim.res.gold === 3 && victim.members.includes(member), 'Ransom payment must preserve colors and ownership');
   } else if (name === 'heist') {
     assert(own.members.includes(member) && !victim.members.includes(member) && victim.members.length === 0, 'Poach must transfer the member without a replacement');
   }

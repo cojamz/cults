@@ -185,14 +185,14 @@ describe('Window Dressers (reworded): "On Recruit: send any shop members to the 
   });
 });
 
-describe('Moneylender: "On Use, once per round: cast out one of your members costing 3 or less to the bottom of the pile. +4 white."', () => {
+describe('Moneylender: "On Use, once per round: cast out one of your members costing 4 or less to the bottom of the pile. +4 white."', () => {
   const Q = ['red', 'trading', 'market', 'purple'];
   it('price, and Landlord retired', () => {
     const d = defById('trading.moneylender');
     expect([d.s, d.w]).toEqual([3, 2]);
     expect(defById('trading.shopkeeper').retired).toBe(true);
   });
-  it('offers only other members costing 3 or less; the one cast out goes to the bottom, +4 white', () => {
+  it('offers only other members costing 4 or less; the one cast out goes to the bottom, +4 white', () => {
     let s = table(Q, { n: 2, round: 2, members: [['trading.moneylender', 'red.volunteer', 'market.shopaholic']] });
     const ml = uidIn(s, 'trading.moneylender', 0), vol = uidIn(s, 'red.volunteer', 0);
     s = move(s, `use:${ml}`);

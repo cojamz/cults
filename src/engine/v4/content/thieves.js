@@ -750,7 +750,7 @@ const thieves = {
     // Hoard Breaker: 6 magenta + 2 any. A rival's biggest pile (ties: you pick the color), half of it rounded down,
     // through the shared steal (Bodyguards and Lie Low block it; Sticky Fingers and Desperado add).
     // Big Score (Cory, Nov 5: "hoard breaker should be Big Score and it should be one time use"): in the deck for Grifter's slot
-    m('hoardbreaker', 'Heist Crew', 5, 2, "On Use, once per game: steal half of a rival's biggest pile, rounded down.", {
+    m('hoardbreaker', 'Heist Crew', 5, 1, "On Use, once per game: steal half of a rival's biggest pile, rounded down.", {
       activate: 'game',
       onActivate(ctx, owner, card) {
         const list = hoardPiles(ctx, owner);

@@ -109,7 +109,7 @@ const HOUSEWARMING = {
   },
 };
 function matchmaker(ctx, owner, member) {
-  if (!newColor(ctx, owner, member)) return;
+  if (!newColor(ctx, owner, member, { grey: true })) return; // grey counts as a color (decisions, Nov 4 4:35am; rulebook)
   owner.bonus += 1;
   ctx.log(`${owner.name}'s Matchmaker: a new color, +1 follower.`);
   pickColors(ctx, owner, 2, 'Matchmaker');

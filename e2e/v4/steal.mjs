@@ -143,15 +143,16 @@ try {
     if (cardGreen !== green0 - 1) errors.push(`(s1) the card's P2 green reads ${cardGreen} after a pick, not what's left (${green0 - 1})`);
     await page.screenshot({ path: `${SHOTS}/s1-one-picked.png` });
     // the other picks on the card itself, coin by coin
-    await click(page, '.gift-card .gc-stack[data-pid="2"][data-res="gold"]');
+    // (all from P2: Help Yourself takes from one rival since Nov 5)
+    await click(page, '.gift-card .gc-stack[data-pid="1"][data-res="gold"]');
     await page.waitForSelector('.pick-left[data-left="1"]', { timeout: 8000 }).catch(() => errors.push('(s1) the counter never showed 1 left'));
     await click(page, '.gift-card .gc-stack[data-pid="1"][data-res="blue"]');
     await page.waitForFunction(() => !document.querySelector('.gift-card'), null, { timeout: 8000 }).catch(() => errors.push('(s1) the steal never closed'));
     // stolen resources keep their colors; the space's own +1 magenta comes on top (Cory, 2026-10-19): what the engine
     // makes of the same three picks (a member P1's bots recruited may add its own)
-    const PICKS = ['take:1:green', 'take:2:gold', 'take:1:blue'];
+    const PICKS = ['take:1:green', 'take:1:gold', 'take:1:blue'];
     const after = PICKS.reduce((st, option) => applyMove(st, { player: 0, option }), save.state);
-    const counts = { '1:green': 3, '2:gold': 4, '1:blue': 1 };
+    const counts = { '1:green': 3, '1:gold': 2, '1:blue': 1 };
     for (const r of ['green', 'gold', 'blue', 'magenta']) counts[`0:${r}`] = after.players[0].res[r];
     // Help Yourself gives no magenta (Cory, Oct 29)
     if (counts['0:magenta'] !== PILES[0].magenta || counts['0:green'] < PILES[0].green + 1) errors.push(`(s1) the engine's own steal is off: ${JSON.stringify(counts)}`);
