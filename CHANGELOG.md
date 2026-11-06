@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.613 — 2026-11-05
+
+- Smoother animations: the wheel's outer ring no longer freezes the page for half a second after moves
+
 ## v0.99.612 — 2026-11-05
 
 - Leaders' Tax is now Bandwagon: +1 yellow per minion on the busiest color's spaces, +1 yellow (no color to choose)
