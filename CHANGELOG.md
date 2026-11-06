@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.651 — 2026-11-06
+
+- Silver Cloak: Whenever you gift silver, +2 silver (was +3).
+
 ## v0.99.650 — 2026-11-06
 
 - Blue Cloak: +1 of each discarded member's color (grey: any color), was +2.
