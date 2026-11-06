@@ -183,3 +183,8 @@ export function stageGone(uid) {
   if (!items.length) placed.clear();
   if (items.length !== n) { ver++; for (const fn of subs) fn(); }
 }
+
+// where the hub's story card stood as it left (GameScreen), for the log's newest row to fly in from (SinceStrip)
+let hubGone = null;
+export const noteHubGone = v => { hubGone = v; };
+export const takeHubGone = () => { const h = hubGone; hubGone = null; return h; };

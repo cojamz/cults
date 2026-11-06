@@ -60,7 +60,7 @@ import LaunderCard, { launderChoice } from './LaunderCard.jsx';
 import SwapCard, { swapChoice } from './SwapCard.jsx';
 import ArtifactDraft from './ArtifactDraft.jsx';
 import ActionStage from './ActionStage.jsx';
-import { stageClear, stageRelease, stageCenter, subscribeStage, stageItems, setStoryZone, storyAtHub } from './stage.js';
+import { stageClear, stageRelease, stageCenter, subscribeStage, stageItems, setStoryZone, storyAtHub, noteHubGone } from './stage.js';
 import { Minion } from '../art/Leader.jsx';
 import { sameSeat } from './seatMemo.js';
 import { holdFlag } from './bodyFlag.js';
@@ -588,7 +588,9 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
       Object.assign(el.style, { display: '', left: px(at.left), top: px(at.top), right: '', bottom: '', width: px(at.width), maxWidth: px(at.width), transformOrigin: '50% 50%' });
       // a long turn rises to stay whole on screen
       const h = el.offsetHeight * z;
-      if (at.centre) { at.top = Math.max(12, Math.round(at.top - h / 2)); el.style.top = px(at.top); }
+      // its top stays put as lines are added, so it grows downward like a log being written (Cory, Nov 6: "we should
+      // just SEE it get added"), a little above the hub's centre
+      if (at.centre) { at.top = Math.max(12, Math.round(at.top - 64)); el.style.top = px(at.top); }
       if (at.top + h > innerHeight - 8) { at.top = Math.max(8, Math.round(innerHeight - 8 - h)); el.style.top = px(at.top); }
       setStoryZone({ left: at.left, top: at.top, width: at.width, height: h, right: at.left + at.width, bottom: at.top + h });
       hubMine.current = { pid: card.pid, rect: { left: at.left, top: at.top, width: at.width, height: h } };
@@ -623,7 +625,7 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
   }, [card.pid, card.n, card.text, root, gone, MAXL, hub, keep]); // eslint-disable-line react-hooks/exhaustive-deps
   const pname = state && state.players[card.pid] ? state.players[card.pid].name : '';
   // the hub card leaves no zone behind, and notes when it left (the log area's card flies in from where it stood)
-  useLayoutEffect(() => (hub ? () => { setStoryZone(null); if (hubMine.current) hubLast = { ...hubMine.current, gone: Date.now() }; } : undefined), [hub]);
+  useLayoutEffect(() => (hub ? () => { setStoryZone(null); if (hubMine.current) { hubLast = { ...hubMine.current, gone: Date.now() }; noteHubGone(hubLast); } } : undefined), [hub]);
   // the log area's card, taking a turn that just left the hub, flies in from the hub
   useLayoutEffect(() => {
     const el = box.current, h = hubLast;
@@ -650,7 +652,7 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
       {keep && <span className="tc-line tc-para"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={13} /> <b className="tc-head">{head}</b>{rest.length > 0 && <> · <Rich text={rest.join(' · ')} /></>}</span>}
       {hub && <span className="tc-who"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={hub ? 16 : 13} /><span>{card.when ? `${pname === 'You' || /^You\b/.test(head) ? 'You' : pname}, ${card.when}` : pname === 'You' || /^You\b/.test(head) ? 'Your turn' : pname ? `${pname}’s turn` : ''}</span></span>}
       {!keep && <b className="tc-head">{(hub || keep) && /^You /.test(head) ? `${head.charAt(4).toUpperCase()}${head.slice(5)}` : (hub || keep) && pname && head.startsWith(`${pname} `) ? `${head.charAt(pname.length + 1).toUpperCase()}${head.slice(pname.length + 2)}` : head}</b>}
-      {!keep && rest.map((l, k) => <span key={`${k}:${l}`} className="tc-line"><Rich text={l} /></span>)}
+      {!keep && rest.map((l, k) => <span key={hub ? k : `${k}:${l}`} className="tc-line"><Rich text={l} /></span>)}
       {/* what didn't fit opens on the "and N more" line, every line in its card (picky bot, Nov 4: "+3 more" with no way
           to see them) */}
       {more > 0 && <Tip className="tc-line tc-more" data-tc-more={more} label={`${head}: every line`}
@@ -989,6 +991,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     const tl = fresh[fresh.length - 1];
     return {
       since: sinceYourTurn(t, mySeats),
+      mineNow: now && mySeats.includes(now.actor) ? { ...now, n: -1 } : null,
       live: now ? { pid: now.actor, text: now.text, live: true, n: `c${t.cur.key}` } : off ? { pid: off.actor, text: off.text, live: true, n: `o${off.n}`, when: off.when } : null,
       told: tl && tl.round === live0.round && !live0.over ? { pid: tl.actor, text: tl.text, live: false, n: `t${tl.n}` } : null,
       touched: [...new Set(fresh.flatMap(st => st.touched))],
@@ -1016,7 +1019,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // the story card (Cory, Nov 6): a rival's turn as it plays, on the hub; the log area keeps the last finished turn (or
   // your own as it builds)
   const liveRival = story.live && !mySeats.includes(story.live.pid) ? story.live : null;
-  const asCard = tl => (tl ? { pid: tl.actor, text: tl.text, live: false, n: `t${tl.n}` } : null);
+  const asCard = tl => (tl ? { pid: tl.actor, text: tl.text, live: false, n: `t${tl.n}`, k: `c${tl.key}` } : null);
   const allStories = trail.current.stories;
   const lastAny = asCard(allStories[allStories.length - 1]);
   const lastDone = lastAny && allStories[allStories.length - 1].round === live0.round && !live0.over ? lastAny : null;
@@ -1027,8 +1030,6 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const chainOn = moment ? momentChain : physicalState !== interactionState;
   const tailOf = moment ? lastAny : lastDone;
   const hubStory = liveRival || (chainOn && !story.live && tailOf && !mySeats.includes(tailOf.pid) ? tailOf : null);
-  const prevDone = (() => { const tl = allStories[allStories.length - 2]; return tl && tl.round === live0.round && !live0.over ? asCard(tl) : null; })();
-  const dockStory = story.live && !liveRival ? story.live : hubStory && hubStory === tailOf ? (moment ? null : prevDone) : lastDone;
   // a rival's story card on the hub is never covered (Cory, Nov 6: "it gets covered up by so much other stuff"): a
   // space's card left up from your own turn closes as theirs comes up (critic pass: Out of Style's card sat on the hub)
   const hubKey = storyAtHub() && hubStory ? hubStory.n : null;
@@ -1891,7 +1892,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
           {/* the spare minions sit in its head, beside the Log (Cory, Oct 29). They read the physical state alone: the table view
               mixes the new round's empty board with the old round's spent turns, which read as every space spare for a moment
               between rounds (Cory, Oct 29: "between rounds the spare minions count is HUGE") */}
-          {state.round >= 1 && <SinceStrip state={tState} entries={storyAtHub() && lastDone ? since.filter(e => `t${e.n}` !== lastDone.n) : since} me={mySeats.length === 1 ? mySeats[0] : null} yours={yours} hover={hover} onLog={openLog}
+          {state.round >= 1 && <SinceStrip state={tState} entries={storyAtHub() && story.mineNow ? [...since, story.mineNow] : storyAtHub() && hubStory && hubStory === tailOf ? since.filter(e => `t${e.n}` !== hubStory.n) : since} full={storyAtHub() && story.mineNow ? -1 : storyAtHub() && lastDone && !(hubStory && hubStory === tailOf) ? Number(lastDone.n.slice(1)) : null} me={mySeats.length === 1 ? mySeats[0] : null} yours={yours} hover={hover} onLog={openLog}
             pool={physicalState.round >= 2 && !physicalState.over ? <MinionPool state={physicalState} /> : null} />}
         </>
       )}
@@ -1901,8 +1902,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
         // (a rival's card stays until its own moves have played: hubStory)
         if (state.over || (moment && !hubStory)) return null;
         return <>
-          {hubStory && <TurnCard key={`hub${hubStory.n}`} card={hubStory} root={rootEl} state={state} hub />}
-          {dockStory && <TurnCard key="dock" card={dockStory} root={rootEl} state={state} keep />}
+          {hubStory && <TurnCard key={`hub${hubStory.k || hubStory.n}`} card={hubStory} root={rootEl} state={state} hub />}
+
+          
         </>;
       })() : <AfterChain value={cardNow} hold={holdStory && !placing}>{c => (c && !moment && !(state.over && !moment) ? <TurnCard card={c} root={rootEl} state={state} /> : null)}</AfterChain>}
       {toast && <div key={toast.n} className="toast" role="status">{toast.text}</div>}

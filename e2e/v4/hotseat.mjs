@@ -251,8 +251,9 @@ try {
       for (const x of await page.evaluate(TYPE_SCALE)) { const m = `off the type scale (12/15/18/36): ${x}`; if (!errors.includes(m)) errors.push(m); }
     }
     // the turn card carries its whole line in data-turn-story (UI-A); the older screen had a .caption
-    const cap = await page.evaluate(() => { const t = document.querySelector('[data-turn-story]'); if (t) return t.getAttribute('data-turn-story'); const c = document.querySelector('.caption'); return c ? c.textContent : null; }).catch(() => null);
-    if (cap) stories.add(cap);
+    // (and the strip's newest row, whole, carries the same: Cory, Nov 6)
+    const caps = await page.evaluate(() => { const t = [...document.querySelectorAll('[data-turn-story]')].map(x => x.getAttribute('data-turn-story')); if (t.length) return t; const c = document.querySelector('.caption'); return c ? [c.textContent] : []; }).catch(() => []);
+    for (const cap of caps) if (cap) stories.add(cap);
     // the board never turns by itself (this run never spins it): its rotation stays put from step to step
     const facingNow = await page.$eval('.lt-wheel g.wheel', e => e.getAttribute('transform')).catch(() => null);
     if (facingNow && !facingSeen) facingSeen = facingNow;

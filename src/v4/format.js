@@ -1199,6 +1199,18 @@ export function effectStory(start, end, actor, me = null, fx = []) {
   const paidOf = (g, pid) => Object.entries(g.res[pid]).filter(([, d]) => d < 0).map(([r, d]) => `${-d} ${r}`).join(', ');
   const out = [], hits = [];
   let gain = '';
+  // what a copy copied, said on the card (Cory, Nov 6: "if they copy something, what did they copy?"): the engine's own
+  // log line ("Cy copied Rising Tide (Di's): …", "Cy copies Di's Coach: its On Recruit.")
+  const actorName = P[actor] ? P[actor].name : null;
+  const meName = me != null && P[me] ? P[me].name : null;
+  if (actorName) for (const l of newLog) {
+    if (!l.startsWith(`${actorName} cop`)) continue;
+    const rest = l.slice(actorName.length + 1);
+    const m = rest.match(/^cop(?:ied|ies) (.+?)(?: \((.+?)'s\))?(?:: |\.$)/);
+    if (!m) continue;
+    const whose = m[2] ? (m[2] === meName ? 'your ' : `${m[2]}'s `) : '';
+    out.push(`copied ${whose}${m[1].replace(/: its On Recruit$/, '')}`);
+  }
   // the space's own result first, then what members added to it: a member that fires before the space's gain landed
   // (Hustler) put "Hustler: +3●" over the space's "+3●", which read as one line twice (w3a #36)
   const ordered = [...groups.values()].sort((a, b) => (b.key === 'space') - (a.key === 'space'));

@@ -72,6 +72,8 @@ async function watchStrip(page) {
         for (const x of l.children) {
           const a = x.getBoundingClientRect();
           if (!a.height || getComputedStyle(x).visibility === 'hidden') continue;
+          // (the newest row flying in from the hub, 250ms, Cory Nov 6: measured once it has landed)
+          if (x.classList.contains('since-full') && x.getAnimations && x.getAnimations().some(n => n.playState === 'running')) continue;
           if (a.top < b.top - 1 || a.bottom > b.bottom + 1) { part = `"${x.textContent.slice(0, 50)}" at ${Math.round(a.top)}–${Math.round(a.bottom)}, list ${Math.round(b.top)}–${Math.round(b.bottom)}, ${innerWidth}px${document.querySelector('.lt > .turn-card') ? ', card up' : ''}`; break; }
         }
       }
@@ -115,11 +117,11 @@ try {
     return {
       prompt: document.querySelector('[data-prompt]')?.innerText || '',
       chips: Object.fromEntries([...document.querySelectorAll('.lt > .lt-seat')].filter(s => s.dataset.pid != null).map(s => { const c = s.querySelector('.cs-turn'); return [s.dataset.pid, c ? { order: c.dataset.turn, text: c.textContent, title: c.title || c.getAttribute('aria-label') || '' } : null]; })),
-      card: document.querySelector('.turn-card')?.dataset.turnStory || null,
+      card: document.querySelector('.turn-card')?.dataset.turnStory || document.querySelector('[data-since-full]')?.textContent.replace(/\s+/g, ' ').trim() || null,
       cardBox: r('.turn-card'),
       strip: [...document.querySelectorAll('[data-since] [data-since-line]')].map(e => e.textContent),
-      // the newest finished turn, kept whole in the log area under the strip (Cory, Nov 6), when it's a rival's
-      kept: (() => { const k = document.querySelector('.turn-card.kept'); const t = k && k.dataset.turnStory; return t && /^P[2-4]\b/.test(t) ? t : null; })(),
+      // the newest finished turn, whole as the strip's last row (Cory, Nov 6), when it's a rival's
+      kept: (() => { const k = document.querySelector('[data-since-full]'); const t = k && k.textContent.replace(/\s+/g, ' ').trim(); return t && /^P[2-4]\b/.test(t) ? t : null; })(),
       // moves the strip folded into "N earlier… open the log" (whole lines only: it folds the oldest rather than show half
       // a line, design pod 08:50), and any line it shows only in part
       folded: Number((document.querySelector('[data-since] .since-more')?.textContent.match(/\d+/) || [0])[0]),
@@ -129,7 +131,8 @@ try {
       took, players: st ? st.players.map(p => p.name) : [],
     };
   });
-  const cardNow = () => page.evaluate(() => document.querySelector('.turn-card')?.dataset.turnStory || null);
+  // (your own turn as you play it is the strip's last row, whole, with the story card on: Cory, Nov 6)
+  const cardNow = () => page.evaluate(() => document.querySelector('.turn-card')?.dataset.turnStory || document.querySelector('[data-since-full]')?.textContent.replace(/\s+/g, ' ').trim() || null);
   // `before`: the turn card's text before the placement. The card arrives as the turn's closing beat (about 1s after
   // a placement, under the motion choreography), so settle waits for it to change, up to 3s, rather than a fixed delay.
   const settle = async (before = undefined) => {
@@ -159,10 +162,10 @@ try {
   // (t2)
   // every rival move since yours is accounted for: on a line, or folded into "N earlier" when the turn card takes the room
   if (v.strip.length + v.folded + (v.kept ? 1 : 0) < 3) fail(`the strip accounts for ${v.strip.length} rival moves + ${v.folded} folded + ${v.kept ? 1 : 0} on the log card (want 3: P2, P3 and P4 placed before P1): ${JSON.stringify(v.strip)}`, 't2');
-  if (v.strip.length < 1) fail('the strip shows no rival move at all', 't2');
+  if (v.strip.length < 1 && !v.kept) fail('the strip shows no rival move at all', 't2');
   if (v.partial) fail(`the strip shows ${v.partial} line(s) only in part (it should fold whole lines)`, 't2');
   for (const l of v.strip) if (!/^\s*P[234]\b/.test(l)) fail(`a strip line doesn't start with a rival's name: "${l}"`, 't2');
-  const words = await page.evaluate(() => [...document.querySelectorAll('[data-since] .since-row')].map(r => !!r.querySelector('.sp-words')));
+  const words = await page.evaluate(() => [...document.querySelectorAll('[data-since] .since-row:not(.since-full)')].map(r => !!r.querySelector('.sp-words')));
   if (words.some(w => !w)) fail(`a strip line names its space without the space's board words: ${JSON.stringify(words)}`, 't2');
   if (!v.since) fail('no "since your last turn" strip on the board', 't2');
   else {
@@ -350,7 +353,7 @@ try {
         const l = document.querySelector('[data-since] .since-list'), card = document.querySelector('.lt > .turn-card');
         if (!l) return null;
         const b = l.getBoundingClientRect();
-        return { lines: l.querySelectorAll('[data-since-line]').length, folded: Number((l.querySelector('.since-more')?.textContent.match(/\d+/) || [0])[0]),
+        return { lines: l.querySelectorAll('[data-since-line], [data-since-full]').length, folded: Number((l.querySelector('.since-more')?.textContent.match(/\d+/) || [0])[0]),
           part: [...l.children].filter(x => { const a = x.getBoundingClientRect(); return a.height && getComputedStyle(x).visibility !== 'hidden' && (a.top < b.top - 1 || a.bottom > b.bottom + 1); }).map(x => x.textContent.slice(0, 50)),
           cover: card ? Math.max(0, b.bottom - card.getBoundingClientRect().top) : 0 };
       };
@@ -402,7 +405,7 @@ try {
     await p3.waitForSelector('.lt-wheel .slot.can');
     await p3.waitForTimeout(800);
     // the newest finished turn: the log area's kept card when one is up (Cory, Nov 6), else the strip's newest line
-    const line = await p3.evaluate(() => { const k = document.querySelector('.turn-card.kept'); if (k && k.dataset.turnStory) return k.dataset.turnStory; const els = document.querySelectorAll('[data-since] .since-row'); return els.length ? els[els.length - 1].textContent.replace(/\s+/g, ' ').trim() : ''; });
+    const line = await p3.evaluate(() => { const k = document.querySelector('[data-since-full]'); if (k) return k.textContent.replace(/\s+/g, ' ').trim(); const els = document.querySelectorAll('[data-since] .since-row'); return els.length ? els[els.length - 1].textContent.replace(/\s+/g, ' ').trim() : ''; });
     // and it is in sight: on the strip's newest line, or (when the turn card takes the strip's room) on the card
     // (the card's text is its data-turn-story: its amounts draw as dots; it shows its first four lines)
     const seen = await p3.evaluate(() => [...document.querySelectorAll('[data-since] .since-row, .turn-card')].filter(e => {

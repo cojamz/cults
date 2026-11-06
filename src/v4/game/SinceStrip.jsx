@@ -12,6 +12,8 @@ import { quadrant, spacesOf } from '../../engine/v4/index.js';
 import { panelWords } from './panelText.js';
 import './since.css';
 import { holdFlag } from './bodyFlag.js';
+import { takeHubGone } from './stage.js';
+import { MO } from '../motion.js';
 
 const MAX = 6;
 /** What a move took from your seat, short enough to lead a one-line row: "took your Recluse", "took your 2 silver 1 follower". */
@@ -45,6 +47,43 @@ function useCompact() {
   return on;
 }
 
+/**
+ * The newest finished turn, whole, as the last row of the list (Cory, Nov 6: the story card "should move to the log
+ * area when its done" and "always show the full story card", and the separate card under the list "is just awkward"):
+ * every line, each name a hover target; it flies in from where the story card stood on the hub.
+ */
+function FullRow({ e, state, hover, name }) {
+  const ref = useRef(null);
+  useLayoutEffect(() => {
+    const el = ref.current, h = takeHubGone();
+    if (!el || !el.animate || !h || h.pid !== e.actor || Date.now() - h.gone > 900) return;
+    const r = el.getBoundingClientRect();
+    if (!r.width) return;
+    const sc = Math.max(0.5, Math.min(1.6, h.rect.width / r.width));
+    const dx = h.rect.left + h.rect.width / 2 - (r.left + r.width / 2), dy = h.rect.top + h.rect.height / 2 - (r.top + r.height / 2);
+    // a copy flies on the page's top layer (the list clips its own rows), and the row shows as it lands
+    const g = el.cloneNode(true);
+    g.removeAttribute('data-since-full');
+    g.classList.add('since-fly');
+    Object.assign(g.style, { position: 'fixed', left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, margin: '0', zIndex: '70', pointerEvents: 'none' });
+    document.body.appendChild(g);
+    el.style.opacity = '0';
+    const a = g.animate([{ transform: `translate(${dx}px,${dy}px) scale(${sc})` }, { transform: 'none' }], { duration: Math.round(MO.storyFly), easing: 'cubic-bezier(.3,.7,.3,1)' });
+    const done = () => { g.remove(); el.style.opacity = ''; };
+    a.onfinish = done; a.oncancel = done;
+    return done;
+  }, [e.n]); // eslint-disable-line react-hooks/exhaustive-deps
+  return (
+    <li ref={ref} className="since-row since-full" data-since-full={e.n} data-turn-story={[e.head, ...e.lines].join(' · ')} style={{ '--pc': playerColor(e.actor) }}
+      onPointerEnter={e.spaceKey ? () => locate(e.spaceKey, true) : undefined} onPointerLeave={e.spaceKey ? () => locate(e.spaceKey, false) : undefined}>
+      <span className="sf-head"><Minion color={playerColor(e.actor)} emoji={seatEmoji(state, e.actor)} size={14} /><b className="who">{name(e.actor)}</b>{' '}
+        <HoverNames state={state} hover={hover} text={e.head.replace(new RegExp(`^${name(e.actor).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} `), '')} uids={e.uids} /></span>
+      {/* its lines as one flowing paragraph, so a long turn still fits the room under the chairs */}
+      {e.lines.length > 0 && <span className="sf-line">{e.lines.map((l, k) => <span key={k} className="sf-part">{k ? ' · ' : ''}<HoverNames state={state} hover={hover} text={l} uids={e.uids} /></span>)}</span>}
+    </li>
+  );
+}
+
 /** One placement's full card (the same lines as the turn card by the cult), its names hover targets. */
 export function StoryCard({ story, color, state, hover }) {
   // open in a tip: body[data-since-tip] (since.css), in place of a body:has() that re-styled the whole page
@@ -64,7 +103,7 @@ export function StoryCard({ story, color, state, hover }) {
  * id or null), yours (it's your move now), hover (the board's hover layer), onLog (opens the full log),
  * pool (the spare minions, MinionPool, from round II: they sit beside the Log, and the strip's title drops to its own line).
  */
-export default function SinceStrip({ state, entries, me, yours, hover = null, onLog, pool = null }) {
+export default function SinceStrip({ state, entries, me, yours, hover = null, onLog, pool = null, full = null }) {
   // whole lines only (design pod): when the strip's room can't hold every line, the oldest go into "N earlier…" instead
   // of showing part of a line at the top. The fold is worked out in one step from where the lines stand (the list stacks
   // from its foot, so dropping the oldest leaves the rest where they are), and lines that won't stay are hidden before the
@@ -94,7 +133,7 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
   // (Cory, 2026-10-27, from Mike's playtest: the one-line log opened over Bot 4's chair; the empty space under the
   // chairs holds the short log instead, and the whole log is one tap away). Elsewhere it keeps its column.
   const compact = useCompact();
-  const sig = `${entries.map(e => e.n).join(',')}|${roomKey}`;
+  const sig = `${entries.map(e => e.n).join(',')}|${full}|${roomKey}`;
   // how many of the oldest lines are folded, for these lines in this room: anything new starts it over at 0 (worked out
   // here, not by a second commit)
   const [dropState, setDrop] = useState({ sig: '', n: 0, bare: false });
@@ -212,7 +251,7 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
         <ol className="since-list" ref={listRef}>
           {/* "2 more: open the log" (picky bot, Nov 4: the ellipsis read as cut-off text) */}
           {more > 0 && !bare && <li className="since-more"><button type="button" onClick={onLog}>{more} more: open the log</button></li>}
-          {shown.map(e => (
+          {shown.map(e => (e.n === full ? <FullRow key={`f${e.n}`} e={e} state={state} hover={hover} name={name} /> : (
             // the space the line names lights on the wheel while any of the line is pointed at, not only its name (picky
             // bot, Nov 4: the wheel prints no names, so readers couldn't find the space a rival took)
             <li key={e.n} className={`since-row${e.hit ? ' hit' : ''}${lvl === 1 ? ' brief' : ''}`} hidden={lvl >= 2 || undefined} data-clip-ok={compact || undefined} style={{ '--pc': playerColor(e.actor) }} onClick={pinLine}
@@ -237,7 +276,7 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
                 <span key={k} className={`big part${k || lead(e) ? '' : ' first'}`}>{k || lead(e) ? '· ' : ': '}<HoverNames state={state} hover={hover} text={part} uids={e.uids} /></span>
               )) : e.short ? <span className="big">{lead(e) ? ' · ' : ': '}<HoverNames state={state} hover={hover} text={e.short} uids={e.uids} /></span> : null}
             </li>
-          ))}
+          )))}
         </ol>
       ) : null}
     </section>
