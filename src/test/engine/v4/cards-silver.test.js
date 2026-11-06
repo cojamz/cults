@@ -34,20 +34,12 @@ describe('Silver actions', () => {
     s = move(take(sc({ n: 3 }), 'silver.partygifts'), 'done');
     expect(s.players[0].bonus).toBe(0);
   });
-  it('Potluck: +2 silver, each rival gives you 1 resource of their choice, then gains 2 silver', () => {
-    let s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, {}] }), 'silver.favors');
-    s = move(s, 'color:red');
-    expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[2, 1], [2, 1], [2, 0]]);
-  });
-  it('Potluck: rivals answer at the same time; either can answer first', () => {
-    let s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, { green: 1 }] }), 'silver.favors');
-    const asked = [s.pending.player, ...(s.pending.also || []).map(a => a.player)].sort();
-    expect(asked).toEqual([1, 2]);
-    const last = s.pending.also[0].player;
-    s = applyMove(s, { player: last, option: last === 2 ? 'color:green' : 'color:red' }); // the one listed second answers first
-    expect(s.pending.also).toBeUndefined();
-    s = move(s, last === 2 ? 'color:red' : 'color:green');
-    expect(s.players.map(p => [p.res.silver, p.res.red, p.res.green])).toEqual([[2, 1, 1], [2, 1, 0], [2, 0, 0]]);
+  // Potluck left the wheel Nov 6 (Cory: Sweet Nothings in its place); its tests went with it
+  it('Sweet Nothings: +3 silver, give rivals up to 3 of your own silver, +2 of any colors per silver given', () => {
+    let s = take(sc({ n: 3, round: 2 }), 'silver.sweetnothings');
+    s = move(move(move(s, 'player:1'), 'player:2'), 'player:2');
+    for (let i = 0; i < 6; i++) s = move(s, 'color:red');
+    expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[0, 6], [1, 0], [2, 0]]);
   });
   it('Sweet Talk: +3 silver, then turn as many as you want into other colors; Largesse: rivals up to 10 silver, +1 follower each', () => {
     let s = take(sc({ round: 2 }), 'silver.tongue');
@@ -67,20 +59,18 @@ describe('Silver actions', () => {
 });
 
 describe('Silver members', () => {
-  it('Gift Wrapper: +1 follower whenever you give rivals silver, once per space (Toast, Potluck)', () => {
+  it('Gift Wrapper: +1 follower whenever you give rivals silver, once per space (Toast, Sweet Nothings)', () => {
     let s = take(sc({ n: 3, members: [['silver.giftwrapper']] }), 'silver.toast');
     expect(s.players[0].bonus).toBe(1);
-    s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, { green: 1 }], members: [['silver.giftwrapper']] }), 'silver.favors');
-    s = move(s, s.pending.options[0].id);
-    s = move(s, s.pending.options[0].id);
+    s = take(sc({ n: 3, round: 2, members: [['silver.giftwrapper']] }), 'silver.sweetnothings');
+    s = move(move(move(s, 'player:1'), 'player:2'), 'done');
     expect(s.players[0].bonus).toBe(1);
     expect(named(s, 'Gift Wrapper')).toHaveLength(1);
   });
-  it('Caterer: Potluck is one gift, +1 silver once however many rivals answer (as Toast)', () => {
-    let s = take(sc({ n: 3, round: 2, res: [{}, { red: 2 }, { green: 1 }], members: [['silver.caterer']] }), 'silver.favors');
-    s = move(s, s.pending.options[0].id);
-    s = move(s, s.pending.options[0].id);
-    expect(S(s)).toBe(2 + 1);
+  it('Caterer: Sweet Nothings is one gift, +1 silver once however many rivals get silver (as Toast)', () => {
+    let s = take(sc({ n: 3, round: 2, members: [['silver.caterer']] }), 'silver.sweetnothings');
+    s = move(move(move(s, 'player:1'), 'player:2'), 'done');
+    expect(S(s)).toBe(3 - 2 + 1);
     expect(named(s, 'Caterer')).toHaveLength(1);
   });
   it('Polisher: once per game, up to 3 silver into 2 of any colors each', () => {

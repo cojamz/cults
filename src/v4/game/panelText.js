@@ -95,7 +95,9 @@ const P = {
     // "+2 per silver" read as per silver you hold (Cory, Nov 1: "VERY misleading"): the giving leads
     // "+2 @f each" read as each rival (picky bot, Nov 4): per silver given, never "per silver" alone (Cory, Nov 1)
     partygifts: { verb: 'Give rivals up to 3 silver', second: '+2 @f per silver given', note: 'from the bank' },
-    favors: { main: '+2 silver', second: 'rivals give you 1, get 2 silver' }, // their 2 silver dropped with line 3 (wheel fit, Nov 3)
+    favors: { main: '+2 silver', second: 'rivals give you 1, get 2 silver' }, // off the wheel since Nov 6 (Sweet Nothings)
+    // Sweet Nothings, Potluck's place (Cory, Nov 6): +2 per silver given, never "per silver" alone (Cory, Nov 1)
+    sweetnothings: { main: '+3 silver', second: 'give rivals up to 3: +2 any per silver given' },
     // ring II's line 2 drops at some turns of the wheel and left a bare "+3 silver" (picky bot, Nov 4): whole in line 1
     tongue: { verb: '+3 silver, then turn silver into colors' },
     // Largesse keeps "+1 @f each": the center ring holds about ten letters there, and "per silver given" dropped line 2

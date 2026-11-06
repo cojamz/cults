@@ -33,12 +33,11 @@ describe('picky hover (Nov 4)', () => {
     for (const k of ['skip', 'lastcall']) expect(words(s, 'purple', k).text).not.toMatch(/after this one/);
   });
 
-  it('Help Yourself says the whole steal; Potluck says the rivals pick (B24, B25)', () => {
+  it('Help Yourself says the whole steal (B24; Potluck, B25, left the wheel Nov 6)', () => {
     const s = start(['thieves', 'silver', 'trading', 'purple']);
     s.round = 3;
     for (const o of s.players) for (const r of s.resources) o.res[r] = 2;
     expect(words(s, 'thieves', 'pickpocket')).toEqual({ text: 'steal 5 in colors you pick', note: null });
-    expect(words(s, 'silver', 'favors')).toEqual({ text: '+2 silver, +3 resources', note: 'their pick' });
   });
 
   it('Farewell and Estate Sale both say the member leaves with its followers (B26)', () => {

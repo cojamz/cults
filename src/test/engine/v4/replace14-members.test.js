@@ -87,14 +87,6 @@ describe('REPLACE14: Charmers ("Whenever you gift silver to rivals, +1 of any co
     t = answer(t, `slot:${slot(t, 'silver', 'Toast')}`);
     expect(log(t)).not.toContain('Charmers');
   });
-  it("paying a rival's Potluck in silver is a payment, not a gift: no pick (the host's 2 silver back is the host's gift)", () => {
-    let s = table(['red', 'silver'], { n: 2, round: 2, res: [{}, { silver: 3 }], members: [[], ['silver.charmers']] });
-    s = answer(s, `slot:${slot(s, 'silver', 'Potluck')}`);
-    while (s.pending && s.pending.player === 1 && s.pending.options.some(o => o.value === 'silver')) s = answer(s, s.pending.options.find(o => o.value === 'silver').id);
-    expect(log(s)).toContain('P2 gave P1 1 silver');
-    expect(log(s)).not.toContain('Charmers');
-    expect(s.pending?.prompt || '').not.toContain('Charmers');
-  });
 });
 
 describe('REPLACE14: Cutpurse replacements', () => {

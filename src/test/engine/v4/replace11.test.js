@@ -216,12 +216,13 @@ describe('REPLACE11: Gift Shop', () => {
   });
 });
 
-describe('REPLACE11: Sweet Nothings', () => {
+describe('Sweet Nothings (live in Potluck\'s place, Cory Nov 6)', () => {
   const slot = (s, name) => { const q = s.quadrants.indexOf('silver'); return `${q}-${quadrant('silver').actions.findIndex(a => a.name === name)}`; };
-  it("is on the wheel in Sweet Talk's place", () => {
+  it("is on the wheel in Potluck's place, beside Sweet Talk", () => {
     const names = quadrant('silver').actions.map(a => a.name);
     expect(names).toContain('Sweet Nothings');
-    expect(names).not.toContain('Sweet Talk');
+    expect(names).toContain('Sweet Talk');
+    expect(names).not.toContain('Potluck');
   });
   // "+3 silver. Give rivals up to 3 of your silver, split as you choose. Gain 2 of any colors for each."
   it('gives +3 silver, then up to 3 of your own silver to rivals you pick, and 2 of any colors for each', () => {

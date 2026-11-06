@@ -207,11 +207,6 @@ describe('Silver gifts with Guest and Kickback', () => {
     expect(R(s, 1).silver).toBe(3); // 2 given + Guest’s 1
     expect(s.players[0].bonus).toBe(4);
   });
-  it('Potluck: the rival’s 2 silver is a gift, so the Guest gets 1 more', () => {
-    const s = go(scene({ quads: Q, round: 2, res: [{}, { red: 1 }], members: [[], ['silver.guest']] }), 'silver.favors', 'color:red');
-    expect(R(s, 1)).toMatchObject({ silver: 3, red: 0 });
-    expect(R(s, 0)).toMatchObject({ silver: 2, red: 1 });
-  });
   it('Kickback’s gold is a gift: the Guest gets 1 more', () => {
     const s = go(scene({ quads: Q, members: [[], ['silver.guest']] }), 'gold.jv', 'player:1');
     expect(R(s, 1).gold).toBe(2);

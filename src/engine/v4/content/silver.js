@@ -227,8 +227,8 @@ function giftShopTo(ctx, p, oid, data) {
 }
 
 /**
- * Sweet Nothings (REPLACE11, Actions lane, Nov 4; /mnt/project-files/quality/pitches/actions-sweet-talk.md), in Sweet
- * Talk's place: "+3 silver. Give rivals up to 3 of your silver, split as you choose: +2 of any colors each."
+ * Sweet Nothings (Actions lane, Nov 4; /mnt/project-files/quality/pitches/actions-sweet-talk.md), live in Potluck's
+ * place since Cory's Nov 6 pick: "+3 silver. Give rivals up to 3 of your silver, split as you choose: +2 of any colors each."
  * Your own silver (not the bank's, as Party Gifts), one at a time; then the colors, as Polish picks them.
  */
 const SWEET_NOTHINGS = {
@@ -295,22 +295,24 @@ export const silverActions = [
     estimate: ctx => 2 * 6 - spillCost(ctx, 1) * 3,
     resolve(ctx, p) { shareStep(ctx, p, { who: 'Party Gifts', max: 3, per: 2 }); },
   },
-  {
+  // Sweet Nothings takes Potluck's place (Cory, Nov 6: "yeah 1"; Potluck had rivals choose on your turn). Potluck stays
+  // in code, off the wheel; REPLACE11=favors puts it back for a comparison.
+  swap11(SWEET_NOTHINGS, {
     key: 'favors', ring: 2, name: 'Potluck', text: '+2 silver. Each rival gives you 1 resource of their choice, then gains 2 silver.',
     estimate: ctx => 2 + (ctx.state.players.length - 1) - spillCost(ctx, 2),
     resolve(ctx, p) {
       hostGain(ctx, p, 2);
       favorAll(ctx, p);
     },
-  },
-  swap11({
+  }),
+  {
     key: 'tongue', copyDoesIt: true, ring: 2, name: 'Sweet Talk', text: '+3 silver. Then turn as many of your silver as you want into other colors.',
     estimate: () => 3.5,
     resolve(ctx, p) {
       hostGain(ctx, p, 3);
       turnStep(ctx, p, { who: 'Sweet Talk', max: null, each: 1, done: 0 });
     },
-  }, SWEET_NOTHINGS),
+  },
   {
     key: 'largesse', copyDoesIt: true, ring: 3, name: 'Largesse', text: 'Give rivals up to 10 silver from the bank, split as you choose. +1 follower per silver you give.',
     estimate: ctx => { const n = ACT.has('largesse6') ? 6 : 10; return 2 * n - spillCost(ctx, 1) * n; },
@@ -350,13 +352,13 @@ const silver = {
   actions: silverActions,
 
   handlers: {
-    ...handlers11({ giftShopCard, giftShopTo,
-      sweetStep(ctx, p, value, data) {
-        if (value === 'done') return sweetDone(ctx, p, data);
-        const given = { ...(data.given || {}) }; given[value] = (given[value] || 0) + 1;
-        sweetStep(ctx, p, { ...data, given });
-      },
-    }),
+    ...handlers11({ giftShopCard, giftShopTo }),
+    // Sweet Nothings, live in Potluck's place (Cory, Nov 6)
+    sweetStep(ctx, p, value, data) {
+      if (value === 'done') return sweetDone(ctx, p, data);
+      const given = { ...(data.given || {}) }; given[value] = (given[value] || 0) + 1;
+      sweetStep(ctx, p, { ...data, given });
+    },
     godparents(ctx, p, value) {
       const [uid, oid] = value, o = ctx.player(oid);
       if (!p.members.includes(uid) || !o || o === p) return;

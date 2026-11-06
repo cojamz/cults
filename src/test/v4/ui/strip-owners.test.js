@@ -27,10 +27,4 @@ describe('strip lines name who got what', () => {
     const st = rivalTurn({ quadrants: ['silver', 'thieves', 'market', 'red'], round: 2, bonus: [0, 0, 5] }, 'thieves.rob');
     expect(st.lines[0]).toMatch(/^\+1 magenta \+3 followers from P3$/);
   });
-  it('Potluck: what you handed over by your own choice is a gift, not a theft', () => {
-    const st = rivalTurn({ quadrants: ['silver', 'thieves', 'market', 'red'], round: 2, res: [{ red: 2 }, {}, { red: 1 }] }, 'silver.favors');
-    expect(st.hit).toBe('you gave 1 red');
-    expect(st.short).not.toMatch(/took/);
-    expect(st.lines).toContain('P3 gave 1 red, then +2 silver');
-  });
 });
