@@ -3,6 +3,7 @@
 // The ring goes to most magenta resources held at round end.
 // Every steal (Magenta's, Gold's Collect Debts, anyone's) goes through the engine's shared ctx.steal(), so Lie Low,
 // Bodyguards, Lookout and Robin Hood apply to all of them.
+import { MORE } from './price.js';
 import { registerQuadrant, defById } from './index.js';
 import { add1, old1 } from './replace1.js';
 import { add2, old2 } from './replace2.js';
@@ -232,7 +233,7 @@ const memberHint = c => c.def.f * 1.5 + cost(c) + (c.def.vanilla || c.used ? 0 :
 // Shake Down: each rival's members it can put at stake (costing 6 or less, and more than 0), by rival id.
 function atStake(ctx, p) {
   const by = new Map();
-  for (const [o, c] of takeable(ctx, p, 6).filter(([, c]) => cost(c) > 0)) by.set(o.id, [...(by.get(o.id) || []), c]);
+  for (const [o, c] of takeable(ctx, p, 6 + MORE).filter(([, c]) => cost(c) > 0)) by.set(o.id, [...(by.get(o.id) || []), c]);
   return by;
 }
 // What a ransom costs its holder: n from their biggest piles, one at a time ({ color: count }). The prompt names it
@@ -381,7 +382,7 @@ const thieves = {
     },
     swap13({
       // Cory, 2026-10-28: the rival picks which of their members is at stake ("yes good idea"; wording Claude's)
-      key: 'ransom', ring: 2, name: 'Shake Down', text: 'Choose a rival. They choose one of their members costing 6 or less, then pay you its cost or you steal it. +1 magenta.',
+      key: 'ransom', ring: 2, name: 'Shake Down', text: `Choose a rival. They choose one of their members costing ${6 + MORE} or less, then pay you its cost or you steal it. +1 magenta.`,
       estimate: (ctx, p) => {
         // the rival gives up their cheapest: what the worst of each rival's list is worth, best rival
         const by = atStake(ctx, p);
@@ -704,9 +705,9 @@ const thieves = {
         if (autoSteal(ctx, owner, info.thief, 'Lookout', 1, true)) card.round = ctx.state.round;
       },
     }),
-    m('lightfingers', 'Light Fingers', 4, 4, 'Whenever a rival recruits a member costing 9 or more, steal 1 resource from that rival.', {
+    m('lightfingers', 'Light Fingers', 4, 4, `Whenever a rival recruits a member costing ${9 + MORE} or more, steal 1 resource from that rival.`, {
       onAnyRecruit(ctx, owner, card, by, recruited) {
-        if (by !== owner && cost(recruited) >= 9) autoSteal(ctx, owner, by, 'Light Fingers');
+        if (by !== owner && cost(recruited) >= 9 + MORE) autoSteal(ctx, owner, by, 'Light Fingers');
       },
     }),
     // Cory, 2026-10-28: "lets just make it a bigger cutpurse for now" (was: a steal when a rival buys 5+ followers)
@@ -822,7 +823,7 @@ const thieves = {
         if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Fixer: not enough magenta for any rival member.`); return; }
         pickMember(ctx, owner, list, 'Fixer: steal which member?', 'thieves.fixer');
       },
-      botActivate: (ctx, owner) => ctx.state.round >= 2 && takeable(ctx, owner, owner.res.magenta || 0).some(([, c]) => cost(c) >= 4),
+      botActivate: (ctx, owner) => ctx.state.round >= 2 && takeable(ctx, owner, owner.res.magenta || 0).some(([, c]) => cost(c) >= 4 + MORE),
     }),
     // Cory's #69 "King of Thieves… based more on members… shouldn't compete with ring competition" (Cory's yes, Oct 21)
     m('kingpin', 'Kingpin', 1, 2, 'Game End: +1 follower per magenta member you have.', { retired: true, // Kidnapper takes its place (Claude, under Cory's "use your judgement", 2026-11-03)
@@ -845,7 +846,7 @@ const thieves = {
     // exists, the name is Claude's fill-in): Kidnapper's place, 6 magenta + 2 any, a round I member as Kidnapper is.
     // Not a steal (Bodyguards doesn't stop it): you pay its cost, by the usual pay rule, and the rival gets what you pay.
     // You may pass. poacher: costing 4 or less ("recruit"); poacher5: 5 or less ("buy").
-    ...add10(m(on10('poacher5') ? 'poacher5' : 'poacher', 'Poacher', 5, 2, on10('poacher5') ? "Round Start: buy a rival's member costing 5 or less, paying that rival its cost." : "Round Start: recruit a rival's member costing 4 or less, paying its cost to that rival.", { round: 1,
+    ...add10(m(on10('poacher5') ? 'poacher5' : 'poacher', 'Poacher', 5, 2, on10('poacher5') ? `Round Start: buy a rival's member costing ${5 + MORE} or less, paying that rival its cost.` : `Round Start: recruit a rival's member costing ${4 + MORE} or less, paying its cost to that rival.`, { round: 1,
       // BOTSEE: each Round Start still ahead recruits about a 3-cost member worth 1, its ability ~1, paid for at cost
       ...see(i => [1, 2, 3].filter(r => r > i.round).length * 1.2),
       onRoundStart(ctx, owner) {
@@ -955,7 +956,7 @@ function hoardPiles(ctx, p) {
 }
 /** Poacher (REPLACE10): [rival, card] for each rival member at or under the cap that p can pay for. */
 function poachList(ctx, p) {
-  const cap = on10('poacher5') ? 5 : 4;
+  const cap = (on10('poacher5') ? 5 : 4) + MORE;
   return ctx.rivals(p).flatMap(o => ctx.membersOf(o).filter(c => cost(c) <= cap && ctx.payChoices(p, c.uid, {}).length).map(c => [o, c]));
 }
 function kidnapList(ctx, p) {

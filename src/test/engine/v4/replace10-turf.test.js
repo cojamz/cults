@@ -4,9 +4,13 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE10 = 'turf';
+// trial cards are tested at the Nov 5 afternoon prices (every member 2 more than its card file); the live price is
+// 4 more since Nov 5 evening, and these tests check what the cards do, not their price
+process.env.MEMBER_UP = '2';
 const { table, named } = await import('./cards-helpers-b.js');
 const { take } = await import('./helpers.js');
 delete process.env.REPLACE10;
+delete process.env.MEMBER_UP;
 
 describe('REPLACE10: Turf (Stash\'s slot, Cory\'s idea)', () => {
   it('steals 1 resource from each rival per minion they have on Magenta spaces, +1 magenta; Lie Low blocks it', () => {

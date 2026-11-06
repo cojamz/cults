@@ -4,6 +4,9 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE10 = 'copyist,copyist2,warmup,warmupcheap,encore,encorenext,songrequest,songrequest2';
+// trial cards are tested at the Nov 5 afternoon prices (every member 2 more than its card file); the live price is
+// 4 more since Nov 5 evening, and these tests check what the cards do, not their price
+process.env.MEMBER_UP = '2';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { table } = await import('./cards-helpers-b.js');
@@ -11,6 +14,7 @@ const { take, move, uidOf } = await import('./helpers.js');
 const { contextFor, resume } = await import('../../../engine/v4/core.js');
 const { named } = await import('./cards-helpers-b.js');
 delete process.env.REPLACE10;
+delete process.env.MEMBER_UP;
 
 const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
 

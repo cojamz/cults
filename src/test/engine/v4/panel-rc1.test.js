@@ -86,23 +86,23 @@ describe('12 · one price rule for every recruit', () => {
   });
   it('memberPrice: the exact price after Intro Offer, and the shortfall by color', () => {
     const s = sceneQ({ quadrants: CLASSIC, res: [{ gold: 2 }], discount: [4] });
-    row(s, ['gold.jackpot']); // Lottery Winner: 7 gold + 5 any (6 + 4 printed, one extra paid in gold since Nov 2, one more any since Nov 5)
+    row(s, ['gold.jackpot']); // Lottery Winner: 8 gold + 6 any (6 + 4 printed; 2 more gold and 2 more any since Nov 5 evening)
     const p = s.players[0], u = s.shop[0];
     const pr = memberPrice(s, p, u);
-    expect(pr).toMatchObject({ color: 'gold', colored: 3, total: 8, afford: false });
-    expect(pr.short).toMatchObject({ gold: 1, any: 5, total: 6 });
-    expect(pr.short.text).toBe('1 gold, 5 any');
+    expect(pr).toMatchObject({ color: 'gold', colored: 4, total: 10, afford: false });
+    expect(pr.short).toMatchObject({ gold: 2, any: 6, total: 8 });
+    expect(pr.short.text).toBe('2 gold, 6 any');
     // the old hover read "need 8 more": it ignored the discount
-    expect(payBreakdown(s, p, u).short.total).toBe(6);
+    expect(payBreakdown(s, p, u).short.total).toBe(8);
   });
   it('memberPrice: "need 2 green" names Busker’s colored price; "2 gold, 1 any" splits it', () => {
     const s = sceneQ({ quadrants: CLASSIC, res: [{ gold: 15 }] });
     row(s, ['echo.evergreen', 'gold.jackpot']);
     const p = s.players[0];
-    expect(memberPrice(s, p, s.shop[0]).short.text).toBe('2 green');
-    p.res = { gold: 5, red: 5, blue: 0, green: 0 };
+    expect(memberPrice(s, p, s.shop[0]).short.text).toBe('3 green');
+    p.res = { gold: 6, red: 6, blue: 0, green: 0 }; // Lottery Winner: 8 gold + 6 any since Nov 5 evening
     expect(memberPrice(s, p, s.shop[1]).short.text).toBe('2 gold');
-    p.res = { gold: 5, red: 4, blue: 0, green: 0 };
+    p.res = { gold: 6, red: 5, blue: 0, green: 0 };
     expect(memberPrice(s, p, s.shop[1]).short.text).toBe('2 gold, 1 any');
   });
   it('the buy step, the pay choices and memberPrice agree on every face-up card, with every rule-changer', () => {

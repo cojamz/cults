@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { contextFor, liveOptions, resume, SHOP_SIZE, shopSize } from '../../../engine/v4/core.js';
 import { ledger } from '../../../engine/v4/content/echo.js';
 import { table, uidIn, useCosts } from './cards-helpers-b.js';
-import { actionName, move, take } from './helpers.js';
+import { actionName, move, take, pinCosts } from './helpers.js';
 
 const Q = ['gold', 'red', 'trading', 'echo'];
 const ROW = ['gold.banker', 'red.twins', 'red.intern', 'red.volunteer', 'gold.tycoon', 'echo.evergreen', 'echo.muse', 'gold.taxman']; // one full round-III row (SHOP_SIZE); round I shows shopSize = 6
@@ -250,6 +250,9 @@ describe('active acquisition versus gifts', () => {
   });
 
   it('an acquired Doppelganger chooses its identity and fires the copied Recruit (Cory, 2026-10-28)', () => {
+    // Doppelganger at 6, within Promote's reach of Volunteer (4) since every member cost 4 more (Nov 5 evening)
+    const back = pinCosts({ 'echo.doppel': [3, 3] });
+    try {
     let s = take(table(Q, { round: 2, members: [['red.volunteer', 'echo.evergreen']], shop: ['echo.doppel', ...ROW] }), 'red.hireup');
     const a = uidIn(s, 'red.volunteer', 0), copy = uidIn(s, 'echo.doppel', 'shop'), target = uidIn(s, 'echo.evergreen', 0);
     s = move(s, swapId(a, copy));
@@ -257,5 +260,6 @@ describe('active acquisition versus gifts', () => {
     expect(s.cards[copy].copy).toBe('echo.evergreen');
     expect(s.players[0].res.green).toBe(2); // Busker's On Recruit: +2 green
     expect(s.recruits).toBe(1);
+    } finally { back(); }
   });
 });

@@ -112,10 +112,10 @@ describe('Magenta actions', () => {
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
     expect(named(s, 'Lookout').length).toBe(1);
   });
-  it('Shake Down: a rival\'s member costing 6 or less (5 until Cory\'s Nov 5 +1); they pay its cost to keep it, or it\'s yours', () => {
-    let s = table(Q, { round: 2, res: [{}, { red: 3 }], members: [[], ['red.twins', 'red.bigfamily', 'red.intern', 'echo.doppel']], shop: ROW });
+  it('Shake Down: a rival\'s member costing 8 or less (5 until Nov 5); they pay its cost to keep it, or it\'s yours', () => {
+    let s = table(Q, { round: 2, res: [{}, { red: 3 }], members: [[], ['red.twins', 'red.patriarch', 'red.intern', 'echo.doppel']], shop: ROW });
     s = take(s, 'thieves.ransom');
-    // Twins, Intern and Doppelganger (6); not Big Family (8)
+    // Twins, Intern and Doppelganger (8 or less since Nov 5 evening); not Patriarch (11)
     expect(ids(s).sort()).toEqual([cardOpt(s, 'red.twins', 1), cardOpt(s, 'red.intern', 1), cardOpt(s, 'echo.doppel', 1)].sort());
     // Twins (4): P2 holds only 3, so they can't pay
     // no question with one answer (skeptic r2): it simply goes, and the log says why
@@ -255,7 +255,7 @@ describe('Magenta members', () => {
     let s = table(Q, { res: [{ red: 12 }], members: [[], ['thieves.lightfingers']], shop: ['red.patriarch', ...ROW.slice(1)] });
     s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'red.patriarch', 'shop')); // Stash: +2 magenta
     s = s.pending?.kind === 'pay' ? move(s, s.pending.options[0].id) : s;
-    expect([R(s).red + R(s).magenta, (R(s, 1).red || 0) + (R(s, 1).magenta || 0)]).toEqual([4, 1]); // 12 red + Stash's 2, paid Patriarch's 9, it took 1
+    expect([R(s).red + R(s).magenta, (R(s, 1).red || 0) + (R(s, 1).magenta || 0)]).toEqual([2, 1]); // 12 red + Stash's 2, paid Patriarch's 9, it took 1
     expect(named(s, 'Light Fingers').length).toBe(1);
     s = table(Q, { res: [{ red: 10 }], members: [[], ['thieves.lightfingers']], shop: ROW });
     s = move(take(s, 'thieves.tipoff'), cardOpt(s, 'red.twins', 'shop'));

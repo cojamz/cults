@@ -4,11 +4,15 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE9 = 'powershoppers,standin,tailor,dabbler,latebloomers,dowagers,windowdressers9,moneylender';
+// trial cards are tested at the Nov 5 afternoon prices (every member 2 more than its card file); the live price is
+// 4 more since Nov 5 evening, and these tests check what the cards do, not their price
+process.env.MEMBER_UP = '2';
 const { applyMove, countMembersOfColor, memberRound } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { move } = await import('./helpers.js');
 const { table, named, uidIn } = await import('./cards-helpers-b.js');
 delete process.env.REPLACE9;
+delete process.env.MEMBER_UP;
 
 const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
 const pay = s => { while (s.pending?.kind === 'pay' || s.pending?.prompt?.includes('choose how to pay')) s = answer(s, s.pending.options[0].id); return s; };

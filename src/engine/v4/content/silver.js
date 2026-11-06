@@ -6,6 +6,7 @@
 // "Give" is Silver's verb: anything a Silver space or member hands to another player. Gifts fire two
 // module-level hooks on members: onGive (the giver's members) and onGiven (the receiver's members).
 // Gold's Kickback also gives (Cory): gold.js fires the receiver's onGiven hooks itself.
+import { MORE } from './price.js';
 import { defById } from './index.js';
 import { add2, old2, handlers2 } from './replace2.js';
 import { add6, old6 } from './replace6.js';

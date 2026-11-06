@@ -18,19 +18,22 @@ const QUADRANTS = { gold, red, blue, green };
 // added once here so the shop, the pay sheet and the bots all read the same price.
 // 2 since Cory, 2026-11-05 ("1 cards", "i'd rather things be more expensive"): one more on every member, so fewer
 // member cards per game. The color shift below still moves just 1 of it to the member's color; the rest is any color.
-export const EXTRA_WILD = 2;
+import { EXTRA_WILD, EXTRA_COLOR } from './price.js';
+export { EXTRA_WILD };
 // Cory, 2026-11-02: "for every member, to shift 1 wild to 1 color cost". A colored member's +1 above is paid in its
 // own color instead (its colored part +1, its "any" part as printed), so what you hold decides what you can buy.
 // Grey members have no color and keep the wild. Live (Cory, Nov 2 7:39pm: "let's swing the cost towards the colors by 1 and keep that anyways"); COLORSHIFT=0 gives the old prices for comparison.
 export const COLOR_SHIFT = globalThis.process?.env?.COLORSHIFT === '0' ? 0 : 1;
+// how much of the extra a colored member pays in its own color (tests read it to compute prices)
+export const COLOR_PART = COLOR_SHIFT ? EXTRA_COLOR : 0;
 // Bot tests only (Nov 3, depth ideas): COLORSHIFT=2 moves one more of the printed "any" to the color where 2+ any remain;
 // COLORSHIFT=all makes the whole cost colored. Same totals; the game uses 1.
 const SHIFT_MORE = globalThis.process?.env?.COLORSHIFT;
 const addWild = def => {
   if (def.extraWild || def.extraColor) return;
   if (COLOR_SHIFT && def.quadrant !== 'guest' && def.quadrant !== 'benders') {
-    def.s = (def.s || 0) + 1; def.extraColor = 1;
-    def.w = (def.w || 0) + EXTRA_WILD - 1; if (EXTRA_WILD > 1) def.extraWild = EXTRA_WILD - 1;
+    def.s = (def.s || 0) + EXTRA_COLOR; def.extraColor = EXTRA_COLOR;
+    def.w = (def.w || 0) + EXTRA_WILD - EXTRA_COLOR; if (EXTRA_WILD > EXTRA_COLOR) def.extraWild = EXTRA_WILD - EXTRA_COLOR;
     const more = SHIFT_MORE === 'all' ? def.w : SHIFT_MORE === '2' && def.w >= 2 ? 1 : 0;
     if (more) { def.s += more; def.w -= more; def.shiftedMore = more; }
   }

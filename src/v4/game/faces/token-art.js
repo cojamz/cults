@@ -1,3 +1,4 @@
+import { MORE } from '../../../engine/v4/content/price.js';
 // The token face's art (see token.jsx): a pixel rasterizer for the cardboard token itself, the small pixel marks
 // that sit on its symbol strip, and each action's strip (at most 3 symbols, Dune: Imperium's icon line).
 // Not a face (a .js file): the registry only loads ./*.jsx.
@@ -190,7 +191,7 @@ const S = {
     tipoff: [['rr', '→', '1', 'any', '/', 'minion'], ['1', 'magenta']],
     hideout: r => [['rr', '→', `${r}`, 'any'], ['shield'], ['1', 'magenta']],
     rob: [['rr', '→', '½', 'any'], ['1', 'magenta']],
-    ransom: [['mr', 'tag:≤6', '→', 'any'], ['1', 'magenta']],
+    ransom: [['mr', `tag:≤${6 + MORE}`, '→', 'any'], ['1', 'magenta']],
     heist: [['mr', '→', 'm'], ['1', 'magenta']],
   },
   trading: {

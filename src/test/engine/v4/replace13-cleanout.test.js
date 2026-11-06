@@ -4,10 +4,14 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE13 = 'cleanout';
+// trial cards are tested at the Nov 5 afternoon prices (every member 2 more than its card file); the live price is
+// 4 more since Nov 5 evening, and these tests check what the cards do, not their price
+process.env.MEMBER_UP = '2';
 const core = await import('../../../engine/v4/core.js');
 const idx = await import('../../../engine/v4/content/index.js');
 const helpers = await import('./cards-helpers-b.js');
 delete process.env.REPLACE13;
+delete process.env.MEMBER_UP;
 const G = { ...core, ...idx, ...helpers };
 const total = p => Object.values(p.res).reduce((a, b) => a + b, 0);
 const answer = (G, s, id) => G.applyMove(s, { player: s.pending.player, option: id });

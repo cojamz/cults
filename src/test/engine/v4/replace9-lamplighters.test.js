@@ -4,11 +4,15 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE9 = 'lamplighters';
+// trial cards are tested at the Nov 5 afternoon prices (every member 2 more than its card file); the live price is
+// 4 more since Nov 5 evening, and these tests check what the cards do, not their price
+process.env.MEMBER_UP = '2';
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take } = await import('./helpers.js');
 const { named } = await import('./cards-helpers-b.js');
 const { sceneQ } = await import('./cards-helpers.js');
 delete process.env.REPLACE9;
+delete process.env.MEMBER_UP;
 
 const turns = (...ps) => ps.map(p => ({ t: 'turn', p }));
 const Q = ['gold', 'red', 'purple', 'echo'];

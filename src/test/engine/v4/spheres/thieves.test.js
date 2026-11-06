@@ -165,13 +165,13 @@ describe('Magenta actions', () => {
     expect(R(s)[1]).toEqual({ ...Z, gold: 1, red: 2 });
   });
 
-  it('Shake Down: or they let it go; only cost 1–6 members (1–5 until the Nov 5 +1) are targets; can’t pay means let go', () => {
-    const back = pinCosts({ 'red.proselytizer': [4, 3] });
+  it('Shake Down: or they let it go; only cost 1–8 members (1–5 until Nov 5) are targets; can’t pay means let go', () => {
+    const back = pinCosts({ 'red.proselytizer': [4, 5] });
     try {
     let s = scene({ round: 2, res: [{}, { gold: 1 }], members: [[], ['red.mob', 'red.bigfamily', 'red.volunteer', 'gold.speculator', 'red.proselytizer']] });
     s = take(s, 'thieves.ransom');
     const mob = uidOf(s, 'red.mob', 1), fam = uidOf(s, 'red.bigfamily', 1), spec = uidOf(s, 'gold.speculator', 1);
-    // Volunteer costs 0 and Proselytizers pinned at 7 (over 6), so Mob (3), Big Family (4) and Speculator (5) can be at stake;
+    // Volunteer costs 0 and Proselytizers pinned at 9 (over 8), so Mob (3), Big Family (4) and Speculator (5) can be at stake;
     // the holder picks which (Cory, 2026-10-28)
     expect(s.pending.player).toBe(1);
     expect(ids(s).sort()).toEqual([`card:${mob}`, `card:${fam}`, `card:${spec}`].sort());
@@ -331,18 +331,18 @@ describe('Magenta members', () => {
     expect(victim.players[1].res.magenta).toBe(m1 + 2);
   });
 
-  it('Light Fingers: when a rival recruits a member costing 9+ (8+ until the Nov 5 +1), take 1 from them', () => {
+  it('Light Fingers: when a rival recruits a member costing 11+ (8+ until Nov 5), take 1 from them', () => {
     let s = scene({ res: [{ gold: 9 }], members: [[], ['thieves.lightfingers']] });
     s = take(s, 'gold.rush');
-    s = move(s, `card:${uidOf(s, 'gold.midas', 'shop')}`); // 5: too cheap
+    s = move(s, `card:${uidOf(s, 'gold.midas', 'shop')}`); // too cheap
     expect(R(s)[1]).toEqual({ ...Z });
-    const back = pinCosts({ 'gold.midas': [5, 4] });
+    const back = pinCosts({ 'gold.midas': [6, 5] });
     try {
-      let t = scene({ res: [{ gold: 10 }], members: [[], ['thieves.lightfingers']] });
+      let t = scene({ res: [{ gold: 13 }], members: [[], ['thieves.lightfingers']] });
       t = take(t, 'gold.rush');
-      t = move(t, `card:${uidOf(t, 'gold.midas', 'shop')}`); // 9
+      t = move(t, `card:${uidOf(t, 'gold.midas', 'shop')}`); // 11
       expect(R(t)[1]).toEqual({ ...Z, gold: 1 });
-      expect(R(t)[0].gold).toBe(2);
+      expect(R(t)[0].gold).toBe(3);
     } finally { back(); }
   });
 

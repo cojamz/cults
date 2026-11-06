@@ -4,10 +4,14 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE11 = 'dutyfree,snobs3,openbar';
+// trial cards are tested at the Nov 5 afternoon prices (every member 2 more than its card file); the live price is
+// 4 more since Nov 5 evening, and these tests check what the cards do, not their price
+process.env.MEMBER_UP = '2';
 const { memberPrice, applyMove } = await import('../../../engine/v4/core.js');
 const { quadrant } = await import('../../../engine/v4/content/index.js');
 const { table } = await import('./cards-helpers-b.js');
 delete process.env.REPLACE11;
+delete process.env.MEMBER_UP;
 
 describe('REPLACE11: Duty Free', () => {
   it('a member of a new color costs 3 less; one of a color you have does not', () => {

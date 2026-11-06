@@ -49,7 +49,7 @@ describe('card.made', () => {
   });
 
   it('rides in saved state', () => {
-    const { s } = play(5, 2);
+    const { s } = play(6, 2); // seed 6: 5 made no card once every member cost 4 more (Nov 5 evening)
     const u = Object.keys(s.cards).find(k => s.cards[k].made);
     expect(u).toBeTruthy();
     expect(JSON.parse(JSON.stringify(s)).cards[u].made).toEqual(s.cards[u].made);

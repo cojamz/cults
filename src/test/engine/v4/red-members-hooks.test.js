@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
 import { contextFor, countMembersOfColor, memberCount, resume } from '../../../engine/v4/core.js';
-import { defById, quadrant, EXTRA_WILD, COLOR_SHIFT } from '../../../engine/v4/content/index.js';
+import { defById, quadrant, EXTRA_WILD, COLOR_PART } from '../../../engine/v4/content/index.js';
 import { CUT } from '../../../engine/v4/content/cull.js';
 import { table, uidIn } from './cards-helpers-b.js';
 import { move } from './helpers.js';
@@ -14,7 +14,7 @@ describe('new Red member hooks', () => {
   it('deals exactly thirteen ordinary Red members, with the approved printed bodies and prices', () => {
     expect(quadrant('red').members.filter(d => !CUT.has(d.id) && !d.retired)).toHaveLength(13);
     for (const [id, s, w, f] of [['volunteer', 0, 0, 1], ['bodysnatchers', 2, 2, 2], ['panel', 4, 2, 3], ['mob', 7, 4, 4], ['loyalists', 2, 2, 3]]) {
-      expect(defById(`red.${id}`)).toMatchObject({ s: s + COLOR_SHIFT, w: w + EXTRA_WILD - COLOR_SHIFT, f }); // Nov 2: 1 of the wild is paid in the member's color
+      expect(defById(`red.${id}`)).toMatchObject({ s: s + COLOR_PART, w: w + EXTRA_WILD - COLOR_PART, f }); // Nov 2: 1 of the wild is paid in the member's color
     }
     const s = fixture({ members: [['red.mob', 'red.panel']] });
     expect(memberCount(s, s.players[0])).toBe(7); // Mob 4 (worth 4, Nov 1, 2:16pm), Panel 3

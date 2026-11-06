@@ -1,4 +1,5 @@
 // Red builds and moves members; held red resources decide its round-end contest.
+import { MORE } from './price.js';
 import { gainColorOf } from './color-of.js';
 import { defById as defOf } from './index.js';
 import { add1, old1 } from './replace1.js';
@@ -153,12 +154,12 @@ export default {
       resolve(ctx, p) { ctx.gain(p, 'red', ACT.has('promote1') ? 1 : 3, { fromAction: true }); swap(ctx, p, 'demote', 'Demote: choose a member and its replacement'); },
     },
     {
-      key: 'take', ring: 3, name: 'Initiation', text: 'Recruit a member in the shop costing 9 or less, for free. +1 red.', // the cap (Cory, 2026-10-24: "8 or less"; 9 since Nov 5, "for named costs, yes go up by 1")
-      estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().filter(c => cost(c) <= 9).map(c => c.def.f + cost(c) * 0.6)),
+      key: 'take', ring: 3, name: 'Initiation', text: `Recruit a member in the shop costing ${9 + MORE} or less, for free. +1 red.`, // the cap (Cory, 2026-10-24: "8 or less"; 9 since Nov 5, "for named costs, yes go up by 1")
+      estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().filter(c => cost(c) <= 9 + MORE).map(c => c.def.f + cost(c) * 0.6)),
       resolve(ctx, p) {
-        const shop = ctx.shopCards().filter(c => cost(c) <= 9);
+        const shop = ctx.shopCards().filter(c => cost(c) <= 9 + MORE);
         ctx.gain(p, 'red', 1, { fromAction: true });
-        if (!shop.length) { ctx.log(`${p.name}: no shop member costs 9 or less.`); return; }
+        if (!shop.length) { ctx.log(`${p.name}: no shop member costs ${9 + MORE} or less.`); return; }
         if (ACT.has('initiation')) usesRecruit(ctx, p);
         ctx.choose(p, 'Initiation: which member?', shop.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + cost(c),
@@ -231,7 +232,7 @@ export default {
     ...({ // always registered: Seat Filler (red.drift) is live since Nov 5; the rest are harmless when unused
       convert(ctx, p, uid) {
         const v = ctx.ownerOf(uid), c = ctx.card(uid);
-        if (!v || v === p || cost(c) > 3 || !ctx.canSteal(p, v, 'swap') || !ctx.canSwapMember(uid)) return;
+        if (!v || v === p || cost(c) > 4 + MORE || !ctx.canSteal(p, v, 'swap') || !ctx.canSwapMember(uid)) return;
         if (!ctx.moveMember(uid, v, p, { recruit: true })) return;
         ctx.log(`${p.name}'s Converts: ${p.name} recruits ${v.name}'s ${c.def.name}.`);
         const shop = ctx.shopCards();
@@ -351,12 +352,12 @@ export default {
     // Red's set 16 vs 13). 4 red + 4 any, worth 2, counts as 2. A trade, so swap protection holds (Loyalists' cult, a
     // rival who can't be swapped with), as Double Agent's; the taken member is recruited (its On Recruit fires), the
     // rival's free one is too. Ties for the shop's cheapest: the owner picks, on the owner's turn.
-    ...add7(m('converts', 'Converts', 3, 4, 'On Recruit: recruit a rival’s member costing 4 or less, for free; that rival recruits the shop’s cheapest, for free.', { f: 2, n: 2,
+    ...add7(m('converts', 'Converts', 3, 4, `On Recruit: recruit a rival’s member costing ${4 + MORE} or less, for free; that rival recruits the shop’s cheapest, for free.`, { f: 2, n: 2,
       onRecruited(ctx, owner, card) {
         const list = ctx.rivals(owner).filter(o => ctx.canSteal(owner, o, 'swap'))
-          .flatMap(o => ctx.membersOf(o).filter(c => cost(c) <= 4 && ctx.canSwapMember(c.uid)).map(c => ({ c, o })));
-        if (!list.length) { ctx.log(`${owner.name}'s Converts: no rival's member costing 4 or less to recruit.`); return; }
-        ctx.choose(owner, 'Converts: recruit which rival’s member (costing 4 or less) for free?', list.map(({ c, o }) => ({
+          .flatMap(o => ctx.membersOf(o).filter(c => cost(c) <= 4 + MORE && ctx.canSwapMember(c.uid)).map(c => ({ c, o })));
+        if (!list.length) { ctx.log(`${owner.name}'s Converts: no rival's member costing ${4 + MORE} or less to recruit.`); return; }
+        ctx.choose(owner, `Converts: recruit which rival’s member (costing ${4 + MORE} or less) for free?`, list.map(({ c, o }) => ({
           id: `card:${c.uid}`, label: `${o.name}: ${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f + cost(c),
         })), 'red.convert');
       },
@@ -519,7 +520,7 @@ export default {
       // about one member in from a rival per round for a Red player (Promote, Demote, Body Snatchers)
       ...see(info => 2 * endsAhead(info).length),
     }),
-    ...add7(m('ushers', 'Ushers', 1, 2, 'Each turn, you may also recruit one member costing 4 or less.', { f: 2, n: 2, round: 1, cheapBuy: 4,
+    ...add7(m('ushers', 'Ushers', 1, 2, `Each turn, you may also recruit one member costing ${4 + MORE} or less.`, { f: 2, n: 2, round: 1, cheapBuy: 4 + MORE,
       // about one cheap member a turn in round I, fewer later (the row holds few of them after round I)
       ...see(info => (info.round === 1 ? 0.6 * info.myNow + 2 : info.round === 2 ? 0.3 * info.myNow : 0)),
     })),
@@ -604,7 +605,7 @@ export default {
         ctx.log(`${owner.name} uses Headhunter.`);
         swap(ctx, owner, 'rival', 'Headhunter: choose a rival’s member and its shop replacement');
       },
-      botActivate: (ctx, owner) => ctx.state.round >= 2 && swapPairs(ctx, owner, 'rival').some(([a]) => cost(a) >= 5),
+      botActivate: (ctx, owner) => ctx.state.round >= 2 && swapPairs(ctx, owner, 'rival').some(([a]) => cost(a) >= 5 + MORE),
     }),
     m('reserve', 'Benchwarmer', 1, 0, 'Worth 1 follower.'), // placeholder until Cory designs its hold (then it becomes Seat Saver)
   ],
@@ -615,7 +616,7 @@ export default {
 // to the move cap); then late, or once the count reaches a pricey card
 function godfatherBot(ctx, owner) {
   const k = ctx.memberCount(owner), fits = ctx.shopCards().filter(x => cost(x) <= k);
-  return fits.length > 0 && (ctx.state.round === 3 || fits.some(x => cost(x) >= 7));
+  return fits.length > 0 && (ctx.state.round === 3 || fits.some(x => cost(x) >= 7 + MORE));
 }
 function godfatherUse(ctx, owner, card) {
   const k = ctx.memberCount(owner), list = ctx.shopCards().filter(x => cost(x) <= k);

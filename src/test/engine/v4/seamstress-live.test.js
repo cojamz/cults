@@ -10,7 +10,7 @@ describe('Seamstress, live: "On Use, once per game: double your full sets."', ()
   it("dealt without any switch, in Harmonist's place, 4 yellow + 2 any", () => {
     const d = defById('yellow.seamstress');
     expect(d.retired).toBeFalsy();
-    expect([d.s, d.w]).toEqual([4, 3]);
+    expect([d.s, d.w]).toEqual([5, 4]);
     expect(defById('yellow.harmonist').retired).toBe(true);
   });
   it('two full sets: +2 of each color', () => {

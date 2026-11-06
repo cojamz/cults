@@ -5,11 +5,15 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE12 = 'turncoat,buryfull,rightaway2,snobsup';
+// trial cards are tested at the Nov 5 afternoon prices (every member 2 more than its card file); the live price is
+// 4 more since Nov 5 evening, and these tests check what the cards do, not their price
+process.env.MEMBER_UP = '2';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
 const { table, named, uidIn, owns } = await import('./cards-helpers-b.js');
 delete process.env.REPLACE12;
+delete process.env.MEMBER_UP;
 
 const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
 

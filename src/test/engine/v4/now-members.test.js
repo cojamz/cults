@@ -19,7 +19,7 @@ describe('now and at round start', () => {
   });
 
   it('Steward counts what you hold right after paying for it', () => {
-    let s = sceneQ({ quadrants: ['gold', 'red', 'silver', 'yellow'], res: [{ silver: 10, gold: 2 }], shop: ['silver.steward'], queue: [{ t: 'buy', p: 0 }] });
+    let s = sceneQ({ quadrants: ['gold', 'red', 'silver', 'yellow'], res: [{ silver: 13, gold: 2 }], shop: ['silver.steward'], queue: [{ t: 'buy', p: 0 }] });
     s = payDefault(buy(s, 'silver.steward'));
     const silver = s.players[0].res.silver;
     expect(silver).toBeGreaterThanOrEqual(5);

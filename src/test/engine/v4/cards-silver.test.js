@@ -126,10 +126,10 @@ describe('Silver members', () => {
     expect(s.players[0].bonus).toBe(1);
   });
   it('Smooth Talkers: your silver pays a member’s colored part', () => {
-    const s = sc({ res: [{ silver: 9 }], members: [['silver.smoothtalker']], shop: ['red.patriarch'] });
+    const s = sc({ res: [{ silver: 15 }], members: [['silver.smoothtalker']], shop: ['red.patriarch'] });
     const uid = s.shop.find(u => s.cards[u].def === 'red.patriarch');
     expect(paymentPlan(s, s.players[0], uid).silver).toBeGreaterThan(0);
-    const s2 = sc({ res: [{ silver: 9 }], shop: ['red.patriarch'] });
+    const s2 = sc({ res: [{ silver: 15 }], shop: ['red.patriarch'] });
     expect(paymentPlan(s2, s2.players[0], s2.shop.find(u => s2.cards[u].def === 'red.patriarch'))).toBe(null);
   });
   it('Philanthropist: On Recruit, rivals gain up to 4 silver, +1 follower each', () => {
@@ -257,7 +257,7 @@ describe('Silver members', () => {
 
   // pays when recruited too (dead-window audit, 2026-10-14): recruited in round III it used to give nothing
   it('Heir: when recruited, +1 silver per member you have (itself included), named', () => {
-    let s = sc({ round: 3, res: [{ silver: 8 }], members: [['red.intern', 'red.twins']], shop: ['silver.heir'], queue: [{ t: 'buy', p: 0 }] });
+    let s = sc({ round: 3, res: [{ silver: 10 }], members: [['red.intern', 'red.twins']], shop: ['silver.heir'], queue: [{ t: 'buy', p: 0 }] });
     s = buy(s, 'silver.heir');
     expect(S(s)).toBe(5); // Heir1 + Intern1 + Triplets 3.
     expect(named(s, 'Heir')).toEqual(["P1's Heir: +5 silver."]);

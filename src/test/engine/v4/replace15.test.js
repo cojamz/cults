@@ -4,10 +4,14 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE15 = 'warchest,gloaters'; // Cheerleaders and Victors are live
+// trial cards are tested at the Nov 5 afternoon prices (every member 2 more than its card file); the live price is
+// 4 more since Nov 5 evening, and these tests check what the cards do, not their price
+process.env.MEMBER_UP = '2';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { table, named } = await import('./cards-helpers-b.js');
 delete process.env.REPLACE15;
+delete process.env.MEMBER_UP;
 
 // P1 wins Red and Blue in round II (+6 each), P3 wins White
 const scene = (member, extra = {}) => table(['red', 'market', 'trading', 'yellow'], { n: 3, round: 2, res: [{ red: 4, blue: 3 }, { red: 2, blue: 1 }, { white: 2, red: 1 }], members: [[member]], queue: [{ t: 'endRound' }], ...extra });

@@ -5,12 +5,16 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE2 = '1';
+// trial cards are tested at the Nov 5 afternoon prices (every member 2 more than its card file); the live price is
+// 4 more since Nov 5 evening, and these tests check what the cards do, not their price
+process.env.MEMBER_UP = '2';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
 const { table, named, uidIn, owns } = await import('./cards-helpers-b.js');
 // read once at load: cleared again so a later test file in this worker loads the engine without the switch
 delete process.env.REPLACE2;
+delete process.env.MEMBER_UP;
 
 const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
 

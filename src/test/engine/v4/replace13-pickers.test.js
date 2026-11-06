@@ -4,10 +4,14 @@
 import { describe, it, expect } from 'vitest';
 
 process.env.REPLACE13 = 'pickers';
+// trial cards are tested at the Nov 5 afternoon prices (every member 2 more than its card file); the live price is
+// 4 more since Nov 5 evening, and these tests check what the cards do, not their price
+process.env.MEMBER_UP = '2';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { quadrant, defById } = await import('../../../engine/v4/content/index.js');
 const { table } = await import('./cards-helpers-b.js');
 delete process.env.REPLACE13;
+delete process.env.MEMBER_UP;
 const go = (s, id) => applyMove(s, { player: s.pending.player, option: id });
 const first = (s, pre) => s.pending.options.find(o => o.id.startsWith(pre)).id;
 const slotOf = (s, q, name) => `slot:${s.quadrants.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.name === name)}`;
