@@ -9,6 +9,9 @@
 // idea ("copy", "in the shop", "on the board"). design/eval/words/decipher-w3.md checks every line against the rule.
 import { pipEffect } from '../shorts.js';
 import { contextFor } from '../../engine/v4/core.js';
+// named costs follow every member's price (content/price.js MORE), as the engine's rule text does (picky bot, Nov 6:
+// the wheel said "costing 9 or less" beside a hover card saying 10, after the Nov 5 11:08pm price change)
+import { MORE } from '../../engine/v4/content/price.js';
 
 // A value that grows by round prints this round's number, and says it grows in plain words (w3b #12/#13, w3a #54: the
 // "2 · 4 · 6 by round" run under "+4●" said the number twice, and "+2●" alone read as flat). It takes line 2 when the
@@ -55,7 +58,7 @@ const P = {
     hire: { verb: 'Recruit the top of the pile', second: '+1 red, rivals +1' }, // the rivals' red sat in line 3, which drops on the outer ring (blind panel, Nov 1)
     hireup: { verb: 'Promote to one costing up to 3 more +3 red' },
     trade: { verb: 'Demote to one costing up to 3 less +3 red' },
-    take: { verb: 'Free member costing 9 or less', second: '+1 red' },
+    take: { verb: `Free member costing ${9 + MORE} or less`, second: '+1 red' },
   },
   market: {
     bargain: r => ({ main: `+${r + 1} blue`, second: 'Discard 1 shop member', note: run(n => `+${n + 1}`, 'blue: ') }), // Cory, Oct 31 ("may" made line 2 too long; it dropped)
@@ -111,7 +114,7 @@ const P = {
     // New Blood and Big New Blood (Nov 4): Gather's shape, the condition in line 2
     dilute: r => ({ main: '+2 yellow', second: `+${r + 1} yellow if you recruit a new color`, note: run(n => `+${n + 1}`, 'new color: ') }),
     // Housewarming took Big New Blood's place (Nov 4, overnight quality loop)
-    housewarming: { main: '+2 yellow', second: 'free new-color member, up to 6' },
+    housewarming: { main: '+2 yellow', second: `free new-color member, up to ${6 + MORE}` },
     meltingpot: { verb: '+1 of each member color', note: '+2 yellow' },
     makeover: { verb: '+4 yellow, then rearrange all', second: 'into any colors' },
     bloom: r => ({ main: `+${r} yellow`, second: '+1 of each fewest color', note: run(n => `+${n}`, 'yellow: ') }),
@@ -130,7 +133,7 @@ const P = {
     tipoff: r => ({ main: `+${r + 1} magenta`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 1}`, 'magenta: ') }), // Gather's shape (Cory, Oct 31)
     hideout: { verb: 'Steal 1, then safe from steals', second: 'this round', note: '+1 magenta' },
     rob: { verb: 'Steal 3 @f', second: 'split among rivals', note: '+1 magenta' }, // any rivals (Nov 5) // Nov 4: followers, not half a pile
-    ransom: { verb: 'Rival pays or loses a member costing 6 or less', note: '+1 magenta' },
+    ransom: { verb: `Rival pays or loses a member costing ${6 + MORE} or less`, note: '+1 magenta' },
     heist: { verb: 'Recruit a rival’s member', note: '+1 magenta' },
   },
   trading: {

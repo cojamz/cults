@@ -6,6 +6,7 @@ import { createGame, applyMove, chooseBotMove, previewSpace, quadrant, allQuadra
 import { seededRandom } from '../../../engine/v4/rng.js';
 import { panelText, panelEntries } from '../../../v4/game/panelText.js';
 import { youdWords } from '../../../v4/game/Info.jsx';
+import { MORE } from '../../../engine/v4/content/price.js';
 
 const lines = t => [t.main, t.verb, t.second, t.note].filter(Boolean);
 
@@ -78,7 +79,7 @@ describe('panel words (w3)', () => {
     expect(panelText('purple', { key: 'rally' }, 3).verb).toMatch(/^Your next two turns, now$/);
     // w4b #5: "A rival's member or its cost" read as "I choose": the rival pays or loses, in line 1
     // shortened to fit on phones (v0.8.8 Magenta, 68c9bf0f): line 1 still says the rival decides, pay or lose
-    expect(panelText('thieves', { key: 'ransom' }, 2).verb).toMatch(/^Rival pays or loses a member costing 6 or less$/); // the limit too: line 2 dropped on ring III (text audit Nov 1)
+    expect(panelText('thieves', { key: 'ransom' }, 2).verb).toBe(`Rival pays or loses a member costing ${6 + MORE} or less`); // the cap follows every member's price, as the rule text does (picky bot, Nov 6); // the limit too: line 2 dropped on ring III (text audit Nov 1)
     expect(panelText('silver', { key: 'largesse' }, 3).verb).toMatch(/^Give rivals 12 silver$/); // Nov 1: "+N per silver" read as per silver you hold
   });
 
