@@ -88,7 +88,7 @@ describe('Red members', () => {
   });
 
   it('Proselytizers: +1 follower whenever you recruit (not for itself)', () => {
-    let s = scene({ res: [{ red: 3, gold: 3 }], shop: ['red.proselytizer', 'red.volunteer', 'gold.midas', 'gold.jackpot', 'red.bigfamily', 'gold.tycoon'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }] });
+    let s = scene({ res: [{ red: 3, gold: 3 }], shop: ['red.proselytizer', 'red.volunteer', 'gold.midas', 'gold.jackpot', 'red.bigfamily', 'gold.tycoon'], pileFirst: ['red.intern'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }] }); // Walk-In's top card set (the deck moved when Victors left, Nov 6)
     s = beginBuy(s);
     s = move(s, `card:${uidOf(s, 'red.proselytizer', 'shop')}`);
     expect(s.players[0].bonus).toBe(0);

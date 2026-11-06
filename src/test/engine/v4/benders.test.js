@@ -41,7 +41,7 @@ describe('guest members join the deck', () => {
     const has = s => Object.values(s.cards).some(c => c.def === 'benders.squatter');
     expect(has(on)).toBe(true);
     expect(has(off)).toBe(false);
-    expect(Object.keys(on.cards).length - Object.keys(off.cards).length).toBe(19); // the full test deck: Cory's 15 guests, Cheerleaders and Victors (Nov 4), plus the cut Insider and Straggler (Oct 28)
+    expect(Object.keys(on.cards).length - Object.keys(off.cards).length).toBe(18); // the full test deck: Cory's 15 guests, Cheerleaders (Nov 4; Victors out Nov 6), plus the cut Insider and Straggler (Oct 28)
   });
   it('a bender whose color is not on the table is paid in any colors', () => {
     // Squatter leans Magenta; the default table has no magenta
