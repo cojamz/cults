@@ -46,6 +46,9 @@ function botMove(s, rand) {
     const alt = s.pending.options.find(x => x.kind === 'slot' && x.q !== undefined && !['skip', 'holdup', 'again', 'lastcall', 'crowdin'].includes(actionAt(s, x.q, x.i).key));
     if (alt) return { player: m.player, option: alt.id };
   }
+  // nor recruit Bouncers (On Recruit: the next two rivals' turns are skipped): since Night Watch left Purple (Nov 6) the
+  // bots buy it on every seed this test tried
+  if (o?.kind === 'card' && s.cards[o.uid]?.def === 'purple.bouncer') return { player: m.player, option: s.pending.options.find(x => x.kind === 'pass')?.id ?? m.option };
   return m;
 }
 const letters = (base, seq) => seq.map(p => L[base.indexOf(p)]).join(' ');
@@ -53,8 +56,8 @@ const others = (seq, who) => seq.filter(p => p !== who);
 
 describe('snake vs real sequence, 3 players, one seat taking turns out of it', () => {
   const crunch = at => {
-    // seed 14 since the Nov 5 replacements (43 before): no seat's members hand out an extra turn in this round III (41 until every member cost 1 more, Nov 5; 40 until the Nov 5 deck; 39 and 31 until Promote stopped reaching cheaper, Nov 4 night; seed 29, 30 until Cheerleaders and Victors joined the grey deck, Nov 4; seed 28 until Recruiter, Tryout and Last Call changed, Nov 1; seeds 11, 12, 14, 15 to 18, after the Oct 29 prices 19 to 23, and after members counting their followers (Nov 1) 24 to 27 did)
-    const { s, rand } = toRound(3, 14);
+    // seed 16 since Night Watch left (Nov 6); seed 14 since the Nov 5 replacements (43 before): no seat's members hand out an extra turn in this round III (41 until every member cost 1 more, Nov 5; 40 until the Nov 5 deck; 39 and 31 until Promote stopped reaching cheaper, Nov 4 night; seed 29, 30 until Cheerleaders and Victors joined the grey deck, Nov 4; seed 28 until Recruiter, Tryout and Last Call changed, Nov 1; seeds 11, 12, 14, 15 to 18, after the Oct 29 prices 19 to 23, and after members counting their followers (Nov 1) 24 to 27 did)
+    const { s, rand } = toRound(3, 16);
     const base = s.order.slice(0, 3), who = base[at];
     const seq = playRound(s, rand, st => {
       if (st.pending.player !== who || st.turns.filter(p => p === who).length !== 1) return null;
@@ -79,7 +82,7 @@ describe('snake vs real sequence, 3 players, one seat taking turns out of it', (
     expect(others(seq, who)).toEqual(others(plain, who));
   });
   for (const at of [0, 1]) it(`an extra turn (Go-Getter) for seat ${L[at]} in round II goes in; nobody else moves`, () => {
-    const { s, rand } = toRound(2, 18); // seed 18 since Promote stopped reaching cheaper (Nov 4 night); seed 16 handed seat B an extra turn once members counted their printed number (Oct 29)
+    const { s, rand } = toRound(2, 21); // seed 21 since Night Watch left (Nov 6); seed 18 since Promote stopped reaching cheaper (Nov 4 night); seed 16 handed seat B an extra turn once members counted their printed number (Oct 29)
     const base = s.order.slice(0, 3), who = base[at];
     let done = false;
     const seq = playRound(s, rand, st => {
