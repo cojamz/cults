@@ -4,16 +4,10 @@
 // sentence; the words stay in the page, hidden, so it reads, copies and searches the same. Mid-sentence timings keep
 // their bold words.
 const SVG = ({ children }) => <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">{children}</svg>;
-const Glass = ({ full }) => (
-  <SVG>
-    <path d="M2.6 1.2h10.8M2.6 14.8h10.8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-    <path d="M3.8 1.6c0 3.6 3.2 4.6 3.2 6.4S3.8 10.8 3.8 14.4h8.4c0-3.6-3.2-4.6-3.2-6.4s3.2-2.8 3.2-6.4Z" stroke="currentColor" strokeWidth="1.3" fill="none" strokeLinejoin="round" />
-    {full ? <path d="M4.3 1.9h7.4C11.6 5 8.6 6 8 7.8C7.4 6 4.4 5 4.3 1.9Z" /> : <path d="M8 8.2c.6 1.8 3.6 2.8 3.7 5.9H4.3C4.4 11 7.4 10 8 8.2Z" />}
-  </SVG>
-);
 const ICONS = {
   recruit: ['On Recruit', () => <SVG><path d="M6.5 1.6a2.7 2.7 0 1 1 0 5.4a2.7 2.7 0 1 1 0-5.4ZM1.2 14.6c0-3.4 2.2-5.4 5.3-5.4s5.3 2 5.3 5.4Z" /><path d="M12.6 1.2v5.6M9.8 4h5.6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" fill="none" /></SVG>],
-  start: ['Round Start', () => <Glass full />],
+  // a sun to pair with Round End's moon (Cory, Nov 6: "make round start a sun i guess"); was an hourglass
+  start: ['Round Start', () => <SVG><circle cx="8" cy="8" r="3.3" /><path d="M8 .9v2.2M8 12.9v2.2M.9 8h2.2M12.9 8h2.2M3 3l1.55 1.55M11.45 11.45L13 13M13 3l-1.55 1.55M4.55 11.45L3 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></SVG>],
   // a moon, not a second hourglass: sand on the bottom read as the round's start (Cory, Nov 6: "spoilsport icon says beginning of round? but it happens end of round?")
   end: ['Round End', () => <SVG><path d="M9.6 1.4A6.8 6.8 0 1 0 14.6 11.2A5.4 5.4 0 0 1 9.6 1.4Z" /></SVG>],
   game: ['Game End', () => <SVG><path d="M2.6 1v14.2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" fill="none" /><path d="M3.4 1.6h10.4v7.2H3.4Z" fill="none" stroke="currentColor" strokeWidth="1.1" /><path d="M3.4 1.6h2.6v2.4H3.4ZM8.6 1.6h2.6v2.4H8.6ZM6 4h2.6v2.4H6ZM11.2 4h2.6v2.4h-2.6ZM3.4 6.4h2.6v2.4H3.4ZM8.6 6.4h2.6v2.4H8.6Z" /></SVG>],
