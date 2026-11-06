@@ -5,6 +5,7 @@ import { discountSources } from '../../engine/v4/discount.js';
 // - CardName / MemberCard: a member named anywhere opens the full card (color, cost, ability).
 // - ContestStandings / ContestTip: a quadrant's contest straight from the engine's contestTable (who'd score now).
 // - TouchTips: on touch screens a long-press on anything with a title shows that title (hover's touch twin).
+import { splitOpener, TimingIcons } from './Timing.jsx';
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { memberWeight, cardDef, defById, quadrant, previewSpace, memberPrice } from '../../engine/v4/index.js';
 import { term, splitTerms } from '../glossary.js';
@@ -156,6 +157,13 @@ export function Definition({ k }) {
 /** Rules text: resource words as symbols (Rich), game keywords underlined (each opens its definition). */
 export function CardText({ text }) {
   if (!text) return null;
+  const open = splitOpener(memberTimingWords(text));
+  if (open) {
+    // the icons open the timing's definition, as its words did (a keyword inside a button still picks the button)
+    const key = splitTerms(open.words).find(x => x.key)?.key;
+    const icons = <TimingIcons kinds={open.kinds} words={open.words} />;
+    return <>{key ? <Term k={key}>{icons}</Term> : icons}<CardText text={open.rest} /></>;
+  }
   const parts = splitTerms(memberTimingWords(text).replace(/(^|\band )at round start\b/ig, (m, pre) => (pre ? `${pre}at Round Start` : 'Round Start')) /* Cory, Nov 5: "On Recruit and at Round Start" */.replace(/\bon recruit\b/ig, 'On Recruit'));
   // each piece knows what follows it, so a color before a keyword ("blue | face-up member") stays a word
   const after = k => parts.slice(k + 1).map(x => x.text).join('');
@@ -170,7 +178,7 @@ export function CardText({ text }) {
  * def's text stays the rule (log, rulebook, panels). Anything else reads as its text.
  */
 const ROMAN = ['I', 'II', 'III'];
-const PlainText = ({ text }) => <Rich text={memberTimingWords(text)} />;
+const PlainText = ({ text }) => { const open = splitOpener(memberTimingWords(text)); return open ? <><TimingIcons kinds={open.kinds} words={open.words} /><Rich text={open.rest} /></> : <Rich text={memberTimingWords(text)} />; };
 // plain: resource marks only, no glossary underlines (the seat's member list; the member's own card underlines them)
 // "+1 of each color" / "+2 of each color" / "+3 of each color" → ['+1', '+2', '+3'] and "of each color" (the last
 // line's words, so a plural reads right); null when the lines differ past their first word

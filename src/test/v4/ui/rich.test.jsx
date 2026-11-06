@@ -58,11 +58,12 @@ describe('two symbols only, words for the rest (Cory, 2026-10-15: simplify)', ()
 
 it('renders canonical ability timings in bold without changing action instructions', () => {
   const { container, rerender } = render(<CardText text="Recruit / round start: +2 red." />);
-  expect([...container.querySelectorAll('strong.ability-timing')].map(e => e.textContent)).toEqual(['On Recruit', 'Round Start']);
+  // a member's opening timing is icons now (Cory, Nov 5), its words kept hidden
+  expect(container.querySelector('[data-timing]').getAttribute('data-timing')).toBe('recruit start');
   expect(container.textContent).not.toContain('**');
   rerender(<CardText text="Now and at round start, +1 gold." />);
-  expect([...container.querySelectorAll('strong.ability-timing')].map(e => e.textContent)).toEqual(['On Recruit', 'Round Start']);
-  expect(container.textContent).toContain('On Recruit and at Round Start'); // Cory, Nov 5: "at Round Start"
+  expect(container.querySelector('[data-timing]').getAttribute('data-timing')).toBe('recruit start');
+  expect(container.textContent).toMatch(/On Recruit and at Round Start/i); // Cory, Nov 5: "at Round Start", the words hidden behind icons
   rerender(<Rich text="Recruit a shop member." />);
   expect(container.textContent).toBe('Recruit a shop member.');
 });

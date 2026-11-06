@@ -116,7 +116,8 @@ describe('colorless members', () => {
   it('a member you use says so first, and in the shop how (w3a #5)', () => {
     const s = createGame({ seats, seed: 5 });
     const use = render(<MemberCard state={s} def={defById('gold.speculator')} />);
-    expect(use.container.querySelector('.mc-text').textContent).toMatch(/^On Use, Once per Game/);
+    expect(use.container.querySelector('.mc-text [data-timing-icon="once"]')).not.toBeNull(); // "1×" (Cory, Nov 5)
+    expect(use.container.querySelector('.mc-text').textContent).toMatch(/On Use, once per game/i);
     cleanup();
     const plain = render(<MemberCard state={s} def={defById('gold.banker')} />);
     expect(plain.container.querySelector('[data-use-tag]')).toBeNull();
@@ -218,7 +219,8 @@ it('member timing names recruitment and round starts precisely', () => {
   expect(memberTimingWords('When recruited: +2 red.')).toBe('On recruit: +2 red.');
   expect(memberTimingWords('Round start: plant any yellow.')).toBe('At round start: plant any yellow.');
   const { container } = render(<CardText text="Now and at round start, +3 gold." />);
-  expect(container.textContent).toMatch(/^On Recruit and at Round Start/);
+  expect(container.querySelector('[data-timing]').getAttribute('data-timing')).toBe('recruit start'); // icons (Cory, Nov 5)
+  expect(container.textContent).toMatch(/^On Recruit and at Round Start/i);
   expect(container.textContent).not.toMatch(/Now/);
 });
 

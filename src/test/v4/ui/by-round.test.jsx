@@ -58,7 +58,7 @@ describe('rules that grow by round', () => {
     const c = Object.values(s.cards).find(x => x.def === 'market.planner');
     s.round = 3;
     const { container } = render(<MemberCard state={s} uid={c.uid} />);
-    expect(container.querySelector('.br-lead').textContent).toMatch(/your next member costs/);
+    expect(container.querySelector('.br-lead').textContent).toMatch(/your next member costs/i); // the opener is icons now (Cory, Nov 5)
     expect([...container.querySelectorAll('[data-round-line].now')].map(l => l.dataset.roundLine)).toEqual(['3']);
     cleanup();
     s.shop = s.shop.filter(u => u !== c.uid); s.pile = s.pile.filter(u => u !== c.uid);

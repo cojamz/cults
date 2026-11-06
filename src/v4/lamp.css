@@ -86,6 +86,15 @@
 .mem-show .member-glyph{width:.92em;height:.92em;vertical-align:-.12em;margin:0 0 0 .03em}
 .rich-n + .mem-show .member-glyph{margin-left:.02em}
 .mem-words{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+/* timing icons (Cory, Nov 5): a member rule's opening timing as dark tiles, the words kept hidden */
+.tm-icons{display:inline-flex;gap:.15em;vertical-align:-.32em;margin-right:.3em;position:relative}
+.tm-icon{display:inline-grid;place-items:center;width:1.4em;height:1.4em;border-radius:.3em;background:#3a2a22;color:#f3e6c8;line-height:1}
+.tm-icon svg{width:1em;height:1em}
+.tm-txt{font-weight:700;font-size:.8em;letter-spacing:-.02em}
+.tm-frac{display:flex;flex-direction:column;align-items:center;font-weight:700;font-size:.64em;line-height:1}
+.tm-frac span:first-child{border-bottom:1.5px solid currentColor;padding:0 1px 1px}
+.tm-frac span:last-child{padding-top:1px}
+.tm-words{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 body{
   background:
     radial-gradient(ellipse 70% 80% at 28% 52%, rgba(var(--lamp),.13), rgba(var(--lamp),.03) 55%, transparent 75%),
