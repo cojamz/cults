@@ -22,10 +22,10 @@ describe('REPLACE14: Ragpicker ("You may recruit the top member of the discard p
     expect(defById('market.ragpicker').name).toBe('Ragpicker');
     expect(defById('market.patroness').retired).toBe(true);
   });
-  it('offers the discard pile's top card beside the shop, and recruits it at its price', () => {
+  it("offers the discard pile's top card beside the shop, and recruits it at its price", () => {
     let s = table(['red', 'market'], { n: 2, round: 2, res: [{ red: 9, blue: 9, gold: 9 }], members: [['market.ragpicker']] });
-    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
     const b = s.pile.pop(); s.discard.push(b); // the discard pile's top card (Nov 6: the pile's bottom became the discard pile)
+    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
     const o = s.pending.options.find(x => x.id === `card:${b}`);
     expect(o?.label).toContain('(top of the discard pile)');
     s = payAll(answer(s, o.id));

@@ -87,7 +87,8 @@
 .rich-n + .mem-show .member-glyph{margin-left:.02em}
 .mem-words{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 /* timing icons (Cory, Nov 5): a member rule's opening timing as dark tiles, the words kept hidden */
-.tm-icons{display:inline-flex;gap:.15em;vertical-align:-.32em;margin-right:.3em;position:relative}
+/* the icons stand on their own line above the rule, so the words never wrap around them (Cory, Nov 6: "visual symbols awkard") */
+.tm-icons{display:flex;justify-content:center;gap:.2em;margin:0 0 .3em;position:relative}
 .tm-icon{display:inline-grid;place-items:center;width:1.4em;height:1.4em;border-radius:.3em;background:#3a2a22;color:#f3e6c8;line-height:1}
 .tm-icon svg{width:1em;height:1em}
 .tm-txt{font-weight:700;font-size:.8em;letter-spacing:-.02em}

@@ -1541,7 +1541,7 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
     if (!punched && !cleared && cardDef(state, uid).s + cardDef(state, uid).w > 0) { p.discount = 0; p.discountSources = []; }
   }
   // Peek's reach is one recruit from the cards it showed; Insider's stays
-  const peeked = idx < 0 && fromPile < (p.peekReach || 0);
+  const peeked = idx < 0 && fromPile >= 0 && fromPile < (p.peekReach || 0);
   if (peeked) delete p.peekReach;
   if (idx >= 0) state.shop.splice(idx, 1);
   else if (bottom) takeFromDiscard(state, uid);
