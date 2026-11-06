@@ -672,7 +672,7 @@ export default {
     // (Normal bots, n=320), so 8+2 (design/eval/purple-members.md). At 4 players round I has no space to spare, so it
     // pays from round II. Fires once per round (owlRound), whether or not the board had room.
     // Cory, Nov 1 2:35pm: the Goes Last token; the extra minion waits on it
-    m('nightowl', 'Night Owls', 6, 1, 'From round II: after your last minion, +1 minion, placed right away.', { f: 2, from: 2, ...old7('purple.nightowl'),
+    m('nightowl', 'Night Owls', 6, 1, 'From round II: after your last minion, +1 minion, placed right away.', { f: 2, from: 2, retired: true, ...old7('purple.nightowl'), // retired Nov 6 (Cory: "I thought we replaced night owls? why still seeing it")
       // its onRecruited only says when the extra minion starts: no On Recruit for Tryout or Sample to borrow
       recruitNote: true,
       // recruited after your last minion of the round (its buy step): it waits for next round, and says so
