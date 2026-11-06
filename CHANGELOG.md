@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.617 — 2026-11-05
+
+- Last-Minute Shopper's round-end recruit is a normal recruit (a member or followers); Night Manager is now Night Managers; Night Watch is out of the Purple deck
+
 ## v0.99.616 — 2026-11-05
 
 - The member browser shows which members are already bought, and by whom
