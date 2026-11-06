@@ -14,7 +14,7 @@ Last updated 2026-11-03 7:05pm Eastern by the "Plan and run today's autonomous i
 - Firefox: every gate and the freeze probe run in it (`npm run check:v4 -- --firefox`); the perf rig stays Chrome-only (CDP).
 
 ## Contest-win greys (Nov 4)
-- Live (v0.99.581, fixes in v0.99.582): Cheerleaders "Whenever you win a contest, +2 followers." (6 any, worth 2) and Victors "Whenever you win a contest, +2 of its color." (5 any) in the grey deck (12). Both pay after every contest is scored. Cory: prices maybe a little high, Cheerleaders maybe 3 members, "we will revisit that later". War Chest and Gloaters stay behind REPLACE15.
+- Live: Cheerleaders "Whenever you win a contest, +2 followers." in the grey deck. Victors ("Whenever you win a contest, +2 of its color.") retired v0.99.627 (Cory, Nov 6: "Victors is bad"); grey deals 11.
 
 ## Replacement members (Nov 3, thread "Plan and run today's autonomous improvements")
 - 44 new members on the six principles (design/notes/replacements-principles-2026-11-03.md), built behind bot-test switches REPLACE1..REPLACE6 (src/engine/v4/content/replace1-6.js; specs design/notes/replacements-batch1..6-2026-11-03.md). Results: design/eval/replacements/ (batch1..batch4-6-results.md, batch7-fixed-bots-results.md is the one to trust).
