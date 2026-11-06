@@ -26,7 +26,7 @@ describe('REPLACE7: the switch', () => {
     expect(card('red.ushers')).toEqual(['Ushers', 2, 3, 2, 2]);
     expect(card('purple.runner')).toEqual(['Runner', 4, 3, 1, 1]);
     expect(card('purple.interrupter')).toEqual(['Interrupter', 4, 3, 1, 1]);
-    expect(card('red.fosterparents')).toEqual(['Foster Parents', 2, 3, 2, 2]);
+    expect(card('red.fosterparents')).toEqual(['Foster Parents', 3, 3, 2, 2]);
     expect(card('red.godfather')).toEqual(['Godfather', 4, 3, 1, 1]);
     expect(card('red.crimefamily')).toEqual(['Crime Family', 4, 3, 3, 3]);
     expect(card('purple.gobetween')).toEqual(['Go-Between', 2, 3, 1, 1]);

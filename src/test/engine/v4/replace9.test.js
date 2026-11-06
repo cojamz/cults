@@ -117,13 +117,13 @@ describe('Quilter: "On Use, once per game: turn up to 3 full sets into 6 followe
   });
 });
 
-describe('Last-Minute Shopper: "Round End: +2 blue, then you may recruit."', () => {
+describe('Last-Minute Shopper: "Round End: +3 blue, then you may recruit." (Cory, Nov 6: +3)', () => {
   const Q4 = ['red', 'market', 'purple', 'silver'];
   const PROMPT = 'P1: Last-Minute Shopper: recruit once before contests are scored, or pass';
   const pay = s => { while (s.pending?.kind === 'pay' || s.pending?.kind === 'choose' && /pay/.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id); return s; };
-  it('Round End, before contests: +2 blue, then one ordinary recruit: shop members it can pay for, the follower cards, or pass (Cory, Nov 5)', () => {
+  it('Round End, before contests: +3 blue, then one ordinary recruit: shop members it can pay for, the follower cards, or pass (Cory, Nov 5)', () => {
     const s = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminute']], shop: ['red.volunteer', 'market.snob'], queue: [{ t: 'allPlaced' }] });
-    expect(s.players[0].res.blue).toBe(2);
+    expect(s.players[0].res.blue).toBe(3);
     expect(s.pending.prompt).toBe(PROMPT);
     const ids = s.pending.options.map(o => o.id);
     expect(s.pending.options.some(o => o.kind === 'card' && o.label.startsWith('Volunteer'))).toBe(true);
@@ -139,7 +139,7 @@ describe('Last-Minute Shopper: "Round End: +2 blue, then you may recruit."', () 
     let t = table(Q4, { n: 3, round: 1, res: [{ red: 4 }], members: [['market.lastminute']], shop: ['red.volunteer'], queue: [{ t: 'allPlaced' }] });
     t = answer(t, 'pass');
     expect(owns(t, 0, 'red.volunteer')).toBe(false);
-    expect(t.players[0].res).toMatchObject({ red: 4, blue: 2 });
+    expect(t.players[0].res).toMatchObject({ red: 4, blue: 3 });
     expect(t.pending).toBeFalsy();
   });
   it('it can buy followers: the 1-follower card for 1 resource', () => {
@@ -148,7 +148,7 @@ describe('Last-Minute Shopper: "Round End: +2 blue, then you may recruit."', () 
     s = pay(answer(s, 'tier:small'));
     expect(s.pending).toBeFalsy();
     expect(s.players[0].bonus).toBe(before + 1);
-    expect(s.players[0].res.red + s.players[0].res.blue).toBe(2); // 1 red + 2 blue, less the 1 paid
+    expect(s.players[0].res.red + s.players[0].res.blue).toBe(3); // 1 red + 3 blue, less the 1 paid
     expect(s.log.some(l => /P1 bought 1 follower/.test(typeof l === 'string' ? l : l.text))).toBe(true);
   });
   it('pitched turn: round I end, the recruit counts in Blue\'s Most members before it is scored', () => {

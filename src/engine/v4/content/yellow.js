@@ -577,11 +577,11 @@ export default {
     // REPLACE2 bot test (Nov 3, replacement batch 2): Meddler's place. 4 yellow + 2 any as a player sees it. Trade
     // Seeds' own swaps, asked after the round's last placement and before anything is scored (core's allPlaced step).
     // In the deck for Meddler's slot, 3 yellow + 1 any as a player sees it (Cory, Nov 5: "yes to night market. should be relatively cheap")
-    m('nightmarket', 'Night Traders', 2, 0, 'Round End: before contests are scored, swap up to 3 of your resources for other colors, one for one.', {
+    m('nightmarket', 'Night Traders', 2, 0, /* up to 4 (Cory, Nov 6: "buff night traders to 4") */ 'Round End: before contests are scored, swap up to 4 of your resources for other colors, one for one.', {
       // BOTSEE: each round end still ahead, about a 30% chance the swap wins or saves a contest
       ...see(i => endsAhead(i).reduce((a, r) => a + 0.3 * SEE_RING[r - 1], 0)),
       onAllPlaced(ctx, owner) {
-        const k = Math.min(3, total(ctx, owner));
+        const k = Math.min(4, total(ctx, owner));
         if (!k) { ctx.log(`${owner.name}'s Night Traders: nothing to swap.`); return; }
         transmuteStep(ctx, owner, { who: 'Night Traders', left: k, done: 0 });
       },

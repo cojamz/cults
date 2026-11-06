@@ -957,9 +957,9 @@ const market = {
     // its own Round End that round (the round's round-end members have already been asked).
     // In the deck for Shopaholics' slot (Cory, Nov 5: "Last minute shopper is good. it should also give one or 2 blue at
     // round end"; +2 is Claude's pick). The blue comes before contests are scored, so it counts for Most blue.
-    m('lastminute', 'Last-Minute Shopper', 2, 0, 'Round End: +2 blue, then you may recruit.', { round: 1,
+    m('lastminute', 'Last-Minute Shopper', 2, 0, /* +3 (Cory, Nov 6: "Give last minute shopper an extra blue") */ 'Round End: +3 blue, then you may recruit.', { round: 1,
       ...see(i => endsAhead(i).length * 3), // BOTSEE: 2 blue and an extra paid recruit each round end still ahead
-      onAllPlaced(ctx, owner) { const got = ctx.gain(owner, B, 2); if (got) ctx.log(`${owner.name}'s Last-Minute Shopper: +${got.n} ${got.color}.`); lmOffer(ctx, owner); },
+      onAllPlaced(ctx, owner) { const got = ctx.gain(owner, B, 3); if (got) ctx.log(`${owner.name}'s Last-Minute Shopper: +${got.n} ${got.color}.`); lmOffer(ctx, owner); },
     }),
     // Alternate (director, Nov 4: numbers for Cory on both): REPLACE9=lastminute2. The same card, first +2 resources of the
     // owner's choice (one color at a time), so the round-end recruit has something to pay with.

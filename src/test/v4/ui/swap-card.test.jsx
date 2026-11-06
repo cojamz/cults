@@ -28,22 +28,22 @@ describe('Night Traders swap card', () => {
     expect(s.pending.prompt).toMatch(/^Night Traders: swap one for one/);
     expect(swapChoice(s, s.pending)).toBe(true);
   });
-  it('three presses of + and one Done make three swaps (was three gives and three gets)', () => {
+  it('four presses of + and one Done make four swaps (Cory, Nov 6: up to 4)', () => {
     vi.useFakeTimers();
     const t = table(traders({ blue: 7, purple: 2 }));
-    press('purple', '+'); press('purple', '+'); press('purple', '+');
-    expect(row('purple').dataset.n).toBe('5');
-    expect(row('blue').dataset.n).toBe('4');
-    expect(screen.getByRole('status').textContent).toMatch(/3 of 3 swaps used/);
-    // out of swaps: + on another color moves one of those three over, never a fourth swap
+    press('purple', '+'); press('purple', '+'); press('purple', '+'); press('purple', '+');
+    expect(row('purple').dataset.n).toBe('6');
+    expect(row('blue').dataset.n).toBe('3');
+    expect(screen.getByRole('status').textContent).toMatch(/4 of 4 swaps used/);
+    // out of swaps: + on another color moves one of those four over, never a fifth swap
     press('red', '+');
-    expect([row('blue').dataset.n, row('purple').dataset.n, row('red').dataset.n]).toEqual(['4', '4', '1']);
+    expect([row('blue').dataset.n, row('purple').dataset.n, row('red').dataset.n]).toEqual(['3', '5', '1']);
     press('red', '-'); press('purple', '+');
-    fireEvent.click(screen.getByRole('button', { name: 'Swap 3' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Swap 4' }));
     settle();
-    expect(t.now().players[0].res.blue).toBe(4);
-    expect(t.now().players[0].res.purple).toBe(5);
-    expect(t.picks).toEqual(['swap:blue:purple', 'swap:blue:purple', 'swap:blue:purple']);
+    expect(t.now().players[0].res.blue).toBe(3);
+    expect(t.now().players[0].res.purple).toBe(6);
+    expect(t.picks).toEqual(['swap:blue:purple', 'swap:blue:purple', 'swap:blue:purple', 'swap:blue:purple']);
     expect(screen.getByText('after')).toBeTruthy();
   });
   it('a mix of colors, stopping early with Done', () => {
@@ -59,12 +59,12 @@ describe('Night Traders swap card', () => {
   it('− past the cap is off, and a raised color comes back down', () => {
     vi.useFakeTimers();
     table(traders({ blue: 7, purple: 2 }));
-    press('blue', '-'); press('blue', '-'); press('blue', '-');
+    press('blue', '-'); press('blue', '-'); press('blue', '-'); press('blue', '-');
     expect(row('blue').querySelector('[data-step="-"]').disabled).toBe(true);
     expect(document.querySelector('[data-swap-done]').disabled).toBe(true);
-    press('red', '+'); press('red', '+'); press('red', '+');
+    press('red', '+'); press('red', '+'); press('red', '+'); press('red', '+');
     press('red', '-');
-    expect(row('red').dataset.n).toBe('2');
+    expect(row('red').dataset.n).toBe('3');
     press('purple', '+');
     expect(row('purple').dataset.n).toBe('3');
   });
