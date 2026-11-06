@@ -26,7 +26,7 @@ import { swap11, handlers11 } from './replace11.js';
 // IMPRESSIONIST=self2: bot test of "Whenever you copy an action, +2 of its color." (Cory, Nov 6 question; off in the game)
 const IMPRESSION_RAW = String(globalThis.process?.env?.IMPRESSIONIST || '1');
 const IMPRESSION_SELF = IMPRESSION_RAW.startsWith('self');
-const IMPRESSION = Number(IMPRESSION_RAW.replace('self', '') || 1);
+const IMPRESSION = parseInt(IMPRESSION_RAW.replace('self', ''), 10) || 1; // self2m: members copied pay too (Cory, Nov 6)
 const impressed = (ctx, p) => (IMPRESSION_SELF ? [p] : ctx.state.players);
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const costOf = def => def.s + def.w;
@@ -636,6 +636,7 @@ const echoQ = {
       // a copied Hustler works the same color (until its own when-recruited pick below sets one)
       if (target.color !== undefined) self.color = target.color;
       ctx.log(`${p.name}'s ${self.def.name} becomes a copy of ${defById(self.copy).name}.`);
+      ctx.impressMember(p, uid); // IMPRESSIONIST=self<n>m bot test: copying a member pays the Green Cloak
       // Becoming a copy is this physical card's Recruit ability. Impostors doesn't recruit that identity again:
       // its ongoing hooks start now, and round-start hooks wait.
       const d = defById(self.copy);

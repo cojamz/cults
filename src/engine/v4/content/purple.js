@@ -180,6 +180,11 @@ export const tokenHolder = s => (s.goesLast && s.goesLast.round === s.round ? s.
 function takeToken(ctx, p, why, what = '') {
   const s = ctx.state, was = tokenHolder(s);
   s.goesLast = { round: s.round, pid: p.id };
+  // POCKETWATCH=token<n>, bot test only (Cory, Nov 6: "when you take the Go Last token, +4 purple or something")
+  const tok = String(globalThis.process?.env?.POCKETWATCH || '').match(/^token(\d+)$/);
+  if (tok && was !== p.id) for (const c of ctx.abilitiesOf(p)) if (c.def.id === 'purple.pocketwatch') ctx.asMember(p, c.def.name, () => {
+    const got = ctx.gain(p, 'purple', Number(tok[1])); if (got) ctx.log(`${p.name}'s ${ctx.cloakOr(c, 'Pocket Watch')}: +${got.n} ${got.color}.`);
+  }, c.uid);
   // Sleepyheads (REPLACE7): "Whenever you take the Goes Last token, +2 followers."
   for (const c of ctx.membersOf(p)) if (c.def.tokenPay) ctx.asMember(p, c.def.name, () => {
     p.bonus += c.def.tokenPay;
@@ -772,6 +777,7 @@ export default {
         // POCKETWATCH=self<n>: bot test of "Whenever you skip a rival's turn, +n purple." (Nov 6; off in the game)
         const own = String(globalThis.process?.env?.POCKETWATCH || '').match(/^self(\d+)$/);
         if (own && (by !== owner.id || p === owner)) return;
+        if (/^token/.test(String(globalThis.process?.env?.POCKETWATCH || ''))) return;
         const got = ctx.gain(owner, 'purple', own ? Number(own[1]) : 2); if (got) ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Pocket Watch')}: +${got.n} ${got.color}.`); },
     }),
     m('gossip', 'Gossip', 2, 2, /* Cory, Nov 5 backlog price yes */ 'Whenever a player’s turn is skipped, +1 follower.', { ...old13('busybody'),

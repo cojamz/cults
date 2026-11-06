@@ -1611,7 +1611,20 @@ function joinNow(state, p, w, defs) {
 /** Red's round I space (Cory, 2026-10-27): p uses a shop member's On Recruit (or its round-start effect, for an
  *  "On Recruit: X Round Start: X" card); the member stays in the shop and isn't p's, so p's own On Recruit
  *  watchers don't fire. */
+/** IMPRESSIONIST=self<n>m, bot test only (Cory, Nov 6: Green Cloak "Maybe needs to be Action or Member ... keep in mind
+ *  the new grey rule"): copying a member pays its holder +n of the member's color; a grey member's is any color (the bot
+ *  takes the table color it has least of). */
+function impressMember(state, p, uid) {
+  const m = String(globalThis.process?.env?.IMPRESSIONIST || '').match(/^self(\d+)m$/);
+  if (!m) return;
+  const ctx = ctxFor(state), cloak = ctx.abilitiesOf(p).find(c => c.def.id === 'echo.tuningfork');
+  if (!cloak) return;
+  const c = colorOf(cardDef(state, uid));
+  const color = state.resources.includes(c) ? c : [...state.resources].sort((a, b) => (p.res[a] || 0) - (p.res[b] || 0))[0];
+  ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, Number(m[1])); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
+}
 function borrowOnRecruit(state, p, uid) {
+  impressMember(state, p, uid);
   const card = state.cards[uid], def = defById(card.def), ctx = ctxFor(state), w = wrap(state, card);
   const run = fn => { const before = traceSnapshot(state); underCause({ kind: 'member', pid: p.id, uid, def: card.def }, fn); traceChanges(state, before, p, def); };
   if (def.onRecruited) run(() => def.onRecruited(ctx, p, w));
@@ -2381,6 +2394,7 @@ function ctxFor(state) {
     /** a cult's member went to the bottom of the pile outside buryMember (Doormen): Bargain Bin pays */
     memberBottomed: () => bottomBlue(state),
     bargainCost: k => bargainCost(state, k),
+    impressMember: (p, uid) => impressMember(state, p, uid),
     swapMembers: (actor, a, b) => swapMembers(state, actor, a, b),
     canSwapMembers: owner => !sumMemberFlag(state, owner, 'blockMemberSwaps'),
     // Loyalists shields its owner's other members, never a Loyalists (a copy of it included): Cory, 2026-10-27.
