@@ -115,7 +115,8 @@ async function draw(textEl, box, px) {
     looks.set(el, l);
     return l;
   };
-  const alpha = num(getComputedStyle(textEl).opacity, 1);
+  // (a rim dimmed while another is scored is drawn at full strength: its picture is the undimmed one, dimmed on the board)
+  const alpha = textEl.hasAttribute('data-rim-wait') ? 1 : num(getComputedStyle(textEl).opacity, 1);
   const k = W / w; // canvas pixels per board unit
   g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'medium';
   // letters not painted yet (the first rims of a game) cost a few ms each: give the page its frame back every ~8 ms
@@ -168,7 +169,7 @@ export function showPictures(stage, layer, boxOf, px, onReady) {
     if (!arc) continue;
     const box = boxOf(Number(q));
     // a rim lit for the Reckoning keeps its live words (its glow is a filter, which a picture wouldn't carry)
-    const pic = t.classList.contains('lit') ? null : want(t, arc, box, px, onReady);
+    const pic = want(t, arc, box, px, onReady);
     let im = layer.querySelector(`image[data-q="${q}"]`);
     if (pic) {
       if (!im) { im = document.createElementNS(SVGNS, 'image'); im.setAttribute('data-q', q); im.setAttribute('preserveAspectRatio', 'none'); layer.appendChild(im); }
@@ -176,6 +177,8 @@ export function showPictures(stage, layer, boxOf, px, onReady) {
       const [x, y, w, h] = pic.box;
       im.setAttribute('x', x); im.setAttribute('y', y); im.setAttribute('width', w); im.setAttribute('height', h);
       t.style.visibility = 'hidden';
+      // dimmed while another rim is scored: the picture carries the words' "wait" (lamp.css), not a picture of its own
+      for (const m of ['data-rim-wait', 'data-rim-lit']) if (t.hasAttribute(m) !== im.hasAttribute(m)) im.toggleAttribute(m, t.hasAttribute(m));
       seen.add(q);
     } else {
       t.style.visibility = '';

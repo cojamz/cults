@@ -382,7 +382,7 @@ h1,h2,h3{font-family:var(--serif)}
    The lit panels' glow, the lifted panel's shadow and the follower mark's halo are drawn shapes; the few filters left
    (the minions' shadows, a contest rim lit during the Reckoning) rest while it turns. Turning every filter on the
    board off and on again re-drew the whole board as each spin started and landed */
-.lt .stage.turning .slot.sel,.lt .stage.turning .worker-fig,.lt .stage.turning .worker,.lt .stage.turning .rim.lit,.lt .stage.turning .rim-rule.lit{filter:none!important}
+.lt .stage.turning .slot.sel,.lt .stage.turning .worker-fig,.lt .stage.turning .worker,.lt .stage.turning .rim.lit,.lt .stage.turning .rim-rule.lit,.lt .stage.turning .rim-rule[data-rim-lit],.lt .stage.turning .rim-pics image[data-rim-lit]{filter:none!important}
 /* ...and while it turns (and until it's still a moment) its spaces and rims don't take the pointer: a space sliding under a
    resting pointer lit its panel, redrawing the whole printed board in Firefox, and asked for its card (wheel pass, Nov 4).
    The stage itself keeps the pointer, so a drag carries on */
@@ -575,7 +575,7 @@ h1,h2,h3{font-family:var(--serif)}
    lowercase rode toward the outer edge on the lower half and the inner edge on the upper; Cory, Oct 29: "rim text looks a
    little weird") */
 .lt .stage svg.wheel-paper .rim-rule{fill:rgba(255,249,236,.95);font-family:var(--sans);font-weight:700;letter-spacing:.11em;dominant-baseline:middle;pointer-events:none;paint-order:stroke;stroke:rgba(42,31,23,.18);stroke-width:.6}
-.lt .stage svg.wheel-paper .rim-rule.wait{opacity:.5}
+.lt .stage svg.wheel-paper .rim-rule.wait,.lt .stage svg.wheel-paper .rim-rule[data-rim-wait],.lt .stage svg.wheel-paper .rim-pics image[data-rim-wait]{opacity:.5}
 .lt .stage svg.wheel-paper .rim-rule.lit{fill:#fffdf6}
 .lt .stage svg.wheel-paper .rim-hit{fill:transparent;cursor:help;pointer-events:all}
 /* the rim's hover target sits in its own layer above the spaces (Wheel.jsx rimHits): the rule and the leaders' emojis
@@ -643,7 +643,7 @@ h1,h2,h3{font-family:var(--serif)}
 /* the leader's emoji inline on the engraved rim line; lit with the label during the Reckoning */
 .lt .stage svg.wheel-paper .rim-emoji{pointer-events:none}
 .lt .stage svg.wheel-paper .rim-emoji.wait{opacity:.5}
-.lt .stage svg.wheel-paper .rim-rule.lit{filter:drop-shadow(0 0 3px rgba(var(--lamp),.95))}
+.lt .stage svg.wheel-paper .rim-rule.lit,.lt .stage svg.wheel-paper .rim-rule[data-rim-lit],.lt .stage svg.wheel-paper .rim-pics image[data-rim-lit]{filter:drop-shadow(0 0 3px rgba(var(--lamp),.95))}
 .lt .stage svg.wheel-paper .rim.lit{fill-opacity:1;filter:drop-shadow(0 0 6px rgba(var(--lamp),.9))}
 /* Release opens as a small list under its button, so the question never gets squeezed */
 .lt-prompt .pr-actions .release-row{position:relative}

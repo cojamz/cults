@@ -1070,6 +1070,11 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       const startS = startOf(lab);
       rimArt.push(<path key={`ra${q}`} id={`rim-arc-${q}`} d={textArc(c, arcHalf, rr, rot)} fill="none" />);
       const lit = lampQid === qid ? ' lit' : lampQid ? ' wait' : '';
+      // the words' own look leaves "wait" out (a data mark, which their picture's name ignores): the same picture serves,
+      // dimmed, while another rim is scored, instead of each rim's words drawn letter by letter again for every rim the
+      // Reckoning lights (Cory, Nov 6: "the end of round contests are a bit laggy")
+      const litWords = '';
+      const waitMark = lampQid ? (lampQid !== qid ? { 'data-rim-wait': '' } : { 'data-rim-lit': '' }) : null;
       // the rule's words as a <text> on its arc: the live one, and (alt) the same rim read the other way up, never shown,
       // kept so its picture is ready before the board first turns it over (rimPictures below)
       // the word before the leaders' faces, after the follower mark, on the same line
@@ -1080,7 +1085,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
         const F = lab.font, arcId = alt ? `rim-arc-${q}-alt` : `rim-arc-${q}`;
         const tag = alt ? { 'data-rim-alt': q, 'data-rim-res': quadrant(qid).resource } : { 'data-plaque': qid, 'data-rim-text': q, 'data-rim-res': quadrant(qid).resource };
         if (lab.runs) return (
-          <text key={alt ? `rta${q}` : `rt${q}`} className={`rim-rule${lit}`} fontSize={F.toFixed(2)} style={{ letterSpacing: `${lab.ls.toFixed(3)}em` }} {...tag}>
+          <text key={alt ? `rta${q}` : `rt${q}`} className={`rim-rule${litWords}`} fontSize={F.toFixed(2)} style={{ letterSpacing: `${lab.ls.toFixed(3)}em` }} {...tag} {...waitMark}>
             {lab.runs.filter(r => r.kind !== 'dot' && r.kind !== 'prize').map((r, k) => (
               <textPath key={k} href={`#${arcId}`} startOffset={(startS + r.s).toFixed(1)}>
                 {r.text}
@@ -1091,7 +1096,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
           </text>
         );
         return (
-          <text key={alt ? `rta${q}` : `rt${q}`} className={`rim-rule${lit}`} fontSize={F.toFixed(2)} style={{ letterSpacing: `${lab.ls.toFixed(3)}em` }} {...tag}>
+          <text key={alt ? `rta${q}` : `rt${q}`} className={`rim-rule${litWords}`} fontSize={F.toFixed(2)} style={{ letterSpacing: `${lab.ls.toFixed(3)}em` }} {...tag} {...waitMark}>
             <textPath href={`#${arcId}`} startOffset={startS.toFixed(1)}>
               {lab.rule}
               {lab.tie ? <tspan className="rim-tie" {...(alt ? {} : { 'data-rim-tie': lab.tie })}>{`  ·  ties: ${lab.tie}`}</tspan> : null}

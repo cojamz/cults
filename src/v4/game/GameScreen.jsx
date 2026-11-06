@@ -14,6 +14,13 @@ import ShopCards from './ShopCards.jsx';
 import CultSeatRaw from './CultSeat.jsx';
 // a chair re-renders only when something it shows changed (seatMemo.js): a rival's step no longer redraws all four
 const CultSeat = memo(CultSeatRaw, sameSeat);
+// a chair while the round is scored: its total leaves out every prize not yet landed (reckonLive.js)
+function PaidSeat({ paying, state, ...rest }) {
+  const n = useReckonPaid(paying);
+  return <CultSeat state={paying ? paidSeatState(state, paying, n) : state} {...rest} />;
+}
+// the wheel, with the rim the Reckoning is paying lit
+function LitWheel(props) { return <Wheel {...props} lampQid={useReckonLamp()} />; }
 const NO_OPTS = new Map();
 const NO_FLASH = new Set();
 // ?trace=1 only: one record per table step, kept on the page for the perf harness (design/eval/perf/turn-wait.md)
@@ -44,6 +51,7 @@ import Results from './Results.jsx';
 import FinalScore from './FinalScore.jsx';
 import RoundEnd from './RoundEnd.jsx';
 import Reckoning, { scoringSeatState } from './Reckoning.jsx';
+import { setReckonPaid, setReckonLamp, resetReckonLive, useReckonPaid, useReckonLamp, paidSeatState } from './reckonLive.js';
 import { snakeOrder, tableView, snakeWords, setupOrder } from './order.js';
 import { ChoicePrompt, Confirm, Handoff, Log, Popover, CardFace } from './parts.jsx';
 import PayPicker, { payChoice, PayReceipt, receiptFor } from './PayPicker.jsx';
@@ -850,10 +858,11 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     }
     setClosedMoment(moment); dismissMoment();
   }, [moment, dismissMoment, state.over]); // eslint-disable-line react-hooks/exhaustive-deps
-  const [lampQid, setLampQid] = useState(null); // the quadrant the Reckoning is paying right now
-  // how many of the Reckoning's quadrants have landed: until a prize reaches its chair, that chair's total leaves it
-  // out, so the totals climb as each prize lands (RC1 saboteur: the seats showed the final numbers at step 1 of 4)
-  const [paid, setPaid] = useState({ moment: null, n: 0 });
+  // the quadrant the Reckoning is paying right now, and how many of its quadrants have landed: until a prize reaches its
+  // chair, that chair's total leaves it out, so the totals climb as each prize lands (RC1 saboteur: the seats showed the
+  // final numbers at step 1 of 4). Both live outside this screen (reckonLive.js): a landing redraws the chairs whose
+  // totals change and a new rim redraws the wheel, never the whole table (Cory, Nov 6: "a bit laggy")
+  useEffect(() => () => resetReckonLive(), []);
   const snake = useMemo(() => snakeOrder(state), [state]);
   // the column of chairs (laptop): each chair keeps its own height (compact to its content, like the plate's panels)
   // and they stack in turn order, centred in the column; a new order re-sorts them (they slide, lamp.css). Positions
@@ -956,9 +965,11 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const seatState = useMemo(() => {
     // The engine has already awarded prizes while the last action is still playing.
     // Withhold them from the very first scoring-board commit, before the Reckoning is visible.
-    if (!scoringMoment) return state;
-    return scoringSeatState(state, scoringMoment, reckoned === scoringMoment ? Infinity : paid.moment === scoringMoment ? paid.n : 0);
-  }, [state, scoringMoment, reckoned, paid]);
+    // (while the Reckoning plays, PaidSeat applies what has landed so far to the chairs themselves)
+    if (!scoringMoment || reckoned !== scoringMoment) return state;
+    return scoringSeatState(state, scoringMoment, Infinity);
+  }, [state, scoringMoment, reckoned]);
+  const paying = scoringMoment && reckoned !== scoringMoment ? scoringMoment : null;
   const [spacePeek, setSpacePeek] = useState(null); // a space selected from the panel list (one sheet, shared with the wheel)
   // re-render when undo comes or goes, so Undo disappears the moment control passes even while the table catches up
   // (perf fix 2: only then, not on every session change, a held bot step included)
@@ -1857,7 +1868,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
         <>
           {/* (data-step: after you've placed, the wheel steps back so only your buys are bright; final panel S#27) */}
           <section className="lt-wheel" data-region="wheel" data-step={buyingNow ? 'buy' : undefined}>
-            <Wheel state={tState} interactionState={hold ? tState : interactionState} hover={hover} lampQid={lampQid} legal={needHandoff ? NO_SLOTS : pickSpaces || legalSlots} idle={pickSpaces ? null : idleSlots} pickNotes={pickNotes} onPick={onPick} onDenied={onDenied} confirmPlace={!wide} flash={flash} lastMove={lastMove} recentMoves={recentMoves} spacePeek={spacePeek} onSpacePeek={setSpacePeek} meId={mySeats.length === 1 ? mySeats[0] : null} facing={facingRef.current} onFacing={onFacing} />
+            <LitWheel state={tState} interactionState={hold ? tState : interactionState} hover={hover} legal={needHandoff ? NO_SLOTS : pickSpaces || legalSlots} idle={pickSpaces ? null : idleSlots} pickNotes={pickNotes} onPick={onPick} onDenied={onDenied} confirmPlace={!wide} flash={flash} lastMove={lastMove} recentMoves={recentMoves} spacePeek={spacePeek} onSpacePeek={setSpacePeek} meId={mySeats.length === 1 ? mySeats[0] : null} facing={facingRef.current} onFacing={onFacing} />
             {showChoice && (!picker || (gift && !shopRecruit && !wheelMove)) && !payChoice(pend) && pend.kind !== 'setup' && (gift
               ? <GiftCard state={state} gift={gift} onFirst={onGiftFirst} onAnswer={gift.board === 'seats' ? onSeatPick : onGiftAnswer} onAnswerAll={gift.board === 'seats' ? null : onGiftAnswerAll} onBack={canUndo ? undo : null} busy={busy} place={plainAt} hover={hover} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />
               : <ChoicePrompt state={state} onPick={onPick} busy={busy} place={plainAt} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />)}
@@ -1881,7 +1892,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
             <section key={k} className={`lt-seat lt-seat-${k}${pid === me ? ' mine' : ''}${pid != null && pend && pend.player === pid && !state.over ? ' now' : ''}`} data-region={`seat-${k}`} data-pid={pid ?? undefined} data-slot={pid == null ? undefined : snake.slot[pid]}
               data-cloak={pid == null ? undefined : cloakOf(state, pid) || undefined} style={{ '--slot': pid == null ? k : snake.slot[pid] ?? k, ...(pid != null && cloakOf(state, pid) ? { '--cloak': `var(--${cloakOf(state, pid)})` } : null) }} aria-label={pid == null ? undefined : pid === me ? 'Your cult' : `${state.players[pid].name}’s cult`}>
               {pid == null ? null : (
-                <CultSeat state={pid === me ? seatState : tSeats} pid={pid} me={me} mine={pid === me} now={!!(pend && pend.player === pid && !state.over)} hover={hover} optionFor={pid === me ? live : undefined} onPick={shopPick} pick={pickParts[pid] || null}
+                <PaidSeat paying={paying} state={pid === me ? seatState : tSeats} pid={pid} me={me} mine={pid === me} now={!!(pend && pend.player === pid && !state.over)} hover={hover} optionFor={pid === me ? live : undefined} onPick={shopPick} pick={pickParts[pid] || null}
                   onLeader={pid === me && canTalk ? openTalkAt : null} talking={pid === me && talkOpen} />
               )}
               {/* your cloak by name, on your chair's lower edge in its color (picky bot, Nov 4: readers learned their
@@ -1925,7 +1936,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
       {swapping && <SwapCard key={`${pend.player}|${state.round}|${state.queue?.[0]?.data?.who || ''}`} state={state} onPick={onPick} busy={busy} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />}
       {laundering && <LaunderCard key={`${pend.player}|${state.round}`} state={state} onPick={onPick} busy={busy} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />}
       {mine && !needHandoff && !paidAlready && ((pend.kind === 'pay' && !onlyPay) || payChoice(pend)) && <PayPicker key={pend.uid ?? pend.tier ?? 'swap'} state={state} onPick={onPick} busy={busy} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />}
-      {moment && reckoned !== moment && <Reckoning key={moment.result.round + moment.after.moves} info={moment} root={rootEl} meId={mySeats.length === 1 ? mySeats[0] : null} onLamp={setLampQid} onPaid={n => setPaid({ moment, n })} onDone={() => setReckoned(moment)} />}
+      {moment && reckoned !== moment && <Reckoning key={moment.result.round + moment.after.moves} info={moment} root={rootEl} meId={mySeats.length === 1 ? mySeats[0] : null} onLamp={setReckonLamp} onPaid={n => setReckonPaid(moment, n)} onDone={() => setReckoned(moment)} />}
       {moment && reckoned === moment && closedMoment !== moment && <RoundEnd info={moment} meId={mySeats.length === 1 ? mySeats[0] : null} onNext={nextRound} autoMs={someoneHere ? 0 : 4000} />}
       {rules && <HowToPlay onClose={() => setRules(false)} />}
       {logOpen && <Chronicle state={state} meId={mySeats.length === 1 ? mySeats[0] : null} hover={hover} talk={talk} onClose={() => setLogOpen(false)} />}

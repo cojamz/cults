@@ -145,6 +145,13 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
     return () => { offEnd(); offLanded(); clearInterval(net); };
   }, [ready]);
   useLayoutEffect(() => { if (ready) stageClear(); }, [ready]);
+  // the table's idle life (breathing, blinking, bobbing) rests while the contests are scored, as it does while a move
+  // plays (lamp-b.css): it redrew every chair each frame under the count-up (Cory, Nov 6: "a bit laggy")
+  useLayoutEffect(() => {
+    if (!root || !root.dataset) return undefined;
+    root.dataset.reckoning = '1';
+    return () => { delete root.dataset.reckoning; };
+  }, [root]);
   const [spots, setSpots] = useState({}); // pid -> { left, top } of that player's chair, for the count chips
   const done = useRef(false);
   const finish = () => { if (!done.current) { done.current = true; onLamp && onLamp(null); onDone(); } };
