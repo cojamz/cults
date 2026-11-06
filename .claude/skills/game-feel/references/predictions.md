@@ -71,3 +71,12 @@ Scored 2:15pm Nov 3 (runs 2026-11-03-fast-live-379cda47 printed, -bycolor- By co
 8. ❌ Doormen −6 Normal printed, +7 Hard By color (10 to 13 owners): too few to read.
 9. ❌ Seat 1 vs 4 flat at Normal; Hard noise.
 Hit rate 3 of 9 clean (3 partial). Lesson: I predicted from old headlines again (Night Owls, Loyalists); the counting change between runs moved cards, so after a tool change predict from mechanisms, not last run's number.
+
+## 2026-11-06 · 2 and 3 players (thread "Balance the game for 2 and 3 players"), written before reading the Hard 2p/3p trials pc2-own3 / pc3-own3
+1. Yellow Cloak ("Whenever you recruit a member of a color none of your members have, +2 yellow.") holders win clearly under even at 2 players, both robe sets (high).
+2. Largesse takers win under even at 2 players with Hard too (med).
+3. Steals (Heist, Help Yourself, Accomplice) read stronger at 2 players than at 4 (med).
+4. Lookouts ("Whenever you take a consecutive turn, +2 followers.") owners win well over even at 2 players (snake turnarounds every round) (med).
+5. Mob ("+2 followers per rival with fewer red members than you") reads weak at 2 players (low; few owners).
+6. Seat 1 wins over even at 3 players with Hard too (low).
+7. Own-action Magenta Cloak ("Whenever you steal, +2 magenta.") is the strongest robe at 2 players (low).
