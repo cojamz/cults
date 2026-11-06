@@ -9,9 +9,9 @@ const rich = { gold: 30, red: 30, yellow: 30, green: 30, blue: 30 };
 const named = (s, name) => linesNaming(s.log, name);
 
 describe('Dabblers and Drifters audit', () => {
-  it('Big Tent: Dabblers never knocks a color off "exactly one"', () => {
+  it('Big Tent: Dabblers never pushes a color past 3', () => {
     const s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], members: [['yellow.bigtent', 'red.intern', 'benders.dabblers']] });
-    // yellow (Big Tent) and red have exactly one member each; Dabblers used to make them 3
+    // yellow (Big Tent) and red pay; Dabblers is left out of the count
     expect(cardDef(s, uidOf(s, 'yellow.bigtent', 0)).onGameEnd(contextFor(s), s.players[0])).toBe(4);
   });
   it('Matchmaker: Dabblers never blocks a new color, and recruiting Dabblers pays while a color is missing', () => {

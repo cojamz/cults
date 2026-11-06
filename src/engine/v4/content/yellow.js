@@ -620,9 +620,10 @@ export default {
       botActivate: (ctx, owner) => touchable(ctx, owner).some(o => total(ctx, o) > 2),
     }),
     // Cory, 2026-10-31 (in place of HR's "+3 per color you have 3 members of")
-    m('bigtent', 'Big Tent', 3, 3, 'Game End: +2 followers per color you have exactly one member of.', {
-      // Dabblers never knocks a color off "exactly one" (Cory, Nov 1: Dabblers and Drifters always work in the owner's favor)
-      onGameEnd: (ctx, owner) => 2 * ctx.state.quadrants.filter(q => ctx.countMembersOfColor(owner, q, { wild: false }) === 1).length,
+    // Cory, Nov 5: "1 to 3 members of" (was "exactly one member of"; most members count as 2 or more)
+    m('bigtent', 'Big Tent', 3, 3, 'Game End: +2 followers per color you have 1 to 3 members of.', {
+      // Dabblers never pushes a color past 3 (Cory, Nov 1: Dabblers and Drifters always work in the owner's favor)
+      onGameEnd: (ctx, owner) => 2 * ctx.state.quadrants.filter(q => { const n = ctx.countMembersOfColor(owner, q, { wild: false }); return n >= 1 && n <= 3; }).length,
     }),
     // Cory, 2026-10-31: named Book Cookers; "agree this gives multiple followers"
     m('bookcooker', 'Book Cookers', 5, 4, 'On Use, once per game: rearrange your resources into any mix of colors.', { f: 3,

@@ -132,7 +132,7 @@ const M = {
   'spice-route': ['🌶️', '🏁 +1 follower per color you hold 3 of'],
   tastemaker: ['🎨', '♾️ You change rivals’ resources: +1 follower'],
   tinker: ['🔧', '✨🌅 Swap up to 3 of yours one for one'],
-  'big-tent': ['🎪', '🏁 +2 followers per color with exactly one member'],
+  'big-tent': ['🎪', '🏁 +2 followers per color with 1 to 3 members'],
   dyer: ['🧶', '✨🌅 +1 yellow per color you hold'],
   harmonist: ['🎼', '🏁 +1 follower per full set'],
   leveler: ['⚖️', '🔁 Each rival’s biggest color: 1 becomes your pick'],
