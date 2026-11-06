@@ -44,5 +44,5 @@
 - **Small cults:** winners with 5 or fewer members 31% (Normal), 35% (Hard), 48% (Very Hard). Bar 20%: met.
 - **Comebacks (Hard):** the last player after round I still wins 21%; a winner was 10+ behind going into round III in 21% of games.
 
-## Still running
-The break-it bot has 9 more cards to try (Kidnapper, Panel, Debt Collectors, Bodyguards, Song Request, Night Watch, Desperado, Anarchist, Brokers), about 40 minutes. Anything it flags gets added here.
+## Break-it bot (all 16 cards done)
+Flagged as worth clearly more than its price: **Ballroom Dancers** and **Cheerleaders** only. Not flagged: Foster Parents, Martyrs, Picket Line, Tribute Band, Patron Saints, Kidnapper, Panel, Debt Collectors, Bodyguards, Song Request, Night Watch, Desperado, Anarchist, Brokers.
