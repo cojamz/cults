@@ -188,3 +188,12 @@ export function stageGone(uid) {
 let hubGone = null;
 export const noteHubGone = v => { hubGone = v; };
 export const takeHubGone = () => { const h = hubGone; hubGone = null; return h; };
+
+// the story card's reading clock (Cory, Nov 6: "this just isnt readbale. esp when updated so quickly"): when its last
+// line will have been on screen long enough to read, and when the shop's new card lands, so the card is never ahead of
+// the board (Cory: "the card played and resolved on a bot turn before the shop had even refreshed")
+let readEnd = 0, dealEnd = 0;
+export const noteReadEnd = t => { readEnd = t; };
+export const readUntil = () => readEnd;
+export const noteDealEnd = t => { if (t > dealEnd || t < Date.now()) dealEnd = t; };
+export const dealEndsAt = () => dealEnd;

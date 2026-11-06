@@ -194,6 +194,9 @@ const TABLE = {
   turnCardHold: [2600, 2600],
   turnCardFold: [500,  500],
   storyFly:     [250,  300],
+  storyLine:    [300,  450],  // the story card's lines show one at a time, at least this far apart (Cory, Nov 6: "esp when updated so quickly")
+  storyWord:    [110,  160],  // and each stays up this long per word before the next shows
+  storyLinger:  [400,  700],  // a finished turn's card stays this long after the board is still (Cory, Nov 6: "linger just a touch longer")
   jiggle:       [900,  900], // a member or cloak on its seat as its line shows on the story card (Cory, Nov 6) // the story card from the hub to the log area (Cory: "lingers too long")
   // the action stage (stage.js): the space taken flies out to the hub as a card, a member steps off its seat beside it,
   // what they give flows from there; when the chain ends the stage holds a moment, then each flies home

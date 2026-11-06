@@ -56,7 +56,8 @@ describe('an extra turn names the card that gave it', () => {
     d.on();
     const extra = d.t.stories.at(-1);
     expect(extra.head).toBe(`P1 took ${actionName('purple.lastcall')}`);
-    expect(extra.lines[0]).toBe('Night Owls: extra turn');
+    // why the turn came follows the space's own result (Cory, Nov 6: a bare payout under another line read as tied to nothing)
+    expect(extra.lines[1]).toBe('Night Owls: extra turn');
   });
 
   it('Go-Getter, used before the placement: its card leads the head and names the turn it gives', () => {
@@ -70,7 +71,7 @@ describe('an extra turn names the card that gave it', () => {
     const [earn, extra] = d.t.stories;
     expect(earn.head).toBe(`P1 used Go-Getter, then took ${actionName('purple.windup')}`);
     expect(earn.lines).toContain('Go-Getter: +1 minion, placed now');
-    expect(extra.lines[0]).toBe('Go-Getter: extra turn');
+    expect(extra.lines[1]).toBe('Go-Getter: extra turn');
   });
 
   it('Crunch Time: the turns it moves up say they were taken now, not that they are extra', () => {
@@ -84,7 +85,7 @@ describe('an extra turn names the card that gave it', () => {
     d.on();
     const moved = d.t.stories[1];
     expect(moved.actor).toBe(0);
-    expect(moved.lines[0]).toBe('Crunch Time: next turn, now');
+    expect(moved.lines[1]).toBe('Crunch Time: next turn, now');
     expect(moved.text).not.toMatch(/extra turn/);
   });
 });

@@ -110,7 +110,8 @@ function told(trail, c, end, story) {
   }
   const later = (c.uses || []).filter(u => !u.before && !named(u.name) && !said.has(u.name) && said.add(u.name)).map(u => `used ${u.name}`);
   if (later.length) lines = [...lines, ...later];
-  if (c.why) { lines = [c.why, ...lines]; short = short ? `${c.why} · ${short}` : c.why; }
+  // why the turn came ("Right Away: next turn, now") follows the space's own result, never between the space and it
+  if (c.why) { lines = lines.length && /^[+−-]\d/.test(lines[0]) ? [lines[0], c.why, ...lines.slice(1)] : [c.why, ...lines]; short = short ? `${c.why} · ${short}` : c.why; }
   if (head === story.head && lines === story.lines) return story;
   return { ...story, head, lines, short, text: [head, ...lines].join(' · ') };
 }

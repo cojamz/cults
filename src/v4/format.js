@@ -1202,6 +1202,7 @@ export function effectStory(start, end, actor, me = null, fx = []) {
   // what a copy copied, said on the card (Cory, Nov 6: "if they copy something, what did they copy?"): the engine's own
   // log line ("Cy copied Rising Tide (Di's): …", "Cy copies Di's Coach: its On Recruit.")
   const actorName = P[actor] ? P[actor].name : null;
+  const copied = [];
   const meName = me != null && P[me] ? P[me].name : null;
   if (actorName) for (const l of newLog) {
     if (!l.startsWith(`${actorName} cop`)) continue;
@@ -1209,7 +1210,8 @@ export function effectStory(start, end, actor, me = null, fx = []) {
     const m = rest.match(/^cop(?:ied|ies) (.+?)(?: \((.+?)'s\))?(?:: |\.$)/);
     if (!m) continue;
     const whose = m[2] ? (m[2] === meName ? 'your ' : `${m[2]}'s `) : '';
-    out.push(`copied ${whose}${m[1].replace(/: its On Recruit$/, '')}`);
+    const said = `copied ${whose}${m[1].replace(/: its On Recruit$/, '')}`;
+    if (!copied.includes(said)) copied.push(said); // the engine can log one copy twice (its choice, then its run)
   }
   // the space's own result first, then what members added to it: a member that fires before the space's gain landed
   // (Hustler) put "Hustler: +3●" over the space's "+3●", which read as one line twice (w3a #36)
@@ -1281,6 +1283,7 @@ export function effectStory(start, end, actor, me = null, fx = []) {
     }
     return bits;
   };
+  if (copied.length && !ordered.some(g => g.key === 'space')) out.push(...copied);
   for (const g of ordered) {
     const c = g.cause || {};
     if (g.key === 'space') {
@@ -1288,7 +1291,11 @@ export function effectStory(start, end, actor, me = null, fx = []) {
       // followers taken from a rival say whose they were (picky bot, Nov 4: "P2 Heist: +1 magenta +3 followers", from whom?)
       const folFrom = as || !(g.fol[actor] > 0) ? [] : P.filter(p => p.id !== actor && g.fol[p.id] < 0);
       const mine = as || (folFrom.length ? `${signedOf(g, actor)} from ${folFrom.map(p => nm(p.id)).join(', ')}` : signedOf(g, actor));
-      if (mine) { gain = mine; out.push(mine); }
+      // a copy's payout sits on the copy's own line, cause then effect (Cory, Nov 6: "this just isnt readbale": "copied
+      // Shake Down" twice, then a bare "+1 +2" tied to nothing)
+      if (copied.length) out.push(mine ? `${copied.join(', ')}: ${mine}` : copied.join(', '));
+      else if (mine) out.push(mine);
+      if (mine) gain = mine;
       out.push(...others(g, actor, !!as));
       if (g.disc) out.push(`next member costs ${g.disc} less`);
     } else if (c.kind === 'member') {
@@ -1304,7 +1311,7 @@ export function effectStory(start, end, actor, me = null, fx = []) {
       // what it's worth goes on the seat's count as it lands, so the line says it (critic pass 3, Nov 6: "P4 goes from 1
       // to 5 followers after recruited Deprogrammers" with nothing saying +4)
       let worthF = 0; try { const d = end.cards[c.uid] ? cardDef(end, c.uid) : null; worthF = d && d.f > 0 ? d.f : 0; } catch { worthF = 0; }
-      const line = `recruited ${cardName(c.uid)} (${paid ? `paid ${paid}` : 'free'})${worthF ? `, worth ${fword(worthF)}` : ''}`;
+      const line = `recruited ${cardName(c.uid)} (${paid ? `paid ${paid.replace(/, /g, ' ')}` : 'free'})${worthF ? `, worth ${fword(worthF)}` : ''}`;
       // two same-named members in one turn read as one line, not the same line twice
       const k = out.indexOf(line);
       if (k >= 0) out[k] = line.replace(/^recruited (.+) \(/, 'recruited $1 twice (');

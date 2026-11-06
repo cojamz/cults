@@ -68,7 +68,7 @@ import LaunderCard, { launderChoice } from './LaunderCard.jsx';
 import SwapCard, { swapChoice } from './SwapCard.jsx';
 import ArtifactDraft from './ArtifactDraft.jsx';
 import ActionStage from './ActionStage.jsx';
-import { stageClear, stageRelease, stageCenter, subscribeStage, stageItems, setStoryZone, storyAtHub, noteHubGone } from './stage.js';
+import { stageClear, stageRelease, stageCenter, subscribeStage, stageItems, setStoryZone, storyAtHub, noteHubGone, readUntil, noteReadEnd, dealEndsAt } from './stage.js';
 import { Minion } from '../art/Leader.jsx';
 import { sameSeat } from './seatMemo.js';
 import { holdFlag } from './bodyFlag.js';
@@ -192,6 +192,14 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
     // Show queued states in order. A rival's placement holds on screen long enough to read (the worker travels,
     // the card shows its delta); after the round-end card, the backlog replays at a readable pace too.
     while (!held.current && !timer.current && !waiting.current && queue.current.length) {
+      // the story card is still showing a rival's lines one at a time: the next rival step waits until they're read
+      // (Cory, Nov 6: "this just isnt readbale. esp when updated so quickly"); your own moves never wait on it
+      const actingNow = shownRef.current && shownRef.current.pending ? shownRef.current.pending.player : null;
+      const readLeft = readUntil() - Date.now();
+      if (readLeft > 30 && motionOK() && rivalDwell >= 300 && actingNow != null && !(session.mySeats || []).includes(actingNow)) {
+        timer.current = setTimeout(() => { timer.current = null; pump(); }, Math.min(readLeft, 4000));
+        return;
+      }
       let next = queue.current.shift();
       const prev = shownRef.current;
       // a rival's run of follower buys plays as one beat (director.js foldBuys); when the bot's next buy is still on its
@@ -549,6 +557,77 @@ function useChainRunning(on) {
   return on && run;
 }
 
+// the space a story's head names ("P4 took Harvest" → Harvest): a space's own result that shows under another line is
+// labelled with it, never a bare "+1" tied to nothing (every-frame check, Nov 6)
+const spaceOf = h => (String(h || '').match(/\btook (.+)$/) || [])[1] || null;
+const words = l => String(l || '').split(/\s+/).filter(Boolean).length;
+/** How many of a hub card's lines show: one at a time, each up long enough to read before the next (Cory, Nov 6: "this
+ *  just isnt readbale. esp when updated so quickly"). Notes when the last will have been read (stage.js readUntil), so
+ *  the next rival step and the card's leaving wait for it. */
+/** What a story line is about, so a later step that changes its numbers updates it in place (the space's own result,
+ *  "Blue Cloak: …", "copied Shake Down: …") while anything new joins at the bottom. */
+export const lineId = (l, i) => (i === 0 && /^[+−-]\d/.test(l) ? '#gain' : (l.match(/^([^:]{2,48}): /) || [])[1] || (l.match(/^used (.+)$/) || [])[1] || (l.match(/^(recruited|bought|released) ([^(,]+)/) || [])[0] || l);
+/** The hub card's lines in the order they first showed (Cory, Nov 6: "we should just SEE it get added"): a line never
+ *  moves once it's up (the every-frame check saw "gave Window Shopper to P2" become "1, 1 from you" as a line was
+ *  inserted above it). */
+function useStableLines(key, lines) {
+  'use no memo';
+  const ref = useRef({ key: null, order: [] });
+  if (ref.current.key !== key) ref.current = { key, order: [], text: new Map() };
+  const byId = new Map();
+  lines.forEach((l, i) => { const id = lineId(l, i); if (!byId.has(id)) byId.set(id, l); });
+  // a line that turned into another (a steal's line growing as its payment lands) takes the old one's place
+  // and a line, once up, stays: the card is a log being written, so one the turn's later steps re-word keeps its words
+  // (the full row in the log has the turn's final wording)
+  const last = ref.current.text || (ref.current.text = new Map());
+  for (const [id, l] of byId) last.set(id, l);
+  const order = ref.current.order;
+  for (const id of byId.keys()) if (!order.includes(id)) order.push(id);
+  return order.map(id => last.get(id));
+}
+
+function useReveal(key, lines, on) {
+  const total = lines.length;
+  const [st, setSt] = useState({ key, k: Math.min(1, total) });
+  const cur = st.key === key ? st : { key, k: Math.min(1, total) };
+  const k = Math.min(cur.k, total);
+  const gapAfter = i => Math.max(MO.storyLine, words(lines[i]) * MO.storyWord);
+  useLayoutEffect(() => {
+    if (!on) return undefined;
+    let left = 0;
+    for (let i = Math.max(0, k - 1); i < total; i++) left += gapAfter(i);
+    noteReadEnd(Date.now() + left);
+    if (k >= total) return undefined;
+    const t = setTimeout(() => setSt({ key, k: k + 1 }), gapAfter(k - 1));
+    return () => clearTimeout(t);
+  }, [key, k, total, on]); // eslint-disable-line react-hooks/exhaustive-deps
+  return on ? k : total;
+}
+
+/** True while `on`, and for a linger after it turns off: longer still while the shop's new card is landing or the
+ *  story card's last line is being read (Cory, Nov 6: "linger just a touch longer", "before the shop had even refreshed"). */
+function useLinger(on) {
+  'use no memo';
+  const ref = useRef({ on: false, until: 0 });
+  const [, redraw] = useState(0);
+  if (on) ref.current = { on: true, until: 0 };
+  else if (ref.current.on) ref.current = { on: false, until: Math.min(Date.now() + 4000, Math.max(Date.now() + MO.storyLinger, dealEndsAt() + 150, readUntil())) };
+  const left = on ? 0 : ref.current.until - Date.now();
+  // the shop's deal and the card's last line are noted in this same commit's layout effects (children's, before this
+  // one): a later end than the render saw stretches the linger
+  useLayoutEffect(() => {
+    if (on || !ref.current.until) return;
+    const want = Math.min(Date.now() + 4000, Math.max(dealEndsAt() + 150, readUntil()));
+    if (want > ref.current.until + 20) { ref.current = { on: false, until: want }; redraw(n => n + 1); }
+  });
+  useEffect(() => {
+    if (left <= 0) return undefined;
+    const t = setTimeout(() => redraw(n => n + 1), left + 10);
+    return () => clearTimeout(t);
+  }, [ref.current.until]); // eslint-disable-line react-hooks/exhaustive-deps
+  return on || left > 0;
+}
+
 function TurnCard({ card, root, state, hub = false, keep = false }) {
   // a card whose player isn't acting any more folds after its moment (wave-4 B #19: "You took X" stayed up ~10s through
   // the bots' whole sequence, stale, under the strip that already lists it): 2.6s after its last line, it folds, and at
@@ -647,6 +726,8 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
     const dx = hr.left + hr.width / 2 - (r.left + r.width / 2), dy = hr.top + hr.height / 2 - (r.top + r.height / 2);
     el.animate([{ transform: `translate(${dx}px,${dy}px) scale(${sc})`, opacity: 1 }, { transform: 'none', opacity: 1 }], { duration: Math.round(MO.storyFly), easing: 'cubic-bezier(.3,.7,.3,1)' });
   }, [card.pid, card.n, keep]); // eslint-disable-line react-hooks/exhaustive-deps
+  const hubLines = useStableLines(`${card.k || card.n}`, hub && card.text ? card.text.split(' · ').slice(1) : []);
+  const shownN = useReveal(`${card.k || card.n}`, hubLines, hub && !!card.text);
   if (gone) return null;
   // at most a few lines, the rest summed up (every line stays in the strip's card and the log)
   const [head, ...all] = card.text.split(' · ');
@@ -661,7 +742,7 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
       {hub && <span className="tc-who"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={hub ? 16 : 13} /><span>{card.when ? `${pname === 'You' || /^You\b/.test(head) ? 'You' : pname}, ${card.when}` : pname === 'You' || /^You\b/.test(head) ? 'Your turn' : pname ? `${pname}${card.again ? ' again' : '’s turn'}` : ''}</span></span>}
       {hub && !card.text && <span className="tc-line tc-wait">{card.why ? `${card.why} · ` : ''}choosing a space…</span>}
       {!keep && !!card.text && <b className="tc-head">{(hub || keep) && /^You /.test(head) ? `${head.charAt(4).toUpperCase()}${head.slice(5)}` : (hub || keep) && pname && head.startsWith(`${pname} `) ? `${head.charAt(pname.length + 1).toUpperCase()}${head.slice(pname.length + 2)}` : head}</b>}
-      {!keep && rest.map((l, k) => <span key={hub ? k : `${k}:${l}`} className="tc-line"><Rich text={l} /></span>)}
+      {!keep && (hub ? hubLines.slice(0, shownN).map((l, k) => (k > 0 && /^[+−-]\d/.test(l) && (spaceOf(head) || card.when) ? `${spaceOf(head) || `${card.when[0].toUpperCase()}${card.when.slice(1)}`}: ${l}` : l)) : rest).map((l, k) => <span key={hub ? k : `${k}:${l}`} className="tc-line"><Rich text={l} /></span>)}
       {/* what didn't fit opens on the "and N more" line, every line in its card (picky bot, Nov 4: "+3 more" with no way
           to see them) */}
       {more > 0 && <Tip className="tc-line tc-more" data-tc-more={more} label={`${head}: every line`}
@@ -1042,9 +1123,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // game has already moved on to the next turn when that chain starts, which took the card away while the recruit was
   // still flying in (critic pass, Nov 6: a recruit told by nothing)
   const momentChain = useChainRunning(!!moment);
-  const chainOn = moment ? momentChain : physicalState !== interactionState;
+  const chainOn = useLinger(moment ? momentChain : physicalState !== interactionState);
   const tailOf = moment ? lastAny : lastDone;
-  const hubStory = liveRival || (chainOn && !story.live && tailOf && !mySeats.includes(tailOf.pid) ? tailOf : null) || (!chainOn && (!moment || closedMoment === moment) ? story.waiting : null);
+  const hubStory = liveRival || (chainOn && !(story.live && story.live.text) && tailOf && !mySeats.includes(tailOf.pid) ? tailOf : null) || (!chainOn && (!moment || closedMoment === moment) ? story.waiting : null);
   // the same player again (a snake turnaround, an extra turn) says so on its card, so a second turn reads as new
   const prevStory = allStories[allStories.length - (hubStory && hubStory === tailOf ? 2 : 1)];
   const hubAgain = !!(hubStory && prevStory && prevStory.actor === hubStory.pid && prevStory.round === live0.round);

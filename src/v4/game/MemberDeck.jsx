@@ -16,6 +16,7 @@ import { ResourceGlyph } from './Glyphs.jsx';
 import { motionOK } from './flight.js';
 import { MO } from '../motion.js';
 import { dealAfter, rowOutMs, noteRoundDeal } from './director.js';
+import { noteDealEnd } from './stage.js';
 
 /** At or below this many cards the count warms. */
 export const DECK_LOW = 10;
@@ -137,6 +138,7 @@ export function useDeal(rowRef, deckRef, state) {
       // after the bought card has left its slot, or the old row has gone to the deck (director.js)
       const outs = newRound ? was.shop.filter(u => !state.shop.includes(u)).length : 0;
       const duration = MO.deal, delay = (outs ? rowOutMs(outs) : dealAfter(state)) + k * MO.dealStagger;
+      noteDealEnd(Date.now() + delay + duration);
       const anim = ghost.animate([
         { transform: `translate(${dx}px,${dy}px) ${s} perspective(500px) rotateY(88deg)` },
         { transform: `translate(${dx}px,${dy}px) ${s} perspective(500px) rotateY(0deg)`, offset: 0.32 },
