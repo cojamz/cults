@@ -12,9 +12,9 @@ import GiftCard from '../../../v4/game/GiftCard.jsx';
 registerQuadrant(silver);
 afterEach(cleanup);
 
-function scene() {
+function scene(round = 1) {
   const s = createGame({ seats: Array.from({ length: 3 }, (_, i) => ({ name: `P${i + 1}`, kind: 'human' })), seed: 7, quadrants: ['gold', 'red', 'blue', 'silver'] });
-  s.queue = []; s.pending = null; s.round = 1; s.slots = {}; s.order = []; s.log = [];
+  s.queue = []; s.pending = null; s.round = round; s.slots = {}; s.order = []; s.log = [];
   s.players.forEach(p => { for (const r of s.resources) p.res[r] = 0; p.left = 3; });
   s.queue = [{ t: 'turn', p: 0 }];
   return resume(s);
@@ -43,5 +43,15 @@ describe('Party Gifts on the gift card', () => {
     expect(container.querySelector('.gc-share[data-pid="2"] .gc-tally')).toBeNull();
     expect(container.querySelector('.gc-sub').textContent).toContain('+4 so far');
     expect(container.querySelector('.gc-rest').textContent).toBe('Done: give 2');
+  });
+});
+
+describe('Largesse on the gift card (Cory, Nov 6: "should have to give 12. And give 10 followers.")', () => {
+  it('asks for all 12, offers no way out, and says +10 followers once all are given', () => {
+    const s = move(take(scene(3), 'silver.largesse'), 'player:1');
+    const { container } = view(s);
+    expect(container.querySelector('.gc-title').textContent).toBe('Largesse · 1 given · 11 left');
+    expect(container.querySelector('.gc-rest')).toBeNull();
+    expect(container.querySelector('.gc-sub').textContent).toBe('One per click, from the bank. +10 followers once all 12 are given.');
   });
 });

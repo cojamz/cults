@@ -42,13 +42,14 @@ describe('Silver actions', () => {
     for (let i = 0; i < 6; i++) s = move(s, 'color:red');
     expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[0, 6], [1, 0], [2, 0]]);
   });
-  it('Sweet Talk: +3 silver, then turn as many as you want into other colors; Largesse: rivals up to 10 silver, +1 follower each', () => {
+  it('Sweet Talk: +3 silver, then turn as many as you want into other colors; Largesse: rivals must gain all 12 silver, +10 followers', () => {
     let s = take(sc({ round: 2 }), 'silver.tongue');
     s = move(move(move(s, 'color:red'), 'color:red'), 'done');
     expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[1, 2], [0, 0]]);
     s = take(sc({ round: 3 }), 'silver.largesse');
-    for (let i = 0; i < 10; i++) s = move(s, 'player:1');
-    expect(s.players[1].res.silver).toBe(10);
+    expect(s.pending.options.some(o => o.kind === 'done')).toBe(false); // Cory, Nov 6: "should have to give 12"
+    for (let i = 0; i < 12; i++) s = move(s, 'player:1');
+    expect(s.players[1].res.silver).toBe(12);
     expect(s.players[0].bonus).toBe(10);
   });
   it.each([1, 2, 3])('Toast round %i scales each rival gift, with Guest, Caterer and Grand Host', round => {

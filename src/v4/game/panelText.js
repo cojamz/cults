@@ -102,7 +102,7 @@ const P = {
     tongue: { verb: '+3 silver, then turn silver into colors' },
     // Largesse keeps "+1 @f each": the center ring holds about ten letters there, and "per silver given" dropped line 2
     // whole (picky bot, Nov 4); its hover says per silver you give
-    largesse: { verb: 'Give rivals up to 10 silver', second: '+1 @f each', note: 'from the bank' },
+    largesse: { verb: 'Give rivals 12 silver', second: '+10 @f', note: 'from the bank' },
   },
   yellow: {
     // Yellow 2.0 (Oct 31): the wheel printed the old Harvest ("+1 yellow, +1 per other color you hold") and only the

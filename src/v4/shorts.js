@@ -28,7 +28,7 @@ const S = {
     hourly: r => `+${3 + r} purple`, catchup: '+1 purple, +1 per rival who placed more', windup: '+1 purple per minion you placed', planahead: '+1 purple per minion left', overtime: '1 extra turn', lastcall: '+1 follower and +1 purple per minion left; take the Goes Last token with the rest on it; +1 purple', skip: r => `+${r + 3} purple; take the Goes Last token with your next minion on it`, holdup: r => `+${r + 1} purple, whoever is next skips, even you`, crowdin: '+3 purple, +1 minion this round', rally: '+2 purple, two turns after this one', again: r => `+${r} purple, another turn after this one`,
   },
   silver: {
-    toast: r => `+${3 * r} silver · others +${r} silver`, polish: '2 silver → 4 any', partygifts: 'give rivals up to 3 silver, +2 followers each', favors: '+2 silver · each rival gives 1', sweetnothings: '+3 silver · give rivals up to 3, +2 any each', tongue: '+3 silver · turn into colors', largesse: 'give rivals up to 10 silver, +1 follower each',
+    toast: r => `+${3 * r} silver · others +${r} silver`, polish: '2 silver → 4 any', partygifts: 'give rivals up to 3 silver, +2 followers each', favors: '+2 silver · each rival gives 1', sweetnothings: '+3 silver · give rivals up to 3, +2 any each', tongue: '+3 silver · turn into colors', largesse: 'give rivals 12 silver, +10 followers',
   },
   yellow: {
     harvest: r => `+${r + 2} any, colors you choose`, bloom: r => `+${r} yellow · +1 of your fewest`, transmute: '+1 yellow per minion on the busiest color · +1 yellow', prism: '+1 each per 3 yellow', gather: '1 per member', flourish: '+1 each per set',
@@ -52,7 +52,7 @@ const PIPS = {
   gold: { steal: 'steal 3 gold', windfall: '+1 gold per member', strike: 'double gold' },
   red: { hireup: 'promote a member; +3 red', trade: 'demote a member; +3 red', take: 'recruit one costing 9 or less, free' },
   purple: { lastcall: '+1 follower, +1 purple per minion left; take the Goes Last token' },
-  silver: { partygifts: 'give rivals up to 3 silver, +2 followers each', largesse: 'give rivals up to 10 silver, +1 follower each' },
+  silver: { partygifts: 'give rivals up to 3 silver, +2 followers each', largesse: 'give rivals 12 silver, +10 followers' },
   yellow: { gather: '+1 per member' },
   market: { clearance: 'recruit an extra time', pricecheck: 'bury for half its cost', spree: 'recruit two extra times' },
   thieves: { rob: 'steal 3 followers', ransom: 'rival pays or loses a member', heist: 'recruit a rival’s member' },

@@ -114,8 +114,8 @@ export function giftPick(state, pend, first = null) {
     const given = share.given || {};
     const total = Object.values(given).reduce((s, n) => s + n, 0);
     const color = state.resources.includes('silver') ? 'silver' : null;
-    return { ...base, kind: 'share', n: share.max, color, chosen: color, per: share.per || 0, given, total, left: Math.max(0, share.max - total),
-      head: `Give rivals up to ${share.max} silver`, firsts: [], seconds: players.map(o => ({ o, b: o.target.pid })), others: players.map(o => o.target.pid),
+    return { ...base, kind: 'share', n: share.max, color, chosen: color, per: share.per || 0, flat: share.flat ?? null, given, total, left: Math.max(0, share.max - total),
+      head: `Give rivals ${share.must ? '' : 'up to '}${share.max} silver`, firsts: [], seconds: players.map(o => ({ o, b: o.target.pid })), others: players.map(o => o.target.pid),
       rest: pend.options.filter(o => !players.includes(o)) };
   }
   // "turn up to N of your resources into followers, one at a time" (Exchange): picked whole, like a payment (SpendPicker.jsx)

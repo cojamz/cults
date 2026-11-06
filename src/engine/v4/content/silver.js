@@ -127,7 +127,8 @@ function shareStep(ctx, p, data) {
     hint: (ctx.followers(o) === low ? 1 : 0) - 0.2 * (given[o.id] || 0),
   }));
   if (!data.must) opts.push({ id: 'done', label: total ? 'Done' : 'Give nothing', kind: 'done', value: 'done', hint: -5 });
-  ctx.choose(p, `${data.who}: which rival gains 1 silver? You get ${data.per} ${data.per === 1 ? 'follower' : 'followers'} for each, ${left} more ${data.must ? 'to give' : 'at most'}`, opts, 'silver.share', { ...data, given });
+  const pay = data.flat != null ? `You get ${data.flat} followers once all ${data.max} are given` : `You get ${data.per} ${data.per === 1 ? 'follower' : 'followers'} for each`;
+  ctx.choose(p, `${data.who}: which rival gains 1 silver? ${pay}, ${left} more ${data.must ? 'to give' : 'at most'}`, opts, 'silver.share', { ...data, given });
 }
 function shareDone(ctx, p, data) {
   const given = data.given || {};
@@ -136,9 +137,10 @@ function shareDone(ctx, p, data) {
   if (data.own) p.res[S] -= total; // your own silver (Patronesses, REPLACE14), not the bank's
   for (const [id, n] of Object.entries(given)) giveTo(ctx, p, ctx.player(Number(id)), S, n);
   afterGive(ctx, p, S);
-  p.bonus += total * data.per;
+  const got = data.flat != null ? data.flat : total * data.per;
+  p.bonus += got;
   const list = Object.entries(given).map(([id, n]) => `${ctx.player(Number(id)).name} +${n}`).join(', ');
-  ctx.log(`${p.name}'s ${data.who}: ${list} silver, then +${total * data.per} followers.`);
+  ctx.log(`${p.name}'s ${data.who}: ${list} silver, then +${got} followers.`);
 }
 /** Sweet Talk: turn silver into other colors one at a time, as many as you want. */
 function turnStep(ctx, p, data) {
@@ -313,9 +315,10 @@ export const silverActions = [
     },
   },
   {
-    key: 'largesse', copyDoesIt: true, ring: 3, name: 'Largesse', text: 'Give rivals up to 10 silver from the bank, split as you choose. +1 follower per silver you give.',
-    estimate: ctx => { const n = ACT.has('largesse6') ? 6 : 10; return 2 * n - spillCost(ctx, 1) * n; },
-    resolve(ctx, p) { shareStep(ctx, p, { who: 'Largesse', max: ACT.has('largesse6') ? 6 : 10, per: 1 }); },
+    // Cory, Nov 6: "Largesse should have to give 12. And give 10 followers." All 12 must go; 10 followers flat.
+    key: 'largesse', copyDoesIt: true, ring: 3, name: 'Largesse', text: 'Give rivals 12 silver from the bank, split as you choose. +10 followers.',
+    estimate: ctx => 10 + 10 - spillCost(ctx, 1) * 12,
+    resolve(ctx, p) { shareStep(ctx, p, { who: 'Largesse', max: 12, per: 0, flat: 10, must: true }); },
   },
 ];
 

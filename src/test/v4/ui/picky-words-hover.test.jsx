@@ -34,7 +34,7 @@ describe('picky words on hovers (Nov 4)', () => {
   it('Walk-In, Party Gifts and Largesse faces say whose gain and per what (W20, W21)', () => {
     expect(panelText('red', { key: 'hire' }).second).toBe('+1 red, rivals +1');
     expect(panelText('silver', { key: 'partygifts' }).second).toBe('+2 @f per silver given');
-    expect(panelText('silver', { key: 'largesse' }).second).toBe('+1 @f each'); // the center ring's room: a longer line dropped
+    expect(panelText('silver', { key: 'largesse' }).second).toBe('+10 @f'); // Cory, Nov 6: 10 followers flat
   });
 
   it('a recolor says "in colors you choose", never one pick\'s colors (W25)', () => {
