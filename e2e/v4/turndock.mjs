@@ -36,7 +36,7 @@ const browser = await launchBrowser({ executablePath: browserPath });
 async function run(size) {
   const tag = `${size.width}x${size.height}`;
   const turns = new Set();
-  let worst = 0, off = 0, games = 0, placed = 0;
+  let worst = 0, off = 0, ex = null, games = 0, placed = 0;
   while (placed < WANT && games < 3) {
     games++;
     // a fresh browser per game: a reload resumes the saved game, so "home" would never show
@@ -62,7 +62,7 @@ async function run(size) {
           // log area"): measured once it has landed
           const flying = c.classList.contains('kept') && c.getAnimations && c.getAnimations().some(x => x.playState === 'running' && !x.animationName);
           if (sv && !flying) { const b = sv.getBoundingClientRect(); const cover = Math.min(a.right, b.right) > Math.max(a.left, b.left) ? Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top)) : 0; if (cover > D.worst) D.worst = cover; }
-          if (a.top < 0 || a.bottom > innerHeight + 1) D.off++;
+          if (a.top < 0 || a.bottom > innerHeight + 1) { D.off++; if (!D.ex) D.ex = [c.className, Math.round(a.top), Math.round(a.bottom), Math.round(a.height), c.getAnimations().map(x => x.animationName || 'waapi').join('+'), (c.dataset.turnStory || '').slice(0, 80)]; }
         }
         requestAnimationFrame(scan);
       };
@@ -95,7 +95,7 @@ async function run(size) {
         // rival placements so far in this game, from the saved game's own log
         here = Math.max(here, await page.evaluate(() => { try { return JSON.parse(localStorage.getItem('patrons.v4.local')).state.log.filter(l => /^P[2-4] took /.test(l)).length; } catch { return 0; } }).catch(() => 0));
         const d = await page.evaluate(() => window.__dock).catch(() => null);
-        if (d) { for (const k of d.turns) turns.add(`${games}:${k}`); worst = Math.max(worst, d.worst); off = Math.max(off, d.off); }
+        if (d) { for (const k of d.turns) turns.add(`${games}:${k}`); worst = Math.max(worst, d.worst); off = Math.max(off, d.off); if (d.ex) ex = d.ex; }
         if (s.over) break;
         still = s.moves === lastMoves ? still + 1 : 0;
         lastMoves = s.moves;
@@ -137,7 +137,7 @@ async function run(size) {
     await ctx.close();
   }
   if (worst > 1) errors.push(`[${tag}] (d2) a turn card covered the since-strip by ${Math.round(worst)}px`);
-  if (off) errors.push(`[${tag}] (d2) a turn card ran off the screen ${off} time(s)`);
+  if (off) errors.push(`[${tag}] (d2) a turn card ran off the screen ${off} time(s) ${JSON.stringify(ex)}`);
   if (placed < WANT) errors.push(`[${tag}] played through only ${placed} rival placements in ${games} game(s) (want ${WANT})`);
   if (turns.size < CARDS) errors.push(`[${tag}] saw only ${turns.size} rival turn cards (want ${CARDS})`);
   console.log(`turndock [${tag}]: ${placed} rival placements, ${turns.size} rival turn cards, ${games} game(s), worst cover ${Math.round(worst)}px`);

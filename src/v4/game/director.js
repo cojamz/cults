@@ -419,12 +419,15 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
       const hubW = { kind: 'stage', slot: 'hub' };
       // one step at a time (Cory, Nov 4: "yes" to the audit's pick): the coins land in the lifted card first, then it
       // flies to the middle, then on to its buyer
-      const toHub = fly(card.from, hubW), fromHub = fly(hubW, card.to);
+      // a rival's recruit told on the story card (Cory, Nov 6: an overhaul, not a layer on top): the line names it, so the
+      // card goes straight from the shop to its buyer's seat, with no showcase in the middle (critic pass 3)
+      const direct = told;
+      const toHub = direct ? fly(card.from, card.to) : fly(card.from, hubW), fromHub = direct ? 0 : fly(hubW, card.to);
       const lifted = Math.max(s + MO.cardLift + hold, paid + (m.pays.length ? MO.paidBeat : 0));
       const atHub = lifted + toHub;
-      const leave = atHub + MO.recruitShow;
+      const leave = atHub + (direct ? 0 : MO.recruitShow);
       hand = Math.max(hand, leave + fromHub * (2 / 3));
-      at(s, { op: 'card', uid: card.what.uid, to: card.to.pid, from: card.from, lift: lifted - s, rise: MO.cardLift, toHub, show: leave - atHub, fromHub });
+      at(s, { op: 'card', uid: card.what.uid, to: card.to.pid, from: card.from, lift: lifted - s, rise: MO.cardLift, toHub, show: leave - atHub, fromHub, direct });
       const landed = ends(leave + fromHub);
       if (card.what.worth > 0) {
         // its worth: follower marks hop from the new chip to the count, which ticks as they land
@@ -1445,7 +1448,8 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
           if (skip || !sn || !sn.rect) return;
           // (the reads first: the chip and the hub, then the ghost goes in)
           const chip = root.querySelector(`.lt-seat[data-pid="${a.to}"] [data-uids~="${a.uid}"]`) || placeEl(root, { kind: 'crowd', pid: a.to }, ctx);
-          const hub = clearOfStory(hubRect(HUB_MEMBER)) || sn.rect;
+          const chipR = a.direct && chip ? chip.getBoundingClientRect() : null;
+          const hub = a.direct ? (chipR && chipR.width ? chipR : sn.rect) : clearOfStory(hubRect(HUB_MEMBER)) || sn.rect;
           const g = document.createElement('div');
           g.className = 'flight card-flight ghost-layer';
           g.dataset.born = String(Date.now());
@@ -1487,6 +1491,11 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
             { opacity: 0, offset: 1 },
           ], { duration: total, fill: 'forwards' }));
           slideShop(root, snap);
+          if (a.direct) {
+            // it lands on its new chip, which rings
+            onFinish(anim, () => { g.remove(); chain.flying = Math.max(0, chain.flying - 1); play('member'); if (chip && chip.animate && chip.isConnected) jiggle(chip, MO.jiggle); });
+            return;
+          }
           const id = `recruit:${a.uid}`;
           const ep = chain.epoch || 0;
           // the member's card opens at the hub as the picture arrives

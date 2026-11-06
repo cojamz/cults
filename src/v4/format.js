@@ -1289,7 +1289,10 @@ export function effectStory(start, end, actor, me = null, fx = []) {
       if (bits.length) out.push(`${label[0].toUpperCase()}${label.slice(1)}: ${bits.join(', ')}`);
     } else if (c.kind === 'recruit') {
       const paid = paidOf(g, actor);
-      const line = `recruited ${cardName(c.uid)} (${paid ? `paid ${paid}` : 'free'})`;
+      // what it's worth goes on the seat's count as it lands, so the line says it (critic pass 3, Nov 6: "P4 goes from 1
+      // to 5 followers after recruited Deprogrammers" with nothing saying +4)
+      let worthF = 0; try { const d = end.cards[c.uid] ? cardDef(end, c.uid) : null; worthF = d && d.f > 0 ? d.f : 0; } catch { worthF = 0; }
+      const line = `recruited ${cardName(c.uid)} (${paid ? `paid ${paid}` : 'free'})${worthF ? `, worth ${fword(worthF)}` : ''}`;
       // two same-named members in one turn read as one line, not the same line twice
       const k = out.indexOf(line);
       if (k >= 0) out[k] = line.replace(/^recruited (.+) \(/, 'recruited $1 twice (');

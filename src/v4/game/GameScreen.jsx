@@ -60,7 +60,7 @@ import LaunderCard, { launderChoice } from './LaunderCard.jsx';
 import SwapCard, { swapChoice } from './SwapCard.jsx';
 import ArtifactDraft from './ArtifactDraft.jsx';
 import ActionStage from './ActionStage.jsx';
-import { stageClear, stageRelease, stageCenter, subscribeStage, stageItems, setStoryZone, storyAtHub, MEMBER } from './stage.js';
+import { stageClear, stageRelease, stageCenter, subscribeStage, stageItems, setStoryZone, storyAtHub } from './stage.js';
 import { Minion } from '../art/Leader.jsx';
 import { sameSeat } from './seatMemo.js';
 import { holdFlag } from './bodyFlag.js';
@@ -512,21 +512,18 @@ function Menu({ onRules, onLog, onLeave, getState }) {
 // somebody else takes their turn. And it should always show the full story card without having to expand or scroll";
 // "the card lingers too long when the player has already started making their next turn"). Your own turn builds in the
 // log area. ?story=dock puts every turn back the old way.
-const HUB_W = 270;
+const HUB_W = 250;
 /** The story card's place over the wheel's hub, or null (no wheel on screen). */
 // a rival's step in the top line: their turn, not each verb ("is paying", "is choosing" flickered over one turn; the
 // story card says what they're doing)
 const RIVAL_VERB = / (is placing a minion|is paying|is choosing|is shopping)$/;
 const rivalLine = p => (storyAtHub() && p.who && RIVAL_VERB.test(p.text) ? `${p.who.name}’s turn` : p.text);
-function hubCardPlace(table) {
+function hubCardPlace() {
   const c = stageCenter();
   if (!c) return null;
-  // right of the members' notes that pop out of the seats' right side (stage.js bubbleRect), so none sits on it
-  let left = c.x - HUB_W / 2;
-  const seats = table ? [...table.querySelectorAll(':scope > .lt-seat')].map(e => e.getBoundingClientRect()).filter(r => r.width) : [];
-  const notesEnd = seats.length ? Math.max(...seats.map(r => r.right)) + 10 + MEMBER.w + 8 : 0;
-  if (notesEnd > left) left = Math.min(notesEnd, c.x + c.R * 0.9 - HUB_W);
-  return { left: Math.round(left), top: Math.round(c.y + 6), width: HUB_W };
+  // centred on the hub (critic pass 3, all three: off to the right it hid the inner spaces and the minion just placed;
+  // the member notes by the seats it used to clear no longer show while a rival's turn is told)
+  return { left: Math.round(c.x - HUB_W / 2), top: Math.round(c.y), width: HUB_W, centre: true };
 }
 // where the hub card last stood, so the log area's card can fly in from there
 let hubLast = null;
@@ -591,6 +588,7 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
       Object.assign(el.style, { display: '', left: px(at.left), top: px(at.top), right: '', bottom: '', width: px(at.width), maxWidth: px(at.width), transformOrigin: '50% 50%' });
       // a long turn rises to stay whole on screen
       const h = el.offsetHeight * z;
+      if (at.centre) { at.top = Math.max(12, Math.round(at.top - h / 2)); el.style.top = px(at.top); }
       if (at.top + h > innerHeight - 8) { at.top = Math.max(8, Math.round(innerHeight - 8 - h)); el.style.top = px(at.top); }
       setStoryZone({ left: at.left, top: at.top, width: at.width, height: h, right: at.left + at.width, bottom: at.top + h });
       hubMine.current = { pid: card.pid, rect: { left: at.left, top: at.top, width: at.width, height: h } };
@@ -647,8 +645,9 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
   return (
     <div ref={box} className={`turn-card${hub ? ' at-hub' : ''}${keep ? ' kept' : ''}${card.live ? ' live' : ''}${!keep && !hub && (card.folding || life === 'folding') ? ' folding' : ''}`} data-turn-story={card.text} data-turn-at={hub ? 'hub' : 'dock'} role="status" aria-live="polite"
       style={{ '--pc': playerColor(card.pid) }}>
-      {keep && <b className="tc-head tc-row"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={13} /><span>{head}</span></b>}
-      {keep && rest.length > 0 && <span className="tc-line"><Rich text={rest.join(' · ')} /></span>}
+      {/* the log area's card: the whole turn as one paragraph, the head in bold, so it stays whole and small enough to
+          leave the strip its lines (Cory, Nov 6: "always show the full story card without having to expand or scroll") */}
+      {keep && <span className="tc-line tc-para"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={13} /> <b className="tc-head">{head}</b>{rest.length > 0 && <> · <Rich text={rest.join(' · ')} /></>}</span>}
       {hub && <span className="tc-who"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={hub ? 16 : 13} /><span>{card.when ? `${pname === 'You' || /^You\b/.test(head) ? 'You' : pname}, ${card.when}` : pname === 'You' || /^You\b/.test(head) ? 'Your turn' : pname ? `${pname}’s turn` : ''}</span></span>}
       {!keep && <b className="tc-head">{(hub || keep) && /^You /.test(head) ? `${head.charAt(4).toUpperCase()}${head.slice(5)}` : (hub || keep) && pname && head.startsWith(`${pname} `) ? `${head.charAt(pname.length + 1).toUpperCase()}${head.slice(pname.length + 2)}` : head}</b>}
       {!keep && rest.map((l, k) => <span key={`${k}:${l}`} className="tc-line"><Rich text={l} /></span>)}
@@ -1033,6 +1032,10 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // a rival's story card on the hub is never covered (Cory, Nov 6: "it gets covered up by so much other stuff"): a
   // space's card left up from your own turn closes as theirs comes up (critic pass: Out of Style's card sat on the hub)
   const hubKey = storyAtHub() && hubStory ? hubStory.n : null;
+  // and one left up when your turn ends or the round turns over (critic pass 3: Out of Style's "you'd get" sat over the
+  // wheel for seconds after you were done)
+  const myOpen = !!(pend && mySeats.includes(pend.player));
+  useEffect(() => { if (!myOpen) hover.close(); }, [myOpen, live0.round, !!moment]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (hubKey) hover.close(); }, [hubKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const lostText = myTurn ? '' : lossWords(story.lost.filter(x => x.n > lostSeen.current), state.players);
   const [busy, setBusy] = useState(false);

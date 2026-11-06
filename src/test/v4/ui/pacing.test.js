@@ -163,7 +163,8 @@ describe('a rival\'s step plays quicker than your own (RIVAL)', () => {
               // RIVAL, tightens less than the same step as yours: there its card is never quicker than yours; otherwise the same
               // (and, in a round, the table's hold cap less its margin, director.js FIT_MARGIN)
               const squeezed = Math.max(rival.total, own.total) >= Math.min(Math.round(2400 * SPEEDS.steady), stepHoldCap() - 600) - 1; // a squeezed chain ends exactly at the cap
-              if (rc && oc) { cards++; for (const f of ['lift', 'toHub', 'show', 'fromHub']) if (squeezed) expect(rc[f]).toBeGreaterThanOrEqual(oc[f] - 1); else expect(Math.abs(rc[f] - oc[f])).toBeLessThanOrEqual(1); }
+              // (a rival's recruit told on the story card flies straight from the shop to its seat: Cory, Nov 6, critic pass 3)
+              if (rc && oc) { cards++; for (const f of rc.direct ? ['lift'] : ['lift', 'toHub', 'show', 'fromHub']) if (squeezed) expect(rc[f]).toBeGreaterThanOrEqual(oc[f] - 1); else expect(Math.abs(rc[f] - oc[f])).toBeLessThanOrEqual(1); }
             }
           }
         }
