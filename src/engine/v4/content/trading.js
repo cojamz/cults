@@ -256,21 +256,21 @@ const trading = {
     }] : []),
     ...(on12('pawnshop') || on12('lowprofile') || on12('pocketmoney') ? [] : [{
       key: 'stipend', copyDoesIt: true, ring: 1, name: 'Allowance',
-      text: '+2 white in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.',
+      text: '+3 white in round I, +4 in round II, +5 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.', // +1 white (Cory, Nov 6: "white needs a bigger white gain in the begining", "just buff those by +1 white")
       // Gather's shape (Cory, 2026-10-31: "just default to gather style for now for the rest"); was +1/2/3 followers and +2/3/4 white
-      byRound: { lines: ['+2 white. This turn, if you recruit a member, +1 follower.', '+3 white. This turn, if you recruit a member, +2 followers.', '+4 white. This turn, if you recruit a member, +3 followers.'] },
-      estimate: ctx => ctx.state.round + 1 + ctx.state.round * 0.7,
+      byRound: { lines: ['+3 white. This turn, if you recruit a member, +1 follower.', '+4 white. This turn, if you recruit a member, +2 followers.', '+5 white. This turn, if you recruit a member, +3 followers.'] },
+      estimate: ctx => ctx.state.round + 2 + ctx.state.round * 0.7,
       resolve(ctx, p) {
-        ctx.gain(p, W, ctx.state.round + 1, { fromAction: true });
+        ctx.gain(p, W, ctx.state.round + 2, { fromAction: true });
         (p.recruitFollowers ||= []).push({ n: ctx.state.round, name: 'Allowance', broker: true });
       },
     }]),
     swap11({
-      key: 'splurge', copyDoesIt: true, ring: 1, name: 'Splurge', text: 'This turn, if you recruit a member, +1 follower for every 2 resources you pay for it (every 1 in round II). +1 white.', // members only: Claude's default, 2026-10-27; +1 (Cory, Oct 28); per 1 in round II (Cory, Nov 1 1:39pm)
-      byRound: { lines: ['+1 white. This turn, if you recruit a member, +1 follower for every 2 resources you pay for it.', '+1 white. This turn, if you recruit a member, +1 follower for every resource you pay for it.', '+1 white. This turn, if you recruit a member, +1 follower for every 2 resources you pay for it.'] },
-      estimate: (ctx, p) => 1 + Math.floor(Math.min(totalRes(p) + 1, 7) / (ctx.state.round === 2 ? 1 : 2)) * fv(ctx) * 0.8,
+      key: 'splurge', copyDoesIt: true, ring: 1, name: 'Splurge', text: 'This turn, if you recruit a member, +1 follower for every 2 resources you pay for it (every 1 in round II). +2 white.', // +2 white (Cory, Nov 6: "just buff those by +1 white"); members only: Claude's default, 2026-10-27; +1 (Cory, Oct 28); per 1 in round II (Cory, Nov 1 1:39pm)
+      byRound: { lines: ['+2 white. This turn, if you recruit a member, +1 follower for every 2 resources you pay for it.', '+2 white. This turn, if you recruit a member, +1 follower for every resource you pay for it.', '+2 white. This turn, if you recruit a member, +1 follower for every 2 resources you pay for it.'] },
+      estimate: (ctx, p) => 2 + Math.floor(Math.min(totalRes(p) + 1, 7) / (ctx.state.round === 2 ? 1 : 2)) * fv(ctx) * 0.8,
       resolve(ctx, p) {
-        ctx.gain(p, W, 1, { fromAction: true });
+        ctx.gain(p, W, 2, { fromAction: true });
         p.perSpend = true;
       },
     }, {
@@ -284,11 +284,11 @@ const trading = {
       },
     }),
     swap11(swap11(swap14({
-      key: 'exchange', copyDoesIt: true, ring: 1, name: 'Exchange', text: '+1 white. Then turn up to 1 resource (2 in round II, 3 in round III) into 2 followers each.', // Cory, 2026-10-23: "up to", you can stop early
-      byRound: { lead: '+1 white. Then:', lines: ['Turn up to 1 resource into 2 followers.', 'Turn up to 2 resources into 2 followers each.', 'Turn up to 3 resources into 2 followers each.'] }, // white first (Cory, Nov 1 text audit)
-      estimate: (ctx, p) => 1 + Math.min(ctx.state.round, totalRes(p) + 1) * (2 * fv(ctx) - 1),
+      key: 'exchange', copyDoesIt: true, ring: 1, name: 'Exchange', text: '+2 white. Then turn up to 1 resource (2 in round II, 3 in round III) into 2 followers each.', // +2 white (Cory, Nov 6: "just buff those by +1 white"); Cory, 2026-10-23: "up to", you can stop early
+      byRound: { lead: '+2 white. Then:', lines: ['Turn up to 1 resource into 2 followers.', 'Turn up to 2 resources into 2 followers each.', 'Turn up to 3 resources into 2 followers each.'] }, // white first (Cory, Nov 1 text audit)
+      estimate: (ctx, p) => 2 + Math.min(ctx.state.round, totalRes(p) + 1) * (2 * fv(ctx) - 1),
       resolve(ctx, p) {
-        ctx.gain(p, W, 1, { fromAction: true });
+        ctx.gain(p, W, 2, { fromAction: true });
         exchangeStep(ctx, p, { left: ctx.state.round, done: 0 });
       },
     }, PAWN_SHOP), WHITE_EXCHANGE), LOAN),

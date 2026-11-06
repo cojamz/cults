@@ -67,8 +67,8 @@ describe('White scoring: most white held', () => {
 });
 
 describe('White actions', () => {
-  it('Allowance (Oct 31): +round+1 white, and +round followers on a member recruit that turn', () => {
-    for (const [round, f, w] of [[1, 1, 2], [2, 2, 3], [3, 3, 4]]) {
+  it('Allowance (Nov 6): +round+2 white, and +round followers on a member recruit that turn', () => {
+    for (const [round, f, w] of [[1, 1, 3], [2, 2, 4], [3, 3, 5]]) {
       let s = take(scene({ round, res: [{ gold: 4 }], shop: ['gold.midas'] }), 'trading.stipend');
       expect([B(s), R(s).white]).toEqual([0, w]);
       expect(s.pending.kind).toBe('buy');
@@ -77,9 +77,9 @@ describe('White actions', () => {
     }
   });
 
-  it('Splurge: +1 white, then +1 follower per 2 resources paid for the turn\'s first recruited member', () => {
+  it('Splurge: +2 white, then +1 follower per 2 resources paid for the turn\'s first recruited member', () => {
     let s = take(scene({ res: [{ gold: 4 }], shop: ['gold.midas'] }), 'trading.splurge');
-    expect(R(s).white).toBe(1);
+    expect(R(s).white).toBe(2);
     expect(s.players[0].perSpend).toBe(true);
     s = move(s, pick(s, 'gold.midas', 'shop')); // Midas 3+2: pays 5
     expect(has(s, 'gold.midas')).toBe(true);
@@ -111,24 +111,24 @@ describe('White actions', () => {
     expect(s.players[0].perSpend).toBeUndefined();
   });
 
-  it('Exchange round I: +1 white, then turn 1 resource into 2 followers', () => {
+  it('Exchange round I: +2 white, then turn 1 resource into 2 followers', () => {
     let s = take(scene({ res: [{ red: 2 }] }), 'trading.exchange');
     expect(ids(s)).toEqual(['color:red', 'color:white', 'done']);
     s = move(s, 'color:red');
-    expect([R(s).red, R(s).white, B(s)]).toEqual([1, 1, 2]);
+    expect([R(s).red, R(s).white, B(s)]).toEqual([1, 2, 2]);
     expect(s.pending.kind).toBe('buy'); // round I: one only
     const none = move(take(scene({ res: [{ red: 2 }] }), 'trading.exchange'), 'done');
-    expect([R(none).red, R(none).white, B(none)]).toEqual([2, 1, 0]);
+    expect([R(none).red, R(none).white, B(none)]).toEqual([2, 2, 0]);
   });
 
   it('Exchange rounds II and III: up to 2, then up to 3 resources, 2 followers each; you can stop early', () => {
     let s = take(scene({ round: 2, res: [{ red: 3 }] }), 'trading.exchange');
     s = move(move(s, 'color:red'), 'color:red');
-    expect([R(s).red, R(s).white, B(s)]).toEqual([1, 1, 4]);
+    expect([R(s).red, R(s).white, B(s)]).toEqual([1, 2, 4]);
     expect(s.pending.kind).toBe('buy');
     let t = take(scene({ round: 3, res: [{ red: 3, blue: 1 }] }), 'trading.exchange');
     t = move(move(move(t, 'color:red'), 'color:blue'), 'color:white');
-    expect([R(t).red, R(t).blue, R(t).white, B(t)]).toEqual([2, 0, 0, 6]);
+    expect([R(t).red, R(t).blue, R(t).white, B(t)]).toEqual([2, 0, 1, 6]);
     let u = take(scene({ round: 3, res: [{ red: 3 }] }), 'trading.exchange');
     u = move(move(u, 'color:red'), 'done');
     expect([R(u).red, B(u)]).toEqual([2, 2]);
@@ -176,7 +176,7 @@ describe('White actions', () => {
 
   it('Midas takes White action gains as gold (Allowance, Estate Sale)', () => {
     const s = take(scene({ round: 2, members: [['gold.midas']] }), 'trading.stipend');
-    expect([R(s).gold, R(s).white]).toEqual([3, 0]);
+    expect([R(s).gold, R(s).white]).toEqual([4, 0]);
     let t = take(scene({ round: 2, members: [['gold.midas', 'red.twins']] }), 'trading.estatesale');
     t = move(t, `card:${uidOf(t, 'red.twins', 0)}`);
     expect([R(t).gold, R(t).white]).toEqual([3, 0]);
@@ -299,7 +299,7 @@ describe('White members', () => {
     expect([B(s), R(s).white]).toEqual([1, 2]);
     s = take(scene({ round: 3, res: [{ red: 3 }], members: [[bk]] }), 'trading.exchange');
     s = move(move(move(s, 'color:red'), 'color:red'), 'color:red');
-    expect([B(s), R(s).white]).toEqual([6, 1]); // +1 space only
+    expect([B(s), R(s).white]).toEqual([6, 2]); // +2 space only
     s = take(scene({ round: 3, res: [{ white: 4 }], members: [[bk]] }), 'trading.cashin');
     expect([B(s), R(s).white]).toEqual([4, 1]);
     s = take(scene({ round: 2, members: [[bk, 'red.twins']] }), 'trading.farewell');
