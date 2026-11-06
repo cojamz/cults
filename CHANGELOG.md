@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.649 — 2026-11-06
+
+- Ghost costs 5 again
+
 ## v0.99.648 — 2026-11-06
 
 - A rival's turn is told on one story card in the middle of the wheel, line by line, then it flies to their seat
