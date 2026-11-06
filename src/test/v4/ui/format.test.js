@@ -310,7 +310,7 @@ describe('v4 format helpers', () => {
     // wave-2 blocker: P2's Raider bought 3 of the tester's followers and the strip never said so
     const four = [...seats, { name: 'Di', kind: 'bot' }];
     let found = null;
-    for (let seed = 1; seed < 120 && !found; seed++) { // 120 since Victors left the grey deck (Nov 6): none of seeds 1 to 59 raided a lone victim
+    for (let seed = 1; seed < 240 && !found; seed++) { // 120 since Victors left the grey deck (Nov 6): none of seeds 1 to 59 raided a lone victim
       let s = createGame({ seats: four, seed, quadrants: ['trading', 'gold', 'red', 'blue'] });
       const states = [s];
       while (!s.over) { s = applyMove(s, chooseBotMove(s, () => 0.4), { effects: true }); states.push(s); }
@@ -323,7 +323,8 @@ describe('v4 format helpers', () => {
       // a turn where the raid is the only thing done to the victim (since Nov 2's bots, seed 2's raiding turn also
       // took 1 gold, which the strip names first, rightly)
       const hit = t.stories.find(x => /Raiders took/.test(x.hit || ''));
-      if (hit && !hit.short.startsWith(`Raiders took ${n}`)) continue;
+      // (and since White's +1 white, Nov 6, one raider also took a White space that turn: the line reads "took 4 of your followers" without the name; looked for elsewhere)
+      if (!hit || !hit.short.startsWith(`Raiders took ${n}`)) continue;
       found = { t, n };
     }
     expect(found).toBeTruthy();
