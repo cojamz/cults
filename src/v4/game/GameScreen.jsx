@@ -68,7 +68,7 @@ import LaunderCard, { launderChoice } from './LaunderCard.jsx';
 import SwapCard, { swapChoice } from './SwapCard.jsx';
 import ArtifactDraft from './ArtifactDraft.jsx';
 import ActionStage from './ActionStage.jsx';
-import { stageClear, stageRelease, stageCenter, subscribeStage, stageItems, setStoryZone, storyAtHub, noteHubGone, readUntil, noteReadEnd, dealEndsAt } from './stage.js';
+import { stageClear, stageRelease, stageCenter, subscribeStage, stageItems, setStoryZone, storyAtHub, noteHubGone, readUntil, noteReadEnd, dealEndsAt, dealing } from './stage.js';
 import { Minion } from '../art/Leader.jsx';
 import { sameSeat } from './seatMemo.js';
 import { holdFlag } from './bodyFlag.js';
@@ -137,6 +137,7 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
   const held = useRef(!!table.moment);
   const timer = useRef(null);
   const foldSince = useRef(null); // when the table began holding for a rival's next buy (director.js foldBuys)
+  const dealWait = useRef(null); // since when the next step has waited on the shop's deal (4s at most)
   const dwellNext = useRef(0); // the hold the step being committed asks for (started once it's on screen)
   const remeasure = useRef(null); // how this step's hold follows from its chain's plan (retime: the measured plan)
   const timerAt = useRef(null);
@@ -195,6 +196,14 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
       // the story card is still showing a rival's lines one at a time: the next rival step waits until they're read
       // (Cory, Nov 6: "this just isnt readbale. esp when updated so quickly"); your own moves never wait on it
       const actingNow = shownRef.current && shownRef.current.pending ? shownRef.current.pending.player : null;
+      // the shop finishes refilling before anything else happens: the next turn never starts under a card still being
+      // dealt (Cory, Nov 6: "what if the in between round stuff happened before people take their fucking turn")
+      const dealLeft = Math.max(dealEndsAt() - Date.now(), dealing() ? 80 : 0);
+      if (dealLeft > 30 && motionOK() && (dealWait.current ??= performance.now()) > performance.now() - 4000) {
+        timer.current = setTimeout(() => { timer.current = null; pump(); }, Math.min(dealLeft + 40, 3000));
+        return;
+      }
+      dealWait.current = null;
       const readLeft = readUntil() - Date.now();
       if (readLeft > 30 && motionOK() && rivalDwell >= 300 && actingNow != null && !(session.mySeats || []).includes(actingNow)) {
         timer.current = setTimeout(() => { timer.current = null; pump(); }, Math.min(readLeft, 4000));
@@ -566,7 +575,7 @@ const words = l => String(l || '').split(/\s+/).filter(Boolean).length;
  *  the next rival step and the card's leaving wait for it. */
 /** What a story line is about, so a later step that changes its numbers updates it in place (the space's own result,
  *  "Blue Cloak: …", "copied Shake Down: …") while anything new joins at the bottom. */
-export const lineId = (l, i) => (i === 0 && /^[+−-]\d/.test(l) ? '#gain' : (l.match(/^([^:]{2,48}): /) || [])[1] || (l.match(/^used (.+)$/) || [])[1] || (l.match(/^(recruited|bought|released) ([^(,]+)/) || [])[0] || l);
+export const lineId = (l, i) => (i === 0 && /^[+−-]\d/.test(l) ? '#gain' : (l.match(/^([^:]{2,48}): /) || [])[1] || (l.match(/^used (.+)$/) || [])[1] || ((l.match(/^(.{1,30}?) [+−-]\d/) || [])[1] ? `who:${l.match(/^(.{1,30}?) [+−-]\d/)[1]}` : '') || ((l.match(/ from (\S+)$/) || [])[1] ? `from:${l.match(/ from (\S+)$/)[1]}` : '') || (l.match(/^(recruited|bought|released) ([^(,]+)/) || [])[0] || l);
 /** The hub card's lines in the order they first showed (Cory, Nov 6: "we should just SEE it get added"): a line never
  *  moves once it's up (the every-frame check saw "gave Window Shopper to P2" become "1, 1 from you" as a line was
  *  inserted above it). */
@@ -616,7 +625,8 @@ function useLinger(on) {
   // the shop's deal and the card's last line are noted in this same commit's layout effects (children's, before this
   // one): a later end than the render saw stretches the linger
   useLayoutEffect(() => {
-    if (on || !ref.current.until) return;
+    // (only while the card is still up: once the linger is over, a late note never brings it back)
+    if (on || !ref.current.until || ref.current.until <= Date.now()) return;
     const want = Math.min(Date.now() + 4000, Math.max(dealEndsAt() + 150, readUntil()));
     if (want > ref.current.until + 20) { ref.current = { on: false, until: want }; redraw(n => n + 1); }
   });

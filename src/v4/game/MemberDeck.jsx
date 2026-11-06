@@ -16,7 +16,7 @@ import { ResourceGlyph } from './Glyphs.jsx';
 import { motionOK } from './flight.js';
 import { MO } from '../motion.js';
 import { dealAfter, rowOutMs, noteRoundDeal } from './director.js';
-import { noteDealEnd } from './stage.js';
+import { noteDealEnd, dealStarted, dealDone } from './stage.js';
 
 /** At or below this many cards the count warms. */
 export const DECK_LOW = 10;
@@ -139,12 +139,16 @@ export function useDeal(rowRef, deckRef, state) {
       const outs = newRound ? was.shop.filter(u => !state.shop.includes(u)).length : 0;
       const duration = MO.deal, delay = (outs ? rowOutMs(outs) : dealAfter(state)) + k * MO.dealStagger;
       noteDealEnd(Date.now() + delay + duration);
+      // dealt like solitaire (Cory, Nov 6: "shop refill animation is janky … like the cards getting quickly dealt"): one
+      // unbroken slide off the deck, turning face up on the way, each card a beat after the last
       const anim = ghost.animate([
-        { transform: `translate(${dx}px,${dy}px) ${s} perspective(500px) rotateY(88deg)` },
-        { transform: `translate(${dx}px,${dy}px) ${s} perspective(500px) rotateY(0deg)`, offset: 0.32 },
-        { transform: 'translate(0,0) scale(1,1) perspective(500px) rotateY(0deg)' },
-      ], { duration, delay, easing: 'cubic-bezier(.3,.7,.4,1)', fill: 'both' });
-      const done = () => ghost.remove();
+        { transform: `translate(${dx}px,${dy}px) ${s} perspective(600px) rotateY(90deg)`, offset: 0 },
+        { transform: `translate(${(dx * 0.45).toFixed(1)}px,${(dy * 0.45 - 10).toFixed(1)}px) scale(0.9) perspective(600px) rotateY(0deg)`, offset: 0.45 },
+        { transform: 'translate(0,0) scale(1,1) perspective(600px) rotateY(0deg)' },
+      ], { duration, delay, easing: 'cubic-bezier(.25,.6,.35,1)', fill: 'both' });
+      dealStarted();
+      let over = false;
+      const done = () => { ghost.remove(); if (!over) { over = true; dealDone(); } };
       anim.onfinish = done;
       anim.oncancel = done;
       // (a safety net; a new round's deal may be pushed later by its chain, so it looks again while it still plays)

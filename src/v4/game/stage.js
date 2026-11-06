@@ -197,3 +197,8 @@ export const noteReadEnd = t => { readEnd = t; };
 export const readUntil = () => readEnd;
 export const noteDealEnd = t => { if (t > dealEnd || t < Date.now()) dealEnd = t; };
 export const dealEndsAt = () => dealEnd;
+// deals still on screen (each card's picture until it lands): the next turn waits for none (Cory, Nov 6)
+let deals = 0;
+export const dealStarted = () => { deals++; };
+export const dealDone = () => { deals = Math.max(0, deals - 1); };
+export const dealing = () => deals > 0;

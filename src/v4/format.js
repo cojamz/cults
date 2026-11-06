@@ -1326,6 +1326,16 @@ export function effectStory(start, end, actor, me = null, fx = []) {
       out.push(`released ${cardName(c.uid)}${back ? ` for ${back}` : ''}`);
     }
   }
+  // rivals who got the same thing share one line ("P2, P3 +1 red each"; every-frame review, Nov 6: Walk-In's card ran to
+  // ten lines, one per rival)
+  const SAME = /^(\S+) ((?:[+−]\d+ [a-z]+ ?)+)$/;
+  for (let i = 0; i < out.length; i++) {
+    const m = out[i].match(SAME);
+    if (!m) continue;
+    const who = [m[1]];
+    for (let j = out.length - 1; j > i; j--) { const o = out[j].match(SAME); if (o && o[2] === m[2]) { who.splice(1, 0, o[1]); out.splice(j, 1); } }
+    if (who.length > 1) out[i] = `${who.join(', ')} ${m[2].trim()} each`;
+  }
   // what you got leads, right after the space's own result (the turn card shows its first lines; the rest fold)
   if (gift) out.splice(gain ? 1 : 0, 0, gift);
   // what only the log says (an extra turn, a member used, a switch): kept from the log's story
