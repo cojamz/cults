@@ -13,8 +13,8 @@ export function memberTimingWords(text) {
 }
 
 // "On Recruit: X Round Start: X" says X twice (Cory, live, Oct 27: "this could be formatted way better"): both keywords
-// stay, the effect prints once, "On Recruit and Round Start: X"
+// stay, the effect prints once, "On Recruit and at Round Start: X" (Cory, Nov 5: "at Round Start")
 export function oneTiming(text) {
   const m = String(text).match(/^(.*?)On Recruit: (.+?) Round Start: (.+)$/i);
-  return m && m[2].trim() === m[3].trim() ? `${m[1]}On Recruit and Round Start: ${m[2].trim()}` : String(text);
+  return m && m[2].trim() === m[3].trim() ? `${m[1]}On Recruit and at Round Start: ${m[2].trim()}` : String(text);
 }

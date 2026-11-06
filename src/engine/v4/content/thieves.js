@@ -710,9 +710,9 @@ const thieves = {
       },
     }),
     // Cory, 2026-10-28: "lets just make it a bigger cutpurse for now" (was: a steal when a rival buys 5+ followers)
-    m('extortionist', 'Extortionist', 4, 2, /* Cory, Nov 5 backlog price yes */ 'On Recruit: steal 2 resources from the rival with the most resources. Round Start: steal 2 resources from the rival with the most resources.', { now: true,
+    m('extortionist', 'Extortionist', 4, 2, /* Cory, Nov 5 backlog price yes */ 'On Recruit and at Round Start: steal 2 resources.' /* Cory, Nov 5: fine print cut, "at Round Start" */, { now: true,
       ...old14('boss'), ...old14('mobboss'),
-      onRoundStart(ctx, owner) { startSteal(ctx, owner, 'Extortionist', 2 + stickyMore(ctx, owner), { fromAction: false, richest: true }); },
+      onRoundStart(ctx, owner) { startSteal(ctx, owner, 'Extortionist', 2 + stickyMore(ctx, owner), { fromAction: false }); },
     }),
     // REPLACE14 bot tests (Members E lane, Nov 4; lane F's paper passers, quality/pitches/F-*.md, set check 17 vs 12):
     // Extortionist's place, same price (its aim read rivals' piles). Members count by how many they count as; The Boss
@@ -833,12 +833,12 @@ const thieves = {
     // members" counts as members count (Counts as N). A tie for the most members, or for the cheapest, is the owner's
     // pick; a rival who can't be stolen from (Bodyguards, Lie Low) is passed over only inside such a tie. A steal of a
     // member: the member is the owner's recruit (its On Recruit fires), as Heist's is.
-    m('kidnappers', 'Kidnapper', 5, 2, 'On Recruit and Round Start: steal the cheapest member of the rival with the most members.', { now: true, ...old10('poacher'), ...old10('poacher5'), // a round I member as Kingpin was (bot-tested in a later round; Nov 3)
+    m('kidnappers', 'Kidnapper', 5, 2, 'On Recruit and at Round Start: steal a rival’s cheapest member.' /* Cory, Nov 5: fine print cut */, { now: true, ...old10('poacher'), ...old10('poacher5'), // a round I member as Kingpin was (bot-tested in a later round; Nov 3)
       onRoundStart(ctx, owner) {
         const list = kidnapList(ctx, owner);
         if (!list.length) { ctx.log(`${owner.name}'s Kidnapper: no member to steal.`); return; }
         if (list.length === 1) { const [v, c] = list[0]; if (ctx.steal(owner, v, { uid: c.uid })) ctx.log(`${owner.name}'s Kidnapper: stole ${v.name}'s ${c.def.name}.`); return; }
-        pickMember(ctx, owner, list, 'Kidnapper: steal which cheapest member?', 'thieves.kidnap');
+        pickMember(ctx, owner, list, 'Kidnapper: steal which rival’s cheapest member?', 'thieves.kidnap');
       },
     }),
     // REPLACE10 bot tests (Nov 4, Members D; gate D-kidnapper "Talent Scout", renamed here because Blue's Talent Scout
@@ -961,9 +961,9 @@ function poachList(ctx, p) {
 function kidnapList(ctx, p) {
   const rivals = ctx.rivals(p).filter(o => ctx.membersOf(o).length);
   if (!rivals.length) return [];
-  const top = Math.max(...rivals.map(o => ctx.memberCount(o)));
   const out = [];
-  for (const o of rivals.filter(x => ctx.memberCount(x) === top && ctx.canSteal(p, x, 'member'))) {
+  // any rival you choose, their cheapest (Cory, Nov 5: "the rival with the most members" cut as fine print)
+  for (const o of rivals.filter(x => ctx.canSteal(p, x, 'member'))) {
     const low = Math.min(...ctx.membersOf(o).map(cost));
     for (const c of ctx.membersOf(o)) if (cost(c) === low) out.push([o, c]);
   }

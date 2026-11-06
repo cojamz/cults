@@ -57,7 +57,7 @@ const M = {
   shoplifter: ['🛍️', '♾️ You recruit: steal 1'],
   bodyguards: ['💪', '♾️ Rivals can’t steal from you'],
   'double-agent': ['🕵️', '✨ Trade this member for one of a rival’s'],
-  extortionist: ['💰', '✨🌅 Steal 2 from the richest rival'],
+  extortionist: ['💰', '✨🌅 Steal 2'],
   grifter: ['🎩', '✨ Steal 1 per 2 members'],
   // Purple
   'night-watch': ['🔦', '♾️ A rival takes the Goes Last token: +1 follower per minion on it'],
@@ -149,7 +149,7 @@ const M = {
   'ghost': ['👻', '♾️ Worth 0 members. Joins your cult: −5 followers'],
   dabblers: ['🌈', ''],
   cheerleader: ['📯', '♾️ You win a contest: +1 follower'],
-  anarchist: ['Ⓐ', '🔁 Swap any 2 members within 2 cost'],
+  anarchist: ['Ⓐ', '🔁 Swap any 2 members of the same cost'],
   spoilsport: ['🙅', '🌙 Nobody wins a contest you don’t lead'],
   'con-men': ['🎰', '✨ Steal 5'],
   'sore-loser': ['😤', '🌙 You win no contest: steal 5 followers from the rival who wins most'],

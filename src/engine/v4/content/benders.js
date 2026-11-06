@@ -81,7 +81,7 @@ const cost = c => c.def.s + c.def.w;
 const anarchyCards = (ctx, p) => [...ctx.state.players.flatMap(o => (o === p || ctx.canSteal(p, o, 'swap')) ? ctx.membersOf(o).filter(c => ctx.canSwapMember(c.uid)) : []), ...ctx.shopCards()];
 const anarchyFits = (ctx, a, b) => ctx.ownerOf(a.uid) !== ctx.ownerOf(b.uid) // two in the same cult or both in the shop: nothing moves
   && a.def.id !== b.def.id // two copies of one member (piles): nothing changes
-  && Math.abs(cost(a) - cost(b)) <= 2;
+  && cost(a) === cost(b);
 function anarchyPairs(ctx, p) {
   const all = anarchyCards(ctx, p);
   const out = [];
@@ -301,15 +301,15 @@ const members = [
     },
   })),
   // Cory, 2026-10-28: Anarchist, 7, once per round (it stands in for Red's swaps)
-  m('anarchist', 'Anarchist', null, 0, 5, /* 6 with the +1 wild (Cory, Nov 1 3:03pm: "maybe we make it a touch cheaper? yes to 1"; was 7) */ 'On Use, once per round: swap any 2 members, in any cult or the shop, that cost within 2 of each other.', {
+  m('anarchist', 'Anarchist', null, 0, 5, /* 6 with the +1 wild (Cory, Nov 1 3:03pm: "maybe we make it a touch cheaper? yes to 1"; was 7) */ 'On Use, once per round: swap any 2 members that cost the same, in any cult or the shop.' /* Cory, Nov 5: fine print cut */, {
     activate: 'round',
     onRoundStart(ctx, owner, card) { card.used = false; },
     onActivate(ctx, owner, card) {
       const pairs = anarchyPairs(ctx, owner);
-      if (!pairs.length) { card.used = false; ctx.log(`${owner.name}'s Anarchist: no two members within 2 cost to swap.`); return; }
+      if (!pairs.length) { card.used = false; ctx.log(`${owner.name}'s Anarchist: no two members of the same cost to swap.`); return; }
       ctx.log(`${owner.name} uses Anarchist.`);
       const where = c => ctx.ownerOf(c.uid)?.name || 'Shop';
-      ctx.choose(owner, 'Anarchist: choose two members within 2 cost to swap', pairs.map(([a, b]) => ({
+      ctx.choose(owner, 'Anarchist: choose two members of the same cost to swap', pairs.map(([a, b]) => ({
         id: `trade:${a.uid}:${b.uid}`, label: `${where(a)}: ${a.def.name} ↔ ${where(b)}: ${b.def.name}`, kind: 'trade', value: [a.uid, b.uid],
         hint: gainFor(ctx, owner, a, b),
       })).concat({ id: 'none', label: 'Don’t swap', kind: 'pass', value: null, hint: -99 }), 'benders.anarchy', { uid: card.uid });

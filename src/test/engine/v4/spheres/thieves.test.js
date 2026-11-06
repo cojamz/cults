@@ -347,9 +347,9 @@ describe('Magenta members', () => {
   });
 
   // Cory, 2026-10-28: a bigger Cutpurse
-  it('Extortionist: round start, steal 2 resources from the rival holding the most', () => {
+  it('Extortionist: round start, steal 2 resources from any rival (Cory, Nov 5: "the rival with the most" cut)', () => {
     let s = scene({ res: [{}, { gold: 2, red: 1 }, { blue: 2 }], members: [['thieves.extortionist']], queue: [{ t: 'round', r: 2 }] });
-    expect(ids(s)).toEqual(['take:1:gold', 'take:1:red']);
+    expect(ids(s)).toEqual(['take:1:gold', 'take:1:red', 'take:2:blue']);
     s = move(s, 'take:1:gold');
     s = move(s, s.pending.options[0].id);
     expect(Object.values(R(s)[0]).reduce((a, b) => a + b, 0)).toBe(2);

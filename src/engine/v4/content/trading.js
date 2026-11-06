@@ -547,17 +547,17 @@ const trading = {
     // player sees it. One of your other members costing 4 or less (3 before every member +1) to the bottom of the pile (as Farewell), +4 white; with
     // none, the use comes back. Bots cast out their cheapest-worth member, from round II.
     // Live in Raiders' slot as Downsizers (Cory, Nov 5: "i like moneylender. needs a different name. maybe slightly cheap"; name Claude's fill-in, 3 white + 2 any as a player sees it)
-    m('moneylender', 'Downsizers', 2, 1, 'On Use, once per round: cast out one of your members costing 4 or less to the bottom of the pile. +4 white.', {
+    m('moneylender', 'Downsizers', 2, 1, 'On Use, once per round: cast out one of your members to the bottom of the pile. +4 white.' /* Cory, Nov 5: "costing 4 or less" cut */, {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
-        const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid && cost(ctx, c.uid) <= 4);
-        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Downsizers: no member costing 4 or less to cast out.`); return; }
+        const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid);
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Downsizers: no other member to cast out.`); return; }
         ctx.choose(owner, 'Downsizers: cast out which member for 4 white?', list.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: -(c.def.f + (c.def.onLeave ? -cost(ctx, c.uid) : 0)),
         })), 'trading.moneylender');
       },
-      botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.membersOf(owner).some(c => c.def.key !== 'moneylender' && cost(ctx, c.uid) <= 4 && c.def.f <= 1),
+      botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.membersOf(owner).some(c => c.def.key !== 'moneylender' && c.def.f <= 1),
     }),
     // Cory, Nov 4 11:53am: "White should definitely have a member that gives an extra buy each turn ... limit the bonus
     // recruit to followers"; 12:45pm: "landlord is easily the worst white card". Landlord's place. Name, price and worth 1

@@ -218,7 +218,7 @@ it('member timing names recruitment and round starts precisely', () => {
   expect(memberTimingWords('When recruited: +2 red.')).toBe('On recruit: +2 red.');
   expect(memberTimingWords('Round start: plant any yellow.')).toBe('At round start: plant any yellow.');
   const { container } = render(<CardText text="Now and at round start, +3 gold." />);
-  expect(container.textContent).toMatch(/^On Recruit and Round Start/);
+  expect(container.textContent).toMatch(/^On Recruit and at Round Start/);
   expect(container.textContent).not.toMatch(/Now/);
 });
 

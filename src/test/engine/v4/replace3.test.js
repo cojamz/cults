@@ -71,16 +71,19 @@ describe('REPLACE3: each card fires', () => {
     expect(s.pending.kind).toBe('place');
   });
 
-  it('Kidnapper: at round start, steal the cheapest member of the rival with the most members', () => {
+  it('Kidnapper: at round start, steal a rival\'s cheapest member, any rival you choose (Cory, Nov 5)', () => {
     let s = table(['red', 'thieves', 'market', 'trading'], { n: 3, round: 1, members: [['thieves.kidnappers'], ['red.recruitbonus', 'trading.martyr'], ['market.snob']], queue: [{ t: 'round', r: 2 }] });
+    expect(s.pending.prompt).toBe('Kidnapper: steal which rival’s cheapest member?');
+    expect(s.pending.options.map(o => o.value).sort()).toEqual([uidIn(s, 'red.recruitbonus', 1), uidIn(s, 'market.snob', 2)].sort());
+    s = answer(s, `card:${uidIn(s, 'red.recruitbonus', 1)}`);
     expect(owns(s, 0, 'red.recruitbonus')).toBe(true);
     expect(owns(s, 1, 'red.recruitbonus')).toBe(false);
     expect(named(s, 'Kidnapper')).toContain("P1's Kidnapper: stole P2's Greeters.");
   });
 
-  it('Kidnapper: a tie for the most members is the owner’s pick', () => {
+  it('Kidnapper: the owner picks the rival', () => {
     let s = table(['red', 'thieves', 'market', 'trading'], { n: 3, round: 1, members: [['thieves.kidnappers'], ['red.crowd'], ['market.regular']], queue: [{ t: 'round', r: 2 }] });
-    expect(s.pending.prompt).toBe('Kidnapper: steal which cheapest member?');
+    expect(s.pending.prompt).toBe('Kidnapper: steal which rival’s cheapest member?');
     s = answer(s, `card:${uidIn(s, 'market.regular', 2)}`);
     expect(owns(s, 0, 'market.regular')).toBe(true);
   });

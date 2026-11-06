@@ -811,7 +811,7 @@ const market = {
     // concepts, Oct 21, not approved (design/eval/member-concepts-2026-10-21.md): prices are sim starting points
     // Cory, 2026-10-24: Blue's round start ("Yeah I kinda like it") and Blue's once per game, the shop refresh that replaces
     // Makeover; names and prices Claude's fill-in
-    m('windowshopper', 'Window Shopper', 2, 2, /* 2 members (Cory, Nov 1, 2:20pm) */ 'On Recruit and Round Start: send 2 shop members to the bottom of the pile. +1 of each one’s color.', { now: true, ...old4,
+    m('windowshopper', 'Window Shopper', 2, 2, /* 2 members (Cory, Nov 1, 2:20pm) */ 'On Recruit and at Round Start: send 2 shop members to the bottom of the pile. +1 of each one’s color.', { now: true, ...old4,
       onRoundStart(ctx, owner) { windowPick(ctx, owner, 2); },
     }),
     // REPLACE4 bot test (Nov 3, replacement batch 4): Window Shopper's place. 5 blue + 3 any as a player sees it. Core runs
