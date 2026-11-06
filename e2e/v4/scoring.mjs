@@ -155,7 +155,9 @@ try {
     // granted so far, and the end totals (below) land exact.
     if (b.values.length < 2 || b.values.at(-1) <= b.values[0]) errors.push(`${g.name}: chair should count up during its step, showed ${b.values.join(' → ')}`);
     const prior = expected.slice(0, expected.indexOf(g) + 1).filter(x => x.pid === g.pid).reduce((n, x) => n + x.n, 0);
-    const start = fs.bonuses.find(x => x.pid === g.pid)?.values[0];
+    // the baseline is the engine's total before any bonus (final minus every bonus it granted this seat), not the first
+    // frame sampled: the first bonus lights while the contests' count still rolls up, so that frame reads low (Nov 5).
+    const start = end[g.pid] ? end[g.pid].final - expected.filter(x => x.pid === g.pid).reduce((n, x) => n + x.n, 0) : null;
     if (start != null && b.values.at(-1) > start + prior) errors.push(`${g.name}: chair overshot, showed ${b.values.at(-1)} with ${start} + ${prior} granted`);
   }
   const firstBonus = fs.order.findIndex(k => k.startsWith('bonus:'));
