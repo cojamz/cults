@@ -174,7 +174,7 @@ for (const [id, name, source] of [
   ['yellow.dyejob', 'Counterfeiters', 'yellow.drifters'], // Nov 5: Drifters' place, on its scene until its own is drawn
   ['market.lastminute', 'Last-Minute Shopper', 'market.shopaholic'], // Nov 5: Shopaholics' place, on its scene until its own is drawn
   ['market.powershoppers', 'Power Shoppers', 'market.doorman'], // Nov 5: Doormen's place, on its scene until its own is drawn
-  ['purple.nightmanager', 'Night Manager', 'purple.earlybird'], // Nov 5: Early Birds' place, on its scene until its own is drawn
+  ['purple.nightmanager', 'Night Managers', 'purple.earlybird'], // Nov 5: Early Birds' place, on its scene until its own is drawn
   ['silver.ballroom', 'Ballroom Dancers', 'silver.benefactor'], ['silver.kingmakers', 'Kingmakers', 'silver.creditors'], ['silver.patronsaints', 'Patron Saints', 'silver.saint'], // Nov 5: silver's three open slots, on these scenes until their own are drawn
   ['trading.moneylender', 'Downsizers', 'trading.raider'], // Nov 5: Raiders' place, on its scene until its own is drawn
 ]) {

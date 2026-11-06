@@ -34,7 +34,7 @@ describe('REPLACE7: the switch', () => {
     expect(card('purple.sprinter')).toEqual(['Sprinter', 2, 3, 1, 1]);
     expect(card('purple.earlyrisers')).toEqual(['Early Risers', 2, 3, 2, 2]);
     expect(card('purple.daylaborers')).toEqual(['Day Laborers', 3, 3, 3, 3]);
-    expect(card('purple.nightmanager')).toEqual(['Night Manager', 2, 3, 1, 1]);
+    expect(card('purple.nightmanager')).toEqual(['Night Managers', 2, 3, 1, 1]);
     expect(card('purple.pacesetters')).toEqual(['Pace-Setters', 3, 3, 2, 2]);
     expect(card('purple.lifers')).toEqual(['Lifers', 3, 2, 2, 2]);
     expect(card('purple.floorcrew')).toEqual(['Floor Crew', 3, 2, 3, 3]);
@@ -435,13 +435,13 @@ describe('Night Manager: "Round End: if you placed the round’s last minion, +1
     const before = s.players[0].bonus;
     s = resume(s);
     expect(s.players[0].bonus - before).toBe(3);
-    expect(named(s, 'Night Manager')).toContain("P1's Night Manager: P1 placed the round's last minion, +3 followers (3 purple members).");
+    expect(named(s, 'Night Managers')).toContain("P1's Night Managers: P1 placed the round's last minion, +3 followers (3 purple members).");
   });
   it('a rival placed it: nothing', () => {
     let s = table(['red', 'purple', 'market', 'yellow'], { round: 2, members: [['purple.nightmanager']], queue: [] });
     s = { ...s, lastPlaced: { round: 2, pid: 1 }, queue: [{ t: 'endRound' }], pending: null };
     s = resume(s);
-    expect(named(s, 'Night Manager')).toEqual([]);
+    expect(named(s, 'Night Managers')).toEqual([]);
   });
 });
 

@@ -885,7 +885,7 @@ export default {
     })),
     // Live in Early Birds' slot (Cory, Nov 5: "night manager yes"). Was REPLACE7 (Nov 4, Members A batch 2): Timekeeper's place (paper 19, 18 on a second gate). 2 purple + 2
     // any as a player sees it. "Placed the round's last minion" is the By color Purple contest's own measure (lastPlaced).
-    m('nightmanager', 'Night Manager', 1, 2, 'Round End: if you placed the round’s last minion, +1 follower per purple member you have.', {
+    m('nightmanager', 'Night Managers', 1, 2, 'Round End: if you placed the round’s last minion, +1 follower per purple member you have.', {
       onRoundEnd(ctx, owner, card) {
         const last = ctx.state.lastPlaced;
         if (!last || last.round !== ctx.state.round || last.pid !== owner.id) return;
