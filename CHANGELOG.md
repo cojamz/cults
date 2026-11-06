@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.611 — 2026-11-05
+
+- Mannequin's shop members no longer count against you in White's Fewest members contest
+
 ## v0.99.610 — 2026-11-05
 
 - Impersonator shows the ability it copied on its card and seat, and its choice lays out the rival members as cards

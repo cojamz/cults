@@ -1211,8 +1211,10 @@ export function scoringOf(state, qid) {
   if (mode === 'byColor') {
     // A different contest per color (Cory, 2026-11-02: "they should all have different goals"; set in
     // /mnt/project-files/ring-goals/by-color.md). Each is won by taking that color's own spaces.
+    // Fewest members counts only your own: Mannequin's shop members never count against its owner (Cory, Nov 4: "It always
+    // works in the best possible interpretation for the player"; Nov 6: "Mannequin must not be counting right")
     const fewest = { label: 'Fewest members', counts: 'your members when the round ends (at least 1)',
-      score: (ctx, p) => { const n = contestMembers(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: contestMembers(state, p) }) };
+      score: (ctx, p) => { const n = memberCount(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: memberCount(state, p) }) };
     const by = {
       // Red keeps its printed contest, most red (Claude, under Cory's "use your judgement", Nov 3): "Priciest member" went
       // to whoever bought Mob (82% of round IIIs, Normal bots) and red cults won 52% where 21% was even.
@@ -1288,7 +1290,7 @@ export function scoringOf(state, qid) {
     return by[qid] || q.scoring;
   }
   if (mode === 'whiteFewest' && qid === 'trading') return { label: 'Fewest members', counts: 'your members when the round ends (at least 1)',
-    score: (ctx, p) => { const n = contestMembers(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: contestMembers(state, p) }) };
+    score: (ctx, p) => { const n = memberCount(state, p); return n > 0 ? 1000 - n : 0; }, show: (ctx, p) => ({ count: memberCount(state, p) }) };
   return q.scoring;
 }
 /**

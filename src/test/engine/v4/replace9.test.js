@@ -284,6 +284,11 @@ describe('Mannequin: "Blue members in the shop count as your members when contes
     expect(won(['market.mannequin'])).toEqual([0]);
     expect(won(['market.lastminute'])).toEqual([1]);
   });
+  it('White\'s Fewest members counts only your own members: the shop never counts against Mannequin\'s owner (Cory, Nov 6)', () => {
+    const Q = ['red', 'market', 'trading', 'silver'];
+    const s = table(Q, { n: 2, round: 1, rules: BY, members: [['market.mannequin'], ['red.bodysnatchers', 'silver.godparents']], shop: ['market.windowdresser', 'market.curator', 'red.volunteer'], queue: [{ t: 'endRound' }] });
+    expect((s.contests || []).at(-1).results.find(c => c.qid === 'trading').winners).toEqual([0]);
+  });
 });
 
 describe('Stallholder: "On Use, once per round: move a shop member beside this card, then refill. Until round end, anyone may recruit it there; a rival pays its cost to you."', () => {
