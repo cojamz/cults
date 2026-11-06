@@ -96,7 +96,7 @@ const M = {
   cashier: ['🧾', '✨ Turn all your white into followers'],
   landlord: ['🏠', '✨🌅 +2 white'],
   martyrs: ['🕯️', '♾️ Leaves your cult: followers equal to its cost'],
-  recluse: ['🏚️', '🏁 +2 followers per rival with more members'],
+  recluse: ['🏚️', '🌙 +2 followers per rival with more members'],
   brokers: ['📈', '♾️ A White action gives you followers: +1 follower'],
   raiders: ['⚔️', '☝️ Take 4 followers from a rival, pay them 2 white'],
   undertaker: ['⚰️', '♾️ You cast out a member: +2 followers'],

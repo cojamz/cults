@@ -500,8 +500,15 @@ const trading = {
   // (white + any, followers printed); names marked new are Claude's fill-ins.
   members: [
     // Recluse moves here from Blue (Cory, 2026-10-25: "yes"), so a seat with few members has a payoff
-    m('recluse', 'Recluse', 2, 1, 'Game End: +2 followers per rival with more members than you.', { round: 1,
-      onGameEnd: (ctx, owner) => 2 * ctx.rivals(owner).filter(o => ctx.memberCount(o) > ctx.memberCount(owner)).length,
+    // Round End, not Game End (Cory, 2026-11-06: "Recluse should be Round End"): counted at each round's end
+    m('recluse', 'Recluse', 2, 1, 'Round End: +2 followers per rival with more members than you.', { round: 1,
+      onRoundEnd(ctx, owner) {
+        const k = ctx.rivals(owner).filter(o => ctx.memberCount(o) > ctx.memberCount(owner)).length;
+        if (!k) return;
+        owner.bonus += 2 * k;
+        ctx.log(`${owner.name}'s Recluse: ${k} rival${k === 1 ? ' has' : 's have'} more members: +${2 * k} followers.`);
+      },
+      ...see(info => endsAhead(info).length * 2),
     }),
     // Cory, 2026-10-25: cost 3 (was 4), so White has a cheap starter
     // REPLACE10 bot test (Nov 4, quality loop lane D): Landlord's place. 3 white + 1 any as a player sees it. "Fewest
