@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.631 — 2026-11-05
+
+- Largesse: give rivals 12 silver from the bank, split as you choose, for +10 followers.
+
 ## v0.99.630 — 2026-11-05
 
 - Member rules open with timing icons; the version shows on the home screen again
