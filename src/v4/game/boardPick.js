@@ -137,7 +137,10 @@ export function giftPick(state, pend, first = null) {
   const neutral = o => !o.target && o.kind === 'color' && o.value === 'neutral';
   const own = pend.options.filter(o => (o.target && o.target.res && o.target.pid == null && o.target.space == null && o.target.uid == null) || neutral(o));
   const fromSpace = title && state.quadrants.some(q => spacesOf(state, q).some(a => a.name === title));
-  if (fromSpace && own.length >= 2 && own.length + pend.options.filter(o => !o.target && !neutral(o)).length === pend.options.length) {
+  // a member's "+N in colors you choose" (Matchmaker, War Chest) takes the same split card as Harvest's, where a plain
+  // question opens (Cory, Nov 6: "Matchmaker resource selection is slow": it was one click on your stacks per coin)
+  const memberSplit = !fromSpace && /\(\d+ to pick\)/.test(question) && pend.options.every(o => o.kind === 'color');
+  if ((fromSpace || memberSplit) && own.length >= 2 && own.length + pend.options.filter(o => !o.target && !neutral(o)).length === pend.options.length) {
     const left = (question.match(/\((\d+) left\)/) || [])[1];
     // "+1 of which color? (3 to pick)" (Harvest): the whole gain split at once, like a payment (SplitPicker.jsx)
     const toPick = Number((question.match(/\((\d+) to pick\)/) || [])[1] || 0);

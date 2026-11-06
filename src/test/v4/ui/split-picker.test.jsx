@@ -49,3 +49,29 @@ describe('Harvest on the split card', () => {
     } finally { vi.useRealTimers(); }
   });
 });
+
+// Matchmaker (Cory, Nov 6: "Matchmaker resource selection is slow"): a member's "+2 in colors you choose" took one click on
+// your stacks per coin; it takes the same split card as Harvest, one Take for the whole gain.
+describe("Matchmaker's colors on the split card", () => {
+  it('a recruit of a new color opens the split card, and Take answers both coins', async () => {
+    const { sceneQ } = await import('../../engine/v4/cards-helpers.js');
+    const { uidOf } = await import('../../engine/v4/helpers.js');
+    const rich = { gold: 30, red: 30, yellow: 30, green: 30 };
+    let s = sceneQ({ quadrants: ['gold', 'red', 'yellow', 'green'], round: 3, res: [rich], members: [['yellow.matchmaker']], shop: ['red.intern'] });
+    s = move(take(s, 'red.take'), `card:${uidOf(s, 'red.intern', 'shop')}`);
+    const g = giftPick(s, s.pending);
+    expect([g.title, g.kind, g.toPick]).toEqual(['Matchmaker', 'color', 2]);
+    vi.useFakeTimers();
+    try {
+      const answers = [];
+      const onAnswer = id => { answers.push(id); s = move(s, id); const g2 = s.pending && giftPick(s, s.pending); if (g2) view.rerender(<GiftCard state={s} gift={g2} onFirst={() => {}} onAnswer={onAnswer} busy={false} />); };
+      const view = render(<GiftCard state={s} gift={g} onFirst={() => {}} onAnswer={onAnswer} busy={false} />);
+      expect(view.container.querySelector('.gc-what').textContent).toBe('+2 in colors you choose');
+      fireEvent.click(view.container.querySelector('[data-split-add="gold"]'));
+      fireEvent.click(view.container.querySelector('[data-split-add="gold"]'));
+      fireEvent.click(view.container.querySelector('[data-split-take]'));
+      for (let k = 0; k < 4; k++) await act(async () => { vi.advanceTimersByTime(200); });
+      expect(answers).toEqual(['color:gold', 'color:gold']);
+    } finally { vi.useRealTimers(); }
+  });
+});
