@@ -26,6 +26,7 @@ function afterPaint(fn) {
 // why a press did nothing, for the perf rig's stuck report (scripts/v4-rig.mjs sets window.__rigWhy; players never do)
 const why = r => { if (globalThis.__rigWhy) globalThis.__rigWhy(r); };
 let userMove = false; // set while your own click is being submitted (useTable.show reads it)
+let batching = false; // a card's whole answer being sent at once (onGiftAnswerAll): the table queues it, then shows it as one step
 const NO_SLOTS = new Map();
 const NOOP = () => {};
 const ANSWER_FIRST = (() => { try { return new URLSearchParams(globalThis.location?.search || '').get('answer') !== 'now'; } catch { return true; } })();
@@ -48,7 +49,7 @@ import PayPicker, { payChoice, PayReceipt, receiptFor } from './PayPicker.jsx';
 import { Rich } from './Rich.jsx';
 import HowToPlay from '../HowToPlay.jsx';
 import { motionOK, snapshotShop, clearFlights, snapshotMinions, flyMinionsHome, flyToken, flyGains, snapshotChips, snapshotArtifacts } from './flight.js';
-import { playChain, planChain, holdAfter, holdCap, stepHoldCap, installChainSkip, noteBehind, skipChain, chainLeft, onChainSkip, onChainEnd, onChainLanded, chainRunning, chainState, noteTable, foldBuys, foldWait, notePick, spotSeats } from './director.js';
+import { playChain, planChain, holdAfter, holdCap, stepHoldCap, installChainSkip, noteBehind, skipChain, chainLeft, onChainSkip, onChainEnd, onChainLanded, chainRunning, chainState, noteTable, foldBuys, foldPicks, foldWait, notePick, spotSeats } from './director.js';
 import { soundOn, onSound, setSound, soundVolume, onVolume, setVolume } from '../sound.js';
 import { MO, BOT, SPEEDS, SPEED_NAMES, motionSpeed, setMotionSpeed, onMotionSpeed, speedScale, slowed } from '../motion.js';
 import { PERF_ON } from '../perf.js';
@@ -195,6 +196,9 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
       foldSince.current = null;
       if (fold.used) next = queue.current.splice(0, fold.used).pop();
       const mine = session.mySeats || [];
+      // your own Take on a split card (Polish's 4 coins): the picks play as one step, every coin at once
+      const picks = fold.used ? { used: 0 } : foldPicks(prev, next, queue.current, mine);
+      if (picks.used) next = queue.current.splice(0, picks.used).pop();
       const rivalPlaced = Object.keys(next.slots).some(k => prev.slots[k] === undefined && !mine.includes(next.slots[k]));
       // a rival's recruit or follower buy is a visible step too; a pass or a hidden bookkeeping step isn't
       const actor = prev.pending && !mine.includes(prev.pending.player) ? prev.pending.player : null;
@@ -354,6 +358,7 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
       if (s === shownRef.current || queue.current.includes(s)) return;
       // Authoritative transport remains current; every client presents complete sequences in order.
       queue.current.push(s);
+      if (batching) return; // the rest of a card's answer is coming in this same call: shown together (foldPicks)
       // your own move answers at once: a rival's step that has landed may still be holding its pause (the landing lights
       // your choices before the hold ends), and your click waited out the rest of it (a click that did nothing, 1.5 s+)
       const at = shownRef.current;
@@ -379,7 +384,7 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
     pump();
   }, [pump, session]);
 
-  return [table.shown, table.interaction === table.shown ? table.moment : null, dismiss, rs0, retime, table.interaction, table.moment?.board || table.shown, table.moment];
+  return [table.shown, table.interaction === table.shown ? table.moment : null, dismiss, rs0, retime, table.interaction, table.moment?.board || table.shown, table.moment, pump];
 }
 
 /**
@@ -697,7 +702,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   renderCount.r++;
   useLayoutEffect(() => { renderCount.c++; });
   const beforeShow = useRef(null);
-  const [live0, moment, dismissMoment, roundStart0, retimeTable, settled0, physical0, scoringMoment] = useTable(session, pace ?? RIVAL_DWELL_MS, beforeShow);
+  const [live0, moment, dismissMoment, roundStart0, retimeTable, settled0, physical0, scoringMoment, pumpTable] = useTable(session, pace ?? RIVAL_DWELL_MS, beforeShow);
   const physicalState = physical0;
   const interactionState = moment && moment.board ? moment.board : settled0;
   // once you've paid, the pay sheet goes at once: it sat over the recruit's reveal while the chain played (Cory, live,
@@ -1512,7 +1517,8 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const onGiftFirst = useCallback(a => setPickFirst({ pend, v: a, seq: swapSeq }), [pend, swapSeq]);
   // mode 'automatic': a card answering its own queued questions (Take on Harvest, Exchange), never a double-click
   const onGiftAnswer = useCallback((id, el, b, mode) => {
-    if (interactionState !== physicalState || session.getState() !== physicalState) { why('gift: presenting'); return; }
+    // (a card answering its own queue hears 'wait' and sends again the moment the table settles, not a timer later)
+    if (interactionState !== physicalState || session.getState() !== physicalState) { why('gift: presenting'); return 'wait'; }
     const g = gift;
     if (!g || !options.has(id)) { why(`gift: no option ${id}`); return; }
     // a gift: its coins fly from the card to the rival's stack of that color, as many as they get (up to 3)
@@ -1525,6 +1531,29 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     }
     onPick(id, mode);
   }, [gift, options, onPick, interactionState, physicalState, session]);
+  // a split card's whole Take at once (local games): each answer goes to the engine in this one call, and the table shows
+  // them as one step (foldPicks), the coins flying together. Online answers still go one at a time (takeRun): the host
+  // takes each in turn. Returns how many went (0: nothing went, the card takes them one at a time).
+  const onGiftAnswerAll = useCallback(ids => {
+    if (session.info?.mode === 'online' || !mine || needHandoff || busy || busyNow.current) return 0;
+    if (interactionState !== physicalState || session.getState() !== physicalState) { why('gift: presenting'); return 0; }
+    const player = pend.player;
+    hover.close();
+    let n = 0;
+    batching = true;
+    try {
+      for (const id of ids) {
+        const st = session.getState();
+        if (!st.pending || st.pending.player !== player || st.pending.kind !== 'choose' || !st.pending.options.some(o => o.id === id)) break;
+        try { session.submit({ player, option: id }); } catch { break; }
+        if (session.getState() === st) break;
+        n += 1;
+      }
+    } finally { batching = false; }
+    // (drawn in the click, as any answer: useTable.show reads userMove)
+    if (n) { userMove = 'now'; try { pumpTable(); } finally { userMove = false; } }
+    return n;
+  }, [session, mine, needHandoff, busy, interactionState, physicalState, pend, hover, pumpTable]);
   const onSeatDenied = useCallback((why, el) => {
     if (why) say(why);
     if (el && el.animate && motionOK()) el.animate([{ translate: '0 0' }, { translate: '-3px 0' }, { translate: '3px 0' }, { translate: '0 0' }], { duration: 220, easing: 'ease-out' });
@@ -1720,7 +1749,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
           <section className="lt-wheel" data-region="wheel" data-step={buyingNow ? 'buy' : undefined}>
             <Wheel state={tState} interactionState={hold ? tState : interactionState} hover={hover} lampQid={lampQid} legal={needHandoff ? NO_SLOTS : pickSpaces || legalSlots} idle={pickSpaces ? null : idleSlots} pickNotes={pickNotes} onPick={onPick} onDenied={onDenied} confirmPlace={!wide} flash={flash} lastMove={lastMove} recentMoves={recentMoves} spacePeek={spacePeek} onSpacePeek={setSpacePeek} meId={mySeats.length === 1 ? mySeats[0] : null} facing={facingRef.current} onFacing={onFacing} />
             {showChoice && (!picker || (gift && !shopRecruit && !wheelMove)) && !payChoice(pend) && pend.kind !== 'setup' && (gift
-              ? <GiftCard state={state} gift={gift} onFirst={onGiftFirst} onAnswer={gift.board === 'seats' ? onSeatPick : onGiftAnswer} onBack={canUndo ? undo : null} busy={busy} place={plainAt} hover={hover} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />
+              ? <GiftCard state={state} gift={gift} onFirst={onGiftFirst} onAnswer={gift.board === 'seats' ? onSeatPick : onGiftAnswer} onAnswerAll={gift.board === 'seats' ? null : onGiftAnswerAll} onBack={canUndo ? undo : null} busy={busy} place={plainAt} hover={hover} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />
               : <ChoicePrompt state={state} onPick={onPick} busy={busy} place={plainAt} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />)}
             {/* the starting picks (motion gaps 1): the row stays on the table while the others pick (read-only), and until the
                 last pick has landed, so each rival's pick lights its coin and flies from it to their seat (director.js) */}

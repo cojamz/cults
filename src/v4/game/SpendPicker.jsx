@@ -36,8 +36,7 @@ export default function SpendPicker({ state, g, onAnswer, busy, place = null, tu
     const o = pend && (pend.options || []).find(x => x.id === id);
     if (!o) return false;
     const c = o.kind === 'color' ? o.value : null;
-    onAnswer(o.id, c && box.current ? box.current.querySelector(`[data-spend-stack="${c}"]`) : null, null, 'automatic');
-    return true;
+    return onAnswer(o.id, c && box.current ? box.current.querySelector(`[data-spend-stack="${c}"]`) : null, null, 'automatic') === 'wait' ? 'wait' : true;
   });
   const colors = g.spends.map(o => o.value);
   const white = state.resources.includes('white') ? 'white' : null;

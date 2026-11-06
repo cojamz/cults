@@ -47,7 +47,7 @@ export default function GiftCard(props) {
   // up it sat over the sheet's own choices (picky UI bot, Nov 4: Promote's card covered P2's members), so it steps away
   useLayoutEffect(() => holdFlag(document.body, 'giftCard'), []);
   // several coins in colors you choose (Harvest): picked whole, like a payment
-  if (g.kind === 'color' && !g.pay && (g.toPick > 1 || splitRunning(state, g))) return <SplitPicker state={state} g={g} onAnswer={props.onAnswer} busy={props.busy} place={props.place} turnOf={props.turnOf} onBack={props.onBack} />;
+  if (g.kind === 'color' && !g.pay && (g.toPick > 1 || splitRunning(state, g))) return <SplitPicker state={state} g={g} onAnswer={props.onAnswer} onAnswerAll={props.onAnswerAll} busy={props.busy} place={props.place} turnOf={props.turnOf} onBack={props.onBack} />;
   // your resources turned into followers, up to a limit (Exchange): picked whole, like a payment
   if (g.kind === 'spend') return <SpendPicker state={state} g={g} onAnswer={props.onAnswer} busy={props.busy} place={props.place} turnOf={props.turnOf} onBack={props.onBack} />;
   return <GiftCardBody {...props} />;

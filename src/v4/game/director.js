@@ -673,6 +673,40 @@ export function foldBuys(prev, next, queue, mine = [], force = false) {
 }
 
 /**
+ * Fold your own run of answers to one "+1 of which color?" question (Polish's 4 coins, Harvest's, Sweet Nothings') into
+ * one step, so the coins fly together as any +4 gain does, not one flight after the next (Cory, Nov 5: "Polish
+ * animation is slow": 4 picks took 7-9 s at Relaxed). The card's Take sends the whole split at once in a local game
+ * (GameScreen onGiftAnswerAll); online it still goes a pick at a time and nothing folds. Returns { used } as foldBuys:
+ * show queue[used - 1] in place of `next`, carrying the run's gains, summed per stack, as `foldedEffects`.
+ */
+const pickStep = (a, b, actor) => !!(a && b && a.pending && a.pending.player === actor && a.pending.kind === 'choose'
+  && b.round === a.round && !b.over && b.moves === a.moves + 1 && a.pending.options.length > 1
+  && a.pending.options.every(o => o.kind === 'color') && Array.isArray(b.effects) && b.effects.length > 0
+  && b.effects.every(e => e.cause && e.cause.kind === 'move' && e.cause.pid === actor && e.type === 'gain' && e.to && e.to.kind === 'stack'));
+export function foldPicks(prev, next, queue, mine = []) {
+  const none = { used: 0 };
+  const actor = prev && prev.pending ? prev.pending.player : null;
+  if (actor == null || !mine.includes(actor) || !pickStep(prev, next, actor)) return none;
+  const run = [next];
+  let k = 0;
+  while (k < queue.length && pickStep(run[run.length - 1], queue[k], actor)) run.push(queue[k++]);
+  if (run.length < 2) return none;
+  const tail = run[run.length - 1];
+  if (tail.foldedFrom === prev.moves && Array.isArray(tail.foldedEffects)) return { used: k };
+  const cause = run[0].effects[0].cause;
+  const gets = new Map();
+  for (const e of run.flatMap(st => st.effects)) {
+    const key = `${e.from && e.from.kind}:${e.from && (e.from.key ?? e.from.pid)}>${e.to.pid}:${e.to.r}`;
+    const had = gets.get(key);
+    gets.set(key, had ? { ...had, what: { ...had.what, n: had.what.n + e.what.n } } : { ...e, cause });
+  }
+  const merged = [...gets.values()].map((e, n) => ({ ...e, n }));
+  Object.defineProperty(tail, 'foldedEffects', { value: merged, enumerable: false, configurable: true, writable: true });
+  Object.defineProperty(tail, 'foldedFrom', { value: prev.moves, enumerable: false, configurable: true, writable: true });
+  return { used: k };
+}
+
+/**
  * How long the table holds a step on screen before showing the next one (the table's pace, grammar §5): the same
  * player's next step shows at this chain's hand-off (at least `floor` after a rival's visible step); a turn that
  * passes waits for the whole chain and its breath; a rival's step with nothing to show costs nothing when the same

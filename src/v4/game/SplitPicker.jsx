@@ -3,7 +3,8 @@
 // doesnt meet the bar"). The card by the space shows what you'd get as coins in a GETTING row, already split the way the
 // engine suggests, over a stack per color of what you hold. Click a stack to take one more of that color; click a coin
 // you're getting to take another color instead. Take (Enter) takes the whole split; the engine still asks one coin at a
-// time, so the card answers each question as it comes, a beat apart, and every coin flies on its own.
+// time: a local game answers them all in one go and the coins fly together (Cory, Nov 5: "Polish animation is slow");
+// online, the card answers each question as it comes.
 import { useEffect, useRef, useState } from 'react';
 import { TurnOf } from './parts.jsx';
 import { ResourceGlyph } from './Glyphs.jsx';
@@ -29,18 +30,17 @@ function suggest(colors, held, n) {
   return got;
 }
 
-export default function SplitPicker({ state, g, onAnswer, busy, place = null, turnOf = null, onBack = null }) {
+export default function SplitPicker({ state, g, onAnswer, onAnswerAll = null, busy, place = null, turnOf = null, onBack = null }) {
   const pend = state.pending;
   const me = state.players[g.actor];
   const key = splitKey(state, g);
   const colors = g.seconds.map(x => x.b).filter(c => c !== 'neutral');
   const optOf = c => (g.seconds.find(x => x.b === c) || {}).o || null;
   const box = useRef(null);
-  const { taking, start } = useTakeRun(store, key, state, busy, c => {
+  const { taking, start, hold } = useTakeRun(store, key, state, busy, c => {
     const o = optOf(c);
     if (!o) return false;
-    onAnswer(o.id, box.current && box.current.querySelector(`[data-split-stack="${c}"]`), null, 'automatic');
-    return true;
+    return onAnswer(o.id, box.current && box.current.querySelector(`[data-split-stack="${c}"]`), null, 'automatic') === 'wait' ? 'wait' : true;
   });
   const total = taking ? store.run.total : g.toPick;
   const [got, setGot] = useState(() => (taking ? store.run.plan : suggest(colors, me.res, g.toPick)));
@@ -62,7 +62,12 @@ export default function SplitPicker({ state, g, onAnswer, busy, place = null, tu
   const take = () => {
     if (busy || taking) return;
     const picks = colors.flatMap(c => Array.from({ length: got[c] }, () => c));
-    start(picks, { plan: got, total });
+    // a local game takes the whole split in one go, its coins flying together (GameScreen onGiftAnswerAll); the card
+    // stays, its plan shown, while they fly. Else (online, or a pick refused) one question at a time.
+    const ids = picks.map(c => (optOf(c) || {}).id);
+    const sent = onAnswerAll && ids.every(Boolean) ? onAnswerAll(ids) : 0;
+    if (sent === picks.length) { hold(state.moves, picks.length, { plan: got, total }); return; }
+    start(picks.slice(sent), { plan: got, total });
   };
   useEffect(() => {
     const b = box.current && box.current.querySelector('.pay-go');
