@@ -2187,7 +2187,7 @@ function bottomBlue(state) {
   const ctx = ctxFor(state);
   // BARGAIN=self<n>: bot test only (Nov 6): pays only the player whose turn it is, +n
   const own = String(globalThis.process?.env?.BARGAIN || '').match(/^self(\d+)$/);
-  if (globalThis.process?.env?.BARGAIN === 'cost') { bargainCost(state, 1); return; }
+  if (/^cost\d*$/.test(globalThis.process?.env?.BARGAIN || '')) { bargainCost(state, 1); return; }
   for (const p of state.players) for (const c of ctx.abilitiesOf(p)) if (c.def.bottomBlue && (!own || state.current === p.id)) ctx.asMember(p, c.def.name, () => { const got = ctx.gain(p, 'blue', own ? Number(own[1]) : 1); if (got) ctx.log(`${p.name}'s ${c.def.name}: +${got.n} ${got.color}.`); }, c.uid);
 }
 /** BARGAIN=cost, bot test only (Cory, Nov 6: "when you bury a member get 1 of its cost. and grey should be wild"):
@@ -2202,7 +2202,7 @@ function bargainCost(state, k) {
   for (const uid of state.pile.slice(-k)) {
     const c = colorOf(cardDef(state, uid));
     const color = state.resources.includes(c) ? c : [...state.resources].sort((a, b) => (p.res[a] || 0) - (p.res[b] || 0))[0];
-    ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, 1); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
+    ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, Number(String(globalThis.process?.env?.BARGAIN).slice(4)) || 1); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
   }
 }
 function release(state, p, uid) {
