@@ -216,6 +216,8 @@ const ALLOW = {
   // Housewarming in Big New Blood's place (Nov 4) moved the seeded games: recruited in 4 games where no rival stole from
   // or changed its holder's resources (no Magenta in this audit's colors)
   'yellow.customs': 'pays only when a rival steals or changes your resources (cards-yellow: Customs Officer)',
+  // Polish taking all its coins at once (Nov 5) moved the seeded games: recruited in 1 game, with no Silver space after
+  'silver.majordomo': 'pays only when its holder takes a Silver space; recruited once in the sample (cards-silver: Majordomo)',
 };
 
 describe('namesCard: what counts as a line naming a card', () => {
