@@ -15,7 +15,7 @@ both looks was clean. The rest are by eye from the shots.
 - **Wheel kept the old named costs after every member went up 1.** Initiation's space read "Free member costing 8 or
   less" (its card: 9 or less), Shake Down's "costing 5 or less" (card: 6), Housewarming's "up to 5" (card: up to 6).
   The emoji look's one-liners said 8 and 5 too, and Promote and Demote's pictures and one-liners still said "up to 2
-  more/less" (card: up to 3, Cory Nov 5). All now match the cards. **fixed (this run)**
+  more/less" (card: up to 3, Cory Nov 5). All now match the cards. **fixed (v0.99.603)**
 - **A boxed "+0" sits over a rival's silver count** (P2, round III, at the start of your turn), hiding the number. A
   gain of nothing shouldn't show. **open** (looks off)
 - **Mannequin is a thing, not a person** (blue, "Blue members in the shop count as your members when contests are
