@@ -13,14 +13,14 @@ const card = (s, d) => `card:${uidIn(s, d, 'shop')}`;
 
 describe('Blue concepts', () => {
   it('texts read as Cory said them', () => {
-    expect(def('market.makeover').text).toBe('On Recruit: send the whole shop to the bottom of the pile, then refill.');
+    expect(def('market.makeover').text).toBe('On Recruit: send the whole shop to the discard pile, then refill.');
     expect(def('market.regular').text).toBe('Whenever you buy followers, +1 blue.');
     expect(def('market.critic').text).toBe('Whenever a rival recruits a blue member, +1 follower.');
-    expect(def('market.patroness').text).toBe('Whenever shop members go to the bottom of the pile, +1 follower.') // Cory, Nov 1 2:25pm;
+    expect(def('market.patroness').text).toBe('Whenever shop members go to the discard pile, +1 follower.') // Cory, Nov 1 2:25pm;
     expect(def('market.connoisseur').text).toBe('Whenever you recruit a blue member, +1 blue.');
     expect(def('market.plusone').f).toBe(2);
   });
-  it('Makeover: the whole old shop goes to the bottom, the row refills, Patroness pays once', () => {
+  it('Makeover: the whole old shop goes to the discard pile, the row refills, Patroness pays once', () => {
     let s = table(Q, { members: [[], ['market.patroness']], res: [{ blue: 9, gold: 9 }], shop: ['market.makeover', ...ROW.slice(1)] });
     const old = [...s.shop].filter(u => s.cards[u].def !== 'market.makeover');
     s = move(take(s, 'thieves.tipoff'), card(s, 'market.makeover'));

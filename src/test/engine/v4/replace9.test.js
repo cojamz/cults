@@ -340,10 +340,10 @@ describe('Stallholder: "On Use, once per round: move a shop member beside this c
     expect(s.round).toBe(2);
     expect(s.cards[uidIn(s, 'market.stallholder', 0)].used).toBe(false);
   });
-  it('unsold, it goes to the bottom of the pile after contests', () => {
+  it('unsold, it goes to the discard pile after contests', () => {
     let { s, vol } = stalled([{ t: 'buy', p: 0 }, { t: 'endRound' }]);
     s = answer(s, 'pass');
-    expect(s.pile.at(-1) === vol || s.pile.includes(vol)).toBe(true);
+    expect(s.discard.at(-1) === vol || s.discard.includes(vol)).toBe(true);
     expect(s.stalls[uidIn(s, 'market.stallholder', 0)]).toEqual([]);
   });
 });

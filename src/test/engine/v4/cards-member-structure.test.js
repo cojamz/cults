@@ -33,17 +33,17 @@ describe('member structure: the new members', () => {
     expect(named(s, 'Fixer')).toHaveLength(1);
   });
 
-  it('Restockers: once per game, the whole row goes to the bottom of the pile and refills', () => {
+  it('Restockers: once per game, the whole row goes to the discard pile and refills', () => {
     const Q = ['gold', 'red', 'market', 'thieves'];
     let s = table(Q, { members: [['market.restocker']], shop: ['gold.tycoon', 'red.volunteer', 'red.twins'], ...buy });
     const old = [...s.shop];
     s = use(s, 'market.restocker');
     expect(s.shop.some(u => old.includes(u))).toBe(false);
-    expect(s.pile.slice(-old.length).sort()).toEqual([...old].sort());
+    expect(s.discard.slice(-old.length).sort()).toEqual([...old].sort());
     expect(named(s, 'Restockers')).toHaveLength(1);
   });
 
-  it('Window Shopper: at round start, two shop members go to the bottom of the pile, +1 of each one’s color', () => {
+  it('Window Shopper: at round start, two shop members go to the discard pile, +1 of each one’s color', () => {
     const Q = ['gold', 'red', 'market', 'thieves'];
     let s = table(Q, { round: 1, members: [['market.windowshopper']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending?.player).toBe(0);
@@ -53,7 +53,7 @@ describe('member structure: the new members', () => {
     const color = quadrant(s.cards[uid].def.split('.')[0]).resource;
     const before = s.players[0].res[color] || 0;
     s = move(s, pick.id);
-    expect(s.pile[s.pile.length - 1]).toBe(uid);
+    expect(s.discard.at(-1)).toBe(uid);
     expect(s.shop.includes(uid)).toBe(false);
     if (s.resources.includes(color)) expect(s.players[0].res[color]).toBe(before + 1);
     expect(named(s, 'Window Shopper')).toHaveLength(1);
@@ -62,7 +62,7 @@ describe('member structure: the new members', () => {
     expect(s.pending.options.some(o => o.id === `card:${uid}`)).toBe(false);
     const uid2 = Number(s.pending.options[0].id.split(':')[1]);
     s = move(s, s.pending.options[0].id);
-    expect(s.pile[s.pile.length - 1]).toBe(uid2);
+    expect(s.discard.at(-1)).toBe(uid2);
     expect(named(s, 'Window Shopper')).toHaveLength(2);
     expect(s.pending?.prompt || '').not.toMatch(/Window Shopper/);
   });

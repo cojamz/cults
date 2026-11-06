@@ -42,6 +42,7 @@ export function checkInvariants(s, ctx) {
   const seen = new Map();
   const put = (u, where) => { if (seen.has(u)) fail(`card ${u} in ${seen.get(u)} and ${where}`, s, ctx); seen.set(u, where); };
   s.pile.forEach(u => put(u, 'pile'));
+  (s.discard || []).forEach(u => put(u, 'discard'));
   s.shop.forEach(u => put(u, 'shop'));
   Object.entries(s.waiting || {}).forEach(([r, w]) => { if (Number(r) <= s.round) fail(`round ${r} members still waiting`, s, ctx); w.forEach(u => put(u, `waiting ${r}`)); });
   s.players.forEach(p => p.members.forEach(u => put(u, p.name)));
@@ -57,7 +58,7 @@ export function checkInvariants(s, ctx) {
   // piles shops: the shop is the face-up row plus each open pile's top; All piles has no row (the rest stay face down)
   const row = s.supply ? s.shop.filter(u => s.supply[s.cards[u].def] === undefined) : s.shop;
   const rowSize = s.supply && s.rules?.piles?.only ? 0 : shopSize(s);
-  if (!['market.churn', 'benders.scoutPick'].includes(s.queue[0]?.h) && row.length !== Math.min(rowSize, row.length + (rowSize ? s.pile.length : 0))) fail(`shop row ${row.length} with pile ${s.pile.length}`, s, ctx);
+  if (!['market.churn', 'benders.scoutPick'].includes(s.queue[0]?.h) && row.length !== Math.min(rowSize, row.length + (rowSize ? s.pile.length + (s.discard || []).length : 0))) fail(`shop row ${row.length} with pile ${s.pile.length}`, s, ctx);
   // pending exists exactly while the game runs
   if (!s.pending !== !!s.over) fail(`pending ${!!s.pending} but over ${s.over}`, s, ctx);
   if (s.pending) {
@@ -69,7 +70,7 @@ export function checkInvariants(s, ctx) {
     if (kind === 'buy' && !options.some(o => o.id === 'pass')) fail('buy without pass', s, ctx);
     // a choice never offers a card that moved since it was queued (core liveOptions; Open Door's "not in the shop")
     if (kind === 'choose') for (const o of options) for (const [u, w] of Object.entries(o.at || {})) {
-      const now = seen.get(Number(u)), want = w === 'shop' || w === 'pile' ? w : s.players[Number(w.slice(1))]?.name;
+      const now = seen.get(Number(u)), want = w === 'shop' || w === 'pile' || w === 'discard' ? w : s.players[Number(w.slice(1))]?.name;
       if (now !== want) fail(`choice option ${o.id} names card ${u} at ${w}, now in ${now}`, s, ctx);
     }
   }

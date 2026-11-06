@@ -60,7 +60,7 @@ function checkSphereInvariants(s, prev, ctx, verified, fail = failHard) {
   // per-card state never negative
   for (const c of Object.values(s.cards)) for (const k of ['invested', 'sown']) if ((c[k] || 0) < 0) fail(`card ${c.uid} ${k} ${c[k]}`, s, ctx);
   // a card in the pile or face up carries no state from an earlier owner (copies, used flags, invested gold…)
-  for (const u of [...s.pile, ...s.shop]) {
+  for (const u of [...s.pile, ...(s.discard || []), ...s.shop]) {
     // except a once-per-game use: it stays with the card (Cory, Nov 4: "once per game is once for the card")
     const spentOnce = k => k === 'used' && s.cards[u].used === true && defById(s.cards[u].def).activate === 'game';
     const extra = Object.keys(s.cards[u]).filter(k => !CLEAN_KEYS.has(k) && !spentOnce(k));

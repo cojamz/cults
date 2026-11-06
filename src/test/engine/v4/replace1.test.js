@@ -64,9 +64,9 @@ describe('REPLACE1: each card fires', () => {
     s = take(s, 'market.pricecheck');
     const u = uidIn(s, 'red.recruitbonus', 'shop');
     s = move(s, `card:${u}`);
-    expect(s.pile[s.pile.length - 1]).toBe(u);
+    expect(s.discard.at(-1)).toBe(u);
     expect(s.pending.player).toBe(1);
-    expect(s.pending.prompt).toMatch(/^Scavengers: P1 sent a member to the bottom of the pile/);
+    expect(s.pending.prompt).toMatch(/^Scavengers: P1 sent a member to the discard pile/);
     s = answer(s, `card:${u}`);
     while (s.pending?.player === 1 && s.pending.kind === 'choose') s = answer(s, s.pending.options[0].id);
     expect(owns(s, 1, 'red.recruitbonus')).toBe(true);

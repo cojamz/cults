@@ -1048,7 +1048,7 @@ export function turnStory(start, end, actor, me = null, mid = null) {
       else if ((m = own.match(/^'s next member costs (\d+) less\.$/))) said.push(`next member costs ${m[1]} less`);
       else if ((m = own.match(/^ recruited (.+?)(?: from the pile with .+?)? \((.+)\)\.$/))) said.push(m[2] === 'free' ? `recruited ${m[1]} (free)` : `recruited ${m[1]} (paid ${m[2]})`);
       else if ((m = own.match(/^ bought (\d+) followers? \((.+)\)\.$/))) said.push(`bought ${fword(Number(m[1]))} (paid ${m[2]})`);
-      else if ((m = own.match(/^ released (.+?) to the bottom of the pile, for (.+)\.$/))) {
+      else if ((m = own.match(/^ released (.+?) to the discard pile, for (.+)\.$/))) {
         const back = ls.map(x => x.match(new RegExp(`^${an} takes (\\d+) (\\w+) from the release\\.$`))).filter(Boolean).map(x => `${x[1]} ${x[2]}`);
         said.push(`released ${m[1]} for ${back.length ? back.join(', ') : m[2]}`);
       } else if ((m = own.match(/^ switched (.+?) (on|off)\.$/))) said.push(`switched ${m[1]} ${m[2]}`);

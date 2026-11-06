@@ -1580,7 +1580,8 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
     } catch { /* gone */ }
   }
   if (outs.length) {
-    const deckEl = root.querySelector('[data-deck] .back') || root.querySelector('[data-deck]');
+    // the old row goes face up on the discard pile (Cory, Nov 6), or to the deck where there is none (piles shops)
+    const deckEl = root.querySelector('[data-discard] .back') || root.querySelector('[data-deck] .back') || root.querySelector('[data-deck]');
     const D = deckEl ? deckEl.getBoundingClientRect() : null;
     const cards = outs.map(u => snap.get(u)).filter(sn => sn && sn.rect && sn.html).sort((a, b) => a.rect.top - b.rect.top || a.rect.left - b.rect.left);
     cards.forEach((sn, k) => {

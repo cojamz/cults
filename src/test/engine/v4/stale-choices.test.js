@@ -11,18 +11,20 @@ import { applyMove, isLegal, resume, createGame } from '../../../engine/v4/core.
 import { chooseBotMove } from '../../../engine/v4/bots.js';
 import { quadrant } from '../../../engine/v4/content/index.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
+import { drawTop } from '../../../engine/v4/discard.js';
 import { take, move, pinCosts } from './helpers.js';
 import { table } from './cards-helpers-b.js';
 import { checkInvariants } from './fuzz-runner.js';
 import { games } from './budget.js';
 
 const N = (q, k) => quadrant(q).actions.find(a => a.key === k).name; // by key: space names get renamed
-const where = (s, u) => (s.shop.includes(u) ? 'shop' : s.pile.includes(u) ? 'pile' : `p${s.players.find(p => p.members.includes(u))?.id}`);
+const where = (s, u) => (s.shop.includes(u) ? 'shop' : s.pile.includes(u) ? 'pile' : (s.discard || []).includes(u) ? 'discard' : `p${s.players.find(p => p.members.includes(u))?.id}`);
 const cardOf = o => Number(String(o.id ?? o.option).split(':')[1]); // an option, or a move
 // another player takes a face-up card (a buy, a steal…): out of the row, the pile refills its slot
 function takeAway(s, uid, to) {
   const i = s.shop.indexOf(uid);
-  s.shop.splice(i, 1, ...(s.pile.length ? [s.pile.shift()] : []));
+  const next = drawTop(s); // an empty deck takes the discard pile first, as the game's refill does
+  s.shop.splice(i, 1, ...(next !== undefined ? [next] : []));
   s.players[to].members.push(uid);
 }
 

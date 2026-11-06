@@ -134,7 +134,7 @@ describe('White actions', () => {
     expect([R(u).red, B(u)]).toEqual([2, 2]);
   });
 
-  it('Farewell (ring II): +1 white, send a member to the bottom of the pile, followers equal to its cost', () => {
+  it('Farewell (ring II): +1 white, send a member to the discard pile, followers equal to its cost', () => {
     expect(() => take(scene({ members: [['gold.midas']] }), 'trading.farewell')).toThrow();
     let s = take(scene({ round: 2, members: [['red.bigfamily', 'red.twins']] }), 'trading.farewell');
     const u = uidOf(s, 'red.bigfamily', 0);
@@ -142,14 +142,14 @@ describe('White actions', () => {
     s = move(s, `card:${u}`);
     expect([B(s), R(s).white]).toEqual([4, 1]); // Big Family costs 2 + 2
     expect(has(s, 'red.bigfamily')).toBe(false);
-    expect(s.pile.at(-1)).toBe(u);
+    expect(s.discard.at(-1)).toBe(u);
     const one = take(scene({ round: 2, members: [['red.bigfamily']] }), 'trading.farewell');
     expect(() => move(one, 'done')).toThrow();
     const none = take(scene({ round: 2 }), 'trading.farewell');
     expect([none.pending.kind, R(none).white]).toEqual(['buy', 1]);
   });
 
-  it('Farewell refills a shop left short by an empty pile with the member it sent to the bottom (QA, Oct 28)', () => {
+  it('Farewell refills a shop left short by an empty pile with the member it sent to the discard pile (QA, Oct 28)', () => {
     const s0 = scene({ round: 2, members: [['red.bigfamily']] });
     s0.pile = []; s0.shop = s0.shop.slice(0, shopSize(s0) - 1);
     let s = take(s0, 'trading.farewell');
@@ -160,7 +160,7 @@ describe('White actions', () => {
     expect(s.pile).toEqual([]);
   });
 
-  it('Estate Sale (ring II): +1 white, send a member to the bottom of the pile, white equal to its cost', () => {
+  it('Estate Sale (ring II): +1 white, send a member to the discard pile, white equal to its cost', () => {
     let s = take(scene({ round: 2, members: [['red.bigfamily']] }), 'trading.estatesale');
     s = move(s, `card:${uidOf(s, 'red.bigfamily', 0)}`);
     expect([R(s).white, B(s), has(s, 'red.bigfamily')]).toEqual([5, 0, false]); // 2+2, +1

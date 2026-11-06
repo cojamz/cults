@@ -61,3 +61,27 @@
 .db-bought{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%) rotate(-8deg);display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:4px;background:#2b2018;color:#fff3da;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;box-shadow:0 1px 3px #0008}
 .db-bought i{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid #fff3da}
 .db-bought-note{color:var(--cream,#f3e6c8)!important}
+/* the discard pile beside the deck (Cory, Nov 6): face up, its top member's picture on its color, the count under it */
+.lt-shop-cards button.lt-discard .back.face{background:color-mix(in srgb,var(--q,#8a7a66) 30%,#f3e6c8);box-shadow:0 0 0 1px #120c0a,inset 0 0 0 2px var(--q,#8a7a66),0 6px 12px -6px rgba(0,0,0,.7);gap:3px}
+.lt-shop-cards button.lt-discard .back.face .n{color:var(--pl-ink,#2b2018);text-shadow:none;font-size:16px}
+.lt-shop-cards button.lt-discard.empty{cursor:default}
+.lt-shop-cards button.lt-discard.empty .back.face{background:none;box-shadow:none;border:1.5px dashed rgba(243,230,200,.32);box-sizing:border-box}
+.lt-shop-cards button.lt-discard.empty .back.face .n{color:var(--cream-3);font-size:13px;font-weight:500;font-style:italic}
+.discard-grid{list-style:none;margin:0;padding:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.discard-grid li{min-width:0}
+/* the slot holding both piles takes the deck's old place in every layout (it carries .lt-deck for that); the two piles
+   inside stand side by side, each with its caption under it */
+.app.game.lt .lt-shop-cards .lt-cards .lt-deck.lt-deck-slot,.lt-shop-cards .lt-deck.lt-deck-slot{flex-direction:row;align-items:center;justify-content:center;gap:6px;flex-basis:auto;cursor:default}
+.app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot > button.lt-deck,.lt-shop-cards .lt-deck.lt-deck-slot > button.lt-deck{flex:0 0 auto;flex-direction:column;gap:3px;height:auto;min-height:0;grid-column:auto;grid-row:auto;order:0;opacity:1}
+/* laptop grid: the slot is a quarter of the short top row, so both piles shrink to fit it whole */
+@media (min-width:1200px) and (min-height:500px){
+  .app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot{gap:4px;padding:0;min-width:0}
+  .app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .pile{width:34px;height:48px}
+  .app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .cap{font-size:9px;line-height:11px;letter-spacing:.04em}
+  .app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .n{font-size:13px}
+  .app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .cult-mark{width:20px;height:20px}
+  .app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .lt-discard .sprite,.app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .lt-discard svg,.app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .lt-discard canvas,.app.game.lt .lt-shop-cards .lt-cards[data-n] .lt-deck.lt-deck-slot .lt-discard img{width:24px;height:24px}
+}
+.dialog.deck-browser.discard-browser{display:flex;flex-direction:column;height:auto;max-height:min(840px,94dvh)}
+.dialog.discard-browser .deck-browser-scroll{flex:1 1 auto}
+.discard-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}

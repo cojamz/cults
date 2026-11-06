@@ -230,7 +230,7 @@ function lastSpaceName(state, p) {
   const [q, i] = l.key.split('-').map(Number);
   try { const a = spacesOf(state, state.quadrants[q])[i]; return a ? a.name : null; } catch { return null; }
 }
-const SHOP_HEADS = { 'Hand-pick': 'Take a member, free', 'Initiation': 'Recruit a shop member, free', 'Open Door': 'Recruit the cheapest shop member, free', 'Bury': 'Send one to the bottom: half its cost in blue' };
+const SHOP_HEADS = { 'Hand-pick': 'Take a member, free', 'Initiation': 'Recruit a shop member, free', 'Open Door': 'Recruit the cheapest shop member, free', 'Bury': 'Send one to the discard pile: half its cost in blue' };
 
 /** The steal, the recruit from the row and the minion's move, on the card by the space (see giftPick), or null. */
 function farPick(state, pend, title, question, base) {

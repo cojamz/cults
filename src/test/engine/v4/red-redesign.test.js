@@ -14,7 +14,7 @@ useCosts({
 const defs = (s, pid) => s.players[pid].members.map(u => s.cards[u].def);
 const swapId = (a, b) => `trade:${a}:${b}`;
 const pass = s => s.pending?.kind === 'buy' ? move(s, 'pass') : s;
-const remaining = s => [...s.shop, ...s.pile, ...s.players.flatMap(p => p.members)];
+const remaining = s => [...s.shop, ...s.pile, ...(s.discard || []), ...s.players.flatMap(p => p.members)];
 
 describe('locked Red action progression', () => {
   it.each([1, 2, 3])('Gather gives round +1 red in round %i, and round followers on a member recruit this turn', round => {

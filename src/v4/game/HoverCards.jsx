@@ -759,7 +759,7 @@ export function SeatCard({ state, pid, meId = null, optionFor = () => null, onPi
  *  (panel Oct 26: Churn's button said "Recruit" and sent the card away). */
 export const cardVerb = pending => {
   const q = (pending && pending.prompt) || '';
-  if (/to the bottom/i.test(q)) return 'Send to bottom';
+  if (/to the discard pile/i.test(q)) return 'Discard';
   if (/^Peek:/.test(q)) return /on top/.test(q) ? 'Put on top' : 'Put next';
   if (/^Tryout:/.test(q)) return 'Use On Recruit'; // Tryout borrows the effect; the card stays in the shop
   return 'Recruit';

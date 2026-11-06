@@ -38,8 +38,8 @@ describe('October17 explicit rules',()=>{
   let s=sceneQ({quadrants:Q,queue:[{t:'turn',p:0}]});
   const old=[...s.shop],next=s.pile.slice(0,7),/* round II shows 7 */all=[...s.shop,...s.pile].sort((a,b)=>a-b);
   s.pending=null;s.queue=[{t:'round',r:2}];s=resume(s);
-  expect(s.shop).toEqual(next);expect(s.pile.slice(-old.length)).toEqual(old);
-  expect([...s.shop,...s.pile].sort((a,b)=>a-b)).toEqual(all);
+  expect(s.shop).toEqual(next);expect(s.discard.slice(-old.length)).toEqual(old);
+  expect([...s.shop,...s.pile,...s.discard].sort((a,b)=>a-b)).toEqual(all);
  });
  it('removes Release from normal games and makes Night Owls worth2followers',()=>{
   expect(DEFAULT_RULES.release).toBe(false);expect(defById('purple.nightowl').f).toBe(2);

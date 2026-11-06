@@ -144,12 +144,12 @@ describe('Tag Along: "Choose a rival: +1 of each color they have a minion on. +1
   });
 });
 
-describe('Dumpster Dive: "Look at the bottom 3 members of the pile and recruit one of them for free, costing up to 5. +1 blue."', () => {
-  it('recruits one of the bottom 3 for free; dearer than 5 or higher up the pile is not offered; the turn still recruits', () => {
+describe('Dumpster Dive: "Look at the top 3 members of the discard pile and recruit one of them for free, costing up to 5. +1 blue."', () => {
+  it('recruits one of the top 3 of the discard pile for free; dearer than 5 or deeper in it is not offered; the turn still recruits', () => {
     let s = table(['market', 'red', 'trading', 'yellow'], { round: 2 });
     const pull = d => { const k = s.pile.findIndex(u => s.cards[u].def === d); return s.pile.splice(k, 1)[0]; };
     const deep = pull('red.loyalists'), cheap = pull('red.volunteer'), dear = pull('red.mentor'), mid = pull('red.fosterparents');
-    s.pile.push(deep, cheap, dear, mid); // bottom 3: Volunteer (1), Mentor (9), Foster Parents (4)
+    s.discard.push(deep, cheap, dear, mid); // top 3 of the discard pile: Volunteer (1), Mentor (9), Foster Parents (4)
     s = take(s, 'market.dumpsterdive');
     const offered = s.pending.options.map(o => o.label);
     expect(offered.some(l => l.startsWith('Volunteer'))).toBe(true);

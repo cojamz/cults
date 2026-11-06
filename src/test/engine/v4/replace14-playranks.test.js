@@ -17,20 +17,20 @@ const slot = (s, q, name) => `${s.quadrants.indexOf(q)}-${quadrant(q).actions.fi
 const log = s => s.log.join('\n');
 const payAll = s => { while (s.pending && s.pending.player === 0 && s.pending.prompt?.includes('pay')) s = answer(s, s.pending.options[0].id); return s; };
 
-describe('REPLACE14: Ragpicker ("You may recruit the bottom member of the pile as if it were in the shop.")', () => {
+describe('REPLACE14: Ragpicker ("You may recruit the top member of the discard pile as if it were in the shop.")', () => {
   it("is dealt in Patroness' place", () => {
     expect(defById('market.ragpicker').name).toBe('Ragpicker');
     expect(defById('market.patroness').retired).toBe(true);
   });
-  it('offers the bottom card of the pile beside the shop, and recruits it at its price', () => {
+  it('offers the discard pile's top card beside the shop, and recruits it at its price', () => {
     let s = table(['red', 'market'], { n: 2, round: 2, res: [{ red: 9, blue: 9, gold: 9 }], members: [['market.ragpicker']] });
     s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
-    const b = s.pile[s.pile.length - 1];
+    const b = s.pile.pop(); s.discard.push(b); // the discard pile's top card (Nov 6: the pile's bottom became the discard pile)
     const o = s.pending.options.find(x => x.id === `card:${b}`);
-    expect(o?.label).toContain('(bottom of the pile)');
+    expect(o?.label).toContain('(top of the discard pile)');
     s = payAll(answer(s, o.id));
     expect(s.players[0].members).toContain(b);
-    expect(log(s)).toContain("from the bottom of the pile with P1's Ragpicker");
+    expect(log(s)).toContain("from the discard pile with P1's Ragpicker");
   });
 });
 

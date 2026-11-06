@@ -5,6 +5,7 @@ import { plainCopy, stateCopy } from './copy.js';
 // state.pending = { player, kind, prompt, options:[{ id, label, kind, ... }] }. A move is { player, option }.
 import { quadrant, defById, handlerById, defaultQuadrants, guestMembers, MAX_PLAYERS, spacesOf } from './content/index.js';
 import { shuffleInPlace } from './rng.js';
+import { discardOf, toDiscard, deckReady, takeFromDiscard } from './discard.js';
 import { CUT, CUT10, FULL_DECK } from './content/cull.js';
 import { pileRules } from './piles.js';
 import { startEffects, stopEffects, abandonEffects, underCause, markEffect, inPhase } from './effects.js';
@@ -112,7 +113,7 @@ export function createGame({ seats, seed = 1, quadrants, rules = {} }) {
       id: i, name: s.name || `P${i + 1}`, kind: s.kind || 'human', ...(s.emoji ? { emoji: String(s.emoji) } : {}), // emoji: the player's pick (display only)
       res: { ...zero }, bonus: 0, contest: 0, bought: 0, members: [], discount: 0, left: 0, turnRecruits: 0, final: null,
     })),
-    cards, pile: Object.keys(cards).map(Number).filter(u => !Object.values(artifacts).includes(u) && !(supply && supply[cards[u].def])), shop: [], artifacts, waiting: {},
+    cards, pile: Object.keys(cards).map(Number).filter(u => !Object.values(artifacts).includes(u) && !(supply && supply[cards[u].def])), shop: [], discard: [], artifacts, waiting: {},
     ...(supply ? { supply } : {}),
     round: 0, slots: {}, squats: {}, order: [], turnIndex: 0, current: null,
     recruits: 0, stock: Object.fromEntries(TIERS.filter(t => t.limited).map(t => [t.key, t.stock(seats.length)])),
@@ -186,7 +187,7 @@ export function applyMove(prev, move, { effects = false } = {}) {
 // (release, bury, swaps, Tryout running a shop member's On Recruit in place) ends clean, checked once per move here.
 function wipeUnowned(state) {
   if (state.supply) refillPiles(state);
-  for (const u of [...state.pile, ...state.shop, ...Object.values(state.supply || {}).flat()]) {
+  for (const u of [...state.pile, ...discardOf(state), ...state.shop, ...Object.values(state.supply || {}).flat()]) {
     const c = state.cards[u];
     if (Object.keys(c).length > 2) wipeCard(state, u); // a used once-per-game member stays used (wipeCard)
   }
@@ -651,9 +652,9 @@ function inputFor(state, task) {
       // the top of the pile, for a player who can reach it (Insider: flag pileReach)
       for (const uid of state.pile.slice(0, pileReach(state, p))) if (memberPrice(state, p, uid).afford)
         opts.push({ id: `card:${uid}`, label: `${cardDef(state, uid).name} (from the pile)`, kind: 'card', uid, fromPile: true });
-      // the bottom of the pile (Ragpicker, REPLACE14 bot test: flag pileBottom)
-      { const b = state.pile.length > pileReach(state, p) && sumMemberFlag(state, p, 'pileBottom') > 0 ? state.pile[state.pile.length - 1] : null;
-        if (b != null && memberPrice(state, p, b).afford) opts.push({ id: `card:${b}`, label: `${cardDef(state, b).name} (bottom of the pile)`, kind: 'card', uid: b, fromPile: true }); }
+      // the top of the discard pile (Ragpicker, REPLACE14 bot test: flag pileBottom; it read the pile's bottom before the discard pile, Nov 6)
+      { const d = discardOf(state), b = d.length && sumMemberFlag(state, p, 'pileBottom') > 0 ? d[d.length - 1] : null;
+        if (b != null && memberPrice(state, p, b).afford) opts.push({ id: `card:${b}`, label: `${cardDef(state, b).name} (top of the discard pile)`, kind: 'card', uid: b, fromPile: true }); }
       // a rival's Peddlers stall (REPLACE6 bot test)
       if (REPLACE6 || REPLACE9) for (const [uid, o, by] of stallCards(state, p)) if (memberPrice(state, p, uid).afford)
         opts.push({ id: `card:${uid}`, label: `${cardDef(state, uid).name} (${o === p ? 'your' : `${o.name}'s`} ${by})`, kind: 'card', uid, stall: o.id });
@@ -1036,10 +1037,10 @@ function runTask(state, task) {
 function startRound(state, r) {
   state.round = r;
   if (REPLACE9) delete state.hypno; // Hypnotist's pick never carries into the next round
-  // Fresh face-up market between rounds; old cards remain in the deck, at the bottom.
+  // Fresh face-up market between rounds; the old row goes on the discard pile (Cory, Nov 6).
   if (r > 1) {
     const old = state.shop.splice(0);
-    state.pile.push(...old);
+    toDiscard(state, ...old);
     const join = state.waiting?.[r] || [];
     if (join.length) {
       state.pile.push(...join);
@@ -1433,7 +1434,7 @@ export const roundWorkers = (state, p) => p.workers ?? WORKERS[Math.max(1, state
 
 function refill(state) {
   if (state.supply) return refillPiles(state);
-  while (state.shop.length < shopSize(state) && state.pile.length) state.shop.push(state.pile.shift());
+  while (state.shop.length < shopSize(state) && deckReady(state, t => log(state, t))) state.shop.push(state.pile.shift());
 }
 // ---------- piles (experiment: rules.piles) ----------
 const isPileCard = (state, uid) => !!state.supply && state.supply[state.cards[uid]?.def] !== undefined;
@@ -1444,7 +1445,7 @@ export const pileOpen = () => true;
  *  the shop row fills from the deck as usual, then every open pile shows its top copy after the row. */
 function refillPiles(state) {
   const back = u => { wipeCard(state, u); state.supply[state.cards[u].def].push(u); };
-  for (const list of [state.pile, ...Object.values(state.waiting || {})])
+  for (const list of [state.pile, discardOf(state), ...Object.values(state.waiting || {})])
     for (let i = list.length - 1; i >= 0; i--) if (isPileCard(state, list[i])) back(list.splice(i, 1)[0]);
   // one face-up copy per pile: an extra copy that landed in the shop (a swap) goes back under its pile
   const seen = new Set();
@@ -1457,7 +1458,7 @@ function refillPiles(state) {
   const row = state.shop.filter(u => !isPileCard(state, u));
   // all piles: the piles are the whole shop, so the deck (if kept) deals no face-up row
   const rowSize = state.rules?.piles?.only ? 0 : shopSize(state);
-  while (row.length < rowSize && state.pile.length) row.push(state.pile.shift());
+  while (row.length < rowSize && deckReady(state, t => log(state, t))) row.push(state.pile.shift());
   // a row card left over (a member swapped for a pile's top lands in the shop): to the bottom of the deck, so the row
   // stays its size (Grey piles grew it to 9; Claude, under Cory's "make judgement calls", Nov 3, setup audit)
   while (row.length > rowSize) state.pile.push(row.pop());
@@ -1488,8 +1489,9 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   const idx = state.shop.indexOf(uid);
   const fromPile = idx < 0 ? state.pile.indexOf(uid) : -1;
   // top: Red's round I space takes the deck's top member (Cory, 2026-10-27)
-  const bottom = idx < 0 && fromPile >= 0 && fromPile === state.pile.length - 1 && fromPile >= pileReach(state, p) && sumMemberFlag(state, p, 'pileBottom') > 0;
-  if (idx < 0 && (fromPile < 0 || (fromPile >= pileReach(state, p) && !(top && fromPile === 0) && !bottom))) throw new Error(`Card ${uid} is not in the shop`);
+  // the discard pile's top card (Ragpicker's flag pileBottom)
+  const bottom = idx < 0 && fromPile < 0 && discardOf(state).at(-1) === uid && sumMemberFlag(state, p, 'pileBottom') > 0;
+  if (idx < 0 && !bottom && (fromPile < 0 || (fromPile >= pileReach(state, p) && !(top && fromPile === 0)))) throw new Error(`Card ${uid} is not in the shop`);
   let paid = 'free', spent = null, silverForColor = false;
   if (!free) {
     const spend = chosen || paymentPlan(state, p, uid, how);
@@ -1542,11 +1544,12 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   const peeked = idx < 0 && fromPile < (p.peekReach || 0);
   if (peeked) delete p.peekReach;
   if (idx >= 0) state.shop.splice(idx, 1);
+  else if (bottom) takeFromDiscard(state, uid);
   else state.pile.splice(fromPile, 1);
   refill(state);
   p.members.push(uid);
   const def = cardDef(state, uid);
-  log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : bottom ? ` from the bottom of the pile with ${p.name}'s ${flagName(state, p, 'pileBottom')}` : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
+  log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : bottom ? ` from the discard pile with ${p.name}'s ${flagName(state, p, 'pileBottom')}` : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
   memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 && !stall, silverForColor });
   // an arrival like any other (Saboteur: "whenever this joins your cult"); swaps and moves fire it in their own code
   memberJoined(state, p, uid);
@@ -2202,7 +2205,7 @@ function bargainCost(state, k) {
   const ctx = ctxFor(state);
   const cloak = ctx.abilitiesOf(p).find(c => c.def.bottomBlue);
   if (!cloak) return;
-  for (const uid of state.pile.slice(-k)) {
+  for (const uid of discardOf(state).slice(-k)) {
     const c = colorOf(cardDef(state, uid));
     const color = state.resources.includes(c) ? c : [...state.resources].sort((a, b) => (p.res[a] || 0) - (p.res[b] || 0))[0];
     ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, Number(String(globalThis.process?.env?.BARGAIN).slice(4)) || 1); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
@@ -2216,11 +2219,11 @@ function releaseNow(state, p, uid) {
   cardLeaves(state, p, uid);
   p.members.splice(p.members.indexOf(uid), 1);
   wipeCard(state, uid);
-  state.pile.push(uid);
+  toDiscard(state, uid);
   bottomBlue(state);
   p.releasedRound = state.round;
   if (back.color) p.res[back.color] = (p.res[back.color] || 0) + back.n;
-  log(state, `${p.name} released ${def.name} to the bottom of the pile, for ${back.label}.`);
+  log(state, `${p.name} released ${def.name} to the discard pile, for ${back.label}.`);
   // a shop short of its size (the pile ran out) takes it back up, as Farewell's send to the bottom does
   refill(state);
   return back;
@@ -2349,8 +2352,8 @@ function ctxFor(state) {
         return c;
       }
       // (piles: refill puts a pile member back under its own pile, as the card says, and it can be bought again; Cory, Nov 1)
-      state.pile.push(uid);
-      log(state, `${p.name} sent ${def.name} to the bottom of the pile.`);
+      toDiscard(state, uid);
+      log(state, `${p.name} sent ${def.name} to the discard pile.`);
       // a member leaving its owner's cult: Recruiter hears a rival's cast-out (Cory, Nov 1: "Yes")
       cultMove(state, uid, p, null, actor);
       // members that answer a cast-out (Successors, Pallbearers: REPLACE6 bot test); actor is who cast it out
@@ -2391,7 +2394,7 @@ function ctxFor(state) {
       const i = state.shop.indexOf(uid);
       if (i < 0) return;
       state.shop.splice(i, 1);
-      state.pile.push(uid);
+      toDiscard(state, uid);
       refill(state);
     },
     /** a cult's member went to the bottom of the pile outside buryMember (Doormen): Bargain Bin pays */
@@ -2423,7 +2426,7 @@ function ctxFor(state) {
     /** Vultures (REPLACE5 bot test): p steals a member just sent to the shop or the pile; it is p's recruit (its On
      *  Recruit fires), as a stolen member is. False when it isn't there any more. */
     claimMember(p, uid) {
-      const lists = [state.shop, state.pile, ...Object.values(state.supply || {})], list = lists.find(l => l.includes(uid));
+      const lists = [state.shop, state.pile, discardOf(state), ...Object.values(state.supply || {})], list = lists.find(l => l.includes(uid));
       if (!list) return false;
       list.splice(list.indexOf(uid), 1);
       wipeCard(state, uid);
@@ -2529,6 +2532,7 @@ const CARD_KINDS = new Set(['card', 'member', 'trade']);
 function whereIs(state, uid) {
   if (state.shop.includes(uid)) return 'shop';
   if (state.pile.includes(uid)) return 'pile';
+  if (discardOf(state).includes(uid)) return 'discard';
   if (Object.values(state.supply || {}).some(w => w.includes(uid))) return 'supply';
   if (Object.values(state.waiting || {}).some(w => w.includes(uid))) return 'waiting';
   const o = state.players.find(q => q.members.includes(uid));
@@ -2542,6 +2546,7 @@ function whereAll(state) {
   const put = (list, w) => { for (const u of list) if (!m.has(u)) m.set(u, w); };
   put(state.shop, 'shop');
   put(state.pile, 'pile');
+  put(discardOf(state), 'discard');
   for (const w of Object.values(state.supply || {})) put(w, 'supply');
   for (const w of Object.values(state.waiting || {})) put(w, 'waiting');
   for (const q of state.players) put(q.members, `p${q.id}`);

@@ -43,7 +43,7 @@ describe('REPLACE3: each card fires', () => {
     expect(s.pending.prompt).toBe("Evictors: cast out which rival's member?");
     s = answer(s, `card:${uidIn(s, 'trading.martyr', 1)}`);
     expect(owns(s, 1, 'trading.martyr')).toBe(false);
-    expect(s.cards[s.pile.at(-1)].def).toBe('trading.martyr');
+    expect(s.cards[s.discard.at(-1)].def).toBe('trading.martyr');
     expect(s.players[0].res.white).toBe(5);
     expect(s.players[1].res.white).toBe(5);
     expect(s.players[1].bonus).toBe(5); // Martyrs left its cult (costs 5 since every member +1, Nov 5)

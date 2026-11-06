@@ -143,7 +143,7 @@ describe('REPLACE11: Yard Sale', () => {
     expect(s.players[0].res.white).toBe(2 * 6 + 1); // Raiders costs 6 (Nov 5: every member +1)
     const log = s.log.join('\n');
     expect(log).toContain("P1's Yard Sale: Raiders paid 12 white.");
-    expect(log).not.toContain('sent Raiders to the bottom of the pile');
+    expect(log).not.toContain('sent Raiders to the discard pile');
     expect(log).toContain('P1 put Raiders face up into the shop.');
     // a cast-out, so Undertaker ("Whenever you cast out one of your members, +2 followers.") pays
     expect(log).toMatch(/Undertaker/);

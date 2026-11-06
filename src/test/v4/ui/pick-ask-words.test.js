@@ -4,9 +4,9 @@ import { expect, it } from 'vitest';
 import { askWords } from '../../../v4/game/boardPick.js';
 
 it('turns "which" questions into a few plain words, or leaves them alone', () => {
-  expect(askWords('send which member to the bottom? (2 to go)')).toBe('send a member to the bottom');
-  expect(askWords('send which member to the bottom?')).toBe('send a member to the bottom');
+  expect(askWords('send which member to the discard pile? (2 to go)')).toBe('send a member to the discard pile');
+  expect(askWords('send which member to the discard pile?')).toBe('send a member to the discard pile');
   expect(askWords('copy which space?')).toBe('copy a space');
   expect(askWords('give P2 1 resource, then you gain 2 silver')).toBeNull();
-  expect(askWords('put which member of yours at the bottom of the pile, for a very long reason?')).toBeNull();
+  expect(askWords('put which member of yours to the discard pile, for a very long reason?')).toBeNull();
 });

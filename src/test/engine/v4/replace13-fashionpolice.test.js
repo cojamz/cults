@@ -24,7 +24,7 @@ describe('REPLACE13=fashionpolice: Fashion Police', () => {
     expect(keys).toContain('fashionpolice');
     expect(keys).not.toContain('trendsetter');
   });
-  it('after you recruit a red member, every red shop member goes to the bottom, then the row refills', () => {
+  it('after you recruit a red member, every red shop member goes to the discard pile, then the row refills', () => {
     let s = table(['market', 'red'], { n: 2, round: 1, members: [['market.fashionpolice']], res: [{ red: 9 }], shop: SHOP });
     s = go(s, slotOf(s, 'red', 'Gather'));
     s = go(s, s.pending.options.find(o => o.label.startsWith('Recruiter')).id);
@@ -32,6 +32,6 @@ describe('REPLACE13=fashionpolice: Fashion Police', () => {
     const sent = ['Volunteer', 'Patriarch'];
     for (const n of sent) expect(s.shop.map(u => defById(s.cards[u].def).name)).not.toContain(n);
     expect(s.shop.map(u => defById(s.cards[u].def).name)).toContain('Regular');
-    expect(s.log.join('\n')).toMatch(/P1's Fashion Police: sends [2-9] red members to the bottom of the pile\./);
+    expect(s.log.join('\n')).toMatch(/P1's Fashion Police: sends [2-9] red members to the discard pile\./);
   });
 });

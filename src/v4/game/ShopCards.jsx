@@ -17,6 +17,7 @@ import { timingOf, unlockedBy, surely } from './cards.js';
 void timingOf;
 import { useHoverSpace } from './HoverCards.jsx';
 import { MemberDeck, useDeal } from './MemberDeck.jsx';
+import { DiscardPile } from './DiscardPile.jsx';
 import './lamp-b.css';
 import './member-pick.css';
 import './shop.css'; // live panel r1 (G2): the deck, the struck price and the worth
@@ -263,7 +264,11 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
       </div>
       <div className="lt-shop-body">
       <div className="lt-cards" data-n={uids.length + ghosts.length} ref={rowRef}>
-      <MemberDeck state={state} deckRef={deckRef} />
+      {/* the deck and, beside it, the discard pile (Cory, Nov 6) share the deck's place in the row */}
+      <div className="lt-deck lt-deck-slot" data-deck-slot="">
+        <MemberDeck state={state} deckRef={deckRef} />
+        {!state.supply && <DiscardPile state={state} />}
+      </div>
       <FollowerRates state={state} me={me} optionFor={optionFor} onPick={onPick} onDenied={onDenied} buying={buying || picking} />
         {uids.map(uid => {
           const d = cardDef(state, uid);

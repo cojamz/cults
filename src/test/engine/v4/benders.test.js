@@ -263,7 +263,7 @@ describe('Straggler: after the last worker is placed, your last minion may move 
 // in the round you recruited it (Claude under Cory's go-with-your-gut, from the dead-window audit, 2026-10-14): it stops buy-collect-release loops such as Lender's +5.
 describe('Release (base rule): once per round, release a member for its colored part', () => {
   const colored = id => defById(id).s;
-  it('is offered in the buy step; the card goes to the bottom of the pile and you take its colored part in its color', () => {
+  it('is offered in the buy step; the card goes to the discard pile and you take its colored part in its color', () => {
     const id = 'red.bigfamily';
     let s = scene({ members: [[id]], queue: [{ t: 'turn', p: 0 }] });
     s = move(s, `slot:${RUSH}`);
@@ -271,11 +271,11 @@ describe('Release (base rule): once per round, release a member for its colored 
     const before = followers(s, s.players[0]), red = R(s).red;
     expect(s.pending.options.find(o => o.id === `release:${uid}`).label).toBe(`Release ${defById(id).name} for ${colored(id)} red`);
     s = move(s, `release:${uid}`);
-    expect(s.pile.at(-1)).toBe(uid);
+    expect(s.discard.at(-1)).toBe(uid);
     expect(s.players[0].members).not.toContain(uid);
     expect(followers(s, s.players[0])).toBe(before - defById(id).f);
     expect(R(s).red).toBe(red + colored(id)); // the "any" part doesn't come back
-    expect(s.log).toContain(`P1 released ${defById(id).name} to the bottom of the pile, for ${colored(id)} red.`);
+    expect(s.log).toContain(`P1 released ${defById(id).name} to the discard pile, for ${colored(id)} red.`);
     // straight back to the buy, without a second release
     expect(s.pending.kind).toBe('buy');
     expect(ids(s).some(i => i.startsWith('release:'))).toBe(false);
@@ -465,7 +465,7 @@ describe('bots play every bender and Release without breaking the game', () => {
       expect(s.over).toBe(true);
       for (const p of s.players) for (const r of s.resources) expect(p.res[r]).toBeGreaterThanOrEqual(0);
       // every card is somewhere exactly once
-      const seen = [...s.pile, ...s.shop, ...s.players.flatMap(p => p.members)];
+      const seen = [...s.pile, ...(s.discard || []), ...s.shop, ...s.players.flatMap(p => p.members)];
       expect(new Set(seen).size).toBe(seen.length);
       expect(seen.length).toBe(Object.keys(s.cards).length);
     }
@@ -473,7 +473,7 @@ describe('bots play every bender and Release without breaking the game', () => {
 });
 void cardDef;
 
-describe('Scouts pays Patroness once, like the other sends to the bottom of the pile', () => {
+describe('Scouts pays Patroness once, like the other sends to the discard pile', () => {
   it('two shop members sent: Patroness +1 follower once', () => {
     let s = scene({ quadrants: ['gold', 'red', 'market', 'green'], members: [['benders.scout', 'market.patroness']] });
     s = move(s, `use:${uidOf(s, 'benders.scout', 0)}`);

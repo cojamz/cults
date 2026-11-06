@@ -11,6 +11,7 @@
 //   extraWorkers: [I,II,III] extra workers by round (taken after the snake)
 //   pickFirst: true        always first in a round's turn order
 // Straggler uses the onAllPlaced hook (after the round's last placement, before its contests).
+import { discardOf, toDiscard, drawTop } from '../discard.js';
 import { registerGuests, spacesOf } from './index.js';
 import { extraMinion, spareSpace } from './purple.js';
 import { startSteal } from './thieves.js';
@@ -104,16 +105,16 @@ function scoutStep(ctx, p, data) {
   // straight back, so a bot sent it round forever (setup audit, Nov 3: 2 players, Grey piles)
   const left = ctx.shopCards().filter(c => data.start.includes(c.uid) && !(data.sentUids || []).includes(c.uid));
   if (!left.length) return scoutDone(ctx, p, data);
-  ctx.choose(p, data.sent.length ? 'Scout: send another to the bottom of the pile, or done' : 'Scout: send which shop members to the bottom of the pile?', [
+  ctx.choose(p, data.sent.length ? 'Scout: send another to the discard pile, or done' : 'Scout: send which shop members to the discard pile?', [
     ...left.map(c => ({ id: `card:${c.uid}`, label: c.def.name, kind: 'card', value: c.uid, hint: cost(c) > Object.values(p.res).reduce((x, y) => x + y, 0) ? 1 : -1 })),
     { id: 'done', label: 'Done', kind: 'pass', value: null, hint: 0 },
   ], 'benders.scoutPick', data);
 }
 function scoutDone(ctx, p, data) {
-  if (data.sent.length) ctx.log(`${p.name}'s Scout: sent ${data.sent.join(', ')} to the bottom of the pile.`);
+  if (data.sent.length) ctx.log(`${p.name}'s Scout: sent ${data.sent.join(', ')} to the discard pile.`);
   // pays Patroness and Bargain Bin once, as Savings, Bury and Trendsetters do (expert AI games, Nov 1)
   toBottom(ctx, data.sent.length);
-  const sentUids = REPLACE1 && data.sent.length ? ctx.state.pile.slice(-data.sent.length) : [];
+  const sentUids = REPLACE1 && data.sent.length ? discardOf(ctx.state).slice(-data.sent.length) : [];
   ctx.refillShop();
   scavenge(ctx, p, sentUids);
 }
@@ -318,7 +319,7 @@ const members = [
     botActivate: (ctx, p) => anarchyPairs(ctx, p).some(([a, b]) => gainFor(ctx, p, a, b) >= 2),
   }),
   // Cory, 2026-10-28: Scout, 4, once per round (it stands in for Blue's shop work)
-  m('scout', 'Scouts', null, 0, 2, 'On Use, once per round: send any shop members to the bottom of the pile, then refill.', { f: 2, n: 2, retired: true, // Spoilsport takes its place (Claude, under Cory's "use your judgement", 2026-11-03); worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
+  m('scout', 'Scouts', null, 0, 2, 'On Use, once per round: send any shop members to the discard pile, then refill.', { f: 2, n: 2, retired: true, // Spoilsport takes its place (Claude, under Cory's "use your judgement", 2026-11-03); worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
     activate: 'round',
     onRoundStart(ctx, owner, card) { card.used = false; },
     onActivate(ctx, owner, card) {
@@ -393,8 +394,8 @@ const members = [
   ...add6(m('peddlers', 'Peddlers', null, 0, 4, 'On Recruit and Round Start: put the top member of the pile beside this card. Rivals may recruit members there, paying you instead of the bank.', { now: true, stall: true,
     onRoundStart(ctx, owner, card) {
       const s = ctx.state;
-      if (!s.pile.length) return;
-      const uid = s.pile.shift();
+      const uid = drawTop(s, ctx.log);
+      if (uid === undefined) return;
       ((s.stalls ||= {})[card.uid] ||= []).push(uid);
       ctx.log(`${owner.name}'s Peddlers: ${ctx.card(uid).def.name} goes on the stall.`);
     },
@@ -440,7 +441,7 @@ export const handlers = {
     if (!ctx.state.shop.includes(uid)) return scoutStep(ctx, p, data);
     const i = ctx.state.shop.indexOf(uid);
     ctx.state.shop.splice(i, 1);
-    ctx.state.pile.push(uid);
+    toDiscard(ctx.state, uid);
     scoutStep(ctx, p, { ...data, sent: [...data.sent, ctx.card(uid).def.name], sentUids: [...(data.sentUids || []), uid] });
   },
   rewind(ctx, p, uid) {

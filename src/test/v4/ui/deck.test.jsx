@@ -22,8 +22,10 @@ describe('member deck', () => {
     expect(container.querySelector('.lt-shop-head').textContent).not.toMatch(/in the pile/);
     // one grid (unified member/follower shop): the deck is its first cell, then the follower buys, then every member
     const grid = container.querySelector('.lt-shop-body > .lt-cards');
-    expect(grid.firstElementChild.matches('[data-deck]')).toBe(true);
-    expect(grid.querySelectorAll(':scope > [data-deck]').length).toBe(1);
+    // (the deck shares its cell with the discard pile, Nov 6)
+    expect(grid.firstElementChild.matches('[data-deck-slot]')).toBe(true);
+    expect(grid.firstElementChild.querySelectorAll(':scope > [data-deck]').length).toBe(1);
+    expect(grid.firstElementChild.querySelectorAll(':scope > [data-discard]').length).toBe(1);
     expect([...grid.querySelectorAll(':scope > .card[data-uid]')].map(c => Number(c.dataset.uid)).sort()).toEqual([...s.shop].sort());
   });
 
@@ -66,7 +68,7 @@ describe('member deck', () => {
     const { container } = render(<DeckCard state={s} />);
     expect(container.querySelector('[data-deck-card]').dataset.left).toBe(String(s.pile.length));
     for (const r of rows) expect(container.querySelector(`[data-color="${r.key}"]`).dataset.n).toBe(String(r.n));
-    expect(container.textContent).toMatch(/Swept members go to the bottom/);
+    expect(container.textContent).toMatch(/Swept members go to the discard pile/);
     expect(container.textContent).not.toMatch(/★/);
   });
 

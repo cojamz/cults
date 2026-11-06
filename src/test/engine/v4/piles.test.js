@@ -173,7 +173,7 @@ describe('Piles: whole games', () => {
       let n = 0;
       while (!s.over && n++ < 5000) {
         s = applyMove(s, chooseBotMove(s, rand, { level: 'normal' }));
-        const placed = [...s.pile, ...s.shop, ...Object.values(s.supply || {}).flat(), ...Object.values(s.waiting).flat(), ...s.players.flatMap(p => [...p.members, ...(p.artifact !== undefined && p.artifact !== null ? [p.artifact] : [])]), ...Object.values(s.artifacts).filter(u => !s.players.some(p => p.artifact === u)), ...(s.outOfGame || [])];
+        const placed = [...s.pile, ...(s.discard || []), ...s.shop, ...Object.values(s.supply || {}).flat(), ...Object.values(s.waiting).flat(), ...s.players.flatMap(p => [...p.members, ...(p.artifact !== undefined && p.artifact !== null ? [p.artifact] : [])]), ...Object.values(s.artifacts).filter(u => !s.players.some(p => p.artifact === u)), ...(s.outOfGame || [])];
         expect(new Set(placed).size).toBe(placed.length);
       }
       expect(s.over).toBe(true);

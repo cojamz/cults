@@ -60,7 +60,7 @@ describe('REPLACE5: each card fires', () => {
     expect(named(s, 'Jackals')).toContain("P1's Jackals: steals 1 red from P2.");
   });
 
-  it("Vultures: a rival's member goes to the bottom of the pile; you may steal it", () => {
+  it("Vultures: a rival's member goes to the discard pile; you may steal it", () => {
     let s = table(['red', 'thieves', 'trading', 'purple'], { round: 2, members: [['thieves.vultures'], ['red.crowd']], queue: [] });
     contextFor(s).buryMember(s.players[1], uidIn(s, 'red.crowd', 1));
     s = resume(s);

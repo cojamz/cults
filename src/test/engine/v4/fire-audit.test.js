@@ -242,8 +242,8 @@ describe('namesCard: what counts as a line naming a card', () => {
   it('does not count lines that only move the card', () => {
     for (const [l, n] of [
       ['P1 recruited Banker (2 gold, 1 red).', 'Banker'], ['P1 traded Intern for P2\'s Banker.', 'Banker'],
-      ['P1 released Banker to the bottom of the pile, for 2 gold.', 'Banker'], ["P1's Doppelganger copies Banker.", 'Banker'],
-      ['P1 pulled a heist: P2\'s Banker.', 'Banker'], ['P1 sent Banker to the bottom of the pile.', 'Banker'],
+      ['P1 released Banker to the discard pile, for 2 gold.', 'Banker'], ["P1's Doppelganger copies Banker.", 'Banker'],
+      ['P1 pulled a heist: P2\'s Banker.', 'Banker'], ['P1 sent Banker to the discard pile.', 'Banker'],
     ]) expect(namesCard(l, n), l).toBe(false);
   });
 });

@@ -302,7 +302,7 @@ describe('Magenta takes members that carry state', () => {
     const d = uidOf(s, 'echo.doppel', 0);
     s.cards[d].used = true;
     s = move(s, `release:${d}`);
-    expect(s.pile).toContain(d);
+    expect(s.discard).toContain(d);
     expect(s.cards[d]).toEqual({ uid: d, def: 'echo.doppel' });
     expect(s.pending.prompt).toContain('Social Climber');
     s = move(s, 'color:red');
@@ -452,7 +452,7 @@ describe('Release on members that carry state', () => {
     const u = uidOf(s, 'echo.doppel', 0);
     s = move(s, `release:${u}`);
     expect(s.cards[u]).toEqual({ uid: u, def: 'echo.doppel' });
-    expect(s.pile.at(-1)).toBe(u);
+    expect(s.discard.at(-1)).toBe(u);
   });
   it('one release per round: no second release after the first', () => {
     let s = scene({ rules: { release: true }, quads: Q, round: 2, queue: buyStep(0), members: [['red.twins', 'red.intern']] });

@@ -32,8 +32,8 @@ describe('White: the printed cards', () => {
       ['stipend', 1], ['splurge', 1], ['exchange', 1], ['farewell', 2], ['estatesale', 2], ['cashin', 3],
     ]);
     expect(text('splurge')).toBe('This turn, if you recruit a member, +1 follower for every 2 resources you pay for it (every 1 in round II). +2 white.');
-    expect(text('farewell')).toBe('Cast out one of your members to the bottom of the pile, gain followers equal to its cost. +1 white.');
-    expect(text('estatesale')).toBe('Cast out one of your members to the bottom of the pile, gain white equal to its cost. +1 white.');
+    expect(text('farewell')).toBe('Cast out one of your members to the discard pile, gain followers equal to its cost. +1 white.');
+    expect(text('estatesale')).toBe('Cast out one of your members to the discard pile, gain white equal to its cost. +1 white.');
     expect(text('cashin')).toBe('Turn all your white into followers. +1 white.');
     expect(W.scoring.label).toBe('Most white');
   });
@@ -67,12 +67,12 @@ describe('White actions', () => {
     expect(named(s, 'Exchange').filter(l => l.includes('became 2 followers'))).toHaveLength(3);
   });
 
-  it('Farewell: Big Family (4+4) pays 8 followers, named; it goes to the bottom of the pile', () => {
+  it('Farewell: Big Family (4+4) pays 8 followers, named; it goes to the discard pile', () => {
     let s = take(table(Q, { round: 2, members: [['red.bigfamily']], shop: ROW }), 'trading.farewell');
     const u = uidIn(s, 'red.bigfamily', 0);
     s = move(s, `card:${u}`);
     expect([B(s), R(s).white]).toEqual([8, 1]);
-    expect(s.pile.at(-1)).toBe(u);
+    expect(s.discard.at(-1)).toBe(u);
     expect(named(s, 'Farewell')).toContain("P1's Farewell: Big Family paid 8 followers.");
   });
 

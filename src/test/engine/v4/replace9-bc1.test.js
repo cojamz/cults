@@ -118,7 +118,7 @@ describe('Dowagers: "On Use, once per game: cast out any of your other members; 
     const d = defById('trading.dowagers');
     expect([d.s, d.w]).toEqual([5, 5]);
   });
-  it('casts out members one at a time to the bottom of the pile, +3 each, until Done', () => {
+  it('casts out members one at a time to the discard pile, +3 each, until Done', () => {
     let s = table(Q, { n: 2, round: 3, members: [['trading.dowagers', 'red.volunteer', 'market.regular']] });
     const dow = uidIn(s, 'trading.dowagers', 0), vol = uidIn(s, 'red.volunteer', 0);
     const b0 = s.players[0].bonus;
@@ -127,7 +127,7 @@ describe('Dowagers: "On Use, once per game: cast out any of your other members; 
     expect(s.pending.options.map(o => o.id)).not.toContain(`card:${dow}`);
     s = move(s, `card:${vol}`);
     expect(s.players[0].members).not.toContain(vol);
-    expect(s.pile[s.pile.length - 1]).toBe(vol);
+    expect(s.discard.at(-1)).toBe(vol);
     expect(s.players[0].bonus).toBe(b0 + 3);
     s = move(s, 'done');
     expect(s.players[0].members).toContain(uidIn(s, 'market.regular', 0));
@@ -153,19 +153,19 @@ describe('Duty Collector: "Whenever a rival recruits a member of a color you hav
   });
 });
 
-describe('Window Dressers (reworded): "On Recruit: send any shop members to the bottom of the pile, then refill. Recruit again this turn."', () => {
+describe('Window Dressers (reworded): "On Recruit: send any shop members to the discard pile, then refill. Recruit again this turn."', () => {
   it('same price and worth, and the old Window Dressers retired', () => {
     const d = defById('market.windowdressers9'), o = defById('market.windowdresser');
     expect([d.s, d.w, d.f]).toEqual([o.s, o.w + 1, o.f]); // the old Window Dressers is 1 cheaper since Nov 5
     expect(o.retired).toBe(true);
   });
-  it('sends chosen shop members to the bottom, refills once, then offers another recruit', () => {
+  it('sends chosen shop members to the discard pile, refills once, then offers another recruit', () => {
     let s = table(Q4, { n: 2, res: [{ red: 20, yellow: 20, blue: 20, purple: 20 }], shop: ['market.windowdressers9', 'red.volunteer', 'yellow.gardener', 'purple.crew'], queue: [{ t: 'buy', p: 0 }] });
     const vol = uidIn(s, 'red.volunteer', 'shop');
     s = pay(move(s, `card:${uidIn(s, 'market.windowdressers9', 'shop')}`));
-    expect(s.pending.prompt).toContain('Window Dressers: send which member to the bottom?');
+    expect(s.pending.prompt).toContain('Window Dressers: send which member to the discard pile?');
     s = move(s, `card:${vol}`);
-    expect(s.pile[s.pile.length - 1]).toBe(vol);
+    expect(s.discard.at(-1)).toBe(vol);
     s = move(s, 'done');
     expect(s.shop).not.toContain(vol);
     expect(s.pending.kind).toBe('buy');
@@ -178,7 +178,7 @@ describe('Window Dressers (reworded): "On Recruit: send any shop members to the 
     const best = [...s.pending.options].sort((a, b) => b.hint - a.hint)[0];
     expect(best.id).toBe('done');
   });
-  it('the batch sent to the bottom pays Patroness once, as Churn does', () => {
+  it('the batch sent to the discard pile pays Patroness once, as Churn does', () => {
     let s = table(Q4, { n: 2, res: [{ red: 20, yellow: 20, blue: 20, purple: 20 }], members: [['market.patroness']], shop: ['market.windowdressers9', 'red.volunteer', 'yellow.gardener', 'purple.crew'], queue: [{ t: 'buy', p: 0 }] });
     s = pay(move(s, `card:${uidIn(s, 'market.windowdressers9', 'shop')}`));
     const b0 = s.players[0].bonus;
@@ -189,14 +189,14 @@ describe('Window Dressers (reworded): "On Recruit: send any shop members to the 
   });
 });
 
-describe('Downsizers: "On Use, once per round: cast out one of your members to the bottom of the pile. +4 white."', () => {
+describe('Downsizers: "On Use, once per round: cast out one of your members to the discard pile. +4 white."', () => {
   const Q = ['red', 'trading', 'market', 'purple'];
   it('price, and Landlord retired', () => {
     const d = defById('trading.moneylender');
     expect([d.s, d.w]).toEqual([3, 2]);
     expect(defById('trading.shopkeeper').retired).toBe(true);
   });
-  it('offers every other member, whatever it costs (Cory, Nov 5); the one cast out goes to the bottom, +4 white', () => {
+  it('offers every other member, whatever it costs (Cory, Nov 5); the one cast out goes to the discard pile, +4 white', () => {
     let s = table(Q, { n: 2, round: 2, members: [['trading.moneylender', 'red.volunteer', 'market.shopaholic']] });
     const ml = uidIn(s, 'trading.moneylender', 0), vol = uidIn(s, 'red.volunteer', 0);
     s = move(s, `use:${ml}`);
@@ -206,7 +206,7 @@ describe('Downsizers: "On Use, once per round: cast out one of your members to t
     expect(ids).toContain(`card:${uidIn(s, 'market.shopaholic', 0)}`);
     s = move(s, `card:${vol}`);
     expect(s.players[0].members).not.toContain(vol);
-    expect(s.pile[s.pile.length - 1]).toBe(vol);
+    expect(s.discard.at(-1)).toBe(vol);
     expect(s.players[0].res.white).toBe(4);
   });
   it('once per round: usable again the next round', () => {

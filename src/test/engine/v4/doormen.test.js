@@ -12,7 +12,7 @@ const buy = () => ({ queue: [{ t: 'buy', p: 0 }, { t: 'turn', p: 1 }] });
 const ids = s => (s.pending?.options || []).map(o => o.id);
 
 describe('Doormen', () => {
-  it('sends a rival member to the bottom and gives them a shop member costing at most 2 less, once per round', () => {
+  it('sends a rival member to the discard pile and gives them a shop member costing at most 2 less, once per round', () => {
     let s = table(Q, { members: [['market.doorman'], ['red.bigfamily']], shop: ['red.intern', 'gold.tycoon', 'red.host'], ...buy() });
     const door = uidIn(s, 'market.doorman', 0);
     s = move(s, `use:${door}`);
@@ -23,9 +23,9 @@ describe('Doormen', () => {
     s = move(s, `trade:${fam}:${host}`);
     expect(owns(s, 1, 'red.host')).toBe(true);
     expect(owns(s, 1, 'red.bigfamily')).toBe(false);
-    expect(s.pile.at(-1)).toBe(fam);
+    expect(s.discard.at(-1)).toBe(fam);
     expect(s.shop).toContain(tycoon);
-    expect(s.log.join('\n')).toMatch(/P1's Doormen: sends P2's Big Family to the bottom of the pile and gives P2 Host\./);
+    expect(s.log.join('\n')).toMatch(/P1's Doormen: sends P2's Big Family to the discard pile and gives P2 Host\./);
     expect(ids(s)).not.toContain(`use:${door}`);
   });
 
@@ -51,7 +51,7 @@ describe('Doormen', () => {
 
 describe('Bargain Bin', () => {
   // Cory, Nov 1: "changes to B when any member goes to the bottom of the pile": a cult's member counts too
-  it('pays +1 blue when Doormen sends a rival member to the bottom', () => {
+  it('pays +1 blue when Doormen sends a rival member to the discard pile', () => {
     let s = table(Q, { members: [['market.doorman'], ['red.bigfamily']], shop: ['red.host'], ...buy() });
     const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
     s.cards[art] = { uid: art, def: 'market.bargainbin' }; s.players[0].artifact = art;

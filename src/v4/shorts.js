@@ -34,7 +34,7 @@ const S = {
     harvest: r => `+${r + 2} any, colors you choose`, bloom: r => `+${r} yellow · +1 of your fewest`, transmute: '+1 yellow per minion on the busiest color · +1 yellow', prism: '+1 each per 3 yellow', gather: '1 per member', flourish: '+1 each per set',
   },
   market: {
-    bargain: r => `+${r + 1} blue; may send a shop member to the bottom, then refill`, restock: 'one color to the bottom; +1 blue each, +1', showroom: r => `peek at 4, may recruit one; +${r + 2} blue`, clearance: 'recruit twice; +3 blue', pricecheck: 'bury one, half its cost in blue; +1', spree: 'recruit 3 times; +6 blue',
+    bargain: r => `+${r + 1} blue; may send a shop member to the discard pile, then refill`, restock: 'one color to the discard pile; +1 blue each, +1', showroom: r => `peek at 4, may recruit one; +${r + 2} blue`, clearance: 'recruit twice; +3 blue', pricecheck: 'bury one, half its cost in blue; +1', spree: 'recruit 3 times; +6 blue',
   },
   thieves: {
     pickpocket: r => `steal ${r + 2} from one rival`, tipoff: r => `+${r + 1} magenta; +${r} followers if you recruit a member this turn`, hideout: 'steal 1; rivals can’t steal from you this round; +1 magenta', rob: 'steal 3 followers, split among rivals; +1 magenta', ransom: 'a rival picks a member costing 6 or less, then pays its cost or loses it; +1 magenta', heist: 'recruit a rival’s member; +1 magenta',

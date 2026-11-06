@@ -294,7 +294,7 @@ const trading = {
       },
     }, PAWN_SHOP), WHITE_EXCHANGE), LOAN),
     {
-      key: 'farewell', copyDoesIt: true, ring: 2, name: 'Farewell', text: 'Cast out one of your members to the bottom of the pile, gain followers equal to its cost. +1 white.', // "cast out": Cory, 2026-10-24
+      key: 'farewell', copyDoesIt: true, ring: 2, name: 'Farewell', text: 'Cast out one of your members to the discard pile, gain followers equal to its cost. +1 white.', // "cast out": Cory, 2026-10-24
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, fv(ctx)))),
       resolve(ctx, p) {
         ctx.gain(p, W, 1, { fromAction: true });
@@ -302,7 +302,7 @@ const trading = {
       },
     },
     swap11({
-      key: 'estatesale', copyDoesIt: true, ring: 2, name: 'Estate Sale', text: 'Cast out one of your members to the bottom of the pile, gain white equal to its cost. +1 white.',
+      key: 'estatesale', copyDoesIt: true, ring: 2, name: 'Estate Sale', text: 'Cast out one of your members to the discard pile, gain white equal to its cost. +1 white.',
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, 1))),
       resolve(ctx, p) {
         ctx.gain(p, W, 1, { fromAction: true });
@@ -380,7 +380,7 @@ const trading = {
         const o = ctx.ownerOf(uid);
         if (!o || o === p) return;
         const c = ctx.card(uid), name = c.def.name, k = c.def.s + c.def.w;
-        ctx.log(`${p.name}'s Evictors: casts out ${o.name}'s ${name} to the bottom of the pile.`);
+        ctx.log(`${p.name}'s Evictors: casts out ${o.name}'s ${name} to the discard pile.`);
         ctx.buryMember(o, uid, p);
         ctx.gain(p, W, k);
         ctx.gain(o, W, k);
@@ -555,7 +555,7 @@ const trading = {
     // player sees it. One of your other members costing 4 or less (3 before every member +1) to the bottom of the pile (as Farewell), +4 white; with
     // none, the use comes back. Bots cast out their cheapest-worth member, from round II.
     // Live in Raiders' slot as Downsizers (Cory, Nov 5: "i like moneylender. needs a different name. maybe slightly cheap"; name Claude's fill-in, 3 white + 2 any as a player sees it)
-    m('moneylender', 'Downsizers', 2, 1, 'On Use, once per round: cast out one of your members to the bottom of the pile. +4 white.' /* Cory, Nov 5: "costing 4 or less" cut */, {
+    m('moneylender', 'Downsizers', 2, 1, 'On Use, once per round: cast out one of your members to the discard pile. +4 white.' /* Cory, Nov 5: "costing 4 or less" cut */, {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
@@ -816,7 +816,7 @@ const trading = {
     // REPLACE3 bot test (Nov 3, replacement batch 3): Hoarder's place. 5 white + 3 any as a player sees it. Any rival's
     // member (casting out isn't a steal or a swap, so Bodyguards and Loyalists don't stop it); its cost is its printed
     // price. It leaves its cult as a cast-out does (Martyrs pays its owner), then both players gain the white.
-    ...add3(m('evictors', 'Evictors', 4, 3, "On Use, once per game: cast out a rival's member to the bottom of the pile. You and that rival each gain white equal to its cost.", {
+    ...add3(m('evictors', 'Evictors', 4, 3, "On Use, once per game: cast out a rival's member to the discard pile. You and that rival each gain white equal to its cost.", {
       activate: 'game',
       onActivate(ctx, owner, card) {
         const list = ctx.rivals(owner).flatMap(o => ctx.membersOf(o).map(c => [o, c]));

@@ -790,7 +790,7 @@ const thieves = {
     // member leaving their cult for the shop or the bottom of the pile (Promote, Demote, Farewell, Estate Sale, Doormen,
     // Evictors…); a rival's Bodyguards or Lie Low blocks it. The member is your recruit (its On Recruit fires), as a
     // stolen member is; the rival keeps what their space paid. The row going to the bottom between rounds doesn't count.
-    ...add5(m('vultures', 'Vultures', 4, 3, "Whenever a rival's member goes to the shop or the bottom of the pile, you may steal it.", {
+    ...add5(m('vultures', 'Vultures', 4, 3, "Whenever a rival's member goes to the shop or the discard pile, you may steal it.", {
       // BOTSEE: about one rival member in 20 rival placements leaves their cult, worth about 5 followers to take
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.05 * 5),
       onCultMove(ctx, owner, card, { uid, from, to }) {

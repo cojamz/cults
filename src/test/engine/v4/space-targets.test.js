@@ -46,7 +46,7 @@ describe('space targets', () => {
     const t = targetsAt(s, 'take');
     expect(sorted(t.shop)).toEqual(sorted(['red.intern', 'red.bigfamily', 'gold.taxman'].map(d => uidIn(s, d, 'shop'))));
   });
-  it('Churn and Bury: no member is lit up front, since the player picks which go to the bottom', () => {
+  it('Churn and Bury: no member is lit up front, since the player picks which go to the discard pile', () => {
     const defs = ['gold.tycoon', 'red.intern', 'red.bigfamily'];
     expect(targetsAt(table(Q, { shop: defs }), 'bargain')).toBe(null);
     expect(targetsAt(table(Q, { round: 2, shop: defs }), 'pricecheck')).toBe(null);

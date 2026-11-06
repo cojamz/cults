@@ -27,7 +27,7 @@ export const GLOSSARY = [
   { key: 'in play', word: 'In play', match: /\bin play\b/,
     def: 'Held by any player. Members in the shop or the pile are not in play.' },
   { key: 'release', word: 'Release', legacy: true, match: /\breleas(e|ed|es)\b/,
-    def: 'Legacy rule, unavailable in normal play. Once per round, when you recruit: put one of your members (not one you recruited this round) at the bottom of the pile and take back only the colored part of its cost, in its own color. You keep your buy.' },
+    def: 'Legacy rule, unavailable in normal play. Once per round, when you recruit: put one of your members (not one you recruited this round) on the discard pile and take back only the colored part of its cost, in its own color. You keep your buy.' },
   // Cory, 2026-10-29: "going twice in a row is very different from extra member"; "extra turn" left the cards
   { key: '+1 minion', word: '+1 minion', match: /\+1 minion\b|\bextra turns?\b/,
     def: 'One more minion this round, to place and recruit with. The card says when you place it; otherwise it goes after everyone else. Never in round I; later only while a space would still be free.' },
@@ -38,7 +38,7 @@ export const GLOSSARY = [
     def: 'A skipped turn is passed over: play goes on to the next turn, and the skipped player places that minion later in the same round. Nobody loses a turn or a minion. A skip never carries into the next round: with no turn left this round, nothing is skipped.' },
   // Cory, 2026-10-24: "cast out" instead of "bury a member", in the cult's own words
   { key: 'cast out', word: 'Cast out', match: /\bcast out\b/i,
-    def: 'Send one of your own members to the bottom of the pile. It leaves your cult.' },
+    def: 'Send one of your own members to the discard pile. It leaves your cult.' },
   { key: 'leaves your cult', word: 'Leaves your cult', match: /\bleaves your cult\b/i,
     def: 'Any way a member stops being yours: you cast it out, a rival steals it, or a swap takes it away.' },
   { key: 'turn into followers', word: 'Turn into followers', match: /\bturn (?:\d+ |all your )?(?:[a-z]+ )*?(?:resources?|white|members?)(?: or members)? into (?:\d+ )?followers\b|\binto \d+ followers\b/i,
@@ -50,8 +50,11 @@ export const GLOSSARY = [
     def: 'Copy an action: get its own printed gain (what its chip shows). Members’ bonuses on it and its gifts to others don’t repeat. Its taker keeps what they got. Copying a copy lets you choose again; never choose an action already in that chain. Each green action gives +1 green, including when copied. Agents stops rivals from copying its owner’s actions. Echo copies the previous action, Cover an action with no minion on it, and Reprise one with your minion. Greatest Hits and Sample copy On Recruits: Greatest Hits each of your members’, Sample a rival member’s.' },
   { key: 'face-up', word: 'Face-up', match: /\bface-up\b/,
     def: 'The members in the shop that everyone can see. When one leaves, the pile refills the row.' },
+  // Cory, Nov 6: "maybe we should start discarding? … then you know what's out"
+  { key: 'discard pile', word: 'Discard pile', match: /\bdiscard pile\b/i,
+    def: 'Members that leave play go face up on the discard pile, beside the deck, so everyone can see what’s out. When the deck runs out, the discard pile is shuffled into a new deck.' },
   { key: 'pile', word: 'Pile', match: /\b(?:the|of the) pile\b/,
-    def: 'The face-down deck the shop refills from. Swept members go to its bottom; the market also refreshes between rounds.' },
+    def: 'The face-down deck the shop refills from. Members that leave play go to the discard pile instead; when the deck runs out, the discard pile is shuffled into a new deck. The market also refreshes between rounds.' },
   { key: 'once per round', word: 'Once per round', match: /\bonce per round\b/i,
     def: 'Usable one time each round; it comes back when the next round starts.' },
   { key: 'once per game', word: 'Once per game', match: /\b(?:once per game|one time use)\b/i,

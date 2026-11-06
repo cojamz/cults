@@ -39,13 +39,13 @@ describe('Blue actions', () => {
       expect(s.pending?.kind).toBe('buy');
     }
   });
-  it('Savings (Cory, Oct 31): before you recruit, one shop member to the bottom of the pile, then refill', () => {
+  it('Savings (Cory, Oct 31): before you recruit, one shop member to the discard pile, then refill', () => {
     let s = table(Q, { shop: ROW5 });
     const gone = s.shop[1], top = s.pile[0];
     s = take(s, 'market.bargain');
     s = move(s, `card:${gone}`);
     expect(s.shop).not.toContain(gone);
-    expect(s.pile[s.pile.length - 1]).toBe(gone);
+    expect(s.discard.at(-1)).toBe(gone);
     expect(s.shop).toContain(top);
     expect(s.pending?.kind).toBe('buy');
   });
@@ -56,7 +56,7 @@ describe('Blue actions', () => {
     expect(named(s, 'Midas').length).toBe(1);
   });
 
-  it('Out of Style: one color to the bottom, refill, +1 blue per member sent, plus the inherent +1', () => {
+  it('Out of Style: one color to the discard pile, refill, +1 blue per member sent, plus the inherent +1', () => {
     // ROW5: Tycoon, Big Family, Twins, Intern, Tax Man: 3 red, 2 gold
     let s = table(Q, { shop: ROW5 });
     s = take(s, 'market.restock');
@@ -67,19 +67,19 @@ describe('Blue actions', () => {
     expect(R(s).blue).toBe(1 + 3);
     expect(s.shop).toHaveLength(6); // round I shows 6
     expect(s.shop.filter(u => reds.includes(u))).toEqual([]);
-    expect(s.pile.slice(-3)).toEqual(reds);
-    expect(s.log).toContain('Out of Style: P1 sends 3 red members to the bottom.');
+    expect(s.discard.slice(-3)).toEqual(reds);
+    expect(s.log).toContain('Out of Style: P1 sends 3 red members to the discard pile.');
     expect(s.log).toContain("P1's Out of Style: +3 blue.");
   });
-  it('Out of Style: neutral is a color you can send to the bottom (Cory, Oct 28)', () => {
+  it('Out of Style: neutral is a color you can send to the discard pile (Cory, Oct 28)', () => {
     let s = table(Q, { shop: ['gold.tycoon', 'red.twins', 'benders.bigspender1', 'benders.insider', 'gold.taxman'] });
     s = take(s, 'market.restock');
     expect(s.pending.options.map(o => o.id).sort()).toEqual(['color:gold', 'color:neutral', 'color:red']);
     const guests = s.shop.filter(u => s.cards[u].def.startsWith('benders.'));
     s = move(s, 'color:neutral');
     expect(s.shop.filter(u => guests.includes(u))).toEqual([]);
-    expect(s.pile.slice(-2)).toEqual(guests);
-    expect(s.log).toContain('Out of Style: P1 sends 2 grey members to the bottom.');
+    expect(s.discard.slice(-2)).toEqual(guests);
+    expect(s.log).toContain('Out of Style: P1 sends 2 grey members to the discard pile.');
   });
 
   it('Peek: reorder the top 4 of the pile; this turn\'s buy may recruit one of them, and only one', () => {
@@ -134,14 +134,14 @@ describe('Blue actions', () => {
     expect(s.pending?.kind).not.toBe('buy');
   });
 
-  it('Bury: one shop member to the bottom, refill, gain half its cost rounded down, plus the inherent +1', () => {
+  it('Bury: one shop member to the discard pile, refill, gain half its cost rounded down, plus the inherent +1', () => {
     let s = table(Q, { round: 2, shop: ROW5 });
     const top = s.pile[0], tycoon = uidIn(s, 'gold.tycoon', 'shop');
     s = take(s, 'market.pricecheck');
     expect(R(s).blue).toBe(1);
     s = move(s, `card:${tycoon}`);
     expect(R(s).blue).toBe(1 + 6); // Tycoon costs 12
-    expect(s.pile[s.pile.length - 1]).toBe(tycoon);
+    expect(s.discard.at(-1)).toBe(tycoon);
     expect(s.shop).toContain(top);
     expect(s.shop).toHaveLength(7); // round II shows 7
     expect(s.log).toContain("P1's Bury: +6 blue.");
@@ -342,7 +342,7 @@ describe('Blue members', () => {
     expect(owns(s, 0, 'market.recluse')).toBe(true);
     expect(s.players[0].discount).toBe(2);
   });
-  it('Patroness: +1 follower each time shop members go to the bottom (once per Out of Style, not per card); not the round refresh', () => {
+  it('Patroness: +1 follower each time shop members go to the discard pile (once per Out of Style, not per card); not the round refresh', () => {
     let s = table(Q, { round: 2, members: [[], ['market.patroness']], shop: ROW });
     s = take(s, 'market.restock');
     s = move(s, 'color:red');

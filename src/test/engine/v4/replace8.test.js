@@ -46,7 +46,7 @@ describe('Well-Wishers: "Whenever one of your members goes to a rival\'s cult, +
     ctx.moveMember(uidIn(s, 'silver.wellwishers', 0), s.players[0], s.players[2], { actor: s.players[2], recruit: true });
     expect(s.players[0].bonus).toBe(3);
   });
-  it('a member sent to the bottom of the pile is not a rival\'s cult: nothing', () => {
+  it('a member sent to the top of the discard pile is not a rival\'s cult: nothing', () => {
     let s = sc({ n: 3, members: [['silver.wellwishers', 'silver.usher']], queue: [] });
     contextFor(s).buryMember(s.players[0], uidIn(s, 'silver.usher', 0));
     expect(s.players[0].bonus).toBe(0);

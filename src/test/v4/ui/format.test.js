@@ -452,7 +452,7 @@ describe('v4 format helpers', () => {
     // at the round's end (nobody's turn) it's your call too, never "Your turn"
     expect(promptFor(at('Spoilsport: choose a contest', null), true).lead).toBe('Your call — ');
     // on your own turn the headline keeps its usual lead
-    expect(promptFor(at('Window Shopper: send which member to the bottom?', b.id), true).lead).toBeUndefined();
+    expect(promptFor(at('Window Shopper: send which member to the discard pile?', b.id), true).lead).toBeUndefined();
   });
 
   it('who picks first says why: the member that makes them, else fewest followers; round I is drawn (w3a A2)', () => {

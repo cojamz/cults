@@ -1,5 +1,6 @@
 // Red builds and moves members; held red resources decide its round-end contest.
 import { MORE } from './price.js';
+import { discardOf } from '../discard.js';
 import { gainColorOf } from './color-of.js';
 import { defById as defOf } from './index.js';
 import { add1, old1 } from './replace1.js';
@@ -561,7 +562,7 @@ export default {
       onCultMove(ctx, owner, card, { uid, from, to, actor, swappedWith }) {
         // (an Exit Counselor that arrives in the same swap wasn't yours when the member left, as with Turncoats)
         if (from !== owner || actor !== owner || to === owner || uid === card.uid || swappedWith === card.uid) return;
-        if (ctx.state.pile.includes(uid)) return; // cast out to the pile (Farewell, Estate Sale): given to nobody
+        if (discardOf(ctx.state).includes(uid)) return; // cast out to the discard pile (Farewell, Estate Sale): given to nobody
         const gone = ctx.card(uid), d = gone.def;
         if (!d.onRecruited && !(d.now && (d.onRoundStart || d.onRoundStartLate))) { ctx.log(`${owner.name}'s Exit Counselor: ${d.name} has no On Recruit to use.`); return; }
         ctx.log(`${owner.name}'s Exit Counselor: ${d.name} leaves, and ${owner.name} uses its On Recruit.`);
