@@ -521,9 +521,19 @@ export default {
       // raise it to +3 after play). Any taken space, yours or a rival's, for the rest of this round. Name is Claude's fill-in.
       // Cory, 2026-10-28 9:31pm Eastern: "It should just be like, +5 purple and gain a minion this round" (placing on
       // taken spaces copied too much with Greatest Hits). Extra minions stop when the round's spare spaces run out.
-      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Overtime', text: '+4 purple. +1 minion this round.', // +4 (Cory, Nov 5: "give a little more purple")
+      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Overtime', text: '+4 purple. +1 minion this round. Take the Goes Last token: that minion is placed after everyone else’s.', // +4 (Cory, Nov 5: "give a little more purple"); the token (Cory, Nov 6: "Overtime is good. I like it", a third way to take it)
       estimate: ctx => 4 + (spareSpace(ctx) ? turnValue(ctx) : 0),
-      resolve(ctx, p) { ctx.gain(p, P, 4, { fromAction: true }); extraMinion(ctx, p, 'Overtime'); },
+      resolve(ctx, p) {
+        ctx.gain(p, P, 4, { fromAction: true });
+        if (!extraMinion(ctx, p, 'Overtime')) return;
+        // the extra minion waits on the Goes Last token (as Night Owls' did with NIGHTOWL=token); Early Birds keeps it off
+        if (noSkip(ctx, p)) { ctx.log(`${p.name}'s Early Birds: ${p.name}'s turns can't be skipped, so ${p.name} doesn't go last.`); return; }
+        const q = ctx.state.queue, t = turnsAhead(ctx, p).map(i => q[i]).pop();
+        const kept = tokenHolder(ctx.state) === p.id;
+        takeToken(ctx, p, 'Overtime', ' with its extra minion on it');
+        if (t) t.token = true;
+        if (t && !kept) nightWatch(ctx, p, 1);
+      },
     },
     {
       // Cory, 2026-10-22: a follower bonus for taking the rest of your turns last ("YES now you're cooking"), in his

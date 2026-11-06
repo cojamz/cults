@@ -20,6 +20,9 @@ describe('Overtime', () => {
     s = applyMove(s, { player: who, option: `slot:${q}-${i}` });
     expect(s.players[who].res.purple).toBe(before + 4); // +4 (Cory, Nov 5)
     expect(s.players[who].squatAll).not.toBe(3); // no longer opens taken spaces
+    // "Take the Goes Last token: that minion is placed after everyone else's." (Cory, Nov 6: "Overtime is good")
+    expect(s.goesLast).toEqual({ round: 3, pid: who });
+    expect(s.log.join(' ')).toMatch(/Overtime: P\d takes the Goes Last token/);
     // the minion just placed is spent, the new one takes its place
     expect(s.players[who].left).toBe(left);
     // every minion left, the new one included, gets placed, on open spaces only
