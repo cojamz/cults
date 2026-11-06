@@ -263,7 +263,11 @@ const members = [
   ...add9(m('dabbler', 'Dabbler', null, 0, 1, 'Counts as a member of every color.', { everyColor: true })),
   // Cory, 2026-10-28: Cheerleader (Champion), 4
   m('cheerleader', 'Cheerleader', null, 0, 3, 'Whenever you win a contest, +1 follower.', {
-    onContestWin(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Cheerleader: +1 follower.`); },
+    // after every contest, as Cheerleaders (Cory, Nov 5: "round ends, contests, members.", then "yes" to moving it), so its
+    // +1 never counts in a later contest; a shared contest counts as a win
+    afterContests(ctx, owner, card, table) {
+      for (const c of table) if (c.winners.includes(owner.id)) { owner.bonus += 1; ctx.log(`${owner.name}'s Cheerleader: +1 follower.`); }
+    },
   }),
   // REPLACE15 bot test (Cory, Nov 4: "when you win a contest, get x y z", then "the member should give resources for
   // winning contests", "though cheerleaders is kinda cool too"): added, nothing retired (Cory: Spoilsport and Dabblers stay). A shared contest
