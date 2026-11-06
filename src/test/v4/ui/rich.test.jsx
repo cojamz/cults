@@ -62,7 +62,7 @@ it('renders canonical ability timings in bold without changing action instructio
   expect(container.textContent).not.toContain('**');
   rerender(<CardText text="Now and at round start, +1 gold." />);
   expect([...container.querySelectorAll('strong.ability-timing')].map(e => e.textContent)).toEqual(['On Recruit', 'Round Start']);
-  expect(container.textContent).not.toContain('at Round Start');
+  expect(container.textContent).toContain('On Recruit and at Round Start'); // Cory, Nov 5: "at Round Start"
   rerender(<Rich text="Recruit a shop member." />);
   expect(container.textContent).toBe('Recruit a shop member.');
 });
