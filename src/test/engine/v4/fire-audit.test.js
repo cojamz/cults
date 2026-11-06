@@ -131,6 +131,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'thieves.secondstory', 'thieves.desperado', // under 3 holds when Last-Minute Shopper and Power Shoppers (Nov 5) moved the games; cards-thieves covers them
       'trading.tipster', // under 3 holds when the Nov 5 deck moved the games (hidden behind Mannequin's line until it was cleared); cards-skips-b covers it
       'trading.pawnbroker', // under 3 holds when Victors left the grey deck (Nov 6) moved the games; replace12c and member-use cover it
+      'echo.impersonators', // under 3 holds once every member cost 4 more (Nov 5 evening) moved the games; cards-market-concepts and replace3 cover it
       'thieves.robinhood']); // under 3 holds when Sleepyheads and Lookouts joined Purple and Victors left (Nov 6) moved the games; cards-thieves covers it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);
