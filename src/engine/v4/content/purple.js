@@ -154,7 +154,7 @@ function skipNext(ctx, p, why, by = p, quiet = false, { token = false, last = fa
   if (token) task.token = true;
   // where the turn sat, a marker: the turn is really skipped when play reaches it (Gossip pays then); a token's marker
   // turns back into the turn if the token is taken first (the minion goes back to its owner's hand)
-  q.splice(i, 0, { t: 'content', p: p.id, h: 'purple.skipped', data: token ? { why, token: true, ...(at !== undefined ? { at } : {}) } : { why } });
+  q.splice(i, 0, { t: 'content', p: p.id, h: 'purple.skipped', data: token ? { why, by: by.id, token: true, ...(at !== undefined ? { at } : {}) } : { why, by: by.id } });
   q.splice(stop, 0, task);
   // its new place: after every other turn of the round's order still to come
   if (at !== undefined && at !== order.length - 1) {
@@ -286,7 +286,7 @@ function skipped(ctx, p, value, data) {
   }
   ctx.skipBeat(p, data?.why, () => {
     ctx.log(`${p.name}'s turn is skipped${data?.why ? ` (${data.why})` : ''}.`);
-    for (const o of ctx.state.players) for (const c of ctx.abilitiesOf(o)) for (const d of ctx.defsOf(c)) if (d.onSkip) ctx.asMember(o, c.def.name, () => d.onSkip(ctx, o, c, p));
+    for (const o of ctx.state.players) for (const c of ctx.abilitiesOf(o)) for (const d of ctx.defsOf(c)) if (d.onSkip) ctx.asMember(o, c.def.name, () => d.onSkip(ctx, o, c, p, data?.by));
   });
 }
 /** How many turns p still has to come this round, after the one now running. */
@@ -771,7 +771,11 @@ export default {
     // Name is Claude's fill-in.
     // +2 (Cory, Nov 1 8:25pm: option A; 19.5% held in the 200-game test, against 11% at +1)
     m('pocketwatch', 'Pocket Watch', 0, 0, 'Whenever a player’s turn is skipped, +2 purple.', { artifact: true,
-      onSkip(ctx, owner, card) { const got = ctx.gain(owner, 'purple', 2); if (got) ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Pocket Watch')}: +${got.n} ${got.color}.`); },
+      onSkip(ctx, owner, card, p, by) {
+        // POCKETWATCH=self<n>: bot test of "Whenever you skip a rival's turn, +n purple." (Nov 6; off in the game)
+        const own = String(globalThis.process?.env?.POCKETWATCH || '').match(/^self(\d+)$/);
+        if (own && (by !== owner.id || p === owner)) return;
+        const got = ctx.gain(owner, 'purple', own ? Number(own[1]) : 2); if (got) ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Pocket Watch')}: +${got.n} ${got.color}.`); },
     }),
     m('gossip', 'Gossip', 2, 2, /* Cory, Nov 5 backlog price yes */ 'Whenever a player’s turn is skipped, +1 follower.', { ...old13('busybody'),
       onSkip(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Gossip: +1 follower.`); },

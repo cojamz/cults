@@ -555,7 +555,10 @@ const silver = {
       onAnyGifted(ctx, owner, card, giver, once) {
         const k = once || `${ctx.state.moves}:${giver.id}`;
         if (card.catered === k) return;
-        card.catered = k; ctx.gain(owner, S, Number(globalThis.process?.env?.CATERER || 1)); // CATERER=n: bot test only (Nov 3)
+        // CATERER=self<n>: bot test of "Whenever you gift silver, +n silver." (own gifts only; Nov 6; off in the game)
+        const raw = String(globalThis.process?.env?.CATERER || '1'), self = raw.startsWith('self');
+        if (self && giver?.id !== owner.id) return;
+        card.catered = k; ctx.gain(owner, S, Number(raw.replace('self', '') || 1)); // CATERER=n: bot test only (Nov 3)
       },
     }),
     m('majordomo', 'Majordomo', 4, 2, 'Whenever you take a Silver space, +2 silver.', {

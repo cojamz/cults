@@ -2166,7 +2166,9 @@ export function releaseRefund(state, uid) {
  *  cult too since Cory, Nov 1 ("changes to B when any member goes to the bottom of the pile"). */
 function bottomBlue(state) {
   const ctx = ctxFor(state);
-  for (const p of state.players) for (const c of ctx.abilitiesOf(p)) if (c.def.bottomBlue) ctx.asMember(p, c.def.name, () => { const got = ctx.gain(p, 'blue', 1); if (got) ctx.log(`${p.name}'s ${c.def.name}: +${got.n} ${got.color}.`); }, c.uid);
+  // BARGAIN=self<n>: bot test only (Nov 6): pays only the player whose turn it is, +n
+  const own = String(globalThis.process?.env?.BARGAIN || '').match(/^self(\d+)$/);
+  for (const p of state.players) for (const c of ctx.abilitiesOf(p)) if (c.def.bottomBlue && (!own || state.current === p.id)) ctx.asMember(p, c.def.name, () => { const got = ctx.gain(p, 'blue', own ? Number(own[1]) : 1); if (got) ctx.log(`${p.name}'s ${c.def.name}: +${got.n} ${got.color}.`); }, c.uid);
 }
 function release(state, p, uid) {
   return underCause({ kind: 'release', pid: p.id, uid }, () => releaseNow(state, p, uid));

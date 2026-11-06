@@ -733,8 +733,9 @@ const trading = {
     // cloaks-rw, holders 22% → 27% Normal, 21% → 28% Hard, 22% → 34% Very Hard)
     m('changer', 'Money Changers', 2, 1, 'Whenever any player buys followers, +1 white (+2 if it\'s you).', { f: 2,
       onBuyFollowers(ctx, owner, card, buyer) {
-        if (globalThis.process?.env?.CHANGER === 'self' && buyer?.id !== owner.id) return; // CHANGER=self: bot test only (Nov 3)
-        const k = buyer?.id === owner.id && globalThis.process?.env?.CHANGER !== 'one' ? 2 : 1; // CHANGER=one: +1 on every buy, bot test only (Nov 4, with Most white)
+        const CH = globalThis.process?.env?.CHANGER || '';
+        if (CH.startsWith('self') && buyer?.id !== owner.id) return; // CHANGER=self: bot test only (Nov 3); self3: +3 (Nov 6)
+        const k = CH === 'self3' ? 3 : buyer?.id === owner.id && CH !== 'one' ? 2 : 1; // CHANGER=one: +1 on every buy, bot test only (Nov 4, with Most white)
         ctx.gain(owner, W, k);
         ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Money Changers')}: +${k} white.`);
       },

@@ -914,6 +914,9 @@ const thieves = {
     // 200-game test, against 39.5% for "any player steals"). Still once per steal instance.
     m('fence', 'Fence', 2, 2, 'Whenever a rival steals from you, +2 magenta.', {
       onSteal(ctx, owner, card, info) {
+        // FENCE=self<n>: bot test of "Whenever you steal, +n magenta." (own actions only; Cory Nov 6 question; off in the game)
+        const own = String(globalThis.process?.env?.FENCE || '').match(/^self(\d+)$/);
+        if (own) { if (info.thief !== owner || card.inst === info.instance) return; card.inst = info.instance; ctx.gain(owner, 'magenta', Number(own[1])); return; }
         if (info.victim !== owner || info.thief === owner || card.inst === info.instance) return;
         card.inst = info.instance; ctx.gain(owner, 'magenta', 2);
       },
