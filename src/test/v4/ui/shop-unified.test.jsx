@@ -36,7 +36,7 @@ it('all new Red members have distinct explicit portraits', () => {
 it('the "affordable" toggle fades the members you cannot pay for, and is remembered (Cory, 2026-10-18)', () => {
   let s = createGame({ seats: [{ name: 'You', kind: 'human' }, { name: 'Bo', kind: 'human' }], quadrants: ['gold','red','purple','echo'], seed: 51 });
   s.pending = null; s.queue = [{ t: 'buy', p: 0 }];
-  s.players[0].res = Object.fromEntries(s.resources.map(r => [r, 2]));
+  s.players[0].res = Object.fromEntries(s.resources.map(r => [r, 4])); // 4 each since every member cost 4 more (Nov 5 evening): 2 each afforded nothing
   s = resume(s);
   const optionFor = id => s.pending.options.find(o => o.id === id);
   const view = () => render(<ShopCards state={s} me={0} mySeats={[0]} optionFor={optionFor} onPick={() => {}} phase="buy" />);

@@ -119,6 +119,10 @@ describe('v4 format helpers', () => {
           const mid = turnStory(start, t, pid);
           if (mid) expect(mid.head).toMatch(new RegExp(`^${name} used \\S`));
           for (let j = 0; j < 20 && t.pending && t.pending.player === pid && t.pending.kind !== 'place'; j++) t = applyMove(t, chooseBotMove(t, () => 0.4));
+          // a use whose choice then changed nothing (Book Cookers answered "Keep your colors") is muted on screen like an
+          // idle one, so the head rightly says only what was taken (seen once every member cost 4 more, Nov 5 evening)
+          const sameAs = (x, y) => JSON.stringify([x.players[pid].res, x.players[pid].members, x.players[pid].bonus]) === JSON.stringify([y.players[pid].res, y.players[pid].members, y.players[pid].bonus]);
+          if (sameAs(start, t)) { s = applyMove(s, chooseBotMove(s, () => 0.4)); continue; }
           if (t.pending && t.pending.kind === 'place' && t.pending.player === pid) {
             const slot = t.pending.options.find(o => String(o.id).startsWith('slot:'));
             if (slot) {

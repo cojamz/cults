@@ -151,7 +151,9 @@ describe('panel words (w3)', () => {
     // picks the member, so a lone rival's ransom reads as what they'd pay, in their colors
     expect(seen.ransom.likely).toMatch(/^(?:up to )?\+\d+ \w+/);
     // (a card worth several members is named first: "Alchemists (+3 members), +3 followers", picky bot Nov 4)
-    expect(seen.ransom.best).toMatch(/^(?:\+\d+ (magenta|member)|[A-Z][\w' -]* \(\+\d+ members\))/);
+    // since every member cost 4 more (Nov 5 evening) the best case can be the payment itself, in the rival's colors
+    // ("+3 white, +4 purple"), when the member is worth less than its price
+    expect(seen.ransom.best).toMatch(/^(?:\+\d+ (magenta|member|gold|red|purple|silver|yellow|blue|white|green)|[A-Z][\w' -]* \(\+\d+ members\))/);
     expect(seen.ransom.best).not.toBe(seen.ransom.likely);
     for (const y of Object.values(seen)) expect(JSON.stringify(y)).not.toMatch(/depends on|−-/);
   }, 120000);
