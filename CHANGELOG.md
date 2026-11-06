@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.662 — 2026-11-06
+
+- The middle card is readable: each payout on the line of what caused it, no repeats, lines one at a time with time to read them; the shop refills before the next turn, dealt in one smooth slide
+
 ## v0.99.661 — 2026-11-06
 
 - Round-end contests count up and pay out without stutters: the wheel's rim words no longer redraw as each contest lights up
