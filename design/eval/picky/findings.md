@@ -14,9 +14,9 @@ both looks was clean. The rest are by eye from the shots.
 
 - **A last note covers the results headline.** "Your Sore Loser: you won no contest; steals 5 followers from P2." sat
   over "P3 wins with 96 followers" as the results opened. On the results screen the note now shows at the foot.
-  **fixed (this run)**
+  **fixed (v0.99.642)**
 - **Peek's header says "then Done" while the button reads "Keep this order".** The button only says Done once you've
-  moved a card. Now "then Done, or keep this order." **fixed (this run)**
+  moved a card. Now "then Done, or keep this order." **fixed (v0.99.642)**
 - **Sore Loser's note reads "you won no contest; steals 5 followers"** (no one doing the stealing). Its log line is
   "<name>'s Sore Loser: <name> won no contest; steals …". **open** (wording)
 - **Emoji look: more members shown as things** (Cashier a receipt, Guest of Honor a medal, Martyrs a candle,
