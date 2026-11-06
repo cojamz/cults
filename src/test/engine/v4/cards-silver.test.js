@@ -5,6 +5,7 @@ import { describe, it, expect } from 'vitest';
 import { followers, resume, memberCount, contestTable, paymentPlan, applyMove } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, buy, linesNaming } from './cards-helpers.js';
+import { defById } from '../../../engine/v4/content/index.js';
 
 const Q = ['gold', 'red', 'silver', 'green'];
 const sc = o => sceneQ({ quadrants: Q, ...o });
@@ -104,10 +105,11 @@ describe('Silver members', () => {
     if (s.pending?.player === 1 && s.pending.kind === 'choose') s = move(s, s.pending.options[0].id);
     expect(S(s)).toBe(1);
   });
-  it('Debt Collectors: once per game, each rival gives you 2 silver if they have it', () => {
+  it('Debt Collectors: once per round, each rival gives you 2 silver if they have it', () => {
     let s = sc({ n: 3, res: [{}, { silver: 5 }, { silver: 1 }], members: [['silver.debtcollector']] });
     s = move(s, s.pending.options.find(o => o.kind === 'use').id);
     expect(s.players.map(p => p.res.silver)).toEqual([3, 3, 0]);
+    expect(defById('silver.debtcollector').activate).toBe('round'); // once per round (Cory, Nov 5 9:29pm)
   });
   it('High Society: counts as 2 members; whenever a rival takes a Silver space, +1 follower (Nov 4)', () => {
     let s = sc({ n: 3, res: [{ silver: 1 }, { silver: 5 }, { silver: 1 }], members: [['silver.highsociety']], queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 2 }, { t: 'turn', p: 0 }] });

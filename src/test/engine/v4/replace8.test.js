@@ -19,7 +19,7 @@ const opt = (s, re) => s.pending.options.find(o => re.test(o.id) || re.test(o.la
 describe('REPLACE8: the switch', () => {
   it("keeps the old cards' prices, worth and count, and retires the old cards", () => {
     const card = id => { const d = defById(id); return [d.s, d.w, d.f, d.n]; };
-    expect(card('silver.wellwishers')).toEqual(card('silver.debtcollector'));
+    expect(card('silver.wellwishers')).toEqual([5, 4, 2, 2]); // Debt Collectors' old price; Debt Collectors 1 cheaper since Nov 5 (Cory)
     expect(card('silver.usher')).toEqual(card('silver.polisher'));
     expect(card('silver.guestofhonor')).toEqual(card('silver.polisher'));
     expect(card('silver.socialites')).toEqual([5, 4, 2, 2]); // High Society's old price (5 + 2 since Nov 5)

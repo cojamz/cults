@@ -25,7 +25,6 @@ const HOSTESS_TEXT = {
   B: 'On Recruit and Round Start: give each rival 1 silver in round I, 2 in round II, 3 in round III. +1 follower per silver you give.',
   C: 'On Recruit and Round Start: give each rival 1 silver. +1 follower for each.', // Cory's pick 1, Nov 3 9:47pm
 };
-const DEBT_ROUND = globalThis.process?.env?.DEBTCOLL_ROUND === '1'; // trial switch (Cory, Nov 5: "maybe once per round?")
 const SOC_N = Number(globalThis.process?.env?.SOCIALITES_N || 1); // live at +1 since Nov 4 (trial switch kept)
 const WW_N = Number(globalThis.process?.env?.WELLWISHERS_N || 3); // trial switch: Well-Wishers' followers per move (Nov 4, c1 read weak)
 const others = (ctx, p) => ctx.rivals(p);
@@ -817,8 +816,8 @@ const silver = {
       },
       ...see(info => 3 * endsAhead(info).length),
     })),
-    m('debtcollector', 'Debt Collectors', 4, 3, `On Use, once per ${DEBT_ROUND ? 'round' : 'game'}: each rival gives you 2 silver, if they have it.`, { f: 2, n: 2, ...old8('silver.debtcollector'), ...old14('patronesses'), // worth 2 (Cory, Nov 1)
-      activate: DEBT_ROUND ? 'round' : 'game',
+    m('debtcollector', 'Debt Collectors', 4, 2, 'On Use, once per round: each rival gives you 2 silver, if they have it.', { f: 2, n: 2, ...old8('silver.debtcollector'), ...old14('patronesses'), // worth 2 (Cory, Nov 1); once per round, 4 silver + 2 any (Cory, Nov 5 9:29pm)
+      activate: 'round',
       onActivate(ctx, owner) {
         let n = 0;
         for (const o of others(ctx, owner)) {

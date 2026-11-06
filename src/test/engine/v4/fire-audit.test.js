@@ -190,7 +190,7 @@ const ALLOW = {
   // changes no number, so there is no payout line to name it (v0.8.2 Red deck)
   // the Nov 1 balance numbers (Last Call, Customs Officer, Loyalists…) moved the seeded games: recruited in 1, as its owner's last
   // Silver's Nov 1 members: bots use it only when rivals together hold 2 silver each, which these games rarely gave (thread told)
-  'silver.debtcollector': 'On Use, once per game; a bot waits for rivals to hold silver (cards-silver: Debt Collectors)',
+  'silver.debtcollector': 'On Use, once per round; a bot waits for rivals to hold silver (cards-silver: Debt Collectors)',
   'yellow.puppeteer': 'new Nov 1; recruited in 2 seeded games without its moment (cards-yellow: Puppeteers)',
   'silver.guest': 'Hangers-On pays only when a rival gives its owner something; recruited once after Collector went to 6 (cards-silver: Hangers-On)',
   'red.recruiter': 'pays only when a member leaves a rival’s cult (Poach, a rival swap, a steal); rare in the sample (cards-red: Recruiter)',
