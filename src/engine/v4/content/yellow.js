@@ -9,7 +9,6 @@ import { add2, old2 } from './replace2.js';
 import { add5, old5 } from './replace5.js';
 import { add9, old9, handlers9, ON9 } from './replace9.js';
 import { on12, handlers12 } from './replace12.js';
-const LT2 = on12('leaderstax2');
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 import { swap14, handlers14 } from './replace14.js';
 import { add11, old11 } from './replace11.js';
@@ -162,7 +161,7 @@ export default {
       estimate: ctx => ctx.state.round + 2.5,
       resolve(ctx, p) { pickColors(ctx, p, ctx.state.round + 2, 'Harvest', true); },
     },
-    // REPLACE12=tagalong bot test (Nov 4, quality loop, lane D2; pitches/D2-batch1.md): Tag Along in Leaders' Tax's place.
+    // REPLACE12=tagalong bot test (Nov 4, quality loop, lane D2; pitches/D2-batch1.md): Tag Along in Leaders' Tax's (now Bandwagon's) place.
     // Counts the colors whose spaces hold at least one of the chosen rival's minions (joined spots count), as the table
     // sees them; nothing of the rival's changes.
     ...(on12('tagalong') ? [{
@@ -190,9 +189,12 @@ export default {
       // the better of two candidates in bot games, Normal 400 and Hard). Key kept for old saves and records.
       // Nov 4 (Claude, under Cory's go-with-your-gut, after his "anything that relies on a rival having more of resources
       // should be reworked"): it counts rivals' minions on a color's spaces, which the table always shows, not their piles.
-      key: 'transmute', ring: 1, name: "Leaders' Tax", text: LT2 ? 'Choose a color: +1 of it per minion on its spaces. +1 yellow.' : 'Choose a color: +1 of it per rival with a minion on its spaces. +1 yellow.',
-      estimate: (ctx, p) => 1 + Math.max(0, ...ctx.state.quadrants.map((q, qi) => taxCount(ctx, p, qi))),
-      resolve(ctx, p) { leadersTax(ctx, p); },
+      // Nov 5 (Cory: "Leaders tax should be renamed and should be +1 yellow per minion on the most occupied color"): every
+      // player's minions on the color whose spaces hold the most; a tie pays the same count. Your own minion counts,
+      // this one included when yellow is the busiest. No choice left. Name Claude's fill-in (was Leaders' Tax).
+      key: 'transmute', ring: 1, name: 'Bandwagon', text: "+1 yellow per minion on the busiest color's spaces. +1 yellow.",
+      estimate: (ctx, p) => 1 + busiest(ctx).n,
+      resolve(ctx, p) { bandwagon(ctx, p); },
     }]),
     {
       // New Blood (Claude, under Cory's go-with-your-gut, Nov 4; was Dilute, "+2 yellow, then change up to 3 of rivals'
@@ -290,13 +292,6 @@ export default {
         ctx.gain(p, Y, 1, { fromAction: true });
       },
     }),
-    taxColor(ctx, p, c) {
-      const n = taxCount(ctx, p, ctx.state.resources.indexOf(c));
-      if (n) ctx.gain(p, c, n, { fromAction: true });
-      const who = LT2 ? ['minion', 'minions'] : ['rival', 'rivals'];
-      ctx.log(`${p.name}'s Leaders' Tax: +${n} ${c} (${n === 1 ? `1 ${who[0]}` : `${n} ${who[1]}`} on its spaces).`);
-      ctx.gain(p, Y, 1, { fromAction: true });
-    },
     ...handlers1({
       barterWith(ctx, p, oid) {
         if (oid == null) { ctx.log(`${p.name}'s Barterers: swapped nothing.`); return; }
@@ -799,31 +794,29 @@ function colorsWith(ctx, o) {
   for (const [key, list] of Object.entries(st.squats || {})) if (list.includes(o.id)) qs.add(Number(key.split('-')[0]));
   return [...qs].sort((a, b) => a - b).map(qi => st.resources[qi]);
 }
-/** Leaders' Tax's count for a color: rivals on it, or every minion on it under REPLACE12=leaderstax2. */
-function taxCount(ctx, p, qi) {
-  if (!LT2) return rivalsOn(ctx, p, qi);
+/** Minions on the qi-th color's spaces, anyone's (joined spots count). */
+function minionsOn(ctx, qi) {
   const st = ctx.state; let n = 0;
   for (const key of Object.keys(st.slots || {})) if (key.startsWith(`${qi}-`)) n++;
   for (const [key, list] of Object.entries(st.squats || {})) if (key.startsWith(`${qi}-`)) n += list.length;
   return n;
+}
+/** Bandwagon: the busiest color (most minions on its spaces) and its count; tied colors are all named. */
+function busiest(ctx) {
+  const counts = ctx.state.resources.map((c, qi) => ({ c, n: minionsOn(ctx, qi) }));
+  const n = Math.max(0, ...counts.map(x => x.n));
+  return { n, colors: counts.filter(x => x.n === n).map(x => x.c) };
 }
 /** Common Ground: colors where you and at least one rival both have a minion. */
 function commonColors(ctx, p) {
   const mine = colorsWith(ctx, p), theirs = new Set(ctx.rivals(p).flatMap(o => colorsWith(ctx, o)));
   return mine.filter(c => theirs.has(c));
 }
-/** Leaders' Tax: rivals with at least one minion on the qi-th color's spaces (joined spots count). */
-function rivalsOn(ctx, p, qi) {
-  const st = ctx.state, ids = new Set();
-  for (const [key, pid] of Object.entries(st.slots || {})) if (key.startsWith(`${qi}-`)) ids.add(pid);
-  for (const [key, list] of Object.entries(st.squats || {})) if (key.startsWith(`${qi}-`)) for (const pid of list) ids.add(pid);
-  return ctx.rivals(p).filter(o => ids.has(o.id)).length;
-}
-function leadersTax(ctx, p) {
-  ctx.choose(p, `Leaders' Tax: which color? +1 of it per ${LT2 ? 'minion' : 'rival with a minion'} on its spaces.`, ctx.state.quadrants.map((q, qi) => {
-    const c = ctx.state.resources[qi], n = taxCount(ctx, p, qi);
-    return { id: `color:${c}`, label: `${c} (+${n})`, kind: 'color', value: c, hint: n * 2 - (p.res[c] || 0) * 0.1 };
-  }), 'yellow.taxColor');
+function bandwagon(ctx, p) {
+  const { n, colors: cs } = busiest(ctx);
+  if (n) ctx.gain(p, Y, n, { fromAction: true });
+  ctx.log(`${p.name}'s Bandwagon: +${n} yellow (${n} minion${n === 1 ? '' : 's'} on ${cs.join(' and ')}, the busiest).`);
+  ctx.gain(p, Y, 1, { fromAction: true });
 }
 function transmuteStep(ctx, p, data) {
   const cs = colors(ctx);

@@ -22,16 +22,22 @@ describe('Yellow actions', () => {
     for (let i = 0; i < 5; i++) s = move(s, 'color:gold');
     expect(R(s).gold).toBe(5);
   });
-  it("Leaders' Tax: choose a color, +1 of it per rival with a minion on its spaces, then +1 yellow (Nov 4)", () => {
+  it("Bandwagon (was Leaders' Tax): +1 yellow per minion on the busiest color's spaces, anyone's, then +1 yellow (Nov 5)", () => {
     let s = sc({ n: 4 });
-    // rivals 1 and 2 sit on gold's spaces (quadrant 0), rival 3 on red's; your own minion on gold doesn't count
-    s.slots = { '0-0': 1, '0-1': 2, '0-2': 0, '1-0': 3 };
+    // gold (quadrant 0) holds 3 minions, one of them yours and one joined; red 1; yellow gets yours when you take it
+    s.slots = { '0-0': 1, '0-1': 0, '1-0': 3 };
+    s.squats = { '0-0': [2] };
     s = take(s, 'yellow.transmute');
-    expect(s.pending.options.map(o => o.label)).toEqual(['gold (+2)', 'red (+1)', 'yellow (+0)', 'green (+0)']);
-    s = move(s, 'color:gold');
-    expect(R(s).gold).toBe(2);
-    expect(R(s).yellow).toBe(1);
-    expect(named(s, "Leaders' Tax").some(l => /\+2 gold \(2 rivals on its spaces\)/.test(l))).toBe(true);
+    expect(s.pending?.kind).not.toBe('choose'); // no choice left
+    expect(R(s).yellow).toBe(3 + 1);
+    expect(named(s, 'Bandwagon').some(l => /\+3 yellow \(3 minions on gold, the busiest\)/.test(l))).toBe(true);
+  });
+  it('Bandwagon: a tie pays the tied count once, and its own minion can make yellow the busiest', () => {
+    let s = sc({ n: 4 });
+    s.slots = { '0-0': 1, '1-0': 2 }; // gold 1, red 1, yellow 1 (yours): all tied at 1
+    s = take(s, 'yellow.transmute');
+    expect(R(s).yellow).toBe(1 + 1);
+    expect(named(s, 'Bandwagon').some(l => /1 minion on gold and red and yellow/.test(l))).toBe(true);
   });
   // New Blood and Big New Blood (Nov 4) replaced Dilute and Big Dilute: Gather's "this turn, if you recruit" shape
   const newBlood = (round, key, members, buyDef) => {

@@ -1,10 +1,10 @@
 // @vitest-environment node
 // Card quality loop, lane D2 (Nov 4; /mnt/project-files/quality/evals/gate/requalified/D2.md): the REPLACE12 cards that
 // requalified under "paper filters, play ranks". Turncoat in Deprogrammers' place, and rewords of the live card in its
-// own place (Deprogrammers, Bury, Leaders' Tax, Right Away). Set before the engine loads (dynamic imports), then cleared.
+// own place (Deprogrammers, Bury, Right Away). Set before the engine loads (dynamic imports), then cleared.
 import { describe, it, expect } from 'vitest';
 
-process.env.REPLACE12 = 'turncoat,buryfull,leaderstax2,rightaway2,snobsup';
+process.env.REPLACE12 = 'turncoat,buryfull,rightaway2,snobsup';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
@@ -47,17 +47,6 @@ describe('Bury, reworded: "...Gain blue equal to its cost. +1 blue."', () => {
     s = answer(s, s.pending.options.find(o => o.label.startsWith('Foster Parents')).id);
     expect(s.players[0].res.blue).toBe(6);
     expect(s.shop.some(u => s.cards[u].def === 'red.fosterparents')).toBe(false);
-  });
-});
-
-describe("Leaders' Tax, reworded: \"Choose a color: +1 of it per minion on its spaces. +1 yellow.\"", () => {
-  it('your own minion on Red counts beside the rival one', () => {
-    let s = table(['yellow', 'red', 'market', 'trading'], { round: 1 });
-    s.slots = { '1-0': 1, '1-1': 0, '2-0': 1 };
-    s = take(s, 'yellow.transmute');
-    s = answer(s, 'color:red');
-    expect(s.players[0].res).toMatchObject({ red: 2, yellow: 1 });
-    expect(named(s, "Leaders' Tax").join(' ')).toContain('+2 red (2 minions on its spaces).');
   });
 });
 

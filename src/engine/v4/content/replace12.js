@@ -8,7 +8,7 @@
 //   space: trading.stipend (Allowance) -> trading.pawnshop (Pawnshop), trading.lowprofile (Low Profile) or trading.pocketmoney (Pocket Money)
 //   space: yellow.transmute (Leaders' Tax) -> yellow.tagalong (Tag Along)
 //   space: purple.again (Right Away) -> purple.tradeplaces (Trade Places)
-//   rewords in place: buryfull (Bury gains its whole cost), leaderstax2 (Leaders' Tax counts every minion),
+//   rewords in place: buryfull (Bury gains its whole cost),
 //   commonground (Common Ground in Leaders' Tax's place), rightaway2 (Right Away +2/3/4), deprog2 (Deprogrammers steals),
 //   snobsup (Snobs: trading up), snobsround (Snobs: every Round End)
 const VAL = globalThis.process?.env?.REPLACE12 || '';
@@ -20,13 +20,13 @@ const REPLACES = {
   tagalong: 'yellow.transmute',
   tradeplaces: 'purple.again',
   // rewords of the live card in its own place (paper requalified, Nov 4)
-  buryfull: 'market.pricecheck', leaderstax2: 'yellow.transmute', commonground: 'yellow.transmute', rightaway2: 'purple.again',
+  buryfull: 'market.pricecheck', commonground: 'yellow.transmute', rightaway2: 'purple.again',
   pawnbrokers: 'trading.raider',
   deprog2: 'red.movementpenalty', snobsup: 'market.snob', snobsround: 'market.snob',
 };
 const MEMBERS = ['turncoat', 'exitcounselor', 'foundling'];
 /** Rewords change the live card in place, so they never retire it. */
-const REWORDS = new Set(['buryfull', 'leaderstax2', 'rightaway2', 'deprog2', 'snobsup', 'snobsround']);
+const REWORDS = new Set(['buryfull', 'rightaway2', 'deprog2', 'snobsup', 'snobsround']);
 export const ON12 = VAL === '1' ? MEMBERS : VAL.split(',').map(x => x.trim()).filter(k => REPLACES[k]);
 export const REPLACE12 = ON12.length > 0;
 /** Is the new card or space with this key switched on? */
