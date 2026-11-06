@@ -818,6 +818,7 @@ const silver = {
     })),
     m('debtcollector', 'Debt Collectors', 4, 2, 'On Use, once per round: each rival gives you 2 silver, if they have it.', { f: 2, n: 2, ...old8('silver.debtcollector'), ...old14('patronesses'), // worth 2 (Cory, Nov 1); once per round, 4 silver + 2 any (Cory, Nov 5 9:29pm)
       activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner) {
         let n = 0;
         for (const o of others(ctx, owner)) {
