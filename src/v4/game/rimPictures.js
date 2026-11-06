@@ -54,14 +54,49 @@ function letters(textEl) {
 const BASE = { middle: 'middle', central: 'middle', hanging: 'hanging', 'text-before-edge': 'top', 'text-top': 'top', 'text-after-edge': 'bottom', 'text-bottom': 'bottom', ideographic: 'ideographic' };
 const num = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
 
-function draw(textEl, box, px) {
+// Each letter painted once, upright, at twice the screen's resolution, then placed on its arc as a picture (Nov 6, Cor:
+// "animations are laggy"). The pixel face's letters are many little squares: stroking their dark edge straight onto
+// the arc, letter by letter at each letter's own angle, cost ~2 ms a letter (~8 ms at 4x CPU), so one rim's picture held
+// the page 0.3-0.5 s and a round redraws ~24 of them (8.7 s of a 40 s round I in Chrome). A letter's look (font, fill,
+// edge, case) and the screen's scale name it, so every rim and every redraw reuses it.
+const glyphs = new Map();
+const GLYPHS_MAX = 800;
+function glyph(l, ch, alpha, k) {
+  const c = l.tf(ch), S = Math.max(1, k * 2);
+  const key = `${l.font}|${l.fill}|${l.fillA}|${l.stroke}|${l.strokeA}|${l.sw}|${l.strokeFirst}|${l.base}|${alpha}|${S}|${c}`;
+  let sp = glyphs.get(key);
+  if (sp) return sp;
+  const cv = document.createElement('canvas');
+  let g = cv.getContext('2d', { willReadFrequently: true });
+  g.font = l.font; g.textBaseline = l.base; g.textAlign = 'left';
+  const m = g.measureText(c);
+  const pad = (l.stroke ? l.sw : 0) + 1;
+  const left = Math.max(0, m.actualBoundingBoxLeft || 0) + pad, right = Math.max(0, m.actualBoundingBoxRight || m.width || 0) + pad;
+  const up = Math.max(0, m.actualBoundingBoxAscent || 0) + pad, down = Math.max(0, m.actualBoundingBoxDescent || 0) + pad;
+  cv.width = Math.max(1, Math.ceil((left + right) * S)); cv.height = Math.max(1, Math.ceil((up + down) * S));
+  g = cv.getContext('2d', { willReadFrequently: true }); // resizing reset its state
+  g.setTransform(S, 0, 0, S, left * S, up * S);
+  g.font = l.font; g.textBaseline = l.base; g.textAlign = 'left';
+  const paint = which => {
+    if (which === 'stroke' && l.stroke && l.sw > 0) { g.globalAlpha = alpha * l.strokeA; g.strokeStyle = l.stroke; g.lineWidth = l.sw; g.lineJoin = 'round'; g.strokeText(c, 0, 0); }
+    if (which === 'fill' && l.fill) { g.globalAlpha = alpha * l.fillA; g.fillStyle = l.fill; g.fillText(c, 0, 0); }
+  };
+  if (l.strokeFirst) { paint('stroke'); paint('fill'); } else { paint('fill'); paint('stroke'); }
+  sp = { cv, ox: left, oy: up, w: cv.width / S, h: cv.height / S };
+  glyphs.set(key, sp);
+  while (glyphs.size > GLYPHS_MAX) glyphs.delete(glyphs.keys().next().value);
+  return sp;
+}
+
+async function draw(textEl, box, px) {
   const ls = letters(textEl);
   if (!ls) throw new Error('letters');
   const [x0, y0, w, h] = box;
   const W = Math.max(1, Math.ceil(w * px)), H = Math.max(1, Math.ceil(h * px));
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
-  const g = cv.getContext('2d');
+  // both canvases in memory, not on the graphics card: a few hundred small pictures each, read back once by toBlob
+  const g = cv.getContext('2d', { willReadFrequently: true });
   if (!g) throw new Error('no canvas');
   g.setTransform(W / w, 0, 0, H / h, -x0 * W / w, -y0 * H / h);
   const looks = new Map();
@@ -81,21 +116,20 @@ function draw(textEl, box, px) {
     return l;
   };
   const alpha = num(getComputedStyle(textEl).opacity, 1);
+  const k = W / w; // canvas pixels per board unit
+  g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'medium';
+  // letters not painted yet (the first rims of a game) cost a few ms each: give the page its frame back every ~8 ms
+  let t0 = performance.now();
   for (let i = 0; i < ls.length; i++) {
     const { ch, el } = ls[i];
     if (!ch || ch === ' ') continue;
+    if (performance.now() - t0 > 8) { await new Promise(ok => requestIdleCallback(ok, { timeout: 500 })); t0 = performance.now(); }
     let p, r;
     try { p = textEl.getStartPositionOfChar(i); r = textEl.getRotationOfChar(i); } catch { continue; }
-    const l = look(el);
+    const sp = glyph(look(el), ch, alpha, k);
     g.save();
     g.translate(p.x, p.y); g.rotate(r * Math.PI / 180);
-    g.font = l.font; g.textBaseline = l.base; g.textAlign = 'left';
-    const c = l.tf(ch);
-    const paint = which => {
-      if (which === 'stroke' && l.stroke && l.sw > 0) { g.globalAlpha = alpha * l.strokeA; g.strokeStyle = l.stroke; g.lineWidth = l.sw; g.lineJoin = 'round'; g.strokeText(c, 0, 0); }
-      if (which === 'fill' && l.fill) { g.globalAlpha = alpha * l.fillA; g.fillStyle = l.fill; g.fillText(c, 0, 0); }
-    };
-    if (l.strokeFirst) { paint('stroke'); paint('fill'); } else { paint('fill'); paint('stroke'); }
+    g.drawImage(sp.cv, -sp.ox, -sp.oy, sp.w, sp.h);
     g.restore();
   }
   return new Promise((ok, no) => cv.toBlob(b => (b ? ok(URL.createObjectURL(b)) : no(new Error('no picture'))), 'image/png'));

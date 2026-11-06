@@ -225,7 +225,7 @@ for (const phase of PHASES) {
     const t0 = Date.now();
     while ((await roundOf(page)) !== LATE && Date.now() - t0 < 6 * 60 * 1000) { await dismiss(page).catch(() => {}); await sleep(300); }
     await page.goto(url('trace=0'));
-    const cdp = await ctx.newCDPSession(page);
+    const cdp = await cdpOf(ctx, page);
     await cdp.send('Performance.enable');
     if (CPU > 1) await cdp.send('Emulation.setCPUThrottlingRate', { rate: CPU });
     await resume(page);
