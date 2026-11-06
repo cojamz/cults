@@ -1,6 +1,6 @@
 # Shorter member text (Nov 5)
 
-What I counted: the 110 members dealt in today's game (10-card decks, guests, cloaks). Their text averages 12 words, so single cards are not long. The load comes from three things:
+What I counted: the 110 members dealt in today's game (10-card decks, grey members, cloaks). Their text averages 12 words, so single cards are not long. The load comes from three things:
 - 35 members say "Whenever", and 17 of those pay when a rival does something, so you watch the whole table, not just your own turn.
 - 5 members print the same effect twice ("On Recruit: X. Round Start: X.").
 - Long conditions bolted onto simple effects ("costing 4 or less", "the rival with the most members", "before contests are scored").
@@ -49,7 +49,7 @@ Each played at 4 players. Numbers are today's.
 - Played: round III start. Today you count every rival's pile to find the target. After: you pick whom to rob, like every other steal card.
 - This also follows your Nov 3 rule ("anything that relies on a rival having more of resources should be reworked").
 
-**C5. Anarchist** (guest) "On Use, once per round: swap any 2 members, in any cult or the shop, that cost within 2 of each other." becomes "On Use, once per round: swap any 2 members that cost the same, in any cult or the shop."
+**C5. Anarchist** (grey) "On Use, once per round: swap any 2 members, in any cult or the shop, that cost within 2 of each other." becomes "On Use, once per round: swap any 2 members that cost the same, in any cult or the shop."
 - Played: round II. "Within 2" means checking two prices and doing math; "the same" is one look. It is weaker (fewer pairs), so it may need a lower price.
 
 ## D. Not proposed here, for later
