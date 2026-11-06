@@ -876,14 +876,10 @@ const silver = {
       },
       ...see(info => 3 * endsAhead(info).length),
     }),
-    m('patronsaints', 'Patron Saints', 5, 2, 'Round End: +1 follower per silver member, anyone’s.', { f: 2,
-      onAllPlaced(ctx, owner) {
-        const k = ctx.state.players.reduce((a, o) => a + ctx.countMembersOfColor(o, S), 0);
-        if (!k) return;
-        owner.bonus += k;
-        ctx.log(`${owner.name}'s Patron Saints: ${k} silver member${k === 1 ? '' : 's'} at the table: +${k} follower${k === 1 ? '' : 's'}.`);
-      },
-      ...see(info => 3 * endsAhead(info).length),
+    // Game End, cost 7 = 4 silver + 3 any as a player sees it (Cory, Nov 6 8:18pm Eastern: "Patron Saints is supposed to be
+    // game end!!", "and keep cost at 7")
+    m('patronsaints', 'Patron Saints', 3, 2, 'Game End: +1 follower per silver member, anyone’s.', { f: 2,
+      onGameEnd: ctx => ctx.state.players.reduce((a, o) => a + ctx.countMembersOfColor(o, S), 0),
     }),
     m('saint', 'Patron Saint', 4, 2, 'Game End: +1 follower per 2 silver members, anyone’s.', {
       onGameEnd: ctx => Math.floor(ctx.state.players.reduce((s, o) => s + ctx.countMembersOfColor(o, S), 0) / 2),
