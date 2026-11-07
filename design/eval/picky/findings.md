@@ -14,7 +14,7 @@ both looks was clean. The rest are by eye from the shots.
 
 - **Your hint shows under a rival's turn.** The headline read "P4's turn ···" (their story card in the middle) while
   the line under it said "…or use Anarchist or Party Crasher first" (both games, round III): a hint for you under
-  their name. The hint now waits until the headline is yours again. **fixed (this run)**
+  their name. The hint now waits until the headline is yours again. **fixed (v0.99.663)**
 - **The middle story card runs off the bottom of the screen** on a long rival turn (round III, P2 took Echo and copied
   three times: the card's last line "bought 1 follower (paid 1 magenta)" was cut at the screen's edge, shot
   table-g1-t08.png). **open** (for the coordinator: the animation thread's card)
