@@ -254,7 +254,10 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
       waiting.current = motionOK() && plan.total > 0 ? next : null;
       // the spotlight: while a rival's step plays, the seats it doesn't touch step back (cleared once the table is
       // caught up, below; your own steps never dim anything)
-      setSpot(null, rivalStep && plan.total > 0 && motionOK() ? spotSeats(plan, actor) : null);
+      // (the step that hands the turn to you keeps your seat lit: frame review, Nov 7, your seat sat dim on your turn)
+      const spot = rivalStep && plan.total > 0 && motionOK() ? spotSeats(plan, actor) : null;
+      if (spot && next.pending && mine.includes(next.pending.player)) spot.add(next.pending.player);
+      setSpot(null, spot);
       clearTimeout(capTimer.current);
       capFor.current = waiting.current && next.round >= 1 && next.round === prev.round ? next : null;
       show(next, !!waiting.current);
