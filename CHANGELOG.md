@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.672 — 2026-11-07
+
+- Online games show the other players' mouse cursors, each with their emoji and name.
+
 ## v0.99.671 — 2026-11-07
 
 - The shop's new members come off the pile face down, slide into their slots and turn face up there; a new round's row starts dealing sooner
