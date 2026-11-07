@@ -204,7 +204,8 @@ function report() {
   const avgOf = (rs, k) => mean(rs.map(r => r[k]).filter(x => x != null));
   const base = { s: avgOf(liveR, 's'), f: avgOf(liveR, 'f'), i: avgOf(liveR, 'i'), c: avgOf(liveR, 'c'),
     likes: avgOf(liveR.filter(r => CORY_LIKES.includes(r.name)), 'f'), dislikes: avgOf(liveR.filter(r => CORY_DISLIKES.includes(r.name)), 'f') };
-  const out = { games: gamesUsed, live: base, calibration: { judges: calN.length, agree: calOk, rows: cal }, cards: [] };
+  const liveCards = Object.entries(rows).filter(([k]) => !cands.has(k)).map(([name, r]) => ({ name, n: r.length, fun: avgOf(r, 'f'), strategic: avgOf(r, 's'), interacts: avgOf(r, 'i'), clear: avgOf(r, 'c') })).filter(c => c.n >= 3);
+  const out = { games: gamesUsed, live: base, liveCards, calibration: { judges: calN.length, agree: calOk, rows: cal }, cards: [] };
   for (const name of [...cands].sort()) {
     const r = rows[name] || [];
     const S = r.map(x => x.s).filter(x => x != null), F = r.map(x => x.f).filter(x => x != null);
