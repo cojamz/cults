@@ -13,9 +13,9 @@ Proposed: "Copy the On Recruit or Round Start of a rival's member. +1 green."
 Played: round II. Dee (Yellow) has Caravan ("On Recruit: +1 of each color. Round Start: +1 of each color."); Cal (Magenta) has Kidnapper ("On Recruit and at Round Start: steal a rival's cheapest member."). Ben takes Sample: copies Kidnapper and steals a rival's cheapest member. Live, the same, but cards that only say Round Start (Body Snatchers, Seat Filler, Late Risers) can't be copied.
 Choices: which member. Who feels it: the victim of the copied effect. Intuitive: one more word. Interacts: every color's Round Start cards. Powerful: same band. Its color: copying members, wider.
 
-## 2. Session Musicians (replaces Encore)
+## 2. Backup Singers (replaces Encore)
 Live Encore: [3 green + 4 any] "On Use, once per game: your next On Recruit happens twice."
-Proposed: **Session Musicians** "Round End: copy the Round End ability of a rival's member."
+Proposed: **Backup Singers** "Round End: copy the Round End ability of a rival's member."
 Played: round II end, 4 players. Ana (Red) has Mob ("Round End: +2 followers per rival with fewer red members than you."), Eve (White) has Recluse ("Round End: +2 followers per rival with more members than you."). Ben has 9 members, most at the table: Recluse pays him nothing, Mob counts his red members (2, more than two rivals): +4.
 Choices: which card, counted on Ben's own cult. Who feels it: no sting; the owner sees Green ride their engine. Ledger: Commission ("fire a rival's On Use") was refused for Silver on Oct 31 as off-theme; this is Green's own verb.
 Intuitive: one sentence. Fun: borrowing the table's best engine. Interacts: every color's Round End cards. Powerful: as strong as the best fit. Engine or counter: engine. Its color: copying a member's timing, new.
