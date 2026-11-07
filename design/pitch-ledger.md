@@ -365,3 +365,4 @@ Tags (✅ yes / ❌ no; ↔ and … uncounted): `too-strong` more power than its
 
 ## 2026-11-07 Cory: brainstorm missed cross-color relations
 Cory: "I think you used our brainstorm skill and didn't think about potential relation to other colors." Asked for a reference table of how each two colors can meet in theory, from contests and existing spaces, no members. Built: design/notes/color-pairs-2026-11-07.html (https://claude.ai/artifact/ARoYxsypdQ81pjaqx7JcFV). Next brainstorms start from this table's "opens up" lines.
+Nov 7 later: card review 2 rejected in full; do not resurface its defaults.

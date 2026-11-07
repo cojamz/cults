@@ -65,3 +65,4 @@ Why each rule in .claude/rules/working-with-cory.md exists, in Cory's words. Mov
 - 2026-11-07: Cory, on a review page republished mid-read: "You can't change it… it makes it confusing." New passes go on a new page, never over one he may be reading.
 - 2026-11-08 12:13am · Cory: "your ideas were fucking awful there its like you applied none of what we learned." (card review 1: Swap in round I when nobody holds members, a cloak giving followers, an awkward Debutantes). Rule: pitching.md step 6, every idea judged with the card-judging page and taste guide in writing, at the table's real state.
 - 2026-11-07: "replies even shorter please - and remember." Aim moved to 1 line; card changes shown as phone-friendly Was / Now pages.
+- 2026-11-07: Showed rejected card review 2 defaults on the coordinator's ask. Check the pitch ledger for a rejection before showing any idea again, even when asked by the coordinator.
