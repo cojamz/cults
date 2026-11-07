@@ -79,3 +79,19 @@ Testing thread cut R6-R8 (small, chooser's choice always one way, rare trigger; 
 
 ### R11. White member: "Whenever this member leaves your cult, recruit a member costing up to its cost, for free."
 - Martyrs' moment, paid with a recruit instead of followers (section 7: refilling is unpaid). Farewell "Cast out one of your members… gain followers equal to its cost." on it: followers and a free replacement. A rival taking it (Poach, Body Snatchers, Shake Down) refills you at once. Own cause: White's own cast-out spaces.
+
+## Round 4 (Cory wants ~30 tested cards across several tiers; bigger and simpler)
+
+Each played at round II and III, 4 players; numbers are fill-ins.
+
+- **R12 Red member: "Game End: +2 followers per member of your biggest color."** Red's deep-cult contest paid at the end. Round III cult of 4 red members: +8. Patriarch "Game End: +1 follower per 2 members you have." pays breadth at a quarter the rate. Who feels it: Yellow's wide players can't match; Red swaps aimed at your biggest color hurt.
+- **R13 Green member: "Round End: +2 followers per minion you have on Green spaces."** Green's own contest paid each round: 2 Green minions = +4 a round, 12 a game. Ballroom Dancers "+2 followers per minion on Silver spaces" is once per game. Rivals feel it as a reason to take Green spaces first.
+- **R14 Magenta member: "Whenever a rival steals from you, steal the same number from another rival."** The theft ripples on; Snitch "they lose 1 follower" punishes, this passes it on. A rare bend (a choice on another's turn) because the reaction only makes sense at that moment. Own cause: Magenta spaces in every game it's in.
+- **R15 Blue space, round II: "Recruit a member from the discard pile costing up to 6, for free. +1 blue."** The pile nothing takes from. Round II: the 6-cost member White cast out or Blue cleared, free; Recruit Twice "+3 blue, recruit an extra time" still makes you pay.
+- **R17 Purple member: "Round End: if you placed the round's last minion, recruit a member costing up to 5, for free."** Purple's contest paid with a body each round. Night Managers pays followers per purple member; Last-Minute Shopper "+3 blue, then you may recruit" makes you pay.
+- **R19 Silver member: "On Use, once per round: give a rival one of your members, then recruit a member costing up to 3 more, for free."** Silver's gifting as an upgrade. Who feels it: the receiver (a White player hates it; Blue likes it); Martyrs and Foster Parents fire. Gives a member, never a minion.
+- **R20 Silver space, round II: "Give each rival 2 silver from the bank. Recruit a member; your silver pays for any color."** Dump silver on rivals, then spend yours as anything. Fewest-silver contest moves both ways in one turn.
+- **R21 Yellow member: "Round End: recruit a shop member of a color none of your members have, costing up to 4, for free."** Yellow's wide contest, one free new color a round. Housewarming "+2 yellow. Recruit a shop member of a color none of your members have, costing up to 5, for free." as a member. Red's deep players feel the shop thinning.
+- **R22 Yellow space, round I: "+1 of each color you don't hold."** Round I: holding 2 colors in a 6-color game gives 4, every one a color you lack. Harvest "+3 in colors you choose" gives 3. Round III it shrinks as piles widen, a self-limiting catch-up.
+- **R24 White member: "Round End: if you have 3 or fewer members, +3 followers."** White's fewest-members goal paid each round: 9 a game for staying small. Recluse "+2 followers per rival with more members than you" reads rivals; this reads only you.
+- **R25 White space, round II: "Cast out any number of your members to the discard pile. +3 followers each."** Farewell "Cast out one of your members… gain followers equal to its cost." for one; this clears out a cult in one move. Round II with 3 spent members: +9 and a small cult for White's contest; Martyrs and Undertaker fire on each.
