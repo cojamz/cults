@@ -148,6 +148,7 @@ function lobbyView(room, code, playerId, { awaySince = new Map(), subAfterMs = S
     code, hostId: room.hostId ?? null, hostName: list.find(s => s.id === room.hostId)?.name || '', status, seed: room.seed ?? null,
     table: parseTable(room.table) ? { mode: room.tableMode || 'custom', quadrants: parseTable(room.table) } : null,
     swapCard: room.swapCard === true,
+    econ: room.econ === 'rich' ? 'rich' : 'today',
     players, seats: players.length, maxSeats: MAX_SEATS,
     canStart: isHost && status === 'lobby' && players.length >= MIN_SEATS, startHint,
     me: { playerId, seat: mine ? mine.seat : null }, isHost, subAfterMs,
@@ -572,6 +573,11 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
       await hostOnly('pick the swap card');
       await transport.update(base, { swapCard: !!on });
     },
+    /** Host: the economy setting ('today' by default, or 'rich'). */
+    async setEcon(v) {
+      await hostOnly('pick the economy');
+      await transport.update(base, { econ: v === 'rich' ? 'rich' : 'today' });
+    },
     async start() {
       await hostOnly('start');
       let tableWhy = '';
@@ -588,7 +594,7 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
         const quadrants = fitTable({ mode: r.table ? r.tableMode || 'custom' : 'classic', quadrants: parseTable(r.table) || [] }, list.length).quadrants;
         tableWhy = tableProblem(quadrants, list.length);
         if (tableWhy) return undefined;
-        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, rules: { roundDecks: 2, deck: 10, ...(r.swapCard === true ? { swapCard: true } : {}), contests: CONTESTS } });
+        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, rules: { roundDecks: 2, deck: 10, ...(r.swapCard === true ? { swapCard: true } : {}), ...(r.econ === 'rich' ? { econ: 'rich' } : {}), contests: CONTESTS } });
         setBotLevels(game, list.map(s => (s.kind === 'bot' ? s.bot : null))); // the level the host picked for each bot
         return {
           ...r, seats, seed, status: 'playing', startedAt: Date.now(), build: { ...BUILD },

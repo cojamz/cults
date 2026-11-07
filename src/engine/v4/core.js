@@ -268,8 +268,22 @@ const cloakDef = (d, q) => {
 export const cardDef = (state, uid) => {
   const d = defById(state.cards[uid].def), arts = state.artifacts;
   if (arts) for (const q in arts) if (arts[q] === uid) return cloakDef(d, q);
-  return d;
+  return state.rules?.econ === 'rich' ? richDef(d) : d;
 };
+/** The "Richer board, pricier members" setting (rules.econ 'rich'; Cory, Nov 7 economy test, the judges' pick; today's
+ *  prices stay the default): every member costs 1 more of its color and 1 more of any (grey: 2 more of any), and every
+ *  space gives 1 more of its color (gain, below). Cards that name a cost keep their printed numbers. */
+export const RICH = Object.freeze({ color: 1, any: 1, grey: 2, space: 1 });
+const richDefs = new WeakMap();
+function richDef(d) {
+  let r = richDefs.get(d);
+  if (!r) {
+    const grey = d.quadrant === 'guest' || d.quadrant === 'benders';
+    r = grey ? { ...d, w: (d.w || 0) + RICH.grey } : { ...d, s: (d.s || 0) + RICH.color, w: (d.w || 0) + RICH.any };
+    richDefs.set(d, r);
+  }
+  return r;
+}
 export { spacesOf }; // content/index.js
 export function actionAt(state, q, i) { return spacesOf(state, state.quadrants[q])[i]; }
 /** A space is open from its ring's round on, and shuts after its lastRound if it has one (Overtime: rounds I–II only, Cory 2026-10-15). */
@@ -1011,7 +1025,7 @@ function runTask(state, task) {
         if (state.openBar && qid === 'silver') for (const t of state.openBar) if (t.round === state.round && t.pid !== p.id) {
           const o = state.players.find(x => x.id === t.pid); o.bonus += 1; log(state, `${o.name}'s Open Bar: ${p.name} took a Silver space, +1 follower.`);
         }
-        econRun('space', { pid: p.id, color: quadrant(qid).resource, round: state.round }, () => a.resolve(ctx, p));
+        econRun('space', { state, pid: p.id, color: quadrant(qid).resource, delta: spaceDelta(state) }, () => a.resolve(ctx, p));
       });
       fCredit(state, mark, a.name);
       return out;
@@ -1943,16 +1957,21 @@ function buyFollowersNow(state, p, tier, chosen) {
 // Economy dials (content/price.js ECON, bot games only): the first gain of a space's own color to its taker, and the
 // first resource gain a cloak's ability pays, move by the dial. Today's numbers leave both untouched.
 const econ = { space: null, cloak: null };
-const econOn = kind => (kind === 'space' ? !!(ECON.space || ECON.spaceR) : !!ECON[kind]);
+// frame.delta: how much the first such gain moves (0 runs fn untouched)
 function econRun(kind, frame, fn) {
-  if (!econOn(kind)) return fn();
-  const was = econ[kind]; econ[kind] = { ...frame, paid: false };
-  try { return fn(); } finally { econ[kind] = was; }
+  if (!frame.delta) return fn();
+  const was = econ[kind], mine = econ[kind] = { ...frame, paid: false };
+  let out;
+  try { out = fn(); } finally { econ[kind] = was; }
+  // a space that prints none of its color still gives the extra (Richer: "every space gives 1 more of its color")
+  if (kind === 'space' && !mine.paid && mine.delta > 0 && mine.state) gain(mine.state, mine.state.players[mine.pid], mine.color, mine.delta, { fromAction: true });
+  return out;
 }
+const spaceDelta = state => ECON.space + (ECON.spaceR?.[state.round - 1] || 0) + (state.rules?.econ === 'rich' ? RICH.space : 0);
 function econAdjust(p, color, n, fromAction) {
   const s = econ.space, c = econ.cloak;
-  if (s && fromAction && !s.paid && s.pid === p.id && s.color === color) { s.paid = true; n = Math.max(0, n + ECON.space + (ECON.spaceR?.[s.round - 1] || 0)); }
-  if (c && !c.paid && c.pid === p.id) { c.paid = true; n = Math.max(0, n + ECON.cloak); }
+  if (s && fromAction && !s.paid && s.pid === p.id && s.color === color) { s.paid = true; n = Math.max(0, n + s.delta); }
+  if (c && !c.paid && c.pid === p.id) { c.paid = true; n = Math.max(0, n + c.delta); }
   return n;
 }
 const isCloak = (state, uid) => uid != null && !!state.artifacts && Object.values(state.artifacts).includes(uid);
@@ -2009,7 +2028,7 @@ function eachMemberOf(state, p, fn, keys) {
     for (const def of effectiveDefs(card, state)) {
       if (keys && !keys.some(k => def[k] !== undefined)) continue;
       const before = traceSnapshot(state), lines = state.log.length;
-      accounted(state, null, () => { const run = () => underCause({ kind: 'member', pid: p.id, uid, def: card.def }, () => tallied(state, p, uid, () => fn(wrap(state, card), def))); if (isCloak(state, uid)) econRun('cloak', { pid: p.id }, run); else run(); traceChanges(state, before, p, def); }, p.id, def.name);
+      accounted(state, null, () => { const run = () => underCause({ kind: 'member', pid: p.id, uid, def: card.def }, () => tallied(state, p, uid, () => fn(wrap(state, card), def))); if (isCloak(state, uid)) econRun('cloak', { pid: p.id, delta: ECON.cloak }, run); else run(); traceChanges(state, before, p, def); }, p.id, def.name);
       // Costumers (pool 7): say whose cloak it was
       if (worn.includes(uid) && state.log.length > lines) log(state, `${p.name}'s Costumers: wears ${state.players.find(o => o.artifact === uid)?.name}'s ${cardDef(state, uid).name}.`);
     }
@@ -2471,7 +2490,7 @@ function ctxFor(state) {
       // or the turn story called it "A member" (bug bash, Nov 1)
       const uid = uid0 ?? [...owner.members, ...(owner.artifact !== undefined ? [owner.artifact] : [])].find(u => { try { return cardDef(state, u).name === name; } catch { return false; } });
       const run = () => underCause({ kind: 'member', pid: owner.id, uid: uid ?? null, def: uid != null ? state.cards[uid].def : null }, () => tallied(state, owner, uid, fn));
-      const out = isCloak(state, uid) ? econRun('cloak', { pid: owner.id }, run) : run();
+      const out = isCloak(state, uid) ? econRun('cloak', { pid: owner.id, delta: ECON.cloak }, run) : run();
       traceChanges(state, before, owner, { name });
       return out;
     },
