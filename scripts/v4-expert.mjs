@@ -17,6 +17,7 @@ import {
   createGame, applyMove, followers, memberCount, memberPrice, cardDef, contestTable, turnRail, previewSpace,
   quadrant, shopSize, TIERS, roundWorkers, openSlots,
 } from '../src/engine/v4/index.js';
+import { scoringOf } from '../src/engine/v4/core.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
@@ -119,7 +120,9 @@ export function cardsMd(s) {
   const out = ['# Every card in this game', '', '## Spaces on the wheel', ''];
   s.quadrants.forEach(qid => {
     const q = quadrant(qid);
-    out.push(`### ${q.name} (${q.resource}). Contest: ${q.scoring.label}: ${q.scoring.counts || ''}`);
+    // the contest this table plays (rules.contests can replace a color's printed one), as the view and the engine count it
+    const sc = scoringOf(s, qid) || q.scoring;
+    out.push(`### ${q.name} (${q.resource}). Contest, every round: ${sc.label}: ${sc.counts || ''}`);
     for (const a of q.actions) out.push(`- ${a.name} (${['', 'outer ring, opens round I', 'middle ring, opens round II', 'center, opens round III'][a.ring]}): ${actionText(a)}`);
     out.push('');
   });
@@ -160,6 +163,18 @@ function youdWords(s, pid, q, i) {
   return bits.join('; ');
 }
 
+// The contests this seat wins if the round ended now, and what picking o changes (only the choice itself, not later steps).
+const contestWins = (st, id) => { const won = contestTable(st).filter(c => c.winners.includes(id)); return { n: won.reduce((a, c) => a + c.prize, 0), names: won.map(c => sphereName(c.qid)) }; };
+function contestSwing(s, p, o) {
+  if (!s.round || s.over || s.pending?.player !== p.id) return '';
+  let before, after;
+  try { before = contestWins(s, p.id); after = contestWins(applyMove(s, { player: p.id, option: o.id }), p.id); } catch { return ''; }
+  const same = before.n === after.n && before.names.join() === after.names.join();
+  if (same) return '';
+  const d = after.n - before.n;
+  return `if the round ended right after this: your contests ${d >= 0 ? '+' : ''}${d} followers (you'd win ${after.names.join(', ') || 'none'}; now ${before.names.join(', ') || 'none'})`;
+}
+
 export function renderOption(s, p, o, taskKind) {
   if (o.kind === 'slot') {
     const a = quadrant(s.quadrants[o.q]).actions[o.i];
@@ -185,7 +200,11 @@ export function renderOption(s, p, o, taskKind) {
   if (o.kind === 'pass') return taskKind === 'buy' || !o.label || /^pass$/i.test(o.label) ? 'Pass (recruit nothing)' : `Pass (${o.label.toLowerCase()})`; // a card's own decline label, e.g. "Give nothing"
   const extra = [];
   if (o.uid !== undefined && s.cards[o.uid]) extra.push(`${memberName(s, o.uid)}: ${cardDef(s, o.uid).text}`);
-  if (o.hint !== undefined && typeof o.hint !== 'object') extra.push(`value hint ${o.hint}`);
+  // The option's hint is a bot's tie-break (pick the color you hold least, swap a big pile for a small one), blind to
+  // contests, so judges read a swap that won a contest as -4 (idea pipeline tool-bugs.md, Nov 7). Show instead what the
+  // pick does to this seat's contest prizes if the round ended right after it.
+  const cw = contestSwing(s, p, o);
+  if (cw) extra.push(cw);
   return `${o.label}${extra.length ? ` — ${extra.join('; ')}` : ''}`;
 }
 
@@ -205,17 +224,19 @@ export function tableView(s, meId, full = false) {
     L.push(`    members: ${mem.join(', ') || 'none'}`);
   }
   if (round > 0) {
-    L.push('', 'THE WHEEL (each sphere is also a contest, scored at round end on what players hold right now; space texts are in cards.md, or run view --full)');
-    const ct = contestTable(s);
+    // contestTable lists the contests in scoring order (cloak order), not wheel order, so each rim finds its own by color
+    // (judges, idea pipeline Nov 7: the rim showed another color's contest, e.g. Blue "Most white")
+    const ct = contestTable(s), byQ = Object.fromEntries(ct.map(c => [c.qid, c]));
+    L.push('', `THE WHEEL (each color is also a contest, the same one every round, scored at round end on what players hold right now, in this order: ${ct.map(c => sphereName(c.qid)).join(', ')}; space texts are in cards.md, or run view --full)`);
     s.quadrants.forEach((qid, q) => {
-      const c = ct[q], lead = c.winners.length ? `leading: ${c.winners.map(id => s.players[id].name).join(' & ')}` : 'nobody scoring yet';
+      const c = byQ[qid], lead = c.winners.length ? `leading: ${c.winners.map(id => s.players[id].name).join(' & ')}` : 'nobody scoring yet';
       const rows = c.rows.filter(r => r.score > 0).map(r => `${s.players[r.player].name} ${r.count ?? r.score}`).join(', ');
       const spaces = quadrant(qid).actions.map((a, i) => {
         const key = `${q}-${i}`, who = s.slots[key], sq = s.squats?.[key] || [];
         const st = a.ring > round ? `dark till ${ROMAN[a.ring]}` : who === undefined ? 'OPEN' : `${s.players[who].name}${sq.length ? `+${sq.map(id => s.players[id].name).join(',')}` : ''}`;
         return full ? `\n    ${a.name} [${st}]: ${actionText(a)}` : `${a.name} [${st}]`;
       });
-      L.push(`${sphereName(qid)} — ${c.label} (${lead}${rows ? `; ${rows}` : ''}): ${spaces.join(full ? '' : ', ')}`);
+      L.push(`${sphereName(qid)} — contest ${c.label}${c.counts ? ` (counts ${c.counts})` : ''} (${lead}${rows ? `; ${rows}` : ''}): ${spaces.join(full ? '' : ', ')}`);
     });
     L.push('', `THE SHOP (${s.shop.length} face up; ${s.pile.length} in the pile)`);
     const me = s.players[meId];
