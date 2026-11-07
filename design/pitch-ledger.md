@@ -376,3 +376,4 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - Third list sent: sell a member back to the shop; lend a member until round end; buy a rival's member by paying them its cost; swap only with a bigger cult; shop in color rows.
 - Cory on the third list: "these aren't really blue and red interactions. they already inherently interacr.." Lesson: an interaction is one color's verb aimed at or paid by the other's contest (count vs one-color depth), not a generic shop or cult mechanic.
 - Fourth list sent: crossed ties; Blue double recruit of one color; Red whole-color swap; Blue clear paid by the deepest group's color.
+- Cory on the fourth list: crossed ties "no, ties need to be intuitive"; all four "bad… not understanding the exercise". Asked back whether the exercise is shared moments two colors both cause (his Martyrs example).
