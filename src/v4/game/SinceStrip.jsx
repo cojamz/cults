@@ -59,6 +59,14 @@ function FullRow({ e, state, hover, name }) {
     if (!el || !el.animate || !h || h.pid !== e.actor || Date.now() - h.gone > 900) return;
     const r = el.getBoundingClientRect();
     if (!r.width) return;
+    // with the next player's banner already up, the row fades in where it lands instead: a copy crossing the wheel, the
+    // seats and your cloak while their banner filled read as a stray card (frame review, Nov 7); and the flight never
+    // takes longer than Steady's
+    const dur = Math.min(300, Math.round(MO.storyFly));
+    if (document.querySelector('[data-turn-at="hub"]')) {
+      const a = el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: dur, easing: 'ease-out' });
+      return () => a.cancel();
+    }
     const sc = Math.max(0.5, Math.min(1.6, h.rect.width / r.width));
     const dx = h.rect.left + h.rect.width / 2 - (r.left + r.width / 2), dy = h.rect.top + h.rect.height / 2 - (r.top + r.height / 2);
     // a copy flies on the page's top layer (the list clips its own rows), and the row shows as it lands
@@ -74,7 +82,7 @@ function FullRow({ e, state, hover, name }) {
     Object.assign(ol.style, { margin: '0', padding: '0', listStyle: 'none', maxHeight: 'none', overflow: 'visible' });
     document.body.appendChild(g);
     el.style.opacity = '0';
-    const a = g.animate([{ transform: `translate(${dx}px,${dy}px) scale(${sc})` }, { transform: 'none' }], { duration: Math.round(MO.storyFly), easing: 'cubic-bezier(.3,.7,.3,1)' });
+    const a = g.animate([{ transform: `translate(${dx}px,${dy}px) scale(${sc})` }, { transform: 'none' }], { duration: dur, easing: 'cubic-bezier(.3,.7,.3,1)' });
     const done = () => { g.remove(); el.style.opacity = ''; };
     a.onfinish = done; a.oncancel = done;
     return done;
