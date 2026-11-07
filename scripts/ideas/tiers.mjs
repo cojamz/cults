@@ -82,23 +82,23 @@ const groups = TIERS.map(([k, title, sub]) => {
 }).join('');
 const liveHtml = liveFind ? `<h2>What judges said about the current game</h2><div class="live">${liveFind.split('\n').filter(l => l.trim() && !l.startsWith('#')).map(l => `<p>${esc(l.replace(/^- /, ''))}</p>`).join('')}</div>` : '';
 
-fs.writeFileSync(out, `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Card Ideas Tested</title><style>
+fs.writeFileSync(out, `<title>Card Ideas Tested</title><meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Public+Sans:wght@400;600&display=swap"><style>
 :root{--bg:#f7f4ec;--fg:#1f1c17;--mut:#6b6457;--card:#fffdf7;--line:#e2dccb;--acc:#7a4b12}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17150f;--fg:#efe9db;--mut:#a59d8c;--card:#211e17;--line:#3a352a;--acc:#e0a95a}}
 :root[data-theme="dark"]{--bg:#17150f;--fg:#efe9db;--mut:#a59d8c;--card:#211e17;--line:#3a352a;--acc:#e0a95a}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.45 system-ui,-apple-system,sans-serif}
-main{max-width:680px;margin:0 auto;padding:16px}h1{font-size:22px;margin:8px 0 4px}h2{font-size:18px;margin:28px 0 2px;color:var(--acc)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 'Public Sans',system-ui,-apple-system,sans-serif}
+main{max-width:680px;margin:0 auto;padding-block:16px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}h1,h2{font-family:'Young Serif',Georgia,serif;font-weight:400;text-wrap:balance}h1{font-size:28px;margin:8px 0 4px}h2{font-size:21px;margin:32px 0 2px;color:var(--acc)}
 .n{font-size:14px;color:var(--mut);font-weight:400}.sub,.intro{color:var(--mut);font-size:14px;margin:2px 0 10px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0}
 .slot{font-size:13px;color:var(--mut);display:flex;align-items:center;gap:6px}.dot{width:10px;height:10px;border-radius:50%;display:inline-block;border:1px solid var(--line)}
 .now{margin:4px 0}.price{color:var(--mut);font-size:13px;white-space:nowrap}.feel{margin:6px 0}.change{margin:4px 0;font-weight:600}
 .nums,.bots{font-size:13px;color:var(--mut);margin:4px 0}.live p{font-size:14px;margin:6px 0}
-</style></head><body><main>
+</style><main>
 <h1>Card ideas, tested</h1>
-<p class="intro">${cards.length} new cards, each played by AI judges in full games beside the current cards (judges didn't know which cards were new), rated for fun, real choice, how it ties colors together and how easy it is to track. Feel sets the tier; bot win rates are beside it, since costs can be tuned. Prices are fill-ins.</p>
+<p class="intro">${cards.length} new cards, played by AI judges in ${judges.games.length} full games of 3 and 4 players beside the current cards. Judges didn't know which cards were new. Each judge rated every card at the table for fun, real choice, how it ties colors together and how easy it is to track, and a reader went through every judge's notes on each card to set its tier. Feel sets the tier. The strongest bots' numbers sit beside it, since costs can be tuned. Prices are fill-ins.</p>
 ${groups}${liveHtml}
-</main></body></html>`);
+</main>`);
 if (jsonOut) fs.writeFileSync(jsonOut, JSON.stringify(cards.map(c => ({ name: c.name, pool: c.pool, tier: c.tier, score: c.score, judge: c.judge && { n: c.judge.n, fun: c.judge.fun, strategic: c.judge.strategic, interacts: c.judge.interacts, clear: c.judge.clear, split: c.judge.split }, bot: c.bot })), null, 1));
 const count = {}; cards.forEach(c => { count[c.tier] = (count[c.tier] || 0) + 1; });
 console.log(`${cards.length} cards: ${TIERS.map(t => `${t[0]} ${count[t[0]] || 0}`).join(', ')}`);
