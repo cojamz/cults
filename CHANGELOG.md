@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.669 — 2026-11-07
+
+- Out of Style's pick shows a member figure, the color's name and how many shop members go, instead of bare dots
+
 ## v0.99.668 — 2026-11-07
 
 - Wheel: Housewarming's space says up to 5, like its card; Picket Line, Foster Parents, Copyist, Guest of Honor, Duty Collector, Jack-of-All-Trades and Seamstress show a full picture in the shop
