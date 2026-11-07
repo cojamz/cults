@@ -218,16 +218,16 @@ const PAWN_SHOP = {
 };
 
 // Hand-Offs and Bequest (idea pipeline pool 3, Nov 7; bot games only): give one of your members to a rival (your pick
-// of member and rival; a gift, not a swap or a steal), then white on its printed cost (and Bequest's followers). No +1
-// white: White's spaces print their own, and these don't.
+// of member and rival; a gift, not a swap or a steal), then white on its printed cost (and Bequest's followers), then
+// the +1 white every White space prints (coordinator, Nov 7: a space must do something for a player with no members).
 // a bot gives the member worth least kept against what it pays, a little less for the followers the rival gets
 const giveValue = (ctx, p, c, each, f) => buryValue(ctx, p, c, each) + f * fv(ctx) - 0.4 * c.def.f;
 const giveSpace = (key, name, text, each, f) => poolSpace({
   key, copyDoesIt: true, ring: 2, name, text,
-  estimate: (ctx, p) => Math.max(0, ...ctx.membersOf(p).map(c => giveValue(ctx, p, c, each, f))),
+  estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => giveValue(ctx, p, c, each, f))),
   resolve(ctx, p) {
     const list = ctx.membersOf(p);
-    if (!list.length) { ctx.log(`${p.name}'s ${name}: no members to give.`); return; }
+    if (!list.length) { ctx.log(`${p.name}'s ${name}: no members to give.`); ctx.gain(p, W, 1, { fromAction: true }); return; }
     ctx.choose(p, `${name}: give which of your members to a rival?`, list.map(c => ({
       id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: giveValue(ctx, p, c, each, f),
     })), 'trading.handOff', { name, each, f });
@@ -244,8 +244,8 @@ const trading = {
   // White, reworked by Cory (2026-10-22, design/spheres/white-actions-draft-2026-10-22.md): "basically better
   // exchange for followers". The names are Claude's fill-ins.
   actions: [
-    giveSpace('handoffs', 'Hand-Offs', 'Give one of your members to a rival. Gain white equal to twice its cost.', 2, 0),
-    giveSpace('bequest', 'Bequest', 'Give one of your members to a rival. Gain white equal to its cost, +3 followers.', 1, 3),
+    giveSpace('handoffs', 'Hand-Offs', 'Give one of your members to a rival. Gain white equal to twice its cost. +1 white.', 2, 0),
+    giveSpace('bequest', 'Bequest', 'Give one of your members to a rival. Gain white equal to its cost, +3 followers. +1 white.', 1, 3),
     poolSpace({
       key: 'handouts', copyDoesIt: true, ring: 2, name: 'Handouts', text: 'Give up to 4 of your resources to rivals, split as you choose. +3 white per resource given. +1 white.',
       estimate: (ctx, p) => 1 + 2 * Math.min(4, Object.entries(p.res).filter(([c]) => c !== W).reduce((a, [, n]) => a + n, 0)),
@@ -363,18 +363,18 @@ const trading = {
   handlers: {
     // Hand-Offs / Bequest (pool 3): the member, then the rival (bots give to the rival with the fewest followers)
     handOff(ctx, p, uid, data) {
-      if (!p.members.includes(uid)) return;
+      if (!p.members.includes(uid)) { ctx.gain(p, W, 1, { fromAction: true }); return; }
       chooseRival(ctx, p, `${data.name}: give ${ctx.card(uid).def.name} to which rival?`, 'trading.handOffTo', { ...data, uid }, o => -ctx.followers(o));
     },
     handOffTo(ctx, p, oid, data) {
       const o = ctx.player(oid), uid = data.uid;
-      if (!o || !p.members.includes(uid)) return;
+      if (!o || !p.members.includes(uid) || !ctx.moveMember(uid, p, o)) { ctx.gain(p, W, 1, { fromAction: true }); return; }
       const name = ctx.card(uid).def.name, k = cost(ctx, uid);
-      if (!ctx.moveMember(uid, p, o)) return;
       ctx.log(`${p.name}'s ${data.name}: gives ${name} to ${o.name}.`);
       if (k * data.each) ctx.gain(p, W, k * data.each, { fromAction: true });
       if (data.f) p.bonus += data.f;
-      ctx.log(`${p.name}'s ${data.name}: +${k * data.each} white${data.f ? `, +${data.f} followers` : ''}.`);
+      ctx.gain(p, W, 1, { fromAction: true });
+      ctx.log(`${p.name}'s ${data.name}: +${k * data.each} white${data.f ? `, +${data.f} followers` : ''}, +1 white.`);
     },
     // idea pipeline pool 2: give resources to rivals, one at a time, for white (Cory, Nov 7: "playing around cash in")
     giveForWhite(ctx, p, v, data) {

@@ -2035,9 +2035,9 @@ function traceChanges(state, before, owner, def) {
 function eachMember(state, fn, keys) {
   for (const owner of state.players) eachMemberOf(state, owner, (card, def) => fn(owner, card, def), keys);
 }
-/** p's member with the discardPick flag (Pickers, pool 3) not yet used this round, or undefined. */
+/** p's member with the discardPick flag (Pickers, pool 3) not yet used this round, or undefined. Candidates only (d.pool), so no live card can reach it. */
 function pickerCard(state, p) {
-  return p.members.find(u => state.cards[u].pickRound !== state.round && effectiveDefs(state.cards[u]).some(d => d.discardPick));
+  return p.members.find(u => state.cards[u].pickRound !== state.round && effectiveDefs(state.cards[u]).some(d => d.discardPick && d.pool));
 }
 /** Name of p's member that carries a flag (a Doppelganger copying it reads as the copied card). */
 function flagName(state, p, flag) {

@@ -8,7 +8,7 @@ const RULES = [
   [/\b(top( \d+)?( (member|card)s?)? of the (pile|deck)|from the pile|draws? (a|the|from)|random(ly|ness)?|shuffle[sd]?|face[- ]down|hidden|secret(ly)?|look at)\b/i,
     'not public and certain (Cory, Nov 7: no pile draws, no randomness, all public information)'],
   [/\b(cheaper|costs? (\d+ )?less|discount)\b/i, 'a member price that changes as you play (verdict 23)'],
-  [/\btoken\b(?![^.]*Goes Last)/i, 'a token other than the Goes Last token (verdict 21: tokens come from Cory)'],
+  [/(?<!Goes Last )\btoken\b(?![^.]*Goes Last)/i, 'a token other than the Goes Last token (verdict 21: tokens come from Cory)'],
   [/\b(copies|copy|skip(s|ped)?|gift(s|ed)?)\b.*\brival'?s? (action|turn)/i, 'may lean on another color\'s verb (verdict 20): check it works without that color'],
   [/\b(Red|Green|Magenta|Blue|Purple|Silver|Yellow|White) (space|action|member)s?\b/, 'names a color\'s spaces or members: check it is the card\'s own color and works without the others'],
 ];

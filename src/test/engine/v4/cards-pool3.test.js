@@ -168,7 +168,7 @@ describe('White candidate spaces (round II)', () => {
   const Q = ['trading', 'market', 'yellow', 'purple'];
   const cases = [['trading.handoffs', 'Hand-Offs', 2, 0], ['trading.bequest', 'Bequest', 1, 3]];
   for (const [id, name, each, f] of cases) {
-    it(`${name}: give one of your members to a rival; white ${each === 2 ? 'twice' : 'equal to'} its cost${f ? ', +3 followers' : ''}`, () => {
+    it(`${name}: give one of your members to a rival; white ${each === 2 ? 'twice' : 'equal to'} its cost${f ? ', +3 followers' : ''}; +1 white`, () => {
       let s = sceneQ({ quadrants: Q, round: 2, n: 3, members: [['market.stylist', 'purple.secondwind']] });
       const u = uidOf(s, 'purple.secondwind', 0), c = price(s, u);
       s = take(s, id);
@@ -176,17 +176,17 @@ describe('White candidate spaces (round II)', () => {
       s = move(s, 'player:2');
       expect(s.players[2].members).toContain(u);
       expect(s.players[0].members).not.toContain(u);
-      expect(s.players[0].res.white).toBe(each * c);
+      expect(s.players[0].res.white).toBe(each * c + 1);
       expect(s.players[0].bonus).toBe(f);
-      expect(named(s, name)).toEqual([`P1's ${name}: gives Go-Getter to P3.`, `P1's ${name}: +${each * c} white${f ? `, +${f} followers` : ''}.`]);
+      expect(named(s, name)).toEqual([`P1's ${name}: gives Go-Getter to P3.`, `P1's ${name}: +${each * c} white${f ? `, +${f} followers` : ''}, +1 white.`]);
     });
   }
-  it('Hand-Offs and Bequest: a player with no members gives nothing and gains nothing', () => {
+  it('Hand-Offs and Bequest: +1 white; a player with no members gives nothing and still gets the +1', () => {
     for (const [id, name] of cases) {
       let s = sceneQ({ quadrants: Q, round: 2 });
       s = take(s, id);
-      expect(s.players[0].res.white).toBe(0);
-      expect(named(s, name)).toEqual([`P1's ${name}: no members to give.`]);
+      expect(s.players[0].res.white).toBe(1);
+      expect(named(s, name)).toEqual(expect.arrayContaining([`P1's ${name}: no members to give.`, `P1's ${name}: +1 white.`]));
     }
   });
 });
@@ -279,4 +279,12 @@ describe('Red candidates', () => {
       expect(named(r, name)).toEqual([]);
     });
   }
+});
+
+describe('Pool 3 flags stay off live cards', () => {
+  it('only a pool candidate carries discardPick (Pickers), and core reads it only on candidates', async () => {
+    const { allQuadrantIds, quadrant: q, guestMembers } = await import('../../../engine/v4/content/index.js');
+    const defs = [...allQuadrantIds().flatMap(id => q(id).members), ...guestMembers()];
+    expect(defs.filter(d => d.discardPick).map(d => [d.id, !!d.pool])).toEqual([['market.pickers3', true]]);
+  });
 });
