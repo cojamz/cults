@@ -52,3 +52,14 @@ Built on batch 1's takeaways (verdicts 27-32): each card makes its own moment ha
 - Round II, 4 players: you hold 3 silver; a rival saves 5 purple for a purple member. Trade: you 0 silver (leading fewest silver) and 3 purple; they 2 purple and 3 silver, which still pays the "any" part of a cost, not the purple part.
 - Who feels: the rival (their colors turn into silver).
 - Intuitive: one trade. Fun: a gift that's a sting. Interacts: whatever color the rival collects. Powerful: wins its contest and takes a color. Its color: Silver gives.
+
+Socialites withdrawn (Claude: added to make five, not one I'd defend). Replaced by:
+
+## 5b. Open House (Silver, round II space)
+"Each rival may recruit once now, in turn order. +2 followers per rival who does." (+1 silver inherent)
+- Silver gives; here it gives the scarce thing late in the game, a recruit. Shape that landed before: a gift that pays you per rival it helps (Hostesses).
+- Bends the no-choosing-on-another's-turn rule on purpose: each rival's choice is the card.
+- Both sides: a rival chasing most members, one color, or new colors recruits (and pays you 2); a rival chasing fewest members declines; a rival short on resources declines. Rivals recruit in turn order, so they race each other for the shop.
+- Round II, 4 players: two of three rivals recruit: +4 followers, and you still recruit on your own turn. Best other: Sweet Nothings "+3 silver. Give rivals up to 3 of your silver, split as you choose: +2 of any colors each."
+- Own cause: works in any game. Who feels: every rival decides.
+- Intuitive: yes. Fun: a table-wide offer. Interacts: Blue, Red, Yellow, White contests. Powerful: up to +6 followers. Engine or counter: engine for Silver's gifts. Its color: Silver gives a new thing.
