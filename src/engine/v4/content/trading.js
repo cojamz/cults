@@ -33,7 +33,7 @@ const W = 'white';
  *  rival with the fewest followers. */
 function giveForWhiteAsk(ctx, p, data) {
   const opts = [];
-  for (const o of ctx.rivals(p)) for (const [c, n] of Object.entries(p.res)) if (n > 0 && c !== W)
+  for (const o of ctx.rivals(p)) if (!data.once || !(data.to || []).includes(o.id)) for (const [c, n] of Object.entries(p.res)) if (n > 0 && c !== W)
     opts.push({ id: `give:${o.id}:${c}`, label: `${o.name} gets 1 ${c}`, kind: 'choice', value: [o.id, c], hint: n - 0.05 * ctx.followers(o) });
   if (!opts.length) return;
   opts.push({ id: 'done', label: 'Give no more', kind: 'done', value: 'done', hint: -10 });
@@ -256,6 +256,30 @@ const trading = {
     }, 'pool5'),
     giveSpace('handoffs', 'Hand-Offs', 'Give one of your members to a rival. Gain white equal to twice its cost. +1 white.', 2, 0),
     giveSpace('bequest', 'Bequest', 'Give one of your members to a rival. Gain white equal to its cost, +3 followers. +1 white.', 1, 3),
+    // idea pipeline pool 14 (Nov 7): variations of the judges' favorites. Charity Drive: Handouts at 2 white each. Care
+    // Packages: round I, up to 2, no rival gets more than 1. Hand-Me-Downs: round III, up to 2 members, no rival gets
+    // more than 1 (Done after the first); the +1 white once, at the end.
+    poolSpace({
+      key: 'charitydrive', copyDoesIt: true, ring: 2, name: 'Charity Drive', text: 'Give up to 4 of your non-white resources to rivals, split as you choose. +2 white per resource given. +1 white.',
+      estimate: (ctx, p) => 1 + 1.2 * Math.min(4, Object.entries(p.res).filter(([c]) => c !== W).reduce((a, [, n]) => a + n, 0)),
+      resolve(ctx, p) { ctx.gain(p, W, 1, { fromAction: true }); giveForWhiteAsk(ctx, p, { name: 'Charity Drive', max: 4, each: 2, given: 0 }); },
+    }, 'pool14'),
+    poolSpace({
+      key: 'carepackages', copyDoesIt: true, ring: 1, name: 'Care Packages', text: 'Give up to 2 of your non-white resources to rivals, no more than 1 each. +3 white per resource given. +1 white.',
+      estimate: (ctx, p) => 1 + 2 * Math.min(2, Object.entries(p.res).filter(([c]) => c !== W).reduce((a, [, n]) => a + n, 0)),
+      resolve(ctx, p) { ctx.gain(p, W, 1, { fromAction: true }); giveForWhiteAsk(ctx, p, { name: 'Care Packages', max: 2, each: 3, given: 0, once: true, to: [] }); },
+    }, 'pool14'),
+    poolSpace({
+      key: 'handmedowns', copyDoesIt: true, ring: 3, name: 'Hand-Me-Downs', text: 'Give up to 2 of your members to rivals, no more than 1 each. Gain white equal to twice their cost. +1 white.',
+      estimate: (ctx, p) => 1 + ctx.membersOf(p).map(c => giveValue(ctx, p, c, 2, 0)).sort((a, b) => b - a).slice(0, 2).filter(v => v > 0).reduce((a, b) => a + b, 0),
+      resolve(ctx, p) {
+        const list = ctx.membersOf(p);
+        if (!list.length) { ctx.log(`${p.name}'s Hand-Me-Downs: no members to give.`); ctx.gain(p, W, 1, { fromAction: true }); return; }
+        ctx.choose(p, 'Hand-Me-Downs: give which of your members to a rival?', list.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: giveValue(ctx, p, c, 2, 0),
+        })), 'trading.handOff', { name: 'Hand-Me-Downs', each: 2, f: 0, left: 2, to: [] });
+      },
+    }, 'pool14'),
     poolSpace({
       key: 'handouts', copyDoesIt: true, ring: 2, name: 'Handouts', text: 'Give up to 4 of your non-white resources to rivals, split as you choose. +3 white per resource given. +1 white.',
       estimate: (ctx, p) => 1 + 2 * Math.min(4, Object.entries(p.res).filter(([c]) => c !== W).reduce((a, [, n]) => a + n, 0)),
@@ -425,7 +449,17 @@ const trading = {
       ctx.recruit(p, uid, { free: true });
     },
     handOff(ctx, p, uid, data) {
-      if (!p.members.includes(uid)) { ctx.gain(p, W, 1, { fromAction: true }); return; }
+      if (data.member) {
+        if (!p.members.includes(uid)) return;
+        chooseRival(ctx, p, `${data.name}: give ${ctx.card(uid).def.name} to which rival?`, 'trading.handOffTo', { ...data, uid }, o => -ctx.followers(o));
+        return;
+      }
+      if (uid == null || !p.members.includes(uid)) { ctx.gain(p, W, 1, { fromAction: true }); return; }
+      if (data.to?.length) {
+        const opts = ctx.rivals(p).filter(o => !data.to.includes(o.id)).map(o => ({ id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers)`, kind: 'player', value: o.id, hint: -ctx.followers(o) }));
+        ctx.choose(p, `${data.name}: give ${ctx.card(uid).def.name} to which rival?`, opts, 'trading.handOffTo', { ...data, uid });
+        return;
+      }
       chooseRival(ctx, p, `${data.name}: give ${ctx.card(uid).def.name} to which rival?`, 'trading.handOffTo', { ...data, uid }, o => -ctx.followers(o));
     },
     handOffTo(ctx, p, oid, data) {
@@ -435,6 +469,20 @@ const trading = {
       ctx.log(`${p.name}'s ${data.name}: gives ${name} to ${o.name}.`);
       if (k * data.each) ctx.gain(p, W, k * data.each, { fromAction: true });
       if (data.f) p.bonus += data.f;
+      // idea pipeline pool 14: Hand-Off Artists (a member: no +1 white); Hand-Me-Downs (a second member, to another rival)
+      if (data.member) { ctx.log(`${p.name}'s ${data.name}: +${k * data.each} white.`); return; }
+      if (data.left > 1) {
+        ctx.log(`${p.name}'s ${data.name}: +${k * data.each} white.`);
+        const to = [...(data.to || []), o.id], list = ctx.membersOf(p);
+        if (list.length && ctx.rivals(p).some(r => !to.includes(r.id))) {
+          ctx.choose(p, `${data.name}: give another member to a different rival?`, list.map(c => ({
+            id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: giveValue(ctx, p, c, data.each, data.f),
+          })).concat({ id: 'none', label: 'Give no more', kind: 'pass', value: null, hint: 0 }), 'trading.handOff', { ...data, left: data.left - 1, to });
+          return;
+        }
+        ctx.gain(p, W, 1, { fromAction: true });
+        return;
+      }
       ctx.gain(p, W, 1, { fromAction: true });
       ctx.log(`${p.name}'s ${data.name}: +${k * data.each} white${data.f ? `, +${data.f} followers` : ''}, +1 white.`);
     },
@@ -442,7 +490,7 @@ const trading = {
     giveForWhite(ctx, p, v, data) {
       if (v !== 'done') {
         const [id, c] = v, o = ctx.player(id);
-        if ((p.res[c] || 0) > 0) { p.res[c]--; o.res[c] = (o.res[c] || 0) + 1; data.given++; ctx.gain(p, W, data.each); ctx.log(`${p.name}'s ${data.name}: gave ${o.name} 1 ${c}, +${data.each} white.`); }
+        if ((p.res[c] || 0) > 0 && !(data.once && (data.to || []).includes(id))) { p.res[c]--; o.res[c] = (o.res[c] || 0) + 1; data.given++; if (data.once) data.to = [...(data.to || []), id]; ctx.gain(p, W, data.each); ctx.log(`${p.name}'s ${data.name}: gave ${o.name} 1 ${c}, +${data.each} white.`); }
       }
       if (v === 'done' || data.given >= data.max) return;
       giveForWhiteAsk(ctx, p, data);
@@ -623,6 +671,37 @@ const trading = {
   members: [
     // idea pipeline pool 5 (Nov 7): members counted as the table counts them (a member worth 3 counts 3), this one
     // included. Round End before contests. Price a fill-in.
+    // idea pipeline pool 14 (Nov 7): variations. Hand-Off Artists: Hand-Offs as a once-per-round member (one of your other
+    // members). Anchorites: Hermits at 2 or fewer for +5. Wallflowers: fewest members at the table (ties count). Members
+    // counted as the table counts them. Prices are fill-ins.
+    pool(m('handoffartists', 'Hand-Off Artists', 3, 2, 'On Use, once per round: give one of your other members to a rival. Gain white equal to twice its cost.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid);
+        if (!list.length || !ctx.rivals(owner).length) { card.used = false; ctx.log(`${owner.name}'s Hand-Off Artists: no other member to give.`); return; }
+        ctx.choose(owner, 'Hand-Off Artists: give which of your other members to a rival?', list.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: giveValue(ctx, owner, c, 2, 0),
+        })), 'trading.handOff', { name: 'Hand-Off Artists', each: 2, f: 0, member: true });
+      },
+      botActivate: (ctx, owner) => ctx.membersOf(owner).some(c => c.def.key !== 'handoffartists' && giveValue(ctx, owner, c, 2, 0) > 3),
+    }), 'pool14'),
+    pool(m('anchorites', 'Anchorites', 2, 1, 'Round End: if you have 2 or fewer members, +5 followers.', {
+      onAllPlaced(ctx, owner) {
+        const n = ctx.memberCount(owner);
+        if (n > 2) return;
+        ctx.asMember(owner, 'Anchorites', () => { owner.bonus += 5; ctx.log(`${owner.name}'s Anchorites: ${n} member${n === 1 ? '' : 's'}, +5 followers.`); });
+      },
+      ...see(info => ((info.owner?.members.length || 0) <= 1 ? 4 : 1) * endsAhead(info).length), // BOTSEE: while the cult stays tiny
+    }), 'pool14'),
+    pool(m('wallflowers', 'Wallflowers', 2, 1, 'Round End: if no rival has fewer members than you, +4 followers.', {
+      onAllPlaced(ctx, owner) {
+        const n = ctx.memberCount(owner);
+        if (ctx.rivals(owner).some(o => ctx.memberCount(o) < n)) return;
+        ctx.asMember(owner, 'Wallflowers', () => { owner.bonus += 4; ctx.log(`${owner.name}'s Wallflowers: no rival has fewer members, +4 followers.`); });
+      },
+      ...see(info => 2 * endsAhead(info).length), // BOTSEE: about half the round ends
+    }), 'pool14'),
     pool(m('hermits', 'Hermits', 2, 1, 'Round End: if you have 3 or fewer members, +3 followers.', {
       onAllPlaced(ctx, owner) {
         const n = ctx.memberCount(owner);

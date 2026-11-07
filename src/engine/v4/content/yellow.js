@@ -174,19 +174,22 @@ const swapPairs = (ctx, p, o) => {
   for (const c of colors(ctx)) if (p.res[c] > 0) for (const t of colors(ctx)) if (t !== c && o.res[t] > 0) out.push([c, t]);
   return out;
 };
-const changeSpace = (key, name, max) => poolSpace({
-  key, ring: 2, name, text: `+2 yellow. Swap up to ${max} of your resources with a rival's, one for one, colors your choice. They +1 follower per resource swapped.`,
-  estimate: (ctx, p) => 2 + Math.max(0, ...ctx.rivals(p).map(o => swapPairs(ctx, p, o).map(([c, t]) => swapHint(p, c, t)).filter(h => h > 0).length ? 1 : 0)),
+// idea pipeline pool 14 (Nov 7) variations through opts: Pocket Change (round I, +1 yellow, 1 swap), Bazaar (round III,
+// up to 2 with each rival in seat order, each paid its followers)
+const changeSpace = (key, name, max, { ring = 2, plus = 2, each = false, text = null, tag = 'pool3' } = {}) => poolSpace({
+  key, ring, name, text: text || `+2 yellow. Swap up to ${max} of your resources with a rival's, one for one, colors your choice. They +1 follower per resource swapped.`,
+  estimate: (ctx, p) => plus + (each ? 1.5 : 1) * Math.max(0, ...ctx.rivals(p).map(o => swapPairs(ctx, p, o).map(([c, t]) => swapHint(p, c, t)).filter(h => h > 0).length ? 1 : 0)),
   resolve(ctx, p) {
-    ctx.gain(p, Y, 2, { fromAction: true });
+    ctx.gain(p, Y, plus, { fromAction: true });
     const rivals = ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'change') && swapPairs(ctx, p, o).length);
     if (!rivals.length) { ctx.log(`${p.name}'s ${name}: no resources to swap with a rival, so only the yellow.`); return; }
+    if (each) { moneyAsk(ctx, p, { name, max, o: rivals[0].id, n: 0, next: rivals.slice(1).map(o => o.id) }); return; }
     ctx.choose(p, `${name}: swap resources with which rival?`, rivals.map(o => ({
       id: `player:${o.id}`, label: `${o.name} (${heldTotal(o)} resources)`, kind: 'player', value: o.id,
       hint: Math.max(...swapPairs(ctx, p, o).map(([c, t]) => swapHint(p, c, t))) - 0.02 * ctx.followers(o),
     })), 'yellow.moneyWith', { name, max });
   },
-}, 'pool3');
+}, tag);
 function moneyAsk(ctx, p, data) {
   const o = ctx.player(data.o);
   const pairs = data.n < data.max ? swapPairs(ctx, p, o) : [];
@@ -197,9 +200,14 @@ function moneyAsk(ctx, p, data) {
 }
 function moneyDone(ctx, p, data) {
   const o = ctx.player(data.o);
-  if (!data.n) { ctx.log(`${p.name}'s ${data.name}: swaps nothing with ${o.name}.`); return; }
-  o.bonus += data.n;
-  ctx.log(`${p.name}'s ${data.name}: ${o.name} +${data.n} follower${data.n === 1 ? '' : 's'} (${data.n} swapped).`);
+  if (!data.n) ctx.log(`${p.name}'s ${data.name}: swaps nothing with ${o.name}.`);
+  else {
+    o.bonus += data.n;
+    ctx.log(`${p.name}'s ${data.name}: ${o.name} +${data.n} follower${data.n === 1 ? '' : 's'} (${data.n} swapped).`);
+  }
+  // Bazaar (pool 14): the next rival, each with its own up-to count
+  const next = (data.next || []).filter(id => swapPairs(ctx, p, ctx.player(id)).length);
+  if (next.length) moneyAsk(ctx, p, { ...data, o: next[0], n: 0, next: next.slice(1) });
 }
 
 export default {
@@ -221,6 +229,8 @@ export default {
       },
     }, 'pool5'),
     changeSpace('smallchange', 'Small Change', 2),
+    changeSpace('pocketchange', 'Pocket Change', 1, { ring: 1, plus: 1, tag: 'pool14', text: "+1 yellow. Swap 1 of your resources with a rival's, colors your choice. They +1 follower." }),
+    changeSpace('bazaar', 'Bazaar', 2, { ring: 3, each: true, tag: 'pool14', text: "+2 yellow. Swap up to 2 of your resources with each rival's, one for one, colors your choice. Each +1 follower per resource swapped." }),
     // idea pipeline pool 11 (Nov 7): each color you hold, one at a time, up to 3 of it into followers, 1 for 1 (bots turn the most);
     // the +1 yellow after, as printed.
     poolSpace({

@@ -197,6 +197,8 @@ function stealStep(ctx, p, data) {
   }
 }
 export const startSteal = (ctx, p, name, n, extra = {}) => stealStep(ctx, p, { name, left: n, each: [], picked: {}, unit: 1, ...extra });
+/** Pool 14's Protection Racket variations: member cards (Collections) or members beyond yours (Tall Poppies). */
+const racketCount = (ctx, p, o, by) => (by === 'cards' ? o.members.length : Math.max(0, ctx.memberCount(o) - ctx.memberCount(p)));
 const estimateSteal = (ctx, p, n, who = ctx.rivals(p)) => Math.min(n, who.reduce((s, o) => s + stealable(ctx, p, o), 0)) * 1.33;
 
 // Members a thief may take.
@@ -291,6 +293,17 @@ const thieves = {
           o => Math.min(cap || 99, ctx.memberCount(o), Object.values(o.res).reduce((a, b) => a + b, 0)) + 0.01 * ctx.followers(o));
       },
     }, 'pool1')),
+    // idea pipeline pool 14 (Nov 7): Protection Racket variations. Collections: member cards, one each, whatever they
+    // count as. Tall Poppies: members the rival has beyond yours (as the table counts them); 0 for a rival no bigger.
+    ...[['collections', 'Collections', 'Choose a rival. Steal 1 resource per member card they have. +1 magenta.', 'cards'],
+      ['tallpoppies', 'Tall Poppies', 'Choose a rival. Steal 1 resource per member they have more than you. +1 magenta.', 'more']].map(([key, name, text, by]) => poolSpace({
+      key, ring: 2, name, text,
+      estimate: (ctx, p) => estimateSteal(ctx, p, Math.max(0, ...ctx.rivals(p).map(o => racketCount(ctx, p, o, by)))),
+      resolve(ctx, p) {
+        chooseRival(ctx, p, `${name}: steal from which rival (1 per ${by === 'cards' ? 'member card they have' : 'member they have more than you'})?`, 'thieves.racket', { name, by },
+          o => Math.min(racketCount(ctx, p, o, by), Object.values(o.res).reduce((a, b) => a + b, 0)) + 0.01 * ctx.followers(o));
+      },
+    }, 'pool14')),
     {
       // Cory, 2026-10-27: "steal 3/4/5", split among rivals as you choose; the follower steal is gone
       key: 'pickpocket', ring: 1, name: 'Help Yourself', text: 'Steal 3 resources in round I, 4 in round II, 5 in round III.', noMagenta: true, // any rivals again (Cory, Nov 8: "Whenever you say steal, that's the inherent… meaning"); // no +1 magenta (Cory, 2026-10-29: "Help Yourself shouldnt give a magenta")
@@ -457,8 +470,9 @@ const thieves = {
   handlers: {
     middlemen(ctx, p, id, data) { const o = ctx.player(id); if (o && o !== p) ctx.asMember(p, 'Middlemen', () => autoSteal(ctx, p, o, 'Middlemen', data.n, true)); },
     racket(ctx, p, id, data) {
-      const o = ctx.player(id), n = Math.min(data.cap || 99, ctx.memberCount(o));
-      ctx.log(`${p.name}'s ${data.name}: ${o.name} has ${n} member${n === 1 ? '' : 's'}${data.cap ? ` (up to ${data.cap})` : ''}.`);
+      const o = ctx.player(id), n = Math.min(data.cap || 99, data.by ? racketCount(ctx, p, o, data.by) : ctx.memberCount(o));
+      if (data.by === 'more') ctx.log(`${p.name}'s ${data.name}: ${o.name} has ${n} member${n === 1 ? '' : 's'} more.`);
+      else ctx.log(`${p.name}'s ${data.name}: ${o.name} has ${n} member${data.by ? ' card' : ''}${n === 1 ? '' : 's'}${data.cap ? ` (up to ${data.cap})` : ''}.`);
       if (n) startSteal(ctx, p, data.name, ctx.stealCount(p, n, { say: true }), { only: [o.id], oneRival: true });
     },
     mug(ctx, p, id) { mugDo(ctx, p, ctx.player(id)); },
