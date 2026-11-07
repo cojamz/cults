@@ -2056,7 +2056,8 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // the results mount in the same commit the last round card leaves (its dismissal is a transition a commit behind):
   // never a frame of the bare table, or of a stale hover, between them (frame review, Nov 7)
   // (the table can still be playing the closing step under the card, a state behind: the shown state is the final one)
-  const overShown = (state.over || live0.over) && (!moment || closedMoment === moment);
+  // (scoringMoment: the round card's moment even while the closing step still plays, when `moment` reads null)
+  const overShown = (state.over && !moment) || (live0.over && (!scoringMoment || closedMoment === scoringMoment));
   const overState = state.over ? state : live0;
   const phase = overShown ? 'over' : moment ? 'reckon' : !pend ? 'wait' : pend.kind === 'pay' ? 'pay' : pend.kind === 'buy' ? 'buy' : pend.kind === 'place' ? 'place' : pend.kind === 'setup' ? 'setup' : 'choose';
   const yours = mine && !needHandoff;

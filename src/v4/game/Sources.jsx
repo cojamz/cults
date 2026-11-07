@@ -90,12 +90,13 @@ export default function FollowerBars({ state, meId, ranks = null }) {
                   {(() => {
                     const fits = t => g.n / max >= Math.max(0.075, (t.length + 4) * 0.0135);
                     const key = `${p.id}:${g.key}`;
-                    const words = [g.long, g.label, g.short].filter(t => t && fits(t)).slice(tight[key] || 0)[0];
+                    // the estimate's last word is the shortest name, tried even when it guesses no fit: the measure
+                    // below drops it to the bare number only if it really doesn't fit (frame review, Nov 7: bare "4",
+                    // "3", "2" parts said nothing without a hover)
+                    const fit = [g.long, g.label, g.short].filter(t => t && fits(t));
+                    const words = (fit.length ? fit : [g.short || g.label]).slice(tight[key] || 0)[0];
                     const num = words === g.label && g.labelNum ? g.labelNum : g.n;
-                    if (words) return <span className="src-lab" data-lab={key}>{`${words} `}<b className="num">{num}</b></span>;
-                    // too thin for any name: its shortest name still shows, the part widening to hold it (frame review,
-                    // Nov 7: bare "4", "3", "2" parts said nothing without a hover)
-                    return <span className="src-lab named" data-lab-named={key}>{`${g.short || g.label} `}<b className="num">{g.n}</b></span>;
+                    return words ? <span className="src-lab" data-lab={key}>{`${words} `}<b className="num">{num}</b></span> : <span className="src-lab bare"><b className="num">{g.n}</b></span>;
                   })()}
                 </Tip>
               ))}
