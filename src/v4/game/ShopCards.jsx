@@ -63,8 +63,8 @@ export function sortShop(state, uids, by = 'cost') {
 }
 /**
  * The row as it stands (w2b #40: "the shop re-sorts after every recruit, so cards jump under the pointer"): within a
- * turn, a card dealt to refill the row takes the place of the one that left, like a real market row, and nothing else
- * moves. The row re-sorts when the turn ends (and on a new round, the sort toggle or a reload), so the order you see
+ * round, a card dealt to refill the row takes the place of the one that left, like a real market row, and nothing else
+ * moves. The row re-sorts on a new round, the sort toggle or a reload (not each turn's end: frame review, Nov 7), so the order you see
  * follows the sort (blind testers, 2026-10-15: "sort: cost" kept a refill in the vacated slot, and a reload
  * reshuffled). prev = { key, uids }.
  */
@@ -161,8 +161,9 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
   const offers = (buying || picking) && pend.options.some(o => o.kind === 'card' || o.kind === 'tier' || /^(card|tier):/.test(String(o.id)));
   const choosing = buying || picking ? (offers ? 'shop' : 'elsewhere') : undefined;
   const steady = useRef(null);
-  // a turn's own key: state.turns grows by one as each turn starts (the engine's record of this round's turns)
-  const rowKey = `${sort}|${state.round}|${(state.turns || []).length}`;
+  // a round's own key: keyed by turn too, the row re-sorted as each turn ended and cards traded places with no buy in
+  // their slot (frame review, Nov 7); a refill takes the vacated slot all round
+  const rowKey = `${sort}|${state.round}`;
   const row = steadyOrder(steady.current, rowKey, sortShop(state, state.shop, sort));
   steady.current = { key: rowKey, uids: row };
   // Peek's 4 (and what you may recruit off the pile after): their own row, "Top of the pile", numbered in the order
