@@ -27,6 +27,10 @@ describe('fizzleNote: an action that found nothing is told to its player (Cory, 
     expect(fizzleNote("P1 couldn't afford anything.", 'P1')).toBe(null);
     expect(fizzleNote('P10 found no one.', 'P1')).toBe(null);
   });
+  it("Sore Loser's steal is a gain, Racket's empty contest a fizzle (frame review, Nov 7)", () => {
+    expect(fizzleNote("P1's Sore Loser: P1 won no contest; steals 5 followers from P2.", 'P1')).toBe(null);
+    expect(fizzleNote("P1's Racket: no contest led by a rival.", 'P1')).toBe('Your Racket: no contest led by a rival.');
+  });
 });
 
 import { tookSpace } from '../../../v4/game/fizzle.js';

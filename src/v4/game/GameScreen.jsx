@@ -1467,7 +1467,10 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     // An action or member of yours that found nothing to act on says so (Cory, Nov 5: "it needs to alert the player
     // rather than just move on"), once the move has landed, long enough to read.
     // "No rival's member…" says which space found nothing: "Sample: no rival's member…"
-    const fizzles = lines.flatMap(l => mySeats.map(id => { const f = fizzleNote(l, state.players[id].name, !humansHere), sp = f && tookSpace(lines, state.players[id].name); return f && sp && /^No\b/.test(f) ? `${sp}: ${f.charAt(0).toLowerCase()}${f.slice(1)}` : f; }).filter(Boolean));
+    // never a round-end line: the Reckoning tells those, after the contests (frame review, Nov 7: Sore Loser's steal
+    // toasted during the last turn, before any contest was scored)
+    const ends = lines.findIndex(l => /^Round \S+ ends\./.test(l));
+    const fizzles = (ends < 0 ? lines : lines.slice(0, ends)).flatMap(l => mySeats.map(id => { const f = fizzleNote(l, state.players[id].name, !humansHere), sp = f && tookSpace(lines, state.players[id].name); return f && sp && /^No\b/.test(f) ? `${sp}: ${f.charAt(0).toLowerCase()}${f.slice(1)}` : f; }).filter(Boolean));
     if (fizzles.length && !skipped) setTimeout(() => showToast(fizzles.join(' '), 3800), motionOK() ? played.total : 0);
 
     // A new minion travels from its leader to the space. The board never turns itself: a rival's move is marked

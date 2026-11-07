@@ -2,7 +2,8 @@
 // with no one to rob): the engine only logged it and the turn moved on. Cory, Nov 5 playtest: "if something like this
 // happens, it needs to alert the player rather than just move on". Read from the engine's own log line, so every
 // "nothing to do" the engine words this way is told, not just Sample's.
-const NOTHING = /\b(?:found no|found nothing|has nothing|gave nothing|changed nothing|swapped nothing|recruits nothing|turned nothing|takes none|does nothing|nothing to|nothing worth|none of|no (?:rival|shop|face-up|eligible|free|contest|members?|white|silver|turn|recruited|round I|one|extra|minions?|empty)\b)/i;
+// "no contest led" (Racket), never a bare "no contest": Sore Loser's steal says "won no contest; steals 5" (frame review, Nov 7)
+const NOTHING = /\b(?:found no|found nothing|has nothing|gave nothing|changed nothing|swapped nothing|recruits nothing|turned nothing|takes none|does nothing|nothing to|nothing worth|none of|no (?:rival|shop|face-up|eligible|free|contest led|members?|white|silver|turn|recruited|round I|one|extra|minions?|empty)\b)/i;
 
 /**
  * The note to show for a log line of name's that says it did nothing, or null. you: write it as "You"/"Your" (one
