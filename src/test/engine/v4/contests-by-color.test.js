@@ -61,15 +61,15 @@ describe('By color: White Fewest members (0 counts), Silver Fewest silver (Cory,
     const sc = s.players.map(p => w.score(ctx, p));
     expect(sc.every(n => n > 0 && n === sc[0])).toBe(true);
   });
-  it('Silver: fewest silver, at least 1 ("yes fewest silver")', () => {
+  it('Silver: fewest silver, 0 counts (Cory: "why at least one???")', () => {
     const s = g(); const ctx = contextFor(s);
-    s.players.forEach((p, i) => { p.res.silver = [0, 1, 3, 2][i]; });
+    s.players.forEach((p, i) => { p.res.silver = [0, 1, 3, 0][i]; });
     const f = scoringOf(s, 'silver');
-    expect(f.label).toMatch(/^Fewest silver/);
+    expect(f.label).toBe('Fewest silver');
     const sc = s.players.map(p => f.score(ctx, p));
-    expect(sc[0]).toBe(0);
-    expect(sc[1]).toBe(Math.max(...sc));
-    expect(sc[1]).toBeGreaterThan(sc[3]);
+    expect(sc[0]).toBe(Math.max(...sc));
+    expect(sc[0]).toBe(sc[3]);
+    expect(sc[1]).toBeGreaterThan(sc[2]);
   });
 });
 

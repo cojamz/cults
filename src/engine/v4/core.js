@@ -1240,7 +1240,7 @@ export function scoringOf(state, qid) {
     // because red can more easily adjust its members… and of course for red grey can count")
     // White Fewest members with 0 counting, Silver Fewest silver (Cory, 2026-11-07 11:31pm: "White fewest members can be 0",
     // "yes fewest silver"; contests are core: "Nailing these competitions down is a massive unlock for the game")
-    const fix = { white: 'members0', silver: 'fewest', red: 'oneColor', yellow: 'colors', ...(state.rules?.contestFix || {}) }; // Green ties split like every contest (Cory, Nov 3: "ties are split… like they already were…")
+    const fix = { white: 'members0', silver: 'fewest0', red: 'oneColor', yellow: 'colors', ...(state.rules?.contestFix || {}) }; // Green ties split like every contest (Cory, Nov 3: "ties are split… like they already were…")
     // Red: most red member cards, one each (Cory, Nov 3: "we should avoid a simply color held. maybe most red members?";
     // cards, not member weight, so one card that counts as 4 can't lock it). contestFix.red 'held' tries most red held.
     if (fix.red === 'cards') by.red = { label: 'Most red members', counts: 'your red member cards when the round ends (each card counts 1, Dabblers 2)',
@@ -1278,6 +1278,9 @@ export function scoringOf(state, qid) {
     if (fix.yellow === 'colors') by.yellow = { label: 'Most member colors', counts: 'the colors among your members when the round ends',
       score: (ctx, p) => { const have = state.quadrants.filter(q => countMembersOfColor(state, p, q, { cards: true, wild: false }) > 0).length;
         return Math.min(state.quadrants.length, have + p.members.filter(u => countsAsEveryColor(state, u)).length); } };
+    // Silver: plain Fewest silver, 0 counts (Cory, 2026-11-07 11:47pm: "why at least one???")
+    if (fix.silver === 'fewest0') by.silver = { label: 'Fewest silver', counts: 'the silver you hold when the round ends',
+      score: (ctx, p) => 1000 - (p.res.silver || 0), show: (ctx, p) => ({ count: p.res.silver || 0 }) };
     if (fix.white === 'members0') by.trading = { label: 'Fewest members', counts: 'your members when the round ends',
       score: (ctx, p) => 1000 - memberCount(state, p), show: (ctx, p) => ({ count: memberCount(state, p) }) };
     if (fix.white === 'net') by.trading = { label: 'Most white, minus 1 per member', counts: 'the white you hold minus your members, when the round ends',
