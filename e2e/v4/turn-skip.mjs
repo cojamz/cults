@@ -1,8 +1,8 @@
 // A skipped turn shows on the table (Cory, Nov 1: "it's not clear when a turn is skipped. we need to show it happening
-// with some UI component or emphases, and the pocket watch (or whatever) gain should occur when that animation
-// happens"). P1 holds Pocket Watch ("Whenever a player's turn is skipped, +2 purple.") and takes Hold Up ("The next
-// turn is skipped."): "Turn skipped" stands on the next player's seat, and Pocket Watch's purple lands only after it
-// shows, never with Hold Up's own purple.
+// with some UI component or emphases"). P1 takes Hold Up ("The next turn is skipped."): "Turn skipped" stands on the
+// next player's seat and the seat dims. P1 holds the Purple Cloak, which since Nov 6 pays only for its holder's own
+// actions ("Whenever you take the Goes Last token, +3 purple."; Cory: "you cant passively gain from it"): the skip pays
+// it nothing, so P1's purple stays where Hold Up left it.
 import { mkdirSync } from 'node:fs';
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 import { buildStamp } from './lib/stamp.mjs';
@@ -95,8 +95,8 @@ try {
     const end = firstUp ? changes.filter(([t]) => t >= firstUp[0] && t <= firstUp[0] + 1500).pop()[1] : afterSpace;
     console.log(`P1 purple: before ${p0}, after Hold Up ${afterSpace}, before the skip shows ${atTag}, settles at ${end}${firstUp ? `, first change at ${Math.round(firstUp[0] - seenAt)}ms after the tag` : ''}`);
     if (atTag !== afterSpace) errors.push(`purple rose before the skip showed (${afterSpace} → ${atTag})`);
-    if (end !== afterSpace + 2) errors.push(`Pocket Watch did not pay +2 with the skip (${afterSpace} → ${end})`);
-    else if (firstUp[0] - seenAt > 4000) errors.push('Pocket Watch paid long after the skip showed');
+    // the cloak pays only for its holder's own actions (Cory, Nov 6): a rival's skipped turn pays it nothing
+    if (end !== afterSpace) errors.push(`the Purple Cloak paid for a rival's skipped turn (${afterSpace} → ${end})`);
   }
   await ctx.close();
 } finally { await browser.close(); }
