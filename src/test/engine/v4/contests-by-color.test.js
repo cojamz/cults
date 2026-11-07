@@ -123,7 +123,7 @@ describe('By color: Yellow Most member colors (Cory, Nov 7: "For now we can make
   it('counts the colors in play among your members', async () => {
     const { table } = await import('./cards-helpers-b.js');
     const s = table(['red', 'market', 'yellow', 'silver'], { n: 2, rules: { contests: 'byColor' }, members: [['market.stylist', 'red.volunteer', 'red.mob'], ['red.intern', 'benders.dabblers']] });
-    s.rules = { ...(s.rules || {}), contests: 'byColor' };
+    s.rules = { ...(s.rules || {}), contests: 'byColor', contestFix: { yellow: 'colors' } }; // held as an option: back to full sets while Cory decides (Nov 7, "the person with the most members most likely wins")
     const y = scoringOf(s, 'yellow');
     expect(y.label).toBe('Most member colors');
     expect(y.score(contextFor(s), s.players[0])).toBe(2);

@@ -1240,7 +1240,7 @@ export function scoringOf(state, qid) {
     // because red can more easily adjust its members… and of course for red grey can count")
     // White Fewest members with 0 counting, Silver Fewest silver (Cory, 2026-11-07 11:31pm: "White fewest members can be 0",
     // "yes fewest silver"; contests are core: "Nailing these competitions down is a massive unlock for the game")
-    const fix = { white: 'members0', silver: 'fewest', red: 'oneColor', yellow: 'colors', ...(state.rules?.contestFix || {}) }; // Green ties split like every contest (Cory, Nov 3: "ties are split… like they already were…")
+    const fix = { white: 'members0', silver: 'fewest', red: 'oneColor', ...(state.rules?.contestFix || {}) }; // Green ties split like every contest (Cory, Nov 3: "ties are split… like they already were…")
     // Red: most red member cards, one each (Cory, Nov 3: "we should avoid a simply color held. maybe most red members?";
     // cards, not member weight, so one card that counts as 4 can't lock it). contestFix.red 'held' tries most red held.
     if (fix.red === 'cards') by.red = { label: 'Most red members', counts: 'your red member cards when the round ends (each card counts 1, Dabblers 2)',
