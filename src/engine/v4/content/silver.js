@@ -432,9 +432,10 @@ const silver = {
     almoners(ctx, p, id, data) {
       const o = ctx.player(id);
       if (!o || o === p || !(p.res[S] > 0)) return;
-      if (giveTo(ctx, p, o, S, 1) === false) return;
+      // one gift event for the whole Round End (Caterer pays once; it looped one silver at a time, judge game p6-6301)
+      if (giveTo(ctx, p, o, S, 1, data.once || `almoners:${ctx.state.round}:${p.id}`) === false) return;
       p.res[S] -= 1;
-      almsStep(ctx, p, { n: data.n + 1, to: { ...(data.to || {}), [o.name]: ((data.to || {})[o.name] || 0) + 1 } });
+      almsStep(ctx, p, { once: data.once || `almoners:${ctx.state.round}:${p.id}`, n: data.n + 1, to: { ...(data.to || {}), [o.name]: ((data.to || {})[o.name] || 0) + 1 } });
     },
     giftExchange(ctx, p, uid) {
       if (uid == null) { ctx.log(`${p.name}'s Gift Exchange: recruits nothing.`); return; }
@@ -1031,7 +1032,7 @@ function almsStep(ctx, p, data) {
     return;
   }
   if (!data.n) return;
-  afterGive(ctx, p, S);
+  afterGive(ctx, p, S, data.once);
   p.bonus += data.n;
   ctx.log(`${p.name}'s Almoners: gave ${data.n} silver (${Object.entries(data.to).map(([k, v]) => `${v} to ${k}`).join(', ')}), +${data.n} follower${data.n === 1 ? '' : 's'}.`);
 }
