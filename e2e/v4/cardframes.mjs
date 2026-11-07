@@ -1,7 +1,7 @@
 // Every frame of the story card, through whole games (Cory, Nov 6: "they should be looking at EVERY FRAME. no???", on a
 // card with "copied Shake Down" twice and a bare "+1 +2" that judges sampling still frames never saw). A watcher reads the
 // middle card on every animation frame and fails on: a line said twice, a payout line with no cause (a bare "+1 …" that
-// isn't the card's first line), a line replaced or the card gone before its words could be read, and the card leaving
+// isn't the card's first line), a line replaced or the card gone before its lines could be read, and the card leaving
 // while the shop's new card is still being dealt ("the card played and resolved … before the shop had even refreshed").
 // V4_URL=<frozen build> node e2e/v4/cardframes.mjs   (CARD_GAMES=2, CARD_MIN=4 minutes per game)
 import { writeFileSync, mkdirSync } from 'node:fs';
@@ -37,8 +37,9 @@ for (let g = 0; g < GAMES; g++) {
     const finish = (now, why) => {
       if (!cur) return;
       if (cur.lines.length && clickAt >= cur.lines[cur.lines.length - 1].at) { cur = null; return; }
-      const last = cur.lines[cur.lines.length - 1];
-      if (last && !read(last.text, now - last.at)) fail('gone before read', `"${last.text}" up ${Math.round(now - last.at)}ms, needs ${Math.round(need(last.text))} (${cur.key}; ${why})`);
+      // every line has had its reading time before the card goes (lines show as their beats start, so two can come up
+      // close together; frame review, Nov 7): the card holds until the last of them has been read
+      for (const ln of cur.lines) if (ln && !read(ln.text, now - ln.at)) { fail('gone before read', `"${ln.text}" up ${Math.round(now - ln.at)}ms, needs ${Math.round(need(ln.text))} (${cur.key}; ${why})`); break; }
       const deal = why === 'gone' && document.querySelector('.lt-deal');
       if (deal) fail('ahead of the shop', `card left while the shop's new card was still being dealt (${cur.key}; deal ${Date.now() - Number(deal.dataset.born || 0)}ms old; top "${(document.querySelector('[data-prompt]')?.textContent || '').slice(0, 40)}"; phase ${document.querySelector('.app.game')?.dataset.phase}; yours ${document.querySelector('.app.game')?.dataset.yours}; modal ${!!document.querySelector('.pay-picker,.talk-card,.lt-reckon,.choice-panel,[role=dialog]')})`);
       cur = null;
@@ -62,10 +63,9 @@ for (let g = 0; g < GAMES; g++) {
           lines.forEach((t, i) => {
             const was = cur.lines[i];
             if (!was) {
-              const prev = cur.lines[i - 1];
-              if (prev && !read(prev.text, now - prev.at)) fail('next line too soon', `"${prev.text}" up ${Math.round(now - prev.at)}ms before "${t}", needs ${Math.round(need(prev.text))} (${key})`);
               cur.lines[i] = { text: t, at: now }; out.lines++;
-            } else if (was.text !== t && idOf(was.text, i) !== idOf(t, i)) { fail('line changed', `"${was.text}" became "${t}" (${key})`); cur.lines[i] = { text: t, at: now }; }
+            // (the space's own result folding into a copy's line, "copied Tryout: …", takes its place: GameScreen)
+            } else if (was.text !== t && idOf(was.text, i) !== idOf(t, i) && !(i === 0 && /^copied /.test(t))) { fail('line changed', `"${was.text}" became "${t}" (${key})`); cur.lines[i] = { text: t, at: now }; }
           });
           const seen = new Set();
           lines.forEach((t, i) => {

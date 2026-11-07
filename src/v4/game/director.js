@@ -20,7 +20,7 @@ import { playerColor, roman } from '../format.js';
 import { play } from '../sound.js';
 import { gainsBetween } from './gains.js';
 import { seatOrder } from './seats.js';
-import { stageRect, hubRect, stageShow, stageRelease, stageClear, stageDismiss, stageBusy, subscribeStage, stageItems, stagePlace, spaceRect, bubbleRect, stageLeave, HUB_MEMBER, clearOfStory, storyAtHub, noteDealEnd } from './stage.js';
+import { stageRect, hubRect, stageShow, stageRelease, stageClear, stageDismiss, stageBusy, subscribeStage, stageItems, stagePlace, spaceRect, bubbleRect, stageLeave, HUB_MEMBER, clearOfStory, storyAtHub, noteDealEnd, noteBeats } from './stage.js';
 import { panelText } from './panelText.js';
 import { quadrant, defById, cardDef, spacesOf, memberCount } from '../../engine/v4/index.js';
 import { seatEmoji } from '../format.js';
@@ -333,6 +333,9 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   const keep = [];
   let movePlace = null;
   let lastStart = null; // when the last beat that wasn't a rival's reaction began
+  // when each cause's beat starts: the story banner shows a beat's line then, not on a clock of its own (frame review,
+  // Nov 7: a line came 1.5-9 s after the coins it told had landed, and Hold Up's +4 before its minion had)
+  const beatAt = [], beatKind = [];
   for (const beat of beats) {
     const c = beat.cause, owner = owner0(c);
     // a turn passed over (Purple's skips), as play reaches it: "Turn skipped" stamps the seat whose turn it was, and
@@ -342,6 +345,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     if (c.kind === 'skip') {
       const s0 = Math.max(t, end - (rival ? 0 : MO.lead));
       at(s0, { op: 'skip', pid: c.pid, why: c.why || null, dur: MO.skipShow });
+      beatAt.push(s0); beatKind.push('skip');
       ends(s0 + MO.skipShow);
       hand = Math.max(hand, s0 + MO.skipShow * (2 / 3));
       t = s0 + Math.round(MO.skipShow * 0.6);
@@ -409,6 +413,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
         s += MO.choicePoint;
       }
     }
+    beatAt.push(s); beatKind.push(c.kind);
     let next = s;
     const isRecruit = c.kind === 'recruit' && m.cards.some(e => e.type === 'recruit');
     // a recruit: the card lifts (a rival's holds a beat: which card), the coins drop into it, then it flies to the crowd
@@ -593,6 +598,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
       a.at = w0;
     }
     end = W(end); hand = W(hand); t = W(t);
+    for (let i = 0; i < beatAt.length; i++) beatAt[i] = W(beatAt[i]);
   }
   // Dense chains tighten proportionally, preserving cause order within the existing turn-wait budget.
   // a longer plan plays faster to fit, never faster than Quick (half)
@@ -609,8 +615,9 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     const k = Math.max(room < cap ? Math.min(0.5, SPEEDS.quick / speedScale()) : 0.5, room / end);
     for (const a of atoms) { a.at = Math.round(a.at * k); if (a.dur) a.dur = Math.round(a.dur * k); if (a.lift) a.lift = Math.round(a.lift * k); if (a.rise) a.rise = Math.round(a.rise * k); if (a.wait) a.wait = Math.round(a.wait * k); for (const f of ['toHub', 'show', 'fromHub']) if (a[f]) a[f] = Math.round(a[f] * k); }
     end *= k; hand *= k; t *= k;
+    for (let i = 0; i < beatAt.length; i++) beatAt[i] *= k;
   }
-  return { atoms: atoms.sort((a, b) => a.at - b.at), total: end ? Math.round(end + (turnPasses ? MO.breath * pace : 0)) : 0, handoff: end ? Math.round(Math.max(hand, t)) : 0, turnPasses, pace };
+  return { atoms: atoms.sort((a, b) => a.at - b.at), total: end ? Math.round(end + (turnPasses ? MO.breath * pace : 0)) : 0, handoff: end ? Math.round(Math.max(hand, t)) : 0, turnPasses, pace, beats: beatAt.map(Math.round), beatKinds: beatKind };
 }
 
 // the table is behind (3+ steps waiting, useTable): the hold cap halves, and a step's show fits the shorter one
@@ -1252,6 +1259,9 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
   // hand-off: the beats already playing finish first (grammar S3, §5)
   const base = chainRunning() ? Math.max(chain.clock, chain.handoffAt || 0) : chain.clock;
   chain.handoffAt = base + (plan.handoff || plan.total);
+  // the banner's lines wait for these (GameScreen useReveal): each beat's start on the wall clock
+  const wall = Date.now() + Math.max(0, base - chain.clock);
+  noteBeats((plan.beats || []).map(x => wall + x), plan.beatKinds || []);
   // a member arriving in a crowd (a swap, a member taken) shows when its ghost lands, never before it leaves
   for (const a of plan.atoms) {
     // a recruit's new chip, too: a beat before it (Walk-In's red) must not show the member already home

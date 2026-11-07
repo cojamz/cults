@@ -197,6 +197,12 @@ export const takeHubGone = () => { const h = hubGone; hubGone = null; return h; 
 let readEnd = 0, dealEnd = 0;
 export const noteReadEnd = t => { readEnd = t; };
 export const readUntil = () => readEnd;
+// when each beat of the chain just started begins, on the wall clock (director.js playChain), counted so the banner can
+// tell a chain started by the step that brought its lines from an older one (frame review, Nov 7: lines came seconds
+// after the board had changed)
+let beats = { v: 0, at: [], kinds: [] };
+export const noteBeats = (at, kinds = []) => { beats = { v: beats.v + 1, at, kinds }; };
+export const chainBeats = () => beats;
 export const noteDealEnd = t => { if (t > dealEnd || t < Date.now()) dealEnd = t; };
 export const dealEndsAt = () => dealEnd;
 // deals still on screen (each card's picture until it lands): the next turn waits for none (Cory, Nov 6)

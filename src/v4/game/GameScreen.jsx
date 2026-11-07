@@ -70,7 +70,7 @@ import LaunderCard, { launderChoice } from './LaunderCard.jsx';
 import SwapCard, { swapChoice } from './SwapCard.jsx';
 import ArtifactDraft from './ArtifactDraft.jsx';
 import ActionStage from './ActionStage.jsx';
-import { stageClear, stageRelease, stageCenter, subscribeStage, stageItems, setStoryZone, storyAtHub, noteHubGone, readUntil, noteReadEnd, dealEndsAt, dealing } from './stage.js';
+import { stageClear, stageRelease, stageCenter, subscribeStage, stageItems, setStoryZone, storyAtHub, noteHubGone, readUntil, noteReadEnd, chainBeats, dealEndsAt, dealing } from './stage.js';
 import { Minion } from '../art/Leader.jsx';
 import { sameSeat } from './seatMemo.js';
 import { holdFlag } from './bodyFlag.js';
@@ -580,58 +580,149 @@ function useChainRunning(on) {
 // labelled with it, never a bare "+1" tied to nothing (every-frame check, Nov 6)
 const spaceOf = h => (String(h || '').match(/\btook (.+)$/) || [])[1] || null;
 const words = l => String(l || '').split(/\s+/).filter(Boolean).length;
-/** How many of a hub card's lines show: one at a time, each up long enough to read before the next (Cory, Nov 6: "this
- *  just isnt readbale. esp when updated so quickly"). Notes when the last will have been read (stage.js readUntil), so
- *  the next rival step and the card's leaving wait for it. */
-/** What a story line is about, so a later step that changes its numbers updates it in place (the space's own result,
- *  "Blue Cloak: …", "copied Shake Down: …") while anything new joins at the bottom. */
+/** What a story line is about, so a later step that changes its numbers is known as the same line (the space's own
+ *  result, "Blue Cloak: …", "copied Shake Down: …") while anything new joins at the bottom. */
 export const lineId = (l, i) => (i === 0 && /^[+−-]\d/.test(l) ? '#gain' : (l.match(/^([^:]{2,48}): /) || [])[1] || (l.match(/^used (.+)$/) || [])[1] || ((l.match(/^(.{1,30}?) [+−-]\d/) || [])[1] ? `who:${l.match(/^(.{1,30}?) [+−-]\d/)[1]}` : '') || ((l.match(/ from (\S+)$/) || [])[1] ? `from:${l.match(/ from (\S+)$/)[1]}` : '') || (l.match(/^(recruited|bought|released) ([^(,]+)/) || [])[0] || l);
 /** The hub card's lines in the order they first showed (Cory, Nov 6: "we should just SEE it get added"): a line never
  *  moves once it's up (the every-frame check saw "gave Window Shopper to P2" become "1, 1 from you" as a line was
- *  inserted above it). */
+ *  inserted above it). `shown`: how many were on screen at the last render. Returns { lines, ids }. */
 // what a turn's card has already shown, kept past the card itself: a card taken down and put back up in the same turn
 // (its place on the table changing) carries on where it was instead of starting its lines over, which read as the
 // turn happening twice (every-frame check, "lines went away", Nov 7)
 const cardMemo = new Map();
-const memoOf = key => {
-  if (!cardMemo.has(key)) { if (cardMemo.size > 40) cardMemo.delete(cardMemo.keys().next().value); cardMemo.set(key, { key, order: [], text: new Map(), k: 0 }); }
-  return cardMemo.get(key);
+const memoOf = (key, part, make) => {
+  if (!cardMemo.has(key)) { if (cardMemo.size > 40) cardMemo.delete(cardMemo.keys().next().value); cardMemo.set(key, {}); }
+  const m = cardMemo.get(key);
+  return m[part] || (m[part] = make(key));
 };
-function useStableLines(key, lines) {
+const linesMemo = key => ({ key, order: [], text: new Map(), told: new Map(), alias: new Map(), more: 0 });
+const revealMemo = key => ({ key, due: new Map(), read: 0, from: null });
+function useStableLines(key, lines, shown = 0) {
   'use no memo';
-  const ref = useRef({ key: null, order: [] });
-  if (ref.current.key !== key) ref.current = memoOf(key);
+  const ref = useRef(null);
+  if (!ref.current || ref.current.key !== key) ref.current = memoOf(key, 'lines', linesMemo);
+  const r = ref.current;
   const byId = new Map();
   lines.forEach((l, i) => { const id = lineId(l, i); if (!byId.has(id)) byId.set(id, l); });
-  // a line that turned into another (a steal's line growing as its payment lands) takes the old one's place
-  // and a line, once up, stays: the card is a log being written, so one the turn's later steps re-word keeps its words
-  // (the full row in the log has the turn's final wording)
-  const last = ref.current.text || (ref.current.text = new Map());
-  for (const [id, l] of byId) last.set(id, l);
-  const order = ref.current.order;
-  for (const id of byId.keys()) if (!order.includes(id)) order.push(id);
-  return order.map(id => last.get(id));
+  const slotOf = id => r.alias.get(id) ?? id;
+  // the space's own result folded into a copy's line ("+1 green", then "copied Tryout: +1 green +2 red"): the copy's
+  // line takes its place, so the gain isn't told twice (frame review, Nov 7: "Cover: +1 green" stayed above it)
+  if (r.order.includes('#gain') && !byId.has('#gain') && ![...byId.keys()].some(id => slotOf(id) === '#gain')) {
+    const copy = [...byId.keys()].find(id => /^copied /.test(id) && !r.order.includes(slotOf(id)));
+    if (copy) { r.alias.set(copy, '#gain'); r.told.set('#gain', null); }
+  }
+  const added = [];
+  for (const [id, l] of byId) {
+    const slot = slotOf(id);
+    if (!r.order.includes(slot)) { added.push(slot); r.text.set(slot, l); r.told.set(slot, l); continue; }
+    const was = r.told.get(slot);
+    if (was === l) continue;
+    r.told.set(slot, l);
+    // a line already up keeps its words; what a later step adds to it joins at the bottom as a line of its own
+    // ("copied Tryout: +3 red +2 pink"), shown as its coins fly (frame review, Nov 7: "+1 green +2 red" was rewritten
+    // to "+5 red +2 pink" under the reader, before the coins moved). A line not up yet, the merge above, or a change
+    // that isn't more of the same takes the new words in place.
+    const more = was != null && r.order.indexOf(slot) < shown ? grewBy(was, l) : null;
+    if (more === '') continue;
+    // (the same words as a line already up say it happened again: "Yellow Cloak again: +2 yellow", never one line twice)
+    const said = !!more && [...r.text.values()].includes(more);
+    const again = !said ? more : /^[^:]{2,48}: /.test(more) ? more.replace(/^([^:]{2,48}): /, '$1 again: ') : `${more} again`;
+    if (more) { const k = `${slot}~${(r.more += 1)}`; added.push(k); r.text.set(k, again); } else r.text.set(slot, l);
+  }
+  // a step's new lines join in the order its beats play (director.js planChain): the space's result first, then the
+  // recruit, buy or swap, then the members and cloaks that answer it (a cloak's +2 for a recruit read above the recruit,
+  // and showed before it; frame review, Nov 7)
+  const rank = id => (/^(#gain|copied |who:|from:)/.test(id) ? 0 : /^(recruited|bought|released|gave|took) /.test(r.text.get(id)) ? 1 : 2);
+  r.order.push(...added.map((id, i) => [id, i]).sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1]).map(([id]) => id));
+  return { lines: r.order.map(id => r.text.get(id)), ids: r.order };
+}
+// a run of signed amounts in a story line ("+1 green +2 red", "−1 follower")
+const AMTS = /(?:[+−-]\d+ [a-z]+ ?)+/;
+const amountsOf = s => {
+  const m = new Map();
+  for (const [, sg, n, w] of s.matchAll(/([+−-])(\d+) ([a-z]+)/g)) { const k = w.replace(/^followers$/, 'follower'); m.set(k, (m.get(k) || 0) + (sg === '+' ? 1 : -1) * Number(n)); }
+  return m;
+};
+/** What `now` adds to the story line `was`, as a line of its own ("copied Tryout: +3 red +2 pink (3 red, 2 pink from
+ *  P4)"); '' when it adds nothing to the amounts; null when it isn't the same line with more (it is re-worded in place). */
+export function grewBy(was, now) {
+  const tail = s => (s.match(/ \(([^()]*)\)$/) || [])[1] || '';
+  const body = s => s.replace(/ \([^()]*\)$/, '');
+  const a = body(was), b = body(now);
+  if (!AMTS.test(b) || a.replace(AMTS, '#') !== b.replace(AMTS, '#')) return null;
+  const x = amountsOf(a), y = amountsOf(b);
+  if ([...x.keys()].some(k => !y.has(k))) return null;
+  const out = [];
+  for (const [k, n] of y) {
+    const d = n - (x.get(k) || 0);
+    if (d < 0 || (d > 0 && n < 0)) return null;
+    if (d) out.push(`+${d} ${k === 'follower' ? `follower${d === 1 ? '' : 's'}` : k}`);
+  }
+  if (!out.length) return '';
+  return `${b.replace(AMTS, m => `${out.join(' ')}${m.endsWith(' ') ? ' ' : ''}`)}${tail(now) && !tail(was) ? ` (${tail(now)})` : ''}`;
 }
 
-function useReveal(key, lines, on) {
+/** How many of a hub card's lines show: each when its beat starts on the board (the chain the step that brought it
+ *  plays, director.js planChain's beats), never on a clock of its own (frame review, Nov 7: lines came 1.5-9 s after
+ *  the coins they told had landed). Every line still gets its reading time (storyLine, storyWord) before the next rival
+ *  step: noted as when the last will have been read (stage.js readUntil), which the next step and the card's leaving
+ *  wait for. */
+function useReveal(key, ids, lines, on) {
   'use no memo';
-  const total = lines.length;
-  const start = () => ({ key, k: Math.min(Math.max(1, memoOf(key).k), total) });
-  const [st, setSt] = useState(start);
-  const cur = st.key === key ? st : start();
-  const k = Math.min(cur.k, total);
-  const gapAfter = i => Math.max(MO.storyLine, words(lines[i]) * MO.storyWord);
-  useLayoutEffect(() => {
+  const ref = useRef(null);
+  if (!ref.current || ref.current.key !== key) ref.current = memoOf(key, 'reveal', revealMemo);
+  const r = ref.current;
+  const [, redraw] = useState(0);
+  const now = Date.now();
+  let k = 0;
+  while (k < ids.length && r.due.get(ids[k]) <= now) k++;
+  const sig = ids.join('\n');
+  // lines new in this commit wait for the chain it starts, which GameScreen plays in its own layout effect, after this one
+  useLayoutEffect(() => { if (on && r.from == null && ids.some(id => !r.due.has(id))) r.from = chainBeats().v; }, [key, sig, on]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
     if (!on) return undefined;
-    memoOf(key).k = Math.max(memoOf(key).k, k);
-    let left = 0;
-    for (let i = Math.max(0, k - 1); i < total; i++) left += gapAfter(i);
-    noteReadEnd(Date.now() + left);
-    if (k >= total) return undefined;
-    const t = setTimeout(() => setSt({ key, k: k + 1 }), gapAfter(k - 1));
+    const t0 = Date.now();
+    const fresh = ids.map((id, i) => [id, i]).filter(([id]) => !r.due.has(id));
+    if (fresh.length) {
+      const b = chainBeats();
+      // each line on the beat of its kind (the space's result and who else it paid on the space's beat, a recruit or buy
+      // on its own, each member or cloak on the next member's beat), never above a line before it; the rest on the last
+      // beat; a step that plays nothing shows its lines at once
+      const at = r.from != null && b.v > r.from ? b.at : [], kinds = b.kinds || [];
+      r.from = null;
+      let prev = Math.max(0, ...[...r.due.values()]), used = -1;
+      const beatOf = (id, text) => {
+        const want = /^(#gain|copied |who:|from:)/.test(id) ? ['space', 'move', 'guess'] : /^(recruited|bought|released|gave|took) /.test(text) ? ['recruit', 'buy', 'release', 'space', 'move'] : ['member', 'skip'];
+        const k = kinds.findIndex((x, n) => n > (want[0] === 'space' ? -1 : used) && want.includes(x));
+        const n = k >= 0 ? k : Math.min(used + 1, at.length - 1);
+        used = Math.max(used, n);
+        return at[n];
+      };
+      fresh.forEach(([id, i]) => {
+        const due = Math.max(prev, at.length ? beatOf(id, lines[i]) : t0);
+        r.due.set(id, due);
+        prev = due;
+        r.read = Math.max(r.read, due) + Math.max(MO.storyLine, words(lines[i]) * MO.storyWord);
+      });
+      noteReadEnd(r.read);
+    }
+    // (a line whose beat has already begun shows now: this render counted it as not yet timed)
+    let kNow = 0;
+    while (kNow < ids.length && r.due.get(ids[kNow]) <= Date.now()) kNow++;
+    if (kNow > k) { redraw(n => n + 1); return undefined; }
+    const next = Math.min(...ids.map(id => r.due.get(id)).filter(d => d > Date.now()));
+    if (!Number.isFinite(next)) return undefined;
+    const t = setTimeout(() => redraw(n => n + 1), next - Date.now() + 10);
     return () => clearTimeout(t);
-  }, [key, k, total, on]); // eslint-disable-line react-hooks/exhaustive-deps
-  return on ? k : total;
+  }, [key, sig, on, k]); // eslint-disable-line react-hooks/exhaustive-deps
+  // a chain skipped (a click, Space) or over: whatever it was still to play is on the board, so its lines are too
+  useEffect(() => onChainEnd(() => {
+    const t = Date.now();
+    let late = false;
+    for (const [id, d] of r.due) if (d > t) { r.due.set(id, t); late = true; }
+    if (late) redraw(n => n + 1);
+  }), []); // eslint-disable-line react-hooks/exhaustive-deps
+  return on ? k : ids.length;
 }
 
 /** True while `on`, and for a linger after it turns off: longer still while the shop's new card is landing or the
@@ -681,8 +772,10 @@ function TurnCard({ card, root, state, hub = false, keep = false, you = -1 }) {
   const [fitOf, setFit] = useState({ key: '', max: 5 });
   const MAXL = keep || hub ? Infinity : fitOf.key === fitKey ? fitOf.max : 5;
   const hubSpace = hub && card.text ? spaceOf(card.text.split(' · ')[0]) : null;
-  const hubLines = useStableLines(`${card.k || card.n}`, hub && card.text ? joinGoesLast(card.text.split(' · ').slice(1), hubSpace) : []);
-  const shownN = useReveal(`${card.k || card.n}`, hubLines, hub && !!card.text);
+  const shownWas = useRef(0);
+  const { lines: hubLines, ids: hubIds } = useStableLines(`${card.k || card.n}`, hub && card.text ? joinGoesLast(card.text.split(' · ').slice(1), hubSpace) : [], shownWas.current);
+  const shownN = useReveal(`${card.k || card.n}`, hubIds, hubLines, hub && !!card.text);
+  shownWas.current = shownN;
   // Where the card sits, written straight to its style in one layout effect (perf, 2026-10-15): as React state its place
   // and its lift cost every step one or two more commits of their own, each reading the layout again
   const box = useRef(null);
@@ -780,7 +873,7 @@ function TurnCard({ card, root, state, hub = false, keep = false, you = -1 }) {
       {!keep && !hub && !!card.text && <b className="tc-head">{head}</b>}
       {/* the banner names the space on its first line ("Sleep In: 🦖 +5"), or on a line of its own when the turn's first
           line is something else */}
-      {hub && !!card.text && <b className={`tc-head bn-head${hubLines.length && /^[+−-]\d/.test(hubLines[0]) ? ' bn-said' : ''}`}>{hubSpace || headOf(head)}</b>}
+      {hub && !!card.text && <b className={`tc-head bn-head${shownN > 0 && /^[+−-]\d/.test(hubLines[0]) ? ' bn-said' : ''}`}>{hubSpace || headOf(head)}</b>}
       {!keep && !hub && rest.map((l, k) => <span key={`${k}:${l}`} className="tc-line"><Rich text={l} /></span>)}
       {hub && hubLines.slice(0, shownN).map((l, k) => <span key={k} className="tc-line"><BannerLine line={k > 0 && /^[+−-]\d/.test(l) && (hubSpace || card.when) ? `${hubSpace || `${card.when[0].toUpperCase()}${card.when.slice(1)}`}: ${l}` : l} i={k} state={state} pid={card.pid} you={you} space={hubSpace} /></span>)}
       {/* what didn't fit opens on the "and N more" line, every line in its card (picky bot, Nov 4: "+3 more" with no way
