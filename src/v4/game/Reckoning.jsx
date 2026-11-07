@@ -34,7 +34,7 @@ export function reckonRows(info) {
   const roundNo = ['I', 'II', 'III'].indexOf(result.round) + 1;
   const scored = scoredStandings(after, roundNo);
   const base = scored || standings(board || after).map(st => ({ ...st, leaders: result.rows.find(r => r.qid === st.qid)?.winners || [] }));
-  return base.map(st => ({ qid: st.qid, rule: ruleWords(st.qid, st.rule), counts: st.counts || null, tiebreak: st.tiebreak || null, prize: st.prize ?? result.rows.find(r => r.qid === st.qid)?.v ?? 0, rows: st.rows, winners: st.leaders || [] }));
+  return base.map(st => ({ qid: st.qid, rule: ruleWords(st.qid, st.rule), counts: st.counts || null, tiebreak: st.tiebreak || null, prize: st.prize ?? result.rows.find(r => r.qid === st.qid)?.v ?? 0, rows: st.rows, winners: st.leaders || [], spoiled: st.spoiled ?? null }));
 }
 
 /**
@@ -293,10 +293,12 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
   };
   const resWords = m => Object.entries(m || {}).filter(([, n]) => n).map(([r, n]) => `${n < 0 ? '−' : '+'}${Math.abs(n)} ${r}`);
   const afterWords = r => r.rows.map(x => { const t = [x.shown ? `${x.shown < 0 ? '−' : '+'}${fol(Math.abs(x.shown))}` : null, ...resWords(r.res[x.id])].filter(Boolean); return t.length ? `${name(x.id)}: ${t.join(', ')}` : null; }).filter(Boolean).join(' · ');
-  const verdict = !row ? '' : row.kind === 'after' ? afterWords(row) : row.kind === 'bonus' ? `${name(row.pid)}: ${row.prize < 0 ? '−' : '+'}${fol(Math.abs(row.prize))} from ${row.rule}` : !row.winners.length ? 'no one scores'
+  const verdict = !row ? '' : row.kind === 'after' ? afterWords(row) : row.kind === 'bonus' ? `${name(row.pid)}: ${row.prize < 0 ? '−' : '+'}${fol(Math.abs(row.prize))} from ${row.rule}` : !row.winners.length ? (row.spoiled != null ? `${row.spoiled === meId ? 'Your' : `${name(row.spoiled)}’s`} Spoilsport: no one scores` : 'no one scores')
     : row.winners.length > 1 ? `${row.winners.map(name).join(' and ')} tie: +${fol(row.prize)} each`
     : `${name(row.winners[0])} ${row.winners[0] === meId ? 'win' : 'wins'} +${fol(row.prize)}${broke(row)}`;
   const shownBeat = step < rows.length ? beat : 2;
+  // a "Fewest" count stands at its value at once: rolling up from 0 it read as everyone's real count (frame review, Nov 7)
+  const fewest = !!(row && /\bfewest\b/i.test(row.rule || ''));
   return (
     <div className={`lt-reckon${ready ? '' : ' waiting'}`} role="dialog" aria-modal="true" aria-label={`Round ${info.result.round} reckoning`} data-reckon={row ? row.qid : ''} data-bonus-member={row?.kind === 'bonus' || row?.kind === 'after' ? row.uid : undefined} onClick={finish}>
       <div className={`reckon-head${mid ? ' at-mid' : atTop ? ' at-top' : ''}`} style={{ '--c': row && ready ? `var(--${row.qid})` : undefined, ...(mid ? { left: mid.left, top: mid.top, '--mid-w': `${mid.w}px` } : null) }} aria-live="polite">
@@ -317,7 +319,7 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
                 return (
                   <span key={`${row.qid}-${r.id}`} className={`rc${k < seen ? ' in' : ''}${won ? ' won' : ''}${lost ? ' lost' : ''}`} data-reckon-col={r.id} style={{ '--pc': playerColor(r.id) }}>
                     <span className="rc-who"><Minion emoji={seatEmoji(info.after, r.id)} color={playerColor(r.id)} size={22} /><span>{name(r.id)}</span></span>
-                    <b className="rc-n">{k < seen ? <Tick value={r.shown} from={0} className="num" float={false} dur={reduced ? 0 : MO.reckonTick} /> : <span className="num">0</span>}</b>
+                    <b className="rc-n">{k < seen ? <Tick value={r.shown} from={fewest ? r.shown : 0} className="num" float={false} dur={reduced ? 0 : MO.reckonTick} /> : <span className="num">0</span>}</b>
                   </span>
                 );
               })}
@@ -337,7 +339,7 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
         const won = shownBeat > 0 && row.winners.includes(r.id);
         return (
           <span key={`${row.qid}-${r.id}`} className={`reckon-count${won ? ' won' : ''}`} data-reckon-count={r.id} style={{ left: at.left, top: at.top, '--pc': playerColor(r.id), '--c': `var(--${row.qid})` }}>
-            <Tick value={r.shown} from={0} className="num" float={false} dur={reduced ? 0 : MO.reckonTick} />
+            <Tick value={r.shown} from={fewest ? r.shown : 0} className="num" float={false} dur={reduced ? 0 : MO.reckonTick} />
           </span>
         );
       })}

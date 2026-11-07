@@ -553,6 +553,8 @@ h1,h2,h3{font-family:var(--serif)}
 .lt-reckon .reckon-head .reckon-verdict{font-family:var(--sans);font-size:18px;line-height:24px;min-height:24px;color:var(--paper-ink-3);font-weight:500;transition:color .25s}
 .lt-reckon .reckon-head .reckon-verdict.on{color:var(--paper-ink);font-weight:800;animation:rise calc(.3s * var(--mo-slow)) ease-out}
 .lt-reckon .reckon-head .reckon-verdict.none{color:var(--paper-ink-3);font-weight:500}
+/* (said, it's ink: grey on cream was too faint to read; frame review, Nov 7) */
+.lt-reckon .reckon-head .reckon-verdict.none.on{color:var(--paper-ink);font-weight:700}
 /* "2 of 4" already says where the scoring is: the four dots after it were a second telling, in dots that aren't
    resources (design pod, from the detail designer) */
 .lt-reckon .reckon-dots{display:none}
