@@ -39,7 +39,6 @@ Current rules only, short on purpose: every line here loads into every thread. W
 - No AI tics: "Fair point", "Here's what…", "The real test is…", triplets, restating his question, apologizing, "want me to…?", slogans, "locked".
 - Reports and lists for him (balance lists, test results): plain game words, no test shorthand ("N/H/VH", "lift", "instruments", choice-log tags, game ids). Each finding says what happens at the table in a real turn, why players disliked it, and what kind of change would fix it (Cory, Nov 1: "you're caught up in the own jargon of the test runs and the shorthand").
 - Write-ups of games and play (bot games, narration, reports): plain facts of what was considered, what was done and the result, in readable sentences. No storytelling, drama or flourish (Cory, Nov 1: "reads like AI slop").
-- When he sets a count ("batches of 5"), deliver exactly that many good ideas: keep generating until that many pass (Cory, Nov 7: "do you go until you fucking have 5 good ideas for me").
 - Label your own fill-ins. Options: about 5 per open slot in one message, within a minute or two, no quoted wait.
 - A note ending in * is logged only. Voice notes: pull out calls, ideas and to-dos, log them, read back only what's ambiguous.
 
