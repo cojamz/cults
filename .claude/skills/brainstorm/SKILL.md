@@ -66,7 +66,7 @@ Round I turn, 4 players: you hold <…>. Here you get <…>; the best other spac
 Round III turn: <same>, plus what a Green copy of it does.
 Choices: <each "you choose" / "a rival chooses", played from the chooser's side>.
 Who feels it: <a sting, a gift, a reason to block, or nothing>.
-Ties to other colors: <the shared moment, and that it still works in a game without each of them>.
+Ties to other colors: <the shared moment; how the card makes it happen by itself; what it does in a game with none of the colors that cause it>.
 Intuitive: / Fun: / Interacts: / Powerful: / Engine or counter: / Its color:  (one line each)
 Meets the bar: <design/notes/card-judging-v2-2026-11-07.md and design/eval/card-judging/taste-guide.md: does it clear our bar on its own; the taste guide's pattern 1, "the current card stays", is for reviews of live cards, not new ideas>
 ```
@@ -80,11 +80,15 @@ Why each line matters:
 
 ### 5. Cut
 
-Run every survivor past [references/verdicts.md](references/verdicts.md) (his yeses, and every failure mode with his words) and the cheatsheet's kill list, then against this color's ledger lines. The same shape as a refused idea is the same idea, however it's reworded. Keep the ideas that touch the most different pieces. If nothing survives, say so and ask one sharp question; a thin list costs less trust than filler.
+Run every survivor past [references/verdicts.md](references/verdicts.md) (his yeses, and every failure mode with his words) and the cheatsheet's kill list, then against this color's ledger lines. The same shape as a refused idea is the same idea, however it's reworded. Keep the ideas that touch the most different pieces. If nothing survives, say so and ask one sharp question; a thin list costs less trust than filler. When Cory sets a count ("batches of 5"), send exactly that many: generate more seeds until that many survive (Nov 7: "what the fuck do you mean 4 survived. i said batches are 5").
 
 ### 6. Send
 
 One short message (Cory reads on a phone): a numbered list he can answer by number, each line the card's printed text and what a player does differently, your pick in brackets, your numbers labeled as fill-ins. Name every live card you mention with its full text. Describe a card by what its text makes happen, never a shorthand like "does it twice". About 5 ideas per open slot at most, all in one message. Phrasings live cards use: [references/wording.md](references/wording.md), applied only after the ideas exist.
+
+### 6b. Takeaways after each batch
+
+Batches exist to tune this skill, not to produce every idea (Cory, Nov 7: "after i'm good with the quality you're just going to start proliferating ideas, no batches"); once he says the quality is good, ideas are generated at scale from this skill and go straight to testing. When Cory answers a batch, send him your takeaways, one line each, before they change the skill; he wants to see what you learned first. Then add them to references/verdicts.md (and color-interactions.md for ties), commit, and build the next batch on them.
 
 ### 7. Log
 

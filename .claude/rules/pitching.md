@@ -14,4 +14,4 @@ Chat threads don't load the /brainstorm skill, so read .claude/skills/brainstorm
 
 8. **Color interactions** (pairs, the intersection table, ties between colors): follow .claude/skills/brainstorm/references/color-interactions.md in writing. A shared moment both colors cause, paid off by a card naming neither; never a generic shop or cult rule, their existing overlap, a crossed tie, or a card built on today's cards (Cory, Nov 7: "ties need to be intuitive", "these aren't really blue and red interactions").
 
-Send only what survives (often 2 to 4, not 5). If nothing survives, say so and ask one sharp question. Two nos on a slot in a row: stop and redo steps 1 to 4 before the next list. Log each pitch in design/pitch-ledger.md the same turn.
+Send only what survives (often 2 to 4), unless Cory set a count: then keep generating until exactly that many survive. If nothing survives, say so and ask one sharp question. Two nos on a slot in a row: stop and redo steps 1 to 4 before the next list. Log each pitch in design/pitch-ledger.md the same turn.
