@@ -616,6 +616,17 @@ export default {
         if (was !== null && was !== p.id) skipNext(ctx, ctx.player(was), 'Cut In', p);
       },
     }, 'pool10'),
+    // pool 15 (round 2, the verdict's change): Cut In's skip in words that say who skips; it plays the same
+    poolSpace({
+      key: 'buttin', copyDoesIt: true, ring: 2, name: 'Butt In', text: '+3 purple. Take the Goes Last token. If a rival held it, that rival skips their next turn.',
+      estimate: (ctx, p) => 3 + 1 + (tokenHolder(ctx.state) !== null && tokenHolder(ctx.state) !== p.id ? 2 : 0),
+      resolve(ctx, p) {
+        ctx.gain(p, P, 3, { fromAction: true });
+        const was = tokenHolder(ctx.state);
+        takeToken(ctx, p, 'Butt In');
+        if (was !== null && was !== p.id) skipNext(ctx, ctx.player(was), 'Butt In', p);
+      },
+    }, 'pool15'),
     {
       // Cory, 2026-10-22: "+4 purple, skip your next turn" (always +4: +3 and the space's +1), from the old game's
       // "Gain 4 purple, skip next turn". You're passed over once; the snake carries on and you still place every minion.

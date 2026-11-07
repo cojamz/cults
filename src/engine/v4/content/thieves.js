@@ -196,6 +196,24 @@ function stealStep(ctx, p, data) {
     }
   }
 }
+/** Dues (pool 15): the victim o picks one resource at a time; with one color left there's nothing to choose. */
+function duesStep(ctx, o, data) {
+  const p = ctx.player(data.thief), have = Object.entries(o.res).filter(([c, n]) => n - (data.take[c] || 0) > 0);
+  if (data.left > 0 && have.length > 1) {
+    ctx.choose(o, `Dues: ${p.name} steals ${data.left} more of your resources. Give up which?`, have.map(([c, n]) => ({
+      id: `give:${c}`, label: `1 ${c} (${n - (data.take[c] || 0)})`, kind: 'choice', value: c, hint: -(n - (data.take[c] || 0)),
+    })), 'thieves.duesPick', data);
+    return;
+  }
+  const take = { ...data.take };
+  if (data.left > 0 && have.length === 1) take[have[0][0]] = (take[have[0][0]] || 0) + Math.min(data.left, have[0][1] - (take[have[0][0]] || 0));
+  let said = '';
+  const k = ctx.steal(p, o, { take, give: (got, took) => {
+    for (const [c, x] of Object.entries(took)) p.res[c] = (p.res[c] || 0) + x;
+    said = Object.entries(took).map(([c, x]) => `${x} ${c}`).join(' and ');
+  } });
+  ctx.log(k ? `${p.name}'s Dues: ${o.name} gives up ${said}.` : `${p.name}'s Dues: nothing stolen from ${o.name}.`);
+}
 export const startSteal = (ctx, p, name, n, extra = {}) => stealStep(ctx, p, { name, left: n, each: [], picked: {}, unit: 1, ...extra });
 /** Pool 14's Protection Racket variations: member cards (Collections) or members beyond yours (Tall Poppies). */
 const racketCount = (ctx, p, o, by) => (by === 'cards' ? o.members.length : Math.max(0, ctx.memberCount(o) - ctx.memberCount(p)));
@@ -304,6 +322,16 @@ const thieves = {
           o => Math.min(racketCount(ctx, p, o, by), Object.values(o.res).reduce((a, b) => a + b, 0)) + 0.01 * ctx.followers(o));
       },
     }, 'pool14')),
+    // idea pipeline pool 15 (Nov 7, round 2): Protection Racket with the victim choosing what goes, one resource at a
+    // time (bots give their smallest piles); one shared steal at the end, so protection and steal reactions apply.
+    poolSpace({
+      key: 'dues', ring: 2, name: 'Dues', text: 'Choose a rival. Steal 1 resource per member they have; they choose which. +1 magenta.',
+      estimate: (ctx, p) => estimateSteal(ctx, p, Math.max(0, ...ctx.rivals(p).map(o => ctx.memberCount(o)))) * 0.8,
+      resolve(ctx, p) {
+        chooseRival(ctx, p, 'Dues: steal from which rival (1 per member they have, they choose which)?', 'thieves.dues', {},
+          o => Math.min(ctx.memberCount(o), holding(o)) + 0.01 * ctx.followers(o));
+      },
+    }, 'pool15'),
     {
       // Cory, 2026-10-27: "steal 3/4/5", split among rivals as you choose; the follower steal is gone
       key: 'pickpocket', ring: 1, name: 'Help Yourself', text: 'Steal 3 resources in round I, 4 in round II, 5 in round III.', noMagenta: true, // any rivals again (Cory, Nov 8: "Whenever you say steal, that's the inherent… meaning"); // no +1 magenta (Cory, 2026-10-29: "Help Yourself shouldnt give a magenta")
@@ -474,6 +502,19 @@ const thieves = {
       if (data.by === 'more') ctx.log(`${p.name}'s ${data.name}: ${o.name} has ${n} member${n === 1 ? '' : 's'} more.`);
       else ctx.log(`${p.name}'s ${data.name}: ${o.name} has ${n} member${data.by ? ' card' : ''}${n === 1 ? '' : 's'}${data.cap ? ` (up to ${data.cap})` : ''}.`);
       if (n) startSteal(ctx, p, data.name, ctx.stealCount(p, n, { say: true }), { only: [o.id], oneRival: true });
+    },
+    // Dues (pool 15): the count, then the victim's picks
+    dues(ctx, p, id) {
+      const o = ctx.player(id);
+      if (!o || o === p) return;
+      if (!ctx.canSteal(p, o)) { ctx.log(`${p.name}'s Dues: can't steal from ${o.name}.`); return; }
+      const n = Math.min(ctx.stealCount(p, ctx.memberCount(o), { say: true }), holding(o));
+      ctx.log(`${p.name}'s Dues: ${o.name} has ${ctx.memberCount(o)} member${ctx.memberCount(o) === 1 ? '' : 's'}${n ? `, and chooses ${n} to give up` : ''}.`);
+      if (n) duesStep(ctx, o, { thief: p.id, left: n, take: {} });
+    },
+    duesPick(ctx, o, c, data) {
+      if ((o.res[c] || 0) - (data.take[c] || 0) > 0) data = { ...data, take: { ...data.take, [c]: (data.take[c] || 0) + 1 }, left: data.left - 1 };
+      duesStep(ctx, o, data);
     },
     mug(ctx, p, id) { mugDo(ctx, p, ctx.player(id)); },
     secondStory(ctx, p, id) {

@@ -25,9 +25,9 @@ const tradeInPairs = (ctx, p, done) => {
   return out;
 };
 function tradeInStep(ctx, p, data) {
-  const pairs = tradeInPairs(ctx, p, data.done);
-  if (!pairs.length) { ctx.log(`${p.name}'s Trade-Ins: ${data.n} swap${data.n === 1 ? '' : 's'}.`); return; }
-  ctx.choose(p, `Trade-Ins: swap which of your members for which shop member? (${data.n} so far)`, pairs.map(([a, b]) => ({
+  const who = data.who || 'Trade-Ins', pairs = data.max && data.n >= data.max ? [] : tradeInPairs(ctx, p, data.done);
+  if (!pairs.length) { ctx.log(`${p.name}'s ${who}: ${data.n} swap${data.n === 1 ? '' : 's'}.`); return; }
+  ctx.choose(p, `${who}: swap which of your members for which shop member? (${data.n} so far${data.max ? `, ${data.max} at most` : ''})`, pairs.map(([a, b]) => ({
     id: `trade:${a.uid}:${b.uid}`, label: `${a.def.name} (${cost(a)}) ↔ Shop: ${b.def.name} (${cost(b)})`, kind: 'trade', value: [a.uid, b.uid],
     hint: (b.def.f + cost(b)) - (a.def.f + cost(a)),
   })).concat({ id: 'none', label: data.n ? 'Done' : 'Swap nothing', kind: 'pass', value: null, hint: 0.5 }), 'red.tradeIn', data);
@@ -131,13 +131,13 @@ function chairStep(ctx, p, data) {
   while (data.left.length) {
     const o = ctx.player(data.left[0]), pairs = chairPairs(ctx, p, o, data.got);
     if (pairs.length) {
-      ctx.choose(p, `Musical Chairs: swap with ${o.name}: which of your members for which of theirs?`, pairs.map(([a, b]) => ({
+      ctx.choose(p, `${data.who || 'Musical Chairs'}: swap with ${o.name}: which of your members for which of theirs?`, pairs.map(([a, b]) => ({
         id: `trade:${a.uid}:${b.uid}`, label: `${a.def.name} (${cost(a)}) ↔ ${o.name}: ${b.def.name} (${cost(b)})`, kind: 'trade', value: [a.uid, b.uid],
         hint: (b.def.f + cost(b)) - (a.def.f + cost(a)),
       })).concat({ id: 'none', label: `Don’t swap with ${o.name}`, kind: 'pass', value: null, hint: 0 }), 'red.chairs', data);
       return;
     }
-    ctx.log(`${p.name}'s Musical Chairs: nothing to swap with ${o.name}.`);
+    ctx.log(`${p.name}'s ${data.who || 'Musical Chairs'}: nothing to swap with ${o.name}.`);
     data = { ...data, left: data.left.slice(1) };
   }
   ctx.gain(p, 'red', 1, { fromAction: true });
@@ -173,6 +173,22 @@ export default {
       estimate: (ctx, p) => 1 + ctx.rivals(p).reduce((n, o) => n + Math.max(0, ...chairPairs(ctx, p, o, []).map(([a, b]) => b.def.f + cost(b) - a.def.f - cost(a))) * 0.6, 0),
       resolve(ctx, p) { chairStep(ctx, p, { left: ctx.rivals(p).map(o => o.id), got: [] }); },
     }, 'pool11'),
+    // idea pipeline pool 15 (Nov 7, round 2): the verdicts' changes. Seat Shuffle: Musical Chairs in words that say one
+    // swap per rival, each with a different member of yours, and whose On Recruit fires (yours, as any swap you make).
+    // Part Exchange: Trade-Ins with 2 swaps at most.
+    poolSpace({
+      key: 'seatshuffle', ring: 3, name: 'Seat Shuffle', copyDoesIt: true, text: 'For each rival, you may swap a different one of your members for one of theirs costing up to 3 more. The members you get use their On Recruit. +1 red.',
+      estimate: (ctx, p) => 1 + ctx.rivals(p).reduce((n, o) => n + Math.max(0, ...chairPairs(ctx, p, o, []).map(([a, b]) => b.def.f + cost(b) - a.def.f - cost(a))) * 0.6, 0),
+      resolve(ctx, p) { chairStep(ctx, p, { left: ctx.rivals(p).map(o => o.id), got: [], who: 'Seat Shuffle' }); },
+    }, 'pool15'),
+    poolSpace({
+      key: 'partexchange', ring: 3, name: 'Part Exchange', copyDoesIt: true, text: 'Swap up to 2 of your members with shop members costing up to 2 more each. +1 red.',
+      estimate: (ctx, p) => 1 + Math.min(2, tradeInPairs(ctx, p, []).filter(([a, b]) => cost(b) > cost(a)).length),
+      resolve(ctx, p) {
+        ctx.gain(p, 'red', 1, { fromAction: true });
+        tradeInStep(ctx, p, { done: [], n: 0, max: 2, who: 'Part Exchange' });
+      },
+    }, 'pool15'),
     poolSpace({
       key: 'familyreunion', ring: 1, name: 'Family Reunion', copyDoesIt: true, text: 'Recruit a member of a color you already have, costing up to 6, for free. +1 red.',
       estimate: (ctx, p) => 1 + Math.max(0, ...reunionList(ctx, p).map(c => c.def.f + 0.6 * cost(c))),
@@ -283,21 +299,22 @@ export default {
       if (Array.isArray(value)) {
         const [a, b] = value;
         if (chairPairs(ctx, p, o, data.got).some(([x, y]) => x.uid === a && y.uid === b) && ctx.swapMembers(p, a, b)) {
-          ctx.log(`${p.name}'s Musical Chairs: swaps ${ctx.card(a).def.name} for ${o.name}'s ${ctx.card(b).def.name}.`);
+          ctx.log(`${p.name}'s ${data.who || 'Musical Chairs'}: swaps ${ctx.card(a).def.name} for ${o.name}'s ${ctx.card(b).def.name}.`);
           next.got = [...data.got, b];
         }
-      } else ctx.log(`${p.name}'s Musical Chairs: no swap with ${o.name}.`);
+      } else ctx.log(`${p.name}'s ${data.who || 'Musical Chairs'}: no swap with ${o.name}.`);
       chairStep(ctx, p, next);
     },
     poolFree: freeTake,
     anyColor: anyColorStep,
     tradeIn(ctx, p, value, data) {
-      if (!Array.isArray(value)) { ctx.log(`${p.name}'s Trade-Ins: ${data.n} swap${data.n === 1 ? '' : 's'}.`); return; }
+      const who = data.who || 'Trade-Ins';
+      if (!Array.isArray(value)) { ctx.log(`${p.name}'s ${who}: ${data.n} swap${data.n === 1 ? '' : 's'}.`); return; }
       const [a, b] = value;
       if (!tradeInPairs(ctx, p, data.done).some(([x, y]) => x.uid === a && y.uid === b)) { tradeInStep(ctx, p, data); return; }
       const names = [ctx.card(a).def.name, ctx.card(b).def.name];
-      if (ctx.swapMembers(p, a, b)) ctx.log(`${p.name}'s Trade-Ins: swaps ${names[0]} for ${names[1]} from the shop.`);
-      tradeInStep(ctx, p, { done: [...data.done, a, b], n: data.n + 1 });
+      if (ctx.swapMembers(p, a, b)) ctx.log(`${p.name}'s ${who}: swaps ${names[0]} for ${names[1]} from the shop.`);
+      tradeInStep(ctx, p, { ...data, done: [...data.done, a, b], n: data.n + 1 });
     },
     // pool 4: Resurrectionists / Night Diggers, one of your members for one in the discard pile
     graveSwap(ctx, p, value, data) {
@@ -441,6 +458,15 @@ export default {
       },
       ...see(info => (info.round >= 3 ? 4 : 2)), // BOTSEE: a long-shot 12
     }), 'pool11'),
+    // pool 15 (round 2, the verdict's change): Clan Elders counting each member card once, whatever it counts as
+    pool(m('matriarchs', 'Matriarchs', 3, 2, 'Game End: +2 followers per member card of your biggest color, each card counted once.', {
+      onGameEnd(ctx, owner) {
+        const by = {};
+        for (const c of ctx.membersOf(owner)) { const q = c.def.quadrant; if (q && q !== 'guest' && q !== 'benders') by[q] = (by[q] || 0) + 1; }
+        return 2 * Math.max(0, ...Object.values(by));
+      },
+      ...see(() => 5), // BOTSEE: two or three of one color by the end
+    }), 'pool15'),
     pool(m('clanelders', 'Clan Elders', 3, 2, 'Game End: +2 followers per member of your biggest color.', {
       onGameEnd(ctx, owner) {
         const by = {};

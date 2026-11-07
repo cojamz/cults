@@ -269,6 +269,37 @@ const trading = {
       estimate: (ctx, p) => 1 + 2 * Math.min(2, Object.entries(p.res).filter(([c]) => c !== W).reduce((a, [, n]) => a + n, 0)),
       resolve(ctx, p) { ctx.gain(p, W, 1, { fromAction: true }); giveForWhiteAsk(ctx, p, { name: 'Care Packages', max: 2, each: 3, given: 0, once: true, to: [] }); },
     }, 'pool14'),
+    // idea pipeline pool 15 (Nov 7, round 2): Care Packages made stronger, two ways (+4 white each; up to 3 gifts)
+    ...[['giftbaskets', 'Gift Baskets', 2, 4], ['goodiebags', 'Goodie Bags', 3, 3]].map(([key, name, max, each]) => poolSpace({
+      key, copyDoesIt: true, ring: 1, name, text: `Give up to ${max} of your non-white resources to rivals, no more than 1 each. +${each} white per resource given. +1 white.`,
+      estimate: (ctx, p) => 1 + (each - 1) * Math.min(max, ctx.rivals(p).length, Object.entries(p.res).filter(([c]) => c !== W).reduce((a, [, n]) => a + n, 0)),
+      resolve(ctx, p) { ctx.gain(p, W, 1, { fromAction: true }); giveForWhiteAsk(ctx, p, { name, max, each, given: 0, once: true, to: [] }); },
+    }, 'pool15')),
+    // pool 15: Bequest with one payoff, followers equal to the member's cost
+    poolSpace({
+      key: 'heirlooms', copyDoesIt: true, ring: 2, name: 'Heirlooms', text: 'Give one of your members to a rival. Gain followers equal to its cost. +1 white.',
+      estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => cost(ctx, c.uid) - 0.6 * c.def.f)),
+      resolve(ctx, p) {
+        const list = ctx.membersOf(p);
+        if (!list.length) { ctx.log(`${p.name}'s Heirlooms: no members to give.`); ctx.gain(p, W, 1, { fromAction: true }); return; }
+        ctx.choose(p, 'Heirlooms: give which of your members to a rival?', list.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: cost(ctx, c.uid) - 0.6 * c.def.f,
+        })), 'trading.handOff', { name: 'Heirlooms', each: 0, f: 0, fPer: 1 });
+      },
+    }, 'pool15'),
+    // pool 15: Last Hurrah that can't fire a once-per-game ability (the verdict's change); any member may still go
+    poolSpace({
+      key: 'swansong', copyDoesIt: true, ring: 2, name: 'Swan Song', text: 'Discard one of your members, using its once-per-round On Use first, even if it\u2019s used up. +2 white.',
+      estimate: (ctx, p) => 2 + Math.max(0, ...ctx.membersOf(p).map(c => (roundUse(c) ? 4 : 0) - (c.def.f || 1))),
+      resolve(ctx, p) {
+        ctx.gain(p, W, 2, { fromAction: true });
+        const list = ctx.membersOf(p);
+        if (!list.length) { ctx.log(`${p.name}'s Swan Song: no member to discard.`); return; }
+        ctx.choose(p, 'Swan Song: discard which member (its once-per-round On Use first)?', list.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name}${roundUse(c) ? ' (On Use, once per round)' : ''}`, kind: 'card', value: c.uid, hint: (roundUse(c) ? 4 : 0) - (c.def.f || 1),
+        })), 'trading.lastHurrah', { name: 'Swan Song', roundOnly: true });
+      },
+    }, 'pool15'),
     poolSpace({
       key: 'handmedowns', copyDoesIt: true, ring: 3, name: 'Hand-Me-Downs', text: 'Give up to 2 of your members to rivals, no more than 1 each. Gain white equal to twice their cost. +1 white.',
       estimate: (ctx, p) => 1 + ctx.membersOf(p).map(c => giveValue(ctx, p, c, 2, 0)).sort((a, b) => b - a).slice(0, 2).filter(v => v > 0).reduce((a, b) => a + b, 0),
@@ -420,17 +451,17 @@ const trading = {
       }, data.uid);
     },
     // pool 7: Last Hurrah, the member's On Use (used up or not), then the discard once that use is done
-    lastHurrah(ctx, p, uid) {
+    lastHurrah(ctx, p, uid, data) {
       if (!p.members.includes(uid)) return;
-      const c = ctx.card(uid);
-      if (hasUse(c)) { ctx.log(`${p.name}'s Last Hurrah: uses ${c.def.name} one last time.`); ctx.freeUse(p, uid); }
-      ctx.defer(p, 'trading.lastHurrahGo', { uid });
+      const c = ctx.card(uid), who = data?.name || 'Last Hurrah';
+      if (data?.roundOnly ? roundUse(c) : hasUse(c)) { ctx.log(`${p.name}'s ${who}: uses ${c.def.name} one last time.`); ctx.freeUse(p, uid); }
+      ctx.defer(p, 'trading.lastHurrahGo', { uid, name: who });
     },
     lastHurrahGo(ctx, p, _v, data) {
       if (!p.members.includes(data.uid)) return;
       const name = ctx.card(data.uid).def.name;
       ctx.buryMember(p, data.uid);
-      ctx.log(`${p.name}'s Last Hurrah: discards ${name}.`);
+      ctx.log(`${p.name}'s ${data.name || 'Last Hurrah'}: discards ${name}.`);
     },
     // Hand-Offs / Bequest (pool 3): the member, then the rival (bots give to the rival with the fewest followers)
     slate(ctx, p, value, data) {
@@ -469,6 +500,7 @@ const trading = {
       ctx.log(`${p.name}'s ${data.name}: gives ${name} to ${o.name}.`);
       if (k * data.each) ctx.gain(p, W, k * data.each, { fromAction: true });
       if (data.f) p.bonus += data.f;
+      if (data.fPer) p.bonus += k * data.fPer;
       // idea pipeline pool 14: Hand-Off Artists (a member: no +1 white); Hand-Me-Downs (a second member, to another rival)
       if (data.member) { ctx.log(`${p.name}'s ${data.name}: +${k * data.each} white.`); return; }
       if (data.left > 1) {
@@ -484,6 +516,7 @@ const trading = {
         return;
       }
       ctx.gain(p, W, 1, { fromAction: true });
+      if (data.fPer) { ctx.log(`${p.name}'s ${data.name}: +${k * data.fPer} follower${k * data.fPer === 1 ? '' : 's'}, +1 white.`); return; }
       ctx.log(`${p.name}'s ${data.name}: +${k * data.each} white${data.f ? `, +${data.f} followers` : ''}, +1 white.`);
     },
     // idea pipeline pool 2: give resources to rivals, one at a time, for white (Cory, Nov 7: "playing around cash in")
@@ -1123,6 +1156,8 @@ const trading = {
 
 const cost = (ctx, uid) => { const d = ctx.card(uid).def; return d.s + d.w; };
 // pool 7 helpers: an On Use member (its own or a copy's); a member with more than an On Recruit; a fewest members contest
+/** Swan Song (pool 15): a once-per-round On Use, its own or a copied one. */
+function roundUse(c) { return [c.def, c.copy && defById(c.copy)].some(d => d?.activate === 'round' && d.onActivate); }
 function hasUse(c) { return [c.def, c.copy && defById(c.copy)].some(d => d?.activate && d.onActivate); }
 function lasting(d) { return Object.keys(d).some(k => /^on[A-Z]/.test(k) && k !== 'onRecruited') || !!d.activate || !!d.botValue; }
 function retireAsk(ctx, owner, card, c) {

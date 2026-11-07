@@ -3,6 +3,7 @@
 // and pays for members of many colors. Contests stay a separate color's job: Yellow's contest is most yellow, as every
 // 2.0 color's is (Claude, under Cory's go-with-your-gut). The wheel and deck: design/decisions.md, Oct 30-31.
 import { MORE } from './price.js';
+import { discardOf } from '../discard.js';
 import { gainColorOf } from './color-of.js';
 import { startLaunder } from './launder.js';
 import { add1, old1, handlers1 } from './replace1.js';
@@ -146,6 +147,8 @@ function askToll(ctx, host, o, left, key) {
 
 // Grand Tour (REPLACE14, Members E lane, Nov 4; quality/pitches/E-meltingpot.md), in Melting Pot's place: read a
 // rival's cult instead of your own, so a narrow player borrows a wide rival's spread. Colors on this table only.
+/** Lost and Found (pool 15): the table colors among discard pile members, in table order. */
+const pileColors = ctx => { const qs = new Set(discardOf(ctx.state).map(u => ctx.card(u).def.quadrant)); return ctx.state.quadrants.map((q, i) => (qs.has(q) ? ctx.state.resources[i] : null)).filter(Boolean); };
 const memberRes = (ctx, p) => memberColors(ctx, p).map(q => ctx.state.resources[ctx.state.quadrants.indexOf(q)]);
 const GRAND_TOUR = {
   key: 'grandtour', ring: 2, name: 'Grand Tour', text: '+2 yellow. Choose a rival: gain 1 of each color among their members.',
@@ -297,6 +300,18 @@ export default {
     },
     // Housewarming in Big New Blood's place, live since Nov 4 (Claude, under Cory's go-with-your-gut, overnight quality
     // loop): paper 18 vs 14, A/B +0.42, Lab 120 games a side. Big New Blood's text: design/archive/spaces/retired-2026-11-04.md
+    // idea pipeline pool 15 (Nov 7, round 2): Rummage's sibling on the same public pile: one of each table color that a
+    // discarded member has (grey members have none); the +1 yellow last, as printed.
+    poolSpace({
+      key: 'lostandfound', ring: 2, name: 'Lost and Found', text: 'Gain 1 resource of each color that has a member in the discard pile. +1 yellow.',
+      estimate: (ctx) => 1 + pileColors(ctx).length,
+      resolve(ctx, p) {
+        const cs = pileColors(ctx);
+        for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
+        ctx.gain(p, Y, 1, { fromAction: true });
+        ctx.log(cs.length ? `${p.name}'s Lost and Found: +1 ${cs.join(', +1 ')} from the discard pile.` : `${p.name}'s Lost and Found: no colored member in the discard pile, so only the yellow.`);
+      },
+    }, 'pool15'),
     HOUSEWARMING,
     swap14(swap14({
       // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 5: "melting pot should give 1 color for each

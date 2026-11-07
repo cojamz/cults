@@ -127,6 +127,28 @@ function scoutDone(ctx, p, data) {
 // used this turn (Tribute Band copying a Tryout that borrowed Coach looped forever; Claude, under Cory's go-with-your-gut)
 const coachable = (ctx, p) => ctx.membersOf(p).filter(c => c.freeTurn !== ctx.turnKey()
   && [c.def, c.copy && ctx.defOf(c.copy)].some(d => d?.activate && d.onActivate));
+/** Sellswords (pool 15): the thief picks each resource; then one shared steal, then the member moves to the victim. */
+function sellStep(ctx, p, data) {
+  const o = ctx.player(data.o), have = Object.entries(o.res).filter(([c, n]) => n - (data.take[c] || 0) > 0);
+  if (data.left > 0 && have.length) {
+    ctx.choose(p, `Sellswords: steal which of ${o.name}'s resources? (${data.left} left)`, have.map(([c, n]) => ({
+      id: `take:${o.id}:${c}`, label: `${o.name}'s ${c} (${n - (data.take[c] || 0)})`, kind: 'take', value: c, hint: n - (data.take[c] || 0),
+    })), 'benders.sellPick', data);
+    return;
+  }
+  if (!p.members.includes(data.uid)) return;
+  ctx.asMember(p, 'Sellswords', () => {
+    let said = '';
+    const k = ctx.steal(p, o, { take: data.take, give: (got, took) => {
+      for (const [c, x] of Object.entries(took)) p.res[c] = (p.res[c] || 0) + x;
+      said = Object.entries(took).map(([c, x]) => `${x} ${c}`).join(', ');
+    } });
+    ctx.log(k ? `${p.name}'s Sellswords: steals ${said} from ${o.name}.` : `${p.name}'s Sellswords: nothing stolen from ${o.name}.`);
+  }, data.uid);
+  if (!p.members.includes(data.uid)) return;
+  ctx.log(`${p.name}'s Sellswords: joins ${o.name}'s cult.`);
+  ctx.moveMember(data.uid, p, o, { actor: p });
+}
 /** Mercenaries (pool 13): n resources from o's biggest piles, one shared steal. */
 function hireSteal(ctx, p, o, n, name) {
   if (!ctx.canSteal(p, o)) { ctx.log(`${p.name}'s ${name}: can't steal from ${o.name}.`); return 0; }
@@ -221,6 +243,21 @@ const members = [
       },
       botActivate: (ctx, owner) => ctx.rivals(owner).some(o => Object.values(o.res).reduce((a, b) => a + b, 0) >= n),
     }), 'pool13')),
+  // idea pipeline pool 15 (Nov 7, round 2): Mercenaries with the thief choosing the colors (the verdict's change), one
+  // resource at a time, then one shared steal; only rivals you can steal from are offered, so it never moves for nothing.
+  pool(m('sellswords', 'Sellswords', null, 0, 1, 'On Use, once per round: steal 3 resources of your choice from a rival, then give them this member.', {
+    activate: 'round',
+    onRoundStart(ctx, owner, card) { card.used = false; },
+    onActivate(ctx, owner, card) {
+      const list = ctx.rivals(owner).filter(o => ctx.canSteal(owner, o) && Object.values(o.res).some(n => n > 0));
+      if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Sellswords: no rival to steal from.`); return; }
+      ctx.choose(owner, 'Sellswords: steal 3 resources of your choice from which rival, then give them this member?', list.map(o => ({
+        id: `player:${o.id}`, label: `${o.name} (${Object.values(o.res).reduce((a, b) => a + b, 0)} resources)`, kind: 'player', value: o.id,
+        hint: Math.min(3, Object.values(o.res).reduce((a, b) => a + b, 0)) + 0.01 * ctx.followers(o),
+      })), 'benders.sell', { uid: card.uid, n: 3 });
+    },
+    botActivate: (ctx, owner) => ctx.rivals(owner).some(o => ctx.canSteal(owner, o) && Object.values(o.res).reduce((a, b) => a + b, 0) >= 3),
+  }), 'pool15'),
   // Party Crasher (was Squatter; id kept for old records): Cory, 2026-10-28, Once per game, cheaper; 5 with the +1 wild (Cory, Nov 1: "5"; was 4)
   m('squatter', 'Party Crasher', 'thieves', 2, 2, 'On Use, once per game: your next minion can be placed on a space a rival already took.', { // cut Nov 7 (cull.js): Scouts takes its place (Cory, "Yes") // still joins in round I at 5, so grey keeps 4 (Claude's fill-in)
     activate: 'game',
@@ -516,6 +553,17 @@ export const handlers = {
     if (!p.members.includes(data.uid)) return;
     ctx.log(`${p.name}'s ${data.name}: joins ${o.name}'s cult.`);
     ctx.moveMember(data.uid, p, o, { actor: p });
+  },
+  // pool 15: Sellswords, the rival, then each resource picked; the steal and the hand-off once all are picked
+  sell(ctx, p, id, data) {
+    const o = ctx.player(id);
+    if (!o || o === p || !p.members.includes(data.uid)) return;
+    sellStep(ctx, p, { ...data, o: o.id, left: data.n, take: {} });
+  },
+  sellPick(ctx, p, c, data) {
+    const o = ctx.player(data.o);
+    if ((o.res[c] || 0) - (data.take[c] || 0) > 0) data = { ...data, take: { ...data.take, [c]: (data.take[c] || 0) + 1 }, left: data.left - 1 };
+    sellStep(ctx, p, data);
   },
   wayfarers(ctx, p, uid, data) { freeTake(ctx, p, uid, data); },
   chameleon(ctx, p, q, data) {

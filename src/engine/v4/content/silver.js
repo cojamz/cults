@@ -332,7 +332,60 @@ export const silverActions = [
       ctx.log(`${p.name}'s Round Robin: ${gave.length ? gave.map(([o, to, n]) => `${o.name} gives ${to.name} ${n}`).join(', ') : 'nobody has silver to pass'}.`);
     },
   }, 'pool10'),
+  // idea pipeline pool 15 (Nov 7, round 2): Round Robin without the whole-pile swing. Pass the Plate: every pile halves
+  // (rounded down) to the next seat, counted before anyone gives. Pass It On: only your pile moves left, then your right
+  // neighbor's whole pile comes to you, a take that protection stops (Regifters' check).
+  poolSpace({
+    key: 'passtheplate', copyDoesIt: true, ring: 1, name: 'Pass the Plate', text: '+1 silver. Then every player, you too, gives half their silver, rounded down, to the player on their left.',
+    estimate: (ctx, p) => { const ps = ctx.state.players, right = ps[(ps.indexOf(p) + ps.length - 1) % ps.length]; return Math.floor((right.res[S] || 0) / 2) - Math.floor((p.res[S] || 0) / 2); },
+    resolve(ctx, p) {
+      hostGain(ctx, p, 1);
+      const ps = ctx.state.players, pile = ps.map(o => Math.floor((o.res[S] || 0) / 2)), gave = [];
+      ps.forEach((o, i) => {
+        const to = ps[(i + 1) % ps.length];
+        if (!pile[i] || to === o) return;
+        if (dry(ctx, o, to)) { ctx.log(`${to.name}'s Teetotalers: ${o.name} can't give ${to.name} silver, and keeps it.`); return; }
+        o.res[S] -= pile[i]; gave.push([o, to, pile[i]]);
+      });
+      for (const [o, to, n] of gave) giveTo(ctx, o, to, S, n);
+      for (const [o] of gave) afterGive(ctx, o, S);
+      ctx.log(`${p.name}'s Pass the Plate: ${gave.length ? gave.map(([o, to, n]) => `${o.name} gives ${to.name} ${n}`).join(', ') : 'nobody has 2 silver to halve'}.`);
+    },
+  }, 'pool15'),
+  poolSpace({
+    key: 'passiton', copyDoesIt: true, ring: 1, name: 'Pass It On', text: '+1 silver. Give all your silver to the player on your left, then take all the silver of the player on your right.',
+    estimate: (ctx, p) => { const ps = ctx.state.players, right = ps[(ps.indexOf(p) + ps.length - 1) % ps.length]; return (p.res[S] || 0) - (right.res[S] || 0); },
+    resolve(ctx, p) {
+      hostGain(ctx, p, 1);
+      const ps = ctx.state.players, i = ps.indexOf(p), left = ps[(i + 1) % ps.length], right = ps[(i + ps.length - 1) % ps.length], said = [];
+      const mine = p.res[S] || 0;
+      if (mine && left !== p) {
+        if (dry(ctx, p, left)) said.push(`${left.name}'s Teetotalers: ${p.name} keeps their silver`);
+        else { p.res[S] -= mine; giveTo(ctx, p, left, S, mine); afterGive(ctx, p, S); said.push(`gives ${left.name} ${mine}`); }
+      }
+      const theirs = right.res[S] || 0;
+      if (theirs && right !== p) {
+        if (!ctx.canSteal(p, right, 'change')) said.push(`can't take ${right.name}'s silver`);
+        else { right.res[S] -= theirs; p.res[S] = (p.res[S] || 0) + theirs; said.push(`takes ${right.name}'s ${theirs}`); }
+      }
+      ctx.log(`${p.name}'s Pass It On: ${said.length ? said.join(', then ') : 'no silver to pass'}.`);
+    },
+  }, 'pool15'),
   REGIFTERS,
+  // pool 15: Regifters with the payout capped at 8 (the verdict's change)
+  poolSpace({
+    key: 'secretsanta', copyDoesIt: true, ring: 2, name: 'Secret Santa', text: 'Move up to 8 of one rival’s silver to another rival. +1 follower per silver moved. +1 silver.',
+    estimate: (ctx, p) => 1 + Math.max(0, ...regiftPairs(ctx, p).map(([o]) => Math.min(8, o.res[S] || 0))),
+    resolve(ctx, p) {
+      ctx.gain(p, S, 1, { fromAction: true });
+      const pairs = regiftPairs(ctx, p);
+      if (!pairs.length) { ctx.log(`${p.name}'s Secret Santa: no rival has silver to move.`); return; }
+      ctx.choose(p, 'Secret Santa: move up to 8 of whose silver to whom?', pairs.map(([o, t]) => ({
+        id: `trade:${o.id}:${t.id}`, label: `${o.name}'s ${Math.min(8, o.res[S])} silver to ${t.name}`, kind: 'trade', value: [o.id, t.id],
+        hint: Math.min(8, o.res[S] || 0) - 0.05 * ctx.followers(t),
+      })), 'silver.regift', { cap: 8, name: 'Secret Santa' });
+    },
+  }, 'pool15'),
   {
     // copyDoesIt: a copy gifts the rivals too, so the copier's Silver Cloak pays (Cory, Nov 6: "yes.")
     key: 'toast', copyDoesIt: true, ring: 1, name: 'Toast', text: '+3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III.',
@@ -421,13 +474,13 @@ const silver = {
   actions: silverActions,
 
   handlers: {
-    regift(ctx, p, v) {
+    regift(ctx, p, v, data) {
       const [a, b] = v || [], o = ctx.player(a), t = ctx.player(b);
       if (!o || !t || o === p || t === p || o === t) return;
-      const n = o.res[S] || 0;
+      const n = Math.min(data?.cap || Infinity, o.res[S] || 0);
       if (!n) return;
-      o.res[S] = 0; t.res[S] = (t.res[S] || 0) + n; p.bonus += n;
-      ctx.log(`${p.name}'s Regifters: moves ${o.name}'s ${n} silver to ${t.name}, +${n} follower${n === 1 ? '' : 's'}.`);
+      o.res[S] -= n; t.res[S] = (t.res[S] || 0) + n; p.bonus += n;
+      ctx.log(`${p.name}'s ${data?.name || 'Regifters'}: moves ${o.name}'s ${n} silver to ${t.name}, +${n} follower${n === 1 ? '' : 's'}.`);
     },
     almoners(ctx, p, id, data) {
       const o = ctx.player(id);

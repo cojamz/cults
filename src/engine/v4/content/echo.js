@@ -311,11 +311,12 @@ export const previousNow = (ctx, p) => {
 };
 /** Headliners (pool 9): every round III space on the wheel but itself, not in this chain: a taken one with the entry
  *  to copy (the copier's own if they share it), an open one to do. */
-function thirdTargets(ctx, p) {
+const BILLING = ['headliners', 'topbilling', 'secondbilling'];
+function thirdTargets(ctx, p, ring = 3) {
   const st = ctx.state, path = pathNow(ctx), now = Object.values(ledger(st).now), out = [];
   st.quadrants.forEach((qid, q) => spacesOf(st, qid).forEach((a, i) => {
     const key = `${q}-${i}`;
-    if (a.ring !== 3 || a.key === 'headliners' || path.includes(key) || (a.lastRound && st.round > a.lastRound)) return;
+    if (a.ring !== ring || BILLING.includes(a.key) || path.includes(key) || (a.lastRound && st.round > a.lastRound)) return;
     const es = now.filter(e => actionKey(e.key) === key);
     if (es.length) { const e = es.find(x => x.p === p.id) || es[0]; if (allowed(ctx, e, p)) out.push({ key, a, qid, e }); }
     else if (st.slots[key] === undefined && a.ring <= st.round) out.push({ key, a, qid });
@@ -482,11 +483,11 @@ function stageMove(ctx, p, { key, joined }, to) {
   ctx.log(`${p.name}'s Stage Door: moves a minion from ${slotAction(ctx, key).name} to ${slotAction(ctx, to).name}.`);
   ctx.state.queue.unshift({ t: 'act', p: p.id, q, i });
 }
-const medleyKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => x.name === 'Medley' || x.name === 'Remix').map(x => actionKey(x.key));
+const medleyKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => ['Medley', 'Remix', 'Mashup'].includes(x.name)).map(x => actionKey(x.key));
 /** Medley: one entry per action with a minion on color q's spaces this round (p's own entry where p shares it). */
 function medleyPlan(ctx, p, q, noThird = false) {
   const byAction = new Map();
-  for (const e of Object.values(ledger(ctx.state).now || {}).filter(x => x.color === q && x.name !== 'Medley' && x.name !== 'Remix' && !(noThird && x.ring === 3)).sort((a, b) => (a.seq || 0) - (b.seq || 0))) {
+  for (const e of Object.values(ledger(ctx.state).now || {}).filter(x => x.color === q && !['Medley', 'Remix', 'Mashup'].includes(x.name) && !(noThird && x.ring === 3)).sort((a, b) => (a.seq || 0) - (b.seq || 0))) {
     const k = actionKey(e.key), had = byAction.get(k);
     if (!had || (had.p !== p.id && e.p === p.id)) byAction.set(k, e);
   }
@@ -541,6 +542,21 @@ const echoQ = {
         })), 'echo.headline');
       },
     }, 'pool9'),
+    // idea pipeline pool 15 (Nov 7, round 2): Headliners in Cory's words (copies take a taken space anyway), and the
+    // weaker one on round II's spaces. Same copy as Headliners: a taken space from its entry, an open one done.
+    ...[['topbilling', 'Top Billing', 3, 'Copy any round III action. +1 green.'], ['secondbilling', 'Second Billing', 2, 'Copy any round II action. +1 green.']].map(([key, name, ring, text]) => poolSpace({
+      key, ring: 3, name, echo: true, text,
+      estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...thirdTargets(ctx, p, ring).map(x => (x.e ? entryValue(ctx, x.e, p) : emptyValue(ctx, x.a, p)))),
+      resolve(ctx, p) {
+        plus(ctx, p);
+        const list = thirdTargets(ctx, p, ring), rn = ring === 3 ? 'III' : 'II';
+        if (!list.length) { ctx.log(`${p.name}'s ${name}: no round ${rn} action to copy.`); return; }
+        ctx.choose(p, `${name}: copy which round ${rn} action?`, list.map(x => ({
+          id: `space:third:${x.key}`, label: `${x.a.name}${x.e ? ` (${ctx.player(x.e.p).name})` : ''}: ${x.e ? describe(ctx, x.e) : x.a.text}`, kind: 'space',
+          value: x.key, hint: x.e ? entryValue(ctx, x.e, p) : emptyValue(ctx, x.a, p),
+        })), 'echo.headline', { name, ring });
+      },
+    }, 'pool15')),
     // pool 9's variation: only a round III space a rival has a minion on, copied as Echo copies
     poolSpace({
       key: 'encorecrowd', ring: 3, name: 'Encore Crowd', echo: true, text: 'Copy a round III action a rival has a minion on. +1 green.',
@@ -637,6 +653,19 @@ const echoQ = {
         })), 'echo.medley'));
       },
     }, 'pool7'),
+    // pool 15 (round 2, the verdict's change): Medley capped at two copies, chosen from that color's actions
+    poolSpace({
+      key: 'mashup', ring: 3, name: 'Mashup', text: 'Choose a color. Copy up to two actions with a minion on its spaces. +1 green.',
+      estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...ctx.state.quadrants.map(q => medleyPlan(ctx, p, q).map(e => entryValue(ctx, e, p)).sort((a, b) => b - a).slice(0, 2).reduce((a, v) => a + v, 0))),
+      resolve(ctx, p) {
+        plus(ctx, p);
+        const opts = ctx.state.quadrants.map(q => ({ q, list: medleyPlan(ctx, p, q) })).filter(x => x.list.length);
+        if (!opts.length) { ctx.log(`${p.name}'s Mashup: no color has an action to copy.`); return; }
+        withPath(ctx, [...new Set([...pathNow(ctx), ...medleyKeys(ctx)])], () => ctx.choose(p, 'Mashup: copy up to two actions on which color\u2019s spaces?', opts.map(({ q, list }) => ({
+          id: `color:${q}`, label: `${quadrant(q).name} (${list.map(e => e.name).join(', ')})`, kind: 'color', value: q, hint: list.map(e => entryValue(ctx, e, p)).sort((a, b) => b - a).slice(0, 2).reduce((a, v) => a + v, 0),
+        })), 'echo.mashup'));
+      },
+    }, 'pool15'),
     // pool 12 (green.md Medley's variation): every round III space left out, Medley's own included
     poolSpace({
       key: 'remix', ring: 3, name: 'Remix', text: 'Choose a color. Copy every action with a minion on its spaces except the round III one. +1 green.',
@@ -669,6 +698,28 @@ const echoQ = {
       const w = stageFrom(ctx, p).find(x => x.key === key && x.joined === (j === 'j'));
       if (!w || ctx.state.slots[data.to] !== undefined) return;
       stageMove(ctx, p, w, data.to);
+    },
+    // Mashup (pool 15): with more than two to copy, pick them one at a time (bots: the two worth most), then copy in
+    // placement order
+    mashup(ctx, p, q, data) {
+      const list = medleyPlan(ctx, p, q);
+      if (!list.length) { ctx.log(`${p.name}'s Mashup: nothing on ${quadrant(q).name} to copy.`); return; }
+      if (list.length <= 2) { ctx.log(`${p.name}'s Mashup copies ${list.map(e => e.name).join(' and ')}.`); copyAll(ctx, p, list, null, 'Mashup'); return; }
+      echoQ.handlers.mashupPick(ctx, p, null, { ...(data || {}), q, picked: [] });
+    },
+    mashupPick(ctx, p, v, data) {
+      const picked = v == null ? data.picked : [...data.picked, v];
+      const list = medleyPlan(ctx, p, data.q), left = list.filter(e => !picked.includes(actionKey(e.key)));
+      if (picked.length >= 2 || !left.length) {
+        const go = list.filter(e => picked.includes(actionKey(e.key)));
+        if (!go.length) return;
+        ctx.log(`${p.name}'s Mashup copies ${go.map(e => e.name).join(' and ')}.`);
+        copyAll(ctx, p, go, null, 'Mashup');
+        return;
+      }
+      ctx.choose(p, `Mashup: copy which ${quadrant(data.q).name} action${picked.length ? ' second' : ' first'}?`, left.map(e => ({
+        id: `space:mash:${actionKey(e.key)}`, label: `${e.name}: ${describe(ctx, e)}`, kind: 'space', value: actionKey(e.key), hint: entryValue(ctx, e, p),
+      })), 'echo.mashupPick', { ...data, picked });
     },
     medley(ctx, p, q, data) {
       const who = data?.who || 'Medley', list = medleyPlan(ctx, p, q, !!data?.noThird);
@@ -745,10 +796,10 @@ const echoQ = {
       ctx.borrowOnRecruit(p, uid);
     },
     // Headliners (pool 9): a taken space is copied from its entry, an open one is done
-    headline(ctx, p, key) {
-      const hit = thirdTargets(ctx, p).find(x => x.key === key);
-      if (!hit) { ctx.log(`${p.name}'s Headliners: that action can't be copied now.`); return; }
-      if (hit.e) copy(ctx, p, hit.e, { asker: 'Headliners' });
+    headline(ctx, p, key, data) {
+      const name = data?.name || 'Headliners', hit = thirdTargets(ctx, p, data?.ring || 3).find(x => x.key === key);
+      if (!hit) { ctx.log(`${p.name}'s ${name}: that action can't be copied now.`); return; }
+      if (hit.e) copy(ctx, p, hit.e, { asker: name });
       else echoQ.handlers.copyEmpty(ctx, p, key);
     },
     openingDo(ctx, p, key) { echoQ.handlers.copyEmpty(ctx, p, key, { as: 'Opening Act' }); },
