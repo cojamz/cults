@@ -10,6 +10,7 @@ import { install as installThieves } from './thieves.js';
 import { install as installTrading } from './trading.js';
 import { install as installEcho } from './echo.js';
 import { install as installBenders } from './benders.js';
+import { POOL_SPACES } from './pool.js';
 
 const QUADRANTS = { gold, red, blue, green };
 
@@ -63,6 +64,8 @@ function index(q) {
     asMembers(def);
     DEFS[def.id] = def;
   }
+  // idea pipeline candidates (content/pool.js): out of the wheel, kept for the bot games that rotate them in
+  if (q.actions.some(a => a.pool)) { POOL_SPACES[q.id] = q.actions.filter(a => a.pool); q.actions = q.actions.filter(a => !a.pool); for (const a of POOL_SPACES[q.id]) a.id = `${q.id}.${a.key}`; }
   for (const a of q.actions) { a.id = `${q.id}.${a.key}`; if (a.piles) { a.piles.id = `${q.id}.${a.piles.key}`; a.piles.ring ??= a.ring; } }
   for (const [k, fn] of Object.entries(q.handlers || {})) HANDLERS[`${q.id}.${k}`] = fn;
 }

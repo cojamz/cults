@@ -4,14 +4,25 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-const TRIALS = process.env.TRIALS_DIR || '/mnt/project-files/trials/trials';
+const TRIALS = join(process.env.TRIALS_DIR || '/mnt/project-files/trials', 'trials');
 const [batchF, outF] = process.argv.slice(2);
 const batch = JSON.parse(readFileSync(batchF, 'utf8'));
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const pct = x => `${Math.round(100 * x)}%`;
 const DOT = { red: '#d9473f', green: '#3f9a52', magenta: '#c13f9a', blue: '#3f6fd0', purple: '#7d4fc0', silver: '#9aa3ad', yellow: '#d9a520', white: '#e8e2d0', grey: '#8a8a8a' };
 
+const POOLS = {};
+function poolBots(c) {
+  const f = join(TRIALS, batch.pool, 'report.json');
+  if (!existsSync(f)) return `<p class="bots">Bot games still running.</p>`;
+  const R = (POOLS[f] ||= JSON.parse(readFileSync(f, 'utf8')));
+  const x = c.kind === 'space' ? R.spaces.find(s => s.name.endsWith(': ' + c.now.name)) : R.members.find(m => m.name === c.now.name);
+  if (!x) return `<p class="bots">Not dealt in the bot games.</p>`;
+  const use = c.kind === 'space' ? `taken ${x.perGame.toFixed(1)} times a game` : `bought in ${pct(x.taken)} of games it showed up`;
+  return `<p class="bots"><b>Bots: ${esc(x.verdict)}.</b> ${use}; ${c.kind === 'space' ? 'takers' : 'owners'} won ${pct(x.wr)} (${x.own}). Live cards in the same games: owners win ${pct(c.kind === 'space' ? R.bar.spLo : R.bar.wrLo)} to ${pct(c.kind === 'space' ? R.bar.spHi : R.bar.wrHi)}.</p>`;
+}
 function bots(c) {
+  if (batch.pool) return poolBots(c);
   if (!c.trial) return '';
   const f = join(TRIALS, c.trial, 'report.json');
   if (!existsSync(f)) return `<p class="bots">Bot games still running.</p>`;
@@ -33,8 +44,8 @@ function bots(c) {
 const cards = batch.cards.map((c, i) => `
 <section class="card">
   <div class="slot"><span class="dot" style="background:${DOT[c.color] || '#888'}"></span>${esc(c.slot)}</div>
-  <div class="was"><span class="lab">Was</span> <b>${esc(c.was.name)}</b> “${esc(c.was.text)}”</div>
-  <div class="now"><span class="lab">Now</span> <b>${esc(c.now.name)}</b> “${esc(c.now.text)}”${c.now.price ? ` <span class="price">${esc(c.now.price)}</span>` : ''}</div>
+  ${c.was ? `<div class="was"><span class="lab">Was</span> <b>${esc(c.was.name)}</b> “${esc(c.was.text)}”</div>` : ''}
+  <div class="now">${c.was ? '<span class="lab">Now</span> ' : ''}<b>${esc(c.now.name)}</b> “${esc(c.now.text)}”${c.now.price ? ` <span class="price">${esc(c.now.price)}</span>` : ''}</div>
   ${c.moment ? `<p class="moment">${esc(c.moment)}</p>` : ''}
   ${c.ties ? `<p class="ties">${esc(c.ties)}</p>` : ''}
   ${bots(c)}

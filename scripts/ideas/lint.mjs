@@ -21,7 +21,7 @@ function check({ text, kind }) {
   const out = [];
   for (const [re, why] of RULES) if (re.test(text)) out.push(`FAIL ${text.match(re)[0]}: ${why}`);
   if (kind === 'space') for (const [re, why] of SPACE_ONLY) if (re.test(text)) out.push(`FAIL ${text.match(re)[0]}: ${why}`);
-  if (CHOICE.test(text)) out.push('CHECK a choice: the paper sheet must play the chooser\'s side; if one side always wins, cut it (verdict 15b). Nobody chooses on another player\'s turn.');
+  if (CHOICE.test(text)) out.push('CHECK a choice: the paper sheet must play the chooser\'s side; if one side always wins, cut it (verdict 15b). Choosing on another player\'s turn: avoid; bend it only when it really makes sense, and say why (Cory, Nov 7).');
   const words = text.split(/\s+/).length;
   if (words > 22) out.push(`CHECK ${words} words: one plain sentence a table reads first time`);
   return out;

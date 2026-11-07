@@ -124,7 +124,8 @@ function cmdNew() {
   }
   const level = flags.level || 'hard', seats = Number(flags.seats || 4), games = Number(flags.games || 120);
   const env = sortObj({ ...DEFAULTS, ...change, LEVEL: level, SEATS: String(seats) });
-  const baseEnv = sortObj(flags['base-env'] ? { ...DEFAULTS, LEVEL: level, SEATS: String(seats), ...JSON.parse(flags['base-env']) }
+  // --pool (idea pipeline, scripts/ideas/README.md): one side only; every candidate is judged against the live cards in the same games
+  const baseEnv = flags.pool ? env : sortObj(flags['base-env'] ? { ...DEFAULTS, LEVEL: level, SEATS: String(seats), ...JSON.parse(flags['base-env']) }
     : Object.fromEntries(Object.entries(env).filter(([k]) => !isChange(k))));
   const rules = rulesPrint(sha);
   const wt = checkout(sha);
@@ -138,8 +139,8 @@ function cmdNew() {
   }
   const arm = e => { const id = `${e.LEVEL}-${hash({ rules, e })}`; return id; };
   const spec = { name, created: new Date().toISOString(), by: hostname(), sha, rules, games, block: BLOCK, level, seats, env, baseEnv,
-    arms: { trial: arm(env), base: arm(baseEnv) }, pairs, note: flags.note || '' };
-  if (spec.arms.trial === spec.arms.base) die('The trial and its base are the same settings: nothing would be compared.');
+    arms: { trial: arm(env), base: arm(baseEnv) }, pairs, note: flags.note || '', ...(flags.pool ? { pool: true } : {}) };
+  if (spec.arms.trial === spec.arms.base && !spec.pool) die('The trial and its base are the same settings: nothing would be compared.');
   for (const [k, id] of Object.entries(spec.arms)) {
     mkdirSync(join(armDir(id), 'games'), { recursive: true }); mkdirSync(join(armDir(id), 'claims'), { recursive: true });
     const f = join(armDir(id), 'arm.json');
@@ -201,7 +202,7 @@ async function cmdWork() {
   const me = { host: hostname(), pid: process.pid, at: new Date().toISOString() };
   const local = join(REPO, '.trial-runs');
   // interleave the two sides so a half-played trial is still a fair game-for-game comparison
-  const queue = blockStarts(spec.games).flatMap(s => [['trial', s], ['base', s]]);
+  const queue = blockStarts(spec.games).flatMap(s => spec.pool ? [['trial', s]] : [['trial', s], ['base', s]]);
   const order = queue; // lowest games first, so a half-played trial is the first N games of both sides
   const mine = new Set(), playing = new Set(), times = [];
   let played = 0, failed = 0;
@@ -408,8 +409,9 @@ function patterns(rows) {
   return { plans, sources, colors, pairs, wins };
 }
 
-function cmdReport() {
+async function cmdReport() {
   const spec = loadSpec(pos[0]);
+  if (spec.pool) return poolReportOf(spec);
   const T = loadArm(spec.arms.trial), B = loadArm(spec.arms.base);
   const both = [...T.keys()].filter(g => B.has(g)).sort((a, b) => a - b);
   const t = both.map(g => T.get(g)), b = both.map(g => B.get(g));
@@ -477,3 +479,17 @@ function cmdReport() {
 const run = { new: cmdNew, work: cmdWork, status: cmdStatus, report: cmdReport }[cmd];
 if (!run) die('Usage: node scripts/trial/trial.mjs new|work|status|report ... (see the top of this file)');
 await run();
+
+// --pool trials: one side, every candidate against the bar the live cards set in the same games (scripts/ideas/pool-report.mjs)
+async function poolReportOf(spec) {
+  const { poolReport } = await import('../ideas/pool-report.mjs');
+  const R = poolReport([...loadArm(spec.arms.trial).values()]);
+  const pct = x => `${Math.round(100 * x)}%`, b = R.bar;
+  const md = [`# Pool trial: ${spec.name}`, `${R.games} games (${spec.level} bots, 10-card deck, By color contests, ${spec.seats} players; commit ${spec.sha.slice(0, 8)}).`, '',
+    `The bar, from the live cards in these same games (middle 80%): members bought in at least ${pct(b.taken)} of games they show up, owners winning ${pct(b.wrLo)} to ${pct(b.wrHi)}; spaces taken at least ${b.spUse.toFixed(1)} times a game, takers winning ${pct(b.spLo)} to ${pct(b.spHi)}. Even is 25%.`, '',
+    '## Members', ...R.members.map(c => `- **${c.name}** (${c.color}): ${c.verdict}. Bought in ${pct(c.taken)} of ${c.shown} games it showed up; owners won ${pct(c.wr)} (${c.own} owners).`), '',
+    '## Spaces', ...R.spaces.map(c => `- **${c.name}**: ${c.verdict}. Taken ${c.perGame.toFixed(1)} times a game in ${c.shown} games; takers won ${pct(c.wr)} (${c.own} takers).`)].join('\n');
+  writeFileSync(join(trialDir(spec.name), 'report.md'), md);
+  writeFileSync(join(trialDir(spec.name), 'report.json'), JSON.stringify(R));
+  console.log(md);
+}

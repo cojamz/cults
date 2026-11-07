@@ -14,6 +14,7 @@ import { chooseBotMove, chooseFollowerBuyerMove } from '../src/engine/v4/bots.js
 import { seededRandom } from '../src/engine/v4/rng.js';
 import { sphereVersion } from '../src/v4/tables.js';
 import { deckRules } from './lib/deck-choice.mjs';
+import { POOL_ACTIVE, rotateIn } from './lib/pool-rotate.mjs';
 // SWAP=1 turns on the swap card table setting (Cory, Nov 1); SWAPCOST=n sets its price (default 2)
 const DECK_RULES = { ...deckRules(), ...(process.env.SWAP === '1' ? { swapCard: true } : {}), ...(process.env.SWAPCOST ? { swapCardCost: Number(process.env.SWAPCOST) } : {}), ...(process.env.CONTESTS ? { contests: process.env.CONTESTS } : {}), ...(process.env.CONTESTFIX ? { contestFix: JSON.parse(process.env.CONTESTFIX) } : {}) };
 
@@ -55,11 +56,14 @@ const cost = d => { try { const x = defById(d); return (x.s || 0) + (x.w || 0); 
 // GAMES=1,5,9 plays only those game numbers inside first..first+count-1 (e.g. re-running just the tables a card change touches;
 // a game number always deals the same table, so the rest of a batch stays valid)
 const only = process.env.GAMES ? new Set(process.env.GAMES.split(',').map(Number)) : null;
+let poolNow = null; // POOL: candidates rotated into this game (scripts/lib/pool-rotate.mjs), put back before the next
 for (let g = first; g < first + count; g++) {
   if (only && !only.has(g)) continue;
   const rand = seededRandom(g * 7717 + 3 + seats * 101);
   const pool = all.filter(q => !must.includes(q)), quads = [...must];
   while (quads.length < seats) quads.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
+  if (poolNow) poolNow.restore();
+  poolNow = POOL_ACTIVE ? rotateIn(g, quads, DECK_RULES.deck || 15) : null;
   let s = createGame({ seats: Array.from({ length: seats }, () => ({ kind: 'bot' })), seed: g, quadrants: quads, rules: DECK_RULES });
   const strongSeat = process.env.STRONGSEAT ? g % seats : -1;
   const buyer = strongSeat < 0 && g % 5 === 0 ? g % seats : -1;
@@ -123,6 +127,7 @@ for (let g = first; g < first + count; g++) {
   const top = Math.max(...s.players.map(p => followers(s, p)));
   const row = {
     game: g, level, seats, table: quads, deck: DECK_RULES.deck || 15, buyer, strongSeat, prices, swaps, standings, tally,
+    ...(poolNow ? { pool: poolNow.record } : {}),
     shop: Object.keys(seen).map(name), shopRound: Object.fromEntries(Object.entries(seen).map(([d, r]) => [name(d), r])),
     // each round's contests: color -> winning seats (for sweeps: one seat taking a color's contest every round)
     contests: (s.contests || []).map(c => Object.fromEntries(c.results.map(x => [x.qid, x.winners]))),
