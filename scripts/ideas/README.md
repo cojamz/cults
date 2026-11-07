@@ -32,3 +32,10 @@ Calibration showed paper judges match Cory's picks only at chance on unseen call
 - **Judges, robust**: `node scripts/ideas/judges.mjs plan <tags> --games 6` pins a worktree at the pushed branch head (rules never change mid-game), starts games at 3 and 4 players with rotating colors and seeds, and rotates three judge mixes (two expert sets, one with two newer players). Judges are blind: nothing marks a card as new. `status` flags a game with no move for 20 minutes as STALLED (relaunch that seat's agent with the same brief; it picks up where the game is). `report` puts each candidate's ratings beside the live cards in the same games and marks where judges split (spread of 1.2 or more, or fun ratings 3 apart).
 - **Bot games**: `bash scripts/ideas/keep-working.sh <trial>` restarts a crashed runner until every block is done; runner threads can run the same line.
 - Never edit the main checkout while judge games or runners use it; builders work in their own worktree.
+
+## Order (coordinator's call on Cory's Nov 7 2:10pm note: "once the feel is good, then pass it to balance testing")
+Build → fire check → judge games (feel gates everything) → only cards with good feel go to the 400-game Hard run → tiers.
+- Judge games per card: at least 3, from different seats, 3 and 4 players, different judge mixes; one repeat game per pool (`judges.mjs repeat <game>`), fresh judges on the same deal.
+- Rubric: fun, strategic, interacts, clear, fits its color, scored on a written scale anchored to Cory's taste (design/eval/expert-games/player-brief-feel.md). Calibration in every report: do judges rate the live cards he likes above the ones he dislikes.
+- A card marked SPLIT gets a tiebreak: a fresh reader agent reads every game transcript with the card (`node scripts/v4-expert.mjs report <game>`) plus the judges' clauses and rules on fun, strategic, interacts and clear, with the reason.
+- Tiers on the final page: Definite (aim 7+), Good to consider (7+), Pretty good with a tweak, Worth a look, Long shot, Cut. Feel decides the tier; bot numbers only move a card down a tier when it's far off (cost can be tweaked).
