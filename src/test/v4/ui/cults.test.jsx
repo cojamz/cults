@@ -81,7 +81,8 @@ describe('every member reads as its sphere', () => {
     const { guestMembers } = await import('../../../engine/v4/content/index.js');
     const defs = [...allQuadrantIds().filter(id => !quadrant(id).standIn).flatMap(id => quadrant(id).members), ...guestMembers()];
     expect(defs.length).toBeGreaterThan(100);
-    expect(defs.filter(d => !d.artifact && !iconFor([d.id, spriteId(d.name)], 'member').drawn).map(d => d.id)).toEqual([]);
+    // idea-pipeline candidates (d.pool, content/pool.js) are bot-only and never dealt, so they have no art yet
+    expect(defs.filter(d => !d.artifact && !d.pool && !iconFor([d.id, spriteId(d.name)], 'member').drawn).map(d => d.id)).toEqual([]);
   });
 
   it('every color with an artifact has its artifact drawn (an object on a plate, never the template)', async () => {
