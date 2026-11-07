@@ -98,3 +98,5 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 - Animation overhaul follow-ups (critic pass 3, Nov 6, not yet done): shop refill flies cards one by one across the board (make it one quick slide after the story card); Out of Style's sent members get no line on the story card; contest count-ups run ~4.5s each; the story card names spaces the wheel doesn't print ("Took Peek"); off-turn cards don't name the member behind them; hover leftover check in Firefox. Evidence frames: /mnt/project-files/anim-overhaul/pass3/.
 
 - Story card placement (Cory, Nov 7: "I like top banner"; don't cover the middle; a big, bold "what is happening, what are we waiting for" line): proposed a fixed two-row top banner, row 1 the state ("P3 is choosing what to copy", "P3 goes again"), row 2 the turn on one line with each cult's robe beside its gain; mockups /mnt/project-files/anim-overhaul/banner/. Waiting on his yes.
+
+- Banner: keep tightening the lines (Cory, Nov 7: "still some work to do"); a rare mid-turn remount restarts its lines (every-frame check, seen before the banner too).

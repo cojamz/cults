@@ -1976,3 +1976,5 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
   - Farewell and Estate Sale "a little weird, but… maybe they're good". Recluse "too overlapping with the competition now".
   - Housewarming "a little strong… like 7 fucking currency" (its cap of 7 stretched as prices changed).
   - Tiebreaker ("You win every contest tie you're in."): "maybe… better in a competition color… we're getting almost enough stuff to have a competition color… I want to get the game like perfect first before I add more stuff."
+
+- 2026-11-07 (Cory, "I like top banner", "you can ship it"): a rival's turn is told in a banner under the headline across the top of the wheel, in the table's pictures: bold space and member names, cult emojis, the cloak tile, recruits as "emoji −x −y for Member 1🧍" (no plus on the worth), the Goes Last token on the space's line. It fades while pointed at and lets drags through to the wheel. Cory: "still some work to do".
