@@ -7,16 +7,16 @@ Lead a cult for three rounds. Send minions to the wheel for resources, recruit m
 ## What you have
 - **Followers** are your score. You start with 1. Each member is worth 1 follower, or the number beside its member mark.
 - **Minions** are your workers: 3 in round I, 4 in round II, 5 in round III.
-- **Resources** come in one color per sphere. A dot split into the table's colors means any resources, colors your choice.
+- **Resources** come in the colors in play, one resource per color. A dot split into the table's colors means any resources, colors your choice.
 - **Members** are cards you recruit from the shop. Most have an ability.
 
 ## Setup
 Turn order is drawn. Then, from last player to first, each picks a **cloak**: a boon all game plus 1 resource of its color. The first player gets the one left.
 
 ## The wheel
-Each player's color is a sphere with six spaces. The outer ring opens in round I, the middle in round II, the center in round III. A space holds one minion per round. The rim shows that color's contest and who leads it.
+Each color in play has six spaces on the wheel. The outer ring opens in round I, the middle in round II, the center in round III. A space holds one minion per round. The rim shows that color's contest and who leads it.
 
-![A sphere: open spaces are pale with gold edges, taken ones dim, dark ones open later](rules-img/wheel.jpg)
+![A color's spaces: open spaces are pale with gold edges, taken ones dim, dark ones open later](rules-img/wheel.jpg)
 
 ## Your turn
 1. **Place a minion** on an open space and take what it gives.
