@@ -2196,8 +2196,11 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
         // playing, and the moment the next player's move starts it flies to the log area, which keeps it whole
         // (a rival's card stays until its own moves have played: hubStory)
         if (state.over || (moment && !hubStory)) return null;
+        // a dialog of yours (a pay, a swap, a rearrange) asked during a rival's turn: the rival's banner yields, never
+        // covers its title (frame review, Nov 7: P3's banner hid your Night Traders swap)
+        const yourDialog = mine && !needHandoff && ((pend.kind === 'pay' && !onlyPay) || payChoice(pend) || launderChoice(state, pend) || swapChoice(state, pend));
         return <>
-          {hubStory && <TurnCard key={`hub${hubStory.k || hubStory.n}`} card={hubAgain ? { ...hubStory, again: true } : hubStory} root={rootEl} state={state} you={me} hub />}
+          {hubStory && !yourDialog && <TurnCard key={`hub${hubStory.k || hubStory.n}`} card={hubAgain ? { ...hubStory, again: true } : hubStory} root={rootEl} state={state} you={me} hub />}
 
           
         </>;
