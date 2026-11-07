@@ -1,4 +1,4 @@
-import { browserPath, launchBrowser } from '../e2e/v4/lib/browser.mjs';
+import { browserPath, launchBrowser, cdpOk } from '../e2e/v4/lib/browser.mjs';
 // Wheel spin while the table is busy (Cory, 2026-10-25: "it's when other animations are happening… I want a super snappy
 // spinning wheel even if other things are going on"). A local game, you and three Normal bots at Steady, 1270×700, CPU
 // throttled (default 4×). On rivals' turns (their flights, the story, the shop sliding) it presses an arrow key every
@@ -6,6 +6,8 @@ import { browserPath, launchBrowser } from '../e2e/v4/lib/browser.mjs';
 // compositor frame, and the key to the landing (the spin's last frame). Frames come from the compositor (CDP screencast),
 // so a spin that runs while the main thread is stuck still counts as moving.
 //   node scripts/v4-spin-busy.mjs <url> [--cpu=4] [--dpr=1] [--spins=12] [--drag] [--shots=<dir>]
+// V4_ENGINE=firefox: Firefox (no CPU throttle, no screencast): frames are the page's own animation frames, so they
+// count main-thread frames, not the compositor's (a gap there is the page stuck, which is what freezes a drag).
 // --drag: mouse drags of a quarter turn instead of keys (pointer-to-rest time, each move's wait for the main thread).
 import { chromium } from 'playwright';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -22,8 +24,9 @@ const browser = await launchBrowser({ executablePath: browserPath });
 const DPR = Number(flag('dpr', 1));
 const ctx = await browser.newContext({ viewport: { width: 1270, height: 700 }, deviceScaleFactor: DPR });
 const page = await ctx.newPage();
-const cdp = await ctx.newCDPSession(page);
-await cdp.send('Emulation.setCPUThrottlingRate', { rate: CPU });
+const cdp = cdpOk ? await ctx.newCDPSession(page) : null;
+if (cdp) await cdp.send('Emulation.setCPUThrottlingRate', { rate: CPU });
+if (!cdp) await page.addInitScript(() => { const F = (window.__raf = []); const tick = t => { F.push(t); requestAnimationFrame(tick); }; requestAnimationFrame(tick); });
 await page.addInitScript(() => {
   const W = window.__spin = { runs: [], long: [] };
   try { new PerformanceObserver(l => { for (const e of l.getEntries()) W.long.push([e.startTime, e.duration]); }).observe({ type: 'longtask', buffered: true }); } catch { /* none */ }
@@ -51,10 +54,10 @@ await page.goto(`${base}/?intro=0`);
 await page.click('[data-home="local"]');
 await page.click('[data-start]');
 const frames = [];
-cdp.on('Page.screencastFrame', async f => { frames.push(f.metadata.timestamp * 1000); if (SHOTS) frames.push(null); cdp.send('Page.screencastFrameAck', { sessionId: f.sessionId }).catch(() => {}); if (SHOTS && f.data) shotQ.push([f.metadata.timestamp * 1000, f.data]); });
+if (cdp) cdp.on('Page.screencastFrame', async f => { frames.push(f.metadata.timestamp * 1000); if (SHOTS) frames.push(null); cdp.send('Page.screencastFrameAck', { sessionId: f.sessionId }).catch(() => {}); if (SHOTS && f.data) shotQ.push([f.metadata.timestamp * 1000, f.data]); });
 const shotQ = [];
 let spins = 0, guard = 0;
-await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 60, everyNthFrame: 1 });
+if (cdp) await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 60, everyNthFrame: 1 });
 const clock0 = await page.evaluate(() => [performance.now(), performance.timeOrigin]);
 while (spins < SPINS && guard++ < 400) {
   // your turn: a starting choice or a lit space; place and pass the buy
@@ -82,9 +85,9 @@ while (spins < SPINS && guard++ < 400) {
   await sleep(150);
 }
 await sleep(800);
-await cdp.send('Page.stopScreencast');
-const { runs, long, origin, drags } = await page.evaluate(() => ({ ...window.__spin, origin: performance.timeOrigin }));
-const fr = frames.filter(x => x != null).map(t => t - origin).sort((a, b) => a - b);
+if (cdp) await cdp.send('Page.stopScreencast');
+const { runs, long, origin, drags, raf } = await page.evaluate(() => ({ ...window.__spin, origin: performance.timeOrigin, raf: window.__raf }));
+const fr = cdp ? frames.filter(x => x != null).map(t => t - origin).sort((a, b) => a - b) : raf;
 const rows = runs.filter(r => !r.none && r.animStart != null).map(r => {
   const end = r.animStart + r.dur;
   const inSpin = fr.filter(t => t >= r.ev && t <= end + 50);
