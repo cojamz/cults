@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.684 — 2026-11-07
+
+- New setup setting, Economy: Richer. Every member costs 1 more of its color and 1 more of any (grey: 2 more of any), and every space gives 1 more of its color. Today's prices stay the default.
+
 ## v0.99.683 — 2026-11-07
 
 - Smaller fixes from the frame review: Turn skipped says whose card did it; steal picker counts down as you click and closes on the last take; the round card shows every player; results open the moment the last round card closes; cloak lines name the cloak; no white flash on load; your banner never hides your own dialog
