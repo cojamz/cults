@@ -20,7 +20,7 @@ import { playerColor, roman } from '../format.js';
 import { play } from '../sound.js';
 import { gainsBetween } from './gains.js';
 import { seatOrder } from './seats.js';
-import { stageRect, hubRect, stageShow, stageRelease, stageClear, stageDismiss, stageBusy, subscribeStage, stageItems, stagePlace, spaceRect, bubbleRect, stageLeave, HUB_MEMBER, clearOfStory, storyAtHub } from './stage.js';
+import { stageRect, hubRect, stageShow, stageRelease, stageClear, stageDismiss, stageBusy, subscribeStage, stageItems, stagePlace, spaceRect, bubbleRect, stageLeave, HUB_MEMBER, clearOfStory, storyAtHub, noteDealEnd } from './stage.js';
 import { panelText } from './panelText.js';
 import { quadrant, defById, cardDef, spacesOf, memberCount } from '../../engine/v4/index.js';
 import { seatEmoji } from '../format.js';
@@ -774,7 +774,7 @@ export const stepHoldCap = (behind = false) => Math.round((2400 * Math.min(speed
 // loaded box) stretches the show instead of bunching its pieces; and a piece's landing (its
 // count ticking, its stack settling) comes from that piece's own animation finishing, never from a separate timer.
 
-const chain = { queue: [], clock: 0, wall: 0, last: null, raf: 0, flying: 0, holds: new Map(), pending: new Map(), counts: new Set(), root: null };
+const chain = { queue: [], clock: 0, wall: 0, last: null, raf: 0, flying: 0, holds: new Map(), pending: new Map(), counts: new Set(), root: null, roundDeals: [] };
 
 // A counted steal's picks (Collect Debts, Help Yourself) show as they're made (the skeptic, w4 #22; tester A, w4 #34:
 // "P2 still showed 3 silver after '1 left'"): each pick drops the rival's stack at once, though the engine takes them all
@@ -855,8 +855,11 @@ const cancelDrain = () => {
   chain.drainToken = null;
   chain.draining = false;
 };
+// the new round's deal this chain plays (playChain): its landing waits for them
+const roundDealPlaying = () => chain.roundDeals.some(a => { try { return a.playState === 'running' || a.playState === 'paused' || a.pending; } catch { return false; } });
 function finishChain(now = false) {
   cancelDrain();
+  chain.roundDeals = [];
   for (const { h } of chain.holds.values()) if (h) h.done(now);
   chain.holds.clear();
   chain.pending.clear();
@@ -882,6 +885,9 @@ function endChain(now = false) {
     queueMicrotask(() => {
       scheduled = false;
       if (chain.drainToken !== token || chain.queue.length || chain.flying > 0) return;
+      // a new round's row is dealt before anyone moves (Cory, Nov 7: "bots still taking turns before deck is dealt"): the
+      // chain lands, and the next turn starts, only once its cards are down
+      if (roundDealPlaying()) return;
       if (!landed) { landed = true; for (const fn of landSubs) fn(); }
       if (!motionPending() && !stageBusy()) finishChain();
     });
@@ -1607,6 +1613,10 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
         d.anim.effect.updateTiming({ delay: (d.anim.effect.getTiming().delay || 0) + refillOff + joinMs });
         d.hide.effect.updateTiming({ duration: Number(d.hide.effect.getTiming().duration) + refillOff + joinMs });
       }
+      // (the deal now starts later: the next turn waits for its real end, GameScreen's pump)
+      const ct = d.anim.effect.getComputedTiming();
+      if (Number.isFinite(ct.endTime)) noteDealEnd(Date.now() + Math.max(0, ct.endTime - (d.anim.currentTime || 0)));
+      chain.roundDeals.push(d.anim);
       track(d.anim); track(d.hide); // a skip deals them at once
     } catch { /* gone */ }
   }

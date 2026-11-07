@@ -201,7 +201,9 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
       // the shop finishes refilling before anything else happens: the next turn never starts under a card still being
       // dealt (Cory, Nov 6: "what if the in between round stuff happened before people take their fucking turn")
       const dealLeft = Math.max(dealEndsAt() - Date.now(), dealing() ? 80 : 0);
-      if (dealLeft > 30 && motionOK() && (dealWait.current ??= performance.now()) > performance.now() - 4000) {
+      // (a safety cap, not the pace: 4s, or as long as the deal says it plays, which a new round's at Relaxed runs past;
+      // Cory, Nov 7: "bots still taking turns before deck is dealt")
+      if (dealLeft > 30 && motionOK() && (dealWait.current ??= performance.now()) > performance.now() - Math.min(15000, Math.max(4000, dealEndsAt() - Date.now() + (performance.now() - dealWait.current) + 500))) {
         timer.current = setTimeout(() => { timer.current = null; pump(); }, Math.min(dealLeft + 40, 3000));
         return;
       }

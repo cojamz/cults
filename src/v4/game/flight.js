@@ -351,6 +351,9 @@ export function clearFlights(maxAge = 0, { spareFlying = false } = {}) {
     // disappears well before making it to its final destination"): at Relaxed one flight runs up to 1.65s, and the next
     // step drew at two-thirds of it, so a 1.2s sweep took coins off at about three-quarters of their way
     if ((maxAge || spareFlying) && (age <= maxAge || (age <= maxAge + 6000 && stillFlying(g)))) return;
+    // a shop card being dealt stays until it lands, however long its deal waited to start (a new round's at Relaxed
+    // waits 8s or more: the sweep took the whole row off before it was dealt, Nov 7); its own safety net clears it
+    if ((maxAge || spareFlying) && g.classList.contains('lt-deal') && stillFlying(g)) return;
     const use = inUse.get(g); if (use) use.release(); else g.remove();
   });
 }
