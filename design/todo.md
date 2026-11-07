@@ -37,7 +37,7 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 14. Color intersection table (Cory, Nov 7; first pass from contests and spaces: design/notes/color-crossings-2026-11-07.html, https://claude.ai/artifact/RT4njjfe4eWtDyU78KPaoY, waiting on his word on the shape): a lookup grid, blue X white gives how those two colors can interact in theory. Build each cell from the two colors' contests and the resources and verbs their actions make and spend, ignoring current members; no brainstorm skill (his verdict on the first try: "these ideas suck. they don't feel original or elegant at alll").
 15. Card review 2 defaults (Scouts, Latecomers and the rest) still wait on Cory's yes; build nothing until he answers.
 16. Bots take turns before the deck is dealt: hold every turn until the deal lands.
-17. Redo the deck deal animation.
+17. Redo the deck deal animation: done v0.99.671 (face-down cards slide off the pile and turn face up in their slots; scripts/v4-deal-clip.mjs records it).
 18. Cory's own Harvest animation is too slow.
 19. Show other players' cursors in online games.
 20. Five small screen issues from the picky UI run, still open.
