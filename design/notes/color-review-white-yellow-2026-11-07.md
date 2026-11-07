@@ -17,7 +17,7 @@ Intuitive: the name already says it; the card sits in the shop like any other.
 Fun: a choice with the table watching.
 Interacts: the shop, in every game; any recruiting color gets a shot at it.
 Powerful: the same white as live.
-Engine or counter: engine with Cash In, Undertaker? No: Undertaker and Martyrs say "cast out" and "leaves your cult"; Martyrs still fires, Undertaker would need "Whenever you cast out or sell one of your members".
+Engine or counter: engine with Cash In and Martyrs ("Whenever this member leaves your cult…", still fires). Undertaker ("Whenever you cast out one of your members, +2 followers.") would need "cast out or sell" to keep firing.
 Its color: selling, a new way into White's cash.
 Rule needed: the shop row gets one more card until it's bought; at round end it goes with the row.
 
