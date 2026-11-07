@@ -47,6 +47,8 @@ function games(where = [BASE]) {
 // publish: copy every local game's meta.json, events.jsonl, cards.md and heal.log to the shared folder (finished or not)
 function publish() {
   for (const dir of games()) {
+    // only games played on this box (a plan can list games another box plays)
+    if (!fs.readFileSync(path.join(dir, 'events.jsonl'), 'utf8').includes('"type":"move"')) continue;
     const to = path.join(SHARED, path.basename(dir));
     fs.mkdirSync(to, { recursive: true });
     for (const n of ['meta.json', 'events.jsonl', 'cards.md', 'heal.log']) if (fs.existsSync(path.join(dir, n))) fs.copyFileSync(path.join(dir, n), path.join(to, n));
