@@ -382,3 +382,12 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - Cory on the third list: "these aren't really blue and red interactions. they already inherently interacr.." Lesson: an interaction is one color's verb aimed at or paid by the other's contest (count vs one-color depth), not a generic shop or cult mechanic.
 - Fourth list sent: crossed ties; Blue double recruit of one color; Red whole-color swap; Blue clear paid by the deepest group's color.
 - Cory on the fourth list: crossed ties "no, ties need to be intuitive"; all four "bad… not understanding the exercise". Asked back whether the exercise is shared moments two colors both cause (his Martyrs example).
+
+## Card-idea tiers page, definite tier (2026-11-07, Cory's read)
+- **Rummage** (blue space: "Recruit a member from the discard pile costing up to 6, for free. +1 blue."): "quite good".
+- **Round Robin** (silver space: "+1 silver. Then every player, you too, gives all their silver to the player on their left."): "interesting but maybe abusable". Next: hunt for the abuse.
+- **Headliners** (green space: "Copy any round III action, even if it's taken. +1 green."): "maybe too good"; "even if it's taken" is not needed, since copies can always take a taken space (except the 1 green action). "not sure about this one".
+- **Bequest** (white space: give a member to a rival, gain white equal to its cost, +3 followers): "maybe".
+- **Care Packages** (white space: give up to 2 non-white resources, 1 per rival, +3 white each): "doesn't seem strong enough. but maybe".
+- **Protection Racket** (magenta space: steal 1 resource per member a chosen rival has): "maybe".
+- **Anchorites** (white member: Round End, 2 or fewer members, +5 followers): "feels like recluse" (Recluse: "Round End: +2 followers per rival with more members than you."). Same shape, so treat as refused.
