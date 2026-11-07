@@ -22,7 +22,7 @@ describe('By color contests', () => {
     expect(last.startsWith(`${s.players[scores.indexOf(1)].name} `)).toBe(true);
   });
   it('Yellow: full sets of one of every color in play', () => {
-    const s = game();
+    const s = game(); s.rules = { ...s.rules, contestFix: { yellow: 'sets' } };
     const p = s.players[0];
     for (const r of s.resources) p.res[r] = 3;
     p.res[s.resources[0]] = 2;
@@ -118,3 +118,15 @@ describe('By color: Red Most members of one color, Blue Most members (Cory, Nov 
   });
 });
 
+
+describe('By color: Yellow Most member colors (Cory, Nov 7: "For now we can make it \'most member colors\'")', () => {
+  it('counts the colors in play among your members', async () => {
+    const { table } = await import('./cards-helpers-b.js');
+    const s = table(['red', 'market', 'yellow', 'silver'], { n: 2, rules: { contests: 'byColor' }, members: [['market.stylist', 'red.volunteer', 'red.mob'], ['red.intern', 'benders.dabblers']] });
+    s.rules = { ...(s.rules || {}), contests: 'byColor' };
+    const y = scoringOf(s, 'yellow');
+    expect(y.label).toBe('Most member colors');
+    expect(y.score(contextFor(s), s.players[0])).toBe(2);
+    expect(y.score(contextFor(s), s.players[1])).toBe(2); // Dabblers adds just one color (Cory: "I think just counts as one")
+  });
+});

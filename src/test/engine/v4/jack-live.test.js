@@ -12,7 +12,7 @@ describe('Jack-of-All-Trades, live: "Your yellow counts as any color in your ful
   });
   it('wins Most full sets with yellow filling the missing purple', () => {
     const won = jack => {
-      const s = table(Q4, { n: 2, round: 1, rules: { contests: 'byColor' }, res: [{ red: 2, yellow: 4, blue: 2 }, { red: 1, yellow: 1, blue: 1, purple: 1 }], members: [[jack]], queue: [{ t: 'endRound' }] });
+      const s = table(Q4, { n: 2, round: 1, rules: { contests: 'byColor', contestFix: { yellow: 'sets' } }, res: [{ red: 2, yellow: 4, blue: 2 }, { red: 1, yellow: 1, blue: 1, purple: 1 }], members: [[jack]], queue: [{ t: 'endRound' }] });
       return (s.contests || []).at(-1).results.find(c => c.qid === 'yellow').winners;
     };
     expect(won('yellow.jack')).toEqual([0]);

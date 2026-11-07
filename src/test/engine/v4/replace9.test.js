@@ -16,7 +16,7 @@ delete process.env.REPLACE9;
 delete process.env.MEMBER_UP;
 
 const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
-const BY = { contests: 'byColor' };
+const BY = { contests: 'byColor', contestFix: { yellow: 'sets' } }; // the full-sets contest these cards were pitched on (Yellow is Most member colors since Nov 7)
 /** Answer every pending ask whose prompt starts with `head`, picking the option `pick(options)` returns. */
 const answerAll = (s, head, pick) => { while (s.pending?.prompt?.startsWith(head)) s = answer(s, pick(s.pending.options, s.pending.player).id); return s; };
 
