@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.673 — 2026-11-07
+
+- Your own Harvest is quicker: the coins you pick fly at Steady's pace, and a quick Take never goes a color at a time
+
 ## v0.99.672 — 2026-11-07
 
 - Online games show the other players' mouse cursors, each with their emoji and name.
