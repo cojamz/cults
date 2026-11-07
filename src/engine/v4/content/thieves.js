@@ -13,7 +13,6 @@ import { on11 } from './replace11.js';
 import { swap13, handlers13 } from './replace13.js';
 import { add14, old14 } from './replace14.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
-import { pool, poolSpace } from './pool.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
@@ -282,7 +281,6 @@ const thieves = {
   },
 
   actions: [
-    poolSpace({ key: 'testspace', ring: 1, name: 'Test Space', text: '+3 magenta.', estimate: () => 3, resolve(ctx, p) { ctx.gain(p, 'magenta', 3, { fromAction: true }); } }, 'test'),
     {
       // Cory, 2026-10-27: "steal 3/4/5", split among rivals as you choose; the follower steal is gone
       key: 'pickpocket', ring: 1, name: 'Help Yourself', text: 'Steal 3 resources in round I, 4 in round II, 5 in round III.', noMagenta: true, // any rivals again (Cory, Nov 8: "Whenever you say steal, that's the inherent… meaning"); // no +1 magenta (Cory, 2026-10-29: "Help Yourself shouldnt give a magenta")
@@ -766,7 +764,6 @@ const thieves = {
       botActivate: (ctx, p) => hoardPiles(ctx, p).some(x => x.n >= 2),
     }),
     m('crew', 'Crew', 1, 1, 'Worth 2 followers.', { f: 2, n: 2, ...old1 }), // 2 members (Cory, Oct 29)
-    pool(m('testcrew', 'Test Crew', 1, 1, 'Worth 2 followers.', { f: 2, n: 2 }), 'test'),
     // REPLACE1 bot test (Nov 3, replacement batch 1): Crew's place. 4 magenta + 2 any as a player sees it. At round end,
     // for each contest a rival wins (tied winners each count), 2 of that contest's color from that rival, through the
     // shared steal (Bodyguards and Lie Low block it; Sticky Fingers and Desperado add). Round III's comes at game end.
