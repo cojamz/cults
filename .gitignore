@@ -21,3 +21,4 @@ vite.config.js.timestamp-*
 .balance-runs/
 .trial-wt/
 .trial-runs/
+.econ-runs/

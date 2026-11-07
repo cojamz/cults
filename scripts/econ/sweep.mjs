@@ -5,7 +5,8 @@ import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { MIXES } from './mixes.mjs';
 const flags = Object.fromEntries(process.argv.slice(2).map(a => { const [k, ...v] = a.replace(/^--/, '').split('='); return [k, v.join('=') || true]; }));
 const games = Number(flags.games || 60), chunk = Number(flags.chunk || 15), W = Number(flags.workers || 4);
-const dir = flags.dir || '/mnt/project-files/economy-test/runs';
+// local disk by default: appends on the shared network folder broke 3 lines on Nov 7; copy results there after
+const dir = flags.dir || '.econ-runs';
 mkdirSync(dir, { recursive: true });
 const slug = n => n.replace(/[^a-z0-9+=-]+/gi, '_');
 const names = flags.only ? String(flags.only).split(',') : Object.keys(MIXES);
