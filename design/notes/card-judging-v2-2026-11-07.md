@@ -1,5 +1,7 @@
 # How we judge every card, version 2 (Nov 7)
 
+Readable version for Cory (version 3, same system, Nov 7, after "I like it. but i need you to rewrite the whole thing in a far more readable way"): https://claude.ai/artifact/Q4KdT3BT91tj6BFWaq7xBP
+
 Cory, Nov 7, on version 1: "it reads as, I don't know, a little not quite right to me." Written by the "Critically review the card evaluation" thread after an independent critic's read (it agreed on every point below). Doc for Cory: https://claude.ai/artifact/85jojr6Nr1VZL7gNA1MuuM (do not edit while he reads it). Supersedes design/notes/card-judging-2026-11-07.md (kept for the record). Calibration: run it on design/eval/card-judging/holdout-*.md, framing each call the way Cory made it (a pick from the list he saw).
 
 ## What was off in the first version
