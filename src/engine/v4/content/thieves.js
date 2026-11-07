@@ -13,6 +13,7 @@ import { on11 } from './replace11.js';
 import { swap13, handlers13 } from './replace13.js';
 import { add14, old14 } from './replace14.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
+import { poolSpace, chooseRival } from './pool.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
@@ -281,6 +282,15 @@ const thieves = {
   },
 
   actions: [
+    // idea pipeline pool 1 (Nov 7): Protection Racket (Cory: "good but might feel too bad"), plus two gentler variations
+    ...[['racket', 'Protection Racket', 2, 0], ['racket4', 'Protection Money', 2, 4], ['racket3', 'Shakedown Crew', 1, 3]].map(([key, name, ring, cap]) => poolSpace({
+      key, ring, name, text: `Choose a rival. Steal 1 resource per member they have${cap ? `, up to ${cap}` : ''}. +1 magenta.`,
+      estimate: (ctx, p) => estimateSteal(ctx, p, Math.max(0, ...ctx.rivals(p).map(o => Math.min(cap || 99, ctx.memberCount(o))))),
+      resolve(ctx, p) {
+        chooseRival(ctx, p, `${name}: steal from which rival (1 per member they have${cap ? `, up to ${cap}` : ''})?`, 'thieves.racket', { name, cap },
+          o => Math.min(cap || 99, ctx.memberCount(o), Object.values(o.res).reduce((a, b) => a + b, 0)) + 0.01 * ctx.followers(o));
+      },
+    }, 'pool1')),
     {
       // Cory, 2026-10-27: "steal 3/4/5", split among rivals as you choose; the follower steal is gone
       key: 'pickpocket', ring: 1, name: 'Help Yourself', text: 'Steal 3 resources in round I, 4 in round II, 5 in round III.', noMagenta: true, // any rivals again (Cory, Nov 8: "Whenever you say steal, that's the inherent… meaning"); // no +1 magenta (Cory, 2026-10-29: "Help Yourself shouldnt give a magenta")
@@ -445,6 +455,11 @@ const thieves = {
   ],
 
   handlers: {
+    racket(ctx, p, id, data) {
+      const o = ctx.player(id), n = Math.min(data.cap || 99, ctx.memberCount(o));
+      ctx.log(`${p.name}'s ${data.name}: ${o.name} has ${n} member${n === 1 ? '' : 's'}${data.cap ? ` (up to ${data.cap})` : ''}.`);
+      if (n) startSteal(ctx, p, data.name, ctx.stealCount(p, n, { say: true }), { only: [o.id], oneRival: true });
+    },
     mug(ctx, p, id) { mugDo(ctx, p, ctx.player(id)); },
     secondStory(ctx, p, id) {
       const o = ctx.player(id);

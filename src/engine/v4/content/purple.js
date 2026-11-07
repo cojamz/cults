@@ -22,6 +22,7 @@ import { add7, old7, REPLACE7 } from './replace7.js';
 import { REPLACE3 } from './replace3.js';
 import { add9, old9 } from './replace9.js';
 import { see, endsAhead } from './botsee.js';
+import { pool, poolSpace, chooseRival } from './pool.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const P = 'purple';
@@ -438,6 +439,12 @@ export default {
   name: 'Purple',
   resource: P,
   handlers: {
+    // idea pipeline pool 1: give a rival the Goes Last token (Cory, Nov 7: "making all a players members go last")
+    sendLast(ctx, p, id, data) {
+      const o = ctx.player(id), n = data.all ? turnsLeft(ctx, o) : 1;
+      ctx.log(`${p.name}'s ${data.name}: ${o.name} takes the Goes Last token.`);
+      if (n) toToken(ctx, o, n, data.name);
+    },
     skipped,
     ...handlers11({ callBack }),
     // Interrupters (REPLACE3) and Interrupter (REPLACE7) share the ask; the log names the holder's card
@@ -476,6 +483,17 @@ export default {
   scoring: { label: 'Most purple', counts: 'the purple you hold when the round ends', score: (ctx, p) => p.res.purple || 0 },
 
   actions: [
+    ...[['closingtime', 'Closing Time', 2, true], ['waityourturn', 'Wait Your Turn', 1, false]].map(([key, name, ring, all]) => poolSpace({
+      key, copyDoesIt: true, ring, name,
+      text: all ? '+3 purple. Give a rival the Goes Last token: their other minions are placed after everyone else’s.'
+        : '+2 purple in round I, +3 in round II, +4 in round III. Give a rival the Goes Last token: their next minion is placed after everyone else’s.',
+      estimate: ctx => (all ? 3 : ctx.state.round + 1) + 1,
+      resolve(ctx, p) {
+        ctx.gain(p, P, all ? 3 : ctx.state.round + 1, { fromAction: true });
+        if (ctx.rivals(p).some(o => turnsLeft(ctx, o))) chooseRival(ctx, p, `${name}: which rival takes the Goes Last token?`, 'purple.sendLast', { name, all },
+          o => (turnsLeft(ctx, o) ? 10 : 0) + ctx.followers(o));
+      },
+    }, 'pool1')),
     {
       // Cory, 2026-10-22: "+4 purple, skip your next turn" (always +4: +3 and the space's +1), from the old game's
       // "Gain 4 purple, skip next turn". You're passed over once; the snake carries on and you still place every minion.
@@ -565,6 +583,15 @@ export default {
   ],
 
   members: [
+    pool(m('ushers', 'Ushers', 2, 3, 'On Use, once per round: give a rival the Goes Last token: their other minions are placed after everyone else’s.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        if (!ctx.rivals(owner).some(o => turnsLeft(ctx, o))) { card.used = false; ctx.log(`${owner.name}'s Ushers: no rival has a minion left.`); return; }
+        chooseRival(ctx, owner, 'Ushers: which rival takes the Goes Last token?', 'purple.sendLast', { name: 'Ushers', all: true },
+          o => (turnsLeft(ctx, o) ? 10 : 0) + ctx.followers(o));
+      },
+    }), 'pool1'),
     m('secondwind', 'Go-Getter', 4, 2, 'On Use, once per game: +1 minion, placed right after this turn.', { from: 2,
       activate: 'game',
       onActivate(ctx, owner, card) { if (!extraTurns(ctx, owner, 1, 'Go-Getter')) card.used = false; },

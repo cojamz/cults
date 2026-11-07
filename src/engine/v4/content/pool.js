@@ -12,3 +12,18 @@ export const pool = (def, batch) => Object.assign(def, { pool: batch || true, re
 export const poolSpace = (a, batch) => Object.assign(a, { pool: batch || true });
 /** Candidate spaces by color id, filled as colors register (content/index.js). */
 export const POOL_SPACES = {};
+
+/** "+n of any colors" for a candidate: one at a time, each to the color the player holds least of (what bots pick when
+ *  asked one color at a time, as Last-Minute Shopper asks). Bot games only; a card that ships asks the player. */
+export function anyColors(ctx, p, n, who) {
+  const got = {};
+  for (let i = 0; i < n; i++) {
+    const c = [...ctx.state.resources].sort((a, b) => (p.res[a] || 0) - (p.res[b] || 0))[0];
+    ctx.gain(p, c, 1); got[c] = (got[c] || 0) + 1;
+  }
+  ctx.log(`${p.name}'s ${who}: +${n} of any colors (${Object.entries(got).map(([c, k]) => `${k} ${c}`).join(', ')}).`);
+}
+/** Ask p to pick a rival; bots lean to the rival with the most followers unless hint says otherwise. */
+export function chooseRival(ctx, p, prompt, handler, data = null, hint = o => ctx.followers(o)) {
+  ctx.choose(p, prompt, ctx.rivals(p).map(o => ({ id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers)`, kind: 'player', value: o.id, hint: hint(o) })), handler, data);
+}

@@ -15,6 +15,7 @@ import { on12, handlers12 } from './replace12.js';
 import { add14, old14 } from './replace14.js';
 import { on13, add13, old13, handlers13 } from './replace13.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
+import { pool, anyColors } from './pool.js';
 /** Bury's blue for a card: half its cost rounded down, or its whole cost under REPLACE12=buryfull. */
 const SNOBS_TEXT = on12('snobsup') ? 'Whenever you recruit a member costing more than each of your others, +2 followers.'
   : on12('snobsround') ? 'Round End: +1 follower per blue member you have.' : 'Game End: +1 follower per blue member you have.';
@@ -386,6 +387,18 @@ const market = {
   ],
 
   handlers: {
+    // idea pipeline pool 1 (content/pool.js): Temps and its variation
+    temps(ctx, p, uid, data) {
+      if (!p.members.includes(uid)) return;
+      const name = ctx.card(uid).def.name;
+      ctx.asMember(p, data.who, () => {
+        ctx.buryMember(p, uid);
+        ctx.log(`${p.name}'s ${data.who}: discarded ${name}.`);
+        anyColors(ctx, p, data.n, data.who);
+        extraBuys(ctx, p, data.buys);
+        ctx.log(`${p.name}'s ${data.who}: recruit ${data.buys === 1 ? 'an extra time' : `${data.buys} extra times`} this turn.`);
+      });
+    },
     ...handlers12({
       dive(ctx, p, uid) {
         if (uid == null) { ctx.log(`${p.name}'s Dumpster Dive: takes none.`); return; }
@@ -598,6 +611,20 @@ const market = {
   },
 
   members: [
+    // idea pipeline pool 1 (Nov 7): Cory's Temps, 1:15pm "maybe temp gives 4 wild on the discard", 1:16pm "AND it gives the
+    // extra recruit"; price 4 blue + 4 any as seen is the brainstorm thread's fill-in. Temps (Big) is the variation step's.
+    ...[['temps', 'Temps', 'round', 4, 1], ['tempsbig', 'Temp Agency', 'game', 6, 2]].map(([key, name, every, n, buys]) => pool(m(key, name, 3, 3,
+      `On Use, once per ${every}: discard one of your members, then +${n} of any colors and recruit ${buys === 1 ? 'an extra time' : `${buys} extra times`} this turn.`, {
+        activate: every,
+        ...(every === 'round' ? { onRoundStart(ctx, owner, card) { card.used = false; } } : {}),
+        onActivate(ctx, owner, card) {
+          const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid);
+          if (!list.length) { card.used = false; ctx.log(`${owner.name}'s ${name}: no other member to discard.`); return; }
+          ctx.choose(owner, `${name}: discard which member?`, list.map(c => ({ id: `card:${c.uid}`, label: c.def.name, kind: 'card', value: c.uid,
+            hint: -((c.def.f || 1) + (c.used ? -1 : 0)) })), `${Q}.temps`, { who: name, n, buys });
+        },
+        botActivate: (ctx, owner) => ctx.membersOf(owner).some(c => c.def.key !== key && ((c.def.f || 1) <= 1 || c.used)),
+      }), 'pool1')),
     m('stylist', 'Stylist', 2, 2, 'Whenever anyone recruits a blue member, +1 blue.', {
       onAnyRecruit(ctx, owner, card, by, rec) {
         if (rec.uid !== card.uid && isBlue(ctx.defOf(rec))) ctx.gain(owner, B, 1);
