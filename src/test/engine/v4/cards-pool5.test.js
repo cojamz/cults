@@ -109,10 +109,10 @@ describe('Gift Exchange (Silver, round II)', () => {
 });
 
 describe('Globetrotters (Yellow)', () => {
-  it('Round End: recruit a shop member of a color none of your members have, costing up to 4, for free', () => {
+  it('Round End: recruit a shop member of a color none of your members have, costing up to 6, for free', () => {
     let s = still({ quadrants: ['yellow', 'red', 'market', 'purple'], members: [['yellow.globetrotters']] });
-    const fresh = cheapest(s, 4, u => defById(s.cards[u].def).quadrant !== 'yellow' && defById(s.cards[u].def).quadrant !== 'guest');
-    const same = cheapest(s, 4, u => defById(s.cards[u].def).quadrant === 'yellow');
+    const fresh = cheapest(s, 6, u => defById(s.cards[u].def).quadrant !== 'yellow' && defById(s.cards[u].def).quadrant !== 'guest');
+    const same = cheapest(s, 6, u => defById(s.cards[u].def).quadrant === 'yellow');
     const pick = [fresh[0], ...same.slice(0, 1)];
     for (const u of pick) s.pile.splice(s.pile.indexOf(u), 1);
     s.shop.splice(0, pick.length, ...pick);
@@ -120,7 +120,7 @@ describe('Globetrotters (Yellow)', () => {
     const offered = s.pending.options.map(o => o.value);
     expect(offered).toContain(fresh[0]);
     for (const u of same) expect(offered).not.toContain(u);
-    expect(offered.every(u => price(s, u) <= 4)).toBe(true);
+    expect(offered.every(u => price(s, u) <= 6)).toBe(true);
     s = move(s, `card:${fresh[0]}`);
     expect(s.players[0].members).toContain(fresh[0]);
     expect(named(s, 'Globetrotters').at(-1)).toMatch(/recruits .* for free/);

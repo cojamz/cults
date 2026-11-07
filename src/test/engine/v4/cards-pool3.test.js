@@ -262,9 +262,14 @@ describe('Red candidates', () => {
       const o = s.pending.options.find(x => x.kind === 'trade' && x.value[0] === mine);
       const red = s.players[0].res.red;
       s = move(s, o.id);
+      const yellow = s.players[0].res.yellow || 0;
+      for (let k = 1; k <= n; k++) { // the owner picks each color (judge games, Nov 7: not the least-held one for them)
+        expect(s.pending.prompt).toBe(`${name}: +1 of which color (${k} of ${n})?`);
+        s = move(s, 'color:yellow');
+      }
       expect(total(s.players[0].res) - red).toBe(n);
-      expect(named(s, name)).toHaveLength(1);
-      expect(named(s, name)[0]).toMatch(new RegExp(`^P1's ${name}: \\+${n} of any colors`));
+      expect(s.players[0].res.yellow - yellow).toBe(n);
+      expect(named(s, name)).toEqual(Array(n).fill(`P1's ${name}: +1 yellow.`));
     });
     it(`${name}: a swap of a rival's member, or a rival swapping yours, pays nothing`, () => {
       let s = sceneQ({ quadrants: Q, round: 2, members: [[id], ['red.panel']] });

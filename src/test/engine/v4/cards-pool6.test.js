@@ -81,11 +81,11 @@ describe('Dinner Hosts (Silver)', () => {
 });
 
 describe('Family Reunion (Red, round I)', () => {
-  it('Recruit a member of a color you already have, costing up to 4, for free. +1 red.', () => {
+  it('Recruit a member of a color you already have, costing up to 6, for free. +1 red.', () => {
     let s = sceneQ({ quadrants: ['red', 'gold', 'market', 'yellow'], members: [['red.panel']], shop: ['red.intern', 'benders.frontrunner'] });
     const mine = uidOf(s, 'red.intern', 'shop'), other = uidOf(s, 'benders.frontrunner', 'shop');
-    expect(price(s, mine)).toBeLessThanOrEqual(4);
-    expect(price(s, other)).toBeLessThanOrEqual(4);
+    expect(price(s, mine)).toBeLessThanOrEqual(6);
+    expect(price(s, other)).toBeLessThanOrEqual(6);
     s = take(s, 'red.familyreunion');
     expect(s.pending.options.map(o => o.value)).toContain(mine);
     expect(s.pending.options.map(o => o.value)).not.toContain(other);

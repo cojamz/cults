@@ -13,15 +13,22 @@ export const poolSpace = (a, batch) => Object.assign(a, { pool: batch || true })
 /** Candidate spaces by color id, filled as colors register (content/index.js). */
 export const POOL_SPACES = {};
 
-/** "+n of any colors" for a candidate: one at a time, each to the color the player holds least of (what bots pick when
- *  asked one color at a time, as Last-Minute Shopper asks). Bot games only; a card that ships asks the player. */
-export function anyColors(ctx, p, n, who) {
-  const got = {};
-  for (let i = 0; i < n; i++) {
-    const c = [...ctx.state.resources].sort((a, b) => (p.res[a] || 0) - (p.res[b] || 0))[0];
-    ctx.gain(p, c, 1); got[c] = (got[c] || 0) + 1;
-  }
-  ctx.log(`${p.name}'s ${who}: +${n} of any colors (${Object.entries(got).map(([c, k]) => `${k} ${c}`).join(', ')}).`);
+/** "+n of any colors" for a candidate: the owner picks one color at a time, as Last-Minute Shopper asks; bots take the
+ *  color they hold least of. `handler` is the calling color file's route to anyColorStep ('<color>.anyColor'). */
+export function anyColors(ctx, p, n, who, handler) {
+  anyColorAsk(ctx, p, { n, left: n, who, handler });
+}
+function anyColorAsk(ctx, p, data) {
+  const k = data.n - data.left + 1;
+  ctx.choose(p, `${data.who}: +1 of which color${data.n > 1 ? ` (${k} of ${data.n})` : ''}?`, ctx.state.resources.map(c => ({
+    id: `color:${c}`, label: c, kind: 'color', value: c, hint: -(p.res[c] || 0),
+  })), data.handler, data);
+}
+export function anyColorStep(ctx, p, color, data) {
+  if (!ctx.state.resources.includes(color)) return;
+  ctx.gain(p, color, 1);
+  ctx.log(`${p.name}'s ${data.who}: +1 ${color}.`);
+  if (data.left > 1) anyColorAsk(ctx, p, { ...data, left: data.left - 1 });
 }
 /** Ask p to pick a rival; bots lean to the rival with the most followers unless hint says otherwise. */
 export function chooseRival(ctx, p, prompt, handler, data = null, hint = o => ctx.followers(o)) {

@@ -257,7 +257,7 @@ const trading = {
     giveSpace('handoffs', 'Hand-Offs', 'Give one of your members to a rival. Gain white equal to twice its cost. +1 white.', 2, 0),
     giveSpace('bequest', 'Bequest', 'Give one of your members to a rival. Gain white equal to its cost, +3 followers. +1 white.', 1, 3),
     poolSpace({
-      key: 'handouts', copyDoesIt: true, ring: 2, name: 'Handouts', text: 'Give up to 4 of your resources to rivals, split as you choose. +3 white per resource given. +1 white.',
+      key: 'handouts', copyDoesIt: true, ring: 2, name: 'Handouts', text: 'Give up to 4 of your non-white resources to rivals, split as you choose. +3 white per resource given. +1 white.',
       estimate: (ctx, p) => 1 + 2 * Math.min(4, Object.entries(p.res).filter(([c]) => c !== W).reduce((a, [, n]) => a + n, 0)),
       resolve(ctx, p) { ctx.gain(p, W, 1, { fromAction: true }); giveForWhiteAsk(ctx, p, { name: 'Handouts', max: 4, each: 3, given: 0 }); },
     }, 'pool2'),
@@ -607,7 +607,7 @@ const trading = {
         },
         ...see(() => 1), // BOTSEE: a member back when it's taken or swapped; bots don't plan it
       }), 'pool4')),
-    pool(m('almsgivers', 'Almsgivers', 3, 3, 'Round End: give up to 2 of your resources to rivals, split as you choose. +3 white per resource given.', {
+    pool(m('almsgivers', 'Almsgivers', 3, 3, 'Round End: give up to 2 of your non-white resources to rivals, split as you choose. +3 white per resource given.', {
       onAllPlaced(ctx, owner) { ctx.asMember(owner, 'Almsgivers', () => giveForWhiteAsk(ctx, owner, { name: 'Almsgivers', max: 2, each: 3, given: 0 })); },
       ...see(info => 4 * endsAhead(info).length),
     }), 'pool2'),

@@ -15,7 +15,7 @@ import { on12, handlers12 } from './replace12.js';
 import { add14, old14 } from './replace14.js';
 import { on13, add13, old13, handlers13 } from './replace13.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
-import { pool, poolSpace, anyColors } from './pool.js';
+import { pool, poolSpace, anyColors, anyColorStep } from './pool.js';
 /** Bury's blue for a card: half its cost rounded down, or its whole cost under REPLACE12=buryfull. */
 const SNOBS_TEXT = on12('snobsup') ? 'Whenever you recruit a member costing more than each of your others, +2 followers.'
   : on12('snobsround') ? 'Round End: +1 follower per blue member you have.' : 'Game End: +1 follower per blue member you have.';
@@ -403,6 +403,7 @@ const market = {
     rummage(ctx, p, uid) { if (discardOf(ctx.state).includes(uid) && priceOf(ctx.card(uid)) <= 6) graveTake(ctx, p, uid, 'Rummage'); },
     // idea pipeline pool 3: Grave Diggers' and Salvagers' pick among tied cheapest discard pile members
     graveFree(ctx, p, uid, data) { if (discardOf(ctx.state).includes(uid)) ctx.asMember(p, data.name, () => graveTake(ctx, p, uid, data.name)); },
+    anyColor: anyColorStep,
     // idea pipeline pool 1 (content/pool.js): Temps and its variation
     temps(ctx, p, uid, data) {
       if (!p.members.includes(uid)) return;
@@ -410,7 +411,7 @@ const market = {
       ctx.asMember(p, data.who, () => {
         ctx.buryMember(p, uid);
         ctx.log(`${p.name}'s ${data.who}: discarded ${name}.`);
-        anyColors(ctx, p, data.n, data.who);
+        anyColors(ctx, p, data.n, data.who, 'market.anyColor');
         extraBuys(ctx, p, data.buys);
         ctx.log(`${p.name}'s ${data.who}: recruit ${data.buys === 1 ? 'an extra time' : `${data.buys} extra times`} this turn.`);
       });

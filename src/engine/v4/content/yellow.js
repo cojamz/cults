@@ -466,11 +466,11 @@ export default {
 
   members: [
     // idea pipeline pool 5 (Nov 7): Round End before contests; "a color none of your members have" as Housewarming reads
-    // it. "costing up to 4" as printed (Housewarming's prints 4 + MORE; this one doesn't move). Price a fill-in.
-    pool(m('globetrotters', 'Globetrotters', 2, 2, 'Round End: recruit a shop member of a color none of your members have, costing up to 4, for free.', {
+    // it. "costing up to 6" as printed (was 4; nothing cost that little, judge games Nov 7) (Housewarming's prints 4 + MORE; this one doesn't move). Price a fill-in.
+    pool(m('globetrotters', 'Globetrotters', 2, 2, 'Round End: recruit a shop member of a color none of your members have, costing up to 6, for free.', {
       onAllPlaced(ctx, owner) {
-        ctx.asMember(owner, 'Globetrotters', () => freeAsk(ctx, owner, 'Globetrotters', ctx.shopCards().filter(c => hwCost(c) <= 4 && newColor(ctx, owner, c, { grey: true })),
-          'yellow.poolFree', 'no shop member of a new color costs 4 or less'));
+        ctx.asMember(owner, 'Globetrotters', () => freeAsk(ctx, owner, 'Globetrotters', ctx.shopCards().filter(c => hwCost(c) <= 6 && newColor(ctx, owner, c, { grey: true })),
+          'yellow.poolFree', 'no shop member of a new color costs 6 or less'));
       },
       ...see(info => 1.5 * endsAhead(info).length * 0.4), // BOTSEE: a cheap new-color member now and then
     }), 'pool5'),

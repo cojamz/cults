@@ -10,13 +10,13 @@ import { see, endsAhead } from './botsee.js';
 import { add7, old7, handlers7 } from './replace7.js';
 import { add12, old12, on12 } from './replace12.js';
 import { swap11, handlers11 } from './replace11.js';
-import { pool, poolSpace, anyColors, freeAsk, freeTake } from './pool.js';
+import { pool, poolSpace, anyColors, anyColorStep, freeAsk, freeTake } from './pool.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
-/** Pool 6: Family Reunion's shop members: a color one of p's members has, costing up to 4. */
+/** Pool 6: Family Reunion's shop members: a color one of p's members has, costing up to 6 (was 4: nothing cost that little, judge games Nov 7). */
 const reunionList = (ctx, p) => {
   const have = new Set(ctx.membersOf(p).map(c => c.asColor || c.def.quadrant).filter(q => q && q !== 'guest' && q !== 'benders'));
-  return ctx.shopCards().filter(c => have.has(c.def.quadrant) && cost(c) <= 4);
+  return ctx.shopCards().filter(c => have.has(c.def.quadrant) && cost(c) <= 6);
 };
 /** Pool 6: Trade-Ins' pairs, [your member, shop member costing up to 2 more], members not yet swapped this time. */
 const tradeInPairs = (ctx, p, done) => {
@@ -121,10 +121,10 @@ export default {
     // up to 4" as printed. Trade-Ins: one of your members at a time (each once; one just swapped in can't go again), for a
     // shop member costing up to 2 more, Done to stop: a Red swap, so swap reactions and protections apply.
     poolSpace({
-      key: 'familyreunion', ring: 1, name: 'Family Reunion', copyDoesIt: true, text: 'Recruit a member of a color you already have, costing up to 4, for free. +1 red.',
+      key: 'familyreunion', ring: 1, name: 'Family Reunion', copyDoesIt: true, text: 'Recruit a member of a color you already have, costing up to 6, for free. +1 red.',
       estimate: (ctx, p) => 1 + Math.max(0, ...reunionList(ctx, p).map(c => c.def.f + 0.6 * cost(c))),
       resolve(ctx, p) {
-        freeAsk(ctx, p, 'Family Reunion', reunionList(ctx, p), 'red.poolFree', 'no shop member of a color you have costs 4 or less');
+        freeAsk(ctx, p, 'Family Reunion', reunionList(ctx, p), 'red.poolFree', 'no shop member of a color you have costs 6 or less');
         ctx.gain(p, 'red', 1, { fromAction: true });
       },
     }, 'pool6'),
@@ -220,6 +220,7 @@ export default {
 
   handlers: {
     poolFree: freeTake,
+    anyColor: anyColorStep,
     tradeIn(ctx, p, value, data) {
       if (!Array.isArray(value)) { ctx.log(`${p.name}'s Trade-Ins: ${data.n} swap${data.n === 1 ? '' : 's'}.`); return; }
       const [a, b] = value;
@@ -366,7 +367,7 @@ export default {
       `Whenever you swap one of your members, +${n} of any colors.`, {
         onCultMove(ctx, owner, card, { uid, from, actor, swappedWith }) {
           if (from !== owner || actor !== owner || swappedWith == null || uid === card.uid) return;
-          ctx.asMember(owner, name, () => anyColors(ctx, owner, n, name), card.uid);
+          ctx.asMember(owner, name, () => anyColors(ctx, owner, n, name, 'red.anyColor'), card.uid);
         },
         ...see(info => 0.8 * n * endsAhead(info).length), // BOTSEE: about one swap a round for a Red player
       }), 'pool3')),
