@@ -31,3 +31,28 @@ console.log(`# Economy test: numbers (${new Date().toISOString().slice(0, 16)}Z)
 console.log('| Mix | Games | Cards end | Seat shows | Cards after II | Most cards | Income a turn | Member price | Turns nothing affordable | Turns everything affordable | Left over I/II/III | Winners ≤5 cards | Follower-only seat wins | Last after II wins | Win margin | Final followers |');
 console.log('|' + '---|'.repeat(16));
 for (const r of rows) console.log(`| ${r.n} | ${r.games} | ${f1(r.cards)} | ${f1(r.seat)} | ${f1(r.cardsR2)} | ${r.maxCards} | ${f1(r.income)} | ${f1(r.price)} | ${pct(r.dead)} | ${pct(r.rich)} | ${r.left.map(f1).join('/')} | ${pct(r.small)} | ${pct(r.buyerWin)} | ${pct(r.lastWins)} | ${f1(r.spread)} | ${f1(r.followers)} |`);
+
+// ---------- paired against today, game for game (same deals), with 90% bootstrap ranges ----------
+const load = n => files.filter(f => f.startsWith(slug(n) + '.') && f.endsWith('.jsonl')).flatMap(f => readFileSync(`${dir}/${f}`, 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)));
+const per = g => {
+  const ps = g.players.filter((_, i) => i !== g.buyer), w = ps.filter(p => p.win), looks = ps.reduce((a, p) => a + p.buyLooks, 0) || 1;
+  return { cards: avg(ps.map(p => p.cards)), dead: ps.reduce((a, p) => a + p.dead, 0) / looks, small: w.length ? w.filter(p => p.cards <= 5).length / w.length : 0,
+    last: g.lastAfterR2Won ? 1 : 0, margin: g.spread, fol: avg(ps.map(p => p.followers)) };
+};
+const base = new Map(load('today').map(g => [g.game, per(g)]));
+let seed = 12345; const rnd = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
+const boot = d => { const m = []; for (let k = 0; k < 1000; k++) { let s = 0; for (let i = 0; i < d.length; i++) s += d[Math.floor(rnd() * d.length)]; m.push(s / d.length); } m.sort((a, b) => a - b); return [m[50], m[949]]; };
+const KEYS = [['cards', 'Cards end', 1], ['dead', 'Turns nothing affordable (pts)', 100], ['small', 'Winners ≤5 cards (pts)', 100], ['last', 'Last after II wins (pts)', 100], ['margin', 'Win margin', 1], ['fol', 'Final followers', 1]];
+console.log('\n## Change from today, same games (90% range; a range that crosses 0 is not a clear change)\n');
+console.log('| Mix | Paired games | ' + KEYS.map(k => k[1]).join(' | ') + ' |');
+console.log('|' + '---|'.repeat(KEYS.length + 2));
+for (const n of Object.keys(MIXES)) {
+  if (n === 'today') continue;
+  const gs = load(n).filter(g => base.has(g.game));
+  if (gs.length < 5) continue;
+  const cells = KEYS.map(([k, , s]) => {
+    const d = gs.map(g => (per(g)[k] - base.get(g.game)[k]) * s), m = avg(d), [lo, hi] = boot(d);
+    return `${m >= 0 ? '+' : ''}${m.toFixed(1)} (${lo.toFixed(1)} to ${hi.toFixed(1)})${lo > 0 || hi < 0 ? ' *' : ''}`;
+  });
+  console.log(`| ${n} | ${gs.length} | ${cells.join(' | ')} |`);
+}
