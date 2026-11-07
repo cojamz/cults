@@ -68,3 +68,4 @@ Why each rule in .claude/rules/working-with-cory.md exists, in Cory's words. Mov
 - 2026-11-07: Showed rejected card review 2 defaults on the coordinator's ask. Check the pitch ledger for a rejection before showing any idea again, even when asked by the coordinator.
 - 2026-11-07: Cory, again: "i don't like drawing from the top of the pile. i don't like randomness. In general the game should be all public information." Added as pitching.md step 7, a design-principles line, and a presend check (it came many times).
 - 2026-11-07 Cory: skills follow Anthropic's skill best practices ("how do you not already do that inherently"). Rule in .claude/rules/harness.md, Skills.
+- 2026-11-07 Cory: "i said batches are 5… do you go until you fucking have 5 good ideas for me". A count he sets is exact; keep generating until that many pass. working-with-cory.md, pitching.md, brainstorm SKILL.md.
