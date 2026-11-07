@@ -1,0 +1,36 @@
+# Magenta: the live 10-card deck and spaces (Nov 8)
+
+- space (round I) **Help Yourself**: "Steal 3 resources in round I, 4 in round II, 5 in round III."
+  - Cory's mark: star: good in concept, perhaps shouldn’t be limited to one rival
+- space (round I) **Stash**: "+2 magenta in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III."
+  - Cory's mark: weak: not on identity at ALL
+- space (round I) **Lie Low**: "Steal 1 resource. Rivals can’t steal from you this round. +1 magenta."
+  - Cory's mark: weak: too frustrating for opponents, no counter. kind of a corner to hide in no good
+- space (round II) **Heist**: "Steal 3 followers, split among rivals as you choose. +1 magenta."
+  - Cory's mark: fine: not super fun.
+- space (round II) **Shake Down**: "Choose a rival. They choose one of their members costing 7 or less, then pay you its cost or you steal it. +1 magenta."
+  - Cory's mark: weak: really feels bad annoying
+- space (round III) **Poach**: "Recruit a rival’s member you choose, for free. +1 magenta."
+  - Cory's mark: star: yeah good round 3. weaker than it seems. players can know it’s coming since it’s round 3 action
+- member (price 5) **Accomplice**: "On Recruit: steal 3 resources."
+  - Cory's mark: fine: fine, a little boring but not too boring.
+- member (price 8) **Second-Story Man**: "Round End: before contests are scored, steal 2 resources from one rival."
+  - Cory's mark: weak: weak - contests don’t really rely on resources
+- member (price 7) **Desperado**: "While you have the fewest followers (ties count), your steals take 2 more resources."
+  - Cory's mark: weak: Confusing.
+- member (price 9) **Extortionist**: "On Recruit and at Round Start: steal 2 resources."
+  - Cory's mark: weak: boring and complicated, bad mix
+- member (price 10) **Bodyguards**: "Rivals can’t steal from you."
+  - Cory's mark: fine: too breaking if it’s hard to move members
+- member (price 9) **Heist Crew**: "On Use, once per game: steal half of a rival's biggest pile, rounded down."
+  - Cory's mark: star: i love it. fine dynamic element to the game. haven’t seen it yet so don’t quite know how it feels. but i like the idea.
+- member (price 10) **Double Agent**: "On Recruit: give this member to a rival and recruit one of theirs."
+  - Cory's mark: fine: too good
+- member (price 10) **Kidnapper**: "On Recruit and at Round Start: steal a rival’s cheapest member."
+  - Cory's mark: fine: Kinda like. a little fun.
+- member (price 6) **Snitch**: "Whenever a rival steals from you, they lose 1 follower."
+  - Cory's mark: star: fun.
+- member (price 9) **Shoplifter**: "Whenever you recruit, steal 1 resource."
+  - Cory's mark: weak: i don’t like this triggering so often. annoying to remember.
+- member (price 7) **Fence**: "Whenever you steal, +1 magenta."
+  - Cory's mark: fine: eh. boring. i don’t like just +1ing resource gains. i’m starting to think members should lean more towards point generation than towards resource gen. idk
