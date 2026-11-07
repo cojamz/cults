@@ -1,6 +1,10 @@
-# Color interactions: how to think through two colors meeting
+# Color interactions: how two colors meet
 
-Read in full before any pitch about how colors tie together: a color pair, the intersection table, "stitch the colors closer", a color review's "interacts with" line. Cory, Nov 7: "the brainstorming skill should be much better at thinking through color interactions." Four Red × Blue lists in one morning drew "these aren't really blue and red interactions", "ties need to be intuitive" and "you are not understanding the exercise". This file is what that morning taught.
+Read this in full before any pitch about colors tying together: a color pair, the intersection table, "stitch the colors closer", or a review's "interacts with" line.
+
+Why it matters: Cory wants every color tied to two or three others, and colors rotate between games, so a tie has to come from the game's shared pieces, not from one color reaching for another. Four Red × Blue lists missed this in one morning (Nov 7: "these aren't really blue and red interactions", "ties need to be intuitive", "you are not understanding the exercise"), and he asked for the skill to get "much better at thinking through color interactions".
+
+Contents: 1 what an interaction is · 2 what it is not · 3 contests as the source · 4 the method per pair · 5 his pocket · 6 refused ideas · 7 a worked check
 
 ## 1. What Cory means by an interaction
 
