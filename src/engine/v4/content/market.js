@@ -219,6 +219,11 @@ export function toBottom(ctx, k) {
  *  Unset, never called with anything to do. */
 export function scavenge(ctx, actor, uids) {
   if (!actor || !uids?.length) return;
+  // Impulse Buyers (idea pipeline pool 8, candidates only): "Whenever you send shop members to the discard pile, recruit
+  // an extra time this turn." One send (a batch) is one extra recruit; on its owner's own turn only.
+  if (ctx.state.current === actor.id) for (const c of ctx.membersOf(actor)) if (ctx.defsOf(c).some(d => d.impulse && d.pool) && uids.some(u => discardOf(ctx.state).includes(u))) {
+    ctx.asMember(actor, c.def.name, () => { extraBuys(ctx, actor, 1); ctx.log(`${actor.name}'s ${c.def.name}: sent shop members to the discard pile, recruit an extra time this turn.`); }, c.uid);
+  }
   // Pickers (REPLACE13=pickers): its owner just sent these down on their own turn; they may also recruit one, paying its cost
   if (on13('pickers') && ctx.membersOf(actor).some(c => ctx.defsOf(c).some(d => d.pickers))) {
     const opts = uids.filter(u => discardOf(ctx.state).includes(u)).filter(u => ctx.payChoices(actor, u, {}).length).map(u => ctx.card(u)).map(x => ({
@@ -628,6 +633,11 @@ const market = {
   },
 
   members: [
+    // idea pipeline pool 8 (Nov 7, writer round 1; price a fill-in): scavenge() is every "you sent shop members to the
+    // discard pile" moment (Churn, Bury, Window Dressers…), so it pays there.
+    pool(m('impulsebuyers', 'Impulse Buyers', 3, 2, 'Whenever you send shop members to the discard pile, recruit an extra time this turn.', { impulse: true,
+      ...see(info => 3 * endsAhead(info).length),
+    }), 'pool8'),
     // idea pipeline pool 3 (Nov 7): the discard pile as a second shop. Prices are fill-ins (design-core bands).
     // Grave Diggers: "Round End" before contests, as Last-Minute Shopper's (onAllPlaced). Cheapest = lowest printed cost; a
     // tie is the owner's pick.

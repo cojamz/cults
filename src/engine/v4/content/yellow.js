@@ -15,6 +15,17 @@ import { swap14, handlers14 } from './replace14.js';
 import { add11, old11 } from './replace11.js';
 import { pool, poolSpace, freeAsk, freeTake } from './pool.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
+// ---------- idea pipeline pool 8 helpers ----------
+const tint = c => c.asColor || c.def.quadrant;
+/** Is rec's color one none of owner's other members have? */
+const freshColor = (ctx, owner, rec) => !ctx.membersOf(owner).some(c => c.uid !== rec.uid && tint(c) === tint(rec));
+/** One more recruit this turn, right after the current one (as Blue's extraBuys). */
+function extraRecruit(ctx, p) {
+  const q = ctx.state.queue;
+  let at = 0;
+  for (let i = 0; i < q.length; i++) { if (q[i].p !== p.id) continue; if (q[i].t === 'endTurn') break; if (q[i].t === 'buy') { at = i; break; } }
+  q.splice(at, 0, { t: 'buy', p: p.id });
+}
 
 const Y = 'yellow';
 const colors = ctx => ctx.state.resources;
@@ -465,6 +476,25 @@ export default {
   },
 
   members: [
+    // idea pipeline pool 8 (Nov 7, writer round 1; prices are fill-ins). A member's color is its own (grey counts as one),
+    // Drifters' the one it picked; "none of your members have" is read without the member just recruited.
+    pool(m('sightseers', 'Sightseers', 3, 2, 'Whenever you recruit a member of a color none of your members have, recruit an extra time this turn.', {
+      onAnyRecruit(ctx, owner, card, by, rec) {
+        if (by !== owner || !freshColor(ctx, owner, rec)) return;
+        extraRecruit(ctx, owner);
+        ctx.log(`${owner.name}'s Sightseers: ${rec.def.name} is a new color, recruit an extra time this turn.`);
+      },
+      ...see(info => 3 * endsAhead(info).length),
+    }), 'pool8'),
+    pool(m('souvenirhunters', 'Souvenir Hunters', 2, 2, 'Whenever you recruit a member of a color none of your members have, +1 follower per color among your members.', {
+      onAnyRecruit(ctx, owner, card, by, rec) {
+        if (by !== owner || !freshColor(ctx, owner, rec)) return;
+        const n = new Set(ctx.membersOf(owner).map(tint)).size;
+        owner.bonus += n;
+        ctx.log(`${owner.name}'s Souvenir Hunters: ${rec.def.name} is a new color, +${n} follower${n === 1 ? '' : 's'} (${n} color${n === 1 ? '' : 's'}).`);
+      },
+      ...see(info => 3 * endsAhead(info).length),
+    }), 'pool8'),
     // idea pipeline pool 5 (Nov 7): Round End before contests; "a color none of your members have" as Housewarming reads
     // it. "costing up to 6" as printed (was 4; nothing cost that little, judge games Nov 7) (Housewarming's prints 4 + MORE; this one doesn't move). Price a fill-in.
     pool(m('globetrotters', 'Globetrotters', 2, 2, 'Round End: recruit a shop member of a color none of your members have, costing up to 6, for free.', {

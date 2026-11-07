@@ -225,7 +225,15 @@ export const followers = (state, p) => Math.max(0, 1 + p.bonus + p.members.reduc
 const printedMembers = def => def.n ?? 1;
 const countOf = card => Math.max(printedMembers(defById(card.def)), card.copy ? printedMembers(defById(card.copy)) : 0);
 export const memberWeight = (state, uid) => countOf(state.cards[uid]);
-export const memberCount = (state, p) => p.members.reduce((s, u) => s + countOf(state.cards[u]), 0);
+// Ascetics (idea pipeline pool 7, candidates only): "Your other members count as 0 members." While p holds one, only
+// members carrying the flag count (each as itself).
+const asceticOnly = (state, p) => holdsId(state, p, 'trading.ascetics', 'othersZero');
+/** A cheap test for one candidate's flag (hot paths): its id on a card, or a copy or ability of it. */
+function holdsId(state, p, id, flag) {
+  return p.members.some(u => { const c = state.cards[u]; return (c.def === id || c.copy === id || c.ability === id) && effectiveDefs(c).some(d => d[flag] && d.pool); });
+}
+const counted = (state, p) => (asceticOnly(state, p) ? p.members.filter(u => effectiveDefs(state.cards[u]).some(d => d.othersZero && d.pool)) : p.members);
+export const memberCount = (state, p) => counted(state, p).reduce((s, u) => s + countOf(state.cards[u]), 0);
 /** Mannequin (live since Nov 5, Hawker's place): "Blue members in the shop count as your members when contests are scored." */
 const contestMembers = (state, p) => {
   const n = memberCount(state, p);
@@ -235,7 +243,7 @@ const contestMembers = (state, p) => {
 // Dabblers (everyColor) counts for every color on the table (Cory, 2026-10-28)
 // { wild: false } leaves Dabblers out, for a card where counting it would hurt its owner (Big Tent's "exactly one")
 // { cards: true } counts member cards, one each, whatever they count as
-export const countMembersOfColor = (state, p, q, { wild = true, cards = false } = {}) => p.members.reduce((s, u) => {
+export const countMembersOfColor = (state, p, q, { wild = true, cards = false } = {}) => counted(state, p).reduce((s, u) => {
   const c = state.cards[u], every = wild && effectiveDefs(c).some(d => d.everyColor) && q !== 'guest' && state.quadrants.includes(q);
   // Drifters counts as the one color its owner chose when recruiting it (card.asColor; Cory, 2026-10-31)
   // cards: one each, but Dabblers keeps its 2 in every color count, Most red members too (Cory, Nov 4 11:07am: "It
@@ -263,6 +271,9 @@ export { spacesOf }; // content/index.js
 export function actionAt(state, q, i) { return spacesOf(state, state.quadrants[q])[i]; }
 /** A space is open from its ring's round on, and shuts after its lastRound if it has one (Overtime: rounds I–II only, Cory 2026-10-15). */
 export const spaceOpen = (a, round) => a.ring <= round && !(a.lastRound && round > a.lastRound);
+/** Protesters (idea pipeline pool 7, candidates only): "Nobody can place there this round." state.protest is set
+ *  only by that candidate. */
+const protested = (state, key) => !!(state.protest && state.protest.round === state.round && state.protest.keys.includes(key));
 export function openSlots(state) {
   const out = [];
   state.quadrants.forEach((qid, q) => quadrant(qid).actions.forEach((a, i) => {
@@ -612,9 +623,10 @@ function inputFor(state, task) {
         // Place Holders (REPLACE11=placeholders): the held space is only its holder's this round
         // Moonlighters (REPLACE7 bot test): its minion only joins a rival's taken space, while one can be joined
         ...(task.join && squatSlots(state, p).length ? [] : openSlots(state)).filter(([q, i]) => !(state.held && state.held.round === state.round && state.held.pid !== p.id && state.held.key === `${q}-${i}`))
+          .filter(([q, i]) => !protested(state, `${q}-${i}`))
           .filter(([q, i]) => !task.ring || actionAt(state, q, i).ring <= task.ring)
           .map(([q, i]) => ({ id: `slot:${q}-${i}`, label: actionAt(state, q, i).name, kind: 'slot', q, i })),
-        ...squatSlots(state, p).filter(([q, i]) => !task.ring || actionAt(state, q, i).ring <= task.ring)
+        ...squatSlots(state, p).filter(([q, i]) => (!task.ring || actionAt(state, q, i).ring <= task.ring) && !protested(state, `${q}-${i}`))
           .map(([q, i]) => ({ id: `squat:${q}-${i}`, label: `${actionAt(state, q, i).name} (join ${state.players[state.slots[`${q}-${i}`]].name})`, kind: 'slot', squat: true, q, i })),
       ];
       // a member's activation can be used any time on your own turn (Cory, 2026-10-15): here too, beside the spaces
@@ -835,7 +847,7 @@ function resolveTask(state, task, optionId) {
       const key = `${q}-${i}`;
       if (squat) {
         // Party Crasher's one use is spent by the minion it lets in (Cory, 2026-10-28: "your next minion")
-        if (p.squatAll === state.round) { /* Overtime's open board */ } else if (p.crashNext && state.slots[key] !== p.id) delete p.crashNext;
+        if (p.squatAll === state.round) { /* Overtime's open board */ } else if (greenFan(state, p) && fanKeys(state, p).includes(key)) log(state, `${p.name}'s Superfans: joins a Green space a rival took.`); else if (p.crashNext && state.slots[key] !== p.id) delete p.crashNext;
         else spendAllowance(state, p, 'squat');
         (state.squats[key] = state.squats[key] || []).push(p.id);
       } else state.slots[key] = p.id;
@@ -1609,6 +1621,9 @@ function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop 
     if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));
     joinNow(state, p, w, [def]);
   }
+  // Day Trippers, Tourists (idea pipeline pool 7, candidates only): "Whenever you recruit a member, you may discard it
+  // after its On Recruit": asked after the On Recruit's own choices (choices queue in call order)
+  eachMemberOf(state, p, (held, d) => { if (d.pool && d.afterOwnRecruit && held.uid !== uid) d.afterOwnRecruit(ctx, p, held, w); }, ['afterOwnRecruit']);
   workersNow(state, p, def, uid);
 }
 /**
@@ -1685,6 +1700,12 @@ function recruitAbility(state, p, card, def, fn) {
   traceChanges(state, before, p, def);
   return out;
 }
+/** Costumers (idea pipeline pool 7, candidates only): "You also have each rival's cloak." Their cloaks' uids, for p's
+ *  ability hooks; none unless p holds a candidate with the flag. */
+function costumed(state, p) {
+  if (!holdsId(state, p, 'echo.costumers', 'allCloaks')) return [];
+  return state.players.filter(o => o !== p && o.artifact !== undefined).map(o => o.artifact);
+}
 /** Movement belongs to the leader doing it, rather than the departed card's owner. */
 const movementListeners = (state, actor) => actor.members.flatMap(uid => effectiveDefs(state.cards[uid]).filter(def => def.onMoveMember).map(def => ({ uid, def })));
 function memberMoved(state, actor, uid, from, to, listeners) {
@@ -1699,6 +1720,8 @@ function memberMoved(state, actor, uid, from, to, listeners) {
 function memberJoined(state, p, uid) {
   const card = state.cards[uid], w = wrap(state, card), defs = effectiveDefs(card), ctx = ctxFor(state);
   for (const def of defs) if (def.onJoined) { const before = traceSnapshot(state); tallied(state, p, uid, () => def.onJoined(ctx, p, w)); traceChanges(state, before, p, def); }
+  // Kinfolk (idea pipeline pool 8, candidates only): "Whenever a member joins your cult" on another card (or itself)
+  eachMemberOf(state, p, (held, d) => { if (d.pool && d.onMemberJoins && p.members.includes(uid)) d.onMemberJoins(ctx, p, held, w); }, ['onMemberJoins']);
 }
 /**
  * A member that adds minions in this round (Extra Hand: "+1 minion in round III"), recruited during it, adds them at
@@ -1967,12 +1990,15 @@ function effectiveDefs(card, state = null) {
 // most of a move's cost late in the game (smoothness panel, Oct 28); without keys every member runs as before.
 function eachMemberOf(state, p, fn, keys) {
   // an artifact's ability works like a member's (it isn't one: no count, no worth, never moves)
-  for (const uid of [...p.members, ...(p.artifact !== undefined ? [p.artifact] : [])]) {
+  const worn = costumed(state, p);
+  for (const uid of [...p.members, ...(p.artifact !== undefined ? [p.artifact] : []), ...worn]) {
     const card = state.cards[uid];
     for (const def of effectiveDefs(card, state)) {
       if (keys && !keys.some(k => def[k] !== undefined)) continue;
-      const before = traceSnapshot(state);
+      const before = traceSnapshot(state), lines = state.log.length;
       accounted(state, null, () => { const run = () => underCause({ kind: 'member', pid: p.id, uid, def: card.def }, () => tallied(state, p, uid, () => fn(wrap(state, card), def))); if (isCloak(state, uid)) econRun('cloak', { pid: p.id }, run); else run(); traceChanges(state, before, p, def); }, p.id, def.name);
+      // Costumers (pool 7): say whose cloak it was
+      if (worn.includes(uid) && state.log.length > lines) log(state, `${p.name}'s Costumers: wears ${state.players.find(o => o.artifact === uid)?.name}'s ${cardDef(state, uid).name}.`);
     }
   }
 }
@@ -2201,15 +2227,23 @@ export function pileReach(state, p) {
 export function squatSlots(state, p) {
   // Purple's round II space (Cory, 2026-10-22): "you can play on occupied spaces this round", any taken space, no limit
   const open = p.squatAll === state.round;
-  if (!open && !p.crashNext && !allowance(state, p, 'squat')) return [];
   const out = [];
+  // Superfans (idea pipeline pool 7, candidates only): "You can place on Green spaces rivals have taken." No use spent.
+  const fan = !open && greenFan(state, p);
+  if (fan) for (const key of fanKeys(state, p)) out.push(key.split('-').map(Number));
+  if (!open && !p.crashNext && !allowance(state, p, 'squat')) return out;
   for (const [key, owner] of Object.entries(state.slots)) {
     if (!open && (owner === p.id || state.squats?.[key]?.length)) continue;
     if (!spaceOpen(actionAt(state, ...key.split('-').map(Number)), state.round)) continue;
+    if (fan && fanKeys(state, p).includes(key)) continue;
     out.push(key.split('-').map(Number));
   }
   return out;
 }
+const greenFan = (state, p) => holdsId(state, p, 'echo.superfans', 'squatGreen');
+/** Green spaces a rival has taken that p hasn't joined yet (Superfans). */
+const fanKeys = (state, p) => Object.entries(state.slots).filter(([key, owner]) => owner !== p.id && state.quadrants[+key.split('-')[0]] === 'echo'
+  && !(state.squats?.[key] || []).includes(p.id) && spaceOpen(actionAt(state, ...key.split('-').map(Number)), state.round)).map(([key]) => key);
 /** p's minions this round, placed or not; .usual is a round's count before any extra (effects.js reads both). */
 const minionsThisRound = (state, p) => (p.left || 0) + workersOnBoard(state, p);
 minionsThisRound.usual = (state, p) => (state.round >= 1 ? WORKERS[state.round - 1] : minionsThisRound(state, p));
@@ -2329,6 +2363,8 @@ function wipeCard(state, uid) {
 function cardLeaves(state, p, uid) {
   const card = state.cards[uid], ctx = ctxFor(state);
   for (const def of effectiveDefs(card)) if (def.onLeave) def.onLeave(ctx, p, wrap(state, card));
+  // Ambulance Chasers (idea pipeline pool 8, candidates only): "Whenever a member leaves a rival's cult"
+  for (const o of state.players) if (o !== p) eachMemberOf(state, o, (held, d) => { if (d.pool && d.onRivalLeave) d.onRivalLeave(ctx, o, held, p, wrap(state, card)); }, ['onRivalLeave']);
   // "Whenever another of your members leaves your cult" (Widows, REPLACE10 bot test)
   if (REPLACE10) for (const u of p.members) if (u !== uid) for (const def of effectiveDefs(state.cards[u])) if (def.onOtherLeave) def.onOtherLeave(ctx, p, wrap(state, state.cards[u]), wrap(state, card));
 }
@@ -2368,7 +2404,7 @@ function ctxFor(state) {
     cloakOr: (card, name) => (card && state.artifacts && Object.values(state.artifacts).includes(card.uid) ? cardDef(state, card.uid).name : name),
     membersOf: p => p.members.map(u => wrap(state, state.cards[u])),
     /** p's members and p's artifact: for ability hooks only (an artifact is not a member) */
-    abilitiesOf: p => [...p.members, ...(p.artifact !== undefined ? [p.artifact] : [])].map(u => wrap(state, state.cards[u])),
+    abilitiesOf: p => [...p.members, ...(p.artifact !== undefined ? [p.artifact] : []), ...costumed(state, p)].map(u => wrap(state, state.cards[u])),
     ownerOf: uid => state.players.find(o => o.members.includes(uid)),
     // a card Snobs reserved for someone else is not offered to the player whose turn it is
     openSpaces: () => openSlots(state).map(([q, i]) => { const a = actionAt(state, q, i); return { key: `${q}-${i}`, name: a.name, ring: a.ring, qid: state.quadrants[q] }; }),

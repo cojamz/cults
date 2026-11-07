@@ -76,6 +76,8 @@ function offerFrom(ctx, owner, uid) {
     { id: 'no', label: 'Stay put', kind: 'no', value: null, hint: 0.5 },
   ], 'benders.stragglerTo', { uid, from });
 }
+/** Open spaces Protesters can sit on: not already blocked, and only while a spare space stays for every minion to come. */
+const protestable = ctx => (spareSpace(ctx) ? openSpaces(ctx).filter(t => !(ctx.state.protest?.round === ctx.state.round && ctx.state.protest.keys.includes(t.key))) : []);
 const stillMine = (ctx, p, w) => (w.joined ? (ctx.state.squats?.[w.key] || []).includes(p.id) : ctx.state.slots[w.key] === p.id);
 
 const cost = c => c.def.s + c.def.w;
@@ -164,6 +166,28 @@ const members = [
     },
     ...see(() => 3), // BOTSEE: the free member on the recruit
   }), 'pool9'),
+  // idea pipeline pool 7 (Nov 7, writer round 1; prices are fill-ins, 6/7/8 any as a player sees it). Saints and Bandits:
+  // onJoined, so a recruit, a swap, a take or a gift all count (as Ghost's). Protesters: core protested(); only while a
+  // spare space is left (spareSpace), so no minion is left with nowhere to go.
+  pool(m('saints', 'Saints', null, 0, 3, 'Whenever this member joins your cult, +3 followers.', {
+    onJoined(ctx, owner) { owner.bonus += 3; ctx.log(`${owner.name}'s Saints: +3 followers.`); },
+  }), 'pool7'),
+  pool(m('bandits', 'Bandits', null, 0, 4, 'Whenever this member joins your cult, steal 3 resources.', {
+    onJoined(ctx, owner) { startSteal(ctx, owner, 'Bandits', 3, { fromAction: false }); },
+  }), 'pool7'),
+  pool(m('protesters', 'Protesters', null, 0, 5, 'On Use, once per round, from round II: put this member on an open space. Nobody can place there this round.', {
+    activate: 'round',
+    onRoundStart(ctx, owner, card) { card.used = false; },
+    onActivate(ctx, owner, card) {
+      const open = protestable(ctx);
+      if (ctx.state.round < 2 || !open.length) { card.used = false; ctx.log(`${owner.name}'s Protesters: ${ctx.state.round < 2 ? 'only from round II' : 'no spare open space'}.`); return; }
+      ctx.choose(owner, 'Protesters: block which open space this round?', open.map(t => ({
+        id: `to:${t.key}`, label: spaceLabel(ctx, t.key), kind: 'slot', value: t.key, hint: Math.max(0, ...ctx.rivals(owner).map(o => t.a.estimate?.(ctx, o) || 0)) - (t.a.estimate?.(ctx, owner) || 0) * 0.5,
+      })), 'benders.protest', { uid: card.uid });
+    },
+    // bots block when a space is worth 4 or more to some rival
+    botActivate: (ctx, owner) => ctx.state.round >= 2 && protestable(ctx).some(t => Math.max(0, ...ctx.rivals(owner).map(o => t.a.estimate?.(ctx, o) || 0)) >= 4),
+  }), 'pool7'),
   // Party Crasher (was Squatter; id kept for old records): Cory, 2026-10-28, Once per game, cheaper; 5 with the +1 wild (Cory, Nov 1: "5"; was 4)
   m('squatter', 'Party Crasher', 'thieves', 2, 2, 'On Use, once per game: your next minion can be placed on a space a rival already took.', { // cut Nov 7 (cull.js): Scouts takes its place (Cory, "Yes") // still joins in round I at 5, so grey keeps 4 (Claude's fill-in)
     activate: 'game',
@@ -460,6 +484,14 @@ export const handlers = {
     for (const c of ctx.abilitiesOf(p)) for (const d of ctx.defsOf(c)) {
       if (d.onColorChosen && c.uid !== card.uid) ctx.asMember(p, d.name, () => d.onColorChosen(ctx, p, c, card), p.members.includes(c.uid) ? c.uid : null);
     }
+  },
+  // pool 7: Protesters' space, blocked for everyone until the round ends
+  protest(ctx, p, key, data) {
+    if (!key || ctx.state.slots[key] !== undefined || !protestable(ctx).some(t => t.key === key)) { const c = ctx.card(data.uid); if (c) c.used = false; return; }
+    const st = ctx.state;
+    if (!st.protest || st.protest.round !== st.round) st.protest = { round: st.round, keys: [] };
+    st.protest.keys.push(key);
+    ctx.log(`${p.name}'s Protesters sit on ${spaceLabel(ctx, key)}: nobody can place there this round.`);
   },
   ...handlers11({
     holdSpace(ctx, p, key) {

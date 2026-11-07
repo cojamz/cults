@@ -42,6 +42,27 @@ function graveSwapAsk(ctx, p, name) {
   opts.push({ id: 'none', label: 'Don’t swap', kind: 'pass', value: null, hint: 0.5 });
   ctx.choose(p, `${name}: swap one of your members with one in the discard pile?`, opts, 'red.graveSwap', { name });
 }
+// ---------- idea pipeline pool 8 helpers ----------
+const kinColor = c => c.asColor || c.def.quadrant;
+/** Talent Agents: [your member, a shop member costing the same or less] pairs. */
+function agentPairs(ctx, p) {
+  const shop = ctx.shopCards();
+  return ctx.membersOf(p).filter(c => ctx.canSwapMember(c.uid)).flatMap(a => shop.filter(b => cost(b) <= cost(a) && b.def.id !== a.def.id).map(b => [a, b]));
+}
+/** Bots: a swap that lifts a contest count of the shop member's color, or brings a member worth more. */
+function agentHint(ctx, p, a, b) {
+  const same = c => ctx.membersOf(p).filter(x => x.uid !== a.uid && kinColor(x) === kinColor(c)).length;
+  return (b.def.f || 1) - (a.def.f || 1) + 0.6 * (same(b) - same(a)) + (b.def.onRecruited ? 1 : 0);
+}
+/** Busybodies: every move of a rival's member costing up to 5 to another rival. */
+function busyMoves(ctx, p) {
+  const out = [];
+  for (const from of ctx.rivals(p)) {
+    if (!ctx.canSteal(p, from, 'member')) continue;
+    for (const c of ctx.membersOf(from)) if (cost(c) <= 5 && ctx.canSwapMember(c.uid)) for (const to of ctx.rivals(p)) if (to !== from) out.push({ c, from, to });
+  }
+  return out;
+}
 
 // bot test (ACT=walkin/initiation): the free member is this turn's recruit, so the turn's own recruit is gone
 function usesRecruit(ctx, p) {
@@ -242,6 +263,21 @@ export default {
         ctx.buryMember(p, a);
       });
     },
+    // pool 8: Talent Agents' swap, and Nosy Neighbors' move
+    talentSwap(ctx, p, v) {
+      if (!v) return;
+      const [a, b] = v;
+      if (!p.members.includes(a) || !ctx.state.shop.includes(b)) return;
+      const an = ctx.card(a).def.name, bn = ctx.card(b).def.name;
+      if (ctx.swapMembers(p, a, b)) ctx.log(`${p.name}'s Talent Agents: swaps ${an} for ${bn} from the shop.`);
+    },
+    busyMove(ctx, p, v) {
+      const [uid, toId] = v || [], from = ctx.ownerOf(uid), to = ctx.player(toId);
+      if (!from || !to || from === p || to === p || from === to) return;
+      const name = ctx.card(uid).def.name;
+      if (ctx.moveMember(uid, from, to, { actor: p })) ctx.log(`${p.name}'s Nosy Neighbors: moves ${from.name}'s ${name} to ${to.name}.`);
+      anyColors(ctx, p, 2, 'Nosy Neighbors', 'red.anyColor');
+    },
     ...handlers11({ blindDate, nothanks, pileGiftTo }),
     ...handlers4({
       defect(ctx, p, id) {
@@ -361,6 +397,55 @@ export default {
         [hook](ctx, owner) { graveSwapAsk(ctx, owner, name); },
         ...see(info => 1.2 * endsAhead(info).length), // BOTSEE: a small upgrade each round
       }), 'pool4')),
+    // idea pipeline pool 8 (Nov 7, writer round 1; prices are fill-ins, design-core bands). Kinfolk and Kindred (the
+    // brief's Kinfolk B): core onMemberJoins, any arrival (a recruit, a swap, a take, a gift), Kinfolk's own included; a
+    // member's color is its own (grey counts as one), Drifters' the one it picked.
+    ...[['kinfolk', 'Kinfolk', 3, 2, 1, 'per other member of its color you have'], ['kindred', 'Kindred', 2, 1, 2, 'per 2 other members of its color you have']].map(([key, name, s1, w1, per, words]) => pool(m(key, name, s1, w1,
+      `Whenever a member joins your cult, +1 follower ${words}.`, {
+        onMemberJoins(ctx, owner, card, joined) {
+          const q = kinColor(joined), n = Math.floor(ctx.membersOf(owner).filter(c => c.uid !== joined.uid && kinColor(c) === q).length / per);
+          if (!n) return;
+          owner.bonus += n;
+          ctx.log(`${owner.name}'s ${name}: ${joined.def.name} joins, +${n} follower${n === 1 ? '' : 's'}.`);
+        },
+        ...see(info => (per === 1 ? 4 : 2) * endsAhead(info).length),
+      }), 'pool8')),
+    // Talent Agents: Round End before contests, as Grave Diggers' (onAllPlaced); the shop member comes in by a swap of
+    // its owner's own doing (a recruit, as Red's swaps are). "Costing the same or less": printed costs.
+    pool(m('talentagents', 'Talent Agents', 2, 1, 'Round End: you may swap one of your members with a shop member costing the same or less.', {
+      onAllPlaced(ctx, owner) {
+        const pairs = agentPairs(ctx, owner);
+        if (!pairs.length) return;
+        ctx.asMember(owner, 'Talent Agents', () => ctx.choose(owner, 'Talent Agents: swap one of your members with a shop member costing the same or less?', [
+          ...pairs.map(([a, b]) => ({ id: `trade:${a.uid}:${b.uid}`, label: `${a.def.name} (${cost(a)}) for ${b.def.name} (${cost(b)})`, kind: 'trade', value: [a.uid, b.uid],
+            hint: agentHint(ctx, owner, a, b) })),
+          { id: 'no', label: 'Keep them', kind: 'no', value: null, hint: 0.5 },
+        ], 'red.talentSwap'));
+      },
+      ...see(info => 2 * endsAhead(info).length),
+    }), 'pool8'),
+    // Nosy Neighbors (the brief's Busybodies; Purple's REPLACE13 has a Busybody): moveMember from one rival to another, "costing up to 5" as a player sees it; a rival who can't be
+    // taken from (Bodyguards) is left out. Bots move the leader's member to the rival with the fewest followers.
+    pool(m('nosyneighbors', 'Nosy Neighbors', 2, 2, 'On Use, once per round: move a member costing up to 5 from one rival\u2019s cult to another rival\u2019s. +2 of any colors.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const opts = busyMoves(ctx, owner);
+        if (!opts.length) { card.used = false; ctx.log(`${owner.name}'s Nosy Neighbors: no member to move.`); return; }
+        ctx.choose(owner, 'Nosy Neighbors: move which member, to which rival?', opts.map(({ c, from, to }) => ({
+          id: `trade:${c.uid}:${to.id}`, label: `${from.name}'s ${c.def.name} (${cost(c)}) to ${to.name}`, kind: 'trade', value: [c.uid, to.id],
+          hint: ctx.followers(from) - ctx.followers(to) + (c.def.f || 1),
+        })), 'red.busyMove');
+      },
+      botActivate: (ctx, owner) => busyMoves(ctx, owner).length > 0,
+    }), 'pool8'),
+    pool(m('ambulancechasers', 'Ambulance Chasers', 1, 1, 'Whenever a member leaves a rival\u2019s cult, +1 follower.', {
+      onRivalLeave(ctx, owner, card, from, left) {
+        owner.bonus += 1;
+        ctx.log(`${owner.name}'s Ambulance Chasers: ${left.def.name} left ${from.name}'s cult, +1 follower.`);
+      },
+      ...see(info => 2 * endsAhead(info).length),
+    }), 'pool8'),
     // idea pipeline pool 3 (Nov 7): a swap of one of your members, by your own card, space or the swap card (one pays
     // once per swap, whichever side it was on: with a rival's member or a shop member). Prices are fill-ins.
     ...[['movers', 'Movers\' Union', 2, 2, 2], ['shiftworkers', 'Shift Workers', 3, 3, 2]].map(([key, name, n, s, w]) => pool(m(key, name, s, w,

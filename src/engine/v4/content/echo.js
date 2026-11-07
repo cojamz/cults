@@ -457,6 +457,41 @@ export function copyOptions(ctx, p, which, self = null) {
 }
 // Greatest Hits is a chain like any copy: an On Recruit it copies (Stunt Double's "copy the action you just took") stays
 // in that chain, so it can't copy Greatest Hits again (that looped forever in seeded games, Nov 1).
+// ---------- idea pipeline pool 7 helpers ----------
+const slotAction = (ctx, key) => { const [q, i] = key.split('-').map(Number); return spacesOf(ctx.state, ctx.state.quadrants[q])[i]; };
+/** Open Green spaces on the board now (Stage Door). */
+function stageTo(ctx) {
+  const st = ctx.state, out = [];
+  st.quadrants.forEach((qid, q) => { if (qid === 'echo') spacesOf(st, qid).forEach((a, i) => {
+    if (a.ring <= st.round && !(a.lastRound && st.round > a.lastRound) && st.slots[`${q}-${i}`] === undefined) out.push({ key: `${q}-${i}`, a });
+  }); });
+  return out;
+}
+/** p's minions on the board, not on a Stage Door. */
+function stageFrom(ctx, p) {
+  const out = [], st = ctx.state;
+  for (const [key, o] of Object.entries(st.slots)) if (o === p.id && slotAction(ctx, key).key !== 'stagedoor') out.push({ key, joined: false });
+  for (const [key, list] of Object.entries(st.squats || {})) if (list.includes(p.id) && slotAction(ctx, key).key !== 'stagedoor') out.push({ key, joined: true });
+  return out;
+}
+function stageMove(ctx, p, { key, joined }, to) {
+  if (joined) { const list = ctx.state.squats[key]; list.splice(list.indexOf(p.id), 1); if (!list.length) delete ctx.state.squats[key]; } else delete ctx.state.slots[key];
+  ctx.state.slots[to] = p.id;
+  p.lastSlot = { key: to, joined: false };
+  const [q, i] = to.split('-').map(Number);
+  ctx.log(`${p.name}'s Stage Door: moves a minion from ${slotAction(ctx, key).name} to ${slotAction(ctx, to).name}.`);
+  ctx.state.queue.unshift({ t: 'act', p: p.id, q, i });
+}
+const medleyKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => x.name === 'Medley').map(x => actionKey(x.key));
+/** Medley: one entry per action with a minion on color q's spaces this round (p's own entry where p shares it). */
+function medleyPlan(ctx, p, q) {
+  const byAction = new Map();
+  for (const e of Object.values(ledger(ctx.state).now || {}).filter(x => x.color === q && x.name !== 'Medley').sort((a, b) => (a.seq || 0) - (b.seq || 0))) {
+    const k = actionKey(e.key), had = byAction.get(k);
+    if (!had || (had.p !== p.id && e.p === p.id)) byAction.set(k, e);
+  }
+  return [...byAction.values()].sort((a, b) => (a.seq || 0) - (b.seq || 0)).filter(e => allowed(ctx, e, p));
+}
 const hitsKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => x.name === 'Greatest Hits').map(x => actionKey(x.key));
 let hitsChain = false;
 function hitsStep(ctx, p, left) {
@@ -574,9 +609,60 @@ const echoQ = {
         withPath(ctx, [...new Set([...pathNow(ctx), ...hitsKeys(ctx)])], () => hitsStep(ctx, p, list.map(c => c.uid)));
       },
     },
+    // idea pipeline pool 7 (Nov 7, writer round 1). Stage Door: as Pacers' move (purple.js), onto a Green space only, and
+    // never the Stage Door minion itself. With no other minion on the board or no open Green space, just the +1.
+    poolSpace({
+      key: 'stagedoor', ring: 2, name: 'Stage Door', text: 'Move one of your other minions to an open Green space and do that space\u2019s action. +1 green.',
+      estimate: (ctx, p) => VARIANT.plus + (stageFrom(ctx, p).length ? Math.max(0, ...stageTo(ctx).map(t => emptyValue(ctx, t.a, p))) + 1.5 : 0),
+      resolve(ctx, p) {
+        plus(ctx, p);
+        const to = stageTo(ctx);
+        if (!to.length || !stageFrom(ctx, p).length) { ctx.log(`${p.name}'s Stage Door: ${to.length ? 'no other minion on the board to move' : 'no open Green space'}.`); return; }
+        ctx.choose(p, 'Stage Door: move one of your other minions to which open Green space?', to.map(t => ({
+          id: `to:${t.key}`, label: t.a.name, kind: 'slot', value: t.key, hint: emptyValue(ctx, t.a, p),
+        })), 'echo.stageTo');
+      },
+    }, 'pool7'),
+    // Medley: every action with a minion on the chosen color's spaces, copied in placement order (Tribute Band's copyAll);
+    // one copy per action however many minions share it; Medley itself is in the chain, so never copied
+    poolSpace({
+      key: 'medley', ring: 3, name: 'Medley', text: 'Choose a color. Copy every action with a minion on its spaces. +1 green.',
+      estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...ctx.state.quadrants.map(q => medleyPlan(ctx, p, q).reduce((a, e) => a + entryValue(ctx, e, p), 0))),
+      resolve(ctx, p) {
+        plus(ctx, p);
+        const opts = ctx.state.quadrants.map(q => ({ q, list: medleyPlan(ctx, p, q) })).filter(x => x.list.length);
+        if (!opts.length) { ctx.log(`${p.name}'s Medley: no color has an action to copy.`); return; }
+        withPath(ctx, [...new Set([...pathNow(ctx), ...medleyKeys(ctx)])], () => ctx.choose(p, 'Medley: copy every action on which color\u2019s spaces?', opts.map(({ q, list }) => ({
+          id: `color:${q}`, label: `${quadrant(q).name} (${list.map(e => e.name).join(', ')})`, kind: 'color', value: q, hint: list.reduce((a, e) => a + entryValue(ctx, e, p), 0),
+        })), 'echo.medley'));
+      },
+    }, 'pool7'),
   ],
 
   handlers: {
+    // pool 7: Stage Door's destination, then which minion (bots move off the space worth least)
+    stageTo(ctx, p, to) {
+      if (!to || ctx.state.slots[to] !== undefined) return;
+      const mine = stageFrom(ctx, p);
+      if (!mine.length) return;
+      if (mine.length === 1) { stageMove(ctx, p, mine[0], to); return; }
+      ctx.choose(p, `Stage Door: move which minion to ${slotAction(ctx, to).name}?`, mine.map(w => ({
+        id: `from:${w.key}${w.joined ? '+j' : ''}`, label: `${slotAction(ctx, w.key).name}${w.joined ? ' (joined)' : ''}`, kind: 'slot',
+        value: `${w.key}${w.joined ? '+j' : ''}`, hint: -(slotAction(ctx, w.key).estimate?.(ctx, p) || 0),
+      })), 'echo.stageFrom', { to });
+    },
+    stageFrom(ctx, p, from, data) {
+      const [key, j] = String(from).split('+');
+      const w = stageFrom(ctx, p).find(x => x.key === key && x.joined === (j === 'j'));
+      if (!w || ctx.state.slots[data.to] !== undefined) return;
+      stageMove(ctx, p, w, data.to);
+    },
+    medley(ctx, p, q) {
+      const list = medleyPlan(ctx, p, q);
+      if (!list.length) { ctx.log(`${p.name}'s Medley: nothing on ${quadrant(q).name} to copy.`); return; }
+      ctx.log(`${p.name}'s Medley copies every action on ${quadrant(q).name}'s spaces.`);
+      copyAll(ctx, p, list, null, 'Medley');
+    },
     ...handlers10({
       // Bootlegger (REPLACE10): the member picked; its On Recruit runs as Greatest Hits runs one
       bootleg(ctx, p, uid) {
@@ -737,6 +823,22 @@ const echoQ = {
       },
       ...see(info => 2.5 * endsAhead(info).length), // BOTSEE: about one minion a round on a Green space
     }), 'pool5'),
+    // idea pipeline pool 7 (Nov 7, writer round 1; prices are fill-ins, design-core bands). Costumers: core costumed()
+    // (rivals' cloaks run for its owner as their own). Superfans: core squatSlots (rivals' taken Green spaces, no use
+    // spent). Packed House (the brief's Full House; Purple's REPLACE5 has a Full House): Round End before contests, as Grave Diggers' (onAllPlaced); a joined minion counts.
+    pool(m('costumers', 'Costumers', 5, 3, 'You also have each rival\u2019s cloak.', { allCloaks: true,
+      ...see(info => 4 * endsAhead(info).length),
+    }), 'pool7'),
+    pool(m('superfans', 'Superfans', 6, 2, 'You can place on Green spaces rivals have taken.', { squatGreen: true,
+      ...see(info => 3 * endsAhead(info).length),
+    }), 'pool7'),
+    pool(m('packedhouse', 'Packed House', 4, 2, 'Round End: +1 follower per minion on Green spaces, anyone\u2019s.', {
+      onAllPlaced(ctx, owner) {
+        const n = greenMinions(ctx);
+        ctx.asMember(owner, 'Packed House', () => { owner.bonus += n; ctx.log(`${owner.name}'s Packed House: ${n} minion${n === 1 ? '' : 's'} on Green spaces, +${n} follower${n === 1 ? '' : 's'}.`); });
+      },
+      ...see(info => 4 * endsAhead(info).length),
+    }), 'pool7'),
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 4 → 8
     // REPLACE10 bot test (Nov 4, quality loop lane D): Busker's place. 3 green + 2 any as a player sees it. At round start
     // (before anyone places): one round I space of any color, done for its owner as Cover does an empty one (Green's own

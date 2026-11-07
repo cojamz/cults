@@ -261,6 +261,20 @@ const trading = {
       estimate: (ctx, p) => 1 + 2 * Math.min(4, Object.entries(p.res).filter(([c]) => c !== W).reduce((a, [, n]) => a + n, 0)),
       resolve(ctx, p) { ctx.gain(p, W, 1, { fromAction: true }); giveForWhiteAsk(ctx, p, { name: 'Handouts', max: 4, each: 3, given: 0 }); },
     }, 'pool2'),
+    // idea pipeline pool 7 (Nov 7, writer round 1): the On Use member, used once more on its way out. A space with no
+    // members still gives +2 white. A member with no On Use is discarded with nothing first.
+    poolSpace({
+      key: 'lasthurrah', copyDoesIt: true, ring: 2, name: 'Last Hurrah', text: 'Discard one of your members, using its On Use first, even if it\u2019s used up. +2 white.',
+      estimate: (ctx, p) => 2 + Math.max(0, ...ctx.membersOf(p).map(c => (hasUse(c) ? 4 : 0) - (c.def.f || 1))),
+      resolve(ctx, p) {
+        ctx.gain(p, W, 2, { fromAction: true });
+        const list = ctx.membersOf(p);
+        if (!list.length) { ctx.log(`${p.name}'s Last Hurrah: no member to discard.`); return; }
+        ctx.choose(p, 'Last Hurrah: discard which member (its On Use first)?', list.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name}${hasUse(c) ? ' (On Use)' : ''}`, kind: 'card', value: c.uid, hint: (hasUse(c) ? 4 : 0) - (c.def.f || 1) - (c.used ? 0 : 0.5),
+        })), 'trading.lastHurrah');
+      },
+    }, 'pool7'),
     // REPLACE12 bot tests (Nov 4, quality loop, lane D2; pitches/D2-batch1.md), one at a time in Allowance's place.
     // Pawnshop: only followers you recruited or won can be turned in (the ones a steal can take; members' printed
     // followers stay), up to the round's number.
@@ -371,6 +385,29 @@ const trading = {
   ],
 
   handlers: {
+    // pool 7: Day Trippers / Tourists, the discard or keep
+    dayTrip(ctx, p, uid, data) {
+      if (uid == null || !p.members.includes(uid)) return;
+      const name = ctx.card(uid).def.name;
+      ctx.asMember(p, data.name, () => {
+        ctx.buryMember(p, uid);
+        if (data.kind === 'white') ctx.gain(p, W, data.n); else p.bonus += data.n;
+        ctx.log(`${p.name}'s ${data.name}: discards ${name}, +${data.n} ${data.kind === 'white' ? 'white' : 'followers'}.`);
+      }, data.uid);
+    },
+    // pool 7: Last Hurrah, the member's On Use (used up or not), then the discard once that use is done
+    lastHurrah(ctx, p, uid) {
+      if (!p.members.includes(uid)) return;
+      const c = ctx.card(uid);
+      if (hasUse(c)) { ctx.log(`${p.name}'s Last Hurrah: uses ${c.def.name} one last time.`); ctx.freeUse(p, uid); }
+      ctx.defer(p, 'trading.lastHurrahGo', { uid });
+    },
+    lastHurrahGo(ctx, p, _v, data) {
+      if (!p.members.includes(data.uid)) return;
+      const name = ctx.card(data.uid).def.name;
+      ctx.buryMember(p, data.uid);
+      ctx.log(`${p.name}'s Last Hurrah: discards ${name}.`);
+    },
     // Hand-Offs / Bequest (pool 3): the member, then the rival (bots give to the rival with the fewest followers)
     slate(ctx, p, value, data) {
       if (value === 'done' || !p.members.includes(value)) { ctx.log(`${p.name}'s Clean Slate: cast out ${data.n} member${data.n === 1 ? '' : 's'}.`); return; }
@@ -607,6 +644,23 @@ const trading = {
         },
         ...see(() => 1), // BOTSEE: a member back when it's taken or swapped; bots don't plan it
       }), 'pool4')),
+    // idea pipeline pool 7 (Nov 7, writer round 1; prices are fill-ins, design-core bands). Day Trippers and Backpackers
+    // (its +2 followers version): asked after the recruited member's On Recruit (core afterOwnRecruit). Ascetics: core
+    // counted() (every member count: contests and color counts).
+    ...[['daytrippers', 'Day Trippers', 'white', 3], ['tourists', 'Backpackers', 'followers', 2]].map(([key, name, kind, n]) => pool(m(key, name, 3, 2,
+      `Whenever you recruit a member, you may discard it after its On Recruit, for +${n} ${kind === 'white' ? 'white' : 'followers'}.`, {
+        afterOwnRecruit(ctx, owner, card, rec) {
+          const keep = (rec.def.f || 1) + (lasting(rec.def) ? 3 : 0);
+          ctx.choose(owner, `${name}: discard ${rec.def.name} for +${n} ${kind === 'white' ? 'white' : 'followers'}?`, [
+            { id: `card:${rec.uid}`, label: `Discard ${rec.def.name}`, kind: 'card', value: rec.uid, hint: n * (kind === 'white' ? 1 : 1.3) + (fewestMembersCult(ctx) ? 1 : 0) },
+            { id: 'keep', label: `Keep ${rec.def.name}`, kind: 'no', value: null, hint: keep },
+          ], 'trading.dayTrip', { name, kind, n, uid: card.uid });
+        },
+        ...see(info => 3 * endsAhead(info).length),
+      }), 'pool7')),
+    pool(m('ascetics', 'Ascetics', 6, 3, 'Your other members count as 0 members.', { othersZero: true,
+      ...see(info => 4 * endsAhead(info).length),
+    }), 'pool7'),
     pool(m('almsgivers', 'Almsgivers', 3, 3, 'Round End: give up to 2 of your non-white resources to rivals, split as you choose. +3 white per resource given.', {
       onAllPlaced(ctx, owner) { ctx.asMember(owner, 'Almsgivers', () => giveForWhiteAsk(ctx, owner, { name: 'Almsgivers', max: 2, each: 3, given: 0 })); },
       ...see(info => 4 * endsAhead(info).length),
@@ -982,6 +1036,10 @@ const trading = {
 };
 
 const cost = (ctx, uid) => { const d = ctx.card(uid).def; return d.s + d.w; };
+// pool 7 helpers: an On Use member (its own or a copy's); a member with more than an On Recruit; a fewest members contest
+function hasUse(c) { return [c.def, c.copy && defById(c.copy)].some(d => d?.activate && d.onActivate); }
+function lasting(d) { return Object.keys(d).some(k => /^on[A-Z]/.test(k) && k !== 'onRecruited') || !!d.activate || !!d.botValue; }
+function fewestMembersCult(ctx) { return ctx.state.quadrants.includes('trading'); }
 const defsOf = (ctx, c) => ctx.defsOf(c);
 // Banker: "Whenever you turn resources or members into followers, +1 white" (once per turning)
 function turned(ctx, p) {
