@@ -75,7 +75,26 @@ async function locked(dir, fn) {
   }
   try { return await fn(); } finally { try { fs.rmdirSync(lock); } catch { /* gone */ } }
 }
-const load = dir => ({ s: readJson(f(dir, 'state.json')), meta: readJson(f(dir, 'meta.json')) });
+// The shared folder (rclone) can hand back an old state.json after a write (seen Nov 7: a game in round 3 read as
+// round 0 while events.jsonl kept every move). events.jsonl is append-only and records every move, so when the state
+// is behind the last recorded move, rebuild it by replaying the moves from the deal and write it back.
+const replayState = (dir, moves) => {
+  const meta = readJson(f(dir, 'meta.json'));
+  let s = createGame({ seats: meta.names.map(name => ({ name, kind: 'human' })), seed: meta.seed, quadrants: meta.colors, rules: meta.deck === 10 ? { deck: 10 } : {} });
+  for (const e of moves) s = applyMove(s, { player: e.seat, option: e.option });
+  return s;
+};
+const readState = dir => {
+  const s = readJson(f(dir, 'state.json'));
+  const moves = events(dir).filter(e => e.type === 'move');
+  const last = moves.length ? moves[moves.length - 1].n : 0;
+  if ((s.moves || 0) >= last) return s;
+  const fixed = replayState(dir, moves);
+  writeJson(f(dir, 'state.json'), fixed);
+  try { fs.appendFileSync(f(dir, 'heal.log'), `${new Date().toISOString()} state at move ${s.moves || 0}, events at ${last}: replayed to ${fixed.moves}\n`); } catch { /* best effort */ }
+  return fixed;
+};
+const load = dir => ({ s: readState(dir), meta: readJson(f(dir, 'meta.json')) });
 const events = dir => (fs.existsSync(f(dir, 'events.jsonl')) ? fs.readFileSync(f(dir, 'events.jsonl'), 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)) : []);
 const addEvents = (dir, list) => { if (list.length) fs.appendFileSync(f(dir, 'events.jsonl'), list.map(e => JSON.stringify({ t: Date.now(), ...e })).join('\n') + '\n'); };
 
@@ -324,7 +343,7 @@ async function main() {
   if (cmd === 'wait') {
     const max = Number(flags.max || 100) * 1000, t0 = Date.now();
     for (;;) {
-      const s = readJson(f(dir, 'state.json'));
+      const s = readState(dir);
       if (s.over || s.pending?.player === seat) break;
       if (Date.now() - t0 > max) { console.log(`Still not your decision (waiting on ${s.players[s.pending.player].name}). Run wait again.`); return; }
       await sleep(1500);
@@ -369,6 +388,9 @@ async function main() {
       const meta = readJson(f(dir, 'meta.json'));
       meta.post[seat] = pos.slice(3).join(' ');
       writeJson(f(dir, 'meta.json'), meta);
+      // also in the append-only event log and a local copy: the shared folder can hand back an old meta.json
+      addEvents(dir, [{ type: 'postgame', seat, text: meta.post[seat] }]);
+      try { fs.mkdirSync('/tmp/judge-postgames', { recursive: true }); fs.writeFileSync(`/tmp/judge-postgames/${path.basename(path.resolve(dir))}-${seat}.txt`, meta.post[seat]); } catch { /* best effort */ }
       console.log('Saved. Reply with your final place and score.');
     });
     return;

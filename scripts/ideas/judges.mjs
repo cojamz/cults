@@ -144,7 +144,13 @@ function report() {
   const rows = {}, cands = new Set(), gamesUsed = [], judges = {};
   for (const dir of games()) {
     const meta = readJson(path.join(dir, 'meta.json'));
-    if (!meta.pool || !Object.keys(meta.post || {}).length) continue;
+    // postgames also live in events.jsonl (the shared folder can hand back an old meta.json)
+    meta.post = { ...(meta.post || {}) };
+    for (const l of fs.readFileSync(path.join(dir, 'events.jsonl'), 'utf8').split('\n')) {
+      if (!l.includes('"postgame"')) continue;
+      try { const e = JSON.parse(l); if (e.type === 'postgame' && !meta.post[e.seat]) meta.post[e.seat] = e.text; } catch { /* partial line */ }
+    }
+    if (!meta.pool || !Object.keys(meta.post).length) continue;
     const g = path.basename(dir);
     gamesUsed.push(g);
     const rec = meta.pool.record;
