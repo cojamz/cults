@@ -374,7 +374,7 @@ function skipped(ctx, p, value, data) {
   ctx.skipBeat(p, data?.why, () => {
     ctx.log(`${p.name}'s turn is skipped${data?.why ? ` (${data.why})` : ''}.`);
     for (const o of ctx.state.players) for (const c of ctx.abilitiesOf(o)) for (const d of ctx.defsOf(c)) if (d.onSkip) ctx.asMember(o, c.def.name, () => d.onSkip(ctx, o, c, p, data?.by));
-  });
+  }, data?.by);
 }
 /** How many turns p still has to come this round, after the one now running. */
 const turnsLeft = (ctx, p) => {

@@ -89,7 +89,8 @@ try {
     const atTag = firstUp && firstUp[0] <= seenAt + 50 ? firstUp[1] : afterSpace; // shown at the skip's first frames = paid with the space, not the skip
     console.log(`tag at ${Math.round(seenAt)}ms; P1 purple changes ${JSON.stringify(changes.map(([t, v]) => [Math.round(t), v]))}`);
 
-    if (text !== 'Turn skipped') errors.push(`tag reads "${text}"`);
+    // it says why: your Hold Up passed P2's turn (frame review, Nov 7: "Turn skipped" never said why)
+    if (text !== 'Turn skipped: your Hold Up') errors.push(`tag reads "${text}"`);
     if (!dim) errors.push('the skipped seat did not dim');
     // a +2 may count up a step at a time (2 → 3 → 4): what it pays is where the count settles, when it starts is firstUp
     const end = firstUp ? changes.filter(([t]) => t >= firstUp[0] && t <= firstUp[0] + 1500).pop()[1] : afterSpace;

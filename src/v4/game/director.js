@@ -344,7 +344,9 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     // animation happens")
     if (c.kind === 'skip') {
       const s0 = Math.max(t, end - (rival ? 0 : MO.lead));
-      at(s0, { op: 'skip', pid: c.pid, why: c.why || null, dur: MO.skipShow });
+      // the reason on the tag: "P3's Hold Up", or just "Sleep In" for your own (frame review, Nov 7: it never said why)
+      const why = c.why ? (c.by != null && c.by !== c.pid && who(c.by) ? `${who(c.by) === 'you' ? 'your' : `${who(c.by)}'s`} ${c.why}` : c.why) : null;
+      at(s0, { op: 'skip', pid: c.pid, why, dur: MO.skipShow });
       beatAt.push(s0); beatKind.push('skip');
       ends(s0 + MO.skipShow);
       hand = Math.max(hand, s0 + MO.skipShow * (2 / 3));
@@ -1457,7 +1459,7 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
           return;
         }
         case 'hop': if (!skip) hopEl(where(a.place), MO.hop); return;
-        case 'skip': if (!skip) skipStamp(root, a.pid, a.dur); return;
+        case 'skip': if (!skip) skipStamp(root, a.pid, a.dur, a.why); return;
         case 'stage': if (!skip) stageOut(root, a, ctx, where, chainId, mine, pre.get(a)); return;
         case 'tug': {
           if (skip) return;
@@ -1703,7 +1705,7 @@ function takeTag(el, n, dot, r = el && !el.rectOnly ? el.getBoundingClientRect()
 }
 
 /** "Turn skipped" on the seat whose turn was just passed over: the seat dims a beat and its next minion sits out. */
-function skipStamp(root, pid, dur) {
+function skipStamp(root, pid, dur, why = null) {
   if (!root || typeof document === 'undefined') return;
   const seat = root.querySelector(`.lt-cult-seat[data-seat="${pid}"]`);
   if (!seat || !seat.getBoundingClientRect) return;
@@ -1715,7 +1717,7 @@ function skipStamp(root, pid, dur) {
   const b = document.createElement('b');
   b.className = 'skip-tag ghost-layer';
   b.dataset.skip = String(pid);
-  b.textContent = 'Turn skipped';
+  b.textContent = why ? `Turn skipped: ${why}` : 'Turn skipped';
   // on the seat's bottom edge, left, clear of its counts (picky bot, Nov 8: in the middle it hid P3's resources) and
   // of the cloak's label on the right
   Object.assign(b.style, { left: `${Math.round(r.left + r.width / 2)}px`, top: `${Math.round(r.bottom)}px` });

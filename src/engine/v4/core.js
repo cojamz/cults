@@ -2457,8 +2457,9 @@ function ctxFor(state) {
     /** p's turn is passed over now (Purple's skips): the table shows it on p's seat, and what pays for it (Pocket Watch,
      *  Gossip) runs inside fn, so it lands as the skip shows (Cory, 2026-11-01: "the pocket watch … gain should occur
      *  when that animation happens"). */
-    skipBeat(p, why, fn) {
-      return underCause({ kind: 'skip', pid: p.id, why: why || null }, () => {
+    skipBeat(p, why, fn, by = null) {
+      // by: whose card or space skipped it, so the seat can say "Turn skipped: P3's Hold Up" (frame review, Nov 7)
+      return underCause({ kind: 'skip', pid: p.id, why: why || null, by: by ?? null }, () => {
         markEffect({ type: 'skip', from: { kind: 'minions', pid: p.id }, to: { kind: 'minions', pid: p.id }, what: { why: why || null } });
         return fn();
       });
