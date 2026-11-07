@@ -4,6 +4,7 @@ import { createGame } from '../../../engine/v4/index.js';
 import Reckoning from '../../../v4/game/Reckoning.jsx';
 import { scoredStandings } from '../../../v4/format.js';
 import { MO } from '../../../v4/motion.js';
+import { countMs } from '../../../v4/game/Tick.jsx';
 const chain = vi.hoisted(() => ({ running: false, end: null }));
 vi.mock('../../../v4/game/director.js', () => ({
   chainRunning: () => chain.running,
@@ -53,11 +54,17 @@ describe('scoring enters directly', () => {
     act(() => { chain.running = false; vi.advanceTimersByTime(600); }); // no end, no landing: the old show was adopted
     expect(b.container.textContent).toContain('Most gold');
   });
-  it('finishes when the final count roll completes, without a trailing 400ms hold or recounts', () => {
+  it('finishes when the final count roll completes and the result is read, without a trailing 400ms hold or recounts', () => {
     vi.useFakeTimers(); const onDone = vi.fn();
     render(<Reckoning info={info()} root={null} onDone={onDone} />);
-    const end = MO.reckonStagger + MO.reckonTick + MO.hop + MO.roll + MO.reckonRest;
-    act(() => { vi.advanceTimersByTime(end); });
+    // the verdict once the count has stopped (Ana's 1: Tick's countMs), the prize, then the next rim (here the end) once
+    // the total has rolled and "Ana wins +2 followers" has been up its reading time (frame review, Nov 7)
+    const counted = Math.max(countMs(1, MO.reckonTick), MO.reckonStagger + MO.reckonTick);
+    const read = Math.max(MO.reckonRest, 4 * MO.storyWord);
+    const end = counted + MO.reckonVerdict + Math.max(MO.reckonRest, MO.roll, read - MO.reckonVerdict);
+    act(() => { vi.advanceTimersByTime(end - 20); });
+    expect(onDone).not.toHaveBeenCalled();
+    act(() => { vi.advanceTimersByTime(40); });
     expect(onDone).toHaveBeenCalledTimes(1);
     expect(scoredStandings).toHaveBeenCalledTimes(1);
   });

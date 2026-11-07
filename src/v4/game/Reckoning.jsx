@@ -15,7 +15,7 @@ import { seatOrder } from './seats.js';
 import { playerAnchor, motionOK, flyToken, expectArrival, pulse, track } from './flight.js';
 import { MO, flightMs, slowed } from '../motion.js';
 import { chainRunning, onChainEnd, onChainLanded } from './director.js';
-import Tick from './Tick.jsx';
+import Tick, { countMs } from './Tick.jsx';
 import { ruleWords } from '../shorts.js';
 import { play } from '../sound.js';
 import { cardDef } from '../../engine/v4/index.js';
@@ -213,10 +213,17 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
     }
     // the counts stamp in seat by seat and tick up (the counting is the motion)
     row.rows.forEach((r, k) => timers.push(setTimeout(() => setSeen(n => Math.max(n, k + 1)), k * MO.reckonStagger)));
-    const counted = (row.rows.length - 1) * MO.reckonStagger + MO.reckonTick;
+    // the verdict once every count has stopped: a big count ticks longer than reckonTick (Tick's countMs), and the winner
+    // was boxed while the others still counted (frame review, Nov 7)
+    const counted = Math.max(0, ...row.rows.map((r, k) => k * MO.reckonStagger + (r.shown ? countMs(r.shown, MO.reckonTick) : MO.reckonTick)));
+    // the result line stays up long enough to read before the next rim (frame review, Nov 7: about 0.5 s at Steady), and
+    // the next rim waits for the winner's total to finish rolling on its chair (it ticked on under the next contest)
+    const read = Math.max(MO.reckonRest, (verdict.split(/\s+/).filter(Boolean).length) * MO.storyWord);
+    let verdictAt = 0;
     // the verdict: the leader's count and its emoji on the rim hop
     timers.push(setTimeout(() => {
       setBeat(1);
+      verdictAt = performance.now();
       // the winner cheers (Cory, 2026-10-15: "have the winning one cheer/jiggle and get the followers added to them"):
       // their column on the card jiggles (CSS), and in their chair the leader celebrates and the members hop
       for (const id of row.winners) cheer(root, id);
@@ -225,7 +232,7 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
         if (e && e.animate) track(e.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-5px)', offset: 0.4 }, { transform: 'translateY(0)' }], { duration: MO.hop, easing: 'cubic-bezier(.3,1.4,.5,1)', composite: 'add' }));
       }
       if (won) play('fanfare'); // the winner's little flourish (sound.js)
-      if (!won) { if (onPaid) onPaid(step + 1); timers.push(setTimeout(advance, MO.hop + MO.reckonRest)); }
+      if (!won) { if (onPaid) onPaid(step + 1); timers.push(setTimeout(advance, Math.max(MO.hop + MO.reckonRest, read))); }
     }, counted));
     if (won) timers.push(setTimeout(() => {
       // the prize lifts off the rim's engraving and arcs to the number it raises: the winner's total on their chair,
@@ -240,8 +247,9 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
         }
         if (onPaid) onPaid(step + 1);
         setBeat(2);
-        // the next rim lights while the total rolls on its chair (a still hold of roll + rest read as a stall, Oct 29)
-        timers.push(setTimeout(advance, MO.reckonRest));
+        // the next rim lights as the total stops rolling on its chair and the result has been read (Oct 29 lit it mid-roll;
+        // frame review, Nov 7: P3's 12→13 ticked on under the next contest)
+        timers.push(setTimeout(advance, Math.max(MO.reckonRest, MO.roll, verdictAt + read - performance.now())));
       };
       row.winners.forEach((id, k) => {
         const home = root && (root.querySelector(`.lt-cult-seat[data-seat="${id}"] .cs-total`) || playerAnchor(root, id));
