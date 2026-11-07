@@ -225,7 +225,8 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
       if (fold.used) next = queue.current.splice(0, fold.used).pop();
       const mine = session.mySeats || [];
       // your own Take on a split card (Polish's 4 coins): the picks play as one step, every coin at once
-      const picks = fold.used ? { used: 0 } : foldPicks(prev, next, queue.current, mine);
+      // (a rival's too: a bot's Harvest went a color at a time, five beats; Cory, Nov 7: "harvest animation is so slow")
+      const picks = fold.used ? { used: 0 } : foldPicks(prev, next, queue.current, prev.players.map((_, i) => i));
       if (picks.used) next = queue.current.splice(0, picks.used).pop();
       const rivalPlaced = Object.keys(next.slots).some(k => prev.slots[k] === undefined && !mine.includes(next.slots[k]));
       // a rival's recruit or follower buy is a visible step too; a pass or a hidden bookkeeping step isn't

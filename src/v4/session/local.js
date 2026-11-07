@@ -160,7 +160,10 @@ export function createLocalSession({ seats, seed = Math.floor(Math.random() * 2 
     const p = state.pending;
     if (destroyed || roundHold || state.over || !p || state.players[p.player].kind !== 'bot') return;
     // (no hold after a buy: the payment step, with Back, is the safety net); a function reads the speed setting live
-    const hold = typeof botDelayMs === 'function' ? botDelayMs() : botDelayMs;
+    // a "+1 of which color?" pick (Harvest's 5, Polish's 4) comes without a hold, so the whole run reaches the table at
+    // once and plays as one beat (GameScreen foldPicks; Cory, Nov 7: "harvest animation is so slow")
+    const colorPick = p.kind === 'choose' && p.options && p.options.length > 1 && p.options.every(o => o.kind === 'color');
+    const hold = colorPick ? 0 : typeof botDelayMs === 'function' ? botDelayMs() : botDelayMs;
     // In a browser the bot thinks in a worker from the moment its turn arrives, so the hold hides the thinking and
     // none of it lands on the main thread mid-spin. Its draws start from this rng's position and come back with
     // the answer, so the game goes exactly as if it had thought here. No worker (tests), or no usable answer:

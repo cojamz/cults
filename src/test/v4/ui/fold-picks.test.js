@@ -28,9 +28,10 @@ describe('foldPicks', () => {
     expect(one.total).toBeGreaterThan(0);
     expect(one.total).toBeLessThan(each * 0.6);
   });
-  it('leaves a rival\'s picks and a lone pick alone', () => {
+  it('folds only the seats it is given, and leaves a lone pick alone', () => {
     const [prev, next, ...rest] = polishRun(['red', 'red', 'gold', 'white']);
     expect(foldPicks(prev, next, rest, [1]).used).toBe(0);
+    expect(foldPicks(prev, next, rest, [0, 1]).used).toBeGreaterThan(0);
     expect(foldPicks(prev, next, [], [0]).used).toBe(0);
   });
 });
