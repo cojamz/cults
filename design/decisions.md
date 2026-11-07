@@ -1968,7 +1968,7 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - (Cory, 2026-11-08 12:10am Eastern, voice note on card review 1; his words quoted) Calls:
   - Steal wording: "Whenever you say steal, that's the inherent… meaning" (from any rivals). Help Yourself drops "from one rival": "Steal 3 resources in round I, 4 in round II, 5 in round III."
   - Body Snatchers: "might be a little too good, but let's try it this way. I think it's just a little more interesting. The bots might struggle" → "swap one of your members with any rival's member", mid price (Claude: 6). Timing asked back.
-  - Caterer cut; Silver Cloak becomes "Whenever you gift silver, +1 follower." ("Yes, cater. Yes, silver cloak.")
+  - Caterer cut; Silver Cloak needs a new text ("Yes, cater. Yes, silver cloak."; then, 12:12am, on "+1 follower": "I don't like the cloak giving followers")
   - Jack-of-All-Trades and Seamstress cut ("those can probably got to get cut").
   - Old Money stays, "reworked to be a little better"; Old Money and Heiresses "in theory, these are supposed to get changed".
   - Keep: Second-Story Man ("I can hear an argument"), Polish ("okay in this case"), Smooth Talkers ("good in this case"), Kingmakers ("I like… maybe just a little too many followers"), Party Gifts ("maybe it's fine as is. Six victory points from an action is pretty fucking strong"), Melting Pot, Yellow Cloak, Out of Style.
