@@ -144,7 +144,7 @@ function feelLines(text) {
   for (const m of text.matchAll(/FEEL:\s*([^\n]*?)(?=\s*FEEL:|\s*META:|\n|$)/gi)) {
     const parts = m[1].split('|').map(x => x.trim());
     if (parts.length < 4) continue;
-    const num = t => { const x = (t || '').match(/\d/); return x ? +x[0] : null; };
+    const num = t => { const x = (t || '').match(/\d/); return x && +x[0] >= 1 && +x[0] <= 5 ? +x[0] : null; }; // 1 to 5 only (a judge wrote 8)
     const name = parts[0].replace(/\s*\(.*\)$/, '');
     const fitPart = parts.find((p, i) => i > 0 && /\b(yes|no|unsure)\b/i.test(p) && !/\d/.test(p.replace(/fits/i, '')));
     const inter = parts.find(p => /interact/i.test(p)), clear = parts.find(p => /^clear/i.test(p));
