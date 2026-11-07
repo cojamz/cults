@@ -372,3 +372,5 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - Two-for-one Red swap: Cory "A two-for-one is interesting. but more ideas here please."
 - Second list sent: two-for-one both ways; swap with the discard pile; recruit every shop member of one color; recruits 1 cheaper per member of that color you hold; give a member to a rival for followers equal to its cost. Waiting on his pick.
 - Cory on #4 (recruits cost 1 less per same-color member): no, "i don't like members getting 'cheaper' - it's hard to track in a live game." (verdicts #23)
+- Cory: two-for-one swap (either way) "let's keep that in our pocket". Asked for more Red × Blue ties, not tied to today's actions or members.
+- Third list sent: sell a member back to the shop; lend a member until round end; buy a rival's member by paying them its cost; swap only with a bigger cult; shop in color rows.
