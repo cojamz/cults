@@ -20,7 +20,8 @@ import { REPLACE1, add1, old1, handlers1 } from './replace1.js';
 import { add6, old6 } from './replace6.js';
 import { add9, old9, handlers9 } from './replace9.js';
 import { see, endsAhead } from './botsee.js';
-import { pool } from './pool.js';
+import { pool, freeAsk, freeTake } from './pool.js';
+import { MORE } from './price.js';
 import { add11, old11, handlers11 } from './replace11.js';
 import { add15, old15 } from './replace15.js';
 import { pickColors } from './yellow.js';
@@ -139,6 +140,30 @@ const members = [
     onCultDiscard(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Mourners: a member went to the discard pile, +1 follower.`); },
     ...see(info => 1.5 * endsAhead(info).length),
   }), 'pool6'),
+  // idea pipeline pool 9 (Nov 7), grey guests (bot games only). Vagabonds: at Round End (before contests, as every
+  // Round End member) it moves to the one cult with the fewest members as the game counts them (a tie for fewest, its
+  // own cult among them or not, and it stays); once a round, so it can't walk again in the same Round End. Its +3 is
+  // an arrival like Ghost's: recruited, swapped, taken, given or walked in. Wayfarers: the same arrival, a free shop
+  // member costing up to 4 as written, plus MORE as every named cost moves with the price raise (Cory, Nov 5), so 5:
+  // nothing costs 4 any more. Prices fill-ins: 6 any as a player sees it, as Saints'.
+  pool(m('vagabonds', 'Vagabonds', null, 0, 3, "Round End: this member joins the cult with the fewest members (if tied, it stays). Whenever it joins a cult, that cult's owner +3 followers.", {
+    onAllPlaced(ctx, owner, card) {
+      if (card.walked === ctx.state.round) return;
+      const all = ctx.state.players, low = Math.min(...all.map(o => ctx.memberCount(o))), at = all.filter(o => ctx.memberCount(o) === low);
+      if (at.length !== 1 || at[0] === owner) return;
+      card.walked = ctx.state.round;
+      ctx.log(`${owner.name}'s Vagabonds joins ${at[0].name}'s cult (the fewest members).`);
+      ctx.moveMember(card.uid, owner, at[0], { actor: owner });
+    },
+    onJoined(ctx, owner) { owner.bonus += 3; ctx.log(`${owner.name}'s Vagabonds: joined their cult, +3 followers.`); },
+    ...see(() => 3), // BOTSEE: the +3 on the recruit
+  }), 'pool9'),
+  pool(m('wayfarers', 'Wayfarers', null, 0, 3, `Whenever this member joins your cult, recruit a shop member costing up to ${4 + MORE}, for free.`, {
+    onJoined(ctx, owner) {
+      freeAsk(ctx, owner, 'Wayfarers', ctx.shopCards().filter(c => c.def.s + c.def.w <= 4 + MORE), 'benders.wayfarers', `no shop member costs ${4 + MORE} or less`);
+    },
+    ...see(() => 3), // BOTSEE: the free member on the recruit
+  }), 'pool9'),
   // Party Crasher (was Squatter; id kept for old records): Cory, 2026-10-28, Once per game, cheaper; 5 with the +1 wild (Cory, Nov 1: "5"; was 4)
   m('squatter', 'Party Crasher', 'thieves', 2, 2, 'On Use, once per game: your next minion can be placed on a space a rival already took.', { // cut Nov 7 (cull.js): Scouts takes its place (Cory, "Yes") // still joins in round I at 5, so grey keeps 4 (Claude's fill-in)
     activate: 'game',
@@ -426,6 +451,7 @@ const members = [
 ];
 
 export const handlers = {
+  wayfarers(ctx, p, uid, data) { freeTake(ctx, p, uid, data); },
   chameleon(ctx, p, q, data) {
     const card = ctx.card(data.uid);
     if (!p.members.includes(data.uid) || !ctx.state.quadrants.includes(q)) return;

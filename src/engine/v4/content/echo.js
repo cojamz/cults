@@ -309,6 +309,21 @@ export const previousNow = (ctx, p) => {
   const L = ledger(ctx.state);
   return targets(ctx, p, 'previous', L.path?.length ? L.origin : null);
 };
+/** Headliners (pool 9): every round III space on the wheel but itself, not in this chain: a taken one with the entry
+ *  to copy (the copier's own if they share it), an open one to do. */
+function thirdTargets(ctx, p) {
+  const st = ctx.state, path = pathNow(ctx), now = Object.values(ledger(st).now), out = [];
+  st.quadrants.forEach((qid, q) => spacesOf(st, qid).forEach((a, i) => {
+    const key = `${q}-${i}`;
+    if (a.ring !== 3 || a.key === 'headliners' || path.includes(key) || (a.lastRound && st.round > a.lastRound)) return;
+    const es = now.filter(e => actionKey(e.key) === key);
+    if (es.length) { const e = es.find(x => x.p === p.id) || es[0]; if (allowed(ctx, e, p)) out.push({ key, a, qid, e }); }
+    else if (st.slots[key] === undefined && a.ring <= st.round) out.push({ key, a, qid });
+  }));
+  return out;
+}
+/** Encore Crowd (pool 9): round III spaces a rival has a minion on. */
+const rivalThirds = (ctx, p) => targets(ctx, p, 'rival').filter(e => e.ring === 3);
 /** Cover's targets: open actions with no minion on them, not already in this copy chain. */
 function emptyTargets(ctx) {
   const st = ctx.state, path = pathNow(ctx), out = [];
@@ -475,6 +490,28 @@ const echoQ = {
         copyAll(ctx, p, list, null, 'Curtain Call');
       },
     }, 'pool6'),
+    // idea pipeline pool 9 (Nov 7): Headliners copies any round III space on the wheel: a taken one as a copy of its
+    // taker's entry (theirs or yours; a joined spot counts), an open one by doing it as Cover does. Itself and anything
+    // already in the chain left out, Agents as for any copy.
+    poolSpace({
+      key: 'headliners', ring: 3, name: 'Headliners', echo: true, text: "Copy any round III action, even if it's taken. +1 green.",
+      estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...thirdTargets(ctx, p).map(x => (x.e ? entryValue(ctx, x.e, p) : emptyValue(ctx, x.a, p)))),
+      resolve(ctx, p) {
+        plus(ctx, p);
+        const list = thirdTargets(ctx, p);
+        if (!list.length) { ctx.log(`${p.name}'s Headliners: no round III action to copy.`); return; }
+        ctx.choose(p, 'Headliners: copy which round III action?', list.map(x => ({
+          id: `space:third:${x.key}`, label: `${x.a.name}${x.e ? ` (${ctx.player(x.e.p).name})` : ''}: ${x.e ? describe(ctx, x.e) : x.a.text}`, kind: 'space',
+          value: x.key, hint: x.e ? entryValue(ctx, x.e, p) : emptyValue(ctx, x.a, p),
+        })), 'echo.headline');
+      },
+    }, 'pool9'),
+    // pool 9's variation: only a round III space a rival has a minion on, copied as Echo copies
+    poolSpace({
+      key: 'encorecrowd', ring: 3, name: 'Encore Crowd', echo: true, text: 'Copy a round III action a rival has a minion on. +1 green.',
+      estimate: (ctx, p) => VARIANT.plus + bestValue(ctx, rivalThirds(ctx, p), p),
+      resolve(ctx, p) { plus(ctx, p); offer(ctx, p, rivalThirds(ctx, p), 'Encore Crowd: copy which round III action?', 'now'); },
+    }, 'pool9'),
     swap11(swap11({
       key: 'chant', ring: 1, name: 'Build Up', text: '+3 green in round I, +4 in round II, +5 in round III.', // every color's 3/4/5 (Cory, 2026-10-27)
       byRound: { lines: ['+3 green', '+4 green', '+5 green'] },
@@ -607,6 +644,13 @@ const echoQ = {
       if (!o || o.id === p.id) { ctx.log(`${p.name}: that member left the rival's cult.`); return; }
       ctx.log(`${p.name} copies ${o.name}'s ${ctx.defOf(uid).name}: its On Recruit.`);
       ctx.borrowOnRecruit(p, uid);
+    },
+    // Headliners (pool 9): a taken space is copied from its entry, an open one is done
+    headline(ctx, p, key) {
+      const hit = thirdTargets(ctx, p).find(x => x.key === key);
+      if (!hit) { ctx.log(`${p.name}'s Headliners: that action can't be copied now.`); return; }
+      if (hit.e) copy(ctx, p, hit.e, { asker: 'Headliners' });
+      else echoQ.handlers.copyEmpty(ctx, p, key);
     },
     openingDo(ctx, p, key) { echoQ.handlers.copyEmpty(ctx, p, key, { as: 'Opening Act' }); },
     warmupDo(ctx, p, key) { echoQ.handlers.copyEmpty(ctx, p, key, { as: 'Warm-Up Act' }); },
