@@ -9,6 +9,7 @@
 //   status [--stale 20]                                       every judge game: round, whose turn, postgames, STALLED
 //                                                             when no move for --stale minutes (relaunch that seat)
 //   repeat <game dir> [--set k]                               the same deal again with fresh judges (consistency check)
+//   publish                                                   copy local games' records to the shared folder (run every 20 min and at the end)
 //   report [--out dir]                                        every candidate card: judges' ratings beside the live
 //                                                             cards in the same games, spread, and where judges split
 //
@@ -20,7 +21,10 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const BASE = process.env.JUDGE_BASE || '/mnt/project-files/idea-pipeline/expert';
+// Games live on the local disk of the box whose agents play them: the shared folder (rclone) handed back old files and
+// even another game's files under load (Nov 7). `publish` copies each game's record to the shared folder for reports.
+const SHARED = '/mnt/project-files/idea-pipeline/expert';
+const BASE = process.env.JUDGE_BASE || '/home/user/judge-games';
 const BRANCH = 'claude/gifted-newton-3lcy3i';
 const args = process.argv.slice(2);
 const flag = (k, d) => { const i = args.indexOf(`--${k}`); return i >= 0 ? args[i + 1] : d; };
@@ -35,9 +39,19 @@ const readJson = p => {
   }
 };
 
-function games() {
-  if (!fs.existsSync(BASE)) return [];
-  return fs.readdirSync(BASE).map(d => path.join(BASE, d)).filter(d => fs.existsSync(path.join(d, 'meta.json')));
+function games(where = [BASE]) {
+  const out = [];
+  for (const b of where) if (fs.existsSync(b)) for (const d of fs.readdirSync(b)) if (fs.existsSync(path.join(b, d, 'meta.json'))) out.push(path.join(b, d));
+  return out;
+}
+// publish: copy every local game's meta.json, events.jsonl, cards.md and heal.log to the shared folder (finished or not)
+function publish() {
+  for (const dir of games()) {
+    const to = path.join(SHARED, path.basename(dir));
+    fs.mkdirSync(to, { recursive: true });
+    for (const n of ['meta.json', 'events.jsonl', 'cards.md', 'heal.log']) if (fs.existsSync(path.join(dir, n))) fs.copyFileSync(path.join(dir, n), path.join(to, n));
+    console.log(`published ${path.basename(dir)}`);
+  }
 }
 
 async function plan() {
@@ -107,7 +121,7 @@ async function plan() {
 
 function status() {
   const stale = Number(flag('stale', 20)) * 60e3;
-  for (const dir of games()) {
+  for (const dir of games(args.includes('--shared') ? [SHARED] : [BASE])) {
     const meta = readJson(path.join(dir, 'meta.json'));
     let s; try { s = readJson(path.join(dir, 'state.json')); } catch { console.log(`${dir}: state unreadable`); continue; }
     const ev = fs.readFileSync(path.join(dir, 'events.jsonl'), 'utf8').trim().split('\n').filter(Boolean);
@@ -150,7 +164,10 @@ const score = x => x.f == null ? null : (x.f + (x.s ?? x.f)) / 2;
 
 function report() {
   const rows = {}, cands = new Set(), gamesUsed = [], judges = {};
-  for (const dir of games()) {
+  const seen = new Set();
+  for (const dir of games([BASE, SHARED])) {
+    if (seen.has(path.basename(dir))) continue;
+    seen.add(path.basename(dir));
     const meta = readJson(path.join(dir, 'meta.json'));
     // postgames also live in events.jsonl (the shared folder can hand back an old meta.json)
     meta.post = { ...(meta.post || {}) };
@@ -205,7 +222,7 @@ function report() {
   L.push('');
   for (const c of out.cards) { L.push(`## ${c.name}`); for (const x of c.clauses) L.push(`- ${x}`); if (!c.clauses.length) L.push('- not rated by anyone (dealt but never weighed)'); L.push(''); }
   L.push('## Calibration by judge', '', ...cal.map(c => `- ${c.who}: liked ${f1(c.like)}, disliked ${f1(c.dis)}${c.agrees == null ? '' : c.agrees ? ', agrees' : ', DISAGREES'}`));
-  const dir = flag('out', BASE);
+  const dir = flag('out', SHARED);
   fs.writeFileSync(path.join(dir, 'judges.md'), L.join('\n'));
   fs.writeFileSync(path.join(dir, 'judges.json'), JSON.stringify(out, null, 1));
   console.log(L.slice(0, 7 + out.cards.length).join('\n'));
@@ -231,4 +248,5 @@ if (cmd === 'plan') await plan();
 else if (cmd === 'status') status();
 else if (cmd === 'report') report();
 else if (cmd === 'repeat') await repeat();
+else if (cmd === 'publish') publish();
 else console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1, 15).join('\n'));
