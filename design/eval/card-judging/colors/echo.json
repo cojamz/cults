@@ -27,7 +27,9 @@
    "ties": "Puts a minion on a Green space for the contest; feeds green-cost members only.",
    "coryNotes": "Oct 31: \"green can stay… just default to gather style for now\". Nov 7: \"I do like the green actions for the most part\".",
    "band": "fine",
-   "why": "Needed fuel, no moment; the other colors' fuel spaces now add followers on a recruit and this doesn't."
+   "why": "Needed fuel, no moment; the other colors' fuel spaces now add followers on a recruit and this doesn't.",
+   "short": "Round III: +5 green, the plainest of the fuel spaces.",
+   "risk": ""
   },
   {
    "name": "Echo",
@@ -41,7 +43,9 @@
    "ties": "Makes turn order and the Goes Last token matter for everyone: whoever takes a big space hands it to the next seat.",
    "coryNotes": "Nov 7: \"I do like the green actions for the most part\" (no card named).",
    "band": "star",
-   "why": "The color in one card: the moment someone takes the best space and the next player says \"me too\"."
+   "why": "The color in one card: the moment someone takes the best space and the next player says \"me too\".",
+   "short": "Round III: copy Initiation after the player before you, a 10-cost member free.",
+   "risk": "Overlaps Understudy: the same copy as a member."
   },
   {
    "name": "Reprise",
@@ -55,7 +59,9 @@
    "ties": "Rivals can't stop it except by Agents moving onto you; it doesn't touch anyone else's pieces.",
    "coryNotes": "Oct 27: moved to round I (\"why not\"; Claude flagged it does nothing on your first turn).",
    "band": "fine",
-   "why": "Solid round III payoff, but it is Stunt Double's job on a space and has no sting for rivals."
+   "why": "Solid round III payoff, but it is Stunt Double's job on a space and has no sting for rivals.",
+   "short": "Round III: do your own Initiation again, a second 10-cost member free.",
+   "risk": "Overlaps Stunt Double: your own space again."
   },
   {
    "name": "Sample",
@@ -69,7 +75,9 @@
    "ties": "Gets better the more On Recruit members rivals buy; overlaps Red's Tryout (\"Use the On Recruit effect of a shop member; it stays in the shop. +2 red.\"), which does the same from the shop and pays more.",
    "coryNotes": "",
    "band": "fine",
-   "why": "A real moment with the right rival card out, but Tryout does the same job better on another color."
+   "why": "A real moment with the right rival card out, but Tryout does the same job better on another color.",
+   "short": "Round II: copy a rival's Con Men and steal 5 resources.",
+   "risk": "Overlaps Red's Tryout: the same job in two colors."
   },
   {
    "name": "Cover",
@@ -83,7 +91,9 @@
    "ties": "Gifts the next player the space you copied; nobody feels it as yours.",
    "coryNotes": "Oct 29: \"i guess just leave it as is for now\" (after its weak balance read; his idea then: \"copy an action with a rival's minion on it\").",
    "band": "weak",
-   "why": "The one Green space you'd miss least: its best turn hands the same space to a rival right after."
+   "why": "The one Green space you'd miss least: its best turn hands the same space to a rival right after.",
+   "short": "Round III: copy empty Initiation for a free 10-cost member; it stays open.",
+   "risk": ""
   },
   {
    "name": "Greatest Hits",
@@ -97,7 +107,9 @@
    "ties": "Makes every color's On Recruit members worth more to a Green player, so the shop matters more to them.",
    "coryNotes": "Nov 1: confirmed as his text; \"copying round 1 amounts is too confusing\" (refused a smaller version).",
    "band": "fine",
-   "why": "The color's big round III moment, but its top case is about twice the next best round III space."
+   "why": "The color's big round III moment, but its top case is about twice the next best round III space.",
+   "short": "Round III: fire every member's On Recruit again, about 21 against 10.",
+   "risk": "About twice the best round III space; overlaps Encore."
   },
   {
    "name": "Song Request",
@@ -111,7 +123,9 @@
    "ties": "Every rival's big space pays the owner too; it doesn't place a minion, so it doesn't help the Green contest.",
    "coryNotes": "",
    "band": "fine",
-   "why": "A strong engine card with a clear moment, but it is Echo again with no minion and no turn-order skill."
+   "why": "A strong engine card with a clear moment, but it is Echo again with no minion and no turn-order skill.",
+   "short": "Round III: copy a rival's Initiation without a minion, a 10-cost member free.",
+   "risk": "Owners win 35% of games; overlaps Fan Club, Tribute Band."
   },
   {
    "name": "Impersonator",
@@ -125,7 +139,9 @@
    "ties": "Every color's best member becomes a Green target.",
    "coryNotes": "Nov 5: \"Impersonator should impersontate the on recruit\".",
    "band": "fine",
-   "why": "Good moment, and the best of Green's three become-a-copy members."
+   "why": "Good moment, and the best of Green's three become-a-copy members.",
+   "short": "Round II: copy a rival's Con Men, steal 5, and keep its ability.",
+   "risk": "Overlaps Impostors and Doppelganger: three become-a-copy members."
   },
   {
    "name": "Understudy",
@@ -139,7 +155,9 @@
    "ties": "Same as Echo: turn order decides what it gets.",
    "coryNotes": "Oct 28: returned at 4 by Cory; Oct 28 11:37pm: reworded to \"the action taken the previous turn\".",
    "band": "weak",
-   "why": "Echo on a member, with Stunt Double right beside it doing nearly the same; you'd miss it least."
+   "why": "Echo on a member, with Stunt Double right beside it doing nearly the same; you'd miss it least.",
+   "short": "Round III: the player before took Spree; you get 2 recruits, +6 blue.",
+   "risk": "Overlaps Echo: the same copy as a space."
   },
   {
    "name": "Ensemble",
@@ -153,7 +171,9 @@
    "ties": "Touches nobody else.",
    "coryNotes": "Oct 29: worth 3 (\"sure why not\").",
    "band": "weak",
-   "why": "Copyist does the same thing bigger and cheaper; no moment of its own."
+   "why": "Copyist does the same thing bigger and cheaper; no moment of its own.",
+   "short": "Round III: copy your own Initiation twice, +2 followers on top.",
+   "risk": "Overlaps Copyist, Impressionist and Wallflower: copy payoffs."
   },
   {
    "name": "Impressionist",
@@ -167,7 +187,9 @@
    "ties": "Pays in other colors' resources, so Green can buy their members.",
    "coryNotes": "Oct 29: \"I like it\" (about an earlier text, then a cloak: \"Whenever any player copies an action, +1 of its color.\").",
    "band": "fine",
-   "why": "He liked the old version; this one is one of four copy payoffs."
+   "why": "He liked the old version; this one is one of four copy payoffs.",
+   "short": "Over a game, about 8 copies pay 16 resources for 6.",
+   "risk": "Overlaps Copyist, Wallflower and Ensemble: four copy payoffs."
   },
   {
    "name": "Wallflower",
@@ -181,7 +203,9 @@
    "ties": "Makes the biggest resource spaces of every color worth taking early so Green can't copy them.",
    "coryNotes": "Oct 28: \"yes. let's make it 10\". Nov 3: \"copying Polish didnt double with Wallflower\" (fixed to match the text).",
    "band": "fine",
-   "why": "A real power moment, but its round III top case runs past twice the best space."
+   "why": "A real power moment, but its round III top case runs past twice the best space.",
+   "short": "Round III: Echo on Toast doubles 9 silver to 18.",
+   "risk": "About +25 in one round, over twice the best space."
   },
   {
    "name": "Fan Club",
@@ -195,7 +219,9 @@
    "ties": "Points at the leader, so it works as catch-up.",
    "coryNotes": "Nov 3: \"Fan club really makes no sense\" (old text); current text is Claude's pick under his go-with-your-gut.",
    "band": "fine",
-   "why": "Clear catch-up moment, but one more copy-an-action On Recruit beside Understudy and Stunt Double."
+   "why": "Clear catch-up moment, but one more copy-an-action On Recruit beside Understudy and Stunt Double.",
+   "short": "Round III: the leader took Initiation; recruit this, get a 10-cost member free.",
+   "risk": "Overlaps Song Request and Tribute Band: copy a rival's spaces."
   },
   {
    "name": "Copyist",
@@ -209,7 +235,9 @@
    "ties": "Touches nobody else.",
    "coryNotes": "Nov 5: \"yeah swap roadie out for shortlist green\".",
    "band": "fine",
-   "why": "The cleanest copy payoff, but cheap for what it pays over a game."
+   "why": "The cleanest copy payoff, but cheap for what it pays over a game.",
+   "short": "Round II: Echo and Song Request in one turn, +4 followers.",
+   "risk": "16 followers a game for 5; overlaps Impressionist, Wallflower."
   },
   {
    "name": "Stunt Double",
@@ -223,7 +251,9 @@
    "ties": "Every color's big space is a target.",
    "coryNotes": "Nov 7: \"I really like stunt double… I don't think we should change stunt double\".",
    "band": "star",
-   "why": "Cory's own star; the same-turn combo lands every time."
+   "why": "Cory's own star; the same-turn combo lands every time.",
+   "short": "Round III after Initiation: a second free 10-cost member, for 7.",
+   "risk": "Overlaps Reprise: your own space again."
   },
   {
    "name": "Tribute Band",
@@ -237,7 +267,9 @@
    "ties": "Turns one rival's whole round into yours.",
    "coryNotes": "Nov 6: \"let's put it on our cut list\".",
    "band": "weak",
-   "why": "Its top case is three times the best round III space, and Cory put it on the cut list."
+   "why": "Its top case is three times the best round III space, and Cory put it on the cut list.",
+   "short": "Round III, last turn: do all five of a rival's spaces, about 30.",
+   "risk": "Breaks the game: 30 in one turn; owners win 68%."
   },
   {
    "name": "Doppelganger",
@@ -251,7 +283,9 @@
    "ties": "Touches nobody else.",
    "coryNotes": "Nov 5: \"keep\" (a copied used Encore gets its own fresh use).",
    "band": "fine",
-   "why": "A clear engine piece, but one of three become-a-copy members."
+   "why": "A clear engine piece, but one of three become-a-copy members.",
+   "short": "Round II: copy your Song Request and copy two rivals' spaces every round.",
+   "risk": "Overlaps Impersonator and Impostors: three become-a-copy members."
   },
   {
    "name": "Impostors",
@@ -265,7 +299,9 @@
    "ties": "Every color's best member becomes a target.",
    "coryNotes": "Nov 7: on making it a copy of a shop member, \"No, I don't like this at all… a duplicate of another thing\"; stays as live.",
    "band": "weak",
-   "why": "Impersonator does the same and more for the same price."
+   "why": "Impersonator does the same and more for the same price.",
+   "short": "Round III: become a rival's game-end scorer and score it yourself, 2 bodies.",
+   "risk": "Overlaps Impersonator and Doppelganger: three become-a-copy members."
   },
   {
    "name": "Agents",
@@ -279,7 +315,9 @@
    "ties": "Only matters when a rival copies; his favorite use (pushing it onto a rival through a swap) needs a swap card from another color.",
    "coryNotes": "Oct 28: \"i like agents moved around as a sabotage bocker\".",
    "band": "fine",
-   "why": "He liked it as a sabotage blocker, but that use needs another color's swap; alone it is a quiet shield."
+   "why": "He liked it as a sabotage blocker, but that use needs another color's swap; alone it is a quiet shield.",
+   "short": "Round III: your Initiation, a free 10-cost member, can't be copied.",
+   "risk": ""
   },
   {
    "name": "Bait",
@@ -293,7 +331,9 @@
    "ties": "Only fires when a rival copies, which needs another Green player; a 2-follower swing at most per copy.",
    "coryNotes": "Oct 29: \"clearly neutral for the player who has it (+1 -1)\".",
    "band": "weak",
-   "why": "Small swing, and it waits on a rival doing Green's thing."
+   "why": "Small swing, and it waits on a rival doing Green's thing.",
+   "short": "Round II: a rival copies your Spree; they −1 follower, you +1.",
+   "risk": ""
   },
   {
    "name": "Encore",
@@ -307,7 +347,9 @@
    "ties": "Every color's On Recruit members get better in Green hands.",
    "coryNotes": "Nov 4: \"Yeah, go with mine\" (his wording). Nov 6: \"i suspect bots can't use this right, so leave as is\".",
    "band": "fine",
-   "why": "His own words and a real moment; overlaps Greatest Hits (both repeat On Recruits)."
+   "why": "His own words and a real moment; overlaps Greatest Hits (both repeat On Recruits).",
+   "short": "Round III: Stunt Double twice after Initiation, two free 10-cost members.",
+   "risk": "Overlaps Greatest Hits: both repeat On Recruits."
   }
  ],
  "overlaps": [
@@ -319,5 +361,6 @@
   "Greatest Hits (\"Copy the On Recruit of each of your members, in any order. +1 green.\") and Encore (\"On Use, once per game: your next On Recruit happens twice.\"): both repeat On Recruits.",
   "Sample (\"Copy the On Recruit of a rival's member. +1 green.\") and Red's Tryout (\"Use the On Recruit effect of a shop member; it stays in the shop. +2 red.\"): the same job across two colors."
  ],
- "notes": "Green has 21 cards doing about five jobs, with two or three cards on each; the members are mostly near twins, while the spaces are the strong part (as Cory said). Only Echo and Song Request give rivals a reason to change how they play (take the big space late, or deny the copy); almost nothing hands anything back to the player copied. The round III payoff is spread across Greatest Hits, Wallflower and Tribute Band, and two of those run past twice the best round III space. The contest counts minions on Green spaces, so the member copiers (Song Request, Tribute Band) don't help it."
+ "notes": "Green has 21 cards doing about five jobs, with two or three cards on each; the members are mostly near twins, while the spaces are the strong part (as Cory said). Only Echo and Song Request give rivals a reason to change how they play (take the big space late, or deny the copy); almost nothing hands anything back to the player copied. The round III payoff is spread across Greatest Hits, Wallflower and Tribute Band, and two of those run past twice the best round III space. The contest counts minions on Green spaces, so the member copiers (Song Request, Tribute Band) don't help it.",
+ "storyShort": "Green copies spaces, a rival's or your own: whatever the best play was."
 }

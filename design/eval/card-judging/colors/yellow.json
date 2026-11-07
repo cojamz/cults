@@ -26,7 +26,9 @@
    "ties": "Feeds shop costs and full sets in any color, so it helps whatever member you're chasing.",
    "coryNotes": "Oct 30: \"we should give the harvest like actions a little flavor\"; Nov 4, on its color picker: \"This one doesnt meet the bar\" (the screen, not the card).",
    "band": "fine",
-   "why": "A solid fuel space whose color choice fits Yellow; it never makes a turn anyone remembers."
+   "why": "A solid fuel space whose color choice fits Yellow; it never makes a turn anyone remembers.",
+   "short": "Round II: +4 in exactly the 3 colors you lack, recruit same turn.",
+   "risk": "Same round I fuel job as Survey."
   },
   {
    "kind": "space",
@@ -40,7 +42,9 @@
    "ties": "Pays more when a color's spaces fill up, so it rides other players' choices, but nobody changes a move because of it.",
    "coryNotes": "Nov 5: \"Leaders tax should be renamed and should be +1 yellow per minion on the most occupied color... that should be the functionality\"; name: \"maybe, Survey\".",
    "band": "weak",
-   "why": "A second fuel space beside Harvest that only says \"wait, then take yellow\"; nobody feels it and it isn't about going broad."
+   "why": "A second fuel space beside Harvest that only says \"wait, then take yellow\"; nobody feels it and it isn't about going broad.",
+   "short": "Round III, last turn: 6 minions on Red's spaces pays 7 yellow.",
+   "risk": "Same round I fuel job as Harvest."
   },
   {
    "kind": "space",
@@ -54,7 +58,9 @@
    "ties": "Pushes you into a color you don't have, the same trigger as Guest Book and Housewarming.",
    "coryNotes": "Nov 3, on the card it replaced (Dilute): \"I still don't like Dilute\"; Nov 4: \"New Blood Should give additional yellow rather than followers\".",
    "band": "weak",
-   "why": "Three colors already have this shape, and Housewarming does the same new-color push with a much bigger moment."
+   "why": "Three colors already have this shape, and Housewarming does the same new-color push with a much bigger moment.",
+   "short": "Round I: recruit your first red member for 4 yellow total.",
+   "risk": "Same trigger as Guest Book and Housewarming."
   },
   {
    "kind": "space",
@@ -68,7 +74,9 @@
    "ties": "Takes a member out of the shop, so rivals feel it; the free recruit is the same action as Red's Initiation and Blue's extra recruits.",
    "coryNotes": "Nov 5, on its cost cap: \"for named costs, yes go up by 1\" (number only).",
    "band": "fine",
-   "why": "Yellow's biggest moment on a space, but the action is Red's free recruit; only the new-color condition is Yellow's."
+   "why": "Yellow's biggest moment on a space, but the action is Red's free recruit; only the new-color condition is Yellow's.",
+   "short": "Round II: recruit a 7-cost member of a new color for free.",
+   "risk": "Free recruit is Red's job, like Initiation."
   },
   {
    "kind": "space",
@@ -82,7 +90,9 @@
    "ties": "Rewards owning many colors of member, so it pairs with Big Tent and Housewarming; nobody else at the table notices it.",
    "coryNotes": "Nov 3: \"Melting Pot is worded strangely\"; Nov 5: \"melting pot should give 1 color for each different member color. And when i have dabblers it should give me 1 of every color.\"",
    "band": "weak",
-   "why": "A fuel space that pays 5 or 6 in round II beside Housewarming's free member; no one reacts to it."
+   "why": "A fuel space that pays 5 or 6 in round II beside Housewarming's free member; no one reacts to it.",
+   "short": "Round II with members in 4 colors: 6 resources, a full set.",
+   "risk": "Hands a full set, like Caravan."
   },
   {
    "kind": "space",
@@ -96,7 +106,9 @@
    "ties": "Sets up full sets for Yellow's contest and any member's colored part; makes Counterfeiters' damage undoable.",
    "coryNotes": "Oct 30: \"yes. I think that's right. could maybe be a round II action though with less yellow gain\"; Nov 2: \"oh no i like makeover as is\".",
    "band": "star",
-   "why": "Cory likes it as is; it's the one Yellow space that is pure translating."
+   "why": "Cory likes it as is; it's the one Yellow space that is pure translating.",
+   "short": "Round III: +4 yellow, rearrange into 5 full sets, win the +10.",
+   "risk": "With Seamstress, about 30 followers in one turn."
   },
   {
    "kind": "member",
@@ -110,7 +122,9 @@
    "ties": "Every rival's recruit pays you a little; a rival might steer away from your colors, rarely.",
    "coryNotes": "",
    "band": "fine",
-   "why": "Steady and clean, but it pays in small drips nobody reacts to."
+   "why": "Steady and clean, but it pays in small drips nobody reacts to.",
+   "short": "Round II: rivals recruit 5 members of your colors; you get 5 free.",
+   "risk": ""
   },
   {
    "kind": "member",
@@ -124,7 +138,9 @@
    "ties": "Smooths shop costs; nobody else notices.",
    "coryNotes": "Oct 31: \"i think not. but then it's just the red artifact power?\"; Nov 1: replaced by Tourist in the 10-card deck.",
    "band": "weak",
-   "why": "Out of the 10-card deck already; it changes one resource at a time and never makes a turn."
+   "why": "Out of the 10-card deck already; it changes one resource at a time and never makes a turn.",
+   "short": "Round III: 5 spaces each turn 1 resource into a color you lack.",
+   "risk": ""
   },
   {
    "kind": "member",
@@ -138,7 +154,9 @@
    "ties": "Makes keeping one of each color worth more than spending it; a Counterfeiters hit on you cuts it to 1.",
    "coryNotes": "Nov 1: \"I like tourists. maybe on recruit and round start?\"",
    "band": "star",
-   "why": "Cory likes it, and it pays going broad in followers, plainly."
+   "why": "Cory likes it, and it pays going broad in followers, plainly.",
+   "short": "Round I holding 4 colors: 12 followers over the game.",
+   "risk": "Same count as Dyer, pays better."
   },
   {
    "kind": "member",
@@ -152,7 +170,9 @@
    "ties": "Same job as Night Traders and Makeover, smaller.",
    "coryNotes": "Oct 31: set to swap 3, On Recruit and Round Start (his verdict, paraphrased in the log).",
    "band": "weak",
-   "why": "Out of the 10-card deck; swaps that gain nothing, done better by Night Traders and Makeover."
+   "why": "Out of the 10-card deck; swaps that gain nothing, done better by Night Traders and Makeover.",
+   "short": "Round II start: swap 3 extra purple into blue, red and white.",
+   "risk": "Fourth way to rearrange, like Makeover and Night Traders."
   },
   {
    "kind": "member",
@@ -166,7 +186,9 @@
    "ties": "Raises the stakes of Yellow's contest; Counterfeiters on its owner before the use takes it to zero.",
    "coryNotes": "",
    "band": "weak",
-   "why": "Its usual turn is fine (about +12), but with Makeover it pays three times the best round III space; weak until capped."
+   "why": "Its usual turn is fine (about +12), but with Makeover it pays three times the best round III space; weak until capped.",
+   "short": "Round III: double 3 full sets into 6, take the +10.",
+   "risk": "With Makeover, about 30 followers in one turn: breaks."
   },
   {
    "kind": "member",
@@ -180,7 +202,9 @@
    "ties": "Makes yellow members in the shop worth blocking by rivals.",
    "coryNotes": "Oct 31: \"more members should give follower triggers. like side quests\"; Nov 5: \"matchmaker is good\"; Nov 6: \"maybe it should just be any yellow member and should be 3 wild\".",
    "band": "star",
-   "why": "Cory called it good and set its text; note it pulls toward deep, not broad."
+   "why": "Cory called it good and set its text; note it pulls toward deep, not broad.",
+   "short": "Round II: recruit Caravan, +3 of any colors and +1 follower.",
+   "risk": "Pulls toward deep yellow, against going broad."
   },
   {
    "kind": "member",
@@ -194,7 +218,9 @@
    "ties": "Feeds Yellow's own contest and costs; nothing else.",
    "coryNotes": "Oct 31: \"i dont like round end\"; Nov 5: \"eh lets leave it for now\".",
    "band": "weak",
-   "why": "A twin of Tourist that pays yellow instead of followers and costs more."
+   "why": "A twin of Tourist that pays yellow instead of followers and costs more.",
+   "short": "Round I holding 4 colors: 12 yellow over the game.",
+   "risk": "Tourist pays the same count in followers."
   },
   {
    "kind": "member",
@@ -208,7 +234,9 @@
    "ties": "Leaders in Yellow's and Silver's contests can't trust the board; the swing comes after everyone's last move.",
    "coryNotes": "Nov 5: \"yes to night market. should be relatively cheap as well\"; Nov 6: \"buff night traders to 4\".",
    "band": "star",
-   "why": "Cory picked and buffed it; it makes the contest close tense."
+   "why": "Cory picked and buffed it; it makes the contest close tense.",
+   "short": "Round III end: 4 swaps finish 2 sets, win the +10 alone.",
+   "risk": "Overlaps Makeover: both rearrange your pile."
   },
   {
    "kind": "member",
@@ -222,7 +250,9 @@
    "ties": "Same job as Counterfeiters, far smaller.",
    "coryNotes": "Oct 31: set to On Use, once per round (his verdict, paraphrased in the log).",
    "band": "weak",
-   "why": "Out of the 10-card deck; Counterfeiters does this job much bigger for less."
+   "why": "Out of the 10-card deck; Counterfeiters does this job much bigger for less.",
+   "short": "Round III: 1 of each rival's biggest pile turns white, 3 changed.",
+   "risk": "Weaker twin of Counterfeiters."
   },
   {
    "kind": "member",
@@ -236,7 +266,9 @@
    "ties": "Hits full sets, the silver lead and any member a rival saved for; rivals spend before your turn.",
    "coryNotes": "Nov 5: \"I think we should have something aggressive, like once per round turn all of a rivals resources into one color.\"; on price: \"i like somebody being able to get it round 1\"; name: \"maybe counterfeiters?\"",
    "band": "star",
-   "why": "Cory's own idea, and the one Yellow card every rival feels."
+   "why": "Cory's own idea, and the one Yellow card every rival feels.",
+   "short": "Round III: turn the leader's 16 resources white, take the +10.",
+   "risk": ""
   },
   {
    "kind": "member",
@@ -250,7 +282,9 @@
    "ties": "Pairs with Housewarming and Melting Pot; nobody reacts.",
    "coryNotes": "Oct 31: \"a little similar to HR\"; Nov 5, on 1 to 3: \"i mean 2\".",
    "band": "fine",
-   "why": "Plain and on theme, but a quiet count at game end."
+   "why": "Plain and on theme, but a quiet count at game end.",
+   "short": "Game end, members in all 4 colors: +8 followers.",
+   "risk": "Overlaps Spice Route: both count colors at game end."
   },
   {
    "kind": "member",
@@ -264,7 +298,9 @@
    "ties": "Same job as Makeover and Night Traders.",
    "coryNotes": "Oct 31 (named it): \"agree this gives multiple followers\".",
    "band": "weak",
-   "why": "Out of the 10-card deck; a copy of Makeover's rearrange."
+   "why": "Out of the 10-card deck; a copy of Makeover's rearrange.",
+   "short": "Round III, Makeover taken: rearrange 18 into 4 full sets.",
+   "risk": "With Seamstress the same break as Makeover."
   },
   {
    "kind": "member",
@@ -278,7 +314,9 @@
    "ties": "Feeds Yellow's contest; same job as Melting Pot.",
    "coryNotes": "Nov 1, why it came in: \"way too much 'change rivals resource'… nothing really benefits\".",
    "band": "fine",
-   "why": "Clean and steady, no moment beyond the full set it hands you."
+   "why": "Clean and steady, no moment beyond the full set it hands you.",
+   "short": "Round I: a full set now and each round start, 12 total.",
+   "risk": "Overlaps Melting Pot: both hand you a full set."
   },
   {
    "kind": "member",
@@ -292,7 +330,9 @@
    "ties": "Only Yellow's contest; makes Counterfeiters into yellow useless against its owner.",
    "coryNotes": "Nov 5, on its reword: \"if we already have the answers, then ship them\".",
    "band": "fine",
-   "why": "Clear and on theme; does Night Traders' contest job more quietly."
+   "why": "Clear and on theme; does Night Traders' contest job more quietly.",
+   "short": "Round II end: 6 yellow fills missing white, 3 sets, win +6.",
+   "risk": ""
   },
   {
    "kind": "member",
@@ -306,7 +346,9 @@
    "ties": "Same job as Big Tent, smaller.",
    "coryNotes": "",
    "band": "weak",
-   "why": "Out of the 10-card deck; Big Tent's smaller twin."
+   "why": "Out of the 10-card deck; Big Tent's smaller twin.",
+   "short": "Game end, 3 or more of all 4 colors: +4 followers.",
+   "risk": "Overlaps Big Tent: both count colors at game end."
   },
   {
    "kind": "member",
@@ -320,7 +362,9 @@
    "ties": "Same trigger as New Blood and Housewarming, so they stack on one turn.",
    "coryNotes": "Oct 31: \"I think C is probably best\"; Nov 1: \"yeah it should keep happening in that scenario. Dabblers always works optimally for the player in the logic\".",
    "band": "fine",
-   "why": "Right size and on theme; Cory picked it from a list but hasn't praised it."
+   "why": "Right size and on theme; Cory picked it from a list but hasn't praised it.",
+   "short": "Round I: first members red, blue, grey: +6 yellow by round II.",
+   "risk": "Same trigger as New Blood and Housewarming."
   }
  ],
  "overlaps": [
@@ -334,5 +378,6 @@
   "Melting Pot (\"+2 yellow, and +1 of each color among your members.\") and Caravan (\"On Recruit: +1 of each color. Round Start: +1 of each color.\"): both hand you a full set.",
   "Big Tent (\"Game End: +2 followers per color you have 1 to 3 members of.\") and Spice Route (\"Game End: +1 follower per color you hold 3 or more of.\")."
  ],
- "notes": "Of the six spaces only Makeover is a clear winner; Survey, New Blood and Melting Pot are fuel spaces with a condition, and the biggest moment (Housewarming) is borrowed from Red. Round II has no Yellow-only big turn. The members are stronger than the spaces: Counterfeiters, Night Traders and Tourist each make a real moment. Seamstress with Makeover is the one break (about 30 followers' worth in one round III turn). Matchmaker pulls toward going deep in yellow, against the color's broad story. Go-Between, Tinker, Leveler, Book Cookers and Spice Route are only in the 15-card deck."
+ "notes": "Of the six spaces only Makeover is a clear winner; Survey, New Blood and Melting Pot are fuel spaces with a condition, and the biggest moment (Housewarming) is borrowed from Red. Round II has no Yellow-only big turn. The members are stronger than the spaces: Counterfeiters, Night Traders and Tourist each make a real moment. Seamstress with Makeover is the one break (about 30 followers' worth in one round III turn). Matchmaker pulls toward going deep in yellow, against the color's broad story. Go-Between, Tinker, Leveler, Book Cookers and Spice Route are only in the 15-card deck.",
+ "storyShort": "Go broad, collect every color, then turn your pile into full sets."
 }

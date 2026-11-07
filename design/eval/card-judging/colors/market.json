@@ -26,7 +26,9 @@
       "ties": "Feeds the Blue Cloak and Patroness, and can pull a card a rival (or Red's Promote, Initiation) was going to take.",
       "coryNotes": "Cory, Oct 31 8:08am: picked \"C\" (this wording, at +2/+3/+4).",
       "band": "fine",
-      "why": "His pick and a solid income space; the discard is a small extra, no big moment."
+      "why": "His pick and a solid income space; the discard is a small extra, no big moment.",
+      "short": "Round III: +4 blue and bin the 10-cost member a rival needed.",
+      "risk": "Overlaps Bury: both send one shop member away."
     },
     {
       "name": "Out of Style",
@@ -40,7 +42,9 @@
       "ties": "The strongest sting in Blue: empties the color a rival collects and also clears blue members out from under a rival's Mannequin.",
       "coryNotes": "Cory, Oct 28: \"it should still be per member sent. it's actually rather good that way\".",
       "band": "star",
-      "why": "He called it rather good, and it is Blue's one real sting on rivals."
+      "why": "He called it rather good, and it is Blue's one real sting on rivals.",
+      "short": "Round II: clear 3 yellow from the shop, +4 blue, ruin Yellow's turn.",
+      "risk": ""
     },
     {
       "name": "Peek",
@@ -54,7 +58,9 @@
       "ties": "Stacks the pile that Red's Walk-In draws from and that every refill deals to rivals.",
       "coryNotes": "Cory, Oct 27: Peek \"should really scale\" (it now does). Oct 27: \"Peek UI is unintuitive\" (screen, since reworked).",
       "band": "fine",
-      "why": "A good quiet turn with a hidden choice; nobody at the table reacts much."
+      "why": "A good quiet turn with a hidden choice; nobody at the table reacts much.",
+      "short": "Round II: pick Power Shoppers from 4 hidden cards, +4 blue.",
+      "risk": ""
     },
     {
       "name": "Recruit Twice",
@@ -68,7 +74,9 @@
       "ties": "Turns saved resources from any color into members or followers; Power Shoppers and the Blue contest (Most members) build on it.",
       "coryNotes": "Cory, Nov 1 1:29pm: stays as is, \"I feel like the bots are probably using it incorrectly… it can be a 20 follower swing.\" Nov 6: Recruit Twice stays.",
       "band": "star",
-      "why": "He defended it twice; the double-buy turn is Blue's signature moment."
+      "why": "He defended it twice; the double-buy turn is Blue's signature moment.",
+      "short": "Round II: two members in one turn, +4 followers from Power Shoppers.",
+      "risk": "Overlaps Plus-Ones: same extra recruit as a member."
     },
     {
       "name": "Bury",
@@ -82,7 +90,9 @@
       "ties": "Same reach as Savings: pulls one card a rival wanted and feeds the Cloak and Patroness.",
       "coryNotes": "None on the live card. Its full-cost version was turned down Oct 20: \"way too strong. it would be like +10 blue in round 2\".",
       "band": "weak",
-      "why": "Blue's third one-card discard, with a halving sum; the space you'd miss least."
+      "why": "Blue's third one-card discard, with a halving sum; the space you'd miss least.",
+      "short": "Round II: bury a rival's 10-cost target, +6 blue.",
+      "risk": "Overlaps Savings: both discard one shop member."
     },
     {
       "name": "Spree",
@@ -96,7 +106,9 @@
       "ties": "Gives every player a reason to save resources for round III and to take it first.",
       "coryNotes": "Cory, Oct 29: \"I still don't think this is weak\". Nov 1: \"just up the blue gain to +3 and +5\"; Nov 5: +6 blue.",
       "band": "star",
-      "why": "His defended payoff space; the biggest turn Blue can build to."
+      "why": "His defended payoff space; the biggest turn Blue can build to.",
+      "short": "Round III: three recruits in one turn, about +25 followers.",
+      "risk": "Overlaps Recruit Twice: same card, bigger."
     },
     {
       "name": "Bargain Bin (the Blue Cloak)",
@@ -110,7 +122,9 @@
       "ties": "Makes every Blue discard card better and pays in other colors, so Blue can buy any color's members.",
       "coryNotes": "Cory, Nov 7 11:28am: \"Just give one color of the member discarded PER EACH DISCARDED. greys are wild\".",
       "band": "fine",
-      "why": "His fresh wording, at his target; quiet but ties the color together."
+      "why": "His fresh wording, at his target; quiet but ties the color together.",
+      "short": "Out of Style on 3 yellow: +3 yellow on top of +4 blue.",
+      "risk": ""
     },
     {
       "name": "Patroness",
@@ -124,7 +138,9 @@
       "ties": "Rewards every player's discards, Blue's and White's alike, without anyone deciding anything.",
       "coryNotes": "",
       "band": "weak",
-      "why": "The priciest blue member for a slow drip of followers that mostly comes from rivals' turns."
+      "why": "The priciest blue member for a slow drip of followers that mostly comes from rivals' turns.",
+      "short": "About +8 to 10 followers over a game from shop discards.",
+      "risk": "Overlaps Bargain Bin: both paid by discards."
     },
     {
       "name": "Snobs",
@@ -138,7 +154,9 @@
       "ties": "Pushes Blue to buy its own color, which also feeds Mannequin and the Most members contest.",
       "coryNotes": "",
       "band": "fine",
-      "why": "Clear and on theme for Most members, but the payoff is a number at the end, never a turn."
+      "why": "Clear and on theme for Most members, but the payoff is a number at the end, never a turn.",
+      "short": "Game end with 5 blue members: +6 followers.",
+      "risk": ""
     },
     {
       "name": "Power Shoppers",
@@ -152,7 +170,9 @@
       "ties": "Makes Recruit Twice and Spree worth fighting over; rivals take those spaces partly to shut it off.",
       "coryNotes": "Cory, Nov 5: \"i actually do like power shoppers\". Nov 6: yes to +4.",
       "band": "star",
-      "why": "He likes it, and it turns Blue's double-buy into a visible payoff."
+      "why": "He likes it, and it turns Blue's double-buy into a visible payoff.",
+      "short": "Round III Spree: second member lands, +4 followers.",
+      "risk": ""
     },
     {
       "name": "Mannequin",
@@ -166,7 +186,9 @@
       "ties": "Gives rivals a reason to buy blue or take Out of Style late in the round; its own owner wants Out of Style off blue.",
       "coryNotes": "Cory, Nov 4: \"Pretty cool; short list for blue\".",
       "band": "star",
-      "why": "He picked it, and it makes the end of every round a fight over the shop."
+      "why": "He picked it, and it makes the end of every round a fight over the shop.",
+      "short": "Round III: 3 blue shop members win Most members, +10 followers.",
+      "risk": ""
     },
     {
       "name": "Window Shopper",
@@ -180,7 +202,9 @@
       "ties": "Changes the first shop rivals see each round and pays in other colors.",
       "coryNotes": "Cory, Nov 1 1:40pm: moves 2 members, \"so then you get 2 colors basically\".",
       "band": "fine",
-      "why": "His shape and steady, but no one at the table notices it fire."
+      "why": "His shape and steady, but no one at the table notices it fire.",
+      "short": "Recruited round I: 6 resources over the game, 12 with the Blue Cloak.",
+      "risk": "Overlaps Window Dressers: both clear the shop on recruit."
     },
     {
       "name": "Restockers",
@@ -194,7 +218,9 @@
       "ties": "Wipes the shop for everyone, including what Red and Yellow were aiming at.",
       "coryNotes": "",
       "band": "weak",
-      "why": "Not in the 10-card deck, and a twin of Out of Style and Window Dressers."
+      "why": "Not in the 10-card deck, and a twin of Out of Style and Window Dressers.",
+      "short": "Round III: clear all 8 shop members, +8 resources with the Blue Cloak.",
+      "risk": "Overlaps Out of Style: both clear the shop."
     },
     {
       "name": "Window Dressers",
@@ -208,7 +234,9 @@
       "ties": "Helps Blue's Most members contest a lot; the clear can rob a rival of a card.",
       "coryNotes": "",
       "band": "fine",
-      "why": "Players buy it for the 3 members, not the clear; a reworded version did not beat it."
+      "why": "Players buy it for the 3 members, not the clear; a reworded version did not beat it.",
+      "short": "Round I: 5 resources buys 3 followers and counts as 3 members.",
+      "risk": "Overlaps Window Shopper: both clear the shop on recruit."
     },
     {
       "name": "Plus-Ones",
@@ -222,7 +250,9 @@
       "ties": "Sets off Power Shoppers without the space.",
       "coryNotes": "",
       "band": "fine",
-      "why": "Clean and useful with Power Shoppers, but not in the 10-card deck and a twin of Recruit Twice."
+      "why": "Clean and useful with Power Shoppers, but not in the 10-card deck and a twin of Recruit Twice.",
+      "short": "Round II: recruit twice in one turn, Power Shoppers pays +4.",
+      "risk": "Overlaps Recruit Twice: same extra recruit."
     },
     {
       "name": "Regular",
@@ -236,7 +266,9 @@
       "ties": "Same trigger as White's cloak; nothing here touches the shop or members.",
       "coryNotes": "Cory, Oct 26, on a White option that copied it: \"we don't have something here already?\"",
       "band": "weak",
-      "why": "Small drip on another color's trigger; the blue member you'd miss least."
+      "why": "Small drip on another color's trigger; the blue member you'd miss least.",
+      "short": "Round III: three follower buys, +3 blue.",
+      "risk": "Overlaps White's Money Changers: both pay on follower buys."
     },
     {
       "name": "Trendsetters",
@@ -250,7 +282,9 @@
       "ties": "Keeps rivals from counting on the shop staying put after your turn.",
       "coryNotes": "Cory, Oct 21: made Trendsetter Blue's 12th member.",
       "band": "fine",
-      "why": "His pick and a good crowd for Most members; the ability blurs into the other discards."
+      "why": "His pick and a good crowd for Most members; the ability blurs into the other discards.",
+      "short": "Round III Spree: three members in, three shop cards gone.",
+      "risk": ""
     },
     {
       "name": "Critic",
@@ -264,7 +298,9 @@
       "ties": "Taxes rivals buying blue lightly, so lightly nobody changes a buy.",
       "coryNotes": "",
       "band": "weak",
-      "why": "A small passive gain from other players' turns; no one at the table feels it."
+      "why": "A small passive gain from other players' turns; no one at the table feels it.",
+      "short": "A rival buys two blue members in round II: +2 followers.",
+      "risk": ""
     },
     {
       "name": "Last-Minute Shopper",
@@ -278,7 +314,9 @@
       "ties": "Lands right before contests, so it can swing Most members or any contest that counts members.",
       "coryNotes": "Cory, Nov 5: \"Last minute shopper is good.\" \"Last Minute Shopper should just be recruiting.\" Nov 6: \"Give last minute shopper an extra blue\".",
       "band": "star",
-      "why": "He called it good and tuned it up; a real end-of-round moment."
+      "why": "He called it good and tuned it up; a real end-of-round moment.",
+      "short": "Round II end: +3 blue, then buy the member that wins Most members.",
+      "risk": "Overlaps Plus-Ones: another extra recruit."
     }
   ],
   "overlaps": [
@@ -288,5 +326,6 @@
     "Paid by discards: Bargain Bin \"Whenever you discard a member, +1 of its color (grey: any color).\" and Patroness \"Whenever shop members go to the discard pile, +1 follower.\"",
     "With White: Regular \"Whenever you buy followers, +1 blue.\" and the White Cloak \"Whenever you buy followers, +2 white.\""
   ],
-  "notes": "Blue has two jobs, clearing the shop and buying more than once a turn, and the second one has all the big moments (Recruit Twice, Spree, Power Shoppers, Last-Minute Shopper). Seven cards clear the shop in slightly different ways, so the clearing half blurs; the weak cards (Bury, Patroness, Regular, Critic, Restockers) are mostly small drips or twins. Blue's only real sting on rivals is Out of Style, and Mannequin is its only card that makes the end of a round a fight. Restockers and Plus-Ones are only in the 15-card deck."
+  "notes": "Blue has two jobs, clearing the shop and buying more than once a turn, and the second one has all the big moments (Recruit Twice, Spree, Power Shoppers, Last-Minute Shopper). Seven cards clear the shop in slightly different ways, so the clearing half blurs; the weak cards (Bury, Patroness, Regular, Critic, Restockers) are mostly small drips or twins. Blue's only real sting on rivals is Out of Style, and Mannequin is its only card that makes the end of a round a fight. Restockers and Plus-Ones are only in the 15-card deck.",
+  "storyShort": "Blue clears the shop, sees what's coming, then buys a bunch in one turn."
 }

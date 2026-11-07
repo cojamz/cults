@@ -31,7 +31,9 @@
    "coryNotes": "Cory, Nov 1 4:23pm: \"make it 4\" then \"5*\" (price raised on feel; answer it with counterplay, Nov 1 2:18pm).",
    "band": "fine",
    "why": "A real round III moment, but once a game and it only matters when the space you want is taken.",
-   "inDeck10": true
+   "inDeck10": true,
+   "short": "Round III: take Initiation after a rival did, free 10-cost member.",
+   "risk": ""
   },
   {
    "name": "Big Spender",
@@ -46,7 +48,9 @@
    "coryNotes": "",
    "band": "weak",
    "why": "A once-a-game copy of Blue's own space; out of the 10-card deck already.",
-   "inDeck10": false
+   "inDeck10": false,
+   "short": "Round II: recruit 2 good members in one turn before rivals.",
+   "risk": "Same as Blue's Recruit Twice."
   },
   {
    "name": "Alchemists",
@@ -61,7 +65,9 @@
    "coryNotes": "Cory, Oct 28 10:55pm: \"Freelancer is good\" (its old name; renamed Alchemist, Oct 28 11:14pm).",
    "band": "fine",
    "why": "Cory called it good, but it has no moment anyone sees, and it does Yellow's translating for every color.",
-   "inDeck10": true
+   "inDeck10": true,
+   "short": "Round II: no red, still recruit a red member with 9 yellow and silver.",
+   "risk": "Translating colors is Yellow's job, like Makeover."
   },
   {
    "name": "Extra Hand",
@@ -76,7 +82,9 @@
    "coryNotes": "Cory, Oct 28 10:55pm: \"Extra Hand stays.\"",
    "band": "fine",
    "why": "A clear round III payoff at a fair price; it is Overtime without the purple.",
-   "inDeck10": true
+   "inDeck10": true,
+   "short": "Round III: a sixth minion takes Spree after everyone runs out.",
+   "risk": "Same as Purple's Overtime extra minion."
   },
   {
    "name": "Line Cutters",
@@ -91,7 +99,9 @@
    "coryNotes": "Cory, Oct 28 10:55pm: \"basically a dead card round 3\" (made cheaper); Nov 1 10:25am: \"maybe we make it 3 members? it seems pretty weak now\".",
    "band": "fine",
    "why": "Cheap followers with a real first pick; the first pick is the moment, the price makes it buyable.",
-   "inDeck10": true
+   "inDeck10": true,
+   "short": "Round III: the leader goes first and takes Initiation, 1 free member.",
+   "risk": "Lets the leader skip 'fewest followers goes first'."
   },
   {
    "name": "Launderers",
@@ -106,7 +116,9 @@
    "coryNotes": "Cory, Oct 28 10:55pm: \"should let you completely redo all your money\"; Oct 30: Makeover takes its effect, \"Launderers stays as the guest version\".",
    "band": "weak",
    "why": "A twin of Yellow's Makeover; out of the 10-card deck already.",
-   "inDeck10": false
+   "inDeck10": false,
+   "short": "Round II: recruit it, rearrange 8 mixed into 5 white for next turn.",
+   "risk": "Same as Yellow's Makeover."
   },
   {
    "name": "Ghost",
@@ -121,7 +133,9 @@
    "coryNotes": "Cory, Oct 29: \"a demote, swap or Anarchist piece; its bot numbers don't count\"; Nov 6: \"ghost should stay 5 cost\".",
    "band": "fine",
    "why": "Cory keeps defending it and it makes a real sting, but it needs another card to do anything.",
-   "inDeck10": true
+   "inDeck10": true,
+   "short": "Round II: swap it into a rival with Promote, they lose 5 followers.",
+   "risk": "With Anarchist, up to 15 followers lost per rival."
   },
   {
    "name": "Dabblers",
@@ -136,7 +150,9 @@
    "coryNotes": "Cory, Nov 4 12:29pm: \"no i like dabblers a lot… Its a very simply card.\" Never a replacement target.",
    "band": "star",
    "why": "Cory loves it, and rivals fight over it because it tips member contests.",
-   "inDeck10": true
+   "inDeck10": true,
+   "short": "Round III: counts 2 in two member contests, win two +10 prizes.",
+   "risk": "Tips two round III prizes at once."
   },
   {
    "name": "Cheerleader",
@@ -151,7 +167,9 @@
    "coryNotes": "Cory, Nov 7 9:18pm: \"cheerleader will go there and copycats will go there\" (the future contests color).",
    "band": "weak",
    "why": "Cory moved it to the future contests color; Cheerleaders does the same thing bigger.",
-   "inDeck10": false
+   "inDeck10": false,
+   "short": "Round III: win 2 contests, +2 followers on top.",
+   "risk": "Weaker twin of Cheerleaders."
   },
   {
    "name": "Cheerleaders",
@@ -166,7 +184,9 @@
    "coryNotes": "Cory, Nov 4 12:29pm: \"though cheerleaders is kinda cool too\"; 12:49pm: \"Lets do cheerleaders for now\"; 3:47pm: \"for now they go in as-is\".",
    "band": "weak",
    "why": "A +2 riding on a +4/+6/+10 prize is not a moment; bot owners won 19% (Nov 4), and it's a contests card waiting for the contests color.",
-   "inDeck10": true
+   "inDeck10": true,
+   "short": "Round III: win the fewest followers +10, take +2 more.",
+   "risk": "Twin of Cheerleader."
   },
   {
    "name": "Anarchist",
@@ -181,7 +201,9 @@
    "coryNotes": "Cory, Nov 4 11:07am: \"yes anarchist counts as a recruit btw.\"",
    "band": "fine",
    "why": "A real reason to fear a rival's turn, but it does Red's swapping for any cult.",
-   "inDeck10": true
+   "inDeck10": true,
+   "short": "Round II: swap away a rival's 7-cost member that wins Red's contest.",
+   "risk": "Same swap as Red's Promote and Demote."
   },
   {
    "name": "Spoilsport",
@@ -196,7 +218,9 @@
    "coryNotes": "Cory, Nov 4 12:50pm: \"I love spoilsport it should stay\"; Nov 6 9:34am: \"lets just make spoilsport 'choose a contest'\".",
    "band": "star",
    "why": "Cory loves it, and it makes the whole table look at its holder in round III.",
-   "inDeck10": true
+   "inDeck10": true,
+   "short": "Round III: cancel the leader's +10, deciding a close game.",
+   "risk": ""
   },
   {
    "name": "Con Men",
@@ -211,7 +235,9 @@
    "coryNotes": "Cory, Nov 1: \"i like con men\"; Nov 6 2:36pm: \"i love conmen\" (stays as is, copies included).",
    "band": "star",
    "why": "Cory loves it; one big steal everyone feels.",
-   "inDeck10": true
+   "inDeck10": true,
+   "short": "Round II: steal 5 from a rival's 9, they can't buy.",
+   "risk": "Copied by Green, fired 7 times: 35 stolen."
   },
   {
    "name": "Coach",
@@ -226,7 +252,9 @@
    "coryNotes": "Cory, Nov 1 12:00am: \"take out Coach\" (from the 10-card deck).",
    "band": "weak",
    "why": "Cory cut it from the 10-card deck; it needs another member to do anything.",
-   "inDeck10": false
+   "inDeck10": false,
+   "short": "Round III: Coach reruns Extra Hand for 1 more minion.",
+   "risk": ""
   },
   {
    "name": "Sore Loser",
@@ -241,7 +269,9 @@
    "coryNotes": "Cory, Nov 4 11:27am: \"sore loser should steal more followers\" (raised 3 to 5).",
    "band": "fine",
    "why": "A real sting on the contest leader; a contests card that waits for the contests color.",
-   "inDeck10": true
+   "inDeck10": true,
+   "short": "Round III: win nothing, steal 5 followers from the leader, 10 swing.",
+   "risk": "Rewards losing on purpose, up to 30 a game."
   },
   {
    "name": "Tiebreaker",
@@ -256,7 +286,9 @@
    "coryNotes": "Cory, Nov 1 12:00am: \"Tiebreaker can also come out\" (from the 10-card deck); Oct 28: \"maybe should be a little cheaper. 4?\".",
    "band": "weak",
    "why": "Cory took it out of the 10-card deck; it only matters on a tie.",
-   "inDeck10": false
+   "inDeck10": false,
+   "short": "Round III: win a tie outright, +10 instead of 5.",
+   "risk": ""
   },
   {
    "name": "Red Cloak (Recruiter)",
@@ -270,7 +302,9 @@
    "ties": "Pushes its holder to buy members over buying followers, which feeds Red's 'Most red members' race.",
    "coryNotes": "Cory, Nov 6 9:36pm: \"Red good\".",
    "band": "fine",
-   "why": "On target and on theme, but a +1 nobody notices."
+   "why": "On target and on theme, but a +1 nobody notices.",
+   "short": "Round II: recruit twice, +2 red toward the next red member.",
+   "risk": ""
   },
   {
    "name": "Green Cloak (Impressionist)",
@@ -284,7 +318,9 @@
    "ties": "Pays in the copied space's or member's color, so Green's copying hands its holder other colors' resources.",
    "coryNotes": "Cory, Nov 6 9:36pm: Green good, \"Maybe needs to be Action or Member to be fair. keep in mind the new grey rule\".",
    "band": "fine",
-   "why": "A real payoff turn on Greatest Hits; a little over target."
+   "why": "A real payoff turn on Greatest Hits; a little over target.",
+   "short": "Round III: copy 4 members' On Recruit, +8 of their colors.",
+   "risk": ""
   },
   {
    "name": "Blue Cloak (Bargain Bin)",
@@ -298,7 +334,9 @@
    "ties": "Turns the discard pile into resources in other colors, and makes clearing the shop a little better for the holder.",
    "coryNotes": "Cory, Nov 7 11:08am: \"are you SURE the blue cloak isnt too strong? 2 resources for EVERY member\"; 11:28am: \"Just give one color of the member discarded PER EACH DISCARDED. greys are wild\".",
    "band": "fine",
-   "why": "Cory's own number; on target with a small burst on batch discards."
+   "why": "Cory's own number; on target with a small burst on batch discards.",
+   "short": "Round I: discard 3 red shop members, +3 red.",
+   "risk": ""
   },
   {
    "name": "Magenta Cloak (Fence)",
@@ -312,7 +350,9 @@
    "ties": "Pushes stealing a little more; feeds Magenta's 'Most resources' contest by 1 per steal.",
    "coryNotes": "Cory, Nov 6 11:07pm: \"+1 probably too weak\".",
    "band": "weak",
-   "why": "Cory himself called +1 too weak; nobody at the table feels a 1."
+   "why": "Cory himself called +1 too weak; nobody at the table feels a 1.",
+   "short": "Round I: steal 3, +1 magenta, about 9 a game.",
+   "risk": ""
   },
   {
    "name": "Purple Cloak (Pocket Watch)",
@@ -326,7 +366,9 @@
    "ties": "Ties straight into the fight over the Goes Last token and Purple's 'Went last' contest.",
    "coryNotes": "Cory, Nov 6 9:36pm: \"when you take the Go Last token, +4 purple or something. Then we need to make sure there are at least a few ways to do it\"; 11:07pm: \"lets try +3\".",
    "band": "weak",
-   "why": "Pays least of all cloaks (about 6 against Cory's 10 to 12) because few cards take the token; his open ask is more ways to take it."
+   "why": "Pays least of all cloaks (about 6 against Cory's 10 to 12) because few cards take the token; his open ask is more ways to take it.",
+   "short": "Round III: Sleep In plus cloak pays +9 purple, about 6 a game.",
+   "risk": ""
   },
   {
    "name": "Silver Cloak (Caterer)",
@@ -340,7 +382,9 @@
    "ties": "Every gift also feeds rivals' silver, so the cloak keeps its holder ahead in Silver's 'Most silver' contest.",
    "coryNotes": "Cory, Nov 7: \"Silver is crazy wtf.... Put silver to +2\"; Nov 6: \"let's do +2\".",
    "band": "fine",
-   "why": "Cory's own fix; on target and it rewards Silver's giving."
+   "why": "Cory's own fix; on target and it rewards Silver's giving.",
+   "short": "Round I: Toast pays +3 silver and +2 more from the cloak.",
+   "risk": "Word for word the same as Caterer."
   },
   {
    "name": "Yellow Cloak (Guest Book)",
@@ -354,7 +398,9 @@
    "ties": "Pushes buying one of every color, which feeds Yellow's 'Most full sets' contest.",
    "coryNotes": "Cory, Nov 6 9:36pm: \"Yellow good\".",
    "band": "fine",
-   "why": "The best fit to its color's story, and self-limiting; no big moment."
+   "why": "The best fit to its color's story, and self-limiting; no big moment.",
+   "short": "Round II: first silver member on New Blood, +7 yellow total.",
+   "risk": "Same trigger as New Blood and Housewarming."
   },
   {
    "name": "White Cloak (Money Changers)",
@@ -368,7 +414,9 @@
    "ties": "Pushes its holder to buy followers, which works against White's own 'Fewest followers' contest and Cory's 'fewer followers' direction for White.",
    "coryNotes": "Cory, Nov 6 9:36pm: \"down to try it\" (+3); Nov 3: \"buff white a touch\".",
    "band": "fine",
-   "why": "Steady and close to target, but it pulls against White's own contest."
+   "why": "Steady and close to target, but it pulls against White's own contest.",
+   "short": "Round III: buy 10 followers, +2 white, Cash In for 2 more.",
+   "risk": ""
   },
   {
    "name": "Red: Most red members",
@@ -381,7 +429,9 @@
    "ties": "Gives Red's swaps, Magenta's member steals and Anarchist a target every round.",
    "coryNotes": "Cory, Nov 3 5:14pm: \"we should avoid a simply color held. maybe most red members? the members need to be such that they aren't auto buys.\"",
    "band": "fine",
-   "why": "Cory's own idea and it makes swaps matter; Red is still the strongest color."
+   "why": "Cory's own idea and it makes swaps matter; Red is still the strongest color.",
+   "short": "Round III: tied 3-3 on red members, Demote makes it 4-2, +10.",
+   "risk": "Counts member cards, like Blue's 'Most members'."
   },
   {
    "name": "Blue: Most members",
@@ -394,7 +444,9 @@
    "ties": "Overlaps Red's 'Most red members' (both count members) and pushes against White's 'fewer followers'.",
    "coryNotes": "Cory, Nov 3: \"those are good\" (kept as listed).",
    "band": "fine",
-   "why": "Fits Blue's extra recruits, but it is close to Red's contest."
+   "why": "Fits Blue's extra recruits, but it is close to Red's contest.",
+   "short": "Round III: Spree recruits 3 members in one turn, pass leader, +10.",
+   "risk": "Counts member cards, like Red's 'Most red members'."
   },
   {
    "name": "Green: Most minions on green",
@@ -407,7 +459,9 @@
    "ties": "Pulls minions onto Green's spaces, so copies and Green's own spaces get taken earlier; it says nothing about copying.",
    "coryNotes": "Cory, Nov 3: \"ties are split… like they already were…\"; Nov 7: \"you haven't really thought about how green connects to other things\".",
    "band": "weak",
-   "why": "Any minion on Green wins it, so it doesn't reward copying, and ties split often."
+   "why": "Any minion on Green wins it, so it doesn't reward copying, and ties split often.",
+   "short": "Round II: two minions on Green spaces win the +6.",
+   "risk": ""
   },
   {
    "name": "Magenta: Most resources",
@@ -420,7 +474,9 @@
    "ties": "Makes every cult's saved resources a target and pushes holding over recruiting.",
    "coryNotes": "Cory, Nov 4 12:36pm (on White): \"I think in general i dont like 'most of X resource' anymore.\"",
    "band": "weak",
-   "why": "A held-resource contest, the kind Cory said he no longer likes."
+   "why": "A held-resource contest, the kind Cory said he no longer likes.",
+   "short": "Round III: steal 5 from the leader, a 10-point swing, win +10.",
+   "risk": "Held-resource count, like Silver's and Yellow's contests."
   },
   {
    "name": "Purple: Went last",
@@ -433,7 +489,9 @@
    "ties": "Is the fight over the Goes Last token, so Purple's turn-order spaces and Extra Hand (\"On Use, once per game: +1 minion this round.\") all bear on it.",
    "coryNotes": "Cory, Nov 3: \"purple should be whoever went last\".",
    "band": "star",
-   "why": "Cory's own idea, and it is exactly Purple's fight over the token."
+   "why": "Cory's own idea, and it is exactly Purple's fight over the token.",
+   "short": "Round III: Sleep In makes your fifth minion last, win +10.",
+   "risk": ""
   },
   {
    "name": "White: Fewest followers",
@@ -446,7 +504,9 @@
    "ties": "Rewards waiting to buy followers and cards that give followers later; pulls against the White Cloak (\"Whenever you buy followers, +2 white.\").",
    "coryNotes": "Cory, Nov 4 12:36pm: \"it should stay 'fewest followers'\".",
    "band": "star",
-   "why": "Cory chose it twice; a clean catch-up that makes when you buy followers a real choice."
+   "why": "Cory chose it twice; a clean catch-up that makes when you buy followers a real choice.",
+   "short": "Round II: hold off buying followers, sit lowest, take +6.",
+   "risk": ""
   },
   {
    "name": "Yellow: Most full sets",
@@ -459,7 +519,9 @@
    "ties": "Pushes holding every color, so it touches every color's resource and Magenta's steals.",
    "coryNotes": "Cory, Nov 3: \"yellow should be sets of colors\".",
    "band": "fine",
-   "why": "Cory's idea and on Yellow's story; a held-resource count, which he's wary of."
+   "why": "Cory's idea and on Yellow's story; a held-resource count, which he's wary of.",
+   "short": "Round III: Makeover into 2 full sets wins the +10.",
+   "risk": "The Makeover taker often wins it."
   },
   {
    "name": "Silver: Most silver",
@@ -472,7 +534,9 @@
    "ties": "Silver's gifts feed rivals' silver too, which is the only tension; otherwise it is a held color.",
    "coryNotes": "Cory, Nov 3: \"silver should maybe be LEAST silver? idk. let's start with most.\"; Nov 4: \"i dont like 'most of X resource' anymore\".",
    "band": "weak",
-   "why": "A held-color contest, the kind Cory said he no longer likes; he floated 'least silver' himself."
+   "why": "A held-color contest, the kind Cory said he no longer likes; he floated 'least silver' himself.",
+   "short": "Round III: Toast jumps you 9 while rivals get 3, win +10.",
+   "risk": "Held-resource count, like Magenta's and Yellow's contests."
   }
  ],
  "overlaps": [
@@ -485,5 +549,6 @@
   "Blue's contest 'Most members' and Red's 'Most red members': both count member cards.",
   "Magenta's 'Most resources', Silver's 'Most silver' and Yellow's 'Most full sets' all count what you hold at round end."
  ],
- "notes": "Five greys are already out of the 10-card deck (Big Spender, Launderers, Cheerleader, Coach, Tiebreaker), so 11 deal; three of the 11 (Cheerleaders, Spoilsport, Sore Loser) are contest cards Cory may move to the future contests color. Grey does several colors' verbs (Blue's extra recruit, Yellow's rearrange, Purple's extra minion, Magenta's steal, Red's swap), which runs against \"colors don't overlap\". Cloaks range from about 6 a game (Purple) to 13 (Green) against Cory's 10 to 12; Purple and Magenta are the two under. Magenta's and Silver's contests are held-resource counts, the kind Cory said on Nov 4 he no longer likes. Gold's cloak (Prospector, \"When an action gains you gold, +1 gold.\") is left out: Gold is parked (Cory: \"dont worry about gold man\")."
+ "notes": "Five greys are already out of the 10-card deck (Big Spender, Launderers, Cheerleader, Coach, Tiebreaker), so 11 deal; three of the 11 (Cheerleaders, Spoilsport, Sore Loser) are contest cards Cory may move to the future contests color. Grey does several colors' verbs (Blue's extra recruit, Yellow's rearrange, Purple's extra minion, Magenta's steal, Red's swap), which runs against \"colors don't overlap\". Cloaks range from about 6 a game (Purple) to 13 (Green) against Cory's 10 to 12; Purple and Magenta are the two under. Magenta's and Silver's contests are held-resource counts, the kind Cory said on Nov 4 he no longer likes. Gold's cloak (Prospector, \"When an action gains you gold, +1 gold.\") is left out: Gold is parked (Cory: \"dont worry about gold man\").",
+ "storyShort": "Grey members bend one rule, cloaks pay your color's habit, contests pay +4/+6/+10."
 }

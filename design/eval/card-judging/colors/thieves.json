@@ -27,7 +27,9 @@
    "ties": "Pushes everyone to spend down before Magenta's turn, and swings the most-resources contest both ways at once.",
    "coryNotes": "Cory, Oct 31: \"maybe help yourself is enough\" then \"yes\" (it's Magenta's fuel, Stash cut). Oct 29: \"Help Yourself shouldnt give a magenta\". Nov 5: \"help yourself in heist\" (swapped to one rival).",
    "band": "star",
-   "why": "Cory kept it as the color's fuel; the plainest steal and a real sting on the player saving up."
+   "why": "Cory kept it as the color's fuel; the plainest steal and a real sting on the player saving up.",
+   "short": "Round III: steal 5 from the leader's saved 9, a 10-follower swing.",
+   "risk": ""
   },
   {
    "name": "Stash",
@@ -41,7 +43,9 @@
    "ties": "Touches nothing a rival owns; the same gain three colors print.",
    "coryNotes": "Cory, Oct 31: Stash is cut (\"maybe help yourself is enough\", \"yes\"); stays live until he picks a replacement. Nov 5: Stash replacement kept in the backlog.",
    "band": "weak",
-   "why": "Cory already cut it; it's another color's space in magenta."
+   "why": "Cory already cut it; it's another color's space in magenta.",
+   "short": "Round III: +4 magenta, and +3 followers if you recruit that turn.",
+   "risk": "Same card as Red's Gather and White's Allowance."
   },
   {
    "name": "Lie Low",
@@ -55,7 +59,9 @@
    "ties": "Moves every steal onto whoever isn't hiding, and blocks Poach for the round.",
    "coryNotes": "Cory, Oct 27: \"the steal block is so strong. it needs to be its own thing\". Oct 31: \"its hard to track\". Nov 1: \"I think b is ok\"; with Bodyguards \"this feels bad. We'll remember it.\"",
    "band": "weak",
-   "why": "Breaks the space rule: its block lasts the whole round, and Cory said it's hard to track."
+   "why": "Breaks the space rule: its block lasts the whole round, and Cory said it's hard to track.",
+   "short": "Round III: holding 12, steal 1 and save 5 to 7 plus the contest.",
+   "risk": "Overlaps Bodyguards: the same shield, for one round."
   },
   {
    "name": "Heist",
@@ -69,7 +75,9 @@
    "ties": "Hits the follower leader directly, which also feeds Robin Hood and Snitch.",
    "coryNotes": "Claude's rework, Nov 4 (under go-with-your-gut). Cory, Nov 5: \"help yourself in heist\" (Heist now splits among rivals).",
    "band": "fine",
-   "why": "A real swing on the scoreboard, but the same \"steal N\" moment as Help Yourself one round later."
+   "why": "A real swing on the scoreboard, but the same \"steal N\" moment as Help Yourself one round later.",
+   "short": "Round II: take 3 followers from the leader, a 6-point swing.",
+   "risk": ""
   },
   {
    "name": "Shake Down",
@@ -83,7 +91,9 @@
    "ties": "Takes a member or resources from one rival, but the rival steers it to what they'd miss least.",
    "coryNotes": "Cory, Oct 28 rework pick: \"Shake Down victim chooses the member\". Oct 18: on his redesign list.",
    "band": "weak",
-   "why": "The rival picks twice on your turn, so you always get their worst; Heist beside it is a bigger moment."
+   "why": "The rival picks twice on your turn, so you always get their worst; Heist beside it is a bigger moment.",
+   "short": "Round II: a rival hands over a member costing 7 or less, or pays.",
+   "risk": "Overlaps Poach, Kidnapper, Double Agent, Fixer: five take members."
   },
   {
    "name": "Poach",
@@ -97,7 +107,9 @@
    "ties": "Makes rivals hold Bodyguards or use once-per-game members early; shares the member pool with Red's swaps.",
    "coryNotes": "Cory, Oct 19: \"Lock Round III: Take any rival's member. Aggression is intentional\". Nov 1: reads \"for free\".",
    "band": "star",
-   "why": "Cory locked it; the color's big round III moment."
+   "why": "Cory locked it; the color's big round III moment.",
+   "short": "Round III: take the leader's Heist Crew, worth 4, free; they drop 4.",
+   "risk": "Overlaps Double Agent: a second way to take any member."
   },
   {
    "name": "Accomplice",
@@ -111,7 +123,9 @@
    "ties": "Feeds the most-resources contest and makes rivals regret holding.",
    "coryNotes": "Cory, Nov 1: \"I agree with price increase\".",
    "band": "fine",
-   "why": "Clean cheap opener; Shoplifter and Extortionist do the same job longer."
+   "why": "Clean cheap opener; Shoplifter and Extortionist do the same job longer.",
+   "short": "Round I: recruit it and steal 3, half its price back.",
+   "risk": "Overlaps Shoplifter: both steal on recruiting."
   },
   {
    "name": "Second-Story Man",
@@ -125,7 +139,9 @@
    "ties": "The only card that aims a steal at the round-end contest; rivals must lead by more than 2.",
    "coryNotes": "",
    "band": "fine",
-   "why": "The best contest moment in the color, but it's Extortionist's repeating steal at the other end of the round."
+   "why": "The best contest moment in the color, but it's Extortionist's repeating steal at the other end of the round.",
+   "short": "Round III end: steal 2 from the leader and flip the 10-follower contest.",
+   "risk": "Overlaps Extortionist: the same repeating steal 2."
   },
   {
    "name": "Desperado",
@@ -139,7 +155,9 @@
    "ties": "A catch-up card; ties count, so it switches on often in round I.",
    "coryNotes": "Cory, Nov 1: \"make it a flat, like +2 or +3\"; built as +2 on any steal.",
    "band": "fine",
-   "why": "Clean catch-up, but it only multiplies other cards and its top case with Shoplifter runs hot."
+   "why": "Clean catch-up, but it only multiplies other cards and its top case with Shoplifter runs hot.",
+   "short": "Round III, last in followers: steals take 2 more, about 22 resources.",
+   "risk": "Near the edge with Shoplifter: about 22 resources a round."
   },
   {
    "name": "Robin Hood",
@@ -153,7 +171,9 @@
    "ties": "Points every steal at the leader, a catch-up with no new rule.",
    "coryNotes": "Cory, Oct 21: \"absolutely shouldn't scale\". Nov 5: he liked it too; out of the 10-card deck unless he says.",
    "band": "star",
-   "why": "Cory likes it; it aims Magenta at the leader in one plain line. Not in the 10-card deck."
+   "why": "Cory likes it; it aims Magenta at the leader in one plain line. Not in the 10-card deck.",
+   "short": "6 to 8 steals from the leader a game: +6 to 8 followers.",
+   "risk": ""
   },
   {
    "name": "Extortionist",
@@ -167,7 +187,9 @@
    "ties": "Steady resource drain on rivals; same job as Second-Story Man.",
    "coryNotes": "Cory, Oct 27: \"Extortionist probably needs some work\". Nov 5: \"yes, but 'at Round Start'\" on the short text.",
    "band": "weak",
-   "why": "A near twin of Second-Story Man, which also hits the contest; the one you'd miss least."
+   "why": "A near twin of Second-Story Man, which also hits the contest; the one you'd miss least.",
+   "short": "Bought round I: steal 2 now and at each round start, 6 total.",
+   "risk": "Overlaps Second-Story Man: the same repeating steal 2."
   },
   {
    "name": "Bodyguards",
@@ -181,7 +203,9 @@
    "ties": "Turns every steal onto the others; pairs with Lie Low to pile steals on one player.",
    "coryNotes": "Cory, Nov 1: \"this feels bad. We'll remember it.\" (with Lie Low). Nov 4: \"Loyalists and bodyguards probably need to be reconciled. my gut is that stolen and swapped are different.... but idk\".",
    "band": "fine",
-   "why": "A needed counter, but it's an off switch, not a moment, and the same job as Lie Low."
+   "why": "A needed counter, but it's an off switch, not a moment, and the same job as Lie Low.",
+   "short": "With two thieves at the table, it saves 10 to 20 resources.",
+   "risk": "Overlaps Lie Low: the same shield, all game."
   },
   {
    "name": "Heist Crew",
@@ -195,7 +219,9 @@
    "ties": "Punishes saving up; once per game for the card, so rivals may Poach it before you use it.",
    "coryNotes": "Cory, Nov 5: \"hoard breaker should be Big Score and it should be one time use\"; \"maybe Heist Crew\". Nov 6: \"make it worth like 4 members. but keep current price\".",
    "band": "fine",
-   "why": "Cory's pick, a good moment once a game; its size depends on rivals holding, which they rarely do."
+   "why": "Cory's pick, a good moment once a game; its size depends on rivals holding, which they rarely do.",
+   "short": "Round III: take 5 of a rival's 10 saved white, blocking their buy.",
+   "risk": ""
   },
   {
    "name": "Crew",
@@ -209,7 +235,9 @@
    "ties": "None beyond member count.",
    "coryNotes": "Cory, Oct 21: keeps its text (\"yes i think so\"). Out of the 10-card deck.",
    "band": "weak",
-   "why": "No moment and no theft; not in the 10-card deck."
+   "why": "No moment and no theft; not in the 10-card deck.",
+   "short": "Always 2 followers for 5.",
+   "risk": ""
   },
   {
    "name": "Double Agent",
@@ -223,7 +251,9 @@
    "ties": "Takes from the member pool like Red's Promote and Demote; Bodyguards don't stop it.",
    "coryNotes": "Cory, Oct 29: \"can say 8 for now\" (price). Nov 1: swaps read as a trade.",
    "band": "weak",
-   "why": "It does Red's swapping and repeats Poach."
+   "why": "It does Red's swapping and repeats Poach.",
+   "short": "Round III: pay 10, hand it over, take the leader's best member.",
+   "risk": "Overlaps Poach and Red's Promote: a second Poach, a swap."
   },
   {
    "name": "Fixer",
@@ -237,7 +267,9 @@
    "ties": "Takes a member from a rival; rivals barely feel the price.",
    "coryNotes": "Cory, Oct 25: \"yes\" to Claude's name and price. Out of the 10-card deck.",
    "band": "weak",
-   "why": "Cost math and a weaker Poach; not in the 10-card deck."
+   "why": "Cost math and a weaker Poach; not in the 10-card deck.",
+   "short": "Round III: spend 7 saved magenta to take a rival's 7-cost member.",
+   "risk": "Overlaps Poach and Double Agent: another way to take members."
   },
   {
    "name": "Kidnapper",
@@ -251,7 +283,9 @@
    "ties": "Thins rivals' cults; rewards rivals for not buying cheap filler.",
    "coryNotes": "Cory, Nov 5: \"yes, but 'at Round Start'\" on the short text.",
    "band": "fine",
-   "why": "A clean repeating member theft, but one of five Magenta cards that take members."
+   "why": "A clean repeating member theft, but one of five Magenta cards that take members.",
+   "short": "Round II: take a rival's 3-cost member, then another at round III start.",
+   "risk": "Overlaps Poach and Shake Down: taking rivals' members."
   },
   {
    "name": "Snitch",
@@ -265,7 +299,9 @@
    "ties": "A counter that keeps steals open but taxed, unlike Bodyguards' off switch.",
    "coryNotes": "Cory, Oct 21: \"I like the counter\". Nov 5: \"i'd say snitch and big score\".",
    "band": "star",
-   "why": "Cory likes it; a counter that keeps the fight going."
+   "why": "Cory likes it; a counter that keeps the fight going.",
+   "short": "Round II: two thieves hit you; each loses 1 follower.",
+   "risk": ""
   },
   {
    "name": "Shoplifter",
@@ -279,7 +315,9 @@
    "ties": "Ties Magenta to recruiting, so it fires on every turn.",
    "coryNotes": "Cory, Oct 21: his idea (#26), \"3 yes\".",
    "band": "fine",
-   "why": "Cory's own idea; small drips, big only with Desperado."
+   "why": "Cory's own idea; small drips, big only with Desperado.",
+   "short": "Round III with Desperado: 5 recruits steal 3 each, 15 resources.",
+   "risk": "Overlaps Accomplice: both steal on recruiting."
   },
   {
    "name": "Fence",
@@ -293,7 +331,9 @@
    "ties": "Counts any of your steals, including Poach.",
    "coryNotes": "Cory, Nov 6: \"ok lets try. might be too good\" (+2); \"+1 probably too weak\". Nov 7: \"ok\" (+1 live).",
    "band": "fine",
-   "why": "The cloak works but runs just under the cloak target."
+   "why": "The cloak works but runs just under the cloak target.",
+   "short": "Round III: Help Yourself, Heist and Shoplifter each pay +1 magenta.",
+   "risk": ""
   }
  ],
  "overlaps": [
@@ -304,5 +344,6 @@
   "Stash \"+2 magenta in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.\" and Red's Gather \"+2 red in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.\": the same card.",
   "Double Agent \"On Recruit: give this member to a rival and recruit one of theirs.\" and Red's Promote \"Swap any member with one in another cult or the shop costing up to 3 more. +3 red.\": swapping is Red's."
  ],
- "notes": "Round I is the weak spot: Help Yourself is the only clean space, Stash is already cut and Lie Low breaks the rule that a space does everything when taken. Too many cards take members (five) and too many guard against steals (Lie Low, Bodyguards, Snitch), while only Second-Story Man aims at Magenta's own most-resources contest. The round III payoff is Poach alone; Desperado with Shoplifter is the one pairing that runs hot. Crew, Robin Hood and Fixer are not in the 10-card deck."
+ "notes": "Round I is the weak spot: Help Yourself is the only clean space, Stash is already cut and Lie Low breaks the rule that a space does everything when taken. Too many cards take members (five) and too many guard against steals (Lie Low, Bodyguards, Snitch), while only Second-Story Man aims at Magenta's own most-resources contest. The round III payoff is Poach alone; Desperado with Shoplifter is the one pairing that runs hot. Crew, Robin Hood and Fixer are not in the 10-card deck.",
+ "storyShort": "Magenta steals resources and members; most resources at round end wins the contest."
 }

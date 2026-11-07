@@ -26,7 +26,9 @@
    "ties": "Feeds every rival's silver count, so it can hand the silver contest to someone if you take it too early.",
    "coryNotes": "Cory, Oct 31: \"Silver round I keeps Toast\". Nov 6 (\"yes.\"): copying Toast gifts the rivals too.",
    "band": "fine",
-   "why": "The color's dependable growing space; solid, not a moment anyone retells."
+   "why": "The color's dependable growing space; solid, not a moment anyone retells.",
+   "short": "Round III, last turn: +9 silver passes the leader, win the +10.",
+   "risk": ""
   },
   {
    "name": "Polish",
@@ -40,7 +42,9 @@
    "ties": "Needs silver from somewhere else first, and gives rivals nothing, so it is the one Silver space nobody else at the table feels.",
    "coryNotes": "Cory, Nov 4: \"yeah allow silver i guess\" (may pick silver among the 4). Nov 5: \"Polish animation is slow.\"",
    "band": "weak",
-   "why": "The space players would miss least: +2 net, no gift, and the same swap as Sweet Talk and Yellow."
+   "why": "The space players would miss least: +2 net, no gift, and the same swap as Sweet Talk and Yellow.",
+   "short": "Round I: turn 2 silver into 4 colors, buy a member early.",
+   "risk": "Swapping silver into colors is Yellow's job, like Makeover."
   },
   {
    "name": "Party Gifts",
@@ -54,7 +58,9 @@
    "ties": "You pick who gets the silver, so it steers the silver contest a little every round.",
    "coryNotes": "Cory, Oct 31: \"No. 3 silver given out. 2 followers per silver\" (his numbers).",
    "band": "fine",
-   "why": "Strong round I turn and the color's clearest idea, but it is the same move as Largesse and Kingmakers at a smaller size."
+   "why": "Strong round I turn and the color's clearest idea, but it is the same move as Largesse and Kingmakers at a smaller size.",
+   "short": "Round I: give 3 silver to the poorest rival, take +6 followers.",
+   "risk": ""
   },
   {
    "name": "Sweet Nothings",
@@ -68,7 +74,9 @@
    "ties": "Lowers your own silver and raises rivals', so it pulls against the silver contest; it swaps silver for colors at Polish's rate.",
    "coryNotes": "Cory, Nov 6: \"yeah 1\" (picked it over Potluck).",
    "band": "fine",
-   "why": "His pick for the slot; a real gift with a real payback."
+   "why": "His pick for the slot; a real gift with a real payback.",
+   "short": "Round II: give away 3 silver for 6 colors, recruit a 6-cost member.",
+   "risk": "Swapping silver into colors is Yellow's job, like Makeover."
   },
   {
    "name": "Sweet Talk",
@@ -82,7 +90,9 @@
    "ties": "Same shape as Yellow's Makeover (\"+4 yellow, then rearrange your resources into any mix of colors.\") one round earlier, and Cory's direction gives translating to Yellow.",
    "coryNotes": "Cory, Oct 31: \"Sweet Talk might be a little too strong, but thats ok. I like an R2 thats close to an R3\".",
    "band": "fine",
-   "why": "He likes it, but it overlaps Yellow's swap; the overlap is his call."
+   "why": "He likes it, but it overlaps Yellow's swap; the overlap is his call.",
+   "short": "Round II: turn 12 silver into colors for a 12-cost member.",
+   "risk": "Swapping silver into colors is Yellow's job, like Makeover."
   },
   {
    "name": "Largesse",
@@ -96,7 +106,9 @@
    "ties": "Decides the round III silver contest for a rival of your choice, the most direct kingmaking in the game.",
    "coryNotes": "Cory, Nov 1: \"a little bit of an issue, but I think it's interesting\". Nov 5: \"Largesse should have to give 12. And give 10 followers.\"",
    "band": "fine",
-   "why": "His numbers; a real choice, though it hands the last silver contest to someone else."
+   "why": "His numbers; a real choice, though it hands the last silver contest to someone else.",
+   "short": "Round III: hand out 12 silver to crown a trailer, take +10.",
+   "risk": ""
   },
   {
    "name": "Godparent",
@@ -110,7 +122,9 @@
    "ties": "Gives a rival a whole member, which raises their member count and their followers.",
    "coryNotes": "",
    "band": "weak",
-   "why": "Two other cards already give away or cash out a member; this one adds nothing they lack."
+   "why": "Two other cards already give away or cash out a member; this one adds nothing they lack.",
+   "short": "Round III: give a used 10-cost member away for +10 followers.",
+   "risk": "Twin of Guest of Honor and White's Farewell."
   },
   {
    "name": "Caterer",
@@ -124,7 +138,9 @@
    "ties": "Pushes you to gift more, so rivals hold more silver.",
    "coryNotes": "Cory, Nov 1: \"seems like a lot. but willing to see what balance testing shows\" (when it was the cloak). Nov 7, on the cloak: \"Silver is crazy wtf.... Put silver to +2\".",
    "band": "weak",
-   "why": "It is the cloak again; a player holding both gets the same thing twice."
+   "why": "It is the cloak again; a player holding both gets the same thing twice.",
+   "short": "Round II: four gifts in one round pay +8 silver.",
+   "risk": "Word for word the Silver Cloak."
   },
   {
    "name": "Guest of Honor",
@@ -138,7 +154,9 @@
    "ties": "Moves members between cults, which changes member counts for Blue's contest and followers for White's.",
    "coryNotes": "Cory, Nov 4: \"i like the concept of it. maybe on use once per round?\"",
    "band": "fine",
-   "why": "He likes the idea; small payoff each round."
+   "why": "He likes the idea; small payoff each round.",
+   "short": "Round II: give away a spent 3-cost member for +4 followers.",
+   "risk": "Twin of Godparent."
   },
   {
    "name": "Toastmaster",
@@ -152,7 +170,9 @@
    "ties": "None: nobody else at the table notices it.",
    "coryNotes": "",
    "band": "weak",
-   "why": "No moment and no one feels it; the same job as High Society."
+   "why": "No moment and no one feels it; the same job as High Society.",
+   "short": "Round II: take Toast and Sweet Talk for +2 followers.",
+   "risk": "Twin of High Society."
   },
   {
    "name": "Debutantes",
@@ -166,7 +186,9 @@
    "ties": "Gives each rival 2 silver but almost always settles the silver contest for you.",
    "coryNotes": "Cory, Nov 1: kept in Silver's deck; worth 1 more follower, price unchanged, \"to try\".",
    "band": "fine",
-   "why": "A real once-a-game moment, but 11 is a lot to pay for it."
+   "why": "A real once-a-game moment, but 11 is a lot to pay for it.",
+   "short": "Round III holding 14 silver: +14, win the silver +10 by a mile.",
+   "risk": ""
   },
   {
    "name": "Smooth Talkers",
@@ -180,7 +202,9 @@
    "ties": "Translating currencies is Yellow's job by Cory's direction, and Sweet Talk and Polish do it in this color.",
    "coryNotes": "Cory, Nov 1: kept, \"Your silver pays for any color.\", expensive.",
    "band": "weak",
-   "why": "Costs 12 and gives nothing new; three other Silver cards already swap silver."
+   "why": "Costs 12 and gives nothing new; three other Silver cards already swap silver.",
+   "short": "Round III: 12 silver pays for a red and blue member outright.",
+   "risk": "Swapping silver into colors is Yellow's job, like Makeover."
   },
   {
    "name": "Debt Collectors",
@@ -194,7 +218,9 @@
    "ties": "Taking resources from rivals is Magenta's job (steals), so it overlaps another color.",
    "coryNotes": "Cory, Nov 5: \"yeah make it once per round. just make it a touch cheaper.\"",
    "band": "fine",
-   "why": "He tuned it; good loop with gifting, but it overlaps Magenta's steals."
+   "why": "He tuned it; good loop with gifting, but it overlaps Magenta's steals.",
+   "short": "Round III: take 2 from each rival, +6 silver, silver contest swings.",
+   "risk": "Taking from rivals is Magenta's job, like Help Yourself."
   },
   {
    "name": "High Society",
@@ -208,7 +234,9 @@
    "ties": "A small sting: rivals think twice before taking Silver spaces.",
    "coryNotes": "",
    "band": "fine",
-   "why": "Rivals feel it a little; the payoff is thin."
+   "why": "Rivals feel it a little; the payoff is thin.",
+   "short": "Round II: rivals take Toast and Sweet Talk, +2 followers for you.",
+   "risk": "Twin of Toastmaster."
   },
   {
    "name": "Ballroom Dancers",
@@ -222,7 +250,9 @@
    "ties": "Makes you want rivals on Silver spaces, so you gift them reasons to go there.",
    "coryNotes": "Cory, Nov 5: \"I love ballroom!\". Nov 6: \"yes on ballroom dancers\" (price up).",
    "band": "star",
-   "why": "He loves it; one big turn that the whole table helps build."
+   "why": "He loves it; one big turn that the whole table helps build.",
+   "short": "Round III, last turn: 6 minions on Silver spaces pay +12 followers.",
+   "risk": ""
   },
   {
    "name": "Kingmakers",
@@ -236,7 +266,9 @@
    "ties": "Round end abilities happen before contests, so it can change who wins the silver contest every round.",
    "coryNotes": "Cory, Nov 5: \"should probably be kingmakers\", \"yes to kingmaker and ballroom\".",
    "band": "star",
-   "why": "Cheap, and it lands exactly when the contest is scored: the name is the moment."
+   "why": "Cheap, and it lands exactly when the contest is scored: the name is the moment.",
+   "short": "Round II end: hand a rival 3 silver to steal the +6.",
+   "risk": ""
   },
   {
    "name": "Patron Saints",
@@ -250,7 +282,9 @@
    "ties": "Makes you want rivals to own silver members; Guest of Honor and Godparent give them yours.",
    "coryNotes": "Cory, Nov 5: \"yeah patron saints\". Nov 6: \"oh Patron Saints is supposed to be game end!!\", \"and keep cost at 7\".",
    "band": "fine",
-   "why": "His pick; steady, no single turn to retell."
+   "why": "His pick; steady, no single turn to retell.",
+   "short": "Game end: 9 silver members around the table pay +9 followers.",
+   "risk": ""
   }
  ],
  "overlaps": [
@@ -261,5 +295,6 @@
   "Debt Collectors \"On Use, once per round: each rival gives you 2 silver, if they have it.\" takes from rivals, Magenta's job (Help Yourself \"Steal 3 resources in round I, 4 in round II, 5 in round III from one rival.\").",
   "Party Gifts \"Give rivals up to 3 silver from the bank, split as you choose. +2 followers per silver you give.\", Largesse \"Give rivals 12 silver from the bank, split as you choose. +10 followers.\" and Kingmakers \"Round End: give a rival 3 silver from the bank. +3 followers.\" are one move at three sizes; that is the color's core, not a flaw on its own."
  ],
- "notes": "Silver's own idea, gift silver and get paid, runs through Party Gifts, Largesse, Kingmakers and Ballroom Dancers and holds up. The weak spots are the four cards that swap silver into other colors (Yellow's job) and three twins: Caterer and the cloak, Toastmaster and High Society, Godparent and Guest of Honor. Every gift raises a rival's silver, so the color decides the silver contest for others more than it wins it for itself; Debutantes and Debt Collectors are the only ways back. Round III pays well (Largesse +10, Ballroom Dancers about +12)."
+ "notes": "Silver's own idea, gift silver and get paid, runs through Party Gifts, Largesse, Kingmakers and Ballroom Dancers and holds up. The weak spots are the four cards that swap silver into other colors (Yellow's job) and three twins: Caterer and the cloak, Toastmaster and High Society, Godparent and Guest of Honor. Every gift raises a rival's silver, so the color decides the silver contest for others more than it wins it for itself; Debutantes and Debt Collectors are the only ways back. Round III pays well (Largesse +10, Ballroom Dancers about +12).",
+ "storyShort": "Gift rivals silver for followers, and choose who your gifts crown."
 }
