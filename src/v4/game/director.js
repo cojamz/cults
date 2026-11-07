@@ -433,7 +433,9 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
       // flies to the middle, then on to its buyer
       // a rival's recruit told on the story card (Cory, Nov 6: an overhaul, not a layer on top): the line names it, so the
       // card goes straight from the shop to its buyer's seat, with no showcase in the middle (critic pass 3)
-      const direct = told;
+      // ...except one off the pile (Walk-In, No Thanks): it was never face up, so it opens in the middle to be seen
+      // rather than flying to its seat as a card back (frame review, Nov 7: P2's Walk-In member was never shown)
+      const direct = told && card.from.kind !== 'pile';
       const toHub = direct ? fly(card.from, card.to) : fly(card.from, hubW), fromHub = direct ? 0 : fly(hubW, card.to);
       const lifted = Math.max(s + MO.cardLift + hold, paid + (m.pays.length ? MO.paidBeat : 0));
       const atHub = lifted + toHub;
