@@ -176,6 +176,8 @@ function contestSwing(s, p, o) {
 }
 
 export function renderOption(s, p, o, taskKind) {
+  // a card choice can offer spaces as 'slot' options with only a key and label (Protesters, p7-8203)
+  if (o.kind === 'slot' && (o.q == null || !s.quadrants[o.q])) return o.label || String(o.value);
   if (o.kind === 'slot') {
     const a = quadrant(s.quadrants[o.q]).actions[o.i];
     const joined = s.slots[`${o.q}-${o.i}`] !== undefined ? ' (taken: you would join it)' : '';
