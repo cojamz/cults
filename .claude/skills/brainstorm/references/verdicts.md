@@ -84,3 +84,15 @@ Each one has drawn a no. Run every idea past all of them.
 31. **Green copying On Recruits: lean away for now** (Nov 7: "I don't love green copying on recruit we might move away from that eventually… lean away for now").
 
 32. **Moving another color's piece needs a reason inside its own color.** Nov 7: Ushers "On Use, once per round: give the Goes Last token to a rival. +2 followers." → "interesting. but… not good execution… kind of a counter to purple, or maybe it lets you take it back? on the right track". Check: a card that hands the Goes Last token (or any color's signature piece) away should still serve that color's fight: a way to take it back, or a cost to whoever holds it.
+
+33. **A sting that scales with no ceiling feels too bad.** Nov 7, batch 2: Protection Racket "Choose a rival. Steal 1 resource per member they have." → "good but might feel too bad". Check: play the victim's side at the top of the range (round III, a big cult); give a steal a cap or a gentle rate.
+
+34. **Play the sequence literally, step by step.** Nov 7: Ushers "give the Goes Last token to a rival… After that rival places their next minion, you take it." → "what you're saying makes no sense. how could you delay them and then take it?" Check: write out who holds what after each placement; if the steps contradict (the token's whole effect is that its holder goes last), cut it. His seed from it: a Purple card that makes all of one player's minions go last.
+
+35. **The cause must happen often enough.** Nov 7: Last Rites "Whenever you discard one of your members, first use its On Use, even if it's used up." → "how much white discard is there? idk that it's reliable." Check: count how many times per game its trigger happens with the color's live cards; a payoff on a rare moment is a dead card.
+
+36. **Don't pitch into a slot he's happy with.** Nov 7: Movers (a Red round II space) → "I like Promote and Demote so red round II not needed". Check: before pitching a space, check which spaces he has starred or kept; new ideas go where he wants change, or as members.
+
+37. **Simple beats close.** Nov 7: Open House "Each rival may recruit once now, in turn order. +2 followers per rival who does." → "close to interesting. A little complicated for my liking". Check: count the steps a table does (each rival decides, in order, then a count); more than two steps reads as complicated.
+
+38. **Good kernels go to testing, not to refinement.** Nov 7: "don't just try and refine the good ideas until i approve the list. just use the good ideas for the broader testing." A kernel he calls good goes to the testing pool with a few variations; the next batch is new ideas, not polish of the last one.
