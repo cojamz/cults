@@ -49,3 +49,20 @@ Cory, 1:53pm Eastern: "i cant do batches anymore… keep things rolling… a lis
 - Purple "whenever your turn is skipped, take a turn right after the next one": only undoes Hold Up.
 - Magenta "steal 1 of each color a rival holds": ~+1 over Help Yourself.
 - Any member "whenever a member leaves your cult, +2 any": restates Bargain Bin.
+
+## Round 2 (after Cory's "Ideas, no batches… They're good enough", 1:56pm)
+
+### R6. Green member: "Whenever anyone copies an action, +1 of any color."
+- Round II, 4 players: Echo "Copy the previous action.", Reprise, Cover and Sample get taken 3-5 times a round across the table; you collect 3-5 resources of your choice a round. Impressionist "Whenever you copy an action or a member, +2 of its color" pays only your own copies.
+- Who feels it: rivals copying feed you; a small reason to avoid Green spaces. Own cause: Green spaces are in every game this member is in. Payoff any colors (verdict 28).
+- Intuitive yes · Fun: every copy pings you · Powerful: steady · Engine yes · Its color: Green rewarded for the table's copying.
+
+### R7. Gold space, round II: "Each rival gives you 1 gold or 2 of any other colors, their choice."
+- Round II: you get 3-6 resources; Collect Debts "Steal up to 3 gold from rivals, split as you choose." gives 3 gold. Victim chooses (Shake Down's shape): a rival in the most-gold race gives 2 others, a rival with spare gold gives 1 gold. Rivals with nothing give nothing.
+- Both sides: giving gold feeds your gold contest; giving 2 others costs them more resources. Neither side always wins.
+- Ties: resources change hands; Magenta's resource count and Gold's count both move.
+
+### R8. Silver member: "Whenever a rival gives you silver, you may turn it into any colors."
+- Toast "Each rival +1/2/3 silver", Party Gifts, Largesse "Give rivals 12 silver…", Kingmakers: rivals dump silver on you to hurt your fewest-silver count. This member turns the dump into fuel: Largesse handing you 6 becomes 6 of any colors.
+- Who feels it: the giver, whose sting becomes a gift; Silver's own counter (member-process: a set has a few of its own counters). Own cause: Silver spaces are in every game this member is in.
+- Intuitive yes · Fun: flips a sting · Interacts: any colors · Counter: yes · Its color: Silver's gifts, from the receiving side.
