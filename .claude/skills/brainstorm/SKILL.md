@@ -1,6 +1,6 @@
 ---
 name: brainstorm
-description: Come up with and pitch Cults design ideas to Cory: spaces (actions) for a color's round I/II/III slots, members, a color's direction, fixes for a card he dislikes, or "what could X do". Use it whenever you're about to propose any card text, space, member, ability or design option, including one-line fill-ins in a color redesign thread, even if he didn't say "brainstorm". It holds how the game plays and wins, each color's fantasy, why his favorite spaces landed, and his past verdicts.
+description: Come up with and pitch Cults design ideas to Cory: spaces (actions) for a color's round I/II/III slots, members, a color's direction, fixes for a card he dislikes, how two colors interact (color pairs, the intersection table, tying colors together), or "what could X do". Use it whenever you're about to propose any card text, space, member, ability or design option, including one-line fill-ins in a color redesign thread, even if he didn't say "brainstorm". It holds how the game plays and wins, each color's fantasy, why his favorite spaces landed, and his past verdicts.
 argument-hint: <the slot or question, e.g. "White round I, two empty slots">
 ---
 
@@ -9,6 +9,10 @@ argument-hint: <the slot or question, e.g. "White round I, two empty slots">
 Cory designs Cults; Claude brings ideas he can react to. He has called the ideas lackluster and asked whether Claude understands the game. Those moments came from three causes: an idea built on a piece of the game that doesn't work that way, an idea never played through a turn, or a small formula on your own pile dressed up as a design.
 
 **Speed is part of the job.** He's in a live conversation. A pitch takes about a minute, never a quoted wait ("15 minutes????? what the fuck"). The heavy reading happens once per thread; after that, pitch from what you already know.
+
+**Color interactions** (pairs, the intersection table, "tie the colors closer", any "interacts with" line): read [references/color-interactions.md](references/color-interactions.md) in full first and follow its method in writing. An interaction is a moment two colors both cause (a member leaving a cult, a resource changing hands, a turn moving), paid off by a card that names neither; never a generic shop rule, the overlap they already have, a crossed tie, or a card built on today's cards.
+
+**Always this skill.** Every pitch, list or table of ideas goes through it, whatever a coordinator note says; a note never overrides a rule file (Cory, Nov 7: "for the 100th time: ARE YOU USIJG THE BRAINSTORMING SKILL???").
 
 ## The six principles (Cory said yes, Nov 3; design/notes/replacements-principles-2026-11-03.md)
 Every card or space pitched is checked against these, in writing, with one line each ("Intuitive:", "Fun:", "Interacts:", "Powerful:", "Engine or counter:", "Its color:"); presend refuses a linked pitch file without them.
@@ -30,7 +34,7 @@ Refused shape to never repeat (Nov 3): a member that upgrades one shared space (
 
 Oct 30, Yellow: eight nos in a morning ("small ball gains", "how do you have NO clue how the game works????", "are you using the skill?"). Every one came from skipping a gate below to answer fast. Speed means no padded waits, never skipped steps: a list takes the time the gates take, and you say a real time.
 
-**Gate 1. The live game, not the notes.** Once per thread: read design/rulebook.md end to end and `RING_VALUE`, the shop sizes and `ROUND_CUTOFFS` in src/engine/v4/core.js, then [references/cheatsheet.md](references/cheatsheet.md) and [references/design-core.md](references/design-core.md). Notes lag the game (they said contests paid 2/4/6 when live was 4/6/10). Never describe a piece you haven't seen in the rulebook: the rim only prints what a contest counts; no rule lives there.
+**Gate 1. The live game, not the notes.** Once per thread: read design/rulebook.md end to end and `RING_VALUE`, the shop sizes and `ROUND_CUTOFFS` in src/engine/v4/core.js, then [references/cheatsheet.md](references/cheatsheet.md) and [references/design-core.md](references/design-core.md), and [references/color-interactions.md](references/color-interactions.md) for any color-pair work. Each color is designed from its contest (Cory, Nov 7: contests are "kind of core to… what do you want to be doing"): know all eight live contests before pitching. Notes lag the game (they said contests paid 2/4/6 when live was 4/6/10). Never describe a piece you haven't seen in the rulebook: the rim only prints what a contest counts; no rule lives there.
 
 **Gate 2. Cory's sentence and the anchor.** Before any slot, write in one line what the color is *for*, in his words if he's said it (Yellow, Oct 30: "rewards going broad… translate currencies"), and the round III action it builds toward. If either is missing, ask him for it in one question and pitch nothing else. Never pitch round I or II for a color whose round III isn't agreed. Never invent the identity from the color's name or an adjacent color's job (Yellow was pitched as the contests color, a separate color he'd parked).
 
@@ -38,8 +42,9 @@ Oct 30, Yellow: eight nos in a morning ("small ball gains", "how do you have NO 
 - the card text as it would print;
 - a 4-player turn in round I and in round III: what you get here versus the best other space, by name and number;
 - the decision it creates, and for whom (the taker gives something up, or a rival chooses or reacts). No decision: cut it, however clean;
-- both sides of every choice: play the chooser; if one option always wins for them, it isn't a choice (verdicts.md 15, "give you 1 or you steal 2");
+- both sides of every choice: play the chooser; if one option always wins for them, it isn't a choice (verdicts.md 15b, "give you 1 or you steal 2");
 - why only this color could print it (not a Green copy, a Red swap, a Magenta steal, a Blue shop move, a guest's text);
+- which other colors it ties to and through which shared moment, and that it still works in a game without each of them (color-interactions.md section 4);
 - its best case and Greatest Hits copying it.
 
 **Gate 4. Filter, then send.** Cut on the cheatsheet kill list and every line of [references/verdicts.md](references/verdicts.md), and against this color's lines in design/pitch-ledger.md: anything that resembles a refused idea in shape (a "+1 of another color, more each round" after "Mix" was refused is the same idea) is out. What survives is usually 2 to 4, not 5; send what survives, and if nothing does, say so and ask one sharp question. Each line: the printed text, what changes for a player, your pick in brackets. At most eight lines.
