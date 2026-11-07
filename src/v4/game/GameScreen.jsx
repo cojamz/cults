@@ -1335,6 +1335,11 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     toastTimer.current = setTimeout(() => setToast(null), ms);
   }, []);
   useEffect(() => () => clearTimeout(toastTimer.current), []);
+  // a note about the last turn goes when the round is scored: the scoring tells the round from there (frame review,
+  // Nov 7: "Swapped nothing" stayed 5s into the contests)
+  const momentNow = useRef(null);
+  momentNow.current = moment;
+  useEffect(() => { if (moment) { clearTimeout(toastTimer.current); setToast(null); } }, [moment]);
 
   const say = useCallback((text, tone = 'nudge', ms = 1900) => {
     clearTimeout(noteTimer.current);
@@ -1477,7 +1482,10 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     // toasted during the last turn, before any contest was scored)
     const ends = lines.findIndex(l => /^Round \S+ ends\./.test(l));
     const fizzles = (ends < 0 ? lines : lines.slice(0, ends)).flatMap(l => mySeats.map(id => { const f = fizzleNote(l, state.players[id].name, !humansHere), sp = f && tookSpace(lines, state.players[id].name); return f && sp && /^No\b/.test(f) ? `${sp}: ${f.charAt(0).toLowerCase()}${f.slice(1)}` : f; }).filter(Boolean));
-    if (fizzles.length && !skipped) setTimeout(() => showToast(fizzles.join(' '), 3800), motionOK() ? played.total : 0);
+    // up as long as its words take to read, never under the old 3.8s (frame review, Nov 7: a long note went before it
+    // was read)
+    const fizzleText = fizzles.join(' ');
+    if (fizzles.length && !skipped) setTimeout(() => !momentNow.current && showToast(fizzleText, Math.max(3800, 1400 + 260 * fizzleText.split(/\s+/).length)), motionOK() ? played.total : 0);
 
     // A new minion travels from its leader to the space. The board never turns itself: a rival's move is marked
     // where it happened (a dashed ring) and told in the turn's story.
