@@ -435,6 +435,13 @@ const market = {
   ],
 
   handlers: {
+    // pool 13: Repo Men / Repossessors
+    repo(ctx, p, uid, data) {
+      const o = ctx.ownerOf(uid);
+      if (!o || o === p) return;
+      ctx.log(`${p.name}'s ${data.name}: ${o.name}'s ${ctx.card(uid).def.name} goes into the shop.`);
+      ctx.buryMember(o, uid, p, { shop: true });
+    },
     rummage(ctx, p, uid) { if (discardOf(ctx.state).includes(uid) && priceOf(ctx.card(uid)) <= 6) graveTake(ctx, p, uid, 'Rummage'); },
     // idea pipeline pool 3: Grave Diggers' and Salvagers' pick among tied cheapest discard pile members
     graveFree(ctx, p, uid, data) { if (discardOf(ctx.state).includes(uid)) ctx.asMember(p, data.name, () => graveTake(ctx, p, uid, data.name)); },
@@ -685,6 +692,23 @@ const market = {
   },
 
   members: [
+    // idea pipeline pool 13 (Nov 7): a rival's member (printed cost) goes face up into the shop row as Yard Sale's do, wiped
+    // clean as any member back in the shop; anyone recruits it as usual, its owner included. Not a steal (members are
+    // moved, as Lie Low's ruling allows). Prices fill-ins.
+    ...[['repomen', 'Repo Men', 'round', 5], ['repossessors', 'Repossessors', 'game', 8]].map(([key, name, every, cap]) => pool(m(key, name, 3, 2,
+      `On Use, once per ${every}: put a rival's member costing up to ${cap} into the shop.`, {
+        activate: every,
+        ...(every === 'round' ? { onRoundStart(ctx, owner, card) { card.used = false; } } : {}),
+        onActivate(ctx, owner, card) {
+          const list = repoList(ctx, owner, cap);
+          if (!list.length) { card.used = false; ctx.log(`${owner.name}'s ${name}: no rival's member costs ${cap} or less.`); return; }
+          ctx.choose(owner, `${name}: put which rival's member into the shop?`, list.map(({ c, o }) => ({
+            id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid,
+            hint: botWorth(c) + (o.res && ctx.memberCount(o) >= Math.max(...ctx.state.players.map(x => ctx.memberCount(x))) ? 2 : 0),
+          })), `${Q}.repo`, { name });
+        },
+        botActivate: (ctx, owner) => repoList(ctx, owner, cap).length > 0,
+      }), 'pool13')),
     // idea pipeline pool 8 (Nov 7, writer round 1; price a fill-in): scavenge() is every "you sent shop members to the
     // discard pile" moment (Churn, Bury, Window Dressers…), so it pays there.
     pool(m('bargainhunters', 'Bargain Hunters', 3, 2, 'Once per turn, when you send shop members to the discard pile, recruit an extra time this turn.', { impulse: 'turn',
@@ -1131,6 +1155,10 @@ const market = {
   ],
 };
 
+/** Repo Men (pool 13): rivals' members costing up to cap, as printed. */
+function repoList(ctx, p, cap) {
+  return ctx.rivals(p).flatMap(o => ctx.membersOf(o).filter(c => c.def.s + c.def.w <= cap).map(c => ({ c, o })));
+}
 export default market;
 
 let installed = false;

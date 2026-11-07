@@ -630,6 +630,9 @@ const thieves = {
     // idea pipeline pool 10 (Nov 7). Bagmen (the brief's Skimmers, renamed: Skimmers is the REPLACE2 test's card, 3 not 2):
     // a buy of 10 followers by a rival, 2 of them stolen through the shared steal, as Skimmers. Fat Cats: Magenta's
     // contest (Most resources by color) counts its owner's resources twice (core scoreContest, flag doubleMagenta).
+    // idea pipeline pool 13 (Nov 7): Safecrackers' steals go through Lie Low, Bodyguards and every other "can't steal"
+    // (core canSteal, flag unstoppable); swaps and color changes aren't steals. Snitch still pays the victim. Price a fill-in.
+    pool(m('safecrackers', 'Safecrackers', 2, 1, "Your steals can't be stopped.", { unstoppable: true }), 'pool13'),
     pool(m('bagmen', 'Bagmen', 3, 2, 'Whenever a rival recruits 10 followers, steal 2 of them.', {
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r] * [0.05, 0.2, 0.4][r - 1], 0) * 2 * (1 + SEE_SPITE)),
       onBuyFollowers(ctx, owner, card, buyer, tier) {

@@ -2396,6 +2396,14 @@ function wrap(state, card) {
 /** The helper context content code runs with. Bots use it read-only for estimates. */
 export function contextFor(state) { return ctxFor(state); }
 
+/** A steal the table's rules or the victim's members would refuse (Lie Low, Bodyguards…). */
+function stealBlocked(state, ctx, thief, victim, kind) {
+  for (const qid of state.quadrants) { const q = quadrant(qid); if (q.guardSteal && q.guardSteal(ctx, thief, victim, kind)) return true; }
+  let blocked = false;
+  eachMemberOf(state, victim, (card, def) => { if (def.guardSteal && def.guardSteal(ctx, victim, card, thief, kind)) blocked = true; }, ['guardSteal']);
+  return blocked;
+}
+const unstoppable = (state, p) => p.members.some(u => effectiveDefs(state.cards[u]).some(d => d.unstoppable));
 function ctxFor(state) {
   const ctx = {
     state,
@@ -2578,10 +2586,9 @@ function ctxFor(state) {
      *  victim's members can refuse (guardSteal returns true). */
     canSteal(thief, victim, kind = 'res') {
       if (!victim || victim === thief) return false;
-      for (const qid of state.quadrants) { const q = quadrant(qid); if (q.guardSteal && q.guardSteal(ctx, thief, victim, kind)) return false; }
-      let blocked = false;
-      eachMemberOf(state, victim, (card, def) => { if (def.guardSteal && def.guardSteal(ctx, victim, card, thief, kind)) blocked = true; }, ['guardSteal']);
-      return !blocked;
+      // Safecrackers (idea pipeline pool 13, flag unstoppable; no live card has it): "Your steals can't be stopped"
+      if (kind !== 'swap' && kind !== 'change' && unstoppable(state, thief)) return true;
+      return !stealBlocked(state, ctx, thief, victim, kind);
     },
     /** How many a steal of `base` takes for this thief (members: stealMore adds, stealMoreIf(ctx, owner) adds when it returns more than 0, stealDouble(ctx, owner) doubles). */
     stealCount(thief, base, { say = false } = {}) {
@@ -2612,6 +2619,7 @@ function ctxFor(state) {
     stealInstance: () => (state.stealSeq = (state.stealSeq || 0) + 1),
     steal(thief, victim, what = {}) {
       if (!ctx.canSteal(thief, victim, what.uid !== undefined ? 'member' : 'res')) return 0;
+      if (unstoppable(state, thief) && victim !== thief && stealBlocked(state, ctx, thief, victim, what.uid !== undefined ? 'member' : 'res')) log(state, `${thief.name}'s Safecrackers: ${victim.name}'s protection doesn't stop the steal.`);
       // a victim's member that answers the steal before it lands (Hush Money, REPLACE2 bot test): it queues the victim's
       // choice, which makes the steal again (what.hushed) or pays it off; nothing is taken now
       if (!what.hushed) {

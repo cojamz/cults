@@ -262,6 +262,26 @@ function takeToken(ctx, p, why, what = '') {
   }
   ctx.log(`${p.name}'s ${why}: ${p.name} takes the Goes Last token${what} from ${o.name}${on.length ? `, and ${o.name}'s ${on.length === 1 ? 'minion on it goes' : `${on.length} minions on it go`} back to their hand` : ''}.`);
 }
+/** Switch Places (pool 13): the queue index of p's next turn this round (not one waiting on the token), or -1. */
+function nextOwnTurn(ctx, p) {
+  const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');
+  for (let i = end + 1; i < (close < 0 ? q.length : close); i++) if (q[i].t === 'turn' && q[i].p === p.id && !q[i].token) return i;
+  return -1;
+}
+/** Rivals whose next turn can trade with p's; gain: how many places earlier p's turn comes. */
+function switchTargets(ctx, p) {
+  const i = nextOwnTurn(ctx, p);
+  if (i < 0) return [];
+  return ctx.rivals(p).map(o => ({ o, j: nextOwnTurn(ctx, o) })).filter(x => x.j >= 0).map(x => ({ ...x, gain: i - x.j }));
+}
+function askSwitch(ctx, p, name) {
+  const list = switchTargets(ctx, p);
+  if (!list.length) { ctx.log(`${p.name}'s ${name}: no next turn to swap.`); return false; }
+  ctx.choose(p, `${name}: swap your next turn with which rival's next turn?`, list.map(({ o, gain }) => ({
+    id: `player:${o.id}`, label: `${o.name} (your turn moves ${gain >= 0 ? `${gain} earlier` : `${-gain} later`})`, kind: 'player', value: o.id, hint: gain,
+  })), 'purple.switchTurn', { name });
+  return true;
+}
 /** Scalpers (pool 10): the token's taker gives the Scalpers' owner 2 of their resources, picked one at a time. */
 function scalpStep(ctx, p, data) {
   const to = ctx.player(data.to), have = ctx.state.resources.filter(c => (p.res[c] || 0) > 0);
@@ -508,6 +528,13 @@ export default {
     // pool 3: Ticket Takers' rival
     ticketSteal(ctx, p, id) { const o = ctx.player(id); if (o) ctx.asMember(p, 'Ticket Takers', () => plainSteal(ctx, p, o, 2, 'Ticket Takers')); },
     // pool 10: Scalpers, one resource at a time from the taker
+    // pool 13: Switch Places / Seat Swappers
+    switchTurn(ctx, p, id, data) {
+      const o = ctx.player(id), q = ctx.state.queue, i = nextOwnTurn(ctx, p), j = nextOwnTurn(ctx, o);
+      if (!o || i < 0 || j < 0) return;
+      [q[i], q[j]] = [q[j], q[i]];
+      ctx.log(`${p.name}'s ${data.name}: ${p.name}'s next turn and ${o.name}'s next turn switch places.`);
+    },
     scalpGive(ctx, p, color, data) {
       const to = ctx.player(data.to);
       if (!to || !((p.res[color] || 0) > 0)) return;
@@ -568,6 +595,13 @@ export default {
           o => (turnsLeft(ctx, o) ? 10 : 0) + ctx.followers(o));
       },
     }, 'pool1')),
+    // idea pipeline pool 13 (Nov 7): your next turn and a rival's next turn trade places in the round's order (a minion
+    // waiting on the Goes Last token isn't a next turn). Either may be earlier; the table sees both move.
+    poolSpace({
+      key: 'switchplaces', copyDoesIt: true, ring: 2, name: 'Switch Places', text: "+3 purple. Swap your next turn with a rival's next turn.",
+      estimate: (ctx, p) => 3 + 1 + (switchTargets(ctx, p).some(x => x.gain > 0) ? 2 : 0),
+      resolve(ctx, p) { ctx.gain(p, P, 3, { fromAction: true }); askSwitch(ctx, p, 'Switch Places'); },
+    }, 'pool13'),
     // idea pipeline pool 10 (Nov 7): Cut In takes the token with no minion put on it (the card says only "take"); the
     // old holder's minions on it go back to their hand as any take does, then their next turn this round is skipped
     // (Hold Up's skip; Early Birds stops it). Nobody held it, or you did: no skip.
@@ -674,6 +708,12 @@ export default {
     // turn. Night Porters (the brief's Night Shift, renamed: a Night Shift is already in the REPLACE7 test): holding the
     // token at Round End, the owner keeps it into next round, and once the round's turns are queued their last minion
     // goes on it (as Sleep In's does). A keep, not a take, so take triggers don't fire. Prices are the writer's fill-ins.
+    pool(m('seatswappers', 'Seat Swappers', 2, 2, "On Use, once per round: swap your next turn with a rival's next turn.", {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) { if (!askSwitch(ctx, owner, 'Seat Swappers')) card.used = false; },
+      botActivate: (ctx, p) => switchTargets(ctx, p).some(x => x.gain >= 3),
+    }), 'pool13'),
     pool(m('scalpers', 'Scalpers', 2, 2, 'Whenever a rival takes the Goes Last token, they give you 2 of their resources.', {
       onRivalTakeToken(ctx, owner, card, taker) { scalpStep(ctx, taker, { to: owner.id, left: 2, n: 0 }); },
       ...see(info => 2 * endsAhead(info).length * 0.8), // BOTSEE: about one rival take a round

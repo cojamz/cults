@@ -127,6 +127,24 @@ function scoutDone(ctx, p, data) {
 // used this turn (Tribute Band copying a Tryout that borrowed Coach looped forever; Claude, under Cory's go-with-your-gut)
 const coachable = (ctx, p) => ctx.membersOf(p).filter(c => c.freeTurn !== ctx.turnKey()
   && [c.def, c.copy && ctx.defOf(c.copy)].some(d => d?.activate && d.onActivate));
+/** Mercenaries (pool 13): n resources from o's biggest piles, one shared steal. */
+function hireSteal(ctx, p, o, n, name) {
+  if (!ctx.canSteal(p, o)) { ctx.log(`${p.name}'s ${name}: can't steal from ${o.name}.`); return 0; }
+  const left = { ...o.res }, take = {};
+  for (let i = 0; i < n; i++) {
+    const c = [...ctx.state.resources].sort((a, b) => (left[b] || 0) - (left[a] || 0))[0];
+    if (!(left[c] > 0)) break;
+    left[c] -= 1; take[c] = (take[c] || 0) + 1;
+  }
+  if (!Object.keys(take).length) { ctx.log(`${p.name}'s ${name}: ${o.name} has nothing to steal.`); return 0; }
+  let said = '';
+  const k = ctx.steal(p, o, { take, give: (got, took) => {
+    for (const [c, x] of Object.entries(took)) p.res[c] = (p.res[c] || 0) + x;
+    said = Object.entries(took).map(([c, x]) => `${x} ${c}`).join(', ');
+  } });
+  if (k) ctx.log(`${p.name}'s ${name}: steals ${said} from ${o.name}.`);
+  return k;
+}
 const members = [
   // idea pipeline pool 6 (Nov 7), grey guests (bot games only). Chameleons: Drifters' choice on a grey card (card.asColor,
   // which every color count reads); it forgets the color when it leaves a cult. Mourners: any cult's member to the
@@ -188,6 +206,21 @@ const members = [
     // bots block when a space is worth 4 or more to some rival
     botActivate: (ctx, owner) => ctx.state.round >= 2 && protestable(ctx).some(t => Math.max(0, ...ctx.rivals(owner).map(o => t.a.estimate?.(ctx, o) || 0)) >= 4),
   }), 'pool7'),
+  // idea pipeline pool 13 (Nov 7), grey guests (bot games only): the steal is the shared one (Lie Low, Bodyguards, Snitch
+  // apply), taken from the victim's biggest piles; then the member moves to that rival's cult whether the steal landed or
+  // not, still used (once per round: theirs to use next round; once per game: once for the card). Prices fill-ins.
+  ...[['mercenaries', 'Mercenaries', 'round', 3, 1], ['hiredguns', 'Hired Guns', 'game', 5, 2]].map(([key, name, every, n, w]) => pool(m(key, name, null, 0, w,
+    `On Use, once per ${every}: steal ${n} resources from a rival, then give them this member.`, {
+      activate: every,
+      ...(every === 'round' ? { onRoundStart(ctx, owner, card) { card.used = false; } } : {}),
+      onActivate(ctx, owner, card) {
+        ctx.choose(owner, `${name}: steal ${n} resources from which rival, then give them this member?`, ctx.rivals(owner).map(o => ({
+          id: `player:${o.id}`, label: `${o.name} (${Object.values(o.res).reduce((a, b) => a + b, 0)} resources)`, kind: 'player', value: o.id,
+          hint: Math.min(n, Object.values(o.res).reduce((a, b) => a + b, 0)) + 0.01 * ctx.followers(o),
+        })), 'benders.hire', { uid: card.uid, n, name });
+      },
+      botActivate: (ctx, owner) => ctx.rivals(owner).some(o => Object.values(o.res).reduce((a, b) => a + b, 0) >= n),
+    }), 'pool13')),
   // Party Crasher (was Squatter; id kept for old records): Cory, 2026-10-28, Once per game, cheaper; 5 with the +1 wild (Cory, Nov 1: "5"; was 4)
   m('squatter', 'Party Crasher', 'thieves', 2, 2, 'On Use, once per game: your next minion can be placed on a space a rival already took.', { // cut Nov 7 (cull.js): Scouts takes its place (Cory, "Yes") // still joins in round I at 5, so grey keeps 4 (Claude's fill-in)
     activate: 'game',
@@ -475,6 +508,15 @@ const members = [
 ];
 
 export const handlers = {
+  // pool 13: Mercenaries / Hired Guns
+  hire(ctx, p, id, data) {
+    const o = ctx.player(id);
+    if (!o || o === p || !p.members.includes(data.uid)) return;
+    ctx.asMember(p, data.name, () => hireSteal(ctx, p, o, data.n, data.name), data.uid);
+    if (!p.members.includes(data.uid)) return;
+    ctx.log(`${p.name}'s ${data.name}: joins ${o.name}'s cult.`);
+    ctx.moveMember(data.uid, p, o, { actor: p });
+  },
   wayfarers(ctx, p, uid, data) { freeTake(ctx, p, uid, data); },
   chameleon(ctx, p, q, data) {
     const card = ctx.card(data.uid);
