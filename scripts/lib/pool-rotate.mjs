@@ -1,4 +1,4 @@
-// Idea pipeline (scripts/ideas/README.md): POOL=1 (or POOL=<key>,<key>) rotates candidate cards (content/pool.js) into
+// Idea pipeline (scripts/ideas/README.md): POOL=1 (or POOL=<key or pool tag>,…) rotates candidate cards (content/pool.js) into
 // a bot game in place of live cards: members take the place of live members of their color, spaces the place of a live
 // space of their color and round. Uses its own random stream, so a game number still deals the same table as without POOL.
 import { quadrant, guestMembers } from '../../src/engine/v4/content/index.js';
@@ -8,7 +8,7 @@ import { ARTIFACTS } from '../../src/engine/v4/core.js';
 import { seededRandom } from '../../src/engine/v4/rng.js';
 
 const RAW = process.env.POOL || '';
-const pick = d => RAW === '1' || RAW.split(',').map(s => s.trim()).some(k => k && (d.key === k || d.id === k));
+const pick = d => RAW === '1' || RAW.split(',').map(s => s.trim()).some(k => k && (d.key === k || d.id === k || d.pool === k));
 export const POOL_ACTIVE = !!RAW;
 const PER_COLOR = Number(process.env.POOL_PER || 2);
 
