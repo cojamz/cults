@@ -80,7 +80,8 @@ export function BannerLine({ line, i, state, pid, space, you = -1 }) {
     return <>{me}{m[2] ? <Rich text={spent(m[2])} /> : 'free'} for <Member state={state} name={m[1]} /> <Rich text={`${worth} followers`} /></>;
   }
   if ((m = l.match(/^bought (\d+) ?followers? \(paid (.+)\)$/))) return <>{me}<Rich text={spent(m[2])} /> for <Rich text={`${m[1]} followers`} /></>;
-  if ((m = l.match(/^(\w+) Cloak: (.+)$/))) return <><CloakTile state={state} pid={pid} />{me}<Rich text={m[2]} /></>;
+  // the tile with its name, as the pick shows it (frame review, Nov 7: a bare tile and "+1 magenta" said nothing)
+  if ((m = l.match(/^(\w+) Cloak: (.+)$/))) return <><CloakTile state={state} pid={pid} /><b className="bn-space">{m[1]} Cloak</b>: {me}<Rich text={m[2]} /></>;
   if ((m = l.match(/^(P\d|you) ([+−-]\d.*) \((.+)\)$/))) return <><Member state={state} name={m[3]} />: <Cult state={state} pid={pidOf(state, m[1])} /><Rich text={m[2]} /></>;
   if ((m = l.match(/^(P\d|you) ([+−-]\d.*)$/))) return <><Cult state={state} pid={pidOf(state, m[1])} /><Rich text={m[2]} /></>;
   if ((m = l.match(/^took (P\d|you)(?:'s|’s) (.+)$/))) return <>{me}took <Cult state={state} pid={pidOf(state, m[1])} />’s <Member state={state} name={m[2]} /></>;
