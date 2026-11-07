@@ -65,7 +65,9 @@ Card: "<printed text>"  (Claude's numbers are fill-ins)
 Round I turn, 4 players: you hold <…>. Here you get <…>; the best other space, <name: text>, gives <…>. Gain: <difference>.
 Round III turn: <same>, plus what a Green copy of it does.
 Choices: <each "you choose" / "a rival chooses", played from the chooser's side>.
-Who feels it: <a sting, a gift, a reason to block, or nothing>.
+Who feels it: <a sting, a gift, a reason to block, or nothing; the victim's side at its worst>.
+How often: <times per game its trigger or cause happens with live cards>.
+Steps: <each step a table does, in order, with who holds what after each>.
 Ties to other colors: <the shared moment; how the card makes it happen by itself; what it does in a game with none of the colors that cause it>.
 Intuitive: / Fun: / Interacts: / Powerful: / Engine or counter: / Its color:  (one line each)
 Meets the bar: <design/notes/card-judging-v2-2026-11-07.md and design/eval/card-judging/taste-guide.md: does it clear our bar on its own; the taste guide's pattern 1, "the current card stays", is for reviews of live cards, not new ideas>
