@@ -297,7 +297,7 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
   }, [show, session, rivalDwell]);
   pumpRef.current = pump;
   // a stuck table's report, for the gates: what the table is waiting on
-  if (typeof window !== 'undefined') window.__tableWait = () => ({ waiting: waiting.current ? waiting.current.moves : null, timer: timer.current == null ? null : typeof timer.current === 'number' ? 'hold' : timer.current, queue: queue.current.length, held: held.current, chain: chainState() });
+  if (typeof window !== 'undefined') window.__tableWait = () => ({ waiting: waiting.current ? waiting.current.moves : null, timer: timer.current == null ? null : typeof timer.current === 'number' ? 'hold' : timer.current, queue: queue.current.length, held: held.current, chain: chainState(), dealing: dealing(), dealLeft: dealEndsAt() - Date.now(), readLeft: readUntil() - Date.now(), dealWaited: dealWait.current == null ? null : Math.round(performance.now() - dealWait.current), timerLeft: timerAt.current == null ? null : Math.round(timerAt.current.t0 + timerAt.current.d - performance.now()) });
   const finishPresentation = useCallback((landed = false) => {
     const completed = waiting.current;
     if (!completed) return;
@@ -589,10 +589,18 @@ export const lineId = (l, i) => (i === 0 && /^[+−-]\d/.test(l) ? '#gain' : (l.
 /** The hub card's lines in the order they first showed (Cory, Nov 6: "we should just SEE it get added"): a line never
  *  moves once it's up (the every-frame check saw "gave Window Shopper to P2" become "1, 1 from you" as a line was
  *  inserted above it). */
+// what a turn's card has already shown, kept past the card itself: a card taken down and put back up in the same turn
+// (its place on the table changing) carries on where it was instead of starting its lines over, which read as the
+// turn happening twice (every-frame check, "lines went away", Nov 7)
+const cardMemo = new Map();
+const memoOf = key => {
+  if (!cardMemo.has(key)) { if (cardMemo.size > 40) cardMemo.delete(cardMemo.keys().next().value); cardMemo.set(key, { key, order: [], text: new Map(), k: 0 }); }
+  return cardMemo.get(key);
+};
 function useStableLines(key, lines) {
   'use no memo';
   const ref = useRef({ key: null, order: [] });
-  if (ref.current.key !== key) ref.current = { key, order: [], text: new Map() };
+  if (ref.current.key !== key) ref.current = memoOf(key);
   const byId = new Map();
   lines.forEach((l, i) => { const id = lineId(l, i); if (!byId.has(id)) byId.set(id, l); });
   // a line that turned into another (a steal's line growing as its payment lands) takes the old one's place
@@ -606,13 +614,16 @@ function useStableLines(key, lines) {
 }
 
 function useReveal(key, lines, on) {
+  'use no memo';
   const total = lines.length;
-  const [st, setSt] = useState({ key, k: Math.min(1, total) });
-  const cur = st.key === key ? st : { key, k: Math.min(1, total) };
+  const start = () => ({ key, k: Math.min(Math.max(1, memoOf(key).k), total) });
+  const [st, setSt] = useState(start);
+  const cur = st.key === key ? st : start();
   const k = Math.min(cur.k, total);
   const gapAfter = i => Math.max(MO.storyLine, words(lines[i]) * MO.storyWord);
   useLayoutEffect(() => {
     if (!on) return undefined;
+    memoOf(key).k = Math.max(memoOf(key).k, k);
     let left = 0;
     for (let i = Math.max(0, k - 1); i < total; i++) left += gapAfter(i);
     noteReadEnd(Date.now() + left);

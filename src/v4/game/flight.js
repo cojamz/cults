@@ -147,6 +147,8 @@ const motionChanged = () => { for (const fn of motionSubs) fn(); };
 /** Explicit finite action motion only; ambient CSS breathing/bobbing never enters this registry. */
 export const motionPending = () => live.size > 0 || countedMotions.size > 0;
 export const onMotionChange = fn => { motionSubs.add(fn); return () => motionSubs.delete(fn); };
+// (gates: what the table is still waiting on when it looks stuck; e2e/v4/round-end.mjs prints it)
+if (typeof window !== 'undefined') window.__motionLive = () => ({ counted: countedMotions.size, anims: [...live].slice(0, 12).map(a => { const t = a.effect && a.effect.target; let ct = {}; try { ct = a.effect.getComputedTiming(); } catch { /* gone */ } return { el: t ? `${t.tagName}.${String(t.className).slice(0, 60)}${t.isConnected ? '' : ' (detached)'}` : null, state: a.playState, t: Math.round(a.currentTime || 0), end: Math.round(ct.endTime || 0), iter: ct.iterations }; }) });
 /** Register a DOM-written count roll, with an idempotent completion/cleanup function. */
 export function beginCountMotion(finish = null) {
   const token = { finish };

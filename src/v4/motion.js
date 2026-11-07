@@ -229,8 +229,12 @@ export const RIVAL = 0.65;
  */
 const TIGHT = new Set(['pieceStagger', 'streamSpread', 'bundleTrail', 'fan', 'deltaChip']);
 const tightScale = () => Math.min(speedScale(), SPEEDS.steady);
+// reading time: a slower speed gives more of it, but not six times Steady's (at Relaxed a 15-word story line held the
+// table 14s and a round took minutes; 2.5x Steady's base is about 150 words a minute, Nov 7)
+const READ = new Set(['storyLine', 'storyWord', 'storyLinger']);
+const readScale = () => Math.min(speedScale(), 2.5);
 /** A budget at the viewer's speed: Quick's own number, else the base times the speed. */
-const atSpeed = ([quick, base], k) => (speed === 'quick' ? quick : Math.round(base * (TIGHT.has(k) ? tightScale() : speedScale())));
+const atSpeed = ([quick, base], k) => (speed === 'quick' ? quick : Math.round(base * (TIGHT.has(k) ? tightScale() : READ.has(k) ? readScale() : speedScale())));
 
 /** MO.x reads the budget at the viewer's speed (read it when you use it, never keep a copy). */
 export const MO = {};

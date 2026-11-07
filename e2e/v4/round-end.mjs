@@ -51,7 +51,8 @@ while (Date.now() - t0 < 240000) {
 }
 if (!done) {
   await page.screenshot({ path: `${process.env.V4_SHOTS || '.'}/round-end-stuck.png` }).catch(() => {});
-  const wait = await page.evaluate(() => window.__tableWait && window.__tableWait()).catch(() => null);
+  if (process.env.V4_END_POLL) for (let i = 0; i < 8; i++) { console.log(JSON.stringify(await page.evaluate(() => ({ ...window.__tableWait(), chain: undefined, banner: document.querySelector('[data-turn-story]')?.dataset.turnStory, bannerHtml: (document.querySelector('.turn-banner, .lt-banner, [data-turn-story]')?.outerHTML || '').slice(0, 300) })))); await page.waitForTimeout(1000); }
+  const wait = await page.evaluate(() => window.__tableWait && { ...window.__tableWait(), live: window.__motionLive && window.__motionLive() }).catch(() => null);
   errors.push(`waiting on: ${JSON.stringify(wait)}`);
   errors.push(`round ${ROUND} never reached its next-round button in 4 minutes (${reckonAt ? `scoring began ${Math.round((Date.now() - reckonAt) / 1000)}s before` : 'scoring never began'}; last seen ${JSON.stringify(last)})`);
 }
