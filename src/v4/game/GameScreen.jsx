@@ -1851,6 +1851,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const [seatPicks, setSeatPicks] = useState({ key: null, map: {} }); // this steal's picks so far, for the "−1" on each stack
   const pickKey = picker && picker.count ? `${picker.actor}|${picker.title}|${picker.count.of}|${state.round}` : null;
   const [pickDone, setPickDone] = useState(null); // the last pick's caption ("· 0 left") stays while its resource flies
+  // the steal card closes in the click that takes the last one, not when the take's chain has landed (frame review,
+  // Nov 7: "Lie Low: take 1 · 0 left" with the card still open a second): the step it closed on, until the table moves
+  const [pickClosed, setPickClosed] = useState(null);
   useEffect(() => { if (!pickDone) return undefined; const t = setTimeout(() => setPickDone(null), 900); return () => clearTimeout(t); }, [pickDone]);
   const onSeatPick = useCallback((id, el) => {
     if (interactionState !== physicalState || session.getState() !== physicalState) return;
@@ -1861,6 +1864,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     const t = o.target || {};
     const take = Number.isInteger(t.pid) && t.res && !t.give && t.pid !== pk.actor;
     if (take && pk.count && pk.count.left === 1 && pk.title) setPickDone({ title: pk.title, what: `take ${pk.count.of}${pk.only ? ` ${pk.only}` : ''}`, n: Date.now() });
+    if (take && pk.count && pk.count.left === 1) setPickClosed(state.moves);
     const root0 = root.current;
     const home = root0 && (root0.querySelector(`.lt-seat[data-pid="${pk.actor}"] .cs-res`) || root0.querySelector(`.lt-seat[data-pid="${pk.actor}"]`));
     const coin = el && el.querySelector('svg') ? `<span class="pick-coin">${el.querySelector('svg').outerHTML}</span>` : '<span class="pick-coin dot"></span>';
@@ -1877,7 +1881,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
       });
     }
     onPick(id);
-  }, [options, onPick, pickKey, interactionState, physicalState, session]);
+  }, [options, onPick, pickKey, interactionState, physicalState, session, state.moves]);
   // the gift card: a first lifts (or is put back); nothing goes to the engine until the second
   const onGiftFirst = useCallback(a => setPickFirst({ pend, v: a, seq: swapSeq }), [pend, swapSeq]);
   // mode 'automatic': a card answering its own queued questions (Take on Harvest, Exchange), never a double-click
@@ -1963,6 +1967,12 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     }
     return out;
   }, [gift, onGiftAnswer, picker, seatPicks, pickKey, state, onSeatPick, onSeatDenied]);
+  // the steal card's "N left" counts down in the click's frame too, as the top line's does (frame review, Nov 7: the
+  // card said "1 left" beside the top line's "0 left" while the take's chain played)
+  const pickAhead = gift && gift.board === 'seats' && picker && picker.count && seatPicks.key === pickKey
+    ? Math.max(0, Object.values(seatPicks.map).reduce((t, m) => t + Object.values(m).reduce((a, b) => a + b, 0), 0) - (picker.count.of - picker.count.left)) : 0;
+  const giftShown = pickAhead && gift.left != null ? { ...gift, left: Math.max(0, gift.left - pickAhead) } : gift;
+  const stealClosed = pickClosed != null && pickClosed === state.moves && gift && gift.board === 'seats';
   const roundText = state.over ? 'Final' : state.round ? <>Round {roman(state.round)} of III</> : 'Setup';
   const someoneHere = mySeats.length > 0;
   const lastLine = state.log.length ? plainLine(state.log, state.log.length - 1) : '';
@@ -2129,8 +2139,8 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
           {/* (data-step: after you've placed, the wheel steps back so only your buys are bright; final panel S#27) */}
           <section className="lt-wheel" data-region="wheel" data-step={buyingNow ? 'buy' : undefined}>
             <LitWheel state={tState} interactionState={hold ? tState : interactionState} hover={hover} legal={needHandoff ? NO_SLOTS : pickSpaces || legalSlots} idle={pickSpaces ? null : idleSlots} pickNotes={pickNotes} onPick={onPick} onDenied={onDenied} confirmPlace={!wide} flash={flash} lastMove={lastMove} recentMoves={recentMoves} spacePeek={spacePeek} onSpacePeek={setSpacePeek} meId={mySeats.length === 1 ? mySeats[0] : null} facing={facingRef.current} onFacing={onFacing} />
-            {showChoice && (!picker || (gift && !shopRecruit && !wheelMove)) && !payChoice(pend) && pend.kind !== 'setup' && (gift
-              ? <GiftCard state={state} gift={gift} onFirst={onGiftFirst} onAnswer={gift.board === 'seats' ? onSeatPick : onGiftAnswer} onAnswerAll={gift.board === 'seats' ? null : onGiftAnswerAll} onBack={canUndo ? undo : null} busy={busy} place={plainAt} hover={hover} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />
+            {showChoice && !stealClosed && (!picker || (gift && !shopRecruit && !wheelMove)) && !payChoice(pend) && pend.kind !== 'setup' && (gift
+              ? <GiftCard state={state} gift={giftShown} onFirst={onGiftFirst} onAnswer={gift.board === 'seats' ? onSeatPick : onGiftAnswer} onAnswerAll={gift.board === 'seats' ? null : onGiftAnswerAll} onBack={canUndo ? undo : null} busy={busy} place={plainAt} hover={hover} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />
               : <ChoicePrompt state={state} onPick={onPick} busy={busy} place={plainAt} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />)}
             {/* the starting picks (motion gaps 1): the row stays on the table while the others pick (read-only), and until the
                 last pick has landed, so each rival's pick lights its coin and flies from it to their seat (director.js) */}
