@@ -1,126 +1,133 @@
 ---
 name: brainstorm
-description: Come up with and pitch Cults design ideas to Cory: spaces (actions) for a color's round I/II/III slots, members, a color's direction, fixes for a card he dislikes, how two colors interact (color pairs, the intersection table, tying colors together), or "what could X do". Use it whenever you're about to propose any card text, space, member, ability or design option, including one-line fill-ins in a color redesign thread, even if he didn't say "brainstorm". It holds how the game plays and wins, each color's fantasy, why his favorite spaces landed, and his past verdicts.
-argument-hint: <the slot or question, e.g. "White round I, two empty slots">
+description: Generates, tests on paper and pitches design ideas for Cults, Cory's worker-placement board game: spaces (actions) for a color's round I, II or III slots, members, contests, a color's direction, fixes for cards he dislikes, and how two colors interact (color pairs, the intersection table, tying colors together). Use it whenever you are about to propose any card text, ability, rule or design option to Cory, including a one-line fill-in, a replacement inside a color review, or a list a coordinator asked for, even if nobody says "brainstorm".
 ---
 
 # Brainstorm with Cory
 
-Cory designs Cults; Claude brings ideas he can react to. He has called the ideas lackluster and asked whether Claude understands the game. Those moments came from three causes: an idea built on a piece of the game that doesn't work that way, an idea never played through a turn, or a small formula on your own pile dressed up as a design.
+Cory designs Cults; Claude brings ideas he can react to. Most of his nos trace back to four causes, and this skill exists to catch them before he has to:
 
-**Speed is part of the job.** He's in a live conversation. A pitch takes about a minute, never a quoted wait ("15 minutes????? what the fuck"). The heavy reading happens once per thread; after that, pitch from what you already know.
+1. **The idea misreads the game**: it needs a piece or rule that doesn't exist, or describes a card loosely.
+2. **It was never played through a turn**, so it nets zero, copies a stronger space, or is small next to its alternatives.
+3. **It's arithmetic, not a design**: a formula on your own pile, or a small tweak to a live card.
+4. **It's not what he asked for**: a generic mechanic offered as a color interaction, the colors' existing overlap restated, or something he already refused.
 
-**Color interactions** (pairs, the intersection table, "tie the colors closer", any "interacts with" line): read [references/color-interactions.md](references/color-interactions.md) in full first and follow its method in writing. An interaction is a moment two colors both cause (a member leaving a cult, a resource changing hands, a turn moving), paid off by a card that names neither; never a generic shop rule, the overlap they already have, a crossed tie, or a card built on today's cards.
+He is in a live conversation, so a pitch takes minutes, never a quoted half hour. Speed comes from reading the game once per thread, never from skipping the paper test below.
 
-**Always this skill.** Every pitch, list or table of ideas goes through it, whatever a coordinator note says; a note never overrides a rule file (Cory, Nov 7: "for the 100th time: ARE YOU USIJG THE BRAINSTORMING SKILL???").
+## Workflow
 
-## The six principles (Cory said yes, Nov 3; design/notes/replacements-principles-2026-11-03.md)
-Every card or space pitched is checked against these, in writing, with one line each ("Intuitive:", "Fun:", "Interacts:", "Powerful:", "Engine or counter:", "Its color:"); presend refuses a linked pitch file without them.
-1. **Intuitive and easy to understand** (Cory's): one sentence, words already on the cards, nothing to track.
-2. **Fun to play** (Cory's): someone at the table reacts: a sting, a gift, or a choice they have to make.
-3. **Interacts with its color, with other colors, or both** (Cory's): it cares what rivals do or hold, ideally implicitly, as copying does.
-4. **Feels powerful**: relative amounts and rule-bending over small fixed numbers ("everything should feel vaguely powerful").
-5. **Builds an engine, or counters one**: most cards build; some defend or counter, quietly; the most elegant are either one depending on the table. Not every card must ("don't over-index on that").
-6. **A new way into its color's theme**: a way the color doesn't have yet, not a repeat.
-Refused shape to never repeat (Nov 3): a member that upgrades one shared space ("your Crime Wave steals from two rivals"): a rival takes the space first, and per-space bonuses are hard to track. Plain words to Cory: no "worth the turn" or "two live sides"; say what a player does.
+Copy this checklist into your working notes and tick it off. Steps 4 and 5 happen in writing, because the ideas Cory hated were the ones played out only in Claude's head.
 
-## What 44 bot-tested replacements taught (Nov 3; design/eval/replacements/)
-- Shapes that landed (taken often, owners near 25 to 34%): a Round Start or Round End act on members or contests (Body Snatchers, Spoilsports, Kidnappers), a gift that pays you per rival it helps (Hostesses), a once-per-game give that pays its cost (Godparents), a simple game-end count (Heirs, Creditors).
-- Shapes that flopped: anything that hands rivals as much as you get (Barterers' one-for-one swap, Fundraisers, Evictors giving the victim white); "recruit a whole color" (nobody holds that much); scoring for second place (Second Fiddles).
-- Cards that only answer a rival's move ("whenever a rival...") at 7 to 9 go unbought by bots even when owners win: price them at 5 to 6 or give them worth, and say in the pitch that bots undervalue them.
-- Before a batch: say for each card which price band its old card sat in and why the new one earns more or less.
+```
+- [ ] 1. Load the live game (once per thread)
+- [ ] 2. Frame the slot or the color pair
+- [ ] 3. Generate about 12 seeds, each on a different piece
+- [ ] 4. Play every seed on paper (template below)
+- [ ] 5. Cut against his verdicts and the kill list
+- [ ] 6. Send what survives (often 2 to 4)
+- [ ] 7. Log the pitch, and later his answer
+```
 
-## Every pitch: four gates, in order, none skipped
+### 1. Load the live game
 
-Oct 30, Yellow: eight nos in a morning ("small ball gains", "how do you have NO clue how the game works????", "are you using the skill?"). Every one came from skipping a gate below to answer fast. Speed means no padded waits, never skipped steps: a list takes the time the gates take, and you say a real time.
+Docs lag the game, and a pitch built on an old rule reads to him as not knowing the game. Once per thread, read:
 
-**Gate 1. The live game, not the notes.** Once per thread: read design/rulebook.md end to end and `RING_VALUE`, the shop sizes and `ROUND_CUTOFFS` in src/engine/v4/core.js, then [references/cheatsheet.md](references/cheatsheet.md) and [references/design-core.md](references/design-core.md), and [references/color-interactions.md](references/color-interactions.md) for any color-pair work. Each color is designed from its contest (Cory, Nov 7: contests are "kind of core to… what do you want to be doing"): know all eight live contests before pitching. Notes lag the game (they said contests paid 2/4/6 when live was 4/6/10). Never describe a piece you haven't seen in the rulebook: the rim only prints what a contest counts; no rule lives there.
+- design/rulebook.md end to end, then [references/cheatsheet.md](references/cheatsheet.md) (the game in ten lines and the kill list).
+- [references/game-model.md](references/game-model.md) (the pieces, what's scarce by round, the math) and [references/design-core.md](references/design-core.md) (engines, arcs, each color's fantasy, why his favorites worked).
+- The live cards: `node .claude/skills/brainstorm/scripts/live-board.mjs <color-id> [more ids] [--members]`. Ids: red, echo (Green), thieves (Magenta), market (Blue), purple, gold, silver, yellow, trading (White). Live code wins over every doc.
+- This color's latest calls (`grep -n "<Color>" design/decisions.md | tail -20`) and its lines at the top of design/pitch-ledger.md.
+- For any color-pair work: [references/color-interactions.md](references/color-interactions.md), in full.
 
-**Gate 2. Cory's sentence and the anchor.** Before any slot, write in one line what the color is *for*, in his words if he's said it (Yellow, Oct 30: "rewards going broad… translate currencies"), and the round III action it builds toward. If either is missing, ask him for it in one question and pitch nothing else. Never pitch round I or II for a color whose round III isn't agreed. Never invent the identity from the color's name or an adjacent color's job (Yellow was pitched as the contests color, a separate color he'd parked).
+### 2. Frame it
 
-**Gate 3. Generate wide, then play every idea on paper, in writing.** About 12 seeds per slot, each a verb on a different real piece (design-core section 4 shapes; game-model.md section 1 pieces). For a fresh angle, hand the whole brief (gates 1 and 2, the slot, his refusals) to a general-purpose subagent and generate there too; never pass its output on unread. Then for every seed, write down, not in your head:
-- the card text as it would print;
-- a 4-player turn in round I and in round III: what you get here versus the best other space, by name and number;
-- the decision it creates, and for whom (the taker gives something up, or a rival chooses or reacts). No decision: cut it, however clean;
-- both sides of every choice: play the chooser; if one option always wins for them, it isn't a choice (verdicts.md 15b, "give you 1 or you steal 2");
-- why only this color could print it (not a Green copy, a Red swap, a Magenta steal, a Blue shop move, a guest's text);
-- which other colors it ties to and through which shared moment, and that it still works in a game without each of them (color-interactions.md section 4);
-- its best case and Greatest Hits copying it.
+Write down, in a few lines:
 
-**Gate 4. Filter, then send.** Cut on the cheatsheet kill list and every line of [references/verdicts.md](references/verdicts.md), and against this color's lines in design/pitch-ledger.md: anything that resembles a refused idea in shape (a "+1 of another color, more each round" after "Mix" was refused is the same idea) is out. What survives is usually 2 to 4, not 5; send what survives, and if nothing does, say so and ask one sharp question. Each line: the printed text, what changes for a player, your pick in brackets. At most eight lines.
+- **The color's contest** and what its player is trying to do. Cory designs each color from its contest ("what do you want to be doing and what's getting rewarded from your color"), so ideas grow from it.
+- **His sentence for the color**, in his words if he has said one (Yellow: "rewards going broad… translate currencies"), and **the round III action** earlier slots build toward. If either is missing, ask him that one question and pitch nothing else; an identity invented from the color's name has failed every time.
+- **The slot**: color, round, and the spaces around it, quoted.
+- **The bar**: the strongest reworked space in the same round, with its total. Equal or better, with a different side effect, or it loses.
+- **His gist**, if he gave one. Ideas grown from his own words land far more often than ideas from nowhere.
 
-**After a no.** Two nos on the same slot in a row: stop pitching that slot. Re-run gates 2 and 3 properly (subagent included) before the next list, and tell Cory the real time it takes. Rapid re-pitches after a no are how one no became eight.
+For a color pair, frame both contests and the moments each color causes instead (color-interactions.md section 4).
 
-**Log** each pitch at the top of design/pitch-ledger.md and his answer the same turn; a verdict that shows a new pattern goes into references/verdicts.md.
+### 3. Generate wide
 
-## Deeper work (a new color or direction, or when he says the ideas miss)
+Build each seed as **a verb on a piece**: a piece from game-model.md section 1 (a space, a minion, a turn, the recruit, the shop row, the discard pile, your member, a rival's member, followers, a resource, a contest) and a verb (take, give, swap, copy, discard, double, skip, move, cash in, block, match). Cover at least six pieces, so the 2 or 3 you send differ in what they touch; variations on one idea drew "not thinking broadly enough". For a fresh angle, hand the full brief (steps 1 and 2, the slot, his refusals) to a general-purpose subagent and generate there too, then read its output before using any of it.
 
-Only when there's time, never while he's waiting on a short list.
+### 4. Play every seed on paper
 
-## 1. Load the real game
+For each seed, write:
 
-Once per thread, or when he says the ideas miss; the game changes daily.
+```
+Card: "<printed text>"  (Claude's numbers are fill-ins)
+Round I turn, 4 players: you hold <…>. Here you get <…>; the best other space, <name: text>, gives <…>. Gain: <difference>.
+Round III turn: <same>, plus what a Green copy of it does.
+Choices: <each "you choose" / "a rival chooses", played from the chooser's side>.
+Who feels it: <a sting, a gift, a reason to block, or nothing>.
+Ties to other colors: <the shared moment, and that it still works in a game without each of them>.
+Intuitive: / Fun: / Interacts: / Powerful: / Engine or counter: / Its color:  (one line each)
+Judged: <design/notes/card-judging-v2-2026-11-07.md and design/eval/card-judging/taste-guide.md, against keeping the current card>
+```
 
-- Read [references/game-model.md](references/game-model.md) in full. It's the pieces, the scarce things by round, and the math.
-- Read [references/verdicts.md](references/verdicts.md) in full. It's what he said yes and no to, and why.
-- Print the live cards: `node .claude/skills/brainstorm/scripts/live-board.mjs <color-id> red echo thieves market` (add `--members` for members). Live code wins over every doc. Ids: red, echo (Green), thieves (Magenta), market (Blue), purple, gold, silver, yellow, trading (White). A color in rework may have approved spaces not built yet: read its spec in design/spheres/ and its latest lines in design/decisions.md (`grep -n "<Color>" design/decisions.md | tail -20`).
-- Read the top of design/pitch-ledger.md for this color: what's already been pitched and refused, so you don't send it again.
-- Answer the six questions at the end of game-model.md to yourself. If any answer is shaky, you aren't ready to pitch.
+Why each line matters:
+- The gain is the difference from the best alternative, never the space alone; a space that only hands back a minion or a turn nets zero.
+- A choice where one side always wins for the chooser isn't a choice ("give you 1 or you steal 2": nobody lets you steal 2). The card is just the winning side.
+- Nobody feeling it means the card adds nothing to the table: cut it.
+- Round I tables hold 0 or 1 members, so judge a card at the table's real state that round.
+- presend refuses a linked pitch file without the six principle lines.
 
-## 2. Frame the slot
+### 5. Cut
 
-Write these down privately, in a few lines:
+Run every survivor past [references/verdicts.md](references/verdicts.md) (his yeses, and every failure mode with his words) and the cheatsheet's kill list, then against this color's ledger lines. The same shape as a refused idea is the same idea, however it's reworded. Keep the ideas that touch the most different pieces. If nothing survives, say so and ask one sharp question; a thin list costs less trust than filler.
 
-- **The slot**: color, ring (round it opens), and what sits around it (the color's approved spaces, quoted).
-- **The anchor**: the color's round III action. Earlier slots build toward it; they never preview a smaller version of it.
-- **What's scarce** in this slot's round (resources early, the recruit late), and what this slot should feed (for White, white or followers for the cash-in; for Purple, timing).
-- **The bar**: the strongest reworked space in the same ring, quoted with its total. Round II's bar is Promote and Shake Down.
-- **His gist**, if he gave one, in his words. Ideas that grow out of his own words land far more often than ideas from nowhere.
+### 6. Send
 
-## 3. Go wide on pieces, not numbers
+One short message (Cory reads on a phone): a numbered list he can answer by number, each line the card's printed text and what a player does differently, your pick in brackets, your numbers labeled as fill-ins. Name every live card you mention with its full text. Describe a card by what its text makes happen, never a shorthand like "does it twice". About 5 ideas per open slot at most, all in one message. Phrasings live cards use: [references/wording.md](references/wording.md), applied only after the ideas exist.
 
-Write about 12 seeds privately. Build each one as **a verb on a piece**: pick a piece from game-model.md section 1 (a space, a minion, a turn, the recruit, the shop row, the pile, a member of yours, a rival's member, recruited followers, a color of resource, a contest) and a verb (take, give, swap, copy, bury, double, skip, move, cash in, reveal, block, match). Cover at least six different pieces. A seed whose whole effect is "your pile changes by a formula" can stay only if this color still lacks its one plain scaling gain.
+### 7. Log
 
-For each seed, write the decision it creates: what the taker gives up, or what a rival now has to choose or watch for. A space with no decision in it is a number, and he reads numbers as flat.
+Add the pitch at the top of design/pitch-ledger.md the same turn. When he answers: mark it ✅ / ❌ / ↔ with his words, log any call in design/decisions.md, and add a line to references/verdicts.md if the no shows a pattern it doesn't name yet. Commit and push. Build nothing he hasn't confirmed; his answer replaces your pick unless he says "also".
 
-## 4. Play each one through a real turn
+## What his yeses share
 
-This is the step that was skipped every time he lost patience. For every seed still standing, write a short turn in game words:
+Almost every space he approved is **one plain verb aimed at a real piece other than your own pile, creating a choice someone can feel**: Echo "Copy the previous action" ("absolutely perfect"), Shake Down (the victim chooses), Last Call (position traded for followers by a count everyone sees), Crowd In (bends the one rule everyone feels). Members he loves bend a rule, pay steadily, or score. Simple and big beats clever. Relative amounts and rule-bending feel powerful; small fixed numbers feel like "small ball".
 
-- At 4 players (and 2 if it counts rivals or spaces): which round, who you are (holding what, roughly), what else you could place this minion on, and what you get here instead. The gain is this space minus the best alternative, not this space alone.
-- The same space taken in round III (round I spaces stay open all game), and what Green's copies do with it.
-- Placement accounting: does it hand back a minion or a turn and nothing else? Then it nets zero.
-- Does it finish the moment it's taken? A space that watches for later events or waits for round end is a member effect; move the idea to members or drop it.
-- What a rival at the table feels: nothing, a sting, a gift, a reason to block it.
+His model of a color interaction is Martyrs, "Whenever this member leaves your cult, gain followers equal to its cost.": a moment Red and White both cause ("when a member leaves your cult… it interacts with red. Inherently"), paid off by a card that names neither color.
 
-Two short examples of the walkthrough deciding:
+## Limits that come from the table
 
-> White round II, "Send one of your members to the bottom of the pile, gain white equal to its cost." (+1 white.) Round II, 4 players: you hold a 6-cost member worth 2 whose ability you've used up. Send it: 7 white. In round III, "Turn all your white into followers" turns those 7 into 7 followers with no recruit spent. You traded 2 followers of worth for 7, and kept your recruit. Placed elsewhere, the best round II space gave you about 4. Real sacrifice, real payoff: pitch it. (He said yes.)
+Cults must work on a physical tabletop, so these hold for every idea:
 
-> Purple round II, "+1 purple. Take one turn after this one." You place here and then place your next minion right away. Without it you'd place both anyway, one now and one next turn. Net: one turn moved earlier, and a minion spent on a space whose gain is 1. It's a smaller Crunch Time. Cut it. (Pitched anyway, it drew "do you understand this game at all?")
+- **Everything public and certain**: no drawing from the top of the pile, no randomness, no hidden cards. He has said this many times.
+- **A space finishes when taken.** "Whenever…", "this round" and "at round end" belong on members, where the card in front of you is the reminder.
+- **Nothing to remember**: no running discounts on member prices, no per-space bonuses, nothing that reads as counting past events.
+- **No decisions on another player's turn**; payoffs that fire on anyone's move are fine.
+- **No new tokens** (they come from him; the Goes Last token is the only one).
+- **No card that names or needs another color's mechanic**, since colors rotate between games. Colors meet through shared pieces.
+- **Ties are the obvious ones** a table guesses without a rulebook.
+- **No space charges you to use it, and none rescues you** from a space you can't use.
 
-## 5. Filter
+## Two examples of the paper test deciding
 
-Run each survivor past every failure mode in verdicts.md. Then compare with the bar from step 2: equal or better total, different side effect. Drop anything already refused in the ledger unless you can say in a few words what's different. From what's left, keep the 5 or so that touch the most different pieces. If nothing survives, say so and ask him a sharper question about the color instead of sending filler; a thin list costs more trust than a short one.
+> White round II, "Send one of your members to the bottom of the pile, gain white equal to its cost." Round II, 4 players: you hold a 6-cost member worth 2 whose ability is spent. Send it: 7 white. Round III's "Turn all your white into followers" makes that 7 followers with no recruit spent. You traded 2 followers of worth for 7 and kept your recruit; the best other round II space gave about 4. Real sacrifice, real payoff: pitched, and he said yes.
 
-## 6. Send
+> Purple round II, "+1 purple. Take one turn after this one." You place here and place your next minion right away; without it you'd place both anyway. Net: one turn moved earlier, for a minion spent on a space worth 1. It's a smaller Crunch Time ("Take two turns after this one."). Cut. Pitched anyway, it drew "do you understand this game at all?"
 
-One message, at most eight lines, in the foreman voice:
+## After a no
 
-- A numbered list he can answer by number. Each line quotes the card text as it would print, then what changes for a player in a few words. Say what a card makes happen in its own printed terms; a loose summary ("does it twice", "basically a steal") reads to him as not knowing the card. One played example if the effect isn't obvious from the text.
-- Your default in brackets. Numbers are your fill-ins; say so once.
-- About 5 ideas per open slot in one message, one line each, never one at a time.
-- No prices on members unless he asks. No file names, system words or coined labels.
-
-## 7. Log the same turn
-
-- Add each pitch at the top of design/pitch-ledger.md: `- date · pitch · … no verdict yet · tags: …`.
-- When he answers: flip it to ✅ / ❌ / ↔ with his words, log any call in design/decisions.md (date, one line, why), update the color's spec in design/spheres/, and refresh the color's section in design/strategy.md if the color's shape changed.
-- If the verdict surprised you, add the lesson to design/lessons/design.md, and if it's a new pattern, a line to references/verdicts.md here so the next thread doesn't repeat it.
-- Commit and push.
-
-Never start building a pick he hasn't confirmed. His answer replaces your suggestion unless he says "also".
+Two nos on the same slot in a row: stop pitching it. Redo steps 2 to 4 properly, subagent included, before the next list; rapid re-pitches are how one no became eight. After two refused lists of replacements, go back to the color's contest and his starred cards, one color at a time.
 
 ## Members
 
-The same steps, with two changes: members come after a color's spaces are set (he said not to design members for colors whose actions aren't done), and a set is a range from strong to weak with a few of the color's own counters (design/member-process.md). Members he loves bend a rule, give steady income or score; small "+1 when…" triggers read as weak. Don't pitch a member that is only "Worth N followers" with no ability (Cory, Oct 22: "I don't like when it's like just worth followers and no ability"), and go easy on "Now and at round start" income, which the redesigned colors mostly dropped. For a deep "how does this play" question, the `strategist` agent can help; check its answer against the live board before using it.
+Same workflow, with three differences. Members come after a color's spaces are set. A set runs from strong to weak with a few of the color's own counters (design/member-process.md). A member that is only "worth N followers" with no ability, or a small "+1 when…" trigger, reads as weak; check its best case and how often it fires per game. Price in the band design-core.md section 5 gives, and leave prices out of the pitch unless he asks.
+
+## Reference files
+
+| File | Read when |
+|---|---|
+| [references/cheatsheet.md](references/cheatsheet.md) | Every thread, first: the game in ten lines and the kill list |
+| [references/game-model.md](references/game-model.md) | Every thread: pieces, contests, scarcity by round, the math |
+| [references/design-core.md](references/design-core.md) | Every thread: engines, arcs, each color's fantasy, strength bands |
+| [references/color-interactions.md](references/color-interactions.md) | Any color pair, intersection table, or "tie the colors together" |
+| [references/verdicts.md](references/verdicts.md) | Step 5, every time: his yeses and every failure mode with his words |
+| [references/wording.md](references/wording.md) | Step 6, writing the card text and the message |
