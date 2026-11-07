@@ -23,7 +23,7 @@ Built on verdicts 27-43 and the liked shape (a capped tax on a common moment: Ma
 - Red moves members (Promote, Demote, Body Snatchers, Panel, Headhunter, Seat Filler); a quiet engine paying in any colors, which feeds whatever the other colors cost. Not every card needs a sting (taste guide, pattern 6).
 - How often: 3 to 6 swaps a game in a Red cult.
 
-## 5. Magenta member: "Whenever a rival buys 5 or more followers at once, steal 1 follower from them."
+## 5 (cut before sending: steals followers, breaks verdict 40). Magenta member: "Whenever a rival buys 5 or more followers at once, steal 1 follower from them."
 - The liked tax shape on a different common moment (the 5 and 10 follower cards). Capped at 1. Only recruited followers can be stolen (rulebook).
 - How often: several times a game from round II.
 
@@ -34,3 +34,12 @@ Built on verdicts 27-43 and the liked shape (a capped tax on a common moment: Ma
 - Yellow "+1 of a color when a rival recruits a color you lack": collapses as you broaden.
 - Red "move a member between rivals" as a member: same idea as Movers.
 - Green: nothing survived; copy targets are covered (Echo, Reprise, Song Request, Cover) and Green On Recruit copying is out.
+
+## 5 (sent). Blue member: "Once per round, on your turn, you may recruit from the discard pile instead of the shop."
+- Round II, 4 players: White discarded a 6-cost member last round and Blue cleared two shop cards; the shop holds nothing you want. You recruit the discarded 6-cost member instead. Gain: the best card on the table, not just the best card in the shop.
+- Round III: the pile holds every member cleared or discarded all game, so the pick is wide. A Green copy doesn't apply (member).
+- Who feels it: the rival who discarded a strong member watches it return to you; a reason to think twice before clearing a good card.
+- How often: Blue's own shop clears fill the pile every game (own cause); White discards and Red/Magenta removals add more.
+- Ties: moment "a member goes to the discard pile" (Blue, White); the pile is filled and nothing takes from it (crossings gap). Without White it still works off shop clears.
+- Intuitive: yes, one sentence. Fun: a real choice between shop and pile. Interacts: yes, every discard feeds it. Powerful: medium, a free wider pick. Engine or counter: counters discard engines. Its color: Blue's recruiting, from a new place.
+- Public and certain: the discard pile is face up.
