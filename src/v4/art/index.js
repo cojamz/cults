@@ -178,6 +178,12 @@ for (const [id, name, source] of [
   ['purple.nightmanager', 'Night Managers', 'purple.earlybird'], // Nov 5: Early Birds' place, on its scene until its own is drawn
   ['silver.ballroom', 'Ballroom Dancers', 'silver.benefactor'], ['silver.kingmakers', 'Kingmakers', 'silver.creditors'], ['silver.patronsaints', 'Patron Saints', 'silver.saint'], // Nov 5: silver's three open slots, on these scenes until their own are drawn
   ['trading.moneylender', 'Downsizers', 'trading.raider'], // Nov 5: Raiders' place, on its scene until its own is drawn
+  // Nov 4-5 replacements that took only their old card's small figure: a lone sprite on a blank card in the shop
+  // (picky bot, Nov 8: Picket Line, Foster Parents). They wear the retired card's scene until their own is drawn.
+  ['red.fosterparents', 'Foster Parents', 'red.recruitbonus'], ['purple.picketline', 'Picket Line', 'purple.crew'],
+  ['echo.copyist', 'Copyist', 'echo.roadie'], ['silver.guestofhonor', 'Guest of Honor', 'silver.polisher'],
+  ['yellow.dutycollector', 'Duty Collector', 'yellow.customs'], ['yellow.jack', 'Jack-of-All-Trades', 'yellow.tastemaker'],
+  ['yellow.seamstress', 'Seamstress', 'yellow.harmonist'],
 ]) {
   const art = PORTRAIT.get(source);
   if (art && !PORTRAIT.has(id)) PORTRAIT.set(id, { ...art, id, name });

@@ -114,7 +114,8 @@ const P = {
     // New Blood and Big New Blood (Nov 4): Gather's shape, the condition in line 2
     dilute: r => ({ main: '+2 yellow', second: `+${r + 1} yellow if you recruit a new color`, note: run(n => `+${n + 1}`, 'new color: ') }),
     // Housewarming took Big New Blood's place (Nov 4, overnight quality loop)
-    housewarming: { main: '+2 yellow', second: `free new-color member, up to ${6 + MORE}` },
+    // cap follows the engine (yellow.js: 4 + MORE since the Nov 8 cut to 5); the panel kept 6 + MORE and said 7 (picky bot, Nov 8)
+    housewarming: { main: '+2 yellow', second: `free new-color member, up to ${4 + MORE}` },
     meltingpot: { verb: '+1 of each member color', note: '+2 yellow' },
     makeover: { verb: '+4 yellow, then rearrange all', second: 'into any colors' },
     bloom: r => ({ main: `+${r} yellow`, second: '+1 of each fewest color', note: run(n => `+${n}`, 'yellow: ') }),

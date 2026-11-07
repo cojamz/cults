@@ -80,6 +80,7 @@ describe('panel words (w3)', () => {
     // w4b #5: "A rival's member or its cost" read as "I choose": the rival pays or loses, in line 1
     // shortened to fit on phones (v0.8.8 Magenta, 68c9bf0f): line 1 still says the rival decides, pay or lose
     expect(panelText('thieves', { key: 'ransom' }, 2).verb).toBe(`Rival pays or loses a member costing ${6 + MORE} or less`); // the cap follows every member's price, as the rule text does (picky bot, Nov 6); // the limit too: line 2 dropped on ring III (text audit Nov 1)
+    expect(panelText('yellow', { key: 'housewarming' }, 2).second).toBe(`free new-color member, up to ${4 + MORE}`); // the engine's cap (picky bot, Nov 8: the panel said 7, the card 5)
     expect(panelText('silver', { key: 'largesse' }, 3).verb).toMatch(/^Give rivals 12 silver$/); // Nov 1: "+N per silver" read as per silver you hold
   });
 
