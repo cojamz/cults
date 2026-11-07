@@ -30,6 +30,7 @@ Distilled from `design/decisions.md`, which stays the full log. Check every sugg
 - Shop: one shared deck of every sphere's members, face up 5 in round I, 6 in round II, 7 in round III (Cory, 2026-10-21). Follower cards: 1, 5 or 10 followers for as many resources of any colors, one per recruit, unlimited (code). The game always ends after round III.
 - After each placement you buy one thing: any face-up member, or followers. The deck is far bigger than one game's buys.
 - Everyone's items are public.
+- No drawing from the top of the pile, no randomness, all public information (Cory, Nov 7, repeated many times). Pile-draw cards still live (Walk-In, Peek) are not a model for new ones.
 
 ## How you win
 - Small cults must win: winners with 5 or fewer members take at least 20% of games (Cory, 2026-10-31, the 1.0 bar: "Winning with like <=5 members should be >=20%"). Buying followers has no target ("buying followers doesnt need a guardrail"; the old 25% target is retired).
