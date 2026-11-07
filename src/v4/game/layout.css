@@ -476,3 +476,24 @@
 @media (prefers-reduced-motion:reduce){.lt .say-sub[data-brief]{animation-duration:.01s}}
 .lt > .lt-seat > .seat-stolen[data-brief]{animation:brief-out .4s ease-out 6s forwards}
 .results .row-btns .save-note,.row-btns .save-note{flex-basis:100%;margin:2px 0 0;text-align:right}
+
+/* the menu (How to play, the log, speed, sound, Leave) stands in a corner of the screen, off the question line (Cory,
+   Nov 7: "we should move the settings menu. probably bottom or top right"). From 1200px up: the bottom right, under
+   the shop's member cards (the top right holds the shop's own toggles); the list opens upward. The shop column keeps
+   its foot clear for it. 861–1199px: the top right, with the story's Log button stepping left of it. */
+@media (min-width:861px) and (min-height:500px){
+  .app.game.lt .lt-menu{position:fixed;transform:none;z-index:63}
+  /* the menu lives in the prompt's box: the prompt stands above the shop (both z 3) so the glyph over the shop's foot
+     takes its clicks, and it no longer holds 48px at its right for the glyph */
+  .app.game.lt > header.bar.lt-prompt{z-index:4;padding-right:0}
+  .app.game.lt .lt-menu:has(.menu-list){z-index:70}
+}
+@media (min-width:1200px) and (min-height:500px){
+  .app.game.lt .lt-menu{right:18px;bottom:10px;top:auto}
+  .app.game.lt .lt-menu .menu-list{top:auto;bottom:52px}
+  .app.game.lt > .lt-shop{padding-bottom:52px;box-sizing:border-box}
+}
+@media (min-width:861px) and (max-width:1199px) and (min-height:500px){
+  .app.game.lt .lt-menu{right:12px;top:8px}
+  .app.game.lt > .lt-since .since-head{padding-right:52px;min-height:44px}
+}
