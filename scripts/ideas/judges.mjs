@@ -209,7 +209,8 @@ function report() {
   for (const name of [...cands].sort()) {
     const r = rows[name] || [];
     const S = r.map(x => x.s).filter(x => x != null), F = r.map(x => x.f).filter(x => x != null);
-    const split = r.length >= 3 && (sd(F) >= 1.2 || sd(S) >= 1.2 || Math.max(...F) - Math.min(...F) >= 3);
+    // split: a real disagreement, not one outlier among many ratings (the fun range only counts below 8 ratings)
+    const split = r.length >= 3 && (sd(F) >= 1.2 || sd(S) >= 1.2 || (r.length < 8 && Math.max(...F) - Math.min(...F) >= 3));
     // repeat games (same deal, fresh judges): does the card's fun hold up between the original and the repeat?
     const reps = r.filter(x => x.rep), orig = r.filter(x => !x.rep && reps.some(y => y.rep === x.g));
     const repeatGap = reps.length && orig.length ? Math.abs(avgOf(reps, 'f') - avgOf(orig, 'f')) : null;
