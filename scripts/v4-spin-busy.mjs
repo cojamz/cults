@@ -16,7 +16,7 @@ const argv = process.argv.slice(2);
 const flag = (n, d) => { const a = argv.find(x => x.startsWith(`--${n}=`)); return a ? a.slice(n.length + 3) : d; };
 const base = argv.find(a => !a.startsWith('--')) || 'http://localhost:5291';
 const DRAG = argv.includes('--drag');
-const CPU = Number(flag('cpu', 4)), SPINS = Number(flag('spins', 12)), SHOTS = flag('shots', '');
+const ROUND = Number(flag('round', 0)), CPU = Number(flag('cpu', 4)), SPINS = Number(flag('spins', 12)), SHOTS = flag('shots', '');
 if (SHOTS) mkdirSync(SHOTS, { recursive: true });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -50,6 +50,8 @@ await page.addInitScript(() => {
     }, 0);
   });
 });
+// --css="<rules>": a stylesheet on every page, to find which piece a spin is paying for
+if (flag('css', '')) await page.addInitScript(css => { addEventListener('DOMContentLoaded', () => { const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st); }); }, flag('css', ''));
 await page.goto(`${base}/?intro=0`);
 await page.click('[data-home="local"]');
 await page.click('[data-start]');
@@ -59,13 +61,23 @@ const shotQ = [];
 let spins = 0, guard = 0;
 if (cdp) await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 60, everyNthFrame: 1 });
 const clock0 = await page.evaluate(() => [performance.now(), performance.timeOrigin]);
-while (spins < SPINS && guard++ < 400) {
+while (spins < SPINS && guard++ < 20000) {
   // your turn: a starting choice or a lit space; place and pass the buy
   const opt = await page.$('.prompt.choice button[data-option]:not([disabled])');
   if (opt) { await opt.click().catch(() => {}); await sleep(300); continue; }
   const lit = await page.$('.slot.can .base');
   if (lit) { await lit.click({ force: true }).catch(() => {}); await sleep(500); const done = await page.$('[data-done], button[data-pass]'); if (done) await done.click().catch(() => {}); await sleep(200); continue; }
   const any = await page.$('.prompt button:not([disabled])');
+  // --round=N: spin only on rivals' turns from round N on (the cloak draft before round I is the lightest table)
+  const late = await page.evaluate(() => { const e = document.querySelector('.app.game'); return e ? [Number(e.dataset.round) || 0, e.dataset.yours] : [0, null]; });
+  if (late[0] < ROUND || (ROUND && late[1] === '1')) {
+    // getting there: any offered option (the deep probe's driver), passing every sixth try, else the round's next button
+    const pass = guard % 6 === 5 ? await page.$('[data-option="pass"]:not([disabled])') : null;
+    const els = pass ? [pass] : await page.$$('.lt-wheel [data-slot][data-option], [data-option]:not([data-slot])');
+    if (els.length) await els[(guard * 7) % els.length].click({ timeout: 1500 }).catch(() => {});
+    else { const b = await page.$('[data-next-round], .round-end button, button.primary'); if (b) await b.click({ timeout: 800 }).catch(() => {}); else if (any) await any.click().catch(() => {}); }
+    await sleep(150); continue;
+  }
   const busy = await page.evaluate(() => document.getAnimations().filter(a => a.playState === 'running' && !(a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('.stage'))).length);
   if (busy > 0) {
     if (DRAG) {
@@ -118,6 +130,7 @@ if (SHOTS && DRAG && drags && drags.length) {
   // the worst spin's frames, key to landing
   const w = rows.slice().sort((a, b) => b.land - a.land)[0];
   const r = runs.filter(x => !x.none && x.animStart != null)[rows.indexOf(w)];
+  if (!r) { await browser.close(); process.exit(1); }
   let k = 0;
   for (const [t, data] of shotQ) { const at = t - origin; if (at >= r.ev - 20 && at <= r.ev + w.land + 120) writeFileSync(`${SHOTS}/${String(k++).padStart(2, '0')}-${Math.round(at - r.ev)}ms.jpg`, Buffer.from(data, 'base64')); }
   writeFileSync(`${SHOTS}/result.json`, JSON.stringify(out, null, 1));
