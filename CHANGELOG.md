@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.679 — 2026-11-07
+
+- Cleaner turns: a hover card no longer pops up after a click or stays over the space you just took; the shop keeps its order through a round; payments fly as −N; a seat's member count waits for its card; follower chips clear each turn
+
 ## v0.99.678 — 2026-11-07
 
 - The menu now sits in the bottom right corner of the screen (top right on narrower laptops)
