@@ -760,7 +760,11 @@ export default {
         try { extraMinion(ctx, owner, 'Tagalongs'); } finally { delete ctx.state.tagalong; }
       },
     })),
-    m('bouncer', 'Bouncers', 1, 2, 'On Recruit: the next two rivals’ turns are skipped.', { f: 2, ...old5,
+    // Latecomers: Bouncers' place (Cory, Nov 7: "Yes"; his ask: "a purple that gives the go last token"). Same price as Bouncers.
+    m('latecomers', 'Latecomers', 1, 2, 'On Recruit: take the Goes Last token: your next minion is placed after everyone else’s.', { f: 2,
+      onRecruited(ctx, owner) { toToken(ctx, owner, 1, 'Latecomers'); },
+    }),
+    m('bouncer', 'Bouncers', 1, 2, 'On Recruit: the next two rivals’ turns are skipped.', { f: 2, ...old5, // cut Nov 7 (cull.js): Latecomers takes its place (Cory, "Yes")
       // the next two turns that belong to rivals; your own turn between them still happens (Cory's yes)
       onRecruited(ctx, owner) {
         const q = ctx.state.queue, end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');

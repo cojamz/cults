@@ -125,7 +125,7 @@ const coachable = (ctx, p) => ctx.membersOf(p).filter(c => c.freeTurn !== ctx.tu
   && [c.def, c.copy && ctx.defOf(c.copy)].some(d => d?.activate && d.onActivate));
 const members = [
   // Party Crasher (was Squatter; id kept for old records): Cory, 2026-10-28, Once per game, cheaper; 5 with the +1 wild (Cory, Nov 1: "5"; was 4)
-  m('squatter', 'Party Crasher', 'thieves', 2, 2, 'On Use, once per game: your next minion can be placed on a space a rival already took.', { // still joins in round I at 5, so grey keeps 4 (Claude's fill-in)
+  m('squatter', 'Party Crasher', 'thieves', 2, 2, 'On Use, once per game: your next minion can be placed on a space a rival already took.', { // cut Nov 7 (cull.js): Scouts takes its place (Cory, "Yes") // still joins in round I at 5, so grey keeps 4 (Claude's fill-in)
     activate: 'game',
     onActivate(ctx, owner, card) {
       if (owner.crashNext) { card.used = false; return; }
@@ -319,7 +319,7 @@ const members = [
     botActivate: (ctx, p) => anarchyPairs(ctx, p).some(([a, b]) => gainFor(ctx, p, a, b) >= 2),
   }),
   // Cory, 2026-10-28: Scout, 4, once per round (it stands in for Blue's shop work)
-  m('scout', 'Scouts', null, 0, 2, 'On Use, once per round: send any shop members to the discard pile, then refill.', { f: 2, n: 2, retired: true, // Spoilsport takes its place (Claude, under Cory's "use your judgement", 2026-11-03); worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
+  m('scout', 'Scouts', null, 2, 2, /* Party Crasher's price (Claude, Nov 7) */ 'On Use, once per round: send any shop members to the discard pile, then refill.', { f: 2, n: 2, // back in Party Crasher's place (Cory, Nov 7: "Yes"); earlier Spoilsport took its place (Claude, under Cory's "use your judgement", 2026-11-03); worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
     activate: 'round',
     onRoundStart(ctx, owner, card) { card.used = false; },
     onActivate(ctx, owner, card) {

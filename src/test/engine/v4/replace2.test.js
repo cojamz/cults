@@ -29,7 +29,7 @@ describe('REPLACE2: the switch', () => {
     expect(price('silver.fundraisers')).toEqual([6, 4, 2]);
     expect(price('silver.hushmoney')).toEqual([4, 3, 1]);
     expect(price('benders.spoilsports')).toEqual([0, 7, 1]);
-    for (const id of ['red.twins', 'echo.wallflower', 'thieves.desperado', 'market.shopaholic', 'yellow.ringleader', 'silver.gala', 'silver.smoothtalker', 'benders.scout'])
+    for (const id of ['red.twins', 'echo.wallflower', 'thieves.desperado', 'market.shopaholic', 'yellow.ringleader', 'silver.gala', 'silver.smoothtalker'])
       expect(defById(id).retired).toBe(true);
   });
 });

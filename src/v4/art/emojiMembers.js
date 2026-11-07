@@ -65,6 +65,7 @@ const M = {
   'picket-line': ['✊', '♾️ A rival takes a Purple space: +1 purple'],
   'early-birds': ['🐦', '♾️ Your turns can’t be skipped'],
   bouncers: ['🚫', '✨ Skip the next two rivals’ turns'],
+  latecomers: ['🛌', '✨ Take the Goes Last token'],
   'shift-crew': ['👷', ''],
   timekeeper: ['⏳', '🏁 +1 follower per 3 purple'],
   clockmakers: ['🕰️', '🌅 Take your first two turns in a row'],

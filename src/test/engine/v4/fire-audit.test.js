@@ -85,7 +85,9 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
   // deck, went silent when the Oct 25 member deck changes moved the games; cards-market-concepts and cards-echo cover their lines.
   // (Translator, like Wallflower, names itself only when its owner copies resources; held 3 games without a copy after
   // the +1 wild on every member, Oct 27, moved the games. cards-echo covers it.)
-  const QUIET_RESTRICTIONS = new Set(['echo.agents', 'trading.cashier', 'echo.doppel', 'market.makeover', 'echo.wallflower', 'echo.translator',
+  const QUIET_RESTRICTIONS = new Set([
+  'market.blackmarket', // cut card; Scouts and Latecomers (Nov 7) moved the seeded games: held in 4 without a turn to use it; cards-market (Black Market) covers it
+'echo.agents', 'trading.cashier', 'echo.doppel', 'market.makeover', 'echo.wallflower', 'echo.translator',
     'market.snob', // Snobs pays only for blue members at game end; Shoplifter 7 and Heiresses 9 (Oct 30) moved the games so its owners had none. cards-market covers it
     'echo.bait', // Bait pays only when a rival copies its owner's space; the Nov 3 live replacements moved the games so its 3 holders were never copied. green-bait-trading covers it
     'market.sommelier', // Sommelier (cut) pays only when its owner recruits a blue member; every member +1 (Nov 5) moved the games so its 4 holders never did. cards-market covers it
@@ -149,6 +151,8 @@ const SPHERES = ['gold', 'red', 'purple', 'silver', 'yellow'];
 // Members that may stay unnamed on bot tables, with why (see design/eval/card-ledger-a.md).
 // Conditional cards that can go a whole bot game without their condition; each has a named test of its own.
 const ALLOW = {
+  // Scouts and Latecomers (Nov 7) moved the seeded games: recruited in 2, never named there
+  'gold.thrift': 'Gold is parked; cards-gold.test.js (Penny Pincher) covers it',
   // Sweet Nothings in Potluck's place (Nov 6) moved the seeded games: recruited in 1, and no rival recruited its color after
   'yellow.dutycollector': 'pays only when a rival recruits a color you have a member of (dutycollector-live.test.js)',
   // Victors leaving the grey deck (Nov 6) moved the seeded games: recruited in 5 without placing the round's last minion

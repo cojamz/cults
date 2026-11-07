@@ -23,6 +23,7 @@ export const CUT = new Set([
   'thieves.mole', 'thieves.lightfingers', 'thieves.bigscore', 'thieves.lookout',
   'trading.lender', 'trading.tipster', 'trading.dealer', 'trading.pawnbroker', 'trading.liquidator',
   'trading.safetynet', 'trading.magnate', 'trading.shareholder', 'trading.reinvestor', // Cory, 2026-10-22: his White set of 12
+  'benders.squatter', 'purple.bouncer', // Cory, Nov 7 ("Yes"): Scouts and Latecomers take their places
   'benders.insider', 'benders.straggler', // Straggler: Cory, 2026-10-28, to the bench (design/bench.md)
   // Cory, Nov 5 backlog ("Yes to the member changes"): his cut list from the member notes; replacements are his pick
   'thieves.grifter', 'thieves.cutpurse', 'yellow.drifters', /* Counterfeiters in its slot, Nov 5 */ 'market.doorman', /* Power Shoppers in its slot, Nov 5 */ 'silver.charityball', 'silver.creditors', 'silver.hostesses', 'yellow.ringleader',
