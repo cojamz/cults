@@ -374,3 +374,5 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - Cory on #4 (recruits cost 1 less per same-color member): no, "i don't like members getting 'cheaper' - it's hard to track in a live game." (verdicts #23)
 - Cory: two-for-one swap (either way) "let's keep that in our pocket". Asked for more Red × Blue ties, not tied to today's actions or members.
 - Third list sent: sell a member back to the shop; lend a member until round end; buy a rival's member by paying them its cost; swap only with a bigger cult; shop in color rows.
+- Cory on the third list: "these aren't really blue and red interactions. they already inherently interacr.." Lesson: an interaction is one color's verb aimed at or paid by the other's contest (count vs one-color depth), not a generic shop or cult mechanic.
+- Fourth list sent: crossed ties; Blue double recruit of one color; Red whole-color swap; Blue clear paid by the deepest group's color.
