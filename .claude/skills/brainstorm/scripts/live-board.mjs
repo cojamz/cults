@@ -2,6 +2,7 @@
 // read straight from the engine, so a pitch starts from what's live, not from docs that lag.
 // Usage: node .claude/skills/brainstorm/scripts/live-board.mjs [sphere ...] [--members]
 import { quadrant, allQuadrantIds } from '../../../../src/engine/v4/index.js';
+import { scoringOf } from '../../../../src/engine/v4/core.js';
 import { CUT } from '../../../../src/engine/v4/content/cull.js';
 import { guestMembers } from '../../../../src/engine/v4/content/index.js';
 
@@ -17,7 +18,11 @@ for (const id of ids) {
   let q;
   try { q = quadrant(id); } catch { console.log(`? ${id}: not a sphere`); continue; }
   console.log(`\n## ${q.name} (${id}) · resource: ${q.resource}`);
-  if (q.contest || q.scoring) console.log(`contest: ${JSON.stringify(q.contest?.text ?? q.contest?.label ?? q.scoring?.text ?? q.contest ?? q.scoring)}`);
+  // the contest every game plays (By color since Nov 7), not the printed one on the sphere
+  let live = null;
+  try { live = scoringOf({ rules: { contests: 'byColor' }, quadrants: ids }, id); } catch { /* fall back to the printed contest */ }
+  const c = live || q.contest || q.scoring;
+  if (c) console.log(`contest (By color): ${c.label}${c.counts ? ` — counts ${c.counts}` : ''}`);
   for (const a of [...q.actions].sort((x, y) => x.ring - y.ring)) console.log(`  ${ROMAN[a.ring] || a.ring}  ${a.name}: ${a.text}`);
   if (showMembers) for (const m of q.members.filter(m => !CUT.has(m.id) && !m.retired)) console.log(`    · ${m.name} [${card(m, q.resource)}] ${m.text ?? ''}`);
 }

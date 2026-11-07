@@ -12,6 +12,8 @@ Cory designs Cults; Claude brings ideas he can react to. Most of his nos trace b
 3. **It's arithmetic, not a design**: a formula on your own pile, or a small tweak to a live card.
 4. **It's not what he asked for**: a generic mechanic offered as a color interaction, the colors' existing overlap restated, or something he already refused.
 
+**Judge each idea against the bar, not against a card it might replace.** Cory wants many, many new cards and actions; the question is whether this one meets the bar (the six principles, the paper test, his verdicts), not whether it beats a specific live card (Cory, Nov 7: "i don't think we should focus on particular card replacements, just generally is the card or action we are testing meeting our bar, not is it better than something"). Don't map ideas to slots unless he asks for a slot.
+
 He is in a live conversation, so a pitch takes minutes, never a quoted half hour. Speed comes from reading the game once per thread, never from skipping the paper test below.
 
 ## Workflow
@@ -45,7 +47,7 @@ Write down, in a few lines:
 - **The color's contest** and what its player is trying to do. Cory designs each color from its contest ("what do you want to be doing and what's getting rewarded from your color"), so ideas grow from it.
 - **His sentence for the color**, in his words if he has said one (Yellow: "rewards going broad… translate currencies"), and **the round III action** earlier slots build toward. If either is missing, ask him that one question and pitch nothing else; an identity invented from the color's name has failed every time.
 - **The slot**: color, round, and the spaces around it, quoted.
-- **The bar**: the strongest reworked space in the same round, with its total. Equal or better, with a different side effect, or it loses.
+- **The strength band**: the strongest reworked space in the same round, with its total, as a yardstick for size (design-core.md section 5). It sizes the idea; it isn't a card to beat.
 - **His gist**, if he gave one. Ideas grown from his own words land far more often than ideas from nowhere.
 
 For a color pair, frame both contests and the moments each color causes instead (color-interactions.md section 4).
@@ -66,7 +68,7 @@ Choices: <each "you choose" / "a rival chooses", played from the chooser's side>
 Who feels it: <a sting, a gift, a reason to block, or nothing>.
 Ties to other colors: <the shared moment, and that it still works in a game without each of them>.
 Intuitive: / Fun: / Interacts: / Powerful: / Engine or counter: / Its color:  (one line each)
-Judged: <design/notes/card-judging-v2-2026-11-07.md and design/eval/card-judging/taste-guide.md, against keeping the current card>
+Meets the bar: <design/notes/card-judging-v2-2026-11-07.md and design/eval/card-judging/taste-guide.md: does it clear our bar on its own; the taste guide's pattern 1, "the current card stays", is for reviews of live cards, not new ideas>
 ```
 
 Why each line matters:
@@ -101,7 +103,7 @@ Cults must work on a physical tabletop, so these hold for every idea:
 - **Everything public and certain**: no drawing from the top of the pile, no randomness, no hidden cards. He has said this many times.
 - **A space finishes when taken.** "Whenever…", "this round" and "at round end" belong on members, where the card in front of you is the reminder.
 - **Nothing to remember**: no running discounts on member prices, no per-space bonuses, nothing that reads as counting past events.
-- **No decisions on another player's turn**; payoffs that fire on anyone's move are fine.
+- **Avoid decisions on another player's turn.** It's a rule to bend only when it really makes sense, and the pitch says why; payoffs that fire on anyone's move with no decision are fine. Usually "on your turn" or a Round Start fixes it (Cory, Nov 7: "a rule we can bend occasionally but should avoid unless it really makes sense").
 - **No new tokens** (they come from him; the Goes Last token is the only one).
 - **No card that names or needs another color's mechanic**, since colors rotate between games. Colors meet through shared pieces.
 - **Ties are the obvious ones** a table guesses without a rulebook.

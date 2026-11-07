@@ -8,7 +8,7 @@ Chat threads don't load the /brainstorm skill, so read .claude/skills/brainstorm
 4. **Who at the table feels it**: a sting, a gift, a reason to block, or nothing. Nothing means cut.
 5. **Not already refused**: check design/pitch-ledger.md for this color and verdicts.md. Same shape counts as the same idea.
 
-6. **Judged like his marks**: run it through design/notes/card-judging-v2-2026-11-07.md and design/eval/card-judging/taste-guide.md in writing, the current card as the default and "none of these" allowed, and play it at the table's real state that round (round I: most players hold 0 or 1 members). (Cory, Nov 8: "your ideas were fucking awful there its like you applied none of what we learned.")
+6. **Judged like his marks**: run it through design/notes/card-judging-v2-2026-11-07.md and design/eval/card-judging/taste-guide.md in writing, judged against the bar on its own (not against a card it would replace; Cory, Nov 7) with "none of these" allowed, and play it at the table's real state that round (round I: most players hold 0 or 1 members). (Cory, Nov 8: "your ideas were fucking awful there its like you applied none of what we learned.")
 
 7. **Public and certain**: no drawing from the top of the pile, no randomness, no hidden cards; everything a player could use is public (Cory, Nov 7, said many times: "i don't like drawing from the top of the pile. i don't like randomness. In general the game should be all public information."). presend bounces it.
 
