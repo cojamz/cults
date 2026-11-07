@@ -6,7 +6,7 @@ import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming, passBuys } from './cards-helpers.js';
 import { usePool, price } from './pool-helpers.js';
 
-usePool(['thieves.safecrackers', 'market.repomen', 'market.repossessors', 'benders.mercenaries', 'benders.hiredguns', 'purple.seatswappers'],
+usePool(['thieves.safecrackers', 'market.bailiffs', 'market.repossessors', 'benders.mercenaries', 'benders.hiredguns', 'purple.seatswappers'],
   ['purple.switchplaces']);
 const named = (s, name) => linesNaming(s.log, name);
 const total = r => Object.values(r).reduce((a, b) => a + b, 0);
@@ -27,8 +27,8 @@ describe('Safecrackers (Magenta)', () => {
   });
 });
 
-describe('Repo Men and Repossessors (Blue)', () => {
-  for (const [id, name, cap, every] of [['market.repomen', 'Repo Men', 5, 'round'], ['market.repossessors', 'Repossessors', 8, 'game']]) {
+describe('Bailiffs and Repossessors (Blue)', () => {
+  for (const [id, name, cap, every] of [['market.bailiffs', 'Bailiffs', 5, 'round'], ['market.repossessors', 'Repossessors', 8, 'game']]) {
     it(`On Use, once per ${every}: put a rival's member costing up to ${cap} into the shop`, () => {
       let s = sceneQ({ quadrants: ['market', 'gold', 'red', 'thieves'], members: [[id]], res: [{ gold: 30, blue: 30, red: 30, magenta: 30 }] });
       const cheap = s.pile.find(u => price(s, u) <= cap), dear = s.pile.find(u => price(s, u) > cap);

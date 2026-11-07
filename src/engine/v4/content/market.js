@@ -435,7 +435,7 @@ const market = {
   ],
 
   handlers: {
-    // pool 13: Repo Men / Repossessors
+    // pool 13: Bailiffs / Repossessors
     repo(ctx, p, uid, data) {
       const o = ctx.ownerOf(uid);
       if (!o || o === p) return;
@@ -695,7 +695,7 @@ const market = {
     // idea pipeline pool 13 (Nov 7): a rival's member (printed cost) goes face up into the shop row as Yard Sale's do, wiped
     // clean as any member back in the shop; anyone recruits it as usual, its owner included. Not a steal (members are
     // moved, as Lie Low's ruling allows). Prices fill-ins.
-    ...[['repomen', 'Repo Men', 'round', 5], ['repossessors', 'Repossessors', 'game', 8]].map(([key, name, every, cap]) => pool(m(key, name, 3, 2,
+    ...[['bailiffs', 'Bailiffs', 'round', 5], ['repossessors', 'Repossessors', 'game', 8]].map(([key, name, every, cap]) => pool(m(key, name, 3, 2,
       `On Use, once per ${every}: put a rival's member costing up to ${cap} into the shop.`, {
         activate: every,
         ...(every === 'round' ? { onRoundStart(ctx, owner, card) { card.used = false; } } : {}),
@@ -1155,7 +1155,7 @@ const market = {
   ],
 };
 
-/** Repo Men (pool 13): rivals' members costing up to cap, as printed. */
+/** Bailiffs (pool 13): rivals' members costing up to cap, as printed. */
 function repoList(ctx, p, cap) {
   return ctx.rivals(p).flatMap(o => ctx.membersOf(o).filter(c => c.def.s + c.def.w <= cap).map(c => ({ c, o })));
 }
