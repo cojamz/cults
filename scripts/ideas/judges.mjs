@@ -8,6 +8,7 @@
 //                                                             write briefs, print one line per seat to launch
 //   status [--stale 20]                                       every judge game: round, whose turn, postgames, STALLED
 //                                                             when no move for --stale minutes (relaunch that seat)
+//   repeat <game dir> [--set k]                               the same deal again with fresh judges (consistency check)
 //   report [--out dir]                                        every candidate card: judges' ratings beside the live
 //                                                             cards in the same games, spread, and where judges split
 //
@@ -104,10 +105,10 @@ function feelLines(text) {
     const num = t => { const x = (t || '').match(/\d/); return x ? +x[0] : null; };
     const name = parts[0].replace(/\s*\(.*\)$/, '');
     const fitPart = parts.find((p, i) => i > 0 && /\b(yes|no|unsure)\b/i.test(p) && !/\d/.test(p.replace(/fits/i, '')));
-    const inter = parts.find(p => /interact/i.test(p));
-    const nums = parts.slice(1).filter(p => /^\D{0,30}\d\b/.test(p) && !/interact/i.test(p));
+    const inter = parts.find(p => /interact/i.test(p)), clear = parts.find(p => /^clear/i.test(p));
+    const nums = parts.slice(1).filter(p => /^\D{0,30}\d\b/.test(p) && !/interact|^clear/i.test(p));
     out.push({ name, s: num(nums[0]), f: num(nums[1]), fit: fitPart ? fitPart.toLowerCase().match(/yes|no|unsure/)[0] : '?',
-      i: inter ? num(inter) : null, why: parts.slice(-1)[0].slice(0, 220) });
+      i: inter ? num(inter) : null, c: clear ? num(clear) : null, why: parts.slice(-1)[0].slice(0, 220) });
   }
   return out;
 }
@@ -115,45 +116,87 @@ const mean = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
 const sd = a => { const m = mean(a); return a.length > 1 ? Math.sqrt(mean(a.map(x => (x - m) ** 2))) : 0; };
 const f1 = x => x == null ? '-' : x.toFixed(1);
 
+// Calibration: live cards Cory has said he likes or dislikes (design/eval/card-judging/taste-guide.md). Judges who rate
+// the liked ones above the disliked ones are reading the game the way he does; the report says how often they do.
+const CORY_LIKES = ['Build Up', 'Courier', 'Grifter', 'Loyalists', 'Patron Saints', 'Promote', 'Demote', 'Sweet Nothings', 'Trade Seeds', 'Party Favors', 'High Tide', 'Rising Tide', 'Top Up'];
+const CORY_DISLIKES = ['Encore', 'Open Door', 'Potluck', 'Rush Hour', 'Crunch Time'];
+const score = x => x.f == null ? null : (x.f + (x.s ?? x.f)) / 2;
+
 function report() {
-  const rows = {}, cands = new Set(), gamesUsed = [];
+  const rows = {}, cands = new Set(), gamesUsed = [], judges = {};
   for (const dir of games()) {
     const meta = readJson(path.join(dir, 'meta.json'));
     if (!meta.pool || !Object.keys(meta.post || {}).length) continue;
-    gamesUsed.push(path.basename(dir));
+    const g = path.basename(dir);
+    gamesUsed.push(g);
     const rec = meta.pool.record;
     const mine = new Set([...rec.members, ...rec.spaces.map(s => s.in.split(': ')[1])]);
     mine.forEach(c => cands.add(c));
     for (const [seat, t] of Object.entries(meta.post)) {
-      for (const r of feelLines(t)) (rows[r.name] ??= []).push({ ...r, g: path.basename(dir), who: meta.names[seat], cand: mine.has(r.name) });
+      const who = `${g}/${meta.names[seat]}`;
+      for (const r of feelLines(t)) {
+        (rows[r.name] ??= []).push({ ...r, g, rep: meta.repeatOf || null, who: meta.names[seat], cand: mine.has(r.name) });
+        (judges[who] ??= []).push(r);
+      }
     }
   }
+  // calibration per judge: mean of liked live cards above mean of disliked ones?
+  const cal = Object.entries(judges).map(([who, rs]) => {
+    const like = rs.filter(r => CORY_LIKES.includes(r.name)).map(score).filter(x => x != null);
+    const dis = rs.filter(r => CORY_DISLIKES.includes(r.name)).map(score).filter(x => x != null);
+    return { who, like: mean(like), dis: mean(dis), agrees: like.length && dis.length ? mean(like) > mean(dis) : null };
+  });
+  const calN = cal.filter(c => c.agrees != null), calOk = calN.filter(c => c.agrees).length;
   const liveR = Object.entries(rows).filter(([k]) => !cands.has(k)).flatMap(([, r]) => r);
-  const base = { s: mean(liveR.map(r => r.s).filter(x => x != null)), f: mean(liveR.map(r => r.f).filter(x => x != null)), i: mean(liveR.map(r => r.i).filter(x => x != null)) };
-  const out = { games: gamesUsed, live: base, cards: [] };
+  const avgOf = (rs, k) => mean(rs.map(r => r[k]).filter(x => x != null));
+  const base = { s: avgOf(liveR, 's'), f: avgOf(liveR, 'f'), i: avgOf(liveR, 'i'), c: avgOf(liveR, 'c'),
+    likes: avgOf(liveR.filter(r => CORY_LIKES.includes(r.name)), 'f'), dislikes: avgOf(liveR.filter(r => CORY_DISLIKES.includes(r.name)), 'f') };
+  const out = { games: gamesUsed, live: base, calibration: { judges: calN.length, agree: calOk, rows: cal }, cards: [] };
   for (const name of [...cands].sort()) {
     const r = rows[name] || [];
-    const S = r.map(x => x.s).filter(x => x != null), F = r.map(x => x.f).filter(x => x != null), I = r.map(x => x.i).filter(x => x != null);
+    const S = r.map(x => x.s).filter(x => x != null), F = r.map(x => x.f).filter(x => x != null);
     const split = r.length >= 3 && (sd(F) >= 1.2 || sd(S) >= 1.2 || Math.max(...F) - Math.min(...F) >= 3);
-    out.cards.push({ name, n: r.length, games: [...new Set(r.map(x => x.g))].length, strategic: mean(S), fun: mean(F), interacts: mean(I),
+    // repeat games (same deal, fresh judges): does the card's fun hold up between the original and the repeat?
+    const reps = r.filter(x => x.rep), orig = r.filter(x => !x.rep && reps.some(y => y.rep === x.g));
+    const repeatGap = reps.length && orig.length ? Math.abs(avgOf(reps, 'f') - avgOf(orig, 'f')) : null;
+    out.cards.push({ name, n: r.length, games: [...new Set(r.map(x => x.g))].length, strategic: mean(S), fun: mean(F), interacts: avgOf(r, 'i'), clear: avgOf(r, 'c'),
       fits: { yes: r.filter(x => x.fit === 'yes').length, no: r.filter(x => x.fit === 'no').length, unsure: r.filter(x => x.fit === 'unsure').length },
-      sdFun: sd(F), sdStrategic: sd(S), split, clauses: r.map(x => `${x.g} ${x.who} (${x.s}/${x.f}${x.i != null ? '/' + x.i : ''}, ${x.fit}): ${x.why}`) });
+      sdFun: sd(F), sdStrategic: sd(S), split, repeatGap,
+      clauses: r.map(x => `${x.g} ${x.who} (strategic ${x.s}, fun ${x.f}${x.i != null ? ', interacts ' + x.i : ''}${x.c != null ? ', clear ' + x.c : ''}, fits ${x.fit}): ${x.why}`) });
   }
   const L = ['# Judge games: candidate cards beside the live cards in the same games', '',
     `Games with postgames: ${gamesUsed.join(', ') || 'none yet'}.`,
-    `Live cards in these games average strategic ${f1(base.s)}, fun ${f1(base.f)}, interacts ${f1(base.i)} (1 to 5).`, '',
-    'card | ratings (games) | strategic | fun | interacts | fits y/n/? | judges split?'];
-  for (const c of out.cards) L.push(`${c.name} | ${c.n} (${c.games}) | ${f1(c.strategic)} | ${f1(c.fun)} | ${f1(c.interacts)} | ${c.fits.yes}/${c.fits.no}/${c.fits.unsure} | ${c.split ? 'SPLIT' : c.n < 3 ? 'too few' : 'agree'}`);
+    `Live cards in these games: strategic ${f1(base.s)}, fun ${f1(base.f)}, interacts ${f1(base.i)}, clear ${f1(base.c)} (1 to 5). Cards Cory likes average fun ${f1(base.likes)}; cards he dislikes ${f1(base.dislikes)}.`,
+    `Calibration: ${calOk} of ${calN.length} judges who rated both rated Cory's liked live cards above his disliked ones.`, '',
+    'card | ratings (games) | strategic | fun | interacts | clear | fits y/n/? | agreement'];
+  for (const c of out.cards) L.push(`${c.name} | ${c.n} (${c.games}) | ${f1(c.strategic)} | ${f1(c.fun)} | ${f1(c.interacts)} | ${f1(c.clear)} | ${c.fits.yes}/${c.fits.no}/${c.fits.unsure} | ${c.split ? 'SPLIT: tiebreak' : c.n < 3 ? 'too few' : 'agree'}${c.repeatGap != null ? `; repeat gap ${f1(c.repeatGap)}` : ''}`);
   L.push('');
   for (const c of out.cards) { L.push(`## ${c.name}`); for (const x of c.clauses) L.push(`- ${x}`); if (!c.clauses.length) L.push('- not rated by anyone (dealt but never weighed)'); L.push(''); }
+  L.push('## Calibration by judge', '', ...cal.map(c => `- ${c.who}: liked ${f1(c.like)}, disliked ${f1(c.dis)}${c.agrees == null ? '' : c.agrees ? ', agrees' : ', DISAGREES'}`));
   const dir = flag('out', BASE);
   fs.writeFileSync(path.join(dir, 'judges.md'), L.join('\n'));
   fs.writeFileSync(path.join(dir, 'judges.json'), JSON.stringify(out, null, 1));
-  console.log(L.slice(0, 6 + out.cards.length).join('\n'));
+  console.log(L.slice(0, 7 + out.cards.length).join('\n'));
+}
+
+// repeat <game dir>: the same deal (seed, colors, players, candidates) with fresh judges, to catch judges who don't
+// repeat themselves. The repeat's meta.json carries repeatOf so the report compares the two.
+async function repeat() {
+  const src = path.resolve(args[1]);
+  const meta = readJson(path.join(src, 'meta.json'));
+  const wt = fs.readdirSync('/home/user/judge-wt').map(d => `/home/user/judge-wt/${d}`).sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs)[0];
+  const dir = `${src}-r`;
+  sh('node', ['scripts/v4-expert.mjs', 'new', dir, '--colors', meta.colors.join(','), '--names', meta.names.join(','), '--pool', meta.pool.keys, '--seed', String(meta.seed)], { cwd: wt, env: { ...process.env, DECK: '10' } });
+  const m2 = readJson(path.join(dir, 'meta.json')); m2.repeatOf = path.basename(src);
+  fs.writeFileSync(path.join(dir, 'meta.json'), JSON.stringify(m2));
+  sh('node', ['scripts/v4-expert.mjs', 'brief', dir, '--feel', '--set', String((Number(flag('set', 0)) + 1) % 3)], { cwd: wt });
+  console.log(`${dir}: repeat of ${path.basename(src)} from ${wt}; briefs:`);
+  for (const n of meta.names) console.log(path.join(dir, `brief-${n}.md`));
 }
 
 const cmd = args[0];
 if (cmd === 'plan') await plan();
 else if (cmd === 'status') status();
 else if (cmd === 'report') report();
+else if (cmd === 'repeat') await repeat();
 else console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1, 15).join('\n'));
