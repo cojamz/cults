@@ -64,6 +64,20 @@ describe('Bargain Bin', () => {
   });
 });
 
+describe('Bargain Bin on a grey member', () => {
+  // picky bot, Nov 8: "+1 of which color (grey is wild)?" read like silver, and never said which member made you choose
+  it('names the grey member in its question', () => {
+    let s = table(Q, { members: [['market.doorman'], ['benders.cheerleader']], shop: ['red.host'], ...buy() });
+    const art = Math.max(...Object.keys(s.cards).map(Number)) + 1;
+    s.cards[art] = { uid: art, def: 'market.bargainbin' }; s.players[0].artifact = art;
+    s.current = 0;
+    s = move(s, `use:${uidIn(s, 'market.doorman', 0)}`);
+    s = move(s, `trade:${uidIn(s, 'benders.cheerleader', 1)}:${uidIn(s, 'red.host', 'shop')}`);
+    expect(s.pending.prompt).toMatch(/^[A-Z][\w ]+: Cheerleader is grey, so \+1 of any color: which\?$/);
+    expect(s.pending.prompt).not.toMatch(/grey is wild/);
+  });
+});
+
 describe('bots and the swap card', () => {
   it('a Normal bot takes a free swap for a much better member when it can afford nothing (a sim at price 0)', () => {
     const s = table(['red', 'gold', 'purple', 'echo'], { rules: { swapCard: true, swapCardCost: 0 }, members: [['red.volunteer'], ['red.twins']], shop: [], ...buy() });

@@ -1636,9 +1636,14 @@ function joinNow(state, p, w, defs) {
  *  the new grey rule"): copying a member pays its holder +n of the member's color; a grey member's is any color (the bot
  *  takes the table color it has least of). */
 /** A cloak paying "of its color" for a grey member: grey is wild, so its holder picks one of the table's colors. */
-function greyPick(ctx, p, cloak, n) {
+/** The question names the grey member that made it (picky bot, Nov 8: "+1 of which color (grey is wild)?" read like
+ *  silver on a Silver table, and nothing said it was your Ghost making you choose). */
+function greyPick(ctx, p, cloak, n, uid) {
   const colors = ctx.state.resources;
-  ctx.asMember(p, cloak.def.name, () => ctx.choose(p, `${ctx.cloakOr ? ctx.cloakOr(cloak, cloak.def.name) : cloak.def.name}: +${n} of which color (grey is wild)?`,
+  let who = '';
+  try { who = uid != null ? cardDef(ctx.state, uid).name : ''; } catch { who = ''; }
+  const ask = who ? `${who} is grey, so +${n} of any color: which?` : `+${n} of any color (grey member): which?`;
+  ctx.asMember(p, cloak.def.name, () => ctx.choose(p, `${ctx.cloakOr ? ctx.cloakOr(cloak, cloak.def.name) : cloak.def.name}: ${ask}`,
     colors.map(r => ({ id: r, label: r[0].toUpperCase() + r.slice(1), kind: 'choice', value: r })), 'benders.pickColor',
     { who: ctx.cloakOr ? ctx.cloakOr(cloak, cloak.def.name) : cloak.def.name, n }), cloak.uid);
 }
@@ -1649,7 +1654,7 @@ function impressMember(state, p, uid) {
   if (!cloak) return;
   const c = colorOf(cardDef(state, uid));
   // grey is wild (Cory, Nov 6): its holder picks the color
-  if (!state.resources.includes(c)) { greyPick(ctx, p, cloak, Number(m[1])); return; }
+  if (!state.resources.includes(c)) { greyPick(ctx, p, cloak, Number(m[1]), uid); return; }
   const color = c;
   ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, Number(m[1])); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
 }
@@ -2243,7 +2248,7 @@ function bargainCost(state, k) {
   for (const uid of discardOf(state).slice(-k)) {
     const c = colorOf(cardDef(state, uid)), n = Number(mode.slice(4)) || 1;
     // grey is wild (Cory, Nov 6): its holder picks the color
-    if (!state.resources.includes(c)) { greyPick(ctx, p, cloak, n); continue; }
+    if (!state.resources.includes(c)) { greyPick(ctx, p, cloak, n, uid); continue; }
     const color = c;
     ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, n); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
   }

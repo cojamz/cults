@@ -1679,9 +1679,13 @@ function skipStamp(root, pid, dur) {
   b.className = 'skip-tag ghost-layer';
   b.dataset.skip = String(pid);
   b.textContent = 'Turn skipped';
-  Object.assign(b.style, { left: `${Math.round(r.left + r.width / 2)}px`, top: `${Math.round(r.top + r.height / 2)}px` });
+  // on the seat's bottom edge, left, clear of its counts (picky bot, Nov 8: in the middle it hid P3's resources) and
+  // of the cloak's label on the right
+  Object.assign(b.style, { left: `${Math.round(r.left + r.width / 2)}px`, top: `${Math.round(r.bottom)}px` });
   b.style.setProperty('--sk', `${life}ms`);
   document.body.appendChild(b);
+  const bw = b.offsetWidth;
+  if (bw) b.style.left = `${Math.round(r.left + 14 + bw / 2)}px`;
   setTimeout(() => { b.remove(); seat.classList.remove('turn-skipped'); }, life + 50);
 }
 

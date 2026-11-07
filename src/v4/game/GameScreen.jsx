@@ -1150,7 +1150,11 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const momentChain = useChainRunning(!!moment);
   const chainOn = useLinger(moment ? momentChain : physicalState !== interactionState);
   const tailOf = moment ? lastAny : lastDone;
-  const hubStory = liveRival || (chainOn && !(story.live && story.live.text) && tailOf && !mySeats.includes(tailOf.pid) ? tailOf : null) || (!chainOn && (!moment || closedMoment === moment) ? story.waiting : null);
+  // once your turn to place has come and the table is still, the rival's finished turn folds away (its lines are in
+  // "Since your last turn"): its banner kept the headline on "P3's turn ···" and hid the wheel's top spaces into your
+  // turn (picky bot, Nov 8: 9 of 12 shots)
+  const yoursSettled = placing && !moment && physicalState === interactionState;
+  const hubStory = liveRival || (chainOn && !yoursSettled && !(story.live && story.live.text) && tailOf && !mySeats.includes(tailOf.pid) ? tailOf : null) || (!chainOn && (!moment || closedMoment === moment) ? story.waiting : null);
   // the same player again (a snake turnaround, an extra turn) says so on its card, so a second turn reads as new
   const prevStory = allStories[allStories.length - (hubStory && hubStory === tailOf ? 2 : 1)];
   const hubAgain = !!(hubStory && prevStory && prevStory.actor === hubStory.pid && prevStory.round === live0.round);
