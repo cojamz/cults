@@ -1117,7 +1117,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
       // a rival's turn that has begun but made no move yet: its card comes up at once with only its header, and the
       // lines arrive on the same card (art director pass: 3-4 s of an empty middle while a rival thought)
       waiting: !now && t.cur && t.cur.start === t.last && !mySeats.includes(t.cur.actor) && live0.round >= 1 && !live0.over ? { pid: t.cur.actor, text: '', live: true, n: `c${t.cur.key}`, why: t.cur.why || null } : null,
-      live: now ? { pid: now.actor, text: now.text, live: true, n: `c${t.cur.key}` } : off ? { pid: off.actor, text: off.text, live: true, n: `o${off.n}`, when: off.when } : null,
+      live: now ? { pid: now.actor, text: now.text, live: true, n: `c${t.cur.key}` } : off ? { pid: off.actor, text: off.text, live: true, n: `o${off.n}`, when: off.when, round: off.round } : null,
       told: tl && tl.round === live0.round && !live0.over ? { pid: tl.actor, text: tl.text, live: false, n: `t${tl.n}` } : null,
       touched: [...new Set(fresh.flatMap(st => st.touched))],
       // what rivals took from your seat since your last turn, the turn in play included (seatLoss, trail.js)
@@ -1143,7 +1143,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const cardNow = placing ? null : story.live || (myTurn ? null : toldCard);
   // the story card (Cory, Nov 6): a rival's turn as it plays, on the hub; the log area keeps the last finished turn (or
   // your own as it builds)
-  const liveRival = story.live && !mySeats.includes(story.live.pid) ? story.live : null;
+  // (a move made between turns belongs to its round: once the next round is on the table it is no one's story, and the
+  // headline stops saying "P4, between turns ···" into round III; frame review, Nov 7)
+  const liveRival = story.live && !mySeats.includes(story.live.pid) && !(story.live.round != null && story.live.round !== live0.round && (!moment || closedMoment === moment)) ? story.live : null;
   const asCard = tl => (tl ? { pid: tl.actor, text: tl.text, live: false, n: `t${tl.n}`, k: `c${tl.key}` } : null);
   const allStories = trail.current.stories;
   const lastAny = asCard(allStories[allStories.length - 1]);
@@ -1158,7 +1160,11 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // "Since your last turn"): its banner kept the headline on "P3's turn ···" and hid the wheel's top spaces into your
   // turn (picky bot, Nov 8: 9 of 12 shots)
   const yoursSettled = placing && !moment && physicalState === interactionState;
-  const hubStory = liveRival || (chainOn && !yoursSettled && !(story.live && story.live.text) && tailOf && !mySeats.includes(tailOf.pid) ? tailOf : null) || (!chainOn && (!moment || closedMoment === moment) ? story.waiting : null);
+  // the round's scoring and its card hold the table: once the round's last move has played, no story stays over them
+  // (a rival's "+2 red from P3", made between turns, sat over the Reckoning and the Round scored card for 35 s, above
+  // the card; frame review, Nov 7). Its lines are in the log.
+  const scoring = !!moment && closedMoment !== moment && !momentChain;
+  const hubStory = scoring ? null : liveRival || (chainOn && !yoursSettled && !(story.live && story.live.text) && tailOf && !mySeats.includes(tailOf.pid) ? tailOf : null) || (!chainOn && (!moment || closedMoment === moment) ? story.waiting : null);
   // the same player again (a snake turnaround, an extra turn) says so on its card, so a second turn reads as new
   const prevStory = allStories[allStories.length - (hubStory && hubStory === tailOf ? 2 : 1)];
   const hubAgain = !!(hubStory && prevStory && prevStory.actor === hubStory.pid && prevStory.round === live0.round);
@@ -1613,9 +1619,25 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     return () => { document.body.style.overflow = prev; };
   }, [modalOpen]);
   const prForMe = mine || (!!pend && mySeats.includes(pend.player) && !state.over);
-  const pr = { ...promptFor(interactionState, prForMe), forMe: prForMe };
+  // your own step, answered, while its pieces still land: the headline moves on at once, never asking a question you
+  // have answered ("choose how to pay" stayed up to 7.5 s after you paid, even when the game paid by itself; frame
+  // review, Nov 7). Your next step of the same turn is asked from the newest state; a turn that has passed says so
+  // (overBeat's words); a pick or an answer off your own turn hands straight to the newest state's line.
+  const ip = interactionState.pending, pp = physicalState.pending;
+  const ownStepDone = !moment && physicalState !== interactionState && !physicalState.over && !!ip && mySeats.includes(ip.player)
+    && !(pp && pp.player === ip.player && pp.kind === ip.kind);
+  const ownNext = ownStepDone && !!pp && pp.player === ip.player;
+  const ownOver = ownStepDone && !ownNext && ip.kind !== 'setup' && interactionState.current === ip.player ? state.players[ip.player] : null;
+  const pr = ownNext ? { ...promptFor(physicalState, true), forMe: true }
+    : ownStepDone && !ownOver ? { ...promptFor(physicalState, false), forMe: false }
+      : { ...promptFor(interactionState, prForMe), forMe: prForMe };
   const myRun = prForMe && pend ? turnRun(interactionState, pend.player) : null;
-  if (pend?.afterPurchase && prForMe) { pr.text = 'Use a member ability, or finish your turn'; pr.sub = ''; }
+  if ((ownNext ? pp : pend)?.afterPurchase && prForMe && (!ownStepDone || ownNext)) { pr.text = 'Use a member ability, or finish your turn'; pr.sub = ''; }
+  if (ownOver) pr.sub = '';
+  // the lit seat is the player the headline names: the hub's story while one is up, the newest state's player once your
+  // answer has handed on, else the step in play (the headline said "P4's turn" while P2's seat stayed lit, up to 15 s at
+  // a hand-off; frame review, Nov 7)
+  const litPid = state.over ? null : hubKey != null ? hubStory.pid : ownStepDone && !ownNext && !ownOver && pp ? pp.player : pend ? pend.player : null;
   // your turn just ended (the table moved from a step of yours to someone else's): for a beat the header says so, then
   // the next player's line (w3b #58: after the second Pass the next frame was already a bot's line). It lasts until the
   // next step lands or the beat runs out, whichever is first.
@@ -1624,15 +1646,18 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   const overTimer = useRef(null);
   useEffect(() => {
     const was = lastAsk.current;
-    lastAsk.current = { forMe: prForMe, who: pend ? state.players[pend.player] : null, moves: state.moves };
-    if (was.forMe && !prForMe && !state.over && was.who && state.moves === was.moves + 1 && pend && pend.player !== was.who.id) {
+    lastAsk.current = { forMe: prForMe, who: pend ? state.players[pend.player] : null, moves: state.moves, kind: pend ? pend.kind : null, own: !!pend && state.current === pend.player };
+    // only a turn of yours ends: a starting pick or an answer on a rival's turn (Spoilsport) is not "your turn is over",
+    // and the beat is read in about a second at any speed (it stayed 4.8 s at Relaxed while P3 and P4 picked cloaks;
+    // frame review, Nov 7)
+    if (was.forMe && !prForMe && !state.over && was.who && was.kind !== 'setup' && was.own && state.moves === was.moves + 1 && pend && pend.player !== was.who.id) {
       clearTimeout(overTimer.current);
       setOverBeat({ who: was.who, moves: state.moves });
-      overTimer.current = setTimeout(() => setOverBeat(null), Math.round(800 * speedScale()));
+      overTimer.current = setTimeout(() => setOverBeat(null), Math.min(1200, Math.round(800 * speedScale())));
     }
   }, [state.moves]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => () => clearTimeout(overTimer.current), []);
-  const turnOver = overBeat && overBeat.moves === state.moves && !prForMe ? overBeat.who : null;
+  const turnOver = (overBeat && overBeat.moves === state.moves && !prForMe ? overBeat.who : null) || ownOver;
   // the summary comes last (motion review #7, #27): while a move's chain plays (or this state is about to play one),
   // the turn card and a rival's headline keep telling what was already on the table, and change when the chain has
   // landed or is skipped (AfterChain re-renders only itself then)
@@ -1903,14 +1928,21 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // step, a space's is the placement; RC1 sweep 93: a buy-step choice lit "Place")
   const stepRef = useRef('place');
   if (phase === 'place') stepRef.current = 'place'; else if (phase === 'buy' || phase === 'pay') stepRef.current = 'buy';
-  const step = phase === 'choose' ? stepRef.current : phase === 'pay' ? 'buy' : phase;
+  // a rival's step is read off the newest state: the shown one still had them placing while they paid for a recruit
+  // (frame review, Nov 7: "Place" lit through a rival's buy); their next player's placement means they're past it
+  const rivalStep = mine || moment || !ip || !pp || state.over ? null
+    : pp.player === ip.player ? (pp.kind === 'place' ? 'place' : pp.kind === 'buy' || pp.kind === 'pay' ? 'buy' : null)
+      : pp.kind === 'place' && ip.kind !== 'setup' ? 'buy' : null;
+  const step = rivalStep || (phase === 'choose' ? stepRef.current : phase === 'pay' ? 'buy' : phase);
+  // the turn's two steps show only on a turn: never through the starting picks or a round's scoring (frame review, Nov 7)
+  const stepsOn = state.round > 0 && !state.over && !moment && !setupNow && !setupHeld;
   useEffect(() => { if (globalThis.__cm) globalThis.__cm('fx'); }); // the rig's click phases: this commit's effects have run
   return (
     <div className={`app game lt${showChoice ? ' choosing' : ''}${buyingNow ? ' buying' : ''}${setupNow || setupHeld ? ' in-setup' : ''}`} ref={rootRef} data-member-pick={memberPicking || undefined} data-shop-details={shopDetails || undefined} data-phase={phase} data-seats={state.players.length} data-round={state.round} data-yours={yours ? '1' : '0'} data-moves={state.moves} data-presentation-moves={interactionState.moves} data-animating={physicalState !== interactionState || undefined} data-live-open={liveOpen} data-actor={pend ? pend.player : ''} data-bot={pend && state.players[pend.player].kind === 'bot' ? '1' : '0'}>
       <header className="bar lt-prompt" data-region="prompt">
         <div className="bar-row status" aria-live="polite">
           {/* a choice picked on the board: its caption takes the headline's place (never over the wheel) */}
-          {picker && (!gift || shopRecruit || wheelMove) ? (
+          {picker && !ownStepDone && (!gift || shopRecruit || wheelMove) ? (
             <ChoicePrompt state={state} onPick={onSeatPick} busy={busy} seatPick={picker} turnOf={!wheelMove && humansHere && handedIn === pend.player ? state.players[pend.player] : null} />
           ) : note ? (
             <span key={note.n} className={`say ${note.tone}`} data-prompt tabIndex={-1} role="status">{note.text}</span>
@@ -1923,7 +1955,8 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
                 : storyAtHub() && hubStory ? { who: state.players[hubStory.pid] ? { ...state.players[hubStory.pid], id: hubStory.pid } : null, text: hubStory.when ? `${state.players[hubStory.pid]?.name || ''}, ${hubStory.when}` : `${state.players[hubStory.pid]?.name || ''}’s turn` }
                 : held.forMe === pr.forMe || (!held.forMe && rivalPlaying) ? held : pr;
               // a rival's line held while their pieces land is said in their voice, never as "Your turn — p4 is paying"
-              const voice = mine && (p === pr || !!p.forMe);
+              // (and the newest state's line after your own answer is theirs too: forMe false)
+              const voice = mine && (p === pr ? pr.forMe !== false : !!p.forMe);
               return (
               <span className={`say${voice ? ' mine' : ''}`} data-prompt tabIndex={-1}>
                 {p.who && <i style={{ background: playerColor(p.who.id) }} />}
@@ -1946,12 +1979,12 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
           {/* the round's snake in names, on hover (round II and III say it on their start card too) */}
           {setupOrder(state) ? <SetupOrderCue state={state} me={me} /> : <span className="round" title={snakeWords(state, me) || undefined}>{roundText}</span>}
           {/* your turn's details sit under the headline (it stays one short line); otherwise the turn's two steps */}
-          {picker && (!gift || shopRecruit || wheelMove) ? <span className="say-sub pick-how" data-prompt-sub title={!note ? pickCaption(state, picker).rule : undefined}>{note ? note.text : pickCaption(state, picker).how}</span>
+          {picker && !ownStepDone && (!gift || shopRecruit || wheelMove) ? <span className="say-sub pick-how" data-prompt-sub title={!note ? pickCaption(state, picker).rule : undefined}>{note ? note.text : pickCaption(state, picker).how}</span>
             : pickDone ? <span className="say-sub seat-pick-done" aria-hidden="true"><span className="pick-cap">{pickDone.title}: {pickDone.what} · <span className="num pick-left" data-left="0">0</span> left</span></span>
               // a rival's story card naming their turn holds the headline: your own hint ("…or use Party Crasher first")
               // waits until the headline is yours again (picky bot, Nov 7: "P4's turn ··· / …or use Anarchist first")
               : mine && !needHandoff && !note && pr.sub && !(storyAtHub() && hubStory) ? <span className="say-sub" data-prompt-sub data-brief={pr.brief || undefined}>{pr.sub}</span>
-                : mine && !needHandoff && buyingNow ? null : state.round > 0 && !state.over && (
+                : mine && !needHandoff && buyingNow ? null : stepsOn && (
             <span className="steps" aria-hidden="true">
               <span className={step === 'place' ? 'on' : ''}>Place</span>
               <span className={step === 'buy' ? 'on' : ''}>Recruit</span>
@@ -2009,10 +2042,10 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
               and its gutter holds the round's counts while a round is scored (Reckoning). */}
           <div className="lt-snake" aria-hidden="true" style={{ '--n': state.players.length }} />
           {seatCorners(state, me).map((pid, k) => (
-            <section key={k} className={`lt-seat lt-seat-${k}${pid === me ? ' mine' : ''}${pid != null && pend && pend.player === pid && !state.over ? ' now' : ''}`} data-region={`seat-${k}`} data-pid={pid ?? undefined} data-slot={pid == null ? undefined : snake.slot[pid]}
+            <section key={k} className={`lt-seat lt-seat-${k}${pid === me ? ' mine' : ''}${pid != null && litPid === pid ? ' now' : ''}`} data-region={`seat-${k}`} data-pid={pid ?? undefined} data-slot={pid == null ? undefined : snake.slot[pid]}
               data-cloak={pid == null ? undefined : cloakOf(state, pid) || undefined} style={{ '--slot': pid == null ? k : snake.slot[pid] ?? k, ...(pid != null && cloakOf(state, pid) ? { '--cloak': `var(--${cloakOf(state, pid)})` } : null) }} aria-label={pid == null ? undefined : pid === me ? 'Your cult' : `${state.players[pid].name}’s cult`}>
               {pid == null ? null : (
-                <PaidSeat paying={paying} state={pid === me ? seatState : tSeats} pid={pid} me={me} mine={pid === me} now={!!(pend && pend.player === pid && !state.over)} hover={hover} optionFor={pid === me ? live : undefined} onPick={shopPick} pick={pickParts[pid] || null}
+                <PaidSeat paying={paying} state={pid === me ? seatState : tSeats} pid={pid} me={me} mine={pid === me} now={pid != null && litPid === pid} hover={hover} optionFor={pid === me ? live : undefined} onPick={shopPick} pick={pickParts[pid] || null}
                   onLeader={pid === me && canTalk ? openTalkAt : null} talking={pid === me && talkOpen} />
               )}
               {/* your cloak by name, on your chair's lower edge in its color (picky bot, Nov 4: readers learned their

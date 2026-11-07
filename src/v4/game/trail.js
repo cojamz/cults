@@ -253,7 +253,7 @@ export function offStory(trail) {
   let st = null;
   try { st = o.fx ? effectStory(o.start, o.end, o.actor, trail.me, o.fx) : turnStory(o.start, o.end, o.actor, trail.me, null); } catch { return null; }
   if (!st || !st.lines || !st.lines.length) return null;
-  return { actor: o.actor, text: [st.head, ...st.lines].join(' · '), n: o.n, when: (o.start.turns || []).length ? 'between turns' : 'round start' };
+  return { actor: o.actor, text: [st.head, ...st.lines].join(' · '), n: o.n, round: o.round, when: (o.start.turns || []).length ? 'between turns' : 'round start' };
 }
 
 /**

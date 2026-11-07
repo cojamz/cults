@@ -58,6 +58,9 @@ export function seatTurns(state, me = null) {
   const out = {};
   const { places, order } = turnPlaces(state, me);
   if (!(state.round >= 1) || state.over) return out;
+  // no turns queued yet (the starting picks, or a new round on the table while its turns are still being dealt) is not
+  // "done this round": said before you had placed in rounds I, II and III (frame review, Nov 7)
+  if (!order.length || state.pending?.kind === 'setup') return out;
   const playing = order.length && state.current != null && order[0] === state.current ? order[0] : null;
   if (me != null && places[me]) {
     const k = order.indexOf(me);
