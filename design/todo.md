@@ -36,7 +36,7 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 13. Story card and the shop deal (every-frame check, e2e/v4/cardframes.mjs WATCH lines): about one turn in fifteen, a turn's card goes, or the next turn starts, in the same moment a shop deal begins (a bot's last buy, a round's new row). The next turn already waits for deals in flight (Cory, Nov 6: "what if the in between round stuff happened before people take their fucking turn"); make the deal start before the hand-off, then make those two checks fail the run.
 14. Color intersection table (Cory, Nov 7; first pass from contests and spaces: design/notes/color-crossings-2026-11-07.html, https://claude.ai/artifact/RT4njjfe4eWtDyU78KPaoY, waiting on his word on the shape): a lookup grid, blue X white gives how those two colors can interact in theory. Build each cell from the two colors' contests and the resources and verbs their actions make and spend, ignoring current members; no brainstorm skill (his verdict on the first try: "these ideas suck. they don't feel original or elegant at alll").
 15. Card review 2 defaults (Scouts, Latecomers and the rest) still wait on Cory's yes; build nothing until he answers.
-16. Bots take turns before the deck is dealt: hold every turn until the deal lands.
+16. Done v0.99.676: a new round's first turn waits until its row is dealt (it was skipped at Relaxed). Left for 17: at Relaxed the old row takes ~8.7s to clear before the deal starts.
 17. Redo the deck deal animation: done v0.99.671 (face-down cards slide off the pile and turn face up in their slots; scripts/v4-deal-clip.mjs records it).
 18. Cory's own Harvest animation is too slow.
 19. Show other players' cursors in online games.
