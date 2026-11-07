@@ -46,15 +46,15 @@ describe('Yellow', () => {
 });
 
 describe('Magenta', () => {
-  it('Robin Hood: Help Yourself robs one of two tied leaders (one rival since Nov 5): +1', () => {
+  it('Robin Hood: Help Yourself robs one of two tied leaders: +1', () => {
     const Q = ['gold', 'red', 'thieves', 'trading'];
-    let s = table(Q, { n: 4, round: 2, res: [{}, { gold: 2 }, { gold: 2 }, { gold: 2 }], bonus: [3, 3, 3, 0], members: [['thieves.robinhood']], shop: ROW });
+    let s = table(Q, { n: 4, round: 2, res: [{}, { gold: 2 }, {}, {}], bonus: [3, 3, 3, 0], members: [['thieves.robinhood']], shop: ROW });
     // P1 4+1(Robin Hood)=5 followers? Robin Hood is worth 1: P1 = 1+3+1 = 5. Make P2, P3 equal at 5.
     s.players[1].bonus = 4; s.players[2].bonus = 4;
     expect([0, 1, 2].map(i => followers(s, s.players[i]))).toEqual([5, 5, 5]);
     // Help Yourself in round II steals 4, split among rivals (no followers since 2026-10-27)
     s = take(s, 'thieves.pickpocket');
-    s = play(s, 'take:1:gold', 'take:1:gold'); // P2 holds 2: emptied, the steal ends
+    s = play(s, 'take:1:gold', 'take:1:gold'); // P2 holds the only resources: emptied, the steal ends
     expect(s.pending?.kind).not.toBe('choose');
     expect(s.players[0].bonus - 3).toBe(1); // Robin Hood +1 once
   });

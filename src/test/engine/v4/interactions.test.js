@@ -73,8 +73,7 @@ describe('Green copies the risky spaces', () => {
     s = move(s, s.pending.options[0].id);
     // P1 now steals 3: P2's gold and P3's last gold are on offer (Help Yourself gives no magenta since Oct 29)
     expect(ids(s).sort()).toEqual(['take:1:gold', 'take:2:gold']);
-    s = play(s, 'take:1:gold'); // one rival only (Nov 5): all 3 from P2
-    expect(ids(s).sort()).toEqual(['take:1:gold']);
+    s = play(s, 'take:1:gold'); // from any rivals (Nov 8): all 3 from P2 here
     s = pass(play(play(s, 'take:1:gold'), 'take:1:gold'));
     // the stolen gold stays gold
     expect(R(s, 0)).toMatchObject({ gold: 3, magenta: 0 });

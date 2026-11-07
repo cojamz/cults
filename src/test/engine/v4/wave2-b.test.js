@@ -50,26 +50,28 @@ describe('#7 Heist: 3 followers, one a pick from any rival (Nov 5), and the choi
 });
 
 describe('#38 a dim rival says the true reason', () => {
-  it('Help Yourself: one rival only (Nov 5); emptying them ends the steal', () => {
+  it('Help Yourself: from any rivals (Cory, Nov 8); emptying everyone ends the steal', () => {
     let s = sceneQ({ quadrants: MAG, n: 3, round: 2, res: [{}, { gold: 1 }, { gold: 2 }] });
     s = take(s, 'thieves.pickpocket');
     s = takeFrom(s, 1);
+    expect(s.pending?.prompt || '').toMatch(/Help Yourself/);
+    s = takeFrom(takeFrom(s, 2), 2);
     expect(s.pending?.prompt || '').not.toMatch(/Help Yourself/);
-    expect(s.players[0].res.gold).toBe(1);
-    expect(s.players[2].res.gold).toBe(2);
+    expect(s.players[0].res.gold).toBe(3);
+    expect(s.players[2].res.gold).toBe(0);
   });
-  it('Help Yourself: a rival holding no more than you is still available; after the first pick, only that rival', () => {
+  it('Help Yourself: a rival holding no more than you is still available; after the first pick, every rival still is (Nov 8)', () => {
     let s = sceneQ({ quadrants: MAG, n: 3, round: 2, res: [{ gold: 2 }, { gold: 5 }, { gold: 2 }] });
     s = take(s, 'thieves.pickpocket');
     expect(s.pending.options.some(o => o.value[0] === 2)).toBe(true);
     s = takeFrom(s, 2);
     expect(s.players[2].res.gold).toBe(2); // chosen piles move together once all picks are complete
-    expect(s.pending.options.every(o => o.value[0] === 2)).toBe(true);
-    expect(s.pending.blocked[1]).toMatch(/one rival only/);
-    s = takeFrom(s, 2); // P3 had 2: emptied, so the steal ends at 2
+    expect(s.pending.options.some(o => o.value[0] === 1)).toBe(true);
+    s = takeFrom(s, 2); // P3 had 2: emptied
+    s = takeFrom(takeFrom(s, 1), 1); // round II steals 4: the last 2 from P2
     expect(s.players[2].res.gold).toBe(0);
-    expect(s.players[1].res.gold).toBe(5);
-    expect(s.players[0].res).toMatchObject({ gold: 4, magenta: 0 });
+    expect(s.players[1].res.gold).toBe(3);
+    expect(s.players[0].res).toMatchObject({ gold: 6, magenta: 0 });
   });
 });
 
