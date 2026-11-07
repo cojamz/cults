@@ -4,8 +4,9 @@ import { describe, it, expect } from 'vitest';
 import { contestTable, contestOrder, followers } from '../../../engine/v4/index.js';
 import { sceneQ } from './cards-helpers.js';
 
+// pinned to the old Fewest followers so a prize paid earlier moves a later contest (White is Fewest members since Nov 7)
 const table = () => {
-  const s = sceneQ({ quadrants: ['red', 'trading'], n: 2, rules: { contests: 'byColor' }, members: [['red.volunteer'], []] });
+  const s = sceneQ({ quadrants: ['red', 'trading'], n: 2, rules: { contests: 'byColor', contestFix: { white: 'followers' } }, members: [['red.volunteer'], []] });
   // even followers before any prize: P1's Red prize then makes P2 the only one with the fewest
   s.players[1].bonus = followers(s, s.players[0]) - followers(s, s.players[1]);
   return s;

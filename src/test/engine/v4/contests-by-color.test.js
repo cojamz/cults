@@ -43,10 +43,33 @@ describe('By color: Green and White (Cory, Nov 3)', () => {
     expect(g.score(ctx, s.players[1])).toBe(g.score(ctx, s.players[0]));
     expect(g.tiebreak).toBeUndefined();
     expect(g.score(ctx, s.players[2])).toBe(0);
-    expect(w.label).toBe('Fewest followers');
+    const f = scoringOf({ ...s, rules: { ...s.rules, contestFix: { white: 'followers' } } }, 'trading');
+    expect(f.label).toBe('Fewest followers');
     s.players[3].bonus -= 1; s.players[0].bonus += 3;
-    const best = Math.max(...s.players.map(p => w.score(ctx, p)));
-    expect(s.players.filter(p => w.score(ctx, p) === best).map(p => p.id)).toEqual([3]);
+    const best = Math.max(...s.players.map(p => f.score(ctx, p)));
+    expect(s.players.filter(p => f.score(ctx, p) === best).map(p => p.id)).toEqual([3]);
+  });
+});
+
+describe('By color: White Fewest members (0 counts), Silver Fewest silver (Cory, Nov 7)', () => {
+  const g = () => createGame({ seats: Array.from({ length: 4 }, () => ({ kind: 'bot' })), seed: 4, quadrants: ['silver', 'trading', 'red', 'echo'], rules: { contests: 'byColor' } });
+  it('White: fewest members wins, and a cult with no members counts ("White fewest members can be 0")', () => {
+    const s = g(); const ctx = contextFor(s);
+    const w = scoringOf(s, 'trading');
+    expect(w.label).toBe('Fewest members');
+    // nobody has members at the start: everyone ties, and everyone scores
+    const sc = s.players.map(p => w.score(ctx, p));
+    expect(sc.every(n => n > 0 && n === sc[0])).toBe(true);
+  });
+  it('Silver: fewest silver, at least 1 ("yes fewest silver")', () => {
+    const s = g(); const ctx = contextFor(s);
+    s.players.forEach((p, i) => { p.res.silver = [0, 1, 3, 2][i]; });
+    const f = scoringOf(s, 'silver');
+    expect(f.label).toMatch(/^Fewest silver/);
+    const sc = s.players.map(p => f.score(ctx, p));
+    expect(sc[0]).toBe(0);
+    expect(sc[1]).toBe(Math.max(...sc));
+    expect(sc[1]).toBeGreaterThan(sc[3]);
   });
 });
 
@@ -79,3 +102,19 @@ describe('By color: White and Silver contest candidates (bot trials only, contes
     expect(pr.score(contextFor(s), s.players[1])).toBe(0);
   });
 });
+
+describe('By color: Red Most members of one color, Blue Most members (Cory, Nov 7)', () => {
+  it('Red counts your biggest same-color group, grey members as a group too; Blue counts all your members', async () => {
+    const { table } = await import('./cards-helpers-b.js');
+    const s = table(['red', 'market', 'trading', 'silver'], { n: 2, rules: { contests: 'byColor' }, members: [['market.stylist', 'red.volunteer', 'red.mob'], ['benders.squatter', 'benders.dabblers']] });
+    s.rules = { ...(s.rules || {}), contests: 'byColor' };
+    const ctx = contextFor(s);
+    const r = scoringOf(s, 'red'), b = scoringOf(s, 'market');
+    expect(r.label).toBe('Most members of one color');
+    expect(r.score(ctx, s.players[0])).toBe(2); // two red cards (Mob counts 1 here)
+    expect(r.score(ctx, s.players[1])).toBe(2); // Party Crasher and Dabblers: two grey cards
+    expect(b.label).toBe('Most members');
+    expect(b.score(ctx, s.players[0])).toBeGreaterThan(3); // Mob counts 4 in Most members
+  });
+});
+

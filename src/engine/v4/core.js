@@ -1235,11 +1235,18 @@ export function scoringOf(state, qid) {
     };
     // Green ties go to the most green held, White is fewest followers (Cory, Nov 3: "use your judgement", after the
     // balance run found Green shared 80% of rounds and White staying with one player). rules.contestFix tries others in sims.
-    const fix = { white: 'followers', red: 'cards', ...(state.rules?.contestFix || {}) }; // Green ties split like every contest (Cory, Nov 3: "ties are split… like they already were…")
+    // Red Most members of one color, grey included; Blue keeps Most members (Cory, 2026-11-07 11:36pm: "blue should be most
+    // members since it gets more recruits. and red is really just moving memebers around… most of one color is good,
+    // because red can more easily adjust its members… and of course for red grey can count")
+    // White Fewest members with 0 counting, Silver Fewest silver (Cory, 2026-11-07 11:31pm: "White fewest members can be 0",
+    // "yes fewest silver"; contests are core: "Nailing these competitions down is a massive unlock for the game")
+    const fix = { white: 'members0', silver: 'fewest', red: 'oneColor', ...(state.rules?.contestFix || {}) }; // Green ties split like every contest (Cory, Nov 3: "ties are split… like they already were…")
     // Red: most red member cards, one each (Cory, Nov 3: "we should avoid a simply color held. maybe most red members?";
     // cards, not member weight, so one card that counts as 4 can't lock it). contestFix.red 'held' tries most red held.
     if (fix.red === 'cards') by.red = { label: 'Most red members', counts: 'your red member cards when the round ends (each card counts 1, Dabblers 2)',
       score: (ctx, p) => countMembersOfColor(state, p, 'red', { cards: true }) };
+    if (fix.red === 'oneColor') by.red = { label: 'Most members of one color', counts: 'your biggest group of members of one color when the round ends, grey members included (each card counts 1)',
+      score: (ctx, p) => Math.max(0, ...[...state.quadrants, 'guest'].map(q => countMembersOfColor(state, p, q, { cards: true }))) };
     // Blue (Actions lane, Nov 4, quality loop; /mnt/project-files/quality/pitches/actions-contest-blue.md): contestFix.market
     // 'cards' counts member cards (each counts 1, as Red's), 'blue' blue member cards, 'held' the blue you hold
     if (fix.market === 'cards') by.market = { label: 'Most member cards', counts: 'your member cards when the round ends (each card counts 1)',
@@ -1265,6 +1272,8 @@ export function scoringOf(state, qid) {
     // Actions lane, Nov 4 (green-r1 judges: "does Fan Club count 1 or 3?"): each green card counts 1, as in Red's contest.
     if (fix.green === 'memberscards') by.echo = { ...by.echo, label: 'Most minions on green, plus green members', counts: 'your minions on Green spaces plus your green member cards (each counts 1), when the round ends',
       score: (ctx, p) => onGreen(p) + countMembersOfColor(state, p, 'echo', { cards: true }) };
+    if (fix.white === 'members0') by.trading = { label: 'Fewest members', counts: 'your members when the round ends',
+      score: (ctx, p) => 1000 - memberCount(state, p), show: (ctx, p) => ({ count: memberCount(state, p) }) };
     if (fix.white === 'net') by.trading = { label: 'Most white, minus 1 per member', counts: 'the white you hold minus your members, when the round ends',
       score: (ctx, p) => Math.max(0, (p.res.white || 0) - memberCount(state, p)), show: (ctx, p) => ({ count: (p.res.white || 0) - memberCount(state, p) }) };
     if (fix.white === 'followers') by.trading = { label: 'Fewest followers', counts: 'your followers when the round ends',
