@@ -1965,3 +1965,14 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - (Cory, 2026-11-07 11:44pm Eastern) Yellow is Most member colors after all: "eh but i think yellow as member colors is much more fitting. Let's just do it."
 - (Cory, 2026-11-07 11:46pm Eastern, "im almost out of tokens") Remaining job for the "Tie the colors closer together" thread: take his marks, the new contests, and the card judging, strategy and connectedness work, and review every action and member: lowest-hanging fruit first (what can be adjusted or replaced), plus Claude's suggestions.
 - (Cory, 2026-11-07 11:47pm Eastern, "why at least one???") Silver is plain Fewest silver; holding 0 counts, like White.
+- (Cory, 2026-11-08 12:10am Eastern, voice note on card review 1; his words quoted) Calls:
+  - Steal wording: "Whenever you say steal, that's the inherent… meaning" (from any rivals). Help Yourself drops "from one rival": "Steal 3 resources in round I, 4 in round II, 5 in round III."
+  - Body Snatchers: "might be a little too good, but let's try it this way. I think it's just a little more interesting. The bots might struggle" → "swap one of your members with any rival's member", mid price (Claude: 6). Timing asked back.
+  - Caterer cut; Silver Cloak becomes "Whenever you gift silver, +1 follower." ("Yes, cater. Yes, silver cloak.")
+  - Jack-of-All-Trades and Seamstress cut ("those can probably got to get cut").
+  - Old Money stays, "reworked to be a little better"; Old Money and Heiresses "in theory, these are supposed to get changed".
+  - Keep: Second-Story Man ("I can hear an argument"), Polish ("okay in this case"), Smooth Talkers ("good in this case"), Kingmakers ("I like… maybe just a little too many followers"), Party Gifts ("maybe it's fine as is. Six victory points from an action is pretty fucking strong"), Melting Pot, Yellow Cloak, Out of Style.
+  - Wording: "instead of cast out, we could just say discard a member", and cast-out triggers become "when a member leaves your cult… then it interacts with red. Red and white both have stuff with members leaving cults."
+  - Farewell and Estate Sale "a little weird, but… maybe they're good". Recluse "too overlapping with the competition now".
+  - Housewarming "a little strong… like 7 fucking currency" (its cap of 7 stretched as prices changed).
+  - Tiebreaker ("You win every contest tie you're in."): "maybe… better in a competition color… we're getting almost enough stuff to have a competition color… I want to get the game like perfect first before I add more stuff."
