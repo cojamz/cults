@@ -90,7 +90,7 @@ describe('Blue candidates (discard pile)', () => {
     expect(named(s, 'Salvagers')).toHaveLength(1);
     expect(s.pending.options.some(o => o.id === use)).toBe(false); // once per game
   });
-  it('Pickers: on your turn, a discard pile member can be your recruit instead of a shop member, paid at its price', () => {
+  it('Junk Collectors: on your turn, a discard pile member can be your recruit instead of a shop member, paid at its price', () => {
     let s = still({ quadrants: Q, members: [['market.pickers3']], res: [RICH] });
     const [lo, hi] = twoCosts(s);
     const [a, b] = discard(s, [hi, lo]); // any member in the pile, not only the top
@@ -103,11 +103,11 @@ describe('Blue candidates (discard pile)', () => {
     expect(s.players[0].members).toContain(a);
     expect(total(s.players[0].res)).toBe(before - price(s, a)); // its normal price
     expect(s.discard).toEqual([b]);
-    expect(s.log.some(l => /from the discard pile with P1's Pickers/.test(l))).toBe(true);
+    expect(s.log.some(l => /from the discard pile with P1's Junk Collectors/.test(l))).toBe(true);
     // that was the turn's recruit: no shop buy follows
     expect(s.pending?.kind === 'buy' && s.pending.options.some(o => o.kind === 'card')).toBe(false);
   });
-  it('Pickers: once per round; never off its owner\'s turn', () => {
+  it('Junk Collectors: once per round; never off its owner\'s turn', () => {
     let s = still({ quadrants: Q, members: [['market.pickers3']], res: [RICH] });
     const [lo, hi] = twoCosts(s);
     const [a, b] = discard(s, [hi, lo]);
@@ -127,7 +127,7 @@ describe('Blue candidates (discard pile)', () => {
 
 describe('Yellow candidate spaces (round II)', () => {
   const Q = ['yellow', 'market', 'trading', 'purple'];
-  for (const [id, name, max] of [['yellow.moneychangers', 'Money Changers', 3], ['yellow.smallchange', 'Small Change', 2]]) {
+  for (const [id, name, max] of [['yellow.moneychangers', 'Swap Meet', 3], ['yellow.smallchange', 'Small Change', 2]]) {
     it(`${name}: +2 yellow; swap up to ${max} resources one for one with a rival, colors your choice; they +1 follower each`, () => {
       let s = sceneQ({ quadrants: Q, round: 2, n: 3, res: [{ blue: 6 }, { white: 5, purple: 5 }, { purple: 1 }] });
       s = take(s, id);
@@ -232,11 +232,11 @@ describe('Purple candidates', () => {
     if (s.pending?.kind === 'buy' && shop().length) s = move(s, shop()[0].id);
     return { s, afterOne };
   };
-  it('Bouncers: a rival who recruits two or more members in one turn skips their next turn; one recruit does nothing', () => {
+  it('Heavies (the brief\'s Bouncers): a rival who recruits two or more members in one turn skips their next turn; one recruit does nothing', () => {
     const one = d => (defById(d.def).n || 1) === 1;
     const { s, afterOne } = recruitTwice('purple.bouncers3', one);
-    expect(linesNaming(afterOne, 'Bouncers')).toEqual([]);
-    expect(named(s, 'Bouncers')).toEqual(["P2's Bouncers: P1 recruited 2 or more members this turn.", "P2's Bouncers: P1 skips their next turn."]);
+    expect(linesNaming(afterOne, 'Heavies')).toEqual([]);
+    expect(named(s, 'Heavies')).toEqual(["P2's Heavies: P1 recruited 2 or more members this turn.", "P2's Heavies: P1 skips their next turn."]);
   });
   it('Gatekeepers: three or more members in one turn (two members counting 1 and 2 reach it); two members counting 1 do not', () => {
     const one = d => (defById(d.def).n || 1) === 1;

@@ -151,7 +151,7 @@ const GRAND_TOUR = {
   },
 };
 
-// Money Changers and Small Change (idea pipeline pool 3, Nov 7; bot games only): swap your resources with one rival's,
+// Swap Meet (key moneychangers: the brief's Money Changers, renamed, as White has a Money Changers) and Small Change (idea pipeline pool 3, Nov 7; bot games only): swap your resources with one rival's,
 // one for one, colors the swapper picks each time; the rival +1 follower per resource swapped. Lie Low lets it through
 // (a color change, not a steal).
 const heldTotal = p => Object.values(p.res).reduce((a, b) => a + b, 0);
@@ -198,7 +198,7 @@ export default {
   scoring: { label: 'Most yellow', counts: 'the yellow you hold when the round ends', score: (ctx, p) => p.res[Y] },
 
   actions: [
-    changeSpace('moneychangers', 'Money Changers', 3),
+    changeSpace('moneychangers', 'Swap Meet', 3),
     changeSpace('smallchange', 'Small Change', 2),
     {
       // fuel with Yellow's flavor (Cory, 2026-10-30): "+3wild +4wild +5wild"
@@ -283,7 +283,7 @@ export default {
   ],
 
   handlers: {
-    // Money Changers / Small Change (pool 3)
+    // Swap Meet / Small Change (pool 3)
     moneyWith(ctx, p, oid, data) { if (ctx.player(oid)) moneyAsk(ctx, p, { ...data, o: oid, n: 0 }); },
     moneyStep(ctx, p, value, data) {
       if (value === 'done') { moneyDone(ctx, p, data); return; }

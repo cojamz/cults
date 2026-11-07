@@ -631,9 +631,9 @@ export default {
       ...see(info => 1.5 * endsAhead(info).length * 0.6),
     }), 'pool3'),
     // "in one turn": recruits made on that rival's own turn, counted as the table counts members (a card worth 3 counts as
-    // 3); "their next turn": the next one this round, as Hold Up's skip (none left: nothing). Key bouncers3: the
-    // culled live Bouncer keeps its key; Gatekeepers (the brief's Doormen) is renamed, as Blue has a Doormen.
-    ...[['bouncers3', 'Bouncers', 2, 3, 2], ['gatekeepers', 'Gatekeepers', 3, 2, 1]].map(([key, name, line, s, w]) => pool(m(key, name, s, w,
+    // 3); "their next turn": the next one this round, as Hold Up's skip (none left: nothing). Heavies (key bouncers3)
+    // is the brief's Bouncers, renamed (the culled Bouncers); Gatekeepers the brief's Doormen (Blue has a Doormen).
+    ...[['bouncers3', 'Heavies', 2, 3, 2], ['gatekeepers', 'Gatekeepers', 3, 2, 1]].map(([key, name, line, s, w]) => pool(m(key, name, s, w,
       `Whenever a rival recruits ${line === 2 ? 'two' : 'three'} or more members in one turn, they skip their next turn.`, {
         onAnyRecruit(ctx, owner, card, by, member) { bounceCheck(ctx, owner, card, by, member, line, name); },
         ...see(info => (line === 2 ? 1 : 0.4) * endsAhead(info).length), // BOTSEE: a rival's lost turn, worth a little to its owner

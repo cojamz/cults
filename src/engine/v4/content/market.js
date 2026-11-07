@@ -621,8 +621,9 @@ const market = {
       ...see(info => 2.5 * endsAhead(info).length), // BOTSEE: a cheap member free at each round end still ahead
     }), 'pool3'),
     // Pickers: core offers every discard pile member in its owner's own buy step, once per round (flag discardPick); the
-    // recruit is that turn's buy, paid at its normal price. Key pickers3: the REPLACE13 bot test already has a Pickers.
-    pool(m('pickers3', 'Pickers', 2, 2, 'Once per round, on your turn, you may recruit from the discard pile instead of the shop.', { discardPick: true,
+    // recruit is that turn's buy, paid at its normal price. Key pickers3; named Junk Collectors (the brief's
+    // Pickers), as the REPLACE13 bot test already has a Pickers.
+    pool(m('pickers3', 'Junk Collectors', 2, 2, 'Once per round, on your turn, you may recruit from the discard pile instead of the shop.', { discardPick: true,
       ...see(info => 1.2 * endsAhead(info).length), // BOTSEE: a wider choice of member about once a round
     }), 'pool3'),
     pool(m('salvagers', 'Salvagers', 2, 1, 'On Use, once per game: recruit the cheapest member in the discard pile, for free.', {
