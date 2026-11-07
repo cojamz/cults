@@ -74,7 +74,7 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
   const phaseLine = (label, steps, key) => steps.length > 0 && (
     <p className="re-next re-final" data-phase={key}>
       <b className="re-phase-in">{label}</b>{' '}
-      {steps.map((st, k) => <span key={st.key}>{k ? ' · ' : ''}<b>{name(st.pid)}</b>’s <NamedText state={after} text={st.rule} />: {stepWords(st)}</span>)}
+      {steps.map((st, k) => <span key={st.key}>{k ? ' · ' : ''}{st.pid === meId ? <b>Your</b> : <><b>{name(st.pid)}</b>’s</>} <NamedText state={after} text={st.rule} />: {stepWords(st)}</span>)}
     </p>
   );
   return (
