@@ -157,9 +157,10 @@ describe('a steal is told once, in the colors it took', () => {
   it('from the effects: the gain in its own colors, and one line for what you lost', () => {
     const st = steal(true); // round I: steal 3, all of your gold
     expect(st.fx).toBe(true);
-    expect(st.lines).toEqual(['+3 gold', '3 gold from you']);
+    // the steal on one line (picky bot, Nov 7: the stolen coins told twice, in the gain and in a "from" line)
+    expect(st.lines).toEqual(['+3 gold from you']);
     expect(st.hit).toBe('took 3 of your gold');
-    expect(st.short).toBe('took 3 of your gold · +3 gold');
+    expect(st.short).toBe('+3 gold from you'); // (the gain that says whose it was, once)
     once(st);
   });
   it('from the log (no effects recorded): the same steal', () => {

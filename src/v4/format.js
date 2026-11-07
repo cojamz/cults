@@ -1290,13 +1290,27 @@ export function effectStory(start, end, actor, me = null, fx = []) {
       const as = stolen(g, actor);
       // followers taken from a rival say whose they were (picky bot, Nov 4: "P2 Heist: +1 magenta +3 followers", from whom?)
       const folFrom = as || !(g.fol[actor] > 0) ? [] : P.filter(p => p.id !== actor && g.fol[p.id] < 0);
-      const mine = as || (folFrom.length ? `${signedOf(g, actor)} from ${folFrom.map(p => nm(p.id)).join(', ')}` : signedOf(g, actor));
+      let mine = as || (folFrom.length ? `${signedOf(g, actor)} from ${folFrom.map(p => nm(p.id)).join(', ')}` : signedOf(g, actor));
+      let oth = others(g, actor, !!as);
+      // a steal is told once, on the gain's own line (picky bot, Nov 7: "+4 green +1 magenta · 4 green, 1 magenta from
+      // P4" told the stolen coins twice): "+3 gold from you" when it all came from rivals, else the gain with whose part
+      // was taken in brackets
+      const FROM = /^(\d+ [a-z]+(?:, \d+ [a-z]+)*) from (.+)$/;
+      const froms = !as && !folFrom.length && mine ? oth.filter(b => FROM.test(b)) : [];
+      if (froms.length) {
+        const took = {};
+        for (const b of froms) for (const part of b.match(FROM)[1].split(', ')) { const [n, r] = part.split(' '); took[r] = (took[r] || 0) + Number(n); }
+        const got = Object.entries(g.res[actor]).filter(([, d]) => d > 0);
+        const whole = !g.fol[actor] && got.length === Object.keys(took).length && got.every(([r, d]) => took[r] === d);
+        mine = whole ? `${mine} from ${froms.map(b => b.match(FROM)[2]).join(' and ')}` : `${mine} (${froms.join('; ')})`;
+        oth = oth.filter(b => !froms.includes(b));
+      }
       // a copy's payout sits on the copy's own line, cause then effect (Cory, Nov 6: "this just isnt readbale": "copied
       // Shake Down" twice, then a bare "+1 +2" tied to nothing)
       if (copied.length) out.push(mine ? `${copied.join(', ')}: ${mine}` : copied.join(', '));
       else if (mine) out.push(mine);
       if (mine) gain = mine;
-      out.push(...others(g, actor, !!as));
+      out.push(...oth);
       if (g.disc) out.push(`next member costs ${g.disc} less`);
     } else if (c.kind === 'member') {
       const owner = c.pid ?? actor;

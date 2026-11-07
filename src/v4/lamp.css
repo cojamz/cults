@@ -639,6 +639,8 @@ h1,h2,h3{font-family:var(--serif)}
 .turn-card.at-hub .tc-who{display:flex;align-items:center;gap:7px;font-family:var(--serif);font-weight:700;font-size:var(--m);line-height:1.15;padding-bottom:6px;margin-bottom:3px;border-bottom:1px solid color-mix(in srgb,var(--paper-ink) 18%,transparent)}
 .turn-card.at-hub .tc-head{font-family:inherit;font-size:var(--m);font-weight:700;line-height:1.25}
 .turn-card.at-hub .tc-line{font-size:var(--m);line-height:1.3;color:var(--paper-ink)}
+.turn-card.at-hub.tc-tight{gap:1px;padding-top:7px;padding-bottom:8px}
+.turn-card.at-hub.tc-tight .tc-line,.turn-card.at-hub.tc-tight .tc-head{font-size:var(--s);line-height:1.2}
 
 /* the leader's emoji inline on the engraved rim line; lit with the label during the Reckoning */
 .lt .stage svg.wheel-paper .rim-emoji{pointer-events:none}

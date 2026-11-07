@@ -51,6 +51,8 @@ for (let g = 0; g < GAMES; g++) {
         const lines = [...el.querySelectorAll('.tc-line:not(.tc-wait):not(.tc-more)')].map(l => l.textContent.trim());
         if (!cur || cur.key !== key) { finish(now, 'next card'); if (cur === null && document.querySelector('.lt-deal') && el.querySelector('.tc-head') && !/again/.test(key)) { const d = document.querySelector('.lt-deal'); const a = d.getAnimations()[0]; const ct = a ? a.effect.getComputedTiming() : {}; fail('turn under the deal', `a turn started while the shop's new card was still being dealt (${key}; deal ${Date.now() - Number(d.dataset.born || 0)}ms old, progress ${ct.progress == null ? 'waiting' : ct.progress.toFixed(2)}, ${Math.round((ct.endTime || 0) - (a ? a.currentTime : 0))}ms left)`); } if (el.querySelector('.tc-head')) { cur = { key, lines: [], shown: 0 }; out.cards++; } }
         if (cur) {
+          // the whole card on screen (picky bot, Nov 7: a long turn's last line cut at the screen's edge)
+          { const b = el.getBoundingClientRect(); if (b.bottom > innerHeight + 1 || b.top < -1) fail('off screen', `card spans ${Math.round(b.top)}–${Math.round(b.bottom)} of ${innerHeight} (${key})`); }
           // a card that starts its lines over (it was taken down and put back up) reads as the turn happening twice
           if (lines.length < cur.shown) fail('lines went away', `${cur.shown} lines up, then ${lines.length} (${key}; "${el.dataset.turnStory}") ${JSON.stringify(window.__hubDbg.slice(-6))}`);
           cur.shown = lines.length;

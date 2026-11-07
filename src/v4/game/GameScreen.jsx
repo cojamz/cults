@@ -659,6 +659,8 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
   const fitKey = `${card.n}|${card.text}`;
   const [fitOf, setFit] = useState({ key: '', max: 5 });
   const MAXL = keep || hub ? Infinity : fitOf.key === fitKey ? fitOf.max : 5;
+  const hubLines = useStableLines(`${card.k || card.n}`, hub && card.text ? card.text.split(' · ').slice(1) : []);
+  const shownN = useReveal(`${card.k || card.n}`, hubLines, hub && !!card.text);
   // Where the card sits, written straight to its style in one layout effect (perf, 2026-10-15): as React state its place
   // and its lift cost every step one or two more commits of their own, each reading the layout again
   const box = useRef(null);
@@ -683,7 +685,9 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
       const z = parseFloat(getComputedStyle(el).zoom) || 1;
       const px = v => `${z === 1 ? v : Math.round((v / z) * 10) / 10}px`;
       Object.assign(el.style, { display: '', left: px(at.left), top: px(at.top), right: '', bottom: '', width: px(at.width), maxWidth: px(at.width), transformOrigin: '50% 50%' });
-      // a long turn rises to stay whole on screen
+      // a long turn rises to stay whole on screen, and one taller than the screen sets its lines a size smaller
+      // (picky bot, Nov 7: an Echo turn that copied three times ran past the screen's edge)
+      if (!el.classList.contains('tc-tight') && el.offsetHeight * z > innerHeight - 24) el.classList.add('tc-tight'); // (kept for the turn: no flicker)
       const h = el.offsetHeight * z;
       // its top stays put as lines are added, so it grows downward like a log being written (Cory, Nov 6: "we should
       // just SEE it get added"), a little above the hub's centre
@@ -719,7 +723,9 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
     // written on the story itself, its only reader (layout.css): on the table, an inherited custom property re-styled all
     // ~5,000 elements of the page every time it changed (perf, 2026-10-15)
     if (story && (h !== turnH.current || turnHOn.current !== story)) { turnH.current = h; turnHOn.current = story; story.style.setProperty('--turn-h', `${h}px`); }
-  }, [card.pid, card.n, card.text, root, gone, MAXL, hub, keep]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [card.pid, card.n, card.text, root, gone, MAXL, hub, keep, shownN]); // eslint-disable-line react-hooks/exhaustive-deps
+  // (shownN: each line shown one at a time makes the card taller, so it rises again to stay whole on screen; picky bot,
+  // Nov 7: a long turn's last line was cut at the screen's edge)
   const pname = state && state.players[card.pid] ? state.players[card.pid].name : '';
   // the hub card leaves no zone behind, and notes when it left (the log area's card flies in from where it stood)
   useLayoutEffect(() => (hub ? () => { setStoryZone(null); if (hubMine.current) { hubLast = { ...hubMine.current, gone: Date.now() }; noteHubGone(hubLast); } } : undefined), [hub]);
@@ -736,8 +742,6 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
     const dx = hr.left + hr.width / 2 - (r.left + r.width / 2), dy = hr.top + hr.height / 2 - (r.top + r.height / 2);
     el.animate([{ transform: `translate(${dx}px,${dy}px) scale(${sc})`, opacity: 1 }, { transform: 'none', opacity: 1 }], { duration: Math.round(MO.storyFly), easing: 'cubic-bezier(.3,.7,.3,1)' });
   }, [card.pid, card.n, keep]); // eslint-disable-line react-hooks/exhaustive-deps
-  const hubLines = useStableLines(`${card.k || card.n}`, hub && card.text ? card.text.split(' · ').slice(1) : []);
-  const shownN = useReveal(`${card.k || card.n}`, hubLines, hub && !!card.text);
   if (gone) return null;
   // at most a few lines, the rest summed up (every line stays in the strip's card and the log)
   const [head, ...all] = card.text.split(' · ');
