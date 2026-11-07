@@ -7,29 +7,25 @@ Green copies spaces (Echo, Reprise, Cover, Song Request, Stunt Double, Understud
 Green also hands nothing back to the colors around it: a copy takes, the copied player gets nothing. Left as is (copying is the sting; Bait already pays the copied player when owned).
 Green's own payoffs are crowded: Copyist, Impressionist, Ensemble and Wallflower all pay when you copy. Encore is on Cory's rework list.
 
-## 1. Session Musicians (replaces Encore)
-Live Encore: [3 green + 4 any] "On Use, once per game: your next On Recruit happens twice."
-Proposed: **Session Musicians** "Round Start: copy the Round Start ability of a rival's member."
-Played: round II start, 4 players. Dee (Yellow) has Caravan ("On Recruit: +1 of each color. Round Start: +1 of each color."), Cal (Magenta) has Kidnapper ("On Recruit and at Round Start: steal a rival's cheapest member."). Ben with Session Musicians copies Kidnapper: he steals a rival's cheapest member. Next round, if Kidnapper's gone, Caravan: +1 of each color.
-Choices: which member to copy each round; real when two are out (a member versus resources).
-Who feels it: whoever Ben steals from, or no one; the owner of a strong Round Start card sees Green ride it.
-Ledger: not refused. Commission ("fire a rival's On Use") was refused for Silver on Oct 31 (off-theme for Silver); this is Green's own verb.
-Intuitive: one sentence, Round Start is printed on the card copied. Fun: borrowing the table's best engine. Interacts: every color's Round Start cards. Powerful: as strong as the best one out. Engine or counter: engine. Its color: copying a member's timing, new.
-Risk: no rival has a Round Start card some games (it does nothing that round).
+## 1. Sample (action tweak)
+Live: "Copy the On Recruit of a rival's member. +1 green."
+Proposed: "Copy the On Recruit or Round Start of a rival's member. +1 green."
+Played: round II. Dee (Yellow) has Caravan ("On Recruit: +1 of each color. Round Start: +1 of each color."); Cal (Magenta) has Kidnapper ("On Recruit and at Round Start: steal a rival's cheapest member."). Ben takes Sample: copies Kidnapper and steals a rival's cheapest member. Live, the same, but cards that only say Round Start (Body Snatchers, Seat Filler, Late Risers) can't be copied.
+Choices: which member. Who feels it: the victim of the copied effect. Intuitive: one more word. Interacts: every color's Round Start cards. Powerful: same band. Its color: copying members, wider.
 
-## 2. Bootleggers (replaces Copyist)
-Live Copyist: [2 green + 3 any] "Whenever you copy an action, +2 followers." (fourth copy payoff)
+## 2. Session Musicians (replaces Encore)
+Live Encore: [3 green + 4 any] "On Use, once per game: your next On Recruit happens twice."
+Proposed: **Session Musicians** "Round End: copy the Round End ability of a rival's member."
+Played: round II end, 4 players. Ana (Red) has Mob ("Round End: +2 followers per rival with fewer red members than you."), Eve (White) has Recluse ("Round End: +2 followers per rival with more members than you."). Ben has 9 members, most at the table: Recluse pays him nothing, Mob counts his red members (2, more than two rivals): +4.
+Choices: which card, counted on Ben's own cult. Who feels it: no sting; the owner sees Green ride their engine. Ledger: Commission ("fire a rival's On Use") was refused for Silver on Oct 31 as off-theme; this is Green's own verb.
+Intuitive: one sentence. Fun: borrowing the table's best engine. Interacts: every color's Round End cards. Powerful: as strong as the best fit. Engine or counter: engine. Its color: copying a member's timing, new.
+Risk: some games no rival has a Round End card.
+
+## 3. Bootleggers (replaces Copyist)
+Live Copyist: [2 green + 3 any] "Whenever you copy an action, +2 followers." (fourth copy payoff beside Impressionist, Ensemble, Wallflower)
 Proposed: **Bootleggers** "Game End: copy the Game End ability of a rival's member."
 Played: game end. Eve has Misers ("Game End: +1 follower per 2 white you hold."), Ana has Patriarch ("Game End: +1 follower per 2 members you have."). Ben holds 12 members: copies Patriarch for +6.
-Choices: which scorer, counted on Ben's own cult; he steers toward the best one out.
-Who feels it: no sting; a rival's plan becomes Ben's plan too. Reason to buy a scorer away from Green.
-Intuitive / Fun / Interacts: every color's Game End cards. Powerful: one scorer's worth. Engine: builds toward what's out. Its color: copying a plan, new.
+Choices: which scorer, on Ben's own cult; he steers toward the best one out. Who feels it: a reason to buy a scorer away from Green.
+Intuitive / Fun / Interacts: every color's Game End cards. Powerful: one scorer. Engine: builds toward what's out. Its color: copying a plan, new.
 
-## 3. Build Up (action tweak)
-Live: "+3 green in round I, +4 in round II, +5 in round III."
-Proposed: "+1 green, and +2 of the previous action's color in round I, +3 in round II, +4 in round III."
-Played: round II. Ana took Toast (silver). Ben takes Build Up: +1 green, +3 silver, and jumps into the silver contest. Live: +4 green.
-Choices: when to take it (after which color).
-Who feels it: whoever leads the color that was just played.
-Intuitive: Echo's "previous action" words. Fun: a small echo of the last move. Interacts: whatever color was just played. Powerful: same total as live, aimed. Engine: Impressionist, Wallflower don't fire (not a copy). Its color: echoing a gain, new.
-Risk: shares its shape with Purple's new Right Away (bonus in another space's color); different trigger (previous action vs your next space).
+Dropped: Build Up "+1 green, and +2 of the previous action's color…": same shape as Purple's new Right Away (a gain in another space's color); colors mustn't overlap.
