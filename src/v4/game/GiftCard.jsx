@@ -352,6 +352,13 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
     for (const x of g.plan) { const k = `${x.pid}:${x.res}`; by.set(k, (by.get(k) || 0) + (x.take || 1)); }
     return [...by].map(([k, n]) => { const [pid, res] = k.split(':'); return `${n} ${res} from ${state.players[pid].name}`; }).join(', ');
   })() : '';
+  // what the one click takes, by color, on the button itself: "Take all 4" beside 17 on offer read as all 17 (frame
+  // review, Nov 7)
+  const planColors = g.plan ? (() => {
+    const by = new Map();
+    for (const x of g.plan) by.set(x.res, (by.get(x.res) || 0) + (x.take || 1));
+    return [...by].map(([res, n]) => `${n} ${res}`).join(', ');
+  })() : '';
   // the members you can recruit from the row: picture, name and what you pay
   const recruitItems = () => g.seconds.map(({ o, b: uid }) => {
     const d = card(uid);
@@ -478,9 +485,9 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
       {(g.rest.length > 0 || (g.plan && g.plan.length > 1)) && (
         <div className="gc-rest">
           {g.plan && g.plan.length > 1 && (
-            <button type="button" className="btn gc-rest-btn gc-all" data-take-all={planTotal} disabled={busy} title={`Takes ${planWords}`} aria-label={`Take all ${planTotal}: ${planWords}`}
+            <button type="button" className="btn gc-rest-btn gc-all" data-take-all={planTotal} disabled={busy} title={`Takes ${planWords}`} aria-label={`Take ${planTotal}: ${planWords}`}
               onPointerEnter={() => setPreview(true)} onPointerLeave={() => setPreview(false)} onFocus={() => setPreview(true)} onBlur={() => setPreview(false)} onClick={onTakeAll}>
-              Take all <b className="num">{planTotal}</b>
+              Take <b className="num">{planTotal}</b> ({planColors})
             </button>
           )}
           {g.rest.map(o => <button key={o.id} type="button" className="btn gc-rest-btn" data-option={o.id} disabled={busy} onClick={e => onAnswer(o.id, e.currentTarget, null)}>{g.kind === 'share' && o.kind === 'done' && g.total ? <>Done: give <b className="num">{g.total}</b></> : o.label}</button>)}
