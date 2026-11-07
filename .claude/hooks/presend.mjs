@@ -88,6 +88,14 @@ if (missing.length) problems.push(`Card text missing. Quote each card in full, n
 // Cory, Nov 1: the neutral members are grey, never "Guests".
 if (/\bguests\b|\bguest members?\b/i.test(prose)) problems.push('Say "grey" for the neutral members, never "Guests" (Cory, Nov 1).');
 
+// Cory, Nov 7 (said many times): no drawing from the top of the pile, no randomness, all public information.
+// Quoted card text is skipped, so quoting a live card (Walk-In, Peek) still passes.
+{
+  const unquoted = prose.replace(/["“][^"”]*["”]/g, '');
+  const hit = unquoted.match(/\b(top of the (pile|deck)|from the pile|draws? (a|the|from)|random(ly|ness)?|shuffle[sd]?|face[- ]down|hidden|secret(ly)?|blind)\b/i);
+  if (hit) problems.push(`"${hit[0]}": no pile draws, no randomness, everything public (Cory, Nov 7: "i don't like drawing from the top of the pile. i don't like randomness. In general the game should be all public information."). Cut the idea or rework it on public cards.`);
+}
+
 // 4. A design pitch: the checklist in .claude/rules/pitching.md, done in writing before sending.
 const looksLikePitch = pitch || (/(^|\n)\s*\d+[.)] .*["“]/.test(text) && /\b(pitch|idea|could|new space|new member|round I{1,3}\b)/i.test(text));
 if (looksLikePitch) {
