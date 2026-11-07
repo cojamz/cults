@@ -7,6 +7,37 @@ each. One line per finding: what a player sees, what's wrong, status. Each run's
 Status words: **fixed (version)**, **fixing**, **sent** (to the thread that owns it), **open** (ours, not started),
 **Cory** (a question only he can answer), **by design** (with the reason; the check got an exception).
 
+## 2026-11-08
+Run at 1:42am Eastern Nov 8 on v0.99.667 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
+emoji; raw list /mnt/project-files/picky/2026-11-07-06-42/). The bot flagged 4 (Housewarming's number; the two below
+already listed); the member sweep of 116 cards in both looks was clean. The rest are by eye from the shots.
+
+- **Wheel: Housewarming says "free new-color member, up to 7"; its card says up to 5.** The Nov 8 cut moved the
+  engine's cap to 4 + the price setting, but the wheel's line kept 6 + it. Now reads the same as the card, with a
+  test. **fixed (v0.99.668)**
+- **Shop: Picket Line and Foster Parents are a lone small figure on a blank card.** They took their old cards' small
+  figures (Shift Crew's, Greeters') but not their scenes. Seven live members had this (also Copyist, Guest of Honor,
+  Duty Collector, Jack-of-All-Trades, Seamstress); each now wears its retired card's scene until its own is drawn.
+  Checked on the members page of v0.99.668 (after/foster-parents-v0.99.668.png). **fixed (v0.99.668)**
+- **On your turn the headline still says the last rival's turn.** "P3's turn ···" with their story card up, while your
+  seat says "your turn" and spare minions show; seen in 9 of 12 table shots, half a second after the table settled
+  with nothing animating. With "2 turns in a row" beside it (round II) it reads as P3's two turns. **open** (for the
+  coordinator: the top banner's owner)
+- **The top banner hides the wheel's top spaces on a rival's turn** (round I-III: "Steal 1, then safe from steals"
+  and the space beside it are cut in half under the banner, the top-middle space hidden). Fine while it plays, but it
+  stays up into your turn (above), when you want to read the wheel. **open** (for the coordinator, same owner)
+- **"Turn skipped" pill sits over P3's resource counts** (round III, P3 holding the Goes Last token), hiding their
+  green and magenta. **open** (looks off)
+- **Emoji look mixes pictures and emoji in the shop** (Downsizers, Patron Saints, Ballroom Dancers, Kingmakers show
+  their pixel scenes beside Ghost's emoji and Old Money's bank). **open** (for the coordinator, emoji members' owner)
+- **Blue Cloak's question: "+1 of which color (grey is wild)?"** on a table with Silver: grey reads like silver, and
+  nothing says it's your Ghost (a grey member) making you choose. **open** (wording)
+- Seen again, already listed: Impersonator's round III hover runs 169px off the bottom (long "Could choose" list),
+  Promote's sheet "Member" label spills 2-3px, bar Members one above the member count (P4 "19 members", bar 20), bare
+  numbers on score parts ("2", "4", "8", "11"), "recruiting followers" beside "Bought", emoji members shown as things
+  (Recluse a house, Critic a monocle, Regular a coffee cup), minions over middle-ring words, rim plaques opening no card
+  (9 and 18 rests).
+
 ## 2026-11-07
 Run at 7:42pm Eastern Nov 6 on v0.99.662 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
 emoji; raw list /mnt/project-files/picky/2026-11-07-00-42/). The bot flagged nothing; the member sweep of 116 cards in
