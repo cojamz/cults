@@ -25,7 +25,15 @@ const BRANCH = 'claude/gifted-newton-3lcy3i';
 const args = process.argv.slice(2);
 const flag = (k, d) => { const i = args.indexOf(`--${k}`); return i >= 0 ? args[i + 1] : d; };
 const sh = (cmd, a, o = {}) => execFileSync(cmd, a, { encoding: 'utf8', ...o });
-const readJson = p => JSON.parse(fs.readFileSync(p, 'utf8'));
+// the shared folder can show a file half written for a moment: retry, then give up on that file for this run
+const readJson = p => {
+  for (let i = 0; ; i++) {
+    try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) {
+      if (i >= 20) throw e;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 150);
+    }
+  }
+};
 
 function games() {
   if (!fs.existsSync(BASE)) return [];
