@@ -15,7 +15,7 @@ both looks was clean. The rest are by eye from the shots.
 - **Out of Style's pick showed bare dots: "send which color to the discard pile?" over a silver dot, a yellow dot, a
   blue dot and "grey".** The choice counts shop members, but the screen showed resource dots with no names and no
   count of how many would go (each one is +1 blue). Grey and silver read as the same dot. Each choice is now "2 [blue
-  member] blue", "2 [silver member] silver", with a test. **fixed (this run)**
+  member] blue", "2 [silver member] silver", with a test. **fixed (v0.99.669)**
 - **The rival banner at round start and between turns names no cause.** "P2, round start ··· +1 yellow +1 silver",
   "P4, round start ··· +1 red +1 green from P3", "P3, between turns ··· −2 yellow +2 blue −1 silver +1 white": only
   the gains, never the member that made them, so a first-time player can't tell why P3 lost 2 yellow. **open** (for
