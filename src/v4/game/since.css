@@ -87,3 +87,7 @@ path.hn-locate,rect.hn-locate,polygon.hn-locate{filter:drop-shadow(0 0 5px rgba(
 .since-fly .since-row.since-full{box-shadow:inset 3px 0 0 var(--pc),0 10px 24px rgba(0,0,0,.5);
   /* opaque in flight: see-through, it laid its words over the wheel's (picky bot, Nov 7) */
   background:color-mix(in srgb,var(--pc) 14%,#211812)}
+/* your own turn as it builds, under its own label below the rivals' lines (frame review, Nov 7) */
+.lt-since .since-own-label{list-style:none;padding:4px 2px 0;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:color-mix(in srgb,var(--cream-3) 50%,var(--cream-2))}
+/* a member's or cloak's name never breaks across two lines ("Green / Cloak"; frame review, Nov 7) */
+.lt-since .sf-line .hn{white-space:nowrap}

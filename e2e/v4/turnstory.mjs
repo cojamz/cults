@@ -165,7 +165,8 @@ try {
   if (v.strip.length < 1 && !v.kept) fail('the strip shows no rival move at all', 't2');
   if (v.partial) fail(`the strip shows ${v.partial} line(s) only in part (it should fold whole lines)`, 't2');
   for (const l of v.strip) if (!/^\s*P[234]\b/.test(l)) fail(`a strip line doesn't start with a rival's name: "${l}"`, 't2');
-  const words = await page.evaluate(() => [...document.querySelectorAll('[data-since] .since-row:not(.since-full)')].map(r => !!r.querySelector('.sp-words')));
+  // (a line whose gain says the board's words already leaves them out: "P2 Sprout: +3 green", picky bot, Nov 6)
+  const words = await page.evaluate(() => [...document.querySelectorAll('[data-since] .since-row:not(.since-full):not([data-says-same])')].map(r => !!r.querySelector('.sp-words')));
   if (words.some(w => !w)) fail(`a strip line names its space without the space's board words: ${JSON.stringify(words)}`, 't2');
   if (!v.since) fail('no "since your last turn" strip on the board', 't2');
   else {

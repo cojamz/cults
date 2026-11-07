@@ -2163,11 +2163,15 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
           <section className="lt-shop" data-region="shop" aria-label="Shop">
             <ShopCards state={tState} me={me} mySeats={yours ? mySeats : NO_SEATS} optionFor={shopFor || live} onPick={shopPick} onDenied={shopDenied} phase={phase} hover={hover} onViewChange={setShopDetails} />
           </section>
-          {/* what the rivals did since your own last placement, one line each, always on the board (RC1 panel) */}
+          {/* what the rivals did since your own last placement, one line each, always on the board (RC1 panel); your own
+              turn as it builds under its own label, not under "Since your last turn", and the newest finished turn whole
+              only until the next player moves, then one line like the rest (frame review, Nov 7: your moves under the
+              heading; an old turn's card parked through the next turn and pushed the other lines into "6 more") */}
           {/* the spare minions sit in its head, beside the Log (Cory, Oct 29). They read the physical state alone: the table view
               mixes the new round's empty board with the old round's spent turns, which read as every space spare for a moment
               between rounds (Cory, Oct 29: "between rounds the spare minions count is HUGE") */}
-          {state.round >= 1 && <SinceStrip state={tState} entries={storyAtHub() && story.mineNow ? [...since, story.mineNow] : storyAtHub() && hubStory && hubStory === tailOf ? since.filter(e => `t${e.n}` !== hubStory.n) : since} full={storyAtHub() && story.mineNow ? -1 : storyAtHub() && lastDone && !(hubStory && hubStory === tailOf) ? Number(lastDone.n.slice(1)) : null} me={mySeats.length === 1 ? mySeats[0] : null} yours={yours} hover={hover} onLog={openLog}
+          {state.round >= 1 && <SinceStrip state={tState} entries={storyAtHub() && hubStory && hubStory === tailOf ? since.filter(e => `t${e.n}` !== hubStory.n) : since} own={storyAtHub() ? story.mineNow : null}
+            full={storyAtHub() && lastDone && !(hubStory && hubStory === tailOf) && !story.live ? Number(lastDone.n.slice(1)) : null} me={mySeats.length === 1 ? mySeats[0] : null} yours={yours} hover={hover} onLog={openLog}
             pool={physicalState.round >= 2 && !physicalState.over ? <MinionPool state={physicalState} /> : null} />}
         </>
       )}

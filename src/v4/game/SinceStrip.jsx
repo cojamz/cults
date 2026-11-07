@@ -117,7 +117,10 @@ export function StoryCard({ story, color, state, hover }) {
  * id or null), yours (it's your move now), hover (the board's hover layer), onLog (opens the full log),
  * pool (the spare minions, MinionPool, from round II: they sit beside the Log, and the strip's title drops to its own line).
  */
-export default function SinceStrip({ state, entries, me, yours, hover = null, onLog, pool = null, full = null }) {
+export default function SinceStrip({ state, entries: rivals, own = null, me, yours, hover = null, onLog, pool = null, full = null }) {
+  // your own turn as it builds is the list's last row, under a label of its own (frame review, Nov 7: "You took Build Up"
+  // showed under "Since your last turn")
+  const entries = own ? [...rivals, own] : rivals;
   // whole lines only (design pod): when the strip's room can't hold every line, the oldest go into "N earlier…" instead
   // of showing part of a line at the top. The fold is worked out in one step from where the lines stand (the list stacks
   // from its foot, so dropping the oldest leaves the rest where they are), and lines that won't stay are hidden before the
@@ -210,7 +213,8 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
           setDrop(d => (d.sig === s0 && (d.lvl || 0) >= 1 ? d : { sig: s0, n: c0, bare: false, lvl: 1 }));
           return;
         }
-        const brief = l0 === 0 && !!rows[k].querySelector('.sp-words');
+        // (a whole turn's row too tall for the room sets as one line: its top was cut under the head, frame review, Nov 7)
+        const brief = l0 === 0 && (!!rows[k].querySelector('.sp-words') || rows[k].classList.contains('since-full'));
         const lvlNow = !fits(k) && !alone ? (brief ? 1 : 2) : l0;
         if ((!k && !bareNow && lvlNow === l0) || c0 + k > len - 1) return;
         const n = c0 + k;
@@ -244,31 +248,16 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
   // nothing to tell (before your first turn, or your second turn in a row): the strip says nothing at all, only the Log
   // stays (blind panel: "No moves since yours yet." narrated nothing)
   const empty = !entries.length;
+  const title = rivals.length ? 'Since your last turn' : 'Your turn';
   const count = (bare || lvl >= 2) && more + (lvl >= 2 ? shown.length : 0) > 0 ? (
     <button type="button" className="since-more in-head" onClick={onLog} title="Open the log">{lvl >= 2 ? `${more + shown.length} ${more + shown.length === 1 ? 'move' : 'moves'}` : `${more} earlier`}</button>
   ) : null;
-  return (
-    <section ref={secRef} className={`lt-since${yours ? ' yours' : ''}${empty ? ' empty' : ''}${compact ? ' compact' : ''}`} data-since data-empty={empty || undefined} data-folded={cut || undefined} aria-label="Since your last turn">
-      <header className={`since-head${pool ? ' with-pool' : ''}`}>
-        {/* the spare minions beside the Log (Cory, Oct 29, his pick of three spots) */}
-        {pool}
-        {!empty && !pool && <span className="since-title">Since your last turn</span>}
-        {/* the newest line alone: the earlier ones are counted up here, beside the Log, taking no line of their own */}
-        {!pool && count}
-        <button type="button" className="since-log" data-open-log onClick={onLog} title="The whole game, move by move">Log</button>
-      </header>
-      {/* with the spare minions in the head, the title and its count take their own line, but only over a line they head:
-          folded to a count, the head wrapped it ("1" over "move") and the title stood alone under the turn card, cut in
-          half (playtest, Nov 1). The Log beside the minions still opens every move. */}
-      {!empty && pool && lvl < 2 && <div className="since-own"><span className="since-title own-line">Since your last turn</span>{count}</div>}
-      {shown.length ? (
-        <ol className="since-list" ref={listRef}>
-          {/* "2 more: open the log" (picky bot, Nov 4: the ellipsis read as cut-off text) */}
-          {more > 0 && !bare && <li className="since-more"><button type="button" onClick={onLog}>{more} more: open the log</button></li>}
-          {shown.map(e => (e.n === full ? <FullRow key={`f${e.n}`} e={e} state={state} hover={hover} name={name} /> : (
+  // one row: the turn whole (yours as it builds, Cory, Nov 6; or the newest finished one, while the room holds it whole),
+  // else its one line
+  const row = e => (e === own || (e.n === full && lvl === 0) ? <FullRow key={`f${e.n}`} e={e} state={state} hover={hover} name={name} /> : (
             // the space the line names lights on the wheel while any of the line is pointed at, not only its name (picky
             // bot, Nov 4: the wheel prints no names, so readers couldn't find the space a rival took)
-            <li key={e.n} className={`since-row${e.hit ? ' hit' : ''}${lvl === 1 ? ' brief' : ''}`} hidden={lvl >= 2 || undefined} data-clip-ok={compact || undefined} style={{ '--pc': playerColor(e.actor) }} onClick={pinLine}
+            <li key={e.n} className={`since-row${e.hit ? ' hit' : ''}${lvl === 1 ? ' brief' : ''}`} hidden={lvl >= 2 || undefined} data-says-same={saysSame(words(state, e.spaceKey), e.short) || undefined} data-clip-ok={compact || undefined} style={{ '--pc': playerColor(e.actor) }} onClick={pinLine}
               onPointerEnter={e.spaceKey ? () => locate(e.spaceKey, true) : undefined} onPointerLeave={e.spaceKey ? () => locate(e.spaceKey, false) : undefined}>
               {/* a move from the round before says so (picky bot, Nov 4: a round I Peek read against round II's faces) */}
               {e.round && e.round !== state.round ? <small className="since-round" data-since-round={e.round}>Round {roman(e.round)}</small> : null}
@@ -290,7 +279,26 @@ export default function SinceStrip({ state, entries, me, yours, hover = null, on
                 <span key={k} className={`big part${k || lead(e) ? '' : ' first'}`}>{k || lead(e) ? '· ' : ': '}<HoverNames state={state} hover={hover} text={part} uids={e.uids} /></span>
               )) : e.short ? <span className="big">{lead(e) ? ' · ' : ': '}<HoverNames state={state} hover={hover} text={e.short} uids={e.uids} /></span> : null}
             </li>
-          )))}
+    ));
+  return (
+    <section ref={secRef} className={`lt-since${yours ? ' yours' : ''}${empty ? ' empty' : ''}${compact ? ' compact' : ''}`} data-since data-empty={empty || undefined} data-folded={cut || undefined} aria-label="Since your last turn">
+      <header className={`since-head${pool ? ' with-pool' : ''}`}>
+        {/* the spare minions beside the Log (Cory, Oct 29, his pick of three spots) */}
+        {pool}
+        {!empty && !pool && <span className="since-title">{title}</span>}
+        {/* the newest line alone: the earlier ones are counted up here, beside the Log, taking no line of their own */}
+        {!pool && count}
+        <button type="button" className="since-log" data-open-log onClick={onLog} title="The whole game, move by move">Log</button>
+      </header>
+      {/* with the spare minions in the head, the title and its count take their own line, but only over a line they head:
+          folded to a count, the head wrapped it ("1" over "move") and the title stood alone under the turn card, cut in
+          half (playtest, Nov 1). The Log beside the minions still opens every move. */}
+      {!empty && pool && lvl < 2 && <div className="since-own"><span className="since-title own-line">{title}</span>{count}</div>}
+      {shown.length ? (
+        <ol className="since-list" ref={listRef}>
+          {/* "2 more: open the log" (picky bot, Nov 4: the ellipsis read as cut-off text) */}
+          {more > 0 && !bare && <li className="since-more"><button type="button" onClick={onLog}>{more} more: open the log</button></li>}
+          {shown.map(e => (e === own && rivals.length && lvl < 2 ? [<li key="own" className="since-own-label">Your turn</li>, row(e)] : row(e)))}
         </ol>
       ) : null}
     </section>
