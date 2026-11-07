@@ -41,6 +41,12 @@ const STYLES = [[
   'an opportunist who hunts for odd combinations and swings late.',
   'a patient engine-builder who waits for the right members and refuses to waste a recruit.',
   'a contest hunter and blocker who likes to deny rivals their favorite space.',
+], [
+  // mixed skill (idea pipeline, Cory Nov 7: judges at different skill levels): two newer players among two experts
+  'a newer player in your third game. You know the rules but not the strategy yet; you pick what looks fun or strong on the card and learn as you go.',
+  'a patient engine-builder who waits for the right members and refuses to waste a recruit.',
+  'a casual player who plays by feel, likes big swingy turns and dislikes bookkeeping.',
+  'a contest hunter and blocker who likes to deny rivals their favorite space.',
 ]];
 
 // ---------- files, lock ----------
@@ -310,7 +316,7 @@ async function main() {
     const meta = readJson(f(dir, 'meta.json'));
     const styles = STYLES[Number(flags.set || 0) % STYLES.length];
     const tpl = fs.readFileSync(f(ROOT, `design/eval/expert-games/player-brief${flags.feel ? '-feel' : ''}.md`), 'utf8'); // --feel: postgame FEEL ratings per card
-    meta.names.forEach((name, i) => fs.writeFileSync(f(dir, `brief-${name}.md`), tpl.replaceAll('{NAME}', name).replaceAll('{DIR}', path.resolve(dir)).replaceAll('{SEAT}', String(i)).replaceAll('{STYLE}', styles[i])));
+    meta.names.forEach((name, i) => fs.writeFileSync(f(dir, `brief-${name}.md`), tpl.replaceAll('{NAME}', name).replaceAll('{DIR}', path.resolve(dir)).replaceAll('{SEAT}', String(i)).replaceAll('{STYLE}', styles[i]).replaceAll('{ROOT}', ROOT)));
     console.log(`Wrote ${meta.names.length} briefs in ${dir}`);
     return;
   }

@@ -26,3 +26,9 @@ Calibration showed paper judges match Cory's picks only at chance on unseen call
     "pick": "Recommend: …" }] }
 ```
 `was` is optional (only when Cory asks to see a card beside another).
+
+## Robustness (Cory, Nov 7: "uplevel the robustness of the testing harness")
+- **Did it act**: `node scripts/ideas/fires.mjs <tags>` plays quick games at 3 and 4 players with full logs and counts, per card, games dealt, bought or taken, and lines where it acted. A card bought but never acting is a build bug; fix it before any judge game.
+- **Judges, robust**: `node scripts/ideas/judges.mjs plan <tags> --games 6` pins a worktree at the pushed branch head (rules never change mid-game), starts games at 3 and 4 players with rotating colors and seeds, and rotates three judge mixes (two expert sets, one with two newer players). Judges are blind: nothing marks a card as new. `status` flags a game with no move for 20 minutes as STALLED (relaunch that seat's agent with the same brief; it picks up where the game is). `report` puts each candidate's ratings beside the live cards in the same games and marks where judges split (spread of 1.2 or more, or fun ratings 3 apart).
+- **Bot games**: `bash scripts/ideas/keep-working.sh <trial>` restarts a crashed runner until every block is done; runner threads can run the same line.
+- Never edit the main checkout while judge games or runners use it; builders work in their own worktree.
