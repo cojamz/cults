@@ -34,6 +34,13 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 11. Rival members hover, more polish later (Cory, Oct 29: "in the backlog, i think we could improve this more in the future"). Shipped as mockup 13: cards in columns by the card's keyword, priciest first, heading with artifact, Round Start, Game End now, resources, members by color.
 12. Goes Last token wording (Cory, Nov 6: "this kind of language around the Go Last token is going to make no sense to players"; "dont fix, backlog for now"). Example log/story line: "P3's Sleep In: P3 takes the Goes Last token from you, and your minion on it goes back to their hand" (also a pronoun slip: your minion, their hand). Rewrite every Goes Last line (format.js, shorts.js, panelText.js, emojiMembers night-watch, seat pill title) in plain player terms.
 13. Story card and the shop deal (every-frame check, e2e/v4/cardframes.mjs WATCH lines): about one turn in fifteen, a turn's card goes, or the next turn starts, in the same moment a shop deal begins (a bot's last buy, a round's new row). The next turn already waits for deals in flight (Cory, Nov 6: "what if the in between round stuff happened before people take their fucking turn"); make the deal start before the hand-off, then make those two checks fail the run.
+14. Color intersection table (Cory, Nov 7): a lookup grid, blue X white gives how those two colors can interact in theory. Build each cell from the two colors' contests and the resources and verbs their actions make and spend, ignoring current members; no brainstorm skill (his verdict on the first try: "these ideas suck. they don't feel original or elegant at alll").
+15. Card review 2 defaults (Scouts, Latecomers and the rest) still wait on Cory's yes; build nothing until he answers.
+16. Bots take turns before the deck is dealt: hold every turn until the deal lands.
+17. Redo the deck deal animation.
+18. Cory's own Harvest animation is too slow.
+19. Show other players' cursors in online games.
+20. Five small screen issues from the picky UI run, still open.
 
 ## Ours, open (no call needed)
 - Bots and **Encore** ("On Use, once per game: your next On Recruit happens twice."): Cory, Nov 6, "i suspect bots can't use this right". Owners won 17% vs 31% (express Hard test) and 21% vs 31% (v606). Check when Hard uses it and whether it aims it at its best On Recruit.
