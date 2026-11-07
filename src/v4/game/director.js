@@ -258,7 +258,10 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     // its tail (a rush of coins, never under 0.6 of the flight), so its last coin lands when the old single bundle did
     // and the turn's pace stays where it was (pacing.test.js)
     const tail = bundle && !opt.fol ? Math.round((n - 1) * streamGap(n)) : 0;
-    const d = opt.dur || Math.max(Math.round(coinFly(from, to) * 0.6), coinFly(from, to) - tail);
+    // your own picked coins (Harvest's, Polish's) cross at Steady's pace at Relaxed: you just chose them, there is
+    // nothing to read (Cory, Nov 7: "harvest animation is so slow", "it was mine that felt slow")
+    const fly0 = opt.picked ? Math.round(coinFly(from, to) * Math.min(1, SPEEDS.steady / coinScale())) : coinFly(from, to);
+    const d = opt.dur || Math.max(Math.round(fly0 * 0.6), fly0 - tail);
     hand = Math.max(hand, (bundle ? time + tail : time + (n - 1) * MO.pieceStagger) + d * (2 / 3));
     if (bundle) { at(time, { op: 'piece', from, to, n, bundle: true, dur: d, ...(tail ? { stream: tail } : {}), ...opt }); at(time + d, { op: 'land', to, by: n, bundle: true, ...(tail ? { stream: tail } : {}), ...opt }); return { last: time + tail, d }; }
     for (let k = 0; k < n; k++) { at(time + k * MO.pieceStagger, { op: 'piece', from, to, n: 1, dur: d, ...opt }); at(time + k * MO.pieceStagger + d, { op: 'land', to, by: 1, ...opt }); }
@@ -489,7 +492,9 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     // the owner's gains, then the spill fan, which starts when the owner's are two-thirds along (the same beat)
     const own = m.gains.filter(g => g.to.pid === owner || owner == null), spill = m.gains.filter(g => !(g.to.pid === owner || owner == null));
     const before0 = cur;
-    phase(own.map(g => ({ from: fromMove && g.from.kind === 'member' ? fromMove : g.from, to: g.to, n: g.what.n, opt: { r: g.what.r, owner: g.to.pid } })));
+    // your own run of color picks, folded into one step (foldPicks): its coins fly at Steady's pace (pieces)
+    const picked = c.kind === 'move' && mine.includes(c.pid) && state.foldedFrom === before.moves && Array.isArray(state.foldedEffects);
+    phase(own.map(g => ({ from: fromMove && g.from.kind === 'member' ? fromMove : g.from, to: g.to, n: g.what.n, opt: { r: g.what.r, owner: g.to.pid, ...(picked ? { picked: true } : {}) } })));
     if (spill.length) { cur = own.length ? cur : before0; phase(spill.map(g => ({ from: g.from, to: g.to, n: g.what.n, opt: { r: g.what.r, owner: g.to.pid, light: true } }))); }
     // an extra minion (Cory, 2026-10-29): a spare one leaves the pool (or a rival's row) and lands in its new seat's row
     const spare = beat.effects.filter(e => e.type === 'minion');

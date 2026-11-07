@@ -59,16 +59,23 @@ export default function SplitPicker({ state, g, onAnswer, onAnswerAll = null, bu
     if (!to) return;
     setGot({ ...got, [c]: got[c] - 1, [to]: got[to] + 1 });
   };
-  const take = () => {
-    if (busy || taking) return;
+  const retry = useRef(null);
+  useEffect(() => () => clearTimeout(retry.current), []);
+  const take = (tries = 0) => {
+    if (taking || (busy && !tries)) return;
     const picks = colors.flatMap(c => Array.from({ length: got[c] }, () => c));
     // a local game takes the whole split in one go, its coins flying together (GameScreen onGiftAnswerAll); the card
     // stays, its plan shown, while they fly. Else (online, or a pick refused) one question at a time.
     const ids = picks.map(c => (optOf(c) || {}).id);
     const sent = onAnswerAll && ids.every(Boolean) ? onAnswerAll(ids) : 0;
-    if (sent === picks.length) { hold(state.moves, picks.length, { plan: got, total }); return; }
-    start(picks.slice(sent), { plan: got, total });
+    // the table was still playing the last step: the whole Take again in a moment (for up to ~4s), never a color at a time
+    if (sent === 'wait' && tries < 30) { clearTimeout(retry.current); retry.current = setTimeout(() => latestTake.current(tries + 1), 130); return; }
+    const n = typeof sent === 'number' ? sent : 0;
+    if (n === picks.length) { hold(state.moves, picks.length, { plan: got, total }); return; }
+    start(picks.slice(n), { plan: got, total });
   };
+  const latestTake = useRef(take);
+  latestTake.current = take;
   useEffect(() => {
     const b = box.current && box.current.querySelector('.pay-go');
     if (b && (!document.hasFocus || document.hasFocus())) b.focus({ preventScroll: true });
@@ -125,7 +132,7 @@ export default function SplitPicker({ state, g, onAnswer, onAnswerAll = null, bu
         {onBack && <button type="button" className="pay-cancel" data-option="back" disabled={busy || taking} onClick={onBack}>Cancel</button>}
         {/* while the split is being taken it stays as it was, its dots in their colors (picky bot, Nov 4: greyed, its blue
             dot read as silver) */}
-        <button type="button" className="pay-go" data-split-take={parts.map(x => `${x.n}${x.color}`).join(' ')} data-taking={taking || undefined} disabled={busy || taking} onClick={take}>
+        <button type="button" className="pay-go" data-split-take={parts.map(x => `${x.n}${x.color}`).join(' ')} data-taking={taking || undefined} disabled={busy || taking} onClick={() => take()}>
           Take <CostDots parts={parts} />
         </button>
       </div>

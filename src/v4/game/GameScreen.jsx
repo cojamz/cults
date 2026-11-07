@@ -1763,10 +1763,14 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   }, [gift, options, onPick, interactionState, physicalState, session]);
   // a split card's whole Take at once (local games): each answer goes to the engine in this one call, and the table shows
   // them as one step (foldPicks), the coins flying together. Online answers still go one at a time (takeRun): the host
-  // takes each in turn. Returns how many went (0: nothing went, the card takes them one at a time).
+  // takes each in turn. Returns how many went (0: nothing went, the card takes them one at a time; 'wait': the table
+  // is still playing, so the card tries the whole Take again shortly).
   const onGiftAnswerAll = useCallback(ids => {
-    if (session.info?.mode === 'online' || !mine || needHandoff || busy || busyNow.current) return 0;
-    if (interactionState !== physicalState || session.getState() !== physicalState) { why('gift: presenting'); return 0; }
+    if (session.info?.mode === 'online' || !mine || needHandoff) return 0;
+    // the table is still showing the last step (your placement's coins): 'wait', and the card sends the whole Take again
+    // in a moment, rather than one color at a time (each its own flight: a quick Take after placing on Harvest)
+    if (busy || busyNow.current) return 'wait';
+    if (interactionState !== physicalState || session.getState() !== physicalState) { why('gift: presenting'); return 'wait'; }
     const player = pend.player;
     hover.close();
     let n = 0;

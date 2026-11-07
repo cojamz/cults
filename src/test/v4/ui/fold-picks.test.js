@@ -4,6 +4,7 @@
 import { describe, it, expect } from 'vitest';
 import { applyMove } from '../../../engine/v4/index.js';
 import { planChain, foldPicks } from '../../../v4/game/director.js';
+import { setMotionSpeed } from '../../../v4/motion.js';
 import { colorSave } from '../../../../e2e/v4/lib/dialog-save.mjs';
 
 function polishRun(picks) {
@@ -33,5 +34,20 @@ describe('foldPicks', () => {
     expect(foldPicks(prev, next, rest, [1]).used).toBe(0);
     expect(foldPicks(prev, next, rest, [0, 1]).used).toBeGreaterThan(0);
     expect(foldPicks(prev, next, [], [0]).used).toBe(0);
+  });
+  // your own Harvest (Cory, Nov 7: "harvest animation is so slow", "it was mine that felt slow"): at Relaxed your folded
+  // picks' coins cross at Steady's pace
+  it('flies your own folded picks at Steady pace at Relaxed', () => {
+    setMotionSpeed('relaxed');
+    try {
+      const [prev, next, ...rest] = polishRun(['red', 'red', 'gold', 'white']);
+      foldPicks(prev, next, rest, [0]);
+      const tail = rest[2];
+      const mine = planChain(prev, tail, { mine: [0] });
+      // the last pick on its own, unfolded, flies one coin at Relaxed's coin pace: the whole folded four land sooner
+      const lone = planChain(rest[1], tail, { mine: [0] });
+      expect(mine.total).toBeGreaterThan(0);
+      expect(mine.total).toBeLessThan(lone.total * 0.8);
+    } finally { setMotionSpeed('steady'); }
   });
 });
