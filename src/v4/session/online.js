@@ -15,6 +15,7 @@
 // v3rooms/_index/<CODE>: when that room last showed life (server ms). The DB rules don't let anyone list v3rooms, so this
 // index is how a client finds rooms left idle for IDLE_MS and clears them (sweepIdleRooms, run when a room is made).
 import { createTalkLog, cleanTalk, TALK_GAP_MS } from './talk.js';
+import { createCursors, cursorPath } from './cursors.js';
 import { isLegal, askFor, chooseBotMove, setBotLevels, BOT_LEVELS, MAX_PLAYERS } from '../../engine/v4/index.js';
 import { seededRandom } from '../../engine/v4/rng.js';
 import { parseTable, fitTable, tableProblem } from '../tables.js';
@@ -91,6 +92,7 @@ export async function sweepIdleRooms(transport, { now = transport.serverNow?.() 
     const room = await transport.get(roomPath(code));
     if (room && now - lastActive(room) < IDLE_MS) { await transport.set(indexPath(code), lastActive(room)); continue; }
     if (room) await transport.remove(roomPath(code));
+    await transport.remove(cursorPath(ROOM_ROOT, code)).catch(() => {});
     await transport.remove(indexPath(code));
     gone.push(code);
   }
@@ -682,6 +684,9 @@ function createOnlineSession({ transport, base, code, playerId, getRoom, getView
     talk.add({ id: key, seat: Number(rec.seat), text, at: typeof rec.at === 'number' ? rec.at : Date.now(), logAt: Number(rec.logAt) || 0 });
   });
 
+  // live cursors (cursors.js): beside the room, so a moving mouse never re-runs the room's update
+  const cursors = createCursors({ transport, path: cursorPath(ROOM_ROOT, code), playerId, getRoom });
+
   const mySeats = () => seatList(getRoom()).filter(s => s.kind === 'human' && s.id === playerId).map(s => s.seat);
   // A choice several players answer at the same time (Potluck: pending.also): the table shows me my own ask, so
   // I answer without waiting for the player the engine lists first. The real state stays as it is for moves.
@@ -784,12 +789,17 @@ function createOnlineSession({ transport, base, code, playerId, getRoom, getView
     },
     get talk() { return talk.list; },
     onTalk: fn => talk.on(fn),
+    /** Live cursors: where my mouse is on the table ({ a, x, y }, or null when it leaves), and everyone else's. */
+    pointAt: c => cursors.point(c),
+    get cursors() { return cursors.list; },
+    onCursors: fn => cursors.on(fn),
     /** Host: a bot plays this seat until its player is back (see lobby.letBotPlay). */
     letBotPlay: seat => lobby.letBotPlay(seat),
     /** Tears down the whole online connection (lobby, host loop, listeners). */
     destroy() { lobby.destroy(); },
     roomChanged() {
       const n = !destroyed && getRoom()?.notice;
+      cursors.roomChanged();
       if (n && n.id && n.id !== seenNotice) { seenNotice = n.id; reportProblem({ kind: n.kind, seat: n.seat, message: n.message, detail: n.detail }); }
       // the room changes far more often than anything the game screen shows (heartbeats, the move queue): only news
       if (state && !destroyed) {
@@ -805,6 +815,7 @@ function createOnlineSession({ transport, base, code, playerId, getRoom, getView
       offRejects();
       offTalk();
       talk.clear();
+      cursors.close();
       for (const w of waiting.values()) w.reject(new Error('Session closed.'));
       waiting.clear();
       subs.clear();

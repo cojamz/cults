@@ -46,6 +46,7 @@ import Chronicle from './Chronicle.jsx';
 import SinceStrip, { StoryCard } from './SinceStrip.jsx';
 import { MinionPool } from './MinionPool.jsx';
 import { useTalk, TalkBubble, TalkPicker, useEnterToTalk } from './Talk.jsx';
+import Cursors from './Cursors.jsx';
 import { createTrail, feed, liveStory, offStory, sinceYourTurn, seatLoss, lossWords } from './trail.js';
 import Results from './Results.jsx';
 import FinalScore from './FinalScore.jsx';
@@ -2054,6 +2055,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
       {logOpen && <Chronicle state={state} meId={mySeats.length === 1 ? mySeats[0] : null} hover={hover} talk={talk} onClose={() => setLogOpen(false)} />}
       {talkOpen && canTalk && <TalkPicker anchor={rootEl?.querySelector('.lt-seat.mine [data-say]')} onSay={sayNow} onClose={closeTalk} />}
       {!state.over && <ActionStage />}
+      <Cursors session={session} state={state} rootRef={root} />
       <HoverCardLayer hover={hover} state={state} me={me} optionFor={live} onPick={onPick} />
       {leaving && (
         <Confirm
