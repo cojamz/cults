@@ -1497,8 +1497,8 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     if ((busy || busyNow.current) && mine) { why(busy ? 'busy' : 'busyNow'); queuedClick.current = counted ? [...queuedClick.current, optionId].slice(-4) : [optionId]; return; }
     if (!mine || needHandoff || !options.has(optionId)) { why(!mine ? 'not-mine' : needHandoff ? 'handoff' : 'no-option'); return; }
     // a commit closes any open hover (wave-2 tester A #40: a 2→1 buy's hover stayed up while the bots played); a
-    // placement keeps the space's card, which shows what you just took
-    if (!String(optionId).startsWith('slot:')) hover.close();
+    // placement too: its card sat over the wheel's centre for seconds, still offering the space (frame review, Nov 7)
+    hover.close();
     busyNow.current = true;
     // (the shop as you see it is measured as the step is shown, beforeShow: the table still stands as you saw it then, so
     // measuring every card here as well was the same picture twice, ~10 ms of the click at 4x CPU)

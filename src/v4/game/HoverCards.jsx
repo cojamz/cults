@@ -574,10 +574,13 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
   const qid = state.quadrants[q];
   const Q = quadrant(qid), a = spacesOf(state, qid)[i];
   const owner = state.slots[spaceKey];
-  const opt = optionFor(`slot:${spaceKey}`) || optionFor(`squat:${spaceKey}`) || optionFor(`to:${spaceKey}`);
+  const viewer = me != null ? me : state.pending && state.pending.player;
+  // the board can be newer than the options: a space you just placed on still had its `slot:` offer, so the card kept
+  // "You'd get" and "you can join it" up while your minion landed (frame review, Nov 7). Your own space is never a slot.
+  const slotOpt = owner !== undefined && owner === viewer ? null : optionFor(`slot:${spaceKey}`);
+  const opt = slotOpt || optionFor(`squat:${spaceKey}`) || optionFor(`to:${spaceKey}`);
   const round = Math.max(1, state.round);
   const open = !past && spaceOpen(a, round) && (owner === undefined || opt);
-  const viewer = me != null ? me : state.pending && state.pending.player;
   // the dry run is read from the cache (warmed in idle time); if it isn't there yet it fills in a moment later
   const pv = usePreview(state, open && viewer != null && !state.over ? viewer : null, q, i, { now: !past }) || null;
   // copy every space you took this round (Greatest Hits): which it copies and which it skips, before you place
@@ -611,7 +614,7 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
         {/* the members the space lights, named (Cory, 2026-10-16: the lit cards say why) */}
         {open && pv ? targetLines(state, viewer, pv.targets, a.text).map(l => <Row key={l.k} k={l.k}><span data-aims={l.uids.join(' ')}>{l.text}</span></Row>) : null}
         {/* a second minion on it says why (w4 skeptic #13: two minions on one space, no reason): Squatter's join */}
-        {owner !== undefined && <Row k="Taken">{owner === viewer ? 'You' : state.players[owner].name}{fresh ? ', since your last turn' : ''}{((state.squats && state.squats[spaceKey]) || []).map(j => `; ${j === viewer ? 'you' : state.players[j].name} joined (Squatter)`).join('')}{opt ? ' — you can join it' : ''}</Row>}
+        {owner !== undefined && <Row k="Taken">{owner === viewer ? 'You' : state.players[owner].name}{fresh ? ', since your last turn' : ''}{((state.squats && state.squats[spaceKey]) || []).map(j => `; ${j === viewer ? 'you' : state.players[j].name} joined (Squatter)`).join('')}{opt && opt.id.startsWith('squat:') ? ' — you can join it' : ''}</Row>}
         {/* a value that grows by round: its run is the rule sentence's ("+2● in round I, +4 in round II…"), said once
             (w3b #12: a "By round" row beside "per round number" was two descriptions of one thing); the panel prints this
             round's number and next round's */}

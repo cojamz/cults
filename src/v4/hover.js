@@ -16,6 +16,12 @@ if (typeof window !== 'undefined' && window.addEventListener) {
     if (e.pointerType !== 'mouse') return;
     if (e.clientX !== mx || e.clientY !== my) { mx = e.clientX; my = e.clientY; lastMove = Date.now(); }
   }, { capture: true, passive: true });
+  // A press is not a hover: a click is a move then a press, so a dialog closing in the click's frame sent an enter that
+  // looked fresh and popped the card under the resting pointer for seconds (frame review, Nov 7). Only a new move opens.
+  window.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'mouse') return;
+    mx = e.clientX; my = e.clientY; lastMove = -1e9;
+  }, { capture: true, passive: true });
 }
 const hoverless = () => typeof matchMedia === 'function' && matchMedia('(hover: none)').matches;
 // A real arrival's enter comes before the move that carries it, at the new position; an enter the table caused (a card
