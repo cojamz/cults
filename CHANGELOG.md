@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.681 — 2026-11-07
+
+- Relaxed speed: the story card's lines no longer hold the table so long a round stalls; a story card never starts its lines over
+
 ## v0.99.680 — 2026-11-07
 
 - The top line and the lit seat always name the player actually moving; no leftover banner over a round's scoring; the Place/Recruit tabs hide during scoring and starting picks; a finished turn's row no longer flies across the board
