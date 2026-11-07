@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.675 — 2026-11-07
+
+- Scouts takes Party Crasher's place; Latecomers takes Bouncers' place
+
 ## v0.99.674 — 2026-11-07
 
 - A menu switch hides your mouse from the other players in online games.
