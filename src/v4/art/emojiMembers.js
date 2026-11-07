@@ -65,7 +65,7 @@ const M = {
   'picket-line': ['✊', '♾️ A rival takes a Purple space: +1 purple'],
   'early-birds': ['🐦', '♾️ Your turns can’t be skipped'],
   bouncers: ['🚫', '✨ Skip the next two rivals’ turns'],
-  latecomers: ['🛌', '✨ Take the Goes Last token'],
+  latecomers: ['🐌', '✨ Take the Goes Last token'],
   'shift-crew': ['👷', ''],
   timekeeper: ['⏳', '🏁 +1 follower per 3 purple'],
   clockmakers: ['🕰️', '🌅 Take your first two turns in a row'],
@@ -141,6 +141,7 @@ const M = {
   'book-cookers': ['📚', '☝️ Rearrange your resources any way'],
   // Grey
   'party-crasher': ['🥳', '☝️ Your next minion can share a taken space'],
+  scouts: ['🧭', '🔁 Discard any shop members, then refill'],
   'big-spender': ['💸', '☝️ Recruit twice this turn'],
   alchemists: ['⚗️', '♾️ Your resources count as any when you recruit'],
   insider: ['🃏', '♾️ You may also recruit from the top 3 of the pile'],
