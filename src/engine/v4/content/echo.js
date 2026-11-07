@@ -21,6 +21,7 @@ import { add10, old10, handlers10, on10 } from './replace10.js';
 import { add9, old9 } from './replace9.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 import { swap11, handlers11 } from './replace11.js';
+import { pool, poolSpace } from './pool.js';
 
 // IMPRESSIONIST=n: bot test only; the game pays 1 (Claude, under Cory's "use your judgement", Nov 3; was 2, Cory Nov 1)
 // IMPRESSIONIST=self2: bot test of "Whenever you copy an action, +2 of its color." (Cory, Nov 6 question; off in the game)
@@ -204,6 +205,9 @@ export const VARIANT = { plus: 1 }; // Every Green action pays its inherent gree
  * Royalties "+3/4/5 green. This round, whenever a rival copies this space, +2 green" (a tab state.royalties
  * [{ pid, round }], paid in heard() when a rival's copy is of Royalties; closed at Round End in core.js).
  */
+/** p's own minions on Green spaces (a joined spot counts): Bench Warmers, pool 5 */
+const myGreenMinions = (ctx, p) => Object.entries(ctx.state.slots).filter(([k, o]) => o === p.id && ctx.state.quadrants[+k.split('-')[0]] === 'echo').length
+  + Object.entries(ctx.state.squats || {}).filter(([k]) => ctx.state.quadrants[+k.split('-')[0]] === 'echo').reduce((a, [, v]) => a + v.filter(o => o === p.id).length, 0);
 const greenMinions = ctx => Object.entries(ctx.state.slots).filter(([k]) => ctx.state.quadrants[+k.split('-')[0]] === 'echo').length
   + Object.entries(ctx.state.squats || {}).filter(([k]) => ctx.state.quadrants[+k.split('-')[0]] === 'echo').reduce((a, [, v]) => a + v.length, 0);
 const CROWD = {
@@ -654,6 +658,16 @@ const echoQ = {
   },
 
   members: [
+    // idea pipeline pool 5 (Nov 7): Round End before contests (as Last-Minute Shopper's); your own minions on Green
+    // spaces (a joined spot counts). Price a fill-in.
+    pool(m('benchwarmers', 'Bench Warmers', 2, 2, 'Round End: +2 followers per minion you have on Green spaces.', {
+      onAllPlaced(ctx, owner) {
+        const n = myGreenMinions(ctx, owner);
+        if (!n) return;
+        ctx.asMember(owner, 'Bench Warmers', () => { owner.bonus += 2 * n; ctx.log(`${owner.name}'s Bench Warmers: ${n} minion${n === 1 ? '' : 's'} on Green spaces, +${2 * n} followers.`); });
+      },
+      ...see(info => 2.5 * endsAhead(info).length), // BOTSEE: about one minion a round on a Green space
+    }), 'pool5'),
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 4 → 8
     // REPLACE10 bot test (Nov 4, quality loop lane D): Busker's place. 3 green + 2 any as a player sees it. At round start
     // (before anyone places): one round I space of any color, done for its owner as Cover does an empty one (Green's own

@@ -13,7 +13,7 @@ import { on12, handlers12 } from './replace12.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 import { swap14, handlers14 } from './replace14.js';
 import { add11, old11 } from './replace11.js';
-import { poolSpace } from './pool.js';
+import { pool, poolSpace, freeAsk, freeTake } from './pool.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
 const Y = 'yellow';
@@ -199,6 +199,16 @@ export default {
 
   actions: [
     changeSpace('moneychangers', 'Swap Meet', 3),
+    // idea pipeline pool 5 (Nov 7): one of each table color you hold none of, yellow included. No +1 yellow: not printed.
+    poolSpace({
+      key: 'oddsandends', ring: 1, name: 'Odds and Ends', text: "+1 of each color you don't hold.",
+      estimate: (ctx, p) => colors(ctx).filter(c => !(p.res[c] > 0)).length,
+      resolve(ctx, p) {
+        const cs = colors(ctx).filter(c => !(p.res[c] > 0));
+        for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
+        ctx.log(cs.length ? `${p.name}'s Odds and Ends: +1 ${cs.join(', +1 ')}.` : `${p.name}'s Odds and Ends: holds every color, so nothing.`);
+      },
+    }, 'pool5'),
     changeSpace('smallchange', 'Small Change', 2),
     {
       // fuel with Yellow's flavor (Cory, 2026-10-30): "+3wild +4wild +5wild"
@@ -283,6 +293,7 @@ export default {
   ],
 
   handlers: {
+    poolFree: freeTake,
     // Swap Meet / Small Change (pool 3)
     moneyWith(ctx, p, oid, data) { if (ctx.player(oid)) moneyAsk(ctx, p, { ...data, o: oid, n: 0 }); },
     moneyStep(ctx, p, value, data) {
@@ -454,6 +465,15 @@ export default {
   },
 
   members: [
+    // idea pipeline pool 5 (Nov 7): Round End before contests; "a color none of your members have" as Housewarming reads
+    // it. "costing up to 4" as printed (Housewarming's prints 4 + MORE; this one doesn't move). Price a fill-in.
+    pool(m('globetrotters', 'Globetrotters', 2, 2, 'Round End: recruit a shop member of a color none of your members have, costing up to 4, for free.', {
+      onAllPlaced(ctx, owner) {
+        ctx.asMember(owner, 'Globetrotters', () => freeAsk(ctx, owner, 'Globetrotters', ctx.shopCards().filter(c => hwCost(c) <= 4 && newColor(ctx, owner, c, { grey: true })),
+          'yellow.poolFree', 'no shop member of a new color costs 4 or less'));
+      },
+      ...see(info => 1.5 * endsAhead(info).length * 0.4), // BOTSEE: a cheap new-color member now and then
+    }), 'pool5'),
     m('gardener', 'Gardeners', 2, 0, 'On Recruit: +1 of each color you have none of. Round Start: +1 of each color you have none of.', { f: 2, now: true,
       onRoundStart(ctx, owner) { for (const c of missing(ctx, owner)) ctx.gain(owner, c, 1); },
     }),

@@ -244,6 +244,16 @@ const trading = {
   // White, reworked by Cory (2026-10-22, design/spheres/white-actions-draft-2026-10-22.md): "basically better
   // exchange for followers". The names are Claude's fill-ins.
   actions: [
+    // idea pipeline pool 5 (Nov 7): cast out one at a time (Done to stop), each to the discard pile, +3 followers each;
+    // a cast-out, so Undertaker pays. No +1 white: not printed.
+    poolSpace({
+      key: 'cleanslate', copyDoesIt: true, ring: 2, name: 'Clean Slate', text: 'Cast out any number of your members to the discard pile. +3 followers each.',
+      estimate: (ctx, p) => ctx.membersOf(p).map(c => dowagersValue(ctx, p, c)).filter(v => v > 0).reduce((a, b) => a + b, 0),
+      resolve(ctx, p) {
+        if (!ctx.membersOf(p).length) { ctx.log(`${p.name}'s Clean Slate: no members to cast out.`); return; }
+        slateStep(ctx, p, { n: 0 });
+      },
+    }, 'pool5'),
     giveSpace('handoffs', 'Hand-Offs', 'Give one of your members to a rival. Gain white equal to twice its cost. +1 white.', 2, 0),
     giveSpace('bequest', 'Bequest', 'Give one of your members to a rival. Gain white equal to its cost, +3 followers. +1 white.', 1, 3),
     poolSpace({
@@ -362,6 +372,21 @@ const trading = {
 
   handlers: {
     // Hand-Offs / Bequest (pool 3): the member, then the rival (bots give to the rival with the fewest followers)
+    slate(ctx, p, value, data) {
+      if (value === 'done' || !p.members.includes(value)) { ctx.log(`${p.name}'s Clean Slate: cast out ${data.n} member${data.n === 1 ? '' : 's'}.`); return; }
+      const name = ctx.card(value).def.name;
+      ctx.buryMember(p, value);
+      p.bonus += 3;
+      ctx.log(`${p.name}'s Clean Slate: cast out ${name}, +3 followers.`);
+      gotRidOf(ctx, p);
+      slateStep(ctx, p, { n: data.n + 1 });
+    },
+    // pool 4: Next of Kin / Second Cousins' free recruit, one of the shop members offered
+    kinRecruit(ctx, p, uid, data) {
+      if (!ctx.state.shop.includes(uid) || !data.ok.includes(uid)) return;
+      ctx.log(`${p.name}'s ${data.name}: recruits ${ctx.card(uid).def.name} for free.`);
+      ctx.recruit(p, uid, { free: true });
+    },
     handOff(ctx, p, uid, data) {
       if (!p.members.includes(uid)) { ctx.gain(p, W, 1, { fromAction: true }); return; }
       chooseRival(ctx, p, `${data.name}: give ${ctx.card(uid).def.name} to which rival?`, 'trading.handOffTo', { ...data, uid }, o => -ctx.followers(o));
@@ -559,6 +584,29 @@ const trading = {
   // Cory's 12 (2026-10-22, design/spheres/white-members-2026-10-22.md). Prices are Claude's educated guesses
   // (white + any, followers printed); names marked new are Claude's fill-ins.
   members: [
+    // idea pipeline pool 5 (Nov 7): members counted as the table counts them (a member worth 3 counts 3), this one
+    // included. Round End before contests. Price a fill-in.
+    pool(m('hermits', 'Hermits', 2, 1, 'Round End: if you have 3 or fewer members, +3 followers.', {
+      onAllPlaced(ctx, owner) {
+        const n = ctx.memberCount(owner);
+        if (n > 3) return;
+        ctx.asMember(owner, 'Hermits', () => { owner.bonus += 3; ctx.log(`${owner.name}'s Hermits: ${n} member${n === 1 ? '' : 's'}, +3 followers.`); });
+      },
+      ...see(info => ((info.owner?.members.length || 0) <= 2 ? 3 : 1) * endsAhead(info).length), // BOTSEE: while the cult stays small
+    }), 'pool5'),
+    // idea pipeline pool 4 (Nov 7): a member that replaces itself when it leaves (swapped, stolen, given, released, cast
+    // out); "its cost" is its printed cost as the table sees it. The recruit is from the shop, the former owner's pick.
+    ...[['nextofkin', 'Next of Kin', 'up to', (k, c) => k <= c, 2, 2], ['secondcousins', 'Second Cousins', 'less than', (k, c) => k < c, 2, 1]].map(([key, name, how, fits, s, w]) => pool(m(key, name, s, w,
+      `Whenever this member leaves your cult, recruit a member costing ${how} its cost, for free.`, {
+        onLeave(ctx, owner, card) {
+          const c = card.def.s + card.def.w, ok = ctx.shopCards().filter(x => fits(x.def.s + x.def.w, c));
+          if (!ok.length) { ctx.log(`${owner.name}'s ${name}: left; no shop member costs ${how} ${c}.`); return; }
+          ctx.asMember(owner, name, () => ctx.choose(owner, `${name} left your cult: recruit which shop member (costing ${how} ${c}), for free?`, ok.map(x => ({
+            id: `card:${x.uid}`, label: `${x.def.name} (${x.def.s + x.def.w})`, kind: 'card', value: x.uid, hint: x.def.f + 0.3 * (x.def.s + x.def.w),
+          })), 'trading.kinRecruit', { name, ok: ok.map(x => x.uid) }));
+        },
+        ...see(() => 1), // BOTSEE: a member back when it's taken or swapped; bots don't plan it
+      }), 'pool4')),
     pool(m('almsgivers', 'Almsgivers', 3, 3, 'Round End: give up to 2 of your resources to rivals, split as you choose. +3 white per resource given.', {
       onAllPlaced(ctx, owner) { ctx.asMember(owner, 'Almsgivers', () => giveForWhiteAsk(ctx, owner, { name: 'Almsgivers', max: 2, each: 3, given: 0 })); },
       ...see(info => 4 * endsAhead(info).length),
@@ -948,6 +996,14 @@ function dowagersStep(ctx, p, data) {
   const opts = list.map(c => ({ id: `card:${c.uid}`, label: `${c.def.name} (+3 followers)`, kind: 'card', value: c.uid, hint: dowagersValue(ctx, p, c) }));
   opts.push({ id: 'done', label: data.n ? 'Done' : 'Cast out nobody', kind: 'done', value: 'done', hint: 0 });
   ctx.choose(p, `Dowagers: cast out which member? (${data.n} so far)`, opts, 'trading.dowagers', data);
+}
+// Clean Slate (pool 5): one member at a time, as Dowagers asks
+function slateStep(ctx, p, data) {
+  const list = ctx.membersOf(p);
+  if (!list.length) return;
+  const opts = list.map(c => ({ id: `card:${c.uid}`, label: `${c.def.name} (+3 followers)`, kind: 'card', value: c.uid, hint: dowagersValue(ctx, p, c) }));
+  opts.push({ id: 'done', label: data.n ? 'Done' : 'Cast out nobody', kind: 'done', value: 'done', hint: 0 });
+  ctx.choose(p, `Clean Slate: cast out which member? (${data.n} so far)`, opts, 'trading.slate', data);
 }
 function gotRidOf(ctx, p) {
   for (const c of ctx.membersOf(p)) for (const d of defsOf(ctx, c)) if (d.onGotRidOf) { p.bonus += d.onGotRidOf; ctx.log(`${p.name}'s ${d.name}: +${d.onGotRidOf} followers.`); }

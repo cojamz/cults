@@ -455,6 +455,7 @@ const thieves = {
   ],
 
   handlers: {
+    middlemen(ctx, p, id, data) { const o = ctx.player(id); if (o && o !== p) ctx.asMember(p, 'Middlemen', () => autoSteal(ctx, p, o, 'Middlemen', data.n, true)); },
     racket(ctx, p, id, data) {
       const o = ctx.player(id), n = Math.min(data.cap || 99, ctx.memberCount(o));
       ctx.log(`${p.name}'s ${data.name}: ${o.name} has ${n} member${n === 1 ? '' : 's'}${data.cap ? ` (up to ${data.cap})` : ''}.`);
@@ -612,6 +613,21 @@ const thieves = {
   },
 
   members: [
+    // idea pipeline pool 5 (Nov 7): a steal from you passes on; "the same number" is what the steal took (resources,
+    // a member or followers, each 1), taken back as resources from the other rival's biggest piles, as Lookout's. Its own
+    // steal is a reaction, so no Middlemen answers it (no chains). The owner picks the other rival. Price a fill-in.
+    pool(m('middlemen', 'Middlemen', 2, 2, 'Whenever a rival steals from you, steal the same number from another rival.', {
+      onSteal(ctx, owner, card, info) {
+        if (info.reaction || info.victim !== owner || info.thief === owner || !(info.n > 0)) return;
+        const others = ctx.rivals(owner).filter(o => o !== info.thief && ctx.canSteal(owner, o) && stealable(ctx, owner, o) > 0);
+        if (!others.length) { ctx.log(`${owner.name}'s Middlemen: no other rival to steal from.`); return; }
+        if (others.length === 1) { ctx.asMember(owner, 'Middlemen', () => autoSteal(ctx, owner, others[0], 'Middlemen', info.n, true)); return; }
+        ctx.choose(owner, `Middlemen: ${info.thief.name} stole ${info.n} from you. Steal ${info.n} from which other rival?`, others.map(o => ({
+          id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers)`, kind: 'player', value: o.id, hint: Math.min(info.n, stealable(ctx, owner, o)) + 0.01 * ctx.followers(o),
+        })), 'thieves.middlemen', { n: info.n });
+      },
+      ...see(info => 1.5 * endsAhead(info).length), // BOTSEE: about one steal from you a round at a Magenta table
+    }), 'pool5'),
     // idea pipeline pool 2 (Nov 7): the brainstorm thread's tax on big buys (Cory: "I like this one!… this would have to
     // scale with member costs"), with two variations whose line moves with the costs: this card's own cost, and the
     // priciest member in the shop. Steals pick the victim's biggest piles (no choice on their turn).

@@ -22,7 +22,7 @@ import { add7, old7, REPLACE7 } from './replace7.js';
 import { REPLACE3 } from './replace3.js';
 import { add9, old9 } from './replace9.js';
 import { see, endsAhead } from './botsee.js';
-import { pool, poolSpace, chooseRival } from './pool.js';
+import { pool, poolSpace, chooseRival, freeAsk, freeTake } from './pool.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const P = 'purple';
@@ -188,6 +188,18 @@ function plainSteal(ctx, p, o, n, name) {
   } });
   if (k) ctx.log(`${p.name}'s ${name}: steals ${said} from ${o.name}.`);
   return k;
+}
+/** Stagehands (pool 4): one extra recruit for p, right after the buy step still to come this turn (as Blue's extraBuys);
+ *  off p's turn, a recruit step of its own now. */
+function extraRecruit(ctx, p) {
+  const q = ctx.state.queue;
+  let at = q.findIndex(t => !t._fresh);
+  if (ctx.state.current === p.id) for (let i = 0; i < q.length; i++) {
+    if (q[i].p !== p.id) continue;
+    if (q[i].t === 'endTurn') { at = i; break; }
+    if (q[i].t === 'buy') { at = i; break; }
+  }
+  q.splice(at < 0 ? q.length : at, 0, { t: 'buy', p: p.id });
 }
 /** Bouncers / Doormen (pool 3): a rival's recruits this turn reached the line, so they skip their next turn. */
 function bounceCheck(ctx, owner, card, by, member, line, name) {
@@ -473,6 +485,7 @@ export default {
   resource: P,
   handlers: {
     // idea pipeline pool 1: give a rival the Goes Last token (Cory, Nov 7: "making all a players members go last")
+    poolFree: freeTake,
     // pool 3: Ticket Takers' rival
     ticketSteal(ctx, p, id) { const o = ctx.player(id); if (o) ctx.asMember(p, 'Ticket Takers', () => plainSteal(ctx, p, o, 2, 'Ticket Takers')); },
     sendLast(ctx, p, id, data) {
@@ -618,6 +631,20 @@ export default {
   ],
 
   members: [
+    // idea pipeline pool 5 (Nov 7): Round End before contests; "placed the round's last minion" is the round's last turn
+    // (the Goes Last token's minions included). "costing up to 5" as printed. Price a fill-in.
+    pool(m('sweepers', 'Sweepers', 2, 2, "Round End: if you placed the round's last minion, recruit a member costing up to 5, for free.", {
+      onAllPlaced(ctx, owner) {
+        if ((ctx.state.turns || []).at(-1) !== owner.id) return;
+        ctx.asMember(owner, 'Sweepers', () => freeAsk(ctx, owner, 'Sweepers', ctx.shopCards().filter(c => c.def.s + c.def.w <= 5), 'purple.poolFree', 'placed last, but no shop member costs 5 or less'));
+      },
+      ...see(info => 1.5 * endsAhead(info).length * 0.3), // BOTSEE: a cheap member when it goes last, now and then
+    }), 'pool5'),
+    // idea pipeline pool 4 (Nov 7): the Goes Last token pays a recruit, an extra one this turn (as Recruit Twice's)
+    pool(m('stagehands', 'Stagehands', 3, 2, 'Whenever you take the Goes Last token, recruit.', {
+      onTakeToken(ctx, owner) { extraRecruit(ctx, owner); ctx.log(`${owner.name}'s Stagehands: ${owner.name} recruits an extra time.`); },
+      ...see(info => 2.5 * endsAhead(info).length * 0.6), // BOTSEE: an extra recruit about every other round
+    }), 'pool4'),
     // idea pipeline pool 3 (Nov 7): the Goes Last token pays a steal; a rival's big turn is skipped. Prices are fill-ins.
     pool(m('usherscut', "Ushers' Cut", 2, 2, 'Whenever you take the Goes Last token, steal 1 resource from each rival.', {
       onTakeToken(ctx, owner) { for (const o of ctx.rivals(owner)) plainSteal(ctx, owner, o, 1, "Ushers' Cut"); },

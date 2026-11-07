@@ -13,6 +13,16 @@ import { swap11, handlers11 } from './replace11.js';
 import { pool, anyColors } from './pool.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
+/** Pool 4: offer p every swap of one of their members (one that may be swapped) for a discard pile member, or none. */
+function graveSwapAsk(ctx, p, name) {
+  const mine = ctx.membersOf(p).filter(c => ctx.canSwapMember(c.uid)), pile = discardOf(ctx.state).map(u => ctx.card(u));
+  if (!mine.length || !pile.length) { ctx.log(`${p.name}'s ${name}: ${mine.length ? 'the discard pile is empty' : 'no member to swap'}.`); return; }
+  const opts = [];
+  for (const a of mine) for (const b of pile) opts.push({ id: `trade:${a.uid}:${b.uid}`, label: `${a.def.name} ↔ discard pile: ${b.def.name}`, kind: 'trade',
+    value: [a.uid, b.uid], hint: (b.def.f + cost(b)) - (a.def.f + cost(a)) - (a.used || a.def.activate !== 'game' ? 0 : 1) });
+  opts.push({ id: 'none', label: 'Don’t swap', kind: 'pass', value: null, hint: 0.5 });
+  ctx.choose(p, `${name}: swap one of your members with one in the discard pile?`, opts, 'red.graveSwap', { name });
+}
 
 // bot test (ACT=walkin/initiation): the free member is this turn's recruit, so the turn's own recruit is gone
 function usesRecruit(ctx, p) {
@@ -171,6 +181,19 @@ export default {
   ],
 
   handlers: {
+    // pool 4: Resurrectionists / Night Diggers, one of your members for one in the discard pile
+    graveSwap(ctx, p, value, data) {
+      if (!Array.isArray(value)) { ctx.log(`${p.name}'s ${data.name}: doesn't swap.`); return; }
+      const [a, b] = value;
+      if (!p.members.includes(a) || !discardOf(ctx.state).includes(b) || !ctx.canSwapMember(a)) return;
+      const names = [ctx.card(a).def.name, ctx.card(b).def.name];
+      ctx.asMember(p, data.name, () => {
+        ctx.log(`${p.name}'s ${data.name}: swaps ${names[0]} for ${names[1]} from the discard pile.`);
+        // the discard pile's member first, so the one sent there can't come straight back
+        if (!ctx.claimMember(p, b)) return;
+        ctx.buryMember(p, a);
+      });
+    },
     ...handlers11({ blindDate, nothanks, pileGiftTo }),
     ...handlers4({
       defect(ctx, p, id) {
@@ -272,6 +295,24 @@ export default {
   },
 
   members: [
+    // idea pipeline pool 5 (Nov 7): your biggest color among your members, counted as the table counts members (a member
+    // worth 3 counts 3); guest members have no color. Price a fill-in.
+    pool(m('clanelders', 'Clan Elders', 3, 2, 'Game End: +2 followers per member of your biggest color.', {
+      onGameEnd(ctx, owner) {
+        const by = {};
+        for (const c of ctx.membersOf(owner)) { const q = c.def.quadrant; if (q && q !== 'guest' && q !== 'benders') by[q] = (by[q] || 0) + ctx.memberWeight(c); }
+        return 2 * Math.max(0, ...Object.values(by));
+      },
+      ...see(() => 5), // BOTSEE: two or three of one color by the end
+    }), 'pool5'),
+    // idea pipeline pool 4 (Nov 7): swap one of your members with one in the discard pile, at Round Start or Round End
+    // (before contests, as Last-Minute Shopper's). Optional ("you may"). The discard pile's member joins as your take (its
+    // On Recruit fires, as a swap's does); yours goes face up on the discard pile. Prices are fill-ins.
+    ...[['resurrectionists', 'Resurrectionists', 'Round Start', 'onRoundStart'], ['nightdiggers', 'Night Diggers', 'Round End', 'onAllPlaced']].map(([key, name, when, hook]) => pool(m(key, name, 2, 1,
+      `${when}: you may swap one of your members with one in the discard pile.`, {
+        [hook](ctx, owner) { graveSwapAsk(ctx, owner, name); },
+        ...see(info => 1.2 * endsAhead(info).length), // BOTSEE: a small upgrade each round
+      }), 'pool4')),
     // idea pipeline pool 3 (Nov 7): a swap of one of your members, by your own card, space or the swap card (one pays
     // once per swap, whichever side it was on: with a rival's member or a shop member). Prices are fill-ins.
     ...[['movers', 'Movers\' Union', 2, 2, 2], ['shiftworkers', 'Shift Workers', 3, 3, 2]].map(([key, name, n, s, w]) => pool(m(key, name, s, w,

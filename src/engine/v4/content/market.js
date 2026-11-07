@@ -15,7 +15,7 @@ import { on12, handlers12 } from './replace12.js';
 import { add14, old14 } from './replace14.js';
 import { on13, add13, old13, handlers13 } from './replace13.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
-import { pool, anyColors } from './pool.js';
+import { pool, poolSpace, anyColors } from './pool.js';
 /** Bury's blue for a card: half its cost rounded down, or its whole cost under REPLACE12=buryfull. */
 const SNOBS_TEXT = on12('snobsup') ? 'Whenever you recruit a member costing more than each of your others, +2 followers.'
   : on12('snobsround') ? 'Round End: +1 follower per blue member you have.' : 'Game End: +1 follower per blue member you have.';
@@ -278,6 +278,19 @@ const market = {
   // Cory's Blue (2026-10-20, decisions.md): churn the shop, dig into the pile, buy more than once. Every action gives
   // +1 blue (the economy call). Names are working names. A copy (Echo) does the action itself: the doing is the value.
   actions: [
+    // idea pipeline pool 5 (Nov 7): "costing up to 6" as printed (the brief's number; it doesn't move with MORE)
+    poolSpace({
+      key: 'rummage', ring: 2, name: 'Rummage', copyDoesIt: true, text: 'Recruit a member from the discard pile costing up to 6, for free. +1 blue.',
+      estimate: ctx => 1 + Math.max(0, ...discardOf(ctx.state).map(u => ctx.card(u)).filter(c => priceOf(c) <= 6).map(c => c.def.f + 0.6 * priceOf(c))),
+      resolve(ctx, p) {
+        const list = discardOf(ctx.state).filter(u => priceOf(ctx.card(u)) <= 6);
+        if (!list.length) ctx.log(`${p.name}'s Rummage: no member in the discard pile costs 6 or less.`);
+        else ctx.choose(p, 'Rummage: recruit which discard pile member for free?', list.map(u => ({
+          id: `card:${u}`, label: `${ctx.card(u).def.name} (${priceOf(ctx.card(u))})`, kind: 'card', value: u, hint: botWorth(ctx.card(u)),
+        })), `${Q}.rummage`);
+        ctx.gain(p, B, 1, { fromAction: true });
+      },
+    }, 'pool5'),
     swap11({
       // every color's 3/4/5 (Cory, 2026-10-27); Churn's sweep goes (Claude's default: Out of Style keeps Blue's sweep).
       // Name is Claude's fill-in.
@@ -387,6 +400,7 @@ const market = {
   ],
 
   handlers: {
+    rummage(ctx, p, uid) { if (discardOf(ctx.state).includes(uid) && priceOf(ctx.card(uid)) <= 6) graveTake(ctx, p, uid, 'Rummage'); },
     // idea pipeline pool 3: Grave Diggers' and Salvagers' pick among tied cheapest discard pile members
     graveFree(ctx, p, uid, data) { if (discardOf(ctx.state).includes(uid)) ctx.asMember(p, data.name, () => graveTake(ctx, p, uid, data.name)); },
     // idea pipeline pool 1 (content/pool.js): Temps and its variation

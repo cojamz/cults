@@ -27,3 +27,17 @@ export function anyColors(ctx, p, n, who) {
 export function chooseRival(ctx, p, prompt, handler, data = null, hint = o => ctx.followers(o)) {
   ctx.choose(p, prompt, ctx.rivals(p).map(o => ({ id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers)`, kind: 'player', value: o.id, hint: hint(o) })), handler, data);
 }
+/** Ask p to recruit one of `list` (shop members) for free, under the card or space `name`; the answer goes to `handler`
+ *  (each color file routes it to freeTake). False, with a log line, when the list is empty. */
+export function freeAsk(ctx, p, name, list, handler, why = 'no shop member fits') {
+  if (!list.length) { ctx.log(`${p.name}'s ${name}: ${why}.`); return false; }
+  ctx.choose(p, `${name}: recruit which member for free?`, list.map(c => ({
+    id: `card:${c.uid}`, label: `${c.def.name} (${c.def.s + c.def.w})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + c.def.s + c.def.w,
+  })), handler, { name, ok: list.map(c => c.uid) });
+  return true;
+}
+export function freeTake(ctx, p, uid, data) {
+  if (!ctx.state.shop.includes(uid) || (data.ok && !data.ok.includes(uid))) return;
+  ctx.log(`${p.name}'s ${data.name}: recruits ${ctx.card(uid).def.name} for free.`);
+  ctx.recruit(p, uid, { free: true });
+}

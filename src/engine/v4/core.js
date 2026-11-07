@@ -312,7 +312,8 @@ function priceParts(state, p, def, how = {}) {
   const q = colored > 0 ? colorOf(def) : null;
   // Smooth Talker (flag silverPaysColor): your silver pays a colored part too
   // Silver Tongues (REPLACE16=tongues, flag tableSilverPaysColor): everyone's silver pays a colored part
-  const alt = q && q !== 'silver' && (sumMemberFlag(state, p, 'silverPaysColor') > 0 || tableFlag(state, 'tableSilverPaysColor')) ? 'silver' : null;
+  // how.silverAny: a recruit whose own rule lets silver pay any color (Gift Exchange, idea pipeline pool 5; bot games only)
+  const alt = q && q !== 'silver' && (how.silverAny || sumMemberFlag(state, p, 'silverPaysColor') > 0 || tableFlag(state, 'tableSilverPaysColor')) ? 'silver' : null;
   return { q, alt, colored, total, worth: c => (c === 'gold' && goldDouble ? 2 : 1) };
 }
 const unitsOf = (v, worth) => Object.entries(v).reduce((t, [c, n]) => t + (n || 0) * worth(c), 0);

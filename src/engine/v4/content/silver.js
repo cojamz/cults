@@ -16,6 +16,7 @@ import { add14, old14, handlers14 } from './replace14.js';
 import { add16, old16, on16 } from './replace16.js';
 import { ON8 } from './replace8.js';
 import { see, endsAhead, SEE_SPITE } from './botsee.js';
+import { poolSpace } from './pool.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const S = 'silver';
@@ -267,7 +268,29 @@ function sweetDone(ctx, p, data) {
   polishPick(ctx, p, 2 * total, 'Sweet Nothings');
 }
 
+// Gift Exchange (idea pipeline pool 5, Nov 7; bot games only): each rival +2 silver from the bank (a gift: Silver's gift
+// hooks fire), then an extra recruit of a shop member where your silver pays any color (core's how.silverAny: silver may
+// pay a member's colored part, as Smooth Talker's does). Optional ("Recruit nothing"). No +1 silver: not printed.
+const GX = { silverAny: true };
+function gxRow(ctx, p) {
+  return ctx.shopCards().filter(c => ctx.price(p, c.uid, GX).afford);
+}
+const GIFT_EXCHANGE = poolSpace({
+  key: 'giftexchange', copyDoesIt: true, ring: 2, name: 'Gift Exchange', text: 'Give each rival 2 silver from the bank. Recruit a member; your silver pays for any color.',
+  estimate: (ctx, p) => Math.max(0, ...gxRow(ctx, p).map(c => c.def.f * 1.4 + 1.6)) - spillCost(ctx, 2),
+  resolve(ctx, p) {
+    giveAll(ctx, p, S, 2);
+    ctx.log(`${p.name}'s Gift Exchange: each rival +2 silver.`);
+    const row = gxRow(ctx, p);
+    if (!row.length) { ctx.log(`${p.name}'s Gift Exchange: can't pay for any shop member.`); return; }
+    ctx.choose(p, 'Gift Exchange: recruit which member (your silver pays for any color)?', row.map(c => ({
+      id: `card:${c.uid}`, label: `${c.def.name} · pay ${ctx.price(p, c.uid, GX).total}`, kind: 'card', value: c.uid, hint: c.def.f * 1.4 + (c.def.vanilla ? 0 : 1.6) + (c.def.s + c.def.w) * 0.3,
+    })).concat({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: -1 }), 'silver.giftExchange');
+  },
+}, 'pool5');
+
 export const silverActions = [
+  GIFT_EXCHANGE,
   {
     // copyDoesIt: a copy gifts the rivals too, so the copier's Silver Cloak pays (Cory, Nov 6: "yes.")
     key: 'toast', copyDoesIt: true, ring: 1, name: 'Toast', text: '+3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III.',
@@ -356,6 +379,18 @@ const silver = {
   actions: silverActions,
 
   handlers: {
+    giftExchange(ctx, p, uid) {
+      if (uid == null) { ctx.log(`${p.name}'s Gift Exchange: recruits nothing.`); return; }
+      if (!ctx.state.shop.includes(uid)) return;
+      const ways = ctx.payChoices(p, uid, GX);
+      if (!ways.length) return;
+      if (ways.length === 1) { giftExchangePay(ctx, p, uid, ways[0]); return; }
+      ctx.choose(p, `Gift Exchange: how do you pay for ${ctx.card(uid).def.name}?`, ways.map((v, i) => ({
+        id: `pay:${ctx.state.resources.map(r => v[r] || 0).join('-')}`, label: Object.entries(v).filter(([, n]) => n).map(([c, n]) => `${n} ${c}`).join(', ') || 'nothing',
+        kind: 'pay', value: v, hint: i === 0 ? 1 : 0, uid,
+      })), 'silver.giftExchangePaid', { uid });
+    },
+    giftExchangePaid(ctx, p, v, data) { if (ctx.state.shop.includes(data.uid)) giftExchangePay(ctx, p, data.uid, v); },
     ...handlers11({ giftShopCard, giftShopTo }),
     // Sweet Nothings, live in Potluck's place (Cory, Nov 6)
     sweetStep(ctx, p, value, data) {
@@ -899,3 +934,8 @@ const silver = {
 };
 
 export default silver;
+
+function giftExchangePay(ctx, p, uid, v) {
+  ctx.log(`${p.name}'s Gift Exchange: pays ${Object.entries(v).filter(([, n]) => n).map(([c, n]) => `${n} ${c}`).join(', ') || 'nothing'} for ${ctx.card(uid).def.name}.`);
+  ctx.recruit(p, uid, { spend: v, how: GX, paid: true });
+}
