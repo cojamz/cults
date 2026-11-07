@@ -66,7 +66,7 @@ Round I turn, 4 players: you hold <…>. Here you get <…>; the best other spac
 Round III turn: <same>, plus what a Green copy of it does.
 Choices: <each "you choose" / "a rival chooses", played from the chooser's side>.
 Who feels it: <a sting, a gift, a reason to block, or nothing; the victim's side at its worst>.
-How often: <times per game its trigger or cause happens with live cards>.
+How often: <times per game its trigger or cause happens with live cards, and what its count looks like in round III>.
 Steps: <each step a table does, in order, with who holds what after each>.
 Ties to other colors: <the shared moment; how the card makes it happen by itself; what it does in a game with none of the colors that cause it>.
 Intuitive: / Fun: / Interacts: / Powerful: / Engine or counter: / Its color:  (one line each)

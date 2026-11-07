@@ -96,3 +96,13 @@ Each one has drawn a no. Run every idea past all of them.
 37. **Simple beats close.** Nov 7: Open House "Each rival may recruit once now, in turn order. +2 followers per rival who does." → "close to interesting. A little complicated for my liking". Check: count the steps a table does (each rival decides, in order, then a count); more than two steps reads as complicated.
 
 38. **Good kernels go to testing, not to refinement.** Nov 7: "don't just try and refine the good ideas until i approve the list. just use the good ideas for the broader testing." A kernel he calls good goes to the testing pool with a few variations; the next batch is new ideas, not polish of the last one.
+
+39. **Giving a rival a minion feels terrible.** Nov 7, batch 3: "Give a rival one of your minions for this round. +5 followers." → "I don't like this at all. getting a minion is so strong, really feels bad at 4 player table". Check: an extra placement is among the strongest things in the game; never hand one out as a side effect, and weigh what it does to the other two players at a 4-player table.
+
+40. **Never subtract followers a table can't take away.** Nov 7: "Give up to 3 of your followers to rivals… +3 white per follower given." → "avoid situation that makes negative members happen (esp when most early followers are from members - how would we subtract at a live table?)". Check: early followers mostly sit printed on members; a card that gives away or loses followers needs followers the player can actually hand over. Prefer other costs. Also: a setup for a round III cash-in "feels strange as round II action", and the numbers were low.
+
+41. **A count that collapses as the table fills.** Nov 7: Yellow "Round End: +1 follower per color among your members that no rival has a member of." → "this gets so weak so fast. good consideration for skill because of how bad this is." Check: play the count in round III, when every cult holds 5 to 8 members; a payoff that needs nobody else to have something dies as the game goes on. Prefer counts that grow with the game.
+
+42. **Liked: a capped tax on a common moment** (Nov 7: "I like this one!"): Magenta "Whenever a rival recruits a member costing 7 or more, steal 2 resources from them." His note: "this would have to scale with member costs". Check: a threshold tied to member prices breaks when prices move; tie it to something relative, or flag it for repricing.
+
+43. **Spaces give their color.** Nov 7, on his own seed as a Purple space: "should give some purple". Every space gives at least 1 of its color, and a space whose effect isn't a gain should still give a real amount of its color.
