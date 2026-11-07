@@ -55,17 +55,34 @@ async function plan() {
   const cand = live.filter(q => idx.quadrant(q).members.some(d => d.pool && hit(d)) || (POOL_SPACES[q] || []).some(hit));
   if (!cand.length) throw new Error(`no candidates tagged ${tags}`);
   const others = live.filter(q => !cand.includes(q));
+  // Coverage: every candidate should reach --each judge games (default 3). For each game, try many seeds and color
+  // sets and keep the one that deals the least-covered candidates (the rotation is seeded, so this is exact).
+  const { rotateIn } = await import(path.join(wt, 'scripts/lib/pool-rotate.mjs'));
+  const each = Number(flag('each', 3)), cov = {};
   const lines = [];
-  for (let i = 0; i < n; i++) {
-    const seed = seed0 + i, players = i % 3 === 2 ? 3 : 4;
-    // up to players-1 candidate colors (rotating, so every candidate color gets games), the rest live-only colors
-    const k = Math.min(cand.length, players - (others.length ? 1 : 0));
-    const colors = Array.from({ length: k }, (_, j) => cand[(i * k + j) % cand.length]);
-    for (let j = 0; colors.length < players; j++) {
-      const pool = others.length ? others : live.filter(q => !colors.includes(q));
-      const q = pool[(seed * 7 + j * 3) % pool.length];
-      if (!colors.includes(q)) colors.push(q);
+  const pickTable = (i, players) => {
+    let best = null;
+    for (let t = 0; t < 60; t++) {
+      const seed = seed0 + i * 100 + t;
+      const k = Math.min(cand.length, players - (others.length ? 1 : 0));
+      const off = (t * 7 + i) % cand.length;
+      const colors = Array.from({ length: k }, (_, j) => cand[(off + j) % cand.length]);
+      for (let j = 0; colors.length < players; j++) {
+        const pool = others.length ? others : live.filter(q => !colors.includes(q));
+        const q = pool[(seed * 7 + j * 3) % pool.length];
+        if (!colors.includes(q)) colors.push(q);
+      }
+      const r = rotateIn(seed, colors, 10); const rec = r.record; r.restore();
+      const names = [...rec.members, ...rec.spaces.map(x => x.in.split(': ')[1])];
+      const gain = names.reduce((a, nm) => a + Math.max(0, each - (cov[nm] || 0)) * 10 + 1, 0);
+      if (!best || gain > best.gain) best = { seed, colors, names, gain };
     }
+    best.names.forEach(nm => { cov[nm] = (cov[nm] || 0) + 1; });
+    return best;
+  };
+  for (let i = 0; i < n; i++) {
+    const players = i % 3 === 2 ? 3 : 4;
+    const { seed, colors } = pickTable(i, players);
     const dir = path.join(BASE, `${label}-${seed}`);
     if (fs.existsSync(path.join(dir, 'meta.json'))) { console.log(`${dir}: exists, skipped`); continue; }
     const names = ['Ava', 'Ben', 'Cal', 'Dee'].slice(0, players).join(',');
@@ -75,6 +92,7 @@ async function plan() {
     console.log(`${dir}: ${players}p ${colors.join(', ')} | members ${rec.members.join(', ') || '-'} | spaces ${rec.spaces.map(s => s.in).join(', ') || '-'}`);
     for (const nm of names.split(',')) lines.push(path.join(dir, `brief-${nm}.md`));
   }
+  console.log(`\ncoverage: ${Object.entries(cov).map(([k, v]) => `${k} ${v}`).join(', ')}`);
   console.log(`\nworktree ${wt} (${sha.slice(0, 12)}). Launch one agent per brief:`);
   for (const l of lines) console.log(l);
 }
