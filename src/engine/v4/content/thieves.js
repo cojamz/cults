@@ -283,11 +283,11 @@ const thieves = {
   actions: [
     {
       // Cory, 2026-10-27: "steal 3/4/5", split among rivals as you choose; the follower steal is gone
-      key: 'pickpocket', ring: 1, name: 'Help Yourself', text: 'Steal 3 resources in round I, 4 in round II, 5 in round III from one rival.', noMagenta: true, // one rival (Cory, Nov 5: swap with Heist's "any rivals"); // no +1 magenta (Cory, 2026-10-29: "Help Yourself shouldnt give a magenta")
-      byRound: { lines: ['Steal 3 resources.', 'Steal 4 resources.', 'Steal 5 resources.'], rest: 'From one rival.' },
+      key: 'pickpocket', ring: 1, name: 'Help Yourself', text: 'Steal 3 resources in round I, 4 in round II, 5 in round III.', noMagenta: true, // any rivals again (Cory, Nov 8: "Whenever you say steal, that's the inherent… meaning"); // no +1 magenta (Cory, 2026-10-29: "Help Yourself shouldnt give a magenta")
+      byRound: { lines: ['Steal 3 resources.', 'Steal 4 resources.', 'Steal 5 resources.'], },
       estimate: (ctx, p) => estimateSteal(ctx, p, ctx.stealCount(p, ctx.state.round + 2)),
       resolve(ctx, p) {
-        startSteal(ctx, p, 'Help Yourself', ctx.stealCount(p, ctx.state.round + 2, { say: true }), { oneRival: true });
+        startSteal(ctx, p, 'Help Yourself', ctx.stealCount(p, ctx.state.round + 2, { say: true }));
       },
     },
     // REPLACE10 bot test (Nov 4, quality loop lane D): Stash's slot (Cory cut Stash Oct 31; it stays live until a pick).

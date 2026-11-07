@@ -78,7 +78,7 @@ const newInShop = (ctx, p) => ctx.shopCards().some(c => newColor(ctx, p, c, { gr
  * An extra recruit, as Initiation's (On Recruit fires); your turn's own recruit is still yours.
  */
 const hwCost = c => c.def.s + c.def.w;
-const hwList = (ctx, p) => ctx.shopCards().filter(c => hwCost(c) <= 6 + MORE && newColor(ctx, p, c, { grey: true }));
+const hwList = (ctx, p) => ctx.shopCards().filter(c => hwCost(c) <= 4 + MORE && newColor(ctx, p, c, { grey: true }));
 /** Open House (REPLACE14=openhouse, Members E lane, Nov 4; quality/pitches/E-redo1.md, paper 17 vs 15; a play A/B under
  *  "paper filters, play ranks"), in Melting Pot's place: a free extra recruit costing up to 2 per member color. */
 const ohList = (ctx, p) => { const cap = 2 * memberColors(ctx, p).length; return ctx.shopCards().filter(c => hwCost(c) <= cap); };
@@ -95,14 +95,15 @@ const OPEN_HOUSE = {
     })), 'yellow.openHouse');
   },
 };
+// cap 7 to 5 (Claude, under Cory's go-with-your-gut, Nov 8: "Housewarming is a little strong… like 7 fucking currency")
 const HOUSEWARMING = {
   key: 'housewarming', ring: 2, name: 'Housewarming', copyDoesIt: true,
-  text: `+2 yellow. Recruit a shop member of a color none of your members have, costing up to ${6 + MORE}, for free.`,
+  text: `+2 yellow. Recruit a shop member of a color none of your members have, costing up to ${4 + MORE}, for free.`,
   estimate: (ctx, p) => 2 + Math.max(0, ...hwList(ctx, p).map(c => c.def.f + hwCost(c) * 0.6)),
   resolve(ctx, p) {
     ctx.gain(p, Y, 2, { fromAction: true });
     const list = hwList(ctx, p);
-    if (!list.length) { ctx.log(`${p.name}'s Housewarming: no shop member of a new color costs ${6 + MORE} or less.`); return; }
+    if (!list.length) { ctx.log(`${p.name}'s Housewarming: no shop member of a new color costs ${4 + MORE} or less.`); return; }
     ctx.choose(p, 'Housewarming: recruit which member for free?', list.map(c => ({
       id: `card:${c.uid}`, label: `${c.def.name} (${hwCost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + hwCost(c),
     })), 'yellow.housewarming');

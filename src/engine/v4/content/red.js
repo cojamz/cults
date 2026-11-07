@@ -276,13 +276,13 @@ export default {
     // 4 red + 2 any as a player sees it. Its swap is a choice with "Don't swap" (Red's swaps can be skipped: Cory,
     // 2026-10-22, "You shouldnt HAVE to swap"); a rival's member it can take is one that may be swapped (Loyalists,
     // Bodyguards). The member you get is your recruit (its On Recruit fires), as with Promote.
-    m('bodysnatchers', 'Body Snatchers', 2, 2, /* Cory, Nov 5 backlog price yes */ "Round Start: swap one of your members with a rival's member of the same cost.", { f: 2,
+    m('bodysnatchers', 'Body Snatchers', 2, 2, /* any rival's member (Cory, Nov 8: "swapped for any… make it mid priced… let's try it this way"); already 6, mid priced */ "Round Start: swap one of your members with any rival's member.", { f: 2,
       onRoundStart(ctx, owner, card) {
         const pairs = snatchPairs(ctx, owner);
-        if (!pairs.length) { ctx.log(`${owner.name}'s Body Snatchers: no rival holds a member at the cost of one of yours.`); return; }
-        ctx.choose(owner, 'Body Snatchers: swap one of your members with a rival’s of the same cost?', pairs.map(([a, b]) => ({
+        if (!pairs.length) { ctx.log(`${owner.name}'s Body Snatchers: no rival member to swap with.`); return; }
+        ctx.choose(owner, 'Body Snatchers: swap one of your members with a rival’s?', pairs.map(([a, b]) => ({
           id: `trade:${a.uid}:${b.uid}`, label: `${owner.name}: ${a.def.name} ↔ ${ctx.ownerOf(b.uid).name}: ${b.def.name}`, kind: 'trade',
-          value: [a.uid, b.uid], hint: b.def.f - a.def.f,
+          value: [a.uid, b.uid], hint: (b.def.f + cost(b)) - (a.def.f + cost(a)),
         })).concat({ id: 'none', label: 'Don’t swap', kind: 'pass', value: null, hint: -99 }), 'red.snatch', { uid: card.uid });
       },
     }),
@@ -637,7 +637,7 @@ function snatchPairs(ctx, p) {
   const mine = ctx.membersOf(p).filter(c => ctx.canSwapMember(c.uid));
   const theirs = ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'swap')).flatMap(o => ctx.membersOf(o).filter(c => ctx.canSwapMember(c.uid)));
   const out = [];
-  for (const a of mine) for (const b of theirs) if (cost(a) === cost(b) && a.def.id !== b.def.id) out.push([a, b]);
+  for (const a of mine) for (const b of theirs) if (a.def.id !== b.def.id) out.push([a, b]); // any cost since Nov 8 (Cory)
   return out;
 }
 // Tryout's shop members: an On Recruit or round-start effect that doesn't act on the card itself ("swap it",

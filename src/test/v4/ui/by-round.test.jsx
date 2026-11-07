@@ -80,7 +80,7 @@ describe('one effect per line', () => {
     const { container } = render(<RuleText def={help} round={2} lines />);
     expect(container.querySelectorAll('.br-line')).toHaveLength(3);
     const rest = [...container.querySelectorAll('.br-rest')].map(e => e.textContent);
-    expect(rest).toEqual(['From one rival.']); // one rival since Nov 5; no +1 magenta since Oct 29
+    expect(rest).toEqual([]); // any rivals again (Cory, Nov 8); no +1 magenta since Oct 29
   });
   it('a member card puts each sentence on its own line', () => {
     const { container } = render(<RuleText def={defById('gold.investor')} round={1} lines />);

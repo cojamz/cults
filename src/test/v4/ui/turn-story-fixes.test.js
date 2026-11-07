@@ -171,10 +171,10 @@ describe('a steal is told once, in the colors it took', () => {
     expect(st.short).toBe('+3 gold · 3 gold from you');
     once(st);
   });
-  it.each([true, false])('from one rival (effects %s, Nov 5): the rival named once, in the color they lost', effects => {
-    const st = steal(effects, 1, ['take:2:red', 'take:2:red']);
-    expect(st.lines.filter(l => /^P3 −2 red|2 red from P3/.test(l))).toHaveLength(1);
-    expect(st.lines[0]).toMatch(/\+2 red/);
+  it.each([true, false])('from two rivals (effects %s): each rival named once, in the color they lost', effects => {
+    const st = steal(effects, 1, ['take:2:red', 'take:2:red', 'take:1:gold']); // any rivals again (Cory, Nov 8)
+    expect(st.lines.join(' ').match(/P3/g)).toHaveLength(1); // each rival named once ("+1 gold +2 red from you and P3")
+    expect(st.lines.join(' ')).toMatch(/\+2 red/);
     once(st);
   });
 });

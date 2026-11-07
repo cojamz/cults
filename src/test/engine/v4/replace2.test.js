@@ -35,7 +35,7 @@ describe('REPLACE2: the switch', () => {
 });
 
 describe('REPLACE2: each card fires', () => {
-  it('Body Snatchers: at round start, swap one of your members with a rival’s of the same cost (or not)', () => {
+  it('Body Snatchers: at round start, swap one of your members with any rival’s (or not; any cost since Cory, Nov 8)', () => {
     let s = table(['red', 'thieves', 'market', 'yellow'], { round: 1, members: [['red.bodysnatchers', 'red.recruitbonus'], ['red.movementpenalty']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending.prompt).toMatch(/^Body Snatchers: swap one of your members/);
     expect(s.pending.options.map(o => o.id)).toContain('none');
