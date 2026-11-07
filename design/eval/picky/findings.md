@@ -46,17 +46,17 @@ already listed); the member sweep of 116 cards in both looks was clean. The rest
   Checked on the members page of v0.99.668 (after/foster-parents-v0.99.668.png). **fixed (v0.99.668)**
 - **On your turn the headline still says the last rival's turn.** "P3's turn ···" with their story card up, while your
   seat says "your turn" and spare minions show; seen in 9 of 12 table shots, half a second after the table settled
-  with nothing animating. With "2 turns in a row" beside it (round II) it reads as P3's two turns. **open** (for the
-  coordinator: the top banner's owner)
+  with nothing animating. With "2 turns in a row" beside it (round II) it reads as P3's two turns. **fixed (v0.99.670)**: once your turn to place comes
+  and the table is still, the rival's finished banner folds (its lines are in "Since your last turn")
 - **The top banner hides the wheel's top spaces on a rival's turn** (round I-III: "Steal 1, then safe from steals"
   and the space beside it are cut in half under the banner, the top-middle space hidden). Fine while it plays, but it
-  stays up into your turn (above), when you want to read the wheel. **open** (for the coordinator, same owner)
+  stays up into your turn (above), when you want to read the wheel. **fixed (v0.99.670)**, same fix
 - **"Turn skipped" pill sits over P3's resource counts** (round III, P3 holding the Goes Last token), hiding their
-  green and magenta. **open** (looks off)
+  green and magenta. **fixed (v0.99.670)**: the tag sits on the seat's bottom edge, left
 - **Emoji look mixes pictures and emoji in the shop** (Downsizers, Patron Saints, Ballroom Dancers, Kingmakers show
-  their pixel scenes beside Ghost's emoji and Old Money's bank). **open** (for the coordinator, emoji members' owner)
+  their pixel scenes beside Ghost's emoji and Old Money's bank). **fixed (v0.99.670)**: 26 dealt members got an emoji; a test checks every dealt member has one
 - **Blue Cloak's question: "+1 of which color (grey is wild)?"** on a table with Silver: grey reads like silver, and
-  nothing says it's your Ghost (a grey member) making you choose. **open** (wording)
+  nothing says it's your Ghost (a grey member) making you choose. **fixed (v0.99.670)**: "Blue Cloak: Ghost is grey, so +1 of any color: which?"
 - Seen again, already listed: Impersonator's round III hover runs 169px off the bottom (long "Could choose" list),
   Promote's sheet "Member" label spills 2-3px, bar Members one above the member count (P4 "19 members", bar 20), bare
   numbers on score parts ("2", "4", "8", "11"), "recruiting followers" beside "Bought", emoji members shown as things
