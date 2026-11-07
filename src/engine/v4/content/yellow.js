@@ -221,6 +221,13 @@ export default {
       },
     }, 'pool5'),
     changeSpace('smallchange', 'Small Change', 2),
+    // idea pipeline pool 11 (Nov 7): each color you hold, one at a time, up to 3 of it into followers, 1 for 1 (bots turn the most);
+    // the +1 yellow after, as printed.
+    poolSpace({
+      key: 'worldsfair', ring: 3, name: "World's Fair", copyDoesIt: true, text: 'Turn up to 3 of each color you hold into followers. +1 yellow.',
+      estimate: (ctx, p) => 1 + colors(ctx).reduce((n, c) => n + Math.min(3, p.res[c] || 0), 0),
+      resolve(ctx, p) { fairStep(ctx, p, { left: held(ctx, p), n: 0 }); },
+    }, 'pool11'),
     {
       // fuel with Yellow's flavor (Cory, 2026-10-30): "+3wild +4wild +5wild"
       key: 'harvest', ring: 1, name: 'Harvest', text: '+3 in round I, +4 in round II, +5 in round III, in colors you choose.',
@@ -305,6 +312,11 @@ export default {
 
   handlers: {
     poolFree: freeTake,
+    fair(ctx, p, k, data) {
+      const c = data.left[0], n = Math.max(0, Math.min(3, k || 0, p.res[c] || 0));
+      if (n) { p.res[c] -= n; p.bonus += n; ctx.log(`${p.name}'s World's Fair: ${n} ${c} into ${n} follower${n > 1 ? 's' : ''}.`); }
+      fairStep(ctx, p, { left: data.left.slice(1), n: data.n + n });
+    },
     // Swap Meet / Small Change (pool 3)
     moneyWith(ctx, p, oid, data) { if (ctx.player(oid)) moneyAsk(ctx, p, { ...data, o: oid, n: 0 }); },
     moneyStep(ctx, p, value, data) {
@@ -497,6 +509,30 @@ export default {
     }), 'pool8'),
     // idea pipeline pool 5 (Nov 7): Round End before contests; "a color none of your members have" as Housewarming reads
     // it. "costing up to 6" as printed (was 4; nothing cost that little, judge games Nov 7) (Housewarming's prints 4 + MORE; this one doesn't move). Price a fill-in.
+    // idea pipeline pool 11 (Nov 7). Prices are fill-ins (the writer's). Pilgrims: Round End before contests, the colors
+    // whose spaces hold your minions (joined spots count), as Tag Along counts them. Joneses: each table color you hold
+    // less of than the rival who holds the most of it, raised to match. Painted Faces: every color count reads your
+    // members as yellow too (core countMembersOfColor, flag allAlsoYellow); "a yellow member" triggers read printed colors.
+    pool(m('pilgrims', 'Pilgrims', 2, 2, 'Round End: +1 follower per color among the spaces your minions are on.', {
+      onAllPlaced(ctx, owner) {
+        const cs = colorsWith(ctx, owner);
+        if (!cs.length) return;
+        ctx.asMember(owner, 'Pilgrims', () => { owner.bonus += cs.length; ctx.log(`${owner.name}'s Pilgrims: minions on ${cs.join(', ')}, +${cs.length} follower${cs.length > 1 ? 's' : ''}.`); });
+      },
+      ...see(info => 3 * endsAhead(info).length), // BOTSEE: about 3 colors at each round end still ahead
+    }), 'pool11'),
+    pool(m('joneses', 'Joneses', 5, 2, 'On Use, once per game: raise each of your colors to match the rival who holds the most of it.', {
+      activate: 'game',
+      onActivate(ctx, owner) {
+        const ups = jonesUps(ctx, owner);
+        for (const [c, n] of ups) ctx.gain(owner, c, n);
+        ctx.log(ups.length ? `${owner.name}'s Joneses: ${ups.map(([c, n]) => `+${n} ${c}`).join(', ')}.` : `${owner.name}'s Joneses: no rival holds more of any color.`);
+      },
+      botActivate: (ctx, owner) => { const n = jonesUps(ctx, owner).reduce((a, [, k]) => a + k, 0); return n >= 10 || (ctx.state.round === 3 && n >= 5); },
+    }), 'pool11'),
+    pool(m('paintedfaces', 'Painted Faces', 2, 1, 'Each of your members is also yellow.', { allAlsoYellow: true,
+      ...see(() => 1.5), // BOTSEE: a color count's worth here and there
+    }), 'pool11'),
     pool(m('globetrotters', 'Globetrotters', 2, 2, 'Round End: recruit a shop member of a color none of your members have, costing up to 6, for free.', {
       onAllPlaced(ctx, owner) {
         ctx.asMember(owner, 'Globetrotters', () => freeAsk(ctx, owner, 'Globetrotters', ctx.shopCards().filter(c => hwCost(c) <= 6 && newColor(ctx, owner, c, { grey: true })),
@@ -898,6 +934,23 @@ function barterStep(ctx, p, data) {
 }
 // Trade Seeds (and Tinker): up to 3 one-for-one swaps of your own, with Done at any time.
 /** Tag Along (REPLACE12): the colors whose spaces hold at least one of o's minions (joined spots count). */
+/** World's Fair (pool 11): the next color held, 0 to 3 of it into followers. */
+function fairStep(ctx, p, data) {
+  let left = data.left.filter(c => (p.res[c] || 0) > 0);
+  if (!left.length) {
+    ctx.log(`${p.name}'s World's Fair: ${data.n ? `+${data.n} follower${data.n > 1 ? 's' : ''}` : 'nothing turned'}.`);
+    ctx.gain(p, Y, 1, { fromAction: true });
+    return;
+  }
+  const c = left[0], most = Math.min(3, p.res[c]);
+  ctx.choose(p, `World's Fair: turn how many ${c} into followers?`, Array.from({ length: most + 1 }, (_, k) => most - k).map(k => ({
+    id: `n:${k}`, label: k ? `${k} ${c} → ${k} follower${k > 1 ? 's' : ''}` : `Keep your ${c}`, kind: k ? 'choice' : 'pass', value: k, hint: k,
+  })), 'yellow.fair', { ...data, left });
+}
+/** Joneses (pool 11): [color, how much to raise it] for each color a rival holds more of. */
+function jonesUps(ctx, p) {
+  return colors(ctx).map(c => [c, Math.max(0, ...ctx.rivals(p).map(o => o.res[c] || 0)) - (p.res[c] || 0)]).filter(([, n]) => n > 0);
+}
 function colorsWith(ctx, o) {
   const st = ctx.state, qs = new Set();
   for (const [key, pid] of Object.entries(st.slots || {})) if (pid === o.id) qs.add(Number(key.split('-')[0]));

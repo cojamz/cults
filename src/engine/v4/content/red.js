@@ -118,6 +118,30 @@ function nothanks(ctx, p, v, data) {
   ctx.gain(p, 'red', 3);
   pileGiftAsk(ctx, p, data.uid, 'No Thanks');
 }
+/** Musical Chairs (pool 11): your member a for rival o's member b, b costing up to 3 more than a. */
+function chairPairs(ctx, p, o, got) {
+  if (!ctx.canSteal(p, o, 'swap')) return [];
+  const mine = ctx.membersOf(p).filter(c => !got.includes(c.uid) && ctx.canSwapMember(c.uid));
+  const theirs = ctx.membersOf(o).filter(c => ctx.canSwapMember(c.uid));
+  const out = [];
+  for (const a of mine) for (const b of theirs) if (a.def.id !== b.def.id && cost(b) <= cost(a) + 3) out.push([a, b]);
+  return out;
+}
+function chairStep(ctx, p, data) {
+  while (data.left.length) {
+    const o = ctx.player(data.left[0]), pairs = chairPairs(ctx, p, o, data.got);
+    if (pairs.length) {
+      ctx.choose(p, `Musical Chairs: swap with ${o.name}: which of your members for which of theirs?`, pairs.map(([a, b]) => ({
+        id: `trade:${a.uid}:${b.uid}`, label: `${a.def.name} (${cost(a)}) ↔ ${o.name}: ${b.def.name} (${cost(b)})`, kind: 'trade', value: [a.uid, b.uid],
+        hint: (b.def.f + cost(b)) - (a.def.f + cost(a)),
+      })).concat({ id: 'none', label: `Don’t swap with ${o.name}`, kind: 'pass', value: null, hint: 0 }), 'red.chairs', data);
+      return;
+    }
+    ctx.log(`${p.name}'s Musical Chairs: nothing to swap with ${o.name}.`);
+    data = { ...data, left: data.left.slice(1) };
+  }
+  ctx.gain(p, 'red', 1, { fromAction: true });
+}
 function pileGiftAsk(ctx, p, uid, who) {
   const rivals = ctx.rivals(p);
   if (!rivals.length) return;
@@ -141,6 +165,14 @@ export default {
     // idea pipeline pool 6 (Nov 7). Family Reunion: a color among your members (Drifters' chosen color counts); "costing
     // up to 4" as printed. Trade-Ins: one of your members at a time (each once; one just swapped in can't go again), for a
     // shop member costing up to 2 more, Done to stop: a Red swap, so swap reactions and protections apply.
+    // idea pipeline pool 11 (Nov 7). Musical Chairs: each rival in seat order, one swap each (or skip): any of your members
+    // that can be swapped (not one this space just brought in) for one of theirs costing up to 3 more (cheaper allowed);
+    // a Red swap, so swap protections apply. The +1 red last, as printed.
+    poolSpace({
+      key: 'musicalchairs', ring: 3, name: 'Musical Chairs', copyDoesIt: true, text: "Swap one of your members with one of each rival's members, each costing up to 3 more than the one you give. +1 red.",
+      estimate: (ctx, p) => 1 + ctx.rivals(p).reduce((n, o) => n + Math.max(0, ...chairPairs(ctx, p, o, []).map(([a, b]) => b.def.f + cost(b) - a.def.f - cost(a))) * 0.6, 0),
+      resolve(ctx, p) { chairStep(ctx, p, { left: ctx.rivals(p).map(o => o.id), got: [] }); },
+    }, 'pool11'),
     poolSpace({
       key: 'familyreunion', ring: 1, name: 'Family Reunion', copyDoesIt: true, text: 'Recruit a member of a color you already have, costing up to 6, for free. +1 red.',
       estimate: (ctx, p) => 1 + Math.max(0, ...reunionList(ctx, p).map(c => c.def.f + 0.6 * cost(c))),
@@ -240,6 +272,17 @@ export default {
   ],
 
   handlers: {
+    chairs(ctx, p, value, data) {
+      const o = ctx.player(data.left[0]), next = { ...data, left: data.left.slice(1) };
+      if (Array.isArray(value)) {
+        const [a, b] = value;
+        if (chairPairs(ctx, p, o, data.got).some(([x, y]) => x.uid === a && y.uid === b) && ctx.swapMembers(p, a, b)) {
+          ctx.log(`${p.name}'s Musical Chairs: swaps ${ctx.card(a).def.name} for ${o.name}'s ${ctx.card(b).def.name}.`);
+          next.got = [...data.got, b];
+        }
+      } else ctx.log(`${p.name}'s Musical Chairs: no swap with ${o.name}.`);
+      chairStep(ctx, p, next);
+    },
     poolFree: freeTake,
     anyColor: anyColorStep,
     tradeIn(ctx, p, value, data) {
@@ -381,6 +424,17 @@ export default {
   members: [
     // idea pipeline pool 5 (Nov 7): your biggest color among your members, counted as the table counts members (a member
     // worth 3 counts 3); guest members have no color. Price a fill-in.
+    // idea pipeline pool 11 (Nov 7): one color fits every member (a member's own color, Drifters' chosen one; Dabblers
+    // fits any table color; with Painted Faces, yellow fits all); grey counts as a color. Price a fill-in.
+    pool(m('familyportrait', 'Family Portrait', 3, 2, 'Game End: if all your members are one color (grey counts as a color), +12 followers.', {
+      onGameEnd(ctx, owner) {
+        const cards = ctx.membersOf(owner);
+        const painted = cards.some(c => ctx.defsOf(c).some(d => d.allAlsoYellow));
+        const fits = (c, q) => (c.asColor || c.def.quadrant) === q || (q !== 'guest' && ctx.defsOf(c).some(d => d.everyColor)) || (q === 'yellow' && painted);
+        return [...ctx.state.quadrants, 'guest'].some(q => cards.every(c => fits(c, q))) ? 12 : 0;
+      },
+      ...see(info => (info.round >= 3 ? 4 : 2)), // BOTSEE: a long-shot 12
+    }), 'pool11'),
     pool(m('clanelders', 'Clan Elders', 3, 2, 'Game End: +2 followers per member of your biggest color.', {
       onGameEnd(ctx, owner) {
         const by = {};

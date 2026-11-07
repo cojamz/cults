@@ -15,7 +15,8 @@ import { on12, handlers12 } from './replace12.js';
 import { add14, old14 } from './replace14.js';
 import { on13, add13, old13, handlers13 } from './replace13.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
-import { pool, poolSpace, anyColors, anyColorStep } from './pool.js';
+import { pool, poolSpace, anyColors, anyColorStep, chooseRival } from './pool.js';
+import { give } from './silver.js';
 /** Bury's blue for a card: half its cost rounded down, or its whole cost under REPLACE12=buryfull. */
 const SNOBS_TEXT = on12('snobsup') ? 'Whenever you recruit a member costing more than each of your others, +2 followers.'
   : on12('snobsround') ? 'Round End: +1 follower per blue member you have.' : 'Game End: +1 follower per blue member you have.';
@@ -245,6 +246,14 @@ export function scavenge(ctx, actor, uids) {
     ctx.choose(o, `Scavengers: ${actor.name} sent ${uids.length === 1 ? 'a member' : `${uids.length} members`} to the discard pile. Recruit one of them, paying its cost?`, opts, `${Q}.scavenge`);
   }
 }
+/** Gift Cards (idea pipeline pool 11): ask which resource to give next. */
+function giftCardsStep0(ctx, p, data) {
+  const cs = ctx.state.resources.filter(c => (p.res[c] || 0) > 0);
+  if (!cs.length) return;
+  ctx.choose(p, `Gift Cards: give which resource to ${ctx.player(data.to).name}? (${3 - data.left} of 2)`, cs.map(c => ({
+    id: `color:${c}`, label: `${c} (${p.res[c]})`, kind: 'color', value: c, hint: p.res[c],
+  })), `${Q}.giftCardsStep`, data);
+}
 /** Extra buys this turn: they run right after the current one (added to the engine's queue directly). */
 // "this turn" recruits join the turn's recruit step, after every action still resolving (a Greatest Hits chain) (Maxwell, Oct 26)
 function extraBuys(ctx, p, k) {
@@ -296,6 +305,25 @@ const market = {
         ctx.gain(p, B, 1, { fromAction: true });
       },
     }, 'pool5'),
+    // idea pipeline pool 11 (Nov 7). Keeping Up: members as the board counts them (Dabblers 2), each extra recruit a turn
+    // recruit like Recruit Twice's. Clean Sweep: every member recruit this turn sweeps (core recruited() reads
+    // p.cleanSweep; cleared at turn start and end), the recruited member's printed cost against the shop's printed costs.
+    poolSpace({
+      key: 'keepingup', ring: 2, name: 'Keeping Up', copyDoesIt: true, text: 'Recruit an extra time this turn for each rival with more members than you. +1 blue.',
+      estimate: (ctx, p) => 1 + 2.5 * ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).length,
+      resolve(ctx, p) {
+        const k = ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).length;
+        if (k) extraBuys(ctx, p, k);
+        ctx.log(k ? `${p.name}'s Keeping Up: ${k} rival${k > 1 ? 's have' : ' has'} more members, ${k === 1 ? 'an extra recruit' : `${k} extra recruits`} this turn.`
+          : `${p.name}'s Keeping Up: no rival has more members.`);
+        ctx.gain(p, B, 1, { fromAction: true });
+      },
+    }, 'pool11'),
+    poolSpace({
+      key: 'cleansweep', ring: 1, name: 'Clean Sweep', copyDoesIt: true, text: '+2 blue. This turn, after you recruit a member, send every shop member costing less than it to the discard pile, then refill.',
+      estimate: () => 2.5,
+      resolve(ctx, p) { ctx.gain(p, B, 2, { fromAction: true }); p.cleanSweep = true; },
+    }, 'pool11'),
     swap11({
       // every color's 3/4/5 (Cory, 2026-10-27); Churn's sweep goes (Claude's default: Out of Style keeps Blue's sweep).
       // Name is Claude's fill-in.
@@ -409,6 +437,28 @@ const market = {
     // idea pipeline pool 3: Grave Diggers' and Salvagers' pick among tied cheapest discard pile members
     graveFree(ctx, p, uid, data) { if (discardOf(ctx.state).includes(uid)) ctx.asMember(p, data.name, () => graveTake(ctx, p, uid, data.name)); },
     anyColor: anyColorStep,
+    // idea pipeline pool 11: Clean Sweep's sweep (core recruited()), Gift Cards' gift
+    cleanSweep(ctx, p, uid) {
+      const c0 = ctx.card(uid);
+      if (!c0) return;
+      const out = ctx.shopCards().filter(c => priceOf(c) < priceOf(c0));
+      if (!out.length) { ctx.log(`${p.name}'s Clean Sweep: no shop member costs less than ${c0.def.name}.`); return; }
+      for (const c of out) { ctx.state.shop.splice(ctx.state.shop.indexOf(c.uid), 1); toDiscard(ctx.state, c.uid); }
+      ctx.refillShop();
+      ctx.log(`${p.name}'s Clean Sweep: sends ${out.map(c => c.def.name).join(', ')} to the discard pile.`);
+      toBottom(ctx, out.length);
+      scavenge(ctx, p, out.map(c => c.uid));
+    },
+    giftCardsTo(ctx, p, oid) { if (ctx.player(oid) && ctx.player(oid) !== p) giftCardsStep0(ctx, p, { to: oid, left: 2 }); },
+    giftCardsStep(ctx, p, color, data) {
+      if (!((p.res[color] || 0) > 0)) return;
+      const o = ctx.player(data.to);
+      p.res[color] -= 1;
+      give(ctx, p, o, color, 1);
+      ctx.log(`${p.name}'s Gift Cards: gives ${o.name} 1 ${color}.`);
+      if (data.left > 1) giftCardsStep0(ctx, p, { ...data, left: data.left - 1 });
+      else { extraBuys(ctx, p, 1); ctx.log(`${p.name}'s Gift Cards: recruit an extra time this turn.`); }
+    },
     // idea pipeline pool 1 (content/pool.js): Temps and its variation
     temps(ctx, p, uid, data) {
       if (!p.members.includes(uid)) return;
@@ -641,6 +691,34 @@ const market = {
     // idea pipeline pool 3 (Nov 7): the discard pile as a second shop. Prices are fill-ins (design-core bands).
     // Grave Diggers: "Round End" before contests, as Last-Minute Shopper's (onAllPlaced). Cheapest = lowest printed cost; a
     // tie is the owner's pick.
+    // idea pipeline pool 11 (Nov 7). Prices are fill-ins (the writer's). Gift Cards: needs 2 resources to give; the
+    // rival first, then each resource one at a time (bots give what they hold most of); then the extra recruit, as
+    // Recruit Twice's. Black Friday Crowd: while it's on this turn, every recruit of yours leaves one more recruit
+    // waiting (Pass ends them all, as every run of recruits).
+    pool(m('giftcards', 'Gift Cards', 2, 2, 'On Use, once per round: give a rival 2 of your resources, then recruit an extra time this turn.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        if (totalRes(owner) < 2) { card.used = false; ctx.log(`${owner.name}'s Gift Cards: needs 2 resources to give.`); return; }
+        chooseRival(ctx, owner, 'Gift Cards: give 2 of your resources to which rival?', `${Q}.giftCardsTo`, null, o => -ctx.followers(o));
+      },
+      botActivate: (ctx, owner) => totalRes(owner) >= 4 && ctx.shopCards().length > 0,
+    }), 'pool11'),
+    pool(m('blackfriday', 'Black Friday Crowd', 5, 2, 'On Use, once per game: recruit as many times as you like this turn.', {
+      activate: 'game',
+      onActivate(ctx, owner, card) {
+        card.friday = ctx.turnKey();
+        extraBuys(ctx, owner, 1);
+        ctx.log(`${owner.name}'s Black Friday Crowd: recruit as many times as you like this turn.`);
+      },
+      onRecruit(ctx, owner, card, by) {
+        if (by !== owner || card.friday == null || card.friday !== ctx.turnKey() || ctx.state.current !== owner.id) return;
+        if (!ctx.state.queue.some(t => t.p === owner.id && t.t === 'buy' && !t.extra && !t.afterPurchase)) extraBuys(ctx, owner, 1);
+      },
+      onTurnEnd(ctx, owner, card, p) { if (p === owner) delete card.friday; },
+      // bots wait for round III, or a pile worth spending twice over
+      botActivate: (ctx, owner) => ctx.state.round === 3 || totalRes(owner) >= 16,
+    }), 'pool11'),
     pool(m('gravediggers', 'Grave Diggers', 4, 2, 'Round End: recruit the cheapest member in the discard pile, for free.', {
       onAllPlaced(ctx, owner) { ctx.asMember(owner, 'Grave Diggers', () => graveFree(ctx, owner, 'Grave Diggers')); },
       ...see(info => 2.5 * endsAhead(info).length), // BOTSEE: a cheap member free at each round end still ahead

@@ -243,12 +243,15 @@ const contestMembers = (state, p) => {
 // Dabblers (everyColor) counts for every color on the table (Cory, 2026-10-28)
 // { wild: false } leaves Dabblers out, for a card where counting it would hurt its owner (Big Tent's "exactly one")
 // { cards: true } counts member cards, one each, whatever they count as
-export const countMembersOfColor = (state, p, q, { wild = true, cards = false } = {}) => counted(state, p).reduce((s, u) => {
+// Painted Faces (idea pipeline pool 11, bot games only: flag allAlsoYellow): "Each of your members is also yellow."
+const paintedFaces = (state, p) => p.members.some(u => effectiveDefs(state.cards[u]).some(d => d.allAlsoYellow));
+export const countMembersOfColor = (state, p, q, opts) => countOfColor(state, p, q, opts, q === 'yellow' && state.quadrants.includes(q) && paintedFaces(state, p));
+const countOfColor = (state, p, q, { wild = true, cards = false } = {}, painted = false) => counted(state, p).reduce((s, u) => {
   const c = state.cards[u], every = wild && effectiveDefs(c).some(d => d.everyColor) && q !== 'guest' && state.quadrants.includes(q);
   // Drifters counts as the one color its owner chose when recruiting it (card.asColor; Cory, 2026-10-31)
   // cards: one each, but Dabblers keeps its 2 in every color count, Most red members too (Cory, Nov 4 11:07am: "It
   // always works in the best possible interpretation for the player. Why would it be 1 for Most red members??")
-  return s + ((c.asColor || defById(c.def).quadrant) === q || every ? (cards && !every ? 1 : countOf(c)) : 0);
+  return s + ((c.asColor || defById(c.def).quadrant) === q || every || painted ? (cards && !every ? 1 : countOf(c)) : 0);
 }, 0);
 /** Dabblers (or a card copying it): counts as every color on the table. */
 export const countsAsEveryColor = (state, uid) => effectiveDefs(state.cards[uid]).some(d => d.everyColor);
@@ -971,6 +974,7 @@ function runTask(state, task) {
       delete p.perSpend;
       delete p.clearance;
       delete p.recruitFollowers;
+      delete p.cleanSweep;
       // task.ring: a turn limited to spaces of that ring or lower (a weaker extra worker)
       const source = workerSourceOf(task);
       state.queue.unshift({ t: 'place', p: p.id, ...source, ...(task.ring ? { ring: task.ring } : {}), ...(task.join ? { join: true } : {}) }, { t: 'buy', p: p.id, ...source }, { t: 'buy', p: p.id, ...source, extra: true }, { t: 'endTurn', p: p.id, ...source });
@@ -1025,6 +1029,7 @@ function runTask(state, task) {
       // "This turn, if you recruit a member, +N followers" (Gather, Stash, Allowance, New Blood) ends with the turn, so a
       // recruit off your turn (a Round End or Round Start recruit) never collects it
       delete p.recruitFollowers;
+      delete p.cleanSweep;
       state.current = null;
       return;
     }
@@ -1640,6 +1645,8 @@ function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop 
 function recruited(state, p, what) {
   const ctx = ctxFor(state);
   if (what.member) recruitFollowersBonus(state, p, what.member);
+  // Clean Sweep (idea pipeline pool 11, bot games only): this turn, after p recruits a member, every cheaper shop member goes
+  if (what.member && p.cleanSweep) handlerById('market.cleanSweep')(ctx, p, what.member.uid);
   eachMember(state, (owner, c, d) => {
     if (what.member && d.onAnyRecruit) d.onAnyRecruit(ctx, owner, c, p, what.member);
     if (d.onRecruit) d.onRecruit(ctx, owner, c, p, what);
