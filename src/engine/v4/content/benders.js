@@ -20,6 +20,7 @@ import { REPLACE1, add1, old1, handlers1 } from './replace1.js';
 import { add6, old6 } from './replace6.js';
 import { add9, old9, handlers9 } from './replace9.js';
 import { see, endsAhead } from './botsee.js';
+import { pool } from './pool.js';
 import { add11, old11, handlers11 } from './replace11.js';
 import { add15, old15 } from './replace15.js';
 import { pickColors } from './yellow.js';
@@ -124,6 +125,20 @@ function scoutDone(ctx, p, data) {
 const coachable = (ctx, p) => ctx.membersOf(p).filter(c => c.freeTurn !== ctx.turnKey()
   && [c.def, c.copy && ctx.defOf(c.copy)].some(d => d?.activate && d.onActivate));
 const members = [
+  // idea pipeline pool 6 (Nov 7), grey guests (bot games only). Chameleons: Drifters' choice on a grey card (card.asColor,
+  // which every color count reads); it forgets the color when it leaves a cult. Mourners: any cult's member to the
+  // discard pile (cast out, released, sent by Doormen), via core's onCultDiscard; never a shop member. Prices fill-ins.
+  pool(m('chameleons', 'Chameleons', null, 2, 2, 'On Recruit: choose a color. This member is that color.', {
+    onRecruited(ctx, owner, card) {
+      ctx.choose(owner, 'Chameleons: this member is which color?', ctx.state.quadrants.map(q => ({
+        id: `color:${q}`, label: ctx.quadrant(q).name, kind: 'color', value: q, hint: ctx.countMembersOfColor(owner, q),
+      })), 'benders.chameleon', { uid: card.uid });
+    },
+  }), 'pool6'),
+  pool(m('mourners', 'Mourners', null, 2, 2, 'Whenever a member goes from any cult to the discard pile, +1 follower.', {
+    onCultDiscard(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Mourners: a member went to the discard pile, +1 follower.`); },
+    ...see(info => 1.5 * endsAhead(info).length),
+  }), 'pool6'),
   // Party Crasher (was Squatter; id kept for old records): Cory, 2026-10-28, Once per game, cheaper; 5 with the +1 wild (Cory, Nov 1: "5"; was 4)
   m('squatter', 'Party Crasher', 'thieves', 2, 2, 'On Use, once per game: your next minion can be placed on a space a rival already took.', { // cut Nov 7 (cull.js): Scouts takes its place (Cory, "Yes") // still joins in round I at 5, so grey keeps 4 (Claude's fill-in)
     activate: 'game',
@@ -411,6 +426,15 @@ const members = [
 ];
 
 export const handlers = {
+  chameleon(ctx, p, q, data) {
+    const card = ctx.card(data.uid);
+    if (!p.members.includes(data.uid) || !ctx.state.quadrants.includes(q)) return;
+    card.asColor = q;
+    ctx.log(`${p.name}'s Chameleons: this member is ${ctx.quadrant(q).name}.`);
+    for (const c of ctx.abilitiesOf(p)) for (const d of ctx.defsOf(c)) {
+      if (d.onColorChosen && c.uid !== card.uid) ctx.asMember(p, d.name, () => d.onColorChosen(ctx, p, c, card), p.members.includes(c.uid) ? c.uid : null);
+    }
+  },
   ...handlers11({
     holdSpace(ctx, p, key) {
       if (!key) return;

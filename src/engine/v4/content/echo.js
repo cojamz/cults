@@ -463,6 +463,18 @@ const echoQ = {
   scoring: { label: 'Most green', counts: 'the green you hold when the round ends', score: (ctx, p) => p.res.green },
 
   actions: [
+    // idea pipeline pool 6 (Nov 7): Big Finish's copy as a round III space (every action with your minion, each once,
+    // as copies go: Agents and copy chains stop what they stop; this space itself is in the chain). No +1 green: not printed.
+    poolSpace({
+      key: 'curtaincall', ring: 3, name: 'Curtain Call', echo: true, text: 'Copy every action you have a minion on.',
+      estimate: (ctx, p) => targets(ctx, p, 'own').reduce((n, e) => n + entryValue(ctx, e, p), 0),
+      resolve(ctx, p) {
+        const list = targets(ctx, p, 'own');
+        if (!list.length) { ctx.log(`${p.name}'s Curtain Call: no other action of theirs to copy.`); return; }
+        ctx.log(`${p.name}'s Curtain Call: copies ${list.map(e => e.name).join(', ')}.`);
+        copyAll(ctx, p, list, null, 'Curtain Call');
+      },
+    }, 'pool6'),
     swap11(swap11({
       key: 'chant', ring: 1, name: 'Build Up', text: '+3 green in round I, +4 in round II, +5 in round III.', // every color's 3/4/5 (Cory, 2026-10-27)
       byRound: { lines: ['+3 green', '+4 green', '+5 green'] },
@@ -596,6 +608,7 @@ const echoQ = {
       ctx.log(`${p.name} copies ${o.name}'s ${ctx.defOf(uid).name}: its On Recruit.`);
       ctx.borrowOnRecruit(p, uid);
     },
+    openingDo(ctx, p, key) { echoQ.handlers.copyEmpty(ctx, p, key, { as: 'Opening Act' }); },
     warmupDo(ctx, p, key) { echoQ.handlers.copyEmpty(ctx, p, key, { as: 'Warm-Up Act' }); },
     // data.as: a member doing the copy (Warm-Up Act), so the copied action's gain is said under its name; Choir's and
     // Impressionist's lines stay their own
@@ -658,6 +671,18 @@ const echoQ = {
   },
 
   members: [
+    // idea pipeline pool 6 (Nov 7): Warm-Up Act's copy with any action open this round: at Round Start no minion is out
+    // yet, so it does the action as Cover does an empty one. Green's own copy spaces are left out (nothing to copy yet).
+    pool(m('openingact', 'Opening Act', 3, 2, 'Round Start: copy any action.', {
+      onRoundStart(ctx, owner) {
+        const list = emptyTargets(ctx).filter(x => !(x.qid === 'echo' && x.a.echo));
+        if (!list.length) return;
+        ctx.choose(owner, 'Opening Act: copy which action?', list.map(x => ({
+          id: `slot:${x.key}`, label: `${x.a.name}: ${x.a.text}`, kind: 'action', value: x.key, hint: emptyValue(ctx, x.a, owner),
+        })), 'echo.openingDo');
+      },
+      ...see(info => 3 * endsAhead(info).length), // BOTSEE: a space's worth at each round start
+    }), 'pool6'),
     // idea pipeline pool 5 (Nov 7): Round End before contests (as Last-Minute Shopper's); your own minions on Green
     // spaces (a joined spot counts). Price a fill-in.
     pool(m('benchwarmers', 'Bench Warmers', 2, 2, 'Round End: +2 followers per minion you have on Green spaces.', {

@@ -10,9 +10,28 @@ import { see, endsAhead } from './botsee.js';
 import { add7, old7, handlers7 } from './replace7.js';
 import { add12, old12, on12 } from './replace12.js';
 import { swap11, handlers11 } from './replace11.js';
-import { pool, anyColors } from './pool.js';
+import { pool, poolSpace, anyColors, freeAsk, freeTake } from './pool.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
+/** Pool 6: Family Reunion's shop members: a color one of p's members has, costing up to 4. */
+const reunionList = (ctx, p) => {
+  const have = new Set(ctx.membersOf(p).map(c => c.asColor || c.def.quadrant).filter(q => q && q !== 'guest' && q !== 'benders'));
+  return ctx.shopCards().filter(c => have.has(c.def.quadrant) && cost(c) <= 4);
+};
+/** Pool 6: Trade-Ins' pairs, [your member, shop member costing up to 2 more], members not yet swapped this time. */
+const tradeInPairs = (ctx, p, done) => {
+  const out = [];
+  for (const a of ctx.membersOf(p)) if (!done.includes(a.uid) && ctx.canSwapMember(a.uid)) for (const b of ctx.shopCards()) if (cost(b) <= cost(a) + 2) out.push([a, b]);
+  return out;
+};
+function tradeInStep(ctx, p, data) {
+  const pairs = tradeInPairs(ctx, p, data.done);
+  if (!pairs.length) { ctx.log(`${p.name}'s Trade-Ins: ${data.n} swap${data.n === 1 ? '' : 's'}.`); return; }
+  ctx.choose(p, `Trade-Ins: swap which of your members for which shop member? (${data.n} so far)`, pairs.map(([a, b]) => ({
+    id: `trade:${a.uid}:${b.uid}`, label: `${a.def.name} (${cost(a)}) ↔ Shop: ${b.def.name} (${cost(b)})`, kind: 'trade', value: [a.uid, b.uid],
+    hint: (b.def.f + cost(b)) - (a.def.f + cost(a)),
+  })).concat({ id: 'none', label: data.n ? 'Done' : 'Swap nothing', kind: 'pass', value: null, hint: 0.5 }), 'red.tradeIn', data);
+}
 /** Pool 4: offer p every swap of one of their members (one that may be swapped) for a discard pile member, or none. */
 function graveSwapAsk(ctx, p, name) {
   const mine = ctx.membersOf(p).filter(c => ctx.canSwapMember(c.uid)), pile = discardOf(ctx.state).map(u => ctx.card(u));
@@ -98,6 +117,25 @@ export default {
   scoring: { label: 'Most red', counts: 'the red you hold when the round ends', score: (ctx, p) => p.res.red },
 
   actions: [
+    // idea pipeline pool 6 (Nov 7). Family Reunion: a color among your members (Drifters' chosen color counts); "costing
+    // up to 4" as printed. Trade-Ins: one of your members at a time (each once; one just swapped in can't go again), for a
+    // shop member costing up to 2 more, Done to stop: a Red swap, so swap reactions and protections apply.
+    poolSpace({
+      key: 'familyreunion', ring: 1, name: 'Family Reunion', copyDoesIt: true, text: 'Recruit a member of a color you already have, costing up to 4, for free. +1 red.',
+      estimate: (ctx, p) => 1 + Math.max(0, ...reunionList(ctx, p).map(c => c.def.f + 0.6 * cost(c))),
+      resolve(ctx, p) {
+        freeAsk(ctx, p, 'Family Reunion', reunionList(ctx, p), 'red.poolFree', 'no shop member of a color you have costs 4 or less');
+        ctx.gain(p, 'red', 1, { fromAction: true });
+      },
+    }, 'pool6'),
+    poolSpace({
+      key: 'tradeins', ring: 3, name: 'Trade-Ins', copyDoesIt: true, text: 'Swap any number of your members with shop members costing up to 2 more each. +1 red.',
+      estimate: (ctx, p) => 1 + tradeInPairs(ctx, p, []).filter(([a, b]) => cost(b) > cost(a)).length,
+      resolve(ctx, p) {
+        ctx.gain(p, 'red', 1, { fromAction: true });
+        tradeInStep(ctx, p, { done: [], n: 0 });
+      },
+    }, 'pool6'),
     {
       // Cory, 2026-10-27: replaces Even Swap ("nobody has members initially"). Name and the +2 are Claude's fill-ins.
       key: 'evenswap', ring: 1, name: 'Tryout', text: 'Use the On Recruit effect of a shop member; it stays in the shop. +2 red.', copyDoesIt: true, // +2 (Cory, Nov 1)
@@ -181,6 +219,15 @@ export default {
   ],
 
   handlers: {
+    poolFree: freeTake,
+    tradeIn(ctx, p, value, data) {
+      if (!Array.isArray(value)) { ctx.log(`${p.name}'s Trade-Ins: ${data.n} swap${data.n === 1 ? '' : 's'}.`); return; }
+      const [a, b] = value;
+      if (!tradeInPairs(ctx, p, data.done).some(([x, y]) => x.uid === a && y.uid === b)) { tradeInStep(ctx, p, data); return; }
+      const names = [ctx.card(a).def.name, ctx.card(b).def.name];
+      if (ctx.swapMembers(p, a, b)) ctx.log(`${p.name}'s Trade-Ins: swaps ${names[0]} for ${names[1]} from the shop.`);
+      tradeInStep(ctx, p, { done: [...data.done, a, b], n: data.n + 1 });
+    },
     // pool 4: Resurrectionists / Night Diggers, one of your members for one in the discard pile
     graveSwap(ctx, p, value, data) {
       if (!Array.isArray(value)) { ctx.log(`${p.name}'s ${data.name}: doesn't swap.`); return; }

@@ -16,7 +16,7 @@ import { add14, old14, handlers14 } from './replace14.js';
 import { add16, old16, on16 } from './replace16.js';
 import { ON8 } from './replace8.js';
 import { see, endsAhead, SEE_SPITE } from './botsee.js';
-import { poolSpace } from './pool.js';
+import { pool, poolSpace } from './pool.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const S = 'silver';
@@ -379,6 +379,13 @@ const silver = {
   actions: silverActions,
 
   handlers: {
+    almoners(ctx, p, id, data) {
+      const o = ctx.player(id);
+      if (!o || o === p || !(p.res[S] > 0)) return;
+      p.res[S] -= 1;
+      giveTo(ctx, p, o, S, 1);
+      almsStep(ctx, p, { n: data.n + 1, to: { ...(data.to || {}), [o.name]: ((data.to || {})[o.name] || 0) + 1 } });
+    },
     giftExchange(ctx, p, uid) {
       if (uid == null) { ctx.log(`${p.name}'s Gift Exchange: recruits nothing.`); return; }
       if (!ctx.state.shop.includes(uid)) return;
@@ -519,6 +526,24 @@ const silver = {
   },
 
   members: [
+    // idea pipeline pool 6 (Nov 7). Almoners: Round End before contests (so it gives up Most silver); every silver, one at
+    // a time to the rival the owner picks (bots: the one with the fewest followers), each a gift. Prices are fill-ins.
+    pool(m('almoners', 'Almoners', 2, 2, 'Round End: give all your silver to rivals, split as you choose. +1 follower per silver given.', {
+      onAllPlaced(ctx, owner) { if ((owner.res[S] || 0) > 0) ctx.asMember(owner, 'Almoners', () => almsStep(ctx, owner, { n: 0 })); },
+      ...see(info => 3 * endsAhead(info).length), // BOTSEE: the silver it holds at each round end, as followers
+    }), 'pool6'),
+    // Dinner Hosts: its own turn only (On Use); the recruit is an extra one, right after this step, as Recruit Twice's.
+    pool(m('dinnerhosts', 'Dinner Hosts', 3, 2, 'On Use, once per round: give each rival 2 silver from the bank. Recruit.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner) {
+        giveAll(ctx, owner, S, 2);
+        ctx.log(`${owner.name}'s Dinner Hosts: each rival +2 silver; ${owner.name} recruits an extra time.`);
+        const q = ctx.state.queue, at = q.findIndex(t => !t._fresh);
+        q.splice(at < 0 ? q.length : at, 0, { t: 'buy', p: owner.id, _fresh: true });
+      },
+      botActivate: (ctx, p) => ctx.shopCards().some(c => ctx.price(p, c.uid).afford),
+    }), 'pool6'),
     m('guest', 'Hangers-On', 4, 4, 'Whenever a rival gives you something, +1 more of it.', { f: 2, n: 2, retired: true, // Godparent takes its place (Claude, under Cory's "use your judgement", 2026-11-03) // worth 2 (Cory, Nov 1)
       onGiven(ctx, owner, card, giver, color) { if (giver !== owner) ctx.gain(owner, color, 1); },
     }),
@@ -935,6 +960,19 @@ const silver = {
 
 export default silver;
 
+// Almoners (pool 6): one silver at a time until none is left, then the followers
+function almsStep(ctx, p, data) {
+  if ((p.res[S] || 0) > 0) {
+    ctx.choose(p, `Almoners: give 1 silver to which rival? (${p.res[S]} left)`, others(ctx, p).map(o => ({
+      id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers, ${o.res[S] || 0} silver)`, kind: 'player', value: o.id, hint: -ctx.followers(o) - 0.1 * (o.res[S] || 0),
+    })), 'silver.almoners', data);
+    return;
+  }
+  if (!data.n) return;
+  afterGive(ctx, p, S);
+  p.bonus += data.n;
+  ctx.log(`${p.name}'s Almoners: gave ${data.n} silver (${Object.entries(data.to).map(([k, v]) => `${v} to ${k}`).join(', ')}), +${data.n} follower${data.n === 1 ? '' : 's'}.`);
+}
 function giftExchangePay(ctx, p, uid, v) {
   ctx.log(`${p.name}'s Gift Exchange: pays ${Object.entries(v).filter(([, n]) => n).map(([c, n]) => `${n} ${c}`).join(', ') || 'nothing'} for ${ctx.card(uid).def.name}.`);
   ctx.recruit(p, uid, { spend: v, how: GX, paid: true });

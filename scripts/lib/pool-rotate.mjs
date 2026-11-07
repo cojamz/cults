@@ -1,7 +1,7 @@
 // Idea pipeline (scripts/ideas/README.md): POOL=1 (or POOL=<key or pool tag>,…) rotates candidate cards (content/pool.js) into
 // a bot game in place of live cards: members take the place of live members of their color, spaces the place of a live
 // space of their color and round. Uses its own random stream, so a game number still deals the same table as without POOL.
-import { quadrant, guestMembers } from '../../src/engine/v4/content/index.js';
+import { quadrant, allGuests } from '../../src/engine/v4/content/index.js';
 import { POOL_SPACES } from '../../src/engine/v4/content/pool.js';
 import { CUT, CUT10 } from '../../src/engine/v4/content/cull.js';
 import { ARTIFACTS } from '../../src/engine/v4/core.js';
@@ -19,7 +19,7 @@ export function rotateIn(g, quads, deck) {
   const undo = [];
   const colors = [...quads, 'guest'];
   for (const q of colors) {
-    const members = q === 'guest' ? guestMembers() : quadrant(q).members;
+    const members = q === 'guest' ? allGuests() : quadrant(q).members; // retired guests too: a candidate is retired until rotated in
     const cands = members.filter(d => d.pool && pick(d));
     if (cands.length) {
       const k = Math.min(PER_COLOR, cands.length), start = (g * k) % cands.length;

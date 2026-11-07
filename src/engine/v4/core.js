@@ -2251,6 +2251,12 @@ export function releaseRefund(state, uid) {
 // A refund in its own color is paid here; one in any colors is picked in the release task. Returns the refund.
 /** Bargain Bin (Blue's artifact): "Whenever members go to the bottom of the pile, +1 blue." Once per batch; from a
  *  cult too since Cory, Nov 1 ("changes to B when any member goes to the bottom of the pile"). */
+/** A member just went from a cult to the discard pile (cast out, released, Doormen's send): members with
+ *  onCultDiscard hear it (Mourners, idea pipeline pool 6; no live card has the hook). */
+function cultDiscard(state) {
+  const ctx = ctxFor(state);
+  eachMember(state, (owner, card, def) => { if (def.onCultDiscard) def.onCultDiscard(ctx, owner, card); }, ['onCultDiscard']);
+}
 function bottomBlue(state) {
   const ctx = ctxFor(state);
   // BARGAIN=self<n>: bot test only (Nov 6): pays only the player whose turn it is, +n
@@ -2296,6 +2302,7 @@ function releaseNow(state, p, uid) {
   wipeCard(state, uid);
   toDiscard(state, uid);
   bottomBlue(state);
+  cultDiscard(state);
   p.releasedRound = state.round;
   if (back.color) p.res[back.color] = (p.res[back.color] || 0) + back.n;
   log(state, `${p.name} released ${def.name} to the discard pile, for ${back.label}.`);
@@ -2435,6 +2442,7 @@ function ctxFor(state) {
       // members that answer a cast-out (Successors, Pallbearers: REPLACE6 bot test); actor is who cast it out
       if (REPLACE6) eachMember(state, (owner, card, d) => { if (d.onCastOut) d.onCastOut(ctx, owner, wrap(state, card), { uid, from: p, actor, cost: c, name: def.name }); }, ['onCastOut']);
       bottomBlue(state);
+      cultDiscard(state);
       // a shop short of its size (the pile ran out) takes it back up, as every other way to the bottom does
       refill(state);
       return c;
@@ -2474,7 +2482,7 @@ function ctxFor(state) {
       refill(state);
     },
     /** a cult's member went to the bottom of the pile outside buryMember (Doormen): Bargain Bin pays */
-    memberBottomed: () => bottomBlue(state),
+    memberBottomed: () => { bottomBlue(state); cultDiscard(state); },
     bargainCost: k => bargainCost(state, k),
     impressMember: (p, uid) => impressMember(state, p, uid),
     swapMembers: (actor, a, b) => swapMembers(state, actor, a, b),

@@ -137,6 +137,8 @@ export function registerGuests(group, defs, handlers = {}) {
   }
 }
 export const guestMembers = () => GUESTS.filter(d => !d.retired); // a retired guest (the old Extra Hand) is a test fixture only
+/** Every guest, retired ones and idea-pipeline candidates included (scripts/lib/pool-rotate.mjs picks candidates here). */
+export const allGuests = () => [...GUESTS];
 
 // Every sphere, so a table can pick any four. A sphere only acts when it's on the table: its scoring, hooks
 // and guards are looked up through state.quadrants, and its members only enter decks that include it.
