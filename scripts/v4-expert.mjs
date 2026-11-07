@@ -2,7 +2,7 @@
 // Expert-player games: four AI players (each a separate agent) play one game of Cults through this tool, and the
 // designer reads the transcript. One game lives in a folder (state.json, meta.json, events.jsonl).
 //
-//   new <dir> [--seed N] [--colors a,b,c,d] [--names Ava,Ben,Cal,Dee]   start a game and write cards.md
+//   new <dir> [--seed N] [--colors a,b,c,d] [--names Ava,Ben,Cal,Dee] [--pool keys|tag]   start a game and write cards.md
 //   wait <dir> <seat> [--max 100]     block until it is that seat's decision (or the game is over), then show the view
 //   view <dir> <seat>                 the table as that seat sees it
 //   move <dir> <seat> <option> [--why "..."] [--say "..."]
@@ -278,14 +278,28 @@ async function main() {
   DIR = dir;
   if (!cmd) { console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1, 14).join('\n')); return; }
 
+  // Idea pipeline: --pool <keys or pool tag> deals candidate cards (content/pool.js) into this game the way bot trials do.
+  // The same rotation is re-applied on every later command from meta.json, so the cards stay in play all game.
+  let poolRecord = null;
+  const poolIn = async (keys, g, colors, deck) => {
+    process.env.POOL = keys;
+    const { rotateIn } = await import('./lib/pool-rotate.mjs');
+    poolRecord = rotateIn(g, colors, deck).record;
+  };
+  if (cmd !== 'new' && dir && fs.existsSync(f(dir, 'meta.json'))) {
+    const m0 = readJson(f(dir, 'meta.json'));
+    if (m0.pool) await poolIn(m0.pool.keys, m0.pool.g, m0.colors, m0.deck);
+  }
+
   if (cmd === 'new') {
     fs.mkdirSync(dir, { recursive: true });
     const seed = Number(flags.seed || Math.floor(Math.random() * 90000) + 1000);
     const names = flags.names ? String(flags.names).split(',') : NAMES;
     const colors = flags.colors ? String(flags.colors).split(',') : shuffled(SIX, seed).slice(0, names.length);
+    if (flags.pool) await poolIn(String(flags.pool), seed, colors, DECK_RULES.deck || 15);
     const s = createGame({ seats: names.map(name => ({ name, kind: 'human' })), seed, quadrants: colors, rules: DECK_RULES });
     writeJson(f(dir, 'state.json'), s);
-    writeJson(f(dir, 'meta.json'), { seed, names, colors, deck: DECK_RULES.deck || 15, seen: {}, post: {}, startedAt: new Date().toISOString() });
+    writeJson(f(dir, 'meta.json'), { seed, names, colors, deck: DECK_RULES.deck || 15, ...(flags.pool ? { pool: { keys: String(flags.pool), g: seed, record: poolRecord } } : {}), seen: {}, post: {}, startedAt: new Date().toISOString() });
     fs.writeFileSync(f(dir, 'cards.md'), cardsMd(s));
     fs.writeFileSync(f(dir, 'events.jsonl'), '');
     addEvents(dir, s.log.map(text => ({ type: 'log', text })));
