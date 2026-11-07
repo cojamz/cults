@@ -195,7 +195,10 @@ export const takeHubGone = () => { const h = hubGone; hubGone = null; return h; 
 // line will have been on screen long enough to read, and when the shop's new card lands, so the card is never ahead of
 // the board (Cory: "the card played and resolved on a bot turn before the shop had even refreshed")
 let readEnd = 0, dealEnd = 0;
-export const noteReadEnd = t => { readEnd = t; };
+// (told to whoever waits on it: a later end noted after they drew still holds them; every-frame check, Nov 7)
+const readSubs = new Set();
+export const noteReadEnd = t => { if (t === readEnd) return; readEnd = t; for (const fn of readSubs) fn(); };
+export const onReadEnd = fn => { readSubs.add(fn); return () => readSubs.delete(fn); };
 export const readUntil = () => readEnd;
 // when each beat of the chain just started begins, on the wall clock (director.js playChain), counted so the banner can
 // tell a chain started by the step that brought its lines from an older one (frame review, Nov 7: lines came seconds

@@ -70,7 +70,7 @@ import LaunderCard, { launderChoice } from './LaunderCard.jsx';
 import SwapCard, { swapChoice } from './SwapCard.jsx';
 import ArtifactDraft from './ArtifactDraft.jsx';
 import ActionStage from './ActionStage.jsx';
-import { stageClear, stageRelease, stageCenter, subscribeStage, stageItems, setStoryZone, storyAtHub, noteHubGone, readUntil, noteReadEnd, chainBeats, dealEndsAt, dealing } from './stage.js';
+import { stageClear, stageRelease, stageCenter, subscribeStage, stageItems, setStoryZone, storyAtHub, noteHubGone, readUntil, noteReadEnd, onReadEnd, chainBeats, dealEndsAt, dealing } from './stage.js';
 import { Minion } from '../art/Leader.jsx';
 import { sameSeat } from './seatMemo.js';
 import { holdFlag } from './bodyFlag.js';
@@ -628,8 +628,13 @@ function useStableLines(key, lines, shown = 0) {
     const more = was != null && r.order.indexOf(slot) < shown ? grewBy(was, l) : null;
     if (more === '') continue;
     // (the same words as a line already up say it happened again: "Yellow Cloak again: +2 yellow", never one line twice)
-    const said = !!more && [...r.text.values()].includes(more);
-    const again = !said ? more : /^[^:]{2,48}: /.test(more) ? more.replace(/^([^:]{2,48}): /, '$1 again: ') : `${more} again`;
+    // (a third time and on says which time it is: "Red Cloak again: P2 +1" came up twice; every-frame check, Nov 7)
+    const told = [...r.text.values()];
+    let times = 1, again = more;
+    while (more && told.includes(again)) {
+      const w = (times += 1) === 2 ? 'again' : `a ${times}${times === 3 ? 'rd' : 'th'} time`;
+      again = /^[^:]{2,48}: /.test(more) ? more.replace(/^([^:]{2,48}): /, `$1 ${w}: `) : `${more} ${w}`;
+    }
     if (more) { const k = `${slot}~${(r.more += 1)}`; added.push(k); r.text.set(k, again); } else r.text.set(slot, l);
   }
   // a step's new lines join in the order its beats play (director.js planChain): the space's result first, then the
@@ -728,6 +733,31 @@ function useReveal(key, ids, lines, on) {
   return on ? k : ids.length;
 }
 
+// (a card with several lines still to show reads them all before it goes: 4s cut the last of them, every-frame check,
+// "gone before read", Nov 7)
+const LINGER_CAP = 8000;
+/** True while the story card's last line is still being read (stage.js readUntil), at most LINGER_CAP from now.
+ *  `need`: whether the answer matters this render; only then does a later end noted after it, or the end itself, draw
+ *  the table again (a rival's step stays one commit of the table: render budget). */
+function useReading(need) {
+  'use no memo';
+  const [, redraw] = useState(0);
+  const left = Math.min(readUntil() - Date.now(), LINGER_CAP);
+  const was = useRef({ need, on: left > 0 });
+  was.current = { need, on: left > 0 };
+  useEffect(() => {
+    let t = null;
+    const arm = () => {
+      clearTimeout(t);
+      const l = Math.min(readUntil() - Date.now(), LINGER_CAP);
+      if (l > 0) t = setTimeout(() => { if (readUntil() > Date.now()) arm(); else if (was.current.need && was.current.on) redraw(n => n + 1); }, l + 10);
+    };
+    const off = onReadEnd(() => { if (was.current.need && !was.current.on && readUntil() > Date.now()) redraw(n => n + 1); arm(); });
+    arm();
+    return () => { off(); clearTimeout(t); };
+  }, []);
+  return left > 0;
+}
 /** True while `on`, and for a linger after it turns off: longer still while the shop's new card is landing or the
  *  story card's last line is being read (Cory, Nov 6: "linger just a touch longer", "before the shop had even refreshed"). */
 function useLinger(on) {
@@ -735,14 +765,14 @@ function useLinger(on) {
   const ref = useRef({ on: false, until: 0 });
   const [, redraw] = useState(0);
   if (on) ref.current = { on: true, until: 0 };
-  else if (ref.current.on) ref.current = { on: false, until: Math.min(Date.now() + 4000, Math.max(Date.now() + MO.storyLinger, dealEndsAt() + 150, readUntil())) };
+  else if (ref.current.on) ref.current = { on: false, until: Math.min(Date.now() + LINGER_CAP, Math.max(Date.now() + MO.storyLinger, dealEndsAt() + 150, readUntil())) };
   const left = on ? 0 : ref.current.until - Date.now();
   // the shop's deal and the card's last line are noted in this same commit's layout effects (children's, before this
   // one): a later end than the render saw stretches the linger
   useLayoutEffect(() => {
     // (only while the card is still up: once the linger is over, a late note never brings it back)
     if (on || !ref.current.until || ref.current.until <= Date.now()) return;
-    const want = Math.min(Date.now() + 4000, Math.max(dealEndsAt() + 150, readUntil()));
+    const want = Math.min(Date.now() + LINGER_CAP, Math.max(dealEndsAt() + 150, readUntil()));
     if (want > ref.current.until + 20) { ref.current = { on: false, until: want }; redraw(n => n + 1); }
   });
   useEffect(() => {
@@ -776,8 +806,11 @@ function TurnCard({ card, root, state, hub = false, keep = false, you = -1 }) {
   const MAXL = keep || hub ? Infinity : fitOf.key === fitKey ? fitOf.max : 5;
   const hubSpace = hub && card.text ? spaceOf(card.text.split(' · ')[0]) : null;
   const shownWas = useRef(0);
-  const { lines: hubLines, ids: hubIds } = useStableLines(`${card.k || card.n}`, hub && card.text ? joinGoesLast(card.text.split(' · ').slice(1), hubSpace) : [], shownWas.current);
-  const shownN = useReveal(`${card.k || card.n}`, hubIds, hubLines, hub && !!card.text);
+  // (the turn's own head in the key too: two turns told under one key carried the first one's lines into the second,
+  // which showed several lines at once; every-frame check, Nov 7)
+  const lineKey = `${card.k || card.n}|${(card.text || '').split(' · ')[0]}`;
+  const { lines: hubLines, ids: hubIds } = useStableLines(lineKey, hub && card.text ? joinGoesLast(card.text.split(' · ').slice(1), hubSpace) : [], shownWas.current);
+  const shownN = useReveal(lineKey, hubIds, hubLines, hub && !!card.text);
   shownWas.current = shownN;
   // Where the card sits, written straight to its style in one layout effect (perf, 2026-10-15): as React state its place
   // and its lift cost every step one or two more commits of their own, each reading the layout again
@@ -867,7 +900,7 @@ function TurnCard({ card, root, state, hub = false, keep = false, you = -1 }) {
   const more = all.length - rest.length;
   const headOf = h => (/^You /.test(h) ? `${h.charAt(4).toUpperCase()}${h.slice(5)}` : pname && h.startsWith(`${pname} `) ? `${h.charAt(pname.length + 1).toUpperCase()}${h.slice(pname.length + 2)}` : h);
   return (
-    <div ref={box} className={`turn-card${hub ? ` at-hub${card.text ? '' : ' bn-empty'}` : ''}${keep ? ' kept' : ''}${card.live ? ' live' : ''}${!keep && !hub && (card.folding || life === 'folding') ? ' folding' : ''}`} data-turn-story={card.text} data-turn-at={hub ? 'hub' : 'dock'} data-again={card.again ? '1' : undefined} role="status" aria-live="polite"
+    <div ref={box} className={`turn-card${hub ? ` at-hub${card.text ? '' : ' bn-empty'}` : ''}${keep ? ' kept' : ''}${card.live ? ' live' : ''}${!keep && !hub && (card.folding || life === 'folding') ? ' folding' : ''}`} data-turn-story={card.text} data-line-key={hub ? `${lineKey}#${shownN}/${hubLines.length}` : undefined} data-turn-at={hub ? 'hub' : 'dock'} data-again={card.again ? '1' : undefined} role="status" aria-live="polite"
       style={{ '--pc': playerColor(card.pid) }}>
       {/* the log area's card: the whole turn as one paragraph, the head in bold, so it stays whole and small enough to
           leave the strip its lines (Cory, Nov 6: "always show the full story card without having to expand or scroll") */}
@@ -1269,11 +1302,18 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   // once your turn to place has come and the table is still, the rival's finished turn folds away (its lines are in
   // "Since your last turn"): its banner kept the headline on "P3's turn ···" and hid the wheel's top spaces into your
   // turn (picky bot, Nov 8: 9 of 12 shots)
-  const yoursSettled = placing && !moment && physicalState === interactionState;
+  // (once its last line has been read: a rival's turn that ended on a follower buy took its last line away 50ms after it
+  // showed, every-frame check, Nov 7)
+  const settledNow = placing && !moment && physicalState === interactionState;
+  const scoringNow = !!moment && closedMoment !== moment && !momentChain;
+  const reading = useReading(settledNow || scoringNow);
+  const yoursSettled = settledNow && !reading;
   // the round's scoring and its card hold the table: once the round's last move has played, no story stays over them
   // (a rival's "+2 red from P3", made between turns, sat over the Reckoning and the Round scored card for 35 s, above
   // the card; frame review, Nov 7). Its lines are in the log.
-  const scoring = !!moment && closedMoment !== moment && !momentChain;
+  // (the round's last turn's last line is read first: the scoring took it away 100ms after it showed, every-frame
+  // check, Nov 7)
+  const scoring = scoringNow && !reading;
   const hubStory = scoring ? null : liveRival || (chainOn && !yoursSettled && !(story.live && story.live.text) && tailOf && !mySeats.includes(tailOf.pid) ? tailOf : null) || (!chainOn && (!moment || closedMoment === moment) ? story.waiting : null);
   // the same player again (a snake turnaround, an extra turn) says so on its card, so a second turn reads as new
   const prevStory = allStories[allStories.length - (hubStory && hubStory === tailOf ? 2 : 1)];

@@ -30,16 +30,23 @@ for (let g = 0; g < GAMES; g++) {
     window.__hubDbg = [];
     const out = window.__card = { frames: 0, cards: 0, lines: 0, fails: [], reads: [] };
     let cur = null, clickAt = -1;
+    // a card put back up after another took the hub for a moment (a rival's between-turns gain) carries on with what it
+    // had shown: those lines were read before, so they aren't judged again
+    const shownBefore = new Map();
+    // what a line says on screen: a tile's tooltip (an svg <title>, "Red Cloak") is no words to read, and a resource dot
+    // is its color, glued to its number ("+1‹red›"), so "+1 red" and "+1 yellow" aren't one line said twice
+    const said = l => { const c = l.cloneNode(true); c.querySelectorAll('title').forEach(t => t.remove()); c.querySelectorAll('[data-pip]').forEach(p => { p.textContent = `‹${p.dataset.pip}›`; }); return c.textContent.trim(); };
     // a card that goes because you moved on is your call, not the card's (only a turn you didn't cut short is judged)
     addEventListener('pointerdown', () => { clickAt = performance.now(); }, true);
     const fail = (kind, detail) => { if (out.fails.length < 40) out.fails.push({ kind, detail, t: Math.round(performance.now()) }); };
     const read = (line, up) => { out.reads.push({ line, up: Math.round(up), need: Math.round(need(line)) }); return up >= need(line); };
     const finish = (now, why) => {
       if (!cur) return;
+      if (cur.base) shownBefore.set(cur.base, cur.lines);
       if (cur.lines.length && clickAt >= cur.lines[cur.lines.length - 1].at) { cur = null; return; }
       // every line has had its reading time before the card goes (lines show as their beats start, so two can come up
       // close together; frame review, Nov 7): the card holds until the last of them has been read
-      for (const ln of cur.lines) if (ln && !read(ln.text, now - ln.at)) { fail('gone before read', `"${ln.text}" up ${Math.round(now - ln.at)}ms, needs ${Math.round(need(ln.text))} (${cur.key}; ${why})`); break; }
+      for (const ln of cur.lines) if (ln && !read(ln.text, now - ln.at)) { fail('gone before read', `"${ln.text}" up ${Math.round(now - ln.at)}ms, needs ${Math.round(need(ln.text))} (${cur.key}; ${why}; top "${(document.querySelector('[data-prompt]')?.textContent || '').slice(0, 40)}"; phase ${document.querySelector('.app.game')?.dataset.phase})`); break; }
       const deal = why === 'gone' && document.querySelector('.lt-deal');
       if (deal) fail('ahead of the shop', `card left while the shop's new card was still being dealt (${cur.key}; deal ${Date.now() - Number(deal.dataset.born || 0)}ms old; top "${(document.querySelector('[data-prompt]')?.textContent || '').slice(0, 40)}"; phase ${document.querySelector('.app.game')?.dataset.phase}; yours ${document.querySelector('.app.game')?.dataset.yours}; modal ${!!document.querySelector('.pay-picker,.talk-card,.lt-reckon,.choice-panel,[role=dialog]')})`);
       cur = null;
@@ -52,8 +59,8 @@ for (let g = 0; g < GAMES; g++) {
       else {
         // (the banner names no player on the card: the headline above it does; the turn's own head says whose it is)
         const key = `${(el.dataset.turnStory || '').split(' · ')[0]} | ${el.querySelector('.tc-head')?.textContent || ''}${el.dataset.again ? ' again' : ''}`;
-        const lines = [...el.querySelectorAll('.tc-line:not(.tc-wait):not(.tc-more)')].map(l => l.textContent.trim());
-        if (!cur || cur.key !== key) { finish(now, 'next card'); if (cur === null && document.querySelector('.lt-deal') && el.querySelector('.tc-head') && !/again/.test(key)) { const d = document.querySelector('.lt-deal'); const a = d.getAnimations()[0]; const ct = a ? a.effect.getComputedTiming() : {}; fail('turn under the deal', `a turn started while the shop's new card was still being dealt (${key}; deal ${Date.now() - Number(d.dataset.born || 0)}ms old, progress ${ct.progress == null ? 'waiting' : ct.progress.toFixed(2)}, ${Math.round((ct.endTime || 0) - (a ? a.currentTime : 0))}ms left)`); } if (el.querySelector('.tc-head')) { cur = { key, lines: [], shown: 0 }; out.cards++; } }
+        const lines = [...el.querySelectorAll('.tc-line:not(.tc-wait):not(.tc-more)')].map(said);
+        if (!cur || cur.key !== key) { finish(now, 'next card'); if (cur === null && document.querySelector('.lt-deal') && el.querySelector('.tc-head') && !/again/.test(key)) { const d = document.querySelector('.lt-deal'); const a = d.getAnimations()[0]; const ct = a ? a.effect.getComputedTiming() : {}; fail('turn under the deal', `a turn started while the shop's new card was still being dealt (${key}; deal ${Date.now() - Number(d.dataset.born || 0)}ms old, progress ${ct.progress == null ? 'waiting' : ct.progress.toFixed(2)}, ${Math.round((ct.endTime || 0) - (a ? a.currentTime : 0))}ms left)`); } if (el.querySelector('.tc-head')) { const base = (el.dataset.lineKey || '').split('#')[0]; const back = base && shownBefore.get(base); cur = { key, base, lines: back ? back.map(l => ({ ...l, at: -1e9 })) : [], shown: back ? back.length : 0 }; if (!back) out.cards++; } }
         if (cur) {
           // the whole card on screen (picky bot, Nov 7: a long turn's last line cut at the screen's edge)
           { const b = el.getBoundingClientRect(); if (b.bottom > innerHeight + 1 || b.top < -1) fail('off screen', `card spans ${Math.round(b.top)}–${Math.round(b.bottom)} of ${innerHeight} (${key})`); }
@@ -65,11 +72,12 @@ for (let g = 0; g < GAMES; g++) {
             if (!was) {
               cur.lines[i] = { text: t, at: now }; out.lines++;
             // (the space's own result folding into a copy's line, "copied Tryout: …", takes its place: GameScreen)
-            } else if (was.text !== t && idOf(was.text, i) !== idOf(t, i) && !(i === 0 && /^copied /.test(t))) { fail('line changed', `"${was.text}" became "${t}" (${key})`); cur.lines[i] = { text: t, at: now }; }
+            // (a count that grows in place may gain its cause's name: "P1 +1" becoming "Counterfeiters: P1 +1 +2")
+            } else if (was.text !== t && idOf(was.text, i) !== idOf(t, i) && idOf(was.text, i) !== idOf(t.replace(/^[^:]{2,48}: /, ''), i) && !(i === 0 && /^copied /.test(t))) { fail('line changed', `"${was.text}" became "${t}" (${key})`); cur.lines[i] = { text: t, at: now }; }
           });
           const seen = new Set();
           lines.forEach((t, i) => {
-            if (seen.has(t)) fail('said twice', `"${t}" (${key})`);
+            if (seen.has(t)) fail('said twice', `"${t}" (${key}; "${el.dataset.turnStory}"; ${el.dataset.lineKey})`);
             seen.add(t);
             if (i > 0 && /^[+−-]\d/.test(t)) fail('no cause', `"${t}" is line ${i + 1}, nothing names what paid it (${key})`);
           });
