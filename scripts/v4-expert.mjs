@@ -56,7 +56,7 @@ const f = (dir, n) => path.join(dir, n);
 const pause = ms => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 const readJson = p => {
   for (let i = 0; ; i++) {
-    try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) {
+    try { return JSON.parse(fs.readFileSync(p, 'utf8').replace(/\0+$/, '')); } catch (e) { // a network folder can NUL-pad a shorter write over a longer file (p3-3702)
       if (i >= 30 || !(e.code === 'ENOENT' || e instanceof SyntaxError)) throw e;
       pause(100);
     }
