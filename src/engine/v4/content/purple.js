@@ -236,6 +236,8 @@ function takeToken(ctx, p, why, what = '') {
   }, c.uid);
   // idea pipeline pool 3 (Ushers' Cut, Ticket Takers): "Whenever you take the Goes Last token", a take, not a keep
   if (was !== p.id) for (const c of ctx.membersOf(p)) if (c.def.onTakeToken) ctx.asMember(p, c.def.name, () => c.def.onTakeToken(ctx, p, c), c.uid);
+  // idea pipeline pool 10 (Scalpers): "Whenever a rival takes the Goes Last token"; no live card has the hook
+  if (was !== p.id) for (const o of ctx.rivals(p)) for (const c of ctx.membersOf(o)) if (c.def.onRivalTakeToken) ctx.asMember(o, c.def.name, () => c.def.onRivalTakeToken(ctx, o, c, p), c.uid);
   if (was === null || was === p.id) { ctx.log(`${p.name}'s ${why}: ${p.name} ${was === p.id ? 'keeps' : 'takes'} the Goes Last token${what}.`); return; }
   const o = ctx.player(was), q = s.queue;
   const close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
@@ -254,6 +256,18 @@ function takeToken(ctx, p, why, what = '') {
     }
   }
   ctx.log(`${p.name}'s ${why}: ${p.name} takes the Goes Last token${what} from ${o.name}${on.length ? `, and ${o.name}'s ${on.length === 1 ? 'minion on it goes' : `${on.length} minions on it go`} back to their hand` : ''}.`);
+}
+/** Scalpers (pool 10): the token's taker gives the Scalpers' owner 2 of their resources, picked one at a time. */
+function scalpStep(ctx, p, data) {
+  const to = ctx.player(data.to), have = ctx.state.resources.filter(c => (p.res[c] || 0) > 0);
+  if (data.left > 0 && have.length) {
+    ctx.choose(p, `${to.name}'s Scalpers: give ${to.name} 1 of which resource? (${data.left} to give)`, have.map(c => ({
+      id: `color:${c}`, label: c, kind: 'color', value: c, hint: p.res[c] - (c === P ? 1 : 0),
+    })), 'purple.scalpGive', data);
+    return;
+  }
+  if (data.n) ctx.log(`${to.name}'s Scalpers: ${p.name} took the Goes Last token and gave ${to.name} ${data.got.join(' and ')}.`);
+  else ctx.log(`${to.name}'s Scalpers: ${p.name} took the Goes Last token but has nothing to give.`);
 }
 /**
  * p takes the Goes Last token and puts n of their minions still to place on it (Last Call: all; Sleep In: 1). Each one
@@ -488,6 +502,13 @@ export default {
     poolFree: freeTake,
     // pool 3: Ticket Takers' rival
     ticketSteal(ctx, p, id) { const o = ctx.player(id); if (o) ctx.asMember(p, 'Ticket Takers', () => plainSteal(ctx, p, o, 2, 'Ticket Takers')); },
+    // pool 10: Scalpers, one resource at a time from the taker
+    scalpGive(ctx, p, color, data) {
+      const to = ctx.player(data.to);
+      if (!to || !((p.res[color] || 0) > 0)) return;
+      p.res[color] -= 1; ctx.gain(to, color, 1);
+      scalpStep(ctx, p, { ...data, left: data.left - 1, n: data.n + 1, got: [...(data.got || []), color] });
+    },
     sendLast(ctx, p, id, data) {
       const o = ctx.player(id), n = data.all ? turnsLeft(ctx, o) : 1;
       ctx.log(`${p.name}'s ${data.name}: ${o.name} takes the Goes Last token.`);
@@ -542,6 +563,19 @@ export default {
           o => (turnsLeft(ctx, o) ? 10 : 0) + ctx.followers(o));
       },
     }, 'pool1')),
+    // idea pipeline pool 10 (Nov 7): Cut In takes the token with no minion put on it (the card says only "take"); the
+    // old holder's minions on it go back to their hand as any take does, then their next turn this round is skipped
+    // (Hold Up's skip; Early Birds stops it). Nobody held it, or you did: no skip.
+    poolSpace({
+      key: 'cutin', copyDoesIt: true, ring: 2, name: 'Cut In', text: '+3 purple. Take the Goes Last token. Whoever held it skips their next turn.',
+      estimate: (ctx, p) => 3 + 1 + (tokenHolder(ctx.state) !== null && tokenHolder(ctx.state) !== p.id ? 2 : 0),
+      resolve(ctx, p) {
+        ctx.gain(p, P, 3, { fromAction: true });
+        const was = tokenHolder(ctx.state);
+        takeToken(ctx, p, 'Cut In');
+        if (was !== null && was !== p.id) skipNext(ctx, ctx.player(was), 'Cut In', p);
+      },
+    }, 'pool10'),
     {
       // Cory, 2026-10-22: "+4 purple, skip your next turn" (always +4: +3 and the space's +1), from the old game's
       // "Gain 4 purple, skip next turn". You're passed over once; the snake carries on and you still place every minion.
@@ -631,6 +665,28 @@ export default {
   ],
 
   members: [
+    // idea pipeline pool 10 (Nov 7). Scalpers: the taker picks the 2 (one at a time, from what they hold), on their own
+    // turn. Night Porters (the brief's Night Shift, renamed: a Night Shift is already in the REPLACE7 test): holding the
+    // token at Round End, the owner keeps it into next round, and once the round's turns are queued their last minion
+    // goes on it (as Sleep In's does). A keep, not a take, so take triggers don't fire. Prices are the writer's fill-ins.
+    pool(m('scalpers', 'Scalpers', 2, 2, 'Whenever a rival takes the Goes Last token, they give you 2 of their resources.', {
+      onRivalTakeToken(ctx, owner, card, taker) { scalpStep(ctx, taker, { to: owner.id, left: 2, n: 0 }); },
+      ...see(info => 2 * endsAhead(info).length * 0.8), // BOTSEE: about one rival take a round
+    }), 'pool10'),
+    pool(m('nightporters', 'Night Porters', 4, 2, "Round End: if you hold the Goes Last token, you keep it: next round your last minion is placed after everyone else's.", { f: 2,
+      onAllPlaced(ctx, owner, card) {
+        if (tokenHolder(ctx.state) !== owner.id || ctx.state.round >= 3) return;
+        card.keepFor = { round: ctx.state.round + 1, pid: owner.id };
+        ctx.log(`${owner.name}'s Night Porters: ${owner.name} keeps the Goes Last token into next round.`);
+      },
+      onRoundQueued(ctx, owner, card) {
+        const k = card.keepFor;
+        if (!k || k.round !== ctx.state.round || k.pid !== owner.id) return;
+        delete card.keepFor;
+        ctx.state.goesLast = { round: ctx.state.round, pid: owner.id };
+        toToken(ctx, owner, 1, 'Night Porters');
+      },
+    }), 'pool10'),
     // idea pipeline pool 5 (Nov 7): Round End before contests; "placed the round's last minion" is the round's last turn
     // (the Goes Last token's minions included). "costing up to 5" as printed. Price a fill-in.
     pool(m('sweepers', 'Sweepers', 2, 2, "Round End: if you placed the round's last minion, recruit a member costing up to 5, for free.", {

@@ -1377,7 +1377,9 @@ function scoreContest(state, ctx, qid, prize) {
   {
     const q = quadrant(qid);
     const sc = scoringOf(state, qid);
-    const scores = state.players.map(p => sc.score(ctx, p));
+    // Fat Cats (idea pipeline pool 10, flag doubleMagenta; no live card has it): its owner's Magenta count counts twice
+    const twice = p => qid === 'thieves' && p.members.some(u => effectiveDefs(state.cards[u]).some(d => d.doubleMagenta));
+    const scores = state.players.map(p => sc.score(ctx, p) * (twice(p) ? 2 : 1));
     const top = Math.max(...scores);
     let winners = top > 0 ? state.players.filter((p, i) => scores[i] === top).map(p => p.id) : [];
     // Spoilsport (REPLACE2 bot test): a contest spoiled this round pays nobody

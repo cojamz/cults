@@ -44,11 +44,14 @@ function hooks(ctx, p, name) {
 /** Give n of a color to one player. Fires the receiver's onGiven hooks. */
 function giveTo(ctx, giver, to, color, n, once = null) {
   if (!(n > 0)) return;
+  if (color === S && dry(ctx, giver, to)) { ctx.log(`${to.name}'s Teetotalers: ${giver.name} can't give ${to.name} silver.`); return false; }
   ctx.gain(to, color, n);
   // run as the member, so what it gives traces to it (Guest)
   for (const [c, d] of hooks(ctx, to, 'onGiven')) ctx.asMember(to, d.name, () => d.onGiven(ctx, to, c, giver, color, n));
   if (color === S) for (const o of ctx.state.players) for (const [c, d] of hooks(ctx, o, 'onAnyGifted')) ctx.asMember(o, d.name, () => d.onAnyGifted(ctx, o, c, giver, once, n));
 }
+/** Teetotalers (idea pipeline pool 10, flag noSilverGifts; no live card has it): rivals can't give its owner silver. */
+const dry = (ctx, giver, to) => giver !== to && hooks(ctx, to, 'noSilverGifts').length > 0;
 /** Give n of a color to every other player. One gift for the giver's onGive hooks. */
 function giveAll(ctx, giver, color, n) {
   if (!(n > 0)) return;
@@ -123,11 +126,12 @@ function shareStep(ctx, p, data) {
   const left = data.max - total;
   if (left <= 0) return shareDone(ctx, p, data);
   const low = lowest(ctx, p);
-  const opts = others(ctx, p).map(o => ({
+  const opts = others(ctx, p).filter(o => !dry(ctx, p, o)).map(o => ({
     id: `player:${o.id}`, label: `${o.name} +1 silver`, kind: 'player', value: o.id,
     // bots spread to whoever trails
     hint: (ctx.followers(o) === low ? 1 : 0) - 0.2 * (given[o.id] || 0),
   }));
+  if (!opts.length) return shareDone(ctx, p, data);
   if (!data.must) opts.push({ id: 'done', label: total ? 'Done' : 'Give nothing', kind: 'done', value: 'done', hint: -5 });
   const pay = data.flat != null ? `You get ${data.flat} followers once all ${data.max} are given` : `You get ${data.per} ${data.per === 1 ? 'follower' : 'followers'} for each`;
   ctx.choose(p, `${data.who}: which rival gains 1 silver? ${pay}, ${left} more ${data.must ? 'to give' : 'at most'}`, opts, 'silver.share', { ...data, given });
@@ -249,7 +253,7 @@ function sweetStep(ctx, p, data) {
   const left = Math.min(3 - total, (p.res[S] || 0) - total); // given silver leaves at Done
   if (left <= 0) return sweetDone(ctx, p, data);
   const low = lowest(ctx, p);
-  const opts = others(ctx, p).map(o => ({
+  const opts = others(ctx, p).filter(o => !dry(ctx, p, o)).map(o => ({
     id: `player:${o.id}`, label: `Give ${o.name} 1 of your silver`, kind: 'player', value: o.id, spend: { silver: 1 },
     // bots give to whoever trails, and keep 2 silver
     hint: (ctx.followers(o) === low ? 1 : 0) - 0.2 * (given[o.id] || 0) - ((p.res[S] || 0) - total <= 2 ? 3 : 0),
@@ -261,7 +265,7 @@ function sweetDone(ctx, p, data) {
   const given = data.given || {};
   const total = Object.values(given).reduce((s, n) => s + n, 0);
   if (!total) { ctx.log(`${p.name}'s Sweet Nothings: gave nothing.`); return; }
-  for (const [id, n] of Object.entries(given)) { p.res[S] -= n; giveTo(ctx, p, ctx.player(Number(id)), S, n); }
+  for (const [id, n] of Object.entries(given)) { if (giveTo(ctx, p, ctx.player(Number(id)), S, n) !== false) p.res[S] -= n; }
   afterGive(ctx, p, S);
   const list = Object.entries(given).map(([id, n]) => `${ctx.player(Number(id)).name} +${n}`).join(', ');
   ctx.log(`${p.name}'s Sweet Nothings: ${p.name} hands over ${total} of ${p.name}'s silver (${list}), for ${2 * total} of any colors.`);
@@ -291,6 +295,26 @@ const GIFT_EXCHANGE = poolSpace({
 
 export const silverActions = [
   GIFT_EXCHANGE,
+  // idea pipeline pool 10 (Nov 7): the +1 is the space's own (Grand Host doubles it); then every player's whole pile of
+  // silver at once (counted before anyone gives) goes to the next seat, a gift (Teetotalers' owner keeps what a rival
+  // can't give them). "Left" is the next seat in the table's order.
+  poolSpace({
+    key: 'roundrobin', copyDoesIt: true, ring: 1, name: 'Round Robin', text: '+1 silver. Then every player, you too, gives all their silver to the player on their left.',
+    estimate: (ctx, p) => { const ps = ctx.state.players, right = ps[(ps.indexOf(p) + ps.length - 1) % ps.length]; return (right.res[S] || 0) - (p.res[S] || 0); },
+    resolve(ctx, p) {
+      hostGain(ctx, p, 1);
+      const ps = ctx.state.players, pile = ps.map(o => o.res[S] || 0), gave = [];
+      ps.forEach((o, i) => {
+        const to = ps[(i + 1) % ps.length];
+        if (!pile[i] || to === o) return;
+        if (dry(ctx, o, to)) { ctx.log(`${to.name}'s Teetotalers: ${o.name} can't give ${to.name} silver, and keeps it.`); return; }
+        o.res[S] -= pile[i]; gave.push([o, to, pile[i]]);
+      });
+      for (const [o, to, n] of gave) giveTo(ctx, o, to, S, n);
+      for (const [o] of gave) afterGive(ctx, o, S);
+      ctx.log(`${p.name}'s Round Robin: ${gave.length ? gave.map(([o, to, n]) => `${o.name} gives ${to.name} ${n}`).join(', ') : 'nobody has silver to pass'}.`);
+    },
+  }, 'pool10'),
   {
     // copyDoesIt: a copy gifts the rivals too, so the copier's Silver Cloak pays (Cory, Nov 6: "yes.")
     key: 'toast', copyDoesIt: true, ring: 1, name: 'Toast', text: '+3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III.',
@@ -382,8 +406,8 @@ const silver = {
     almoners(ctx, p, id, data) {
       const o = ctx.player(id);
       if (!o || o === p || !(p.res[S] > 0)) return;
+      if (giveTo(ctx, p, o, S, 1) === false) return;
       p.res[S] -= 1;
-      giveTo(ctx, p, o, S, 1);
       almsStep(ctx, p, { n: data.n + 1, to: { ...(data.to || {}), [o.name]: ((data.to || {})[o.name] || 0) + 1 } });
     },
     giftExchange(ctx, p, uid) {
@@ -526,6 +550,18 @@ const silver = {
   },
 
   members: [
+    // idea pipeline pool 10 (Nov 7). Teetotalers: every gift of silver to its owner (from a rival's own pile or the bank)
+    // doesn't happen; the giver's split skips them. High Rollers: silver paid for a member, its own recruit included (the
+    // silver paid for it), as the pay sheet shows it; follower buys don't count. Prices are the writer's fill-ins.
+    pool(m('teetotalers', 'Teetotalers', 3, 2, "Rivals can't give you silver.", { f: 2, noSilverGifts: true }), 'pool10'),
+    pool(m('highrollers', 'High Rollers', 4, 3, 'Whenever you pay silver for a member, +1 follower per silver paid.', {
+      onRecruit(ctx, owner, card, by, what) {
+        if (by !== owner || !what.member) return;
+        const k = what.spent?.[S] || 0;
+        if (k > 0) { owner.bonus += k; ctx.log(`${owner.name}'s High Rollers: paid ${k} silver, +${k} follower${k === 1 ? '' : 's'}.`); }
+      },
+      ...see(info => 3 * endsAhead(info).length * 0.6), // BOTSEE: about one silver-paid recruit a round, 3 silver
+    }), 'pool10'),
     // idea pipeline pool 6 (Nov 7). Almoners: Round End before contests (so it gives up Most silver); every silver, one at
     // a time to the rival the owner picks (bots: the one with the fewest followers), each a gift. Prices are fill-ins.
     pool(m('almoners', 'Almoners', 2, 2, 'Round End: give all your silver to rivals, split as you choose. +1 follower per silver given.', {
@@ -962,8 +998,8 @@ export default silver;
 
 // Almoners (pool 6): one silver at a time until none is left, then the followers
 function almsStep(ctx, p, data) {
-  if ((p.res[S] || 0) > 0) {
-    ctx.choose(p, `Almoners: give 1 silver to which rival? (${p.res[S]} left)`, others(ctx, p).map(o => ({
+  if ((p.res[S] || 0) > 0 && others(ctx, p).some(o => !dry(ctx, p, o))) {
+    ctx.choose(p, `Almoners: give 1 silver to which rival? (${p.res[S]} left)`, others(ctx, p).filter(o => !dry(ctx, p, o)).map(o => ({
       id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers, ${o.res[S] || 0} silver)`, kind: 'player', value: o.id, hint: -ctx.followers(o) - 0.1 * (o.res[S] || 0),
     })), 'silver.almoners', data);
     return;

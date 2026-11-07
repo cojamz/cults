@@ -613,6 +613,26 @@ const thieves = {
   },
 
   members: [
+    // idea pipeline pool 10 (Nov 7). Bagmen (the brief's Skimmers, renamed: Skimmers is the REPLACE2 test's card, 3 not 2):
+    // a buy of 10 followers by a rival, 2 of them stolen through the shared steal, as Skimmers. Fat Cats: Magenta's
+    // contest (Most resources by color) counts its owner's resources twice (core scoreContest, flag doubleMagenta).
+    pool(m('bagmen', 'Bagmen', 3, 2, 'Whenever a rival recruits 10 followers, steal 2 of them.', {
+      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r] * [0.05, 0.2, 0.4][r - 1], 0) * 2 * (1 + SEE_SPITE)),
+      onBuyFollowers(ctx, owner, card, buyer, tier) {
+        if (buyer === owner || !(tier?.get >= 10) || !ctx.canSteal(owner, buyer)) return;
+        const got = ctx.steal(owner, buyer, { followers: 2 });
+        if (got) ctx.log(`${owner.name}'s Bagmen: stole ${got} of ${buyer.name}'s 10 followers.`);
+      },
+    }), 'pool10'),
+    pool(m('fatcats', 'Fat Cats', 4, 3, 'Your resources count double in the Magenta contest.', { f: 2, doubleMagenta: true,
+      // the table's read-out at Round End, before contests (the count itself is core's)
+      onAllPlaced(ctx, owner) {
+        if (!ctx.state.quadrants.includes('thieves')) return;
+        const n = ctx.state.resources.reduce((t, r) => t + (owner.res[r] || 0), 0);
+        if (n) ctx.log(`${owner.name}'s Fat Cats: ${n} resources count as ${2 * n} in the Magenta contest.`);
+      },
+      ...see(info => 0.5 * endsAhead(info).reduce((a, r) => a + SEE_RING[r - 1], 0)), // BOTSEE: about half the contests it tips
+    }), 'pool10'),
     // idea pipeline pool 5 (Nov 7): a steal from you passes on; "the same number" is what the steal took (resources,
     // a member or followers, each 1), taken back as resources from the other rival's biggest piles, as Lookout's. Its own
     // steal is a reaction, so no Middlemen answers it (no chains). The owner picks the other rival. Price a fill-in.
