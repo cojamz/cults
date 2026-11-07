@@ -88,7 +88,7 @@ One short message (Cory reads on a phone): a numbered list he can answer by numb
 
 ### 6b. Takeaways after each batch
 
-When Cory answers a batch, send him your takeaways, one line each, before they change the skill; he wants to see what you learned first. Then add them to references/verdicts.md (and color-interactions.md for ties), commit, and build the next batch on them.
+Batches exist to tune this skill, not to produce every idea (Cory, Nov 7: "after i'm good with the quality you're just going to start proliferating ideas, no batches"); once he says the quality is good, ideas are generated at scale from this skill and go straight to testing. When Cory answers a batch, send him your takeaways, one line each, before they change the skill; he wants to see what you learned first. Then add them to references/verdicts.md (and color-interactions.md for ties), commit, and build the next batch on them.
 
 ### 7. Log
 
