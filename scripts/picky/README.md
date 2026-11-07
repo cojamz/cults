@@ -62,3 +62,12 @@ The running list across runs, with what was done about each: design/eval/picky/f
 Read the card's facts in `probes.mjs` (in-page, self-contained functions) and judge them in `checks.mjs`. A check that
 fires on something by design gets an exception with the reason, never a weaker test. `cards.jsonl` from a past run
 is the quickest way to try a new check without playing.
+
+## Frame by frame (Cory, Nov 7: "reviewing every frame of each game ... speed and how long things have lingered")
+
+    node scripts/picky/film.mjs --speed relaxed|steady --table a,b,c,d --out <dir>   # a whole game on video + timeline.jsonl
+    node scripts/picky/film-sheets.mjs <dir>                                         # frames 4/s, still runs folded with "held N s", 12 to a sheet
+
+Then give ~25 sheets each to fresh Agents with scripts/picky/frame-brief.md (frames only, rulebook, no code), and one
+more Agent merges the notes against the code (classes as above). One game at a time: a second film or the sheet cutter
+running alongside loads the box and skews the timings. First run: /mnt/project-files/film/ (merged.md).
