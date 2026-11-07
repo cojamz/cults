@@ -658,6 +658,10 @@ function inputFor(state, task) {
       // the top of the discard pile (Ragpicker, REPLACE14 bot test: flag pileBottom; it read the pile's bottom before the discard pile, Nov 6)
       { const d = discardOf(state), b = d.length && sumMemberFlag(state, p, 'pileBottom') > 0 ? d[d.length - 1] : null;
         if (b != null && memberPrice(state, p, b).afford) opts.push({ id: `card:${b}`, label: `${cardDef(state, b).name} (top of the discard pile)`, kind: 'card', uid: b, fromPile: true }); }
+      // any member in the discard pile, once per round on its owner's own turn (Pickers, idea pipeline pool 3: flag discardPick)
+      if (state.current === p.id && !task.doorbuster && !task.lateShop && !task.lastMinute && !task.cheap && !barkerOnly && pickerCard(state, p) !== undefined)
+        for (const u of discardOf(state)) if (!opts.some(o => o.uid === u) && memberPrice(state, p, u).afford)
+          opts.push({ id: `card:${u}`, label: `${cardDef(state, u).name} (discard pile)`, kind: 'card', uid: u, fromPile: true });
       // a rival's Peddlers stall (REPLACE6 bot test)
       if (REPLACE6 || REPLACE9) for (const [uid, o, by] of stallCards(state, p)) if (memberPrice(state, p, uid).afford)
         opts.push({ id: `card:${uid}`, label: `${cardDef(state, uid).name} (${o === p ? 'your' : `${o.name}'s`} ${by})`, kind: 'card', uid, stall: o.id });
@@ -1512,7 +1516,10 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   // top: Red's round I space takes the deck's top member (Cory, 2026-10-27)
   // the discard pile's top card (Ragpicker's flag pileBottom)
   const bottom = idx < 0 && fromPile < 0 && discardOf(state).at(-1) === uid && sumMemberFlag(state, p, 'pileBottom') > 0;
-  if (idx < 0 && !bottom && (fromPile < 0 || (fromPile >= pileReach(state, p) && !(top && fromPile === 0)))) throw new Error(`Card ${uid} is not in the shop`);
+  // any discard pile member, once per round on the owner's turn (Pickers' flag discardPick)
+  const picker = idx < 0 && fromPile < 0 && !bottom && state.current === p.id && discardOf(state).includes(uid) ? pickerCard(state, p) : undefined;
+  if (picker !== undefined) state.cards[picker].pickRound = state.round;
+  if (idx < 0 && !bottom && picker === undefined && (fromPile < 0 || (fromPile >= pileReach(state, p) && !(top && fromPile === 0)))) throw new Error(`Card ${uid} is not in the shop`);
   let paid = 'free', spent = null, silverForColor = false;
   if (!free) {
     const spend = chosen || paymentPlan(state, p, uid, how);
@@ -1565,12 +1572,12 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   const peeked = idx < 0 && fromPile >= 0 && fromPile < (p.peekReach || 0);
   if (peeked) delete p.peekReach;
   if (idx >= 0) state.shop.splice(idx, 1);
-  else if (bottom) takeFromDiscard(state, uid);
+  else if (bottom || picker !== undefined) takeFromDiscard(state, uid);
   else state.pile.splice(fromPile, 1);
   refill(state);
   p.members.push(uid);
   const def = cardDef(state, uid);
-  log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : bottom ? ` from the discard pile with ${p.name}'s ${flagName(state, p, 'pileBottom')}` : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
+  log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : bottom ? ` from the discard pile with ${p.name}'s ${flagName(state, p, 'pileBottom')}` : picker !== undefined ? ` from the discard pile with ${p.name}'s ${cardDef(state, picker).name}` : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
   memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 && !stall, silverForColor });
   // an arrival like any other (Saboteur: "whenever this joins your cult"); swaps and moves fire it in their own code
   memberJoined(state, p, uid);
@@ -2027,6 +2034,10 @@ function traceChanges(state, before, owner, def) {
 }
 function eachMember(state, fn, keys) {
   for (const owner of state.players) eachMemberOf(state, owner, (card, def) => fn(owner, card, def), keys);
+}
+/** p's member with the discardPick flag (Pickers, pool 3) not yet used this round, or undefined. */
+function pickerCard(state, p) {
+  return p.members.find(u => state.cards[u].pickRound !== state.round && effectiveDefs(state.cards[u]).some(d => d.discardPick));
 }
 /** Name of p's member that carries a flag (a Doppelganger copying it reads as the copied card). */
 function flagName(state, p, flag) {

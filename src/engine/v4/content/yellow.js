@@ -13,6 +13,7 @@ import { on12, handlers12 } from './replace12.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
 import { swap14, handlers14 } from './replace14.js';
 import { add11, old11 } from './replace11.js';
+import { poolSpace } from './pool.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 
 const Y = 'yellow';
@@ -150,6 +151,46 @@ const GRAND_TOUR = {
   },
 };
 
+// Money Changers and Small Change (idea pipeline pool 3, Nov 7; bot games only): swap your resources with one rival's,
+// one for one, colors the swapper picks each time; the rival +1 follower per resource swapped. Lie Low lets it through
+// (a color change, not a steal).
+const heldTotal = p => Object.values(p.res).reduce((a, b) => a + b, 0);
+// a bot swaps a big pile for a small one (more for a color it holds none of), keeps its yellow (the contest), and
+// counts the follower it hands the rival
+const swapHint = (p, c, t) => 0.4 * ((p.res[c] || 0) - (p.res[t] || 0) - 1) + (p.res[t] ? 0 : 0.3) - (c === Y ? 0.6 : 0) - 0.4;
+const swapPairs = (ctx, p, o) => {
+  const out = [];
+  for (const c of colors(ctx)) if (p.res[c] > 0) for (const t of colors(ctx)) if (t !== c && o.res[t] > 0) out.push([c, t]);
+  return out;
+};
+const changeSpace = (key, name, max) => poolSpace({
+  key, ring: 2, name, text: `+2 yellow. Swap up to ${max} of your resources with a rival's, one for one, colors your choice. They +1 follower per resource swapped.`,
+  estimate: (ctx, p) => 2 + Math.max(0, ...ctx.rivals(p).map(o => swapPairs(ctx, p, o).map(([c, t]) => swapHint(p, c, t)).filter(h => h > 0).length ? 1 : 0)),
+  resolve(ctx, p) {
+    ctx.gain(p, Y, 2, { fromAction: true });
+    const rivals = ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'change') && swapPairs(ctx, p, o).length);
+    if (!rivals.length) { ctx.log(`${p.name}'s ${name}: no resources to swap with a rival, so only the yellow.`); return; }
+    ctx.choose(p, `${name}: swap resources with which rival?`, rivals.map(o => ({
+      id: `player:${o.id}`, label: `${o.name} (${heldTotal(o)} resources)`, kind: 'player', value: o.id,
+      hint: Math.max(...swapPairs(ctx, p, o).map(([c, t]) => swapHint(p, c, t))) - 0.02 * ctx.followers(o),
+    })), 'yellow.moneyWith', { name, max });
+  },
+}, 'pool3');
+function moneyAsk(ctx, p, data) {
+  const o = ctx.player(data.o);
+  const pairs = data.n < data.max ? swapPairs(ctx, p, o) : [];
+  if (!pairs.length) { moneyDone(ctx, p, data); return; }
+  const opts = pairs.map(([c, t]) => ({ id: `swap:${c}:${t}`, label: `Give 1 ${c}, take 1 ${t}`, kind: 'choice', value: `${c}:${t}`, hint: swapHint(p, c, t) }));
+  opts.push({ id: 'done', label: data.n ? 'Done' : 'Swap nothing', kind: 'done', value: 'done', hint: 0 });
+  ctx.choose(p, `${data.name}: swap which resources with ${o.name}? (${data.n} of up to ${data.max} so far)`, opts, 'yellow.moneyStep', data);
+}
+function moneyDone(ctx, p, data) {
+  const o = ctx.player(data.o);
+  if (!data.n) { ctx.log(`${p.name}'s ${data.name}: swaps nothing with ${o.name}.`); return; }
+  o.bonus += data.n;
+  ctx.log(`${p.name}'s ${data.name}: ${o.name} +${data.n} follower${data.n === 1 ? '' : 's'} (${data.n} swapped).`);
+}
+
 export default {
   id: 'yellow',
   name: 'Yellow',
@@ -157,6 +198,8 @@ export default {
   scoring: { label: 'Most yellow', counts: 'the yellow you hold when the round ends', score: (ctx, p) => p.res[Y] },
 
   actions: [
+    changeSpace('moneychangers', 'Money Changers', 3),
+    changeSpace('smallchange', 'Small Change', 2),
     {
       // fuel with Yellow's flavor (Cory, 2026-10-30): "+3wild +4wild +5wild"
       key: 'harvest', ring: 1, name: 'Harvest', text: '+3 in round I, +4 in round II, +5 in round III, in colors you choose.',
@@ -240,6 +283,17 @@ export default {
   ],
 
   handlers: {
+    // Money Changers / Small Change (pool 3)
+    moneyWith(ctx, p, oid, data) { if (ctx.player(oid)) moneyAsk(ctx, p, { ...data, o: oid, n: 0 }); },
+    moneyStep(ctx, p, value, data) {
+      if (value === 'done') { moneyDone(ctx, p, data); return; }
+      const [c, t] = String(value).split(':'), o = ctx.player(data.o);
+      if (!(p.res[c] > 0) || !(o.res[t] > 0)) { moneyAsk(ctx, p, data); return; }
+      p.res[c] -= 1; o.res[c] = (o.res[c] || 0) + 1;
+      o.res[t] -= 1; p.res[t] = (p.res[t] || 0) + 1;
+      ctx.log(`${p.name}'s ${data.name}: gives ${o.name} 1 ${c} for 1 ${t}.`);
+      moneyAsk(ctx, p, { ...data, n: data.n + 1 });
+    },
     ...handlers14({
       openHouse(ctx, p, uid) {
         const c = ctx.card(uid);

@@ -387,6 +387,8 @@ const market = {
   ],
 
   handlers: {
+    // idea pipeline pool 3: Grave Diggers' and Salvagers' pick among tied cheapest discard pile members
+    graveFree(ctx, p, uid, data) { if (discardOf(ctx.state).includes(uid)) ctx.asMember(p, data.name, () => graveTake(ctx, p, uid, data.name)); },
     // idea pipeline pool 1 (content/pool.js): Temps and its variation
     temps(ctx, p, uid, data) {
       if (!p.members.includes(uid)) return;
@@ -611,6 +613,24 @@ const market = {
   },
 
   members: [
+    // idea pipeline pool 3 (Nov 7): the discard pile as a second shop. Prices are fill-ins (design-core bands).
+    // Grave Diggers: "Round End" before contests, as Last-Minute Shopper's (onAllPlaced). Cheapest = lowest printed cost; a
+    // tie is the owner's pick.
+    pool(m('gravediggers', 'Grave Diggers', 4, 2, 'Round End: recruit the cheapest member in the discard pile, for free.', {
+      onAllPlaced(ctx, owner) { ctx.asMember(owner, 'Grave Diggers', () => graveFree(ctx, owner, 'Grave Diggers')); },
+      ...see(info => 2.5 * endsAhead(info).length), // BOTSEE: a cheap member free at each round end still ahead
+    }), 'pool3'),
+    // Pickers: core offers every discard pile member in its owner's own buy step, once per round (flag discardPick); the
+    // recruit is that turn's buy, paid at its normal price. Key pickers3: the REPLACE13 bot test already has a Pickers.
+    pool(m('pickers3', 'Pickers', 2, 2, 'Once per round, on your turn, you may recruit from the discard pile instead of the shop.', { discardPick: true,
+      ...see(info => 1.2 * endsAhead(info).length), // BOTSEE: a wider choice of member about once a round
+    }), 'pool3'),
+    pool(m('salvagers', 'Salvagers', 2, 1, 'On Use, once per game: recruit the cheapest member in the discard pile, for free.', {
+      activate: 'game',
+      onActivate(ctx, owner, card) { if (!graveFree(ctx, owner, 'Salvagers')) card.used = false; },
+      // bots wait for a member worth having: costing 3 or more, or any in round III
+      botActivate: ctx => { const l = cheapestDiscard(ctx); return l.length > 0 && (ctx.state.round === 3 || priceOf(ctx.card(l[0])) >= 3); },
+    }), 'pool3'),
     // idea pipeline pool 1 (Nov 7): Cory's Temps, 1:15pm "maybe temp gives 4 wild on the discard", 1:16pm "AND it gives the
     // extra recruit"; price 4 blue + 4 any as seen is the brainstorm thread's fill-in. Temps (Big) is the variation step's.
     ...[['temps', 'Temps', 'round', 4, 1], ['tempsbig', 'Temp Agency', 'game', 6, 2]].map(([key, name, every, n, buys]) => pool(m(key, name, 3, 3,
@@ -1011,6 +1031,31 @@ export function install() {
   registerQuadrant(market);
   installed = true;
   return market;
+}
+
+// Grave Diggers and Salvagers (idea pipeline pool 3): the discard pile's cheapest members by printed cost
+function cheapestDiscard(ctx) {
+  const d = discardOf(ctx.state);
+  if (!d.length) return [];
+  const low = Math.min(...d.map(u => priceOf(ctx.card(u))));
+  return d.filter(u => priceOf(ctx.card(u)) === low);
+}
+/** Recruit the discard pile's cheapest member for free (the owner picks among a tie). False when the pile is empty. */
+function graveFree(ctx, p, name) {
+  const list = cheapestDiscard(ctx);
+  if (!list.length) { ctx.log(`${p.name}'s ${name}: the discard pile is empty.`); return false; }
+  if (list.length === 1) { graveTake(ctx, p, list[0], name); return true; }
+  ctx.choose(p, `${name}: recruit which of the cheapest members in the discard pile, for free?`, list.map(u => ({
+    id: `card:${u}`, label: ctx.card(u).def.name, kind: 'card', value: u, hint: botWorth(ctx.card(u)),
+  })), `${Q}.graveFree`, { name });
+  return true;
+}
+function graveTake(ctx, p, uid, name) {
+  if (!takeFromDiscard(ctx.state, uid)) return;
+  // lifted into the row for a moment, so it is recruited the normal way (as payAndRecruit does)
+  ctx.state.shop.push(uid);
+  ctx.log(`${p.name}'s ${name}: recruits ${ctx.card(uid).def.name} from the discard pile for free.`);
+  ctx.recruit(p, uid, { free: true });
 }
 
 // Talent Scout recruits from the pile at the member's own price, by the one price rule.

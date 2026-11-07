@@ -170,6 +170,37 @@ const turnsAhead = (ctx, p) => {
   for (let i = end + 1; i < (close < 0 ? q.length : close); i++) if (q[i].t === 'turn' && q[i].p === p.id) out.push(i);
   return out;
 };
+/** Pool 3: p steals n resources from rival o, one at a time from o's biggest pile (no choice on the trigger), as one
+ *  steal (protections and steal reactions apply). Returns how many it took. */
+function plainSteal(ctx, p, o, n, name) {
+  if (!ctx.canSteal(p, o)) { ctx.log(`${p.name}'s ${name}: can't steal from ${o.name}.`); return 0; }
+  const left = { ...o.res }, take = {};
+  for (let i = 0; i < n; i++) {
+    const c = [...ctx.state.resources].sort((a, b) => (left[b] || 0) - (left[a] || 0))[0];
+    if (!(left[c] > 0)) break;
+    left[c] -= 1; take[c] = (take[c] || 0) + 1;
+  }
+  if (!Object.keys(take).length) { ctx.log(`${p.name}'s ${name}: ${o.name} has nothing to steal.`); return 0; }
+  let said = '';
+  const k = ctx.steal(p, o, { take, give: (got, took) => {
+    for (const [c, x] of Object.entries(took)) p.res[c] = (p.res[c] || 0) + x;
+    said = Object.entries(took).map(([c, x]) => `${x} ${c}`).join(', ');
+  } });
+  if (k) ctx.log(`${p.name}'s ${name}: steals ${said} from ${o.name}.`);
+  return k;
+}
+/** Bouncers / Doormen (pool 3): a rival's recruits this turn reached the line, so they skip their next turn. */
+function bounceCheck(ctx, owner, card, by, member, line, name) {
+  if (by === owner || ctx.state.current !== by.id || !member) return;
+  const key = ctx.turnKey();
+  if (!card.bounce || card.bounce.k !== key || card.bounce.pid !== by.id) card.bounce = { k: key, pid: by.id, n: 0 };
+  const before = card.bounce.n;
+  card.bounce = { ...card.bounce, n: before + ctx.memberWeight(member) };
+  if (before < line && card.bounce.n >= line) ctx.asMember(owner, name, () => {
+    ctx.log(`${owner.name}'s ${name}: ${by.name} recruited ${line} or more members this turn.`);
+    skipNext(ctx, by, name, owner);
+  }, card.uid);
+}
 /** Who holds the Goes Last token this round (Cory, Nov 1, 2:16pm and 2:35pm), or null. */
 export const tokenHolder = s => (s.goesLast && s.goesLast.round === s.round ? s.goesLast.pid : null);
 /**
@@ -191,6 +222,8 @@ function takeToken(ctx, p, why, what = '') {
     p.bonus += c.def.tokenPay;
     ctx.log(`${p.name}'s ${c.def.name}: ${p.name} takes the Goes Last token, +${c.def.tokenPay} followers.`);
   }, c.uid);
+  // idea pipeline pool 3 (Ushers' Cut, Ticket Takers): "Whenever you take the Goes Last token", a take, not a keep
+  if (was !== p.id) for (const c of ctx.membersOf(p)) if (c.def.onTakeToken) ctx.asMember(p, c.def.name, () => c.def.onTakeToken(ctx, p, c), c.uid);
   if (was === null || was === p.id) { ctx.log(`${p.name}'s ${why}: ${p.name} ${was === p.id ? 'keeps' : 'takes'} the Goes Last token${what}.`); return; }
   const o = ctx.player(was), q = s.queue;
   const close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
@@ -440,6 +473,8 @@ export default {
   resource: P,
   handlers: {
     // idea pipeline pool 1: give a rival the Goes Last token (Cory, Nov 7: "making all a players members go last")
+    // pool 3: Ticket Takers' rival
+    ticketSteal(ctx, p, id) { const o = ctx.player(id); if (o) ctx.asMember(p, 'Ticket Takers', () => plainSteal(ctx, p, o, 2, 'Ticket Takers')); },
     sendLast(ctx, p, id, data) {
       const o = ctx.player(id), n = data.all ? turnsLeft(ctx, o) : 1;
       ctx.log(`${p.name}'s ${data.name}: ${o.name} takes the Goes Last token.`);
@@ -583,6 +618,26 @@ export default {
   ],
 
   members: [
+    // idea pipeline pool 3 (Nov 7): the Goes Last token pays a steal; a rival's big turn is skipped. Prices are fill-ins.
+    pool(m('usherscut', "Ushers' Cut", 2, 2, 'Whenever you take the Goes Last token, steal 1 resource from each rival.', {
+      onTakeToken(ctx, owner) { for (const o of ctx.rivals(owner)) plainSteal(ctx, owner, o, 1, "Ushers' Cut"); },
+      ...see(info => 2 * endsAhead(info).length * 0.6), // BOTSEE: about one take a round when it pays, 3 resources less spite
+    }), 'pool3'),
+    pool(m('tickettakers', 'Ticket Takers', 2, 1, 'Whenever you take the Goes Last token, steal 2 resources from one rival.', {
+      onTakeToken(ctx, owner) {
+        chooseRival(ctx, owner, 'Ticket Takers: steal 2 resources from which rival?', 'purple.ticketSteal', null,
+          o => Math.min(2, Object.values(o.res).reduce((a, b) => a + b, 0)) + 0.01 * ctx.followers(o));
+      },
+      ...see(info => 1.5 * endsAhead(info).length * 0.6),
+    }), 'pool3'),
+    // "in one turn": recruits made on that rival's own turn, counted as the table counts members (a card worth 3 counts as
+    // 3); "their next turn": the next one this round, as Hold Up's skip (none left: nothing). Key bouncers3: the
+    // culled live Bouncer keeps its key; Gatekeepers (the brief's Doormen) is renamed, as Blue has a Doormen.
+    ...[['bouncers3', 'Bouncers', 2, 3, 2], ['gatekeepers', 'Gatekeepers', 3, 2, 1]].map(([key, name, line, s, w]) => pool(m(key, name, s, w,
+      `Whenever a rival recruits ${line === 2 ? 'two' : 'three'} or more members in one turn, they skip their next turn.`, {
+        onAnyRecruit(ctx, owner, card, by, member) { bounceCheck(ctx, owner, card, by, member, line, name); },
+        ...see(info => (line === 2 ? 1 : 0.4) * endsAhead(info).length), // BOTSEE: a rival's lost turn, worth a little to its owner
+      }), 'pool3')),
     pool(m('ushers', 'Ushers', 2, 3, 'On Use, once per round: give a rival the Goes Last token: their other minions are placed after everyone else’s.', {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },

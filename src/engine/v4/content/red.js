@@ -10,6 +10,7 @@ import { see, endsAhead } from './botsee.js';
 import { add7, old7, handlers7 } from './replace7.js';
 import { add12, old12, on12 } from './replace12.js';
 import { swap11, handlers11 } from './replace11.js';
+import { pool, anyColors } from './pool.js';
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
 
@@ -271,6 +272,16 @@ export default {
   },
 
   members: [
+    // idea pipeline pool 3 (Nov 7): a swap of one of your members, by your own card, space or the swap card (one pays
+    // once per swap, whichever side it was on: with a rival's member or a shop member). Prices are fill-ins.
+    ...[['movers', 'Movers\' Union', 2, 2, 2], ['shiftworkers', 'Shift Workers', 3, 3, 2]].map(([key, name, n, s, w]) => pool(m(key, name, s, w,
+      `Whenever you swap one of your members, +${n} of any colors.`, {
+        onCultMove(ctx, owner, card, { uid, from, actor, swappedWith }) {
+          if (from !== owner || actor !== owner || swappedWith == null || uid === card.uid) return;
+          ctx.asMember(owner, name, () => anyColors(ctx, owner, n, name), card.uid);
+        },
+        ...see(info => 0.8 * n * endsAhead(info).length), // BOTSEE: about one swap a round for a Red player
+      }), 'pool3')),
     m('twins', 'Triplets', 1, 1, 'Worth 3 followers.', { f: 3, n: 3, retired: true }), // Body Snatchers takes its place (Claude, under Cory's "use your judgement", 2026-11-03) // was Twins, worth 2 (Cory, 2026-10-29: "make it triplets, 3 followers")
     // Replacement batch 2 (Nov 3), live since Nov 3 (Claude, under Cory's "use your judgement"): Triplets' place, and a round I member as Triplets was (round: 1).
     // 4 red + 2 any as a player sees it. Its swap is a choice with "Don't swap" (Red's swaps can be skipped: Cory,
