@@ -257,7 +257,7 @@ export default function CultSeat({ state, pid, me = null, mine = false, now = fa
             count (Cory's todo: the words crowded the row); its hover says it in words, the seat card too */}
         {safe && <small className="cs-safe" data-safe="1" role="img" aria-label="safe this round" title={`Safe this round: no one can steal members or resources from ${mine ? 'you' : p.name} until it ends`}><SafeShield /></small>}
         {/* the figures oldest to newest; they never overlap */}
-        <span className="cs-figs">
+        <span className="cs-figs" style={fold.figW ? { '--fig-w': `${fold.figW}px` } : undefined}>
         {shown.map(g => {
           const d = g.def;
           // yours to use now (Cory, 2026-10-15): the figure is lit, and its card carries the Use button (MemberUse.jsx)
@@ -432,6 +432,7 @@ function useFigureFold(rootEl, sig) {
   const [size, setSize] = useState(0); // bumped when the member area changes size (a resize, a new layout)
   const key = `${sig}|${size}`;
   const limit = st.key === key ? st.limit : Infinity;
+  const figW = st.key === key ? st.figW || null : null; // figures a little narrower, so one or two never sit alone on a row
   const ro = useRef(null), measured = useRef('');
   useLayoutEffect(() => {
     const seat = rootEl.current;
@@ -454,14 +455,22 @@ function useFigureFold(rootEl, sig) {
     if (!box) return;
     const figs = box.querySelectorAll(':scope > .cs-member');
     // measured once per drawing of these figures (no layout read on a step that changed nothing here)
-    const drawn = `${key}|${limit}|${[...figs].map(e => e.dataset.uids).join(',')}`;
+    const drawn = `${key}|${limit}|${figW}|${[...figs].map(e => e.dataset.uids).join(',')}`;
     if (measured.current === drawn) return;
     measured.current = drawn;
     const H = box.clientHeight;
     if (!H || figs.length < 2) return;
     const over = [...box.children].some(e => e.offsetTop + e.offsetHeight > H + 1);
-    if (over) setSt({ on, key, limit: figs.length - 1 });
+    if (over) { setSt({ on, key, limit: figs.length - 1, figW }); return; }
+    // one or two figures alone on a last row: the figures narrow a little so they fit the rows above (frame review,
+    // Nov 7: P4's seat wrapped one thumbnail onto a row of its own), never under 18px
+    if (figW || limit !== Infinity || figs.length < 6) return;
+    const tops = [...figs].map(e => e.offsetTop), bottom = Math.max(...tops);
+    const alone = tops.filter(t => t === bottom).length;
+    if (bottom === tops[0] || alone > 2) return;
+    const w = Math.floor((25 * (figs.length - alone)) / figs.length) - 1; // (25: a figure and its 1px gap)
+    if (w >= 18) setSt({ on, key, limit, figW: w });
   });
   useEffect(() => () => { if (ro.current) ro.current.disconnect(); ro.current = null; }, []);
-  return { on: st.on, limit };
+  return { on: st.on, limit, figW };
 }
