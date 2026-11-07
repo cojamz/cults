@@ -157,7 +157,7 @@ describe('Purple actions', () => {
     expect(s.log).toContain("P1's Crunch Time: P1 takes their next turn now (their last minion).");
     s = take(scene({ round: 3, queue: turns(0, 1, 1) }), 'purple.rally');
     expect(after1(s)).toEqual([1, 1]);
-    expect(s.log).toContain('P1 has no minions left to place: Crunch Time does nothing.');
+    expect(s.log).toContain('P1 has no turns left this round to take now: Crunch Time does nothing.');
     expect(nextPlacer(s)).toBe(1);
   });
   it('turnsNow: placements per round unchanged, the next 2 happen at once, and it works in round I at 4 players', () => {

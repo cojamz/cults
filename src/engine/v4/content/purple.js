@@ -418,7 +418,8 @@ export function turnsNow(ctx, p, n, why) {
   // (Cory, 2026-10-21: it shouldn't skip your next turns)
   const picks = [];
   for (let i = stop - 1; i > end && picks.length < n; i--) if (q[i].t === 'turn' && q[i].p === p.id) picks.unshift(i);
-  if (!picks.length) { ctx.log(`${p.name} has no minions left to place: ${why} does nothing.`); return 0; }
+  // "no turns left", not "no minions": spare minions can still sit at home for extra turns (frame review, Nov 7)
+  if (!picks.length) { ctx.log(`${p.name} has no turns left this round to take now: ${why} does nothing.`); return 0; }
   // where each turn sits in the round's order, matched as the seats match it (extra turns sit outside it)
   const { order } = ctx.roundOrder();
   const seq = [...(s.turns || []).map(pid => ({ pid })), ...q.filter(t => t.t === 'turn').map(task => ({ pid: task.p, task }))];
