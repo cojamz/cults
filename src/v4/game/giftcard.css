@@ -57,6 +57,10 @@
 /* neutral has no dot of its own: a gray one, named */
 .gift-card .gc-neutral{gap:6px}
 .gift-card .gc-neutral .gc-word{font:600 15px/18px var(--sans)}
+.gift-card .gc-sent{gap:5px}
+.gift-card .gc-sent .gc-word{font:600 15px/18px var(--sans)}
+/* a grey member has no color variable of its own: the grey of the colorless dot */
+.gift-card .gc-sent .member-glyph[data-member-glyph="neutral"] path:first-of-type{fill:#9b958c}
 /* a rival: their face over their name; what they hold of the color under it */
 .gift-card .gc-face{flex-direction:column;gap:0;min-width:56px;padding:4px 8px 2px}
 .gift-card .gc-face .gc-name{font:700 15px/18px var(--sans)}

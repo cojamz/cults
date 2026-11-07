@@ -10,7 +10,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { holdFlag } from './bodyFlag.js';
 import { cardDef, quadrant } from '../../engine/v4/index.js';
 import { costParts, playerColor, seatEmoji } from '../format.js';
-import { ResourceGlyph, anyParts } from './Glyphs.jsx';
+import { MemberGlyph, ResourceGlyph, anyParts } from './Glyphs.jsx';
 import { Pip } from './Rich.jsx';
 import { Minion } from '../art/Leader.jsx';
 import { Sprite } from '../art/Sprite.jsx';
@@ -247,6 +247,19 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
           <span className="gc-name">{p.name}</span>
           {/* what they hold of the color (kept in its place, unseen, until a color is picked: the card never changes size) */}
           <span className="gc-has num" style={has == null ? { visibility: 'hidden' } : undefined}>{has ?? 0}<ResourceGlyph r={color || state.resources[0]} size={11} decorative /></span>
+        </button>
+      );
+    }
+    // a pick of shop members by color ("Out of Style: send which color…", options "silver (2)"): a member figure in
+    // that color and how many go, not a resource dot (picky run, Nov 7: three bare dots and a "grey", no counts)
+    const sent = g.kind === 'color' && !g.pay && o ? /\((\d+)\)$/.exec(o.label || '') : null;
+    if (sent) {
+      const k = Number(sent[1]), word = b === 'neutral' ? 'grey' : b;
+      return (
+        <button key={b} {...common} className={`${common.className} gc-dot gc-sent`} data-res={b} aria-label={`${word}: ${k} member${k === 1 ? '' : 's'}`} title={`${k} ${word} member${k === 1 ? '' : 's'} in the shop`}>
+          <b className="num">{k}</b>
+          <MemberGlyph r={b} size={24} decorative />
+          <span className="gc-word">{word}</span>
         </button>
       );
     }

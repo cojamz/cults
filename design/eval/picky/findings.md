@@ -7,6 +7,31 @@ each. One line per finding: what a player sees, what's wrong, status. Each run's
 Status words: **fixed (version)**, **fixing**, **sent** (to the thread that owns it), **open** (ours, not started),
 **Cory** (a question only he can answer), **by design** (with the reason; the check got an exception).
 
+## 2026-11-07 (morning run)
+Run at 7:44am Eastern Nov 7 on v0.99.668 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
+emoji; raw list /mnt/project-files/picky/2026-11-07-12-44/). The bot flagged nothing; the member sweep of 116 cards in
+both looks was clean. The rest are by eye from the shots.
+
+- **Out of Style's pick showed bare dots: "send which color to the discard pile?" over a silver dot, a yellow dot, a
+  blue dot and "grey".** The choice counts shop members, but the screen showed resource dots with no names and no
+  count of how many would go (each one is +1 blue). Grey and silver read as the same dot. Each choice is now "2 [blue
+  member] blue", "2 [silver member] silver", with a test. **fixed (this run)**
+- **The rival banner at round start and between turns names no cause.** "P2, round start ··· +1 yellow +1 silver",
+  "P4, round start ··· +1 red +1 green from P3", "P3, between turns ··· −2 yellow +2 blue −1 silver +1 white": only
+  the gains, never the member that made them, so a first-time player can't tell why P3 lost 2 yellow. **open** (for
+  the coordinator: the top banner's owner)
+- **A long turn headline wraps and pushes the round line down** ("Your turn — Out of Style: send which color to the
+  discard pile?" on two lines, "pile?" alone, Undo placement pushed to the right edge). **open** (looks off)
+- **P2's "took Cover" line says Sleep In twice** ("copied Sleep In: +1 green +5 purple · Sleep In: took the Goes Last
+  token"). One name would do. **open** (wording)
+- Seen again, already listed: the headline keeping "P2's turn ···" over the top spaces, the banner hiding the wheel's
+  top spaces, "Turn skipped" pill over P3's resource counts, bar Members one above the member count (P4 "21 members",
+  bar 22; P3 "15 members", bar 16), bare numbers on score parts, "+34 shuffled in for round II" over the shop's count,
+  "Since your last turn" lines with no effect ("Round II · P2 Help Yourself", "P2 Sample"), emoji members shown as
+  things (Line Cutters a car, Debt Collectors a phone, Old Money a bank, Magpie a chipmunk), white and silver dots alike
+  in the emoji look, minions over middle-ring words, rim plaques opening no card (9 and 18 rests), "last turn in a row"
+  in header and seat (by design).
+
 ## 2026-11-08
 Run at 1:42am Eastern Nov 8 on v0.99.667 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
 emoji; raw list /mnt/project-files/picky/2026-11-07-06-42/). The bot flagged 4 (Housewarming's number; the two below
