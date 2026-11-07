@@ -1,4 +1,4 @@
-# Calibration run 3: version 2 on 17 held-out calls (Nov 7 ~10:15pm Eastern)
+# Calibration run 3: version 2 on 17 held-out calls (Nov 7 10:02pm Eastern)
 
 Plan fixed before reading: run3-plan.md. Method as the readers saw it: run3-method-as-given.md. Three fresh readers, each saw only the method, the rulebook and holdout-calls-blind.md.
 
