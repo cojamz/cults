@@ -469,7 +469,7 @@ function cmdReport() {
   const md = L.join('\n') + '\n';
   const outF = flags.md || join(trialDir(spec.name), 'report.md');
   writeFileSync(outF, md);
-  writeFileSync(join(trialDir(spec.name), 'report.json'), JSON.stringify({ games: both.length, pairs: spec.pairs.map(([n, o]) => ({ n, o, trial: n && cardLine(t, n), base: o && cardLine(b, o) })), trial: P, base: Q }));
+  writeFileSync(join(trialDir(spec.name), 'report.json'), JSON.stringify({ games: both.length, pairs: spec.pairs.map(([n, o]) => ({ n, o, trial: n && cardLine(t, n), base: o && cardLine(b, o) })), spaces: sp.map(([n, o]) => ({ n, o, trial: spaceLine(t, n), base: o ? spaceLine(b, o) : null })), trial: P, base: Q }));
   console.log(md);
   console.log(`Written to ${outF}`);
 }
