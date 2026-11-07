@@ -2,7 +2,7 @@
 // count big on it, thinner as it empties, warm when low (≤ 10), an outline "empty" at 0. No hover (Cory, 2026-10-15:
 // "the deck doesn't need a hover"): the count is the whole story. It sits in its own slot at the head of the strip, so
 // a pile for released members can stand beside it later. (DeckCard, what's in it by color, stays for that day.)
-// When the face-up row refills, each new card comes off the deck: a short flip at the deck, then a slide into its slot.
+// When the face-up row refills, each new card comes off the deck face down, slides into its slot and turns face up there.
 // Every number is the engine's: state.pile (top first; core.js refill() takes from the top, release() and
 // buryFromShop() push to the bottom).
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -95,8 +95,8 @@ export function DeckCard({ state }) {
 }
 
 /**
- * Deals the row: a card that wasn't face up a moment ago came off the top of the deck, so a picture of it flips there
- * and slides to its slot, and the real card shows once it lands. The real card never moves (its layout box stays in
+ * Deals the row: a card that wasn't face up a moment ago came off the top of the deck, so a card back slides from
+ * there to its slot and turns face up on it, and the real card shows once it lands. The real card never moves (its layout box stays in
  * its slot), so the table's own shop snapshot (GameScreen: recruited cards flying, the row sliding) stays true.
  * Only forward moves animate (never on the first paint, an undo or a new game); reduced motion: no motion.
  */
@@ -125,27 +125,38 @@ export function useDeal(rowRef, deckRef, state) {
       const { el, b } = c;
       if (!b.width) return;
       const dx = a.left + a.width / 2 - (b.left + b.width / 2), dy = a.top + a.height / 2 - (b.top + b.height / 2);
-      const s = `scale(${(a.width / b.width).toFixed(3)},${(a.height / b.height).toFixed(3)})`;
-      const ghost = el.cloneNode(true);
-      ghost.removeAttribute('data-option');
-      ghost.removeAttribute('data-uid');
+      // one size change, the same both ways, so the card never stretches on its way (Cory, Nov 7: "deck deal animation
+      // is terrible": the old picture squashed from the pile's shape and tumbled face up mid-air, cards piling over each other)
+      const s = (a.width / b.width).toFixed(3);
+      // a face-down card slides off the pile into its slot, then turns face up where it lands, like dealing a market row
+      // by hand: the back (the pile's own) on one side, the member on the other
+      const ghost = document.createElement('div');
+      ghost.className = 'lt-deal ghost-layer';
       ghost.setAttribute('aria-hidden', 'true');
-      ghost.setAttribute('tabindex', '-1');
-      ghost.classList.add('lt-deal', 'ghost-layer');
       ghost.dataset.born = String(Date.now());
-      Object.assign(ghost.style, { position: 'fixed', left: `${b.left}px`, top: `${b.top}px`, width: `${b.width}px`, height: `${b.height}px`, margin: '0', zIndex: '13', pointerEvents: 'none' });
+      const face = el.cloneNode(true);
+      face.removeAttribute('data-option');
+      face.removeAttribute('data-uid');
+      face.setAttribute('tabindex', '-1');
+      face.classList.add('face');
+      const back = document.createElement('span');
+      back.className = 'back';
+      const mark = top.querySelector('.cult-mark');
+      if (mark) back.appendChild(mark.cloneNode(true));
+      ghost.append(face, back);
+      Object.assign(ghost.style, { left: `${b.left}px`, top: `${b.top}px`, width: `${b.width}px`, height: `${b.height}px`, zIndex: String(13 + k) });
       document.body.appendChild(ghost);
       // after the bought card has left its slot, or the old row has gone to the deck (director.js)
       const outs = newRound ? was.shop.filter(u => !state.shop.includes(u)).length : 0;
       const duration = MO.deal, delay = (outs ? rowOutMs(outs) : dealAfter(state)) + k * MO.dealStagger;
       noteDealEnd(Date.now() + delay + duration);
-      // dealt like solitaire (Cory, Nov 6: "shop refill animation is janky … like the cards getting quickly dealt"): one
-      // unbroken slide off the deck, turning face up on the way, each card a beat after the last
+      const flip = rot => `perspective(900px) rotateY(${rot}deg)`;
       const anim = ghost.animate([
-        { transform: `translate(${dx}px,${dy}px) ${s} perspective(600px) rotateY(90deg)`, offset: 0 },
-        { transform: `translate(${(dx * 0.45).toFixed(1)}px,${(dy * 0.45 - 10).toFixed(1)}px) scale(0.9) perspective(600px) rotateY(0deg)`, offset: 0.45 },
-        { transform: 'translate(0,0) scale(1,1) perspective(600px) rotateY(0deg)' },
-      ], { duration, delay, easing: 'cubic-bezier(.25,.6,.35,1)', fill: 'both' });
+        { transform: `translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px) scale(${s}) ${flip(180)}`, easing: 'cubic-bezier(.2,.7,.3,1)' },
+        { transform: `translate(0,0) scale(1) ${flip(180)}`, offset: 0.6, easing: 'cubic-bezier(.4,0,.6,1)' },
+        { transform: `translate(0,-4px) scale(1.04) ${flip(270)}`, offset: 0.8, easing: 'cubic-bezier(.4,0,.6,1)' },
+        { transform: `translate(0,0) scale(1) ${flip(360)}` },
+      ], { duration, delay, fill: 'both' });
       dealStarted();
       let over = false;
       const done = () => { ghost.remove(); if (!over) { over = true; dealDone(); } };

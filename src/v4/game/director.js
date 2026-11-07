@@ -572,7 +572,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   if (outs) {
     const refillAt = t;
     at(refillAt, { op: 'refill', n: outs });
-    end = Math.max(end, refillAt + rowOutMs(outs) + shuffleInMs(joinedNow(before, state)) + MO.deal + (outs - 1) * MO.dealStagger);
+    end = Math.max(end, refillAt + rowOutMs(outs) + (joinedNow(before, state) ? Math.max(0, shuffleInMs(joinedNow(before, state)) - shuffleBeats().riffle) : 0) + MO.deal + (outs - 1) * MO.dealStagger);
     hand = end;
   }
   // a rival's step: its timeline runs at RIVAL outside its recruit beats (rivalClock), and its closing
@@ -1592,7 +1592,9 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
   // a new round's fresh row is its own last beat (planChain's refill): the old row leaves then, and the new deals after
   const refill = plan.atoms.find(a => a.op === 'refill');
   const refillOff = refill ? Math.max(0, base + refill.at - chain.clock) : 0;
-  const joinN = refill ? joinedNow(before, state) : 0, joinMs = shuffleInMs(joinN);
+  // the new row starts dealing as the deck riffles, not after it (Cory, Nov 7: "deck deal animation is terrible": the shop
+  // sat empty for most of a second between the old row leaving and the new one coming)
+  const joinN = refill ? joinedNow(before, state) : 0, joinMs = joinN ? Math.max(0, shuffleInMs(joinN) - shuffleBeats().riffle) : 0;
   if (joinN) shuffleIn(root, joinN, state.round, refillOff + rowOutMs(outs.length));
   for (const d of deals) {
     try {

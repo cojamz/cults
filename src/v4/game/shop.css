@@ -273,3 +273,11 @@
   .app.game.lt .lt-shop-cards[data-tray="members"] .lt-cards > .lt-card[data-uid]{grid-column:span 6}
   .app.game.lt .lt-shop-cards[data-tray="members"] .lt-cards > .lt-card[data-uid]:last-child:nth-child(odd){grid-column:4 / 10}
 }
+
+/* The deal (Cory, Nov 7: "deck deal animation is terrible"): a face-down card slides off the pile into its slot and turns
+   face up there. Two faces on one turning card: the member (front) and the pile's back. */
+.lt-deal{position:fixed;margin:0;pointer-events:none;transform-style:preserve-3d;will-change:transform}
+.lt-deal > .face,.lt-deal > .back{position:absolute;inset:0;width:100%;height:100%;margin:0;box-sizing:border-box;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.lt-deal > .back{transform:rotateY(180deg);display:flex;align-items:center;justify-content:center;border-radius:6px;
+  background:radial-gradient(circle at 50% 42%,rgba(255,217,120,.14),transparent 62%),repeating-linear-gradient(45deg,rgba(0,0,0,.16) 0 2px,transparent 2px 6px),linear-gradient(180deg,#4b2e41,#36202f);
+  box-shadow:0 0 0 1px #120c0a,inset 0 0 0 2px #36202f,inset 0 0 0 3px rgba(217,166,58,.72),0 8px 16px -6px rgba(0,0,0,.75)}
