@@ -37,6 +37,7 @@ These come from your past nos. A card that breaks one gets fixed, not ranked.
 - Every choice has two sides that someone would pick.
 - It uses the game's pieces as they really are (for example, the follower cards in the shop are fixed).
 - It isn't the same shape as something you've already turned down.
+- It adds no new token. Tokens come only from Cory; the Goes Last token is the only one now (Cory, Nov 7: "tokens are a thing that need to come from me… I don't want you, like, willy-nilly throwing tokens in the game"). "A table can track it with cards and tokens" means the pieces already in the game.
 
 ## Step 3. Three questions, answered in sentences
 
