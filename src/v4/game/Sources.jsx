@@ -24,7 +24,8 @@ function parts(state, p, s, meId) {
   const all = [
     // the part is the members' followers and the leader's 1, so it says so beside the count under the name (picky bot,
     // Nov 4: "Members 12" beside "11 members")
-    { key: 'members', n: b.members + b.self, label: 'Members', long: `Members + ${p.id === meId ? 'you' : 'leader'}`, card: <>
+    // (frame review, Nov 7: squeezed to "Members 15" beside "14 members": the shorter name says its sum, "Members 14+1")
+    { key: 'members', n: b.members + b.self, label: 'Members', labelNum: b.self ? `${b.members}+${b.self}` : null, long: `Members + ${p.id === meId ? 'you' : 'leader'}`, card: <>
       <b>{poss} members: {b.members + b.self}</b>
       <span>{plural(n, 'member')}: +{b.members}, and 1 for {p.id === meId ? 'you' : 'the leader'}</span>
       {s.colors.filter(c => c.count).map(c => <span key={c.qid}>{plural(c.count, `${cname(c.qid).toLowerCase()} member`)}: +{c.members}</span>)}
@@ -90,7 +91,11 @@ export default function FollowerBars({ state, meId, ranks = null }) {
                     const fits = t => g.n / max >= Math.max(0.075, (t.length + 4) * 0.0135);
                     const key = `${p.id}:${g.key}`;
                     const words = [g.long, g.label, g.short].filter(t => t && fits(t)).slice(tight[key] || 0)[0];
-                    return words ? <span className="src-lab" data-lab={key}>{`${words} `}<b className="num">{g.n}</b></span> : <span className="src-lab bare"><b className="num">{g.n}</b></span>;
+                    const num = words === g.label && g.labelNum ? g.labelNum : g.n;
+                    if (words) return <span className="src-lab" data-lab={key}>{`${words} `}<b className="num">{num}</b></span>;
+                    // too thin for any name: its shortest name still shows, the part widening to hold it (frame review,
+                    // Nov 7: bare "4", "3", "2" parts said nothing without a hover)
+                    return <span className="src-lab named" data-lab-named={key}>{`${g.short || g.label} `}<b className="num">{g.n}</b></span>;
                   })()}
                 </Tip>
               ))}

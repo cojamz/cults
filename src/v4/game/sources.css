@@ -12,6 +12,9 @@
 .src-lab{padding:0 8px;font-size:var(--fs-2);white-space:nowrap;overflow:hidden}
 .src-lab b{font-weight:700;margin-left:2px}
 .src-lab.bare{padding:0 3px;margin:0 auto}.src-lab.bare b{margin-left:0}
+/* a part too thin for its name widens to hold its shortest one (frame review, Nov 7) */
+.src-seg:has(> .src-lab.named){min-width:max-content}
+.src-lab.named{padding:0 6px;overflow:visible}
 .kind-members{background:color-mix(in srgb,var(--cream) 34%,#1b130c);color:#1b130c}
 .src-row.first .kind-members{background:var(--cream)}
 .kind-prizes{background:color-mix(in srgb,var(--cream) 22%,#1b130c)}
