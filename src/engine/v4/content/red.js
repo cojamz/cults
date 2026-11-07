@@ -196,7 +196,13 @@ export default {
       resolve(ctx, p) {
         ctx.gain(p, 'red', 2, { fromAction: true });
         const list = borrowable(ctx);
-        if (!list.length) { ctx.log(`${p.name}: no shop member has an On Recruit effect.`); return; }
+        if (!list.length) {
+          // a Tryout copied by the Stunt Double it just used found that Stunt Double again: name it, so the line isn't
+          // read as "there was none" (frame review, Nov 7)
+          const used = ctx.shopCards().filter(c => c.def.onRecruited && (c.borrowTurn === turnKey(ctx) || (copiesAction(c.def) && ctx.state.tryoutCopyTurn === turnKey(ctx))));
+          ctx.log(used.length ? `${p.name}: no shop member has an On Recruit to use again this turn (${used.map(c => `${c.def.name}’s`).join(', ')} already was).` : `${p.name}: no shop member has an On Recruit effect.`);
+          return;
+        }
         ctx.choose(p, 'Tryout: use which shop member’s On Recruit?', list.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name}: ${c.def.text}`, kind: 'card', value: c.uid, hint: 2 + (c.def.f || 0),
         })), 'red.borrow');

@@ -128,6 +128,14 @@ describe('locked Red action progression', () => {
     }
   });
 
+  it('a Tryout copied by the Stunt Double it used names that Stunt Double, never "no shop member has one" (frame review, Nov 7)', () => {
+    let s = take(table(Q, { shop: ['echo.hourglass', 'red.twins', 'red.intern'] }), 'red.evenswap');
+    s = move(s, `card:${uidIn(s, 'echo.hourglass', 'shop')}`);
+    for (let i = 0; s.pending?.kind === 'choose' && i < 20; i++) s = move(s, s.pending.options[0].id);
+    expect(s.log.some(l => /no shop member has an On Recruit to use again this turn \(Stunt Double’s already was\)/.test(l))).toBe(true);
+    expect(s.log.some(l => /no shop member has an On Recruit effect/.test(l))).toBe(false);
+  });
+
   it('Promote never reaches a cheaper member, any cult (Cory, Nov 4 night: a copied Promote swapped Extra Hand for Line Cutters)', () => {
     const s = take(table(Q, { round: 2, members: [['red.twins'], ['benders.extrahand', 'red.intern']], shop: ['red.volunteer', 'gold.banker'] }), 'red.hireup');
     const cost = u => { const d = s.cards[u].def; return d; };
