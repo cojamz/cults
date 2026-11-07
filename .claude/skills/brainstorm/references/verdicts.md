@@ -106,3 +106,5 @@ Each one has drawn a no. Run every idea past all of them.
 42. **Liked: a capped tax on a common moment** (Nov 7: "I like this one!"): Magenta "Whenever a rival recruits a member costing 7 or more, steal 2 resources from them." His note: "this would have to scale with member costs". Check: a threshold tied to member prices breaks when prices move; tie it to something relative, or flag it for repricing.
 
 43. **Spaces give their color.** Nov 7, on his own seed as a Purple space: "should give some purple". Every space gives at least 1 of its color, and a space whose effect isn't a gain should still give a real amount of its color.
+
+44. **The tester's read, Nov 7 (pipeline thread, after Cory approved quality):** bigger and simpler land best. Cut on its read: a +1 trigger on Green's copying (small; Cory leans away from Green copying), a rival's choice where the cheaper option always wins (Gold "1 gold or 2 others"), a trigger that rarely fires plus a "you may" on another player's turn (Silver "whenever a rival gives you silver"). Gold is not in the live color set: check the live set before pitching a color.

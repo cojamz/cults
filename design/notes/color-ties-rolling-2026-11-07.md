@@ -66,3 +66,16 @@ Cory, 1:53pm Eastern: "i cant do batches anymore… keep things rolling… a lis
 - Toast "Each rival +1/2/3 silver", Party Gifts, Largesse "Give rivals 12 silver…", Kingmakers: rivals dump silver on you to hurt your fewest-silver count. This member turns the dump into fuel: Largesse handing you 6 becomes 6 of any colors.
 - Who feels it: the giver, whose sting becomes a gift; Silver's own counter (member-process: a set has a few of its own counters). Own cause: Silver spaces are in every game this member is in.
 - Intuitive yes · Fun: flips a sting · Interacts: any colors · Counter: yes · Its color: Silver's gifts, from the receiving side.
+
+Testing thread cut R6-R8 (small, chooser's choice always one way, rare trigger; Gold not in the live set) and R5 (twin of Protection Money). Lesson: bigger and simpler.
+
+## Round 3 (bigger, simpler)
+
+### R9. Purple member: "Whenever you take the Goes Last token, recruit."
+- Sleep In, Last Call, Overtime, Latecomers give the token 2-3 times a game: 2-3 extra recruits. Pocket Watch "+3 purple" and Sleepyheads "+3 followers" pay on the same moment far smaller. Own cause: Purple's own spaces. Feeds Blue's most-members race from Purple.
+
+### R10. Red member: "Round Start: you may swap one of your members with one in the discard pile."
+- Red's swap verb pointed at the pile nothing takes from. Round II: trade your spent 3-cost member for the 7-cost member a rival cast out or Blue cleared. Who feels it: whoever dumped a good card. Own cause: Red's own Promote/Demote put members in the shop, Blue/White fill the pile.
+
+### R11. White member: "Whenever this member leaves your cult, recruit a member costing up to its cost, for free."
+- Martyrs' moment, paid with a recruit instead of followers (section 7: refilling is unpaid). Farewell "Cast out one of your members… gain followers equal to its cost." on it: followers and a free replacement. A rival taking it (Poach, Body Snatchers, Shake Down) refills you at once. Own cause: White's own cast-out spaces.
