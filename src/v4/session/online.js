@@ -24,7 +24,9 @@ import { moveProblem, normalizeMove } from './local.js';
 import { BUILD, CONTENT_HASH, newGame, step, trackState, botStep, reportProblem } from './record.js';
 import { askBot } from './botThink.js';
 // other contest goals (core.js scoringOf), a host setting
-const CONTEST_MODES = ['byColor']; // the other modes stay in the engine for sims only (Cory wanted a different goal per color)
+// Contests are always By color, a different contest per color (Cory, 2026-11-07: "just remove the contest, it's always bicolor
+// now"); the other modes stay in the engine for sims only
+const CONTESTS = 'byColor';
 
 /** Shown when a room was made by a build with different rules content (a deploy happened in between). */
 export const VERSION_MISMATCH = 'That room is on a different version of Cults. Refresh this page and try again; if it still won’t join, the host should refresh and make a new room.';
@@ -144,7 +146,6 @@ function lobbyView(room, code, playerId, { awaySince = new Map(), subAfterMs = S
     code, hostId: room.hostId ?? null, hostName: list.find(s => s.id === room.hostId)?.name || '', status, seed: room.seed ?? null,
     table: parseTable(room.table) ? { mode: room.tableMode || 'custom', quadrants: parseTable(room.table) } : null,
     swapCard: room.swapCard === true,
-    contests: CONTEST_MODES.includes(room.contests) ? room.contests : '',
     players, seats: players.length, maxSeats: MAX_SEATS,
     canStart: isHost && status === 'lobby' && players.length >= MIN_SEATS, startHint,
     me: { playerId, seat: mine ? mine.seat : null }, isHost, subAfterMs,
@@ -569,11 +570,6 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
       await hostOnly('pick the swap card');
       await transport.update(base, { swapCard: !!on });
     },
-    /** Host: other contest goals, a table setting ('' is each color's printed contest). */
-    async setContests(mode) {
-      await hostOnly('pick the contests');
-      await transport.update(base, { contests: CONTEST_MODES.includes(mode) ? mode : '' });
-    },
     async start() {
       await hostOnly('start');
       let tableWhy = '';
@@ -590,7 +586,7 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
         const quadrants = fitTable({ mode: r.table ? r.tableMode || 'custom' : 'classic', quadrants: parseTable(r.table) || [] }, list.length).quadrants;
         tableWhy = tableProblem(quadrants, list.length);
         if (tableWhy) return undefined;
-        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, rules: { roundDecks: 2, deck: 10, ...(r.swapCard === true ? { swapCard: true } : {}), ...(CONTEST_MODES.includes(r.contests) ? { contests: r.contests } : {}) } });
+        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, rules: { roundDecks: 2, deck: 10, ...(r.swapCard === true ? { swapCard: true } : {}), contests: CONTESTS } });
         setBotLevels(game, list.map(s => (s.kind === 'bot' ? s.bot : null))); // the level the host picked for each bot
         return {
           ...r, seats, seed, status: 'playing', startedAt: Date.now(), build: { ...BUILD },

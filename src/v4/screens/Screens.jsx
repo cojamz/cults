@@ -209,14 +209,6 @@ export function MemberLookPick() {
   return <div className="seat" data-member-look={v}><span>Members look</span>
     <Seg label="Members look" value={v} options={LOOK_OPTS} onChange={x => { setV(x); setMemberLook(x); }} /></div>;
 }
-const CONTEST_OPTS = [['', 'As printed', 'Each color: most of its color held'], ['byColor', 'By color', 'A different contest per color: Red most red members, Blue most members, White fewest followers, Magenta most resources, Yellow most full sets of every color, Green most minions on Green, Purple whoever placed the last minion, Silver most silver']];
-export function ContestPick({ value, onChange, readOnly }) {
-  const opt = CONTEST_OPTS.find(o => o[0] === (value || '')) || CONTEST_OPTS[0];
-  return <div className="seat" data-contest-pick={opt[0] || 'printed'}><span>Contests</span>
-    {readOnly ? <span className="hint">{opt[1]}</span>
-      : <Seg label="Contests" value={opt[0]} options={CONTEST_OPTS} onChange={onChange} />}
-  </div>;
-}
 export function TablePicker({ value, onChange, readOnly = false, n = 4 }) {
   const { mode, quadrants } = value;
   const setMode = m => {
@@ -325,7 +317,6 @@ export function LocalSetup({ initial, onStart, onBack }) {
   const [level, setLevel] = useState(initial?.level || DEFAULT_BOT_LEVEL);
   const [table, setTable] = useState(() => initialTable(initial?.table));
   const [swapCard, setSwapCard] = useState(!!initial?.swapCard);
-  const [contests, setContests] = useState(initial?.contests || '');
   // Shop, Member deck and Round III members rows cut (Cory, Nov 4: "drop the piles modes. drop 15 members. drop 'wait for round III'")
   const filled = seats.filter(s => s.kind !== 'empty');
   // one sphere per player (Cory, 2026-10-15): the table follows the seats as they're filled or emptied
@@ -378,8 +369,6 @@ export function LocalSetup({ initial, onStart, onBack }) {
           <small className="set-hint" data-set-hint="speed">{SPEED_HINT[speed] ? `${SPEED_HINT[speed]}.` : null}</small>
           <SwapPick value={swapCard} onChange={setSwapCard} />
           <small className="set-hint" data-set-hint="swap">{swapCard ? 'A recruit option: pay 2 resources to swap one of your members for a shop or rival member costing up to 2 more or less.' : 'No swap card.'}</small>
-          <ContestPick value={contests} onChange={setContests} />
-          <small className="set-hint" data-set-hint="contests">{contests ? 'A different contest for each color, printed on its rim.' : 'Each color: most of its color held at round end.'}</small>
           <MemberLookPick />
           <small className="set-hint" data-set-hint="look">How members look to you. The rules are the same.</small>
         </div>
@@ -388,7 +377,7 @@ export function LocalSetup({ initial, onStart, onBack }) {
           {/* why Start is off, said beside it (RC1 #8: it dimmed at 3 of 4 with nothing near it) */}
           {startWhy && <span className="hint start-why" data-start-why>{startWhy}</span>}
           <button type="button" className="btn" onClick={onBack}>Back</button>
-          <button type="button" className="btn pri" data-start disabled={!!startWhy} title={startWhy || undefined} onClick={() => onStart({ seats: named(), speed, level, table: fitted, roundDecks: 2, deck: 10, swapCard, contests })}>Start</button>
+          <button type="button" className="btn pri" data-start disabled={!!startWhy} title={startWhy || undefined} onClick={() => onStart({ seats: named(), speed, level, table: fitted, roundDecks: 2, deck: 10, swapCard })}>Start</button>
         </div>
       </div>
     </div>
@@ -481,7 +470,6 @@ export function Lobby({ lobby, myId, onLeave }) {
         )}
         <div className="setup-settings" data-setup-settings>
           <SwapPick value={!!view.swapCard} onChange={v => act(() => lobby.setSwapCard(v))} readOnly={!isHost || !lobby.setSwapCard} />
-          <ContestPick value={view.contests || ''} onChange={v => act(() => lobby.setContests(v))} readOnly={!isHost || !lobby.setContests} />
           <MemberLookPick />
         </div>
         <TablePicker value={shownTable} n={nSph} onChange={pickTable} readOnly={!isHost || !lobby.setTable} />

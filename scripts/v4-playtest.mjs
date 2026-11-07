@@ -44,7 +44,6 @@ for (let i = 0; i < 6; i++) {
 await page.locator('[aria-label="Bot level"] button', { hasText: new RegExp('^' + level + '$') }).click();
 await page.locator('button', { hasText: new RegExp('^' + (process.env.PT_SPEED || 'Quick') + '$') }).click();
 if (process.env.PT_DECK) await page.locator('button[role="radio"]', { hasText: new RegExp('^' + process.env.PT_DECK + ' per color$') }).click();
-if (process.env.PT_CONTESTS) await page.locator('[data-contest-pick] button', { hasText: new RegExp('^' + process.env.PT_CONTESTS + '$') }).click();
 await page.locator('button', { hasText: /^Custom$/ }).click();
 await page.waitForTimeout(200);
 // clear what's on, then pick ours
