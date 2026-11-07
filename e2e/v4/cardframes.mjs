@@ -22,7 +22,9 @@ for (let g = 0; g < GAMES; g++) {
     // the reading floor the card promises (motion.js storyWord/storyLine at Steady, less 15% for frame timing)
     const PER_WORD = 110 * 0.85, MIN_LINE = 300 * 0.85;
     // the same thing as GameScreen's lineId: a line whose numbers change in place is a count going up, not a new line
-    const idOf = (l, i) => (i === 0 && /^[+−-]\d/.test(l) ? '#gain' : (l.match(/^([^:]{2,48}): /) || [])[1] || (l.match(/^used (.+)$/) || [])[1] || ((l.match(/^(.{1,30}?) [+−-]\d/) || [])[1] ? `who:${l.match(/^(.{1,30}?) [+−-]\d/)[1]}` : '') || ((l.match(/ from (\S+)$/) || [])[1] ? `from:${l.match(/ from (\S+)$/)[1]}` : '') || (l.match(/^(recruited|bought|released) ([^(,]+)/) || [])[0] || l);
+    // (the banner writes a cult's name before what it did: "P2 used X" is the game's "used X")
+    const idOf = (l0, i) => { const l = l0.replace(/^(P\d|You) (?=used )/, ''); return idOf0(l, i); };
+    const idOf0 = (l, i) => (i === 0 && /^[+−-]\d/.test(l) ? '#gain' : (l.match(/^([^:]{2,48}): /) || [])[1] || (l.match(/^used (.+)$/) || [])[1] || ((l.match(/^(.{1,30}?) [+−-]\d/) || [])[1] ? `who:${l.match(/^(.{1,30}?) [+−-]\d/)[1]}` : '') || ((l.match(/ from (\S+)$/) || [])[1] ? `from:${l.match(/ from (\S+)$/)[1]}` : '') || (l.match(/^(recruited|bought|released) ([^(,]+)/) || [])[0] || l);
     const words = s => s.split(/\s+/).filter(Boolean).length;
     const need = s => Math.max(MIN_LINE, words(s) * PER_WORD);
     window.__hubDbg = [];
@@ -47,7 +49,8 @@ for (let g = 0; g < GAMES; g++) {
       const el = document.querySelector('.turn-card.at-hub');
       if (!el) finish(now, 'gone');
       else {
-        const key = `${el.querySelector('.tc-who')?.textContent || ''} | ${el.querySelector('.tc-head')?.textContent || ''}`;
+        // (the banner names no player on the card: the headline above it does; the turn's own head says whose it is)
+        const key = `${(el.dataset.turnStory || '').split(' · ')[0]} | ${el.querySelector('.tc-head')?.textContent || ''}${el.dataset.again ? ' again' : ''}`;
         const lines = [...el.querySelectorAll('.tc-line:not(.tc-wait):not(.tc-more)')].map(l => l.textContent.trim());
         if (!cur || cur.key !== key) { finish(now, 'next card'); if (cur === null && document.querySelector('.lt-deal') && el.querySelector('.tc-head') && !/again/.test(key)) { const d = document.querySelector('.lt-deal'); const a = d.getAnimations()[0]; const ct = a ? a.effect.getComputedTiming() : {}; fail('turn under the deal', `a turn started while the shop's new card was still being dealt (${key}; deal ${Date.now() - Number(d.dataset.born || 0)}ms old, progress ${ct.progress == null ? 'waiting' : ct.progress.toFixed(2)}, ${Math.round((ct.endTime || 0) - (a ? a.currentTime : 0))}ms left)`); } if (el.querySelector('.tc-head')) { cur = { key, lines: [], shown: 0 }; out.cards++; } }
         if (cur) {

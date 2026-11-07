@@ -56,6 +56,7 @@ import { snakeOrder, tableView, snakeWords, setupOrder } from './order.js';
 import { ChoicePrompt, Confirm, Handoff, Log, Popover, CardFace } from './parts.jsx';
 import PayPicker, { payChoice, PayReceipt, receiptFor } from './PayPicker.jsx';
 import { Rich } from './Rich.jsx';
+import { BannerLine, joinGoesLast, installTuck } from './Banner.jsx';
 import HowToPlay from '../HowToPlay.jsx';
 import { motionOK, snapshotShop, clearFlights, snapshotMinions, flyMinionsHome, flyToken, flyGains, snapshotChips, snapshotArtifacts } from './flight.js';
 import { playChain, planChain, holdAfter, holdCap, stepHoldCap, installChainSkip, noteBehind, skipChain, chainLeft, onChainSkip, onChainEnd, onChainLanded, chainRunning, chainState, noteTable, foldBuys, foldPicks, foldWait, notePick, spotSeats } from './director.js';
@@ -537,18 +538,22 @@ function Menu({ onRules, onLog, onLeave, getState }) {
 // somebody else takes their turn. And it should always show the full story card without having to expand or scroll";
 // "the card lingers too long when the player has already started making their next turn"). Your own turn builds in the
 // log area. ?story=dock puts every turn back the old way.
-const HUB_W = 250;
-/** The story card's place over the wheel's hub, or null (no wheel on screen). */
 // a rival's step in the top line: their turn, not each verb ("is paying", "is choosing" flickered over one turn; the
 // story card says what they're doing)
 const RIVAL_VERB = / (is placing a minion|is paying|is choosing|is shopping)$/;
 const rivalLine = p => (storyAtHub() && p.who && RIVAL_VERB.test(p.text) ? `${p.who.name}’s turn` : p.text);
+const BANNER_W = 600;
+/** Where the story banner stands: across the top of the wheel, right under the headline that says whose turn it is
+ *  (Cory, Nov 7: "I like top banner", "i don't like blocking the wheel"), growing downward as the turn's lines come. */
 function hubCardPlace() {
-  const c = stageCenter();
-  if (!c) return null;
-  // centred on the hub (critic pass 3, all three: off to the right it hid the inner spaces and the minion just placed;
-  // the member notes by the seats it used to clear no longer show while a rival's turn is told)
-  return { left: Math.round(c.x - HUB_W / 2), top: Math.round(c.y), width: HUB_W, centre: true };
+  if (typeof document === 'undefined') return null;
+  const wheel = document.querySelector('.lt-wheel');
+  const w = wheel && wheel.getBoundingClientRect();
+  if (!w || !w.width) return null;
+  const head = document.querySelector('.lt-prompt');
+  const hb = head && head.getBoundingClientRect();
+  const width = Math.round(Math.min(BANNER_W, w.width - 24));
+  return { left: Math.round(w.left + w.width / 2 - width / 2), top: Math.round(hb && hb.height ? hb.bottom + 2 : w.top + 4), width };
 }
 // where the hub card last stood, so the log area's card can fly in from there
 let hubLast = null;
@@ -638,7 +643,7 @@ function useLinger(on) {
   return on || left > 0;
 }
 
-function TurnCard({ card, root, state, hub = false, keep = false }) {
+function TurnCard({ card, root, state, hub = false, keep = false, you = -1 }) {
   // a card whose player isn't acting any more folds after its moment (wave-4 B #19: "You took X" stayed up ~10s through
   // the bots' whole sequence, stale, under the strip that already lists it): 2.6s after its last line, it folds, and at
   // 3.1s it's gone and gives the story its room back
@@ -659,7 +664,8 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
   const fitKey = `${card.n}|${card.text}`;
   const [fitOf, setFit] = useState({ key: '', max: 5 });
   const MAXL = keep || hub ? Infinity : fitOf.key === fitKey ? fitOf.max : 5;
-  const hubLines = useStableLines(`${card.k || card.n}`, hub && card.text ? card.text.split(' · ').slice(1) : []);
+  const hubSpace = hub && card.text ? spaceOf(card.text.split(' · ')[0]) : null;
+  const hubLines = useStableLines(`${card.k || card.n}`, hub && card.text ? joinGoesLast(card.text.split(' · ').slice(1), hubSpace) : []);
   const shownN = useReveal(`${card.k || card.n}`, hubLines, hub && !!card.text);
   // Where the card sits, written straight to its style in one layout effect (perf, 2026-10-15): as React state its place
   // and its lift cost every step one or two more commits of their own, each reading the layout again
@@ -680,6 +686,7 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
     if (!el) return;
     const table = tableOf();
     if (hub) {
+      installTuck();
       const at = hubCardPlace(table);
       if (!at) { el.style.display = 'none'; return; }
       const z = parseFloat(getComputedStyle(el).zoom) || 1;
@@ -691,7 +698,6 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
       const h = el.offsetHeight * z;
       // its top stays put as lines are added, so it grows downward like a log being written (Cory, Nov 6: "we should
       // just SEE it get added"), a little above the hub's centre
-      if (at.centre) { at.top = Math.max(12, Math.round(at.top - 64)); el.style.top = px(at.top); }
       if (at.top + h > innerHeight - 8) { at.top = Math.max(8, Math.round(innerHeight - 8 - h)); el.style.top = px(at.top); }
       setStoryZone({ left: at.left, top: at.top, width: at.width, height: h, right: at.left + at.width, bottom: at.top + h });
       hubMine.current = { pid: card.pid, rect: { left: at.left, top: at.top, width: at.width, height: h } };
@@ -747,16 +753,20 @@ function TurnCard({ card, root, state, hub = false, keep = false }) {
   const [head, ...all] = card.text.split(' · ');
   const rest = all.length > MAXL ? all.slice(0, MAXL - 1) : all; // never "+4 more": it read as a gain of 4 (picky UI bot, Nov 4)
   const more = all.length - rest.length;
+  const headOf = h => (/^You /.test(h) ? `${h.charAt(4).toUpperCase()}${h.slice(5)}` : pname && h.startsWith(`${pname} `) ? `${h.charAt(pname.length + 1).toUpperCase()}${h.slice(pname.length + 2)}` : h);
   return (
-    <div ref={box} className={`turn-card${hub ? ' at-hub' : ''}${keep ? ' kept' : ''}${card.live ? ' live' : ''}${!keep && !hub && (card.folding || life === 'folding') ? ' folding' : ''}`} data-turn-story={card.text} data-turn-at={hub ? 'hub' : 'dock'} role="status" aria-live="polite"
+    <div ref={box} className={`turn-card${hub ? ` at-hub${card.text ? '' : ' bn-empty'}` : ''}${keep ? ' kept' : ''}${card.live ? ' live' : ''}${!keep && !hub && (card.folding || life === 'folding') ? ' folding' : ''}`} data-turn-story={card.text} data-turn-at={hub ? 'hub' : 'dock'} data-again={card.again ? '1' : undefined} role="status" aria-live="polite"
       style={{ '--pc': playerColor(card.pid) }}>
       {/* the log area's card: the whole turn as one paragraph, the head in bold, so it stays whole and small enough to
           leave the strip its lines (Cory, Nov 6: "always show the full story card without having to expand or scroll") */}
       {keep && <span className="tc-line tc-para"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={13} /> <b className="tc-head">{head}</b>{rest.length > 0 && <> · <Rich text={rest.join(' · ')} /></>}</span>}
-      {hub && <span className="tc-who"><Minion emoji={seatEmoji(state, card.pid)} color={playerColor(card.pid)} size={hub ? 16 : 13} /><span>{card.when ? `${pname === 'You' || /^You\b/.test(head) ? 'You' : pname}, ${card.when}` : pname === 'You' || /^You\b/.test(head) ? 'Your turn' : pname ? `${pname}${card.again ? ' again' : '’s turn'}` : ''}</span></span>}
       {hub && !card.text && <span className="tc-line tc-wait">{card.why ? `${card.why} · ` : ''}choosing a space…</span>}
-      {!keep && !!card.text && <b className="tc-head">{(hub || keep) && /^You /.test(head) ? `${head.charAt(4).toUpperCase()}${head.slice(5)}` : (hub || keep) && pname && head.startsWith(`${pname} `) ? `${head.charAt(pname.length + 1).toUpperCase()}${head.slice(pname.length + 2)}` : head}</b>}
-      {!keep && (hub ? hubLines.slice(0, shownN).map((l, k) => (k > 0 && /^[+−-]\d/.test(l) && (spaceOf(head) || card.when) ? `${spaceOf(head) || `${card.when[0].toUpperCase()}${card.when.slice(1)}`}: ${l}` : l)) : rest).map((l, k) => <span key={hub ? k : `${k}:${l}`} className="tc-line"><Rich text={l} /></span>)}
+      {!keep && !hub && !!card.text && <b className="tc-head">{head}</b>}
+      {/* the banner names the space on its first line ("Sleep In: 🦖 +5"), or on a line of its own when the turn's first
+          line is something else */}
+      {hub && !!card.text && <b className={`tc-head bn-head${hubLines.length && /^[+−-]\d/.test(hubLines[0]) ? ' bn-said' : ''}`}>{hubSpace || headOf(head)}</b>}
+      {!keep && !hub && rest.map((l, k) => <span key={`${k}:${l}`} className="tc-line"><Rich text={l} /></span>)}
+      {hub && hubLines.slice(0, shownN).map((l, k) => <span key={k} className="tc-line"><BannerLine line={k > 0 && /^[+−-]\d/.test(l) && (hubSpace || card.when) ? `${hubSpace || `${card.when[0].toUpperCase()}${card.when.slice(1)}`}: ${l}` : l} i={k} state={state} pid={card.pid} you={you} space={hubSpace} /></span>)}
       {/* what didn't fit opens on the "and N more" line, every line in its card (picky bot, Nov 4: "+3 more" with no way
           to see them) */}
       {more > 0 && <Tip className="tc-line tc-more" data-tc-more={more} label={`${head}: every line`}
@@ -2017,7 +2027,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
         // (a rival's card stays until its own moves have played: hubStory)
         if (state.over || (moment && !hubStory)) return null;
         return <>
-          {hubStory && <TurnCard key={`hub${hubStory.k || hubStory.n}`} card={hubAgain ? { ...hubStory, again: true } : hubStory} root={rootEl} state={state} hub />}
+          {hubStory && <TurnCard key={`hub${hubStory.k || hubStory.n}`} card={hubAgain ? { ...hubStory, again: true } : hubStory} root={rootEl} state={state} you={me} hub />}
 
           
         </>;

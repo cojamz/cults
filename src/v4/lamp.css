@@ -641,6 +641,23 @@ h1,h2,h3{font-family:var(--serif)}
 .turn-card.at-hub .tc-line{font-size:var(--m);line-height:1.3;color:var(--paper-ink)}
 .turn-card.at-hub.tc-tight{gap:1px;padding-top:7px;padding-bottom:8px}
 .turn-card.at-hub.tc-tight .tc-line,.turn-card.at-hub.tc-tight .tc-head{font-size:var(--s);line-height:1.2}
+/* the top banner (Cory, Nov 7: "I like top banner"): the turn's lines under the headline, in the table's own pictures */
+.turn-card.at-hub{pointer-events:none;gap:0;padding:5px 16px 6px;transition:opacity .12s ease-out}
+.turn-card.at-hub.bn-empty{display:none !important}
+.turn-card.at-hub.bn-tucked{opacity:.08}
+.turn-card.at-hub .tc-line{font-family:var(--sans);display:block;font-size:15px;line-height:1.6;padding:1px 0}
+.turn-card.at-hub .tc-line + .tc-line{border-top:1px solid color-mix(in srgb,var(--paper-ink) 12%,transparent)}
+.turn-card.at-hub .bn-head{font-size:var(--m)}
+.turn-card.at-hub .bn-head.bn-said{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.turn-card.at-hub .bn-space,.turn-card.at-hub .bn-mem b{font-weight:700}
+.bn-cult{display:inline-flex;align-items:center;vertical-align:-3px;margin:0 3px 0 1px}
+.bn-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.bn-mem{display:inline-flex;align-items:center;gap:4px;vertical-align:-5px}
+.bn-pic{display:inline-flex;width:28px;height:22px;overflow:hidden;border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,.25);align-items:center;justify-content:center}
+.bn-pic > *{width:28px !important;height:28px !important}
+.bn-cloak{display:inline-flex;align-items:center;margin-right:2px;vertical-align:-6px}
+.bn-cloak .art-tile{transform:scale(.85)}
+.bn-quiet{color:var(--paper-ink-2)}
 
 /* the leader's emoji inline on the engraved rim line; lit with the label during the Reckoning */
 .lt .stage svg.wheel-paper .rim-emoji{pointer-events:none}

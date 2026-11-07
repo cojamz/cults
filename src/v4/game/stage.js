@@ -79,6 +79,8 @@ export function clearOfStory(b) {
   if (!b || !z) return b;
   const overlaps = b.left < z.right && b.right > z.left && b.top < z.bottom && b.bottom > z.top;
   if (!overlaps) return b;
+  // (the banner at the top: pieces stand under it, never pushed off the screen's top)
+  if (z.top < 140) return box(b.left, z.bottom + 8, b.width, b.height);
   return box(b.left, Math.max(4, z.top - b.height - 8), b.width, b.height);
 }
 /** Remember where a slot stands (the director places it when it plays). */
