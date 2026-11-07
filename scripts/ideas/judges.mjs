@@ -195,7 +195,9 @@ function report() {
   const cal = Object.entries(judges).map(([who, rs]) => {
     const like = rs.filter(r => CORY_LIKES.includes(r.name)).map(score).filter(x => x != null);
     const dis = rs.filter(r => CORY_DISLIKES.includes(r.name)).map(score).filter(x => x != null);
-    return { who, like: mean(like), dis: mean(dis), agrees: like.length && dis.length ? mean(like) > mean(dis) : null };
+    // needs 2+ anchors on each side; a tie tells nothing
+    const ok = like.length >= 2 && dis.length >= 2 && mean(like) !== mean(dis);
+    return { who, like: mean(like), dis: mean(dis), n: [like.length, dis.length], agrees: ok ? mean(like) > mean(dis) : null };
   });
   const calN = cal.filter(c => c.agrees != null), calOk = calN.filter(c => c.agrees).length;
   const liveR = Object.entries(rows).filter(([k]) => !cands.has(k)).flatMap(([, r]) => r);
@@ -218,7 +220,7 @@ function report() {
   const L = ['# Judge games: candidate cards beside the live cards in the same games', '',
     `Games with postgames: ${gamesUsed.join(', ') || 'none yet'}.`,
     `Live cards in these games: strategic ${f1(base.s)}, fun ${f1(base.f)}, interacts ${f1(base.i)}, clear ${f1(base.c)} (1 to 5). Cards Cory likes average fun ${f1(base.likes)}; cards he dislikes ${f1(base.dislikes)}.`,
-    `Calibration: ${calOk} of ${calN.length} judges who rated both rated Cory's liked live cards above his disliked ones.`, '',
+    calN.length ? `Calibration: ${calOk} of ${calN.length} judges (with 2+ anchor cards each side) rated Cory's liked live cards above his disliked ones.` : 'Calibration: too few of Cory\'s anchor cards were on these tables to tell (needs 2 liked and 2 disliked rated by the same judge).', '',
     'card | ratings (games) | strategic | fun | interacts | clear | fits y/n/? | agreement'];
   for (const c of out.cards) L.push(`${c.name} | ${c.n} (${c.games}) | ${f1(c.strategic)} | ${f1(c.fun)} | ${f1(c.interacts)} | ${f1(c.clear)} | ${c.fits.yes}/${c.fits.no}/${c.fits.unsure} | ${c.split ? 'SPLIT: tiebreak' : c.n < 3 ? 'too few' : 'agree'}${c.repeatGap != null ? `; repeat gap ${f1(c.repeatGap)}` : ''}`);
   L.push('');
