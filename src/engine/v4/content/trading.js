@@ -23,11 +23,22 @@ import { add9, old9 } from './replace9.js';
 import { swap11, handlers11, add11, old11 } from './replace11.js';
 import { swap14, handlers14, add14, old14 } from './replace14.js';
 import { see, endsAhead, resAt } from './botsee.js';
+import { pool, poolSpace } from './pool.js';
 import { add10, old10, handlers10 } from './replace10.js';
 import { add8, old8 } from './replace8.js';
 import { on12, handlers12, add12, old12 } from './replace12.js';
 
 const W = 'white';
+/** Idea pipeline pool 2: one resource to one rival per pick, or stop; bots give their most-held non-white color to the
+ *  rival with the fewest followers. */
+function giveForWhiteAsk(ctx, p, data) {
+  const opts = [];
+  for (const o of ctx.rivals(p)) for (const [c, n] of Object.entries(p.res)) if (n > 0 && c !== W)
+    opts.push({ id: `give:${o.id}:${c}`, label: `${o.name} gets 1 ${c}`, kind: 'choice', value: [o.id, c], hint: n - 0.05 * ctx.followers(o) });
+  if (!opts.length) return;
+  opts.push({ id: 'done', label: 'Give no more', kind: 'done', value: 'done', hint: -10 });
+  ctx.choose(p, `${data.name}: give a rival 1 resource for ${data.each} white? (${data.max - data.given} more at most)`, opts, 'trading.giveForWhite', data);
+}
 /** No rival has fewer followers than p (ties count): Low Profile (REPLACE12). */
 const richer = (ctx, p) => ctx.rivals(p).filter(o => ctx.followers(o) > ctx.followers(p)).length;
 const fewestFollowers = (ctx, p) => !ctx.rivals(p).some(o => ctx.followers(o) < ctx.followers(p));
@@ -216,6 +227,11 @@ const trading = {
   // White, reworked by Cory (2026-10-22, design/spheres/white-actions-draft-2026-10-22.md): "basically better
   // exchange for followers". The names are Claude's fill-ins.
   actions: [
+    poolSpace({
+      key: 'handouts', copyDoesIt: true, ring: 2, name: 'Handouts', text: 'Give up to 4 of your resources to rivals, split as you choose. +3 white per resource given. +1 white.',
+      estimate: (ctx, p) => 1 + 2 * Math.min(4, Object.entries(p.res).filter(([c]) => c !== W).reduce((a, [, n]) => a + n, 0)),
+      resolve(ctx, p) { ctx.gain(p, W, 1, { fromAction: true }); giveForWhiteAsk(ctx, p, { name: 'Handouts', max: 4, each: 3, given: 0 }); },
+    }, 'pool2'),
     // REPLACE12 bot tests (Nov 4, quality loop, lane D2; pitches/D2-batch1.md), one at a time in Allowance's place.
     // Pawnshop: only followers you recruited or won can be turned in (the ones a steal can take; members' printed
     // followers stay), up to the round's number.
@@ -326,6 +342,15 @@ const trading = {
   ],
 
   handlers: {
+    // idea pipeline pool 2: give resources to rivals, one at a time, for white (Cory, Nov 7: "playing around cash in")
+    giveForWhite(ctx, p, v, data) {
+      if (v !== 'done') {
+        const [id, c] = v, o = ctx.player(id);
+        if ((p.res[c] || 0) > 0) { p.res[c]--; o.res[c] = (o.res[c] || 0) + 1; data.given++; ctx.gain(p, W, data.each); ctx.log(`${p.name}'s ${data.name}: gave ${o.name} 1 ${c}, +${data.each} white.`); }
+      }
+      if (v === 'done' || data.given >= data.max) return;
+      giveForWhiteAsk(ctx, p, data);
+    },
     ...handlers12({
       pawnbrokers(ctx, p, k) {
         const n = Math.min(Number(k) || 0, 5, Math.max(0, p.bonus));
@@ -500,6 +525,10 @@ const trading = {
   // Cory's 12 (2026-10-22, design/spheres/white-members-2026-10-22.md). Prices are Claude's educated guesses
   // (white + any, followers printed); names marked new are Claude's fill-ins.
   members: [
+    pool(m('almsgivers', 'Almsgivers', 3, 3, 'Round End: give up to 2 of your resources to rivals, split as you choose. +3 white per resource given.', {
+      onAllPlaced(ctx, owner) { ctx.asMember(owner, 'Almsgivers', () => giveForWhiteAsk(ctx, owner, { name: 'Almsgivers', max: 2, each: 3, given: 0 })); },
+      ...see(info => 4 * endsAhead(info).length),
+    }), 'pool2'),
     // Recluse moves here from Blue (Cory, 2026-10-25: "yes"), so a seat with few members has a payoff
     // Round End, not Game End (Cory, 2026-11-06: "Recluse should be Round End"): counted at each round's end
     m('recluse', 'Recluse', 2, 1, 'Round End: +2 followers per rival with more members than you.', { round: 1,

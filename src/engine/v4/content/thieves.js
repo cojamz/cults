@@ -13,7 +13,7 @@ import { on11 } from './replace11.js';
 import { swap13, handlers13 } from './replace13.js';
 import { add14, old14 } from './replace14.js';
 import { see, endsAhead, resAt, SEE_SPITE, SEE_RING } from './botsee.js';
-import { poolSpace, chooseRival } from './pool.js';
+import { pool, poolSpace, chooseRival } from './pool.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
@@ -612,6 +612,23 @@ const thieves = {
   },
 
   members: [
+    // idea pipeline pool 2 (Nov 7): the brainstorm thread's tax on big buys (Cory: "I like this one!… this would have to
+    // scale with member costs"), with two variations whose line moves with the costs: this card's own cost, and the
+    // priciest member in the shop. Steals pick the victim's biggest piles (no choice on their turn).
+    ...[['bigtax', 'Tax Men', 'Whenever a rival recruits a member costing 7 or more, steal 2 resources from them.', (ctx, c, cost) => cost >= 7],
+      ['taxabove', 'Loan Sharks', 'Whenever a rival recruits a member costing more than this one, steal 2 resources from them.', (ctx, c, cost, own) => cost > own],
+      ['taxtop', 'Customs Men', 'Whenever a rival recruits a member costing at least as much as every member left in the shop, steal 2 resources from them.',
+        (ctx, c, cost) => ctx.state.shop.every(u => { const d = defById(ctx.state.cards[u].def); return (d.s || 0) + (d.w || 0) <= cost; })],
+    ].map(([key, name, text, hits]) => pool(m(key, name, 3, 3, text, {
+      onAnyRecruit(ctx, owner, card, by, member) {
+        if (by === owner || !member) return;
+        const d = defById(member.def?.id || member.def), own = defById(card.def?.id || card.def);
+        if (!hits(ctx, member, (d.s || 0) + (d.w || 0), (own.s || 0) + (own.w || 0))) return;
+        if (ctx.canSteal(owner, by)) ctx.asMember(owner, name, () => autoSteal(ctx, owner, by, `${name} (${d.name})`, 2));
+      },
+      // BOTSEE: a member costing 7+ is recruited by some rival about twice a round from round II
+      ...see(info => endsAhead(info).filter(r => r >= 2).length * 3),
+    }), 'pool2')),
     m('cutpurse', 'Cutpurse', 1, 1, 'On Recruit: steal 1 resource from the rival with the most resources. Round Start: steal 1 resource from the rival with the most resources.', { now: true,
       ...old14('filcher'), ...old14('taxman'),
       onRoundStart(ctx, owner) { startSteal(ctx, owner, 'Cutpurse', 1 + stickyMore(ctx, owner), { fromAction: false, richest: true }); },
