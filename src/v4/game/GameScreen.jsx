@@ -1043,6 +1043,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
   }, []);
   useEffect(() => () => clearTimeout(hoverTimer.current), []);
   const hover = useHoverCards(); // UI-B's one hover layer: spaces, plaques, seats, shop cards
+  // the game's end closes any hover still open on the table (frame review, Nov 7: "No one would score yet" flashed over
+  // the board between the last round card and the results)
+  useEffect(() => { if (live0.over) hover.close(); }, [live0.over]); // eslint-disable-line react-hooks/exhaustive-deps
   // a press anywhere, or Space, lands the chain of animations playing on the table (director.js)
   useEffect(() => { const off = installChainSkip(); return () => { off(); skipChain(); }; }, []);
   useEffect(() => stageClear, []);
@@ -2042,7 +2045,12 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
 
   // The lamp follows the decision; the furniture never moves (fixed regions, phase only re-lights them).
   const memberPicking = mine && !needHandoff && pend?.kind === 'choose' && pend.options.some(o => o.kind === 'card');
-  const phase = state.over && !moment ? 'over' : moment ? 'reckon' : !pend ? 'wait' : pend.kind === 'pay' ? 'pay' : pend.kind === 'buy' ? 'buy' : pend.kind === 'place' ? 'place' : pend.kind === 'setup' ? 'setup' : 'choose';
+  // the results mount in the same commit the last round card leaves (its dismissal is a transition a commit behind):
+  // never a frame of the bare table, or of a stale hover, between them (frame review, Nov 7)
+  // (the table can still be playing the closing step under the card, a state behind: the shown state is the final one)
+  const overShown = (state.over || live0.over) && (!moment || closedMoment === moment);
+  const overState = state.over ? state : live0;
+  const phase = overShown ? 'over' : moment ? 'reckon' : !pend ? 'wait' : pend.kind === 'pay' ? 'pay' : pend.kind === 'buy' ? 'buy' : pend.kind === 'place' ? 'place' : pend.kind === 'setup' ? 'setup' : 'choose';
   const yours = mine && !needHandoff;
   // which of the turn's two steps a choice belongs to: the one before it (a recruit's or a release's choice is the buy
   // step, a space's is the placement; RC1 sweep 93: a buy-step choice lit "Place")
@@ -2128,13 +2136,13 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
             : <button type="button" className="btn ghost" onClick={() => setError('')}>OK</button>}
         </div>
       )}
-      {state.over && !moment ? (
+      {overShown ? (
         <div className="main over">
-          <Results state={state} onPlayAgain={onPlayAgain} onHome={onHome} meId={mySeats.length === 1 ? mySeats[0] : null} />
+          <Results state={overState} onPlayAgain={onPlayAgain} onHome={onHome} meId={mySeats.length === 1 ? mySeats[0] : null} />
           {/* the cults at the end, with their final totals already in place: round III's Reckoning has scored the
               end-game bonuses, so the results never count up a second time (Cory, 2026-10-21) */}
-          <FinalScore animate={false} state={state} me={me} hover={hover} onPick={onPick} CultSeat={CultSeat}>
-            <Log state={state} meId={mySeats.length === 1 ? mySeats[0] : null} hover={hover} />
+          <FinalScore animate={false} state={overState} me={me} hover={hover} onPick={onPick} CultSeat={CultSeat}>
+            <Log state={overState} meId={mySeats.length === 1 ? mySeats[0] : null} hover={hover} />
           </FinalScore>
         </div>
       ) : (
