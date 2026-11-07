@@ -482,11 +482,11 @@ function stageMove(ctx, p, { key, joined }, to) {
   ctx.log(`${p.name}'s Stage Door: moves a minion from ${slotAction(ctx, key).name} to ${slotAction(ctx, to).name}.`);
   ctx.state.queue.unshift({ t: 'act', p: p.id, q, i });
 }
-const medleyKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => x.name === 'Medley').map(x => actionKey(x.key));
+const medleyKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => x.name === 'Medley' || x.name === 'Remix').map(x => actionKey(x.key));
 /** Medley: one entry per action with a minion on color q's spaces this round (p's own entry where p shares it). */
-function medleyPlan(ctx, p, q) {
+function medleyPlan(ctx, p, q, noThird = false) {
   const byAction = new Map();
-  for (const e of Object.values(ledger(ctx.state).now || {}).filter(x => x.color === q && x.name !== 'Medley').sort((a, b) => (a.seq || 0) - (b.seq || 0))) {
+  for (const e of Object.values(ledger(ctx.state).now || {}).filter(x => x.color === q && x.name !== 'Medley' && x.name !== 'Remix' && !(noThird && x.ring === 3)).sort((a, b) => (a.seq || 0) - (b.seq || 0))) {
     const k = actionKey(e.key), had = byAction.get(k);
     if (!had || (had.p !== p.id && e.p === p.id)) byAction.set(k, e);
   }
@@ -637,6 +637,19 @@ const echoQ = {
         })), 'echo.medley'));
       },
     }, 'pool7'),
+    // pool 12 (green.md Medley's variation): every round III space left out, Medley's own included
+    poolSpace({
+      key: 'remix', ring: 3, name: 'Remix', text: 'Choose a color. Copy every action with a minion on its spaces except the round III one. +1 green.',
+      estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...ctx.state.quadrants.map(q => medleyPlan(ctx, p, q, true).reduce((a, e) => a + entryValue(ctx, e, p), 0))),
+      resolve(ctx, p) {
+        plus(ctx, p);
+        const opts = ctx.state.quadrants.map(q => ({ q, list: medleyPlan(ctx, p, q, true) })).filter(x => x.list.length);
+        if (!opts.length) { ctx.log(`${p.name}'s Remix: no color has an action to copy.`); return; }
+        withPath(ctx, [...new Set([...pathNow(ctx), ...medleyKeys(ctx)])], () => ctx.choose(p, 'Remix: copy every action on which color\u2019s spaces (not its round III one)?', opts.map(({ q, list }) => ({
+          id: `color:${q}`, label: `${quadrant(q).name} (${list.map(e => e.name).join(', ')})`, kind: 'color', value: q, hint: list.reduce((a, e) => a + entryValue(ctx, e, p), 0),
+        })), 'echo.medley', { who: 'Remix', noThird: true }));
+      },
+    }, 'pool12'),
   ],
 
   handlers: {
@@ -657,11 +670,11 @@ const echoQ = {
       if (!w || ctx.state.slots[data.to] !== undefined) return;
       stageMove(ctx, p, w, data.to);
     },
-    medley(ctx, p, q) {
-      const list = medleyPlan(ctx, p, q);
-      if (!list.length) { ctx.log(`${p.name}'s Medley: nothing on ${quadrant(q).name} to copy.`); return; }
-      ctx.log(`${p.name}'s Medley copies every action on ${quadrant(q).name}'s spaces.`);
-      copyAll(ctx, p, list, null, 'Medley');
+    medley(ctx, p, q, data) {
+      const who = data?.who || 'Medley', list = medleyPlan(ctx, p, q, !!data?.noThird);
+      if (!list.length) { ctx.log(`${p.name}'s ${who}: nothing on ${quadrant(q).name} to copy.`); return; }
+      ctx.log(`${p.name}'s ${who} copies every action on ${quadrant(q).name}'s spaces${data?.noThird ? ' but the round III one' : ''}.`);
+      copyAll(ctx, p, list, null, who);
     },
     ...handlers10({
       // Bootlegger (REPLACE10): the member picked; its On Recruit runs as Greatest Hits runs one

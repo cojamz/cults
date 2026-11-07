@@ -238,6 +238,11 @@ function takeToken(ctx, p, why, what = '') {
   if (was !== p.id) for (const c of ctx.membersOf(p)) if (c.def.onTakeToken) ctx.asMember(p, c.def.name, () => c.def.onTakeToken(ctx, p, c), c.uid);
   // idea pipeline pool 10 (Scalpers): "Whenever a rival takes the Goes Last token"; no live card has the hook
   if (was !== p.id) for (const o of ctx.rivals(p)) for (const c of ctx.membersOf(o)) if (c.def.onRivalTakeToken) ctx.asMember(o, c.def.name, () => c.def.onRivalTakeToken(ctx, o, c, p), c.uid);
+  // idea pipeline pool 12 (candidates only): Line Jumpers, "Whenever a rival takes the Goes Last token, your next turn
+  // comes right after theirs"; Bellhops (the variation, renamed: pool 10 has a Night Porters), "Whenever the Goes Last token leaves you, ..." (turnsNow, as Right Away)
+  if (was !== p.id) for (const o of ctx.rivals(p)) for (const c of ctx.membersOf(o)) {
+    if (c.def.pool && (c.def.lineJump || (c.def.tokenLeaves && was === o.id))) ctx.asMember(o, c.def.name, () => turnsNow(ctx, o, 1, c.def.name), c.uid);
+  }
   if (was === null || was === p.id) { ctx.log(`${p.name}'s ${why}: ${p.name} ${was === p.id ? 'keeps' : 'takes'} the Goes Last token${what}.`); return; }
   const o = ctx.player(was), q = s.queue;
   const close = q.findIndex(t => t.t === 'allPlaced'), stop = close < 0 ? q.length : close;
@@ -687,6 +692,13 @@ export default {
         toToken(ctx, owner, 1, 'Night Porters');
       },
     }), 'pool10'),
+    // idea pipeline pool 12 (Nov 7; purple.md round 3 and its variation; prices are fill-ins): core-free, in takeToken
+    pool(m('linejumpers', 'Line Jumpers', 3, 2, 'Whenever a rival takes the Goes Last token, your next turn comes right after theirs.', { lineJump: true,
+      ...see(info => 2 * endsAhead(info).length),
+    }), 'pool12'),
+    pool(m('bellhops', 'Bellhops', 3, 2, 'Whenever the Goes Last token leaves you, your next turn comes right after.', { tokenLeaves: true,
+      ...see(info => 1.5 * endsAhead(info).length),
+    }), 'pool12'),
     // idea pipeline pool 5 (Nov 7): Round End before contests; "placed the round's last minion" is the round's last turn
     // (the Goes Last token's minions included). "costing up to 5" as printed. Price a fill-in.
     pool(m('sweepers', 'Sweepers', 2, 2, "Round End: if you placed the round's last minion, recruit a member costing up to 5, for free.", {

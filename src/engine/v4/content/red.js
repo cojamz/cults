@@ -493,6 +493,16 @@ export default {
       },
       botActivate: (ctx, owner) => busyMoves(ctx, owner).length > 0,
     }), 'pool8'),
+    // pool 12 (red.md Ambulance Chasers' variation B; price a fill-in): its color's resource when that color is on the
+    // table; a grey member's (or one whose color isn't on the table) is any color, the owner's pick
+    pool(m('repomen', 'Repo Men', 1, 1, 'Whenever a member leaves a rival\u2019s cult, +1 of its color (grey: any color).', {
+      onRivalLeave(ctx, owner, card, from, left) {
+        const r = ctx.state.quadrants.includes(left.def.quadrant) ? ctx.quadrant(left.def.quadrant).resource : null;
+        ctx.log(`${owner.name}'s Repo Men: ${left.def.name} left ${from.name}'s cult.`);
+        if (r) ctx.gain(owner, r, 1); else anyColors(ctx, owner, 1, 'Repo Men', 'red.anyColor');
+      },
+      ...see(info => 2 * endsAhead(info).length),
+    }), 'pool12'),
     pool(m('ambulancechasers', 'Ambulance Chasers', 1, 1, 'Whenever a member leaves a rival\u2019s cult, +1 follower.', {
       onRivalLeave(ctx, owner, card, from, left) {
         owner.bonus += 1;

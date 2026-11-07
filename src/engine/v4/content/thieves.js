@@ -633,6 +633,28 @@ const thieves = {
       },
       ...see(info => 0.5 * endsAhead(info).reduce((a, r) => a + SEE_RING[r - 1], 0)), // BOTSEE: about half the contests it tips
     }), 'pool10'),
+    // idea pipeline pool 12 (Nov 7; magenta.md survivors 3 and 4; prices are fill-ins). Grudge Holders: a rival "takes"
+    // your member when it goes into that rival's cult by their own card or space (a steal, Poach, a swap), never when a
+    // third player moves it. Insurers: the resources a rival's steal takes from you (not members or followers).
+    pool(m('grudgeholders', 'Grudge Holders', 2, 1, 'Whenever a rival takes one of your members, steal 4 resources from them.', { f: 2, n: 2,
+      onCultMove(ctx, owner, card, mv) {
+        if (mv.from !== owner || !mv.to || mv.to === owner || mv.actor !== mv.to) return;
+        const o = mv.to;
+        ctx.log(`${owner.name}'s Grudge Holders: ${o.name} took ${ctx.card(mv.uid).def.name}, so ${owner.name} steals 4 from them.`);
+        startSteal(ctx, owner, 'Grudge Holders', 4, { fromAction: false, only: [o.id] });
+      },
+      ...see(() => 1),
+    }), 'pool12'),
+    pool(m('insurers', 'Insurers', 2, 1, 'Whenever a rival steals from you, +1 follower per resource stolen.', {
+      onSteal(ctx, owner, card, info) {
+        if (info.victim !== owner || info.thief === owner) return;
+        const n = Object.values(info.took || {}).reduce((a, b) => a + b, 0);
+        if (!n) return;
+        owner.bonus += n;
+        ctx.log(`${owner.name}'s Insurers: ${info.thief.name} stole ${n}, +${n} follower${n === 1 ? '' : 's'}.`);
+      },
+      ...see(info => 2 * endsAhead(info).length),
+    }), 'pool12'),
     // idea pipeline pool 5 (Nov 7): a steal from you passes on; "the same number" is what the steal took (resources,
     // a member or followers, each 1), taken back as resources from the other rival's biggest piles, as Lookout's. Its own
     // steal is a reaction, so no Middlemen answers it (no chains). The owner picks the other rival. Price a fill-in.

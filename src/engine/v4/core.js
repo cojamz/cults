@@ -804,6 +804,9 @@ function useMember(state, p, uid, resume) {
   if (resume.t === 'place') state.unplaced = 1;
   try { tallied(state, p, uid, () => act.onActivate(ctxFor(state), p, wrap(state, c))); } finally { delete state.unplaced; }
   traceChanges(state, before, p, act);
+  // Retirees (idea pipeline pool 12, candidates only): "Whenever you use one of your members' ... On Use": asked after
+  // the use's own choices, before the turn goes on
+  eachMemberOf(state, p, (held, d) => { if (d.pool && d.afterOwnUse && p.members.includes(uid)) d.afterOwnUse(ctxFor(state), p, held, wrap(state, c)); }, ['afterOwnUse']);
   const at = state.queue.findIndex(t => !t._fresh);
   state.queue.splice(at < 0 ? state.queue.length : at, 0, resume);
 }

@@ -293,6 +293,23 @@ const GIFT_EXCHANGE = poolSpace({
   },
 }, 'pool5');
 
+// idea pipeline pool 12 (Nov 7; silver.md survivor 3): all of one rival's silver to another rival, one pair per pick;
+// bots move the most silver, away from whoever it helps most in Most silver. Nothing to move: just the +1.
+const regiftPairs = (ctx, p) => ctx.rivals(p).filter(o => (o.res[S] || 0) > 0 && ctx.canSteal(p, o, 'change')).flatMap(o => ctx.rivals(p).filter(t => t !== o).map(t => [o, t]));
+const REGIFTERS = poolSpace({
+  key: 'regifters', copyDoesIt: true, ring: 2, name: 'Regifters', text: 'Move all of one rival\u2019s silver to another rival. +1 follower per silver moved. +1 silver.',
+  estimate: (ctx, p) => 1 + Math.max(0, ...regiftPairs(ctx, p).map(([o]) => o.res[S] || 0)),
+  resolve(ctx, p) {
+    ctx.gain(p, S, 1, { fromAction: true });
+    const pairs = regiftPairs(ctx, p);
+    if (!pairs.length) { ctx.log(`${p.name}'s Regifters: no rival has silver to move.`); return; }
+    ctx.choose(p, 'Regifters: move all of whose silver to whom?', pairs.map(([o, t]) => ({
+      id: `trade:${o.id}:${t.id}`, label: `${o.name}'s ${o.res[S]} silver to ${t.name}`, kind: 'trade', value: [o.id, t.id],
+      hint: (o.res[S] || 0) - 0.05 * ctx.followers(t),
+    })), 'silver.regift');
+  },
+}, 'pool12');
+
 export const silverActions = [
   GIFT_EXCHANGE,
   // idea pipeline pool 10 (Nov 7): the +1 is the space's own (Grand Host doubles it); then every player's whole pile of
@@ -315,6 +332,7 @@ export const silverActions = [
       ctx.log(`${p.name}'s Round Robin: ${gave.length ? gave.map(([o, to, n]) => `${o.name} gives ${to.name} ${n}`).join(', ') : 'nobody has silver to pass'}.`);
     },
   }, 'pool10'),
+  REGIFTERS,
   {
     // copyDoesIt: a copy gifts the rivals too, so the copier's Silver Cloak pays (Cory, Nov 6: "yes.")
     key: 'toast', copyDoesIt: true, ring: 1, name: 'Toast', text: '+3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III.',
@@ -403,6 +421,14 @@ const silver = {
   actions: silverActions,
 
   handlers: {
+    regift(ctx, p, v) {
+      const [a, b] = v || [], o = ctx.player(a), t = ctx.player(b);
+      if (!o || !t || o === p || t === p || o === t) return;
+      const n = o.res[S] || 0;
+      if (!n) return;
+      o.res[S] = 0; t.res[S] = (t.res[S] || 0) + n; p.bonus += n;
+      ctx.log(`${p.name}'s Regifters: moves ${o.name}'s ${n} silver to ${t.name}, +${n} follower${n === 1 ? '' : 's'}.`);
+    },
     almoners(ctx, p, id, data) {
       const o = ctx.player(id);
       if (!o || o === p || !(p.res[S] > 0)) return;

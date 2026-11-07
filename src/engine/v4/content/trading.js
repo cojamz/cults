@@ -658,6 +658,13 @@ const trading = {
         },
         ...see(info => 3 * endsAhead(info).length),
       }), 'pool7')),
+    // idea pipeline pool 12 (Nov 7; white.md variation A3; price a fill-in): asked after the On Recruit (core
+    // afterOwnRecruit, only for a member that has one) or after the On Use (core afterOwnUse), its own choices first
+    pool(m('retirees', 'Retirees', 3, 2, 'Whenever you use one of your members\u2019 On Recruit or On Use, you may discard it, for +3 white.', {
+      afterOwnRecruit(ctx, owner, card, rec) { if (rec.def.onRecruited || rec.def.now) retireAsk(ctx, owner, card, rec); },
+      afterOwnUse(ctx, owner, card, used) { if (used.uid !== card.uid) retireAsk(ctx, owner, card, used); },
+      ...see(info => 3 * endsAhead(info).length),
+    }), 'pool12'),
     pool(m('ascetics', 'Ascetics', 6, 3, 'Your other members count as 0 members.', { othersZero: true,
       ...see(info => 4 * endsAhead(info).length),
     }), 'pool7'),
@@ -1039,6 +1046,13 @@ const cost = (ctx, uid) => { const d = ctx.card(uid).def; return d.s + d.w; };
 // pool 7 helpers: an On Use member (its own or a copy's); a member with more than an On Recruit; a fewest members contest
 function hasUse(c) { return [c.def, c.copy && defById(c.copy)].some(d => d?.activate && d.onActivate); }
 function lasting(d) { return Object.keys(d).some(k => /^on[A-Z]/.test(k) && k !== 'onRecruited') || !!d.activate || !!d.botValue; }
+function retireAsk(ctx, owner, card, c) {
+  const keep = (c.def.f || 1) + (lasting(c.def) && !(c.def.activate === 'game') ? 3 : 0);
+  ctx.choose(owner, `Retirees: discard ${c.def.name} for +3 white?`, [
+    { id: `card:${c.uid}`, label: `Discard ${c.def.name}`, kind: 'card', value: c.uid, hint: 3 },
+    { id: 'keep', label: `Keep ${c.def.name}`, kind: 'no', value: null, hint: keep },
+  ], 'trading.dayTrip', { name: 'Retirees', kind: 'white', n: 3, uid: card.uid });
+}
 function fewestMembersCult(ctx) { return ctx.state.quadrants.includes('trading'); }
 const defsOf = (ctx, c) => ctx.defsOf(c);
 // Banker: "Whenever you turn resources or members into followers, +1 white" (once per turning)

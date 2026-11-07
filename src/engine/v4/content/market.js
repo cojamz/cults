@@ -222,7 +222,9 @@ export function scavenge(ctx, actor, uids) {
   if (!actor || !uids?.length) return;
   // Impulse Buyers (idea pipeline pool 8, candidates only): "Whenever you send shop members to the discard pile, recruit
   // an extra time this turn." One send (a batch) is one extra recruit; on its owner's own turn only.
+  // Bargain Hunters (pool 12, Impulse Buyers' variation B): the same, once per turn (card.impulseTurn)
   if (ctx.state.current === actor.id) for (const c of ctx.membersOf(actor)) if (ctx.defsOf(c).some(d => d.impulse && d.pool) && uids.some(u => discardOf(ctx.state).includes(u))) {
+    if (ctx.defsOf(c).some(d => d.impulse === 'turn')) { if (c.impulseTurn === ctx.turnKey()) continue; c.impulseTurn = ctx.turnKey(); }
     ctx.asMember(actor, c.def.name, () => { extraBuys(ctx, actor, 1); ctx.log(`${actor.name}'s ${c.def.name}: sent shop members to the discard pile, recruit an extra time this turn.`); }, c.uid);
   }
   // Pickers (REPLACE13=pickers): its owner just sent these down on their own turn; they may also recruit one, paying its cost
@@ -685,6 +687,9 @@ const market = {
   members: [
     // idea pipeline pool 8 (Nov 7, writer round 1; price a fill-in): scavenge() is every "you sent shop members to the
     // discard pile" moment (Churn, Bury, Window Dressers…), so it pays there.
+    pool(m('bargainhunters', 'Bargain Hunters', 3, 2, 'Once per turn, when you send shop members to the discard pile, recruit an extra time this turn.', { impulse: 'turn',
+      ...see(info => 2.5 * endsAhead(info).length),
+    }), 'pool12'),
     pool(m('impulsebuyers', 'Impulse Buyers', 3, 2, 'Whenever you send shop members to the discard pile, recruit an extra time this turn.', { impulse: true,
       ...see(info => 3 * endsAhead(info).length),
     }), 'pool8'),
