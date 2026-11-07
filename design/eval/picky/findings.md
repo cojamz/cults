@@ -7,6 +7,29 @@ each. One line per finding: what a player sees, what's wrong, status. Each run's
 Status words: **fixed (version)**, **fixing**, **sent** (to the thread that owns it), **open** (ours, not started),
 **Cory** (a question only he can answer), **by design** (with the reason; the check got an exception).
 
+## 2026-11-07
+Run at 7:42pm Eastern Nov 6 on v0.99.662 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
+emoji; raw list /mnt/project-files/picky/2026-11-07-00-42/). The bot flagged nothing; the member sweep of 116 cards in
+both looks was clean. The rest are by eye from the shots.
+
+- **Your hint shows under a rival's turn.** The headline read "P4's turn ···" (their story card in the middle) while
+  the line under it said "…or use Anarchist or Party Crasher first" (both games, round III): a hint for you under
+  their name. The hint now waits until the headline is yours again. **fixed (this run)**
+- **The middle story card runs off the bottom of the screen** on a long rival turn (round III, P2 took Echo and copied
+  three times: the card's last line "bought 1 follower (paid 1 magenta)" was cut at the screen's edge, shot
+  table-g1-t08.png). **open** (for the coordinator: the animation thread's card)
+- **A steal is told twice on the turn card.** "Took Help Yourself · +4 green +1 magenta · 4 green, 1 magenta from P4",
+  and "You took Lie Low · +1 magenta +1 red · 1 red from P2": the stolen coins sit in the gain and again in the "from"
+  line. A gate pins this form ("+3 gold", "3 gold from you"); one line ("+4 green +1 magenta from P4") would read
+  better, but it is the turn card's owner's call after Cory's "no repeats". **open** (for the coordinator)
+- **A rival's last turn card fades out over the wheel's words** (round I, "P4 took Reprise" half see-through over
+  "Copy an action" and "Free member costing", text on text, shot table-g1-t01.png). Brief. **open** (looks off)
+- Seen again, already listed: bar Members one above the member count (P4 "12 members", bar 13), bare numbers on score
+  parts ("3", "5", "8", "4"), "recruiting followers" beside "Bought", "+37 shuffled in for round II" over the shop's
+  count, "You had nothing to copy" after placing Reprise, emoji members shown as things (Old Money a bank, Critic a
+  monocle, Window Dressers a window), rim plaques opening no card on 9 and 18 rests, "2 turns in a row" in header and
+  seat (by design).
+
 ## 2026-11-06 (fourth run)
 Run at 1:50pm Eastern Nov 6 on v0.99.652 (2 games: red/echo/thieves/purple in pictures, market/trading/silver/yellow in
 emoji; raw list /mnt/project-files/picky/2026-11-06-18-50/). The bot flagged nothing; the member sweep of 116 cards in
