@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.670 — 2026-11-07
+
+- On your turn the last rival's banner folds away, so the headline says Your turn and the wheel's top spaces show; Turn skipped sits on the seat's bottom edge, off its counts; every member has an emoji in the emoji look; a grey member's cloak question names the member
+
 ## v0.99.669 — 2026-11-07
 
 - Out of Style's pick shows a member figure, the color's name and how many shop members go, instead of bare dots
