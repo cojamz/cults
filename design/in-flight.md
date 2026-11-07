@@ -53,3 +53,5 @@ Branches
 
 - Silver communal (Nov 4, thread "Make Silver cards more communal", resolved for the token wind-down): three member swaps built behind REPLACE16/REPLACE8, trials sc-socialites-c1, sc-chaperone-c1, sc-tongues-c1 queued; next steps in /mnt/project-files/desk/backlog-tests.md.
 - Balance testing (thread "Design the full balance testing setup", Nov 5-6): toolkit node scripts/eval.mjs; deep run on v0.99.606 split over 4 boxes (scripts/balance/shard.sh). Report: design/eval/balance-v601/report-v606.md. Open: Cory's pick on Ballroom Dancers +1 silver.
+
+- 2026-11-08 12:30am · Tie the colors closer together: new contests live in v0.99.665 (Red most members of one color, grey counts; Blue most members; White fewest members, 0 counts; Silver fewest silver, 0 counts; Yellow most member colors, Dabblers adds one). Card review 1 (/mnt/project-files/contests/card-review-1-2026-11-07.md) waits on Cory: Body Snatchers timing, Magenta round I. Next: build the review's cuts/moves he confirms; review unmarked colors (Green, Blue, Purple, White, Yellow) the same way.
