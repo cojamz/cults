@@ -80,7 +80,7 @@ Why each line matters:
 
 ### 5. Cut
 
-Run every survivor past [references/verdicts.md](references/verdicts.md) (his yeses, and every failure mode with his words) and the cheatsheet's kill list, then against this color's ledger lines. The same shape as a refused idea is the same idea, however it's reworded. Keep the ideas that touch the most different pieces. If nothing survives, say so and ask one sharp question; a thin list costs less trust than filler.
+Run every survivor past [references/verdicts.md](references/verdicts.md) (his yeses, and every failure mode with his words) and the cheatsheet's kill list, then against this color's ledger lines. The same shape as a refused idea is the same idea, however it's reworded. Keep the ideas that touch the most different pieces. If nothing survives, say so and ask one sharp question; a thin list costs less trust than filler. When Cory sets a count ("batches of 5"), send exactly that many: generate more seeds until that many survive (Nov 7: "what the fuck do you mean 4 survived. i said batches are 5").
 
 ### 6. Send
 

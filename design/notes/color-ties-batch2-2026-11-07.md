@@ -44,3 +44,11 @@ Built on batch 1's takeaways (verdicts 27-32): each card makes its own moment ha
 - Yellow "a member of a new color joins your cult, +3 of any colors": a tiny change to Guest Book.
 - Silver "rivals can only steal your silver": needs another color to steal.
 - Silver "give rivals up to 6 of your silver, +1 of any colors each": the same shape as Sweet Nothings.
+
+## 5. Socialites (Silver member, 4 silver + 4 any), added after Cory: "i said batches are 5"
+"On Use, once per round: trade up to 3 of your silver for the same number of one color a rival holds."
+- Ties: Silver sheds silver toward its fewest-silver contest; the rival is left holding silver instead of the color they were saving, which hurts any plan that needs that color, and the trade happens on the Silver player's turn only.
+- Own cause: works in any game with Silver.
+- Round II, 4 players: you hold 3 silver; a rival saves 5 purple for a purple member. Trade: you 0 silver (leading fewest silver) and 3 purple; they 2 purple and 3 silver, which still pays the "any" part of a cost, not the purple part.
+- Who feels: the rival (their colors turn into silver).
+- Intuitive: one trade. Fun: a gift that's a sting. Interacts: whatever color the rival collects. Powerful: wins its contest and takes a color. Its color: Silver gives.
