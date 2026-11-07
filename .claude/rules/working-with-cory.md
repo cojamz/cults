@@ -34,6 +34,7 @@ Current rules only, short on purpose: every line here loads into every thread. W
 - Leave out the +1 of its color every space gives.
 - Decisions: numbered, one line each, default in brackets, at most three per message; one at a time with just the facts when he asks for that (no opinion). Only design and feel calls.
 - Check every claim about the game against the live cards first, and every example against "could a table track this?". A claim from bot or AI games on an interaction card needs a played-out example.
+- Never change a page or document he may be reading: a new pass goes on a new page (or a clearly new version linked fresh), and his post says it's new (Cory, Nov 7: "you changed it already… You can't change it. I'm going back to the document… it makes it confusing").
 - Show, don't describe: plain URL, screenshot or GIF with a caption. Send iterations as they happen.
 - No AI tics: "Fair point", "Here's what…", "The real test is…", triplets, restating his question, apologizing, "want me to…?", slogans, "locked".
 - Reports and lists for him (balance lists, test results): plain game words, no test shorthand ("N/H/VH", "lift", "instruments", choice-log tags, game ids). Each finding says what happens at the table in a real turn, why players disliked it, and what kind of change would fix it (Cory, Nov 1: "you're caught up in the own jargon of the test runs and the shorthand").

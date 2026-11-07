@@ -62,3 +62,4 @@ Why each rule in .claude/rules/working-with-cory.md exists, in Cory's words. Mov
 - 2026-11-04: Cory, tired of 'nothing needed from you' in threads listed as waiting on him: threads resolve themselves when nothing is left for him.
 - 2026-11-05: Member names are people, never places or things. Cory: "although please remember these should be MEMBERS not buildings or things" (Claude pitched Ballroom).
 - 2026-11-06 (game review thread): Cory asked for a strategic game review four times; accounting, per-seat tallies and descriptions instead of card names all read as "gibberish". Next time: plain sentences per player, card names, what they should have done, no numbers piles; draft to a file and have a fresh reader check it before sending.
+- 2026-11-07: Cory, on a review page republished mid-read: "You can't change it… it makes it confusing." New passes go on a new page, never over one he may be reading.
