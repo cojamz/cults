@@ -309,7 +309,7 @@ async function main() {
   if (cmd === 'brief') {
     const meta = readJson(f(dir, 'meta.json'));
     const styles = STYLES[Number(flags.set || 0) % STYLES.length];
-    const tpl = fs.readFileSync(f(ROOT, 'design/eval/expert-games/player-brief.md'), 'utf8');
+    const tpl = fs.readFileSync(f(ROOT, `design/eval/expert-games/player-brief${flags.feel ? '-feel' : ''}.md`), 'utf8'); // --feel: postgame FEEL ratings per card
     meta.names.forEach((name, i) => fs.writeFileSync(f(dir, `brief-${name}.md`), tpl.replaceAll('{NAME}', name).replaceAll('{DIR}', path.resolve(dir)).replaceAll('{SEAT}', String(i)).replaceAll('{STYLE}', styles[i])));
     console.log(`Wrote ${meta.names.length} briefs in ${dir}`);
     return;
