@@ -13,10 +13,10 @@ Doc for Cory: https://claude.ai/artifact/9US8nrf77fdKoBfZUvQUTF (do not edit whi
 7. Does it touch the other colors? Through resources, members, the shop, the pile, turn order, followers, contests. Never naming or needing another color, never friction. (Nov 7 lens)
 8. Does it hold up across tables? Round I and III, 2 to 4 players, any mix of colors. (colors rotate between games)
 9. What does real play say? Cory's games, then Hard and Very Hard bots, the skill ladder, AI players. His notes outrank bots.
-10. Is it better than what it replaces, and does the color need it? Play the old card and the new one in the same turn. A change that is tiny, that removes a card players like, or that gives the color a job it already has scores 2 or lower. New cards in an open slot: does the color lack what this does? ("What's wrong with hot streak?"; "That's like a tiny change"; "magenta already has this")
+10. Is it better than what it replaces, and does the color need it? Play the old card and the new one in the same turn. Score 2 or lower only when: the change is tiny (players would barely notice the difference), it removes a card that was working with nothing clearly better in its place, or it repeats a card already in its color at the same size and payoff. A sibling at a different size, timing or payoff is not a repeat (same rule as Q6). For a new card in an open slot, ask whether the color lacks what it does. ("What's wrong with hot streak?"; "That's like a tiny change"; "magenta already has this")
 
 Flag: any question at 2 or lower, or weakest in its color on two or more. Every score of 2 or lower needs a 4-player played turn.
-v1 (nine questions, run 1): 26 of 44 agreed with Cory (59%), failed the bar.
+v1 (nine questions, run 1): 26 of 44 agreed with Cory (59%). v2 (run 2, in-sample): 30 of 44 (68%). v3: Q10 narrowed so siblings aren't read as repeats; three judges per card, majority verdict.
 
 ## Three layers
 1. The card (the nine questions).
