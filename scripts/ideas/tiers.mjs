@@ -29,7 +29,9 @@ const TIERS = [
 ];
 
 const judges = read(path.join(P, 'expert/judges.json'));
+// verdicts.json plus every verdicts/*.json (one file per reader; later files win)
 const verdicts = fs.existsSync(path.join(P, 'verdicts.json')) ? read(path.join(P, 'verdicts.json')) : {};
+if (fs.existsSync(path.join(P, 'verdicts'))) for (const f of fs.readdirSync(path.join(P, 'verdicts')).filter(f => f.endsWith('.json')).sort()) Object.assign(verdicts, read(path.join(P, 'verdicts', f)));
 const live = judges.liveCards || [];
 const below = (k, v) => v == null || !live.length ? 0 : live.filter(c => c[k] != null && c[k] < v).length / live.filter(c => c[k] != null).length;
 
