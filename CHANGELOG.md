@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.680 — 2026-11-07
+
+- The top line and the lit seat always name the player actually moving; no leftover banner over a round's scoring; the Place/Recruit tabs hide during scoring and starting picks; a finished turn's row no longer flies across the board
+
 ## v0.99.679 — 2026-11-07
 
 - Cleaner turns: a hover card no longer pops up after a click or stays over the space you just took; the shop keeps its order through a round; payments fly as −N; a seat's member count waits for its card; follower chips clear each turn
