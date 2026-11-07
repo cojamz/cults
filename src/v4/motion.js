@@ -180,6 +180,8 @@ const TABLE = {
   // read (wave 4 #6: the scoring began while the player looked away)
   reckonLead:  [450,   800],
   lingerDelta: [1800, 2600],  // a seat's follower change stays readable under its count (panel r3)
+  // the "+N followers" chip itself: never past Steady's (frame review, Nov 7: at Relaxed it stayed 15 s, into rivals' turns)
+  deltaChip:   [1800, 2600],
   // the end-game scoring on the results' cults (taste rule 11; game/FinalScore.jsx): the results are read, then every
   // seat in step: the leader's followers pop, then each member's people one figure after the next, then the followers
   // members grant at game end; each seat's total ticks up as each pop lands
@@ -225,7 +227,7 @@ export const RIVAL = 0.65;
  * coins still fly at Relaxed's pace, but they leave together as a handful instead of one after the next (Cory, Nov 5:
  * "currencies moving one by one in so many animations is so slow"; at x6 a +3 left 300 ms apart, a payment's colors 240).
  */
-const TIGHT = new Set(['pieceStagger', 'streamSpread', 'bundleTrail', 'fan']);
+const TIGHT = new Set(['pieceStagger', 'streamSpread', 'bundleTrail', 'fan', 'deltaChip']);
 const tightScale = () => Math.min(speedScale(), SPEEDS.steady);
 /** A budget at the viewer's speed: Quick's own number, else the base times the speed. */
 const atSpeed = ([quick, base], k) => (speed === 'quick' ? quick : Math.round(base * (TIGHT.has(k) ? tightScale() : speedScale())));

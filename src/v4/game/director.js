@@ -488,7 +488,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     };
     phase(m.pays.map(p => ({ from: p.from, to: p.to.kind === 'bank' && pulsed ? { kind: 'space', key: pulsed } : p.to, n: p.what.n, opt: { pay: true, r: p.what.r, owner: p.from.pid } })));
     phase(m.takes.map(x => ({ from: x.from, to: x.to, n: x.n, tug: true, opt: { take: true, r: x.r, turn: x.turn, owner: x.to.pid } })));
-    phase(m.gives.map(x => ({ from: x.from, to: x.to, n: x.n, opt: { r: x.r, turn: x.turn, owner: x.to.pid } })));
+    phase(m.gives.map(x => ({ from: x.from, to: x.to, n: x.n, opt: { give: true, r: x.r, turn: x.turn, owner: x.to.pid } })));
     // the owner's gains, then the spill fan, which starts when the owner's are two-thirds along (the same beat)
     const own = m.gains.filter(g => g.to.pid === owner || owner == null), spill = m.gains.filter(g => !(g.to.pid === owner || owner == null));
     const before0 = cur;
@@ -1228,6 +1228,7 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
   const rectOf = e => { if (!rects.has(e)) rects.set(e, e.getBoundingClientRect()); return rects.get(e); };
   const measure = (a, b) => { const A = where(a), B = where(b); if (!A || !B) return TYPICAL; const ra = rectOf(A), rb = rectOf(B); return Math.hypot(rb.left + rb.width / 2 - ra.left - ra.width / 2, rb.top + rb.height / 2 - ra.top - ra.height / 2); };
   const plan = planChain(before, state, { mine, measure });
+  if (lingering.size) dropOldChips(turnOf(state));
   if (!plan.atoms.length || !motionOK()) return plan;
   // where each placed minion stood in its column: the slot past the last one still standing there
   for (const a of plan.atoms) {
@@ -1336,24 +1337,30 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
   for (const [el, w] of toHold) holdOf(el, w.pid, w.r);
   // a recruit's seat keeps its old member count until the card lands there (the motion audit, Nov 4: P3's seat said
   // "1 member" while Timekeepers was still big at the hub): cause before effect
-  const memberHolds = new Map();
+  // a member coming off the pile or a seat lands as a chip, not a card (Walk-In, a member taken): it holds the count too,
+  // till the last member arriving there lands (frame review, Nov 7: "7 members" while Walk-In's card was in the air)
+  const memberLands = new Map();
   for (const a of plan.atoms) {
-    if (a.op !== 'card' || memberHolds.has(a.to)) continue;
-    const b = root.querySelector(`.lt-cult-seat[data-seat="${a.to}"] .cs-mc-n`), p = before.players[a.to];
+    const pid = a.op === 'card' ? a.to : a.op === 'chip' && a.to && a.to.kind === 'crowd' ? a.to.pid : null;
+    if (pid == null) continue;
+    const t = a.op === 'card' ? a.at + a.lift + a.toHub + a.show + a.fromHub : a.at + a.dur;
+    memberLands.set(pid, Math.max(memberLands.get(pid) ?? 0, t));
+  }
+  for (const [pid, landAt] of memberLands) {
+    const b = root.querySelector(`.lt-cult-seat[data-seat="${pid}"] .cs-mc-n`), p = before.players[pid];
     if (!b || !p) continue;
     let was = 0; try { was = memberCount(before, p); } catch { continue; }
-    if (was === memberCount(ctx.state, ctx.state.players[a.to])) continue;
+    if (was === memberCount(ctx.state, ctx.state.players[pid])) continue;
     // (its word follows the number it shows: "1 member", "2 members")
     const box = b.parentElement, one = n => { if (!box) return; if (n === 1) box.dataset.one = '1'; else delete box.dataset.one; };
-    const now = memberCount(ctx.state, ctx.state.players[a.to]);
+    const now = memberCount(ctx.state, ctx.state.players[pid]);
     one(was);
     const held = holdStack({ querySelector: () => b }, was);
     if (!held) continue;
     const h = { ...held, done: x => { held.done(x); one(now); } };
-    memberHolds.set(a.to, h);
     // (a chain's end or skip lets go of it with the other holds)
     chain.holds.set(b, { h });
-    schedule(base + a.at + a.lift + a.toHub + a.show + a.fromHub, sk => { h.done(!!sk); if (chain.holds.get(b)?.h === h) chain.holds.delete(b); });
+    schedule(base + landAt, sk => { h.done(!!sk); if (chain.holds.get(b)?.h === h) chain.holds.delete(b); });
   }
   const epoch = chain.epoch || 0;
   const land = (a, B, skip) => {
@@ -1587,7 +1594,7 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
           chain.flying++;
           // (the places were measured before the commit, or on first use: never a layout read per piece)
           const anim = aim(flyPath(html, `piece-flight piece-${a.fol ? 'fol' : 'res'}${a.pay ? ' pay' : ''}`, square(rectOf(A), size), square(rectOf(B), size),
-            { path: a.pay ? 'drop' : a.take ? 'line' : 'arc', duration: a.dur, label: a.bundle ? `+${a.n}` : '', ...bundleTrail(a), turnTo: a.turn ? dotHtml(root, a.turn, pid) : null, fade: true }), B);
+            { path: a.pay ? 'drop' : a.take ? 'line' : 'arc', duration: a.dur, label: a.bundle ? bundleLabel(a) : '', ...bundleTrail(a), turnTo: a.turn ? dotHtml(root, a.turn, pid) : null, fade: true }), B);
           onFinish(anim, () => { chain.flying = Math.max(0, chain.flying - 1); land({ ...a, by: a.n }, B, false); });
           return;
         }
@@ -1657,7 +1664,7 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
     // every count read, then every delta written (one layout, not one per seat)
     const at = [];
     for (const [pid, n] of fdelta) if (n) { const el = where({ kind: 'count', pid }); if (el && !el.rectOnly) at.push([el, n, el.getBoundingClientRect()]); }
-    for (const [el, n, r] of at) linger(el, n, r);
+    for (const [el, n, r] of at) linger(el, n, r, turnOf(state));
   });
   // what starts at once plays now, before this commit's first paint (the lifted card, the hidden chip, your minion's
   // stamp): never a frame of the end state first
@@ -1667,6 +1674,9 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
   return plan;
 }
 
+// a handful's label says which way it goes: a payment leaves under "−N", a steal (the victim's "−N" tag already on its
+// pile) or a ransom paid to a rival carries its plain count, only a gain is "+N" (frame review, Nov 7: P4 lost 2 pink under "+2")
+const bundleLabel = a => (a.pay ? `−${a.n}` : a.take || a.give ? `${a.n}` : `+${a.n}`);
 /** "−2 ●" over a victim's pile as it's taken from (stage.css .take-tag). */
 function takeTag(el, n, dot, r = el && !el.rectOnly ? el.getBoundingClientRect() : null) {
   if (!el || el.rectOnly || !r || typeof document === 'undefined') return;
@@ -1724,13 +1734,20 @@ function jiggle(el, dur) {
 /** A space or member flies out of its place onto the stage (stage.js; ActionStage.jsx draws it). */
 // a seat's follower change, lingering under its count
 const lingering = new Map();
-function linger(el, n, r = el && !el.rectOnly ? el.getBoundingClientRect() : null) {
+// a turn's own key: state.turns grows by one as each turn starts. A chip belongs to its turn: one from an earlier turn
+// is never added to, and goes when the next turn's motion starts (frame review, Nov 7: "+5" grew to "+8" and stayed
+// through rivals' turns while the count went 31→29)
+const turnOf = st => (st ? `${st.round}|${(st.turns || []).length}` : '');
+function dropOldChips(turn) {
+  for (const [el, was] of lingering) if (was.turn !== turn) { clearTimeout(was.t); was.b.remove(); lingering.delete(el); }
+}
+function linger(el, n, r = el && !el.rectOnly ? el.getBoundingClientRect() : null, turn = '') {
   if (!el || el.rectOnly || !r || typeof document === 'undefined') return;
   // while a rival's turn is told on the story card, the card says the followers (the plan, Cory Nov 6: no +N chips)
   if (document.querySelector('.turn-card.at-hub')) return;
   if (!r.width) return;
   const was = lingering.get(el);
-  if (was) { clearTimeout(was.t); was.b.remove(); n += was.n; }
+  if (was) { clearTimeout(was.t); was.b.remove(); if (was.turn === turn) n += was.n; }
   if (!n) { lingering.delete(el); return; }
   const b = document.createElement('b');
   b.className = `seat-delta ${n > 0 ? 'up' : 'down'}`;
@@ -1743,10 +1760,10 @@ function linger(el, n, r = el && !el.rectOnly ? el.getBoundingClientRect() : nul
   // on the count's top right corner, over the chair's top edge: to its left it covered the turn words ("your last in a
   // row") and, as the count grew a digit, the count itself ("+2 0"); under it, it read as "+19 purple" (picky bot, Nov 4)
   Object.assign(b.style, { left: `${Math.round(r.right + 2)}px`, top: `${Math.round(r.top)}px` });
-  b.style.setProperty('--ld', `${MO.lingerDelta}ms`);
+  b.style.setProperty('--ld', `${MO.deltaChip}ms`);
   document.body.appendChild(b);
-  const t = setTimeout(() => { b.remove(); lingering.delete(el); }, MO.lingerDelta);
-  lingering.set(el, { b, n, t });
+  const t = setTimeout(() => { b.remove(); lingering.delete(el); }, MO.deltaChip);
+  lingering.set(el, { b, n, t, turn });
 }
 
 /** The deck's top card as a picture to fly (its back, the cult mark on it), where it sits, as snapshotShop gives a shop card. */
