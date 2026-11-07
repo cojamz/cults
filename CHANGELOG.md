@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.666 — 2026-11-07
+
+- A rival's turn is told in a banner at the top of the wheel, in the table's own pictures: bold space and member names, each cult's emoji, the cloak's tile, and recruits as what was paid for the member and its followers
+
 ## v0.99.665 — 2026-11-06
 
 - New contests: Red most members of one color (grey counts), White fewest members, Silver fewest silver, Yellow most member colors; Blue keeps most members
