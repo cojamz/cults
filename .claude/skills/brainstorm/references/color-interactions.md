@@ -74,6 +74,8 @@ Card review 2 (Nov 8, design/notes/card-review-2-2026-11-08.md) was refused in f
 
 The color map stitches (Nov 7): Flatterers and Pickpockets (named another color's mechanic).
 
-## 7. Small worked check
+## 7. Check the moment against the live members first
 
-> Red × White. Moments both cause: a member leaves a cult (Red takes or swaps it out; White discards its own). Already rewarded? Martyrs pays the owner whose member leaves. Underused: the member arriving. A card: "Whenever a member joins your cult from a rival's cult, +2 followers." Without Red: Magenta or a grey taker still moves members; without White it still works; with neither, it's quiet. That's the shape. Whether it's good is the pitching gates' job, not this file's. (Claude's illustration, not pitched.)
+The first version of this file illustrated the method with "Whenever a member joins your cult from a rival's cult, +2 followers.", which is already the live Foster Parents "Whenever a member joins your cult from a rival's, +2 followers." Step 3 of the method exists for this: print the live members of every color (`live-board.mjs … --members`) and list which cards already pay off the moment before writing a card for it. A moment that is already rewarded needs a different payoff (a recruit instead of followers, a different owner), not the same one again.
+
+Worked check, Blue × White and friends (batch 1, Nov 7): moment "a member leaves your cult". Already paid: Martyrs (the leaving card's owner, followers), Undertaker (your own discards, followers), Bargain Bin (your discards, a resource). Unpaid: refilling. Card: "Whenever one of your members leaves your cult on your turn, recruit an extra time this turn." "On your turn" keeps the extra recruit off a rival's turn. Without White it fires on Silver's member gifts and Red's swaps; without Silver or Red it still fires on White's discards.
