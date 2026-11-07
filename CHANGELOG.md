@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.682 — 2026-11-07
+
+- A rival's lines on the middle card appear as each move happens on the board, never seconds later, and keep their words; no empty bar at a turn's start; round scoring waits for each count before the next prize; your own turn sits under its own label in Since your last turn
+
 ## v0.99.681 — 2026-11-07
 
 - Relaxed speed: the story card's lines no longer hold the table so long a round stalls; a story card never starts its lines over
