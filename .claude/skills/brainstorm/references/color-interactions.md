@@ -21,6 +21,13 @@ So the unit of a color interaction is the **shared moment**, not the color:
 - a space is taken twice (copied) · followers are gained outside a recruit
 - a contest standing flips (someone passes or drops below a leader)
 
+## 1b. What makes a tie work (batch 1, Nov 7)
+
+- **It brings its own way to cause the moment.** A game can lack every color that causes it; an On Use that makes it happen keeps the card alive, and the other colors add more chances (verdicts 27).
+- **Its payoff reaches other colors.** "+N of any colors" is interactive by nature, because it feeds whatever the game's other colors need (verdicts 28).
+- **It still does its own color's job** and helps its own contest; a member traded away for followers reads as White in any color (verdicts 29).
+- **It doesn't read current contest leaders** (verdicts 30).
+
 ## 2. What it is not (each drew a no)
 
 - **A generic shop or cult mechanic.** Sell a member back to the shop, lend a member until round end, buy a rival's member by paying them its cost, swap only with a bigger cult, the shop laid out in color rows. Cory, Nov 7: "these aren't really blue and red interactions. they already inherently interact." Any color could print them; they add a new rule, not a tie.
