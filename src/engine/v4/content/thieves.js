@@ -496,6 +496,16 @@ const thieves = {
   ],
 
   handlers: {
+    // Cutthroats (pool 16): the stolen resources go back to the victim and that many of their followers come instead
+    // (loose followers, as every follower steal takes; never below 0)
+    cutthroats(ctx, p, v, data) {
+      if (v !== 'followers') return;
+      const o = ctx.player(data.vid);
+      for (const [c, k] of Object.entries(data.took)) { const x = Math.min(k, p.res[c] || 0); p.res[c] -= x; o.res[c] = (o.res[c] || 0) + x; }
+      const f = Math.min(data.n, Math.max(0, o.bonus));
+      o.bonus -= f; p.bonus += f;
+      ctx.log(`${p.name}'s Cutthroats: gives back the ${data.n} resource${data.n === 1 ? '' : 's'} and steals ${f} of ${o.name}'s followers instead.`);
+    },
     middlemen(ctx, p, id, data) { const o = ctx.player(id); if (o && o !== p) ctx.asMember(p, 'Middlemen', () => autoSteal(ctx, p, o, 'Middlemen', data.n, true)); },
     racket(ctx, p, id, data) {
       const o = ctx.player(id), n = Math.min(data.cap || 99, data.by ? racketCount(ctx, p, o, data.by) : ctx.memberCount(o));
@@ -668,6 +678,21 @@ const thieves = {
   },
 
   members: [
+    // idea pipeline pool 16 (Nov 7; ideas/magenta-r2.md; price a fill-in): after any steal of yours that took resources,
+    // you choose; reactions to the steal already ran on the resources (a table settles the steal, then the swap)
+    pool(m('cutthroats', 'Cutthroats', 3, 2, 'Whenever you steal resources, you may steal that many followers instead.', {
+      onSteal(ctx, owner, card, info) {
+        if (info.thief !== owner || info.victim === owner) return;
+        const n = Object.values(info.took || {}).reduce((a, b) => a + b, 0);
+        if (!n || !(info.victim.bonus > 0)) return;
+        const f = Math.min(n, info.victim.bonus), late = ctx.state.round >= 3 ? 1 : 0;
+        ctx.choose(owner, `Cutthroats: you stole ${n} from ${info.victim.name}. Keep them, or give them back and steal ${f} follower${f === 1 ? '' : 's'} instead?`, [
+          { id: 'keep', label: `Keep the ${n} resource${n === 1 ? '' : 's'}`, kind: 'choice', value: 'keep', hint: n * 0.7 },
+          { id: 'followers', label: `Steal ${f} follower${f === 1 ? '' : 's'}`, kind: 'choice', value: 'followers', hint: f * (1.1 + late) },
+        ], 'thieves.cutthroats', { vid: info.victim.id, took: { ...info.took }, n });
+      },
+      ...see(info => 2 * endsAhead(info).length),
+    }), 'pool16'),
     // idea pipeline pool 10 (Nov 7). Bagmen (the brief's Skimmers, renamed: Skimmers is the REPLACE2 test's card, 3 not 2):
     // a buy of 10 followers by a rival, 2 of them stolen through the shared steal, as Skimmers. Fat Cats: Magenta's
     // contest (Most resources by color) counts its owner's resources twice (core scoreContest, flag doubleMagenta).

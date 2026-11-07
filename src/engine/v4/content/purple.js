@@ -26,6 +26,7 @@ import { pool, poolSpace, chooseRival, freeAsk, freeTake } from './pool.js';
 
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const P = 'purple';
+const wheelMinions = ctx => Object.keys(ctx.state.slots || {}).length + Object.values(ctx.state.squats || {}).reduce((n, l) => n + l.length, 0);
 const TURN_VALUE = [3, 5, 7]; // a placement plus its buy, by round
 
 /** Workers p has on the board right now (a worker sharing a rival's space counts too). */
@@ -585,6 +586,18 @@ export default {
   scoring: { label: 'Most purple', counts: 'the purple you hold when the round ends', score: (ctx, p) => p.res.purple || 0 },
 
   actions: [
+    // idea pipeline pool 16 (Nov 7; ideas/purple-r2.md): the count is every minion on the wheel but the one just placed
+    // here (squatters and joined spots count, as Survey counts them). Price-free; numbers are fill-ins.
+    poolSpace({
+      key: 'witchinghour', ring: 3, name: 'Witching Hour', text: '+2 purple. +1 follower per other minion on the wheel.',
+      estimate: (ctx, p) => 2 + Math.max(0, wheelMinions(ctx)),
+      resolve(ctx, p) {
+        ctx.gain(p, P, 2, { fromAction: true });
+        const k = Math.max(0, wheelMinions(ctx) - 1);
+        if (k) p.bonus += k;
+        ctx.log(`${p.name}'s Witching Hour: ${k} other minion${k === 1 ? '' : 's'} on the wheel, +${k} follower${k === 1 ? '' : 's'}.`);
+      },
+    }, 'pool16'),
     ...[['closingtime', 'Closing Time', 2, true], ['waityourturn', 'Wait Your Turn', 1, false]].map(([key, name, ring, all]) => poolSpace({
       key, copyDoesIt: true, ring, name,
       text: all ? '+3 purple. Give a rival the Goes Last token: their other minions are placed after everyone else’s.'
@@ -716,6 +729,39 @@ export default {
   ],
 
   members: [
+    // idea pipeline pool 16 (Nov 7; ideas/purple-r2.md; prices are fill-ins). Both act once the round's turns are queued.
+    // Stragglers: your last turn this round moves to the end; the Goes Last token's minions still sort after it.
+    pool(m('stragglers', 'Stragglers', 5, 2, "Your last minion each round is placed after everyone else's. A Goes Last minion still goes after it.", {
+      onRoundQueued(ctx, owner, card) {
+        const q = ctx.state.queue, stop = q.findIndex(t => t.t === 'allPlaced');
+        if (stop < 0) return;
+        let last = -1;
+        for (let i = 0; i < stop; i++) if (q[i].t === 'turn' && q[i].p === owner.id) last = i;
+        if (last < 0 || last === stop - 1) return;
+        const [t] = q.splice(last, 1);
+        q.splice(stop - 1, 0, t);
+        ctx.log(`${owner.name}'s Stragglers: ${owner.name}'s last minion is placed after everyone else's.`);
+      },
+      ...see(info => 3 * endsAhead(info).length),
+    }), 'pool16'),
+    // Tag Team: each of your turns pulls your next one right behind it (pairs, in order; an odd last turn stays put)
+    pool(m('tagteam', 'Tag Team', 3, 2, 'Each time your turn comes, take two turns in a row.', {
+      onRoundQueued(ctx, owner, card) {
+        const q = ctx.state.queue, stop = q.findIndex(t => t.t === 'allPlaced');
+        if (stop < 0) return;
+        let moved = 0;
+        for (let i = 0; i < stop; i++) {
+          if (!(q[i].t === 'turn' && q[i].p === owner.id)) continue;
+          let j = -1;
+          for (let k = i + 1; k < stop; k++) if (q[k].t === 'turn' && q[k].p === owner.id) { j = k; break; }
+          if (j < 0) break;
+          if (j > i + 1) { const [t] = q.splice(j, 1); q.splice(i + 1, 0, t); moved++; }
+          i++;
+        }
+        if (moved) ctx.log(`${owner.name}'s Tag Team: ${owner.name}'s turns come two in a row.`);
+      },
+      ...see(info => 2 * endsAhead(info).length),
+    }), 'pool16'),
     // idea pipeline pool 10 (Nov 7). Scalpers: the taker picks the 2 (one at a time, from what they hold), on their own
     // turn. Night Porters (the brief's Night Shift, renamed: a Night Shift is already in the REPLACE7 test): holding the
     // token at Round End, the owner keeps it into next round, and once the round's turns are queued their last minion
