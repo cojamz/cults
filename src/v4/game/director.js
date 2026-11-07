@@ -1449,7 +1449,9 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
         // the chairs re-sort into the new round's order now (GameScreen lays the column out; a skip sorts them too)
         case 'sort': try { dispatchEvent(new Event('patrons:seat-sort')); } catch { /* no window */ } return;
         case 'pulse': if (!skip) pulse(where(a.place), a.dur, { press: !!a.press }); return;
-        case 'jiggle': if (!skip) jiggle(where(a.place), a.dur); return;
+        // only the member or cloak itself: a member not on the seat (Stunt Double used from the shop) fell back to the
+        // whole crowd, which then grew past the seat's border, tilted, with its "2 members" (frame review, Nov 7)
+        case 'jiggle': { const el = skip ? null : where(a.place); if (el && el.matches && el.matches('.cs-member, .cs-cloak-on')) jiggle(el, a.dur); return; }
         case 'point': {
           // a rival's choice (grammar S3): what they chose lights, then its effect leaves it; it stays lit until it lands
           const el = where(a.place);
