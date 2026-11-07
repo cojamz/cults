@@ -35,4 +35,17 @@ export const MIXES = {
   'spaces +1/0/-1 up4': { SPACE_GAIN_R: '1,0,-1', MEMBER_UP: 4 },
   'start3 up4': { CLOAK_START: 3, MEMBER_UP: 4 },
   'spaces +1/0/-1 up4 prizes 4/6/14': { SPACE_GAIN_R: '1,0,-1', MEMBER_UP: 4, PRIZES: '4,6,14' },
+  // wave 3 (Nov 7, Cory: "continue economy tests as well, with more tweaks/levers pulled"): around Richer (live as a
+  // setting: members +1 color +1 any, spaces +1), each lever pulled alone on top of it, judged against Richer
+  'richer': { MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1 },
+  'richer spaces III-1': { MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1, SPACE_GAIN_R: '0,0,-1' },
+  'richer spaces I+1': { MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1, SPACE_GAIN_R: '1,0,0' },
+  'richer prizes 6/9/14': { MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1, PRIZES: '6,9,14' },
+  'richer prizes 4/6/14': { MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1, PRIZES: '4,6,14' },
+  'richer fol 5→6': { MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1, FOL_MID: 6 },
+  'richer cloak+1': { MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1, CLOAK_GAIN: 1 },
+  'richer all colored': { MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1, MEMBER_COLOR: 3 },
+  'richer start3': { MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1, CLOAK_START: 3 },
+  'richer r1=2': { MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1, R1_LIMIT: 2 },
+  'up6 color3 space+2': { MEMBER_UP: 6, MEMBER_COLOR: 3, SPACE_GAIN: 2 },
 };

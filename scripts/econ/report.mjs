@@ -41,15 +41,16 @@ const per = g => {
   return { cards: avg(ps.map(p => p.cards)), dead: ps.reduce((a, p) => a + p.dead, 0) / looks, small: w.length ? w.filter(p => p.cards <= 5).length / w.length : 0,
     last: g.lastAfterR2Won ? 1 : 0, margin: g.spread, fol: avg(ps.map(p => p.followers)) };
 };
-const base = new Map(load('today').map(g => [g.game, per(g)]));
+const BASE = process.argv[3] || 'today';
+const base = new Map(load(BASE).map(g => [g.game, per(g)]));
 let seed = 12345; const rnd = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
 const boot = d => { const m = []; for (let k = 0; k < 1000; k++) { let s = 0; for (let i = 0; i < d.length; i++) s += d[Math.floor(rnd() * d.length)]; m.push(s / d.length); } m.sort((a, b) => a - b); return [m[50], m[949]]; };
 const KEYS = [['cards', 'Cards end', 1], ['dead', 'Turns nothing affordable (pts)', 100], ['small', 'Winners ≤5 cards (pts)', 100], ['last', 'Last after II wins (pts)', 100], ['margin', 'Win margin', 1], ['fol', 'Final followers', 1]];
-console.log('\n## Change from today, same games (90% range; a range that crosses 0 is not a clear change)\n');
+console.log(`\n## Change from ${BASE}, same games (90% range; a range that crosses 0 is not a clear change)\n`);
 console.log('| Mix | Paired games | ' + KEYS.map(k => k[1]).join(' | ') + ' |');
 console.log('|' + '---|'.repeat(KEYS.length + 2));
 for (const n of Object.keys(MIXES)) {
-  if (n === 'today') continue;
+  if (n === BASE) continue;
   const gs = load(n).filter(g => base.has(g.game));
   if (gs.length < 5) continue;
   const cells = KEYS.map(([k, , s]) => {
