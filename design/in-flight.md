@@ -58,4 +58,4 @@ Branches
 
 - 2026-11-08 1:20am · Tie the colors closer together: card review 2 sent (/mnt/project-files/contests/card-review-2-2026-11-08.md; work in design/eval/review2/). Waiting on Cory: build every default? If yes, build the page's defaults (new cards, fixes, cuts, White's two moves) with tests, then publish. Earlier held items now covered by the page: Caterer/Silver Cloak, Jack/Seamstress, Old Money, cast out → discard.
 
-- **Economy test** (thread "Tune member costs for fun", Nov 7): done. Results design/eval/economy-test/results-2026-11-07.md; dials are env vars for bot games only (content/price.js ECON), runner scripts/econ/. Next if Cory picks: put the top mixes in the menu as a setting so he can play them.
+- **Economy test** (thread "Tune member costs for fun", Nov 7): waves 1-2 done, results design/eval/economy-test/results-2026-11-07.md; Richer shipped as an optional setup (v0.99.684). Wave 3 (10 levers on top of Richer) stopped early when Cor wrapped up: resume steps in design/eval/economy-test/wave3-status-2026-11-07.md.
