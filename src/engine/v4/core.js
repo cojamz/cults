@@ -1011,7 +1011,7 @@ function runTask(state, task) {
         if (state.openBar && qid === 'silver') for (const t of state.openBar) if (t.round === state.round && t.pid !== p.id) {
           const o = state.players.find(x => x.id === t.pid); o.bonus += 1; log(state, `${o.name}'s Open Bar: ${p.name} took a Silver space, +1 follower.`);
         }
-        econRun('space', { pid: p.id, color: quadrant(qid).resource }, () => a.resolve(ctx, p));
+        econRun('space', { pid: p.id, color: quadrant(qid).resource, round: state.round }, () => a.resolve(ctx, p));
       });
       fCredit(state, mark, a.name);
       return out;
@@ -1943,14 +1943,15 @@ function buyFollowersNow(state, p, tier, chosen) {
 // Economy dials (content/price.js ECON, bot games only): the first gain of a space's own color to its taker, and the
 // first resource gain a cloak's ability pays, move by the dial. Today's numbers leave both untouched.
 const econ = { space: null, cloak: null };
+const econOn = kind => (kind === 'space' ? !!(ECON.space || ECON.spaceR) : !!ECON[kind]);
 function econRun(kind, frame, fn) {
-  if (!ECON[kind]) return fn();
+  if (!econOn(kind)) return fn();
   const was = econ[kind]; econ[kind] = { ...frame, paid: false };
   try { return fn(); } finally { econ[kind] = was; }
 }
 function econAdjust(p, color, n, fromAction) {
   const s = econ.space, c = econ.cloak;
-  if (s && fromAction && !s.paid && s.pid === p.id && s.color === color) { s.paid = true; n = Math.max(0, n + ECON.space); }
+  if (s && fromAction && !s.paid && s.pid === p.id && s.color === color) { s.paid = true; n = Math.max(0, n + ECON.space + (ECON.spaceR?.[s.round - 1] || 0)); }
   if (c && !c.paid && c.pid === p.id) { c.paid = true; n = Math.max(0, n + ECON.cloak); }
   return n;
 }

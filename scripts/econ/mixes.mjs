@@ -28,4 +28,11 @@ export const MIXES = {
   'prizes 3/5/8': { PRIZES: '3,5,8' },
   'up5 fol 5→6 10→13': { MEMBER_UP: 5, FOL_MID: 6, FOL_TOP: 13 },
   'up4 prizes 6/9/14': { MEMBER_UP: 4, PRIZES: '6,9,14' },
+  // wave 2 (Nov 7, from the judges: round I has turns with nothing to buy, round III floods into follower buys):
+  // spaces give more early and less late (the round shows on every space, as Gather's numbers already do)
+  'spaces +1/0/-1': { SPACE_GAIN_R: '1,0,-1' },
+  'spaces +1/0/0 up4': { SPACE_GAIN_R: '1,0,0', MEMBER_UP: 4 },
+  'spaces +1/0/-1 up4': { SPACE_GAIN_R: '1,0,-1', MEMBER_UP: 4 },
+  'start3 up4': { CLOAK_START: 3, MEMBER_UP: 4 },
+  'spaces +1/0/-1 up4 prizes 4/6/14': { SPACE_GAIN_R: '1,0,-1', MEMBER_UP: 4, PRIZES: '4,6,14' },
 };

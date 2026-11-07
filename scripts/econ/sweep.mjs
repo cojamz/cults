@@ -11,10 +11,11 @@ mkdirSync(dir, { recursive: true });
 const slug = n => n.replace(/[^a-z0-9+=-]+/gi, '_');
 const names = flags.only ? String(flags.only).split(',') : Object.keys(MIXES);
 const jobs = [];
-for (let first = 1; first <= games; first += chunk) for (const n of names) {
+const from = Number(flags.from || 1);
+for (let first = from; first < from + games; first += chunk) for (const n of names) {
   const out = `${dir}/${slug(n)}.${first}.jsonl`;
   const have = existsSync(out) ? readFileSync(out, 'utf8').trim().split('\n').filter(Boolean).length : 0;
-  const k = Math.min(chunk, games - first + 1);
+  const k = Math.min(chunk, from + games - first);
   if (have < k) jobs.push({ n, first: first + have, count: k - have, out });
 }
 console.log(`${jobs.length} jobs`);

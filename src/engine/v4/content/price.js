@@ -27,6 +27,8 @@ export const EXTRA_COLOR = (() => {
 const num = k => { const v = Number(globalThis.process?.env?.[k]); return Number.isInteger(v) ? v : null; };
 export const ECON = Object.freeze({
   space: num('SPACE_GAIN') ?? 0,
+  // SPACE_GAIN_R=a,b,c: the space dial by round (round I, II, III), added to SPACE_GAIN
+  spaceR: globalThis.process?.env?.SPACE_GAIN_R ? globalThis.process.env.SPACE_GAIN_R.split(',').map(Number) : null,
   cloak: num('CLOAK_GAIN') ?? 0,
   cloakStart: num('CLOAK_START') ?? 1,
   r1: num('R1_LIMIT'),
