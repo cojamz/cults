@@ -8,4 +8,6 @@ Chat threads don't load the /brainstorm skill, so read .claude/skills/brainstorm
 4. **Who at the table feels it**: a sting, a gift, a reason to block, or nothing. Nothing means cut.
 5. **Not already refused**: check design/pitch-ledger.md for this color and verdicts.md. Same shape counts as the same idea.
 
+6. **Judged like his marks**: run it through design/notes/card-judging-v2-2026-11-07.md and design/eval/card-judging/taste-guide.md in writing, the current card as the default and "none of these" allowed, and play it at the table's real state that round (round I: most players hold 0 or 1 members). (Cory, Nov 8: "your ideas were fucking awful there its like you applied none of what we learned.")
+
 Send only what survives (often 2 to 4, not 5). If nothing survives, say so and ask one sharp question. Two nos on a slot in a row: stop and redo steps 1 to 4 before the next list. Log each pitch in design/pitch-ledger.md the same turn.
