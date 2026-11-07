@@ -1,5 +1,7 @@
 # How we judge every card (Nov 7)
 
+> Superseded by design/notes/card-judging-v2-2026-11-07.md (Nov 7). Kept for the record.
+
 Cory, Nov 7: "come up with a really, really good robust evaluation system… well-rounded… not to overweight on the color interaction… it becomes really likely for us to hit local maximas… it needs to be thought of in a way of like how they all connect to each other." Then: "don't skimp on integrity."
 Doc for Cory: https://claude.ai/artifact/9US8nrf77fdKoBfZUvQUTF (do not edit while he reads it). This file is the working copy for readers and agents.
 
