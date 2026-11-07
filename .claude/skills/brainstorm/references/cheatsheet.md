@@ -6,7 +6,7 @@
 - Spaces: 3 per color in round I, 2 more in round II, 1 center in round III; rings stay open. Round I fills exactly.
 - Shop: 6/7/8 face up by round, pile underneath, row goes to the bottom between rounds.
 - Members: colored part + any part (floor 2), worth followers, abilities. They move (swap, steal, bury).
-- Contests: every color scores most of its color held at round end, +4/+6/+10 (ties split, rounded up). Hold to win it, spend to recruit.
+- Contests (By color, every game, Nov 7 to 8): Red most members of one color (grey counts); Blue most members; White fewest members (0 counts); Yellow most member colors; Magenta most resources; Silver fewest silver (0 counts); Purple placed the round's last minion; Green most minions on Green spaces. +4/+6/+10, ties split rounded up. Design each color from its contest; check decisions.md for the latest.
 - Scarce: resources in round I, the recruit in round III. Round II spaces must change what you own or how much you recruit (bar: Promote, Shake Down).
 - Every space gives at least 1 of its color; lean conservative; grows by round.
 - A space does its whole effect the moment it's taken. "Whenever", "this round", "at round end" are member effects.
@@ -28,5 +28,7 @@ Trade one scarce thing for another (Last Call: position for followers). Break a 
 6. It loses to the same ring's reworked sibling.
 7. It lasts past the moment it's taken.
 8. It charges you, rescues you, places out of turn, rewards the leader, cuts costs, needs memory, or names another color.
+9. It draws from the pile, uses chance or hides a card; makes a member cheaper; adds a token.
+10. Offered as a color interaction but is a generic shop or cult rule, the overlap the colors already have, a crossed tie, or built on a live card's name (color-interactions.md).
 
 ## Describe cards by their printed text, never a loose summary.
