@@ -64,3 +64,5 @@ Each one has drawn a no. Run every idea past all of them.
 21. **Inventing a token.** Nov 7: "tokens are a thing that need to come from me. And the last turn token is that right now. I don't want you… willy-nilly throwing tokens in the game." Check: use only pieces already in the game (the Goes Last token is the only token). A new token is Cory's call, raised as its own question only when it clearly connects colors.
 
 22. **Pile draws, randomness, hidden cards.** Nov 7, said many times: "i don't like drawing from the top of the pile. i don't like randomness. In general the game should be all public information." Check: every card a player gains or reads is face up and chosen; nothing comes off the top of the pile or by chance. presend bounces it.
+
+23. **Members that get cheaper.** Nov 7, on "recruits cost 1 less per member of that color you hold": "i don't like members getting 'cheaper' - it's hard to track in a live game." Check: no running discounts on member prices; a printed price stays the price.
