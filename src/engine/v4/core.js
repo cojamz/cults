@@ -1,3 +1,4 @@
+import { ECON } from './content/price.js';
 import { grantDiscount } from './discount.js';
 import { plainCopy, stateCopy } from './copy.js';
 // Patrons v4 engine. Pure and deterministic: state in, move in, state out.
@@ -27,7 +28,8 @@ function pinToTop(state) {
   state.pile = [...hit, ...state.pile.filter(u => !hit.includes(u))];
 }
 
-export const RING_VALUE = [4, 6, 10];
+// PRIZES=a,b,c: bot games only (economy test, Cory Nov 7: "yes you can adjust follower price etc.")
+export const RING_VALUE = ECON.prizes || [4, 6, 10];
 export const WORKERS = [3, 4, 5];
 export const SHOP_SIZE = 8;
 /** Face-up members by round: 6 in round I (and setup), 7 in round II, 8 in round III (Cory, 2026-10-22). SHOP_SIZE is the most. */
@@ -35,8 +37,9 @@ export const shopSize = state => (state.round <= 1 ? 6 : state.round === 2 ? 7 :
 // Any colors, no stock limit. The three rounds remain the game clock.
 export const TIERS = [
   { key: 'small', cost: 1, get: 1, colors: 1, label: '1 of anything' },
-  { key: 'mid', cost: 5, get: 5, colors: 1, label: '5 of anything' },
-  { key: 'top', cost: 10, get: 10, colors: 1, label: '10 of anything' },
+  // FOL_MID / FOL_TOP: bot games only (economy test): followers the 5 and 10 buys give; 1 for 1 always stays (Cory, Nov 7: "always keep 1 for 1 i find that essential")
+  { key: 'mid', cost: 5, get: ECON.folMid ?? 5, colors: 1, label: '5 of anything' },
+  { key: 'top', cost: 10, get: ECON.folTop ?? 10, colors: 1, label: '10 of anything' },
 ];
 /** How many buys of a limited tier are left (Infinity for unlimited tiers). */
 export const tierLeft = (state, tier) => (tier.limited ? state.stock?.[tier.key] ?? 0 : Infinity);
@@ -51,7 +54,7 @@ export const DEFAULT_RULES = { release: false, guests: true, cull: true, artifac
 /** Round cutoffs by printed cost (Cory, 2026-10-25: "3 or less / 4 / 5 and up"): the most a round I, then round II,
  *  member costs; anything pricier joins in round III. */
 // Round I is up to 5 as a player sees it since every member +1 (Cory, Nov 5 10:22pm UTC: "with the price increase, we should move it to 5"): printed 3 plus the 2 every member adds, so the cutoffs stay
-export const ROUND_CUTOFFS = [3, 4];
+export const ROUND_CUTOFFS = ECON.r1 != null ? [ECON.r1, Math.max(ECON.r1, 4)] : [3, 4];
 /** Members that join in another round than their cost says (Cory, 2026-10-25: Impostors and Doppelganger, round III). */
 export const ROUND_OF = { 'echo.impostor': 3, 'echo.doppel': 3 };
 // (by the cost before the +1 wild every member pays, content/index.js EXTRA_WILD, so no member changes round)
@@ -808,7 +811,7 @@ function resolveTask(state, task, optionId) {
   switch (task.t) {
     case 'setupPick': {
       const q = optionId.slice('color:'.length);
-      p.res[quadrant(q).resource] += 1;
+      p.res[quadrant(q).resource] += ECON.cloakStart;
       p.startColor = q; // the color this player brings to the contest order (contestOrder)
       if (state.startPool) state.startPool = state.startPool.filter(id => id !== q);
       const art = state.artifacts?.[q];
@@ -984,7 +987,7 @@ function runTask(state, task) {
         if (state.openBar && qid === 'silver') for (const t of state.openBar) if (t.round === state.round && t.pid !== p.id) {
           const o = state.players.find(x => x.id === t.pid); o.bonus += 1; log(state, `${o.name}'s Open Bar: ${p.name} took a Silver space, +1 follower.`);
         }
-        a.resolve(ctx, p);
+        econRun('space', { pid: p.id, color: quadrant(qid).resource }, () => a.resolve(ctx, p));
       });
       fCredit(state, mark, a.name);
       return out;
@@ -1894,9 +1897,27 @@ function buyFollowersNow(state, p, tier, chosen) {
   recruited(state, p, { followers: tier.get, tier, spent: spend });
 }
 
+// Economy dials (content/price.js ECON, bot games only): the first gain of a space's own color to its taker, and the
+// first resource gain a cloak's ability pays, move by the dial. Today's numbers leave both untouched.
+const econ = { space: null, cloak: null };
+function econRun(kind, frame, fn) {
+  if (!ECON[kind]) return fn();
+  const was = econ[kind]; econ[kind] = { ...frame, paid: false };
+  try { return fn(); } finally { econ[kind] = was; }
+}
+function econAdjust(p, color, n, fromAction) {
+  const s = econ.space, c = econ.cloak;
+  if (s && fromAction && !s.paid && s.pid === p.id && s.color === color) { s.paid = true; n = Math.max(0, n + ECON.space); }
+  if (c && !c.paid && c.pid === p.id) { c.paid = true; n = Math.max(0, n + ECON.cloak); }
+  return n;
+}
+const isCloak = (state, uid) => uid != null && !!state.artifacts && Object.values(state.artifacts).includes(uid);
+
 // again: a later part of a gain the same action already paid (Collect Debts' second victim), so "whenever an action
 // gains you gold" members (Prospector) pay once per action
 function gain(state, p, color, n, { fromAction = false, again = false } = {}) {
+  if (!(n > 0)) return;
+  n = econAdjust(p, color, n, fromAction);
   if (!(n > 0)) return;
   const g = { color, n, fromAction, again, doubled: false };
   const ctx = ctxFor(state);
@@ -1943,7 +1964,7 @@ function eachMemberOf(state, p, fn, keys) {
     for (const def of effectiveDefs(card, state)) {
       if (keys && !keys.some(k => def[k] !== undefined)) continue;
       const before = traceSnapshot(state);
-      accounted(state, null, () => { underCause({ kind: 'member', pid: p.id, uid, def: card.def }, () => tallied(state, p, uid, () => fn(wrap(state, card), def))); traceChanges(state, before, p, def); }, p.id, def.name);
+      accounted(state, null, () => { const run = () => underCause({ kind: 'member', pid: p.id, uid, def: card.def }, () => tallied(state, p, uid, () => fn(wrap(state, card), def))); if (isCloak(state, uid)) econRun('cloak', { pid: p.id }, run); else run(); traceChanges(state, before, p, def); }, p.id, def.name);
     }
   }
 }
@@ -2372,7 +2393,8 @@ function ctxFor(state) {
       // an artifact's own hook runs as itself too (Pocket Watch, Impressionist): its uid is the artifact's, not a member's,
       // or the turn story called it "A member" (bug bash, Nov 1)
       const uid = uid0 ?? [...owner.members, ...(owner.artifact !== undefined ? [owner.artifact] : [])].find(u => { try { return cardDef(state, u).name === name; } catch { return false; } });
-      const out = underCause({ kind: 'member', pid: owner.id, uid: uid ?? null, def: uid != null ? state.cards[uid].def : null }, () => tallied(state, owner, uid, fn));
+      const run = () => underCause({ kind: 'member', pid: owner.id, uid: uid ?? null, def: uid != null ? state.cards[uid].def : null }, () => tallied(state, owner, uid, fn));
+      const out = isCloak(state, uid) ? econRun('cloak', { pid: owner.id }, run) : run();
       traceChanges(state, before, owner, { name });
       return out;
     },

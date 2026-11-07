@@ -1,0 +1,31 @@
+// The mixes the economy test plays (Claude's picks, Nov 7): today, each dial moved alone, then mixes aimed at fewer
+// member cards that keep turns full. Today: MEMBER_UP 3 (every member +3, 1 of it its color), spaces and cloaks as printed,
+// 1 resource with your cloak, round I deck up to printed 3 (shown 5).
+export const MIXES = {
+  today: {},
+  'up2': { MEMBER_UP: 2 }, 'up4': { MEMBER_UP: 4 }, 'up5': { MEMBER_UP: 5 },
+  'color0': { MEMBER_COLOR: 0 }, 'color2': { MEMBER_COLOR: 2 },
+  'space-1': { SPACE_GAIN: -1 }, 'space+1': { SPACE_GAIN: 1 },
+  'cloak-1': { CLOAK_GAIN: -1 }, 'cloak+1': { CLOAK_GAIN: 1 },
+  'start3': { CLOAK_START: 3 },
+  'r1=2': { R1_LIMIT: 2 }, 'r1=4': { R1_LIMIT: 4 },
+  'up4 color2': { MEMBER_UP: 4, MEMBER_COLOR: 2 },
+  'up4 space+1': { MEMBER_UP: 4, SPACE_GAIN: 1 },
+  'up5 color2 space+1': { MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1 },
+  'up5 space+1 cloak+1': { MEMBER_UP: 5, SPACE_GAIN: 1, CLOAK_GAIN: 1 },
+  'up4 color2 cloak+1': { MEMBER_UP: 4, MEMBER_COLOR: 2, CLOAK_GAIN: 1 },
+  'up4 r1=2': { MEMBER_UP: 4, R1_LIMIT: 2 },
+  'up4 color0': { MEMBER_UP: 4, MEMBER_COLOR: 0 },
+  'space-1 cloak+1': { SPACE_GAIN: -1, CLOAK_GAIN: 1 },
+  'up2 space-1': { MEMBER_UP: 2, SPACE_GAIN: -1 },
+  'color2 r1=4': { MEMBER_COLOR: 2, R1_LIMIT: 4 },
+  'up5 color2 start3': { MEMBER_UP: 5, MEMBER_COLOR: 2, CLOAK_START: 3 },
+  'up6 space+1': { MEMBER_UP: 6, SPACE_GAIN: 1 },
+  // follower buys and contest prizes (Cory, Nov 7: "yes you can adjust follower price etc. just always keep 1 for 1")
+  'fol 5→6 10→13': { FOL_MID: 6, FOL_TOP: 13 },
+  'fol 5→4 10→8': { FOL_MID: 4, FOL_TOP: 8 },
+  'prizes 6/9/14': { PRIZES: '6,9,14' },
+  'prizes 3/5/8': { PRIZES: '3,5,8' },
+  'up5 fol 5→6 10→13': { MEMBER_UP: 5, FOL_MID: 6, FOL_TOP: 13 },
+  'up4 prizes 6/9/14': { MEMBER_UP: 4, PRIZES: '6,9,14' },
+};
