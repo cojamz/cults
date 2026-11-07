@@ -26,7 +26,7 @@ export const onCursorShared = fn => shareSubs.on(fn);
 // player's own minion, outlined in their robe color). ?cursorLook= on the page picks one (the looks shown to Cory).
 const urlLook = () => { try { return new URLSearchParams(globalThis.location?.search || '').get('cursorLook') || ''; } catch { return ''; } };
 export const CURSOR_LOOKS = ['seat', 'robe', 'minion'];
-export const cursorLook = () => (CURSOR_LOOKS.includes(urlLook()) ? urlLook() : 'seat');
+export const cursorLook = () => (CURSOR_LOOKS.includes(urlLook()) ? urlLook() : 'robe');
 const robeOf = (state, seat) => { const c = cloakOf(state, seat); return c ? CLOAK_HEX[c] : ROBE; };
 
 const ANCHORS = '.lt-seat[data-pid], [data-uid], [data-slot], [data-cell], [data-rate], [data-deck], [data-region]';
