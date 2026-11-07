@@ -178,3 +178,14 @@ describe('a steal is told once, in the colors it took', () => {
     once(st);
   });
 });
+
+describe('a member cast out to the discard is said (frame review, Nov 7)', () => {
+  it('Estate Sale: the line names the member that left, not only the white', () => {
+    const d = table({ quadrants: ['red', 'yellow', 'trading', 'gold'], round: 2, left: 1, members: [['red.recruiter', 'red.intern']],
+      queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }], order: [0, 1] }, 1);
+    d.take('trading.estatesale');
+    d.on();
+    const st = d.t.stories.at(-1);
+    expect(st.lines.join(' · ')).toMatch(/cast out (Recruiter|Intern)/);
+  });
+});

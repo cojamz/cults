@@ -1187,6 +1187,9 @@ export function effectStory(start, end, actor, me = null, fx = []) {
     // Promote/Demote physically exchange a cult member and a shop card under the action's cause.
     // Their outgoing card returns to the shop, rather than being released to the pile.
     else if (e.type === 'release' && e.to.kind === 'shop') g.moved.push({ uid: e.what.uid, from: e.from.pid, to: 'shop' });
+    // a member cast out to the discard by a space or a member (Estate Sale): said, or P2 dropped a member and its
+    // followers with the line telling only "+8 white" (frame review, Nov 7)
+    else if (e.type === 'release' && e.to.kind === 'pile' && (g.key === 'space' || g.key.startsWith('member:'))) g.moved.push({ uid: e.what.uid, from: e.from.pid, to: 'out' });
     // Red's swaps with the shop record the incoming card as a recruit under the move ('move'), not the space
     else if (e.type === 'recruit' && e.from.kind === 'shop' && (e.cause?.kind === 'space' || e.cause?.kind === 'move')) g.moved.push({ uid: e.what.uid, from: 'shop', to: e.to.pid });
     else if (e.type === 'discount' && e.to.pid === actor) g.disc += e.what.n;
@@ -1278,6 +1281,11 @@ export function effectStory(start, end, actor, me = null, fx = []) {
     // a shop exchange tells what left first ("gave X to the shop, took the shop's Y"), whatever order the engine moved them
     for (const m of [...g.moved].sort((x, y) => (x.from === 'shop') - (y.from === 'shop'))) {
       if (paired.has(m)) continue;
+      if (m.to === 'out') {
+        bits.push(m.from === owner ? `cast out ${cardName(m.uid)}` : `cast out ${whose(m.from)} ${cardName(m.uid)}`);
+        if (m.from === me && actor !== me) hits.push(`cast out your ${cardName(m.uid)}`);
+        continue;
+      }
       bits.push(m.to === owner ? `took ${whose(m.from)} ${cardName(m.uid)}` : m.from === owner ? `gave ${cardName(m.uid)} to ${nm(m.to)}` : `${cardName(m.uid)}: ${nm(m.from)} → ${nm(m.to)}`);
       if (m.from === me && m.to !== me && actor !== me) hits.push(`took your ${cardName(m.uid)}`);
     }
