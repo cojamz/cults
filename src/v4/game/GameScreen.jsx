@@ -46,7 +46,7 @@ import Chronicle from './Chronicle.jsx';
 import SinceStrip, { StoryCard } from './SinceStrip.jsx';
 import { MinionPool } from './MinionPool.jsx';
 import { useTalk, TalkBubble, TalkPicker, useEnterToTalk } from './Talk.jsx';
-import Cursors from './Cursors.jsx';
+import Cursors, { CursorSetting } from './Cursors.jsx';
 import { createTrail, feed, liveStory, offStory, sinceYourTurn, seatLoss, lossWords } from './trail.js';
 import Results from './Results.jsx';
 import FinalScore from './FinalScore.jsx';
@@ -484,7 +484,7 @@ function SoundSetting() {
 }
 
 /** One glyph for the rest (How to play, the log, Leave): the table carries no header buttons. */
-function Menu({ onRules, onLog, onLeave, getState }) {
+function Menu({ onRules, onLog, onLeave, getState, online = false }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(null); // null | 'copied' | the record text, when the clipboard refused
   useEffect(() => { if (!open) setCopied(null); }, [open]);
@@ -513,6 +513,7 @@ function Menu({ onRules, onLog, onLeave, getState }) {
           <button type="button" role="menuitem" className="btn ghost log-btn" onClick={pick(onLog)}>The log</button>
           <SpeedSetting />
           <SoundSetting />
+          {online && <CursorSetting />}
           <button type="button" role="menuitem" className="btn ghost record-btn" data-copy-record onClick={copyRecord}
             title="Copies this game, move by move, so a problem can be replayed exactly">{copied === 'copied' ? 'Copied' : 'Copy game record'}</button>
           <button type="button" role="menuitem" className="btn ghost save-game-btn" data-save-game onClick={() => { const st = getState && getState(); if (st) saveGame(gameRecord(st)); }}
@@ -1960,7 +1961,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
           {yours && !state.over && myRun && myRun.total >= 2 && pend.kind === 'place' && <span className="say-run" data-run-left={myRun.left} title={runTitle(myRun)}>{runSay(myRun)}</span>}
         </div>
         {/* who's winning lives on the chairs (each total, its place, the margin on hover): no score row (Cory, 2026-10-15) */}
-        <Menu onRules={() => setRules(true)} onLog={openLog} getState={() => session.getState()} onLeave={onHome ? () => (state.over ? onHome() : setLeaving(true)) : null} />
+        <Menu onRules={() => setRules(true)} onLog={openLog} online={typeof session.pointAt === 'function'} getState={() => session.getState()} onLeave={onHome ? () => (state.over ? onHome() : setLeaving(true)) : null} />
       </header>
       {session.info && session.info.mode === 'online' && session.info.roomCode && (
         <div className="hint room">Room {session.info.roomCode}</div>

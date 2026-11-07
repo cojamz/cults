@@ -9,8 +9,25 @@ import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { CURSOR_GAP_MS, CURSOR_IDLE_MS } from '../session/cursors.js';
 import { playerColor, seatEmoji } from '../format.js';
-import { Minion } from '../art/Leader.jsx';
+import { Minion, ROBE } from '../art/Leader.jsx';
+import { cloakOf, CLOAK_HEX } from './cloak.js';
+import { createEmitter } from '../session/emitter.js';
 import './cursors.css';
+
+// Whether others see my cursor (Cory, 2026-11-07: "players should be able to turn off their cursor being seen"): a
+// switch in the menu, kept in this browser. On by default.
+const SHARE_KEY = 'patrons.v4.cursorShare';
+const shareSubs = createEmitter();
+export function cursorShared() { try { return localStorage.getItem(SHARE_KEY) !== 'off'; } catch { return true; } }
+export function setCursorShared(on) { try { localStorage.setItem(SHARE_KEY, on ? 'on' : 'off'); } catch { /* private window */ } shareSubs.emit(!!on); }
+export const onCursorShared = fn => shareSubs.on(fn);
+
+// Which look the arrows wear: 'seat' (an arrow in the seat color), 'robe' (an arrow in the robe color) or 'minion' (the
+// player's own minion, outlined in their robe color). ?cursorLook= on the page picks one (the looks shown to Cory).
+const urlLook = () => { try { return new URLSearchParams(globalThis.location?.search || '').get('cursorLook') || ''; } catch { return ''; } };
+export const CURSOR_LOOKS = ['seat', 'robe', 'minion'];
+export const cursorLook = () => (CURSOR_LOOKS.includes(urlLook()) ? urlLook() : 'seat');
+const robeOf = (state, seat) => { const c = cloakOf(state, seat); return c ? CLOAK_HEX[c] : ROBE; };
 
 const ANCHORS = '.lt-seat[data-pid], [data-uid], [data-slot], [data-cell], [data-rate], [data-deck], [data-region]';
 const esc = v => (globalThis.CSS?.escape ? CSS.escape(String(v)) : String(v).replace(/["\\]/g, '\\$&'));
@@ -58,7 +75,10 @@ export function pointOf(c, root, doc = document) {
 }
 
 /** Sends this player's mouse (not touches: a phone has no cursor to show) while the session takes cursors. */
-function useSendCursor(session, on) {
+function useSendCursor(session, online) {
+  const [shared, setShared] = useState(cursorShared);
+  useEffect(() => onCursorShared(setShared), []);
+  const on = online && shared;
   useEffect(() => {
     if (!on || typeof session.pointAt !== 'function') return undefined;
     let last = null;
@@ -141,6 +161,7 @@ function Cursors({ session, state, rootRef }) {
   }, [ids, rootRef]);
 
   if (!online || !ids) return null;
+  const look = cursorLook();
   return createPortal(
     <div className="cursors" aria-hidden="true">
       {ids.split(',').map(k => {
@@ -148,13 +169,16 @@ function Cursors({ session, state, rootRef }) {
         const seat = Number(s);
         const p = state.players[seat];
         if (!p) return null;
+        const color = look === 'seat' ? playerColor(seat) : robeOf(state, seat);
         return (
-          <div key={id} className="cursor" data-cursor-seat={seat} style={{ '--pc': playerColor(seat) }}
+          <div key={id} className={`cursor cursor-${look}`} data-cursor-seat={seat} style={{ '--pc': color }}
             ref={el => { if (el) nodes.current.set(id, el); else nodes.current.delete(id); }}>
-            <svg className="cursor-arrow" viewBox="0 0 14 20" width="14" height="20">
-              <path d="M1 1 L1 16 L5 12.5 L7.8 18.6 L10.4 17.4 L7.7 11.5 L12.6 11.5 Z" />
-            </svg>
-            <span className="cursor-name"><Minion color={playerColor(seat)} emoji={seatEmoji(state, seat)} size={16} />{p.name}</span>
+            {look === 'minion'
+              ? <span className="cursor-minion"><Minion color={color} emoji={seatEmoji(state, seat)} size={28} /></span>
+              : <svg className="cursor-arrow" viewBox="0 0 14 20" width="14" height="20">
+                <path d="M1 1 L1 16 L5 12.5 L7.8 18.6 L10.4 17.4 L7.7 11.5 L12.6 11.5 Z" />
+              </svg>}
+            <span className="cursor-name">{look !== 'minion' && <Minion color={color} emoji={seatEmoji(state, seat)} size={16} />}{p.name}</span>
           </div>
         );
       })}
@@ -164,4 +188,16 @@ function Cursors({ session, state, rootRef }) {
 }
 
 export default memo(Cursors, (a, b) => a.session === b.session && a.rootRef === b.rootRef
-  && a.state.players.length === b.state.players.length && a.state.players.every((p, i) => p.name === b.state.players[i].name && p.emoji === b.state.players[i].emoji));
+  && a.state.players.length === b.state.players.length && a.state.players.every((p, i) => p.name === b.state.players[i].name && p.emoji === b.state.players[i].emoji && cloakOf(a.state, i) === cloakOf(b.state, i)));
+
+/** The menu's switch: whether the other players see your mouse (online games only). */
+export function CursorSetting() {
+  const [on, setOn] = useState(cursorShared);
+  useEffect(() => onCursorShared(setOn), []);
+  return (
+    <button type="button" role="menuitemcheckbox" aria-checked={on} className="btn ghost cursor-share-btn" data-cursor-share={on ? 'on' : 'off'}
+      onClick={() => setCursorShared(!on)} title="Whether the other players see where your mouse is">
+      {on ? 'Others see my mouse' : 'My mouse is hidden'}
+    </button>
+  );
+}

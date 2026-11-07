@@ -79,6 +79,18 @@ try {
   await pointAt('.lt-seat[data-pid="1"]', 'his own seat');
   // Hana never sees her own arrow, and Gus sees nobody's (Hana's mouse hasn't moved)
   if (await hana.$('.cursors .cursor[data-cursor-seat="0"]')) throw new Error('Hana sees her own arrow');
+  // Gus turns his cursor off in the menu: his arrow goes, and moving his mouse doesn't bring it back; on again, it's back
+  await gus.click('.menu-glyph');
+  await gus.click('[data-cursor-share="on"]');
+  await hana.waitForFunction(() => !document.querySelector('.cursors .cursor[data-cursor-seat="1"]'), null, { timeout: 5000 });
+  await gus.mouse.move(300, 300, { steps: 5 });
+  await hana.waitForTimeout(600);
+  if (await hana.$('.cursors .cursor[data-cursor-seat="1"]')) throw new Error('Gus hid his cursor, but Hana still sees it');
+  log('Gus hid his cursor: Hana sees nothing');
+  if (!(await gus.$('[data-cursor-share="off"]'))) await gus.click('.menu-glyph');
+  await gus.click('[data-cursor-share="off"]');
+  await gus.keyboard.press('Escape');
+  await pointAt(`.lt .stage [data-slot="${slot}"]`, 'shown again');
   // the mouse leaves the window: the arrow goes
   await gus.evaluate(() => document.dispatchEvent(new PointerEvent('pointerout', { bubbles: true, relatedTarget: null })));
   await hana.waitForFunction(() => !document.querySelector('.cursors .cursor[data-cursor-seat="1"]'), null, { timeout: 5000 });
