@@ -1,4 +1,4 @@
-import { ECON } from './content/price.js';
+import { ECON, RICH_UP, shiftCosts, richUp } from './content/price.js';
 import { grantDiscount } from './discount.js';
 import { plainCopy, stateCopy } from './copy.js';
 // Patrons v4 engine. Pure and deterministic: state in, move in, state out.
@@ -59,7 +59,9 @@ export const ROUND_CUTOFFS = ECON.r1 != null ? [ECON.r1, Math.max(ECON.r1, 4)] :
 /** Members that join in another round than their cost says (Cory, 2026-10-25: Impostors and Doppelganger, round III). */
 export const ROUND_OF = { 'echo.impostor': 3, 'echo.doppel': 3 };
 // (by the cost before the +1 wild every member pays, content/index.js EXTRA_WILD, so no member changes round)
-const baseCost = def => def.s + def.w - (def.extraWild || 0) - (def.extraColor || 0);
+// (and before the Richer setting's 2: round decks go by the printed price, so Richer keeps every member in its round;
+// Nov 9, Richer dealt only the 2 members pinned to round I)
+const baseCost = def => def.s + def.w - (def.extraWild || 0) - (def.extraColor || 0) - (def.richUp || 0);
 export const memberRound = def => def.round ?? ROUND_OF[def.id] ?? (baseCost(def) <= ROUND_CUTOFFS[0] ? 1 : baseCost(def) <= ROUND_CUTOFFS[1] ? 2 : 3);
 /** The round a member joins the deck in this game (1 when it starts in the deck). */
 export const joinsRound = (state, def) => (!state.rules?.roundDecks ? 1 : Math.min(memberRound(def), state.rules.roundDecks));
@@ -273,14 +275,17 @@ export const cardDef = (state, uid) => {
 };
 /** The "Richer board, pricier members" setting (rules.econ 'rich'; Cory, Nov 7 economy test, the judges' pick; today's
  *  prices stay the default): every member costs 1 more of its color and 1 more of any (grey: 2 more of any), and every
- *  space gives 1 more of its color (gain, below). Cards that name a cost keep their printed numbers. */
+ *  space gives 1 more of its color (gain, below). Every named cost moves up the same 2 (Cory, Nov 9; content/price.js). */
 export const RICH = Object.freeze({ color: 1, any: 1, grey: 2, space: 1 });
+if (RICH.color + RICH.any !== RICH_UP || RICH.grey !== RICH_UP) throw new Error('Richer: every member must cost RICH_UP more, so named costs move with it');
 const richDefs = new WeakMap();
 function richDef(d) {
   let r = richDefs.get(d);
   if (!r) {
     const grey = d.quadrant === 'guest' || d.quadrant === 'benders';
-    r = grey ? { ...d, w: (d.w || 0) + RICH.grey } : { ...d, s: (d.s || 0) + RICH.color, w: (d.w || 0) + RICH.any };
+    // its own words move every named cost too (content/price.js richText; Cory, Nov 9)
+    const text = shiftCosts(d.text, RICH_UP);
+    r = grey ? { ...d, text, w: (d.w || 0) + RICH.grey, richUp: RICH.grey } : { ...d, text, s: (d.s || 0) + RICH.color, w: (d.w || 0) + RICH.any, richUp: RICH.color + RICH.any };
     richDefs.set(d, r);
   }
   return r;
@@ -1003,7 +1008,7 @@ function runTask(state, task) {
         const more = [];
         for (let k = 0; k < (p.turnExtraBuys || 0); k++) more.push({ t: 'buy', p: p.id, ...source });
         const cheap = Math.max(0, ...p.members.flatMap(uid => effectiveDefs(state.cards[uid]).map(d => d.cheapBuy || 0)));
-        if (cheap) more.push({ t: 'buy', p: p.id, ...source, cheap });
+        if (cheap) more.push({ t: 'buy', p: p.id, ...source, cheap: cheap + richUp(state) }); // Richer moves the named cost too
         delete p.turnExtraBuys;
         if (more.length) state.queue.splice(2, 0, ...more);
       }

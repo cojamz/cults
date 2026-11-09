@@ -1,4 +1,4 @@
-import { MORE } from './price.js';
+import { MORE, richUp } from './price.js';
 import { memberScoring } from './member-scoring.js';
 // White: the exchange. Your followers are liquid: sell them for white when you need fuel, draw white on them
 // (Dividend), buy them back cheap. Fewest followers at round end takes the ring's followers (Cory, 2026-10-15):
@@ -1127,7 +1127,7 @@ const trading = {
           hint: (c.def.f || 1) * 1.5 + c.def.s + c.def.w,
         })), 'trading.evict');
       },
-      botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).some(o => ctx.membersOf(o).some(c => c.def.s + c.def.w >= 6 + MORE)),
+      botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).some(o => ctx.membersOf(o).some(c => c.def.s + c.def.w >= 6 + MORE + richUp(ctx.state))),
     })),
     // cut by Cory (2026-10-22); kept defined for old records and card tests
     m('dealer', 'Dealer', 2, 0, 'Whenever you sell followers, +1 white per follower sold.', {

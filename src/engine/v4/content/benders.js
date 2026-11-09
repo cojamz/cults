@@ -21,7 +21,7 @@ import { add6, old6 } from './replace6.js';
 import { add9, old9, handlers9 } from './replace9.js';
 import { see, endsAhead } from './botsee.js';
 import { pool, freeAsk, freeTake } from './pool.js';
-import { MORE } from './price.js';
+import { MORE, richUp } from './price.js';
 import { add11, old11, handlers11 } from './replace11.js';
 import { add15, old15 } from './replace15.js';
 import { pickColors } from './yellow.js';
@@ -202,7 +202,7 @@ const members = [
   }), 'pool9'),
   pool(m('wayfarers', 'Wayfarers', null, 0, 3, `Whenever this member joins your cult, recruit a shop member costing up to ${4 + MORE}, for free.`, {
     onJoined(ctx, owner) {
-      freeAsk(ctx, owner, 'Wayfarers', ctx.shopCards().filter(c => c.def.s + c.def.w <= 4 + MORE), 'benders.wayfarers', `no shop member costs ${4 + MORE} or less`);
+      freeAsk(ctx, owner, 'Wayfarers', ctx.shopCards().filter(c => c.def.s + c.def.w <= 4 + MORE + richUp(ctx.state)), 'benders.wayfarers', `no shop member costs ${4 + MORE + richUp(ctx.state)} or less`);
     },
     ...see(() => 3), // BOTSEE: the free member on the recruit
   }), 'pool9'),

@@ -32,6 +32,7 @@ import { shortEffect, pipEffect, ruleWords } from '../shorts.js';
 import { Follower } from '../art/Follower.jsx';
 import { lookFromUrl, useFace, boxOf, faceStatus, FaceBox, BUILT_IN } from './faces/index.js';
 import { panelText, lineText } from './panelText.js';
+import { richUp, richText } from '../../engine/v4/content/price.js';
 import { ResourceGlyph } from './Glyphs.jsx';
 import { Pip } from './Rich.jsx';
 import { MO, spinEase } from '../motion.js';
@@ -1414,7 +1415,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       if (Face) {
         const crew = owner !== undefined ? [owner, ...joiners].map(id => ({ emoji: seatEmoji(state, id), pid: id, fresh: !!(fresh && fresh.pid === id), color: playerColor(id), name: state.players[id].name })) : [];
         face = (
-          <FaceBox Face={Face} q={qid} action={a} ring={t} round={round} name={a.name} effect={pipEffect(qid, a, round)}
+          <FaceBox Face={Face} q={qid} action={a} ring={t} round={round} name={a.name} effect={richText(state, pipEffect(qid, a, round))} up={richUp(state)}
             status={faceStatus({ legal: !!opt, owner: shadeOwner, open, fresh })} minions={crew} onPick={opt ? placeFn(live, key, opt) : null}
             px={1 / (scale || 1)} color={`var(--${qid})`} angle={(norm(s.ang + rot) + 360) % 360} flash={flashV.has(key)} selected={selected} />
         );
@@ -1454,7 +1455,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
               <span className="face" aria-hidden="true">
                 <span className="ico"><Sprite id={[`${qid}.${a.key}`, spriteId(a.name)]} kind="action" sphere={quadrant(qid).resource} size={24} /></span>
                 {/* no name on the space (Cory, 2026-10-15: "do away with the names of the actions for now"); it's in the hover */}
-                <span className="yl" data-yield><Rich text={shortEffect(qid, a, round)} /></span>
+                <span className="yl" data-yield><Rich text={richText(state, shortEffect(qid, a, round))} /></span>
               </span>
             )}
             {!open && <span className="seal" aria-hidden="true">{roman(t)}</span>}

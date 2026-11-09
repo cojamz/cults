@@ -35,3 +35,19 @@ export const ECON = Object.freeze({
   folMid: num('FOL_MID'), folTop: num('FOL_TOP'),
   prizes: globalThis.process?.env?.PRIZES ? globalThis.process.env.PRIZES.split(',').map(Number) : null,
 });
+// The Richer setting (setup "Economy: Richer", rules.econ 'rich'; core.js RICH): every member costs 2 more (1 of its
+// color + 1 any, grey members 2 any). Everything that names a member's cost moves up the same 2 (Cory, Nov 9: "if you
+// meddle with member prices you have to tweak everything that references them, including deck limit"): each cap in the
+// rules adds richUp(state), and every text a player reads moves its named costs with richText. Round decks go by the
+// printed price, so each round keeps its members.
+export const RICH_UP = 2;
+export const isRich = state => state?.rules?.econ === 'rich';
+/** How far a named member cost moves at this table (0 today, 2 under Richer). */
+export const richUp = state => (isRich(state) ? RICH_UP : 0);
+// "costing 9 or less", "costing up to 5", "costing 7 or more", "member, up to 5", "≤8": an absolute cost, never a
+// relative one ("costing up to 3 more", "at most 2 less", "within 2").
+const NAMED_COST = /(\bcosting (?:up to |at most )?|\bmember, up to |≤)(\d+)(?!\d)(?!\s*(?:more|less)\b)/g;
+/** A text with every named member cost moved by n. */
+export const shiftCosts = (text, n) => (!n || typeof text !== 'string' ? text : text.replace(NAMED_COST, (_, a, d) => `${a}${Number(d) + n}`));
+/** A text as this table reads it (named costs moved under Richer). */
+export const richText = (state, text) => shiftCosts(text, richUp(state));

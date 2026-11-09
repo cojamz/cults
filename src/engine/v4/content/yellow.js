@@ -2,7 +2,7 @@
 // flexible. it also allows you to translate currencies (kind of like launderer)". It changes colors, yours and rivals',
 // and pays for members of many colors. Contests stay a separate color's job: Yellow's contest is most yellow, as every
 // 2.0 color's is (Claude, under Cory's go-with-your-gut). The wheel and deck: design/decisions.md, Oct 30-31.
-import { MORE } from './price.js';
+import { MORE, richUp } from './price.js';
 import { discardOf } from '../discard.js';
 import { gainColorOf } from './color-of.js';
 import { startLaunder } from './launder.js';
@@ -91,7 +91,7 @@ const newInShop = (ctx, p) => ctx.shopCards().some(c => newColor(ctx, p, c, { gr
  * An extra recruit, as Initiation's (On Recruit fires); your turn's own recruit is still yours.
  */
 const hwCost = c => c.def.s + c.def.w;
-const hwList = (ctx, p) => ctx.shopCards().filter(c => hwCost(c) <= 4 + MORE && newColor(ctx, p, c, { grey: true }));
+const hwList = (ctx, p) => ctx.shopCards().filter(c => hwCost(c) <= 4 + MORE + richUp(ctx.state) && newColor(ctx, p, c, { grey: true }));
 /** Open House (REPLACE14=openhouse, Members E lane, Nov 4; quality/pitches/E-redo1.md, paper 17 vs 15; a play A/B under
  *  "paper filters, play ranks"), in Melting Pot's place: a free extra recruit costing up to 2 per member color. */
 const ohList = (ctx, p) => { const cap = 2 * memberColors(ctx, p).length; return ctx.shopCards().filter(c => hwCost(c) <= cap); };
@@ -116,7 +116,7 @@ const HOUSEWARMING = {
   resolve(ctx, p) {
     ctx.gain(p, Y, 2, { fromAction: true });
     const list = hwList(ctx, p);
-    if (!list.length) { ctx.log(`${p.name}'s Housewarming: no shop member of a new color costs ${4 + MORE} or less.`); return; }
+    if (!list.length) { ctx.log(`${p.name}'s Housewarming: no shop member of a new color costs ${4 + MORE + richUp(ctx.state)} or less.`); return; }
     ctx.choose(p, 'Housewarming: recruit which member for free?', list.map(c => ({
       id: `card:${c.uid}`, label: `${c.def.name} (${hwCost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + hwCost(c),
     })), 'yellow.housewarming');
@@ -562,8 +562,8 @@ export default {
     }), 'pool11'),
     pool(m('globetrotters', 'Globetrotters', 2, 2, 'Round End: recruit a shop member of a color none of your members have, costing up to 6, for free.', {
       onAllPlaced(ctx, owner) {
-        ctx.asMember(owner, 'Globetrotters', () => freeAsk(ctx, owner, 'Globetrotters', ctx.shopCards().filter(c => hwCost(c) <= 6 && newColor(ctx, owner, c, { grey: true })),
-          'yellow.poolFree', 'no shop member of a new color costs 6 or less'));
+        ctx.asMember(owner, 'Globetrotters', () => freeAsk(ctx, owner, 'Globetrotters', ctx.shopCards().filter(c => hwCost(c) <= 6 + richUp(ctx.state) && newColor(ctx, owner, c, { grey: true })),
+          'yellow.poolFree', `no shop member of a new color costs ${6 + richUp(ctx.state)} or less`));
       },
       ...see(info => 1.5 * endsAhead(info).length * 0.4), // BOTSEE: a cheap new-color member now and then
     }), 'pool5'),

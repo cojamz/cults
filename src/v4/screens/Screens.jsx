@@ -221,7 +221,7 @@ export function SwapPick({ value, onChange, readOnly }) {
   </div>;
 }
 // Economy (Cory, Nov 7 economy test: the judges' pick, opt-in; today's prices stay the default)
-const ECON_OPTS = [['today', 'Today', 'Costs and gains as printed.'], ['rich', 'Richer', 'Members cost 1 more of their color and 1 more of any (grey members: 2 more of any). Spaces give 1 more of their color.']];
+const ECON_OPTS = [['today', 'Today', 'Costs and gains as printed.'], ['rich', 'Richer', 'Members cost 1 more of their color and 1 more of any (grey members: 2 more of any), and every cost named on a card goes up 2 with them. Spaces give 1 more of their color.']];
 export const ECON_HINT = { today: 'Costs and gains as printed.', rich: 'Members cost more; spaces give more.' };
 export function EconPick({ value, onChange, readOnly }) {
   return <div className="seat" data-econ-pick={value}><SetName name="Economy" />

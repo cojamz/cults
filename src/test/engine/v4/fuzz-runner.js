@@ -22,6 +22,16 @@ function plainJSONPath(v, path = 'state') {
 
 function fail(msg, s, ctx) { throw new Error(`${ctx}: ${msg} (round ${s.round}, move ${s.moves})`); }
 
+// cast-outs into the shop row since this round began (log lines, newest first)
+function castInsThisRound(s) {
+  let n = 0;
+  for (let i = s.log.length - 1; i >= 0; i--) {
+    const l = String(s.log[i]);
+    if (/^Round [IV]+ begins/.test(l) || /market refreshes/.test(l)) break;
+    if (/ face up into the shop\.$/.test(l)) n++;
+  }
+  return n;
+}
 export function checkInvariants(s, ctx) {
   // pure JSON
   const bad = plainJSONPath(s);
@@ -58,7 +68,11 @@ export function checkInvariants(s, ctx) {
   // piles shops: the shop is the face-up row plus each open pile's top; All piles has no row (the rest stay face down)
   const row = s.supply ? s.shop.filter(u => s.supply[s.cards[u].def] === undefined) : s.shop;
   const rowSize = s.supply && s.rules?.piles?.only ? 0 : shopSize(s);
-  if (!['market.churn', 'benders.scoutPick'].includes(s.queue[0]?.h) && row.length !== Math.min(rowSize, row.length + (rowSize ? s.pile.length + (s.discard || []).length : 0))) fail(`shop row ${row.length} with pile ${s.pile.length}`, s, ctx);
+  // a member cast out face up into a full row (Yard Sale; the Test cards' Bailiffs and Repossessors: "put a rival's
+  // member … into the shop") is one card over until someone recruits from it; the row never refills past its size
+  const castIn = rowSize ? castInsThisRound(s) : 0;
+  const want = Math.min(rowSize, row.length + (rowSize ? s.pile.length + (s.discard || []).length : 0));
+  if (!['market.churn', 'benders.scoutPick'].includes(s.queue[0]?.h) && !(row.length === want || (row.length > want && row.length <= rowSize + castIn))) fail(`shop row ${row.length} with pile ${s.pile.length}`, s, ctx);
   // pending exists exactly while the game runs
   if (!s.pending !== !!s.over) fail(`pending ${!!s.pending} but over ${s.over}`, s, ctx);
   if (s.pending) {

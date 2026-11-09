@@ -1,3 +1,4 @@
+import { richUp } from './price.js';
 // Green copies actions, including copy actions whose targets are chosen afresh.
 // Each action pays +1 green; each branch excludes actions already in that branch.
 //
@@ -79,7 +80,7 @@ function track(ctx, e) {
   ctx.recruit = (t, uid, o) => {
     // a member the taker paid for (Snap Up, Half Price) is a trade: a copy does the action itself
     if (t.id === e.p && o?.paid) e.redo = true;
-    else if (t.id === e.p && o?.free) { e.members.push(costOf(quadrantDef(ctx.state, uid))); e.members.sort((x, y) => x - y); }
+    else if (t.id === e.p && o?.free) { e.members.push(costOf(quadrantDef(ctx.state, uid)) + richUp(ctx.state)); /* as the shop shows it (Richer: +2) */ e.members.sort((x, y) => x - y); }
     return recruit(t, uid, o);
   };
 }

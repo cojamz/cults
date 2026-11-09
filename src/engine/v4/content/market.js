@@ -1,7 +1,7 @@
 // Blue (the market): bend the shop. Recruit outside your buy, ignore colors, pay half, churn the row.
 // Scoring: most blue (Cory, 2026-10-15; the old rule counted members costing 8 or more, a cutoff he cut).
 // Blue's members watch who recruits blue members, and Blue's spaces pay out in blue.
-import { MORE } from './price.js';
+import { MORE, richUp } from './price.js';
 import { discardOf, toDiscard, deckReady, takeFromDiscard } from '../discard.js';
 import { registerQuadrant } from './index.js';
 import { gainColorOf } from './color-of.js';
@@ -301,10 +301,10 @@ const market = {
     // seems rather high… play with that going between five and six"; Claude's default for the test version, RUMMAGE_CAP)
     poolSpace({
       key: 'rummage', ring: 2, name: 'Rummage', copyDoesIt: true, text: `Recruit a member from the discard pile costing up to ${RUMMAGE_CAP}, for free. +1 blue.`,
-      estimate: ctx => 1 + Math.max(0, ...discardOf(ctx.state).map(u => ctx.card(u)).filter(c => priceOf(c) <= RUMMAGE_CAP).map(c => c.def.f + 0.6 * priceOf(c))),
+      estimate: ctx => 1 + Math.max(0, ...discardOf(ctx.state).map(u => ctx.card(u)).filter(c => priceOf(c) <= RUMMAGE_CAP + richUp(ctx.state)).map(c => c.def.f + 0.6 * priceOf(c))),
       resolve(ctx, p) {
-        const list = discardOf(ctx.state).filter(u => priceOf(ctx.card(u)) <= RUMMAGE_CAP);
-        if (!list.length) ctx.log(`${p.name}'s Rummage: no member in the discard pile costs ${RUMMAGE_CAP} or less.`);
+        const list = discardOf(ctx.state).filter(u => priceOf(ctx.card(u)) <= RUMMAGE_CAP + richUp(ctx.state));
+        if (!list.length) ctx.log(`${p.name}'s Rummage: no member in the discard pile costs ${RUMMAGE_CAP + richUp(ctx.state)} or less.`);
         else ctx.choose(p, 'Rummage: recruit which discard pile member for free?', list.map(u => ({
           id: `card:${u}`, label: `${ctx.card(u).def.name} (${priceOf(ctx.card(u))})`, kind: 'card', value: u, hint: botWorth(ctx.card(u)),
         })), `${Q}.rummage`);
@@ -398,9 +398,9 @@ const market = {
         ctx.gain(p, B, 1, { fromAction: true });
         const bottom = discardOf(ctx.state).slice(-3).reverse().map(u => ctx.card(u));
         ctx.log(`${p.name}'s Dumpster Dive: the top of the discard pile is ${bottom.map(c => `${c.def.name} (${priceOf(c)})`).join(', ') || 'empty'}.`);
-        const fit = bottom.filter(c => priceOf(c) <= 6 + MORE);
-        if (!fit.length) { ctx.log(`${p.name}'s Dumpster Dive: none of them costs ${6 + MORE} or less.`); return; }
-        ctx.choose(p, `Dumpster Dive: recruit which of the top 3 of the discard pile for free (costing up to ${6 + MORE})?`, fit.map(c => ({
+        const fit = bottom.filter(c => priceOf(c) <= 6 + MORE + richUp(ctx.state));
+        if (!fit.length) { ctx.log(`${p.name}'s Dumpster Dive: none of them costs ${6 + MORE + richUp(ctx.state)} or less.`); return; }
+        ctx.choose(p, `Dumpster Dive: recruit which of the top 3 of the discard pile for free (costing up to ${6 + MORE + richUp(ctx.state)})?`, fit.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: priceOf(c) + c.def.f * 1.5,
         })).concat({ id: 'none', label: 'Take none', kind: 'pass', value: null, hint: -1 }), `${Q}.dive`);
       },
@@ -446,7 +446,7 @@ const market = {
       ctx.log(`${p.name}'s ${data.name}: ${o.name}'s ${ctx.card(uid).def.name} goes into the shop.`);
       ctx.buryMember(o, uid, p, { shop: true });
     },
-    rummage(ctx, p, uid) { if (discardOf(ctx.state).includes(uid) && priceOf(ctx.card(uid)) <= RUMMAGE_CAP) graveTake(ctx, p, uid, 'Rummage'); },
+    rummage(ctx, p, uid) { if (discardOf(ctx.state).includes(uid) && priceOf(ctx.card(uid)) <= RUMMAGE_CAP + richUp(ctx.state)) graveTake(ctx, p, uid, 'Rummage'); },
     // idea pipeline pool 3: Grave Diggers' and Salvagers' pick among tied cheapest discard pile members
     graveFree(ctx, p, uid, data) { if (discardOf(ctx.state).includes(uid)) ctx.asMember(p, data.name, () => graveTake(ctx, p, uid, data.name)); },
     anyColor: anyColorStep,
@@ -705,7 +705,7 @@ const market = {
         ...(every === 'round' ? { onRoundStart(ctx, owner, card) { card.used = false; } } : {}),
         onActivate(ctx, owner, card) {
           const list = repoList(ctx, owner, cap);
-          if (!list.length) { card.used = false; ctx.log(`${owner.name}'s ${name}: no rival's member costs ${cap} or less.`); return; }
+          if (!list.length) { card.used = false; ctx.log(`${owner.name}'s ${name}: no rival's member costs ${cap + richUp(ctx.state)} or less.`); return; }
           ctx.choose(owner, `${name}: put which rival's member into the shop?`, list.map(({ c, o }) => ({
             id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid,
             hint: botWorth(c) + (o.res && ctx.memberCount(o) >= Math.max(...ctx.state.players.map(x => ctx.memberCount(x))) ? 2 : 0),
@@ -913,7 +913,7 @@ const market = {
       ...see(i => endsAhead(i).length * 1.5),
       onAnyRecruit(ctx, owner, card, by, rec) {
         const d = ctx.defOf(rec);
-        if (by !== owner && d.s + d.w <= 4 + MORE) { owner.bonus += 1; ctx.log(`${owner.name}'s Snobs: ${by.name} recruited ${d.name}, +1 follower.`); }
+        if (by !== owner && d.s + d.w <= 4 + MORE + richUp(ctx.state)) { owner.bonus += 1; ctx.log(`${owner.name}'s Snobs: ${by.name} recruited ${d.name}, +1 follower.`); }
       },
     })),
     m('snob', 'Snobs', 3, 2, SNOBS_TEXT, { f: 2, ...old11('snob2'), ...old11('snobs3'), ...old9('market.snob'),
@@ -1161,7 +1161,7 @@ const market = {
 
 /** Bailiffs (pool 13): rivals' members costing up to cap, as printed. */
 function repoList(ctx, p, cap) {
-  return ctx.rivals(p).flatMap(o => ctx.membersOf(o).filter(c => c.def.s + c.def.w <= cap).map(c => ({ c, o })));
+  return ctx.rivals(p).flatMap(o => ctx.membersOf(o).filter(c => c.def.s + c.def.w <= cap + richUp(ctx.state)).map(c => ({ c, o })));
 }
 export default market;
 

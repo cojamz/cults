@@ -1,3 +1,4 @@
+import { shiftCosts } from '../../../engine/v4/content/price.js';
 import { MORE } from '../../../engine/v4/content/price.js';
 // The token face's art (see token.jsx): a pixel rasterizer for the cardboard token itself, the small pixel marks
 // that sit on its symbol strip, and each action's strip (at most 3 symbols, Dune: Imperium's icon line).
@@ -232,10 +233,11 @@ export function parseEffect(text) {
 }
 
 /** The strip for a space: its drawn symbols, else the effect text read as symbols. */
-export function stripFor(q, action, round = 1, effect = '') {
+export function stripFor(q, action, round = 1, effect = '', up = 0) {
   const v = S[q] && S[q][action.key];
   const s = typeof v === 'function' ? v(Math.max(1, Math.min(3, round))) : v;
-  if (s) return s;
+  // a named member cost ("tag:≤8") moves with the table's prices (Richer: up 2; content/price.js)
+  if (s) return up ? s.map(row => (Array.isArray(row) ? row.map(w => (typeof w === 'string' ? shiftCosts(w, up) : w)) : row)) : s;
   // a plain gain ('+2 blue, +1 red.'): one symbol per resource
   const gains = [...String(action.text || '').matchAll(/\+(\d+) ([a-z]+)/g)].filter(m => RES.has(m[2]));
   if (gains.length && /^(\+\d+ [a-z]+,? ?)+\.?$/.test(String(action.text).trim())) return gains.slice(0, 3).map(m => [m[1], m[2]]);

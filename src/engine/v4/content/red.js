@@ -1,5 +1,5 @@
 // Red builds and moves members; held red resources decide its round-end contest.
-import { MORE } from './price.js';
+import { MORE, richUp } from './price.js';
 import { discardOf } from '../discard.js';
 import { gainColorOf } from './color-of.js';
 import { defById as defOf } from './index.js';
@@ -16,7 +16,7 @@ const cost = c => c.def.s + c.def.w;
 /** Pool 6: Family Reunion's shop members: a color one of p's members has, costing up to 6 (was 4: nothing cost that little, judge games Nov 7). */
 const reunionList = (ctx, p) => {
   const have = new Set(ctx.membersOf(p).map(c => c.asColor || c.def.quadrant).filter(q => q && q !== 'guest' && q !== 'benders'));
-  return ctx.shopCards().filter(c => have.has(c.def.quadrant) && cost(c) <= 6);
+  return ctx.shopCards().filter(c => have.has(c.def.quadrant) && cost(c) <= 6 + richUp(ctx.state));
 };
 /** Pool 6: Trade-Ins' pairs, [your member, shop member costing up to 2 more], members not yet swapped this time. */
 const tradeInPairs = (ctx, p, done) => {
@@ -59,7 +59,7 @@ function busyMoves(ctx, p) {
   const out = [];
   for (const from of ctx.rivals(p)) {
     if (!ctx.canSteal(p, from, 'member')) continue;
-    for (const c of ctx.membersOf(from)) if (cost(c) <= 5 && ctx.canSwapMember(c.uid)) for (const to of ctx.rivals(p)) if (to !== from) out.push({ c, from, to });
+    for (const c of ctx.membersOf(from)) if (cost(c) <= 5 + richUp(ctx.state) && ctx.canSwapMember(c.uid)) for (const to of ctx.rivals(p)) if (to !== from) out.push({ c, from, to });
   }
   return out;
 }
@@ -193,7 +193,7 @@ export default {
       key: 'familyreunion', ring: 1, name: 'Family Reunion', copyDoesIt: true, text: 'Recruit a member of a color you already have, costing up to 6, for free. +1 red.',
       estimate: (ctx, p) => 1 + Math.max(0, ...reunionList(ctx, p).map(c => c.def.f + 0.6 * cost(c))),
       resolve(ctx, p) {
-        freeAsk(ctx, p, 'Family Reunion', reunionList(ctx, p), 'red.poolFree', 'no shop member of a color you have costs 6 or less');
+        freeAsk(ctx, p, 'Family Reunion', reunionList(ctx, p), 'red.poolFree', `no shop member of a color you have costs ${6 + richUp(ctx.state)} or less`);
         ctx.gain(p, 'red', 1, { fromAction: true });
       },
     }, 'pool6'),
@@ -282,11 +282,11 @@ export default {
     },
     {
       key: 'take', ring: 3, name: 'Initiation', text: `Recruit a shop member costing ${9 + MORE} or less, for free. +1 red.`, // the cap (Cory, 2026-10-24: "8 or less"; 9 since Nov 5, "for named costs, yes go up by 1")
-      estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().filter(c => cost(c) <= 9 + MORE).map(c => c.def.f + cost(c) * 0.6)),
+      estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().filter(c => cost(c) <= 9 + MORE + richUp(ctx.state)).map(c => c.def.f + cost(c) * 0.6)),
       resolve(ctx, p) {
-        const shop = ctx.shopCards().filter(c => cost(c) <= 9 + MORE);
+        const shop = ctx.shopCards().filter(c => cost(c) <= 9 + MORE + richUp(ctx.state));
         ctx.gain(p, 'red', 1, { fromAction: true });
-        if (!shop.length) { ctx.log(`${p.name}: no shop member costs ${9 + MORE} or less.`); return; }
+        if (!shop.length) { ctx.log(`${p.name}: no shop member costs ${9 + MORE + richUp(ctx.state)} or less.`); return; }
         if (ACT.has('initiation')) usesRecruit(ctx, p);
         ctx.choose(p, 'Initiation: which member?', shop.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + cost(c),
@@ -409,7 +409,7 @@ export default {
     ...({ // always registered: Seat Filler (red.drift) is live since Nov 5; the rest are harmless when unused
       convert(ctx, p, uid) {
         const v = ctx.ownerOf(uid), c = ctx.card(uid);
-        if (!v || v === p || cost(c) > 4 + MORE || !ctx.canSteal(p, v, 'swap') || !ctx.canSwapMember(uid)) return;
+        if (!v || v === p || cost(c) > 4 + MORE + richUp(ctx.state) || !ctx.canSteal(p, v, 'swap') || !ctx.canSwapMember(uid)) return;
         if (!ctx.moveMember(uid, v, p, { recruit: true })) return;
         ctx.log(`${p.name}'s Converts: ${p.name} recruits ${v.name}'s ${c.def.name}.`);
         const shop = ctx.shopCards();
@@ -639,9 +639,9 @@ export default {
     ...add7(m('converts', 'Converts', 3, 4, `On Recruit: recruit a rival’s member costing ${4 + MORE} or less, for free; that rival recruits the shop’s cheapest, for free.`, { f: 2, n: 2,
       onRecruited(ctx, owner, card) {
         const list = ctx.rivals(owner).filter(o => ctx.canSteal(owner, o, 'swap'))
-          .flatMap(o => ctx.membersOf(o).filter(c => cost(c) <= 4 + MORE && ctx.canSwapMember(c.uid)).map(c => ({ c, o })));
-        if (!list.length) { ctx.log(`${owner.name}'s Converts: no rival's member costing ${4 + MORE} or less to recruit.`); return; }
-        ctx.choose(owner, `Converts: recruit which rival’s member (costing ${4 + MORE} or less) for free?`, list.map(({ c, o }) => ({
+          .flatMap(o => ctx.membersOf(o).filter(c => cost(c) <= 4 + MORE + richUp(ctx.state) && ctx.canSwapMember(c.uid)).map(c => ({ c, o })));
+        if (!list.length) { ctx.log(`${owner.name}'s Converts: no rival's member costing ${4 + MORE + richUp(ctx.state)} or less to recruit.`); return; }
+        ctx.choose(owner, `Converts: recruit which rival’s member (costing ${4 + MORE + richUp(ctx.state)} or less) for free?`, list.map(({ c, o }) => ({
           id: `card:${c.uid}`, label: `${o.name}: ${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f + cost(c),
         })), 'red.convert');
       },
@@ -889,7 +889,7 @@ export default {
         ctx.log(`${owner.name} uses Headhunter.`);
         swap(ctx, owner, 'rival', 'Headhunter: choose a rival’s member and its shop replacement');
       },
-      botActivate: (ctx, owner) => ctx.state.round >= 2 && swapPairs(ctx, owner, 'rival').some(([a]) => cost(a) >= 5 + MORE),
+      botActivate: (ctx, owner) => ctx.state.round >= 2 && swapPairs(ctx, owner, 'rival').some(([a]) => cost(a) >= 5 + MORE + richUp(ctx.state)),
     }),
     m('reserve', 'Benchwarmer', 1, 0, 'Worth 1 follower.'), // placeholder until Cory designs its hold (then it becomes Seat Saver)
   ],
@@ -900,7 +900,7 @@ export default {
 // to the move cap); then late, or once the count reaches a pricey card
 function godfatherBot(ctx, owner) {
   const k = ctx.memberCount(owner), fits = ctx.shopCards().filter(x => cost(x) <= k);
-  return fits.length > 0 && (ctx.state.round === 3 || fits.some(x => cost(x) >= 7 + MORE));
+  return fits.length > 0 && (ctx.state.round === 3 || fits.some(x => cost(x) >= 7 + MORE + richUp(ctx.state)));
 }
 function godfatherUse(ctx, owner, card) {
   const k = ctx.memberCount(owner), list = ctx.shopCards().filter(x => cost(x) <= k);

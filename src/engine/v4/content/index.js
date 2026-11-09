@@ -1,4 +1,5 @@
 // Content registry. Every quadrant is a self-contained module; the engine looks them up by id.
+import { isRich, shiftCosts, RICH_UP } from './price.js';
 import gold from './gold.js';
 import red from './red.js';
 import { blue, green } from './standins.js';
@@ -74,7 +75,22 @@ for (const q of Object.values(QUADRANTS)) index(q);
 
 /** A color's spaces at this table: a space with a version for all piles (a.piles) shows that version there (Cory, 2026-11-01:
  *  "for the piles mode, we may need to change red round 1 action back to recruit the cheapest"). Same ring, same place. */
-export function spacesOf(state, qid) { if (state?.rules) noteTable(state.rules.testSet); const acts = state?.rules?.testSet && qid !== 'guest' ? testSpaces(qid) : quadrant(qid).actions; return state?.rules?.piles?.only ? acts.map(a => a.piles || a) : acts; }
+export function spacesOf(state, qid) {
+  if (state?.rules) noteTable(state.rules.testSet);
+  const acts = state?.rules?.testSet && qid !== 'guest' ? testSpaces(qid) : quadrant(qid).actions;
+  const out = state?.rules?.piles?.only ? acts.map(a => a.piles || a) : acts;
+  return isRich(state) ? richSpaces(out) : out;
+}
+// Richer: a space that names a member's cost says the moved number (Cory, Nov 9); the rule itself reads richUp(state)
+const richCache = new WeakMap();
+function richSpaces(acts) {
+  let r = richCache.get(acts);
+  if (!r) {
+    r = acts.map(a => { const text = shiftCosts(a.text, RICH_UP); return text === a.text ? a : { ...a, text }; });
+    richCache.set(acts, r);
+  }
+  return r;
+}
 
 export const DEFAULT_QUADRANTS = ['gold', 'red', 'blue', 'green'];
 // A game has as many spheres as players (Cory, 2026-10-15: "there are only X number of spheres for X number of

@@ -70,3 +70,4 @@ Why each rule in .claude/rules/working-with-cory.md exists, in Cory's words. Mov
 - 2026-11-07 Cory: skills follow Anthropic's skill best practices ("how do you not already do that inherently"). Rule in .claude/rules/harness.md, Skills.
 - 2026-11-07 Cory: "i said batches are 5… do you go until you fucking have 5 good ideas for me". A count he sets is exact; keep generating until that many pass. working-with-cory.md, pitching.md, brainstorm SKILL.md.
 - 2026-11-07 Cory: "it's 5 ideas that YOU FEEL ARE GOOD". Never pad a count; each idea is one Claude would defend. working-with-cory.md, brainstorm SKILL.md.
+- 2026-11-09 Cory, second time (first Nov 5): "if you meddle with member prices you have to tweak everything that references them, including deck limit"; Richer dealt no deck and kept old caps. Rule in working-with-cory.md (Spending and numbers); the check is setup-combos.test.js.

@@ -1,3 +1,4 @@
+import { richUp } from './price.js';
 // Purple: extra turns. Its spaces give them free (Cory, 2026-10-15: no board action requires spending); purple held
 // counts for the ring, and members (Taskmaster) can still buy a turn with it.
 // Most purple at round end takes the ring's followers.
@@ -843,7 +844,7 @@ export default {
     pool(m('sweepers', 'Sweepers', 2, 2, "Round End: if you placed the round's last minion, recruit a member costing up to 5, for free.", {
       onAllPlaced(ctx, owner) {
         if ((ctx.state.turns || []).at(-1) !== owner.id) return;
-        ctx.asMember(owner, 'Sweepers', () => freeAsk(ctx, owner, 'Sweepers', ctx.shopCards().filter(c => c.def.s + c.def.w <= 5), 'purple.poolFree', 'placed last, but no shop member costs 5 or less'));
+        ctx.asMember(owner, 'Sweepers', () => freeAsk(ctx, owner, 'Sweepers', ctx.shopCards().filter(c => c.def.s + c.def.w <= 5 + richUp(ctx.state)), 'purple.poolFree', `placed last, but no shop member costs ${5 + richUp(ctx.state)} or less`));
       },
       ...see(info => 1.5 * endsAhead(info).length * 0.3), // BOTSEE: a cheap member when it goes last, now and then
     }), 'pool5'),

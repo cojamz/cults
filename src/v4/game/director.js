@@ -21,7 +21,7 @@ import { play } from '../sound.js';
 import { gainsBetween } from './gains.js';
 import { seatOrder } from './seats.js';
 import { stageRect, hubRect, stageShow, stageRelease, stageClear, stageDismiss, stageBusy, subscribeStage, stageItems, stagePlace, spaceRect, bubbleRect, stageLeave, HUB_MEMBER, clearOfStory, storyAtHub, noteDealEnd, noteBeats } from './stage.js';
-import { panelText } from './panelText.js';
+import { panelText, richPanel } from './panelText.js';
 import { quadrant, defById, cardDef, spacesOf, memberCount } from '../../engine/v4/index.js';
 import { seatEmoji } from '../format.js';
 import { spriteId } from '../art/index.js';
@@ -1822,7 +1822,7 @@ function stageOut(root, a, ctx, where, chainId, mine = [], pre = null) {
     const [q, i] = String(key).split('-').map(Number);
     const qid = st.quadrants[q];
     let said = null;
-    try { said = panelText(qid, spacesOf(st, qid)[i], Math.max(1, st.round)); } catch { return; }
+    try { said = richPanel(st, panelText(qid, spacesOf(st, qid)[i], Math.max(1, st.round))); } catch { return; }
     const pid = a.pid ?? (st.slots && st.slots[key]);
     const p = st.players[pid];
     const slot = a.slot || 'card';

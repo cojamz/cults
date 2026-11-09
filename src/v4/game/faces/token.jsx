@@ -113,7 +113,7 @@ function Body({ ring, variant }) {
 // a light ink would vanish against the cream field: its rim prints a shade darker
 const RIM_INK = { white: '#b3a283' };
 
-function Token({ q, action, ring, round, status, minions = [], effect, px = 0.77, color, flash }) {
+function Token({ q, action, ring, round, status, minions = [], effect, px = 0.77, color, flash, up = 0 }) {
   const R = radiusOf(ring);
   const L = LAY[ring];
   const locked = status === 'locked';
@@ -122,7 +122,7 @@ function Token({ q, action, ring, round, status, minions = [], effect, px = 0.77
   const res = quadrant(q).resource;
   const ids = [`${q}.${action.key}`, spriteId(action.name)];
   const drawn = iconFor(ids, 'action').drawn;
-  const symbols = locked ? [] : stripFor(q, action, round, effect);
+  const symbols = locked ? [] : stripFor(q, action, round, effect, up);
   const mover = minions.find(m => m.fresh);
   const lift = lit ? -1.6 : 0;
   return (

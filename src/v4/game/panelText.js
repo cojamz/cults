@@ -7,6 +7,7 @@
 // The only marks are the resource dot (a resource word right after a number) and the follower mark (@f). The
 // space's name opens with its hover, whose rule sentence (the engine's action text) uses the same words for the same
 // idea ("copy", "in the shop", "on the board"). design/eval/words/decipher-w3.md checks every line against the rule.
+import { richUp, richText } from '../../engine/v4/content/price.js';
 import { pipEffect } from '../shorts.js';
 import { contextFor } from '../../engine/v4/core.js';
 import { quadrant } from '../../engine/v4/index.js';
@@ -192,6 +193,16 @@ function liveYield(qid, action, state, pid) {
  * Pass `state` for the board's live face (what a space pays this turn); without it, the printed rule.
  */
 export function panelText(qid, action, round = 1, state = null, pid = null) {
+  return richPanel(state, panelFace(qid, action, round, state, pid));
+}
+/** A panel's lines as this table reads them: under Richer every named member cost moves up 2 (content/price.js). */
+export function richPanel(state, t) {
+  if (!richUp(state) || !t) return t;
+  const out = {};
+  for (const k of Object.keys(t)) out[k] = richText(state, t[k]);
+  return out;
+}
+function panelFace(qid, action, round, state, pid) {
   const r = Math.max(1, Math.min(3, round));
   let v = P[qid] && P[qid][action.key];
   if (typeof v === 'function') v = v(r, liveYield(qid, action, state, pid));
