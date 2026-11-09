@@ -13,6 +13,8 @@ import { realHover } from '../hover.js';
 import { cardColor, cardGround, onTable, usePreview, Tip, CostDots, paidParts, discountWhy, RuleText } from './Info.jsx';
 import { FollowerGlyph, MemberGlyph } from './Glyphs.jsx';
 import { Pip } from './Rich.jsx';
+import { useShopDrag } from './shopDrag.js';
+import './shop-drag.css';
 import { timingOf, unlockedBy, surely } from './cards.js';
 void timingOf;
 import { useHoverSpace } from './HoverCards.jsx';
@@ -177,6 +179,10 @@ function ShopCards({ state, me, mySeats = [], optionFor = () => null, onPick, on
   // a dealt pile would on a real table: one that opens in a later round waits face up, marked with its round, and an
   // emptied pile stays as a gap with its name (Cory, 2026-11-01: "you'll have to figure out the UI here a little bit")
   const ghosts = state.supply && state.rules?.piles?.only && !tray && !pileRow ? pileGhosts(state) : [];
+  // drag a card to reorder your own shop (Cory, Nov 9): the order is kept as this round's row (steadyOrder)
+  const [, redrawOrder] = useState(0);
+  useShopDrag(rowRef, { on: !tray && !pileRow && !ghosts.length && !peeking, order: row, hover,
+    reorder: next => { steady.current = { key: rowKey, uids: next }; redrawOrder(n => n + 1); } });
   const memberPick = picking && uids.some(uid => optionFor(`card:${uid}`));
   // Show abilities for a first member choice, but a reader's explicit preference always wins, in every phase.
   // a copy tray always shows the rules: the On Recruit is what's being picked
