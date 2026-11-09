@@ -119,12 +119,12 @@ async function draw(textEl, box, px) {
   const alpha = textEl.hasAttribute('data-rim-wait') ? 1 : num(getComputedStyle(textEl).opacity, 1);
   const k = W / w; // canvas pixels per board unit
   g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'medium';
-  // letters not painted yet (the first rims of a game) cost a few ms each: give the page its frame back every ~8 ms
+  // letters not painted yet (the first rims of a game) cost a few ms each: give the page its frame back every ~4 ms (8 ms ran to 35 ms in Firefox at 2x: a new letter costs several)
   let t0 = performance.now();
   for (let i = 0; i < ls.length; i++) {
     const { ch, el } = ls[i];
     if (!ch || ch === ' ') continue;
-    if (performance.now() - t0 > 8) { await new Promise(ok => requestIdleCallback(ok, { timeout: 500 })); t0 = performance.now(); }
+    if (performance.now() - t0 > 4) { await new Promise(ok => requestIdleCallback(ok, { timeout: 500 })); t0 = performance.now(); }
     let p, r;
     try { p = textEl.getStartPositionOfChar(i); r = textEl.getRotationOfChar(i); } catch { continue; }
     const sp = glyph(look(el), ch, alpha, k);
@@ -143,7 +143,7 @@ export function want(textEl, arcEl, box, px, onReady, { soon = false } = {}) {
   if (had) return had.url ? had : null;
   // drawn in idle time, and never while the board is turning (a picture costs a frame of its own; it waits for a still board).
   // `soon`: an older picture of this rim stands in meanwhile, so the new one is drawn at the first quiet moment
-  const wait = soon ? 300 : 3000;
+  const wait = soon ? 1000 : 3000;
   const idle = () => new Promise(ok => { const go = () => requestIdleCallback(d => (textEl.closest('.stage.turning') ? setTimeout(go, 400) : ok(d)), { timeout: wait }); go(); });
   const p = idle()
     .then(() => draw(textEl, box, px))
