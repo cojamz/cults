@@ -12,15 +12,17 @@ export const TEST_SPACES = {
   thieves: [['ransom', 'racket']], // Shake Down -> Protection Racket
   silver: [['polish', 'roundrobin']], // Polish -> Round Robin
   trading: [['estatesale', 'bequest']], // Estate Sale -> Bequest
-  market: [['pricecheck', 'rummage']], // Bury -> Rummage
+  // Foreclose (Nov 9, Cory: "yeah add some member movement ideas to the next test pool") takes Recruit Twice's place:
+  // Claude's fill-in, the only Blue round II space left
+  market: [['pricecheck', 'rummage'], ['clearance', 'foreclose']], // Bury -> Rummage, Recruit Twice -> Foreclose
   echo: [['eternity', 'medley']], // Greatest Hits -> Medley
   yellow: [['meltingpot', 'moneychangers']], // Melting Pot -> Swap Meet
   // Purple: every space takes the Goes Last token (Cory, Nov 8 8:21pm)
   purple: [['holdup', 'holduplast'], ['again', 'againlast'], ['rally', 'closinglast']],
 };
 /** Candidate members dealt into the test version's decks, each in a live member's place so decks stay at 10 (Cory,
- *  Nov 8: "Are we keeping the member decks consistent?"); Protesters joins the grey members with nothing out. */
-export const TEST_MEMBERS = new Set(['trading.anchorites', 'market.repossessors', 'trading.oldguard', 'benders.protesters']);
+ *  Nov 8: "Are we keeping the member decks consistent?"); Protesters, Gift Swappers and Purifiers (Nov 9) join the grey members with nothing out. */
+export const TEST_MEMBERS = new Set(['trading.anchorites', 'market.repossessors', 'trading.oldguard', 'benders.protesters', 'benders.giftswappers', 'benders.purifiers']);
 /** Live members the test version leaves out: Recluse (Anchorites), Misers (Old Guard), Regular (Repossessors). */
 export const TEST_OUT = new Set(['trading.recluse', 'trading.heirs', 'market.regular']);
 /** Whether a member is in this table's decks under the test version (null: the live rule decides). */
