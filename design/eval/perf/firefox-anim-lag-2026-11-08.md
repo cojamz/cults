@@ -21,3 +21,13 @@ style pass with the seats' container queries, the director's flight planning, th
 through it (checked: a 1.2 s busy loop doesn't stop a WAAPI transform flight in Firefox).
 Probes: /tmp scripts in this thread were run.mjs (MOZ_PROFILER_STARTUP), cft.py (Compositor markers), tree.py (long tasks);
 lesson in design/lessons/screen.md (Nov 8).
+
+## Second pass (Cory 9:13pm: "still quite laggy", Intel Mac, Firefox 152, 1440x790@2)
+- Blob rasterization (CPU, the frame waits on it) at 1440x790@2, 40 s of bots: board shown RasterizeSingleBlob sum 1146 ms,
+  max 76 ms, BlobRasterization max 122 ms; board hidden: sum 269 ms, max 6 ms. Seats or shop hidden: little change.
+  Handed to the wheel thread (board layers rebuild).
+- Main thread with the whole page in Firefox: freeze probe, seed 20261028, steady, whole game: 0 presses over 100 ms,
+  worst 30 ms (freeze-ff-v698). Paint is ~40% of main-thread time (about 6 ms a paint, ~15 paints a second during play);
+  hiding seats, shop or board doesn't change that, and contain:layout style on the table's areas doesn't either.
+- Ambient CSS animations: pausing them cut the (software) renderer's busy time by a third, because any running animation
+  makes every frame composite; content thread unchanged. Not changed (it's the look).
