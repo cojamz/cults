@@ -43,6 +43,17 @@
 .overlay .dialog.roundend .re-p[data-me]{background:var(--table-2)}
 .overlay .dialog.roundend .re-p[data-me] .nm{color:var(--lamp-ink)}
 
+/* followers, simplest (Cory, Nov 9 second pass): name, the round's change, the total big */
+.overlay .dialog.roundend .re-p{grid-template-columns:minmax(0,1fr) auto auto!important;grid-template-areas:none!important;gap:14px;padding:6px 6px}
+.overlay .dialog.roundend .re-p > *{grid-area:auto!important}
+.overlay .dialog.roundend .re-p .nm{font-size:17px}
+.overlay .dialog.roundend .re-delta{font-size:15px;color:var(--muted);text-align:right;cursor:help}
+.overlay .dialog.roundend .re-delta.lost{color:#e5907f}
+.overlay .dialog.roundend .re-f{font-size:28px;line-height:1;min-width:3ch}
+/* the lines after the contests (members that answer them, Game End bonuses): plain lines, no boxes */
+.overlay .dialog.roundend .re-final{background:none;box-shadow:none;padding:0 2px;font-size:14px;color:var(--cream-2)}
+.overlay .dialog.roundend .re-final > b:first-child{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:400;margin-right:6px}
+
 /* the next round */
 .overlay .dialog.roundend .re-nextround{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 12px;border-radius:12px;
   background:rgba(var(--lamp),.06);box-shadow:inset 0 0 0 1px rgba(var(--lamp),.22);text-align:center}
@@ -76,3 +87,9 @@
   .overlay .dialog.roundend .re-p .re-gains{grid-area:gains}
   .overlay .dialog.roundend .re-p .re-f{grid-area:f}
 }
+
+/* second pass (Cory, Nov 9: "this is awful"): fewer boxes. Only the winners wear a pill; the rest of the counts are
+   faint plain text, and the next round is plain lines under a rule, not a box */
+.overlay .dialog.roundend .re-pill:not(.won){background:none;box-shadow:none;padding-left:2px;padding-right:4px;opacity:.6}
+.overlay .dialog.roundend .re-nextround{background:none;box-shadow:none;border-top:1px solid var(--rim);border-radius:0;padding:10px 0 0}
+.overlay .dialog.roundend .re-turn,.overlay .dialog.roundend .re-turn.back .who-tag{background:none}

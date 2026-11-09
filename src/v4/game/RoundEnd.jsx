@@ -102,7 +102,7 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
                   a counts line read as clutter); "P2 2", the number set apart so it never reads "P22" (w3b) */}
               <span className="re-counts num">
                 {!r.winners.length && (r.spoiled != null
-                  ? <em className="re-none" data-spoiled>nobody: <Who state={after} id={r.spoiled} meId={meId} /> spoiled it (Spoilsport)</em>
+                  ? <em className="re-none" data-spoiled title="Spoilsport: nobody scores this contest">spoiled by <Who state={after} id={r.spoiled} meId={meId} size={14} /></em>
                   : <em className="re-none">no one scored</em>)}
                 {r.rows.map(row => {
                   const tb = tiebreakNote(r, row);
@@ -156,17 +156,11 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
             return (
               <div key={p.id} className="re-p" style={{ '--pc': playerColor(p.id) }} data-total={`${p.id}:${now}`} data-me={p.id === meId ? '' : undefined}>
                 <span className="nm"><Who state={after} id={p.id} meId={meId} /></span>
-                <span className="re-gains">
-                  {c > 0 && <span className="re-g re-prize num" data-prize={p.id}>+{c} prizes</span>}
-                  {/* the parts whenever there are any, even when they cancel out (live panel r1: P4 recruited 3 and lost 3
-                      to a sale, and the cell said "—") */}
-                  <span className="re-this num" data-this-round={p.id}>
-                    {gains.length && whyLong.length
-                      ? <Tip label={`${p.id === meId ? 'Your' : `${p.name}’s`} followers this round`} content={() => <div className="pop-card"><b>{p.id === meId ? 'Your' : `${p.name}’s`} followers this round, besides prizes: {other > 0 ? '+' : other < 0 ? '−' : ''}{Math.abs(other)}</b>{whyLong.map(t => <span key={t}>{t}</span>)}</div>}>{gains.map(t => <span key={t} className={`re-g${/^−/.test(t) ? ' lost' : ''}`}>{t}</span>)}</Tip>
-                      : gains.map(t => <span key={t} className={`re-g${/^−/.test(t) ? ' lost' : ''}`}>{t}</span>)}
-                  </span>
-                  {!c && !gains.length && <span className="re-g quiet">no new followers</span>}
-                </span>
+                {/* just the round's change beside the total (Cory, Nov 9: "this is awful" twice; the parts as words or tags
+                    were clutter): where it came from opens on hover or tap */}
+                <Tip className={`re-delta num${now - was < 0 ? ' lost' : ''}`} label={`${p.id === meId ? 'Your' : `${p.name}’s`} followers this round`} content={() => <div className="pop-card"><b>{p.id === meId ? 'Your' : `${p.name}’s`} followers this round: {now - was >= 0 ? '+' : '−'}{Math.abs(now - was)}</b>{c ? <span>+{c} from contest prizes</span> : null}{whyLong.map(t => <span key={t}>{t}</span>)}</div>}>{now - was >= 0 ? '+' : '−'}{Math.abs(now - was)}</Tip>
+                {/* the parts whenever there are any, even when they cancel out (live panel r1), said for screen readers */}
+                <span className="sr-only" data-this-round={p.id}>{gains.join(' · ')}</span>
                 <Tick value={now} from={now} color="var(--ink)" className="re-f num" dur={0} float={false} />
               </div>
             );
