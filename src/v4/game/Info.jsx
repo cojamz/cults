@@ -212,12 +212,59 @@ function Lines({ text, Text, className = 'fx-line' }) {
 const unworth = (def, text) => (def && def.f != null && text ? String(text).replace(/^\s*Worth \d+ followers?\.\s*/i, '') : text);
 // no "Passive:" keyword: a rule with no timing is always on (Cory, Nov 6: "passive doesnt need to be a keyword it can jsut be implied")
 export const passiveText = (def, given) => unworth(def, given);
+// Three round lines that differ only in their numbers ("+2 red. This turn, if you recruit a member, +1 follower." /
+// "+3 red. … +2 followers." / …), as one sentence: the shared words once, each number that changes as its run "+2/+3/+4"
+// with this round lit (Cory, Nov 9, on Splurge's three repeated sentences: "jesus"). null when the lines differ in words.
+const TOK = l => String(l).split(' ');
+const sameWord = (a, b) => OTHER(a) === OTHER(b);
+const NUM = /^\+?\d+$/;
+export function roundRuns(lines) {
+  if (!lines || lines.length !== 3) return null;
+  const t = lines.map(TOK);
+  if (t.some(x => x.length !== t[0].length)) return null;
+  const out = [];
+  let changes = 0;
+  for (let k = 0; k < t[0].length; k++) {
+    const w = t.map(x => x[k]);
+    if (w.every(x => x === w[0])) { out.push(w[0]); continue; }
+    if (w.every(x => NUM.test(x))) { out.push({ run: w }); changes++; continue; }
+    if (w.every(x => sameWord(x, w[2]))) { out.push(w[2]); continue; }
+    return null;
+  }
+  return changes ? out : null;
+}
+function RunText({ parts, now, Text }) {
+  // words between runs read as one text, so the resource marks and glossary words still work
+  const segs = [];
+  let words = [];
+  const flush = () => { if (words.length) segs.push(words.join(' ')); words = []; };
+  for (const p of parts) { if (typeof p === 'string') words.push(p); else { flush(); segs.push(p); } }
+  flush();
+  return <>{segs.map((g, k) => (typeof g === 'string'
+    ? <Fragment key={k}>{k ? ' ' : ''}<Text text={g} />{k < segs.length - 1 ? ' ' : ''}</Fragment>
+    : <span key={k} className="br-run" data-round-run="" title="round I / II / III">{g.run.map((v, j) => <Fragment key={j}>{j ? <span className="br-sep" aria-hidden="true">/</span> : null}<b className={`br-n${j + 1 === now ? ' now' : ''}`} data-round-line={j + 1} aria-current={j + 1 === now ? 'true' : undefined}>{v}</b></Fragment>)}</span>))}</>;
+}
 export function RuleText({ def, text: given = def && def.text, round = 1, plain = false, compact = false, lines = false }) {
   const text = passiveText(def, given);
   const by = def && def.byRound;
   const Text = plain ? PlainText : CardText;
   if (!by || !by.lines || by.lines.length !== 3) return lines ? <span className="fx-lines"><Lines text={text} Text={Text} /></span> : <Text text={text} />;
   const now = Math.min(3, Math.max(1, round || 1));
+  const runs = roundRuns(by.lines);
+  if (runs) {
+    // one sentence, the changing numbers as runs; the lead and the rest around it, each effect on its own line in a hover
+    // a hover puts each sentence on its own line ("+2 white." then "This turn, if you recruit…")
+    const groups = [[]];
+    runs.forEach((p, k) => { groups[groups.length - 1].push(p); if (lines && typeof p === 'string' && /[.!?]$/.test(p) && k < runs.length - 1) groups.push([]); });
+    const body = <>{groups.map((g, k) => <span key={k} className="br-body"><RunText parts={g} now={now} Text={Text} />{k < groups.length - 1 ? ' ' : null}</span>)}</>;
+    return (
+      <span className="by-round runs" data-by-round={now}>
+        {by.lead ? (lines ? <Lines text={by.lead} Text={Text} className="br-lead" /> : <span className="br-lead"><Text text={by.lead} /></span>) : null}
+        {by.lead ? ' ' : null}{body}{by.rest ? ' ' : null}
+        {by.rest ? (lines ? <Lines text={by.rest} Text={Text} className="br-rest" /> : <span className="br-rest"><Text text={by.rest} /></span>) : null}
+      </span>
+    );
+  }
   const shared = compact ? sharedTail(by.lines) : null;
   if (shared) {
     return (
@@ -967,7 +1014,10 @@ export function ifRecruitWords(x) {
   return `${parts.join(' and ')}${x.per ? ',' : ''} if you recruit a member this turn`;
 }
 /** "You'd get: +3 ●, +1 member" for player pid on space (q, i), computed just after it shows. */
-export function YoudGet({ state, pid, q, i, now = false }) {
+// skipSelf: Hold Up when the next turn is yours: the skip pushes your minion later, said as the skip it is, not "goes
+// last" beside a "Skips: you" row (Cory, Nov 9: "this should be reworded for sure")
+const SKIP_SELF = t => (t ? t.replace(/your next minion goes last/, 'you skip your next turn') : t);
+export function YoudGet({ state, pid, q, i, now = false, skipSelf = false }) {
   const pv = usePreview(state, pid, q, i, { now });
   if (pid == null) return null;
   if (pv === undefined) return <span className="youd-get pending" data-youd-get="">You’d get: …</span>;
@@ -975,7 +1025,8 @@ export function YoudGet({ state, pid, q, i, now = false }) {
   const w = previewWords(pv, state);
   let own = null;
   try { own = quadrant(state.quadrants[q]).resource; } catch { /* none */ }
-  const y = youdWords(pv, state, own);
+  const y0 = youdWords(pv, state, own);
+  const y = skipSelf ? { ...y0, text: SKIP_SELF(y0.text), or: SKIP_SELF(y0.or), likely: SKIP_SELF(y0.likely), best: SKIP_SELF(y0.best) } : y0;
   return (
     <span className="youd-get" data-youd-get={w.you} title="Worked out by playing this space on a copy of the table, right now">
       {/* never "about": the preview is the engine's own dry run, and hedged words made it read unsure (w4 skeptic #29) */}

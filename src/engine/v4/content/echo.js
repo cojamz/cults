@@ -1054,8 +1054,9 @@ const echoQ = {
         const leaders = rivals.filter(o => ctx.followers(o) === most).map(o => o.id);
         const list = targets(ctx, owner, 'any').filter(e => leaders.includes(e.p));
         const names = leaders.map(id => ctx.player(id).name).join(' and ');
+        const whose = leaders.map(id => `${ctx.player(id).name}'s`).join(' or ');
         if (!list.length) { ctx.log(`${owner.name}'s Fan Club: ${names} has no minion on an action to copy.`); return; }
-        offer(ctx, owner, list, `Fan Club: copy which of ${names}'s actions?`, 'now', 'Fan Club');
+        offer(ctx, owner, list, `Fan Club: copy which of ${whose} actions?`, 'now', 'Fan Club');
       },
     }),
     // Cory, 2026-10-28: "Roadie is good" (Green's 16th); cost 3 is Claude's

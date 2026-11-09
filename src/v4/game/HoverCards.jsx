@@ -598,7 +598,7 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
           : pv && !all && /^Copy (?:an|the previous) action\b/.test(a.text) && onlyFlat(pv, a.text) ? <Row k="Can copy"><span data-copy-none=""><Rich text={nothingToCopy(a.text)} /></span></Row> : null}
         {all ? <Row k="Copies"><span data-copies-all>{all.names.length ? all.names.join(', ') : 'nothing yet'}</span></Row> : null}
         {all && all.skips ? <Row k="Skips"><span data-copies-skip>{all.skips}</span></Row> : null}
-        {open && viewer != null && !state.over ? <div className="lt-yd-row youd"><span className="k">You’d get</span><span className="v"><YoudGet state={state} pid={viewer} q={q} i={i} now /></span></div> : null}
+        {open && viewer != null && !state.over ? <div className="lt-yd-row youd"><span className="k">You’d get</span><span className="v"><YoudGet state={state} pid={viewer} q={q} i={i} now skipSelf={/Whoever’s turn is next skips/.test(a.text) && nextAfter(state, viewer) === SELF_NEXT} /></span></div> : null}
         {/* why a member changed the number, or stayed off ("Underdog: no ×2 (Hustler’s +3 lands first)"), from the dry run */}
         {/* a rival's gain says why too (picky bot, Nov 4: "rivals +1 blue in all" was a rival's cloak, unnamed) */}
         {open && pv && whyOf(pv, state).length ? <Row k="Why"><span data-reasons><Rich text={whyLine(whyOf(pv, state))} /></span></Row> : null}
@@ -628,12 +628,13 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
 }
 // the Why row: your members, then a rival's member only when "You'd get" didn't already name it beside their gain
 const whyOf = (pv, state) => { const done = new Set(previewWords(pv, state).inlined || []); return [...(pv.reasons || []), ...(pv.theirReasons || []).filter(l => !done.has(l))]; };
+const SELF_NEXT = 'your own next turn (you place that minion later this round)';
 /** Whose turn comes after viewer's next one (Hold Up's "whoever's turn is next"), from the engine's queue. */
 export function nextAfter(state, viewer) {
   const { order } = turnPlaces(state, viewer);
   const k = order.indexOf(viewer);
   const id = k < 0 ? undefined : order[k + 1];
-  return id === undefined ? 'nobody: no turns left this round' : id === viewer ? 'you (your next turn)' : state.players[id].name;
+  return id === undefined ? 'nobody: no turns left this round' : id === viewer ? SELF_NEXT : state.players[id].name;
 }
 /** Whether the dry run gives exactly the rule's own flat gain ("… +1 green.") and nothing else: a copy with nothing to copy. */
 const onlyFlat = (pv, text) => {

@@ -11,6 +11,7 @@ import { Log, ChoicePrompt, CardFace } from '../../../v4/game/parts.jsx';
 import { MemberCard, NamedText, CardText } from '../../../v4/game/Info.jsx';
 import { memberTimingWords } from '../../../v4/game/memberTiming.js';
 import { GLOSSARY, splitTerms, term, glossaryEntries } from '../../../v4/glossary.js';
+import { seatEmoji } from '../../../v4/format.js';
 
 afterEach(cleanup);
 const seats = [{ name: 'Ana', kind: 'human' }, { name: 'Bo', kind: 'bot' }, { name: 'Cy', kind: 'bot' }];
@@ -89,7 +90,7 @@ describe('card names open the card everywhere', () => {
     const open = container.querySelector('.pick-keys-open');
     if (open) fireEvent.click(open);
     const btn = container.querySelector('.pick-keys [data-option]') || container.querySelector('[data-option]');
-    expect(btn.textContent).toContain('Bo’s');
+    expect(btn.textContent).toContain(`${seatEmoji(s, 1)}’s`); // the owner as their seat emoji (Cory, Nov 9)
     // the cost in dots, as the card prints it, never color words (wave-2 tester B #54)
     expect(btn.querySelector('.cost-line').textContent).toMatch(/^costs \d/);
     expect(btn.querySelector('.cost-line .pip')).not.toBeNull();

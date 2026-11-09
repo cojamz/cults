@@ -594,6 +594,12 @@
 .by-round .br-r{display:inline-block;min-width:2.1em;font-weight:700}
 .by-round .br-lead + .br-line{margin-top:2px}
 .by-round .br-rest{display:block;margin-top:2px}
+/* one sentence with its changing numbers as runs, "+2/+3/+4", this round lit (Cory, Nov 9) */
+.by-round.runs .br-body,.by-round.runs .br-rest,.by-round.runs .br-lead{display:block}
+.by-round.runs .br-run{white-space:nowrap}
+.by-round.runs .br-n{font-weight:500;color:var(--pl-ink-3,#a39078)}
+.by-round.runs .br-n.now{font-weight:800;color:inherit}
+.by-round.runs .br-sep{color:var(--pl-ink-3,#a39078);padding:0 1px}
 /* one effect per line in the hover cards (RuleText lines); the first flows after a leading tag (II+, Use) */
 .fx-lines .fx-line{display:block;margin-top:3px}
 .fx-lines .fx-line:first-child{display:inline;margin-top:0}

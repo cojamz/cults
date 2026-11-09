@@ -40,7 +40,7 @@ describe('rules that grow by round', () => {
     const a = quadrant('gold').actions.find(x => x.key === 'rush');
     const { container } = render(<RuleText def={a} round={2} />);
     const lines = [...container.querySelectorAll('[data-round-line]')];
-    expect(lines.map(l => l.textContent.replace(/\s+/g, ''))).toEqual(['I:+2', 'II:+4', 'III:+6']);
+    expect(lines.map(l => l.textContent)).toEqual(['+2', '+4', '+6']); // "+2/+4/+6 gold", one sentence (Cory, Nov 9)
     expect(lines.map(l => l.classList.contains('now'))).toEqual([false, true, false]);
     expect(lines[1].getAttribute('aria-current')).toBe('true');
     expect(container.querySelector('[data-by-round]').dataset.byRound).toBe('2');
@@ -78,7 +78,8 @@ describe('one effect per line', () => {
     // Lie Low no longer steals (Cory, 2026-10-22), so Help Yourself is the scaling Magenta space
     const help = quadrant('thieves').actions.find(a => a.key === 'pickpocket');
     const { container } = render(<RuleText def={help} round={2} lines />);
-    expect(container.querySelectorAll('.br-line')).toHaveLength(3);
+    expect(container.textContent).toMatch(/Steal 3\/4\/5 resources/);
+    expect(container.querySelectorAll('[data-round-line]')).toHaveLength(3);
     const rest = [...container.querySelectorAll('.br-rest')].map(e => e.textContent);
     expect(rest).toEqual([]); // any rivals again (Cory, Nov 8); no +1 magenta since Oct 29
   });

@@ -2,7 +2,7 @@
 import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { quadrant, cardDef, defById } from '../../engine/v4/index.js';
-import { logSections, playerColor, costParts, plainLine, turnGroups, foldRepeats, plural } from '../format.js';
+import { logSections, playerColor, costParts, plainLine, turnGroups, foldRepeats, plural, seatNames, seatEmoji } from '../format.js';
 import { Rich, CostPips, Pip } from './Rich.jsx';
 import { MemberCard, NamedText, CardText, cardColor, asYou, CostDots } from './Info.jsx';
 import { Follower } from '../art/Follower.jsx';
@@ -98,7 +98,7 @@ export function ChoicePrompt({ state, onPick, busy, turnOf = null, seatPick = nu
       {turnOf && <TurnOf player={turnOf} />}
       {/* setup: the headline says "pick a starting resource (1 of 2)"; the panel says only which pick this is, not the
           same sentence again (RC1 sweep 24) */}
-      <p>{!setup && tally ? <span className="tally">{tally} · </span> : null}{setup ? `${watching ? `${watching.name} · ` : ''}${state?.artifacts && Object.keys(state.artifacts).length ? 'Pick a cloak' : 'Draft 1 resource'}` : <Rich text={pend.prompt} />}</p>
+      <p>{!setup && tally ? <span className="tally">{tally} · </span> : null}{setup ? `${watching ? `${watching.name} · ` : ''}${state?.artifacts && Object.keys(state.artifacts).length ? 'Pick a cloak' : 'Draft 1 resource'}` : <Rich text={seatNames(state, pend.prompt)} />}</p>
       {setup ? <><SetupTokens state={state} pend={pend} onPick={pick} busy={busy} /><ForSale state={state} /></>
         : <MergedOptions state={state} pend={pend} onPick={pick} busy={busy} />}
       {!setup && left != null && Number(left) > 1 && (
@@ -108,8 +108,8 @@ export function ChoicePrompt({ state, onPick, busy, turnOf = null, seatPick = nu
           {pend.options.map(o => [o, holds(o) ? Math.min(Number(left), holds(o)) : Number(left)])
             .filter(([o, k]) => k > 1 && (k === Number(left) || pend.options.length === 1)).map(([o, k]) => (
               <button key={o.id} type="button" className="btn pri take-all" disabled={busy} onClick={() => pick(o.id, 'all')}>
-                {k === Number(left) ? `Take all ${k} from ${withUnits(o.label, pend.prompt, state.resources).split(' · ')[0]}`
-                  : `Take ${k} from ${withUnits(o.label, pend.prompt, state.resources).split(' · ')[0]} (all they have)`}
+                {seatNames(state, k === Number(left) ? `Take all ${k} from ${withUnits(o.label, pend.prompt, state.resources).split(' · ')[0]}`
+                  : `Take ${k} from ${withUnits(o.label, pend.prompt, state.resources).split(' · ')[0]} (all they have)`)}
               </button>
             ))}
         </div>
@@ -155,7 +155,7 @@ function SeatPickCaption({ state, pk, onPick, busy, turnOf, box }) {
       {/* what has no place on the board (Pass, "All 3 as green", how many) stays a button here */}
       {pk.rest.length > 0 && (
         <div className="pick-rest">
-          {pk.rest.map(o => <button key={o.id} type="button" className="btn pick-rest-btn" data-option={o.id} disabled={busy} onClick={() => onPick(o.id)}><Rich text={o.label} /></button>)}
+          {pk.rest.map(o => <button key={o.id} type="button" className="btn pick-rest-btn" data-option={o.id} disabled={busy} onClick={() => onPick(o.id)}><Rich text={seatNames(state, o.label)} /></button>)}
         </div>
       )}
       {/* the keyboard's way in: hidden until Tab lands on it, then the list opens under the caption */}
@@ -249,11 +249,11 @@ function MergedOptions({ state, pend, onPick, busy }) {
             {color && <i />}
             {det ? (
               <span className="rich-body">
-                <b>{det.owner != null && <span className="from">{state.players[det.owner].name}’s </span>}{det.name}{n > 1 && <span className="num copies"> {state.shop && state.shop.includes(o.value) ? `· ${n} in the shop` : `· ${n} of them`}</span>}{det.f != null && <> <Follower n={det.f} className="star" /></>}</b>
+                <b>{det.owner != null && <span className="from">{seatEmoji(state, det.owner)}’s </span>}{det.name}{n > 1 && <span className="num copies"> {state.shop && state.shop.includes(o.value) ? `· ${n} in the shop` : `· ${n} of them`}</span>}{det.f != null && <> <Follower n={det.f} className="star" /></>}</b>
                 <small>{det.def ? <CardText text={det.text} /> : <Rich text={det.text} />}</small>
                 {det.cost && <small className="cost-line">costs <CostDots parts={det.cost} /></small>}
               </span>
-            ) : <MarkLabel text={withUnits(o.label, pend.prompt, state.resources)} resources={state.resources} /> /* the engine's label: "+2 gold" as "+2●", never a bare "Gold" */}
+            ) : <MarkLabel text={seatNames(state, withUnits(o.label, pend.prompt, state.resources))} resources={state.resources} /> /* the engine's label: "+2 gold" as "+2●", never a bare "Gold" */}
           </button>
         );
       })}

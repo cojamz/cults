@@ -418,7 +418,8 @@ export function askerOf(state, pk) {
  *  the caption says what the pick is for (picky bot, Nov 4: "Window Shopper: pick a member", for what?). Else null. */
 export function askWords(q) {
   const m = String(q || '').match(/^(\w+) which (\w+)\b([^?(]*)\??\s*(?:\([^)]*\))?$/i);
-  const w = m ? `${m[1].toLowerCase()} a ${m[2]}${m[3].trimEnd()}` : null;
+  // "copy which of P2's actions" is "copy one of P2's actions", never "copy a of…" (Cory, Nov 9: Fan Club's prompt)
+  const w = m ? `${m[1].toLowerCase()} ${/^of$/i.test(m[2]) ? 'one of' : `a ${m[2]}`}${m[3].trimEnd()}` : null;
   return w && w.length <= 34 ? w : null;
 }
 /** What a choice wants, in two words, from what it lights ("pick a color"). */

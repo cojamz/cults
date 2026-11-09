@@ -14,6 +14,15 @@ export const SEAT_SIGILS = ['circle', 'triangle', 'square', 'star', 'diamond', '
 export const seatSigil = id => SEAT_SIGILS[id % SEAT_SIGILS.length];
 /** The emoji a player picked (their minions, and the emblem on their leader), or the seat's default. */
 export const seatEmoji = (state, id) => (state && state.players[id] && state.players[id].emoji) || defaultEmoji(id);
+/** A question or button's player names as their seat emoji ("Green (P1 & P3 lead)" → "Green (🦊 & 🐸 lead)"): the table
+ *  knows players by their minion's emoji (Cory, Nov 9, on Spoilsport's buttons: "just show the emojis here"). */
+export function seatNames(state, text) {
+  if (!state || !state.players || text == null) return text;
+  let out = String(text);
+  const names = state.players.map((p, id) => [p && p.name, seatEmoji(state, id)]).filter(([n]) => n).sort((a, b) => b[0].length - a[0].length);
+  for (const [n, e] of names) out = out.replace(new RegExp(`(?<![\\p{L}\\p{N}])${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\p{L}\\p{N}])`, 'gu'), e);
+  return out;
+}
 export const playerColor = id => PLAYER_COLORS[id % PLAYER_COLORS.length];
 export const resColor = r => `var(--${r})`;
 export { roman };

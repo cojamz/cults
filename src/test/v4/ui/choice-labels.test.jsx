@@ -5,6 +5,7 @@ import { render, cleanup } from '@testing-library/react';
 import { ChoicePrompt } from '../../../v4/game/parts.jsx';
 import { sceneQ } from '../../engine/v4/cards-helpers.js';
 import { take, move } from '../../engine/v4/helpers.js';
+import { seatEmoji } from '../../../v4/format.js';
 
 afterEach(cleanup);
 const CLASSIC = ['gold', 'red', 'market', 'echo'];
@@ -18,10 +19,10 @@ describe('choice labels say what happens', () => {
     expect([...c.querySelectorAll('.take-all')].map(b => b.textContent)).toEqual([]);
     expect(c.textContent).not.toMatch(/Take all 3/);
   });
-  it('Collect Debts: a lone rival holding 2 of 3 reads "Take 2 from P2 (all they have)"', () => {
+  it('Collect Debts: a lone rival holding 2 of 3 reads "Take 2 from P2 (all they have)", P2 as its seat emoji (Cory, Nov 9)', () => {
     let s = sceneQ({ quadrants: CLASSIC, n: 3, round: 2, res: [{}, { gold: 2 }, {}] });
     s = take(s, 'gold.steal');
-    expect([...show(s).querySelectorAll('.take-all')].map(b => b.textContent)).toEqual(['Take 2 from P2 (all they have)']);
+    expect([...show(s).querySelectorAll('.take-all')].map(b => b.textContent)).toEqual([`Take 2 from ${seatEmoji(s, 1)} (all they have)`]);
   });
   it('Collect Debts: the tally survives a save and load ("1 of 3 taken")', () => {
     let s = sceneQ({ quadrants: CLASSIC, n: 3, round: 2, res: [{}, { gold: 1 }, { gold: 5 }] });

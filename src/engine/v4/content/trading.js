@@ -382,7 +382,7 @@ const trading = {
     }]),
     swap11({
       key: 'splurge', copyDoesIt: true, ring: 1, name: 'Splurge', text: 'This turn, if you recruit a member, +1 follower for every 2 resources you pay for it (every 1 in round II). +2 white.', // +2 white (Cory, Nov 6: "just buff those by +1 white"); members only: Claude's default, 2026-10-27; +1 (Cory, Oct 28); per 1 in round II (Cory, Nov 1 1:39pm)
-      byRound: { lines: ['+2 white. This turn, if you recruit a member, +1 follower for every 2 resources you pay for it.', '+2 white. This turn, if you recruit a member, +1 follower for every resource you pay for it.', '+2 white. This turn, if you recruit a member, +1 follower for every 2 resources you pay for it.'] },
+      byRound: { lines: ['+2 white. This turn, if you recruit a member, +1 follower for every 2 resources you pay for it.', '+2 white. This turn, if you recruit a member, +1 follower for every 1 resource you pay for it.', '+2 white. This turn, if you recruit a member, +1 follower for every 2 resources you pay for it.'] },
       estimate: (ctx, p) => 2 + Math.floor(Math.min(totalRes(p) + 1, 7) / (ctx.state.round === 2 ? 1 : 2)) * fv(ctx) * 0.8,
       resolve(ctx, p) {
         ctx.gain(p, W, 2, { fromAction: true });
@@ -400,7 +400,7 @@ const trading = {
     }),
     swap11(swap11(swap14({
       key: 'exchange', copyDoesIt: true, ring: 1, name: 'Exchange', text: '+2 white. Then turn up to 1 resource (2 in round II, 3 in round III) into 2 followers each.', // +2 white (Cory, Nov 6: "just buff those by +1 white"); Cory, 2026-10-23: "up to", you can stop early
-      byRound: { lead: '+2 white. Then:', lines: ['Turn up to 1 resource into 2 followers.', 'Turn up to 2 resources into 2 followers each.', 'Turn up to 3 resources into 2 followers each.'] }, // white first (Cory, Nov 1 text audit)
+      byRound: { lead: '+2 white. Then:', lines: ['Turn up to 1 resource into 2 followers each.', 'Turn up to 2 resources into 2 followers each.', 'Turn up to 3 resources into 2 followers each.'] }, // white first (Cory, Nov 1 text audit)
       estimate: (ctx, p) => 2 + Math.min(ctx.state.round, totalRes(p) + 1) * (2 * fv(ctx) - 1),
       resolve(ctx, p) {
         ctx.gain(p, W, 2, { fromAction: true });

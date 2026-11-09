@@ -9,7 +9,7 @@ import SpendPicker from './SpendPicker.jsx';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { holdFlag } from './bodyFlag.js';
 import { cardDef, quadrant } from '../../engine/v4/index.js';
-import { costParts, playerColor, seatEmoji } from '../format.js';
+import { costParts, playerColor, seatEmoji, seatNames } from '../format.js';
 import { MemberGlyph, ResourceGlyph, anyParts } from './Glyphs.jsx';
 import { Pip } from './Rich.jsx';
 import { Minion } from '../art/Leader.jsx';
@@ -490,7 +490,7 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
               Take <b className="num">{planTotal}</b> ({planColors})
             </button>
           )}
-          {g.rest.map(o => <button key={o.id} type="button" className="btn gc-rest-btn" data-option={o.id} disabled={busy} onClick={e => onAnswer(o.id, e.currentTarget, null)}>{g.kind === 'share' && o.kind === 'done' && g.total ? <>Done: give <b className="num">{g.total}</b></> : o.label}</button>)}
+          {g.rest.map(o => <button key={o.id} type="button" className="btn gc-rest-btn" data-option={o.id} disabled={busy} onClick={e => onAnswer(o.id, e.currentTarget, null)}>{g.kind === 'share' && o.kind === 'done' && g.total ? <>Done: give <b className="num">{g.total}</b></> : seatNames(state, o.label)}</button>)}
         </div>
       )}
     </section>
