@@ -12,9 +12,9 @@ export const TEST_SPACES = {
   thieves: [['ransom', 'racket']], // Shake Down -> Protection Racket
   silver: [['polish', 'roundrobin']], // Polish -> Round Robin
   trading: [['estatesale', 'bequest']], // Estate Sale -> Bequest
-  // Foreclose (Nov 9, Cory: "yeah add some member movement ideas to the next test pool") takes Recruit Twice's place:
-  // Claude's fill-in, the only Blue round II space left
-  market: [['pricecheck', 'rummage'], ['clearance', 'foreclose']], // Bury -> Rummage, Recruit Twice -> Foreclose
+  // Recruit Twice stays (Cory, Nov 9: "recruit twice and recruit three times are strong… very strategic"), so
+  // Foreclose sits out until he says which Blue round II space it takes (Bury's spot holds Rummage)
+  market: [['pricecheck', 'rummage']], // Bury -> Rummage
   echo: [['eternity', 'medley']], // Greatest Hits -> Medley
   yellow: [['meltingpot', 'moneychangers']], // Melting Pot -> Swap Meet
   // Purple: every space takes the Goes Last token (Cory, Nov 8 8:21pm)

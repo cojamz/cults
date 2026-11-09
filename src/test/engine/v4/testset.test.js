@@ -10,7 +10,7 @@ const defs = s => new Set(Object.values(s.cards).map(c => c.def));
 describe('Test version (rules.testSet)', () => {
   it('swaps seven spaces in place, same round and spot', () => {
     const t = { rules: { testSet: true } }, live = { rules: {} };
-    const want = { thieves: ['Shake Down', 'Protection Racket'], silver: ['Polish', 'Round Robin'], trading: ['Estate Sale', 'Bequest'], market: ['Bury', 'Rummage', 'Recruit Twice', 'Foreclose'], echo: ['Greatest Hits', 'Medley'], yellow: ['Melting Pot', 'Swap Meet'] };
+    const want = { thieves: ['Shake Down', 'Protection Racket'], silver: ['Polish', 'Round Robin'], trading: ['Estate Sale', 'Bequest'], market: ['Bury', 'Rummage'], echo: ['Greatest Hits', 'Medley'], yellow: ['Melting Pot', 'Swap Meet'] };
     for (const k of ['Hold Up', 'Right Away', 'Crunch Time']) {
       const i = spacesOf(live, 'purple').findIndex(x => x.name === k);
       expect(spacesOf(t, 'purple')[i].text).toMatch(/Goes Last token/);
