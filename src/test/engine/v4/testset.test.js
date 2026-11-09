@@ -11,6 +11,11 @@ describe('Test version (rules.testSet)', () => {
   it('swaps six spaces in place, same round and spot', () => {
     const t = { rules: { testSet: true } }, live = { rules: {} };
     const want = { thieves: ['Shake Down', 'Protection Racket'], silver: ['Polish', 'Round Robin'], trading: ['Estate Sale', 'Bequest'], market: ['Bury', 'Rummage'], echo: ['Greatest Hits', 'Medley'], yellow: ['Melting Pot', 'Swap Meet'] };
+    for (const k of ['Hold Up', 'Right Away', 'Crunch Time']) {
+      const i = spacesOf(live, 'purple').findIndex(x => x.name === k);
+      expect(spacesOf(t, 'purple')[i].text).toMatch(/Goes Last token/);
+      expect(spacesOf(live, 'purple')[i].text).not.toMatch(/Goes Last token/);
+    }
     for (const [q, [out, inn]] of Object.entries(want)) {
       const a = spacesOf(live, q), b = spacesOf(t, q);
       const i = a.findIndex(x => x.name === out);

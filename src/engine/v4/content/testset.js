@@ -7,14 +7,16 @@ import { quadrant } from './index.js';
 import { POOL_SPACES } from './pool.js';
 import { wrapInPlace } from './echo.js';
 
-/** color -> [live space key out, candidate space key in] */
+/** color -> [[live space key out, candidate space key in], ...] */
 export const TEST_SPACES = {
-  thieves: ['ransom', 'racket'], // Shake Down -> Protection Racket
-  silver: ['polish', 'roundrobin'], // Polish -> Round Robin
-  trading: ['estatesale', 'bequest'], // Estate Sale -> Bequest
-  market: ['pricecheck', 'rummage'], // Bury -> Rummage
-  echo: ['eternity', 'medley'], // Greatest Hits -> Medley
-  yellow: ['meltingpot', 'moneychangers'], // Melting Pot -> Swap Meet
+  thieves: [['ransom', 'racket']], // Shake Down -> Protection Racket
+  silver: [['polish', 'roundrobin']], // Polish -> Round Robin
+  trading: [['estatesale', 'bequest']], // Estate Sale -> Bequest
+  market: [['pricecheck', 'rummage']], // Bury -> Rummage
+  echo: [['eternity', 'medley']], // Greatest Hits -> Medley
+  yellow: [['meltingpot', 'moneychangers']], // Melting Pot -> Swap Meet
+  // Purple: every space takes the Goes Last token (Cory, Nov 8 8:21pm)
+  purple: [['holdup', 'holduplast'], ['again', 'againlast'], ['rally', 'rallylast']],
 };
 /** Candidate members dealt into the test version's decks, each in a live member's place so decks stay at 10 (Cory,
  *  Nov 8: "Are we keeping the member decks consistent?"); Protesters joins the grey members with nothing out. */
@@ -29,14 +31,23 @@ const cache = {};
 export function testSpaces(qid) {
   if (cache[qid]) return cache[qid];
   const live = quadrant(qid).actions;
-  const swap = TEST_SPACES[qid];
-  if (!swap) return (cache[qid] = live);
-  const i = live.findIndex(a => a.key === swap[0]);
-  const cand = (POOL_SPACES[qid] || []).find(a => a.key === swap[1]);
-  if (i < 0 || !cand) throw new Error(`Test version: ${qid} is missing ${i < 0 ? swap[0] : swap[1]}.`);
+  const swaps = TEST_SPACES[qid];
+  if (!swaps) return (cache[qid] = live);
   const out = [...live];
-  out[i] = wrapInPlace(qid, cand, i);
+  for (const [outKey, inKey] of swaps) {
+    const i = live.findIndex(a => a.key === outKey);
+    const cand = (POOL_SPACES[qid] || []).find(a => a.key === inKey);
+    if (i < 0 || !cand) throw new Error(`Test version: ${qid} is missing ${i < 0 ? outKey : inKey}.`);
+    out[i] = wrapInPlace(qid, cand, i);
+  }
   return (cache[qid] = out);
 }
+/** Whether the last table asked for was the test version: name lookups with no table in hand (hovers, log words)
+ *  read the test version's text first then, as a Purple space keeps its name with new words. */
+let lastTest = false;
+export const noteTable = on => { lastTest = !!on; };
 /** Every space a name might name: the live ones and the test version's (hover and log lookups by name). */
-export const anySpaces = qid => [...quadrant(qid).actions, ...(POOL_SPACES[qid] || []).filter(a => TEST_SPACES[qid]?.[1] === a.key)];
+export const anySpaces = qid => {
+  const test = (POOL_SPACES[qid] || []).filter(a => (TEST_SPACES[qid] || []).some(([, k]) => k === a.key));
+  return lastTest ? [...test, ...quadrant(qid).actions] : [...quadrant(qid).actions, ...test];
+};

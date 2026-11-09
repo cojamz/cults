@@ -9,7 +9,7 @@ import { install as installMarket } from './market.js';
 import { install as installThieves } from './thieves.js';
 import { install as installTrading } from './trading.js';
 import { install as installEcho } from './echo.js';
-import { testSpaces } from './testset.js';
+import { testSpaces, noteTable } from './testset.js';
 import { install as installBenders } from './benders.js';
 import { POOL_SPACES } from './pool.js';
 
@@ -74,7 +74,7 @@ for (const q of Object.values(QUADRANTS)) index(q);
 
 /** A color's spaces at this table: a space with a version for all piles (a.piles) shows that version there (Cory, 2026-11-01:
  *  "for the piles mode, we may need to change red round 1 action back to recruit the cheapest"). Same ring, same place. */
-export function spacesOf(state, qid) { const acts = state?.rules?.testSet && qid !== 'guest' ? testSpaces(qid) : quadrant(qid).actions; return state?.rules?.piles?.only ? acts.map(a => a.piles || a) : acts; }
+export function spacesOf(state, qid) { if (state?.rules) noteTable(state.rules.testSet); const acts = state?.rules?.testSet && qid !== 'guest' ? testSpaces(qid) : quadrant(qid).actions; return state?.rules?.piles?.only ? acts.map(a => a.piles || a) : acts; }
 
 export const DEFAULT_QUADRANTS = ['gold', 'red', 'blue', 'green'];
 // A game has as many spheres as players (Cory, 2026-10-15: "there are only X number of spheres for X number of

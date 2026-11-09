@@ -726,6 +726,32 @@ export default {
       estimate: (ctx, p) => 2 + turnsNowEstimate(ctx, p, 2),
       resolve(ctx, p) { ctx.gain(p, P, 2, { fromAction: true }); turnsNow(ctx, p, 2, 'Crunch Time'); },
     },
+    // The test version (Cory, Nov 8: "Lets just try goes last token on all the purple"; content/testset.js). The token
+    // comes after what the space already does: Right Away's and Crunch Time's turns come first, then the minion after
+    // them waits on the token (Claude's reading, put to Cory the same turn).
+    poolSpace({
+      key: 'holduplast', copyDoesIt: true, ring: 1, name: 'Hold Up', text: '+2 purple in round I, +3 in round II, +4 in round III. Whoever\u2019s turn is next skips it, even yours. Then take the Goes Last token: your next minion is placed after everyone else\u2019s.',
+      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Whoever\u2019s turn is next skips it, even yours. Then take the Goes Last token: your next minion is placed after everyone else\u2019s.' },
+      estimate: ctx => ctx.state.round + 2,
+      resolve(ctx, p) {
+        ctx.gain(p, P, ctx.state.round + 1, { fromAction: true });
+        const who = nextTurnOf(ctx);
+        if (who == null) ctx.log(`${p.name}'s Hold Up: no turn left to skip this round.`);
+        else skipNext(ctx, ctx.player(who), 'Hold Up', p);
+        toToken(ctx, p, 1, 'Hold Up');
+      },
+    }, 'testset'),
+    poolSpace({
+      key: 'againlast', copyDoesIt: true, ring: 1, name: 'Right Away', text: '+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one. Then take the Goes Last token: your minion after that is placed after everyone else\u2019s.',
+      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Your next turn comes right after this one. Then take the Goes Last token: your minion after that is placed after everyone else\u2019s.' },
+      estimate: (ctx, p) => ctx.state.round + 1 + turnsNowEstimate(ctx, p, 1),
+      resolve(ctx, p) { ctx.gain(p, P, ctx.state.round + 1, { fromAction: true }); turnsNow(ctx, p, relayRunners(ctx, p) ? 2 : 1, 'Right Away'); toToken(ctx, p, 1, 'Right Away'); },
+    }, 'testset'),
+    poolSpace({
+      key: 'rallylast', copyDoesIt: true, ring: 2, name: 'Crunch Time', text: '+2 purple. Your next two turns come right after this one. Then take the Goes Last token: your minion after those is placed after everyone else\u2019s.',
+      estimate: (ctx, p) => 2 + turnsNowEstimate(ctx, p, 2),
+      resolve(ctx, p) { ctx.gain(p, P, 2, { fromAction: true }); turnsNow(ctx, p, 2, 'Crunch Time'); toToken(ctx, p, 1, 'Crunch Time'); },
+    }, 'testset'),
   ],
 
   members: [
