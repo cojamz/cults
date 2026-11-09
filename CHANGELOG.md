@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.699 — 2026-11-08
+
+- The board turns on its own layer, so a spin no longer redraws the printed board; the menu's Copy spin report records how smoothly the board turned in your browser
+
 ## v0.99.698 — 2026-11-08
 
 - Firefox: the wheel's ring words are redrawn in smaller slices, so animations keep moving while they draw
