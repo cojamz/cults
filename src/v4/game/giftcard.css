@@ -178,3 +178,8 @@
 .gift-card[data-gift="change"] .gc-row[data-row="2"]{grid-template-columns:minmax(0,1fr)}
 .gift-card[data-gift="change"] .gc-stack:disabled:not(.chosen){opacity:.4}
 .gift-card[data-gift="change"] .gc-stack.chosen:disabled{opacity:1}
+/* Spoilsport's contests (Nov 9): a tile per contest, its color, its name and the faces of who leads it */
+.gift-card .gc-contest{flex-direction:column;gap:3px;padding:6px 10px;min-width:72px}
+.gift-card .gc-contest .gc-word{font:600 14px/16px var(--sans)}
+.gift-card .gc-contest .gc-lead{display:flex;gap:2px;min-height:16px;align-items:center}
+.gift-card .gc-contest .gc-lead i{font:italic 12px/14px var(--sans);opacity:.7}

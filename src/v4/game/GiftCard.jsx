@@ -8,9 +8,9 @@ import SplitPicker, { splitRunning } from './SplitPicker.jsx';
 import SpendPicker from './SpendPicker.jsx';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { holdFlag } from './bodyFlag.js';
-import { cardDef, quadrant } from '../../engine/v4/index.js';
+import { cardDef, followers, quadrant } from '../../engine/v4/index.js';
 import { costParts, playerColor, seatEmoji, seatNames } from '../format.js';
-import { MemberGlyph, ResourceGlyph, anyParts } from './Glyphs.jsx';
+import { FollowerGlyph, MemberGlyph, ResourceGlyph, anyParts } from './Glyphs.jsx';
 import { Pip } from './Rich.jsx';
 import { Minion } from '../art/Leader.jsx';
 import { Sprite } from '../art/Sprite.jsx';
@@ -21,7 +21,7 @@ import { TurnOf } from './parts.jsx';
 import { breakable } from './hyphen.js';
 import './giftcard.css';
 
-const LABELS = { share: [null, 'To'], color: [null, null], give: ['Color', 'To'], gift: [null, 'To'], colors: ['Give', 'Get'], amount: ['Get', 'How many'], trade: ['Member', 'For'], steal: [null, null], recruit: [null, null], move: [null, null], change: [null, null] };
+const LABELS = { share: [null, 'To'], color: [null, null], give: ['Color', 'To'], gift: [null, 'To'], colors: ['Give', 'Get'], amount: ['Get', 'How many'], trade: ['Member', 'For'], steal: [null, null], recruit: [null, null], move: [null, null], change: [null, null], handover: ['Give', 'To'], contest: [null, null] };
 // a swap with this many members on the card sets them closer (round III: twelve of yours and twenty of theirs), so
 // every row shows whole, never cut off at the card's foot (live panel round 1)
 const DENSE = 14;
@@ -141,7 +141,8 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
   };
   const edge = () => fade(more.current), edge1 = () => fade(more1.current);
   useEffect(() => { edge(); edge1(); });
-  const [l1, l2] = LABELS[g.kind];
+  const [l1raw, l2] = LABELS[g.kind];
+  const l1 = g.kind === 'handover' && g.move ? 'Move' : l1raw;
   const card = uid => cardDef(state, uid);
   const owner = uid => state.players.find(p => p.members.includes(uid));
   const ownerName = uid => { const p = owner(uid); return p ? p.id === g.actor ? 'You' : p.name : 'Shop'; };
@@ -154,6 +155,7 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
       : g.kind === 'colors' && g.chosen ? <>Swap <b className="num">1</b><Pip color={g.chosen} /> for another color</>
         : g.kind === 'amount' && from ? <>Swap {g.chosen ? 'your' : ''}<Pip color={from} /> for {g.chosen ? <Pip color={g.chosen} /> : 'another color'}</>
           : g.kind === 'trade' && g.chosen != null ? <>Swap {card(g.chosen).name} for…</>
+            : g.kind === 'handover' && g.chosen != null ? <>{g.move ? 'Move' : 'Give'} {card(g.chosen).name} to…</>
             : g.head;
   // what the second row's items pair with, live or (before a first is picked) quiet
   const live = new Map(g.seconds.map(x => [x.b, x.o]));
@@ -193,14 +195,15 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
       </>
     );
   };
-  const dense = g.kind === 'trade' && g.firsts.length + g.others.length > DENSE;
+  const members = g.kind === 'trade' || g.kind === 'handover';
+  const dense = members && g.firsts.length + g.others.length > DENSE;
   const crowd = g.kind === 'trade' && g.firsts.length + g.others.length > CROWD;
   const pic = dense ? 24 : 28;
 
   const firstItem = f => {
     const press = e => onFirst(f.chosen ? null : f.a, e.currentTarget);
     const common = { type: 'button', 'data-option': f.id, 'aria-pressed': f.chosen, disabled: busy, onClick: press, className: `gc-item${f.chosen ? ' chosen' : ''}` };
-    if (g.kind === 'trade') {
+    if (members) {
       const d = card(f.a);
       return (
         <button key={f.a} {...common} className={`${common.className} gc-member`} data-uid={f.a} aria-label={`${memberLabel(f.a)}${f.chosen ? ' (picked)' : ''}`} style={{ '--q': cardColor(state, d) }} {...memberHover(f.a)}>
@@ -233,6 +236,33 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
           <Minion color={playerColor(b)} emoji={seatEmoji(state, b)} size={28} />
           <span className="gc-name">{p.name}</span>
           <span className="gc-has num">{has}<ResourceGlyph r={color || 'silver'} size={11} decorative />{k > 0 && <i className="gc-tally num" aria-hidden="true">+{k}</i>}</span>
+        </button>
+      );
+    }
+    if (g.kind === 'handover') {
+      // the rival's face, with how many followers and members they have now (who you'd be feeding)
+      const p = state.players[b];
+      const fol = followers(state, p), mem = p.members.length;
+      const what = g.chosen != null ? card(g.chosen).name : null;
+      return (
+        <button key={b} {...common} className={`${common.className} gc-face`} data-pid={b} style={{ '--pc': playerColor(b) }}
+          aria-label={o ? `${g.move ? 'Move' : 'Give'} ${what} to ${p.name} (${fol} followers, ${mem} members)` : `${p.name}: ${g.chosen == null ? 'pick a member first' : 'not this one'}`}
+          title={o ? `${p.name}: ${fol} followers, ${mem} members` : g.chosen == null ? 'Pick a member first' : `${what} is already ${p.name}'s`}>
+          <Minion color={playerColor(b)} emoji={seatEmoji(state, b)} size={28} />
+          <span className="gc-name">{p.name}</span>
+          <span className="gc-has num">{fol}<FollowerGlyph size={11} title="followers" /></span>
+        </button>
+      );
+    }
+    if (g.kind === 'contest') {
+      // a contest: its color, its name, and the faces of whoever leads it now
+      const t = g.tiles.find(x => x.b === b);
+      const names = t.lead.map(pid => (pid === g.actor ? 'you' : state.players[pid].name));
+      return (
+        <button key={b} {...common} className={`${common.className} gc-dot gc-contest`} data-res={b} aria-label={`${t.name}: ${names.length ? `${names.join(' and ')} lead${names.length === 1 && names[0] !== 'you' ? 's' : ''}` : 'nobody leads'}`} title={t.o.label}>
+          <ResourceGlyph r={b} size={24} decorative />
+          <span className="gc-word">{t.name}</span>
+          <span className="gc-lead">{t.lead.length ? t.lead.map(pid => <Minion key={pid} color={playerColor(pid)} emoji={seatEmoji(state, pid)} size={16} />) : <i>nobody</i>}</span>
         </button>
       );
     }
@@ -470,7 +500,7 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
       {!far && l1 && (
         <div className="gc-row" data-row="1" data-live={step === 1 ? '1' : undefined}>
           <span className="gc-lbl">{l1}</span>
-          <div ref={more1} onScroll={edge1} className={`gc-items${g.kind === 'trade' ? ' gc-theirs' : ''}`}>{g.kind === 'trade' ? memberGroups(g.firsts.map(f => f.a), true) : g.firsts.map(firstItem)}</div>
+          <div ref={more1} onScroll={edge1} className={`gc-items${members ? ' gc-theirs' : ''}`}>{members ? memberGroups(g.firsts.map(f => f.a), true) : g.firsts.map(firstItem)}</div>
         </div>
       )}
       {!far && (

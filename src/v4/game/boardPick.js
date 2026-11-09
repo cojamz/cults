@@ -100,6 +100,8 @@ export function giftPick(state, pend, first = null) {
   const title = m ? m[1] : '';
   const question = m ? m[2] : String(pend.prompt || '');
   const base = { title, actor: pend.player, done: null, sameCost: false };
+  const other = otherPick(state, pend, title, question, base, first);
+  if (other) return other;
   // a gift of a fixed color to a rival: every answer is a player ("Kickback: give 1 gold to…")
   const gift = question.match(/^give (\d+) (\w+) to\b/i);
   const players = pend.options.filter(o => o.target && Number.isInteger(o.target.pid) && o.target.res == null && o.target.pid !== pend.player);
@@ -195,6 +197,70 @@ export function giftPick(state, pend, first = null) {
   const swapTask = state.queue?.[0]?.h === 'yellow.swap' ? state.queue[0].data : null;
   const left = swapTask && Number.isInteger(swapTask.left) ? swapTask.left : null;
   return { ...base, kind, n, color: null, head, chosen, firsts, seconds, others, rest, done: done == null ? null : Number(done), left, sameCost: /equal cost/i.test(question) };
+}
+
+/**
+ * Questions that were a flat wall of buttons (Cory, Nov 9, on Godparent's "Kingmakers (8) to bee, Kingmakers (8) to
+ * crab…": "this can be way better"), each on the gift card instead:
+ * - a member to a rival (Godparent, Guest of Honor, Nosy Neighbors): the members as pictures with their cost, then the
+ *   rivals' faces; tap a member, then a rival (kind 'handover')
+ * - a grey member's "+N of any color: which?" (the cloaks): one row of color dots (kind 'color')
+ * - Spoilsport's contest: one tile per contest, its color and who leads it (kind 'contest')
+ * - Heist Crew's "steal half of which pile?": the half-pile steal card (kind 'steal', halfPile)
+ * Null when it isn't one of these.
+ */
+function otherPick(state, pend, title, question, base, first) {
+  const opts = pend.options;
+  const h = state.queue?.[0]?.h;
+  const holderOf = uid => state.players.find(p => p.members.includes(uid));
+  if (/to which rival\b/i.test(question)) {
+    const pairs = [], rest = [];
+    for (const o of opts) {
+      const v = o.value;
+      const from = Array.isArray(v) && v.length === 2 && Number.isInteger(v[0]) && state.cards[v[0]] && Number.isInteger(v[1]) && state.players[v[1]] ? holderOf(v[0]) : null;
+      if (from && from.id !== v[1]) pairs.push({ o, a: v[0], b: v[1] }); else rest.push(o);
+    }
+    if (pairs.length >= 2) {
+      const firstsAll = [...new Set(pairs.map(x => x.a))];
+      const chosen = firstsAll.includes(first) ? first : firstsAll.length === 1 ? firstsAll[0] : null;
+      const move = firstsAll.some(u => holderOf(u).id !== pend.player);
+      const fol = (question.match(/\+(\d+) followers?/) || [])[1];
+      const pickedCost = chosen == null ? null : (String((pairs.find(x => x.a === chosen) || {}).o?.label || '').match(/\((\d+)\)/) || [])[1];
+      const sub = fol ? `+${fol} followers.` : /godparent/i.test(title) ? (pickedCost ? `You gain ${pickedCost} followers (its cost).` : 'You gain its cost in followers.') : move ? 'Tap a member, then the rival it goes to.' : '';
+      return { ...base, kind: 'handover', move, n: null, color: null, chosen, sub,
+        head: move ? 'Move a member to another rival' : 'Give one of your members to a rival',
+        firsts: firstsAll.map(a => ({ id: a === chosen ? '@unpick' : `@pick:${a}`, a, chosen: a === chosen })),
+        seconds: chosen == null ? [] : pairs.filter(x => x.a === chosen).map(({ o, b }) => ({ o, b })),
+        others: [...new Set(pairs.map(x => x.b))].sort((x, y) => x - y), rest };
+    }
+  }
+  if (h === 'benders.pickColor' && opts.length >= 2 && opts.every(o => typeof o.value === 'string' && state.resources.includes(o.value))) {
+    const n = (question.match(/\+(\d+)/) || [])[1] || '1';
+    const who = (question.match(/^(.+?) is grey/) || [])[1];
+    return { ...base, kind: 'color', n: null, color: null, chosen: null, pay: false, left: null, toPick: 0,
+      head: `+${n} of any color`, sub: who ? `${who} is grey, so you pick the color.` : 'A grey member: you pick the color.',
+      firsts: [], seconds: opts.map(o => ({ o, b: o.value })), others: opts.map(o => o.value), rest: [] };
+  }
+  if (h === 'benders.spoil' && opts.length >= 2) {
+    const tiles = [];
+    for (const o of opts) {
+      let res = null;
+      try { res = quadrant(o.value).resource; } catch { return null; }
+      const paren = (String(o.label).match(/\(([^)]*)\)$/) || [])[1] || '';
+      const names = /nobody/i.test(paren) ? [] : paren.replace(/\s+leads?$/, '').split(' & ');
+      const lead = names.map(nm => (state.players.find(p => p.name === nm) || {}).id).filter(Number.isInteger);
+      tiles.push({ o, b: res, lead, name: String(o.label).replace(/\s*\([^)]*\)$/, '') });
+    }
+    return { ...base, kind: 'contest', n: null, color: null, chosen: null, head: 'Pick a contest nobody wins this round', sub: 'Its leaders get nothing for it.',
+      firsts: [], seconds: tiles, others: tiles.map(t => t.b), tiles, rest: [] };
+  }
+  if (h === 'thieves.hoardBreak' && opts.every(o => o.kind === 'pile' && Array.isArray(o.value))) {
+    const takes = opts.map(o => ({ ...o, target: { pid: o.value[0], res: o.value[1] }, take: Number((String(o.label).match(/take (\d+)/) || [])[1]) || 1 }));
+    const model = stealModel(state, pend, title, question, base, takes);
+    const rivals = model.rivals.map(r => (r.stacks.length ? r : { ...r, why: (pend.blocked && pend.blocked[r.pid]) || `${r.name} has no pile of 2 or more.` }));
+    return { ...model, rivals, board: null, halfPile: true, n: null, left: null, plan: null, head: 'Steal half of a rival\u2019s biggest pile', sub: 'Rounded down.' };
+  }
+  return null;
 }
 
 /**
