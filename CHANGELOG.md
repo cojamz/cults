@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.711 — 2026-11-09
+
+- Test cards: Recruit Twice is back in Blue round II
+
 ## v0.99.710 — 2026-11-09
 
 - Test cards: three new member-movement cards. Gift Swappers and Purifiers join the grey members; Foreclose takes Recruit Twice's place on Blue.
