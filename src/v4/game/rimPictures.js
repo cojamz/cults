@@ -137,18 +137,23 @@ async function draw(textEl, box, px) {
 }
 
 /** Start drawing a rim text's picture (in idle time) unless it's drawn or on its way; onReady when it lands. */
-export function want(textEl, arcEl, box, px, onReady) {
+export function want(textEl, arcEl, box, px, onReady, { soon = false } = {}) {
   const key = pictureKey(textEl, arcEl, px);
   const had = cache.get(key);
   if (had) return had.url ? had : null;
-  // drawn in idle time, and never while the board is turning (a picture costs a frame of its own; it waits for a still board)
-  const idle = () => new Promise(ok => { const go = () => requestIdleCallback(d => (textEl.closest('.stage.turning') ? setTimeout(go, 400) : ok(d)), { timeout: 3000 }); go(); });
+  // drawn in idle time, and never while the board is turning (a picture costs a frame of its own; it waits for a still board).
+  // `soon`: an older picture of this rim stands in meanwhile, so the new one is drawn at the first quiet moment
+  const wait = soon ? 300 : 3000;
+  const idle = () => new Promise(ok => { const go = () => requestIdleCallback(d => (textEl.closest('.stage.turning') ? setTimeout(go, 400) : ok(d)), { timeout: wait }); go(); });
   const p = idle()
     .then(() => draw(textEl, box, px))
     .then(url => { remember(key, { url, box }); onReady(); }, () => { cache.set(key, { url: null, box, failed: true }); });
   remember(key, { url: null, box, pending: p });
   return null;
 }
+
+/** Whether this text's picture can't be drawn (so only its live words can show it). */
+const failed = (textEl, arcEl, px) => { const had = cache.get(pictureKey(textEl, arcEl, px)); return !!(had && had.failed); };
 
 /** A picture already drawn for this text, or null. */
 export function ready(textEl, arcEl, px) {
@@ -169,19 +174,27 @@ export function showPictures(stage, layer, boxOf, px, onReady) {
     if (!arc) continue;
     const box = boxOf(Number(q));
     // a rim lit for the Reckoning keeps its live words (its glow is a filter, which a picture wouldn't carry)
-    const pic = want(t, arc, box, px, onReady);
     let im = layer.querySelector(`image[data-q="${q}"]`);
-    if (pic) {
+    const pic = want(t, arc, box, px, onReady, { soon: !!im });
+    if (!pic && im && !failed(t, arc, px)) {
+      // the rim's words changed (a new leader's face at the end of the line moves them all along it, most often) and their
+      // new picture isn't drawn yet: the old picture stays up until it lands (onReady), never the live words. Firefox draws
+      // curved live words letter by letter: showing them for that moment, then hiding them again, held every animation on
+      // the table for 0.2-0.3 s at a time on a 2x screen (Cory, Nov 8: "basically all animations are laggy")
+      for (const m of ['data-rim-wait', 'data-rim-lit']) if (t.hasAttribute(m) !== im.hasAttribute(m)) im.toggleAttribute(m, t.hasAttribute(m));
+      seen.add(q);
+    } else if (pic) {
       if (!im) { im = document.createElementNS(SVGNS, 'image'); im.setAttribute('data-q', q); im.setAttribute('preserveAspectRatio', 'none'); layer.appendChild(im); }
       if (im.getAttribute('href') !== pic.url) im.setAttribute('href', pic.url);
       const [x, y, w, h] = pic.box;
-      im.setAttribute('x', x); im.setAttribute('y', y); im.setAttribute('width', w); im.setAttribute('height', h);
-      t.style.visibility = 'hidden';
+      // only what changed: Firefox repaints the board for a same-value write too, and this runs after every commit
+      for (const [a, v] of [['x', x], ['y', y], ['width', w], ['height', h]]) if (im.getAttribute(a) !== String(v)) im.setAttribute(a, v);
+      if (t.style.visibility !== 'hidden') t.style.visibility = 'hidden';
       // dimmed while another rim is scored: the picture carries the words' "wait" (lamp.css), not a picture of its own
       for (const m of ['data-rim-wait', 'data-rim-lit']) if (t.hasAttribute(m) !== im.hasAttribute(m)) im.toggleAttribute(m, t.hasAttribute(m));
       seen.add(q);
     } else {
-      t.style.visibility = '';
+      if (t.style.visibility) t.style.visibility = '';
       if (im) im.remove();
     }
   }
