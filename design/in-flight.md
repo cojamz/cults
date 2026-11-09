@@ -60,3 +60,4 @@ Branches
 
 - **Economy test** (thread "Tune member costs for fun", Nov 7): waves 1-2 done, results design/eval/economy-test/results-2026-11-07.md; Richer shipped as an optional setup (v0.99.684). Wave 3 (10 levers on top of Richer) stopped early when Cor wrapped up: resume steps in design/eval/economy-test/wave3-status-2026-11-07.md.
 - **Card idea pipeline** (thread "card and action testing", Nov 7): round 1 done, page https://claude.ai/artifact/QbGxNgEwkPPgrjBjBLrcRm (117 cards in 6 tiers). Round 2 stopped at 23:37Z when Cory ran out of credits: pools 15 and 16 built, judge games partial. Resume notes: /mnt/project-files/idea-pipeline/round2/README.md.
+- Wheel spin stall (thread "Stop wheel spin from freezing the game", Nov 8): v0.99.699 live (board layers composited for good, spin recorder in the menu). Waiting on Cory's spin report from his Mac; this box can't measure Firefox's compositor. Notes: design/eval/perf/wheel-spin-2026-11-08.md.
