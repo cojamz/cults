@@ -301,7 +301,11 @@ function scalpStep(ctx, p, data) {
  * the rest already come last and only join the token. Early Birds ("Your turns can't be skipped."): the space pays and
  * nothing goes on the token, so the token stays where it is (decisions, Nov 1 2:21pm: take the payout without going last).
  */
+// test version (Cory, Nov 9: "maybe the goes last token applies to ALL of your minions?"): a Purple space's token holds
+// every minion you have left, as Last Call's does; members keep their own words
+const ALL_LAST = new Set(['Sleep In', 'Hold Up', 'Right Away', 'Closing Time', 'Overtime']);
 function toToken(ctx, p, n, why) {
+  if (ctx.state.rules?.testSet && ALL_LAST.has(why)) n = Math.max(n, turnsLeft(ctx, p));
   if (noSkip(ctx, p)) { ctx.log(`${p.name}'s Early Birds: ${p.name}'s turns can't be skipped, so ${p.name} doesn't go last.`); return 0; }
   const kept = tokenHolder(ctx.state) === p.id; // already theirs: they keep it, they don't take it (Night Watch pays on a take)
   takeToken(ctx, p, why);

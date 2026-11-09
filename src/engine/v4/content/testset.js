@@ -27,18 +27,21 @@ export const TEST_OUT = new Set(['trading.recluse', 'trading.heirs', 'market.reg
 export const testDealt = (rules, def) => (!rules?.testSet ? null : TEST_MEMBERS.has(def.id) ? true : TEST_OUT.has(def.id) ? false : null);
 
 const cache = {};
+const ALL_WORDS = /(your next minion is|your minion after (that|those) is|that minion is) placed after everyone else\u2019s/;
 /** A color's spaces in the test version: the live list with the swap made in place. */
 export function testSpaces(qid) {
   if (cache[qid]) return cache[qid];
   const live = quadrant(qid).actions;
   const swaps = TEST_SPACES[qid];
   if (!swaps) return (cache[qid] = live);
-  const out = [...live];
+  // Purple: the token holds all your other minions (Cory, Nov 9), so its spaces say so
+  const out = qid === 'purple' ? live.map(a => (ALL_WORDS.test(a.text) ? { ...a, text: a.text.replace(ALL_WORDS, 'your other minions are placed after everyone else\u2019s') } : a)) : [...live];
   for (const [outKey, inKey] of swaps) {
     const i = live.findIndex(a => a.key === outKey);
     const cand = (POOL_SPACES[qid] || []).find(a => a.key === inKey);
     if (i < 0 || !cand) throw new Error(`Test version: ${qid} is missing ${i < 0 ? outKey : inKey}.`);
-    out[i] = wrapInPlace(qid, cand, i);
+    const c2 = qid === 'purple' && ALL_WORDS.test(cand.text) ? { ...cand, text: cand.text.replace(ALL_WORDS, 'your other minions are placed after everyone else\u2019s') } : cand;
+    out[i] = wrapInPlace(qid, c2, i);
   }
   return (cache[qid] = out);
 }
@@ -49,5 +52,5 @@ export const noteTable = on => { lastTest = !!on; };
 /** Every space a name might name: the live ones and the test version's (hover and log lookups by name). */
 export const anySpaces = qid => {
   const test = (POOL_SPACES[qid] || []).filter(a => (TEST_SPACES[qid] || []).some(([, k]) => k === a.key));
-  return lastTest ? [...test, ...quadrant(qid).actions] : [...quadrant(qid).actions, ...test];
+  return lastTest ? [...testSpaces(qid), ...test, ...quadrant(qid).actions] : [...quadrant(qid).actions, ...test];
 };
