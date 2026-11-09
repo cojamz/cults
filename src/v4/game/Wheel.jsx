@@ -35,6 +35,7 @@ import { panelText, lineText } from './panelText.js';
 import { ResourceGlyph } from './Glyphs.jsx';
 import { Pip } from './Rich.jsx';
 import { MO, spinEase } from '../motion.js';
+import { spinStep, spinLabContext } from './spinLab.js';
 
 // One space on the board, drawn once per change of what it shows (perf, 2026-10-15): the wheel keeps each space's
 // element while its picture is the same, so a rival's step redraws only the spaces that changed, not all 24
@@ -49,7 +50,7 @@ const placeFn = (live, key, opt) => () => live.current.place(key, opt);
 // in six mouse drags, 5 with the spaces ignoring the pointer). The stage's .turning class also takes their pointer
 // events away in CSS (lamp.css); this is the same rule for an event already on its way.
 const startTurning = root => {
-  if (!root || root.classList.contains('turning')) return;
+  if (!root || root.classList.contains('turning') || spinmode('noturning')) return;
   root.classList.add('turning');
   for (const c of root.querySelectorAll('.hot')) c.classList.remove('hot');
 };
@@ -111,6 +112,16 @@ export const facingOf = (rot, count) => {
   return best;
 };
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+// ?wheelmarks=1: performance marks at each step of a turn (press, land, commit), read by scripts/v4-spin-marks.mjs beside the
+// frames that painted, to see which step a slow frame fell in (wheel pass, Nov 8). Off, `mark` is a no-op.
+const WHEEL_MARKS = typeof location !== 'undefined' && /[?&]wheelmarks=1\b/.test(location.search);
+// every step also goes to the spin recorder (spinLab.js), which times the frames of every turn in the player's own browser
+const mark = WHEEL_MARKS ? n => { performance.mark(`wheel:${n}`); spinStep(n, spinHow); } : n => spinStep(n, spinHow);
+let spinHow = ''; // what started the turn being timed: key, drag, flick, facing
+// ?spinmode=<flags> (an experiment, wheel pass Nov 8): noturning (no .turning class), layersonly (the spaces don't animate,
+// only the two layers), raf (no Web Animations: paintRot each frame), nofilter
+const SPINMODE = typeof location !== 'undefined' ? (location.search.match(/[?&]spinmode=([\w,]+)/) || [])[1] || '' : '';
+const spinmode = f => SPINMODE.split(',').includes(f);
 
 /** Which look the spaces wear: `?spaces=sockets` (the old look), `?spaces=<a face in ./faces/>`, else 'panels'. */
 export function spacesLook() {
@@ -435,6 +446,7 @@ function rememberScale(s) {
 
 function Wheel({ state, interactionState = state, legal, idle = null, pickNotes = null, onPick, onDenied, onTouched, confirmPlace = false, flash, late = false, caption = null, lastMove = null, recentMoves = [], spacePeek = null, onSpacePeek, meId = null, facing, onFacing, hover = null, lampQid = null, look: lookProp = null }) {
   const look = useMemo(() => lookProp || spacesLook(), [lookProp]);
+  mark('render');
   const panels = look === 'panels';
   // a face from ./faces/ (null for the built-in looks, and for a moment while its chunk loads)
   const custom = !BUILT_IN.includes(look);
@@ -495,12 +507,15 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     return () => ro.disconnect();
   }, []);
   const boardPx = scale * VBS;
+  // what the spin recorder notes beside each turn's frames (spinLab.js): the round, whether a rival's move is showing, the board's size
+  useEffect(() => { spinLabContext(() => { const g = document.querySelector('.app.game'); return { round: state.round, rival: !!g && (g.dataset.animating === 'true' || g.dataset.bot === '1'), board: Math.round(boardPx) }; }); }, [state.round, boardPx]);
 
   // React takes a landed angle as a transition: the board already shows it (paintRot), and the re-lay of every space that
   // follows (~200ms at 4× CPU) can't hold up the next press, key or hover. Until it commits, any other render draws the
   // old angle, which the painted transforms still correct.
   const applyRot = useCallback(r => {
     rotRef.current = r;
+    mark('apply');
     startTransition(() => {
       setRot(r);
       onFacing(facingOf(r, nq));
@@ -551,6 +566,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     for (const [el, x, y] of geo.current) el.style.translate = Number.isFinite(x + y) ? `${(x * c - y * s - x).toFixed(1)}px ${(x * s + y * c - y).toFixed(1)}px` : '';
   };
   useLayoutEffect(() => {
+    mark('commit');
     drawn.current = rot;
     geo.current = null;
     const root = stage.current;
@@ -590,7 +606,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     const ks = Array.from({ length: n + 1 }, (_, i) => [from + ((to - from) * i) / n, i === 0 ? 0 : i === n ? 1 : when(i / n)]);
     const opts = { duration: dur, easing: 'linear', fill: 'forwards' };
     for (const sv of root.querySelectorAll(':scope > .turn-layer')) sp.anims.push(sv.animate(ks.map(([r, offset]) => ({ offset, transform: `rotate(${(r - painted.current).toFixed(2)}deg)` })), opts));
-    for (const [el, x, y] of geo.current || []) {
+    for (const [el, x, y] of spinmode('layersonly') ? [] : geo.current || []) {
       if (!Number.isFinite(x + y)) continue;
       sp.anims.push(el.animate(ks.map(([r, offset]) => {
         const d = ((r - drawn.current) * Math.PI) / 180, c = Math.cos(d), s = Math.sin(d);
@@ -616,6 +632,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     paintRot(at);
   };
   const animateTo = useCallback(to => {
+    mark('press');
     stop();
     clearTimeout(commitT.current);
     const from = rotRef.current, dur = reduced() ? 1 : MO.spin;
@@ -627,6 +644,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     const sp = { from, to, t0: performance.now(), dur, anims: [], start: null };
     sp.land = () => {
       if (spin.current !== sp) return;
+      mark('land');
       spin.current = null;
       // land on the exact angle (the spin ends at MO.spin); React's commit of it follows and changes nothing on screen
       // (snappy gate s1: waiting on the commit read as a ~500ms spin)
@@ -640,17 +658,24 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     if (!root || dur <= 1 || typeof root.animate !== 'function' || Math.abs(to - from) < 0.01) { sp.land(); return; }
     paintRot(from); // the layers carry the start (a drag ends with a turn on them), and the spaces' places are read
     rotRef.current = to;
+    if (spinmode('raf')) {
+      const tick = () => { if (spin.current !== sp) return; const k = Math.min(1, (performance.now() - sp.t0) / dur); paintRot(from + (to - from) * spinEase(k)); if (k < 1) anim.current = requestAnimationFrame(tick); else sp.land(); };
+      anim.current = requestAnimationFrame(tick);
+      mark('pressed');
+      return;
+    }
     spinAnims(sp);
+    mark('pressed');
     if (!sp.anims.length) sp.land();
   }, [commitWhenStill]); // eslint-disable-line react-hooks/exhaustive-deps
   const touched = useRef(onTouched);
   touched.current = onTouched;
-  const nudge = useCallback(deg => { if (touched.current) touched.current(); animateTo(Math.round((rotRef.current + deg) / SEC) * SEC); }, [animateTo, SEC]);
+  const nudge = useCallback(deg => { if (touched.current) touched.current(); spinHow = spinHow || 'key'; animateTo(Math.round((rotRef.current + deg) / SEC) * SEC); spinHow = ''; }, [animateTo, SEC]);
 
   // Parent asked to face a quadrant (a tab, or a rival's move): spin there the short way.
   useEffect(() => {
     if (spin.current || drag.current) return;
-    if (facingOf(rotRef.current, nq) !== facing) animateTo(rotRef.current + norm(-SEC * facing - rotRef.current));
+    if (facingOf(rotRef.current, nq) !== facing) { spinHow = 'facing'; animateTo(rotRef.current + norm(-SEC * facing - rotRef.current)); spinHow = ''; }
   }, [facing, nq, SEC, animateTo]);
 
   useEffect(() => {
@@ -768,7 +793,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     const n = Math.abs(dr.acc) < DRAG_GRAB ? 0 : Math.sign(dr.acc) * (1 + Math.floor((Math.abs(dr.acc) - DRAG_GRAB) / SEC));
     if (n === 0 && dr.goal == null) { paintRot(rotRef.current + d); return; }
     const goal = dr.home + n * SEC;
-    if (goal !== dr.goal) { dr.goal = goal; animateTo(goal); }
+    if (goal !== dr.goal) { dr.goal = goal; spinHow = 'drag'; animateTo(goal); spinHow = ''; }
   };
   const onUp = e => {
     if (e && e.pointerType === 'touch' && !moved.current && drag.current) {
@@ -790,7 +815,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     drag.current = null;
     if (!moved.current) return;
     // swipe right moves the facing quadrant right (the wheel turns counter-clockwise), and the other way round
-    if (dr.swipe) { const dx = (e && e.type !== 'pointercancel' && e.clientX != null ? e.clientX : dr.lastX ?? dr.x) - dr.x; if (Math.abs(dx) > 24) nudge(dx > 0 ? -SEC : SEC); setTimeout(() => { moved.current = false; }, 0); return; }
+    if (dr.swipe) { const dx = (e && e.type !== 'pointercancel' && e.clientX != null ? e.clientX : dr.lastX ?? dr.x) - dr.x; if (Math.abs(dx) > 24) { spinHow = 'swipe'; nudge(dx > 0 ? -SEC : SEC); } setTimeout(() => { moved.current = false; }, 0); return; }
     // a drag past the grab is already spinning to its quarter
     if (dr.goal != null) { if (!spin.current) commitWhenStill(rotRef.current); setTimeout(() => { moved.current = false; }, 0); return; }
     // a fling (fast and recent) steps one quadrant in its direction; a slow drag settles on the nearest
@@ -800,7 +825,9 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     // a deliberate drag never springs back home (the skeptic, w4 #19: "it won't stay where I put it"): past 12° it turns
     // on to the next quarter its way, where the rims read upright
     else if (target === home && Math.abs(rotRef.current - home) > 12) target = home + Math.sign(rotRef.current - home) * SEC;
+    spinHow = Math.abs(dr.v) > 0.18 ? 'flick' : 'drag';
     animateTo(target);
+    spinHow = '';
     setTimeout(() => { moved.current = false; }, 0);
   };
 

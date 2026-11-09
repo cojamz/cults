@@ -1,4 +1,5 @@
 // The game table. Renders engine state from a session and turns clicks into { player, option } moves.
+import { spinReport, spinLabOn, onSpin, spinRecords } from './spinLab.js';
 import { GAME_NAME, VERSION_LABEL } from '../version.js';
 import { fizzleNote, tookSpace } from './fizzle.js';
 import { turnRun, runTitle, runSay } from './seats.js';
@@ -492,7 +493,8 @@ function SoundSetting() {
 function Menu({ onRules, onLog, onLeave, getState, online = false }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(null); // null | 'copied' | the record text, when the clipboard refused
-  useEffect(() => { if (!open) setCopied(null); }, [open]);
+  const [spinCopied, setSpinCopied] = useState(false); // the spin report's own "Copied" (the two buttons share the textarea)
+  useEffect(() => { if (!open) { setCopied(null); setSpinCopied(false); } }, [open]);
   const copyRecord = async () => {
     const st = getState && getState();
     const text = recordText(st ? gameRecord(st) : { empty: true });
@@ -521,6 +523,9 @@ function Menu({ onRules, onLog, onLeave, getState, online = false }) {
           {online && <CursorSetting />}
           <button type="button" role="menuitem" className="btn ghost record-btn" data-copy-record onClick={copyRecord}
             title="Copies this game, move by move, so a problem can be replayed exactly">{copied === 'copied' ? 'Copied' : 'Copy game record'}</button>
+          {/* the spin recorder's report (spinLab.js): every turn of the board timed in this browser, for the wheel's lag work */}
+          <button type="button" role="menuitem" className="btn ghost spin-report-btn" data-copy-spins onClick={async () => { const t = spinReport(); if (await copyText(t)) setSpinCopied(true); else setCopied(t); }}
+            title="Copies how smoothly the board turned in this browser, spin by spin">{spinCopied ? 'Copied' : 'Copy spin report'}</button>
           <button type="button" role="menuitem" className="btn ghost save-game-btn" data-save-game onClick={() => { const st = getState && getState(); if (st) saveGame(gameRecord(st)); }}
             title="Downloads this game as text, every move in order, that replays it exactly">Save game</button>
           {copied && copied !== 'copied' && (
@@ -2173,6 +2178,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
           {yours && !state.over && myRun && myRun.total >= 2 && pend.kind === 'place' && <span className="say-run" data-run-left={myRun.left} title={runTitle(myRun)}>{runSay(myRun)}</span>}
         </div>
         {/* who's winning lives on the chairs (each total, its place, the margin on hover): no score row (Cory, 2026-10-15) */}
+        <SpinLabCorner />
         <Menu onRules={() => setRules(true)} onLog={openLog} online={typeof session.pointAt === 'function'} getState={() => session.getState()} onLeave={onHome ? () => (state.over ? onHome() : setLeaving(true)) : null} />
       </header>
       {session.info && session.info.mode === 'online' && session.info.roomCode && (
@@ -2290,4 +2296,13 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
       {needHandoff && !moment && <Handoff player={state.players[pend.player]} onReady={() => setReady(pend.player)} />}
     </div>
   );
+}
+
+/** ?spinlab=1: the last spin's frames in a corner, so a stall can be seen as it happens (spinLab.js). */
+export function SpinLabCorner() {
+  const [last, setLast] = useState(() => spinRecords().at(-1) || null);
+  useEffect(() => onSpin(setLast), []);
+  if (!spinLabOn()) return null;
+  const st = { position: 'fixed', left: 8, bottom: 8, zIndex: 90, font: '12px/1.3 ui-monospace, monospace', background: 'rgba(0,0,0,.75)', color: '#fff', padding: '6px 8px', borderRadius: 6, pointerEvents: 'none', maxWidth: 360, whiteSpace: 'pre-wrap' };
+  return <div style={st} data-spinlab>{last ? `spin ${last.how || ''}: ${last.frames} frames / ${last.ms} ms, worst ${last.worst} ms, over 100: ${last.over100}, stall ${last.stall} ms\n${last.gaps.join(' ')}` : 'spin the board…'}</div>;
 }

@@ -236,6 +236,12 @@ h1,h2,h3{font-family:var(--serif)}
   .app.game.lt .lt-wheel .stage{width:min(100cqw, calc(100cqh + 20px))} /* the board's margin is thin now (Wheel.jsx VB0) */
   .lt > .lt-prompt,.lt > .lt-shop{position:relative;z-index:3}
 }
+/* the turning layers (the printed paper, the rims' standings) are kept on their own composited layer for good: a turn
+   written as a plain transform on an ordinary element makes Firefox draw the whole printed board again under the new
+   angle (its SVG is drawn on the CPU), at every landing and every interrupted spin, ~0.2-0.3 s at a Retina size; a
+   promoted layer is drawn once and only moved (wheel pass, Nov 8). On Chrome the wrapper div (not the svg) already took
+   the turn, lesson 2026-10-23; will-change keeps that so here too */
+.lt .stage > .turn-layer{will-change:transform}
 .lt .stage svg.wheel-paper{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .lt .stage svg.wheel-paper .disk{stroke:none}
 .lt .stage svg.wheel-paper .band{transition:fill-opacity .3s}
