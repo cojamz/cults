@@ -28,3 +28,5 @@
 - **Silver → Blessing magic.** Gifts that come back to you: you bless rivals, and the blessing returns.
 
 Weakest spot: Silver. Blessing a rival is generous rather than dueling.
+
+Status (Nov 9): pinned by Cory ("not loving it. let's put a pin in this"). Back to circus.
