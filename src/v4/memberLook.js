@@ -3,9 +3,13 @@
 // never in the game, so an online table can mix looks and no rule changes. ?members=emoji in the address wins for that page.
 const KEY = 'patrons.v4.memberLook';
 export const LOOKS = ['pictures', 'emoji'];
+/** Offered on the setup screens? Not for now (Cory, Nov 8: "remove emoji memebrs option for now… keep them up to date, just
+ *  dont show the option"): a look saved before stays unread, so nobody is left on emoji with no switch back; the
+ *  address's ?members=emoji still shows it. */
+export const LOOK_OFFERED = false;
 function read() {
   try { const u = new URLSearchParams(globalThis.location?.search || '').get('members'); if (LOOKS.includes(u)) return u; } catch { /* no location */ }
-  try { const v = globalThis.localStorage && localStorage.getItem(KEY); if (LOOKS.includes(v)) return v; } catch { /* private window */ }
+  if (LOOK_OFFERED) try { const v = globalThis.localStorage && localStorage.getItem(KEY); if (LOOKS.includes(v)) return v; } catch { /* private window */ }
   return 'pictures';
 }
 let look = read();

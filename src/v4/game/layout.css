@@ -497,3 +497,26 @@
   .app.game.lt .lt-menu{right:12px;top:8px}
   .app.game.lt > .lt-since .since-head{padding-right:52px;min-height:44px}
 }
+/* A setting's name opens what each choice does (Cory, Nov 8: "clear, but crisply, what the options do? maybe on hover?"):
+   the name wears the dotted underline every hover word wears; the picked choice stands out on its card */
+.setup-settings .set-name,.table-pick .set-name{text-decoration:underline dotted color-mix(in srgb,currentColor 55%,transparent);text-underline-offset:4px;text-decoration-thickness:1px;cursor:help}
+.pop-card.set-card,.pop-card.sphere-card{--c:var(--cream-2,#b9a98c);max-width:340px;line-height:1.35}
+.pop-card.sphere-card{border-left-color:var(--c)}
+.set-card > span{color:var(--muted,#b09f82)}
+.set-card > span.on{color:var(--ink,#f2e8d2)}
+.set-card > span > b{color:var(--ink,#f2e8d2);margin-right:4px}
+.set-card > small,.sphere-card > small{color:var(--muted,#b09f82);font-size:var(--fs-1)}
+.set-test{display:flex;flex-direction:column;gap:4px;margin-top:4px;padding-top:8px;border-top:1px solid var(--hair,rgba(242,232,210,.12));font-size:var(--fs-1);color:var(--muted,#b09f82)}
+.set-test > b{color:var(--ink,#f2e8d2);margin-top:2px}
+.set-test > span > b{color:var(--ink,#f2e8d2)}
+.set-test .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);margin-right:6px;vertical-align:1px}
+.sphere-card .sc-name{display:flex;align-items:center;gap:8px;font-size:var(--fs-3,1.05em)}
+.sphere-card .sc-name .dot{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.sphere-card .sc-round{display:flex;flex-direction:column;gap:2px;font-size:var(--fs-1);color:var(--muted,#b09f82)}
+.sphere-card .sc-round > b{color:var(--ink,#f2e8d2);font-size:var(--fs-1);letter-spacing:.04em}
+.sphere-card .sc-space > b{color:var(--ink,#f2e8d2);font-weight:600}
+/* a picker tile sits in a hover wrapper: the wrapper is only the hover, the tile fills it */
+.sphere-tip{display:flex;min-width:0}
+.sphere-tip > .sphere{flex:1;min-width:0}
+.sphere .sphere-contest{color:var(--cream-2,#b9a98c)}
+.sphere-tip > .hitbox{display:none}

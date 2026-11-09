@@ -11,7 +11,7 @@ describe('setup sphere hints', () => {
   it('pluralise the follower mark where the words are plural', () => {
     const t = sphereHint('trading');
     expect(t).toMatch(/into followers/);
-    expect(t).toMatch(/\+1 follower if you recruit a member/); // singular
+    expect(t).toMatch(/\+1 follower in round I/); // singular
     expect(t).toMatch(/into 2 followers/); // plural
     expect(t).not.toMatch(/@f|more follower\b/);
   });
@@ -25,6 +25,7 @@ describe('setup sphere hints', () => {
     await act(() => new Promise(r => setTimeout(r, 120)));
     const card = document.querySelector('[data-chip-card]');
     expect(card).not.toBeNull();
-    expect(card.textContent).toMatch(/at round end\. *Its round I spaces: /);
+    expect(card.textContent).toMatch(/Contest: Fewest members|Contest: Most/);
+    expect(card.textContent).toMatch(/Round I.*Round II.*Round III/);
   });
 });

@@ -3,6 +3,7 @@
 // N), random, or a custom pick. Gold is in the backlog: off the picker and random tables, still known to old saves.
 import { allQuadrantIds, quadrant, CLASSIC, MAX_PLAYERS, classicFor } from '../engine/v4/index.js';
 import { seededRandom } from '../engine/v4/rng.js';
+import { scoringOf } from '../engine/v4/core.js';
 
 export { CLASSIC, classicFor };
 /** How many spheres a table of `players` plays: one each, 2 to 6. */
@@ -24,18 +25,24 @@ export const sphereName = id => `${quadrant(id).name}${quadrant(id).standIn ? ' 
  */
 const LINES = {
   gold: 'Piles up gold, and saves on your next member.',
-  red: 'Recruits: free members, and swaps with shop and rival members.', // the rulebook's words (picky bot, Nov 4)
-  purple: 'Turns: go twice in a row, skip, +1 minion.',
-  silver: 'Gifts to rivals that pay you back.',
-  yellow: 'Goes broad: picks its colors, and changes rivals’ resources.',
-  market: 'Bends the shop: extra recruits, bury shop members, a look at the pile.',
-  thieves: 'Steals resources and members from rivals.',
-  trading: 'Turns what you have into followers.',
-  echo: 'Copies spaces: a rival’s, or your own again.',
+  // plain verb-first lines (Cory, Nov 8: "update these descriptions for easier reading/intuitive understanding")
+  red: 'Get members: recruit off the pile, use shop members’ powers, swap members up or down.',
+  purple: 'Bend turn order: go again, make the next player skip, place last.',
+  silver: 'Give rivals silver, and get followers and other colors back.',
+  yellow: 'Collect members of many colors, and pick which colors you gain.',
+  market: 'Work the shop: clear out members, look at the pile, recruit extra times.',
+  thieves: 'Steal resources, followers and members from rivals.',
+  trading: 'Turn resources and members into followers.',
+  echo: 'Copy spaces and members’ powers, yours or a rival’s.',
   blue: 'Plain gains: blue, with a little of another color.',
   green: 'Plain gains: green, with a little of another color.',
 };
 export const sphereLine = id => LINES[id] || '';
+/** The contest a color runs in the games we play (By color, App.jsx and online.js), not its printed "Most red": the
+ *  picker said "Most white" for a color whose contest is Fewest members. */
+export const sphereContest = id => {
+  try { return scoringOf({ rules: { contests: 'byColor' }, quadrants: [id], resources: [quadrant(id).resource] }, id); } catch { return quadrant(id).scoring; }
+};
 // Which colors Cory has redesigned, shown small on the Custom picker so he remembers (Cory, 2026-10-22). One line per
 // color: '2.0' spaces and members redesigned, '1.5' spaces only, anything missing is '1.0'. Flip a color when it ships.
 const VERSION = {

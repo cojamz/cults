@@ -1,13 +1,12 @@
 // Home, local setup and the online lobby.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { MAX_PLAYERS as MAX_SEATS } from '../../engine/v4/index.js';
-import { playerColor, lowColor } from '../format.js';
+import { playerColor } from '../format.js';
 import HowToPlay from '../HowToPlay.jsx';
 import { friendlyError } from '../errors.js';
 import { quadrant, defById, BOT_LEVEL_INFO, DEFAULT_BOT_LEVEL } from '../../engine/v4/index.js';
 import { ARTIFACTS, cloakName } from '../../engine/v4/core.js';
-import { CLASSIC, spheres, sphereName, sphereLine, sphereVersion, sphereVersionWords, tableProblem, randomTable, urlTable, fitTable, sphereCount } from '../tables.js';
-import { panelWords } from '../game/panelText.js';
+import { CLASSIC, spheres, sphereName, sphereLine, sphereContest, sphereVersion, sphereVersionWords, tableProblem, randomTable, urlTable, fitTable, sphereCount } from '../tables.js';
 import { GAME_NAME, VERSION_LABEL } from '../version.js';
 import { copyText } from '../Recovery.jsx';
 import { pastGames, saveGame, gameFile } from '../session/archive.js';
@@ -17,7 +16,8 @@ import { EmojiButton, EmojiFace, emojiName } from './EmojiPicker.jsx';
 import { settleEmojis, takeEmoji, lastEmoji, rememberEmoji } from '../emojiPick.js';
 import { playCall } from '../sound.js';
 import { SPEEDS, SPEED_NAMES, motionSpeed, setMotionSpeed } from '../motion.js';
-import { memberLook, setMemberLook } from '../memberLook.js';
+import { memberLook, setMemberLook, LOOK_OFFERED } from '../memberLook.js';
+import { TEST_SPACES, testSpaces } from '../../engine/v4/content/testset.js';
 
 const KINDS = [['human', 'Person'], ['bot', 'Bot'], ['empty', 'Empty']];
 const NAME_MAX = 14;
@@ -36,6 +36,19 @@ function Seg({ value, options, onChange, label }) {
         <button key={v} type="button" role="radio" aria-checked={value === v} className={value === v ? 'on' : ''} title={title} onClick={() => onChange(v)}>{text}</button>
       ))}
     </div>
+  );
+}
+
+/** A setting's name opens what each of its choices does, on hover or a tap (Cory, Nov 8: "can we make sure that its
+ *  clear, but crisply, what the options do? maybe on hover?"). opts: [value, name, one line]. */
+function SetName({ name, opts, value, extra = null }) {
+  return (
+    <Tip as="span" className="set-name" label={`${name}: what each choice does`} content={() => (
+      <div className="pop-card set-card" data-set-card={name}>
+        {opts.map(([v, text, line]) => <span key={v} className={v === value ? 'on' : undefined} data-set-opt={v}><b>{text}</b> {line}</span>)}
+        {extra}
+      </div>
+    )}>{name}</Tip>
   );
 }
 
@@ -193,7 +206,10 @@ const sameTable = (a, b) => a.length === b.length && a.every((x, i) => x === b[i
 
 /** Pick the spheres, one per player (`n`): Classic, random, or your own. `value` = { mode, quadrants }, already fitted
  *  to n (fitTable); a change hands back the whole pick. */
-// the swap card (Cory, Nov 1 3:01pm: "add it as a setting, let's try it!"), off by default
+// the swap card (Cory, Nov 1 3:01pm: "add it as a setting, let's try it!"), off by default. Not offered for now (Cory,
+// Nov 8: "remove swap card mode as well. Dont delete these, keep them up to date, just dont show the option"): the rule
+// and this picker stay, so turning SWAP_OFFERED back on brings it back
+export const SWAP_OFFERED = false;
 const SWAP_OPTS = [['off', 'Off', 'No swap card'], ['on', 'On', 'As your recruit, for 2 resources in any colors: swap one of your members with a shop or rival member costing up to 2 more or less']];
 export function SwapPick({ value, onChange, readOnly }) {
   return <div className="seat" data-swap-pick={value ? 'on' : 'off'}><span>Swap card</span>
@@ -202,29 +218,50 @@ export function SwapPick({ value, onChange, readOnly }) {
   </div>;
 }
 // Economy (Cory, Nov 7 economy test: the judges' pick, opt-in; today's prices stay the default)
-const ECON_OPTS = [['today', 'Today', 'Members and spaces as printed'], ['rich', 'Richer', 'Every member costs 1 more of its color and 1 more of any (grey: 2 more of any); every space gives 1 more of its color']];
-export const ECON_HINT = { today: 'Members and spaces as printed.', rich: 'Every member costs 1 more of its color and 1 more of any (grey: 2 more of any). Every space gives 1 more of its color than printed.' };
+const ECON_OPTS = [['today', 'Today', 'Costs and gains as printed.'], ['rich', 'Richer', 'Members cost 1 more of their color and 1 more of any (grey members: 2 more of any). Spaces give 1 more of their color.']];
+export const ECON_HINT = { today: 'Costs and gains as printed.', rich: 'Members cost more; spaces give more.' };
 export function EconPick({ value, onChange, readOnly }) {
-  return <div className="seat" data-econ-pick={value}><span>Economy</span>
+  return <div className="seat" data-econ-pick={value}><SetName name="Economy" opts={ECON_OPTS} value={value} />
     {readOnly ? <span className="hint">{value === 'rich' ? 'Richer' : 'Today'}</span>
       : <Seg label="Economy" value={value} options={ECON_OPTS} onChange={onChange} />}
   </div>;
 }
 // The test version (Cory, Nov 8: "create an alt-like version here with these, like, try it ones baked in"): his try-it
 // cards in place of live ones (engine content/testset.js). Live stays the default.
-const CARDS_OPTS = [['live', 'Live', 'The cards as they are'], ['test', 'Test', 'Your try-it cards from the Nov 8 list in place of live ones']];
-export const CARDS_HINT = {
-  live: 'The cards as they are.',
-  test: 'Try-it cards in: Protection Racket (Magenta), Round Robin (Silver), Bequest (White), Rummage (Blue), Medley (Green), Swap Meet (Yellow); members Anchorites, Old Guard, Repossessors, Protesters. Pick those colors to see the spaces.',
-};
+// (Cory, Nov 8: "like this is meaningless" of the list of card names: say what Test does; the cards themselves on hover)
+const CARDS_OPTS = [['live', 'Live', 'The cards in the game now.'], ['test', 'Test', '6 spaces and 4 members swapped for your try-it cards.']];
+export const CARDS_HINT = { live: 'The cards in the game now.', test: '6 spaces and 4 members swapped for your try-it cards. Hover Cards for which.' };
+// which live member each try-it member takes the place of (content/testset.js TEST_OUT; Protesters joins the grey ones)
+const TEST_MEMBER_SWAPS = [['trading.anchorites', 'trading.recluse'], ['trading.oldguard', 'trading.heirs'], ['market.repossessors', 'market.regular'], ['benders.protesters', null]];
+const ROMAN = ['', 'I', 'II', 'III'];
+function TestCards() {
+  return (
+    <div className="set-test" data-test-cards>
+      <b>Spaces</b>
+      {Object.entries(TEST_SPACES).map(([q, [out, inn]]) => {
+        const live = quadrant(q).actions.find(a => a.key === out);
+        const cand = testSpaces(q).find(a => a.key === inn);
+        if (!live || !cand) return null;
+        return <span key={q}><i className="dot" style={{ '--c': `var(--${q})` }} /><b>{cand.name}</b> for {live.name} ({sphereName(q)}, round {ROMAN[cand.ring]}): {cand.text}</span>;
+      })}
+      <b>Members</b>
+      {TEST_MEMBER_SWAPS.map(([id, out]) => {
+        const d = defById(id);
+        return <span key={id}><b>{d.name}</b>{out ? ` for ${defById(out).name}` : ', a new grey member'}: {d.text}</span>;
+      })}
+      <small>A space shows only when its color is on the table.</small>
+    </div>
+  );
+}
 export function CardsPick({ value, onChange, readOnly }) {
-  return <div className="seat" data-cards-pick={value}><span>Cards</span>
+  return <div className="seat" data-cards-pick={value}><SetName name="Cards" opts={CARDS_OPTS} value={value} extra={<TestCards />} />
     {readOnly ? <span className="hint">{value === 'test' ? 'Test' : 'Live'}</span>
       : <Seg label="Cards" value={value} options={CARDS_OPTS} onChange={onChange} />}
   </div>;
 }
 // Emoji members (Cory, Nov 3: "lets create an alt mode for it? in the setup?"): how members look to you; rules unchanged,
-// your own setting even at an online table
+// your own setting even at an online table. Not offered for now (Cory, Nov 8: "remove emoji memebrs option for now. Im sure
+// they havent been keeping up"; "keep them up to date, just dont show the option"): memberLook.js LOOK_OFFERED
 const LOOK_OPTS = [['pictures', 'Pictures', 'Members show their pictures and full rules'], ['emoji', 'Emoji', 'Members show as one emoji picture with their full rules']];
 export function MemberLookPick() {
   const [v, setV] = useState(memberLook);
@@ -256,7 +293,8 @@ export function TablePicker({ value, onChange, readOnly = false, n = 4 }) {
   return (
     <div className={`table-pick${readOnly ? '' : ' editable'}`} data-table={quadrants.join(',')}>
       <div className="seat">
-        <span>Table</span>
+        <SetName name="Table" value={mode} opts={[['classic', 'Classic', `The starting colors: ${CLASSIC.slice(0, n).map(sphereName).join(', ')}.`], ['random', `Random ${n}`, `${n} colors drawn at random.`], ['custom', 'Custom', `You pick the ${n} colors.`]]}
+          extra={<small>One color per player. Hover a color for its spaces, contest and cloak.</small>} />
         {readOnly ? <span className="hint">{mode === 'random' ? `Random ${n}` : mode === 'custom' ? 'Custom' : 'Classic'}</span>
           : <Seg label="Table" value={mode} options={[['classic', 'Classic'], ['random', `Random ${n}`], ['custom', 'Custom']]} onChange={setMode} />}
       </div>
@@ -278,13 +316,17 @@ export function TablePicker({ value, onChange, readOnly = false, n = 4 }) {
               // Blue sits out the piles shops (Cory, Nov 1); greyed here like a color clash, not found only at Start
               const clash = !on && usedRes.includes(quadrant(id).resource);
               const over = !on && !clash && full;
+              // its hover is the same card as the table's chips (Cory, Nov 8: "maybe make the hover overs a little better"):
+              // the wrapper only shows the card; the click stays the tile's own (onClick undefined: no pinning)
               return (
-                <button key={id} type="button" className={`sphere${on ? ' on' : ''}${over ? ' over' : ''}`} aria-pressed={on} data-sphere={id}
-                  disabled={clash} style={{ '--c': `var(--${id})` }} onClick={() => toggle(id)}
-                  title={clash ? `Another sphere on this table already uses ${quadrant(id).resource}.` : over ? `Swap ${sphereName(id)} in for ${sphereName(last)} (the last one picked). ${sphereHint(id)}` : sphereHint(id)}>
+                <Tip key={id} as="div" className="sphere-tip" label={`${sphereName(id)}: what it does`} role={undefined} tabIndex={undefined} aria-haspopup={undefined} aria-expanded={undefined} onClick={undefined} onKeyDown={undefined}
+                  content={() => <SphereCard id={id} note={clash ? `Another color on this table already uses ${quadrant(id).resource}.` : over ? `A click swaps it in for ${sphereName(last)}, the last one picked.` : null} />}>
+                <button type="button" className={`sphere${on ? ' on' : ''}${over ? ' over' : ''}`} aria-pressed={on} data-sphere={id}
+                  disabled={clash} style={{ '--c': `var(--${id})` }} onClick={() => toggle(id)} data-hint={sphereHint(id)}>
                   <i className="dot" />{on && <span className="ord num">{quadrants.indexOf(id) + 1}</span>}
-                  <b>{sphereName(id)}</b><span className={`ver num${sphereVersion(id) === '2.0' ? ' new' : ''}`} data-version={sphereVersion(id)} title={sphereVersionWords(id)}>{sphereVersion(id)}</span><small>{lowColor(quadrant(id).scoring.label)}</small><small className="sphere-line">{sphereLine(id)}</small>
+                  <b>{sphereName(id)}</b><span className={`ver num${sphereVersion(id) === '2.0' ? ' new' : ''}`} data-version={sphereVersion(id)} title={sphereVersionWords(id)}>{sphereVersion(id)}</span><small className="sphere-line">{sphereLine(id)}</small><small className="sphere-contest">Contest: {sphereContest(id).label}</small>
                 </button>
+                </Tip>
               );
             })}
           </div>
@@ -297,23 +339,42 @@ export function TablePicker({ value, onChange, readOnly = false, n = 4 }) {
 /** What a sphere does, in its own panels' words (RC1 sweep 6: the chips said only how it scores): "Most gold. Its
  *  round I spaces: +3 gold, pick who gets 1 · +2 gold · Save 4 on next member." The resource dot is a word here. */
 export function sphereHint(id) {
+  const c = sphereContest(id);
+  const art = ARTIFACTS[id] ? defById(ARTIFACTS[id]) : null;
+  return `${sphereLine(id)} Contest: ${c.label}.${art ? ` ${cloakName(id)}: ${art.text}` : ''} Round I spaces: ${roundOne(id).join(' · ')}`;
+}
+const roundOne = id => quadrant(id).actions.filter(a => a.ring === 1).map(a => `${a.name}: ${followerWords(a.text)}`);
+const followerWords = t => String(t || '').replace(/(^|[^\d])1 @f/g, '$11 follower').replace(/@f/g, 'followers');
+/** What a color does, for its hover on the table: the line, its contest, its cloak, then every space by round, each
+ *  with its full text (a name alone means nothing: "I DONT HAVE THE ACTION NAMES MEMORIZED"). */
+function SphereCard({ id, note = null }) {
   const q = quadrant(id);
-  // the follower mark in words, singular only after a 1 ("+1 follower"; "+1 per rival with more followers")
-  const lines = q.actions.filter(a => a.ring === 1).map(a => panelWords(id, a, 1).replace(/(^|[^\d])1 @f/g, '$11 follower').replace(/@f/g, 'followers'));
-  return `${sphereLine(id)} ${lowColor(q.scoring.label)} at round end. Its round I spaces: ${lines.join(' · ')}.`;
+  const c = sphereContest(id);
+  const art = ARTIFACTS[id] ? defById(ARTIFACTS[id]) : null;
+  return (
+    <div className="pop-card sphere-card" data-chip-card={id} style={{ '--c': `var(--${id})` }}>
+      <b className="sc-name"><i className="dot" />{sphereName(id)}</b>
+      <span>{sphereLine(id)}</span>
+      <span><b>Contest:</b> {c.label}.{c.counts ? ` Counts ${c.counts}.` : ''}</span>
+      {art && <span><b>{cloakName(id)}:</b> {art.text}</span>}
+      {[1, 2, 3].map(r => (
+        <span key={r} className="sc-round"><b>Round {ROMAN[r]}</b>
+          {q.actions.filter(a => a.ring === r).map(a => <span key={a.key} className="sc-space"><b>{a.name}:</b> {followerWords(a.text)}</span>)}</span>
+      ))}
+      {note && <small>{note}</small>}
+    </div>
+  );
 }
 // a chip opens what its sphere does, like any hover in the game (w4b #24: its native title showed nothing to a pointer
 // that paused, and nothing at all on touch)
 function TableChip({ id }) {
-  const q = quadrant(id);
   const art = ARTIFACTS[id] ? defById(ARTIFACTS[id]) : null;
   return (
-    <Tip className="table-chip" style={{ '--c': `var(--${id})` }} label={`${sphereName(id)}: what it does`} content={() => (
-      <div className="pop-card" data-chip-card={id}><b>{sphereName(id)}</b><span>{sphereLine(id)}</span><span>{lowColor(q.scoring.label)} at round end.</span>
-        <span>Its round I spaces: {q.actions.filter(a => a.ring === 1).map(a => panelWords(id, a, 1).replace(/(^|[^\d])1 @f/g, '$11 follower').replace(/@f/g, 'followers')).join(' · ')}.</span></div>
-    )}><i className="dot" />{sphereName(id)}<small className="chip-line">{sphereLine(id)}</small>
+    <Tip className="table-chip" style={{ '--c': `var(--${id})` }} label={`${sphereName(id)}: what it does`} content={() => <SphereCard id={id} />}>
+      <i className="dot" />{sphereName(id)}<small className="chip-line">{sphereLine(id)}</small>
       {/* the legend under each color (Cory, 2026-10-27, from Mike: "maybe this spot can have an overall legend of all
-          the colors"): what its spaces do, then its artifact, in the room's empty column */}
+          the colors"): what its spaces do, its contest, then its cloak, in the room's empty column */}
+      <small className="chip-line chip-legend" data-chip-contest={id}>Contest: {sphereContest(id).label}</small>
       {art && <small className="chip-line chip-legend" data-chip-artifact={id}>{cloakName(id)}: {art.text}</small>}</Tip>
   );
 }
@@ -338,7 +399,7 @@ export function LocalSetup({ initial, onStart, onBack }) {
   const [speed, setSpeed] = useState(motionSpeed);
   const [level, setLevel] = useState(initial?.level || DEFAULT_BOT_LEVEL);
   const [table, setTable] = useState(() => initialTable(initial?.table));
-  const [swapCard, setSwapCard] = useState(!!initial?.swapCard);
+  const [swapCard, setSwapCard] = useState(SWAP_OFFERED && !!initial?.swapCard);
   const [econ, setEcon] = useState(initial?.econ === 'rich' ? 'rich' : 'today');
   const [cards, setCards] = useState(initial?.cards === 'test' ? 'test' : 'live');
   // Shop, Member deck and Round III members rows cut (Cory, Nov 4: "drop the piles modes. drop 15 members. drop 'wait for round III'")
@@ -387,18 +448,18 @@ export function LocalSetup({ initial, onStart, onBack }) {
         <div className="setup-settings" data-setup-settings>
           {/* each switch says what its choice does in one line under it (picky bot, Nov 4: "Swap card", "By color" and
               "Very Hard" went unexplained; the words were only in hover titles) */}
-          <div className="seat"><span>Bots</span><Seg label="Bot level" value={level} options={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} onChange={setLevel} /></div>
+          <div className="seat"><SetName name="Bots" opts={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} value={level} /><Seg label="Bot level" value={level} options={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} onChange={setLevel} /></div>
           <small className="set-hint" data-set-hint="bots">{(BOT_LEVEL_INFO.find(l => l.level === level) || {}).blurb}</small>
-          <div className="seat"><span>Speed</span><Seg label="Speed" value={speed} options={SPEED_OPTS} onChange={v => { setSpeed(v); setMotionSpeed(v); }} /></div>
+          <div className="seat"><SetName name="Speed" opts={SPEED_OPTS} value={speed} /><Seg label="Speed" value={speed} options={SPEED_OPTS} onChange={v => { setSpeed(v); setMotionSpeed(v); }} /></div>
           <small className="set-hint" data-set-hint="speed">{SPEED_HINT[speed] ? `${SPEED_HINT[speed]}.` : null}</small>
-          <SwapPick value={swapCard} onChange={setSwapCard} />
-          <small className="set-hint" data-set-hint="swap">{swapCard ? 'A recruit option: pay 2 resources to swap one of your members for a shop or rival member costing up to 2 more or less.' : 'No swap card.'}</small>
+          {SWAP_OFFERED && <SwapPick value={swapCard} onChange={setSwapCard} />}
+          {SWAP_OFFERED && <small className="set-hint" data-set-hint="swap">{swapCard ? 'A recruit option: pay 2 resources to swap one of your members for a shop or rival member costing up to 2 more or less.' : 'No swap card.'}</small>}
           <EconPick value={econ} onChange={setEcon} />
           <small className="set-hint" data-set-hint="econ">{ECON_HINT[econ]}</small>
           <CardsPick value={cards} onChange={setCards} />
           <small className="set-hint" data-set-hint="cards">{CARDS_HINT[cards]}</small>
-          <MemberLookPick />
-          <small className="set-hint" data-set-hint="look">How members look to you. The rules are the same.</small>
+          {LOOK_OFFERED && <MemberLookPick />}
+          {LOOK_OFFERED && <small className="set-hint" data-set-hint="look">How members look to you. The rules are the same.</small>}
         </div>
         <TablePicker value={fitted} n={nSph} onChange={setTable} />
         <div className="row-btns">
@@ -497,10 +558,10 @@ export function Lobby({ lobby, myId, onLeave }) {
           </div>
         )}
         <div className="setup-settings" data-setup-settings>
-          <SwapPick value={!!view.swapCard} onChange={v => act(() => lobby.setSwapCard(v))} readOnly={!isHost || !lobby.setSwapCard} />
+          {SWAP_OFFERED && <SwapPick value={!!view.swapCard} onChange={v => act(() => lobby.setSwapCard(v))} readOnly={!isHost || !lobby.setSwapCard} />}
           <EconPick value={view.econ === 'rich' ? 'rich' : 'today'} onChange={v => act(() => lobby.setEcon(v))} readOnly={!isHost || !lobby.setEcon} />
           <CardsPick value={view.cards === 'test' ? 'test' : 'live'} onChange={v => act(() => lobby.setCards(v))} readOnly={!isHost || !lobby.setCards} />
-          <MemberLookPick />
+          {LOOK_OFFERED && <MemberLookPick />}
         </div>
         <TablePicker value={shownTable} n={nSph} onChange={pickTable} readOnly={!isHost || !lobby.setTable} />
         {err && <p className="error">{err}</p>}
