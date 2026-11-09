@@ -127,8 +127,9 @@ describe('Blue candidates (discard pile)', () => {
 
 describe('Yellow candidate spaces (round II)', () => {
   const Q = ['yellow', 'market', 'trading', 'purple'];
-  for (const [id, name, max] of [['yellow.moneychangers', 'Swap Meet', 3], ['yellow.smallchange', 'Small Change', 2]]) {
-    it(`${name}: +2 yellow; swap up to ${max} resources one for one with a rival, colors your choice; they +1 follower each`, () => {
+  // Swap Meet pays the rival nothing since Nov 8 (Cory: "I don't think you should give them followers")
+  for (const [id, name, max, pay] of [['yellow.moneychangers', 'Swap Meet', 3, 0], ['yellow.smallchange', 'Small Change', 2, 1]]) {
+    it(`${name}: +2 yellow; swap up to ${max} resources one for one with a rival, colors your choice${pay ? '; they +1 follower each' : ''}`, () => {
       let s = sceneQ({ quadrants: Q, round: 2, n: 3, res: [{ blue: 6 }, { white: 5, purple: 5 }, { purple: 1 }] });
       s = take(s, id);
       expect(s.players[0].res.yellow).toBe(2);
@@ -143,17 +144,17 @@ describe('Yellow candidate spaces (round II)', () => {
       expect(s.players[0].res.blue).toBe(6 - max);
       expect(s.players[1].res.blue).toBe(max);
       expect(s.players[0].res.white + s.players[0].res.purple).toBe(max);
-      expect(s.players[1].bonus).toBe(f1 + max);
+      expect(s.players[1].bonus).toBe(f1 + pay * max);
       expect(named(s, name).filter(l => /gives P2 1 blue/.test(l))).toHaveLength(max);
-      expect(named(s, name).at(-1)).toBe(`P1's ${name}: P2 +${max} followers (${max} swapped).`);
+      expect(named(s, name).at(-1)).toBe(pay ? `P1's ${name}: P2 +${max} followers (${max} swapped).` : `P1's ${name}: ${max} swapped with P2.`);
     });
-    it(`${name}: stopping early pays 1 follower per swap; swapping none pays nothing`, () => {
+    it(`${name}: stopping early ${pay ? 'pays 1 follower per swap' : 'is fine'}; swapping none pays nothing`, () => {
       let s = sceneQ({ quadrants: Q, round: 2, res: [{ blue: 6 }, { white: 5 }] });
       s = take(s, id);
       s = move(s, 'player:1');
       s = move(s, 'swap:blue:white');
       s = move(s, 'done');
-      expect(s.players[1].bonus).toBe(1);
+      expect(s.players[1].bonus).toBe(pay);
       let z = sceneQ({ quadrants: Q, round: 2, res: [{ blue: 6 }, { white: 5 }] });
       z = take(z, id);
       z = move(z, 'player:1');

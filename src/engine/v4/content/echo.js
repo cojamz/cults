@@ -108,6 +108,20 @@ function wrapAction(qid, a, idx) {
   wrapped.__orig = orig;
   a.resolve = wrapped;
 }
+/** The test version (content/testset.js): a candidate space standing in a live space's place, wrapped for the yield
+ *  ledger at that place (so Echo, Reprise and Medley copy it as they would the live one), and gated like the rest so a
+ *  table without Green runs it bare. Returns a copy; the candidate itself stays as the bot games use it. */
+export function wrapInPlace(qid, a, idx) {
+  const c = { ...a };
+  const bare = a.resolve.__orig || a.resolve;
+  c.resolve = bare;
+  wrapAction(qid, c, idx);
+  const w = c.resolve;
+  const gated = function (ctx, p) { return (ctx.state.quadrants.includes('echo') ? w : bare).call(this, ctx, p); };
+  Object.assign(gated, { __echo: true, __gated: true, __orig: bare });
+  c.resolve = gated;
+  return c;
+}
 function wrapHandler(q, k) {
   const orig = q.handlers[k];
   if (orig.__echo) return;
@@ -642,11 +656,12 @@ const echoQ = {
     // Medley: every action with a minion on the chosen color's spaces, copied in placement order (Tribute Band's copyAll);
     // one copy per action however many minions share it; Medley itself is in the chain, so never copied
     poolSpace({
-      key: 'medley', ring: 3, name: 'Medley', text: 'Choose a color. Copy every action with a minion on its spaces. +1 green.',
-      estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...ctx.state.quadrants.map(q => medleyPlan(ctx, p, q).reduce((a, e) => a + entryValue(ctx, e, p), 0))),
+      // a color other than green since Nov 8 (Cory: "We probably have to be specific that you can't choose green. Maybe that's what went wrong.")
+      key: 'medley', ring: 3, name: 'Medley', text: 'Choose a color other than green. Copy every action with a minion on its spaces. +1 green.',
+      estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...ctx.state.quadrants.filter(q => q !== 'echo').map(q => medleyPlan(ctx, p, q).reduce((a, e) => a + entryValue(ctx, e, p), 0))),
       resolve(ctx, p) {
         plus(ctx, p);
-        const opts = ctx.state.quadrants.map(q => ({ q, list: medleyPlan(ctx, p, q) })).filter(x => x.list.length);
+        const opts = ctx.state.quadrants.filter(q => q !== 'echo').map(q => ({ q, list: medleyPlan(ctx, p, q) })).filter(x => x.list.length);
         if (!opts.length) { ctx.log(`${p.name}'s Medley: no color has an action to copy.`); return; }
         withPath(ctx, [...new Set([...pathNow(ctx), ...medleyKeys(ctx)])], () => ctx.choose(p, 'Medley: copy every action on which color\u2019s spaces?', opts.map(({ q, list }) => ({
           id: `color:${q}`, label: `${quadrant(q).name} (${list.map(e => e.name).join(', ')})`, kind: 'color', value: q, hint: list.reduce((a, e) => a + entryValue(ctx, e, p), 0),

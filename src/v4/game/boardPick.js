@@ -6,6 +6,7 @@
 // stays a button by the caption, and every pick is also in a compact list for the keyboard.
 import { quadrant, defById, followers, spacesOf } from '../../engine/v4/index.js';
 import { lastSpace } from './seats.js';
+import { anySpaces } from '../../engine/v4/content/testset.js';
 
 /**
  * The picker for the pending choice, or null when it isn't one (no option has a place on the board, or two options
@@ -458,7 +459,7 @@ export function pickName(state, o) {
 function ruleText(state, pk) {
   const last = lastSpace(state, pk.actor);
   if (!last || last.name !== pk.title) return '';
-  try { const a = quadrant(last.qid).actions.flatMap(a => (a.piles ? [a, a.piles] : [a])).find(x => x.name === last.name); return a ? a.text : ''; } catch { return ''; }
+  try { const a = anySpaces(last.qid).flatMap(a => (a.piles ? [a, a.piles] : [a])).find(x => x.name === last.name); return a ? a.text : ''; } catch { return ''; }
 }
 
 /**

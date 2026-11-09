@@ -4,6 +4,7 @@ import { contextFor, logSince } from '../engine/v4/core.js';
 import { defaultEmoji } from './art/emojis.js';
 import { usableNow, memberAsks, secondBuyGiver } from './game/memberUse.js';
 import { panelWords } from './game/panelText.js';
+import { anySpaces } from '../engine/v4/content/testset.js';
 
 // Seat colors are an accent now (identity is the player's emoji on their leader, Cory 2026-10-14): ochre, teal,
 // terracotta-rose, lavender-plum, each ΔE ≥ 30 (CIE76) from every resource color on screen (the Lamplit inks) and
@@ -690,7 +691,7 @@ export function boardWords(name, round = 1, sphere = null) {
   for (const id of allQuadrantIds()) {
     const q = quadrant(id);
     if (sphere && q.name !== sphere) continue;
-    const a = q.actions.flatMap(x => (x.piles ? [x, x.piles] : [x])).find(x => x.name === name);
+    const a = anySpaces(id).flatMap(x => (x.piles ? [x, x.piles] : [x])).find(x => x.name === name); // the test version's spaces too
     if (!a) continue;
     let w = '';
     try { w = panelWords(id, a, Math.max(1, Math.min(3, round))) || ''; } catch { w = ''; }

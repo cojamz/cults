@@ -4,7 +4,8 @@ import { plainCopy, stateCopy } from './copy.js';
 // Patrons v4 engine. Pure and deterministic: state in, move in, state out.
 // Everything runs through a task queue. When a task needs a decision, the engine stops and publishes
 // state.pending = { player, kind, prompt, options:[{ id, label, kind, ... }] }. A move is { player, option }.
-import { quadrant, defById, handlerById, defaultQuadrants, guestMembers, MAX_PLAYERS, spacesOf } from './content/index.js';
+import { quadrant, defById, handlerById, defaultQuadrants, guestMembers, allGuests, MAX_PLAYERS, spacesOf } from './content/index.js';
+import { testDealt } from './content/testset.js';
 import { shuffleInPlace } from './rng.js';
 import { discardOf, toDiscard, deckReady, takeFromDiscard } from './discard.js';
 import { CUT, CUT10, FULL_DECK } from './content/cull.js';
@@ -90,7 +91,7 @@ export function createGame({ seats, seed = 1, quadrants, rules = {} }) {
   // of; the rest of the shop as now) or 'all' (every member a pile, ten piles a game; the rest face down as the deck, no face-up row). piles.js builds it.
   if (table.shop && table.shop !== 'deck' && !table.piles) Object.assign(table, pileRules(table.shop, quadrants, seed, table.deck === 10 ? 10 : 15));
   const artifactIds = new Set(table.artifacts ? quadrants.map(q => ARTIFACTS[q]).filter(Boolean) : []);
-  const dealt = def => !(table.cull && (CUT.has(def.id) || (table.deck === 10 && CUT10.has(def.id)))) && !artifactIds.has(def.id) && !def.artifact && !def.retired; // the cull (content/cull.js); artifacts (an artifact-only card is never dealt)
+  const dealt = def => testDealt(table, def) ?? (!(table.cull && (CUT.has(def.id) || (table.deck === 10 && CUT10.has(def.id)))) && !artifactIds.has(def.id) && !def.artifact && !def.retired); // the cull (content/cull.js); artifacts (an artifact-only card is never dealt)
   // Piles (experiment, branch only; Cory, 2026-11-01): rules.piles = { defs: [member ids], copies: n, only: bool } deals
   // each listed member as a face-up pile of n copies anyone can recruit from, Dominion-style. only: the piles are the
   // whole market (no shuffled deck). See src/engine/v4/piles.js.
@@ -99,7 +100,7 @@ export function createGame({ seats, seed = 1, quadrants, rules = {} }) {
   const inDeck = def => dealt(def) && !(pileDefs && (pileDefs.has(def.id) || (table.piles.only && !table.piles.deck)));
   for (const q of quadrants) for (const def of quadrant(q).members.filter(inDeck))
     for (let k = 0; k < def.copies; k++) { cards[uid] = { uid, def: def.id }; uid++; }
-  if (table.guests) for (const def of guestMembers().filter(inDeck))
+  if (table.guests) for (const def of (table.testSet ? allGuests() : guestMembers()).filter(inDeck)) // the test version deals its candidate guest too (content/testset.js)
     for (let k = 0; k < def.copies; k++) { cards[uid] = { uid, def: def.id }; uid++; }
   const supply = pileDefs ? {} : null;
   if (pileDefs) for (const id of table.piles.defs) {
@@ -293,7 +294,7 @@ export const spaceOpen = (a, round) => a.ring <= round && !(a.lastRound && round
 const protested = (state, key) => !!(state.protest && state.protest.round === state.round && state.protest.keys.includes(key));
 export function openSlots(state) {
   const out = [];
-  state.quadrants.forEach((qid, q) => quadrant(qid).actions.forEach((a, i) => {
+  state.quadrants.forEach((qid, q) => spacesOf(state, qid).forEach((a, i) => {
     if (spaceOpen(a, state.round) && state.slots[`${q}-${i}`] === undefined) out.push([q, i]);
   }));
   return out;
@@ -1250,8 +1251,8 @@ export function scoringOf(state, qid) {
   if (mode === 'members') return { label: `Most ${res}, 2 per ${res} member`, counts: `the ${res} you hold, plus 2 for each ${res} member`,
     score: (ctx, p) => (p.res[res] || 0) + 2 * countMembersOfColor(state, p, qid) };
   if (mode === 'minions') return { label: `Most minions on ${name}`, counts: `your minions on ${q.name} spaces when the round ends`,
-    score: (ctx, p) => q.actions.reduce((n, a, i) => n + (state.slots[`${qi}-${i}`] === p.id ? 1 : 0) + (state.squats?.[`${qi}-${i}`] || []).filter(id => id === p.id).length, 0) };
-  const onIt = p => q.actions.some((a, i) => state.slots[`${qi}-${i}`] === p.id || (state.squats?.[`${qi}-${i}`] || []).includes(p.id));
+    score: (ctx, p) => spacesOf(state, qid).reduce((n, a, i) => n + (state.slots[`${qi}-${i}`] === p.id ? 1 : 0) + (state.squats?.[`${qi}-${i}`] || []).filter(id => id === p.id).length, 0) };
+  const onIt = p => spacesOf(state, qid).some((a, i) => state.slots[`${qi}-${i}`] === p.id || (state.squats?.[`${qi}-${i}`] || []).includes(p.id));
   if (mode === 'present') return { label: `Most ${res}, if on ${res}`, counts: `the ${res} you hold, if you have a minion on a ${q.name} space when the round ends`,
     score: (ctx, p) => (onIt(p) ? (p.res[res] || 0) : 0), show: (ctx, p) => ({ count: p.res[res] || 0 }) };
   // bot test only (Nov 3, depth ideas): most held, among players with at least one member of the color
@@ -1271,7 +1272,7 @@ export function scoringOf(state, qid) {
       trading: fewest,
       thieves: { label: 'Most resources', counts: 'all the resources you hold when the round ends, every color together', score: (ctx, p) => state.resources.reduce((n, r) => n + (p.res[r] || 0), 0) },
       yellow: { label: 'Most full sets', counts: 'your full sets of one of every color in play, when the round ends', score: (ctx, p) => setsOf(ctx, p) }, // setsOf: the plain min, or Jack-of-All-Trades' yellow filling gaps
-      echo: { label: 'Most minions on green', counts: 'your minions on Green spaces when the round ends', score: (ctx, p) => q.actions.reduce((n, a, i) => n + (state.slots[`${qi}-${i}`] === p.id ? 1 : 0) + (state.squats?.[`${qi}-${i}`] || []).filter(id => id === p.id).length, 0) },
+      echo: { label: 'Most minions on green', counts: 'your minions on Green spaces when the round ends', score: (ctx, p) => spacesOf(state, qid).reduce((n, a, i) => n + (state.slots[`${qi}-${i}`] === p.id ? 1 : 0) + (state.squats?.[`${qi}-${i}`] || []).filter(id => id === p.id).length, 0) },
       purple: { label: 'Went last', counts: "whoever placed the round's last minion", tiebreak: null,
         score: (ctx, p) => (state.lastPlaced && state.lastPlaced.round === state.round && state.lastPlaced.pid === p.id ? 1 : 0) },
     };
@@ -2287,7 +2288,7 @@ minionsThisRound.usual = (state, p) => (state.round >= 1 ? WORKERS[state.round -
 export function minionPool(state) {
   if (!(state.round >= 2)) return 0;
   let open = 0;
-  state.quadrants.forEach((qid, q) => quadrant(qid).actions.forEach((a, i) => { if (spaceOpen(a, state.round) && state.slots[`${q}-${i}`] === undefined) open++; }));
+  state.quadrants.forEach((qid, q) => spacesOf(state, qid).forEach((a, i) => { if (spaceOpen(a, state.round) && state.slots[`${q}-${i}`] === undefined) open++; }));
   const toCome = state.queue.filter(t => t.t === 'turn' || t.t === 'place').length + (state.unplaced || 0);
   return Math.max(0, open - toCome);
 }

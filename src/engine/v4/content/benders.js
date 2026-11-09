@@ -32,7 +32,7 @@ const holdWorth = (ctx, who, sp) => {
 /** Hypnotist (REPLACE9 bot test): the open spaces now, as [q, i, action]. */
 const hypnoSpaces = ctx => {
   const out = [];
-  ctx.state.quadrants.forEach((qid, q) => ctx.quadrant(qid).actions.forEach((a, i) => {
+  ctx.state.quadrants.forEach((qid, q) => spacesOf(ctx.state, qid).forEach((a, i) => {
     if (!(a.ring > ctx.state.round || (a.lastRound && ctx.state.round > a.lastRound)) && ctx.state.slots[`${q}-${i}`] === undefined) out.push([q, i, a]);
   }));
   return out;
@@ -215,7 +215,10 @@ const members = [
   pool(m('bandits', 'Bandits', null, 0, 4, 'Whenever this member joins your cult, steal 3 resources.', {
     onJoined(ctx, owner) { startSteal(ctx, owner, 'Bandits', 3, { fromAction: false }); },
   }), 'pool7'),
-  pool(m('protesters', 'Protesters', null, 0, 5, 'On Use, once per round, from round II: put this member on an open space. Nobody can place there this round.', {
+  // Test version (Nov 8, Cory: "maybe we put an extra minion token… make it expensive enough that it goes in round
+  // two… maybe it should be inherently in the round two deck… play around with the price"): a spare minion token, round II deck.
+  pool(m('protesters', 'Protesters', null, 0, 5, 'On Use, once per round: put a spare minion token on an open space. Nobody can place there this round.', {
+    round: 2,
     activate: 'round',
     onRoundStart(ctx, owner, card) { card.used = false; },
     onActivate(ctx, owner, card) {
@@ -594,7 +597,7 @@ export const handlers = {
     hypno(ctx, p, key) {
       const [q, i] = String(key).split('-').map(Number);
       ctx.state.hypno = { key, by: p.id, round: ctx.state.round, armed: false };
-      ctx.log(`${p.name}'s Hypnotist: whoever places next must take ${ctx.quadrant(ctx.state.quadrants[q]).actions[i].name}.`);
+      ctx.log(`${p.name}'s Hypnotist: whoever places next must take ${spacesOf(ctx.state, ctx.state.quadrants[q])[i].name}.`);
     },
   }),
   pickColor(ctx, p, r, data) { // gainColorOf (color-of.js): Dabblers' owner picks its color

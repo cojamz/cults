@@ -73,8 +73,8 @@ describe('Hand-Off Artists (White)', () => {
 });
 
 describe('Anchorites (White)', () => {
-  it('Round End: if you have 2 or fewer members, +5 followers.', () => {
-    for (const [extra, want] of [[['market.stylist'], 5], [['market.stylist', 'market.onlooker'], 0]]) {
+  it('Round End: if you have 3 or fewer members, +5 followers.', () => {
+    for (const [extra, want] of [[['market.stylist', 'market.onlooker'], 5], [['market.stylist', 'market.onlooker', 'trading.cashier'], 0]]) {
       let s = still({ quadrants: ['trading', 'red', 'market', 'yellow'], members: [['trading.anchorites', ...extra]] });
       s = go(s, [{ t: 'allPlaced' }]);
       expect(s.players[0].bonus).toBe(want);

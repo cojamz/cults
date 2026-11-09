@@ -719,14 +719,31 @@ const trading = {
       },
       botActivate: (ctx, owner) => ctx.membersOf(owner).some(c => c.def.key !== 'handoffartists' && giveValue(ctx, owner, c, 2, 0) > 3),
     }), 'pool14'),
-    pool(m('anchorites', 'Anchorites', 2, 1, 'Round End: if you have 2 or fewer members, +5 followers.', {
+    // 3 or fewer since Nov 8 (Cory: "Plus five. Let's try that… owners won 14%… maybe we buff it… three or fewer members")
+    pool(m('anchorites', 'Anchorites', 2, 1, 'Round End: if you have 3 or fewer members, +5 followers.', {
       onAllPlaced(ctx, owner) {
         const n = ctx.memberCount(owner);
-        if (n > 2) return;
+        if (n > 3) return;
         ctx.asMember(owner, 'Anchorites', () => { owner.bonus += 5; ctx.log(`${owner.name}'s Anchorites: ${n} member${n === 1 ? '' : 's'}, +5 followers.`); });
       },
-      ...see(info => ((info.owner?.members.length || 0) <= 1 ? 4 : 1) * endsAhead(info).length), // BOTSEE: while the cult stays tiny
+      ...see(info => ((info.owner?.members.length || 0) <= 2 ? 4 : 1) * endsAhead(info).length), // BOTSEE: while the cult stays tiny
     }), 'pool14'),
+    // Test version (Nov 8): Last Hurrah as a member (Cory: "I'm interested to try last hurrah. I don't like it as a
+    // space. Too specific for a space."). Name, wording and price are Claude's fill-ins; the use and the discard are
+    // Last Hurrah's own (handlers lastHurrah / lastHurrahGo).
+    pool(m('oldguard', 'Old Guard', 2, 2, 'On Use, once per round: discard another of your members, using its On Use first, even if it\u2019s used up. +2 white.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid);
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Old Guard: no other member to discard.`); return; }
+        ctx.gain(owner, W, 2);
+        ctx.choose(owner, 'Old Guard: discard which member (its On Use first)?', list.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name}${hasUse(c) ? ' (On Use)' : ''}`, kind: 'card', value: c.uid, hint: (hasUse(c) ? 4 : 0) - (c.def.f || 1) - (c.used ? 0 : 0.5),
+        })), 'trading.lastHurrah', { name: 'Old Guard' });
+      },
+      botActivate: (ctx, owner) => ctx.membersOf(owner).some(c => c.def.key !== 'oldguard' && hasUse(c) && c.used),
+    }), 'testset'),
     pool(m('wallflowers', 'Wallflowers', 2, 1, 'Round End: if no rival has fewer members than you, +4 followers.', {
       onAllPlaced(ctx, owner) {
         const n = ctx.memberCount(owner);

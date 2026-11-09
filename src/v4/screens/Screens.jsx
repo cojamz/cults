@@ -210,6 +210,19 @@ export function EconPick({ value, onChange, readOnly }) {
       : <Seg label="Economy" value={value} options={ECON_OPTS} onChange={onChange} />}
   </div>;
 }
+// The test version (Cory, Nov 8: "create an alt-like version here with these, like, try it ones baked in"): his try-it
+// cards in place of live ones (engine content/testset.js). Live stays the default.
+const CARDS_OPTS = [['live', 'Live', 'The cards as they are'], ['test', 'Test', 'Your try-it cards from the Nov 8 list in place of live ones']];
+export const CARDS_HINT = {
+  live: 'The cards as they are.',
+  test: 'Try-it cards in: Protection Racket (Magenta), Round Robin (Silver), Bequest (White), Rummage (Blue), Medley (Green), Swap Meet (Yellow); members Anchorites, Old Guard, Repossessors, Protesters. Pick those colors to see the spaces.',
+};
+export function CardsPick({ value, onChange, readOnly }) {
+  return <div className="seat" data-cards-pick={value}><span>Cards</span>
+    {readOnly ? <span className="hint">{value === 'test' ? 'Test' : 'Live'}</span>
+      : <Seg label="Cards" value={value} options={CARDS_OPTS} onChange={onChange} />}
+  </div>;
+}
 // Emoji members (Cory, Nov 3: "lets create an alt mode for it? in the setup?"): how members look to you; rules unchanged,
 // your own setting even at an online table
 const LOOK_OPTS = [['pictures', 'Pictures', 'Members show their pictures and full rules'], ['emoji', 'Emoji', 'Members show as one emoji picture with their full rules']];
@@ -327,6 +340,7 @@ export function LocalSetup({ initial, onStart, onBack }) {
   const [table, setTable] = useState(() => initialTable(initial?.table));
   const [swapCard, setSwapCard] = useState(!!initial?.swapCard);
   const [econ, setEcon] = useState(initial?.econ === 'rich' ? 'rich' : 'today');
+  const [cards, setCards] = useState(initial?.cards === 'test' ? 'test' : 'live');
   // Shop, Member deck and Round III members rows cut (Cory, Nov 4: "drop the piles modes. drop 15 members. drop 'wait for round III'")
   const filled = seats.filter(s => s.kind !== 'empty');
   // one sphere per player (Cory, 2026-10-15): the table follows the seats as they're filled or emptied
@@ -381,6 +395,8 @@ export function LocalSetup({ initial, onStart, onBack }) {
           <small className="set-hint" data-set-hint="swap">{swapCard ? 'A recruit option: pay 2 resources to swap one of your members for a shop or rival member costing up to 2 more or less.' : 'No swap card.'}</small>
           <EconPick value={econ} onChange={setEcon} />
           <small className="set-hint" data-set-hint="econ">{ECON_HINT[econ]}</small>
+          <CardsPick value={cards} onChange={setCards} />
+          <small className="set-hint" data-set-hint="cards">{CARDS_HINT[cards]}</small>
           <MemberLookPick />
           <small className="set-hint" data-set-hint="look">How members look to you. The rules are the same.</small>
         </div>
@@ -389,7 +405,7 @@ export function LocalSetup({ initial, onStart, onBack }) {
           {/* why Start is off, said beside it (RC1 #8: it dimmed at 3 of 4 with nothing near it) */}
           {startWhy && <span className="hint start-why" data-start-why>{startWhy}</span>}
           <button type="button" className="btn" onClick={onBack}>Back</button>
-          <button type="button" className="btn pri" data-start disabled={!!startWhy} title={startWhy || undefined} onClick={() => onStart({ seats: named(), speed, level, table: fitted, roundDecks: 2, deck: 10, swapCard, econ })}>Start</button>
+          <button type="button" className="btn pri" data-start disabled={!!startWhy} title={startWhy || undefined} onClick={() => onStart({ seats: named(), speed, level, table: fitted, roundDecks: 2, deck: 10, swapCard, econ, cards })}>Start</button>
         </div>
       </div>
     </div>
@@ -483,6 +499,7 @@ export function Lobby({ lobby, myId, onLeave }) {
         <div className="setup-settings" data-setup-settings>
           <SwapPick value={!!view.swapCard} onChange={v => act(() => lobby.setSwapCard(v))} readOnly={!isHost || !lobby.setSwapCard} />
           <EconPick value={view.econ === 'rich' ? 'rich' : 'today'} onChange={v => act(() => lobby.setEcon(v))} readOnly={!isHost || !lobby.setEcon} />
+          <CardsPick value={view.cards === 'test' ? 'test' : 'live'} onChange={v => act(() => lobby.setCards(v))} readOnly={!isHost || !lobby.setCards} />
           <MemberLookPick />
         </div>
         <TablePicker value={shownTable} n={nSph} onChange={pickTable} readOnly={!isHost || !lobby.setTable} />

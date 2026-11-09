@@ -179,18 +179,18 @@ const swapPairs = (ctx, p, o) => {
 };
 // idea pipeline pool 14 (Nov 7) variations through opts: Pocket Change (round I, +1 yellow, 1 swap), Bazaar (round III,
 // up to 2 with each rival in seat order, each paid its followers)
-const changeSpace = (key, name, max, { ring = 2, plus = 2, each = false, text = null, tag = 'pool3' } = {}) => poolSpace({
-  key, ring, name, text: text || `+2 yellow. Swap up to ${max} of your resources with a rival's, one for one, colors your choice. They +1 follower per resource swapped.`,
+const changeSpace = (key, name, max, { ring = 2, plus = 2, each = false, text = null, tag = 'pool3', pay = true } = {}) => poolSpace({
+  key, ring, name, text: text || `+2 yellow. Swap up to ${max} of your resources with a rival's, one for one, colors your choice.${pay ? ' They +1 follower per resource swapped.' : ''}`,
   estimate: (ctx, p) => plus + (each ? 1.5 : 1) * Math.max(0, ...ctx.rivals(p).map(o => swapPairs(ctx, p, o).map(([c, t]) => swapHint(p, c, t)).filter(h => h > 0).length ? 1 : 0)),
   resolve(ctx, p) {
     ctx.gain(p, Y, plus, { fromAction: true });
     const rivals = ctx.rivals(p).filter(o => ctx.canSteal(p, o, 'change') && swapPairs(ctx, p, o).length);
     if (!rivals.length) { ctx.log(`${p.name}'s ${name}: no resources to swap with a rival, so only the yellow.`); return; }
-    if (each) { moneyAsk(ctx, p, { name, max, o: rivals[0].id, n: 0, next: rivals.slice(1).map(o => o.id) }); return; }
+    if (each) { moneyAsk(ctx, p, { name, max, pay, o: rivals[0].id, n: 0, next: rivals.slice(1).map(o => o.id) }); return; }
     ctx.choose(p, `${name}: swap resources with which rival?`, rivals.map(o => ({
       id: `player:${o.id}`, label: `${o.name} (${heldTotal(o)} resources)`, kind: 'player', value: o.id,
       hint: Math.max(...swapPairs(ctx, p, o).map(([c, t]) => swapHint(p, c, t))) - 0.02 * ctx.followers(o),
-    })), 'yellow.moneyWith', { name, max });
+    })), 'yellow.moneyWith', { name, max, pay });
   },
 }, tag);
 function moneyAsk(ctx, p, data) {
@@ -204,6 +204,7 @@ function moneyAsk(ctx, p, data) {
 function moneyDone(ctx, p, data) {
   const o = ctx.player(data.o);
   if (!data.n) ctx.log(`${p.name}'s ${data.name}: swaps nothing with ${o.name}.`);
+  else if (data.pay === false) ctx.log(`${p.name}'s ${data.name}: ${data.n} swapped with ${o.name}.`);
   else {
     o.bonus += data.n;
     ctx.log(`${p.name}'s ${data.name}: ${o.name} +${data.n} follower${data.n === 1 ? '' : 's'} (${data.n} swapped).`);
@@ -220,7 +221,8 @@ export default {
   scoring: { label: 'Most yellow', counts: 'the yellow you hold when the round ends', score: (ctx, p) => p.res[Y] },
 
   actions: [
-    changeSpace('moneychangers', 'Swap Meet', 3),
+    // no followers for the rival since Nov 8 (Cory: "I don't think you should give them followers. I think the numbers are off, but I like the idea")
+    changeSpace('moneychangers', 'Swap Meet', 3, { pay: false }),
     // idea pipeline pool 5 (Nov 7): one of each table color you hold none of, yellow included. No +1 yellow: not printed.
     poolSpace({
       key: 'oddsandends', ring: 1, name: 'Odds and Ends', text: "+1 of each color you don't hold.",

@@ -422,3 +422,5 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - **Hand-Me-Downs** (white III: "Give up to 2 of your members to rivals, no more than 1 each. Gain white equal to twice their cost. +1 white."): "white kind of wants to turn members into white… I like this idea… figure out the right implementation of this idea in white specifically." → White ideas pile: turning members into white.
 - **Remix** (green: "Choose a color. Copy every action with a minion on its spaces except the round III one. +1 green."): "I thought we talked about this already… These seem like not good ideas now." (Medley's twin.) Stopped reading the full list here.
 - Cory asked how well the tiers matched his read, once he finished.
+- (7:24pm, relayed) Cory: "yeah blue white purple are probably weakest action consistency at the moment" → Blue, White and Purple spaces go first in the next round of replacement ideas and testing.
+- (7:27pm, relayed) Ideas pile, White probably: "everybody gets rid of a minion or a member… a very destructive card. Everybody gets to pick naturally, but basically you discard a member to make everybody else have to discard a member." (Cory)

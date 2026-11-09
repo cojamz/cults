@@ -124,7 +124,8 @@ describe('Green candidates', () => {
     expect(s.players[0].res.green).toBe(1);
     expect(named(s, 'Stage Door').some(l => /no other minion/.test(l))).toBe(true);
   });
-  it('Medley: choose a color, copy every action with a minion on its spaces; +1 green', () => {
+  // a color other than green since Nov 8 (Cory: "We probably have to be specific that you can't choose green")
+  it('Medley: choose a color other than green, copy every action with a minion on its spaces; +1 green', () => {
     let s = go(still({ round: 3 }), turn(1, 1, 0));
     s = pass(take(s, 'gold.rush'));
     s = pass(take(s, 'echo.chant'));
@@ -132,10 +133,11 @@ describe('Green candidates', () => {
     s = take(s, 'echo.medley');
     expect(s.players[0].res.green).toBe(1);
     expect(s.pending.prompt).toMatch(/^Medley: copy every action on which color/);
-    s = move(s, 'color:echo');
-    expect(s.players[0].res.green).toBe(1 + 5); // P2's Build Up in round III, copied
-    expect(s.players[0].res.gold || 0).toBe(gold); // only the chosen color
-    expect(named(s, 'Medley').some(l => /copies every action on Green/.test(l))).toBe(true);
+    expect(s.pending.options.map(o => o.id)).not.toContain('color:echo');
+    s = move(s, 'color:gold');
+    expect(s.players[0].res.green).toBe(1); // Green's Build Up is not copied
+    expect(s.players[0].res.gold || 0).toBeGreaterThan(gold);
+    expect(named(s, 'Medley').some(l => /copies every action on Gold/.test(l))).toBe(true);
   });
   it('Costumers: you also have each rival\'s cloak (P2\'s Red Cloak pays you on your recruits)', () => {
     let s = still({ rules: { artifacts: true }, members: [['echo.costumers']], res: [RICH] });

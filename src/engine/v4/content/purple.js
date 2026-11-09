@@ -35,7 +35,7 @@ export const onBoard = (ctx, p) => Object.values(ctx.state.slots).filter(o => o 
 /** Open spaces right now, as [quadrant index, action index]. */
 function openSpaces(ctx) {
   const out = [];
-  ctx.state.quadrants.forEach((qid, q) => ctx.quadrant(qid).actions.forEach((a, i) => {
+  ctx.state.quadrants.forEach((qid, q) => spacesOf(ctx.state, qid).forEach((a, i) => {
     if (!(a.ring > ctx.state.round || (a.lastRound && ctx.state.round > a.lastRound)) && ctx.state.slots[`${q}-${i}`] === undefined) out.push([q, i]);
   }));
   return out;
