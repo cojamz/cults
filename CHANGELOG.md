@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.690 — 2026-11-08
+
+- Clearer words: the wheel shows what each space really gives, growing spaces read as +2/+3/+4, 'Discard' replaces 'Cast out', rivals' gains are named, and choices show players as their emoji.
+
 ## v0.99.689 — 2026-11-08
 
 - Test cards: every Purple space takes the Goes Last token.
