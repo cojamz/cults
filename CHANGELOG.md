@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.706 — 2026-11-09
+
+- Godparent, Guest of Honor and Nosy Neighbors: tap the member, then the rival (no more wall of buttons); grey-member colors, Spoilsport and Heist Crew picks on the same card
+
 ## v0.99.705 — 2026-11-09
 
 - Kingmakers now gives rivals 3 silver from the bank, split as you choose (no followers). Godparent is now Godparents.
