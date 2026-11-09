@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.701 — 2026-11-08
+
+- The board's landing no longer redraws the whole table, and the seats' minions bob in two frames, so Firefox stays responsive while anything moves
+
 ## v0.99.700 — 2026-11-08
 
 - Gather: +1 follower for every 3 resources you pay on a member this turn
