@@ -89,7 +89,7 @@ const P = {
     // Cory, 2026-10-28: +5 purple and a minion this round
     crowdin: { verb: '+1 minion this round', note: '+4 purple' },
     rally: { verb: 'Your next two turns, now', note: '+2 purple' },
-    again: r => ({ verb: 'Your next turn, now', second: `+${r} purple`, note: run(n => `+${n}`, 'purple: ') }),
+    again: r => ({ verb: 'Your next turn, now', second: `+${r + 1} purple`, note: run(n => `+${n + 1}`, 'purple: ') }), // 2/3/4 since Nov 6 (Cory); the wheel said 1/2/3 (Cory, Nov 9)
   },
   silver: {
     // "others get 1" left "1 of what?" (live panel r1): silver
@@ -149,16 +149,16 @@ const P = {
     // "All for followers" hid that you pay (tester A, live panel r1; the charge is Cory's call): it says so in line 1
     boom: { verb: 'Pay all your resources: +1 @f each', second: 'you may keep your white' },
     // White's Oct 22 spaces (Cory's set): they had no panel words, so the board cut each to its first four words
-    stipend: r => ({ main: `+${r + 1} white`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 1}`, 'white: ') }), // Gather's shape (Cory, Oct 31)
+    stipend: r => ({ main: `+${r + 2} white`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 2}`, 'white: ') }), // 3/4/5 since Nov 6 // Gather's shape (Cory, Oct 31)
     // White's three round I spaces lead with their white, then the follower part (Cory, Nov 4: "the white actions are hard
     // to understand what they do at a glance"): Splurge's +1 white sat on line 3, which most rings drop
-    splurge: r => ({ main: '+1 white', second: r === 2 ? '+1 @f per resource spent on a member' : '+1 @f per 2 spent on a member' }), // per 1 in round II (Cory, Nov 1)
+    splurge: r => ({ main: '+2 white', second: r === 2 ? '+1 @f per resource spent on a member' : '+1 @f per 2 spent on a member' }), // per 1 in round II (Cory, Nov 1)
     // rounds II and III: "then turn up to 2 resources into 2 @f each" was too long for line 2, which dropped whole and
     // left a bare "+1 white" (picky bot, Nov 4): the same rule in fewer words
-    exchange: r => ({ main: '+1 white', second: r === 1 ? 'then turn 1 resource into 2 @f' : `turn up to ${r} into 2 @f each` }),
+    exchange: r => ({ main: '+2 white', second: r === 1 ? 'then turn 1 resource into 2 @f' : `turn up to ${r} into 2 @f each` }),
     // the gain leads: on ring II only one line fits, and the two read the same as "Bury one of your members"
-    farewell: { verb: 'Cast out a member for its cost in @f', note: '+1 white' },
-    estatesale: { verb: 'Cast out a member for its cost in white', note: '+1 white' },
+    farewell: { verb: 'Discard a member for its cost in @f', note: '+1 white' },
+    estatesale: { verb: 'Discard a member for its cost in white', note: '+1 white' },
     cashin: { verb: 'Turn all your white into @f', note: '+1 white' },
   },
   echo: {

@@ -40,7 +40,7 @@ describe('REPLACE3: each card fires', () => {
   it("Evictors: cast out a rival's member; you and that rival each gain white equal to its cost", () => {
     let s = table(['red', 'trading', 'market', 'yellow'], { round: 2, members: [['trading.evictors'], ['trading.martyr']], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `use:${uidIn(s, 'trading.evictors', 0)}`);
-    expect(s.pending.prompt).toBe("Evictors: cast out which rival's member?");
+    expect(s.pending.prompt).toBe("Evictors: discard which rival's member?");
     s = answer(s, `card:${uidIn(s, 'trading.martyr', 1)}`);
     expect(owns(s, 1, 'trading.martyr')).toBe(false);
     expect(s.cards[s.discard.at(-1)].def).toBe('trading.martyr');

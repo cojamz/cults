@@ -186,6 +186,6 @@ describe('a member cast out to the discard is said (frame review, Nov 7)', () =>
     d.take('trading.estatesale');
     d.on();
     const st = d.t.stories.at(-1);
-    expect(st.lines.join(' · ')).toMatch(/cast out (Recruiter|Intern)/);
+    expect(st.lines.join(' · ')).toMatch(/discarded (Recruiter|Intern)/);
   });
 });

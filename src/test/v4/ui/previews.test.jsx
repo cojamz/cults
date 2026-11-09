@@ -87,6 +87,18 @@ describe('previews reach the screen', () => {
     expect(previewWords(gift, st).others).toBe('rivals +1 gold in all');
   });
 
+  it('names who gets what, with the member that pays it (Cory, Nov 9, Right Away: "rivals +1 in all" and a separate Why)', () => {
+    const z = [0, 0];
+    const st = { resources: ['gold', 'purple'], players: [{ name: 'P1' }, { name: 'P2' }, { name: 'P3' }, { name: 'P4' }] };
+    const row = g => ({ res: { gold: z, purple: g }, followers: z, members: z });
+    const pv = { you: { res: { gold: z, purple: [2, 2] }, followers: z, members: z, turns: z }, others: { res: { gold: z, purple: [1, 1] }, followers: z, members: z }, othersBy: { 1: row([1, 1]), 2: row(z), 3: row(z) }, theirReasons: ['P2’s Picket Line: +1 purple'], asks: [], theirAsks: [], exact: true, partial: false };
+    const w = previewWords(pv, st);
+    expect(w.others).toBe('P2 +1 purple (Picket Line)');
+    expect(w.inlined).toEqual(['P2’s Picket Line: +1 purple']);
+    const toast = { ...pv, othersBy: { 1: row([2, 2]), 2: row([2, 2]), 3: row([2, 2]) }, theirReasons: [] };
+    expect(previewWords(toast, st).others).toBe('each rival +2 purple');
+  });
+
   it('a contest line never reads a pick off its first branch: Kickback\'s +1 goes to the one you pick (w3b #10), in plain words (w3a #28)', () => {
     const T = ['gold', 'red', 'market', 'echo'];
     const q = T.indexOf('gold'), i = quadrant('gold').actions.findIndex(a => a.key === 'jv');

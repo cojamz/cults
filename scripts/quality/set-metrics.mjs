@@ -42,7 +42,7 @@ const SHAPES = {
   'on-recruit': /on recruit/i,
   'whenever-you': /whenever you|when you/i,
   'discount': /costs? \d+ less|counts double|less\b.*cost/i,
-  'swap-move-member': /swap|give one of your members|take .* member|promote|demote|cast out/i,
+  'swap-move-member': /swap|give one of your members|take .* member|promote|demote|cast out|discard (?:one|any|a|another)/i,
   'copy-effect': /\bcopy|use the .* effect/i,
   'turn-order': /minion|skip|goes last|first turn|turn order|extra turn|place .* again/i,
   'flat-income': /^\+\d+ \w+\.?$|^worth \d+ followers?\.?$/i,

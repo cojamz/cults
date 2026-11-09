@@ -1283,8 +1283,8 @@ export function effectStory(start, end, actor, me = null, fx = []) {
     for (const m of [...g.moved].sort((x, y) => (x.from === 'shop') - (y.from === 'shop'))) {
       if (paired.has(m)) continue;
       if (m.to === 'out') {
-        bits.push(m.from === owner ? `cast out ${cardName(m.uid)}` : `cast out ${whose(m.from)} ${cardName(m.uid)}`);
-        if (m.from === me && actor !== me) hits.push(`cast out your ${cardName(m.uid)}`);
+        bits.push(m.from === owner ? `discarded ${cardName(m.uid)}` : `discarded ${whose(m.from)} ${cardName(m.uid)}`);
+        if (m.from === me && actor !== me) hits.push(`discarded your ${cardName(m.uid)}`);
         continue;
       }
       bits.push(m.to === owner ? `took ${whose(m.from)} ${cardName(m.uid)}` : m.from === owner ? `gave ${cardName(m.uid)} to ${nm(m.to)}` : `${cardName(m.uid)}: ${nm(m.from)} → ${nm(m.to)}`);

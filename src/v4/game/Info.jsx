@@ -719,7 +719,30 @@ export function previewWords(pv, state) {
   const theirs = (r, unit, plural) => (r[0] !== r[1] ? null : span(r, unit, plural));
   const others = [...state.resources.map(r => theirs(pv.others.res[r], r, r)), theirs(pv.others.followers, 'follower', 'followers'), theirs(pv.others.members, 'member', 'members')].filter(Boolean);
   const many = state.players.length > 2;
+  const by = rivalWords(pv, state, theirs);
+  if (by) return { you: you.join(', ') || 'nothing right now', others: by.text, inlined: by.inlined, choose: pv.asks.length > 0, theyChoose: pv.theirAsks.length > 0, partial: pv.partial };
   return { you: you.join(', ') || 'nothing right now', others: others.length ? `rivals ${others.join(', ')}${many ? ' in all' : ''}` : null, choose: pv.asks.length > 0, theyChoose: pv.theirAsks.length > 0, partial: pv.partial };
+}
+// The rivals' sure gains, each rival by name, with the member that pays it when one alone does ("Bo +1 purple (Picket
+// Line)"), or "each rival +1 silver" when they all get the same (Cory, Nov 9, on Right Away's "rivals +1 purple in all" and
+// a separate "Why: P2's Picket Line: +1 purple": "this language is wrong"). inlined: the Why lines said here already.
+function rivalWords(pv, state, theirs) {
+  if (!pv.othersBy) return null;
+  const inlined = [];
+  const rows = Object.entries(pv.othersBy).map(([id, d]) => {
+    const p = state.players[id];
+    const parts = [...state.resources.map(r => theirs(d.res[r] || [0, 0], r, r)), theirs(d.followers, 'follower', 'followers'), theirs(d.members, 'member', 'members')].filter(Boolean);
+    if (!parts.length || !p) return null;
+    const words = parts.join(', ');
+    const own = (pv.theirReasons || []).filter(l => l.startsWith(`${p.name}’s `));
+    const whole = own.length === 1 && own[0].endsWith(`: ${words}`) ? own[0].slice(p.name.length + 3, -(words.length + 2)) : null;
+    if (whole) inlined.push(own[0]);
+    return { words, text: `${p.name} ${words}${whole ? ` (${whole})` : ''}` };
+  }).filter(Boolean);
+  if (!rows.length) return null; // nothing sure per rival (Kickback's gift goes to the one you choose): the summed line
+  const rivals = Object.keys(pv.othersBy).length;
+  if (rivals > 1 && rows.length === rivals && !inlined.length && rows.every(r => r.words === rows[0].words)) return { text: `each rival ${rows[0].words}`, inlined };
+  return { text: rows.map(r => r.text).join('; '), inlined };
 }
 /** Only what you'd surely get (the parts no pick changes), or '' when every part hangs on the pick. */
 function sureWords(pv, state) {

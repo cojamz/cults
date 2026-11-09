@@ -112,7 +112,7 @@ describe('Late Bloomers: "Round End: if you have the fewest followers (ties coun
   });
 });
 
-describe('Dowagers: "On Use, once per game: cast out any of your other members; +3 followers each."', () => {
+describe('Dowagers: "On Use, once per game: discard any of your other members; +3 followers each."', () => {
   const Q = ['red', 'trading', 'market', 'purple'];
   it('price', () => {
     const d = defById('trading.dowagers');
@@ -123,7 +123,7 @@ describe('Dowagers: "On Use, once per game: cast out any of your other members; 
     const dow = uidIn(s, 'trading.dowagers', 0), vol = uidIn(s, 'red.volunteer', 0);
     const b0 = s.players[0].bonus;
     s = move(s, `use:${dow}`);
-    expect(s.pending.prompt).toContain('Dowagers: cast out which member?');
+    expect(s.pending.prompt).toContain('Dowagers: discard which member?');
     expect(s.pending.options.map(o => o.id)).not.toContain(`card:${dow}`);
     s = move(s, `card:${vol}`);
     expect(s.players[0].members).not.toContain(vol);
@@ -131,7 +131,7 @@ describe('Dowagers: "On Use, once per game: cast out any of your other members; 
     expect(s.players[0].bonus).toBe(b0 + 3);
     s = move(s, 'done');
     expect(s.players[0].members).toContain(uidIn(s, 'market.regular', 0));
-    expect(named(s, 'Dowagers')).toContain("P1's Dowagers: cast out Volunteer, +3 followers.");
+    expect(named(s, 'Dowagers')).toContain("P1's Dowagers: discarded Volunteer, +3 followers.");
   });
 });
 
@@ -189,7 +189,7 @@ describe('Window Dressers (reworded): "On Recruit: send any shop members to the 
   });
 });
 
-describe('Downsizers: "On Use, once per round: cast out one of your members to the discard pile. +4 white."', () => {
+describe('Downsizers: "On Use, once per round: discard one of your members. +4 white."', () => {
   const Q = ['red', 'trading', 'market', 'purple'];
   it('price, and Landlord retired', () => {
     const d = defById('trading.moneylender');

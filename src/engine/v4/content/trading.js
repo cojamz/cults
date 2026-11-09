@@ -170,7 +170,7 @@ const CASH_OUT = {
   },
 };
 const YARD_SALE = {
-  key: 'yardsale', copyDoesIt: true, ring: 2, name: 'Yard Sale', text: 'At the end of your turn, cast out one of your members face up into the shop, gain white equal to twice its cost. +1 white.',
+  key: 'yardsale', copyDoesIt: true, ring: 2, name: 'Yard Sale', text: 'At the end of your turn, put one of your members face up into the shop, gain white equal to twice its cost. +1 white.',
   // a rival may buy it off the row: bots count a little less than the full twice
   estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, 2) - 1)),
   resolve(ctx, p) {
@@ -247,10 +247,10 @@ const trading = {
     // idea pipeline pool 5 (Nov 7): cast out one at a time (Done to stop), each to the discard pile, +3 followers each;
     // a cast-out, so Undertaker pays. No +1 white: not printed.
     poolSpace({
-      key: 'cleanslate', copyDoesIt: true, ring: 2, name: 'Clean Slate', text: 'Cast out any number of your members to the discard pile. +3 followers each.',
+      key: 'cleanslate', copyDoesIt: true, ring: 2, name: 'Clean Slate', text: 'Discard any number of your members. +3 followers each.',
       estimate: (ctx, p) => ctx.membersOf(p).map(c => dowagersValue(ctx, p, c)).filter(v => v > 0).reduce((a, b) => a + b, 0),
       resolve(ctx, p) {
-        if (!ctx.membersOf(p).length) { ctx.log(`${p.name}'s Clean Slate: no members to cast out.`); return; }
+        if (!ctx.membersOf(p).length) { ctx.log(`${p.name}'s Clean Slate: no members to discard.`); return; }
         slateStep(ctx, p, { n: 0 });
       },
     }, 'pool5'),
@@ -408,7 +408,7 @@ const trading = {
       },
     }, PAWN_SHOP), WHITE_EXCHANGE), LOAN),
     {
-      key: 'farewell', copyDoesIt: true, ring: 2, name: 'Farewell', text: 'Cast out one of your members to the discard pile, gain followers equal to its cost. +1 white.', // "cast out": Cory, 2026-10-24
+      key: 'farewell', copyDoesIt: true, ring: 2, name: 'Farewell', text: 'Discard one of your members. Gain its cost in followers. +1 white.', // "cast out": Cory, 2026-10-24
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, fv(ctx)))),
       resolve(ctx, p) {
         ctx.gain(p, W, 1, { fromAction: true });
@@ -416,7 +416,7 @@ const trading = {
       },
     },
     swap11({
-      key: 'estatesale', copyDoesIt: true, ring: 2, name: 'Estate Sale', text: 'Cast out one of your members to the discard pile, gain white equal to its cost. +1 white.',
+      key: 'estatesale', copyDoesIt: true, ring: 2, name: 'Estate Sale', text: 'Discard one of your members. Gain its cost in white. +1 white.',
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, 1))),
       resolve(ctx, p) {
         ctx.gain(p, W, 1, { fromAction: true });
@@ -465,11 +465,11 @@ const trading = {
     },
     // Hand-Offs / Bequest (pool 3): the member, then the rival (bots give to the rival with the fewest followers)
     slate(ctx, p, value, data) {
-      if (value === 'done' || !p.members.includes(value)) { ctx.log(`${p.name}'s Clean Slate: cast out ${data.n} member${data.n === 1 ? '' : 's'}.`); return; }
+      if (value === 'done' || !p.members.includes(value)) { ctx.log(`${p.name}'s Clean Slate: discarded ${data.n} member${data.n === 1 ? '' : 's'}.`); return; }
       const name = ctx.card(value).def.name;
       ctx.buryMember(p, value);
       p.bonus += 3;
-      ctx.log(`${p.name}'s Clean Slate: cast out ${name}, +3 followers.`);
+      ctx.log(`${p.name}'s Clean Slate: discarded ${name}, +3 followers.`);
       gotRidOf(ctx, p);
       slateStep(ctx, p, { n: data.n + 1 });
     },
@@ -570,7 +570,7 @@ const trading = {
         const owner = ctx.player(data.owner);
         if (o.members.includes(uid)) {
           const name = ctx.card(uid).def.name;
-          ctx.log(`${owner.name}'s Inquisitors: ${o.name} casts out ${name}; ${owner.name} +2 followers.`);
+          ctx.log(`${owner.name}'s Inquisitors: ${o.name} discards ${name}; ${owner.name} +2 followers.`);
           ctx.buryMember(o, uid, o);
           owner.bonus += 2;
         }
@@ -582,7 +582,7 @@ const trading = {
         const o = ctx.ownerOf(uid);
         if (!o || o === p) return;
         const c = ctx.card(uid), name = c.def.name, k = c.def.s + c.def.w;
-        ctx.log(`${p.name}'s Evictors: casts out ${o.name}'s ${name} to the discard pile.`);
+        ctx.log(`${p.name}'s Evictors: discards ${o.name}'s ${name} to the discard pile.`);
         ctx.buryMember(o, uid, p);
         ctx.gain(p, W, k);
         ctx.gain(o, W, k);
@@ -651,13 +651,13 @@ const trading = {
     moneylender(ctx, p, uid) {
       if (!p.members.includes(uid)) return;
       const name = ctx.card(uid).def.name;
-      ctx.asMember(p, 'Downsizers', () => { ctx.buryMember(p, uid); ctx.gain(p, W, 4); ctx.log(`${p.name}'s Downsizers: cast out ${name}, +4 white.`); });
+      ctx.asMember(p, 'Downsizers', () => { ctx.buryMember(p, uid); ctx.gain(p, W, 4); ctx.log(`${p.name}'s Downsizers: discarded ${name}, +4 white.`); });
       gotRidOf(ctx, p);
     },
     dowagers(ctx, p, value, data) {
       if (value === 'done' || !p.members.includes(value)) return;
       const name = ctx.card(value).def.name;
-      ctx.asMember(p, 'Dowagers', () => { ctx.buryMember(p, value); p.bonus += 3; ctx.log(`${p.name}'s Dowagers: cast out ${name}, +3 followers.`); });
+      ctx.asMember(p, 'Dowagers', () => { ctx.buryMember(p, value); p.bonus += 3; ctx.log(`${p.name}'s Dowagers: discarded ${name}, +3 followers.`); });
       gotRidOf(ctx, p);
       dowagersStep(ctx, p, { ...data, n: data.n + 1 });
     },
@@ -856,13 +856,13 @@ const trading = {
     // player sees it. One of your other members costing 4 or less (3 before every member +1) to the bottom of the pile (as Farewell), +4 white; with
     // none, the use comes back. Bots cast out their cheapest-worth member, from round II.
     // Live in Raiders' slot as Downsizers (Cory, Nov 5: "i like moneylender. needs a different name. maybe slightly cheap"; name Claude's fill-in, 3 white + 2 any as a player sees it)
-    m('moneylender', 'Downsizers', 2, 1, 'On Use, once per round: cast out one of your members to the discard pile. +4 white.' /* Cory, Nov 5: "costing 4 or less" cut */, {
+    m('moneylender', 'Downsizers', 2, 1, 'On Use, once per round: discard one of your members. +4 white.' /* Cory, Nov 5: "costing 4 or less" cut */, {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
         const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid);
-        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Downsizers: no other member to cast out.`); return; }
-        ctx.choose(owner, 'Downsizers: cast out which member for 4 white?', list.map(c => ({
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Downsizers: no other member to discard.`); return; }
+        ctx.choose(owner, 'Downsizers: discard which member for 4 white?', list.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: -(c.def.f + (c.def.onLeave ? -cost(ctx, c.uid) : 0)),
         })), 'trading.moneylender');
       },
@@ -908,10 +908,10 @@ const trading = {
     // REPLACE9 bot test (Members C, Nov 4, batch bC6: paper 18 vs Heiresses' 14, White's set 13 -> 16): Heiresses' place.
     // 5 white + 4 any as a player sees it. One member at a time to the bottom of the pile (as Farewell), +3 followers
     // each, until you stop or have no other member; using it with no other member doesn't spend it (as Appraiser).
-    ...add9(m('dowagers', 'Dowagers', 4, 4, 'On Use, once per game: cast out any of your other members; +3 followers each.', { f: 2,
+    ...add9(m('dowagers', 'Dowagers', 4, 4, 'On Use, once per game: discard any of your other members; +3 followers each.', { f: 2,
       activate: 'game',
       onActivate(ctx, owner, card) {
-        if (!ctx.membersOf(owner).some(c => c.uid !== card.uid)) { card.used = false; ctx.log(`${owner.name}'s Dowagers: no other member to cast out.`); return; }
+        if (!ctx.membersOf(owner).some(c => c.uid !== card.uid)) { card.used = false; ctx.log(`${owner.name}'s Dowagers: no other member to discard.`); return; }
         dowagersStep(ctx, owner, { uid: card.uid, n: 0 });
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 && ctx.membersOf(owner).filter(c => dowagersValue(ctx, owner, c) > 0).length >= 2,
@@ -965,7 +965,7 @@ const trading = {
     // REPLACE6 bot test (Nov 3, replacement batch 6): Raiders' place. 4 white + 1 any as a player sees it. Each rival with a
     // member, in seat order from your left, picks one of theirs; it goes to the bottom of the pile as their own cast-out
     // (Martyrs pays them, their Successors answers it, Pallbearers hears it). Not a steal, so Bodyguards doesn't stop it.
-    ...add6(m('inquisitors', 'Inquisitors', 3, 1, 'On Use, once per game: each rival casts out one of their members. +2 followers per member cast out.', {
+    ...add6(m('inquisitors', 'Inquisitors', 3, 1, 'On Use, once per game: each rival discards one of their members. +2 followers per member discarded.', {
       activate: 'game',
       onActivate(ctx, owner, card) {
         const n = ctx.state.players.length, left = Array.from({ length: n - 1 }, (_, k) => (owner.id + 1 + k) % n);
@@ -1006,7 +1006,7 @@ const trading = {
     // REPLACE6 bot test (Nov 3, replacement batch 6): Cashier's place. 4 white + 1 any as a player sees it. Your own
     // cast-out of your own member (Farewell, Estate Sale, Appraiser; one Inquisitors makes you do): a shop member costing up
     // to its printed price, free (your recruit). A rival casting out your member (Evictors) isn't you casting out.
-    ...add6(m('successors', 'Successors', 3, 1, 'Whenever you cast out one of your members, recruit a shop member costing up to its cost, for free.', {
+    ...add6(m('successors', 'Successors', 3, 1, 'Whenever you discard one of your members, recruit a shop member costing up to its cost, for free.', {
       onCastOut(ctx, owner, card, { from, actor, cost: k, name }) {
         if (from !== owner || actor !== owner) return;
         const list = ctx.shopCards().filter(c => cost(ctx, c.uid) <= k);
@@ -1025,13 +1025,13 @@ const trading = {
         turned(ctx, owner);
       },
     }),
-    m('undertaker', 'Undertaker', 2, 2, 'Whenever you cast out one of your members, +2 followers.', { onGotRidOf: 2 }),
-    m('appraiser', 'Appraiser', 3, 2, 'On Use, once per game: cast out one of your members, gain followers or white equal to its cost.', {
+    m('undertaker', 'Undertaker', 2, 2, 'Whenever you discard one of your members, +2 followers.', { onGotRidOf: 2 }),
+    m('appraiser', 'Appraiser', 3, 2, 'On Use, once per game: discard one of your members. Gain its cost in followers or white.', {
       activate: 'game',
       onActivate(ctx, owner, card) {
         const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid);
-        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Appraiser: no other member to cast out.`); return; }
-        ctx.choose(owner, 'Appraiser: cast out which member?', list.map(c => ({
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Appraiser: no other member to discard.`); return; }
+        ctx.choose(owner, 'Appraiser: discard which member?', list.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: buryValue(ctx, owner, c, fv(ctx)),
         })), 'trading.appraise');
       },
@@ -1059,12 +1059,12 @@ const trading = {
     // REPLACE6 bot test (Nov 3, replacement batch 6): Old Money's place. 4 white + 1 any as a player sees it. Any rival's
     // cast-out to the bottom of the pile (Farewell, Estate Sale, Evictors, one Inquisitors makes them do, yours or theirs
     // cast out by them); its cost is its printed price.
-    ...add6(m('pallbearers', 'Pallbearers', 3, 1, 'Whenever a rival casts out a member, gain followers equal to half its cost, rounded up.', {
+    ...add6(m('pallbearers', 'Pallbearers', 3, 1, 'Whenever a rival discards one of their members, gain followers equal to half its cost, rounded up.', {
       onCastOut(ctx, owner, card, { actor, cost: k, name }) {
         if (!actor || actor === owner || !(k > 0)) return;
         const n = Math.ceil(k / 2);
         owner.bonus += n;
-        ctx.log(`${owner.name}'s Pallbearers: ${actor.name} cast out ${name} (${k}): +${n} followers.`);
+        ctx.log(`${owner.name}'s Pallbearers: ${actor.name} discarded ${name} (${k}): +${n} followers.`);
       },
     })),
     // REPLACE10 bot test (Nov 4, quality loop lane D): Old Money's place. 4 white + 3 any as a player sees it. Asked after
@@ -1117,12 +1117,12 @@ const trading = {
     // REPLACE3 bot test (Nov 3, replacement batch 3): Hoarder's place. 5 white + 3 any as a player sees it. Any rival's
     // member (casting out isn't a steal or a swap, so Bodyguards and Loyalists don't stop it); its cost is its printed
     // price. It leaves its cult as a cast-out does (Martyrs pays its owner), then both players gain the white.
-    ...add3(m('evictors', 'Evictors', 4, 3, "On Use, once per game: cast out a rival's member to the discard pile. You and that rival each gain white equal to its cost.", {
+    ...add3(m('evictors', 'Evictors', 4, 3, "On Use, once per game: discard a rival's member. You and that rival each gain white equal to its cost.", {
       activate: 'game',
       onActivate(ctx, owner, card) {
         const list = ctx.rivals(owner).flatMap(o => ctx.membersOf(o).map(c => [o, c]));
         if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Evictors: no rival has a member.`); return; }
-        ctx.choose(owner, "Evictors: cast out which rival's member?", list.map(([o, c]) => ({
+        ctx.choose(owner, "Evictors: discard which rival's member?", list.map(([o, c]) => ({
           id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${c.def.s + c.def.w})`, kind: 'member', value: c.uid,
           hint: (c.def.f || 1) * 1.5 + c.def.s + c.def.w,
         })), 'trading.evict');
@@ -1197,16 +1197,16 @@ function dowagersStep(ctx, p, data) {
   const list = ctx.membersOf(p).filter(c => c.uid !== data.uid);
   if (!list.length) return;
   const opts = list.map(c => ({ id: `card:${c.uid}`, label: `${c.def.name} (+3 followers)`, kind: 'card', value: c.uid, hint: dowagersValue(ctx, p, c) }));
-  opts.push({ id: 'done', label: data.n ? 'Done' : 'Cast out nobody', kind: 'done', value: 'done', hint: 0 });
-  ctx.choose(p, `Dowagers: cast out which member? (${data.n} so far)`, opts, 'trading.dowagers', data);
+  opts.push({ id: 'done', label: data.n ? 'Done' : 'Discard nobody', kind: 'done', value: 'done', hint: 0 });
+  ctx.choose(p, `Dowagers: discard which member? (${data.n} so far)`, opts, 'trading.dowagers', data);
 }
 // Clean Slate (pool 5): one member at a time, as Dowagers asks
 function slateStep(ctx, p, data) {
   const list = ctx.membersOf(p);
   if (!list.length) return;
   const opts = list.map(c => ({ id: `card:${c.uid}`, label: `${c.def.name} (+3 followers)`, kind: 'card', value: c.uid, hint: dowagersValue(ctx, p, c) }));
-  opts.push({ id: 'done', label: data.n ? 'Done' : 'Cast out nobody', kind: 'done', value: 'done', hint: 0 });
-  ctx.choose(p, `Clean Slate: cast out which member? (${data.n} so far)`, opts, 'trading.slate', data);
+  opts.push({ id: 'done', label: data.n ? 'Done' : 'Discard nobody', kind: 'done', value: 'done', hint: 0 });
+  ctx.choose(p, `Clean Slate: discard which member? (${data.n} so far)`, opts, 'trading.slate', data);
 }
 function gotRidOf(ctx, p) {
   for (const c of ctx.membersOf(p)) for (const d of defsOf(ctx, c)) if (d.onGotRidOf) { p.bonus += d.onGotRidOf; ctx.log(`${p.name}'s ${d.name}: +${d.onGotRidOf} followers.`); }
@@ -1222,7 +1222,7 @@ function buryChoice(ctx, p, what, gain) {
   const each = gain === 'white' ? 1 : fv(ctx);
   const opts = list.map(c => ({ id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: buryValue(ctx, p, c, each) }));
   // no "Keep them all": casting out is mandatory (Cory, Nov 4 11:42am: "should farewell and estate sale be mandatory?" ... "yes")
-  ctx.choose(p, `${what}: cast out which member?`, opts, 'trading.buryPick', { gain, what });
+  ctx.choose(p, `${what}: discard which member?`, opts, 'trading.buryPick', { gain, what });
 }
 // Exchange: one resource at a time (you pick the color), 2 followers each, up to the round's limit or Done
 function exchangeStep(ctx, p, data) {
@@ -1306,7 +1306,7 @@ function inquireStep(ctx, owner, left) {
   const at = left.findIndex(id => ctx.player(id).members.length);
   if (at < 0) return;
   const o = ctx.player(left[at]);
-  ctx.choose(o, 'Inquisitors: cast out which of your members?', ctx.membersOf(o).map(c => ({
+  ctx.choose(o, 'Inquisitors: discard which of your members?', ctx.membersOf(o).map(c => ({
     id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'member', value: c.uid,
     hint: -((c.def.f || 1) * 1.5 + cost(ctx, c.uid) * 0.5 + (c.used || c.def.vanilla ? 0 : 1)) + (c.def.onLeave ? 4 : 0),
   })), 'trading.inquire', { owner: owner.id, left: left.slice(at + 1) });

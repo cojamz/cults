@@ -68,7 +68,7 @@ describe('REPLACE6: each card fires', () => {
     let s = table(['red', 'trading', 'market', 'yellow'], { n: 3, round: 2, members: [['trading.inquisitors'], ['market.snob', 'red.crowd'], ['trading.martyr']], queue: [{ t: 'buy', p: 0 }] });
     s = move(s, `use:${uidIn(s, 'trading.inquisitors', 0)}`);
     expect(s.pending.player).toBe(1);
-    expect(s.pending.prompt).toBe('Inquisitors: cast out which of your members?');
+    expect(s.pending.prompt).toBe('Inquisitors: discard which of your members?');
     s = answer(s, `card:${uidIn(s, 'red.crowd', 1)}`);
     expect(s.pending.player).toBe(2);
     s = answer(s, `card:${uidIn(s, 'trading.martyr', 2)}`);
@@ -83,7 +83,7 @@ describe('REPLACE6: each card fires', () => {
     contextFor(s).buryMember(s.players[1], uidIn(s, 'market.snob', 1));
     s = resume(s);
     expect(s.players[0].bonus).toBe(4); // Snobs costs 7 (Nov 5: every member +1)
-    expect(named(s, 'Pallbearers')).toContain("P1's Pallbearers: P2 cast out Snobs (7): +4 followers.");
+    expect(named(s, 'Pallbearers')).toContain("P1's Pallbearers: P2 discarded Snobs (7): +4 followers.");
   });
 
   it('Sore Loser: win no contest, steal 5 followers from the rival who wins the most', () => {

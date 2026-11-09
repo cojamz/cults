@@ -26,7 +26,7 @@ const S = {
   blue: { a1: '+3 blue', a2: '+2 blue +1 red', a3: '+2 blue +1 green', a4: '+5 blue', a5: '+4 blue +1 gold', a6: '+8 blue' },
   green: { a1: '+3 green', a2: '+2 green +1 gold', a3: '+2 green +1 blue', a4: '+5 green', a5: '+4 green +1 red', a6: '+8 green' },
   purple: {
-    hourly: r => `+${3 + r} purple`, catchup: '+1 purple, +1 per rival who placed more', windup: '+1 purple per minion you placed', planahead: '+1 purple per minion left', overtime: '1 extra turn', lastcall: '+1 follower and +1 purple per minion left; take the Goes Last token with the rest on it; +1 purple', skip: r => `+${r + 3} purple; take the Goes Last token with your next minion on it`, holdup: r => `+${r + 1} purple, whoever is next skips, even you`, crowdin: '+3 purple, +1 minion this round', rally: '+2 purple, two turns after this one', again: r => `+${r} purple, another turn after this one`,
+    hourly: r => `+${3 + r} purple`, catchup: '+1 purple, +1 per rival who placed more', windup: '+1 purple per minion you placed', planahead: '+1 purple per minion left', overtime: '1 extra turn', lastcall: '+1 follower and +1 purple per minion left; take the Goes Last token with the rest on it; +1 purple', skip: r => `+${r + 3} purple; take the Goes Last token with your next minion on it`, holdup: r => `+${r + 1} purple, whoever is next skips, even you`, crowdin: '+4 purple, +1 minion this round', rally: '+2 purple, two turns after this one', again: r => `+${r + 1} purple, your next turn right after this one`,
   },
   silver: {
     toast: r => `+${3 * r} silver · others +${r} silver`, polish: '2 silver → 4 any', partygifts: 'give rivals up to 3 silver, +2 followers each', favors: '+2 silver · each rival gives 1', sweetnothings: '+3 silver · give rivals up to 3, +2 any each', tongue: '+3 silver · turn into colors', largesse: 'give rivals 12 silver, +10 followers',
@@ -41,7 +41,7 @@ const S = {
     pickpocket: r => `steal ${r + 2} from one rival`, tipoff: r => `+${r + 1} magenta; +${r} followers if you recruit a member this turn`, hideout: 'steal 1; rivals can’t steal from you this round; +1 magenta', rob: 'steal 3 followers, split among rivals; +1 magenta', ransom: `a rival picks a member costing ${6 + MORE} or less, then pays its cost or loses it; +1 magenta`, heist: 'recruit a rival’s member; +1 magenta',
   },
   trading: {
-    stipend: r => `+${r + 1} white; +${r} followers if you recruit a member this turn`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid for a member this turn; +1 white`, exchange: r => `turn ${r} into ${2 * r} followers; +1 white`, farewell: 'cast out a member for its cost in followers; +1 white', estatesale: 'cast out a member for its cost in white; +1 white', cashin: 'all your white into followers; +1 white',
+    stipend: r => `+${r + 2} white; +${r} followers if you recruit a member this turn`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid for a member this turn; +2 white`, exchange: r => `turn up to ${r} into 2 followers each; +2 white`, farewell: 'discard a member for its cost in followers; +1 white', estatesale: 'discard a member for its cost in white; +1 white', cashin: 'all your white into followers; +1 white',
     haggle: '+2 white, +1 per leader', buylow: '+1 follower per 3 white', pawn: r => `${r} follower · may take 2 white each instead`, sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower bought or won', boom: 'all for followers',
   },
   echo: { hum: 'copy an action with no minion on it; +1 green', chant: r => `+${r + 2} green`, echo: 'copy previous; +1 green', encore: 'copy a rival member’s On Recruit; +1 green', refrain: 'copy your action; +1 green', eternity: 'copy each of your members’ On Recruit; +1 green' },
@@ -57,7 +57,7 @@ const PIPS = {
   yellow: { gather: '+1 per member' },
   market: { clearance: 'recruit an extra time', pricecheck: 'bury for half its cost', spree: 'recruit two extra times' },
   thieves: { rob: 'steal 3 followers', ransom: 'rival pays or loses a member', heist: 'recruit a rival’s member' },
-  trading: { stipend: r => `+${r + 1} white; +${r} if you recruit a member`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid`, exchange: r => `${r} into ${2 * r} followers`, farewell: 'cast out one for followers', estatesale: 'cast out one for white', cashin: 'all white for followers', sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower', boom: 'all for followers' },
+  trading: { stipend: r => `+${r + 2} white; +${r} if you recruit a member`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid`, exchange: r => `up to ${r} into 2 followers each`, farewell: 'discard one for followers', estatesale: 'discard one for white', cashin: 'all white for followers', sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower', boom: 'all for followers' },
   echo: { refrain: 'copy yours', eternity: 'copy your On Recruits' },
 };
 /** The pips-first form of a space's yield (falls back to the few words). */

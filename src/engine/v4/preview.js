@@ -125,6 +125,9 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
   const put = (r, v) => { r[0] = Math.min(r[0], v); r[1] = Math.max(r[1], v); };
   const you = { res: {}, followers: range(), members: range(), lost: range(), turns: range(), early: range(), late: range(), discount: range() };
   const others = { res: {}, followers: range(), members: range() };
+  // each rival's own change, so the hover can name who gets what ("Bo +1 purple (Picket Line)") instead of a summed
+  // "rivals +1 purple in all" beside a separate Why (Cory, Nov 9: "this language is wrong")
+  const othersBy = {};
   // made: per color, what came into the table rather than moved between players (your change plus the rivals'): a steal's
   // part is what's left of your gain, so "You'd get" can say the whole steal (Help Yourself's 5 read as "+1 green; steal
   // 4" when every pick took a green: picky bot, Nov 4)
@@ -148,6 +151,12 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
     for (const r of state.resources) put(made[r] = made[r] || range(), s.players.reduce((t, o) => t + (o.res[r] || 0) - (state.players[o.id].res[r] || 0), 0));
     put(others.followers, rivals.reduce((t, o) => t + followers(s, o) - followers(state, state.players[o.id]), 0));
     put(others.members, rivals.reduce((t, o) => t + memberCount(s, o) - memberCount(state, state.players[o.id]), 0));
+    for (const o of rivals) {
+      const o0 = state.players[o.id], by = othersBy[o.id] = othersBy[o.id] || { res: {}, followers: range(), members: range() };
+      for (const r of state.resources) put(by.res[r] = by.res[r] || range(), (o.res[r] || 0) - (o0.res[r] || 0));
+      put(by.followers, followers(s, o) - followers(state, o0));
+      put(by.members, memberCount(s, o) - memberCount(state, o0));
+    }
   }
   // face-up members this space sends back under the pile (Restock's sweep; a bury), whatever you choose: so nobody
   // sweeps away the card they meant to recruit by surprise. Not counting cards someone recruits.
@@ -238,7 +247,7 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
   const keepLeaf = leaves.filter(spendsNothing).reduce((a, s) => (!a || worth(s, pid) > worth(a, pid) ? s : a), null);
   // every member some branch brings you (Open Door's tied cheapest: all four, not the best one's name)
   const joins = [...new Set(leaves.flatMap(s => s.players[pid].members.filter(u => !me0.members.includes(u) && s.cards[u].def !== FACE_DOWN)))];
-  return { exact, partial, capped, made, leaves: leaves.length, keep: keepLeaf ? change(keepLeaf) : null, you, others, asks: [...asks], theirAsks: [...theirAsks], copies, swept, reasons: reasons.filter(l => inLeaves.get(reasonOf.get(l)) === leaves.length).slice(0, 6), theirReasons: theirReasons.filter(l => theirCount.get(l) === leaves.length).slice(0, 4), ifRecruit, colorPays, sample: leaves[0], samples: leaves.slice(0, 16),
+  return { exact, partial, capped, made, leaves: leaves.length, keep: keepLeaf ? change(keepLeaf) : null, you, others, othersBy, asks: [...asks], theirAsks: [...theirAsks], copies, swept, reasons: reasons.filter(l => inLeaves.get(reasonOf.get(l)) === leaves.length).slice(0, 6), theirReasons: theirReasons.filter(l => theirCount.get(l) === leaves.length).slice(0, 4), ifRecruit, colorPays, sample: leaves[0], samples: leaves.slice(0, 16),
     best: change(top.best), likely: change(top.likely), worst: change(top.worst), tied, mix,
     joins, targets: spaceTargets(state, pid, first, joins, leaves, capped || partial ? tried : null) };
 }

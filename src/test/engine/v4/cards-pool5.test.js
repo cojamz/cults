@@ -147,7 +147,7 @@ describe('Hermits (White)', () => {
 });
 
 describe('Clean Slate (White, round II)', () => {
-  it('Cast out any number of your members to the discard pile. +3 followers each.', () => {
+  it('Discard any number of your members. +3 followers each.', () => {
     let s = sceneQ({ quadrants: ['trading', 'red', 'market', 'yellow'], round: 2, members: [['market.stylist', 'market.onlooker', 'red.panel']] });
     const a = uidOf(s, 'market.stylist', 0), b = uidOf(s, 'market.onlooker', 0);
     s = take(s, 'trading.cleanslate');

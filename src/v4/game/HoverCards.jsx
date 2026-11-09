@@ -9,7 +9,7 @@ import { quadrant, roman, spaceOpen, contestTable, contestOrder, cardDef, botLev
 import { ruleWords } from '../shorts.js';
 import { playerColor, standings } from '../format.js';
 import { Popover } from './parts.jsx';
-import { CardText, RuleText, ContestStandings, MemberCard, CardName, YoudGet, usePreview, requestPreviews, cancelPreviewFallback } from './Info.jsx';
+import { CardText, RuleText, ContestStandings, MemberCard, CardName, YoudGet, previewWords, usePreview, requestPreviews, cancelPreviewFallback } from './Info.jsx';
 import { SeatFigure } from './Glyphs.jsx';
 import { Rich } from './Rich.jsx';
 import { memberCopyTargets, ownCopyPlan, copiesAll, copyAllPlan, copyChoices } from './cards.js';
@@ -601,7 +601,7 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
         {open && viewer != null && !state.over ? <div className="lt-yd-row youd"><span className="k">You’d get</span><span className="v"><YoudGet state={state} pid={viewer} q={q} i={i} now /></span></div> : null}
         {/* why a member changed the number, or stayed off ("Underdog: no ×2 (Hustler’s +3 lands first)"), from the dry run */}
         {/* a rival's gain says why too (picky bot, Nov 4: "rivals +1 blue in all" was a rival's cloak, unnamed) */}
-        {open && pv && ((pv.reasons && pv.reasons.length) || (pv.theirReasons && pv.theirReasons.length)) ? <Row k="Why"><span data-reasons><Rich text={whyLine([...(pv.reasons || []), ...(pv.theirReasons || [])])} /></span></Row> : null}
+        {open && pv && whyOf(pv, state).length ? <Row k="Why"><span data-reasons><Rich text={whyLine(whyOf(pv, state))} /></span></Row> : null}
         {/* a few by name; the whole row is said as one (it listed all ten names, the row you can already see) */}
         {pv && pv.swept && pv.swept.length ? <Row k="Sweeps away">{pv.swept.length > 3
           ? <span data-swept={pv.swept.join(' ')}>{pv.swept.length === state.shop.length ? `the whole row (${pv.swept.length})` : `${pv.swept.length} face-up members`}</span>
@@ -626,6 +626,8 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
     </div>
   );
 }
+// the Why row: your members, then a rival's member only when "You'd get" didn't already name it beside their gain
+const whyOf = (pv, state) => { const done = new Set(previewWords(pv, state).inlined || []); return [...(pv.reasons || []), ...(pv.theirReasons || []).filter(l => !done.has(l))]; };
 /** Whose turn comes after viewer's next one (Hold Up's "whoever's turn is next"), from the engine's queue. */
 export function nextAfter(state, viewer) {
   const { order } = turnPlaces(state, viewer);
