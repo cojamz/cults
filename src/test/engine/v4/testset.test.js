@@ -14,6 +14,7 @@ describe('Test version (rules.testSet)', () => {
     for (const k of ['Hold Up', 'Right Away', 'Crunch Time']) {
       const i = spacesOf(live, 'purple').findIndex(x => x.name === k);
       expect(spacesOf(t, 'purple')[i].text).toMatch(/Goes Last token/);
+      if (k === 'Crunch Time') expect(spacesOf(t, 'purple')[i].name).toBe('Closing Time');
       expect(spacesOf(live, 'purple')[i].text).not.toMatch(/Goes Last token/);
     }
     for (const [q, [out, inn]] of Object.entries(want)) {

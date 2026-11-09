@@ -16,7 +16,7 @@ export const TEST_SPACES = {
   echo: [['eternity', 'medley']], // Greatest Hits -> Medley
   yellow: [['meltingpot', 'moneychangers']], // Melting Pot -> Swap Meet
   // Purple: every space takes the Goes Last token (Cory, Nov 8 8:21pm)
-  purple: [['holdup', 'holduplast'], ['again', 'againlast'], ['rally', 'rallylast']],
+  purple: [['holdup', 'holduplast'], ['again', 'againlast'], ['rally', 'closinglast']],
 };
 /** Candidate members dealt into the test version's decks, each in a live member's place so decks stay at 10 (Cory,
  *  Nov 8: "Are we keeping the member decks consistent?"); Protesters joins the grey members with nothing out. */

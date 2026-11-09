@@ -198,6 +198,7 @@ for (const [id, name, source] of [
   ['thieves.racket', 'Protection Racket', 'thieves.ransom'], ['silver.roundrobin', 'Round Robin', 'silver.gift'],
   ['trading.bequest', 'Bequest', 'trading.haggle'], ['market.rummage', 'Rummage', 'market.pricecheck'],
   ['echo.medley', 'Medley', 'echo.eternity'], ['yellow.moneychangers', 'Swap Meet', 'yellow.prism'],
+  ['purple.holduplast', 'Hold Up', 'purple.holdup'], ['purple.againlast', 'Right Away', 'purple.again'], ['purple.closinglast', 'Closing Time', 'purple.rally'],
 ]) {
   const art = PORTRAIT.get(source) || BY_ID.get(source);
   if (!art || PORTRAIT.has(id) || BY_ID.has(id)) continue;

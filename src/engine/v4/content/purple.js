@@ -752,6 +752,17 @@ export default {
       estimate: (ctx, p) => 2 + turnsNowEstimate(ctx, p, 2),
       resolve(ctx, p) { ctx.gain(p, P, 2, { fromAction: true }); turnsNow(ctx, p, 2, 'Crunch Time'); toToken(ctx, p, 1, 'Crunch Time'); },
     }, 'testset'),
+    // test version (Cory, Nov 9: "lets try it at 2 followers"): Closing Time in Crunch Time's place
+    poolSpace({
+      key: 'closinglast', copyDoesIt: true, ring: 2, name: 'Closing Time', text: '+2 purple. +2 followers per rival with no minions left. Take the Goes Last token: your next minion is placed after everyone else\u2019s.',
+      estimate: (ctx, p) => 2 + 2 * ctx.rivals(p).filter(o => !o.left).length,
+      resolve(ctx, p) {
+        ctx.gain(p, P, 2, { fromAction: true });
+        const n = ctx.rivals(p).filter(o => !o.left).length;
+        if (n) { p.bonus += 2 * n; ctx.log(`${p.name}'s Closing Time: +${2 * n} followers (${n} rival${n === 1 ? '' : 's'} out of minions).`); }
+        toToken(ctx, p, 1, 'Closing Time');
+      },
+    }, 'testset'),
   ],
 
   members: [
