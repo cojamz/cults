@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.696 — 2026-11-08
+
+- Test cards: a Purple space's Goes Last token holds all your other minions.
+
 ## v0.99.695 — 2026-11-08
 
 - Plainer card words: the gain comes first, 'If you recruit a member this turn:', and a space's +1 of its color is a small badge by its name instead of a line.
