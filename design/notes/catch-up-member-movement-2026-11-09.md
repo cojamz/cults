@@ -46,6 +46,8 @@ Prints: **Gift Swappers** [8 any, worth 1] "On Use, once per game: every player,
 - Grey, so it can show up in any game, including ones with no Red, Magenta or White (Cory, Nov 1: counterplay goes in the grey deck).
 - Not refused: Musical Chairs (a Red III swap with each rival) was "a little aggressive"; Cory put "everybody pass a member left" at the top of the ideas pile.
 
+- Intuitive: one sentence, "the player on their right" is the only new idea. Fun: everyone gets a card and loses one, and the owner times it. Interacts: every cult at once, the biggest most. Powerful: a swing of up to a 10-cost card for each player. Engine or counter: a counter to a fast-growing cult. Its color: grey, which holds the counterplay every table gets.
+
 ### 2. Blue sends a big cult's member into the shop (Blue round II space)
 Prints: **Foreclose** "+2 blue. Put a member of a rival with more members than you into the shop."
 - Played: round II, Ann has 6 members and leads Blue's most-members contest. You have 3. You take Foreclose and put her 7-cost card in the shop, then you can recruit it with this turn's recruit. If you don't, the next player can.
@@ -53,12 +55,16 @@ Prints: **Foreclose** "+2 blue. Put a member of a rival with more members than y
 - Who feels it: the big cult loses a card, and the whole table sees a good card hit the shop.
 - Close to **Repossessors** (test cards), but on a space, so it is there every Blue game instead of once if dealt.
 
+- Intuitive: one sentence with a count everyone can see. Fun: the leader loses a good card to the shop and anyone can grab it. Interacts: Blue's contest and every rival cult. Powerful: a member gone from the leader plus a strong card offered to you. Engine or counter: a counter. Its color: Blue works the shop, now with a rival's card.
+
 ### 3. Everybody discards a member (grey member or White)
 Cory's own seed (Nov 8: "you discard a member to make everybody else have to discard a member").
 Prints: **Purge** [6 any, worth 1] "On Use, once per game: discard one of your members. Each rival with more members than you discards one too."
 - Each player picks what they discard, so the leader drops their cheapest card. It is a mild sting, but it cuts their count for Blue's contest and feeds Blue's discard pile.
 - Played: round II, you have 3, Ann 6, Ben 5. You discard a 3-cost card; Ann and Ben each discard one. You lose 1, the two ahead lose 1 each.
 - Weaker than 1 and 2 in a 3-player game (one for one against each rival).
+
+- Intuitive: one sentence. Fun: a mild sting for everyone ahead. Interacts: every bigger cult and Blue's discard pile. Powerful: weak in a 3-player game. Engine or counter: a counter. Its color: grey (or White, which gets rid of members).
 
 ### 4. Silver generosity lets you recruit (Cory's top of the Silver pile, Nov 8)
 Noted, not pitched here: it helps whoever takes it recruit, not the player behind, so it doesn't answer this note.
