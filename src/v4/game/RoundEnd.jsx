@@ -124,7 +124,7 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
           </p>
         )}
         <p className="re-phase" data-phase="followers">Followers</p>
-        <div className="re-totals" role="list" aria-label="Followers after this round">
+        <div className="re-totals" aria-label="Followers after this round">
           {ranked.map(p => {
             const now = shownTotal(p);
             const was = start && start.players[p.id] ? followers(start, start.players[p.id]) : now;
@@ -154,7 +154,7 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
             // (Cory, Nov 9: the four-column table wrapped its words into three lines a row)
             const gains = why.length ? why : other ? [`${other > 0 ? '+' : '−'}${Math.abs(other)} in play`] : [];
             return (
-              <div key={p.id} className="re-p" role="listitem" style={{ '--pc': playerColor(p.id) }} data-total={`${p.id}:${now}`} data-me={p.id === meId ? '' : undefined}>
+              <div key={p.id} className="re-p" style={{ '--pc': playerColor(p.id) }} data-total={`${p.id}:${now}`} data-me={p.id === meId ? '' : undefined}>
                 <span className="nm"><Who state={after} id={p.id} meId={meId} /></span>
                 <span className="re-gains">
                   {c > 0 && <span className="re-g re-prize num" data-prize={p.id}>+{c} prizes</span>}
