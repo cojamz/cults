@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.691 — 2026-11-08
+
+- Setup: point at a setting's name (Bots, Speed, Economy, Cards, Table) to see what each choice does; plainer color lines with each color's real contest, and a fuller card when you point at a color; Members look and Swap card are off the setup screen for now; hover cards now wait a beat before opening
+
 ## v0.99.690 — 2026-11-08
 
 - Clearer words: the wheel shows what each space really gives, growing spaces read as +2/+3/+4, 'Discard' replaces 'Cast out', rivals' gains are named, and choices show players as their emoji.
