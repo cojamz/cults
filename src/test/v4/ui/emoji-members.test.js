@@ -8,7 +8,7 @@ import { CUT } from '../../../engine/v4/content/cull.js';
 import { ARTIFACTS } from '../../../engine/v4/core.js';
 
 describe('emoji members', () => {
-  const names = new Set([...allQuadrantIds().flatMap(q => (quadrant(q).members || []).map(m => spriteId(m.name))), ...guestMembers().map(m => spriteId(m.name))]);
+  const names = new Set([...allQuadrantIds().flatMap(q => (quadrant(q).members || []).map(m => spriteId(m.name))), ...guestMembers().map(m => spriteId(m.name)), 'protesters']); // Protesters: a test-version guest (content/testset.js)
   it('has an entry for the members it lists, each a real member', () => {
     const src = Object.keys(mod).length && EMOJI_MEMBER_COUNT;
     expect(src).toBeGreaterThan(100);

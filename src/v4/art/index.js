@@ -189,6 +189,20 @@ for (const [id, name, source] of [
   const art = PORTRAIT.get(source);
   if (art && !PORTRAIT.has(id)) PORTRAIT.set(id, { ...art, id, name });
 }
+// The test version's cards (Nov 8; engine content/testset.js) borrow cut cards' drawings until they get their own
+// (Claude's picks, as earlier new members did; Cory may swap any). A space borrows an old space's drawing, or the one
+// it stands in for when its color has none spare.
+for (const [id, name, source] of [
+  ['trading.anchorites', 'Anchorites', 'trading.shopkeeper'], ['trading.oldguard', 'Old Guard', 'trading.bulkbuyer'],
+  ['market.repossessors', 'Repossessors', 'market.hawkers'], ['benders.protesters', 'Protesters', 'benders.insider'],
+  ['thieves.racket', 'Protection Racket', 'thieves.ransom'], ['silver.roundrobin', 'Round Robin', 'silver.gift'],
+  ['trading.bequest', 'Bequest', 'trading.haggle'], ['market.rummage', 'Rummage', 'market.pricecheck'],
+  ['echo.medley', 'Medley', 'echo.eternity'], ['yellow.moneychangers', 'Swap Meet', 'yellow.prism'],
+]) {
+  const art = PORTRAIT.get(source) || BY_ID.get(source);
+  if (!art || PORTRAIT.has(id) || BY_ID.has(id)) continue;
+  (PORTRAIT.has(source) ? PORTRAIT : BY_ID).set(id, { ...art, id, name });
+}
 export function iconFor(id, kind = 'member') {
   const ids = Array.isArray(id) ? id : [id];
   const hit = (kind !== 'action' && ids.map(x => PORTRAIT.get(x)).find(Boolean)) || ids.map(x => BY_ID.get(x)).find(Boolean);

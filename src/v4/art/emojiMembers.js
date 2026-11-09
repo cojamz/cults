@@ -98,6 +98,11 @@ const M = {
   landlord: ['🏠', '✨🌅 +2 white'],
   martyrs: ['🕯️', '♾️ Leaves your cult: followers equal to its cost'],
   recluse: ['🏚️', '🌙 +2 followers per rival with more members'],
+  // the test version's members (Nov 8, Claude's fill-ins until Cory picks)
+  anchorites: ['⛪', '🌙 3 or fewer members: +5 followers'],
+  'old-guard': ['🧓', '🔁 Discard another member, using its On Use first; +2 white'],
+  repossessors: ['🚚', '🔁 Once a game: a rival’s member up to 8 goes to the shop'],
+  protesters: ['⛔', '🔁 Block an open space this round'],
   brokers: ['📈', '♾️ A White action gives you followers: +1 follower'],
   raiders: ['⚔️', '☝️ Take 4 followers from a rival, pay them 2 white'],
   undertaker: ['⚰️', '♾️ You cast out a member: +2 followers'],
