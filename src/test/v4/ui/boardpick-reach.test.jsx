@@ -44,6 +44,8 @@ function unreachable(state) {
       for (const o of Object.values(g.colorOpts)) reach.add(o.id);
     }
     // turning resources in (Exchange): a stack per color held, and "Turn in nothing" answers Done
+    // Sweet Talk's silver into colors (ConvertPicker): each color's stack, and the Done its press sends
+    if (g.kind === 'convert') for (const o of [...g.outs, g.stop]) { if (!engine.has(o.id)) bad.push(`the card's ${o.id} is not an engine answer`); reach.add(o.id); }
     if (g.kind === 'spend') for (const o of [...g.spends, g.stop]) { if (!engine.has(o.id)) bad.push(`the card's ${o.id} is not an engine answer`); reach.add(o.id); }
     if (g.kind === 'gift' && g.seconds.some(x => x.b === pend.player)) bad.push('a gift offers your own face');
     if (g.kind === 'steal' && g.seconds.some(x => x.o.target.pid === pend.player)) bad.push('a steal offers your own stack');

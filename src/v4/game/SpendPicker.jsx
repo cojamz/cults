@@ -27,12 +27,12 @@ function suggest(colors, held, n, white) {
   return out;
 }
 
-export default function SpendPicker({ state, g, onAnswer, busy, place = null, turnOf = null, onBack = null }) {
+export default function SpendPicker({ state, g, onAnswer, onAnswerAll = null, busy, place = null, turnOf = null, onBack = null }) {
   const pend = state.pending;
   const me = state.players[g.actor];
   const key = keyOf(state, g);
   const box = useRef(null);
-  const { taking, start } = useTakeRun(store, key, state, busy, id => {
+  const { taking, start, hold } = useTakeRun(store, key, state, busy, id => {
     const o = pend && (pend.options || []).find(x => x.id === id);
     if (!o) return false;
     const c = o.kind === 'color' ? o.value : null;
@@ -52,13 +52,23 @@ export default function SpendPicker({ state, g, onAnswer, busy, place = null, tu
     if (busy || taking || !out[c]) return;
     setOut({ ...out, [c]: out[c] - 1 });
   };
-  const take = () => {
-    if (busy || taking) return;
+  const retry = useRef(null);
+  useEffect(() => () => clearTimeout(retry.current), []);
+  const take = (tries = 0) => {
+    if (taking || (busy && !tries)) return;
     const ids = colors.flatMap(c => Array.from({ length: out[c] || 0 }, () => `color:${c}`));
     // stopping early answers Done (the engine asks again while any are left)
     if (ids.length < g.left) ids.push(g.stop.id);
-    start(ids, { plan: out, total: limit });
+    // a local game sends the whole turn-in at once and the table plays it as one step (Cory, Nov 9: all the decisions,
+    // then the animation, "same anywhere else that happens"); online, one question at a time
+    const sent = onAnswerAll ? onAnswerAll(ids) : 0;
+    if (sent === 'wait' && tries < 30) { clearTimeout(retry.current); retry.current = setTimeout(() => latestTake.current(tries + 1), 130); return; }
+    const k = typeof sent === 'number' ? sent : 0;
+    if (k === ids.length) { hold(state.moves, ids.length, { plan: out, total: limit }); return; }
+    start(ids.slice(k), { plan: out, total: limit });
   };
+  const latestTake = useRef(take);
+  latestTake.current = take;
   useEffect(() => {
     const b = box.current && box.current.querySelector('.pay-go');
     if (b && (!document.hasFocus || document.hasFocus())) b.focus({ preventScroll: true });
@@ -114,7 +124,7 @@ export default function SpendPicker({ state, g, onAnswer, busy, place = null, tu
       </div>
       <div className="pay-foot">
         {onBack && <button type="button" className="pay-cancel" data-option="back" disabled={busy || taking} onClick={onBack}>Cancel</button>}
-        <button type="button" className="pay-go" data-spend-take={parts.map(x => `${x.n}${x.color}`).join(' ') || 'none'} disabled={busy || taking} onClick={take}>
+        <button type="button" className="pay-go" data-spend-take={parts.map(x => `${x.n}${x.color}`).join(' ') || 'none'} disabled={busy || taking} onClick={() => take()}>
           {n ? <>Turn in <CostDots parts={parts} /> for <b className="num">{get}</b> followers</> : 'Turn in nothing'}
         </button>
       </div>

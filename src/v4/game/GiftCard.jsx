@@ -6,6 +6,7 @@
 // picked one stays pressed, and a click on another switches it. Every answer is the engine's own option id.
 import SplitPicker, { splitRunning } from './SplitPicker.jsx';
 import SpendPicker from './SpendPicker.jsx';
+import ConvertPicker from './ConvertPicker.jsx';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { holdFlag } from './bodyFlag.js';
 import { cardDef, followers, quadrant } from '../../engine/v4/index.js';
@@ -49,7 +50,8 @@ export default function GiftCard(props) {
   // several coins in colors you choose (Harvest): picked whole, like a payment
   if (g.kind === 'color' && !g.pay && (g.toPick > 1 || splitRunning(state, g))) return <SplitPicker state={state} g={g} onAnswer={props.onAnswer} onAnswerAll={props.onAnswerAll} busy={props.busy} place={props.place} turnOf={props.turnOf} onBack={props.onBack} />;
   // your resources turned into followers, up to a limit (Exchange): picked whole, like a payment
-  if (g.kind === 'spend') return <SpendPicker state={state} g={g} onAnswer={props.onAnswer} busy={props.busy} place={props.place} turnOf={props.turnOf} onBack={props.onBack} />;
+  if (g.kind === 'spend') return <SpendPicker state={state} g={g} onAnswer={props.onAnswer} onAnswerAll={props.onAnswerAll} busy={props.busy} place={props.place} turnOf={props.turnOf} onBack={props.onBack} />;
+  if (g.kind === 'convert') return <ConvertPicker state={state} g={g} onAnswer={props.onAnswer} onAnswerAll={props.onAnswerAll} busy={props.busy} place={props.place} turnOf={props.turnOf} onBack={props.onBack} />;
   return <GiftCardBody {...props} />;
 }
 function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, turnOf = null, hover = null, onBack = null }) {

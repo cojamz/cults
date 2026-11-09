@@ -229,3 +229,16 @@ export function momentSave(name) {
 
 /** The member a pay save is for, by name (for messages). */
 export const payName = save => (save.state.pending.uid != null ? cardDef(save.state, save.state.pending.uid).name : `${TIERS.find(t => t.key === save.state.pending.tier).get} followers`);
+
+/** P1 about to place on Sweet Talk ("+3 silver. Then turn any of your silver into other colors."), round II, holding
+ *  `silver` silver: { save, slot } (the probe places itself, then turns silver on the card). */
+export function sweetTalkSave(silver = 2) {
+  const slot = slotOf(COLOR_TABLE, 'silver', 'tongue');
+  for (let seed = 1; seed < 300; seed++) {
+    const s = playToOn(COLOR_TABLE, seed, st => st.round >= 2 && st.pending && st.pending.player === 0 && st.pending.kind === 'place' && st.pending.options.some(o => o.id === slot));
+    if (!s) continue;
+    s.players[0].res = { ...s.players[0].res, silver };
+    return { save: wrap(s), slot };
+  }
+  throw new Error('dialog-save: never reached P1 on Sweet Talk');
+}

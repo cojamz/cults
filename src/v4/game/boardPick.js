@@ -121,6 +121,20 @@ export function giftPick(state, pend, first = null) {
       head: `Give rivals ${share.must ? '' : 'up to '}${share.max} silver`, firsts: [], seconds: players.map(o => ({ o, b: o.target.pid })), others: players.map(o => o.target.pid),
       rest: pend.options.filter(o => !players.includes(o)) };
   }
+  // Sweet Talk's "turn any of your silver into other colors" (and any silver-into-colors turn the engine asks one coin at
+  // a time): the whole turn set on one card, then one press (Cory, Nov 9: "sweet talk decisions all happen then
+  // animations. not animation for each resource"): ConvertPicker.jsx
+  const turn = state.queue?.[0]?.h === 'silver.turn' ? state.queue[0].data : null;
+  if (turn) {
+    const outs = pend.options.filter(o => o.kind === 'color' && o.spend && state.resources.includes(o.value));
+    const quit = pend.options.find(o => o.kind === 'done');
+    if (outs.length && quit && outs.length + 1 === pend.options.length) {
+      const from = Object.keys(outs[0].spend).find(k => outs[0].spend[k] > 0) || 'silver';
+      const have = state.players[pend.player].res[from] || 0;
+      const left = turn.max == null ? have : Math.max(0, Math.min(have, turn.max - (turn.done || 0)));
+      return { ...base, kind: 'convert', from, each: turn.each || 1, left, done: turn.done || 0, head: `Turn ${from} into other colors`, chosen: null, stop: quit, outs, firsts: [], seconds: [], others: [], rest: [] };
+    }
+  }
   // "turn up to N of your resources into followers, one at a time" (Exchange): picked whole, like a payment (SpendPicker.jsx)
   const spend = question.match(/^turn which resource into (\d+) followers\?\s*\((\d+) left\)/i);
   const spends = pend.options.filter(o => o.kind === 'color' && o.spend && state.resources.includes(o.value));

@@ -48,9 +48,10 @@ async function answer(page, held, { prefer, last, avoid, panelFirst, skip, domFa
   }
   // the split card (Harvest's colors, SplitPicker.jsx) and the spend card (SpendPicker.jsx), picked like a payment: their
   // Take carries no data-option and answers with the suggested split, like the pay sheet's Pay (Nov 4)
-  const take = keep(await page.$('[data-split-take]:not([disabled]), [data-spend-take]:not([disabled])'));
+  // (and Sweet Talk's convert card, ConvertPicker.jsx: its press with nothing set keeps the silver)
+  const take = keep(await page.$('[data-split-take]:not([disabled]), [data-spend-take]:not([disabled]), [data-convert-take]:not([disabled])'));
   if (take) {
-    const id = await take.evaluate(e => (e.hasAttribute('data-split-take') ? 'split:' : 'spend:') + (e.getAttribute('data-split-take') ?? e.getAttribute('data-spend-take'))).catch(() => 'take');
+    const id = await take.evaluate(e => (e.hasAttribute('data-split-take') ? 'split:' : e.hasAttribute('data-convert-take') ? 'convert:' : 'spend:') + (e.getAttribute('data-split-take') ?? e.getAttribute('data-spend-take') ?? e.getAttribute('data-convert-take'))).catch(() => 'take');
     try { await take.click({ timeout }); return { id, kind: 'pay' }; } catch { /* covered: fall through to the board */ }
   }
   const els = await page.$$('[data-option]:not([disabled]):not([aria-disabled="true"])');

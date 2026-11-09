@@ -51,3 +51,34 @@ describe('foldPicks', () => {
     } finally { setMotionSpeed('steady'); }
   });
 });
+
+// Sweet Talk (Cory, Nov 9: "sweet talk decisions all happen then animations. not animation for each resource"): every
+// silver turned, set on one card and sent at once, plays as one step: the silver paid summed, the colors got summed
+import { createGame, resume, actionAt } from '../../../engine/v4/core.js';
+function sweetRun(picks) {
+  const s0 = createGame({ seats: [0, 1, 2].map(i => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 7, quadrants: ['gold', 'red', 'blue', 'silver'] });
+  s0.queue = []; s0.pending = null; s0.round = 2; s0.slots = {}; s0.order = []; s0.log = [];
+  s0.players.forEach(p => { for (const r of s0.resources) p.res[r] = 0; p.res.silver = 2; p.left = 3; });
+  s0.queue = [{ t: 'turn', p: 0 }];
+  let s = resume(s0);
+  const o = s.pending.options.find(x => x.kind === 'slot' && actionAt(s, x.q, x.i).name === 'Sweet Talk');
+  s = applyMove(s, { player: 0, option: o.id }, { effects: true });
+  const states = [s];
+  for (const id of picks) { s = applyMove(s, { player: 0, option: id }, { effects: true }); states.push(s); }
+  return states;
+}
+describe('foldPicks on Sweet Talk', () => {
+  it('folds every silver turned into one step, the silver and each color summed', () => {
+    const [prev, next, ...rest] = sweetRun(['color:gold', 'color:gold', 'color:red', 'done']);
+    const fold = foldPicks(prev, next, rest, [0]);
+    expect(fold.used).toBe(2); // the Done shows nothing and stays its own step
+    const tail = rest[1];
+    const pay = tail.foldedEffects.filter(e => e.type === 'pay');
+    expect(pay.map(e => [e.what.r, e.what.n])).toEqual([['silver', 3]]);
+    const got = Object.fromEntries(tail.foldedEffects.filter(e => e.type === 'gain').map(e => [e.to.r, e.what.n]));
+    expect(got).toEqual({ gold: 2, red: 1 });
+    const one = planChain(prev, tail, { mine: [0] });
+    const each = [next, ...rest.slice(0, 2)].reduce((t, st, i, a) => t + planChain(i ? a[i - 1] : prev, st, { mine: [0] }).total, 0);
+    expect(one.total).toBeLessThan(each * 0.7);
+  });
+});

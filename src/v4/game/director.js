@@ -719,10 +719,14 @@ export function foldBuys(prev, next, queue, mine = [], force = false) {
  * (GameScreen onGiftAnswerAll); online it still goes a pick at a time and nothing folds. Returns { used } as foldBuys:
  * show queue[used - 1] in place of `next`, carrying the run's gains, summed per stack, as `foldedEffects`.
  */
+// a pick of a color (Harvest, Polish), or a coin turned into a color with a Done to stop (Sweet Talk's silver, Exchange's
+// turn-in: Cory, Nov 9, "sweet talk decisions all happen then animations ... same anywhere else that happens")
 const pickStep = (a, b, actor) => !!(a && b && a.pending && a.pending.player === actor && a.pending.kind === 'choose'
   && b.round === a.round && !b.over && b.moves === a.moves + 1 && a.pending.options.length > 1
-  && a.pending.options.every(o => o.kind === 'color') && Array.isArray(b.effects) && b.effects.length > 0
-  && b.effects.every(e => e.cause && e.cause.kind === 'move' && e.cause.pid === actor && e.type === 'gain' && e.to && e.to.kind === 'stack'));
+  && a.pending.options.every(o => o.kind === 'color' || o.kind === 'done') && a.pending.options.some(o => o.kind === 'color')
+  && Array.isArray(b.effects) && b.effects.length > 0
+  && b.effects.every(e => e.cause && e.cause.kind === 'move' && e.cause.pid === actor && e.to
+    && ((e.type === 'gain' && e.to.kind === 'stack') || (e.type === 'pay' && e.from && e.from.kind === 'stack' && e.from.pid === actor) || (e.type === 'followers' && e.to.kind === 'count'))));
 export function foldPicks(prev, next, queue, mine = []) {
   const none = { used: 0 };
   const actor = prev && prev.pending ? prev.pending.player : null;
@@ -736,7 +740,7 @@ export function foldPicks(prev, next, queue, mine = []) {
   const cause = run[0].effects[0].cause;
   const gets = new Map();
   for (const e of run.flatMap(st => st.effects)) {
-    const key = `${e.from && e.from.kind}:${e.from && (e.from.key ?? e.from.pid)}>${e.to.pid}:${e.to.r}`;
+    const key = `${e.type}:${e.from && e.from.kind}:${e.from && (e.from.key ?? e.from.pid)}:${e.from && e.from.r}>${e.to.kind}:${e.to.key ?? e.to.pid}:${e.to.r}`;
     const had = gets.get(key);
     gets.set(key, had ? { ...had, what: { ...had.what, n: had.what.n + e.what.n } } : { ...e, cause });
   }
