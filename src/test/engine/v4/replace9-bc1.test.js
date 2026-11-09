@@ -135,7 +135,7 @@ describe('Dowagers: "On Use, once per game: discard any of your other members; +
   });
 });
 
-describe('Duty Collector: "Whenever a rival recruits a member of a color you have a member of, +1 of that color."', () => {
+describe('Duty Collector: "Whenever a rival recruits a member in one of your members’ colors, +1 of that color."', () => {
   it('price, round I, and Customs Officer retired', () => {
     const d = defById('yellow.dutycollector');
     expect([d.s, d.w, memberRound(d)]).toEqual([3, 4, 3]); // joins by cost (Cory, Nov 5)
@@ -153,7 +153,7 @@ describe('Duty Collector: "Whenever a rival recruits a member of a color you hav
   });
 });
 
-describe('Window Dressers (reworded): "On Recruit: send any shop members to the discard pile, then refill. Recruit again this turn."', () => {
+describe('Window Dressers (reworded): "On Recruit: discard any shop members and refill. Recruit again this turn."', () => {
   it('same price and worth, and the old Window Dressers retired', () => {
     const d = defById('market.windowdressers9'), o = defById('market.windowdresser');
     expect([d.s, d.w, d.f]).toEqual([o.s, o.w + 1, o.f]); // the old Window Dressers is 1 cheaper since Nov 5

@@ -371,9 +371,9 @@ const trading = {
     }] : []),
     ...(on12('pawnshop') || on12('lowprofile') || on12('pocketmoney') ? [] : [{
       key: 'stipend', copyDoesIt: true, ring: 1, name: 'Allowance',
-      text: '+3 white in round I, +4 in round II, +5 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.', // +1 white (Cory, Nov 6: "white needs a bigger white gain in the begining", "just buff those by +1 white")
+      text: '+3 white in round I, +4 in round II, +5 in round III. If you recruit a member this turn: +1 follower in round I, +2 in round II, +3 in round III.', // +1 white (Cory, Nov 6: "white needs a bigger white gain in the begining", "just buff those by +1 white")
       // Gather's shape (Cory, 2026-10-31: "just default to gather style for now for the rest"); was +1/2/3 followers and +2/3/4 white
-      byRound: { lines: ['+3 white. This turn, if you recruit a member, +1 follower.', '+4 white. This turn, if you recruit a member, +2 followers.', '+5 white. This turn, if you recruit a member, +3 followers.'] },
+      byRound: { lines: ['+3 white. If you recruit a member this turn: +1 follower.', '+4 white. If you recruit a member this turn: +2 followers.', '+5 white. If you recruit a member this turn: +3 followers.'] },
       estimate: ctx => ctx.state.round + 2 + ctx.state.round * 0.7,
       resolve(ctx, p) {
         ctx.gain(p, W, ctx.state.round + 2, { fromAction: true });
@@ -381,8 +381,8 @@ const trading = {
       },
     }]),
     swap11({
-      key: 'splurge', copyDoesIt: true, ring: 1, name: 'Splurge', text: 'This turn, if you recruit a member, +1 follower for every 2 resources you pay for it (every 1 in round II). +2 white.', // +2 white (Cory, Nov 6: "just buff those by +1 white"); members only: Claude's default, 2026-10-27; +1 (Cory, Oct 28); per 1 in round II (Cory, Nov 1 1:39pm)
-      byRound: { lines: ['+2 white. This turn, if you recruit a member, +1 follower for every 2 resources you pay for it.', '+2 white. This turn, if you recruit a member, +1 follower for every 1 resource you pay for it.', '+2 white. This turn, if you recruit a member, +1 follower for every 2 resources you pay for it.'] },
+      key: 'splurge', copyDoesIt: true, ring: 1, name: 'Splurge', text: '+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay (every 1 in round II).', // +2 white (Cory, Nov 6: "just buff those by +1 white"); members only: Claude's default, 2026-10-27; +1 (Cory, Oct 28); per 1 in round II (Cory, Nov 1 1:39pm)
+      byRound: { lines: ['+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay.', '+2 white. If you recruit a member this turn: +1 follower for every 1 resource you pay.', '+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay.'] },
       estimate: (ctx, p) => 2 + Math.floor(Math.min(totalRes(p) + 1, 7) / (ctx.state.round === 2 ? 1 : 2)) * fv(ctx) * 0.8,
       resolve(ctx, p) {
         ctx.gain(p, W, 2, { fromAction: true });
@@ -391,7 +391,7 @@ const trading = {
     }, {
       // Patron (REPLACE11=patron, Actions lane r4 batch, Nov 4): Splurge's place. Paid on the turn's first member recruit
       // (core.js recruitFollowersBonus); followers, not resources.
-      key: 'patron', copyDoesIt: true, ring: 1, name: 'Patron', text: '+1 white. This turn, if you recruit a member, each rival with more followers than you gives you 1 follower.',
+      key: 'patron', copyDoesIt: true, ring: 1, name: 'Patron', text: '+1 white. If you recruit a member this turn: each rival with more followers than you gives you 1 follower.',
       estimate: (ctx, p) => 1 + 1.6 * ctx.rivals(p).filter(o => ctx.followers(o) > ctx.followers(p)).length,
       resolve(ctx, p) {
         ctx.gain(p, W, 1, { fromAction: true });
@@ -1049,7 +1049,7 @@ const trading = {
         ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Money Changers')}: +${k} white.`);
       },
     }),
-    m('martyr', 'Martyrs', 2, 1, 'Whenever this member leaves your cult, gain followers equal to its cost.', { f: 3,
+    m('martyr', 'Martyrs', 2, 1, 'Whenever this member leaves your cult, gain its cost in followers.', { f: 3,
       onLeave(ctx, owner, card) {
         const c = card.def.s + card.def.w;
         ctx.asMember(owner, 'Martyrs', () => { owner.bonus += c; ctx.log(`${owner.name}'s Martyrs left: +${plural(c, 'follower')}.`); });

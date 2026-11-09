@@ -38,8 +38,8 @@ export const GLOSSARY = [
     def: 'A skipped turn is passed over: play goes on to the next turn, and the skipped player places that minion later in the same round. Nobody loses a turn or a minion. A skip never carries into the next round: with no turn left this round, nothing is skipped.' },
   // Cory, 2026-10-24: "cast out" instead of "bury a member", in the cult's own words
   // Cory, Nov 9: "just say discard one of your members" (was "cast out", Oct 24)
-  { key: 'discard', word: 'Discard', match: /\bdiscards? (?:one|any|a|another)\b/i,
-    def: 'Put the member face up on the discard pile. One of yours leaves your cult.' },
+  { key: 'discard', word: 'Discard', match: /\bdiscards? (?:one|any|a|another|every|the whole|\d+)\b/i,
+    def: 'Put a member face up on the discard pile. If it’s yours, it leaves your cult.' },
   { key: 'leaves your cult', word: 'Leaves your cult', match: /\bleaves your cult\b/i,
     def: 'Any way a member stops being yours: you discard it, a rival steals it, or a swap takes it away.' },
   { key: 'turn into followers', word: 'Turn into followers', match: /\bturn (?:\d+ |all your )?(?:[a-z]+ )*?(?:resources?|white|members?)(?: or members)? into (?:\d+ )?followers\b|\binto \d+ followers\b/i,

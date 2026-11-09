@@ -111,7 +111,7 @@ const OPEN_HOUSE = {
 // cap 7 to 5 (Claude, under Cory's go-with-your-gut, Nov 8: "Housewarming is a little strong… like 7 fucking currency")
 const HOUSEWARMING = {
   key: 'housewarming', ring: 2, name: 'Housewarming', copyDoesIt: true,
-  text: `+2 yellow. Recruit a shop member of a color none of your members have, costing up to ${4 + MORE}, for free.`,
+  text: `+2 yellow. Recruit a free shop member costing up to ${4 + MORE}, in a color none of your members have.`,
   estimate: (ctx, p) => 2 + Math.max(0, ...hwList(ctx, p).map(c => c.def.f + hwCost(c) * 0.6)),
   resolve(ctx, p) {
     ctx.gain(p, Y, 2, { fromAction: true });
@@ -292,8 +292,8 @@ export default {
       key: 'dilute', ring: 1, name: 'New Blood', copyDoesIt: true,
       // Cory, Nov 4: "New Blood Should give additional yellow rather than followers": the new-color recruit pays yellow,
       // same numbers (a follower buys at 1 of anything, so 1 yellow for 1 follower)
-      text: '+2 yellow. This turn, if you recruit a member of a color none of your members have, +2 yellow in round I, +3 in round II, +4 in round III.',
-      byRound: { lines: ['+2 yellow. This turn, if you recruit a member of a color none of your members have, +2 yellow.', '+2 yellow. This turn, if you recruit a member of a color none of your members have, +3 yellow.', '+2 yellow. This turn, if you recruit a member of a color none of your members have, +4 yellow.'] },
+      text: '+2 yellow. If you recruit a member this turn in a color none of your members have: +2 yellow in round I, +3 in round II, +4 in round III.',
+      byRound: { lines: ['+2 yellow. If you recruit a member this turn in a color none of your members have: +2 yellow.', '+2 yellow. If you recruit a member this turn in a color none of your members have: +3 yellow.', '+2 yellow. If you recruit a member this turn in a color none of your members have: +4 yellow.'] },
       estimate: (ctx, p) => 2 + (newInShop(ctx, p) ? 0.6 * (ctx.state.round + 1) : 0),
       resolve(ctx, p) {
         ctx.gain(p, Y, 2, { fromAction: true });
@@ -319,7 +319,7 @@ export default {
       // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 5: "melting pot should give 1 color for each
       // different member color. And when i have dabblers it should give me 1 of every color": 1 of each of your member
       // colors, no choosing (memberColors: Dabblers counts as every color on the table, Drifters as its chosen color)
-      key: 'meltingpot', ring: 2, name: 'Melting Pot', text: '+2 yellow, and +1 of each color among your members.',
+      key: 'meltingpot', ring: 2, name: 'Melting Pot', text: '+2 yellow. +1 of each color among your members.',
       estimate: (ctx, p) => memberColors(ctx, p).length + 2,
       resolve(ctx, p) {
         ctx.gain(p, Y, 2, { fromAction: true });
@@ -331,7 +331,7 @@ export default {
     {
       // Cory, 2026-10-30: "let's stick with launderers effect round III", "+3 or +4 yellow". Name: Claude's fill-in.
       // Nov 2: "oh no i like makeover as is" (the per-contest follower version was live briefly in v0.99.505)
-      key: 'makeover', ring: 3, name: 'Makeover', text: '+4 yellow, then rearrange your resources into any mix of colors.',
+      key: 'makeover', ring: 3, name: 'Makeover', text: '+4 yellow. Then rearrange your resources into any colors.',
       estimate: () => 5,
       resolve(ctx, p) { ctx.gain(p, Y, ACT.has('makeover1') ? 1 : 4, { fromAction: true }); startLaunder(ctx, p, 'Makeover'); },
     },
@@ -604,7 +604,7 @@ export default {
     // round I (paper 16 vs 10, Yellow's set 9 -> 16; blind play +0.34; trial on tables with Yellow: taken 28% vs 27%, owners
     // won 40% vs 35%). 3 yellow + 3 any as a player sees it. The recruited member's color, if you have a member of it
     // (Dabblers and Drifters count, as everywhere); automatic, on the rival's recruit.
-    m('dutycollector', 'Duty Collector', 2, 3, 'Whenever a rival recruits a member of a color you have a member of, +1 of that color.', {
+    m('dutycollector', 'Duty Collector', 2, 3, 'Whenever a rival recruits a member in one of your members’ colors, +1 of that color.', {
       onAnyRecruit(ctx, owner, card, by, recruited) {
         const c = colorOf(ctx, recruited);
         if (!c || by === owner || !(ctx.countMembersOfColor(owner, ctx.defOf(recruited).quadrant) > 0)) return;
@@ -748,7 +748,7 @@ export default {
     // REPLACE2 bot test (Nov 3, replacement batch 2): Meddler's place. 4 yellow + 2 any as a player sees it. Trade
     // Seeds' own swaps, asked after the round's last placement and before anything is scored (core's allPlaced step).
     // In the deck for Meddler's slot, 3 yellow + 1 any as a player sees it (Cory, Nov 5: "yes to night market. should be relatively cheap")
-    m('nightmarket', 'Night Traders', 2, 0, /* up to 4 (Cory, Nov 6: "buff night traders to 4") */ 'Round End: before contests are scored, swap up to 4 of your resources for other colors, one for one.', {
+    m('nightmarket', 'Night Traders', 2, 0, /* up to 4 (Cory, Nov 6: "buff night traders to 4") */ 'Round End, before scoring: swap up to 4 of your resources for other colors, one for one.', {
       // BOTSEE: each round end still ahead, about a 30% chance the swap wins or saves a contest
       ...see(i => endsAhead(i).reduce((a, r) => a + 0.3 * SEE_RING[r - 1], 0)),
       onAllPlaced(ctx, owner) {

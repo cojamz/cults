@@ -207,7 +207,7 @@ export default {
     }, 'pool6'),
     {
       // Cory, 2026-10-27: replaces Even Swap ("nobody has members initially"). Name and the +2 are Claude's fill-ins.
-      key: 'evenswap', ring: 1, name: 'Tryout', text: 'Use the On Recruit effect of a shop member; it stays in the shop. +2 red.', copyDoesIt: true, // +2 (Cory, Nov 1)
+      key: 'evenswap', ring: 1, name: 'Tryout', text: '+2 red. Use a shop member’s On Recruit. It stays in the shop.', copyDoesIt: true, // +2 (Cory, Nov 1)
       estimate: ctx => 2 + (borrowable(ctx).length ? 2 : 0),
       resolve(ctx, p) {
         ctx.gain(p, 'red', 2, { fromAction: true });
@@ -226,9 +226,9 @@ export default {
     },
     swap11({
       key: 'turnout', ring: 1, name: 'Gather', copyDoesIt: true,
-      text: '+2 red in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.',
+      text: '+2 red in round I, +3 in round II, +4 in round III. If you recruit a member this turn: +1 follower in round I, +2 in round II, +3 in round III.',
       // Cory, 2026-10-31: fuel tied to the recruit ("B": 2/3/4 red, 1/2/3 followers). Core pays it on the turn's first member recruit.
-      byRound: { lines: ['+2 red. This turn, if you recruit a member, +1 follower.', '+3 red. This turn, if you recruit a member, +2 followers.', '+4 red. This turn, if you recruit a member, +3 followers.'] },
+      byRound: { lines: ['+2 red. If you recruit a member this turn: +1 follower.', '+3 red. If you recruit a member this turn: +2 followers.', '+4 red. If you recruit a member this turn: +3 followers.'] },
       estimate: ctx => ctx.state.round + 1 + ctx.state.round * 0.7,
       resolve(ctx, p) {
         ctx.gain(p, 'red', ctx.state.round + 1, { fromAction: true });
@@ -266,7 +266,7 @@ export default {
       },
     }, BLIND_DATE), NO_THANKS),
     {
-      key: 'hireup', ring: 2, name: 'Promote', text: 'Swap any member with one in another cult or the shop costing up to 3 more. +3 red.', copyDoesIt: true, // any cult, up to 3 (Cory, Nov 5; words Claude's); // +3 red (Cory, Oct 30: balance run)
+      key: 'hireup', ring: 2, name: 'Promote', text: '+3 red. Swap any member for one costing up to 3 more, from another cult or the shop.', copyDoesIt: true, // any cult, up to 3 (Cory, Nov 5; words Claude's); // +3 red (Cory, Oct 30: balance run)
       estimate: (ctx, p) => 3 + (swapPairs(ctx, p, 'promote').length ? 2 : 0),
       resolve(ctx, p) {
         ctx.gain(p, 'red', ACT.has('promote1') ? 1 : 3, { fromAction: true });
@@ -274,12 +274,12 @@ export default {
       },
     },
     {
-      key: 'trade', ring: 2, name: 'Demote', text: 'Swap any member with one in another cult or the shop costing up to 3 less. +3 red.', copyDoesIt: true, // any cult, up to 3 (Cory, Nov 5; words Claude's); // +3 red (Cory, Oct 30: balance run)
+      key: 'trade', ring: 2, name: 'Demote', text: '+3 red. Swap any member for one costing up to 3 less, from another cult or the shop.', copyDoesIt: true, // any cult, up to 3 (Cory, Nov 5; words Claude's); // +3 red (Cory, Oct 30: balance run)
       estimate: (ctx, p) => 3 + (swapPairs(ctx, p, 'demote').length ? 2 : 0),
       resolve(ctx, p) { ctx.gain(p, 'red', ACT.has('promote1') ? 1 : 3, { fromAction: true }); swap(ctx, p, 'demote', 'Demote: choose a member and its replacement'); },
     },
     {
-      key: 'take', ring: 3, name: 'Initiation', text: `Recruit a member in the shop costing ${9 + MORE} or less, for free. +1 red.`, // the cap (Cory, 2026-10-24: "8 or less"; 9 since Nov 5, "for named costs, yes go up by 1")
+      key: 'take', ring: 3, name: 'Initiation', text: `Recruit a shop member costing ${9 + MORE} or less, for free. +1 red.`, // the cap (Cory, 2026-10-24: "8 or less"; 9 since Nov 5, "for named costs, yes go up by 1")
       estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().filter(c => cost(c) <= 9 + MORE).map(c => c.def.f + cost(c) * 0.6)),
       resolve(ctx, p) {
         const shop = ctx.shopCards().filter(c => cost(c) <= 9 + MORE);
@@ -572,7 +572,7 @@ export default {
     // REPLACE7 bot test (Nov 4, quality loop, Members A): Volunteer's place. 2 red + 1 any as a player sees it, a round I
     // member. At round start (II and III; it can't be bought before round I's) the owner may give it to the shop and
     // recruit a shop member costing up to 3 more, for free: Promote's trade, done by the card itself.
-    m('seatfiller', 'Seat Filler', 1, 1, 'Round Start: you may give this to the shop and recruit a shop member costing up to 3 more, for free.', {
+    m('seatfiller', 'Seat Filler', 1, 1, 'Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free.', {
       onRoundStart(ctx, owner, card) {
         const list = ctx.shopCards().filter(x => cost(x) <= cost(card) + 3);
         if (!list.length) { ctx.log(`${owner.name}'s ${card.def.name}: no shop member costs ${cost(card) + 3} or less.`); return; }

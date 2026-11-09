@@ -585,11 +585,17 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
   const pv = usePreview(state, open && viewer != null && !state.over ? viewer : null, q, i, { now: !past }) || null;
   // copy every space you took this round (Greatest Hits): which it copies and which it skips, before you place
   const all = open && viewer != null && !state.over && copiesAll(a.text) ? ownCopyPlan(state, viewer) : null;
+  // the space's own flat gain of its color ("… +1 white.") sits as a badge by its name, not a line of its own (Cory, Nov 9:
+  // "have it but visually better added rather than extra lines of text")
+  const flatEnd = !a.byRound && /^(.*?)\s*\+(\d+) ([a-z]+)\.\s*$/.exec(String(a.text || ''));
+  const ownPlus = flatEnd && flatEnd[1] && flatEnd[3] === Q.resource;
+  const plus = ownPlus ? `+${flatEnd[2]} ${flatEnd[3]}` : null;
+  const rule = ownPlus ? flatEnd[1] : a.text;
   return (
     <div className="lt-card-body" data-space-card={spaceKey} style={{ '--q': `var(--q-${sphereOf(qid)}, var(--${qid}))` }}>
       {/* plate 1b: the name, its one-sentence rule, then "You'd get" (the picture lives on the space itself) */}
-      <h4 className="sc-name" title={`${Q.name} · ${RINGS[a.ring - 1]}`}>{a.name}</h4>
-      <p className="sc-rule"><RuleText def={a} round={round} lines /></p>
+      <h4 className="sc-name" title={`${Q.name} · ${RINGS[a.ring - 1]}`}>{a.name}{plus ? <span className="sc-plus" data-plus="" title={`You also get ${plus}`}><Rich text={plus} /></span> : null}</h4>
+      <p className="sc-rule"><RuleText def={a} text={rule} round={round} lines /></p>
       {LIMITS[`${qid}.${a.key}`] ? <p className="sc-limit" data-limit=""><Rich text={LIMITS[`${qid}.${a.key}`]} /></p> : null}
       <div className="lt-yd">
         {/* nothing to copy: the space pays only its flat gain, and says so (picky bot, Nov 4: Reprise's "You'd get +1 green"
@@ -598,7 +604,7 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
           : pv && !all && /^Copy (?:an|the previous) action\b/.test(a.text) && onlyFlat(pv, a.text) ? <Row k="Can copy"><span data-copy-none=""><Rich text={nothingToCopy(a.text)} /></span></Row> : null}
         {all ? <Row k="Copies"><span data-copies-all>{all.names.length ? all.names.join(', ') : 'nothing yet'}</span></Row> : null}
         {all && all.skips ? <Row k="Skips"><span data-copies-skip>{all.skips}</span></Row> : null}
-        {open && viewer != null && !state.over ? <div className="lt-yd-row youd"><span className="k">You’d get</span><span className="v"><YoudGet state={state} pid={viewer} q={q} i={i} now skipSelf={/Whoever’s turn is next skips/.test(a.text) && nextAfter(state, viewer) === SELF_NEXT} /></span></div> : null}
+        {open && viewer != null && !state.over ? <div className="lt-yd-row youd"><span className="k">You’d get</span><span className="v"><YoudGet state={state} pid={viewer} q={q} i={i} now skipSelf={/The next turn is skipped/.test(a.text) && nextAfter(state, viewer) === SELF_NEXT} /></span></div> : null}
         {/* why a member changed the number, or stayed off ("Underdog: no ×2 (Hustler’s +3 lands first)"), from the dry run */}
         {/* a rival's gain says why too (picky bot, Nov 4: "rivals +1 blue in all" was a rival's cloak, unnamed) */}
         {open && pv && whyOf(pv, state).length ? <Row k="Why"><span data-reasons><Rich text={whyLine(whyOf(pv, state))} /></span></Row> : null}
@@ -609,7 +615,7 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
         {open && viewer != null && !state.over ? <CopyChoices state={state} viewer={viewer} text={a.text} /> : null}
         {/* the number that decides the space, before you take it (picky bot, Nov 4): who Hold Up would skip, and what each
             color pays on Leaders' Tax */}
-        {open && viewer != null && !state.over && /Whoever’s turn is next skips/.test(a.text) ? <Row k="Skips"><span data-skips>{nextAfter(state, viewer)}</span></Row> : null}
+        {open && viewer != null && !state.over && /The next turn is skipped/.test(a.text) ? <Row k="Skips"><span data-skips>{nextAfter(state, viewer)}</span></Row> : null}
         {open && pv && pv.colorPays ? <Row k="Pays"><span data-color-pays><Rich text={pv.colorPays.map(x => `+${x.n} ${x.color}`).join(' · ')} /></span></Row> : null}
         {/* the members the space lights, named (Cory, 2026-10-16: the lit cards say why) */}
         {open && pv ? targetLines(state, viewer, pv.targets, a.text).map(l => <Row key={l.k} k={l.k}><span data-aims={l.uids.join(' ')}>{l.text}</span></Row>) : null}

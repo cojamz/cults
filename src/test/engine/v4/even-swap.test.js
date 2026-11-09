@@ -11,7 +11,7 @@ describe('Tryout — a shop member’s On Recruit, and it stays in the shop', ()
   it('stays in round I, says the On Recruit stays in the shop, plus +2 red', () => {
     const a = quadrant('red').actions.find(a => a.key === 'evenswap');
     expect(a.ring).toBe(1); expect(a.name).toBe('Tryout');
-    expect(a.text).toMatch(/On Recruit effect of a shop member; it stays in the shop/);
+    expect(a.text).toMatch(/Use a shop member’s On Recruit\. It stays in the shop/);
     expect(a.text).toMatch(/\+2 red/);
   });
   it('offers only shop members with an On Recruit, never your own members', () => {

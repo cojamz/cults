@@ -459,6 +459,7 @@
 /* a rulebook limit under a space's rule (picky bot, Nov 4): quieter than the rule, never mistaken for it */
 .lt-card-body p.sc-limit{font-size:12px;line-height:16px;color:var(--pl-ink-2,#6e5c49);font-style:italic}
 .lt-card-body h4,.lt-card-body h4.sc-name{font-family:var(--sans);font-weight:800;font-size:18px;line-height:22px;color:var(--pl-ink,#2b2018);margin:0}
+.lt-card-body h4.sc-name .sc-plus{display:inline-flex;align-items:center;gap:2px;margin-left:8px;padding:0 7px;border-radius:999px;background:color-mix(in srgb,var(--q) 16%,transparent);font-size:14px;line-height:20px;font-weight:800;vertical-align:2px}
 .lt-card-body h4 small{font-family:var(--sans);color:var(--pl-ink-3,#a39078)}
 .lt-yd{margin-top:12px;padding-top:10px;border-top:1px solid var(--hair-ink,rgba(43,32,24,.12));font-size:15px;line-height:19px;color:var(--pl-ink,#2b2018);gap:4px}
 .lt-yd-row .k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pl-ink-2,#6e5c49);width:64px;line-height:19px}

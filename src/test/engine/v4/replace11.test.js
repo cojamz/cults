@@ -271,7 +271,7 @@ describe('REPLACE11: Housewarming', () => {
     expect(names).toContain('Housewarming');
     expect(names).not.toContain('Big New Blood');
   });
-  // "+2 yellow. Recruit a shop member of a color none of your members have, costing up to 5, for free."
+  // "+2 yellow. Recruit a free shop member costing up to 5, in a color none of your members have."
   it('gives +2 yellow and recruits, for free, a new-color shop member costing up to 5 (not your colors, not dearer)', () => {
     // Gardeners (4) for Pilgrim, which costs 6 since every member +1 (Nov 5)
     let s = table(['red', 'yellow'], { round: 2, members: [['red.volunteer']], shop: ['red.intern', 'yellow.gardener', 'yellow.peddler'] });

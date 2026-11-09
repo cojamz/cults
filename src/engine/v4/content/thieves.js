@@ -401,9 +401,9 @@ const thieves = {
     }] : [    {
       // every color's 3/4/5 (Cory, 2026-10-27), counting the +1 magenta every Magenta action gives; name Claude's fill-in
       key: 'tipoff', ring: 1, name: 'Stash', copyDoesIt: true,
-      text: '+2 magenta in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III.',
+      text: '+2 magenta in round I, +3 in round II, +4 in round III. If you recruit a member this turn: +1 follower in round I, +2 in round II, +3 in round III.',
       // Gather's shape for now (Cory, 2026-10-31: "just default to gather style for now for the rest"); Magenta's round I is parked
-      byRound: { lines: ['+2 magenta. This turn, if you recruit a member, +1 follower.', '+3 magenta. This turn, if you recruit a member, +2 followers.', '+4 magenta. This turn, if you recruit a member, +3 followers.'] },
+      byRound: { lines: ['+2 magenta. If you recruit a member this turn: +1 follower.', '+3 magenta. If you recruit a member this turn: +2 followers.', '+4 magenta. If you recruit a member this turn: +3 followers.'] },
       // the wrapper at the bottom adds every Magenta action's +1, so this gives the rest: +2/+3/+4 in all, as printed
       // (balance-1.0 g9: it paid +3/+4/+5, the +1 counted twice)
       estimate: ctx => ctx.state.round + ctx.state.round * 0.7,
@@ -433,7 +433,7 @@ const thieves = {
     },
     swap13({
       // Cory, 2026-10-28: the rival picks which of their members is at stake ("yes good idea"; wording Claude's)
-      key: 'ransom', ring: 2, name: 'Shake Down', text: `Choose a rival. They choose one of their members costing ${6 + MORE} or less, then pay you its cost or you steal it. +1 magenta.`,
+      key: 'ransom', ring: 2, name: 'Shake Down', text: `Choose a rival. They choose one of their members costing ${6 + MORE} or less, then pay you its cost or lose it to you. +1 magenta.`,
       estimate: (ctx, p) => {
         // the rival gives up their cheapest: what the worst of each rival's list is worth, best rival
         const by = atStake(ctx, p);
@@ -839,7 +839,7 @@ const thieves = {
     // after the round's last placement and before anything is scored (core's allPlaced step, in this round's turn
     // order): one rival, then which 2 of theirs, through the shared steal (Bodyguards, Lie Low and Hush Money apply;
     // Desperado adds). Stolen resources keep their color.
-    m('secondstory', 'Second-Story Man', 3, 2, /* Cory, Nov 5 backlog price yes */ 'Round End: before contests are scored, steal 2 resources from one rival.', { // a round I member as Sticky Fingers was (bot-tested in a later round; Nov 4)
+    m('secondstory', 'Second-Story Man', 3, 2, /* Cory, Nov 5 backlog price yes */ 'Round End, before scoring: steal 2 resources from one rival.', { // a round I member as Sticky Fingers was (bot-tested in a later round; Nov 4)
       // BOTSEE: each round end still ahead, 2 resources taken from a rival, plus a quarter chance it swings a contest
       ...see(i => (i.rivals.some(o => Object.values(o.res).some(v => v > 0)) ? endsAhead(i).reduce((a, r) => a + 2 * resAt(r) * (1 + SEE_SPITE) + 0.25 * SEE_RING[r - 1], 0) : 0)),
       onAllPlaced(ctx, owner) {

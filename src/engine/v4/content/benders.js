@@ -456,7 +456,7 @@ const members = [
     botActivate: (ctx, p) => anarchyPairs(ctx, p).some(([a, b]) => gainFor(ctx, p, a, b) >= 2),
   }),
   // Cory, 2026-10-28: Scout, 4, once per round (it stands in for Blue's shop work)
-  m('scout', 'Scouts', null, 2, 2, /* Party Crasher's price (Claude, Nov 7) */ 'On Use, once per round: send any shop members to the discard pile, then refill.', { f: 2, n: 2, // back in Party Crasher's place (Cory, Nov 7: "Yes"); earlier Spoilsport took its place (Claude, under Cory's "use your judgement", 2026-11-03); worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
+  m('scout', 'Scouts', null, 2, 2, /* Party Crasher's price (Claude, Nov 7) */ 'On Use, once per round: discard any shop members and refill.', { f: 2, n: 2, // back in Party Crasher's place (Cory, Nov 7: "Yes"); earlier Spoilsport took its place (Claude, under Cory's "use your judgement", 2026-11-03); worth 2, plural (Cory, Nov 1: "I like scout, why cut? … make it more members maybe")
     activate: 'round',
     onRoundStart(ctx, owner, card) { card.used = false; },
     onActivate(ctx, owner, card) {
@@ -499,7 +499,7 @@ const members = [
   // Cory, 2026-10-28: the 8 ("use one of your One Time Use members again"), named Coach (Cory, Oct 29); now any member's
   // Once per game or Once per round ability, as a free extra use (Cory, Oct 29: "activate the On Use effect of one of
   // your members (could be a once per round)")
-  m('secondwind', 'Coach', null, 0, 6, /* 7 (Cory, Oct 30: "coach should be cheaper") */ 'On Recruit: activate one of your members’ On Use ability as a free extra use.', {
+  m('secondwind', 'Coach', null, 0, 6, /* 7 (Cory, Oct 30: "coach should be cheaper") */ 'On Recruit: use one of your members’ On Use an extra time.', {
     onRecruited(ctx, owner) {
       const list = coachable(ctx, owner);
       if (!list.length) { ctx.log(`${owner.name}'s Coach: no member with an On Use ability.`); return; }

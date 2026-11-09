@@ -19,7 +19,7 @@ describe('Magenta action wording and one-stack theft', () => {
       const safe = panelText('thieves', { key: 'hideout' }, round);
       expect(safe.verb).toBe('Steal 1, then safe from steals'); // Cory, Nov 1; the protection in line 1 (line 2 dropped every round, text audit Nov 1)
       expect(safe.second).toBe('this round');
-      expect(safe.note).toBe('+1 magenta');
+      expect(safe.note).toBeNull(); // the +1 of its color is the hover's badge, off the wheel (Cory, Nov 9)
       expect(shortEffect('thieves', { key: 'pickpocket' }, round)).toContain(`steal ${round + 2}`);
     }
     const stash = panelText('thieves', { key: 'tipoff' }, 1);

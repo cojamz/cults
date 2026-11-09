@@ -9,6 +9,7 @@
 // idea ("copy", "in the shop", "on the board"). design/eval/words/decipher-w3.md checks every line against the rule.
 import { pipEffect } from '../shorts.js';
 import { contextFor } from '../../engine/v4/core.js';
+import { quadrant } from '../../engine/v4/index.js';
 // named costs follow every member's price (content/price.js MORE), as the engine's rule text does (picky bot, Nov 6:
 // the wheel said "costing 9 or less" beside a hover card saying 10, after the Nov 5 11:08pm price change)
 import { MORE } from '../../engine/v4/content/price.js';
@@ -84,7 +85,7 @@ const P = {
     // Cory, 2026-10-22: place on taken spaces for the rest of the round
     // Cory, 2026-10-22: the old game's "Gain 4 purple, skip next turn"
     skip: r => ({ main: `+${r + 3} purple`, second: 'take the Goes Last token', note: run(n => `+${n + 3}`, 'purple: ') }),
-    holdup: r => ({ main: `+${r + 1} purple`, second: 'whoever is next skips, even you', note: run(n => `+${n + 1}`, 'purple: ') }),
+    holdup: r => ({ main: `+${r + 1} purple`, second: 'the next turn is skipped, even yours', note: run(n => `+${n + 1}`, 'purple: ') }),
     // the center ring can drop line 2 (round III since Oct 22): line 1 says it whole
     // Cory, 2026-10-28: +5 purple and a minion this round
     crowdin: { verb: '+1 minion this round', note: '+4 purple' },
@@ -195,6 +196,13 @@ export function panelText(qid, action, round = 1, state = null, pid = null) {
   let v = P[qid] && P[qid][action.key];
   if (typeof v === 'function') v = v(r, liveYield(qid, action, state, pid));
   if (v) {
+    // the space's own +1 of its color isn't printed on the wheel: the hover shows it as a badge by the name (Cory, Nov 9:
+    // "visually better added rather than extra lines of text", not "a visual element repeated many many times on the board")
+    let own = null;
+    try { own = quadrant(qid).resource; } catch { /* none */ }
+    const plusOne = t => typeof t === 'string' && own && t === `+1 ${own}`;
+    if (plusOne(v.note)) v = { ...v, note: null };
+    if (plusOne(v.second)) v = { ...v, second: v.note || null, note: null };
     // a space's flat gain ("+1 white") sat in line 3, which the wheel drops first: on most rings it never showed
     // (text review, 2026-10-23). With line 2 free, it moves up there; line 2 shows wherever the panel has room.
     const flat = typeof v.note === 'string' && /^\+\d+ [a-z]+$/.test(v.note);

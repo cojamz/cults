@@ -212,7 +212,7 @@ function Lines({ text, Text, className = 'fx-line' }) {
 const unworth = (def, text) => (def && def.f != null && text ? String(text).replace(/^\s*Worth \d+ followers?\.\s*/i, '') : text);
 // no "Passive:" keyword: a rule with no timing is always on (Cory, Nov 6: "passive doesnt need to be a keyword it can jsut be implied")
 export const passiveText = (def, given) => unworth(def, given);
-// Three round lines that differ only in their numbers ("+2 red. This turn, if you recruit a member, +1 follower." /
+// Three round lines that differ only in their numbers ("+2 red. If you recruit a member this turn: +1 follower." /
 // "+3 red. … +2 followers." / …), as one sentence: the shared words once, each number that changes as its run "+2/+3/+4"
 // with this round lit (Cory, Nov 9, on Splurge's three repeated sentences: "jesus"). null when the lines differ in words.
 const TOK = l => String(l).split(' ');
@@ -240,6 +240,9 @@ function RunText({ parts, now, Text }) {
   const flush = () => { if (words.length) segs.push(words.join(' ')); words = []; };
   for (const p of parts) { if (typeof p === 'string') words.push(p); else { flush(); segs.push(p); } }
   flush();
+  // a lone resource word closing the sentence prints as its dot: no stray period after it ("+2/+3/+4 ●.")
+  const last = segs.length - 1;
+  if (last > 0 && typeof segs[last] === 'string' && /^[a-z]+\.$/.test(segs[last])) segs[last] = segs[last].slice(0, -1);
   return <>{segs.map((g, k) => (typeof g === 'string'
     ? <Fragment key={k}>{k ? ' ' : ''}<Text text={g} />{k < segs.length - 1 ? ' ' : ''}</Fragment>
     : <span key={k} className="br-run" data-round-run="" title="round I / II / III">{g.run.map((v, j) => <Fragment key={j}>{j ? <span className="br-sep" aria-hidden="true">/</span> : null}<b className={`br-n${j + 1 === now ? ' now' : ''}`} data-round-line={j + 1} aria-current={j + 1 === now ? 'true' : undefined}>{v}</b></Fragment>)}</span>))}</>;

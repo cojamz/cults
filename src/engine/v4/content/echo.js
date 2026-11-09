@@ -966,7 +966,7 @@ const echoQ = {
     // Cory, Nov 5 playtest: "Impersonator should impersontate the on recruit": the chosen member's On Recruit runs too,
     // on Impersonator (as Greatest Hits runs one), answering Claude's question about members with only an On Recruit.
     // Words Claude's fill-in.
-    m('impersonators', 'Impersonator', 3, 2, "On Recruit: choose a rival's member. Do its On Recruit, and Impersonator has its ability.", { // On Recruit only (Cory, Nov 5 backlog yes) // a round I member as Muse was (bot-tested in a later round; Nov 3)
+    m('impersonators', 'Impersonator', 3, 2, "On Recruit: choose a rival's member. Do its On Recruit, and this member gains its ability.", { // On Recruit only (Cory, Nov 5 backlog yes) // a round I member as Muse was (bot-tested in a later round; Nov 3)
       onRecruited(ctx, owner, card) {
         const list = ctx.rivals(owner).flatMap(o => ctx.membersOf(o)).filter(c => c.copy || !['doppel', 'impostor', 'impersonators'].includes(c.def.key));
         if (!list.length) { ctx.log(`${owner.name}'s Impersonator: no rival member to choose.`); return; }
@@ -1046,7 +1046,7 @@ const echoQ = {
     // Nov 4 (Claude, under Cory's go-with-your-gut; was "+1 green per Green space with anyone's minion"): fans copy the
     // leader. Holding the most yourself, or tying for it, it reads the rival with the most; rivals tied for the most:
     // any of their actions (Claude's reading). Nothing when that player has no minion on the board.
-    m('mirror', 'Fan Club', 2, 3, 'On Recruit: copy an action the player with the most followers has a minion on.', { n: 3, // 3 members, 3 to 6 (Cory, Oct 29: yes to "counts as 3 members, price 3 to 6")
+    m('mirror', 'Fan Club', 2, 3, 'On Recruit: copy an action of the rival with the most followers.', { n: 3, // 3 members, 3 to 6 (Cory, Oct 29: yes to "counts as 3 members, price 3 to 6")
       onRecruited(ctx, owner) {
         const rivals = ctx.rivals(owner);
         if (!rivals.length) return;

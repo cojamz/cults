@@ -102,7 +102,7 @@ export function copyAllPlan(state, pid, text) {
 const COPY_KINDS = [
   [/copy the On Recruit of a rival[’']s member/i, 'rival', 'Could copy', 'No rival member has an On Recruit yet'],
   [/copy the On Recruit of (?:each of your members|another of your members)/i, 'own', 'Could copy', 'None of your members has an On Recruit yet'],
-  [/use the On Recruit effect of a shop member/i, 'shop', 'Could use', 'No shop member has an On Recruit'],
+  [/use (?:the On Recruit effect of a shop member|a shop member’s On Recruit)/i, 'shop', 'Could use', 'No shop member has an On Recruit'],
   [/becomes a copy of a rival[’']s member/i, 'rivalMember', 'Could copy', 'No rival has a member yet'],
   [/becomes a copy of another of your members/i, 'ownMember', 'Could copy', 'You have no other member yet'],
   [/choose a rival[’']s member\. Until you choose again/i, 'rivalMember', 'Could choose', 'No rival has a member yet'],

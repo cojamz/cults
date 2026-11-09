@@ -334,10 +334,10 @@ const market = {
       // every color's 3/4/5 (Cory, 2026-10-27); Churn's sweep goes (Claude's default: Out of Style keeps Blue's sweep).
       // Name is Claude's fill-in.
       key: 'bargain', ring: 1, name: 'Savings', copyDoesIt: true,
-      text: '+2 blue in round I, +3 in round II, +4 in round III. Before you recruit, you may send one shop member to the discard pile, then refill.',
+      text: '+2 blue in round I, +3 in round II, +4 in round III. Before you recruit, you may discard one shop member and refill.',
       // Cory, 2026-10-31: fuel that announces Blue ("C"); was +3/4/5 blue
       estimate: ctx => ctx.state.round + 1.5,
-      byRound: { lines: ['+2 blue', '+3 blue', '+4 blue'], rest: 'Before you recruit, you may send one shop member to the discard pile, then refill.' },
+      byRound: { lines: ['+2 blue', '+3 blue', '+4 blue'], rest: 'Before you recruit, you may discard one shop member and refill.' },
       resolve(ctx, p) {
         ctx.gain(p, B, ctx.state.round + 1, { fromAction: true });
         const shop = ctx.shopCards();
@@ -356,7 +356,7 @@ const market = {
       resolve(ctx, p) { ctx.gain(p, B, ctx.state.round + 1, { fromAction: true }); p.clearance = true; },
     }),
     {
-      key: 'restock', ring: 1, name: 'Out of Style', text: 'Send every shop member of one color to the discard pile, then refill. +1 blue per member sent. +1 blue.', copyDoesIt: true, // per member sent: Cory, Oct 28 ("it's actually rather good that way")
+      key: 'restock', ring: 1, name: 'Out of Style', text: 'Discard every shop member of one color and refill. +1 blue per member discarded. +1 blue.', copyDoesIt: true, // per member sent: Cory, Oct 28 ("it's actually rather good that way")
       estimate: ctx => 1 + Math.max(0, ...shopColors(ctx).map(([, n]) => n)),
       resolve(ctx, p) {
         ctx.gain(p, B, 1, { fromAction: true });
@@ -368,9 +368,9 @@ const market = {
       },
     },
     {
-      key: 'showroom', ring: 1, name: 'Peek', text: 'Look at the top 4 of the pile and put them back in any order. This turn your recruit may be one of them. +3 blue in round I, +4 in round II, +5 in round III.', copyDoesIt: true, // +3/+4/+5 (Cory, Nov 5)
+      key: 'showroom', ring: 1, name: 'Peek', text: 'Look at the top 4 of the pile and put them back in any order. You may recruit one of them this turn. +3 blue in round I, +4 in round II, +5 in round III.', copyDoesIt: true, // +3/+4/+5 (Cory, Nov 5)
       // scales, more blue (Cory, 2026-10-22 playtest: weak in round I, "should give more resource", "Peek should really really scale")
-      byRound: { lead: 'Look at the top 4 of the pile and put them back in any order. This turn your recruit may be one of them.', lines: ['+3 blue', '+4 blue', '+5 blue'] },
+      byRound: { lead: 'Look at the top 4 of the pile and put them back in any order. You may recruit one of them this turn.', lines: ['+3 blue', '+4 blue', '+5 blue'] },
       estimate: (ctx, p) => ctx.state.round + 2 + Math.max(0, ...ctx.state.pile.slice(0, 4).map(u => ctx.card(u)).filter(c => ctx.payChoices(p, c.uid, {}).length).map(botWorth)) * 0.3,
       resolve(ctx, p) {
         ctx.gain(p, B, ctx.state.round + 2, { fromAction: true });
@@ -381,7 +381,7 @@ const market = {
       },
     },
     {
-      key: 'clearance', ring: 2, name: 'Recruit Twice', text: 'Recruit an extra time this turn. +3 blue.', copyDoesIt: true,
+      key: 'clearance', ring: 2, name: 'Recruit Twice', text: '+3 blue. Recruit an extra time this turn.', copyDoesIt: true,
       estimate: (ctx, p) => 3 + Math.min(10, Math.max(0, totalRes(p) - 2)) * 0.4, // +3 blue (Cory, Nov 1)
       resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); extraBuys(ctx, p, 1); ctx.log(`${p.name} recruits an extra time this turn.`); },
     },
@@ -420,7 +420,7 @@ const market = {
     }] : []),
     ...(on12('dumpsterdive') || on12('delivery') ? [] : [
     {
-      key: 'pricecheck', ring: 2, name: 'Bury', text: on12('buryfull') ? 'Send a shop member to the discard pile, then refill. Gain blue equal to its cost. +1 blue.' : 'Send a shop member to the discard pile, then refill. Gain blue equal to half its cost, rounded down. +1 blue.', copyDoesIt: true,
+      key: 'pricecheck', ring: 2, name: 'Bury', text: on12('buryfull') ? 'Discard a shop member and refill. Gain its cost in blue. +1 blue.' : 'Discard a shop member and refill. Gain half its cost in blue, rounded down. +1 blue.', copyDoesIt: true,
       estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().map(c => buryGain(c))),
       resolve(ctx, p) {
         ctx.gain(p, B, 1, { fromAction: true });
@@ -432,7 +432,7 @@ const market = {
       },
     }]),
     {
-      key: 'spree', ring: 3, name: 'Spree', text: 'Recruit two extra times this turn. +6 blue.', copyDoesIt: true,
+      key: 'spree', ring: 3, name: 'Spree', text: '+6 blue. Recruit two extra times this turn.', copyDoesIt: true,
       estimate: (ctx, p) => 6 + Math.min(10, Math.max(0, totalRes(p) - 3)) * 0.8, // +6 blue (Cory, Nov 5; was +5 Nov 1)
       resolve(ctx, p) { ctx.gain(p, B, 6, { fromAction: true }); extraBuys(ctx, p, 2); ctx.log(`${p.name} goes on a spree: two extra recruits this turn.`); },
     },
@@ -996,7 +996,7 @@ const market = {
     // concepts, Oct 21, not approved (design/eval/member-concepts-2026-10-21.md): prices are sim starting points
     // Cory, 2026-10-24: Blue's round start ("Yeah I kinda like it") and Blue's once per game, the shop refresh that replaces
     // Makeover; names and prices Claude's fill-in
-    m('windowshopper', 'Window Shopper', 2, 2, /* 2 members (Cory, Nov 1, 2:20pm) */ 'On Recruit and at Round Start: send 2 shop members to the discard pile. +1 of each one’s color.', { now: true, ...old4,
+    m('windowshopper', 'Window Shopper', 2, 2, /* 2 members (Cory, Nov 1, 2:20pm) */ 'On Recruit and Round Start: discard 2 shop members. +1 of each one’s color.', { now: true, ...old4,
       onRoundStart(ctx, owner) { windowPick(ctx, owner, 2); },
     }),
     // REPLACE4 bot test (Nov 3, replacement batch 4): Window Shopper's place. 5 blue + 3 any as a player sees it. Core runs
@@ -1004,7 +1004,7 @@ const market = {
     // in that round's turn order, before the row goes to the bottom; in round III, before the Game End cards count.
     ...add4(m('lateshoppers', 'Late Shoppers', 4, 3, 'Round End: after contests are scored, recruit once.', { roundEndBuy: true,
       ...see(i => endsAhead(i).length * 2.5) })), // BOTSEE: an extra recruit each round end still ahead
-    m('restocker', 'Restockers', 2, 1, 'On Use, once per game: send the whole shop to the discard pile, then refill.', {
+    m('restocker', 'Restockers', 2, 1, 'On Use, once per game: discard the whole shop and refill.', {
       f: 2, // (Cory, Oct 29, balance run: +1 follower)
       activate: 'game',
       onActivate(ctx, owner, card) {
@@ -1025,7 +1025,7 @@ const market = {
     // REPLACE9 bot test (Members C, Nov 4, batch bC7b: paper 19 vs 11, raised bar): Window Dressers reworded, same price
     // and worth. Shop members one at a time to the bottom of the pile until Done (the row refills once, after), then one
     // more recruit this turn (as Plus-Ones). Bots send away what they can't afford.
-    ...add9(m('windowdressers9', 'Window Dressers', 2, 1, 'On Recruit: send any shop members to the discard pile, then refill. Recruit again this turn.', { f: 3,
+    ...add9(m('windowdressers9', 'Window Dressers', 2, 1, 'On Recruit: discard any shop members and refill. Recruit again this turn.', { f: 3,
       onRecruited(ctx, owner) { wd9Step(ctx, owner, { n: 0 }); },
     })),
     // REPLACE9 (Members C, bC7b: paper 14 vs 11; Cory's "paper filters, play ranks", Nov 4): Window Dressers' place,
@@ -1038,7 +1038,7 @@ const market = {
         ctx.gain(owner, B, 3); ctx.log(`${owner.name}'s Buyers' Club: +3 blue.`);
       },
     })),
-    m('windowdresser', 'Window Dressers', 2, 0, /* Cory, Nov 5 backlog price yes */ 'On Recruit: send 3 shop members to the discard pile, then refill.', { f: 3, ...old4, ...old9('market.windowdresser'),
+    m('windowdresser', 'Window Dressers', 2, 0, /* Cory, Nov 5 backlog price yes */ 'On Recruit: discard 3 shop members and refill.', { f: 3, ...old4, ...old9('market.windowdresser'),
       onRecruited(ctx, owner) {
         ctx.log(`${owner.name}'s Window Dressers: send 3 shop members to the discard pile.`);
         churnStep(ctx, owner, { left: Math.min(3, ctx.state.shop.length) });
@@ -1066,7 +1066,7 @@ const market = {
       botActivate: (ctx, p) => doorPairs(ctx, p).some(([a, b]) => botWorth(a) - botWorth(b) >= 2),
     }),
     // Cory's, Oct 21: "one recruit, refresh the shop. all the members"; prices are sim starting points
-    m('makeover', 'Makeover', 2, 1, 'On Recruit: send the whole shop to the discard pile, then refill.', { f: 3,
+    m('makeover', 'Makeover', 2, 1, 'On Recruit: discard the whole shop and refill.', { f: 3,
       onRecruited(ctx, owner) { sweepRow(ctx, owner); },
     }),
     // Cory's, Oct 21: "when you buy followers +1 blue"; his Oct 21 definition makes buying followers a recruit
@@ -1099,7 +1099,7 @@ const market = {
       },
     })),
     // Cory's pick for Blue's 12th, Oct 21 ("trendsetter is good!")
-    m('trendsetter', 'Trendsetters', 2, 1, 'Whenever you recruit a member, send 1 shop member to the discard pile, then refill.', { f: 3,
+    m('trendsetter', 'Trendsetters', 2, 1, 'Whenever you recruit a member, discard 1 shop member and refill.', { f: 3,
       ...old13('pickers', 'trendsetters2', 'fashionpolice'),
       // members only, not follower buys (Cory, Oct 27: it was paying Bargain Bin and Patroness on every follower buy)
       onRecruit(ctx, owner, card, by, what) {

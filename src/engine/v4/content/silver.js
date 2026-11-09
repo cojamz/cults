@@ -235,12 +235,12 @@ function giftShopTo(ctx, p, oid, data) {
 
 /**
  * Sweet Nothings (Actions lane, Nov 4; /mnt/project-files/quality/pitches/actions-sweet-talk.md), live in Potluck's
- * place since Cory's Nov 6 pick: "+3 silver. Give rivals up to 3 of your silver, split as you choose: +2 of any colors each."
+ * place since Cory's Nov 6 pick: "+3 silver. Give rivals up to 3 of your silver. +2 of any colors per silver given."
  * Your own silver (not the bank's, as Party Gifts), one at a time; then the colors, as Polish picks them.
  */
 const SWEET_NOTHINGS = {
   key: 'sweetnothings', copyDoesIt: true, ring: 2, name: 'Sweet Nothings',
-  text: '+3 silver. Give rivals up to 3 of your silver, split as you choose: +2 of any colors each.',
+  text: '+3 silver. Give rivals up to 3 of your silver. +2 of any colors per silver given.',
   estimate: ctx => 3 + 3 - spillCost(ctx, 1),
   resolve(ctx, p) {
     hostGain(ctx, p, 3);
@@ -412,7 +412,7 @@ export const silverActions = [
     },
   }, GIFT_SHOP), OPEN_BAR),
   {
-    key: 'partygifts', ring: 1, name: 'Party Gifts', copyDoesIt: true, text: 'Give rivals up to 3 silver from the bank, split as you choose. +2 followers per silver you give.',
+    key: 'partygifts', ring: 1, name: 'Party Gifts', copyDoesIt: true, text: 'Give rivals up to 3 silver from the bank. +2 followers per silver given.',
     estimate: ctx => 2 * 6 - spillCost(ctx, 1) * 3,
     resolve(ctx, p) { shareStep(ctx, p, { who: 'Party Gifts', max: 3, per: 2 }); },
   },
@@ -427,7 +427,7 @@ export const silverActions = [
     },
   }),
   {
-    key: 'tongue', copyDoesIt: true, ring: 2, name: 'Sweet Talk', text: '+3 silver. Then turn as many of your silver as you want into other colors.',
+    key: 'tongue', copyDoesIt: true, ring: 2, name: 'Sweet Talk', text: '+3 silver. Then turn any of your silver into other colors.',
     estimate: () => 3.5,
     resolve(ctx, p) {
       hostGain(ctx, p, 3);
@@ -667,7 +667,7 @@ const silver = {
     // members (Godparent itself too) to any rival; its cost is its printed price. A gift, not a steal or a swap
     // (Loyalists and Bodyguards don't stop it): an arrival for the rival (Old Maid's −5 lands on them), and Martyrs pays
     // you as it leaves. A used card stays used.
-    m('godparents', 'Godparent', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain followers equal to its cost.', { // a round I member as Hangers-On was (bot-tested in a later round; Nov 3)
+    m('godparents', 'Godparent', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain its cost in followers.', { // a round I member as Hangers-On was (bot-tested in a later round; Nov 3)
       activate: 'game',
       onActivate(ctx, owner, card) {
         const opts = [];

@@ -647,8 +647,8 @@ export default {
       // Cory, 2026-10-28: grows by round, "maybe more like 4/5/6", so a late skip is worth taking
       // Cory, Nov 1 2:35pm: the Goes Last token ("Let's just try it with the goes last token"): one minion waits on it,
       // so your hand empties a turn early and that snake turn is passed (a skip, for Pocket Watch and Gossip)
-      key: 'skip', copyDoesIt: true, ring: 1, name: 'Sleep In', text: '+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your next minion is placed after everyone else’s.',
-      byRound: { lines: ['+4 purple', '+5 purple', '+6 purple'], rest: 'Take the Goes Last token: your next minion is placed after everyone else’s.' },
+      key: 'skip', copyDoesIt: true, ring: 1, name: 'Sleep In', text: '+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your next minion goes after everyone else’s.',
+      byRound: { lines: ['+4 purple', '+5 purple', '+6 purple'], rest: 'Take the Goes Last token: your next minion goes after everyone else’s.' },
       estimate: ctx => ctx.state.round + 3,
       resolve(ctx, p) {
         ctx.gain(p, P, ctx.state.round + 3, { fromAction: true });
@@ -658,8 +658,8 @@ export default {
     {
       // Cory, 2026-10-22: replaces Catch Up ("the skip should replace catch up"); "1 purple per round" so it isn't weak
       // late. Wording and name are Claude's fill-in.
-      key: 'holdup', copyDoesIt: true, ring: 1, name: 'Hold Up', text: '+2 purple in round I, +3 in round II, +4 in round III. Whoever’s turn is next skips it, even yours.',
-      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Whoever’s turn is next skips it, even yours.' },
+      key: 'holdup', copyDoesIt: true, ring: 1, name: 'Hold Up', text: '+2 purple in round I, +3 in round II, +4 in round III. The next turn is skipped, even if it’s yours.',
+      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'The next turn is skipped, even if it’s yours.' },
       // Cory, 2026-10-22: "it has to be the next TURN not even the next player. so a player could skip their own in
       // snake draft". Whoever's turn comes next is passed over once and still places every minion.
       // Cory, 2026-10-25: +1 each round (Hard bot read).
@@ -685,7 +685,7 @@ export default {
       // raise it to +3 after play). Any taken space, yours or a rival's, for the rest of this round. Name is Claude's fill-in.
       // Cory, 2026-10-28 9:31pm Eastern: "It should just be like, +5 purple and gain a minion this round" (placing on
       // taken spaces copied too much with Greatest Hits). Extra minions stop when the round's spare spaces run out.
-      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Overtime', text: '+4 purple. +1 minion this round. Take the Goes Last token: that minion is placed after everyone else’s.', // +4 (Cory, Nov 5: "give a little more purple"); the token (Cory, Nov 6: "Overtime is good. I like it", a third way to take it)
+      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Overtime', text: '+4 purple. +1 minion this round. Take the Goes Last token: that minion goes after everyone else’s.', // +4 (Cory, Nov 5: "give a little more purple"); the token (Cory, Nov 6: "Overtime is good. I like it", a third way to take it)
       estimate: ctx => 4 + (spareSpace(ctx) ? turnValue(ctx) : 0),
       resolve(ctx, p) {
         ctx.gain(p, P, 4, { fromAction: true });
@@ -703,7 +703,7 @@ export default {
       // Cory, 2026-10-22: a follower bonus for taking the rest of your turns last ("YES now you're cooking"), in his
       // words ("take the remainder of your turns when others are out of minions"), "let's just try it at 2 followers
       // per minion left". Replaces Rush Hour. Name is Claude's fill-in.
-      key: 'lastcall', copyDoesIt: true, ring: 2, name: 'Last Call', text: '+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token: your other minions are placed after everyone else’s.', // (Cory, Nov 1: "keep it one follower, and give purple per minion"; "also keep +1 purple up front")
+      key: 'lastcall', copyDoesIt: true, ring: 2, name: 'Last Call', text: '+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token: your other minions go after everyone else’s.', // (Cory, Nov 1: "keep it one follower, and give purple per minion"; "also keep +1 purple up front")
       estimate: (ctx, p) => 1 + 2 * Math.max(0, p.left - 1),
       resolve(ctx, p) {
         ctx.gain(p, P, 1 + p.left, { fromAction: true });
@@ -1073,7 +1073,7 @@ export default {
       },
     })),
     // Latecomers: Bouncers' place (Cory, Nov 7: "Yes"; his ask: "a purple that gives the go last token"). Same price as Bouncers.
-    m('latecomers', 'Latecomers', 1, 2, 'On Recruit: take the Goes Last token: your next minion is placed after everyone else’s.', { f: 2,
+    m('latecomers', 'Latecomers', 1, 2, 'On Recruit: take the Goes Last token: your next minion goes after everyone else’s.', { f: 2,
       onRecruited(ctx, owner) { toToken(ctx, owner, 1, 'Latecomers'); },
     }),
     m('bouncer', 'Bouncers', 1, 2, 'On Recruit: the next two rivals’ turns are skipped.', { f: 2, ...old5, // cut Nov 7 (cull.js): Latecomers takes its place (Cory, "Yes")
