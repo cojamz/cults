@@ -22,3 +22,7 @@ vite.config.js.timestamp-*
 .trial-wt/
 .trial-runs/
 .econ-runs/
+
+# raw browser profiles from the spin probes (tens of MB each; the reports go in design/eval/perf/*.md)
+design/eval/perf/spin-ffprof-*.json
+design/eval/perf/spin-trace-*.json
