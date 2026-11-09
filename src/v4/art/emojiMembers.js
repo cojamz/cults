@@ -115,7 +115,7 @@ const M = {
   'guest-of-honor': ['🎖️', '♾️ You take a Silver space: you may give a rival a member costing 3 or less for +4 followers'],
   polisher: ['🧽', '☝️ Turn up to 3 silver into 2 any each'],
   toastmaster: ['🥂', '♾️ You take a Silver space: +1 follower'],
-  godparent: ['🎁', '☝️ Give a rival a member; followers equal to its cost'],
+  godparents: ['🎁', '☝️ Give a rival a member; followers equal to its cost'],
   creditor: ['📒', '🔁 A rival gives you 2 followers, then gains 3 silver'],
   hostesses: ['🫖', '✨🌅 Each rival +1 silver; +1 follower per rival with more silver'],
   philanthropist: ['🤲', '✨ Give rivals up to 4 silver; +1 follower each'],

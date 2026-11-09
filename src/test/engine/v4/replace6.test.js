@@ -46,7 +46,7 @@ describe('REPLACE6: each card fires', () => {
     let s = table(['red', 'silver', 'market', 'trading'], { n: 3, round: 3, members: [['silver.godparents', 'trading.martyr']], queue: [{ t: 'buy', p: 0 }] });
     const martyr = uidIn(s, 'trading.martyr', 0);
     s = move(s, `use:${uidIn(s, 'silver.godparents', 0)}`);
-    expect(s.pending.prompt).toBe('Godparent: give which of your members to which rival?');
+    expect(s.pending.prompt).toBe('Godparents: give which of your members to which rival?');
     s = answer(s, `give:${martyr}:2`);
     expect(owns(s, 2, 'trading.martyr')).toBe(true);
     expect(s.players[0].bonus).toBe(10); // Godparent 5, and Martyrs' own 5 as it leaves (Martyrs 5 since every member +1, Nov 5)
