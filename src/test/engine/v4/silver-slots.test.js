@@ -28,24 +28,39 @@ describe('Ballroom Dancers: "On Use, once per game: +2 followers per minion on S
   });
 });
 
-describe('Kingmakers: "Round End: give rivals 3 silver from the bank, split as you choose." (Cory, Nov 9)', () => {
-  it('the owner hands out 3 silver one at a time, split as they choose; no followers', () => {
-    let s = table(Q, { n: 3, round: 2, members: [['silver.kingmakers']], queue: [] });
+describe('Kingmakers: "Round End: give rivals up to 3 of your silver, split as you choose. +1 follower per silver given." (Cory, Nov 9)', () => {
+  const withSilver = (s, n) => ({ ...s, players: s.players.map((p, i) => (i === 0 ? { ...p, res: { ...p.res, silver: n } } : p)) });
+  it('the owner gives their own silver one at a time, split as they choose; +1 follower each', () => {
+    let s = withSilver(table(Q, { n: 3, round: 2, members: [['silver.kingmakers']], queue: [] }), 5);
     const before = s.players[0].bonus;
     s = atEnd(s);
-    expect(s.pending.prompt).toBe('Kingmakers: give 1 silver to which rival? (3 left)');
+    expect(s.pending.prompt).toBe('Kingmakers: give 1 of your silver to which rival? +1 follower (3 more at most)');
     s = move(s, 'player:2');
-    expect(s.pending.prompt).toBe('Kingmakers: give 1 silver to which rival? (2 left)');
     s = move(s, 'player:1');
     s = move(s, 'player:2');
     expect(s.players[1].res.silver).toBe(1);
     expect(s.players[2].res.silver).toBe(2);
-    expect(s.players[0].bonus - before).toBe(0);
+    expect(s.players[0].bonus - before).toBe(3);
   });
-  it('with one rival, all 3 go to them without asking', () => {
-    let s = table(Q, { n: 2, round: 2, members: [['silver.kingmakers']], queue: [] });
+  it('gives no more silver than you have, and you may stop early', () => {
+    let s = withSilver(table(Q, { n: 3, round: 2, members: [['silver.kingmakers']], queue: [] }), 1);
+    const before = s.players[0].bonus;
     s = atEnd(s);
-    expect(s.players[1].res.silver).toBe(3);
+    s = move(s, 'player:1');
+    expect(s.players[1].res.silver).toBe(1);
+    expect(s.players[0].bonus - before).toBe(1);
+    let t = withSilver(table(Q, { n: 3, round: 2, members: [['silver.kingmakers']], queue: [] }), 4);
+    const b2 = t.players[0].bonus;
+    t = atEnd(t);
+    t = move(t, 'stop');
+    expect(t.players[0].bonus - b2).toBe(0);
+  });
+  it('with no silver, nothing happens', () => {
+    let s = table(Q, { n: 2, round: 2, members: [['silver.kingmakers']], queue: [] });
+    const before = s.players[0].bonus;
+    s = atEnd(s);
+    expect(s.players[1].res.silver || 0).toBe(0);
+    expect(s.players[0].bonus - before).toBe(0);
   });
 });
 

@@ -527,13 +527,14 @@ const silver = {
       p.bonus += 4;
       ctx.log(`${p.name}'s Guest of Honor: gives ${name} to ${o.name}: +4 followers.`);
     },
-    // Kingmakers (Cory, Nov 5; Nov 9: "kingmaker should just be give 3 silver to rivals"): one silver at a time, 3 in all
+    // Kingmakers (Cory, Nov 5; Nov 9: "should give from your silver. And +1 follower for each given. So you dont auto get 3")
     kingmakers(ctx, p, id, data = {}) {
-      const o = ctx.player(id);
-      if (!o || o === p) return;
       const once = data.once || `kingmakers:${ctx.state.round}:${p.id}`;
       const to = { ...(data.to || {}) };
-      if (giveTo(ctx, p, o, S, 1, once) !== false) to[o.name] = (to[o.name] || 0) + 1;
+      if (id === 'stop') { kingStep(ctx, p, { once, left: 0, to }); return; }
+      const o = ctx.player(id);
+      if (!o || o === p || !(p.res[S] > 0)) return;
+      if (giveTo(ctx, p, o, S, 1, once) !== false) { p.res[S] -= 1; to[o.name] = (to[o.name] || 0) + 1; }
       kingStep(ctx, p, { once, left: (data.left ?? 3) - 1, to });
     },
     ...handlers8({
@@ -1050,11 +1051,12 @@ const silver = {
       botActivate: (ctx) => { const k = onSilver(ctx); return k >= Math.max(3, ctx.state.players.length) || (ctx.state.round === 3 && k >= 2 && ctx.state.players.every(o => o.left <= 1)); },
       ...see(info => (endsAhead(info).length ? 7 : 0)),
     }),
-    m('kingmakers', 'Kingmakers', 2, 1, 'Round End: give rivals 3 silver from the bank, split as you choose.', {
+    m('kingmakers', 'Kingmakers', 2, 1, 'Round End: give rivals up to 3 of your silver, split as you choose. +1 follower per silver given.', {
       onAllPlaced(ctx, owner) {
         if (!others(ctx, owner).length) return;
         kingStep(ctx, owner, { once: `kingmakers:${ctx.state.round}:${owner.id}`, left: 3, to: {} });
       },
+      ...see(info => 3 * endsAhead(info).length),
     }),
     // Game End, cost 7 = 4 silver + 3 any as a player sees it (Cory, Nov 6 8:18pm Eastern: "Patron Saints is supposed to be
     // game end!!", "and keep cost at 7")
@@ -1069,22 +1071,26 @@ const silver = {
 
 export default silver;
 
-// Kingmakers: 3 silver from the bank, one at a time to the rival the owner picks
+// Kingmakers: up to 3 of the owner's silver, one at a time to the rival they pick, +1 follower each
 function kingStep(ctx, p, data) {
   const list = others(ctx, p).filter(o => !dry(ctx, p, o));
-  if (data.left > 0 && list.length) {
-    if (list.length === 1) { silver.handlers.kingmakers(ctx, p, list[0].id, data); return; }
-    ctx.choose(p, `Kingmakers: give 1 silver to which rival? (${data.left} left)`, list.map(o => ({
-      id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers, ${o.res[S] || 0} silver)`, kind: 'player', value: o.id,
-      // bots hand it to whoever it helps least: off the Silver contest lead, and not the leader in followers
-      hint: -(o.res[S] || 0) - (leadIn(ctx, o, S) >= -3 ? 3 : 0) - ctx.followers(o) * 0.05,
-    })), 'silver.kingmakers', data);
+  if (data.left > 0 && (p.res[S] || 0) > 0 && list.length) {
+    const given = Object.values(data.to).reduce((a, n) => a + n, 0);
+    ctx.choose(p, `Kingmakers: give 1 of your silver to which rival? +1 follower (${Math.min(data.left, p.res[S])} more at most)`, [
+      ...list.map(o => ({
+        id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers, ${o.res[S] || 0} silver)`, kind: 'player', value: o.id,
+        // bots hand it to whoever it helps least: off the Silver contest lead, and not the leader in followers
+        hint: 2 - (o.res[S] || 0) * 0.1 - (leadIn(ctx, o, S) >= -3 ? 0.5 : 0) - ctx.followers(o) * 0.01,
+      })),
+      { id: 'stop', label: given ? 'Keep the rest' : 'Give none', kind: 'choice', value: 'stop', hint: 0 },
+    ], 'silver.kingmakers', data);
     return;
   }
   const given = Object.values(data.to).reduce((a, n) => a + n, 0);
   if (!given) return;
   afterGive(ctx, p, S, data.once);
-  ctx.log(`${p.name}'s Kingmakers: gave ${given} silver (${Object.entries(data.to).map(([k, v]) => `${v} to ${k}`).join(', ')}).`);
+  p.bonus += given;
+  ctx.log(`${p.name}'s Kingmakers: gave ${given} silver (${Object.entries(data.to).map(([k, v]) => `${v} to ${k}`).join(', ')}): +${given} follower${given === 1 ? '' : 's'}.`);
 }
 // Almoners (pool 6): one silver at a time until none is left, then the followers
 function almsStep(ctx, p, data) {
