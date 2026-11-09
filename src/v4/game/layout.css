@@ -500,7 +500,7 @@
 /* A setting's name opens what each choice does (Cory, Nov 8: "clear, but crisply, what the options do? maybe on hover?"):
    the name wears the dotted underline every hover word wears; the picked choice stands out on its card */
 .setup-settings .set-name,.table-pick .set-name{text-decoration:underline dotted color-mix(in srgb,currentColor 55%,transparent);text-underline-offset:4px;text-decoration-thickness:1px;cursor:help}
-.pop-card.set-card,.pop-card.sphere-card{--c:var(--cream-2,#b9a98c);max-width:340px;line-height:1.35}
+.pop-card.set-card,.pop-card.sphere-card{--c:var(--cream-2,#b9a98c);max-width:280px;line-height:1.35}
 .pop-card.sphere-card{border-left-color:var(--c)}
 .set-card > span{color:var(--muted,#b09f82)}
 .set-card > span.on{color:var(--ink,#f2e8d2)}

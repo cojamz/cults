@@ -17,7 +17,6 @@ import { settleEmojis, takeEmoji, lastEmoji, rememberEmoji } from '../emojiPick.
 import { playCall } from '../sound.js';
 import { SPEEDS, SPEED_NAMES, motionSpeed, setMotionSpeed } from '../motion.js';
 import { memberLook, setMemberLook, LOOK_OFFERED } from '../memberLook.js';
-import { TEST_SPACES, testSpaces } from '../../engine/v4/content/testset.js';
 
 const KINDS = [['human', 'Person'], ['bot', 'Bot'], ['empty', 'Empty']];
 const NAME_MAX = 14;
@@ -39,16 +38,20 @@ function Seg({ value, options, onChange, label }) {
   );
 }
 
-/** A setting's name opens what each of its choices does, on hover or a tap (Cory, Nov 8: "can we make sure that its
- *  clear, but crisply, what the options do? maybe on hover?"). opts: [value, name, one line]. */
-function SetName({ name, opts, value, extra = null }) {
+/** A setting's name explains the setting in a short line on hover, or a tap on a phone, like any settings tooltip
+ *  (Cory, Nov 8: "can we make sure that its clear, but crisply, what the options do? maybe on hover?"; then "doesnt need
+ *  that much detail. this is jsut like briefly explaining a setting. suepr common pattern"). */
+const SET_TIPS = {
+  Bots: 'How well the bots play. Harder bots think further ahead.',
+  Speed: 'How fast bots move and moves play out. Also in the ☰ menu.',
+  Economy: 'Today uses the printed costs and gains. Richer: members cost more and spaces give more.',
+  Cards: 'Live uses the current cards. Test swaps in your try-it cards.',
+  Table: 'Which colors are on the wheel, one per player.',
+};
+function SetName({ name }) {
   return (
-    <Tip as="span" className="set-name" label={`${name}: what each choice does`} content={() => (
-      <div className="pop-card set-card" data-set-card={name}>
-        {opts.map(([v, text, line]) => <span key={v} className={v === value ? 'on' : undefined} data-set-opt={v}><b>{text}</b> {line}</span>)}
-        {extra}
-      </div>
-    )}>{name}</Tip>
+    <Tip as="span" className="set-name" label={`${name}: what it does`} hint={SET_TIPS[name]}
+      content={() => <div className="pop-card set-card" data-set-card={name}>{SET_TIPS[name]}</div>}>{name}</Tip>
   );
 }
 
@@ -221,7 +224,7 @@ export function SwapPick({ value, onChange, readOnly }) {
 const ECON_OPTS = [['today', 'Today', 'Costs and gains as printed.'], ['rich', 'Richer', 'Members cost 1 more of their color and 1 more of any (grey members: 2 more of any). Spaces give 1 more of their color.']];
 export const ECON_HINT = { today: 'Costs and gains as printed.', rich: 'Members cost more; spaces give more.' };
 export function EconPick({ value, onChange, readOnly }) {
-  return <div className="seat" data-econ-pick={value}><SetName name="Economy" opts={ECON_OPTS} value={value} />
+  return <div className="seat" data-econ-pick={value}><SetName name="Economy" />
     {readOnly ? <span className="hint">{value === 'rich' ? 'Richer' : 'Today'}</span>
       : <Seg label="Economy" value={value} options={ECON_OPTS} onChange={onChange} />}
   </div>;
@@ -230,31 +233,9 @@ export function EconPick({ value, onChange, readOnly }) {
 // cards in place of live ones (engine content/testset.js). Live stays the default.
 // (Cory, Nov 8: "like this is meaningless" of the list of card names: say what Test does; the cards themselves on hover)
 const CARDS_OPTS = [['live', 'Live', 'The cards in the game now.'], ['test', 'Test', '6 spaces and 4 members swapped for your try-it cards.']];
-export const CARDS_HINT = { live: 'The cards in the game now.', test: '6 spaces and 4 members swapped for your try-it cards. Hover Cards for which.' };
-// which live member each try-it member takes the place of (content/testset.js TEST_OUT; Protesters joins the grey ones)
-const TEST_MEMBER_SWAPS = [['trading.anchorites', 'trading.recluse'], ['trading.oldguard', 'trading.heirs'], ['market.repossessors', 'market.regular'], ['benders.protesters', null]];
-const ROMAN = ['', 'I', 'II', 'III'];
-function TestCards() {
-  return (
-    <div className="set-test" data-test-cards>
-      <b>Spaces</b>
-      {Object.entries(TEST_SPACES).map(([q, [out, inn]]) => {
-        const live = quadrant(q).actions.find(a => a.key === out);
-        const cand = testSpaces(q).find(a => a.key === inn);
-        if (!live || !cand) return null;
-        return <span key={q}><i className="dot" style={{ '--c': `var(--${q})` }} /><b>{cand.name}</b> for {live.name} ({sphereName(q)}, round {ROMAN[cand.ring]}): {cand.text}</span>;
-      })}
-      <b>Members</b>
-      {TEST_MEMBER_SWAPS.map(([id, out]) => {
-        const d = defById(id);
-        return <span key={id}><b>{d.name}</b>{out ? ` for ${defById(out).name}` : ', a new grey member'}: {d.text}</span>;
-      })}
-      <small>A space shows only when its color is on the table.</small>
-    </div>
-  );
-}
+export const CARDS_HINT = { live: 'The cards in the game now.', test: 'Swaps in your try-it cards: 6 spaces and 4 members.' };
 export function CardsPick({ value, onChange, readOnly }) {
-  return <div className="seat" data-cards-pick={value}><SetName name="Cards" opts={CARDS_OPTS} value={value} extra={<TestCards />} />
+  return <div className="seat" data-cards-pick={value}><SetName name="Cards" />
     {readOnly ? <span className="hint">{value === 'test' ? 'Test' : 'Live'}</span>
       : <Seg label="Cards" value={value} options={CARDS_OPTS} onChange={onChange} />}
   </div>;
@@ -293,8 +274,7 @@ export function TablePicker({ value, onChange, readOnly = false, n = 4 }) {
   return (
     <div className={`table-pick${readOnly ? '' : ' editable'}`} data-table={quadrants.join(',')}>
       <div className="seat">
-        <SetName name="Table" value={mode} opts={[['classic', 'Classic', `The starting colors: ${CLASSIC.slice(0, n).map(sphereName).join(', ')}.`], ['random', `Random ${n}`, `${n} colors drawn at random.`], ['custom', 'Custom', `You pick the ${n} colors.`]]}
-          extra={<small>One color per player. Hover a color for its spaces, contest and cloak.</small>} />
+        <SetName name="Table" />
         {readOnly ? <span className="hint">{mode === 'random' ? `Random ${n}` : mode === 'custom' ? 'Custom' : 'Classic'}</span>
           : <Seg label="Table" value={mode} options={[['classic', 'Classic'], ['random', `Random ${n}`], ['custom', 'Custom']]} onChange={setMode} />}
       </div>
@@ -320,7 +300,7 @@ export function TablePicker({ value, onChange, readOnly = false, n = 4 }) {
               // the wrapper only shows the card; the click stays the tile's own (onClick undefined: no pinning)
               return (
                 <Tip key={id} as="div" className="sphere-tip" label={`${sphereName(id)}: what it does`} role={undefined} tabIndex={undefined} aria-haspopup={undefined} aria-expanded={undefined} onClick={undefined} onKeyDown={undefined}
-                  content={() => <SphereCard id={id} note={clash ? `Another color on this table already uses ${quadrant(id).resource}.` : over ? `A click swaps it in for ${sphereName(last)}, the last one picked.` : null} />}>
+                  content={() => <SphereCard id={id} brief note={clash ? `Another color on this table already uses ${quadrant(id).resource}.` : over ? `A click swaps it in for ${sphereName(last)}, the last one picked.` : null} />}>
                 <button type="button" className={`sphere${on ? ' on' : ''}${over ? ' over' : ''}`} aria-pressed={on} data-sphere={id}
                   disabled={clash} style={{ '--c': `var(--${id})` }} onClick={() => toggle(id)} data-hint={sphereHint(id)}>
                   <i className="dot" />{on && <span className="ord num">{quadrants.indexOf(id) + 1}</span>}
@@ -339,28 +319,19 @@ export function TablePicker({ value, onChange, readOnly = false, n = 4 }) {
 /** What a sphere does, in its own panels' words (RC1 sweep 6: the chips said only how it scores): "Most gold. Its
  *  round I spaces: +3 gold, pick who gets 1 · +2 gold · Save 4 on next member." The resource dot is a word here. */
 export function sphereHint(id) {
-  const c = sphereContest(id);
-  const art = ARTIFACTS[id] ? defById(ARTIFACTS[id]) : null;
-  return `${sphereLine(id)} Contest: ${c.label}.${art ? ` ${cloakName(id)}: ${art.text}` : ''} Round I spaces: ${roundOne(id).join(' · ')}`;
+  return `${sphereLine(id)} Contest: ${sphereContest(id).label}.`;
 }
-const roundOne = id => quadrant(id).actions.filter(a => a.ring === 1).map(a => `${a.name}: ${followerWords(a.text)}`);
-const followerWords = t => String(t || '').replace(/(^|[^\d])1 @f/g, '$11 follower').replace(/@f/g, 'followers');
-/** What a color does, for its hover on the table: the line, its contest, its cloak, then every space by round, each
- *  with its full text (a name alone means nothing: "I DONT HAVE THE ACTION NAMES MEMORIZED"). */
-function SphereCard({ id, note = null }) {
-  const q = quadrant(id);
-  const c = sphereContest(id);
-  const art = ARTIFACTS[id] ? defById(ARTIFACTS[id]) : null;
+/** What a color does, briefly, for its hover on the table: its line and its contest (Cory, Nov 8: the setup hovers
+ *  "doesnt need that much detail"). */
+function SphereCard({ id, note = null, brief = false }) {
+  // a picker tile already shows its line and contest: its hover adds only its cloak (and what a click does)
+  const art = brief && ARTIFACTS[id] ? defById(ARTIFACTS[id]) : null;
+  if (brief) return <div className="pop-card sphere-card" data-chip-card={id} style={{ '--c': `var(--${id})` }}>{art && <span><b>{cloakName(id)}:</b> {art.text}</span>}{note && <small>{note}</small>}</div>;
   return (
     <div className="pop-card sphere-card" data-chip-card={id} style={{ '--c': `var(--${id})` }}>
-      <b className="sc-name"><i className="dot" />{sphereName(id)}</b>
+      <b>{sphereName(id)}</b>
       <span>{sphereLine(id)}</span>
-      <span><b>Contest:</b> {c.label}.{c.counts ? ` Counts ${c.counts}.` : ''}</span>
-      {art && <span><b>{cloakName(id)}:</b> {art.text}</span>}
-      {[1, 2, 3].map(r => (
-        <span key={r} className="sc-round"><b>Round {ROMAN[r]}</b>
-          {q.actions.filter(a => a.ring === r).map(a => <span key={a.key} className="sc-space"><b>{a.name}:</b> {followerWords(a.text)}</span>)}</span>
-      ))}
+      <span>Contest: {sphereContest(id).label}.</span>
       {note && <small>{note}</small>}
     </div>
   );
@@ -448,9 +419,9 @@ export function LocalSetup({ initial, onStart, onBack }) {
         <div className="setup-settings" data-setup-settings>
           {/* each switch says what its choice does in one line under it (picky bot, Nov 4: "Swap card", "By color" and
               "Very Hard" went unexplained; the words were only in hover titles) */}
-          <div className="seat"><SetName name="Bots" opts={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} value={level} /><Seg label="Bot level" value={level} options={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} onChange={setLevel} /></div>
+          <div className="seat"><SetName name="Bots" /><Seg label="Bot level" value={level} options={BOT_LEVEL_INFO.map(l => [l.level, l.name, l.blurb])} onChange={setLevel} /></div>
           <small className="set-hint" data-set-hint="bots">{(BOT_LEVEL_INFO.find(l => l.level === level) || {}).blurb}</small>
-          <div className="seat"><SetName name="Speed" opts={SPEED_OPTS} value={speed} /><Seg label="Speed" value={speed} options={SPEED_OPTS} onChange={v => { setSpeed(v); setMotionSpeed(v); }} /></div>
+          <div className="seat"><SetName name="Speed" /><Seg label="Speed" value={speed} options={SPEED_OPTS} onChange={v => { setSpeed(v); setMotionSpeed(v); }} /></div>
           <small className="set-hint" data-set-hint="speed">{SPEED_HINT[speed] ? `${SPEED_HINT[speed]}.` : null}</small>
           {SWAP_OFFERED && <SwapPick value={swapCard} onChange={setSwapCard} />}
           {SWAP_OFFERED && <small className="set-hint" data-set-hint="swap">{swapCard ? 'A recruit option: pay 2 resources to swap one of your members for a shop or rival member costing up to 2 more or less.' : 'No swap card.'}</small>}

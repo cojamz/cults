@@ -8,12 +8,8 @@ import { sphereHint, LocalSetup } from '../../../v4/screens/Screens.jsx';
 afterEach(cleanup);
 
 describe('setup sphere hints', () => {
-  it('pluralise the follower mark where the words are plural', () => {
-    const t = sphereHint('trading');
-    expect(t).toMatch(/into followers/);
-    expect(t).toMatch(/\+1 follower in round I/); // singular
-    expect(t).toMatch(/into 2 followers/); // plural
-    expect(t).not.toMatch(/@f|more follower\b/);
+  it('a color hint is brief: what it does and its contest (Cory, Nov 8: "doesnt need that much detail")', () => {
+    expect(sphereHint('trading')).toBe('Turn resources and members into followers. Contest: Fewest members.');
   });
 
   it('a table chip opens what its sphere does', async () => {
@@ -26,6 +22,6 @@ describe('setup sphere hints', () => {
     const card = document.querySelector('[data-chip-card]');
     expect(card).not.toBeNull();
     expect(card.textContent).toMatch(/Contest: Fewest members|Contest: Most/);
-    expect(card.textContent).toMatch(/Round I.*Round II.*Round III/);
+    expect(card.textContent).not.toMatch(/Round I/);
   });
 });
