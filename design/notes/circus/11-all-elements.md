@@ -10,3 +10,9 @@
 - **Followers:** your crowd. A star brings their own fans (each member counts 1). You can call in any favors to fill seats (buying followers).
 
 Example: your agent works the strongmen (a gold space) and they owe you 3 favors. You call them in and a famous strongman joins your show.
+
+## Why resources, minions and actions still fail (Cory, Nov 9: "can you see why?")
+- Resources get stolen (Magenta), handed to rivals (Silver), hoarded and counted (Gold), and turned into crowd. Favors can't be stolen or handed out, so resources must be **a physical thing** you can carry off, give and pile up.
+- Actions mostly do things **to rivals and the table** (skip their turn, steal, copy a space). A "deal with the magicians" doesn't explain why a rival loses a turn. An action has to be **something a person physically does at a spot**.
+- Minions block a spot for everyone else. An agent making a deal doesn't block anyone. A minion has to be **a person standing somewhere** that others then can't use.
+Next: rebuild those three around physical things first, then fit colors to them.
