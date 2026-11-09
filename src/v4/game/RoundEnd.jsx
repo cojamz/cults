@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { followers } from '../../engine/v4/index.js';
 import { snakeWords } from './order.js';
+import { seatOrder } from './seats.js';
 import { playerColor, roman, standings, scoredStandings, roundGains, membersParts, tiebreakNote, workersNote, firstPickWhy } from '../format.js';
 import Tick from './Tick.jsx';
 import { ruleWords } from '../shorts.js';
@@ -11,6 +12,7 @@ import { Tip, ContestStandings, NamedText } from './Info.jsx';
 import { Who } from './Glyphs.jsx';
 import { Follower } from '../art/Follower.jsx';
 import { afterContestSteps } from './Reckoning.jsx';
+import './roundend.css';
 
 export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
   const { result, start, after, board } = info;
@@ -89,29 +91,25 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
         <ul className="re-rows">
           {rows.map(r => (
             <li key={r.qid} style={{ '--c': `var(--${r.qid})` }} className={r.winners.length ? '' : 'none'} data-qid={r.qid} data-winners={r.winners.join(',')}>
-              <span className="re-q"><i /><span>
+              <span className="re-q">
                 <Tip className="re-rule" label={`${r.rule}: what it counts and every count`} content={() => <ContestStandings state={at} st={r} scored />}>{r.rule}</Tip>
                 {r.tiebreak && <small className="re-tb">{r.tiebreak.text}</small>}
                 {/* "Most full sets" was never defined on screen (live panel r1) */}
                 {/full sets?\b/i.test(r.rule) && <small className="re-tb" data-full-set>one of each color makes a set</small>}
-              </span></span>
-              <span className="re-w">
-                <span className="re-win">
-                  {r.winners.length
-                    ? r.winners.map((id, k) => <b key={id}>{k ? ' & ' : ''}<Who state={after} id={id} meId={meId} /></b>)
-                    : r.spoiled != null
-                      ? <em data-spoiled>nobody: <Who state={after} id={r.spoiled} meId={meId} /> spoiled it (Spoilsport)</em>
-                      : <em>no one scored</em>}
-                </span>
-                {/* "P2: 2", never "P2 2" (w3b: it read as "P22") */}
-                <small className="re-counts num">
-                  {r.rows.map(row => {
-                    const tb = tiebreakNote(r, row);
-                    return <span key={row.id} className={r.winners.includes(row.id) ? 'won' : ''} data-pid={row.id} data-count={row.shown}>{name(row.id)}: <b className="n">{row.shown}</b>{tb ? <small> ({tb})</small> : null}</span>;
-                  })}
-                </small>
               </span>
               <Tip className="re-chip num" label={`plus ${r.v} followers`} content={() => <div className="pop-card"><b>{r.rule}: +{r.v} followers</b><span>{r.winners.length ? `Round ${result.round}'s prize, to ${r.winners.map(id => (id === meId ? 'you' : after.players[id].name)).join(' and ')} (ties all score).` : `Round ${result.round}'s prize: nobody scored it.`}</span></div>}>+{r.v}<Follower size={11} title="followers" /></Tip>
+              {/* every cult's count as a pill, the winners' lit in the rim's color (Cory, Nov 9: the old winners line plus
+                  a counts line read as clutter); "P2 2", the number set apart so it never reads "P22" (w3b) */}
+              <span className="re-counts num">
+                {!r.winners.length && (r.spoiled != null
+                  ? <em className="re-none" data-spoiled>nobody: <Who state={after} id={r.spoiled} meId={meId} /> spoiled it (Spoilsport)</em>
+                  : <em className="re-none">no one scored</em>)}
+                {r.rows.map(row => {
+                  const tb = tiebreakNote(r, row);
+                  const won = r.winners.includes(row.id);
+                  return <span key={row.id} className={`re-pill${won ? ' won' : ''}`} data-pid={row.id} data-count={row.shown} title={`${name(row.id)}: ${row.shown}${won ? ', scored' : ''}`}><Who state={after} id={row.id} meId={meId} size={14} /><b className="n">{row.shown}</b>{tb ? <small> ({tb})</small> : null}</span>;
+                })}
+              </span>
             </li>
           ))}
         </ul>
@@ -125,8 +123,8 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
             {after.players.filter(p => p.final && (p.final.parts.length || zeroOf(p).length)).map((p, k) => <span key={p.id} data-final-bonus={p.id}>{k ? ' · ' : ''}<b>{name(p.id)}</b> <NamedText state={after} text={[...p.final.parts, ...zeroOf(p)].join(', ')} /></span>)}
           </p>
         )}
-        <div className="re-totals" role="table" aria-label="Followers after this round">
-          <div className="re-head" role="row"><span role="columnheader">By followers</span><span role="columnheader" title="The rims' prizes this round (above)">Contests</span><span role="columnheader" title="Followers gained this round otherwise: what new members are worth, followers bought, and followers won or lost during play (members' abilities, spaces, sales and raids), as the results count them">This round</span><span role="columnheader">Followers</span></div>
+        <p className="re-phase" data-phase="followers">Followers</p>
+        <div className="re-totals" role="list" aria-label="Followers after this round">
           {ranked.map(p => {
             const now = shownTotal(p);
             const was = start && start.players[p.id] ? followers(start, start.players[p.id]) : now;
@@ -148,17 +146,27 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
             // "+2 in play" was jargon (blind testers, 2026-10-15): gained or lost, in plain words; the sources are in its hover
             // ("won" read as contest prizes, panel Oct 26: a steal or Exchange's followers aren't won)
             // "+1 new members" read as a count of members (live panel r1): it's followers, so "from new members"
-            const why = g ? [...membersParts(g).map(t => t.replace(/ that left$/, ' who left')), g.bought && `+${g.bought} recruited followers`, play && `${play} ${g.effects > 0 ? 'won' : 'lost'} in play`, endGame && `${endGame} end-game`].filter(Boolean).join(' · ') : '';
+            const why = g ? [...membersParts(g).map(t => t.replace(/ that left$/, ' who left')), g.bought && `+${g.bought} recruited followers`, play && `${play} ${g.effects > 0 ? 'won' : 'lost'} in play`, endGame && `${endGame} end-game`].filter(Boolean) : [];
             const whyLong = g ? [...membersParts(g).map(t => t.replace(/ that left$/, ' who left')), g.bought && `+${g.bought} followers recruited with resources`, play && `${play} ${g.effects > 0 ? 'won' : 'lost'} in play, from spaces and members' abilities (steals, trades and the like), not prizes`, endGame && `${endGame} from end-game bonuses`].filter(Boolean) : [];
             // your row sticks to the card's foot while the rows above it scroll: round III's card hid it under "More below"
             // when you placed last (picky bot, Nov 4)
+            // one line a cult: who, where this round's followers came from as small tags (prizes first), the total
+            // (Cory, Nov 9: the four-column table wrapped its words into three lines a row)
+            const gains = why.length ? why : other ? [`${other > 0 ? '+' : '−'}${Math.abs(other)} in play`] : [];
             return (
-              <div key={p.id} className="re-p" role="row" style={{ '--pc': playerColor(p.id) }} data-total={`${p.id}:${now}`} data-me={p.id === meId ? '' : undefined}>
-                <span className="nm" role="cell"><Who state={after} id={p.id} meId={meId} /></span>
-                <span className="re-d num" role="cell">{c ? `+${c}` : '0'}</span>
-                {/* the parts whenever there are any, even when they cancel out (live panel r1: P4 recruited 3 and lost 3 to a
-                    sale, and the cell said "—") */}
-                <span className="re-d num" role="cell" data-this-round={p.id}>{other || whyLong.length ? (whyLong.length ? <Tip label={`${p.id === meId ? 'Your' : `${p.name}’s`} followers this round`} content={() => <div className="pop-card"><b>{p.id === meId ? 'Your' : `${p.name}’s`} followers this round, besides prizes: {other > 0 ? '+' : other < 0 ? '−' : ''}{Math.abs(other)}</b>{whyLong.map(t => <span key={t}>{t}</span>)}</div>}>{why}</Tip> : `${other > 0 ? '+' : '−'}${Math.abs(other)}`) : '0'}</span>
+              <div key={p.id} className="re-p" role="listitem" style={{ '--pc': playerColor(p.id) }} data-total={`${p.id}:${now}`} data-me={p.id === meId ? '' : undefined}>
+                <span className="nm"><Who state={after} id={p.id} meId={meId} /></span>
+                <span className="re-gains">
+                  {c > 0 && <span className="re-g re-prize num" data-prize={p.id}>+{c} prizes</span>}
+                  {/* the parts whenever there are any, even when they cancel out (live panel r1: P4 recruited 3 and lost 3
+                      to a sale, and the cell said "—") */}
+                  <span className="re-this num" data-this-round={p.id}>
+                    {gains.length && whyLong.length
+                      ? <Tip label={`${p.id === meId ? 'Your' : `${p.name}’s`} followers this round`} content={() => <div className="pop-card"><b>{p.id === meId ? 'Your' : `${p.name}’s`} followers this round, besides prizes: {other > 0 ? '+' : other < 0 ? '−' : ''}{Math.abs(other)}</b>{whyLong.map(t => <span key={t}>{t}</span>)}</div>}>{gains.map(t => <span key={t} className={`re-g${/^−/.test(t) ? ' lost' : ''}`}>{t}</span>)}</Tip>
+                      : gains.map(t => <span key={t} className={`re-g${/^−/.test(t) ? ' lost' : ''}`}>{t}</span>)}
+                  </span>
+                  {!c && !gains.length && <span className="re-g quiet">no new followers</span>}
+                </span>
                 <Tick value={now} from={now} color="var(--ink)" className="re-f num" dur={0} float={false} />
               </div>
             );
@@ -168,12 +176,26 @@ export default function RoundEnd({ info, onNext, autoMs, meId = null }) {
           ? <p className="hint re-final" data-final-bonuses="0">End-game bonuses came to nothing:{' '}
             {zeroParts.map((p, k) => <span key={p.id} data-final-zero={p.id}>{k ? ' · ' : ''}<b>{name(p.id)}</b> <NamedText state={after} text={zeroOf(p).join(', ')} /></span>)}. These totals are final.</p>
           : <p className="hint re-final" data-final-bonuses="0">No end-game bonuses: these totals are final.</p>)}
-        {/* why they pick first, in words (live panel r1: "P3 picks first: Front-runner" never said what Front-runner was) */}
-        {first && <p className="hint" data-first-pick>Round {roman(after.round)} · <span className="num">{workersNote(after)}</span> · {first.id === meId ? 'You go' : `${first.name} goes`} first{whyFirst ? <>: <NamedText state={after} text={whyFirst} /></> : ''}</p>}
-        {/* the round's turn order as the snake it is, in names (Cory's todo: "make it clear the turn order is a snake draft") */}
-        {first && <p className="hint" data-snake-order>{snakeWords(after, meId)}</p>}
-        {/* the spaces change with the round: say so as it happens (live panel r1: "faces change by round without saying so") */}
-        {first && after.round >= 2 && <p className="hint" data-round-news>New this round: the {after.round === 2 ? 'middle ring' : 'center'} opens, and spaces that grow by round pay more.</p>}
+        {/* the next round in one box (Cory, Nov 9: three centered paragraphs read as clutter): its name and minions,
+            the snake as the cults themselves, who goes first and why, what's new */}
+        {first && (
+          <div className="re-nextround" data-next-round-box>
+            <p className="re-nr-head"><b>Round {roman(after.round)}</b><span className="num">{workersNote(after)}</span></p>
+            {/* the round's turn order as the snake it is (Cory's todo: "make it clear the turn order is a snake draft"):
+                down the table and back up, so the double turn at each end shows */}
+            <p className="re-snake" aria-hidden="true">
+              {(() => { const o = seatOrder(after); return [...o, ...[...o].reverse()].map((id, k) => (
+                <span key={k} className={`re-turn${k === o.length ? ' back' : ''}`}><Who state={after} id={id} meId={meId} size={14} /></span>
+              )); })()}
+              <span className="re-turn more">…</span>
+            </p>
+            <span className="sr-only" data-snake-order>{snakeWords(after, meId)}</span>
+            {/* why they pick first, in words (live panel r1: "P3 picks first: Front-runner" never said what Front-runner was) */}
+            <p className="re-nr-line" data-first-pick>{first.id === meId ? 'You go' : `${first.name} goes`} first{whyFirst ? <>: <NamedText state={after} text={whyFirst} /></> : ''}</p>
+            {/* the spaces change with the round: say so as it happens (live panel r1: "faces change by round without saying so") */}
+            {after.round >= 2 && <p className="re-nr-line" data-round-news>New: the {after.round === 2 ? 'middle ring' : 'center'} opens, and spaces that grow by round pay more.</p>}
+          </div>
+        )}
         </div>
         {more && <span className="re-more" aria-hidden="true">More below</span>}
         <div className="re-foot">
