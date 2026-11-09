@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.693 — 2026-11-08
+
+- Test cards: Closing Time takes Crunch Time's place.
+
 ## v0.99.692 — 2026-11-08
 
 - The round's score card, simpler: big totals, only the winners highlighted, where followers came from on hover.
