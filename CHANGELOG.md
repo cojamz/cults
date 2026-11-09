@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.705 — 2026-11-09
+
+- Kingmakers now gives rivals 3 silver from the bank, split as you choose (no followers). Godparent is now Godparents.
+
 ## v0.99.704 — 2026-11-09
 
 - A recruited member's picture flies to the middle, its card stays 3.5 seconds to be read, then shrinks back to the picture and flies to its new owner. Resource counts tick up faster.
