@@ -178,7 +178,7 @@ const M = {
   sleepyheads: ['🛌', '♾️ You take the Goes Last token: +3 followers'],
   'night-managers': ['🌃', '🌙 You placed the last minion: +1 follower per purple member'],
   'ballroom-dancers': ['🕺', '☝️ +2 followers per minion on Silver spaces'],
-  kingmakers: ['👑', '🌙 Give a rival 3 silver from the bank. +3 followers'],
+  kingmakers: ['👑', '🌙 Give rivals 3 silver from the bank, split as you choose'],
   'patron-saints': ['😇', '🏁 +1 follower per silver member, anyone’s'],
   'night-traders': ['🦇', '🌙 Before contests: swap up to 4 of your resources, one for one'],
   counterfeiters: ['🖨️', '🔁 Turn all of a rival’s resources into one color'],

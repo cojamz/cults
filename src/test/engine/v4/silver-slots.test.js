@@ -28,16 +28,24 @@ describe('Ballroom Dancers: "On Use, once per game: +2 followers per minion on S
   });
 });
 
-describe('Kingmakers: "Round End: give a rival 3 silver from the bank. +3 followers."', () => {
-  it('the owner picks the rival, who gains 3 silver; the owner +3 followers', () => {
+describe('Kingmakers: "Round End: give rivals 3 silver from the bank, split as you choose." (Cory, Nov 9)', () => {
+  it('the owner hands out 3 silver one at a time, split as they choose; no followers', () => {
     let s = table(Q, { n: 3, round: 2, members: [['silver.kingmakers']], queue: [] });
     const before = s.players[0].bonus;
     s = atEnd(s);
-    expect(s.pending.prompt).toBe('Kingmakers: which rival gains 3 silver? You get 3 followers');
+    expect(s.pending.prompt).toBe('Kingmakers: give 1 silver to which rival? (3 left)');
     s = move(s, 'player:2');
-    expect(s.players[2].res.silver).toBe(3);
-    expect(s.players[1].res.silver || 0).toBe(0);
-    expect(s.players[0].bonus - before).toBe(3);
+    expect(s.pending.prompt).toBe('Kingmakers: give 1 silver to which rival? (2 left)');
+    s = move(s, 'player:1');
+    s = move(s, 'player:2');
+    expect(s.players[1].res.silver).toBe(1);
+    expect(s.players[2].res.silver).toBe(2);
+    expect(s.players[0].bonus - before).toBe(0);
+  });
+  it('with one rival, all 3 go to them without asking', () => {
+    let s = table(Q, { n: 2, round: 2, members: [['silver.kingmakers']], queue: [] });
+    s = atEnd(s);
+    expect(s.players[1].res.silver).toBe(3);
   });
 });
 
