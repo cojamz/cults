@@ -207,7 +207,7 @@
 @media (min-width:1100px) and (min-height:500px){
   .app.narrow:has(> .dialog.page > .table-pick.editable){max-width:1200px}
   .app.narrow > .dialog.page:has(> .table-pick.editable){max-width:1200px;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
-    min-height:600px} /* Custom's two-wide sphere grid runs taller: Back and Start hold still when it opens */
+    min-height:640px} /* Custom's two-wide sphere grid runs taller: Back and Start hold still when it opens */
   .app.narrow > .dialog.page:has(> .table-pick.editable) > .setup-settings{grid-column:2;grid-row:1 / 9;align-self:start;padding-left:32px;margin-left:-16px;
     box-shadow:inset 1px 0 0 var(--hair, rgba(242,232,210,.10))}
   .app.narrow > .dialog.page:has(> .table-pick.editable) > .table-pick{grid-column:3}
