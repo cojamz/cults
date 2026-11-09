@@ -89,8 +89,10 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     // 3500, 7000 and 19000 (Claude, Nov 4, under Cory's "make judgement calls" after "Things are still going too fast to
     // make sense of"): a rival's move lands in full, then holds 1s before the next (MO.rivalRead). Measured: rival turn
     // p50 1.36s to 2.52s, p95 4.28s to 5.51s; the usual wait 7.4s to 10.7s; the longest run of six 24.9s to 30.0s
-    expect(h3p95).toBeLessThanOrEqual(4000 * K); // 4000 (Nov 4 night, the same content move: 6.41s)
-    expect(h2p50).toBeLessThanOrEqual(7300 * K); // 7300 (Nov 4, same content move: 11.5s)
+    // 4800, 8500 and 25000 (Cory, Nov 9: a recruit's card "lingers for 3-4 seconds" in the middle, 3.5s at every speed):
+    // rival turn p95 6.41s to 7.47s, the usual wait 11.5s to 13.3s, the longest run of six 30.0s to 39.0s; slower by his call
+    expect(h3p95).toBeLessThanOrEqual(4800 * K); // 4000 (Nov 4 night, the same content move: 6.41s)
+    expect(h2p50).toBeLessThanOrEqual(8500 * K); // 7300 (Nov 4, same content move: 11.5s)
     // 13.5s (was 13s; Claude, 2026-10-29): HR at 4 members moved seed 2's bots into a run of six turns holding a Walk-In
     // 14s (Claude, 2026-10-29): members counting their printed number moved a seeded run of six to 13.76s; same shows, longer chain
     // free recruit, a Con Men steal of 5, an Anarchist swap and three recruits (21.2s vs 21.1s); content, not slower motion
@@ -99,7 +101,7 @@ describe('the table\'s pace at Steady (H2, H3)', () => {
     // Tryout on Treasurer plus two Anarchist swaps, a Coach and a Mentor protégé (14.95s); content, not slower motion
     // 15.5s (Claude, Nov 4): recruits play one step at a time, coins in, then to the middle, then to the buyer (Cory's
     // "yes" to the audit's pick): seed 2's run of six holds three recruits, 21.5s to 24.9s at Steady; slower by his call
-    expect(h2max).toBeLessThanOrEqual(19000 * K);
+    expect(h2max).toBeLessThanOrEqual(25000 * K);
   });
   it('Relaxed plays a rival\'s turn about three times as long as Steady, and Steady a little slower than the first table', () => {
     const steady = rivalTurnsAt('steady'), relaxed = rivalTurnsAt('relaxed'), quick = rivalTurnsAt('quick');

@@ -52,13 +52,17 @@ export function snapshotShop(root, htmlFor = null) {
     // the card's own styles hang off its shop panel (compact or full): keep that context, so the flying copy
     // is the same picture at the same size, never reflowed text
     const uid = Number(el.dataset.uid);
-    let html = null;
+    let html = null, fig = null;
     if (!htmlFor || htmlFor.has(uid)) {
+      // where its picture stands on it: a recruit's picture leaves from there (Cory, Nov 9: in transit only the picture)
+      const art = el.querySelector('.art svg, .art img');
+      const ar = art && art.getBoundingClientRect();
+      if (ar && ar.width) fig = { left: ar.left, top: ar.top, width: ar.width, height: ar.height, html: art.outerHTML };
       const panel = el.closest('.shop-panel');
       const ctx = panel ? panel.className.replace(/[^\w\s-]/g, '') : 'shop-panel';
       html = `<div class="${ctx} ghost-ctx"><div class="shop ghost-ctx">${inert(el.outerHTML)}</div></div>`;
     }
-    snap.set(uid, { html, index, full: !!el.closest('.buy-view'), rect: { left: r.left, top: r.top, width: r.width, height: r.height } });
+    snap.set(uid, { html, fig, index, full: !!el.closest('.buy-view'), rect: { left: r.left, top: r.top, width: r.width, height: r.height } });
   });
   return snap;
 }

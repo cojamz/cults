@@ -82,3 +82,4 @@
 @keyframes minskip{0%{transform:none;opacity:1}15%{transform:translateY(3px) rotate(-12deg);opacity:.45}75%{transform:translateY(3px) rotate(-12deg);opacity:.45}100%{transform:none;opacity:1}}
 @media (prefers-reduced-motion: reduce){.skip-tag,.lt-cult-seat.turn-skipped,.lt-cult-seat.turn-skipped .cs-min{animation:none}}
 body[data-gift-card] .action-stage .as-card{visibility:hidden}
+.piece-flight.recruit-pic{z-index:70}

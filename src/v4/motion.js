@@ -104,9 +104,9 @@ const BASE = {
   minionsHome: 380,
   minionsHomeStagger: 35,
   /** a number counting up or down: base + per step, capped (Tick.jsx; the round summary passes its own) */
-  tickBase: 300,
-  tickPer: 30,
-  tickMax: 550,
+  tickBase: 240,
+  tickPer: 25,
+  tickMax: 450,
   /** a seat's members and leader react to what just happened (CultSeat.jsx) */
   react: 900,
   /** the "Nothing you can afford" toast waits for your recruit to land */
@@ -207,7 +207,8 @@ const TABLE = {
   stageOut:    [160,   240],
   // a recruit holds at the hub, its rule readable, before it flies on to its buyer (Cory, 2026-10-18)
   // (Cory, live, Oct 27: "the card should fly up, show what it does"): long enough to read the whole card
-  recruitShow: [600,   500],
+  // (Cory, Nov 9: "the card lingers for 3-4 seconds"): the same at every speed, never stretched by Relaxed
+  recruitShow: [3000,  3500],
   // a recruit's coins have all landed in the lifted card: a beat before it flies, so paying and leaving read as two steps
   paidBeat:    [140,   140],
   // a member's bubble stays this long after its chain to be read, without holding the next move (Cory, live, Oct 27)
@@ -227,14 +228,18 @@ export const RIVAL = 0.65;
  * coins still fly at Relaxed's pace, but they leave together as a handful instead of one after the next (Cory, Nov 5:
  * "currencies moving one by one in so many animations is so slow"; at x6 a +3 left 300 ms apart, a payment's colors 240).
  */
-const TIGHT = new Set(['pieceStagger', 'streamSpread', 'bundleTrail', 'fan', 'deltaChip']);
+// (Cory, Nov 9: "the resources counts incrementing up are a bit laggy/slow") a number counting up or rolling as its
+// coins land never runs slower than Steady either: at Relaxed a roll took 1.4 s and a count up to 3.3 s
+const TIGHT = new Set(['pieceStagger', 'streamSpread', 'bundleTrail', 'fan', 'deltaChip', 'roll', 'tickBase', 'tickPer', 'tickMax']);
 const tightScale = () => Math.min(speedScale(), SPEEDS.steady);
 // reading time: a slower speed gives more of it, but not six times Steady's (at Relaxed a 15-word story line held the
 // table 14s and a round took minutes; 2.5x Steady's base is about 150 words a minute, Nov 7)
 const READ = new Set(['storyLine', 'storyWord', 'storyLinger']);
 const readScale = () => Math.min(speedScale(), 2.5);
 /** A budget at the viewer's speed: Quick's own number, else the base times the speed. */
-const atSpeed = ([quick, base], k) => (speed === 'quick' ? quick : Math.round(base * (TIGHT.has(k) ? tightScale() : READ.has(k) ? readScale() : speedScale())));
+// held the same at every speed but Quick (Cory gave the recruit card's linger in seconds)
+const FIXED = new Set(['recruitShow']);
+const atSpeed = ([quick, base], k) => (speed === 'quick' ? quick : FIXED.has(k) ? base : Math.round(base * (TIGHT.has(k) ? tightScale() : READ.has(k) ? readScale() : speedScale())));
 
 /** MO.x reads the budget at the viewer's speed (read it when you use it, never keep a copy). */
 export const MO = {};

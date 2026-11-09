@@ -146,6 +146,7 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
   const timerAt = useRef(null);
   // a step in a round never holds the table past stepHoldCap (director.js): what's left of its chain lands at once, as a click does
   const capFor = useRef(null); // the step whose chain is capped, until it's on screen
+  const capLinger = useRef(0); // that step's recruit cards held at the hub (director.js stepHoldCap)
   const capTimer = useRef(null);
   const pace = useRef(null); // ?trace=1: this step's pacing record (perf.js summary().pace)
   const handedAt = useRef(null); // when the step now being drawn was handed to React
@@ -261,6 +262,7 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
       setSpot(null, spot);
       clearTimeout(capTimer.current);
       capFor.current = waiting.current && next.round >= 1 && next.round === prev.round ? next : null;
+      capLinger.current = plan.linger || 0;
       show(next, !!waiting.current);
       const sameNext = !!(next.pending && prev.pending && next.pending.player === prev.pending.player);
       // (a rival's step that shows something stays on screen at least 400ms before the same bot's next step: motion.mjs m4)
@@ -340,7 +342,7 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
       if (left > 0 && left < 1500 && more-- > 0) { capTimer.current = setTimeout(jump, left + 300); return; }
       skipChain();
     };
-    capTimer.current = setTimeout(() => { if (waiting.current === w && chainRunning()) capTimer.current = setTimeout(jump, CAP_GRACE); }, stepHoldCap(queue.current.length >= 3));
+    capTimer.current = setTimeout(() => { if (waiting.current === w && chainRunning()) capTimer.current = setTimeout(jump, CAP_GRACE); }, stepHoldCap(queue.current.length >= 3, capLinger.current));
   }, [table.shown]);
   useEffect(() => () => clearTimeout(capTimer.current), []);
   useLayoutEffect(() => {
@@ -374,7 +376,7 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
     remeasure.current = null;
     if (!f || typeof timer.current !== 'number' || !timerAt.current) return;
     // the measured chain sets the hold, sooner or later than the estimate (never past the cap)
-    const d = Math.min(f(played), holdCap()), left = d - (performance.now() - timerAt.current.t0);
+    const d = Math.min(f(played), holdCap(capLinger.current)), left = d - (performance.now() - timerAt.current.t0);
     if (d === timerAt.current.d) return;
     clearTimeout(timer.current);
     timer.current = setTimeout(() => { timer.current = null; if (pace.current) pace.current.fired = performance.now(); pump(); }, Math.max(0, left));

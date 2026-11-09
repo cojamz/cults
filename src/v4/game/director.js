@@ -239,6 +239,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     at(time, { op: 'artifact', pid, qid: pk.qid, uid: pk.uid, dur: MO.cardFly });
     ends(time + MO.cardFly);
   };
+  let linger = 0; // the recruit cards' read at the hub (MO.recruitShow each): the caps below make room for it
   let hand = 0; // when the last piece is two-thirds along: the same player's next step may show then
   // the action stage (stage.js): a space or member out on the hub gives and takes from there
   const stagedKeys = new Map(); // a staged space's key → its slot: 'card', or 'card2' for the space it copies
@@ -435,11 +436,14 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
       // card goes straight from the shop to its buyer's seat, with no showcase in the middle (critic pass 3)
       // ...except one off the pile (Walk-In, No Thanks): it was never face up, so it opens in the middle to be seen
       // rather than flying to its seat as a card back (frame review, Nov 7: P2's Walk-In member was never shown)
-      const direct = told && card.from.kind !== 'pile';
+      // (Cory, Nov 9: every recruit, a rival's too, goes by the middle: "in transit its always image/emoji, at center
+      // its full card"; the card lingers 3-4 s there, then shrinks and flies to the player)
+      const direct = false;
       const toHub = direct ? fly(card.from, card.to) : fly(card.from, hubW), fromHub = direct ? 0 : fly(hubW, card.to);
       const lifted = Math.max(s + MO.cardLift + hold, paid + (m.pays.length ? MO.paidBeat : 0));
       const atHub = lifted + toHub;
       const leave = atHub + (direct ? 0 : MO.recruitShow);
+      if (!direct) linger += MO.recruitShow;
       hand = Math.max(hand, leave + fromHub * (2 / 3));
       at(s, { op: 'card', uid: card.what.uid, to: card.to.pid, from: card.from, lift: lifted - s, rise: MO.cardLift, toHub, show: leave - atHub, fromHub, direct });
       const landed = ends(leave + fromHub);
@@ -612,16 +616,16 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   // skipped"; at Relaxed a third of rivals' steps ran past it). It plays faster to fit instead, never faster than Quick
   // (was Steady, Nov 1: a rival's recruit whose free member brought four bonuses, 11.6s at Relaxed, still ran past the
   // cap at Steady's pace, and its last beats jumped with nobody pressing; landing gate, round II move 47)
-  const fit = state.round >= 1 && state.round === before.round ? stepHoldCap(chainBehind) - FIT_MARGIN : Infinity;
-  const room = Math.min(cap, fit);
+  const fit = state.round >= 1 && state.round === before.round ? stepHoldCap(chainBehind, linger) - FIT_MARGIN : Infinity;
+  const room = Math.min(cap + linger, fit);
   // (a new round's opening isn't a turn: its beats keep their own pace, outside the turn's cap)
   if (end > room && !roundAdvance) {
-    const k = Math.max(room < cap ? Math.min(0.5, SPEEDS.quick / speedScale()) : 0.5, room / end);
+    const k = Math.max(room < cap + linger ? Math.min(0.5, SPEEDS.quick / speedScale()) : 0.5, room / end);
     for (const a of atoms) { a.at = Math.round(a.at * k); if (a.dur) a.dur = Math.round(a.dur * k); if (a.lift) a.lift = Math.round(a.lift * k); if (a.rise) a.rise = Math.round(a.rise * k); if (a.wait) a.wait = Math.round(a.wait * k); for (const f of ['toHub', 'show', 'fromHub']) if (a[f]) a[f] = Math.round(a[f] * k); }
     end *= k; hand *= k; t *= k;
     for (let i = 0; i < beatAt.length; i++) beatAt[i] *= k;
   }
-  return { atoms: atoms.sort((a, b) => a.at - b.at), total: end ? Math.round(end + (turnPasses ? MO.breath * pace : 0)) : 0, handoff: end ? Math.round(Math.max(hand, t)) : 0, turnPasses, pace, beats: beatAt.map(Math.round), beatKinds: beatKind };
+  return { atoms: atoms.sort((a, b) => a.at - b.at), total: end ? Math.round(end + (turnPasses ? MO.breath * pace : 0)) : 0, handoff: end ? Math.round(Math.max(hand, t)) : 0, linger, turnPasses, pace, beats: beatAt.map(Math.round), beatKinds: beatKind };
 }
 
 // the table is behind (3+ steps waiting, useTable): the hold cap halves, and a step's show fits the shorter one
@@ -770,7 +774,7 @@ export function holdAfter(plan, { sameNext, rivalStep, floor = 400, base = 0, ne
   return rivalStep ? (sameNext ? 0 : MO.passHold) : base;
 }
 /** The longest a step may hold on screen: the chain's cap plus its breath and the floor (re-timing never goes past it). */
-export const holdCap = () => Math.round(2400 * speedScale()) + MO.breath + 400 + MO.rivalRead;
+export const holdCap = (linger = 0) => Math.round(2400 * speedScale()) + MO.breath + 400 + MO.rivalRead + linger;
 /** The longest a step in a round may hold the table before the rest of its chain lands at once: the speed's own cap,
  *  up to RELAXED_CAP's pace (about 7.6s at Relaxed), and half that while the table is `behind` (3+ steps waiting).
  *  A late-game recruit that sets off 4–6 members one by one held 7–9s at Relaxed, and the table fell minutes behind the
@@ -778,7 +782,8 @@ export const holdCap = () => Math.round(2400 * speedScale()) + MO.breath + 400 +
  *  things are still quite fast" (a fifth of rivals' steps at Relaxed, mostly recruits, were squeezed to Steady's pace).
  *  Falling behind still halves it. */
 const RELAXED_CAP = 3;
-export const stepHoldCap = (behind = false) => Math.round((2400 * Math.min(speedScale(), RELAXED_CAP) + 400) * (behind ? 0.5 : 1));
+// `linger`: the step's recruit cards held at the hub (Cory, Nov 9: 3-4 s), on top of the cap and never halved
+export const stepHoldCap = (behind = false, linger = 0) => Math.round((2400 * Math.min(speedScale(), RELAXED_CAP) + 400) * (behind ? 0.5 : 1)) + linger;
 
 // ---------- the screen ----------
 // One clock for every chain on the table, woken by a timer when its next step is due (tick, below). A late wake (a
@@ -1486,6 +1491,16 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
           const chip = root.querySelector(`.lt-seat[data-pid="${a.to}"] [data-uids~="${a.uid}"]`) || placeEl(root, { kind: 'crowd', pid: a.to }, ctx);
           const chipR = a.direct && chip ? chip.getBoundingClientRect() : null;
           const hub = a.direct ? (chipR && chipR.width ? chipR : sn.rect) : clearOfStory(hubRect(HUB_MEMBER)) || sn.rect;
+          // (Cory, Nov 9: "in transit its always image/emoji, at center its full card") the card lifts in its slot with
+          // the bought ring while its coins land, then only its picture flies to the middle, where the member's card opens
+          // out of it and stays to be read; then the card shrinks back to its picture, which flies to the buyer's seat
+          const fig0 = sn.fig || null;
+          const chipFig = chip && !chip.rectOnly && chip.querySelector ? chip.querySelector('.fig svg, .fig img, svg') : null;
+          const picHtml = (chipFig && chipFig.outerHTML) || (fig0 && fig0.html) || shopFig(snap, a.uid);
+          const P = 56; // the picture in flight, about the shop card's own portrait
+          const figR = fig0 && fig0.width ? fig0 : { left: sn.rect.left + sn.rect.width / 2 - P / 2, top: sn.rect.top + sn.rect.height * 0.3 - P / 2, width: P, height: P };
+          const picA = { left: figR.left + figR.width / 2 - P / 2, top: figR.top + figR.height / 2 - P / 2 - 10, width: P, height: P };
+          const picB = { left: hub.left + hub.width / 2 - P / 2, top: hub.top + hub.height * 0.3 - P / 2, width: P, height: P };
           const g = document.createElement('div');
           g.className = 'flight card-flight ghost-layer';
           g.dataset.born = String(Date.now());
@@ -1493,24 +1508,22 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
           Object.assign(g.style, { left: `${sn.rect.left}px`, top: `${sn.rect.top}px`, width: `${sn.rect.width}px`, height: `${sn.rect.height}px`, borderRadius: 'var(--corner, 8px)' });
           document.body.appendChild(g);
           if (typeof window !== 'undefined') window.__patronsFlights = (window.__patronsFlights || 0) + 1;
-          const dx = hub.left + hub.width / 2 - (sn.rect.left + sn.rect.width / 2), dy = hub.top + hub.height / 2 - (sn.rect.top + sn.rect.height / 2);
           const total = a.lift + a.toHub, k1 = a.lift / total;
           chain.flying++;
-          // lift, then a true arc to the hub, fading as the member's card opens out of it there
-          const bow = onScreenBow(sn.rect, hub, Math.max(16, Math.min(70, Math.hypot(dx, dy) * 0.18)));
-          // it rises quickly, then waits lifted while its coins land, then flies
+          // it rises quickly, waits lifted while its coins land, then lets go of its picture and fades where it stood
           const kr = Math.min(k1, (a.rise || a.lift) / total);
+          const kOut = Math.min(0.99, k1 + (1 - k1) * 0.18);
           const path = [
             { transform: 'translate(0px,0px) scale(1)', offset: 0, easing: 'ease-out' },
             ...(kr < k1 ? [{ transform: 'translate(0px,-10px) scale(1.06)', offset: kr }] : []),
             { transform: 'translate(0px,-10px) scale(1.06)', offset: k1 },
-            ...arcFrames(dx, dy, bow, { from: k1, s0: 1.06, s1: 1.2, y0: -10, ease: CARD_EASE }),
+            { transform: 'translate(0px,-10px) scale(0.9)', offset: kOut },
+            { transform: 'translate(0px,-10px) scale(0.9)', offset: 1 },
           ];
           const anim = track(g.animate(path, { duration: total, fill: 'forwards' }));
-          track(g.animate([{ opacity: 1 }, { opacity: 1, offset: k1 + (1 - k1) * 0.55 }, { opacity: 0 }], { duration: total, fill: 'forwards' }));
-          // the bought card says so before it leaves (H13): a warm ring comes up as it lifts and lets go as it flies. The
-          // ring is its own empty box riding the same path: a shadow animated on the card itself repainted the whole
-          // card (its words, its portrait) every frame of the lift. The ring's shadow is drawn once; only its opacity moves
+          track(g.animate([{ opacity: 1 }, { opacity: 1, offset: k1 }, { opacity: 0, offset: kOut }, { opacity: 0 }], { duration: total, fill: 'forwards' }));
+          // the bought card says so before it leaves (H13): a warm ring comes up as it lifts and lets go as the picture
+          // leaves. The ring is its own empty box riding the same path (a shadow on the card repainted it every frame)
           const ring = document.createElement('div');
           ring.className = 'flight card-ring ghost-layer';
           ring.dataset.born = g.dataset.born;
@@ -1523,26 +1536,39 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
             { opacity: 0, offset: 0 },
             ...(kr < k1 ? [{ opacity: 1, offset: kr }] : []),
             { opacity: 1, offset: k1 },
-            { opacity: 0, offset: Math.min(0.99, k1 + (1 - k1) * 0.4) },
+            { opacity: 0, offset: kOut },
             { opacity: 0, offset: 1 },
           ], { duration: total, fill: 'forwards' }));
           slideShop(root, snap);
-          if (a.direct) {
-            // it lands on its new chip, which rings
-            onFinish(anim, () => { g.remove(); chain.flying = Math.max(0, chain.flying - 1); play('member'); if (chip && chip.animate && chip.isConnected) jiggle(chip, MO.jiggle); });
-            return;
+          // the picture: off the lifted card, a true arc to the middle (70% of the way there), where the card opens out of it
+          const picFly = Math.max(1, Math.round(a.toHub * 0.7)), open = Math.max(1, a.toHub - picFly);
+          if (picHtml) {
+            const p = document.createElement('div');
+            p.className = 'piece-flight piece-member recruit-pic ghost-layer';
+            p.dataset.born = g.dataset.born;
+            p.innerHTML = `<span class="piece-member-pic">${picHtml}</span>`;
+            Object.assign(p.style, { left: `${picA.left}px`, top: `${picA.top}px`, width: `${P}px`, height: `${P}px`, opacity: '0' });
+            document.body.appendChild(p);
+            const pdx = picB.left - picA.left, pdy = picB.top - picA.top, k = picFly / (picFly + open);
+            const bow = onScreenBow(picA, picB, Math.max(16, Math.min(70, Math.hypot(pdx, pdy) * 0.18)));
+            const end = `translate(${pdx.toFixed(1)}px,${pdy.toFixed(1)}px) scale(1.15)`;
+            const fly = track(p.animate([...arcFrames(pdx, pdy, bow, { to: k, s1: 1.15, ease: CARD_EASE }), { offset: 1, transform: end }], { duration: picFly + open, delay: a.lift, fill: 'both' }));
+            // it shows as it leaves the card, rides the travel, then fades into the card opening out of it
+            track(p.animate([{ opacity: 1 }, { opacity: 1, offset: k }, { opacity: 0 }], { duration: picFly + open, delay: a.lift, fill: 'forwards' }));
+            onFinish(fly, () => p.remove());
+            safetyNet(fly, a.lift + picFly + open, 400, () => p.remove());
           }
           const id = `recruit:${a.uid}`;
           const ep = chain.epoch || 0;
-          // the member's card opens at the hub as the picture arrives
-          schedule(base + a.at + a.lift + Math.round(a.toHub * 0.45), sk => {
+          // the member's card opens at the hub out of the picture as it arrives
+          schedule(base + a.at + a.lift + picFly, sk => {
             if (sk || (chain.epoch || 0) !== ep) return;
             const look = memberLook(ctx.state, a.uid);
             if (!look) return;
-            stageShow({ id, chain: chainId, kind: 'member', recruit: true, uid: a.uid, pid: a.to, who: mine.length === 1 && mine[0] === a.to ? 'You' : (ctx.state.players[a.to] || {}).name, size: HUB_MEMBER, at: hub, from: g.getBoundingClientRect(), homeEl: chip && !chip.rectOnly ? chip : null, dur: Math.round(a.toHub * 0.55), ...look, got: '',
+            stageShow({ id, chain: chainId, kind: 'member', recruit: true, uid: a.uid, pid: a.to, who: mine.length === 1 && mine[0] === a.to ? 'You' : (ctx.state.players[a.to] || {}).name, size: HUB_MEMBER, at: hub, from: picB, homeEl: chip && !chip.rectOnly ? chip : null, dur: Math.max(160, open), ...look, got: '', pic: picHtml,
               onHome: () => { play('member'); if (chip && chip.animate && chip.isConnected && !region(chip)) relative(chip, [{ boxShadow: '0 0 0 0 rgba(236,230,214,0)', transform: 'scale(1)' }, { boxShadow: '0 0 0 4px rgba(236,230,214,.55), 0 0 14px rgba(236,230,214,.5)', transform: 'scale(1.1)', offset: 0.35 }, { boxShadow: '0 0 0 0 rgba(236,230,214,0)', transform: 'scale(1)' }], { duration: MO.ring, easing: 'ease-out' }); } });
           });
-          // read, then on to the buyer
+          // read, then on to the buyer: the card shrinks to its picture, which flies to the seat (ActionStage)
           schedule(base + a.at + total + a.show, sk => { if (!sk) stageLeave(id, a.fromHub); });
           onFinish(anim, () => { g.remove(); chain.flying = Math.max(0, chain.flying - 1); });
           return;

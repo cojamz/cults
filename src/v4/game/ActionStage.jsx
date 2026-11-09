@@ -10,7 +10,7 @@ import { Sprite } from '../art/Sprite.jsx';
 import { Minion } from '../art/Leader.jsx';
 import { MO } from '../motion.js';
 import { play } from '../sound.js';
-import { track, landedEarly } from './flight.js';
+import { track, landedEarly, ghostFly } from './flight.js';
 import './stage.css';
 
 const EASE_OUT = 'cubic-bezier(.2,.9,.25,1.15)'; // lands with a little give, like a card slapped on the table
@@ -56,6 +56,31 @@ function StageItem({ it }) {
     const home = live(it.homeEl) || it.from;
     const done = () => { if (it.homeEl && it.homeEl.classList) it.homeEl.classList.remove('on-stage'); stageGone(it.uid); };
     if (!e || !e.animate || !home) { done(); return; }
+    if (it.recruit) {
+      // (Cory, Nov 9: "the card shrinks and flies to player"; "in transit its always image/emoji") the card folds into
+      // its own picture where it stands, and only the picture flies on to the new member's place in the buyer's seat
+      const out = it.out || MO.stageOut;
+      const fig = e.querySelector('.as-fig');
+      const fr = fig && fig.getBoundingClientRect();
+      const er = e.getBoundingClientRect();
+      const shrink = Math.max(120, Math.min(260, Math.round(out * 0.35)));
+      const ox = fr && fr.width ? fr.left + fr.width / 2 - er.left : er.width / 2, oy = fr && fr.width ? fr.top + fr.height / 2 - er.top : er.height * 0.3;
+      e.style.transformOrigin = `${ox}px ${oy}px`;
+      const s0 = fr && fr.width ? Math.max(0.15, fr.width / er.width) : 0.3;
+      track(e.animate([{ transform: 'none', opacity: 1 }, { transform: `scale(${s0.toFixed(3)})`, opacity: 0.9, offset: 0.8 }, { transform: `scale(${s0.toFixed(3)})`, opacity: 0 }], { duration: shrink, easing: EASE_HOME, fill: 'forwards' }));
+      const P = 56;
+      const cx = er.left + ox, cy = er.top + oy;
+      const A = { left: cx - P / 2, top: cy - P / 2, width: P, height: P };
+      const s1 = Math.max(0.3, Math.min(1, Math.min(home.width, home.height) / P));
+      const B = { left: home.left + home.width / 2 - P / 2, top: home.top + home.height / 2 - P / 2, width: P, height: P };
+      const html = fig ? fig.innerHTML : '';
+      if (fig && html) fig.style.visibility = 'hidden';
+      const fly = html ? ghostFly(`<span class="piece-member-pic">${html}</span>`, 'piece-flight piece-member recruit-pic', A, B, { duration: Math.max(160, out - shrink), delay: Math.round(shrink * 0.6), scaleTo: s1, fadeTo: 1, arc: 40 }) : null;
+      const end = fly ? fly.finished : new Promise(r => setTimeout(r, out));
+      const landed = () => { if (it.onHome && !(fly && landedEarly(fly))) it.onHome(); done(); };
+      end.then(landed, done);
+      return;
+    }
     const a = track(e.animate([{ transform: 'none', opacity: 1 }, { transform: over(it.at, size, home), opacity: 0.15 }], { duration: it.out || MO.stageOut, easing: EASE_HOME, fill: 'forwards' }));
     // a recruit lands in its buyer's crowd with its sound and the crowd's landing ring; a bubble goes back quietly
     a.finished.then(() => { if (it.onHome && a.playState === 'finished' && !landedEarly(a)) it.onHome(); done(); }, done);
