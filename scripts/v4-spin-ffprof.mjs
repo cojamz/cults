@@ -64,6 +64,9 @@ if (flag('drag', false)) {
   // --play=<ms>: no spin; your placement, then the bots play for that long (what the table's own animations cost the compositor)
   const legal = await page.$('.lt-wheel [data-slot][data-option]'); if (legal) await legal.click().catch(() => {});
   await sleep(Number(flag('play')));
+} else if (flag('idle', false)) {
+  // --idle=<ms>: no spin, no placement; your settled turn left alone for that long (what the table at rest costs)
+  await sleep(Number(flag('idle')));
 } else if (flag('poke', false)) {
   // --poke: no spin at all; a one-pixel change somewhere else on the page every --every ms (a control: what any content
   // paint costs here, wheel or not)
