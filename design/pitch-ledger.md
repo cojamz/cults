@@ -425,3 +425,4 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - Cory asked how well the tiers matched his read, once he finished.
 - (7:24pm, relayed) Cory: "yeah blue white purple are probably weakest action consistency at the moment" → Blue, White and Purple spaces go first in the next round of replacement ideas and testing.
 - (7:27pm, relayed) Ideas pile, White probably: "everybody gets rid of a minion or a member… a very destructive card. Everybody gets to pick naturally, but basically you discard a member to make everybody else have to discard a member." (Cory)
+- 2026-11-09 (Claude, rename pitch after Cory: "also i dont like the name" on Godparents, "On Use, once per game: give one of your members to a rival. Gain its cost in followers."): Emissaries (top pick: a cult sends one of its own into a rival's), Envoys, Matchmakers, Sponsors. Verdict pending.
