@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.689 — 2026-11-08
+
+- Test cards: every Purple space takes the Goes Last token.
+
 ## v0.99.688 — 2026-11-08
 
 - The round's score card is cleaner: one line per contest with everyone's count, gains as small tags, and the next round's order shown as faces.
