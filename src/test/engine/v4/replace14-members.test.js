@@ -35,7 +35,7 @@ describe('REPLACE14: Big Spenders', () => {
     for (let i = 0; i < paid; i++) s = answer(s, i % 2 ? 'player:2' : 'player:1');
     expect(s.players[1].res.silver + s.players[2].res.silver).toBe(paid);
     expect(log(s)).toContain(`then +${paid} followers.`);
-    expect(s.players[0].bonus).toBe(paid + 2); // + Gather's round II recruit bonus
+    expect(s.players[0].bonus).toBe(paid + Math.floor(paid / 3)); // + Gather's +1 per 3 paid
   });
 });
 

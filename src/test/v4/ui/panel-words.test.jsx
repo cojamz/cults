@@ -105,7 +105,7 @@ describe('panel words (w3)', () => {
     s.recruits = 5;
     const t = panelText('red', quadrant('red').actions.find(x => x.key === 'turnout'), 1, s, 0);
     expect(t.main).toBe('+2 red');
-    expect(t.second).toBe('+1 @f if you recruit a member');
+    expect(t.second).toBe('+1 @f per 3 spent on a member');
     // Tithe: +1 gold per member you have, for the viewer
     const w = panelText('gold', quadrant('gold').actions.find(x => x.key === 'windfall'), 2, s, 0);
     expect(w.main).toBe(`+${s.players[0].members.length} gold`);

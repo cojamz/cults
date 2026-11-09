@@ -170,14 +170,16 @@ describe('Yellow candidates', () => {
     s = take(go(s, turn(0, 1)), 'Gather');
     const sb = s.players[0].bonus;
     s = move(s, `card:${g}`);
-    expect(s.players[0].bonus - sb).toBe(3 + 1); // yellow, red, gold; and Gather's +1 for recruiting a member
+    const gath = x => +((x.log.join('\n').match(/Gather: \+(\d+) follower/) || [0, 0])[1]);
+    expect(gath(s)).toBeGreaterThan(0);
+    expect(s.players[0].bonus - sb).toBe(3 + gath(s)); // yellow, red, gold; and Gather's +1 per 3 paid
     let t = still({ members: [['yellow.souvenirhunters']], res: [RICH] });
     give(t, 0, 'red');
     const r = faceUp(t, 'red');
     t = take(go(t, turn(0, 1)), 'Gather');
     const tb = t.players[0].bonus;
     t = move(t, `card:${r}`);
-    expect(t.players[0].bonus).toBe(tb + 1); // Gather's +1 only
+    expect(t.players[0].bonus).toBe(tb + gath(t)); // Gather's only
     expect(named(s, 'Souvenir Hunters')[0]).toMatch(/\+3 followers \(3 colors\)/);
   });
 });

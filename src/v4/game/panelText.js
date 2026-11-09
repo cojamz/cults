@@ -52,7 +52,7 @@ const P = {
   red: {
     // the +2 red sat in line 3, which drops on the outer ring (round I review, Oct 25): it takes line 2, as Right Away's purple
     evenswap: { verb: 'Use a shop member’s On Recruit', second: '+2 red', note: 'it stays in the shop' },
-    turnout: r => ({ main: `+${r + 1} red`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 1}`, 'red: ') }), // Cory, Oct 31
+    turnout: r => ({ main: `+${r + 1} red`, second: '+1 @f per 3 spent on a member', note: run(n => `+${n + 1}`, 'red: ') }), // per 3 paid (Cory, Nov 9)
     opendoor: { verb: 'Recruit the cheapest', second: 'in the shop, free', note: '+1 red' }, // all piles' Walk-In (Open Door's old words)
     // "+1 red to all" read as everyone, you too, or not (picky bot, Nov 4): yours, then the rivals'; "each rival +1"
     // took a second line and dropped on the outer ring; "pile" as its card says

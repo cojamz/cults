@@ -226,13 +226,15 @@ export default {
     },
     swap11({
       key: 'turnout', ring: 1, name: 'Gather', copyDoesIt: true,
-      text: '+2 red in round I, +3 in round II, +4 in round III. If you recruit a member this turn: +1 follower in round I, +2 in round II, +3 in round III.',
-      // Cory, 2026-10-31: fuel tied to the recruit ("B": 2/3/4 red, 1/2/3 followers). Core pays it on the turn's first member recruit.
-      byRound: { lines: ['+2 red. If you recruit a member this turn: +1 follower.', '+3 red. If you recruit a member this turn: +2 followers.', '+4 red. If you recruit a member this turn: +3 followers.'] },
-      estimate: ctx => ctx.state.round + 1 + ctx.state.round * 0.7,
+      text: '+2 red in round I, +3 in round II, +4 in round III. If you recruit a member this turn: +1 follower for every 3 resources you pay.',
+      // Cory, 2026-10-31: fuel tied to the recruit ("B": 2/3/4 red, 1/2/3 followers). Cory, Nov 9 ("lets say yeah for now"):
+      // the followers scale with the member bought, as Splurge's do; per 3 paid is Claude's fill-in. Core pays it on the
+      // turn's first paid recruit (spendBonus).
+      byRound: { lines: ['+2 red', '+3 red', '+4 red'], rest: 'If you recruit a member this turn: +1 follower for every 3 resources you pay.' },
+      estimate: ctx => ctx.state.round + 1 + 2.3,
       resolve(ctx, p) {
         ctx.gain(p, 'red', ctx.state.round + 1, { fromAction: true });
-        (p.recruitFollowers ||= []).push({ n: ctx.state.round, name: 'Gather' });
+        (p.spendFollowers ||= []).push({ per: 3, name: 'Gather' });
       },
     }, {
       // Rally (REPLACE11=rally, Actions lane r4 batch, Nov 4): Gather's place. Members as the board counts them.

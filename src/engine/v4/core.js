@@ -990,6 +990,7 @@ function runTask(state, task) {
       p.turnBuys = 0;
       delete p.peekReach;
       delete p.perSpend;
+      delete p.spendFollowers;
       delete p.clearance;
       delete p.recruitFollowers;
       delete p.cleanSweep;
@@ -1047,6 +1048,7 @@ function runTask(state, task) {
       // "This turn, if you recruit a member, +N followers" (Gather, Stash, Allowance, New Blood) ends with the turn, so a
       // recruit off your turn (a Round End or Round Start recruit) never collects it
       delete p.recruitFollowers;
+      delete p.spendFollowers;
       delete p.cleanSweep;
       state.current = null;
       return;
@@ -1180,7 +1182,7 @@ function startRound(state, r) {
   // Doorbusters (REPLACE2 bot test: flag roundStartBuy): one recruit each, in this round's order, before anyone places
   const doors = [];
   for (const id of base) for (let k = sumMemberFlag(state, state.players[id], 'roundStartBuy'); k > 0; k--) doors.push({ t: 'buy', p: id, doorbuster: true });
-  for (const t of doors) { const p = state.players[t.p]; p.turnRecruits = 0; p.turnBuys = 0; delete p.peekReach; delete p.perSpend; delete p.clearance; delete p.recruitFollowers; }
+  for (const t of doors) { const p = state.players[t.p]; p.turnRecruits = 0; p.turnBuys = 0; delete p.peekReach; delete p.perSpend; delete p.spendFollowers; delete p.clearance; delete p.recruitFollowers; }
   if (doors.length) log(state, [...new Set(doors.map(t => t.p))].map(id => `${state.players[id].name}'s ${flagName(state, state.players[id], 'roundStartBuy')}: recruits once before anyone places.`).join(' '));
   state.queue.push(...doors, ...snake, { t: 'allPlaced' }, { t: 'endRound' }, { t: 'afterRound' });
   // Round Start effects that act on the round's turns (Wake-Up Caller, REPLACE7) run once the turns are queued
@@ -1222,7 +1224,7 @@ function endRound(state) {
   if (REPLACE4) {
     const late = [];
     for (const id of turnOrder(state)) for (let k = sumMemberFlag(state, state.players[id], 'roundEndBuy'); k > 0; k--) late.push({ t: 'buy', p: id, lateShop: true });
-    for (const t of late) { const p = state.players[t.p]; p.turnRecruits = 0; p.turnBuys = 0; delete p.peekReach; delete p.perSpend; delete p.clearance; delete p.recruitFollowers; }
+    for (const t of late) { const p = state.players[t.p]; p.turnRecruits = 0; p.turnBuys = 0; delete p.peekReach; delete p.perSpend; delete p.spendFollowers; delete p.clearance; delete p.recruitFollowers; }
     if (late.length) {
       log(state, [...new Set(late.map(t => t.p))].map(id => `${state.players[id].name}'s ${flagName(state, state.players[id], 'roundEndBuy')}: recruits once after the contests.`).join(' '));
       const at = state.queue.findIndex(t => !t._fresh);
@@ -1897,6 +1899,20 @@ function swapMembers(state, actor, aUid, bUid) {
 // p.perSpend is set by the space and cleared at turn start; it pays once, on the turn's first paid recruit.
 // A White action giving followers, so Brokers adds its +1.
 function spendBonus(state, p, spend) {
+  // Gather (Cory, Nov 9, "lets say yeah for now": its followers scale with the member bought, as Splurge's do): +1 follower
+  // per 3 resources paid (the 3 is Claude's fill-in), on the turn's first paid recruit
+  if (p.spendFollowers && p.spendFollowers.length) {
+    const paid = Object.values(spend).reduce((a, b) => a + b, 0);
+    for (const x of p.spendFollowers) {
+      const k = Math.floor(paid / x.per);
+      if (!k) continue;
+      const mark = fMark(state);
+      p.bonus += k;
+      fCredit(state, mark, x.name);
+      log(state, `${p.name}'s ${x.name}: +${k} follower${k > 1 ? 's' : ''} for spending.`);
+    }
+    delete p.spendFollowers;
+  }
   if (!p.perSpend) return;
   delete p.perSpend;
   // per 1 resource in round II, per 2 in rounds I and III (Cory, Nov 1 1:39pm)

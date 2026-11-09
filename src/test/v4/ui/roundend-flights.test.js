@@ -35,11 +35,11 @@ const flown = plan => {
 it('flies only the closing move\'s own followers, from their own sources, before the Reckoning (never the prizes)', () => {
   let checked = 0, multiWinner = 0, buggy = 0, streamed = 0;
   // seed 9 for 2 since every member cost 4 more (Nov 5 evening): seed 2's round II now closes on a Sore Loser pick after the
-  // round-end line, a closing this check doesn't model
-  for (const seed of [1, 9, 3, 4, 5, 6, 7, 8]) {
+  // round-end line, a closing this check doesn't model; seed 10 for 8 since Gather pays per 3 spent (Nov 9), same reason
+  for (const seed of [1, 9, 3, 4, 5, 6, 7, 10]) {
     for (const { prev, next } of closings(seed)) {
       const line = newLogLines(prev, next).filter(isRoundEnd).pop();
-      expect(line).toBeTruthy();
+      expect(line, `seed ${seed} round ${prev.round}`).toBeTruthy();
       const board = scoringSnapshot(prev, next);
       const info = { result: parseRoundEnd(next, line), start: null, after: next, board };
       // what GameScreen plays at that commit: the physical state (the scored board) with the prizes withheld

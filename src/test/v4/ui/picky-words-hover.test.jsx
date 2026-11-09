@@ -56,8 +56,8 @@ describe('picky words on hovers (Nov 4)', () => {
     const tax = previewSpace(s, pid, ...space(s, 'yellow', 'transmute'));
     expect(tax.colorPays).toBe(null); // Survey (Nov 5): no pick, its yellow is in "You'd get"
     const gather = previewSpace(s, pid, ...space(s, 'red', 'turnout'));
-    expect(gather.ifRecruit).toEqual({ followers: s.round, per: 0 });
-    expect(ifRecruitWords(gather.ifRecruit)).toBe(`+${s.round} follower${s.round === 1 ? '' : 's'} if you recruit a member this turn`);
+    expect(gather.ifRecruit).toEqual({ followers: 0, per: 3 });
+    expect(ifRecruitWords(gather.ifRecruit)).toBe('+1 follower per 3 resources you pay, if you recruit a member this turn');
     const splurge = previewSpace(s, pid, ...space(s, 'trading', 'splurge'));
     expect(ifRecruitWords(splurge.ifRecruit)).toMatch(/^\+1 follower per (2 resources|resource) you pay, if you recruit a member this turn$/);
   });

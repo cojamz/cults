@@ -17,37 +17,39 @@ const pass = s => s.pending?.kind === 'buy' ? move(s, 'pass') : s;
 const remaining = s => [...s.shop, ...s.pile, ...(s.discard || []), ...s.players.flatMap(p => p.members)];
 
 describe('locked Red action progression', () => {
-  it.each([1, 2, 3])('Gather gives round +1 red in round %i, and round followers on a member recruit this turn', round => {
+  it.each([1, 2, 3])('Gather gives round +1 red in round %i, and +1 follower per 3 paid on a member recruit this turn', round => {
     let s = table(Q, { round, shop: ROW });
     s.players[0].res.gold = 9;
     s = take(s, 'red.turnout');
     expect(s.players[0].res.red).toBe(round + 1);
-    expect(s.players[0].recruitFollowers).toEqual([{ n: round, name: 'Gather' }]);
-    const bonus = s.players[0].bonus;
-    s = move(s, `card:${uidIn(s, 'red.intern', 'shop')}`);
-    expect(defs(s, 0)).toContain('red.intern');
-    expect(s.players[0].bonus - bonus).toBe(round);
-    expect(s.players[0].recruitFollowers).toBeUndefined();
-    expect(s.log.join('\n')).toContain("P1's Gather: +");
+    expect(s.players[0].spendFollowers).toEqual([{ per: 3, name: 'Gather' }]);
+    const bonus = s.players[0].bonus, before = { ...s.players[0].res };
+    s = move(s, `card:${uidIn(s, 'gold.tycoon', 'shop')}`);
+    while (s.pending && s.pending.prompt?.includes('pay')) s = move(s, s.pending.options[0].id);
+    expect(defs(s, 0)).toContain('gold.tycoon');
+    const paid = Object.keys(before).reduce((a, c) => a + before[c] - (s.players[0].res[c] || 0), 0);
+    expect(paid).toBeGreaterThanOrEqual(3);
+    expect(s.players[0].bonus - bonus).toBe(Math.floor(paid / 3));
+    expect(s.players[0].spendFollowers).toBeUndefined();
+    expect(s.log.join('\n')).toMatch(/P1's Gather: \+\d+ follower/);
   });
 
-  it('Gather pays nothing for buying followers, and wears off at the next turn', () => {
+  it('Gather pays nothing for buying followers', () => {
     let s = table(Q, { shop: ROW });
     s.players[0].res.gold = 5;
     s = take(s, 'red.turnout');
     s = move(s, 'tier:mid');
-    expect(s.log.join('\n')).not.toContain('for recruiting a member');
-    expect(s.players[0].recruitFollowers).toBeUndefined();
+    expect(s.log.join('\n')).not.toMatch(/Gather: \+\d+ follower/);
   });
 
   it('Gather wears off when the turn ends, so a recruit off your turn never collects it', () => {
     let s = table(Q, { shop: ROW });
     s.players[0].res.gold = 5;
     s = take(s, 'red.turnout');
-    expect(s.players[0].recruitFollowers).toEqual([{ n: 1, name: 'Gather' }]);
+    expect(s.players[0].spendFollowers).toEqual([{ per: 3, name: 'Gather' }]);
     s.pending = null; s.queue = [{ t: 'endTurn', p: 0 }];
     s = resume(s);
-    expect(s.players[0].recruitFollowers).toBeUndefined();
+    expect(s.players[0].spendFollowers).toBeUndefined();
   });
 
   it('Walk-In recruits the top member of the deck free, leaves the shop alone, +1 red and each rival +1 red', () => {
