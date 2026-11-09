@@ -8,6 +8,7 @@
 - 8:45pm: "yeah this goes last token is interesting but needs some thought." Open question; the test version keeps every Purple space taking the token.
 - 8:46pm: idea: the Goes Last token applies to ALL of your minions, so taking several turns in a row lets you do more.
 - 8:47pm: "thats how taking multiple turns in a row links up, and i think we can remove the skip stuff."
+- 8:49pm: "housewarming costing up to 5 is terrible. We really need to rethink so many actions."
 - 8:18pm: "gossip is bad now. Idk that turn skips really matter anymore for purple and going lsat." (live: Gossip [3 purple + 4 any, worth 1] Whenever a player’s turn is skipped, +1 follower.). Purple's turn skips and Goes Last may no longer matter; fits his "Blue, White, Purple first" call.
 - 8:20pm: "I think almost every purple action should take the go last token?" Today Sleep In, Last Call and Overtime take it; Hold Up, Right Away and Crunch Time do not.
 - 8:20pm: "maybe except +1 minion" (Overtime: "+4 purple. +1 minion this round. Take the Goes Last token: that minion is placed after everyone else's." takes it today).
