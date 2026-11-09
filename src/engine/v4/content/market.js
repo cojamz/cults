@@ -314,6 +314,21 @@ const market = {
     // idea pipeline pool 11 (Nov 7). Keeping Up: members as the board counts them (Dabblers 2), each extra recruit a turn
     // recruit like Recruit Twice's. Clean Sweep: every member recruit this turn sweeps (core recruited() reads
     // p.cleanSweep; cleared at turn start and end), the recruited member's printed cost against the shop's printed costs.
+    // idea pipeline pool move (Nov 9, catch-up and member movement; Cory: "yeah add some member movement ideas to the next
+    // test pool"): Repossessors on a space, aimed only up the table (members as the board counts them, Dabblers 2).
+    // The member goes face up into the shop as Repossessors' does (the shared repo handler). Number a fill-in.
+    poolSpace({
+      key: 'foreclose', ring: 2, name: 'Foreclose', copyDoesIt: true, text: '+2 blue. Put a member of a rival with more members than you into the shop.',
+      estimate: (ctx, p) => 2 + Math.max(0, ...forecloseList(ctx, p).map(({ c }) => 0.5 * botWorth(c))),
+      resolve(ctx, p) {
+        ctx.gain(p, B, 2, { fromAction: true });
+        const list = forecloseList(ctx, p);
+        if (!list.length) { ctx.log(`${p.name}'s Foreclose: no rival has more members.`); return; }
+        ctx.choose(p, "Foreclose: put which rival's member into the shop?", list.map(({ c, o }) => ({
+          id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: botWorth(c) + 0.1 * ctx.memberCount(o),
+        })), `${Q}.repo`, { name: 'Foreclose', more: true });
+      },
+    }, 'poolmove'),
     poolSpace({
       key: 'keepingup', ring: 2, name: 'Keeping Up', copyDoesIt: true, text: 'Recruit an extra time this turn for each rival with more members than you. +1 blue.',
       estimate: (ctx, p) => 1 + 2.5 * ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).length,
@@ -443,6 +458,7 @@ const market = {
     repo(ctx, p, uid, data) {
       const o = ctx.ownerOf(uid);
       if (!o || o === p) return;
+      if (data?.more && ctx.memberCount(o) <= ctx.memberCount(p)) return; // Foreclose: only up the table
       ctx.log(`${p.name}'s ${data.name}: ${o.name}'s ${ctx.card(uid).def.name} goes into the shop.`);
       ctx.buryMember(o, uid, p, { shop: true });
     },
@@ -1159,6 +1175,10 @@ const market = {
   ],
 };
 
+/** Foreclose (pool move): every member of each rival with more members than p. */
+function forecloseList(ctx, p) {
+  return ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).flatMap(o => ctx.membersOf(o).map(c => ({ c, o })));
+}
 /** Bailiffs (pool 13): rivals' members costing up to cap, as printed. */
 function repoList(ctx, p, cap) {
   return ctx.rivals(p).flatMap(o => ctx.membersOf(o).filter(c => c.def.s + c.def.w <= cap + richUp(ctx.state)).map(c => ({ c, o })));

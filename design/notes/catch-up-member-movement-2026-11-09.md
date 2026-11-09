@@ -59,7 +59,7 @@ Prints: **Foreclose** "+2 blue. Put a member of a rival with more members than y
 
 ### 3. Everybody discards a member (grey member or White)
 Cory's own seed (Nov 8: "you discard a member to make everybody else have to discard a member").
-Prints: **Purge** [6 any, worth 1] "On Use, once per game: discard one of your members. Each rival with more members than you discards one too."
+Prints: **Purifiers** [6 any, worth 1] "On Use, once per game: discard one of your members. Each rival with more members than you discards one too."
 - Each player picks what they discard, so the leader drops their cheapest card. It is a mild sting, but it cuts their count for Blue's contest and feeds Blue's discard pile.
 - Played: round II, you have 3, Ann 6, Ben 5. You discard a 3-cost card; Ann and Ben each discard one. You lose 1, the two ahead lose 1 each.
 - Weaker than 1 and 2 in a 3-player game (one for one against each rival).
@@ -73,3 +73,8 @@ Noted, not pitched here: it helps whoever takes it recruit, not the player behin
 - "Everyone gives a member to the player on their left": the giver always hands over their cheapest card, so nothing changes.
 - Anything keyed to who leads a contest right now (verdicts 30).
 - A catch-up rule such as "fewest members recruits first": placing first from round II already goes to fewest followers, and a rule change helps every table, not this one.
+
+## Cory's answer and what was built (Nov 9, 12:45pm)
+Cory: "yeah add some member movement ideas to the next test pool". All three are coded as idea pipeline candidates (tag `poolmove`, bot games only, never dealt in a real game): Gift Swappers and Purifiers (grey; Purge renamed, since a member is people) in content/benders.js, Foreclose (Blue round II) in content/market.js. Tests: src/test/engine/v4/cards-poolmove.test.js. Fire check: all three act in bot games.
+- Gift Swappers rule as built: every pick is made from the cults as they stand when it's used (owner first, then around the table), then every member moves at once.
+- Purifiers rule as built: you discard first; then each rival with more members than you now has discards one of their choice.

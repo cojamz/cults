@@ -167,6 +167,35 @@ function hireSteal(ctx, p, o, n, name) {
   if (k) ctx.log(`${p.name}'s ${name}: steals ${said} from ${o.name}.`);
   return k;
 }
+// pool move helpers: a member's worth to a bot (as Blue's botWorth), the seat on a player's right, Gift Swappers' asks
+const moveWorth = c => c.def.f * 1.4 + (c.def.vanilla ? 0 : 1.6) + (c.def.s + c.def.w) * 0.3;
+const rightOf = (ctx, o) => { const ps = ctx.state.players; return ps[(ps.indexOf(o) + ps.length - 1) % ps.length]; };
+const bestWorth = (ctx, o) => Math.max(0, ...ctx.membersOf(o).map(moveWorth));
+const swapGain = (ctx, p) => bestWorth(ctx, rightOf(ctx, p)) - bestWorth(ctx, p);
+function swapAsk(ctx, data) {
+  for (let k = data.k; k < data.order.length; k++) {
+    const p = ctx.player(data.order[k]), from = rightOf(ctx, p);
+    const list = data.snap[from.id].filter(u => from.members.includes(u));
+    if (!list.length || from === p) continue;
+    ctx.choose(p, `Gift Swappers: take which member from ${from.name}?`, list.map(u => {
+      const c = ctx.card(u);
+      return { id: `card:${u}`, label: `${from.name}'s ${c.def.name} (${c.def.s + c.def.w})`, kind: 'card', value: u, hint: moveWorth(c) };
+    }), 'benders.swapPick', { ...data, k });
+    return;
+  }
+  const owner = ctx.player(data.owner);
+  for (const { to, from, uid } of data.picks) ctx.moveMember(uid, ctx.player(from), ctx.player(to), { actor: owner });
+  ctx.log(`${owner.name}'s Gift Swappers: ${data.picks.length ? data.picks.map(({ to, from, uid }) => `${ctx.player(to).name} takes ${ctx.card(uid).def.name} from ${ctx.player(from).name}`).join(', ') : 'nobody had a member to take'}.`);
+}
+function purgeAsk(ctx, data) {
+  if (data.k >= data.order.length) return;
+  const o = ctx.player(data.order[data.k]);
+  const list = ctx.membersOf(o);
+  if (!list.length) return purgeAsk(ctx, { ...data, k: data.k + 1 });
+  ctx.choose(o, 'Purifiers: discard which of your members?', list.map(c => ({
+    id: `card:${c.uid}`, label: `${c.def.name} (${c.def.s + c.def.w})`, kind: 'card', value: c.uid, hint: -moveWorth(c),
+  })), 'benders.purgeRival', data);
+}
 const members = [
   // idea pipeline pool 6 (Nov 7), grey guests (bot games only). Chameleons: Drifters' choice on a grey card (card.asColor,
   // which every color count reads); it forgets the color when it leaves a cult. Mourners: any cult's member to the
@@ -246,6 +275,34 @@ const members = [
       },
       botActivate: (ctx, owner) => ctx.rivals(owner).some(o => Object.values(o.res).reduce((a, b) => a + b, 0) >= n),
     }), 'pool13')),
+  // idea pipeline pool move (Nov 9, catch-up and member movement; Cory: "yeah add some member movement ideas to the next
+  // test pool"). Gift Swappers: Cory's "everybody pass a member left" (Nov 8), turned so the taker chooses (a giver
+  // would always hand over their cheapest). Every pick is made from the cults as they stand when it's used, the owner
+  // first and then on round the table; then every member moves at once. Right = the seat before (Round Robin gives to
+  // the seat after, "left"). Purifiers: Cory's "you discard a member to make everybody else have to discard a member"
+  // (Nov 8), aimed at bigger cults: you discard first, then each rival with more members than you now has discards
+  // one of their choice, in seat order. Prices fill-ins (8 and 6 any as a player sees them).
+  pool(m('giftswappers', 'Gift Swappers', null, 0, 5, 'On Use, once per game: every player, you too, takes one member they choose from the player on their right.', {
+    activate: 'game',
+    onActivate(ctx, owner, card) {
+      const ps = ctx.state.players, start = ps.indexOf(owner);
+      if (!ps.some(o => rightOf(ctx, o).members.length)) { card.used = false; ctx.log(`${owner.name}'s Gift Swappers: nobody has a member to take.`); return; }
+      const snap = Object.fromEntries(ps.map(o => [o.id, [...o.members]]));
+      swapAsk(ctx, { order: ps.map((_, k) => ps[(start + k) % ps.length].id), k: 0, snap, picks: [], owner: owner.id });
+    },
+    // bots use it when the best card on their right beats the best of their own (what the player on their left takes)
+    botActivate: (ctx, owner) => ctx.state.round >= 2 && swapGain(ctx, owner) > 1,
+  }), 'poolmove'),
+  pool(m('purifiers', 'Purifiers', null, 0, 3, 'On Use, once per game: discard one of your members. Each rival with more members than you discards one too.', {
+    activate: 'game',
+    onActivate(ctx, owner) {
+      ctx.choose(owner, 'Purifiers: discard which of your members?', ctx.membersOf(owner).map(c => ({
+        id: `card:${c.uid}`, label: `${c.def.name} (${c.def.s + c.def.w})`, kind: 'card', value: c.uid, hint: -moveWorth(c),
+      })), 'benders.purgeOwn', { owner: owner.id });
+    },
+    // bots use it when at least two rivals would discard (counted after their own discard)
+    botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).filter(o => ctx.memberCount(o) > ctx.memberCount(owner) - 1).length >= 2,
+  }), 'poolmove'),
   // idea pipeline pool 15 (Nov 7, round 2): Mercenaries with the thief choosing the colors (the verdict's change), one
   // resource at a time, then one shared steal; only rivals you can steal from are offered, so it never moves for nothing.
   pool(m('sellswords', 'Sellswords', null, 0, 1, 'On Use, once per round: steal 3 resources of your choice from a rival, then give them this member.', {
@@ -567,6 +624,27 @@ export const handlers = {
     const o = ctx.player(data.o);
     if ((o.res[c] || 0) - (data.take[c] || 0) > 0) data = { ...data, take: { ...data.take, [c]: (data.take[c] || 0) + 1 }, left: data.left - 1 };
     sellStep(ctx, p, data);
+  },
+  // pool move: Gift Swappers' picks, then the moves at once; Purifiers' discards
+  swapPick(ctx, p, uid, data) {
+    const from = rightOf(ctx, p);
+    if (!data.snap[from.id].includes(uid) || !from.members.includes(uid)) return swapAsk(ctx, data);
+    swapAsk(ctx, { ...data, k: data.k + 1, picks: [...data.picks, { to: p.id, from: from.id, uid }] });
+  },
+  purgeOwn(ctx, p, uid, data) {
+    if (!p.members.includes(uid)) return;
+    ctx.log(`${p.name}'s Purifiers: discards ${ctx.card(uid).def.name}.`);
+    ctx.buryMember(p, uid, p);
+    const ps = ctx.state.players, start = ps.indexOf(p), n = ctx.memberCount(p);
+    const order = ps.map((_, k) => ps[(start + k) % ps.length]).filter(o => o !== p && ctx.memberCount(o) > n).map(o => o.id);
+    if (!order.length) ctx.log(`${p.name}'s Purifiers: no rival has more members.`);
+    purgeAsk(ctx, { ...data, order, k: 0 });
+  },
+  purgeRival(ctx, p, uid, data) {
+    if (!p.members.includes(uid)) return purgeAsk(ctx, data);
+    ctx.log(`${ctx.player(data.owner).name}'s Purifiers: ${p.name} discards ${ctx.card(uid).def.name}.`);
+    ctx.buryMember(p, uid, ctx.player(data.owner));
+    purgeAsk(ctx, { ...data, k: data.k + 1 });
   },
   wayfarers(ctx, p, uid, data) { freeTake(ctx, p, uid, data); },
   chameleon(ctx, p, q, data) {
