@@ -123,7 +123,7 @@ export function Tip({ content, children, as: As = 'span', className = '', label,
           if (e.pointerType !== 'mouse') return;
           if (sticky && isOpen && !open.pinned && body.current) { aimAt(body.current.closest('.popover') || body.current); release(); }
           // the hover's wait is on closing (Cory, 2026-10-25): an open tip stays a beat after the pointer leaves
-          else if (isOpen && !open.pinned && HOVER_DELAY_MS <= 0) timer.current = setTimeout(letGo, MO.hoverClose);
+          else if (isOpen && !open.pinned) timer.current = setTimeout(letGo, MO.hoverClose);
           else letGo();
         }}
         onClick={pin}

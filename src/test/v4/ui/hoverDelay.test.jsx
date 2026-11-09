@@ -12,10 +12,10 @@ const seats = [{ name: 'Ana', kind: 'human' }, { name: 'Bo', kind: 'bot' }, { na
 const target = () => { const el = document.createElement('div'); document.body.appendChild(el); return el; };
 
 describe('the hover delay', () => {
-  // Cory, 2026-10-25: hovers open the moment you point; the wait moved to closing (MO.hoverClose)
-  it('is one constant, 0ms: no wait to open', () => { expect(HOVER_DELAY_MS).toBe(0); });
+  // Cory, 2026-11-08: "hover over should take more of a beat. Like the pointer needs to be on the thing for a beat."
+  it('is one constant, a beat (400ms) to open', () => { expect(HOVER_DELAY_MS).toBe(400); expect(HOVER_OPEN_MS).toBe(400); });
 
-  it('opens a card the moment the pointer arrives (a frame to place it), whole', () => {
+  it('opens a card once the pointer has rested the beat, whole', () => {
     vi.useFakeTimers();
     const s = createGame({ seats, seed: 7 });
     const hover = createHover();
