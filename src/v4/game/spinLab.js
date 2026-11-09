@@ -32,6 +32,7 @@ function finish() {
     at: new Date().toISOString(), how: c.how, frames: c.frames.length, ms: Math.round(c.frames.reduce((a, f) => a + f.gap, 0)),
     worst: Math.round(Math.max(0, ...c.frames.map(f => f.gap))), over50: c.frames.filter(f => f.gap > 50).length, over100: c.frames.filter(f => f.gap > 100).length,
     stall: Math.round(c.frames.filter(f => f.gap > 34).reduce((a, f) => a + f.gap - 17, 0)), gaps, events: c.events.slice(0, 24), steps: c.stepCount,
+    block: Math.round(c.blockWorst), blockTotal: Math.round(c.blockTotal),
     ...safeCtx(),
   };
   lab.records.push(rec);
@@ -47,7 +48,12 @@ export function spinStep(step, how = '') {
   const t = performance.now();
   if (step === 'press') {
     if (lab.cur) { lab.cur.until = t + WATCH_MS; lab.cur.presses++; lab.cur.pending.push(step); lab.cur.stepCount[step] = (lab.cur.stepCount[step] || 0) + 1; return; }
-    const c = (lab.cur = { how, t0: t, until: t + WATCH_MS, presses: 1, frames: [], pending: ['press'], stepCount: { press: 1 }, events: [], last: t });
+    const c = (lab.cur = { how, t0: t, until: t + WATCH_MS, presses: 1, frames: [], pending: ['press'], stepCount: { press: 1 }, events: [], last: t, blockWorst: 0, blockTotal: 0 });
+    // a 25 ms timer chain beside the frames: a late timer means the page's own thread was busy (script, style, layout);
+    // frames that stall while the timers run on time mean the browser's drawing side (compositor, graphics) was stuck
+    let tt = t;
+    const timer = () => { if (lab.cur !== c) return; const now = performance.now(), late = now - tt - 25; if (late > 8) { c.blockTotal += late; if (late > c.blockWorst) c.blockWorst = late; } tt = now; setTimeout(timer, 25); };
+    setTimeout(timer, 25);
     const tick = now => {
       if (lab.cur !== c) return;
       c.frames.push({ t: now, gap: now - c.last, steps: c.pending });
@@ -67,8 +73,8 @@ export const spinRecords = () => lab.records;
 
 /** The report as plain text: where it was measured, then one line per spin. */
 export function spinReport() {
-  const env = on ? `${navigator.userAgent}\nwindow ${innerWidth}x${innerHeight} @${devicePixelRatio}x, screen ${screen.width}x${screen.height}, graphics ${gpu()}` : '';
-  const lines = lab.records.map(r => `${r.at.slice(11, 19)} ${r.how || ''} r${r.round ?? '?'}${r.rival ? ' rival moving' : ''} board ${r.board ?? '?'}px: ${r.frames} frames in ${r.ms} ms, worst ${r.worst} ms, over 50: ${r.over50}, over 100: ${r.over100}, stall ${r.stall} ms; gaps ${r.gaps.join(' ') || 'none'}; steps ${Object.entries(r.steps || {}).map(([k, v]) => `${k} ${v}`).join(' ')}${r.events && r.events.length ? `; waits ${r.events.join(' ')}` : ''}`);
+  const env = on ? `${navigator.userAgent}\nwindow ${innerWidth}x${innerHeight} @${devicePixelRatio}x, screen ${screen.width}x${screen.height}, graphics ${gpu()}, ${navigator.hardwareConcurrency || '?'} cores` : '';
+  const lines = lab.records.map(r => `${r.at.slice(11, 19)} ${r.how || ''} r${r.round ?? '?'}${r.rival ? ' rival moving' : ''} board ${r.board ?? '?'}px: ${r.frames} frames in ${r.ms} ms, worst ${r.worst} ms, over 50: ${r.over50}, over 100: ${r.over100}, stall ${r.stall} ms, page thread busy worst ${r.block ?? '?'} ms (total ${r.blockTotal ?? '?'}); gaps ${r.gaps.join(' ') || 'none'}; steps ${Object.entries(r.steps || {}).map(([k, v]) => `${k} ${v}`).join(' ')}${r.events && r.events.length ? `; waits ${r.events.join(' ')}` : ''}`);
   return `Spin report (${lab.records.length} spins)\n${env}\n${lines.join('\n') || 'no spins yet'}`;
 }
 // the graphics card the browser draws with (a software renderer here means every change to the screen is drawn on the CPU)
