@@ -14,3 +14,12 @@ Cory, Nov 8 8:09pm: "spinning the wheel basically crashes the game as usual." Fi
 
 ## Next
 Read Cory's report. If the gaps sit at `land`/`commit`: the landing's React re-lay (every panel's words fitted to the new angle, rims upright). If at `press`: layer creation. The animations thread (Nov 8) separately found the rims' live curved text re-rasterizing at 200-330 ms whenever a leader changes (rimPictures.js, their fix).
+
+## Cory's spin report (Nov 8, 9:12pm; Firefox 152, Intel Mac, 1440x790 at 2x, v0.99.699)
+8 drags: 11-75 frames per 1.6 s window; worst gaps 0.3-0.9 s at `land`, 0.5-4.3 s at `apply+render+commit` (the React re-lay of the landed angle plus Firefox's redraw); frames at 3-5 a second while anything moved. His steps' own code is small; the time is Firefox drawing. His numbers mirror this box's headless Firefox (software compositor), so this box is a fair model of his Mac after all.
+
+## Second pass (v0.99.700)
+- Landing: nothing is written at `land`; the spin's animations hold the pose (fill: forwards) until the commit writes the angle and drops them in the same frame. Gecko timeline on this box: at land, no main-thread paint at all (before: a paint of the board).
+- Commit: the 24 spaces keep their unturned left/top for good; the turn is a `translate` in `--wheel-px` units the layout effect writes (compositor-only). A landing no longer moves every space; only a space whose words re-fit for the new angle repaints. Positions checked against the paper's cells through spins, drags, back-home and rival moves (max distance unchanged, 10-11 px, which is the print's offset from the cell centre by design).
+- Idle animations: the minions' bob in the seats (`cs-bob`, a 1.5 px ease-in-out glide, 12 elements) kept the renderer thread redrawing the seats' tiles every frame of the whole game: Renderer busy 7.2 s of 20 s of bot play here; 3.1 s with the bob off; 2.2 s with every idle animation off. Now the bob is two pixel frames (`steps(2, jump-none)`): 3.6 s of 20 s. The breathe and blink were already stepped.
+- Per spin on this box: content paints 7 → 7 (press, commit's two renders, bots), scene rebuilds 5 → 4, paint-to-screen total 1086 → 806 ms, worst 253 → 174 ms. Over 20 s of bot play the renderer's load halves. What's left per content paint (~50 ms here, 2-3x on his Intel) is the software compositor redrawing the screen's tiles for any change: fewer changes per second is the remaining lever (count-ups write text every frame; see the animations thread).

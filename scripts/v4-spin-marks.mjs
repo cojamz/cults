@@ -57,6 +57,7 @@ await sleep(1200);
 await page.evaluate(() => window.__sp.stop());
 const fr = await w;
 const marks = await page.evaluate(() => performance.getEntriesByType('mark').map(m => [m.name.replace('wheel:', ''), m.startTime]));
+const lab = await page.evaluate(() => (window.__spinLab ? { records: window.__spinLab.records.length, cur: !!window.__spinLab.cur, last: window.__spinLab.records.at(-1) } : null));
 await browser.close();
 const t0 = fr[0][0];
 const f = t => `${Math.round(t - t0)}`;
@@ -70,3 +71,4 @@ for (const [t, gap] of fr) {
 const steps = {};
 for (const [n] of marks) steps[n] = (steps[n] || 0) + 1;
 console.log(`marks: ${Object.entries(steps).map(([k, v]) => `${k} ${v}`).join(', ')}`);
+if (lab) console.log(`spin recorder: ${lab.records} records${lab.cur ? ', one still timing' : ''}${lab.last ? `; last: ${lab.last.how} worst ${lab.last.worst} gaps ${lab.last.gaps.join(' ')}` : ''}`);

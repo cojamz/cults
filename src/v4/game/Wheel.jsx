@@ -530,10 +530,13 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   const commitWhenStill = useCallback(r => {
     rotRef.current = r;
     clearTimeout(commitT.current);
-    commitT.current = setTimeout(() => {
-      if (spin.current || drag.current) return; // the next landing asks again
+    const tick = () => {
+      // a spin or a drag under way: ask again when it's still (a press on a space during the quiet moment set drag.current
+      // too, and a commit that never came left the board in .turning with its spaces deaf to the pointer)
+      if (spin.current || (drag.current && moved.current)) { commitT.current = setTimeout(tick, QUIET_MS); return; }
       applyRot(rotRef.current);
-    }, QUIET_MS);
+    };
+    commitT.current = setTimeout(tick, QUIET_MS);
   }, [applyRot]);
   useEffect(() => () => clearTimeout(commitT.current), []);
 
@@ -562,9 +565,23 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     // Read slot geometry above before writing transforms: the first frame must not force a layout.
     const dr = r - painted.current;
     for (const sv of root.querySelectorAll(':scope > .turn-layer')) sv.style.transform = Math.abs(dr) > 0.001 ? `rotate(${dr.toFixed(2)}deg)` : '';
-    const d = ((r - drawn.current) * Math.PI) / 180, c = Math.cos(d), s = Math.sin(d);
+    // (the spaces sit at their unturned places: their translate is the whole turn)
+    const d = (r * Math.PI) / 180, c = Math.cos(d), s = Math.sin(d);
     for (const [el, x, y] of geo.current) el.style.translate = Number.isFinite(x + y) ? `${(x * c - y * s - x).toFixed(1)}px ${(x * s + y * c - y).toFixed(1)}px` : '';
   };
+  // A space's resting translate for angle r, from its unturned place (left/top, % of the stage), in board units of --wheel-px
+  // (no pixel read, so it's right at any size the stage takes later)
+  const restTr = (el, r) => {
+    const x = (parseFloat(el.style.left) / 100 - 0.5), y = (parseFloat(el.style.top) / 100 - 0.5);
+    if (!Number.isFinite(x + y)) return '';
+    const d = (r * Math.PI) / 180, c = Math.cos(d), sn = Math.sin(d);
+    return `calc(var(--wheel-px) * ${(x * c - y * sn - x).toFixed(5)}) calc(var(--wheel-px) * ${(x * sn + y * c - y).toFixed(5)})`;
+  };
+  // the animations of a spin that has landed but not yet committed: they hold the board's pose (fill: forwards) until the
+  // commit writes the same angle into the styles and drops them in the same frame. One drawing change per landing, not two
+  // (Nov 8: the landing's own writes, and then the commit's, each cost Cory's Intel Mac a 0.3-0.9 s redraw in Firefox)
+  const held = useRef([]);
+  const dropHeld = () => { for (const a of held.current) a.cancel(); held.current = []; };
   useLayoutEffect(() => {
     mark('commit');
     drawn.current = rot;
@@ -574,11 +591,26 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     root.classList.remove('turning');
     const t = rot ? `rotate(${rot.toFixed(2)}deg)` : '';
     for (const sv of root.querySelectorAll(':scope > .turn-layer')) if (sv.style.transform !== t) sv.style.transform = t;
-    for (const el of root.querySelectorAll(':scope > [data-slot]')) if (el.style.translate) el.style.translate = '';
+    for (const el of root.querySelectorAll(':scope > [data-slot]')) { el.style.translate = restTr(el, rot); el.dataset.tr = `${rot.toFixed(2)}|${el.style.left}|${el.style.top}`; }
+    dropHeld();
     // a spin still turning when an earlier landing commits (its re-lay runs as a transition): its frames were drawn from
     // the old angle, so they're drawn again from this one, on the same clock
     if (spin.current) { root.classList.add('turning'); spinAnims(spin.current); }
   }, [rot]);
+  // a space's element rebuilt by any other render (taken, lit, its words) comes without its turn: give it the resting one
+  // (while the board turns, the next paintRot or spin reads it instead: geo is dropped so it's included)
+  useLayoutEffect(() => {
+    const root = stage.current;
+    if (!root) return;
+    const turning = spin.current || drag.current || held.current.length;
+    for (const el of root.querySelectorAll(':scope > [data-slot]')) {
+      const k = `${rot.toFixed(2)}|${el.style.left}|${el.style.top}`;
+      if (el.dataset.tr === k) continue;
+      el.dataset.tr = k;
+      if (turning) { geo.current = null; if (spin.current) spinAnims(spin.current); else paintRot(rotRef.current); }
+      else el.style.translate = restTr(el, rot);
+    }
+  });
   // A spin (arrow keys, the settle after a drag, a facing change) runs on the compositor (lag pass 2026-10-21: at 4× CPU a
   // rAF spin got 4 frames in ~800ms while a rival's move rendered): the board's layers turn by a CSS transform and each
   // space slides round by `translate`, as Web Animations sampled from the spin's own easing, so a busy main thread can't
@@ -609,7 +641,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     for (const [el, x, y] of spinmode('layersonly') ? [] : geo.current || []) {
       if (!Number.isFinite(x + y)) continue;
       sp.anims.push(el.animate(ks.map(([r, offset]) => {
-        const d = ((r - drawn.current) * Math.PI) / 180, c = Math.cos(d), s = Math.sin(d);
+        const d = (r * Math.PI) / 180, c = Math.cos(d), s = Math.sin(d);
         return { offset, translate: `${(x * c - y * s - x).toFixed(1)}px ${(x * s + y * c - y).toFixed(1)}px` };
       }), opts));
     }
@@ -624,12 +656,14 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     if (anim.current) cancelAnimationFrame(anim.current);
     anim.current = null;
     const sp = spin.current;
-    if (!sp) return;
-    spin.current = null;
-    // a spin cut short (a key, a drag) holds where it was
-    const at = spinAt(sp);
-    for (const a of sp.anims) a.cancel();
-    paintRot(at);
+    if (sp) {
+      spin.current = null;
+      // a spin cut short (a key, a drag) holds where it was: the styles take the pose first, then the animations go (one frame)
+      const at = spinAt(sp);
+      paintRot(at);
+      for (const a of sp.anims) a.cancel();
+    } else if (held.current.length) { paintRot(rotRef.current); }
+    dropHeld();
   };
   const animateTo = useCallback(to => {
     mark('press');
@@ -646,12 +680,12 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       if (spin.current !== sp) return;
       mark('land');
       spin.current = null;
-      // land on the exact angle (the spin ends at MO.spin); React's commit of it follows and changes nothing on screen
-      // (snappy gate s1: waiting on the commit read as a ~500ms spin)
-      paintRot(to);
-      for (const a of sp.anims) a.cancel();
-      // A return to the same React angle has no commit to clean up its promoted layers.
-      if (to === drawn.current && stage.current) stage.current.classList.remove('turning'); // (a drag that came back where it started commits nothing)
+      rotRef.current = to;
+      // the animations hold the landed pose (fill: forwards) until the commit writes it and drops them (held, above):
+      // nothing is drawn again at the landing itself
+      held.current = sp.anims;
+      // a return to the same React angle has no commit: write the pose now and drop them (a drag that came back where it started)
+      if (to === drawn.current) { paintRot(to); dropHeld(); if (stage.current) stage.current.classList.remove('turning'); return; }
       commitWhenStill(to);
     };
     spin.current = sp;
@@ -893,6 +927,14 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   const turned = (x0, y0) => {
     const r = (rot * Math.PI) / 180;
     return [CX + (x0 - CX) * Math.cos(r) - (y0 - CY) * Math.sin(r), CY + (x0 - CX) * Math.sin(r) + (y0 - CY) * Math.cos(r)];
+  };
+  // A space's element sits at its unturned place (left/top) for good; the turn is a `translate` (data-tr, in board units of
+  // --wheel-px) that the layout effect writes and the compositor applies. A landing then changes no space's position: before
+  // (Nov 8, Cory's Intel Mac in Firefox) the landing's commit moved all 24 spaces (left/top) and Firefox re-laid and repainted
+  // the board, 0.5-4 s of frozen page per spin; now only a space whose words re-fit for the new angle repaints.
+  const turnTr = (x0, y0) => {
+    const [X, Y] = turned(x0, y0);
+    return `calc(var(--wheel-px) * ${((X - x0) / VBS).toFixed(5)}) calc(var(--wheel-px) * ${((Y - y0) / VBS).toFixed(5)})`;
   };
 
   const stand = standingsOf(state);
@@ -1333,7 +1375,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   const built = useRef(new Map()); // key → { sig, el }: each space's last element and what it showed
   const sockets = useMemo(() => spaces.map(s => {
     const { key, q, a, ring: t, qid } = s;
-    const [X, Y] = turned(s.xy[0], s.xy[1]);
+    const [X, Y] = s.xy; // (unturned; the turn is data-tr)
     const owner = slotsV[key];
     const shadeOwner = shadeV[key];
     const joiners = (squatsV && squatsV[key]) || [];
@@ -1362,7 +1404,8 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     );
     const minions = owner !== undefined ? <span className="worker-fig" data-seat={owner}>{[owner, ...joiners].map(minion)}</span> : null;
     let style = { ...at(X, Y), '--c': `var(--${qid})` };
-    if (panels) style = { ...style, ...at(...turned(...polar(s.ang, lay.rc))), width: `${((lay.w / VBS) * 100).toFixed(2)}%`, '--one': `${lay.one || PANEL_PX.main}px` };
+    let tr = turnTr(X, Y);
+    if (panels) { const [px0, py0] = polar(s.ang, lay.rc); style = { ...style, ...at(px0, py0), width: `${((lay.w / VBS) * 100).toFixed(2)}%`, '--one': `${lay.one || PANEL_PX.main}px` }; tr = turnTr(px0, py0); }
     // a face from ./faces/: the box is the face's own size (board units), and the face draws everything inside it
     let face = null;
     if (custom) {

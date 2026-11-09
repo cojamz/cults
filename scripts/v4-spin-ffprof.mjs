@@ -28,7 +28,7 @@ const GL_PREFS = { 'gfx.webrender.software': false, 'gfx.webrender.all': true, '
 const browser = await firefox.launch({
   headless: !GL,
   firefoxUserPrefs: GL ? { ...DESK, ...GL_PREFS } : DESK,
-  env: { ...process.env, ...(GL ? { LIBGL_ALWAYS_SOFTWARE: '1', MOZ_WEBRENDER: '1', MOZ_X11_EGL: '1', MOZ_ACCELERATED: '1' } : {}), MOZ_PROFILER_STARTUP: '1', MOZ_PROFILER_SHUTDOWN: OUT, MOZ_PROFILER_STARTUP_FEATURES: 'js,stackwalk,cpu,markers', MOZ_PROFILER_STARTUP_FILTERS: 'GeckoMain,Compositor,Renderer,WRRenderBackend,WRWorker,ImgDecoder,StyleThread', MOZ_PROFILER_STARTUP_INTERVAL: '1', MOZ_PROFILER_STARTUP_ENTRIES: '67108864' },
+  env: { ...process.env, ...(GL ? { LIBGL_ALWAYS_SOFTWARE: '1', MOZ_WEBRENDER: '1', MOZ_X11_EGL: '1', MOZ_ACCELERATED: '1' } : {}), MOZ_PROFILER_STARTUP: '1', MOZ_PROFILER_SHUTDOWN: OUT, MOZ_PROFILER_STARTUP_FEATURES: 'js,stackwalk,cpu,markers', MOZ_PROFILER_STARTUP_FILTERS: 'GeckoMain,Compositor,Renderer,WR,ImgDecoder,StyleThread', MOZ_PROFILER_STARTUP_INTERVAL: '1', MOZ_PROFILER_STARTUP_ENTRIES: '67108864' },
 });
 const [VW, VH] = String(flag('size', '1512x945')).split('x').map(Number);
 const ctx = await browser.newContext({ viewport: { width: VW, height: VH }, deviceScaleFactor: Number(flag('dpr', 2)) });
@@ -60,6 +60,10 @@ if (flag('drag', false)) {
     for (let i = 1; i <= 14; i++) { [x, y] = at(a0 + (sweep * i) / 14); await page.mouse.move(x, y); await sleep(30); }
     await page.mouse.up(); await sleep(600);
   }
+} else if (flag('play', false)) {
+  // --play=<ms>: no spin; your placement, then the bots play for that long (what the table's own animations cost the compositor)
+  const legal = await page.$('.lt-wheel [data-slot][data-option]'); if (legal) await legal.click().catch(() => {});
+  await sleep(Number(flag('play')));
 } else if (flag('poke', false)) {
   // --poke: no spin at all; a one-pixel change somewhere else on the page every --every ms (a control: what any content
   // paint costs here, wheel or not)
@@ -189,5 +193,27 @@ console.log(report.join('\n'));
   }
   rows.sort((a, b) => b - a);
   console.log(`\ncontent paints shown in the window: ${rows.length}; paint-to-screen ms (compositor's CONTENT_FRAME_TIME) total ${rows.reduce((a, b) => a + b, 0)}, worst ${rows[0] ?? 0}, over 100 ms ${rows.filter(x => x > 100).length}: ${rows.slice(0, 12).join(' ')}`);
+}
+// WebRender's CPU rasterizing of SVG "blobs" (the board's paper is one): RasterizeSingleBlob / BlobRasterization start/end
+// markers (phase 2 and 3, paired in order per thread) on the WR worker threads. On a Mac with no working GPU path this is
+// the work a frame waits on (the animations thread, Nov 8: the board's SVG was ~75% of all blob raster time in bot play).
+{
+  let n = 0, sum = 0, max = 0, nb = 0, sumb = 0, maxb = 0;
+  for (const p of procs) for (const th of p.threads || []) {
+    if (!th.markers || !/^(WR|Renderer)/.test(th.name)) continue;
+    const M = th.markers, S = M.schema; const open = new Map();
+    for (const m of M.data) {
+      const name = th.stringTable[m[S.name]]; if (name !== 'RasterizeSingleBlob' && name !== 'BlobRasterization') continue;
+      const t = m[S.phase] === 3 ? m[S.endTime] : m[S.startTime]; // (an interval's end marker carries only endTime)
+      if (m[S.phase] === 2) open.set(name, t);
+      else if (m[S.phase] === 3 || m[S.phase] === 1) {
+        const t0 = m[S.phase] === 1 ? t : open.get(name); const t1 = m[S.phase] === 1 ? m[S.endTime] : t; open.delete(name);
+        if (t0 == null || t1 < window[0] || t0 > window[1]) continue;
+        const d = t1 - t0;
+        if (name === 'RasterizeSingleBlob') { n++; sum += d; max = Math.max(max, d); } else { nb++; sumb += d; maxb = Math.max(maxb, d); }
+      }
+    }
+  }
+  console.log(`blob rasterizing in the window: ${n} blobs, ${Math.round(sum)} ms, longest ${Math.round(max)} ms; ${nb} batches, ${Math.round(sumb)} ms, longest batch ${Math.round(maxb)} ms`);
 }
 console.log(`\nraw profile: ${PROF} (open at https://profiler.firefox.com)`);

@@ -67,8 +67,12 @@ export const spinRecords = () => lab.records;
 
 /** The report as plain text: where it was measured, then one line per spin. */
 export function spinReport() {
-  const env = on ? `${navigator.userAgent}\nwindow ${innerWidth}x${innerHeight} @${devicePixelRatio}x, screen ${screen.width}x${screen.height}` : '';
+  const env = on ? `${navigator.userAgent}\nwindow ${innerWidth}x${innerHeight} @${devicePixelRatio}x, screen ${screen.width}x${screen.height}, graphics ${gpu()}` : '';
   const lines = lab.records.map(r => `${r.at.slice(11, 19)} ${r.how || ''} r${r.round ?? '?'}${r.rival ? ' rival moving' : ''} board ${r.board ?? '?'}px: ${r.frames} frames in ${r.ms} ms, worst ${r.worst} ms, over 50: ${r.over50}, over 100: ${r.over100}, stall ${r.stall} ms; gaps ${r.gaps.join(' ') || 'none'}; steps ${Object.entries(r.steps || {}).map(([k, v]) => `${k} ${v}`).join(' ')}${r.events && r.events.length ? `; waits ${r.events.join(' ')}` : ''}`);
   return `Spin report (${lab.records.length} spins)\n${env}\n${lines.join('\n') || 'no spins yet'}`;
+}
+// the graphics card the browser draws with (a software renderer here means every change to the screen is drawn on the CPU)
+function gpu() {
+  try { const gl = document.createElement('canvas').getContext('webgl'); const d = gl && gl.getExtension('WEBGL_debug_renderer_info'); return gl ? String(d ? gl.getParameter(d.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)) : 'no webgl'; } catch { return '?'; }
 }
 export const spinLabOn = () => on && /[?&]spinlab=1\b/.test(location.search);
