@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.708 — 2026-11-09
+
+- Drag a shop card to put your shop in your own order for the round.
+
 ## v0.99.707 — 2026-11-09
 
 - Sweet Talk: set every silver you turn on one card, press once, and it all flies in one go. Exchange's turn-in too.
