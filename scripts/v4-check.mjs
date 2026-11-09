@@ -20,6 +20,9 @@ import { availableParallelism, loadavg } from 'node:os';
 import { runChild, exitOf, VITE, VITEST, portBusy, busyMessage, servePreview, removeOnExit, removeNow } from './lib/procs.mjs';
 import { acquireSlot, acquire, E2E_TOKENS, SLOTS, recordRun, RUNS } from './lib/slots.mjs';
 import { keysFor, passedKeys, recordPasses, testFilesUnder } from './lib/unit-cache.mjs';
+// Hovers wait a beat before opening (Cory, Nov 8: "the pointer needs to be on the thing for a beat"). These gates time
+// that beat themselves; every other gate only reads what a card says and runs with no wait (V4_HOVER_DELAY=0).
+const BEAT_GATES = new Set(['snappy.mjs', 'info.mjs', 'performance-probe.mjs']);
 
 const HELP = `npm run check:v4 [-- options]
 
@@ -259,7 +262,7 @@ if (wantE2E && existsSync(join(root, 'e2e/v4'))) {
       const tok = await acquire('e2e', { weight, what: `${what}: ${f}`, kind, quietMs: 60000, log: m => console.log(`[${f}] ${m}`) });
       // stalled past 5x its typical time (at least 6 min, counted from when it gets its token)
       const limitS = Math.max(360, 5 * (LONG[f] || 30));
-      try { return await run(`e2e ${f}${ENGINE !== 'chromium' ? ` [${ENGINE}]` : ''}`, [`e2e/v4/${f}`], { env: { V4_URL: server.url, V4_SHOTS: `${shotsRoot}/${f.replace(/\.mjs$/, '')}`, V4_ENGINE: ENGINE }, limitS }); } finally { tok.release(); }
+      try { return await run(`e2e ${f}${ENGINE !== 'chromium' ? ` [${ENGINE}]` : ''}`, [`e2e/v4/${f}`], { env: { V4_URL: server.url, V4_SHOTS: `${shotsRoot}/${f.replace(/\.mjs$/, '')}`, V4_ENGINE: ENGINE, ...(BEAT_GATES.has(f) ? {} : { V4_HOVER_DELAY: '0' }) }, limitS }); } finally { tok.release(); }
     };
     // the FIFO token queue runs them in this order: the parallel ones (one token each), then each solo one alone
     const par = all.filter(f => !SOLO.has(f)).sort(order), solo = all.filter(f => SOLO.has(f)).sort(order);

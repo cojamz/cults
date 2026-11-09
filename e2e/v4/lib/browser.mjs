@@ -13,7 +13,21 @@ const FIREFOX_MISSING = 'Firefox is not installed here. It needs cdn.playwright.
 // Headless Firefox has no pointing device, so it answers (hover: none) and every hover card stays shut (snappy s2 opened
 // 0 of 23 in Firefox, Oct 28). Cory's Firefox on a Mac has a trackpad: tell it so (fine pointer that can hover: 2 | 4).
 export const DESK = { 'ui.primaryPointerCapabilities': 6, 'ui.allPointerCapabilities': 6 };
+// V4_HOVER_DELAY (set by scripts/v4-check.mjs for gates that only read what a hover card says): every page this browser
+// opens gets that hover wait instead of the game's beat (src/v4/game/hoverDelay.js)
+const HOVER = process.env.V4_HOVER_DELAY;
+function withHover(b) {
+  if (HOVER == null || HOVER === '') return b;
+  const script = `window.__V4_HOVER_DELAY = ${JSON.stringify(String(HOVER))};`;
+  const newContext = b.newContext.bind(b), newPage = b.newPage.bind(b);
+  b.newContext = async (...a) => { const c = await newContext(...a); await c.addInitScript(script); return c; };
+  b.newPage = async (...a) => { const pg = await newPage(...a); await pg.addInitScript(script); return pg; };
+  return b;
+}
 export async function launchBrowser(opts = {}) {
+  return withHover(await launchRaw(opts));
+}
+async function launchRaw(opts) {
   if (engine === 'chromium') return chromium.launch(opts);
   const path = process.env.V4_BROWSER || firefox.executablePath();
   if (!existsSync(path)) throw new Error(FIREFOX_MISSING);
