@@ -5,6 +5,7 @@ The road to 1.0 (bar, gaps, order, Cory's calls): design/1.0.md. It sets the ord
 Done items and the old lists: design/archive/todo-2026-10-20-to-23.md and design/archive/todo-before-2026-10-20.md.
 
 ## Cory's calls
+- White: **Brokers** ("Whenever a White action gives you followers, +1 follower.") could be +2 followers (Cory, 2026-11-09 11:18pm Eastern: "Brokers could probably be +2 followers"). Logged only.
 - White: **Martyrs** (now "Whenever this member leaves your cult, gain its cost in followers.") should give +4 white and +4 followers when discarded (Cory, 2026-11-09 10:16pm Eastern: "martyr should give +4 white +4 followers when discarded"). Logged only.
 - Green: **Tribute Band** ("On Use, once per game: choose a rival. Do every action they have a minion on this round.") (Cory, 2026-11-09 10:06pm Eastern: "tribute band is for sure too good"). Logged only.
 - Blue: **Critic** ("Whenever a rival recruits a blue member, +1 follower.") (Cory, 2026-11-09 9:50pm Eastern: "I dont like critic"). Logged only.
