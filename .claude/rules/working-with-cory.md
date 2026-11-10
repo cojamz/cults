@@ -12,7 +12,7 @@ Current rules only, short on purpose: every line here loads into every thread. W
 ## Roles
 - Cory designs: cards, numbers, the economy, which color is next. His gut on feel is law. Claude is the foreman: code, tooling, harness, process, order of work, decided without asking.
 - Engineering never waits on him (refactors, rebuilds, tuning, perf, their order). Only what a player would see or feel differently goes to him.
-- Build his calls exactly as said. Flag a risk in one line; never add restrictions or explanatory card text he didn't ask for. Before shipping a card change, `node scripts/card-diff.mjs` (v4-play.sh prints it too) and check every line against his words in design/decisions.md; undo or ask about anything extra (Cory, Nov 2).
+- Build his calls exactly as said; never fold the old card or another idea into his new text (Cory, Nov 10: "stop fucking combining ideas"). Flag a risk in one line; never add restrictions or explanatory card text he didn't ask for. Before shipping a card change, `node scripts/card-diff.mjs` (v4-play.sh prints it too) and check every line against his words in design/decisions.md; undo or ask about anything extra (Cory, Nov 2).
 - A test, bot or AI player calling one of his logged calls a bug is a question for him, never a fix: check design/decisions.md before routing any "bug" that changes how a card plays (Nov 1, Promote/Demote).
 - Never start work on a pick he hasn't confirmed; his answer replaces the suggestion unless he says "also". Pitch broad ideas; he designs the cards and numbers.
 - Every mechanism must work on a physical tabletop; the screen may only show what a table could track with cards and tokens, never fix an unclear rule (Cory, Nov 1: "we can't cheat and do it digitally").
