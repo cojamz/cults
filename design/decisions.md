@@ -2053,3 +2053,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - (Cory, 2026-11-10 2:49pm Eastern) Fire Sale includes once-per-game effects for now, watched in play ("yes").
 - (Cory, 2026-11-10 2:51pm Eastern) The discard-and-use Blue space stays as is after reviewing the strongest usable members ("Tribute Band we're reworking… Con Men is fine. Heist Crew is fine. Seat Filler is fine. Mentor is fine. I think this will be ok."). Name still open (Fire Sale refused).
 - (Cory, 2026-11-10 2:51pm Eastern) The discard-and-use Blue space is named **Test Drive**: "Discard a shop member. Use its effect now. +1 blue."
+- (Cory, 2026-11-10 2:53pm Eastern) Markdown recruits now, on the space, and you still get your normal recruit at turn end ("Markdown should recruit now. then you also get a nromal recruit at the end"). "Recruit Twice, Spree, Markdown should basically be scaling versions of the same thing." Ladder pending.
