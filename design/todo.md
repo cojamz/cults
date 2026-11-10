@@ -54,6 +54,7 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 20. Five small screen issues from the picky UI run, still open.
 
 ## Ours, open (no call needed)
+- Bug: **Window Shopper** ("On Recruit and Round Start: discard 2 shop members. +1 of each one’s color.") gave no resources at Round Start when it discarded grey members (grey should give any color) (Cory, 2026-11-09 10:20pm Eastern: "window shopper didnt give resources when used on round start (on grey members)"). Logged only.
 - Bug, not reproduced: Red's "Most members of one color" went to a player with 4 red over Cory holding 9 grey (Cory, 2026-11-09 9:31pm Eastern: "i had 9 grey members and I didnt win the contest", "the winner was 4 red"; no log). A hand-built table with 9 grey scores 9 (live, Test cards and Richer). Next: replay a recorded game with many grey members and check the round-end score.
 - Bug: Sore Loser ("Round End: if you win no contest, steal 5 followers from the rival who wins the most.") doesn't show the followers being taken and given (Cory, 2026-11-09 9:19pm Eastern: "Sore loser doesnt correctly wshow taking and giving"). Logged only.
 - Bots and **Encore** ("On Use, once per game: your next On Recruit happens twice."): Cory, Nov 6, "i suspect bots can't use this right". Owners won 17% vs 31% (express Hard test) and 21% vs 31% (v606). Check when Hard uses it and whether it aims it at its best On Recruit.
