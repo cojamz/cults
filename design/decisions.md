@@ -2024,3 +2024,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - 2026-11-09 (Cory, 9:42pm Eastern): "Goes Last token always applies to all minions". Card wording to follow (logged in design/todo.md, not changed yet).
 - 2026-11-09 (Cory, 9:44pm Eastern): "song request should be buskers and should be two members". Not built yet (design/todo.md).
 - 2026-11-09 (Cory, 10:16pm Eastern): "martyr should give +4 white +4 followers when discarded". Not built yet (design/todo.md).
+- (Cory, 2026-11-10 3:40am UTC, after his Blue/Green/White/Purple game) "the contests being unique has been the single best change to this game so far i think": each color having its own contest (By color) stays central; design new colors from their contest.
