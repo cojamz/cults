@@ -5,6 +5,7 @@ The road to 1.0 (bar, gaps, order, Cory's calls): design/1.0.md. It sets the ord
 Done items and the old lists: design/archive/todo-2026-10-20-to-23.md and design/archive/todo-before-2026-10-20.md.
 
 ## Cory's calls
+- Green: **Tribute Band** ("On Use, once per game: choose a rival. Do every action they have a minion on this round.") (Cory, 2026-11-09 10:06pm Eastern: "tribute band is for sure too good"). Logged only.
 - Blue: **Critic** ("Whenever a rival recruits a blue member, +1 follower.") (Cory, 2026-11-09 9:50pm Eastern: "I dont like critic"). Logged only.
 - Renames: **Song Request** (Green: "On Use, once per round: copy an action a rival has a minion on.") becomes **Buskers** and counts as two members (Cory, 2026-11-09 9:44pm Eastern: "song request should be buskers and should be two members"). Logged only.
 - Gift Swappers (Test cards: "On Use, once per game: every player, you too, takes one member they choose from the player on their right.") (Cory, 2026-11-09 9:39pm Eastern: "gift swappers is crazy. The giver picks!"): his read is the giver should pick. Logged only.
