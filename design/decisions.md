@@ -2058,3 +2058,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - (Cory, 2026-11-10 2:58pm Eastern) Yes, 3/5/7 include the space's own +1. Word of Mouth has "a question mark around it for me".
 - (Cory, 2026-11-10 2:58pm Eastern) Word of Mouth stays for now ("yes"). Blue actions done for this pass.
 - (Cory, 2026-11-10 2:58pm Eastern) "So blue red purple green are all locked in" (Red's third round I space still open; Borrow candidate: "Recruit the cheapest shop member, for free. It returns to the shop at round end, before scoring. +1 red."). All four build tonight at reset.
+- (Cory, 2026-11-10, in the project chat) Red's third round I space is **Borrow**: "Recruit the cheapest shop member, for free. It returns to the shop at round end, before scoring. +1 red." ("it also combos with promote/demote"; "cool. so red green purple are mostly done"). Red round I complete. Build tonight at reset.
