@@ -2023,3 +2023,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - 2026-11-09: Foreclose stays out of the Test cards for now (Cory: "out for now").
 - 2026-11-09 (Cory, 9:42pm Eastern): "Goes Last token always applies to all minions". Card wording to follow (logged in design/todo.md, not changed yet).
 - 2026-11-09 (Cory, 9:44pm Eastern): "song request should be buskers and should be two members". Not built yet (design/todo.md).
+- 2026-11-09 (Cory, 10:16pm Eastern): "martyr should give +4 white +4 followers when discarded". Not built yet (design/todo.md).
