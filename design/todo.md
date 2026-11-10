@@ -5,6 +5,7 @@ The road to 1.0 (bar, gaps, order, Cory's calls): design/1.0.md. It sets the ord
 Done items and the old lists: design/archive/todo-2026-10-20-to-23.md and design/archive/todo-before-2026-10-20.md.
 
 ## Cory's calls
+- Gift Swappers (Test cards: "On Use, once per game: every player, you too, takes one member they choose from the player on their right.") (Cory, 2026-11-09 9:39pm Eastern: "gift swappers is crazy. The giver picks!"): his read is the giver should pick. Logged only.
 - Wording: "your next minion goes after everyone else's" on Goes Last token cards (Cory, 2026-11-09 9:33pm Eastern: "\"your next minion goes after everyone elses\" doesnt really make sense with how go last works now"). Logged only.
 - Purple rethink: every card about turns in a row (Cory, 2026-11-09 9:36pm Eastern: "all the consecutive turn stuff doesnt make sense anymore"). Logged only.
 - Purple: **Right Away** (Test cards: "+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one. Then take the Goes Last token: your other minions are placed after everyone else’s.") (Cory, 2026-11-09 9:32pm Eastern: "the purple right away action makes no sense", "because it gives go last token so then you cant take your next turn immediately"). Logged only.
