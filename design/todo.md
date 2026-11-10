@@ -4,6 +4,12 @@
 The road to 1.0 (bar, gaps, order, Cory's calls): design/1.0.md. It sets the order; this list keeps the detail.
 Done items and the old lists: design/archive/todo-2026-10-20-to-23.md and design/archive/todo-before-2026-10-20.md.
 
+## Tonight at reset, 7pm Eastern (Cory, 2026-11-10 3:57pm: "Our main priority tonight will be updating the remainder of the actions of our 8 colors")
+1. Finish actions design with Cory: Magenta's open round I spot (he's thinking), then Silver, White, Yellow (the colors left).
+2. Build every logged action change from design/decisions.md, Nov 10: Green (Build Up, Greatest Hits, Cover; partial code in /mnt/project-files/green-actions/green-nov10-unpushed.patch, 54 tests to update), Red round I, Purple, Blue (Markdown/Recruit Twice/Spree 3/5/7 from discard, Word of Mouth), Magenta (Help Yourself, Catch Up, Heist "Steal 4 followers and 4 resources.", Swindle, Poach unchanged).
+3. Members: Extra Hand → "On Recruit: +1 minion this round."
+4. Rules logged today: steal always splits among rivals as you choose; every color action gives +1 of its color; round I nothing keyed to members or recruiting.
+
 ## Cory's calls
 - Parked for Cory: recruiting from the discard pile (Blue; liked, no slot), Red's third round I space (Borrow candidate). Tonight at reset (Cory, Nov 10; also Magenta actions and Extra Hand → On Recruit: "don't build red green purple in. add them to backlog for tonight at reset"): build the logged Red, Green and Purple action changes (design/decisions.md, Nov 10; unbuilt Green code in /mnt/project-files/green-actions/green-nov10-unpushed.patch).
 - White: **Brokers** ("Whenever a White action gives you followers, +1 follower.") could be +2 followers (Cory, 2026-11-09 11:18pm Eastern: "Brokers could probably be +2 followers"). Logged only.
