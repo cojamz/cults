@@ -2066,3 +2066,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - 2026-11-10 (Cory): "Steal X always implies split among rivals as you choose." Every steal on any card reads this way; card text can drop "split among rivals". Help Yourself logged text drops it too.
 - 2026-11-10 (Cory): Heist stays as Magenta's follower space, up to "Steal 4 followers. +1 magenta." (steal splits among rivals per the steal rule). Build tonight at reset.
 - 2026-11-10 (Cory): In the physical board game, steals take only loose followers; the digital card text does not need to say so.
+- (Cory, 2026-11-10 3:22pm Eastern) Magenta locks: Help Yourself (round I), Heist (round II), Poach (round III, unchanged: "Recruit a rival’s member you choose, for free. +1 magenta."). Three remaining: Stash, Lie Low, Shake Down (Stash's 3:11pm text stays logged but is not a lock).
