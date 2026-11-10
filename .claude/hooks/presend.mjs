@@ -86,6 +86,14 @@ for (const c of cards) {
 if (missing.length) problems.push(`Card text missing. Quote each card in full, next to its name, every time: ${missing.join('; ')}. If a name is only a plain word here, add --ok "Name".`);
 
 // Cory, Nov 1: the neutral members are grey, never "Guests".
+// A pitch (quoted card text with a number, Copy, Recruit, Swap or Discard) needs the brainstorm skill read on this box
+// within 12 hours (Cory, Nov 10: "are you using the FUCKING BRAINSTORMING SKILL", "why do i always have to ask?").
+{
+  const pitch = /["“][^"”]*(\+\d|\bCopy\b|\bRecruit\b|\bSwap\b|\bDiscard\b)[^"”]*["”]/.test(text);
+  let fresh = false;
+  try { fresh = Date.now() / 1000 - Number(readFileSync('/tmp/.cults-brainstorm-read', 'utf8')) < 12 * 3600; } catch { /* not read */ }
+  if (pitch && !fresh) problems.push('This reads as a pitch and the brainstorm skill is not read on this box: run `bash .claude/hooks/brainstorm-read.sh`, put every idea through it in writing (pitching.md), then send again.');
+}
 if (/\bguests\b|\bguest members?\b/i.test(prose)) problems.push('Say "grey" for the neutral members, never "Guests" (Cory, Nov 1).');
 
 // Cory, Nov 7 (said many times): no drawing from the top of the pile, no randomness, all public information.
