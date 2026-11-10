@@ -6,3 +6,4 @@ Ideas Cory wants kept but not acted on. They are not rules. Read before a big me
 - Related note from the same message: the old colors have many "Now and at round start" members, and the redesigned ones have few; "we should maybe reconsider that".
 - **Red action, +red per red member** (Cory, 2026-11-09 9:10pm Eastern): "a red action that gives +red for each red member. Minimum 2, or something like that". Next up for Red's ideas.
 - **Red and On Recruit** (Cory, 2026-11-09 9:10pm Eastern): "triggering the on recruit doesnt 'feel' red anymore". Weigh when Red's cards next change.
+- **Red around its contest** (Cory, 2026-11-09 9:11pm Eastern): "red in general needs to bend more around \"most of one color\"". Red's next rework starts from its contest.
