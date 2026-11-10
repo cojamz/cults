@@ -2025,3 +2025,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - 2026-11-09 (Cory, 9:44pm Eastern): "song request should be buskers and should be two members". Not built yet (design/todo.md).
 - 2026-11-09 (Cory, 10:16pm Eastern): "martyr should give +4 white +4 followers when discarded". Not built yet (design/todo.md).
 - (Cory, 2026-11-10 3:40am UTC, after his Blue/Green/White/Purple game) "the contests being unique has been the single best change to this game so far i think": each color having its own contest (By color) stays central; design new colors from their contest.
+- (Cory, 2026-11-10 3:41am UTC) "i like Con Men activating several times. Its kind of a fun shared thing. I also think Spoilsport is really great": copying a rival's On Recruit over and over (Con Men via Impersonator, Sample, Reprise) is a feature, not a problem to fix; Spoilsport stays.
