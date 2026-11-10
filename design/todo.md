@@ -131,4 +131,4 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 - Banner: keep tightening the lines (Cory, Nov 7: "still some work to do"); a rare mid-turn remount restarts its lines (every-frame check, seen before the banner too).
 - Frame review leftovers (Nov 7, thread "Review every frame for UI polish"): Cory's open pick, should a rival's steals and swaps play as slowly as recruits [yes] (his Oct 26 call keeps them quick until he answers); the middle card's deal-timing WATCH notes in cardframes (a card leaving 10-30 ms after the shop deal starts on your placing turn); DESIGN items D1-D4 in /mnt/project-files/film/merged.md. Re-film any build: scripts/picky/README.md "Frame by frame".
 - Stretch goal (Cory, Nov 9 11:14am): reorganize your own shop by drag and drop to reorder the cards.
-- Red third round I space: a member-moving or swap space that works with few members and isn't too strong (Cory, Nov 10; Tryout holds the slot).
+- Red third round I space: a member-moving or swap space that works with few members and isn't too strong (Cory, Nov 10; Tryout holds the slot).  Also try "everyone recruits something" (Cory, Nov 10).
