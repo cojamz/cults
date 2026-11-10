@@ -5,6 +5,7 @@ The road to 1.0 (bar, gaps, order, Cory's calls): design/1.0.md. It sets the ord
 Done items and the old lists: design/archive/todo-2026-10-20-to-23.md and design/archive/todo-before-2026-10-20.md.
 
 ## Cory's calls
+- Three round I spaces pay followers for recruiting, one each in Magenta (Stash: "+2/+3/+4 magenta. If you recruit a member this turn: +1/+2/+3 followers"), White ("+2 white. +1 follower per 2 spent on a member") and Red ("+2 red. +1 follower per 3 spent on a member") (Cory, 2026-11-09 9:12pm Eastern: "magenta white and red all have an action that do this. Doesnt make sense"). Logged only; at most one color should keep it.
 - Contest-win greys (live v0.99.581): revisit prices and Cheerleaders at 3 members (Cory, Nov 4: "we will revisit that later"); later pick which greys drop back to 10.
 - Decision backlog (Cory, Nov 4 12:36pm): member decks of 12 per color instead of 10 ("maybe we need to increase the member decks to 12...... but we'll talk more about that later"); this also covers fewer, more strategic cults (item 2 under Backlog initiatives, merged Nov 4 12:39pm, Cory: "agreed with all"). The full parked list Cory sees: /mnt/project-files/desk/backlog-for-cory.md.
 - Balance for 2 and 3 players (Cory, Nov 6: "a lot of stuff probably doesnt scale down to two players, particularly robes"; "can be later"): findings and data so far in design/notes/player-count-2-3p-2026-11-06.md (Magenta and Yellow robes, steals, gifts, rival and color counts, snake turnarounds, grey share).
