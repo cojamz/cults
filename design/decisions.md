@@ -2065,3 +2065,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - (Cory, 2026-11-10 3:13pm Eastern) Magenta round I, Help Yourself's slot: "Steal 1 resource per minion you've placed this round, this one included. +1 magenta." ("then there's competition to cap it": taking it late pays more, but someone may take it first). "this round" and "from rivals, split as you choose" are Claude's fill-ins. Build tonight at reset.
 - 2026-11-10 (Cory): "Steal X always implies split among rivals as you choose." Every steal on any card reads this way; card text can drop "split among rivals". Help Yourself logged text drops it too.
 - 2026-11-10 (Cory): Heist stays as Magenta's follower space, up to "Steal 4 followers. +1 magenta." (steal splits among rivals per the steal rule). Build tonight at reset.
+- 2026-11-10 (Cory): In the physical board game, steals take only loose followers; the digital card text does not need to say so.
