@@ -2075,3 +2075,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - (Cory, 2026-11-10 3:38pm Eastern) The new Magenta round II space is named **Swindle** ("call it Swindle").
 - (Cory, 2026-11-10 3:40pm Eastern) Heist up to "Steal 5 followers. +1 magenta." ("4 seems low. its only going to happen one or two times a game (maybe more with copies)"). Build tonight at reset.
 - (Cory, 2026-11-10 3:41pm Eastern) Hoard dropped ("I odnt like hoard"); his Stash steal idea not kept. Magenta has two round I spaces open beside Help Yourself.
+- (Cory, 2026-11-10 3:44pm Eastern) Magenta round I: Catch Up "+2 magenta per rival with more resources than you. +1 magenta." takes one open slot, to try ("lets just try it as +2"; risk noted: 4th seat can get 7 on turn 4). One round I slot left. Build tonight at reset.
