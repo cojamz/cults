@@ -1,9 +1,7 @@
 node_modules
-# build output: Netlify builds from source (previews and deploys run vite build)
+# build output
 dist/
 
-# Local Netlify folder
-.netlify
 .DS_Store
 .v4-build*/
 .v4-panel/

@@ -1,7 +1,7 @@
 # The v4 gate on a clean machine (run by hand, or on a release tag like v0.2 — not on every work-in-progress push,
 # which made a stream of "run failed" emails while agents were mid-change): unit + engine + sphere + session + UI tests and a
 # production build (npm run check:v4 -- --fast). Same command agents run locally, so a red can't depend on whose box
-# it ran on. Nothing here deploys: Netlify builds previews on its own; this job only checks.
+# it ran on. Nothing here deploys; this job only checks.
 name: v4 gate
 
 on:
