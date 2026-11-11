@@ -53,7 +53,8 @@ const P = {
   red: {
     // Nov 10 round I (Cory): Borrow, Trending and Gather
     borrow: { verb: 'Recruit the cheapest, free', second: 'discard it at round end', note: '+1 red' },
-    trending: { verb: '+1 per shop member of', second: 'the most common color', note: '+1 red' },
+    trending: { verb: '+1 per shop member of', second: 'the most common color', note: '+1 red' },  // off the wheel since Nov 11 (Late Shift)
+    lateshift: { verb: 'Free member costing up to', second: '2 per minion you placed this round', note: '+1 red' }, // Cory, Nov 11
     gather: { main: '+3 red', second: '+4 @f: recruit a color you have', note: '+1 red' },
     // the +2 red sat in line 3, which drops on the outer ring (round I review, Oct 25): it takes line 2, as Right Away's purple
     evenswap: { verb: 'Use a shop member’s On Recruit', second: '+2 red', note: 'it stays in the shop' },

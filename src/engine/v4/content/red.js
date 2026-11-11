@@ -14,6 +14,12 @@ import { pool, poolSpace, anyColors, anyColorStep, freeAsk, freeTake } from './p
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
 /** Pool 6: Family Reunion's shop members: a color one of p's members has, costing up to 6 (was 4: nothing cost that little, judge games Nov 7). */
+// Late Shift: your minions on the wheel this round (joined spots count), as Help Yourself counts them
+const placedCount = (ctx, p) => Object.values(ctx.state.slots || {}).filter(o => o === p.id).length
+  + Object.values(ctx.state.squats || {}).reduce((a, l) => a + l.filter(o => o === p.id).length, 0);
+const onBoardNow = (ctx, p) => ctx.state.current === p.id && ctx.state.queue.some(t => t.t === 'endTurn');
+const lateCap = (ctx, n) => 2 * n + richUp(ctx.state);
+const lateList = (ctx, p, n) => ctx.shopCards().filter(c => cost(c) <= lateCap(ctx, n));
 const reunionList = (ctx, p) => {
   const have = new Set(ctx.membersOf(p).map(c => c.asColor || c.def.quadrant).filter(q => q && q !== 'guest' && q !== 'benders'));
   return ctx.shopCards().filter(c => have.has(c.def.quadrant) && cost(c) <= 6 + richUp(ctx.state));
@@ -241,6 +247,20 @@ export default {
       },
     },
     {
+      // Cory, Nov 11 2:04pm: Late Shift replaces Trending ("1. yes... lets just try it and see what the testing says").
+      // The count includes the minion on this space, as Help Yourself reads it; the free member is the player's pick.
+      key: 'lateshift', ring: 1, name: 'Late Shift', copyDoesIt: true,
+      text: 'Recruit a shop member costing up to 2 per minion you’ve placed this round, for free. +1 red.',
+      estimate: (ctx, p) => 1 + Math.max(0, ...lateList(ctx, p, placedCount(ctx, p) + (onBoardNow(ctx, p) ? 0 : 1)).map(c => c.def.f * 1.5 + 1)),
+      resolve(ctx, p) {
+        const n = placedCount(ctx, p), cap = lateCap(ctx, n);
+        freeAsk(ctx, p, 'Late Shift', lateList(ctx, p, n), 'red.poolFree', `${n} minion${n === 1 ? '' : 's'} placed, and no shop member costs ${cap} or less`);
+        ctx.gain(p, 'red', 1, { fromAction: true });
+      },
+    },
+    {
+      // Out of the wheel since Nov 11 (Late Shift takes its place); kept for old saves and its tests
+      pool: true,
       // Cory, Nov 10 11:49am/11:50am: "+1 of the shop's most common color per shop member of that color. +1 red." in
       // Gather's place. Grey members aren't a color. A tie for most common is your pick. Name is Claude's fill-in.
       key: 'trending', ring: 1, name: 'Trending', text: '+1 of the shop’s most common color per shop member of that color. +1 red.', copyDoesIt: true,

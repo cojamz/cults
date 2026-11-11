@@ -58,6 +58,6 @@ describe('space targets', () => {
   });
   it('a space that touches no particular member lights nothing', () => {
     const s = table(Q, { round: 2, shop: ['gold.tycoon', 'red.intern'] });
-    for (const key of ['trending', 'markdown', 'wordofmouth']) expect(targetsAt(s, key)).toBe(null);
+    for (const key of ['markdown', 'wordofmouth'] /* Trending left Nov 11 */) expect(targetsAt(s, key)).toBe(null);
   });
 });

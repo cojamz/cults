@@ -10,7 +10,7 @@ import { beforeAll, afterAll } from 'vitest';
 // Spaces retired by Cory's Nov 10 calls, each with the space that took its slot. They stay in the code for old saves, so
 // their own tests keep running: useRetired([...]) puts them back in their old slot for one test file.
 export const RETIRED_NOV10 = {
-  'red.evenswap': 'borrow', 'red.turnout': 'trending', 'red.hire': 'gather',
+  'red.evenswap': 'borrow', 'red.turnout': 'lateshift', 'red.trending': 'lateshift', 'red.hire': 'gather',
   'market.bargain': 'testdrive', 'market.showroom': 'markdown', 'market.pricecheck': 'wordofmouth',
   'echo.encore': 'crowd2', 'purple.holdup': 'onaroll', 'thieves.hideout': 'catchup', 'thieves.ransom': 'swindle',
   'silver.tongue': 'buyout', 'trading.stipend': 'modestmeans', 'silver.sweetnothings': 'flaunt', 'trading.exchange': 'nestegg', 'trading.estatesale': 'writeoff',
