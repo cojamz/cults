@@ -154,3 +154,20 @@ Verdict: send
 ## Idea: Pocket Money (Exchange's slot)
 Same block as above (Allowance's slot): "+3 white. Buy followers now, as well as your recruit this turn." Round I is mostly the +3 white; from round II it lets you buy followers and a member on one turn, the big-buy turn Cory likes Splurge for. Step 9: round III, a 10-follower card bought with your own 10 resources plus your member recruit; no free followers.
 Verdict: send
+
+# Exchange's slot, second pass (Nov 11 10:55am)
+
+Cory: "white is a LOT of follower gain though", then on Hand-Me-Down "actually i think its to similar." So: no followers, no member's cost paid out. Seeds cut this pass: Pocket Money (buying followers, not picked), discard a shop member for white (Estate Sale's shape on Blue's piece), Test Drive's "use a member, then get rid of it" (Blue's live space), fire a rival's On Use (refused as Commission, Oct 31), take the Goes Last token (Purple's piece), turn a color into white (refused Oct 22), give resources to rivals for white (Silver's verb), steal from bigger cults (Magenta's verb, Modest Means' count), double your white (Gold's verb), borrow a member until round end (Red's Borrow). One survivor, offered as a direction beside plain fuel:
+
+## Idea: Hard Cash
+
+1. Printed text: "+3 white. This turn, your white pays for any color." (name and numbers Claude's fill-ins). Cards it touches: Splurge "+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay (every 1 in round II)."; Smooth Talkers (Silver member) "Your silver pays for any color."; Modest Means "+2 white. +1 white per rival with more members than you."
+2. Played turn: round I, 4 players, you hold 4 white and 1 red after Modest Means and this space; a 5-cost blue member asks for 2 blue: with this you pay it all in white. Best other space, Harvest-style fuel, gives +3 of colors you choose. Gain: the same +3, and your white buys any member in the row this turn. Round II: 10 white buys a 9-cost member of any color, and Splurge on an earlier turn has paid nothing, so the big buy is here.
+3. Both sides: there are no choices on the card; the only decision is which member to buy with the white, made by the player who took it.
+4. Who feels it: rivals saving a color to recruit a member lose the race for it; no sting.
+5. Not refused: Interpreters ("Your yellow can pay any member's colored part.", Nov 6) went unpicked for Yellow; Smooth Talkers is the Silver member with the lasting version. Same shape counts: a space-sized Smooth Talkers, flagged.
+6. Judged: one rule bent for one turn, plain; it depends on recruiting that turn, which the round I rule warns against (Splurge does too, kept by Cory). Access more than power (verdicts 4): the risk.
+7. Public and certain: the shop row and every pile of resources are face up; nothing comes off the pile and nothing is hidden or random.
+8. Color interactions: none named; it touches any color's members through their colored parts, so it works in any game.
+9. Biggest case: round III, 15 white buys a 12-cost member of any color; no free followers or resources. Under the 10 cutoff.
+Verdict: send

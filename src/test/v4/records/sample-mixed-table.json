@@ -3,15 +3,15 @@
  "schema": 1,
  "build": {
   "schema": 1,
-  "content": "459bwurkd4.82587c9b0b",
+  "content": "25uu16v8wr1.20ef2c0249",
   "id": "dev",
-  "version": "v0.99.712"
+  "version": "v0.99.718"
  },
  "made": {
   "schema": 1,
-  "content": "459bwurkd4.82587c9b0b",
+  "content": "25uu16v8wr1.20ef2c0249",
   "id": "dev",
-  "version": "v0.99.712"
+  "version": "v0.99.718"
  },
  "seed": 20261014,
  "quadrants": [
@@ -581,11 +581,11 @@
   ],
   [
    1,
-   "pay:2-0-0-5"
+   "pay:3-1-1-2"
   ],
   [
    2,
-   "slot:1-2"
+   "slot:3-1"
   ],
   [
    2,
@@ -593,63 +593,59 @@
   ],
   [
    2,
-   "tier:top"
+   "tier:small"
   ],
   [
    2,
-   "pay:0-0-4-6"
+   "pay:0-1-0-0"
   ],
   [
    2,
-   "slot:3-2"
+   "slot:0-0"
   ],
   [
    2,
-   "color:magenta"
+   "player:0"
   ],
   [
    2,
-   "done"
+   "tier:mid"
   ],
   [
    2,
-   "tier:top"
+   "pay:3-0-0-2"
   ],
   [
    2,
-   "pay:0-1-5-4"
+   "slot:2-5"
   ],
   [
    2,
-   "slot:2-1"
+   "tier:small"
   ],
   [
    2,
-   "tier:top"
-  ],
-  [
-   2,
-   "pay:0-0-7-3"
+   "pay:0-0-0-1"
   ]
  ],
  "at": {
   "round": 3,
-  "moves": 147,
+  "moves": 146,
   "over": true
  },
  "note": "Sample: a whole 3-player game on a mixed table, played by bots. Replaces nothing; shows the format.",
  "expect": {
   "over": true,
-  "moves": 147,
+  "moves": 146,
   "followers": [
    49,
-   67,
-   67
+   44,
+   60
   ]
  },
  "refreshed": {
-  "from": "psht3ox670.2d42737447",
-  "kept": 147,
+  "from": "459bwurkd4.82587c9b0b",
+  "kept": 134,
   "of": 147
  }
 }
