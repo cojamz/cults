@@ -131,3 +131,26 @@ Verdict: cut (Silver's Toast shape, small ball)
 8. Color interactions: none.
 9. Biggest case: +3 white and +3 followers.
 Verdict: cut (same idea as Modest Means)
+
+
+# Exchange's slot (White round I), Nov 11 10:50am
+
+Asked by Cory: "splurge is good actually, lets keep it. It encourages big buys, and combos with the other actions. I don't like Exchange"
+Frame: round I now Modest Means ("+2 white per rival with more members than you. +1 white.") and Splurge ("+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay (every 1 in round II)."); round II Farewell and Estate Sale pay a discarded member's cost; round III Cash In. White's plan from these: few, big members, rivals wide. Exchange ("+2 white. Then turn up to 1 resource (2 in round II, 3 in round III) into 2 followers each.") is a small converter beside Cash In. Seeds cut this pass: white pays any color this turn (Yellow's translating, and a recruit condition), turn resources into white (refused Oct 22), the old White Exchange "turn up to 2 white into 3 followers" (smaller Cash In), +1 follower per rival with more members (Modest Means' count), give each rival the cheapest member (a 15-resource gift in round I), white per resource held (pile formula).
+
+## Idea: Hand-Me-Down
+
+1. Printed text: "Give a rival the cheapest shop member, for free. Gain followers equal to its cost. +1 white." (name Claude's fill-in; a tie for cheapest is your pick; the rival does not use its On Recruit, as with Swindle). Cards it touches: Modest Means and Splurge as above; Swindle (Magenta): "Steal a rival's member costing up to 7; give them a shop member of your choice in its place. +1 magenta."; Party Gifts (Silver): "Give rivals up to 3 silver from the bank. +2 followers per silver given."; Recluse: "Round End: +2 followers per rival with more members than you."
+2. Played turn: round I, 4 players. The cheapest round I shop member costs about 4 or 5 as a player sees it: you give it to a rival and gain 4 or 5 followers and 1 white. Best other White round I space for followers, Splurge, pays nothing without a member recruit; Party Gifts pays up to +6 followers. Gain: about +4 followers, and one rival now has one more member than you, which raises Modest Means by 2 and helps you in Fewest members.
+3. Both sides: you choose the rival; the rival has no choice. Your side: give it to the rival a member helps least (not the Most members or Most of one color leader), or to the one you want ahead of you on member count for Modest Means and Recluse.
+4. Who feels it: the receiver gets a free member (a gift, plus 1 follower printed on it) but moves away from Fewest members; the other rivals lose the cheapest card in the row. Reason to block: a Blue or Red player who doesn't want to hand White followers.
+5. Not refused: pitched Nov 7 as a Silver space "Give a rival a shop member costing up to 5, for free. Gain followers equal to its cost." → "doesn't do anything for the silver competition… white coded for no reason… removing a member for followers is what reads as white". This is that shape on White, with "the cheapest" in place of the cap so it never goes dead and needs no repricing. Not Hand-Me-Downs (Silver, Nov 11, "way too complicated"), which took rivals' members.
+6. Judged: one plain verb (give) on the shop row, aimed at a rival, done when taken; round I real state needs no members. Intuitive: yes. Fun: a real choice of whom to grow. Interacts: the receiver's contests (Blue, Red, Yellow) and White's own count. Powerful: 4 to 7 followers. Engine or counter: feeds Modest Means, Recluse and Fewest members; counters a rival racing for one cheap card. Its color: White cashes things into followers and stays small while others grow (Cory: "removing a member for followers is what reads as white").
+7. Public and certain: the shop row and its costs are face up; the row refills as after any recruit; no randomness or hidden cards.
+8. Color interactions: the shared moment is a member joining a rival's cult, which Red, Magenta, Silver (Buyout) and Blue also cause; names no color.
+9. Biggest case: round III, the cheapest of 8 shop members costs about 6 or 7: +7 followers and +1 white; Green copying it gives another rival a member and gains the same. Against a winner's 70 to 110, a contest's 4/6/10 and Party Gifts' +6; under the 10 cutoff.
+Verdict: send
+
+## Idea: Pocket Money (Exchange's slot)
+Same block as above (Allowance's slot): "+3 white. Buy followers now, as well as your recruit this turn." Round I is mostly the +3 white; from round II it lets you buy followers and a member on one turn, the big-buy turn Cory likes Splurge for. Step 9: round III, a 10-follower card bought with your own 10 resources plus your member recruit; no free followers.
+Verdict: send
