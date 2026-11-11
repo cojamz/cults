@@ -627,7 +627,7 @@ const silver = {
     polishAll(ctx, p, c) {
       const n = p.res[S] || 0;
       if (!n || c === S || !ctx.state.resources.includes(c)) return;
-      p.res[S] = 0; ctx.gain(p, c, n);
+      p.res[S] = 0; ctx.gain(p, c, n, { unscaled: true }); // a copy's Wallflower doubles the +3, not the turn (Cory, Nov 11)
       ctx.log(`${p.name}'s Polish: ${n} silver into ${n} ${c}.`);
     },
     buyout(ctx, p, uid) {

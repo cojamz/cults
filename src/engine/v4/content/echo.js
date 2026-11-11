@@ -167,7 +167,8 @@ const allowed = (ctx, e, by, path = pathNow(ctx)) => copyable(e) && !protectedAc
 // The active context exists only while content resolves. Every queued choice/continuation gets its
 // own immutable path, so siblings don't poison each other's targets and save/load needs no closures.
 // copier: while a copy does a space itself (a redo, Cover, a copied Echo), the copier's Wallflower and Translator act on
-// every resource that space hands them ({ p, x, green }); it rides on queued choices like the path, so Polish's
+// every resource that space hands them ({ p, x, green }), except a gain marked unscaled (turned, not given: Polish's
+// turn, Cory Nov 11: "just the +3 should double"); it rides on queued choices like the path, so Polish's
 // four picks, made one at a time, are each doubled. Null outside such a copy; a nested copy() starts fresh.
 function withPath(ctx, path, fn, origin = ledger(ctx.state).origin, copier = ledger(ctx.state).copier ?? null) {
   const L = ledger(ctx.state), previous = { path: L.path, origin: L.origin, copier: L.copier };
@@ -178,7 +179,7 @@ function withPath(ctx, path, fn, origin = ledger(ctx.state).origin, copier = led
   const stamp = data => data?.__echoPath ? data : ({ ...(data || {}), __echoPath: [...path], __echoOrigin: origin ?? null, ...(copier ? { __echoCopier: copier } : {}) });
   ctx.choose = (p, prompt, options, h, data, extra) => choose(p, prompt, options, h, stamp(data), extra);
   ctx.defer = (p, h, data, cause) => defer(p, h, stamp(data), cause);
-  if (copier) ctx.gain = Object.assign((t, c, n, o) => (t.id === copier.p && n > 0 ? base(t, copier.green ? 'green' : c, n * copier.x, o) : base(t, c, n, o)), { __copyBase: base });
+  if (copier) ctx.gain = Object.assign((t, c, n, o) => (t.id === copier.p && n > 0 ? base(t, copier.green ? 'green' : c, o?.unscaled ? n : n * copier.x, o) : base(t, c, n, o)), { __copyBase: base });
   else ctx.gain = base;
   try { return fn(); }
   finally {
