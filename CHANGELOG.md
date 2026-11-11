@@ -2,6 +2,11 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.716 — 2026-11-11
+
+- Magenta: Help Yourself reads "Steal 1 resource per minion you've placed this round. +1 magenta."; Stash is "+3 magenta." for now; a member Swindle gives a rival is not a recruit (no On Recruit).
+- Fixes: a member's card opens sooner when you move to the next one; the turn card fits a short screen; your skipped seat dims; a few small labels are easier to read.
+
 ## v0.99.715 — 2026-11-10
 
 - Song Request is now Buskers and counts as two members; Martyrs gives +4 white and +4 followers when discarded; Gift Swappers: each player gives a member they choose; Window Shopper's grey discards give a color you pick; you can still use a member after a last follower recruit; Sore Loser's steal shows at round end; your turn's headline is yours after a rival's round-start card
