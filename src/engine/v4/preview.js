@@ -250,7 +250,13 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
   const keepLeaf = leaves.filter(spendsNothing).reduce((a, s) => (!a || worth(s, pid) > worth(a, pid) ? s : a), null);
   // every member some branch brings you (Open Door's tied cheapest: all four, not the best one's name)
   const joins = [...new Set(leaves.flatMap(s => s.players[pid].members.filter(u => !me0.members.includes(u) && s.cards[u].def !== FACE_DOWN)))];
-  return { exact, partial, capped, made, leaves: leaves.length, keep: keepLeaf ? change(keepLeaf) : null, you, others, othersBy, asks: [...asks], theirAsks: [...theirAsks], copies, swept, reasons: reasons.filter(l => inLeaves.get(reasonOf.get(l)) === leaves.length).slice(0, 6), theirReasons: theirReasons.filter(l => theirCount.get(l) === leaves.length).slice(0, 4), ifRecruit, colorPays, sample: leaves[0], samples: leaves.slice(0, 16),
+  // why a space you'd take does nothing more right now, in the engine's own log words ("1 minion placed, and no shop
+  // member costs 2 or less" on Late Shift), when no pick changes it: "nothing right now" alone read as a broken hover
+  // (picky bot, Nov 11)
+  const mine = `${me0.name}'s `;
+  const whyNone = exact ? ((leaves[0].log || []).map(l => (typeof l === 'string' ? l : l && l.text) || '')
+    .filter(l => l.startsWith(mine) && /: (?:.*\b)?no\b/.test(l)).map(l => l.slice(l.indexOf(': ') + 2).replace(/\.$/, ''))[0] || null) : null;
+  return { exact, partial, capped, made, whyNone, leaves: leaves.length, keep: keepLeaf ? change(keepLeaf) : null, you, others, othersBy, asks: [...asks], theirAsks: [...theirAsks], copies, swept, reasons: reasons.filter(l => inLeaves.get(reasonOf.get(l)) === leaves.length).slice(0, 6), theirReasons: theirReasons.filter(l => theirCount.get(l) === leaves.length).slice(0, 4), ifRecruit, colorPays, sample: leaves[0], samples: leaves.slice(0, 16),
     best: change(top.best), likely: change(top.likely), worst: change(top.worst), tied, mix,
     joins, targets: spaceTargets(state, pid, first, joins, leaves, capped || partial ? tried : null) };
 }

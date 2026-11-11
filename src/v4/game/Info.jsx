@@ -7,7 +7,7 @@ import { discountSources } from '../../engine/v4/discount.js';
 // - TouchTips: on touch screens a long-press on anything with a title shows that title (hover's touch twin).
 import { splitOpener, TimingIcons } from './Timing.jsx';
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { memberWeight, cardDef, defById, quadrant, previewSpace, memberPrice } from '../../engine/v4/index.js';
+import { memberWeight, cardDef, defById, quadrant, previewSpace, memberPrice, spacesOf } from '../../engine/v4/index.js';
 import { term, splitTerms } from '../glossary.js';
 import { costParts, playerColor, standings, toStanding, tiebreakNote, onLoan } from '../format.js';
 import { realHover } from '../hover.js';
@@ -199,7 +199,8 @@ export const effectLines = text => String(text || '').split(/(?<=[.!?])\s+(?=[^\
 // a lone flat gain after the rule ("+1 blue.") read as a stray or a repeat of the line above it ("+1 blue per member sent."),
 // and after "Each rival +1 red." as the rivals' too (picky bot, Nov 4): its own line still, said as yours, no period
 const FLAT = /^\+(\d+) ([a-z]+)\.$/;
-const flatWords = (t, k) => { const m = k > 0 && FLAT.exec(t); return m ? `You also get +${m[1]} ${m[2]}` : t; };
+// a line that is only the gain ("+3 red.") drops its period too: a lone dot read as a stray mark (picky bot, Nov 11)
+const flatWords = (t, k) => { const m = FLAT.exec(t); return !m ? t : k > 0 ? `You also get +${m[1]} ${m[2]}` : `+${m[1]} ${m[2]}`; };
 function Lines({ text, Text, className = 'fx-line' }) {
   const parts = effectLines(text);
   return <>{parts.map((t, k) => <Fragment key={k}>{k ? ' ' : null}<span className={className} data-effect-line=""><Text text={flatWords(t, k)} /></span></Fragment>)}</>;
@@ -821,7 +822,11 @@ export function changeWords(d, state) {
   const went = d.members === -1 && d.lost > 0 ? d.lost : 0;
   // cards that count as more than one member: the cards by name, then the count ("+5 members (Stunt Double,
   // Deprogrammers)" read as five cards: picky bot, Nov 4)
-  if (d.members > 0 && names && names.length !== d.members) gain.push(`${names.join(' and ')} (${n(d.members, 'member')})`);
+  // a card that counts as more than one says so on itself ("Sleepyheads (+2 members)" read as two more cards on top:
+  // picky bot, Nov 11)
+  const weight = u => { try { return memberWeight(state, u); } catch { return 1; } };
+  if (d.members > 0 && names && d.joined.some(u => weight(u) > 1)) gain.push(d.joined.map((u, k) => (weight(u) > 1 ? `${names[k]} (counts as ${weight(u)} members)` : names[k])).join(' and '));
+  else if (d.members > 0 && names && names.length !== d.members) gain.push(`${names.join(' and ')} (${n(d.members, 'member')})`);
   else if (d.members > 0) gain.push(n(d.members, 'member') + who);
   if (d.followers + went > 0) gain.push(n(d.followers + went, 'follower'));
   if (d.turns > 0) gain.push(n(d.turns, 'minion'));
@@ -871,7 +876,11 @@ function mixWords(pv, state, own) {
     const n = Math.max(...mix.map(resTotal)) - fixed;
     const minimums = made ? state.resources.filter(r => made[r][0] > 0).map(r => `+${made[r][0]} ${r}`)
       : state.resources.filter(r => pv.you.res[r][0] > 0 && pv.you.res[r][0] !== pv.you.res[r][1]).map(r => `+${pv.you.res[r][0]} ${r}`);
-    const guaranteed = (made ? minimums : [...minimums, sure].filter(Boolean)).join(', ');
+    // the followers and members every pick brings ride along: Heist's "+4 followers" went missing beside the rivals'
+    // "−4 followers" (picky bot, Nov 11); without `made`, `sure` already says them
+    const [fl, mb] = lostSpans(pv.you);
+    const whole = [pv.you.followers[0] === pv.you.followers[1] ? fl : null, pv.you.members[0] === pv.you.members[1] ? mb : null].filter(Boolean);
+    const guaranteed = (made ? [...minimums, ...whole] : [...minimums, sure].filter(Boolean)).join(', ');
     if (n > 0 && theirs && eqTotal) return { text: `${guaranteed ? `${guaranteed}, ` : ''}+${n} resource${n === 1 ? '' : 's'}`, note: 'their pick' };
     if (n > 0 && !theirs) return { text: `${guaranteed ? `${guaranteed}; ` : ''}steal ${eqTotal ? '' : 'up to '}${n} in colors you pick`, note: null };
   }
@@ -889,7 +898,11 @@ function mixWords(pv, state, own) {
     // a color some pick spends (Sweet Talk's silver, Makeover's whole pile): yours to turn into others
     const spent = state.resources.filter(r => lo(r) !== hi(r) && lo(r) < 0);
     const free = total(mix[0]) - fixedRes.reduce((t, r) => t + lo(r), 0);
-    const parts = [...fixedRes.map(r => `${signed(lo(r))} ${r}`), free > 0 ? `+${free} in colors you choose` : null,
+    // you pick members, not colors (Out of Style: +1 of each discarded member's color): say what sets the colors
+    // (picky bot, Nov 11: "in colors you choose" when the shop's members fix them)
+    const asks = pv.asks || [];
+    const byMembers = asks.length > 0 && /member/i.test(asks[0]) && !/colou?r|resource/i.test(asks[0]);
+    const parts = [...fixedRes.map(r => `${signed(lo(r))} ${r}`), free > 0 ? `+${free} ${byMembers ? 'in the colors of the members you pick' : 'in colors you choose'}` : null,
       mix[0].followers ? `${signed(mix[0].followers)} follower${Math.abs(mix[0].followers) === 1 ? '' : 's'}` : null].filter(Boolean);
     const list = spent.length > 1 ? `${spent.slice(0, -1).join(', ')} and ${spent[spent.length - 1]}` : spent[0];
     return { text: parts.join(', ') || 'nothing', note: spent.length ? `rearranging your ${list}` : null };
@@ -929,15 +942,17 @@ export function youdWords(pv, state, own = null) {
   // your pick decides: what's sure as it is, and the best pick's gains as "up to", never as a promise (w4 skeptic #10:
   // Even Swap's "+1 follower" read as promised, and a different swap gave none)
   if (pv.best && !pv.tied) {
+    // (a single copy too: a copied Heist read "up to +4 red" and lost its steal, picky bot, Nov 11)
     // a steal whose picks differ only in how much each rival holds (Help Yourself from one rival, Nov 5): the most you
     // could take, in colors you pick, never one pick's colors as if promised ("up to +5 gold, +2 red")
     const total = d => state.resources.reduce((t, r) => t + d.res[r], 0);
-    if (!pv.copies && !(pv.theirAsks && pv.theirAsks.length) && pv.worst
+    if ((!pv.copies || pv.copies.length === 1) && !(pv.theirAsks && pv.theirAsks.length) && pv.worst
       && state.resources.some(r => pv.others?.res?.[r]?.[0] < 0) && state.resources.every(r => pv.you.res[r][0] >= 0)
       && pv.best.followers === pv.worst.followers && pv.best.members === pv.worst.members) {
       const mins = state.resources.filter(r => pv.you.res[r][0] > 0);
       const n = total(pv.best) - mins.reduce((t, r) => t + pv.you.res[r][0], 0);
-      const sure = mins.map(r => `+${pv.you.res[r][0]} ${r}`).join(', ');
+      const [fl, mb] = lostSpans(pv.you); // its followers too (picky bot, Nov 11: a copied Heist left out its +4 followers)
+      const sure = [...mins.map(r => `+${pv.you.res[r][0]} ${r}`), pv.you.followers[0] === pv.you.followers[1] ? fl : null, pv.you.members[0] === pv.you.members[1] ? mb : null].filter(Boolean).join(', ');
       if (n > 0) return { text: `${sure ? `${sure}; ` : ''}steal up to ${n} in colors you pick`, note: null };
     }
     // your best pick spends what the space just gave (Snap Up: +2 blue, then pay for a member): the two ends, so the
@@ -953,13 +968,17 @@ export function youdWords(pv, state, own = null) {
       const kept = Object.fromEntries(state.resources.map(r => [r, Math.max(0, (pv.best.res[r] || 0) - (w0.res[r] || 0))]));
       const gets = changeWords({ ...pv.best, res: kept }, state);
       // each branch on its own line (picky bot, Nov 4: Cover's "…right after this one, or +2 …, +3 followers for 6" ran on)
-      return { text: worst, or: paid > 0 && gets !== 'nothing' ? `${gets} for ${paid}` : best, note: 'your pick' };
+      // what the recruit costs says "resources" (picky bot, Nov 11: Markdown's "+1 follower for 3", a bare number)
+      return { text: worst, or: paid > 0 && gets !== 'nothing' ? `${gets} for ${paid} resource${paid === 1 ? '' : 's'}` : best, note: 'your pick' };
     }
     // the best pick keeps the space's own gain and pays from what you held (Exchange: "+1 white", then followers for 2
     // resources): the gain, then the pick on its own line (picky bot, Nov 4: "up to +1 white, +4 followers, −2 resources")
     // (the least pick, turning nothing, is the space’s own gain; never on a copy space, whose least pick is another space)
     const base = pv.worst;
-    if (base && !pv.copies && !spends(base) && state.resources.some(r => base.res[r] > 0) && (pv.best.followers > base.followers || pv.best.members > base.members) && state.resources.some(r => pv.best.res[r] < base.res[r])) {
+    // only a least pick that is the gain alone: Demote's and Farewell's worst swap or cast-out read as a first step
+    // ("−3 members, −3 followers then up to +3 members": picky bot, Nov 11)
+    const gainOnly = base && !base.swapped && base.members >= 0 && base.followers >= 0;
+    if (gainOnly && !pv.copies && !spends(base) && state.resources.some(r => base.res[r] > 0) && (pv.best.followers > base.followers || pv.best.members > base.members) && state.resources.some(r => pv.best.res[r] < base.res[r])) {
       const paid = state.resources.reduce((t, r) => t + Math.max(0, (base.res[r] || 0) - (pv.best.res[r] || 0)), 0);
       const gets = changeWords({ ...pv.best, res: Object.fromEntries(state.resources.map(r => [r, Math.max(0, (pv.best.res[r] || 0) - (base.res[r] || 0))])), followers: pv.best.followers - base.followers, members: pv.best.members - base.members }, state);
       if (paid > 0 && gets !== 'nothing') return { text: changeWords(base, state), or: `up to ${gets} for ${paid} resource${paid === 1 ? '' : 's'}`, orWord: 'then', note: 'your pick' };
@@ -1022,6 +1041,18 @@ export function ifRecruitWords(x) {
 // skipSelf: Hold Up when the next turn is yours: the skip pushes your minion later, said as the skip it is, not "goes
 // last" beside a "Skips: you" row (Cory, Nov 9: "this should be reworded for sure")
 const SKIP_SELF = t => (t ? t.replace(/your next minion goes last/, 'you skip your next turn') : t);
+/**
+ * A steal the space itself doesn't print comes from the member it brings in (Swindle taking Accomplice, "On Recruit:
+ * steal 3 resources"; Promote to Fan Club copying a Heist): the steal names that member, "(via Accomplice)" (picky bot,
+ * Nov 11: "steal 3" with nothing on the space saying steal read as a wrong hover). Words only; '' when it doesn't apply.
+ */
+export function viaWords(pv, state, spaceText) {
+  if (!pv || /\bsteal (?:\d|up to|half|1 per)/i.test(spaceText || '')) return '';
+  const names = [...new Set((pv.joins || []).map(u => { try { return cardDef(state, u); } catch { return null; } })
+    .filter(d => d && /On Recruit:[^.]*\b(?:steal|copy)/i.test(d.text || '')).map(d => d.name))];
+  return names.length === 1 ? names[0] : '';
+}
+const withVia = (t, via) => (t && via ? t.replace(/(steal (?:up to )?\d+ in colors you pick)/, `$1 (via ${via})`) : t);
 export function YoudGet({ state, pid, q, i, now = false, skipSelf = false }) {
   const pv = usePreview(state, pid, q, i, { now });
   if (pid == null) return null;
@@ -1031,7 +1062,13 @@ export function YoudGet({ state, pid, q, i, now = false, skipSelf = false }) {
   let own = null;
   try { own = quadrant(state.quadrants[q]).resource; } catch { /* none */ }
   const y0 = youdWords(pv, state, own);
-  const y = skipSelf ? { ...y0, text: SKIP_SELF(y0.text), or: SKIP_SELF(y0.or), likely: SKIP_SELF(y0.likely), best: SKIP_SELF(y0.best) } : y0;
+  const y1 = skipSelf ? { ...y0, text: SKIP_SELF(y0.text), or: SKIP_SELF(y0.or), likely: SKIP_SELF(y0.likely), best: SKIP_SELF(y0.best) } : y0;
+  let spaceText = '';
+  try { spaceText = spacesOf(state, state.quadrants[q])[i].text || ''; } catch { /* none */ }
+  const via = viaWords(pv, state, spaceText);
+  const y = via ? { ...y1, text: withVia(y1.text, via), or: withVia(y1.or, via), likely: withVia(y1.likely, via), best: withVia(y1.best, via) } : y1;
+  // why it does nothing more (Late Shift: "no shop member costs 2 or less"), when no pick changes it (picky bot, Nov 11)
+  const whyNone = pv.whyNone && !y.note && !y.likely && !y.or ? pv.whyNone : null;
   return (
     <span className="youd-get" data-youd-get={w.you} title="Worked out by playing this space on a copy of the table, right now">
       {/* never "about": the preview is the engine's own dry run, and hedged words made it read unsure (w4 skeptic #29) */}
@@ -1040,7 +1077,7 @@ export function YoudGet({ state, pid, q, i, now = false, skipSelf = false }) {
           after "or", and whose call it is (w4b #12: "+4 likely / +1 member, +1 at best" read like an engine dump) */}
       {y.likely
         ? <span data-youd-cases>{y.text ? <><Rich text={y.text} />{', and '}</> : null}<Rich text={y.likely} />{', or '}<Rich text={y.best} /><em className="yd-note">their choice</em></span>
-        : <>{y.text ? <Rich text={y.text} /> : null}{y.or ? <span className="yd-or" data-youd-or="">{y.orWord || 'or'} <Rich text={y.or} /></span> : null}{y.note ? <em className="yd-note">{y.note}</em> : null}</>}
+        : <>{y.text ? <Rich text={y.text} /> : null}{y.or ? <span className="yd-or" data-youd-or="">{y.orWord || 'or'} <Rich text={y.or} /></span> : null}{y.note ? <em className="yd-note">{y.note}</em> : null}{whyNone ? <em className="yd-note" data-youd-why="">{whyNone}</em> : null}</>}
       {/* the followers a later recruit this turn would add (Gather, Stash, Allowance, Splurge): the dry run stops before
           the recruit, so its own line says them (picky bot, Nov 4: "+3 red" alone left the follower part out) */}
       {pv.ifRecruit ? <small className="youd-others youd-if" data-youd-if=""><Rich text={ifRecruitWords(pv.ifRecruit)} /></small> : null}

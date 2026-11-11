@@ -6,6 +6,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { quadrant, roman, spaceOpen, contestTable, contestOrder, cardDef, botLevel, BOT_LEVEL_INFO, RING_VALUE, spacesOf } from '../../engine/v4/index.js';
+import { plus1Mode, plus1Open, printsPlus1 } from '../../engine/v4/core.js';
 import { ruleWords } from '../shorts.js';
 import { playerColor, standings } from '../format.js';
 import { Popover } from './parts.jsx';
@@ -472,7 +473,7 @@ function useCopyTargets(c, state, me) {
 }
 /**
  * The hover's one plain line naming what the space lights (Cory, 2026-10-16: the lit cards say why): "Would recruit:
- * Intern (cheapest, 1)", "Could recruit: Intern or Benchwarmer (cheapest, 1)", "Could take: Bo's Twins (2)", "Could
+ * Intern (cheapest, cost 1)", "Could recruit: Intern or Benchwarmer (cheapest, cost 1)", "Could take: Bo’s Twins (cost 2)", "Could
  * swap: your Banker for Bo's Twins". Past three, the count (the lit cards name themselves). { k, text } rows, or [].
  */
 export function targetLines(state, viewer, t, ruleText = '') {
@@ -488,11 +489,14 @@ export function targetLines(state, viewer, t, ruleText = '') {
     const cheapest = state.shop.length > t.shop.length && t.shop.every(u => cost(u) === low) && state.shop.filter(u => cost(u) === low).length === t.shop.length;
     const same = t.shop.every(u => cost(u) === cost(t.shop[0]));
     const names = t.shop.length > 3 ? `${t.shop.length} lit members` : list(t.shop.map(u => def(u).name));
-    const tail = cheapest ? ` (cheapest, ${low})` : t.shop.length <= 3 && same ? ` (${cost(t.shop[0])})` : '';
-    out.push({ k: t.sure ? 'Would recruit' : 'Could recruit', text: names + tail, uids: t.shop });
+    // the number says it's a cost (picky bot, Nov 11: "Accomplice (5)" was a bare number)
+    const tail = cheapest ? ` (cheapest, cost ${low})` : t.shop.length <= 3 && same ? ` (cost ${cost(t.shop[0])})` : '';
+    // on a swap space the shop's members come by a swap, never a recruit (picky bot, Nov 11: Promote's "Would recruit
+    // Fan Club (8)")
+    out.push({ k: t.pairs.length ? 'Could swap for' : t.sure ? 'Would recruit' : 'Could recruit', text: names + tail, uids: t.shop });
   }
   if (t.seats.length) {
-    const names = t.seats.length > 3 ? `${t.seats.length} lit members` : list(t.seats.map(u => `${whose(u)} ${def(u).name} (${cost(u)})`.trim()));
+    const names = t.seats.length > 3 ? `${t.seats.length} lit members` : list(t.seats.map(u => `${whose(u)} ${def(u).name} (cost ${cost(u)})`.trim()));
     out.push({ k: 'Could take', text: names, uids: t.seats });
   }
   if (t.pairs.length) {
@@ -504,7 +508,13 @@ export function targetLines(state, viewer, t, ruleText = '') {
     // pair is (it said so for Promote and Demote, whose pairs differ by up to 2: picky bot, Nov 4)
     const reach = (/costing (up to \d+ (?:more|less))/.exec(ruleText) || [])[1];
     const price = reach ? `, each costing ${reach}` : t.pairs.every(([a, b]) => cost(a) === cost(b)) ? ' of the same cost' : '';
-    const text = t.pairs.length > 2 ? `${many(firsts.size, 'member')} for ${allShop ? many(seconds.size, 'shop member') : many(seconds.size, 'member')}${price}` : t.pairs.map(([a, b]) => `${whose(a)} ${def(a).name} for ${whose(b) || 'the shop’s'} ${def(b).name}`.trim()).join(', or ');
+    // your side is any one of yours, the other side one of theirs: "any of your 9 for one of 16 others" (picky bot, Nov 11:
+    // "Could swap 9 members for 16 members" read as trading nine away)
+    // (a pair can list either side first, so the sides are read by owner)
+    const sides = [...new Set(t.pairs.flat())], give = sides.filter(u => whose(u) === 'your'), get = sides.filter(u => whose(u) !== 'your');
+    const getShop = get.every(u => state.shop.includes(u));
+    const text = t.pairs.length > 2 ? (give.length && get.length ? `any of your ${give.length} for one of ${get.length} ${getShop ? 'shop members' : 'others'}${price}`
+      : `${many(firsts.size, 'member')} for ${allShop ? many(seconds.size, 'shop member') : many(seconds.size, 'member')}${price}`) : t.pairs.map(([a, b]) => `${whose(a)} ${def(a).name} for ${whose(b) || 'the shop’s'} ${def(b).name}`.trim()).join(', or ');
     out.push({ k: 'Could swap', text, uids: [...new Set(t.pairs.flat())] });
   }
   return out;
@@ -588,13 +598,16 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
   // the space's own flat gain of its color ("… +1 white.") sits as a badge by its name, not a line of its own (Cory, Nov 9:
   // "have it but visually better added rather than extra lines of text")
   const flatEnd = !a.byRound && /^(.*?)\s*\+(\d+) ([a-z]+)\.\s*$/.exec(String(a.text || ''));
-  const ownPlus = flatEnd && flatEnd[1] && flatEnd[3] === Q.resource;
+  // not when the sentence leads into it ("…none of your members have: +3 yellow." read as ending on a colon), and not a
+  // once-a-game +1 someone already claimed (it stayed after the first taker, beside the missing dot: picky bot, Nov 11)
+  const ownPlus = flatEnd && flatEnd[1] && flatEnd[3] === Q.resource && !/:$/.test(flatEnd[1]);
+  const claimed = ownPlus && flatEnd[2] === '1' && plus1Mode(state) === 'game' && printsPlus1(a, qid) && !plus1Open(state, q, i);
   const plus = ownPlus ? `+${flatEnd[2]} ${flatEnd[3]}` : null;
   const rule = ownPlus ? flatEnd[1] : a.text;
   return (
     <div className="lt-card-body" data-space-card={spaceKey} style={{ '--q': `var(--q-${sphereOf(qid)}, var(--${qid}))` }}>
       {/* plate 1b: the name, its one-sentence rule, then "You'd get" (the picture lives on the space itself) */}
-      <h4 className="sc-name" title={`${Q.name} · ${RINGS[a.ring - 1]}`}>{a.name}{plus ? <span className="sc-plus" data-plus="" title={`You also get ${plus}`}><Rich text={plus} /></span> : null}</h4>
+      <h4 className="sc-name" title={`${Q.name} · ${RINGS[a.ring - 1]}`}>{a.name}{plus ? <span className="sc-plus" data-plus={claimed ? 'taken' : ''} title={claimed ? 'Taken: only the first player to take this space gets it' : `You also get ${plus}`}>{claimed ? <s><Rich text={plus} /></s> : <Rich text={plus} />}</span> : null}</h4>
       <p className="sc-rule"><RuleText def={a} text={rule} round={round} lines /></p>
       {LIMITS[`${qid}.${a.key}`] ? <p className="sc-limit" data-limit=""><Rich text={LIMITS[`${qid}.${a.key}`]} /></p> : null}
       <div className="lt-yd">
