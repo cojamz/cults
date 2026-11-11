@@ -18,7 +18,7 @@ Real numbers (4 Normal-bot games, scratchpad measure.mjs): followers at round II
 7. Public and certain: followers are public.
 8. Color interactions: none: a single-color catch-up card; it reads followers, which every color makes.
 9. Biggest case: last place in round III, 3 rivals ahead: +6 followers and 9 silver to rivals; Green copying it pays the copier by its own standing, at most +6 again. Against a winner's 70 to 110 and a contest's 10: small and bounded.
-Verdict: send
+Verdict: cut (Cory, Nov 11: "we already have a follower action")
 
 ## Idea: Thank-You Gifts
 
