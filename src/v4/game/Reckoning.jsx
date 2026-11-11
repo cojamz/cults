@@ -69,6 +69,17 @@ export function afterContestSteps(info, phase = 'afterContests') {
   }).filter(st => st.rows.length);
 }
 
+/**
+ * A member step that moves followers from one rival to another (Sore Loser's steal): the one seat that loses them, else
+ * null. Its token leaves that seat's total, not the member, so the table sees the take and the give (Cory's playtest,
+ * Nov 9: "Sore loser doesnt correctly wshow taking and giving").
+ */
+export function stealFrom(row) {
+  if (!row || row.kind !== 'after' || !row.winners.length) return null;
+  const losers = row.rows.filter(x => x.shown < 0);
+  return losers.length === 1 ? losers[0].id : null;
+}
+
 /** The round's steps on screen: the contests, then the members that answer them, then (round III) the Game End members, each credited to its member on the table. */
 export function reckonSteps(info) {
   const contests = [...reckonRows(info), ...afterContestSteps(info)];
@@ -255,7 +266,10 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
         const home = root && (root.querySelector(`.lt-cult-seat[data-seat="${id}"] .cs-total`) || playerAnchor(root, id));
         // the followers leave the winner's column on the card (their score), else the rim's engraving
         const col = document.querySelector(`.lt-reckon [data-reckon-col="${id}"] .rc-n`);
-        const src = row.kind === 'bonus' || row.kind === 'after' ? plaque : col && col.getBoundingClientRect().width ? col : plaque;
+        // a steal (Sore Loser) leaves the robbed seat's total, which flashes as the followers go
+        const robbed = stealFrom(row), robbedEl = robbed != null && root ? root.querySelector(`.lt-cult-seat[data-seat="${robbed}"] .cs-total`) : null;
+        const src = robbedEl || (row.kind === 'bonus' || row.kind === 'after' ? plaque : col && col.getBoundingClientRect().width ? col : plaque);
+        if (robbedEl && !k) pulse(robbedEl, MO.roll);
         if (!src || !home) { land(); return; }
         const a = src.getBoundingClientRect(), b = home.getBoundingClientRect();
         // a little quicker than an ordinary flight of its length: it's the fourth of four, and its source is lit (Oct 29)
