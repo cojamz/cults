@@ -25,6 +25,7 @@ Written by the "Plan action balance and feel testing" thread from Cory's message
   - how early in the round it goes
   - what one minion there earns its placer and the rivals that turn (followers, resources, and members at their price)
   - how its takers do compared with players who ended with about as many members
+- **Each color's own resource** (Cory, Nov 11, on Red getting Late Shift for Trending: "we need to consider how to get more red resources ... lets just try it and see what the testing says. We could always add +1 red"): how much of it each player gains, and how much the player who used that color most gains and how many of its members they end with. If Red's comes out short, that goes to Cory with the +1 red option.
 - **For each color**: its share of placements, and how much of the winner's play went there. It also gives cloak win rates, the winners-with-5-or-fewer share, and the follower totals.
 - **Members get their own section**: who ends the game holding each one, and how they do compared with players as wide. That keeps the member read apart from the spaces without needing separate games.
 - **Replacement Green**: `membersOut`/`membersIn` (a rule that bot runs and expert games can set) swaps Tribute Band for **Ensemble** ("Whenever you copy your own action, +1 follower."), worth 3 and counting as 3 members like Tribute Band, so the Green deck stays at 10. Ensemble is Claude's stand-in from Green's own cut cards; the members thread can name a real one.

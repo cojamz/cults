@@ -101,6 +101,23 @@ for (const q of qs) {
   P(`| ${color(q)} | ${gs.length} | ${pct(mine.length / Math.max(1, all.length))} | ${f1(avg(mine.map(pc => pc.value).filter(Number.isFinite)))} | ${pct(wShare)} | ${cl.length ? `${pct(avg(cl.map(p => (p.win ? 1 : 0))))} of ${cl.length}` : '-'} |`);
 }
 P('');
+// each color's own resource: how much of it a player gains in a game, and how much the player who leaned on that color
+// most (most placements on its spaces) gains, beside how many of its members that player recruited. A short color
+// shows as its heaviest user gaining little of it and recruiting few of its members.
+const RES = { thieves: 'magenta', market: 'blue', echo: 'green', trading: 'white', red: 'red', yellow: 'yellow', purple: 'purple', silver: 'silver' };
+P('## Each color\'s own resource');
+P('');
+P('| Color | Gained per player | Gained by its heaviest user | Its members its heaviest user ended with | Heaviest user won |');
+P('|---|---|---|---|---|');
+for (const q of qs) {
+  const gs = games.filter(g => g.table.includes(q) && g.players[0].gained);
+  if (!gs.length) continue;
+  const r = RES[q] || q;
+  const per = avg(gs.flatMap(g => g.players.map(p => p.gained[r] || 0)));
+  const heavy = gs.map(g => { const c = g.players.map((_, i) => g.placements.filter(pc => pc.p === i && pc.space.startsWith(q + ':')).length); const i = c.indexOf(Math.max(...c)); return g.players[i]; });
+  P(`| ${color(q)} | ${f1(per)} | ${f1(avg(heavy.map(p => p.gained[r] || 0)))} | ${f1(avg(heavy.map(p => (p.members || []).filter(id => id.startsWith(q + '.')).length)))} | ${pct(avg(heavy.map(p => (p.win ? 1 : 0))))} |`);
+}
+P('');
 // members, kept apart from the spaces (Cory, Nov 11: "I would like the balance testing for the members to be a little
 // bit separate and focused on them"): who ends the game holding each one and how they do against players as wide
 const M = {};

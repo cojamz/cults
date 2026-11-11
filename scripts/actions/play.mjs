@@ -53,6 +53,9 @@ for (let g = first; g < first + count; g++) {
   // a turn's window: from its placement to the next placement by anyone (its buy and any rival choices inside it).
   // The move that ends a round closes it on the table before that move, so round-end contests never count for a space
   // (that move is a buy or a pass, which nets about 0 here).
+  // each color's resources each player gained over the game (Cory, Nov 11, on Red: "we need to consider how to get
+  // more red resources. Maybe it doesnt matter? lets just try it and see what the testing says")
+  const gained = s.players.map(() => ({}));
   let guard = 0, round = s.round, pick = 0;
   while (!s.over && guard++ < 20000) {
     const pl = s.pending.player;
@@ -72,6 +75,7 @@ for (let g = first; g < first + count; g++) {
     }
     const prev = s;
     s = applyMove(s, m);
+    s.players.forEach((x, i) => { for (const c in x.res) { const d = (x.res[c] || 0) - (prev.players[i].res[c] || 0); if (d > 0) gained[i][c] = (gained[i][c] || 0) + d; } });
     if (s.round !== prev.round || s.over) for (const k in open) close(Number(k), prev);
   }
   for (const k in open) close(Number(k), s);
@@ -81,7 +85,7 @@ for (let g = first; g < first + count; g++) {
     players: s.players.map((x, i) => ({
       followers: fol[i], win: fol[i] === top, cards: x.members.length, seat: memberCount(s, x),
       cloak: x.artifact != null ? cardDef(s, x.artifact)?.quadrant || null : null,
-      members: x.members.map(u => s.cards[u]?.def),
+      members: x.members.map(u => s.cards[u]?.def), gained: gained[i],
     })),
     placements,
   }) + '\n');
