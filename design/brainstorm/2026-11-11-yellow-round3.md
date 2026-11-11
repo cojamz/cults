@@ -127,3 +127,18 @@ Verdict: cut (Swindle's shape)
 8. Color interactions: none.
 9. Biggest case: +9, about +6 net.
 Verdict: cut (White's verb; nobody feels it)
+
+# Pass 3 (Cory, archetype review: "the other threee (red yellow white) we do need to solve for those gaps"; Yellow's gap: no space touches rivals with a sting or a gift; "don't worry about yellow followers for now")
+
+## Idea: Shun
+
+1. Printed text: "Choose a color. Each rival with exactly one member of that color discards it. +4 yellow." (name and +4 Claude's fill-ins; grey counts as a color). Cards it touches: Martyrs (White) "Whenever this member is discarded, +4 white and +4 followers."; White's contest, fewest members; Melting Pot "For each color among your members: +1 follower and +1 of that color (grey: 1 of any color)."; Poach "Recruit a rival's member you choose, for free. +1 magenta." (the other round III sting).
+2. Played turn: round III, 4 players. Rivals hold 9 to 14 members; two of them hold a single grey and one a single white. You choose grey: two rivals discard their grey member (worth about 1 to 2 followers each) and drop from 5 member colors to 4, while you keep 5; you +4 yellow. Against Initiation "Recruit a shop member costing 10 or less, for free. +1 red." (a free member for you), Shun gives you nothing to keep but moves you ahead of two rivals in the Yellow contest (round III prize 10, ties split rounded up: a 3-way tie at 5 colors pays 4 each; leading alone pays 10), so about +6 followers to you plus 1 to 2 lost by each hit rival.
+3. Both sides: you choose the color: the best pick is the color the most rivals hold one member of; no rival choice. If no rival has a singleton, it pays only +4 yellow, which the table can see before you place.
+4. Who feels it: a real sting to every rival with a singleton; a reason to recruit a second member of your thin colors (the same pull as the contest) and a reason to take the center first. A White player hit by it may like it (one fewer member for Fewest members; Martyrs pays +4 white and +4 followers).
+5. Not refused: not a steal (nothing moves to you), not a swap (Red's), not Release. No ledger line refuses discarding rivals' members from a space. Same aggression level as Poach, which Cory approved for round III ("Aggression is intentional").
+6. Judged: one choice, one visible count (rivals' members by color), done when taken. Round III real state: wide cults often hold a single grey or a single member of one color. Intuitive: yes, "everyone with only one of that color loses it". Fun: high tension, a round III swing in Yellow's contest. Interacts: hits every rival; counters a cult that went wide with one of each. Powerful: up to 3 members gone and the contest lead. Engine or counter: counters Yellow's own race and Melting Pot counts. Its color: the color race of Yellow's contest, played at rivals.
+7. Public and certain: members and colors are public; nothing hidden or random.
+8. Color interactions: the shared moment is a member being discarded (White's Martyrs, Farewell, Estate Sale also cause it); names no color; works in any game.
+9. Biggest case: round III, all three rivals hold a single grey (round II grey members are common in a 4-color game): 3 members discarded, each rival drops one contest color; you lead Yellow's contest alone for 10 followers instead of a 4-way split at 3. Swing about +7 for you, -1 to -3 each for rivals. Green's Greatest Hits copying it later that round makes the copier choose again: a second color can be hit, up to 3 more members. Against a winner's 70 to 110 and Poach (a rival's best member, worth up to 4 or 5 followers plus its ability); round III center.
+Verdict: send
