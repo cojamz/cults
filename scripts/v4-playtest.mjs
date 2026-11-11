@@ -48,7 +48,12 @@ await page.locator('button', { hasText: /^Custom$/ }).click();
 await page.waitForTimeout(200);
 // clear what's on, then pick ours
 for (const el of await page.$$('[data-sphere][aria-pressed="true"]')) await el.click();
-for (const c of colors.split(',')) await page.click(`[data-sphere="${c}"]`);
+// the setup buttons carry the color's id since the 2.0 colors (data-sphere="market" is Blue): take a name or an id
+const SPHERE_ID = { Blue: 'market', Magenta: 'thieves', White: 'trading', Green: 'echo' };
+for (const c of colors.split(',')) {
+  const id = SPHERE_ID[c] || c.toLowerCase();
+  await page.click((await page.$(`[data-sphere="${id}"]`)) ? `[data-sphere="${id}"]` : `[data-sphere="${c}"]`);
+}
 await page.waitForTimeout(200);
 await shot('setup');
 const why = await page.$eval('[data-start-why]', e => e.textContent).catch(() => '');

@@ -575,6 +575,16 @@ function hubCardPlace() {
   const width = Math.round(Math.min(BANNER_W, w.width - 24));
   return { left: Math.round(w.left + w.width / 2 - width / 2), top: Math.round(hb && hb.height ? hb.bottom + 2 : w.top + 4), width };
 }
+/** The question card on screen (a choice for the person at this device), as a rect, or null. */
+function choiceBox() {
+  if (typeof document === 'undefined') return null;
+  for (const e of document.querySelectorAll('.prompt.choice')) {
+    if (e.closest('.turn-card')) continue;
+    const r = e.getBoundingClientRect();
+    if (r.width && r.height) return r;
+  }
+  return null;
+}
 // where the hub card last stood, so the log area's card can fly in from there
 let hubLast = null;
 // whether a chain is playing, kept as state while `on` (the round-end moment holds the table, so the shown and settled
@@ -835,6 +845,14 @@ function TurnCard({ card, root, state, hub = false, keep = false, you = -1 }) {
   // and its lift cost every step one or two more commits of their own, each reading the layout again
   const box = useRef(null);
   const hubMine = useRef(null); // where this hub card stands, handed to hubLast as it leaves
+  // a question card on screen (see the hub layout): the layout reruns when one comes or goes, polled while this card is
+  // at the hub, since the question waits for the stage and can show after the story's last line
+  const [askKey, setAskKey] = useState('');
+  useEffect(() => {
+    if (!hub) return undefined;
+    const t = setInterval(() => { const r = choiceBox(); const k = r ? `${Math.round(r.top)}:${Math.round(r.bottom)}` : ''; setAskKey(v => (v === k ? v : k)); }, 250);
+    return () => clearInterval(t);
+  }, [hub]);
   // the story above leaves the card exactly its own height (layout.css --turn-h), written only when the whole-pixel value
   // changes (the card's height depends on its text and width only)
   const turnH = useRef(null), turnHOn = useRef(null);
@@ -863,10 +881,20 @@ function TurnCard({ card, root, state, hub = false, keep = false, you = -1 }) {
       // the screen's edge and its lines scroll inside it, so it never runs off the screen
       el.style.maxHeight = el.scrollHeight * z > innerHeight - 16 ? px(innerHeight - 16) : '';
       el.style.overflowY = el.style.maxHeight ? 'auto' : '';
-      const h = el.offsetHeight * z;
+      let h = el.offsetHeight * z;
       // its top stays put as lines are added, so it grows downward like a log being written (Cory, Nov 6: "we should
       // just SEE it get added"), a little above the hub's centre
       if (at.top + h > innerHeight - 8) { at.top = Math.max(8, Math.round(innerHeight - 8 - h)); el.style.top = px(at.top); }
+      // a question for you that comes up during a rival's turn (Gift Swappers asks each player to give a member) stands
+      // in the same place: the story steps down under it, never over its answers (bug hunt, Nov 11: P1's members were
+      // hidden behind P4's New Blood story); it scrolls inside if the room left is short
+      const ask = choiceBox();
+      if (ask && ask.left < at.left + at.width && ask.right > at.left && ask.top < at.top + h && ask.bottom > at.top) {
+        at.top = Math.round(ask.bottom + 6);
+        const room = Math.max(60, innerHeight - 8 - at.top);
+        Object.assign(el.style, { top: px(at.top), maxHeight: h > room ? px(room) : el.style.maxHeight, overflowY: h > room ? 'auto' : el.style.overflowY });
+        h = Math.min(h, room);
+      }
       setStoryZone({ left: at.left, top: at.top, width: at.width, height: h, right: at.left + at.width, bottom: at.top + h });
       hubMine.current = { pid: card.pid, rect: { left: at.left, top: at.top, width: at.width, height: h } };
       return;
@@ -897,7 +925,7 @@ function TurnCard({ card, root, state, hub = false, keep = false, you = -1 }) {
     // written on the story itself, its only reader (layout.css): on the table, an inherited custom property re-styled all
     // ~5,000 elements of the page every time it changed (perf, 2026-10-15)
     if (story && (h !== turnH.current || turnHOn.current !== story)) { turnH.current = h; turnHOn.current = story; story.style.setProperty('--turn-h', `${h}px`); }
-  }, [card.pid, card.n, card.text, root, gone, MAXL, hub, keep, shownN]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [card.pid, card.n, card.text, root, gone, MAXL, hub, keep, shownN, askKey]); // eslint-disable-line react-hooks/exhaustive-deps
   // (shownN: each line shown one at a time makes the card taller, so it rises again to stay whole on screen; picky bot,
   // Nov 7: a long turn's last line was cut at the screen's edge)
   const pname = state && state.players[card.pid] ? state.players[card.pid].name : '';
