@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.722 — 2026-11-11
+
+- Yellow: Harvest "+3 in colors you choose." in every round; New Blood "+2 yellow. If you recruit a member this turn in a color none of your members have: +3 yellow."; Melting Pot "For each color among your members: +1 follower and +1 of that color (grey: 1 of any color)."
+
 ## v0.99.721 — 2026-11-11
 
 - Farewell and Estate Sale: shorter words, same effect
