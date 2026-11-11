@@ -76,3 +76,6 @@ Real table state (20 Hard-bot games, 4 players, Red/Green/Magenta/Purple, live v
 - "Round End: if all your minions this round are on Green spaces, +3 followers per minion": the measured highest is 4 of 5 in round III and 2 of 3 in round I, so it almost never pays.
 - "Round End: +2 green per minion on Green spaces": small resource gain.
 - "Whenever you place a minion on a Green space, +1 follower": the same count as Regulars, paid sooner; about 6 a game.
+
+### Batch 2 recheck against pitching.md step 9 (biggest real case, added Nov 11 while this batch was drafted)
+Biggest measured count is 4 minions on Green in round III. Old-Timers pays 4 × 3 = 12 at one round end and Holdouts 4 × 3 = 12 at game end: both over 10 in one moment, cut. Regulars at +2: biggest 8 (round III). Gawkers: biggest 6 (6 Green spaces filled). Sent: Regulars at +2 [pick] and Gawkers.
