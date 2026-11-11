@@ -5,6 +5,8 @@ import { describe, it, expect } from 'vitest';
 import { followers, resume } from '../../../engine/v4/core.js';
 import { take, move, uidOf, pinCosts } from './helpers.js';
 import { sceneQ, buy, passBuys, linesNaming } from './cards-helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.evenswap', 'red.hire', 'red.turnout']);
 
 const named = (s, name) => linesNaming(s.log, name);
 const G = s => s.players.map(p => p.res.gold);

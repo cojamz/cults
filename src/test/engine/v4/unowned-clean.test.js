@@ -4,6 +4,8 @@
 import { it, expect } from 'vitest';
 import { sceneQ } from './cards-helpers.js';
 import { take, move } from './helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.evenswap']);
 
 const clean = (s, uid) => expect(s.cards[uid]).toEqual({ uid, def: s.cards[uid].def });
 const shopCard = (s, def) => s.shop.find(u => s.cards[u].def === def);

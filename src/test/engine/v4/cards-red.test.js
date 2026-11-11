@@ -7,6 +7,8 @@ import { defById } from '../../../engine/v4/content/index.js';
 import { take, move, uidOf, pinCosts } from './helpers.js';
 import { sceneQ, buy, linesNaming, settle } from './cards-helpers.js';
 import { SHOP_SIZE } from '../../../engine/v4/core.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.hire', 'red.turnout']);
 
 const named = (s, name) => linesNaming(s.log, name);
 const R = (s, i = 0) => s.players[i].res;

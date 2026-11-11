@@ -3,6 +3,8 @@ import { createGame, applyMove, resume, contestTable, DEFAULT_RULES } from '../.
 import { defById } from '../../../engine/v4/content/index.js';
 import { sceneQ } from './cards-helpers.js';
 import { take, move } from './helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['market.pricecheck']);
 const Q=['gold','red','yellow','green'];
 const costOf=(s,u)=>{const d=defById(s.cards[u].def);return d.s+d.w;};
 describe('October17 explicit rules',()=>{

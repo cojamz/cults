@@ -4,6 +4,7 @@ import { chooseBotMove } from '../../../engine/v4/index.js';
 import { until, autoPlay } from './helpers.js';
 import { revealed } from '../../../v4/session/local.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
+import { useRetired } from '../../engine/v4/helpers.js';
 
 // No wall clock: bots and the host run on fake timers, and until() advances them (helpers.js).
 beforeEach(() => { vi.useFakeTimers(); });
@@ -123,26 +124,6 @@ describe('local session: undo', () => {
     // and the game plays on from there
     await s.submit({ option: s.getState().pending.options[0].id });
     expect(s.canUndo()).toBe(true);
-    s.destroy();
-  });
-
-  it('is not offered after a placement that showed hidden cards (Peek), and is after one that did not', async () => {
-    const s = createLocalSession({ seats: humans2, seed: 21, botDelayMs: 0, quadrants: ['market', 'gold', 'red', 'silver'] });
-    await driveUntil(s, st => st.pending && st.pending.kind === 'place');
-    const pre = s.getState();
-    const slot = name => pre.pending.options.find(o => o.kind === 'slot' && o.label === name).id;
-    // a placement that shows nothing new: undo is there
-    await s.submit({ option: slot('Golden Years') });
-    expect(s.canUndo()).toBe(true);
-    expect(s.undo()).toBe(true);
-    // Peek shows the top of the pile: undoing it would leak the deck
-    await s.submit({ option: slot('Peek') });
-    const after = s.getState();
-    expect(after.pending.player).toBe(pre.pending.player);
-    expect(after.pending.options.some(o => Object.values(o.at || {}).includes('pile'))).toBe(true);
-    expect(s.canUndo()).toBe(false);
-    expect(s.undo()).toBe(false);
-    expect(s.getState()).toEqual(after);
     s.destroy();
   });
 
@@ -376,5 +357,30 @@ describe('local session: undo never crosses a hand-off', () => {
       s.destroy();
     }
     expect(checked).toBeGreaterThan(0);
+  });
+});
+
+// Peek left the wheel Nov 10 (Markdown took its slot) and no live space shows the pile now; it stays for old saves,
+// so the undo guard keeps its test with Peek back in its old slot.
+describe('local session: undo after hidden cards', () => {
+  useRetired(['market.showroom']);
+  it('is not offered after a placement that showed hidden cards (Peek), and is after one that did not', async () => {
+    const s = createLocalSession({ seats: humans2, seed: 21, botDelayMs: 0, quadrants: ['market', 'gold', 'red', 'silver'] });
+    await driveUntil(s, st => st.pending && st.pending.kind === 'place');
+    const pre = s.getState();
+    const slot = name => pre.pending.options.find(o => o.kind === 'slot' && o.label === name).id;
+    // a placement that shows nothing new: undo is there
+    await s.submit({ option: slot('Golden Years') });
+    expect(s.canUndo()).toBe(true);
+    expect(s.undo()).toBe(true);
+    // Peek shows the top of the pile: undoing it would leak the deck
+    await s.submit({ option: slot('Peek') });
+    const after = s.getState();
+    expect(after.pending.player).toBe(pre.pending.player);
+    expect(after.pending.options.some(o => Object.values(o.at || {}).includes('pile'))).toBe(true);
+    expect(s.canUndo()).toBe(false);
+    expect(s.undo()).toBe(false);
+    expect(s.getState()).toEqual(after);
+    s.destroy();
   });
 });

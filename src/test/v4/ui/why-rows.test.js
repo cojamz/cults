@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { previewSpace } from '../../../engine/v4/index.js';
 import { sceneQ, spaceOf } from '../../engine/v4/cards-helpers.js';
-import { take, move } from '../../engine/v4/helpers.js';
+import { take, move, useRetired } from '../../engine/v4/helpers.js';
 import { youdWords } from '../../../v4/game/Info.jsx';
 
 const pv = (s, name) => { const [q, i] = spaceOf(s, name).split('-').map(Number); return previewSpace(s, s.pending.player, q, i); };
@@ -31,18 +31,21 @@ describe('Why rows', () => {
 });
 
 describe("You'd get", () => {
-  it('Out of Style says its best color as your pick: +1 per member sent, plus its own +1', () => {
-    // 3 red and 2 gold face up: sending red is the best case
+  it('Out of Style says what it pays in all, in the colors your three picks bring (Nov 10: +1 of each discarded member’s color, plus its +1)', () => {
+    // 3 red and 2 gold face up: every pick of 3 pays 3 in the members' colors, plus its own +1 blue
     const s = sceneQ({ quadrants: ['market', 'silver', 'gold', 'red'], shop: ['red.intern', 'red.twins', 'red.volunteer', 'gold.banker', 'gold.taxman'] });
     s.shop = s.shop.slice(0, 5);
     const y = youdWords(pv(s, 'market.restock'), s, 'blue');
-    expect(y.text).toBe('up to +4 blue');
-    expect(y.note).toBe('your pick');
+    expect(y.text).toBe('+4 in colors you choose');
+    expect(y.note).toBeNull();
   });
+  describe('Walk-In (retired Nov 10, kept for old saves)', () => {
+  useRetired(['red.hire']);
   it('Walk-In says its +1 red and the member it brings', () => {
     const s = sceneQ({ quadrants: ['red', 'silver', 'gold', 'market'] });
     const y = youdWords(pv(s, 'red.hire'), s, 'red');
     expect(y.text).toMatch(/^\+1 red/);
     expect(y.text).toMatch(/\+\d+ members?/); // the cheapest shop member; a group (Revelers) counts as 3
+  });
   });
 });

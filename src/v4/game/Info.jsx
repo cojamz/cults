@@ -1014,7 +1014,7 @@ export function ifRecruitWords(x) {
   const parts = [];
   if (x.followers) parts.push(`+${x.followers} follower${x.followers === 1 ? '' : 's'}`);
   if (x.per) parts.push(`+1 follower per ${x.per === 1 ? 'resource' : `${x.per} resources`} you pay`);
-  return `${parts.join(' and ')}${x.per ? ',' : ''} if you recruit a member this turn`;
+  return `${parts.join(' and ')}${x.per ? ',' : ''} if you recruit a member this turn${x.sameColor ? ' of a color you already have' : ''}`;
 }
 /** "You'd get: +3 ●, +1 member" for player pid on space (q, i), computed just after it shows. */
 // skipSelf: Hold Up when the next turn is yours: the skip pushes your minion later, said as the skip it is, not "goes

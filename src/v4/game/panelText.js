@@ -51,6 +51,10 @@ const P = {
     strike: { verb: 'Double your gold' },
   },
   red: {
+    // Nov 10 round I (Cory): Borrow, Trending and Gather
+    borrow: { verb: 'Recruit the cheapest, free', second: 'discard it at round end', note: '+1 red' },
+    trending: { verb: '+1 per shop member of', second: 'the most common color', note: '+1 red' },
+    gather: { main: '+3 red', second: '+4 @f: recruit a color you have', note: '+1 red' },
     // the +2 red sat in line 3, which drops on the outer ring (round I review, Oct 25): it takes line 2, as Right Away's purple
     evenswap: { verb: 'Use a shop member’s On Recruit', second: '+2 red', note: 'it stays in the shop' },
     turnout: r => ({ main: `+${r + 1} red`, second: '+1 @f per 3 spent on a member', note: run(n => `+${n + 1}`, 'red: ') }), // per 3 paid (Cory, Nov 9)
@@ -63,13 +67,17 @@ const P = {
     take: { verb: `Free member costing ${9 + MORE} or less`, second: '+1 red' },
   },
   market: {
+    // Nov 10 (Cory): Test Drive, the new Out of Style, Word of Mouth and the recruit ladder from the discard pile (3/5/7)
+    testdrive: { verb: 'Discard a shop member', second: 'use its effect now', note: '+1 blue' },
+    markdown: { main: '+3 blue', second: 'recruit from the discard now, 2 less' },
+    wordofmouth: { verb: '+1 @f per 2 members', note: '+1 blue' },
     bargain: r => ({ main: `+${r + 1} blue`, second: 'Discard 1 shop member', note: run(n => `+${n + 1}`, 'blue: ') }), // Cory, Oct 31 ("may" made line 2 too long; it dropped)
-    restock: { verb: 'Discard one color', second: '+1 blue per member sent', note: '+1 blue' },
+    restock: { verb: 'Discard 3 shop members', second: '+1 of each one’s color', note: '+1 blue' },
     // line 2 was too long and dropped whole at the wheel's bottom, taking the blue with it (round I review, Oct 25)
     showroom: r => ({ main: `+${r + 2} blue`, second: 'peek at the top 4', note: run(n => `+${n + 2}`, 'blue: ') }), // +3/+4/+5 (Nov 5)
-    clearance: { verb: 'Recruit an extra time +3 blue', second: 'this turn' },
+    clearance: { verb: 'Recruit from the discard now +5 blue' },
     pricecheck: { verb: 'Bury a shop member for half its cost in blue', note: '+1 blue' },
-    spree: { verb: 'Recruit two extra times +6 blue', second: 'this turn' },
+    spree: { verb: 'Recruit 2 from the discard now +7 blue' },
   },
   purple: {
     hourly: r => ({ main: `+${3 + r} purple`, second: run(n => `+${3 + n}`) }),
@@ -86,6 +94,8 @@ const P = {
     // Cory, 2026-10-22: place on taken spaces for the rest of the round
     // Cory, 2026-10-22: the old game's "Gain 4 purple, skip next turn"
     skip: r => ({ main: `+${r + 3} purple`, second: 'take the Goes Last token', note: run(n => `+${n + 3}`, 'purple: ') }),
+    // On a Roll (Nov 10, Cory's Purple plan): Hold Up's place
+    onaroll: (r, now) => ({ main: `+${now ?? 2} purple`, second: now == null ? 'per turn in a row' : '2 per turn in a row', note: 'take the Goes Last token' }),
     holdup: r => ({ main: `+${r + 1} purple`, second: 'the next turn is skipped, even yours', note: run(n => `+${n + 1}`, 'purple: ') }),
     // the center ring can drop line 2 (round III since Oct 22): line 1 says it whole
     // Cory, 2026-10-28: +5 purple and a minion this round
@@ -132,10 +142,12 @@ const P = {
     flourish: { verb: '+1 each other color, per full set' },
   },
   thieves: {
-    pickpocket: r => ({ verb: `Steal ${r + 2} resources`, second: 'from one rival', note: run(n => `${n + 2}`) }), // one rival (Nov 5)
+    pickpocket: { verb: 'Steal 1 per minion you placed', second: 'this round, this one too', note: '+1 magenta' }, // Nov 10 (Cory)
+    catchup: { main: '+2 magenta', second: 'per rival with more resources', note: '+1 magenta' }, // Nov 10 (Cory)
+    swindle: { verb: `Steal a member costing up to ${6 + MORE}`, second: 'give them a shop member', note: '+1 magenta' }, // Nov 10 (Cory)
     tipoff: r => ({ main: `+${r + 1} magenta`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 1}`, 'magenta: ') }), // Gather's shape (Cory, Oct 31)
     hideout: { verb: 'Steal 1, then safe from steals', second: 'this round', note: '+1 magenta' },
-    rob: { verb: 'Steal 3 @f', second: 'split among rivals', note: '+1 magenta' }, // any rivals (Nov 5) // Nov 4: followers, not half a pile
+    rob: { verb: 'Steal 4 @f and 4 resources', note: '+1 magenta' }, // Nov 10 (Cory) // any rivals (Nov 5) // Nov 4: followers, not half a pile
     ransom: { verb: `Rival pays or loses a member costing ${6 + MORE} or less`, note: '+1 magenta' },
     heist: { verb: 'Recruit a rival’s member', note: '+1 magenta' },
   },
@@ -164,15 +176,16 @@ const P = {
     cashin: { verb: 'Turn all your white into @f', note: '+1 white' },
   },
   echo: {
-    hum: { verb: 'Copy an action', second: 'with no minion on it', note: '+1 green' },
-    chant: r => ({ main: `+${r + 2} green`, note: run(n => `+${n + 2}`) }),
+    hum: { verb: 'Copy an action', second: 'with a rival’s minion', note: '+1 green' },
+    chant: { verb: '+1 green per minion on Green', second: 'this one included', note: '+1 green' },
     // the hover's own words, "since your last turn" (w4b #22: "a rival just took" said it two ways)
     echo: { verb: 'Copy previous action', note: '+1 green' },
     // Cory, 2026-10-28: a rival member's On Recruit, not a space
     encore: { verb: 'Copy a rival member’s On Recruit', note: '+1 green' },
+    crowd2: { main: '+3 green', second: '+1 @f per minion on Green' }, // Crowd, Sample's place (Nov 10, Cory)
     // one word for it, the hover's (w3a #22: "redo" here, "copy" there)
     refrain: { verb: 'Copy an action', second: 'with your minion', note: '+1 green' },
-    eternity: { verb: 'Copy each of your members’ On Recruit', second: 'in any order', note: '+1 green' },
+    eternity: { verb: 'Copy every action on one color', second: 'not green', note: '+1 green' },
   },
 };
 

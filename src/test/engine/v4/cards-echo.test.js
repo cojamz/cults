@@ -8,6 +8,8 @@ import { ledger, ownPlan } from '../../../engine/v4/content/echo.js';
 import { term } from '../../../v4/glossary.js';
 import { take, move, play, ids, actionName } from './helpers.js';
 import { table, useCosts, named, uidIn } from './cards-helpers-b.js';
+import { useRetired } from './helpers.js';
+useRetired(['echo.encore', 'red.turnout', 'thieves.hideout']);
 
 const Q = ['gold', 'red', 'market', 'echo'];
 const QT = ['gold', 'thieves', 'market', 'echo'];
@@ -33,32 +35,44 @@ const buildThenEcho = (opts = {}) => {
 };
 
 describe('Green current actions', () => {
-  it.each([1, 2, 3])('Build Up in round %i: +3 / +4 / +5 green', round => {
-    expect(R(go(table(Q, { round, shop: ROW }), 'echo.chant')).green).toBe(round + 2);
+  // Cory, Nov 10: "+1 green per minion on green (including this). +1 green. So round 1 is max 4 if its taken last"
+  it.each([1, 2, 3])('Build Up alone in round %i: +1 for its own minion, +1 green', round => {
+    expect(R(go(table(Q, { round, shop: ROW }), 'echo.chant')).green).toBe(2);
   });
-  // Cover replaced Chorus (Cory, 2026-10-27): copy an action with no minion on it, +1 green
-  it('Cover copies only an action with no minion on it, plus inherent green', () => {
-    let s = table(Q, { round: 2, shop: ROW, queue: turns(1, 0) });
+  it('Build Up counts every minion on Green spaces, anyone\'s, this one included', () => {
+    let s = table(Q, { n: 3, shop: ROW, queue: turns(1, 2, 0) });
+    s = go(s, 'echo.refrain'); // P2: no action of theirs to copy, just +1 green
+    s = go(s, 'gold.rush'); // P3's minion is not on Green
     s = go(s, 'echo.chant');
+    expect(R(s).green).toBe(3); // P2's Reprise and this one: +2, plus +1
+    expect(s.log).toContain('P1\'s Build Up: +2 green (2 minions on Green).');
+  });
+  // Cory, Nov 10: Cover in round II becomes "copy an action with a rival's minion on it" (was: with no minion on it)
+  it('Cover copies only an action with a rival\'s minion on it, plus inherent green', () => {
+    let s = table(Q, { round: 2, shop: ROW, queue: turns(1, 0, 0) });
+    s = go(s, 'echo.chant'); // P2's Build Up: +1 for its minion, +1
+    s = go(s, 'gold.rush'); // P1's own minion: not a target
     s = take(s, 'echo.hum');
     expect(s.pending.prompt).toMatch(/^Cover:/);
-    const keys = s.pending.options.map(o => o.value);
-    expect(keys).not.toContain(`3-${quadrant('echo').actions.findIndex(a => a.key === 'chant')}`);
-    expect(keys).not.toContain(`3-${quadrant('echo').actions.findIndex(a => a.key === 'hum')}`);
-    s = pass(play(s, o => o.label.startsWith('Golden Years')));
-    expect(R(s)).toMatchObject({ gold: 4, green: 1 });
+    expect(s.pending.options.map(o => o.label)).toEqual([expect.stringMatching(/^Build Up \(P2\)/)]);
+    s = pass(move(s, s.pending.options[0].id));
+    expect(R(s).green).toBe(3); // Cover's own +1, Build Up's +2
   });
-  // bots copied blind when every empty action was rated 2 (Claude, under Cory's go-with-your-gut, Oct 29)
-  it('Cover rates each empty action by what it would give, so bots copy the best one', () => {
-    const s = take(table(Q, { round: 2, shop: ROW, queue: turns(1, 0) }), 'echo.hum');
+  it('Cover rates each rival action by what it would give, so bots copy the best one', () => {
+    let s = table(Q, { round: 2, shop: ROW, queue: turns(1, 1, 0) });
+    s = go(s, 'echo.chant'); s = go(s, 'gold.rush');
+    s = take(s, 'echo.hum');
     const hint = name => s.pending.options.find(o => o.label.startsWith(name)).hint;
-    expect(hint('Build Up')).toBeGreaterThan(hint('Echo'));
-    expect(new Set(s.pending.options.map(o => o.hint)).size).toBeGreaterThan(1);
+    expect(hint('Golden Years')).toBeGreaterThan(hint('Build Up')); // 4 gold against 2 green
+  });
+  it('Cover with no rival minion out gives just its green', () => {
+    const s = go(table(Q, { round: 2, shop: ROW }), 'echo.hum');
+    expect(R(s).green).toBe(1);
   });
   it('Echo copies the printed chip and also gains its own inherent green', () => {
     const s = buildThenEcho();
-    expect(R(s).green).toBe(4); // Echo's own +1 plus Build Up's +3
-    expect(s.log.some(l => l.includes('P1 copied Build Up') && l.includes('+3 green'))).toBe(true);
+    expect(R(s).green).toBe(3); // Echo's own +1 plus Build Up's +2 (one minion on Green, +1)
+    expect(s.log.some(l => l.includes('P1 copied Build Up') && l.includes('+2 green'))).toBe(true);
   });
   // Sample copies a rival member's On Recruit, not a space (Cory, 2026-10-28)
   it('Sample offers only rivals\' members with an On Recruit, and does it for you', () => {
@@ -74,36 +88,39 @@ describe('Green current actions', () => {
     let s = table(Q, { round: 2, shop: ROW, queue: turns(0, 1, 0) });
     s = go(s, 'echo.chant'); s = go(s, 'gold.rush');
     s = take(s, 'echo.refrain');
-    expect(s.pending.options.map(o => o.label)).toEqual(['Build Up (P1): +4 green']);
+    expect(s.pending.options.map(o => o.label)).toEqual(['Build Up (P1): +2 green']);
     s = pass(move(s, s.pending.options[0].id));
-    expect(R(s).green).toBe(9); // Build Up 4, Reprise's own +1, the copy 4
+    expect(R(s).green).toBe(5); // Build Up 2, Reprise's own +1, the copy 2
   });
   it('one shared copy rule explains fresh choices and forbids revisiting the chain', () => {
     expect(quadrant('echo').rule).toMatch(/Copying a copy lets you choose again/);
     expect(term('copy').def).toMatch(/choose again/);
     expect(readFileSync(new URL('../../../../design/rulebook.md', import.meta.url), 'utf8')).toMatch(/choose again/);
     expect(quadrant('echo').rule).toMatch(/already in its chain/);
-    // Build Up's +1 green sits inside its by-round run (3 / 4 / 5); Echo and Reprise give +1 (back to +1, Cory, Oct 28)
+    // Build Up counts minions on Green (Cory, Nov 10); every Green space gives +1 green (Crowd +3)
     for (const d of quadrant('echo').actions) {
-      if (d.key === 'chant') expect(d.text).toBe('+3 green in round I, +4 in round II, +5 in round III.');
+      if (d.key === 'chant') expect(d.text).toBe('+1 green per minion on Green spaces, this one included. +1 green.');
+      else if (d.key === 'crowd2') expect(d.text).toBe('+1 follower per minion on Green spaces. +3 green.');
       else if (d.key === 'echo' || d.key === 'refrain') expect(d.text).toContain('+1 green');
       else expect(d.text).toContain('+1 green');
     }
   });
-  // Cory, Nov 1 morning: "maybe we try copying all your members On Recruit in any order"
-  it('Greatest Hits copies the On Recruit of each of your members, in the order you pick', () => {
-    let s = table(Q, { round: 3, left: 5, shop: ROW, members: [['gold.seed', 'gold.hustler', 'gold.tycoon']], queue: turns(0, 1) });
+  // Cory, Nov 10: "The Greatest Hits should be updated to the test version where it picks a color and copys every action
+  // on that color with a minion" (Medley's rule and words)
+  it('Greatest Hits copies every action with a minion on the chosen color\'s spaces, anyone\'s', () => {
+    let s = table(Q, { round: 3, left: 5, shop: ROW, queue: turns(1, 1, 1, 0) });
+    s = go(s, 'gold.rush'); s = go(s, 'gold.jv', () => true); s = go(s, 'echo.chant');
+    const gold = R(s).gold; // Kickback's 1 gold from P2
     s = take(s, 'echo.eternity');
-    expect(s.pending.prompt).toBe("Greatest Hits: copy which member's On Recruit first? (2 to go)");
-    expect(s.pending.options.map(o => o.label.split(':')[0])).toEqual(['Treasurer', 'Hustler']); // Tycoon has no On Recruit
-    s = move(s, s.pending.options.find(o => o.label.startsWith('Hustler')).id);
-    expect(s.pending.prompt).toMatch(/^Hustler/);
-    s = move(s, 'color:echo');
-    s = pass(s);
-    expect(R(s)).toMatchObject({ gold: 3, green: 1 }); // Treasurer: +1 gold per member (3)
-    expect(s.log.filter(l => /copies .*On Recruit/.test(l))).toEqual(["P1 copies Hustler's On Recruit.", "P1 copies Treasurer's On Recruit."]);
+    expect(s.pending.prompt).toBe('Greatest Hits: copy every action on which color\u2019s spaces?');
+    expect(s.pending.options.map(o => o.value)).toEqual(['gold']); // Green is never a choice; Red and Blue are empty
+    expect(s.pending.options[0].label).toBe('Gold (Golden Years, Kickback)');
+    s = pass(move(s, 'color:gold'));
+    expect(R(s).gold - gold).toBe(9); // Golden Years' +6 and Kickback's +3, as P2 got them
+    expect(s.log.filter(l => l.startsWith('P1 copied'))).toEqual(["P1 copied Golden Years (P2's): +6 gold.", "P1 copied Kickback (P2's): +3 gold."]);
+    expect(R(s).green).toBe(1); // its own +1; Build Up is on Green, so not copied
   });
-  it('Greatest Hits with no On Recruit among your members gives just its green', () => {
+  it('Greatest Hits with no minion on another color\'s spaces gives just its green', () => {
     let s = table(Q, { round: 3, left: 5, shop: ROW, members: [['gold.tycoon']], queue: turns(0, 1) });
     s = go(s, 'echo.eternity');
     expect(R(s)).toMatchObject({ green: 1 });
@@ -120,14 +137,15 @@ describe('Green current actions', () => {
   });
   it('Echo redoes stealing for its copier and still respects Lie Low', () => {
     let s = table(QT, { n: 3, shop: ROW, res: [{}, {}, { gold: 3, blue: 2 }], queue: turns(1, 0) });
-    s = go(s, 'thieves.pickpocket', 'take:2:gold', 'take:2:gold', 'take:2:gold'); // round I: steal 3
-    s = go(s, 'echo.echo', sp('thieves.pickpocket'), 'take:2:blue', 'take:2:blue', 'take:1:gold'); // from any rivals (Cory, Nov 8)
-    // the copier steals for itself (blue stays blue); Help Yourself gives no magenta
-    expect([R(s).magenta, R(s).blue, R(s).gold, R(s, 2).blue, R(s).green]).toEqual([0, 2, 1, 0, 1]);
+    // Help Yourself (Cory, Nov 10): steal 1 per minion you've placed this round, this one included, +1 magenta
+    s = go(s, 'thieves.pickpocket', 'take:2:gold'); // P2's first minion: steal 1
+    s = go(s, 'echo.echo', sp('thieves.pickpocket'), 'take:2:blue'); // P1's first minion is the Echo: steal 1
+    // the copier steals for itself (blue stays blue) and gets the copied space's +1 magenta
+    expect([R(s).magenta, R(s).blue, R(s).gold || 0, R(s, 2).blue, R(s).green, R(s, 1).gold]).toEqual([1, 1, 0, 1, 1, 1]);
     // P3 lies low (stealing 1 gold from P2, Cory Nov 1), P2 steals from P1, P1's copy of that steal can't reach P3
     let t = table(QT, { n: 3, shop: ROW, res: [{ red: 3 }, { gold: 3 }, { blue: 3 }], queue: turns(2, 1, 0) });
     t = go(t, 'thieves.hideout', 'take:1:gold');
-    t = go(t, 'thieves.pickpocket', 'take:0:red', 'take:0:red', 'take:0:red');
+    t = go(t, 'thieves.pickpocket', 'take:0:red');
     t = play(take(t, 'echo.echo'), sp('thieves.pickpocket'));
     expect(ids(t).length).toBeGreaterThan(0);
     expect(ids(t).every(id => id.startsWith('take:1:'))).toBe(true);
@@ -139,7 +157,7 @@ describe('Green current members', () => {
   it('Wallflower doubles what every copy gives you, whatever your followers', () => {
     for (const extra of [[], ['red.twins']]) {
       const s = buildThenEcho({ members: [['echo.wallflower', ...extra]], bonus: [0, 2] });
-      expect(R(s).green).toBe(7); // Echo's own +1, Build Up's +3 doubled
+      expect(R(s).green).toBe(5); // Echo's own +1, Build Up's +2 doubled
     }
   });
   it('Fan Club: when recruited, copy an action the player with the most followers has a minion on (Nov 4)', () => {
@@ -151,7 +169,7 @@ describe('Green current members', () => {
     expect(s.pending.options.map(o => o.label)).toEqual([expect.stringMatching(/^Build Up \(P2\)/)]); // P3's Echo isn't the leader's
     const g = R(s).green;
     s = move(s, s.pending.options[0].id);
-    expect(R(s).green).toBe(g + 3); // Build Up's +3 (Green's own +1 belongs to a Green space, not to a copy)
+    expect(R(s).green).toBe(g + 2); // Build Up's +2 as P2 got it (one minion on Green, +1)
   });
   it('Fan Club: holding the most yourself, it copies the rival with the most; nothing when they have no minion out', () => {
     let s = table(Q, { n: 3, shop: ['echo.mirror', ...ROW], res: [{ green: 1, red: 2 }], bonus: [9, 0, 3], queue: turns(1, 2, 0) });
@@ -263,7 +281,7 @@ describe('Green current members', () => {
     const uid = uidIn(s, 'echo.dejavu', 0), before = R(s).green, gold = R(s).gold || 0;
     s = move(s, 'use:' + uid);
     expect(R(s).gold - gold).toBe(4); // P2's Golden Years
-    expect(R(s).green - before).toBe(4); // P2's Build Up
+    expect(R(s).green - before).toBe(2); // P2's Build Up (one minion on Green, +1)
     expect(s.cards[uid].used).toBe(true);
     expect(ids(s)).not.toContain('use:' + uid);
   });
@@ -275,7 +293,7 @@ describe('Green current members', () => {
     expect(s.pending.prompt).toMatch(/^Tribute Band: whose actions/);
     expect(s.pending.options.map(o => o.label)).toEqual(['P2', 'P3']);
     s = move(s, 'player:2');
-    expect(R(s).green - before).toBe(4); // P3's Build Up
+    expect(R(s).green - before).toBe(2); // P3's Build Up (one minion on Green, +1)
   });
   // Cory, 2026-10-28: Doppelganger also does the copied member's On Recruit right then (was: never fired)
   it('Doppelganger becomes a copy and does its On Recruit at once, keeping its round-start hooks', () => {

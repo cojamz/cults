@@ -20,12 +20,12 @@ describe('picky words on hovers (Nov 4)', () => {
     const pid = s.pending.player;
     const owner = s.players.find(p => p.artifact === s.artifacts.market);
     if (owner.id === pid) return; // this seed deals the viewer the Blue Cloak
-    const why = ['bargain', 'restock', 'pricecheck'].flatMap(k => previewSpace(s, pid, ...space(s, 'market', k)).theirReasons);
+    const why = ['testdrive', 'restock', 'markdown'].flatMap(k => previewSpace(s, pid, ...space(s, 'market', k)).theirReasons);
     expect(why.filter(l => /Cloak/.test(l))).toEqual([]);
   });
 
   it('a lone flat gain after the rule reads as yours, without a period (W7)', () => {
-    const a = quadrant('red').actions.find(x => x.key === 'hire');
+    const a = quadrant('red').actions.find(x => x.key === 'gather'); // Gather (Nov 10, Walk-In's slot) ends "+1 red."
     const { container } = render(<RuleText def={a} lines />);
     const lines = [...container.querySelectorAll('[data-effect-line]')].map(l => l.textContent);
     expect(lines[lines.length - 1]).toMatch(/^You also get \+1/);
@@ -50,14 +50,15 @@ describe('picky words on hovers (Nov 4)', () => {
     expect(nothingToCopy(quadrant('echo').actions.find(x => x.key === 'refrain').text)).toBe('Nothing yet: only its +1 green');
   });
 
-  it("Survey has no color pick to list; Gather says its followers if you recruit (W27, W28)", () => {
+  it("Survey has no color pick to list; Gather says its followers if you recruit a color you have (W27, W28)", () => {
     const s = start(['yellow', 'red', 'silver', 'trading']);
     const pid = s.pending.player;
     const tax = previewSpace(s, pid, ...space(s, 'yellow', 'transmute'));
     expect(tax.colorPays).toBe(null); // Survey (Nov 5): no pick, its yellow is in "You'd get"
-    const gather = previewSpace(s, pid, ...space(s, 'red', 'turnout'));
-    expect(gather.ifRecruit).toEqual({ followers: 0, per: 3 });
-    expect(ifRecruitWords(gather.ifRecruit)).toBe('+1 follower per 3 resources you pay, if you recruit a member this turn');
+    // Gather (Nov 10): "+3 red. If you recruit a member this turn of a color you already have: +4 followers. +1 red."
+    const gather = previewSpace(s, pid, ...space(s, 'red', 'gather'));
+    expect(gather.ifRecruit).toEqual({ followers: 4, per: 0, sameColor: true });
+    expect(ifRecruitWords(gather.ifRecruit)).toBe('+4 followers if you recruit a member this turn of a color you already have');
     const splurge = previewSpace(s, pid, ...space(s, 'trading', 'splurge'));
     expect(ifRecruitWords(splurge.ifRecruit)).toMatch(/^\+1 follower per (2 resources|resource) you pay, if you recruit a member this turn$/);
   });

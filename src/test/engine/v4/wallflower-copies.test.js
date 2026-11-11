@@ -29,25 +29,26 @@ describe('Wallflower doubles every copied action', () => {
     expect(run(['echo.wallflower'])).toEqual({ gained: 8, silver: 0 });
   });
 
-  // Cover does the empty action itself: Golden Years (+4 gold in round II) doubled to 8
-  it('Cover copying an empty action is doubled', () => {
+  // Cover copies an action with a rival's minion on it (Cory, Nov 10): a rival's Golden Years (+4 gold in round II) doubled
+  it('Cover copying a rival\'s action is doubled', () => {
     const run = members => {
       let s = table(['gold', 'red', 'market', 'echo'], { round: 2, members: [members], queue: turns(1, 0) });
-      s = go(s, 'echo.chant');
-      s = pass(play(take(s, 'echo.hum'), o => o.label.startsWith('Golden Years')));
+      s = go(s, 'gold.rush');
+      s = pass(play(take(s, 'echo.hum'), sp('gold.rush')));
       return R(s);
     };
     expect(run([])).toMatchObject({ gold: 4, green: 1 });
     expect(run(['echo.wallflower'])).toMatchObject({ gold: 8, green: 1 }); // Cover's own +1 isn't a copy
   });
-  // Cover copying an empty Echo: Echo's +1 doubled, and the Build Up it copies doubled once, never twice
+  // Echo copying a rival's Cover: Cover's +1 doubled, and the Build Up the copied Cover picks again doubled once, never twice
   it('a copy inside a copy is doubled once', () => {
-    let s = table(['gold', 'red', 'market', 'echo'], { round: 2, members: [['echo.wallflower']], queue: turns(1, 0) });
-    s = go(s, 'echo.chant');
-    s = take(s, 'echo.hum');
-    s = play(s, o => o.label.startsWith(actionName('echo.echo')));
+    let s = table(['gold', 'red', 'market', 'echo'], { n: 3, round: 2, members: [['echo.wallflower']], queue: turns(1, 2, 0) });
+    s = go(s, 'echo.chant'); // P2: +1 for its minion, +1
+    s = go(s, 'echo.hum', sp('echo.chant')); // P3's Cover copies P2's Build Up
+    s = take(s, 'echo.echo');
+    s = play(s, sp('echo.hum'));
     s = pass(play(s, sp('echo.chant')));
-    expect(R(s).green).toBe(1 + 2 + 8); // Cover +1, Echo's +1 doubled, Build Up's +4 doubled
+    expect(R(s).green).toBe(1 + 2 + 4); // Echo +1, Cover's +1 doubled, Build Up's +2 doubled
   });
   it('Translator turns a copied Polish green', () => {
     let s = table(['silver', 'red', 'market', 'echo'], { members: [['echo.translator']], res: [{ silver: 2 }, { silver: 2 }], queue: turns(1, 0) });
@@ -63,6 +64,6 @@ describe('Wallflower doubles every copied action', () => {
     s.cards[s.players[0].members[0]].ability = 'echo.wallflower';
     s = go(s, 'echo.chant');
     s = go(s, 'echo.echo', sp('echo.chant'));
-    expect(R(s).green).toBe(1 + 6);
+    expect(R(s).green).toBe(1 + 4); // Echo's +1, Build Up's +2 (one minion, +1) doubled
   });
 });

@@ -6,6 +6,8 @@ import { describe, it, expect } from 'vitest';
 import { applyMove, followers } from '../../../engine/v4/core.js';
 import { take, move, play, ids, actionName } from './helpers.js';
 import { table, useCosts, named, uidIn, owns } from './cards-helpers-b.js';
+import { useRetired } from './helpers.js';
+useRetired(['market.bargain', 'market.pricecheck', 'market.showroom', 'red.turnout', 'thieves.hideout']);
 
 const Q = ['gold', 'red', 'market', 'thieves'];
 const QE = ['gold', 'red', 'market', 'echo'];
@@ -22,6 +24,8 @@ const ROW = ['gold.tycoon', 'red.bigfamily', 'red.twins', 'red.intern', 'gold.ta
 const R = (s, i = 0) => s.players[i].res;
 const card = (s, def) => `card:${uidIn(s, def, 'shop')}`;
 const first = s => move(s, s.pending.options[0].id);
+// lay these members (taken from the pile) on the discard pile, in order; returns their uids
+const onDiscard = (s, defs) => defs.map(d => { const k = s.pile.findIndex(u => s.cards[u].def === d); if (k < 0) throw new Error(`${d} not in the pile`); const u = s.pile.splice(k, 1)[0]; (s.discard ||= []).push(u); return u; });
 // a Blue payment choice: the way that pays with `color` only, else the suggested way
 const pickPay = (s, color = 'red') => (s.pending?.kind === 'choose' && s.pending.options[0].kind === 'pay'
   ? move(s, (s.pending.options.find(o => Object.entries(o.value).every(([c, n]) => !n || c === color)) || s.pending.options[0]).id) : s);
@@ -56,30 +60,32 @@ describe('Blue actions', () => {
     expect(named(s, 'Midas').length).toBe(1);
   });
 
-  it('Out of Style: one color to the discard pile, refill, +1 blue per member sent, plus the inherent +1', () => {
+  it('Out of Style (Nov 10): discard 3 shop members you pick, one at a time with the row refilling; +1 of each one\'s color, plus the inherent +1', () => {
     // ROW5: Tycoon, Big Family, Twins, Intern, Tax Man: 3 red, 2 gold
     let s = table(Q, { shop: ROW5 });
     s = take(s, 'market.restock');
     expect(R(s).blue).toBe(1);
-    expect(s.pending.options.map(o => o.id).sort()).toEqual(['color:gold', 'color:red']);
-    const reds = s.shop.filter(u => s.cards[u].def.startsWith('red.'));
-    s = move(s, 'color:red');
-    expect(R(s).blue).toBe(1 + 3);
-    expect(s.shop).toHaveLength(6); // round I shows 6
-    expect(s.shop.filter(u => reds.includes(u))).toEqual([]);
-    expect(s.discard.slice(-3)).toEqual(reds);
-    expect(s.log).toContain('Out of Style: P1 sends 3 red members to the discard pile.');
-    expect(s.log).toContain("P1's Out of Style: +3 blue.");
+    expect(s.pending.options.map(o => o.id).sort()).toEqual(s.shop.map(u => `card:${u}`).sort());
+    expect(s.pending.prompt).toBe('Out of Style: send which member to the discard pile? (3 to go)');
+    const picks = [uidIn(s, 'gold.tycoon', 'shop'), uidIn(s, 'red.bigfamily', 'shop'), uidIn(s, 'red.twins', 'shop')];
+    for (const u of picks) s = move(s, `card:${u}`);
+    expect([R(s).blue, R(s).gold, R(s).red]).toEqual([1, 1, 2]);
+    expect(s.shop).toHaveLength(6); // round I shows 6, refilled
+    expect(s.shop.filter(u => picks.includes(u))).toEqual([]);
+    expect(s.discard.slice(-3)).toEqual(picks);
+    expect(s.log).toContain("P1's Out of Style sends Tycoon to the discard pile: +1 gold.");
+    expect(s.log).toContain("P1's Out of Style sends Big Family to the discard pile: +1 red.");
+    expect(s.pending?.kind).toBe('buy');
   });
-  it('Out of Style: neutral is a color you can send to the discard pile (Cory, Oct 28)', () => {
+  it('Out of Style: a grey member gives 1 of any color you pick (Claude\'s fill-in, Nov 10)', () => {
     let s = table(Q, { shop: ['gold.tycoon', 'red.twins', 'benders.bigspender1', 'benders.insider', 'gold.taxman'] });
     s = take(s, 'market.restock');
-    expect(s.pending.options.map(o => o.id).sort()).toEqual(['color:gold', 'color:neutral', 'color:red']);
-    const guests = s.shop.filter(u => s.cards[u].def.startsWith('benders.'));
-    s = move(s, 'color:neutral');
-    expect(s.shop.filter(u => guests.includes(u))).toEqual([]);
-    expect(s.discard.slice(-2)).toEqual(guests);
-    expect(s.log).toContain('Out of Style: P1 sends 2 grey members to the discard pile.');
+    const g = uidIn(s, 'benders.bigspender1', 'shop');
+    s = move(s, `card:${g}`);
+    expect(s.pending.options.map(o => o.id)).toEqual(s.resources.map(c => `color:${c}`));
+    s = move(s, 'color:magenta');
+    expect(R(s).magenta).toBe(1);
+    expect(s.discard.at(-1)).toBe(g);
   });
 
   it('Peek: reorder the top 4 of the pile; this turn\'s buy may recruit one of them, and only one', () => {
@@ -124,14 +130,25 @@ describe('Blue actions', () => {
     for (const u of top) expect(ids(s)).not.toContain(`card:${u}`);
   });
 
-  it('Recruit Twice: +3 blue and two buys this turn', () => {
-    let s = table(Q, { round: 2, res: [{ gold: 2, red: 2 }], shop: ROW5 });
+  it('Recruit Twice (Nov 10): +5 blue, recruit a member from the discard pile now, then the turn\'s own recruit', () => {
+    let s = table(Q, { round: 2, res: [{ gold: 4 }], shop: ROW5 });
+    const [twins] = onDiscard(s, ['gold.banker']);
     s = take(s, 'market.clearance');
-    expect(R(s).blue).toBe(3); // +3 blue since Nov 1 (was +1)
-    expect(s.log).toContain('P1 recruits an extra time this turn.');
-    for (let k = 0; k < 2; k++) { expect(s.pending.kind).toBe('buy'); s = move(s, 'tier:small'); }
-    expect(s.players[0].bonus).toBe(2);
-    expect(s.pending?.kind).not.toBe('buy');
+    expect(R(s).blue).toBe(5);
+    expect(s.pending.prompt).toBe('Recruit Twice: recruit which member from the discard pile?');
+    expect(ids(s)).toEqual([`card:${twins}`, 'none']);
+    s = pickPay(move(s, `card:${twins}`), 'gold');
+    expect(owns(s, 0, 'gold.banker')).toBe(true);
+    expect(s.discard).not.toContain(twins);
+    expect(s.log.some(l => /^P1's Recruit Twice: pays .* for Banker\.$/.test(l))).toBe(true);
+    expect(s.pending.kind).toBe('buy');
+  });
+  it('Recruit Twice: an empty discard pile says so, and the turn\'s recruit still comes', () => {
+    let s = table(Q, { round: 2, shop: ROW5 });
+    s.discard = [];
+    s = take(s, 'market.clearance');
+    expect(s.log).toContain("P1's Recruit Twice: the discard pile is empty.");
+    expect(s.pending.kind).toBe('buy');
   });
 
   it('Bury: one shop member to the discard pile, refill, gain half its cost rounded down, plus the inherent +1', () => {
@@ -152,20 +169,26 @@ describe('Blue actions', () => {
     expect(R(s).blue).toBe(1 + 5);
   });
 
-  it('Spree: +6 blue and you buy 3 times this turn', () => {
-    let s = table(Q, { round: 3, res: [{ gold: 2, red: 2 }], shop: ROW, left: 5 });
+  it('Spree (Nov 10): +7 blue, recruit two members from the discard pile now, one at a time, then the turn\'s own recruit', () => {
+    let s = table(Q, { round: 3, res: [{ gold: 4 }], shop: ROW, left: 5 });
+    const [twins, intern] = onDiscard(s, ['gold.banker', 'market.planner']);
     s = take(s, 'market.spree');
-    expect(R(s).blue).toBe(6); // +6 blue since Nov 5 (+5 Nov 1)
-    expect(s.log).toContain('P1 goes on a spree: two extra recruits this turn.');
-    for (let k = 0; k < 3; k++) { expect(s.pending.kind).toBe('buy'); s = move(s, 'tier:small'); }
-    expect(s.players[0].bonus).toBe(3);
-    expect(s.pending?.kind).not.toBe('buy');
+    expect(R(s).blue).toBe(7);
+    expect(s.pending.prompt).toBe('Spree: recruit which member from the discard pile? (2 to go)');
+    s = pickPay(move(s, `card:${twins}`), 'gold');
+    expect(s.pending.prompt).toBe('Spree: recruit which member from the discard pile?');
+    s = pickPay(move(s, `card:${intern}`), 'blue');
+    expect(owns(s, 0, 'gold.banker') && owns(s, 0, 'market.planner')).toBe(true);
+    expect(s.pending.kind).toBe('buy');
   });
-  it('× Big Spender: Spree plus Big Spender is 4 buys', () => {
-    let s = table(Q, { round: 3, res: [{ gold: 4, red: 4 }], shop: ROW, left: 5, members: [['benders.bigspender1']] });
+  it('× Big Spender: Spree plus Big Spender is two discard pile recruits, then two buys', () => {
+    let s = table(Q, { round: 3, res: [{ red: 2, gold: 6 }], shop: ROW, left: 5, members: [['benders.bigspender1']] });
+    const [twins, intern] = onDiscard(s, ['gold.banker', 'market.planner']);
     s = take(s, 'market.spree');
-    for (let k = 0; k < 4; k++) { expect(s.pending.kind).toBe('buy'); s = move(s, 'tier:small'); }
-    expect(s.players[0].bonus).toBe(4);
+    s = pickPay(move(s, `card:${twins}`), 'gold');
+    s = pickPay(move(s, `card:${intern}`), 'blue');
+    for (let k = 0; k < 2; k++) { expect(s.pending.kind).toBe('buy'); s = move(s, 'tier:small'); }
+    expect(s.players[0].bonus).toBe(2);
     expect(s.pending?.kind).not.toBe('buy');
   });
 });
@@ -185,8 +208,8 @@ describe('Blue members', () => {
   it('× Doppelganger copying Stylist: +2 for one blue recruit', () => {
     let s = table(Q, { round: 2, members: [['echo.doppel', 'market.stylist']], res: [{ blue: 4 }], shop: ['market.curator', ...ROW.slice(1)] });
     s.cards[uidIn(s, 'echo.doppel', 0)].copy = 'market.stylist';
-    s = move(take(s, 'market.clearance'), card(s, 'market.curator'));
-    expect(R(s).blue).toBe(4 + 3 - 4 + 2 + 1); // Recruit Twice's 3 (since Nov 1), Curator paid 4 blue, the two Stylists 2, Curator's own 1 (Stylist)
+    s = move(take(s, 'thieves.hideout'), card(s, 'market.curator'));
+    expect(R(s).blue).toBe(4 - 4 + 2 + 1); // Curator paid 4 blue, the two Stylists 2, Curator's own 1 (Stylist)
   });
 
   it('Onlooker: whenever a rival recruits a blue member, +2 blue; not for other colors or its owner\'s own', () => {
@@ -215,13 +238,14 @@ describe('Blue members', () => {
     s = buyTurn([['market.connoisseur']], [{ red: 8 }], 'red.bigfamily');
     expect(R(s).blue).toBe(0);
   });
-  it('× Recruit Twice: both blue recruits pay Connoisseurs', () => {
-    let s = table(Q, { round: 2, members: [['market.connoisseur']], res: [{ blue: 8 }], shop: ['market.recluse', 'market.curator', ...ROW] });
-    s = move(take(s, 'market.clearance'), card(s, 'market.recluse'));
+  it('× Recruit Twice: the discard pile recruit and the turn\'s own both pay Connoisseurs', () => {
+    let s = table(Q, { round: 2, members: [['market.connoisseur']], res: [{ blue: 8 }], shop: ['market.curator', ...ROW] });
+    const [recluse] = onDiscard(s, ['market.recluse']);
+    s = pickPay(move(take(s, 'market.clearance'), `card:${recluse}`), 'blue');
     s = move(s, card(s, 'market.curator'));
     expect(owns(s, 0, 'market.recluse') && owns(s, 0, 'market.curator')).toBe(true);
-    // 8, Recruit Twice's 3 (since Nov 1), two members at 4 blue each, Connoisseurs' 1 twice, Curator's own 2 (Connoisseurs, Recluse)
-    expect(R(s).blue).toBe(8 + 3 - 8 + 2 + 3); // Curator now counts Connoisseurs as 2 (worth 2 followers since Nov 1 balance; member count = follower count)
+    // 8, Recruit Twice's 5 (Nov 10), two members at 4 blue each, Connoisseurs' 1 twice, Curator's own 3 (Connoisseurs, Recluse)
+    expect(R(s).blue).toBe(8 + 5 - 8 + 2 + 3); // Curator now counts Connoisseurs as 2 (worth 2 followers since Nov 1 balance; member count = follower count)
     expect(named(s, 'Connoisseurs').length).toBe(2);
   });
 
@@ -234,9 +258,10 @@ describe('Blue members', () => {
     // Front-runner leans purple; purple isn't on this table
     // red enough to pay Front-runner exactly (4 any since every member cost 3 more as any, Nov 5 night), so only Recruit Twice's blue is left
     let s = table(Q, { round: 2, members: [['market.reseller']], res: [{ red: 4 }], shop: ['benders.frontrunner', ...ROW.slice(1)] });
+    s.discard = [];
     s = move(take(s, 'market.clearance'), card(s, 'benders.frontrunner'));
     expect(owns(s, 0, 'benders.frontrunner')).toBe(true);
-    expect(Object.values(R(s)).reduce((a, b) => a + b, 0)).toBe(3); // only Recruit Twice's 3 blue (since Nov 1)
+    expect(Object.values(R(s)).reduce((a, b) => a + b, 0)).toBe(5); // only Recruit Twice's 5 blue (Nov 10)
     expect(named(s, 'Reseller')).toEqual([]);
   });
 
@@ -345,7 +370,7 @@ describe('Blue members', () => {
   it('Patroness: +1 follower each time shop members go to the discard pile (once per Out of Style, not per card); not the round refresh', () => {
     let s = table(Q, { round: 2, members: [[], ['market.patroness']], shop: ROW });
     s = take(s, 'market.restock');
-    s = move(s, 'color:red');
+    for (let k = 0; k < 3; k++) s = move(s, card(s, ['red.bigfamily', 'red.twins', 'red.intern'][k]));
     expect(s.players[1].bonus).toBe(1);
     expect(named(s, 'Patroness').length).toBe(1);
     s = table(Q, { round: 2, members: [['market.patroness']], shop: ROW });

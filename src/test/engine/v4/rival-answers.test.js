@@ -5,6 +5,8 @@ import { describe, it, expect } from 'vitest';
 import { take, move } from './helpers.js';
 import { table, useCosts, uidIn } from './cards-helpers-b.js';
 import { turnStory } from '../../../v4/format.js';
+import { useRetired } from './helpers.js';
+useRetired(['thieves.ransom']);
 
 const Q = ['gold', 'red', 'thieves', 'market'];
 useCosts({ 'red.twins': [2, 2], 'red.intern': [2, 0], 'red.bigfamily': [4, 4], 'gold.tycoon': [8, 4], 'gold.taxman': [2, 2], 'red.volunteer': [0, 0] });

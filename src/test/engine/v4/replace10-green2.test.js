@@ -21,7 +21,8 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 describe('REPLACE10 second versions', () => {
   it('Copyist: whenever you copy an action, +2 followers (Cover copying Build Up)', () => {
     expect(defById('echo.copyist').text).toBe('Whenever you copy an action, +2 followers.');
-    let s = table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, left: 4, members: [['echo.copyist']] });
+    let s = table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, left: 4, members: [['echo.copyist']], queue: [1, 0].map(p => ({ t: 'turn', p })) });
+    s = answer(take(s, 'echo.chant'), 'pass'); // a rival's Build Up for Cover to copy (Cory, Nov 10)
     const f = s.players[0].bonus || 0;
     s = take(s, 'echo.hum');
     while (s.pending?.player === 0 && s.pending.kind === 'choose') s = answer(s, (s.pending.options.find(o => /Build Up/.test(o.label)) || s.pending.options[0]).id);

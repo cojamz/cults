@@ -9,16 +9,12 @@ import { wrapInPlace } from './echo.js';
 
 /** color -> [[live space key out, candidate space key in], ...] */
 export const TEST_SPACES = {
-  thieves: [['ransom', 'racket']], // Shake Down -> Protection Racket
+  // Nov 10 (Cory: "once we're done those will be the live actions in both test and other version"): Magenta, Blue,
+  // Green and Purple play their new live spaces in the test version too, so their swaps (Shake Down -> Protection Racket,
+  // Bury -> Rummage, Greatest Hits -> Medley, Purple's token spaces) are gone
   silver: [['polish', 'roundrobin']], // Polish -> Round Robin
   trading: [['estatesale', 'bequest']], // Estate Sale -> Bequest
-  // Recruit Twice stays (Cory, Nov 9: "recruit twice and recruit three times are strong… very strategic"), so
-  // Foreclose sits out until he says which Blue round II space it takes (Bury's spot holds Rummage)
-  market: [['pricecheck', 'rummage']], // Bury -> Rummage
-  echo: [['eternity', 'medley']], // Greatest Hits -> Medley
   yellow: [['meltingpot', 'moneychangers']], // Melting Pot -> Swap Meet
-  // Purple: every space takes the Goes Last token (Cory, Nov 8 8:21pm)
-  purple: [['holdup', 'holduplast'], ['again', 'againlast'], ['rally', 'closinglast']],
 };
 /** Candidate members dealt into the test version's decks, each in a live member's place so decks stay at 10 (Cory,
  *  Nov 8: "Are we keeping the member decks consistent?"); Protesters, Gift Swappers and Purifiers (Nov 9) join the grey members with nothing out. */
@@ -29,21 +25,18 @@ export const TEST_OUT = new Set(['trading.recluse', 'trading.heirs', 'market.reg
 export const testDealt = (rules, def) => (!rules?.testSet ? null : TEST_MEMBERS.has(def.id) ? true : TEST_OUT.has(def.id) ? false : null);
 
 const cache = {};
-const ALL_WORDS = /(your next minion is|your minion after (that|those) is|that minion is) placed after everyone else\u2019s/;
 /** A color's spaces in the test version: the live list with the swap made in place. */
 export function testSpaces(qid) {
   if (cache[qid]) return cache[qid];
   const live = quadrant(qid).actions;
   const swaps = TEST_SPACES[qid];
   if (!swaps) return (cache[qid] = live);
-  // Purple: the token holds all your other minions (Cory, Nov 9), so its spaces say so
-  const out = qid === 'purple' ? live.map(a => (ALL_WORDS.test(a.text) ? { ...a, text: a.text.replace(ALL_WORDS, 'your other minions are placed after everyone else\u2019s') } : a)) : [...live];
+  const out = [...live];
   for (const [outKey, inKey] of swaps) {
     const i = live.findIndex(a => a.key === outKey);
     const cand = (POOL_SPACES[qid] || []).find(a => a.key === inKey);
     if (i < 0 || !cand) throw new Error(`Test version: ${qid} is missing ${i < 0 ? outKey : inKey}.`);
-    const c2 = qid === 'purple' && ALL_WORDS.test(cand.text) ? { ...cand, text: cand.text.replace(ALL_WORDS, 'your other minions are placed after everyone else\u2019s') } : cand;
-    out[i] = wrapInPlace(qid, c2, i);
+    out[i] = wrapInPlace(qid, cand, i);
   }
   return (cache[qid] = out);
 }

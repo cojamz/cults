@@ -5,6 +5,8 @@ import { describe, it, expect } from 'vitest';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming, passBuys } from './cards-helpers.js';
 import { usePool, price, still, go, total } from './pool-helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.turnout']);
 
 usePool(['trading.handoffartists', 'trading.anchorites', 'trading.wallflowers'],
   ['trading.charitydrive', 'trading.carepackages', 'trading.handmedowns', 'thieves.collections', 'thieves.tallpoppies', 'yellow.pocketchange', 'yellow.bazaar']);

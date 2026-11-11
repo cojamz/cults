@@ -2,16 +2,19 @@
 import { describe, it, expect } from 'vitest';
 import { table, uidIn } from './cards-helpers-b.js';
 import { take, move, ids } from './helpers.js';
+import { useRetired } from './helpers.js';
+import { placed } from './placed-helpers.js';
+useRetired(['thieves.hideout']);
 const Q = ['gold', 'red', 'thieves', 'market'];
 const shop = ['red.volunteer', 'red.intern'];
 describe('Magenta corrections retained through the redesign', () => {
   it('Help Yourself can take from poorer and tied rivals', () => {
     let s = table(Q, { n: 3, res: [{ gold: 6 }, { gold: 1 }, { red: 6 }], shop });
-    s = take(s, 'thieves.pickpocket');
+    s = take(placed(s, 0, 2), 'thieves.pickpocket'); // the third minion this round: steal 3
     expect(ids(s)).toContain('take:1:gold');
     expect(ids(s)).toContain('take:2:red');
-    s = move(move(move(s, 'take:2:red'), 'take:2:red'), 'take:2:red'); // round I: steal 3, from one rival (Nov 5)
-    expect(s.players[0].res).toMatchObject({ gold: 6, red: 3, magenta: 0 });
+    s = move(move(move(s, 'take:2:red'), 'take:2:red'), 'take:2:red');
+    expect(s.players[0].res).toMatchObject({ gold: 6, red: 3, magenta: 1 });
   });
   it('Lie Low prevents member and resource theft', () => {
     let s = table(Q, { round: 3, left: 5, res: [{ gold: 4 }, { red: 3 }], members: [['red.intern']], shop, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
@@ -24,12 +27,12 @@ describe('Magenta corrections retained through the redesign', () => {
   });
   it('adds Desperado and Sticky Fingers once to one theft', () => {
     let s = table(Q, { n: 3, res: [{}, { gold: 9 }, { red: 9 }], members: [['thieves.sticky', 'thieves.desperado']], bonus: [0, 5, 5], shop });
-    s = take(s, 'thieves.pickpocket');
+    s = take(placed(s, 0, 2), 'thieves.pickpocket');
     expect(s.pending.count.left).toBe(6); // 3+2+1 (Desperado +2, Cory, Nov 1, 2:27pm)
     s = move(s, 'take:2:red');
     expect(s.pending.count.left).toBe(5);
     for (let k = 0; k < 5; k++) s = move(s, 'take:2:red');
-    expect(s.players[0].res).toMatchObject({ magenta: 0, red: 6 });
+    expect(s.players[0].res).toMatchObject({ magenta: 1, red: 6 });
     expect(s.players[1].res.gold).toBe(9);
     expect(s.players[2].res.red).toBe(3);
   });

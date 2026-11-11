@@ -12,6 +12,8 @@ const { applyMove, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { table, named } = await import('./cards-helpers-b.js');
 const { take, move, uidOf } = await import('./helpers.js');
+const { useRetired } = await import('./helpers.js');
+useRetired(['red.turnout']);
 delete process.env.REPLACE10;
 delete process.env.MEMBER_UP;
 
@@ -78,27 +80,27 @@ describe('REPLACE10: lane D requalified cards', () => {
     expect(Object.values(s.players[0].res).reduce((a, b) => a + b, 0)).toBe(1);
   });
 
-  it('Big Finish: once per game, copies every action you have a minion on (Build Up in round II: +4 green again)', () => {
+  it('Big Finish: once per game, copies every action you have a minion on (Build Up alone on Green: its 2 green again, Nov 10)', () => {
     let s = table(Q, { n: 2, round: 2, left: 4, members: [['echo.bigfinish']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
     s = done(take(s, 'echo.chant'));
     s = done(take(s, 'red.turnout'));
     const u = uidOf(s, 'echo.bigfinish', 0);
     const g = s.players[0].res.green || 0;
     s = done(move(s, `use:${u}`));
-    expect((s.players[0].res.green || 0) - g).toBe(4);
+    expect((s.players[0].res.green || 0) - g).toBe(2);
     expect(s.cards[u].used).toBe(true);
   });
 
   it('Cover Band: once per round, copies the previous action', () => {
     let s = table(Q, { n: 2, round: 2, left: 4, members: [['echo.coverband']], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
     s = done(take(s, 'red.turnout'));
-    s = done(take(s, 'echo.chant')); // P2 on Build Up: +4 green
+    s = done(take(s, 'echo.chant')); // P2 on Build Up, the one minion on Green: +2 green (Nov 10)
     const u = uidOf(s, 'echo.coverband', 0);
     const g = s.players[0].res.green || 0;
     s = move(s, `use:${u}`);
     expect(s.pending.prompt).toBe('Cover Band: copy the previous action?');
     s = done(answer(s, s.pending.options[0].id));
-    expect((s.players[0].res.green || 0) - g).toBe(4);
+    expect((s.players[0].res.green || 0) - g).toBe(2);
     expect(s.cards[u].used).toBe(true);
   });
 });

@@ -6,6 +6,8 @@ import { resume, countMembersOfColor } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming, passBuys } from './cards-helpers.js';
 import { usePool, price } from './pool-helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.turnout']);
 
 usePool(['market.giftcards', 'market.blackfriday', 'yellow.pilgrims', 'yellow.joneses', 'red.familyportrait', 'yellow.paintedfaces'],
   ['red.musicalchairs', 'market.keepingup', 'market.cleansweep', 'yellow.worldsfair']);

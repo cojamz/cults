@@ -18,25 +18,34 @@ const pair = (a, b) => `trade:${a}:${b}`;
 const copyChoice = (s, action) => s.pending.options.find(o => o.kind === 'space' && o.label.startsWith(`${actionName(action)} (`));
 
 describe('Green exact action targets alongside Red recruitment', () => {
-  it.each([1, 2, 3])('Build Up in round %i gives +3/+4/+5 green and its estimate matches the gain', round => {
+  // Build Up since Nov 10: "+1 green per minion on Green spaces, this one included. +1 green."
+  it.each([1, 2, 3])('Build Up in round %i alone on Green gives 2 green and its estimate matches the gain', round => {
     const s = table(Q, { round });
     const ctx = contextFor(s), buildUp = quadrant('echo').actions.find(a => a.key === 'chant');
-    expect(buildUp.estimate(ctx, s.players[0])).toBe(round + 2);
+    expect(buildUp.estimate(ctx, s.players[0])).toBe(2);
     const after = take(s, 'echo.chant');
-    expect(after.players[0].res.green).toBe(round + 2);
+    expect(after.players[0].res.green).toBe(2);
+  });
+  it('Build Up counts a rival\'s minion on Green too, and its estimate matches the gain', () => {
+    let s = table(Q, { round: 2, left: 5, queue: turns(1, 0) });
+    s = go(s, 'echo.crowd2');
+    const ctx = contextFor(s), buildUp = quadrant('echo').actions.find(a => a.key === 'chant');
+    expect(buildUp.estimate(ctx, s.players[0])).toBe(3);
+    s = take(s, 'echo.chant');
+    expect(s.players[0].res.green).toBe(3);
   });
 
-  it('Cover offers only actions with no minion on them and does the chosen one', () => {
-    let s = table(Q, { round: 2, left: 5, queue: turns(1, 0) });
+  it('Cover (Nov 10) offers only actions with a rival\'s minion on them and copies the chosen one', () => {
+    let s = table(Q, { round: 2, left: 5, queue: turns(1, 0, 0) });
     s = go(s, 'gold.rush');
+    s = go(s, 'echo.chant'); // P1's own: not offered
     s = take(s, 'echo.hum');
     expect(s.pending.kind).toBe('choose');
-    const labels = s.pending.options.map(o => o.label);
-    expect(labels.some(l => l.startsWith(`${actionName('gold.rush')}:`))).toBe(false); // P2's minion is on it
-    expect(labels.some(l => l.startsWith('Cover:'))).toBe(false); // P1's minion is on it
-    const before = s.players[0].res.green;
-    s = pass(move(s, s.pending.options.find(o => o.label.startsWith('Build Up:')).id));
-    expect(s.players[0].res.green - before).toBe(4); // Build Up in round II
+    expect(copyChoice(s, 'gold.rush')).toBeTruthy(); // P2's minion is on it
+    expect(copyChoice(s, 'echo.chant')).toBeUndefined();
+    const before = s.players[0].res.gold;
+    s = pass(move(s, copyChoice(s, 'gold.rush').id));
+    expect(s.players[0].res.gold - before).toBe(4); // Golden Years in round II
   });
 
   it.each([0, 1])('Echo copies the immediately preceding player %i, including your own snake turn', previousPlayer => {

@@ -146,7 +146,7 @@ describe('Yellow members', () => {
     let s = sceneQ({ quadrants: ['gold', 'yellow', 'thieves', 'echo'], n: 2, round: 2, bonus: [0, 5], members: [[], ['yellow.customs']] });
     s = take(s, 'thieves.rob');
     while (s.pending?.options?.some(o => o.id === 'player:1')) s = move(s, 'player:1'); // one follower a pick (Heist, Nov 5)
-    expect(s.players[1].bonus).toBe(2);
+    expect(s.players[1].bonus).toBe(1); // Heist takes 4 (Nov 10)
     expect(R(s, 1).yellow || 0).toBe(0);
     expect(named(s, 'Customs Officer')).toHaveLength(0);
   });

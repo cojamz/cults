@@ -5,6 +5,8 @@ import { describe, it, expect } from 'vitest';
 import { createGame, resume, followers } from '../../../../engine/v4/core.js';
 import { install } from '../../../../engine/v4/content/echo.js';
 import { take, move, play, uidOf, pinCosts } from '../helpers.js';
+import { useRetired } from '../helpers.js';
+useRetired(['red.hire']);
 
 install();
 const QUADS = ['gold', 'red', 'blue', 'echo'];
@@ -28,7 +30,7 @@ const entry = (s, name) => Object.values(s.echo.now).find(e => e.name === name);
 
 describe('Green: a space’s chip is what the space gave, closed at the buy step', () => {
   it('a member recruited in the buy step (Understudy) does not add its copy to the space the buyer just took', () => {
-    // P2 takes Golden Years. P1 takes Build Up (+3 green in round I), then buys legacy Understudy and copies Golden Years.
+    // P2 takes Golden Years. P1 takes Build Up (+2 green: its own minion on Green, +1), then buys legacy Understudy and copies Golden Years.
     let s = scene({ turns: [1, 0, 1], res: [{ green: 10, gold: 4 }, {}], shop: ['echo.understudy', 'red.twins', 'red.bigfamily'] });
     s = pass(take(s, 'gold.rush'));
     s = take(s, 'echo.chant');
@@ -36,8 +38,8 @@ describe('Green: a space’s chip is what the space gave, closed at the buy step
     expect(s.pending.prompt).toMatch(/^Understudy/);
     s = pass(move(s, s.pending.options[0].id));
     const hum = entry(s, 'Build Up');
-    // Its taker got just Build Up's +3, and nothing from Understudy's copy.
-    expect(hum.res).toEqual({ green: 3 });
+    // Its taker got just Build Up's +2, and nothing from Understudy's copy.
+    expect(hum.res).toEqual({ green: 2 });
     expect(hum.redo).toBeFalsy();
     expect(hum.members).toEqual([]);
   });

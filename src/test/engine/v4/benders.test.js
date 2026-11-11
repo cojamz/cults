@@ -5,7 +5,7 @@ import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, resume, followers, contextFor, cardDef, releaseRefund } from '../../../engine/v4/core.js';
 import { defById, EXTRA_WILD } from '../../../engine/v4/content/index.js';
 import { extraTurns, onBoard } from '../../../engine/v4/content/purple.js';
-import { move, uidOf, ids, hasOpt, actionName, pinCosts } from './helpers.js';
+import { move, take, uidOf, ids, hasOpt, actionName, pinCosts } from './helpers.js';
 import { SHOP_SIZE } from '../../../engine/v4/core.js';
 import { STRAYS, stray } from './stray.js';
 
@@ -197,16 +197,19 @@ describe('Insider: also recruit from the top 3 of the pile', () => {
   });
 });
 
-describe('Extra Hand: Once per game, +1 minion this round', () => {
-  it('adds a minion after everyone else’s turns, from round II only', () => {
-    let s = scene({ round: 3, members: [['benders.extrahand']] });
-    s = move(s, `use:${uidOf(s, 'benders.extrahand', 0)}`);
-    expect(s.players[0].left).toBe(4);
-    let t = scene({ round: 1, members: [['benders.extrahand']] });
-    const u = uidOf(t, 'benders.extrahand', 0);
-    t = move(t, `use:${u}`);
-    expect(t.players[0].left).toBe(3);
-    expect(t.cards[u].used).toBe(false);
+describe('Extra Hand: On Recruit, +1 minion this round (Nov 10)', () => {
+  it('adds a minion the turn it is recruited, from round II only', () => {
+    let s = scene({ round: 3, res: [{ gold: 30, red: 30, blue: 30, green: 30 }], shop: ['benders.extrahand'] });
+    s = take(s, 'gold.rush');
+    const left = s.players[0].left;
+    s = move(s, `card:${uidOf(s, 'benders.extrahand', 'shop')}`);
+    expect(s.players[0].left).toBe(left + 1);
+    expect(s.pending?.options?.map(o => o.id) || []).not.toContain(`use:${uidOf(s, 'benders.extrahand', 0)}`);
+    let t = scene({ round: 1, res: [{ gold: 30, red: 30, blue: 30, green: 30 }], shop: ['benders.extrahand'] });
+    t = take(t, 'gold.rush');
+    const l1 = t.players[0].left;
+    t = move(t, `card:${uidOf(t, 'benders.extrahand', 'shop')}`);
+    expect(t.players[0].left).toBe(l1);
   });
   it('a turn task with a ring limit only offers spaces of that ring or lower (the weaker version’s hook)', () => {
     const s = scene({ round: 3, queue: [{ t: 'turn', p: 0, ring: 1 }] });

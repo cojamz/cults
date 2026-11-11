@@ -4,6 +4,8 @@ import { describe, it, expect } from 'vitest';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming } from './cards-helpers.js';
 import { cardDef, contextFor, resume } from '../../../engine/v4/core.js';
+import { useRetired } from './helpers.js';
+useRetired(['market.pricecheck']);
 
 const rich = { gold: 30, red: 30, yellow: 30, green: 30, blue: 30 };
 const named = (s, name) => linesNaming(s.log, name);

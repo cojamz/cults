@@ -176,7 +176,9 @@ describe('"You\'d get" on a space (the engine\'s dry run)', () => {
     const pid = s.pending.player;
     const echo = s.quadrants.indexOf('echo'), chant = quadrant('echo').actions.findIndex(a => a.key === 'chant');
     const one = render(<YoudGet state={s} pid={pid} q={echo} i={chant} />);
-    await waitFor(() => expect(one.container.querySelector('[data-youd-get]').dataset.youdGet).toBe('+3 green'));
+    // Build Up with no minion on Green yet: +1 for this one, plus its own +1 (Nov 10)
+    expect(Object.keys(s.slots).filter(k => k.startsWith(`${echo}-`))).toEqual([]);
+    await waitFor(() => expect(one.container.querySelector('[data-youd-get]').dataset.youdGet).toBe('+2 green'));
     cleanup();
     const gold = s.quadrants.indexOf('gold'), jv = quadrant('gold').actions.findIndex(a => a.key === 'jv');
     const two = render(<YoudGet state={s} pid={pid} q={gold} i={jv} />);

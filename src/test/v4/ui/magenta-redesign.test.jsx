@@ -12,22 +12,25 @@ describe('Magenta action wording and one-stack theft', () => {
   it('separates scaling theft, followers, protection (no steal since 2026-10-22) and the inherent color gain', () => {
     for (const round of [1, 2, 3]) {
       const pick = panelText('thieves', { key: 'pickpocket' }, round);
-      // the followers are stolen too, not gained from the bank (Cory, 2026-10-22)
-      // round I rework (Cory, Oct 27): resources only, 3/4/5, from one rival since Nov 5
-      expect(pick.verb).toBe(`Steal ${round + 2} resources`); // what is stolen, said (picky bot, Nov 4: a taken "Steal 4" read as followers)
-      expect(pick.second).toBe('from one rival');
+      // Nov 10: "Steal 1 resource per minion you've placed this round, this one included. +1 magenta." (any rivals: a
+      // steal splits among rivals as you choose, Cory Nov 10); the same words every round
+      expect(pick.verb).toBe('Steal 1 per minion you placed');
+      expect(pick.second).toBe('this round, this one too');
       const safe = panelText('thieves', { key: 'hideout' }, round);
       expect(safe.verb).toBe('Steal 1, then safe from steals'); // Cory, Nov 1; the protection in line 1 (line 2 dropped every round, text audit Nov 1)
       expect(safe.second).toBe('this round');
       expect(safe.note).toBeNull(); // the +1 of its color is the hover's badge, off the wheel (Cory, Nov 9)
-      expect(shortEffect('thieves', { key: 'pickpocket' }, round)).toContain(`steal ${round + 2}`);
+      expect(shortEffect('thieves', { key: 'pickpocket' }, round)).toBe('steal 1 per minion you placed this round; +1 magenta');
     }
     const stash = panelText('thieves', { key: 'tipoff' }, 1);
     expect(stash.main).toBe('+2 magenta'); // Gather's shape (Oct 31)
     expect(stash.second).toBe('+1 @f if you recruit a member');
     expect(panelText('thieves', { key: 'ransom' }, 2).verb).toContain(`costing ${6 + MORE} or less`);
-    expect(panelText('thieves', { key: 'rob' }, 2).verb).toBe('Steal 3 @f'); // Heist takes followers (Nov 4), from any rivals (Nov 5)
-    expect(pipEffect('thieves', { key: 'rob' }, 2)).toBe('steal 3 followers');
+    expect(panelText('thieves', { key: 'rob' }, 2).verb).toBe('Steal 4 @f and 4 resources'); // Heist, Nov 10 3:46pm
+    expect(pipEffect('thieves', { key: 'rob' }, 2)).toBe('steal 4 followers and 4 resources');
+    // Catch Up (Nov 10) and Swindle (Nov 10, Shake Down's slot)
+    expect(panelText('thieves', { key: 'catchup' }, 1)).toMatchObject({ main: '+2 magenta', second: 'per rival with more resources' });
+    expect(panelText('thieves', { key: 'swindle' }, 2)).toMatchObject({ verb: `Steal a member costing up to ${6 + MORE}`, second: 'give them a shop member' });
   });
 
   it('shows each exact half-stack amount without a Take All or coin-by-coin plan', () => {

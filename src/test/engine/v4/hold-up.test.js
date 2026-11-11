@@ -9,6 +9,8 @@ import { seededRandom } from '../../../engine/v4/rng.js';
 import { quadrant } from '../../../engine/v4/index.js';
 import { sceneQ } from './cards-helpers.js';
 import { take } from './helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['purple.holdup']);
 
 const Q = ['gold', 'red', 'purple', 'echo'];
 /** A bot move that takes a space moving turns (Sleep In, Hold Up) only when it is the last one open: round I fills

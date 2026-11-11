@@ -10,6 +10,8 @@ process.env.MEMBER_UP = '2';
 const { applyMove, contextFor, resume } = await import('../../../engine/v4/core.js');
 const { table, named } = await import('./cards-helpers-b.js');
 const { take, move, uidOf } = await import('./helpers.js');
+const { useRetired } = await import('./helpers.js');
+useRetired(['red.hire', 'red.turnout']);
 delete process.env.REPLACE10;
 delete process.env.MEMBER_UP;
 
@@ -18,7 +20,8 @@ const payFor = (s, i, uid) => contextFor(s).payChoices(s.players[i], uid, {})[0]
 
 describe('REPLACE10: Copyist', () => {
   it('Whenever you copy an action, +2 followers (Cover copying Build Up)', () => {
-    let s = table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, left: 4, members: [['echo.copyist']] });
+    let s = table(['red', 'echo', 'thieves', 'trading'], { n: 2, round: 2, left: 4, members: [['echo.copyist']], queue: [1, 0].map(p => ({ t: 'turn', p })) });
+    s = answer(take(s, 'echo.chant'), 'pass'); // a rival's Build Up for Cover to copy (Cory, Nov 10)
     const b = s.players[0].bonus;
     s = take(s, 'echo.hum');
     while (s.pending?.player === 0 && s.pending.kind === 'choose') s = answer(s, (s.pending.options.find(o => /Build Up/.test(o.label)) || s.pending.options[0]).id);

@@ -9,6 +9,8 @@ process.env.MEMBER_UP = '2';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { quadrant, defById } = await import('../../../engine/v4/content/index.js');
 const { table, uidIn } = await import('./cards-helpers-b.js');
+const { useRetired } = await import('./helpers.js');
+useRetired(['red.turnout', 'thieves.hideout']);
 delete process.env.REPLACE14;
 delete process.env.MEMBER_UP;
 

@@ -18,6 +18,7 @@ useRetiredRollCall(); // Roll Call, a plain purple space, kept for these tests (
 function table(opts, me = null) {
   let s = sceneQ(opts);
   if (opts.order) s.order = opts.order;
+  if (opts.slots) s.slots = { ...s.slots, ...opts.slots };
   const t = createTrail(me);
   feed(t, s);
   const lives = [], states = [s];
@@ -140,7 +141,10 @@ describe('a steal is told once, in the colors it took', () => {
   // Magenta redesign (decisions.md 2026-10-19): stolen resources keep their colors and every Magenta action gives +1
   // magenta, so the "…, as magenta" line is gone. What stays: each rival's loss is told once, beside the thief's gain,
   // and Help Yourself no longer steals followers (Oct 27). A fresh table each time (sceneQ runs the queue it is given in place).
+  // Help Yourself (Nov 10) steals 1 per minion you've placed this round, this one included: two of P1's minions already
+  // sit on Gold's spaces, so it steals 3, as these stories were written for
   const opts = (round = 1) => ({ quadrants: ['gold', 'thieves', 'market', 'red'], n: 3, round, left: 2, res: [{}, { gold: 3 }, { red: 2 }],
+    slots: { '0-0': 0, '0-1': 0 },
     queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 2 }, { t: 'turn', p: 0 }] });
   const steal = (effects, round = 1, picks = []) => {
     const d = table({ ...opts(round), effects }, 1);
@@ -151,24 +155,26 @@ describe('a steal is told once, in the colors it took', () => {
   };
   const once = st => {
     expect(st.text).not.toMatch(/as magenta/);
-    expect(st.lines.filter(l => /\+1 magenta/.test(l))).toHaveLength(0); // no +1 magenta on Help Yourself (Oct 29), never the stolen coins
+    // Help Yourself's +1 magenta came back with its Nov 10 text: told once, its own gain, never in a "from" line
+    expect(st.lines.join(' ').match(/\+1 magenta/g) || []).toHaveLength(1);
+    expect(st.lines.join(' ')).not.toMatch(/magenta from|\d+ magenta[^(]*\)/); // the magenta is never told as taken
     expect(st.lines.filter(l => /followers?/.test(l))).toHaveLength(0); // Help Yourself steals no followers (Oct 27)
   };
   it('from the effects: the gain in its own colors, and one line for what you lost', () => {
     const st = steal(true); // round I: steal 3, all of your gold
     expect(st.fx).toBe(true);
     // the steal on one line (picky bot, Nov 7: the stolen coins told twice, in the gain and in a "from" line)
-    expect(st.lines).toEqual(['+3 gold from you']);
+    expect(st.lines).toEqual(['+1 magenta +3 gold (3 gold from you)']); // with its own +1 magenta, as Heist's line reads
     expect(st.hit).toBe('took 3 of your gold');
-    expect(st.short).toBe('+3 gold from you'); // (the gain that says whose it was, once)
+    expect(st.short).toBe('+1 magenta +3 gold (3 gold from you)'); // (the gain that says whose it was, once)
     once(st);
   });
   it('from the log (no effects recorded): the same steal', () => {
     const st = steal(false);
     expect(st.fx).toBeUndefined();
-    expect(st.lines).toEqual(['+3 gold', '3 gold from you']);
+    expect(st.lines).toEqual(['+3 gold +1 magenta', '3 gold from you']);
     expect(st.hit).toBe('took 3 of your gold');
-    expect(st.short).toBe('+3 gold · 3 gold from you');
+    expect(st.short).toBe('+3 gold +1 magenta · 3 gold from you');
     once(st);
   });
   it.each([true, false])('from two rivals (effects %s): each rival named once, in the color they lost', effects => {

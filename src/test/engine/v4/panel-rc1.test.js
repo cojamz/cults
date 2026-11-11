@@ -211,6 +211,8 @@ describe('19 · Collect Debts keeps its count through a save and load', () => {
 // session stores stateJson), and check every offered pay option is legal and finishes.
 import { chooseBotMove } from '../../../engine/v4/bots.js';
 import { STRAYS, stray } from './stray.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.evenswap', 'red.hire']);
 const json = v => JSON.parse(JSON.stringify(v)); // the online session stores the state as a JSON string
 describe('Talent Scout → pay always finishes', () => {
   const start = (extra = {}) => {

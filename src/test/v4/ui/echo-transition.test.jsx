@@ -37,9 +37,10 @@ it('automatically copies after placing on Echo, through the step input lock', as
   const copyId = current.pending.options[0].id;
   await wait(700);
   expect(submit).toHaveBeenCalledWith({ player: 0, option: copyId });
-  // Echo's own +1, plus the copied Build Up yield (round I: +3 green); a copy repeats what the taker got
-  expect(current.players[0].res.green).toBe(4);
-  expect(current.players[1].res.green).toBe(3);
-  expect(current.log.at(-1)).toMatch(/copied Build Up \(P2's\): \+3 green/);
+  // Echo's own +1, plus the copied Build Up yield: P2's Build Up was the only minion on Green, so +1 for it and its own
+  // +1 (Nov 10: "+1 green per minion on Green spaces, this one included. +1 green."); a copy repeats what the taker got
+  expect(current.players[0].res.green).toBe(3);
+  expect(current.players[1].res.green).toBe(2);
+  expect(current.log.at(-1)).toMatch(/copied Build Up \(P2's\): \+2 green/);
   expect(current.pending.kind).toBe('buy');
 });

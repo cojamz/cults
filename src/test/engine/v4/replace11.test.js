@@ -11,6 +11,8 @@ process.env.MEMBER_UP = '2';
 const { createGame, applyMove, contestTable } = await import('../../../engine/v4/core.js');
 const { quadrant } = await import('../../../engine/v4/content/index.js');
 const { table } = await import('./cards-helpers-b.js');
+const { useRetired } = await import('./helpers.js');
+useRetired(['red.turnout']);
 delete process.env.REPLACE11;
 delete process.env.MEMBER_UP;
 
@@ -156,7 +158,7 @@ describe('REPLACE11: Yard Sale', () => {
     while (s.pending && s.pending.kind === 'buy') s = answer(s, 'pass');
     s = answer(s, `card:${raiders}`);
     while (s.pending && s.pending.player === 0) s = answer(s, s.pending.kind === 'buy' ? 'pass' : s.pending.options[0].id);
-    s = answer(s, s.pending.options.find(o => o.id.startsWith('slot:')).id);
+    s = answer(s, `slot:${s.quadrants.indexOf('red')}-${quadrant('red').actions.findIndex(a => a.name === 'Gather')}`); // a plain gain (Borrow, Red's first space since Nov 10, would recruit the cheapest member itself)
     while (s.pending && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
     const buy = s.pending.options.find(o => o.id === `card:${raiders}`);
     expect(buy, JSON.stringify(s.pending.options.map(o => o.id))).toBeTruthy();

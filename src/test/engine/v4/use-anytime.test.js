@@ -8,6 +8,8 @@ import { quadrant } from '../../../engine/v4/content/index.js';
 import { take, move, ids } from './helpers.js';
 import { table, named, uidIn } from './cards-helpers-b.js';
 import { promptFor } from '../../../v4/format.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.evenswap']); // Tryout's shop-member choice (retired Nov 10 for Borrow, kept for old saves)
 
 const Q = ['gold', 'red', 'market', 'echo'];
 const ROW = ['gold.tycoon', 'red.bigfamily', 'red.twins', 'gold.taxman'];

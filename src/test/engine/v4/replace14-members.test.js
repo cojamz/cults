@@ -11,6 +11,8 @@ const { quadrant, defById } = await import('../../../engine/v4/content/index.js'
 const { table, uidIn } = await import('./cards-helpers-b.js');
 const { move } = await import('./helpers.js');
 const { sceneQ, settle, passBuys } = await import('./cards-helpers.js');
+const { useRetired } = await import('./helpers.js');
+useRetired(['red.turnout']);
 delete process.env.REPLACE14;
 delete process.env.MEMBER_UP;
 
@@ -126,19 +128,19 @@ describe('REPLACE14: Extortionist replacements (lane F paper passers)', () => {
     expect(defById('thieves.mobboss').name).toBe('Mob Boss');
     expect(defById('thieves.extortionist').retired).toBe(true);
   });
-  it('The Boss with 2 other Magenta members: Help Yourself in round I takes 3 + 2 (the pitched turn)', () => {
+  it('The Boss with 2 other Magenta members: Help Yourself as the first minion takes 1 + 2 (Help Yourself since Nov 10: 1 per minion placed this round)', () => {
     let s = table(Q, { n: 2, round: 1, res: [{}, { gold: 9 }], members: [['thieves.boss', 'thieves.fence', 'thieves.secondstory']] });
     s = answer(s, `slot:${slot(s, 'thieves', 'Help Yourself')}`);
     let k = 0;
     while (s.pending?.player === 0 && s.pending.options.some(o => String(o.id).includes('gold')) && k < 9) { s = answer(s, s.pending.options.find(o => String(o.id).includes('gold')).id); k++; }
-    expect(9 - s.players[1].res.gold).toBe(5);
+    expect(9 - s.players[1].res.gold).toBe(3);
   });
   it('The Boss alone: no other Magenta member, no extra', () => {
     let s = table(Q, { n: 2, round: 1, res: [{}, { gold: 9 }], members: [['thieves.boss']] });
     s = answer(s, `slot:${slot(s, 'thieves', 'Help Yourself')}`);
     let k = 0;
     while (s.pending?.player === 0 && s.pending.options.some(o => String(o.id).includes('gold')) && k < 9) { s = answer(s, s.pending.options.find(o => String(o.id).includes('gold')).id); k++; }
-    expect(9 - s.players[1].res.gold).toBe(3);
+    expect(9 - s.players[1].res.gold).toBe(1);
   });
   it('Mob Boss with 1 other Magenta member: On Recruit steals 2 from each rival', () => {
     let s = table(Q, { n: 3, round: 2, res: [{ magenta: 9, gold: 9 }, { red: 5 }, { blue: 5 }], members: [['thieves.fence']], shop: ['thieves.mobboss'] });

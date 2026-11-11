@@ -4,6 +4,8 @@ import { contextFor, liveOptions, resume, SHOP_SIZE, shopSize } from '../../../e
 import { ledger } from '../../../engine/v4/content/echo.js';
 import { table, uidIn, useCosts } from './cards-helpers-b.js';
 import { actionName, move, take, pinCosts } from './helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.evenswap', 'red.hire', 'red.turnout']);
 
 const Q = ['gold', 'red', 'trading', 'echo'];
 const ROW = ['gold.banker', 'red.twins', 'red.intern', 'red.volunteer', 'gold.tycoon', 'echo.evergreen', 'echo.muse', 'gold.taxman']; // one full round-III row (SHOP_SIZE); round I shows shopSize = 6

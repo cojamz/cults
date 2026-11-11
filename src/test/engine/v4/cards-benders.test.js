@@ -5,6 +5,8 @@ import { describe, it, expect } from 'vitest';
 import { resume, contextFor } from '../../../engine/v4/core.js';
 import { take, move, uidOf, pinCosts } from './helpers.js';
 import { sceneQ, buy, linesNaming } from './cards-helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.turnout']);
 
 const named = (s, name) => linesNaming(s.log, name);
 const rich = { gold: 30, red: 30, blue: 30, green: 30 };
@@ -52,25 +54,28 @@ describe('Guest members (rule-benders)', () => {
     expect(t.players[0].res).toEqual({ gold: 1, red: 0, blue: 2, green: total - 3 });
     expect(named(t, 'Launderers').at(-1)).toMatch(/rearranged into 1 gold, 2 blue/);
   });
+  // Extra Hand has no On Use since Nov 10, so Coach's tests use Big Spender ("On Use, once per game: recruit twice this turn")
   it('Coach: a free extra use of one of your Once per game or Once per round members, used or not; once per member per turn', () => {
-    let s = sceneQ({ round: 3, res: [rich], members: [['benders.extrahand']], shop: ['benders.secondwind'] });
-    const hand = uidOf(s, 'benders.extrahand', 0);
-    s = move(s, `use:${hand}`); // Extra Hand used: +1 minion
-    const left = s.players[0].left;
+    let s = sceneQ({ round: 3, res: [rich], members: [['benders.bigspender']], shop: ['benders.secondwind', 'gold.taxman'] });
+    const big = uidOf(s, 'benders.bigspender', 0);
+    s.cards[big].used = true; // spent earlier in the game
     s = buy(take(s, 'gold.rush'), 'benders.secondwind');
-    s = move(s, `card:${hand}`);
-    expect(named(s, 'Coach').at(-1)).toMatch(/uses Extra Hand/);
-    expect(s.players[0].left).toBe(left); // the minion placed on Golden Rush, and Coach's Extra Hand gave one back
-    expect(s.cards[hand].used).toBe(true); // still used, as it was
+    s = move(s, `card:${big}`);
+    expect(named(s, 'Coach').at(-1)).toMatch(/uses Big Spender/);
+    expect(s.cards[big].used).toBe(true); // still used, as it was
+    // Coach's free use of Big Spender: one more recruit this turn
+    let extra = 0;
+    while (s.pending?.player === 0 && s.pending.kind === 'buy' && s.pending.options.some(o => o.kind === 'tier')) { s = move(s, 'tier:small'); extra++; }
+    expect(extra).toBe(1);
   });
   it('Coach: an unused member stays unused after its free use', () => {
-    let s = sceneQ({ round: 3, res: [rich], members: [['benders.extrahand']], shop: ['benders.secondwind'] });
-    const hand = uidOf(s, 'benders.extrahand', 0);
-    const left = s.players[0].left;
+    let s = sceneQ({ round: 3, res: [rich], members: [['benders.bigspender']], shop: ['benders.secondwind'] });
+    const big = uidOf(s, 'benders.bigspender', 0);
     s = buy(take(s, 'gold.rush'), 'benders.secondwind');
-    s = move(s, `card:${hand}`);
-    expect(s.players[0].left).toBe(left);
-    expect(s.cards[hand].used).toBeFalsy();
+    s = move(s, `card:${big}`);
+    expect(named(s, 'Coach').at(-1)).toMatch(/uses Big Spender/);
+    expect(s.pending.kind).toBe('buy');
+    expect(s.cards[big].used).toBeFalsy();
   });
   it('Con Men: On Recruit, steal 5 (Cory, Oct 31)', () => {
     let s = sceneQ({ res: [rich, { gold: 9 }], shop: ['benders.conmen'] });
@@ -135,18 +140,19 @@ describe('Guest members (rule-benders)', () => {
     expect(named(s, 'Insider')[0]).toMatch(/from the pile with P1's Insider/);
   });
 
-  it('Extra Hand: Once per game, +1 minion this round from round II, named; in round I it stays unused', () => {
-    let s = sceneQ({ round: 3, members: [['benders.extrahand']] });
-    const u = uidOf(s, 'benders.extrahand', 0), left = s.players[0].left;
-    s = move(s, `use:${u}`);
+  it('Extra Hand (Nov 10): On Recruit, +1 minion this round, named; nothing in round I (no extra minions in round I)', () => {
+    let s = sceneQ({ round: 3, res: [rich], shop: ['benders.extrahand'] });
+    s = take(s, 'gold.rush');
+    const left = s.players[0].left;
+    s = buy(s, 'benders.extrahand');
     expect(s.players[0].left).toBe(left + 1);
-    expect(s.cards[u].used).toBe(true);
     expect(named(s, 'Extra Hand')[0]).toMatch(/P1's Extra Hand: P1 gets 1 more minion/);
-    expect(s.pending.options.map(o => o.id)).not.toContain(`use:${u}`);
-    let t = sceneQ({ round: 1, members: [['benders.extrahand']] });
-    const v = uidOf(t, 'benders.extrahand', 0);
-    t = move(t, `use:${v}`);
-    expect(t.cards[v].used).toBe(false);
+    expect(s.pending?.options?.map(o => o.id) || []).not.toContain(`use:${uidOf(s, 'benders.extrahand', 0)}`);
+    let t = sceneQ({ round: 1, res: [rich], shop: ['benders.extrahand'] });
+    t = take(t, 'gold.rush');
+    const l1 = t.players[0].left;
+    t = buy(t, 'benders.extrahand');
+    expect(t.players[0].left).toBe(l1);
   });
 
   it('Line Cutters: picks first even when ahead; the round’s opening line names it', () => {

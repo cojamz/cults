@@ -5,6 +5,8 @@ import { describe, it, expect } from 'vitest';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming, passBuys } from './cards-helpers.js';
 import { usePool, price } from './pool-helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['thieves.hideout']);
 
 usePool(['thieves.safecrackers', 'market.bailiffs', 'market.repossessors', 'benders.mercenaries', 'benders.hiredguns', 'purple.seatswappers'],
   ['purple.switchplaces']);

@@ -340,7 +340,8 @@ function priceParts(state, p, def, how = {}) {
   const punch = punchFree(state, p) || clearanceFree(state, p, how.uid);
   // Duty Free (REPLACE11=dutyfree, flag dutyFree): a member of a color none of your members have costs 3 less per copy
   const duty = how.uid != null && sumMemberFlag(state, p, 'dutyFree') > 0 && isNewColor(ctxFor(state), p, wrap(state, state.cards[how.uid])) ? 3 * sumMemberFlag(state, p, 'dutyFree') : 0;
-  const off = punch ? Infinity : (p.discount || 0) + sumMemberFlag(state, p, 'costReduction') + duty;
+  // how.less: a recruit's own discount (Markdown, Nov 10: "paying 2 less"), off any part of the cost as every discount
+  const off = punch ? Infinity : (p.discount || 0) + sumMemberFlag(state, p, 'costReduction') + duty + (how.less || 0);
   const colored = Math.max(0, s - off), total = Math.max(0, s + w - off);
   const goldDouble = sumMemberFlag(state, p, 'goldPaysDouble') > 0;
   const q = colored > 0 ? colorOf(def) : null;
@@ -1196,6 +1197,17 @@ function startRound(state, r) {
 
 function endRound(state) {
   const ctx = ctxFor(state);
+  // Borrow (Cory, Nov 10: "Discard it at round end, before scoring."): this round's borrowed members still in the
+  // borrower's cult go to the discard pile first, before the Round End cards and the contests
+  const lent = (state.borrowed || []).filter(b => b.round === state.round);
+  state.borrowed = (state.borrowed || []).filter(b => b.round !== state.round);
+  for (const b of lent) {
+    const p = state.players[b.pid];
+    if (!p?.members.includes(b.uid)) continue;
+    log(state, `${p.name}'s Borrow: ${cardDef(state, b.uid).name} is discarded at round end.`);
+    ctx.buryMember(p, b.uid);
+  }
+  if (!state.borrowed.length) delete state.borrowed;
   // Round End cards act in this round's turn order, as the ones before them (Cory, Nov 5: "round ends, contests, members.")
   inPhase('roundEnd', () => { for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.onRoundEnd) def.onRoundEnd(ctx, state.players[id], card); }, ['onRoundEnd']); });
   const v = RING_VALUE[state.round - 1];
@@ -1718,6 +1730,15 @@ function impressMember(state, p, uid) {
   const color = c;
   ctx.asMember(p, cloak.def.name, () => { const got = ctx.gain(p, color, Number(m[1])); if (got) ctx.log(`${p.name}'s ${cloak.def.name}: +${got.n} ${got.color}.`); }, cloak.uid);
 }
+/** Test Drive (Blue, Nov 10: "Discard a shop member. Use its effect now."): the member's own effect (hook: onActivate,
+ *  onRecruited, onRoundStart(Late) or onRoundEnd, by its printed timing) plays for p, from wherever the card now is. */
+function useEffectOf(state, p, uid, hook) {
+  const card = state.cards[uid], def = defById(card.def), ctx = ctxFor(state), w = wrap(state, card);
+  if (!def[hook]) return;
+  const before = traceSnapshot(state);
+  underCause({ kind: 'member', pid: p.id, uid, def: card.def }, () => def[hook](ctx, p, w));
+  traceChanges(state, before, p, def);
+}
 function borrowOnRecruit(state, p, uid) {
   impressMember(state, p, uid);
   const card = state.cards[uid], def = defById(card.def), ctx = ctxFor(state), w = wrap(state, card);
@@ -1937,7 +1958,10 @@ function recruitFollowersBonus(state, p, member) {
   const list = p.recruitFollowers;
   if (!list?.length) return;
   const fresh = list.some(x => x.newColor) && member ? isNewColor(ctxFor(state), p, member) : false;
-  const pay = list.filter(x => !x.newColor || fresh), wait = list.filter(x => x.newColor && !fresh);
+  // Gather (Cory, Nov 10): "a color you already have" waits, the other way round, for a member matching one p has
+  const same = list.some(x => x.sameColor) && member ? !isNewColor(ctxFor(state), p, member) : false;
+  const ok = x => (!x.newColor || fresh) && (!x.sameColor || same);
+  const pay = list.filter(ok), wait = list.filter(x => !ok(x));
   if (wait.length) p.recruitFollowers = wait; else delete p.recruitFollowers;
   for (const { n, name, broker, color, patron } of pay) {
     // Patron (REPLACE11=patron): each rival with more followers than you gives you 1
@@ -2476,6 +2500,7 @@ function ctxFor(state) {
     recruit: (p, uid, opts) => recruit(state, p, uid, opts),
     recruitAbility: (p, card, def, fn) => recruitAbility(state, p, card, def, fn),
     borrowOnRecruit: (p, uid) => borrowOnRecruit(state, p, uid),
+    useEffectOf: (p, uid, hook) => useEffectOf(state, p, uid, hook),
     grantWorkers: (p, def, uid) => workersNow(state, p, def, uid),
     /** The one price rule (memberPrice) and the ways to pay it (paymentChoices), for recruits outside the buy step. */
     price: (p, uid, how) => memberPrice(state, p, uid, how),

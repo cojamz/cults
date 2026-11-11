@@ -302,11 +302,12 @@ function scalpStep(ctx, p, data) {
  * the rest already come last and only join the token. Early Birds ("Your turns can't be skipped."): the space pays and
  * nothing goes on the token, so the token stays where it is (decisions, Nov 1 2:21pm: take the payout without going last).
  */
-// test version (Cory, Nov 9: "maybe the goes last token applies to ALL of your minions?"): a Purple space's token holds
-// every minion you have left, as Last Call's does; members keep their own words
-const ALL_LAST = new Set(['Sleep In', 'Hold Up', 'Right Away', 'Closing Time', 'Overtime']);
+// Cory, Nov 9: "maybe the goes last token applies to ALL of your minions?" (test version first; live since Nov 10, the
+// Purple plan: "The token: your turns are skipped until every rival is out of minions, for all your minions"): a Purple
+// space's token holds every minion you have left, as Last Call's does; members keep their own words
+const ALL_LAST = new Set(['Sleep In', 'Hold Up', 'Right Away', 'Closing Time', 'Overtime', 'On a Roll']);
 function toToken(ctx, p, n, why) {
-  if (ctx.state.rules?.testSet && ALL_LAST.has(why)) n = Math.max(n, turnsLeft(ctx, p));
+  if (ALL_LAST.has(why)) n = Math.max(n, turnsLeft(ctx, p));
   if (noSkip(ctx, p)) { ctx.log(`${p.name}'s Early Birds: ${p.name}'s turns can't be skipped, so ${p.name} doesn't go last.`); return 0; }
   const kept = tokenHolder(ctx.state) === p.id; // already theirs: they keep it, they don't take it (Night Watch pays on a take)
   takeToken(ctx, p, why);
@@ -652,8 +653,8 @@ export default {
       // Cory, 2026-10-28: grows by round, "maybe more like 4/5/6", so a late skip is worth taking
       // Cory, Nov 1 2:35pm: the Goes Last token ("Let's just try it with the goes last token"): one minion waits on it,
       // so your hand empties a turn early and that snake turn is passed (a skip, for Pocket Watch and Gossip)
-      key: 'skip', copyDoesIt: true, ring: 1, name: 'Sleep In', text: '+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your next minion goes after everyone else’s.',
-      byRound: { lines: ['+4 purple', '+5 purple', '+6 purple'], rest: 'Take the Goes Last token: your next minion goes after everyone else’s.' },
+      key: 'skip', copyDoesIt: true, ring: 1, name: 'Sleep In', text: '+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your other minions are placed after everyone else’s.',
+      byRound: { lines: ['+4 purple', '+5 purple', '+6 purple'], rest: 'Take the Goes Last token: your other minions are placed after everyone else’s.' },
       estimate: ctx => ctx.state.round + 3,
       resolve(ctx, p) {
         ctx.gain(p, P, ctx.state.round + 3, { fromAction: true });
@@ -661,8 +662,23 @@ export default {
       },
     },
     {
+      // Cory, Nov 10 12:43am: Purple's third round I space, "+2 purple * consecutive turn. so it's always at least 2 purple
+      // but could get up to like 10"; 12:45am: a skipped turn doesn't break a streak (consecutive means no other player
+      // placed in between: skips aren't turns); 12:48am: it takes the Goes Last token. Hold Up's place. Name is Claude's fill-in.
+      key: 'onaroll', copyDoesIt: true, ring: 1, name: 'On a Roll', text: '+2 purple per consecutive turn, this one included. Take the Goes Last token: your other minions are placed after everyone else’s.',
+      estimate: (ctx, p) => 2 * (inARow(ctx, p) + 1),
+      resolve(ctx, p) {
+        const n = inARow(ctx, p) + 1;
+        ctx.gain(p, P, 2 * n, { fromAction: true });
+        ctx.log(`${p.name}'s On a Roll: ${n} turn${n === 1 ? '' : 's'} in a row, +${2 * n} purple.`);
+        toToken(ctx, p, 1, 'On a Roll');
+      },
+    },
+    {
       // Cory, 2026-10-22: replaces Catch Up ("the skip should replace catch up"); "1 purple per round" so it isn't weak
       // late. Wording and name are Claude's fill-in.
+      // Out of the wheel since Nov 10 (On a Roll takes its place, Cory's Purple plan); kept for old saves and its tests
+      pool: true,
       key: 'holdup', copyDoesIt: true, ring: 1, name: 'Hold Up', text: '+2 purple in round I, +3 in round II, +4 in round III. The next turn is skipped, even if it’s yours.',
       byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'The next turn is skipped, even if it’s yours.' },
       // Cory, 2026-10-22: "it has to be the next TURN not even the next player. so a player could skip their own in

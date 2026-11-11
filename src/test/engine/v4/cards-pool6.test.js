@@ -6,6 +6,8 @@ import { defById } from '../../../engine/v4/content/index.js';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming, passBuys } from './cards-helpers.js';
 import { usePool, price, still, go } from './pool-helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['market.pricecheck']);
 
 usePool(['echo.openingact', 'silver.almoners', 'silver.dinnerhosts', 'benders.chameleons', 'benders.mourners'],
   ['echo.curtaincall', 'red.familyreunion', 'red.tradeins', 'trading.cleanslate']);
@@ -28,13 +30,13 @@ describe('Curtain Call (Green, round III)', () => {
     s = passBuys(take(s, 'gold.jv')); // P2: Kickback
     if (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
     s = passBuys(s);
-    s = passBuys(take(s, 'echo.chant')); // P1: Build Up +5 green
+    s = passBuys(take(s, 'echo.chant')); // P1: Build Up +2 green (one minion on Green, +1)
     s = passBuys(take(s, 'purple.skip')); // P2
     const gold = s.players[0].res.gold, green = s.players[0].res.green;
     s = take(s, 'echo.curtaincall');
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
     expect(s.players[0].res.gold - gold).toBe(6);
-    expect(s.players[0].res.green - green).toBe(5);
+    expect(s.players[0].res.green - green).toBe(2);
     expect(named(s, 'Curtain Call')[0]).toBe("P1's Curtain Call: copies Golden Years, Build Up.");
   });
 });

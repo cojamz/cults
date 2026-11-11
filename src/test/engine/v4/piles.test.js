@@ -7,6 +7,8 @@ import { GREY_CORE, pileRules, allPiles } from '../../../engine/v4/piles.js';
 import { chooseBotMove } from '../../../engine/v4/bots.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
 import { move } from './helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.hire']);
 
 const TABLE = ['red', 'yellow', 'purple', 'echo'];
 const seats = n => Array.from({ length: n }, (_, i) => ({ name: `P${i + 1}`, kind: 'bot' }));

@@ -8,15 +8,13 @@ const Q2 = ['echo', 'yellow', 'market', 'trading'];
 const defs = s => new Set(Object.values(s.cards).map(c => c.def));
 
 describe('Test version (rules.testSet)', () => {
-  it('swaps seven spaces in place, same round and spot', () => {
+  // Nov 10 (Cory: "once we're done those will be the live actions in both test and other version"): Magenta, Blue, Green
+  // and Purple play their new live spaces in the test version too; three swaps stay
+  it('swaps three spaces in place, same round and spot; every other color plays its live spaces', () => {
     const t = { rules: { testSet: true } }, live = { rules: {} };
-    const want = { thieves: ['Shake Down', 'Protection Racket'], silver: ['Polish', 'Round Robin'], trading: ['Estate Sale', 'Bequest'], market: ['Bury', 'Rummage'], echo: ['Greatest Hits', 'Medley'], yellow: ['Melting Pot', 'Swap Meet'] };
-    for (const k of ['Hold Up', 'Right Away', 'Crunch Time']) {
-      const i = spacesOf(live, 'purple').findIndex(x => x.name === k);
-      expect(spacesOf(t, 'purple')[i].text).toMatch(/Goes Last token/);
-      if (k === 'Crunch Time') expect(spacesOf(t, 'purple')[i].name).toBe('Closing Time');
-      expect(spacesOf(live, 'purple')[i].text).not.toMatch(/Goes Last token/);
-    }
+    const want = { silver: ['Polish', 'Round Robin'], trading: ['Estate Sale', 'Bequest'], yellow: ['Melting Pot', 'Swap Meet'] };
+    for (const q of ['thieves', 'market', 'echo', 'purple', 'red']) expect(spacesOf(t, q).map(x => x.name)).toEqual(spacesOf(live, q).map(x => x.name));
+    for (const q of ['thieves', 'market', 'echo', 'purple', 'red']) expect(spacesOf(t, q).map(x => x.text)).toEqual(spacesOf(live, q).map(x => x.text));
     for (const [q, names] of Object.entries(want)) {
       const a = spacesOf(live, q), b = spacesOf(t, q), at = [];
       for (let j = 0; j < names.length; j += 2) {
@@ -38,7 +36,7 @@ describe('Test version (rules.testSet)', () => {
     const d = defs(createGame({ seats, seed: 3, quadrants: Q, rules: { deck: 10 } }));
     for (const id of ['trading.anchorites', 'trading.oldguard', 'market.repossessors', 'benders.protesters', 'benders.giftswappers', 'benders.purifiers']) expect(d.has(id)).toBe(false);
     for (const id of ['trading.recluse', 'market.regular']) expect(d.has(id)).toBe(true);
-    expect(spacesOf({ rules: {} }, 'market').map(a => a.name)).toContain('Bury');
+    expect(spacesOf({ rules: {} }, 'yellow').map(a => a.name)).toContain('Melting Pot');
   });
   it('white and blue decks keep their size', () => {
     for (const q of [Q, Q2]) {

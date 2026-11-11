@@ -11,6 +11,8 @@ const { applyMove, resume } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { table, named } = await import('./cards-helpers-b.js');
 const { take, move, uidOf } = await import('./helpers.js');
+const { useRetired } = await import('./helpers.js');
+useRetired(['red.turnout']);
 delete process.env.REPLACE10;
 delete process.env.MEMBER_UP;
 

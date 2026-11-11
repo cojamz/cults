@@ -6,6 +6,8 @@ import { followers, resume, memberCount, contestTable, paymentPlan, applyMove } 
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, buy, linesNaming } from './cards-helpers.js';
 import { defById } from '../../../engine/v4/content/index.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.turnout']);
 
 const Q = ['gold', 'red', 'silver', 'green'];
 const sc = o => sceneQ({ quadrants: Q, ...o });

@@ -10,6 +10,8 @@ import { table, useCosts } from '../cards-helpers-b.js';
 import { checkInvariants } from '../fuzz-runner.js';
 import { games } from '../budget.js';
 import { FULL_DECK } from '../../../../engine/v4/content/cull.js';
+import { useRetired } from '../helpers.js';
+useRetired(['echo.encore', 'red.hire']);
 
 const GAMES = games(200);
 const QUADS = ['gold', 'red', 'blue', 'echo'];
@@ -31,8 +33,15 @@ const target = id => o => o.kind === 'space' && o.label.startsWith(actionName(id
 const chooseTarget = (s, id) => play(s, target(id));
 
 describe('Green table action boundaries', () => {
-  it.each([1, 2, 3])('Build Up in round %i pays 3 / 4 / 5 green', round => {
-    expect(R(go(scene({ round }), 'echo.chant')).green).toBe(round + 2);
+  // Cory, Nov 10: +1 green per minion on Green spaces, this one included, +1 green (was 3 / 4 / 5 by round)
+  it.each([1, 2, 3])('Build Up alone in round %i pays 2 green', round => {
+    expect(R(go(scene({ round }), 'echo.chant')).green).toBe(2);
+  });
+  it('Build Up taken last on a full Green round I pays 4', () => {
+    let s = scene({ n: 3, turns: [1, 2, 0] });
+    s = go(s, 'echo.echo'); s = go(s, 'echo.refrain'); // nothing earlier to copy
+    s = go(s, 'echo.chant');
+    expect(R(s).green).toBe(4); // three minions on Green, +1
   });
   it('Echo can copy your immediately previous action on a consecutive turn', () => {
     let s = scene({ turns: [1, 0, 0] });
@@ -57,17 +66,18 @@ describe('Green table action boundaries', () => {
     const s = go(scene({ round: 3 }), action);
     expect(R(s)).toEqual({ ...Z, green });
   });
-  // Greatest Hits copies On Recruits since Nov 1 (its round-I-only, click-order and rival-action checks went with its
-  // action copies). Stunt Double copied by it stays in its chain, so it can't run Greatest Hits again: seeded games
-  // looped forever on that.
-  it('Greatest Hits copying Stunt Double’s On Recruit does not run Greatest Hits again', () => {
-    let s = scene({ round: 3, turns: [0, 1], members: [['echo.hourglass', 'gold.seed']] });
-    s = take(s, 'echo.eternity');
-    let steps = 0;
-    while (s.pending?.kind === 'choose' && s.pending.player === 0 && steps++ < 10) s = move(s, s.pending.options[0].id);
-    expect(steps).toBeLessThan(10);
-    expect(s.log.filter(l => /copies .*On Recruit/.test(l))).toHaveLength(2);
-    expect(s.log.some(l => /copies Greatest Hits/.test(l))).toBe(false);
+  // Greatest Hits is Medley's rule since Nov 10 (choose a color other than Green, copy every action with a minion on it).
+  // A copy of Greatest Hits hands over its chip, so it never runs Greatest Hits again: seeded games looped on copy chains.
+  it('Echo copying Greatest Hits takes its chip and never runs Greatest Hits again', () => {
+    let s = scene({ round: 3, turns: [1, 1, 0] });
+    s = go(s, 'gold.rush');
+    s = go(s, 'echo.eternity', 'color:gold');
+    s = take(s, 'echo.echo');
+    if (s.pending?.kind === 'choose' && s.pending.player === 0) s = move(s, s.pending.options.find(o => o.label.startsWith('Greatest Hits')).id);
+    s = pass(s);
+    expect(s.log).toContain("P1 copied Greatest Hits (P2's): +1 green, +6 gold.");
+    expect(s.log.some(l => /^P1's Greatest Hits/.test(l))).toBe(false);
+    expect(R(s)).toEqual({ ...Z, gold: 6, green: 2 });
   });
   it('the original owner’s passive bonuses never enter the chip', () => {
     let s = scene({ turns: [1, 0], res: [{ gold: 9 }], members: [[], ['gold.prospector', 'gold.underdog']] });
@@ -99,7 +109,7 @@ describe('Green table action boundaries', () => {
     let s = scene({ round: 3, turns: [1, 1, 0, 0], res: [{}, { gold: 5 }], members: [[], ['red.intern', 'red.twins', 'red.volunteer']] });
     s = go(s, 'gold.windfall'); s = go(s, 'gold.strike'); s = go(s, 'echo.chant');
     s = pass(take(s, 'echo.encore'));
-    expect(R(s)).toEqual({ ...Z, green: 6 });
+    expect(R(s)).toEqual({ ...Z, green: 3 }); // Build Up alone (+1, +1) and Sample's own +1
     expect(s.log.some(l => /no rival's member has an On Recruit/.test(l))).toBe(true);
   });
   it('Reprise copies an own action and leaves a rival’s actions unavailable', () => {
@@ -116,7 +126,7 @@ describe('Green table action boundaries', () => {
     s.round = 2; s.slots = {}; s.queue = [{ t: 'turn', p: 0 }]; s = resume(s);
     s = go(s, 'gold.rush');
     expect(Object.keys(ledger(s).now)).toEqual(['0-1']);
-    expect(Object.values(ledger(s).last).map(e => [e.name, e.res])).toEqual([['Build Up', { green: 3 }]]);
+    expect(Object.values(ledger(s).last).map(e => [e.name, e.res])).toEqual([['Build Up', { green: 2 }]]);
   });
   // Walk-In (Cory, 2026-10-27): recruit the top member of the deck, each rival +1 red. A copy does it again: the
   // copier recruits the deck's new top member, free, and the copy's rivals get their +1 red

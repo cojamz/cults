@@ -4,6 +4,8 @@ import { describe, it, expect } from 'vitest';
 import { memberCount, resume } from '../../../engine/v4/core.js';
 import { scene as baseScene, take, move, uidOf, ids, hasOpt, fol, useTestCosts } from './helpers.js';
 import { SHOP_SIZE, shopSize } from '../../../engine/v4/core.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.hire', 'red.turnout']);
 
 useTestCosts();
 

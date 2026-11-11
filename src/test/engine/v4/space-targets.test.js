@@ -23,10 +23,10 @@ const targetsAt = (s, key, pid = 0) => { const [q, i] = spot(s, key); return pre
 const sorted = a => [...a].sort((x, y) => x - y);
 
 describe('space targets', () => {
-  // Walk-In (2026-10-27) recruits the deck's top member, which isn't face-up, so no shop member lights
-  it('Walk-In: lights no shop member, since it takes the top of the deck', () => {
+  // Gather took Walk-In's slot (Cory, Nov 10): its bonus rides on whatever you recruit, so no shop member lights
+  it('Gather: lights no shop member, since any recruit of a color you have pays', () => {
     const s = table(Q, { shop: ['gold.tycoon', 'red.bigfamily', 'red.intern', 'gold.taxman'] });
-    expect(targetsAt(s, 'hire')).toBe(null);
+    expect(targetsAt(s, 'gather')).toBe(null);
   });
   // Open House left with the Red redesign (v0.8.0); round II's hireup space is Promote
   it('Promote: the pairs of a member (yours or a rival\'s) for a shop or other cult\'s member costing up to 3 more (Cory, Nov 5)', () => {
@@ -46,19 +46,18 @@ describe('space targets', () => {
     const t = targetsAt(s, 'take');
     expect(sorted(t.shop)).toEqual(sorted(['red.intern', 'red.bigfamily', 'gold.taxman'].map(d => uidIn(s, d, 'shop'))));
   });
-  it('Churn and Bury: no member is lit up front, since the player picks which go to the discard pile', () => {
+  it('Test Drive and Out of Style: no member is lit up front, since the player picks which go to the discard pile', () => {
     const defs = ['gold.tycoon', 'red.intern', 'red.bigfamily'];
-    expect(targetsAt(table(Q, { shop: defs }), 'bargain')).toBe(null);
-    expect(targetsAt(table(Q, { round: 2, shop: defs }), 'pricecheck')).toBe(null);
+    expect(targetsAt(table(Q, { shop: defs }), 'testdrive')).toBe(null);
+    expect(targetsAt(table(Q, { shop: defs }), 'restock')).toBe(null);
   });
-  // Tryout (2026-10-27) borrows a shop member's On Recruit; the member stays in the shop, so nothing joins and
-  // nothing lights (Even Swap's pairs left with it)
-  it('Tryout: no swap pairs and no member lit', () => {
-    const s = table(Q, { members: [['gold.taxman'], ['red.intern', 'red.bigfamily']], shop: ['gold.tycoon'] });
-    expect(targetsAt(s, 'evenswap')).toBe(null);
+  // Borrow took Tryout's slot (Cory, Nov 10): "Recruit the cheapest shop member, for free", so the cheapest lights
+  it('Borrow: lights the cheapest shop member, for sure', () => {
+    const s = table(Q, { members: [['gold.taxman'], ['red.intern']], shop: ['gold.tycoon', 'red.bigfamily', 'red.reserve'] });
+    expect(targetsAt(s, 'borrow')).toEqual({ shop: [uidIn(s, 'red.reserve', 'shop')], seats: [], pairs: [], sure: true });
   });
   it('a space that touches no particular member lights nothing', () => {
-    const s = table(Q, { shop: ['gold.tycoon', 'red.intern'] });
-    expect(targetsAt(s, 'turnout')).toBe(null);
+    const s = table(Q, { round: 2, shop: ['gold.tycoon', 'red.intern'] });
+    for (const key of ['trending', 'markdown', 'wordofmouth']) expect(targetsAt(s, key)).toBe(null);
   });
 });

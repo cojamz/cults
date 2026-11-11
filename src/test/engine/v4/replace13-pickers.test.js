@@ -10,6 +10,8 @@ process.env.MEMBER_UP = '2';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { quadrant, defById } = await import('../../../engine/v4/content/index.js');
 const { table } = await import('./cards-helpers-b.js');
+const { useRetired } = await import('./helpers.js');
+useRetired(['market.bargain']);
 delete process.env.REPLACE13;
 delete process.env.MEMBER_UP;
 const go = (s, id) => applyMove(s, { player: s.pending.player, option: id });

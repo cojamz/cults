@@ -213,9 +213,9 @@ describe('v4 format helpers', () => {
     expect(st.short).toMatch(/^\+6 gold \(Midas\)/);
   });
 
-  it('the log names a space by the words the board shows on it too (panel r1: "Sample"; wave-2 B#3: "which is Heist?")', () => {
-    const log = ['Round II begins. Bo picks first.', 'P1 took Sample (Green).', "Cy copied Largesse (Di's): +10 followers.", 'P1 took Kickback (Gold).', 'P1 took Nowhere (Gold).'];
-    expect(plainLine(log, 1)).toBe('P1 took Sample (Copy a rival member’s On Recruit).');
+  it('the log names a space by the words the board shows on it too (panel r1: "Sample", now Crowd; wave-2 B#3: "which is Heist?")', () => {
+    const log = ['Round II begins. Bo picks first.', 'P1 took Crowd (Green).', "Cy copied Largesse (Di's): +10 followers.", 'P1 took Kickback (Gold).', 'P1 took Nowhere (Gold).'];
+    expect(plainLine(log, 1)).toBe('P1 took Crowd (+3 green, +1 follower per minion on Green).');
     expect(plainLine(log, 2)).toBe('Cy copied Di\'s Largesse (Give rivals 12 silver: +10 followers): +10 followers.');
     expect(plainLine(log, 3)).toBe('P1 took Kickback (+3 gold, +1 gold to a rival).');
     expect(plainLine(log, 4)).toBe('P1 took Nowhere (Gold).'); // no such space: the line as the engine wrote it

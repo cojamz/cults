@@ -2,8 +2,8 @@
 // The Goes Last token (Cory, Nov 1 2:16pm and 2:35pm: "Let's just try it with the goes last token"). "Its holder places
 // the minions on it once every hand is empty. If someone takes it, the minions on it go back to their owner's hand."
 // Last Call: "+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token and put your other
-// minions on it." Sleep In: "+4 purple (+5 in round II, +6 in round III). Take the Goes Last token and put your next
-// minion on it." Night Owls: "Once per round: after you place your last minion, take the Goes Last token with 1 more
+// minions on it." Sleep In: "+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your other
+// minions are placed after everyone else’s." (Nov 10; was "put your next minion on it"). Night Owls: "Once per round: after you place your last minion, take the Goes Last token with 1 more
 // minion on it." A pass because your hand is empty counts as a skipped turn (Pocket Watch, Gossip).
 import { describe, it, expect } from 'vitest';
 import { applyMove } from '../../../engine/v4/core.js';
@@ -46,16 +46,16 @@ describe('the Goes Last token', () => {
     expect(s.goesLast).toEqual({ round: 2, pid: 1 });
     expect(s.log.some(l => /takes the Goes Last token from P1, and P1's 3 minions on it go back to their hand/.test(l))).toBe(true);
     const { s: end, placed } = playOut(s);
-    // P1's minions take their own turns again; P2's last minion waits on the token and places last
-    expect(placed).toEqual([0, 1, 0, 0, 1]);
+    // P1's minions take their own turns again; P2's other minions all wait on the token (Nov 10) and place last
+    expect(placed).toEqual([0, 0, 0, 1, 1]);
     expect(skips(end).filter(l => /P1's turn/.test(l))).toHaveLength(0);
   });
 
-  it('Sleep In: one minion waits on the token; your next turn still happens, and your last snake turn is the pass', () => {
+  it('Sleep In (Nov 10): all your other minions wait on the token and are placed after everyone else\'s', () => {
     const s = take(sceneQ({ quadrants: Q, round: 2, left: 3, members: [[], ['purple.gossip']], queue: [...turns(0, 1, 0, 1, 0, 1), { t: 'allPlaced' }] }), 'purple.skip');
     const { s: end, placed } = playOut(s);
-    expect(placed).toEqual([1, 0, 1, 1, 0]);
-    expect(skips(end)).toEqual(["P1's turn is skipped (Sleep In)."]);
+    expect(placed).toEqual([1, 1, 1, 0, 0]);
+    expect(skips(end)).toEqual(["P1's turn is skipped (Sleep In).", "P1's turn is skipped (Sleep In)."]); // both waiting minions' turns
   });
 
   it('Early Birds: Last Call pays, nothing goes on the token, and the token stays with its holder', () => {

@@ -114,12 +114,12 @@ const SUMS = {
   'trading.dividend': () => [R('white', '+1'), PER, FOL()], //                                     +1⬡ / ☺
   'trading.boom': () => [WORD('all'), R('any'), ARROW, FOL()], //                                  all◌ → ☺      (keep white if you like)
   // echo (green): copies
-  'echo.hum': () => [R('green', '+1'), PER, WORD('other green action'), MIN(), DOT, R('green', '+1')],
-  'echo.chant': ({ r }) => [R('green', plus(r + 1))],
+  'echo.hum': () => [COPY, HOOD(), MIN(), DOT, R('green', '+1')],
+  'echo.chant': () => [R('green', '+1'), PER, MIN(), DOT, R('green', '+1')],
   'echo.echo': () => [COPY, WORD('previous'), DOT, R('green', '+1')],
   'echo.encore': () => [COPY, HOOD(), MIN(), DOT, R('green', '+1')],
   'echo.refrain': () => [COPY, MIN(), DOT, R('green', '+1')],
-  'echo.eternity': () => [COPY, WORD('all'), MIN(), DOT, R('green', '+1')],
+  'echo.eternity': () => [COPY, WORD('a color’s'), MIN(), DOT, R('green', '+1')],
 };
 
 /** Plain gains ("+2 blue, +1 red."), for the stand-in spheres and anything else that's only that. */

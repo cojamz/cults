@@ -5,6 +5,8 @@ import { describe, it, expect } from 'vitest';
 import { quadrant } from '../../../engine/v4/content/index.js';
 import { take, move, uidOf, ids } from './helpers.js';
 import { sceneQ } from './cards-helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.evenswap']);
 const T = ['gold', 'red', 'thieves', 'echo'];
 
 describe('Tryout — a shop member’s On Recruit, and it stays in the shop', () => {

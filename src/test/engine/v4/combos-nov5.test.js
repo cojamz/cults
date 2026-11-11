@@ -55,8 +55,9 @@ describe('hard combos (Nov 5)', () => {
 
   it('Encore + Stunt Double: the copy of the action you just took happens twice', () => {
     const s = run({ members: [['echo.encore']], shop: ['echo.hourglass'], res: [{ green: 20 }] }, [/Build Up/, /Encore/, /Stunt Double/]);
-    expect(s.log.filter(l => /Stunt Double: P1 copied Build Up: \+5 green/.test(l))).toHaveLength(2);
-    expect(s.players[0].res.green).toBe(20 + 5 - 7 + 10); // Stunt Double costs 7 (Nov 5: every member +1)
+    // Build Up alone: +1 for its minion, +1 (Cory, Nov 10)
+    expect(s.log.filter(l => /Stunt Double: P1 copied Build Up: \+2 green/.test(l))).toHaveLength(2);
+    expect(s.players[0].res.green).toBe(20 + 2 - 7 + 4); // Stunt Double costs 7 (Nov 5: every member +1)
   });
 
   it('Encore + Extra Shift: two more minions this round', () => {
@@ -66,29 +67,34 @@ describe('hard combos (Nov 5)', () => {
 
   it('Stunt Double copied by Wallflower and Roadie: the copy is doubled, Roadie pays per green member', () => {
     const s = run({ members: [['echo.wallflower', 'echo.roadie9']], shop: ['echo.hourglass'], res: [{ green: 20 }] }, [/Build Up/, /Stunt Double/]);
-    expect(has(s, /Stunt Double: P1 copied Build Up: \+5 green, doubled by P1's Wallflower/)).toBe(true);
+    expect(has(s, /Stunt Double: P1 copied Build Up: \+2 green, doubled by P1's Wallflower/)).toBe(true);
     expect(has(s, /P1's Roadie: \+3 green/)).toBe(true); // Wallflower, Roadie, Stunt Double
   });
 
-  it('Greatest Hits copying Stunt Double never loops back into Greatest Hits', () => {
-    const s = run({ members: [['echo.hourglass', 'red.host']] }, [/Greatest Hits/, /Stunt Double/]);
-    expect(s.log.filter(l => /Greatest Hits: \+1 green/.test(l))).toHaveLength(1);
-    expect(has(s, /P1's Host: \+1 red/)).toBe(true);
-    expect(s.pending.kind).toBe('buy');
+  // Greatest Hits is Medley's rule since Nov 10: Stunt Double recruited after it copies Greatest Hits, which must not loop
+  it('Stunt Double copying Greatest Hits never loops back into Greatest Hits', () => {
+    const r = drive(scene({ quads: Q, turns: [1, 0, 1, 0], shop: ['echo.hourglass'], res: [{ green: 20 }] }), [/Gather/, /pass/, /Greatest Hits/, /Red/, /Stunt Double/]);
+    const s = r.s;
+    expect(s.log.filter(l => /^P1's Greatest Hits: \+1 green/.test(l))).toHaveLength(1);
+    expect(s.log).toContain("P1's Stunt Double: P1 copied Greatest Hits: +1 green, +4 red.");
+    expect(s.players[0].res.red).toBe(8); // Gather copied by Greatest Hits, then that chip again
+    expect([s.pending.kind, s.pending.player]).toEqual(['place', 1]);
   });
 
-  // Runner 6, Nov 6: a seeded bot game (cloaks-own4 base, game 17) looped forever here. Impersonator's choice is made
-  // after Greatest Hits' copy has returned, so Stunt Double started a fresh chain and copied Greatest Hits again.
-  it("Greatest Hits copying Impersonator, who takes a rival's Stunt Double, never loops back into Greatest Hits", () => {
-    const s = run({ members: [['echo.impersonators', 'echo.copyist'], ['echo.hourglass']] }, [/Greatest Hits/, /Stunt Double/]);
-    expect(s.log.filter(l => /Greatest Hits: \+1 green/.test(l))).toHaveLength(1);
+  it("Impersonator doing a rival's Stunt Double after Greatest Hits never loops back into Greatest Hits", () => {
+    const r = drive(scene({ quads: Q, turns: [1, 0, 1, 0], members: [[], ['echo.hourglass']], shop: ['echo.impersonators'], res: [{ green: 30 }] }), [/Gather/, /pass/, /Greatest Hits/, /Red/, /Impersonator/, /Stunt Double/]);
+    const s = r.s;
+    expect(s.log.filter(l => /^P1's Greatest Hits: \+1 green/.test(l))).toHaveLength(1);
     expect(s.log.filter(l => /Impersonator does Stunt Double's On Recruit/.test(l))).toHaveLength(1);
-    expect(s.pending.kind).toBe('buy');
+    expect(s.log).toContain("P1's Stunt Double: P1 copied Greatest Hits: +1 green, +4 red.");
+    expect([s.pending.kind, s.pending.player]).toEqual(['place', 1]);
   });
 
   it('Barker + Spree: a follower buy after each of the three recruits', () => {
-    const s = run({ members: [['trading.barker']], shop: ['red.volunteer', 'red.host', 'red.recruiter'], res: [{ blue: 30, red: 30 }] },
-      [/Spree/, /Volunteer/, /tier:small/, /Host/, /tier:small/, /Recruiter/, /tier:small/]);
+    let s0 = scene({ quads: Q, members: [['trading.barker']], shop: ['red.volunteer'], pileFirst: ['red.host', 'red.recruiter'], res: [{ blue: 30, red: 30 }] });
+    s0.discard = s0.pile.splice(0, 2);
+    const r = drive(s0, [/Spree/, /Host/, /^pay:/, /tier:small/, /^pay:/, /Recruiter/, /^pay:/, /tier:small/, /^pay:/, /Volunteer/, /tier:small/]);
+    const s = r.s; // Spree recruits two from the discard pile now (Cory, Nov 10), then the turn's own recruit
     expect(s.log.filter(l => /bought 1 follower/.test(l))).toHaveLength(3);
     expect(s.pending.player).toBe(1);
   });

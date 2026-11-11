@@ -204,8 +204,8 @@ const S = {
     boom: [['anys', '→', 'f']],
   },
   echo: {
-    hum: [['1', 'green', '/', 'space', 'w'], ['1', 'green']],
-    chant: r => [[`${r + 1}`, 'green']],
+    hum: [['copy', 'r'], ['1', 'green']],
+    chant: [['1', 'green', '/', 'ws'], ['1', 'green']],
     echo: [['copy', 'space'], ['1', 'green']],
     encore: [['copy', 'r', 'w'], ['1', 'green']],
     refrain: [['copy', 'w'], ['1', 'green']],

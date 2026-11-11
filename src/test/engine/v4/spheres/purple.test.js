@@ -11,6 +11,8 @@ import { take, move, uidOf, ids, pinCosts, TEST_COSTS } from '../helpers.js';
 import { checkInvariants } from '../fuzz-runner.js';
 import { games } from '../budget.js';
 import { useRetiredOvertime, useRetiredRollCall } from '../retired-overtime.js';
+import { useRetired } from '../helpers.js';
+useRetired(['purple.holdup', 'red.turnout']);
 
 useRetiredOvertime();
 useRetiredRollCall();

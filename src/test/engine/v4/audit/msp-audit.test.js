@@ -4,6 +4,8 @@ import { describe, it, expect } from 'vitest';
 import { take, move, pinCosts } from '../helpers.js';
 import { sceneQ } from '../cards-helpers.js';
 import { useRetiredOvertime, useRetiredRollCall } from '../retired-overtime.js';
+import { useRetired } from '../helpers.js';
+useRetired(['market.pricecheck']);
 
 useRetiredOvertime();
 useRetiredRollCall();

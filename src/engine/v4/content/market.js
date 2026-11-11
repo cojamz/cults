@@ -108,7 +108,13 @@ function payAndRecruit(ctx, p, v, { uid, why, fromPile, how = howFor(why) }) {
   // the engine takes the payment (and spends a discount) by the same price rule; `paid` tells a copy (Green) this
   // wasn't a free member
   ctx.recruit(p, uid, { spend: v, how, paid: true });
+  // Barker ("Each time you recruit a member, you may also recruit followers"; Cory, Nov 4: "it should stack with blue
+  // actions"): Blue's recruit ladder recruits on the space now (Nov 10), so each of its members brings Barker's
+  // followers-only recruit right after it, before the ladder's next pick
+  if (LADDER.has(why) && ctx.state.shop.includes(uid) === false && ctx.membersOf(p).some(c => ctx.defsOf(c).some(d => d.followersTwice)))
+    ctx.state.queue.unshift({ t: 'buy', p: p.id, barker: true });
 }
+const LADDER = new Set(['Markdown', 'Recruit Twice', 'Spree']);
 
 /** Offer face-up members the player can pay for at the price `how` sets, in any colors. */
 function offerRow(ctx, p, how, why) {
@@ -196,12 +202,38 @@ function sweepRow(ctx, actor = null) {
 /** k shop members just went to the bottom of the pile on someone's turn: Patroness pays once (Cory, Oct 21: "just one
  * follower each time it happens, not per card"), not for the round-start refresh. */
 // Window Shopper: one pick at a time, so the second choice sees the refilled shop
-function windowPick(ctx, owner, left, sent = []) {
-  const shop = ctx.shopCards();
+function windowPick(ctx, owner, left, sent = [], who = 'Window Shopper', row = null) {
+  const all = ctx.shopCards(), first = who !== 'Window Shopper' && row == null;
+  const shop = row == null ? all : all.filter(c => row.includes(c.uid));
+  if (first) row = all.map(c => c.uid);
   if (!shop.length) { scavenge(ctx, owner, sent); return; }
-  ctx.choose(owner, left > 1 ? `Window Shopper: send which member to the discard pile? (${left} to go)` : 'Window Shopper: send which member to the discard pile?', shop.map(c => ({
-    id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: priceOf(c),
-  })), `${Q}.windowShop`, { left, ...(TRACK ? { sent } : {}) });
+  // Out of Style (Nov 10) goes through the same steps, by its own name; a grey member gives 1 of any color there
+  const named = who === 'Window Shopper' ? {} : { who };
+  ctx.choose(owner, left > 1 ? `${who}: send which member to the discard pile? (${left} to go)` : `${who}: send which member to the discard pile?`, shop.map(c => ({
+    id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: who === 'Window Shopper' ? priceOf(c) : 1 + 0.1 * priceOf(c),
+  })), `${Q}.windowShop`, { left, ...named, ...(TRACK || who !== 'Window Shopper' ? { sent } : {}), ...(row ? { row } : {}) });
+}
+/** Test Drive (Nov 10): the hook that plays a member's effect now, by its printed timing; null when its timing doesn't count. */
+export function driveHook(def) {
+  const t = def.text || '';
+  if (/^On Use\b/.test(t)) return def.onActivate ? 'onActivate' : null;
+  if (/^On Recruit\b/.test(t)) return def.onRecruited ? 'onRecruited' : null;
+  if (/^Round Start\b/.test(t)) return def.onRoundStart ? 'onRoundStart' : def.onRoundStartLate ? 'onRoundStartLate' : null;
+  if (/^Round End\b/.test(t)) return def.onRoundEnd ? 'onRoundEnd' : null;
+  return null;
+}
+/** Blue's recruit ladder (Nov 10): discard pile members p can pay for at the price `how` sets. */
+const discardFits = (ctx, p, how) => discardOf(ctx.state).filter(u => ctx.price(p, u, how).afford);
+const discardBest = (ctx, p, how) => Math.max(0, ...discardFits(ctx, p, how).map(u => botWorth(ctx.card(u))));
+/** Markdown, Recruit Twice, Spree: recruit a member from the discard pile now, paying as `how` says; data.left in all. */
+function discardOffer(ctx, p, data) {
+  if (!(data.left > 0)) return;
+  const list = discardFits(ctx, p, data.how);
+  if (!list.length) { ctx.log(`${p.name}'s ${data.why}: ${discardOf(ctx.state).length ? 'can’t pay for any member in the discard pile' : 'the discard pile is empty'}.`); return; }
+  ctx.choose(p, `${data.why}: recruit which member from the discard pile${data.how.less ? `, paying ${data.how.less} less` : ''}?${data.left > 1 ? ` (${data.left} to go)` : ''}`, list.map(u => {
+    const c = ctx.card(u), pr = ctx.price(p, u, data.how);
+    return { id: `card:${u}`, label: `${c.def.name} · pay ${pr.total}`, kind: 'card', value: u, hint: botWorth(c) + (priceOf(c) - pr.total) * 0.5 };
+  }).concat({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: -1 }), `${Q}.discardPick`, data);
 }
 
 const BARGAIN = String(globalThis.process?.env?.BARGAIN || 'cost1').match(/^self(\d+)$/); // BARGAIN=self<n>: bot test of "Whenever you send members to the bottom of the pile, +n blue." (on your turn; Nov 6; off in the game)
@@ -345,9 +377,28 @@ const market = {
       estimate: () => 2.5,
       resolve(ctx, p) { ctx.gain(p, B, 2, { fromAction: true }); p.cleanSweep = true; },
     }, 'pool11'),
+    {
+      // Cory, Nov 10 2:48pm (Savings' slot): "Discard a shop member. Use its effect now. +1 blue." Effects that count: "Once
+      // per game, once per round, Round End, Round start, On recruit" (2:49pm: once per game included for now, watched in
+      // play); 2:51pm: named Test Drive. Any shop member may go; a member whose timing isn't one of those (Whenever, Game
+      // End, none) only goes to the discard pile. The shop refills.
+      key: 'testdrive', ring: 1, name: 'Test Drive', copyDoesIt: true, text: 'Discard a shop member. Use its effect now. +1 blue.',
+      estimate: ctx => 1 + (ctx.shopCards().some(c => driveHook(c.def)) ? 2.5 : 0.3),
+      resolve(ctx, p) {
+        ctx.gain(p, B, 1, { fromAction: true });
+        const shop = ctx.shopCards();
+        if (!shop.length) { ctx.log(`${p.name}'s Test Drive: the shop is empty.`); return; }
+        ctx.choose(p, 'Test Drive: discard which shop member and use its effect?', shop.map(c => ({
+          id: `card:${c.uid}`, label: `${c.def.name}: ${driveHook(c.def) ? c.def.text : `${c.def.text} (no effect to use now)`}`, kind: 'card', value: c.uid,
+          hint: driveHook(c.def) ? 2 + (c.def.f || 0) : -priceOf(c) * 0.1,
+        })), `${Q}.testDrive`);
+      },
+    },
     swap11({
       // every color's 3/4/5 (Cory, 2026-10-27); Churn's sweep goes (Claude's default: Out of Style keeps Blue's sweep).
       // Name is Claude's fill-in.
+      // Out of the wheel since Nov 10 (Test Drive takes its place); kept for old saves and its tests
+      pool: true,
       key: 'bargain', ring: 1, name: 'Savings', copyDoesIt: true,
       text: '+2 blue in round I, +3 in round II, +4 in round III. Before you recruit, you may discard one shop member and refill.',
       // Cory, 2026-10-31: fuel that announces Blue ("C"); was +3/4/5 blue
@@ -371,18 +422,28 @@ const market = {
       resolve(ctx, p) { ctx.gain(p, B, ctx.state.round + 1, { fromAction: true }); p.clearance = true; },
     }),
     {
-      key: 'restock', ring: 1, name: 'Out of Style', text: 'Discard every shop member of one color and refill. +1 blue per member discarded. +1 blue.', copyDoesIt: true, // per member sent: Cory, Oct 28 ("it's actually rather good that way")
-      estimate: ctx => 1 + Math.max(0, ...shopColors(ctx).map(([, n]) => n)),
+      // Cory, Nov 10 2:31pm ("too strong turn 1, very luck of the draw"; 2:22pm: "you discard three and you basically get the
+      // benefit of the blue cloak (and +1 blue)"): "Discard 3 shop members and refill. +1 of each discarded member's color.
+      // +1 blue." One at a time, the row refilling after each; a grey member gives 1 of any color (as the Blue Cloak reads
+      // grey: Claude's fill-in). Was "Discard every shop member of one color and refill. +1 blue per member discarded."
+      key: 'restock', ring: 1, name: 'Out of Style', text: 'Discard 3 shop members and refill. +1 of each discarded member’s color. +1 blue.', copyDoesIt: true,
+      estimate: ctx => 1 + Math.min(3, ctx.shopCards().length),
       resolve(ctx, p) {
         ctx.gain(p, B, 1, { fromAction: true });
-        const colors = shopColors(ctx);
-        if (!colors.length) return;
-        ctx.choose(p, 'Out of Style: send which color to the discard pile?', colors.map(([c, n]) => ({
-          id: `color:${c}`, label: `${styleWord(c)} (${n})`, kind: 'color', value: c, hint: n,
-        })), `${Q}.outOfStyle`);
+        windowPick(ctx, p, 3, [], 'Out of Style');
       },
     },
     {
+      // Cory, Nov 10 2:57pm, Blue's recruit ladder ("Make it 3/5/7. and always from discard."; 2:53pm "Markdown should
+      // recruit now. then you also get a nromal recruit at the end"): "Recruit a member from the discard pile now, paying 2
+      // less. +3 blue." Peek's place (2:17pm "markdown is great"). The +3 includes the space's own +1 (2:58pm).
+      key: 'markdown', ring: 1, name: 'Markdown', copyDoesIt: true, text: 'Recruit a member from the discard pile now, paying 2 less. +3 blue.',
+      estimate: (ctx, p) => 3 + discardBest(ctx, p, { less: 2 }) * 0.6,
+      resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); discardOffer(ctx, p, { why: 'Markdown', how: { less: 2 }, left: 1 }); },
+    },
+    {
+      // Out of the wheel since Nov 10 (Markdown takes its place); kept for old saves and its tests
+      pool: true,
       key: 'showroom', ring: 1, name: 'Peek', text: 'Look at the top 4 of the pile and put them back in any order. You may recruit one of them this turn. +3 blue in round I, +4 in round II, +5 in round III.', copyDoesIt: true, // +3/+4/+5 (Cory, Nov 5)
       // scales, more blue (Cory, 2026-10-22 playtest: weak in round I, "should give more resource", "Peek should really really scale")
       byRound: { lead: 'Look at the top 4 of the pile and put them back in any order. You may recruit one of them this turn.', lines: ['+3 blue', '+4 blue', '+5 blue'] },
@@ -396,9 +457,11 @@ const market = {
       },
     },
     {
-      key: 'clearance', ring: 2, name: 'Recruit Twice', text: '+3 blue. Recruit an extra time this turn.', copyDoesIt: true,
-      estimate: (ctx, p) => 3 + Math.min(10, Math.max(0, totalRes(p) - 2)) * 0.4, // +3 blue (Cory, Nov 1)
-      resolve(ctx, p) { ctx.gain(p, B, 3, { fromAction: true }); extraBuys(ctx, p, 1); ctx.log(`${p.name} recruits an extra time this turn.`); },
+      // Cory, Nov 10 2:57pm, the ladder: "Recruit a member from the discard pile now. +5 blue." (was "+3 blue. Recruit an
+      // extra time this turn."); the turn's own recruit still comes at turn end
+      key: 'clearance', ring: 2, name: 'Recruit Twice', text: 'Recruit a member from the discard pile now. +5 blue.', copyDoesIt: true,
+      estimate: (ctx, p) => 5 + discardBest(ctx, p, {}) * 0.6,
+      resolve(ctx, p) { ctx.gain(p, B, 5, { fromAction: true }); discardOffer(ctx, p, { why: 'Recruit Twice', how: {}, left: 1 }); },
     },
     // REPLACE12 bot tests (Nov 4, quality loop, lane D2; pitches/D2-batch1.md), one at a time in Bury's place.
     // Dumpster Dive: the bottom 3 members of the pile (the last ones sent down), one recruited free if it costs 6 or less;
@@ -435,6 +498,21 @@ const market = {
     }] : []),
     ...(on12('dumpsterdive') || on12('delivery') ? [] : [
     {
+      // Cory, Nov 10 12:14pm/12:15pm: "Simply, +1 Follower per 2 members you have" in Bury's place ("it doesnt need to be
+      // called bury!"; name Claude's fill-in, kept); 12:31pm: "+1 blue. Every color action gives +1 of its color".
+      // Members as the board counts them; rounded down (Claude's fill-in).
+      key: 'wordofmouth', ring: 2, name: 'Word of Mouth', copyDoesIt: true, text: '+1 follower per 2 members you have. +1 blue.',
+      estimate: (ctx, p) => 1 + 1.5 * Math.floor(ctx.memberCount(p) / 2),
+      resolve(ctx, p) {
+        ctx.gain(p, B, 1, { fromAction: true });
+        const n = Math.floor(ctx.memberCount(p) / 2);
+        if (n) p.bonus += n;
+        ctx.log(`${p.name}'s Word of Mouth: ${ctx.memberCount(p)} member${ctx.memberCount(p) === 1 ? '' : 's'}, +${n} follower${n === 1 ? '' : 's'}.`);
+      },
+    },
+    {
+      // Out of the wheel since Nov 10 (Word of Mouth takes its place); kept for old saves and its tests
+      pool: true,
       key: 'pricecheck', ring: 2, name: 'Bury', text: on12('buryfull') ? 'Discard a shop member and refill. Gain its cost in blue. +1 blue.' : 'Discard a shop member and refill. Gain half its cost in blue, rounded down. +1 blue.', copyDoesIt: true,
       estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().map(c => buryGain(c))),
       resolve(ctx, p) {
@@ -447,9 +525,11 @@ const market = {
       },
     }]),
     {
-      key: 'spree', ring: 3, name: 'Spree', text: '+6 blue. Recruit two extra times this turn.', copyDoesIt: true,
-      estimate: (ctx, p) => 6 + Math.min(10, Math.max(0, totalRes(p) - 3)) * 0.8, // +6 blue (Cory, Nov 5; was +5 Nov 1)
-      resolve(ctx, p) { ctx.gain(p, B, 6, { fromAction: true }); extraBuys(ctx, p, 2); ctx.log(`${p.name} goes on a spree: two extra recruits this turn.`); },
+      // Cory, Nov 10 2:57pm, the ladder: "Recruit two members from the discard pile now. +7 blue." (was "+6 blue. Recruit
+      // two extra times this turn."); one at a time, then the turn's own recruit at turn end
+      key: 'spree', ring: 3, name: 'Spree', text: 'Recruit two members from the discard pile now. +7 blue.', copyDoesIt: true,
+      estimate: (ctx, p) => 7 + discardBest(ctx, p, {}) * 1.1,
+      resolve(ctx, p) { ctx.gain(p, B, 7, { fromAction: true }); discardOffer(ctx, p, { why: 'Spree', how: {}, left: 2 }); },
     },
   ],
 
@@ -546,15 +626,39 @@ const market = {
     },
     windowShop(ctx, p, uid, data) {
       if (!ctx.state.shop.includes(uid)) return;
+      const who = data?.who || 'Window Shopper', space = who !== 'Window Shopper';
       const c = ctx.card(uid), col = colorOf(ctx, c);
       ctx.state.shop.splice(ctx.state.shop.indexOf(uid), 1);
       toDiscard(ctx.state, uid);
-      if (col) ctx.gain(p, col, 1);
-      ctx.log(`${p.name}'s Window Shopper sends ${c.def.name} to the discard pile${col ? `: +1 ${col}` : ''}.`);
-      if (c.def.everyColor) gainColorOf(ctx, p, c.def, 'Window Shopper');
-      ctx.refillShop(); toBottom(ctx, 1);
-      if (data?.left > 1) windowPick(ctx, p, data.left - 1, TRACK ? [...(data.sent || []), uid] : []);
-      else scavenge(ctx, p, [...(data?.sent || []), uid]);
+      if (col) ctx.gain(p, col, 1, space ? { fromAction: true } : undefined);
+      ctx.log(`${p.name}'s ${who} sends ${c.def.name} to the discard pile${col ? `: +1 ${col}` : ''}.`);
+      if (c.def.everyColor) gainColorOf(ctx, p, c.def, who);
+      else if (!col && space) anyColors(ctx, p, 1, who, 'market.anyColor');
+      // Out of Style's three sends are one batch (Patroness and the Blue Cloak pay once per batch, Cory Oct 21); Window
+      // Shopper keeps paying per send, as it always has
+      ctx.refillShop();
+      if (!space) toBottom(ctx, 1);
+      // Out of Style ("Discard 3 shop members and refill"): all three come from the row as it was when the space was taken,
+      // never a card that just slid in (the row refills as it goes so it is never short between picks; the end is the same)
+      const row = space ? (data?.row || []).filter(u => ctx.state.shop.includes(u)) : null;
+      if (data?.left > 1 && (space ? row.length : ctx.shopCards().length)) windowPick(ctx, p, data.left - 1, TRACK || space ? [...(data.sent || []), uid] : [], who, row);
+      else { if (space) toBottom(ctx, (data?.sent || []).length + 1); scavenge(ctx, p, [...(data?.sent || []), uid]); }
+    },
+    // Test Drive (Nov 10): the member goes to the discard pile first, then its effect plays for p
+    testDrive(ctx, p, uid) {
+      if (!ctx.state.shop.includes(uid)) return;
+      const c = ctx.card(uid), hook = driveHook(ctx.defOf(c));
+      ctx.buryFromShop(uid);
+      ctx.log(`${p.name}'s Test Drive: sends ${c.def.name} to the discard pile${hook ? ' and uses its effect' : ''}.`);
+      toBottom(ctx, 1);
+      if (hook) ctx.useEffectOf(p, uid, hook);
+      scavenge(ctx, p, [uid]);
+    },
+    discardPick(ctx, p, uid, data) {
+      if (uid == null) { ctx.log(`${p.name}'s ${data.why}: recruits nothing.`); return; }
+      if (!discardOf(ctx.state).includes(uid) || !ctx.payChoices(p, uid, data.how).length) return;
+      askPay(ctx, p, `${data.why}: how do you pay ${ctx.price(p, uid, data.how).total} for ${ctx.card(uid).def.name}?`, { uid, why: data.why, fromPile: true, how: data.how });
+      if (data.left > 1) discardOffer(ctx, p, { ...data, left: data.left - 1 });
     },
     churn(ctx, p, uid, data) {
       if (ctx.state.shop.includes(uid)) {

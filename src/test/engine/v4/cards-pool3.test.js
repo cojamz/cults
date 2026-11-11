@@ -6,7 +6,8 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { quadrant, defById } from '../../../engine/v4/content/index.js';
 import { POOL_SPACES } from '../../../engine/v4/content/pool.js';
 import { createGame, resume } from '../../../engine/v4/core.js';
-import { take, move, uidOf } from './helpers.js';
+import { take, move, uidOf, useRetired } from './helpers.js';
+useRetired(['purple.holdup']);
 import { sceneQ, linesNaming } from './cards-helpers.js';
 
 const MEMBERS = ['market.gravediggers', 'market.pickers3', 'market.salvagers', 'purple.usherscut', 'purple.tickettakers',

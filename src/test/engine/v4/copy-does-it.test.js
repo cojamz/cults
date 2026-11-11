@@ -8,6 +8,8 @@ import { describe, it, expect } from 'vitest';
 import { allQuadrantIds, quadrant } from '../../../engine/v4/content/index.js';
 import { take, move } from './helpers.js';
 import { sceneQ, settle, passBuys, buy } from './cards-helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.turnout', 'thieves.hideout']);
 
 const FILL = ['gold', 'red', 'market', 'echo', 'purple'];
 const turns = s => s.queue.filter(t => t.t === 'turn' || (t.t === 'content' && t.h === 'purple.skipped')).map(t => `${t.t}${t.p}`).join(' ');

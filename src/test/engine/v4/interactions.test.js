@@ -9,6 +9,10 @@ import { quadrant } from '../../../engine/v4/content/index.js';
 import { take, move, play, uidOf, ids, pinCosts } from './helpers.js';
 import { STRAYS, stray } from './stray.js';
 import { useRetiredOvertime } from './retired-overtime.js';
+import { useRetired } from './helpers.js';
+import { placed } from './placed-helpers.js';
+const AV = ['thieves', 'echo', 'market'];
+useRetired(['market.pricecheck', 'thieves.hideout', 'thieves.ransom']);
 
 useRetiredOvertime();
 
@@ -48,6 +52,9 @@ function scene({ quads, n = 2, seed = 7, round = 1, res = [], members = [], shop
   return resume(s);
 }
 const R = (s, i) => s.players[i].res;
+/** Move these shop members to the discard pile (the last on top). */
+const inDiscard = (s, def) => s.discard.find(x => s.cards[x].def === def);
+const toDiscard = (s, list) => { for (const d of list) { const u = uidOf(s, d, 'shop'); s.shop = s.shop.filter(x => x !== u); s.discard = [...(s.discard || []), u]; } return s; };
 const pass = s => (s.pending?.kind === 'buy' ? move(s, 'pass') : s);
 const go = (s, name, ...then) => pass(play(take(s, name), ...then));
 // Blue's own pay prompt (several ways to pay): take the suggested one
@@ -66,27 +73,27 @@ describe('Green copies the risky spaces', () => {
 
   it('copying a Magenta steal means stealing yourself, and never takes more than the victim holds', () => {
     let s = scene({ quads: Q, n: 3, turns: [1, 0], res: [{}, {}, { gold: 4 }] });
-    s = go(s, 'thieves.pickpocket', 'take:2:gold', 'take:2:gold', 'take:2:gold'); // round I: steal 3
-    expect(R(s, 1)).toMatchObject({ gold: 3, magenta: 0 });
-    s = take(s, 'echo.echo');
+    s = go(placed(s, 1, 2, AV), 'thieves.pickpocket', 'take:2:gold', 'take:2:gold', 'take:2:gold'); // P2's third minion: steal 3
+    expect(R(s, 1)).toMatchObject({ gold: 3, magenta: 1 });
+    s = take(placed(s, 0, 2, AV), 'echo.echo');
     expect(labels(s)).toEqual(['Help Yourself (P2): do Help Yourself yourself']);
     s = move(s, s.pending.options[0].id);
-    // P1 now steals 3: P2's gold and P3's last gold are on offer (Help Yourself gives no magenta since Oct 29)
-    expect(ids(s).sort()).toEqual(['take:1:gold', 'take:2:gold']);
+    // P1 now steals 3 (their own third minion): P2's gold and magenta and P3's last gold are on offer
+    expect(ids(s).sort()).toEqual(['take:1:gold', 'take:1:magenta', 'take:2:gold']);
     s = play(s, 'take:1:gold'); // from any rivals (Nov 8): all 3 from P2 here
     s = pass(play(play(s, 'take:1:gold'), 'take:1:gold'));
-    // the stolen gold stays gold
-    expect(R(s, 0)).toMatchObject({ gold: 3, magenta: 0 });
-    expect(R(s, 1)).toMatchObject({ gold: 0, magenta: 0 });
+    // the stolen gold stays gold; the copy gives its +1 magenta once
+    expect(R(s, 0)).toMatchObject({ gold: 3, magenta: 1 });
+    expect(R(s, 1)).toMatchObject({ gold: 0, magenta: 1 });
     expect(R(s, 2).gold).toBe(1);
   });
 
   it('copying a steal can’t reach a player in the Lie Low', () => {
     let s = scene({ quads: Q, n: 3, turns: [2, 1, 0], res: [{ red: 3 }, { gold: 5 }, { red: 4 }] });
     s = go(s, 'thieves.hideout', 'take:1:gold'); // P3 hides, stealing 1 gold from P2 (Cory, Nov 1)
-    s = take(s, 'thieves.pickpocket');
+    s = take(placed(s, 1, 2, AV), 'thieves.pickpocket');
     expect(ids(s)).toEqual(['take:0:red']); // P2 can only rob P1
-    s = pass(move(move(move(s, 'take:0:red'), 'take:0:red'), 'take:0:red')); // round I: steal 3
+    s = pass(move(move(move(s, 'take:0:red'), 'take:0:red'), 'take:0:red')); // P2's third minion: steal 3
     s = take(s, 'echo.echo');
     s = move(s, s.pending.options.find(opt('Help Yourself')).id);
     expect(ids(s).length).toBeGreaterThan(0);
@@ -105,13 +112,14 @@ describe('Green copies the risky spaces', () => {
   it('copying Blue’s Out of Style does Out of Style again for the copier', () => {
     const B = ['gold', 'red', 'market', 'echo'];
     let s = scene({ quads: B, turns: [1, 0] });
-    s = take(s, 'market.restock');
-    s = pass(move(s, s.pending.options[0].id));
+    s = take(s, 'market.restock'); // Nov 10: "Discard 3 shop members and refill. +1 of each discarded member's color. +1 blue."
+    for (let k = 0; k < 3; k++) s = move(s, s.pending.options[0].id);
+    s = pass(s);
     s = take(s, 'echo.echo');
     expect(labels(s)).toEqual(['Out of Style (P2): do Out of Style yourself']);
     s = move(s, s.pending.options[0].id);
-    expect(R(s, 0).blue).toBe(1); // its +1 now, +1 per member once the copier picks a color
-    expect(s.pending.prompt).toMatch(/^Out of Style: send which color/);
+    expect(R(s, 0).blue).toBe(1); // its +1 now, +1 of each color once the copier picks the members
+    expect(s.pending.prompt).toBe('Out of Style: send which member to the discard pile? (3 to go)');
   });
 
   it('a copied Toast is done again: it gifts the rivals too, without the host’s Caterer or Grand Host (Cory, Nov 6)', () => {
@@ -142,12 +150,12 @@ describe('Green copies the risky spaces', () => {
     expect(R(s, 0)).toMatchObject({ gold: 4, silver: 1 }); // Echo's inherent +1 green also turns gold; the gift stays silver.
 
     let t = scene({ quads: S, turns: [1, 0], members: [[], ['gold.midas']] });
-    t = go(t, 'echo.chant');
-    expect(R(t, 1)).toMatchObject({ gold: 3, green: 0 });
+    t = go(t, 'echo.chant'); // Build Up (Nov 10): +1 per minion on Green (its own) and +1 green: 2
+    expect(R(t, 1)).toMatchObject({ gold: 2, green: 0 });
     t = take(t, 'echo.echo');
-    expect(labels(t)).toEqual(['Build Up (P2): +3 green']);
+    expect(labels(t)).toEqual(['Build Up (P2): +2 green']);
     t = pass(move(t, t.pending.options[0].id));
-    expect(R(t, 0).green).toBe(4); // the copied +3, Echo's own +1
+    expect(R(t, 0).green).toBe(3); // the copied +2, Echo's own +1
   });
 
   it('Underdog doubles a copied gold gain (the copy is the copier’s own action)', () => {
@@ -217,10 +225,14 @@ describe('Silver gifts with Guest and Kickback', () => {
 describe('Blue’s out-of-buy recruits with Pied Piper and Proselytizers', () => {
   const Q = ['gold', 'red', 'market', 'green'];
   const rich = { gold: 9, red: 9, blue: 9, green: 9 };
-  it('Recruit Twice makes 2 recruits: Drive pays, Proselytizers pays twice', () => {
+  // Recruit Twice (Nov 10): "Recruit a member from the discard pile now. +5 blue." The turn's own recruit still follows.
+  it('Recruit Twice: a discard pile recruit, then the turn\'s own: Drive pays, Proselytizers pays twice', () => {
     let s = scene({ quads: Q, round: 2, res: [rich, { blue: 30 }], members: [['red.drive', 'red.proselytizer']] });
+    s = toDiscard(s, ['red.intern']);
     s = take(s, 'market.clearance');
-    s = payUp(move(s, `card:${uidOf(s, 'red.intern', 'shop')}`));
+    s = payUp(move(s, `card:${inDiscard(s, 'red.intern')}`));
+    expect(defs(s, 0)).toContain('red.intern');
+    expect(s.pending?.kind).toBe('buy');
     const red = R(s, 0).red;
     s = payUp(move(s, `card:${uidOf(s, 'red.patriarch', 'shop')}`));
     expect(R(s, 0).red).toBe(red + 2 - 3); // Drive's +2, Patriarch's 3 red
@@ -234,10 +246,14 @@ describe('Blue’s out-of-buy recruits with Pied Piper and Proselytizers', () =>
     expect(s.pending?.kind).toBe('buy');
     expect(s.players[0].turnRecruits).toBe(0);
   });
-  it('Spree: 3 buys, Drive pays once', () => {
+  // Spree (Nov 10): "Recruit two members from the discard pile now. +7 blue." Then the turn's own recruit.
+  it('Spree: two discard pile recruits and the turn\'s own, Drive pays once', () => {
     let s = scene({ quads: Q, round: 3, res: [{ gold: 20, red: 20, blue: 20, green: 20 }, { blue: 30 }], members: [['red.drive']] });
+    s = toDiscard(s, ['red.intern', 'red.patriarch']);
     s = take(s, 'market.spree');
-    for (const d of ['red.intern', 'red.patriarch', 'gold.tycoon']) s = move(s, `card:${uidOf(s, d, 'shop')}`);
+    for (const d of ['red.intern', 'red.patriarch']) s = payUp(move(s, `card:${inDiscard(s, d)}`));
+    expect(s.pending?.kind).toBe('buy');
+    s = payUp(move(s, `card:${uidOf(s, 'gold.tycoon', 'shop')}`));
     expect(R(s, 0).red).toBe(20 + 2 - 1 - 3);
     expect(s.pending?.kind).not.toBe('buy');
   });
@@ -407,11 +423,11 @@ describe('gain changers on stolen goods', () => {
   // "stolen resources keep their colors"; today an action's loot and its +1 magenta are both gains from an action.
   it('DESIGN QUESTION: an action’s steal is: Midas turns the loot (and the +1 magenta) to gold, and Underdog doubles it', () => {
     let s = scene({ quads: Q, res: [{}, { red: 3, gold: 5 }], members: [['gold.midas', 'gold.underdog'], []] });
-    s = take(s, 'thieves.pickpocket');
+    s = take(placed(s, 0, 2, AV), 'thieves.pickpocket');
     expect(ids(s)).toEqual(['take:1:gold', 'take:1:red']);
-    s = pass(move(move(move(s, 'take:1:red'), 'take:1:red'), 'take:1:red')); // round I: steal 3
+    s = pass(move(move(move(s, 'take:1:red'), 'take:1:red'), 'take:1:red')); // the third minion: steal 3
     expect(R(s, 1)).toMatchObject({ red: 0, gold: 5 }); // lost 3
-    expect(R(s, 0)).toMatchObject({ gold: 6, red: 0, magenta: 0 }); // 3 red → 3 gold → 6 (no +1 magenta on Help Yourself since Oct 29)
+    expect(R(s, 0)).toMatchObject({ gold: 8, red: 0, magenta: 0 }); // 3 red and the +1 magenta → 4 gold → 8 (Help Yourself's +1 magenta is back, Nov 10)
   });
 });
 

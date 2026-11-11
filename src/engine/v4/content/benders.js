@@ -347,10 +347,10 @@ const members = [
   // (Poach and swaps moving an unplaced grant, copies, a full board) keep it as their fixture
   m('extrahand3', 'Extra Hand', 'purple', 5, 4, '+1 minion in round III.', { extraWorkers: [0, 0, 1], retired: true }),
   // Cory, 2026-10-28: "probably needs to be a Use Once… it had to have some category, and On Recruit would be broken"
-  m('extrahand', 'Extra Hand', 'purple', 5, 2, /* Cory, Nov 5 backlog price yes */ 'On Use, once per game: +1 minion this round.', { from: 2, ...old9('benders.extrahand'),
-    activate: 'game',
-    onActivate(ctx, owner, card) { if (!extraMinion(ctx, owner, 'Extra Hand')) card.used = false; },
-    botActivate: ctx => ctx.state.round === 3 && spareSpace(ctx),
+  // Cory, Nov 10 3:56pm: "On Recruit: +1 minion this round." ("you're always going to use it right away"; was "On Use,
+  // once per game: +1 minion this round.")
+  m('extrahand', 'Extra Hand', 'purple', 5, 2, /* Cory, Nov 5 backlog price yes */ 'On Recruit: +1 minion this round.', { from: 2, ...old9('benders.extrahand'),
+    onRecruited(ctx, owner) { extraMinion(ctx, owner, 'Extra Hand'); },
   }),
   // REPLACE9 bot test (Members C, Nov 4, batch bC1: paper 17 vs Extra Hand's 14, the guests' set 10 -> 14): Extra
   // Hand's place. 6 any as a player sees it. Fewest followers when its Round Start comes up (ties count); no extra

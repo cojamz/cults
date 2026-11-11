@@ -7,6 +7,8 @@ import { defById } from '../../../engine/v4/content/index.js';
 import { resume, contextFor } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming } from './cards-helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['market.pricecheck', 'red.turnout']);
 
 const MEMBERS = ['red.kinfolk', 'red.kindred', 'red.talentagents', 'red.nosyneighbors', 'red.ambulancechasers', 'market.impulsebuyers',
   'yellow.sightseers', 'yellow.souvenirhunters'];

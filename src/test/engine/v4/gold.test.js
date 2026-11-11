@@ -3,6 +3,8 @@
 import { describe, it, expect } from 'vitest';
 import { resume } from '../../../engine/v4/core.js';
 import { scene as baseScene, take, play, move, uidOf, ids, hasOpt, fol, useTestCosts } from './helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.hire', 'red.turnout']);
 
 useTestCosts();
 

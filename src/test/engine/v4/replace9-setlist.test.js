@@ -28,7 +28,7 @@ describe('REPLACE9: Setlist', () => {
     const g = s.players[0].res.green || 0;
     if (s.pending?.player !== 0 || !s.pending.options.some(o => o.id === `use:${u}`)) throw new Error('use not offered after the turn');
     s = move(s, `use:${u}`);
-    expect((s.players[0].res.green || 0) - g).toBe(4);
+    expect((s.players[0].res.green || 0) - g).toBe(2); // Build Up again: one minion on Green, +1 (Cory, Nov 10)
     expect(s.cards[u].used).toBe(true);
   });
   it('resets at Round Start', () => {

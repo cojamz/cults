@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import { defById, quadrant } from '../../../engine/v4/index.js';
 import { table } from '../../engine/v4/cards-helpers-b.js';
-import { take, move } from '../../engine/v4/helpers.js';
+import { take, move, useRetired } from '../../engine/v4/helpers.js';
 import { memberCopyTargets, ownCopyPlan, copiesAll, copyAllPlan } from '../../../v4/game/cards.js';
 
 describe('Green hover targets follow the current rules', () => {
@@ -34,6 +34,8 @@ describe('Green hover targets follow the current rules', () => {
 // Cory, Nov 4: "hovering over copy a rival members on recruit should show you the available options in the hover over"
 const act = (q, name) => quadrant(q).actions.find(a => a.name === name).text;
 describe('Copy-a-member hovers list the choices the card would offer', () => {
+  // Sample and Tryout left the wheel Nov 10 (Crowd and Borrow took their slots); kept for old saves, so their hovers too
+  useRetired(['echo.encore', 'red.evenswap']);
   it('Sample lists exactly the rival members its choice offers', async () => {
     const { copyChoices } = await import('../../../v4/game/cards.js');
     const s0 = table(['gold', 'echo'], { round: 2, members: [[], ['echo.evergreen', 'echo.agents', 'echo.hourglass']] });
@@ -44,10 +46,10 @@ describe('Copy-a-member hovers list the choices the card would offer', () => {
     const s = take(s0, 'echo.encore');
     expect(s.pending.options.map(o => o.value)).toEqual(cc.list.map(x => x.uid));
   });
-  it('Greatest Hits, Tryout, Impostors and Doppelganger name their options; other cards none', async () => {
+  it('Tryout, Impostors and Doppelganger name their options; other cards none (Greatest Hits copies actions since Nov 10)', async () => {
     const { copyChoices } = await import('../../../v4/game/cards.js');
     const s = table(['red', 'echo'], { round: 3, members: [['echo.evergreen'], ['echo.connector']], shop: ['echo.evergreen', 'echo.connector'] });
-    expect(copyChoices(s, 0, act('echo', 'Greatest Hits')).list.map(x => x.def.name)).toEqual(['Busker']);
+    expect(copyChoices(s, 0, act('echo', 'Greatest Hits'))).toBe(null); // Medley's text: every action on one color, no member
     expect(copyChoices(s, 0, act('red', 'Tryout')).label).toBe('Could use');
     expect(copyChoices(s, 0, defById('echo.impostor').text).list.map(x => x.owner.id)).toEqual([1]);
     expect(copyChoices(s, 0, defById('echo.doppel').text).list.map(x => x.def.name)).toEqual(['Busker']);

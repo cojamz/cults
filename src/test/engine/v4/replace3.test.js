@@ -12,6 +12,8 @@ const { applyMove, contextFor, followers, resume } = await import('../../../engi
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
 const { table, named, uidIn, owns } = await import('./cards-helpers-b.js');
+const { useRetired } = await import('./helpers.js');
+useRetired(['red.evenswap', 'red.turnout']);
 // read once at load: cleared again so a later test file in this worker loads the engine without the switch
 delete process.env.REPLACE3;
 delete process.env.MEMBER_UP;

@@ -206,7 +206,23 @@ export default {
       },
     }, 'pool6'),
     {
+      // Cory, Nov 10 (project chat): Red's third round I space is Borrow, Tryout's place (no space relies on On Recruits,
+      // 11:57am); 3:00pm: "lets say it gets discarded at the end of the round instead of retruning to shop", "before
+      // scoring" kept from his earlier words. Free, the cheapest (a tie is your pick). It goes to the discard pile when the
+      // round ends, before the Round End cards and the contests, if it is still in your cult; swapped away (Promote,
+      // Demote) it stays where it went ("it also combos with promote/demote").
+      key: 'borrow', ring: 1, name: 'Borrow', text: 'Recruit the cheapest shop member, for free. Discard it at round end, before scoring. +1 red.', copyDoesIt: true,
+      estimate: ctx => 1 + cheapValue(ctx) * 0.5,
+      resolve(ctx, p) {
+        ctx.gain(p, 'red', 1, { fromAction: true });
+        if (!ctx.shopCards().length) { ctx.log(`${p.name}'s Borrow: the shop is empty.`); return; }
+        hireCheapest(ctx, p, 'Borrow', true);
+      },
+    },
+    {
       // Cory, 2026-10-27: replaces Even Swap ("nobody has members initially"). Name and the +2 are Claude's fill-ins.
+      // Out of the wheel since Nov 10 (Borrow takes its place); kept for old saves and its tests
+      pool: true,
       key: 'evenswap', ring: 1, name: 'Tryout', text: '+2 red. Use a shop member’s On Recruit. It stays in the shop.', copyDoesIt: true, // +2 (Cory, Nov 1)
       estimate: ctx => 2 + (borrowable(ctx).length ? 2 : 0),
       resolve(ctx, p) {
@@ -224,7 +240,25 @@ export default {
         })), 'red.borrow');
       },
     },
+    {
+      // Cory, Nov 10 11:49am/11:50am: "+1 of the shop's most common color per shop member of that color. +1 red." in
+      // Gather's place. Grey members aren't a color. A tie for most common is your pick. Name is Claude's fill-in.
+      key: 'trending', ring: 1, name: 'Trending', text: '+1 of the shop’s most common color per shop member of that color. +1 red.', copyDoesIt: true,
+      estimate: ctx => 1 + Math.max(0, ...shopColors(ctx).map(([, n]) => n)),
+      resolve(ctx, p) {
+        ctx.gain(p, 'red', 1, { fromAction: true });
+        const list = shopColors(ctx), top = Math.max(0, ...list.map(([, n]) => n));
+        const tied = list.filter(([, n]) => n === top && n > 0);
+        if (!tied.length) { ctx.log(`${p.name}'s Trending: no colored member in the shop.`); return; }
+        if (tied.length === 1) { trend(ctx, p, tied[0][0], top); return; }
+        ctx.choose(p, `Trending: the shop holds ${top} each of ${tied.map(([c]) => c).join(' and ')}. Gain which?`, tied.map(([c]) => ({
+          id: `color:${c}`, label: `+${top} ${c}`, kind: 'color', value: c, hint: top,
+        })), 'red.trending', { n: top });
+      },
+    },
     swap11({
+      // Out of the wheel since Nov 10 (Trending takes its place); kept for old saves and its tests
+      pool: true,
       key: 'turnout', ring: 1, name: 'Gather', copyDoesIt: true,
       text: '+2 red in round I, +3 in round II, +4 in round III. If you recruit a member this turn: +1 follower for every 3 resources you pay.',
       // Cory, 2026-10-31: fuel tied to the recruit ("B": 2/3/4 red, 1/2/3 followers). Cory, Nov 9 ("lets say yeah for now"):
@@ -248,8 +282,22 @@ export default {
         if (k) ctx.log(`${p.name}'s Rally: ${k} rival${k > 1 ? 's' : ''} with more members, +${k} red.`);
       },
     }),
+    {
+      // Cory, Nov 10 11:49am/11:50am: "+3 red. If you recruit a member this turn of a color you already have: +4 followers.
+      // +1 red." (his call, kept as said beside the round I rule). In Walk-In's place. "A color you already have": one of
+      // your members before this recruit is that color; it pays once, on the turn's first recruit that matches. Name is
+      // Claude's fill-in (Gather's old job).
+      key: 'gather', ring: 1, name: 'Gather', text: '+3 red. If you recruit a member this turn of a color you already have: +4 followers. +1 red.', copyDoesIt: true,
+      estimate: (ctx, p) => 4 + (ctx.membersOf(p).length ? 2.5 : 0),
+      resolve(ctx, p) {
+        ctx.gain(p, 'red', 4, { fromAction: true });
+        (p.recruitFollowers ||= []).push({ n: 4, name: 'Gather', sameColor: true });
+      },
+    },
     swap11(swap11({
       // Cory, 2026-10-27: "recruit the top member of the deck. each rival gets 1 red". Name and the +2 are Claude's fill-ins.
+      // Out of the wheel since Nov 10 (Gather takes its place); kept for old saves and its tests
+      pool: true,
       key: 'hire', ring: 1, name: 'Walk-In', text: 'Recruit the top member of the pile. Each rival +1 red. +1 red.', copyDoesIt: true,
       estimate: ctx => 1 + (ctx.state.pile.length ? 3 : 0),
       resolve(ctx, p) {
@@ -406,6 +454,8 @@ export default {
       ctx.borrowOnRecruit(p, uid);
     },
     takeFree(ctx, p, uid) { ctx.recruit(p, uid, { free: true }); },
+    borrowFree(ctx, p, uid) { borrowIt(ctx, p, uid); },
+    trending(ctx, p, color, data) { trend(ctx, p, color, data.n); },
     ...({ // always registered: Seat Filler (red.drift) is live since Nov 5; the rest are harmless when unused
       convert(ctx, p, uid) {
         const v = ctx.ownerOf(uid), c = ctx.card(uid);
@@ -945,15 +995,31 @@ function cheapest(ctx) {
   return shop.reduce((a, b) => (cost(b) < cost(a) ? b : a));
 }
 // who: the card or space asking, so its choice is titled with its own name (Mentor & Protégés shares this with Open Door)
-function hireCheapest(ctx, p, who) {
+function hireCheapest(ctx, p, who, borrow = false) {
   const shop = ctx.shopCards();
   if (!shop.length) return;
   const min = Math.min(...shop.map(cost));
   const tied = shop.filter(c => cost(c) === min);
-  if (tied.length === 1) { ctx.recruit(p, tied[0].uid, { free: true }); return; }
+  if (tied.length === 1) { if (borrow) borrowIt(ctx, p, tied[0].uid); else ctx.recruit(p, tied[0].uid, { free: true }); return; }
   ctx.choose(p, `${who}: which of the cheapest members?`, tied.map(c => ({
     id: `card:${c.uid}`, label: c.def.name, kind: 'card', value: c.uid, hint: c.def.f,
-  })), 'red.takeFree');
+  })), borrow ? 'red.borrowFree' : 'red.takeFree');
+}
+/** Borrow: recruit it free, and note it for the round end (core endRound discards it if p still has it). */
+function borrowIt(ctx, p, uid) {
+  if (!ctx.state.shop.includes(uid)) return;
+  ctx.recruit(p, uid, { free: true });
+  if (p.members.includes(uid)) (ctx.state.borrowed ||= []).push({ uid, pid: p.id, round: ctx.state.round });
+}
+/** Trending: each color's count of shop members (grey members aren't a color), biggest first. */
+function shopColors(ctx) {
+  const by = new Map();
+  for (const c of ctx.shopCards()) { const col = ctx.quadrant(c.def.quadrant)?.resource; if (col && ctx.state.resources.includes(col)) by.set(col, (by.get(col) || 0) + 1); }
+  return [...by].sort((a, b) => b[1] - a[1]);
+}
+function trend(ctx, p, color, n) {
+  ctx.gain(p, color, n, { fromAction: true });
+  ctx.log(`${p.name}'s Trending: ${n} ${color} member${n === 1 ? '' : 's'} in the shop, +${n} ${color}.`);
 }
 // A swap can rearrange any cult, but taking from a protected rival remains blocked.
 // Each card's owner and cost are read once (bots rate every pair on a copy, and each rating re-checks its pair: the

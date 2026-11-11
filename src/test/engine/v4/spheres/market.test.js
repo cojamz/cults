@@ -12,6 +12,8 @@ import { take, move, uidOf, ids, fol, pinCosts, TEST_COSTS } from '../helpers.js
 import { checkInvariants } from '../fuzz-runner.js';
 import { shopSize } from '../../../../engine/v4/core.js';
 import { games } from '../budget.js';
+import { useRetired } from '../helpers.js';
+useRetired(['market.bargain', 'market.pricecheck', 'market.showroom', 'red.turnout']);
 
 // seeded games in the table block below: a game count, not a time budget (budget.js). The verdict plays all 200 here,
 // not half: the block asserts a rate (Spree in over 60% of games), and a rate needs its whole sample. The fast gate 20.
@@ -90,16 +92,15 @@ describe('Blue actions', () => {
       expect(s.pending.kind).toBe('buy');
     }
   });
-  it('Out of Style (ring I): one color to the discard pile, +1 blue per member sent, +1', () => {
+  it('Out of Style (ring I, Nov 10): discard 3 shop members you pick, +1 of each one\'s color, +1 blue', () => {
     let s = take(scene({ shop: S5 }), 'market.restock'); // Midas, Jackpot, Tycoon gold; Mentor, Proselytizers red
-    // the row fills to its size from the pile, so count the gold actually showing (the deck's order moves with it)
-    const gold = s.shop.filter(u => s.cards[u].def.startsWith('gold.')).length;
-    expect(gold).toBeGreaterThanOrEqual(3);
     expect(R(s).blue).toBe(1);
-    s = move(s, 'color:gold');
-    expect(R(s).blue).toBe(1 + gold); // per member sent (Cory, Oct 28)
-    expect(s.shop.some(u => s.cards[u].def.startsWith('gold.'))).toBe(s.shop.slice(2).some(u => s.cards[u].def.startsWith('gold.')));
+    s = move(s, card(s, 'gold.midas'));
+    s = move(s, card(s, 'gold.jackpot'));
+    s = move(s, card(s, 'red.mentor'));
+    expect(R(s)).toMatchObject({ blue: 1, gold: 2, red: 1 });
     expect(s.shop).toHaveLength(shopSize(s));
+    expect(s.pending.kind).toBe('buy');
   });
   it('Peek (ring I): reorder the top 4; one of them may be this turn\'s buy', () => {
     let s = take(scene({ res: [{ red: 20, gold: 20, blue: 20, green: 20 }], shop: S5 }), 'market.showroom');
@@ -110,10 +111,14 @@ describe('Blue actions', () => {
     expect(ids(s)).toContain(`card:${top[1]}`);
     expect(ids(s)).not.toContain(`card:${s.pile[4]}`);
   });
-  it('Recruit Twice (ring II): two buys', () => {
+  it('Recruit Twice (ring II, Nov 10): +5 blue and a member from the discard pile now, then the turn\'s own recruit', () => {
     expect(() => take(scene({ round: 1, shop: SHOP }), 'market.clearance')).toThrow();
-    let s = take(scene({ round: 2, res: [{ red: 10, gold: 8 }], shop: CHEAP }), 'market.clearance');
-    s = move(s, card(s, 'red.intern'));
+    let s = scene({ round: 2, res: [{ red: 10, gold: 8 }], shop: CHEAP.slice(1) });
+    s.discard = [s.pile.splice(s.pile.findIndex(u => s.cards[u].def === 'red.intern'), 1)[0]];
+    s = take(s, 'market.clearance');
+    expect(R(s).blue).toBe(5);
+    s = move(s, `card:${s.discard[0]}`);
+    expect(has(s, 'red.intern')).toBe(true);
     expect(s.pending.kind).toBe('buy');
     s = move(s, card(s, 'red.twins'));
     expect(s.pending?.kind).not.toBe('buy');
@@ -127,28 +132,31 @@ describe('Blue actions', () => {
     s = move(s, card(s, 'gold.midas')); // 5
     expect(R(s).blue).toBe(2 + 1);
   });
-  it('Spree (ring III): +6 blue and three buys this turn', () => {
-    let s = take(scene({ round: 3, res: [{ red: 10, gold: 8, green: 8 }], shop: CHEAP }), 'market.spree');
-    expect(R(s).blue).toBe(6); // +6 since Nov 5
-    s = move(s, card(s, 'red.intern'));
-    expect(s.pending.kind).toBe('buy');
-    s = move(s, 'tier:mid');
+  it('Spree (ring III, Nov 10): +7 blue, two members from the discard pile now, then the turn\'s own recruit', () => {
+    let s = scene({ round: 3, res: [{ red: 10, gold: 8, green: 8 }], shop: CHEAP.slice(2) });
+    const pick = d => s.pile.splice(s.pile.findIndex(u => s.cards[u].def === d), 1)[0];
+    s.discard = [pick('red.intern'), pick('red.volunteer')];
+    const [intern, vol] = s.discard;
+    s = take(s, 'market.spree');
+    expect(R(s).blue).toBe(7);
+    expect(s.pending.prompt).toMatch(/\(2 to go\)$/);
+    s = move(s, `card:${intern}`);
+    expect(s.pending.prompt).toBe('Spree: recruit which member from the discard pile?');
+    s = move(s, `card:${vol}`);
     expect(s.pending.kind).toBe('buy');
     s = move(s, card(s, 'red.twins'));
     expect(s.pending?.kind).not.toBe('buy');
-    expect(s.players[0].members).toHaveLength(2);
-    expect(s.players[0].bonus).toBe(5);
+    expect(s.players[0].members).toHaveLength(3);
   });
 
-  it('Spree: the prompt counts recruits left, and Done ends every recruit left (panel Oct 26)', () => {
-    let s = take(scene({ round: 3, res: [{ red: 10, gold: 8, green: 8 }], shop: CHEAP }), 'market.spree');
-    expect(s.pending.prompt).toMatch(/3 recruits left/);
-    s = move(s, card(s, 'red.intern'));
+  it('Spree: "Recruit nothing" ends the discard pile recruits; the turn\'s own recruit still comes', () => {
+    let s = scene({ round: 3, res: [{ red: 10, gold: 8, green: 8 }], shop: CHEAP.slice(2) });
+    s.discard = [s.pile.splice(s.pile.findIndex(u => s.cards[u].def === 'red.intern'), 1)[0]];
+    s = take(s, 'market.spree');
+    s = move(s, 'none');
+    expect(s.log).toContain("P1's Spree: recruits nothing.");
     expect(s.pending.kind).toBe('buy');
-    expect(s.pending.prompt).toMatch(/2 recruits left/);
-    s = move(s, 'pass');
-    expect(s.pending?.kind).not.toBe('buy');
-    expect(s.players[0].members).toHaveLength(1);
+    expect(s.players[0].members).toHaveLength(0);
   });
 });
 
@@ -157,7 +165,7 @@ describe('Blue members', () => {
   // P2 recruits def from the shop by buying it outright
   const rivalBuys = (members, def, res = { red: 9, gold: 9, blue: 9 }) => {
     let s = scene({ members, res: [{}, res], shop: [def, ...CHEAP.filter(d => d !== def).slice(0, 5)], turn: 1, round: 2 });
-    s = take(s, 'market.clearance');
+    s = take(s, 'gold.rush'); // a plain gain, so the buy is all that changes
     return move(s, card(s, def));
   };
 
@@ -172,19 +180,19 @@ describe('Blue members', () => {
   it('Connoisseurs: whenever you recruit a blue member, +1 blue', () => {
     let s = take(scene({ round: 2, res: [{ gold: 9, blue: 1 }], members: [['market.connoisseur']], shop: ['market.recluse', ...SHOP.slice(0, 5)] }), 'market.clearance');
     s = move(s, card(s, 'market.recluse'));
-    expect(R(s).gold).toBe(9); // the 1 blue held and Recruit Twice's 3 (since Nov 1) pay Recluse in blue, no gold
-    expect(R(s).blue).toBe(4 - 3 + 1);
+    expect(R(s).gold).toBe(9); // the 1 blue held and Recruit Twice's 5 (Nov 10) pay Recluse in blue, no gold
+    expect(R(s).blue).toBe(6 - 3 + 1);
     let t = take(scene({ round: 2, res: [{ red: 9 }], members: [['market.connoisseur']], shop: CHEAP }), 'market.clearance');
     t = move(t, card(t, 'red.twins'));
-    // Recruit Twice's 3 blue (since Nov 1) are kept (Blue scores held blue since Oct 20, like Red's held red), Twins is all red,
+    // Recruit Twice's 5 blue (Nov 10) are kept (Blue scores held blue since Oct 20, like Red's held red), Twins is all red,
     // and no +1 comes back for a red member
-    expect(R(t)).toMatchObject({ red: 7, blue: 3 });
+    expect(R(t)).toMatchObject({ red: 7, blue: 5 });
   });
   it('Reseller: whenever you recruit, +1 of that member’s color', () => {
     let s = take(scene({ round: 2, res: [{ gold: 9 }], members: [['market.reseller']], shop: SHOP }), 'market.clearance');
     s = move(s, card(s, 'gold.tycoon'));
-    // Recruit Twice's 3 blue (since Nov 1): 1 blue and 3 gold pay Tycoon's 4, Reseller's +1 gold back.
-    expect(R(s)).toEqual({ gold: 7, red: 0, blue: 2, green: 0 });
+    // Recruit Twice's 5 blue (Nov 10): 1 blue and 3 gold pay Tycoon's 4, Reseller's +1 gold back.
+    expect(R(s)).toEqual({ gold: 7, red: 0, blue: 4, green: 0 });
   });
   it('Curator: round start, +1 blue per other blue member', () => {
     expect(R(start([['market.curator', 'market.stylist', 'market.planner', 'gold.midas']])).blue).toBe(2); // Stylist, Planner
@@ -288,7 +296,7 @@ describe(`Blue table: ${GAMES} seeded bot games`, () => {
           if (g <= 25) checkInvariants(s, { seed: g });
           if (++k > 1500) throw new Error(`game ${g} stuck`);
         }
-        if (s.log.some(l => l.includes('goes on a spree'))) usedSpree++;
+        if (s.log.some(l => l.includes('took Spree'))) usedSpree++;
         expect(s.ranking).toHaveLength(4);
         for (const p of s.players) expect(followers(s, p)).toBeGreaterThan(0);
       }

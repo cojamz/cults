@@ -13,6 +13,8 @@ const { applyMove, resume, followers } = await import('../../../engine/v4/core.j
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
 const { table, named, uidIn, owns } = await import('./cards-helpers-b.js');
+const { useRetired } = await import('./helpers.js');
+useRetired(['red.evenswap', 'red.turnout']);
 delete process.env.REPLACE7;
 delete process.env.MEMBER_UP;
 

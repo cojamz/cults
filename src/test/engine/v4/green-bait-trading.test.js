@@ -5,6 +5,8 @@ import { defById } from '../../../engine/v4/content/index.js';
 import { sell, sellable } from '../../../engine/v4/content/trading.js';
 import { table, uidIn } from './cards-helpers-b.js';
 import { actionName, move, take } from './helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.turnout']);
 
 const Q = ['gold', 'red', 'trading', 'echo'];
 const pass = s => s.pending?.kind === 'buy' ? move(s, 'pass') : s;

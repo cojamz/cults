@@ -9,6 +9,8 @@ import { boardPicker, giftPick } from '../../../v4/game/boardPick.js';
 import { chooseGreedyMove } from '../../../engine/v4/bots.js';
 import { quadrant } from '../../../engine/v4/content/index.js';
 import { useRetiredRollCall } from './retired-overtime.js';
+import { useRetired } from './helpers.js';
+useRetired(['thieves.ransom']);
 
 useRetiredRollCall(); // Roll Call, a plain purple space, kept for these tests (it left the board 2026-10-22)
 

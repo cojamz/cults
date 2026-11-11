@@ -5,6 +5,7 @@ import { youdWords, cachedPreview } from '../../../v4/game/Info.jsx';
 import { raceAfter, whyLine } from '../../../v4/game/HoverCards.jsx';
 import { quadrant, defById } from '../../../engine/v4/content/index.js';
 import { sceneQ, spaceOf } from '../../engine/v4/cards-helpers.js';
+import { useRetired } from '../../engine/v4/helpers.js';
 
 const T = ['gold', 'red', 'thieves', 'market'];
 const at = (s, name) => spaceOf(s, name).split('-').map(Number);
@@ -18,9 +19,10 @@ describe('hover honesty (live panel r1)', () => {
   it('Help Yourself with Desperado: the Why names Desperado', () => {
     const s = sceneQ({ quadrants: T, round: 3, n: 3, res: [{}, { gold: 5, red: 4 }, { blue: 3 }], bonus: [0, 3, 3], members: [['thieves.desperado'], [], []] });
     const { pv, y } = words(s, 'Help Yourself');
-    // round III steals 5, +2 with Desperado (Cory, Nov 1, 2:27pm): 7, all your pick; rivals hold 12, from any of them (Nov 8)
-    expect(y.text).toBe('steal 7 in colors you pick');
-    expect(whyLine(pv.reasons)).toBe('Desperado: +2 to steal (5 → 7)');
+    // Nov 10: 1 per minion you've placed this round, this one included (here the first: 1), +2 with Desperado (Cory, Nov 1,
+    // 2:27pm): 3, all your pick, from any rivals; its +1 magenta came back with the Nov 10 text
+    expect(y.text).toBe('+1 magenta; steal 3 in colors you pick');
+    expect(whyLine(pv.reasons)).toBe('Desperado: +2 to steal (1 → 3)');
   });
 
   it('Collect Debts with Sticky Fingers: the Why names it, and a rival it can rob reads now and after, never a gift', () => {
@@ -34,6 +36,8 @@ describe('hover honesty (live panel r1)', () => {
     for (const t of r.them) expect(t.text).toMatch(/^P[23] has 3 now, \d( or \d| to \d)? after$/);
   });
 
+  describe('retired spaces, kept for old saves (Bury, the old Gather; Walk-In back too so "Gather" names one space)', () => {
+  useRetired(['market.pricecheck', 'red.turnout', 'red.hire']);
   it('Bury: says the most it can give, as your pick (1 + half the priciest face-up cost), never a loss', () => {
     const s = sceneQ({ quadrants: T, round: 2, n: 3, res: [{ gold: 9, red: 3 }], shop: ['red.bigfamily', 'gold.tycoon', 'red.intern', 'gold.taxman', 'red.twins', 'red.volunteer'] });
     const most = Math.max(...s.shop.map(u => { const d = defById(s.cards[u].def); return d.s + d.w; }));
@@ -49,6 +53,7 @@ describe('hover honesty (live panel r1)', () => {
       s.recruits = 9;
       expect(words(s, 'Gather').y.text).toMatch(new RegExp(`^\\+${round + 1} red`));
     }
+  });
   });
 
   it('Stash says its round gain', () => {

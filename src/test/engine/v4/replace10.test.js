@@ -12,6 +12,8 @@ const { applyMove, contextFor, resume } = await import('../../../engine/v4/core.
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { table, named } = await import('./cards-helpers-b.js');
 const { move, uidOf, take } = await import('./helpers.js');
+const { useRetired } = await import('./helpers.js');
+useRetired(['red.hire', 'red.turnout']);
 // read once at load: cleared again so a later test file in this worker loads the engine without the switch
 delete process.env.REPLACE10;
 delete process.env.MEMBER_UP;
@@ -143,7 +145,8 @@ describe('REPLACE10: Warm-Up Act', () => {
     expect(names).toContain('Build Up');
     expect(names).not.toContain('Echo');
     s = answer(s, s.pending.options.find(o => o.label.startsWith('Build Up')).id);
-    expect(s.players[0].res.green).toBeGreaterThanOrEqual(3);
+    // Build Up since Nov 10: +1 green per minion on Green spaces, +1 green; at round start no minion is on Green
+    expect(s.players[0].res.green).toBe(1);
   });
 
   it('leaves off spaces that say "this turn", and says the copied gain under its own name (Lab play judge, Nov 4)', () => {
@@ -153,8 +156,8 @@ describe('REPLACE10: Warm-Up Act', () => {
     expect(names).not.toContain('Allowance');
     expect(names).not.toContain('Splurge');
     s = answer(s, s.pending.options.find(o => o.label.startsWith('Build Up')).id);
-    expect(s.players[1].res.green).toBe(5);
-    expect(s.log).toContain("P2's Warm-Up Act: +5 green.");
+    expect(s.players[1].res.green).toBe(1); // Build Up with no minion on Green (Nov 10)
+    expect(s.log).toContain("P2's Warm-Up Act: +1 green.");
   });
 });
 

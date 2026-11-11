@@ -16,8 +16,9 @@ const takeFrom = (s, pid) => move(s, s.pending.options.find(o => o.value[0] === 
 // Magenta redesign (design/spheres/magenta-redesign-2026-10-19.md): Redistribute steals 1 per Magenta action that
 // has a minion (its own space too, Cory Oct 22), Heist halves one rival's one-color stack, and general steals split freely among rivals.
 describe('#6 Help Yourself: a rival lying low is never offered', () => {
-  it('round I: 3 to take, all may come from P2, never from P3', () => {
-    let s = sceneQ({ quadrants: MAG, n: 4, res: [{ gold: 1 }, { gold: 3, red: 2 }, { gold: 4 }, { gold: 3 }] });
+  // Help Yourself since Nov 10: "Steal 1 resource per minion you’ve placed this round, this one included. +1 magenta."
+  it('round I, the third minion: 3 to take, all may come from P2, never from P3', () => {
+    let s = sceneQ({ quadrants: MAG, n: 4, res: [{ gold: 1 }, { gold: 3, red: 2 }, { gold: 4 }, { gold: 3 }], slots: { '0-0': 0, '0-1': 0 } });
     s.players[2].hideout = s.round; // P3 lies low
     s = take(s, 'thieves.pickpocket');
     expect(s.pending.count).toEqual({ of: 3, left: 3 });
@@ -28,30 +29,31 @@ describe('#6 Help Yourself: a rival lying low is never offered', () => {
     expect(s.pending.options.some(o => o.value[0] === 2)).toBe(false);
     s = takeFrom(takeFrom(s, 1), 1);
     expect(s.pending?.kind).not.toBe('choose');
-    expect(s.players[0].res).toMatchObject({ gold: 4, magenta: 0 });
+    expect(s.players[0].res).toMatchObject({ gold: 4, magenta: 1 });
     expect(s.players[1].res.gold).toBe(0);
     expect(s.players[2].res.gold).toBe(4);
   });
 });
 
-describe('#7 Heist: 3 followers, one a pick from any rival (Nov 5), and the choice says so', () => {
+describe('#7 Heist: 4 followers (Nov 10), one a pick from any rival (Nov 5), and the choice says so', () => {
   it('offers each rival with loose followers; a rival with none or lying low is not offered', () => {
     let s = sceneQ({ quadrants: MAG, n: 4, round: 2, res: [{}, {}, {}, {}] });
     s.players[1].bonus = 0; s.players[2].bonus = 5; s.players[3].bonus = 5;
     s.players[3].hideout = s.round; // P4 lies low
     s = take(s, 'thieves.rob');
-    expect(s.pending.prompt).toMatch(/Heist: steal a follower from which rival\? \(3 left\)/);
+    expect(s.pending.prompt).toMatch(/Heist: steal a follower from which rival\? \(4 left\)/);
     expect(s.pending.options.map(o => o.id)).toEqual(['player:2']);
-    for (let k = 0; k < 3 && s.pending?.options?.some(o => o.id === 'player:2'); k++) s = move(s, 'player:2');
-    expect(s.players[0].bonus).toBe(3);
-    expect(s.players[2].bonus).toBe(2);
+    for (let k = 0; k < 4 && s.pending?.options?.some(o => o.id === 'player:2'); k++) s = move(s, 'player:2');
+    expect(s.players[0].bonus).toBe(4);
+    expect(s.players[2].bonus).toBe(1);
     expect(s.players[0].res.magenta).toBe(1);
   });
 });
 
 describe('#38 a dim rival says the true reason', () => {
   it('Help Yourself: from any rivals (Cory, Nov 8); emptying everyone ends the steal', () => {
-    let s = sceneQ({ quadrants: MAG, n: 3, round: 2, res: [{}, { gold: 1 }, { gold: 2 }] });
+    // the fourth minion this round: 4 to steal, more than the rivals hold
+    let s = sceneQ({ quadrants: MAG, n: 3, round: 2, res: [{}, { gold: 1 }, { gold: 2 }], slots: { '0-0': 0, '0-1': 0, '0-2': 0 } });
     s = take(s, 'thieves.pickpocket');
     s = takeFrom(s, 1);
     expect(s.pending?.prompt || '').toMatch(/Help Yourself/);
@@ -61,17 +63,17 @@ describe('#38 a dim rival says the true reason', () => {
     expect(s.players[2].res.gold).toBe(0);
   });
   it('Help Yourself: a rival holding no more than you is still available; after the first pick, every rival still is (Nov 8)', () => {
-    let s = sceneQ({ quadrants: MAG, n: 3, round: 2, res: [{ gold: 2 }, { gold: 5 }, { gold: 2 }] });
+    let s = sceneQ({ quadrants: MAG, n: 3, round: 2, res: [{ gold: 2 }, { gold: 5 }, { gold: 2 }], slots: { '0-0': 0, '0-1': 0, '0-2': 0 } });
     s = take(s, 'thieves.pickpocket');
     expect(s.pending.options.some(o => o.value[0] === 2)).toBe(true);
     s = takeFrom(s, 2);
     expect(s.players[2].res.gold).toBe(2); // chosen piles move together once all picks are complete
     expect(s.pending.options.some(o => o.value[0] === 1)).toBe(true);
     s = takeFrom(s, 2); // P3 had 2: emptied
-    s = takeFrom(takeFrom(s, 1), 1); // round II steals 4: the last 2 from P2
+    s = takeFrom(takeFrom(s, 1), 1); // the fourth minion this round steals 4: the last 2 from P2
     expect(s.players[2].res.gold).toBe(0);
     expect(s.players[1].res.gold).toBe(3);
-    expect(s.players[0].res).toMatchObject({ gold: 6, magenta: 0 });
+    expect(s.players[0].res).toMatchObject({ gold: 6, magenta: 1 });
   });
 });
 

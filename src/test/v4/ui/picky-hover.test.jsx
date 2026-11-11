@@ -6,6 +6,7 @@ import { createGame, applyMove, chooseBotMove, previewSpace, spacesOf, cardDef }
 import { seededRandom } from '../../../engine/v4/rng.js';
 import { youdWords } from '../../../v4/game/Info.jsx';
 import { targetLines } from '../../../v4/game/HoverCards.jsx';
+import { useRetired } from '../../engine/v4/helpers.js';
 
 const toPlace = (s, rand = seededRandom(1)) => { while (s.pending && s.pending.kind !== 'place') s = applyMove(s, chooseBotMove(s, rand)); return s; };
 const start = quadrants => toPlace(createGame({ seats: [{}, {}, {}, {}], seed: 5, quadrants }));
@@ -14,6 +15,8 @@ const words = (s, qid, key) => { const pid = s.pending.player; return youdWords(
 const cost = (s, u) => { const d = cardDef(s, u); return (d.s || 0) + (d.w || 0); };
 
 describe('picky hover (Nov 4)', () => {
+  describe('Walk-In (retired Nov 10, kept for old saves)', () => {
+  useRetired(['red.hire']);
   it('Walk-In: the face-down top card is never named or counted (B3)', () => {
     const s = start(['red', 'purple', 'market', 'yellow']);
     const pid = s.pending.player;
@@ -24,10 +27,12 @@ describe('picky hover (Nov 4)', () => {
     expect(pv.best.joined).toEqual([]);
     expect(pv.reasons.join(' ')).not.toContain(cardDef(s, s.pile[0]).name);
   });
+  });
 
   it('Sleep In and Last Call go last; Right Away comes right after (B4)', () => {
     const s = start(['thieves', 'silver', 'trading', 'purple']);
-    expect(words(s, 'purple', 'skip').text).toMatch(/your next minion goes last/);
+    // Sleep In holds all your other minions since Nov 10, as Last Call does
+    expect(words(s, 'purple', 'skip').text).toMatch(/your other 2 minions go last/);
     expect(words(s, 'purple', 'again').text).toMatch(/your next turn right after this one/);
     expect(words(s, 'purple', 'lastcall').text).toMatch(/your other 2 minions go last/);
     for (const k of ['skip', 'lastcall']) expect(words(s, 'purple', k).text).not.toMatch(/after this one/);
@@ -37,7 +42,9 @@ describe('picky hover (Nov 4)', () => {
     const s = start(['thieves', 'silver', 'trading', 'purple']);
     s.round = 3;
     for (const o of s.players) for (const r of s.resources) o.res[r] = 2;
-    expect(words(s, 'thieves', 'pickpocket')).toEqual({ text: 'steal 5 in colors you pick', note: null });
+    // Nov 10: 1 per minion you've placed this round, this one included; round III's first placement steals 1, plus its +1 magenta
+    expect(Object.values(s.slots).filter(v => v === s.pending.player)).toEqual([]);
+    expect(words(s, 'thieves', 'pickpocket')).toEqual({ text: '+1 magenta; steal 1 in colors you pick', note: null });
   });
 
   it('Farewell and Estate Sale both say the member leaves with its followers (B26)', () => {

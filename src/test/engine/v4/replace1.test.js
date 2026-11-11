@@ -13,6 +13,8 @@ const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
 const { table, named, uidIn, owns } = await import('./cards-helpers-b.js');
 const { sceneQ } = await import('./cards-helpers.js');
+const { useRetired } = await import('./helpers.js');
+useRetired(['market.pricecheck']);
 // read once at load: cleared again so a later test file in this worker loads the engine without the switch
 delete process.env.REPLACE1;
 delete process.env.MEMBER_UP;

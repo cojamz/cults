@@ -27,14 +27,16 @@ describe('rules that grow by round', () => {
 
   it('the lines say what the space pays in each round', () => {
     const num = l => Number(l.match(/\d+/)[0]);
-    for (const [qid, key] of [['gold', 'rush'], ['echo', 'chant']]) {
+    for (const [qid, key] of [['gold', 'rush']]) {
       const a = quadrant(qid).actions.find(x => x.key === key);
       for (const r of [1, 2, 3]) expect(num(a.byRound.lines[r - 1]), `${qid}.${key} round ${r}`).toBe(a.estimate({ state: { round: r } }));
     }
-    // Gather (Oct 31): +2/3/4 red; its recruit followers go per 3 paid every round (Nov 9), so they sit in the rest
-    const g = quadrant('red').actions.find(x => x.key === 'turnout');
-    for (const r of [1, 2, 3]) expect(g.byRound.lines[r - 1].match(/\d+/g).map(Number), `red.turnout round ${r}`).toEqual([r + 1]);
-    expect(g.byRound.rest).toMatch(/every 3 resources you pay/);
+    // Sleep In (Nov 10): +4/+5/+6 purple, then the Goes Last token in the rest
+    const g = quadrant('purple').actions.find(x => x.key === 'skip');
+    for (const r of [1, 2, 3]) expect(g.byRound.lines[r - 1].match(/\d+/g).map(Number), `purple.skip round ${r}`).toEqual([r + 3]);
+    expect(g.byRound.rest).toMatch(/Goes Last token/);
+    // Build Up stopped growing by round (Nov 10: +1 green per minion on Green spaces), so it has no lines
+    expect(quadrant('echo').actions.find(x => x.key === 'chant').byRound).toBeUndefined();
   });
 
   it('the hover lights this round and dims the others', () => {
@@ -72,17 +74,18 @@ describe('rules that grow by round', () => {
 
 // Each separate effect gets its own line in the hover cards (Cory, 2026-10-23: "the +1 resource should be its own line").
 describe('one effect per line', () => {
-  it('splits a rule at its sentences, and a scaling space reads as its three rounds, then the rest (Help Yourself)', async () => {
+  it('splits a rule at its sentences, and a scaling space reads as its three rounds, then the rest (Sleep In)', async () => {
     const { effectLines } = await import('../../../v4/game/Info.jsx');
     expect(effectLines('Swap any 2 members of equal cost. +1 red.')).toEqual(['Swap any 2 members of equal cost.', '+1 red.']);
     expect(effectLines('+3 gold, and +1 gold to a rival you choose.')).toHaveLength(1);
-    // Lie Low no longer steals (Cory, 2026-10-22), so Help Yourself is the scaling Magenta space
-    const help = quadrant('thieves').actions.find(a => a.key === 'pickpocket');
-    const { container } = render(<RuleText def={help} round={2} lines />);
-    expect(container.textContent).toMatch(/Steal 3\/4\/5 resources/);
+    // Help Yourself stopped growing by round (Nov 10), so Sleep In is the scaling space here
+    const sleep = quadrant('purple').actions.find(a => a.key === 'skip');
+    const { container } = render(<RuleText def={sleep} round={2} lines />);
+    expect(container.textContent).toMatch(/^\+4\/\+5\/\+6 /); // the color is its icon
     expect(container.querySelectorAll('[data-round-line]')).toHaveLength(3);
     const rest = [...container.querySelectorAll('.br-rest')].map(e => e.textContent);
-    expect(rest).toEqual([]); // any rivals again (Cory, Nov 8); no +1 magenta since Oct 29
+    expect(rest).toHaveLength(1);
+    expect(rest[0]).toMatch(/Take the Goes Last token: your other minions are placed after everyone else’s\./);
   });
   it('a member card puts each sentence on its own line', () => {
     const { container } = render(<RuleText def={defById('gold.investor')} round={1} lines />);

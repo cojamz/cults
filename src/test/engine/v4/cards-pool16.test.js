@@ -5,6 +5,7 @@ import { describe, it, expect } from 'vitest';
 import { take, move } from './helpers.js';
 import { linesNaming, sceneQ } from './cards-helpers.js';
 import { usePool, still, go } from './pool-helpers.js';
+import { placed } from './placed-helpers.js';
 
 usePool(['purple.stragglers', 'purple.tagteam', 'thieves.cutthroats'], ['purple.witchinghour']);
 const named = (s, name) => linesNaming(s.log, name);
@@ -58,7 +59,7 @@ describe('Tag Team (Purple)', () => {
 describe('Cutthroats (Magenta)', () => {
   const steal3 = () => {
     let s = sceneQ({ quadrants: ['thieves', 'gold', 'red', 'market'], members: [['thieves.cutthroats']], res: [{}, { red: 5 }], bonus: [0, 4] });
-    s = take(s, 'thieves.pickpocket');
+    s = take(placed(s, 0, 2), 'thieves.pickpocket'); // Help Yourself's third minion: steal 3
     for (let k = 0; k < 3; k++) s = move(s, 'take:1:red');
     return s;
   };

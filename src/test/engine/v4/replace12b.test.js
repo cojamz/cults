@@ -12,6 +12,8 @@ const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
 const { take, move } = await import('./helpers.js');
 const { table, named, uidIn, owns } = await import('./cards-helpers-b.js');
+const { useRetired } = await import('./helpers.js');
+useRetired(['market.pricecheck']);
 delete process.env.REPLACE12;
 delete process.env.MEMBER_UP;
 

@@ -3,6 +3,8 @@ import { defById } from '../../../engine/v4/content/index.js';
 import { it, expect } from 'vitest';
 import { sceneQ, settle } from './cards-helpers.js';
 import { take, move } from './helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.hire']);
 for (const [action, round] of [['red.hire', 1], ['red.hireup', 2], ['red.take', 3]]) {
   it(`${action} triggers Exporters when taking a red member`, () => {
     const before = sceneQ({ quadrants: ['red', 'yellow', 'trading', 'gold'], round, members: [['trading.exporter', 'gold.taxman']], shop: ['red.volunteer'] });

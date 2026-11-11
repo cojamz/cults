@@ -3,6 +3,32 @@ import { beforeEach, afterEach } from 'vitest';
 import { createGame, applyMove, resume, actionAt, followers } from '../../../engine/v4/core.js';
 import { defById, quadrant } from '../../../engine/v4/content/index.js';
 import { STRAYS, stray } from './stray.js';
+import { POOL_SPACES } from '../../../engine/v4/content/pool.js';
+import { wrapInPlace } from '../../../engine/v4/content/echo.js';
+import { beforeAll, afterAll } from 'vitest';
+
+// Spaces retired by Cory's Nov 10 calls, each with the space that took its slot. They stay in the code for old saves, so
+// their own tests keep running: useRetired([...]) puts them back in their old slot for one test file.
+export const RETIRED_NOV10 = {
+  'red.evenswap': 'borrow', 'red.turnout': 'trending', 'red.hire': 'gather',
+  'market.bargain': 'testdrive', 'market.showroom': 'markdown', 'market.pricecheck': 'wordofmouth',
+  'echo.encore': 'crowd2', 'purple.holdup': 'onaroll', 'thieves.hideout': 'catchup', 'thieves.ransom': 'swindle',
+};
+/** Put these retired spaces back on the wheel, each in the slot its replacement took, for the whole file. */
+export function useRetired(spaceIds) {
+  const undo = [];
+  beforeAll(() => {
+    for (const id of spaceIds) {
+      const [q, key] = id.split('.'), acts = quadrant(q).actions;
+      const c = (POOL_SPACES[q] || []).find(a => a.key === key);
+      if (!c) throw new Error(`no retired space ${id}`);
+      const i = acts.findIndex(a => a.key === RETIRED_NOV10[id]);
+      if (i < 0) throw new Error(`no slot for ${id}`);
+      const old = acts[i]; acts[i] = wrapInPlace(q, c, i); undo.push(() => { acts[i] = old; });
+    }
+  });
+  afterAll(() => { while (undo.length) undo.pop()(); });
+}
 
 /**
  * Build a game and put it in a hand-made position.
@@ -78,7 +104,7 @@ export function play(s, ...opts) {
 export function actionName(idOrName) {
   if (!String(idOrName).includes('.')) return idOrName;
   const [q, key] = idOrName.split('.');
-  const a = quadrant(q).actions.find(x => x.key === key);
+  const a = quadrant(q).actions.find(x => x.key === key) || (POOL_SPACES[q] || []).find(x => x.key === key);
   if (!a) throw new Error(`no action ${idOrName}`);
   return a.name;
 }

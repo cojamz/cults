@@ -8,6 +8,8 @@ import { POOL_SPACES } from '../../../engine/v4/content/pool.js';
 import { resume, memberCount, contextFor } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming, spaceOf } from './cards-helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.turnout']);
 
 const MEMBERS = ['trading.daytrippers', 'trading.tourists', 'trading.ascetics', 'echo.costumers', 'echo.superfans', 'echo.packedhouse',
   'benders.saints', 'benders.bandits', 'benders.protesters'];
@@ -115,7 +117,7 @@ describe('Green candidates', () => {
     s = move(s, `to:${build}`);
     expect(s.slots[build]).toBe(0);
     expect(s.slots[gold]).toBeUndefined(); // open again for the rivals
-    expect(s.players[0].res.green).toBe(1 + 4); // Build Up in round II
+    expect(s.players[0].res.green).toBe(1 + 3); // Build Up: Stage Door's minion and the moved one on Green, +1
     expect(named(s, 'Stage Door').some(l => /moves a minion from/.test(l))).toBe(true);
   });
   it('Stage Door: never moves the Stage Door minion itself; with no other minion, just +1 green', () => {

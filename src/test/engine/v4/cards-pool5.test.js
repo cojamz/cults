@@ -6,6 +6,7 @@ import { defById } from '../../../engine/v4/content/index.js';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming } from './cards-helpers.js';
 import { usePool, price, total, still, go, discard } from './pool-helpers.js';
+import { placed } from './placed-helpers.js';
 
 usePool(['red.clanelders', 'echo.benchwarmers', 'thieves.middlemen', 'purple.sweepers', 'yellow.globetrotters', 'trading.hermits'],
   ['market.rummage', 'silver.giftexchange', 'yellow.oddsandends', 'trading.cleanslate']);
@@ -35,7 +36,7 @@ describe('Middlemen (Magenta)', () => {
   it('Whenever a rival steals from you, steal the same number from another rival (you pick which)', () => {
     let s = sceneQ({ quadrants: ['thieves', 'red', 'market', 'yellow'], n: 4, members: [[], ['thieves.middlemen']],
       res: [{}, { red: 5 }, { blue: 4 }, { yellow: 4 }], queue: [{ t: 'turn', p: 0 }] });
-    s = take(s, 'thieves.pickpocket'); // Help Yourself: steal 3 in round I
+    s = take(placed(s, 0, 2), 'thieves.pickpocket'); // Help Yourself's third minion this round: steal 3
     for (let k = 0; k < 3 && s.pending?.prompt?.startsWith('Help Yourself'); k++) s = move(s, s.pending.options.find(o => o.id.startsWith('take:1:')).id);
     // each steal from P2 asks P2 which other rival (not the thief) to steal the same number from
     let stolen = 0;

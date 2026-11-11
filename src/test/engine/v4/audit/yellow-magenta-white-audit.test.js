@@ -4,6 +4,9 @@ import { describe, it, expect } from 'vitest';
 import { followers, followerChoices, TIERS } from '../../../../engine/v4/core.js';
 import { take, move, play, ids } from '../helpers.js';
 import { table, uidIn } from '../cards-helpers-b.js';
+import { useRetired } from '../helpers.js';
+useRetired(['red.turnout']);
+import { placed } from '../placed-helpers.js';
 
 const R = (s, i = 0) => s.players[i].res;
 const turns = (...p) => p.map(id => ({ t: 'turn', p: id }));
@@ -52,8 +55,8 @@ describe('Magenta', () => {
     // P1 4+1(Robin Hood)=5 followers? Robin Hood is worth 1: P1 = 1+3+1 = 5. Make P2, P3 equal at 5.
     s.players[1].bonus = 4; s.players[2].bonus = 4;
     expect([0, 1, 2].map(i => followers(s, s.players[i]))).toEqual([5, 5, 5]);
-    // Help Yourself in round II steals 4, split among rivals (no followers since 2026-10-27)
-    s = take(s, 'thieves.pickpocket');
+    // Help Yourself on the fourth minion steals 4, split among rivals (no followers since 2026-10-27)
+    s = take(placed(s, 0, 3), 'thieves.pickpocket');
     s = play(s, 'take:1:gold', 'take:1:gold'); // P2 holds the only resources: emptied, the steal ends
     expect(s.pending?.kind).not.toBe('choose');
     expect(s.players[0].bonus - 3).toBe(1); // Robin Hood +1 once

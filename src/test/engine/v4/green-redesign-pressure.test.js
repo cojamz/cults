@@ -6,6 +6,8 @@ import { quadrant } from '../../../engine/v4/content/index.js';
 import { targets } from '../../../engine/v4/content/echo.js';
 import { table, uidIn } from './cards-helpers-b.js';
 import { actionName, ids, move, take } from './helpers.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.hire', 'red.turnout']);
 
 const Q = ['gold', 'red', 'market', 'echo'];
 const turns = (...players) => players.map(p => ({ t: 'turn', p }));
@@ -88,15 +90,19 @@ describe('Green redesign: copied copy actions and continuation safety', () => {
     expect(s.pending?.kind).not.toBe('choose');
     expect(s.players[0].members).toContain(u);
   });
-  it('Greatest Hits picks survive a reload between each On Recruit copy', () => {
-    let s = table(Q, { round: 3, left: 5, members: [['gold.seed', 'gold.hustler', 'echo.tuningfork']], queue: turns(0, 1) });
+  // Greatest Hits is Medley's rule since Nov 10: the color pick, then each copied action's own choices
+  it('Greatest Hits picks survive a reload between the color pick and a copied action\'s choices', () => {
+    let s = table(Q, { round: 3, left: 5, res: [{ gold: 3 }, { gold: 3 }], queue: turns(1, 0, 1) });
+    s = take(s, 'gold.steal');
+    while (s.pending?.player === 1 && s.pending.kind === 'choose') s = move(s, 'player:0');
+    s = pass(s);
     s = take(s, 'echo.eternity');
     let a = s, b = saved(s), steps = 0;
     while (a.pending?.player === 0 && a.pending.kind !== 'place' && a.pending.kind !== 'buy' && steps++ < 10) {
       const id = a.pending.options[0].id;
       a = move(a, id); b = move(saved(b), id);
     }
-    expect(steps).toBeGreaterThan(1); // the order pick, then Hustler's color pick
+    expect(steps).toBeGreaterThan(1); // the color pick, then Collect Debts' victim picks
     expect(steps).toBeLessThan(10);
     expect(b).toEqual(a);
   });
@@ -114,7 +120,7 @@ describe('Green redesign: copied copy actions and continuation safety', () => {
     for (let i = 0; i < 3; i++) s = move(saved(s), 'player:1');
     expect(s.players[0].res.gold).toBe(3);
     expect(s.players[1].res.gold).toBe(6);
-    expect(s.players[0].res.green).toBe(4);
+    expect(s.players[0].res.green).toBe(2); // P2's Build Up: one minion on Green, +1
     expect(s.cards[uid].used).toBe(true);
     expect(ids(s)).not.toContain(`use:${uid}`);
   });

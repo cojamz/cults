@@ -6,8 +6,8 @@ Done items and the old lists: design/archive/todo-2026-10-20-to-23.md and design
 
 ## Tonight at reset, 7pm Eastern (Cory, 2026-11-10 3:57pm: "Our main priority tonight will be updating the remainder of the actions of our 8 colors")
 1. Finish actions design with Cory: Magenta's open round I spot (he's thinking), then Silver, White, Yellow (the colors left).
-2. Build every logged action change from design/decisions.md, Nov 10: Green (Build Up, Greatest Hits, Cover; partial code in /mnt/project-files/green-actions/green-nov10-unpushed.patch, 54 tests to update), Red round I, Purple, Blue (Markdown/Recruit Twice/Spree 3/5/7 from discard, Word of Mouth), Magenta (Help Yourself, Catch Up, Heist "Steal 4 followers and 4 resources.", Swindle, Poach unchanged).
-3. Members: Extra Hand → "On Recruit: +1 minion this round."
+2. DONE Nov 11 (live in the normal game and the Test option): build every logged action change from design/decisions.md, Nov 10: Green (Build Up, Greatest Hits, Cover; partial code in /mnt/project-files/green-actions/green-nov10-unpushed.patch, 54 tests to update), Red round I, Purple, Blue (Markdown/Recruit Twice/Spree 3/5/7 from discard, Word of Mouth), Magenta (Help Yourself, Catch Up, Heist "Steal 4 followers and 4 resources.", Swindle, Poach unchanged).
+3. DONE Nov 11: Members: Extra Hand → "On Recruit: +1 minion this round."
 4. Rules logged today: steal always splits among rivals as you choose; every color action gives +1 of its color; round I nothing keyed to members or recruiting.
 5. Then redo the color interaction map (Cory, 3:58pm: "then we'll redo the color interaction map").
 

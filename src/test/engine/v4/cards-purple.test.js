@@ -6,6 +6,8 @@ import { followers, turnRail } from '../../../engine/v4/core.js';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, buy, linesNaming, passBuys } from './cards-helpers.js';
 import { useRetiredOvertime, useRetiredRollCall } from './retired-overtime.js';
+import { useRetired } from './helpers.js';
+useRetired(['purple.holdup', 'red.turnout']);
 
 useRetiredOvertime();
 useRetiredRollCall();

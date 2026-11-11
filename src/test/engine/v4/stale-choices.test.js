@@ -16,6 +16,8 @@ import { take, move, pinCosts } from './helpers.js';
 import { table } from './cards-helpers-b.js';
 import { checkInvariants } from './fuzz-runner.js';
 import { games } from './budget.js';
+import { useRetired } from './helpers.js';
+useRetired(['red.evenswap']); // Tryout's shop-member choice (retired Nov 10 for Borrow, kept for old saves)
 
 const N = (q, k) => quadrant(q).actions.find(a => a.key === k).name; // by key: space names get renamed
 const where = (s, u) => (s.shop.includes(u) ? 'shop' : s.pile.includes(u) ? 'pile' : (s.discard || []).includes(u) ? 'discard' : `p${s.players.find(p => p.members.includes(u))?.id}`);
