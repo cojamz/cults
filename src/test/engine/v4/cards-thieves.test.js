@@ -109,6 +109,15 @@ describe('Magenta actions', () => {
     expect(R(s)).toMatchObject({ magenta: 1, gold: 2, red: 2 });
     expect([R(s, 1).gold, R(s, 2).red]).toEqual([1, 3]);
   });
+  // picky bot, Nov 11: each follower pick was its own steal, so a Heist paid "Whenever you steal, +1 magenta." 5 times
+  it('one Heist is one steal: Fence pays +1 magenta once, over every pick and both parts', () => {
+    let s = table(Q, { n: 3, round: 2, res: [{}, { gold: 3 }, { red: 5 }], bonus: [0, 7, 1], members: [['thieves.fence'], [], []], shop: ROW });
+    s = take(s, 'thieves.rob');
+    for (let k = 0; k < 3; k++) s = move(s, 'player:1');
+    s = move(s, 'player:2');
+    s = play(s, 'take:1:gold', 'take:2:red', 'take:2:red', 'take:1:gold');
+    expect(R(s).magenta).toBe(2); // the space's +1 and Fence's +1
+  });
   it('Lookout takes an original-color resource back, only once per round', () => {
     let s = table(Q, { n: 3, round: 2, res: [{ gold: 2 }, { gold: 7 }, { red: 3 }], bonus: [0, 5, 0], members: [[], [], ['thieves.lookout']], shop: ROW, queue: turns(0, 0) });
     s = take(s, 'thieves.rob');

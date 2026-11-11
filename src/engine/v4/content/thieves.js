@@ -165,7 +165,7 @@ function stealStep(ctx, p, data) {
   const from = [], hit = [];
   // who led when the steal began: a follower one victim's theft wins (Robin Hood) doesn't un-lead the next victim
   const led = new Set(ctx.state.players.filter(o => isLeader(ctx, o)).map(o => o.id));
-  const instance = ctx.stealInstance(); // one steal, however many rivals it takes from (Fence pays once)
+  const instance = data.instance ?? ctx.stealInstance(); // one steal, however many rivals it takes from (Fence pays once)
   for (const [id, pick] of Object.entries(data.picked)) {
     const v = ctx.player(Number(id)), x = commit(ctx, p, v, pick, false, data.fromAction !== false, led.has(v.id), instance);
     // Each pile stays in its original color, including its recap.
@@ -236,7 +236,7 @@ const placedCount = (ctx, p) => Object.values(ctx.state.slots || {}).filter(o =>
 const onBoardNow = (ctx, p) => ctx.state.current === p.id && ctx.state.queue.some(t => t.t === 'endTurn');
 const heistTargets = (ctx, p) => ctx.rivals(p).filter(o => o.bonus > 0 && ctx.canSteal(p, o));
 /** Heist: one follower a pick, from any rival with stealable followers, until 3 are taken or none is left. */
-function heistPick(ctx, p, left, first = true) {
+function heistPick(ctx, p, left, first = true, instance = undefined) {
   const list = heistTargets(ctx, p);
   if (!list.length) { if (first) ctx.log(`${p.name} found no rival with followers to steal.`); return; }
   if (left < 1) return;
@@ -244,7 +244,7 @@ function heistPick(ctx, p, left, first = true) {
   ctx.choose(p, `Heist: steal a follower from which rival? (${left} left)`, list.map(o => ({
     id: `player:${o.id}`, kind: 'player', value: o.id, label: `${o.name} (${ctx.followers(o)} followers)`,
     hint: 2 + (ctx.followers(o) === top ? 1 : 0) + 0.01 * ctx.followers(o),
-  })), 'thieves.heistSplit', { left });
+  })), 'thieves.heistSplit', { left, instance });
 }
 function halfPiles(ctx, p) {
   return ctx.rivals(p).flatMap(owner => piles(ctx, p, owner).flatMap(([color, held]) => {
@@ -444,7 +444,9 @@ const thieves = {
       // from rivals for the round II?"). The followers first, then the resources, each split among rivals as you choose.
       key: 'rob', ring: 2, name: 'Heist', text: 'Steal 4 followers and 4 resources. +1 magenta.',
       estimate: (ctx, p) => Math.min(4, heistTargets(ctx, p).reduce((a, o) => a + o.bonus, 0)) * 2 + estimateSteal(ctx, p, ctx.stealCount(p, 4)),
-      resolve(ctx, p) { heistPick(ctx, p, 4); startSteal(ctx, p, 'Heist', ctx.stealCount(p, 4, { say: true })); },
+      // one Heist is one steal (Cory, Oct 29: "once per steal instance"): every follower pick and the resources share one id,
+      // so Fence and the Magenta Cloak pay once (picky bot, Nov 11: a copied Heist paid the cloak 6 times)
+      resolve(ctx, p) { const instance = ctx.stealInstance(); heistPick(ctx, p, 4, true, instance); startSteal(ctx, p, 'Heist', ctx.stealCount(p, 4, { say: true }), { instance }); },
     },
     {
       // Retired Nov 10 (Swindle took its slot); kept for old saves.
@@ -601,9 +603,9 @@ const thieves = {
     heistSplit(ctx, p, vid, data) {
       const v = ctx.player(vid);
       if (!v || !ctx.canSteal(p, v)) return;
-      const n = ctx.steal(p, v, { followers: 1 });
+      const n = ctx.steal(p, v, { followers: 1, ...(data.instance !== undefined ? { instance: data.instance } : {}) });
       ctx.log(n ? `${p.name}'s Heist: stole 1 follower from ${v.name}.` : `${p.name}'s Heist: ${v.name} had no follower to steal.`);
-      heistPick(ctx, p, data.left - 1, false);
+      heistPick(ctx, p, data.left - 1, false, data.instance);
     },
     heistFollowers(ctx, p, vid) {
       const v = ctx.player(vid);
