@@ -36,7 +36,7 @@ describe("You'd get", () => {
     const s = sceneQ({ quadrants: ['market', 'silver', 'gold', 'red'], shop: ['red.intern', 'red.twins', 'red.volunteer', 'gold.banker', 'gold.taxman'] });
     s.shop = s.shop.slice(0, 5);
     const y = youdWords(pv(s, 'market.restock'), s, 'blue');
-    expect(y.text).toBe('+4 in colors you choose');
+    expect(y.text).toBe('+1 blue, +3 in colors you choose');
     expect(y.note).toBeNull();
   });
   describe('Walk-In (retired Nov 10, kept for old saves)', () => {
