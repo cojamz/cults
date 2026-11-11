@@ -14,4 +14,6 @@ Chat threads don't load the /brainstorm skill, so read .claude/skills/brainstorm
 
 8. **Color interactions** (pairs, the intersection table, ties between colors): follow .claude/skills/brainstorm/references/color-interactions.md in writing. A shared moment both colors cause, paid off by a card naming neither; never a generic shop or cult rule, their existing overlap, a crossed tie, or a card built on today's cards (Cory, Nov 7: "ties need to be intuitive", "these aren't really blue and red interactions").
 
+9. **Biggest real case**: play each idea at the largest count a real game reaches (right after the spaces and members that feed it, in round III, with Green copying it) and compare with real holdings and scores from a game (a 4-player winner ends near 70 to 110 followers; a contest pays 4/6/10). An idea that pays 10+ in one turn outside round III's center is cut. (Cory, Nov 11, on two Silver spaces that read rivals' silver: "thats just a fucking insane amount of silver and followers. DID YOU USE BRAINSTORMING SKILL".)
+
 Send only what survives (often 2 to 4), unless Cory set a count: then keep generating until exactly that many survive. If nothing survives, say so and ask one sharp question. Two nos on a slot in a row: stop and redo steps 1 to 4 before the next list. Log each pitch in design/pitch-ledger.md the same turn.
