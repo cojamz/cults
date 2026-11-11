@@ -166,7 +166,7 @@ for (const [id, name, source] of [
   ['red.bodysnatchers', 'Body Snatchers', 'red.twins'], ['benders.spoilsports', 'Spoilsport', 'benders.scout'],
   ['echo.impersonators', 'Impersonator', 'echo.muse'], ['silver.creditors', 'Creditor', 'silver.collector'],
   ['thieves.kidnappers', 'Kidnapper', 'thieves.kingpin'], ['silver.godparents', 'Godparents', 'silver.guest'],
-  ['echo.encore', 'Encore', 'echo.chronicler'], ['echo.songrequest', 'Song Request', 'echo.evergreen'], // Nov 4: Chronicler's and Busker's places
+  ['echo.encore', 'Encore', 'echo.chronicler'], ['echo.songrequest', 'Buskers', 'echo.evergreen'], // Nov 4: Chronicler's and Busker's places
   ['benders.cheerleaders', 'Cheerleaders', 'benders.cheerleader'], ['benders.victors', 'Victors', 'benders.tiebreaker'], // Nov 4: new greys (both off the 10 deck's cut cards)
   ['market.mannequin', 'Mannequin', 'market.connoisseur'], // Nov 4 night: Hawker's place, on Connoisseurs' retired scene until its own is drawn
   ['red.seatfiller', 'Seat Filler', 'red.volunteer'], // Nov 5: Volunteer's place, on its scene until its own is drawn

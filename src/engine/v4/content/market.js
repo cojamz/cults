@@ -619,6 +619,7 @@ const market = {
       if (!doorPairs(ctx, p).some(([x, y]) => x.uid === a && y.uid === b)) return;
       const rival = ctx.ownerOf(a), sent = ctx.card(a).def.name, given = ctx.card(b).def.name;
       if (!ctx.swapMembers(p, a, b)) return;
+      ctx.memberDiscarded(rival, a); // Martyrs: "Whenever this member is discarded" pays the cult it left
       ctx.buryFromShop(a);
       ctx.log(`${p.name}'s Doormen: sends ${rival.name}'s ${sent} to the discard pile and gives ${rival.name} ${given}.`);
       ctx.memberBottomed();

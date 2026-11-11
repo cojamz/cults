@@ -64,7 +64,7 @@ describe('REPLACE4: each card fires', () => {
     expect(s.pending.player).toBe(1);
     expect(s.pending.prompt).toBe('Tithe Takers: give which of your members to P1?');
     s = answer(s, `card:${uidIn(s, 'trading.martyr', 1)}`);
-    expect(s.players[1].bonus).toBe(5); // Martyrs left P2's cult (costs 5 since every member +1, Nov 5)
+    expect(s.players[1].bonus).toBe(0); // Martyrs pays only when discarded (Cory, Nov 9), not when given away
     expect(s.pending.player).toBe(2);
     s = answer(s, `card:${uidIn(s, 'red.crowd', 2)}`);
     expect(owns(s, 0, 'trading.martyr')).toBe(true);

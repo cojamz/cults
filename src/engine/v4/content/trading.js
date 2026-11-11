@@ -863,7 +863,7 @@ const trading = {
         const list = ctx.membersOf(owner).filter(c => c.uid !== card.uid);
         if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Downsizers: no other member to discard.`); return; }
         ctx.choose(owner, 'Downsizers: discard which member for 4 white?', list.map(c => ({
-          id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: -(c.def.f + (c.def.onLeave ? -cost(ctx, c.uid) : 0)),
+          id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: -(c.def.f + (c.def.onDiscard ? -6 : 0)),
         })), 'trading.moneylender');
       },
       botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.membersOf(owner).some(c => c.def.key !== 'moneylender' && c.def.f <= 1),
@@ -1049,10 +1049,11 @@ const trading = {
         ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Money Changers')}: +${k} white.`);
       },
     }),
-    m('martyr', 'Martyrs', 2, 1, 'Whenever this member leaves your cult, gain its cost in followers.', { f: 3,
-      onLeave(ctx, owner, card) {
-        const c = card.def.s + card.def.w;
-        ctx.asMember(owner, 'Martyrs', () => { owner.bonus += c; ctx.log(`${owner.name}'s Martyrs left: +${plural(c, 'follower')}.`); });
+    // Cory, 2026-11-09 10:16pm Eastern: "martyr should give +4 white +4 followers when discarded" (was "Whenever this member
+    // leaves your cult, gain its cost in followers."): only a discard pays now, never a steal or a swap
+    m('martyr', 'Martyrs', 2, 1, 'Whenever this member is discarded, +4 white and +4 followers.', { f: 3,
+      onDiscard(ctx, owner, card) {
+        ctx.asMember(owner, 'Martyrs', () => { ctx.gain(owner, W, 4); owner.bonus += 4; ctx.log(`${owner.name}'s Martyrs were discarded: +4 white, +4 followers.`); }, card.uid);
       },
     }),
     // Cory, 2026-10-24: "go deep card for every color" ("sure for now"); name and price Claude's fill-in, priced like Chronicler
@@ -1192,7 +1193,7 @@ function turned(ctx, p) {
 }
 // Undertaker: "Whenever you cast out one of your members, +2 followers"
 // Dowagers: what casting out one member for 3 followers is worth to a bot (as buryValue, at a flat 3)
-const dowagersValue = (ctx, p, c) => 3 * fv(ctx) - (c.def.f + (c.used || ctx.state.round === 3 ? 0 : 1) + (c.def.onLeave ? -cost(ctx, c.uid) : 0));
+const dowagersValue = (ctx, p, c) => 3 * fv(ctx) - (c.def.f + (c.used || ctx.state.round === 3 ? 0 : 1) + (c.def.onDiscard ? -6 : 0));
 function dowagersStep(ctx, p, data) {
   const list = ctx.membersOf(p).filter(c => c.uid !== data.uid);
   if (!list.length) return;
@@ -1213,7 +1214,7 @@ function gotRidOf(ctx, p) {
 }
 // What getting rid of a member is worth to a bot: its cost (in followers or white) less what it's worth kept
 function buryValue(ctx, p, c, each) {
-  const kept = c.def.f + (c.used || ctx.state.round === 3 ? 0 : 1) + (c.def.onLeave ? -cost(ctx, c.uid) : 0);
+  const kept = c.def.f + (c.used || ctx.state.round === 3 ? 0 : 1) + (c.def.onDiscard ? -6 : 0);
   return cost(ctx, c.uid) * each - kept;
 }
 function buryChoice(ctx, p, what, gain) {
@@ -1308,7 +1309,7 @@ function inquireStep(ctx, owner, left) {
   const o = ctx.player(left[at]);
   ctx.choose(o, 'Inquisitors: discard which of your members?', ctx.membersOf(o).map(c => ({
     id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'member', value: c.uid,
-    hint: -((c.def.f || 1) * 1.5 + cost(ctx, c.uid) * 0.5 + (c.used || c.def.vanilla ? 0 : 1)) + (c.def.onLeave ? 4 : 0),
+    hint: -((c.def.f || 1) * 1.5 + cost(ctx, c.uid) * 0.5 + (c.used || c.def.vanilla ? 0 : 1)) + (c.def.onDiscard ? 6 : 0),
   })), 'trading.inquire', { owner: owner.id, left: left.slice(at + 1) });
 }
 

@@ -49,7 +49,7 @@ describe('REPLACE6: each card fires', () => {
     expect(s.pending.prompt).toBe('Godparents: give which of your members to which rival?');
     s = answer(s, `give:${martyr}:2`);
     expect(owns(s, 2, 'trading.martyr')).toBe(true);
-    expect(s.players[0].bonus).toBe(10); // Godparent 5, and Martyrs' own 5 as it leaves (Martyrs 5 since every member +1, Nov 5)
+    expect(s.players[0].bonus).toBe(5); // Godparent 5; Martyrs pays only when discarded (Cory, Nov 9)
   });
 
   it('Successors: cast out one of your members; recruit a shop member costing up to its cost, for free', () => {
@@ -74,7 +74,7 @@ describe('REPLACE6: each card fires', () => {
     s = answer(s, `card:${uidIn(s, 'trading.martyr', 2)}`);
     expect(owns(s, 1, 'red.crowd')).toBe(false);
     expect(owns(s, 2, 'trading.martyr')).toBe(false);
-    expect(s.players[2].bonus).toBe(5); // Martyrs pays as it goes (costs 5 since Nov 5)
+    expect(s.players[2].bonus).toBe(4); // Martyrs, discarded: +4 followers (Cory, Nov 9)
     expect(s.players[0].bonus).toBe(4);
   });
 

@@ -978,14 +978,15 @@ const echoQ = {
     // copies (Agents blocks it). The card is turned until the next round starts.
     // Live Nov 4 (director, under Cory's "you dont need my permission"): 4 green + 3 any. Trials: at 3 + 2 owners won 39%
     // (Busker 31%); at 4 + 3 taken 84% (Busker 85%), owners won 35% (Busker 32%).
-    m('songrequest', 'Song Request', 3, 3, 'On Use, once per round: copy an action a rival has a minion on.', { // a round I member as Busker was (bot-tested in round II; Nov 4)
+    // Renamed Buskers and counts as two members (Cory, 2026-11-09 9:44pm Eastern: "song request should be buskers and should be two members")
+    m('songrequest', 'Buskers', 3, 3, 'On Use, once per round: copy an action a rival has a minion on.', { n: 2, // a round I member as Busker was (bot-tested in round II; Nov 4)
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
         const list = targets(ctx, owner, 'rival');
-        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Song Request: no rival action to copy.`); return; }
-        ctx.log(`${owner.name} uses Song Request.`);
-        offer(ctx, owner, list, 'Song Request: copy which rival action?', 'now', 'Song Request');
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Buskers: no rival action to copy.`); return; }
+        ctx.log(`${owner.name} uses Buskers.`);
+        offer(ctx, owner, list, 'Buskers: copy which rival action?', 'now', 'Buskers');
       },
       botActivate: (ctx, p) => targets(ctx, p, 'rival').some(e => entryValue(ctx, e, p) >= 3),
     }),

@@ -37,7 +37,7 @@ describe('REPLACE10: Song Request and Stagehand', () => {
     const u = uidOf(s, 'echo.songrequest', 0);
     const g = s.players[0].res.green || 0, m = s.players[0].res.magenta || 0;
     s = move(s, `use:${u}`);
-    expect(s.pending.prompt).toBe('Song Request: copy which rival action?');
+    expect(s.pending.prompt).toBe('Buskers: copy which rival action?');
     expect(s.pending.options.every(o => /\(P2\)/.test(o.label))).toBe(true);
     s = answer(s, s.pending.options[0].id);
     expect((s.players[0].res.green || 0) + (s.players[0].res.magenta || 0)).toBeGreaterThan(g + m);
@@ -50,7 +50,7 @@ describe('REPLACE10: Song Request and Stagehand', () => {
     const u = uidOf(s, 'echo.songrequest', 0);
     s = move(s, `use:${u}`);
     expect(s.cards[u].used).toBe(false);
-    expect(named(s, 'Song Request')).toContain("P1's Song Request: no rival action to copy.");
+    expect(named(s, 'Buskers')).toContain("P1's Buskers: no rival action to copy.");
   });
 
   it('Stagehand: Round End: +1 follower per minion you have on Green spaces (2 on Green, 1 on Red: +2)', () => {

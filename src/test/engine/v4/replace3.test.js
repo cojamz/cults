@@ -47,8 +47,8 @@ describe('REPLACE3: each card fires', () => {
     expect(owns(s, 1, 'trading.martyr')).toBe(false);
     expect(s.cards[s.discard.at(-1)].def).toBe('trading.martyr');
     expect(s.players[0].res.white).toBe(5);
-    expect(s.players[1].res.white).toBe(5);
-    expect(s.players[1].bonus).toBe(5); // Martyrs left its cult (costs 5 since every member +1, Nov 5)
+    expect(s.players[1].res.white).toBe(9); // +5 from Evictors, +4 from Martyrs being discarded (Cory, Nov 9)
+    expect(s.players[1].bonus).toBe(4); // Martyrs: Whenever this member is discarded, +4 white and +4 followers
     expect(named(s, 'Evictors')).toContain("P1's Evictors: P1 and P2 each +5 white.");
   });
 
@@ -153,7 +153,7 @@ describe('REPLACE3: each card fires', () => {
     s = answer(s, `card:${uidIn(s, 'trading.martyr', 0)}`);
     expect(owns(s, 1, 'red.recruitbonus')).toBe(true);
     expect(owns(s, 2, 'trading.martyr')).toBe(true);
-    expect(s.players[0].bonus).toBe(5); // Martyrs left P1's cult (costs 5 since every member +1, Nov 5)
+    expect(s.players[0].bonus).toBe(0); // Martyrs pays only when discarded (Cory, Nov 9), not when given away
     expect(s.pending.prompt).toMatch(/^Missionaries: recruit which member for free\? \(2 to go: up to 7, 6\)/);
     s = answer(s, `card:${uidIn(s, 'market.snob', 'shop')}`);
     expect(s.pending.prompt).toMatch(/^Missionaries: recruit which member for free\? \(1 to go: up to 6\)/);

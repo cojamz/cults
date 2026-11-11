@@ -280,13 +280,13 @@ describe('White members', () => {
     expect(B(s)).toBe(4);
   });
 
-  it('Martyrs: when it leaves your cult, followers equal to its cost', () => {
+  it('Martyrs: whenever this member is discarded, +4 white and +4 followers', () => {
     let s = take(scene({ round: 2, members: [['trading.martyr']] }), 'trading.farewell');
     s = move(s, `card:${uidOf(s, 'trading.martyr', 0)}`);
-    expect(B(s)).toBe(4); // Farewell 2, Martyrs 2
+    expect(B(s)).toBe(6); // Farewell 2, Martyrs 4
     s = take(scene({ round: 2, members: [['trading.martyr']] }), 'trading.estatesale');
     s = move(s, `card:${uidOf(s, 'trading.martyr', 0)}`);
-    expect([R(s).white, B(s)]).toEqual([3, 2]);
+    expect([R(s).white, B(s)]).toEqual([7, 4]); // Estate Sale's white 3, Martyrs +4 white and +4 followers
   });
 
   it('Money Changers: whenever you buy followers, +2 white; a rival\'s buy and turning things into followers pay nothing', () => {
@@ -324,11 +324,11 @@ describe('White members', () => {
     expect(ids(none)).toContain(`use:${uidOf(none, 'trading.appraiser', 0)}`); // nothing else to get rid of: not spent
   });
 
-  it('Appraiser with Undertaker and Martyrs: +2 more, and the Martyrs pays its cost again', () => {
+  it('Appraiser with Undertaker and Martyrs: +2 more, and the discarded Martyrs pays +4', () => {
     let s = scene({ members: [['trading.appraiser', 'trading.undertaker', 'trading.martyr']], ...buyTurn });
     s = move(s, `use:${uidOf(s, 'trading.appraiser', 0)}`);
     s = move(move(s, `card:${uidOf(s, 'trading.martyr', 0)}`), 'pick:followers');
-    expect(B(s)).toBe(2 + 2 + 2);
+    expect(B(s)).toBe(2 + 2 + 4); // Appraiser, Undertaker, Martyrs discarded (+4 followers, Cory Nov 9)
   });
 
   it('Magpie (was Hoarder): once per game, turn all your resources into white', () => {

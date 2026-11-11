@@ -206,19 +206,21 @@ describe('White members', () => {
     expect(R(s).white).toBe(4);
   });
 
-  it('Martyrs: sent away with Farewell, 4 + 4 followers (named)', () => {
+  it('Martyrs: discarded with Farewell, +4 followers and +4 white (named)', () => {
     let s = take(table(Q, { round: 2, members: [['trading.martyr']], shop: ROW }), 'trading.farewell');
+    const w1 = R(s).white || 0;
     s = move(s, cardOpt(s, 'trading.martyr', 0));
-    expect(B(s)).toBe(8);
-    expect(named(s, 'Martyrs')).toEqual(["P1's Martyrs left: +4 followers."]);
+    expect(B(s)).toBe(8); // Farewell: its cost (4); Martyrs: +4 followers
+    expect((R(s).white || 0) - w1).toBe(4); // Martyrs: +4 white
+    expect(named(s, 'Martyrs')).toEqual(["P1's Martyrs were discarded: +4 white, +4 followers."]);
   });
-  it('× Poach: a stolen Martyrs pays its old owner 4 followers', () => {
+  it('× Poach: a stolen Martyrs pays nothing (only a discard pays, Cory Nov 9)', () => {
     let s = table(Q, { round: 3, left: 5, members: [[], ['trading.martyr']], shop: ROW });
     const u = uidIn(s, 'trading.martyr', 1);
     s = move(take(s, 'thieves.heist'), `card:${u}`);
     expect(s.players[0].members).toContain(u);
-    expect(B(s, 1)).toBe(4);
-    expect(named(s, 'Martyrs')).toEqual(["P2's Martyrs left: +4 followers."]);
+    expect(B(s, 1)).toBe(0);
+    expect(named(s, 'Martyrs')).toEqual([]);
   });
 
   it('Magpie (was Hoarder): once per game, every resource becomes white (named)', () => {

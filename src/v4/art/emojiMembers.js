@@ -96,7 +96,7 @@ const M = {
   'money-changers': ['💱', '♾️ Anyone buys followers: +1 white (+2 if it’s you)'],
   cashier: ['🧾', '✨ Turn all your white into followers'],
   landlord: ['🏠', '✨🌅 +2 white'],
-  martyrs: ['🕯️', '♾️ Leaves your cult: followers equal to its cost'],
+  martyrs: ['🕯️', '♾️ Discarded: +4 white, +4 followers'],
   recluse: ['🏚️', '🌙 +2 followers per rival with more members'],
   // the test version's members (Nov 8, Claude's fill-ins until Cory picks)
   anchorites: ['⛪', '🌙 3 or fewer members: +5 followers'],
@@ -188,7 +188,7 @@ const M = {
   'heist-crew': ['🧨', '☝️ Steal half a rival’s biggest pile'],
   downsizers: ['✂️', '🔁 Discard one of your members: +4 white'],
   barker: ['📢', '♾️ You recruit a member: may also recruit followers'],
-  'song-request': ['🎙️', '🔁 Copy an action a rival has a minion on'],
+  buskers: ['🎙️', '🔁 Copy an action a rival has a minion on'],
   copyist: ['📝', '♾️ You copy an action: +2 followers'],
   cheerleaders: ['🎊', '♾️ You win a contest: +2 followers'],
 };

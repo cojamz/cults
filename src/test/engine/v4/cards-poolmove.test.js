@@ -15,34 +15,37 @@ const give = (s, p, n, test = () => true) => {
 };
 
 describe('Gift Swappers (grey)', () => {
-  it('On Use, once per game: every player, you too, takes one member they choose from the player on their right', () => {
+  it('On Use, once per game: every player, you too, gives one member they choose to the player on their left', () => {
     let s = sceneQ({ quadrants: ['market', 'gold', 'red'], n: 3, round: 2, members: [['benders.giftswappers']] });
     const gs = uidOf(s, 'benders.giftswappers', 0);
     const [a] = give(s, 1, 1), [b1, b2] = give(s, 2, 2);
-    const use = `use:${gs}`;
-    s = move(s, use);
-    // P1 takes from the seat on the right, P3
-    expect(s.pending.prompt).toBe('Gift Swappers: take which member from P3?');
+    s = move(s, `use:${gs}`);
+    // P1 gives first, from their own cult, to the seat on the left, P2 (the giver picks: Cory, Nov 9)
+    expect(s.pending.prompt).toBe('Gift Swappers: give which of your members to P2?');
+    expect(s.pending.player).toBe(0);
+    expect(s.pending.options.map(o => o.value)).toEqual([gs]);
+    s = move(s, `card:${gs}`);
+    expect(s.pending.prompt).toBe('Gift Swappers: give which of your members to P3?');
+    expect(s.pending.player).toBe(1);
+    s = move(s, `card:${a}`);
+    expect(s.pending.prompt).toBe('Gift Swappers: give which of your members to P1?');
+    expect(s.pending.player).toBe(2);
     expect(s.pending.options.map(o => o.value).sort()).toEqual([b1, b2].sort());
     s = move(s, `card:${b2}`);
-    // P2 takes from P1 (P1 still holds Gift Swappers: picks are from the cults as they stood)
-    expect(s.pending.prompt).toBe('Gift Swappers: take which member from P1?');
-    s = move(s, `card:${gs}`);
-    expect(s.pending.prompt).toBe('Gift Swappers: take which member from P2?');
-    s = move(s, `card:${a}`);
     expect(s.players[0].members).toEqual([b2]);
     expect(s.players[1].members).toEqual([gs]);
     expect(s.players[2].members.sort()).toEqual([b1, a].sort());
-    expect(named(s, 'Gift Swappers').at(-1)).toMatch(/^P1's Gift Swappers: P1 takes .* from P3, P2 takes Gift Swappers from P1, P3 takes .* from P2\.$/);
+    expect(named(s, 'Gift Swappers').at(-1)).toMatch(/^P1's Gift Swappers: P1 gives Gift Swappers to P2, P2 gives .* to P3, P3 gives .* to P1\.$/);
     expect(s.cards[gs].used).toBe(true);
   });
-  it('a player whose right-hand neighbor has no members takes nothing', () => {
+  it('a player with no members gives nothing', () => {
     let s = sceneQ({ quadrants: ['market', 'gold', 'red'], n: 3, round: 2, members: [['benders.giftswappers']] });
     const gs = uidOf(s, 'benders.giftswappers', 0);
-    s = move(s, `use:${gs}`); // only P1 has a member, so only P2 (on P1's left) takes
-    expect(s.pending.prompt).toBe('Gift Swappers: take which member from P1?');
+    s = move(s, `use:${gs}`); // only P1 has a member, so only P1 gives (to P2)
+    expect(s.pending.prompt).toBe('Gift Swappers: give which of your members to P2?');
     s = move(s, `card:${gs}`);
     expect(s.players[1].members).toEqual([gs]);
+    expect(s.pending?.prompt || '').not.toMatch(/Gift Swappers/);
   });
 });
 
