@@ -179,3 +179,4 @@ Keep
 
 - Red: Mob out, Clan stays. New ideas held until every color is read.
 - Purple: Timekeeper stays (maybe +2), Lookouts stays (maybe +1, balance test), Night Managers, Closer, Courier, Latecomers stay. Sleepyheads close to the Purple Cloak (asked). Wants one new member that grabs or takes the Goes Last token.
+- Silver (2:29pm): Kingmakers, Patron Saints, Smooth Talkers stay; Debutantes stays to watch in games. Debt Collectors, Ballroom Dancers, High Society, Toastmaster go. Guest of Honor and Patrons move to White. 6 open Silver slots; White would hold 12 before its own cuts.
