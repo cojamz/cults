@@ -72,11 +72,12 @@ describe('Silver actions', () => {
     expect(R(s, 1).silver).toBe(3);
   });
 
-  it('rings: Polish and Party Gifts open in round I, Sweet Nothings and Sweet Talk in round II, Largesse in round III', () => {
+  it('rings: Polish and Party Gifts open in round I, Sweet Nothings and Buyout in round II, Largesse in round III', () => {
     const names = s => s.pending.options.map(o => o.label);
     expect(names(scene())).toEqual(expect.arrayContaining(['Toast', 'Polish', 'Party Gifts']));
-    expect(names(scene())).not.toContain('Sweet Talk');
-    expect(names(scene({ round: 2 }))).toEqual(expect.arrayContaining(['Sweet Nothings', 'Sweet Talk']));
+    expect(names(scene())).not.toContain('Buyout');
+    expect(names(scene({ round: 2 }))).toEqual(expect.arrayContaining(['Sweet Nothings', 'Buyout']));
+    expect(names(scene({ round: 2 }))).not.toContain('Sweet Talk'); // off the wheel since Nov 11
     expect(names(scene({ round: 2 }))).not.toContain('Largesse');
     expect(names(scene({ round: 3 }))).toContain('Largesse');
   });
@@ -186,8 +187,8 @@ describe('Silver members', () => {
     let s = take(scene({ round: 2, members: [['silver.grandhost']] }), 'silver.toast');
     expect(R(s).silver).toBe(12);
     expect(R(s, 1).silver).toBe(2);
-    s = take(scene({ round: 2, members: [['silver.grandhost']] }), 'silver.tongue');
-    expect(R(s).silver).toBe(6);
+    s = take(scene({ members: [['silver.grandhost']] }), 'silver.polish'); // Polish's +3 is the space's own silver: doubled
+    expect(s.pending.prompt).toMatch(/all 6/);
     s = take(scene({ members: [['silver.grandhost'], ['silver.guest']] }), 'silver.toast');
     expect(R(s).silver).toBe(6);
   });

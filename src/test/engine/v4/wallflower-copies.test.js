@@ -14,10 +14,12 @@ const red = o => o.id === 'color:red';
 const sum = r => Object.values(r).reduce((a, b) => a + b, 0);
 
 describe('Wallflower doubles every copied action', () => {
-  it('Echo copying a rival\'s Polish: 2 silver into 8, not 4', () => {
+  // Polish (Nov 11): "+3 silver. Then turn all your silver into one other color." Wallflower doubles the +3 and the
+  // silver turned: 2 held + 6 = 8 silver, into 16 red (flagged to Cory as a size risk, Nov 11)
+  it('Echo copying a rival\'s Polish: +3 and the turn both doubled', () => {
     const run = members => {
       let s = table(['silver', 'red', 'market', 'echo'], { members: [members], res: [{ silver: 2 }, { silver: 2 }], queue: turns(1, 0) });
-      s = go(s, 'silver.polish', red, red, red, red);
+      s = go(s, 'silver.polish', red);
       const before = { ...R(s) };
       s = take(s, 'echo.echo');
       s = play(s, sp('silver.polish'));
@@ -25,8 +27,8 @@ describe('Wallflower doubles every copied action', () => {
       s = pass(s);
       return { gained: R(s).red - (before.red || 0), silver: R(s).silver };
     };
-    expect(run([])).toEqual({ gained: 4, silver: 0 });
-    expect(run(['echo.wallflower'])).toEqual({ gained: 8, silver: 0 });
+    expect(run([])).toEqual({ gained: 5, silver: 0 });
+    expect(run(['echo.wallflower'])).toEqual({ gained: 16, silver: 0 });
   });
 
   // Cover copies an action with a rival's minion on it (Cory, Nov 10): a rival's Golden Years (+4 gold in round II) doubled
@@ -52,12 +54,12 @@ describe('Wallflower doubles every copied action', () => {
   });
   it('Translator turns a copied Polish green', () => {
     let s = table(['silver', 'red', 'market', 'echo'], { members: [['echo.translator']], res: [{ silver: 2 }, { silver: 2 }], queue: turns(1, 0) });
-    s = go(s, 'silver.polish', red, red, red, red);
+    s = go(s, 'silver.polish', red);
     s = take(s, 'echo.echo');
     s = play(s, sp('silver.polish'));
     while (s.pending?.options?.some(red)) s = play(s, red);
     s = pass(s);
-    expect(R(s)).toMatchObject({ red: 0, silver: 0, green: 1 + 4 }); // Echo's +1, Polish's 4 as green
+    expect(R(s)).toMatchObject({ red: 0, silver: 0, green: 1 + 5 }); // Echo's +1, Polish's 2 held + 3 turned, as green
   });
   it('an Impersonator holding a rival\'s Wallflower doubles a copy', () => {
     let s = table(['gold', 'red', 'market', 'echo'], { members: [['echo.impersonators'], ['echo.wallflower']], queue: turns(1, 0) });

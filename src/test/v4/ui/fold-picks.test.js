@@ -7,22 +7,24 @@ import { planChain, foldPicks } from '../../../v4/game/director.js';
 import { setMotionSpeed } from '../../../v4/motion.js';
 import { colorSave } from '../../../../e2e/v4/lib/dialog-save.mjs';
 
+// Polish became one pick (Nov 11), so the run of picks is Harvest's ("+3 in round I, +4 in round II, +5 in round III,
+// in colors you choose").
 function polishRun(picks) {
-  let s = colorSave('polish').state;
+  let s = colorSave('harvest').state;
   const states = [s];
   for (const c of picks) { s = applyMove(s, { player: 0, option: `color:${c}` }, { effects: true }); states.push(s); }
   return states;
 }
 
 describe('foldPicks', () => {
-  it('folds your four Polish picks into one step with the gains summed per color', () => {
-    const [prev, next, ...rest] = polishRun(['red', 'red', 'gold', 'white']);
+  it('folds your three Harvest picks (round I) into one step with the gains summed per color', () => {
+    const [prev, next, ...rest] = polishRun(['red', 'red', 'silver']);
     const fold = foldPicks(prev, next, rest, [0]);
-    expect(fold.used).toBe(3);
-    const tail = rest[2];
+    expect(fold.used).toBe(2);
+    const tail = rest[1];
     expect(tail.foldedFrom).toBe(prev.moves);
     const got = Object.fromEntries(tail.foldedEffects.map(e => [e.to.r, e.what.n]));
-    expect(got).toEqual({ red: 2, gold: 1, white: 1 });
+    expect(got).toEqual({ red: 2, silver: 1 });
     // one beat: every coin leaves together, so the chain is far shorter than four chains one after the next
     const one = planChain(prev, tail, { mine: [0] });
     const each = [prev, next, ...rest].slice(1).reduce((t, st, i, a) => t + planChain(i ? a[i - 1] : prev, st, { mine: [0] }).total, 0);
@@ -30,7 +32,7 @@ describe('foldPicks', () => {
     expect(one.total).toBeLessThan(each * 0.6);
   });
   it('folds only the seats it is given, and leaves a lone pick alone', () => {
-    const [prev, next, ...rest] = polishRun(['red', 'red', 'gold', 'white']);
+    const [prev, next, ...rest] = polishRun(['red', 'red', 'silver']);
     expect(foldPicks(prev, next, rest, [1]).used).toBe(0);
     expect(foldPicks(prev, next, rest, [0, 1]).used).toBeGreaterThan(0);
     expect(foldPicks(prev, next, [], [0]).used).toBe(0);
@@ -40,12 +42,12 @@ describe('foldPicks', () => {
   it('flies your own folded picks at Steady pace at Relaxed', () => {
     setMotionSpeed('relaxed');
     try {
-      const [prev, next, ...rest] = polishRun(['red', 'red', 'gold', 'white']);
+      const [prev, next, ...rest] = polishRun(['red', 'red', 'silver']);
       foldPicks(prev, next, rest, [0]);
-      const tail = rest[2];
+      const tail = rest[1];
       const mine = planChain(prev, tail, { mine: [0] });
-      // the last pick on its own, unfolded, flies one coin at Relaxed's coin pace: the whole folded four land sooner
-      const lone = planChain(rest[1], tail, { mine: [0] });
+      // the last pick on its own, unfolded, flies one coin at Relaxed's coin pace: the whole folded three land sooner
+      const lone = planChain(rest[0], tail, { mine: [0] });
       expect(mine.total).toBeGreaterThan(0);
       expect(mine.total).toBeLessThan(lone.total * 0.8);
     } finally { setMotionSpeed('steady'); }
@@ -55,6 +57,8 @@ describe('foldPicks', () => {
 // Sweet Talk (Cory, Nov 9: "sweet talk decisions all happen then animations. not animation for each resource"): every
 // silver turned, set on one card and sent at once, plays as one step: the silver paid summed, the colors got summed
 import { createGame, resume, actionAt } from '../../../engine/v4/core.js';
+import { useRetired } from '../../engine/v4/helpers.js';
+useRetired(['silver.tongue']); // Sweet Talk left the wheel Nov 11; its fold stays tested
 function sweetRun(picks) {
   const s0 = createGame({ seats: [0, 1, 2].map(i => ({ name: `P${i + 1}`, kind: 'bot' })), seed: 7, quadrants: ['gold', 'red', 'blue', 'silver'] });
   s0.queue = []; s0.pending = null; s0.round = 2; s0.slots = {}; s0.order = []; s0.log = [];

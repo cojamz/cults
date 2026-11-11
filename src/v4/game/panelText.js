@@ -106,7 +106,7 @@ const P = {
   silver: {
     // "others get 1" left "1 of what?" (live panel r1): silver
     toast: r => ({ main: `+${3 * r} silver`, second: `others get ${r} silver`, note: run(n => `+${3 * n}`) }),
-    polish: { verb: '2 silver → 4 any', second: 'colors you choose' },
+    polish: { main: '+3 silver', second: 'then all silver → one color' }, // Cory, Nov 11
     // "+2 per silver" read as per silver you hold (Cory, Nov 1: "VERY misleading"): the giving leads
     // "+2 @f each" read as each rival (picky bot, Nov 4): per silver given, never "per silver" alone (Cory, Nov 1)
     partygifts: { verb: 'Give rivals up to 3 silver', second: '+2 @f per silver given', note: 'from the bank' },
@@ -114,7 +114,8 @@ const P = {
     // Sweet Nothings, Potluck's place (Cory, Nov 6): +2 per silver given, never "per silver" alone (Cory, Nov 1)
     sweetnothings: { main: '+3 silver', second: 'give rivals up to 3: +2 any per silver given' },
     // ring II's line 2 drops at some turns of the wheel and left a bare "+3 silver" (picky bot, Nov 4): whole in line 1
-    tongue: { verb: '+3 silver, then turn silver into colors' },
+    tongue: { verb: '+3 silver, then turn silver into colors' }, // off the wheel since Nov 11 (Buyout)
+    buyout: { verb: "Recruit a rival's member", second: 'pay them its cost in silver' }, // Cory, Nov 11
     // Largesse keeps "+1 @f each": the center ring holds about ten letters there, and "per silver given" dropped line 2
     // whole (picky bot, Nov 4); its hover says per silver you give
     largesse: { verb: 'Give rivals 12 silver', second: '+10 @f', note: 'from the bank' },

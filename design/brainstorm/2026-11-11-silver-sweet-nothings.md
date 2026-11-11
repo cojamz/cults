@@ -56,4 +56,4 @@ Verdict: cut (rewards the leader)
 7. Public and certain: the shop row is face up and every price is printed, so the choice is open; no pile draws, no randomness, nothing hidden.
 8. Color interactions: none: single-color; the member enters a cult, which Blue's and Red's contests count.
 9. Biggest case: round III, a free member costing 6 (round III rows also hold pricier members, so 6 is a cap, not a floor) and 6 silver out; Green copying it gets a second 6-cost member and gives 6 more. At most about 12 resources of members across a copy, against a winner's 70 to 110: in band.
-Verdict: send
+Verdict: cut (Cory, Nov 11: "nope bad idea")

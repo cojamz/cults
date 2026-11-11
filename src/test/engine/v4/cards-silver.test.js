@@ -20,14 +20,11 @@ describe('Silver actions', () => {
     const s = take(sc({ n: 3, round: 2 }), 'silver.toast');
     expect(s.players.map(p => p.res.silver)).toEqual([6, 2, 2]);
   });
-  it('Polish: 2 silver into 4 of any colors, picked one at a time; 1 silver gives 2', () => {
-    let s = take(sc({ res: [{ silver: 3 }] }), 'silver.polish');
-    for (const c of ['red', 'red', 'green', 'gold']) s = move(s, `color:${c}`);
-    expect([S(s), s.players[0].res.red, s.players[0].res.green, s.players[0].res.gold]).toEqual([1, 2, 1, 1]);
-    s = take(sc({ res: [{ silver: 1 }] }), 'silver.polish');
-    s = move(move(s, 'color:red'), 'color:red');
-    expect([S(s), s.players[0].res.red]).toEqual([0, 2]);
-    expect(s.pending?.prompt || '').not.toMatch(/Polish/);
+  it('Polish: +3 silver, then all your silver into one other color you choose', () => {
+    let s = take(sc({ res: [{ silver: 2 }] }), 'silver.polish');
+    s = move(s, 'color:red');
+    expect([S(s), s.players[0].res.red]).toEqual([0, 5]);
+    expect(named(s, 'Polish').length).toBeGreaterThan(0);
   });
   it('Party Gifts: rivals gain up to 3 silver from the bank, split as you choose, +2 followers each', () => {
     let s = take(sc({ n: 3, res: [{ silver: 2 }] }), 'silver.partygifts');
@@ -44,10 +41,18 @@ describe('Silver actions', () => {
     for (let i = 0; i < 6; i++) s = move(s, 'color:red');
     expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[0, 6], [1, 0], [2, 0]]);
   });
-  it('Sweet Talk: +3 silver, then turn as many as you want into other colors; Largesse: rivals must gain all 12 silver, +10 followers', () => {
-    let s = take(sc({ round: 2 }), 'silver.tongue');
-    s = move(move(move(s, 'color:red'), 'color:red'), 'done');
-    expect(s.players.map(p => [p.res.silver, p.res.red])).toEqual([[1, 2], [0, 0]]);
+  it('Buyout: recruit a rival member, paying them its cost in silver, +1 silver; Largesse: rivals must gain all 12 silver, +10 followers', () => {
+    let s = sc({ round: 2, res: [{ silver: 20 }], members: [[], ['silver.guest']] });
+    const uid = s.players[1].members[0], k = s.cards[uid].def ? s.cards[uid].def.s + s.cards[uid].def.w : null;
+    s = take(s, 'silver.buyout');
+    s = move(s, `card:${uid}`);
+    expect(s.players[0].members).toContain(uid);
+    expect(s.players[1].members).not.toContain(uid);
+    expect(s.players[1].res.silver).toBeGreaterThan(0);
+    expect(s.players[0].res.silver + s.players[1].res.silver).toBe(21);
+    let t = take(sc({ round: 2, res: [{ silver: 0 }], members: [[], ['silver.guest']] }), 'silver.buyout');
+    expect(t.players[0].res.silver).toBe(1);
+    expect(t.players[1].members).toHaveLength(1);
     s = take(sc({ round: 3 }), 'silver.largesse');
     expect(s.pending.options.some(o => o.kind === 'done')).toBe(false); // Cory, Nov 6: "should have to give 12"
     for (let i = 0; i < 12; i++) s = move(s, 'player:1');

@@ -31,6 +31,10 @@ const SOC_N = Number(globalThis.process?.env?.SOCIALITES_N || 1); // live at +1 
 const WW_N = Number(globalThis.process?.env?.WELLWISHERS_N || 3); // trial switch: Well-Wishers' followers per move (Nov 4, c1 read weak)
 const others = (ctx, p) => ctx.rivals(p);
 const otherColors = ctx => ctx.state.resources.filter(c => c !== S);
+const cost = c => c.def.s + c.def.w;
+/** Buyout: [rival, card] for each rival member whose cost p's silver covers. */
+const buyoutList = (ctx, p) => ctx.rivals(p).flatMap(o => ctx.membersOf(o).filter(c => cost(c) <= (p.res[S] || 0)).map(c => [o, c]));
+const memberValue = c => (c.def.f || 1) + 0.5 * cost(c);
 
 // a Doppelganger runs the hooks of the member it copies too
 const effDefs = c => (c.copy || c.ability ? [c.def, ...[c.copy, c.ability].filter(Boolean).map(defById)] : [c.def]);
@@ -400,15 +404,18 @@ export const silverActions = [
     },
   },
   swap11(swap11({
-    key: 'polish', copyDoesIt: true, ring: 1, name: 'Polish', text: 'Turn 2 of your silver into 4 of any colors.',
-    estimate: (ctx, p) => Math.min(2, p.res[S] || 0) * 1 + 0.5,
+    // Cory, Nov 11 12:24-12:29am: "+3 silver, turn your silver into other colors… maybe make it all one other color",
+    // "would be pretty good as a round I even", then "yeah 1. simpler also" (all of it, not "any of it"). Name kept.
+    key: 'polish', copyDoesIt: true, ring: 1, name: 'Polish', text: '+3 silver. Then turn all your silver into one other color.',
+    estimate: () => 3.5,
     resolve(ctx, p) {
-      // with 1 silver, 1 turns into 2 (Claude's reading of "2 silver -> 4 wild")
-      const k = Math.min(2, p.res[S] || 0);
-      if (!k) { ctx.log(`${p.name}'s Polish: no silver to turn.`); return; }
-      p.res[S] -= k;
-      ctx.log(`${p.name}'s Polish: ${k} silver into ${2 * k} of any colors.`);
-      polishPick(ctx, p, 2 * k);
+      hostGain(ctx, p, 3);
+      const n = p.res[S] || 0, opts = otherColors(ctx);
+      if (!n || !opts.length) return;
+      ctx.choose(p, `Polish: turn all ${n} of your silver into which color?`, opts.map(c => ({
+        id: `color:${c}`, label: `${n} silver → ${n} ${c}`, kind: 'color', value: c, spend: { silver: n, [c]: -n },
+        hint: 1 - 0.3 * (p.res[c] || 0),
+      })), 'silver.polishAll');
     },
   }, GIFT_SHOP), OPEN_BAR),
   {
@@ -427,11 +434,28 @@ export const silverActions = [
     },
   }),
   {
+    // Out of the wheel since Nov 11 (Buyout takes its place); kept for old saves and its tests
+    pool: true,
     key: 'tongue', copyDoesIt: true, ring: 2, name: 'Sweet Talk', text: '+3 silver. Then turn any of your silver into other colors.',
     estimate: () => 3.5,
     resolve(ctx, p) {
       hostGain(ctx, p, 3);
       turnStep(ctx, p, { who: 'Sweet Talk', max: null, each: 1, done: 0 });
+    },
+  },
+  {
+    // Cory, Nov 11 12:31am: "thats pretty good. lets try it." (Sweet Talk's slot; name Claude's fill-in). You pick the
+    // rival and the member; its cost is its price as a player sees it, all paid in silver to that rival; it is a recruit
+    // (its On Recruit fires, as Poach's does) and doesn't use your turn's recruit. A purchase, not a steal or a gift.
+    key: 'buyout', copyDoesIt: true, ring: 2, name: 'Buyout', text: 'Recruit a rival’s member, paying them its cost in silver. +1 silver.',
+    estimate: (ctx, p) => { const l = buyoutList(ctx, p); return l.length ? Math.max(...l.map(([, c]) => memberValue(c))) : 0.5; },
+    resolve(ctx, p) {
+      const list = buyoutList(ctx, p);
+      if (list.length) ctx.choose(p, `Buyout: recruit which rival's member? (you have ${p.res[S] || 0} silver)`, list.map(([o, c]) => ({
+        id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${cost(c)} silver)`, kind: 'card', value: c.uid, hint: memberValue(c),
+      })).concat({ id: 'none', label: 'Recruit nothing', kind: 'pass', value: null, hint: 0 }), 'silver.buyout');
+      else ctx.log(`${p.name}'s Buyout: no rival's member costs ${p.res[S] || 0} silver or less.`);
+      ctx.gain(p, S, 1, { fromAction: true });
     },
   },
   {
@@ -599,6 +623,20 @@ const silver = {
       ctx.gain(p, c, 1);
       ctx.log(`${p.name}'s ${who}: +1 ${c}.`);
       if (data.left > 1) polishPick(ctx, p, data.left - 1, who);
+    },
+    polishAll(ctx, p, c) {
+      const n = p.res[S] || 0;
+      if (!n || c === S || !ctx.state.resources.includes(c)) return;
+      p.res[S] = 0; ctx.gain(p, c, n);
+      ctx.log(`${p.name}'s Polish: ${n} silver into ${n} ${c}.`);
+    },
+    buyout(ctx, p, uid) {
+      if (uid == null) { ctx.log(`${p.name}'s Buyout: recruits nothing.`); return; }
+      const hit = buyoutList(ctx, p).find(([, c]) => c.uid === uid);
+      if (!hit) return;
+      const [o, c] = hit, k = cost(c);
+      p.res[S] -= k; o.res[S] = (o.res[S] || 0) + k;
+      if (ctx.moveMember(uid, o, p, { recruit: true })) ctx.log(`${p.name}'s Buyout: recruits ${o.name}'s ${c.def.name}, paying ${o.name} ${k} silver.`);
     },
     turn(ctx, p, value, data) {
       if (value === 'done') return;

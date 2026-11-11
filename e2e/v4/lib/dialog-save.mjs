@@ -102,7 +102,7 @@ export function swapCrowdSave(extra = 7) {
 // Choices whose answers are combinations, picked in two steps on the board: Good Deed (a color × a rival), Trade
 // Seeds (a color you give × a color you get), Sweet Talk (a color × how many).
 export const COMBO_TABLE = ['silver', 'red', 'yellow', 'echo'];
-const COMBOS = { seeds: ['yellow', 'transmute'], sweettalk: ['silver', 'tongue'] };
+const COMBOS = { seeds: ['yellow', 'transmute'] }; // Sweet Talk left the wheel Nov 11
 export function comboSave(space = 'seeds') {
   const [qid, key] = COMBOS[space];
   const q = COMBO_TABLE.indexOf(qid), i = quadrant(qid).actions.findIndex(a => a.key === key), ring = quadrant(qid).actions[i].ring;
