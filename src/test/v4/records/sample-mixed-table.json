@@ -3,15 +3,15 @@
  "schema": 1,
  "build": {
   "schema": 1,
-  "content": "psht3ox670.2d42737447",
+  "content": "459bwurkd4.82587c9b0b",
   "id": "dev",
-  "version": "v0.99.711"
+  "version": "v0.99.712"
  },
  "made": {
   "schema": 1,
-  "content": "psht3ox670.2d42737447",
+  "content": "459bwurkd4.82587c9b0b",
   "id": "dev",
-  "version": "v0.99.711"
+  "version": "v0.99.712"
  },
  "seed": 20261014,
  "quadrants": [
@@ -642,14 +642,14 @@
   "over": true,
   "moves": 147,
   "followers": [
-   46,
-   70,
+   49,
+   67,
    67
   ]
  },
  "refreshed": {
-  "from": "25wxid7oonq.ec565e4fc7",
-  "kept": 7,
-  "of": 135
+  "from": "psht3ox670.2d42737447",
+  "kept": 147,
+  "of": 147
  }
 }
