@@ -9,6 +9,16 @@ export const VARIANTS = {
   base: {},
   'no-tribute': { MEMBERS_OUT: 'echo.dejavu', MEMBERS_IN: 'echo.ensemble' },
   'plus1-every': { PLUS1: 'every' },
+  // Cory, Nov 11: Greatest Hits copies only rivals' minions; and "tribute band into greatest hits is the real problem"
+  'hits-rival': { HITS: 'rival' },
+  'hits-rival-no-tribute': { HITS: 'rival', MEMBERS_OUT: 'echo.dejavu', MEMBERS_IN: 'echo.ensemble' },
+  // the same three with Green at every table, so every game reads Greatest Hits
+  'green-base': { FORCE: 'echo' },
+  'green-hits-rival': { FORCE: 'echo', HITS: 'rival' },
+  'green-hits-rival-no-tribute': { FORCE: 'echo', HITS: 'rival', MEMBERS_OUT: 'echo.dejavu', MEMBERS_IN: 'echo.ensemble' },
+  // Cory, Nov 11: "The purple one was too strong. Let's nerf that. And let's buff magenta." Claude's first numbers:
+  // Purple Cloak +3 purple -> +2, Magenta Cloak +1 magenta -> +2 (env knobs already in purple.js and thieves.js)
+  cloaks: { POCKETWATCH: 'token2', FENCE: 'self2' },
 };
 const flags = Object.fromEntries(process.argv.slice(2).map(a => { const [k, ...v] = a.replace(/^--/, '').split('='); return [k, v.join('=') || true]; }));
 const games = Number(flags.games || 200), chunk = Number(flags.chunk || 10), W = Number(flags.workers || 4);

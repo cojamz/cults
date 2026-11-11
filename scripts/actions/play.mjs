@@ -21,6 +21,7 @@ const RULES = {
   plus1: process.env.PLUS1 === 'every' ? '' : 'game', // the setup default since v0.99.723 (Cory, Nov 11: "i like one per game")
   ...(process.env.MEMBERS_OUT ? { membersOut: list(process.env.MEMBERS_OUT) } : {}),
   ...(process.env.MEMBERS_IN ? { membersIn: list(process.env.MEMBERS_IN) } : {}),
+  ...(process.env.HITS === 'rival' ? { hitsRival: true } : {}), // Greatest Hits copies only rivals' minions (Cory, Nov 11)
 };
 const [first, count, out] = [Number(process.argv[2] || 1), Number(process.argv[3] || 1), process.argv[4] || 'actions.jsonl'];
 const level = process.env.LEVEL || 'hard';
@@ -29,7 +30,8 @@ const sum = o => Object.values(o || {}).reduce((a, b) => a + (b || 0), 0);
 
 for (let g = first; g < first + count; g++) {
   const rand = seededRandom(g * 7717 + 3);
-  const pool = [...COLORS], quads = [];
+  const pool = [...COLORS], quads = list(process.env.FORCE) || []; // FORCE=silver: that color at every table
+  for (const q of quads) pool.splice(pool.indexOf(q), 1);
   while (quads.length < 4) quads.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
   let s = createGame({ seats: Array.from({ length: 4 }, () => ({ kind: 'bot' })), seed: g, quadrants: quads, rules: RULES });
   const price = {}; // member value: its price to a player with no discounts, fixed per card for the game
@@ -69,7 +71,7 @@ for (let g = first; g < first + count; g++) {
       const a = o ? actionAt(s, o.q, o.i) : null;
       placements.push({
         p: pl, r: s.round, n: ++pick, space: o ? name(o) : m.option, name: a?.name, ring: a?.ring,
-        open: [...new Set(opts.map(name))], w0: s.players.map(p => worth(s, p)), f0: followers(s, s.players[pl]),
+        open: [...new Set(opts.map(name))], held: { ...s.players[pl].res }, w0: s.players.map(p => worth(s, p)), f0: followers(s, s.players[pl]),
       });
       open[pl] = placements.length - 1;
     }

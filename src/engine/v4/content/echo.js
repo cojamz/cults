@@ -529,9 +529,9 @@ function stageMove(ctx, p, { key, joined }, to) {
 }
 const medleyKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => ['Medley', 'Remix', 'Mashup', 'Greatest Hits'].includes(x.name)).map(x => actionKey(x.key));
 /** Medley: one entry per action with a minion on color q's spaces this round (p's own entry where p shares it). */
-function medleyPlan(ctx, p, q, noThird = false) {
+function medleyPlan(ctx, p, q, noThird = false, rivalOnly = false) {
   const byAction = new Map();
-  for (const e of Object.values(ledger(ctx.state).now || {}).filter(x => x.color === q && !['Medley', 'Remix', 'Mashup', 'Greatest Hits'].includes(x.name) && !(noThird && x.ring === 3)).sort((a, b) => (a.seq || 0) - (b.seq || 0))) {
+  for (const e of Object.values(ledger(ctx.state).now || {}).filter(x => x.color === q && !['Medley', 'Remix', 'Mashup', 'Greatest Hits'].includes(x.name) && !(noThird && x.ring === 3) && !(rivalOnly && x.p === p.id)).sort((a, b) => (a.seq || 0) - (b.seq || 0))) {
     const k = actionKey(e.key), had = byAction.get(k);
     if (!had || (had.p !== p.id && e.p === p.id)) byAction.set(k, e);
   }
@@ -682,14 +682,17 @@ const echoQ = {
       // on that color with a minion" (Medley's rule and words; was "Copy the On Recruit of each of your members"). Key kept
       // for old saves and records.
       key: 'eternity', ring: 3, name: 'Greatest Hits', text: 'Choose a color other than green. Copy every action with a minion on its spaces. +1 green.',
-      estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...ctx.state.quadrants.filter(q => q !== 'echo').map(q => medleyPlan(ctx, p, q).reduce((a, e) => a + entryValue(ctx, e, p), 0))),
+      // rules.hitsRival (test rule, Cory Nov 11: "we could make it copy rival minions on another color ... I lean more
+      // towards rival"): only actions with a rival's minion on them
+      estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...ctx.state.quadrants.filter(q => q !== 'echo').map(q => medleyPlan(ctx, p, q, false, !!ctx.state.rules?.hitsRival).reduce((a, e) => a + entryValue(ctx, e, p), 0))),
       resolve(ctx, p) {
         plus(ctx, p);
-        const opts = ctx.state.quadrants.filter(q => q !== 'echo').map(q => ({ q, list: medleyPlan(ctx, p, q) })).filter(x => x.list.length);
+        const rivalOnly = !!ctx.state.rules?.hitsRival;
+        const opts = ctx.state.quadrants.filter(q => q !== 'echo').map(q => ({ q, list: medleyPlan(ctx, p, q, false, rivalOnly) })).filter(x => x.list.length);
         if (!opts.length) { ctx.log(`${p.name}'s Greatest Hits: no color has an action to copy.`); return; }
         withPath(ctx, [...new Set([...pathNow(ctx), ...medleyKeys(ctx)])], () => ctx.choose(p, 'Greatest Hits: copy every action on which color\u2019s spaces?', opts.map(({ q, list }) => ({
           id: `color:${q}`, label: `${quadrant(q).name} (${list.map(e => e.name).join(', ')})`, kind: 'color', value: q, hint: list.reduce((a, e) => a + entryValue(ctx, e, p), 0),
-        })), 'echo.medley', { who: 'Greatest Hits' }));
+        })), 'echo.medley', { who: 'Greatest Hits', rivalOnly }));
       },
     },
     // idea pipeline pool 7 (Nov 7, writer round 1). Stage Door: as Pacers' move (purple.js), onto a Green space only, and
@@ -790,7 +793,7 @@ const echoQ = {
       })), 'echo.mashupPick', { ...data, picked });
     },
     medley(ctx, p, q, data) {
-      const who = data?.who || 'Medley', list = medleyPlan(ctx, p, q, !!data?.noThird);
+      const who = data?.who || 'Medley', list = medleyPlan(ctx, p, q, !!data?.noThird, !!data?.rivalOnly);
       if (!list.length) { ctx.log(`${p.name}'s ${who}: nothing on ${quadrant(q).name} to copy.`); return; }
       ctx.log(`${p.name}'s ${who} copies every action on ${quadrant(q).name}'s spaces${data?.noThird ? ' but the round III one' : ''}.`);
       copyAll(ctx, p, list, null, who);
