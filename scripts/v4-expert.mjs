@@ -427,6 +427,8 @@ async function main() {
       const { s, meta } = load(dir);
       const r = s.over ? 3 : s.round - 1;
       if (r < 1) { console.log('No round has finished yet. Write a diary after round I ends.'); return; }
+      // two players sent their postgame through diary after the game (Nov 11): once round III's diary is in, refuse
+      if (s.over && meta.diary?.[seat]?.[3]) { console.log(`Your round III diary is already saved. For your postgame note use: node scripts/v4-expert.mjs postgame ${dir} ${seat} "<text>"`); return; }
       ((meta.diary ||= {})[seat] ||= {})[r] = pos.slice(3).join(' ');
       writeJson(f(dir, 'meta.json'), meta);
       addEvents(dir, [{ type: 'diary', seat, round: r, text: meta.diary[seat][r] }]);
@@ -487,7 +489,7 @@ function report(dir) {
   const L = [`# Expert game ${path.basename(dir)}`, '', `Seed ${meta.seed}. Table: ${meta.colors.map(c => sphereName(c)).join(', ')}. Players: ${meta.names.join(', ')}.`];
   if (s.over) L.push('', `**Result:** ${s.ranking.map((id, i) => `${i + 1}. ${s.players[id].name} ${followers(s, s.players[id])}`).join(' · ')}`);
   L.push('', '(Each turn: what the player did, their private reasoning, what they said at the table, what happened.)', '');
-  let round = 0;
+  let round = 0, diaryShown;
   for (let i = 0; i < evs.length; i++) {
     const e = evs[i];
     if (e.type === 'log') { if (/^Round (I|II|III)/.test(e.text) || /Game over|wins/.test(e.text)) L.push(`> ${e.text}`); else L.push(`    ${e.text}`); continue; }
@@ -498,7 +500,8 @@ function report(dir) {
       if (e.think) L.push(`  _thinks:_ ${e.think}`);
     }
     if (e.type === 'say') L.push(`  💬 **${meta.names[e.seat]}:** "${e.text}"`);
-    if (e.type === 'diary') L.push('', `> **${meta.names[e.seat]}'s round ${ROMAN[e.round]} diary:** ${e.text}`, '');
+    // a rewritten diary shows once, with its final text (meta.diary)
+    if (e.type === 'diary' && !(diaryShown ||= new Set()).has(`${e.seat}:${e.round}`)) { diaryShown.add(`${e.seat}:${e.round}`); L.push('', `> **${meta.names[e.seat]}'s round ${ROMAN[e.round]} diary:** ${meta.diary?.[e.seat]?.[e.round] ?? e.text}`, ''); }
   }
   L.push('', '## After the game', '');
   for (const [seat, text] of Object.entries(meta.post)) L.push(`**${meta.names[seat]}:** ${text}`, '');
