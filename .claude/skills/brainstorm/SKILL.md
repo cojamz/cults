@@ -48,6 +48,7 @@ Write down, in a few lines:
 - **His sentence for the color**, in his words if he has said one (Yellow: "rewards going broad… translate currencies"), and **the round III action** earlier slots build toward. If either is missing, ask him that one question and pitch nothing else; an identity invented from the color's name has failed every time.
 - **The slot**: color, round, and the spaces around it, quoted.
 - **The strength band**: the strongest reworked space in the same round, with its total, as a yardstick for size (design-core.md section 5). It sizes the idea; it isn't a card to beat.
+- **The whole round and the whole game** (Cory, Nov 10: "you're not thinking about this big picture. I feel you dont understand how this game works"): play the color's existing spaces from a round's first turn to its last, in round I (everyone starts with 1 resource, every space fills) and in round III, and write what each pays at each point; then write what the color's contest pulls against in the other colors' contests. The slot is the gap that play-through shows, not the next piece on a list.
 - **His gist**, if he gave one. Ideas grown from his own words land far more often than ideas from nowhere.
 
 For a color pair, frame both contests and the moments each color causes instead (color-interactions.md section 4).
