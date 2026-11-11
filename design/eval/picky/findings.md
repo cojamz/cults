@@ -295,3 +295,8 @@ publish, so they go live with the next site update.
 - Open from the fix passes: the cloak popup shows the artifact's picture (Cory, Nov 1: "don't use the artifact pictures");
   Impersonator's round III hover runs off the screen bottom (long "Could choose" list).
 - Next run: `node scripts/picky/picky.mjs --album` then fresh reader agents (scripts/picky/README.md); paused for the token budget.
+
+## Hyper-picky run, Nov 11 (v0.99.726 → fixes live in v0.99.729)
+Two album games (all 8 colors, both looks), 362 pictures, 8 fresh first-time readers, 685 notes, merged and checked: /mnt/project-files/picky/2026-11-11-hyper/merged.md.
+Fixed: B1, B2, B4-B13, B15, B18 (Heist one steal), B7 (Polish later taker); W1, W2, W4, W5 (mostly), W9 (partly), W11 (partly), W14, W15, W18 (partly), W19; rulebook R1-R9; glossary copy line.
+Open: B3 (white vs silver dots alike, look call), B14 (details view clips card text), B16 (Place/Recruit tabs come and go), B17 (Sleep In bubble and cloak tab between seats), W3, W6-W8, W10, W12, W13, W16, W17, W20; Buyout's face too long for a full line 1; Spree's centre panel can overrun when taken. DESIGN D1-D9 sent to the coordinator.
