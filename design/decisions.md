@@ -2120,3 +2120,4 @@ Cory’s additional batch: Chorus excludes the minion placed on itself; Copy Pre
 - 2026-11-11 (Claude, gut call, over 2 days) **Wallflower and a copied Sweet Talk**: moot, Sweet Talk left the wheel today (Buyout). If it returns it follows Cory's Polish call: only the +3 doubles, not the silver turned into colors.
 - 2026-11-11 (Claude, closing a stale pick) **Emoji members 1-3 pick**: already answered by Cory Nov 8 ("remove emoji memebrs option for now"; code kept, option hidden). Nothing to build.
 - 2026-11-11 (Claude, gut call, over 2 days) **Copy game button at the end**: no. The menu already has **Copy game record** and **Save game**; a third button adds nothing.
+- 2026-11-11 10:42am Eastern · Flaunt loses its condition: "+1 of each other color per 3 silver you hold, up to 3 of each. +1 silver." (Cory: "lets remove the \"if you hold the most\"").
