@@ -15,7 +15,7 @@
 // and timers (no React state). A click or Space skips the rest of a chain to its end (skipChain). Every duration comes
 // from src/v4/motion.js at the viewer's speed. A state without an effect stream (an online guest, a catch-up) falls
 // back to gains.js, which reads the change of state.
-import { MO, RIVAL, SPEEDS, flightMs, coinFlightMs, coinScale, nextBeatAt, speedScale, streamGap, slowed } from '../motion.js';
+import { MO, RIVAL, RIVAL_RECRUIT, SPEEDS, flightMs, coinFlightMs, coinScale, nextBeatAt, speedScale, streamGap, slowed } from '../motion.js';
 import { playerColor, roman } from '../format.js';
 import { play } from '../sound.js';
 import { gainsBetween } from './gains.js';
@@ -325,7 +325,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   // "nothing travels from my buy to P4's seat")
   const mover = before.pending ? before.pending.player : null;
   // a rival's step in a round plays at RIVAL (motion.js), its beats overlapping; `keep` holds the spans of its recruit
-  // beats, which keep their full timing
+  // beats (at RIVAL_RECRUIT) and its steal and swap beats (full timing), each [start, end, rate]
   const rival = mover != null && !mine.includes(mover) && sameRound && before.round >= 1;
   // a rival's turn told on the story card: no space card, no member bubbles; the space lights and the coins fly from it
   // every turn is told on the story card or the strip's live row (Cory, Nov 6: "the card should basically be a mini log"),
@@ -469,8 +469,13 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     }
     // a recruit keeps full time on a rival's step; a follower buy plays at the rival's pace too (Cory, Oct 28) but
     // still lands in full before anything else moves
-    const kept = isRecruit || c.kind === 'buy';
-    if (rival && isRecruit) keep.push([s, Math.max(next, end)]);
+    // a rival's steal or swap (members trading hands, with a rival or the shop) plays at full timing and lands in full
+    // (Cory, Nov 10: "1 yes but recruits should be slightly sped up": a steal of 3 colors was over in 1 s)
+    const isShop0 = p => p && p.kind === 'shop';
+    const full = rival && !isRecruit && (m.takes.length > 0 || m.cards.some(e => e.type === 'member-move')
+      || (m.cards.some(e => e.type === 'release' && isShop0(e.to)) && m.cards.some(e => e.type === 'recruit' && isShop0(e.from))));
+    const kept = isRecruit || c.kind === 'buy' || full;
+    if (rival && isRecruit) keep.push([s, Math.max(next, end), RIVAL_RECRUIT]);
     // everything else in the beat, in order: what was paid, what was taken, given, gained, the cards, the followers
     let cur = Math.max(s, next === s ? s : next);
     // a release (M8): the member drops to the pile first; its refund leaves when the card is 40% along
@@ -576,6 +581,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     // Each named cause gets a clear landing before the next source enters. Color fans within a cause stay together.
     // A rival's beats overlap instead: the next starts at this one's hand-off (its last piece two-thirds along, grammar
     // §5), except after a recruit or a follower buy, which lands in full before anything else moves.
+    if (full) keep.push([s, Math.max(cur, end), 1]);
     t = rival && !kept ? Math.max(t, cur) : Math.max(t, cur, end);
   }
   for (const pid of [...artPicks.keys()]) { setup = true; flyArt(0, pid); }
@@ -595,7 +601,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
   }
   // a rival's step: its timeline runs at RIVAL outside its recruit beats (rivalClock), and its closing
   // breath too when it has neither
-  const pace = rival && end ? (keep.length ? 1 : RIVAL) : 1;
+  const pace = rival && end ? (keep.length ? Math.max(...keep.map(k => k[2])) : RIVAL) : 1;
   if (rival && end) {
     const W = rivalClock(keep);
     for (const a of atoms) {
@@ -633,19 +639,20 @@ let chainBehind = false;
 export const noteBehind = b => { chainBehind = !!b; };
 const FIT_MARGIN = 600;
 
-/** A rival step's clock: time runs at RIVAL, except inside the kept spans (a recruit's beat), where it
- *  runs at full speed. Maps a time on the plan to its time on screen (whole ms, never out of order). */
+/** A rival step's clock: time runs at RIVAL, except inside the kept spans, where it runs at the span's rate (a
+ *  recruit's beat at RIVAL_RECRUIT, a steal or swap at full speed). Maps a time on the plan to its time on screen
+ *  (whole ms, never out of order). Where spans overlap, the earlier one's rate holds. */
 function rivalClock(keep) {
   const spans = [];
-  for (const [a, b] of [...keep].sort((x, y) => x[0] - y[0])) {
-    if (!(b > a)) continue;
+  for (const [a0, b, rate = 1] of [...keep].sort((x, y) => x[0] - y[0])) {
     const last = spans[spans.length - 1];
-    if (last && a <= last[1]) last[1] = Math.max(last[1], b); else spans.push([a, b]);
+    const a = last ? Math.max(a0, last[1]) : a0;
+    if (b > a) spans.push([a, b, rate]);
   }
   return x => {
-    let kept = 0;
-    for (const [a, b] of spans) { if (x <= a) break; kept += Math.min(x, b) - a; }
-    return Math.round(RIVAL * x + (1 - RIVAL) * kept);
+    let extra = 0;
+    for (const [a, b, rate] of spans) { if (x <= a) break; extra += (rate - RIVAL) * (Math.min(x, b) - a); }
+    return Math.round(RIVAL * x + extra);
   };
 }
 

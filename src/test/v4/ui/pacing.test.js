@@ -8,7 +8,7 @@ import { describe, it, expect } from 'vitest';
 import { createGame, applyMove, chooseBotMove } from '../../../engine/v4/index.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
 import { planChain, holdAfter, foldBuys, stepHoldCap } from '../../../v4/game/director.js';
-import { MO, RIVAL, SPEEDS, motionSpeed, setMotionSpeed } from '../../../v4/motion.js';
+import { MO, RIVAL, RIVAL_RECRUIT, SPEEDS, motionSpeed, setMotionSpeed } from '../../../v4/motion.js';
 
 const pct = (xs, p) => { const s = [...xs].sort((a, b) => a - b); return s.length ? s[Math.min(s.length - 1, Math.floor(s.length * p))] : NaN; };
 
@@ -152,13 +152,15 @@ describe('a rival\'s step plays quicker than your own (RIVAL)', () => {
           const buys = next.effects.some(e => e.cause && e.cause.kind === 'recruit' && e.type === 'recruit');
           if (rival.total && own.total) {
             if (!buys) {
-              expect(rival.pace).toBe(RIVAL);
+              // (a rival's steal or swap keeps full timing: Cory, Nov 10, "1 yes but recruits should be slightly sped up")
+              expect([RIVAL, 1]).toContain(rival.pace);
               // (a placement shows differently for you and a rival, a stamp against a flight and a read: compare the rest)
-              if (s.pending.kind !== 'place') { plainRival += rival.total; plainOwn += own.total; plain++; }
+              if (s.pending.kind !== 'place' && rival.pace === RIVAL) { plainRival += rival.total; plainOwn += own.total; plain++; }
               expect(holdAfter(rival, { sameNext: false, rivalStep: true, floor: MO.stepFloor })).toBeGreaterThanOrEqual(Math.round(MO.stepFloor * RIVAL));
             } else {
-              expect(rival.pace).toBe(1);
-              expect(holdAfter(rival, { sameNext: false, rivalStep: true, floor: MO.stepFloor })).toBeGreaterThanOrEqual(MO.stepFloor);
+              // a rival's recruit plays a little quicker than yours, RIVAL_RECRUIT (full when the step also steals or swaps)
+              expect([RIVAL_RECRUIT, 1]).toContain(rival.pace);
+              expect(holdAfter(rival, { sameNext: false, rivalStep: true, floor: MO.stepFloor })).toBeGreaterThanOrEqual(Math.round(MO.stepFloor * rival.pace));
               kept++;
               const rc = rival.atoms.find(a => a.op === 'card'), oc = own.atoms.find(a => a.op === 'card');
               // a dense chain tightens to fit the turn's cap (director.js planChain), and a rival's chain, its other beats at
@@ -166,7 +168,7 @@ describe('a rival\'s step plays quicker than your own (RIVAL)', () => {
               // (and, in a round, the table's hold cap less its margin, director.js FIT_MARGIN)
               const squeezed = Math.max(rival.total, own.total) >= Math.min(Math.round(2400 * SPEEDS.steady), stepHoldCap() - 600) - 1; // a squeezed chain ends exactly at the cap
               // (a rival's recruit told on the story card flies straight from the shop to its seat: Cory, Nov 6, critic pass 3)
-              if (rc && oc) { cards++; for (const f of rc.direct ? ['lift'] : ['lift', 'toHub', 'show', 'fromHub']) if (squeezed) expect(rc[f]).toBeGreaterThanOrEqual(oc[f] - 1); else expect(Math.abs(rc[f] - oc[f])).toBeLessThanOrEqual(1); }
+              if (rc && oc) { cards++; for (const f of rc.direct ? ['lift'] : ['lift', 'toHub', 'show', 'fromHub']) if (squeezed) expect(rc[f]).toBeGreaterThanOrEqual(Math.round(oc[f] * RIVAL_RECRUIT) - 2); else expect(Math.abs(rc[f] - oc[f] * RIVAL_RECRUIT)).toBeLessThanOrEqual(2); }
             }
           }
         }

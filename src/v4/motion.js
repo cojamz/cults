@@ -223,6 +223,9 @@ const TABLE = {
  * hand never read it.
  */
 export const RIVAL = 0.65;
+// a rival's recruit plays a little quicker than full timing; a rival's steal or swap keeps full timing (Cory, Nov 10:
+// "1 yes but recruits should be slightly sped up", on rival steals and swaps playing as slowly as their recruits)
+export const RIVAL_RECRUIT = 0.85;
 /**
  * The gaps between the coins of one gain or payment, and between its colors, never stretch past Steady: at Relaxed the
  * coins still fly at Relaxed's pace, but they leave together as a handful instead of one after the next (Cory, Nov 5:
