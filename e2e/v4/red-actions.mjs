@@ -68,35 +68,35 @@ function scenario(name) {
   if (expected.pending?.kind !== 'buy') throw new Error(`${name}: did not return to buying`);
   return { save, action: `slot:${slot(name === 'copy-promote' ? 'echo' : 'red', action)}`, picks, a, b, pair, expected };
 }
-// Tryout: the shop keeps Banker after its On Recruit pays; Stunt Double (copies the action) is offered too since Nov 4
-// (decisions: Tryout offers members whose On Recruit copies an action, one such per turn).
-function tryoutScenario() {
+// Borrow (Cory, Nov 10, in Tryout's old slot): "Recruit the cheapest shop member, for free. Discard it at round end,
+// before scoring. +1 red." Triplets and Copyist both cost 5, the cheapest, so you pick one on the board; it joins your
+// cult for free and is noted to go at round end.
+function borrowScenario() {
   let s = fixture();
-  s.shop.push(takeCard(s, 'echo.hourglass'));
+  s.shop.push(takeCard(s, 'echo.copyist'));
   s.queue = [0, 0].map(p => ({ t: 'turn', p }));
   s = resume(s);
   s.build = stamp;
   const save = { config: { seats, speed: 'fast' }, state: s, undo: null, savedAt: Date.now() };
-  const action = `slot:${slot('red', 'evenswap')}`;
+  const action = `slot:${slot('red', 'borrow')}`;
   let expected = move(s, action);
-  const banker = uid(expected, 'gold.banker', 'shop'), stunt = uid(expected, 'echo.hourglass', 'shop');
+  const twins = uid(expected, 'red.twins', 'shop'), copyist = uid(expected, 'echo.copyist', 'shop');
   const ids = expected.pending?.options.map(o => o.id) || [];
-  if (!ids.includes(`card:${banker}`)) throw new Error(`tryout: Banker not offered: ${ids}`);
-  if (!ids.includes(`card:${stunt}`)) throw new Error('tryout: Stunt Double not offered');
-  expected = move(expected, `card:${banker}`);
-  if (expected.pending?.kind !== 'buy') throw new Error('tryout: did not return to buying');
+  if (JSON.stringify([...ids].sort()) !== JSON.stringify([`card:${twins}`, `card:${copyist}`].sort())) throw new Error(`borrow: offered ${ids}, want the two cheapest`);
+  expected = move(expected, `card:${twins}`);
+  if (expected.pending?.kind !== 'buy') throw new Error('borrow: did not return to buying');
   const me = expected.players[0], was = s.players[0];
-  if (me.res.red !== was.res.red + 2) throw new Error(`tryout: red ${was.res.red} -> ${me.res.red}`);
-  if (me.res.gold !== was.res.gold + 3) throw new Error(`tryout: gold ${was.res.gold} -> ${me.res.gold}`);
-  if (!expected.shop.includes(banker) || me.members.includes(banker)) throw new Error('tryout: Banker left the shop');
-  if (expected.recruits !== s.recruits || JSON.stringify(me.members) !== JSON.stringify(was.members)) throw new Error('tryout: counted as a recruit');
-  return { save, action, banker, stunt, was, expected };
+  if (me.res.red !== was.res.red + 1) throw new Error(`borrow: red ${was.res.red} -> ${me.res.red}`);
+  if (JSON.stringify(Object.entries(me.res).filter(([r]) => r !== 'red')) !== JSON.stringify(Object.entries(was.res).filter(([r]) => r !== 'red'))) throw new Error('borrow: paid for a free member');
+  if (!me.members.includes(twins) || expected.shop.includes(twins)) throw new Error('borrow: Triplets not recruited');
+  if (!(expected.borrowed || []).some(b => b.uid === twins && b.pid === 0)) throw new Error('borrow: not noted to go at round end');
+  return { save, action, twins, copyist, was, expected };
 }
 const comparable = s => ({ players: s.players.map(p => ({ members: p.members, res: p.res, bonus: p.bonus })), shop: s.shop, cards: s.cards });
 if (process.argv.includes('--fixtures-only')) {
-  // (rival-swap went with Even Swap: Tryout took its space in the round I rework, Cory Oct 27)
+  // (rival-swap went with Even Swap: Tryout took its space in the round I rework, Cory Oct 27; Borrow took Tryout's Nov 10)
   for (const name of ['promote', 'copy-promote']) { scenario(name); console.log(`${name}: fixture resolves to buying.`); }
-  tryoutScenario(); console.log('tryout: Banker and Stunt Double offered; +2 red, +3 gold, Banker stays in the shop, no recruit.');
+  borrowScenario(); console.log('borrow: the two cheapest offered; Triplets recruited free, +1 red, noted for round end.');
   process.exit(0);
 }
 const browser = await launchBrowser({ executablePath: browserPath });
@@ -143,10 +143,10 @@ try {
     }
     {
       const ctx = await browser.newContext(options);
-      const page = await ctx.newPage(); currentPage = page; currentTag = `${tag}-tryout`;
+      const page = await ctx.newPage(); currentPage = page; currentTag = `${tag}-borrow`;
       page.setDefaultTimeout(10000);
       const errors = []; page.on('pageerror', e => errors.push(e.message));
-      const test = tryoutScenario();
+      const test = borrowScenario();
       await seedSave(page, test.save);
       await page.goto(`${base}/?intro=0&botDelay=50`);
       await page.locator('[data-home="resume"]').click();
@@ -157,21 +157,21 @@ try {
       await tapOrClick(live(test.action).first());
       const place = page.getByRole('button', { name: 'Place here', exact: true });
       if (await place.isVisible()) await place.click();
-      const pick = live(`card:${test.banker}`).first();
+      const pick = live(`card:${test.twins}`).first();
       await pick.waitFor();
-      if (!(await live(`card:${test.stunt}`).count())) throw new Error(`${tag}: Tryout doesn't offer Stunt Double`);
-      await page.screenshot({ path: `${out}/${tag}-tryout-choice.png` });
+      if (!(await live(`card:${test.copyist}`).count())) throw new Error(`${tag}: Borrow doesn't offer Copyist (tied cheapest)`);
+      await page.screenshot({ path: `${out}/${tag}-borrow-choice.png` });
       await tapOrClick(pick);
       // on touch the tap pins the card's sheet; its button makes the pick
-      if (tag === 'phone') await page.locator(`[data-recruit="${test.banker}"]`).click();
+      if (tag === 'phone') await page.locator(`[data-recruit="${test.twins}"]`).click();
       await page.waitForFunction(({ want, recruits }) => {
         try { const s = JSON.parse(localStorage.getItem('patrons.v4.local')).state;
           return s.pending?.kind === 'buy' && s.recruits === recruits && JSON.stringify({ players: s.players.map(p => ({ members: p.members, res: p.res, bonus: p.bonus })), shop: s.shop, cards: s.cards }) === JSON.stringify(want);
         } catch { return false; }
       }, { want: comparable(test.expected), recruits: test.expected.recruits }, { timeout: 15000 });
       await page.locator('.app.game[data-phase="buy"]:not([data-animating])').waitFor({ timeout: 15000 });
-      await page.screenshot({ path: `${out}/${tag}-tryout-settled.png` });
-      console.log(`${tag}: tryout; Banker and Stunt Double offered, +2 red, Banker's +3 gold, Banker still in the shop, no recruit.`);
+      await page.screenshot({ path: `${out}/${tag}-borrow-settled.png` });
+      console.log(`${tag}: borrow; the two cheapest offered, Triplets recruited free, +1 red, nothing paid.`);
       if (errors.length) throw new Error(`${tag}: ${errors.join('; ')}`);
       await ctx.close();
     }

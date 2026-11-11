@@ -837,6 +837,14 @@ const landSubs = new Set();
 export const onChainLanded = fn => { landSubs.add(fn); return () => landSubs.delete(fn); };
 /** How much of the chain's queue is still to play, on its own clock (0 when only landings and the settle are left). */
 export const chainLeft = () => (chain.queue.length ? Math.max(0, chain.queue[chain.queue.length - 1].at - chain.clock) : 0);
+/** How much later than planned the latest step's show runs on the wall clock (0 when on time): the time it waited for
+ *  the step before it to hand off, plus the time a frozen page stretched it (tick: a late wake stretches the show, and
+ *  a chain's first wake after a freeze starts its clock there). The table's hold cap for the step adds this. */
+export const chainStepLate = () => {
+  if (!chainRunning() || chain.stepWall == null) return 0;
+  const stretched = chain.last == null ? 0 : (chain.last - chain.stepWall) - (chain.clock - chain.stepClock);
+  return Math.max(0, chain.stepLate || 0) + Math.max(0, stretched);
+};
 export const chainRunning = () => chain.queue.length > 0 || chain.flying > 0 || !!chain.draining;
 /** For a stuck-table report (gates): where the chain stands. */
 export const chainState = () => ({ queue: chain.queue.length, flying: chain.flying, draining: !!chain.draining, motion: motionPending(), stage: stageBusy(), items: stageItems().map(it => ({ id: it.id, kind: it.kind, recruit: !!it.recruit, leaving: !!it.leaving, lingering: !!it.lingering, chain: it.chain, out: it.out })), clock: Math.round(chain.clock || 0) });
@@ -1279,6 +1287,8 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
   // hand-off: the beats already playing finish first (grammar S3, §5)
   const base = chainRunning() ? Math.max(chain.clock, chain.handoffAt || 0) : chain.clock;
   chain.handoffAt = base + (plan.handoff || plan.total);
+  chain.stepLate = Math.max(0, base - chain.clock);
+  chain.stepWall = performance.now(); chain.stepClock = chain.clock;
   // the banner's lines wait for these (GameScreen useReveal): each beat's start on the wall clock
   const wall = Date.now() + Math.max(0, base - chain.clock);
   noteBeats((plan.beats || []).map(x => wall + x), plan.beatKinds || []);
@@ -1753,7 +1763,9 @@ function skipStamp(root, pid, dur, why = null) {
   const r = seat.getBoundingClientRect();
   if (!r.width) return;
   const life = dur + MO.lingerDelta / 2;
-  seat.classList.add('turn-skipped');
+  // an attribute React never writes, so the dim survives the seat re-rendering under it (your own seat re-renders as
+  // your turn passes, which wiped a class added here: the dim never showed on your own skipped turn)
+  seat.dataset.turnSkipped = '1';
   seat.style.setProperty('--sk', `${life}ms`);
   const b = document.createElement('b');
   b.className = 'skip-tag ghost-layer';
@@ -1766,7 +1778,7 @@ function skipStamp(root, pid, dur, why = null) {
   document.body.appendChild(b);
   const bw = b.offsetWidth;
   if (bw) b.style.left = `${Math.round(r.left + 14 + bw / 2)}px`;
-  setTimeout(() => { b.remove(); seat.classList.remove('turn-skipped'); }, life + 50);
+  setTimeout(() => { b.remove(); delete seat.dataset.turnSkipped; }, life + 50);
 }
 
 /** A member or cloak on its seat says "this one": a little jiggle and a warm glow (Cory, Nov 6). */

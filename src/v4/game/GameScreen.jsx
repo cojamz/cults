@@ -61,7 +61,7 @@ import { Rich } from './Rich.jsx';
 import { BannerLine, joinGoesLast, installTuck } from './Banner.jsx';
 import HowToPlay from '../HowToPlay.jsx';
 import { motionOK, snapshotShop, clearFlights, snapshotMinions, flyMinionsHome, flyToken, flyGains, snapshotChips, snapshotArtifacts } from './flight.js';
-import { playChain, planChain, holdAfter, holdCap, stepHoldCap, installChainSkip, noteBehind, skipChain, chainLeft, onChainSkip, onChainEnd, onChainLanded, chainRunning, chainState, noteTable, foldBuys, foldPicks, foldWait, notePick, spotSeats } from './director.js';
+import { playChain, planChain, holdAfter, holdCap, stepHoldCap, installChainSkip, noteBehind, skipChain, chainLeft, chainStepLate, onChainSkip, onChainEnd, onChainLanded, chainRunning, chainState, noteTable, foldBuys, foldPicks, foldWait, notePick, spotSeats } from './director.js';
 import { soundOn, onSound, setSound, soundVolume, onVolume, setVolume } from '../sound.js';
 import { MO, BOT, SPEEDS, SPEED_NAMES, motionSpeed, setMotionSpeed, onMotionSpeed, speedScale, slowed } from '../motion.js';
 import { PERF_ON } from '../perf.js';
@@ -335,9 +335,14 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
     // rest jumps to its end: a jump at the cap itself mostly cut the member card's way home and the last coins' flight
     // (Cory, Oct 28: "often seems like half the animation is skipped")
     // (a page that froze mid-show is behind its own clock: beats a moment from playing get that moment, once more)
-    let more = 1;
+    // (a show that started late, behind the one before it, or that a frozen page stretched, gets that time too: the cap
+    // counted from the commit cut a rival's recruit 2s short of its end after a 3s freeze at its first flight; landing
+    // gate, Nov 11)
+    let more = 1, given = 0;
     const jump = () => {
       if (waiting.current !== w || !chainRunning()) return;
+      const owed = chainStepLate() - given;
+      if (owed > 50) { given += owed; capTimer.current = setTimeout(jump, owed); return; }
       const left = chainLeft();
       if (left > 0 && left < 1500 && more-- > 0) { capTimer.current = setTimeout(jump, left + 300); return; }
       skipChain();
@@ -854,6 +859,10 @@ function TurnCard({ card, root, state, hub = false, keep = false, you = -1 }) {
       // a long turn rises to stay whole on screen, and one taller than the screen sets its lines a size smaller
       // (picky bot, Nov 7: an Echo turn that copied three times ran past the screen's edge)
       if (!el.classList.contains('tc-tight') && el.offsetHeight * z > innerHeight - 24) el.classList.add('tc-tight'); // (kept for the turn: no flicker)
+      // still taller than the screen at the smaller size (Greatest Hits copying a whole color, Nov 10): the card stops at
+      // the screen's edge and its lines scroll inside it, so it never runs off the screen
+      el.style.maxHeight = el.scrollHeight * z > innerHeight - 16 ? px(innerHeight - 16) : '';
+      el.style.overflowY = el.style.maxHeight ? 'auto' : '';
       const h = el.offsetHeight * z;
       // its top stays put as lines are added, so it grows downward like a log being written (Cory, Nov 6: "we should
       // just SEE it get added"), a little above the hub's centre

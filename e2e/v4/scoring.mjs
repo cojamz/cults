@@ -62,7 +62,7 @@ const WATCH = () => {
           if (pid != null) {
             let b = log.bonuses.at(-1);
             if (!b || b.uid !== uid) {
-              b = { uid, pid, name: r.querySelector('.reckon-rule')?.textContent, values: [], verdict: '' };
+              b = { uid, pid, name: r.querySelector('.reckon-rule')?.textContent, phase: r.querySelector('[data-reckon-phase]')?.dataset.reckonPhase, values: [], verdict: '' };
               log.bonuses.push(b);
             }
             const value = Number(document.querySelector(`.lt-seat[data-pid="${pid}"] .cs-total .tv`)?.textContent);
@@ -141,9 +141,22 @@ try {
     const amount = source.def === 'gold.tycoon' ? Math.floor(state.players[0].res.gold / 2) : countMembersOfColor(state, state.players[0], 'echo'); // Chronicler counts its own color, Green (echo), not the old test table's 'green' sphere
     if (!grant || grant.n <= 0 || grant.n !== amount) errors.push(`fixture: ${source.def} should grant ${amount}, engine recorded ${grant?.n}`);
   }
-  if (fs.bonuses.length !== expected.length) errors.push(`showed ${fs.bonuses.length} bonus steps; engine granted ${expected.length}`);
+  // Two kinds of member step follow the contests (Reckoning.jsx reckonSteps): the members that answer the contests
+  // (Cheerleader, Cheerleaders, Victors, Sore Loser: "After contests", Cory Nov 5: "round ends, contests, members."), then the
+  // Game End members. This gate's fixture is about Game End; the After contests steps the dealt table brings are checked
+  // against the engine's log lines, and must all come before the first Game End step.
+  const gameEnd = fs.bonuses.filter(b => b.phase === 'bonus'), afters = fs.bonuses.filter(b => b.phase === 'after');
+  if (gameEnd.length + afters.length !== fs.bonuses.length) errors.push(`member steps with no phase: ${JSON.stringify(fs.bonuses.filter(b => b.phase !== 'bonus' && b.phase !== 'after').map(b => b.name))}`);
+  if (fs.bonuses.findIndex(b => b.phase === 'bonus') >= 0 && fs.bonuses.slice(fs.bonuses.findIndex(b => b.phase === 'bonus')).some(b => b.phase === 'after')) errors.push('an After contests step came after a Game End step');
+  for (const b of afters) {
+    const who = b.pid === '0' ? 'P1' : `P${+b.pid + 1}`;
+    const amount = b.verdict.match(/\+(\d+) follower/);
+    const line = amount && new RegExp(`${who}'s ${b.name}: \\+${amount[1]} follower`);
+    if (!line || !state.log.some(l => line.test(l))) errors.push(`${b.name} (P${+b.pid + 1}): After contests step "${b.verdict}" matches no engine log line`);
+  }
+  if (gameEnd.length !== expected.length) errors.push(`showed ${gameEnd.length} Game End steps; engine granted ${expected.length}`);
   for (const g of expected) {
-    const seen = fs.bonuses.filter(b => b.uid === g.uid && b.pid === g.pid);
+    const seen = gameEnd.filter(b => b.uid === g.uid && b.pid === g.pid);
     if (seen.length !== 1) { errors.push(`${g.name}: expected one sourced step, saw ${seen.length}`); continue; }
     const b = seen[0];
     if (b.name !== g.name || !b.verdict.includes(`from ${g.name}`)) errors.push(`${g.name}: missing source name in bonus caption (${b.verdict})`);
@@ -172,7 +185,7 @@ try {
   if (!fs.results.length || fs.resultPops) errors.push('results were missing or replayed scoring pops');
   if (!(await page.locator('[data-play-again]').isEnabled())) errors.push('Play again is unavailable');
   await page.screenshot({ path: `${SHOTS}/s4-final.png` });
-  console.log(`scoring: ${fs.bonuses.length} sourced bonuses after ${state.quadrants.length} contests; final totals ${Object.values(end).map(f => f.table).join(', ')}`);
+  console.log(`scoring: ${fs.bonuses.length} sourced member steps after ${state.quadrants.length} contests; final totals ${Object.values(end).map(f => f.table).join(', ')}`);
   await page.close();
 
   // Skipping mid-bonus settles the current bonus and every unpaid bonus before results.

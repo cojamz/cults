@@ -83,13 +83,20 @@ function checkSphereInvariants(s, prev, ctx, verified, fail = failHard) {
   // every slot owner placed it this round; a player's workers on the board never exceed their placements
   // honest copy chips (Green on the table): when a space's window closes (its taker reaches the buy), what the
   // chip promises a copier never exceeds what the taker actually got from it
+  const theftsAt = (verified.theftsAt ||= new Map());
+  // the theft count when each space's window opened (the move that placed on it), for the chip check below
+  if (s.echo) for (const e of Object.values(s.echo.now || {})) { const k = `${s.round}:${e.seq}`; if (!theftsAt.has(k)) theftsAt.set(k, (prev?.thefts || []).length); }
   if (s.echo && s.pending?.kind === 'buy') {
     const L = s.echo;
     const e = L.open && L.now[L.open];
     if (e && e.p === s.pending.player && !e.echo && !e.redo && !verified.has(`${s.round}:${e.seq}`)) {
       verified.add(`${s.round}:${e.seq}`);
       const p = s.players[e.p];
-      const got = total(p.res) - total(e.before.res[e.p]);
+      // a rival's reaction that steals from the taker inside the window (Light Fingers on the free member the space
+      // recruited) takes from what the taker holds, not from what the space gave: add those thefts back
+      const since = theftsAt.get(`${s.round}:${e.seq}`) ?? 0;
+      const lost = (s.thefts || []).slice(since).filter(t => t.from === e.p && t.kind === 'res').reduce((a, t) => a + t.n, 0);
+      const got = total(p.res) - total(e.before.res[e.p]) + lost;
       const chip = total(e.res);
       if (got < chip) fail(`chip on ${e.name} promises ${chip} resources but its taker netted ${got} (${JSON.stringify(e.res)})`, s, ctx);
       const newMembers = p.members.filter(u => !e.before.members[e.p].includes(u)).length;

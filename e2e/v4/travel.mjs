@@ -7,8 +7,10 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //  (t3) a gift (Kickback): from the space's resource (its color's rim on the wheel, where a space's resources come
 //       from since the wheel-slice rework) to the rival's stack;
 //  (t4) a member taken (Poach): the member flies from the rival's seat to its new chip in yours;
-//  (t5) a ransom paid: from your seat to the rival's stack;
-//  (t6) a member's Use: from the member to your stack.
+//  (t5) a member given to a rival (Swindle's shop member; Shake Down's ransom left the wheel Nov 10): from the shop to
+//       their seat;
+//  (t6) a member's Use: from the member to your stack;
+//  (t7) a member recruited off the wheel (Borrow; Walk-In's draw off the deck left Nov 10): from the shop to your seat.
 // Since the action stage (decisions 2026-10-15 20:30) a path may relay through the wheel's hub: the member steps off
 // its seat (or the piece flies) to the stage, and what it gives flies on from there (from the member's card as it
 // stands on the stage); both legs are checked.
@@ -96,6 +98,7 @@ const RECT = (w) => {
     case 'member': return box(seat(w.pid) && seat(w.pid).querySelector(`.cs-member[data-uids~="${w.uid}"]`));
     case 'crowd': case 'seat': return box(seat(w.pid));
     case 'pile': return box(document.querySelector('.lt-deck .back'));
+    case 'shop': return box(document.querySelector(`.lt-shop .lt-card[data-uid="${w.uid}"]`));
     default: return null;
   }
 };
@@ -171,9 +174,10 @@ async function check(kind, label) {
     // destination, and that last leg is in the air before the destination's number changes
     // (a member on the stage is a wide card: what it gives leaves from its portrait, inside the card it landed as)
     const meet = (a, b) => Math.hypot(a.x1 - b.x0, a.y1 - b.y0) <= 48 || (!!a.box && near(b.x0, b.y0, a.box, 8));
-    // a recruit off the deck (t7) flies its card to the hub, opens there and goes home from the stage: the card must
-    // leave the deck before the member shows in your seat
-    const ok = from.kind === 'pile' ? fl.filter(f => /card-flight/.test(f.cls) && near(f.x0, f.y0, fromR) && f.t < landedAt) : fl.filter(f => near(f.x1, f.y1, toBox) && (f.t <= landedAt + 5 || f.frame <= landedFrame) &&
+    // a member off the shop (t5 Swindle's gift, t7 Borrow) flies its card to the hub, opens there and goes home from the
+    // stage: the card must leave the shop before the member shows in the seat
+    // (a member handed to a rival goes straight from the shop card to their seat: that flight counts as well)
+    const ok = from.kind === 'pile' || from.kind === 'shop' ? fl.filter(f => near(f.x0, f.y0, fromR) && f.t < landedAt && (/card-flight/.test(f.cls) || (from.kind === 'shop' && near(f.x1, f.y1, toBox)))) : fl.filter(f => near(f.x1, f.y1, toBox) && (f.t <= landedAt + 5 || f.frame <= landedFrame) &&
       (near(f.x0, f.y0, fromR) || fl.some(a => a !== f && near(a.x0, a.y0, fromR) && !near(a.x0, a.y0, toBox, 0) && a.t <= f.t + 5 && meet(a, f))));
     console.log(`${label}: ${fl.length} flight(s) after the click, ${ok.length} from the source to the destination; landed ${Math.round(landedAt - clickAt)}ms after the click`);
     if (!fl.length) errors.push(`(${label}) nothing flew: the ${to.kind === 'member' ? 'member' : 'number'} changed with no flight in the air`);
@@ -186,9 +190,9 @@ await check('steal1', 't1 steal, round I');
 await check('steal3', 't2 steal, round III');
 await check('gift', 't3 gift');
 await check('member', 't4 member taken');
-await check('ransom', 't5 ransom paid');
+await check('swindle', 't5 member given to a rival');
 await check('use', 't6 member use');
-await check('walkin', 't7 member off the top of the deck');
+await check('borrow', 't7 member recruited off the wheel');
 
 await browser.close();
 if (server) server.kill();

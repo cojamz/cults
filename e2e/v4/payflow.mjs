@@ -18,6 +18,7 @@ import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { buySave } from './lib/shop-save.mjs';
+import { defById } from '../../src/engine/v4/content/index.js';
 import { seedSave } from './lib/seed.mjs';
 import { applyMove, memberPrice } from '../../src/engine/v4/index.js';
 
@@ -90,9 +91,10 @@ try {
   // (f1) 5 for 5 with exactly 5 in two colors, the rivals holding more of both colors (no lead lost). Was 8 for 8 on the
   // retired 'big' tier; the buys are 1 for 1, 5 for 5 and 10 for 10 since 2026-10-16 (decisions.md).
   await receipt('f1', buySave({ def: null, res: { gold: 3, red: 0, blue: 2, green: 0 }, rivals: { gold: 6, blue: 6 } }).save, '.lt-rates [data-rate="mid"]');
-  // (f2) Prospector at exactly its cost
+  // (f2) Prospector at exactly its cost (read from the card, so a price change doesn't break the gate)
   {
-    const { save, uid } = buySave({ def: 'gold.prospector', res: { gold: 6, red: 0, blue: 0, green: 0 }, rivals: { gold: 7 } });
+    const pd = defById('gold.prospector'), cost = pd.s + pd.w;
+    const { save, uid } = buySave({ def: 'gold.prospector', res: { gold: cost, red: 0, blue: 0, green: 0 }, rivals: { gold: cost + 1 } });
     await receipt('f2', save, `.lt-shop .lt-card[data-uid="${uid}"]`);
   }
   // (f3) 1 for 1 with four colors: several ways, the sheet beside the tile

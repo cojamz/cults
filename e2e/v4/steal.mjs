@@ -5,7 +5,8 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //  (s1) Help Yourself: the card opens by the space, its stacks exactly the engine's options; exactly the same stacks
 //       light on the rival seats (own seat never), every other rival stack is dim and says why on hover; one pick on a
 //       seat and two on the card take them, the counter runs 2 → 1 → 0, a resource flies for each pick, and the right
-//       resources move (they keep their colors, plus the space's +1 magenta: Cory, 2026-10-19). Round I: it steals 3.
+//       resources move (they keep their colors, plus the space's +1 magenta: Cory, Nov 10). It steals 1 per minion you've
+//       placed this round: P1 has two out, so 3.
 //  (s2) Collect Debts: only gold, on the seats and the card; "Take all 3" previews its picks on the card's stacks while
 //       pointed at, and one click takes all 3, biggest pile first (the engine's options, recorded one by one).
 //  ((s3) Redistribute went in the round I rework, Cory Oct 27.)
@@ -20,9 +21,10 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //  (s5) Cover (Sample copies a member's On Recruit since Cory's Oct 28 call, so it asks no pick on the wheel):
 //       exactly the copyable spaces light on the wheel, the caption covers none of them, a lit space's hover says
 //       what the copy gives, and clicking it copies (your resources match the engine's).
-//  (s6) Bury: exactly the offered face-up members light in the shop; no duplicate
+//  (s6) Test Drive (was Bury until Nov 10): exactly the offered face-up members light in the shop; no duplicate
 //       card by the space (feedback #14); clicking a lit shop card sends it.
-//  (s7) Shake Down: the rivals' seats light; a member there opens its card when pointed at, and a click picks the seat.
+//  (s7) Heist (was Shake Down until Nov 10): the rivals' seats light; a member there opens its card when pointed at, and
+//       a click picks the seat.
 // Starts from saved games stopped on each choice (e2e/v4/lib/steal-save.mjs).
 // Server: $V4_URL if set, else its own `npx vite` on a free port from 5390.
 import { chromium } from 'playwright';
@@ -107,9 +109,10 @@ const cardOptions = (page, sel) => page.$$eval(`.gift-card ${sel}[data-option]`,
 const moved = (page, m0) => page.waitForFunction(m => Number(document.querySelector('.app.game').dataset.moves) > m, m0, { timeout: 8000 }).then(() => true, () => false);
 
 try {
-  // (s1) Help Yourself: take 3 (it steals 3 / 4 / 5 by round since the round I rework, Cory Oct 27; round I here)
+  // (s1) Help Yourself: take 3 (it steals 1 per minion you've placed this round, this one included: Cory, Nov 10; P1 has
+  // two minions out already, so this one makes 3)
   {
-    const { ctx, page, save } = await open('help', '.lt-wheel .gift-card');
+    const { ctx, page, save } = await open('help', '.lt-wheel .gift-card', { ownPlaced: 2 });
     const want = expectedLit(save);
     const got = await lit(page);
     if (JSON.stringify(got) !== JSON.stringify(want)) errors.push(`(s1) lit stacks ${got.join(' ')} ≠ the engine's options ${want.join(' ')}`);
@@ -154,8 +157,9 @@ try {
     const after = PICKS.reduce((st, option) => applyMove(st, { player: 0, option }), save.state);
     const counts = { '1:green': 3, '1:gold': 2, '1:blue': 1 };
     for (const r of ['green', 'gold', 'blue', 'magenta']) counts[`0:${r}`] = after.players[0].res[r];
-    // Help Yourself gives no magenta (Cory, Oct 29)
-    if (counts['0:magenta'] !== PILES[0].magenta || counts['0:green'] < PILES[0].green + 1) errors.push(`(s1) the engine's own steal is off: ${JSON.stringify(counts)}`);
+    // Help Yourself gives its +1 magenta again (Cory, Nov 10: "Steal 1 resource per minion you've placed this round, this
+    // one included. +1 magenta."; the Magenta Cloak, when P1 holds it, adds its own +1 on a steal)
+    if (!after.log.includes("P1's Help Yourself: +1 magenta.") || counts['0:magenta'] < PILES[0].magenta + 1 || counts['0:green'] < PILES[0].green + 1) errors.push(`(s1) the engine's own steal is off: ${JSON.stringify(counts)}`);
     await expectCounts(page, 's1', counts);
     const left = await seenLeft(page);
     // from the first take on (never the count again at the start); the closing "0" can be missed on a loaded box
@@ -255,15 +259,15 @@ try {
     await expectCounts(page, 's5', mine);
     await ctx.close();
   }
-  // (s6) Bury: pick from the shop strip. The shop is the only surface for a space's shop pick since feedback #14
-  // (2026-10-17: "why also have the pop up window"; the duplicate card by the space went)
+  // (s6) Test Drive (Bury's shop pick until Nov 10): pick from the shop strip. The shop is the only surface for a space's
+  // shop pick since feedback #14 (2026-10-17: "why also have the pop up window"; the duplicate card by the space went)
   {
-    const { ctx, page, save } = await open('bury', '.lt-shop .card.lit');
+    const { ctx, page, save } = await open('testdrive', '.lt-shop .card.lit');
     const want = save.state.pending.options.filter(o => o.target && Number.isInteger(o.target.uid)).map(o => String(o.target.uid)).sort();
     const got = await page.$$eval('.lt-shop .card.lit[data-uid]', els => els.map(e => e.dataset.uid).sort());
     if (JSON.stringify(got) !== JSON.stringify(want)) errors.push(`(s6) lit shop cards ${got.join(' ')} ≠ the engine's ${want.join(' ')}`);
-    if (await page.$('.gift-card[data-gift="recruit"]')) errors.push('(s6) Bury opens a duplicate card by the space (#14)');
-    await page.screenshot({ path: `${SHOTS}/s6-bury.png` });
+    if (await page.$('.gift-card[data-gift="recruit"]')) errors.push('(s6) Test Drive opens a duplicate card by the space (#14)');
+    await page.screenshot({ path: `${SHOTS}/s6-testdrive.png` });
     await click(page, `.lt-shop .card.lit[data-uid="${want[0]}"]`);
     await page.waitForFunction(m => Number(document.querySelector('.app.game').dataset.moves) > m, save.state.moves, { timeout: 8000 }).catch(() => errors.push('(s6) clicking the lit card did nothing'));
     await ctx.close();
@@ -336,10 +340,11 @@ try {
     if (rec && rec !== o.id) errors.push(`(t1) recorded ${rec}, clicked ${o.id}`);
     await ctx.close();
   }
-  // (s7) Shake Down: choose a rival, on their seat; a member on a lit seat still opens its card when pointed at
-  //      (Cory, Oct 29: "can't hover over members in shake down"), and clicking it picks that seat
+  // (s7) Heist (Shake Down's rival pick until Nov 10): choose a rival to steal a follower from, on their seat; a member on
+  //      a lit seat still opens its card when pointed at (Cory, Oct 29: "can't hover over members in shake down"), and
+  //      clicking it picks that seat
   {
-    const { ctx, page, save } = await open('shakedown', '.prompt.choice.seat-pick');
+    const { ctx, page, save } = await open('heist', '.prompt.choice.seat-pick');
     const btn = await page.$('.lt-cult-seat.pick-seat button.cs-pick-seat');
     const id = btn && await btn.getAttribute('data-option');
     if (!btn) errors.push('(s7) no rival seat is lit to pick');
@@ -353,7 +358,7 @@ try {
       const name = await fig.evaluate(e => e.closest('.cs-member').querySelector('.fig').getAttribute('aria-label') || '').then(l => l.split(':')[0]);
       const shown = await page.waitForFunction(n => [...document.querySelectorAll('.popover')].some(e => e.getBoundingClientRect().width > 100 && e.textContent.includes(n)), name, { timeout: 3000 }).then(() => true, () => false);
       if (!shown) errors.push('(s7) pointing at a member on a lit seat opened no card');
-      await page.screenshot({ path: `${SHOTS}/s7-shakedown.png` });
+      await page.screenshot({ path: `${SHOTS}/s7-heist.png` });
       await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
       await page.waitForFunction(m => Number(document.querySelector('.app.game').dataset.moves) > m, save.state.moves, { timeout: 8000 }).catch(() => errors.push('(s7) clicking a member on a lit seat did not pick that rival'));
       const rec = await page.evaluate(() => { try { return (JSON.parse(window.patronsRecord()).moves || []).slice(-1)[0]?.[1]; } catch { return null; } });
@@ -368,4 +373,4 @@ try {
   if (server) server.kill();
 }
 if (errors.length) { console.error(`board-picker gate: ${errors.length} problem(s)\n - ${errors.join('\n - ')}`); process.exit(1); }
-console.log('board-picker gate: ok (Help Yourself, Collect Debts and Take all, Kickback and Escape, Cover, Bury, Hand-pick, Straggler, Shake Down)');
+console.log('board-picker gate: ok (Help Yourself, Collect Debts and Take all, Kickback and Escape, Cover, Test Drive, Hand-pick, Straggler, Heist)');

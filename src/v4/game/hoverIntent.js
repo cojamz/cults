@@ -4,12 +4,12 @@
 // is heading for stays. "Heading for" means inside the triangle from where the pointer left to the card's near edge
 // (or on the card), for a short while: the menu-aim rule. One aim at a time; nothing else in the app is touched.
 let aim = null; // { el, x, y, until }
-let pt = null, prev = null;
+let pt = null, prev = null, movedAt = 0;
 // where the pointer is, fresh before any enter/leave handler runs (boundary events come before the move itself), and
 // where it was a step before: a leave reports the new spot (already on whatever is next), so the crossing starts from
 // the last spot inside what it left
 if (typeof addEventListener === 'function') {
-  const at = e => { if (pt && (pt.x !== e.clientX || pt.y !== e.clientY)) prev = pt; pt = { x: e.clientX, y: e.clientY }; };
+  const at = e => { if (pt && (pt.x !== e.clientX || pt.y !== e.clientY)) { prev = pt; movedAt = performance.now(); } pt = { x: e.clientX, y: e.clientY }; };
   for (const t of ['pointerover', 'pointerout', 'pointermove']) addEventListener(t, at, { passive: true, capture: true });
 }
 
@@ -17,7 +17,8 @@ export const AIM_MS = 700; // how long the pointer may rest on the way (outside 
 const PAD = 12;
 // right after leaving, the way may wander (w3b #47: down out of the member first, then over to its card): for this long
 // the card holds whatever route is taken, and the way is then measured from wherever the pointer has got to
-const GRACE_MS = 300, GRACE_PX = 48; // (only near where it left: a pointer that has gone further is going elsewhere)
+const GRACE_MS = 300, GRACE_PX = 48;
+const REST_MS = 250; // a pointer still this long on a neighbour has stopped there (see heading) // (only near where it left: a pointer that has gone further is going elsewhere)
 
 /** The pointer just left toward `el` (the open card), from `from` (default: its last spot inside what it left). */
 export function aimAt(el, from = prev || pt) {
@@ -48,6 +49,10 @@ export function heading(p = pt, { noGrace = false } = {}) {
   // they often stand over a neighbour's name)
   const r = controlsRect(aim.el);
   if (!r) return false;
+  // asked for a neighbour (noGrace: may the thing under the pointer open its own card?), a pointer that has stopped on
+  // it isn't on its way anywhere: after REST_MS still, the neighbour opens (w4a #36: one move along the row opens the
+  // next member's card; the way to a card above-right covers the next member, so the aim held it shut for all of AIM_MS)
+  if (noGrace && now - movedAt > REST_MS && !(p.x >= r.left - PAD && p.x <= r.right + PAD && p.y >= r.top - PAD && p.y <= r.bottom + PAD)) return false;
   if (!noGrace && now < aim.grace && Math.hypot(p.x - aim.ox, p.y - aim.oy) <= GRACE_PX) { aim.x = p.x; aim.y = p.y; return true; }
   if (p.x >= r.left - PAD && p.x <= r.right + PAD && p.y >= r.top - PAD && p.y <= r.bottom + PAD) return true;
   if (Math.hypot(p.x - aim.x, p.y - aim.y) <= PAD) return true; // still where it left

@@ -10,7 +10,8 @@ const base = process.env.V4_URL || 'http://localhost:5335', out = process.env.V4
 const speed = process.env.SPEED || 'steady';
 mkdirSync(out, { recursive: true });
 const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];
-const s = createGame({ seats, quadrants: ['red', 'purple', 'echo', 'market'], seed: 11 });
+// seed 1: P3 and P4 pick before you and P2 after (the last picker is handed the one cloak left, so you must not be last)
+const s = createGame({ seats, quadrants: ['red', 'purple', 'echo', 'market'], seed: 1 });
 s.build = buildStamp();
 const browser = await launchBrowser({ executablePath: browserPath });
 let fail = 0;

@@ -774,6 +774,8 @@ export const cardVerb = pending => {
   if (/to the discard pile/i.test(q)) return 'Discard';
   if (/^Peek:/.test(q)) return /on top/.test(q) ? 'Put on top' : 'Put next';
   if (/^Tryout:/.test(q)) return 'Use On Recruit'; // Tryout borrows the effect; the card stays in the shop
+  if (/^Test Drive:/.test(q)) return 'Discard and use'; // Nov 10: "Discard a shop member. Use its effect now."
+  if (/^Swindle: give/.test(q)) return 'Give'; // Nov 10: the shop member goes to the rival you stole from
   return 'Recruit';
 };
 

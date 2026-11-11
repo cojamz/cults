@@ -23,8 +23,8 @@ describe('Magenta action wording and one-stack theft', () => {
       expect(shortEffect('thieves', { key: 'pickpocket' }, round)).toBe('steal 1 per minion you placed this round; +1 magenta');
     }
     const stash = panelText('thieves', { key: 'tipoff' }, 1);
-    expect(stash.main).toBe('+2 magenta'); // Gather's shape (Oct 31)
-    expect(stash.second).toBe('+1 @f if you recruit a member');
+    expect(stash.main).toBe('+3 magenta'); // a plain stand-in (Cory, Nov 10 10:42pm)
+    expect(stash.second).toBeNull();
     expect(panelText('thieves', { key: 'ransom' }, 2).verb).toContain(`costing ${6 + MORE} or less`);
     expect(panelText('thieves', { key: 'rob' }, 2).verb).toBe('Steal 4 @f and 4 resources'); // Heist, Nov 10 3:46pm
     expect(pipEffect('thieves', { key: 'rob' }, 2)).toBe('steal 4 followers and 4 resources');

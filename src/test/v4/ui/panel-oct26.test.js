@@ -10,6 +10,10 @@ describe('panel Oct 26', () => {
     expect(cardVerb({ kind: 'buy', prompt: 'P1: recruit a member or followers, or pass' })).toBe('Recruit');
     expect(cardVerb(null)).toBe('Recruit');
   });
+  it('Nov 10 spaces: Test Drive discards and uses, Swindle gives the rival the member', () => {
+    expect(cardVerb({ kind: 'choose', prompt: 'Test Drive: discard which shop member and use its effect?' })).toBe('Discard and use');
+    expect(cardVerb({ kind: 'choose', prompt: 'Swindle: give Bo which shop member in its place?' })).toBe('Give');
+  });
 });
 
 import { lossWords } from '../../../v4/game/GameScreen.jsx';

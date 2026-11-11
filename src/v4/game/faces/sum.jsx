@@ -101,7 +101,7 @@ const SUMS = {
   'market.spree': () => [TAGT(), X(3), DOT, R('blue', '+3')], //                                       [ ] ×3 · +3■
   // thieves (magenta): take
   'thieves.pickpocket': ({ r }) => [HOOD(), ARROW, R('any', r), DOT, FOL(plus(r))],
-  'thieves.tipoff': () => [HOOD(), ARROW, R('any', 1), PER, WORD('occupied magenta action'), MIN(), CUT, DOT, R('magenta', '+1')],
+  'thieves.tipoff': () => [R('magenta', '+3')],
   'thieves.hideout': ({ r }) => [HOOD(), ARROW, R('any', r), DOT, SAFE, CUT, DOT, R('magenta', '+1')],
   'thieves.rob': () => [HOOD(), R('any', '½'), ARROW, R('any'), CUT, DOT, R('magenta', '+1')],
   'thieves.ransom': () => [MEM({ rival: true }), ARROW, R('any'), WORD('or'), MEM(), CUT, DOT, R('magenta', '+1')],

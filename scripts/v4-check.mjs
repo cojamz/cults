@@ -256,7 +256,10 @@ if (wantE2E && existsSync(join(root, 'e2e/v4'))) {
       // shop-names: 440s here, stalled at 650s on GitHub three runs running (Nov 3)
       'shop-names.mjs': 180, 'turndock.mjs': 130,
       // motion plays round I twice (Steady, then Relaxed) after its own checks: 436s alone on this box (stalled at 360s, Nov 3)
-      'motion.mjs': 110 };
+      'motion.mjs': 110,
+      // cardframes watches CARD_GAMES=2 games for up to CARD_MIN=4 minutes each by design: 8 minutes of its own, so its
+      // stall limit sits above that (5 x 110 s), as tables' does (stalled at 360s on every full run since it came in)
+      'cardframes.mjs': 110 };
     const order = (a, b) => (LONG[b] || 30) - (LONG[a] || 30) || a.localeCompare(b);
     const one = async (f, weight) => {
       const tok = await acquire('e2e', { weight, what: `${what}: ${f}`, kind, quietMs: 60000, log: m => console.log(`[${f}] ${m}`) });

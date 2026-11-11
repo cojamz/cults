@@ -1,8 +1,9 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E: Party Crasher (was Squatter) onto a rival's Greatest Hits does it for you (Cory's v0.9.1 playtest, Oct 27:
 // "using squatter on greatest hits didnt seem to work… players actions werent copied"). Round III, you took two
-// spaces, a rival took Greatest Hits; you join it on the wheel. Greatest Hits copies On Recruits since Nov 1, so the
-// joiner copies its own Treasurer's On Recruit (Twins has none).
+// spaces, a rival took Greatest Hits; you join it on the wheel. Since Nov 10 Greatest Hits reads "Choose a color other
+// than green. Copy every action with a minion on its spaces. +1 green.", so the joiner picks Gold and copies the Golden
+// Years it took.
 // Server: $V4_URL (a built preview). Shots: $V4_SHOTS/squat-hits.
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
@@ -32,7 +33,7 @@ function squatSave(stamp) {
   s.players[0].crashNext = true; // Party Crasher already used: the next minion may join (Once per game since Oct 28)
   s.queue = [0, 1, 0, 0, 1].map(p => ({ t: 'turn', p }));
   s = resume(s);
-  const mv = (p, option) => { s = applyMove(s, { player: p, option }); while (s.pending?.player === p && s.pending.kind === 'buy') s = applyMove(s, { player: p, option: 'pass' }); };
+  const mv = (p, option) => { s = applyMove(s, { player: p, option }); while (s.pending?.player === p && s.pending.kind !== 'place') s = applyMove(s, { player: p, option: s.pending.kind === 'buy' ? 'pass' : s.pending.options[0].id }); };
   mv(0, `slot:${key('gold', 'rush')}`);
   mv(1, `slot:${GH}`);
   mv(0, `slot:${key('echo', 'chant')}`);
@@ -84,7 +85,9 @@ try {
   const end = await page.evaluate(() => JSON.parse(localStorage.getItem('patrons.v4.local')).state);
   const log = end.log.slice(end.log.findIndex(l => /P1 joined P2 on Greatest Hits/.test(l)));
   console.log(JSON.stringify(log.slice(0, 10)), JSON.stringify(end.players[0].res), JSON.stringify(before));
-  if (!log.includes("P1 copies Treasurer's On Recruit.")) fails.push('no "P1 copies Treasurer\'s On Recruit." after joining Greatest Hits');
+  if (!log.includes("P1's Greatest Hits copies every action on Gold's spaces.")) fails.push('no "P1\'s Greatest Hits copies every action on Gold\'s spaces." after joining Greatest Hits');
+  if (!log.some(l => l.startsWith('P1 copied Golden Years'))) fails.push('no "P1 copied Golden Years" after joining Greatest Hits');
+  if (!(end.players[0].res.gold > before.gold)) fails.push(`the copy gave no gold (${before.gold} -> ${end.players[0].res.gold})`);
   if (errors.length) fails.push(errors.join(' | '));
   await ctx.close();
 } finally { await browser.close(); }

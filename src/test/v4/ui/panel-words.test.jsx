@@ -50,7 +50,7 @@ describe('panel words (w3)', () => {
       expect(panelText('echo', { key: 'chant' }, r).note).toBeNull();
     }
     // every space that grows carries its schedule (W18: only some did, and readers took the rest as flat)
-    for (const [qid, key] of [['red', 'turnout'], ['thieves', 'tipoff'], ['trading', 'stipend'], ['market', 'bargain'], ['purple', 'skip'], ['purple', 'holdup'], ['purple', 'again'], ['yellow', 'dilute']]) {
+    for (const [qid, key] of [['red', 'turnout'], ['trading', 'stipend'], ['market', 'bargain'], ['purple', 'skip'], ['purple', 'holdup'], ['purple', 'again'], ['yellow', 'dilute']]) {
       expect(lines(panelText(qid, { key }, 2)).join(' '), `${qid}.${key}`).toMatch(/I\u00a0\+\d+\u00a0· II\u00a0\+\d+\u00a0· III\u00a0\+\d+/);
     }
   });

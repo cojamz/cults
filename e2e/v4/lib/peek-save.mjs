@@ -6,11 +6,27 @@ import { createGame, applyMove, chooseBotMove } from '../../../src/engine/v4/ind
 import { resume } from '../../../src/engine/v4/core.js';
 import { seededRandom } from '../../../src/engine/v4/rng.js';
 import { buildStamp } from './stamp.mjs';
+import { quadrant } from '../../../src/engine/v4/content/index.js';
+import { POOL_SPACES } from '../../../src/engine/v4/content/pool.js';
+import { wrapInPlace } from '../../../src/engine/v4/content/echo.js';
+
+// Peek left the wheel on Nov 10 (Markdown took its slot). It stays in the code for old saves, and its ordering and
+// recruit screens still run from a save already at Peek's choice, so this save takes it with Peek put back in
+// Markdown's slot for the setup only (the test-only swap of src/test/engine/v4/helpers.js useRetired), then restores.
+function withPeek(fn) {
+  const acts = quadrant('market').actions, i = acts.findIndex(a => a.key === 'markdown');
+  const peek = (POOL_SPACES.market || []).find(a => a.key === 'showroom');
+  if (i < 0 || !peek) throw new Error('peek-save: no Markdown slot or no retired Peek');
+  const old = acts[i]; acts[i] = wrapInPlace('market', peek, i);
+  try { return fn(); } finally { acts[i] = old; }
+}
 
 const SEATS = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];
 const wrap = s => { s.build = buildStamp(); return { config: { seats: SEATS.map(x => ({ kind: x.kind, name: x.name })), speed: 'normal' }, state: s, undo: null, savedAt: Date.now() }; };
 
-export function peekSave({ stage = 'order', res = { blue: 0, red: 1, gold: 0, green: 0 }, seed = 3 } = {}) {
+export function peekSave(o = {}) { return withPeek(() => takePeek(o)); }
+
+function takePeek({ stage = 'order', res = { blue: 0, red: 1, gold: 0, green: 0 }, seed = 3 } = {}) {
   let s = createGame({ seats: SEATS, seed, quadrants: ['market', 'gold', 'red', 'echo'] });
   const rand = seededRandom(seed);
   const ready = st => st.round >= 1 && st.pending && st.pending.player === 0 && st.pending.kind === 'place';

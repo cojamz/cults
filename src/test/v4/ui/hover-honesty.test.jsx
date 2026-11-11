@@ -56,7 +56,7 @@ describe('hover honesty (live panel r1)', () => {
   });
   });
 
-  it('Stash says its round gain', () => {
-    for (const round of [1, 2, 3]) expect(words(sceneQ({ quadrants: T, round, n: 3 }), 'Stash').y.text).toBe(`+${round + 1} magenta`);
+  it('Stash says its gain (+3 magenta, Nov 10 stand-in)', () => {
+    for (const round of [1, 2, 3]) expect(words(sceneQ({ quadrants: T, round, n: 3 }), 'Stash').y.text).toBe('+3 magenta');
   });
 });

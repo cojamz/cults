@@ -22,7 +22,7 @@ for(const def of ['thieves.crew','thieves.snitch','thieves.watchdog']){
 s.players[1].res.magenta=8;s.players[2].res.magenta=8;s.players[3].res.silver=99;
 s=resume(s);s.build=buildStamp();
 const save={config:{seats,speed:'fast'},state:s,undo:null,savedAt:Date.now()};
-const action=`slot:1-${quadrant('red').actions.findIndex(a=>a.key==='turnout')}`;
+const action=`slot:1-${quadrant('red').actions.findIndex(a=>a.key==='gather')}`; // a plain red gain (Gather, Nov 10: "+3 red. If you recruit a member this turn of a color you already have: +4 followers. +1 red.")
 let expected=applyMove(s,{player:0,option:action});
 if(expected.pending?.kind!=='buy')throw new Error('Fixture must reach buying');
 expected=applyMove(expected,{player:0,option:'pass'});

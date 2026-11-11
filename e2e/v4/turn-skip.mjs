@@ -1,8 +1,10 @@
 // A skipped turn shows on the table (Cory, Nov 1: "it's not clear when a turn is skipped. we need to show it happening
-// with some UI component or emphases"). P1 takes Hold Up ("The next turn is skipped."): "Turn skipped" stands on the
-// next player's seat and the seat dims. P1 holds the Purple Cloak, which since Nov 6 pays only for its holder's own
-// actions ("Whenever you take the Goes Last token, +3 purple."; Cory: "you cant passively gain from it"): the skip pays
-// it nothing, so P1's purple stays where Hold Up left it.
+// with some UI component or emphases"). Hold Up, which skipped a rival's next turn, left the wheel Nov 10; the skips now
+// come from the Goes Last token ("your other minions are placed after everyone else's"). P1 has two turns in a row at
+// the snake's end and takes Sleep In on the first: the second is passed over at once, so "Turn skipped: Sleep In"
+// stands on P1's seat and the seat dims. P1 holds the Purple Cloak ("Whenever you take the Goes Last token, +3
+// purple."), which pays as the token is taken, with the space: the skip itself pays nothing, so P1's purple stays where
+// Sleep In left it.
 import { mkdirSync } from 'node:fs';
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 import { buildStamp } from './lib/stamp.mjs';
@@ -16,7 +18,7 @@ mkdirSync(out, { recursive: true });
 
 const TABLE = ['red', 'purple', 'echo', 'market'];
 const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];
-const q = TABLE.indexOf('purple'), i = quadrant('purple').actions.findIndex(a => a.key === 'holdup');
+const q = TABLE.indexOf('purple'), i = quadrant('purple').actions.findIndex(a => a.key === 'skip'); // Sleep In
 function save() {
   for (let seed = 1; seed < 300; seed++) {
     let s = createGame({ seats, seed, quadrants: TABLE });
@@ -24,9 +26,9 @@ function save() {
     const ready = st => st.round === 1 && st.pending && st.pending.player === 0 && st.pending.kind === 'place' && st.pending.options.some(o => o.id === `slot:${q}-${i}`);
     for (let n = 0; n < 600 && !ready(s) && !s.over; n++) s = applyMove(s, chooseBotMove(s, rand));
     if (!ready(s)) continue;
-    // the next turn after P1's must be a rival's, so the stamp lands on a rival seat
+    // the next turn after P1's is P1's own (the snake's end), so the skip comes right after P1's turn
     const next = s.queue.find(t => t.t === 'turn');
-    if (!next || next.p === 0) continue;
+    if (!next || next.p !== 0) continue;
     const pw = s.artifacts && s.artifacts.purple;
     if (pw == null) continue;
     s.players.forEach(p => { if (p.artifact === pw) p.artifact = undefined; });
@@ -34,7 +36,7 @@ function save() {
     s.build = buildStamp();
     return { save: { config: { seats, speed }, state: s, undo: null, savedAt: Date.now() }, next: next.p };
   }
-  throw new Error('turn-skip: never reached P1 on Hold Up in round I');
+  throw new Error('turn-skip: never reached P1 on Sleep In at the snake end of round I');
 }
 
 const { save: sv, next } = save();
@@ -51,7 +53,7 @@ try {
   const purple = () => p.evaluate(() => (b => Number(b ? (b.dataset.hold ?? b.textContent) : 0))(document.querySelector('.lt-cult-seat[data-seat="0"] .cs-stack[data-res="purple"] b.num')));
   const p0 = await purple();
   await p.locator(`.lt-wheel .slot.lit[data-slot="${q}-${i}"]`).click();
-  // Hold Up's own purple lands; Pocket Watch's comes only with the skip (P1 ends the turn first)
+  // Sleep In's purple (and the cloak's +3 for taking the token) lands with the space
   await p.waitForFunction(n => { const b = document.querySelector('.lt-cult-seat[data-seat="0"] .cs-stack[data-res="purple"] b.num'); return b && b.dataset.hold === undefined && Number(b.textContent) > n; }, p0);
   await p.locator('.app.game:not([data-animating])').waitFor();
   await p.locator('[data-option="pass"]').first().waitFor();
@@ -77,7 +79,7 @@ try {
   let text = '', dim = 0;
   if (seen) {
     text = await tag.textContent().catch(() => '');
-    dim = await p.locator(`.lt-cult-seat[data-seat="${next}"].turn-skipped`).count();
+    dim = await p.locator(`.lt-cult-seat[data-seat="${next}"][data-turn-skipped]`).count();
     await p.waitForTimeout(Number(process.env.MID || 120)); await p.screenshot({ path: `${out}/skip-${speed}.png` });
     if (process.env.FRAMES) for (let k = 1; k <= 8; k++) { await p.waitForTimeout(200); await p.screenshot({ path: `${out}/skip-${speed}-${k}.png`, clip: { x: 0, y: 0, width: 640, height: 300 } }); }
   }
@@ -89,15 +91,15 @@ try {
     const atTag = firstUp && firstUp[0] <= seenAt + 50 ? firstUp[1] : afterSpace; // shown at the skip's first frames = paid with the space, not the skip
     console.log(`tag at ${Math.round(seenAt)}ms; P1 purple changes ${JSON.stringify(changes.map(([t, v]) => [Math.round(t), v]))}`);
 
-    // it says why: your Hold Up passed P2's turn (frame review, Nov 7: "Turn skipped" never said why)
-    if (text !== 'Turn skipped: your Hold Up') errors.push(`tag reads "${text}"`);
+    // it says why: your own Sleep In passed your turn (frame review, Nov 7: "Turn skipped" never said why)
+    if (text !== 'Turn skipped: Sleep In') errors.push(`tag reads "${text}"`);
     if (!dim) errors.push('the skipped seat did not dim');
     // a +2 may count up a step at a time (2 → 3 → 4): what it pays is where the count settles, when it starts is firstUp
     const end = firstUp ? changes.filter(([t]) => t >= firstUp[0] && t <= firstUp[0] + 1500).pop()[1] : afterSpace;
-    console.log(`P1 purple: before ${p0}, after Hold Up ${afterSpace}, before the skip shows ${atTag}, settles at ${end}${firstUp ? `, first change at ${Math.round(firstUp[0] - seenAt)}ms after the tag` : ''}`);
+    console.log(`P1 purple: before ${p0}, after Sleep In ${afterSpace}, before the skip shows ${atTag}, settles at ${end}${firstUp ? `, first change at ${Math.round(firstUp[0] - seenAt)}ms after the tag` : ''}`);
     if (atTag !== afterSpace) errors.push(`purple rose before the skip showed (${afterSpace} → ${atTag})`);
-    // the cloak pays only for its holder's own actions (Cory, Nov 6): a rival's skipped turn pays it nothing
-    if (end !== afterSpace) errors.push(`the Purple Cloak paid for a rival's skipped turn (${afterSpace} → ${end})`);
+    // the cloak pays when the token is taken (Cory, Nov 6), never again for the turn the token passes over
+    if (end !== afterSpace) errors.push(`purple rose at the skipped turn (${afterSpace} → ${end})`);
   }
   await ctx.close();
 } finally { await browser.close(); }

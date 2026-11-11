@@ -341,7 +341,7 @@ const thieves = {
       // Cory, 2026-10-27: "steal 3/4/5", split among rivals as you choose; the follower steal is gone
       // Cory, Nov 10 3:13pm: "Steal 1 resource per minion you've placed this round, this one included. +1 magenta." ("then
       // there's competition to cap it"; was "Steal 3/4/5 resources", no magenta). A steal splits among rivals as you choose.
-      key: 'pickpocket', ring: 1, name: 'Help Yourself', text: 'Steal 1 resource per minion you’ve placed this round, this one included. +1 magenta.',
+      key: 'pickpocket', ring: 1, name: 'Help Yourself', text: 'Steal 1 resource per minion you’ve placed this round. +1 magenta.',
       estimate: (ctx, p) => 1 + estimateSteal(ctx, p, ctx.stealCount(p, placedCount(ctx, p) + (onBoardNow(ctx, p) ? 0 : 1))),
       resolve(ctx, p) {
         startSteal(ctx, p, 'Help Yourself', ctx.stealCount(p, placedCount(ctx, p), { say: true }));
@@ -405,18 +405,12 @@ const thieves = {
         for (const [o, n] of plan) autoSteal(ctx, p, o, 'Racket', n);
       },
     }] : [    {
-      // every color's 3/4/5 (Cory, 2026-10-27), counting the +1 magenta every Magenta action gives; name Claude's fill-in
+      // Cory, Nov 10 10:42pm: Magenta's open round I space is a plain stand-in for now ("lets just make it +3 magenta or
+      // something for now. idk"). +3 in all, the wrapper's +1 magenta included (as Crowd's +3 green counts its own +1).
       key: 'tipoff', ring: 1, name: 'Stash', copyDoesIt: true,
-      text: '+2 magenta in round I, +3 in round II, +4 in round III. If you recruit a member this turn: +1 follower in round I, +2 in round II, +3 in round III.',
-      // Gather's shape for now (Cory, 2026-10-31: "just default to gather style for now for the rest"); Magenta's round I is parked
-      byRound: { lines: ['+2 magenta. If you recruit a member this turn: +1 follower.', '+3 magenta. If you recruit a member this turn: +2 followers.', '+4 magenta. If you recruit a member this turn: +3 followers.'] },
-      // the wrapper at the bottom adds every Magenta action's +1, so this gives the rest: +2/+3/+4 in all, as printed
-      // (balance-1.0 g9: it paid +3/+4/+5, the +1 counted twice)
-      estimate: ctx => ctx.state.round + ctx.state.round * 0.7,
-      resolve(ctx, p) {
-        ctx.gain(p, 'magenta', ctx.state.round, { fromAction: true });
-        (p.recruitFollowers ||= []).push({ n: ctx.state.round, name: 'Stash' });
-      },
+      text: '+3 magenta.',
+      estimate: () => 2,
+      resolve(ctx, p) { ctx.gain(p, 'magenta', 2, { fromAction: true }); },
     }]),
     {
       // Cory, Nov 10 3:44pm: Catch Up takes an open round I slot, to try ("lets just try it as +2"); Lie Low's slot (his
@@ -716,6 +710,7 @@ const thieves = {
       if (!ctx.state.shop.includes(uid)) return;
       ctx.giveFromShop(v, uid, p);
       ctx.log(`${p.name}'s Swindle: gave ${v.name} ${ctx.card(uid).def.name} from the shop.`);
+      // Cory, Nov 10 10:42pm: "if you give them a member that doesnt count as an on recruit" (no On Recruit for the rival)
     },
     heist(ctx, p, uid) {
       const v = ctx.ownerOf(uid), c = ctx.card(uid);

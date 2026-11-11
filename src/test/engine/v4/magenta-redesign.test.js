@@ -31,18 +31,18 @@ describe('Magenta redesign edge cases', () => {
     expect(s.players[0].bonus).toBe(0);
     expect(s.players[0].res.magenta).toBe(1);
   });
-  it('Stash: +4 magenta in round III as printed, its own +1 included, with no target needed', () => {
+  it('Stash: +3 magenta in round III as printed (Nov 10 stand-in), its own +1 included, with no target needed', () => {
     const s = take(table(Q, { round: 3, shop }), 'thieves.tipoff');
-    expect(s.players[0].res.magenta).toBe(4);
+    expect(s.players[0].res.magenta).toBe(3);
     expect(s.pending.kind).toBe('buy');
   });
-  it('copying Stash gives its magenta for the current round', () => {
+  it('copying Stash gives its magenta', () => {
     let s = table(Q, { res: [{}, { gold: 8 }, { red: 8 }], n: 3, shop, queue: turns(1, 0) });
     s = pass(take(s, 'thieves.tipoff'));
-    expect(s.players[1].res.magenta).toBe(2);
+    expect(s.players[1].res.magenta).toBe(3);
     s = take(s, 'echo.echo');
     s = move(s, s.pending.options.find(o => o.kind === 'space' && o.label.startsWith(actionName('thieves.tipoff'))).id);
-    expect(s.players[0].res).toMatchObject({ green: 1, magenta: 2 });
+    expect(s.players[0].res).toMatchObject({ green: 1, magenta: 3 });
   });
   it('copying Help Yourself grants its resource once, with fresh rival choices and no followers', () => {
     let s = table(Q, { round: 2, n: 3, res: [{}, {}, { gold: 9, red: 9 }], bonus: [0, 0, 5], shop, queue: turns(1, 0) });

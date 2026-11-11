@@ -145,7 +145,7 @@ const P = {
     pickpocket: { verb: 'Steal 1 per minion you placed', second: 'this round, this one too', note: '+1 magenta' }, // Nov 10 (Cory)
     catchup: { main: '+2 magenta', second: 'per rival with more resources', note: '+1 magenta' }, // Nov 10 (Cory)
     swindle: { verb: `Steal a member costing up to ${6 + MORE}`, second: 'give them a shop member', note: '+1 magenta' }, // Nov 10 (Cory)
-    tipoff: r => ({ main: `+${r + 1} magenta`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 1}`, 'magenta: ') }), // Gather's shape (Cory, Oct 31)
+    tipoff: { main: '+3 magenta' }, // a plain stand-in for the open round I space (Cory, Nov 10 10:42pm)
     hideout: { verb: 'Steal 1, then safe from steals', second: 'this round', note: '+1 magenta' },
     rob: { verb: 'Steal 4 @f and 4 resources', note: '+1 magenta' }, // Nov 10 (Cory) // any rivals (Nov 5) // Nov 4: followers, not half a pile
     ransom: { verb: `Rival pays or loses a member costing ${6 + MORE} or less`, note: '+1 magenta' },

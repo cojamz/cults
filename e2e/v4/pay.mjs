@@ -323,8 +323,9 @@ try {
   }
   // (k1) the keyboard list: only for the keyboard
   {
-    // (a member pick on the seats: steals now ask on the card by the space, whose own buttons take the keyboard)
-    const save = stealSave('shakedown');
+    // (a member pick on the seats: steals now ask on the card by the space, whose own buttons take the keyboard; Shake
+    // Down left the wheel Nov 10, and Swindle, in its slot, starts with the same pick of a rival's member)
+    const save = stealSave('swindle');
     const { ctx, page } = await open('k1', save, '.seat-pick.docked');
     if (await page.$('.pick-key')) errors.push('(k1) the list is in the page before any Tab');
     await page.focus('.seat-pick.docked');

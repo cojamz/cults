@@ -410,7 +410,9 @@ try {
         if (!(await deck.count())) fail('(h) no member deck at the head of the shop strip', step);
         else {
           const placed = await page.evaluate(() => {
-            const d = document.querySelector('[data-deck]').getBoundingClientRect();
+            // since Nov 6 the deck shares its slot with the discard pile beside it (DiscardPile.jsx, Cory: "members that leave
+            // play go face up beside the deck"): the slot heads the row, the deck centred in it
+            const d = (document.querySelector('[data-deck-slot]') || document.querySelector('[data-deck]')).getBoundingClientRect();
             const members = [...document.querySelectorAll('.lt-shop .lt-cards .card[data-uid]')].map(e => e.getBoundingClientRect());
             const buys = [...document.querySelectorAll('.lt-shop .lt-cards .lt-rate')].map(e => e.getBoundingClientRect());
             return {
@@ -457,8 +459,10 @@ try {
           const again = await page.evaluate(() => { let st = null; try { st = JSON.parse(localStorage.getItem('patrons.v4.local')).state; } catch { /* none */ } return { first: st && st.order ? st.order.slice(0, st.players.length) : null, byY: [...document.querySelectorAll('.lt > .lt-seat[data-pid]')].filter(e => e.querySelector('[data-cult]')).sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top).map(e => Number(e.dataset.pid)), moves: Number(document.querySelector('.app.game').dataset.moves), saved: st && st.moves }; });
           if (again.moves === again.saved && JSON.stringify(again.byY) !== JSON.stringify(again.first)) fail(`(l) the chairs stand ${JSON.stringify(again.byY)}, the turn order is ${JSON.stringify(again.first)}`, step);
         }
+        // stacked turns count down (Cory, Nov 4: "its not clear to me how many turns i have remaining"): "3 turns in a row",
+        // "2 turns in a row", then "last turn in a row" (seats.js runSay); was "two turns in a row"
         const mineSays = tops.turns.filter(t => t.mine).map(t => t.say), rivalSays = tops.turns.filter(t => !t.mine && t.say);
-        if (tops.playing && !tops.held && mineSays.length && (mineSays.length !== 1 || !/^(two turns in a row|your turn( next| in \d+)?|done this round)$/.test(mineSays[0] || ''))) fail(`(l) your chair's turn words: ${JSON.stringify(tops.turns)}`, step);
+        if (tops.playing && !tops.held && mineSays.length && (mineSays.length !== 1 || !/^([2-9]\d* turns in a row|last turn in a row|your turn( next| in \d+)?|done this round)$/.test(mineSays[0] || ''))) fail(`(l) your chair's turn words: ${JSON.stringify(tops.turns)}`, step);
         if (rivalSays.length) fail(`(l) rival chairs' turn words (want none: Cory dropped "next"): ${JSON.stringify(tops.turns)}`, step);
       }
     }

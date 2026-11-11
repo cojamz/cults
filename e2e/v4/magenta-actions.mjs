@@ -37,20 +37,23 @@ function fixture(name) {
   };
   let action, picks, member;
   if (name === 'scaling-resume') {
-    // Help Yourself steals 3 / 4 / 5 by round, split as you choose (Cory, Oct 27); Cy lay low this round
+    // Help Yourself (Cory, Nov 10): "Steal 1 resource per minion you’ve placed this round, this one included. +1 magenta."
+    // You have 4 minions out already, so this fifth steals 5, split as you choose; Cy lay low this round
     action = 'pickpocket'; picks = ['take:1:gold', 'take:1:red', 'take:1:gold', 'take:1:gold', 'take:1:red'];
     s.players[2].hideout = round;
+    for (const k of ['1-0', '1-1', '1-2', '2-0']) s.slots[k] = 0;
+    s.players[0].left = 1;
   } else if (name === 'followers') {
-    // Heist steals 3 followers from a rival (Nov 4, Cory's rival-resources rule): Bo has 5 to take, Cy none, Di is guarded
-    action = 'rob'; picks = ['player:1', 'player:1', 'player:1']; // one follower at a time, split as you choose
+    // Heist (Cory, Nov 10): "Steal 4 followers and 4 resources. +1 magenta." Bo has 5 followers to take, Cy none, Di is
+    // guarded; one follower at a time, then the resources, each split as you choose
+    action = 'rob'; picks = ['player:1', 'player:1', 'player:1', 'player:1', 'take:1:gold', 'take:1:gold', 'take:1:red', 'take:2:red'];
     s.players.forEach((p, i) => { p.bonus = [0, 5, 0, 6][i]; });
     deal('thieves.watchdog', 3);
   } else if (name === 'ransom') {
-    action = 'ransom'; member = deal('red.host', 1);
-    // Host costs 6, the ceiling, since every member cost 1 more (Nov 5; 5 before, Patriarch until Oct 27); the old <=4
-    // ceiling would wrongly hide it.
-    s.players[1].res.red = 0;
-    picks = ['pay']; // one member at stake: no pick, straight to pay or let it go
+    // Swindle took Shake Down's slot (Cory, Nov 10): "Steal a rival’s member costing up to 7; give them a shop member of
+    // your choice in its place. +1 magenta." Bo's Host costs 6, under the cap; you hand Bo the shop's first member
+    action = 'swindle'; member = deal('red.host', 1);
+    picks = [`card:${member}`, `card:${s.shop[0]}`];
   } else if (name === 'heist') {
     action = 'heist'; member = deal('thieves.crew', 1); picks = [`card:${member}`];
   } else throw Error(`Unknown scene ${name}`);
@@ -60,18 +63,21 @@ function fixture(name) {
   let expected = placed;
   for (const id of picks) expected = move(expected, id);
   assert(expected.pending?.kind === 'buy', `${name}: did not restore buying (${expected.pending?.prompt}: ${expected.pending?.options?.map(o => o.id).join(' ')})`);
-  // Help Yourself gives no magenta (Cory, 2026-10-29); every other action gives exactly 1
-  const inherent = action === 'pickpocket' ? 0 : 1;
+  // every Magenta action gives exactly 1 magenta (Help Yourself too since Nov 10: "+1 magenta.")
+  const inherent = 1;
   assert(expected.players[0].res.magenta === inherent, `${name}: the action gives exactly ${inherent} inherent Magenta`);
   const own = expected.players[0], victim = expected.players[1];
   if (name === 'scaling-resume') {
     assert(own.res.gold === 3 && own.res.red === 2 && own.bonus === initial.players[0].bonus && victim.res.gold === 6 && victim.res.red === 2, 'Round III must steal 5 in their original colors and no followers');
     assert(expected.players[2].res.red === 6 && !placed.pending.options.some(o => /^take:2:/.test(o.id)), 'A rival who lay low must not be offered');
   } else if (name === 'followers') {
-    assert(own.bonus === 3 && victim.bonus === 2 && victim.res.gold === 9 && victim.res.red === 4, 'Heist must move exactly 3 followers and no resources');
+    assert(own.bonus === 4 && victim.bonus === 1, 'Heist must move exactly 4 followers');
+    assert(own.res.gold === 2 && own.res.red === 2 && victim.res.gold === 7 && victim.res.red === 3 && expected.players[2].res.red === 5, 'Heist must then move exactly 4 resources in their colors');
     assert(placed.pending.options.map(o => o.id).join() === 'player:1', 'Only a rival with followers to steal and no guard may be offered');
   } else if (name === 'ransom') {
-    assert(own.res.gold === 6 && victim.res.gold === 3 && victim.members.includes(member), 'Ransom payment must preserve colors and ownership');
+    const given = Number(picks[1].slice(5));
+    assert(own.members.includes(member) && !victim.members.includes(member), 'Swindle must take the member');
+    assert(victim.members.includes(given) && !expected.shop.includes(given), 'Swindle must give the rival the shop member you chose');
   } else if (name === 'heist') {
     assert(own.members.includes(member) && !victim.members.includes(member) && victim.members.length === 0, 'Poach must transfer the member without a replacement');
   }
@@ -126,10 +132,13 @@ try {
         if (size === 'phone') await el.tap(); else await el.click();
         const place = page.getByRole('button', { name: 'Place here', exact: true });
         if (await place.isVisible()) await place.click();
+        // a shop card tapped on touch pins its card with the pick's button (Swindle's: Give)
+        const pin = page.locator(`[data-recruit="${id.replace(/^card:/, '')}"]`);
+        if (/^card:/.test(id) && await pin.isVisible().catch(() => false)) await pin.click();
       };
       await press(t.action);
       await page.locator('.app.game:not([data-animating])').waitFor();
-      if (name === 'ransom') { // the holder answers first: hand the screen over
+      if (name === 'ransom') { // a hand-over screen, if one shows, goes first
         const handoff = page.locator('[data-handoff]'); if (await handoff.isVisible()) await handoff.click();
       }
       await page.locator(`[data-option=${JSON.stringify(t.picks[0])}]:not([disabled])`).first().waitFor();
@@ -156,7 +165,7 @@ try {
       const flights = await page.evaluate(() => window.__magentaFlights);
       assert(flights.length > 0, `${tag}: no visible motion`);
       assert(!flights.some(f => f.colorTurn), `${tag}: theft still changes color in flight`);
-      if (name === 'scaling-resume' || name === 'ransom') {
+      if (name === 'scaling-resume' || name === 'followers') { // Help Yourself and Heist both take Bo's gold
         const color = 'gold';
         assert(flights.some(f => /piece-res|pick-flight/.test(f.className) && f.sources.includes(`1:${color}`)), `${tag}: resource motion never starts at the chosen rival pile`);
       }

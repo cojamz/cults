@@ -1,10 +1,11 @@
 // Saved hot-seat games stopped where P1 (the only person) is about to make a move that sends something to someone, for
 // the travel gate (e2e/v4/travel.mjs): a steal (round I and round III), a gift (Kickback), a member taken (Poach), a
-// ransom paid, and a member's Use. Each comes from real bot games (P1 played by the Normal bot until the moment), with
+// member given to a rival (Swindle), a member's Use, and a member recruited off the wheel (Borrow). Each comes from real bot games (P1 played by the Normal bot until the moment), with
 // the engine's own effect stream saying what must travel from where to where.
 import { createGame, applyMove, chooseBotMove } from '../../../src/engine/v4/index.js';
 import { seededRandom } from '../../../src/engine/v4/rng.js';
 import { buildStamp } from './stamp.mjs';
+import { freeCard } from './deal.mjs';
 
 const SEATS = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];
 const prompt = s => (s.pending && s.pending.prompt) || '';
@@ -18,13 +19,16 @@ export const TRAVEL = {
   gift: { q: ['gold', 'red', 'blue', 'green'], hit: (s, mv, n) => /^Kickback: give/.test(prompt(s)) && (g => g && { from: g.from, to: g.to })(fx(n).find(e => e.type === 'gain' && e.to.pid !== 0)) },
   // a member taken: Poach, a rival's member to your crowd
   member: { q: ['gold', 'thieves', 'red', 'purple'], hit: (s, mv, n) => /^Poach: (take|recruit) which/.test(prompt(s)) && (e => e && { from: { kind: 'crowd', pid: e.from.pid }, to: { kind: 'member', pid: 0, uid: e.what.uid } })(fx(n).find(e => e.type === 'member-move' && e.to.pid === 0)) },
-  // a ransom paid: your resources to the rival who holds your member. The ransom's own gain, never a rival member's
-  // bonus on the same move (Fence: "Whenever you steal, +1 magenta" gains first and flies from Fence, not your seat)
-  ransom: { q: ['gold', 'thieves', 'red', 'purple'], force: 'pay', hit: (s, mv, n) => /^Shake Down: pay /.test(prompt(s)) && mv.option === 'pay' && (g => g && { from: { kind: 'seat', pid: 0 }, to: g.to })(fx(n).find(e => e.type === 'gain' && e.to.pid !== 0 && e.cause?.kind !== 'member')) },
-  // a member's Use: what it gives flies from the member to your stack
-  use: { q: ['gold', 'red', 'blue', 'green'], hit: (s, mv, n) => String(mv.option).startsWith('use:') && s.pending.kind === 'buy' && (g => g && { from: { kind: 'member', pid: 0, uid: g.cause.uid }, to: g.to })(fx(n).find(e => e.type === 'gain' && e.cause.kind === 'member' && e.to.pid === 0)) },
-  // a member off the top of the deck (Walk-In): its card leaves the deck for your crowd
-  walkin: { q: ['red', 'gold', 'blue', 'green'], hit: (s, mv, n) => (e => e && { from: { kind: 'pile' }, to: { kind: 'member', pid: 0, uid: e.what.uid } })(fx(n).find(e => e.type === 'recruit' && e.from.kind === 'pile' && e.to.pid === 0)) },
+  // a member given to a rival (Swindle, Nov 10, in Shake Down's old place: "give them a shop member of your choice in its
+  // place"): the shop card goes to the rival's crowd
+  swindle: { q: ['gold', 'thieves', 'red', 'purple'], hit: (s, mv, n) => /^Swindle: give /.test(prompt(s)) && (e => e && { from: { kind: 'shop', uid: e.from.uid }, to: { kind: 'member', pid: e.to.pid, uid: e.what.uid } })(fx(n).find(e => e.type === 'recruit' && e.from.kind === 'shop' && e.to.pid !== 0)) },
+  // a member's Use: what it gives flies from the member to your stack. P1 holds Speculator ("On Use, once per game:
+  // double your gold"), used at its first buy step with gold in hand: the live On Use members that gain at once are rare
+  // in bot games (the others ask a question first)
+  use: { q: ['gold', 'red', 'blue', 'green'], give: 'gold.speculator', forceUse: true, hit: (s, mv, n) => String(mv.option).startsWith('use:') && (g => g && { from: { kind: 'member', pid: 0, uid: g.cause.uid }, to: g.to })(fx(n).find(e => e.type === 'gain' && e.cause.kind === 'member' && e.to.pid === 0)) },
+  // a member recruited off the wheel (Borrow, Nov 10: "Recruit the cheapest shop member, for free"; Walk-In's draw off
+  // the deck left the game): its card leaves the shop for your crowd
+  borrow: { q: ['red', 'gold', 'blue', 'green'], hit: (s, mv, n) => (n.log || []).slice(-8).some(l => /^P1 took Borrow/.test(l)) && (e => e && { from: { kind: 'shop', uid: e.from.uid }, to: { kind: 'member', pid: 0, uid: e.what.uid } })(fx(n).find(e => e.type === 'recruit' && e.from.kind === 'shop' && e.to.pid === 0)) },
 };
 function takeOf(n) {
   const t = fx(n).find(e => e.type === 'transfer' && e.to.pid === 0);
@@ -42,11 +46,12 @@ export function travelSave(kind) {
   const sc = TRAVEL[kind];
   for (let seed = 1; seed < 400; seed++) {
     let s = createGame({ seats: SEATS, seed, quadrants: sc.q });
+    if (sc.give) { const uid = freeCard(s, sc.give); s.shop = s.shop.filter(u => u !== uid); s.pile = s.pile.filter(u => u !== uid); s.players[0].members.push(uid); s.cards[uid].recruitedRound = 0; s.cards[uid].recruitedBy = 0; }
     const rand = seededRandom(seed);
     const turn = [];
     for (let k = 0; k < 3000 && !s.over; k++) {
       let mv = chooseBotMove(s, rand);
-      if (sc.force && s.pending && s.pending.player === 0 && /^Shake Down: pay /.test(prompt(s)) && s.pending.options.some(o => o.id === sc.force)) mv = { player: 0, option: sc.force };
+      if (sc.forceUse && s.pending && s.pending.player === 0 && s.pending.kind === 'buy' && (s.players[0].res.gold || 0) > 0) { const u = s.pending.options.find(o => String(o.id).startsWith('use:')); if (u) mv = { player: 0, option: u.id }; }
       let n;
       try { n = applyMove(s, mv, { effects: true }); } catch { break; }
       if (s.pending && s.pending.player === 0) {
