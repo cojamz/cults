@@ -90,7 +90,7 @@ describe('Guest of Honor: "On Use, once per round: give a rival one of your memb
   });
   it('any member may be given, whatever it costs (Cory, Nov 5: "costing 4 or less" cut)', () => {
     const s = use(at(['silver.guestofhonor', 'silver.godparents']));
-    expect(s.pending.options.some(o => o.label.startsWith('Godparents'))).toBe(true);
+    expect(s.pending.options.some(o => o.label.startsWith('Patrons'))).toBe(true);
   });
   it('taking a Silver space no longer asks anything', () => {
     const s = take(at(['silver.guestofhonor', 'red.intern']), 'silver.toast');

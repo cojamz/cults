@@ -515,7 +515,7 @@ const silver = {
       const c = ctx.card(uid), k = c.def.s + c.def.w, name = c.def.name;
       if (!ctx.moveMember(uid, p, o, { actor: p })) return;
       p.bonus += k;
-      ctx.log(`${p.name}'s Godparents: gives ${name} to ${o.name}: +${k} followers.`);
+      ctx.log(`${p.name}'s Patrons: gives ${name} to ${o.name}: +${k} followers.`);
     },
     // live since Nov 4 (quality loop): Polisher's place
     guestofhonor(ctx, p, value) {
@@ -668,7 +668,7 @@ const silver = {
     // members (Godparent itself too) to any rival; its cost is its printed price. A gift, not a steal or a swap
     // (Loyalists and Bodyguards don't stop it): an arrival for the rival (Old Maid's −5 lands on them), and Martyrs pays
     // you as it leaves. A used card stays used.
-    m('godparents', 'Godparents', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain its cost in followers.', { // a round I member as Hangers-On was (bot-tested in a later round; Nov 3)
+    m('godparents', 'Patrons', 3, 1, 'On Use, once per game: give one of your members to a rival. Gain its cost in followers.', { // a round I member as Hangers-On was (bot-tested in a later round; Nov 3)
       activate: 'game',
       onActivate(ctx, owner, card) {
         const opts = [];
@@ -676,7 +676,7 @@ const silver = {
           id: `give:${c.uid}:${o.id}`, label: `${c.def.name} (${c.def.s + c.def.w}) to ${o.name}`, kind: 'choice', value: [c.uid, o.id],
           hint: c.def.s + c.def.w - (c.def.f || 1) * 1.5 - (c.used || c.def.vanilla ? 0 : 1) + (c.def.onJoined ? 5 : 0) - ctx.followers(o) * 0.01,
         });
-        ctx.choose(owner, 'Godparents: give which of your members to which rival?', opts, 'silver.godparents');
+        ctx.choose(owner, 'Patrons: give which of your members to which rival?', opts, 'silver.godparents');
       },
       botActivate: (ctx, owner) => ctx.state.round === 3 || (ctx.state.round === 2 && ctx.membersOf(owner).some(c => c.used && c.def.activate === 'game')),
     }),
