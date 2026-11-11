@@ -67,4 +67,4 @@ Branches
 ## Action balance and feel testing (thread "Plan action balance and feel testing", Nov 11)
 - Plan: design/notes/action-balance-plan-2026-11-11.md. Harness: `DECK=10 node scripts/actions/run.mjs --games=200` (base and Tribute Band→Ensemble); feel games: `v4-expert.mjs new <dir> --today --diary`, `brief <dir> --brief round`, judge design/eval/expert-games/feel-judge.md.
 - Done Nov 11: economy baseline (Cory: prices stay), first action run (design/eval/action-balance-2026-11-11/), first feel game (design/eval/feel-games-2026-11-11/).
-- Next: when White, Yellow and Red's action builds ship, the full run (400 bot games + 2 feel games on Red, Green, Purple, Silver and the changed colors), then one page to Cory.
+- Done Nov 11 5:30pm: full run on v0.99.726 (400 bot games + 2 more AI-player games), findings design/eval/action-balance-2026-11-11/full-findings.md sent. Waiting on Cory's pick of what to rework first (Greatest Hits, Purple Cloak, Flaunt/Buyout, Cash In, Crunch Time).
