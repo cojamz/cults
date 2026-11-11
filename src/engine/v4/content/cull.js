@@ -28,7 +28,6 @@ export const CUT = new Set([
   // Cory, Nov 5 backlog ("Yes to the member changes"): his cut list from the member notes; replacements are his pick
   'thieves.grifter', 'thieves.cutpurse', 'yellow.drifters', /* Counterfeiters in its slot, Nov 5 */ 'market.doorman', /* Power Shoppers in its slot, Nov 5 */ 'silver.charityball', 'silver.creditors', 'silver.hostesses', 'yellow.ringleader',
   'yellow.gardener', 'market.shopaholic', 'trading.raider', 'purple.earlybird', 'red.volunteer', // Seat Filler takes Volunteer's place
-  'red.patriarch', // Clan takes Patriarch's place (Cory, Nov 11: "Yeah Clan is good"; the slot is Claude's pick, asked)
   'trading.bulkbuyer', 'trading.appraiser', 'market.makeover', 'market.stylist', // Cory, 2026-10-24 / Stylist 2026-10-25: thinning ("I like Closer rest can go"); Restockers replaces Makeover
 ]);
 

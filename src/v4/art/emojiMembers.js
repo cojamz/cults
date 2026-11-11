@@ -21,6 +21,7 @@ const M = {
   loyalists: ['🛡️', '♾️ Your other members can’t be swapped'],
   headhunter: ['🔍', '☝️ Swap a rival’s member for a shop one, same cost or more'],
   patriarch: ['👴', '🏁 +1 follower per 2 members'],
+  clan: ['👪', '🌙 +1 follower per member in your biggest one-color group'],
   panel: ['🪧', '✨ Promote or demote another of your members'],
   proselytizers: ['📣', '♾️ You recruit: +1 follower'],
   'mentor': ['🧑‍🏫', '✨ Recruit the cheapest shop member'],

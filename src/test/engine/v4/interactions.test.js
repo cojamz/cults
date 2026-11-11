@@ -18,7 +18,7 @@ useRetiredOvertime();
 
 // Costs these scenes are written against (the real cards get repriced; these don't move).
 const PINNED = {
-  'red.intern': [1, 1], 'red.twins': [1, 1], 'red.volunteer': [0, 0], 'red.mob': [2, 2], 'red.patriarch': [3, 1],
+  'red.intern': [1, 1], 'red.twins': [1, 1], 'red.volunteer': [0, 0], 'red.mob': [2, 2], 'red.clan': [3, 1],
   'red.bigfamily': [2, 2], 'echo.doppel': [2, 2], 'red.drive': [1, 1], 'red.proselytizer': [3, 3],
   'gold.midas': [3, 2], 'gold.jackpot': [3, 3], 'gold.tycoon': [3, 1], 'gold.speculator': [3, 2], 'gold.investor': [2, 2],
   'thieves.crew': [1, 1], 'market.climber': [1, 0],
@@ -27,7 +27,7 @@ let restore;
 beforeEach(() => { restore = pinCosts(PINNED); });
 afterEach(() => restore());
 
-const SHOP = ['gold.midas', 'gold.jackpot', 'gold.tycoon', 'red.intern', 'red.patriarch', 'red.bigfamily'];
+const SHOP = ['gold.midas', 'gold.jackpot', 'gold.tycoon', 'red.intern', 'red.clan', 'red.bigfamily'];
 
 /**
  * A hand-made position on any table. `turns` is the turn order to queue (default P1, P2, P1, P2…),
@@ -234,7 +234,7 @@ describe('Blue’s out-of-buy recruits with Pied Piper and Proselytizers', () =>
     expect(defs(s, 0)).toContain('red.intern');
     expect(s.pending?.kind).toBe('buy');
     const red = R(s, 0).red;
-    s = payUp(move(s, `card:${uidOf(s, 'red.patriarch', 'shop')}`));
+    s = payUp(move(s, `card:${uidOf(s, 'red.clan', 'shop')}`));
     expect(R(s, 0).red).toBe(red + 2 - 3); // Drive's +2, Patriarch's 3 red
     expect(s.players[0].bonus).toBe(2);
     expect(s.pending?.kind).not.toBe('buy');
@@ -242,16 +242,16 @@ describe('Blue’s out-of-buy recruits with Pied Piper and Proselytizers', () =>
   it('Bury is not a buy: the normal buy step follows it', () => {
     let s = scene({ quads: Q, round: 2, res: [rich], members: [['red.drive', 'red.proselytizer']] });
     s = take(s, 'market.pricecheck');
-    s = move(s, `card:${uidOf(s, 'red.patriarch', 'shop')}`);
+    s = move(s, `card:${uidOf(s, 'red.clan', 'shop')}`);
     expect(s.pending?.kind).toBe('buy');
     expect(s.players[0].turnRecruits).toBe(0);
   });
   // Spree (Nov 10): "Recruit two members from the discard pile now. +7 blue." Then the turn's own recruit.
   it('Spree: two discard pile recruits and the turn\'s own, Drive pays once', () => {
     let s = scene({ quads: Q, round: 3, res: [{ gold: 20, red: 20, blue: 20, green: 20 }, { blue: 30 }], members: [['red.drive']] });
-    s = toDiscard(s, ['red.intern', 'red.patriarch']);
+    s = toDiscard(s, ['red.intern', 'red.clan']);
     s = take(s, 'market.spree');
-    for (const d of ['red.intern', 'red.patriarch']) s = payUp(move(s, `card:${inDiscard(s, d)}`));
+    for (const d of ['red.intern', 'red.clan']) s = payUp(move(s, `card:${inDiscard(s, d)}`));
     expect(s.pending?.kind).toBe('buy');
     s = payUp(move(s, `card:${uidOf(s, 'gold.tycoon', 'shop')}`));
     expect(R(s, 0).red).toBe(20 + 2 - 1 - 3);

@@ -19,7 +19,8 @@ export const STRAYS = new Set(['echo.doppel', 'benders.extrahand3', 'benders.big
   'echo.roadie9', // Roadie reworked, retired Nov 5 (Copyist)
   'purple.nightwatch', // Night Watch, retired Nov 6 (Cory: makes no sense)
   'purple.nightowl', // Night Owls, retired Nov 6 (Cory: thought it was replaced)
-  'benders.victors']); // Victors, retired Nov 6 (Cory: "Victors is bad")
+  'benders.victors', // Victors, retired Nov 6 (Cory: "Victors is bad")
+  'red.patriarch']); // Patriarch, retired Nov 11 (Clan)
 export function stray(s, def) {
   const uid = Math.max(...Object.keys(s.cards).map(Number)) + 1;
   s.cards[uid] = { uid, def };

@@ -801,7 +801,7 @@ export default {
       },
       ...see(info => 2 * endsAhead(info).length),
     })),
-    m('patriarch', 'Patriarch', 5, 2, /* Cory, Nov 5 backlog price yes */ 'Game End: +1 follower per 2 members you have.', { ...old3, ...old7('red.patriarch'),
+    m('patriarch', 'Patriarch', 5, 2, /* Cory, Nov 5 backlog price yes */ 'Game End: +1 follower per 2 members you have.', { ...old3, ...old7('red.patriarch'), retired: true, // Clan takes its place (Nov 11)
       onGameEnd: (ctx, owner) => Math.floor(ctx.memberCount(owner) / 2),
     }),
     // Cory, 2026-11-11 12:13am Eastern: "Yeah Clan is good. Round End might be a bit too strong but lets try it." Pays
