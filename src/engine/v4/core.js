@@ -2218,7 +2218,9 @@ function boughtOnce(state, p, task) {
   }
 
   p.turnBuys = (p.turnBuys || 0) + 1;
-  if (task.uid !== undefined && !task.doorbuster && !task.lateShop && !task.lastMinute) state.queue.unshift({ t: 'buy', p: p.id, afterPurchase: true, ...workerSourceOf(task) });
+  // a follower recruit too: after the round's last one, a member's On Use is still yours to use before the round ends
+  // (Cory's playtest, Nov 9: "why cant i use hot streak after i do my last recruit of the round? it goes right to spoils")
+  if ((task.uid !== undefined || task.tier !== undefined) && !task.doorbuster && !task.lateShop && !task.lastMinute) state.queue.unshift({ t: 'buy', p: p.id, afterPurchase: true, ...workerSourceOf(task) });
   // Barker: each member recruited in a buy step brings a followers-only recruit right after it (Spree's three bring three)
   if (task.barker) { const b = followersTwiceCard(state, p); if (b !== undefined) log(state, `${p.name} uses ${defById(state.cards[b].def).name}.`); }
   if (task.uid !== undefined && !task.doorbuster && !task.lateShop && !task.lastMinute && followersTwiceCard(state, p) !== undefined) state.queue.unshift({ t: 'buy', p: p.id, barker: true, ...workerSourceOf(task) });
