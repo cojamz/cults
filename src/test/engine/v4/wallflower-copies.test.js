@@ -14,9 +14,9 @@ const red = o => o.id === 'color:red';
 const sum = r => Object.values(r).reduce((a, b) => a + b, 0);
 
 describe('Wallflower doubles every copied action', () => {
-  // Polish (Nov 11): "+3 silver. Then turn all your silver into one other color." Wallflower doubles only the +3
-  // (Cory, Nov 11: "just the +3 should double"): 2 held + 6 = 8 silver, into 8 red
-  it('Echo copying a rival\'s Polish: only the +3 doubled', () => {
+  // Polish (Nov 11): "+2 silver. Then turn all your silver into one other color. +1 silver." Wallflower doubles the
+  // silver gained, not the turn (Cory, Nov 11: "just the +3 should double"): 2 held + 4 = 6 silver into 6 red, then +2 silver
+  it('Echo copying a rival\'s Polish: the silver gained doubled, the turn not', () => {
     const run = members => {
       let s = table(['silver', 'red', 'market', 'echo'], { members: [members], res: [{ silver: 2 }, { silver: 2 }], queue: turns(1, 0) });
       s = go(s, 'silver.polish', red);
@@ -27,8 +27,8 @@ describe('Wallflower doubles every copied action', () => {
       s = pass(s);
       return { gained: R(s).red - (before.red || 0), silver: R(s).silver };
     };
-    expect(run([])).toEqual({ gained: 5, silver: 0 });
-    expect(run(['echo.wallflower'])).toEqual({ gained: 8, silver: 0 });
+    expect(run([])).toEqual({ gained: 4, silver: 1 });
+    expect(run(['echo.wallflower'])).toEqual({ gained: 6, silver: 2 });
   });
 
   // Cover copies an action with a rival's minion on it (Cory, Nov 10): a rival's Golden Years (+4 gold in round II) doubled

@@ -392,26 +392,28 @@ export const silverActions = [
   }, 'pool15'),
   {
     // copyDoesIt: a copy gifts the rivals too, so the copier's Silver Cloak pays (Cory, Nov 6: "yes.")
-    key: 'toast', copyDoesIt: true, ring: 1, name: 'Toast', text: '+3 silver in round I, +6 in round II, +9 in round III. Each rival +1 silver in round I, +2 in round II, +3 in round III.',
-    byRound: { lines: ['+3 silver. Each rival +1 silver.', '+6 silver. Each rival +2 silver.', '+9 silver. Each rival +3 silver.'] },
-    estimate: ctx => 3 * ctx.state.round - spillCost(ctx, ctx.state.round),
+    // Cory, Nov 11 10:26am: "i dont like Toast scaling so crazily. We should set it to a baseline. Maybe +4 (+2 to
+    // everyone else) +1 silver", then "that feels a bit better to me"
+    key: 'toast', copyDoesIt: true, ring: 1, name: 'Toast', text: '+4 silver. Each rival +2 silver. +1 silver.',
+    estimate: ctx => 5 - spillCost(ctx, 2),
     resolve(ctx, p) {
-      const n = 3 * ctx.state.round;
-      const got = hostGain(ctx, p, n);
-      giveAll(ctx, p, S, ctx.state.round);
+      const got = hostGain(ctx, p, 4);
+      giveAll(ctx, p, S, 2);
       // what the taker got (Grand Host's doubling included), so the line matches the count
-      ctx.log(`${p.name} raised a toast: +${got} silver, +${ctx.state.round} silver to everyone else.`);
+      ctx.log(`${p.name} raised a toast: +${got} silver, +2 silver to everyone else.`);
+      hostGain(ctx, p, 1);
     },
   },
   swap11(swap11({
     // Cory, Nov 11 12:24-12:29am: "+3 silver, turn your silver into other colors… maybe make it all one other color",
     // "would be pretty good as a round I even", then "yeah 1. simpler also" (all of it, not "any of it"). Name kept.
-    key: 'polish', copyDoesIt: true, ring: 1, name: 'Polish', text: '+3 silver. Then turn all your silver into one other color.',
+    key: 'polish', copyDoesIt: true, ring: 1, name: 'Polish', text: '+2 silver. Then turn all your silver into one other color. +1 silver.',
+    // Cory, Nov 11 10:23am: "Polish should be +2 silver, then the +1": the space's +1 comes after the turn, so it stays silver
     estimate: () => 3.5,
     resolve(ctx, p) {
-      hostGain(ctx, p, 3);
+      hostGain(ctx, p, 2);
       const n = p.res[S] || 0, opts = otherColors(ctx);
-      if (!n || !opts.length) return;
+      if (!n || !opts.length) { hostGain(ctx, p, 1); return; }
       ctx.choose(p, `Polish: turn all ${n} of your silver into which color?`, opts.map(c => ({
         id: `color:${c}`, label: `${n} silver → ${n} ${c}`, kind: 'color', value: c, spend: { silver: n, [c]: -n },
         hint: 1 - 0.3 * (p.res[c] || 0),
@@ -626,9 +628,11 @@ const silver = {
     },
     polishAll(ctx, p, c) {
       const n = p.res[S] || 0;
-      if (!n || c === S || !ctx.state.resources.includes(c)) return;
-      p.res[S] = 0; ctx.gain(p, c, n, { unscaled: true }); // a copy's Wallflower doubles the +3, not the turn (Cory, Nov 11)
-      ctx.log(`${p.name}'s Polish: ${n} silver into ${n} ${c}.`);
+      if (n && c !== S && ctx.state.resources.includes(c)) {
+        p.res[S] = 0; ctx.gain(p, c, n, { unscaled: true }); // a copy's Wallflower doubles the silver gained, not the turn (Cory, Nov 11)
+        ctx.log(`${p.name}'s Polish: ${n} silver into ${n} ${c}.`);
+      }
+      hostGain(ctx, p, 1);
     },
     buyout(ctx, p, uid) {
       if (uid == null) { ctx.log(`${p.name}'s Buyout: recruits nothing.`); return; }

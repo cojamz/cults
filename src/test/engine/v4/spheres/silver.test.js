@@ -187,8 +187,8 @@ describe('Silver members', () => {
     let s = take(scene({ round: 2, members: [['silver.grandhost']] }), 'silver.toast');
     expect(R(s).silver).toBe(12);
     expect(R(s, 1).silver).toBe(2);
-    s = take(scene({ members: [['silver.grandhost']] }), 'silver.polish'); // Polish's +3 is the space's own silver: doubled
-    expect(s.pending.prompt).toMatch(/all 6/);
+    s = take(scene({ members: [['silver.grandhost']] }), 'silver.polish'); // Polish's +2 is the space's own silver: doubled
+    expect(s.pending.prompt).toMatch(/all 4/);
     s = take(scene({ members: [['silver.grandhost'], ['silver.guest']] }), 'silver.toast');
     expect(R(s).silver).toBe(6);
   });
