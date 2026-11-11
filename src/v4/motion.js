@@ -208,7 +208,8 @@ const TABLE = {
   // a recruit holds at the hub, its rule readable, before it flies on to its buyer (Cory, 2026-10-18)
   // (Cory, live, Oct 27: "the card should fly up, show what it does"): long enough to read the whole card
   // (Cory, Nov 9: "the card lingers for 3-4 seconds"): the same at every speed, never stretched by Relaxed
-  recruitShow: [3000,  3500],
+  // (Cory, Nov 9 9:11pm, after playing it: "member card lingers too long in center"): about 2 s (Claude, under his go-with-your-gut)
+  recruitShow: [1800,  2200],
   // a recruit's coins have all landed in the lifted card: a beat before it flies, so paying and leaving read as two steps
   paidBeat:    [140,   140],
   // a member's bubble stays this long after its chain to be read, without holding the next move (Cory, live, Oct 27)
