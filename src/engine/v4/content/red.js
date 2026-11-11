@@ -251,7 +251,7 @@ export default {
         const tied = list.filter(([, n]) => n === top && n > 0);
         if (!tied.length) { ctx.log(`${p.name}'s Trending: no colored member in the shop.`); return; }
         if (tied.length === 1) { trend(ctx, p, tied[0][0], top); return; }
-        ctx.choose(p, `Trending: the shop holds ${top} each of ${tied.map(([c]) => c).join(' and ')}. Gain which?`, tied.map(([c]) => ({
+        ctx.choose(p, `Trending: +${top} of which color?`, tied.map(([c]) => ({
           id: `color:${c}`, label: `+${top} ${c}`, kind: 'color', value: c, hint: top,
         })), 'red.trending', { n: top });
       },
