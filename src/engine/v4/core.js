@@ -1033,7 +1033,7 @@ function runTask(state, task) {
         if (state.openBar && qid === 'silver') for (const t of state.openBar) if (t.round === state.round && t.pid !== p.id) {
           const o = state.players.find(x => x.id === t.pid); o.bonus += 1; log(state, `${o.name}'s Open Bar: ${p.name} took a Silver space, +1 follower.`);
         }
-        econRun('space', { state, pid: p.id, color: quadrant(qid).resource, delta: spaceDelta(state) }, () => a.resolve(ctx, p));
+        econRun('space', { state, pid: p.id, color: quadrant(qid).resource, delta: spaceDelta(state) + plus1Delta(state, task, a, qid) }, () => a.resolve(ctx, p));
       });
       fCredit(state, mark, a.name);
       return out;
@@ -2012,6 +2012,20 @@ function econRun(kind, frame, fn) {
   // a space that prints none of its color still gives the extra (Richer: "every space gives 1 more of its color")
   if (kind === 'space' && !mine.paid && mine.delta > 0 && mine.state) gain(mine.state, mine.state.players[mine.pid], mine.color, mine.delta, { fromAction: true });
   return out;
+}
+// PLUS1 test dial (bot games only; Cory, Nov 11: "the spaces give the +1 only once each round, to the first person who
+// takes it. actually maybe the +1 should just be per game?"): round = only a space's first taker each round gets its
+// printed +1 of its color; game = only its first taker all game. Spaces that print no "+1 <color>." are untouched.
+const PLUS1 = globalThis.process?.env?.PLUS1 || '';
+function plus1Delta(state, task, a, qid) {
+  if (!PLUS1) return 0;
+  const res = quadrant(qid).resource;
+  if (!new RegExp(`\\+1 ${res}\\.\\s*$`, 'i').test(a.text || '')) return 0;
+  const seen = state.plus1Seen || (state.plus1Seen = {});
+  const k = PLUS1 === 'game' ? `${task.q}-${task.i}` : `${state.round}:${task.q}-${task.i}`;
+  state.plus1Stats = state.plus1Stats || { paid: 0, cut: 0 };
+  if (seen[k]) { state.plus1Stats.cut++; return -1; }
+  seen[k] = true; state.plus1Stats.paid++; return 0;
 }
 const spaceDelta = state => ECON.space + (ECON.spaceR?.[state.round - 1] || 0) + (state.rules?.econ === 'rich' ? RICH.space : 0);
 function econAdjust(p, color, n, fromAction) {

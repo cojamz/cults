@@ -55,7 +55,7 @@ for (let g = first; g < first + count; g++) {
   const sorted = [...fol].sort((a, b) => b - a);
   const r2 = P.map(x => x.folR2), lastR2 = r2.indexOf(Math.min(...r2));
   appendFileSync(out, JSON.stringify({
-    game: g, table: quads, buyer, over: !!s.over, spread: sorted[0] - sorted[1],
+    game: g, table: quads, buyer, over: !!s.over, plus1: s.plus1Stats || null, spread: sorted[0] - sorted[1],
     lastAfterR2Won: fol[lastR2] === top,
     players: s.players.map((x, i) => ({
       followers: fol[i], win: fol[i] === top, cards: x.members.length, seat: memberCount(s, x),

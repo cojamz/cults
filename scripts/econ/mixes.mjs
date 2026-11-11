@@ -3,6 +3,8 @@
 // 1 resource with your cloak, round I deck up to printed 3 (shown 5).
 export const MIXES = {
   today: {},
+  // Nov 11 (Cory: "the spaces give the +1 only once each round, to the first person who takes it. actually maybe the +1 should just be per game?")
+  'plus1-round': { PLUS1: 'round' }, 'plus1-game': { PLUS1: 'game' },
   'up2': { MEMBER_UP: 2 }, 'up4': { MEMBER_UP: 4 }, 'up5': { MEMBER_UP: 5 },
   'color0': { MEMBER_COLOR: 0 }, 'color2': { MEMBER_COLOR: 2 },
   'space-1': { SPACE_GAIN: -1 }, 'space+1': { SPACE_GAIN: 1 },
