@@ -61,3 +61,31 @@ Meets the bar: fine, not a star. It's the "something that just gives magenta" he
 
 ## Still open from his own words: Switcheroo
 "Swap one of your piles with one of a rival's piles. +1 magenta." Cory, 3:48pm: "oh switcheroo is cool. because then oyu have to have a pile?" Open: whether your pile must hold at least 1. Round III case: your 1 red for their 12 blue.
+
+## Second pass, 9pm: from a played round (after Cory: "you're not thinking about this big picture")
+
+Round I, 4 players (Magenta, Red, Green, Blue in the game), everyone starts with 1 resource. Order A B C D D C B A A B C D.
+- Turns 1 to 3: A, B and C take spaces paying 3 or 4 (Red's "+3 red. If you recruit a member this turn of a color you already have: +4 followers. +1 red.", Blue's discard spaces). They hold 5, 5 and 4.
+- Turn 4: D holds 1, three rivals are richer. Catch Up "+2 magenta per rival with more resources than you. +1 magenta." pays 7. D holds 8 and is the richest (the risk Cory noted when he took Catch Up).
+- Turns 5 to 8: second minions. Help Yourself "Steal 1 resource per minion you've placed this round, this one included. +1 magenta." would steal 2 here; players leave it.
+- Turns 9 to 12: last minions. Whoever gets to Help Yourself first steals 3, most likely from D, the richest: D drops 3, the thief gains 4. That swing usually decides Most resources (+4 followers).
+- Round III is the same with bigger numbers: Catch Up still tops out at 7, Help Yourself steals 5, and the rich player is also the target of Heist "Steal 4 followers and 4 resources. +1 magenta." and Poach "Recruit a rival's member you choose, for free. +1 magenta."
+
+What the round shows: Magenta has a space for the player who is behind (Catch Up) and a space for the thief who waits (Help Yourself). The player who is ahead in resources has no Magenta play, and they are the one everybody robs. The third space is theirs: a way to still be richest when the round ends.
+
+### Lie Low (new text)
+Card: "Rivals can't steal from you while your minion is here. +2 magenta." (the 2 is Claude's fill-in; today's Lie Low is "Steal 1 resource. Rivals can't steal from you this round. +1 magenta.")
+Round I turn: D on turn 5, holding 8. Here: 10 and safe. Best other space, Red's "+3 red … +1 red.": 12, then robbed of 3 on the last turns, ending near 9 with the thief up 4. About even, so it's a real pick. Rivals A, B and C now know the turn-9 steal lands on one of them.
+Round III turn: you hold 14 resources and a member costing 10. First turn: +2 magenta, and Heist, Help Yourself, Swindle and Poach can't touch you this round. A Green copy gets only the 2 magenta, since the copier's minion isn't on the space.
+Choices: none handed to a rival. Yours: guard early and give up a paying space, or stay exposed.
+Who feels it: every thief, and the other rivals, who become the targets.
+How often: every round has a richest player; in rounds II and III also anyone with a member worth taking.
+Steps: place the minion; while it sits there nobody may steal from that player; it comes home at round end.
+Ties to other colors: none needed; it protects resources of every color and members of every color.
+Intuitive: the minion on the space is the reminder, so the table has nothing to remember.
+Fun: the richest player makes a visible claim, and the thief has to pick someone else.
+Interacts: Catch Up into Lie Low is a plan (get rich, then guard); Help Yourself and Heist are what it answers; Bodyguards "Rivals can't steal from you." is the permanent version on a member.
+Powerful: a whole round of safety; in round III it protects your best member from Poach.
+Engine or counter: the color's own counter, for one round, at the price of a minion.
+Its color: Magenta's contest is Most resources; this is how a lead in it is kept.
+Meets the bar: relates to the resource contest (keeps the pile that wins it), changes with the game state (worth more the more you own and the more thieves are still to play), not a steal, works in round I with no members. Breaks "a space finishes when taken"; Cory knows that exception ("i don't think we have any except for can't be stolen from") and said of it today "I don't really like the action giving the protection. but maybe." and on Oct 31 "its hard to track". The minion as the marker is the answer to the tracking; the dislike is his call.
