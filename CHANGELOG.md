@@ -2,6 +2,14 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.712 — 2026-11-11
+
+- New actions, in the normal game and with Test cards: Red Borrow, Trending, Gather; Blue Test Drive, Markdown, Word of Mouth; Green Crowd; Purple On a Roll; Magenta Catch Up, Swindle.
+- Changed: Out of Style discards 3 shop members you pick; Recruit Twice and Spree recruit from the discard pile now; Build Up, Cover and Greatest Hits have new text; Help Yourself steals 1 per minion you've placed this round; Heist steals 4 followers and 4 resources.
+- The Goes Last token now holds all your other minions (Sleep In, On a Roll).
+- Extra Hand: On Recruit, +1 minion this round.
+- Test cards keep only their Silver, Trading and Yellow swaps.
+
 ## v0.99.711 — 2026-11-09
 
 - Test cards: Recruit Twice is back in Blue round II
