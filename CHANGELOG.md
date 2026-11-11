@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.717 — 2026-11-11
+
+- Brokers gives +2 followers whenever a White action gives you followers; new Red member Clan replaces Patriarch
+
 ## v0.99.716 — 2026-11-11
 
 - Magenta: Help Yourself reads "Steal 1 resource per minion you've placed this round. +1 magenta."; Stash is "+3 magenta." for now; a member Swindle gives a rival is not a recruit (no On Recruit).
