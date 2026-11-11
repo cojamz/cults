@@ -1,8 +1,12 @@
 import { readdirSync, readFileSync } from 'node:fs';
 const dir = process.argv[2] || '.econ-plus1';
+// --names=a,b (the mixes' slugs, as sweep.mjs names files); --games=N keeps games 1..N so every mix plays the same deals
+const opt = Object.fromEntries(process.argv.slice(3).map(a => { const [k, ...v] = a.replace(/^--/, '').split('='); return [k, v.join('=')]; }));
+const upTo = Number(opt.games || Infinity);
 const avg = a => a.reduce((x, y) => x + y, 0) / (a.length || 1);
-for (const n of ['today', 'plus1-round', 'plus1-game']) {
-  const g = readdirSync(dir).filter(f => f.startsWith(n + '.')).flatMap(f => readFileSync(`${dir}/${f}`, 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)));
+for (const n of opt.names ? opt.names.split(',') : ['today', 'plus1-round', 'plus1-game']) {
+  const g = readdirSync(dir).filter(f => f.startsWith(n + '.')).flatMap(f => readFileSync(`${dir}/${f}`, 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l))).filter(x => x.game <= upTo);
+    if (!g.length) continue;
   const ps = g.flatMap(x => x.players.filter((_, i) => i !== x.buyer));
   const ws = g.flatMap(x => x.players.filter((p, i) => p.win && i !== x.buyer));
   const r = [0, 1, 2].map(k => avg(ps.map(p => p.recruits[k])).toFixed(2));

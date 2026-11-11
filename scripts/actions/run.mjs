@@ -3,7 +3,7 @@
 // Green's deck stays at 10 (Cory: "maybe we'll cut tribute band ... We'll need to put in a replacement green").
 // Usage: DECK=10 node scripts/actions/run.mjs [--games=200] [--chunk=10] [--only=base,no-tribute] [--dir=.actions-runs/<id>]
 import { spawn, execSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, appendFileSync } from 'node:fs';
 
 export const VARIANTS = {
   base: {},
@@ -31,7 +31,23 @@ const next = () => {
   while (running < W && i < jobs.length) {
     const j = jobs[i++]; running++;
     const c = spawn('node', ['scripts/actions/play.mjs', String(j.first), String(j.count), j.out], { env: { ...process.env, BUDGET: process.env.BUDGET || '40', ...VARIANTS[j.n] }, stdio: 'inherit' });
-    c.on('exit', code => { running--; console.log(`${new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' })} ${j.n} ${j.first}+${j.count} exit ${code}`); next(); });
+    // watchdog: some deals hang a bot inside one move (economy baseline, Nov 11: games 50 and 58 ran 80+ minutes).
+    // A job with no new game in 12 minutes is killed, the stuck game is logged and skipped, and the rest re-queued.
+    const lines = () => (existsSync(j.out) ? readFileSync(j.out, 'utf8').trim().split('\n').filter(Boolean).length : 0);
+    const start = lines(); let seen = start, last = Date.now();
+    const dog = setInterval(() => {
+      const n = lines();
+      if (n !== seen) { seen = n; last = Date.now(); return; }
+      if (Date.now() - last > 12 * 60000) {
+        const stuck = j.first + (n - start);
+        console.log(`${j.n}: game ${stuck} made no progress in 12 minutes; skipped (logged in ${dir}/stuck.txt)`);
+        appendFileSync(`${dir}/stuck.txt`, `${j.n} game ${stuck}\n`);
+        const left = j.first + j.count - stuck - 1;
+        if (left > 0) jobs.push({ n: j.n, first: stuck + 1, count: left, out: j.out });
+        c.kill('SIGKILL');
+      }
+    }, 30000);
+    c.on('exit', code => { clearInterval(dog); running--; console.log(`${new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' })} ${j.n} ${j.first}+${j.count} exit ${code}`); next(); });
   }
 };
 next();
