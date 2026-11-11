@@ -260,6 +260,15 @@ function onGreen(ctx, p) {
   const k = Object.keys(st.slots || {}).find(key => key.startsWith(`${qi}-`) && spacesOf(st, 'echo')?.[+key.split('-')[1]]?.key === 'chant');
   return k != null && st.slots[k] === p.id;
 }
+/** The entries `targets` would offer but Agents stops (empty when Agents isn't why), so an empty copy can say so. */
+export function agentsBlocked(ctx, p, which, skip = null) {
+  const L = ledger(ctx.state), path = pathNow(ctx);
+  const fits = e => copyable(e) && protectedAction(ctx, e, p) && !path.includes(actionKey(e.key));
+  if (which === 'previous') { const e = previousEntry(ctx, skip); return e && fits(e) ? [e] : []; }
+  return Object.values(L.now).filter(e => e.key !== skip && fits(e) && (which === 'own' ? e.p === p.id : which === 'rival' ? e.p !== p.id : true));
+}
+/** " (Agents prevents copying Gather)" when Agents is why nothing could be copied, else "". */
+const agentsWhy = (ctx, blocked) => (blocked.length ? ` (${[...new Set(blocked.map(e => `${ctx.player(e.p).name}'s Agents prevents copying ${e.name}`))].join('; ')})` : '');
 export function targets(ctx, p, which, skip = null) {
   const L = ledger(ctx.state);
   const pool = Object.values(L.now);
@@ -379,8 +388,8 @@ function emptyValue(ctx, a, p) {
 }
 // by: the member making the copy (Understudy, Sleepwalker…), so the log names it. who: the card or space asking
 // (the prompt's own name), so a copied space's free member is titled with it ("Sample: take a face-up member…").
-function offer(ctx, p, list, prompt, from, by = null) {
-  if (!list.length) { ctx.log(`${p.name}${by ? `'s ${by}` : ''} had nothing to copy.`); return; }
+function offer(ctx, p, list, prompt, from, by = null, blocked = []) {
+  if (!list.length) { ctx.log(`${p.name}${by ? `'s ${by}` : ''} had nothing to copy${agentsWhy(ctx, blocked)}.`); return; }
   const who = by || prompt.split(':')[0];
   ctx.choose(p, prompt, list.map(e => ({
     id: `space:${from}:${e.key}`, label: `${e.name} (${ctx.player(e.p).name}): ${describe(ctx, e)}`, kind: 'space',
@@ -614,7 +623,7 @@ const echoQ = {
       // The previous placement can be your own on a snake double turn.
       key: 'echo', ring: 1, name: 'Echo', echo: true, text: 'Copy the previous action. +1 green.', // back to +1 (Cory, Oct 28)
       estimate: (ctx, p) => VARIANT.plus + bestValue(ctx, targets(ctx, p, 'previous'), p),
-      resolve(ctx, p) { plus(ctx, p); offer(ctx, p, previousNow(ctx, p), 'Echo: copy the previous action?', 'now'); },
+      resolve(ctx, p) { plus(ctx, p); offer(ctx, p, previousNow(ctx, p), 'Echo: copy the previous action?', 'now', null, agentsBlocked(ctx, p, 'previous', ledger(ctx.state).path?.length ? ledger(ctx.state).origin : null)); },
     },
     {
       // your own spaces are on the board in your color: no memory of last round needed (it replaced Recall)
@@ -622,7 +631,7 @@ const echoQ = {
       estimate: (ctx, p) => VARIANT.plus + bestValue(ctx, targets(ctx, p, 'own'), p),
       resolve(ctx, p) {
         plus(ctx, p);
-        offer(ctx, p, targets(ctx, p, 'own'), 'Reprise: copy which of your spaces?', 'now');
+        offer(ctx, p, targets(ctx, p, 'own'), 'Reprise: copy which of your spaces?', 'now', null, agentsBlocked(ctx, p, 'own'));
       },
     },
     {
@@ -662,7 +671,7 @@ const echoQ = {
       estimate: (ctx, p) => VARIANT.plus + bestValue(ctx, targets(ctx, p, 'rival'), p),
       resolve(ctx, p) {
         plus(ctx, p);
-        offer(ctx, p, targets(ctx, p, 'rival'), 'Cover: copy which rival\u2019s space?', 'now');
+        offer(ctx, p, targets(ctx, p, 'rival'), 'Cover: copy which rival\u2019s space?', 'now', null, agentsBlocked(ctx, p, 'rival'));
       },
     },
     {
@@ -990,7 +999,7 @@ const echoQ = {
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
         const list = targets(ctx, owner, 'rival');
-        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Buskers: no rival action to copy.`); return; }
+        if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Buskers: no rival action to copy${agentsWhy(ctx, agentsBlocked(ctx, owner, 'rival'))}.`); return; }
         ctx.log(`${owner.name} uses Buskers.`);
         offer(ctx, owner, list, 'Buskers: copy which rival action?', 'now', 'Buskers');
       },
