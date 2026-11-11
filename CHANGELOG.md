@@ -12,10 +12,6 @@ Player-facing releases, newest first. What's live is main's play/build.json: a s
 
 ## v0.99.720 — 2026-11-11
 
-- Yellow: Harvest "+3 in colors you choose." in every round; New Blood "+2 yellow. If you recruit a member this turn in a color none of your members have: +3 yellow."; Melting Pot "For each color among your members: +1 follower and +1 of that color (grey: 1 of any color)."
-
-## v0.99.720 — 2026-11-11
-
 - White: Modest Means replaces Allowance: "+2 white. +1 white per rival with more members than you."; Nest Egg "+3 white." replaces Exchange for now. Silver: Toast "+4 silver. Each rival +2 silver. +1 silver."; Flaunt replaces Sweet Nothings; Polish reworded.
 
 ## v0.99.719 — 2026-11-11
