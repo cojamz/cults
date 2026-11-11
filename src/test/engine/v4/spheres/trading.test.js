@@ -6,7 +6,7 @@ import { chooseBotMove } from '../../../../engine/v4/bots.js';
 import { seededRandom } from '../../../../engine/v4/rng.js';
 import trading, { install } from '../../../../engine/v4/content/trading.js';
 import { take, move, uidOf, ids, pinCosts, TEST_COSTS, useRetired } from '../helpers.js';
-useRetired(['trading.stipend']); // Allowance left the wheel Nov 11; its checks stay on the retired space
+useRetired(['trading.stipend', 'trading.exchange']); // Allowance and Exchange left the wheel Nov 11; their checks stay on the retired spaces
 import { checkInvariants } from '../fuzz-runner.js';
 import { games } from '../budget.js';
 import { STRAYS, stray } from '../stray.js';

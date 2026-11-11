@@ -27,9 +27,9 @@ const use = (s, def) => move(s, `use:${uidIn(s, def, 0)}`);
 const W = quadrant('trading');
 const text = k => [...W.actions, ...W.members].find(c => c.key === k).text;
 
-useRetired(['trading.stipend']);
+useRetired(['trading.stipend', 'trading.exchange']);
 
-describe('White: Allowance (retired Nov 11)', () => {
+describe('White: Allowance and Exchange (retired Nov 11)', () => {
   it('Allowance (Oct 31, Gather\'s shape): round II pays +4 white, and +2 followers on a member recruit that turn (named)', () => {
     let s = take(table(Q, { round: 2, res: [{ red: 2 }], shop: ROW }), 'trading.stipend');
     expect([B(s), R(s).white]).toEqual([0, 4]);
@@ -45,6 +45,13 @@ describe('White: Allowance (retired Nov 11)', () => {
     s = take(s, 'trading.stipend');
     s = move(s, cardOpt(s, 'red.intern', 'shop'));
     expect(B(s)).toBe(1 + 4);
+  });
+
+  it('Exchange: round III, three resources into 6 followers, each trade named', () => {
+    let s = take(table(Q, { round: 3, left: 5, res: [{ red: 2, gold: 1 }], shop: ROW }), 'trading.exchange');
+    s = move(move(move(s, 'color:red'), 'color:gold'), 'color:white');
+    expect([B(s), R(s).red, R(s).gold, R(s).white]).toEqual([6, 1, 0, 1]); // one of Exchange's +2 white traded (Nov 6)
+    expect(named(s, 'Exchange').filter(l => l.includes('became 2 followers'))).toHaveLength(3);
   });
 
 });

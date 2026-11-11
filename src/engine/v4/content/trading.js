@@ -412,7 +412,15 @@ const trading = {
         (p.recruitFollowers ||= []).push({ patron: true, name: 'Patron' });
       },
     }),
+    {
+      // Cory, 2026-11-11 10:57am Eastern: "yeah lets just plug in +3 white for now." (Exchange's slot; a stand-in, name Claude's fill-in)
+      key: 'nestegg', copyDoesIt: true, ring: 1, name: 'Nest Egg', text: '+3 white.',
+      estimate: () => 3,
+      resolve(ctx, p) { ctx.gain(p, W, 3, { fromAction: true }); ctx.log(`${p.name}'s Nest Egg: +3 white.`); },
+    },
+    // Exchange left the wheel Nov 11 (Cory: "I don't like Exchange"); kept for old saves and its tests.
     swap11(swap11(swap14({
+      pool: true,
       key: 'exchange', copyDoesIt: true, ring: 1, name: 'Exchange', text: '+2 white. Then turn up to 1 resource (2 in round II, 3 in round III) into 2 followers each.', // +2 white (Cory, Nov 6: "just buff those by +1 white"); Cory, 2026-10-23: "up to", you can stop early
       byRound: { lead: '+2 white. Then:', lines: ['Turn up to 1 resource into 2 followers each.', 'Turn up to 2 resources into 2 followers each.', 'Turn up to 3 resources into 2 followers each.'] }, // white first (Cory, Nov 1 text audit)
       estimate: (ctx, p) => 2 + Math.min(ctx.state.round, totalRes(p) + 1) * (2 * fv(ctx) - 1),

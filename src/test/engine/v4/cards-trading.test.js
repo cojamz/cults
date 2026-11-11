@@ -29,9 +29,10 @@ const text = k => [...W.actions, ...W.members].find(c => c.key === k).text;
 describe('White: the printed cards', () => {
   it('six actions on their rings, with their text', () => {
     expect(W.actions.map(a => [a.key, a.ring])).toEqual([
-      ['modestmeans', 1], ['splurge', 1], ['exchange', 1], ['farewell', 2], ['estatesale', 2], ['cashin', 3],
+      ['modestmeans', 1], ['splurge', 1], ['nestegg', 1], ['farewell', 2], ['estatesale', 2], ['cashin', 3],
     ]);
     expect(text('modestmeans')).toBe('+2 white. +1 white per rival with more members than you.');
+    expect(text('nestegg')).toBe('+3 white.');
     expect(text('splurge')).toBe('+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay (every 1 in round II).');
     expect(text('farewell')).toBe('Discard one of your members. Gain its cost in followers. +1 white.');
     expect(text('estatesale')).toBe('Discard one of your members. Gain its cost in white. +1 white.');
@@ -63,11 +64,10 @@ describe('White actions', () => {
     expect(named(b, 'Splurge')).toContain("P1's Splurge: +6 followers for spending. Brokers: +2.");
   });
 
-  it('Exchange: round III, three resources into 6 followers, each trade named', () => {
-    let s = take(table(Q, { round: 3, left: 5, res: [{ red: 2, gold: 1 }], shop: ROW }), 'trading.exchange');
-    s = move(move(move(s, 'color:red'), 'color:gold'), 'color:white');
-    expect([B(s), R(s).red, R(s).gold, R(s).white]).toEqual([6, 1, 0, 1]); // one of Exchange's +2 white traded (Nov 6)
-    expect(named(s, 'Exchange').filter(l => l.includes('became 2 followers'))).toHaveLength(3);
+  it('Nest Egg (Nov 11 stand-in): +3 white, named', () => {
+    const s = take(table(Q), 'trading.nestegg');
+    expect(R(s).white).toBe(3);
+    expect(named(s, 'Nest Egg')).toContain("P1's Nest Egg: +3 white.");
   });
 
   it('Farewell: Big Family (4+4) pays 8 followers, named; it goes to the discard pile', () => {

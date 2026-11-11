@@ -13,7 +13,7 @@ export const RETIRED_NOV10 = {
   'red.evenswap': 'borrow', 'red.turnout': 'trending', 'red.hire': 'gather',
   'market.bargain': 'testdrive', 'market.showroom': 'markdown', 'market.pricecheck': 'wordofmouth',
   'echo.encore': 'crowd2', 'purple.holdup': 'onaroll', 'thieves.hideout': 'catchup', 'thieves.ransom': 'swindle',
-  'silver.tongue': 'buyout', 'trading.stipend': 'modestmeans', 'silver.sweetnothings': 'flaunt',
+  'silver.tongue': 'buyout', 'trading.stipend': 'modestmeans', 'silver.sweetnothings': 'flaunt', 'trading.exchange': 'nestegg',
 };
 /** Put these retired spaces back on the wheel, each in the slot its replacement took, for the whole file. */
 export function useRetired(spaceIds) {

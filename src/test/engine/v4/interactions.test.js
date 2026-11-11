@@ -12,7 +12,7 @@ import { useRetiredOvertime } from './retired-overtime.js';
 import { useRetired } from './helpers.js';
 import { placed } from './placed-helpers.js';
 const AV = ['thieves', 'echo', 'market'];
-useRetired(['market.pricecheck', 'thieves.hideout', 'thieves.ransom']);
+useRetired(['market.pricecheck', 'thieves.hideout', 'thieves.ransom', 'trading.exchange']);
 
 useRetiredOvertime();
 
