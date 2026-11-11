@@ -34,8 +34,8 @@ describe('White: the printed cards', () => {
     expect(text('modestmeans')).toBe('+2 white. +1 white per rival with more members than you.');
     expect(text('nestegg')).toBe('+3 white.');
     expect(text('splurge')).toBe('+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay (every 1 in round II).');
-    expect(text('farewell')).toBe('Discard one of your members. Gain its cost in followers. +1 white.');
-    expect(text('estatesale')).toBe('Discard one of your members. Gain its cost in white. +1 white.');
+    expect(text('farewell')).toBe('Discard a member for its cost in followers. +1 white.');
+    expect(text('estatesale')).toBe('Discard a member for its cost in white. +1 white.');
     expect(text('cashin')).toBe('Turn all your white into followers. +1 white.');
     expect(W.scoring.label).toBe('Most white');
   });

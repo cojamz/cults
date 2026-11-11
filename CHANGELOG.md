@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.721 — 2026-11-11
+
+- Farewell and Estate Sale: shorter words, same effect
+
 ## v0.99.720 — 2026-11-11
 
 - White: Modest Means replaces Allowance: "+2 white. +1 white per rival with more members than you."; Nest Egg "+3 white." replaces Exchange for now. Silver: Toast "+4 silver. Each rival +2 silver. +1 silver."; Flaunt replaces Sweet Nothings; Polish reworded.

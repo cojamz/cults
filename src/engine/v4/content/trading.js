@@ -430,7 +430,7 @@ const trading = {
       },
     }, PAWN_SHOP), WHITE_EXCHANGE), LOAN),
     {
-      key: 'farewell', copyDoesIt: true, ring: 2, name: 'Farewell', text: 'Discard one of your members. Gain its cost in followers. +1 white.', // "cast out": Cory, 2026-10-24
+      key: 'farewell', copyDoesIt: true, ring: 2, name: 'Farewell', text: 'Discard a member for its cost in followers. +1 white.', // "cast out": Cory, 2026-10-24
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, fv(ctx)))),
       resolve(ctx, p) {
         ctx.gain(p, W, 1, { fromAction: true });
@@ -438,7 +438,7 @@ const trading = {
       },
     },
     swap11({
-      key: 'estatesale', copyDoesIt: true, ring: 2, name: 'Estate Sale', text: 'Discard one of your members. Gain its cost in white. +1 white.',
+      key: 'estatesale', copyDoesIt: true, ring: 2, name: 'Estate Sale', text: 'Discard a member for its cost in white. +1 white.',
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, 1))),
       resolve(ctx, p) {
         ctx.gain(p, W, 1, { fromAction: true });
