@@ -174,3 +174,8 @@ Keep
 
 - Clean House ("Discard a member. Each rival discards a member of their choice.") is to be a member effect, not a space: a candidate for one of the open slots.
 - Cory wants more members that "jam people up", like Agents ("Your actions can't be copied."). Favor that shape when replacements are brainstormed.
+
+## Cory's read (Nov 11, 2:27pm)
+
+- Red: Mob out, Clan stays. New ideas held until every color is read.
+- Purple: Timekeeper stays (maybe +2), Lookouts stays (maybe +1, balance test), Night Managers, Closer, Courier, Latecomers stay. Sleepyheads close to the Purple Cloak (asked). Wants one new member that grabs or takes the Goes Last token.
