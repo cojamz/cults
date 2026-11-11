@@ -78,7 +78,7 @@ Frame update: round II Melting Pot now pays per member color in followers and re
 
 ## Idea: Even Spread
 
-1. Printed text: "+3 followers per member of the color you have the fewest members of (among your members' colors). +1 yellow." (name and +3 Claude's fill-ins; grey counts as a color, as everywhere). Cards it touches: Melting Pot "For each color among your members: +1 follower and +1 of that color (grey: 1 of any color)."; Red's contest, most members of one color; Dabblers (counts as one color more).
+1. Printed text: "+3 followers per member of the color you have the fewest members of. +1 yellow." (only colors among your members count) (name and +3 Claude's fill-ins; grey counts as a color, as everywhere). Cards it touches: Melting Pot "For each color among your members: +1 follower and +1 of that color (grey: 1 of any color)."; Red's contest, most members of one color; Dabblers (counts as one color more).
 2. Played turn: round III, 4 players. You hold 11 members: 3 red, 3 blue, 2 white, 2 yellow, 1 grey: smallest group 1 (grey): +3 followers. Recruit a second grey first and it is 2: +6. A cult of 15 spread 3/3/3/3/3: +9. Best other round III space for a wide cult, Initiation "Recruit a shop member costing 10 or less, for free. +1 red." (a 10-cost member, worth about 2 to 3 followers plus its ability). Gain: 0 to +6 over Initiation, more the evener your cult.
 3. Both sides: no choices on the card; the choice is earlier, recruiting your thinnest color instead of your best member.
 4. Who feels it: a rival who wants it must also be even; the Red player stacking one color gets little from it, so they block it only to deny you. Mild: a race for the center space.
