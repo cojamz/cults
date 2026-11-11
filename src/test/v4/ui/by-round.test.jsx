@@ -18,7 +18,7 @@ const everything = () => [
 describe('rules that grow by round', () => {
   it('every space and member whose rule grows by round has its three lines', () => {
     const found = everything().filter(([, d]) => GROWS.test(d.text || ''));
-    expect(found.length).toBeGreaterThanOrEqual(8); // Allowance left and Toast went flat (Nov 11)
+    expect(found.length).toBeGreaterThanOrEqual(6); // Allowance left; Toast, Harvest and New Blood went flat (Nov 11)
     for (const [id, d] of found) {
       expect(d.byRound, id).toBeTruthy();
       expect(d.byRound.lines, id).toHaveLength(3);

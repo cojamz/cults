@@ -437,7 +437,8 @@ describe('member colors across spheres', () => {
     let s = go(scene({ quads: ['gold', 'red', 'yellow', 'echo'], round: 2, members: [['echo.evergreen', 'echo.choir', 'red.twins']] }), 'yellow.meltingpot');
     // green and red among the members: +1 of each
     expect(s.pending?.prompt || '').not.toMatch(/Melting Pot/);
-    expect(R(s, 0)).toMatchObject({ green: 1, red: 1, yellow: 2, gold: 0 });
+    expect(R(s, 0)).toMatchObject({ green: 1, red: 1, yellow: 0, gold: 0 }); // and +2 followers (Nov 11)
+    expect(s.players[0].bonus).toBe(2);
   });
   it('Green members pay their colored part in green', () => {
     let s = scene({ quads: ['gold', 'red', 'yellow', 'echo'], res: [{ green: 1, gold: 1 }], shop: ['echo.agents', ...SHOP.slice(1)] });

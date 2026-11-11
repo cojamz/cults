@@ -74,13 +74,17 @@ describe('Yellow actions', () => {
     expect(names).toContain('Housewarming');
     expect(names).not.toContain('Big New Blood');
   });
-  it('Melting Pot (round II): +2 yellow, and +1 of each color among your members (Cory, Nov 5)', () => {
+  // Cory, Nov 11: "+1 follower and + 1 of each color among your members (including a wild for grey)"
+  it('Melting Pot (round II): for each color among your members, +1 follower and +1 of that color', () => {
     const s = take(sc({ round: 2, members: [['red.twins', 'gold.banker', 'yellow.explorer']] }), 'yellow.meltingpot');
-    expect(R(s)).toMatchObject({ red: 1, gold: 1, yellow: 3, green: 0 });
+    expect(R(s)).toMatchObject({ red: 1, gold: 1, yellow: 1, green: 0 });
+    expect(s.players[0].bonus).toBe(3);
+    expect(s.pending?.prompt || '').not.toMatch(/Melting Pot/);
   });
   it('Melting Pot with Dabblers: Dabblers is wild, so +1 of every color (Cory, Nov 5)', () => {
     const s = take(sc({ round: 2, members: [['benders.dabblers']] }), 'yellow.meltingpot');
-    expect(R(s)).toMatchObject({ red: 1, gold: 1, yellow: 3, green: 1 });
+    expect(R(s)).toMatchObject({ red: 1, gold: 1, yellow: 1, green: 1 });
+    expect(s.players[0].bonus).toBe(4);
   });
   it('Makeover (round III): +4 yellow, then rearrange everything', () => {
     let s = take(sc({ round: 3, res: [{ gold: 2, red: 2 }] }), 'yellow.makeover');

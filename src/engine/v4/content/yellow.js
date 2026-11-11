@@ -149,6 +149,8 @@ function askToll(ctx, host, o, left, key) {
 // rival's cult instead of your own, so a narrow player borrows a wide rival's spread. Colors on this table only.
 /** Lost and Found (pool 15): the table colors among discard pile members, in table order. */
 const pileColors = ctx => { const qs = new Set(discardOf(ctx.state).map(u => ctx.card(u).def.quadrant)); return ctx.state.quadrants.map((q, i) => (qs.has(q) ? ctx.state.resources[i] : null)).filter(Boolean); };
+/** Melting Pot: a grey member (not Dabblers, which counts as every table color) among p's members. */
+const hasGrey = (ctx, p) => ctx.membersOf(p).some(c => !isWild(ctx, c) && !c.asColor && ['guest', 'benders'].includes(c.def.quadrant));
 const memberRes = (ctx, p) => memberColors(ctx, p).map(q => ctx.state.resources[ctx.state.quadrants.indexOf(q)]);
 const GRAND_TOUR = {
   key: 'grandtour', ring: 2, name: 'Grand Tour', text: '+2 yellow. Choose a rival: gain 1 of each color among their members.',
@@ -319,13 +321,18 @@ export default {
       // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 5: "melting pot should give 1 color for each
       // different member color. And when i have dabblers it should give me 1 of every color": 1 of each of your member
       // colors, no choosing (memberColors: Dabblers counts as every color on the table, Drifters as its chosen color)
-      key: 'meltingpot', ring: 2, name: 'Melting Pot', text: '+2 yellow. +1 of each color among your members.',
-      estimate: (ctx, p) => memberColors(ctx, p).length + 2,
+      // Cory, Nov 11 12:05pm: "+1 follower and + 1 of each color among your members (including a wild for grey)",
+      // "that'd be +10 if somebody had all four and a grey": a follower and a resource per color; grey members count as
+      // one color whose resource is your pick. The old +2 yellow goes.
+      key: 'meltingpot', ring: 2, name: 'Melting Pot', text: 'For each color among your members: +1 follower and +1 of that color (grey: 1 of any color).',
+      estimate: (ctx, p) => 2 * (memberColors(ctx, p).length + (hasGrey(ctx, p) ? 1 : 0)),
       resolve(ctx, p) {
-        ctx.gain(p, Y, 2, { fromAction: true });
-        const cs = memberRes(ctx, p).filter(c => colors(ctx).includes(c));
+        const cs = memberRes(ctx, p).filter(c => colors(ctx).includes(c)), grey = hasGrey(ctx, p);
+        const n = cs.length + (grey ? 1 : 0);
         for (const c of cs) ctx.gain(p, c, 1, { fromAction: true });
-        ctx.log(cs.length ? `${p.name}'s Melting Pot: +1 ${cs.join(', +1 ')}.` : `${p.name}'s Melting Pot: no members yet, so only the yellow.`);
+        if (n) p.bonus += n;
+        ctx.log(n ? `${p.name}'s Melting Pot: ${n} member color${n > 1 ? 's' : ''}, +${n} follower${n > 1 ? 's' : ''}${cs.length ? `, +1 ${cs.join(', +1 ')}` : ''}${grey ? ', and 1 of any color for grey' : ''}.` : `${p.name}'s Melting Pot: no members yet, nothing.`);
+        if (grey) pickColors(ctx, p, 1, 'Melting Pot', true);
       },
     }, GRAND_TOUR), OPEN_HOUSE),
     {

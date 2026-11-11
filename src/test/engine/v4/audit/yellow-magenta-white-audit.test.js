@@ -39,12 +39,16 @@ describe('Yellow', () => {
     expect(R(s)).toEqual({ gold: 1, red: 1, yellow: 3, white: 1 }); // Survey's 2 yellow, less the price
   });
 
-  it('Melting Pot: a guest member whose color is not on the table adds no color', () => {
+  // Cory, Nov 11: "(including a wild for grey)": a grey member is a color whose resource is your pick
+  it('Melting Pot: a grey member counts as a color: +1 follower and 1 of any color', () => {
     const Q = ['gold', 'red', 'yellow', 'trading']; // no purple: Front-runner leans purple
     let s = table(Q, { round: 2, members: [['benders.frontrunner', 'yellow.explorer']], shop: ROW });
     s = take(s, 'yellow.meltingpot');
-    // Explorer is yellow: +1 yellow; Front-runner: nothing
-    expect(R(s)).toEqual({ gold: 0, red: 0, yellow: 3, white: 0 });
+    // Explorer is yellow: +1 yellow; Line Cutters is grey: 1 of any color, picked
+    expect(s.pending.prompt).toMatch(/Melting Pot: \+1 of which color/);
+    s = move(s, 'color:red');
+    expect(R(s)).toEqual({ gold: 0, red: 1, yellow: 1, white: 0 });
+    expect(s.players[0].bonus).toBe(2);
   });
 });
 
