@@ -372,7 +372,9 @@ try {
         if (again !== after + 1) { errors.push(`center click after undo did not place (${after} -> ${again}); ${JSON.stringify({ bb, clickState })}`); await shot('zz-undo-center-click'); }
         // the "Placement undone" note goes with the step it was about: the pill now tracks the real prompt (read once the
         // placement has landed: the minion stands in the space in the click's own frame, a beat before the move commits)
-        await page.waitForFunction(() => { const g = document.querySelector('.app.game'); return g && g.dataset.presentationMoves === g.dataset.moves && !g.hasAttribute('data-animating'); }, null, { timeout: 1500, polling: 50 }).catch(() => {});
+        // (up to 5 s like the settle above: on a loaded box 1.5 s ran out before the move committed, and the pill was read
+        // a beat early, still on the undo note; quick run Nov 11 05:00)
+        await page.waitForFunction(() => { const g = document.querySelector('.app.game'); return g && g.dataset.presentationMoves === g.dataset.moves && !g.hasAttribute('data-animating'); }, null, { timeout: 5000, polling: 50 }).catch(() => {});
         const pill = await page.$eval('[data-prompt]', e => e.textContent).catch(() => '');
         if (/undone/i.test(pill)) errors.push(`after undo and a new placement the pill still says "${pill}"`);
       }
