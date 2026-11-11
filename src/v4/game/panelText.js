@@ -124,9 +124,9 @@ const P = {
   yellow: {
     // Yellow 2.0 (Oct 31): the wheel printed the old Harvest ("+1 yellow, +1 per other color you hold") and only the
     // yellow of Dilute, Big Dilute and Makeover; Melting Pot's long sentence ran off its panel (Claude, gut call, Nov 1)
-    harvest: r => ({ main: `+${r + 2} any`, second: 'colors you choose', note: run(n => `+${n + 2}`) }),
+    harvest: { main: '+3 any', second: 'colors you choose' }, // flat since Nov 11 (Cory)
     // New Blood and Big New Blood (Nov 4): Gather's shape, the condition in line 2
-    dilute: r => ({ main: '+2 yellow', second: `+${r + 1} yellow if you recruit a new color`, note: run(n => `+${n + 1}`, 'new color: ') }),
+    dilute: { main: '+2 yellow', second: '+3 yellow if you recruit a new color' }, // flat since Nov 11 (Cory)
     // Housewarming took Big New Blood's place (Nov 4, overnight quality loop)
     // cap follows the engine (yellow.js: 4 + MORE since the Nov 8 cut to 5); the panel kept 6 + MORE and said 7 (picky bot, Nov 8)
     housewarming: { main: '+2 yellow', second: `free new-color member, up to ${4 + MORE}` },

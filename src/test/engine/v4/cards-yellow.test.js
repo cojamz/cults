@@ -14,13 +14,14 @@ const R = (s, i = 0) => s.players[i].res;
 const rich = { gold: 30, red: 30, yellow: 30, green: 30 };
 
 describe('Yellow actions', () => {
-  it('Harvest: +3 in round I, +4 in II, +5 in III, one color at a time, named', () => {
+  it('Harvest (flat since Nov 11): +3 in colors you choose in every round, one color at a time, named', () => {
     let s = take(sc({}), 'yellow.harvest');
     for (const c of ['red', 'red', 'green']) s = move(s, `color:${c}`);
     expect(R(s)).toEqual({ gold: 0, red: 2, yellow: 0, green: 1 });
     s = take(sc({ round: 3 }), 'yellow.harvest');
-    for (let i = 0; i < 5; i++) s = move(s, 'color:gold');
-    expect(R(s).gold).toBe(5);
+    for (let i = 0; i < 3; i++) s = move(s, 'color:gold');
+    expect(R(s).gold).toBe(3);
+    expect(s.pending?.prompt || '').not.toMatch(/Harvest/);
   });
   it("Survey (was Leaders' Tax): +1 yellow per minion on the busiest color's spaces, anyone's, then +1 yellow (Nov 5)", () => {
     let s = sc({ n: 4 });
@@ -47,7 +48,8 @@ describe('Yellow actions', () => {
     return { s, y, paid: s.players[0].bonus - b };
   };
   // Cory, Nov 4: the new-color recruit pays yellow, not followers
-  it.each([[1, 2], [2, 3], [3, 4]])('New Blood in round %i: +2 yellow; recruiting a member of a new color, +%i yellow', (round, n) => {
+  // flat since Nov 11 (Cory: "+3 flat if the condition is met (no scaling)")
+  it.each([[1, 3], [2, 3], [3, 3]])('New Blood in round %i: +2 yellow; recruiting a member of a new color, +%i yellow', (round, n) => {
     const { s, y, paid } = newBlood(round, 'yellow.dilute', ['red.volunteer'], 'gold.banker');
     expect(y).toBe(30 + 2);
     expect(paid).toBe(0);
@@ -64,7 +66,7 @@ describe('Yellow actions', () => {
   });
   it('New Blood: your first member is always a new color', () => {
     const { s } = newBlood(1, 'yellow.dilute', [], 'red.intern');
-    expect(named(s, 'New Blood')).toContain("P1's New Blood: +2 yellow for recruiting a member of a new color.");
+    expect(named(s, 'New Blood')).toContain("P1's New Blood: +3 yellow for recruiting a member of a new color.");
   });
   it("Housewarming is on the wheel in Big New Blood's place (Nov 4)", async () => {
     const { quadrant } = await import('../../../engine/v4/content/index.js');

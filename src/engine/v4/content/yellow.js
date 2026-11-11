@@ -245,10 +245,10 @@ export default {
     }, 'pool11'),
     {
       // fuel with Yellow's flavor (Cory, 2026-10-30): "+3wild +4wild +5wild"
-      key: 'harvest', ring: 1, name: 'Harvest', text: '+3 in round I, +4 in round II, +5 in round III, in colors you choose.',
-      byRound: { lead: 'In colors you choose:', lines: ['+3', '+4', '+5'] },
-      estimate: ctx => ctx.state.round + 2.5,
-      resolve(ctx, p) { pickColors(ctx, p, ctx.state.round + 2, 'Harvest', true); },
+      // Cory, Nov 11 11:58am: "let's just make harvest +3any.": the same +3 in every round
+      key: 'harvest', ring: 1, name: 'Harvest', text: '+3 in colors you choose.',
+      estimate: () => 3.5,
+      resolve(ctx, p) { pickColors(ctx, p, 3, 'Harvest', true); },
     },
     // REPLACE12=tagalong bot test (Nov 4, quality loop, lane D2; pitches/D2-batch1.md): Tag Along in Leaders' Tax's (now Survey's) place.
     // Counts the colors whose spaces hold at least one of the chosen rival's minions (joined spots count), as the table
@@ -292,12 +292,12 @@ export default {
       key: 'dilute', ring: 1, name: 'New Blood', copyDoesIt: true,
       // Cory, Nov 4: "New Blood Should give additional yellow rather than followers": the new-color recruit pays yellow,
       // same numbers (a follower buys at 1 of anything, so 1 yellow for 1 follower)
-      text: '+2 yellow. If you recruit a member this turn in a color none of your members have: +2 yellow in round I, +3 in round II, +4 in round III.',
-      byRound: { lines: ['+2 yellow. If you recruit a member this turn in a color none of your members have: +2 yellow.', '+2 yellow. If you recruit a member this turn in a color none of your members have: +3 yellow.', '+2 yellow. If you recruit a member this turn in a color none of your members have: +4 yellow.'] },
-      estimate: (ctx, p) => 2 + (newInShop(ctx, p) ? 0.6 * (ctx.state.round + 1) : 0),
+      // Cory, Nov 11 11:58am: "Make it +2 yellow, +3 flat if the condition is met (no scaling)"
+      text: '+2 yellow. If you recruit a member this turn in a color none of your members have: +3 yellow.',
+      estimate: (ctx, p) => 2 + (newInShop(ctx, p) ? 0.6 * 3 : 0),
       resolve(ctx, p) {
         ctx.gain(p, Y, 2, { fromAction: true });
-        (p.recruitFollowers ||= []).push({ n: ctx.state.round + 1, name: 'New Blood', newColor: true, color: Y });
+        (p.recruitFollowers ||= []).push({ n: 3, name: 'New Blood', newColor: true, color: Y });
       },
     },
     // Housewarming in Big New Blood's place, live since Nov 4 (Claude, under Cory's go-with-your-gut, overnight quality
