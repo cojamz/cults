@@ -71,7 +71,7 @@ P(`# Action balance: ${games.length} games, ${nPl} placements`);
 P('');
 P(`Hard bots, 4 players, 10-card decks, By color contests, space +1 ${v.plus1 === 'game' ? 'once a game' : 'every time'}${v.membersOut ? `, ${v.membersOut.join(', ')} out` : ''}${v.membersIn ? `, ${v.membersIn.join(', ')} in` : ''}. Each table is 4 random colors.`);
 P('');
-P('How to read it. "Earns" is what one minion there gave its placer that turn: followers, resources, and members at their price (a paid recruit nets about 0, so what is left is what the space added). Going last, extra turns and an extra minion earn 0 here; read those from how often they are taken and how their takers do. "Taken when open" is the share of rounds it was open in which someone placed there. "Takers vs same size" compares how often its takers won with players who ended with about as many members (25% is an even share at 4 players). One run can be off by 5 to 10 points on any one space; trust what two runs agree on.');
+P('How to read it. "Earns" is what one minion there gave its placer that turn: followers, resources, and members at their price (a paid recruit nets about 0, so what is left is what the space added). A space that only turns one thing into another (a member or resources into followers, resources into other colors) earns about 0 here by design, so "earns less" on those says little. Going last, extra turns and an extra minion earn 0 here too; read those from how often they are taken and how their takers do. "Taken when open" is the share of rounds it was open in which someone placed there. "Takers vs same size" compares how often its takers won with players who ended with about as many members (25% is an even share at 4 players). One run can be off by 5 to 10 points on any one space; trust what two runs agree on.');
 P('');
 P(`Typical space earns ${f1(ringMed[0])} in round I's ring, ${f1(ringMed[1])} in round II's, ${f1(ringMed[2])} in round III's.`);
 P('');
@@ -127,7 +127,8 @@ P('');
     const per = Object.values(by).reduce((a, b) => a + b, 0) / (gl.length * 4);
     P(`## Members leaving cults: ${f1(per)} per player a game (${gl.length} games)`);
     P('');
-    for (const [k, n] of Object.entries(by).sort((a, b) => b[1] - a[1])) P(`- ${k}: ${f1(n / gl.length)} a game`);
+    for (const [k, n] of Object.entries(by).sort((a, b) => b[1] - a[1]).filter(([, n]) => n / gl.length >= 0.3)) P(`- ${k}: ${f1(n / gl.length)} a game`);
+    P('(A swap counts the member that leaves. Spaces under 0.3 a game left out: those are members that left during a turn for another reason.)');
     P('');
   }
 }
