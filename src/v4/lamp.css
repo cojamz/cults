@@ -767,6 +767,9 @@ h1,h2,h3{font-family:var(--serif)}
 /* the pixel face on the wheel (Cory, 2026-10-28: "number 3"): the ring's rule and prize, and a space's big numbers */
 .lt [data-spaces="panels"] .stage svg.wheel-paper .rim-rule,.lt [data-spaces="panels"] .stage svg.wheel-paper .rim-rule .rim-prize,
 .lt [data-spaces="panels"] .stage .slot .face .main b.n{font-family:'Cults Pixel Wheel',var(--sans);font-weight:800}
+/* a count inside a verb's words ("Discard 3", "costing up to 7") sets in the words' own type: the pixel 3 read small and
+   jammed against its word, "Discard3" (picky bot, Nov 11) */
+.lt [data-spaces="panels"] .stage .slot .face .main b.n.c{font-family:var(--sans)}
 .lt [data-spaces="panels"] .stage svg.wheel-paper .rim-rule .rim-tie{font-family:var(--sans);font-variation-settings:normal}
 .turn-card .tc-more{pointer-events:auto;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
 /* the space +1 once a game (Cory, Nov 11: "a little dot on the action"): one resource dot of the space's color under

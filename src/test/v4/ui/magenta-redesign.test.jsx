@@ -30,7 +30,7 @@ describe('Magenta action wording and one-stack theft', () => {
     expect(pipEffect('thieves', { key: 'rob' }, 2)).toBe('steal 4 followers and 4 resources');
     // Catch Up (Nov 10) and Swindle (Nov 10, Shake Down's slot)
     expect(panelText('thieves', { key: 'catchup' }, 1)).toMatchObject({ main: '+2 magenta', second: 'per rival with more resources' });
-    expect(panelText('thieves', { key: 'swindle' }, 2)).toMatchObject({ verb: `Steal a member costing up to ${6 + MORE}`, second: 'give them a shop member' });
+    expect(panelText('thieves', { key: 'swindle' }, 2)).toMatchObject({ verb: `Steal a member up to ${6 + MORE} for a shop member`, second: 'you give them one' }); // the give-back in line 1 (picky bot, Nov 11)
   });
 
   it('shows each exact half-stack amount without a Take All or coin-by-coin plan', () => {

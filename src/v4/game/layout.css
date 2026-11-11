@@ -286,7 +286,18 @@
    first words read above it (w3b: "the minion sits on the space text, 'Steal 1 each' half-covered"; #30 for the inner
    rings). One-line panels keep it under their gain (lamp.css). Every ring alike: lifted above the words, a ring-I minion
    ran past its panel's edge once panels showed their own line 3 (spaces.mjs s9, 0-1 on red/yellow/market/thieves). */
-.lt [data-spaces="panels"] .stage .slot.taken:not(.lit):not([data-panel^="1.0.0"]) .face .worker-fig{top:auto;bottom:-3px;transform:translate(-50%,0)}
+/* A panel with no line 2 has none to stand over: there "bottom" put the minion on line 1's last line ("Recruit the
+   cheap[cat]st", "Copy previous a[skull]on", picky bot Nov 11). It stands under the words (Wheel.jsx `under`), and the
+   words step up by half its height so the two stay in the panel together (they move; they never rewrap) */
+.lt [data-spaces="panels"] .stage .slot.taken:not(.lit):not(.under):not([data-panel^="1.0.0"]) .face .worker-fig{top:auto;bottom:-3px;transform:translate(-50%,0)}
+.lt [data-spaces="panels"] .stage .slot.taken.under:not(.lit){margin-top:-8px}
+.lt [data-spaces="panels"] .stage .slot.taken.under:not(.lit) .face .worker-fig{top:100%;bottom:auto;transform:translate(-50%,1px)}
+/* the inner rings' panels are shallower: a smaller minion, a smaller step */
+.lt [data-spaces="panels"] .stage .slot.taken.under:not(.lit):not(.r1){margin-top:-6px}
+.lt [data-spaces="panels"] .stage .slot.taken.under:not(.lit):not(.r1) .face .worker-fig{transform:translate(-50%,0)}
+.lt [data-spaces="panels"] .stage .slot.taken.under:not(.lit):not(.r1) .face .worker-fig svg{height:11px}
+.lt [data-spaces="panels"] .stage .slot.taken.under.r3:not(.lit){margin-top:-5px}
+.lt [data-spaces="panels"] .stage .slot.taken.under.r3:not(.lit) .face .worker-fig svg{height:10px}
 /* a steal that pays the thief's Robin Hood on this seat: its second row says so in the lamp's ink */
 .lt > .lt-seat .cs-bonus,.lt > .lt-seat .cs-bonus small{color:var(--lamp-ink)}
 .lt > .lt-seat .cs-bonus .cs-inc{display:inline-flex;align-items:center;gap:4px}

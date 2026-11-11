@@ -34,7 +34,8 @@ describe('picky words on hovers (Nov 4)', () => {
 
   it('Walk-In, Party Gifts and Largesse faces say whose gain and per what (W20, W21)', () => {
     expect(panelText('red', { key: 'hire' }).second).toBe('+1 red, rivals +1');
-    expect(panelText('silver', { key: 'partygifts' }).second).toBe('+2 @f per silver given');
+    // in line 1 since Nov 11 (picky bot: a tight ring dropped line 2 and showed only the giving)
+    expect(panelText('silver', { key: 'partygifts' }).verb).toBe('Give rivals up to 3 silver, +2 @f per silver given');
     expect(panelText('silver', { key: 'largesse' }).second).toBe('+10 @f'); // Cory, Nov 6: 10 followers flat
   });
 

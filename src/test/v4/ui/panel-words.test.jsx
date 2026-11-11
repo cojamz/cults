@@ -23,6 +23,7 @@ describe('panel words (w3)', () => {
     // the space's schedule by round, never "more each round" or "+4 next round" (Cory, Oct 24: both misread; /card-words)
     // Toast is flat since Nov 11 (Cory: "i dont like Toast scaling so crazily"): the same words every round, no schedule
     for (const r of [1, 2, 3]) expect(lines(panelText('silver', { key: 'toast' }, r))).toEqual(['+4 silver, then +1', 'others get 2 silver']);
+    expect(panelText('silver', { key: 'toast' }, 1).verb).toBe('+4 silver, then +1'); // a verb: as a gain, "then" stood alone in gain type (picky bot, Nov 11)
     for (const [qid, key, says] of [['trading', 'pawn', 'I\u00a0+1\u00a0· II\u00a0+2\u00a0· III\u00a0+3']]) {
       for (const r of [1, 2, 3]) expect(lines(panelText(qid, { key }, r)), `${qid}.${key} round ${r}`).toContain(says);
       expect(lines(panelText(qid, { key }, 2)).join(' ')).not.toMatch(/next round|each round/);
@@ -48,7 +49,7 @@ describe('panel words (w3)', () => {
       // the schedule in line 3, as every growing space has it; line 2 repeated line 1's number (picky bot, Nov 4)
       expect(gold.note).toBe('I\u00a0+2\u00a0· II\u00a0+4\u00a0· III\u00a0+6');
       expect(gold.second).toBeNull();
-      expect(panelText('echo', { key: 'chant' }, r).second).toBe('this one included');
+      expect(panelText('echo', { key: 'chant' }, r).second).toBe('including this one'); // runs on from line 1 (picky bot, Nov 11)
       expect(panelText('echo', { key: 'chant' }, r).note).toBeNull();
     }
     // every space that grows carries its schedule (W18: only some did, and readers took the rest as flat)
@@ -58,17 +59,17 @@ describe('panel words (w3)', () => {
   });
 
   it('keeps ownership and copy targets explicit without long inner-ring clauses', () => {
+    // whose minion in line 1 (picky bot, Nov 11: taken, line 2 hides, and Cover and Reprise both read "Copy an action")
     const ownSpace = panelText('echo', { key: 'refrain' });
-    expect(ownSpace.verb).toBe('Copy an action');
-    expect(ownSpace.second).toBe('with your minion');
+    expect(ownSpace.verb).toBe('Copy an action with your minion');
     const allOwn = panelText('echo', { key: 'eternity' });
-    // Greatest Hits takes Medley's text (Cory, Nov 10): every action on one color, not Green's own
-    expect(allOwn.verb).toBe('Copy every action on one color');
-    expect(allOwn.second).toBe('not green');
-    expect(panelText('echo', { key: 'hum' }).second).toBe('with a rival’s minion'); // Cover, Nov 10: "copy an action with a rival's minion on it"
+    // Greatest Hits takes Medley's text (Cory, Nov 10): every action on one color, not Green's own; in line 1 (the center
+    // drops line 2)
+    expect(allOwn.verb).toBe('Copy a whole color, not green');
+    expect(panelText('echo', { key: 'hum' }).verb).toBe('Copy an action with a rival’s minion'); // Cover, Nov 10: "copy an action with a rival's minion on it"
     // Rival and own minions are distinct, as are the previous action and your own last action.
     expect(panelText('echo', { key: 'encore' }).verb).toBe('Copy a rival member’s On Recruit'); // Sample copies an On Recruit (Oct 28); whose, in line 1 (text audit Nov 1)
-    expect(panelText('echo', { key: 'echo' }).verb).toBe('Copy previous action');
+    expect(panelText('echo', { key: 'echo' }).verb).toBe('Copy the previous action'); // the hover's words (picky bot, Nov 11)
     // The purple gain counts only your minions, not every piece on the wheel.
     expect(panelText('purple', { key: 'windup' }).second).toBe('per minion you placed');
   });
@@ -86,12 +87,32 @@ describe('panel words (w3)', () => {
 
   it('a space whose center or ring II panel drops line 2 is whole in line 1', () => {
     // w3b #18: "Extra turns for all purple" read as a group effect; w3b #19: "Ransom a member" read backwards
-    expect(panelText('purple', { key: 'rally' }, 3).verb).toMatch(/^Your next two turns, now$/);
+    // its +2 joined line 1 (picky bot, Nov 11: taken, line 2 hides and the purple went with it)
+    expect(panelText('purple', { key: 'rally' }, 3).verb).toMatch(/^Your next two turns, now \+2 purple$/);
     // w4b #5: "A rival's member or its cost" read as "I choose": the rival pays or loses, in line 1
     // shortened to fit on phones (v0.8.8 Magenta, 68c9bf0f): line 1 still says the rival decides, pay or lose
     expect(panelText('thieves', { key: 'ransom' }, 2).verb).toBe(`Rival pays or loses a member costing ${6 + MORE} or less`); // the cap follows every member's price, as the rule text does (picky bot, Nov 6); // the limit too: line 2 dropped on ring III (text audit Nov 1)
     expect(panelText('yellow', { key: 'housewarming' }, 2).second).toBe(`free new-color member, up to ${4 + MORE}`); // the engine's cap (picky bot, Nov 8: the panel said 7, the card 5)
     expect(panelText('silver', { key: 'largesse' }, 3).verb).toMatch(/^Give rivals 12 silver$/); // Nov 1: "+N per silver" read as per silver you hold
+  });
+
+  it('a face keeps the catch in line 1, and a +1 the card prints first is its own gain (picky bot, Nov 11, W1/B2)', () => {
+    // Last Call's card leads with "+1 purple.": not the first taker's +1, so the face keeps it
+    expect(lines(panelText('purple', { key: 'lastcall' }, 2))).toContain('+1 purple');
+    // a printed last "+1 <its color>." is still the hover's badge, off the wheel
+    expect(lines(panelText('echo', { key: 'echo' }, 1))).not.toContain('+1 green');
+    const one = (qid, key, r = 2) => { const t = panelText(qid, { key }, r); return t.main || t.verb; };
+    expect(one('red', 'borrow', 1)).toMatch(/for this round/);
+    expect(one('market', 'markdown', 1)).toMatch(/discard.*2 less/);
+    expect(one('thieves', 'swindle')).toMatch(/for a shop member/);
+    for (const key of ['skip', 'onaroll', 'crowdin', 'lastcall']) expect(one('purple', key), key).toMatch(/Goes Last|go last|placed last/);
+    expect(one('silver', 'flaunt')).toMatch(/per 3 silver held/);
+    expect(one('silver', 'partygifts', 1)).toMatch(/\+2 @f per silver given/);
+    expect(one('yellow', 'offering', 3)).toMatch(/rivals discard/);
+    expect(one('echo', 'eternity', 3)).toMatch(/not green/);
+    expect(one('red', 'lateshift', 1)).toMatch(/up to 2 per minion/);
+    expect(one('yellow', 'meltingpot')).toMatch(/\+1 @f and \+1 of it/);
+    expect(panelText('silver', { key: 'polish' }, 1).second).not.toMatch(/→/);
   });
 
   it('says 1 of what, what a space costs, and whose cost (live panel r1)', () => {
@@ -128,8 +149,8 @@ describe('panel words (w3)', () => {
   it('Build Up prints its rule, not a round gain', () => {
     const s = createGame({ seats: [{ name: 'A', kind: 'human' }, { name: 'B', kind: 'bot' }], seed: 5, quadrants: ['gold', 'echo'] });
     const a = quadrant('echo').actions.find(x => x.key === 'chant');
-    expect(lines(panelText('echo', a, 1, s, 0))).toEqual(['+1 green per minion on Green', 'this one included']);
-    for (const r of [1, 2, 3]) expect(lines(panelText('echo', a, r))).toEqual(['+1 green per minion on Green', 'this one included']);
+    expect(lines(panelText('echo', a, 1, s, 0))).toEqual(['+1 green per minion on Green', 'including this one']);
+    for (const r of [1, 2, 3]) expect(lines(panelText('echo', a, r))).toEqual(['+1 green per minion on Green', 'including this one']);
   });
 
   it('Spree prints its blue and its two recruits from the discard pile (Nov 10: "Recruit two members from the discard pile now. +7 blue.")', () => {

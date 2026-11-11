@@ -274,7 +274,7 @@ export function fitHalfWidth(cx, cy, h, r0, r1, a0, a1, pad, side = pad) {
 
 const PANEL_RES = new Set(['gold', 'red', 'blue', 'green', 'magenta', 'silver', 'yellow', 'purple', 'white', 'any']);
 // a round and its value ("II\u00a0+3", panelText's schedule) is one token that never splits across a line
-const PANEL_TOK = /I{1,3}\u00a0[+−-]?\d+(?:\u00a0·)?|@f|[+−-]?\d+|×\d+|½|[A-Za-z’'?;,.!-]+|\s+|./g;
+const PANEL_TOK = /I{1,3}\u00a0[+−-]?\d+(?:\u00a0·)?|@f|[+−-]?\d+|×\d+|½|[A-Za-z’'-]+|[?;,.!]|\s+|./g; // punctuation alone: "+4 yellow, then…" keeps its dot (picky bot, Nov 11)
 const isNum = t => /^(?:[+−-]?\d+|×\d+|½)$/.test(t);
 const panelToks = text => [...String(text || '').matchAll(PANEL_TOK)].map(m => m[0]);
 /** One line of a panel: numbers heavy; a resource word right after a number is its dot ("+3●"), @f the follower
@@ -292,7 +292,9 @@ export function Said({ text }) {
     }
     // a number and its dot (or follower) are one unit, never split across a line (span.amt, lamp.css)
     const mark = t === '@f' ? <Follower key={k} size={12} title="followers" /> : PANEL_RES.has(t) && prev && isNum(prev) ? <Pip key={k} color={t} /> : null;
-    if (isNum(t)) out.push(<b key={k} className="n">{t}</b>);
+    // a count inside the words ("Discard 3", "up to 7") is a word's number, not a gain: it keeps the words' type (picky
+    // bot, Nov 11: "Discard3", the pixel 3 small and jammed against its word); a signed gain keeps the pixel face
+    if (isNum(t)) out.push(<b key={k} className={/^[+−-]/.test(t) ? 'n' : 'n c'}>{t}</b>);
     else if (mark && prev && isNum(prev) && out.length && out[out.length - 1] && out[out.length - 1].type === 'b') out.push(<span key={`a${k}`} className="amt">{out.pop()}{mark}</span>);
     else if (mark) out.push(mark);
     else out.push(t);
@@ -384,12 +386,15 @@ function layPanel(s, R, rot, k, said, taken, need) {
     for (const tl of two ? (tp === X.small ? [1, 2, 3, 4] : [1, 2, 3]) : [0]) for (const nl of note && !need.noNote ? [1, 0] : [0]) tries.push({ op, ol, tp, tl, nl });
   // prefer: line 1 bigger and whole, line 2 on at most two lines at its own size, then line 3 shown, then fewer lines
   tries.sort((x, y) => y.op - x.op || (y.tl <= 2) - (x.tl <= 2) || y.tp - x.tp || x.ol - y.ol || (y.nl > 0) - (x.nl > 0) || x.tl - y.tl);
+  // `under`: no line 2 shows, so a minion taking the space has nothing to stand over and goes under the words (layout.css
+  // .under; picky bot, Nov 11: standing on the last line it hid "Recruit the cheap[cat]st"). No room is kept for it here:
+  // keeping it wrapped and overflowed a dozen open panels
   for (const t of tries) {
     const parts = [t.ol * lineH(t.op), taken ? X.minion : 0, t.tl * lineH(t.tp), t.nl * lineH(X.note)].filter(Boolean);
     const h = parts.reduce((x, y) => x + y, 0) + X.gap * (parts.length - 1);
     const needW = Math.max(needOne(t.op, t.ol), needTwo(t.tp, t.tl), t.nl ? noteEm * X.note : 0, taken ? 24 : 0);
     const w = room(h) * k;
-    if (w >= needW + 2) return { one: t.op, oneLines: t.ol, two: t.tp, twoLines: t.tl, noteLines: t.nl, w: w / k, rc };
+    if (w >= needW + 2) return { one: t.op, oneLines: t.ol, two: t.tp, twoLines: t.tl, noteLines: t.nl, w: w / k, rc, under: !taken && !t.tl && !t.nl };
   }
   // nothing fits: line 1 alone at its smallest (line 2 and 3 are in the hover); a taken panel shows just its minion
   const ol = taken || !one ? 0 : isGain ? Math.min(2, oneClauses.length) : 3;
@@ -399,7 +404,7 @@ function layPanel(s, R, rot, k, said, taken, need) {
   let px = isGain ? X.mainMin : X.verbMin;
   while (k < 1 && ol && px > 9 && room(ol * lineH(px) + extra) * k < needOne(px, ol) + 2) px--;
   const w = room(ol * lineH(px) + extra);
-  return { one: px, oneLines: ol, two: X.small, twoLines: 0, noteLines: 0, w: Math.max(w, 24 / k), rc: w ? rc : R.r, tight: true };
+  return { one: px, oneLines: ol, two: X.small, twoLines: 0, noteLines: 0, w: Math.max(w, 24 / k), rc: w ? rc : R.r, tight: true, under: !taken };
 }
 
 // Is the person driving with the keyboard? Focus moved to a space on its own (your turn begins) opens its card only
@@ -1353,7 +1358,9 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     const out = new Map();
     for (const s of spaces) out.set(s.key, { said: said(s), lay: lay(s) });
     // every gain on the wheel is one size, and every verb in a ring: the smallest any of those panels needs
-    const sizeTo = all => { const px = Math.min(...all.map(v => v.lay.one)); for (const v of all) v.lay = { ...v.lay, one: px }; };
+    // line 2 steps down with it, never larger than line 1 (picky bot, Nov 11: Toast's "+4, then +1" shrank to the ring's
+    // smallest verb under a larger "others get 2")
+    const sizeTo = all => { const px = Math.min(...all.map(v => v.lay.one)); for (const v of all) v.lay = { ...v.lay, one: px, two: v.lay.two && v.lay.two >= px ? PANEL_PX.small : v.lay.two }; };
     sizeTo([...out.values()].filter(v => v.said.main));
     for (const t of [1, 2, 3]) sizeTo(spaces.filter(x => x.ring === t).map(x => out.get(x.key)).filter(v => v.said.verb));
     return out;
@@ -1411,7 +1418,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       fresh ? state.players[fresh.pid].name : '', meId ?? '', round, dot ? 1 : 0, look, custom ? `${Face ? 1 : 0}:${scale}:${rot}` : '', panels ? `${scale}:${fontsIn}` : ''].join('|');
     const had = built.current.get(key);
     if (had && had.sig === sig) return <Space key={key} el={had.el} />;
-    const cls = ['slot', `r${t}`, opt ? 'can lit' : '', squat ? 'squat' : '', quiet ? 'idle' : '', flashV.has(key) ? 'flash' : '', selected ? 'sel' : '', open ? 'open' : 'locked', shadeOwner !== undefined ? 'taken' : '', fresh ? 'fresh' : '', fresh && fresh.newest ? 'newest' : '', lay && said.verb ? 'verb' : '', lay && lay.oneLines > 1 ? 'wrap1' : '', lay && lay.twoLines > 1 ? 'wrap' : '', lay && lay.tight ? 'tight' : '', lay && lay.two === PANEL_PX.small ? 'small' : ''].filter(Boolean).join(' ');
+    const cls = ['slot', `r${t}`, opt ? 'can lit' : '', squat ? 'squat' : '', quiet ? 'idle' : '', flashV.has(key) ? 'flash' : '', selected ? 'sel' : '', open ? 'open' : 'locked', shadeOwner !== undefined ? 'taken' : '', fresh ? 'fresh' : '', fresh && fresh.newest ? 'newest' : '', lay && said.verb ? 'verb' : '', lay && lay.oneLines > 1 ? 'wrap1' : '', lay && lay.twoLines > 1 ? 'wrap' : '', lay && lay.tight ? 'tight' : '', lay && lay.two === PANEL_PX.small ? 'small' : '', lay && lay.under ? 'under' : ''].filter(Boolean).join(' ');
     const protestBy = state.slots[key] === undefined && owner !== undefined && !(ghostNow && ghostNow.key === key);
     const status = protestBy ? `Blocked by ${owner === meId ? 'your' : `${state.players[owner].name}’s`} Protesters this round` : owner !== undefined ? `Taken by ${owner === meId ? 'you' : state.players[owner].name}${joiners.length ? ` and ${joiners.map(id => state.players[id].name).join(', ')}` : ''}${opt && String(opt).startsWith('squat:') ? ' (you can join it)' : ''}` : open ? (opt ? 'Open: you can take it' : 'Open') : `Opens in round ${roman(t)}`;
     const minion = id => (
