@@ -2,6 +2,15 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.729 — 2026-11-11
+
+- Wheel: each space's face now says its catch (Borrow's round-end discard, Markdown's 2 less, Swindle's give-back, the Goes Last token, Flaunt's per 3 silver); a minion no longer covers a taken space's words.
+- Heist counts as one steal: the Magenta Cloak and Fence pay +1 magenta once per Heist, not once per pick.
+- Polish: a later taker turns all its silver after the +2; only the last +1 silver is lost.
+- Hovers: a claimed first-taker +1 shows struck through; You'd get counts followers you steal and names the member a steal comes from.
+- Log and seats: clearer lines for gifts, Borrow's round-end discard and shop members given; your seat says "your turn next" while a rival's move plays; Markdown's and Promote/Demote's sheets fit.
+- Rulebook: member worth, Goes Last token, spare minions, timing words, fewest contests, copies and Promote/Demote explained.
+
 ## v0.99.728 — 2026-11-11
 
 - A question for you during a rival's turn (like Gift Swappers asking for a member) is no longer covered by their turn card.
