@@ -14,3 +14,6 @@ Rules for the message you return:
 - Ends with the decision (numbered, default in brackets) or "Nothing needed from you."
 - No storytelling, slogans, apologies, "Here's what", "want me to", em dashes, tables or headers.
 If a sentence still makes no sense to you as a player, say UNCLEAR: <sentence> instead of guessing.
+
+Last step, always: record the exact message you return (without the CHANGED line) by running
+`node /home/user/patrons/.claude/hooks/reader-stamp.mjs <<'EOF'` the message `EOF` (use the cults clone's path if patrons is missing). The sender's check refuses any message over one line that you haven't recorded.

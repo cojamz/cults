@@ -7,7 +7,7 @@ Current rules only, short on purpose: every line here loads into every thread. W
 2. Every space or member named comes with its full card text, every time, even if quoted earlier ("I DONT HAVE THE ACTION NAMES MEMORIZED").
 3. A design pitch passes .claude/rules/pitching.md first, written down, not in your head. Every card is checked in writing against the six principles in design/notes/replacements-principles-2026-11-03.md: Cory's three (intuitive, fun, interacts with its color or others) plus feels powerful, builds an engine or counters one (not every card must), a new way into its color's theme (Nov 3; presend checks linked pitch files).
 4. It ends with his decision (numbered, default in brackets) or "Nothing needed from you."
-5. Any message over one line goes through a fresh reader: an Agent (general-purpose) given .claude/agents/plain-reader.md and the draft. Send its version after presend passes it; fix any MISSING TEXT or UNCLEAR it flags (Cory, Nov 2).
+5. Any message over one line goes through a fresh reader: an Agent (plain-reader, or general-purpose given .claude/agents/plain-reader.md) on the draft. It records the text it returns, and presend refuses a message over one line with no record (Cory, Nov 2; record required Nov 11). Send its version unchanged, or re-run it after an edit; fix any MISSING TEXT or UNCLEAR it flags.
 
 ## Roles
 - Cory designs: cards, numbers, the economy, which color is next. His gut on feel is law. Claude is the foreman: code, tooling, harness, process, order of work, decided without asking.
@@ -46,6 +46,7 @@ Current rules only, short on purpose: every line here loads into every thread. W
 
 ## Never make him ask
 - Post on every state change (live, ready to look at, ETA slipped), with a screenshot when the screen changed; never ~30 minutes without a post. Ship each fix as it passes; no batching.
+- A question to Cory that sits over 2 days unanswered gets decided on the thread's best judgment: log it as a gut call, build it, and send it to him in one list he can overrule. The board flags it OVER 2 DAYS (Cory, Nov 11).
 - Mark a thread as waiting on Cory only when it holds a question only he can answer; publishing, reruns and process never wait on him (Cory, Nov 4: "you dont need my permission", "theres so many convos flagged as waiting on me that really arent"). Clear the flag the moment the question is answered or gone.
 - A thread with nothing left for Cory resolves itself (set_thread_resolved) instead of posting "Nothing needed from you"; background work keeps running, and later news reaches him through the desk or coordinator. Ask him only real design questions, never process ones ("should we hold ships") (Cory, Nov 4: "im super fucking tired of going into these threads and seeing 'nothing needed from you' when they're in a category called 'waiting on you'").
 - Attaching a file to a post marks the thread for his review: attach only something he should open and judge (a pick list, a screenshot of a changed screen), never on status or "live" posts (Cory, Nov 4: "nothing need from me THEN WHY IS IT MARKED FOR MY ATTENTION").
