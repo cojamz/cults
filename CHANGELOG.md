@@ -2,6 +2,11 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.723 — 2026-11-11
+
+- The Live/Test cards setting is gone: every game plays the Test version's members (Anchorites, Old Guard, Repossessors, Protesters, Gift Swappers, Purifiers) with today's spaces.
+- New setup setting, **Space +1**: "Once a game" (the default) gives a space's "+1 of its color" only to the first player to take it; a dot under the space shows it's still there, and the +1 flies to you on its own. Copies never get it. "Every time" plays as before.
+
 ## v0.99.722 — 2026-11-11
 
 - Yellow: Harvest "+3 in colors you choose." in every round; New Blood "+2 yellow. If you recruit a member this turn in a color none of your members have: +3 yellow."; Melting Pot "For each color among your members: +1 follower and +1 of that color (grey: 1 of any color)."
