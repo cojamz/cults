@@ -53,3 +53,7 @@ Verdict: cut (Patrons and Estate Sale)
 8. Color interactions: Dinner Bell overlaps Blue.
 9. Biggest case: Introductions takes up to 11 resources in round III (over 10); the others stay small.
 Verdict: cut (feels bad, Blue's verb, or too small)
+
+## Idea: Flaunt
+Source: Cory, 2026-11-11 10:28am-10:36am: "have the open space be based on having the MOST silver. then its tempting to have the most (or tied for most)", "3 is pretty close to good", "i like 1." (version 1: "+1 of each other color per 3 silver you hold, up to 3 of each. +1 silver.", only if you hold the most silver, ties count; name is Claude's fill-in)
+Verdict: send
