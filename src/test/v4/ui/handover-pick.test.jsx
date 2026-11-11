@@ -16,9 +16,9 @@ const godparent = () => {
 };
 
 describe('a member to a rival, on the gift card', () => {
-  it('Godparent: members first, then the rivals light for the picked one', () => {
+  it('Patrons (was Godparent): members first, then the rivals light for the picked one', () => {
     const s = godparent();
-    expect(s.pending.prompt).toMatch(/Godparent/);
+    expect(s.pending.prompt).toMatch(/Patrons/);
     const g = giftPick(s, s.pending);
     expect(g.kind).toBe('handover');
     expect(g.firsts.map(f => f.a).sort()).toEqual([...s.players[0].members].sort());
