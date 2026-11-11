@@ -243,6 +243,8 @@ function giftShopTo(ctx, p, oid, data) {
  * Your own silver (not the bank's, as Party Gifts), one at a time; then the colors, as Polish picks them.
  */
 const SWEET_NOTHINGS = {
+  // Out of the wheel since Nov 11 (Flaunt takes its place: "its just a +6 wild space! no."); kept for old saves and its tests
+  pool: true,
   key: 'sweetnothings', copyDoesIt: true, ring: 2, name: 'Sweet Nothings',
   text: '+3 silver. Give rivals up to 3 of your silver. +2 of any colors per silver given.',
   estimate: ctx => 3 + 3 - spillCost(ctx, 1),
@@ -407,7 +409,7 @@ export const silverActions = [
   swap11(swap11({
     // Cory, Nov 11 12:24-12:29am: "+3 silver, turn your silver into other colors… maybe make it all one other color",
     // "would be pretty good as a round I even", then "yeah 1. simpler also" (all of it, not "any of it"). Name kept.
-    key: 'polish', copyDoesIt: true, ring: 1, name: 'Polish', text: '+2 silver. Then turn all your silver into one other color. +1 silver.',
+    key: 'polish', copyDoesIt: true, ring: 1, name: 'Polish', text: '+2 silver. Turn all your silver into one other color. +1 silver.',
     // Cory, Nov 11 10:23am: "Polish should be +2 silver, then the +1": the space's +1 comes after the turn, so it stays silver
     estimate: () => 3.5,
     resolve(ctx, p) {
@@ -427,7 +429,20 @@ export const silverActions = [
   },
   // Sweet Nothings takes Potluck's place (Cory, Nov 6: "yeah 1"; Potluck had rivals choose on your turn). Potluck stays
   // in code, off the wheel; REPLACE11=favors puts it back for a comparison.
-  swap11(SWEET_NOTHINGS, {
+  // Flaunt takes Sweet Nothings' place (Cory, Nov 11: "i like 1.", then "lets remove the 'if you hold the most'").
+  // You keep your silver; the colors come from the bank. The name is Claude's fill-in.
+  swap11({
+    key: 'flaunt', copyDoesIt: true, ring: 2, name: 'Flaunt', text: '+1 of each other color per 3 silver you hold, up to 3 each. +1 silver.',
+    estimate: (ctx, p) => Math.min(3, Math.floor((p.res[S] || 0) / 3)) * otherColors(ctx).length + 1,
+    resolve(ctx, p) {
+      const k = Math.min(3, Math.floor((p.res[S] || 0) / 3));
+      if (k) {
+        for (const c of otherColors(ctx)) ctx.gain(p, c, k, { fromAction: true });
+        ctx.log(`${p.name}'s Flaunt: ${p.res[S]} silver held, +${k} of each other color.`);
+      } else ctx.log(`${p.name}'s Flaunt: under 3 silver held, no colors.`);
+      hostGain(ctx, p, 1);
+    },
+  }, {
     key: 'favors', copyDoesIt: true, ring: 2, name: 'Potluck', text: '+2 silver. Each rival gives you 1 resource of their choice, then gains 2 silver.',
     estimate: ctx => 2 + (ctx.state.players.length - 1) - spillCost(ctx, 2),
     resolve(ctx, p) {
@@ -435,6 +450,7 @@ export const silverActions = [
       favorAll(ctx, p);
     },
   }),
+  SWEET_NOTHINGS,
   {
     // Out of the wheel since Nov 11 (Buyout takes its place); kept for old saves and its tests
     pool: true,

@@ -126,17 +126,17 @@ describe('Green copies the risky spaces', () => {
     const S = ['gold', 'red', 'silver', 'echo'];
     let s = scene({ quads: S, turns: [1, 0], members: [[], ['silver.caterer']] });
     s = go(s, 'silver.toast');
-    expect(R(s, 1).silver).toBe(5); // 3 + the Silver Cloak's 2 on its holder's own gift (Cory, Nov 7)
-    expect(R(s, 0).silver).toBe(1); // the toast's spill
+    expect(R(s, 1).silver).toBe(7); // 5 (+4, +1) + the Silver Cloak's 2 on its holder's own gift (Cory, Nov 7)
+    expect(R(s, 0).silver).toBe(2); // the toast's spill
     s = take(s, 'echo.echo');
     expect(labels(s)).toEqual(['Toast (P2): do Toast yourself']);
     s = pass(move(s, s.pending.options[0].id));
-    expect(R(s, 0).silver).toBe(4);
-    expect(R(s, 1).silver).toBe(6); // the copy's gift; P2's Caterer pays only on P2's own gifts
+    expect(R(s, 0).silver).toBe(7);
+    expect(R(s, 1).silver).toBe(9); // the copy's gift; P2's Caterer pays only on P2's own gifts
 
     let t = scene({ quads: S, turns: [1, 0], members: [[], ['silver.grandhost']] });
     t = go(t, 'silver.toast');
-    expect(R(t, 1).silver).toBe(6);
+    expect(R(t, 1).silver).toBe(10);
     t = take(t, 'echo.echo');
     expect(labels(t)).toEqual(['Toast (P2): do Toast yourself']);
   });
@@ -147,7 +147,7 @@ describe('Green copies the risky spaces', () => {
     let s = scene({ quads: S, turns: [1, 0], members: [['gold.midas'], []] });
     s = go(s, 'silver.toast');
     s = pass(move(take(s, 'echo.echo'), 'space:now:2-0'));
-    expect(R(s, 0)).toMatchObject({ gold: 4, silver: 1 }); // Echo's inherent +1 green also turns gold; the gift stays silver.
+    expect(R(s, 0)).toMatchObject({ gold: 6, silver: 2 }); // the copied +4 and +1 turn gold; Echo's inherent +1 green also turns gold; the gift stays silver.
 
     let t = scene({ quads: S, turns: [1, 0], members: [[], ['gold.midas']] });
     t = go(t, 'echo.chant'); // Build Up (Nov 10): +1 per minion on Green (its own) and +1 green: 2
@@ -170,12 +170,12 @@ describe('Green copies the risky spaces', () => {
 describe('Doppelganger copying Purple, Green and Silver members', () => {
   it('copying Grand Host doubles again (×4)', () => {
     const s = go(scene({ quads: ['gold', 'red', 'silver', 'echo'], members: [['silver.grandhost', 'echo.doppel']], copies: { 0: { 'echo.doppel': 'silver.grandhost' } } }), 'silver.toast');
-    expect(R(s, 0).silver).toBe(12);
+    expect(R(s, 0).silver).toBe(20);
   });
   it('copying Guest adds 1 more to every gift', () => {
     let s = scene({ quads: ['gold', 'red', 'silver', 'echo'], turns: [1, 0], members: [['silver.guest', 'echo.doppel']], copies: { 0: { 'echo.doppel': 'silver.guest' } } });
     s = go(s, 'silver.toast');
-    expect(R(s, 0).silver).toBe(3);
+    expect(R(s, 0).silver).toBe(4);
   });
   it('copying Foreman pays on every extra turn twice', () => {
     let s = scene({ quads: ['gold', 'red', 'purple', 'echo'], round: 2, slots: { '0-0': 0 }, members: [['purple.foreman', 'echo.doppel']], copies: { 0: { 'echo.doppel': 'purple.foreman' } } });

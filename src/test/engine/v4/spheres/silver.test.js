@@ -62,21 +62,22 @@ describe('Silver scoring: most silver', () => {
 });
 
 describe('Silver actions', () => {
-  it('Toast: +3 silver per round number, everyone else +1 / +2 / +3 silver', () => {
+  it('Toast (flat since Nov 11): +4 silver, everyone else +2 silver, +1 silver, in every round', () => {
     let s = take(scene({ res: [{}, { gold: 2 }] }), 'silver.toast');
-    expect(R(s)).toEqual({ ...Z, silver: 3 });
-    expect(R(s, 1)).toEqual({ ...Z, gold: 2, silver: 1 });
-    expect(R(s, 2)).toEqual({ ...Z, silver: 1 });
+    expect(R(s)).toEqual({ ...Z, silver: 5 });
+    expect(R(s, 1)).toEqual({ ...Z, gold: 2, silver: 2 });
+    expect(R(s, 2)).toEqual({ ...Z, silver: 2 });
     s = take(scene({ round: 3 }), 'silver.toast');
-    expect(R(s).silver).toBe(9);
-    expect(R(s, 1).silver).toBe(3);
+    expect(R(s).silver).toBe(5);
+    expect(R(s, 1).silver).toBe(2);
   });
 
-  it('rings: Polish and Party Gifts open in round I, Sweet Nothings and Buyout in round II, Largesse in round III', () => {
+  it('rings: Polish and Party Gifts open in round I, Flaunt and Buyout in round II, Largesse in round III', () => {
     const names = s => s.pending.options.map(o => o.label);
     expect(names(scene())).toEqual(expect.arrayContaining(['Toast', 'Polish', 'Party Gifts']));
     expect(names(scene())).not.toContain('Buyout');
-    expect(names(scene({ round: 2 }))).toEqual(expect.arrayContaining(['Sweet Nothings', 'Buyout']));
+    expect(names(scene({ round: 2 }))).toEqual(expect.arrayContaining(['Flaunt', 'Buyout']));
+    expect(names(scene({ round: 2 }))).not.toContain('Sweet Nothings'); // off the wheel since Nov 11 (Flaunt)
     expect(names(scene({ round: 2 }))).not.toContain('Sweet Talk'); // off the wheel since Nov 11
     expect(names(scene({ round: 2 }))).not.toContain('Largesse');
     expect(names(scene({ round: 3 }))).toContain('Largesse');
@@ -86,12 +87,12 @@ describe('Silver actions', () => {
 describe('Silver members', () => {
   it('Guest: whenever another player gives you something, +1 more of it (not on your own gains)', () => {
     let s = take(scene({ members: [[], ['silver.guest']] }), 'silver.toast');
-    expect(R(s, 1).silver).toBe(2);
-    expect(R(s, 2).silver).toBe(1);
+    expect(R(s, 1).silver).toBe(3);
+    expect(R(s, 2).silver).toBe(2);
     s = move(move(take(scene({ members: [[], ['silver.guest']] }), 'silver.partygifts'), 'player:1'), 'done');
     expect(R(s, 1).silver).toBe(2);
     s = take(scene({ members: [['silver.guest']] }), 'silver.toast');
-    expect(R(s).silver).toBe(3);
+    expect(R(s).silver).toBe(5);
   });
 
   it('Benefactor: at round start +3 silver, and the rival you pick gets 1 silver', () => {
@@ -105,14 +106,14 @@ describe('Silver members', () => {
 
   it('Caterer: whenever you gift silver, +2 silver (once per gift, not per player)', () => {
     let s = take(scene({ members: [['silver.caterer']] }), 'silver.toast');
-    expect(R(s).silver).toBe(5); // the Silver Cloak +2 (Cory, Nov 7)
+    expect(R(s).silver).toBe(7); // Toast's 5, the Silver Cloak +2 (Cory, Nov 7)
     s = move(move(move(take(scene({ members: [['silver.caterer']] }), 'silver.partygifts'), 'player:1'), 'player:2'), 'done');
     expect(R(s).silver).toBe(2);
   });
 
   it('Majordomo: whenever you take a Silver space, +2 silver (not elsewhere)', () => {
     let s = take(scene({ members: [['silver.majordomo']] }), 'silver.toast');
-    expect(R(s).silver).toBe(5);
+    expect(R(s).silver).toBe(7);
     s = take(scene({ members: [['silver.majordomo']] }), 'gold.rush');
     expect(R(s).silver).toBe(0);
   });
@@ -120,9 +121,9 @@ describe('Silver members', () => {
   // rewards not hosting (dead-window audit, 2026-10-14)
   it('Silversmith: whenever a rival takes a Silver space, +1 silver (not your own)', () => {
     let s = take(scene({ members: [[], ['silver.silversmith']] }), 'silver.toast');
-    expect([R(s, 1).silver, R(s, 2).silver]).toEqual([2, 1]);
+    expect([R(s, 1).silver, R(s, 2).silver]).toEqual([3, 2]);
     s = take(scene({ members: [['silver.silversmith']] }), 'silver.toast');
-    expect(R(s).silver).toBe(3);
+    expect(R(s).silver).toBe(5);
   });
 
   it('Steward: at round start +1 silver per 3 silver you hold', () => {
@@ -185,12 +186,12 @@ describe('Silver members', () => {
 
   it('Grand Host: silver from Silver spaces is doubled; gifts and other spaces are not', () => {
     let s = take(scene({ round: 2, members: [['silver.grandhost']] }), 'silver.toast');
-    expect(R(s).silver).toBe(12);
+    expect(R(s).silver).toBe(10); // +4 and +1, each doubled
     expect(R(s, 1).silver).toBe(2);
     s = take(scene({ members: [['silver.grandhost']] }), 'silver.polish'); // Polish's +2 is the space's own silver: doubled
     expect(s.pending.prompt).toMatch(/all 4/);
     s = take(scene({ members: [['silver.grandhost'], ['silver.guest']] }), 'silver.toast');
-    expect(R(s).silver).toBe(6);
+    expect(R(s).silver).toBe(10);
   });
 
   it('Patron Saint: game end +1 follower per 2 silver members in play, anyone’s', () => {

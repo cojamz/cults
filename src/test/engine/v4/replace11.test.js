@@ -12,7 +12,7 @@ const { createGame, applyMove, contestTable } = await import('../../../engine/v4
 const { quadrant } = await import('../../../engine/v4/content/index.js');
 const { table } = await import('./cards-helpers-b.js');
 const { useRetired } = await import('./helpers.js');
-useRetired(['red.turnout']);
+useRetired(['red.turnout', 'silver.sweetnothings']);
 delete process.env.REPLACE11;
 delete process.env.MEMBER_UP;
 

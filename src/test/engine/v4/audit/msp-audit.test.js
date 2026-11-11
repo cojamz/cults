@@ -89,7 +89,7 @@ describe('audit', () => {
 describe('audit: log lines', () => {
   it('Grand Host: Toast logs what the taker got, doubled', () => {
     let s = take(sc(QP, { round: 2, members: [['silver.grandhost']] }), 'silver.toast');
-    expect(s.players[0].res.silver).toBe(12);
-    expect(s.log.some(l => /raised a toast: \+12 silver/.test(l))).toBe(true);
+    expect(s.players[0].res.silver).toBe(10); // +4 and +1, each doubled
+    expect(s.log.some(l => /raised a toast: \+8 silver/.test(l))).toBe(true);
   });
 });

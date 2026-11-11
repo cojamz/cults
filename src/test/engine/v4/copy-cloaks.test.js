@@ -39,7 +39,7 @@ describe('cloaks on copied actions', () => {
       return s;
     };
     const base = run(false), s = run(true);
-    expect(base.players[1].res.silver).toBe(3 + 1); // P2's Toast, then P1's copy gives P2 1
+    expect(base.players[1].res.silver).toBe(5 + 2); // P2's Toast, then P1's copy gives P2 2
     expect(s.players[0].res.silver).toBe(base.players[0].res.silver + 2);
   });
 });

@@ -14,7 +14,7 @@ describe('Why rows', () => {
   it('Toast with Grand Host: the Why names the doubling', () => {
     const s = sceneQ({ quadrants: ['silver', 'gold', 'red', 'market'], round: 3, members: [['silver.grandhost', 'silver.caterer']] });
     const p = pv(s, 'silver.toast');
-    expect(p.reasons).toContain('Grand Host: silver gain 9 → 18');
+    expect(p.reasons).toContain('Grand Host: silver gain 4 → 8; silver gain 1 → 2'); // flat Toast (Nov 11): the +4 and the +1, each doubled
   });
   // Greatest Hits copies On Recruits since Nov 1; a copy chain still fires Impressionist more than once: Echo copies
   // your Reprise (green), which copies Golden Years again (gold).

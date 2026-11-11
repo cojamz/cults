@@ -21,7 +21,7 @@ function rivalTurn(opts, space) {
 describe('strip lines name who got what', () => {
   it('beside what you got, the mover\'s own gain names the mover', () => {
     const st = rivalTurn({ quadrants: ['silver', 'thieves', 'market', 'red'] }, 'silver.toast');
-    expect(st.short).toBe('you +1 silver · P2 +3 silver');
+    expect(st.short).toBe('you +2 silver · P2 +5 silver');
   });
   it('followers taken say whose they were', () => {
     const st = rivalTurn({ quadrants: ['silver', 'thieves', 'market', 'red'], round: 2, bonus: [0, 0, 5] }, 'thieves.rob');

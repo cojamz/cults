@@ -21,7 +21,9 @@ describe('panel words (w3)', () => {
   it('a gain that grows by round says so in rounds I and II, and not in III (w3a #54: "+2●" read as flat)', () => {
     // a space that does more than one thing says what grows (Cory, 2026-10-22)
     // the space's schedule by round, never "more each round" or "+4 next round" (Cory, Oct 24: both misread; /card-words)
-    for (const [qid, key, says] of [['silver', 'toast', 'I\u00a0+3\u00a0· II\u00a0+6\u00a0· III\u00a0+9'], ['trading', 'pawn', 'I\u00a0+1\u00a0· II\u00a0+2\u00a0· III\u00a0+3']]) {
+    // Toast is flat since Nov 11 (Cory: "i dont like Toast scaling so crazily"): the same words every round, no schedule
+    for (const r of [1, 2, 3]) expect(lines(panelText('silver', { key: 'toast' }, r))).toEqual(['+4 silver, then +1', 'others get 2 silver']);
+    for (const [qid, key, says] of [['trading', 'pawn', 'I\u00a0+1\u00a0· II\u00a0+2\u00a0· III\u00a0+3']]) {
       for (const r of [1, 2, 3]) expect(lines(panelText(qid, { key }, r)), `${qid}.${key} round ${r}`).toContain(says);
       expect(lines(panelText(qid, { key }, 2)).join(' ')).not.toMatch(/next round|each round/);
     }

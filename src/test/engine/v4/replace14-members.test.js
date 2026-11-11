@@ -73,13 +73,13 @@ describe('REPLACE14: Charmers ("Whenever you gift silver to rivals, +1 of any co
     expect(defById('silver.charmers').name).toBe('Charmers');
     expect(defById('silver.smoothtalker').retired).toBe(true);
   });
-  it('Toast in round I: each of 3 rivals +1 silver, so +3 of any colors, picked one at a time (the pitched turn)', () => {
+  it('Toast: each of 3 rivals +2 silver, so +6 of any colors, picked one at a time (flat Toast, Nov 11)', () => {
     let s = table(['red', 'silver', 'market'], { n: 4, round: 1, members: [['silver.charmers']] });
     s = answer(s, `slot:${slot(s, 'silver', 'Toast')}`);
-    expect(log(s)).toContain("P1's Charmers: 3 silver gifted, +3 of any colors.");
-    s = answer(s, 'color:red'); s = answer(s, 'color:red'); s = answer(s, 'color:blue');
-    expect(s.players[0].res).toMatchObject({ red: 2, blue: 1, silver: 3 });
-    expect([1, 2, 3].map(i => s.players[i].res.silver)).toEqual([1, 1, 1]);
+    expect(log(s)).toContain("P1's Charmers: 6 silver gifted, +6 of any colors.");
+    for (const c of ['red', 'red', 'red', 'red', 'blue', 'blue']) s = answer(s, `color:${c}`);
+    expect(s.players[0].res).toMatchObject({ red: 4, blue: 2, silver: 5 });
+    expect([1, 2, 3].map(i => s.players[i].res.silver)).toEqual([2, 2, 2]);
   });
   it('Party Gifts giving 2: +2 of any colors on top of its 4 followers; silver a rival gives you pays nothing', () => {
     let s = table(['red', 'silver'], { n: 3, round: 1, members: [['silver.charmers']] });
