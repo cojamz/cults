@@ -634,7 +634,9 @@ const market = {
       if (col) ctx.gain(p, col, 1, space ? { fromAction: true } : undefined);
       ctx.log(`${p.name}'s ${who} sends ${c.def.name} to the discard pile${col ? `: +1 ${col}` : ''}.`);
       if (c.def.everyColor) gainColorOf(ctx, p, c.def, who);
-      else if (!col && space) anyColors(ctx, p, 1, who, 'market.anyColor');
+      // a grey member gives 1 of any color, the sender's pick, for Window Shopper too (Cory's playtest, Nov 9: "window shopper
+      // didnt give resources when used on round start (on grey members)")
+      else if (!col) anyColors(ctx, p, 1, who, 'market.anyColor');
       // Out of Style's three sends are one batch (Patroness and the Blue Cloak pay once per batch, Cory Oct 21); Window
       // Shopper keeps paying per send, as it always has
       ctx.refillShop();
