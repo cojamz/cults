@@ -10,7 +10,8 @@ process.env.REPLACE12 = 'exitcounselor,foundling,pawnshop,lowprofile,pocketmoney
 process.env.MEMBER_UP = '2';
 const { applyMove } = await import('../../../engine/v4/core.js');
 const { defById } = await import('../../../engine/v4/content/index.js');
-const { take } = await import('./helpers.js');
+const { take, useRetired } = await import('./helpers.js');
+useRetired(['trading.estatesale']); // Estate Sale left the wheel Nov 11 (Write-Off)
 const { table, named, uidIn, owns } = await import('./cards-helpers-b.js');
 delete process.env.REPLACE12;
 delete process.env.MEMBER_UP;

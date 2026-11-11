@@ -15,6 +15,7 @@ const words = (s, qid, key) => { const pid = s.pending.player; return youdWords(
 const cost = (s, u) => { const d = cardDef(s, u); return (d.s || 0) + (d.w || 0); };
 
 describe('picky hover (Nov 4)', () => {
+  useRetired(['trading.estatesale']); // Estate Sale left the wheel Nov 11 (Write-Off)
   describe('Walk-In (retired Nov 10, kept for old saves)', () => {
   useRetired(['red.hire']);
   it('Walk-In: the face-down top card is never named or counted (B3)', () => {

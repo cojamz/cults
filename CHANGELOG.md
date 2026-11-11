@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.724 — 2026-11-11
+
+- Write-Off replaces Estate Sale; Agents: your actions can't be copied
+
 ## v0.99.723 — 2026-11-11
 
 - The Live/Test cards setting is gone: every game plays the Test version's members (Anchorites, Old Guard, Repossessors, Protesters, Gift Swappers, Purifiers) with today's spaces.

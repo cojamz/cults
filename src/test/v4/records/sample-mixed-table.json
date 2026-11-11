@@ -3,15 +3,15 @@
  "schema": 1,
  "build": {
   "schema": 1,
-  "content": "25uu16v8wr1.20ef2c0249",
+  "content": "11zzj8k9f4q.2ffaff85c9",
   "id": "dev",
-  "version": "v0.99.718"
+  "version": "v0.99.723"
  },
  "made": {
   "schema": 1,
-  "content": "25uu16v8wr1.20ef2c0249",
+  "content": "11zzj8k9f4q.2ffaff85c9",
   "id": "dev",
-  "version": "v0.99.718"
+  "version": "v0.99.723"
  },
  "seed": 20261014,
  "quadrants": [
@@ -26,7 +26,8 @@
   "cull": true,
   "artifacts": true,
   "roundDecks": 2,
-  "swapCard": false
+  "swapCard": false,
+  "testSet": true
  },
  "seats": [
   {
@@ -44,60 +45,28 @@
  ],
  "moves": [
   [
-   0,
+   1,
    "color:gold"
   ],
   [
-   2,
+   0,
    "color:trading"
   ],
   [
-   1,
+   2,
    "color:thieves"
   ],
   [
-   1,
+   2,
    "slot:2-0"
   ],
   [
-   1,
-   "pass"
+   2,
+   "tier:small"
   ],
   [
    2,
-   "slot:1-0"
-  ],
-  [
-   2,
-   "take:1:purple"
-  ],
-  [
-   2,
-   "pass"
-  ],
-  [
-   0,
-   "slot:1-2"
-  ],
-  [
-   0,
-   "card:9"
-  ],
-  [
-   0,
-   "pay:0-5-0-0"
-  ],
-  [
-   0,
-   "take:2:white"
-  ],
-  [
-   0,
-   "take:1:purple"
-  ],
-  [
-   0,
-   "take:1:purple"
+   "pay:0-0-1-0"
   ],
   [
    0,
@@ -108,12 +77,88 @@
    "pass"
   ],
   [
-   2,
+   1,
+   "slot:1-2"
+  ],
+  [
+   1,
+   "card:9"
+  ],
+  [
+   1,
+   "pay:0-5-0-0"
+  ],
+  [
+   1,
+   "take:0:white"
+  ],
+  [
+   1,
+   "take:2:magenta"
+  ],
+  [
+   1,
+   "take:0:magenta"
+  ],
+  [
+   1,
+   "slot:1-0"
+  ],
+  [
+   1,
+   "take:2:purple"
+  ],
+  [
+   1,
+   "take:2:purple"
+  ],
+  [
+   1,
+   "pass"
+  ],
+  [
+   0,
    "slot:0-0"
   ],
   [
+   0,
+   "player:2"
+  ],
+  [
+   0,
+   "tier:small"
+  ],
+  [
+   0,
+   "pay:0-1-0-0"
+  ],
+  [
+   0,
+   "slot:2-1"
+  ],
+  [
+   0,
+   "tier:small"
+  ],
+  [
+   0,
+   "pay:0-0-1-0"
+  ],
+  [
+   1,
+   "slot:0-1"
+  ],
+  [
+   1,
+   "tier:small"
+  ],
+  [
+   1,
+   "pay:0-0-1-0"
+  ],
+  [
    2,
-   "player:1"
+   "slot:2-2"
   ],
   [
    2,
@@ -125,35 +170,11 @@
   ],
   [
    2,
-   "pass"
+   "tier:small"
   ],
   [
-   0,
-   "slot:0-1"
-  ],
-  [
-   0,
-   "pass"
-  ],
-  [
-   1,
-   "slot:2-2"
-  ],
-  [
-   1,
-   "pass"
-  ],
-  [
-   1,
-   "slot:2-1"
-  ],
-  [
-   1,
-   "card:34"
-  ],
-  [
-   1,
-   "pay:1-1-4-0"
+   2,
+   "pay:0-0-0-1"
   ],
   [
    2,
@@ -161,7 +182,11 @@
   ],
   [
    2,
-   "player:0"
+   "player:1"
+  ],
+  [
+   2,
+   "player:1"
   ],
   [
    2,
@@ -170,14 +195,6 @@
   [
    2,
    "player:0"
-  ],
-  [
-   2,
-   "player:0"
-  ],
-  [
-   2,
-   "take:0:magenta"
   ],
   [
    2,
@@ -189,7 +206,11 @@
   ],
   [
    2,
-   "take:1:purple"
+   "take:1:gold"
+  ],
+  [
+   2,
+   "take:0:white"
   ],
   [
    2,
@@ -200,36 +221,28 @@
    "pay:0-1-0-0"
   ],
   [
-   1,
+   0,
    "slot:1-4"
   ],
   [
-   1,
+   0,
    "card:9"
   ],
   [
-   1,
-   "take:2:purple"
-  ],
-  [
-   1,
-   "take:2:white"
-  ],
-  [
-   1,
+   0,
    "take:2:gold"
   ],
   [
-   1,
-   "card:41"
-  ],
-  [
-   1,
-   "pass"
+   0,
+   "take:2:magenta"
   ],
   [
    0,
-   "slot:2-4"
+   "take:2:magenta"
+  ],
+  [
+   0,
+   "card:54"
   ],
   [
    0,
@@ -237,7 +250,11 @@
   ],
   [
    1,
-   "slot:0-3"
+   "slot:3-4"
+  ],
+  [
+   1,
+   "card:54"
   ],
   [
    1,
@@ -245,47 +262,11 @@
   ],
   [
    1,
-   "player:2"
+   "card:52"
   ],
   [
    1,
-   "player:2"
-  ],
-  [
-   1,
-   "card:28"
-  ],
-  [
-   1,
-   "pay:1-1-3-1"
-  ],
-  [
-   2,
-   "slot:1-0"
-  ],
-  [
-   2,
-   "take:0:purple"
-  ],
-  [
-   2,
-   "take:0:purple"
-  ],
-  [
-   2,
-   "pass"
-  ],
-  [
-   2,
-   "slot:0-1"
-  ],
-  [
-   2,
-   "tier:small"
-  ],
-  [
-   2,
-   "pay:1-0-0-0"
+   "pay:0-2-0-2"
   ],
   [
    1,
@@ -297,23 +278,7 @@
   ],
   [
    0,
-   "slot:3-4"
-  ],
-  [
-   0,
-   "card:41"
-  ],
-  [
-   0,
-   "tier:small"
-  ],
-  [
-   0,
-   "pay:0-0-1-0"
-  ],
-  [
-   0,
-   "slot:1-1"
+   "slot:3-2"
   ],
   [
    0,
@@ -321,103 +286,203 @@
   ],
   [
    2,
-   "slot:3-0"
+   "slot:0-3"
   ],
   [
    2,
-   "card:54"
+   "player:0"
   ],
   [
    2,
-   "pay:0-2-3-2"
-  ],
-  [
-   0,
-   "slot:0-0"
-  ],
-  [
-   0,
    "player:1"
   ],
   [
-   0,
-   "tier:mid"
+   2,
+   "player:0"
+  ],
+  [
+   2,
+   "card:57"
+  ],
+  [
+   2,
+   "pay:2-0-3-2"
+  ],
+  [
+   2,
+   "slot:1-2"
+  ],
+  [
+   2,
+   "card:20"
+  ],
+  [
+   2,
+   "pay:0-4-1-1"
   ],
   [
    0,
-   "pay:0-0-1-4"
+   "slot:1-0"
   ],
   [
-   1,
+   0,
+   "take:1:purple"
+  ],
+  [
+   0,
+   "take:2:magenta"
+  ],
+  [
+   0,
+   "take:1:purple"
+  ],
+  [
+   0,
+   "pass"
+  ],
+  [
+   0,
+   "slot:0-1"
+  ],
+  [
+   0,
+   "tier:small"
+  ],
+  [
+   0,
+   "pay:1-0-0-0"
+  ],
+  [
+   2,
    "slot:0-4"
   ],
   [
-   1,
-   "release:9"
+   2,
+   "card:55"
+  ],
+  [
+   2,
+   "pay:2-3-0-0"
   ],
   [
    1,
-   "tier:small"
+   "slot:0-0"
   ],
   [
    1,
-   "pay:0-0-1-0"
+   "player:0"
   ],
   [
-   0,
+   1,
+   "card:56"
+  ],
+  [
+   1,
+   "pay:0-1-0-5"
+  ],
+  [
+   1,
+   "slot:2-1"
+  ],
+  [
+   1,
+   "pass"
+  ],
+  [
+   1,
    "slot:1-3"
   ],
   [
-   0,
-   "player:1"
+   1,
+   "player:2"
   ],
   [
-   0,
-   "player:1"
+   1,
+   "player:0"
   ],
   [
-   0,
-   "player:1"
+   1,
+   "player:2"
   ],
   [
-   0,
-   "player:1"
+   1,
+   "player:0"
   ],
   [
-   0,
-   "take:1:magenta"
+   1,
+   "take:0:gold"
   ],
   [
-   0,
-   "take:1:purple"
+   1,
+   "take:0:white"
   ],
   [
-   0,
-   "take:1:purple"
+   1,
+   "take:0:white"
   ],
   [
-   0,
-   "take:1:gold"
+   1,
+   "take:0:magenta"
   ],
   [
-   0,
+   1,
    "tier:small"
   ],
   [
-   0,
+   1,
    "pay:0-0-0-1"
   ],
   [
-   2,
+   0,
    "slot:2-4"
   ],
   [
-   2,
-   "card:49"
+   0,
+   "card:43"
+  ],
+  [
+   0,
+   "pay:3-0-0-3"
   ],
   [
    2,
-   "pay:3-0-0-1"
+   "slot:3-4"
+  ],
+  [
+   2,
+   "card:20"
+  ],
+  [
+   2,
+   "player:1"
+  ],
+  [
+   2,
+   "card:44"
+  ],
+  [
+   2,
+   "pay:4-1-0-3"
+  ],
+  [
+   2,
+   "slot:1-4"
+  ],
+  [
+   2,
+   "card:43"
+  ],
+  [
+   2,
+   "card:16"
+  ],
+  [
+   2,
+   "tier:small"
+  ],
+  [
+   2,
+   "pay:0-1-0-0"
   ],
   [
    1,
@@ -425,131 +490,79 @@
   ],
   [
    1,
-   "tier:small"
+   "release:20"
   ],
   [
    1,
-   "pay:0-1-0-0"
+   "card:59"
   ],
   [
    1,
-   "slot:1-1"
+   "pay:5-0-2-0"
   ],
   [
    1,
    "pass"
   ],
   [
-   2,
-   "slot:2-0"
+   1,
+   "slot:3-0"
   ],
   [
-   2,
+   1,
+   "tier:small"
+  ],
+  [
+   1,
+   "pay:1-0-0-0"
+  ],
+  [
+   1,
    "pass"
   ],
   [
    0,
-   "slot:1-5"
-  ],
-  [
-   0,
-   "card:54"
-  ],
-  [
-   0,
-   "tier:small"
-  ],
-  [
-   0,
-   "pay:0-0-0-1"
-  ],
-  [
-   0,
-   "slot:3-4"
-  ],
-  [
-   0,
-   "card:54"
-  ],
-  [
-   0,
-   "tier:mid"
-  ],
-  [
-   0,
-   "pay:0-0-3-2"
-  ],
-  [
-   1,
    "slot:1-0"
   ],
   [
-   1,
-   "take:2:gold"
+   0,
+   "take:1:gold"
   ],
   [
-   1,
-   "take:2:purple"
+   0,
+   "take:1:purple"
   ],
   [
-   1,
-   "take:2:purple"
+   0,
+   "pass"
   ],
   [
-   1,
+   2,
+   "slot:0-4"
+  ],
+  [
+   2,
    "tier:small"
   ],
   [
-   1,
-   "pay:0-1-0-0"
+   2,
+   "pay:1-0-0-0"
   ],
   [
-   1,
-   "slot:1-4"
+   2,
+   "slot:1-2"
   ],
   [
-   1,
-   "card:49"
+   2,
+   "tier:mid"
   ],
   [
-   1,
-   "card:20"
-  ],
-  [
-   1,
-   "tier:small"
-  ],
-  [
-   1,
-   "pay:0-1-0-0"
+   2,
+   "pay:5-0-0-0"
   ],
   [
    0,
-   "slot:0-3"
-  ],
-  [
-   0,
-   "player:1"
-  ],
-  [
-   0,
-   "player:1"
-  ],
-  [
-   0,
-   "player:1"
-  ],
-  [
-   0,
-   "tier:top"
-  ],
-  [
-   0,
-   "pay:4-6-0-0"
-  ],
-  [
-   0,
-   "slot:3-3"
+   "slot:3-2"
   ],
   [
    0,
@@ -561,7 +574,7 @@
   ],
   [
    1,
-   "slot:0-4"
+   "slot:2-0"
   ],
   [
    1,
@@ -569,43 +582,43 @@
   ],
   [
    1,
-   "pay:3-7-0-0"
+   "pay:0-4-3-3"
   ],
   [
    1,
-   "slot:3-0"
+   "pass"
   ],
   [
-   1,
-   "card:47"
+   0,
+   "slot:2-2"
   ],
   [
-   1,
-   "pay:3-1-1-2"
+   0,
+   "tier:mid"
   ],
   [
-   2,
-   "slot:3-1"
+   0,
+   "pay:1-0-1-3"
   ],
   [
-   2,
-   "release:20"
+   0,
+   "slot:0-1"
   ],
   [
-   2,
+   0,
    "tier:small"
   ],
   [
-   2,
-   "pay:0-1-0-0"
+   0,
+   "pay:0-0-0-1"
   ],
   [
    2,
-   "slot:0-0"
+   "slot:3-3"
   ],
   [
    2,
-   "player:0"
+   "card:43"
   ],
   [
    2,
@@ -613,39 +626,107 @@
   ],
   [
    2,
-   "pay:3-0-0-2"
+   "pay:4-0-0-1"
   ],
   [
-   2,
-   "slot:2-5"
+   1,
+   "slot:0-3"
   ],
   [
-   2,
-   "tier:small"
+   1,
+   "player:0"
   ],
   [
-   2,
-   "pay:0-0-0-1"
+   1,
+   "player:0"
+  ],
+  [
+   1,
+   "player:0"
+  ],
+  [
+   1,
+   "tier:top"
+  ],
+  [
+   1,
+   "pay:0-0-10-0"
+  ],
+  [
+   1,
+   "pass"
+  ],
+  [
+   1,
+   "slot:1-5"
+  ],
+  [
+   1,
+   "card:57"
+  ],
+  [
+   1,
+   "tier:mid"
+  ],
+  [
+   1,
+   "pay:0-2-2-1"
+  ],
+  [
+   1,
+   "use:59"
+  ],
+  [
+   1,
+   "card:39"
+  ],
+  [
+   1,
+   "card:38"
+  ],
+  [
+   1,
+   "card:17"
+  ],
+  [
+   1,
+   "card:22"
+  ],
+  [
+   1,
+   "card:28"
+  ],
+  [
+   1,
+   "card:21"
+  ],
+  [
+   1,
+   "card:0"
+  ],
+  [
+   1,
+   "card:30"
   ]
  ],
  "at": {
   "round": 3,
-  "moves": 146,
+  "moves": 166,
   "over": true
  },
  "note": "Sample: a whole 3-player game on a mixed table, played by bots. Replaces nothing; shows the format.",
  "expect": {
   "over": true,
-  "moves": 146,
+  "moves": 166,
   "followers": [
-   49,
-   44,
-   60
+   46,
+   68,
+   46
   ]
  },
  "refreshed": {
-  "from": "459bwurkd4.82587c9b0b",
-  "kept": 134,
-  "of": 147
+  "from": "25uu16v8wr1.20ef2c0249",
+  "kept": 0,
+  "of": 146
  }
 }

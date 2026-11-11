@@ -177,6 +177,7 @@ const P = {
     // the gain leads: on ring II only one line fits, and the two read the same as "Bury one of your members"
     farewell: { verb: 'Discard a member for its cost in @f', note: '+1 white' },
     estatesale: { verb: 'Discard a member for its cost in white', note: '+1 white' },
+    writeoff: { verb: 'Give a member to a rival for its cost in white', note: '+1 white' },
     cashin: { verb: 'Turn all your white into @f', note: '+1 white' },
   },
   echo: {

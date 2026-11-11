@@ -29,7 +29,7 @@ const M = {
   // Green
   encore: ['👏', '☝️ Your next On Recruit happens twice'],
   impressionist: ['🖼️', '♾️ Anyone copies an action: +1 of its color'],
-  agents: ['🕶️', '♾️ Rivals can’t copy your actions'],
+  agents: ['🕶️', '♾️ Your actions can’t be copied'],
   bait: ['🪝', '♾️ Anyone copies your action: they −1 follower, you +1 follower'],
   roadie: ['🎚️', '✨🌅 +1 green per green member'],
   busker: ['🪕', '✨🌅 +2 green'],

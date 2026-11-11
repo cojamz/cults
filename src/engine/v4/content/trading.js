@@ -222,7 +222,7 @@ const PAWN_SHOP = {
 // the +1 white every White space prints (coordinator, Nov 7: a space must do something for a player with no members).
 // a bot gives the member worth least kept against what it pays, a little less for the followers the rival gets
 const giveValue = (ctx, p, c, each, f) => buryValue(ctx, p, c, each) + f * fv(ctx) - 0.4 * c.def.f;
-const giveSpace = (key, name, text, each, f) => poolSpace({
+const giveDef = (key, name, text, each, f) => ({
   key, copyDoesIt: true, ring: 2, name, text,
   estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => giveValue(ctx, p, c, each, f))),
   resolve(ctx, p) {
@@ -232,7 +232,8 @@ const giveSpace = (key, name, text, each, f) => poolSpace({
       id: `card:${c.uid}`, label: `${c.def.name} (${cost(ctx, c.uid)})`, kind: 'card', value: c.uid, hint: giveValue(ctx, p, c, each, f),
     })), 'trading.handOff', { name, each, f });
   },
-}, 'pool3');
+});
+const giveSpace = (key, name, text, each, f) => poolSpace(giveDef(key, name, text, each, f), 'pool3');
 
 const trading = {
   id: 'trading',
@@ -437,7 +438,11 @@ const trading = {
         buryChoice(ctx, p, 'Farewell', 'followers');
       },
     },
+    // Write-Off took Estate Sale's slot (Cory, 2026-11-11 1:30pm Eastern: "Maybe like Write-Off. and yeah i like switching
+    // it to the give to a rival"): Bequest's give without its +3 followers. Estate Sale stays for old saves and its tests.
+    giveDef('writeoff', 'Write-Off', 'Give a member to a rival for its cost in white. +1 white.', 1, 0),
     swap11({
+      pool: true,
       key: 'estatesale', copyDoesIt: true, ring: 2, name: 'Estate Sale', text: 'Discard a member for its cost in white. +1 white.',
       estimate: (ctx, p) => 1 + Math.max(0, ...ctx.membersOf(p).map(c => buryValue(ctx, p, c, 1))),
       resolve(ctx, p) {

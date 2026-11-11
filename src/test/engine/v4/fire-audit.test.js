@@ -151,6 +151,8 @@ const SPHERES = ['gold', 'red', 'purple', 'silver', 'yellow'];
 // Members that may stay unnamed on bot tables, with why (see design/eval/card-ledger-a.md).
 // Conditional cards that can go a whole bot game without their condition; each has a named test of its own.
 const ALLOW = {
+  // Write-Off in Estate Sale's place and Agents for everyone (Nov 11) moved the seeded games: recruited in 1, never used there
+  'purple.secondwind': 'once per game and rarely used by a bot; interactions.test.js (Go-Getter) covers it',
   // Scouts and Latecomers (Nov 7) moved the seeded games: recruited in 2, never named there
   'gold.thrift': 'Gold is parked; cards-gold.test.js (Penny Pincher) covers it',
   // Sweet Nothings in Potluck's place (Nov 6) moved the seeded games: recruited in 1, and no rival recruited its color after

@@ -27,7 +27,16 @@ const use = (s, def) => move(s, `use:${uidIn(s, def, 0)}`);
 const W = quadrant('trading');
 const text = k => [...W.actions, ...W.members].find(c => c.key === k).text;
 
-useRetired(['trading.stipend', 'trading.exchange']);
+useRetired(['trading.stipend', 'trading.exchange', 'trading.estatesale']);
+
+describe('Estate Sale (retired Nov 11, Write-Off took its slot)', () => {
+  it('Estate Sale: Tycoon (8+4) pays 12 white, named', () => {
+    let s = take(table(Q, { round: 2, members: [['gold.tycoon']], shop: ROW }), 'trading.estatesale');
+    s = move(s, cardOpt(s, 'gold.tycoon', 0));
+    expect([R(s).white, B(s), owns(s, 0, 'gold.tycoon')]).toEqual([13, 0, false]);
+    expect(named(s, 'Estate Sale')).toContain("P1's Estate Sale: Tycoon paid 12 white.");
+  });
+});
 
 describe('White: Allowance and Exchange (retired Nov 11)', () => {
   it('Allowance (Oct 31, Gather\'s shape): round II pays +4 white, and +2 followers on a member recruit that turn (named)', () => {

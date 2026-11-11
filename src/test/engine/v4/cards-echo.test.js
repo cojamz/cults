@@ -125,12 +125,12 @@ describe('Green current actions', () => {
     s = go(s, 'echo.eternity');
     expect(R(s)).toMatchObject({ green: 1 });
   });
-  it('Agents: rivals can’t copy your actions, and you still can (Cory, 2026-10-29)', () => {
+  it('Agents: your actions can’t be copied, by rivals or by you (Cory, 2026-11-11)', () => {
     let s = table(Q, { round: 3, members: [['echo.agents']], queue: turns(0, 1) });
     s = go(s, 'gold.rush');
     const plan = ownPlan(contextFor(s), s.players[0]);
-    expect(plan.take.map(e => e.p)).toEqual([0]);
-    expect(plan.skip).toEqual([]);
+    expect(plan.take).toEqual([]);
+    expect(plan.skip.map(x => x.why)).toEqual(['protected']);
     s = go(s, 'echo.echo'); // P2's Echo can't copy P1's Gold Rush
     expect(R(s, 1).gold || 0).toBe(0);
     expect(R(s, 1).green).toBe(1);

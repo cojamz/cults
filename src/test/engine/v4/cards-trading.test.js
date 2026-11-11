@@ -29,13 +29,13 @@ const text = k => [...W.actions, ...W.members].find(c => c.key === k).text;
 describe('White: the printed cards', () => {
   it('six actions on their rings, with their text', () => {
     expect(W.actions.map(a => [a.key, a.ring])).toEqual([
-      ['modestmeans', 1], ['splurge', 1], ['nestegg', 1], ['farewell', 2], ['estatesale', 2], ['cashin', 3],
+      ['modestmeans', 1], ['splurge', 1], ['nestegg', 1], ['farewell', 2], ['writeoff', 2], ['cashin', 3],
     ]);
     expect(text('modestmeans')).toBe('+2 white. +1 white per rival with more members than you.');
     expect(text('nestegg')).toBe('+3 white.');
     expect(text('splurge')).toBe('+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay (every 1 in round II).');
     expect(text('farewell')).toBe('Discard a member for its cost in followers. +1 white.');
-    expect(text('estatesale')).toBe('Discard a member for its cost in white. +1 white.');
+    expect(text('writeoff')).toBe('Give a member to a rival for its cost in white. +1 white.');
     expect(text('cashin')).toBe('Turn all your white into followers. +1 white.');
     expect(W.scoring.label).toBe('Most white');
   });
@@ -79,11 +79,12 @@ describe('White actions', () => {
     expect(named(s, 'Farewell')).toContain("P1's Farewell: Big Family paid 8 followers.");
   });
 
-  it('Estate Sale: Tycoon (8+4) pays 12 white, named', () => {
-    let s = take(table(Q, { round: 2, members: [['gold.tycoon']], shop: ROW }), 'trading.estatesale');
+  it('Write-Off: give Tycoon (8+4) to a rival for 12 white, then +1 white, named', () => {
+    let s = take(table(Q, { round: 2, members: [['gold.tycoon']], shop: ROW }), 'trading.writeoff');
     s = move(s, cardOpt(s, 'gold.tycoon', 0));
-    expect([R(s).white, B(s), owns(s, 0, 'gold.tycoon')]).toEqual([13, 0, false]);
-    expect(named(s, 'Estate Sale')).toContain("P1's Estate Sale: Tycoon paid 12 white.");
+    s = move(s, 'player:1');
+    expect([R(s).white, B(s), owns(s, 0, 'gold.tycoon'), owns(s, 1, 'gold.tycoon')]).toEqual([13, 0, false, true]);
+    expect(named(s, 'Write-Off')).toContain("P1's Write-Off: gives Tycoon to P2.");
   });
 
   it('Cash In: 7 white become 7 followers, then +1 white (named)', () => {

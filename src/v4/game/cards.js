@@ -2,7 +2,7 @@
 // and which face-up cards a space would make affordable. All read off the engine; nothing here is a rule.
 import { paymentPlan, memberPrice } from '../../engine/v4/index.js';
 import { contextFor } from '../../engine/v4/core.js';
-import { ownPlan, skipWords, justTook, previousNow, copyOptions } from '../../engine/v4/content/echo.js';
+import { ownPlan, skipWords, justTook, previousNow, copyOptions, canCopy } from '../../engine/v4/content/echo.js';
 import { borrowable } from '../../engine/v4/content/red.js';
 
 // The card's timing, from how its text opens (the tag above the name).
@@ -69,7 +69,7 @@ export function memberCopyTargets(state, pid, def) {
     const entries = /copy the action you just took/i.test(def.text || '')
       ? [justTook(ctx, p)].filter(Boolean)
       : /copy the (?:previous action|action taken the previous turn)/i.test(def.text || '') ? previousNow(ctx, p) : null;
-    return entries && [...new Set(entries.map(e => String(e.key).split('+')[0]))];
+    return entries && [...new Set(entries.filter(e => canCopy(ctx, e, p)).map(e => String(e.key).split('+')[0]))];
   } catch { return null; }
 }
 

@@ -161,8 +161,11 @@ const copyable = e => e.echo || e.redo || spaceTotal(e) > 0 || e.discount > 0 ||
 const has = (ctx, p, key) => (key === 'tuningfork' ? ctx.abilitiesOf(p) : ctx.membersOf(p)).filter(c => [c.def.id, c.copy, c.ability].includes(`echo.${key}`)).length;
 const actionKey = key => key.split('+')[0];
 const pathNow = ctx => ledger(ctx.state).path || [];
-// Agents (Cory, 2026-10-29: "your actions can't be copied"): rivals can't copy its owner's actions; the owner still can
-const protectedAction = (ctx, e, by) => e.p !== by?.id && has(ctx, ctx.player(e.p), 'agents') > 0;
+// Agents: no one can copy its owner's actions, the owner included (Cory, 2026-11-11, replacing Oct 29's rivals-only reading)
+// Cory, 2026-11-11 1:31pm Eastern: "your actions can't be copied" rather than "rivals cant copy your actions" (you can't copy them either)
+const protectedAction = (ctx, e) => has(ctx, ctx.player(e.p), 'agents') > 0;
+/** Could `by` copy ledger entry e right now (Green's own rule: copyable, not under Agents, not already in this chain)? */
+export const canCopy = (ctx, e, by) => allowed(ctx, e, by);
 const allowed = (ctx, e, by, path = pathNow(ctx)) => copyable(e) && !protectedAction(ctx, e, by) && !path.includes(actionKey(e.key));
 // The active context exists only while content resolves. Every queued choice/continuation gets its
 // own immutable path, so siblings don't poison each other's targets and save/load needs no closures.
@@ -1227,7 +1230,7 @@ const echoQ = {
       onRecruited(ctx, owner) { ctx.gain(owner, 'green', nonGreenMembers(ctx, owner)); },
       onRoundStart(ctx, owner) { ctx.gain(owner, 'green', nonGreenMembers(ctx, owner)); },
     }),
-    m('agents', 'Agents', 1, 1, 'Rivals can’t copy your actions.', { f: 2, n: 2 }),
+    m('agents', 'Agents', 1, 1, 'Your actions can’t be copied.', { f: 2, n: 2 }),
     m('bait', 'Bait', 1, 1, 'Whenever anyone copies one of your actions, they −1 follower and you +1 follower.'),
     // REPLACE10 bot test (Nov 4): Chronicler's place, Cory's idea ("use once per game and the next on-recruit is doubled").
     // 2 green + 3 any as a player sees it. Used on your turn; the member you recruit later this same turn has its On
