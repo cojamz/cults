@@ -44,3 +44,16 @@ Verdict: cut (Party Gifts again with your own silver, flat; "give up to 3" is al
 8. Color interactions: none.
 9. Biggest case: +6 to the leader every round.
 Verdict: cut (rewards the leader)
+
+## Idea: Welcome Party
+
+1. Printed text: "Give rivals 6 silver from the bank, split as you choose. Recruit a shop member costing up to 6, for free. +1 silver." (numbers and name Claude's fill-ins). Cards it touches: Initiation: "Recruit a shop member costing 10 or less, for free. +1 red."; Borrow: "Recruit the cheapest shop member, for free. Discard it at round end, before scoring. +1 red."; Buyout: "Recruit a rival's member, paying them its cost in silver. +1 silver."
+2. Played turn: round II, 4 players. A round II row of 7 holds about 2 to 4 members costing 6 or less as seen (round I's deck tops out at 6). You get one free, without using your recruit (worth about 6 resources plus its ability and followers); rivals get 6 silver between them. Best other round II spaces: Heist "Steal 4 followers and 4 resources. +1 magenta." (8), Promote "+3 red. Swap any member for one costing up to 3 more, from another cult or the shop." Gain: about a 6-cost member, on par, paid for by handing the table 6 silver.
+3. Both sides: you choose the member and how to split the 6. Splitting: all 6 to one rival makes that rival hold the most silver (likely loses Fewest silver if kept to round end); spreading 2/2/2 gives each a little. Both are real choices (the gift is resources to them, a contest weight if they keep it).
+4. Who feels it: rivals get silver (a gift now, a weight at round end); anyone eyeing that shop member loses it.
+5. Not refused: different from Grand Gift (refused Oct 31 / Nov 7, a member to a rival for followers: white-coded); here the member is yours and the gift is silver, Silver's verb. Overlap risk: a free shop member is also Red's (Borrow, Initiation).
+6. Judged: one gift plus one member; round II's real table can afford few members, so a free one changes what you own (the round II bar). Not followers (Cory: "we already have a follower action").
+7. Public and certain: the row is face up.
+8. Color interactions: none: single-color; the member enters a cult, which Blue's and Red's contests count.
+9. Biggest case: round III, a free member costing 6 (round III rows also hold pricier members, so 6 is a cap, not a floor) and 6 silver out; Green copying it gets a second 6-cost member and gives 6 more. At most about 12 resources of members across a copy, against a winner's 70 to 110: in band.
+Verdict: send
