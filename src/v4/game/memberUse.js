@@ -109,6 +109,12 @@ const spentThisRound = (state, card) => !!card.spent && Object.values(card.spent
  *    use: useNow(...) | null, ask: memberAsks(...) entry | null, toggle: { on, option } | null, used }]
  * viewer: who's looking (their own members get "ready to use" and the Use button); optionFor: the live options.
  */
+/** A member on loan from Red's Borrow (Cory, Nov 11: "visually distinguish in the player cards that the member is on
+ *  loan"): recruited this round by Borrow, still with the player who borrowed it, discarded at round end (core endRound). */
+export function onLoan(state, uid) {
+  return !!(state && !state.over && (state.borrowed || []).some(b => b.uid === uid && b.round === state.round && state.players[b.pid] && state.players[b.pid].members.includes(uid)));
+}
+
 export function memberRows(state, pid, viewer = null, optionFor = () => null) {
   const p = state.players[pid];
   const rows = new Map();
@@ -151,11 +157,11 @@ export function memberRows(state, pid, viewer = null, optionFor = () => null) {
     // a rule that grows by round shows as I / II / III lines in the hover (Cory, 2026-10-18); text stays the whole rule
     const rule = copy || d;
     const byRound = rule.byRound ? { def: rule, before: copy ? `${copyWord}:` : '', after: picked } : null;
-    const key = [d.id, c.used ? 'u' : '', c.on === false ? 'off' : '', c.copy || '', c.color || '', spentThisRound(state, c) ? 's' : '', ask ? 'ask' : ''].join('|');
+    const key = [d.id, c.used ? 'u' : '', c.on === false ? 'off' : '', c.copy || '', c.color || '', spentThisRound(state, c) ? 's' : '', ask ? 'ask' : '', onLoan(state, uid) ? 'loan' : ''].join('|');
     const row = rows.get(key);
     if (row) { row.uids.push(uid); row.n++; if (!row.use && use) row.use = use; continue; }
     rows.set(key, {
-      key, uids: [uid], uid, def: d, name: d.name, n: 1, text, byRound, kind, tag, use, ask,
+      key, uids: [uid], uid, def: d, name: d.name, n: 1, text, byRound, kind, tag, use, ask, loan: onLoan(state, uid),
       toggle: eff.toggle ? { on, option: toggleOpt } : null,
       used: kind === 'use' ? !!c.used : spentThisRound(state, c),
       loaded: kind === 'use' && !c.used, // a use still in hand: a rival's is a threat to watch (w2b #21)

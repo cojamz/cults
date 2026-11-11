@@ -58,3 +58,5 @@
 .rc-count{flex:none;display:inline-flex;align-items:center;gap:2px;height:16px;padding:0 4px;border-radius:4px;background:#fbf5e6;color:#2b2018;text-shadow:none;font-size:11px;line-height:16px;font-weight:800}
 .rc-count .member-glyph{display:block;flex:none}
 .rc-chip .rc-count{background:rgba(43,32,24,.08)}
+/* Borrow's member, on loan till round end (Cory, Nov 11): the seat's quiet tab, in words */
+.rc-loan{flex:none;margin-left:4px;padding:0 5px;border-radius:6px;font-size:10px;line-height:14px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border:1px dashed currentColor;opacity:.8}

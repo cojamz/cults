@@ -70,6 +70,15 @@ button.mu-switch:focus-visible{outline:2px solid var(--pl-ink-2,#6e5c49);outline
 .lt-cult-seat .cs-member .cs-loaded-dot{position:absolute;right:0;top:1px;width:6px;height:6px;border-radius:50%;z-index:3;pointer-events:none;
   background:rgb(var(--lamp,255,206,140));box-shadow:0 0 0 1.5px var(--board,#2b2119)}
 .lt-cult-seat .cs-member.used .fig .sprite{opacity:.4;filter:grayscale(.6)}
+/* on loan from Borrow (Cory, Nov 11: "visually distinguish in the player cards that the member is on loan"): a dashed
+   ring where the aura sits, the figure a little see-through, and a quiet paper tab under it (not lamp-lit: you can't act on it) */
+.lt-cult-seat .cs-member.on-loan .aura{opacity:.5}
+.lt-cult-seat .cs-member.on-loan .fig::after{content:"";position:absolute;left:50%;top:50%;width:calc(100% + 6px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;
+  border:1.5px dashed rgba(var(--paper-rgb,240,226,200),.75);pointer-events:none}
+.lt-cult-seat .cs-member.on-loan .fig .sprite{opacity:.72}
+.lt-cult-seat .cs-member .cs-loan-tab{position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);z-index:3;pointer-events:none;
+  padding:0 4px;border-radius:6px;font:700 10px/13px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:rgba(240,226,200,.9);
+  background:var(--board,#2b2119);box-shadow:0 0 0 1px rgba(240,226,200,.45)}
 .lt-cult-seat .cs-member.used .aura{opacity:.35}
 .lt-cult-seat .cs-member .mu-switch{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);gap:0;z-index:2}
 /* the switch's own hover (blind testers, 2026-10-15): the tip holds the switch where it always sat, says what it is */

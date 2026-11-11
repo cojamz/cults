@@ -9,7 +9,7 @@ import { splitOpener, TimingIcons } from './Timing.jsx';
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { memberWeight, cardDef, defById, quadrant, previewSpace, memberPrice } from '../../engine/v4/index.js';
 import { term, splitTerms } from '../glossary.js';
-import { costParts, playerColor, standings, toStanding, tiebreakNote } from '../format.js';
+import { costParts, playerColor, standings, toStanding, tiebreakNote, onLoan } from '../format.js';
 import { realHover } from '../hover.js';
 import { Popover } from './parts.jsx';
 import { aimAt, arrived, heading, over, holdCard, dropCard, busyWith, claim, unclaim, claimedByOther } from './hoverIntent.js';
@@ -381,6 +381,8 @@ export function MemberCard({ state, uid, def: d0 = null, me = null, onFace = fal
       {card && card.asColor && state.quadrants.includes(card.asColor) && <small className="mc-live" data-counts-as={card.asColor}>Counts as a <MemberGlyph r={quadrant(card.asColor).resource} size={13} decorative /> <b>{quadrant(card.asColor).name}</b> member</small>}
       {copied && card.copy && <small className="mc-live" data-copy-of="">Copy of <CardName state={state} def={copied} /></small>}
       {copied && !card.copy && <small className="mc-live" data-ability-of="">Has the ability of <CardName state={state} def={copied} /></small>}
+      {/* Borrow's member (Cory, Nov 11): on loan, and when it goes, in the card's words */}
+      {owner && onLoan(state, uid) && <small className="mc-live" data-on-loan="">On loan from Borrow: discarded at round end, before scoring.</small>}
       {card && card.used && !state.over && <small className="mc-live" data-member-used="">{owner ? 'Used' : 'Already used: it can’t be used again this game'}</small>}
       {/* the cost and nothing else about paying (Cory, 03:40: cut "You pay"); a discount on you says only why the face's
           price is struck ("Your next member costs 4 less.") */}

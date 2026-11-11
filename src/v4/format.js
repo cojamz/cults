@@ -2,7 +2,8 @@
 import { quadrant, cardDef, defById, roman, TIERS, RING_VALUE, memberCount, followers as engineFollowers, applyMove, contestTable, roundWorkers, WORKERS, allQuadrantIds, turnRail, roundOrder, spacesOf } from '../engine/v4/index.js';
 import { contextFor, logSince } from '../engine/v4/core.js';
 import { defaultEmoji } from './art/emojis.js';
-import { usableNow, memberAsks, secondBuyGiver } from './game/memberUse.js';
+import { usableNow, memberAsks, secondBuyGiver, onLoan } from './game/memberUse.js';
+export { onLoan };
 import { panelWords } from './game/panelText.js';
 import { anySpaces } from '../engine/v4/content/testset.js';
 
@@ -44,8 +45,9 @@ export function memberChips(state, p) {
     const c = state.cards[uid];
     const d = cardDef(state, uid);
     const extra = c.copy ? ` → ${defById(c.copy).name}` : c.color ? ` · ${quadrant(c.color).name} spaces` : ''; // "Hustler · Gold spaces" (it read as a color tag)
-    const key = [d.id, c.used ? 'u' : '', c.on === false ? 'off' : '', c.copy || '', c.color || ''].join('|');
-    if (!out.has(key)) out.set(key, { key, uids: [], def: d, card: c, label: d.name + extra, count: 0 });
+    const loan = onLoan(state, uid); // a borrowed card never shares a chip with one the player keeps
+    const key = [d.id, c.used ? 'u' : '', c.on === false ? 'off' : '', c.copy || '', c.color || '', loan ? 'loan' : ''].join('|');
+    if (!out.has(key)) out.set(key, { key, uids: [], def: d, card: c, label: d.name + extra, count: 0, loan });
     const g = out.get(key);
     g.uids.push(uid);
     g.count += 1;

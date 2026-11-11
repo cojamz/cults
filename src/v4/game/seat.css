@@ -72,6 +72,7 @@
   /* at 24px a lit member's glow and a switch keep inside their own cell, so the rows never collide */
   .app.game.lt > .lt-seat .cs-member.ready .fig::before{width:calc(100% + 10px)}
   .app.game.lt > .lt-seat .cs-member .cs-use-tab{bottom:-4px;font-size:9px;line-height:11px;padding:0 4px}
+  .app.game.lt > .lt-seat .cs-member .cs-loan-tab{bottom:-4px;font-size:9px;line-height:11px;padding:0 3px}
   .app.game.lt > .lt-seat .cs-member .mu-switch,.app.game.lt > .lt-seat .cs-member .mu-sw-tip{bottom:-5px}
   /* a choice that picks one of this chair's members shows every one: the area grows over what's under the chair, on
      the chair's own ground, and folds back after */
