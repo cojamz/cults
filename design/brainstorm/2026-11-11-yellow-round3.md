@@ -224,3 +224,8 @@ Verdict: send (flagged to Cory as the one not tied to Yellow's contest; his own 
 8. Color interactions: none named; it reads only your own member colors and the shop row, and works in any game.
 9. Biggest case: a 12-cost member free plus breaking a 3-way tie at 4 colors (from 4 each to 10 alone): about +9 swing. Green copying it recruits for the copier's missing color. Against a winner's 70 to 110.
 Verdict: send
+
+## Idea: Offering
+
+Source: Cory, 2026-11-11 4:16pm Eastern: "plus four, plus five yellow, and then every other player like discards two colors for each type of member that you have, basically. And gray just doesn't count" (4:22pm: "you dont need to say \"grey doesnt count\" for now"). Built as "+5 yellow. Each rival discards 2 of each color among your members." named Offering (Tithe is Gold's).
+Verdict: send
