@@ -12,7 +12,7 @@ const { createGame, applyMove, contestTable } = await import('../../../engine/v4
 const { quadrant } = await import('../../../engine/v4/content/index.js');
 const { table } = await import('./cards-helpers-b.js');
 const { useRetired } = await import('./helpers.js');
-useRetired(['red.turnout', 'silver.sweetnothings']);
+useRetired(['red.turnout', 'silver.sweetnothings', 'yellow.housewarming']);
 delete process.env.REPLACE11;
 delete process.env.MEMBER_UP;
 
@@ -268,7 +268,7 @@ describe('Sweet Nothings (live in Potluck\'s place, Cory Nov 6)', () => {
 
 describe('REPLACE11: Housewarming', () => {
   const slot = (s, name) => { const q = s.quadrants.indexOf('yellow'); return `${q}-${quadrant('yellow').actions.findIndex(a => a.name === name)}`; };
-  it("is on the wheel in Big New Blood's place", () => {
+  it("is back in its old round II slot for these tests (Makeover took it Nov 11)", () => {
     const names = quadrant('yellow').actions.map(a => a.name);
     expect(names).toContain('Housewarming');
     expect(names).not.toContain('Big New Blood');

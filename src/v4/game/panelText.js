@@ -130,9 +130,10 @@ const P = {
     dilute: { main: '+2 yellow', second: '+3 yellow if you recruit a new color' }, // flat since Nov 11 (Cory)
     // Housewarming took Big New Blood's place (Nov 4, overnight quality loop)
     // cap follows the engine (yellow.js: 4 + MORE since the Nov 8 cut to 5); the panel kept 6 + MORE and said 7 (picky bot, Nov 8)
-    housewarming: { main: '+2 yellow', second: `free new-color member, up to ${4 + MORE}` },
+    housewarming: { main: '+2 yellow', second: `free new-color member, up to ${4 + MORE}` }, // off the wheel since Nov 11 (Makeover)
     meltingpot: { verb: 'Per member color:', second: '+1 @f and +1 of it' }, // Cory, Nov 11; grey: 1 of any (hover)
     makeover: { verb: '+4 yellow, then rearrange all', second: 'into any colors' },
+    offering: { main: '+5 yellow', second: 'rivals discard 2 of each of your member colors' }, // Cory, Nov 11
     bloom: r => ({ main: `+${r} yellow`, second: '+1 of each fewest color', note: run(n => `+${n}`, 'yellow: ') }),
     // Match the current rule: the yellow arrives before the optional swaps.
     // the condition sat in line 3, which the wheel drops: the board read "pick a color: each rival" (Cory, Nov 3: "wtf is

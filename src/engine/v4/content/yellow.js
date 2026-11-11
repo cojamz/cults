@@ -110,6 +110,8 @@ const OPEN_HOUSE = {
 };
 // cap 7 to 5 (Claude, under Cory's go-with-your-gut, Nov 8: "Housewarming is a little strong… like 7 fucking currency")
 const HOUSEWARMING = {
+  // Out of the wheel since Nov 11 (Makeover moved into its round II slot); kept for old saves and its tests
+  pool: true,
   key: 'housewarming', ring: 2, name: 'Housewarming', copyDoesIt: true,
   text: `+2 yellow. Recruit a free shop member costing up to ${4 + MORE}, in a color none of your members have.`,
   estimate: (ctx, p) => 2 + Math.max(0, ...hwList(ctx, p).map(c => c.def.f + hwCost(c) * 0.6)),
@@ -151,6 +153,7 @@ function askToll(ctx, host, o, left, key) {
 const pileColors = ctx => { const qs = new Set(discardOf(ctx.state).map(u => ctx.card(u).def.quadrant)); return ctx.state.quadrants.map((q, i) => (qs.has(q) ? ctx.state.resources[i] : null)).filter(Boolean); };
 /** Melting Pot: a grey member (not Dabblers, which counts as every table color) among p's members. */
 const hasGrey = (ctx, p) => ctx.membersOf(p).some(c => !isWild(ctx, c) && !c.asColor && ['guest', 'benders'].includes(c.def.quadrant));
+const offeringColors = (ctx, p) => memberRes(ctx, p).filter(c => colors(ctx).includes(c));
 const memberRes = (ctx, p) => memberColors(ctx, p).map(q => ctx.state.resources[ctx.state.quadrants.indexOf(q)]);
 const GRAND_TOUR = {
   key: 'grandtour', ring: 2, name: 'Grand Tour', text: '+2 yellow. Choose a rival: gain 1 of each color among their members.',
@@ -317,6 +320,14 @@ export default {
       },
     }, 'pool15'),
     HOUSEWARMING,
+    {
+      // Cory, 2026-10-30: "let's stick with launderers effect round III", "+3 or +4 yellow". Name: Claude's fill-in.
+      // Nov 2: "oh no i like makeover as is" (the per-contest follower version was live briefly in v0.99.505)
+      // Nov 11: "Makeover could be RII": round II, in Housewarming's slot; Offering takes round III
+      key: 'makeover', ring: 2, name: 'Makeover', text: '+4 yellow. Then rearrange your resources into any colors.',
+      estimate: () => 5,
+      resolve(ctx, p) { ctx.gain(p, Y, ACT.has('makeover1') ? 1 : 4, { fromAction: true }); startLaunder(ctx, p, 'Makeover'); },
+    },
     swap14(swap14({
       // Cory, 2026-10-30: "+1 rainbow per, and then also +2 yellow"; Nov 5: "melting pot should give 1 color for each
       // different member color. And when i have dabblers it should give me 1 of every color": 1 of each of your member
@@ -336,11 +347,22 @@ export default {
       },
     }, GRAND_TOUR), OPEN_HOUSE),
     {
-      // Cory, 2026-10-30: "let's stick with launderers effect round III", "+3 or +4 yellow". Name: Claude's fill-in.
-      // Nov 2: "oh no i like makeover as is" (the per-contest follower version was live briefly in v0.99.505)
-      key: 'makeover', ring: 3, name: 'Makeover', text: '+4 yellow. Then rearrange your resources into any colors.',
-      estimate: () => 5,
-      resolve(ctx, p) { ctx.gain(p, Y, ACT.has('makeover1') ? 1 : 4, { fromAction: true }); startLaunder(ctx, p, 'Makeover'); },
+      // Cory, Nov 11 4:16pm: "plus four, plus five yellow, and then every other player like discards two colors for each
+      // type of member that you have, basically. And gray just doesn't count". 2 of each of your member colors from each
+      // rival (all they have of it when short); Dabblers counts as every table color, as Melting Pot reads it.
+      // Name: Claude's fill-in (the pitch's "Tithe" is already Gold's round II space, Cory's Oct naming pick)
+      key: 'offering', ring: 3, name: 'Offering', copyDoesIt: true, text: '+5 yellow. Each rival discards 2 of each color among your members (grey doesn\u2019t count).',
+      estimate: (ctx, p) => 5 + 0.4 * ctx.rivals(p).reduce((n, o) => n + offeringColors(ctx, p).reduce((m, c) => m + Math.min(2, o.res[c] || 0), 0), 0),
+      resolve(ctx, p) {
+        ctx.gain(p, Y, 5, { fromAction: true });
+        const cs = offeringColors(ctx, p);
+        if (!cs.length) { ctx.log(`${p.name}'s Offering: no colored members yet, so rivals discard nothing.`); return; }
+        for (const o of ctx.rivals(p)) {
+          const lost = cs.map(c => [c, Math.min(2, o.res[c] || 0)]).filter(([, k]) => k > 0);
+          for (const [c, k] of lost) o.res[c] -= k;
+          ctx.log(lost.length ? `${p.name}'s Offering: ${o.name} discards ${lost.map(([c, k]) => `${k} ${c}`).join(', ')}.` : `${p.name}'s Offering: ${o.name} has none of ${cs.join(', ')} to discard.`);
+        }
+      },
     },
   ],
 

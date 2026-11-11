@@ -68,11 +68,22 @@ describe('Yellow actions', () => {
     const { s } = newBlood(1, 'yellow.dilute', [], 'red.intern');
     expect(named(s, 'New Blood')).toContain("P1's New Blood: +3 yellow for recruiting a member of a new color.");
   });
-  it("Housewarming is on the wheel in Big New Blood's place (Nov 4)", async () => {
+  // Cory, Nov 11: Makeover moves to round II in Housewarming's slot; Offering takes round III
+  it('round II holds Makeover and Melting Pot, round III Offering; Housewarming is off the wheel', async () => {
     const { quadrant } = await import('../../../engine/v4/content/index.js');
-    const names = quadrant('yellow').actions.map(a => a.name);
-    expect(names).toContain('Housewarming');
-    expect(names).not.toContain('Big New Blood');
+    const acts = quadrant('yellow').actions, ring = n => acts.filter(a => a.ring === n).map(a => a.name);
+    expect(ring(2)).toEqual(expect.arrayContaining(['Makeover', 'Melting Pot']));
+    expect(ring(3)).toEqual(['Offering']);
+    expect(acts.map(a => a.name)).not.toContain('Housewarming');
+  });
+  it('Offering (round III, the pitch\'s Tithe): +5 yellow; each rival discards 2 of each color among your members, all they have when short; grey adds nothing', () => {
+    let s = take(sc({ n: 3, round: 3, members: [['red.twins', 'gold.banker', 'benders.frontrunner']], res: [{}, { red: 5, gold: 1, green: 4 }, { red: 2 }] }), 'yellow.offering');
+    expect(R(s).yellow).toBe(5);
+    expect(s.players[1].res).toMatchObject({ red: 3, gold: 0, green: 4 });
+    expect(s.players[2].res.red).toBe(0);
+    expect(named(s, 'Offering').some(l => /P2 discards 1 gold, 2 red\./.test(l))).toBe(true);
+    s = take(sc({ n: 3, round: 3, res: [{}, { red: 5 }] }), 'yellow.offering');
+    expect(s.players[1].res.red).toBe(5); // no members: nothing to discard
   });
   // Cory, Nov 11: "+1 follower and + 1 of each color among your members (including a wild for grey)"
   it('Melting Pot (round II): for each color among your members, +1 follower and +1 of that color', () => {
