@@ -370,14 +370,16 @@ const trading = {
       },
     }] : []),
     {
-      // Cory, 2026-11-11 10:33am Eastern: "Modest means is good. I like." Allowance's slot; name and numbers Claude's fill-ins.
+      // Cory, 2026-11-11 10:33am Eastern: "Modest means is good. I like." Allowance's slot; name Claude's fill-in.
+      // 10:44am: "make modest means +2. Keep in mind the +1 for the space." (+2 per rival, then the standard +1)
       // Counts members as White's contest does (memberCount: a card that counts as 2 counts 2).
-      key: 'modestmeans', copyDoesIt: true, ring: 1, name: 'Modest Means', text: '+3 white. +1 white per rival with more members than you.',
-      estimate: (ctx, p) => 3 + ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).length,
+      key: 'modestmeans', copyDoesIt: true, ring: 1, name: 'Modest Means', text: '+2 white per rival with more members than you. +1 white.',
+      estimate: (ctx, p) => 1 + 2 * ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).length,
       resolve(ctx, p) {
         const k = ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).length;
-        ctx.gain(p, W, 3 + k, { fromAction: true });
-        ctx.log(`${p.name}'s Modest Means: ${k} rival${k === 1 ? '' : 's'} with more members, +${3 + k} white.`);
+        if (k) ctx.gain(p, W, 2 * k, { fromAction: true });
+        ctx.log(`${p.name}'s Modest Means: ${k} rival${k === 1 ? '' : 's'} with more members, +${2 * k} white.`);
+        ctx.gain(p, W, 1, { fromAction: true });
       },
     },
     // Allowance left the wheel Nov 11 (Modest Means took its slot); kept for old saves and its tests.

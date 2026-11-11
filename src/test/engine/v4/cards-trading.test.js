@@ -31,7 +31,7 @@ describe('White: the printed cards', () => {
     expect(W.actions.map(a => [a.key, a.ring])).toEqual([
       ['modestmeans', 1], ['splurge', 1], ['exchange', 1], ['farewell', 2], ['estatesale', 2], ['cashin', 3],
     ]);
-    expect(text('modestmeans')).toBe('+3 white. +1 white per rival with more members than you.');
+    expect(text('modestmeans')).toBe('+2 white per rival with more members than you. +1 white.');
     expect(text('splurge')).toBe('+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay (every 1 in round II).');
     expect(text('farewell')).toBe('Discard one of your members. Gain its cost in followers. +1 white.');
     expect(text('estatesale')).toBe('Discard one of your members. Gain its cost in white. +1 white.');
@@ -41,14 +41,14 @@ describe('White: the printed cards', () => {
 });
 
 describe('White actions', () => {
-  it('Modest Means (Nov 11): +3 white, +1 per rival with more members named', () => {
+  it('Modest Means (Nov 11): +2 white per rival with more members, then +1, named', () => {
     let s = take(table(Q), 'trading.modestmeans');
-    expect(R(s).white).toBe(3);
-    expect(named(s, 'Modest Means')).toContain("P1's Modest Means: 0 rivals with more members, +3 white.");
+    expect(R(s).white).toBe(1);
+    expect(named(s, 'Modest Means')).toContain("P1's Modest Means: 0 rivals with more members, +0 white.");
     s = take(table(Q, { n: 4, members: [[], ['red.intern'], ['red.bigfamily'], ['red.twins']] }), 'trading.modestmeans');
-    expect(R(s).white).toBe(6);
+    expect(R(s).white).toBe(7);
     s = take(table(Q, { n: 4, members: [['red.intern'], ['red.twins'], ['red.bigfamily'], []] }), 'trading.modestmeans');
-    expect(R(s).white).toBe(5); // P2 and P3 each count as more members than P1's one card; P4 has none
+    expect(R(s).white).toBe(5); // 2 x 2 + 1: P2 and P3 each count as more members than P1's one card; P4 has none
   });
 
   it('Splurge: a 12-cost Tycoon pays +6 followers, named; Brokers adds 2 in the same line', () => {
