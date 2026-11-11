@@ -8,11 +8,12 @@ Prices are left out of the pitch; Claude's numbers are fill-ins.
 
 ## Green
 
-### G1 Squatters (pick): "Once per round, you may place on a Green space a rival has taken."
+### G1 Gatecrashers (pick): "Once per round, you may place on a Green space a rival has taken."
 - Round II, 4 players: a rival took Crowd first turn (+1 follower per minion on Green, +3 green). Without this you take Build Up for about 4 green. With it you also take Crowd: about +3 followers and +3 green, and your minion still counts for the Green contest. Gain: one blocked Green space opened, about 3 to 6 more than the next best space.
 - Round III: Greatest Hits taken by a rival; you take it too and copy every action of a color. Top case big but once a round, at a cost of 7 to 8.
 - Choices: none. Who feels it: the rival who thought taking the space blocked you; Green contest rivals lose a sure count. Reason to block: none works, which is the sting.
 - How often: once a round, rounds II and III; round I only if bought then. Steps: place your minion on a taken Green space, do it. Table: two minions on one space, like the old Crowd In.
+- Note: Squatter (now Party Crasher, "On Use, once per game: your next minion can be placed on a space a rival already took.", grey, cut Nov 7) was his "really great"; this is a Green-only, once-a-round take.
 - Intuitive: bends the rule everyone feels (taken spaces) for one color. Fun: a rival's block fails. Interacts: reads rivals' placements. Powerful: yes, rule-bender. Engine: feeds Build Up and Crowd counts, the Green contest. Its color: Green lives on others' spaces; now it can share them. Meets the bar: one clean rule-bend, no memory beyond the card's once-a-round.
 
 ### G2 Regulars: "Round End: +1 follower per minion you have on Green spaces."
@@ -21,7 +22,7 @@ Prices are left out of the pitch; Claude's numbers are fill-ins.
 - Note: Crowd pays the same count once as a space; this pays it every round end and asks you to stay on Green all round.
 - Intuitive: one visible count. Fun: watching your Green minions add up; rivals block. Interacts: Green spaces are shared, rivals can take them. Powerful: steady scorer, his "scoring or passive income" yes. Engine: pays for Echo/Reprise/Cover chains staying on Green. Its color: the contest's own count, paid in followers.
 
-### G3 Stagehands: "On Use, once per round: move one of your minions from another color's space to an open Green space."
+### G3 Wanderers: "On Use, once per round: move one of your minions from another color's space to an open Green space."
 - Round II: you placed on Heist earlier (steal 4 followers and 4 resources); later you move that minion to the open Green space: +1 Green contest count, and Heist's space opens for a rival's later minion. Gain: +1 toward +6 green contest, minus a gift of a space.
 - Choices: you give a space back to the table; real trade. Who feels it: the Green contest rival, and whoever gets the freed space.
 - Steps: lift your minion, put it on an open Green space (its action isn't taken). Risk: "open Green space" is often one spare in rounds II and III.
