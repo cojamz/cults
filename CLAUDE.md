@@ -5,7 +5,7 @@ The game was called Patrons; since 2026-10-14 it's **Cults** (v0.5). Code ids an
 
 ## Read first, every session
 - **Chat threads run no hooks and load no skills.** First command: `bash .claude/hooks/start.sh` (moves to the game's branch, prints where things stand). Before every message to Cory: `node .claude/hooks/presend.mjs <<'EOF'` (message) `EOF`, and fix what it says. Log a correction of Cory's with `bash .claude/hooks/correction.sh "<his words>"`.
-- Before any design pitch: `.claude/rules/pitching.md`. Skills are read by path: `.claude/skills/<name>/SKILL.md`.
+- **Any idea for a card, action, member or number goes through the brainstorm skill, every step, before Cory sees it**: read `.claude/skills/brainstorm/SKILL.md` and run `bash .claude/hooks/brainstorm-read.sh`, play each idea on paper, and size it at its biggest real game state (right after the gifts, steals or copies that feed it, in round III) against real holdings from a game (Cory, Nov 11: "explain to me why ive had to tell EVERY THREAD EVER to use the brainstorming skill", "maybe use the fucking SKILL"). Before any design pitch: `.claude/rules/pitching.md`. Skills are read by path: `.claude/skills/<name>/SKILL.md`.
 - Project instructions and these files load once, when a thread starts. Rules added later reach you through presend's NEW RULES lines and the coordinator.
 - `.claude/rules/working-with-cory.md` and `.claude/output-styles/foreman.md`: how to work with Cory and the voice for every message. Follow strictly.
 - `.claude/rules/harness.md`: hooks, where every kind of file goes, skills, agents, checks, shipping.
