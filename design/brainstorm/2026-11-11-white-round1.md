@@ -35,6 +35,19 @@ Frame: White round I sits beside Splurge ("+2 white. If you recruit a member thi
 9. Biggest case: round III, the White player holds 3 members, the three rivals hold 8 to 14 (real game 3 and 1 endings): +6 white, then Cash In turns it into 6 followers. Green copying it counts the copier's own rivals: a Green player with 13 members gets +3. Live Allowance in round III paid +5 white and +3 followers on a recruit. Most it ever pays: +6, against a winner's 70 to 110 and a contest's 4/6/10. Under the 10 cutoff.
 Verdict: send
 
+## Idea: Pocket Money
+
+1. Printed text: "+3 white. Buy followers now, as well as your recruit this turn." (name and numbers Claude's fill-ins). Cards it touches: Barker (White member): "Each time you recruit a member, you may also recruit followers."; Recruit Twice (Blue): "Recruit a member from the discard pile now. +5 blue."; Exchange: "+2 white. Then turn up to 1 resource (2 in round II, 3 in round III) into 2 followers each."; the follower cards (1, 5 or 10 followers for as many resources).
+2. Played turn: round I, 4 players. You hold 3 resources, take +3 white: buy a 5-follower card now with 5 of your 6, and your recruit is still open (1 left, a 1-follower card, or nothing). Most round I players can't afford a member, so in round I it is mainly +3 white, the same as live Allowance's base; against Harvest (+3) the gain is 0 in round I, and it lets you turn leftover resources into followers without giving up the turn's recruit. Round II (real: 10 to 14 resources): buy a 5-follower card and recruit a 6 to 8 cost member on one turn; the best other round II White space, Farewell ("Discard one of your members. Gain its cost in followers. +1 white."), pays a member's cost in followers but costs you the member.
+3. Both sides: no choices beyond which follower card to buy.
+4. Who feels it: rivals racing for the same shop member lose tempo, since you buy followers and still take that member; reason to block it in rounds II and III, when the recruit is the scarce thing.
+5. Not refused: "This turn your follower recruit has no limit" was refused as a misread (follower cards are fixed); this buys one more fixed card at its printed price. White refusals Oct 22 to Nov 5 checked; none is an extra follower buy. Same verb as Barker on a space; Blue owns extra member recruits, this buys only followers, which is White's cash-in.
+6. Judged: one plain verb (buy followers) on the follower cards, done when taken, grows on its own as resources grow; round I real state gives +3 white with an extra buy that is often small, so it leans on rounds II and III. Intuitive: yes. Fun: medium, a big turn when you have a pile. Interacts: the shop race. Powerful: an extra recruit in round III. Engine or counter: pairs with Barker, Money Changers ("Whenever you buy followers, +2 white.") and the White Cloak ("Whenever you buy followers, +2 white."). Its color: cashing resources into followers without growing your cult.
+7. Public and certain: follower cards are fixed and face up; no pile draws, randomness or hidden cards.
+8. Color interactions: none named; it works in any game.
+9. Biggest case: round III, you hold 20 resources: buy a 10-follower card now and recruit a 10-cost member. It gives no free followers, only one more buy at full price; with the White Cloak the extra buy pays +2 white. Green copying it gets one extra buy with the copier's own resources. Never more than the resources you already hold, against a winner's 70 to 110.
+Verdict: send
+
 ## Idea: Low Profile (cut)
 1. Printed text: "+2 white in round I, +3 in round II, +4 in round III, doubled if you have the fewest followers (ties count)." (pitched Nov 5, no verdict)
 2. Played turn: round I turn 1 everyone ties on followers: +4.
@@ -94,3 +107,27 @@ Verdict: cut (Blue's verb)
 8. Color interactions: overlaps Magenta.
 9. Biggest case: round III 3 white + 3 resources.
 Verdict: cut (Magenta's verb)
+
+## Idea: Party Favor (cut)
+1. Printed text: "+4 white in round I, +5 in round II, +6 in round III. Each rival +1 white."
+2. Played turn: round I +4 white, rivals +3 between them.
+3. Both sides: no choices.
+4. Who feels it: a small gift to everyone.
+5. Not refused: the gift is Silver's verb (Toast).
+6. Judged: plain fuel with a gift, small ball.
+7. Public and certain: yes.
+8. Color interactions: none.
+9. Biggest case: +6 white.
+Verdict: cut (Silver's Toast shape, small ball)
+
+## Idea: Recluse Space (cut)
+1. Printed text: "+3 white. +1 follower per rival with more members than you."
+2. Played turn: as Modest Means, paid in followers.
+3. Both sides: no choices.
+4. Who feels it: as Modest Means.
+5. Not refused: the same idea as Modest Means paid differently (verdicts 8, too narrow) and Recluse's own text.
+6. Judged: a variation, not a second idea.
+7. Public and certain: yes.
+8. Color interactions: none.
+9. Biggest case: +3 white and +3 followers.
+Verdict: cut (same idea as Modest Means)
