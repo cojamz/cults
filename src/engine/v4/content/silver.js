@@ -413,7 +413,7 @@ export const silverActions = [
     // Cory, Nov 11 10:23am: "Polish should be +2 silver, then the +1": the space's +1 comes after the turn, so it stays silver
     estimate: () => 3.5,
     resolve(ctx, p) {
-      hostGain(ctx, p, 2);
+      (ctx.beforeTrailingPlus1 || (f => f()))(() => hostGain(ctx, p, 2)); // a later taker's +1 cut comes off the last +1, after the turn
       const n = p.res[S] || 0, opts = otherColors(ctx);
       if (!n || !opts.length) { hostGain(ctx, p, 1); return; }
       ctx.choose(p, `Polish: turn all ${n} of your silver into which color?`, opts.map(c => ({

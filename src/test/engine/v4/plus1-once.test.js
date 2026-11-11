@@ -48,6 +48,21 @@ describe('space +1 once per game', () => {
     expect(fx.map(e => [e.cause.kind, e.what.n])).toEqual([['space', 4], ['plus1', 1]]);
     expect(fx[1].from).toMatchObject({ kind: 'space', key: `${o.q}-${o.i}` });
   });
+  // picky bot, Nov 11: a later taker's cut came off Polish's +2, before the turn ("Turn all 1 of your silver")
+  it('Polish: a later taker turns the whole +2 and loses only the trailing +1; the first taker keeps 1 silver', () => {
+    const polish = (seen, hold) => {
+      let s = scene({ plus1: 'game' }); s.players[0].res.silver = hold;
+      const k = spaceOf(s, 'Polish'); if (seen) s.plus1Seen = { [k]: true };
+      s = take(s, 'Polish');
+      expect(s.pending?.kind).toBe('choose');
+      const o = s.pending.options.find(x => x.kind === 'color');
+      const c = o.value, had = s.players[0].res[c] || 0;
+      s = passBuys(settle(move(s, o.id)));
+      return [s.players[0].res[c] - had, silver(s, 0)];
+    };
+    expect(polish(true, 3)).toEqual([5, 0]);
+    expect(polish(false, 3)).toEqual([5, 1]);
+  });
   it('every taker gets it with the setting off', () => {
     let t = scene({}); const k = spaceOf(t, 'Toast'); t.plus1Seen = { [k]: true };
     t = passBuys(settle(take(t, 'Toast')));

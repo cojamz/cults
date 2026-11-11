@@ -1036,7 +1036,7 @@ function runTask(state, task) {
           const o = state.players.find(x => x.id === t.pid); o.bonus += 1; log(state, `${o.name}'s Open Bar: ${p.name} took a Silver space, +1 follower.`);
         }
         const d1 = plus1Delta(state, task, a, qid), color = quadrant(qid).resource, had = p.res[color] || 0;
-        econRun('space', { state, pid: p.id, color, delta: spaceDelta(state) + (d1 === PLUS1_CLAIM ? -1 : d1) }, () => a.resolve(ctx, p));
+        econRun('space', { state, pid: p.id, color, delta: spaceDelta(state) + (d1 === PLUS1_CLAIM ? -1 : d1), claim: d1 === PLUS1_CLAIM }, () => a.resolve(ctx, p));
         // once per game, the first taker's +1 is its own gain, after the space's (the screen flies it on its own from the
         // space: Cory, "that resource needs an animation to fly to the player, separate from the gains of the action")
         if (d1 === PLUS1_CLAIM) underCause({ kind: 'plus1', key: `${task.q}-${task.i}`, qid, pid: p.id }, () => {
@@ -2060,6 +2060,16 @@ export function copyPlus1Cut(state, p, a, qid, times, fn, color = null) {
   if (plus1Mode(state) !== 'game' || !printsPlus1(a, qid)) return fn();
   return econRun('space', { state, pid: p.id, color: color || quadrant(qid).resource, delta: -times }, fn);
 }
+/** Run fn (a space's own gain that comes before its printed trailing "+1 <color>.") without the space's +1 cut, so the
+ *  cut waits for that trailing +1. Polish: "+2 silver. Turn all your silver into one other color. +1 silver." A later
+ *  taker or a copy lost 1 of the +2 before the turn, so it turned 1 silver less and kept 1 (picky bot, Nov 11: "Turn all
+ *  1 of your silver"). The first taker's claim keeps the old order: its +1 is paid apart right after the space. */
+export function beforeTrailingPlus1(fn) {
+  const s = econ.space;
+  if (!s || s.claim || !(s.delta < 0)) return fn();
+  econ.space = null;
+  try { return fn(); } finally { econ.space = s; }
+}
 const spaceDelta = state => ECON.space + (ECON.spaceR?.[state.round - 1] || 0) + (state.rules?.econ === 'rich' ? RICH.space : 0);
 function econAdjust(p, color, n, fromAction, state) {
   const s = econ.space, c = econ.cloak, owe = state?.econOwed;
@@ -2533,6 +2543,7 @@ function ctxFor(state) {
     player: id => state.players[id],
     rivals: p => state.players.filter(o => o !== p),
     quadrant,
+    beforeTrailingPlus1,
     followers: p => followers(state, p),
     memberCount: p => memberCount(state, p),
     memberWeight: card => memberWeight(state, typeof card === 'number' ? card : card.uid),
