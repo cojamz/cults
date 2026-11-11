@@ -1,6 +1,6 @@
 # Feel judge (reads finished playthroughs, writes the feel report)
 
-Hand this to a fresh agent with the folders of one batch of finished games (played with `new --today --diary` and `brief --brief=round`). It never sees the designer's likes and dislikes, earlier reports or the bot numbers, so it reads the games alone.
+Hand this to a fresh agent with the folders of one batch of finished games (played with `new --today --diary` and `brief --brief round`). It never sees the designer's likes and dislikes, earlier reports or the bot numbers, so it reads the games alone.
 
 ---
 

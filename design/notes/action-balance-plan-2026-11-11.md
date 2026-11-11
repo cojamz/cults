@@ -31,7 +31,7 @@ Written by the "Plan action balance and feel testing" thread from Cory's message
 - **Replacement Green**: `membersOut`/`membersIn` (a rule that bot runs and expert games can set) swaps Tribute Band for **Ensemble** ("Whenever you copy your own action, +1 follower."), worth 3 and counting as 3 members like Tribute Band, so the Green deck stays at 10. Ensemble is Claude's stand-in from Green's own cut cards; the members thread can name a real one.
 
 ## Feel playthroughs (built today)
-- `DECK=10 node scripts/v4-expert.mjs new <dir> --today --diary [--out=echo.dejavu --in=echo.ensemble]`, then `brief <dir> --brief=round`. Four agents each play one seat from their brief.
+- `DECK=10 node scripts/v4-expert.mjs new <dir> --today --diary [--out echo.dejavu --in echo.ensemble]`, then `brief <dir> --brief round`. Four agents each play one seat from their brief.
 - **The players' brief** (design/eval/expert-games/player-brief-round.md):
   - Every placement gives its reasoning and a tag: hard, obvious or stuck.
   - The tool won't let a player start a new round until they write a diary of the round just ended. The diary covers their best move, a regret, how many choices were hard, obvious or stuck, what a rival did that changed their plan, the biggest swing, and fun from 1 to 5.

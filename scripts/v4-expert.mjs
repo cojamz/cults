@@ -9,8 +9,8 @@
 //   postgame <dir> <seat> "<text>"    the player's after-game note
 //   diary <dir> <seat> "<text>"       the player's note on the round just finished (briefs that ask for one: the
 //                                     first move of the next round waits for it)
-// new --today plays today's setup (10-card deck, round decks, By color, space +1 once a game); --out=a,b --in=c deal
-// members out of and into the decks (rules.membersOut / membersIn). brief --brief=<name> uses player-brief-<name>.md.
+// new --today plays today's setup (10-card deck, round decks, By color, space +1 once a game); --out a,b --in c deal
+// members out of and into the decks (rules.membersOut / membersIn). brief --brief <name> uses player-brief-<name>.md.
 //   status <dir>                      one line for the foreman
 //   report <dir> [--out file]         the transcript for the designer (markdown)
 //   data <dir>                        one JSON line of the game's numbers (for balance reads)
