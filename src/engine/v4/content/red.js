@@ -804,6 +804,19 @@ export default {
     m('patriarch', 'Patriarch', 5, 2, /* Cory, Nov 5 backlog price yes */ 'Game End: +1 follower per 2 members you have.', { ...old3, ...old7('red.patriarch'),
       onGameEnd: (ctx, owner) => Math.floor(ctx.memberCount(owner) / 2),
     }),
+    // Cory, 2026-11-11 12:13am Eastern: "Yeah Clan is good. Round End might be a bit too strong but lets try it." Pays
+    // Red's contest count (biggest group of one color, grey counts, each card 1), the same count the contest uses.
+    // Price is Claude's fill-in (Patriarch's); Patriarch leaves the deck for it (cull.js; Claude's pick pending Cory).
+    m('clan', 'Clan', 5, 2, 'Round End: +1 follower per member in your biggest group of one color (grey counts).', {
+      onRoundEnd(ctx, owner) {
+        const n = Math.max(0, ...[...ctx.state.quadrants, 'guest'].map(q => ctx.countMembersOfColor(owner, q, { cards: true })));
+        if (!n) return;
+        owner.bonus += n;
+        ctx.log(`${owner.name}'s Clan: ${n} member${n === 1 ? '' : 's'} in their biggest group of one color: +${n} followers.`);
+      },
+      // BOTSEE: each round end still ahead, about 3 in the biggest group
+      ...see(i => endsAhead(i).length * 3),
+    }),
     // REPLACE3 bot test (Nov 3, replacement batch 3): Patriarch's place. 6 red + 3 any as a player sees it. Every rival
     // gets one (seat order from the owner's left), as long as the owner has members; any member may go, Missionaries
     // itself too. A give is an arrival, not their recruit (Old Maid's −5 lands on them, Martyrs pays the giver). Then one

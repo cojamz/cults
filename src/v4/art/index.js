@@ -169,6 +169,7 @@ for (const [id, name, source] of [
   ['echo.encore', 'Encore', 'echo.chronicler'], ['echo.songrequest', 'Buskers', 'echo.evergreen'], // Nov 4: Chronicler's and Busker's places
   ['benders.cheerleaders', 'Cheerleaders', 'benders.cheerleader'], ['benders.victors', 'Victors', 'benders.tiebreaker'], // Nov 4: new greys (both off the 10 deck's cut cards)
   ['market.mannequin', 'Mannequin', 'market.connoisseur'], // Nov 4 night: Hawker's place, on Connoisseurs' retired scene until its own is drawn
+  ['red.clan', 'Clan', 'red.patriarch'], // Nov 11: Patriarch's place, on its scene until its own is drawn
   ['red.seatfiller', 'Seat Filler', 'red.volunteer'], // Nov 5: Volunteer's place, on its scene until its own is drawn
   ['thieves.hoardbreaker', 'Heist Crew', 'thieves.grifter'], // Nov 5: Grifter's place, on its scene until its own is drawn
   ['yellow.nightmarket', 'Night Traders', 'yellow.ringleader'], // Nov 5: Meddler's place, on its scene until its own is drawn

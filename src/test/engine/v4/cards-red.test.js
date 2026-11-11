@@ -69,6 +69,15 @@ describe('Red members', () => {
     expect(defById('red.mob').onGameEnd).toBeUndefined();
   });
 
+  it('Clan: round end +1 follower per member card in your biggest group of one color, grey counts (Cory, Nov 11)', () => {
+    // P1: Clan + Intern + Volunteer = 3 red cards beside 1 blue; P2 has no Clan, so it pays nothing
+    const M = [['red.clan', 'red.intern', 'red.volunteer', 'market.regular'], ['market.critic']];
+    const s = sceneQ({ n: 2, quadrants: ['gold', 'red', 'market', 'echo'], members: M, queue: [{ t: 'endRound' }] });
+    expect(named(s, 'Clan')).toEqual([
+      "P1's Clan: 3 members in their biggest group of one color: +3 followers.",
+    ]);
+  });
+
   it('Recruiter: a rival’s Poach of another rival’s member pays its holder nothing (shop recruits only, Nov 1)', () => {
     // 3 players, round III: P1 Poaches P3's Triplets; P2 holds Recruiter
     let s = sceneQ({ quadrants: ['gold', 'red', 'thieves', 'echo'], n: 3, round: 3, members: [[], ['red.recruiter'], ['red.twins']] });
