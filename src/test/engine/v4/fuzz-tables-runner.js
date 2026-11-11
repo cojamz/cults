@@ -96,7 +96,10 @@ function checkSphereInvariants(s, prev, ctx, verified, fail = failHard) {
       // recruited) takes from what the taker holds, not from what the space gave: add those thefts back
       const since = theftsAt.get(`${s.round}:${e.seq}`) ?? 0;
       const lost = (s.thefts || []).slice(since).filter(t => t.from === e.p && t.kind === 'res').reduce((a, t) => a + t.n, 0);
-      const got = total(p.res) - total(e.before.res[e.p]) + lost;
+      // a choice inside the window that pays resources for something else (a copied Exchange: 1 white → 2 followers) was
+      // the taker's own spend after the chip's gain: add it back, as the thefts above
+      const spent = theftsAt.spent?.get(`${s.round}:${e.seq}`) || 0;
+      const got = total(p.res) - total(e.before.res[e.p]) + lost + spent;
       const chip = total(e.res);
       if (got < chip) fail(`chip on ${e.name} promises ${chip} resources but its taker netted ${got} (${JSON.stringify(e.res)})`, s, ctx);
       const newMembers = p.members.filter(u => !e.before.members[e.p].includes(u)).length;
@@ -208,6 +211,16 @@ export function runTable({ quadrants, n, seed, kind, deep = false, allOptions = 
       try { alt = applyMove(s, o); } catch (err) { fail(`legal option ${o.option} threw: ${err.stack}`, s, ctx); }
       checkInvariants(alt, `${ctx} (option ${o.option})`);
       checkSphereInvariants(alt, s, `${ctx} (option ${o.option})`, new Set(verified), soft || failHard);
+    }
+    // resources the mover pays inside an open space window (option.spend; a swap's {silver: n, white: -n} nets 0), for the
+    // chip check in checkSphereInvariants
+    if (s.echo?.open && s.pending?.kind === 'choose') {
+      const e = s.echo.now[s.echo.open], o = s.pending.options.find(x => x.id === m.option);
+      if (e && o?.spend && e.p === m.player) {
+        const net = Object.values(o.spend).reduce((a, b) => a + b, 0);
+        const map = ((verified.theftsAt ||= new Map()).spent ||= new Map()), k = `${s.round}:${e.seq}`;
+        map.set(k, (map.get(k) || 0) + net);
+      }
     }
     let next;
     try { next = applyMove(s, m); } catch (err) { fail(`applyMove threw on ${JSON.stringify(m)}: ${err.stack}`, s, ctx); }
