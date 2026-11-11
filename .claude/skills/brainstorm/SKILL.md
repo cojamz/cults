@@ -25,6 +25,7 @@ Copy this checklist into your working notes and tick it off. Steps 4 and 5 happe
 - [ ] 2. Frame the slot or the color pair
 - [ ] 3. Generate about 12 seeds, each on a different piece
 - [ ] 4. Play every seed on paper (template below)
+- [ ] 4b. Write the record: design/brainstorm/<date>-<topic>.md, one block per idea, steps 1 to 9 (a hook refuses the pitch without it)
 - [ ] 5. Cut against his verdicts and the kill list
 - [ ] 6. Send what survives (often 2 to 4)
 - [ ] 7. Log the pitch, and later his answer
@@ -80,6 +81,10 @@ Why each line matters:
 - Nobody feeling it means the card adds nothing to the table: cut it.
 - Round I tables hold 0 or 1 members, so judge a card at the table's real state that round.
 - presend refuses a linked pitch file without the six principle lines.
+
+### 4b. Write the record
+
+Copy design/brainstorm/TEMPLATE.md to design/brainstorm/<date>-<topic>.md and fill one `## Idea: <Name>` block per seed, including the ones you cut: the nine steps of .claude/rules/pitching.md, each at least a sentence, step 9 (the biggest real case) with its numbers, and `Verdict: send` or `Verdict: cut`. Bold each idea's name in the message to Cory exactly as its heading reads. A hook on every message, decision card and widget to Cory refuses a pitch whose new names have no complete `send` block (`.claude/hooks/pitch-gate.mjs`; presend runs it too). Cory, Nov 11: "how do we actually make it happen in the future vs you saying 'golly ill make sure!' and then doing jack shit after a few compactions". Commit the record with the ledger line.
 
 ### 5. Cut
 

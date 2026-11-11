@@ -10,6 +10,15 @@
             "timeout": 300
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/design-rules.sh\" ] && bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/design-rules.sh\" || true",
+            "timeout": 20
+          }
+        ]
       }
     ],
     "PreToolUse": [
@@ -37,6 +46,16 @@
           {
             "type": "command",
             "command": "[ -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/card-gate.mjs\" ] && node \"$CLAUDE_PROJECT_DIR/.claude/hooks/card-gate.mjs\" || true"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__hearthbot__post_message|mcp__hearthbot__edit_message|mcp__hearthbot__request_decision|mcp__hearthbot__post_widget",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -f \"$CLAUDE_PROJECT_DIR/.claude/hooks/pitch-gate.mjs\" ] && node \"$CLAUDE_PROJECT_DIR/.claude/hooks/pitch-gate.mjs\" || true",
+            "timeout": 30
           }
         ]
       }

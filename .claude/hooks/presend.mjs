@@ -94,6 +94,11 @@ if (missing.length) problems.push(`Card text missing. Quote each card in full, n
   try { fresh = Date.now() / 1000 - Number(readFileSync('/tmp/.cults-brainstorm-read', 'utf8')) < 12 * 3600; } catch { /* not read */ }
   if (pitch && !fresh) problems.push('This reads as a pitch and the brainstorm skill is not read on this box: run `bash .claude/hooks/brainstorm-read.sh`, put every idea through it in writing (pitching.md), then send again.');
 }
+// Cory, Nov 11: a pitch needs a finished brainstorm record for every idea it names (the same gate the PreToolUse hook runs).
+{
+  const g = spawnSync('node', [join(root, '.claude/hooks/pitch-gate.mjs'), '--why'], { input: JSON.stringify({ tool_input: { text } }), encoding: 'utf8' });
+  if (g.stdout.trim()) problems.push(g.stdout.trim());
+}
 if (/\bguests\b|\bguest members?\b/i.test(prose)) problems.push('Say "grey" for the neutral members, never "Guests" (Cory, Nov 1).');
 
 // Cory, Nov 7 (said many times): no drawing from the top of the pile, no randomness, all public information.
