@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.726 — 2026-11-11
+
+- Yellow: Makeover "+4 yellow. Then rearrange your resources into any colors." moves to round II in place of Housewarming; new round III space Offering "+5 yellow. Each rival discards 2 of each color among your members."
+
 ## v0.99.725 — 2026-11-11
 
 - Red: Late Shift replaces Trending in round I: "Recruit a shop member costing up to 2 per minion you’ve placed this round, for free. +1 red."
