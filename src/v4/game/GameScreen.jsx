@@ -2142,8 +2142,12 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
               // a held line addressed to someone else is never shown in this one's voice (w3b: your "Choose how to
               // pay" stayed up, dotted like a rival's, while the bots moved): it gives way to the current line
               // (a rival's move already playing names them, never "Your turn is over" under their story card)
+              // a rival's round-start or between-turns card (Seat Filler, Window Shopper) stays up into your turn, but the
+              // headline is yours: "P2, round start ···" over your own move read as a bot frozen (Cory, Nov 9: "bot got
+              // frozen after Seat Filler triggered", and it was his turn)
+              const offOverMine = !!(hubStory && hubStory.when && yours && pr.forMe);
               const p = turnOver && !(storyAtHub() && hubStory && hubStory.text) ? { who: turnOver, text: humansHere ? `${turnOver.name}’s turn is over` : 'Your turn is over', over: true }
-                : storyAtHub() && hubStory ? { who: state.players[hubStory.pid] ? { ...state.players[hubStory.pid], id: hubStory.pid } : null, text: hubStory.when ? `${state.players[hubStory.pid]?.name || ''}, ${hubStory.when}` : `${state.players[hubStory.pid]?.name || ''}’s turn` }
+                : storyAtHub() && hubStory && !offOverMine ? { who: state.players[hubStory.pid] ? { ...state.players[hubStory.pid], id: hubStory.pid } : null, text: hubStory.when ? `${state.players[hubStory.pid]?.name || ''}, ${hubStory.when}` : `${state.players[hubStory.pid]?.name || ''}’s turn` }
                 : held.forMe === pr.forMe || (!held.forMe && rivalPlaying) ? held : pr;
               // a rival's line held while their pieces land is said in their voice, never as "Your turn — p4 is paying"
               // (and the newest state's line after your own answer is theirs too: forMe false)
