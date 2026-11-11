@@ -55,7 +55,7 @@ for (let g = first; g < first + count; g++) {
   // (that move is a buy or a pass, which nets about 0 here).
   // each color's resources each player gained over the game (Cory, Nov 11, on Red: "we need to consider how to get
   // more red resources. Maybe it doesnt matter? lets just try it and see what the testing says")
-  const gained = s.players.map(() => ({}));
+  const gained = s.players.map(() => ({})), left = s.players.map(() => ({}));
   let guard = 0, round = s.round, pick = 0;
   while (!s.over && guard++ < 20000) {
     const pl = s.pending.player;
@@ -75,6 +75,10 @@ for (let g = first; g < first + count; g++) {
     }
     const prev = s;
     s = applyMove(s, m);
+    // members leaving a cult (Cory, Nov 11: "how many get removed/discarded on average? from cults, not from the shop"),
+    // credited to the space whose turn it is (round end, for Borrow's member and the like)
+    const why = s.round !== prev.round || s.over ? 'round end' : placements.length ? placements[placements.length - 1].name || '?' : 'setup';
+    s.players.forEach((x, i) => { for (const u of prev.players[i].members) if (!x.members.includes(u)) left[i][why] = (left[i][why] || 0) + 1; });
     s.players.forEach((x, i) => { for (const c in x.res) { const d = (x.res[c] || 0) - (prev.players[i].res[c] || 0); if (d > 0) gained[i][c] = (gained[i][c] || 0) + d; } });
     if (s.round !== prev.round || s.over) for (const k in open) close(Number(k), prev);
   }
@@ -85,7 +89,7 @@ for (let g = first; g < first + count; g++) {
     players: s.players.map((x, i) => ({
       followers: fol[i], win: fol[i] === top, cards: x.members.length, seat: memberCount(s, x),
       cloak: x.artifact != null ? cardDef(s, x.artifact)?.quadrant || null : null,
-      members: x.members.map(u => s.cards[u]?.def), gained: gained[i],
+      members: x.members.map(u => s.cards[u]?.def), gained: gained[i], left: left[i],
     })),
     placements,
   }) + '\n');

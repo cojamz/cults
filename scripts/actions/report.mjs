@@ -118,6 +118,19 @@ for (const q of qs) {
   P(`| ${color(q)} | ${f1(per)} | ${f1(avg(heavy.map(p => p.gained[r] || 0)))} | ${f1(avg(heavy.map(p => (p.members || []).filter(id => id.startsWith(q + '.')).length)))} | ${pct(avg(heavy.map(p => (p.win ? 1 : 0))))} |`);
 }
 P('');
+// members leaving cults, by what caused it
+{
+  const gl = games.filter(g => g.players[0].left);
+  if (gl.length) {
+    const by = {};
+    for (const g of gl) for (const p of g.players) for (const [k, n] of Object.entries(p.left)) by[k] = (by[k] || 0) + n;
+    const per = Object.values(by).reduce((a, b) => a + b, 0) / (gl.length * 4);
+    P(`## Members leaving cults: ${f1(per)} per player a game (${gl.length} games)`);
+    P('');
+    for (const [k, n] of Object.entries(by).sort((a, b) => b[1] - a[1])) P(`- ${k}: ${f1(n / gl.length)} a game`);
+    P('');
+  }
+}
 // members, kept apart from the spaces (Cory, Nov 11: "I would like the balance testing for the members to be a little
 // bit separate and focused on them"): who ends the game holding each one and how they do against players as wide
 const M = {};
