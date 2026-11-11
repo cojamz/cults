@@ -351,7 +351,7 @@ export default {
       // type of member that you have, basically. And gray just doesn't count". 2 of each of your member colors from each
       // rival (all they have of it when short); Dabblers counts as every table color, as Melting Pot reads it.
       // Name: Claude's fill-in (the pitch's "Tithe" is already Gold's round II space, Cory's Oct naming pick)
-      key: 'offering', ring: 3, name: 'Offering', copyDoesIt: true, text: '+5 yellow. Each rival discards 2 of each color among your members (grey doesn\u2019t count).',
+      key: 'offering', ring: 3, name: 'Offering', copyDoesIt: true, text: '+5 yellow. Each rival discards 2 of each color among your members.', // Cory, Nov 11: "you dont need to say 'grey doesnt count' for now"
       estimate: (ctx, p) => 5 + 0.4 * ctx.rivals(p).reduce((n, o) => n + offeringColors(ctx, p).reduce((m, c) => m + Math.min(2, o.res[c] || 0), 0), 0),
       resolve(ctx, p) {
         ctx.gain(p, Y, 5, { fromAction: true });
