@@ -48,3 +48,31 @@ Prices are left out of the pitch; Claude's numbers are fill-ins.
 - "Round Start: recruit the cheapest shop member of your biggest color, free": Cory dislikes "recruit cheapest" (Open Door), and a free member every round is too big.
 - Green "Your minions on Green spaces count as 2 for the Green contest": a count bonus, the shape he refused for focus (Nov 2 "members count as 2" is out).
 - Green "Round Start: place a minion on a Green space": out-of-turn placement, ruled out.
+
+# Batch 2: Green, grown from Regulars (Nov 11, after Cory: "Regulars is a good seed of an idea")
+
+Real table state (20 Hard-bot games, 4 players, Red/Green/Magenta/Purple, live v0.99.712 spaces, measured at each round end): minions on Green spaces per player average 0.75 / 1.24 / 1.27 in rounds I / II / III; the player with the most averages 1.5 / 2.2 / 2.4, highest seen 2 / 3 / 4. So Regulars as printed pays a Green-focused player about 6 over a game: too small. (Same games: biggest one-color group averages 1.0 / 1.6 / 2.0, highest 4, so Clan pays about 1 to 4 a round.)
+
+### B1 Old-Timers (pick): "Round End: +1 follower per minion you have on Green spaces, times the round."
+- Focused player at the measured counts: 1.5 + 4.4 + 7.2, about 13 over a game; top case (2/3/4): 2 + 6 + 12 = 20.
+- Round III turn: you hold 3 minions on Green; placing your 4th on the last open Green space (Build Up "+1 green per minion on Green spaces, this one included. +1 green.", about 5 green) instead of Heist ("Steal 4 followers and 4 resources. +1 magenta.") is worth +3 followers at round end plus the space's 5 green, against Heist's 8. Close: a real choice.
+- Who feels it: rivals take Green spaces to hold the count down (a reason to block). Choices: none.
+- Intuitive: one visible count times the round. Fun: round III Green spaces get fought over. Interacts: shared Green spaces. Powerful: grows into the round III burst. Engine or counter: rides Echo, Reprise, Cover, Build Up, Crowd. Its color: pays the Green contest's own count.
+
+### B2 Regulars at +2: "Round End: +2 followers per minion you have on Green spaces."
+- Measured: 3 + 4.4 + 4.8, about 12; top case 4 + 6 + 8 = 18. Pays from round I, flat.
+- Same feel as B1, earlier and flatter. Intuitive / Fun / Interacts / Powerful / Engine or counter / Its color: as B1.
+
+### B3 Holdouts: "Game End: +3 followers per minion you have on Green spaces."
+- One moment: round III, measured 2.4 for the most → about 7, top case 12. Makes the last round's Green spaces the fight.
+- Intuitive: yes. Fun: a last-round count everyone watches. Interacts: blocking Green in round III. Powerful: medium. Engine or counter: as B1. Its color: the contest count.
+
+### B4 Gawkers: "Round End: +1 follower per minion on Green spaces, anyone's."
+- Table totals: Green spaces fill most rounds, 3 / up to 5 / up to 6, about 12 over a game whatever the owner does.
+- Who feels it: everyone who takes a Green space feeds the owner (his pattern 3: payoffs on anyone's move). Weakness: pays without the owner playing Green.
+- Intuitive: yes. Fun: watching the table crowd Green. Interacts: every player's placement. Powerful: steady. Engine or counter: fits Build Up and Crowd drawing rivals in. Its color: Green lives on others' play.
+
+### Cut
+- "Round End: if all your minions this round are on Green spaces, +3 followers per minion": the measured highest is 4 of 5 in round III and 2 of 3 in round I, so it almost never pays.
+- "Round End: +2 green per minion on Green spaces": small resource gain.
+- "Whenever you place a minion on a Green space, +1 follower": the same count as Regulars, paid sooner; about 6 a game.
