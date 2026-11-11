@@ -262,7 +262,7 @@ function takeToken(ctx, p, why, what = '') {
       if (k >= 0) s.early.moves.splice(k, 1);
     }
   }
-  ctx.log(`${p.name}'s ${why}: ${p.name} takes the Goes Last token${what} from ${o.name}${on.length ? `, and ${o.name}'s ${on.length === 1 ? 'minion on it goes' : `${on.length} minions on it go`} back to their hand` : ''}.`);
+  ctx.log(`${p.name}'s ${why}: ${p.name} takes the Goes Last token${what} from ${o.name}${on.length ? `, and ${on.length === 1 ? 'the minion on it goes' : `the ${on.length} minions on it go`} back to ${o.name}` : ''}.`);
 }
 /** Switch Places (pool 13): the queue index of p's next turn this round (not one waiting on the token), or -1. */
 function nextOwnTurn(ctx, p) {

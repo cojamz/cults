@@ -44,7 +44,7 @@ describe('the Goes Last token', () => {
     expect(s.pending.player).toBe(1);
     s = applyMove(s, { player: 1, option: slot(s, 'Sleep In') });
     expect(s.goesLast).toEqual({ round: 2, pid: 1 });
-    expect(s.log.some(l => /takes the Goes Last token from P1, and P1's 3 minions on it go back to their hand/.test(l))).toBe(true);
+    expect(s.log.some(l => /takes the Goes Last token from P1, and the 3 minions on it go back to P1/.test(l))).toBe(true);
     const { s: end, placed } = playOut(s);
     // P1's minions take their own turns again; P2's other minions all wait on the token (Nov 10) and place last
     expect(placed).toEqual([0, 0, 0, 1, 1]);

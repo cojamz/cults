@@ -53,7 +53,7 @@ describe('Echo copying Sleep In (Cory’s playtest, Oct 23)', () => {
     s = passBuys(settle(take(s, 'purple.skip')));
     s = passBuys(settle(take(s, 'echo.echo')));
     // P1's Sleep In minion was already last (nothing passed); P2's copy takes the token and P1's minion goes back
-    expect(s.log).toContain("P2's Sleep In: P2 takes the Goes Last token from P1, and P1's minion on it goes back to their hand.");
+    expect(s.log).toContain("P2's Sleep In: P2 takes the Goes Last token from P1, and the minion on it goes back to P1.");
     expect(s.goesLast.pid).toBe(1);
     expect(s.players[1].res.purple).toBe(9 + 5); // Sleep In's round II gain (+4 / +5 / +6, Oct 28)
     s = passBuys(settle(take(s, 'gold.rush'))); // P3

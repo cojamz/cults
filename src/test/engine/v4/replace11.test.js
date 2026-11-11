@@ -79,7 +79,7 @@ describe('REPLACE11: Call Back', () => {
     expect(s.goesLast.pid).toBe(1);
     s = passBuys(answer(s, `slot:${slotOf(s, 'Call Back')}`));
     expect(s.goesLast.pid).toBe(0);
-    expect(s.log.join('\n')).toMatch(/takes the Goes Last token \(no other minion of theirs on the wheel to move onto it\) from P2, and P2's minion on it goes back to their hand/);
+    expect(s.log.join('\n')).toMatch(/takes the Goes Last token \(no other minion of theirs on the wheel to move onto it\) from P2, and the minion on it goes back to P2/);
     expect(s.players[0].left).toBe(2); // this placement used one; nothing moved, so no minion added
   });
 
