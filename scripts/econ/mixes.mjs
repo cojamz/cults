@@ -5,6 +5,9 @@ export const MIXES = {
   today: {},
   // Nov 11 (Cory: "the spaces give the +1 only once each round, to the first person who takes it. actually maybe the +1 should just be per game?")
   'plus1-round': { PLUS1: 'round' }, 'plus1-game': { PLUS1: 'game' },
+  // Nov 11 (Cory: "have the one resource per space, per game ... and then we will probably like reduce the member costs slightly"):
+  // the economy baseline: +1 once a game with every member 1 any cheaper (MEMBER_UP 3 -> 2), and 2 cheaper as the far side
+  'plus1-game up2': { PLUS1: 'game', MEMBER_UP: 2 }, 'plus1-game up1': { PLUS1: 'game', MEMBER_UP: 1 },
   'up2': { MEMBER_UP: 2 }, 'up4': { MEMBER_UP: 4 }, 'up5': { MEMBER_UP: 5 },
   'color0': { MEMBER_COLOR: 0 }, 'color2': { MEMBER_COLOR: 2 },
   'space-1': { SPACE_GAIN: -1 }, 'space+1': { SPACE_GAIN: 1 },

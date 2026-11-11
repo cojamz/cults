@@ -7,6 +7,10 @@
 //   view <dir> <seat>                 the table as that seat sees it
 //   move <dir> <seat> <option> [--why "..."] [--say "..."]
 //   postgame <dir> <seat> "<text>"    the player's after-game note
+//   diary <dir> <seat> "<text>"       the player's note on the round just finished (briefs that ask for one: the
+//                                     first move of the next round waits for it)
+// new --today plays today's setup (10-card deck, round decks, By color, space +1 once a game); --out=a,b --in=c deal
+// members out of and into the decks (rules.membersOut / membersIn). brief --brief=<name> uses player-brief-<name>.md.
 //   status <dir>                      one line for the foreman
 //   report <dir> [--out file]         the transcript for the designer (markdown)
 //   data <dir>                        one JSON line of the game's numbers (for balance reads)
@@ -81,7 +85,7 @@ async function locked(dir, fn) {
 // is behind the last recorded move, rebuild it by replaying the moves from the deal and write it back.
 const replayState = (dir, moves) => {
   const meta = readJson(f(dir, 'meta.json'));
-  let s = createGame({ seats: meta.names.map(name => ({ name, kind: 'human' })), seed: meta.seed, quadrants: meta.colors, rules: meta.deck === 10 ? { deck: 10 } : {} });
+  let s = createGame({ seats: meta.names.map(name => ({ name, kind: 'human' })), seed: meta.seed, quadrants: meta.colors, rules: meta.rules || (meta.deck === 10 ? { deck: 10 } : {}) });
   for (const e of moves) s = applyMove(s, { player: e.seat, option: e.option });
   return s;
 };
@@ -250,6 +254,8 @@ export function tableView(s, meId, full = false) {
   return L.join('\n');
 }
 
+// the round whose diary this seat still owes (games started with --diary), or 0
+const diaryOwed = (s, meta, seat) => (meta.diaryOn && !s.over && s.round > 1 && !meta.diary?.[seat]?.[s.round - 1] ? s.round - 1 : 0);
 function view(dir, seat, { fresh, full = false }) {
   const { s, meta } = load(dir);
   const me = s.players[seat];
@@ -267,9 +273,12 @@ function view(dir, seat, { fresh, full = false }) {
   out.push('', tableView(s, seat, full));
   if (s.over) {
     out.push('', 'FINAL', ...s.ranking.map((id, i) => `  ${i + 1}. ${s.players[id].name}: ${followers(s, s.players[id])} followers, ${memberCount(s, s.players[id])} members`));
-    out.push('', `Game over. Write your postgame note: node scripts/v4-expert.mjs postgame ${dir} ${seat} "<text>"`);
+    if (meta.diaryOn && !meta.diary?.[seat]?.[3]) out.push('', `Game over. First write your round III diary: node scripts/v4-expert.mjs diary ${dir} ${seat} "<text>". Then your postgame note.`);
+    else out.push('', `Game over. Write your postgame note: node scripts/v4-expert.mjs postgame ${dir} ${seat} "<text>"`);
     return out.join('\n');
   }
+  const owed = diaryOwed(s, meta, seat);
+  if (owed) out.push('', `ROUND ${ROMAN[owed]} IS OVER. Before your first move of this round, write your round diary: node scripts/v4-expert.mjs diary ${dir} ${seat} "<text>"`);
   if (s.pending?.player === seat) { out.push('', decisionView(s, me, meta)); writeJson(f(dir, 'meta.json'), meta); }
   else if (s.pending) out.push('', `Not your decision: waiting on ${s.players[s.pending.player].name} (${s.pending.kind}).`);
   return out.join('\n');
@@ -345,9 +354,14 @@ async function main() {
     const names = flags.names ? String(flags.names).split(',') : NAMES;
     const colors = flags.colors ? String(flags.colors).split(',') : shuffled(SIX, seed).slice(0, names.length);
     if (flags.pool) await poolIn(String(flags.pool), seed, colors, DECK_RULES.deck || 15);
-    const s = createGame({ seats: names.map(name => ({ name, kind: 'human' })), seed, quadrants: colors, rules: DECK_RULES });
+    // --today: the game as a table plays it now (Nov 11): 10-card deck, round decks, By color, each space's +1 once a game
+    const rules = {
+      ...DECK_RULES, ...(flags.today ? { deck: 10, roundDecks: 2, contests: 'byColor', plus1: 'game' } : {}),
+      ...(flags.out ? { membersOut: String(flags.out).split(',') } : {}), ...(flags.in ? { membersIn: String(flags.in).split(',') } : {}),
+    };
+    const s = createGame({ seats: names.map(name => ({ name, kind: 'human' })), seed, quadrants: colors, rules });
     writeJson(f(dir, 'state.json'), s);
-    writeJson(f(dir, 'meta.json'), { seed, names, colors, deck: DECK_RULES.deck || 15, ...(flags.pool ? { pool: { keys: String(flags.pool), g: seed, record: poolRecord } } : {}), seen: {}, post: {}, startedAt: new Date().toISOString() });
+    writeJson(f(dir, 'meta.json'), { seed, names, colors, deck: rules.deck || 15, rules, diaryOn: !!flags.diary, ...(flags.pool ? { pool: { keys: String(flags.pool), g: seed, record: poolRecord } } : {}), seen: {}, post: {}, startedAt: new Date().toISOString() });
     fs.writeFileSync(f(dir, 'cards.md'), cardsMd(s));
     fs.writeFileSync(f(dir, 'events.jsonl'), '');
     addEvents(dir, s.log.map(text => ({ type: 'log', text })));
@@ -357,7 +371,7 @@ async function main() {
   if (cmd === 'brief') {
     const meta = readJson(f(dir, 'meta.json'));
     const styles = STYLES[Number(flags.set || 0) % STYLES.length];
-    const tpl = fs.readFileSync(f(ROOT, `design/eval/expert-games/player-brief${flags.feel ? '-feel' : ''}.md`), 'utf8'); // --feel: postgame FEEL ratings per card
+    const tpl = fs.readFileSync(f(ROOT, `design/eval/expert-games/player-brief${flags.brief ? `-${flags.brief}` : flags.feel ? '-feel' : ''}.md`), 'utf8'); // --feel: postgame FEEL ratings per card
     meta.names.forEach((name, i) => fs.writeFileSync(f(dir, `brief-${name}.md`), tpl.replaceAll('{NAME}', name).replaceAll('{DIR}', path.resolve(dir)).replaceAll('{SEAT}', String(i)).replaceAll('{STYLE}', styles[i]).replaceAll('{ROOT}', ROOT)));
     console.log(`Wrote ${meta.names.length} briefs in ${dir}`);
     return;
@@ -380,6 +394,8 @@ async function main() {
       const { s, meta } = load(dir);
       if (s.over) { console.log('The game is over.'); return; }
       if (s.pending?.player !== seat) { console.log(`Not your decision now (waiting on ${s.players[s.pending.player].name}). Run wait.`); return; }
+      const owed = diaryOwed(s, meta, seat);
+      if (owed) { console.log(`Round ${ROMAN[owed]} is over. Before your first move of this round, write your round diary: node scripts/v4-expert.mjs diary ${dir} ${seat} "<text>" (what your brief asks for). Nothing was played.`); return; }
       const { o, gone } = pickOption(s, meta, seat, arg);
       if (!o) {
         const why = gone ? `Option ${arg} isn't offered any more (an earlier step of your turn changed the list). Nothing was played.` : `No such option "${arg}".`;
@@ -403,6 +419,18 @@ async function main() {
       if (next.over) console.log(`\nGAME OVER. ${next.ranking.map((id, i) => `${i + 1}. ${next.players[id].name} ${followers(next, next.players[id])}`).join(' · ')}\nNow run postgame.`);
       else if (next.pending?.player === seat) { console.log(`\nYour turn continues.\n${tableView(next, seat).split('\n').slice(0, 2).join('\n')}\n\n${decisionView(next, next.players[seat], meta, true)}`); writeJson(f(dir, 'meta.json'), meta); }
       else console.log(`\nYour decisions are finished for now. Run wait.`);
+    });
+    return;
+  }
+  if (cmd === 'diary') {
+    await locked(dir, async () => {
+      const { s, meta } = load(dir);
+      const r = s.over ? 3 : s.round - 1;
+      if (r < 1) { console.log('No round has finished yet. Write a diary after round I ends.'); return; }
+      ((meta.diary ||= {})[seat] ||= {})[r] = pos.slice(3).join(' ');
+      writeJson(f(dir, 'meta.json'), meta);
+      addEvents(dir, [{ type: 'diary', seat, round: r, text: meta.diary[seat][r] }]);
+      console.log(`Saved your round ${ROMAN[r]} diary.${s.over ? ' Now write your postgame note.' : ' Go on with your turn.'}`);
     });
     return;
   }
@@ -470,6 +498,7 @@ function report(dir) {
       if (e.think) L.push(`  _thinks:_ ${e.think}`);
     }
     if (e.type === 'say') L.push(`  💬 **${meta.names[e.seat]}:** "${e.text}"`);
+    if (e.type === 'diary') L.push('', `> **${meta.names[e.seat]}'s round ${ROMAN[e.round]} diary:** ${e.text}`, '');
   }
   L.push('', '## After the game', '');
   for (const [seat, text] of Object.entries(meta.post)) L.push(`**${meta.names[seat]}:** ${text}`, '');

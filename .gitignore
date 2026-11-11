@@ -28,3 +28,6 @@ design/eval/perf/spin-trace-*.json
 
 # agent worktrees (local only)
 .claude/worktrees/
+.actions-runs/
+.actions-smoke/
+.econ-base/

@@ -36,3 +36,18 @@ describe('Test version (rules.testSet)', () => {
     }
   });
 });
+
+// Nov 11 (Cory: "maybe we'll cut tribute band ... We'll need to put in a replacement green"): bot tests swap a member
+// out and another in so the color's deck stays at 10
+describe('rules.membersOut / membersIn', () => {
+  it('swaps Tribute Band for Ensemble and keeps Green at the same count', () => {
+    const rules = { deck: 10, testSet: true, cull: true, artifacts: true, roundDecks: 2 };
+    const green = s => Object.values(s.cards).map(c => c.def).filter(d => d.startsWith('echo.'));
+    const base = createGame({ seats, seed: 3, quadrants: Q2, rules });
+    const swap = createGame({ seats, seed: 3, quadrants: Q2, rules: { ...rules, membersOut: ['echo.dejavu'], membersIn: ['echo.ensemble'] } });
+    expect(green(base)).toContain('echo.dejavu');
+    expect(green(swap)).not.toContain('echo.dejavu');
+    expect(green(swap)).toContain('echo.ensemble');
+    expect(green(swap).length).toBe(green(base).length);
+  });
+});

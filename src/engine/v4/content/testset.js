@@ -24,7 +24,11 @@ export const TEST_MEMBERS = new Set(['trading.anchorites', 'market.repossessors'
 /** Live members the test version leaves out: Recluse (Anchorites), Misers (Old Guard), Regular (Repossessors). */
 export const TEST_OUT = new Set(['trading.recluse', 'trading.heirs', 'market.regular']);
 /** Whether a member is in this table's decks under the test version (null: the live rule decides). */
-export const testDealt = (rules, def) => (!rules?.testSet ? null : TEST_MEMBERS.has(def.id) ? true : TEST_OUT.has(def.id) ? false : null);
+// rules.membersIn / rules.membersOut (member ids) put a card in or take one out of this table's decks, over every other
+// rule. Bot tests only for now (the action balance harness, Nov 11, Cory: "maybe we'll cut tribute band ... We'll need to
+// put in a replacement green", so the deck stays at 10): scripts pass them as MEMBERS_IN / MEMBERS_OUT.
+export const testDealt = (rules, def) => (rules?.membersIn?.includes(def.id) ? true : rules?.membersOut?.includes(def.id) ? false
+  : !rules?.testSet ? null : TEST_MEMBERS.has(def.id) ? true : TEST_OUT.has(def.id) ? false : null);
 
 const cache = {};
 /** A color's spaces in the test version: the live list with the swap made in place. */
