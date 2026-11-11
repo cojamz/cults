@@ -60,6 +60,9 @@ function line(r, now = new Date()) {
   if (r.next) bits.push(`next: ${r.next}`);
   if (r.eta) bits.push(`ETA ${r.eta}`);
   if (r.cory) bits.push(`needs Cory: ${r.cory}`);
+  // Cory, Nov 9 weekly review: a question to him that sits over 2 days gets decided on the thread's best guess and
+  // sent to him in one list he can overrule; the board names the overdue ones.
+  if (r.cory && r.state === 'waiting' && now - new Date(r.coryAt || r.updated) > 2 * 864e5) bits.push('OVER 2 DAYS: decide it on best judgment, log it, add it to the overrule list');
   return { text: bits.join(' · ') + ` · ${when}`, stale, r };
 }
 
@@ -103,7 +106,10 @@ if (cmd === 'set') {
     }
   }
   const rec = { ...(prev || {}), id: prev?.id || slug(thread), thread, session };
+  const prevCory = rec.cory || '';
   for (const k of ['state', 'doing', 'next', 'eta', 'cory']) if (args[k] !== undefined) rec[k] = args[k] === true ? '' : args[k];
+  // when the question to Cory was first asked, so a refreshed status line doesn't reset its age
+  if (rec.cory && rec.cory !== prevCory) rec.coryAt = new Date().toISOString();
   rec.state ||= 'working';
   if (!rec.doing) { console.error('--doing is required the first time'); process.exit(2); }
   if (args.state && args.state !== 'waiting' && args.cory === undefined) rec.cory = '';

@@ -129,6 +129,13 @@ if (looksLikePitch) {
   }
 }
 
+// Cory, Nov 9 weekly review ("sure whatever"): any message over one line has passed the fresh reader, on record.
+{
+  const { stamped } = await import(join(root, '.claude/hooks/reader-stamp.mjs'));
+  const real = text.split('\n').filter(l => l.trim()).length;
+  if (real > 1 && !stamped(text)) problems.push('Over one line and no fresh reader on record for this exact text: run an Agent (plain-reader, or general-purpose given .claude/agents/plain-reader.md) on the draft; it stamps what it returns. Send that text unchanged, or re-run the reader after any edit.');
+}
+
 for (const n of notes) console.log(`note: ${n}`);
 if (problems.length) {
   console.log(`DON'T SEND YET:\n- ${problems.join('\n- ')}`);
