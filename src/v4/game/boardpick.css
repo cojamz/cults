@@ -61,11 +61,11 @@
 /* ---- the caption, docked in the prompt under the headline: it never covers the wheel or what you're picking ---- */
 .lt-prompt .prompt.choice.seat-pick.docked{position:relative;display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:12px;flex:1 1 auto;min-width:0;margin:0;padding:0;
   border:0;border-radius:0;background:none;box-shadow:none;max-height:none;overflow:visible;text-align:left;outline:none;animation:none}
-.seat-pick.docked .pick-cap{margin:0;min-width:0;font-family:var(--serif);font-style:italic;font-weight:500;font-size:var(--m,18px);line-height:1.15;
+.seat-pick.docked .pick-cap{margin:0;flex:0 0 auto;max-width:100%;min-width:0;font-family:var(--serif);font-style:italic;font-weight:500;font-size:var(--m,18px);line-height:1.15;
   color:var(--lamp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .seat-pick.docked .pick-cap .pip.glyph{width:.8em;height:.8em;vertical-align:-.06em;margin:0 .08em}
 .seat-pick.docked .pick-left{font-style:normal;font-weight:700;color:var(--cream)}
-.seat-pick.docked .turn-of{margin:0;flex:none}
+.seat-pick.docked .turn-of{margin:0;flex:0 1 auto;min-width:0}
 /* what has no place on the board (Pass, "All 3 as green", how many): quiet pills beside the caption */
 .seat-pick.docked .pick-rest{display:flex;flex-wrap:nowrap;gap:8px;flex:none}
 .seat-pick.docked .pick-rest-btn{min-height:28px;height:28px;padding:0 14px;border-radius:999px;font:500 15px/1 var(--sans);color:var(--cream);
