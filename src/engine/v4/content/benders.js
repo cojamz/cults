@@ -171,21 +171,24 @@ function hireSteal(ctx, p, o, n, name) {
 const moveWorth = c => c.def.f * 1.4 + (c.def.vanilla ? 0 : 1.6) + (c.def.s + c.def.w) * 0.3;
 const rightOf = (ctx, o) => { const ps = ctx.state.players; return ps[(ps.indexOf(o) + ps.length - 1) % ps.length]; };
 const bestWorth = (ctx, o) => Math.max(0, ...ctx.membersOf(o).map(moveWorth));
-const swapGain = (ctx, p) => bestWorth(ctx, rightOf(ctx, p)) - bestWorth(ctx, p);
+const leftOf = (ctx, o) => { const ps = ctx.state.players; return ps[(ps.indexOf(o) + 1) % ps.length]; };
+const worstWorth = (ctx, o) => Math.min(...ctx.membersOf(o).map(moveWorth));
+// what Gift Swappers brings a bot: the player on its right hands over the member they value least, it hands over its own least
+const swapGain = (ctx, p) => { const r = rightOf(ctx, p); return (r.members.length ? worstWorth(ctx, r) : 0) - (p.members.length ? worstWorth(ctx, p) : 0); };
 function swapAsk(ctx, data) {
   for (let k = data.k; k < data.order.length; k++) {
-    const p = ctx.player(data.order[k]), from = rightOf(ctx, p);
-    const list = data.snap[from.id].filter(u => from.members.includes(u));
-    if (!list.length || from === p) continue;
-    ctx.choose(p, `Gift Swappers: take which member from ${from.name}?`, list.map(u => {
+    const p = ctx.player(data.order[k]), to = leftOf(ctx, p);
+    const list = data.snap[p.id].filter(u => p.members.includes(u));
+    if (!list.length || to === p) continue;
+    ctx.choose(p, `Gift Swappers: give which of your members to ${to.name}?`, list.map(u => {
       const c = ctx.card(u);
-      return { id: `card:${u}`, label: `${from.name}'s ${c.def.name} (${c.def.s + c.def.w})`, kind: 'card', value: u, hint: moveWorth(c) };
+      return { id: `card:${u}`, label: `${c.def.name} (${c.def.s + c.def.w}) to ${to.name}`, kind: 'card', value: u, hint: -moveWorth(c) };
     }), 'benders.swapPick', { ...data, k });
     return;
   }
   const owner = ctx.player(data.owner);
   for (const { to, from, uid } of data.picks) ctx.moveMember(uid, ctx.player(from), ctx.player(to), { actor: owner });
-  ctx.log(`${owner.name}'s Gift Swappers: ${data.picks.length ? data.picks.map(({ to, from, uid }) => `${ctx.player(to).name} takes ${ctx.card(uid).def.name} from ${ctx.player(from).name}`).join(', ') : 'nobody had a member to take'}.`);
+  ctx.log(`${owner.name}'s Gift Swappers: ${data.picks.length ? data.picks.map(({ to, from, uid }) => `${ctx.player(from).name} gives ${ctx.card(uid).def.name} to ${ctx.player(to).name}`).join(', ') : 'nobody had a member to give'}.`);
 }
 function purgeAsk(ctx, data) {
   if (data.k >= data.order.length) return;
@@ -276,21 +279,21 @@ const members = [
       botActivate: (ctx, owner) => ctx.rivals(owner).some(o => Object.values(o.res).reduce((a, b) => a + b, 0) >= n),
     }), 'pool13')),
   // idea pipeline pool move (Nov 9, catch-up and member movement; Cory: "yeah add some member movement ideas to the next
-  // test pool"). Gift Swappers: Cory's "everybody pass a member left" (Nov 8), turned so the taker chooses (a giver
-  // would always hand over their cheapest). Every pick is made from the cults as they stand when it's used, the owner
+  // test pool"). Gift Swappers: Cory's "everybody pass a member left" (Nov 8); the giver picks (Cory, 2026-11-09 9:39pm
+  // Eastern: "gift swappers is crazy. The giver picks!"; it had been turned so the taker chose). Every pick is made from the cults as they stand when it's used, the owner
   // first and then on round the table; then every member moves at once. Right = the seat before (Round Robin gives to
   // the seat after, "left"). Purifiers: Cory's "you discard a member to make everybody else have to discard a member"
   // (Nov 8), aimed at bigger cults: you discard first, then each rival with more members than you now has discards
   // one of their choice, in seat order. Prices fill-ins (8 and 6 any as a player sees them).
-  pool(m('giftswappers', 'Gift Swappers', null, 0, 5, 'On Use, once per game: every player, you too, takes one member they choose from the player on their right.', {
+  pool(m('giftswappers', 'Gift Swappers', null, 0, 5, 'On Use, once per game: every player, you too, gives one member they choose to the player on their left.', {
     activate: 'game',
     onActivate(ctx, owner, card) {
       const ps = ctx.state.players, start = ps.indexOf(owner);
-      if (!ps.some(o => rightOf(ctx, o).members.length)) { card.used = false; ctx.log(`${owner.name}'s Gift Swappers: nobody has a member to take.`); return; }
+      if (!ps.some(o => o.members.length)) { card.used = false; ctx.log(`${owner.name}'s Gift Swappers: nobody has a member to give.`); return; }
       const snap = Object.fromEntries(ps.map(o => [o.id, [...o.members]]));
       swapAsk(ctx, { order: ps.map((_, k) => ps[(start + k) % ps.length].id), k: 0, snap, picks: [], owner: owner.id });
     },
-    // bots use it when the best card on their right beats the best of their own (what the player on their left takes)
+    // bots use it when what the player on their right will give beats what they give away (each gives their least)
     botActivate: (ctx, owner) => ctx.state.round >= 2 && swapGain(ctx, owner) > 1,
   }), 'poolmove'),
   pool(m('purifiers', 'Purifiers', null, 0, 3, 'On Use, once per game: discard one of your members. Each rival with more members than you discards one too.', {
@@ -627,9 +630,9 @@ export const handlers = {
   },
   // pool move: Gift Swappers' picks, then the moves at once; Purifiers' discards
   swapPick(ctx, p, uid, data) {
-    const from = rightOf(ctx, p);
-    if (!data.snap[from.id].includes(uid) || !from.members.includes(uid)) return swapAsk(ctx, data);
-    swapAsk(ctx, { ...data, k: data.k + 1, picks: [...data.picks, { to: p.id, from: from.id, uid }] });
+    const to = leftOf(ctx, p);
+    if (!data.snap[p.id].includes(uid) || !p.members.includes(uid)) return swapAsk(ctx, data);
+    swapAsk(ctx, { ...data, k: data.k + 1, picks: [...data.picks, { to: to.id, from: p.id, uid }] });
   },
   purgeOwn(ctx, p, uid, data) {
     if (!p.members.includes(uid)) return;

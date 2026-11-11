@@ -2411,6 +2411,7 @@ function releaseNow(state, p, uid) {
   const def = cardDef(state, uid), back = releaseRefund(state, uid);
   cardLeaves(state, p, uid);
   p.members.splice(p.members.indexOf(uid), 1);
+  discardPays(state, p, uid);
   wipeCard(state, uid);
   toDiscard(state, uid);
   bottomBlue(state);
@@ -2437,6 +2438,12 @@ function wipeCard(state, uid) {
   // its own once-per-game use only: a Doppelganger's copy comes off with the wipe, and its use with it
   const spent = old.used === true && defById(old.def).activate === 'game';
   state.cards[uid] = { uid, def: old.def, ...(spent ? { used: true } : {}) };
+}
+// A member discarded from p's cult (Martyrs: "Whenever this member is discarded"): its own onDiscard pays p, the cult it
+// left. Called once the member is out of the cult and before its card is wiped.
+function discardPays(state, p, uid) {
+  const card = state.cards[uid], ctx = ctxFor(state);
+  for (const def of effectiveDefs(card)) if (def.onDiscard) def.onDiscard(ctx, p, wrap(state, card));
 }
 function cardLeaves(state, p, uid) {
   const card = state.cards[uid], ctx = ctxFor(state);
@@ -2549,6 +2556,7 @@ function ctxFor(state) {
       const def = cardDef(state, uid), c = def.s + def.w;
       cardLeaves(state, p, uid);
       p.members.splice(p.members.indexOf(uid), 1);
+      if (!shop) discardPays(state, p, uid); // before the wipe: a copied ability (card.ability) still counts
       wipeCard(state, uid);
       // shop: cast out face up into the shop row instead (Yard Sale, REPLACE11 bot test), at the end of the row
       if (shop) {
@@ -2607,6 +2615,8 @@ function ctxFor(state) {
     },
     /** a cult's member went to the bottom of the pile outside buryMember (Doormen): Bargain Bin pays */
     memberBottomed: () => { bottomBlue(state); cultDiscard(state); },
+    /** a member discarded from p's cult outside buryMember (Doormen): its "Whenever this member is discarded" pays p */
+    memberDiscarded: (p, uid) => discardPays(state, p, uid),
     bargainCost: k => bargainCost(state, k),
     impressMember: (p, uid) => impressMember(state, p, uid),
     swapMembers: (actor, a, b) => swapMembers(state, actor, a, b),
