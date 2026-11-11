@@ -5,7 +5,8 @@ Player-facing releases, newest first. What's live is main's play/build.json: a s
 ## v0.99.716 — 2026-11-11
 
 - Magenta: Help Yourself reads "Steal 1 resource per minion you've placed this round. +1 magenta."; Stash is "+3 magenta." for now; a member Swindle gives a rival is not a recruit (no On Recruit).
-- Fixes: a member's card opens sooner when you move to the next one; the turn card fits a short screen; your skipped seat dims; a few small labels are easier to read.
+- Red: Clan replaces Patriarch: "Round End: +1 follower per member in your biggest group of one color (grey counts)."
+- Fixes: a choice's name above the wheel no longer gets cut off; a member's card opens sooner when you move to the next one; the turn card fits a short screen; your skipped seat dims; a few small labels are easier to read.
 
 ## v0.99.715 — 2026-11-10
 
