@@ -104,7 +104,7 @@ const M = {
   'old-guard': ['🧓', '🔁 Discard another member, using its On Use first; +2 white'],
   repossessors: ['🚚', '🔁 Once a game: a rival’s member up to 8 goes to the shop'],
   protesters: ['⛔', '🔁 Block an open space this round'],
-  brokers: ['📈', '♾️ A White action gives you followers: +1 follower'],
+  brokers: ['📈', '♾️ A White action gives you followers: +2 followers'],
   raiders: ['⚔️', '☝️ Take 4 followers from a rival, pay them 2 white'],
   undertaker: ['⚰️', '♾️ You discard a member: +2 followers'],
   'old-money': ['🏛️', '🏁 +1 follower per white member'],

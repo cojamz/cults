@@ -48,7 +48,7 @@ describe('White actions', () => {
     expect(named(s, 'Allowance')).toContain("P1's Allowance: +2 followers for recruiting a member.");
   });
 
-  it('Splurge: a 12-cost Tycoon pays +6 followers, named; Brokers adds 1 in the same line', () => {
+  it('Splurge: a 12-cost Tycoon pays +6 followers, named; Brokers adds 2 in the same line', () => {
     let s = take(table(Q, { res: [{ gold: 12 }], shop: ROW }), 'trading.splurge');
     s = move(s, cardOpt(s, 'gold.tycoon', 'shop'));
     expect(owns(s, 0, 'gold.tycoon')).toBe(true);
@@ -56,8 +56,8 @@ describe('White actions', () => {
     expect(named(s, 'Splurge')).toContain("P1's Splurge: +6 followers for spending.");
     let b = take(table(Q, { res: [{ gold: 12 }], members: [['trading.broker']], shop: ROW }), 'trading.splurge');
     b = move(b, cardOpt(b, 'gold.tycoon', 'shop'));
-    expect(B(b)).toBe(7);
-    expect(named(b, 'Splurge')).toContain("P1's Splurge: +6 followers for spending. Brokers: +1.");
+    expect(B(b)).toBe(8);
+    expect(named(b, 'Splurge')).toContain("P1's Splurge: +6 followers for spending. Brokers: +2.");
   });
 
   it('Exchange: round III, three resources into 6 followers, each trade named', () => {
@@ -114,19 +114,19 @@ describe('White members', () => {
     expect(B(s)).toBe(1);
   });
 
-  it('Brokers: +1 on Farewell (named)', () => {
+  it('Brokers: +2 on Farewell (named)', () => {
     let s = take(table(Q, { round: 2, members: [['trading.broker', 'red.twins']], shop: ROW }), 'trading.farewell');
     s = move(s, cardOpt(s, 'red.twins', 0));
-    expect(B(s)).toBe(4 + 1);
-    expect(named(s, 'Brokers')).toEqual(["P1's Brokers: +1 follower."]);
+    expect(B(s)).toBe(4 + 2);
+    expect(named(s, 'Brokers')).toEqual(["P1's Brokers: +2 followers."]);
   });
-  it('× Doppelganger copying Brokers: two Brokers, +2 on Allowance', () => {
+  it('× Doppelganger copying Brokers: two Brokers, +4 on Allowance', () => {
     let s = table(QE, { members: [['trading.broker', 'echo.doppel']], shop: ROW });
     s.cards[uidIn(s, 'echo.doppel', 0)].copy = 'trading.broker';
     s.players[0].res.red = 2;
     s = take(s, 'trading.stipend');
     s = move(s, cardOpt(s, 'red.intern', 'shop'));
-    expect(B(s)).toBe(1 + 2);
+    expect(B(s)).toBe(1 + 4);
   });
 
   it('Exporters: recruiting a non-white member +1 white (named); a white one, nothing', () => {

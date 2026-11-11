@@ -13,7 +13,7 @@ Done items and the old lists: design/archive/todo-2026-10-20-to-23.md and design
 
 ## Cory's calls
 - Parked for Cory: recruiting from the discard pile (Blue; liked, no slot), Red's third round I space (Borrow candidate). Tonight at reset (Cory, Nov 10; also Magenta actions and Extra Hand → On Recruit: "don't build red green purple in. add them to backlog for tonight at reset"): build the logged Red, Green and Purple action changes (design/decisions.md, Nov 10; unbuilt Green code in /mnt/project-files/green-actions/green-nov10-unpushed.patch).
-- White: **Brokers** ("Whenever a White action gives you followers, +1 follower.") could be +2 followers (Cory, 2026-11-09 11:18pm Eastern: "Brokers could probably be +2 followers"). Logged only.
+- DONE v0.99.716 (Nov 11): White: **Brokers** ("Whenever a White action gives you followers, +1 follower.") could be +2 followers (Cory, 2026-11-09 11:18pm Eastern: "Brokers could probably be +2 followers"). Logged only.
 - DONE v0.99.715 (Nov 11): White: **Martyrs** (now "Whenever this member leaves your cult, gain its cost in followers.") should give +4 white and +4 followers when discarded (Cory, 2026-11-09 10:16pm Eastern: "martyr should give +4 white +4 followers when discarded"). Logged only.
 - Green: **Tribute Band** ("On Use, once per game: choose a rival. Do every action they have a minion on this round.") (Cory, 2026-11-09 10:06pm Eastern: "tribute band is for sure too good"). Logged only.
 - Blue: **Critic** ("Whenever a rival recruits a blue member, +1 follower.") (Cory, 2026-11-09 9:50pm Eastern: "I dont like critic"). Logged only.

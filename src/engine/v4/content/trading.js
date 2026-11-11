@@ -921,7 +921,7 @@ const trading = {
         if (buyer === owner && tier?.get >= 5) { owner.bonus += 1; ctx.log(`${owner.name}'s Bulk Buyer: +1 follower.`); }
       },
     }),
-    m('broker', 'Brokers', 2, 2, 'Whenever a White action gives you followers, +1 follower.', { f: 3, brokerBonus: 1, ...old14('brokerage') }), // (Cory, Oct 29, balance run: +1 follower)
+    m('broker', 'Brokers', 2, 2, 'Whenever a White action gives you followers, +2 followers.', { f: 3, brokerBonus: 2, ...old14('brokerage') }), // (Cory, Oct 29, balance run: +1 follower; Nov 11: +2)
     m('exporter', 'Exporters', 2, 4, 'Whenever you recruit a non-white member, +1 white.', { f: 2, retired: true, // Misers takes its place (Claude, under Cory's "use your judgement", 2026-11-03)
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (by === owner && recruited.uid !== card.uid && ctx.defOf(recruited).quadrant !== 'trading') ctx.gain(owner, W, 1);

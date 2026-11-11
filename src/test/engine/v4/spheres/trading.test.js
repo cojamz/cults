@@ -212,17 +212,17 @@ describe('White members', () => {
     expect([B(s, 0), B(s, 1)]).toEqual([0, 5]); // a rival's buy: nothing
   });
 
-  it('Brokers: whenever a White action gives you followers, +1 follower (once per action)', () => {
+  it('Brokers: whenever a White action gives you followers, +2 followers (once per action)', () => {
     const br = { members: [['trading.broker']] };
     const al = take(scene({ round: 2, res: [{ gold: 4 }], shop: ['gold.midas'], ...br }), 'trading.stipend');
-    expect(B(move(al, pick(al, 'gold.midas', 'shop')))).toBe(3); // Allowance's +2 on a member recruit, Brokers +1
-    expect(B(move(move(take(scene({ round: 2, res: [{ red: 2 }], ...br }), 'trading.exchange'), 'color:red'), 'color:red'))).toBe(5);
-    expect(B(take(scene({ round: 3, res: [{ white: 2 }], ...br }), 'trading.cashin'))).toBe(3);
+    expect(B(move(al, pick(al, 'gold.midas', 'shop')))).toBe(4); // Allowance's +2 on a member recruit, Brokers +2
+    expect(B(move(move(take(scene({ round: 2, res: [{ red: 2 }], ...br }), 'trading.exchange'), 'color:red'), 'color:red'))).toBe(6);
+    expect(B(take(scene({ round: 3, res: [{ white: 2 }], ...br }), 'trading.cashin'))).toBe(4);
     expect(B(take(scene({ round: 3, ...br }), 'trading.cashin'))).toBe(0); // nothing turned, no bonus
     let s = take(scene({ round: 2, members: [['trading.broker', 'red.twins']] }), 'trading.farewell');
-    expect(B(move(s, `card:${uidOf(s, 'red.twins', 0)}`))).toBe(3);
+    expect(B(move(s, `card:${uidOf(s, 'red.twins', 0)}`))).toBe(4);
     const sp = take(scene({ res: [{ gold: 4 }], shop: ['gold.midas'], ...br }), 'trading.splurge');
-    expect(B(move(sp, pick(sp, 'gold.midas', 'shop')))).toBe(2 + 1); // Midas paid 5: +2, Brokers +1
+    expect(B(move(sp, pick(sp, 'gold.midas', 'shop')))).toBe(2 + 2); // Midas paid 5: +2, Brokers +2
     expect(B(move(scene({ res: [{ red: 1 }], ...br, ...buyTurn }), 'tier:small'))).toBe(1); // a buy isn't a White action
   });
 
