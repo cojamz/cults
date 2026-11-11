@@ -16,4 +16,6 @@ Chat threads don't load the /brainstorm skill, so read .claude/skills/brainstorm
 
 9. **Biggest real case**: play each idea at the largest count a real game reaches (right after the spaces and members that feed it, in round III, with Green copying it) and compare with real holdings and scores from a game (a 4-player winner ends near 70 to 110 followers; a contest pays 4/6/10). An idea that pays 10+ in one turn outside round III's center is cut. (Cory, Nov 11, on two Silver spaces that read rivals' silver: "thats just a fucking insane amount of silver and followers. DID YOU USE BRAINSTORMING SKILL".)
 
+**Write it down**: every idea, sent or cut, goes in design/brainstorm/<date>-<topic>.md (copy TEMPLATE.md there) with steps 1 to 9 and a verdict. A hook refuses any message, decision card or widget to Cory that pitches a name without a complete `Verdict: send` block (.claude/hooks/pitch-gate.mjs; presend runs it too).
+
 Send only what survives (often 2 to 4), unless Cory set a count: then keep generating until exactly that many survive. If nothing survives, say so and ask one sharp question. Two nos on a slot in a row: stop and redo steps 1 to 4 before the next list. Log each pitch in design/pitch-ledger.md the same turn.

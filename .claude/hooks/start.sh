@@ -3,6 +3,7 @@
 # so this does its job by hand: move to the game's branch, install, print where things stand.
 cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)" || exit 0
 export CLAUDE_PROJECT_DIR=$PWD
+bash .claude/hooks/install-thread-hooks.sh >/dev/null 2>&1 || true   # design hooks for this box's next start, resume or compaction
 echo '{"source":"startup"}' | bash .claude/hooks/bootstrap.sh
 rm -f /tmp/cults-presend/rules-seen   # a fresh thread sees every live rule on its first presend
 echo
