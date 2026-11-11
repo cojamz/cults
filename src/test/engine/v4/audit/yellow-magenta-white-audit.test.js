@@ -5,7 +5,7 @@ import { followers, followerChoices, TIERS } from '../../../../engine/v4/core.js
 import { take, move, play, ids } from '../helpers.js';
 import { table, uidIn } from '../cards-helpers-b.js';
 import { useRetired } from '../helpers.js';
-useRetired(['red.turnout']);
+useRetired(['red.turnout', 'trading.stipend']);
 import { placed } from '../placed-helpers.js';
 
 const R = (s, i = 0) => s.players[i].res;

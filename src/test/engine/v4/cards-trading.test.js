@@ -29,8 +29,9 @@ const text = k => [...W.actions, ...W.members].find(c => c.key === k).text;
 describe('White: the printed cards', () => {
   it('six actions on their rings, with their text', () => {
     expect(W.actions.map(a => [a.key, a.ring])).toEqual([
-      ['stipend', 1], ['splurge', 1], ['exchange', 1], ['farewell', 2], ['estatesale', 2], ['cashin', 3],
+      ['modestmeans', 1], ['splurge', 1], ['exchange', 1], ['farewell', 2], ['estatesale', 2], ['cashin', 3],
     ]);
+    expect(text('modestmeans')).toBe('+3 white. +1 white per rival with more members than you.');
     expect(text('splurge')).toBe('+2 white. If you recruit a member this turn: +1 follower for every 2 resources you pay (every 1 in round II).');
     expect(text('farewell')).toBe('Discard one of your members. Gain its cost in followers. +1 white.');
     expect(text('estatesale')).toBe('Discard one of your members. Gain its cost in white. +1 white.');
@@ -40,12 +41,14 @@ describe('White: the printed cards', () => {
 });
 
 describe('White actions', () => {
-  it('Allowance (Oct 31, Gather\'s shape): round II pays +4 white, and +2 followers on a member recruit that turn (named)', () => {
-    let s = take(table(Q, { round: 2, res: [{ red: 2 }], shop: ROW }), 'trading.stipend');
-    expect([B(s), R(s).white]).toEqual([0, 4]);
-    s = move(s, cardOpt(s, 'red.intern', 'shop'));
-    expect(B(s)).toBe(2);
-    expect(named(s, 'Allowance')).toContain("P1's Allowance: +2 followers for recruiting a member.");
+  it('Modest Means (Nov 11): +3 white, +1 per rival with more members named', () => {
+    let s = take(table(Q), 'trading.modestmeans');
+    expect(R(s).white).toBe(3);
+    expect(named(s, 'Modest Means')).toContain("P1's Modest Means: 0 rivals with more members, +3 white.");
+    s = take(table(Q, { n: 4, members: [[], ['red.intern'], ['red.bigfamily'], ['red.twins']] }), 'trading.modestmeans');
+    expect(R(s).white).toBe(6);
+    s = take(table(Q, { n: 4, members: [['red.intern'], ['red.twins'], ['red.bigfamily'], []] }), 'trading.modestmeans');
+    expect(R(s).white).toBe(5); // P2 and P3 each count as more members than P1's one card; P4 has none
   });
 
   it('Splurge: a 12-cost Tycoon pays +6 followers, named; Brokers adds 2 in the same line', () => {
@@ -120,15 +123,6 @@ describe('White members', () => {
     expect(B(s)).toBe(4 + 2);
     expect(named(s, 'Brokers')).toEqual(["P1's Brokers: +2 followers."]);
   });
-  it('× Doppelganger copying Brokers: two Brokers, +4 on Allowance', () => {
-    let s = table(QE, { members: [['trading.broker', 'echo.doppel']], shop: ROW });
-    s.cards[uidIn(s, 'echo.doppel', 0)].copy = 'trading.broker';
-    s.players[0].res.red = 2;
-    s = take(s, 'trading.stipend');
-    s = move(s, cardOpt(s, 'red.intern', 'shop'));
-    expect(B(s)).toBe(1 + 4);
-  });
-
   it('Exporters: recruiting a non-white member +1 white (named); a white one, nothing', () => {
     let s = table(Q, { res: [{ red: 2 }], members: [['trading.exporter']], shop: ROW, ...buy });
     s = move(s, cardOpt(s, 'red.intern', 'shop'));

@@ -369,7 +369,20 @@ const trading = {
         ctx.gain(p, W, 1, { fromAction: true });
       },
     }] : []),
+    {
+      // Cory, 2026-11-11 10:33am Eastern: "Modest means is good. I like." Allowance's slot; name and numbers Claude's fill-ins.
+      // Counts members as White's contest does (memberCount: a card that counts as 2 counts 2).
+      key: 'modestmeans', copyDoesIt: true, ring: 1, name: 'Modest Means', text: '+3 white. +1 white per rival with more members than you.',
+      estimate: (ctx, p) => 3 + ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).length,
+      resolve(ctx, p) {
+        const k = ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).length;
+        ctx.gain(p, W, 3 + k, { fromAction: true });
+        ctx.log(`${p.name}'s Modest Means: ${k} rival${k === 1 ? '' : 's'} with more members, +${3 + k} white.`);
+      },
+    },
+    // Allowance left the wheel Nov 11 (Modest Means took its slot); kept for old saves and its tests.
     ...(on12('pawnshop') || on12('lowprofile') || on12('pocketmoney') ? [] : [{
+      pool: true,
       key: 'stipend', copyDoesIt: true, ring: 1, name: 'Allowance',
       text: '+3 white in round I, +4 in round II, +5 in round III. If you recruit a member this turn: +1 follower in round I, +2 in round II, +3 in round III.', // +1 white (Cory, Nov 6: "white needs a bigger white gain in the begining", "just buff those by +1 white")
       // Gather's shape (Cory, 2026-10-31: "just default to gather style for now for the rest"); was +1/2/3 followers and +2/3/4 white

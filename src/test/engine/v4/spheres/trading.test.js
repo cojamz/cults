@@ -5,7 +5,8 @@ import { createGame, applyMove, resume, followers, contextFor, shopSize } from '
 import { chooseBotMove } from '../../../../engine/v4/bots.js';
 import { seededRandom } from '../../../../engine/v4/rng.js';
 import trading, { install } from '../../../../engine/v4/content/trading.js';
-import { take, move, uidOf, ids, pinCosts, TEST_COSTS } from '../helpers.js';
+import { take, move, uidOf, ids, pinCosts, TEST_COSTS, useRetired } from '../helpers.js';
+useRetired(['trading.stipend']); // Allowance left the wheel Nov 11; its checks stay on the retired space
 import { checkInvariants } from '../fuzz-runner.js';
 import { games } from '../budget.js';
 import { STRAYS, stray } from '../stray.js';

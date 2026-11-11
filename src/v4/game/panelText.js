@@ -164,6 +164,7 @@ const P = {
     // "All for followers" hid that you pay (tester A, live panel r1; the charge is Cory's call): it says so in line 1
     boom: { verb: 'Pay all your resources: +1 @f each', second: 'you may keep your white' },
     // White's Oct 22 spaces (Cory's set): they had no panel words, so the board cut each to its first four words
+    modestmeans: { main: '+3 white', second: '+1 per rival with more members' }, // Nov 11 (Cory)
     stipend: r => ({ main: `+${r + 2} white`, second: `+${r} @f if you recruit a member`, note: run(n => `+${n + 2}`, 'white: ') }), // 3/4/5 since Nov 6 // Gather's shape (Cory, Oct 31)
     // White's three round I spaces lead with their white, then the follower part (Cory, Nov 4: "the white actions are hard
     // to understand what they do at a glance"): Splurge's +1 white sat on line 3, which most rings drop
