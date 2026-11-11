@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.713 — 2026-11-10
+
+- Rival steals and swaps now play at full speed; rival recruits a little quicker
+
 ## v0.99.712 — 2026-11-11
 
 - New actions, in the normal game and with Test cards: Red Borrow, Trending, Gather; Blue Test Drive, Markdown, Word of Mouth; Green Crowd; Purple On a Roll; Magenta Catch Up, Swindle.
