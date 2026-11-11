@@ -8,23 +8,13 @@ const Q2 = ['echo', 'yellow', 'market', 'trading'];
 const defs = s => new Set(Object.values(s.cards).map(c => c.def));
 
 describe('Test version (rules.testSet)', () => {
-  // Nov 10 (Cory: "once we're done those will be the live actions in both test and other version"): Magenta, Blue, Green
-  // and Purple play their new live spaces in the test version too; three swaps stay
-  it('swaps three spaces in place, same round and spot; every other color plays its live spaces', () => {
+  // Nov 11 (Cory: "we are committing to the test version, with updated actions from our recent action work"): the
+  // recent action work kept Polish, Estate Sale and Melting Pot, so every color plays its live spaces
+  it('plays every color\'s live spaces', () => {
     const t = { rules: { testSet: true } }, live = { rules: {} };
-    const want = { silver: ['Polish', 'Round Robin'], trading: ['Estate Sale', 'Bequest'], yellow: ['Melting Pot', 'Swap Meet'] };
-    for (const q of ['thieves', 'market', 'echo', 'purple', 'red']) expect(spacesOf(t, q).map(x => x.name)).toEqual(spacesOf(live, q).map(x => x.name));
-    for (const q of ['thieves', 'market', 'echo', 'purple', 'red']) expect(spacesOf(t, q).map(x => x.text)).toEqual(spacesOf(live, q).map(x => x.text));
-    for (const [q, names] of Object.entries(want)) {
-      const a = spacesOf(live, q), b = spacesOf(t, q), at = [];
-      for (let j = 0; j < names.length; j += 2) {
-        const i = a.findIndex(x => x.name === names[j]);
-        expect(i).toBeGreaterThanOrEqual(0);
-        expect(b[i].name).toBe(names[j + 1]);
-        expect(b[i].ring).toBe(a[i].ring);
-        at.push(i);
-      }
-      expect(b.filter((x, k) => !at.includes(k)).map(x => x.name)).toEqual(a.filter((x, k) => !at.includes(k)).map(x => x.name));
+    for (const q of ['thieves', 'market', 'echo', 'purple', 'red', 'silver', 'trading', 'yellow']) {
+      expect(spacesOf(t, q).map(x => x.name)).toEqual(spacesOf(live, q).map(x => x.name));
+      expect(spacesOf(t, q).map(x => x.text)).toEqual(spacesOf(live, q).map(x => x.text));
     }
   });
   it('deals the four candidate members, without Recluse, Misers and Regular', () => {

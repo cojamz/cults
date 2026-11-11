@@ -318,7 +318,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     const lead = who(pid);
     return out.length ? `${lead === 'you' ? 'You' : lead}: ${out.join(', ')}` : '';
   };
-  const owner0 = c => (c.kind === 'recruit' || c.kind === 'buy' || c.kind === 'space' || c.kind === 'move' || c.kind === 'release' || c.kind === 'member' || c.kind === 'setup' ? c.pid : null);
+  const owner0 = c => (c.kind === 'recruit' || c.kind === 'buy' || c.kind === 'space' || c.kind === 'move' || c.kind === 'release' || c.kind === 'member' || c.kind === 'setup' || c.kind === 'plus1' ? c.pid : null);
   let setup = false;
   // where the mover's move happened (the space taken, the rate bought at, the card recruited): a rival's member that pays
   // out because of it (Tax Collector on your follower buy) sends its gain from there to their pile (the skeptic, w4 #14:

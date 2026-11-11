@@ -20,6 +20,7 @@ import { showPictures, picturesOn } from './rimPictures.js';
 import { memo, startTransition, useEffect, useLayoutEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { quadrant, roman, spaceOpen, RING_VALUE, spacesOf } from '../../engine/v4/index.js';
+import { plus1Open } from '../../engine/v4/core.js';
 import { playerColor, standings, seatEmoji, shortLabel } from '../format.js';
 import { Minion } from '../art/Leader.jsx';
 import { emojiArt } from '../art/emojis.js';
@@ -1398,6 +1399,8 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     const quiet = !!(opt && !squat && idle && idle.has(key));
     const selected = pinnedKey === key || sent === key;
     const fresh = freshOf(key);
+    // the space +1 once a game (Cory, Nov 11: "a little dot on the action"): a dot of its color while nobody has taken it
+    const dot = open && plus1Open(state, q, Number(key.split('-')[1]));
     // panels: the gain, the effect, the clarification, laid out in the room this panel has where it sits now
     const pl = panels ? panelLays.get(key) : null;
     const said = pl && pl.said, lay = pl && pl.lay;
@@ -1405,7 +1408,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     const crewIds = owner !== undefined ? [owner, ...joiners] : [];
     const sig = [X.toFixed(2), Y.toFixed(2), owner ?? '', shadeOwner ?? '', joiners.join(','), open ? 1 : 0, opt || '', quiet ? 1 : 0, selected ? 1 : 0, fresh ? `${fresh.pid}:${fresh.newest ? 1 : 0}:${fresh.action}` : '',
       flashV.has(key) ? 1 : 0, lay ? laySig(lay) : '', said ? `${said.main || said.verb}/${said.second || ''}` : '', (opt && pickNotes && pickNotes.get(key)) || '', crewIds.map(id => `${state.players[id].name}:${seatEmoji(state, id)}`).join(','),
-      fresh ? state.players[fresh.pid].name : '', meId ?? '', round, look, custom ? `${Face ? 1 : 0}:${scale}:${rot}` : '', panels ? `${scale}:${fontsIn}` : ''].join('|');
+      fresh ? state.players[fresh.pid].name : '', meId ?? '', round, dot ? 1 : 0, look, custom ? `${Face ? 1 : 0}:${scale}:${rot}` : '', panels ? `${scale}:${fontsIn}` : ''].join('|');
     const had = built.current.get(key);
     if (had && had.sig === sig) return <Space key={key} el={had.el} />;
     const cls = ['slot', `r${t}`, opt ? 'can lit' : '', squat ? 'squat' : '', quiet ? 'idle' : '', flashV.has(key) ? 'flash' : '', selected ? 'sel' : '', open ? 'open' : 'locked', shadeOwner !== undefined ? 'taken' : '', fresh ? 'fresh' : '', fresh && fresh.newest ? 'newest' : '', lay && said.verb ? 'verb' : '', lay && lay.oneLines > 1 ? 'wrap1' : '', lay && lay.twoLines > 1 ? 'wrap' : '', lay && lay.tight ? 'tight' : '', lay && lay.two === PANEL_PX.small ? 'small' : ''].filter(Boolean).join(' ');
@@ -1438,11 +1441,12 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       <div
         key={key} className={cls} data-slot={key} data-option={opt || undefined} data-pick-note={(opt && pickNotes && pickNotes.get(key)) || undefined} style={style}
         data-panel={lay ? `${lay.oneLines}.${lay.twoLines}.${lay.noteLines}${lay.tight ? ' tight' : ''}` : undefined}
-        role="button" tabIndex={opt ? 0 : -1} aria-label={`${a.name}, ${quadrant(qid).name} round ${roman(t)}: ${a.text} ${status}.`}
+        role="button" tabIndex={opt ? 0 : -1} aria-label={`${a.name}, ${quadrant(qid).name} round ${roman(t)}: ${a.text} ${status}.${dot ? ' Its +1 is still here for the first player to take it.' : ''}`}
         {...slotHandlers(live, touchTapped, s, key, opt, panels)}
       >
         <span className="hit" aria-hidden="true" />
         <span className="base" aria-hidden="true" />
+        {dot && <span className="plus1-dot" data-plus1-dot title={`+1 ${quadrant(qid).resource} for the first player to take it`}><Pip color={quadrant(qid).resource} /></span>}
         {custom ? face : panels ? (
           // three lines at most, no picture (Cory, 2026-10-15): the gain, the effect in words, a quiet clarification.
           // Taken: the lines fade and the minion stands over them (Cory: "over line 2")

@@ -12,9 +12,11 @@ export const TEST_SPACES = {
   // Nov 10 (Cory: "once we're done those will be the live actions in both test and other version"): Magenta, Blue,
   // Green and Purple play their new live spaces in the test version too, so their swaps (Shake Down -> Protection Racket,
   // Bury -> Rummage, Greatest Hits -> Medley, Purple's token spaces) are gone
-  silver: [['polish', 'roundrobin']], // Polish -> Round Robin
-  trading: [['estatesale', 'bequest']], // Estate Sale -> Bequest
-  yellow: [['meltingpot', 'moneychangers']], // Melting Pot -> Swap Meet
+  // Nov 11 (Cory: "we are committing to the test version, with updated actions from our recent action work"): the
+  // Test version is the game now (rules.testSet is on by default, core.js DEFAULT_RULES), and the recent action work
+  // wins its slots: Silver keeps the new Polish (Nov 11) and White keeps Estate Sale (Cory, Nov 11: "I like white
+  // Round II actions"), so Round Robin and Bequest are out, and Yellow keeps Melting Pot (Cory, Nov 11: "Melting pot is
+  // good"), so Swap Meet is out. No space swaps are left: the Test version is its members now
 };
 /** Candidate members dealt into the test version's decks, each in a live member's place so decks stay at 10 (Cory,
  *  Nov 8: "Are we keeping the member decks consistent?"); Protesters, Gift Swappers and Purifiers (Nov 9) join the grey members with nothing out. */

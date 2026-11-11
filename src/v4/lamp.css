@@ -769,3 +769,8 @@ h1,h2,h3{font-family:var(--serif)}
 .lt [data-spaces="panels"] .stage .slot .face .main b.n{font-family:'Cults Pixel Wheel',var(--sans);font-weight:800}
 .lt [data-spaces="panels"] .stage svg.wheel-paper .rim-rule .rim-tie{font-family:var(--sans);font-variation-settings:normal}
 .turn-card .tc-more{pointer-events:auto;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
+/* the space +1 once a game (Cory, Nov 11: "a little dot on the action"): one resource dot of the space's color under
+   the panel while its +1 is unclaimed; it goes when the first player takes the space */
+.lt .stage .slot .plus1-dot{position:absolute;left:50%;bottom:-16px;transform:translateX(-50%);display:flex;padding:2px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(43,32,24,.28);font-size:11px;line-height:0;pointer-events:auto;z-index:3}
+.lt .stage .slot .plus1-dot .pip{width:1em;height:1em;margin:0;filter:none}
+.lt [data-spaces="sockets"] .stage .slot .plus1-dot{bottom:4%}

@@ -18,7 +18,7 @@
 //          what pays for it, Pocket Watch or Gossip, follows under its own member cause)
 //   cause: { kind: 'space', key, qid, pid } | { kind: 'member', pid, uid, def } | { kind: 'recruit', pid, uid, index }
 //        | { kind: 'buy', pid, tier, get } | { kind: 'contest', qid, round } | { kind: 'round', round }
-//        | { kind: 'release', pid, uid } | { kind: 'final' } | { kind: 'setup', pid, qid } | { kind: 'move', pid, option, slot }
+//        | { kind: 'release', pid, uid } | { kind: 'plus1', key, qid, pid } (a space's once-a-game +1) | { kind: 'final' } | { kind: 'setup', pid, qid } | { kind: 'move', pid, option, slot }
 //   from / to: { kind: 'space', key, qid } | { kind: 'quadrant', qid } | { kind: 'member', pid, uid } | { kind: 'stack', pid, r }
 //        | { kind: 'count', pid } | { kind: 'crowd', pid } | { kind: 'shop', index, uid } | { kind: 'rate', tier }
 //        | { kind: 'rim', qid } | { kind: 'pile' } | { kind: 'bank' } | { kind: 'player', pid }
@@ -97,6 +97,7 @@ function snap() {
 function placeOf(cause) {
   switch (cause.kind) {
     case 'space': return { kind: 'space', key: cause.key, qid: cause.qid };
+    case 'plus1': return { kind: 'space', key: cause.key, qid: cause.qid }; // a space's first-taker +1 (rules.plus1 'game')
     case 'member': return { kind: 'member', pid: cause.pid, uid: cause.uid };
     case 'recruit': return { kind: 'shop', index: cause.index, uid: cause.uid };
     case 'buy': return { kind: 'rate', tier: cause.tier };

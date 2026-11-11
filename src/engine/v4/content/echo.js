@@ -399,13 +399,14 @@ function copyResolved(ctx, p, e, { later, by, asker }) {
     heard(ctx, p, e, taker);
     // Wallflower doubles, and Translator greens, what the space hands the copier here too (Cory, Nov 3: copying
     // Polish wasn't doubled)
-    const a = actionOf(e, ctx.state);
-    withPath(ctx, pathNow(ctx), () => (a.resolve.__orig || a.resolve).call(a, ctx, p), undefined, copierOf(ctx, p));
+    const a = actionOf(e, ctx.state), cp = copierOf(ctx, p);
+    // a copy never gets the space's first-taker +1 (rules.plus1 'game'; Cory: "plus one to the first taker matters for green")
+    ctx.copyPlus1(p, a, e.color, cp?.x || 1, () => withPath(ctx, pathNow(ctx), () => (a.resolve.__orig || a.resolve).call(a, ctx, p), undefined, cp), cp?.green ? 'green' : null);
     return;
   }
   const mult = has(ctx, p, 'wallflower') ? 2 : 1;
   const asGreen = translating(ctx, p);
-  for (const [c, n] of Object.entries(e.res)) ctx.gain(p, asGreen ? 'green' : c, n * mult, { fromAction: true });
+  ctx.copyPlus1(p, actionOf(e, ctx.state), e.color, mult, () => { for (const [c, n] of Object.entries(e.res)) ctx.gain(p, asGreen ? 'green' : c, n * mult, { fromAction: true }); }, asGreen ? 'green' : null);
   if (e.discount) ctx.discount(p, e.discount, `Copy of ${e.name}`);
   const notes = [mult > 1 ? `doubled by ${p.name}'s Wallflower` : '', asGreen && Object.keys(e.res).length ? `as green by ${p.name}'s Translator` : ''].filter(Boolean);
   ctx.log(`${who} copied ${e.name}${e.p !== p.id ? ` (${ctx.player(e.p).name}'s)` : ''}: ${describe(ctx, e)}${notes.length ? `, ${notes.join(', ')}` : ''}.`);
@@ -870,7 +871,8 @@ const echoQ = {
         each(ctx, p, 'choir', 'Choir', () => ctx.gain(p, 'green', 1));
         each(ctx, p, 'copyist', 'Copyist', () => { p.bonus += COPYIST; }); // REPLACE10
         each(ctx, p, 'roadie9', 'Roadie', () => { const g = ctx.countMembersOfColor(p, 'echo'); if (g) ctx.gain(p, 'green', g); }); // REPLACE9
-        const run = () => withPath(ctx, pathNow(ctx), () => (hit.a.resolve.__orig || hit.a.resolve).call(hit.a, ctx, p), undefined, copierOf(ctx, p));
+        const cp = copierOf(ctx, p);
+        const run = () => ctx.copyPlus1(p, hit.a, hit.qid, cp?.x || 1, () => withPath(ctx, pathNow(ctx), () => (hit.a.resolve.__orig || hit.a.resolve).call(hit.a, ctx, p), undefined, cp), cp?.green ? 'green' : null);
         if (data?.as) ctx.asMember(p, data.as, run); else run();
       });
     },

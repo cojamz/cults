@@ -1182,7 +1182,7 @@ export function effectStory(start, end, actor, me = null, fx = []) {
   const gaveByChoice = pid => newLog.some(l => l.startsWith(`${P[pid].name} gave ${P[actor].name} `) && l.endsWith(`(${P[actor].name}'s Potluck).`));
   const groups = new Map();
   const groupOf = c => {
-    const key = !c ? 'space' : c.kind === 'space' || c.kind === 'move' ? 'space' : c.kind === 'member' ? `member:${c.uid}:${c.def || ''}` : c.kind === 'recruit' ? `recruit:${c.uid}` : c.kind === 'buy' ? `buy:${c.tier}` : c.kind === 'release' ? `release:${c.uid}` : null;
+    const key = !c ? 'space' : c.kind === 'space' || c.kind === 'move' ? 'space' : c.kind === 'member' ? `member:${c.uid}:${c.def || ''}` : c.kind === 'recruit' ? `recruit:${c.uid}` : c.kind === 'buy' ? `buy:${c.tier}` : c.kind === 'release' ? `release:${c.uid}` : c.kind === 'plus1' ? 'plus1' : null;
     if (!key) return null;
     if (!groups.has(key)) groups.set(key, { key, cause: c, res: P.map(() => ({})), fol: P.map(() => 0), moved: [], disc: 0 });
     return groups.get(key);
@@ -1355,6 +1355,10 @@ export function effectStory(start, end, actor, me = null, fx = []) {
       const n = g.fol[actor];
       out.push(`bought ${fword(n)} (paid ${paidOf(g, actor) || 'nothing'})`);
       out.push(...others(g, actor));
+    } else if (c.kind === 'plus1') {
+      // the space's +1 once a game, said apart as it flies apart (Cory, Nov 11)
+      const got = signedOf(g, actor);
+      if (got) out.push(`${got}, first to take it`);
     } else if (c.kind === 'release') {
       const back = Object.entries(g.res[actor]).filter(([, d]) => d > 0).map(([r, d]) => `${d} ${r}`).join(', ');
       out.push(`released ${cardName(c.uid)}${back ? ` for ${back}` : ''}`);

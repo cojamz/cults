@@ -48,7 +48,9 @@ const LOG_MAX = 300;
 // Rule flags a table can toggle (sims flip them). release: once per round, on your turn, release one of your
 // members (it goes to the bottom of the pile) for its colored part in its own color (not one recruited this round). guests: rule-bending guest
 // members join the deck.
-export const DEFAULT_RULES = { release: false, guests: true, cull: true, artifacts: true, roundDecks: 2, swapCard: false };
+// testSet: the Test version's cards (content/testset.js) are the game since Nov 11 (Cory: "we can drop the Live/Test
+// setting. we are committing to the test version"); an old save keeps the rules it was dealt with
+export const DEFAULT_RULES = { release: false, guests: true, cull: true, artifacts: true, roundDecks: 2, swapCard: false, testSet: true };
 /** Round decks (Cory, 2026-10-25): one deck, but round II and round III members wait out of it and are shuffled in
  *  when their round starts. A member's round is its `round`, else its printed cost (ROUND_CUTOFFS). rules.roundDecks: 3 batches, 2 folds round III into round II, 0 is off.
  *  Default 2 (Cory, 2026-10-27: "round 1 deck one, round 2 and 3 all three decks"). */
@@ -87,7 +89,7 @@ export function createGame({ seats, seed = 1, quadrants, rules = {} }) {
   const zero = Object.fromEntries(resources.map(r => [r, 0]));
   const cards = {};
   let uid = 0;
-  const table = { ...DEFAULT_RULES, ...(FULL_DECK.tests ? { cull: false, artifacts: false, roundDecks: 0 } : {}), ...rules }; // tests: content/cull.js (artifacts too: a test asks for them)
+  const table = { ...DEFAULT_RULES, ...(FULL_DECK.tests ? { cull: false, artifacts: false, roundDecks: 0, testSet: false } : {}), ...rules }; // tests: content/cull.js (artifacts too: a test asks for them; the Test version's members too: testset.test.js and plus1-once.test.js ask for it)
   // The shop (Cory, 2026-11-01: "anything we update needs to go to all the different types of the game"): rules.shop is
   // 'deck' (the shop as it is: one shuffled deck, the default), 'grey' (the grey core as piles anyone can buy several
   // of; the rest of the shop as now) or 'all' (every member a pile, ten piles a game; the rest face down as the deck, no face-up row). piles.js builds it.
@@ -1033,7 +1035,16 @@ function runTask(state, task) {
         if (state.openBar && qid === 'silver') for (const t of state.openBar) if (t.round === state.round && t.pid !== p.id) {
           const o = state.players.find(x => x.id === t.pid); o.bonus += 1; log(state, `${o.name}'s Open Bar: ${p.name} took a Silver space, +1 follower.`);
         }
-        econRun('space', { state, pid: p.id, color: quadrant(qid).resource, delta: spaceDelta(state) + plus1Delta(state, task, a, qid) }, () => a.resolve(ctx, p));
+        const d1 = plus1Delta(state, task, a, qid), color = quadrant(qid).resource, had = p.res[color] || 0;
+        econRun('space', { state, pid: p.id, color, delta: spaceDelta(state) + (d1 === PLUS1_CLAIM ? -1 : d1) }, () => a.resolve(ctx, p));
+        // once per game, the first taker's +1 is its own gain, after the space's (the screen flies it on its own from the
+        // space: Cory, "that resource needs an animation to fly to the player, separate from the gains of the action")
+        if (d1 === PLUS1_CLAIM) underCause({ kind: 'plus1', key: `${task.q}-${task.i}`, qid, pid: p.id }, () => {
+          const owed = state.econOwed; delete state.econOwed; // a cut still waiting for the space's own gain isn't this +1's
+          gain(state, p, color, 1, { fromAction: true, again: (p.res[color] || 0) > had });
+          if (owed) state.econOwed = owed;
+          log(state, `${p.name} +1 ${color} (first to take ${a.name}).`);
+        });
       });
       fCredit(state, mark, a.name);
       return out;
@@ -1049,6 +1060,7 @@ function runTask(state, task) {
     }
     case 'endTurn': {
       const ctx = ctxFor(state);
+      delete state.econOwed; // a space's +1 cut never outlives its turn
       if (REPLACE9 && state.hypno && state.hypno.by === p.id && !state.hypno.armed) state.hypno.armed = true;
       eachMember(state, (owner, card, def) => { if (def.onTurnEnd) def.onTurnEnd(ctx, owner, card, p); }, ['onTurnEnd']);
       // "This turn, if you recruit a member, +N followers" (Gather, Stash, Allowance, New Blood) ends with the turn, so a
@@ -2011,25 +2023,47 @@ function econRun(kind, frame, fn) {
   try { out = fn(); } finally { econ[kind] = was; }
   // a space that prints none of its color still gives the extra (Richer: "every space gives 1 more of its color")
   if (kind === 'space' && !mine.paid && mine.delta > 0 && mine.state) gain(mine.state, mine.state.players[mine.pid], mine.color, mine.delta, { fromAction: true });
+  // a cut whose gain comes in a later choice (the space asks first) waits for that gain, until the turn's buy step
+  if (kind === 'space' && !mine.paid && mine.delta < 0 && mine.state) mine.state.econOwed = { pid: mine.pid, color: mine.color, n: -mine.delta };
   return out;
 }
-// PLUS1 test dial (bot games only; Cory, Nov 11: "the spaces give the +1 only once each round, to the first person who
-// takes it. actually maybe the +1 should just be per game?"): round = only a space's first taker each round gets its
-// printed +1 of its color; game = only its first taker all game. Spaces that print no "+1 <color>." are untouched.
+// Space +1 once per game (Cory, Nov 11: "i like one per game. then we can just make members cheaper if we need to.",
+// "let's make it a setting for now"): rules.plus1 === 'game' gives a space's printed "+1 <its color>." only to the
+// first player ever to take it; the space shows a dot until then (state.plus1Seen holds the claimed spaces). A copy
+// (Green's copy spaces and members) is never a first taker, so it never gets the +1 (copyPlus1Cut). Spaces that print
+// no "+1 <color>." are untouched. PLUS1=game|round (env) is the economy tests' old dial; 'round' is first taker each round.
 const PLUS1 = globalThis.process?.env?.PLUS1 || '';
+const PLUS1_CLAIM = -1.5; // plus1Delta's answer for a claimed +1 under the setting: cut it from the space like a later taker, pay it apart
+export const plus1Mode = state => state?.rules?.plus1 || PLUS1 || '';
+/** Whether a space prints the "+1 <its color>." a first taker gets. */
+export const printsPlus1 = (a, qid) => !!a && new RegExp(`\\+1 ${quadrant(qid).resource}\\.\\s*$`, 'i').test(a.text || '');
+/** Whether space q-i still holds its unclaimed +1 (the dot on the wheel). */
+export function plus1Open(state, q, i) {
+  if (plus1Mode(state) !== 'game') return false;
+  const qid = state.quadrants[q];
+  return printsPlus1(spacesOf(state, qid)[i], qid) && !state.plus1Seen?.[`${q}-${i}`];
+}
 function plus1Delta(state, task, a, qid) {
-  if (!PLUS1) return 0;
-  const res = quadrant(qid).resource;
-  if (!new RegExp(`\\+1 ${res}\\.\\s*$`, 'i').test(a.text || '')) return 0;
+  const mode = plus1Mode(state);
+  if (!mode || !printsPlus1(a, qid)) return 0;
   const seen = state.plus1Seen || (state.plus1Seen = {});
-  const k = PLUS1 === 'game' ? `${task.q}-${task.i}` : `${state.round}:${task.q}-${task.i}`;
+  const k = mode === 'game' ? `${task.q}-${task.i}` : `${state.round}:${task.q}-${task.i}`;
   state.plus1Stats = state.plus1Stats || { paid: 0, cut: 0 };
   if (seen[k]) { state.plus1Stats.cut++; return -1; }
-  seen[k] = true; state.plus1Stats.paid++; return 0;
+  seen[k] = true; state.plus1Stats.paid++;
+  // the setting: the space runs without its +1 and the claim pays it on its own (case 'act'); the env dial pays it in place
+  return state.rules?.plus1 === 'game' ? PLUS1_CLAIM : 0;
+}
+/** A copy of space a (color qid) doing or handing over its gain: the +1 that space prints never goes to a copier
+ *  (Cory: "plus one to the first taker matters for green"). times: the copier's doubling (Wallflower), so a doubled copy loses 2. */
+export function copyPlus1Cut(state, p, a, qid, times, fn, color = null) {
+  if (plus1Mode(state) !== 'game' || !printsPlus1(a, qid)) return fn();
+  return econRun('space', { state, pid: p.id, color: color || quadrant(qid).resource, delta: -times }, fn);
 }
 const spaceDelta = state => ECON.space + (ECON.spaceR?.[state.round - 1] || 0) + (state.rules?.econ === 'rich' ? RICH.space : 0);
-function econAdjust(p, color, n, fromAction) {
-  const s = econ.space, c = econ.cloak;
+function econAdjust(p, color, n, fromAction, state) {
+  const s = econ.space, c = econ.cloak, owe = state?.econOwed;
+  if (owe && fromAction && owe.pid === p.id && owe.color === color && !(s && s.pid === p.id && s.color === color && !s.paid)) { delete state.econOwed; n = Math.max(0, n - owe.n); }
   if (s && fromAction && !s.paid && s.pid === p.id && s.color === color) { s.paid = true; n = Math.max(0, n + s.delta); }
   if (c && !c.paid && c.pid === p.id) { c.paid = true; n = Math.max(0, n + c.delta); }
   return n;
@@ -2040,7 +2074,7 @@ const isCloak = (state, uid) => uid != null && !!state.artifacts && Object.value
 // gains you gold" members (Prospector) pay once per action
 function gain(state, p, color, n, { fromAction = false, again = false } = {}) {
   if (!(n > 0)) return;
-  n = econAdjust(p, color, n, fromAction);
+  n = econAdjust(p, color, n, fromAction, state);
   if (!(n > 0)) return;
   const g = { color, n, fromAction, again, doubled: false };
   const ctx = ctxFor(state);
@@ -2519,6 +2553,8 @@ function ctxFor(state) {
     openSpaces: () => openSlots(state).map(([q, i]) => { const a = actionAt(state, q, i); return { key: `${q}-${i}`, name: a.name, ring: a.ring, qid: state.quadrants[q] }; }),
     shopCards: () => state.shop.filter(u => state.current == null || !reservedFor(state, state.players[state.current], u)).map(u => wrap(state, state.cards[u])),
     gain: (p, color, n, opts) => gain(state, p, color, n, opts),
+    /** run a copy of space a (color qid): with the +1 once per game, the copier never gets the +1 it prints (core copyPlus1Cut) */
+    copyPlus1: (p, a, qid, times, fn, color) => copyPlus1Cut(state, p, a, qid, times, fn, color),
     discount: grantDiscount,
     recruit: (p, uid, opts) => recruit(state, p, uid, opts),
     recruitAbility: (p, card, def, fn) => recruitAbility(state, p, card, def, fn),

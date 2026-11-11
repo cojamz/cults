@@ -16,6 +16,8 @@ Turn order is drawn. Then, from last player to first, each picks a **cloak**: a 
 ## The wheel
 Each color in play has six spaces on the wheel. The outer ring opens in round I, the middle in round II, the center in round III. A space holds one minion per round. The rim shows that color's contest and who leads it.
 
+A space that ends "+1 of its color" pays that +1 only to the first player ever to take it; a dot under the space shows its +1 is still there. A copy never gets it. (A setup setting, **Space +1**, can give it to every taker instead.)
+
 ![A color's spaces: open spaces are pale with gold edges, taken ones dim, dark ones open later](rules-img/wheel.jpg)
 
 ## Your turn
