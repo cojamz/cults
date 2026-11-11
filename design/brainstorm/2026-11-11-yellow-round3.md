@@ -71,3 +71,59 @@ Verdict: cut (rewards the leader; Rainbow Feast is the fair version)
 8. Color interactions: none.
 9. Biggest case: 2 unique colors, +6.
 Verdict: cut (pays 0 most games)
+
+# Pass 2 (Cory, 12:05pm: Melting Pot becomes "+1 follower and +1 of each color among your members (including a wild for grey)", "then we would need more ideas for the round 3")
+
+Frame update: round II Melting Pot now pays per member color in followers and resources (5 colors: +5 followers, +5 resources), and Makeover rearranges. So round III must not count colors again. What's left in the contest by round III: most cults hold 4 or 5 colors, so the next layer of "broad" is how evenly your members spread, and the pull against Red's contest (most members of one color) and Blue's (most members).
+
+## Idea: Even Spread
+
+1. Printed text: "+3 followers per member of the color you have the fewest members of (among your members' colors). +1 yellow." (name and +3 Claude's fill-ins; grey counts as a color, as everywhere). Cards it touches: Melting Pot "For each color among your members: +1 follower and +1 of that color (grey: 1 of any color)."; Red's contest, most members of one color; Dabblers (counts as one color more).
+2. Played turn: round III, 4 players. You hold 11 members: 3 red, 3 blue, 2 white, 2 yellow, 1 grey: smallest group 1 (grey): +3 followers. Recruit a second grey first and it is 2: +6. A cult of 15 spread 3/3/3/3/3: +9. Best other round III space for a wide cult, Initiation "Recruit a shop member costing 10 or less, for free. +1 red." (a 10-cost member, worth about 2 to 3 followers plus its ability). Gain: 0 to +6 over Initiation, more the evener your cult.
+3. Both sides: no choices on the card; the choice is earlier, recruiting your thinnest color instead of your best member.
+4. Who feels it: a rival who wants it must also be even; the Red player stacking one color gets little from it, so they block it only to deny you. Mild: a race for the center space.
+5. Not refused: not a count of colors (Melting Pot's job now), not "+2 of every color" (resources, refused), not a full set (a set of resources). New shape: reads the depth of your thinnest color.
+6. Judged: one count, done when taken, follower payoff (Cory: resources matter less late). Intuitive: yes, "your smallest color group". Fun: medium-high, gives Yellow players a reason to balance recruits in rounds II and III. Interacts: pulls against Red's one-color stack and rewards recruiting colors other cults leave. Powerful: 3 to 9. Engine or counter: the end of Melting Pot and New Blood; counter to one-color stacks. Its color: going broad, evenly.
+7. Public and certain: members and their colors are public; nothing hidden or random.
+8. Color interactions: the shared moment is the round II and III recruit choice between a second member of your stack (Red, Blue) or a thin color; names no color.
+9. Biggest case: round III, a 20-member cult spread 4/4/4/4/4 (beyond the 8 to 14 real wide cults): +12. Real biggest: 15 members at 3 each, +9. Green's Greatest Hits copying it counts the Green player's own smallest group, usually 1 or 2: +3 to +6. Against a winner's 70 to 110 and a contest's 10; round III center.
+Verdict: send
+
+## Idea: Broad Lead
+
+1. Printed text: "+2 followers per color in which no rival has more members than you. +1 yellow." (Claude's fill-ins; only colors among your members count)
+2. Played turn: round III, you hold 1 to 3 in each of 5 colors; rivals stack 4 red and 4 blue: you lead or tie white, yellow, grey: +6.
+3. Both sides: no choices.
+4. Who feels it: each rival's stack shuts off a color; reason to recruit into a color a Yellow player leads.
+5. Not refused: new; touches Red's contest count per color.
+6. Judged: 5 colors × 4 cults to check at the table, heavy to count; Even Spread asks for the same play with one count of your own.
+7. Public and certain: yes.
+8. Color interactions: reads the other colors' stacks.
+9. Biggest case: 5 colors led: +10.
+Verdict: cut (slow to count at a table; Even Spread is the plainer version)
+
+## Idea: Pick Off
+
+1. Printed text: "Take a rival's member of a color they have only one member of; give them one of your members in its place. +4 yellow."
+2. Played turn: round III, a rival's only white: they drop to 4 colors, you give them a spare red.
+3. Both sides: you choose both.
+4. Who feels it: a real sting on the contest.
+5. Not refused: Swindle "Steal a rival's member costing up to 7; give them a shop member of your choice in its place. +1 magenta." is the same shape; moving members is Red's.
+6. Judged: another color's verb.
+7. Public and certain: yes.
+8. Color interactions: none.
+9. Biggest case: a 2-color contest swing.
+Verdict: cut (Swindle's shape)
+
+## Idea: Duplicates Out
+
+1. Printed text: "Discard up to 3 of your members that share a color with another of your members. +3 followers each."
+2. Played turn: round III, 12 members, discard 3 cheap duplicates: +9 followers minus their worth (about 3).
+3. Both sides: you choose.
+4. Who feels it: nobody.
+5. Not refused: discarding members for followers is White's (Farewell, Estate Sale).
+6. Judged: White's verb.
+7. Public and certain: yes.
+8. Color interactions: none.
+9. Biggest case: +9, about +6 net.
+Verdict: cut (White's verb; nobody feels it)
