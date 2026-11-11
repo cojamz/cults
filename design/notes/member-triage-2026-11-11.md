@@ -142,7 +142,7 @@ Keep
 - **Copyist** "Whenever you copy an action, +2 followers." Four of six Green spaces copy.
 - **Wallflower** "Whenever you copy an action, double the resources it gives you." Same four spaces.
 - **Buskers** "On Use, once per round: copy an action a rival has a minion on." Cover once a round.
-- **Agents** "Rivals can't copy your actions." The answer to Green.
+- **Agents** "Your actions can't be copied." (Cory, Nov 11, was "Rivals can't copy your actions.") The answer to Green.
 - **Fan Club** "On Recruit: copy an action of the rival with the most followers." Copies an action.
 - **Stunt Double** "On Recruit: copy the action you just took." Copies an action.
 
@@ -169,3 +169,8 @@ Keep
 - **Spoilsport** "Round End: choose a contest; nobody wins it this round." You marked it a star.
 - **Extra Hand** "On Recruit: +1 minion this round." Your rework.
 - **Scouts** "On Use, once per round: discard any shop members and refill." Your yes on Nov 7.
+
+## For replacements (Cory, Nov 11, after the sort went out)
+
+- Clean House ("Discard a member. Each rival discards a member of their choice.") is to be a member effect, not a space: a candidate for one of the open slots.
+- Cory wants more members that "jam people up", like Agents ("Your actions can't be copied."). Favor that shape when replacements are brainstormed.
