@@ -1,0 +1,176 @@
+// Content registry. Every quadrant is a self-contained module; the engine looks them up by id.
+import { isRich, shiftCosts, RICH_UP } from './price.js';
+import gold from './gold.js';
+import red from './red.js';
+import { blue, green } from './standins.js';
+import purple from './purple.js';
+import silver from './silver.js';
+import yellow from './yellow.js';
+import { install as installMarket } from './market.js';
+import { install as installThieves } from './thieves.js';
+import { install as installTrading } from './trading.js';
+import { install as installEcho } from './echo.js';
+import { testSpaces, noteTable } from './testset.js';
+import { install as installBenders } from './benders.js';
+import { POOL_SPACES } from './pool.js';
+
+const QUADRANTS = { gold, red, blue, green };
+
+// Member defs get a global id "<quadrant>.<key>" and know their quadrant.
+// Every member costs this many wild more than its card file says (Cory, Oct 27: "+1 wild cost to every member"),
+// added once here so the shop, the pay sheet and the bots all read the same price.
+// 2 since Cory, 2026-11-05 ("1 cards", "i'd rather things be more expensive"): one more on every member, so fewer
+// member cards per game. The color shift below still moves just 1 of it to the member's color; the rest is any color.
+import { EXTRA_WILD, EXTRA_COLOR } from './price.js';
+export { EXTRA_WILD };
+// Cory, 2026-11-02: "for every member, to shift 1 wild to 1 color cost". A colored member's +1 above is paid in its
+// own color instead (its colored part +1, its "any" part as printed), so what you hold decides what you can buy.
+// Grey members have no color and keep the wild. Live (Cory, Nov 2 7:39pm: "let's swing the cost towards the colors by 1 and keep that anyways"); COLORSHIFT=0 gives the old prices for comparison.
+export const COLOR_SHIFT = globalThis.process?.env?.COLORSHIFT === '0' ? 0 : 1;
+// how much of the extra a colored member pays in its own color (tests read it to compute prices)
+export const COLOR_PART = COLOR_SHIFT ? EXTRA_COLOR : 0;
+// Bot tests only (Nov 3, depth ideas): COLORSHIFT=2 moves one more of the printed "any" to the color where 2+ any remain;
+// COLORSHIFT=all makes the whole cost colored. Same totals; the game uses 1.
+const SHIFT_MORE = globalThis.process?.env?.COLORSHIFT;
+const addWild = def => {
+  if (def.extraWild || def.extraColor) return;
+  if (COLOR_SHIFT && def.quadrant !== 'guest' && def.quadrant !== 'benders') {
+    def.s = (def.s || 0) + EXTRA_COLOR; def.extraColor = EXTRA_COLOR;
+    def.w = (def.w || 0) + EXTRA_WILD - EXTRA_COLOR; if (EXTRA_WILD > EXTRA_COLOR) def.extraWild = EXTRA_WILD - EXTRA_COLOR;
+    const more = SHIFT_MORE === 'all' ? def.w : SHIFT_MORE === '2' && def.w >= 2 ? 1 : 0;
+    if (more) { def.s += more; def.w -= more; def.shiftedMore = more; }
+  }
+  else { def.w = (def.w || 0) + EXTRA_WILD; def.extraWild = EXTRA_WILD; }
+};
+// Every member is a follower (Cory, Oct 29: "Every card should score its member count. Its a core rule! every member is a
+// follower. Not every follower is a member."): a card that counts as N members scores at least N followers.
+const asFollowers = def => { if ((def.n || 1) > (def.f || 1)) def.f = def.n; };
+// and the other way (Cory, 2026-11-01: "member count = follower count, for members"; "1. yes"): a member worth N
+// followers counts as N members, as its card shows (Proselytizers 2, Trendsetters 3).
+const asMembers = def => { if ((def.f || 1) > (def.n || 1)) def.n = def.f; };
+const DEFS = {};
+const HANDLERS = {};
+/** Add a quadrant module to the registry (used by index below, and by new spheres while they're being designed). */
+export function registerQuadrant(q) {
+  QUADRANTS[q.id] = q;
+  index(q);
+  return q;
+}
+function index(q) {
+  for (const def of q.members) {
+    def.id = `${q.id}.${def.key}`;
+    def.quadrant = q.id;
+    def.copies = def.copies || 1;
+    addWild(def);
+    asFollowers(def);
+    asMembers(def);
+    DEFS[def.id] = def;
+  }
+  // idea pipeline candidates (content/pool.js): out of the wheel, kept for the bot games that rotate them in
+  if (q.actions.some(a => a.pool)) { POOL_SPACES[q.id] = q.actions.filter(a => a.pool); q.actions = q.actions.filter(a => !a.pool); for (const a of POOL_SPACES[q.id]) a.id = `${q.id}.${a.key}`; }
+  for (const a of q.actions) { a.id = `${q.id}.${a.key}`; if (a.piles) { a.piles.id = `${q.id}.${a.piles.key}`; a.piles.ring ??= a.ring; } }
+  for (const [k, fn] of Object.entries(q.handlers || {})) HANDLERS[`${q.id}.${k}`] = fn;
+}
+for (const q of Object.values(QUADRANTS)) index(q);
+
+/** A color's spaces at this table: a space with a version for all piles (a.piles) shows that version there (Cory, 2026-11-01:
+ *  "for the piles mode, we may need to change red round 1 action back to recruit the cheapest"). Same ring, same place. */
+export function spacesOf(state, qid) {
+  if (state?.rules) noteTable(state.rules.testSet);
+  const acts = state?.rules?.testSet && qid !== 'guest' ? testSpaces(qid) : quadrant(qid).actions;
+  const out = state?.rules?.piles?.only ? acts.map(a => a.piles || a) : acts;
+  return isRich(state) ? richSpaces(out) : out;
+}
+// Richer: a space that names a member's cost says the moved number (Cory, Nov 9); the rule itself reads richUp(state)
+const richCache = new WeakMap();
+function richSpaces(acts) {
+  let r = richCache.get(acts);
+  if (!r) {
+    r = acts.map(a => { const text = shiftCosts(a.text, RICH_UP); return text === a.text ? a : { ...a, text }; });
+    richCache.set(acts, r);
+  }
+  return r;
+}
+
+export const DEFAULT_QUADRANTS = ['gold', 'red', 'blue', 'green'];
+// A game has as many spheres as players (Cory, 2026-10-15: "there are only X number of spheres for X number of
+// players"), so every round-I space still fills (3 per sphere, 3 minions each). Classic (Cory, 2026-10-31, decisions
+// ae4897bd): four seats play Blue (market), Red, Yellow and Purple; three drop Purple; two drop Yellow too. Gold goes to
+// the backlog (kept registered for old saves and replays, off the picker); Silver takes Purple's place once it has
+// members. Five and six seats add Green (echo), then Magenta (thieves) (Claude, under Cory's go-with-your-gut: the
+// next real 2.0 colors, until he names the big-table colors).
+export const CLASSIC = ['market', 'red', 'yellow', 'purple', 'echo', 'thieves'];
+export const MAX_PLAYERS = CLASSIC.length;
+export const classicFor = n => CLASSIC.slice(0, Math.max(2, Math.min(MAX_PLAYERS, n)));
+/** The engine's default table for n seats: the plain 4-sphere test table, or the old test table's first n when fewer
+ *  play (the plain Blue and Green hand out each other's colors, so they don't split). */
+// (the engine's own default stays the long-tested table the tests and sims are written against; players get Classic
+// from the setup page)
+const TEST_TABLE = ['gold', 'red', 'market', 'echo', 'purple', 'yellow'];
+export const defaultQuadrants = n => (n === 4 ? [...DEFAULT_QUADRANTS] : TEST_TABLE.slice(0, Math.max(2, Math.min(MAX_PLAYERS, n))));
+// Guest members' stand-in sphere: colorless, never on a table, so no color counts them and no sphere scores them.
+const GUEST_QUADRANT = Object.freeze({ id: 'guest', name: 'Grey', resource: 'colorless', members: [], actions: [] });
+export const quadrant = id => {
+  if (id === 'guest') return GUEST_QUADRANT;
+  const q = QUADRANTS[id];
+  if (!q) throw new Error(`Unknown quadrant: ${id}`);
+  return q;
+};
+export const defById = id => {
+  const d = DEFS[id];
+  if (!d) throw new Error(`Unknown member: ${id}`);
+  return d;
+};
+// "You'd get" only (preview.js): a pile card nobody may look at runs as this blank, so Walk-In's hover never names the
+// face-down top card or counts its worth (picky bot, Nov 4). In no deck, sphere or guest list: never dealt. Its price is
+// out of reach, so a dry run never has anyone buy a card that only a refill would show.
+export const FACE_DOWN = 'preview.facedown';
+DEFS[FACE_DOWN] = { id: FACE_DOWN, key: 'facedown', name: 'a face-down member', quadrant: 'guest', s: 0, w: 99, f: 1, n: 1, copies: 1, round: 1, text: '' };
+export const handlerById = id => {
+  const h = HANDLERS[id];
+  if (!h) throw new Error(`Unknown handler: ${id}`);
+  return h;
+};
+export const allQuadrantIds = () => Object.keys(QUADRANTS);
+
+// Guest members: cards that join the shared deck without a quadrant of their own (the rule-benders, while they
+// wait for a sphere). Guests are colorless (Cory, 2026-10-18: "neutral cards stay neutral"): no sphere counts them,
+// and their whole cost is paid in any colors. def.lean only says which sphere a guest was first drawn for (records
+// and notes). Ids are "<group>.<key>". A table with the rule flag rules.guests off leaves them out.
+const GUESTS = [];
+export function registerGuests(group, defs, handlers = {}) {
+  for (const [k, fn] of Object.entries(handlers)) HANDLERS[`${group}.${k}`] = fn;
+  for (const def of defs) {
+    def.id = `${group}.${def.key}`;
+    def.quadrant = 'guest';
+    if (def.s) { def.w = (def.w || 0) + def.s; def.s = 0; }
+    addWild(def);
+    asFollowers(def);
+    asMembers(def);
+    def.copies = def.copies || 1;
+    def.guest = group;
+    DEFS[def.id] = def;
+    if (!GUESTS.includes(def)) GUESTS.push(def);
+  }
+}
+export const guestMembers = () => GUESTS.filter(d => !d.retired); // a retired guest (the old Extra Hand) is a test fixture only
+/** Every guest, retired ones and idea-pipeline candidates included (scripts/lib/pool-rotate.mjs picks candidates here). */
+export const allGuests = () => [...GUESTS];
+
+// Every sphere, so a table can pick any four. A sphere only acts when it's on the table: its scoring, hooks
+// and guards are looked up through state.quadrants, and its members only enter decks that include it.
+for (const q of [purple, silver, yellow]) registerQuadrant(q);
+installMarket();
+installThieves();
+installTrading();
+installBenders();
+// Echo goes last: it wraps every action registered so far to record what spaces gave. Gate the wrapper so a
+// table without Echo runs each action's own resolve and its state never grows an echo ledger.
+installEcho();
+for (const q of Object.values(QUADRANTS)) for (const a of q.actions) {
+  const w = a.resolve;
+  if (!w.__echo || w.__gated) continue;
+  const gated = function (ctx, p) { return (ctx.state.quadrants.includes('echo') ? w : w.__orig).call(this, ctx, p); };
+  Object.assign(gated, { __echo: true, __gated: true, __orig: w.__orig });
+  a.resolve = gated;
+}

@@ -1,0 +1,35 @@
+# Red: the live 10-card deck and spaces (Nov 8)
+
+- space (round I) **Tryout**: "Use the On Recruit effect of a shop member; it stays in the shop. +2 red."
+  - Cory's mark: fine: don’t like that overlaps with green
+- space (round I) **Gather**: "+2 red in round I, +3 in round II, +4 in round III. This turn, if you recruit a member, +1 follower in round I, +2 in round II, +3 in round III."
+  - Cory's mark: fine: Not the most interesting
+- space (round I) **Walk-In**: "Recruit the top member of the pile. Each rival +1 red. +1 red."
+  - Cory's mark: weak: I don’t want randomness involved.
+- space (round II) **Promote**: "Swap any member with one in another cult or the shop costing up to 3 more. +3 red."
+  - Cory's mark: star: I like
+- space (round II) **Demote**: "Swap any member with one in another cult or the shop costing up to 3 less. +3 red."
+  - Cory's mark: star: good, fun to move members around. lots of agency
+- space (round III) **Initiation**: "Recruit a member in the shop costing 10 or less, for free. +1 red."
+  - Cory's mark: star: simple. might need a little balancing on the price cap
+- member (price 7) **Body Snatchers**: "Round Start: swap one of your members with any rival's member."
+  - Cory's mark: weak: would be way better id it swapped for any. do we already have one like that? like it can just swap for any. and then make it mid priced. but have it do beginning of turn. this could be a really fun one
+- member (price 5) **Seat Filler**: "Round Start: you may give this to the shop and recruit a shop member costing up to 3 more, for free."
+  - Cory's mark: star: needs to say discard. but this is good/interesting
+- member (price 11) **Mentor**: "On Recruit: recruit the cheapest member in the shop."
+  - Cory's mark: weak: too hard to build around
+- member (price 10) **Proselytizers**: "Whenever you recruit, +1 follower."
+- member (price 14) **Mob**: "Round End: +2 followers per rival with fewer red members than you."
+  - Cory's mark: weak: don’t like this
+- member (price 8) **Recruiter**: "Whenever you recruit a member, +1 red."
+  - Cory's mark: fine: yes
+- member (price 10) **Patriarch**: "Game End: +1 follower per 2 members you have."
+  - Cory's mark: star: yeah
+- member (price 6) **Foster Parents**: "Whenever a member joins your cult from a rival’s, +2 followers."
+  - Cory's mark: star: Core red. only downside is no real overlap with colors
+- member (price 5) **Deprogrammers**: "Whenever you take a rival’s member out of their cult, they lose 1 follower."
+  - Cory's mark: weak: I don’t like it
+- member (price 9) **Panel**: "On Use, once per round: promote or demote another of your members."
+  - Cory's mark: star: usable by anybody.
+- member (price 5) **Loyalists**: "Your other members can’t be swapped."
+  - Cory's mark: star: they’ve grown on me

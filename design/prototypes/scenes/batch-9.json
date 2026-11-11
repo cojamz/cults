@@ -1,0 +1,6 @@
+[
+ {"id": "yellow.ringleader", "name": "Meddler", "sphere": "yellow", "n": 1, "text": "On Recruit: change 1 of each rival's resources one for one. +1 follower per rival changed."},
+ {"id": "trading.shopkeeper", "name": "Landlord", "sphere": "white", "n": 1, "text": "On Recruit: +2 white. Round Start: +2 white."},
+ {"id": "trading.heirs", "name": "Misers", "sphere": "white", "n": 2, "text": "Game End: +1 follower per 2 white you hold."},
+ {"id": "red.recruitbonus", "name": "Greeters", "sphere": "red", "n": 2, "text": "Your On Recruits also give +1 of that member's color."}
+]

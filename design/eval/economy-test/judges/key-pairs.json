@@ -1,0 +1,146 @@
+{
+ "P1": {
+  "persona": "cory",
+  "first": "today",
+  "second": "fol 5\u21926 10\u219213",
+  "game": "game1.md"
+ },
+ "P2": {
+  "persona": "veteran",
+  "first": "today",
+  "second": "fol 5\u21926 10\u219213",
+  "game": "game2.md"
+ },
+ "P3": {
+  "persona": "casual",
+  "first": "today",
+  "second": "fol 5\u21926 10\u219213",
+  "game": "game1.md"
+ },
+ "P4": {
+  "persona": "cory",
+  "first": "today",
+  "second": "up4",
+  "game": "game1.md"
+ },
+ "P5": {
+  "persona": "veteran",
+  "first": "today",
+  "second": "up4",
+  "game": "game2.md"
+ },
+ "P6": {
+  "persona": "casual",
+  "first": "today",
+  "second": "up4",
+  "game": "game1.md"
+ },
+ "P7": {
+  "persona": "cory",
+  "first": "up5 color2 space+1",
+  "second": "today",
+  "game": "game1.md"
+ },
+ "P8": {
+  "persona": "veteran",
+  "first": "up5 color2 space+1",
+  "second": "today",
+  "game": "game2.md"
+ },
+ "P9": {
+  "persona": "casual",
+  "first": "today",
+  "second": "up5 color2 space+1",
+  "game": "game1.md"
+ },
+ "P10": {
+  "persona": "cory",
+  "first": "today",
+  "second": "space-1",
+  "game": "game1.md"
+ },
+ "P11": {
+  "persona": "veteran",
+  "first": "today",
+  "second": "space-1",
+  "game": "game2.md"
+ },
+ "P12": {
+  "persona": "casual",
+  "first": "space-1",
+  "second": "today",
+  "game": "game1.md"
+ },
+ "P13": {
+  "persona": "cory",
+  "first": "up5 fol 5\u21926 10\u219213",
+  "second": "today",
+  "game": "game1.md"
+ },
+ "P14": {
+  "persona": "veteran",
+  "first": "up5 fol 5\u21926 10\u219213",
+  "second": "today",
+  "game": "game2.md"
+ },
+ "P15": {
+  "persona": "casual",
+  "first": "today",
+  "second": "up5 fol 5\u21926 10\u219213",
+  "game": "game1.md"
+ },
+ "P16": {
+  "persona": "cory",
+  "first": "fol 5\u21926 10\u219213",
+  "second": "today",
+  "game": "game3.md"
+ },
+ "P17": {
+  "persona": "veteran",
+  "first": "fol 5\u21926 10\u219213",
+  "second": "today",
+  "game": "game3.md"
+ },
+ "P18": {
+  "persona": "casual",
+  "first": "fol 5\u21926 10\u219213",
+  "second": "today",
+  "game": "game3.md"
+ },
+ "P19": {
+  "persona": "cory",
+  "first": "today",
+  "second": "up4",
+  "game": "game3.md"
+ },
+ "P20": {
+  "persona": "veteran",
+  "first": "up4",
+  "second": "today",
+  "game": "game3.md"
+ },
+ "P21": {
+  "persona": "casual",
+  "first": "today",
+  "second": "up4",
+  "game": "game3.md"
+ },
+ "P22": {
+  "persona": "cory",
+  "first": "today",
+  "second": "up5 color2 space+1",
+  "game": "game3.md"
+ },
+ "P23": {
+  "persona": "veteran",
+  "first": "up5 color2 space+1",
+  "second": "today",
+  "game": "game3.md"
+ },
+ "P24": {
+  "persona": "casual",
+  "first": "today",
+  "second": "up5 color2 space+1",
+  "game": "game3.md"
+ }
+}

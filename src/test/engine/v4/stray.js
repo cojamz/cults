@@ -1,0 +1,28 @@
+// Members that moved sphere (Doppelganger went Red → Green, Cory 2026-10-15): the card scenes written for the old
+// table still deal them, so a scene whose spheres don't include the card's own gets a copy of it made up on the spot.
+// the retired Extra Hand (never dealt) too, and the four cards retired Nov 3 (Hostesses, Misers, Spoilsport and Body
+// Snatchers took their places): their rules stay, and the scenes that use them as fixtures still run
+export const STRAYS = new Set(['echo.doppel', 'benders.extrahand3', 'benders.bigspender1',
+  'red.twins', 'trading.exporter', 'silver.giftwrapper', 'benders.scout',
+  'echo.muse', 'silver.collector', 'thieves.kingpin', 'silver.guest', // and the four retired later Nov 3 (Impersonator, Creditors, Kidnapper, Godparent)
+  'purple.clockmaker', 'thieves.sticky', 'market.connoisseur', 'benders.hr', // and the four retired Nov 4 (Night Watch, Second-Story Man, Hawker, Sore Loser)
+  'red.recruitbonus', // Greeters, retired Nov 4 (Foster Parents)
+  'yellow.tastemaker', // Tastemaker, retired Nov 4 (Jack-of-All-Trades)
+  'silver.polisher', // Polisher, retired Nov 4 (Guest of Honor)
+  'silver.philanthropists', // Philanthropist, retired Nov 4 (Charity Ball)
+  'yellow.harmonist', // Harmonist, retired Nov 4 (Seamstress)
+  'yellow.customs', // Customs Officer, retired Nov 4 (Duty Collector)
+  'echo.chronicler', // Chronicler, retired Nov 4 (Encore, Cory's call)
+  'echo.evergreen', // Busker, retired Nov 4 (Song Request)
+  'trading.shopkeeper', // Landlord, retired Nov 4 (Barker, Cory's extra follower buy)
+  'echo.roadie', // Roadie (On Recruit / Round Start green), retired Nov 4 (Roadie reworked: green on every copy)
+  'echo.roadie9', // Roadie reworked, retired Nov 5 (Copyist)
+  'purple.nightwatch', // Night Watch, retired Nov 6 (Cory: makes no sense)
+  'purple.nightowl', // Night Owls, retired Nov 6 (Cory: thought it was replaced)
+  'benders.victors', // Victors, retired Nov 6 (Cory: "Victors is bad")
+  'red.patriarch']); // Patriarch, retired Nov 11 (Clan)
+export function stray(s, def) {
+  const uid = Math.max(...Object.keys(s.cards).map(Number)) + 1;
+  s.cards[uid] = { uid, def };
+  return uid;
+}

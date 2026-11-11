@@ -1,0 +1,18 @@
+# Purple: the live 10-card deck and spaces (Nov 8)
+
+- space (round I) **Sleep In**: "+4 purple in round I, +5 in round II, +6 in round III. Take the Goes Last token: your next minion is placed after everyone else’s."
+- space (round I) **Hold Up**: "+2 purple in round I, +3 in round II, +4 in round III. Whoever’s turn is next skips it, even yours."
+- space (round I) **Right Away**: "+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one."
+- space (round III) **Overtime**: "+4 purple. +1 minion this round. Take the Goes Last token: that minion is placed after everyone else’s."
+- space (round II) **Last Call**: "+1 purple. +1 follower and +1 purple per minion you have left. Take the Goes Last token: your other minions are placed after everyone else’s."
+- space (round II) **Crunch Time**: "+2 purple. Your next two turns come right after this one."
+- member (price 8) **Courier**: "Whenever you take a consecutive turn, +1 of each other color."
+- member (price 6) **Bouncers**: "On Recruit: the next two rivals’ turns are skipped."
+- member (price 7) **Gossip**: "Whenever a player’s turn is skipped, +1 follower."
+- member (price 6) **Timekeeper**: "Game End: +1 follower per purple member you have."
+- member (price 7) **Lookouts**: "Whenever you take a consecutive turn, +2 followers."
+- member (price 7) **Sleepyheads**: "Whenever you take the Goes Last token, +3 followers."
+- member (price 6) **Night Managers**: "Round End: if you placed the round’s last minion, +1 follower per purple member you have."
+- member (price 7) **Closer**: "When you place the last minion of the round: +4 purple."
+- member (price 7) **Hot Streak**: "On Use, once per game: +3 followers per turn in a row you’ve taken just before this one."
+- member (price 6) **Picket Line**: "Whenever a rival takes a Purple space, +1 purple."

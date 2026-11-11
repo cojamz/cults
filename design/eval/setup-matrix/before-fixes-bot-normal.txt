@@ -1,0 +1,882 @@
+ok    2p deck10 swap:off contests:printed shop:deck late:2 classic[market,red] 277ms swaps 0/0 pileBuys 0
+ok    2p deck10 swap:off contests:printed shop:deck late:2 random[thieves,red] 208ms swaps 0/0 pileBuys 0
+ok    2p deck10 swap:off contests:printed shop:deck late:3 classic[market,red] 278ms swaps 0/0 pileBuys 0
+ok    2p deck10 swap:off contests:printed shop:deck late:3 random[market,trading] 114ms swaps 0/0 pileBuys 0
+FLAG  2p deck10 swap:off contests:printed shop:grey late:2 classic[yellow,red] 369ms swaps 0/0 pileBuys 12
+       retired member dealt: Scouts (benders.scout)
+FAIL  2p deck10 swap:off contests:printed shop:grey late:2 random[trading,red]
+       [trading,red] bot n=2 seed=1006: shop row 8 with pile 13 (round 2, move 28)
+FLAG  2p deck10 swap:off contests:printed shop:grey late:3 classic[yellow,red] 345ms swaps 0/0 pileBuys 10
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  2p deck10 swap:off contests:printed shop:grey late:3 random[silver,red] 232ms swaps 0/0 pileBuys 12
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    2p deck10 swap:off contests:printed shop:all late:2 classic[yellow,red] 640ms swaps 0/0 pileBuys 33
+ok    2p deck10 swap:off contests:printed shop:all late:2 random[red,silver] 234ms swaps 0/0 pileBuys 26
+FLAG  2p deck10 swap:off contests:printed shop:all late:3 classic[yellow,red] 171ms swaps 0/0 pileBuys 26
+       round III member out before round III: Big Tent (a pile)
+       round III member out before round III: Mob (a pile)
+       round III member out before round III: Caravan (a pile)
+       round III member out before round III: Patriarch (a pile)
+FLAG  2p deck10 swap:off contests:printed shop:all late:3 random[thieves,red] 210ms swaps 0/0 pileBuys 26
+       round III member out before round III: Double Agent (a pile)
+       round III member out before round III: Mentor & Protégés (a pile)
+       round III member out before round III: Extortionist (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    2p deck10 swap:off contests:byColor shop:deck late:2 classic[market,red] 200ms swaps 0/0 pileBuys 0
+ok    2p deck10 swap:off contests:byColor shop:deck late:2 random[echo,red] 987ms swaps 0/0 pileBuys 0
+ok    2p deck10 swap:off contests:byColor shop:deck late:3 classic[market,red] 148ms swaps 0/0 pileBuys 0
+ok    2p deck10 swap:off contests:byColor shop:deck late:3 random[red,yellow] 116ms swaps 0/0 pileBuys 0
+FLAG  2p deck10 swap:off contests:byColor shop:grey late:2 classic[yellow,red] 276ms swaps 0/0 pileBuys 10
+       retired member dealt: Scouts (benders.scout)
+FAIL  2p deck10 swap:off contests:byColor shop:grey late:2 random[yellow,red]
+       [yellow,red] bot n=2 seed=1018: shop row 8 with pile 12 (round 2, move 54)
+FLAG  2p deck10 swap:off contests:byColor shop:grey late:3 classic[yellow,red] 246ms swaps 0/0 pileBuys 10
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  2p deck10 swap:off contests:byColor shop:grey late:3 random[purple,thieves] 169ms swaps 0/0 pileBuys 10
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    2p deck10 swap:off contests:byColor shop:all late:2 classic[yellow,red] 175ms swaps 0/0 pileBuys 25
+ok    2p deck10 swap:off contests:byColor shop:all late:2 random[red,thieves] 479ms swaps 0/0 pileBuys 23
+FLAG  2p deck10 swap:off contests:byColor shop:all late:3 classic[yellow,red] 191ms swaps 0/0 pileBuys 27
+       round III member out before round III: Tastemaker (a pile)
+       round III member out before round III: Mob (a pile)
+       round III member out before round III: Big Tent (a pile)
+       round III member out before round III: Patriarch (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  2p deck10 swap:off contests:byColor shop:all late:3 random[thieves,trading] 71ms swaps 0/0 pileBuys 10
+       round III member out before round III: Grifter (a pile)
+       round III member out before round III: Shoplifter (a pile)
+       round III member out before round III: Misers (a pile)
+ok    2p deck10 swap:on contests:printed shop:deck late:2 classic[market,red] 409ms swaps 11/26 pileBuys 0
+ok    2p deck10 swap:on contests:printed shop:deck late:2 random[echo,silver] 295ms swaps 4/21 pileBuys 0
+ok    2p deck10 swap:on contests:printed shop:deck late:3 classic[market,red] 621ms swaps 14/26 pileBuys 0
+ok    2p deck10 swap:on contests:printed shop:deck late:3 random[yellow,market] 391ms swaps 10/24 pileBuys 0
+FLAG  2p deck10 swap:on contests:printed shop:grey late:2 classic[yellow,red] 428ms swaps 7/24 pileBuys 10
+       retired member dealt: Scouts (benders.scout)
+FLAG  2p deck10 swap:on contests:printed shop:grey late:2 random[trading,red] 296ms swaps 7/24 pileBuys 11
+       retired member dealt: Scouts (benders.scout)
+FAIL  2p deck10 swap:on contests:printed shop:grey late:3 classic[yellow,red]
+       [yellow,red] bot n=2 seed=1031: shop row 8 with pile 1 (round 2, move 37)
+FLAG  2p deck10 swap:on contests:printed shop:grey late:3 random[echo,silver] 459ms swaps 5/22 pileBuys 7
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    2p deck10 swap:on contests:printed shop:all late:2 classic[yellow,red] 293ms swaps 8/23 pileBuys 23
+ok    2p deck10 swap:on contests:printed shop:all late:2 random[yellow,red] 266ms swaps 4/23 pileBuys 27
+FLAG  2p deck10 swap:on contests:printed shop:all late:3 classic[yellow,red] 242ms swaps 8/25 pileBuys 39
+       round III member out before round III: Dyer (a pile)
+       round III member out before round III: Harmonist (a pile)
+       round III member out before round III: Mentor & Protégés (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  2p deck10 swap:on contests:printed shop:all late:3 random[purple,red] 1242ms swaps 1/20 pileBuys 31
+       round III member out before round III: Proselytizers (a pile)
+       round III member out before round III: Panel (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    2p deck10 swap:on contests:byColor shop:deck late:2 classic[market,red] 341ms swaps 10/27 pileBuys 0
+ok    2p deck10 swap:on contests:byColor shop:deck late:2 random[purple,silver] 192ms swaps 6/22 pileBuys 0
+ok    2p deck10 swap:on contests:byColor shop:deck late:3 classic[market,red] 671ms swaps 10/30 pileBuys 0
+ok    2p deck10 swap:on contests:byColor shop:deck late:3 random[silver,trading] 146ms swaps 8/21 pileBuys 0
+FLAG  2p deck10 swap:on contests:byColor shop:grey late:2 classic[yellow,red] 509ms swaps 15/23 pileBuys 4
+       retired member dealt: Scouts (benders.scout)
+FAIL  2p deck10 swap:on contests:byColor shop:grey late:2 random[red,purple]
+       [red,purple] bot n=2 seed=1042: shop row 8 with pile 12 (round 2, move 30)
+FAIL  2p deck10 swap:on contests:byColor shop:grey late:3 classic[yellow,red]
+       [yellow,red] bot n=2 seed=1043: shop row 9 with pile 8 (round 3, move 95)
+FAIL  2p deck10 swap:on contests:byColor shop:grey late:3 random[trading,yellow]
+       [trading,yellow] bot n=2 seed=1044: no end after 6000 moves (round 1, move 6000)
+ok    2p deck10 swap:on contests:byColor shop:all late:2 classic[yellow,red] 321ms swaps 5/23 pileBuys 28
+ok    2p deck10 swap:on contests:byColor shop:all late:2 random[trading,silver] 113ms swaps 3/21 pileBuys 10
+FLAG  2p deck10 swap:on contests:byColor shop:all late:3 classic[yellow,red] 220ms swaps 4/23 pileBuys 27
+       round III member out before round III: Caravan (a pile)
+       round III member out before round III: Mob (a pile)
+       round III member out before round III: Tastemaker (a pile)
+       round III member out before round III: Proselytizers (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  2p deck10 swap:on contests:byColor shop:all late:3 random[echo,purple] 682ms swaps 6/23 pileBuys 18
+       round III member out before round III: Gossip (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    2p deck15 swap:off contests:printed shop:deck late:2 classic[market,red] 305ms swaps 0/0 pileBuys 0
+ok    2p deck15 swap:off contests:printed shop:deck late:2 random[purple,trading] 61ms swaps 0/0 pileBuys 0
+ok    2p deck15 swap:off contests:printed shop:deck late:3 classic[market,red] 254ms swaps 0/0 pileBuys 0
+ok    2p deck15 swap:off contests:printed shop:deck late:3 random[purple,echo] 124ms swaps 0/0 pileBuys 0
+FAIL  2p deck15 swap:off contests:printed shop:grey late:2 classic[yellow,red]
+       [yellow,red] bot n=2 seed=1053: shop row 8 with pile 27 (round 2, move 55)
+FLAG  2p deck15 swap:off contests:printed shop:grey late:2 random[silver,yellow] 175ms swaps 0/0 pileBuys 8
+       retired member dealt: Scouts (benders.scout)
+FLAG  2p deck15 swap:off contests:printed shop:grey late:3 classic[yellow,red] 307ms swaps 0/0 pileBuys 13
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  2p deck15 swap:off contests:printed shop:grey late:3 random[echo,purple] 160ms swaps 0/0 pileBuys 11
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    2p deck15 swap:off contests:printed shop:all late:2 classic[yellow,red] 185ms swaps 0/0 pileBuys 22
+ok    2p deck15 swap:off contests:printed shop:all late:2 random[red,echo] 1949ms swaps 0/0 pileBuys 48
+FLAG  2p deck15 swap:off contests:printed shop:all late:3 classic[yellow,red] 235ms swaps 0/0 pileBuys 22
+       round III member out before round III: Tastemaker (a pile)
+       round III member out before round III: Headhunter (a pile)
+       round III member out before round III: Dyer (a pile)
+       round III member out before round III: Patriarch (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  2p deck15 swap:off contests:printed shop:all late:3 random[yellow,purple] 123ms swaps 0/0 pileBuys 22
+       round III member out before round III: Big Tent (a pile)
+       round III member out before round III: Tastemaker (a pile)
+       round III member out before round III: Go-Getter (a pile)
+ok    2p deck15 swap:off contests:byColor shop:deck late:2 classic[market,red] 518ms swaps 0/0 pileBuys 0
+ok    2p deck15 swap:off contests:byColor shop:deck late:2 random[red,silver] 164ms swaps 0/0 pileBuys 0
+ok    2p deck15 swap:off contests:byColor shop:deck late:3 classic[market,red] 352ms swaps 0/0 pileBuys 0
+ok    2p deck15 swap:off contests:byColor shop:deck late:3 random[silver,thieves] 103ms swaps 0/0 pileBuys 0
+FAIL  2p deck15 swap:off contests:byColor shop:grey late:2 classic[yellow,red]
+       [yellow,red] bot n=2 seed=1065: shop row 8 with pile 25 (round 2, move 65)
+FLAG  2p deck15 swap:off contests:byColor shop:grey late:2 random[thieves,red] 208ms swaps 0/0 pileBuys 11
+       retired member dealt: Scouts (benders.scout)
+FAIL  2p deck15 swap:off contests:byColor shop:grey late:3 classic[yellow,red]
+       [yellow,red] bot n=2 seed=1067: shop row 8 with pile 4 (round 2, move 42)
+FLAG  2p deck15 swap:off contests:byColor shop:grey late:3 random[thieves,trading] 125ms swaps 0/0 pileBuys 8
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    2p deck15 swap:off contests:byColor shop:all late:2 classic[yellow,red] 238ms swaps 0/0 pileBuys 34
+ok    2p deck15 swap:off contests:byColor shop:all late:2 random[echo,red] 601ms swaps 0/0 pileBuys 50
+FLAG  2p deck15 swap:off contests:byColor shop:all late:3 classic[yellow,red] 229ms swaps 0/0 pileBuys 24
+       round III member out before round III: Spice Route (a pile)
+       round III member out before round III: Headhunter (a pile)
+       round III member out before round III: Big Tent (a pile)
+       round III member out before round III: Mob (a pile)
+FLAG  2p deck15 swap:off contests:byColor shop:all late:3 random[echo,red] 958ms swaps 0/0 pileBuys 45
+       round III member out before round III: Mentor & Protégés (a pile)
+       round III member out before round III: Headhunter (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    2p deck15 swap:on contests:printed shop:deck late:2 classic[market,red] 577ms swaps 13/33 pileBuys 0
+ok    2p deck15 swap:on contests:printed shop:deck late:2 random[red,silver] 200ms swaps 13/24 pileBuys 0
+ok    2p deck15 swap:on contests:printed shop:deck late:3 classic[market,red] 641ms swaps 11/28 pileBuys 0
+ok    2p deck15 swap:on contests:printed shop:deck late:3 random[trading,echo] 109ms swaps 7/20 pileBuys 0
+FLAG  2p deck15 swap:on contests:printed shop:grey late:2 classic[yellow,red] 555ms swaps 8/24 pileBuys 11
+       retired member dealt: Scouts (benders.scout)
+FAIL  2p deck15 swap:on contests:printed shop:grey late:2 random[red,thieves]
+       [red,thieves] bot n=2 seed=1078: shop row 8 with pile 28 (round 2, move 40)
+FAIL  2p deck15 swap:on contests:printed shop:grey late:3 classic[yellow,red]
+       [yellow,red] bot n=2 seed=1079: shop row 8 with pile 6 (round 2, move 40)
+FAIL  2p deck15 swap:on contests:printed shop:grey late:3 random[red,purple]
+       [red,purple] bot n=2 seed=1080: shop row 8 with pile 11 (round 2, move 29)
+ok    2p deck15 swap:on contests:printed shop:all late:2 classic[yellow,red] 5328ms swaps 4/23 pileBuys 40
+ok    2p deck15 swap:on contests:printed shop:all late:2 random[thieves,echo] 509ms swaps 2/16 pileBuys 13
+FLAG  2p deck15 swap:on contests:printed shop:all late:3 classic[yellow,red] 271ms swaps 10/22 pileBuys 22
+       round III member out before round III: Caravan (a pile)
+       round III member out before round III: Proselytizers (a pile)
+       round III member out before round III: Big Tent (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  2p deck15 swap:on contests:printed shop:all late:3 random[thieves,echo] 217ms swaps 4/18 pileBuys 14
+       round III member out before round III: Fixer (a pile)
+       round III member out before round III: Fan Club (a pile)
+       round III member out before round III: Tribute Band (a pile)
+ok    2p deck15 swap:on contests:byColor shop:deck late:2 classic[market,red] 837ms swaps 10/31 pileBuys 0
+ok    2p deck15 swap:on contests:byColor shop:deck late:2 random[market,yellow] 428ms swaps 16/31 pileBuys 0
+ok    2p deck15 swap:on contests:byColor shop:deck late:3 classic[market,red] 408ms swaps 13/26 pileBuys 0
+ok    2p deck15 swap:on contests:byColor shop:deck late:3 random[purple,silver] 188ms swaps 6/25 pileBuys 0
+FAIL  2p deck15 swap:on contests:byColor shop:grey late:2 classic[yellow,red]
+       [yellow,red] bot n=2 seed=1089: shop row 8 with pile 24 (round 2, move 60)
+FLAG  2p deck15 swap:on contests:byColor shop:grey late:2 random[purple,thieves] 302ms swaps 6/24 pileBuys 10
+       retired member dealt: Scouts (benders.scout)
+FAIL  2p deck15 swap:on contests:byColor shop:grey late:3 classic[yellow,red]
+       [yellow,red] bot n=2 seed=1091: shop row 8 with pile 7 (round 2, move 53)
+FLAG  2p deck15 swap:on contests:byColor shop:grey late:3 random[thieves,echo] 346ms swaps 7/22 pileBuys 7
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    2p deck15 swap:on contests:byColor shop:all late:2 classic[yellow,red] 297ms swaps 9/24 pileBuys 17
+ok    2p deck15 swap:on contests:byColor shop:all late:2 random[yellow,red] 216ms swaps 10/23 pileBuys 20
+FLAG  2p deck15 swap:on contests:byColor shop:all late:3 classic[yellow,red] 463ms swaps 5/23 pileBuys 31
+       round III member out before round III: Caravan (a pile)
+       round III member out before round III: Panel (a pile)
+       round III member out before round III: Dyer (a pile)
+FLAG  2p deck15 swap:on contests:byColor shop:all late:3 random[trading,red] 237ms swaps 5/23 pileBuys 31
+       round III member out before round III: Proselytizers (a pile)
+       round III member out before round III: Mentor & Protégés (a pile)
+ok    3p deck10 swap:off contests:printed shop:deck late:2 classic[market,red,yellow] 491ms swaps 0/0 pileBuys 0
+ok    3p deck10 swap:off contests:printed shop:deck late:2 random[trading,market,silver] 217ms swaps 0/0 pileBuys 0
+ok    3p deck10 swap:off contests:printed shop:deck late:3 classic[market,red,yellow] 507ms swaps 0/0 pileBuys 0
+ok    3p deck10 swap:off contests:printed shop:deck late:3 random[yellow,trading,silver] 184ms swaps 0/0 pileBuys 0
+FAIL  3p deck10 swap:off contests:printed shop:grey late:2 classic[purple,red,yellow]
+       [purple,red,yellow] bot n=3 seed=1101: shop row 8 with pile 24 (round 2, move 86)
+FLAG  3p deck10 swap:off contests:printed shop:grey late:2 random[red,thieves,purple] 540ms swaps 0/0 pileBuys 13
+       retired member dealt: Scouts (benders.scout)
+FLAG  3p deck10 swap:off contests:printed shop:grey late:3 classic[purple,red,yellow] 635ms swaps 0/0 pileBuys 14
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FAIL  3p deck10 swap:off contests:printed shop:grey late:3 random[silver,red,thieves]
+       [silver,red,thieves] bot n=3 seed=1104: shop row 8 with pile 4 (round 2, move 70)
+ok    3p deck10 swap:off contests:printed shop:all late:2 classic[purple,red,yellow] 554ms swaps 0/0 pileBuys 33
+ok    3p deck10 swap:off contests:printed shop:all late:2 random[yellow,trading,red] 437ms swaps 0/0 pileBuys 36
+FLAG  3p deck10 swap:off contests:printed shop:all late:3 classic[purple,red,yellow] 375ms swaps 0/0 pileBuys 31
+       round III member out before round III: Tastemaker (a pile)
+FLAG  3p deck10 swap:off contests:printed shop:all late:3 random[silver,trading,yellow] 316ms swaps 0/0 pileBuys 21
+       round III member out before round III: Debt Collectors (a pile)
+       round III member out before round III: Harmonist (a pile)
+ok    3p deck10 swap:off contests:byColor shop:deck late:2 classic[market,red,yellow] 779ms swaps 0/0 pileBuys 0
+ok    3p deck10 swap:off contests:byColor shop:deck late:2 random[echo,yellow,red] 1861ms swaps 0/0 pileBuys 0
+ok    3p deck10 swap:off contests:byColor shop:deck late:3 classic[market,red,yellow] 580ms swaps 0/0 pileBuys 0
+ok    3p deck10 swap:off contests:byColor shop:deck late:3 random[yellow,thieves,market] 350ms swaps 0/0 pileBuys 0
+FLAG  3p deck10 swap:off contests:byColor shop:grey late:2 classic[purple,red,yellow] 655ms swaps 0/0 pileBuys 16
+       retired member dealt: Scouts (benders.scout)
+FLAG  3p deck10 swap:off contests:byColor shop:grey late:2 random[silver,red,thieves] 612ms swaps 0/0 pileBuys 13
+       retired member dealt: Scouts (benders.scout)
+FAIL  3p deck10 swap:off contests:byColor shop:grey late:3 classic[purple,red,yellow]
+       [purple,red,yellow] bot n=3 seed=1115: shop row 8 with pile 6 (round 2, move 58)
+FLAG  3p deck10 swap:off contests:byColor shop:grey late:3 random[yellow,silver,thieves] 390ms swaps 0/0 pileBuys 9
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    3p deck10 swap:off contests:byColor shop:all late:2 classic[purple,red,yellow] 466ms swaps 0/0 pileBuys 34
+ok    3p deck10 swap:off contests:byColor shop:all late:2 random[thieves,red,trading] 411ms swaps 0/0 pileBuys 30
+FLAG  3p deck10 swap:off contests:byColor shop:all late:3 classic[purple,red,yellow] 6874ms swaps 0/0 pileBuys 38
+       round III member out before round III: Panel (a pile)
+       round III member out before round III: Dyer (a pile)
+FLAG  3p deck10 swap:off contests:byColor shop:all late:3 random[silver,echo,yellow] 514ms swaps 0/0 pileBuys 25
+       round III member out before round III: High Society (a pile)
+       round III member out before round III: Doppelganger (a pile)
+       round III member out before round III: Tastemaker (a pile)
+ok    3p deck10 swap:on contests:printed shop:deck late:2 classic[market,red,yellow] 537ms swaps 15/35 pileBuys 0
+ok    3p deck10 swap:on contests:printed shop:deck late:2 random[purple,silver,thieves] 406ms swaps 9/32 pileBuys 0
+ok    3p deck10 swap:on contests:printed shop:deck late:3 classic[market,red,yellow] 846ms swaps 14/33 pileBuys 0
+ok    3p deck10 swap:on contests:printed shop:deck late:3 random[yellow,purple,silver] 416ms swaps 9/37 pileBuys 0
+FAIL  3p deck10 swap:on contests:printed shop:grey late:2 classic[purple,red,yellow]
+       [purple,red,yellow] bot n=3 seed=1125: shop row 8 with pile 24 (round 2, move 87)
+FAIL  3p deck10 swap:on contests:printed shop:grey late:2 random[red,trading,echo]
+       [red,trading,echo] bot n=3 seed=1126: shop row 8 with pile 24 (round 2, move 82)
+FLAG  3p deck10 swap:on contests:printed shop:grey late:3 classic[purple,red,yellow] 842ms swaps 9/40 pileBuys 13
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FAIL  3p deck10 swap:on contests:printed shop:grey late:3 random[thieves,purple,red]
+       [thieves,purple,red] bot n=3 seed=1128: shop row 9 with pile 20 (round 3, move 187)
+ok    3p deck10 swap:on contests:printed shop:all late:2 classic[purple,red,yellow] 5525ms swaps 7/34 pileBuys 42
+ok    3p deck10 swap:on contests:printed shop:all late:2 random[thieves,red,yellow] 2336ms swaps 13/32 pileBuys 34
+FLAG  3p deck10 swap:on contests:printed shop:all late:3 classic[purple,red,yellow] 806ms swaps 10/35 pileBuys 32
+       round III member out before round III: Mob (a pile)
+       round III member out before round III: Tastemaker (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    3p deck10 swap:on contests:printed shop:all late:3 random[echo,purple,red] 593ms swaps 3/33 pileBuys 34
+ok    3p deck10 swap:on contests:byColor shop:deck late:2 classic[market,red,yellow] 1078ms swaps 26/43 pileBuys 0
+ok    3p deck10 swap:on contests:byColor shop:deck late:2 random[purple,trading,thieves] 318ms swaps 12/28 pileBuys 0
+ok    3p deck10 swap:on contests:byColor shop:deck late:3 classic[market,red,yellow] 1365ms swaps 19/39 pileBuys 0
+ok    3p deck10 swap:on contests:byColor shop:deck late:3 random[thieves,trading,market] 326ms swaps 14/32 pileBuys 0
+FLAG  3p deck10 swap:on contests:byColor shop:grey late:2 classic[purple,red,yellow] 1248ms swaps 19/39 pileBuys 9
+       retired member dealt: Scouts (benders.scout)
+FLAG  3p deck10 swap:on contests:byColor shop:grey late:2 random[trading,red,silver] 855ms swaps 17/35 pileBuys 8
+       retired member dealt: Scouts (benders.scout)
+FAIL  3p deck10 swap:on contests:byColor shop:grey late:3 classic[purple,red,yellow]
+       [purple,red,yellow] bot n=3 seed=1139: shop row 9 with pile 17 (round 3, move 126)
+FAIL  3p deck10 swap:on contests:byColor shop:grey late:3 random[purple,red,yellow]
+       [purple,red,yellow] bot n=3 seed=1140: shop row 9 with pile 14 (round 3, move 137)
+ok    3p deck10 swap:on contests:byColor shop:all late:2 classic[purple,red,yellow] 675ms swaps 14/35 pileBuys 32
+ok    3p deck10 swap:on contests:byColor shop:all late:2 random[silver,trading,red] 402ms swaps 12/34 pileBuys 22
+FLAG  3p deck10 swap:on contests:byColor shop:all late:3 classic[purple,red,yellow] 598ms swaps 14/34 pileBuys 26
+       round III member out before round III: Gossip (a pile)
+       round III member out before round III: Mob (a pile)
+       round III member out before round III: Harmonist (a pile)
+FLAG  3p deck10 swap:on contests:byColor shop:all late:3 random[thieves,purple,trading] 460ms swaps 7/31 pileBuys 21
+       round III member out before round III: Shoplifter (a pile)
+       round III member out before round III: Gossip (a pile)
+       round III member out before round III: Hoarder (a pile)
+ok    3p deck15 swap:off contests:printed shop:deck late:2 classic[market,red,yellow] 600ms swaps 0/0 pileBuys 0
+ok    3p deck15 swap:off contests:printed shop:deck late:2 random[yellow,red,thieves] 376ms swaps 0/0 pileBuys 0
+ok    3p deck15 swap:off contests:printed shop:deck late:3 classic[market,red,yellow] 715ms swaps 0/0 pileBuys 0
+ok    3p deck15 swap:off contests:printed shop:deck late:3 random[trading,red,purple] 214ms swaps 0/0 pileBuys 0
+FLAG  3p deck15 swap:off contests:printed shop:grey late:2 classic[purple,red,yellow] 572ms swaps 0/0 pileBuys 15
+       retired member dealt: Scouts (benders.scout)
+FLAG  3p deck15 swap:off contests:printed shop:grey late:2 random[silver,echo,red] 2409ms swaps 0/0 pileBuys 19
+       retired member dealt: Scouts (benders.scout)
+FAIL  3p deck15 swap:off contests:printed shop:grey late:3 classic[purple,red,yellow]
+       [purple,red,yellow] bot n=3 seed=1151: shop row 8 with pile 10 (round 2, move 94)
+FLAG  3p deck15 swap:off contests:printed shop:grey late:3 random[purple,echo,silver] 595ms swaps 0/0 pileBuys 14
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    3p deck15 swap:off contests:printed shop:all late:2 classic[purple,red,yellow] 1179ms swaps 0/0 pileBuys 32
+ok    3p deck15 swap:off contests:printed shop:all late:2 random[red,echo,trading] 857ms swaps 0/0 pileBuys 30
+FLAG  3p deck15 swap:off contests:printed shop:all late:3 classic[purple,red,yellow] 440ms swaps 0/0 pileBuys 24
+       round III member out before round III: Night Owls (a pile)
+       round III member out before round III: Headhunter (a pile)
+       round III member out before round III: Matchmaker (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  3p deck15 swap:off contests:printed shop:all late:3 random[red,trading,echo] 24062ms swaps 0/0 pileBuys 43
+       round III member out before round III: Panel (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    3p deck15 swap:off contests:byColor shop:deck late:2 classic[market,red,yellow] 1279ms swaps 0/0 pileBuys 0
+ok    3p deck15 swap:off contests:byColor shop:deck late:2 random[echo,thieves,yellow] 672ms swaps 0/0 pileBuys 0
+ok    3p deck15 swap:off contests:byColor shop:deck late:3 classic[market,red,yellow] 986ms swaps 0/0 pileBuys 0
+ok    3p deck15 swap:off contests:byColor shop:deck late:3 random[red,thieves,purple] 348ms swaps 0/0 pileBuys 0
+FAIL  3p deck15 swap:off contests:byColor shop:grey late:2 classic[purple,red,yellow]
+       [purple,red,yellow] bot n=3 seed=1161: shop row 9 with pile 24 (round 3, move 188)
+FLAG  3p deck15 swap:off contests:byColor shop:grey late:2 random[purple,echo,silver] 588ms swaps 0/0 pileBuys 11
+       retired member dealt: Scouts (benders.scout)
+FAIL  3p deck15 swap:off contests:byColor shop:grey late:3 classic[purple,red,yellow]
+       [purple,red,yellow] bot n=3 seed=1163: shop row 8 with pile 11 (round 2, move 48)
+FLAG  3p deck15 swap:off contests:byColor shop:grey late:3 random[thieves,silver,red] 744ms swaps 0/0 pileBuys 13
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    3p deck15 swap:off contests:byColor shop:all late:2 classic[purple,red,yellow] 448ms swaps 0/0 pileBuys 32
+ok    3p deck15 swap:off contests:byColor shop:all late:2 random[purple,silver,echo] 496ms swaps 0/0 pileBuys 31
+FLAG  3p deck15 swap:off contests:byColor shop:all late:3 classic[purple,red,yellow] 463ms swaps 0/0 pileBuys 26
+       round III member out before round III: Go-Getter (a pile)
+       round III member out before round III: Leveler (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  3p deck15 swap:off contests:byColor shop:all late:3 random[thieves,echo,silver] 421ms swaps 0/0 pileBuys 15
+       round III member out before round III: Extortionist (a pile)
+       round III member out before round III: Tribute Band (a pile)
+       round III member out before round III: High Society (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    3p deck15 swap:on contests:printed shop:deck late:2 classic[market,red,yellow] 1673ms swaps 29/48 pileBuys 0
+ok    3p deck15 swap:on contests:printed shop:deck late:2 random[trading,echo,silver] 349ms swaps 13/32 pileBuys 0
+ok    3p deck15 swap:on contests:printed shop:deck late:3 classic[market,red,yellow] 671ms swaps 13/34 pileBuys 0
+ok    3p deck15 swap:on contests:printed shop:deck late:3 random[silver,echo,thieves] 934ms swaps 12/32 pileBuys 0
+FLAG  3p deck15 swap:on contests:printed shop:grey late:2 classic[purple,red,yellow] 1403ms swaps 13/38 pileBuys 13
+       retired member dealt: Scouts (benders.scout)
+FLAG  3p deck15 swap:on contests:printed shop:grey late:2 random[yellow,purple,red] 1092ms swaps 4/39 pileBuys 17
+       retired member dealt: Scouts (benders.scout)
+FAIL  3p deck15 swap:on contests:printed shop:grey late:3 classic[purple,red,yellow]
+       [purple,red,yellow] bot n=3 seed=1175: shop row 8 with pile 15 (round 2, move 46)
+FLAG  3p deck15 swap:on contests:printed shop:grey late:3 random[trading,red,purple] 603ms swaps 5/34 pileBuys 13
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    3p deck15 swap:on contests:printed shop:all late:2 classic[purple,red,yellow] 643ms swaps 16/33 pileBuys 26
+ok    3p deck15 swap:on contests:printed shop:all late:2 random[thieves,red,echo] 758ms swaps 5/27 pileBuys 23
+FLAG  3p deck15 swap:on contests:printed shop:all late:3 classic[purple,red,yellow] 5404ms swaps 8/36 pileBuys 46
+       round III member out before round III: Gossip (a pile)
+       round III member out before round III: Panel (a pile)
+       round III member out before round III: Tastemaker (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  3p deck15 swap:on contests:printed shop:all late:3 random[trading,purple,red] 436ms swaps 3/28 pileBuys 22
+       round III member out before round III: Gossip (a pile)
+       round III member out before round III: Headhunter (a pile)
+ok    3p deck15 swap:on contests:byColor shop:deck late:2 classic[market,red,yellow] 2309ms swaps 21/38 pileBuys 0
+ok    3p deck15 swap:on contests:byColor shop:deck late:2 random[echo,silver,yellow] 515ms swaps 9/33 pileBuys 0
+ok    3p deck15 swap:on contests:byColor shop:deck late:3 classic[market,red,yellow] 1357ms swaps 16/41 pileBuys 0
+ok    3p deck15 swap:on contests:byColor shop:deck late:3 random[trading,echo,silver] 453ms swaps 13/32 pileBuys 0
+FLAG  3p deck15 swap:on contests:byColor shop:grey late:2 classic[purple,red,yellow] 907ms swaps 17/35 pileBuys 9
+       retired member dealt: Scouts (benders.scout)
+FLAG  3p deck15 swap:on contests:byColor shop:grey late:2 random[purple,yellow,red] 842ms swaps 21/36 pileBuys 2
+       retired member dealt: Scouts (benders.scout)
+FAIL  3p deck15 swap:on contests:byColor shop:grey late:3 classic[purple,red,yellow]
+       [purple,red,yellow] bot n=3 seed=1187: shop row 9 with pile 33 (round 3, move 162)
+FLAG  3p deck15 swap:on contests:byColor shop:grey late:3 random[echo,thieves,red] 1250ms swaps 18/35 pileBuys 8
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    3p deck15 swap:on contests:byColor shop:all late:2 classic[purple,red,yellow] 643ms swaps 11/34 pileBuys 30
+ok    3p deck15 swap:on contests:byColor shop:all late:2 random[echo,yellow,trading] 988ms swaps 11/33 pileBuys 26
+FLAG  3p deck15 swap:on contests:byColor shop:all late:3 classic[purple,red,yellow] 896ms swaps 4/34 pileBuys 30
+       round III member out before round III: Gossip (a pile)
+       round III member out before round III: Spice Route (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  3p deck15 swap:on contests:byColor shop:all late:3 random[red,trading,yellow] 763ms swaps 11/35 pileBuys 34
+       round III member out before round III: Mentor & Protégés (a pile)
+       round III member out before round III: Meddler (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    4p deck10 swap:off contests:printed shop:deck late:2 classic[market,red,yellow,purple] 1282ms swaps 0/0 pileBuys 0
+ok    4p deck10 swap:off contests:printed shop:deck late:2 random[yellow,thieves,red,market] 1106ms swaps 0/0 pileBuys 0
+ok    4p deck10 swap:off contests:printed shop:deck late:3 classic[market,red,yellow,purple] 854ms swaps 0/0 pileBuys 0
+ok    4p deck10 swap:off contests:printed shop:deck late:3 random[purple,trading,red,silver] 1055ms swaps 0/0 pileBuys 0
+FLAG  4p deck10 swap:off contests:printed shop:grey late:2 classic[echo,red,yellow,purple] 2438ms swaps 0/0 pileBuys 18
+       retired member dealt: Scouts (benders.scout)
+FLAG  4p deck10 swap:off contests:printed shop:grey late:2 random[silver,thieves,trading,echo] 1052ms swaps 0/0 pileBuys 16
+       retired member dealt: Scouts (benders.scout)
+FLAG  4p deck10 swap:off contests:printed shop:grey late:3 classic[echo,red,yellow,purple] 2534ms swaps 0/0 pileBuys 20
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  4p deck10 swap:off contests:printed shop:grey late:3 random[trading,red,silver,echo] 1505ms swaps 0/0 pileBuys 18
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FAIL  4p deck10 swap:off contests:printed shop:all late:2 classic[echo,red,yellow,purple]
+       [echo,red,yellow,purple] bot n=4 seed=1201: choice option trade:82:122 names card 122 at shop, now in pile benders.squatter (round 2, move 50)
+ok    4p deck10 swap:off contests:printed shop:all late:2 random[red,purple,silver,echo] 917ms swaps 0/0 pileBuys 32
+FLAG  4p deck10 swap:off contests:printed shop:all late:3 classic[echo,red,yellow,purple] 1222ms swaps 0/0 pileBuys 31
+       round III member out before round III: Fan Club (a pile)
+       round III member out before round III: Proselytizers (a pile)
+       round III member out before round III: Harmonist (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  4p deck10 swap:off contests:printed shop:all late:3 random[thieves,echo,purple,yellow] 1011ms swaps 0/0 pileBuys 29
+       round III member out before round III: Extortionist (a pile)
+       round III member out before round III: Dyer (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    4p deck10 swap:off contests:byColor shop:deck late:2 classic[market,red,yellow,purple] 1649ms swaps 0/0 pileBuys 0
+ok    4p deck10 swap:off contests:byColor shop:deck late:2 random[echo,market,thieves,trading] 751ms swaps 0/0 pileBuys 0
+ok    4p deck10 swap:off contests:byColor shop:deck late:3 classic[market,red,yellow,purple] 1383ms swaps 0/0 pileBuys 0
+ok    4p deck10 swap:off contests:byColor shop:deck late:3 random[market,red,yellow,silver] 2389ms swaps 0/0 pileBuys 0
+FLAG  4p deck10 swap:off contests:byColor shop:grey late:2 classic[echo,red,yellow,purple] 2927ms swaps 0/0 pileBuys 20
+       retired member dealt: Scouts (benders.scout)
+FLAG  4p deck10 swap:off contests:byColor shop:grey late:2 random[silver,red,echo,purple] 3801ms swaps 0/0 pileBuys 14
+       retired member dealt: Scouts (benders.scout)
+FLAG  4p deck10 swap:off contests:byColor shop:grey late:3 classic[echo,red,yellow,purple] 2665ms swaps 0/0 pileBuys 14
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FAIL  4p deck10 swap:off contests:byColor shop:grey late:3 random[echo,purple,red,yellow]
+       [echo,purple,red,yellow] bot n=4 seed=1212: shop row 7 with pile 9 (round 1, move 27)
+ok    4p deck10 swap:off contests:byColor shop:all late:2 classic[echo,red,yellow,purple] 3148ms swaps 0/0 pileBuys 45
+ok    4p deck10 swap:off contests:byColor shop:all late:2 random[echo,yellow,red,silver] 8836ms swaps 0/0 pileBuys 47
+FLAG  4p deck10 swap:off contests:byColor shop:all late:3 classic[echo,red,yellow,purple] 1948ms swaps 0/0 pileBuys 60
+       round III member out before round III: Mentor & Protégés (a pile)
+       round III member out before round III: Tastemaker (a pile)
+       round III member out before round III: Courier (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  4p deck10 swap:off contests:byColor shop:all late:3 random[echo,thieves,trading,silver] 594ms swaps 0/0 pileBuys 22
+       round III member out before round III: Tribute Band (a pile)
+       round III member out before round III: High Society (a pile)
+ok    4p deck10 swap:on contests:printed shop:deck late:2 classic[market,red,yellow,purple] 2066ms swaps 25/51 pileBuys 0
+ok    4p deck10 swap:on contests:printed shop:deck late:2 random[purple,trading,echo,thieves] 636ms swaps 22/38 pileBuys 0
+ok    4p deck10 swap:on contests:printed shop:deck late:3 classic[market,red,yellow,purple] 2725ms swaps 20/48 pileBuys 0
+ok    4p deck10 swap:on contests:printed shop:deck late:3 random[purple,trading,thieves,echo] 666ms swaps 17/36 pileBuys 0
+FLAG  4p deck10 swap:on contests:printed shop:grey late:2 classic[echo,red,yellow,purple] 3387ms swaps 17/44 pileBuys 11
+       retired member dealt: Scouts (benders.scout)
+FAIL  4p deck10 swap:on contests:printed shop:grey late:2 random[red,silver,echo,trading]
+       [red,silver,echo,trading] bot n=4 seed=1222: shop row 8 with pile 31 (round 2, move 96)
+FAIL  4p deck10 swap:on contests:printed shop:grey late:3 classic[echo,red,yellow,purple]
+       [echo,red,yellow,purple] bot n=4 seed=1223: shop row 9 with pile 22 (round 3, move 150)
+FLAG  4p deck10 swap:on contests:printed shop:grey late:3 random[thieves,silver,yellow,purple] 1582ms swaps 10/53 pileBuys 18
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    4p deck10 swap:on contests:printed shop:all late:2 classic[echo,red,yellow,purple] 2096ms swaps 2/43 pileBuys 36
+ok    4p deck10 swap:on contests:printed shop:all late:2 random[red,yellow,echo,silver] 2159ms swaps 13/41 pileBuys 33
+FLAG  4p deck10 swap:on contests:printed shop:all late:3 classic[echo,red,yellow,purple] 2813ms swaps 8/46 pileBuys 50
+       round III member out before round III: Mentor & Protégés (a pile)
+       round III member out before round III: Tastemaker (a pile)
+FLAG  4p deck10 swap:on contests:printed shop:all late:3 random[purple,echo,silver,yellow] 2124ms swaps 10/44 pileBuys 35
+       round III member out before round III: Courier (a pile)
+       round III member out before round III: Hostesses (a pile)
+       round III member out before round III: Harmonist (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    4p deck10 swap:on contests:byColor shop:deck late:2 classic[market,red,yellow,purple] 2563ms swaps 31/52 pileBuys 0
+ok    4p deck10 swap:on contests:byColor shop:deck late:2 random[silver,yellow,market,trading] 1169ms swaps 17/42 pileBuys 0
+ok    4p deck10 swap:on contests:byColor shop:deck late:3 classic[market,red,yellow,purple] 2323ms swaps 22/50 pileBuys 0
+ok    4p deck10 swap:on contests:byColor shop:deck late:3 random[trading,market,thieves,silver] 936ms swaps 23/42 pileBuys 0
+FLAG  4p deck10 swap:on contests:byColor shop:grey late:2 classic[echo,red,yellow,purple] 3658ms swaps 21/47 pileBuys 10
+       retired member dealt: Scouts (benders.scout)
+FLAG  4p deck10 swap:on contests:byColor shop:grey late:2 random[purple,silver,yellow,echo] 1682ms swaps 9/45 pileBuys 10
+       retired member dealt: Scouts (benders.scout)
+FLAG  4p deck10 swap:on contests:byColor shop:grey late:3 classic[echo,red,yellow,purple] 4681ms swaps 20/47 pileBuys 10
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FAIL  4p deck10 swap:on contests:byColor shop:grey late:3 random[echo,red,yellow,purple]
+       [echo,red,yellow,purple] bot n=4 seed=1236: shop row 9 with pile 18 (round 3, move 284)
+ok    4p deck10 swap:on contests:byColor shop:all late:2 classic[echo,red,yellow,purple] 132391ms swaps 9/46 pileBuys 56
+ok    4p deck10 swap:on contests:byColor shop:all late:2 random[red,purple,silver,echo] 185139ms swaps 10/44 pileBuys 77
+FLAG  4p deck10 swap:on contests:byColor shop:all late:3 classic[echo,red,yellow,purple] 78997ms swaps 11/47 pileBuys 63
+       round III member out before round III: Doppelganger (a pile)
+       round III member out before round III: Panel (a pile)
+       round III member out before round III: Dyer (a pile)
+       round III member out before round III: Night Owls (a pile)
+FLAG  4p deck10 swap:on contests:byColor shop:all late:3 random[red,yellow,trading,silver] 4334ms swaps 6/40 pileBuys 35
+       round III member out before round III: Panel (a pile)
+       round III member out before round III: Big Tent (a pile)
+       round III member out before round III: Hoarder (a pile)
+       round III member out before round III: Debutantes (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    4p deck15 swap:off contests:printed shop:deck late:2 classic[market,red,yellow,purple] 1680ms swaps 0/0 pileBuys 0
+ok    4p deck15 swap:off contests:printed shop:deck late:2 random[market,red,silver,purple] 1538ms swaps 0/0 pileBuys 0
+ok    4p deck15 swap:off contests:printed shop:deck late:3 classic[market,red,yellow,purple] 1551ms swaps 0/0 pileBuys 0
+ok    4p deck15 swap:off contests:printed shop:deck late:3 random[thieves,echo,silver,red] 998ms swaps 0/0 pileBuys 0
+FAIL  4p deck15 swap:off contests:printed shop:grey late:2 classic[echo,red,yellow,purple]
+       [echo,red,yellow,purple] bot n=4 seed=1245: shop row 9 with pile 44 (round 3, move 204)
+FLAG  4p deck15 swap:off contests:printed shop:grey late:2 random[red,trading,purple,echo] 1948ms swaps 0/0 pileBuys 19
+       retired member dealt: Scouts (benders.scout)
+FLAG  4p deck15 swap:off contests:printed shop:grey late:3 classic[echo,red,yellow,purple] 2343ms swaps 0/0 pileBuys 13
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  4p deck15 swap:off contests:printed shop:grey late:3 random[red,thieves,echo,trading] 1306ms swaps 0/0 pileBuys 18
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    4p deck15 swap:off contests:printed shop:all late:2 classic[echo,red,yellow,purple] 1107ms swaps 0/0 pileBuys 40
+ok    4p deck15 swap:off contests:printed shop:all late:2 random[echo,thieves,silver,yellow] 872ms swaps 0/0 pileBuys 28
+FLAG  4p deck15 swap:off contests:printed shop:all late:3 classic[echo,red,yellow,purple] 1275ms swaps 0/0 pileBuys 40
+       round III member out before round III: Tribute Band (a pile)
+       round III member out before round III: Mentor & Protégés (a pile)
+       round III member out before round III: Caravan (a pile)
+       round III member out before round III: Gossip (a pile)
+FLAG  4p deck15 swap:off contests:printed shop:all late:3 random[purple,red,trading,thieves] 514ms swaps 0/0 pileBuys 24
+       round III member out before round III: Gossip (a pile)
+       round III member out before round III: Headhunter (a pile)
+       round III member out before round III: Shoplifter (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    4p deck15 swap:off contests:byColor shop:deck late:2 classic[market,red,yellow,purple] 1429ms swaps 0/0 pileBuys 0
+ok    4p deck15 swap:off contests:byColor shop:deck late:2 random[trading,silver,purple,red] 732ms swaps 0/0 pileBuys 0
+ok    4p deck15 swap:off contests:byColor shop:deck late:3 classic[market,red,yellow,purple] 1114ms swaps 0/0 pileBuys 0
+ok    4p deck15 swap:off contests:byColor shop:deck late:3 random[red,echo,purple,silver] 2416ms swaps 0/0 pileBuys 0
+FLAG  4p deck15 swap:off contests:byColor shop:grey late:2 classic[echo,red,yellow,purple] 3839ms swaps 0/0 pileBuys 17
+       retired member dealt: Scouts (benders.scout)
+FLAG  4p deck15 swap:off contests:byColor shop:grey late:2 random[yellow,trading,red,thieves] 1280ms swaps 0/0 pileBuys 16
+       retired member dealt: Scouts (benders.scout)
+FLAG  4p deck15 swap:off contests:byColor shop:grey late:3 classic[echo,red,yellow,purple] 5040ms swaps 0/0 pileBuys 14
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FAIL  4p deck15 swap:off contests:byColor shop:grey late:3 random[silver,trading,red,echo]
+       [silver,trading,red,echo] bot n=4 seed=1260: chip on Initiation promises 1 free members, taker got 0 (round 3, move 289)
+ok    4p deck15 swap:off contests:byColor shop:all late:2 classic[echo,red,yellow,purple] 1672ms swaps 0/0 pileBuys 41
+FAIL  4p deck15 swap:off contests:byColor shop:all late:2 random[yellow,silver,red,echo]
+       [yellow,silver,red,echo] bot n=4 seed=1262: choice option trade:130:140 names card 140 at shop, now in pile benders.squatter (round 2, move 68)
+FLAG  4p deck15 swap:off contests:byColor shop:all late:3 classic[echo,red,yellow,purple] 127669ms swaps 0/0 pileBuys 72
+       round III member out before round III: Doppelganger (a pile)
+       round III member out before round III: Panel (a pile)
+       round III member out before round III: Tastemaker (a pile)
+       round III member out before round III: Courier (a pile)
+FLAG  4p deck15 swap:off contests:byColor shop:all late:3 random[yellow,purple,trading,echo] 617ms swaps 0/0 pileBuys 24
+       round III member out before round III: Book Cookers (a pile)
+       round III member out before round III: Go-Getter (a pile)
+       round III member out before round III: Hoarder (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    4p deck15 swap:on contests:printed shop:deck late:2 classic[market,red,yellow,purple] 1971ms swaps 24/50 pileBuys 0
+ok    4p deck15 swap:on contests:printed shop:deck late:2 random[thieves,red,yellow,market] 2202ms swaps 30/48 pileBuys 0
+ok    4p deck15 swap:on contests:printed shop:deck late:3 classic[market,red,yellow,purple] 1478ms swaps 19/50 pileBuys 0
+ok    4p deck15 swap:on contests:printed shop:deck late:3 random[thieves,echo,yellow,trading] 745ms swaps 20/36 pileBuys 0
+FAIL  4p deck15 swap:on contests:printed shop:grey late:2 classic[echo,red,yellow,purple]
+       [echo,red,yellow,purple] bot n=4 seed=1269: shop row 8 with pile 48 (round 2, move 153)
+FAIL  4p deck15 swap:on contests:printed shop:grey late:2 random[silver,trading,yellow,red]
+       [silver,trading,yellow,red] bot n=4 seed=1270: shop row 9 with pile 46 (round 3, move 192)
+FLAG  4p deck15 swap:on contests:printed shop:grey late:3 classic[echo,red,yellow,purple] 2700ms swaps 12/52 pileBuys 15
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  4p deck15 swap:on contests:printed shop:grey late:3 random[red,echo,thieves,yellow] 2017ms swaps 14/43 pileBuys 9
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    4p deck15 swap:on contests:printed shop:all late:2 classic[echo,red,yellow,purple] 8300ms swaps 6/45 pileBuys 55
+ok    4p deck15 swap:on contests:printed shop:all late:2 random[echo,purple,yellow,red] 1710ms swaps 11/44 pileBuys 37
+FLAG  4p deck15 swap:on contests:printed shop:all late:3 classic[echo,red,yellow,purple] 1634ms swaps 12/44 pileBuys 38
+       round III member out before round III: Patriarch (a pile)
+       round III member out before round III: Dyer (a pile)
+       round III member out before round III: Go-Getter (a pile)
+FLAG  4p deck15 swap:on contests:printed shop:all late:3 random[trading,red,echo,thieves] 1322ms swaps 14/41 pileBuys 42
+       round III member out before round III: Headhunter (a pile)
+       round III member out before round III: Bodyguards (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    4p deck15 swap:on contests:byColor shop:deck late:2 classic[market,red,yellow,purple] 1562ms swaps 25/51 pileBuys 0
+ok    4p deck15 swap:on contests:byColor shop:deck late:2 random[thieves,yellow,red,purple] 1174ms swaps 26/44 pileBuys 0
+ok    4p deck15 swap:on contests:byColor shop:deck late:3 classic[market,red,yellow,purple] 1602ms swaps 24/52 pileBuys 0
+ok    4p deck15 swap:on contests:byColor shop:deck late:3 random[purple,market,trading,silver] 940ms swaps 21/51 pileBuys 0
+FLAG  4p deck15 swap:on contests:byColor shop:grey late:2 classic[echo,red,yellow,purple] 2196ms swaps 13/51 pileBuys 11
+       retired member dealt: Scouts (benders.scout)
+FLAG  4p deck15 swap:on contests:byColor shop:grey late:2 random[red,trading,thieves,purple] 972ms swaps 24/46 pileBuys 10
+       retired member dealt: Scouts (benders.scout)
+FAIL  4p deck15 swap:on contests:byColor shop:grey late:3 classic[echo,red,yellow,purple]
+       [echo,red,yellow,purple] bot n=4 seed=1283: shop row 9 with pile 37 (round 3, move 282)
+FLAG  4p deck15 swap:on contests:byColor shop:grey late:3 random[thieves,silver,echo,trading] 1127ms swaps 9/43 pileBuys 14
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    4p deck15 swap:on contests:byColor shop:all late:2 classic[echo,red,yellow,purple] 3206ms swaps 20/54 pileBuys 50
+ok    4p deck15 swap:on contests:byColor shop:all late:2 random[silver,echo,trading,purple] 1039ms swaps 10/41 pileBuys 26
+FAIL  4p deck15 swap:on contests:byColor shop:all late:3 classic[echo,red,yellow,purple]
+       [echo,red,yellow,purple] bot n=4 seed=1287: choice option trade:70:90 names card 90 at shop, now in pile purple.timekeepers (round 2, move 63)
+FLAG  4p deck15 swap:on contests:byColor shop:all late:3 random[silver,yellow,red,echo] 1893ms swaps 7/45 pileBuys 34
+       round III member out before round III: Philanthropist (a pile)
+       round III member out before round III: Leveler (a pile)
+       round III member out before round III: Mob (a pile)
+       round III member out before round III: Tribute Band (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    5p deck10 swap:off contests:printed shop:deck late:2 classic[market,red,yellow,purple,echo] 10237ms swaps 0/0 pileBuys 0
+ok    5p deck10 swap:off contests:printed shop:deck late:2 random[yellow,purple,market,silver,echo] 1914ms swaps 0/0 pileBuys 0
+ok    5p deck10 swap:off contests:printed shop:deck late:3 classic[market,red,yellow,purple,echo] 4065ms swaps 0/0 pileBuys 0
+ok    5p deck10 swap:off contests:printed shop:deck late:3 random[market,echo,purple,red,yellow] 4880ms swaps 0/0 pileBuys 0
+FAIL  5p deck10 swap:off contests:printed shop:grey late:2 classic[thieves,red,yellow,purple,echo]
+       [thieves,red,yellow,purple,echo] bot n=5 seed=1293: shop row 8 with pile 43 (round 2, move 100)
+FLAG  5p deck10 swap:off contests:printed shop:grey late:2 random[trading,purple,echo,silver,yellow] 1905ms swaps 0/0 pileBuys 18
+       retired member dealt: Scouts (benders.scout)
+FLAG  5p deck10 swap:off contests:printed shop:grey late:3 classic[thieves,red,yellow,purple,echo] 4006ms swaps 0/0 pileBuys 19
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  5p deck10 swap:off contests:printed shop:grey late:3 random[silver,yellow,red,thieves,purple] 3166ms swaps 0/0 pileBuys 18
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    5p deck10 swap:off contests:printed shop:all late:2 classic[thieves,red,yellow,purple,echo] 1546ms swaps 0/0 pileBuys 39
+FAIL  5p deck10 swap:off contests:printed shop:all late:2 random[purple,echo,silver,yellow,red]
+       [purple,echo,silver,yellow,red] bot n=5 seed=1298: choice option trade:50:62 names card 62 at shop, now in pile echo.roadie (round 2, move 68)
+FLAG  5p deck10 swap:off contests:printed shop:all late:3 classic[thieves,red,yellow,purple,echo] 11387ms swaps 0/0 pileBuys 45
+       round III member out before round III: Double Agent (a pile)
+       round III member out before round III: Proselytizers (a pile)
+       round III member out before round III: Big Tent (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  5p deck10 swap:off contests:printed shop:all late:3 random[yellow,silver,red,echo,purple] 66111ms swaps 0/0 pileBuys 51
+       round III member out before round III: Dyer (a pile)
+       round III member out before round III: Philanthropist (a pile)
+       round III member out before round III: Panel (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    5p deck10 swap:off contests:byColor shop:deck late:2 classic[market,red,yellow,purple,echo] 6754ms swaps 0/0 pileBuys 0
+ok    5p deck10 swap:off contests:byColor shop:deck late:2 random[thieves,red,market,silver,yellow] 3007ms swaps 0/0 pileBuys 0
+ok    5p deck10 swap:off contests:byColor shop:deck late:3 classic[market,red,yellow,purple,echo] 7634ms swaps 0/0 pileBuys 0
+ok    5p deck10 swap:off contests:byColor shop:deck late:3 random[purple,market,silver,trading,yellow] 2213ms swaps 0/0 pileBuys 0
+FLAG  5p deck10 swap:off contests:byColor shop:grey late:2 classic[thieves,red,yellow,purple,echo] 4863ms swaps 0/0 pileBuys 19
+       retired member dealt: Scouts (benders.scout)
+FLAG  5p deck10 swap:off contests:byColor shop:grey late:2 random[red,yellow,silver,purple,thieves] 3221ms swaps 0/0 pileBuys 19
+       retired member dealt: Scouts (benders.scout)
+FLAG  5p deck10 swap:off contests:byColor shop:grey late:3 classic[thieves,red,yellow,purple,echo] 4249ms swaps 0/0 pileBuys 22
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  5p deck10 swap:off contests:byColor shop:grey late:3 random[echo,purple,yellow,silver,red] 5899ms swaps 0/0 pileBuys 21
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    5p deck10 swap:off contests:byColor shop:all late:2 classic[thieves,red,yellow,purple,echo] 3703ms swaps 0/0 pileBuys 44
+FAIL  5p deck10 swap:off contests:byColor shop:all late:2 random[silver,echo,yellow,purple,red]
+       [silver,echo,yellow,purple,red] bot n=5 seed=1310: choice option trade:110:131 names card 131 at shop, now in pile benders.squatter (round 2, move 99)
+FLAG  5p deck10 swap:off contests:byColor shop:all late:3 classic[thieves,red,yellow,purple,echo] 3694ms swaps 0/0 pileBuys 47
+       round III member out before round III: Grifter (a pile)
+       round III member out before round III: Proselytizers (a pile)
+       round III member out before round III: Harmonist (a pile)
+FLAG  5p deck10 swap:off contests:byColor shop:all late:3 random[red,thieves,yellow,trading,purple] 2127ms swaps 0/0 pileBuys 41
+       round III member out before round III: Proselytizers (a pile)
+       round III member out before round III: Bodyguards (a pile)
+       round III member out before round III: Harmonist (a pile)
+ok    5p deck10 swap:on contests:printed shop:deck late:2 classic[market,red,yellow,purple,echo] 14069ms swaps 27/57 pileBuys 0
+ok    5p deck10 swap:on contests:printed shop:deck late:2 random[yellow,purple,silver,thieves,red] 1816ms swaps 25/49 pileBuys 0
+ok    5p deck10 swap:on contests:printed shop:deck late:3 classic[market,red,yellow,purple,echo] 9155ms swaps 29/64 pileBuys 0
+ok    5p deck10 swap:on contests:printed shop:deck late:3 random[market,echo,thieves,silver,yellow] 3653ms swaps 20/51 pileBuys 0
+FAIL  5p deck10 swap:on contests:printed shop:grey late:2 classic[thieves,red,yellow,purple,echo]
+       [thieves,red,yellow,purple,echo] bot n=5 seed=1317: shop row 9 with pile 31 (round 3, move 306)
+FLAG  5p deck10 swap:on contests:printed shop:grey late:2 random[trading,echo,purple,thieves,red] 4763ms swaps 20/61 pileBuys 19
+       retired member dealt: Scouts (benders.scout)
+FLAG  5p deck10 swap:on contests:printed shop:grey late:3 classic[thieves,red,yellow,purple,echo] 7695ms swaps 24/61 pileBuys 15
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FAIL  5p deck10 swap:on contests:printed shop:grey late:3 random[purple,red,silver,echo,thieves]
+       [purple,red,silver,echo,thieves] bot n=5 seed=1320: shop row 8 with pile 18 (round 2, move 155)
+ok    5p deck10 swap:on contests:printed shop:all late:2 classic[thieves,red,yellow,purple,echo] 3083ms swaps 18/54 pileBuys 39
+ok    5p deck10 swap:on contests:printed shop:all late:2 random[purple,thieves,trading,echo,silver] 2289ms swaps 9/47 pileBuys 31
+FLAG  5p deck10 swap:on contests:printed shop:all late:3 classic[thieves,red,yellow,purple,echo] 6043ms swaps 15/54 pileBuys 47
+       round III member out before round III: Grifter (a pile)
+       round III member out before round III: Proselytizers (a pile)
+       round III member out before round III: Meddler (a pile)
+FLAG  5p deck10 swap:on contests:printed shop:all late:3 random[trading,echo,silver,purple,thieves] 1756ms swaps 8/45 pileBuys 27
+       round III member out before round III: Misers (a pile)
+       round III member out before round III: Fan Club (a pile)
+       round III member out before round III: Hostesses (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    5p deck10 swap:on contests:byColor shop:deck late:2 classic[market,red,yellow,purple,echo] 5620ms swaps 26/58 pileBuys 0
+ok    5p deck10 swap:on contests:byColor shop:deck late:2 random[red,silver,purple,market,thieves] 5619ms swaps 32/56 pileBuys 0
+ok    5p deck10 swap:on contests:byColor shop:deck late:3 classic[market,red,yellow,purple,echo] 10251ms swaps 31/67 pileBuys 0
+ok    5p deck10 swap:on contests:byColor shop:deck late:3 random[purple,thieves,red,echo,market] 8976ms swaps 24/63 pileBuys 0
+FLAG  5p deck10 swap:on contests:byColor shop:grey late:2 classic[thieves,red,yellow,purple,echo] 3531ms swaps 36/60 pileBuys 11
+       retired member dealt: Scouts (benders.scout)
+FLAG  5p deck10 swap:on contests:byColor shop:grey late:2 random[yellow,echo,thieves,silver,red] 7303ms swaps 30/60 pileBuys 10
+       retired member dealt: Scouts (benders.scout)
+FLAG  5p deck10 swap:on contests:byColor shop:grey late:3 classic[thieves,red,yellow,purple,echo] 3691ms swaps 34/53 pileBuys 9
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  5p deck10 swap:on contests:byColor shop:grey late:3 random[red,purple,yellow,echo,trading] 5268ms swaps 27/58 pileBuys 10
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    5p deck10 swap:on contests:byColor shop:all late:2 classic[thieves,red,yellow,purple,echo] 6884ms swaps 13/53 pileBuys 44
+ok    5p deck10 swap:on contests:byColor shop:all late:2 random[silver,echo,red,purple,yellow] 4529ms swaps 6/58 pileBuys 42
+FLAG  5p deck10 swap:on contests:byColor shop:all late:3 classic[thieves,red,yellow,purple,echo] 3343ms swaps 20/57 pileBuys 28
+       round III member out before round III: Shoplifter (a pile)
+       round III member out before round III: Mob (a pile)
+       round III member out before round III: Caravan (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  5p deck10 swap:on contests:byColor shop:all late:3 random[purple,trading,red,silver,echo] 73635ms swaps 18/55 pileBuys 49
+       round III member out before round III: Heiresses (a pile)
+       round III member out before round III: Panel (a pile)
+ok    5p deck15 swap:off contests:printed shop:deck late:2 classic[market,red,yellow,purple,echo] 5626ms swaps 0/0 pileBuys 0
+ok    5p deck15 swap:off contests:printed shop:deck late:2 random[echo,thieves,red,trading,yellow] 3030ms swaps 0/0 pileBuys 0
+ok    5p deck15 swap:off contests:printed shop:deck late:3 classic[market,red,yellow,purple,echo] 5546ms swaps 0/0 pileBuys 0
+ok    5p deck15 swap:off contests:printed shop:deck late:3 random[trading,thieves,echo,yellow,red] 2332ms swaps 0/0 pileBuys 0
+FLAG  5p deck15 swap:off contests:printed shop:grey late:2 classic[thieves,red,yellow,purple,echo] 6324ms swaps 0/0 pileBuys 20
+       retired member dealt: Scouts (benders.scout)
+FLAG  5p deck15 swap:off contests:printed shop:grey late:2 random[silver,red,echo,yellow,thieves] 8724ms swaps 0/0 pileBuys 20
+       retired member dealt: Scouts (benders.scout)
+FLAG  5p deck15 swap:off contests:printed shop:grey late:3 classic[thieves,red,yellow,purple,echo] 5210ms swaps 0/0 pileBuys 20
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  5p deck15 swap:off contests:printed shop:grey late:3 random[thieves,trading,yellow,echo,red] 2727ms swaps 0/0 pileBuys 19
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FAIL  5p deck15 swap:off contests:printed shop:all late:2 classic[thieves,red,yellow,purple,echo]
+       [thieves,red,yellow,purple,echo] bot n=5 seed=1345: no end after 6000 moves (round 3, move 6000)
+ok    5p deck15 swap:off contests:printed shop:all late:2 random[red,trading,echo,silver,yellow] 2305ms swaps 0/0 pileBuys 34
+FLAG  5p deck15 swap:off contests:printed shop:all late:3 classic[thieves,red,yellow,purple,echo] 2362ms swaps 0/0 pileBuys 37
+       round III member out before round III: Extortionist (a pile)
+       round III member out before round III: Leveler (a pile)
+FLAG  5p deck15 swap:off contests:printed shop:all late:3 random[yellow,red,echo,purple,thieves] 83692ms swaps 0/0 pileBuys 58
+       round III member out before round III: Dyer (a pile)
+       round III member out before round III: Panel (a pile)
+       round III member out before round III: Tribute Band (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    5p deck15 swap:off contests:byColor shop:deck late:2 classic[market,red,yellow,purple,echo] 2594ms swaps 0/0 pileBuys 0
+ok    5p deck15 swap:off contests:byColor shop:deck late:2 random[yellow,silver,purple,trading,market] 1659ms swaps 0/0 pileBuys 0
+ok    5p deck15 swap:off contests:byColor shop:deck late:3 classic[market,red,yellow,purple,echo] 7628ms swaps 0/0 pileBuys 0
+ok    5p deck15 swap:off contests:byColor shop:deck late:3 random[echo,market,purple,red,yellow] 8804ms swaps 0/0 pileBuys 0
+FLAG  5p deck15 swap:off contests:byColor shop:grey late:2 classic[thieves,red,yellow,purple,echo] 8310ms swaps 0/0 pileBuys 19
+       retired member dealt: Scouts (benders.scout)
+FAIL  5p deck15 swap:off contests:byColor shop:grey late:2 random[trading,red,purple,yellow,silver]
+       [trading,red,purple,yellow,silver] bot n=5 seed=1354: shop row 9 with pile 47 (round 3, move 276)
+FLAG  5p deck15 swap:off contests:byColor shop:grey late:3 classic[thieves,red,yellow,purple,echo] 4453ms swaps 0/0 pileBuys 19
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  5p deck15 swap:off contests:byColor shop:grey late:3 random[yellow,trading,echo,red,purple] 6200ms swaps 0/0 pileBuys 16
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    5p deck15 swap:off contests:byColor shop:all late:2 classic[thieves,red,yellow,purple,echo] 2097ms swaps 0/0 pileBuys 43
+ok    5p deck15 swap:off contests:byColor shop:all late:2 random[silver,yellow,red,purple,thieves] 18535ms swaps 0/0 pileBuys 48
+FLAG  5p deck15 swap:off contests:byColor shop:all late:3 classic[thieves,red,yellow,purple,echo] 2362ms swaps 0/0 pileBuys 44
+       round III member out before round III: Shoplifter (a pile)
+       round III member out before round III: Patriarch (a pile)
+       round III member out before round III: Matchmaker (a pile)
+FLAG  5p deck15 swap:off contests:byColor shop:all late:3 random[thieves,echo,trading,yellow,red] 3271ms swaps 0/0 pileBuys 38
+       round III member out before round III: Grifter (a pile)
+       round III member out before round III: Heiresses (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    5p deck15 swap:on contests:printed shop:deck late:2 classic[market,red,yellow,purple,echo] 10473ms swaps 36/63 pileBuys 0
+ok    5p deck15 swap:on contests:printed shop:deck late:2 random[red,yellow,market,silver,thieves] 6687ms swaps 28/56 pileBuys 0
+ok    5p deck15 swap:on contests:printed shop:deck late:3 classic[market,red,yellow,purple,echo] 7960ms swaps 16/62 pileBuys 0
+ok    5p deck15 swap:on contests:printed shop:deck late:3 random[silver,thieves,echo,market,purple] 2703ms swaps 15/53 pileBuys 0
+FLAG  5p deck15 swap:on contests:printed shop:grey late:2 classic[thieves,red,yellow,purple,echo] 7207ms swaps 25/66 pileBuys 17
+       retired member dealt: Scouts (benders.scout)
+FLAG  5p deck15 swap:on contests:printed shop:grey late:2 random[yellow,echo,purple,silver,red] 5055ms swaps 20/60 pileBuys 16
+       retired member dealt: Scouts (benders.scout)
+FLAG  5p deck15 swap:on contests:printed shop:grey late:3 classic[thieves,red,yellow,purple,echo] 7461ms swaps 22/55 pileBuys 19
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  5p deck15 swap:on contests:printed shop:grey late:3 random[thieves,silver,trading,purple,yellow] 2779ms swaps 11/57 pileBuys 22
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    5p deck15 swap:on contests:printed shop:all late:2 classic[thieves,red,yellow,purple,echo] 3453ms swaps 14/54 pileBuys 39
+ok    5p deck15 swap:on contests:printed shop:all late:2 random[thieves,trading,echo,silver,red] 6073ms swaps 10/53 pileBuys 43
+FLAG  5p deck15 swap:on contests:printed shop:all late:3 classic[thieves,red,yellow,purple,echo] 5396ms swaps 20/56 pileBuys 46
+       round III member out before round III: Mob (a pile)
+       round III member out before round III: Big Tent (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  5p deck15 swap:on contests:printed shop:all late:3 random[yellow,thieves,echo,red,trading] 2508ms swaps 12/54 pileBuys 37
+       round III member out before round III: Tinker (a pile)
+       round III member out before round III: Extortionist (a pile)
+       round III member out before round III: Anarchist (a pile)
+ok    5p deck15 swap:on contests:byColor shop:deck late:2 classic[market,red,yellow,purple,echo] 19228ms swaps 44/76 pileBuys 0
+ok    5p deck15 swap:on contests:byColor shop:deck late:2 random[echo,market,red,thieves,yellow] 11798ms swaps 37/65 pileBuys 0
+ok    5p deck15 swap:on contests:byColor shop:deck late:3 classic[market,red,yellow,purple,echo] 4813ms swaps 32/64 pileBuys 0
+ok    5p deck15 swap:on contests:byColor shop:deck late:3 random[red,trading,echo,silver,yellow] 3857ms swaps 26/58 pileBuys 0
+FAIL  5p deck15 swap:on contests:byColor shop:grey late:2 classic[thieves,red,yellow,purple,echo]
+       [thieves,red,yellow,purple,echo] bot n=5 seed=1377: shop row 8 with pile 66 (round 2, move 103)
+FAIL  5p deck15 swap:on contests:byColor shop:grey late:2 random[echo,trading,yellow,silver,red]
+       [echo,trading,yellow,silver,red] bot n=5 seed=1378: shop row 8 with pile 59 (round 2, move 144)
+FLAG  5p deck15 swap:on contests:byColor shop:grey late:3 classic[thieves,red,yellow,purple,echo] 4917ms swaps 34/57 pileBuys 11
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  5p deck15 swap:on contests:byColor shop:grey late:3 random[red,yellow,silver,trading,thieves] 3090ms swaps 29/56 pileBuys 12
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    5p deck15 swap:on contests:byColor shop:all late:2 classic[thieves,red,yellow,purple,echo] 4047ms swaps 18/55 pileBuys 37
+ok    5p deck15 swap:on contests:byColor shop:all late:2 random[echo,yellow,red,silver,purple] 5729ms swaps 9/58 pileBuys 38
+FLAG  5p deck15 swap:on contests:byColor shop:all late:3 classic[thieves,red,yellow,purple,echo] 4863ms swaps 11/60 pileBuys 48
+       round III member out before round III: Shoplifter (a pile)
+       round III member out before round III: Headhunter (a pile)
+       round III member out before round III: Tastemaker (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  5p deck15 swap:on contests:byColor shop:all late:3 random[trading,silver,echo,red,thieves] 2587ms swaps 19/50 pileBuys 39
+       round III member out before round III: High Society (a pile)
+ok    6p deck10 swap:off contests:printed shop:deck late:2 classic[market,red,yellow,purple,echo,thieves] 4257ms swaps 0/0 pileBuys 0
+ok    6p deck10 swap:off contests:printed shop:deck late:2 random[market,yellow,thieves,trading,red,purple] 2089ms swaps 0/0 pileBuys 0
+ok    6p deck10 swap:off contests:printed shop:deck late:3 classic[market,red,yellow,purple,echo,thieves] 4452ms swaps 0/0 pileBuys 0
+ok    6p deck10 swap:off contests:printed shop:deck late:3 random[yellow,thieves,red,market,echo,silver] 6887ms swaps 0/0 pileBuys 0
+FAIL  6p deck10 swap:off contests:printed shop:grey late:2 classic[silver,red,yellow,purple,echo,thieves]
+       [silver,red,yellow,purple,echo,thieves] bot n=6 seed=1389: choice option trade:103:110 names card 110 at shop, now in pile benders.scout (round 2, move 100)
+FLAG  6p deck10 swap:off contests:printed shop:grey late:2 random[red,yellow,echo,trading,silver,purple] 4186ms swaps 0/0 pileBuys 22
+       retired member dealt: Scouts (benders.scout)
+FAIL  6p deck10 swap:off contests:printed shop:grey late:3 classic[silver,red,yellow,purple,echo,thieves]
+       [silver,red,yellow,purple,echo,thieves] bot n=6 seed=1391: shop row 9 with pile 34 (round 3, move 410)
+FLAG  6p deck10 swap:off contests:printed shop:grey late:3 random[red,yellow,trading,purple,echo,thieves] 6433ms swaps 0/0 pileBuys 21
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    6p deck10 swap:off contests:printed shop:all late:2 classic[silver,red,yellow,purple,echo,thieves] 23406ms swaps 0/0 pileBuys 52
+ok    6p deck10 swap:off contests:printed shop:all late:2 random[thieves,echo,red,purple,yellow,silver] 7294ms swaps 0/0 pileBuys 45
+FLAG  6p deck10 swap:off contests:printed shop:all late:3 classic[silver,red,yellow,purple,echo,thieves] 3582ms swaps 0/0 pileBuys 42
+       round III member out before round III: Debt Collectors (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  6p deck10 swap:off contests:printed shop:all late:3 random[yellow,echo,red,trading,silver,purple] 4118ms swaps 0/0 pileBuys 47
+       round III member out before round III: Big Tent (a pile)
+       round III member out before round III: Doppelganger (a pile)
+ok    6p deck10 swap:off contests:byColor shop:deck late:2 classic[market,red,yellow,purple,echo,thieves] 7923ms swaps 0/0 pileBuys 0
+ok    6p deck10 swap:off contests:byColor shop:deck late:2 random[yellow,echo,trading,thieves,red,purple] 4336ms swaps 0/0 pileBuys 0
+ok    6p deck10 swap:off contests:byColor shop:deck late:3 classic[market,red,yellow,purple,echo,thieves] 8177ms swaps 0/0 pileBuys 0
+ok    6p deck10 swap:off contests:byColor shop:deck late:3 random[red,silver,purple,thieves,echo,trading] 3644ms swaps 0/0 pileBuys 0
+FLAG  6p deck10 swap:off contests:byColor shop:grey late:2 classic[silver,red,yellow,purple,echo,thieves] 19301ms swaps 0/0 pileBuys 24
+       retired member dealt: Scouts (benders.scout)
+FLAG  6p deck10 swap:off contests:byColor shop:grey late:2 random[purple,silver,thieves,echo,red,yellow] 18175ms swaps 0/0 pileBuys 21
+       retired member dealt: Scouts (benders.scout)
+FLAG  6p deck10 swap:off contests:byColor shop:grey late:3 classic[silver,red,yellow,purple,echo,thieves] 8386ms swaps 0/0 pileBuys 19
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  6p deck10 swap:off contests:byColor shop:grey late:3 random[echo,silver,trading,thieves,yellow,red] 8065ms swaps 0/0 pileBuys 20
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    6p deck10 swap:off contests:byColor shop:all late:2 classic[silver,red,yellow,purple,echo,thieves] 6722ms swaps 0/0 pileBuys 48
+ok    6p deck10 swap:off contests:byColor shop:all late:2 random[red,echo,silver,yellow,thieves,trading] 3991ms swaps 0/0 pileBuys 39
+FLAG  6p deck10 swap:off contests:byColor shop:all late:3 classic[silver,red,yellow,purple,echo,thieves] 148974ms swaps 0/0 pileBuys 51
+       round III member out before round III: Smooth Talkers (a pile)
+       round III member out before round III: Panel (a pile)
+FAIL  6p deck10 swap:off contests:byColor shop:all late:3 random[echo,silver,trading,thieves,purple,red]
+       [echo,silver,trading,thieves,purple,red] bot n=6 seed=1408: choice option trade:61:145 names card 145 at shop, now in pile benders.squatter (round 2, move 118)
+ok    6p deck10 swap:on contests:printed shop:deck late:2 classic[market,red,yellow,purple,echo,thieves] 6282ms swaps 38/64 pileBuys 0
+ok    6p deck10 swap:on contests:printed shop:deck late:2 random[trading,red,echo,thieves,market,silver] 5203ms swaps 24/58 pileBuys 0
+ok    6p deck10 swap:on contests:printed shop:deck late:3 classic[market,red,yellow,purple,echo,thieves] 12772ms swaps 36/67 pileBuys 0
+ok    6p deck10 swap:on contests:printed shop:deck late:3 random[echo,trading,silver,market,purple,yellow] 3601ms swaps 25/59 pileBuys 0
+FLAG  6p deck10 swap:on contests:printed shop:grey late:2 classic[silver,red,yellow,purple,echo,thieves] 13177ms swaps 20/75 pileBuys 17
+       retired member dealt: Scouts (benders.scout)
+FLAG  6p deck10 swap:on contests:printed shop:grey late:2 random[yellow,purple,thieves,silver,red,echo] 15412ms swaps 23/71 pileBuys 19
+       retired member dealt: Scouts (benders.scout)
+FAIL  6p deck10 swap:on contests:printed shop:grey late:3 classic[silver,red,yellow,purple,echo,thieves]
+       [silver,red,yellow,purple,echo,thieves] bot n=6 seed=1415: shop row 8 with pile 22 (round 2, move 174)
+FLAG  6p deck10 swap:on contests:printed shop:grey late:3 random[purple,yellow,echo,red,silver,thieves] 7885ms swaps 18/70 pileBuys 20
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    6p deck10 swap:on contests:printed shop:all late:2 classic[silver,red,yellow,purple,echo,thieves] 4963ms swaps 14/67 pileBuys 45
+ok    6p deck10 swap:on contests:printed shop:all late:2 random[purple,red,thieves,yellow,echo,silver] 5018ms swaps 15/63 pileBuys 37
+FLAG  6p deck10 swap:on contests:printed shop:all late:3 classic[silver,red,yellow,purple,echo,thieves] 56309ms swaps 13/59 pileBuys 67
+       round III member out before round III: Philanthropist (a pile)
+       round III member out before round III: Panel (a pile)
+FAIL  6p deck10 swap:on contests:printed shop:all late:3 random[thieves,echo,purple,yellow,red,silver]
+       [thieves,echo,purple,yellow,red,silver] bot n=6 seed=1420: choice option trade:120:153 names card 153 at shop, now in pile benders.anarchist (round 2, move 133)
+ok    6p deck10 swap:on contests:byColor shop:deck late:2 classic[market,red,yellow,purple,echo,thieves] 19895ms swaps 47/68 pileBuys 0
+ok    6p deck10 swap:on contests:byColor shop:deck late:2 random[purple,yellow,silver,thieves,trading,echo] 4637ms swaps 17/38 pileBuys 0
+ok    6p deck10 swap:on contests:byColor shop:deck late:3 classic[market,red,yellow,purple,echo,thieves] 12216ms swaps 38/72 pileBuys 0
+ok    6p deck10 swap:on contests:byColor shop:deck late:3 random[silver,purple,thieves,trading,red,market] 4371ms swaps 40/71 pileBuys 0
+FLAG  6p deck10 swap:on contests:byColor shop:grey late:2 classic[silver,red,yellow,purple,echo,thieves] 8986ms swaps 35/72 pileBuys 12
+       retired member dealt: Scouts (benders.scout)
+FLAG  6p deck10 swap:on contests:byColor shop:grey late:2 random[thieves,trading,yellow,echo,purple,red] 7837ms swaps 42/62 pileBuys 12
+       retired member dealt: Scouts (benders.scout)
+FLAG  6p deck10 swap:on contests:byColor shop:grey late:3 classic[silver,red,yellow,purple,echo,thieves] 12050ms swaps 36/66 pileBuys 13
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  6p deck10 swap:on contests:byColor shop:grey late:3 random[echo,thieves,red,silver,yellow,trading] 7245ms swaps 31/63 pileBuys 14
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    6p deck10 swap:on contests:byColor shop:all late:2 classic[silver,red,yellow,purple,echo,thieves] 8566ms swaps 11/64 pileBuys 43
+ok    6p deck10 swap:on contests:byColor shop:all late:2 random[yellow,silver,echo,purple,red,thieves] 7577ms swaps 17/64 pileBuys 53
+FLAG  6p deck10 swap:on contests:byColor shop:all late:3 classic[silver,red,yellow,purple,echo,thieves] 7499ms swaps 23/63 pileBuys 58
+       round III member out before round III: Hostesses (a pile)
+       round III member out before round III: Mentor & Protégés (a pile)
+       round III member out before round III: Anarchist (a pile)
+FLAG  6p deck10 swap:on contests:byColor shop:all late:3 random[purple,trading,silver,yellow,echo,red] 8266ms swaps 18/63 pileBuys 44
+       round III member out before round III: Misers (a pile)
+ok    6p deck15 swap:off contests:printed shop:deck late:2 classic[market,red,yellow,purple,echo,thieves] 7667ms swaps 0/0 pileBuys 0
+ok    6p deck15 swap:off contests:printed shop:deck late:2 random[silver,echo,market,thieves,purple,trading] 2144ms swaps 0/0 pileBuys 0
+ok    6p deck15 swap:off contests:printed shop:deck late:3 classic[market,red,yellow,purple,echo,thieves] 7875ms swaps 0/0 pileBuys 0
+ok    6p deck15 swap:off contests:printed shop:deck late:3 random[thieves,market,trading,echo,yellow,silver] 3895ms swaps 0/0 pileBuys 0
+FLAG  6p deck15 swap:off contests:printed shop:grey late:2 classic[silver,red,yellow,purple,echo,thieves] 7429ms swaps 0/0 pileBuys 21
+       retired member dealt: Scouts (benders.scout)
+FLAG  6p deck15 swap:off contests:printed shop:grey late:2 random[silver,yellow,trading,thieves,echo,red] 5545ms swaps 0/0 pileBuys 22
+       retired member dealt: Scouts (benders.scout)
+FLAG  6p deck15 swap:off contests:printed shop:grey late:3 classic[silver,red,yellow,purple,echo,thieves] 8538ms swaps 0/0 pileBuys 21
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+FLAG  6p deck15 swap:off contests:printed shop:grey late:3 random[echo,silver,red,thieves,purple,yellow] 6619ms swaps 0/0 pileBuys 20
+       retired member dealt: Scouts (benders.scout)
+       round III member out before round III: Anarchist (a pile)
+ok    6p deck15 swap:off contests:printed shop:all late:2 classic[silver,red,yellow,purple,echo,thieves] 8582ms swaps 0/0 pileBuys 51
+ok    6p deck15 swap:off contests:printed shop:all late:2 random[purple,echo,thieves,yellow,red,trading] 3853ms swaps 0/0 pileBuys 34
+FLAG  6p deck15 swap:off contests:printed shop:all late:3 classic[silver,red,yellow,purple,echo,thieves] 3881ms swaps 0/0 pileBuys 44
+       round III member out before round III: High Society (a pile)
+       round III member out before round III: Proselytizers (a pile)
+FLAG  6p deck15 swap:off contests:printed shop:all late:3 random[echo,red,purple,yellow,silver,thieves] 129950ms swaps 0/0 pileBuys 72
+       round III member out before round III: Doppelganger (a pile)
+       round III member out before round III: Panel (a pile)
+ok    6p deck15 swap:off contests:byColor shop:deck late:2 classic[market,red,yellow,purple,echo,thieves] 7311ms swaps 0/0 pileBuys 0
+ok    6p deck15 swap:off contests:byColor shop:deck late:2 random[trading,echo,red,yellow,silver,thieves] 4914ms swaps 0/0 pileBuys 0
+ok    6p deck15 swap:off contests:byColor shop:deck late:3 classic[market,red,yellow,purple,echo,thieves] 17644ms swaps 0/0 pileBuys 0
+ok    6p deck15 swap:off contests:byColor shop:deck late:3 random[yellow,silver,market,red,purple,trading] 6172ms swaps 0/0 pileBuys 0
+FAIL  6p deck15 swap:off contests:byColor shop:grey late:2 classic[silver,red,yellow,purple,echo,thieves]
+       [silver,red,yellow,purple,echo,thieves] bot n=6 seed=1449: shop row 8 with pile 69 (round 2, move 221)
+FAIL  6p deck15 swap:off contests:byColor shop:grey late:2 random[silver,purple,red,trading,yellow,thieves]
+       [silver,purple,red,trading,yellow,thieves] bot n=6 seed=1450: shop row 7 with pile 25 (round 1, move 35)
+FAIL  6p deck15 swap:off contests:byColor shop:grey late:3 classic[silver,red,yellow,purple,echo,thieves]
+       [silver,red,yellow,purple,echo,thieves] bot n=6 seed=1451: shop row 9 with pile 57 (round 3, move 401)
+FAIL  6p deck15 swap:off contests:byColor shop:grey late:3 random[red,purple,silver,trading,yellow,thieves]
+       [red,purple,silver,trading,yellow,thieves] bot n=6 seed=1452: shop row 8 with pile 31 (round 2, move 129)

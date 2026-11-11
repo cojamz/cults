@@ -1,0 +1,126 @@
+// Card facts for the Lamplit shop and hover cards: timing tags, what paying leaves, how a buy moves the contests,
+// and which face-up cards a space would make affordable. All read off the engine; nothing here is a rule.
+import { paymentPlan, memberPrice } from '../../engine/v4/index.js';
+import { contextFor } from '../../engine/v4/core.js';
+import { ownPlan, skipWords, justTook, previousNow, copyOptions } from '../../engine/v4/content/echo.js';
+import { borrowable } from '../../engine/v4/content/red.js';
+
+// The card's timing, from how its text opens (the tag above the name).
+const TIMINGS = [
+  [/^(?:now|recruit|on recruit|when recruited) (?:and|\/) (?:at )?round start\b/i, 'On recruit + at round start'],
+  [/^on recruit:.*\bround (?:i+ )?start:/i, 'On recruit + at round start'], // "On Recruit: X Round Start: X" (Cory, 2026-10-27)
+  [/^(?:at )?round start\b/i, 'At round start'],
+  [/^round end\b/i, 'Round end'],
+  [/^(?:recruit|on recruit|when recruited|when it joins you)\b/i, 'On recruit'],
+  [/^(?:whenever|when you|when another player)\b/i, 'Whenever'],
+  [/^game end\b/i, 'Game end'],
+  [/^(?:on use, )?once per round\b/i, 'Once a round'],
+  [/^(?:on use, )?(?:once per game|one time use)\b/i, 'Once per game'],
+  [/^while\b/i, 'While'],
+];
+/** "Round start", "On recruit", "Worth 2"… for a member def. */
+export function timingOf(def) {
+  const t = (def.text || '').trim();
+  const rest = t.replace(/^Worth \d+ followers?\.\s*/i, '');
+  if (!rest || /^no effect\.?$/i.test(rest)) return `Worth ${def.f}`;
+  for (const [re, label] of TIMINGS) if (re.test(rest)) return label;
+  return 'Always';
+}
+
+/**
+ * What recruiting uid costs player p now: { spend, leaves, short } (short when unaffordable: what's missing, by the
+ * engine's one price rule, discounts and Penny Pincher included: { color, colorN, any, total, text: "4 green" }).
+ */
+export function payBreakdown(state, p, uid) {
+  const spend = paymentPlan(state, p, uid);
+  if (spend) {
+    const leaves = Object.fromEntries(state.resources.map(r => [r, (p.res[r] || 0) - (spend[r] || 0)]));
+    return { spend, leaves, short: null };
+  }
+  const pr = memberPrice(state, p, uid);
+  const sh = pr.short || { any: 0, total: 0, text: '' };
+  const colorN = pr.color ? sh[pr.color] || 0 : 0;
+  return { spend: null, leaves: null, short: { color: colorN ? pr.color : null, colorN, any: sh.any, total: sh.total, text: sh.text } };
+}
+
+const cap = s => s[0].toUpperCase() + s.slice(1);
+
+/**
+ * Face-up cards p can't afford now but could after gaining at least `gain` ({ color: n }): uids. The space's
+ * worst case is used, so a tick never promises what a choice might not give.
+ */
+export function unlockedBy(state, p, gain) {
+  const res = { ...p.res };
+  for (const r in gain || {}) res[r] = (res[r] || 0) + Math.max(0, gain[r]);
+  const richer = { ...p, res };
+  return state.shop.filter(u => !paymentPlan(state, p, u) && paymentPlan(state, richer, u));
+}
+/** The guaranteed gains of a preview (the low end of each color's range). */
+export const surely = pv => (pv ? Object.fromEntries(Object.entries(pv.you.res).map(([r, [lo]]) => [r, lo])) : {});
+
+/**
+ * The actions a copying member would copy if recruited now, as
+ * board keys, from Green's own target rule; null for any other member or when Green isn't on the table.
+ */
+export function memberCopyTargets(state, pid, def) {
+  if (!state.quadrants.includes('echo')) return null;
+  try {
+    const ctx = contextFor(state), p = state.players[pid];
+    const entries = /copy the action you just took/i.test(def.text || '')
+      ? [justTook(ctx, p)].filter(Boolean)
+      : /copy the (?:previous action|action taken the previous turn)/i.test(def.text || '') ? previousNow(ctx, p) : null;
+    return entries && [...new Set(entries.map(e => String(e.key).split('+')[0]))];
+  } catch { return null; }
+}
+
+/**
+ * "Copy every space you took this round" (Greatest Hits, Tribute Band) for player pid right now: the spaces it would
+ * copy (board keys and names, in the order taken) and what it skips, in the engine's own words.
+ * Null when it isn't such a card or Green isn't on the table. Read on a copy of the ledger.
+ */
+export function ownCopyPlan(state, pid) {
+  if (!state.quadrants.includes('echo') || pid == null) return null;
+  try {
+    const s = { ...state, echo: state.echo ? structuredClone(state.echo) : undefined };
+    const { take, skip } = ownPlan(contextFor(s), s.players[pid]);
+    return { keys: [...new Set(take.map(e => String(e.key).split('+')[0]))], names: take.map(e => e.name), skips: skipWords(skip) };
+  } catch { return null; }
+}
+/** Is this the copy-all card (Greatest Hits as a space, Tribute Band as a member)? */
+export const copiesAll = text => /^(?:(?:on use, )?(?:once per game|one time use): )?(?:choose a rival\. )?(?:copy|do) every (?:action (?:they have a minion on|where you have a minion|with your minion|you took this round|(?:the leader|a rival you choose) has a minion on)|space you took this round)/i.test(text || '');
+/** The copy-all plan a card would play for pid: its own actions, or every rival's it could pick (Tribute Band, Cory 2026-10-28). */
+export function copyAllPlan(state, pid, text) {
+  if (!/\ba rival you choose\b|\bchoose a rival\b/i.test(text || '')) return ownCopyPlan(state, pid);
+  try {
+    const plans = state.players.filter(o => o.id !== pid).map(o => ownCopyPlan(state, o.id)).filter(Boolean);
+    return plans.length ? { keys: [...new Set(plans.flatMap(x => x.keys))], names: plans.flatMap(x => x.names), skips: plans[0].skips } : null;
+  } catch { return null; }
+}
+
+// A card or space that copies a member's On Recruit (or a member itself): which list its choice offers, from its words.
+// the fourth: what an empty list says, in the card's terms ("nobody yet" read as no players: picky bot, Nov 4)
+const COPY_KINDS = [
+  [/copy the On Recruit of a rival[’']s member/i, 'rival', 'Could copy', 'No rival member has an On Recruit yet'],
+  [/copy the On Recruit of (?:each of your members|another of your members)/i, 'own', 'Could copy', 'None of your members has an On Recruit yet'],
+  [/use (?:the On Recruit effect of a shop member|a shop member’s On Recruit)/i, 'shop', 'Could use', 'No shop member has an On Recruit'],
+  [/becomes a copy of a rival[’']s member/i, 'rivalMember', 'Could copy', 'No rival has a member yet'],
+  [/becomes a copy of another of your members/i, 'ownMember', 'Could copy', 'You have no other member yet'],
+  [/choose a rival[’']s member\. Until you choose again/i, 'rivalMember', 'Could choose', 'No rival has a member yet'],
+  [/choose a rival[’']s member\. Do its On Recruit/i, 'rivalMember', 'Could choose', 'No rival has a member yet'], // Impersonator (Cory, Nov 5: "i mean like in the hover over")
+];
+/**
+ * The members a copy card or space (Sample, Greatest Hits, Tryout, Bootlegger, Impostors, Doppelganger, Impersonator)
+ * could pick for pid right now, from the engine's own lists (Cory, Nov 4: "hovering over copy a rival members on
+ * recruit should show you the available options"). self: the card's own uid (a member never copies itself).
+ * → { label, list: [{ uid, def, owner }] } or null when the text isn't a copy of a member.
+ */
+export function copyChoices(state, pid, text, self = null) {
+  const hit = COPY_KINDS.find(([re]) => re.test(text || ''));
+  if (!hit || pid == null || !state.players[pid]) return null;
+  try {
+    const ctx = contextFor(state), p = state.players[pid];
+    const raw = hit[1] === 'shop' ? borrowable(ctx).map(c => ({ uid: c.uid, def: c.def })) : copyOptions(ctx, p, hit[1], self);
+    const ownerOf = u => state.players.find(o => o.members.includes(u));
+    return { label: hit[2], none: hit[3], list: raw.map(x => ({ ...x, owner: ownerOf(x.uid) || null })) };
+  } catch { return null; }
+}

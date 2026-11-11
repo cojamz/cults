@@ -1,0 +1,89 @@
+g1 Ava: FEEL: Last-Minute Shopper | 4 | 4 | yes | Its +2 blue before scoring quietly won blue in round II; the end-of-round recruit was useful twice.
+g1 Ava: FEEL: Power Shoppers | 2 | 2 | yes | Two members in one turn hardly ever happens; I passed every time it showed.
+g1 Ava: FEEL: Night Manager | 2 | 2 | yes | You must place the round's last minion, and Last Call's token makes that one player; nobody bought it.
+g1 Ava: FEEL: Ballroom Dancers | 4 | 4 | yes | +12 for Dee at the end of round III with every Silver space full; a good payoff for waiting.
+g1 Ava: FEEL: Kingmakers | 3 | 3 | yes | Ben buried it in round I to deny Cal; in round III it gave Ben +3 and me 3 useless silver.
+g1 Ava: FEEL: Patron Saints | 2 | 2 | yes | Too few silver members on the table to count; dead each time I saw it.
+g1 Ava: FEEL: Downsizers | 2 | 1 | yes | My only cheap member was Line Cutters, so casting one out meant losing 3 followers for 4 white.
+g1 Ava: META: The contest race is the heart of the game, and moving the rims between rounds I and II made me plan around what I hold, not which sphere I like. Holding back to the last turn is the best tool by far. Last Call's Goes Last token gives one player 3 or 4 uncontested turns in round III, and with Party Crasher that settled the game. White Cloak with Regular makes buying followers nearly free and may be too strong. I'd first limit the Goes Last token in round III, for example by letting its minions go last one at a time in turn order, and fix Peek so pile cards can't be recruited.
+g1 Ben: FEEL: Kingmakers | 3 | 3 | yes | +3 a round is a real engine if bought early; in round III it's break-even, and the silver gift feeds the Silver Cloak
+g1 Ben: FEEL: Power Shoppers | 2 | 1 | unsure | it needs two member recruits in one turn, which almost never lines up; 7 for 2 followers otherwise
+g1 Ben: FEEL: Last-Minute Shopper | 5 | 3 | yes | 4 for 1 follower looks weak, but its +2 blue before scoring swung two blue contests for Ava; it's sneaky strong
+g1 Ben: FEEL: Night Manager | 2 | 1 | yes | narrow; I only buried it because Dee places last
+g1 Ben: FEEL: Ballroom Dancers | 4 | 3 | unsure | +12 at the end of round III for one use is a lot for 7; it counts everyone's minions on Silver, so the silver players set it up for the buyer
+g1 Ben: FEEL: Patron Saints | 2 | 2 | yes | it counts anyone's silver members, which is neat, but it showed up too late to weigh seriously
+g1 Ben: FEEL: Downsizers | 2 | 1 | yes | casting out a 3-cost for 4 white once a round had no member worth feeding it
+g1 Ben: META: The reshuffled contest rims and the shared Silver/Blue/White/Purple contests make holdings the real score, and reading what each rival can still add before scoring is the best part of the game. Two engines run away: White Cloak with Regular repays every follower buy, and Goes Last on four round-III minions plus Party Crasher lets one player set the final contests with no answer. Party Gifts at a flat +6 in every round is the easiest pick on the wheel. The first thing I'd change is White Cloak's "+2 if it's you", which makes buying followers cheaper the more you do it.
+g1 Cal: FEEL: Kingmakers | 3 | 3 | yes | +3 a round and a gift to a rival fits silver well; dangerous to own while you're fighting for silver, since its gift lands right before scoring
+g1 Cal: FEEL: Ballroom Dancers | 5 | 2 | unsure | counting everyone's minions made it +12 for Dee mostly off my placements; it rewards a rival living on silver more than playing silver yourself
+g1 Cal: FEEL: Patron Saints | 3 | 3 | yes | at round III it counted 5 silver members around the table; about par, I passed only because I needed the silver for the contest
+g1 Cal: FEEL: Downsizers | 1 | 1 | unsure | sat in the shop for two rounds; cutting your own members for 4 white never looked worth a recruit
+g1 Cal: FEEL: Last-Minute Shopper | 4 | 3 | yes | +2 blue right before scoring quietly won Ava blue, and the free extra recruit at round end is strong
+g1 Cal: FEEL: Night Manager | 1 | 1 | yes | needs the last minion and several purple members; no one but Dee could use it and she skipped it
+g1 Cal: FEEL: Power Shoppers | 1 | 1 | yes | showed up in round III with no turns left to recruit two members; nobody looked at it
+g1 Cal: META: Getting a member engine going in round I (White Cloak plus Regular, Last-Minute Shopper, Goes Last) wins. A player who fights for one contest with a held pile falls behind, because a 1-to-1 follower buy plus a cloak kickback is better than holding. The wheel's contests reshuffling between spheres each round was a good twist and made the color you hold matter more than the spheres you take. The thing I'd change first is Last Call's Goes Last in round III: four placements in a row after everyone else is done, plus Party Crasher, let Dee set two +10 contests that nobody could answer. Also fix Peek so it doesn't sell cards from the pile.
+g1 Dee: FEEL: Splurge | 4 | 5 | yes | round II pays a follower per resource paid, so Ballroom Dancers was +7 on the spot; round III halving it felt odd.
+g1 Dee: FEEL: Ballroom Dancers | 5 | 5 | no | holding it for a full Silver sphere was a real gamble that paid +12; it counts minions on silver rather than gifting, so it feels unlike silver's other cards.
+g1 Dee: FEEL: Night Manager | 3 | 2 | yes | I held the round's last minion in round I but buying it would have emptied my purple; Ben buried it in round III.
+g1 Dee: FEEL: High Society | 3 | 2 | yes | weighed it against Ballroom Dancers for Splurge; its trickle lost to a one-time +8 or more.
+g1 Dee: FEEL: Power Shoppers | 2 | 2 | yes | needs blue and two member recruits in a turn; I had neither, and I sent it to the bottom with Out of Style.
+g1 Dee: FEEL: Last-Minute Shopper | 4 | 3 | yes | in Ava's hand its +2 blue before scoring won her round II's blue contest and set the bar I had to beat at the end.
+g1 Dee: FEEL: Kingmakers | 3 | 3 | yes | 3 followers per round end for 5 is real; Ben buried it in round I for that reason, and it gave Ava silver at the end.
+g1 Dee: FEEL: Patron Saints | 2 | 2 | unsure | only 4 or 5 silver members on the table, so it was a 7-cost body worth about 7; never tempted.
+g1 Dee: FEEL: Downsizers | 1 | 1 | yes | needed white and cheap members to throw away; dead in my seat all game.
+g1 Dee: META: The shuffled contest colors on each sphere are the best idea here: spaces and contests point at different colors, so every placement asks two questions. The White Cloak plus Regular loop on follower buys was the strongest engine until the very end, and a cloak should not hand back more than a buy costs. Last Call's Goes Last in round III is too strong: four turns in a row after everyone else is out means nobody can answer, and combined with Party Crasher it decided the game. First change: have Goes Last minions fit back into the turn order instead of all landing after the last rival, or cap it at one minion.
+g2 Ava: FEEL: Recruit Twice | 4 | 4 | yes | an extra recruit was exactly what I needed to cash out ahead of Counterfeiters
+g2 Ava: FEEL: Ballroom Dancers | 4 | 4 | yes | +8 on my last turn felt great, but you have to hold it to the end and count silver minions
+g2 Ava: FEEL: Snitch | 2 | 2 | yes | I needed steal protection badly in III, but 1 follower per steal does not stop Heist Crew halving your pile
+g2 Ava: FEEL: Heist Crew | 4 | 3 | yes | with both other piles steal-proof it had exactly one target, me; it was strong because protection funnels all the stealing
+g2 Ava: FEEL: Night Traders | 4 | 3 | yes | a 3-swap after the last minion shaped every close lead in round I, though Dee ended up swapping nothing
+g2 Ava: FEEL: Counterfeiters | 5 | 2 | yes | once per round it picks who wins a contest; the flip of Dee to all-blue to take blue off Cal was a kingmaker move, a lot of power for 5
+g2 Ava: FEEL: Matchmaker | 1 | 1 | yes | it was in the shop a moment and got buried; never a consideration
+g2 Ava: FEEL: Kingmakers | 4 | 3 | yes | 3 a round for 5 is strong, and choosing which rival gets the silver is real table politics
+g2 Ava: FEEL: Patron Saints | 3 | 2 | yes | paid Cal 5 and 8 at round ends; quiet but big with silver members spread around the table
+g2 Ava: FEEL: Power Shoppers | 1 | 1 | yes | needed 4 blue I never had; dead for me
+g2 Ava: FEEL: Last-Minute Shopper | 3 | 3 | yes | the round-end recruit let Ben land Critic and Kidnapper after everyone else was done
+g2 Ava: META: The crossed contests that remap each round and the snake order work, and round I was full of real holding decisions. From round II on, too many effects fire after the last minion lands: Spoilsport, Counterfeiters, Night Traders, Kingmakers, Last-Minute Shopper. Leading a contest felt like theater, and the best plan was to dump resources into followers. Steal immunity also stacks badly (Lie Low, Bodyguards, Magenta Cloak), so every steal lands on the one player without protection. First change: cap or reprice Spoilsport and Counterfeiters so a lead you held to the last turn is worth something again.
+g2 Ben: FEEL: Harvest | 4 | 4 | no | 3, 4 or 5 of any color is the most flexible space; it set up Kingmakers in round I and the Debutantes double in round III; it does not feel like yellow picking its colors
+g2 Ben: FEEL: Housewarming | 4 | 5 | yes | free member up to 6 plus 2 yellow plus the Yellow Cloak 2 is a lot for one space; it got me Counterfeiters
+g2 Ben: FEEL: Peek | 4 | 4 | yes | being able to recruit straight from the cards you looked at was stronger than I expected; I took Last-Minute Shopper from it
+g2 Ben: FEEL: Kingmakers | 4 | 4 | yes | 3 followers a round for 5 resources was my best early buy; choosing who gets the silver was a small real decision each round
+g2 Ben: FEEL: Last-Minute Shopper | 4 | 4 | yes | 2 blue plus a recruit before scoring at every round end; the last Kidnapper buy came from it
+g2 Ben: FEEL: Counterfeiters | 5 | 5 | yes | the most powerful card I saw: once a round I chose who won a contest, and it cost Cal the game; probably too strong for 5 resources, and Bodyguards blocking it surprised me
+g2 Ben: FEEL: Window Dressers | 3 | 3 | yes | 3 followers for 4 resources is a great body; I took Last-Minute Shopper's engine over it
+g2 Ben: FEEL: Heist Crew | 2 | 2 | yes | half a rival's biggest pile sounds great, but Lie Low and Bodyguards blanked it and Dee only took 2 yellow
+g2 Ben: FEEL: Snitch | 2 | 1 | yes | I weighed it twice while being robbed, but it costs magenta I needed for contests and only makes the thief lose 1
+g2 Ben: FEEL: Night Traders | 3 | 2 | yes | everyone planned around it for a round, then Dee swapped nothing in rounds II and III; the threat mattered more than the card
+g2 Ben: FEEL: Matchmaker | 1 | 1 | yes | it showed up in round II and Out of Style buried it before anyone could use it; on paper it stacks with Yellow Cloak
+g2 Ben: FEEL: Ballroom Dancers | 3 | 3 | yes | 8 followers for Ava in round III, but only if you hold it until every silver space is full; a fair once-a-game card
+g2 Ben: FEEL: Kingmakers vs Patron Saints | 4 | 3 | yes | Patron Saints paid Cal 5 and then 8 at round end because every silver member at the table counts; with silver members spread around it was the quiet card that nearly won him the game
+g2 Ben: FEEL: Patron Saints | 4 | 3 | yes | counting anyone's silver members makes it scale with what the rest of us buy; 13 followers for Cal over two rounds
+g2 Ben: FEEL: Power Shoppers | 1 | 1 | yes | never close to affordable for me with 4 blue; only for someone with extra recruits
+g2 Ben: FEEL: Bodyguards | 4 | 3 | yes | it blocked Poach, Kidnapper and Counterfeiters as well as steals, which no one at the table read from the card
+g2 Ben: META: The contests decide the game, and round-end tricks (Counterfeiters, Spoilsport, Night Traders, Kingmakers, Last-Minute Shopper) make the last placement and the round end feel like a second phase. That is tense, but it is hard to track at a real table. Stealing is very harsh in round I and then nearly dead in round III once Lie Low and Bodyguards are out. Counterfeiters and Debutantes are the outliers; I would change Counterfeiters first, because a once-a-round 'you pick who wins this contest' for 5 resources was the single biggest swing all game. Bodyguards also needs to say on the card that it blocks Poach and Counterfeiters.
+g2 Cal: FEEL: Recruit Twice | 3 | 3 | yes | only as good as Regular or Power Shoppers make the extra recruit
+g2 Cal: FEEL: Patron Saints | 5 | 5 | yes | +5 and +8 at round end, because the counts-as-2 silver members count double; underpriced at 7
+g2 Cal: FEEL: Bodyguards | 4 | 3 | yes | 9 is steep, but it blanked Heist Crew, Kidnapper and Counterfeiters aimed at me; it can't protect you from that card being used on someone else
+g2 Cal: FEEL: Counterfeiters | 5 | 2 | yes | it decided the game; once a round it picks who wins a contest, which is a kingmaker card wearing an attack card's clothes, and a feel-bad to be on the wrong end of
+g2 Cal: FEEL: Night Traders | 3 | 2 | yes | everyone played around it in round I, then Dee swapped nothing for two rounds; mostly a threat, rarely used
+g2 Cal: FEEL: Heist Crew | 2 | 1 | yes | it only fired once and fizzled into 2 yellow; with immunity everywhere, a once-per-game steal saved for round III is easy to blank
+g2 Cal: FEEL: Snitch | 1 | 1 | yes | a 1-follower penalty never deterred anyone; I never considered it
+g2 Cal: FEEL: Matchmaker | 2 | 2 | yes | weighed it for a Spree of new colors, but there weren't enough recruits left to pay it back
+g2 Cal: FEEL: Ballroom Dancers | 3 | 4 | yes | Ava's +8 in round III was a nice payoff for holding minions on silver
+g2 Cal: FEEL: Kingmakers | 4 | 3 | yes | +3 a round for Ben, and where the 3 silver went was the last real decision of the game
+g2 Cal: FEEL: Power Shoppers | 2 | 1 | yes | I kept it in the shop for my Recruit Twice and Spree, then it was gone before I could use it; +2 for 7 is weak
+g2 Cal: FEEL: Last-Minute Shopper | 4 | 3 | yes | its round-end +2 blue and recruit gave Ben Kidnapper after everyone had placed, which is sneaky
+g2 Cal: FEEL: Heist Crew vs Bodyguards (interaction) | 4 | 2 | yes | steal immunity is so common late that Heist Crew is dead on arrival
+g2 Cal: META: The crossed, reshuffling contest colors are a great twist, and holding versus converting is a real tension every turn. But too many after-the-last-placement effects (Counterfeiters, Night Traders, Spoilsport, Kingmakers, Last-Minute Shopper) make round-end leads feel like theater and are hard to track at a real table. Counterfeiters especially lets one player decide another contest. First change: make Counterfeiters convert only some of a rival's resources (say up to 5), or only work on a rival with no steal immunity, so it can't manufacture a 14-pile out of nothing on the last turn.
+g2 Dee: FEEL: Lie Low | 3 | 2 | yes | the steal is tiny; it is really a shield, and in round III it shut down my Heist Crew completely
+g2 Dee: FEEL: Night Traders | 4 | 2 | yes | a 3-swap after the last placement sounded strong, but every time I used it the gaps were 4 or more or the leads were spread so it did nothing; three games out of three it said swap nothing
+g2 Dee: FEEL: Heist Crew | 4 | 1 | yes | 9 resources for a once-per-game steal that Bodyguards and Lie Low both blank; it netted 2 yellow and cost me a round II contest, the feel-bad card of my game
+g2 Dee: FEEL: Snitch | 2 | 1 | yes | I passed every round; with the Magenta Cloak already deterring thieves it would almost never fire
+g2 Dee: FEEL: Counterfeiters | 5 | 2 | no | the most powerful card at the table: once a round Ben chose which single contest I won; it plays like a yellow kingmaking card, not the yellow go-broad idea, and felt bad both times
+g2 Dee: FEEL: Matchmaker | 2 | 1 | yes | I weighed it in round II and passed; with one round left it fires maybe twice
+g2 Dee: FEEL: Ballroom Dancers | 3 | 4 | yes | Ava cashed 8 on her last turn, which looked great, but it needs you to hold it to the very end
+g2 Dee: FEEL: Kingmakers | 4 | 3 | yes | 3 followers a round for 5 resources was a steady earner for Ben, and the silver gift picks whose contest moves
+g2 Dee: FEEL: Patron Saints | 4 | 3 | yes | Cal got 5 then 8 from it counting everyone's silver members, a strong engine nobody could stop
+g2 Dee: FEEL: Power Shoppers | 1 | 1 | yes | sat in the shop and nobody had the double-recruit turns to use it
+g2 Dee: FEEL: Last-Minute Shopper | 4 | 4 | yes | an extra recruit every round end; Ben used it to grab Critic and Kidnapper, quietly strong
+g2 Dee: META: Contests scored at round end make the last placement and the round-end cards (Spoilsport, Counterfeiters, Night Traders) the real game, which is tense but hard to track at a table. Cards that pick a winner for someone else, Counterfeiters and Spoilsport, are too strong and felt bad; the player they hit could do nothing. Party Gifts at a flat +6 in rounds I and II is the best follower space and rewards ignoring your engine. First change: make Spoilsport and Counterfeiters cost more or only work once per game.
