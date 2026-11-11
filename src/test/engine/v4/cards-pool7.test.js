@@ -1,3 +1,4 @@
+import { deniedText } from '../../../v4/game/Wheel.jsx';
 // @vitest-environment node
 // Idea pipeline pool 7 (Nov 7; scripts/ideas/README.md): bot-only candidates, never dealt in a real game. One test per
 // sentence of each card's text, through real moves, with the log naming the card. Candidates are un-retired (members)
@@ -218,6 +219,9 @@ describe('Grey candidates', () => {
     expect(s.pending.player).toBe(1);
     expect(s.pending.options.some(o => o.id === `slot:${build}`)).toBe(false);
     expect(named(s, 'Protesters')[0]).toMatch(/nobody can place there this round/);
+    // whose token it is, for the screen's minion on the space (Cory, Nov 9)
+    expect(s.protest.by[build]).toBe(0);
+    expect(deniedText(s, build, 1)).toBe('Blocked by P1’s Protesters this round');
   });
   it('Protesters: not in round I', () => {
     let s = go(still({ members: [['benders.protesters']], round: 1 }), turn(0, 1));

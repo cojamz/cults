@@ -662,6 +662,8 @@ export const handlers = {
     const st = ctx.state;
     if (!st.protest || st.protest.round !== st.round) st.protest = { round: st.round, keys: [] };
     st.protest.keys.push(key);
+    // whose token sits there, so the screen stands their minion on it (Cory, Nov 9)
+    (st.protest.by ||= {})[key] = p.id;
     ctx.log(`${p.name}'s Protesters sit on ${spaceLabel(ctx, key)}: nobody can place there this round.`);
   },
   ...handlers11({

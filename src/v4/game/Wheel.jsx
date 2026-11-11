@@ -413,6 +413,8 @@ const keyboardLed = () => viaKeys;
 /** Why a space can't be taken, in a few words at the pointer (null when it's open: the turn itself explains). */
 export function deniedText(state, key, meId = null) {
   const owner = state.slots[key];
+  const pr = state.protest;
+  if (owner === undefined && pr && pr.round === state.round && pr.keys && pr.keys.includes(key)) return `Blocked by ${pr.by && pr.by[key] !== undefined ? (pr.by[key] === meId ? 'your' : `${state.players[pr.by[key]].name}’s`) : 'a'} Protesters this round`;
   if (owner !== undefined) return `Taken by ${owner === meId ? 'you' : state.players[owner].name}`;
   const [q, i] = key.split('-').map(Number);
   const a = spacesOf(state, state.quadrants[q])[i];
@@ -764,7 +766,17 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   const ghostNow = ghost && ghost.state === state ? ghost : null;
   // the board as drawn: the state, with the placement on its way (if any) standing on its space and no longer lit
   const withGhost = slots => (ghostNow && !ghostNow.squat ? { ...slots, [ghostNow.key]: ghostNow.pid } : slots);
-  const slotsV = withGhost(state.slots), shadeV = withGhost(interactionState.slots);
+  // Protesters' spare minion token stands on its blocked space as its owner's emoji, the space dimmed as a taken one
+  // (Cory, Nov 9: "using protesters should put the extra minion token on the space as the emoji and dim it like an emoji
+  // taking the action would")
+  const withProtest = (st, slots) => {
+    const pr = st.protest;
+    if (!pr || pr.round !== st.round || !pr.keys || !pr.keys.length) return slots;
+    const out = { ...slots };
+    for (const k of pr.keys) if (out[k] === undefined && pr.by && pr.by[k] !== undefined) out[k] = pr.by[k];
+    return out;
+  };
+  const slotsV = withProtest(state, withGhost(state.slots)), shadeV = withProtest(interactionState, withGhost(interactionState.slots));
   const squatsV = ghostNow && ghostNow.squat ? { ...state.squats, [ghostNow.key]: [...((state.squats && state.squats[ghostNow.key]) || []), ghostNow.pid] } : state.squats;
   const legalV = ghostNow ? new Map([...legal].filter(([k]) => k !== ghostNow.key)) : legal;
   // its landing starts at the press too (the table's commit then keeps the same flash, so it doesn't land twice)
@@ -1397,7 +1409,8 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     const had = built.current.get(key);
     if (had && had.sig === sig) return <Space key={key} el={had.el} />;
     const cls = ['slot', `r${t}`, opt ? 'can lit' : '', squat ? 'squat' : '', quiet ? 'idle' : '', flashV.has(key) ? 'flash' : '', selected ? 'sel' : '', open ? 'open' : 'locked', shadeOwner !== undefined ? 'taken' : '', fresh ? 'fresh' : '', fresh && fresh.newest ? 'newest' : '', lay && said.verb ? 'verb' : '', lay && lay.oneLines > 1 ? 'wrap1' : '', lay && lay.twoLines > 1 ? 'wrap' : '', lay && lay.tight ? 'tight' : '', lay && lay.two === PANEL_PX.small ? 'small' : ''].filter(Boolean).join(' ');
-    const status = owner !== undefined ? `Taken by ${owner === meId ? 'you' : state.players[owner].name}${joiners.length ? ` and ${joiners.map(id => state.players[id].name).join(', ')}` : ''}${opt && String(opt).startsWith('squat:') ? ' (you can join it)' : ''}` : open ? (opt ? 'Open: you can take it' : 'Open') : `Opens in round ${roman(t)}`;
+    const protestBy = state.slots[key] === undefined && owner !== undefined && !(ghostNow && ghostNow.key === key);
+    const status = protestBy ? `Blocked by ${owner === meId ? 'your' : `${state.players[owner].name}’s`} Protesters this round` : owner !== undefined ? `Taken by ${owner === meId ? 'you' : state.players[owner].name}${joiners.length ? ` and ${joiners.map(id => state.players[id].name).join(', ')}` : ''}${opt && String(opt).startsWith('squat:') ? ' (you can join it)' : ''}` : open ? (opt ? 'Open: you can take it' : 'Open') : `Opens in round ${roman(t)}`;
     const minion = id => (
       <span key={id} className="worker" data-seat={id}>
         <Minion color={playerColor(id)} emoji={seatEmoji(state, id)} size={16} title={`${state.players[id].name}’s minion`} />
