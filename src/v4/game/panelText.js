@@ -105,8 +105,8 @@ const P = {
   },
   silver: {
     // "others get 1" left "1 of what?" (live panel r1): silver
-    toast: r => ({ main: `+${3 * r} silver`, second: `others get ${r} silver`, note: run(n => `+${3 * n}`) }),
-    polish: { main: '+3 silver', second: 'then all silver → one color' }, // Cory, Nov 11
+    toast: { main: '+4 silver', second: 'others get 2, then +1 silver' }, // Cory, Nov 11
+    polish: { main: '+2 silver', second: 'all silver → one color, then +1' }, // Cory, Nov 11
     // "+2 per silver" read as per silver you hold (Cory, Nov 1: "VERY misleading"): the giving leads
     // "+2 @f each" read as each rival (picky bot, Nov 4): per silver given, never "per silver" alone (Cory, Nov 1)
     partygifts: { verb: 'Give rivals up to 3 silver', second: '+2 @f per silver given', note: 'from the bank' },
