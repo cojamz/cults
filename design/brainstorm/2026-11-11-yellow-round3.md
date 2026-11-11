@@ -164,11 +164,11 @@ Verdict: send
 
 1. Printed text: "Each player gains 1 of each color among their members; you gain 2 of each." (grey: 1 of any color) (name and numbers Claude's fill-ins). Cards it touches: Melting Pot; Largesse "Give rivals 12 silver from the bank, split as you choose. +10 followers."; Rising Tide shape (gift, then take).
 2. Played turn: round III, you hold 5 member colors, rivals 3, 4 and 5: they gain 3, 4, 5; you gain 10. Against Initiation's member (about 3 followers): +10 resources is about +10 followers, minus what the table got.
-3. Both sides: no choices.
+3. Both sides: no choices on the card; the only choice is when to take it, best when you hold the most member colors at the table.
 4. Who feels it: a gift to every rival sized by their own breadth; narrow cults (White, Red stacks) get least, so it widens the gap against them; you take it when you are the widest.
 5. Not refused: not "+2 of every other color" (that paid only you, a pile formula); this reads every cult's members and hands the table a share, the Rising Tide reason Cory liked. Melting Pot counts the same thing for you alone in round II (a sibling at a different size and to the table: taste guide pattern 9).
 6. Judged: one count per cult, done when taken. Intuitive: yes. Fun: medium. Interacts: a gift to all. Powerful: +10. Engine or counter: payoff for breadth. Its color: many colors, the whole table.
-7. Public and certain: yes.
+7. Public and certain: every cult's members are face up; nothing drawn, random or hidden.
 8. Color interactions: none named; works in any game.
 9. Biggest case: 5 colors: +10 to you, +15 to rivals in total. Green copying gives the copier 2 per their colors and everyone 1 again. Under 10 net in followers.
 Verdict: send
@@ -182,7 +182,7 @@ Verdict: send
 5. Not refused: County Fair's no was about paying only the colored part; this pays full price. Risk: recruiting more is Blue's verb (Spree, Recruit Twice); this one is shaped by color breadth and the shop row, not the discard pile.
 6. Judged: breaks the one-recruit limit in round III, where the recruit is scarce (design-core: break a felt limit, best in round III). Intuitive: yes. Fun: high, a big turn. Interacts: the shop. Powerful: 2 to 4 members. Engine or counter: payoff for a resource pile. Its color: going broad, one of each.
 7. Public and certain: shop row is face up.
-8. Color interactions: none named.
+8. Color interactions: none named; it reads only the shop row and works in any game.
 9. Biggest case: 26 resources, four cheap members (5 to 7 each) of four colors in one turn: about 4 to 8 followers in worth plus abilities. Green copying it buys with the copier's own resources. Under a winner's 70 to 110.
 Verdict: send
 
@@ -199,7 +199,7 @@ Verdict: send
 9. Biggest case: a free 10.
 Verdict: cut (Initiation's twin)
 
-## Idea: Dye Job (round III)
+## Idea: Dye Job
 
 1. Printed text: "Turn up to 12 of rivals' resources into yellow, split as you choose. +1 yellow per 2 turned." (Cory's own Oct 30 round II text at 8; 12 is Claude's round III fill-in). Cards it touches: Polish (Silver) "+2 silver. Turn all your silver into one other color. +1 silver."; Gold's contest most gold; Silver's contest fewest silver; Counterfeiters (Yellow member) "On Use, once per round: turn all of a rival's resources into one color you choose."
 2. Played turn: round III, a Gold player holds 9 gold toward most gold: you turn 8 of it into yellow and 4 of the Magenta leader's purple: Gold loses the lead (contest 10), you +6 yellow. Against Initiation's member.
@@ -207,7 +207,7 @@ Verdict: cut (Initiation's twin)
 4. Who feels it: a sting on held-color contests (Gold most gold, Green no, Silver fewest silver if you turn a rival's silver away: a gift).
 5. Not refused: Cory said "I like dye job" (Oct 30) with these numbers for round II; never built after the contests changed. Dilute (disliked) changed 1 of a color a rival held more of; Dye Job is his own text.
 6. Judged: Cory's own shape. Weak tie to Yellow's own contest (member colors): it touches other colors' contests, not this one.
-7. Public and certain: yes.
+7. Public and certain: rivals' resources are face up; you pick which to turn; nothing drawn or hidden.
 8. Color interactions: held-color contests (Gold, Silver).
 9. Biggest case: 12 turned, +6 yellow; a Gold leader drops out of a 10 prize.
 Verdict: send (flagged to Cory as the one not tied to Yellow's contest; his own liked shape)
@@ -221,6 +221,6 @@ Verdict: send (flagged to Cory as the one not tied to Yellow's contest; his own 
 5. Not refused: Housewarming's cap was the problem in round II (5 "terrible", 7 "like 7 fucking currency"); round III is where a big free member belongs. Earlier today I cut it as often dead late; with +4 yellow it never pays nothing, and it is the only idea that moves the contest count itself, which is what Cory asked this slot to do. Risk: close to Initiation's effect (taste guide pattern 9), different in what it reads.
 6. Judged: one sentence, done when taken, the contest's own verb (add a color). Intuitive: yes. Fun: medium-high when the race is tied. Interacts: the contest race and the shop. Powerful: a free member of any cost plus the contest. Engine or counter: the end of New Blood and Melting Pot. Its color: going broad.
 7. Public and certain: shop row is face up.
-8. Color interactions: none named.
+8. Color interactions: none named; it reads only your own member colors and the shop row, and works in any game.
 9. Biggest case: a 12-cost member free plus breaking a 3-way tie at 4 colors (from 4 each to 10 alone): about +9 swing. Green copying it recruits for the copier's missing color. Against a winner's 70 to 110.
 Verdict: send
