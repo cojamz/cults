@@ -202,8 +202,11 @@ export function promptFor(state, mine) {
       if (asker && asker !== name) {
         const cur = state.current != null && state.current !== pend.player ? state.players[state.current] : null;
         const took = cur && lastTakenName(state, cur.name) === asker ? `${cur.name} took ${asker}` : asker;
-        // options that all point at seats are answered on the cults (the seat selector, game/seatPick.js)
-        return { who: p, text: `${took}: ${pend.options.some(o => o.target) ? 'pick on the board' : 'choose one'}`, keepCase: true, ...call };
+        // options that all point at seats are answered on the cults (the seat selector, game/seatPick.js); a member with
+        // no place on the table (the discard pile: Markdown) is picked in the sheet, so "choose one" (picky bot, Nov 11)
+        const onTable = t => !Number.isInteger(t.uid) || state.shop.includes(t.uid) || (state.pile || []).slice(0, 5).includes(t.uid) || state.players.some(q => q.members.includes(t.uid));
+        const board = pend.options.some(o => o.target) && pend.options.every(o => !o.target || onTable(o.target));
+        return { who: p, text: `${took}: ${board ? 'pick on the board' : 'choose one'}`, keepCase: true, ...call };
       }
       if (short) return { who: p, text: pend.prompt, ...call };
       // your own name before the question goes ("P2: take 6 more from the release, in any colors")
@@ -1059,7 +1062,7 @@ export function turnStory(start, end, actor, me = null, mid = null) {
       else if ((m = own.match(/gets (1 more minion|(\d+) more minions), placed now\.$/))) said.push(`+${m[2] || 1} minion${m[2] ? 's' : ''}, placed now`);
       else if ((m = own.match(/^'s next member costs (\d+) less\.$/))) said.push(`next member costs ${m[1]} less`);
       else if ((m = own.match(/^ recruited (.+?)(?: from the pile with .+?)? \((.+)\)\.$/))) said.push(m[2] === 'free' ? `recruited ${m[1]} (free)` : `recruited ${m[1]} (paid ${m[2]})`);
-      else if ((m = own.match(/^ bought (\d+) followers? \((.+)\)\.$/))) said.push(`bought ${fword(Number(m[1]))} (paid ${m[2]})`);
+      else if ((m = own.match(/^ bought (\d+) followers? \((.+)\)\.$/))) said.push(`recruited ${fword(Number(m[1]))} (paid ${m[2]})`); // the rulebook's word (picky bot, Nov 11)
       else if ((m = own.match(/^ released (.+?) to the discard pile, for (.+)\.$/))) {
         const back = ls.map(x => x.match(new RegExp(`^${an} takes (\\d+) (\\w+) from the release\\.$`))).filter(Boolean).map(x => `${x[1]} ${x[2]}`);
         said.push(`released ${m[1]} for ${back.length ? back.join(', ') : m[2]}`);
@@ -1187,7 +1190,13 @@ export function effectStory(start, end, actor, me = null, fx = []) {
     if (!groups.has(key)) groups.set(key, { key, cause: c, res: P.map(() => ({})), fol: P.map(() => 0), moved: [], disc: 0 });
     return groups.get(key);
   };
+  // Borrow's members discarded at round end (core endRound clears their record) aren't this move's doing: they leave the
+  // move's own lines and get one line of their own, "Round end, Borrow: …" (picky bot, Nov 11: "P3 Catch Up: discarded
+  // your Agents", and the seat said P3 took them)
+  const loaned = (start.borrowed || []).filter(b => !(end.borrowed || []).some(x => x.uid === b.uid) && start.players[b.pid] && start.players[b.pid].members.includes(b.uid) && !(end.players[b.pid] && end.players[b.pid].members.includes(b.uid)));
+  const loanUids = new Set(loaned.map(b => b.uid));
   for (const e of fx) {
+    if (e.type === 'release' && loanUids.has(e.what && e.what.uid)) continue;
     const g = groupOf(e.cause);
     if (!g) continue;
     const add = (pid, r, n) => { g.res[pid][r] = (g.res[pid][r] || 0) + n; };
@@ -1298,7 +1307,9 @@ export function effectStory(start, end, actor, me = null, fx = []) {
         if (m.from === me && actor !== me) hits.push(`discarded your ${cardName(m.uid)}`);
         continue;
       }
-      bits.push(m.to === owner ? `took ${whose(m.from)} ${cardName(m.uid)}` : m.from === owner ? `gave ${cardName(m.uid)} to ${nm(m.to)}` : `${cardName(m.uid)}: ${nm(m.from)} → ${nm(m.to)}`);
+      bits.push(m.to === owner ? `took ${whose(m.from)} ${cardName(m.uid)}` : m.from === owner || m.from === 'shop' ? `gave ${cardName(m.uid)} to ${nm(m.to)}` : `moved ${whose(m.from)} ${cardName(m.uid)} to ${nm(m.to)}`);
+      // (a shop member handed to a rival is the mover's gift, and a move between two others names both: the arrow read
+      // "Body Snatchers: the shop becomes P2", picky bot, Nov 11)
       if (m.from === me && m.to !== me && actor !== me) hits.push(`took your ${cardName(m.uid)}`);
     }
     return bits;
@@ -1353,7 +1364,7 @@ export function effectStory(start, end, actor, me = null, fx = []) {
       out.push(...others(g, actor));
     } else if (c.kind === 'buy') {
       const n = g.fol[actor];
-      out.push(`bought ${fword(n)} (paid ${paidOf(g, actor) || 'nothing'})`);
+      out.push(`recruited ${fword(n)} (paid ${paidOf(g, actor) || 'nothing'})`); // "recruit", as the rulebook says (picky bot, Nov 11: "bought")
       out.push(...others(g, actor));
     } else if (c.kind === 'plus1') {
       // the space's +1 once a game, said apart as it flies apart (Cory, Nov 11)
@@ -1364,6 +1375,7 @@ export function effectStory(start, end, actor, me = null, fx = []) {
       out.push(`released ${cardName(c.uid)}${back ? ` for ${back}` : ''}`);
     }
   }
+  if (loaned.length) out.push(`Round end, Borrow: discarded ${loaned.map(b => `${whose(b.pid)} ${cardName(b.uid)}`).join(', ')}`);
   // rivals who got the same thing share one line ("P2, P3 +1 red each"; every-frame review, Nov 6: Walk-In's card ran to
   // ten lines, one per rival)
   const SAME = /^(\S+) ((?:[+−]\d+ [a-z]+ ?)+)$/;

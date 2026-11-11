@@ -43,7 +43,10 @@ export function seatLoss(a, b, me) {
   for (const r of b.resources || []) { const d = (p0.res[r] || 0) - (p1.res[r] || 0); if (d > 0) res[r] = d; }
   const f = Math.max(0, (p0.bonus || 0) - (p1.bonus || 0));
   const name = (s, u) => (s.cards[u] ? cardDef(s, u).name : 'a member');
-  const gone = p0.members.filter(u => !p1.members.includes(u)).map(u => name(a, u));
+  // a member you borrowed, discarded at round end (its Borrow record gone), was never taken by the move (picky bot,
+  // Nov 11: "P3 took your Agents")
+  const loanEnd = u => (a.borrowed || []).some(x => x.uid === u && x.pid === me) && !(b.borrowed || []).some(x => x.uid === u);
+  const gone = p0.members.filter(u => !p1.members.includes(u) && !loanEnd(u)).map(u => name(a, u));
   if (!gone.length && !f && !Object.keys(res).length) return null;
   const came = gone.length ? p1.members.filter(u => !p0.members.includes(u)).map(u => name(b, u)) : [];
   return { res, f, gone, came };

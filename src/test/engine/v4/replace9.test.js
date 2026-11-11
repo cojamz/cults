@@ -158,7 +158,7 @@ describe('Last-Minute Shopper: "Round End: +3 blue, then you may recruit." (Cory
     const wd = s.pending.options.find(o => o.kind === 'card' && o.label.startsWith('Window Dressers'));
     expect(wd).toBeTruthy();
     s = pay(answer(s, wd.id));
-    s = answerAll(s, 'Churn', o => o[0]);
+    s = answerAll(s, 'Window Dressers: send', o => o[0]); // its question names it (Nov 11; was "Churn")
     expect(owns(s, 0, 'market.windowdresser')).toBe(true);
     const blue = (s.contests || []).at(-1).results.find(c => c.qid === 'market');
     expect(blue.winners).toEqual([0]);

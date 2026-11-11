@@ -205,7 +205,8 @@ export function giftPick(state, pend, first = null) {
   const swapCard = /swap card/i.test(question) || /swap card/i.test(title);
   // Body Snatchers trades one of yours for a rival's, never two rivals' (playtest, Nov 3: the generic head read "any two")
   const snatch = /body snatchers/i.test(title) || /body snatchers/i.test(question);
-  const tradeHead = swapKind === 'Promote' ? 'Promote a member' : swapKind === 'Demote' ? 'Demote a member' : swapCard ? 'Swap card: a member within 2 cost' : snatch ? 'Swap one of yours for a rival’s of the same cost' : 'Swap any two equal-cost members';
+  // the card's own rule, never its name again under its name (picky bot, Nov 11: "DEMOTE / Demote a member")
+  const tradeHead = swapKind === 'Promote' ? 'Swap a member for one costing up to 3 more' : swapKind === 'Demote' ? 'Swap a member for one costing up to 3 less' : swapCard ? 'Swap card: a member within 2 cost' : snatch ? 'Swap one of yours for a rival’s of the same cost' : 'Swap any two equal-cost members';
   const head = { give: n ? `A rival you pick gets ${n}` : 'A rival you pick gets some', colors: 'Swap one for one', amount: 'Swap for another color', trade: tradeHead }[kind];
   // Trade Seeds' swaps still to make, on the card's title line ("1 swapped · 2 left")
   const swapTask = state.queue?.[0]?.h === 'yellow.swap' ? state.queue[0].data : null;
@@ -517,7 +518,8 @@ export function pickHow(pk) {
   if (k.has('space')) say.push('a lit space on the wheel');
   if (k.has('shop')) say.push('a lit member in the shop');
   if (k.has('pile')) say.push('one of the lit members from the top of the pile');
-  if (k.has('member') || k.has('own-member')) say.push(k.has('own-member') && !k.has('member') ? 'one of your lit members' : 'a lit member on a cult');
+  // whose cult it is (picky bot, Nov 11: "a lit member on a cult")
+  if (k.has('member') || k.has('own-member')) say.push(k.has('own-member') && !k.has('member') ? 'one of your lit members' : k.has('own-member') ? 'a lit member on any cult' : 'a lit member on a rival’s cult');
   if (k.has('stack')) say.push(pk.give ? 'a color on a rival’s cult' : 'a lit stack on a rival’s cult');
   if (k.has('own-stack')) say.push('one of your lit stacks');
   if (k.has('seat')) say.push('a rival’s cult');

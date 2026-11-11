@@ -209,7 +209,8 @@ function windowPick(ctx, owner, left, sent = [], who = 'Window Shopper', row = n
   if (!shop.length) { scavenge(ctx, owner, sent); return; }
   // Out of Style (Nov 10) goes through the same steps, by its own name; a grey member gives 1 of any color there
   const named = who === 'Window Shopper' ? {} : { who };
-  ctx.choose(owner, left > 1 ? `${who}: send which member to the discard pile? (${left} to go)` : `${who}: send which member to the discard pile?`, shop.map(c => ({
+  // the count stays to the last pick ("(last one)"), so the question doesn't change shape under it (picky bot, Nov 11)
+  ctx.choose(owner, left > 1 ? `${who}: send which member to the discard pile? (${left} to go)` : sent.length ? `${who}: send which member to the discard pile? (last one)` : `${who}: send which member to the discard pile?`, shop.map(c => ({
     id: `card:${c.uid}`, label: `${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid, hint: who === 'Window Shopper' ? priceOf(c) : 1 + 0.1 * priceOf(c),
   })), `${Q}.windowShop`, { left, ...named, ...(TRACK || who !== 'Window Shopper' ? { sent } : {}), ...(row ? { row } : {}) });
 }
@@ -1164,7 +1165,7 @@ const market = {
     m('windowdresser', 'Window Dressers', 2, 0, /* Cory, Nov 5 backlog price yes */ 'On Recruit: discard 3 shop members and refill.', { f: 3, ...old4, ...old9('market.windowdresser'),
       onRecruited(ctx, owner) {
         ctx.log(`${owner.name}'s Window Dressers: send 3 shop members to the discard pile.`);
-        churnStep(ctx, owner, { left: Math.min(3, ctx.state.shop.length) });
+        churnStep(ctx, owner, { left: Math.min(3, ctx.state.shop.length), who: 'Window Dressers' }); // its own name on the question, not "Churn" (picky bot, Nov 11)
         ctx.defer(owner, `${Q}.churnRefill`);
       },
     }),

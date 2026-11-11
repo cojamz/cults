@@ -36,9 +36,10 @@ export function chooseRival(ctx, p, prompt, handler, data = null, hint = o => ct
 }
 /** Ask p to recruit one of `list` (shop members) for free, under the card or space `name`; the answer goes to `handler`
  *  (each color file routes it to freeTake). False, with a log line, when the list is empty. */
-export function freeAsk(ctx, p, name, list, handler, why = 'no shop member fits') {
+// cap: the most it may cost, said in the question (display only; picky bot, Nov 11: Late Shift's question gave no cap)
+export function freeAsk(ctx, p, name, list, handler, why = 'no shop member fits', cap = null) {
   if (!list.length) { ctx.log(`${p.name}'s ${name}: ${why}.`); return false; }
-  ctx.choose(p, `${name}: recruit which member for free?`, list.map(c => ({
+  ctx.choose(p, cap != null ? `${name}: recruit which member costing ${cap} or less, for free?` : `${name}: recruit which member for free?`, list.map(c => ({
     id: `card:${c.uid}`, label: `${c.def.name} (${c.def.s + c.def.w})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + c.def.s + c.def.w,
   })), handler, { name, ok: list.map(c => c.uid) });
   return true;

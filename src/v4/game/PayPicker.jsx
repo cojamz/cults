@@ -107,7 +107,8 @@ export default function PayPicker({ state, onPick, busy, turnOf = null }) {
   // every rule-changer bending this price, one quiet line each (the sockets already show what it comes to); a pay
   // choice says first what it's paid under ("Half Price: half its cost, in any colors")
   const asker = asChoice ? (String(pend.prompt || '').match(/^([^:]{2,40}):/) || [])[1] : null;
-  const rule = asChoice ? (how.half ? 'half its cost, in any colors' : how.anyColors ? 'in any colors' : 'at its cost') : null;
+  // a recruit's own discount says how much (picky bot, Nov 11: Markdown's sheet said "at its cost" for "paying 2 less")
+  const rule = asChoice ? (how.half ? 'half its cost, in any colors' : [how.less ? `${how.less} less than its cost` : '', how.anyColors ? 'in any colors' : ''].filter(Boolean).join(', ') || 'at its cost') : null;
   const notes = useMemo(() => [
     ...(asChoice && asker ? [{ key: 'how', text: `${asker}: ${rule}` }] : []),
     ...(def ? priceNotes(state, p, uid).filter(n => n.key !== 'total') : []),

@@ -302,7 +302,7 @@ describe('v4 format helpers', () => {
     let n = 0;
     for (const st of trail.stories) for (const l of st.lines) {
       const m = l.match(/^recruited (.+?) \(paid (.+)\)$/);
-      if (!m) continue;
+      if (!m || /^\d+ followers?$/.test(m[1])) continue; // followers recruited (said "bought" before Nov 11) aren't a member's recruit
       n++;
       // the paid amount is the price the engine logged, never a net of the turn's other gains
       // (a recruit from the pile reads "recruited X from the pile with Insider (price)")

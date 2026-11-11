@@ -72,12 +72,16 @@
   /* at 24px a lit member's glow and a switch keep inside their own cell, so the rows never collide */
   .app.game.lt > .lt-seat .cs-member.ready .fig::before{width:calc(100% + 10px)}
   .app.game.lt > .lt-seat .cs-member .cs-use-tab{bottom:-4px;font-size:9px;line-height:11px;padding:0 4px}
-  .app.game.lt > .lt-seat .cs-member .cs-loan-tab{bottom:-4px;font-size:9px;line-height:11px;padding:0 3px}
+  .app.game.lt > .lt-seat .cs-member .cs-loan-tab{bottom:-4px;font-size:9px;line-height:11px;padding:0 3px;pointer-events:auto;cursor:help} /* its title says what loan means (picky bot, Nov 11) */
   .app.game.lt > .lt-seat .cs-member .mu-switch,.app.game.lt > .lt-seat .cs-member .mu-sw-tip{bottom:-5px}
   /* a choice that picks one of this chair's members shows every one: the area grows over what's under the chair, on
      the chair's own ground, and folds back after */
   .app.game.lt > .lt-seat .lt-cult-seat.pick-all > .cs-crowd{z-index:6}
   .app.game.lt > .lt-seat .lt-cult-seat.pick-all > .cs-crowd > .cs-figs{height:auto;min-height:100%;background:var(--seat, #221a15);border-radius:0 0 8px 8px;box-shadow:0 8px 0 4px var(--seat, #221a15)}
+  /* the count stays over that ground, and a lit chair's ground is the lit color (picky bot, Nov 11: "N members" went
+     under a dark box darker than the lit chair) */
+  .app.game.lt > .lt-seat .lt-cult-seat.pick-all > .cs-crowd > .cs-member-count{position:relative;z-index:1}
+  .app.game.lt > .lt-seat .lt-cult-seat.pick-all.pick-lit:not(.pick-seat) > .cs-crowd > .cs-figs{--pick-ground:color-mix(in srgb,var(--seat, #221a15) 95%,rgb(var(--lamp)));background:var(--pick-ground);box-shadow:0 8px 0 4px var(--pick-ground)}
 
   /* your starting pick stands where your members will */
   .app.game.lt > .lt-seat > .lt-cult-seat > .cs-setup{order:2;flex:1 1 0;min-height:0;margin-top:6px;justify-content:center}

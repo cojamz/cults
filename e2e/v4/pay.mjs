@@ -288,7 +288,7 @@ try {
     const { ctx, page } = await open('w1', save, '.lt-wheel .gift-card[data-gift="trade"]');
     const head = await page.$eval('.gift-card .gc-what', e => e.textContent.replace(/\s+/g, ' ').trim());
     // the heading says the space's rule
-    if (head !== 'Promote a member') errors.push(`(w1) the card's heading reads "${head}"`);
+    if (head !== 'Swap a member for one costing up to 3 more') errors.push(`(w1) the card's heading reads "${head}"`);
     if (await page.$('.lt-seat .cs-member.pick-on')) errors.push('(w1) members light on the seats');
     if (await page.$('.gift-card .gc-row[data-row="2"] .gc-member:not([disabled])')) errors.push('(w1) a rival member is live before yours is picked');
     const mine = await page.$$eval('.gift-card .gc-row[data-row="1"] .gc-member:not([disabled])', els => els.map(e => Number(e.dataset.uid)));

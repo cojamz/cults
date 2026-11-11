@@ -416,7 +416,7 @@ export const silverActions = [
       (ctx.beforeTrailingPlus1 || (f => f()))(() => hostGain(ctx, p, 2)); // a later taker's +1 cut comes off the last +1, after the turn
       const n = p.res[S] || 0, opts = otherColors(ctx);
       if (!n || !opts.length) { hostGain(ctx, p, 1); return; }
-      ctx.choose(p, `Polish: turn all ${n} of your silver into which color?`, opts.map(c => ({
+      ctx.choose(p, n === 1 ? `Polish: turn your 1 silver into which color?` : `Polish: turn all ${n} of your silver into which color?`, opts.map(c => ({
         id: `color:${c}`, label: `${n} silver → ${n} ${c}`, kind: 'color', value: c, spend: { silver: n, [c]: -n },
         hint: 1 - 0.3 * (p.res[c] || 0),
       })), 'silver.polishAll');

@@ -66,10 +66,10 @@ describe('trade picker', () => {
     const { s, a, c } = scene();
     for (const title of ['Promote', 'Demote']) {
       s.pending = { ...s.pending, prompt: `${title}: swap a member with one in the shop`, options: [{ kind: 'trade', id: `trade:${a}:${c}`, value: [a, c] }] };
-      expect(giftPick(s, s.pending).head).toBe(`${title} a member`);
+      expect(giftPick(s, s.pending).head).toBe(`Swap a member for one costing up to 3 ${title === 'Promote' ? 'more' : 'less'}`); // its rule, not its name again (picky bot, Nov 11)
       // Panel asks in its own name (release QA, Oct 28: its Demote read "Swap any two equal-cost members")
       s.pending = { ...s.pending, prompt: `Panel: ${title.toLowerCase()} another member` };
-      expect(giftPick(s, s.pending).head).toBe(`${title} a member`);
+      expect(giftPick(s, s.pending).head).toBe(`Swap a member for one costing up to 3 ${title === 'Promote' ? 'more' : 'less'}`); // its rule, not its name again (picky bot, Nov 11)
     }
     // ring II shows line 1 only: the limit and the red both live there (text audit, Nov 1)
     expect(panelText('red', quadrant('red').actions.find(a => a.key === 'hireup')).verb).toContain('one costing up to 3 more');

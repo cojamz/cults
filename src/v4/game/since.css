@@ -30,6 +30,10 @@
 .lt-since.compact .since-row > * + *{margin-left:.3em}
 .lt-since.compact .since-row > .big.part.first{margin-left:0}
 .lt-since.compact .since-row .big.part{display:inline}
+/* the first piece (what the move gained) never drops whole: a row where it didn't fit (data-tight, SinceStrip) keeps its
+   leading words, followers first (rowParts), and lets the rest go (picky bot, Nov 11: "P3 Heist" with nothing after it) */
+.lt-since.compact .since-row[data-tight] > .big.part.first{flex:1 1 0;min-width:0;white-space:normal}
+.lt-since.compact .since-row[data-tight] > .big.part:not(.first),.lt-since.compact .since-row[data-tight] > .sp-words{display:none}
 .lt-since.compact .since-row .sp-words{order:2}
 /* the newest line in little room (SinceStrip level 1): without the space's board words, whole */
 .lt-since .since-row.brief .sp-words{display:none}

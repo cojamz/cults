@@ -254,7 +254,7 @@ export default {
       estimate: (ctx, p) => 1 + Math.max(0, ...lateList(ctx, p, placedCount(ctx, p) + (onBoardNow(ctx, p) ? 0 : 1)).map(c => c.def.f * 1.5 + 1)),
       resolve(ctx, p) {
         const n = placedCount(ctx, p), cap = lateCap(ctx, n);
-        freeAsk(ctx, p, 'Late Shift', lateList(ctx, p, n), 'red.poolFree', `${n} minion${n === 1 ? '' : 's'} placed, and no shop member costs ${cap} or less`);
+        freeAsk(ctx, p, 'Late Shift', lateList(ctx, p, n), 'red.poolFree', `${n} minion${n === 1 ? '' : 's'} placed, and no shop member costs ${cap} or less`, cap);
         ctx.gain(p, 'red', 1, { fromAction: true });
       },
     },

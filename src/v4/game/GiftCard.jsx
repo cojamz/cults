@@ -143,6 +143,16 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
   };
   const edge = () => fade(more.current), edge1 = () => fade(more1.current);
   useEffect(() => { edge(); edge1(); });
+  // a swap whose pictures still don't fit the card packs into the crowd's name chips, so no row is cut through a
+  // holder's members (picky bot, Nov 11: Demote's P4 row cut in half under "For", with the fade); read off the card
+  // as drawn, once per question
+  const [packedFor, setPackedFor] = useState(null);
+  useLayoutEffect(() => {
+    const el = box.current;
+    if (!el || packedFor === pend || el.dataset.gift !== 'trade' || el.dataset.crowd || !(innerWidth > 860)) return;
+    const over = x => !!x && x.scrollHeight > x.clientHeight + 1;
+    if (over(more.current) || over(more1.current)) setPackedFor(pend);
+  });
   const [l1raw, l2] = LABELS[g.kind];
   const l1 = g.kind === 'handover' && g.move ? 'Move' : l1raw;
   const card = uid => cardDef(state, uid);
@@ -199,7 +209,7 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
   };
   const members = g.kind === 'trade' || g.kind === 'handover';
   const dense = members && g.firsts.length + g.others.length > DENSE;
-  const crowd = g.kind === 'trade' && g.firsts.length + g.others.length > CROWD;
+  const crowd = g.kind === 'trade' && (g.firsts.length + g.others.length > CROWD || packedFor === pend);
   const pic = dense ? 24 : 28;
 
   const firstItem = f => {

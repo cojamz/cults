@@ -27,6 +27,23 @@ const words = (state, key) => {
   try { const [q, i] = key.split('-').map(Number); const qid = state.quadrants[q]; return panelWords(qid, spacesOf(state, qid)[i], Math.max(1, state.round)) || ''; } catch { return ''; }
 };
 
+/**
+ * The one-line row's pieces (compact strip): the short's parts, with a gain's bracketed detail as a piece of its own
+ * and its followers first, so a long gain keeps its head when the row is narrow. Each piece drops whole when it doesn't
+ * fit; a first piece that dropped whole left "P4 Melting Pot" with nothing gained (picky bot, Nov 11: P4 went 15 to 26).
+ */
+export function rowParts(short) {
+  const parts = String(short || '').split(' · ').filter(Boolean);
+  if (!parts.length) return parts;
+  let [first, ...rest] = parts;
+  const br = first.match(/^([+−-]\d.*?) (\(.+\))$/);
+  const detail = br ? br[2] : null;
+  if (br) first = br[1];
+  const fol = first.match(/^((?:[+−-]\d+ [a-z]+ )+)([+−-]\d+ followers?)((?: from .+)?)$/);
+  if (fol) first = `${fol[2]} ${fol[1].trim()}${fol[3]}`;
+  return [first, ...(detail ? [detail] : []), ...rest];
+}
+
 /** The board words and the move's gain say the same thing ("+3 green" both), so the brackets would repeat it. */
 const flat = t => String(t || '').toLowerCase().replace(/\s+/g, ' ').trim();
 export const saysSame = (board, short) => !!board && !!short && flat(short.split(' · ')[0]) === flat(board);
@@ -91,7 +108,9 @@ function FullRow({ e, state, hover, name }) {
     <li ref={ref} className="since-row since-full" data-since-full={e.n} data-turn-story={[e.head, ...e.lines].join(' · ')} style={{ '--pc': playerColor(e.actor) }}
       onPointerEnter={e.spaceKey ? () => locate(e.spaceKey, true) : undefined} onPointerLeave={e.spaceKey ? () => locate(e.spaceKey, false) : undefined}>
       <span className="sf-head"><Minion color={playerColor(e.actor)} emoji={seatEmoji(state, e.actor)} size={14} /><b className="who">{name(e.actor)}</b>{' '}
-        <HoverNames state={state} hover={hover} text={e.head.replace(new RegExp(`^${name(e.actor).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} `), '')} uids={e.uids} /></span>
+        <HoverNames state={state} hover={hover} text={e.head.replace(new RegExp(`^${name(e.actor).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} `), '')} uids={e.uids} />{/* the space's words from the board, as on the one-line rows: the wheel prints no names (picky bot, Nov 11:
+            "You took Swindle") */}
+        {e.spaceKey && words(state, e.spaceKey) ? <span className="sp-words"> (<Rich text={words(state, e.spaceKey)} />)</span> : null}</span>
       {/* its lines as one flowing paragraph, so a long turn still fits the room under the chairs */}
       {e.lines.length > 0 && <span className="sf-line">{e.lines.map((l, k) => <span key={k} className="sf-part">{k ? ' · ' : ''}<HoverNames state={state} hover={hover} text={l} uids={e.uids} /></span>)}</span>}
     </li>
@@ -192,6 +211,18 @@ export default function SinceStrip({ state, entries: rivals, own = null, me, you
         const rows = moreEl ? kids.slice(1) : kids;
         if (!rows.length) return;
         // in a ResizeObserver callback the layout is settled, so these reads are free
+        // a one-line row whose gain didn't fit beside the name dropped it whole ("P4 Melting Pot" alone): that row keeps
+        // its gain, cut at a word, and lets the rest go (data-tight, since.css; kept until the row says something else,
+        // and the row's height never changes, so this can't feed back). Picky bot, Nov 11.
+        if (list.closest('.compact')) {
+          const tight = [];
+          for (const r of list.querySelectorAll(':scope > .since-row[data-short]')) {
+            if (r.dataset.tight && r.dataset.tight !== r.dataset.short) delete r.dataset.tight;
+            const f = r.dataset.tight ? null : r.querySelector(':scope > .big.part.first');
+            if (f && f.getBoundingClientRect().top - r.getBoundingClientRect().top > 2) tight.push(r);
+          }
+          for (const r of tight) r.dataset.tight = r.dataset.short;
+        }
         const top = list.getBoundingClientRect().top;
         const gap = parseFloat(getComputedStyle(list).rowGap) || 0;
         // the "N earlier" line's height when it stands above the kept lines (its own, or a one-line guess before it exists)
@@ -257,7 +288,7 @@ export default function SinceStrip({ state, entries: rivals, own = null, me, you
   const row = e => (e === own || (e.n === full && lvl === 0) ? <FullRow key={`f${e.n}`} e={e} state={state} hover={hover} name={name} /> : (
             // the space the line names lights on the wheel while any of the line is pointed at, not only its name (picky
             // bot, Nov 4: the wheel prints no names, so readers couldn't find the space a rival took)
-            <li key={e.n} className={`since-row${e.hit ? ' hit' : ''}${lvl === 1 ? ' brief' : ''}`} hidden={lvl >= 2 || undefined} data-says-same={saysSame(words(state, e.spaceKey), e.short) || undefined} data-clip-ok={compact || undefined} style={{ '--pc': playerColor(e.actor) }} onClick={pinLine}
+            <li key={e.n} className={`since-row${e.hit ? ' hit' : ''}${lvl === 1 ? ' brief' : ''}`} hidden={lvl >= 2 || undefined} data-says-same={saysSame(words(state, e.spaceKey), e.short) || undefined} data-clip-ok={compact || undefined} data-short={compact && e.short ? e.short : undefined} style={{ '--pc': playerColor(e.actor) }} onClick={pinLine}
               onPointerEnter={e.spaceKey ? () => locate(e.spaceKey, true) : undefined} onPointerLeave={e.spaceKey ? () => locate(e.spaceKey, false) : undefined}>
               {/* a move from the round before says so (picky bot, Nov 4: a round I Peek read against round II's faces) */}
               {e.round && e.round !== state.round ? <small className="since-round" data-since-round={e.round}>Round {roman(e.round)}</small> : null}
@@ -275,8 +306,8 @@ export default function SinceStrip({ state, entries: rivals, own = null, me, you
                   short, so it shows on a one-line row,
                   unless the line already says what it took of yours */}
               {lead(e) ? <span className="big part first lost" data-since-lost={e.n}>: <Rich text={lostSay(e.lost)} /></span> : null}
-              {e.short && compact ? e.short.split(' · ').map((part, k) => (
-                <span key={k} className={`big part${k || lead(e) ? '' : ' first'}`}>{k || lead(e) ? '· ' : ': '}<HoverNames state={state} hover={hover} text={part} uids={e.uids} /></span>
+              {e.short && compact ? rowParts(e.short).map((part, k) => (
+                <span key={k} className={`big part${k || lead(e) ? '' : ' first'}`}>{k === 0 && !lead(e) ? ': ' : /^\(/.test(part) ? '' : '· '}<HoverNames state={state} hover={hover} text={part} uids={e.uids} /></span>
               )) : e.short ? <span className="big">{lead(e) ? ' · ' : ': '}<HoverNames state={state} hover={hover} text={e.short} uids={e.uids} /></span> : null}
             </li>
     ));
@@ -296,8 +327,8 @@ export default function SinceStrip({ state, entries: rivals, own = null, me, you
       {!empty && pool && lvl < 2 && <div className="since-own"><span className="since-title own-line">{title}</span>{count}</div>}
       {shown.length ? (
         <ol className="since-list" ref={listRef}>
-          {/* "2 more: open the log" (picky bot, Nov 4: the ellipsis read as cut-off text) */}
-          {more > 0 && !bare && <li className="since-more"><button type="button" onClick={onLog}>{more} more: open the log</button></li>}
+          {/* "2 earlier moves: open the log" (picky bot, Nov 4: the ellipsis read as cut-off text; Nov 11: "3 more" read as a fragment) */}
+          {more > 0 && !bare && <li className="since-more"><button type="button" onClick={onLog}>{more} earlier {more === 1 ? 'move' : 'moves'}: open the log</button></li>}
           {shown.map(e => (e === own && rivals.length && lvl < 2 ? [<li key="own" className="since-own-label">Your turn</li>, row(e)] : row(e)))}
         </ol>
       ) : null}

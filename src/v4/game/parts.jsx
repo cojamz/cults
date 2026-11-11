@@ -251,7 +251,12 @@ function MergedOptions({ state, pend, onPick, busy }) {
               <span className="rich-body">
                 <b>{det.owner != null && <span className="from">{seatEmoji(state, det.owner)}’s </span>}{det.name}{n > 1 && <span className="num copies"> {state.shop && state.shop.includes(o.value) ? `· ${n} in the shop` : `· ${n} of them`}</span>}{det.f != null && <> <Follower n={det.f} className="star" /></>}</b>
                 <small>{det.def ? <CardText text={det.text} /> : <Rich text={det.text} />}</small>
-                {det.cost && <small className="cost-line">costs <CostDots parts={det.cost} /></small>}
+                {det.cost && <small className="cost-line">costs <CostDots parts={det.cost} />{(() => {
+                  // a recruit at a lower price (Markdown's "paying 2 less") says what you pay, from the engine's own
+                  // label (picky bot, Nov 11: only the printed cost showed)
+                  const m = / · pay (\d+)$/.exec(o.label || ''), list = det.cost.reduce((t, c) => t + c.n, 0);
+                  return m && Number(m[1]) < list ? <> · <b className="num">you pay {m[1]}</b></> : null;
+                })()}</small>}
               </span>
             ) : <MarkLabel text={seatNames(state, withUnits(o.label, pend.prompt, state.resources))} resources={state.resources} /> /* the engine's label: "+2 gold" as "+2●", never a bare "Gold" */}
           </button>

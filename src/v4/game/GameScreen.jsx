@@ -8,7 +8,7 @@ import { cloakOf } from './cloak.js';
 import { memo, startTransition, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { tierLeft, quadrant, cardDef } from '../../engine/v4/index.js';
 import { useAnyDot } from './Glyphs.jsx';
-import { isRoundEnd, newLogLines, parseRoundEnd, playerColor, seatEmoji, promptFor, roman, tierCostText, scoringSnapshot, explainLine, plainLine, latestRivalMove, movesSinceYourTurn } from '../format.js';
+import { boardWords, isRoundEnd, newLogLines, parseRoundEnd, playerColor, seatEmoji, promptFor, roman, tierCostText, scoringSnapshot, explainLine, plainLine, latestRivalMove, movesSinceYourTurn } from '../format.js';
 import { TouchTips, useIdleSpaces, Tip } from './Info.jsx';
 import Wheel from './Wheel.jsx';
 import ShopCards from './ShopCards.jsx';
@@ -960,7 +960,9 @@ function TurnCard({ card, root, state, hub = false, keep = false, you = -1 }) {
       {!keep && !hub && !!card.text && <b className="tc-head">{head}</b>}
       {/* the banner names the space on its first line ("Sleep In: 🦖 +5"), or on a line of its own when the turn's first
           line is something else */}
-      {hub && !!card.text && <b className={`tc-head bn-head${shownN > 0 && /^[+−-]\d/.test(hubLines[0]) ? ' bn-said' : ''}`}>{hubSpace || headOf(head)}</b>}
+      {hub && !!card.text && <b className={`tc-head bn-head${shownN > 0 && /^[+−-]\d/.test(hubLines[0]) ? ' bn-said' : ''}`}>{hubSpace || headOf(head)}{hubSpace && boardWords(hubSpace, state ? state.round : 1) ? <span className="bn-words" style={{ fontWeight: 400, opacity: 0.75 }}> (<Rich text={boardWords(hubSpace, state ? state.round : 1)} />)</span> : null}</b>}
+      {/* the space's name with the words the wheel prints on it, in brackets: the wheel prints no names (picky bot, Nov 11:
+          "Echo", "Swindle", "Splurge") */}
       {!keep && !hub && rest.map((l, k) => <span key={`${k}:${l}`} className="tc-line"><Rich text={l} /></span>)}
       {hub && hubLines.slice(0, shownN).map((l, k) => <span key={k} className="tc-line"><BannerLine line={k > 0 && /^[+−-]\d/.test(l) && (hubSpace || card.when) ? `${hubSpace || `${card.when[0].toUpperCase()}${card.when.slice(1)}`}: ${l}` : l} i={k} state={state} pid={card.pid} you={you} space={hubSpace} /></span>)}
       {/* what didn't fit opens on the "and N more" line, every line in its card (picky bot, Nov 4: "+3 more" with no way

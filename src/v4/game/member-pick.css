@@ -34,3 +34,11 @@
 /* a rule too long even with the picture gone stops above the price, faded at its foot (picky bot, Nov 4) */
 .app.game.lt .lt-shop-cards[data-view="details"] .lt-cards .lt-card.card:has(.lt-pick-ability[data-fit="clip"]) > .art{display:none}
 .app.game.lt .lt-shop-cards[data-view="details"] .lt-pick-ability[data-fit="clip"]{flex:0 1 auto;min-height:0;overflow:hidden;-webkit-mask-image:linear-gradient(#000 calc(100% - 10px),transparent);mask-image:linear-gradient(#000 calc(100% - 10px),transparent)}
+/* A choice of members in the paper note (Markdown's discard pile): the cost reads in the note's own ink (it took the
+   table's cream ink, nearly invisible on paper), and the note grows to hold six answers with its scroll shown, so the
+   last one and "Recruit nothing" never sit cut off at its foot (picky bot, Nov 11) */
+@media (min-width:861px) and (min-height:500px){
+  .app.game.lt .lt-wheel > .prompt.choice .rich-body small.cost-line{color:var(--paper-ink-2,#5f4e3d)!important;opacity:1}
+  .app.game.lt .lt-wheel > .prompt.choice .rich-body small.cost-line b{color:var(--paper-ink,#2a1f17);font-weight:700}
+  .app.game.lt .lt-wheel > .prompt.choice:has(.btn.rich){max-height:82%;scrollbar-width:thin;scrollbar-color:rgba(42,31,23,.45) transparent}
+}

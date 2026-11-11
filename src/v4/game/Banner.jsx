@@ -8,7 +8,7 @@ import { Minion } from '../art/Leader.jsx';
 import { Sprite } from '../art/Sprite.jsx';
 import { spriteId } from '../art/index.js';
 import { ArtifactTile } from './ArtifactDraft.jsx';
-import { playerColor, seatEmoji } from '../format.js';
+import { boardWords, playerColor, seatEmoji } from '../format.js';
 import { Rich } from './Rich.jsx';
 
 const GOES_LAST = ' · Goes Last token';
@@ -27,9 +27,14 @@ const pidOf = (state, who) => {
   if (who === 'you') return viewer >= 0 ? viewer : state.players.findIndex(p => p.name === 'You');
   return state.players.findIndex(p => p.name === who);
 };
-function Cult({ state, pid }) {
+// a rival named in a line keeps its name beside its face ("took 💀 P4's Fan Club"): the faces alone left readers matching
+// emoji to seats (picky bot, Nov 11); the mover leading its own line, and you, stay a face
+// own: the possessive ("P4’s"), said with the name, so it never reads "P4 ’s"
+function Cult({ state, pid, lead = false, own = false }) {
   if (pid < 0 || !state || !state.players[pid]) return null;
-  return <span className="bn-cult" title={state.players[pid].name}><Minion emoji={seatEmoji(state, pid)} color={playerColor(pid)} size={17} /><span className="bn-sr">{state.players[pid].name} </span></span>;
+  const named = !lead && pid !== viewer;
+  return <span className="bn-cult" title={state.players[pid].name}><Minion emoji={seatEmoji(state, pid)} color={playerColor(pid)} size={17} />{named
+    ? <b className="bn-name" style={{ marginLeft: 2, fontWeight: 700 }}>{state.players[pid].name}{own ? '’s' : ''} </b> : <>{own ? '’s ' : null}<span className="bn-sr">{state.players[pid].name} </span></>}</span>;
 }
 // "P2" and "you" anywhere in a line, as their cults
 function WithCults({ text, state }) {
@@ -69,23 +74,26 @@ const spent = s => String(s).replace(/,/g, '').replace(/(^|\s)(\d+) /g, '$1−$2
 export function BannerLine({ line, i, state, pid, space, you = -1 }) {
   viewer = you;
   let l = line, m;
-  const me = <Cult state={state} pid={pid} />;
+  const me = <Cult state={state} pid={pid} lead />;
   const goesLast = l.endsWith(GOES_LAST);
   if (goesLast) l = l.slice(0, -GOES_LAST.length);
   const tail = goesLast ? <span className="bn-quiet"> · Goes Last token</span> : null;
-  if (i === 0 && /^[+−-]\d/.test(l)) return <>{space ? <><b className="bn-space">{space}</b>: </> : null}{me}<WithCults text={l} state={state} />{tail}</>;
+  // the space's name with the wheel's words for it in brackets (picky bot, Nov 11: "Echo", a name the wheel never prints)
+  const said = space && i === 0 ? boardWords(space, state ? state.round : 1) : '';
+  if (i === 0 && /^[+−-]\d/.test(l)) return <>{space ? <><b className="bn-space">{space}</b>{said ? <span className="bn-words" style={{ opacity: 0.75 }}> (<Rich text={said} />)</span> : null}: </> : null}{me}<WithCults text={l} state={state} />{tail}</>;
+  // followers recruited ("recruited 5 followers (paid 5 red)"; "bought" before Nov 11) before a member's recruit
+  if ((m = l.match(/^(?:bought|recruited) (\d+) ?followers? \(paid (.+)\)$/))) return <>{me}<Rich text={spent(m[2])} /> for <Rich text={`${m[1]} followers`} /></>;
   if ((m = l.match(/^recruited (.+?) \((?:paid (.+)|free)\)(?:, worth .+)?$/))) {
     const d = defByName(state, m[1]);
     const worth = d ? (d.f ?? 1) : 1;
     return <>{me}{m[2] ? <Rich text={spent(m[2])} /> : 'free'} for <Member state={state} name={m[1]} /> <Rich text={`${worth} followers`} /></>;
   }
-  if ((m = l.match(/^bought (\d+) ?followers? \(paid (.+)\)$/))) return <>{me}<Rich text={spent(m[2])} /> for <Rich text={`${m[1]} followers`} /></>;
   // the tile with its name, as the pick shows it (frame review, Nov 7: a bare tile and "+1 magenta" said nothing)
   if ((m = l.match(/^(\w+) Cloak: (.+)$/))) return <><CloakTile state={state} pid={pid} /><b className="bn-space">{m[1]} Cloak</b>: {me}<Rich text={m[2]} /></>;
   if ((m = l.match(/^(P\d|you) ([+−-]\d.*) \((.+)\)$/))) return <><Member state={state} name={m[3]} />: <Cult state={state} pid={pidOf(state, m[1])} /><Rich text={m[2]} /></>;
   if ((m = l.match(/^(P\d|you) ([+−-]\d.*)$/))) return <><Cult state={state} pid={pidOf(state, m[1])} /><Rich text={m[2]} /></>;
-  if ((m = l.match(/^took (P\d|you)(?:'s|’s) (.+)$/))) return <>{me}took <Cult state={state} pid={pidOf(state, m[1])} />’s <Member state={state} name={m[2]} /></>;
-  if ((m = l.match(/^took your (.+)$/))) return <>{me}took <Cult state={state} pid={pidOf(state, 'you')} />’s <Member state={state} name={m[1]} /></>;
+  if ((m = l.match(/^took (P\d|you)(?:'s|’s) (.+)$/))) return <>{me}took <Cult state={state} pid={pidOf(state, m[1])} own /><Member state={state} name={m[2]} /></>;
+  if ((m = l.match(/^took your (.+)$/))) return <>{me}took <Cult state={state} pid={pidOf(state, 'you')} own /><Member state={state} name={m[1]} /></>;
   if ((m = l.match(/^gave (.+) to the shop$/))) return <>{me}gave <Member state={state} name={m[1]} /> to the shop</>;
   if ((m = l.match(/^took the shop(?:'s|’s) (.+)$/))) return <>{me}took the shop’s <Member state={state} name={m[1]} /></>;
   if ((m = l.match(/^gave (.+) to (P\d|you)$/))) return <>{me}gave <Member state={state} name={m[1]} /> to <Cult state={state} pid={pidOf(state, m[2])} /></>;
