@@ -39,3 +39,16 @@ it('tells what a later step adds to a line that is up as a line of its own', () 
   expect(grewBy('P2 +2 red', 'P2 +1 red')).toBe(null);
   expect(grewBy('+3 gold from P2', '+5 gold from P2 and P3')).toBe(null);
 });
+
+it("the space's own gain counts up on one row as its picks land (Cory, Nov 9: Out of Style on grey)", async () => {
+  const { foldStoryLines, linesMemo } = await import('../../../v4/game/GameScreen.jsx');
+  const r = linesMemo('t');
+  let out = foldStoryLines(r, ['+2 blue'], 0);
+  for (const step of [['+6 blue'], ['+7 blue'], ['+8 blue'], ['+8 blue +1 white'], ['+9 blue +1 white']]) out = foldStoryLines(r, step, out.lines.length);
+  expect(out.lines).toEqual(['+9 blue +1 white']);
+  // a member's or cloak's line that grows still joins as a line of its own
+  const c = linesMemo('c');
+  let o = foldStoryLines(c, ['+1 green', 'Blue Cloak: +1 blue'], 0);
+  o = foldStoryLines(c, ['+1 green', 'Blue Cloak: +2 blue'], o.lines.length);
+  expect(o.lines).toEqual(['+1 green', 'Blue Cloak: +1 blue', 'Blue Cloak again: +1 blue']);
+});

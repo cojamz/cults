@@ -605,13 +605,16 @@ const memoOf = (key, part, make) => {
   const m = cardMemo.get(key);
   return m[part] || (m[part] = make(key));
 };
-const linesMemo = key => ({ key, order: [], text: new Map(), told: new Map(), alias: new Map(), more: 0 });
+export const linesMemo = key => ({ key, order: [], text: new Map(), told: new Map(), alias: new Map(), more: 0 });
 const revealMemo = key => ({ key, due: new Map(), read: 0, from: null });
 function useStableLines(key, lines, shown = 0) {
   'use no memo';
   const ref = useRef(null);
   if (!ref.current || ref.current.key !== key) ref.current = memoOf(key, 'lines', linesMemo);
-  const r = ref.current;
+  return foldStoryLines(ref.current, lines, shown);
+}
+/** useStableLines' work on its memo `r` (linesMemo), pure apart from `r`, so a test can step a turn's lines through it. */
+export function foldStoryLines(r, lines, shown = 0) {
   const byId = new Map();
   lines.forEach((l, i) => { const id = lineId(l, i); if (!byId.has(id)) byId.set(id, l); });
   const slotOf = id => r.alias.get(id) ?? id;
@@ -634,6 +637,10 @@ function useStableLines(key, lines, shown = 0) {
     // that isn't more of the same takes the new words in place.
     const more = was != null && r.order.indexOf(slot) < shown ? grewBy(was, l) : null;
     if (more === '') continue;
+    // the space's own result growing as its picks land (Out of Style's grey members, one color at a time) stays one row
+    // and counts up in place (Cory, Nov 9: "this could show up on one row", "and update as the resources are
+    // incrementally added")
+    if (more && slot === '#gain') { r.text.set(slot, l); continue; }
     // (the same words as a line already up say it happened again: "Yellow Cloak again: +2 yellow", never one line twice)
     // (a third time and on says which time it is: "Red Cloak again: P2 +1" came up twice; every-frame check, Nov 7)
     const told = [...r.text.values()];
