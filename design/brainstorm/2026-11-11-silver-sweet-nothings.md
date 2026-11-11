@@ -53,7 +53,7 @@ Verdict: cut (rewards the leader)
 4. Who feels it: rivals get silver (a gift now, a weight at round end); anyone eyeing that shop member loses it.
 5. Not refused: different from Grand Gift (refused Oct 31 / Nov 7, a member to a rival for followers: white-coded); here the member is yours and the gift is silver, Silver's verb. Overlap risk: a free shop member is also Red's (Borrow, Initiation).
 6. Judged: one gift plus one member; round II's real table can afford few members, so a free one changes what you own (the round II bar). Not followers (Cory: "we already have a follower action").
-7. Public and certain: the row is face up.
+7. Public and certain: the shop row is face up and every price is printed, so the choice is open; no pile draws, no randomness, nothing hidden.
 8. Color interactions: none: single-color; the member enters a cult, which Blue's and Red's contests count.
 9. Biggest case: round III, a free member costing 6 (round III rows also hold pricier members, so 6 is a cap, not a floor) and 6 silver out; Green copying it gets a second 6-cost member and gives 6 more. At most about 12 resources of members across a copy, against a winner's 70 to 110: in band.
 Verdict: send
