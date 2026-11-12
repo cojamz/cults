@@ -16,7 +16,7 @@ const count = (s, color) => {
 
 // round I members by color since Nov 5 (only members at 3 or less before the +1 wild)
 // round I is up to 5 as a player sees it (printed 3 plus the 2 every member adds; Cory, Nov 5 10:22pm UTC: "move it to 5")
-const R1 = { red: 4, echo: 3, /* Regulars (Nov 11) */ thieves: 2, purple: 4, market: 2 /* Blue's Nov 11 members cost more than 3 printed */, trading: 4, yellow: 1 /* Early Traders only: Cory's Nov 11 Yellow members all cost more than 3 printed */ }; // red 4: Foster Parents back in round I (Cory, Nov 6: "lower")
+const R1 = { red: 5 /* Purists, round I (Cory, Nov 11) */, echo: 3, /* Regulars (Nov 11) */ thieves: 2, purple: 4, market: 2 /* Blue's Nov 11 members cost more than 3 printed */, trading: 4, yellow: 1 /* Early Traders only: Cory's Nov 11 Yellow members all cost more than 3 printed */ }; // red 4: Foster Parents back in round I (Cory, Nov 6: "lower")
 // fewer than 10 where Cory's Nov 5 cuts left holes (Grifter, Cutpurse; Early Birds; Shopaholics; Raiders; Meddler, Gardeners), until he picks their replacements
 const N = { red: 10 /* Mob and Proselytizers out, Brethren and Purists in, Nov 11 */, echo: 10 /* Buskers out, Nov 11 */, thieves: 10, purple: 10, market: 10, trading: 10, yellow: 10 }; // purple 10: Night Watch and Night Owls out, Sleepyheads and Lookouts in (Cory, Nov 6)
 
