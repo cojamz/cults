@@ -29,6 +29,11 @@ export const CUT = new Set([
   'thieves.grifter', 'thieves.cutpurse', 'yellow.drifters', /* Counterfeiters in its slot, Nov 5 */ 'market.doorman', /* Power Shoppers in its slot, Nov 5 */ 'silver.charityball', 'silver.creditors', 'silver.hostesses', 'yellow.ringleader',
   'yellow.gardener', 'market.shopaholic', 'trading.raider', 'purple.earlybird', 'red.volunteer', // Seat Filler takes Volunteer's place
   'trading.bulkbuyer', 'trading.appraiser', 'market.makeover', 'market.stylist', // Cory, 2026-10-24 / Stylist 2026-10-25: thinning ("I like Closer rest can go"); Restockers replaces Makeover
+  // Cory, 2026-11-11 member sort: Silver 2:29pm (Debt Collectors, Ballroom Dancers, High Society, Toastmaster go; Guest of
+  // Honor and Patrons move to White as trading.guestofhonor and trading.godparents), Blue 3:41pm (Critic, Window
+  // Dressers, Trendsetters), Yellow 2:31pm (Jack-of-All-Trades, Seamstress, Counterfeiters) and 3:45pm (Sleepyheads),
+  // White 3:45pm (Old Money, Cashier), Green 3:52pm (Tribute Band, Buskers), Red 2:27pm (Mob, for Clan)
+  'silver.debtcollector', 'silver.ballroom', 'silver.highsociety', 'silver.toastmaster', 'silver.guestofhonor', 'silver.godparents',
 ]);
 
 // The 10-card decks (Cory, 2026-10-31: "create two versions of game, 10 card deck version and 15 card deck version";

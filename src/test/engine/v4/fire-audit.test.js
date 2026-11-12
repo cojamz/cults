@@ -134,6 +134,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'trading.tipster', // under 3 holds when the Nov 5 deck moved the games (hidden behind Mannequin's line until it was cleared); cards-skips-b covers it
       'trading.pawnbroker', // under 3 holds when Victors left the grey deck (Nov 6) moved the games; replace12c and member-use cover it
       'echo.impersonators', // under 3 holds once every member cost 4 more (Nov 5 evening) moved the games; cards-market-concepts and replace3 cover it
+      'trading.reinvestor', // under 3 holds when Guest of Honor and Patrons moved to White (Nov 11) moved the games; cards-trading (Reinvestor) covers it
       'thieves.robinhood']); // under 3 holds when Sleepyheads and Lookouts joined Purple and Victors left (Nov 6) moved the games; cards-thieves covers it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);
@@ -153,6 +154,11 @@ const SPHERES = ['gold', 'red', 'purple', 'silver', 'yellow'];
 const ALLOW = {
   // Paupers and Loan Officers joining Silver (Nov 11) moved the seeded games: recruited in 1, holding fewer than 3 of every color at game end
   // Splurgers and Toll Collectors joining Silver (Nov 11) moved the seeded games: recruited in 1, no gold member recruited after
+  // Guest of Honor and Patrons moving to White (Nov 11) moved the seeded games: bots hold Scouts for 3+ shop members they
+  // can't afford, which no longer came up
+  'benders.scout': 'On Use only when 3+ shop members are out of reach for a bot (cards-member-structure and replace tests cover its use)',
+  // Hustlers joining Silver (Nov 11) moved the seeded games: its 3 holders recruited no silver member after it, or passed on the buy
+  'silver.splurgers': 'a "you may" buy after a silver recruit (silver-new-members.test.js covers it)',
   'gold.merchant': 'Gold is parked; pays only when anyone recruits a gold member after it (cards-gold covers it)',
   'yellow.spiceroute': 'cut from the 10 deck; Game End pays only for colors held 3 or more (cards-yellow covers it)',
   // Write-Off in Estate Sale's place and Agents for everyone (Nov 11) moved the seeded games: recruited in 1, never used there

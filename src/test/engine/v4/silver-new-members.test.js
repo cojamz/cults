@@ -25,37 +25,36 @@ describe('Paupers: "Round End: if you hold no silver, +3 followers."', () => {
   });
 });
 
-describe('Loan Officers: "On Use, once per round: give a rival up to 5 of your silver, then take as many of their resources, you choose which."', () => {
-  it('gives the silver, then takes as many of their resources as you choose', () => {
+describe('Loan Officers: "On Use, once per round: swap up to 5 of your silver for rivals’ resources, one for one." (Cory, Nov 11 8:00pm)', () => {
+  it('each swap gives a rival 1 of your silver for 1 of their resources, from any rivals, up to 5', () => {
     let s = table(Q, { n: 3, round: 2, members: [['silver.loanofficers']] });
-    s = withRes(withRes(s, 0, { silver: 7, red: 0 }), 1, { silver: 0, red: 2, magenta: 3 });
+    s = withRes(withRes(withRes(s, 0, { silver: 9, red: 0, magenta: 0 }), 1, { silver: 0, red: 4 }), 2, { silver: 0, magenta: 4 });
     const u = uidIn(s, 'silver.loanofficers', 0);
     s = move(s, `use:${u}`);
-    s = move(s, 'player:1');
-    expect(s.pending.options.map(o => o.id)).toEqual(['n:5', 'n:4', 'n:3', 'n:2', 'n:1']);
-    s = move(s, 'n:3');
+    for (const id of ['swap:1:red', 'swap:1:red', 'swap:2:magenta', 'swap:1:red', 'swap:2:magenta']) s = move(s, id);
     expect(s.players[0].res.silver).toBe(4);
+    expect(s.players[0].res.red).toBe(3);
+    expect(s.players[0].res.magenta).toBe(2);
     expect(s.players[1].res.silver).toBe(3);
-    s = move(s, 'color:red');
-    s = move(s, 'color:red');
-    s = move(s, 'color:magenta');
-    expect(s.players[0].res.red).toBe(2);
-    expect(s.players[0].res.magenta).toBe(1);
-    expect(s.players[1].res.red).toBe(0);
-    expect(s.players[1].res.magenta).toBe(2);
+    expect(s.players[2].res.silver).toBe(2);
+    expect(s.pending?.prompt || '').not.toContain('Loan Officers');
     expect(s.cards[u].used).toBe(true);
   });
-  it('gives at most 5, and takes no more than the rival has', () => {
+  it('you may stop early, and never swap more silver than you have', () => {
     let s = table(Q, { n: 2, round: 2, members: [['silver.loanofficers']] });
-    s = withRes(withRes(s, 0, { silver: 9 }), 1, { silver: 0, red: 1, blue: 0, magenta: 0 });
+    s = withRes(withRes(s, 0, { silver: 2 }), 1, { silver: 0, red: 5 });
     const u = uidIn(s, 'silver.loanofficers', 0);
     s = move(s, `use:${u}`);
-    if (s.pending?.options?.some(o => o.id === 'player:1')) s = move(s, 'player:1');
-    expect(s.pending.options[0].id).toBe('n:5');
-    s = move(s, 'n:5');
-    // they now hold 5 silver and 1 red: 5 picks, any of their colors (silver too)
-    for (let i = 0; i < 5; i++) s = move(s, s.pending.options[0].id);
-    expect(s.players[0].res.silver + s.players[0].res.red).toBe(4 + 5);
+    s = move(s, 'swap:1:red');
+    s = move(s, 'swap:1:red');
+    expect(s.players[0].res.silver).toBe(0);
+    expect(s.pending?.prompt || '').not.toContain('Loan Officers');
+    let t = table(Q, { n: 2, round: 2, members: [['silver.loanofficers']] });
+    t = withRes(withRes(t, 0, { silver: 5 }), 1, { silver: 0, red: 5 });
+    t = move(t, `use:${uidIn(t, 'silver.loanofficers', 0)}`);
+    t = move(t, 'swap:1:red');
+    t = move(t, 'done');
+    expect(t.players[0].res.silver).toBe(4);
   });
   it('with no silver, nothing happens and it stays ready', () => {
     let s = table(Q, { n: 2, round: 2, members: [['silver.loanofficers']] });
@@ -63,6 +62,25 @@ describe('Loan Officers: "On Use, once per round: give a rival up to 5 of your s
     const u = uidIn(s, 'silver.loanofficers', 0);
     s = move(s, `use:${u}`);
     expect(s.cards[u].used).toBe(false);
+  });
+});
+
+describe('Bookies: "On Recruit: turn in up to 4 silver for 2 followers each." (Cory, Nov 11 8:00pm)', async () => {
+  const { applyMove } = await import('../../../engine/v4/core.js');
+  const { quadrant } = await import('../../../engine/v4/content/index.js');
+  const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
+  const slot = (s, q, name) => `${s.quadrants.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.name === name)}`;
+  it('on recruit, turns in up to 4 silver for 2 followers each', () => {
+    let s = table(['red', 'silver'], { n: 2, round: 2, res: [{ red: 0, silver: 20 }], members: [[]], shop: ['silver.bookies'] });
+    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    while (s.pending && s.pending.player === 0 && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
+    s = answer(s, `card:${uidIn(s, 'silver.bookies', 'shop')}`);
+    while (s.pending && s.pending.player === 0 && !String(s.pending.prompt).startsWith('Bookies')) s = answer(s, s.pending.options[0].id);
+    expect(s.pending.options.map(o => o.id)).toEqual(['n:4', 'n:3', 'n:2', 'n:1', 'n:0']);
+    const silver = s.players[0].res.silver, before = s.players[0].bonus;
+    s = answer(s, 'n:3');
+    expect(s.players[0].res.silver).toBe(silver - 3);
+    expect(s.players[0].bonus - before).toBe(6);
   });
 });
 
@@ -102,5 +120,23 @@ describe('Splurgers and Toll Collectors (Cory, Nov 11 7:47pm and 7:48pm)', async
     s = payAll(answer(s, 'tier:small'));
     expect(s.players[0].bonus - before).toBe(2);
     expect(s.log.join('\n')).toContain("P1's Toll Collectors: P1 paid silver for followers, +1 follower.");
+  });
+});
+
+describe('Hustlers: "On Recruit: swap all your silver with a rival’s." (Cory, Nov 11 8:17pm)', async () => {
+  const { applyMove } = await import('../../../engine/v4/core.js');
+  const { quadrant } = await import('../../../engine/v4/content/index.js');
+  const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
+  const slot = (s, q, name) => `${s.quadrants.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.name === name)}`;
+  it('on recruit, your silver and the chosen rival’s change places', () => {
+    let s = table(['red', 'silver'], { n: 3, round: 2, res: [{ red: 20, silver: 5 }, { silver: 9 }, { silver: 4 }], members: [[]], shop: ['silver.hustlers'] });
+    s = answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+    while (s.pending && s.pending.player === 0 && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
+    s = answer(s, `card:${uidIn(s, 'silver.hustlers', 'shop')}`);
+    while (s.pending && s.pending.player === 0 && !String(s.pending.prompt).startsWith('Hustlers')) s = answer(s, s.pending.options[0].id);
+    const mine = s.players[0].res.silver;
+    s = answer(s, 'player:1');
+    expect(s.players[0].res.silver).toBe(9);
+    expect(s.players[1].res.silver).toBe(mine);
   });
 });

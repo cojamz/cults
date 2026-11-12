@@ -2,6 +2,13 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.733 — 2026-11-11
+
+- **Loan Officers** now reads "On Use, once per round: swap up to 5 of your silver for rivals’ resources, one for one."
+- New Silver members **Bookies** "On Recruit: turn in up to 4 silver for 2 followers each." and **Hustlers** "On Recruit: swap all your silver with a rival’s."
+- **Guest of Honor** and **Patrons** are White members now.
+- Out of the deck: Debt Collectors, Ballroom Dancers, High Society, Toastmaster.
+
 ## v0.99.732 — 2026-11-11
 
 - Doppelganger recruited with Buyout now does its copy's On Recruit.

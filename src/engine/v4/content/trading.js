@@ -27,6 +27,7 @@ import { pool, poolSpace, chooseRival } from './pool.js';
 import { add10, old10, handlers10 } from './replace10.js';
 import { add8, old8 } from './replace8.js';
 import { on12, handlers12, add12, old12 } from './replace12.js';
+import { guestOfHonorDef, patronsDef } from './silver.js';
 
 const W = 'white';
 /** Idea pipeline pool 2: one resource to one rival per pick, or stop; bots give their most-held non-white color to the
@@ -1067,6 +1068,9 @@ const trading = {
     // Cory, Nov 1: artifacts fire on any player's move ("Whenever any player buys followers, +1 white"): −8 → +1 in 400 games
     // Cory, Nov 3 8:52pm ("buff white a touch"): +2 on your own buys (Claude, under his go-with-your-gut; trial
     // cloaks-rw, holders 22% → 27% Normal, 21% → 28% Hard, 22% → 34% Very Hard)
+    // From Silver (Cory, 2026-11-11 2:29pm: "guest of honor should be white", "it's more of a white card too. Patrons")
+    guestOfHonorDef(),
+    patronsDef(),
     m('changer', 'Money Changers', 2, 1, 'Whenever you buy followers, +2 white.', { f: 2,
       onBuyFollowers(ctx, owner, card, buyer) {
         const CH = globalThis.process?.env?.CHANGER || 'self'; // live: own buys only, +2 (Cory, Nov 6 "ok")
