@@ -143,9 +143,9 @@ describe('White members', () => {
     expect(named(s, 'Raiders')).toEqual(["P1's Raiders stole 4 followers from P2 and paid 2 white."]);
   });
 
-  it('Raiders counts as a steal for the Magenta Cloak (Cory, Nov 1: "Count raiders… that should count"): the thief gets +1', () => {
+  it('Raiders counts as a steal for the Magenta Cloak (Cory, Nov 1: "Count raiders… that should count"): the thief gets +2 (+1 until Nov 11)', () => {
     const s = move(use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider', 'thieves.fence'], [], []], shop: ROW, ...buy }), 'trading.raider'), 'player:1');
-    expect(R(s).magenta).toBe(1); // "Whenever you steal, +1 magenta." (Cory, Nov 6)
+    expect(R(s).magenta).toBe(2); // "Whenever you steal, +2 magenta." (Cory, Nov 11; +1 since Nov 6)
     expect(named(s, 'Fence')).toHaveLength(1);
     // the victim's cloak pays nothing
     const t = move(use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider'], ['thieves.fence'], []], shop: ROW, ...buy }), 'trading.raider'), 'player:1');

@@ -21,7 +21,9 @@ const RULES = {
   plus1: process.env.PLUS1 === 'every' ? '' : 'game', // the setup default since v0.99.723 (Cory, Nov 11: "i like one per game")
   ...(process.env.MEMBERS_OUT ? { membersOut: list(process.env.MEMBERS_OUT) } : {}),
   ...(process.env.MEMBERS_IN ? { membersIn: list(process.env.MEMBERS_IN) } : {}),
-  ...(process.env.HITS === 'rival' ? { hitsRival: true } : {}), // Greatest Hits copies only rivals' minions (Cory, Nov 11)
+  // Greatest Hits: the game copies only rivals' minions since Nov 11; HITS=own or HITS=all for tests (Cory: "try some
+  // where it only copies your own on another color")
+  ...(['own', 'all'].includes(process.env.HITS) ? { hitsMode: process.env.HITS } : {}),
 };
 const [first, count, out] = [Number(process.argv[2] || 1), Number(process.argv[3] || 1), process.argv[4] || 'actions.jsonl'];
 const level = process.env.LEVEL || 'hard';

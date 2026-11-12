@@ -6,25 +6,22 @@ import { spawn, execSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, appendFileSync } from 'node:fs';
 
 export const VARIANTS = {
+  // the game since Nov 11 9:32pm: Greatest Hits copies only rivals' minions, Tribute Band out (Ensemble in), cloaks +2
   base: {},
-  'no-tribute': { MEMBERS_OUT: 'echo.dejavu', MEMBERS_IN: 'echo.ensemble' },
   'plus1-every': { PLUS1: 'every' },
-  // Cory, Nov 11: Greatest Hits copies only rivals' minions; and "tribute band into greatest hits is the real problem"
-  'hits-rival': { HITS: 'rival' },
-  'hits-rival-no-tribute': { HITS: 'rival', MEMBERS_OUT: 'echo.dejavu', MEMBERS_IN: 'echo.ensemble' },
-  // the same three with Green at every table, so every game reads Greatest Hits
+  // Cory, Nov 11: "test purple at +1"
+  'purple1': { POCKETWATCH: 'token1' },
+  // Green at every table, so every game reads Greatest Hits: the game, the old rule, and only your own minions
   'green-base': { FORCE: 'echo' },
-  'green-hits-rival': { FORCE: 'echo', HITS: 'rival' },
-  'green-hits-rival-no-tribute': { FORCE: 'echo', HITS: 'rival', MEMBERS_OUT: 'echo.dejavu', MEMBERS_IN: 'echo.ensemble' },
-  // Cory, Nov 11: "The purple one was too strong. Let's nerf that. And let's buff magenta." Claude's first numbers:
-  // Purple Cloak +3 purple -> +2, Magenta Cloak +1 magenta -> +2 (env knobs already in purple.js and thieves.js)
-  cloaks: { POCKETWATCH: 'token2', FENCE: 'self2' },
+  'green-hits-all': { FORCE: 'echo', HITS: 'all' },
+  'green-hits-own': { FORCE: 'echo', HITS: 'own' },
+  'green-tribute': { FORCE: 'echo', MEMBERS_OUT: 'echo.ensemble', MEMBERS_IN: 'echo.dejavu' },
 };
 const flags = Object.fromEntries(process.argv.slice(2).map(a => { const [k, ...v] = a.replace(/^--/, '').split('='); return [k, v.join('=') || true]; }));
 const games = Number(flags.games || 200), chunk = Number(flags.chunk || 10), W = Number(flags.workers || 4);
 const sha = execSync('git rev-parse --short HEAD').toString().trim();
 const dir = flags.dir || `.actions-runs/${new Date().toISOString().slice(0, 10)}-${sha}`;
-const names = flags.only ? String(flags.only).split(',') : ['base', 'no-tribute'];
+const names = flags.only ? String(flags.only).split(',') : ['base'];
 const jobs = [];
 for (const n of names) mkdirSync(`${dir}/${n}`, { recursive: true });
 for (let first = 1; first <= games; first += chunk) for (const n of names) {
