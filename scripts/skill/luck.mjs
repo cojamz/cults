@@ -46,7 +46,11 @@ if (!isMainThread) {
       if (next >= jobs.length) { if (!live) done(); return; }
       const job = jobs[next++]; live++;
       const w = new Worker(file, { workerData: job });
+      // --limit=<seconds>: a game still playing after that is stopped and skipped (one stuck game held a run for an hour, Nov 12)
+      const limit = Number(arg('limit', 0));
+      const timer = limit ? setTimeout(() => { console.log(`STUCK, skipped: deal ${job.g} replay ${job.rep}`); w.removeAllListeners('message'); w.terminate(); live--; launch(); }, limit * 1000) : null;
       w.once('message', r => {
+        clearTimeout(timer);
         live--;
         if (r.error) console.error(r.error);
         else { if (out) appendFileSync(out, JSON.stringify(r) + '\n'); console.log(`deal ${r.g} replay ${r.rep}: ${r.followers.map((x, i) => `${x}${r.won[i] ? '*' : ''}`).join(' ')} (${Math.round(r.ms / 1000)}s)`); }

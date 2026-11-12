@@ -92,6 +92,13 @@ export function setBotLevels(state, levels = []) {
  * @returns {{ player: number, option: string } | null}
  */
 export function chooseBotMove(state, rand = Math.random, opts = {}) {
+  // opts.ease (skill test, Nov 12): this seat sorts contests by how easy they are to win (see contests)
+  if (opts.ease === undefined) return chooseBotMoveAt(state, rand, opts);
+  const prev = EASE;
+  EASE = opts.ease;
+  try { return chooseBotMoveAt(state, rand, opts); } finally { EASE = prev; }
+}
+function chooseBotMoveAt(state, rand, opts) {
   const pend = state.pending;
   if (!pend) return null;
   const level = botLevel(state, pend.player, opts);
@@ -617,7 +624,20 @@ function contestScores(s, ctx, table, qid) {
   table?.set(qid, row);
   return row;
 }
-function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null) {
+// EASE (skill test, Nov 12; Cory: "what contests are reasonable to win and what contests do they have to stretch to win ...
+// cutting their losses where they have to stretch"). Off, a lead of 1 and a lead of 10 count the same, and so do being 1
+// behind and 20 behind. On, the chance of a prize goes by the gap and by what the turns left this round can still move:
+// a lead rivals can't reach is safe (more adds nothing), a gap the bot's own turns can't close is worth almost nothing,
+// and a close one is worth fighting for. swing: what one turn aimed at the contest moves it (2 of a held color, else 1).
+let EASE = false;
+const EASE_K = { rivalAim: 0.5, behindTop: 0.4, lost: 0.02 };
+function easeChance(gap, swing, myTurns, rivalTurns) {
+  if (gap > 0) return Math.min(1, 0.55 + 0.45 * gap / (EASE_K.rivalAim * swing * rivalTurns + 1));
+  if (gap === 0) return rivalTurns + myTurns > 0 ? 0.4 : 0.5;
+  const need = 1 - gap, reach = swing * myTurns;
+  return need > reach ? EASE_K.lost : EASE_K.behindTop * (1 - need / (reach + 1));
+}
+function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null, roundTurns = null) {
   if (s.over || !s.round) return 0;
   // later rounds' rings count too, discounted: a lead in members lasts, a pile of resources mostly gets spent
   const later = RING_VALUE.slice(s.round).reduce((a, b) => a + b, 0) * future;
@@ -630,6 +650,16 @@ function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null) 
     let other = -Infinity;
     for (let i = 0; i < row.length; i++) if (i !== p.id) other = Math.max(other, row[i]);
     if (!(mine > 0)) continue;
+    if (EASE && roundTurns) {
+      const res = quadrant(qid).resource, swing = mine === (p.res[res] || 0) ? 2 : 1;
+      let rivalTurns = 0;
+      for (let i = 0; i < row.length; i++) if (i !== p.id && row[i] === other) rivalTurns = Math.max(rivalTurns, roundTurns[i] || 0);
+      // behind: any rival at the top can still add to it; ahead: the nearest rival has to catch up
+      const chance = easeChance(mine - other, swing, roundTurns[p.id] || 0, rivalTurns);
+      const live = s.spoiled && s.spoiled.round === s.round && s.spoiled.list.some(x => x.qid === qid) ? 0 : 1;
+      out += live * v * chance + later * (0.15 + 0.5 * chance) * (0.3 + 0.7 * (1 - roundLeft));
+      continue;
+    }
     const certain = mine >= other ? 1 : 0;
     // BOTLEAD (bot audit, Nov 12; Cory: Normal bots "took Build Up first"): a lead held now counted 75% of this round's
     // prize and of later rounds' even on the round's first turn, when every rival can still pass it, so every Normal bot
@@ -747,10 +777,11 @@ function evaluate(s, buysLeft, incomeLeft, roundLeft, extraAbility = {}, future)
   const ctx = contextFor(s);
   const wild = new Set(s.quadrants.map(quadrant).filter(q => q.wildInFollowerBuys).map(q => q.resource));
   const table = new Map();
+  const lt = EASE ? laterTurns(s).turns : 0, roundTurns = EASE ? buysLeft.map(b => Math.max(0, b - lt)) : null;
   return s.players.map(p => {
     const extra = incomeLeft[p.id];
     return followers(s, p) + gameEndPay(s, ctx, p) + (extraAbility[p.id] || 0)
-      + liquidate(s, p.res, extra, buysLeft[p.id], wild) + contests(s, ctx, p, roundLeft, future, table);
+      + liquidate(s, p.res, extra, buysLeft[p.id], wild) + contests(s, ctx, p, roundLeft, future, table, roundTurns);
   });
 }
 /**

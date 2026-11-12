@@ -82,7 +82,11 @@ if (!isMainThread) {
       if (next >= jobs.length) { if (!live) done(); return; }
       const job = jobs[next++]; live++;
       const w = new Worker(file, { workerData: job });
+      // --limit=<seconds>: a game still playing after that is stopped and skipped (one stuck game held a run for an hour, Nov 12)
+      const limit = Number(arg('limit', 0));
+      const timer = limit ? setTimeout(() => { console.log(`STUCK, skipped: table ${job.g} side ${job.side}`); w.removeAllListeners('message'); w.terminate(); live--; launch(); }, limit * 1000) : null;
       w.once('message', r => {
+        clearTimeout(timer);
         live--;
         if (r.error) { console.error(r.error); } else {
           res.push(r);

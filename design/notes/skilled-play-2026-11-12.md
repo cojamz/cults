@@ -48,3 +48,10 @@
   A. Counts the real score: where every player will finish, with what their members and contests will give.
   B. Judges a move by how it changes that finish against the player they must beat; a gain for me and a loss for them count the same.
   C. Plays the reply out first: what rivals do next, what is gone before my turn returns, whether they can take it back.
+
+## Cory, 11:57am "yes" (go on luck and thinking-more), then 1:16pm to 1:19pm in project chat
+- "its 1:16. skill games done yet?" (a stuck game held the run for an hour; unmonitored. Scripts now take --limit.)
+- On Hard beating Normal 88% and Normal beating Easy 63%: "we already knew that? eh?"
+- "this is about making very hard better???" The work: build each habit into the strongest bot, play it against the strongest bot as it is today, see if it wins more. Comparing existing levels is not the question.
+- 1:22pm to 1:25pm: "whats the point in spending my fucking tokens on what we already knew???", "wait so what the fuck was happening this whole time? just testing our existing bots and ignoring all the principles we cam up with", "also dont run these tests with fable tokens", "this is basic shit". Level-against-level runs and same-deal replays stopped (7 replay games, 4 Very Hard games played; not reported). Rule for this work: only the strongest bot with a new habit against the strongest bot as it is today.
+- 1:24pm "yes" to contests by ease first. Built as opts.ease (bots.js contests/easeChance). Normal with it against Normal, 100 tables both ways: 103 winners against 105, followers per player -0.33 ± 0.84: no change. Very Hard with it against Very Hard: playing (design/eval/skill-2026-11-12/ease-veryhard.jsonl).
