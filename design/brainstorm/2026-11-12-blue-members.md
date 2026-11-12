@@ -77,10 +77,10 @@ Verdict: send
 2. Played turn: round II, the 5-cost red member you need was discarded by Out of Style; recruit it on any turn after placing, without a Blue space.
 3. Both sides: you choose shop or pile each recruit; no rival choice.
 4. Who feels it: rivals who discarded a member to keep it from you; Blue players racing you for the pile.
-5. Not refused: no ledger verdict.
+5. Not refused: no ledger verdict on this shape or name.
 6. Judged: cross-color (anyone wants a bigger shop), memorable rule card; strong at a Blue table.
 7. Public and certain: yes, the pile is face up.
-8. Color interactions: none named.
+8. Color interactions: none named; any player can use the pile.
 9. Biggest case: round III, 7 shop members plus a pile of 10 to 15 to choose from on every recruit; no followers of its own.
 Verdict: send
 
@@ -93,6 +93,6 @@ Verdict: send
 5. Not refused: no ledger verdict; Plus-Ones "On Recruit: recruit again this turn." is the pay-for version.
 6. Judged: On Recruit, simple, complementary (members for the contest).
 7. Public and certain: yes, the pile is face up and costs are printed.
-8. Color interactions: none named.
+8. Color interactions: none named; any player can use the pile.
 9. Biggest case: a free member of about 2 to 4 cost once, plus a contest place worth up to 10.
 Verdict: send
