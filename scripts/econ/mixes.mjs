@@ -64,4 +64,8 @@ export const MIXES = {
   'n12 grow': { PLUS1: 'game', PLUS1_GROW: '1' },
   'n12 r3+1': { PLUS1: 'game', SPACE_GAIN_R: '0,0,1' },
   'n12 first+2': { PLUS1: 'game', PLUS1_SIZE: 2 },
+  // Nov 12 11:23am (Cory: "I don't like every space giving one more of its color. That's not a lever for us."): the
+  // price settings again with spaces as printed
+  'n12 pricier': { PLUS1: 'game', MEMBER_UP: 5, MEMBER_COLOR: 2 },
+  'n12 color+1': { PLUS1: 'game', MEMBER_UP: 4, MEMBER_COLOR: 2 },
 };
