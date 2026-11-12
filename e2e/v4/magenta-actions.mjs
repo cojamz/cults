@@ -44,8 +44,9 @@ function fixture(name) {
     for (const k of ['1-0', '1-1', '1-2', '2-0']) s.slots[k] = 0;
     s.players[0].left = 1;
   } else if (name === 'followers') {
-    // Heist (Cory, Nov 10): "Steal 4 followers and 4 resources. +1 magenta." Bo has 5 followers to take, Cy none, Di is
-    // guarded; one follower at a time, then the resources, each split as you choose
+    // Heist (Cory, Nov 10): "Steal 4 followers and 4 resources. +1 magenta." Bo has 5 followers to take, Cy none, Di has
+    // Bodyguards, which no longer stops a steal ("Whenever a rival steals from you, steal 1 back from them.", Cory, Nov 11 9:17pm
+    // rework); one follower at a time, then the resources, each split as you choose
     action = 'rob'; picks = ['player:1', 'player:1', 'player:1', 'player:1', 'take:1:gold', 'take:1:gold', 'take:1:red', 'take:2:red'];
     s.players.forEach((p, i) => { p.bonus = [0, 5, 0, 6][i]; });
     deal('thieves.watchdog', 3);
@@ -73,7 +74,7 @@ function fixture(name) {
   } else if (name === 'followers') {
     assert(own.bonus === 4 && victim.bonus === 1, 'Heist must move exactly 4 followers');
     assert(own.res.gold === 2 && own.res.red === 2 && victim.res.gold === 7 && victim.res.red === 3 && expected.players[2].res.red === 5, 'Heist must then move exactly 4 resources in their colors');
-    assert(placed.pending.options.map(o => o.id).join() === 'player:1', 'Only a rival with followers to steal and no guard may be offered');
+    assert(placed.pending.options.map(o => o.id).join() === 'player:1,player:3', 'Only rivals with followers to steal may be offered (Bodyguards does not stop it)');
   } else if (name === 'ransom') {
     const given = Number(picks[1].slice(5));
     assert(own.members.includes(member) && !victim.members.includes(member), 'Swindle must take the member');

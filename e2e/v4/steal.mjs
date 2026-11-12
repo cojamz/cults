@@ -345,10 +345,15 @@ try {
   //      clicking it picks that seat
   {
     const { ctx, page, save } = await open('heist', '.prompt.choice.seat-pick');
-    const btn = await page.$('.lt-cult-seat.pick-seat button.cs-pick-seat');
-    const id = btn && await btn.getAttribute('data-option');
-    if (!btn) errors.push('(s7) no rival seat is lit to pick');
-    else if (!save.state.pending.options.some(o => o.id === id)) errors.push(`(s7) a lit seat points at ${id}, not an engine option`);
+    // a lit seat that holds a member (the seeded game can leave the first rival with followers and no member yet)
+    const btns = await page.$$('.lt-cult-seat.pick-seat button.cs-pick-seat');
+    if (!btns.length) errors.push('(s7) no rival seat is lit to pick');
+    for (const b of btns) { const o = await b.getAttribute('data-option'); if (!save.state.pending.options.some(x => x.id === o)) errors.push(`(s7) a lit seat points at ${o}, not an engine option`); }
+    const holder = save.state.pending.options.find(o => /^player:/.test(o.id) && save.state.players[o.value]?.members.length);
+    if (!holder) errors.push('(s7) fixture: no rival to pick holds a member');
+    const id = holder && holder.id;
+    const btn = holder && await page.$(`.lt-cult-seat.pick-seat button.cs-pick-seat[data-option="${id}"]`);
+    if (holder && !btn) errors.push(`(s7) the seat for ${id} is not lit`);
     const seat = btn && await btn.evaluateHandle(b => b.closest('.lt-cult-seat'));
     const fig = seat && await seat.$('.cs-member .fig');
     if (btn && !fig) errors.push('(s7) the lit seat shows no member');
