@@ -76,3 +76,4 @@ Why each rule in .claude/rules/working-with-cory.md exists, in Cory's words. Mov
 - 2026-11-11 · Cory had to ask again for the brainstorm skill after two Silver spaces that read rivals' silver paid 12+ after Largesse. Rule moved to the top of CLAUDE.md and a biggest-case step added to pitching.md.
 - 2026-11-11: Weekly review of Nov 9, Cory: "sure whatever" to all three. Pitch-needs-brainstorm-record was already built that day (pitch-gate.mjs); fresh reader now leaves a record presend checks; questions over 2 days get decided on best judgment and sent as one overrule list.
 - 2026-11-11: Card text is one trigger and one plain effect; Safekeepers (silver parked on the card until Round Start) refused as "so fucking complicated. Never say anything like that again." presend now refuses long, two-timing or parked card text.
+- 2026-11-11: Live back-and-forth, speed first; draft so presend passes first time (Cory x3: "Every message takes so long").
