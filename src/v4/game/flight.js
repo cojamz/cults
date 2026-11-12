@@ -251,14 +251,13 @@ export function flyWorker(root, pid, slotKey, color, { fromRect = null, duration
 }
 
 /** A small token (e.g. "+2" followers) arcs from one element to another. */
-export function flyToken(fromEl, toEl, html, { tag = '', duration = MO.reckonToken } = {}) {
+export function flyToken(fromEl, toEl, html, { tag = '', duration = MO.reckonToken, w = 34, h = 34, scaleTo = 0.9 } = {}) {
   if (!motionOK() || !fromEl || !toEl) return false;
   const f = fromEl.getBoundingClientRect(), t = toEl.getBoundingClientRect();
   if (!f.width || !t.width) return false;
-  const size = 34;
-  const a = { left: f.left + f.width / 2 - size / 2, top: f.top + f.height / 2 - size / 2, width: size, height: size };
-  const b = { left: t.left + t.width / 2 - size / 2, top: t.top + t.height / 2 - size / 2, width: size, height: size };
-  const anim = ghostFly(html, `token-flight ${tag}`.trim(), a, b, { duration, scaleTo: 0.9, fadeTo: 0.15, arc: 70 });
+  const a = { left: f.left + f.width / 2 - w / 2, top: f.top + f.height / 2 - h / 2, width: w, height: h };
+  const b = { left: t.left + t.width / 2 - w / 2, top: t.top + t.height / 2 - h / 2, width: w, height: h };
+  const anim = ghostFly(html, `token-flight ${tag}`.trim(), a, b, { duration, scaleTo, fadeTo: 0.15, arc: 70 });
   return anim || true;
 }
 

@@ -18,7 +18,7 @@ import { chainRunning, onChainEnd, onChainLanded } from './director.js';
 import Tick, { countMs } from './Tick.jsx';
 import { ruleWords } from '../shorts.js';
 import { play } from '../sound.js';
-import { cardDef } from '../../engine/v4/index.js';
+import { cardDef, quadrant } from '../../engine/v4/index.js';
 import { finalGrants } from './finalScore.js';
 
 // The pace (the motion language's B6, grammar.md; Cory: "readable, one quadrant at a time", then Oct 29: "a bit
@@ -27,6 +27,13 @@ import { finalGrants } from './finalScore.js';
 // and its emoji on the rim hop; the prize arcs off the rim's engraving to the winner's count, which rolls the moment
 // it lands; a short rest; the next rim. A rim nobody scores pulses once, dim, and moves on.
 // Every duration scales with the viewer's animation speed (src/v4/motion.js).
+
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+/** What paid the flying followers, in two or three words: "Purple contest", or the member's name. */
+export function tokenWhy(row) {
+  if (row.kind === 'bonus' || row.kind === 'after') return row.rule || '';
+  try { return `${quadrant(row.qid).name} contest`; } catch { return ''; }
+}
 
 /** The round's contests as scored: [{ qid, rule, prize, rows:[{ id, shown }], winners:[ids] }]. */
 export function reckonRows(info) {
@@ -273,10 +280,13 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
         if (!src || !home) { land(); return; }
         const a = src.getBoundingClientRect(), b = home.getBoundingClientRect();
         // a little quicker than an ordinary flight of its length: it's the fourth of four, and its source is lit (Oct 29)
-        const d = Math.round(flightMs(Math.hypot(b.left - a.left, b.top - a.top)) * 0.8);
+        const d = Math.round(flightMs(Math.hypot(b.left - a.left, b.top - a.top)) * 1.1); // 0.8 until Nov 12: too quick to read the words it carries
         longest = Math.max(longest, d);
         const go = () => {
-          const anim = flyToken(src, home, `<b class="reckon-token" style="--pc:${playerColor(id)}">${row.prize < 0 ? '−' : '+'}${Math.abs(row.prize)}</b>`, { tag: 'reckon', duration: d });
+          // Cory, Nov 12: "the +X at round end that flies to the player, its not clear what it says": it says followers and
+          // what paid them (the color's contest, or the member), big enough to read in flight
+          const n = Math.abs(row.prize), why = tokenWhy(row);
+          const anim = flyToken(src, home, `<b class="reckon-token" style="--pc:${playerColor(id)}"><span class="rt-n">${row.prize < 0 ? '−' : '+'}${n} follower${n === 1 ? '' : 's'}</span>${why ? `<small class="rt-why">${esc(why)}</small>` : ''}</b>`, { tag: 'reckon', duration: d, w: 150, h: why ? 46 : 32, scaleTo: 1 });
           // (round-end smoothing) the total starts to roll as the token reaches it, while it fades onto it: on the token's
           // finish the table's re-render landed the first number a beat after the token had gone (frame by frame, ~0.2s)
           if (anim && anim.finished) { let once = false; const go1 = () => { if (!once) { once = true; land(); } }; timers.push(setTimeout(go1, Math.round(d * 0.8))); anim.finished.then(go1, go1); } else land();
