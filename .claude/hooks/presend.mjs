@@ -109,6 +109,16 @@ if (/\bguests\b|\bguest members?\b/i.test(prose)) problems.push('Say "grey" for 
   if (hit) problems.push(`"${hit[0]}": no pile draws, no randomness, everything public (Cory, Nov 7: "i don't like drawing from the top of the pile. i don't like randomness. In general the game should be all public information."). Cut the idea or rework it on public cards.`);
 }
 
+// Cory, Nov 11 7:38pm, on "Round End, before scoring: put up to 5 of your silver on this card; it isn't yours until Round Start, when you take it back.":
+// "so fucking complicated. Never say anything like that again." Card text: one trigger, one simple effect, no parking things on a card for later.
+for (const q of args.includes("--long-ok") ? [] : prose.match(/["“][^"”]{12,}["”]/g) || []) {
+  if (!/\b(Round End|Round Start|On Use|On Recruit|Whenever|Game End|followers?|silver|members?)\b/.test(q)) continue;
+  const words = q.split(/\s+/).length;
+  const triggers = new Set((q.match(/\b(Round End|Round Start|On Use|On Recruit|Game End|Whenever)\b/g) || []));
+  const why = words > 26 ? `${words} words` : triggers.size > 1 ? `two timings (${[...triggers].join(', ')})` : /;|\bon this card\b|\buntil\b/.test(q) ? 'a two-part or parked effect (";", "on this card", "until")' : '';
+  if (why) problems.push(`Card text too complicated, ${why}: ${q.slice(0, 80)}. Cory, Nov 11: "so fucking complicated. Never say anything like that again." One trigger, one plain effect; cut or simplify before it reaches him. Quoting a live card that long? add --long-ok.`);
+}
+
 // 4. A design pitch: the checklist in .claude/rules/pitching.md, done in writing before sending.
 const looksLikePitch = pitch || (/(^|\n)\s*\d+[.)] .*["“]/.test(text) && /\b(pitch|idea|could|new space|new member|round I{1,3}\b)/i.test(text));
 if (looksLikePitch) {
