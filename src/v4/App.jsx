@@ -16,6 +16,7 @@ import { Recovered } from './Recovery.jsx';
 import { IntroGate, introOnGameStart } from './Intro.jsx';
 import { BOT, motionSpeed, onMotionSpeed } from './motion.js';
 import { PerfProfiler, traceSession } from './perf.js'; // ?trace=1 only (design/eval/perf/)
+import { ECON_VALUES } from '../engine/v4/content/price.js';
 
 // Bots decide quickly; the table paces what you see (each visible bot step holds PACE ms, a pass doesn't wait).
 const BOT_DELAY = BOT.think; // src/v4/motion.js: every pace in one place
@@ -133,7 +134,7 @@ function App() {
     const quadrants = fit && !tableProblem(fit.quadrants, seats.length) ? fit.quadrants : undefined;
     // this tab takes the one local save (any other tab holding a game lets go), then starts over in it
     claimLocal(); clearLocal(); clearLast(); setLast(null);
-    begin(createLocalSession({ seats, seed: Math.floor(Math.random() * 1e9), botDelayMs, quadrants, rules: { deck: 10, ...(cfg.swapCard ? { swapCard: true } : {}), ...(cfg.econ === 'rich' ? { econ: 'rich' } : {}), ...(cfg.plus1 === 'every' ? {} : { plus1: 'game' }), contests: 'byColor' }, botLevel: cfg.level, holdRoundEnds: true, isOwner: ownsLocal }), cfg);
+    begin(createLocalSession({ seats, seed: Math.floor(Math.random() * 1e9), botDelayMs, quadrants, rules: { deck: 10, ...(cfg.swapCard ? { swapCard: true } : {}), ...(ECON_VALUES.includes(cfg.econ) ? { econ: cfg.econ } : {}), ...(cfg.plus1 === 'every' ? {} : { plus1: 'game' }), contests: 'byColor' }, botLevel: cfg.level, holdRoundEnds: true, isOwner: ownsLocal }), cfg);
     introOnGameStart(); // this browser's first game: the intro, on this screen only (Intro.jsx)
   }, [begin]);
 

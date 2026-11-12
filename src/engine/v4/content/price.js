@@ -41,9 +41,22 @@ export const ECON = Object.freeze({
 // rules adds richUp(state), and every text a player reads moves its named costs with richText. Round decks go by the
 // printed price, so each round keeps its members.
 export const RICH_UP = 2;
-export const isRich = state => state?.rules?.econ === 'rich';
-/** How far a named member cost moves at this table (0 today, 2 under Richer). */
-export const richUp = state => (isRich(state) ? RICH_UP : 0);
+// The price settings (rules.econ): how much more each member costs (color, any; grey members pay it all as any),
+// how much more each space gives of its color, and how far every named cost moves (up = color + any = grey).
+// '+1 any' (Cory, Nov 12, after the economy judges: "let's add a switch for +1any"): every member 1 more of any.
+export const ECON_SETS = Object.freeze({
+  rich: Object.freeze({ color: 1, any: 1, grey: 2, space: 1, up: RICH_UP }),
+  any1: Object.freeze({ color: 0, any: 1, grey: 1, space: 0, up: 1 }),
+});
+for (const [k, e] of Object.entries(ECON_SETS)) if (e.color + e.any !== e.up || e.grey !== e.up) throw new Error(`Economy ${k}: every member must cost up more, so named costs move with it`);
+/** The price settings a table can pick besides today's ('rich', 'any1'). */
+export const ECON_VALUES = Object.freeze(Object.keys(ECON_SETS));
+/** The table's price setting, or null at today's prices. */
+export const econSet = state => ECON_SETS[state?.rules?.econ] || null;
+/** Whether this table's prices differ from today's (Richer or +1 any). */
+export const isRich = state => !!econSet(state);
+/** How far a named member cost moves at this table (0 today, 2 under Richer, 1 under +1 any). */
+export const richUp = state => econSet(state)?.up || 0;
 // "costing 9 or less", "costing up to 5", "costing 7 or more", "member, up to 5", "≤8": an absolute cost, never a
 // relative one ("costing up to 3 more", "at most 2 less", "within 2").
 const NAMED_COST = /(\bcosting (?:up to |at most )?|\bmember, up to |≤)(\d+)(?!\d)(?!\s*(?:more|less)\b)/g;

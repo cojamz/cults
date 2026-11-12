@@ -18,6 +18,7 @@ import { createTalkLog, cleanTalk, TALK_GAP_MS } from './talk.js';
 import { createCursors, cursorPath } from './cursors.js';
 import { isLegal, askFor, chooseBotMove, setBotLevels, BOT_LEVELS, MAX_PLAYERS } from '../../engine/v4/index.js';
 import { seededRandom } from '../../engine/v4/rng.js';
+import { ECON_VALUES } from '../../engine/v4/content/price.js';
 import { parseTable, fitTable, tableProblem } from '../tables.js';
 import { randomFreeEmoji, settleEmojis } from '../emojiPick.js';
 import { createEmitter, randomId } from './emitter.js';
@@ -148,7 +149,7 @@ function lobbyView(room, code, playerId, { awaySince = new Map(), subAfterMs = S
     code, hostId: room.hostId ?? null, hostName: list.find(s => s.id === room.hostId)?.name || '', status, seed: room.seed ?? null,
     table: parseTable(room.table) ? { mode: room.tableMode || 'custom', quadrants: parseTable(room.table) } : null,
     swapCard: room.swapCard === true,
-    econ: room.econ === 'rich' ? 'rich' : 'today',
+    econ: ECON_VALUES.includes(room.econ) ? room.econ : 'today',
     plus1: room.plus1 === 'every' ? 'every' : 'game',
     players, seats: players.length, maxSeats: MAX_SEATS,
     canStart: isHost && status === 'lobby' && players.length >= MIN_SEATS, startHint,
@@ -574,10 +575,10 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
       await hostOnly('pick the swap card');
       await transport.update(base, { swapCard: !!on });
     },
-    /** Host: the economy setting ('today' by default, or 'rich'). */
+    /** Host: the economy setting ('today' by default, 'rich' or 'any1'). */
     async setEcon(v) {
       await hostOnly('pick the economy');
-      await transport.update(base, { econ: v === 'rich' ? 'rich' : 'today' });
+      await transport.update(base, { econ: ECON_VALUES.includes(v) ? v : 'today' });
     },
     /** Host: the space +1 ('game' by default: only a space's first taker gets it; or 'every'). */
     async setPlus1(v) {
@@ -600,7 +601,7 @@ function openLobby({ transport, code, playerId, botDelayMs, subAfterMs = default
         const quadrants = fitTable({ mode: r.table ? r.tableMode || 'custom' : 'classic', quadrants: parseTable(r.table) || [] }, list.length).quadrants;
         tableWhy = tableProblem(quadrants, list.length);
         if (tableWhy) return undefined;
-        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, rules: { roundDecks: 2, deck: 10, ...(r.swapCard === true ? { swapCard: true } : {}), ...(r.econ === 'rich' ? { econ: 'rich' } : {}), ...(r.plus1 === 'every' ? {} : { plus1: 'game' }), contests: CONTESTS } });
+        const game = newGame({ seats: list.map(s => ({ name: s.name, kind: s.kind, ...withEmoji(s.emoji) })), seed, quadrants, rules: { roundDecks: 2, deck: 10, ...(r.swapCard === true ? { swapCard: true } : {}), ...(ECON_VALUES.includes(r.econ) ? { econ: r.econ } : {}), ...(r.plus1 === 'every' ? {} : { plus1: 'game' }), contests: CONTESTS } });
         setBotLevels(game, list.map(s => (s.kind === 'bot' ? s.bot : null))); // the level the host picked for each bot
         return {
           ...r, seats, seed, status: 'playing', startedAt: Date.now(), build: { ...BUILD },

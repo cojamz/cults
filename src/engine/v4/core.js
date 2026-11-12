@@ -1,4 +1,4 @@
-import { ECON, RICH_UP, shiftCosts, richUp } from './content/price.js';
+import { ECON, RICH_UP, shiftCosts, richUp, econSet } from './content/price.js';
 import { grantDiscount } from './discount.js';
 import { plainCopy, stateCopy } from './copy.js';
 // Patrons v4 engine. Pure and deterministic: state in, move in, state out.
@@ -273,22 +273,26 @@ const cloakDef = (d, q) => {
 export const cardDef = (state, uid) => {
   const d = defById(state.cards[uid].def), arts = state.artifacts;
   if (arts) for (const q in arts) if (arts[q] === uid) return cloakDef(d, q);
-  return state.rules?.econ === 'rich' ? richDef(d) : d;
+  const e = econSet(state);
+  return e ? richDef(d, e) : d;
 };
 /** The "Richer board, pricier members" setting (rules.econ 'rich'; Cory, Nov 7 economy test, the judges' pick; today's
  *  prices stay the default): every member costs 1 more of its color and 1 more of any (grey: 2 more of any), and every
  *  space gives 1 more of its color (gain, below). Every named cost moves up the same 2 (Cory, Nov 9; content/price.js). */
 export const RICH = Object.freeze({ color: 1, any: 1, grey: 2, space: 1 });
 if (RICH.color + RICH.any !== RICH_UP || RICH.grey !== RICH_UP) throw new Error('Richer: every member must cost RICH_UP more, so named costs move with it');
-const richDefs = new WeakMap();
-function richDef(d) {
-  let r = richDefs.get(d);
+// e: the table's price setting (price.js ECON_SETS: Richer, or +1 any); one cache per setting
+const richDefs = new Map();
+function richDef(d, e) {
+  if (!richDefs.has(e)) richDefs.set(e, new WeakMap());
+  const cache = richDefs.get(e);
+  let r = cache.get(d);
   if (!r) {
     const grey = d.quadrant === 'guest' || d.quadrant === 'benders';
     // its own words move every named cost too (content/price.js richText; Cory, Nov 9)
-    const text = shiftCosts(d.text, RICH_UP);
-    r = grey ? { ...d, text, w: (d.w || 0) + RICH.grey, richUp: RICH.grey } : { ...d, text, s: (d.s || 0) + RICH.color, w: (d.w || 0) + RICH.any, richUp: RICH.color + RICH.any };
-    richDefs.set(d, r);
+    const text = shiftCosts(d.text, e.up);
+    r = grey ? { ...d, text, w: (d.w || 0) + e.grey, richUp: e.grey } : { ...d, text, s: (d.s || 0) + e.color, w: (d.w || 0) + e.any, richUp: e.color + e.any };
+    cache.set(d, r);
   }
   return r;
 }
@@ -2109,7 +2113,7 @@ export function beforeTrailingPlus1(fn) {
   econ.space = null;
   try { return fn(); } finally { econ.space = s; }
 }
-const spaceDelta = state => ECON.space + (ECON.spaceR?.[state.round - 1] || 0) + (state.rules?.econ === 'rich' ? RICH.space : 0);
+const spaceDelta = state => ECON.space + (ECON.spaceR?.[state.round - 1] || 0) + (econSet(state)?.space || 0);
 function econAdjust(p, color, n, fromAction, state) {
   const s = econ.space, c = econ.cloak, owe = state?.econOwed;
   if (owe && fromAction && owe.pid === p.id && owe.color === color && !(s && s.pid === p.id && s.color === color && !s.paid)) { delete state.econOwed; n = Math.max(0, n - owe.n); }

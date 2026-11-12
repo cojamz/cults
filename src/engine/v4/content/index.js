@@ -1,5 +1,5 @@
 // Content registry. Every quadrant is a self-contained module; the engine looks them up by id.
-import { isRich, shiftCosts, RICH_UP } from './price.js';
+import { isRich, shiftCosts, richUp } from './price.js';
 import gold from './gold.js';
 import red from './red.js';
 import { blue, green } from './standins.js';
@@ -86,15 +86,17 @@ export function spacesOf(state, qid) {
   if (state?.rules) noteTable(state.rules.testSet);
   const acts = state?.rules?.testSet && qid !== 'guest' ? testSpaces(qid) : quadrant(qid).actions;
   const out = state?.rules?.piles?.only ? acts.map(a => a.piles || a) : acts;
-  return isRich(state) ? richSpaces(out) : out;
+  return isRich(state) ? richSpaces(out, richUp(state)) : out;
 }
 // Richer: a space that names a member's cost says the moved number (Cory, Nov 9); the rule itself reads richUp(state)
-const richCache = new WeakMap();
-function richSpaces(acts) {
-  let r = richCache.get(acts);
+const richCache = new Map(); // by how far costs move: a WeakMap of space lists each
+function richSpaces(acts, up) {
+  if (!richCache.has(up)) richCache.set(up, new WeakMap());
+  const cache = richCache.get(up);
+  let r = cache.get(acts);
   if (!r) {
-    r = acts.map(a => { const text = shiftCosts(a.text, RICH_UP); return text === a.text ? a : { ...a, text }; });
-    richCache.set(acts, r);
+    r = acts.map(a => { const text = shiftCosts(a.text, up); return text === a.text ? a : { ...a, text }; });
+    cache.set(acts, r);
   }
   return r;
 }

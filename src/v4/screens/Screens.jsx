@@ -6,6 +6,7 @@ import HowToPlay from '../HowToPlay.jsx';
 import { friendlyError } from '../errors.js';
 import { quadrant, defById, BOT_LEVEL_INFO, DEFAULT_BOT_LEVEL } from '../../engine/v4/index.js';
 import { ARTIFACTS, cloakName } from '../../engine/v4/core.js';
+import { ECON_VALUES } from '../../engine/v4/content/price.js';
 import { CLASSIC, spheres, sphereName, sphereLine, sphereContest, sphereVersion, sphereVersionWords, tableProblem, randomTable, urlTable, fitTable, sphereCount } from '../tables.js';
 import { GAME_NAME, VERSION_LABEL } from '../version.js';
 import { copyText } from '../Recovery.jsx';
@@ -221,11 +222,13 @@ export function SwapPick({ value, onChange, readOnly }) {
   </div>;
 }
 // Economy (Cory, Nov 7 economy test: the judges' pick, opt-in; today's prices stay the default)
-const ECON_OPTS = [['today', 'Today', 'Costs and gains as printed.'], ['rich', 'Richer', 'Members cost 1 more of their color and 1 more of any (grey members: 2 more of any), and every cost named on a card goes up 2 with them. Spaces give 1 more of their color.']];
-export const ECON_HINT = { today: 'Costs and gains as printed.', rich: 'Members cost more; spaces give more.' };
+// '+1 any' (Cory, Nov 12: "let's add a switch for +1any"), after the economy judges
+const ECON_OPTS = [['today', 'Today', 'Costs and gains as printed.'], ['any1', '+1 any', 'Members cost 1 more of any color, and every cost named on a card goes up 1 with them. Spaces give what they print.'], ['rich', 'Richer', 'Members cost 1 more of their color and 1 more of any (grey members: 2 more of any), and every cost named on a card goes up 2 with them. Spaces give 1 more of their color.']];
+export const ECON_HINT = { today: 'Costs and gains as printed.', any1: 'Members cost 1 more of any color.', rich: 'Members cost more; spaces give more.' };
+const ECON_LABEL = { today: 'Today', any1: '+1 any', rich: 'Richer' };
 export function EconPick({ value, onChange, readOnly }) {
   return <div className="seat" data-econ-pick={value}><SetName name="Economy" />
-    {readOnly ? <span className="hint">{value === 'rich' ? 'Richer' : 'Today'}</span>
+    {readOnly ? <span className="hint">{ECON_LABEL[value] || 'Today'}</span>
       : <Seg label="Economy" value={value} options={ECON_OPTS} onChange={onChange} />}
   </div>;
 }
@@ -371,7 +374,7 @@ export function LocalSetup({ initial, onStart, onBack }) {
   const [level, setLevel] = useState(initial?.level || DEFAULT_BOT_LEVEL);
   const [table, setTable] = useState(() => initialTable(initial?.table));
   const [swapCard, setSwapCard] = useState(SWAP_OFFERED && !!initial?.swapCard);
-  const [econ, setEcon] = useState(initial?.econ === 'rich' ? 'rich' : 'today');
+  const [econ, setEcon] = useState(ECON_VALUES.includes(initial?.econ) ? initial.econ : 'today');
   const [plus1, setPlus1] = useState(initial?.plus1 === 'every' ? 'every' : 'game');
   // Shop, Member deck and Round III members rows cut (Cory, Nov 4: "drop the piles modes. drop 15 members. drop 'wait for round III'")
   const filled = seats.filter(s => s.kind !== 'empty');
@@ -530,7 +533,7 @@ export function Lobby({ lobby, myId, onLeave }) {
         )}
         <div className="setup-settings" data-setup-settings>
           {SWAP_OFFERED && <SwapPick value={!!view.swapCard} onChange={v => act(() => lobby.setSwapCard(v))} readOnly={!isHost || !lobby.setSwapCard} />}
-          <EconPick value={view.econ === 'rich' ? 'rich' : 'today'} onChange={v => act(() => lobby.setEcon(v))} readOnly={!isHost || !lobby.setEcon} />
+          <EconPick value={ECON_VALUES.includes(view.econ) ? view.econ : 'today'} onChange={v => act(() => lobby.setEcon(v))} readOnly={!isHost || !lobby.setEcon} />
           <Plus1Pick value={view.plus1 === 'every' ? 'every' : 'game'} onChange={v => act(() => lobby.setPlus1(v))} readOnly={!isHost || !lobby.setPlus1} />
           {LOOK_OFFERED && <MemberLookPick />}
         </div>

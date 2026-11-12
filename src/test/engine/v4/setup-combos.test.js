@@ -7,20 +7,20 @@
 import { describe, it, expect } from 'vitest';
 import { createGame, cardDef, shopSize, spacesOf, actionAt } from '../../../engine/v4/core.js';
 import { defById, quadrant } from '../../../engine/v4/content/index.js';
-import { shiftCosts, RICH_UP, MORE } from '../../../engine/v4/content/price.js';
+import { shiftCosts, RICH_UP, MORE, ECON_SETS } from '../../../engine/v4/content/price.js';
 import { runGame } from './fuzz-runner.js';
 import { sceneQ, settle } from './cards-helpers.js';
 import { take } from './helpers.js';
 
 // every color on some table, and every color the Test cards change
 const TABLES = [['gold', 'red', 'market', 'echo'], ['purple', 'silver', 'yellow', 'thieves'], ['trading', 'red', 'echo', 'purple']];
-const ECON = [{}, { econ: 'rich' }];
+const ECON = [{}, { econ: 'rich' }, { econ: 'any1' }]; // + '+1 any' (Cory, Nov 12)
 const CARDS = [{}, { testSet: true }];
 const SWAP = [{}, { swapCard: true }];
 const base = { deck: 10, roundDecks: 2, contests: 'byColor' };
 const combos = [];
 for (const e of ECON) for (const c of CARDS) for (const w of SWAP) combos.push({ ...base, ...e, ...c, ...w });
-const label = r => [r.econ === 'rich' ? 'Richer' : 'Today', r.testSet ? 'Test cards' : 'Live cards', r.swapCard ? 'swap card' : 'no swap'].join(', ');
+const label = r => [{ rich: 'Richer', any1: '+1 any' }[r.econ] || 'Today', r.testSet ? 'Test cards' : 'Live cards', r.swapCard ? 'swap card' : 'no swap'].join(', ');
 const deal = (quadrants, rules, seed = 7) => createGame({ seats: quadrants.map((_, i) => ({ name: `P${i + 1}`, kind: 'bot' })), seed, quadrants, rules });
 const ids = (s, us) => us.map(u => s.cards[u].def).sort();
 const byRound = s => ({ 1: ids(s, [...s.pile, ...s.shop]), 2: ids(s, s.waiting[2] || []), 3: ids(s, s.waiting[3] || []) });
@@ -52,12 +52,13 @@ describe('every setup combination plays to the end', () => {
   }
 });
 
-describe('Richer moves every named member cost', () => {
-  it('every space and member that names a cost says 2 more', () => {
-    for (const t of TABLES) for (const test of [false, true]) {
-      const today = deal(t, { ...base, ...(test ? { testSet: true } : {}) }), rich = deal(t, { ...base, econ: 'rich', ...(test ? { testSet: true } : {}) });
-      for (const q of t) spacesOf(today, q).forEach((a, i) => expect(spacesOf(rich, q)[i].text).toBe(shiftCosts(a.text, RICH_UP)));
-      for (const u of Object.keys(today.cards)) if (!Object.values(today.artifacts || {}).includes(Number(u))) expect(cardDef(rich, Number(u)).text).toBe(shiftCosts(cardDef(today, Number(u)).text, RICH_UP));
+describe('Richer and +1 any move every named member cost', () => {
+  it('every space and member that names a cost says 2 more (Richer) or 1 more (+1 any)', () => {
+    for (const econ of ['rich', 'any1']) for (const t of TABLES) for (const test of [false, true]) {
+      const up = ECON_SETS[econ].up;
+      const today = deal(t, { ...base, ...(test ? { testSet: true } : {}) }), rich = deal(t, { ...base, econ, ...(test ? { testSet: true } : {}) });
+      for (const q of t) spacesOf(today, q).forEach((a, i) => expect(spacesOf(rich, q)[i].text).toBe(shiftCosts(a.text, up)));
+      for (const u of Object.keys(today.cards)) if (!Object.values(today.artifacts || {}).includes(Number(u))) expect(cardDef(rich, Number(u)).text).toBe(shiftCosts(cardDef(today, Number(u)).text, up));
     }
     // the words that move, and the ones that don't
     expect(shiftCosts('Recruit a shop member costing 10 or less, for free.', 2)).toBe('Recruit a shop member costing 12 or less, for free.');
@@ -66,11 +67,11 @@ describe('Richer moves every named member cost', () => {
     expect(shiftCosts('a shop member costing at most 2 less', 2)).toBe('a shop member costing at most 2 less');
   });
   it('Initiation offers exactly the shop members its words allow, at both prices', () => {
-    for (const econ of [undefined, 'rich']) {
-      // members around the cap: Initiation's cap is 9 + MORE as printed, 2 more under Richer
+    for (const econ of [undefined, 'rich', 'any1']) {
+      // members around the cap: Initiation's cap is 9 + MORE as printed, 2 more under Richer, 1 more under +1 any
       const s0 = sceneQ({ round: 3, rules: { ...base, econ }, quadrants: ['gold', 'red', 'market', 'echo'] });
       const cap = Number(/costing (\d+) or less/.exec(spacesOf(s0, 'red').find(a => a.key === 'take').text)[1]);
-      expect(cap).toBe(9 + MORE + (econ ? RICH_UP : 0));
+      expect(cap).toBe(9 + MORE + (econ ? ECON_SETS[econ].up : 0));
       const s = take(s0, 'red.take');
       const offered = (s.pending?.options || []).filter(o => o.kind === 'card').map(o => o.value).sort();
       const fits = s0.shop.filter(u => { const d = cardDef(s0, u); return d.s + d.w <= cap; }).sort();
