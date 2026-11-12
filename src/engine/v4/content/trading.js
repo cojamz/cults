@@ -1067,7 +1067,8 @@ const trading = {
     // as the shop prices it (Richer moves the 6 with its text, content/price.js). Old Money's price (Claude, gut).
     // Cory, 2026-11-11 11:53pm Eastern: "yeah just nerf minimalists. +2 followers per. member costing 8 or more." (was 6;
     // bots, v0.99.738: it paid cults of 6+ members 12.8 a game and cults of 5 or fewer 7.2)
-    m('minimalists', 'Minimalists', 1, 4, 'Game End: +2 followers per member you have costing 8 or more.', {
+    // costs 10 (Cory, Nov 12 10:31am Eastern, yes to "Minimalists cost 8 → 10")
+    m('minimalists', 'Minimalists', 1, 6, 'Game End: +2 followers per member you have costing 8 or more.', {
       onGameEnd: (ctx, owner) => 2 * ctx.membersOf(owner).filter(c => c.def.s + c.def.w >= 8 + richUp(ctx.state)).length,
     }),
     m('appraiser', 'Appraiser', 3, 2, 'On Use, once per game: discard one of your members. Gain its cost in followers or white.', {

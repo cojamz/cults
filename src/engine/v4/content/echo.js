@@ -1312,7 +1312,7 @@ const echoQ = {
     // your next On Recruit is doubled"). Used on any turn; the next member you recruit that has an On Recruit, on any turn,
     // has it happen twice; the card stays turned until then, so a table can see it's waiting. Price 2 green + 3 any.
     // Archived: the "this turn" wording (REPLACE10=encore, Nov 4 trials q-d-encore-c1, A/B +0.28).
-    m('encore', 'Encore', 2, 2, /* Cory, Nov 5 backlog price yes */ 'On Use, once per game: your next On Recruit happens twice.', {
+    m('encore', 'Encore', 2, 2, /* Cory, Nov 5 backlog price yes */ 'On Use, once per game: your next On Recruit happens twice.', { f: 3, // worth 3 (Cory, Nov 12 10:31am Eastern)
       activate: 'game',
       onActivate(ctx, owner) {
         owner.encoreTurn = 'next';

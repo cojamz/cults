@@ -143,13 +143,13 @@ describe('Leavetakers: "Whenever one of your members leaves your cult, +2 white.
     expect(leave(s, 1)).toEqual([]);
   });
 
-  it('Double Agent swaps itself for a rival\'s Minimalists: the rival\'s Leavetakers pays +2', () => {
-    const { s } = go('lt-doubleagent', { quads: W, queue: BUY, shop: ['thieves.doubleagent'], members: [[], ['trading.leavetakers', 'trading.minimalists']], res: [{ magenta: 20 }] },
-      [/Double Agent/, /Minimalists/]);
-    expect(names(s, 0)).toEqual(['Minimalists']);
+  it('Double Agent swaps itself for a rival\'s Intern: the rival\'s Leavetakers pays +2', () => {
+    const { s } = go('lt-doubleagent', { quads: W, queue: BUY, shop: ['thieves.doubleagent'], members: [[], ['trading.leavetakers', 'red.intern']], res: [{ magenta: 20 }] },
+      [/Double Agent/, /Intern/]);
+    expect(names(s, 0)).toEqual(['Intern']);
     expect(names(s, 1)).toEqual(['Leavetakers', 'Double Agent']);
     expect(s.players[1].res.white).toBe(2);
-    expect(leave(s, 1)).toEqual(["P2's Leavetakers: Minimalists left: +2 white."]);
+    expect(leave(s, 1)).toEqual(["P2's Leavetakers: Intern left: +2 white."]);
     cleanLog(s);
   });
 
@@ -234,11 +234,12 @@ describe('Minimalists: "Game End: +2 followers per member you have costing 8 or 
     expect(part(s, 0)).toEqual(['Minimalists +4', 'Minimalists +4']);
   });
 
-  it('swapped away by Double Agent before Game End: it scores for its new holder only', () => {
+  it('Double Agent (swaps for a rival\'s member costing up to 8) cannot reach Minimalists at cost 10 (Cory, Nov 12)', () => {
     const { s } = go('mm-doubleagent', { quads: W, queue: [...BUY, ...FIN], shop: ['thieves.doubleagent'], members: [[], ['trading.minimalists', 'trading.leavetakers']], res: [{ magenta: 20 }] },
-      [/Double Agent/, /Minimalists/]);
-    expect(part(s, 0)).toEqual(['Minimalists +2']);
-    expect(part(s, 1)).toEqual([]);
+      [/Double Agent/]);
+    const labels = (s.pending?.options || []).map(o => o.label || '').join(' | ');
+    expect(labels).not.toMatch(/Minimalists/);
+    expect(names(s, 1)).toContain('Minimalists');
   });
 });
 

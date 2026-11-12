@@ -56,7 +56,7 @@ describe('Green members, Nov 11', () => {
   });
 
   it('Die-Hards: +6 at game end with the most green members, ties count, none with no green member', () => {
-    const s = table(Q, { n: 3, members: [['echo.diehards', 'echo.encore'], ['echo.copyist', 'echo.hourglass'], ['gold.taxman']] });
+    const s = table(Q, { n: 3, members: [['echo.diehards', 'echo.groupie'], ['echo.copyist', 'echo.hourglass'], ['gold.taxman']] });
     const ctx = contextFor(s), d = defById('echo.diehards');
     expect(d.onGameEnd(ctx, s.players[0])).toBe(6); // 2 to 2: a tie counts
     s.players[1].members.push(s.pile.find(u => s.cards[u].def === 'echo.wallflower'));

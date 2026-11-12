@@ -651,7 +651,7 @@ export default {
     // round I (paper 16 vs 10, Yellow's set 9 -> 16; blind play +0.34; trial on tables with Yellow: taken 28% vs 27%, owners
     // won 40% vs 35%). 3 yellow + 3 any as a player sees it. The recruited member's color, if you have a member of it
     // (Dabblers and Drifters count, as everywhere); automatic, on the rival's recruit.
-    m('dutycollector', 'Duty Collector', 2, 3, 'Whenever a rival recruits a member in one of your members’ colors, +1 of that color.', {
+    m('dutycollector', 'Duty Collector', 2, 3, 'Whenever a rival recruits a member in one of your members’ colors, +1 of that color.', { f: 3, // worth 3 (Cory, Nov 12 10:31am Eastern)
       onAnyRecruit(ctx, owner, card, by, recruited) {
         const c = colorOf(ctx, recruited);
         if (!c || by === owner || !(ctx.countMembersOfColor(owner, ctx.defOf(recruited).quadrant) > 0)) return;

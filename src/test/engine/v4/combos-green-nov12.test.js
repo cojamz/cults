@@ -204,7 +204,7 @@ describe('Die-Hards: "Game End: if you have the most green members, +6 followers
   const part = (s, i) => s.players[i].final.parts.filter(x => /Die-Hards/.test(x));
   it('4 players, two Die-Hards owners tied for the most (2 each): both +6 (ties count, Claude\'s logged fill-in)', () => {
     const { s } = go('diehards-4p-tie', { quads: Q, n: 4, queue: FIN,
-      members: [['echo.diehards', 'echo.copyist'], ['echo.regulars', 'red.intern'], ['echo.diehards', 'echo.encore'], ['gold.banker']] }, []);
+      members: [['echo.diehards', 'echo.copyist'], ['echo.regulars', 'red.intern'], ['echo.diehards', 'echo.groupie'], ['gold.banker']] }, []); // Groupie, not Encore: Encore counts as 3 since Nov 12
     expect([0, 1, 2, 3].map(i => part(s, i))).toEqual([['Die-Hards +6'], [], ['Die-Hards +6'], []]);
     cleanLog(s);
   });
@@ -238,10 +238,10 @@ describe('Die-Hards: "Game End: if you have the most green members, +6 followers
 
   it('Mimics copies Exchange Students to take a rival\'s Die-Hards: it scores for its new holder', () => {
     const { s } = go('diehards-mimics-exchange', { quads: Q, queue: [{ t: 'turn', p: 0 }, ...FIN], shop: ['echo.mimics'],
-      members: [['echo.encore'], ['yellow.exchangestudents', 'echo.diehards', 'echo.copyist']], res: [RICH] },
-      [/Gather/, /Mimics/, /Exchange Students/, /Encore ↔ P2: Die-Hards/]);
+      members: [['echo.hourglass'], ['yellow.exchangestudents', 'echo.diehards', 'echo.copyist']], res: [RICH] },
+      [/Gather/, /Mimics/, /Exchange Students/, /Stunt Double ↔ P2: Die-Hards/]);
     expect(names(s, 0).sort()).toEqual(['Die-Hards', 'Mimics']);
-    expect(part(s, 0)).toEqual(['Die-Hards +6']); // 2 green (Mimics, Die-Hards) to P2's 2 (Encore, Copyist): a tie
+    expect(part(s, 0)).toEqual(['Die-Hards +6']); // 2 green (Mimics, Die-Hards) to P2's 2 (Stunt Double, Copyist): a tie
     expect(part(s, 1)).toEqual([]);
   });
 });

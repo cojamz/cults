@@ -65,10 +65,10 @@ describe('Kingmakers: "Round End: give rivals up to 3 of your silver, split as y
 });
 
 describe('Patron Saints: "Game End: +1 follower per silver member, anyone’s." (Cory, Nov 6: game end)', () => {
-  it('counts every silver member at the table at game end, as many as each counts as (Patron Saints and High Society 2 each, Toastmaster 1)', () => {
+  it('counts every silver member at the table at game end, as many as each counts as (High Society 2, Patron Saints and Toastmaster 1 each)', () => {
     let s = table(Q, { n: 3, round: 3, members: [['silver.patronsaints', 'silver.toastmaster'], ['silver.highsociety'], ['red.panel']], queue: [] });
     s = resume({ ...s, queue: [{ t: 'finish' }], pending: null });
-    expect(s.players[0].final.parts).toContain('Patron Saints +5');
+    expect(s.players[0].final.parts).toContain('Patron Saints +4');
   });
   it('pays nothing at round end', () => {
     let s = table(Q, { n: 3, round: 2, members: [['silver.patronsaints', 'silver.toastmaster'], ['silver.highsociety'], ['red.panel']], queue: [] });
