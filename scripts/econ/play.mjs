@@ -22,7 +22,7 @@ for (let g = first; g < first + count; g++) {
   while (quads.length < 4) quads.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
   let s = createGame({ seats: Array.from({ length: 4 }, () => ({ kind: 'bot' })), seed: g, quadrants: quads, rules: RULES });
   const buyer = g % 5 === 0 ? g % 4 : -1; // every 5th game one seat only buys followers (the existing check)
-  const P = s.players.map(() => ({ gained: 0, places: 0, buyLooks: 0, dead: 0, rich: 0, recruits: [0, 0, 0], followerBuys: 0, prices: [], leftover: [], seatR2: 0, cardsR2: 0, folR2: 0 }));
+  const P = s.players.map(() => ({ gained: 0, places: 0, buyLooks: 0, dead: 0, rich: 0, recruits: [0, 0, 0], followerBuys: 0, folBought: 0, prices: [], leftover: [], seatR2: 0, cardsR2: 0, folR1: 0, folR2: 0, folR3buys: 0 }));
   const looked = new Set();
   let guard = 0;
   while (!s.over && guard++ < 20000) {
@@ -45,9 +45,10 @@ for (let g = first; g < first + count; g++) {
       const fresh = x.members.filter(u => !before[i].members.includes(u));
       if (i === pl && fresh.length && r >= 1) { P[i].recruits[r - 1] += fresh.length; for (const u of fresh) { try { P[i].prices.push(memberPrice(t, t.players[i], u).total); } catch {} } }
     });
-    if (typeof m.option === 'string' && /^tier:/.test(m.option)) P[pl].followerBuys++;
+    if (typeof m.option === 'string' && /^tier:/.test(m.option)) { P[pl].followerBuys++; const d = followers(s, s.players[pl]) - followers(t, t.players[pl]); P[pl].folBought += d; if (r === 3) P[pl].folR3buys += d; }
     if (r >= 1 && (s.round !== r || s.over)) {
       t.players.forEach((x, i) => P[i].leftover.push(sum(x.res)));
+      if (r === 1) s.players.forEach((x, i) => { P[i].folR1 = followers(s, x); });
       if (r === 2) s.players.forEach((x, i) => { P[i].seatR2 = memberCount(s, x); P[i].cardsR2 = x.members.length; P[i].folR2 = followers(s, x); });
     }
   }
@@ -62,6 +63,7 @@ for (let g = first; g < first + count; g++) {
       cardsR2: P[i].cardsR2, seatR2: P[i].seatR2,
       incomePerPlace: P[i].places ? P[i].gained / P[i].places : 0, avgPrice: P[i].prices.length ? P[i].prices.reduce((a, b) => a + b, 0) / P[i].prices.length : null,
       buyLooks: P[i].buyLooks, dead: P[i].dead, rich: P[i].rich, recruits: P[i].recruits, leftover: P[i].leftover,
+      gained: P[i].gained, places: P[i].places, followerBuys: P[i].followerBuys, folBought: P[i].folBought, folR3buys: P[i].folR3buys, folR1: P[i].folR1, folR2: P[i].folR2,
     })),
   }) + '\n');
 }

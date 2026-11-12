@@ -60,4 +60,8 @@ export const MIXES = {
   'n12 richer': { PLUS1: 'game', MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1 },
   'n12 between': { PLUS1: 'game', MEMBER_UP: 4, MEMBER_COLOR: 2, SPACE_GAIN: 1 },
   'n12 color-1': { PLUS1: 'game', MEMBER_UP: 2, MEMBER_COLOR: 0 },
+  // Nov 12 levers on top of today (Claude's picks after Cory's "think about other economic levers we could test")
+  'n12 grow': { PLUS1: 'game', PLUS1_GROW: '1' },
+  'n12 r3+1': { PLUS1: 'game', SPACE_GAIN_R: '0,0,1' },
+  'n12 first+2': { PLUS1: 'game', PLUS1_SIZE: 2 },
 };

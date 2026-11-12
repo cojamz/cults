@@ -2067,6 +2067,8 @@ function econRun(kind, frame, fn) {
 // (Green's copy spaces and members) is never a first taker, so it never gets the +1 (copyPlus1Cut). Spaces that print
 // no "+1 <color>." are untouched. PLUS1=game|round (env) is the economy tests' old dial; 'round' is first taker each round.
 const PLUS1 = globalThis.process?.env?.PLUS1 || '';
+const PLUS1_GROW = globalThis.process?.env?.PLUS1_GROW === '1';
+const PLUS1_SIZE = Number(globalThis.process?.env?.PLUS1_SIZE) || 0;
 const PLUS1_CLAIM = -1.5; // plus1Delta's answer for a claimed +1 under the setting: cut it from the space like a later taker, pay it apart
 export const plus1Mode = state => state?.rules?.plus1 || PLUS1 || '';
 /** Whether a space prints the "+1 <its color>." a first taker gets. */
@@ -2086,7 +2088,10 @@ function plus1Delta(state, task, a, qid) {
   if (seen[k]) { state.plus1Stats.cut++; return -1; }
   seen[k] = true; state.plus1Stats.paid++;
   // the setting: the space runs without its +1 and the claim pays it on its own (case 'act'); the env dial pays it in place
-  return state.rules?.plus1 === 'game' ? PLUS1_CLAIM : 0;
+  if (state.rules?.plus1 === 'game') return PLUS1_CLAIM;
+  // economy-test levers, bot games only (Nov 12): PLUS1_GROW=1, an unclaimed +1 is +2 in round II and +3 in round III;
+  // PLUS1_SIZE=n, the first taker gets +n instead of +1
+  return (PLUS1_GROW ? state.round - 1 : 0) + (PLUS1_SIZE ? PLUS1_SIZE - 1 : 0);
 }
 /** A copy of space a (color qid) doing or handing over its gain: the +1 that space prints never goes to a copier
  *  (Cory: "plus one to the first taker matters for green"). times: the copier's doubling (Wallflower), so a doubled copy loses 2. */
