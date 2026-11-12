@@ -18,6 +18,11 @@ export const VARIANTS = {
   'green-tribute': { FORCE: 'echo', MEMBERS_OUT: 'echo.ensemble', MEMBERS_IN: 'echo.dejavu' },
   // Cory, Nov 11 11:36pm: Purifiers "Whenever this member leaves your cult, each rival discards a member. On Use, once per game: discard this member."
   'purifiers-leave': { PURIFIERS: 'leave' },
+  // Cory, Nov 11 11:46pm: "minimalists for sure needs tweaks"
+  'mini-base': { FORCE: 'trading' },
+  'mini-small': { FORCE: 'trading', MINIMALISTS: 'small' },
+  'mini-one': { FORCE: 'trading', MINIMALISTS: 'one' },
+  'mini-eight': { FORCE: 'trading', MINIMALISTS: 'eight' },
 };
 const flags = Object.fromEntries(process.argv.slice(2).map(a => { const [k, ...v] = a.replace(/^--/, '').split('='); return [k, v.join('=') || true]; }));
 const games = Number(flags.games || 200), chunk = Number(flags.chunk || 10), W = Number(flags.workers || 4);
