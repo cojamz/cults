@@ -15,12 +15,12 @@ describe('Magenta action wording and one-stack theft', () => {
       // Nov 10: "Steal 1 resource per minion you've placed this round, this one included. +1 magenta." (any rivals: a
       // steal splits among rivals as you choose, Cory Nov 10); the same words every round
       expect(pick.verb).toBe('Steal 1 per minion you placed');
-      expect(pick.second).toBe('this round, this one too');
+      expect(pick.second).toBe('this round, this one included');
       const safe = panelText('thieves', { key: 'hideout' }, round);
       expect(safe.verb).toBe('Steal 1, then safe from steals'); // Cory, Nov 1; the protection in line 1 (line 2 dropped every round, text audit Nov 1)
       expect(safe.second).toBe('this round');
       expect(safe.note).toBeNull(); // the +1 of its color is the hover's badge, off the wheel (Cory, Nov 9)
-      expect(shortEffect('thieves', { key: 'pickpocket' }, round)).toBe('steal 1 per minion you placed this round; +1 magenta');
+      expect(shortEffect('thieves', { key: 'pickpocket' }, round)).toBe('steal 1 per minion you placed this round, this one included');
     }
     const stash = panelText('thieves', { key: 'tipoff' }, 1);
     expect(stash.main).toBe('+3 magenta'); // a plain stand-in (Cory, Nov 10 10:42pm)

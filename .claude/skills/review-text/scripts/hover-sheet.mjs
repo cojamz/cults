@@ -29,7 +29,7 @@ if (!base) {
 function save(quadrants) {
   const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];
   for (let seed = 1; seed < 80; seed++) {
-    let s = createGame({ seats, seed, quadrants });
+    let s = createGame({ seats, seed, quadrants, rules: { plus1: 'game' } });
     s.build = buildStamp();
     const rand = seededRandom(seed);
     const ready = x => x.round === round && x.pending && x.pending.player === 0 && x.pending.kind === 'place';

@@ -955,6 +955,25 @@ export function youdWords(pv, state, own = null) {
       const sure = [...mins.map(r => `+${pv.you.res[r][0]} ${r}`), pv.you.followers[0] === pv.you.followers[1] ? fl : null, pv.you.members[0] === pv.you.members[1] ? mb : null].filter(Boolean).join(', ');
       if (n > 0) return { text: `${sure ? `${sure}; ` : ''}steal up to ${n} in colors you pick`, note: null };
     }
+    // a recruit decides it (Markdown, Recruit Twice, Spree, Test Drive, Buyout, Initiation): what's sure first, then the best
+    // pick by name and price on its own line (Cory, Nov 12, action wording: "up to +4 blue, +1 white, +3 followers,
+    // Caravan (counts as 3 members), −5 resources" read as a pile of numbers)
+    if (pv.best.members > 0 && pv.best.joined && pv.best.joined.length && pv.best.joined.length <= 2 && !pv.copies && !(pv.theirAsks && pv.theirAsks.length)) {
+      let names = null;
+      try { names = pv.best.joined.map(u => cardDef(state, u).name); } catch { names = null; }
+      if (names) {
+        const low = r => Math.max(0, pv.you?.res?.[r]?.[0] || 0);
+        const paid = state.resources.reduce((t, r) => t + Math.max(0, -(pv.best.res[r] || 0)), 0);
+        const lowF = 0; // a recruit's followers are the member's worth: said whole beside its name, never split into sure and extra
+        const extras = [...state.resources.filter(r => (pv.best.res[r] || 0) > low(r)).map(r => `+${pv.best.res[r] - low(r)} ${r}`),
+          pv.best.followers > lowF ? `+${pv.best.followers - lowF} follower${pv.best.followers - lowF === 1 ? '' : 's'}` : null].filter(Boolean);
+        const sure0 = [...state.resources.filter(r => low(r) > 0).map(r => `+${low(r)} ${r}`), lowF > 0 ? `+${lowF} follower${lowF === 1 ? '' : 's'}` : null].filter(Boolean).join(', ');
+        const paidIn = state.resources.filter(r => (pv.best.res[r] || 0) < 0);
+        const price = paid <= 0 ? 'for free' : paidIn.length === 1 ? `for ${paid} ${paidIn[0]}` : `for ${paid} resources`;
+        const pick = `${names.join(' and ')} ${price}${extras.length ? ` (${extras.join(', ')})` : ''}`;
+        return { text: sure0 || null, or: pick, orWord: 'best pick:', note: null };
+      }
+    }
     // your best pick spends what the space just gave (Snap Up: +2 blue, then pay for a member): the two ends, so the
     // space's own gain is never dropped (blind tester B: Snap Up's hover left out its +2 blue)
     const spends = d => state.resources.some(r => d.res[r] < 0);
