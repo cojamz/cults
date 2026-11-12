@@ -43,10 +43,10 @@ Verdict: send
 2. Played turn: round II end, you are the only player with a white and a purple member: +2.
 3. Both sides: no card choice; rivals can recruit those colors to deny it.
 4. Who feels it: rivals, who now have a reason to recruit your rare colors.
-5. Not refused: no ledger verdict.
+5. Not refused: no ledger verdict for this shape or name.
 6. Judged: a scorer that makes rivals react; a little to read (compare every rival).
 7. Public and certain: yes, all members are face up.
-8. Color interactions: none named.
+8. Color interactions: none named; it reads member colors only.
 9. Biggest case: 2 to 3 per round end, about 6 to 9 a game against a winner's 70 to 110.
 Verdict: send
 
@@ -58,7 +58,7 @@ Verdict: send
 4. Who feels it: rivals racing for that face-up member.
 5. Not refused: no ledger verdict; free recruits are generic, not Yellow's own.
 6. Judged: Yellow's first On Use, simple, strong; theme is weak (any color's card).
-7. Public and certain: yes.
-8. Color interactions: none named.
+7. Public and certain: yes, the shop is face up.
+8. Color interactions: none named; it reads member colors only.
 9. Biggest case: 6 resources once plus a member worth 1 to 3 followers and a contest color.
 Verdict: send
