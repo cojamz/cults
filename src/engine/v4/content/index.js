@@ -59,10 +59,13 @@ export function registerQuadrant(q) {
 // MEMBER_F="id:n,id:n", bot tests only (Cory, Nov 12: "for members, increasing or decreasing follower counts is a lever"):
 // sets a member's printed followers (and so its member count) for one batch of games. Off in the game.
 const MEMBER_F = Object.fromEntries(String(globalThis.process?.env?.MEMBER_F || '').split(',').filter(Boolean).map(x => { const [k, v] = x.split(':'); return [k, Number(v)]; }));
+// MEMBER_P="id:n": adds n to a member's any-color price, bot tests only (the price lever for members worth 1)
+const MEMBER_P = Object.fromEntries(String(globalThis.process?.env?.MEMBER_P || '').split(',').filter(Boolean).map(x => { const [k, v] = x.split(':'); return [k, Number(v)]; }));
 function index(q) {
   for (const def of q.members) {
     def.id = `${q.id}.${def.key}`;
     if (MEMBER_F[def.id] > 0) { def.f = MEMBER_F[def.id]; def.n = MEMBER_F[def.id]; }
+    if (MEMBER_P[def.id]) def.w = Math.max(0, (def.w || 0) + MEMBER_P[def.id]);
     def.quadrant = q.id;
     def.copies = def.copies || 1;
     addWild(def);

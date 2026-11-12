@@ -28,6 +28,9 @@ export const VARIANTS = {
   // members that can't pay back their price (design/eval/member-payback/2026-11-12-pays-for-itself.md), lifted with
   // followers to reach it (Cory: "lift a weak card with followers before cutting its price")
   'payback': { MEMBER_F: 'silver.bookies:4,market.snob:4,red.recruiter:4,gold.seed:2,market.windowshopper:3,market.thrifthunters:3,purple.timekeepers:2' },
+  // the bot games' 4 strongest and 5 weakest members (Nov 12 8am): strongest 2 dearer or 1 follower less, weakest +2 followers
+  'strong-down': { MEMBER_P: 'trading.minimalists:2,market.lastminute:2,echo.diehards:2,thieves.secondstory:2', MEMBER_F: 'red.fosterparents:1,silver.patronsaints:1' },
+  'weak-up': { MEMBER_F: 'echo.encore:3,yellow.dutycollector:3,market.powershoppers:4,benders.extrahand:3,thieves.doubleagent:3' },
   // (tweak tests dropped: he called +2 per member costing 8 or more at 11:53pm)
 };
 const flags = Object.fromEntries(process.argv.slice(2).map(a => { const [k, ...v] = a.replace(/^--/, '').split('='); return [k, v.join('=') || true]; }));
