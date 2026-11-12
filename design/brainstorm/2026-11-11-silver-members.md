@@ -52,7 +52,7 @@ Verdict: send
 7. Public and certain: yes.
 8. Color interactions: none named.
 9. Biggest case: 3 per round end, 9 a game.
-Verdict: send
+Verdict: cut (Cory, Nov 11 7:33pm: win more, "instead we need a member that benefits the opposite strategy")
 
 ## Idea: Loan Officers
 
@@ -78,7 +78,7 @@ Verdict: send
 7. Public and certain: yes.
 8. Color interactions: none named.
 9. Biggest case: round III, Toast, Party Gifts, Largesse, Kingmakers and Debutantes all reach you: 5 gifts, 10 followers over the round, 2 per gift. Under the cap per turn.
-Verdict: send
+Verdict: cut (Cory, Nov 11 7:33pm: "I don't love that")
 
 ## Idea: Teetotalers
 
@@ -91,7 +91,7 @@ Verdict: send
 7. Public and certain: yes.
 8. Color interactions: none named.
 9. Biggest case: no followers; it turns away up to 12 silver.
-Verdict: send
+Verdict: cut (Cory, Nov 11 7:33pm: "weird and not good")
 
 ## Idea: Spendthrifts
 
