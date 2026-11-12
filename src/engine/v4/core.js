@@ -1247,8 +1247,7 @@ function endRound(state) {
   });
   // the round's scoring, kept as decided: the round-end card and the results read it back (never re-derived)
   state.contests = [...(state.contests || []), { round: state.round, prize: v, results: table }];
-  log(state, `Round ${roman(state.round)} ends. ${msg.join(' · ') || 'No one scored.'}`);
-  // why each contest went that way, on its own line after the result (Cory, Nov 12: "How did I not win most members?"
+  // why each contest went that way, on its own line just before the result (the result stays the round's last line) (Cory, Nov 12: "How did I not win most members?"
   // P2's Mannequin counted the shop's blue members): every player's count, and what a Mannequin added
   const counts = table.filter(c => c.rows && c.rows.length).map(c => {
     const extra = /\bmembers\b/i.test(c.label) && !/\b(?:of one color|cards?|blue|red|green|purple|white|silver|yellow|magenta|gold)\b/i.test(c.label)
@@ -1256,6 +1255,7 @@ function endRound(state) {
     return `${c.label}: ${c.rows.map(r => `${state.players[r.player].name} ${r.count}`).join(', ')}${extra.map(x => ` (${x.p.name}'s Mannequin counts ${x.n} blue shop member${x.n === 1 ? '' : 's'})`).join('')}`;
   });
   if (counts.length) log(state, `Round ${roman(state.round)} counts. ${counts.join(' · ')}.`);
+  log(state, `Round ${roman(state.round)} ends. ${msg.join(' · ') || 'No one scored.'}`);
   // a test's "table at scoring" stops here, before members that act on the scored contests (Sore Loser's follower steal
   // paid Fence's magenta after Most magenta was scored, and the oracle read the later pile)
   if (state.stopAtScoring) return;
