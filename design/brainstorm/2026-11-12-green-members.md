@@ -112,3 +112,18 @@ Verdict: send
 8. Color interactions: names none; reads every color's Game End.
 9. Biggest case: Big Tent with 5 colors: +10 at game end, once, against a winner's 70 to 110.
 Verdict: send
+
+## Pass 5 (Body Doubles out: "leaning too hard into the member copying"; Green lacks a Game End scorer and a card that costs a rival something)
+
+## Idea: Hecklers
+
+1. Printed text: "On Recruit: send a rival's minion on a Green space back to them." (Claude's words). Cards it touches: the most-minions-on-Green contest, Regulars "Round End: +1 follower per minion you have on Green spaces.", Crowd "+1 follower per minion on Green spaces. +3 green.".
+2. Played turn: round II, a rival leads Green 3 to 2; recruit Hecklers and send one of their minions home: 2 to 2, and the contest's 10 is shared or yours; their Regulars pays 1 less. The minion returns to them unplaced this round? No: it leaves the board, so they lose that minion's spot for the count.
+3. Both sides: you choose which rival's minion; the space it leaves is open again for anyone.
+4. Who feels it: the Green leader, a sting; the space it frees.
+5. Not refused: no ledger verdict on this shape or name.
+6. Judged: a card that costs a rival, the gap Cory asked about; cross-color (anyone racing the Green contest). On Recruit, simple.
+7. Public and certain: yes, minions are on the board.
+8. Color interactions: none named; reads Green spaces.
+9. Biggest case: round III, a contest swing of 4 to 10 followers plus 1 from Regulars, once.
+Verdict: send
