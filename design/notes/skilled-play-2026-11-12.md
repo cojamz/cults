@@ -60,3 +60,6 @@
 - "i mean not chosen together, but considered together. rather than decoupled decisions": built as opts.together (a space is rated by the best buy it leaves, played for real).
 - Results, strongest bot with the habit against today's strongest bot, same deals both seatings: contests by ease 42 games, the habit's bots had the winner in 64%, +2.3 ± 1.6 followers; together 24 games, 67%, +1.2 ± 1.0. Contest margins (21 Hard games): 81% of contests end tied or within 2; Most members 17% by 6 or more (/mnt/project-files/skill/contests-2026-11-12.md).
 - 4:00pm "yeah" to a bot with both habits (32 games, running). Then: "lets see if we can just fully bake a more robust bot based on our principles, rather than going one by one. And the robust bot will be tested against this 'two habit' bot."
+
+## 4:00pm to 4:23pm: the cloak
+- "are bots leaning towards the color of their cloak?" Measured on 240 saved Hard games (Nov 6 build): 26% of placements and 24% of members in the cloak's color, about the even 25%. "ok thats an obvious one then": added to the robust bot's list as a habit (lean toward the cloak's color, since its starting resources and card pay off there). Needs a look at what the cloak gives before choosing how strongly.
