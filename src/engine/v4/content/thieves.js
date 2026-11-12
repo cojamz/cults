@@ -602,6 +602,22 @@ const thieves = {
       const name = ctx.card(uid).def.name;
       if (ctx.steal(p, v, { uid })) ctx.log(`${p.name}'s Kidnappers: stole ${v.name}'s ${name}.`);
     },
+    // Cat Burglars' and Kidnappers' Round End, run when their owner's turn in the order comes (roundEndTurn)
+    catBurglars(ctx, owner, _, data) {
+      if (!holdsNow(owner, data)) return;
+      if (!ctx.rivals(owner).some(o => stealable(ctx, owner, o) > 0)) { ctx.log(`${owner.name}'s Cat Burglars: no rival to steal from.`); return; }
+      startSteal(ctx, owner, 'Cat Burglars', 3 + stickyMore(ctx, owner), { fromAction: false });
+    },
+    kidnapNow(ctx, owner, _, data) {
+      if (!holdsNow(owner, data)) return;
+      const list = ctx.rivals(owner).filter(o => ctx.membersOf(o).length);
+      if (!list.length) { ctx.log(`${owner.name}'s Kidnappers: no rival has a member.`); return; }
+      if (list.length === 1) { kidnapAsk(ctx, owner, list[0]); return; }
+      ctx.choose(owner, 'Kidnappers: which rival gives you one of their members?', list.map(o => ({
+        id: `player:${o.id}`, label: `${o.name} (${ctx.membersOf(o).length} member${ctx.membersOf(o).length === 1 ? '' : 's'})`, kind: 'player', value: o.id,
+        hint: Math.min(...ctx.membersOf(o).map(memberHint)),
+      })), 'thieves.kidnapRival');
+    },
     kidnapRival(ctx, p, id) { const o = ctx.player(id); if (o && o !== p && ctx.membersOf(o).length) kidnapAsk(ctx, p, o); },
     kidnapGive(ctx, giver, uid, data) {
       const owner = ctx.player(data.to);
@@ -909,10 +925,8 @@ const thieves = {
     m('secondstory', 'Cat Burglars', 3, 2, 'Round End, before scoring: steal 3 resources.', { // a round I member as Sticky Fingers was
       // BOTSEE: each round end still ahead, 3 resources taken, plus a quarter chance it swings a contest
       ...see(i => (i.rivals.some(o => Object.values(o.res).some(v => v > 0)) ? endsAhead(i).reduce((a, r) => a + 3 * resAt(r) * (1 + SEE_SPITE) + 0.25 * SEE_RING[r - 1], 0) : 0)),
-      onAllPlaced(ctx, owner) {
-        if (!ctx.rivals(owner).some(o => stealable(ctx, owner, o) > 0)) { ctx.log(`${owner.name}'s Cat Burglars: no rival to steal from.`); return; }
-        startSteal(ctx, owner, 'Cat Burglars', 3 + stickyMore(ctx, owner), { fromAction: false });
-      },
+      // queued, so each owner's Round End waits for the ones before it in turn order (Cory, Nov 4) and reads the table then
+      onAllPlaced(ctx, owner, card) { roundEndTurn(ctx, owner, card, 'thieves.catBurglars'); },
     }),
     // +2 to every steal, spaces and members, no longer double (Cory, Nov 1, 2:27pm: "Yeah, number one is fine")
     m('desperado', 'Desperado', 2, 2, 'While you have the fewest followers (ties count), your steals take 2 more resources.', { ...old2,
@@ -976,8 +990,11 @@ const thieves = {
     m('watchdog', 'Bodyguards', 5, 2, 'Whenever a rival steals from you, steal 1 back from them.', { f: 2, ...old10('watchman'), ...old10('hoardbreaker'),
       onSteal(ctx, owner, card, info) {
         if (guarding || info.victim !== owner || !info.thief || info.thief === owner || !(info.n > 0 || info.uid !== undefined)) return;
+        // one steal, one answer: a Heist's 4 follower picks and its resources share one steal id (as Fence pays once);
+        // a steal back that found nothing waits for the rest of the same steal
+        if (card.inst === info.instance) return;
         guarding = true;
-        try { autoSteal(ctx, owner, info.thief, 'Bodyguards', 1, true); } finally { guarding = false; }
+        try { if (autoSteal(ctx, owner, info.thief, 'Bodyguards', 1, true)) card.inst = info.instance; } finally { guarding = false; }
       },
       // BOTSEE: about 1 rival placement in 7 steals from you, and each gives 1 back
       ...see(i => [1, 2, 3].filter(r => r >= i.round).reduce((a, r) => a + i.rivalByRound[r] * 0.15 * resAt(r), 0)),
@@ -1085,15 +1102,8 @@ const thieves = {
     // picks which one. A gift, as Tithe Takers' is: not a steal or a swap (Bodyguards, Lie Low and Loyalists don't stop
     // it), an arrival for the owner, not their recruit.
     m('kidnappers', 'Kidnappers', 5, 2, 'Round End: a rival you choose gives you one of their members.', { f: 2, ...old10('poacher'), ...old10('poacher5'),
-      onAllPlaced(ctx, owner) {
-        const list = ctx.rivals(owner).filter(o => ctx.membersOf(o).length);
-        if (!list.length) { ctx.log(`${owner.name}'s Kidnappers: no rival has a member.`); return; }
-        if (list.length === 1) { kidnapAsk(ctx, owner, list[0]); return; }
-        ctx.choose(owner, 'Kidnappers: which rival gives you one of their members?', list.map(o => ({
-          id: `player:${o.id}`, label: `${o.name} (${ctx.membersOf(o).length} member${ctx.membersOf(o).length === 1 ? '' : 's'})`, kind: 'player', value: o.id,
-          hint: Math.min(...ctx.membersOf(o).map(memberHint)),
-        })), 'thieves.kidnapRival');
-      },
+      // queued, as Cat Burglars': in turn order, and only if the owner still holds it then (Cory, Nov 4)
+      onAllPlaced(ctx, owner, card) { roundEndTurn(ctx, owner, card, 'thieves.kidnapNow'); },
       // BOTSEE: each round end still ahead, a rival's least wanted member, about 3 followers' worth
       ...see(i => (i.rivals.some(o => o.members.length) ? endsAhead(i).length * 3 : 0)),
     }),
@@ -1200,6 +1210,13 @@ export function install() {
   return thieves;
 }
 
+/** A Round End member that asks (Cat Burglars, Kidnappers): queued behind the Round End steps before it, so it resolves
+ *  in turn order (Cory, Nov 4) and reads the table as it is then. data.uid: the card, which must still be its owner's. */
+function roundEndTurn(ctx, owner, card, handler) {
+  // held: a card used from elsewhere (an effect borrowed from the shop) has no holder to check
+  ctx.defer(owner, handler, { uid: card.uid, held: owner.members.includes(card.uid) }, { kind: 'member', pid: owner.id, uid: card.uid, def: ctx.state.cards[card.uid].def });
+}
+const holdsNow = (owner, data) => !data?.held || owner.members.includes(data.uid);
 /** Kidnappers: the rival o picks which of their members to give the owner. */
 function kidnapAsk(ctx, owner, o) {
   ctx.choose(o, `Kidnappers: give which of your members to ${owner.name}?`, ctx.membersOf(o).map(c => ({
