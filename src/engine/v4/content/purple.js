@@ -305,7 +305,7 @@ function scalpStep(ctx, p, data) {
 // Cory, Nov 9: "maybe the goes last token applies to ALL of your minions?" (test version first; live since Nov 10, the
 // Purple plan: "The token: your turns are skipped until every rival is out of minions, for all your minions"): a Purple
 // space's token holds every minion you have left, as Last Call's does; members keep their own words
-const ALL_LAST = new Set(['Last Callers', 'Sleep In', 'Hold Up', 'Right Away', 'Closing Time', 'Overtime', 'On a Roll']);
+const ALL_LAST = new Set(['Last Callers', 'Latecomers', 'Sleep In', 'Hold Up', 'Right Away', 'Closing Time', 'Overtime', 'On a Roll']);
 function toToken(ctx, p, n, why) {
   if (ALL_LAST.has(why)) n = Math.max(n, turnsLeft(ctx, p));
   if (noSkip(ctx, p)) { ctx.log(`${p.name}'s Early Birds: ${p.name}'s turns can't be skipped, so ${p.name} doesn't go last.`); return 0; }
@@ -751,8 +751,8 @@ export default {
     // comes after what the space already does: Right Away's and Crunch Time's turns come first, then the minion after
     // them waits on the token (Claude's reading, put to Cory the same turn).
     poolSpace({
-      key: 'holduplast', copyDoesIt: true, ring: 1, name: 'Hold Up', text: '+2 purple in round I, +3 in round II, +4 in round III. Whoever\u2019s turn is next skips it, even yours. Then take the Goes Last token: your next minion is placed after everyone else\u2019s.',
-      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Whoever\u2019s turn is next skips it, even yours. Then take the Goes Last token: your next minion is placed after everyone else\u2019s.' },
+      key: 'holduplast', copyDoesIt: true, ring: 1, name: 'Hold Up', text: '+2 purple in round I, +3 in round II, +4 in round III. Whoever\u2019s turn is next skips it, even yours. Then take the Goes Last token: your other minions are placed after everyone else\u2019s.',
+      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Whoever\u2019s turn is next skips it, even yours. Then take the Goes Last token: your other minions are placed after everyone else\u2019s.' },
       estimate: ctx => ctx.state.round + 2,
       resolve(ctx, p) {
         ctx.gain(p, P, ctx.state.round + 1, { fromAction: true });
@@ -775,7 +775,7 @@ export default {
     }, 'testset'),
     // test version (Cory, Nov 9: "lets try it at 2 followers"): Closing Time in Crunch Time's place
     poolSpace({
-      key: 'closinglast', copyDoesIt: true, ring: 2, name: 'Closing Time', text: '+2 purple. +2 followers per rival with no minions left. Take the Goes Last token: your next minion is placed after everyone else\u2019s.',
+      key: 'closinglast', copyDoesIt: true, ring: 2, name: 'Closing Time', text: '+2 purple. +2 followers per rival with no minions left. Take the Goes Last token: your other minions are placed after everyone else\u2019s.',
       estimate: (ctx, p) => 2 + 2 * ctx.rivals(p).filter(o => !o.left).length,
       resolve(ctx, p) {
         ctx.gain(p, P, 2, { fromAction: true });
@@ -1094,7 +1094,7 @@ export default {
       },
     })),
     // Latecomers: Bouncers' place (Cory, Nov 7: "Yes"; his ask: "a purple that gives the go last token"). Same price as Bouncers.
-    m('latecomers', 'Latecomers', 1, 2, 'On Recruit: take the Goes Last token: your next minion goes after everyone else’s.', { f: 2,
+    m('latecomers', 'Latecomers', 1, 2, 'On Recruit: take the Goes Last token: your other minions are placed after everyone else’s.', { f: 2,
       onRecruited(ctx, owner) { toToken(ctx, owner, 1, 'Latecomers'); },
     }),
     m('bouncer', 'Bouncers', 1, 2, 'On Recruit: the next two rivals’ turns are skipped.', { f: 2, ...old5, // cut Nov 7 (cull.js): Latecomers takes its place (Cory, "Yes")
