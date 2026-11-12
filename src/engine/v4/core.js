@@ -1072,10 +1072,20 @@ function runTask(state, task) {
       return;
     }
     case 'allPlaced': {
-      // after the round's last placement, before its contests: members that act then (Straggler), in turn order
-      const ctx = ctxFor(state);
-      inPhase('roundEnd', () => { for (const id of turnOrder(state)) eachMemberOf(state, state.players[id], (card, def) => { if (def.onAllPlaced) def.onAllPlaced(ctx, state.players[id], card); }, ['onAllPlaced']); });
-      if (state.loans?.length) loanDue(ctx); // Loan (REPLACE11=loan): the debts fall due
+      // after the round's last placement, before its contests: members that act then (Straggler), in turn order. Each
+      // player's step is its own task, so one player's Round End members finish, choices included, before the next
+      // player's start (Cory, Nov 4: "Round Start / Round End effects resolve in turn order."): a later player's Paupers
+      // reads its silver after an earlier player's Cat Burglars took it
+      state.queue.unshift(...turnOrder(state).map(id => ({ t: 'allPlacedOf', pid: id })), { t: 'loansDue' });
+      return;
+    }
+    case 'allPlacedOf': {
+      const ctx = ctxFor(state), o = state.players[task.pid];
+      if (o) inPhase('roundEnd', () => eachMemberOf(state, o, (card, def) => { if (def.onAllPlaced) def.onAllPlaced(ctx, o, card); }, ['onAllPlaced']));
+      return;
+    }
+    case 'loansDue': {
+      if (state.loans?.length) loanDue(ctxFor(state)); // Loan (REPLACE11=loan): the debts fall due
       return;
     }
     case 'released': {
@@ -1671,10 +1681,18 @@ function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop 
   // fromShop: a member taken from the face-up shop (Red Cloak, Cory Nov 1)
   recruited(state, p, { member: w, spent, fromShop, silverForColor, ...(fromDiscard ? { fromDiscard: true } : {}) });
   // a when-recruited effect leaves a trace like any other member hook (Seed Money, Pilgrim, Retinue…)
-  if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));
-  joinNow(state, p, w, [def]);
+  // A member's On Recruit happens once a turn for the same player: Double Agent swapped away and swapped straight back
+  // (Stunt Double copying Reprise copying Promote) looped forever (Nov 12, found by a seeded game). Claude's engine guard.
+  const firedKey = `${turnKey(state)}:${p.id}`;
+  const again = (def.onRecruited || def.now) && card.recruitFired === firedKey;
+  if (again) log(state, `${p.name}'s ${def.name} came back this turn: its On Recruit already happened.`);
+  else {
+    if (def.onRecruited || def.now) card.recruitFired = firedKey;
+    if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));
+    joinNow(state, p, w, [def]);
+  }
   // Encore (REPLACE10 bot test): used this turn, the recruited member's On Recruit happens a second time
-  if (p.encoreTurn === 'next' && (def.onRecruited || def.now)) { // Encore (Cory, Nov 4)
+  if (!again && p.encoreTurn === 'next' && (def.onRecruited || def.now)) { // Encore (Cory, Nov 4)
     delete p.encoreTurn;
     log(state, `${p.name}'s Encore: ${def.name}'s On Recruit again.`);
     if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));

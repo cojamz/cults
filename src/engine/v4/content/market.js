@@ -221,7 +221,8 @@ export function driveHook(def) {
   if (/^On Use\b/.test(t)) return def.onActivate ? 'onActivate' : null;
   if (/^On Recruit\b/.test(t)) return def.onRecruited ? 'onRecruited' : null;
   if (/^Round Start\b/.test(t)) return def.onRoundStart ? 'onRoundStart' : def.onRoundStartLate ? 'onRoundStartLate' : null;
-  if (/^Round End\b/.test(t)) return def.onRoundEnd ? 'onRoundEnd' : null;
+  // Round End members that act before scoring (Cat Burglars, Kidnappers, Paupers) run on core's onAllPlaced
+  if (/^Round End\b/.test(t)) return def.onRoundEnd ? 'onRoundEnd' : def.onAllPlaced ? 'onAllPlaced' : null;
   return null;
 }
 /** Blue's recruit ladder (Nov 10): discard pile members p can pay for at the price `how` sets. */

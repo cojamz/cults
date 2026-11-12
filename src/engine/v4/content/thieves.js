@@ -1126,6 +1126,9 @@ const thieves = {
     m('snitch', 'Snitch', 2, 1, 'Whenever a rival steals from you, they lose 1 follower.', {
       onSteal(ctx, owner, card, info) {
         if (info.victim !== owner || info.thief === owner || ctx.followers(info.thief) <= 0) return;
+        // once per steal (Cory, Oct 29: "once per steal instance"): a Heist's picks share one steal id, as Fence and Bodyguards
+        if (info.instance !== undefined && card.snitched === info.instance) return;
+        card.snitched = info.instance;
         info.thief.bonus -= 1; ctx.log(`${owner.name}'s Snitch: ${info.thief.name} loses 1 follower.`);
       },
     }),

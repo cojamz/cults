@@ -5,7 +5,7 @@
 // member costing up to 8."), played against the steal sources, the swaps, the Round End members and each other. Each
 // scene checks the outcome against the printed text. Harness: combos-green-nov12.test.js's scene/drive/go.
 import { describe, it, expect } from 'vitest';
-import { createGame, resume, followers, applyMove } from '../../../engine/v4/core.js';
+import { createGame, resume, followers, applyMove, contextFor } from '../../../engine/v4/core.js';
 import { stray } from './stray.js';
 import { defById } from '../../../engine/v4/content/index.js';
 const names = (s, i) => s.players[i].members.map(u => defById(s.cards[u].def).name);
@@ -112,6 +112,15 @@ describe('Bodyguards: "Whenever a rival steals from you, steal 1 back from them.
     expect(bonusOf(s, 1)).toBe(1);
   });
 
+  it('Heist (4 followers, then 4 resources) is one steal: the victim\'s Snitch ("they lose 1 follower") takes 1, not five', () => {
+    const { s } = go('snitch-heist', { quads: Q, round: 2, turns: [0], members: [[], ['thieves.snitch']], res: [{ red: 5 }, { gold: 6 }], prep: st => { st.players[0].bonus = 9; st.players[1].bonus = 5; } },
+      [/Heist/, /player:1/, /player:1/, /player:1/, /player:1/, /take:1:gold/, /take:1:gold/, /take:1:gold/, /take:1:gold/]);
+    expect(lines(s, /Snitch/)).toEqual(["P2's Snitch: P1 loses 1 follower."]);
+    expect(s.players[0].res.gold).toBe(4);
+    expect([bonusOf(s, 0), bonusOf(s, 1)]).toEqual([9 + 4 - 1, 1]);
+    cleanLog(s);
+  });
+
   it("3 players: a third player's Lookout answers the first steal, not the steal back", () => {
     const { s } = go('bg-lookout', { quads: Q, n: 3, round: 1, turns: [0], members: [[], ['thieves.watchdog'], ['thieves.lookout']], res: [{ red: 3 }, { gold: 3 }, {}] },
       [/Help Yourself/, /take:1:gold/]);
@@ -171,10 +180,9 @@ describe('Cat Burglars: "Round End, before scoring: steal 3 resources."', () => 
   });
 
   // Same rule, with a Round End member that reads what you hold (Paupers, "if you hold no silver, +3 followers").
-  // FAILS (core.js, not fixed): the allPlaced step runs every Round End member at once in turn order; Paupers and
-  // Cosmopolitans settle on the spot while Cat Burglars' and Kidnappers' picks wait in the queue, so P2's Paupers reads
-  // P2's silver before P1's Cat Burglars (earlier in turn order) takes it. A table would resolve P1's first.
-  it.fails("P1's Cat Burglars takes P2's only silver; P2's Paupers (later in turn order) then sees no silver: +3", () => {
+  // core's allPlaced step runs each player's Round End members as its own step, so P1's Cat Burglars picks finish before
+  // P2's Paupers reads P2's silver (was a bug: Paupers settled on the spot, ahead of the queued picks).
+  it("P1's Cat Burglars takes P2's only silver; P2's Paupers (later in turn order) then sees no silver: +3", () => {
     const { s } = go('cb-paupers', { quads: Q, round: 1, queue: END, members: [['thieves.secondstory'], ['silver.paupers']], res: [{}, { silver: 1, red: 2 }] },
       [/take:1:silver/, /take:1:red/, /take:1:red/]);
     expect(s.players[1].res.silver).toBe(0);
@@ -245,8 +253,8 @@ describe('Kidnappers: "Round End: a rival you choose gives you one of their memb
   });
 
   // Same rule with a member that counts at Round End: P2's Cosmopolitans counts after P1's Kidnappers took P2's red member.
-  // FAILS (core.js allPlaced, as Paupers above): Cosmopolitans counts 3 colors on the spot, before P2 gives the Intern.
-  it.fails("P2 gives its only red member; P2's Cosmopolitans (later in turn order) then counts 2 colors, not 3", () => {
+  // (was a bug, as Paupers above: Cosmopolitans counted 3 colors on the spot, before P2 gave the Intern)
+  it("P2 gives its only red member; P2's Cosmopolitans (later in turn order) then counts 2 colors, not 3", () => {
     const { s } = go('kid-cosmo', { quads: ['thieves', 'echo', 'red', 'yellow'], round: 1, queue: END,
       members: [['thieves.kidnappers'], ['yellow.cosmopolitans', 'red.intern', 'echo.copyist']] }, [/Intern/]);
     expect(s.log).toContain("P2's Cosmopolitans: 2 colors among their members, +2 followers.");
@@ -280,6 +288,18 @@ describe('Double Agent: "On Recruit: swap this member for a rival\'s member cost
     const { s } = go('da-rich-none', { quads: Q, turns: [0], shop: ['thieves.doubleagent'], members: [[], ['thieves.lookout']], res: [{ magenta: 14, red: 14 }], rules: { econ: 'rich' } },
       [/Stash/, /Double Agent/]);
     expect(s.log).toContain("P1's Double Agent: no rival member costing 10 or less to swap for.");
+  });
+
+  // Nov 12, a seeded game looped forever: Double Agent swapped away, then swapped straight back the same turn (Stunt Double
+  // copying Reprise copying Promote), firing its On Recruit each time. Its On Recruit happens once a turn for a player.
+  it('swapped straight back the same turn, Double Agent does not swap again', () => {
+    const { s } = go('da-back', { quads: Q, turns: [0], shop: ['thieves.doubleagent'], members: [[], ['thieves.bigscore']], res: [RICHRES, { gold: 4 }] },
+      [/Stash/, /Double Agent/, /Safecracker/]);
+    const before = s.log.length;
+    expect(contextFor(s).swapMembers(s.players[0], uidOf(s, 0, 'thieves.bigscore'), uidOf(s, 1, 'thieves.doubleagent'))).toBe(true);
+    expect(names(s, 0)).toEqual(['Double Agent']);
+    expect(s.log.slice(before)).toContain("P1's Double Agent came back this turn: its On Recruit already happened.");
+    expect(s.queue.some(t => /doubleAgent|Double Agent/i.test(JSON.stringify(t)))).toBe(false);
   });
 
   it('a used once-per-game member (Safecracker) arrives still used: no second use', () => {
@@ -323,13 +343,13 @@ describe('Double Agent: "On Recruit: swap this member for a rival\'s member cost
 // scoring), which Test Drive's driveHook (market.js) does not look for; Paupers and Cosmopolitans share the hook.
 describe('Test Drive on the Magenta Round End members', () => {
   const QB = ['thieves', 'market', 'red', 'yellow'];
-  // FAILS (market.js driveHook reads onRoundEnd only, not onAllPlaced; not fixed here): the member is discarded with no effect
-  it.fails('Test Drive on Cat Burglars in the shop: steal 3 now', () => {
+  // (was a bug: market.js driveHook read onRoundEnd only, not onAllPlaced, and the member was discarded with no effect)
+  it('Test Drive on Cat Burglars in the shop: steal 3 now', () => {
     const { s } = go('td-catburglars', { quads: QB, round: 1, turns: [0], shop: ['thieves.secondstory'], res: [{}, { red: 5 }] },
       [/Test Drive/, /Cat Burglars/, /take:1:red/, /take:1:red/, /take:1:red/]);
     expect(s.players[0].res.red).toBe(3);
   });
-  it.fails('Test Drive on Kidnappers in the shop: a rival gives you a member now', () => {
+  it('Test Drive on Kidnappers in the shop: a rival gives you a member now', () => {
     const { s } = go('td-kidnappers', { quads: QB, round: 1, turns: [0], shop: ['thieves.kidnappers'], members: [[], ['red.intern']] },
       [/Test Drive/, /Kidnappers/, /Intern/]);
     expect(names(s, 0)).toContain('Intern');
