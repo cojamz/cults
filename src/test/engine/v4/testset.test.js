@@ -32,9 +32,8 @@ describe('Test version (rules.testSet)', () => {
     for (const q of [Q, Q2]) {
       const a = Object.values(createGame({ seats, seed: 5, quadrants: q, rules: { deck: 10 } }).cards).length;
       const b = Object.values(createGame({ seats, seed: 5, quadrants: q, rules: { deck: 10, testSet: true } }).cards).length;
-      // Protesters, Gift Swappers and Purifiers join the grey members; Tribute Band leaves Green (Nov 11), and Ensemble,
-      // its stand-in, is already in a deck dealt without the cull
-      expect(b).toBe(a + 3 - (q.includes('echo') ? 1 : 0));
+      // Protesters, Gift Swappers and Purifiers join the grey members (Tribute Band is cut for good since Nov 11)
+      expect(b).toBe(a + 3);
     }
   });
 });
@@ -42,16 +41,16 @@ describe('Test version (rules.testSet)', () => {
 // Nov 11 (Cory: "maybe we'll cut tribute band ... We'll need to put in a replacement green"): bot tests swap a member
 // out and another in so the color's deck stays at 10
 describe('rules.membersOut / membersIn', () => {
-  it('swaps Tribute Band for Ensemble and keeps Green at the same count', () => {
+  it('swaps Regulars for Ensemble and keeps Green at the same count', () => {
     const rules = { deck: 10, testSet: true, cull: true, artifacts: true, roundDecks: 2 };
     const green = s => Object.values(s.cards).map(c => c.def).filter(d => d.startsWith('echo.'));
-    // since Nov 11 the game itself has Ensemble in Tribute Band's place (Cory: "cut tribute band"); the rules swap it back
+    // since Nov 11 the game has Regulars in Tribute Band's slot (Ensemble was the stand-in); the rules swap it back
     const base = createGame({ seats, seed: 3, quadrants: Q2, rules });
-    const swap = createGame({ seats, seed: 3, quadrants: Q2, rules: { ...rules, membersOut: ['echo.ensemble'], membersIn: ['echo.dejavu'] } });
+    const swap = createGame({ seats, seed: 3, quadrants: Q2, rules: { ...rules, membersOut: ['echo.regulars'], membersIn: ['echo.ensemble'] } });
     expect(green(base)).not.toContain('echo.dejavu');
-    expect(green(base)).toContain('echo.ensemble');
-    expect(green(swap)).toContain('echo.dejavu');
-    expect(green(swap)).not.toContain('echo.ensemble');
+    expect(green(base)).toContain('echo.regulars');
+    expect(green(swap)).toContain('echo.ensemble');
+    expect(green(swap)).not.toContain('echo.regulars');
     expect(green(swap).length).toBe(green(base).length);
   });
 });

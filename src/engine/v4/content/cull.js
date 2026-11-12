@@ -36,6 +36,7 @@ export const CUT = new Set([
   'silver.debtcollector', 'silver.ballroom', 'silver.highsociety', 'silver.toastmaster', 'silver.guestofhonor', 'silver.godparents',
   'yellow.jack', 'yellow.seamstress', 'yellow.dyejob',
   'echo.impersonators', // Cory, 2026-11-11 9:02pm Eastern: Mimics replaces Impersonator
+  'echo.dejavu', // Cory, 2026-11-11 9:32pm Eastern: "cut tribute band" (Regulars has its slot, 9:01pm)
 ]);
 
 // The 10-card decks (Cory, 2026-10-31: "create two versions of game, 10 card deck version and 15 card deck version";
