@@ -32,6 +32,17 @@ const words = (state, key) => {
  * and its followers first, so a long gain keeps its head when the row is narrow. Each piece drops whole when it doesn't
  * fit; a first piece that dropped whole left "P4 Melting Pot" with nothing gained (picky bot, Nov 11: P4 went 15 to 26).
  */
+/** The strip's lines as the fold counts them: one per move, the "N earlier" line apart. Your own turn's row stands under
+ *  its "Your turn" label and goes with it, so the label is no line of its own: counted as one, the fold ran one past the
+ *  moves it could drop and gave up, leaving three rival lines hidden over the top with no "N earlier" and the label cut
+ *  in half (turnstory t2, 1270x700, Nov 12). head(row) is what the row's top is measured from: the label over it, if any. */
+export function foldLines(kids) {
+  const moreEl = kids[0] && kids[0].classList.contains('since-more') ? kids[0] : null;
+  const rows = kids.filter(el => el !== moreEl && !el.classList.contains('since-own-label'));
+  const head = el => { const p = el.previousElementSibling; return p && p.classList.contains('since-own-label') ? p : el; };
+  return { moreEl, rows, head };
+}
+
 export function rowParts(short) {
   const parts = String(short || '').split(' · ').filter(Boolean);
   if (!parts.length) return parts;
@@ -206,9 +217,7 @@ export default function SinceStrip({ state, entries: rivals, own = null, me, you
         if (!list) return;
         const { sig: s0, cut: c0, len, lvl: l0 } = committed.current;
         if (l0 >= 2) return;
-        const kids = [...list.children];
-        const moreEl = kids[0] && kids[0].classList.contains('since-more') ? kids[0] : null;
-        const rows = moreEl ? kids.slice(1) : kids;
+        const { moreEl, rows, head } = foldLines([...list.children]);
         if (!rows.length) return;
         // in a ResizeObserver callback the layout is settled, so these reads are free
         // a one-line row whose gain didn't fit beside the name dropped it whole ("P4 Melting Pot" alone): that row keeps
@@ -227,11 +236,11 @@ export default function SinceStrip({ state, entries: rivals, own = null, me, you
         const gap = parseFloat(getComputedStyle(list).rowGap) || 0;
         // the "N earlier" line's height when it stands above the kept lines (its own, or a one-line guess before it exists)
         const moreH = (moreEl ? moreEl.getBoundingClientRect().height : 18) + gap;
-        const fits = k => rows[k].getBoundingClientRect().top - (c0 + k > 0 ? moreH : 0) >= top - 1;
+        const fits = k => head(rows[k]).getBoundingClientRect().top - (c0 + k > 0 ? moreH : 0) >= top - 1;
         let k = 0;
         while (k < rows.length - 1 && !fits(k)) k++;
         // the newest line fits, but not with the "earlier" line above it; or it doesn't fit even alone (a level down)
-        const alone = rows[k].getBoundingClientRect().top >= top - 1;
+        const alone = head(rows[k]).getBoundingClientRect().top >= top - 1;
         const bareNow = c0 + k > 0 && !fits(k);
         // a line shows whole or not at all, never cut mid-word (blind panel: "took your Tax…"): a newest line too tall
         // for the room first drops the space's board words in brackets (its name still opens its card), which changes
@@ -239,7 +248,7 @@ export default function SinceStrip({ state, entries: rivals, own = null, me, you
         // rival turns since yours are the strip's whole point (panel r3: the fold hid three of them): before any line
         // folds into "N earlier", every line drops its board words in brackets, and the fold is measured again
         if (l0 === 0 && k > 0 && rows.some(r => r.querySelector('.sp-words'))) {
-          for (const el of rows.slice(0, k)) { el.setAttribute('data-fold-hide', ''); el.style.visibility = 'hidden'; }
+          for (const el of new Set(rows.slice(0, k).flatMap(r => [head(r), r]))) { el.setAttribute('data-fold-hide', ''); el.style.visibility = 'hidden'; }
           asked.current = { sig: s0, n: c0, bare: false, lvl: 1 };
           setDrop(d => (d.sig === s0 && (d.lvl || 0) >= 1 ? d : { sig: s0, n: c0, bare: false, lvl: 1 }));
           return;
@@ -251,7 +260,7 @@ export default function SinceStrip({ state, entries: rivals, own = null, me, you
         const n = c0 + k;
         // hide what goes (and the "earlier" line, which moves down when React draws the fold; and the newest, when it
         // sets smaller) before this frame paints
-        for (const el of [...(moreEl ? [moreEl] : []), ...rows.slice(0, lvlNow > l0 ? k + 1 : k)]) { el.setAttribute('data-fold-hide', ''); el.style.visibility = 'hidden'; }
+        for (const el of new Set([...(moreEl ? [moreEl] : []), ...rows.slice(0, lvlNow > l0 ? k + 1 : k).flatMap(r => [head(r), r])])) { el.setAttribute('data-fold-hide', ''); el.style.visibility = 'hidden'; }
         asked.current = { sig: s0, n, bare: bareNow, lvl: lvlNow };
         setDrop(d => (d.sig === s0 && d.n >= n && (d.bare || !bareNow) && (d.lvl || 0) >= lvlNow ? d : { sig: s0, n, bare: bareNow || (d.sig === s0 && d.bare), lvl: lvlNow }));
       };

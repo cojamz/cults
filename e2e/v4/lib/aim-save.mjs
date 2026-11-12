@@ -1,11 +1,12 @@
 // A saved hot-seat game where P1 (the only person) is about to place in round III with Initiation ("Recruit a
-// member in the shop costing 11 or less.") open, and the face-up row holds exactly two members at the cap or less, the rest
+// member in the shop costing 10 or less, for free.") open, and the face-up row holds exactly two members at the cap or less, the rest
 // pricier: hovering it should light exactly those two (Cory, 2026-10-16: a space's hover lights what it acts on).
 // It replaced Open Door (cut in the round I rework, Oct 27). The expected set is read off the card defs (cost = the
 // colored part plus the any part, the +1 wild included), independent of the screen's path.
 import { createGame, applyMove, chooseBotMove, quadrant, defById } from '../../../src/engine/v4/index.js';
 import { seededRandom } from '../../../src/engine/v4/rng.js';
 import { buildStamp } from './stamp.mjs';
+import { takeCard } from './take.mjs';
 import { MORE } from '../../../src/engine/v4/content/price.js';
 
 const cost = (s, u) => { const d = defById(s.cards[u].def); return (d.s || 0) + (d.w || 0); };
@@ -25,13 +26,21 @@ export function aimSave(seed = 4) {
     const i = quadrant('red').actions.findIndex(a => a.key === 'take');
     const key = `${q}-${i}`;
     if (s.slots[key] !== undefined || !s.pending.options.some(o => o.q === q && o.i === i)) continue;
-    // exactly two face-up members at the cap or under, every other one over it (pile cards trade places)
-    const cheap = s.pile.filter(u => cost(s, u) <= CAP), dear = s.pile.filter(u => cost(s, u) > CAP);
-    const row = [...s.shop.filter(u => cost(s, u) <= CAP), ...cheap].slice(0, 2);
+    // exactly two face-up members at the cap or under, every other one over it. Since the Nov 11-12 decks almost every
+    // member costs the cap or less (a dealt game holds 0 to 3 dearer ones), so the dearer ones come from the game's own
+    // colors' member lists (takeCard: out of the pile or a waiting deck, or minted the way createGame deals)
+    const row = [...s.shop, ...s.pile].filter(u => cost(s, u) <= CAP).slice(0, 2);
     if (row.length < 2) continue;
-    const over = [...s.shop.filter(u => cost(s, u) > CAP), ...dear].slice(0, s.shop.length - 2);
-    if (over.length < s.shop.length - 2) continue;
-    const shop = [...over.slice(0, 1), ...row, ...over.slice(1)];
+    const want = s.shop.length - 2;
+    const dearDefs = s.quadrants.flatMap(c => quadrant(c).members || []).filter(m => (m.s || 0) + (m.w || 0) > CAP).map(m => m.id);
+    const over = [...s.shop, ...s.pile].filter(u => cost(s, u) > CAP);
+    for (const d of dearDefs) {
+      if (over.length >= want) break;
+      if (over.some(u => s.cards[u].def === d)) continue;
+      over.push(takeCard(s, d));
+    }
+    if (!over.length) continue;
+    const shop = [...over.slice(0, 1), ...row, ...over.slice(1, want)];
     s.pile = s.pile.filter(u => !shop.includes(u)).concat(s.shop.filter(u => !shop.includes(u)));
     s.shop = shop;
     return { save: { config: { seats: seats.map(x => ({ kind: x.kind, name: x.name })), speed: 'normal' }, state: s, undo: null, savedAt: Date.now() }, key, lit: row };

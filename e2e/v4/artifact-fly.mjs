@@ -10,8 +10,11 @@ const base = process.env.V4_URL || 'http://localhost:5335', out = process.env.V4
 const speed = process.env.SPEED || 'steady';
 mkdirSync(out, { recursive: true });
 const seats = [{ name: 'P1', kind: 'human' }, { name: 'P2', kind: 'bot' }, { name: 'P3', kind: 'bot' }, { name: 'P4', kind: 'bot' }];
-// seed 1: P3 and P4 pick before you and P2 after (the last picker is handed the one cloak left, so you must not be last)
-const s = createGame({ seats, quadrants: ['red', 'purple', 'echo', 'market'], seed: 1 });
+// seed 4: P4 picks before you, P2 and P3 after (the last picker is handed the one cloak left, so you must not be last).
+// Seed 1 made you last once the Nov 11-12 decks changed what the deal draws before the random first order.
+const s = createGame({ seats, quadrants: ['red', 'purple', 'echo', 'market'], seed: 4 });
+const picks = [s.pending.player, ...s.queue.filter(t => t.t === 'setupPick').map(t => t.p)];
+if (picks[0] === 0 || picks[picks.length - 1] === 0) throw new Error(`artifact-fly: the seed's cloak picks go ${picks.map(i => `P${i + 1}`)}; you need a rival before you and one after`);
 s.build = buildStamp();
 const browser = await launchBrowser({ executablePath: browserPath });
 let fail = 0;

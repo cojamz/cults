@@ -1,5 +1,6 @@
-// Night Traders' swaps (Cory, Nov 5: the swapping "is also clunky"): the swap card sets the colors with − and +, up to 3
-// swaps, and one press of Swap sends them all. Round II's end, before contests: You hold 7 blue and 2 purple.
+// Night Traders' swaps (Cory, Nov 5: the swapping "is also clunky"): the swap card sets the colors with − and +, and one
+// press of Swap sends them all. The card is Early Traders now (Cory, Nov 11: "Round Start: swap up to 4 of your
+// resources"), so the card opens at round III's start: You hold 7 blue and 2 purple, and set 3 of the 4 swaps.
 import { mkdirSync } from 'node:fs';
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 import { buildStamp } from './lib/stamp.mjs';
@@ -11,7 +12,7 @@ const base = (process.env.V4_URL || 'http://localhost:5325').replace(/\/$/, '');
 const out = `${process.env.V4_SHOTS || '/tmp/cults-night-traders'}/night-traders`; mkdirSync(out, { recursive: true });
 const seats = [{ name: 'You', kind: 'human' }, ...['Bo', 'Cy', 'Di'].map(name => ({ name, kind: 'bot' }))];
 let s = createGame({ seats, seed: 61, quadrants: ['red', 'market', 'purple', 'yellow'] });
-Object.assign(s, { round: 2, queue: [{ t: 'allPlaced' }, { t: 'endRound' }], pending: null, slots: {}, squats: {}, order: [], log: [] }); delete s.echo;
+Object.assign(s, { round: 2, queue: [{ t: 'round', r: 3 }], pending: null, slots: {}, squats: {}, order: [], log: [] }); delete s.echo;
 s.players.forEach((p, i) => { p.res = Object.fromEntries(s.resources.map(r => [r, 0])); p.left = 0; if (i === 1) p.res.blue = 4; });
 Object.assign(s.players[0].res, { blue: 7, purple: 2 });
 s.players[0].members.push(takeCard(s, 'yellow.nightmarket'));
@@ -40,6 +41,6 @@ try {
   await page.screenshot({ path: `${out}/after.png` });
   const log = await page.evaluate(() => document.body.innerText);
   if (!fail && errors.length) fail = `page errors: ${errors.join('; ')}`;
-  console.log(fail ? `FAIL night-traders: ${fail}` : `ok night-traders: three swaps in one press (${out})`, log.includes('Night Traders') ? '' : '');
+  console.log(fail ? `FAIL night-traders: ${fail}` : `ok night-traders: three swaps in one press (${out})`, log.includes('Early Traders') ? '' : '');
 } finally { await browser.close(); }
 if (fail) process.exit(1);
