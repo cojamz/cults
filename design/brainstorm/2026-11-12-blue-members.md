@@ -54,3 +54,45 @@ Verdict: send
 8. Color interactions: none named; any pile recruit counts.
 9. Biggest case: round III, 3 pile recruits by rivals: 6 followers over the round, 2 per recruit.
 Verdict: cut (Gold Diggers' shape, refused tonight)
+
+## Pass 2 (Cory 8:34pm: Swap Shoppers in; "give me more ideas… look at what type of cards we're missing")
+Blue's 8: On Use: Repossessors, Swap Shoppers. Triggered scorers: Patroness, Power Shoppers. Game End: Snobs. Round End: Last-Minute Shopper. On Recruit (plus Round Start): Window Shopper. Rule: Mannequin. Missing: a plain On Recruit, a scorer you control that pays for using the pile.
+
+## Idea: Thrift Hunters
+
+1. Printed text: "Whenever you recruit from the discard pile, +2 followers." (Claude's numbers). Cards it touches: Markdown "Recruit a member from the discard pile now, paying 2 less. +3 blue.", Recruit Twice "Recruit a member from the discard pile now. +5 blue.", Spree "Recruit two members from the discard pile now. +7 blue.", Swap Shoppers (above).
+2. Played turn: round II, Recruit Twice: a pile member plus +2 followers; the other plan, a shop recruit, gives the member alone.
+3. Both sides: you choose pile or shop each recruit; rivals racing you for pile members take them first.
+4. Who feels it: rivals who want the same pile member (Markdown users), and anyone discarding a member you can now take with a bonus.
+5. Not refused: Dumpster Divers ("random points") paid for the pile's size, out of your control; this pays only for your own recruits.
+6. Judged: complementary (pays Blue's verb), cross-color (any player recruiting from the pile). Scorer you control.
+7. Public and certain: yes, the pile and recruits are face up.
+8. Color interactions: none named; any pile recruit counts.
+9. Biggest case: round III, Spree (2) plus Recruit Twice (1): 3 pile recruits, +6 followers over the round, 4 in one turn.
+Verdict: send
+
+## Idea: Rummagers
+
+1. Printed text: "You may recruit from the discard pile as if it were the shop." (Claude's words).
+2. Played turn: round II, the 5-cost red member you need was discarded by Out of Style; recruit it on any turn after placing, without a Blue space.
+3. Both sides: you choose shop or pile each recruit; no rival choice.
+4. Who feels it: rivals who discarded a member to keep it from you; Blue players racing you for the pile.
+5. Not refused: no ledger verdict.
+6. Judged: cross-color (anyone wants a bigger shop), memorable rule card; strong at a Blue table.
+7. Public and certain: yes, the pile is face up.
+8. Color interactions: none named.
+9. Biggest case: round III, 7 shop members plus a pile of 10 to 15 to choose from on every recruit; no followers of its own.
+Verdict: send
+
+## Idea: Scroungers
+
+1. Printed text: "On Recruit: take the cheapest member in the discard pile." (Claude's words).
+2. Played turn: round II, the pile's cheapest is a 2-cost member: you get two members for one buy (+1 for the most-members contest).
+3. Both sides: no card choice; rivals can empty the cheap end of the pile first.
+4. Who feels it: rivals chasing the most-members contest (4/6/10).
+5. Not refused: no ledger verdict; Plus-Ones "On Recruit: recruit again this turn." is the pay-for version.
+6. Judged: On Recruit, simple, complementary (members for the contest).
+7. Public and certain: yes, the pile is face up and costs are printed.
+8. Color interactions: none named.
+9. Biggest case: a free member of about 2 to 4 cost once, plus a contest place worth up to 10.
+Verdict: send

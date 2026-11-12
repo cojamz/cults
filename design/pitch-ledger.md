@@ -519,3 +519,4 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - 2026-11-11 8:25pm Eastern · Yellow members, 3 open slots: Exchange Students, Nomads, Pioneers, Headhunters [1, 2, 4]. design/brainstorm/2026-11-12-yellow-members.md · … awaiting · tags: yellow, members
 - 2026-11-11 8:21pm Eastern · Yellow members · ✅ Exchange Students, ✅ Headhunters, ❌ Pioneers ("so weak"), Nomads maybe (per-color version floated) · tags: yellow, members
 - 2026-11-11 8:38pm Eastern · Blue members, 3 open slots: Swap Shoppers (his idea), Dumpster Divers, Hagglers [all three]; cut Curators (Gold Diggers' shape). design/brainstorm/2026-11-12-blue-members.md · … awaiting · tags: blue, members
+- 2026-11-11 8:34pm Eastern · Blue · ✅ Swap Shoppers, ❌ Dumpster Divers ("random points"), ❌ Hagglers · tags: blue, members
