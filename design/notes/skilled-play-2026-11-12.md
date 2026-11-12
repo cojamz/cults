@@ -37,3 +37,7 @@
 - 13: "What?" (not understood; explained 11:43am: a red member costs mostly red, so gather red the round before).
 - 14: "Yeah, I think that's a pretty good" (cut off).
 - Claude's read: skill is weighing these against each other in the situation; a later test should compare a bot that weighs each one, not one that always does it.
+
+## Cory, 11:41am (second message): the space and the buy are one decision
+- "There's also some basics like with Blue, like you have to be aware of what's in the discard pile and like you need to be thinking about the choices before you take the turn. Because otherwise, like you'll decouple those things and then they won't be aligned. Like if you're min-maxing your turn and then min-maxing what you buy ... you're not gonna win that way."
+- Added to the short list as 7: picks the space and the buy together, having looked at the shop and the discard pile first. To check later (no testing yet): how far the bots pick the space first and the buy second.
