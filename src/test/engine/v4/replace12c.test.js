@@ -44,19 +44,19 @@ describe('Deprogrammers, reworded: "Whenever a member joins your cult from a riv
     expect(defById('red.movementpenalty').text).toBe('Whenever a member joins your cult from a rival’s, steal 1 follower from that rival.');
   });
   it('your Promote takes a rival member: 1 follower moves from them to you', () => {
-    let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.movementpenalty', 'red.panel'], ['red.mentor']],
+    let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.movementpenalty', 'red.seatfiller'], ['red.mentor']],
       bonus: [0, 3], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
     s = take(s, 'red.hireup');
-    s = answer(s, `trade:${uidIn(s, 'red.panel', 0)}:${uidIn(s, 'red.mentor', 1)}`);
+    s = answer(s, `trade:${uidIn(s, 'red.seatfiller', 0)}:${uidIn(s, 'red.mentor', 1)}`);
     expect(s.players[0].bonus).toBe(1);
     expect(s.players[1].bonus).toBe(2);
     expect(named(s, 'Deprogrammers').join(' ')).toContain('Mentor joins from P2\'s cult, so P1 steals 1 follower from P2.');
   });
   it("a rival's Demote hands you their member: it joins from their cult, so you steal 1 too", () => {
-    let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.mentor'], ['red.movementpenalty', 'red.panel']],
+    let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.mentor'], ['red.movementpenalty', 'red.seatfiller']],
       bonus: [3, 0], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
-    s = take(s, 'red.trade'); // P1 demotes: Mentor to P2, Panel to P1
-    s = answer(s, `trade:${uidIn(s, 'red.mentor', 0)}:${uidIn(s, 'red.panel', 1)}`);
+    s = take(s, 'red.trade'); // P1 demotes: Mentor to P2, Seat Filler to P1
+    s = answer(s, `trade:${uidIn(s, 'red.mentor', 0)}:${uidIn(s, 'red.seatfiller', 1)}`);
     expect(s.players[1].bonus).toBe(1);
     expect(s.players[0].bonus).toBe(2);
   });

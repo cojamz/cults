@@ -264,14 +264,14 @@ describe('Kidnappers: "Round End: a rival you choose gives you one of their memb
 describe('Double Agent: "On Recruit: swap this member for a rival\'s member costing up to 8."', () => {
   const RICHRES = { magenta: 12, red: 12 };
   it('4 players: members costing exactly 8 are offered, 9 are not, from every rival', () => {
-    const { s } = go('da-cap-4p', { quads: Q, n: 4, turns: [0], shop: ['thieves.doubleagent'], members: [[], ['red.bigfamily', 'thieves.lookout'], ['silver.bookies'], ['thieves.extortionist']], res: [RICHRES] },
+    const { s } = go('da-cap-4p', { quads: Q, n: 4, turns: [0], shop: ['thieves.doubleagent'], members: [[], ['red.bigfamily', 'thieves.lookout'], ['silver.bookies'], ['thieves.shoplifter']], res: [RICHRES] },
       [/Stash/, /Double Agent/]);
     expect(s.pending.prompt).toBe('Double Agent: swap for which member?');
     expect(s.pending.options.map(o => o.label).sort()).toEqual(["P2's Big Family (8)", "P3's Bookies (8)"]);
   });
 
   it('no rival member costing 8 or less: one plain line, and the Double Agent stays', () => {
-    const { s } = go('da-none', { quads: Q, n: 3, turns: [0], shop: ['thieves.doubleagent'], members: [[], ['thieves.lookout'], ['gold.banker']], res: [RICHRES] },
+    const { s } = go('da-none', { quads: Q, n: 3, turns: [0], shop: ['thieves.doubleagent'], members: [[], ['thieves.lookout'], ['gold.tycoon']], res: [RICHRES] },
       [/Stash/, /Double Agent/]);
     expect(s.log).toContain("P1's Double Agent: no rival member costing 8 or less to swap for.");
     expect(names(s, 0)).toEqual(['Double Agent']);

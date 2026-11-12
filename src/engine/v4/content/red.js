@@ -673,7 +673,7 @@ export default {
       },
     })),
     m('intern', 'Intern', 1, 0, 'Worth 1 follower.'),
-    m('mentor', 'Mentor', 5, 3, 'On Recruit: recruit the cheapest member in the shop.', { f: 1, n: 1, // Mentor, counts as 1 member (Cory, Nov 5 backlog yes)
+    m('mentor', 'Mentor', 4, 1, 'On Recruit: recruit the cheapest member in the shop.', { f: 1, n: 1, // Mentor, counts as 1 member (Cory, Nov 5 backlog yes)
       // 3 members (Cory, Oct 30: +1 follower, "change the names accordingly")
       // +1 follower (Cory, 2026-10-25)
       // card: this Mentor, or a Doppelganger copying it (its free pick says so)
@@ -706,7 +706,7 @@ export default {
     // Cory, 2026-11-11 9:14pm Eastern: Brethren replaces Proselytizers ("Let's try +1 for now"; test +2). "A color you
     // already have" reads as Gather does: one of your other members is that color (grey counts, as for Gather). Not its
     // own arrival (as Proselytizers). Proselytizers' price (Claude, under Cory's go-with-your-gut).
-    m('brethren', 'Brethren', 3, 4, 'Whenever you recruit a member of a color you already have, +1 follower.', { f: 2,
+    m('brethren', 'Brethren', 3, 1, 'Whenever you recruit a member of a color you already have, +1 follower.', { f: 2,
       onRecruit(ctx, owner, card, by, what) {
         const member = what?.member;
         if (by !== owner || !member || member.uid === card.uid || isNewColor(ctx, owner, member)) return;
@@ -852,7 +852,7 @@ export default {
     // Cory, 2026-11-11 12:13am Eastern: "Yeah Clan is good. Round End might be a bit too strong but lets try it." Pays
     // Red's contest count (biggest group of one color, grey counts, each card 1), the same count the contest uses.
     // Price is Claude's fill-in (Patriarch's); Patriarch leaves the deck for it (cull.js; Claude's pick pending Cory).
-    m('clan', 'Clan', 5, 2, 'Round End: +1 follower per member in your biggest group of one color (grey counts).', {
+    m('clan', 'Clan', 4, 1, 'Round End: +1 follower per member in your biggest group of one color (grey counts).', {
       onRoundEnd(ctx, owner) {
         const n = Math.max(0, ...[...ctx.state.quadrants, 'guest'].map(q => ctx.countMembersOfColor(owner, q, { cards: true })));
         if (!n) return;

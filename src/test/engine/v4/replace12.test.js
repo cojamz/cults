@@ -29,21 +29,21 @@ describe('REPLACE12: the switch', () => {
 
 describe('Exit Counselor: "Whenever you give one of your members away, use its On Recruit."', () => {
   it("the pitched turn: Demote gives Mentor to a rival, and its On Recruit (the cheapest shop member, free) is yours", () => {
-    let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.exitcounselor', 'red.mentor'], ['red.panel']],
+    let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.exitcounselor', 'red.mentor'], ['red.fosterparents']],
       shop: ['red.volunteer', 'red.loyalists'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
     s = take(s, 'red.trade'); // Demote
-    s = answer(s, `trade:${uidIn(s, 'red.mentor', 0)}:${uidIn(s, 'red.panel', 1)}`);
+    s = answer(s, `trade:${uidIn(s, 'red.mentor', 0)}:${uidIn(s, 'red.fosterparents', 1)}`);
     expect(owns(s, 1, 'red.mentor')).toBe(true);
-    expect(owns(s, 0, 'red.panel')).toBe(true);
+    expect(owns(s, 0, 'red.fosterparents')).toBe(true);
     expect(owns(s, 0, 'red.volunteer')).toBe(true); // Mentor's cheapest shop member, for P1
     expect(named(s, 'Exit Counselor').join(' ')).toContain('Mentor leaves, and P1 uses its On Recruit.');
   });
 
   it("a member a rival takes from you doesn't count (you didn't give it)", () => {
-    let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.panel'], ['red.exitcounselor', 'red.mentor']],
+    let s = table(['red', 'market', 'trading', 'yellow'], { round: 2, members: [['red.fosterparents'], ['red.exitcounselor', 'red.mentor']],
       shop: ['red.volunteer'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }] });
     s = take(s, 'red.hireup'); // P1 promotes: gives Panel (7), takes P2's Mentor (9)
-    s = answer(s, `trade:${uidIn(s, 'red.panel', 0)}:${uidIn(s, 'red.mentor', 1)}`);
+    s = answer(s, `trade:${uidIn(s, 'red.fosterparents', 0)}:${uidIn(s, 'red.mentor', 1)}`);
     expect(owns(s, 0, 'red.mentor')).toBe(true);
     expect(named(s, 'Exit Counselor')).toEqual([]);
     expect(owns(s, 1, 'red.volunteer')).toBe(false);

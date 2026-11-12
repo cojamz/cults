@@ -84,7 +84,7 @@ export default {
       },
     }),
     // balance pass 1 (bench, both bots agree; design/eval/balance-pass-1.md): 4 → 8
-    m('banker', 'Banker', 4, 4, 'On Recruit: +3 gold. Round Start: +3 gold.', { now: true,
+    m('banker', 'Banker', 3, 1, 'On Recruit: +3 gold. Round Start: +3 gold.', { now: true,
       onRoundStart(ctx, owner) { ctx.gain(owner, 'gold', 3); },
     }),
     m('prospector', 'Prospector', 2, 2, 'When an action gains you gold, +1 gold.', {
@@ -96,7 +96,7 @@ export default {
     m('taxman', 'Tax Collector', 4, 4, 'Whenever a rival buys followers, +1 gold.', {
       onBuyFollowers(ctx, owner, card, buyer) { if (buyer !== owner) ctx.gain(owner, 'gold', 1); },
     }),
-    m('merchant', 'Merchant', 4, 2, 'Whenever anyone recruits a gold member, +1 gold.', {
+    m('merchant', 'Merchant', 3, 1, 'Whenever anyone recruits a gold member, +1 gold.', {
       onAnyRecruit(ctx, owner, card, by, recruited) {
         if (recruited.uid !== card.uid && ctx.defOf(recruited).quadrant === 'gold') ctx.gain(owner, 'gold', 1);
       },

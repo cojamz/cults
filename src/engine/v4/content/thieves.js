@@ -961,7 +961,7 @@ const thieves = {
       },
     }),
     // Cory, 2026-10-28: "lets just make it a bigger cutpurse for now" (was: a steal when a rival buys 5+ followers)
-    m('extortionist', 'Extortionist', 4, 2, /* Cory, Nov 5 backlog price yes */ 'On Recruit and at Round Start: steal 2 resources.' /* Cory, Nov 5: fine print cut, "at Round Start" */, { now: true,
+    m('extortionist', 'Extortionist', 3, 1, /* Cory, Nov 5 backlog price yes */ 'On Recruit and at Round Start: steal 2 resources.' /* Cory, Nov 5: fine print cut, "at Round Start" */, { now: true,
       ...old14('boss'), ...old14('mobboss'),
       onRoundStart(ctx, owner) { startSteal(ctx, owner, 'Extortionist', 2 + stickyMore(ctx, owner), { fromAction: false }); },
     }),

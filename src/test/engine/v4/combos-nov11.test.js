@@ -165,7 +165,7 @@ describe('combo tester, copies and member movement (Nov 11)', () => {
   it('Write-Off to a rival, then that rival writes it back off: white each way', () => {
     const { s } = go('writeoff-pingpong', { quads: Q, turns: [0, 1, 0, 1], members: [['red.clan'], []] },
       [/Write-Off/, /Clan/, /P2/, /^pass$/, /Farewell/, /Clan/]);
-    expect(s.players[0].res.white).toBe(11);
-    expect(followers(s, s.players[1])).toBe(11);
+    expect(s.players[0].res.white).toBe(9);
+    expect(followers(s, s.players[1])).toBe(9);
   });
 });
