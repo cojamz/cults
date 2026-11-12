@@ -45,7 +45,7 @@ Verdict: cut (Cory, 7:41pm: "That's too good, but it's interesting")
 4. Who feels it: nobody; income.
 5. Not refused: Allowance Kids' shape (cut today, nobody feels it).
 6. Judged: helps holding, but nobody at the table feels it.
-7. Public and certain: yes.
+7. Public and certain: yes, all silver and followers move in the open.
 8. Color interactions: none.
 9. Biggest case: hold 12, +4.
 Verdict: cut (nobody feels it)
@@ -58,7 +58,7 @@ Verdict: cut (nobody feels it)
 4. Who feels it: the rival, both ways.
 5. Not refused: copying a member is Green's (Doppelganger); Cory, Nov 11: "careful about like adding chains of copies".
 6. Judged: Green's verb in Silver; a copy chain.
-7. Public and certain: yes.
+7. Public and certain: yes, all silver and followers move in the open.
 8. Color interactions: Green's copying.
 9. Biggest case: copies the biggest On Use on the table.
 Verdict: cut (Green's verb, a copy chain)
@@ -71,7 +71,7 @@ Verdict: cut (Green's verb, a copy chain)
 4. Who feels it: nobody.
 5. Not refused: repeats Flaunt and Polish ("Members shouldn't just repeat the color's actions").
 6. Judged: an action on a card.
-7. Public and certain: yes.
+7. Public and certain: yes, all silver and followers move in the open.
 8. Color interactions: none.
 9. Biggest case: 3 resources a round.
 Verdict: cut (repeats Flaunt)
@@ -140,8 +140,8 @@ Source: Cory, 2026-11-11 7:42pm: "Maybe something that's just like, when you buy
 4. Who feels it: rivals racing you for face-up members (your later buys stay free for members).
 5. Not refused: Cory's own idea.
 6. Judged: rewards holding silver to spend it (his opposite strategy); helps any player who recruits silver members.
-7. Public and certain: yes.
-8. Color interactions: none named.
+7. Public and certain: yes, all silver and followers move in the open.
+8. Color interactions: none named; any player can hold silver.
 9. Biggest case: round III, 3 silver members recruited, 3 extra follower buys of up to 10 each, paid with your own resources.
 Verdict: send
 
@@ -174,8 +174,8 @@ Verdict: send
 4. Who feels it: every player holding silver, a sting to all; strongest against the Flaunt holder.
 5. Not refused: no ledger verdict; flag: a wide sting ("direct harm stays rare and small").
 6. Judged: cross-color (a 0-silver player hits everyone); jams the holding plan. On Recruit, memorable.
-7. Public and certain: yes.
-8. Color interactions: none named.
+7. Public and certain: yes, all silver and followers move in the open.
+8. Color interactions: none named; any player can hold silver.
 9. Biggest case: round III, 16 silver removed, 16 resources off the table; 0 followers to you.
 Verdict: send
 
@@ -187,7 +187,7 @@ Verdict: send
 4. Who feels it: each loaded rival loses 1 follower.
 5. Not refused: Wallflowers at the Ball (round end, same count) cut today as the contest's copy; this is once, takes from rivals. Close shape, flagged.
 6. Judged: complementary (pays Silver's gifts once), weak cross-color. On Recruit.
-7. Public and certain: yes.
-8. Color interactions: none named.
+7. Public and certain: yes, all silver and followers move in the open.
+8. Color interactions: none named; any player can hold silver.
 9. Biggest case: 3 followers once, a 6-follower swing against 3 rivals.
 Verdict: send
