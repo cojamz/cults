@@ -75,3 +75,15 @@ table, played both ways (80 games, Borrow fix on for both; bans/ has the games):
 
 None helps: the bots don't overrate these. "Takers do worse than players as wide" comes from who takes them, not from the
 space. Use these duels (scripts/v4-bot-duel.mjs ban/force/hoard options) before calling a space a bot misread.
+
+## The +1 once a game (Nov 12; Cory: "it impacts what you do in the game")
+Bots read each space by running its text on a copy of the game, where the printed "+1 <color>." always paid, so a
+space already claimed read 1 resource too high. With the fix (BOTPLUS1=1) a claimed space reads without it.
+50 tables of random colors played both ways (99 games, today's rules):
+
+| Setting | Followers per seat, paired by deal | Seats won (of 396) |
+|---|---|---|
+| +1 read right vs today's bots | -1.2 ± 1.1 | 48 vs 56 |
+
+No measurable change: 1 resource rarely moves a bot's pick. Left off. The AI players' view now marks each space whose
++1 is still there (a table shows a dot), and their notes say so.
