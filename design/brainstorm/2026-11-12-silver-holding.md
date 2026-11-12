@@ -22,7 +22,7 @@ Skill read: bash .claude/hooks/brainstorm-read.sh at 7:38pm Eastern.
 7. Public and certain: yes, the silver sits on the card.
 8. Color interactions: none named; silver is a resource every player can hold.
 9. Biggest case: 5 silver out of the count per round, a contest swing of up to 5; no followers on its own. Contest pays 4/6/10.
-Verdict: send
+Verdict: cut (Cory, 7:38pm: "so fucking complicated. Never say anything like that again.")
 
 ## Idea: Valued Clients
 
