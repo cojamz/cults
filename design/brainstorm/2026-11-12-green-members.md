@@ -84,3 +84,31 @@ Verdict: cut (Cory 9:06pm: "such a fundamental misunderstanding of the game" (a 
 8. Color interactions: none named; any player can hold it.
 9. Biggest case: blocks one Mimics copy, worth 3 to 6 resources and a recruit; 0 followers of its own.
 Verdict: cut (Cory 9:06pm: "dumb and bad")
+
+## Pass 4: Mimics' shape on other timings (Cory liked Mimics "On Recruit: use the On Recruit of any member in play.")
+
+## Idea: Body Doubles
+
+1. Printed text: "On Use, once per game: use the On Use of any member in play." (Claude's words). Cards it touches: Repossessors "On Use, once per game: discard a rival's member costing up to 8.", Debutantes "On Use, once per game: double your silver. Each rival +2 silver.", Headhunters "On Use, once per game: recruit a member costing up to 6 for free.", Swap Shoppers (above).
+2. Played turn: round III, a rival holds Headhunters: use it, recruit a 6-cost member for free; a plain buy pays 6.
+3. Both sides: you pick whose On Use; several live picks at any table, no dominated one.
+4. Who feels it: rivals whose best On Use you borrow; a rival hit by a borrowed Repossessors.
+5. Not refused: Mimics' shape, which Cory chose tonight; once per game, so no chain.
+6. Judged: Green's member copying (his "Copies a member"), cross-color through the table's On Uses. Simple.
+7. Public and certain: yes, all members are face up.
+8. Color interactions: names none; reads every color's On Use.
+9. Biggest case: round III, a borrowed Headhunters or Repossessors: 6 to 8 resources' worth once, against a winner's 70 to 110.
+Verdict: send
+
+## Idea: Lookalikes
+
+1. Printed text: "Game End: use the Game End of any member in play." (Claude's words). Cards it touches: Patron Saints "Game End: +1 follower per silver member, anyone's.", Snobs "Game End: +1 follower per blue member you have.", Big Tent "Game End: +2 followers per color you have 1 to 3 members of.".
+2. Played turn: game end, a rival holds Big Tent and you have members of 4 colors: +8. A plain buy of 8 followers costs 8 resources.
+3. Both sides: you pick whose Game End scores best for you.
+4. Who feels it: the holder of a strong Game End, now shared; buyers deciding whether a Game End card is worth it.
+5. Not refused: Mimics' shape, chosen tonight.
+6. Judged: a Game End scorer, cross-color. Simple.
+7. Public and certain: yes, all members are face up.
+8. Color interactions: names none; reads every color's Game End.
+9. Biggest case: Big Tent with 5 colors: +10 at game end, once, against a winner's 70 to 110.
+Verdict: send
