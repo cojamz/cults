@@ -31,7 +31,8 @@ describe('Part Exchange (Red, round III)', () => {
     const mine = ['market.stylist', 'market.onlooker', 'red.intern'].map(id => uidOf(s, id, 0));
     // shop members each a little dearer than one of P1's
     for (const a of mine) {
-      const u = s.pile.find(x => price(s, x) > price(s, a) && price(s, x) <= price(s, a) + 2);
+      // not Loyalists: swapped in, it stops P1's other members being swapped (the Nov 11 Red deck dealt it here)
+      const u = s.pile.find(x => s.cards[x].def !== 'red.loyalists' && price(s, x) > price(s, a) && price(s, x) <= price(s, a) + 2);
       if (u !== undefined) { s.pile.splice(s.pile.indexOf(u), 1); s.shop.unshift(u); }
     }
     s = go(s, [{ t: 'turn', p: 0 }]);

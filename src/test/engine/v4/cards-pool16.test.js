@@ -23,11 +23,14 @@ describe('Witching Hour (Purple, round III)', () => {
 
 describe('Stragglers (Purple)', () => {
   it("Your last minion each round is placed after everyone else's.", () => {
-    let s = still({ quadrants: ['purple', 'gold', 'red', 'market'], n: 3, members: [['purple.stragglers']] });
+    // a seat that isn't already last on this deal (the order moves with the deck), as Tag Team's test finds its seat
+    const plain = go(still({ quadrants: ['purple', 'gold', 'red', 'market'], n: 3 }), [{ t: 'round', r: 1 }]);
+    const seat = [0, 1, 2].find(p => order(plain).at(-1) !== p);
+    let s = still({ quadrants: ['purple', 'gold', 'red', 'market'], n: 3, members: [0, 1, 2].map(p => (p === seat ? ['purple.stragglers'] : [])) });
     s = go(s, [{ t: 'round', r: 1 }]);
     const o = order(s);
-    expect(o.at(-1)).toBe(0);
-    expect(o.filter(p => p === 0)).toHaveLength(3);
+    expect(o.at(-1)).toBe(seat);
+    expect(o.filter(p => p === seat)).toHaveLength(3);
     expect(named(s, 'Stragglers')).toHaveLength(1);
   });
   it('A Goes Last minion still goes after it.', () => {
