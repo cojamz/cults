@@ -22,7 +22,8 @@ export const TEST_SPACES = {
  *  Nov 8: "Are we keeping the member decks consistent?"); Protesters, Gift Swappers and Purifiers (Nov 9) join the grey members with nothing out. */
 // Ensemble in Tribute Band's place (Cory, Nov 11 9:32pm Eastern: "cut tribute band"; Ensemble, "Whenever you copy your
 // own action, +1 follower.", is the stand-in from the action test until the members work names Green's replacement)
-export const TEST_MEMBERS = new Set(['echo.ensemble', 'trading.anchorites', 'market.repossessors', 'trading.oldguard', 'benders.protesters', 'benders.giftswappers', 'benders.purifiers']);
+// Nov 11 9:01pm: Regulars takes the slot for good, so Ensemble leaves (back to CUT10).
+export const TEST_MEMBERS = new Set(['trading.anchorites', 'market.repossessors', 'trading.oldguard', 'benders.protesters', 'benders.giftswappers', 'benders.purifiers']);
 /** Live members the test version leaves out: Recluse (Anchorites), Misers (Old Guard), Regular (Repossessors). */
 export const TEST_OUT = new Set(['echo.dejavu', 'trading.recluse', 'trading.heirs', 'market.regular']);
 /** Whether a member is in this table's decks under the test version (null: the live rule decides). */

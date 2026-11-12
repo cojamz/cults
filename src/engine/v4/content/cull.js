@@ -35,6 +35,7 @@ export const CUT = new Set([
   // White 3:45pm (Old Money, Cashier), Green 3:52pm (Tribute Band, Buskers), Red 2:27pm (Mob, for Clan)
   'silver.debtcollector', 'silver.ballroom', 'silver.highsociety', 'silver.toastmaster', 'silver.guestofhonor', 'silver.godparents',
   'yellow.jack', 'yellow.seamstress', 'yellow.dyejob',
+  'echo.impersonators', // Cory, 2026-11-11 9:02pm Eastern: Mimics replaces Impersonator
 ]);
 
 // The 10-card decks (Cory, 2026-10-31: "create two versions of game, 10 card deck version and 15 card deck version";

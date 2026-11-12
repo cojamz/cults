@@ -481,6 +481,12 @@ function rivalRecruits(ctx, p) {
       && !/\bit\b|\bthese\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
 }
 
+// Mimics: every member in play (anyone's) with an On Recruit Sample could copy, Mimics itself and other Mimics left out.
+function mimicRecruits(ctx, p, self) {
+  return ctx.state.players.flatMap(o => ctx.membersOf(o).map(c => ({ c, o })))
+    .filter(({ c }) => c.uid !== self && c.def.key !== 'mimics' && !c.def.artifact && !c.def.recruitNote && c.def.key !== 'impersonators' && (c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate)))
+      && !/\bit\b|\bthese\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
+}
 // Greatest Hits: your members with an On Recruit (or a now-and-round-start effect, as Sample reads it).
 const recruitDef = c => (c.copy ? defById(c.copy) : c.def);
 function ownRecruits(ctx, p) {
@@ -864,6 +870,12 @@ const echoQ = {
         if (d.now) for (const hook of ['onRoundStart', 'onRoundStartLate']) if (d[hook]) ctx.recruitAbility(p, c, d, () => d[hook](ctx, p, c));
       } finally { hitsChain = false; }
     },
+    // Mimics: any member in play, yours or a rival's
+    mimic(ctx, p, uid) {
+      if (!ctx.ownerOf(uid)) { ctx.log(`${p.name}: that member left play.`); return; }
+      ctx.log(`${p.name}'s Mimics uses ${ctx.defOf(uid).name}'s On Recruit.`);
+      ctx.borrowOnRecruit(p, uid);
+    },
     encoreCopy(ctx, p, uid) {
       const o = ctx.ownerOf(uid);
       if (!o || o.id === p.id) { ctx.log(`${p.name}: that member left the rival's cult.`); return; }
@@ -1038,6 +1050,37 @@ const echoQ = {
           id: `card:${c.uid}`, label: `${ctx.ownerOf(c.uid).name}: ${c.def.name}`, kind: 'member', value: c.uid,
           hint: impersonateHint(ctx, owner, card, defById(c.copy || c.def.id)),
         })), 'echo.impersonate', { uid: card.uid });
+      },
+    }),
+    // Cory, 2026-11-11 9:02pm Eastern: "We should actually just replace impersonator with mimics" (Impersonator is in
+    // CUT). Any member in play: a rival's or one of your own, never Mimics itself. Price is Impersonator's (Claude).
+    // Members whose On Recruit acts on the card itself ("swap it", "it becomes a copy") aren't offered, as Sample reads them.
+    m('mimics', 'Mimics', 3, 2, 'On Recruit: use the On Recruit of any member in play.', {
+      onRecruited(ctx, owner, card) {
+        const list = mimicRecruits(ctx, owner, card.uid);
+        if (!list.length) { ctx.log(`${owner.name}'s Mimics: no member in play has an On Recruit to use.`); return; }
+        ctx.choose(owner, 'Mimics: use which member\u2019s On Recruit?', list.map(({ c, o }) => ({
+          id: `card:${c.uid}`, label: `${o === owner ? 'Your' : `${o.name}'s`} ${c.def.name}: ${c.def.text}`, kind: 'card', value: c.uid, hint: 2 + (c.def.f || 0),
+        })), 'echo.mimic');
+      },
+    }),
+    // Cory, 2026-11-11 9:01pm Eastern: "+1 follower per minion you have on green at round end is good" (Stagehand's rule,
+    // bot-tested Nov 4; Stagehand's price, 2 green + 3 any as a player sees it). Fills Tribute Band's slot (Ensemble out).
+    m('regulars', 'Regulars', 1, 1, 'Round End: +1 follower per minion you have on Green spaces.', {
+      onRoundEnd(ctx, owner) {
+        const n = minionsOnGreen(ctx, owner);
+        if (!n) return;
+        owner.bonus += n;
+        ctx.log(`${owner.name}'s Regulars: ${n} minion${n === 1 ? '' : 's'} on Green spaces: +${n} follower${n === 1 ? '' : 's'}.`);
+      },
+    }),
+    // Cory, 2026-11-11 9:08pm Eastern: "if you have the most green members, like +6 followers… Something simple." Name,
+    // ties count as most, and the price (3 green + 4 any as a player sees it) are Claude's fill-ins. Green members are
+    // counted as the Green members' own cards count them (countMembersOfColor).
+    m('diehards', 'Die-Hards', 2, 2, 'Game End: if you have the most green members, +6 followers.', {
+      onGameEnd: (ctx, owner) => {
+        const mine = ctx.countMembersOfColor(owner, 'echo');
+        return mine > 0 && ctx.rivals(owner).every(o => ctx.countMembersOfColor(o, 'echo') <= mine) ? 6 : 0;
       },
     }),
     // Understudy and Ensemble replaced Choirmaster (green for a rival's copy: a gift for doing nothing, and Muse's
