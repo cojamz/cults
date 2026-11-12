@@ -605,9 +605,17 @@ function useChainRunning(on) {
 // labelled with it, never a bare "+1" tied to nothing (every-frame check, Nov 6)
 const spaceOf = h => (String(h || '').match(/\btook (.+)$/) || [])[1] || null;
 const words = l => String(l || '').split(/\s+/).filter(Boolean).length;
+/** A hub card line as the card prints it (the line at 967 and BannerLine): a gain labelled with its space, and on the
+ *  first line the wheel's words for it and the cult's name too ("Gather (+3 red, …): P4 +3 red"). Read for its words. */
+export const hubShown = (l, i, space, when, round = 1) => {
+  if (!/^[+−-]\d/.test(String(l || ''))) return l;
+  if (i === 0) { if (!space) return l; const w = boardWords(space, round); return `${space}${w ? ` (${w})` : ''}: P ${l}`; }
+  // (a later gain on the space's own label prints as the cult and its gain; another label keeps its name)
+  return space ? `P ${l}` : when ? `${when}: P ${l}` : l;
+};
 /** What a story line is about, so a later step that changes its numbers is known as the same line (the space's own
  *  result, "Blue Cloak: …", "copied Shake Down: …") while anything new joins at the bottom. */
-export const lineId = (l, i) => (i === 0 && /^[+−-]\d/.test(l) ? '#gain' : (l.match(/^([^:]{2,48}): /) || [])[1] || (l.match(/^used (.+)$/) || [])[1] || ((l.match(/^(.{1,30}?) [+−-]\d/) || [])[1] ? `who:${l.match(/^(.{1,30}?) [+−-]\d/)[1]}` : '') || ((l.match(/ from (\S+)$/) || [])[1] ? `from:${l.match(/ from (\S+)$/)[1]}` : '') || (l.match(/^(recruited|bought|released) ([^(,]+)/) || [])[0] || l);
+export const lineId = (l, i) => (i === 0 && /^[+−-]\d/.test(l) ? '#gain' : (l.match(/^([^:(]{2,48} \([^()]*\)|[^:]{2,48}): /) || [])[1] || (l.match(/^used (.+)$/) || [])[1] || ((l.match(/^(.{1,30}?) [+−-]\d/) || [])[1] ? `who:${l.match(/^(.{1,30}?) [+−-]\d/)[1]}` : '') || ((l.match(/ from (\S+)$/) || [])[1] ? `from:${l.match(/ from (\S+)$/)[1]}` : '') || (l.match(/^(recruited|bought|released) ([^(,]+)/) || [])[0] || l);
 /** The hub card's lines in the order they first showed (Cory, Nov 6: "we should just SEE it get added"): a line never
  *  moves once it's up (the every-frame check saw "gave Window Shopper to P2" become "1, 1 from you" as a line was
  *  inserted above it). `shown`: how many were on screen at the last render. Returns { lines, ids }. */
@@ -704,7 +712,10 @@ export function grewBy(was, now) {
  *  the coins they told had landed). Every line still gets its reading time (storyLine, storyWord) before the next rival
  *  step: noted as when the last will have been read (stage.js readUntil), which the next step and the card's leaving
  *  wait for. */
-function useReveal(key, ids, lines, on) {
+// `shown(line, i)`: the words the card prints for a line (BannerLine labels a gain with its space and the wheel's words
+// for it): its reading time counts those, not the bare line (every-frame gate, Nov 12: "Gather (+3 red, +4 followers if
+// you recruit a color you have): P4 +3 red" was timed as "+3 red" and went after 750 ms)
+function useReveal(key, ids, lines, on, shown = l => l) {
   'use no memo';
   const ref = useRef(null);
   if (!ref.current || ref.current.key !== key) ref.current = memoOf(key, 'reveal', revealMemo);
@@ -739,7 +750,7 @@ function useReveal(key, ids, lines, on) {
         const due = Math.max(prev, at.length ? beatOf(id, lines[i]) : t0);
         r.due.set(id, due);
         prev = due;
-        r.read = Math.max(r.read, due) + Math.max(MO.storyLine, words(lines[i]) * MO.storyWord);
+        r.read = Math.max(r.read, due) + Math.max(MO.storyLine, words(shown(lines[i], i)) * MO.storyWord);
       });
       noteReadEnd(r.read);
     }
@@ -839,7 +850,7 @@ function TurnCard({ card, root, state, hub = false, keep = false, you = -1 }) {
   // which showed several lines at once; every-frame check, Nov 7)
   const lineKey = `${card.k || card.n}|${(card.text || '').split(' · ')[0]}`;
   const { lines: hubLines, ids: hubIds } = useStableLines(lineKey, hub && card.text ? joinGoesLast(card.text.split(' · ').slice(1), hubSpace) : [], shownWas.current);
-  const shownN = useReveal(lineKey, hubIds, hubLines, hub && !!card.text);
+  const shownN = useReveal(lineKey, hubIds, hubLines, hub && !!card.text, (l, k) => hubShown(l, k, hubSpace, card.when, state ? state.round : 1));
   shownWas.current = shownN;
   // Where the card sits, written straight to its style in one layout effect (perf, 2026-10-15): as React state its place
   // and its lift cost every step one or two more commits of their own, each reading the layout again

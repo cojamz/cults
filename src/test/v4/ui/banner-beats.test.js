@@ -52,3 +52,27 @@ it("the space's own gain counts up on one row as its picks land (Cory, Nov 9: Ou
   o = foldStoryLines(c, ['+1 green', 'Blue Cloak: +2 blue'], o.lines.length);
   expect(o.lines).toEqual(['+1 green', 'Blue Cloak: +1 blue', 'Blue Cloak again: +1 blue']);
 });
+
+it("a line labelled with its space's board words is one line as it grows, however long the words (Nov 12 wording pass)", async () => {
+  const { lineId } = await import('../../../v4/game/GameScreen.jsx');
+  // "Promote (+3 red, promote a member to one costing up to 3 more): …" ran past the 48 letters a label had, so each new
+  // number read as a new line (every-frame gate: "line changed", then "gone before read")
+  const label = 'Promote (+3 red, promote a member to one costing up to 3 more)';
+  expect(lineId(`${label}: P4 +3 red`, 1)).toBe(label);
+  expect(lineId(`${label}: P4 +3 red +3 yellow (1 yellow from P1 ; 2 yellow from P2 )`, 1)).toBe(label);
+  // board words with a colon of their own stay inside the label
+  expect(lineId("copied Di's Rising Tide (Gain silver: half the top rival’s): +6 silver", 1)).toBe("copied Di's Rising Tide (Gain silver: half the top rival’s)");
+  // short labels as before
+  expect(lineId('Blue Cloak: +2 blue', 1)).toBe('Blue Cloak');
+});
+
+it("a hub line's reading time counts the words the card prints for it: its space and the wheel's words (Nov 12)", async () => {
+  const { hubShown } = await import('../../../v4/game/GameScreen.jsx');
+  const first = hubShown('+3 red', 0, 'Gather', null, 1);
+  expect(first.startsWith('Gather (')).toBe(true);
+  expect(first.endsWith('): P +3 red')).toBe(true);
+  expect(first.split(/\s+/).length).toBeGreaterThan(8); // "+3 red" alone is 2 words: the card shows a dozen
+  expect(hubShown('+1 blue', 1, 'Gather', null, 1)).toBe('P +1 blue');
+  expect(hubShown('recruited Seat Filler (free)', 1, 'Gather', null, 1)).toBe('recruited Seat Filler (free)');
+  expect(hubShown('+3 red', 0, null, null, 1)).toBe('+3 red');
+});

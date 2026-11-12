@@ -8,6 +8,7 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 import { chromium } from 'playwright';
 import { richSave } from './lib/rich-save.mjs';
 import { seedSave } from './lib/seed.mjs';
+import { answerChoice } from './lib/answer.mjs';
 
 const base = process.env.V4_URL;
 if (!base) { console.error('midchain: set V4_URL'); process.exit(2); }
@@ -24,7 +25,9 @@ if (!resume) { console.error('midchain: the saved game did not resume'); process
 await resume.click();
 const moves = () => page.$eval('.app.game', e => Number(e.dataset.moves));
 let tried = 0, placed = null;
-for (let turn = 0; turn < 8 && placed == null; turn++) {
+// (a whole game at most: the moment needs a rival's last step to be one with a show, a recruit's payment, right before
+// your turn, which a game may not bring until round III; Nov 12)
+for (let turn = 0; turn < 40 && placed == null && !(await page.$('.results')); turn++) {
   // your turn: place anywhere lit (past a round's end card: Start round), then answer or end the turn until the bots move
   for (let k = 0; k < 120 && !(await page.$('.slot.can .base')); k++) {
     const next = await page.$('button:has-text("Start round")');
@@ -36,13 +39,21 @@ for (let turn = 0; turn < 8 && placed == null; turn++) {
   await page.click('.slot.can .base');
   for (let k = 0; k < 40; k++) {
     if (await page.$('[data-done-no-buy="on"]')) { await page.click('[data-done-no-buy="on"]'); break; }
-    const opt = await page.$('.prompt.choice button[data-option]:not([disabled])');
-    if (opt) await opt.click().catch(() => {});
+    // answer whatever the space asks the way a person would (a shop member for Borrow, a seat, a button; lib/answer.mjs)
+    if (await page.$eval('.app.game', e => e.dataset.phase !== 'place').catch(() => false)) await answerChoice(page, { last: ['pass'] }).catch(() => null);
     await page.waitForTimeout(150);
   }
   // the bots play; catch the moment your turn has come while their last step still plays
-  const open = await page.waitForFunction(() => { const a = document.querySelector('.app.game'); return a && a.dataset.liveOpen ? a.dataset.liveOpen : null; }, null, { timeout: 30000, polling: 'raf' }).then(h => h.jsonValue(), () => null);
-  if (!open) continue;
+  // (your turn arriving settled, with no rival show left, or a round's end card, is this turn missed: on to the next;
+  // the snake order gives you two turns in a row at each end of the round)
+  const open = await page.waitForFunction(() => {
+    const a = document.querySelector('.app.game');
+    if (!a) return null;
+    if (a.dataset.liveOpen) return a.dataset.liveOpen;
+    const settledMine = a.dataset.yours === '1' && a.dataset.phase === 'place' && !a.dataset.animating && document.querySelector('.slot.can .base');
+    return settledMine || [...document.querySelectorAll('button')].some(b => /Start round/.test(b.textContent)) || document.querySelector('.results') ? '-' : null;
+  }, null, { timeout: 30000, polling: 'raf' }).then(h => h.jsonValue(), () => null);
+  if (!open || open === '-') continue;
   tried++;
   const key = open.split(',')[0];
   const at = await page.$eval(`[data-slot="${key}"] .base`, e => { const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }).catch(() => null);

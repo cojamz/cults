@@ -24,7 +24,7 @@ for (let g = 0; g < GAMES; g++) {
     // the same thing as GameScreen's lineId: a line whose numbers change in place is a count going up, not a new line
     // (the banner writes a cult's name before what it did: "P2 used X" is the game's "used X")
     const idOf = (l0, i) => { const l = l0.replace(/^(P\d|You) (?=used )/, ''); return idOf0(l, i); };
-    const idOf0 = (l, i) => (i === 0 && /^[+−-]\d/.test(l) ? '#gain' : (l.match(/^([^:]{2,48}): /) || [])[1] || (l.match(/^used (.+)$/) || [])[1] || ((l.match(/^(.{1,30}?) [+−-]\d/) || [])[1] ? `who:${l.match(/^(.{1,30}?) [+−-]\d/)[1]}` : '') || ((l.match(/ from (\S+)$/) || [])[1] ? `from:${l.match(/ from (\S+)$/)[1]}` : '') || (l.match(/^(recruited|bought|released) ([^(,]+)/) || [])[0] || l);
+    const idOf0 = (l, i) => (i === 0 && /^[+−-]\d/.test(l) ? '#gain' : (l.match(/^([^:(]{2,48} \([^()]*\)|[^:]{2,48}): /) || [])[1] || (l.match(/^used (.+)$/) || [])[1] || ((l.match(/^(.{1,30}?) [+−-]\d/) || [])[1] ? `who:${l.match(/^(.{1,30}?) [+−-]\d/)[1]}` : '') || ((l.match(/ from (\S+)$/) || [])[1] ? `from:${l.match(/ from (\S+)$/)[1]}` : '') || (l.match(/^(recruited|bought|released) ([^(,]+)/) || [])[0] || l);
     const words = s => s.split(/\s+/).filter(Boolean).length;
     const need = s => Math.max(MIN_LINE, words(s) * PER_WORD);
     window.__hubDbg = [];
