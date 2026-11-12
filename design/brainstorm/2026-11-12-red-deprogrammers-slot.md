@@ -70,3 +70,33 @@ Verdict: cut (repeats Seat Filler, small)
 8. Color interactions: Blue's most-members contest.
 9. Biggest case: one extra member in two contests, worth up to a 10 swing at round III.
 Verdict: cut (vanilla, Triplets retired)
+
+# Second list (after Cory, 6:36pm: "these are too similar to existing stuff")
+
+Every live Red member's shape, so the next pick differs: Body Snatchers (Round Start swap), Seat Filler (Round Start trade itself up), Mentor (On Recruit free cheapest), Brethren (whenever you recruit a matching color, +1 follower), Purists (Round End, 2 or fewer colors, +3 followers), Clan (Round End, +1 follower per member in your biggest group), Foster Parents (whenever a rival's member joins you, +2 followers), Panel (On Use promote or demote), Loyalists (your other members can't be swapped). Five of nine already pay followers on a trigger or count, so no new "whenever X, +N followers". Two families are missing: a rule that bends what a member counts as, and a sting rivals feel on their own recruit.
+
+## Idea: Assimilators
+
+1. Printed text: "Your grey members count as members of your biggest color." Cards it touches: the grey members, e.g. Line Cutters "You go first every round.", Cheerleaders "Whenever you win a contest, +2 followers.", Dabblers "Counts as 2 wild members."; Clan "Round End: +1 follower per member in your biggest group of one color (grey counts)."; Purists "Round End: if your members have 2 or fewer colors, +3 followers."; Brethren "Whenever you recruit a member of a color you already have, +1 follower."
+2. Played turn: round II end, 4 players: you hold 3 red, 1 yellow and 2 grey; a rival holds 4 green. Without it your biggest group is 3 red (grey makes its own group of 2), so the rival wins Red's contest. With it you count 5 red and win the 6. Gain: a contest won instead of lost, plus Clan counts 5, and Purists sees 2 colors.
+3. Both sides: no choices on the card (ties for biggest color: they count as either, the plain reading).
+4. Who feels it: the rival racing you for most members of one color; and every grey member in the shop becomes one you want, so rivals have a reason to recruit greys away from you.
+5. Not refused: not Dabblers (that card itself counts as 2 of every color; this one changes your other greys). No ledger line bends what color your members are.
+6. Judged: a rule bender (his favorite member kind), one sentence, no tracking past what's on the table. It joins round II by price: in round I nobody holds greys.
+7. Public and certain: yes, every member and its color is face up.
+8. Color interactions: the shared piece is grey members, which every game deals; Blue's most-members and Yellow's most-colors contests read the same cults. Names no color.
+9. Biggest case: round III, you hold 4 red and 3 grey: biggest group 7, Red's contest won (10) where you'd tie or lose, Clan pays 7 instead of 4 (+3). One round end, about 10 followers more at most, at round III's center moment; a winner ends near 70 to 110.
+Verdict: send
+
+## Idea: Landlords
+
+1. Printed text: "Whenever a rival recruits a member of a color you have 3 or more of, they give you 2 resources of their choice." (Claude's numbers). Cards it touches: Red's contest (most members of one color); Gather "+3 red. If you recruit a member this turn of a color you already have: +4 followers. +1 red."
+2. Played turn: round II, 4 players, you hold 3 red. A rival wants the 6-cost red member: they pay its price and give you 2 resources (they pick which), or buy something else. You gain 2 resources on someone else's turn; best other outcome, they skip red and your lead in red holds.
+3. Both sides: the rival chooses which 2 resources to give (they give what they need least, a real but small choice), and whether to recruit your color at all: a cheap red member still worth it for them, an expensive one for the contest maybe not. Neither side always wins.
+4. Who feels it: every rival, at the moment of recruiting, a sting capped at 2 per recruit; it keeps rivals off your color, which protects your Red contest lead.
+5. Not refused: the liked "capped tax on a common moment" (Nov 7, verdicts 42) with a count not tied to prices; not a steal (Magenta's verb: the rival hands it over); not Mob (Round End count of rivals' reds, refused).
+6. Judged: one trigger, one plain effect, felt by the whole table. Reads holdings, so it joins round II by price.
+7. Public and certain: yes, recruits and members are face up.
+8. Color interactions: the shared moment is any recruit of a color; every color recruits, so it works in any game. Names no color.
+9. Biggest case: round III, you hold 5 red and 3 yellow; rivals recruit about 4 members of those colors over round III: 8 resources, at most 2 in one rival's turn. About 10 to 14 resources a game, under 10 followers' worth.
+Verdict: send
