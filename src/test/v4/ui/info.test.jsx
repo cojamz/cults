@@ -210,7 +210,9 @@ describe('How to play lists the glossary', () => {
     // only words today's deck uses (Cory, Nov 5: the discount word stayed after its card was cut)
     expect(dts).toEqual(glossaryEntries().map(t => t.word));
     expect(dts).not.toContain('Next member costs less');
-    expect(container.querySelector('[data-glossary]').textContent).toMatch(/Full set/);
+    // Full set shows only while a card in today's deck says it (no card in the Nov 11 decks does)
+    if (glossaryEntries().some(t => t.key === 'full set')) expect(container.querySelector('[data-glossary]').textContent).toMatch(/Full set/);
+    else expect(dts).not.toContain('Full set');
     expect(dts).not.toContain('Release');
     expect(container.textContent).not.toContain('Released members');
   });
