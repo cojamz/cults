@@ -40,6 +40,10 @@ export const CUT = new Set([
   // Cory, 2026-11-11 9:10pm: Leavetakers replaces Undertaker. Barker ("we should just rethink this", 3:45pm) makes room
   // for Minimalists (Claude, under Cory's go-with-your-gut: his White open slots were "1 (2 if Barker's rethink is a new card)")
   'trading.undertaker', 'trading.barker',
+  // the Nov 11 sort's cuts for White and Purple (Old Money, Cashier: 3:45pm; Sleepyheads: "yes to both", 3:45pm), and
+  // Heiresses so White deals 10 with Leavetakers and Minimalists in (Claude, under Cory's go-with-your-gut: his lowest
+  // mark left after Barker and Old Guard, which he wants to try, and "it doesn't go well with… having fewer members")
+  'trading.oldmoney', 'trading.cashier', 'purple.sleepyheads', 'trading.heiress',
 ]);
 
 // The 10-card decks (Cory, 2026-10-31: "create two versions of game, 10 card deck version and 15 card deck version";
