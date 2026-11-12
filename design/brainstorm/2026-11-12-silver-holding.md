@@ -35,7 +35,7 @@ Verdict: cut (Cory, 7:38pm: "so fucking complicated. Never say anything like tha
 7. Public and certain: yes, the silver you hold is on the table and the discount is printed.
 8. Color interactions: none named; any player holding silver uses it.
 9. Biggest case: round III, hold 8: 2 off each of up to 5 recruits, 10 resources over the round, 2 per turn.
-Verdict: send
+Verdict: cut (Cory, 7:41pm: "That's too good, but it's interesting")
 
 ## Idea: Investors
 
@@ -89,7 +89,7 @@ Each card: one trigger, one plain effect (Cory, 7:38pm).
 6. Judged: the holding side of Silver (complementary to Flaunt and Buyout holders) and cross-color (any player with a member worth protecting). Rule card, memorable. Round I: a round II card by price.
 7. Public and certain: yes, silver held is on the table and the rule is printed.
 8. Color interactions: none named; it reads silver held and members taken by any card.
-9. Biggest case: round III, it stops one Buyout of a 10-cost member, worth 10 resources plus that member's followers; no followers of its own.
+9. Biggest case: round III, it stops one Buyout of a 10-cost member, worth 10 resources plus that member's followers; holding 5 silver costs the 4/6/10 contest; no followers of its own.
 Verdict: send
 
 ## Idea: Show-Offs
@@ -101,7 +101,7 @@ Verdict: send
 5. Not refused: Cory said "not giving points based on silver? I don't know" (unsure, 7:33pm): this pays a fixed 4 for a position, not per silver. Flagged to him as the closest to that line.
 6. Judged: the exact opposite of Paupers, cross-color (a Toasted player likes it). Scorer, memorable.
 7. Public and certain: yes, everyone sees silver held.
-8. Color interactions: none named.
+8. Color interactions: none named; any player can hold silver.
 9. Biggest case: 4 per round end, 12 a game over 3 rounds, against a contest's 4/6/10 and a winner's 70 to 110.
 Verdict: send
 
@@ -114,7 +114,7 @@ Verdict: send
 5. Not refused: Valued Clients ("too good, but it's interesting"), at half its size.
 6. Judged: cross-color first (anyone Toasted), complementary to Silver's holding side. Rule card.
 7. Public and certain: yes, silver held is on the table.
-8. Color interactions: none named.
+8. Color interactions: none named; any player can hold silver.
 9. Biggest case: round III, 1 off each of up to 5 recruits, 5 resources over the round, 1 per turn.
 Verdict: send
 
@@ -126,7 +126,7 @@ Verdict: send
 4. Who feels it: the Magenta player, whose steal turns into silver they didn't want.
 5. Not refused: Cory asked Magenta for Bodyguards "defensive against getting stolen from, but doesn't block it outright"; this is Silver's version, paid in silver. Flag: it sits close to that Magenta rework.
 6. Judged: cross-color (anyone at a Magenta table) and on Silver's verb (give). Rule card, memorable.
-7. Public and certain: yes.
+7. Public and certain: yes, the steal and the payment happen on the table.
 8. Color interactions: Magenta's steal meets Silver's give; it names neither color.
 9. Biggest case: Heist round III, a steal of 4 or more turned into 2 silver; saves about 4 resources a turn, 0 followers of its own.
 Verdict: send
