@@ -48,7 +48,7 @@ describe('panel words (w3)', () => {
       // the schedule in line 3, as every growing space has it; line 2 repeated line 1's number (picky bot, Nov 4)
       expect(gold.note).toBe('I\u00a0+2\u00a0· II\u00a0+4\u00a0· III\u00a0+6');
       expect(gold.second).toBeNull();
-      expect(panelText('echo', { key: 'chant' }, r).second).toBe('any player’s, this one included'); // runs on from line 1 (picky bot, Nov 11)
+      expect(panelText('echo', { key: 'chant' }, r).second).toBe('this one included'); // runs on from line 1 (picky bot, Nov 11)
       expect(panelText('echo', { key: 'chant' }, r).note).toBeNull();
     }
     // every space that grows carries its schedule (W18: only some did, and readers took the rest as flat)
@@ -148,8 +148,8 @@ describe('panel words (w3)', () => {
   it('Build Up prints its rule, not a round gain', () => {
     const s = createGame({ seats: [{ name: 'A', kind: 'human' }, { name: 'B', kind: 'bot' }], seed: 5, quadrants: ['gold', 'echo'] });
     const a = quadrant('echo').actions.find(x => x.key === 'chant');
-    expect(lines(panelText('echo', a, 1, s, 0))).toEqual(['+1 green per minion on Green', 'any player’s, this one included']);
-    for (const r of [1, 2, 3]) expect(lines(panelText('echo', a, r))).toEqual(['+1 green per minion on Green', 'any player’s, this one included']);
+    expect(lines(panelText('echo', a, 1, s, 0))).toEqual(['+1 green per minion on Green', 'this one included']);
+    for (const r of [1, 2, 3]) expect(lines(panelText('echo', a, r))).toEqual(['+1 green per minion on Green', 'this one included']);
   });
 
   it('Spree prints its blue and its two recruits from the discard pile (Nov 10: "Recruit two members from the discard pile now. +7 blue.")', () => {

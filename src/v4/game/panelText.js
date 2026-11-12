@@ -207,13 +207,13 @@ const P = {
     // whose minion in line 1: taken, line 2 hides, and Cover and Reprise both read "Copy an action" (picky bot, Nov 11)
     hum: { verb: 'Copy an action with a rival’s minion', note: '+1 green' },
     // line 2 runs on from line 1 (picky bot, Nov 11: "…on Green / this one included" read as "Green. This one included")
-    chant: { verb: '+1 green per minion on Green', second: 'any player’s, this one included', note: '+1 green' },
+    chant: { verb: '+1 green per minion on Green', second: 'this one included', note: '+1 green' },
     // the hover's own words, "since your last turn" (w4b #22: "a rival just took" said it two ways); "the" as the hover
     // has it (picky bot, Nov 11)
     echo: { verb: 'Copy the previous action', note: '+1 green' },
     // Cory, 2026-10-28: a rival member's On Recruit, not a space
     encore: { verb: 'Copy a rival member’s On Recruit', note: '+1 green' },
-    crowd2: { main: '+3 green', second: '+1 @f per minion on Green', note: 'any player’s, this one included' }, // Crowd, Sample's place (Nov 10, Cory)
+    crowd2: { main: '+3 green', second: '+1 @f per minion on Green', note: 'this one included' }, // Crowd, Sample's place (Nov 10, Cory)
     // one word for it, the hover's (w3a #22: "redo" here, "copy" there)
     refrain: { verb: 'Copy an action with your minion', note: '+1 green' }, // whose minion in line 1 (picky bot, Nov 11)
     // "not green" in line 1: the center ring drops line 2 (picky bot, Nov 11)
