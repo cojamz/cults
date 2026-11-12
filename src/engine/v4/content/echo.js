@@ -413,7 +413,14 @@ function copyResolved(ctx, p, e, { later, by, asker }) {
     // Polish wasn't doubled)
     const a = actionOf(e, ctx.state), cp = copierOf(ctx, p);
     // a copy never gets the space's first-taker +1 (rules.plus1 'game'; Cory: "plus one to the first taker matters for green")
+    // the copier's own open space (Greatest Hits copying your Cash In) records what this copy hands over on its chip;
+    // a copied action that spends inside the copy (Cash In turns all your white into followers, then +1 white) gave
+    // the copier less than the chip would read (+1 white, though their white didn't rise): settle can't see it, as
+    // the net is even, so that space becomes one a copy does itself, as any space that traded
+    const L = ctx.state.echo, o = L?.open && L.now[L.open];
+    const mine = o && o !== e && o.p === p.id && windowOpen(ctx.state, o) ? { res: { ...p.res }, chip: { ...o.res } } : null;
     ctx.copyPlus1(p, a, e.color, cp?.x || 1, () => withPath(ctx, pathNow(ctx), () => (a.resolve.__orig || a.resolve).call(a, ctx, p), undefined, cp), cp?.green ? 'green' : null);
+    if (mine && Object.keys(o.res).some(c => (o.res[c] || 0) - (mine.chip[c] || 0) > (p.res[c] || 0) - (mine.res[c] || 0))) o.redo = true;
     return;
   }
   const mult = has(ctx, p, 'wallflower') ? 2 : 1;
