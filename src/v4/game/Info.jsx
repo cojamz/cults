@@ -917,7 +917,7 @@ function mixWords(pv, state, own) {
  * follower at best"); when it's your pick, your best pick's numbers; when every pick is worth the same, which mix
  * ("+2 followers or +4 white"). Ranges stay out (RC1 sweep 17/62/89: "0 to +2 ■, −2 to 0 ◆…" read as algebra).
  */
-export function youdWords(pv, state, own = null) {
+export function youdWords(pv, state, own = null, spaceText = '') {
   const w = previewWords(pv, state);
   // a member that could be any of several (Open Door's tied cheapest): named once, all of them (blind tester B: "+1
   // member" twice, naming one of four)
@@ -958,7 +958,7 @@ export function youdWords(pv, state, own = null) {
     // a recruit decides it (Markdown, Recruit Twice, Spree, Test Drive, Buyout, Initiation): what's sure first, then the best
     // pick by name and price on its own line (Cory, Nov 12, action wording: "up to +4 blue, +1 white, +3 followers,
     // Caravan (counts as 3 members), −5 resources" read as a pile of numbers)
-    if (pv.best.members > 0 && pv.best.joined && pv.best.joined.length && pv.best.joined.length <= 2 && !pv.copies && !(pv.theirAsks && pv.theirAsks.length)) {
+    if (pv.best.members > 0 && !(pv.best.swapped > 0) && pv.best.joined && pv.best.joined.length && pv.best.joined.length <= 2 && !pv.copies && !(pv.theirAsks && pv.theirAsks.length)) {
       let names = null;
       try { names = pv.best.joined.map(u => cardDef(state, u).name); } catch { names = null; }
       if (names) {
@@ -969,8 +969,12 @@ export function youdWords(pv, state, own = null) {
           pv.best.followers > lowF ? `+${pv.best.followers - lowF} follower${pv.best.followers - lowF === 1 ? '' : 's'}` : null].filter(Boolean);
         const sure0 = [...state.resources.filter(r => low(r) > 0).map(r => `+${low(r)} ${r}`), lowF > 0 ? `+${lowF} follower${lowF === 1 ? '' : 's'}` : null].filter(Boolean).join(', ');
         const paidIn = state.resources.filter(r => (pv.best.res[r] || 0) < 0);
-        const price = paid <= 0 ? 'for free' : paidIn.length === 1 ? `for ${paid} ${paidIn[0]}` : `for ${paid} resources`;
-        const pick = `${names.join(' and ')} ${price}${extras.length ? ` (${extras.join(', ')})` : ''}`;
+        // a free recruit's resources lost are its member's own trade (Launderers), never a price: said with the gains
+        const freeSpace = /\bfor free\b/i.test(spaceText) || paid <= 0;
+        const lost = paid <= 0 ? null : paidIn.length === 1 ? `${paid} ${paidIn[0]}` : `${paid} resources`;
+        const price = freeSpace ? 'for free' : `for ${lost}`;
+        const after = [...extras, freeSpace && lost ? `−${lost}` : null].filter(Boolean);
+        const pick = `${names.join(' and ')} ${price}${after.length ? ` (${after.join(', ')})` : ''}`;
         return { text: sure0 || null, or: pick, orWord: 'best pick:', note: null };
       }
     }
@@ -1080,10 +1084,10 @@ export function YoudGet({ state, pid, q, i, now = false, skipSelf = false }) {
   const w = previewWords(pv, state);
   let own = null;
   try { own = quadrant(state.quadrants[q]).resource; } catch { /* none */ }
-  const y0 = youdWords(pv, state, own);
-  const y1 = skipSelf ? { ...y0, text: SKIP_SELF(y0.text), or: SKIP_SELF(y0.or), likely: SKIP_SELF(y0.likely), best: SKIP_SELF(y0.best) } : y0;
   let spaceText = '';
   try { spaceText = spacesOf(state, state.quadrants[q])[i].text || ''; } catch { /* none */ }
+  const y0 = youdWords(pv, state, own, spaceText);
+  const y1 = skipSelf ? { ...y0, text: SKIP_SELF(y0.text), or: SKIP_SELF(y0.or), likely: SKIP_SELF(y0.likely), best: SKIP_SELF(y0.best) } : y0;
   const via = viaWords(pv, state, spaceText);
   const y = via ? { ...y1, text: withVia(y1.text, via), or: withVia(y1.or, via), likely: withVia(y1.likely, via), best: withVia(y1.best, via) } : y1;
   // why it does nothing more (Late Shift: "no shop member costs 2 or less"), when no pick changes it (picky bot, Nov 11)
