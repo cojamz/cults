@@ -46,3 +46,7 @@ Verdict: send
 Source: Cory, 2026-11-11 11:20pm Eastern: "Let's put it on your own. Let's try your own. I'll try that in game."
 Test and live words (Claude's, his rule): "Choose a color other than green. Copy every action with your minion on its spaces. +1 green."
 Verdict: send
+
+## Idea: Fewest silver
+Source: Cory, 2026-11-07 11:31pm Eastern: "yes fewest silver" (Silver's live contest, named in the Nov 12 polish report, not a pitch)
+Verdict: send
