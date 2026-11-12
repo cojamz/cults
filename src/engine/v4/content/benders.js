@@ -190,6 +190,8 @@ function swapAsk(ctx, data) {
   for (const { to, from, uid } of data.picks) ctx.moveMember(uid, ctx.player(from), ctx.player(to), { actor: owner });
   ctx.log(`${owner.name}'s Gift Swappers: ${data.picks.length ? data.picks.map(({ to, from, uid }) => `${ctx.player(from).name} gives ${ctx.card(uid).def.name} to ${ctx.player(to).name}`).join(', ') : 'nobody had a member to give'}.`);
 }
+// LINECUTTERS_F=<n>, bot test only (polish pass Nov 12: 7 of 8 AI players called Line Cutters cheap; Cory: follower counts are a lever)
+const CUTTERS_F = Number(globalThis.process?.env?.LINECUTTERS_F || 3);
 const PURIFY_LEAVE = globalThis.process?.env?.PURIFIERS === 'leave';
 function purgeAsk(ctx, data) {
   if (data.k >= data.order.length) return;
@@ -417,7 +419,7 @@ const members = [
       return Math.max(...est) - Math.min(...est) >= 3;
     },
   })),
-  m('frontrunner', 'Line Cutters', 'purple', 1, 0, 'You go first every round.', { pickFirst: true, f: 3, n: 3, ...old1, ...old11('placeholders') }), // worth 3 (Cory, Nov 1: "maybe we make it 3 members?"), renamed (Cory, Nov 1: "make front runner worth more followers. figure out a better name") // Cory, Oct 21: 5; Oct 27: 4; Oct 28 "could probably be cheaper": 3 with the +1 wild (Claude's price, the floor); Oct 29 "I'm okay with front runners at 2": 2
+  m('frontrunner', 'Line Cutters', 'purple', 1, 0, 'You go first every round.', { pickFirst: true, f: CUTTERS_F, n: CUTTERS_F, ...old1, ...old11('placeholders') }), // worth 3 (Cory, Nov 1: "maybe we make it 3 members?"), renamed (Cory, Nov 1: "make front runner worth more followers. figure out a better name") // Cory, Oct 21: 5; Oct 27: 4; Oct 28 "could probably be cheaper": 3 with the +1 wild (Claude's price, the floor); Oct 29 "I'm okay with front runners at 2": 2
   // Place Holders' bot pick (Evaluators, Nov 4: bots held Last Call by ring and never took it): hold the space worth
   // most to the holder right now, which is also the one its own placement takes first
   // REPLACE11 bot test (Actions lane, Nov 4; quality/pitches/actions-line-cutters.md): Line Cutters' place, same cost,

@@ -19,6 +19,8 @@ export const VARIANTS = {
   // Cory, Nov 11 11:36pm: Purifiers "Whenever this member leaves your cult, each rival discards a member. On Use, once per game: discard this member."
   'purifiers-leave': { PURIFIERS: 'leave' },
   // Cory, Nov 11 11:46pm: "minimalists for sure needs tweaks"
+  // Line Cutters worth 1 instead of 3 (polish pass: 7 of 8 AI players called it cheap)
+  'cutters1': { LINECUTTERS_F: '1' },
   // (tweak tests dropped: he called +2 per member costing 8 or more at 11:53pm)
 };
 const flags = Object.fromEntries(process.argv.slice(2).map(a => { const [k, ...v] = a.replace(/^--/, '').split('='); return [k, v.join('=') || true]; }));
