@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.750 — 2026-11-12
+
+- Crowd, Late Shift and Survey say whose minions count, same effects
+
 ## v0.99.749 — 2026-11-12
 
 - Promote and Demote wheel words fit their space
