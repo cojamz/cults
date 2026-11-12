@@ -17,8 +17,13 @@ describe('setup options together', () => {
       const quadrants = fitTable({ mode: 'classic' }, 4).quadrants;
       const rules = { ...LIVE, ...(swapCard ? { swapCard } : {}), ...(contests ? { contests } : {}) };
       const rows = [];
+      // Borrow's member goes back to the shop at round end (Cory, Nov 12: "it goes back to the shop"): that one card
+      // sits in the row past its size until the next round's fresh row; every other way stays within the size
+      let back = new Set(), round = 0;
       const { state } = runTable({ quadrants, n: 4, seed: 77 + (swapCard ? 1 : 0), kind: 'bot', rules, onMove: (prev, s) => {
-        if (s.round >= 1) rows.push(s.shop.length - shopSize(s));
+        if (s.round !== round) { back = new Set(); round = s.round; }
+        for (const b of prev.borrowed || []) if (s.shop.includes(b.uid) && !prev.shop.includes(b.uid)) back.add(b.uid);
+        if (s.round >= 1) rows.push(s.shop.length - shopSize(s) - s.shop.filter(u => back.has(u)).length);
       } });
       expect(state.over).toBe(true);
       expect(rows.filter(d => d > 0)).toEqual([]); // the face-up row never grows past its size
