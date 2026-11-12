@@ -1,0 +1,34 @@
+<title>Three Member Prices</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap">
+<style>
+/* one wide table, three price rows, judges' words last */
+:root{--bg:#f6f5f2;--fg:#1d1b22;--mute:#615d6b;--line:#dcd8e2;--head:#ebe8f0;--accent:#6b3fa0;--good:#2f7d4f;--bad:#b0443a;
+--display:"Space Grotesk",system-ui,sans-serif;--body:Inter,system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17151c;--fg:#ece9f2;--mute:#a49fae;--line:#35303d;--head:#231f2a;--accent:#b98ce8;--good:#6cc392;--bad:#e5857b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17151c;--fg:#ece9f2;--mute:#a49fae;--line:#35303d;--head:#231f2a;--accent:#b98ce8;--good:#6cc392;--bad:#e5857b;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-family:var(--display);font-size:1.6rem;margin:0 0 6px;text-wrap:balance}
+p{max-width:65ch;margin:0 0 10px;color:var(--mute)}
+.wrap{overflow-x:auto;margin:16px 0 8px;border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;min-width:1050px;font-variant-numeric:tabular-nums}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:center;vertical-align:top}
+th{background:var(--head);font-family:var(--display);font-weight:500;font-size:.8rem;letter-spacing:.02em;color:var(--mute)}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--bg);min-width:150px}
+th:first-child{background:var(--head)}
+td.said{text-align:left;min-width:300px;max-width:340px}
+.name{font-family:var(--display);font-weight:700}
+.cost{display:block;color:var(--accent);font-size:.85rem;margin-top:2px}
+.hi{color:var(--good);font-weight:600}.lo{color:var(--bad);font-weight:600}
+</style>
+<h1>Today vs +1 color vs +1 any</h1>
+<p>Only member prices change; spaces give what they print, and each space's +1 goes to its first player. Three fresh judges (one judging as you, one seasoned worker-placement player, one casual friend) read the same deal played three times, once per price, without being told which was which, and ranked them. Two deals, so six rankings each. The numbers on the right come from 60 bot games per price on the same deals, per player.</p>
+<p>Cost line: <b>Purists</b> ("Round End: if your members have 2 or fewer colors, +3 followers."), printed 2 red + 1 any.</p>
+<div class="wrap"><table>
+<thead><tr><th>Price</th><th>Judges' rankings<br>1st · 2nd · 3rd</th><th>Would play again (1–5)</th><th>Members feel planned</th><th>Resources worth fighting for</th><th>Close race</th><th>Members bought<br>round I · II · III</th><th>Shop looks with nothing affordable</th><th>Winner had 5 or fewer members</th><th>What the judges said</th></tr></thead>
+<tbody>
+<tr><td><span class="name">Today</span><span class="cost">Purists: 3 red + 3 any</span></td><td>3 · 2 · 1</td><td>3.3</td><td class="lo">2.5</td><td class="lo">2.3</td><td class="hi">4.3</td><td>1.8 · 2.4 · 3.0</td><td>36%</td><td>37%</td><td class="said">Next to the pricier games, a member was in reach almost every turn. Wide cults stacked 15 or more cards and buys felt routine; the race stayed close.</td></tr>
+<tr><td><span class="name">+1 any</span><span class="cost">Purists: 3 red + 4 any</span></td><td class="hi">3 · 3 · 0</td><td class="hi">3.5</td><td class="hi">3.7</td><td class="hi">3.8</td><td>3.7</td><td>1.4 · 2.1 · 2.6</td><td>44%</td><td>49%</td><td class="said">A member took a turn or two of saving, so buys felt planned. Resources neither piled up nor ran dry. Never ranked last.</td></tr>
+<tr><td><span class="name">+1 color</span><span class="cost">Purists: 4 red + 3 any</span></td><td class="lo">0 · 1 · 5</td><td class="lo">2.3</td><td>2.8</td><td>3.7</td><td class="lo">1.7</td><td>1.4 · 2.0 · 2.4</td><td>44%</td><td>65%</td><td class="said">The judged player could almost never afford a member, put everything into followers one at a time, and the race was decided early.</td></tr>
+</tbody></table></div>
+<p>Today and +1 any each won one deal and came second on the other; on each deal, the game the judges read first won, so those two are close to even. +1 color came last in 5 of 6 rankings on both deals, as it did in the earlier four-way reading. Both pricier rows buy about the same members in the bot games; the difference is whether the extra is a color you may not have (+1 color) or anything (+1 any).</p>
