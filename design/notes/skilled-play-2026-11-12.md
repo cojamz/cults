@@ -41,3 +41,10 @@
 ## Cory, 11:41am (second message): the space and the buy are one decision
 - "There's also some basics like with Blue, like you have to be aware of what's in the discard pile and like you need to be thinking about the choices before you take the turn. Because otherwise, like you'll decouple those things and then they won't be aligned. Like if you're min-maxing your turn and then min-maxing what you buy ... you're not gonna win that way."
 - Added to the short list as 7: picks the space and the buy together, having looked at the shop and the discard pile first. To check later (no testing yet): how far the bots pick the space first and the buy second.
+
+## Cory, 11:42am: member movement, and step the principles up a level
+- "with member movement, what member could you take from somebody else that would let you win, or what member could you give somebody else that would, like, hurt them a little bit ... when should you do it? Like, if you take it, can they just take it back? ... there's a lot of complexity we're not necessarily going to be able to, like, model at all. So I think, like, the principal should step up a level in" (cut off).
+- Claude's step up (sent 11:44am), three things under every item on the list:
+  A. Counts the real score: where every player will finish, with what their members and contests will give.
+  B. Judges a move by how it changes that finish against the player they must beat; a gain for me and a loss for them count the same.
+  C. Plays the reply out first: what rivals do next, what is gone before my turn returns, whether they can take it back.
