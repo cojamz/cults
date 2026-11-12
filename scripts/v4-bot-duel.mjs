@@ -30,7 +30,12 @@ async function playOne({ g, side, A, B }) {
   while (!s.over && ++moves < 4000) {
     const pl = s.pending.player;
     const o = who[pl] === 'A' ? A : B;
-    const m = chooseBotMove(s, rand, { maxMs: Infinity, ...o });
+    // o.force = { key, round, minLeft }: that seat takes space `key` whenever it's open in that round with at least
+    // minLeft minions in hand, and plays its level otherwise (bot audit, Nov 11: is Crunch Time worth taking early?)
+    const f = o.force, pend = s.pending;
+    const forced = f && pend.kind === 'place' && s.round === f.round && s.players[pl].left >= (f.minLeft || 0)
+      ? pend.options.find(x => x.kind === 'slot' && actionAt(s, x.q, x.i)?.key === f.key) : null;
+    const m = forced ? { player: pl, option: forced.id } : chooseBotMove(s, rand, { maxMs: Infinity, ...o });
     const slot = track.length && s.pending.kind === 'place' ? s.pending.options.find(x => x.id === m.option && x.kind === 'slot') : null;
     const key = slot ? actionAt(s, slot.q, slot.i)?.key : null;
     if (key && track.includes(key)) picks[who[pl]][`${key}${s.round}`] = (picks[who[pl]][`${key}${s.round}`] || 0) + 1;
