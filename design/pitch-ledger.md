@@ -522,3 +522,4 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - 2026-11-11 8:34pm Eastern · Blue · ✅ Swap Shoppers, ❌ Dumpster Divers ("random points"), ❌ Hagglers · tags: blue, members
 - 2026-11-11 8:42pm Eastern · Blue · ✅ Thrift Hunters, ❌ Rummagers, Scroungers liked but more On Recruits asked · tags: blue, members
 - 2026-11-11 8:45pm Eastern · Liquidators, Shop Clerks · ❌ ("This is just so slow") · his idea instead: On Recruit +blue, recruit again from the discard pile · tags: blue, members
+- 2026-11-11 9:01pm Eastern · Green · ✅ Regulars at +1, Mimics near-copy of Impersonator (dropped) · tags: green, members
