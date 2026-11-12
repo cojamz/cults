@@ -2,6 +2,14 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.744 — 2026-11-12
+
+- The **Goes Last token** holds all your other minions, from every card: **Overtime**, **Latecomers** and the rest say so.
+- Round end: the flying followers read "+4 followers" and what paid them (the color's contest, or the member), big enough to read. The log lists every player's count for each contest, and what a **Mannequin** added.
+- Hovers: your members row opens the member you point at (the next one's hover reached over it). A space whose numbers change by round prints its card sentence, not "2/1/2". **Splurge**'s You'd get no longer showed +1 white partway through a turn.
+- **Purists** joins in round I; **Banker**, **Brethren**, **Merchant** and **Extortionist** cost 7, **Mentor** and **Clan** 8. **Test Drive** on **Seat Filler** now recruits the member you pick. **Minimalists**: "Game End: +2 followers per member you have costing 8 or more."
+- Easy and Normal bots open on Build Up less often.
+
 ## v0.99.743 — 2026-11-12
 
 - You'd get: free recruits never show a price
