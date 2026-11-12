@@ -782,6 +782,33 @@ function roundEndPay(s, me) {
   } catch { return 0; }
 }
 
+// BOTTEMPO (bot audit, Nov 11; Cory: "crunch time is good. your bots suck"): a space that moves your own turns up
+// (Crunch Time, Right Away) was valued at its resources only, since the copy normal judges a placement on has no turn
+// queue, so moving turns was worth 0 and Hard almost never looked at Crunch Time. With it on, such a space is credited
+// with the better spaces those turns get by coming before rivals' turns: open spaces ranked by their estimate for the
+// bot, each turn from now (anyone's) taking the next best, and the bot's turns before and after the move compared.
+export const TEMPO = globalThis.process?.env?.BOTTEMPO === '1';
+const TEMPO_K = Number(globalThis.process?.env?.BOTTEMPO_K || 0.6); // estimates are in resources; rivals don't rank spaces as the bot does
+const TURNS_MOVED = { rally: 2, rallylast: 2, again: 1, againlast: 1 };
+/** Followers' worth of first picks a placement on (q, i) gains by moving the bot's last n turns of the round up. */
+export const turnsMoved = (state, o) => TURNS_MOVED[actionAt(state, o.q, o.i)?.key] || 0;
+export function tempoGain(state, o, ranked) {
+  const n = turnsMoved(state, o);
+  if (!n) return 0;
+  const me = state.pending.player, q = state.queue;
+  const end = q.findIndex(t => t.t === 'endTurn'), close = q.findIndex(t => t.t === 'allPlaced');
+  const turns = q.slice(end + 1, close < 0 ? q.length : close).filter(t => t.t === 'turn').map(t => t.p);
+  const mine = turns.flatMap((p, g) => (p === me ? [g] : []));
+  if (!mine.length) return 0;
+  const moved = mine.slice(-Math.min(n, mine.length));
+  // after the move: the moved turns come first, then everything else in its old order
+  const after = [...moved, ...turns.map((_, g) => g).filter(g => !moved.includes(g))];
+  const post = after.flatMap((g, k) => (turns[g] === me ? [k] : []));
+  const e = ranked.filter(x => x.key !== `${o.q}-${o.i}`).map(x => x.v);
+  const at = k => (k < e.length ? e[k] : 0);
+  return TEMPO_K * (post.reduce((t, k) => t + at(k), 0) - mine.reduce((t, k) => t + at(k), 0));
+}
+
 /**
  * Every buy or placement option of the pending decision with its value to the deciding player:
  * the expected final follower margin over the best rival, after that option. Sorted best first.
@@ -815,6 +842,13 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
   const endBase = smart ? roundEndPay(state, me) : 0;
   const endDelta = s => (smart ? roundEndPay(s, me) - endBase : 0);
   if (pend.kind === 'place') {
+    // BOTTEMPO: every open space's quick estimate for the bot, best first (what an earlier turn picks from)
+    const tempo = (opts.tempo ?? TEMPO) === true;
+    const ranked = tempo ? pend.options.filter(o => o.kind === 'slot').map(o => {
+      let v = 0;
+      try { v = actionAt(state, o.q, o.i).estimate(contextFor(state), state.players[me]) || 0; } catch { /* 0 */ }
+      return { key: `${o.q}-${o.i}`, v };
+    }).sort((x, y) => y.v - x.v) : null;
     // spaces only: a member's activation is also offered here (Cory, 2026-10-15), but bots use members in the buy
     // step, where their botActivate rules are tuned (buyShortcut), so they rate only where to place
     for (const o of pend.options) {
@@ -850,6 +884,7 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
       // Nov 4: bots held a space at Round Start and then never took it)
       const held = state.held;
       if (held && held.round === state.round && held.pid === state.players[me].id && held.key === `${o.q}-${o.i}`) v += HELD_PULL;
+      if (tempo) v += tempoGain(state, o, ranked);
       out.push({ o, v: v + rand() * (opts.noise ?? 0.3) });
     }
   } else if (pend.kind === 'buy' || pend.kind === 'pay') {

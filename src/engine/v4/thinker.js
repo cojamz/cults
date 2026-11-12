@@ -3,7 +3,7 @@
 // best average result. Work is counted in simulated moves, not wall time, so a seed always gives the same move;
 // chooseBotMove also caps a move at 250ms of wall time for the UI (see opts.maxMs).
 import { applyMove, followers } from './core.js';
-import { chooseNormalMove, chooseGreedyMove, scoreOptions, buyShortcut, rankRivalChoice, boundaryParts, SMART, useGain, followUpGain, placeUse } from './bots.js';
+import { turnsMoved, chooseNormalMove, chooseGreedyMove, scoreOptions, buyShortcut, rankRivalChoice, boundaryParts, SMART, useGain, followUpGain, placeUse } from './bots.js';
 import { defById } from './content/index.js';
 import { seededRandom } from './rng.js';
 import { planProfile, planNudge, lessonNudge, modelValues } from './mind.js';
@@ -34,7 +34,7 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   if (!rival && !['place', 'buy'].includes(pend.kind)) return chooseNormalMove(state, rand);
   // an activation or a Release normal would take: nothing to think about
   const smart = opts.smart ?? SMART;
-  const policy = { ...ROLLOUT, ...(smart ? { smart } : {}), ...(opts.future !== undefined ? { future: opts.future } : {}) };
+  const policy = { ...ROLLOUT, ...(smart ? { smart } : {}), ...(opts.future !== undefined ? { future: opts.future } : {}), ...(opts.tempo !== undefined ? { tempo: opts.tempo === true } : {}) };
   let short = pend.kind === 'buy' ? buyShortcut(state, { smart }) : smart && pend.kind === 'place' ? placeUse(state) : null;
   // holdRollouts (on by default under BOTSMART): 6 rollouts to game end are noisy for a now-or-later of 2 to 6 followers,
   // but without them smart Hard did worse head to head (12 seats to 13, -2.7 followers, 23 games; with them 15 to 9,
@@ -47,7 +47,8 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   if (short) return { player: me, option: short.id };
   const { plan = null, memory = null, lessons = null } = opts;
   const nudge = o => planNudge(state, plan, memory, o) + lessonNudge(state, lessons, o);
-  const ranked = rival || scoreOptions(state, rand, opts.future !== undefined ? { ...planProfile(plan, lessons), future: opts.future, smart } : { ...planProfile(plan, lessons), smart }).map(r => ({ ...r, v: r.v + nudge(r.o) })).sort((a, b) => b.v - a.v);
+  const tempo = opts.tempo === true ? { tempo: true } : opts.tempo !== undefined ? { tempo: false } : {};
+  const ranked = rival || scoreOptions(state, rand, opts.future !== undefined ? { ...planProfile(plan, lessons), future: opts.future, smart, ...tempo } : { ...planProfile(plan, lessons), smart, ...tempo }).map(r => ({ ...r, v: r.v + nudge(r.o) })).sort((a, b) => b.v - a.v);
   if (!ranked.length) return chooseNormalMove(state, rand);
   if (ranked.length === 1) return { player: me, option: ranked[0].o.id };
   const { candidates = 3, budget = 100, full = false, maxMs = Infinity } = opts;
@@ -56,6 +57,9 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   const late = () => until !== Infinity && now() > until;
   // only weigh options normal rates close to its best
   const pool = ranked.slice(0, candidates).filter((r, i) => i === 0 || r.v >= ranked[0].v - (opts.window ?? 4));
+  // tempo 'look' (bot audit, Nov 11): a space that moves the bot's turns up is always played out, since normal's yardstick
+  // can't see what those turns are worth; the rollouts can
+  if (opts.tempo === 'look' && pend.kind === 'place') for (const r of ranked) if (!pool.includes(r) && r.o.kind === 'slot' && turnsMoved(state, r.o)) pool.push(r);
   if (pool.length === 1) {
     opts.onDecision?.({ player: me, kind: pend.kind, round: state.round, chosen: pool[0].o.id, ranked, options: [{ id: pool[0].o.id, normal: pool[0].v, mean: null, n: 0 }] }, state);
     return { player: me, option: pool[0].o.id };

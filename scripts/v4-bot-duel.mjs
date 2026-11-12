@@ -17,20 +17,28 @@ async function playOne({ g, side, A, B }) {
   const { sphereVersion } = await import('../src/v4/tables.js');
   const { deckRules } = await import('./lib/deck-choice.mjs');
   const rand = seededRandom(g * 7717 + 3 + 4 * 101);
-  const pool = allQuadrantIds().filter(q => sphereVersion(q) === '2.0'), quads = [];
+  // FORCE=purple: that color at every table (bot audit, Nov 11); TODAY=1: today's rules as the action test plays them
+  const pool = allQuadrantIds().filter(q => sphereVersion(q) === '2.0'), quads = (process.env.FORCE || '').split(',').filter(Boolean);
+  for (const q of quads) pool.splice(pool.indexOf(q), 1);
   while (quads.length < 4) quads.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
-  let s = createGame({ seats: [0, 1, 2, 3].map(() => ({ kind: 'bot' })), seed: g, quadrants: quads, rules: { ...deckRules(), ...(process.env.CONTESTS ? { contests: process.env.CONTESTS } : {}) } });
+  let s = createGame({ seats: [0, 1, 2, 3].map(() => ({ kind: 'bot' })), seed: g, quadrants: quads, rules: { ...deckRules(), ...(process.env.TODAY === '1' ? { roundDecks: 2, contests: 'byColor', plus1: 'game' } : {}), ...(process.env.CONTESTS ? { contests: process.env.CONTESTS } : {}) } });
+  const { actionAt } = await import('../src/engine/v4/index.js');
+  const track = (process.env.TRACK || '').split(',').filter(Boolean), picks = { A: {}, B: {} }; // TRACK=rally,again: placements by side
   const who = [0, 1, 2, 3].map(i => (i % 2 === side ? 'A' : 'B'));
   let moves = 0;
   const t0 = Date.now();
   while (!s.over && ++moves < 4000) {
     const pl = s.pending.player;
     const o = who[pl] === 'A' ? A : B;
-    s = applyMove(s, chooseBotMove(s, rand, { maxMs: Infinity, ...o }));
+    const m = chooseBotMove(s, rand, { maxMs: Infinity, ...o });
+    const slot = track.length && s.pending.kind === 'place' ? s.pending.options.find(x => x.id === m.option && x.kind === 'slot') : null;
+    const key = slot ? actionAt(s, slot.q, slot.i)?.key : null;
+    if (key && track.includes(key)) picks[who[pl]][`${key}${s.round}`] = (picks[who[pl]][`${key}${s.round}`] || 0) + 1;
+    s = applyMove(s, m);
   }
   const f = s.players.map(p => followers(s, p));
   const top = Math.max(...f);
-  return { g, side, quads, who, followers: f, members: s.players.map(p => memberCount(s, p)), won: f.map(x => x === top), ms: Date.now() - t0 };
+  return { g, side, quads, who, followers: f, members: s.players.map(p => memberCount(s, p)), won: f.map(x => x === top), picks, ms: Date.now() - t0 };
 }
 
 if (!isMainThread) {
@@ -76,5 +84,7 @@ if (!isMainThread) {
   const sd = Math.sqrt(diffs.reduce((a, b) => a + (b - m) ** 2, 0) / Math.max(1, diffs.length - 1));
   const better = diffs.filter(d => d > 0).length;
   console.log(`\nA ${JSON.stringify(A)}\nB ${JSON.stringify(B)}`);
+  const tally = side => { const t = {}; for (const r of res) for (const k in r.picks?.[side] || {}) t[k] = (t[k] || 0) + r.picks[side][k]; return JSON.stringify(t); };
+  if (process.env.TRACK) console.log(`placements A ${tally('A')}, B ${tally('B')}`);
   console.log(`seats won A ${wa}, B ${wb} of ${res.length * 4}; followers per seat A−B ${m.toFixed(2)} ± ${(sd / Math.sqrt(diffs.length || 1)).toFixed(2)} (s.e.); A better on ${better} of ${diffs.length} tables`);
 }

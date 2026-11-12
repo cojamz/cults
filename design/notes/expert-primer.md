@@ -20,11 +20,20 @@ Holding a color wins contests; spending it buys followers and members. Every rou
 ## Reading rivals
 Rivals' piles are visible. Count what each can still reach this round (open spaces for their color, steals, copies) and assume they will take the best one. A lead of 2 against a rival with two open spaces is not safe. Theft and member steals (Magenta, some guests) punish big piles and cheap bodies; protect what you plan to keep.
 
-## Members and artifacts
+## Members and cloaks
 - Engines that pay every round or every recruit beat flat bodies if you will actually use them; check how many turns are left.
 - An ability that needs a condition (a color of member, a rival doing something) is worth what the table will realistically trigger, not what the text promises.
-- Artifacts are free, all game, and come with 1 of their color: pick the one that matches the plan you will really run, and note what your pick leaves the others.
+- Cloaks are free, all game, and come with 1 of their color: pick the one that matches the plan you will really run, and note what your pick leaves the others.
 - Copy and extra-turn effects are strongest when they repeat a big gain; look at what is on the board before you pick them.
+
+## Rules that change what a space is worth (added Nov 11 after AI players misplayed them)
+Each of these is a plain reading of the rulebook; past players got it wrong and lost value.
+- **Your recruit is one thing a turn.** One recruit buys one member or one batch of followers (1, 5 or 10). So 7 white needs three recruits (5, 1, 1) to become followers, and every one of those recruits is then not a member.
+- **A space that turns resources into followers does not use your recruit** (Cash In: "Turn all your white into followers"). In round III with a big pile of one color, it saves you two or three recruits, which you can spend on members or on another color's followers that same turn and the turns after. Compare it with the recruits it saves, not with "buying already does that".
+- **Moving your turns up is worth the spaces you get before rivals.** Crunch Time ("Your next two turns come right after this one") with your first minion of a round gives you three placements and three recruits in a row before anyone answers: three of the best open spaces, and a lead in a contest nobody can react to until your run ends. On your last minion it does nothing; on your second-to-last it moves one turn. Right Away is the one-turn version. Count which spaces would be gone by your next turn if you waited.
+- **Copies read the whole table.** Green's copy spaces (Echo, Cover, Greatest Hits) take what is on other players' minions. Agents ("Your actions can't be copied") stops rivals copying yours, and also stops you copying your own (Reprise, Greatest Hits on a color where you have minions). It matters when you are the one with the big actions on the board.
+- **Holding versus spending silver**: Silver's contest pays the fewest silver held, so Flaunt and Buyout (which pay for silver you hold) only pay a player who has given up that contest this round.
+- **Counting**: "counts as N members" counts N wherever members are counted, except where a rule says each card counts 1 (Red's contest).
 
 ## Table etiquette for a playtest
 You are testing the game as much as playing it. When something looks too strong, too weak, confusing or unfun, say so at the table and say why. Do not announce your own move. Ask rivals what they read from a position, and challenge a read you disagree with.
