@@ -186,11 +186,11 @@ describe('panel words (w3)', () => {
     // ..."up to" only when you pick among rivals (aminus r1 #3: "+4" read as promised, paid +2); since Oct 28 the rival
     // picks the member, so a lone rival's ransom reads as what they'd pay, in their colors
     // (the likely case can be the member itself, a card worth several members named first, as the best case is below)
-    expect(seen.ransom.likely).toMatch(/^(?:(?:up to )?\+\d+ \w+|[A-Z][\w' -]* \(\+\d+ members\))/);
+    expect(seen.ransom.likely).toMatch(/^(?:(?:up to )?\+\d+ \w+|[A-Z][\w' -]* \((?:\+|counts as )\d+ members\))/);
     // (a card worth several members is named first: "Alchemists (+3 members), +3 followers", picky bot Nov 4)
     // since every member cost 4 more (Nov 5 evening) the best case can be the payment itself, in the rival's colors
     // ("+3 white, +4 purple"), when the member is worth less than its price
-    expect(seen.ransom.best).toMatch(/^(?:\+\d+ (magenta|member|gold|red|purple|silver|yellow|blue|white|green)|[A-Z][\w' -]* \(\+\d+ members\))/);
+    expect(seen.ransom.best).toMatch(/^(?:\+\d+ (magenta|member|gold|red|purple|silver|yellow|blue|white|green)|[A-Z][\w' -]* \((?:\+|counts as )\d+ members\))/);
     expect(seen.ransom.best).not.toBe(seen.ransom.likely);
     for (const y of Object.values(seen)) expect(JSON.stringify(y)).not.toMatch(/depends on|−-/);
   }, 120000);
