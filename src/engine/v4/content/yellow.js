@@ -381,7 +381,10 @@ export default {
       const [a, b] = value;
       if (!exchangePairs(ctx, p).some(([x, y]) => x.uid === a && y.uid === b)) return;
       const names = [ctx.card(a).def.name, `${ctx.ownerOf(b).name}'s ${ctx.card(b).def.name}`];
-      if (ctx.swapMembers(p, a, b)) ctx.log(`${p.name}'s Exchange Students: swaps ${names[0]} for ${names[1]}.`);
+      // said before the swap, so the log reads cause first: what the swap sets off (Matchmaker, the incoming member's On
+      // Recruit, Deprogrammers) follows it (combo tester, Nov 12). The pair was checked swappable just above.
+      ctx.log(`${p.name}'s Exchange Students: swaps ${names[0]} for ${names[1]}.`);
+      ctx.swapMembers(p, a, b);
     },
     fair(ctx, p, k, data) {
       const c = data.left[0], n = Math.max(0, Math.min(3, k || 0, p.res[c] || 0));
@@ -797,7 +800,9 @@ export default {
     m('nightmarket', 'Early Traders', 2, 0, 'Round Start: swap up to 4 of your resources for other colors, one for one.', {
       // BOTSEE: each round start still ahead, a few resources moved where the round's plan needs them
       ...see(i => [2, 3].filter(r => r > i.round).length * 1.5),
-      onRoundStart(ctx, owner) {
+      // late (combo tester, Nov 12): it swaps what the round's other Round Start income gave (Caravan earlier in the row
+      // left it "nothing to swap" with 4 resources in hand)
+      onRoundStartLate(ctx, owner) {
         const k = Math.min(4, total(ctx, owner));
         if (!k) { ctx.log(`${owner.name}'s Early Traders: nothing to swap.`); return; }
         transmuteStep(ctx, owner, { who: 'Early Traders', left: k, done: 0 });
@@ -901,11 +906,17 @@ export default {
     // Yellow's artifact (Cory, 2026-10-31: "I think C is probably best"; replaces Farmer). Name: Claude's fill-in.
     // Cory, 2026-11-11 8:21pm Eastern: "You buy it, swap your members for arrivals that cost the same… mixing and matching
     // colors around… Costing the same might be a little restrictive, but that might keep it power balanced." A swap as
-    // Body Snatchers' (Loyalists and Bodyguards stop it). Price is Claude's fill-in.
+    // Body Snatchers' (Loyalists stop it; Bodyguards don't, Cory Nov 1: "blocks steals, not swaps"). Price is Claude's fill-in.
     m('exchangestudents', 'Exchange Students', 2, 2, 'On Recruit: swap one of your members for a rival\u2019s member that costs the same.', {
       onRecruited(ctx, owner) {
         const pairs = exchangePairs(ctx, owner);
-        if (!pairs.length) { ctx.log(`${owner.name}'s Exchange Students: no rival's member costs the same as one of yours.`); return; }
+        if (!pairs.length) {
+          // a same-cost pair that Loyalists shields is not "no member costs the same" (combo tester, Nov 12)
+          const same = ctx.membersOf(owner).some(a => ctx.rivals(owner).some(o => ctx.membersOf(o).some(b => hwCost(a) === hwCost(b))));
+          ctx.log(same ? `${owner.name}'s Exchange Students: no rival's member that costs the same as one of yours can be swapped.`
+            : `${owner.name}'s Exchange Students: no rival's member costs the same as one of yours.`);
+          return;
+        }
         ctx.choose(owner, 'Exchange Students: swap one of your members for a rival’s that costs the same?', pairs.map(([a, b]) => ({
           id: `trade:${a.uid}:${b.uid}`, label: `${a.def.name} ↔ ${ctx.ownerOf(b.uid).name}: ${b.def.name} (${hwCost(b)})`, kind: 'trade', value: [a.uid, b.uid],
           // bots take a member that adds a color they have none of, or is worth more
