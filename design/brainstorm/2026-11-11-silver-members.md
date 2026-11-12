@@ -36,9 +36,9 @@ Verdict: cut (dominated: buying followers turns silver into followers 1 for 1, t
 4. Who feels it: the Silver player, who now has a reason to load you; you, who must spend what you're handed.
 5. Not refused: he disliked "held color" contests for most silver; this pays for holding none, the same direction as today's contest. Anchorites' shape ("Round End: if you have 3 or fewer members, +5 followers"), which he kept.
 6. Judged: complementary (pays the Silver player for ending every round at 0, not only the winner) and cross-color (any player not using silver buys it). A scorer, his "members are victory conditions". Memorable: "she's a Pauper, don't give her silver… or do".
-7. Public and certain: yes.
-8. Color interactions: none named.
-9. Biggest case: 3 per round end, 9 a game.
+7. Public and certain: yes, everyone sees the silver you hold at round end.
+8. Color interactions: none named; silver is a resource every player can hold.
+9. Biggest case: 3 followers per round end, 9 a game over 3 rounds; a contest pays 4/6/10 and a winner ends near 70 to 110.
 Verdict: send
 
 ## Idea: Chaperones
@@ -62,9 +62,9 @@ Verdict: send
 4. Who feels it: the rival loses the colors they were saving and holds 3 more silver for the contest.
 5. Not refused: Debt Collectors and Return the Favor pulled silver to you; this pushes it out. Not a member-taking card ("one spot taking rival members is enough").
 6. Judged: complementary (turns silver into colors without a space, and loads a rival) and cross-color (anyone handed silver trades it for what they need). Activated.
-7. Public and certain: yes.
+7. Public and certain: yes, the silver and resources moved are all on the table.
 8. Color interactions: Magenta also takes resources; this one pays for them. Names no color.
-9. Biggest case: 3 resources a round, 9 a game.
+9. Biggest case: Cory's version (Nov 11, 7:33pm), all your silver: once per round with up to 5 silver, 5 resources a round, 15 a game; once per game with all of it, round III after Debutantes doubles 8 to 16, 16 resources if a rival holds that many (rivals hold 0 to 10 of other colors).
 Verdict: send
 
 ## Idea: Gold Diggers

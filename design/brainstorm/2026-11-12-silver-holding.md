@@ -32,8 +32,8 @@ Verdict: send
 4. Who feels it: rivals racing you for face-up members (you buy more of them); Silver players whose gifts now make you cheaper.
 5. Not refused: Big Spenders (pays silver to rivals on recruit) failed its set check Nov 4; this keeps the silver. Not points based on silver.
 6. Judged: cross-color first (anyone handed silver wants it) and complementary to Silver's holding side (Flaunt, Buyout). Rule card. Round I: a round II card by price.
-7. Public and certain: yes.
-8. Color interactions: none named.
+7. Public and certain: yes, the silver you hold is on the table and the discount is printed.
+8. Color interactions: none named; any player holding silver uses it.
 9. Biggest case: round III, hold 8: 2 off each of up to 5 recruits, 10 resources over the round, 2 per turn.
 Verdict: send
 
