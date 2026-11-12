@@ -59,3 +59,19 @@ minion, against normal Hard, Silver at every table, 49 tables played both ways (
 
 Even never spending silver, a player reaches about 3.6 silver by round II, so Flaunt pays +1 of each other color
 (3 resources), not 9, while the player gives up round I's Fewest silver contest and the buys that silver would have made.
+
+## Five more spaces the bots take while their takers do worse (Nov 12)
+In the action test these five were taken most rounds while their takers won less than players as wide. If the bots
+overrated them, a Hard seat that never takes them would beat normal Hard. 40 tables each with that color at every
+table, played both ways (80 games, Borrow fix on for both; bans/ has the games):
+
+| Hard that never takes | Followers per seat vs normal Hard | Seats won (of 320) |
+|---|---|---|
+| Largesse (Silver III) | -1.4 ± 0.9 | 39 vs 44 |
+| Test Drive (Blue I) | -1.1 ± 1.5 | 40 vs 40 |
+| Word of Mouth (Blue II) | -0.4 ± 1.2 | 43 vs 42 |
+| Gather (Red I) | -1.5 ± 1.5 | 45 vs 44 |
+| Makeover (Yellow II) | 0.0 ± 1.2 | 43 vs 41 |
+
+None helps: the bots don't overrate these. "Takers do worse than players as wide" comes from who takes them, not from the
+space. Use these duels (scripts/v4-bot-duel.mjs ban/force/hoard options) before calling a space a bot misread.
