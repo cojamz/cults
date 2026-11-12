@@ -1054,6 +1054,20 @@ const trading = {
       },
     }),
     m('undertaker', 'Undertaker', 2, 2, 'Whenever you discard one of your members, +2 followers.', { onGotRidOf: 2 }),
+    // Cory, 2026-11-11 9:10pm Eastern: "replace undertaker with leave takers" (his idea, 3:56pm: "when a thing leaves your
+    // cult, you get 2 white"). Any of your members leaving, itself too: discarded, given, stolen, swapped (core's cardLeaves,
+    // onAnyLeave). Undertaker's price (Claude, under Cory's go-with-your-gut).
+    m('leavetakers', 'Leavetakers', 2, 2, 'Whenever one of your members leaves your cult, +2 white.', {
+      onAnyLeave(ctx, owner, card, gone) {
+        ctx.gain(owner, W, 2);
+        ctx.log(`${owner.name}'s Leavetakers: ${gone.def.name} left: +2 white.`);
+      },
+    }),
+    // Cory, 2026-11-11 9:12pm Eastern: "Minimalists over exiles" ("you're going to want to be like small but big"). Costing
+    // as the shop prices it (Richer moves the 6 with its text, content/price.js). Old Money's price (Claude, gut).
+    m('minimalists', 'Minimalists', 1, 4, 'Game End: +2 followers per member you have costing 6 or more.', {
+      onGameEnd: (ctx, owner) => 2 * ctx.membersOf(owner).filter(c => c.def.s + c.def.w >= 6 + richUp(ctx.state)).length,
+    }),
     m('appraiser', 'Appraiser', 3, 2, 'On Use, once per game: discard one of your members. Gain its cost in followers or white.', {
       activate: 'game',
       onActivate(ctx, owner, card) {

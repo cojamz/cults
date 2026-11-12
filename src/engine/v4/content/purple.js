@@ -305,7 +305,7 @@ function scalpStep(ctx, p, data) {
 // Cory, Nov 9: "maybe the goes last token applies to ALL of your minions?" (test version first; live since Nov 10, the
 // Purple plan: "The token: your turns are skipped until every rival is out of minions, for all your minions"): a Purple
 // space's token holds every minion you have left, as Last Call's does; members keep their own words
-const ALL_LAST = new Set(['Sleep In', 'Hold Up', 'Right Away', 'Closing Time', 'Overtime', 'On a Roll']);
+const ALL_LAST = new Set(['Last Callers', 'Sleep In', 'Hold Up', 'Right Away', 'Closing Time', 'Overtime', 'On a Roll']);
 function toToken(ctx, p, n, why) {
   if (ALL_LAST.has(why)) n = Math.max(n, turnsLeft(ctx, p));
   if (noSkip(ctx, p)) { ctx.log(`${p.name}'s Early Birds: ${p.name}'s turns can't be skipped, so ${p.name} doesn't go last.`); return 0; }
@@ -1225,6 +1225,19 @@ export default {
     // Live Nov 6 in Night Watch's place (Cory: "1 ok"), at Night Watch's price (Claude, under Cory's go-with-your-gut).
     m('sleepyheads', 'Sleepyheads', 2, 2, 'Whenever you take the Goes Last token, +3 followers.', { f: 2, n: 2, tokenPay: 3, // +3 (Cory, Nov 6 12:24am: "yes to sleepyheads")
       ...see(info => 3 * endsAhead(info).length),
+    }),
+    // Cory, 2026-11-11 9:10pm Eastern: "last callers is fine. Let's try that" (his ask, 2:27pm: a member that grabs the Goes
+    // Last token). Takes it as a Purple space does: your other minions wait until every other hand is empty. Sleepyheads'
+    // place and price (Claude, under Cory's go-with-your-gut).
+    m('lastcallers', 'Last Callers', 2, 2, 'On Use, once per round: take the Goes Last token.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        if (!turnsLeft(ctx, owner)) { card.used = false; ctx.log(`${owner.name}'s Last Callers: no minion left to wait.`); return; }
+        toToken(ctx, owner, 1, 'Last Callers');
+      },
+      // a bot takes it with its last minion in hand, when a rival holds the token
+      botActivate: (ctx, p) => turnsLeft(ctx, p) === 1 && tokenHolder(ctx.state) != null && tokenHolder(ctx.state) !== p.id,
     }),
     // REPLACE7 (Nov 4, quality loop, Members A batch 5): Timekeeper's place, a round I first taste of the extra-turn plan
     // (director's ask; paper 18 vs 9, Purple's set 18 vs 9). Right Away's turn rule, carried, once a round, on your own

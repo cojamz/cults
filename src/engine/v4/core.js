@@ -2519,6 +2519,8 @@ function cardLeaves(state, p, uid) {
   for (const def of effectiveDefs(card)) if (def.onLeave) def.onLeave(ctx, p, wrap(state, card));
   // Ambulance Chasers (idea pipeline pool 8, candidates only): "Whenever a member leaves a rival's cult"
   for (const o of state.players) if (o !== p) eachMemberOf(state, o, (held, d) => { if (d.pool && d.onRivalLeave) d.onRivalLeave(ctx, o, held, p, wrap(state, card)); }, ['onRivalLeave']);
+  // "Whenever one of your members leaves your cult" (Leavetakers, Cory Nov 11): the leaving member counts too
+  for (const u of [...p.members]) for (const def of effectiveDefs(state.cards[u])) if (def.onAnyLeave) def.onAnyLeave(ctx, p, wrap(state, state.cards[u]), wrap(state, card));
   // "Whenever another of your members leaves your cult" (Widows, REPLACE10 bot test)
   if (REPLACE10) for (const u of p.members) if (u !== uid) for (const def of effectiveDefs(state.cards[u])) if (def.onOtherLeave) def.onOtherLeave(ctx, p, wrap(state, state.cards[u]), wrap(state, card));
 }

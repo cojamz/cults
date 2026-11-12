@@ -37,6 +37,9 @@ export const CUT = new Set([
   'yellow.jack', 'yellow.seamstress', 'yellow.dyejob',
   'echo.impersonators', // Cory, 2026-11-11 9:02pm Eastern: Mimics replaces Impersonator
   'echo.dejavu', // Cory, 2026-11-11 9:32pm Eastern: "cut tribute band" (Regulars has its slot, 9:01pm)
+  // Cory, 2026-11-11 9:10pm: Leavetakers replaces Undertaker. Barker ("we should just rethink this", 3:45pm) makes room
+  // for Minimalists (Claude, under Cory's go-with-your-gut: his White open slots were "1 (2 if Barker's rethink is a new card)")
+  'trading.undertaker', 'trading.barker',
 ]);
 
 // The 10-card decks (Cory, 2026-10-31: "create two versions of game, 10 card deck version and 15 card deck version";
@@ -49,7 +52,6 @@ export const CUT10 = new Set([
   'thieves.crew', 'thieves.robinhood', 'thieves.fixer', // Snitch back in for Cutpurse's slot (Cory, Nov 5)
   'purple.extrashift', 'purple.secondwind', 'purple.lateriser', // Gossip back in, Extra Shift out (Cory, Nov 1)
   'market.restocker', 'market.plusone',
-  'trading.undertaker',
   'yellow.tinker', 'yellow.spiceroute', // Matchmaker into the 10 deck for Gardeners' slot (Cory, Nov 5)
   'yellow.leveler', 'yellow.bookcooker',
   'yellow.gobetween', // Tourist takes its place (Cory, Nov 1 3:14pm)
