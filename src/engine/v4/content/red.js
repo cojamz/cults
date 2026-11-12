@@ -730,6 +730,12 @@ export default {
     // Cory, 2026-11-11 9:14pm Eastern: "put in purists if you have two or less", in Mob's slot. Grey has no color; Dabblers
     // never counts against its owner. 2 red + 1 any, a round I member (Cory, Nov 11 10:55pm: "it's ok round 1. if it can't even pay for its own flat cost
     // what's the point").
+    // Cory, 2026-11-12 6:39pm Eastern: "assimilators is cool" (Deprogrammers' open slot). The count lives in core.js
+    // countMembersOfColor (flag greyToBiggest), so Red's contest, Clan and every color count read it. Price is Claude's
+    // fill-in, 3 red + 4 any as printed (joins in round II: in round I nobody holds members yet).
+    m('assimilators', 'Assimilators', 2, 2, 'Your grey members count as members of your biggest color.', { greyToBiggest: true,
+      ...see(i => endsAhead(i).length * 2), // BOTSEE: about one more in the biggest group each round end left
+    }),
     m('purists', 'Purists', 2, 1, 'Round End: if your members have 2 or fewer colors, +3 followers.', {
       onRoundEnd(ctx, owner) {
         const k = ctx.state.quadrants.filter(q => ctx.countMembersOfColor(owner, q, { wild: false }) > 0).length;

@@ -250,7 +250,19 @@ const contestMembers = (state, p) => {
 // { cards: true } counts member cards, one each, whatever they count as
 // Painted Faces (idea pipeline pool 11, bot games only: flag allAlsoYellow): "Each of your members is also yellow."
 const paintedFaces = (state, p) => p.members.some(u => effectiveDefs(state.cards[u]).some(d => d.allAlsoYellow));
-export const countMembersOfColor = (state, p, q, opts) => countOfColor(state, p, q, opts, q === 'yellow' && state.quadrants.includes(q) && paintedFaces(state, p));
+// Assimilators (Cory, Nov 12: "assimilators is cool"): "Your grey members count as members of your biggest color."
+// Biggest color: the color (not grey) with the most of its members, counted as the table counts it; a tie counts the
+// greys in each tied color (the best reading for the player, Cory Nov 4). With no colored member, greys stay grey.
+const assimilates = (state, p) => p.members.some(u => effectiveDefs(state.cards[u]).some(d => d.greyToBiggest));
+const countOne = (state, p, q, opts) => countOfColor(state, p, q, opts, q === 'yellow' && state.quadrants.includes(q) && paintedFaces(state, p));
+export const countMembersOfColor = (state, p, q, opts) => {
+  const n = countOne(state, p, q, opts);
+  if (!assimilates(state, p)) return n;
+  const big = Math.max(0, ...state.quadrants.map(c => countOne(state, p, c, opts)));
+  if (!big) return n;
+  if (q === 'guest') return 0;
+  return state.quadrants.includes(q) && n === big ? n + countOne(state, p, 'guest', opts) : n;
+};
 const countOfColor = (state, p, q, { wild = true, cards = false } = {}, painted = false) => counted(state, p).reduce((s, u) => {
   const c = state.cards[u], every = wild && effectiveDefs(c).some(d => d.everyColor) && q !== 'guest' && state.quadrants.includes(q);
   // Drifters counts as the one color its owner chose when recruiting it (card.asColor; Cory, 2026-10-31)

@@ -208,6 +208,7 @@ const M = {
   'die-hards': ['🏟️', '🏁 Most green members: +6 followers'],
   brethren: ['🫂', '♾️ You recruit a member of a color you already have: +1 follower'], // Nov 11: Red
   purists: ['🧼', '🌙 Your members have 2 or fewer colors: +3 followers'],
+  assimilators: ['🫥', '♾️ Your greys count as your biggest color'], // Nov 12: Red
   'last-callers': ['🔔', '🔁 Take the Goes Last token'], // Nov 11: Purple
   leavetakers: ['🥀', '♾️ One of your members leaves your cult: +2 white'], // Nov 11: White
   minimalists: ['🪴', '🏁 +2 followers per member you have costing 8 or more'],
