@@ -730,12 +730,6 @@ export default {
     // Cory, 2026-11-11 9:14pm Eastern: "put in purists if you have two or less", in Mob's slot. Grey has no color; Dabblers
     // never counts against its owner. 2 red + 1 any, a round I member (Cory, Nov 11 10:55pm: "it's ok round 1. if it can't even pay for its own flat cost
     // what's the point").
-    // Cory, 2026-11-12 6:39pm Eastern: "assimilators is cool" (Deprogrammers' open slot). The count lives in core.js
-    // countMembersOfColor (flag greyToBiggest), so Red's contest, Clan and every color count read it. Price is Claude's
-    // fill-in, 3 red + 4 any as printed (joins in round II: in round I nobody holds members yet).
-    m('assimilators', 'Assimilators', 2, 2, 'Your grey members count as members of your biggest color.', { greyToBiggest: true,
-      ...see(i => endsAhead(i).length * 2), // BOTSEE: about one more in the biggest group each round end left
-    }),
     m('purists', 'Purists', 2, 1, 'Round End: if your members have 2 or fewer colors, +3 followers.', {
       onRoundEnd(ctx, owner) {
         const k = ctx.state.quadrants.filter(q => ctx.countMembersOfColor(owner, q, { wild: false }) > 0).length;
@@ -934,7 +928,7 @@ export default {
       // about one cheap member a turn in round I, fewer later (the row holds few of them after round I)
       ...see(info => (info.round === 1 ? 0.6 * info.myNow + 2 : info.round === 2 ? 0.3 * info.myNow : 0)),
     })),
-    m('movementpenalty', 'Deprogrammers', 1, 1, on12('deprog2') ? 'Whenever a member joins your cult from a rival’s, steal 1 follower from that rival.' : 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 4, n: 2, ...old12('red.movementpenalty'), // +1 (Cory, Oct 30)
+    m('movementpenalty', 'Deprogrammers', 1, 1, on12('deprog2') ? 'Whenever a member joins your cult from a rival’s, steal 1 follower from that rival.' : 'Whenever you take a rival’s member out of their cult, they lose 1 follower.', { f: 4, n: 2, ...(on12('deprog2') ? {} : { retired: true }), /* cut, Cory Nov 12 (design/cuts.md) */ ...old12('red.movementpenalty'), // +1 (Cory, Oct 30)
       ...(on12('deprog2') ? {
         // REPLACE12=deprog2 reword (paper requalified, Nov 4): any member that comes to you from a rival's cult (your take,
         // their give, either side of a swap), and the follower comes to you. Not for Deprogrammers' own arrival.
@@ -947,6 +941,12 @@ export default {
       } : {
         onMoveMember(ctx, owner, card, info) { if (info.from !== owner && ctx.followers(info.from) > 0) info.from.bonus -= 1; },
       }),
+    }),
+    // Cory, 2026-11-12 6:39pm Eastern: "assimilators is cool" (Deprogrammers' open slot). The count lives in core.js
+    // countMembersOfColor (flag greyToBiggest), so Red's contest, Clan and every color count read it. Price is Claude's
+    // fill-in, in Deprogrammers' place in the deck list (so seeded test decks keep their order), 3 red + 4 any as printed (joins in round II: in round I nobody holds members yet).
+    m('assimilators', 'Assimilators', 2, 2, 'Your grey members count as members of your biggest color.', { greyToBiggest: true,
+      ...see(i => endsAhead(i).length * 2), // BOTSEE: about one more in the biggest group each round end left
     }),
     // Turncoat (3 red + 1 any as a player sees it; REPLACE12=turncoat, paper requalified Nov 4): Cory's back-pocket
     // Turncoats (Nov 4, 12:35am: "I also like Turncoat") with the free recruit from the top of the pile, so nobody chooses

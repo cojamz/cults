@@ -47,6 +47,7 @@ export const CUT = new Set([
   'market.critic', 'market.windowdresser', 'market.trendsetter',
   'echo.songrequest', 'red.mob',
   'red.proselytizer', // Cory, 2026-11-11 9:14pm: Brethren replaces Proselytizers (Purists takes Mob's slot)
+  'purple.gossip', // Cory, 2026-11-12 6:49pm: "Gossip is still in the game as well" (no turn is skipped since the Nov 9 token)
   'red.movementpenalty', // Cory, 2026-11-12 6:16pm: "why is deprogrammers in the game? didnt we cut" (Nov 8: "I don't like it"); slot open
 ]);
 
