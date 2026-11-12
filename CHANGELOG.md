@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.741 — 2026-11-11
+
+- A space's hover adds up: Why names the space's own part (On a Roll: 2 turns in a row, +4) beside a cloak's or member's
+
 ## v0.99.740 — 2026-11-11
 
 - Round End members resolve player by player in turn order: a later **Paupers** sees the silver an earlier **Cat Burglars** took.
