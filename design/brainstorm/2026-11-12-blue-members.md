@@ -96,3 +96,44 @@ Verdict: send
 8. Color interactions: none named; any player can use the pile.
 9. Biggest case: a free member of about 2 to 4 cost once, plus a contest place worth up to 10.
 Verdict: send
+
+## Pass 3 (Cory 8:42pm: Thrift Hunters in; Scroungers liked, "might be abusable", "let's think of some other on-recruits")
+
+## Idea: Liquidators
+
+1. Printed text: "On Recruit: discard up to 3 shop members. +1 follower each." (Claude's numbers). Cards it touches: Out of Style "Discard 3 shop members and refill. +1 of each discarded member's color. +1 blue.", Patroness "Whenever shop members go to the discard pile, +1 follower.", Thrift Hunters (above).
+2. Played turn: round II, recruit Liquidators and discard the 3 shop members your rivals are saving for: +3 followers, and they sit in the pile for your Recruit Twice (+2 more with Thrift Hunters).
+3. Both sides: you choose which members go (the ones rivals want, or ones you plan to take from the pile); several live picks.
+4. Who feels it: rivals whose target leaves the shop; Blue rivals who now have more in the pile.
+5. Not refused: Window Dressers (On Recruit: discard 3 and refill) cut for overlap with Window Shopper; this pays followers and doesn't refill. Flagged as close.
+6. Judged: complementary (fills the pile), cross-color (deny a rival's member). On Recruit, simple.
+7. Public and certain: yes, the shop and pile are face up.
+8. Color interactions: none named; any player can buy it.
+9. Biggest case: 3 followers once, 6 with Patroness out (3 discards), against a winner's 70 to 110.
+Verdict: send
+
+## Idea: Shop Clerks
+
+1. Printed text: "On Recruit: swap a shop member with a discard-pile member." (Claude's words). Cards it touches: Swap Shoppers (above), Markdown, Test Drive (above).
+2. Played turn: round II, the pile holds the 6-cost member you want; put it back in the shop and send the shop member a rival wants to the pile. Then recruit it next turn from the shop.
+3. Both sides: you choose both members; it helps you (bring one back) or hurts a rival (bury their target).
+4. Who feels it: the rival whose shop target goes to the pile.
+5. Not refused: no ledger verdict on this shape or name.
+6. Judged: Blue's shop-and-pile theme, cross-color (anyone can rescue a member). On Recruit, simple.
+7. Public and certain: yes, both are face up.
+8. Color interactions: none named; any player can use the pile.
+9. Biggest case: one member moved each way; worth a 2 to 10 cost member to you or a rival; no followers of its own.
+Verdict: send
+
+## Idea: Housecleaners
+
+1. Printed text: "On Recruit: discard a rival's member costing 3 or less." (Claude's numbers).
+2. Played turn: round II, the most-members leader holds a 2-cost member: discard it, they drop a place in the contest (4/6/10), and it waits in the pile.
+3. Both sides: you choose the rival and the member.
+4. Who feels it: the rival losing a member, a sting.
+5. Not refused: Repossessors "On Use, once per game: discard a rival's member costing up to 8." already does it bigger in Blue's own deck. Flagged as a near-copy.
+6. Judged: a smaller Repossessors.
+7. Public and certain: yes, members are face up.
+8. Color interactions: none named.
+9. Biggest case: a 3-cost member discarded and a contest place worth up to 10 followers.
+Verdict: cut (a smaller Repossessors)
