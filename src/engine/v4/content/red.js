@@ -12,6 +12,9 @@ import { add7, old7, handlers7 } from './replace7.js';
 import { add12, old12, on12 } from './replace12.js';
 import { swap11, handlers11 } from './replace11.js';
 import { pool, poolSpace, anyColors, anyColorStep, freeAsk, freeTake } from './pool.js';
+// INITIATION_CAP=<n>, bot test only (bug hunter, Nov 12: with today's prices a cap of 10 reaches almost every member)
+const INIT_CAP_ENV = Number(globalThis.process?.env?.INITIATION_CAP || 0);
+const INIT_CAP = INIT_CAP_ENV || 9 + MORE;
 const m = (key, name, s, w, text, extra = {}) => ({ key, name, s, w, text, f: 1, n: 1, ...extra });
 const cost = c => c.def.s + c.def.w;
 /** Pool 6: Family Reunion's shop members: a color one of p's members has, costing up to 6 (was 4: nothing cost that little, judge games Nov 7). */
@@ -350,12 +353,12 @@ export default {
       resolve(ctx, p) { ctx.gain(p, 'red', ACT.has('promote1') ? 1 : 3, { fromAction: true }); swap(ctx, p, 'demote', 'Demote: choose a member and its replacement'); },
     },
     {
-      key: 'take', ring: 3, name: 'Initiation', text: `Recruit a shop member costing ${9 + MORE} or less, for free. +1 red.`, // the cap (Cory, 2026-10-24: "8 or less"; 9 since Nov 5, "for named costs, yes go up by 1")
-      estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().filter(c => cost(c) <= 9 + MORE + richUp(ctx.state)).map(c => c.def.f + cost(c) * 0.6)),
+      key: 'take', ring: 3, name: 'Initiation', text: `Recruit a shop member costing ${INIT_CAP} or less, for free. +1 red.`, // the cap (Cory, 2026-10-24: "8 or less"; 9 since Nov 5, "for named costs, yes go up by 1")
+      estimate: ctx => 1 + Math.max(0, ...ctx.shopCards().filter(c => cost(c) <= INIT_CAP + richUp(ctx.state)).map(c => c.def.f + cost(c) * 0.6)),
       resolve(ctx, p) {
-        const shop = ctx.shopCards().filter(c => cost(c) <= 9 + MORE + richUp(ctx.state));
+        const shop = ctx.shopCards().filter(c => cost(c) <= INIT_CAP + richUp(ctx.state));
         ctx.gain(p, 'red', 1, { fromAction: true });
-        if (!shop.length) { ctx.log(`${p.name}: no shop member costs ${9 + MORE + richUp(ctx.state)} or less.`); return; }
+        if (!shop.length) { ctx.log(`${p.name}: no shop member costs ${INIT_CAP + richUp(ctx.state)} or less.`); return; }
         if (ACT.has('initiation')) usesRecruit(ctx, p);
         ctx.choose(p, 'Initiation: which member?', shop.map(c => ({
           id: `card:${c.uid}`, label: `${c.def.name} (${cost(c)})`, kind: 'card', value: c.uid, hint: c.def.f * 1.5 + cost(c),

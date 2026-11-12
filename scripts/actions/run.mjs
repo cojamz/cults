@@ -22,6 +22,9 @@ export const VARIANTS = {
   // Line Cutters worth 1 instead of 3 (polish pass: 7 of 8 AI players called it cheap)
   'cutters1': { LINECUTTERS_F: '1' },
   'cutters2': { LINECUTTERS_F: '2' },
+  // Initiation's cap (bug hunter, Nov 12): Red at every table, today's 10 against 8
+  'init-base': { FORCE: 'red' },
+  'init8': { FORCE: 'red', INITIATION_CAP: '8' },
   // members that can't pay back their price (design/eval/member-payback/2026-11-12-pays-for-itself.md), lifted with
   // followers to reach it (Cory: "lift a weak card with followers before cutting its price")
   'payback': { MEMBER_F: 'silver.bookies:4,market.snob:4,red.recruiter:4,gold.seed:2,market.windowshopper:3,market.thrifthunters:3,purple.timekeepers:2' },
