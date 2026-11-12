@@ -88,7 +88,7 @@ Every live Red member's shape, so the next pick differs: Body Snatchers (Round S
 9. Biggest case: round III, you hold 4 red and 3 grey: biggest group 7, Red's contest won (10) where you'd tie or lose, Clan pays 7 instead of 4 (+3). One round end, about 10 followers more at most, at round III's center moment; a winner ends near 70 to 110.
 Verdict: send
 
-## Idea: Landlords
+## Idea: Ward Bosses
 
 1. Printed text: "Whenever a rival recruits a member of a color you have 3 or more of, they give you 2 resources of their choice." (Claude's numbers). Cards it touches: Red's contest (most members of one color); Gather "+3 red. If you recruit a member this turn of a color you already have: +4 followers. +1 red."
 2. Played turn: round II, 4 players, you hold 3 red. A rival wants the 6-cost red member: they pay its price and give you 2 resources (they pick which), or buy something else. You gain 2 resources on someone else's turn; best other outcome, they skip red and your lead in red holds.
