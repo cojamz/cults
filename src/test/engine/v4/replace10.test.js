@@ -181,11 +181,12 @@ describe('REPLACE10: Almoner and Widows', () => {
     expect(named(s, 'Widows')).toEqual(["P1's Widows: Accomplice left: +2 followers.", "P1's Widows: Roadie left: +2 followers."]);
   });
 
-  it('Widows, the pitched turn: Ben\'s Kidnapper takes your cheapest member at round start: +2', () => {
-    let s = table(['red', 'echo', 'trading', 'thieves'], { n: 4, round: 1, members: [['trading.widows', 'echo.roadie'], ['thieves.kidnappers'], ['echo.agents'], []], queue: [{ t: 'round', r: 2 }] });
-    // Ben picks P1: Kidnapper takes P1's cheapest, Roadie
-    s = applyMove(s, { player: s.pending.player, option: s.pending.options.find(o => o.label.startsWith("P1's Roadie")).id });
-    expect(named(s, 'Kidnapper')).toEqual(["P2's Kidnapper: stole P1's Roadie."]);
+  it('Widows, the pitched turn: Ben\'s Kidnappers has you give a member at round end: +2', () => {
+    let s = table(['red', 'echo', 'trading', 'thieves'], { n: 4, round: 1, members: [['trading.widows', 'echo.roadie'], ['thieves.kidnappers'], ['echo.agents'], []], queue: [{ t: 'allPlaced' }] });
+    // Ben picks P1, who gives Roadie (Kidnappers, Nov 11: the rival chooses)
+    s = applyMove(s, { player: s.pending.player, option: 'player:0' });
+    s = applyMove(s, { player: s.pending.player, option: s.pending.options.find(o => o.label.startsWith('Roadie')).id });
+    expect(named(s, 'Kidnappers')).toEqual(["P2's Kidnappers: P1 gives Roadie to P2."]);
     expect(named(s, 'Widows')).toEqual(["P1's Widows: Roadie left: +2 followers."]);
   });
 });

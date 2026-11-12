@@ -86,10 +86,12 @@ describe('REPLACE1: each card fires', () => {
     expect(named(s, 'Racketeers')).toEqual(["P2's Racketeers: took 2 red from P1 (Most red).", "P2's Racketeers: took 1 blue from P1 (Most blue)."]);
   });
 
-  it('Racketeers: Bodyguards blocks it', () => {
+  it('Racketeers against Bodyguards: it steals 2, Bodyguards steals 1 back (Nov 11)', () => {
     const s = table(['red', 'thieves', 'market', 'yellow'], { round: 1, res: [{ red: 3 }], members: [['thieves.watchdog'], ['thieves.racketeers']], queue: [{ t: 'endRound' }] });
-    expect(s.players[0].res.red).toBe(3);
-    expect(named(s, 'Racketeers')).toEqual([]);
+    expect(s.players[0].res.red).toBe(2);
+    expect(s.players[1].res.red).toBe(1);
+    expect(named(s, 'Racketeers')).toHaveLength(1);
+    expect(named(s, 'Bodyguards')).toEqual(["P1's Bodyguards: took 1 from P2."]);
   });
 
   it('Night Watch: a rival takes the Goes Last token with Last Call, +1 follower per minion on it', () => {

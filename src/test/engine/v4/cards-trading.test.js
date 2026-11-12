@@ -160,8 +160,10 @@ describe('White members', () => {
     expect(named(s, 'Recruiter')).toHaveLength(0);
   });
 
-  it('Raiders can\'t steal from a rival with Bodyguards (Cory, Nov 1: Bodyguards and Lie Low block every steal)', () => {
-    const s = use(table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider'], ['thieves.watchdog']], shop: ROW, ...buy }), 'trading.raider');
+  it('Raiders can\'t steal from a rival on Lie Low (Cory, Nov 1: Lie Low blocks every steal)', () => {
+    const t = table(Q, { n: 3, res: [{ white: 2 }], bonus: [0, 5, 2], members: [['trading.raider']], shop: ROW, ...buy });
+    t.players[1].hideout = t.round;
+    const s = use(t, 'trading.raider');
     expect([B(s, 0), B(s, 1), B(s, 2), R(s, 0).white]).toEqual([2, 5, 0, 0]); // the only rival it can steal from: P3
     expect(named(s, 'Raiders')).toEqual(["P1's Raiders stole 2 followers from P3 and paid 2 white."]);
   });

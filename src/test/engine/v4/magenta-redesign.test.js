@@ -78,7 +78,8 @@ describe('Magenta redesign edge cases', () => {
     expect(s.players[0].res).toMatchObject({ gold: 5, magenta: 1 });
   });
   it('Heist offers only rivals with followers to steal, never a protected one, and takes 4', () => {
-    let s = table(Q, { round: 2, n: 4, res: [{}, {}, {}, {}], bonus: [0, 5, 0, 6], members: [[], [], [], ['thieves.watchdog']], shop });
+    let s = table(Q, { round: 2, n: 4, res: [{}, {}, {}, {}], bonus: [0, 5, 0, 6], shop });
+    s.players[3].hideout = s.round; // Lie Low (Bodyguards stopped blocking, Nov 11)
     s = take(s, 'thieves.rob');
     expect(ids(s)).toEqual(['player:1']);
     s = restored(s);
@@ -97,9 +98,11 @@ describe('Magenta redesign edge cases', () => {
     expect(s.players[0].bonus).toBe(2);
     expect(s.players[1].bonus).toBe(0);
   });
-  it('Bodyguards blocks resource theft as well as member taking and ransom', () => {
-    for (const key of ['pickpocket', 'hideout', 'rob', 'ransom', 'heist']) {
-      const s = take(table(Q, { round: 3, res: [{}, { gold: 10 }], members: [[], ['thieves.watchdog', 'red.twins']], shop }), `thieves.${key}`);
+  it('Lie Low blocks resource theft as well as member taking and ransom', () => {
+    for (const key of ['pickpocket', 'rob', 'ransom', 'heist']) {
+      const t = table(Q, { round: 3, res: [{}, { gold: 10 }], members: [[], ['red.twins']], shop });
+      t.players[1].hideout = t.round;
+      const s = take(t, `thieves.${key}`);
       expect(s.pending.kind).toBe('buy');
       expect(s.players[1].res.gold).toBe(10);
       expect(owns(s, 1, 'red.twins')).toBe(true);

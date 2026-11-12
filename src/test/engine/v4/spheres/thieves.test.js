@@ -363,15 +363,14 @@ describe('Magenta members', () => {
     expect(Object.values(R(s)[0]).reduce((a, b) => a + b, 0)).toBe(2);
   });
 
-  it('Bodyguards: rivals can’t steal your members or your resources', () => {
-    const s = take(scene({ round: 3, members: [[], ['thieves.watchdog', 'red.intern']] }), 'thieves.heist');
-    expect(s.pending?.kind).not.toBe('choose');
-    expect(s.players[1].members).toHaveLength(2);
+  // Cory, Nov 11 9:17pm: "Whenever a rival steals from you, steal 1 back from them." (no longer blocks)
+  it('Bodyguards: a rival steals from you; steal 1 back from them', () => {
     let t = scene({ res: [{}, { gold: 3 }, { red: 1 }], members: [[], ['thieves.watchdog']] });
     t = take(t, 'thieves.pickpocket');
-    expect(ids(t)).toEqual(['take:2:red']);
-    t = move(t, 'take:2:red');
-    expect(R(t)[1]).toEqual({ ...Z, gold: 3 });
+    expect(ids(t)).toEqual(['take:1:gold', 'take:2:red']);
+    t = move(t, 'take:1:gold');
+    expect(R(t)[1]).toEqual({ ...Z, gold: 3 }); // stole 1 gold, then Bodyguards took 1 back
+    expect(R(t)[0].gold + R(t)[0].magenta).toBe(1);
   });
 
   it('Crew: worth 2 followers', () => {

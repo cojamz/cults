@@ -148,11 +148,12 @@ describe('Magenta actions', () => {
     expect([R(t).magenta, R(t).red, R(t, 1).red]).toEqual([1, 2, 1]);
     expect(owns(t, 1, 'red.intern')).toBe(true);
   });
-  it('× Bodyguards: Shake Down and Poach can\'t reach a Bodyguards owner\'s members', () => {
-    let s = table(Q, { round: 2, members: [[], ['thieves.watchdog', 'red.twins']], shop: ROW });
+  it('× Lie Low: Shake Down and Poach can\'t reach a hidden rival\'s members', () => {
+    const hide = t => { t.players[1].hideout = t.round; return t; };
+    let s = hide(table(Q, { round: 2, members: [[], ['red.twins']], shop: ROW }));
     s = take(s, 'thieves.ransom');
     expect(s.log).toContain('P1 found no one to hold to ransom.');
-    s = take(table(Q, { round: 3, left: 5, members: [[], ['thieves.watchdog', 'red.twins']], shop: ROW }), 'thieves.heist');
+    s = take(hide(table(Q, { round: 3, left: 5, members: [[], ['red.twins']], shop: ROW })), 'thieves.heist');
     expect(s.log).toContain('P1 found nothing worth a heist.');
   });
 
@@ -330,8 +331,9 @@ describe('Magenta members', () => {
     expect(named(s, 'Safecracker').length).toBe(1);
     expect(ids(s)).not.toContain(`use:${uidIn(s, 'thieves.bigscore', 0)}`);
   });
-  it('× Safecracker: Bodyguards keeps its owner out of the steal; a victim\'s Fence pays nothing (own steals only, Nov 6)', () => {
-    let s = table(Q, { n: 3, res: [{ gold: 20 }, { magenta: 7 }, { gold: 3 }], members: [['thieves.bigscore'], ['thieves.watchdog'], ['thieves.fence']], shop: ROW });
+  it('× Safecracker: Lie Low keeps its player out of the steal; a victim\'s Fence pays nothing (own steals only, Nov 6)', () => {
+    let s = table(Q, { n: 3, res: [{ gold: 20 }, { magenta: 7 }, { gold: 3 }], members: [['thieves.bigscore'], [], ['thieves.fence']], shop: ROW });
+    s.players[1].hideout = s.round;
     s = take(s, 'gold.rush');
     s = move(s, `use:${uidIn(s, 'thieves.bigscore', 0)}`);
     expect(s.pending.options.map(o => o.id)).toEqual(['take:2:gold']); // 2 from P3 only

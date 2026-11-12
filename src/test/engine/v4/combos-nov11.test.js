@@ -132,9 +132,9 @@ describe('combo tester, copies and member movement (Nov 11)', () => {
     expect(s.log).toContain("P2's Buskers: no rival action to copy (P1's Agents prevents copying Gather).");
   });
   it('Buyout of Double Agent: its On Recruit fires for the buyer', () => {
-    const { s } = go('buyout-doubleagent', { quads: ['red', 'echo', 'silver', 'trading'], n: 3, turns: [0, 1, 2], members: [[], ['thieves.doubleagent', 'red.clan'], ['echo.wallflower']], res: [{ silver: 10 }] },
-      [/Buyout/, /Double Agent/, /Clan/]);
-    expect(names(s, 0)).toEqual(['Clan']);
+    const { s } = go('buyout-doubleagent', { quads: ['red', 'echo', 'silver', 'trading'], n: 3, turns: [0, 1, 2], members: [[], ['thieves.doubleagent', 'red.bigfamily'], ['echo.wallflower']], res: [{ silver: 10 }] },
+      [/Buyout/, /Double Agent/, /Big Family/]); // costing up to 8 since Nov 11 (Clan costs 10)
+    expect(names(s, 0)).toEqual(['Big Family']);
     expect(names(s, 1)).toEqual(['Double Agent']);
     expect(s.players[1].res.silver).toBe(10);
   });

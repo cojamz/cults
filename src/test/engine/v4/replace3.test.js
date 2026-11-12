@@ -27,7 +27,7 @@ describe('REPLACE3: the switch', () => {
     const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
     expect(price('trading.evictors')).toEqual([5, 4, 1]);
     expect(price('purple.interrupters')).toEqual([4, 3, 1]);
-    expect(price('thieves.kidnappers')).toEqual([6, 3, 1]); // 2 more when it went live (Claude, Nov 3: owners won 44% at 4 + 2)
+    expect(price('thieves.kidnappers')).toEqual([6, 3, 2]); // 2 more when it went live (Claude, Nov 3: owners won 44% at 4 + 2); worth 2 (Cory, Nov 11)
     expect(price('market.completists')).toEqual([6, 4, 2]);
     expect(price('echo.impersonators')).toEqual([4, 3, 1]);
     expect(price('red.missionaries')).toEqual([6, 4, 2]);
@@ -77,21 +77,30 @@ describe('REPLACE3: each card fires', () => {
     expect(s.pending.kind).toBe('place');
   });
 
-  it('Kidnapper: at round start, steal a rival\'s cheapest member, any rival you choose (Cory, Nov 5)', () => {
-    let s = table(['red', 'thieves', 'market', 'trading'], { n: 3, round: 1, members: [['thieves.kidnappers'], ['red.recruitbonus', 'trading.martyr'], ['market.snob']], queue: [{ t: 'round', r: 2 }] });
-    expect(s.pending.prompt).toBe('Kidnapper: steal which rival’s cheapest member?');
-    expect(s.pending.options.map(o => o.value).sort()).toEqual([uidIn(s, 'red.recruitbonus', 1), uidIn(s, 'market.snob', 2)].sort());
-    s = answer(s, `card:${uidIn(s, 'red.recruitbonus', 1)}`);
-    expect(owns(s, 0, 'red.recruitbonus')).toBe(true);
-    expect(owns(s, 1, 'red.recruitbonus')).toBe(false);
-    expect(named(s, 'Kidnapper')).toContain("P1's Kidnapper: stole P2's Greeters.");
+  // Cory, Nov 11 9:17pm: "Round End: a rival you choose gives you one of their members."
+  it('Kidnappers: at round end the owner picks a rival, and that rival picks which member to give', () => {
+    let s = table(['red', 'thieves', 'market', 'trading'], { n: 3, round: 1, members: [['thieves.kidnappers'], ['red.recruitbonus', 'trading.martyr'], ['market.snob']], queue: [{ t: 'allPlaced' }] });
+    expect(s.pending.player).toBe(0);
+    expect(s.pending.prompt).toBe('Kidnappers: which rival gives you one of their members?');
+    expect(s.pending.options.map(o => o.id)).toEqual(['player:1', 'player:2']);
+    s = answer(s, 'player:1');
+    expect(s.pending.player).toBe(1);
+    expect(s.pending.prompt).toBe('Kidnappers: give which of your members to P1?');
+    expect(s.pending.options.map(o => o.value).sort()).toEqual([uidIn(s, 'red.recruitbonus', 1), uidIn(s, 'trading.martyr', 1)].sort());
+    s = answer(s, `card:${uidIn(s, 'trading.martyr', 1)}`);
+    expect(owns(s, 0, 'trading.martyr')).toBe(true);
+    expect(owns(s, 1, 'trading.martyr')).toBe(false);
+    expect(named(s, 'Kidnappers')).toContain("P1's Kidnappers: P2 gives Martyrs to P1.");
   });
 
-  it('Kidnapper: the owner picks the rival', () => {
-    let s = table(['red', 'thieves', 'market', 'trading'], { n: 3, round: 1, members: [['thieves.kidnappers'], ['red.crowd'], ['market.regular']], queue: [{ t: 'round', r: 2 }] });
-    expect(s.pending.prompt).toBe('Kidnapper: steal which rival’s cheapest member?');
-    s = answer(s, `card:${uidIn(s, 'market.regular', 2)}`);
-    expect(owns(s, 0, 'market.regular')).toBe(true);
+  it('Kidnappers: one rival with a member is asked straight away; Bodyguards and Lie Low don\'t stop a gift', () => {
+    const t = table(['red', 'thieves', 'market', 'trading'], { n: 3, round: 1, members: [['thieves.kidnappers'], ['thieves.watchdog'], []], queue: [{ t: 'allPlaced' }] });
+    t.players[1].hideout = t.round;
+    let s = t;
+    if (s.pending?.player === 0) s = answer(s, 'player:1');
+    expect(s.pending.player).toBe(1);
+    s = answer(s, `card:${uidIn(s, 'thieves.watchdog', 1)}`);
+    expect(owns(s, 0, 'thieves.watchdog')).toBe(true);
   });
 
   it('Completists: once per game, recruit every shop member of one color, paying each', () => {
