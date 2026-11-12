@@ -27,3 +27,13 @@
 12. Never ends a round with more resources than their turns left can spend, unless it wins a contest
 13. Collects the colors their target members cost, rounds ahead
 14. Aims steals and swaps at whoever is really winning, not at the biggest pile
+
+## Cory, 11:41am: these are things to weigh, never hard rules
+- 8: "It's not never skip an expensive member. That means always buy, right? Like it's a more nuanced calculation ... if the gain from the member is straightforward, then like you should be assessing it. But if it's harder to think about, then like I don't know ... I don't want it to be never skip or like always buy ... But there needs to be a consideration of this element for sure."
+- 9: "that's part of what we're talking about" (same as 8).
+- 10: "these are hard rules that aren't always going to be right. Like you don't want to take a rival's thing if like it doesn't add to your build and you're spending like 10 resources on it ... just buy the followers ... you can find situations where like all of these like heuristics will be wrong and also situations where all of these heuristics will be right ... what a rival wants and if it's easy for you to get, then consider it ... a losing rival, you probably don't really care."
+- 11: "there's so much nuance here ... the whole goal is like every space almost is a fought over space. Like there should be none that are just objectively like everybody wants immediately. I know there are today ... there should be some consideration here."
+- 12: "I think that's fair ... you kind of want to end with 0 unless you're trying to win a contest, but again, this shouldn't be a hard rule."
+- 13: "What?" (not understood; explained 11:43am: a red member costs mostly red, so gather red the round before).
+- 14: "Yeah, I think that's a pretty good" (cut off).
+- Claude's read: skill is weighing these against each other in the situation; a later test should compare a bot that weighs each one, not one that always does it.
