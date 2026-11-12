@@ -65,10 +65,10 @@ function index(q) {
   for (const def of q.members) {
     def.id = `${q.id}.${def.key}`;
     if (MEMBER_F[def.id] > 0) { def.f = MEMBER_F[def.id]; def.n = MEMBER_F[def.id]; }
-    if (MEMBER_P[def.id]) def.w = Math.max(0, (def.w || 0) + MEMBER_P[def.id]);
     def.quadrant = q.id;
     def.copies = def.copies || 1;
     addWild(def);
+    if (MEMBER_P[def.id]) def.w = Math.max(0, (def.w || 0) + MEMBER_P[def.id]); // after the shift, so +n is +n on the card
     asFollowers(def);
     asMembers(def);
     DEFS[def.id] = def;
