@@ -244,3 +244,18 @@ Verdict: cut (Debt Collectors' verb, two steps)
 8. Color interactions: none named; any player holds silver.
 9. Biggest case: 3 resources once, about 3 followers' worth against a winner's 70 to 110.
 Verdict: send
+
+## Pass 5 (Cory 8:02pm: "no. more on recruit"): Matrons and Party Hosts refused; more On Recruit ideas, 1 slot left.
+
+## Idea: Well-Wishers
+
+1. Printed text: "On Recruit: give one of your members to a rival. +3 followers." (Claude's numbers). Cards it touches: Patron Saints "Game End: +1 follower per silver member, anyone's.", Buyout "Recruit a rival's member, paying them its cost in silver. +1 silver.".
+2. Played turn: round II, you hold a 2-cost member that no longer helps; give it to the rival leading White's fewest-members contest (they now hold one more) and take +3 followers. Recruiting followers instead costs 3 resources for 3.
+3. Both sides: you choose the member and the rival: a weak member to someone it hurts (White's contest) or helps least. Several live picks.
+4. Who feels it: the rival handed a member (a gift or a sting, by color contest).
+5. Not refused: Cory asked for member movement (8:00pm). Close to White's Bequest pitch (give a member for white); that one is a space.
+6. Judged: Silver's verb is give; cross-color (any player with a spare member). On Recruit, memorable.
+7. Public and certain: yes, the member moves face up.
+8. Color interactions: White's fewest-members and Blue's most-members contests both read member counts; names neither.
+9. Biggest case: 3 followers once plus a member's worth moved (2 to 10 resources); a contest swing up to 10 if it changes a fewest-members or most-members race.
+Verdict: send
