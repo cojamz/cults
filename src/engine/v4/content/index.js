@@ -68,7 +68,7 @@ function index(q) {
     def.quadrant = q.id;
     def.copies = def.copies || 1;
     addWild(def);
-    if (MEMBER_P[def.id]) def.w = Math.max(0, (def.w || 0) + MEMBER_P[def.id]); // after the shift, so +n is +n on the card
+    if (MEMBER_P[def.id] && !def.priceTest) { def.w = Math.max(0, (def.w || 0) + MEMBER_P[def.id]); def.priceTest = true; } // once (index can run twice), after the shift
     asFollowers(def);
     asMembers(def);
     DEFS[def.id] = def;
