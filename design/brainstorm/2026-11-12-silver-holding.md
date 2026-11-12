@@ -144,3 +144,9 @@ Source: Cory, 2026-11-11 7:42pm: "Maybe something that's just like, when you buy
 8. Color interactions: none named.
 9. Biggest case: round III, 3 silver members recruited, 3 extra follower buys of up to 10 each, paid with your own resources.
 Verdict: send
+
+## Idea: Ticket Takers
+
+Source: Cory, 2026-11-11 7:48pm: "we should do something like, whenever a player uses silver to buy followers, get a follower"
+1. Printed text: "Whenever any player buys followers with silver, +1 follower." (Cory's idea; Claude's words and name; "a player" read as any player, you included).
+Verdict: send
