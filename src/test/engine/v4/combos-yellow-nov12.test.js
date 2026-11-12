@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Combo tester, Yellow's Nov 11 members (Early Traders, Matchmaker, Exchange Students, Headhunters, Cosmopolitans)
+// Combo tester, Yellow's Nov 11 members (Early Traders, Matchmaker, Exchange Students, Talent Scouts, Cosmopolitans)
 // against the members and settings they touch. Each scene checks the outcome against the printed text.
 import { describe, it, expect } from 'vitest';
 import { createGame, resume, followers, applyMove } from '../../../engine/v4/core.js';
@@ -137,7 +137,7 @@ describe('Exchange Students: "On Recruit: swap one of your members for a rivalâ€
     expect(s.log.filter(l => l === "P1's Matchmaker: a yellow member, +3 followers.")).toHaveLength(1);
   });
 
-  it('a used Headhunters stays used in its new cult; an unused one can be used by its new owner that turn', () => {
+  it('a used Talent Scouts stays used in its new cult; an unused one can be used by its new owner that turn', () => {
     const used = run('es-hh-used', { quads: Q, queue: BUY, res: [{ yellow: 20 }], shop: ['yellow.exchangestudents', 'red.volunteer'],
       members: [['red.recruiter'], ['yellow.headhunters']] }, [/Exchange/, /Recruiter â†”/],
       st => { st.cards[uidOf(st, 'yellow.headhunters')].used = true; }).s;
@@ -148,14 +148,14 @@ describe('Exchange Students: "On Recruit: swap one of your members for a rivalâ€
 
     const fresh = run('es-hh-fresh', { quads: Q, queue: BUY, res: [{ yellow: 20 }], shop: ['yellow.exchangestudents', 'red.volunteer'],
       members: [['red.recruiter'], ['yellow.headhunters']] }, [/Exchange/, /Recruiter â†”/, /^use:/, /Volunteer/]).s;
-    expect(names(fresh, 0)).toEqual(['Exchange Students', 'Headhunters', 'Volunteer']);
-    expect(fresh.log).toContain("P1's Headhunters: recruits Volunteer for free.");
+    expect(names(fresh, 0)).toEqual(['Exchange Students', 'Talent Scouts', 'Volunteer']);
+    expect(fresh.log).toContain("P1's Talent Scouts: recruits Volunteer for free.");
   });
 
   it('Matchmaker swapped out: it does not pay P1 for the yellow member swapped in, nor P2 for the arrival', () => {
     const { s } = run('es-matchmaker-out', { quads: Q, queue: BUY, res: [{ yellow: 20 }], shop: ['yellow.exchangestudents'],
       members: [['yellow.matchmaker'], ['yellow.headhunters']] }, [/Exchange/, WILD, WILD, /Matchmaker â†”/]);
-    expect(names(s, 0)).toEqual(['Exchange Students', 'Headhunters']);
+    expect(names(s, 0)).toEqual(['Exchange Students', 'Talent Scouts']);
     expect(names(s, 1)).toEqual(['Matchmaker']);
     expect(s.players[0].bonus).toBe(3); // Exchange Students' own recruit only
     expect(s.players[1].bonus).toBe(0);
@@ -189,12 +189,12 @@ describe('Exchange Students: "On Recruit: swap one of your members for a rivalâ€
   });
 });
 
-describe('Headhunters: "On Use, once per game: recruit a member costing up to 6 for free."', () => {
+describe('Talent Scouts: "On Use, once per game: recruit a member costing up to 6 for free."', () => {
   it('a free recruit is a recruit: Matchmaker, Proselytizers and Recruiter all pay', () => {
     const { s } = run('hh-recruit-triggers', { quads: Q, queue: BUY, shop: ['yellow.nightmarket'],
       members: [['yellow.headhunters', 'yellow.matchmaker', 'red.proselytizer', 'red.recruiter']] }, [/^use:/, /Early Traders/, WILD, WILD]);
     expect(names(s, 0)).toContain('Early Traders');
-    expect(s.log).toContain("P1's Headhunters: recruits Early Traders for free.");
+    expect(s.log).toContain("P1's Talent Scouts: recruits Early Traders for free.");
     expect(s.players[0].bonus).toBe(3 + 1); // Matchmaker +3, Proselytizers +1
     expect(s.players[0].res.red).toBe(1 + 2); // Recruiter +1, Matchmaker's 2 wild picked red
     expect(s.cards[uidOf(s, 'yellow.headhunters')].used).toBe(true);
@@ -203,7 +203,7 @@ describe('Headhunters: "On Use, once per game: recruit a member costing up to 6 
   // OPEN QUESTION, not fixed (core.js, silver.js): Splurgers rides Barker's extra followers buy, which only a recruit
   // step's member brings (decisions.md, Nov 4, Claude's reading for Barker: "Members recruited by a space... don't bring
   // one"). Splurgers prints "Whenever you recruit a silver member", and a free recruit is a recruit (Cory, Oct 21), so
-  // Headhunters' free silver member brings no followers buy today. Flips to passing if Cory reads it the printed way.
+  // Talent Scouts' free silver member brings no followers buy today. Flips to passing if Cory reads it the printed way.
   it.fails('Splurgers: a silver member taken free after the turn\'s recruit still lets you buy followers', () => {
     const sc = splurge => ({ quads: SQ, queue: BUY, res: [{ red: 3, silver: 6 }], shop: ['red.volunteer', 'silver.retinue'],
       members: [['yellow.headhunters', ...(splurge ? ['silver.splurgers'] : [])]] });
@@ -220,27 +220,27 @@ describe('Headhunters: "On Use, once per game: recruit a member costing up to 6 
     const { s } = run('hh-discount', { quads: Q, queue: BUY, shop: ['trading.martyr', 'echo.encore'], discount: [3],
       members: [['yellow.headhunters']] }, [/^use:/]);
     const labels = s.pending.options.map(o => o.label);
-    expect(s.pending.prompt).toBe('Headhunters: recruit which member costing 6 or less, for free?');
+    expect(s.pending.prompt).toBe('Talent Scouts: recruit which member costing 6 or less, for free?');
     expect(labels).toEqual(['Martyrs (6)']);
     const r = drive(s, [/Martyrs/]);
-    expect(names(r.s, 0)).toEqual(['Headhunters', 'Martyrs']);
+    expect(names(r.s, 0)).toEqual(['Talent Scouts', 'Martyrs']);
     expect(r.s.players[0].discount).toBe(3);
   });
 
   it('Richer setting: every cost is 2 more, so up to 8 reaches the same members, and the words say 8', () => {
     const { s } = run('hh-rich', { quads: Q, queue: BUY, rules: { econ: 'rich' }, shop: ['trading.martyr', 'echo.encore'],
       members: [['yellow.headhunters']] }, [/^use:/]);
-    expect(s.pending.prompt).toBe('Headhunters: recruit which member costing 8 or less, for free?');
+    expect(s.pending.prompt).toBe('Talent Scouts: recruit which member costing 8 or less, for free?');
     expect(s.pending.options.map(o => o.label)).toEqual(['Martyrs (8)']);
   });
 
   it('no shop member costs 6 or less: it says so and stays unused', () => {
     const { s } = run('hh-none', { quads: Q, queue: BUY, shop: ['echo.encore', 'red.panel'], members: [['yellow.headhunters']] }, [/^use:/]);
-    expect(s.log).toContain("P1's Headhunters: no shop member costs 6 or less.");
+    expect(s.log).toContain("P1's Talent Scouts: no shop member costs 6 or less.");
     expect(s.cards[uidOf(s, 'yellow.headhunters')].used).toBeFalsy();
   });
 
-  it('once per game: after the free recruit the shop refills and Headhunters is not offered again', () => {
+  it('once per game: after the free recruit the shop refills and Talent Scouts is not offered again', () => {
     const { s } = run('hh-once', { quads: Q, queue: [...BUY, { t: 'buy', p: 0 }], res: [{ red: 20 }], shop: ['red.volunteer', 'red.intern'],
       members: [['yellow.headhunters']] }, [/^use:/, /Volunteer/]);
     const hh = uidOf(s, 'yellow.headhunters');

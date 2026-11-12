@@ -474,10 +474,11 @@ function freeStep(ctx, p, data) {
 }
 
 // Sample's rival members: an On Recruit (or a now-and-round-start effect) that doesn't act on the card itself ("swap
-// it", "it becomes a copy"), which a card held by someone else can't do for you. Same test as Red's Tryout.
+// it", "it becomes a copy"), which a card held by someone else can't do for you. Same test as Red's Tryout. Never
+// Mimics, a copy itself: Sample of Mimics of Stunt Double (or Understudy) of Sample looped forever in bot games (Nov 12).
 function rivalRecruits(ctx, p) {
   return ctx.rivals(p).flatMap(o => ctx.membersOf(o).map(c => ({ c, o })))
-    .filter(({ c }) => !c.def.artifact && !c.def.recruitNote && c.def.key !== 'impersonators' && (c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate)))
+    .filter(({ c }) => !c.def.artifact && !c.def.recruitNote && c.def.key !== 'impersonators' && c.def.key !== 'mimics' && (c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate)))
       && !/\bit\b|\bthese\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
 }
 
