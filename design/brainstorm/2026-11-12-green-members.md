@@ -117,8 +117,8 @@ Verdict: send
 
 ## Idea: Hecklers
 
-1. Printed text: "On Recruit: send a rival's minion on a Green space back to them." (Claude's words). Cards it touches: the most-minions-on-Green contest, Regulars "Round End: +1 follower per minion you have on Green spaces.", Crowd "+1 follower per minion on Green spaces. +3 green.".
-2. Played turn: round II, a rival leads Green 3 to 2; recruit Hecklers and send one of their minions home: 2 to 2, and the contest's 10 is shared or yours; their Regulars pays 1 less. The minion returns to them unplaced this round? No: it leaves the board, so they lose that minion's spot for the count.
+1. Printed text: "On Recruit: take a rival's minion off a Green space; it sits out the round." (Claude's words). Cards it touches: the most-minions-on-Green contest, Regulars "Round End: +1 follower per minion you have on Green spaces.", Crowd "+1 follower per minion on Green spaces. +3 green.".
+2. Played turn: round II, a rival leads Green 3 to 2; recruit Hecklers and send one of their minions home: 2 to 2, and the contest's 10 is shared or yours; their Regulars pays 1 less. The minion sits out the rest of the round.
 3. Both sides: you choose which rival's minion; the space it leaves is open again for anyone.
 4. Who feels it: the Green leader, a sting; the space it frees.
 5. Not refused: no ledger verdict on this shape or name.
