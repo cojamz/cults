@@ -645,6 +645,7 @@ function easeChance(gap, swing, myTurns, rivalTurns) {
   const need = 1 - gap, reach = swing * myTurns;
   return need > reach ? EASE_K.lost : EASE_K.behindTop * (1 - need / (reach + 1));
 }
+const minionContest = (s, qid) => s.rules?.contests === 'minions' || (s.rules?.contests === 'byColor' && (qid === 'echo' || qid === 'purple'));
 function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null, roundTurns = null) {
   if (s.over || !s.round) return 0;
   // later rounds' rings count too, discounted: a lead in members lasts, a pile of resources mostly gets spent
@@ -681,7 +682,10 @@ function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null, 
     // a contest spoiled this round (Spoilsport, REPLACE2 bot test) pays nobody this round
     const now = s.spoiled && s.spoiled.round === s.round && s.spoiled.list.some(x => x.qid === qid) ? 0 : 1;
     // BOTLEAD: later rounds' share of a lead also grows as the round runs out (most contests are fought again each round)
-    plain = now * v * (certain * (1 - roundLeft) + rough * roundLeft) + later * rough * (LEAD_FIX ? 0.3 + 0.7 * (1 - roundLeft) : 1);
+    // BOTLEAD: a contest of minions on spaces (Green's, Purple's went last, the minions setting) starts again from nothing
+    // next round, so a minion there now gives no head start later (Cory, Nov 12: "why would they ever take it first?")
+    const carries = !LEAD_FIX || !minionContest(s, qid);
+    plain = now * v * (certain * (1 - roundLeft) + rough * roundLeft) + (carries ? later * rough * (LEAD_FIX ? 0.3 + 0.7 * (1 - roundLeft) : 1) : 0);
     out += easedHere === null ? plain : (1 - EASE_W) * plain + EASE_W * easedHere;
   }
   return out;

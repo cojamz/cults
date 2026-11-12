@@ -90,3 +90,4 @@ No measurable change: 1 resource rarely moves a bot's pick. Left off. The AI pla
 
 ## Build Up first (Nov 12, Cory: "they took Build Up first")
 Normal valued a round I contest lead as 75% sure to hold, so an early lead looked worth a space. With early leads read as less sure (0.45 + 0.3 × share of the round played), paired duels on the same deals: Normal 800 games +0.36 ± 0.43 followers a seat (no loss); Hard (budget 40) 50 tables −1.54 ± 1.13 (slightly worse, not proven). So it's on for Normal and Easy picks only; Hard's look-ahead plays out without it. BOTLEAD=0 turns it off.
+Step 2 (Nov 12 evening, Cory: "why would they ever take it first?"): a contest of minions on spaces (Green's, Purple's went last) starts again each round, so Normal no longer counts a minion there toward later rounds. Normal opens on Build Up on 17 of 94 tables (was 92, then 44). Same deals, 400 Normal games, fixed against unfixed: +1.22 ± 0.62 followers a seat for the fixed bots.
