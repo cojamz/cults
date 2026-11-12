@@ -33,7 +33,7 @@ const S = {
     toast: '+4 silver · others +2 silver · +1 silver', polish: '+2 silver · all silver → one color · +1 silver', buyout: "recruit a rival's member, pay its cost in silver", partygifts: 'give rivals up to 3 silver, +2 followers each', favors: '+2 silver · each rival gives 1', sweetnothings: '+3 silver · give rivals up to 3, +2 any each', flaunt: '+1 each other color per 3 silver held (up to 3) · +1 silver', tongue: '+3 silver · turn into colors', largesse: 'give rivals 12 silver, +10 followers',
   },
   yellow: {
-    harvest: '+3 any, colors you choose', offering: '+5 yellow · rivals discard 2 of each of your member colors', bloom: r => `+${r} yellow · +1 of your fewest`, transmute: '+1 yellow per minion on the busiest color · +1 yellow', prism: '+1 each per 3 yellow', gather: '1 per member', flourish: '+1 each per set',
+    harvest: '+3 any, colors you choose', offering: '+5 yellow · rivals discard 2 of each of your member colors', bloom: r => `+${r} yellow · +1 of your fewest`, transmute: '+1 yellow per minion on the color whose spaces hold the most minions', prism: '+1 each per 3 yellow', gather: '1 per member', flourish: '+1 each per set',
   },
   market: {
     testdrive: 'discard a shop member, use its effect now; +1 blue', markdown: 'recruit from the discard pile now, 2 less; +3 blue', wordofmouth: '+1 follower per 2 members; +1 blue',

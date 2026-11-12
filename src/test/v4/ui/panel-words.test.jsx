@@ -75,7 +75,7 @@ describe('panel words (w3)', () => {
 
   it("Survey says its whole rule in line 1 (the wheel drops line 3), and Churn its round gain before the 3 it sends", () => {
     const seeds = panelText('yellow', { key: 'transmute' });
-    expect(seeds.verb).toBe('+1 yellow per minion on busiest color');
+    expect(seeds.verb).toBe('+1 yellow per minion on the color with the most minions');
     expect(seeds.second).toBeNull(); // the +1 of its color is the hover's badge, off the wheel (Cory, Nov 9)
     // Savings (Oct 31): +2/+3/+4 and one shop member to the bottom, if you like
     const savings = panelText('market', { key: 'bargain' }, 2);

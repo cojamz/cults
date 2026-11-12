@@ -254,7 +254,7 @@ export default {
       // Cory, Nov 11 2:04pm: Late Shift replaces Trending ("1. yes... lets just try it and see what the testing says").
       // The count includes the minion on this space, as Help Yourself reads it; the free member is the player's pick.
       key: 'lateshift', ring: 1, name: 'Late Shift', copyDoesIt: true,
-      text: 'Recruit a shop member costing up to 2 per minion you’ve placed this round, for free. +1 red.',
+      text: 'Recruit a shop member costing up to 2 per minion you’ve placed this round, this one included, for free. +1 red.',
       estimate: (ctx, p) => 1 + Math.max(0, ...lateList(ctx, p, placedCount(ctx, p) + (onBoardNow(ctx, p) ? 0 : 1)).map(c => c.def.f * 1.5 + 1)),
       resolve(ctx, p) {
         const n = placedCount(ctx, p), cap = lateCap(ctx, n);

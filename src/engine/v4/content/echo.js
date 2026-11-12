@@ -658,7 +658,7 @@ const echoQ = {
       // Cory, Nov 10 10:36am: Crowd takes Sample's round II slot ("I like crowd but feel like it doesnt pay enough. Maybe it
       // gives +3 green."; 10:37am: "+2 plus the one inherent to the space"). Anyone's minion counts, this one included.
       // followers can't ride on a chip, so a copy does Crowd itself (counting the minions on Green at that moment)
-      key: 'crowd2', ring: 2, name: 'Crowd', copyDoesIt: true, text: '+1 follower per minion on Green spaces. +3 green.',
+      key: 'crowd2', ring: 2, name: 'Crowd', copyDoesIt: true, text: '+1 follower per minion on Green spaces, anyone\'s minions, this one included. +3 green.',
       estimate: ctx => 3 + 1.5 * (greenMinions(ctx) + 1),
       resolve(ctx, p) {
         plus(ctx, p);
