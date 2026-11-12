@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.747 — 2026-11-12
+
+- Four players' review: the room code no longer sits on Turn order; the pay sheet no longer flashes -1 after Pay; Swap Shoppers and Exchange Students say their own rule and name the discard pile; a taken +1 on a space reads taken; a turn moved up by Crunch Time no longer labels a rival's turn; the end screen says where most followers came from
+
 ## v0.99.746 — 2026-11-12
 
 - You'd get: the space's gain said whole, the price in full, Borrow's member goes at round end
