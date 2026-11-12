@@ -48,7 +48,8 @@ describe('member structure: the new members', () => {
     let s = table(Q, { round: 1, members: [['market.windowshopper']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending?.player).toBe(0);
     // a colored member (a grey one has no color to pay; the 12-card grey deck, Nov 4, put one first on this seed)
-    const pick = s.pending.options.find(o => !s.cards[Number(o.id.split(':')[1])].def.startsWith('benders.'));
+    // (and not one that counts as every color, which asks which color: the Nov 11 Red deck put one first on this seed)
+    const pick = s.pending.options.find(o => { const d = s.cards[Number(o.id.split(':')[1])]?.def; return d && !d.startsWith('benders.') && !defById(d).everyColor; });
     const uid = Number(pick.id.split(':')[1]);
     const color = quadrant(s.cards[uid].def.split('.')[0]).resource;
     const before = s.players[0].res[color] || 0;
@@ -60,8 +61,7 @@ describe('member structure: the new members', () => {
     // the second pick (Cory, Nov 1: 2 members instead of 1)
     expect(s.pending?.player).toBe(0);
     expect(s.pending.options.some(o => o.id === `card:${uid}`)).toBe(false);
-    // a colored one again (a grey member asks which color; Nov 11's Blue cuts put one first on this seed)
-    const pick2 = s.pending.options.find(o => !s.cards[Number(o.id.split(':')[1])].def.startsWith('benders.')) || s.pending.options[0];
+    const pick2 = s.pending.options.find(o => { const d = s.cards[Number(o.id.split(':')[1])]?.def; return d && !d.startsWith('benders.') && !defById(d).everyColor; });
     const uid2 = Number(pick2.id.split(':')[1]);
     s = move(s, pick2.id);
     expect(s.discard.at(-1)).toBe(uid2);

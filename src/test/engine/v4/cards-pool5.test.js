@@ -55,7 +55,7 @@ describe('Middlemen (Magenta)', () => {
 });
 
 describe('Rummage (Blue, round II)', () => {
-  it('Recruit a member from the discard pile costing up to 6, for free. +1 blue.', () => {
+  it('Recruit a member from the discard pile costing up to 5, for free. +1 blue.', () => {
     let s = still({ quadrants: ['market', 'red', 'purple', 'yellow'], round: 2 });
     // the cheap one can sit in the shop since the Nov 11 member sort left the piles with few members at 6 or less
     const cheap = cheapest(s, 5)[0] ?? s.shop.find(u => price(s, u) <= 5), dear = s.pile.find(u => price(s, u) > 5); // the cap is 5 in code (RUMMAGE_CAP)

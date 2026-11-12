@@ -81,6 +81,6 @@ describe('picky hover (Nov 4)', () => {
     const pid = s.pending.player;
     const pv = previewSpace(s, pid, ...space(s, 'red', 'take'), { cap: 4 });
     expect(pv.capped).toBe(true);
-    expect(pv.targets.shop.slice().sort()).toEqual(s.shop.filter(u => cost(s, u) <= 11).sort());
+    expect(pv.targets.shop.slice().sort()).toEqual(s.shop.filter(u => cost(s, u) <= 10).sort()); // Initiation: "costing 10 or less"
   });
 });

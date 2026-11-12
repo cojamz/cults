@@ -2,6 +2,7 @@
 // Idea pipeline pool 4 (Nov 7; scripts/ideas/README.md): bot-only candidates, never dealt in a real game. One test per
 // sentence of each card's text, through real moves, with the log naming the card.
 import { describe, it, expect } from 'vitest';
+import { defById } from '../../../engine/v4/content/index.js';
 import { take, move, uidOf } from './helpers.js';
 import { sceneQ, linesNaming } from './cards-helpers.js';
 import { usePool, price, total, still, go, discard, twoCosts } from './pool-helpers.js';
@@ -68,19 +69,21 @@ describe('Next of Kin and Second Cousins (White)', () => {
   const Q = ['trading', 'red', 'purple', 'market'];
   for (const [id, name, fits] of [['trading.nextofkin', 'Next of Kin', (k, c) => k <= c], ['trading.secondcousins', 'Second Cousins', (k, c) => k < c]]) {
     it(`${name}: whenever this member leaves your cult, recruit a shop member costing ${name === 'Next of Kin' ? 'up to' : 'less than'} its cost, for free`, () => {
-      let s = sceneQ({ quadrants: Q, round: 2, members: [[id]], res: [{ white: 1 }] });
+      let s = sceneQ({ quadrants: Q, round: 2, members: [[id]], res: [{ white: 1 }], shop: ['red.intern', 'red.twins', 'purple.closer', 'market.patroness', 'trading.martyr'] }); // a pinned row: the Nov 11 decks left this seed's row too dear for Second Cousins
       const u = uidOf(s, id, 0), c = price(s, u);
       // two shop members that fit, whatever the deal (Promote may swap one away); the Nov 11 deck left none under 6 here
       const cheap = s.pile.filter(x => fits(price(s, x), c) && price(s, x) < c).slice(0, 2);
       s = { ...s, pile: s.pile.filter(x => !cheap.includes(x)), shop: [...s.shop, ...cheap] };
       s = take(s, 'red.hireup'); // Promote: it leaves, swapped for a shop member
-      s = move(s, s.pending.options.find(o => o.kind === 'trade' && o.value[0] === u).id);
+      // a swap that leaves a shop member it can recruit (the Nov 11 Red deck changed this seed's shop)
+      const t0 = s;
+      for (const o of t0.pending.options.filter(o => o.kind === 'trade' && o.value[0] === u)) { s = move(t0, o.id); if (s.pending?.kind === 'choose' && s.pending.prompt?.includes(name)) break; }
       expect(s.pending.kind).toBe('choose');
       const offered = s.pending.options.map(o => o.value);
       const shopFit = s.shop.filter(x => x !== u && fits(price(s, x), c));
       expect(offered.filter(x => x !== u).sort()).toEqual(shopFit.sort());
       expect(offered.every(x => fits(price(s, x), c))).toBe(true);
-      const pick = offered.find(x => x !== u);
+      const pick = offered.find(x => x !== u && !defById(s.cards[x].def).onRecruited) ?? offered.find(x => x !== u); // one with no On Recruit gain of its own
       const before = total(s.players[0].res);
       s = move(s, `card:${pick}`);
       expect(s.players[0].members).toContain(pick);
