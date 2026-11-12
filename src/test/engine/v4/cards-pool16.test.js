@@ -46,11 +46,12 @@ describe('Stragglers (Purple)', () => {
 
 describe('Tag Team (Purple)', () => {
   it('Each time your turn comes, take two turns in a row.', () => {
-    // the middle seat (P2), whose snake turns never touch: since the Nov 11 member sort P1 picks first here, so P3's two
-    // turns already sat together
-    let s = still({ quadrants: ['purple', 'gold', 'red', 'market'], n: 3, members: [[], ['purple.tagteam'], []] });
+    // the seat whose snake turns don't touch: who picks first moves with the deal, so the test finds that seat first
+    const plain = go(still({ quadrants: ['purple', 'gold', 'red', 'market'], n: 3 }), [{ t: 'round', r: 1 }]);
+    const seat = [0, 1, 2].find(p => { const k = order(plain).map((x, i) => (x === p ? i : -1)).filter(i => i >= 0); return k[1] > k[0] + 1; });
+    let s = still({ quadrants: ['purple', 'gold', 'red', 'market'], n: 3, members: [0, 1, 2].map(p => (p === seat ? ['purple.tagteam'] : [])) });
     s = go(s, [{ t: 'round', r: 1 }]);
-    const o = order(s), at = o.map((p, k) => (p === 1 ? k : -1)).filter(k => k >= 0);
+    const o = order(s), at = o.map((p, k) => (p === seat ? k : -1)).filter(k => k >= 0);
     expect(at).toHaveLength(3);
     expect(at[1]).toBe(at[0] + 1); // the snake had them apart
     expect(at[2]).toBeGreaterThan(at[1] + 1); // an odd last turn stays where it was

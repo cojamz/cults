@@ -136,6 +136,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'echo.impersonators', // under 3 holds once every member cost 4 more (Nov 5 evening) moved the games; cards-market-concepts and replace3 cover it
       'trading.reinvestor', // under 3 holds when Guest of Honor and Patrons moved to White (Nov 11) moved the games; cards-trading (Reinvestor) covers it
       'trading.appraiser', // cut; under 3 holds when Leavetakers, Minimalists and Last Callers (Nov 11) moved the games; cards-trading (Appraiser) covers it
+      'market.swapshoppers', 'trading.heiress', // under 3 holds when Nov 11's Blue, Green and White members moved the games; blue-new-members (Swap Shoppers) and cards-trading cover them (Heiresses is cut)
       'thieves.robinhood']); // under 3 holds when Sleepyheads and Lookouts joined Purple and Victors left (Nov 6) moved the games; cards-thieves covers it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);

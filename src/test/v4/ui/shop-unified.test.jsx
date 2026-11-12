@@ -6,7 +6,7 @@ import { resume } from '../../../engine/v4/core.js';
 import { iconFor } from '../../../v4/art/index.js';
 afterEach(() => { cleanup(); localStorage.clear(); });
 it('puts follower offers in the member grid, matching art/name/cost card anatomy', () => {
-  let s = createGame({ seats: [{ name: 'You', kind: 'human' }, { name: 'Bo', kind: 'human' }], quadrants: ['gold','red','purple','echo'], seed: 51 });
+  let s = createGame({ seats: [{ name: 'You', kind: 'human' }, { name: 'Bo', kind: 'human' }], quadrants: ['gold','red','purple','echo'], seed: 52 });
   s.pending = null; s.queue = [{ t: 'buy', p: 0 }];
   s.players[0].res = Object.fromEntries(s.resources.map(r => [r, 6]));
   s = resume(s);
@@ -34,7 +34,7 @@ it('all new Red members have distinct explicit portraits', () => {
   }
 });
 it('the "affordable" toggle fades the members you cannot pay for, and is remembered (Cory, 2026-10-18)', () => {
-  let s = createGame({ seats: [{ name: 'You', kind: 'human' }, { name: 'Bo', kind: 'human' }], quadrants: ['gold','red','purple','echo'], seed: 51 });
+  let s = createGame({ seats: [{ name: 'You', kind: 'human' }, { name: 'Bo', kind: 'human' }], quadrants: ['gold','red','purple','echo'], seed: 52 });
   s.pending = null; s.queue = [{ t: 'buy', p: 0 }];
   s.players[0].res = Object.fromEntries(s.resources.map(r => [r, 4])); // 4 each since every member cost 4 more (Nov 5 evening): 2 each afforded nothing
   s = resume(s);
