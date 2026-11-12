@@ -87,3 +87,6 @@ space already claimed read 1 resource too high. With the fix (BOTPLUS1=1) a clai
 
 No measurable change: 1 resource rarely moves a bot's pick. Left off. The AI players' view now marks each space whose
 +1 is still there (a table shows a dot), and their notes say so.
+
+## Build Up first (Nov 12, Cory: "they took Build Up first")
+Normal valued a round I contest lead as 75% sure to hold, so an early lead looked worth a space. With early leads read as less sure (0.45 + 0.3 × share of the round played), paired duels on the same deals: Normal 800 games +0.36 ± 0.43 followers a seat (no loss); Hard (budget 40) 50 tables −1.54 ± 1.13 (slightly worse, not proven). So it's on for Normal and Easy picks only; Hard's look-ahead plays out without it. BOTLEAD=0 turns it off.

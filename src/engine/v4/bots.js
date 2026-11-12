@@ -105,7 +105,14 @@ export function chooseBotMove(state, rand = Math.random, opts = {}) {
     const deep = level === 'veryhard' ? VERY_HARD : { maxMs: HARD_MAX_MS };
     return chooseThinkerMove(state, rand, { ...deep, ...opts, plan, memory: mind?.memory || null, lessons: mind?.lessons || null, valueModel: opts.valueModel ?? mind?.valueModel ?? null });
   }
-  return chooseNormalMove(state, rand, { ...BOT_PROFILES[level], ...opts });
+  // Normal and Easy read an early contest lead as less sure (Cory, Nov 12: "they took Build Up first"). Only their own
+  // picks: Hard's look-ahead plays out with it off, since Hard measured weaker with it on (design/eval/bot-audit-2026-11-11)
+  return asNormal(() => chooseNormalMove(state, rand, { ...BOT_PROFILES[level], ...opts }), opts.leadFix);
+}
+function asNormal(fn, lead = NORMAL_LEAD) {
+  const prev = LEAD_FIX;
+  LEAD_FIX = lead ?? NORMAL_LEAD;
+  try { return fn(); } finally { LEAD_FIX = prev; }
 }
 
 /** The easy level: normal, played carelessly. */
@@ -624,10 +631,16 @@ function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null) 
     for (let i = 0; i < row.length; i++) if (i !== p.id) other = Math.max(other, row[i]);
     if (!(mine > 0)) continue;
     const certain = mine >= other ? 1 : 0;
-    const rough = mine > other ? 0.75 : mine === other ? 0.55 : 0.15;
+    // BOTLEAD (bot audit, Nov 12; Cory: Normal bots "took Build Up first"): a lead held now counted 75% of this round's
+    // prize and of later rounds' even on the round's first turn, when every rival can still pass it, so every Normal bot
+    // in 40 of 40 games opened on Green's contest (a 1-minion lead). With the fix, a lead or tie is surer as the round runs out.
+    const rough = LEAD_FIX
+      ? (mine > other ? 0.45 + 0.3 * (1 - roundLeft) : mine === other ? 0.35 + 0.2 * (1 - roundLeft) : 0.15)
+      : (mine > other ? 0.75 : mine === other ? 0.55 : 0.15);
     // a contest spoiled this round (Spoilsport, REPLACE2 bot test) pays nobody this round
     const now = s.spoiled && s.spoiled.round === s.round && s.spoiled.list.some(x => x.qid === qid) ? 0 : 1;
-    out += now * v * (certain * (1 - roundLeft) + rough * roundLeft) + later * rough;
+    // BOTLEAD: later rounds' share of a lead also grows as the round runs out (most contests are fought again each round)
+    out += now * v * (certain * (1 - roundLeft) + rough * roundLeft) + later * rough * (LEAD_FIX ? 0.3 + 0.7 * (1 - roundLeft) : 1);
   }
   return out;
 }
@@ -712,6 +725,9 @@ function seeUse(state, s, me, uid) {
 // kept: its followers, its place in member contests and its ability all went into the forecast, so bots took Borrow
 // in 93% of the rounds it was open and its takers won 20% (7 points under players as wide). With the fix on, the
 // forecast drops members still on loan this round (core endRound discards them before scoring).
+let LEAD_FIX = false;
+const NORMAL_LEAD = globalThis.process?.env?.BOTLEAD !== '0'; // on for Normal and Easy since Nov 12
+export const setLeadFix = on => { LEAD_FIX = !!on; };
 let PLUS1_FIX = globalThis.process?.env?.BOTPLUS1 === '1';
 export const setPlus1Fix = on => { PLUS1_FIX = !!on; };
 let BORROW_FIX = globalThis.process?.env?.BOTBORROW !== '0'; // on by default since Nov 12: +4.4 ± 1.3 followers a seat over 100 Hard games (design/eval/bot-audit-2026-11-11)
@@ -1111,4 +1127,4 @@ export const chooseFollowerBuyerMove = (state, rand = Math.random) => {
 };
 
 /** For audits (scripts/v4-bot-choice-audit.mjs): the pieces bots choose with. Not used by the game. */
-export const botInternals = { evaluate: (...a) => evaluate(...a), horizon: s => horizon(s), laterTurns: s => laterTurns(s), contests: (...a) => contests(...a), rateOnCopy: (...a) => rateOnCopy(...a), avoidUndo: (...a) => avoidUndo(...a), lightClone: s => lightClone(s), settle: (...a) => settle(...a), givenAway: (...a) => givenAway(...a) };
+export const botInternals = { evaluate: (...a) => evaluate(...a), horizon: s => horizon(s), laterTurns: s => laterTurns(s), contests: (...a) => contests(...a), rateOnCopy: (...a) => asNormal(() => rateOnCopy(...a)), avoidUndo: (...a) => avoidUndo(...a), lightClone: s => lightClone(s), settle: (...a) => settle(...a), givenAway: (...a) => givenAway(...a) };

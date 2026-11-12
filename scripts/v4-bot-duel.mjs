@@ -36,7 +36,8 @@ async function playOne({ g, side, A, B }) {
     const forced = f && pend.kind === 'place' && s.round === f.round && s.players[pl].left >= (f.minLeft || 0)
       ? pend.options.find(x => x.kind === 'slot' && actionAt(s, x.q, x.i)?.key === f.key) : null;
     setBorrowFix?.(o.borrowFix ?? process.env.BOTBORROW !== '0');
-    setPlus1Fix?.(o.plus1Fix ?? process.env.BOTPLUS1 === '1'); // a setting's plus1Fix: a claimed space read without its +1 // a setting's borrowFix: Borrow's member counted as discarded at round end
+    setPlus1Fix?.(o.plus1Fix ?? process.env.BOTPLUS1 === '1');
+    // o.leadFix (passed through to Normal's pick): early contest leads count less // a setting's plus1Fix: a claimed space read without its +1 // a setting's borrowFix: Borrow's member counted as discarded at round end
     // o.hoard = { res, round }: that seat keeps every `res` through round `round` (bot audit, Nov 12; Cory on Flaunt: "you
     // should just forego the followers to get the resources"). It decides as if it held none, and pays without it.
     const h = o.hoard, hoarding = h && !forced && s.round <= h.round && s.round >= 1;
