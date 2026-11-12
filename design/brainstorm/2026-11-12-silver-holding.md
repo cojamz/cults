@@ -247,7 +247,7 @@ Verdict: send
 
 ## Pass 5 (Cory 8:02pm: "no. more on recruit"): Matrons and Party Hosts refused; more On Recruit ideas, 1 slot left.
 
-## Idea: Well-Wishers
+## Idea: Good Samaritans
 
 1. Printed text: "On Recruit: give one of your members to a rival. +3 followers." (Claude's numbers). Cards it touches: Patron Saints "Game End: +1 follower per silver member, anyone's.", Buyout "Recruit a rival's member, paying them its cost in silver. +1 silver.".
 2. Played turn: round II, you hold a 2-cost member that no longer helps; give it to the rival leading White's fewest-members contest (they now hold one more) and take +3 followers. Recruiting followers instead costs 3 resources for 3.

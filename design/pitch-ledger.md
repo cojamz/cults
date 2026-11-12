@@ -514,3 +514,4 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - 2026-11-11 7:33pm Eastern · Silver six · ✅ Paupers (try it; "win more"), ✅ Loan Officers (all your silver, numbers open), ❌ Chaperones (win more; wants a member for the opposite strategy, not points for silver), ❌ Gold Diggers ("I don't love that"), ❌ Teetotalers ("weird and not good") · tags: silver, members
 - 2026-11-11 7:38pm Eastern · Safekeepers (set silver aside on the card at round end, take it back at round start) · ❌ "Number one is so fucking complicated. Never say anything like that again." · Loan Officers numbers set: once per round, up to 5 · tags: silver, members, complicated
 - 2026-11-11 7:47pm Eastern · Silver holding slot: Tycoons, Show-Offs, Good Customers, Fixers, Splurgers (his idea) · ✅ Splurgers · tags: silver, members
+- 2026-11-11 8:02pm Eastern · Matrons, Party Hosts (last Silver slot) · ❌ "no. more on recruit" · tags: silver, members
