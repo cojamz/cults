@@ -67,3 +67,5 @@
 - 4:27pm Cory: "It also means then we need to rebalance cloaks" (bots ignore cloak power; once they weigh it the cloak balance shifts). Passed to the coordinator for its own thread; earlier finding: starting cloak swung win chance about 25 points (Nov 3 deep run, Silver lowest, White and Green highest).
 - 4:28pm Cory: maybe the two new habits compete; wants a holistically better bot with the principles implemented, maybe with an internal priority order; the option set is complicated; "even normal bots are hard to beat". First 6 games of ease+together: 1 winner in 6, -9.5 followers (too few; running).
 - 4:30pm coordinator: when the robust (cloak-aware) bot is built and tested, message the balance thread cmsg_01PySa5gYMfCiexiWTLrWgo39rxGwMqkjQ5tpzWX4284vH so it can start the cloak rebalance runs with it.
+- 5:39pm Cory: "but isn't that against the whole point?" (switching tests to Hard bots). Right: the goal is a better strongest bot; tests run on Very Hard against today's Very Hard. Hard-bot runs stopped, their data kept but not reported.
+- 5:58pm Cory: "i don't think we need to test against the two habit bot". Only today's Very Hard is the control.
