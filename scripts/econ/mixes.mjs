@@ -68,4 +68,9 @@ export const MIXES = {
   // price settings again with spaces as printed
   'n12 pricier': { PLUS1: 'game', MEMBER_UP: 5, MEMBER_COLOR: 2 },
   'n12 color+1': { PLUS1: 'game', MEMBER_UP: 4, MEMBER_COLOR: 2 },
+  // Nov 12 1:24pm (Cory: "let's try a few more combos eh? ... we're just moving the member cost right?"): the color/any
+  // split at today's total, and 1 more any. Purists (printed 2 red + 1 any): 4 red + 2 any, 2 red + 4 any, 3 red + 4 any
+  'n12 c2a1': { PLUS1: 'game', MEMBER_UP: 3, MEMBER_COLOR: 2 },
+  'n12 c0a3': { PLUS1: 'game', MEMBER_UP: 3, MEMBER_COLOR: 0 },
+  'n12 c1a3': { PLUS1: 'game', MEMBER_UP: 4, MEMBER_COLOR: 1 },
 };
