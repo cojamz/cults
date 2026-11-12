@@ -172,7 +172,7 @@ for (const [id, name, source] of [
   ['red.clan', 'Clan', 'red.patriarch'], // Nov 11: Patriarch's place, on its scene until its own is drawn
   ['red.seatfiller', 'Seat Filler', 'red.volunteer'], // Nov 5: Volunteer's place, on its scene until its own is drawn
   ['thieves.hoardbreaker', 'Heist Crew', 'thieves.grifter'], // Nov 5: Grifter's place, on its scene until its own is drawn
-  ['yellow.nightmarket', 'Night Traders', 'yellow.ringleader'], // Nov 5: Meddler's place, on its scene until its own is drawn
+  ['yellow.nightmarket', 'Early Traders', 'yellow.ringleader'], // Nov 5: Meddler's place, on its scene until its own is drawn
   ['yellow.dyejob', 'Counterfeiters', 'yellow.drifters'], // Nov 5: Drifters' place, on its scene until its own is drawn
   ['market.lastminute', 'Last-Minute Shopper', 'market.shopaholic'], // Nov 5: Shopaholics' place, on its scene until its own is drawn
   ['purple.lookouts', 'Lookouts', 'purple.nightwatch'], ['purple.sleepyheads', 'Sleepyheads', 'purple.clockmaker'], // Nov 6: on retired scenes until their own are drawn
@@ -187,6 +187,7 @@ for (const [id, name, source] of [
   ['yellow.dutycollector', 'Duty Collector', 'yellow.customs'], ['yellow.jack', 'Jack-of-All-Trades', 'yellow.tastemaker'],
   ['yellow.seamstress', 'Seamstress', 'yellow.harmonist'],
   ['silver.paupers', 'Paupers', 'silver.spoon'], ['silver.loanofficers', 'Loan Officers', 'silver.revelers'], ['silver.splurgers', 'Splurgers', 'silver.heir'], ['silver.tollcollectors', 'Toll Collectors', 'silver.majordomo'], ['silver.bookies', 'Bookies', 'silver.steward'], ['silver.hustlers', 'Hustlers', 'silver.silversmith'],
+  ['yellow.exchangestudents', 'Exchange Students', 'yellow.pilgrim'], ['yellow.headhunters', 'Headhunters', 'yellow.explorer'], ['yellow.cosmopolitans', 'Cosmopolitans', 'yellow.weaver'], // Nov 11: new Yellow members, on retired scenes
   ['trading.guestofhonor', 'Guest of Honor', 'silver.polisher'], ['trading.godparents', 'Patrons', 'silver.godparents'], // Nov 11: moved to White, on their Silver scenes // Nov 11: new Silver members, on retired scenes until their own are drawn
 ]) {
   const art = PORTRAIT.get(source);

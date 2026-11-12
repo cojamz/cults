@@ -8,7 +8,10 @@ import SwapCard, { swapChoice } from '../../../v4/game/SwapCard.jsx';
 
 afterEach(() => { cleanup(); vi.useRealTimers(); });
 
-const traders = res => scene(['red', 'market', 'purple', 'yellow'], { round: 2, res: [res, { blue: 4 }], members: [['yellow.nightmarket']], queue: [{ t: 'allPlaced' }, { t: 'endRound' }] });
+// Early Traders (Nov 11: Night Traders at Round Start, Cory)
+const traders = res => { let s = scene(['red', 'market', 'purple', 'yellow'], { round: 1, res: [res, { blue: 4 }], members: [['yellow.nightmarket']], queue: [{ t: 'round', r: 2 }] });
+  while (s.pending && !/^Early Traders/.test(s.pending.prompt)) s = applyMove(s, { player: s.pending.player, option: s.pending.options[0].id });
+  return s; };
 
 function table(s) {
   const picks = [];
@@ -22,10 +25,10 @@ const row = c => document.querySelector(`[data-swap="${c}"]`);
 const press = (c, step) => fireEvent.click(row(c).querySelector(`[data-step="${step}"]`));
 const settle = () => { for (let k = 0; k < 8; k++) act(() => { vi.advanceTimersByTime(200); }); };
 
-describe('Night Traders swap card', () => {
+describe('Early Traders swap card', () => {
   it('answers the swap question', () => {
     const s = traders({ blue: 7, purple: 2 });
-    expect(s.pending.prompt).toMatch(/^Night Traders: swap one for one/);
+    expect(s.pending.prompt).toMatch(/^Early Traders: swap one for one/);
     expect(swapChoice(s, s.pending)).toBe(true);
   });
   it('four presses of + and one Done make four swaps (Cory, Nov 6: up to 4)', () => {

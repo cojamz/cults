@@ -105,18 +105,17 @@ describe('REPLACE2: each card fires', () => {
     expect(s.pending.kind).toBe('place');
   });
 
-  it('Night Market: after the last placement, swap up to 4 before contests are scored (Cory, Nov 6: 4)', () => {
-    let s = table(['red', 'market', 'purple', 'yellow'], { round: 2, res: [{ blue: 7, purple: 2 }, { blue: 4 }], members: [['yellow.nightmarket']], queue: [{ t: 'allPlaced' }, { t: 'endRound' }] });
-    expect(s.pending.prompt).toMatch(/^Night Traders: swap one for one/);
+  it('Early Traders: at Round Start, swap up to 4, one for one (Cory, Nov 11: Night Traders at Round Start)', () => {
+    let s = table(['red', 'market', 'purple', 'yellow'], { round: 1, res: [{ blue: 7, purple: 2 }, { blue: 4 }], members: [['yellow.nightmarket']], queue: [{ t: 'round', r: 2 }] });
+    while (s.pending && !/^Early Traders/.test(s.pending.prompt)) s = answer(s, s.pending.options[0].id);
+    expect(s.pending.prompt).toMatch(/^Early Traders: swap one for one/);
     s = answer(s, 'swap:blue:purple');
     s = answer(s, 'swap:blue:purple');
     s = answer(s, 'swap:blue:purple');
     s = answer(s, 'done');
     expect(s.players[0].res.blue).toBe(4);
     expect(s.players[0].res.purple).toBe(5);
-    // a tie for Blue (+3 each) and Purple alone (+6)
-    expect(s.players[0].contest).toBe(9);
-    expect(s.log.filter(l => /^P1's Night Traders: swapped 1 blue for 1 purple\.$/.test(l))).toHaveLength(3);
+    expect(s.log.filter(l => /^P1's Early Traders: swapped 1 blue for 1 purple\.$/.test(l))).toHaveLength(3);
   });
 
   it('Fundraisers: once per game, each rival +2 silver, then +1 follower per 2 silver rivals hold', () => {

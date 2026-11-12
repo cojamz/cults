@@ -197,14 +197,14 @@ describe('Yellow members', () => {
     s = move(s, 'swap:gold:red'); s = move(s, 'done');
     expect(R(s)).toMatchObject({ gold: 2, red: 1 });
   });
-  it('Matchmaker: a yellow recruit gives +1 follower and +3 in colors you choose; other colors give nothing (Cory, Nov 6)', () => {
+  it('Matchmaker: a yellow recruit gives +3 followers and +2 in colors you choose; other colors give nothing (Cory, Nov 11)', () => {
     let s = sc({ round: 3, res: [rich], members: [['yellow.matchmaker']], shop: ['yellow.dyer', 'red.intern'] });
     const f0 = followers(s, s.players[0]);
     s = move(take(s, 'red.take'), `card:${uidOf(s, 'yellow.dyer', 'shop')}`);
     const g0 = R(s).green;
-    s = move(s, 'color:green'); s = move(s, 'color:green'); s = move(s, 'color:green');
-    expect(R(s).green - g0).toBe(3);
-    expect(followers(s, s.players[0]) - f0).toBe(1 + cardDef(s, uidOf(s, 'yellow.dyer', 0)).f);
+    s = move(s, 'color:green'); s = move(s, 'color:green');
+    expect(R(s).green - g0).toBe(2);
+    expect(followers(s, s.players[0]) - f0).toBe(3 + cardDef(s, uidOf(s, 'yellow.dyer', 0)).f);
     let t = sc({ round: 3, res: [rich], members: [['yellow.matchmaker']], shop: ['red.intern'] });
     t = move(take(t, 'red.take'), `card:${uidOf(t, 'red.intern', 'shop')}`);
     expect(named(t, 'Matchmaker')).toHaveLength(0);

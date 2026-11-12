@@ -2,6 +2,13 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.734 — 2026-11-11
+
+- **Night Traders** is now **Early Traders**: "Round Start: swap up to 4 of your resources for other colors, one for one."
+- **Matchmaker**: "Whenever you recruit a yellow member, +2 wild, +3 followers."
+- New Yellow members **Exchange Students** "On Recruit: swap one of your members for a rival’s member that costs the same.", **Headhunters** "On Use, once per game: recruit a member costing up to 6 for free." and **Cosmopolitans** "Round End: +1 follower per color among your members."
+- Out of the deck: Jack-of-All-Trades, Seamstress, Counterfeiters.
+
 ## v0.99.733 — 2026-11-11
 
 - **Loan Officers** now reads "On Use, once per round: swap up to 5 of your silver for rivals’ resources, one for one."
