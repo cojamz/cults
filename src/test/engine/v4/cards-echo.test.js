@@ -106,19 +106,21 @@ describe('Green current actions', () => {
     }
   });
   // Cory, Nov 10: "The Greatest Hits should be updated to the test version where it picks a color and copys every action
-  // on that color with a minion" (Medley's rule and words)
-  it('Greatest Hits copies every action with a minion on the chosen color\'s spaces, anyone\'s', () => {
-    let s = table(Q, { round: 3, left: 5, shop: ROW, queue: turns(1, 1, 1, 0) });
-    s = go(s, 'gold.rush'); s = go(s, 'gold.jv', () => true); s = go(s, 'echo.chant');
-    const gold = R(s).gold; // Kickback's 1 gold from P2
+  // on that color with a minion" (Medley's rule and words); Nov 11 11:20pm: "Let's put it on your own" (only your own minions)
+  it('Greatest Hits copies every action with your own minion on the chosen color\'s spaces, never a rival\'s', () => {
+    let s = table(Q, { round: 3, left: 5, shop: ROW, queue: turns(0, 1, 0, 1, 0) });
+    s = go(s, 'gold.rush'); s = go(s, 'gold.discount'); s = go(s, 'gold.jv', () => true); s = go(s, 'red.gather');
+    const gold = R(s).gold, rivalGold = R(s, 1).gold;
     s = take(s, 'echo.eternity');
     expect(s.pending.prompt).toBe('Greatest Hits: copy every action on which color\u2019s spaces?');
-    expect(s.pending.options.map(o => o.value)).toEqual(['gold']); // Green is never a choice; Red and Blue are empty
-    expect(s.pending.options[0].label).toBe('Gold (Golden Years, Kickback)');
+    expect(s.pending.options.map(o => o.value)).toEqual(['gold']); // Green is never a choice; Red has only P2's Gather, Blue is empty
+    expect(s.pending.options[0].label).toBe('Gold (Golden Years, Kickback)'); // P2's Intro Offer on Gold is not copied
     s = pass(move(s, 'color:gold'));
-    expect(R(s).gold - gold).toBe(9); // Golden Years' +6 and Kickback's +3, as P2 got them
-    expect(s.log.filter(l => l.startsWith('P1 copied'))).toEqual(["P1 copied Golden Years (P2's): +6 gold.", "P1 copied Kickback (P2's): +3 gold."]);
-    expect(R(s).green).toBe(1); // its own +1; Build Up is on Green, so not copied
+    expect(R(s).gold - gold).toBe(9); // Golden Years' +6 and Kickback's +3
+    expect(R(s, 1).gold).toBe(rivalGold); // a copy replays the copier's own gain only, so Kickback's gift isn't sent again
+    expect(s.log.filter(l => l.startsWith('P1 copied'))).toEqual(['P1 copied Golden Years: +6 gold.', 'P1 copied Kickback: +3 gold.']);
+    expect(s.log.some(l => /copied Intro Offer|copied Gather/.test(l))).toBe(false);
+    expect(R(s).green).toBe(1); // its own +1
   });
   it('Greatest Hits with no minion on another color\'s spaces gives just its green', () => {
     let s = table(Q, { round: 3, left: 5, shop: ROW, members: [['gold.tycoon']], queue: turns(0, 1) });

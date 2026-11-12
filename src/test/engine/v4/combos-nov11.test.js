@@ -121,11 +121,22 @@ describe('combo tester, copies and member movement (Nov 11)', () => {
     expect(s.log).toContain("P2's Offering: P1 discards 2 red, 2 green."); // Clan red, Wallflower green
     expect(s.players[0].res).toMatchObject({ red: 2, green: 2, yellow: 9 });
   });
-  it('Greatest Hits on Yellow in round III copies Offering', () => {
-    const { s } = go('medley-offering', { quads: Q, n: 3, turns: [0, 1, 2], members: [['yellow.gardener'], ['red.clan'], ['echo.wallflower']],
-      res: [{ red: 4, green: 4, yellow: 4 }, { red: 4, green: 4, yellow: 4 }, {}] }, [/Offering/, /^pass$/, /Melting Pot/, /^pass$/, /Greatest Hits/, /Yellow|yellow/]);
-    expect(s.log).toContain("P3's Offering: P1 discards 2 green.");
-    expect(s.log).toContain("P3's Offering: P2 discards 2 green.");
+  // Greatest Hits copies only your own minions (Cory, Nov 11 11:20pm): P3's own Offering, never P1's Melting Pot
+  it('Greatest Hits on Yellow in round III copies your own Offering', () => {
+    const sc = { quads: Q, n: 3, turns: [2, 0, 1, 2], members: [['yellow.gardener'], ['red.clan'], ['echo.wallflower']],
+      res: [{ red: 4, green: 4, yellow: 4 }, { red: 4, green: 4, yellow: 4 }, {}] };
+    const r = drive(scene(sc), [/Offering/, /^pass$/, /Melting Pot/, /^pass$/, /Gather/, /^pass$/, /Greatest Hits/]);
+    const yellow = r.s.pending.options.find(o => o.value === 'yellow');
+    expect(yellow.label).toBe('Yellow (Offering)'); // P1's Melting Pot on Yellow is a rival's: not copied
+    expect(r.s.pending.options.map(o => o.value)).not.toContain('red'); // only P2's Gather on Red
+    const { s } = drive(r.s, [/Yellow|yellow/]);
+    if (DUMP) dump('medley-offering', s, [...r.trail]);
+    expect(s.log.filter(l => l === "P3's Offering: P1 discards 2 green.")).toHaveLength(2); // placed, then copied
+    expect(s.log.filter(l => l === "P3's Offering: P2 discards 2 green.")).toHaveLength(2);
+    expect(s.players[0].res.green).toBe(0);
+    expect(s.players[1].res.green).toBe(0);
+    expect(s.players[2].res.yellow).toBe(15); // +5 placed, +10 copied (Wallflower doubles the copy)
+    expect(s.log.some(l => /copied Melting Pot|copies Melting Pot/.test(l))).toBe(false);
   });
   it('Buskers against Agents: no copy of the Agents owner\'s action', () => {
     const { s } = go('buskers-agents', { quads: Q, turns: [0, 1], members: [['echo.agents'], ['echo.songrequest']] }, [/Gather/, /^pass$/, /Late Shift/, /use:/]);

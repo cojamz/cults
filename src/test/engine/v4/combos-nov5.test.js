@@ -71,22 +71,27 @@ describe('hard combos (Nov 5)', () => {
     expect(has(s, /P1's Roadie: \+3 green/)).toBe(true); // Wallflower, Roadie, Stunt Double
   });
 
-  // Greatest Hits is Medley's rule since Nov 10: Stunt Double recruited after it copies Greatest Hits, which must not loop
+  // Greatest Hits is Medley's rule since Nov 10, on your own minions only since Nov 11 11:20pm: P1's own Gather on Red is
+  // copied, P2's Late Shift there is not; Stunt Double recruited after it copies Greatest Hits, which must not loop
   it('Stunt Double copying Greatest Hits never loops back into Greatest Hits', () => {
-    const r = drive(scene({ quads: Q, turns: [1, 0, 1, 0], shop: ['echo.hourglass'], res: [{ green: 20 }] }), [/Gather/, /pass/, /Greatest Hits/, /Red/, /Stunt Double/]);
+    const r = drive(scene({ quads: Q, turns: [0, 1, 0, 1], shop: ['echo.hourglass'], res: [{ green: 20 }] }), [/Gather/, /pass/, /Late Shift/, /pass/, /Greatest Hits/, /Red/, /Stunt Double/]);
     const s = r.s;
     expect(s.log.filter(l => /^P1's Greatest Hits: \+1 green/.test(l))).toHaveLength(1);
     expect(s.log).toContain("P1's Stunt Double: P1 copied Greatest Hits: +1 green, +4 red.");
-    expect(s.players[0].res.red).toBe(8); // Gather copied by Greatest Hits, then that chip again
+    expect(s.log.some(l => /^P1 cop(ied|ies) Late Shift/.test(l))).toBe(false); // P2's minion: not copied
+    expect(s.players[0].res.red).toBe(12); // own Gather +4, copied by Greatest Hits +4, then that chip again +4
     expect([s.pending.kind, s.pending.player]).toEqual(['place', 1]);
   });
 
+  // Impersonator left the deck for Mimics (Nov 11 9:02pm); its rule stays and it is dealt here as a fixture, because this
+  // is the path (a choice made after Greatest Hits reaching a rival's Stunt Double) that looped forever on Nov 6
   it("Impersonator doing a rival's Stunt Double after Greatest Hits never loops back into Greatest Hits", () => {
-    const r = drive(scene({ quads: Q, turns: [1, 0, 1, 0], members: [[], ['echo.hourglass']], shop: ['echo.impersonators'], res: [{ green: 30 }] }), [/Gather/, /pass/, /Greatest Hits/, /Red/, /Impersonator/, /Stunt Double/]);
+    const r = drive(scene({ quads: Q, turns: [0, 1, 0, 1], members: [[], ['echo.hourglass']], shop: ['echo.impersonators'], res: [{ green: 30 }] }), [/Gather/, /pass/, /Late Shift/, /pass/, /Greatest Hits/, /Red/, /Impersonator/, /Stunt Double/]);
     const s = r.s;
     expect(s.log.filter(l => /^P1's Greatest Hits: \+1 green/.test(l))).toHaveLength(1);
     expect(s.log.filter(l => /Impersonator does Stunt Double's On Recruit/.test(l))).toHaveLength(1);
     expect(s.log).toContain("P1's Stunt Double: P1 copied Greatest Hits: +1 green, +4 red.");
+    expect(s.log.some(l => /^P1 cop(ied|ies) Late Shift/.test(l))).toBe(false); // P2's minion: not copied
     expect([s.pending.kind, s.pending.player]).toEqual(['place', 1]);
   });
 

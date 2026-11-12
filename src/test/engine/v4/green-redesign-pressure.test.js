@@ -90,21 +90,25 @@ describe('Green redesign: copied copy actions and continuation safety', () => {
     expect(s.pending?.kind).not.toBe('choose');
     expect(s.players[0].members).toContain(u);
   });
-  // Greatest Hits is Medley's rule since Nov 10: the color pick, then each copied action's own choices
+  // Greatest Hits is Medley's rule since Nov 10 (your own minions only since Nov 11 11:20pm): the color pick, then each
+  // copied action's own choices
   it('Greatest Hits picks survive a reload between the color pick and a copied action\'s choices', () => {
-    let s = table(Q, { round: 3, left: 5, res: [{ gold: 3 }, { gold: 3 }], queue: turns(1, 0, 1) });
+    let s = table(Q, { round: 3, left: 5, res: [{ gold: 3 }, { gold: 3 }], queue: turns(0, 1, 0) });
     s = take(s, 'gold.steal');
-    while (s.pending?.player === 1 && s.pending.kind === 'choose') s = move(s, 'player:0');
+    while (s.pending?.player === 0 && s.pending.kind === 'choose') s = move(s, 'player:1');
     s = pass(s);
+    s = go(s, 'gold.rush'); // P2's minion on Gold: not copied
     s = take(s, 'echo.eternity');
+    expect(s.pending.options.find(o => o.value === 'gold').label).toBe('Gold (Collect Debts)');
     let a = s, b = saved(s), steps = 0;
     while (a.pending?.player === 0 && a.pending.kind !== 'place' && a.pending.kind !== 'buy' && steps++ < 10) {
       const id = a.pending.options[0].id;
       a = move(a, id); b = move(saved(b), id);
     }
-    expect(steps).toBeGreaterThan(1); // the color pick, then Collect Debts' victim picks
+    expect(steps).toBeGreaterThan(1); // the color pick, then the copied Collect Debts' victim picks
     expect(steps).toBeLessThan(10);
     expect(b).toEqual(a);
+    expect(a.log.some(l => /cop(ied|ies) Golden Years/.test(l))).toBe(false);
   });
 
   it('Tribute Band is once per game and its saved replay resumes through choice-bearing actions', () => {
