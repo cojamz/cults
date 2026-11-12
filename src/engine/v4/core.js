@@ -1243,7 +1243,13 @@ function endRound(state) {
     underCause({ kind: 'contest', qid: c.qid, round: state.round }, () => { for (const w of winners) { w.bonus += c.prize; w.contest += c.prize; fBump(state, w, c.prize); } });
     // members that answer a contest won (Cheerleader); the screen shows them with the members after the contests
     inPhase('afterContests', () => { for (const w of winners) eachMemberOf(state, w, (card, def) => { if (def.onContestWin) def.onContestWin(ctx, w, card, c); }, ['onContestWin']); });
-    msg.push(`${c.label}: ${winners.map(w => w.name).join(' & ')} +${c.prize}`);
+    // why it went that way (Cory, Nov 12: "How did I not win most members?" P2's Mannequin counted the shop's blue
+    // members): every count, and what a Mannequin added
+    const why = (c.rows || []).map(r => `${state.players[r.player].name} ${r.count}`).join(', ');
+    const dummies = /\bmembers\b/i.test(c.label) && !/\b(?:of one color|cards?|blue|red|green|purple|white|silver|yellow|magenta|gold)\b/i.test(c.label)
+      ? state.players.map(p => ({ p, n: contestMembers(state, p) - memberCount(state, p) })).filter(x => x.n > 0) : [];
+    const extra = dummies.map(x => `${x.p.name}'s Mannequin counts ${x.n} blue shop member${x.n === 1 ? '' : 's'}`).join('; ');
+    msg.push(`${c.label}: ${winners.map(w => w.name).join(' & ')} +${c.prize}${why ? ` (${why}${extra ? `; ${extra}` : ''})` : ''}`);
   });
   // the round's scoring, kept as decided: the round-end card and the results read it back (never re-derived)
   state.contests = [...(state.contests || []), { round: state.round, prize: v, results: table }];
