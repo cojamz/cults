@@ -65,3 +65,19 @@ Verdict: send
 8. Color interactions: none: a table rule; Blue's shop cards scale with it.
 9. Biggest case: no resource or follower added; only choice. Shop-reading members (Trending-like) could read 2 more cards.
 Verdict: cut (adds reading, no money: the round III shortfall is resources, since leftovers are 5 and nothing-affordable is 34%; weaker than the others)
+
+## Idea: Today
+Source: Cory, 2026-11-12: "run games on "once a game" and evaluate today, richer, inbetween (one less any) and one less color than "today". So four."
+Verdict: send
+
+## Idea: Richer
+Source: Cory, 2026-11-12: "run games on "once a game" and evaluate today, richer, inbetween (one less any) and one less color than "today". So four."
+Verdict: send
+
+## Idea: In between
+Source: Cory, 2026-11-12: "run games on "once a game" and evaluate today, richer, inbetween (one less any) and one less color than "today". So four."
+Verdict: send
+
+## Idea: One less color
+Source: Cory, 2026-11-12: "run games on "once a game" and evaluate today, richer, inbetween (one less any) and one less color than "today". So four."
+Verdict: send
