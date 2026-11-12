@@ -70,7 +70,7 @@ Verdict: send
 7. Public and certain: yes, minions are on the board.
 8. Color interactions: none named; reads any space.
 9. Biggest case: round III, the center space with the most minions copied once, about 5 to 10 resources or followers, against a winner's 70 to 110.
-Verdict: send
+Verdict: cut (Cory 9:06pm: "such a fundamental misunderstanding of the game" (a space holds one minion))
 
 ## Idea: Originals
 
@@ -83,4 +83,4 @@ Verdict: send
 7. Public and certain: yes, the rule is printed.
 8. Color interactions: none named; any player can hold it.
 9. Biggest case: blocks one Mimics copy, worth 3 to 6 resources and a recruit; 0 followers of its own.
-Verdict: send
+Verdict: cut (Cory 9:06pm: "dumb and bad")
