@@ -163,11 +163,11 @@ describe('Exchange Students: "On Recruit: swap one of your members for a rival�
 
   it('4 players: every rival\'s same-cost member is offered, by name; the pick goes to that rival', () => {
     const { s } = run('es-4p', { quads: SQ, n: 4, queue: BUY, res: [{ yellow: 20 }], shop: ['yellow.exchangestudents'],
-      members: [['echo.encore'], ['silver.dowager'], ['silver.splurgers'], ['silver.revelers', 'red.panel']] }, [/Exchange/]);
+      members: [['echo.encore'], ['silver.dowager'], ['silver.hustlers'], ['silver.revelers', 'red.panel']] }, [/Exchange/]);
     expect(s.pending.options.filter(o => o.kind === 'trade').map(o => o.label)).toEqual([
-      'Encore ↔ P2: Dowager (7)', 'Encore ↔ P3: Splurgers (7)', 'Encore ↔ P4: Revelers (7)',
+      'Encore ↔ P2: Dowager (7)', 'Encore ↔ P3: Hustlers (7)', 'Encore ↔ P4: Revelers (7)',
       // Exchange Students itself costs 7 too
-      'Exchange Students ↔ P2: Dowager (7)', 'Exchange Students ↔ P3: Splurgers (7)', 'Exchange Students ↔ P4: Revelers (7)']);
+      'Exchange Students ↔ P2: Dowager (7)', 'Exchange Students ↔ P3: Hustlers (7)', 'Exchange Students ↔ P4: Revelers (7)']);
     const r = drive(s, [/Encore ↔ P4/]);
     expect(names(r.s, 3)).toEqual(['Panel', 'Encore']);
     expect(r.s.log).toContain("P1's Exchange Students: swaps Encore for P4's Revelers.");

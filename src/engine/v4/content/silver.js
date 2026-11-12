@@ -1132,7 +1132,7 @@ const silver = {
     }),
     // Cory, 2026-11-11 7:47pm Eastern (his idea): Barker's extra followers recruit, after a silver member only (core.js
     // followersTwiceCard). Price is Claude's fill-in (Barker's).
-    m('splurgers', 'Splurgers', 2, 2, 'Whenever you recruit a silver member, you may also buy followers.', { followersOnColor: S }),
+    m('splurgers', 'Splurgers', 2, 1, /* 1 cheaper (Cory, Nov 12 6:37pm Eastern: "splurgers should be a touch cheaper") */ 'Whenever you recruit a silver member, you may also buy followers.', { followersOnColor: S }),
     // Cory, 2026-11-11 7:48pm Eastern (his idea; 7:49pm: "any"): a follower buy with any silver in its payment.
     // Name, words and price are Claude's fill-ins (price: Tax Collector's trigger, a follower instead of a resource).
     m('tollcollectors', 'Toll Collectors', 2, 2, 'Whenever any player buys followers with silver, +1 follower.', {
