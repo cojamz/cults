@@ -127,3 +127,9 @@ Verdict: send
 8. Color interactions: none named; reads Green spaces.
 9. Biggest case: round III, a contest swing of 4 to 10 followers plus 1 from Regulars, once.
 Verdict: send
+
+## Idea: Die-Hards
+
+Source: Cory, 2026-11-11 9:08pm: "if you have the most green members, like +6 followers or something like that… Something simple."
+1. Printed text: "Game End: if you have the most green members, +6 followers."
+Verdict: send
