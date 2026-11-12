@@ -83,6 +83,21 @@ describe('combo tester (Nov 11 spaces and members)', () => {
     expect(names(s, 0)).toContain('Clan');
   });
 
+  // Bug, Nov 12 (Cory asked how a twice-done On Recruit works with copiers): a Doppelganger bought with Buyout became
+  // a copy of the buyer's member but skipped its On Recruit, since the seller's copy had used its once-a-round stamp
+  it('Buyout of a Doppelganger: it copies one of yours and does that On Recruit for you', () => {
+    // P2 recruits the Doppelganger this round (it copies Clan), then P1 buys it
+    const first = drive(scene({ quads: ['red', 'echo', 'silver', 'trading'], turns: [1, 0], shop: ['echo.doppel'], members: [['echo.evergreen'], ['red.clan']], res: [{ silver: 12 }, { green: 9 }] }),
+      [/Gather|Build Up/, /Doppelganger/, /Clan/]).s;
+    const d = first.players[1].members.find(u => first.cards[u].def === 'echo.doppel');
+    expect(first.cards[d].copy).toBe('red.clan');
+    const green = first.players[0].res.green || 0;
+    const { s } = drive(first, [/Buyout/, /Doppelganger/, /Busker/]);
+    expect(s.players[0].members).toContain(d);
+    expect(s.cards[d].copy).toBe('echo.evergreen');
+    expect(s.players[0].res.green - green).toBe(2); // Busker's On Recruit, for the buyer
+  });
+
   it('Modest Means counts Buskers and Dabblers as two members each', () => {
     const { s } = go('modest-buskers', { quads: ['red', 'echo', 'yellow', 'trading'], n: 3, turns: [0, 1, 2], members: [['red.clan'], ['echo.songrequest'], ['benders.dabblers']] }, [/Modest Means/]);
     expect(s.players[0].res.white).toBeGreaterThanOrEqual(4); // +2, +1 per rival with more members (both count 2 > 1)

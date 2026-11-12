@@ -926,9 +926,11 @@ const echoQ = {
       // Doppelganger also does the copied member's On Recruit right then (Cory, 2026-10-28: a copied Connector
       // did nothing, since Doppelganger only comes in round III and Connector's Round Start never came)
       // Once per round per Doppelganger, so a Doppelganger swapped out and back in by Panel-style swaps can't loop
-      // (Claude, under Cory's go-with-your-gut).
-      if (self.def.key === 'doppel' && self.copiedRecruit !== ctx.state.round) {
-        self.copiedRecruit = ctx.state.round;
+      // (Claude, under Cory's go-with-your-gut). Kept per owner: a Doppelganger bought off a rival (Buyout) does its
+      // new copy's On Recruit for the buyer, though the seller's copy already did one this round (bug, Nov 12).
+      const stamp = `${p.id}:${ctx.state.round}`;
+      if (self.def.key === 'doppel' && self.copiedRecruit !== stamp) {
+        self.copiedRecruit = stamp;
         if (d.onRecruited) ctx.recruitAbility(p, self, d, () => d.onRecruited(ctx, p, self));
         if (d.now) for (const hook of ['onRoundStart', 'onRoundStartLate']) if (d[hook]) ctx.recruitAbility(p, self, d, () => d[hook](ctx, p, self));
       }
