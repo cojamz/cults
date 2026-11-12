@@ -14,3 +14,16 @@
 6. Knows who is really winning (Claude, unanswered)
 7. Spends or protects before a rival can take (Claude, unanswered)
 8. Buys a member only if it earns more than it costs in the turns left (Claude, unanswered)
+
+## Cory, 11:36am
+- 1: "Yes, has a big payoff in mind. Like, how are you going to get most of your points ... I'm not saying they need to pivot to stop the leader. It's just that like they need to maybe spend some resources to slow the leader down ... I don't want the game to becoming everybody ganging up on the leader to win, although some of that is inherent".
+- 3 contests by ease: "Yes, that's a good one." 6 knows who's really winning: "Yes. This is key. Six is a huge one." 7 protect before a rival takes: "Maybe, very situational."
+- 8 member earns more than it costs: "Yes, that's true. Though ... say you have a member that's going to score you points based on your members ... it's going to cost 10 and it's going to pay explicitly like 5, but it's worth 3 members. So that counts ... Sometimes it's hard to figure out exactly how much the members will give ... there should be a general baseline heuristic here at least, but I don't want this to make bots like ignore stuff that is expensive that would be a big payoff for them ultimately when it's hard to assess that payoff". "Come up with some more ... Let's keep riffing."
+
+## Round 3 of guesses (Claude, sent 11:38am)
+9. Values a member by what it does with the members and spaces they already have, not its printed followers
+10. Shop order: buys first what a rival will take before their turn returns; waits on what nobody else can afford
+11. Minion order: takes the fought-over space first, leaves the space nobody else wants for last
+12. Never ends a round with more resources than their turns left can spend, unless it wins a contest
+13. Collects the colors their target members cost, rounds ahead
+14. Aims steals and swaps at whoever is really winning, not at the biggest pile
