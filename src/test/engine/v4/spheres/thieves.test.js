@@ -324,19 +324,19 @@ describe('Magenta members', () => {
     expect(R(s)[2]).toEqual({ ...Z, gold: 1 });
   });
 
-  it('Fence (Magenta Cloak): whenever you steal, +1 magenta, once per steal; a rival stealing from you pays nothing (Cory, Nov 6)', () => {
+  it('Fence (Magenta Cloak): whenever you steal, +2 magenta (+1 until Nov 11), once per steal; a rival stealing from you pays nothing (Cory, Nov 6)', () => {
     const run = members => {
       const s = scene({ round: 2, res: [{}, { gold: 5 }, { gold: 3 }], members }); // P2 keeps 1 gold for the later steal
       return play(take(placed(s, 0, 3), 'thieves.pickpocket'), 'take:1:gold', 'take:1:gold', 'take:1:gold', 'take:1:gold'); // the fourth minion: 4 from P2
     };
     const without = run([]), mine = run([['thieves.fence']]), victim = run([[], ['thieves.fence']]);
-    expect(R(mine)[0].magenta).toBe(R(without)[0].magenta + 1); // one steal of several resources: +1 once
+    expect(R(mine)[0].magenta).toBe(R(without)[0].magenta + 2); // one steal of several resources: +2 once
     expect(R(victim)[1].magenta || 0).toBe(R(without)[1].magenta || 0); // the victim's cloak: nothing
-    // two more steals by the holder: each its own steal, +1 each
+    // two more steals by the holder: each its own steal, +2 each
     const ctx = contextFor(mine), m0 = mine.players[0].res.magenta || 0;
     ctx.steal(mine.players[0], mine.players[1], { take: { gold: 1 } });
     ctx.steal(mine.players[0], mine.players[2], { take: { gold: 1 } });
-    expect(mine.players[0].res.magenta).toBe(m0 + 2);
+    expect(mine.players[0].res.magenta).toBe(m0 + 4);
   });
 
   it('Light Fingers: when a rival recruits a member costing 11+ (8+ until Nov 5), take 1 from them', () => {

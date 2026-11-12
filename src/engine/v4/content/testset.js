@@ -20,9 +20,11 @@ export const TEST_SPACES = {
 };
 /** Candidate members dealt into the test version's decks, each in a live member's place so decks stay at 10 (Cory,
  *  Nov 8: "Are we keeping the member decks consistent?"); Protesters, Gift Swappers and Purifiers (Nov 9) join the grey members with nothing out. */
-export const TEST_MEMBERS = new Set(['trading.anchorites', 'market.repossessors', 'trading.oldguard', 'benders.protesters', 'benders.giftswappers', 'benders.purifiers']);
+// Ensemble in Tribute Band's place (Cory, Nov 11 9:32pm Eastern: "cut tribute band"; Ensemble, "Whenever you copy your
+// own action, +1 follower.", is the stand-in from the action test until the members work names Green's replacement)
+export const TEST_MEMBERS = new Set(['echo.ensemble', 'trading.anchorites', 'market.repossessors', 'trading.oldguard', 'benders.protesters', 'benders.giftswappers', 'benders.purifiers']);
 /** Live members the test version leaves out: Recluse (Anchorites), Misers (Old Guard), Regular (Repossessors). */
-export const TEST_OUT = new Set(['trading.recluse', 'trading.heirs', 'market.regular']);
+export const TEST_OUT = new Set(['echo.dejavu', 'trading.recluse', 'trading.heirs', 'market.regular']);
 /** Whether a member is in this table's decks under the test version (null: the live rule decides). */
 // rules.membersIn / rules.membersOut (member ids) put a card in or take one out of this table's decks, over every other
 // rule. Bot tests only for now (the action balance harness, Nov 11, Cory: "maybe we'll cut tribute band ... We'll need to

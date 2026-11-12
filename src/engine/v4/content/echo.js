@@ -529,9 +529,12 @@ function stageMove(ctx, p, { key, joined }, to) {
 }
 const medleyKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => ['Medley', 'Remix', 'Mashup', 'Greatest Hits'].includes(x.name)).map(x => actionKey(x.key));
 /** Medley: one entry per action with a minion on color q's spaces this round (p's own entry where p shares it). */
-function medleyPlan(ctx, p, q, noThird = false, rivalOnly = false) {
+/** Greatest Hits' copy rule: 'rival' (the game, Nov 11), 'own' or false (every minion), from rules.hitsMode. */
+const hitsMode = ctx => { const m = ctx.state.rules?.hitsMode; return m === 'all' ? false : m === 'own' ? 'own' : 'rival'; };
+// whose: false every minion, 'rival' only rivals' minions, 'own' only the copier's own
+function medleyPlan(ctx, p, q, noThird = false, whose = false) {
   const byAction = new Map();
-  for (const e of Object.values(ledger(ctx.state).now || {}).filter(x => x.color === q && !['Medley', 'Remix', 'Mashup', 'Greatest Hits'].includes(x.name) && !(noThird && x.ring === 3) && !(rivalOnly && x.p === p.id)).sort((a, b) => (a.seq || 0) - (b.seq || 0))) {
+  for (const e of Object.values(ledger(ctx.state).now || {}).filter(x => x.color === q && !['Medley', 'Remix', 'Mashup', 'Greatest Hits'].includes(x.name) && !(noThird && x.ring === 3) && !(whose === 'rival' && x.p === p.id) && !(whose === 'own' && x.p !== p.id)).sort((a, b) => (a.seq || 0) - (b.seq || 0))) {
     const k = actionKey(e.key), had = byAction.get(k);
     if (!had || (had.p !== p.id && e.p === p.id)) byAction.set(k, e);
   }
@@ -681,13 +684,14 @@ const echoQ = {
       // Cory, Nov 10: "The Greatest Hits should be updated to the test version where it picks a color and copys every action
       // on that color with a minion" (Medley's rule and words; was "Copy the On Recruit of each of your members"). Key kept
       // for old saves and records.
-      key: 'eternity', ring: 3, name: 'Greatest Hits', text: 'Choose a color other than green. Copy every action with a minion on its spaces. +1 green.',
-      // rules.hitsRival (test rule, Cory Nov 11: "we could make it copy rival minions on another color ... I lean more
-      // towards rival"): only actions with a rival's minion on them
-      estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...ctx.state.quadrants.filter(q => q !== 'echo').map(q => medleyPlan(ctx, p, q, false, !!ctx.state.rules?.hitsRival).reduce((a, e) => a + entryValue(ctx, e, p), 0))),
+      // Cory, Nov 11 9:32pm Eastern: "ship greatest hits, copying only rivals, minions" (action test: takers won 64%, 56%
+      // rivals only). rules.hitsMode (bot tests only): 'all' the old rule, 'own' only your own minions (Cory: "try some
+      // where it only copies your own on another color").
+      key: 'eternity', ring: 3, name: 'Greatest Hits', text: 'Choose a color other than green. Copy every action with a rival\u2019s minion on its spaces. +1 green.',
+      estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...ctx.state.quadrants.filter(q => q !== 'echo').map(q => medleyPlan(ctx, p, q, false, hitsMode(ctx)).reduce((a, e) => a + entryValue(ctx, e, p), 0))),
       resolve(ctx, p) {
         plus(ctx, p);
-        const rivalOnly = !!ctx.state.rules?.hitsRival;
+        const rivalOnly = hitsMode(ctx);
         const opts = ctx.state.quadrants.filter(q => q !== 'echo').map(q => ({ q, list: medleyPlan(ctx, p, q, false, rivalOnly) })).filter(x => x.list.length);
         if (!opts.length) { ctx.log(`${p.name}'s Greatest Hits: no color has an action to copy.`); return; }
         withPath(ctx, [...new Set([...pathNow(ctx), ...medleyKeys(ctx)])], () => ctx.choose(p, 'Greatest Hits: copy every action on which color\u2019s spaces?', opts.map(({ q, list }) => ({
@@ -793,7 +797,7 @@ const echoQ = {
       })), 'echo.mashupPick', { ...data, picked });
     },
     medley(ctx, p, q, data) {
-      const who = data?.who || 'Medley', list = medleyPlan(ctx, p, q, !!data?.noThird, !!data?.rivalOnly);
+      const who = data?.who || 'Medley', list = medleyPlan(ctx, p, q, !!data?.noThird, data?.rivalOnly || false);
       if (!list.length) { ctx.log(`${p.name}'s ${who}: nothing on ${quadrant(q).name} to copy.`); return; }
       ctx.log(`${p.name}'s ${who} copies every action on ${quadrant(q).name}'s spaces${data?.noThird ? ' but the round III one' : ''}.`);
       copyAll(ctx, p, list, null, who);

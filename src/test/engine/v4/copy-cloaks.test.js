@@ -19,7 +19,7 @@ const withCloak = (s, def, i = 0) => {
 };
 
 describe('cloaks on copied actions', () => {
-  it('Magenta Cloak: Echo copying Help Yourself is your steal, +1 magenta', () => {
+  it('Magenta Cloak: Echo copying Help Yourself is your steal, +2 magenta', () => {
     const run = cloak => {
       let s = table(['gold', 'thieves', 'market', 'echo'], { queue: turns(1, 0, 1, 0), res: [{ gold: 5 }, { gold: 5 }] });
       if (cloak) s = withCloak(s, 'thieves.fence', 0);
@@ -28,7 +28,7 @@ describe('cloaks on copied actions', () => {
       return s;
     };
     const base = run(false), s = run(true);
-    expect(s.players[0].res.magenta).toBe(base.players[0].res.magenta + 1);
+    expect(s.players[0].res.magenta).toBe(base.players[0].res.magenta + 2);
   });
   it('Silver Cloak: Echo copying Toast gifts each rival again, +2 silver', () => {
     const run = cloak => {

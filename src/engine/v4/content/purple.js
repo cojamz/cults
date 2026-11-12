@@ -227,7 +227,7 @@ function takeToken(ctx, p, why, what = '') {
   const s = ctx.state, was = tokenHolder(s);
   s.goesLast = { round: s.round, pid: p.id };
   // POCKETWATCH=token<n>, bot test only (Cory, Nov 6: "when you take the Go Last token, +4 purple or something")
-  const tok = String(globalThis.process?.env?.POCKETWATCH || 'token3').match(/^token(\d+)$/);
+  const tok = String(globalThis.process?.env?.POCKETWATCH || 'token2').match(/^token(\d+)$/);
   if (tok && was !== p.id) for (const c of ctx.abilitiesOf(p)) if (c.def.id === 'purple.pocketwatch') ctx.asMember(p, c.def.name, () => {
     const got = ctx.gain(p, 'purple', Number(tok[1])); if (got) ctx.log(`${p.name}'s ${ctx.cloakOr(c, 'Pocket Watch')}: +${got.n} ${got.color}.`);
   }, c.uid);
@@ -1119,12 +1119,12 @@ export default {
     // Purple's artifact only, never dealt (Claude's pick, 2026-10-24, after Cory found Courier "a little too good").
     // Name is Claude's fill-in.
     // +2 (Cory, Nov 1 8:25pm: option A; 19.5% held in the 200-game test, against 11% at +1)
-    m('pocketwatch', 'Pocket Watch', 0, 0, 'Whenever you take the Goes Last token, +3 purple.', { artifact: true,
+    m('pocketwatch', 'Pocket Watch', 0, 0, 'Whenever you take the Goes Last token, +2 purple.', { artifact: true, // +2 (Cory, Nov 11 9:32pm Eastern: "ship ... purple at +2"; was +3, owners won 40% in the action test)
       onSkip(ctx, owner, card, p, by) {
         // POCKETWATCH=self<n>: bot test of "Whenever you skip a rival's turn, +n purple." (Nov 6; off in the game)
-        const own = String(globalThis.process?.env?.POCKETWATCH || 'token3').match(/^self(\d+)$/);
+        const own = String(globalThis.process?.env?.POCKETWATCH || 'token2').match(/^self(\d+)$/);
         if (own && (by !== owner.id || p === owner)) return;
-        if (/^token/.test(String(globalThis.process?.env?.POCKETWATCH || 'token3'))) return;
+        if (/^token/.test(String(globalThis.process?.env?.POCKETWATCH || 'token2'))) return;
         const got = ctx.gain(owner, 'purple', own ? Number(own[1]) : 2); if (got) ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Pocket Watch')}: +${got.n} ${got.color}.`); },
     }),
     m('gossip', 'Gossip', 2, 2, /* Cory, Nov 5 backlog price yes */ 'Whenever a player’s turn is skipped, +1 follower.', { ...old13('busybody'),
