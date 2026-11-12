@@ -135,6 +135,7 @@ describe('fire audit: Blue, Magenta, White, Green', () => {
       'trading.pawnbroker', // under 3 holds when Victors left the grey deck (Nov 6) moved the games; replace12c and member-use cover it
       'echo.impersonators', // under 3 holds once every member cost 4 more (Nov 5 evening) moved the games; cards-market-concepts and replace3 cover it
       'trading.reinvestor', // under 3 holds when Guest of Honor and Patrons moved to White (Nov 11) moved the games; cards-trading (Reinvestor) covers it
+      'trading.appraiser', // cut; under 3 holds when Leavetakers, Minimalists and Last Callers (Nov 11) moved the games; cards-trading (Appraiser) covers it
       'thieves.robinhood']); // under 3 holds when Sleepyheads and Lookouts joined Purple and Victors left (Nov 6) moved the games; cards-thieves covers it
     const unseen = hand.filter(id => !THIN.has(id) && !(st[id]?.held >= 3));
     expect(silent).toEqual([]);
@@ -244,6 +245,9 @@ const ALLOW = {
   'yellow.customs': 'pays only when a rival steals or changes your resources (cards-yellow: Customs Officer)',
   // Polish taking all its coins at once (Nov 5) moved the seeded games: recruited in 1 game, with no Silver space after
   'silver.majordomo': 'pays only when its holder takes a Silver space; recruited once in the sample (cards-silver: Majordomo)',
+  // Leavetakers, Minimalists and Last Callers (Nov 11) moved the seeded games: recruited in 8 games where its Normal-bot
+  // holders never took the use (they weigh it against the round's other uses)
+  'red.panel': 'pays only when used, and Normal bots rarely take it (red-recruit-chain: Panel)',
 };
 
 describe('namesCard: what counts as a line naming a card', () => {
