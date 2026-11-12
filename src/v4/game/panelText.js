@@ -67,8 +67,8 @@ const P = {
     // took a second line and dropped on the outer ring; "pile" as its card says
     hire: { verb: 'Recruit the top of the pile', second: '+1 red, rivals +1' }, // the rivals' red sat in line 3, which drops on the outer ring (blind panel, Nov 1)
     // the gain first, then the action, split by a comma (wording pass, Nov 12: "…3 more +3 red" ran together)
-    hireup: { verb: '+3 red, promote a member to one costing up to 3 more' }, // whole in line 1: ring II drops line 2
-    trade: { verb: '+3 red, demote a member to one costing up to 3 less' },
+    hireup: { verb: '+3 red, promote (cost up to +3)' }, // whole in line 1: ring II drops line 2
+    trade: { verb: '+3 red, demote (cost up to −3)' },
     take: { verb: `Recruit for free, costing ${9 + MORE} or less`, second: '+1 red' },
   },
   market: {

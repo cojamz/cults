@@ -72,8 +72,8 @@ describe('trade picker', () => {
       expect(giftPick(s, s.pending).head).toBe(`Swap a member for one costing up to 3 ${title === 'Promote' ? 'more' : 'less'}`); // its rule, not its name again (picky bot, Nov 11)
     }
     // ring II shows line 1 only: the limit and the red both live there (text audit, Nov 1)
-    expect(panelText('red', quadrant('red').actions.find(a => a.key === 'hireup')).verb).toContain('one costing up to 3 more');
-    expect(panelText('red', quadrant('red').actions.find(a => a.key === 'trade')).verb).toContain('one costing up to 3 less');
+    expect(panelText('red', quadrant('red').actions.find(a => a.key === 'hireup')).verb).toContain('promote (cost up to +3)');
+    expect(panelText('red', quadrant('red').actions.find(a => a.key === 'trade')).verb).toContain('demote (cost up to −3)');
     expect([1, 2, 3].map(r => panelText('red', { key: 'turnout' }, r).main)).toEqual(['+2 red', '+3 red', '+4 red']);
     for (const k of ['hireup', 'trade']) expect(panelText('red', quadrant('red').actions.find(a => a.key === k)).verb).toContain('+3 red'); // Cory, Nov 1: "Promote and Demote actions should show their +red" (line 3 drops on ring II)
   });
