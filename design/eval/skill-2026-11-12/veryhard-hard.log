@@ -1,0 +1,8 @@
+table 1 side 0: A64* B41 A51 B51 (104s)
+table 1 side 1: B52 A56* B54 A49 (107s)
+table 2 side 0: A53 B67* A60 B56 (59s)
+table 2 side 1: B65 A75 B81* A66 (67s)
+table 3 side 0: A59 B45 A60 B74* (92s)
+table 3 side 1: B55 A62* B53 A54 (115s)
+table 4 side 0: A77 B90 A108* B72 (121s)
+table 4 side 1: B108* A108* B105 A100 (140s)
