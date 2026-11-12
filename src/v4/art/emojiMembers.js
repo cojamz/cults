@@ -200,6 +200,9 @@ const M = {
   barker: ['📢', '♾️ You recruit a member: may also recruit followers'],
   buskers: ['🎙️', '🔁 Copy an action a rival has a minion on'],
   copyist: ['📝', '♾️ You copy an action: +2 followers'],
+  mimics: ['🦜', '🌅 Use the On Recruit of any member in play'], // Nov 11: Green
+  regulars: ['🍺', '🌙 +1 follower per minion you have on Green spaces'],
+  'die-hards': ['🏟️', '🏁 Most green members: +6 followers'],
   cheerleaders: ['🎊', '♾️ You win a contest: +2 followers'],
 };
 
