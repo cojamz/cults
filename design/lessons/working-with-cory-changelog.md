@@ -78,3 +78,4 @@ Why each rule in .claude/rules/working-with-cory.md exists, in Cory's words. Mov
 - 2026-11-11: Card text is one trigger and one plain effect; Safekeepers (silver parked on the card until Round Start) refused as "so fucking complicated. Never say anything like that again." presend now refuses long, two-timing or parked card text.
 - 2026-11-11: Live back-and-forth, speed first; draft so presend passes first time (Cory x3: "Every message takes so long").
 - 2026-11-11 8:25pm: Short pick lists (≤3 prose lines, ≤8 lines, an ask ending in [default]) skip the plain-reader once presend passes; presend enforces it (coordinator, after Cory: "Every message takes so long").
+- 2026-11-11: Purple Cloak +1 vs +2 reported as 30% vs 28% owner wins, "the same result"; Cory: "its objectively worse, we're just trying to measure how much worse". Number changes now report paired same-deal differences (resources, followers).
