@@ -47,3 +47,15 @@ The fix drops members still on loan from the forecast. 50 tables with Red at eve
 | fixed vs old Hard | 5 vs 246 | +4.4 ± 1.3 | 72 vs 34 |
 
 On by default (BOTBORROW=0 turns it off). Balance numbers that involve Red's Borrow change with it.
+
+## Keeping silver for Flaunt (Nov 12; Cory: "you should just forego the followers to get the resources")
+A Hard seat that keeps all its silver through round I (decides as if it held none, never pays with it) and takes
+**Flaunt** ("+1 of each other color per 3 silver you hold, up to 3 each. +1 silver.") with its first or second round II
+minion, against normal Hard, Silver at every table, 49 tables played both ways (98 games, BOTBORROW on for both):
+
+| Setting | Followers per seat | Seats won (of 392) | Silver held when taking Flaunt |
+|---|---|---|---|
+| keep silver, Flaunt early vs normal Hard | -4.0 ± 1.1 | 39 vs 62 | 3.6 on average |
+
+Even never spending silver, a player reaches about 3.6 silver by round II, so Flaunt pays +1 of each other color
+(3 resources), not 9, while the player gives up round I's Fewest silver contest and the buys that silver would have made.
