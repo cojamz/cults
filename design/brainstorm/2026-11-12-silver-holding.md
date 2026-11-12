@@ -130,3 +130,17 @@ Verdict: send
 8. Color interactions: Magenta's steal meets Silver's give; it names neither color.
 9. Biggest case: Heist round III, a steal of 4 or more turned into 2 silver; saves about 4 resources a turn, 0 followers of its own.
 Verdict: send
+
+## Idea: Splurgers
+
+Source: Cory, 2026-11-11 7:42pm: "Maybe something that's just like, when you buy a silver member, you can also buy followers."
+1. Printed text: "Whenever you recruit a silver member, you may also buy followers." (Cory's idea; Claude's words and name).
+2. Played turn: round II, you hold 9 silver; recruit a 4-cost silver member and, in the same buy, 5 followers for 5 silver. Without it, the followers take your next buy.
+3. Both sides: you choose to buy followers or not; a free extra buy is never worse, so it is just "an extra buy".
+4. Who feels it: rivals racing you for face-up members (your later buys stay free for members).
+5. Not refused: Cory's own idea.
+6. Judged: rewards holding silver to spend it (his opposite strategy); helps any player who recruits silver members.
+7. Public and certain: yes.
+8. Color interactions: none named.
+9. Biggest case: round III, 3 silver members recruited, 3 extra follower buys of up to 10 each, paid with your own resources.
+Verdict: send
