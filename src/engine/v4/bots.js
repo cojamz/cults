@@ -630,6 +630,7 @@ function contestScores(s, ctx, table, qid) {
 // a lead rivals can't reach is safe (more adds nothing), a gap the bot's own turns can't close is worth almost nothing,
 // and a close one is worth fighting for. swing: what one turn aimed at the contest moves it (2 of a held color, else 1).
 let EASE = false;
+const TOGETHER_TOP = 4;
 const EASE_K = { rivalAim: 0.5, behindTop: 0.4, lost: 0.02 };
 function easeChance(gap, swing, myTurns, rivalTurns) {
   if (gap > 0) return Math.min(1, 0.55 + 0.45 * gap / (EASE_K.rivalAim * swing * rivalTurns + 1));
@@ -962,6 +963,22 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
       if (held && held.round === state.round && held.pid === state.players[me].id && held.key === `${o.q}-${o.i}`) v += HELD_PULL;
       if (tempo) v += tempoGain(state, o, ranked);
       out.push({ o, v: v + rand() * (opts.noise ?? 0.3) });
+    }
+    // TOGETHER (skill test, Nov 12; Cory: "considered together ... rather than decoupled decisions"): a space is rated
+    // above only by what its resources are worth as followers. Here each of the best few spaces is played for real, and
+    // the buy that follows it (a member in the shop, a follower pack) is rated on the resulting game; the space is then
+    // worth the best buy it leaves. Hard's own look-ahead (thinker.js) still plays the best few out afterwards.
+    if (opts.together) {
+      const top = [...out].sort((a, b) => b.v - a.v).slice(0, TOGETHER_TOP);
+      for (const r of top) {
+        try {
+          const s2 = applyMove(state, { player: me, option: r.o.id });
+          if (s2.pending?.kind === 'buy' && s2.pending.player === me) {
+            const next = scoreOptions(s2, rand, { ...opts, together: false });
+            if (next.length) r.v = Math.max(...next.map(x => x.v));
+          }
+        } catch { /* keep the space's own rating */ }
+      }
     }
   } else if (pend.kind === 'buy' || pend.kind === 'pay') {
     // One buy, paid one way, valued on a copy of the game.
