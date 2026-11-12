@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.752 — 2026-11-12
+
+- Setup: new Economy option, +1 any (every member costs 1 more of any color)
+
 ## v0.99.751 — 2026-11-12
 
 - Minimalists costs 10; Patron Saints worth 1 follower; Duty Collector and Encore worth 3 followers (Cory, Nov 12)
