@@ -188,6 +188,7 @@ for (const [id, name, source] of [
   ['yellow.seamstress', 'Seamstress', 'yellow.harmonist'],
   ['silver.paupers', 'Paupers', 'silver.spoon'], ['silver.loanofficers', 'Loan Officers', 'silver.revelers'], ['silver.splurgers', 'Splurgers', 'silver.heir'], ['silver.tollcollectors', 'Toll Collectors', 'silver.majordomo'], ['silver.bookies', 'Bookies', 'silver.steward'], ['silver.hustlers', 'Hustlers', 'silver.silversmith'],
   ['yellow.exchangestudents', 'Exchange Students', 'yellow.pilgrim'], ['yellow.headhunters', 'Headhunters', 'yellow.explorer'], ['yellow.cosmopolitans', 'Cosmopolitans', 'yellow.weaver'], // Nov 11: new Yellow members, on retired scenes
+  ['red.brethren', 'Brethren', 'red.proselytizer'], ['red.purists', 'Purists', 'red.mob'], // Nov 11: new Red members, on retired scenes until their own are drawn
   ['trading.leavetakers', 'Leavetakers', 'trading.undertaker'], ['trading.minimalists', 'Minimalists', 'trading.oldmoney'], ['purple.lastcallers', 'Last Callers', 'purple.sleepyheads'], // Nov 11: new White and Purple members, on retired scenes until their own are drawn
   ['echo.mimics', 'Mimics', 'echo.impersonators'], ['echo.regulars', 'Regulars', 'echo.dejavu'], ['echo.diehards', 'Die-Hards', 'echo.choir'], // Nov 11: new Green members, on retired scenes until their own are drawn
   ['yellow.exchangestudents', 'Exchange Students', 'yellow.pilgrim'], ['yellow.headhunters', 'Talent Scouts', 'yellow.explorer'], ['yellow.cosmopolitans', 'Cosmopolitans', 'yellow.weaver'],

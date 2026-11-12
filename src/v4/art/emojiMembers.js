@@ -206,6 +206,8 @@ const M = {
   mimics: ['🦜', '🌅 Use the On Recruit of any member in play'], // Nov 11: Green
   regulars: ['🍺', '🌙 +1 follower per minion you have on Green spaces'],
   'die-hards': ['🏟️', '🏁 Most green members: +6 followers'],
+  brethren: ['🫂', '♾️ You recruit a member of a color you already have: +1 follower'], // Nov 11: Red
+  purists: ['🧼', '🌙 Your members have 2 or fewer colors: +3 followers'],
   'last-callers': ['🔔', '🔁 Take the Goes Last token'], // Nov 11: Purple
   leavetakers: ['🥀', '♾️ One of your members leaves your cult: +2 white'], // Nov 11: White
   minimalists: ['🪴', '🏁 +2 followers per member you have costing 6 or more'],
