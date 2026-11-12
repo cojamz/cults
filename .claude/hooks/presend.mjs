@@ -143,7 +143,11 @@ if (looksLikePitch) {
 {
   const { stamped } = await import(join(root, '.claude/hooks/reader-stamp.mjs'));
   const real = text.split('\n').filter(l => l.trim()).length;
-  if (real > 1 && !stamped(text)) problems.push('Over one line and no fresh reader on record for this exact text: run an Agent (plain-reader, or general-purpose given .claude/agents/plain-reader.md) on the draft; it stamps what it returns. Send that text unchanged, or re-run the reader after any edit.');
+  // Coordinator, Nov 11 8:20pm, after Cory: "hurry up… Every message takes so long": a short pick list skips the reader once everything else passes.
+  const lines = text.split('\n').filter(l => l.trim());
+  const prose = lines.filter(l => !/^\s*(\d+[.)]|[-*])\s/.test(l) && !/\[[^\]]+\]\s*$/.test(l));
+  const pickList = lines.length <= 8 && prose.length <= 3 && lines.some(l => /\?\**\s*\[[^\]]+\]\s*$/.test(l));
+  if (real > 1 && !pickList && !stamped(text)) problems.push('Over one line, not a short pick list (3 prose lines at most, up to 8 lines, an ask ending in a [default]), and no fresh reader on record for this exact text: run an Agent (plain-reader, or general-purpose given .claude/agents/plain-reader.md) on the draft; it stamps what it returns. Send that text unchanged, or re-run the reader after any edit.');
 }
 
 for (const n of notes) console.log(`note: ${n}`);
