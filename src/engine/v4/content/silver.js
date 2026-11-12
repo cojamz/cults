@@ -579,6 +579,37 @@ const silver = {
       if (giveTo(ctx, p, o, S, 1, once) !== false) { p.res[S] -= 1; to[o.name] = (to[o.name] || 0) + 1; }
       kingStep(ctx, p, { once, left: (data.left ?? 3) - 1, to });
     },
+    // Loan Officers (Cory, Nov 11): how much silver to give, then one resource of theirs at a time
+    loanTo(ctx, p, id, data) {
+      const o = ctx.player(id);
+      if (!o || o === p) return;
+      const k = Math.min(data.k || 5, p.res[S] || 0);
+      if (!k) return;
+      const theirs = ctx.state.resources.filter(c => c !== S).reduce((a, c) => a + (o.res[c] || 0), 0);
+      const opts = [];
+      for (let n = k; n >= 1; n--) opts.push({ id: `n:${n}`, label: `Give ${n} silver`, kind: 'choice', value: n,
+        // bots give as many as there is to take back in other colors (the silver they hand over comes back as silver otherwise)
+        hint: n <= Math.max(1, theirs) ? n : Math.max(1, theirs) - (n - theirs) });
+      ctx.choose(p, `Loan Officers: give ${o.name} how much silver? You take as many of their resources`, opts, 'silver.loanGive', { to: o.id });
+    },
+    loanGive(ctx, p, n, data) {
+      const o = ctx.player(data.to);
+      n = Math.min(Number(n) || 0, 5, p.res[S] || 0);
+      if (!o || o === p || !n) return;
+      if (giveTo(ctx, p, o, S, n) === false) return;
+      p.res[S] -= n;
+      afterGive(ctx, p, S);
+      ctx.log(`${p.name}'s Loan Officers: gives ${o.name} ${n} silver.`);
+      loanTake(ctx, p, o, n, {});
+    },
+    loanTake(ctx, p, c, data) {
+      const o = ctx.player(data.from);
+      if (!o || !(o.res[c] > 0)) return;
+      o.res[c] -= 1;
+      ctx.gain(p, c, 1);
+      const took = { ...(data.took || {}) }; took[c] = (took[c] || 0) + 1;
+      loanTake(ctx, p, o, data.left - 1, took);
+    },
     ...handlers8({
       usher(ctx, p, id) {
         const o = ctx.player(id);
@@ -1116,6 +1147,35 @@ const silver = {
       },
       ...see(info => 3 * endsAhead(info).length),
     }),
+    // Cory, 2026-11-11 7:33pm Eastern: "I'm willing to try it". Price is Claude's fill-in (Anchorites' price, a smaller
+    // payout read at the same time). Round End as Kingmakers': after the last placement, before contests.
+    m('paupers', 'Paupers', 2, 1, 'Round End: if you hold no silver, +3 followers.', {
+      onAllPlaced(ctx, owner) {
+        if ((owner.res[S] || 0) > 0) return;
+        owner.bonus += 3;
+        ctx.log(`${owner.name}'s Paupers: no silver, +3 followers.`);
+      },
+      ...see(info => ((info.owner?.res?.[S] || 0) <= 1 ? 2 : 0.5) * endsAhead(info).length),
+    }),
+    // Cory, 2026-11-11 7:38pm Eastern: "On use, give a rival all of your silver. Let's say once per round, up to 5."
+    // Price is Claude's fill-in (Debt Collectors' old price: once per round, 5 resources of your choice). The silver
+    // is a gift (gift hooks fire); taking their resources is not a steal.
+    m('loanofficers', 'Loan Officers', 4, 2, 'On Use, once per round: give a rival up to 5 of your silver, then take as many of their resources, you choose which.', { f: 2, n: 2,
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const list = others(ctx, owner).filter(o => !dry(ctx, owner, o));
+        if (!(owner.res[S] > 0) || !list.length) { card.used = false; ctx.log(`${owner.name}'s Loan Officers: no silver to give.`); return; }
+        const k = Math.min(5, owner.res[S]);
+        const worth = o => ctx.state.resources.reduce((a, c) => a + (o.res[c] || 0), 0);
+        ctx.choose(owner, `Loan Officers: give up to ${k} of your silver to which rival? You then take as many of their resources`, list.map(o => ({
+          id: `player:${o.id}`, label: `${o.name} (${worth(o)} resources)`, kind: 'player', value: o.id,
+          // bots lend to the richest rival, and mind lifting a rival who leads silver
+          hint: Math.min(k, worth(o)) - (leadIn(ctx, o, S) >= -k ? 1 : 0) + ctx.followers(o) * 0.01,
+        })), 'silver.loanTo', { k });
+      },
+      botActivate: (ctx, owner) => (owner.res[S] || 0) >= 2 && others(ctx, owner).some(o => ctx.state.resources.some(c => c !== S && (o.res[c] || 0) > 0)),
+    }),
     // Game End, cost 7 = 4 silver + 3 any as a player sees it (Cory, Nov 6 8:18pm Eastern: "Patron Saints is supposed to be
     // game end!!", "and keep cost at 7")
     m('patronsaints', 'Patron Saints', 3, 2, 'Game End: +1 follower per silver member, anyone’s.', { f: 2,
@@ -1166,4 +1226,19 @@ function almsStep(ctx, p, data) {
 function giftExchangePay(ctx, p, uid, v) {
   ctx.log(`${p.name}'s Gift Exchange: pays ${Object.entries(v).filter(([, n]) => n).map(([c, n]) => `${n} ${c}`).join(', ') || 'nothing'} for ${ctx.card(uid).def.name}.`);
   ctx.recruit(p, uid, { spend: v, how: GX, paid: true });
+}
+
+// Loan Officers: take one of the rival's resources at a time, any color they hold, until n are taken or they have none
+function loanTake(ctx, p, o, left, took) {
+  const have = ctx.state.resources.filter(c => (o.res[c] || 0) > 0);
+  if (left <= 0 || !have.length) {
+    const list = Object.entries(took).map(([c, n]) => `${n} ${c}`).join(', ');
+    ctx.log(`${p.name}'s Loan Officers: takes ${list || 'nothing'} from ${o.name}.`);
+    return;
+  }
+  ctx.choose(p, `Loan Officers: take 1 of ${o.name}'s resources (${left} more)`, have.map(c => ({
+    id: `color:${c}`, label: `${c} (${o.res[c]})`, kind: 'color', value: c,
+    // bots take what they're short of, never their own silver back
+    hint: (o.res[c] || 0) * 0.2 - 0.3 * (p.res[c] || 0) - (c === S ? 5 : 0),
+  })), 'silver.loanTake', { from: o.id, left, took });
 }

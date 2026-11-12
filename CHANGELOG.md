@@ -2,6 +2,11 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.730 — 2026-11-11
+
+- New Silver member **Paupers**: "Round End: if you hold no silver, +3 followers."
+- New Silver member **Loan Officers**: "On Use, once per round: give a rival up to 5 of your silver, then take as many of their resources, you choose which."
+
 ## v0.99.729 — 2026-11-11
 
 - Wheel: each space's face now says its catch (Borrow's round-end discard, Markdown's 2 less, Swindle's give-back, the Goes Last token, Flaunt's per 3 silver); a minion no longer covers a taken space's words.
