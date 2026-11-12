@@ -50,6 +50,9 @@ export function previewSpace(state, pid, q, i, { cap = NODE_CAP } = {}) {
   try {
     // notes: the engine's preview-only reasons (a member that changed the result, or one that stayed off and why)
     base = plainCopy({ ...state, log: [], pending: null, notes: [] });
+    // the turn in progress ends before this space is taken: its owed +1 cut (Write-Off taken after the once-a-game +1 was
+    // claimed) never reaches a later space (Cory, Nov 12: Splurge's hover said +1 white mid-turn, the space gives +2)
+    delete base.econOwed;
     const joined = base.slots[key] !== undefined; // a taken space, a rival's or (Overtime) your own
     if (joined) (base.squats[key] = base.squats[key] || []).push(pid);
     else base.slots[key] = pid;
