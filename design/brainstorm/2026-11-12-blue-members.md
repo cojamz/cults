@@ -122,7 +122,7 @@ Verdict: send
 6. Judged: Blue's shop-and-pile theme, cross-color (anyone can rescue a member). On Recruit, simple.
 7. Public and certain: yes, both are face up.
 8. Color interactions: none named; any player can use the pile.
-9. Biggest case: one member moved each way; worth a 2 to 10 cost member to you or a rival; no followers of its own.
+9. Biggest case: one member moved each way in round III; worth a 2 to 10 cost member to you or a rival, 0 followers of its own.
 Verdict: send
 
 ## Idea: Housecleaners
