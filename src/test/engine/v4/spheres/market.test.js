@@ -17,7 +17,7 @@ useRetired(['market.bargain', 'market.pricecheck', 'market.showroom', 'red.turno
 
 // seeded games in the table block below: a game count, not a time budget (budget.js). The verdict plays all 200 here,
 // not half: the block asserts a rate (Spree in over 60% of games), and a rate needs its whole sample. The fast gate 20.
-const GAMES = games(200, 20, 200);
+const GAMES = games(200, 40, 200); // fast 40 (Nov 12): 20 games read 8 to 10 Spree games either side of the 45% bar by seed luck alone
 
 install();
 const Q = ['gold', 'red', 'market', 'green'];

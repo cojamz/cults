@@ -48,6 +48,10 @@ async function playOne({ g, side, A, B }) {
     } else if (hoarding) {
       const hid = { ...s, players: s.players.map((p, i) => (i === pl ? { ...p, res: { ...p.res, [h.res]: 0 } } : p)) };
       m = chooseBotMove(hid, rand, { maxMs: Infinity, ...o });
+    // o.ban = [keys]: that seat never places on those spaces (bot audit: does a bot do better without a space it takes?)
+    } else if (o.ban && pend.kind === 'place' && pend.options.some(x => x.kind === 'slot' && o.ban.includes(actionAt(s, x.q, x.i)?.key))) {
+      const left = pend.options.filter(x => x.kind !== 'slot' || !o.ban.includes(actionAt(s, x.q, x.i)?.key));
+      m = chooseBotMove(left.some(x => x.kind === 'slot') ? { ...s, pending: { ...pend, options: left } } : s, rand, { maxMs: Infinity, ...o });
     } else m = chooseBotMove(s, rand, { maxMs: Infinity, ...o });
     const slot = track.length && s.pending.kind === 'place' ? s.pending.options.find(x => x.id === m.option && x.kind === 'slot') : null;
     const key = slot ? actionAt(s, slot.q, slot.i)?.key : null;

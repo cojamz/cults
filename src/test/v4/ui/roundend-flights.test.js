@@ -38,8 +38,9 @@ it('flies only the closing move\'s own followers, from their own sources, before
   // round-end line, a closing this check doesn't model; seed 10 for 8 since Gather pays per 3 spent (Nov 9), same reason
   // seed 11 for 5 since Borrow (Nov 10): seed 5's round II closes with a borrowed member discarded at round end, which
   // takes back a follower the closing recruit flew in, a closing this check doesn't model either
+  // seed 14 for 7 since bots count Borrow's member as discarded at round end (Nov 12): seed 7's round I closing has no round-end line now
   // seed 13 for 9 since Late Shift took Trending's place (Nov 11): seed 9's round I now closes on a Borrow discard, as seed 5's did
-  for (const seed of [1, 13, 3, 4, 11, 6, 7, 10]) {
+  for (const seed of [1, 13, 3, 4, 11, 6, 14, 10]) {
     for (const { prev, next } of closings(seed)) {
       const line = newLogLines(prev, next).filter(isRoundEnd).pop();
       expect(line, `seed ${seed} round ${prev.round}`).toBeTruthy();
