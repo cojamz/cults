@@ -7,15 +7,16 @@ import { applyMove } from '../../../engine/v4/index.js';
 import { table } from '../../engine/v4/cards-helpers-b.js';
 import { afterContestSteps, stealFrom } from '../../../v4/game/Reckoning.jsx';
 
-it('Sore Loser’s round-end step takes from the robbed rival and gives to its owner', () => {
+// Since Nov 11 it is Consolation Prize ("Round End: if you win no contest, +5 followers."): the step only gives.
+it('Consolation Prize’s round-end step gives its owner 5 and takes from nobody', () => {
   const s = table(['red', 'market', 'trading', 'yellow'], { n: 3, round: 2, res: [{}, { red: 4, blue: 3 }, { white: 2 }], bonus: [0, 5, 5], members: [['benders.sorelosers']], queue: [{ t: 'buy', p: 1 }, { t: 'endRound' }] });
   const next = applyMove(s, { player: 1, option: 'pass' }, { effects: true });
   expect(next.players[0].bonus).toBe(5);
   const steps = afterContestSteps({ after: next, board: null });
-  const sore = steps.find(st => st.rule === 'Sore Loser');
+  const sore = steps.find(st => st.rule === 'Consolation Prize');
   expect(sore).toBeTruthy();
-  expect(sore.deltas).toEqual({ 0: 5, 1: -5 });
-  expect(stealFrom(sore)).toBe(1);
+  expect(sore.deltas).toEqual({ 0: 5 });
+  expect(stealFrom(sore)).toBe(null);
 });
 
 it('a member step that only gives (no rival loses) flies from the member as before', () => {

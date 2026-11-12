@@ -35,5 +35,9 @@ export function takeFromDiscard(state, uid) {
   const d = discardOf(state), i = d.indexOf(uid);
   if (i < 0) return false;
   d.splice(i, 1);
+  // marked for this turn, so a recruit of it this turn counts as from the discard pile (Thrift Hunters)
+  if (state.cards?.[uid]) state.cards[uid].offPile = offPileKey(state);
   return true;
 }
+/** The turn a member left the discard pile in (Thrift Hunters: "Whenever you recruit from the discard pile"). */
+export const offPileKey = state => `${state.round}:${(state.turns || []).length}`;

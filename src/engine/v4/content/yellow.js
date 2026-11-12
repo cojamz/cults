@@ -926,11 +926,11 @@ export default {
     }),
     // Cory, 2026-11-11 8:21pm Eastern: "On use once per game, recruiting a member costing up to 6 for free. That's pretty
     // good, actually." From the shop. Price is Claude's fill-in.
-    m('headhunters', 'Headhunters', 3, 2, 'On Use, once per game: recruit a member costing up to 6 for free.', {
+    m('headhunters', 'Talent Scouts', 3, 2, /* Headhunters until Nov 11: Red has a Headhunter (Claude's stand-in name; Cory renames members later) */ 'On Use, once per game: recruit a member costing up to 6 for free.', {
       activate: 'game',
       onActivate(ctx, owner, card) {
         const cap = 6 + richUp(ctx.state);
-        if (!freeAsk(ctx, owner, 'Headhunters', ctx.shopCards().filter(c => hwCost(c) <= cap), 'yellow.poolFree', `no shop member costs ${cap} or less`, cap)) card.used = false;
+        if (!freeAsk(ctx, owner, 'Talent Scouts', ctx.shopCards().filter(c => hwCost(c) <= cap), 'yellow.poolFree', `no shop member costs ${cap} or less`, cap)) card.used = false;
       },
       botActivate: (ctx, owner) => ctx.shopCards().some(c => hwCost(c) >= 5 && hwCost(c) <= 6 + richUp(ctx.state)),
     }),

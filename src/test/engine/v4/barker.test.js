@@ -73,7 +73,8 @@ describe('Barker', () => {
   // each of them brings Barker's followers recruit right after it, then the turn's own recruit follows
   it('stacks with Spree: each discard pile recruit brings its own followers recruit', () => {
     let s = table(['market', 'trading'], { n: 2, round: 3, res: [{ blue: 30, white: 30 }], members: [['trading.barker']] });
-    for (const k of [0, 1]) (s.discard ||= []).push(s.pile.splice(k, 1)[0]);
+    // two plain members (Repeat Customers, Nov 11, would open a third discard pile recruit of its own)
+    for (const u of s.pile.filter(u => s.cards[u].def !== 'market.repeatcustomers').slice(0, 2)) { s.pile.splice(s.pile.indexOf(u), 1); (s.discard ||= []).push(u); }
     s = answer(s, `slot:${slot(s, 'market', 'Spree')}`);
     const first = o => o.id !== 'none' && o.id !== 'pass' && o.id !== 'back';
     let followerSteps = 0;

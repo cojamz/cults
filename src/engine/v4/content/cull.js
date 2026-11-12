@@ -44,6 +44,8 @@ export const CUT = new Set([
   // Heiresses so White deals 10 with Leavetakers and Minimalists in (Claude, under Cory's go-with-your-gut: his lowest
   // mark left after Barker and Old Guard, which he wants to try, and "it doesn't go well with… having fewer members")
   'trading.oldmoney', 'trading.cashier', 'purple.sleepyheads', 'trading.heiress',
+  'market.critic', 'market.windowdresser', 'market.trendsetter',
+  'echo.songrequest', 'red.mob',
 ]);
 
 // The 10-card decks (Cory, 2026-10-31: "create two versions of game, 10 card deck version and 15 card deck version";

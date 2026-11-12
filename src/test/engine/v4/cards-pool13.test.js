@@ -30,19 +30,20 @@ describe('Safecrackers (Magenta)', () => {
 });
 
 describe('Bailiffs and Repossessors (Blue)', () => {
-  for (const [id, name, cap, every] of [['market.bailiffs', 'Bailiffs', 5, 'round'], ['market.repossessors', 'Repossessors', 8, 'game']]) {
-    it(`On Use, once per ${every}: put a rival's member costing up to ${cap} into the shop`, () => {
+  for (const [id, name, cap, every, toPile] of [['market.bailiffs', 'Bailiffs', 5, 'round', false], ['market.repossessors', 'Repossessors', 8, 'game', true]]) {
+    // Repossessors discards (Cory, Nov 11 3:41pm: "it should go into the discard, actually")
+    it(`On Use, once per ${every}: ${toPile ? 'discard' : 'put'} a rival's member costing up to ${cap}${toPile ? '' : ' into the shop'}`, () => {
       let s = sceneQ({ quadrants: ['market', 'gold', 'red', 'thieves'], members: [[id]], res: [{ gold: 30, blue: 30, red: 30, magenta: 30 }] });
       const cheap = s.pile.find(u => price(s, u) <= cap), dear = s.pile.find(u => price(s, u) > cap);
       for (const u of [cheap, dear]) { s.pile.splice(s.pile.indexOf(u), 1); s.players[1].members.push(u); }
       const use = `use:${uidOf(s, id, 0)}`;
       s = move(s, use);
-      expect(s.pending.prompt).toBe(`${name}: put which rival's member into the shop?`);
+      expect(s.pending.prompt).toBe(toPile ? `${name}: discard which rival's member?` : `${name}: put which rival's member into the shop?`);
       expect(s.pending.options.map(o => o.value)).toEqual([cheap]);
       s = move(s, `card:${cheap}`);
       expect(s.players[1].members).toEqual([dear]);
-      expect(s.shop).toContain(cheap);
-      expect(named(s, name)[0]).toMatch(new RegExp(`^P1's ${name}: P2's .* goes into the shop\\.$`));
+      if (toPile) expect(s.discard).toContain(cheap); else expect(s.shop).toContain(cheap);
+      expect(named(s, name)[0]).toMatch(toPile ? new RegExp(`^P1's ${name}: discards P2's .*\\.$`) : new RegExp(`^P1's ${name}: P2's .* goes into the shop\\.$`));
       expect(s.pending.options.some(o => o.id === use)).toBe(false);
     });
   }

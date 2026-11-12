@@ -1,5 +1,5 @@
 // @vitest-environment node
-// Yellow's Nov 11 member calls (Cory): Early Traders, Matchmaker's numbers, Exchange Students, Headhunters.
+// Yellow's Nov 11 member calls (Cory): Early Traders, Matchmaker's numbers, Exchange Students, Talent Scouts.
 import { describe, it, expect } from 'vitest';
 import { applyMove, resume } from '../../../engine/v4/core.js';
 import { quadrant, defById } from '../../../engine/v4/content/index.js';
@@ -47,7 +47,7 @@ describe('Exchange Students: "On Recruit: swap one of your members for a rivalâ€
   });
 });
 
-describe('Headhunters: "On Use, once per game: recruit a member costing up to 6 for free."', () => {
+describe('Talent Scouts (Headhunters until Nov 11): "On Use, once per game: recruit a member costing up to 6 for free."', () => {
   it('recruits a shop member costing 6 or less for free, once', () => {
     let s = table(['red', 'yellow'], { n: 2, round: 2, res: [{ red: 0, yellow: 0 }], members: [['yellow.headhunters']], shop: ['red.loyalists', 'red.mob'], queue: [{ t: 'buy', p: 0 }] });
     const u = uidIn(s, 'yellow.headhunters', 0);

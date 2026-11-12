@@ -571,19 +571,12 @@ const members = [
   // Replacement batch 6 (Nov 3), live since Nov 4 (Claude, under Cory's "use your judgement"): HR's place. 5 any as a player sees it. Read right after the contests
   // are scored (core's afterContests): a shared contest counts as a win; rivals tied for the most wins (at least 1):
   // the owner chooses. Loose followers only, through the shared steal (Bodyguards blocks it), as Raiders takes.
-  m('sorelosers', 'Sore Loser', null, 0, 4, 'Round End: if you win no contest, steal 5 followers from the rival who wins the most.', { round: 3, // a round III member as HR was (bot-tested in round II; Nov 4)
+  m('sorelosers', 'Consolation Prize', null, 0, 4, 'Round End: if you win no contest, +5 followers.', { round: 3, // Sore Loser redesigned (Cory, Nov 11 3:56pm); same id and price
     afterContests(ctx, owner, card, table) {
-      const wins = o => table.filter(c => c.winners.includes(o.id)).length;
-      // each quiet case says why in the log (Cory's playtest, Nov 4: "the sore loser didnt trigger")
-      if (wins(owner)) { ctx.log(`${owner.name}'s Sore Loser: ${owner.name} won or tied a contest, so no steal.`); return; }
-      const rivals = ctx.state.players.filter(o => o !== owner && wins(o) > 0);
-      if (!rivals.length) { ctx.log(`${owner.name}'s Sore Loser: no rival won a contest, so no steal.`); return; }
-      const most = Math.max(...rivals.map(wins));
-      const top = rivals.filter(o => wins(o) === most);
-      if (top.length === 1) return soreSteal(ctx, owner, top[0]);
-      ctx.choose(owner, 'Sore Loser: steal 5 followers from which rival?', top.map(o => ({
-        id: `player:${o.id}`, label: `${o.name} (${ctx.followers(o)} followers)`, kind: 'player', value: o.id, hint: ctx.followers(o),
-      })), 'benders.sore');
+      // a shared contest counts as a win, as Sore Loser read it
+      if (table.some(c => c.winners.includes(owner.id))) { ctx.log(`${owner.name}'s Consolation Prize: ${owner.name} won or tied a contest, so nothing.`); return; }
+      owner.bonus += 5;
+      ctx.log(`${owner.name}'s Consolation Prize: won no contest, +5 followers.`);
     },
   }),
   // REPLACE6 bot test: Alchemists' place. 5 any as a player sees it. The stall is a list beside this card
@@ -746,7 +739,7 @@ export const handlers = {
     s.spoiled.list.push({ qid: q, by: p.id });
     ctx.log(`${p.name}'s Spoilsport: nobody wins the ${ctx.quadrant(q).name} contest this round.`);
   },
-  sore(ctx, p, id) { soreSteal(ctx, p, ctx.player(id)); },
+  sore() {}, // old saves paused on Sore Loser's pick: nothing left to do
   ...handlers1({
     grudge(ctx, p, pid, data) {
       const card = ctx.card(data.uid);
@@ -757,12 +750,6 @@ export const handlers = {
   }),
 };
 
-/** Sore Loser (live since Nov 4): 3 loose followers from t. */
-function soreSteal(ctx, owner, t) {
-  const got = ctx.steal(owner, t, { followers: 5 });
-  if (got) ctx.log(`${owner.name}'s Sore Loser: ${owner.name} won no contest; steals ${got} follower${got === 1 ? '' : 's'} from ${t.name}.`);
-  else ctx.log(`${owner.name}'s Sore Loser: can't steal from ${t.name}.`);
-}
 
 const group = { id: 'benders', members, handlers };
 let installed = false;

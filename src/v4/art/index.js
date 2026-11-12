@@ -190,6 +190,8 @@ for (const [id, name, source] of [
   ['yellow.exchangestudents', 'Exchange Students', 'yellow.pilgrim'], ['yellow.headhunters', 'Headhunters', 'yellow.explorer'], ['yellow.cosmopolitans', 'Cosmopolitans', 'yellow.weaver'], // Nov 11: new Yellow members, on retired scenes
   ['trading.leavetakers', 'Leavetakers', 'trading.undertaker'], ['trading.minimalists', 'Minimalists', 'trading.oldmoney'], ['purple.lastcallers', 'Last Callers', 'purple.sleepyheads'], // Nov 11: new White and Purple members, on retired scenes until their own are drawn
   ['echo.mimics', 'Mimics', 'echo.impersonators'], ['echo.regulars', 'Regulars', 'echo.dejavu'], ['echo.diehards', 'Die-Hards', 'echo.choir'], // Nov 11: new Green members, on retired scenes until their own are drawn
+  ['yellow.exchangestudents', 'Exchange Students', 'yellow.pilgrim'], ['yellow.headhunters', 'Talent Scouts', 'yellow.explorer'], ['yellow.cosmopolitans', 'Cosmopolitans', 'yellow.weaver'],
+  ['market.swapshoppers', 'Swap Shoppers', 'market.critic'], ['market.thrifthunters', 'Thrift Hunters', 'market.trendsetter'], ['market.repeatcustomers', 'Repeat Customers', 'market.windowdresser'], // Nov 11: new Blue member, on a retired scene // Nov 11: new Yellow members, on retired scenes
   ['trading.guestofhonor', 'Guest of Honor', 'silver.polisher'], ['trading.godparents', 'Patrons', 'silver.godparents'], // Nov 11: moved to White, on their Silver scenes // Nov 11: new Silver members, on retired scenes until their own are drawn
 ]) {
   const art = PORTRAIT.get(source);

@@ -7,7 +7,7 @@ import { plainCopy, stateCopy } from './copy.js';
 import { quadrant, defById, handlerById, defaultQuadrants, guestMembers, allGuests, MAX_PLAYERS, spacesOf } from './content/index.js';
 import { testDealt } from './content/testset.js';
 import { shuffleInPlace } from './rng.js';
-import { discardOf, toDiscard, deckReady, takeFromDiscard } from './discard.js';
+import { discardOf, toDiscard, deckReady, takeFromDiscard, offPileKey } from './discard.js';
 import { CUT, CUT10, FULL_DECK } from './content/cull.js';
 import { pileRules } from './piles.js';
 import { startEffects, stopEffects, abandonEffects, underCause, markEffect, inPhase } from './effects.js';
@@ -1640,6 +1640,8 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   // Peek's reach is one recruit from the cards it showed; Insider's stays
   const peeked = idx < 0 && fromPile >= 0 && fromPile < (p.peekReach || 0);
   if (peeked) delete p.peekReach;
+  const offPile = bottom || picker !== undefined || state.cards[uid].offPile === offPileKey(state);
+  delete state.cards[uid].offPile;
   if (idx >= 0) state.shop.splice(idx, 1);
   else if (bottom || picker !== undefined) takeFromDiscard(state, uid);
   else state.pile.splice(fromPile, 1);
@@ -1647,12 +1649,13 @@ function recruitNow(state, p, uid, { free, spend: chosen, how = {}, top = false 
   p.members.push(uid);
   const def = cardDef(state, uid);
   log(state, `${p.name} recruited ${def.name}${idx < 0 ? (top && fromPile === 0 && !peeked ? ' from the top of the deck' : peeked ? ' from the pile with Peek' : bottom ? ` from the discard pile with ${p.name}'s ${flagName(state, p, 'pileBottom')}` : picker !== undefined ? ` from the discard pile with ${p.name}'s ${cardDef(state, picker).name}` : ` from the pile with ${p.name}'s ${flagName(state, p, 'pileReach')}`) : ''} (${paid}).`);
-  memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 && !stall, silverForColor });
+  if (state.cards[uid].offPile !== undefined) delete state.cards[uid].offPile; // takeFromDiscard just above marked it
+  memberAcquired(state, p, uid, { spent, fromShop: idx >= 0 && !stall, silverForColor, fromDiscard: offPile });
   // an arrival like any other (Saboteur: "whenever this joins your cult"); swaps and moves fire it in their own code
   memberJoined(state, p, uid);
 }
 /** A member recruit: p took it (shop, free, a steal) or swapped it in with their own red action (see recruited). */
-function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop = false, silverForColor = false } = {}) {
+function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop = false, silverForColor = false, fromDiscard = false } = {}) {
   state.recruits += memberWeight(state, uid);
   p.turnRecruits += memberWeight(state, uid);
   const card = state.cards[uid], def = defById(card.def);
@@ -1666,7 +1669,7 @@ function memberAcquired(state, p, uid, { stolen = false, spent = null, fromShop 
   const w = wrap(state, card);
   // spent: what the recruit paid (Collector reads silver in it); null when free
   // fromShop: a member taken from the face-up shop (Red Cloak, Cory Nov 1)
-  recruited(state, p, { member: w, spent, fromShop, silverForColor });
+  recruited(state, p, { member: w, spent, fromShop, silverForColor, ...(fromDiscard ? { fromDiscard: true } : {}) });
   // a when-recruited effect leaves a trace like any other member hook (Seed Money, Pilgrim, Retinue…)
   if (def.onRecruited) recruitAbility(state, p, w, def, () => def.onRecruited(ctx, p, w));
   joinNow(state, p, w, [def]);

@@ -57,8 +57,9 @@ describe('Middlemen (Magenta)', () => {
 describe('Rummage (Blue, round II)', () => {
   it('Recruit a member from the discard pile costing up to 6, for free. +1 blue.', () => {
     let s = still({ quadrants: ['market', 'red', 'purple', 'yellow'], round: 2 });
-    const cheap = cheapest(s, 6)[0], dear = s.pile.find(u => price(s, u) > 6);
-    s.pile.splice(s.pile.indexOf(cheap), 1); s.pile.splice(s.pile.indexOf(dear), 1);
+    // the cheap one can sit in the shop since the Nov 11 member sort left the piles with few members at 6 or less
+    const cheap = cheapest(s, 5)[0] ?? s.shop.find(u => price(s, u) <= 5), dear = s.pile.find(u => price(s, u) > 5); // the cap is 5 in code (RUMMAGE_CAP)
+    for (const k of ['pile', 'shop']) s[k] = s[k].filter(u => u !== cheap && u !== dear);
     s.discard = [cheap, dear];
     s = go(s, [{ t: 'turn', p: 0 }]);
     s = take(s, 'market.rummage');

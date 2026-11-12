@@ -70,6 +70,9 @@ describe('Next of Kin and Second Cousins (White)', () => {
     it(`${name}: whenever this member leaves your cult, recruit a shop member costing ${name === 'Next of Kin' ? 'up to' : 'less than'} its cost, for free`, () => {
       let s = sceneQ({ quadrants: Q, round: 2, members: [[id]], res: [{ white: 1 }] });
       const u = uidOf(s, id, 0), c = price(s, u);
+      // two shop members that fit, whatever the deal (Promote may swap one away); the Nov 11 deck left none under 6 here
+      const cheap = s.pile.filter(x => fits(price(s, x), c) && price(s, x) < c).slice(0, 2);
+      s = { ...s, pile: s.pile.filter(x => !cheap.includes(x)), shop: [...s.shop, ...cheap] };
       s = take(s, 'red.hireup'); // Promote: it leaves, swapped for a shop member
       s = move(s, s.pending.options.find(o => o.kind === 'trade' && o.value[0] === u).id);
       expect(s.pending.kind).toBe('choose');

@@ -19,6 +19,7 @@ import { pool, poolSpace, anyColors, anyColorStep, chooseRival } from './pool.js
 import { give } from './silver.js';
 /** Rummage's cost cap (test version, Nov 8). */
 const RUMMAGE_CAP = 5;
+const THRIFT_N = Number(globalThis.process?.env?.THRIFT_N || 2); // Thrift Hunters' followers (balance test knob: 3)
 /** Bury's blue for a card: half its cost rounded down, or its whole cost under REPLACE12=buryfull. */
 const SNOBS_TEXT = on12('snobsup') ? 'Whenever you recruit a member costing more than each of your others, +2 followers.'
   : on12('snobsround') ? 'Round End: +1 follower per blue member you have.' : 'Game End: +1 follower per blue member you have.';
@@ -540,8 +541,24 @@ const market = {
       const o = ctx.ownerOf(uid);
       if (!o || o === p) return;
       if (data?.more && ctx.memberCount(o) <= ctx.memberCount(p)) return; // Foreclose: only up the table
+      if (data?.toPile) {
+        ctx.log(`${p.name}'s ${data.name}: discards ${o.name}'s ${ctx.card(uid).def.name}.`);
+        ctx.buryMember(o, uid, p);
+        return;
+      }
       ctx.log(`${p.name}'s ${data.name}: ${o.name}'s ${ctx.card(uid).def.name} goes into the shop.`);
       ctx.buryMember(o, uid, p, { shop: true });
+    },
+    swapShop(ctx, p, value) {
+      if (!Array.isArray(value)) { ctx.log(`${p.name}'s Swap Shoppers: no swap.`); return; }
+      const [a, b] = value;
+      if (!swapShopPairs(ctx, p).some(([x, y]) => x.uid === a && y.uid === b)) return;
+      const names = [ctx.card(a).def.name, ctx.card(b).def.name];
+      if (!takeFromDiscard(ctx.state, b)) return;
+      ctx.state.shop.push(b); // lifted into the row for a moment, so it joins as any member a move brings in
+      ctx.giveFromShop(p, b, p);
+      ctx.buryMember(p, a, p);
+      ctx.log(`${p.name}'s Swap Shoppers: swaps ${names[0]} for ${names[1]} from the discard pile.`);
     },
     rummage(ctx, p, uid) { if (discardOf(ctx.state).includes(uid) && priceOf(ctx.card(uid)) <= RUMMAGE_CAP + richUp(ctx.state)) graveTake(ctx, p, uid, 'Rummage'); },
     // idea pipeline pool 3: Grave Diggers' and Salvagers' pick among tied cheapest discard pile members
@@ -823,17 +840,18 @@ const market = {
     // idea pipeline pool 13 (Nov 7): a rival's member (printed cost) goes face up into the shop row as Yard Sale's do, wiped
     // clean as any member back in the shop; anyone recruits it as usual, its owner included. Not a steal (members are
     // moved, as Lie Low's ruling allows). Prices fill-ins.
-    ...[['bailiffs', 'Bailiffs', 'round', 5], ['repossessors', 'Repossessors', 'game', 8]].map(([key, name, every, cap]) => pool(m(key, name, 3, 2,
-      `On Use, once per ${every}: put a rival's member costing up to ${cap} into the shop.`, {
+    // Repossessors discards (Cory, Nov 11 3:41pm: "it should go into the discard, actually")
+    ...[['bailiffs', 'Bailiffs', 'round', 5], ['repossessors', 'Repossessors', 'game', 8, true]].map(([key, name, every, cap, toPile]) => pool(m(key, name, 3, 2,
+      toPile ? `On Use, once per ${every}: discard a rival's member costing up to ${cap}.` : `On Use, once per ${every}: put a rival's member costing up to ${cap} into the shop.`, {
         activate: every,
         ...(every === 'round' ? { onRoundStart(ctx, owner, card) { card.used = false; } } : {}),
         onActivate(ctx, owner, card) {
           const list = repoList(ctx, owner, cap);
           if (!list.length) { card.used = false; ctx.log(`${owner.name}'s ${name}: no rival's member costs ${cap + richUp(ctx.state)} or less.`); return; }
-          ctx.choose(owner, `${name}: put which rival's member into the shop?`, list.map(({ c, o }) => ({
+          ctx.choose(owner, toPile ? `${name}: discard which rival's member?` : `${name}: put which rival's member into the shop?`, list.map(({ c, o }) => ({
             id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${priceOf(c)})`, kind: 'card', value: c.uid,
             hint: botWorth(c) + (o.res && ctx.memberCount(o) >= Math.max(...ctx.state.players.map(x => ctx.memberCount(x))) ? 2 : 0),
-          })), `${Q}.repo`, { name });
+          })), `${Q}.repo`, { name, toPile: !!toPile });
         },
         botActivate: (ctx, owner) => repoList(ctx, owner, cap).length > 0,
       }), 'pool13')),
@@ -1070,21 +1088,56 @@ const market = {
     // + 3 any as a player sees it. Pays once a turn, on the owner's second member recruit of that turn (Recruit Twice,
     // Spree, Shopaholics); buying followers isn't a member. Recruiting Power Shoppers itself counts as the first.
     // In the deck for Doormen's slot (Cory, Nov 5: "i actually do like power shoppers", "doormen")
-    m('powershoppers', 'Power Shoppers', 3, 2, 'Whenever you recruit your second member in a turn, +4 followers.', { f: 2,
+    // Cory, 2026-11-11 8:34pm Eastern: "Swap shoppers is pretty good. Let's try it… Definitely number one." Your member goes
+    // to the discard pile and the other joins your cult (a swap, not a recruit: no On Recruit). Price is Claude's fill-in.
+    m('swapshoppers', 'Swap Shoppers', 2, 2, 'On Use, once per round: swap one of your members for a discard-pile member that costs the same.', {
+      activate: 'round',
+      onRoundStart(ctx, owner, card) { card.used = false; },
+      onActivate(ctx, owner, card) {
+        const pairs = swapShopPairs(ctx, owner);
+        if (!pairs.length) { card.used = false; ctx.log(`${owner.name}'s Swap Shoppers: no discard-pile member costs the same as one of yours.`); return; }
+        ctx.choose(owner, 'Swap Shoppers: swap which of your members for which discard-pile member?', pairs.map(([a, b]) => ({
+          id: `trade:${a.uid}:${b.uid}`, label: `${a.def.name} ↔ ${b.def.name} (${priceOf(b)})`, kind: 'trade', value: [a.uid, b.uid],
+          // bots trade a used-up or plain member for one still to use, or worth more
+          hint: (b.def.f - a.def.f) + (a.used ? 1 : 0) + (b.def.activate || b.def.onAllPlaced || b.def.onGameEnd ? 0.5 : 0) - (a.uid === card.uid ? 3 : 0),
+        })).concat({ id: 'none', label: 'Don’t swap', kind: 'pass', value: null, hint: 0 }), `${Q}.swapShop`);
+      },
+      botActivate: (ctx, owner, card) => swapShopPairs(ctx, owner).some(([a, b]) => b.def.f > a.def.f || (a.used && a.uid !== card?.uid)),
+    }),
+    // Cory, 2026-11-11 8:42pm Eastern: "I do like Thrift Hunters" (8:42pm: "should maybe be 3 followers… but we can balance
+    // test it": +2 built, +3 for the next balance test, THRIFT_N). Any recruit of a member off the discard pile (core
+    // marks it: what.fromDiscard). Price is Claude's fill-in.
+    m('thrifthunters', 'Thrift Hunters', 2, 2, `Whenever you recruit from the discard pile, +${THRIFT_N} followers.`, {
+      onRecruit(ctx, owner, card, by, what) {
+        if (by !== owner || !what?.member || !what.fromDiscard || what.member.uid === card.uid) return;
+        owner.bonus += THRIFT_N;
+        ctx.log(`${owner.name}'s Thrift Hunters: ${what.member.def?.name || ctx.card(what.member.uid).def.name} from the discard pile, +${THRIFT_N} followers.`);
+      },
+      ...see(i => endsAhead(i).length * 2),
+    }),
+    // Cory, 2026-11-11 8:49pm Eastern, his idea ("Yeah, just put that in there"): Recruit Twice's discard-pile recruit,
+    // paid as usual. Price is Claude's fill-in.
+    m('repeatcustomers', 'Repeat Customers', 3, 2, 'On Recruit: +3 blue, then recruit from the discard pile.', {
+      onRecruited(ctx, owner) {
+        ctx.gain(owner, B, 3);
+        discardOffer(ctx, owner, { why: 'Repeat Customers', how: {}, left: 1 });
+      },
+    }),
+    m('powershoppers', 'Power Shoppers', 3, 2, 'Whenever you recruit your second member in a turn, +3 followers.', { f: 2, // +3 (Cory, Nov 11 3:41pm: "let's just put it down to 3. For right now")
       onRecruit(ctx, owner, card, by, what) {
         if (by !== owner || !what?.member || what.member.uid === card.uid) return; // itself: onRecruited counts it
         const key = `${ctx.state.round}:${(ctx.state.turns || []).length}`;
         if (card.shopTurn !== key) { card.shopTurn = key; card.shopN = 0; }
         card.shopN += 1;
         if (card.shopN !== 2) return;
-        owner.bonus += 4;
-        ctx.log(`${owner.name}'s Power Shoppers: a second member this turn, +4 followers.`);
+        owner.bonus += 3;
+        ctx.log(`${owner.name}'s Power Shoppers: a second member this turn, +3 followers.`);
       },
       onRecruited(ctx, owner, card) {
         const key = `${ctx.state.round}:${(ctx.state.turns || []).length}`;
         if (card.shopTurn !== key) { card.shopTurn = key; card.shopN = 1; }
       },
-      ...see(i => endsAhead(i).length * 4), // BOTSEE: about one double-recruit turn a round still ahead
+      ...see(i => endsAhead(i).length * 3), // BOTSEE: about one double-recruit turn a round still ahead
     }),
     // REPLACE9 bot test (Members C, Nov 4): Hawker's place (Hawker asked rivals to choose on its owner's turn). 3 blue + 2 any as a
     // player sees it. The shop's blue members count toward the owner's members in every contest that counts them (core
@@ -1288,6 +1341,13 @@ function forecloseList(ctx, p) {
   return ctx.rivals(p).filter(o => ctx.memberCount(o) > ctx.memberCount(p)).flatMap(o => ctx.membersOf(o).map(c => ({ c, o })));
 }
 /** Bailiffs (pool 13): rivals' members costing up to cap, as printed. */
+// Swap Shoppers: [yours, a discard-pile member] that cost the same
+function swapShopPairs(ctx, p) {
+  const pile = discardOf(ctx.state).map(u => ctx.card(u));
+  const out = [];
+  for (const a of ctx.membersOf(p)) for (const b of pile) if (priceOf(a) === priceOf(b)) out.push([a, b]);
+  return out;
+}
 function repoList(ctx, p, cap) {
   return ctx.rivals(p).flatMap(o => ctx.membersOf(o).filter(c => c.def.s + c.def.w <= cap + richUp(ctx.state)).map(c => ({ c, o })));
 }
