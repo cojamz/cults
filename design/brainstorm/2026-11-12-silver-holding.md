@@ -191,3 +191,56 @@ Verdict: send
 8. Color interactions: none named; any player can hold silver.
 9. Biggest case: 3 followers once, a 6-follower swing against 3 rivals.
 Verdict: send
+
+## Idea: Bookies
+
+Source: Cory, 2026-11-11 8:00pm: "on recruit, you may turn in silver… Maybe like 4 silver for 2 followers each. You may turn it up to 4 silver for 2 followers each."
+1. Printed text: "On Recruit: turn in up to 4 silver for 2 followers each." (his card; Claude's name).
+Verdict: send
+
+## Idea: Loan Officers
+
+Source: Cory, 2026-11-11 8:00pm: "Loan officer should be any rivals. Like, it's basically Steal 5, but, like, you're giving a silver."
+1. Printed text: "On Use, once per round: swap up to 5 of your silver for rivals' resources, one for one."
+Verdict: send
+
+## Pass 4: last slot, Cory 8:00pm: "On recruit, maybe like... some benefit for each player who has silver."
+
+## Idea: Matrons
+
+1. Printed text: "On Recruit: +2 followers per player holding silver." (Claude's numbers). Cards it touches: Toast "+4 silver. Each rival +2 silver. +1 silver.", Largesse "Give rivals 12 silver from the bank, split as you choose. +10 followers.".
+2. Played turn: round III, after Largesse spread silver to all 3 rivals and you kept some: 4 players hold silver, +8 followers. Earlier in the round with 2 holders, +4.
+3. Both sides: you choose when to recruit; rivals can spend down first, but a recruit comes on your turn.
+4. Who feels it: everyone who took Silver's gifts feeds you; the Silver player's gifts help a non-Silver buyer.
+5. Not refused: Chaperones (round end, +1 per rival holding silver) was "win more"; this is once, on recruit, counts all players, Cory's own ask.
+6. Judged: cross-color (any buyer at a Silver table) and Silver's give verb paid off. On Recruit, memorable, simple.
+7. Public and certain: yes, everyone sees who holds silver.
+8. Color interactions: none named; any player holds silver.
+9. Biggest case: round III, 4 holders, 8 followers once; under the 10-in-one-turn line.
+Verdict: send
+
+## Idea: Pickpockets
+
+1. Printed text: "On Recruit: take 1 silver from each player holding silver, then +2 followers per silver taken."
+2. Played turn: round II, 3 rivals hold silver: take 3, +6 followers, and you now hold 3 for the contest.
+3. Both sides: none on the card.
+4. Who feels it: each rival loses 1 silver (it helps their contest) and you gain 3.
+5. Not refused: Debt Collectors (taking silver) Cory disliked; same verb.
+6. Judged: two steps, the shape Cory disliked.
+7. Public and certain: yes, all moves are open.
+8. Color interactions: none named.
+9. Biggest case: 3 silver taken, 6 followers, 3 silver held.
+Verdict: cut (Debt Collectors' verb, two steps)
+
+## Idea: Hostesses
+
+1. Printed text: "On Recruit: each player holding silver gives you 1 resource of their choice."
+2. Played turn: round III, 3 rivals hold silver: +3 resources of their choosing.
+3. Both sides: each rival picks the color worst for you; still 3 resources.
+4. Who feels it: each rival holding silver pays 1.
+5. Not refused: no ledger verdict; Party Favors' shape (each rival gives you resources) from Oct 31.
+6. Judged: cross-color, weaker than Matrons, gives no followers.
+7. Public and certain: yes, the resources move in the open.
+8. Color interactions: none named; any player holds silver.
+9. Biggest case: 3 resources once, about 3 followers' worth against a winner's 70 to 110.
+Verdict: send
