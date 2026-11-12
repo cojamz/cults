@@ -333,14 +333,7 @@ describe('more combos (Nov 12)', () => {
     expect(has(s, /Paupers/)).toBe(false);
   });
 
-  it('Kidnapper takes a used Loan Officers at Round Start: ready for the Kidnapper\'s owner this round', () => {
-    const { s } = go('kidnap-loan', { quads: Q, round: 2, queue: [{ t: 'round', r: 3 }], members: [['silver.loanofficers'], ['thieves.kidnappers']],
-      prep: st => { st.cards[uidOf(st, 0, 'silver.loanofficers')].used = true; } }, []);
-    const u = s.players[1].members.find(x => s.cards[x].def === 'silver.loanofficers');
-    expect(u).toBeDefined();
-    expect(s.cards[u].used).toBe(false);
-    cleanLog(s);
-  });
+  // (a Kidnapper scene left here: Kidnappers was reworked Nov 11; the Magenta combo pass covers it)
 
   it('Impersonator copying a rival\'s Hustlers: swaps the copier\'s silver with a rival\'s', () => {
     const { s } = go('hustlers-impersonator', { quads: ['silver', 'red', 'echo', 'thieves'], n: 3, turns: [0], members: [[], ['silver.hustlers'], []], shop: ['echo.impersonators'],
