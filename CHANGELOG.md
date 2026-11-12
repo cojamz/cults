@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.736 — 2026-11-11
+
+- Magenta: Bodyguards steals 1 back instead of blocking; Cat Burglars (steal 3 at round end) replace Second-Story Man; Kidnappers: at round end a rival you choose gives you a member, worth 2; Double Agent swaps for a rival's member costing up to 8
+
 ## v0.99.735 — 2026-11-11
 
 - **Greatest Hits** copies only rivals’ minions: "Choose a color other than green. Copy every action with a rival’s minion on its spaces." **Tribute Band** is out of Green’s deck; **Ensemble** "Whenever you copy your own action, +1 follower." takes its place. Purple Cloak: "Whenever you take the Goes Last token, +2 purple." (was +3). Magenta Cloak: "Whenever you steal, +2 magenta." (was +1).
