@@ -1160,7 +1160,7 @@ const silver = {
     // Cory, 2026-11-11 7:38pm Eastern: "On use, give a rival all of your silver. Let's say once per round, up to 5."
     // Price is Claude's fill-in (Debt Collectors' old price: once per round, 5 resources of your choice). The silver
     // is a gift (gift hooks fire); taking their resources is not a steal.
-    m('loanofficers', 'Loan Officers', 4, 2, 'On Use, once per round: give a rival up to 5 of your silver, then take as many of their resources, you choose which.', { f: 2, n: 2,
+    m('loanofficers', 'Loan Officers', 4, 2, 'On Use, once per round: give a rival up to 5 of your silver, then take as many of their resources, you choose which.', {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
