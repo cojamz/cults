@@ -1,0 +1,8 @@
+table 23 side 1: B74 A79* B73 A56 (95s)
+table 23 side 0: A67 B75* A74 B53 (105s)
+table 24 side 0: A36 B62 A78* B63 (124s)
+table 24 side 1: B65* A58 B50 A54 (124s)
+
+A {"level":"veryhard","ease":true}
+B {"level":"veryhard"}
+seats won A 2, B 2 of 16; followers per seat A−B -1.63 ± 1.88 (s.e.); A better on 1 of 2 tables
