@@ -63,3 +63,7 @@
 
 ## 4:00pm to 4:23pm: the cloak
 - "are bots leaning towards the color of their cloak?" Measured on 240 saved Hard games (Nov 6 build): 26% of placements and 24% of members in the cloak's color, about the even 25%. "ok thats an obvious one then": added to the robust bot's list as a habit (lean toward the cloak's color, since its starting resources and card pay off there). Needs a look at what the cloak gives before choosing how strongly.
+- 4:23pm Cory: "not taking into account their cloak power. I dont think they always need to do so, but at least weighing the benefit of it." So the robust bot weighs what its cloak does (its power and start) when comparing moves; never a fixed lean.
+- 4:27pm Cory: "It also means then we need to rebalance cloaks" (bots ignore cloak power; once they weigh it the cloak balance shifts). Passed to the coordinator for its own thread; earlier finding: starting cloak swung win chance about 25 points (Nov 3 deep run, Silver lowest, White and Green highest).
+- 4:28pm Cory: maybe the two new habits compete; wants a holistically better bot with the principles implemented, maybe with an internal priority order; the option set is complicated; "even normal bots are hard to beat". First 6 games of ease+together: 1 winner in 6, -9.5 followers (too few; running).
+- 4:30pm coordinator: when the robust (cloak-aware) bot is built and tested, message the balance thread cmsg_01PySa5gYMfCiexiWTLrWgo39rxGwMqkjQ5tpzWX4284vH so it can start the cloak rebalance runs with it.
