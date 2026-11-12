@@ -21,7 +21,7 @@ import {
   createGame, applyMove, followers, memberCount, memberPrice, cardDef, contestTable, turnRail, previewSpace,
   quadrant, shopSize, TIERS, roundWorkers, openSlots,
 } from '../src/engine/v4/index.js';
-import { scoringOf } from '../src/engine/v4/core.js';
+import { scoringOf, plus1Open } from '../src/engine/v4/core.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
@@ -240,7 +240,10 @@ export function tableView(s, meId, full = false) {
       const spaces = quadrant(qid).actions.map((a, i) => {
         const key = `${q}-${i}`, who = s.slots[key], sq = s.squats?.[key] || [];
         const st = a.ring > round ? `dark till ${ROMAN[a.ring]}` : who === undefined ? 'OPEN' : `${s.players[who].name}${sq.length ? `+${sq.map(id => s.players[id].name).join(',')}` : ''}`;
-        return full ? `\n    ${a.name} [${st}]: ${actionText(a)}` : `${a.name} [${st}]`;
+        // the dot a table shows under a space whose first-taker +1 is still there (Cory, Nov 12: "it impacts what you do
+        // in the game"; the AI players couldn't see which spaces still held it)
+        const dot = plus1Open(s, q, i) ? ' · +1 still there for its first taker' : '';
+        return full ? `\n    ${a.name} [${st}${dot}]: ${actionText(a)}` : `${a.name} [${st}${dot}]`;
       });
       L.push(`${sphereName(qid)} — contest ${c.label}${c.counts ? ` (counts ${c.counts})` : ''} (${lead}${rows ? `; ${rows}` : ''}): ${spaces.join(full ? '' : ', ')}`);
     });

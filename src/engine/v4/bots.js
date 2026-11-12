@@ -16,6 +16,7 @@
 import {
   contextFor, actionAt, cardDef, TIERS, followers, memberCount, RING_VALUE, WORKERS, tierLeft,
   paymentChoices, followerChoices, releaseRefund, liveOptions, swapCardPairs, paySwapCard, scoringOf, applyMove,
+  plus1Mode, printsPlus1,
 } from './core.js';
 import { defById, quadrant, handlerById } from './content/index.js';
 import { BOTSEE } from './content/botsee.js';
@@ -711,6 +712,8 @@ function seeUse(state, s, me, uid) {
 // kept: its followers, its place in member contests and its ability all went into the forecast, so bots took Borrow
 // in 93% of the rounds it was open and its takers won 20% (7 points under players as wide). With the fix on, the
 // forecast drops members still on loan this round (core endRound discards them before scoring).
+let PLUS1_FIX = globalThis.process?.env?.BOTPLUS1 === '1';
+export const setPlus1Fix = on => { PLUS1_FIX = !!on; };
 let BORROW_FIX = globalThis.process?.env?.BOTBORROW !== '0'; // on by default since Nov 12: +4.4 ± 1.3 followers a seat over 100 Hard games (design/eval/bot-audit-2026-11-11)
 export const setBorrowFix = on => { BORROW_FIX = !!on; };
 const onLoan = s => (s.borrowed || []).filter(b => b.round === s.round && s.players[b.pid]?.members.includes(b.uid));
@@ -882,7 +885,15 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
         p.left -= 1;
         const qid = s.quadrants[o.q];
         for (const c of ctx.membersOf(p)) for (const id of [c.def.id, c.copy].filter(Boolean)) defById(id).afterAction?.(ctx, p, c, qid);
-        actionAt(s, o.q, o.i).resolve(ctx, p);
+        const act = actionAt(s, o.q, o.i);
+        act.resolve(ctx, p);
+        // BOTPLUS1 (bot audit, Nov 12; Cory: "it impacts what you do in the game"): with the +1 once a game, a space's
+        // printed "+1 <color>." goes only to its first taker, but the copy here runs the space's own text, so every space
+        // read as paying its +1. With the fix on, a claimed space is read without it (the game cuts it the same way).
+        if (PLUS1_FIX && plus1Mode(s) === 'game' && printsPlus1(act, qid) && s.plus1Seen?.[`${o.q}-${o.i}`]) {
+          const color = quadrant(qid).resource;
+          if ((p.res[color] || 0) > 0) p.res[color] -= 1;
+        }
         // buys the action queues (Spree…) are buys still ahead, like this turn's own
         const moreBuys = s.queue.filter(t => t.t === 'buy' && t.p === me && !t.extra).length;
         const moreTurns = Math.max(0, turnsQueued(s) - turns0);
