@@ -574,7 +574,7 @@ const members = [
   m('sorelosers', 'Consolation Prize', null, 0, 4, 'Round End: if you win no contest, +5 followers.', { round: 3, // Sore Loser redesigned (Cory, Nov 11 3:56pm); same id and price
     afterContests(ctx, owner, card, table) {
       // a shared contest counts as a win, as Sore Loser read it
-      if (table.some(c => c.winners.includes(owner.id))) { ctx.log(`${owner.name}'s Consolation Prize: ${owner.name} won or tied a contest, so nothing.`); return; }
+      if (table.some(c => c.winners.includes(owner.id))) { ctx.log(`${owner.name}'s Consolation Prize: won or tied a contest, so nothing.`); return; }
       owner.bonus += 5;
       ctx.log(`${owner.name}'s Consolation Prize: won no contest, +5 followers.`);
     },

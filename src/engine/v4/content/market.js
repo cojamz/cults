@@ -555,11 +555,15 @@ const market = {
       const [a, b] = value;
       if (!swapShopPairs(ctx, p).some(([x, y]) => x.uid === a && y.uid === b)) return;
       const names = [ctx.card(a).def.name, ctx.card(b).def.name];
-      if (!takeFromDiscard(ctx.state, b)) return;
-      ctx.state.shop.push(b); // lifted into the row for a moment, so it joins as any member a move brings in
-      ctx.giveFromShop(p, b, p);
-      ctx.buryMember(p, a, p);
+      if (!takeFromDiscard(ctx.state, b)) return; // marks it as off the discard pile this turn (Thrift Hunters)
       ctx.log(`${p.name}'s Swap Shoppers: swaps ${names[0]} for ${names[1]} from the discard pile.`);
+      // yours goes first, so a member swapped away never hears the one coming in
+      ctx.buryMember(p, a, p);
+      // the one taken is your recruit, free (Cory, Nov 1: "A member you get by your own swap is recruited (its On
+      // Recruit fires)"; Nov 4: "Any time you bring a minion into your own cult by your own choice is a recruit"):
+      // lifted into the row for a moment and recruited the normal way, as graveTake does
+      ctx.state.shop.push(b);
+      ctx.recruit(p, b, { free: true });
     },
     rummage(ctx, p, uid) { if (discardOf(ctx.state).includes(uid) && priceOf(ctx.card(uid)) <= RUMMAGE_CAP + richUp(ctx.state)) graveTake(ctx, p, uid, 'Rummage'); },
     // idea pipeline pool 3: Grave Diggers' and Salvagers' pick among tied cheapest discard pile members
@@ -1090,7 +1094,8 @@ const market = {
     // Spree, Shopaholics); buying followers isn't a member. Recruiting Power Shoppers itself counts as the first.
     // In the deck for Doormen's slot (Cory, Nov 5: "i actually do like power shoppers", "doormen")
     // Cory, 2026-11-11 8:34pm Eastern: "Swap shoppers is pretty good. Let's try it… Definitely number one." Your member goes
-    // to the discard pile and the other joins your cult (a swap, not a recruit: no On Recruit). Price is Claude's fill-in.
+    // to the discard pile and the other joins your cult as your recruit (his Nov 1 and Nov 4 calls: a member you bring in
+    // by your own swap is recruited, so its On Recruit and every "whenever you recruit" fire). Price is Claude's fill-in.
     m('swapshoppers', 'Swap Shoppers', 2, 2, 'On Use, once per round: swap one of your members for a discard-pile member that costs the same.', {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
@@ -1120,7 +1125,9 @@ const market = {
     // paid as usual. Price is Claude's fill-in.
     m('repeatcustomers', 'Repeat Customers', 3, 2, 'On Recruit: +3 blue, then recruit from the discard pile.', {
       onRecruited(ctx, owner) {
-        ctx.gain(owner, B, 3);
+        // said here: with the pile empty, its "the discard pile is empty" line hid the +3 blue from the log
+        const got = ctx.gain(owner, B, 3);
+        if (got) ctx.log(`${owner.name}'s Repeat Customers: +${got.n} ${got.color}.`);
         discardOffer(ctx, owner, { why: 'Repeat Customers', how: {}, left: 1 });
       },
     }),
@@ -1134,9 +1141,11 @@ const market = {
         owner.bonus += 3;
         ctx.log(`${owner.name}'s Power Shoppers: a second member this turn, +3 followers.`);
       },
+      // its place among this turn's members (core counts them in turnRecruits, itself included): recruited as the
+      // second, the next one is the third and pays nothing (it paid the third: combos-blue-nov12)
       onRecruited(ctx, owner, card) {
         const key = `${ctx.state.round}:${(ctx.state.turns || []).length}`;
-        if (card.shopTurn !== key) { card.shopTurn = key; card.shopN = 1; }
+        if (card.shopTurn !== key) { card.shopTurn = key; card.shopN = ctx.state.current === owner.id ? Math.max(1, owner.turnRecruits || 0) : 1; }
       },
       ...see(i => endsAhead(i).length * 3), // BOTSEE: about one double-recruit turn a round still ahead
     }),
@@ -1346,7 +1355,8 @@ function forecloseList(ctx, p) {
 function swapShopPairs(ctx, p) {
   const pile = discardOf(ctx.state).map(u => ctx.card(u));
   const out = [];
-  for (const a of ctx.membersOf(p)) for (const b of pile) if (priceOf(a) === priceOf(b)) out.push([a, b]);
+  // Loyalists ("Your other members can't be swapped.") guards them from its owner's own swaps too, as Red's swaps read it
+  for (const a of ctx.membersOf(p)) if (ctx.canSwapMember(a.uid)) for (const b of pile) if (priceOf(a) === priceOf(b)) out.push([a, b]);
   return out;
 }
 function repoList(ctx, p, cap) {
