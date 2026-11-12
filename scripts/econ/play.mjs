@@ -39,13 +39,15 @@ for (let g = first; g < first + count; g++) {
     if (typeof m.option === 'string' && /^(slot|squat):/.test(m.option)) P[pl].places++;
     const before = s.players.map(x => ({ res: { ...x.res }, members: [...x.members], bonus: x.bonus }));
     const t = s;
+    const payTier = s.pending.kind === 'pay' && s.pending.tier != null;
     s = applyMove(s, m);
     s.players.forEach((x, i) => {
       for (const c in x.res) { const d = (x.res[c] || 0) - (before[i].res[c] || 0); if (d > 0) P[i].gained += d; }
       const fresh = x.members.filter(u => !before[i].members.includes(u));
       if (i === pl && fresh.length && r >= 1) { P[i].recruits[r - 1] += fresh.length; for (const u of fresh) { try { P[i].prices.push(memberPrice(t, t.players[i], u).total); } catch {} } }
     });
-    if (typeof m.option === 'string' && /^tier:/.test(m.option)) { P[pl].followerBuys++; const d = followers(s, s.players[pl]) - followers(t, t.players[pl]); P[pl].folBought += d; if (r === 3) P[pl].folR3buys += d; }
+    if (typeof m.option === 'string' && /^tier:/.test(m.option)) P[pl].followerBuys++;
+    if (payTier) { const d = followers(s, s.players[pl]) - followers(t, t.players[pl]); P[pl].folBought += d; if (r === 3) P[pl].folR3buys += d; }
     if (r >= 1 && (s.round !== r || s.over)) {
       t.players.forEach((x, i) => P[i].leftover.push(sum(x.res)));
       if (r === 1) s.players.forEach((x, i) => { P[i].folR1 = followers(s, x); });
