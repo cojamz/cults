@@ -219,9 +219,10 @@ export default {
       // Cory, Nov 10 (project chat): Red's third round I space is Borrow, Tryout's place (no space relies on On Recruits,
       // 11:57am); 3:00pm: "lets say it gets discarded at the end of the round instead of retruning to shop", "before
       // scoring" kept from his earlier words. Free, the cheapest (a tie is your pick). It goes to the discard pile when the
-      // round ends, before the Round End cards and the contests, if it is still in your cult; swapped away (Promote,
-      // Demote) it stays where it went ("it also combos with promote/demote").
-      key: 'borrow', ring: 1, name: 'Borrow', text: 'Recruit the cheapest shop member, for free. Discard it at round end, before scoring. +1 red.', copyDoesIt: true,
+      // round ends, before the Round End cards and the contests. Nov 12: "it goes back to the shop", and "when you give
+      // somebody a loaned card, it should stay loaned and go back at end of the round": swapped or given to a rival
+      // (Promote, Demote) it stays on loan and goes back from there; swapped into the shop it is no longer on loan.
+      key: 'borrow', ring: 1, name: 'Borrow', text: 'Recruit the cheapest shop member, for free. It returns to the shop at round end, before scoring. +1 red.', copyDoesIt: true,
       estimate: ctx => 1 + cheapValue(ctx) * 0.5,
       resolve(ctx, p) {
         ctx.gain(p, 'red', 1, { fromAction: true });

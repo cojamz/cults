@@ -109,7 +109,7 @@ function Card({ state, r, onPick = null }) {
         <span className="rc-disc num" title={`Costs ${price(r)}`}>{price(r)}</span>
         <span className="rc-bar-n"><CardName state={state} uid={r.uid} />{r.n > 1 ? ` ×${r.n}` : ''}</span>
         <Count state={state} r={r} />
-        {r.loan ? <span className="rc-loan" data-on-loan="" title="On loan from Borrow: discarded at round end, before scoring">on loan</span> : null}
+        {r.loan ? <span className="rc-loan" data-on-loan="" title="On loan from Borrow: back to the shop at round end, before scoring">on loan</span> : null}
         {use ? <span className="rc-usetag">{idle ? 'Nothing to gain now' : r.loaded ? 'Not used yet' : 'Used'}</span> : r.used ? <span className="rc-usetag">Used this round</span> : null}
       </span>
       <span className="rc-body">
@@ -146,7 +146,7 @@ export function RivalCard({ state, pid, who, me = null, optionFor = () => null, 
                   {g.t === 'plain'
                     ? <div className="rc-chips">{g.rows.map(r => (
                       <span key={r.key} className="rc-chip" data-member-row={r.def.id} title={r.text}>
-                        <span className="rc-disc num">{price(r)}</span><Pic state={state} def={r.def} name={r.name} size={20} /><b className="rc-name"><CardName state={state} uid={r.uid} />{r.n > 1 ? ` ×${r.n}` : ''}</b><Count state={state} r={r} />{r.loan ? <span className="rc-loan" data-on-loan="" title="On loan from Borrow: discarded at round end, before scoring">on loan</span> : null}
+                        <span className="rc-disc num">{price(r)}</span><Pic state={state} def={r.def} name={r.name} size={20} /><b className="rc-name"><CardName state={state} uid={r.uid} />{r.n > 1 ? ` ×${r.n}` : ''}</b><Count state={state} r={r} />{r.loan ? <span className="rc-loan" data-on-loan="" title="On loan from Borrow: back to the shop at round end, before scoring">on loan</span> : null}
                         <span className="rc-hide" data-ability>{r.text}</span>
                       </span>
                     ))}</div>

@@ -383,7 +383,7 @@ export function MemberCard({ state, uid, def: d0 = null, me = null, onFace = fal
       {copied && card.copy && <small className="mc-live" data-copy-of="">Copy of <CardName state={state} def={copied} /></small>}
       {copied && !card.copy && <small className="mc-live" data-ability-of="">Has the ability of <CardName state={state} def={copied} /></small>}
       {/* Borrow's member (Cory, Nov 11): on loan, and when it goes, in the card's words */}
-      {owner && onLoan(state, uid) && <small className="mc-live" data-on-loan="">On loan from Borrow: discarded at round end, before scoring.</small>}
+      {owner && onLoan(state, uid) && <small className="mc-live" data-on-loan="">On loan from Borrow: back to the shop at round end, before scoring.</small>}
       {card && card.used && !state.over && <small className="mc-live" data-member-used="">{owner ? 'Used' : 'Already used: it can’t be used again this game'}</small>}
       {/* the cost and nothing else about paying (Cory, 03:40: cut "You pay"); a discount on you says only why the face's
           price is struck ("Your next member costs 4 less.") */}
@@ -984,7 +984,7 @@ export function youdWords(pv, state, own = null, spaceText = '') {
         const after = [...extras, freeSpace && lost ? `its effect −${lost}` : null].filter(Boolean);
         // Borrow's member leaves at round end, before scoring: its followers are yours only until then (four players,
         // Nov 12: "discarded before scoring, yet +4 followers")
-        const until = /discard it at round end/i.test(spaceText) ? ', until round end' : '';
+        const until = /(discard it|it returns to the shop) at round end/i.test(spaceText) ? ', until round end' : '';
         const pick = `${names.join(' and ')} ${price}${after.length ? ` (${after.join(', ')}${until})` : until ? ` (${until.slice(2)})` : ''}`;
         return { text: sure || null, or: pick, orWord: 'best pick:', note: null };
       }
@@ -1099,7 +1099,7 @@ export function YoudGet({ state, pid, q, i, now = false, skipSelf = false }) {
   try { spaceText = spacesOf(state, state.quadrants[q])[i].text || ''; } catch { /* none */ }
   const y00 = youdWords(pv, state, own, spaceText);
   // Borrow: the member and its followers go at round end, before scoring (four players, Nov 12)
-  const y0 = /discard it at round end/i.test(spaceText) && !/until round end/.test(`${y00.or || ''}`) && !y00.note ? { ...y00, note: 'the member and its followers go at round end' } : y00;
+  const y0 = /(discard it|it returns to the shop) at round end/i.test(spaceText) && !/until round end/.test(`${y00.or || ''}`) && !y00.note ? { ...y00, note: 'the member and its followers go at round end' } : y00;
   const y1 = skipSelf ? { ...y0, text: SKIP_SELF(y0.text), or: SKIP_SELF(y0.or), likely: SKIP_SELF(y0.likely), best: SKIP_SELF(y0.best) } : y0;
   const via = viaWords(pv, state, spaceText);
   const y = via ? { ...y1, text: withVia(y1.text, via), or: withVia(y1.or, via), likely: withVia(y1.likely, via), best: withVia(y1.best, via) } : y1;

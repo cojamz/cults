@@ -1223,15 +1223,16 @@ function startRound(state, r) {
 
 function endRound(state) {
   const ctx = ctxFor(state);
-  // Borrow (Cory, Nov 10: "Discard it at round end, before scoring."): this round's borrowed members still in the
-  // borrower's cult go to the discard pile first, before the Round End cards and the contests
+  // Borrow (Cory, Nov 12: "it goes back to the shop"; "when you give somebody a loaned card, it should stay loaned and
+  // go back at end of the round"): this round's borrowed members, in whichever cult holds them now (a swap or a give
+  // moves the loan with the card, loanFollows), go back to the shop first, before the Round End cards and the contests
   const lent = (state.borrowed || []).filter(b => b.round === state.round);
   state.borrowed = (state.borrowed || []).filter(b => b.round !== state.round);
   for (const b of lent) {
-    const p = state.players[b.pid];
-    if (!p?.members.includes(b.uid)) continue;
-    log(state, `${p.name}'s Borrow: ${cardDef(state, b.uid).name} is discarded at round end.`);
-    ctx.buryMember(p, b.uid);
+    const p = state.players.find(o => o.members.includes(b.uid));
+    if (!p) continue;
+    log(state, `${p.name}'s ${cardDef(state, b.uid).name} was on loan from Borrow: back to the shop at round end.`);
+    ctx.buryMember(p, b.uid, p, { shop: true });
   }
   if (!state.borrowed.length) delete state.borrowed;
   // Round End cards act in this round's turn order, as the ones before them (Cory, Nov 5: "round ends, contests, members.")
@@ -1954,6 +1955,7 @@ function swapMembers(state, actor, aUid, bUid) {
   a.list.splice(a.index, 1); b.list.splice(b.index, 1);
   // a member arriving in a cult joins the end of its row, oldest to newest (Cory, 2026-10-22); the shop keeps its slot
   for (const [uid, dest] of [[bUid, a], [aUid, b]]) if (dest.owner) dest.list.push(uid); else dest.list.splice(dest.index, 0, uid);
+  for (const [uid, dest] of [[bUid, a], [aUid, b]]) if (dest.owner) loanFollows(state, uid, dest.owner);
   for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner) memberMoved(state, actor, uid, from.owner, to.owner || null, movedHooks);
   // out of a cult into another cult or the shop (Recruiter pays for a rival's member going to the shop too; Cory, Nov 1)
   for (const [uid, from, to] of [[aUid, a, b], [bUid, b, a]]) if (from.owner && from.owner !== to.owner) cultMove(state, uid, from.owner, to.owner || null, actor, uid === aUid ? bUid : aUid);
@@ -2547,6 +2549,8 @@ function cultMove(state, uid, from, to, actor = null, swappedWith = null) {
  *  for better stuff" (Cory, Nov 4 11:07am). A used one stays used whoever recruits it next. */
 function wipeCard(state, uid) {
   const old = state.cards[uid];
+  // a borrowed member that went to the shop or a pile is no longer on loan: whoever takes it next keeps it
+  if (state.borrowed?.some(b => b.uid === uid)) { state.borrowed = state.borrowed.filter(b => b.uid !== uid); if (!state.borrowed.length) delete state.borrowed; }
   // its own once-per-game use only: a Doppelganger's copy comes off with the wipe, and its use with it
   const spent = old.used === true && defById(old.def).activate === 'game';
   state.cards[uid] = { uid, def: old.def, ...(spent ? { used: true } : {}) };
@@ -2566,6 +2570,11 @@ function cardLeaves(state, p, uid) {
   for (const u of [...p.members]) for (const def of effectiveDefs(state.cards[u])) if (def.onAnyLeave) def.onAnyLeave(ctx, p, wrap(state, state.cards[u]), wrap(state, card));
   // "Whenever another of your members leaves your cult" (Widows, REPLACE10 bot test)
   if (REPLACE10) for (const u of p.members) if (u !== uid) for (const def of effectiveDefs(state.cards[u])) if (def.onOtherLeave) def.onOtherLeave(ctx, p, wrap(state, state.cards[u]), wrap(state, card));
+}
+/** A borrowed member that changes cults stays on loan, now with the cult it went to (Cory, Nov 12: "when you give
+ *  somebody a loaned card, it should stay loaned and go back at end of the round"). */
+function loanFollows(state, uid, to) {
+  for (const b of state.borrowed || []) if (b.uid === uid) b.pid = to.id;
 }
 /** This round's turn order (its first pass). */
 const turnOrder = state => (state.order.length ? state.order.slice(0, state.players.length) : state.players.map(p => p.id));
@@ -2751,6 +2760,7 @@ function ctxFor(state) {
       cardLeaves(state, from, uid);
       from.members.splice(from.members.indexOf(uid), 1);
       to.members.push(uid);
+      loanFollows(state, uid, to);
       memberMoved(state, actor, uid, from, to, movedHooks);
       cultMove(state, uid, from, to, actor);
       if (activelyAcquired) memberAcquired(state, to, uid, { stolen: true });

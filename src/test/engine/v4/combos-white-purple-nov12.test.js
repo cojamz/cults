@@ -92,10 +92,10 @@ describe('Leavetakers: "Whenever one of your members leaves your cult, +2 white.
     cleanLog(s);
   });
 
-  it('Borrow\'s member is discarded at round end: that leaving pays +2 white', () => {
+  it('Borrow\'s member goes back to the shop at round end: that leaving pays +2 white', () => {
     const { s } = go('lt-borrow', { quads: W, queue: [{ t: 'turn', p: 0 }, ...END], shop: ['red.volunteer', 'trading.recluse'], members: [['trading.leavetakers'], []] },
       [/Borrow/, /^pass$/]);
-    expect(s.log).toContain("P1's Borrow: Volunteer is discarded at round end.");
+    expect(s.log).toContain("P1's Volunteer was on loan from Borrow: back to the shop at round end.");
     expect(leave(s, 0)).toEqual(["P1's Leavetakers: Volunteer left: +2 white."]);
     expect(names(s, 0)).toEqual(['Leavetakers']);
     expect(s.players[0].res.white).toBe(2);
@@ -325,5 +325,32 @@ describe('Last Callers: "On Use, once per round: take the Goes Last token."', ()
     const { s } = go('lc-early', { quads: P, round: 2, left: 3, queue: T(0, 1, 0, 1, 0, 1), members: [['purple.lastcallers', 'purple.earlybird']] }, [/Gather/, /Last Callers/]);
     expect(s.goesLast ?? null).toBe(null);
     expect(s.log).toContain("P1's Early Birds: P1's turns can't be skipped, so P1 doesn't go last.");
+  });
+});
+
+// Cory, Nov 12: "when you give somebody a loaned card, it should stay loaned and go back at end of the round",
+// "it goes back to the shop". Borrow's member given away with Demote stays on loan in the rival's cult and goes back
+// to the shop at round end, before scoring (its Round End doesn't pay the rival).
+describe('a loaned member given away stays on loan', () => {
+  const R = ['red', 'trading', 'yellow', 'thieves'];
+  it('Borrow Recluse, Demote it to a rival for their Volunteer: Recluse goes back to the shop at round end', () => {
+    const { s, trail } = go('loan-given', { quads: R, round: 2, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }, ...END], shop: ['trading.recluse'], members: [[], ['red.volunteer']] },
+      [/Borrow/, /^pass$/, /Demote/, /Recluse.*Volunteer|Volunteer.*Recluse/, /^pass$/]);
+    expect(trail.join('\n')).not.toMatch(/STOP/);
+    expect(s.log).toContain("P2's Recluse was on loan from Borrow: back to the shop at round end.");
+    expect(names(s, 0)).toEqual(['Volunteer']);
+    expect(names(s, 1)).toEqual([]);
+    expect(s.shop.map(u => s.cards[u].def)).toContain('trading.recluse');
+    expect(lines(s, /Recluse: \+/)).toEqual([]);
+    expect(s.borrowed).toBeUndefined();
+    cleanLog(s);
+  });
+  it('a loaned member swapped into the shop is no longer on loan; the member taken for it is kept', () => {
+    const { s, trail } = go('loan-to-shop', { quads: R, round: 2, queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 0 }, ...END], shop: ['trading.recluse'], members: [[], []] },
+      [/Borrow/, /^pass$/, /Demote/, /Recluse.*Intern/, /^pass$/]);
+    expect(trail.join('\n')).not.toMatch(/STOP/);
+    expect(names(s, 0)).toEqual(['Intern']);
+    expect(has(s, /on loan from Borrow/)).toBe(false);
+    expect(s.borrowed).toBeUndefined();
   });
 });

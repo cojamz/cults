@@ -21,7 +21,7 @@ const S = {
     jv: '+3 gold · 1 gold to a rival', rush: r => `+${2 * r} gold`, discount: '−4 cost', steal: 'steal 3 gold', windfall: '+1 gold per member', strike: 'double gold',
   },
   red: {
-    borrow: 'recruit the cheapest, free; discard it at round end; +1 red', trending: '+1 of the shop’s most common color per member of it; +1 red', lateshift: 'free shop member costing up to 2 per minion you placed this round; +1 red', gather: '+3 red; +4 followers if you recruit a color you have; +1 red',
+    borrow: 'recruit the cheapest, free; back to the shop at round end; +1 red', trending: '+1 of the shop’s most common color per member of it; +1 red', lateshift: 'free shop member costing up to 2 per minion you placed this round; +1 red', gather: '+3 red; +4 followers if you recruit a color you have; +1 red',
     evenswap: 'use a shop member’s On Recruit; +2 red', turnout: r => `+${r + 1} red; +1 follower per 3 paid for a member this turn`, hire: 'recruit the top of the deck; each rival +1 red; +1 red', opendoor: 'recruit the cheapest in the shop, free; +1 red', hireup: 'promote: one costing up to 3 more; +3 red', trade: 'demote: one costing up to 3 less; +3 red', take: `recruit one costing ${9 + MORE} or less, free; +1 red`,
   },
   blue: { a1: '+3 blue', a2: '+2 blue +1 red', a3: '+2 blue +1 green', a4: '+5 blue', a5: '+4 blue +1 gold', a6: '+8 blue' },
@@ -55,7 +55,7 @@ const S = {
 const LIVE_WORDS = {
   gold: { jv: '+3 gold; +1 gold to a rival you choose', steal: 'steal up to 3 gold from rivals' },
   red: {
-    borrow: 'recruit the cheapest for free; discard it at round end', lateshift: 'recruit for free, costing up to 2 per minion you placed this round',
+    borrow: 'recruit the cheapest for free; back to the shop at round end', lateshift: 'recruit for free, costing up to 2 per minion you placed this round',
     gather: '+3 red; +4 followers if you recruit a color you have', hireup: '+3 red; promote a member to one costing up to 3 more',
     trade: '+3 red; demote a member to one costing up to 3 less', take: `recruit for free, costing ${9 + MORE} or less`,
   },

@@ -54,7 +54,7 @@ const P = {
     // Nov 10 round I (Cory): Borrow, Trending and Gather
     // the catch in line 1 (picky bot, Nov 11: a tight ring or a taken space shows line 1 alone, and it read as a member to
     // keep; decisions Oct 25 and Nov 1: a space's catch is on the wheel)
-    borrow: { verb: 'Recruit the cheapest for free, this round only', second: 'discard it at round end', note: '+1 red' },
+    borrow: { verb: 'Recruit the cheapest for free, this round only', second: 'it returns to the shop at round end', note: '+1 red' },
     trending: { verb: '+1 per shop member of', second: 'the most common color', note: '+1 red' },  // off the wheel since Nov 11 (Late Shift)
     // Cory's words, split later (picky bot, Nov 11: taken, line 1 alone read "Free member costing up to" with no number)
     lateshift: { verb: 'Recruit for free, costing up to 2 per minion', second: 'you placed this round, this one included', note: '+1 red' }, // Cory, Nov 11

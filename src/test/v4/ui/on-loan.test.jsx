@@ -38,7 +38,7 @@ describe('on loan from Borrow', () => {
     expect(container.querySelectorAll('[data-on-loan]')).toHaveLength(1);
     cleanup();
     const card = render(<MemberCard state={s} uid={lent} />).container;
-    expect(card.querySelector('[data-on-loan]').textContent).toContain('discarded at round end');
+    expect(card.querySelector('[data-on-loan]').textContent).toContain('back to the shop at round end');
     cleanup();
     const kept = render(<MemberCard state={s} uid={s.players[0].members[0]} />).container;
     expect(kept.querySelector('[data-on-loan]')).toBeNull();

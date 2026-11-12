@@ -286,8 +286,8 @@ export default function CultSeat({ state, pid, me = null, mine = false, now = fa
               {readyUid != null && !(mine && d.toggle) && <span className="cs-use-tab" aria-hidden="true">use</span>}
               {loaded && !pendingRound && <span className="cs-loaded-dot" aria-hidden="true" />}
               {/* on loan from Borrow (Cory, Nov 11): a dashed ring and a quiet "loan" tab; it leaves at round end */}
-              {g.loan && readyUid == null && !(mine && d.toggle) && <span className="cs-loan-tab" aria-hidden="true" title="Borrowed: discarded at round end">loan</span>}
-              <Tip className="fig" sticky={mine} {...(mine ? {} : { tabIndex: -1 })} label={`${d.name}: ${g.loan ? 'on loan, discarded at round end, ' : ''}${pendingRound ? 'pending this round, show the card' : readyUid != null ? 'ready to use, show the card' : g.card.used ? 'used, show the card' : loaded ? 'not used yet, show the card' : 'show the card'}`}
+              {g.loan && readyUid == null && !(mine && d.toggle) && <span className="cs-loan-tab" aria-hidden="true" title="Borrowed: back to the shop at round end">loan</span>}
+              <Tip className="fig" sticky={mine} {...(mine ? {} : { tabIndex: -1 })} label={`${d.name}: ${g.loan ? 'on loan, back to the shop at round end, ' : ''}${pendingRound ? 'pending this round, show the card' : readyUid != null ? 'ready to use, show the card' : g.card.used ? 'used, show the card' : loaded ? 'not used yet, show the card' : 'show the card'}`}
                 content={memberCardFn(latest, readyUid ?? g.uids[0])}>
                 <Sprite id={[d.id, spriteId(d.name)]} kind="member" sphere={sphereOf(state, d)} size={24} />
                 {g.count > 1 && <b className="x num">×{g.count}</b>}
