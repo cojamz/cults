@@ -529,7 +529,7 @@ export function turnGroups(state, lines) {
   const names = state.players.map(p => esc(p.name)).join('|');
   const took = new RegExp(`^(${names}) (?:took .+|joined .+ on .+) \\([A-Z][a-z]+\\)\\.$`); // a turn: a space taken or joined
   const pass = new RegExp(`^(${names}) passed\\.$`);
-  const alone = /^(Round \S+ ends\.|Game over\.)/;
+  const alone = /^(Round \S+ ends\.|Round \S+ counts\.|Game over\.)/; // counts: why each contest went that way (Nov 12)
   const groups = [];
   let g = null;
   lines.forEach((l, j) => {
