@@ -1533,7 +1533,12 @@ export function roundOrder(state) {
   const order = [...(state.order || [])], early = order.map(() => null), src = order.map((_, i) => i), late = order.map(() => null);
   const e = state.early;
   // a move marked late is a skipped turn (Purple's skip space): the seat is passed over once, so its turn goes last
-  if (e && e.round === state.round) for (const m of e.moves) {
+  // a move that names its turn (src: the turn's place in state.order) finds it there: an earlier move taken back (the
+  // Goes Last token taken, its minions back to their turns) shifts the places after it, and a place alone then named a
+  // rival's turn (four-player review, Nov 12: Vera's turn read "Crunch Time: next turn, now" after Cass's Crunch Time)
+  if (e && e.round === state.round) for (const m0 of e.moves) {
+    const at = m0.src !== undefined ? src.indexOf(m0.src) : -1;
+    const m = at >= 0 ? { ...m0, from: at } : m0;
     const [pid] = order.splice(m.from, 1); early.splice(m.from, 1); const [i] = src.splice(m.from, 1); late.splice(m.from, 1);
     order.splice(m.to, 0, pid); early.splice(m.to, 0, m.late ? null : m.why); src.splice(m.to, 0, i); late.splice(m.to, 0, m.late ? m.why : null);
   }

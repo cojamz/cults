@@ -157,7 +157,9 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
   const l1 = g.kind === 'handover' && g.move ? 'Move' : l1raw;
   const card = uid => cardDef(state, uid);
   const owner = uid => state.players.find(p => p.members.includes(uid));
-  const ownerName = uid => { const p = owner(uid); return p ? p.id === g.actor ? 'You' : p.name : 'Shop'; };
+  // a member nobody holds sits in the shop or, for Swap Shoppers, on the discard pile (four-player review, Nov 12)
+  const loose = uid => (state.discard || []).includes(uid) ? 'Discard pile' : 'Shop';
+  const ownerName = uid => { const p = owner(uid); return p ? p.id === g.actor ? 'You' : p.name : loose(uid); };
   const memberLabel = uid => `${ownerName(uid)}: ${card(uid).name}`;
   const from = g.kind === 'amount' ? (String(pend.prompt).match(/swap (\w+) for/i) || [])[1] : null;
   // the gift comes from the bank, never your own stack (blind testers read "Give 1 to a rival" as paying it, 2026-10-15)
@@ -342,12 +344,12 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
   // Both sides show their real holder: a Red action may swap two rivals or a rival with the shop.
   const memberGroups = (uids, first = false) => {
     const groups = new Map();
-    for (const u of uids) { const pid = owner(u)?.id ?? 'shop'; if (!groups.has(pid)) groups.set(pid, []); groups.get(pid).push(u); }
+    for (const u of uids) { const pid = owner(u)?.id ?? ((state.discard || []).includes(u) ? 'discard' : 'shop'); if (!groups.has(pid)) groups.set(pid, []); groups.get(pid).push(u); }
     return [...groups].map(([pid, uids]) => (
       <span key={pid} className="gc-group" data-pid={pid}>
         <span className="gc-who gc-holder">
-          {pid !== 'shop' && <Minion color={playerColor(pid)} emoji={seatEmoji(state, pid)} size={crowd ? 16 : 20} />}
-          <span className="gc-who-name">{pid === 'shop' ? 'Shop' : pid === g.actor ? 'You' : state.players[pid].name}</span>
+          {pid !== 'shop' && pid !== 'discard' && <Minion color={playerColor(pid)} emoji={seatEmoji(state, pid)} size={crowd ? 16 : 20} />}
+          <span className="gc-who-name">{pid === 'shop' ? 'Shop' : pid === 'discard' ? 'Discard pile' : pid === g.actor ? 'You' : state.players[pid].name}</span>
         </span>
         <span className="gc-group-items">{uids.map(u => {
           if (first) return firstItem(g.firsts.find(f => f.a === u));

@@ -461,6 +461,10 @@
 .lt-card-body h4,.lt-card-body h4.sc-name{font-family:var(--sans);font-weight:800;font-size:18px;line-height:22px;color:var(--pl-ink,#2b2018);margin:0}
 .lt-card-body h4.sc-name .sc-plus{display:inline-flex;align-items:center;gap:2px;margin-left:8px;padding:0 7px;border-radius:999px;background:color-mix(in srgb,var(--q) 16%,transparent);font-size:15px;line-height:20px;font-weight:800;vertical-align:2px}
 .lt-card-body h4.sc-name .sc-plus .sc-plus-who{font-size:12px;font-weight:600;opacity:.8;margin-left:3px}
+/* a once-a-game +1 someone already took: greyed and struck, its word "taken" (four-player review, Nov 12: the thin strike
+   alone read as still there) */
+.lt-card-body h4.sc-name .sc-plus[data-plus="taken"]{background:rgba(60,45,30,.08);opacity:.55;font-weight:600}
+.lt-card-body h4.sc-name .sc-plus[data-plus="taken"] s{text-decoration-thickness:2px}
 .lt-card-body h4 small{font-family:var(--sans);color:var(--pl-ink-3,#a39078)}
 .lt-yd{margin-top:12px;padding-top:10px;border-top:1px solid var(--hair-ink,rgba(43,32,24,.12));font-size:15px;line-height:19px;color:var(--pl-ink,#2b2018);gap:4px}
 .lt-yd-row .k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pl-ink-2,#6e5c49);width:64px;line-height:19px}

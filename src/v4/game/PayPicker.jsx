@@ -71,7 +71,13 @@ export const payChoice = pend => {
 
 export default function PayPicker({ state, onPick, busy, turnOf = null }) {
   const pend = state.pending;
-  const p = state.players[pend.player];
+  // the coins on screen are what you held when this payment was asked: once Pay is pressed the charge lands on the
+  // table (its counters) before the sheet closes, and "keeping" read "-1" for a beat (four-player review, Nov 12: "looks
+  // like a double charge"). Nothing else moves your resources while you pay.
+  const live = state.players[pend.player];
+  const held = useRef({ pend, p: live });
+  if (held.current.pend !== pend && !busy) held.current = { pend, p: live };
+  const p = held.current.p;
   const res = state.resources;
   // the buy step's pay options carry spend; a pay choice (Snap Up…) carries the same vector as its value
   const ways = useMemo(() => pend.options.filter(o => o.kind === 'pay').map(o => (o.spend ? o : { ...o, spend: o.value })), [pend]);

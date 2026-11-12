@@ -145,7 +145,7 @@ function skipNext(ctx, p, why, by = p, quiet = false, { token = false, last = fa
   else while (i < stop && !mine(q[i])) i++;
   if (i >= stop) { ctx.log(`${by.name}'s ${why}: ${p === by ? 'no turn' : `${p.name} has no turn`} left to skip this round.`); return false; }
   // where that turn sat in the round's order, matched as the seats match it (as turnsNow does)
-  const s = ctx.state, { order } = ctx.roundOrder();
+  const s = ctx.state, { order, src } = ctx.roundOrder();
   const seq = [...(s.turns || []).map(pid => ({ pid })), ...q.filter(t => t.t === 'turn').map(task => ({ pid: task.p, task }))];
   let j = 0;
   for (const t of seq) if (j < order.length && order[j] === t.pid) t.at = j++;
@@ -159,7 +159,7 @@ function skipNext(ctx, p, why, by = p, quiet = false, { token = false, last = fa
   // its new place: after every other turn of the round's order still to come
   if (at !== undefined && at !== order.length - 1) {
     if (!s.early || s.early.round !== s.round) s.early = { round: s.round, moves: [] };
-    s.early.moves.push({ p: p.id, from: at, to: order.length - 1, why, late: true });
+    s.early.moves.push({ p: p.id, from: at, to: order.length - 1, why, late: true, ...(src && src[at] !== undefined ? { src: src[at] } : {}) });
   }
   if (!quiet) ctx.log(`${by.name}'s ${why}: ${p.name} skips their next turn.`);
   return true;
@@ -428,7 +428,7 @@ export function turnsNow(ctx, p, n, why) {
   // "no turns left", not "no minions": spare minions can still sit at home for extra turns (frame review, Nov 7)
   if (!picks.length) { ctx.log(`${p.name} has no turns left this round to take now: ${why} does nothing.`); return 0; }
   // where each turn sits in the round's order, matched as the seats match it (extra turns sit outside it)
-  const { order } = ctx.roundOrder();
+  const { order, src } = ctx.roundOrder();
   const seq = [...(s.turns || []).map(pid => ({ pid })), ...q.filter(t => t.t === 'turn').map(task => ({ pid: task.p, task }))];
   let j = 0;
   for (const t of seq) if (j < order.length && order[j] === t.pid) t.at = j++;
@@ -442,7 +442,7 @@ export function turnsNow(ctx, p, n, why) {
   const moves = [];
   tasks.forEach((task, k) => {
     const at = (seq.find(t => t.task === task) || {}).at;
-    if (at !== undefined && at !== cur + 1 + k) moves.push({ p: p.id, from: at, to: cur + 1 + k, why });
+    if (at !== undefined && at !== cur + 1 + k) moves.push({ p: p.id, from: at, to: cur + 1 + k, why, ...(src && src[at] !== undefined ? { src: src[at] } : {}) });
   });
   if (moves.length) {
     if (!s.early || s.early.round !== s.round) s.early = { round: s.round, moves: [] };

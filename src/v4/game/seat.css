@@ -20,6 +20,8 @@
   /* the column's caption, over the chair that goes first (picky bot, Nov 4: the seats reorder between rounds with no
      word why) */
   .app.game.lt > .lt-seat[data-slot="0"]::after{content:'Turn order';position:absolute;z-index:1;left:12px;top:-7px;padding:0 5px;border-radius:3px;background:var(--walnut-2,#271d16);font-family:var(--sans);font-size:12px;line-height:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pl-cream-3,#7d6e5a);pointer-events:none}
+  /* the room code on the same edge, at the other end, in the caption's own type */
+  .app.game.lt > .lt-seat > .seat-room{position:absolute;z-index:1;right:12px;top:-7px;padding:0 5px;border-radius:3px;background:var(--walnut-2,#271d16);font-family:var(--sans);font-size:12px;line-height:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pl-cream-3,#7d6e5a);pointer-events:none}
   .app.game.lt > .lt-seat > .lt-cult-seat{position:relative;display:flex;flex-direction:column;height:100%;min-height:0;gap:0;padding:0;background:none;box-shadow:none;max-width:none}
 
   /* the top: leader, name over minions, total */

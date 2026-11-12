@@ -2233,9 +2233,6 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
         <SpinLabCorner />
         <Menu onRules={() => setRules(true)} onLog={openLog} online={typeof session.pointAt === 'function'} getState={() => session.getState()} onLeave={onHome ? () => (state.over ? onHome() : setLeaving(true)) : null} />
       </header>
-      {session.info && session.info.mode === 'online' && session.info.roomCode && (
-        <div className="hint room">Room {session.info.roomCode}</div>
-      )}
       {error && (
         <div className="error" role="alert">{error}{' '}
           {isNetworkError(error) || /Check your connection/.test(error)
@@ -2279,6 +2276,11 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
           {seatCorners(state, me).map((pid, k) => (
             <section key={k} className={`lt-seat lt-seat-${k}${pid === me ? ' mine' : ''}${pid != null && litPid === pid ? ' now' : ''}`} data-region={`seat-${k}`} data-pid={pid ?? undefined} data-slot={pid == null ? undefined : snake.slot[pid]}
               data-cloak={pid == null ? undefined : cloakOf(state, pid) || undefined} style={{ '--slot': pid == null ? k : snake.slot[pid] ?? k, ...(pid != null && cloakOf(state, pid) ? { '--cloak': `var(--${cloakOf(state, pid)})` } : null) }} aria-label={pid == null ? undefined : pid === me ? 'Your cult' : `${state.players[pid].name}’s cult`}>
+              {/* an online room's code on the first chair's top edge, across from its "Turn order" caption (four-player
+                  review, Nov 12: pinned at a fixed spot it sat on top of that caption) */}
+              {pid != null && snake.slot[pid] === 0 && session.info && session.info.mode === 'online' && session.info.roomCode && (
+                <span className="seat-room">Room {session.info.roomCode}</span>
+              )}
               {pid == null ? null : (
                 <PaidSeat paying={paying} state={pid === me ? seatState : tSeats} pid={pid} me={me} mine={pid === me} now={pid != null && litPid === pid} hover={hover} optionFor={pid === me ? live : undefined} onPick={shopPick} pick={pickParts[pid] || null}
                   onLeader={pid === me && canTalk ? openTalkAt : null} talking={pid === me && talkOpen} />

@@ -609,7 +609,7 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
   return (
     <div className="lt-card-body" data-space-card={spaceKey} style={{ '--q': `var(--q-${sphereOf(qid)}, var(--${qid}))` }}>
       {/* plate 1b: the name, its one-sentence rule, then "You'd get" (the picture lives on the space itself) */}
-      <h4 className="sc-name" title={`${Q.name} · ${RINGS[a.ring - 1]}`}>{a.name}{plus ? <span className="sc-plus" data-plus={claimed ? 'taken' : ''} title={claimed ? 'Taken: only the first player to take this space gets it' : `You also get ${plus}`}>{claimed ? <s><Rich text={plus} /></s> : <Rich text={plus} />}{once ? <small className="sc-plus-who"> first to take it</small> : null}</span> : null}</h4>
+      <h4 className="sc-name" title={`${Q.name} · ${RINGS[a.ring - 1]}`}>{a.name}{plus ? <span className="sc-plus" data-plus={claimed ? 'taken' : ''} title={claimed ? 'Taken: only the first player to take this space gets it' : `You also get ${plus}`}>{claimed ? <s><Rich text={plus} /></s> : <Rich text={plus} />}{claimed ? <small className="sc-plus-who"> taken</small> : once ? <small className="sc-plus-who"> first to take it</small> : null}</span> : null}</h4>
       {/* a rule that changes by round says it in the card's own words ("every 2 resources you pay (every 1 in round II)"),
           not the "2/1/2" run with this round lit (Cory, Nov 12, on Splurge: "why does this change? … im confused") */}
       <p className="sc-rule"><RuleText def={a.byRound ? { ...a, byRound: null } : a} text={rule} round={round} lines /></p>
