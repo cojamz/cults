@@ -2238,8 +2238,12 @@ const allowance = (state, p, flag) => allowanceCards(state, p, flag).length;
 const alwaysBuysTwice = (state, p) => p.members.some(uid => effectiveDefs(state.cards[uid]).some(d => d.buyTwice));
 // Barker (Cory Nov 4: "you can always recruit followers, even if you recruited a member using your one buy/recruit"):
 // "Each time you recruit a member, you may also recruit followers." (Nov 4 2:28pm: "it should stack with blue actions").
-const followersTwiceCard = (state, p, recruit) => p.members.find(uid => effectiveDefs(state.cards[uid]).some(d => d.followersTwice
-  || (recruit !== undefined && d.followersOnColor && uid !== recruit && recruitIsColor(state, recruit, d.followersOnColor))));
+const givesFollowersBuy = (state, uid, recruit) => effectiveDefs(state.cards[uid]).some(d => d.followersTwice
+  || (recruit !== undefined && d.followersOnColor && uid !== recruit && recruitIsColor(state, recruit, d.followersOnColor)));
+const followersTwiceCard = (state, p, recruit) => p.members.find(uid => givesFollowersBuy(state, uid, recruit));
+// Each card that gives one brings its own extra followers buy: Barker and Splurgers on a silver recruit bring two
+// (Claude, under Cory's go-with-your-gut, Nov 12: each card prints "you may also buy followers", so both pay).
+const followersTwiceCards = (state, p, recruit) => p.members.filter(uid => givesFollowersBuy(state, uid, recruit));
 // Splurgers (Cory, Nov 11: "Whenever you recruit a silver member, you may also buy followers."): Barker's extra
 // followers recruit, only after a member of its color (a member counting as every color counts)
 const recruitIsColor = (state, uid, q) => { const d = cardDef(state, uid); return d.quadrant === q || !!d.everyColor; };
@@ -2268,7 +2272,7 @@ function dropBuys(state, p) {
   const gone = new Set(turnBuys(state, p, 0));
   if (gone.size) state.queue = state.queue.filter(t => !gone.has(t));
 }
-const extraOf = task => ({ ...workerSourceOf(task), ...(task.extra ? { extra: true } : {}), ...(task.barker ? { barker: true } : {}), ...(task.afterPurchase ? { afterPurchase: true } : {}), ...(task.doorbuster ? { doorbuster: true } : {}), ...(task.lateShop ? { lateShop: true } : {}), ...(task.lastMinute ? { lastMinute: true } : {}) });
+const extraOf = task => ({ ...workerSourceOf(task), ...(task.extra ? { extra: true } : {}), ...(task.barker ? { barker: true, ...(task.by !== undefined ? { by: task.by } : {}) } : {}), ...(task.afterPurchase ? { afterPurchase: true } : {}), ...(task.doorbuster ? { doorbuster: true } : {}), ...(task.lateShop ? { lateShop: true } : {}), ...(task.lastMinute ? { lastMinute: true } : {}) });
 // A real buy (member or followers) in a buy step. The second one spends a Big Spender.
 function boughtOnce(state, p, task) {
   if (task.extra) {
@@ -2285,8 +2289,8 @@ function boughtOnce(state, p, task) {
   if ((task.uid !== undefined || task.tier !== undefined) && !task.doorbuster && !task.lateShop && !task.lastMinute) state.queue.unshift({ t: 'buy', p: p.id, afterPurchase: true, ...workerSourceOf(task) });
   // Barker: each member recruited in a buy step brings a followers-only recruit right after it (Spree's three bring three)
   if (task.barker) { const b = task.by ?? followersTwiceCard(state, p); if (b !== undefined && p.members.includes(b)) log(state, `${p.name} uses ${defById(state.cards[b].def).name}.`); }
-  const twice = task.uid !== undefined && !task.doorbuster && !task.lateShop && !task.lastMinute ? followersTwiceCard(state, p, task.uid) : undefined;
-  if (twice !== undefined) state.queue.unshift({ t: 'buy', p: p.id, barker: true, by: twice, ...workerSourceOf(task) });
+  const twice = task.uid !== undefined && !task.doorbuster && !task.lateShop && !task.lastMinute ? followersTwiceCards(state, p, task.uid) : [];
+  state.queue.unshift(...twice.map(by => ({ t: 'buy', p: p.id, barker: true, by, ...workerSourceOf(task) })));
 }
 // ---------- Outbidders (REPLACE4 bot test: flag outbids) ----------
 // "Whenever a rival recruits a shop member, you may pay its cost plus 2 to recruit it instead. They get back what they

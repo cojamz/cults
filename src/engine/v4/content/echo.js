@@ -838,7 +838,7 @@ const echoQ = {
       ctx.log(`${p.name}'s Impersonator: has the ability of ${ctx.ownerOf(uid).name}'s ${d.name} ("${d.text}").`);
       // and does its On Recruit now, on Impersonator (Cory, Nov 5)
       if (!d.recruitNote && (d.onRecruited || (d.now && (d.onRoundStart || d.onRoundStartLate)))) {
-        ctx.log(`${p.name}'s Impersonator does ${d.name}'s On Recruit.`);
+        ctx.log(`${p.name}'s Impersonator does ${d.name}${/s$/.test(d.name) ? "'" : "'s"} On Recruit.`);
         if (d.onRecruited) ctx.recruitAbility(p, self, d, () => d.onRecruited(ctx, p, self));
         if (d.now) for (const hook of ['onRoundStart', 'onRoundStartLate']) if (d[hook]) ctx.recruitAbility(p, self, d, () => d[hook](ctx, p, self));
       }
