@@ -18,3 +18,8 @@ Each lifted with followers, all in one batch:
 Worth N also counts as N members (your rule, Nov 1), so each lift also helps in Most members.
 Not tested: Recruiter and Treasurer (not in today's deck), Kingmakers (its problem is the round-end gift, not its payback).
 Small cults won 47% of games with the lifts (bar 20%).
+
+## Paired resources too (added Nov 12, 2:10am, per the paired-deal rule)
+Seats holding the card, new version minus today, same deals; about ±1 to ±1.9 by chance.
+- Line Cutters worth 2: followers -1.6, resources gained -0.9. Worth 1: -1.6, -0.9.
+- Bookies worth 4: +3.1, -4.0. Window Shopper worth 3: +3.4, -2.1. Thrift Hunters worth 3: +0.3, -2.3. Snobs worth 4: +3.4, +1.6. Timekeeper worth 2: +2.0, -0.1.
