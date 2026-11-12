@@ -538,8 +538,8 @@ function stageMove(ctx, p, { key, joined }, to) {
 }
 const medleyKeys = ctx => Object.values(ledger(ctx.state).now || {}).filter(x => ['Medley', 'Remix', 'Mashup', 'Greatest Hits'].includes(x.name)).map(x => actionKey(x.key));
 /** Medley: one entry per action with a minion on color q's spaces this round (p's own entry where p shares it). */
-/** Greatest Hits' copy rule: 'rival' (the game, Nov 11), 'own' or false (every minion), from rules.hitsMode. */
-const hitsMode = ctx => { const m = ctx.state.rules?.hitsMode; return m === 'all' ? false : m === 'own' ? 'own' : 'rival'; };
+/** Greatest Hits' copy rule: 'own' (the game, Nov 11 11:20pm), 'rival' or false (every minion), from rules.hitsMode. */
+const hitsMode = ctx => { const m = ctx.state.rules?.hitsMode; return m === 'all' ? false : m === 'rival' ? 'rival' : 'own'; };
 // whose: false every minion, 'rival' only rivals' minions, 'own' only the copier's own
 function medleyPlan(ctx, p, q, noThird = false, whose = false) {
   const byAction = new Map();
@@ -694,9 +694,9 @@ const echoQ = {
       // on that color with a minion" (Medley's rule and words; was "Copy the On Recruit of each of your members"). Key kept
       // for old saves and records.
       // Cory, Nov 11 9:32pm Eastern: "ship greatest hits, copying only rivals, minions" (action test: takers won 64%, 56%
-      // rivals only). rules.hitsMode (bot tests only): 'all' the old rule, 'own' only your own minions (Cory: "try some
+      // rivals only); then 11:20pm: "Let's put it on your own. Let's try your own. I'll try that in game." (33% in bots). rules.hitsMode (bot tests only): 'all' the old rule, 'own' only your own minions (Cory: "try some
       // where it only copies your own on another color").
-      key: 'eternity', ring: 3, name: 'Greatest Hits', text: 'Choose a color other than green. Copy every action with a rival\u2019s minion on its spaces. +1 green.',
+      key: 'eternity', ring: 3, name: 'Greatest Hits', text: 'Choose a color other than green. Copy every action with your minion on its spaces. +1 green.',
       estimate: (ctx, p) => VARIANT.plus + Math.max(0, ...ctx.state.quadrants.filter(q => q !== 'echo').map(q => medleyPlan(ctx, p, q, false, hitsMode(ctx)).reduce((a, e) => a + entryValue(ctx, e, p), 0))),
       resolve(ctx, p) {
         plus(ctx, p);

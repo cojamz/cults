@@ -35,3 +35,14 @@ Verdict: send
 8. Color interactions: none: Magenta's cloak paying off Magenta's steals.
 9. Biggest case: round III with Green copying Heist for the cloak's owner is still one steal, +2. A heavy thief steals about 8 times a game: 16 magenta at +2 against 8 live, against a winner's 70 to 110. Cloak owners won 13% live, the lowest.
 Verdict: send
+
+## Idea: Purple Cloak
+
+Source: Cory, 2026-11-11 9:32pm Eastern: "ship magenta at +2 and purple at +2, but then test purple at +1"
+Verdict: send
+
+## Idea: Greatest Hits (your own minions)
+
+Source: Cory, 2026-11-11 11:20pm Eastern: "Let's put it on your own. Let's try your own. I'll try that in game."
+Test and live words (Claude's, his rule): "Choose a color other than green. Copy every action with your minion on its spaces. +1 green."
+Verdict: send

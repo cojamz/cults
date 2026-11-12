@@ -69,8 +69,8 @@ describe('Green table action boundaries', () => {
   // Greatest Hits is Medley's rule since Nov 10 (choose a color other than Green, copy every action with a minion on it).
   // A copy of Greatest Hits hands over its chip, so it never runs Greatest Hits again: seeded games looped on copy chains.
   it('Echo copying Greatest Hits takes its chip and never runs Greatest Hits again', () => {
-    // Greatest Hits copies only rivals' minions (Cory, Nov 11): P1's Gold Rush is P2's to copy
-    let s = scene({ round: 3, turns: [0, 1, 0] });
+    // Greatest Hits copies only your own minions (Cory, Nov 11 11:20pm): P2's own Gold Rush
+    let s = scene({ round: 3, turns: [1, 1, 0] });
     s = go(s, 'gold.rush');
     const before = R(s).gold;
     s = go(s, 'echo.eternity', 'color:gold');
@@ -81,8 +81,8 @@ describe('Green table action boundaries', () => {
     expect(s.log.some(l => /^P1's Greatest Hits/.test(l))).toBe(false);
     expect(R(s)).toEqual({ ...Z, gold: before + 6, green: 2 });
   });
-  it('Greatest Hits never copies your own minions on the color (Cory, Nov 11: "copying only rivals, minions")', () => {
-    let s = scene({ round: 3, turns: [1, 1] });
+  it('Greatest Hits never copies a rival\'s minion on the color (Cory, Nov 11 11:20pm: "Let\'s put it on your own")', () => {
+    let s = scene({ round: 3, turns: [0, 1] });
     s = go(s, 'gold.rush');
     s = take(s, 'echo.eternity');
     expect(s.log).toContain("P2's Greatest Hits: no color has an action to copy.");
