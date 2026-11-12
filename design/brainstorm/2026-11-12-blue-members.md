@@ -12,7 +12,7 @@ Skill read: bash .claude/hooks/brainstorm-read.sh at 7:38pm Eastern (within 12 h
 
 ## Idea: Swap Shoppers
 
-Source: Cory, 2026-11-11 3:41pm: a member that swaps one of yours with a discard-pile member costing the same or within one.
+Source: Cory, 2026-11-11 3:41pm: "swap a member with a discard-pile member costing the same or within one" (his idea, as logged in decisions.md).
 1. Printed text: "On Use, once per round: swap one of your members for a discard-pile member that costs the same." (his idea; Claude's words, "the same" as with Exchange Students tonight).
 Verdict: send
 
@@ -33,13 +33,13 @@ Verdict: send
 
 1. Printed text: "Rivals pay 2 more to recruit from the discard pile." (Claude's numbers). Cards it touches: Markdown, Recruit Twice, Spree (above).
 2. Played turn: round III, the Blue rival takes Spree for two pile members: each costs them 2 more, 4 resources in all; they may buy one instead.
-3. Both sides: no card choice.
+3. Both sides: no card choice; the rival chooses to pay 2 more or recruit from the shop instead.
 4. Who feels it: the Blue player, every pile recruit; the Agents shape Cory asked for ("jam people up").
 5. Not refused: no ledger verdict; Agents "Your actions can't be copied." is the model he liked.
 6. Judged: cross-color (any player at a Blue table wants it), a counter in Blue's own deck like Snitch in Magenta's. Rule card, memorable.
 7. Public and certain: yes, the rule is printed and costs are counted openly.
 8. Color interactions: none named; any pile recruit counts.
-9. Biggest case: round III, Spree plus Recruit Twice: 3 pile recruits, 6 resources a round taken from a rival.
+9. Biggest case: round III, Spree (2 pile recruits) plus Recruit Twice (1): 3 recruits, 6 resources a round taken from a rival, about 6 followers' worth against a winner's 70 to 110.
 Verdict: send
 
 ## Idea: Curators
