@@ -2,6 +2,13 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.740 — 2026-11-11
+
+- Round End members resolve player by player in turn order: a later **Paupers** sees the silver an earlier **Cat Burglars** took.
+- **Bodyguards** and **Snitch** answer one Heist once, not once per pick. **Splurgers** and **Barker** each give their own extra followers buy.
+- **Swap Shoppers**' member from the discard pile counts as your recruit and can't take a member Loyalists protects. **Power Shoppers** pays once a turn. **Mimics** can use Fan Club's and Stunt Double's On Recruit. **Last Callers** takes the token after your last minion too. **Early Traders** swaps after other Round Start income.
+- Fixed: two ways a game could loop forever (Double Agent swapped straight back; copies copying each other). **Test Drive** now fires Round End members.
+
 ## v0.99.739 — 2026-11-11
 
 - New members: Brethren and Purists (Red), Last Callers (Purple), Leavetakers and Minimalists (White)
