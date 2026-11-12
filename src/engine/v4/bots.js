@@ -707,7 +707,24 @@ function seeUse(state, s, me, uid) {
  * Expected final followers of every player in state s, as seen from a decision point.
  * buysLeft[i]: buys each player still has; incomeLeft[i]: resources they can still expect from placements.
  */
+// BOTBORROW (bot audit, Nov 12): a member taken with Borrow ("Discard it at round end, before scoring") was counted as
+// kept: its followers, its place in member contests and its ability all went into the forecast, so bots took Borrow
+// in 93% of the rounds it was open and its takers won 20% (7 points under players as wide). With the fix on, the
+// forecast drops members still on loan this round (core endRound discards them before scoring).
+let BORROW_FIX = globalThis.process?.env?.BOTBORROW === '1';
+export const setBorrowFix = on => { BORROW_FIX = !!on; };
+const onLoan = s => (s.borrowed || []).filter(b => b.round === s.round && s.players[b.pid]?.members.includes(b.uid));
+function dropBorrowed(s) {
+  const lent = onLoan(s);
+  if (!lent.length) return s;
+  const players = s.players.map(p => {
+    const mine = lent.filter(b => b.pid === p.id).map(b => b.uid);
+    return mine.length ? { ...p, members: p.members.filter(u => !mine.includes(u)) } : p;
+  });
+  return { ...s, players };
+}
 function evaluate(s, buysLeft, incomeLeft, roundLeft, extraAbility = {}, future) {
+  if (BORROW_FIX && s.borrowed) s = dropBorrowed(s);
   const ctx = contextFor(s);
   const wild = new Set(s.quadrants.map(quadrant).filter(q => q.wildInFollowerBuys).map(q => q.resource));
   const table = new Map();
@@ -873,7 +890,8 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
         let undo = false;
         settle(s, ctx, t => { undo = undo || undoesSwap(state, s, me, t); });
         // members the action brought in (Open Door, Hand-pick…) bring their abilities too
-        const gained = p.members.filter(u => !had.has(u)).reduce((a, u) => a + abilityValue(cardDef(s, u), placesLeft, opts.k, s, me), 0);
+        const lentNow = BORROW_FIX ? new Set(onLoan(s).map(b => b.uid)) : null;
+        const gained = p.members.filter(u => !had.has(u) && !lentNow?.has(u)).reduce((a, u) => a + abilityValue(cardDef(s, u), placesLeft, opts.k, s, me), 0);
         v = marginOf(evaluate(s, buysAt(s, 1 + moreBuys + moreTurns), incomeAt(s, moreTurns), roundLeft, { [me]: gained + endDelta(s) }, opts.future), me, opts.spite);
         if (opts.noMembers && memberCount(s, p) > before) v -= 100;
         if (undo) v -= UNDO_SWAP;

@@ -12,7 +12,7 @@ const arg = (k, d) => { const a = process.argv.find(x => x.startsWith(`--${k}=`)
 
 async function playOne({ g, side, A, B }) {
   const { createGame, applyMove, followers, memberCount, allQuadrantIds } = await import('../src/engine/v4/index.js');
-  const { chooseBotMove } = await import('../src/engine/v4/bots.js');
+  const { chooseBotMove, setBorrowFix } = await import('../src/engine/v4/bots.js');
   const { seededRandom } = await import('../src/engine/v4/rng.js');
   const { sphereVersion } = await import('../src/v4/tables.js');
   const { deckRules } = await import('./lib/deck-choice.mjs');
@@ -35,6 +35,7 @@ async function playOne({ g, side, A, B }) {
     const f = o.force, pend = s.pending;
     const forced = f && pend.kind === 'place' && s.round === f.round && s.players[pl].left >= (f.minLeft || 0)
       ? pend.options.find(x => x.kind === 'slot' && actionAt(s, x.q, x.i)?.key === f.key) : null;
+    setBorrowFix?.(o.borrowFix ?? process.env.BOTBORROW === '1'); // a setting's borrowFix: Borrow's member counted as discarded at round end
     const m = forced ? { player: pl, option: forced.id } : chooseBotMove(s, rand, { maxMs: Infinity, ...o });
     const slot = track.length && s.pending.kind === 'place' ? s.pending.options.find(x => x.id === m.option && x.kind === 'slot') : null;
     const key = slot ? actionAt(s, slot.q, slot.i)?.key : null;
