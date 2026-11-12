@@ -26,6 +26,14 @@ if (hit.length) hard.push(`drop the AI tics or offers: "${hit.join('", "')}"`);
 const internals = prose.match(/\b(sessions?|subagents?|wakes?|coordinator|cmsg_\w+)\b/i);
 if (internals) hard.push(`don't talk about internals ("${internals[0]}"); name the thread or say what's happening in the game`);
 
+// Cory, Nov 12 ("I hate when you take your own fucking stupid jargon that doesn't make sense, but was used by you in
+// your conversations and think it's going to be obvious. This happens so fucking often."): words coined in our own
+// work, and bare numbers that don't say what they count, bounce. Say what was done in game words.
+const JARGON = /\b(paired|pairs? of numbers|lift(?:s|ed|ing)?|paper check|pays? (?:it )?back|payback|holders?|takers?|seats?|variants?|deltas?|A\/B|typical (?:round I+ )?space|earns? per|instruments?|n\s?=\s?\d+)\b/i;
+const jar = prose.match(JARGON);
+if (jar) hard.push(`our own jargon ("${jar[0]}"): say what was done and what it means at the table in plain game words, as if he never saw our notes`);
+if (/\bworth \d+ to \d+\b/i.test(prose)) hard.push('"worth N to M" is shorthand; say "worth N followers today, tested at M"');
+if (/[+\-−]\d+(\.\d+)?\s*,\s*[+\-−]\d+(\.\d+)?/.test(prose)) hard.push('a bare pair of numbers ("+3.1, -4.0"): say what each number counts, in words, next to it');
 if (/\bv[34]\b(?!\.\d)/i.test(prose)) hard.push('"v3"/"v4" mean nothing to Cory; say "the old game" / "the game" (version numbers like v0.8.11 are fine)');
 const mech = prose.match(/\b(hooks?|gates?|repo|mirror(ed)?|orientation|harness|\.mjs|\.md|jsonl|frontmatter|PreToolUse|SessionStart)\b/gi) || [];
 if (mech.length >= 3) hard.push(`too much machinery (${[...new Set(mech.map(m => m.toLowerCase()))].join(', ')}); say what changes for Cory in everyday words`);
