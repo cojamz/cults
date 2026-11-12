@@ -15,5 +15,5 @@ Verdict: send
 ## Idea: Kidnapper
 
 Source: Cory, 2026-11-11 3:49pm: "Maybe just like round end, that way the people know what to take from you… you pick a rival, they have to give you… a member… It's a bit strong… needs to be expensive."
-1. Printed text: "Round End: choose a rival; they give you one of their members." (Claude's words; the rival picks which; price raised to 10).
+1. Printed text: "Round End: a rival you choose gives you one of their members." (Claude's words; the rival picks which; price raised to 10).
 Verdict: send
