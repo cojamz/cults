@@ -190,6 +190,7 @@ function swapAsk(ctx, data) {
   for (const { to, from, uid } of data.picks) ctx.moveMember(uid, ctx.player(from), ctx.player(to), { actor: owner });
   ctx.log(`${owner.name}'s Gift Swappers: ${data.picks.length ? data.picks.map(({ to, from, uid }) => `${ctx.player(from).name} gives ${ctx.card(uid).def.name} to ${ctx.player(to).name}`).join(', ') : 'nobody had a member to give'}.`);
 }
+const PURIFY_LEAVE = globalThis.process?.env?.PURIFIERS === 'leave';
 function purgeAsk(ctx, data) {
   if (data.k >= data.order.length) return;
   const o = ctx.player(data.order[data.k]);
@@ -296,7 +297,26 @@ const members = [
     // bots use it when what the player on their right will give beats what they give away (each gives their least)
     botActivate: (ctx, owner) => ctx.state.round >= 2 && swapGain(ctx, owner) > 1,
   }), 'poolmove'),
-  pool(m('purifiers', 'Purifiers', null, 0, 3, 'On Use, once per game: discard one of your members. Each rival with more members than you discards one too.', {
+  // PURIFIERS=leave, bot test only (Cory, Nov 11 11:36pm Eastern: "when this card is discarded, other players must
+  // discard a member. once per game: discard this", then "not counting discarded from the shop", then "Maybe: when
+  // this leaves your cult"). Off in the game until he says yes.
+  ...(PURIFY_LEAVE ? [pool(m('purifiers', 'Purifiers', null, 0, 3, 'Whenever this member leaves your cult, each rival discards a member. On Use, once per game: discard this member.', {
+    activate: 'game',
+    onActivate(ctx, owner, card) {
+      if (!owner.members.includes(card.uid)) return;
+      ctx.log(`${owner.name}'s Purifiers: discards itself.`);
+      ctx.buryMember(owner, card.uid, owner);
+    },
+    onLeave(ctx, p) {
+      const ps = ctx.state.players, start = ps.indexOf(p);
+      const order = ps.map((_, k) => ps[(start + k) % ps.length]).filter(o => o !== p && ctx.memberCount(o) > 0).map(o => o.id);
+      ctx.log(`${p.name}'s Purifiers left: each rival discards a member.`);
+      purgeAsk(ctx, { owner: p.id, order, k: 0 });
+    },
+    // bots use it from round II when rivals hold at least 2 members each on average
+    botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).reduce((a, o) => a + Math.min(1, ctx.memberCount(o)), 0) >= 2,
+  }), 'poolmove')] : []),
+  ...(PURIFY_LEAVE ? [] : [pool(m('purifiers', 'Purifiers', null, 0, 3, 'On Use, once per game: discard one of your members. Each rival with more members than you discards one too.', {
     activate: 'game',
     onActivate(ctx, owner) {
       ctx.choose(owner, 'Purifiers: discard which of your members?', ctx.membersOf(owner).map(c => ({
@@ -305,7 +325,7 @@ const members = [
     },
     // bots use it when at least two rivals would discard (counted after their own discard)
     botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).filter(o => ctx.memberCount(o) > ctx.memberCount(owner) - 1).length >= 2,
-  }), 'poolmove'),
+  }), 'poolmove')]),
   // idea pipeline pool 15 (Nov 7, round 2): Mercenaries with the thief choosing the colors (the verdict's change), one
   // resource at a time, then one shared steal; only rivals you can steal from are offered, so it never moves for nothing.
   pool(m('sellswords', 'Sellswords', null, 0, 1, 'On Use, once per round: steal 3 resources of your choice from a rival, then give them this member.', {
