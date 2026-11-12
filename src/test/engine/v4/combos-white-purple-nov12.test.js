@@ -1,7 +1,7 @@
 // @vitest-environment node
 // Combo tester, Cory's Nov 11 White and Purple members (design/decisions.md, 9:10pm, 9:12pm, and Claude's 9:35pm build
 // notes): Leavetakers ("Whenever one of your members leaves your cult, +2 white."; any of your members, itself included:
-// discard, give, steal, swap), Minimalists ("Game End: +2 followers per member you have costing 6 or more."; the cost the
+// discard, give, steal, swap), Minimalists ("Game End: +2 followers per member you have costing 8 or more.", was 6; the cost the
 // shop shows, Richer moves the 6 with the text), Last Callers ("On Use, once per round: take the Goes Last token."; as a
 // Purple space takes it: all your other minions wait). Played against every way a member leaves, the costing cards and
 // Purple's turn-order spaces. Harness: combos-green-nov12.test.js's scene/drive/go (the queue array is copied).
@@ -198,20 +198,20 @@ describe('Leavetakers: "Whenever one of your members leaves your cult, +2 white.
   });
 });
 
-describe('Minimalists: "Game End: +2 followers per member you have costing 6 or more."', () => {
+describe('Minimalists: "Game End: +2 followers per member you have costing 8 or more." (Cory, Nov 11 11:53pm; was 6)', () => {
   const part = (s, i) => s.players[i].final.parts.filter(x => /Minimalists/.test(x));
   // costs as the shop shows them: Minimalists 8, Downsizers 6, Recluse 6, Seat Filler 5, Intern 4
   const SET = ['trading.minimalists', 'trading.moneylender', 'trading.recluse', 'red.seatfiller', 'red.intern'];
-  it('counts itself (8) and the two costing exactly 6; not 5 or 4: +6', () => {
+  it('counts itself (8); not 6, 5 or 4: +2', () => {
     const { s } = go('mm-base', { quads: W, queue: FIN, members: [SET, ['red.mob']] }, []);
-    expect(part(s, 0)).toEqual(['Minimalists +6']);
+    expect(part(s, 0)).toEqual(['Minimalists +2']);
     expect(part(s, 1)).toEqual([]);
   });
 
-  it('Richer: every cost and the 6 move up 2 together (text reads 8), same members count: +6', () => {
+  it('Richer: every cost and the 8 move up 2 together (text reads 10), same members count: +2', () => {
     const { s } = go('mm-rich', { quads: W, queue: FIN, rules: { econ: 'rich' }, members: [SET] }, []);
-    expect(richText(s, defById('trading.minimalists').text)).toBe('Game End: +2 followers per member you have costing 8 or more.');
-    expect(part(s, 0)).toEqual(['Minimalists +6']);
+    expect(richText(s, defById('trading.minimalists').text)).toBe('Game End: +2 followers per member you have costing 10 or more.');
+    expect(part(s, 0)).toEqual(['Minimalists +2']);
   });
 
   it('4 players: each owner counts only their own members', () => {

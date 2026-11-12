@@ -29,12 +29,6 @@ import { add8, old8 } from './replace8.js';
 import { on12, handlers12, add12, old12 } from './replace12.js';
 import { guestOfHonorDef, patronsDef } from './silver.js';
 
-const MINI = globalThis.process?.env?.MINIMALISTS || '';
-const MINI_TEXT = {
-  small: 'Game End: if you have 5 or fewer members, +3 followers per member you have costing 6 or more.',
-  one: 'Game End: +1 follower per member you have costing 6 or more.',
-  eight: 'Game End: +4 followers per member you have costing 8 or more.',
-};
 const W = 'white';
 /** Idea pipeline pool 2: one resource to one rival per pick, or stop; bots give their most-held non-white color to the
  *  rival with the fewest followers. */
@@ -1069,20 +1063,12 @@ const trading = {
         ctx.log(`${owner.name}'s Leavetakers: ${gone.def.name} left: +2 white.`);
       },
     }),
-    // (MINI, MINI_TEXT: bot-test variants, see below)
     // Cory, 2026-11-11 9:12pm Eastern: "Minimalists over exiles" ("you're going to want to be like small but big"). Costing
     // as the shop prices it (Richer moves the 6 with its text, content/price.js). Old Money's price (Claude, gut).
-    // MINIMALISTS=small|one|eight, bot tests only (Cory, Nov 11 11:46pm: "minimalists for sure needs tweaks"; bots: it
-    // paid cults of 6+ members 12.8 a game and cults of 5 or fewer 7.2). small: "Game End: if you have 5 or fewer
-    // members, +3 followers per member you have costing 6 or more." one: +1 per. eight: +4 per member costing 8 or more.
-    m('minimalists', 'Minimalists', 1, 4, MINI_TEXT[MINI] || 'Game End: +2 followers per member you have costing 6 or more.', {
-      onGameEnd: (ctx, owner) => {
-        const r = richUp(ctx.state), list = ctx.membersOf(owner);
-        if (MINI === 'small') return ctx.memberCount(owner) <= 5 ? 3 * list.filter(c => c.def.s + c.def.w >= 6 + r).length : 0;
-        if (MINI === 'one') return list.filter(c => c.def.s + c.def.w >= 6 + r).length;
-        if (MINI === 'eight') return 4 * list.filter(c => c.def.s + c.def.w >= 8 + r).length;
-        return 2 * list.filter(c => c.def.s + c.def.w >= 6 + r).length;
-      },
+    // Cory, 2026-11-11 11:53pm Eastern: "yeah just nerf minimalists. +2 followers per. member costing 8 or more." (was 6;
+    // bots, v0.99.738: it paid cults of 6+ members 12.8 a game and cults of 5 or fewer 7.2)
+    m('minimalists', 'Minimalists', 1, 4, 'Game End: +2 followers per member you have costing 8 or more.', {
+      onGameEnd: (ctx, owner) => 2 * ctx.membersOf(owner).filter(c => c.def.s + c.def.w >= 8 + richUp(ctx.state)).length,
     }),
     m('appraiser', 'Appraiser', 3, 2, 'On Use, once per game: discard one of your members. Gain its cost in followers or white.', {
       activate: 'game',

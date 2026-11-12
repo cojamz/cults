@@ -210,7 +210,7 @@ const M = {
   purists: ['🧼', '🌙 Your members have 2 or fewer colors: +3 followers'],
   'last-callers': ['🔔', '🔁 Take the Goes Last token'], // Nov 11: Purple
   leavetakers: ['🥀', '♾️ One of your members leaves your cult: +2 white'], // Nov 11: White
-  minimalists: ['🪴', '🏁 +2 followers per member you have costing 6 or more'],
+  minimalists: ['🪴', '🏁 +2 followers per member you have costing 8 or more'],
   cheerleaders: ['🎊', '♾️ You win a contest: +2 followers'],
 };
 

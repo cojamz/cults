@@ -14,7 +14,7 @@ const turns = (...ps) => ps.map(p => ({ t: 'turn', p }));
 describe('White: Leavetakers and Minimalists', () => {
   it('print his text; Undertaker and Barker leave the deck', () => {
     expect(defById('trading.leavetakers').text).toBe('Whenever one of your members leaves your cult, +2 white.');
-    expect(defById('trading.minimalists').text).toBe('Game End: +2 followers per member you have costing 6 or more.');
+    expect(defById('trading.minimalists').text).toBe('Game End: +2 followers per member you have costing 8 or more.');
     expect(CUT.has('trading.undertaker') && CUT.has('trading.barker')).toBe(true);
     expect(CUT.has('trading.leavetakers') || CUT.has('trading.minimalists')).toBe(false);
   });
@@ -25,10 +25,10 @@ describe('White: Leavetakers and Minimalists', () => {
     expect(s.players[0].res.white).toBe(6);
     expect(named(s, 'Leavetakers')).toEqual(["P1's Leavetakers: Triplets left: +2 white."]);
   });
-  it('Minimalists: +2 per member costing 6 or more at Game End', () => {
+  it('Minimalists: +2 per member costing 8 or more at Game End', () => {
     const s = table(['gold', 'red', 'trading', 'thieves'], { members: [['trading.minimalists', 'trading.heiress', 'gold.tycoon', 'red.twins']] });
     const ctx = contextFor(s), cost = d => d.s + d.w;
-    const big = s.players[0].members.filter(u => cost(defById(s.cards[u].def)) >= 6).length;
+    const big = s.players[0].members.filter(u => cost(defById(s.cards[u].def)) >= 8).length;
     expect(defById('trading.minimalists').onGameEnd(ctx, s.players[0])).toBe(2 * big);
   });
 });
