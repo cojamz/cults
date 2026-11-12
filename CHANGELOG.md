@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.743 — 2026-11-12
+
+- You'd get: free recruits never show a price
+
 ## v0.99.742 — 2026-11-12
 
 - Clearer action words: panels lead with the gain, the +1 says only the first taker gets it, You'd get names your best pick and its price
