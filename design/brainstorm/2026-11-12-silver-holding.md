@@ -75,3 +75,58 @@ Verdict: cut (Green's verb, a copy chain)
 8. Color interactions: none.
 9. Biggest case: 3 resources a round.
 Verdict: cut (repeats Flaunt)
+
+## Pass 2 (Cory, 7:41pm, on Valued Clients: "That's too good, but it's interesting… I think we just need more ideas faster.")
+Each card: one trigger, one plain effect (Cory, 7:38pm).
+
+## Idea: Tycoons
+
+1. Printed text: "While you hold 5 or more silver, rivals can't take or discard your members." (Claude's numbers). Cards it touches: Buyout "Recruit a rival's member, paying them its cost in silver. +1 silver.", Repossessors "On Use, once per game: discard a rival's member costing up to 8." (Cory's Nov 11 text).
+2. Played turn: round II, you hold 6 silver and your best member is a 7-cost; a rival takes Buyout to recruit it. With Tycoons they can't, and they take Toast instead. Without it you lose the member and get 7 silver.
+3. Both sides: you choose to stay at 5+ silver (losing the fewest-silver contest, 4/6/10) or spend below 5 and drop the protection. A real choice each round.
+4. Who feels it: anyone holding Buyout or Repossessors, and the Magenta player if a member-taking card is out; it blocks them, the Agents shape Cory asked for ("jam people up").
+5. Not refused: no ledger verdict; not points based on silver (his 7:33pm limit); not the cloak "Whenever you gift silver, +2 silver.".
+6. Judged: the holding side of Silver (complementary to Flaunt and Buyout holders) and cross-color (any player with a member worth protecting). Rule card, memorable. Round I: a round II card by price.
+7. Public and certain: yes, silver held is on the table and the rule is printed.
+8. Color interactions: none named; it reads silver held and members taken by any card.
+9. Biggest case: round III, it stops one Buyout of a 10-cost member, worth 10 resources plus that member's followers; no followers of its own.
+Verdict: send
+
+## Idea: Show-Offs
+
+1. Printed text: "Round End: if you hold the most silver, +4 followers." (Claude's numbers). Cards it touches: Paupers "Round End: if you hold no silver, +3 followers.", the fewest-silver contest, Toast, Flaunt (above).
+2. Played turn: round II end, you hold 7 silver after Flaunt's +1 and Toast; the next most is 4: +4 followers, while you place last in the fewest-silver contest (0 for you). The other plan, spending down to 0, would win part of the contest instead.
+3. Both sides: hold the most (Show-Offs) or hold the least (the contest, Paupers): you pick one each round. Rivals can hand you silver to help, or hand silver to another player to take the most from you.
+4. Who feels it: the Silver player, whose gifts (Toast, Largesse "Give rivals 12 silver from the bank, split as you choose. +10 followers.") can make someone else hold the most.
+5. Not refused: Cory said "not giving points based on silver? I don't know" (unsure, 7:33pm): this pays a fixed 4 for a position, not per silver. Flagged to him as the closest to that line.
+6. Judged: the exact opposite of Paupers, cross-color (a Toasted player likes it). Scorer, memorable.
+7. Public and certain: yes, everyone sees silver held.
+8. Color interactions: none named.
+9. Biggest case: 4 per round end, 12 a game over 3 rounds, against a contest's 4/6/10 and a winner's 70 to 110.
+Verdict: send
+
+## Idea: Good Customers
+
+1. Printed text: "While you hold 5 or more silver, members cost you 1 less." (Claude's numbers; Valued Clients cut down after "That's too good").
+2. Played turn: round II, hold 6: a 6-cost member costs 5, and you keep the silver above 5 working.
+3. Both sides: hold 5+ for the discount and lose the fewest-silver contest, or spend down and win it.
+4. Who feels it: rivals racing you for face-up members; a Silver player whose Toast keeps you at 5.
+5. Not refused: Valued Clients ("too good, but it's interesting"), at half its size.
+6. Judged: cross-color first (anyone Toasted), complementary to Silver's holding side. Rule card.
+7. Public and certain: yes, silver held is on the table.
+8. Color interactions: none named.
+9. Biggest case: round III, 1 off each of up to 5 recruits, 5 resources over the round, 1 per turn.
+Verdict: send
+
+## Idea: Fixers
+
+1. Printed text: "Whenever a rival would steal from you, you may pay them 2 silver instead." (Claude's numbers). Cards it touches: Help Yourself "Steal 1 resource per minion you've placed this round. +1 magenta." and the other steal cards.
+2. Played turn: round II, Magenta takes Help Yourself with 3 minions placed, about to steal 3 of your red you need for a member. Pay 2 silver instead: you keep the red, they get 2 silver (worse for them in the fewest-silver contest).
+3. Both sides: you choose per steal: pay 2 silver or lose what they'd steal. Paying is better when the steal is 3+ or a color you need; worse when it is 1.
+4. Who feels it: the Magenta player, whose steal turns into silver they didn't want.
+5. Not refused: Cory asked Magenta for Bodyguards "defensive against getting stolen from, but doesn't block it outright"; this is Silver's version, paid in silver. Flag: it sits close to that Magenta rework.
+6. Judged: cross-color (anyone at a Magenta table) and on Silver's verb (give). Rule card, memorable.
+7. Public and certain: yes.
+8. Color interactions: Magenta's steal meets Silver's give; it names neither color.
+9. Biggest case: Heist round III, a steal of 4 or more turned into 2 silver; saves about 4 resources a turn, 0 followers of its own.
+Verdict: send
