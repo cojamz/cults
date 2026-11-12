@@ -137,3 +137,9 @@ Verdict: send
 8. Color interactions: none named.
 9. Biggest case: a 3-cost member discarded and a contest place worth up to 10 followers.
 Verdict: cut (a smaller Repossessors)
+
+## Idea: Repeat Customers
+
+Source: Cory, 2026-11-11 8:45pm: "Could we do like on recruit plus some blue and recruit again, maybe? Like kind of like tie some of the thing to it? Like from the discard piles?"
+1. Printed text: "On Recruit: +3 blue, then recruit from the discard pile." (his idea; Claude's numbers and name). Ties: Power Shoppers' second recruit (+3 followers), Thrift Hunters (+2 per pile recruit).
+Verdict: send
