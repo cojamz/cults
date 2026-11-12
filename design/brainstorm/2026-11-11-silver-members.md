@@ -9,7 +9,7 @@ Skill read: bash .claude/hooks/brainstorm-read.sh at 3:58pm Eastern (within 12 h
 - Contest: fewest silver held at round end (0 counts). Verb: give.
 - Spaces: Toast "+4 silver. Each rival +2 silver. +1 silver." · Polish "+2 silver. Turn all your silver into one other color. +1 silver." · Party Gifts "Give rivals up to 3 silver from the bank. +2 followers per silver given." · Flaunt "+1 of each other color per 3 silver you hold, up to 3 each. +1 silver." · Buyout "Recruit a rival's member, paying them its cost in silver. +1 silver." · Largesse "Give rivals 12 silver from the bank, split as you choose. +10 followers."
 - The Silver player's round: take silver early (Toast), use it while holding it (Flaunt, Buyout, Polish), hand rivals silver (Toast, Party Gifts, Largesse), and end the round low. The pull: Flaunt pays for holding silver, the contest pays for holding none.
-- What the spaces don't give it (the complementary test): a way to turn its own leftover silver into followers (Party Gifts and Largesse give bank silver, not yours); a payoff for rivals sitting on silver between gifts; protection from rivals handing silver back (Kingmakers in other hands, a rival's Toast).
+- What the spaces don't give it (the complementary test): ~~a way to turn its own leftover silver into followers~~ (wrong: silver buys followers 1 for 1 and pays for members like any color; Cory, Nov 11 7:08pm: "when you say shit like this it's genuinely baffling"); a payoff for rivals sitting on silver between gifts; protection from rivals handing silver back (Kingmakers in other hands, a rival's Toast).
 - What other colors want at a Silver table (the cross-color test): a use for the silver they're handed, protection from it, or a payoff for being handed it.
 - Members kept (Cory, 2:29pm): Kingmakers "Round End: give rivals up to 3 of your silver, split as you choose. +1 follower per silver given." · Patron Saints "Game End: +1 follower per silver member, anyone's." · Smooth Talkers "Your silver pays for any color." · Debutantes "On Use, once per game: double your silver. Each rival +2 silver."
 - Deck mix today: On Recruit 0, activated 1 (Debutantes), scorers 2 (Patron Saints, Kingmakers), rule 1 (Smooth Talkers). The six slots need at least one On Recruit, one more activated, and two or more scorers.
@@ -26,7 +26,7 @@ Skill read: bash .claude/hooks/brainstorm-read.sh at 3:58pm Eastern (within 12 h
 7. Public and certain: yes.
 8. Color interactions: none named; silver is a resource every player can hold.
 9. Biggest case: round III, Debutantes doubles 8 silver to 16, then recruit: 8 followers in one turn. Under 10. A winner's 70 to 110.
-Verdict: send
+Verdict: cut (dominated: buying followers turns silver into followers 1 for 1, this pays 1 per 2; the gap it filled does not exist)
 
 ## Idea: Paupers
 
