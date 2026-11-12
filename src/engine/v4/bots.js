@@ -93,10 +93,14 @@ export function setBotLevels(state, levels = []) {
  */
 export function chooseBotMove(state, rand = Math.random, opts = {}) {
   // opts.ease (skill test, Nov 12): this seat sorts contests by how easy they are to win (see contests)
-  if (opts.ease === undefined) return chooseBotMoveAt(state, rand, opts);
-  const prev = EASE;
-  EASE = opts.ease;
-  try { return chooseBotMoveAt(state, rand, opts); } finally { EASE = prev; }
+  // opts.robust = { ease: weight 0 to 1, together: weight 0 to 1 } (skill test, Nov 12): the strongest bot with the habits
+  // blended, each by its weight, so the order they matter in can be set and tested (see design/notes/skilled-play-2026-11-12.md)
+  const rb = opts.robust;
+  if (opts.ease === undefined && !rb) return chooseBotMoveAt(state, rand, opts);
+  const prev = EASE, prevW = EASE_W;
+  EASE = rb ? rb.ease > 0 : opts.ease;
+  EASE_W = rb ? Math.min(1, rb.ease ?? 0) : 1;
+  try { return chooseBotMoveAt(state, rand, rb ? { ...opts, together: (rb.together ?? 0) > 0 ? rb.together : false } : opts); } finally { EASE = prev; EASE_W = prevW; }
 }
 function chooseBotMoveAt(state, rand, opts) {
   const pend = state.pending;
@@ -629,7 +633,7 @@ function contestScores(s, ctx, table, qid) {
 // behind and 20 behind. On, the chance of a prize goes by the gap and by what the turns left this round can still move:
 // a lead rivals can't reach is safe (more adds nothing), a gap the bot's own turns can't close is worth almost nothing,
 // and a close one is worth fighting for. swing: what one turn aimed at the contest moves it (2 of a held color, else 1).
-let EASE = false;
+let EASE = false, EASE_W = 1;
 const TOGETHER_TOP = 4;
 const EASE_K = { rivalAim: 0.5, behindTop: 0.4, lost: 0.02 };
 function easeChance(gap, swing, myTurns, rivalTurns) {
@@ -645,6 +649,7 @@ function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null, 
   const v = RING_VALUE[s.round - 1];
   let out = 0;
   for (const qid of s.quadrants) {
+    let easedHere = null;
     const row = contestScores(s, ctx, table, qid);
     if (!row) continue;
     const mine = row[p.id];
@@ -658,9 +663,11 @@ function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null, 
       // behind: any rival at the top can still add to it; ahead: the nearest rival has to catch up
       const chance = easeChance(mine - other, swing, roundTurns[p.id] || 0, rivalTurns);
       const live = s.spoiled && s.spoiled.round === s.round && s.spoiled.list.some(x => x.qid === qid) ? 0 : 1;
-      out += live * v * chance + later * (0.15 + 0.5 * chance) * (0.3 + 0.7 * (1 - roundLeft));
-      continue;
+      const eased = live * v * chance + later * (0.15 + 0.5 * chance) * (0.3 + 0.7 * (1 - roundLeft));
+      if (EASE_W >= 1) { out += eased; continue; }
+      easedHere = eased; // robust bot: blended with the plain reading below
     }
+    let plain = 0;
     const certain = mine >= other ? 1 : 0;
     // BOTLEAD (bot audit, Nov 12; Cory: Normal bots "took Build Up first"): a lead held now counted 75% of this round's
     // prize and of later rounds' even on the round's first turn, when every rival can still pass it, so every Normal bot
@@ -671,7 +678,8 @@ function contests(s, ctx, p, roundLeft, future = FUTURE_CONTESTS, table = null, 
     // a contest spoiled this round (Spoilsport, REPLACE2 bot test) pays nobody this round
     const now = s.spoiled && s.spoiled.round === s.round && s.spoiled.list.some(x => x.qid === qid) ? 0 : 1;
     // BOTLEAD: later rounds' share of a lead also grows as the round runs out (most contests are fought again each round)
-    out += now * v * (certain * (1 - roundLeft) + rough * roundLeft) + later * rough * (LEAD_FIX ? 0.3 + 0.7 * (1 - roundLeft) : 1);
+    plain = now * v * (certain * (1 - roundLeft) + rough * roundLeft) + later * rough * (LEAD_FIX ? 0.3 + 0.7 * (1 - roundLeft) : 1);
+    out += easedHere === null ? plain : (1 - EASE_W) * plain + EASE_W * easedHere;
   }
   return out;
 }
@@ -970,15 +978,20 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
     // worth the best buy it leaves. Hard's own look-ahead (thinker.js) still plays the best few out afterwards.
     if (opts.together) {
       const top = [...out].sort((a, b) => b.v - a.v).slice(0, TOGETHER_TOP);
+      const w = opts.together === true ? 1 : opts.together, deltas = [];
       for (const r of top) {
         try {
           const s2 = applyMove(state, { player: me, option: r.o.id });
           if (s2.pending?.kind === 'buy' && s2.pending.player === me) {
             const next = scoreOptions(s2, rand, { ...opts, together: false });
-            if (next.length) r.v = Math.max(...next.map(x => x.v));
+            if (next.length) deltas.push([r, Math.max(...next.map(x => x.v)) - r.v]);
           }
         } catch { /* keep the space's own rating */ }
       }
+      // weight 1 keeps the plain test's reading (the space is worth the buy it leaves). Under 1 (the robust bot), only the
+      // difference between spaces counts: the buy's rating sits on a different scale from a space's, so the average is taken off
+      if (w >= 1) for (const [r, d] of deltas) r.v += d;
+      else if (deltas.length) { const mean = deltas.reduce((a, [, d]) => a + d, 0) / deltas.length; for (const [r, d] of deltas) r.v += w * (d - mean); }
     }
   } else if (pend.kind === 'buy' || pend.kind === 'pay') {
     // One buy, paid one way, valued on a copy of the game.
