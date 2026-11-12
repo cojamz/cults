@@ -27,3 +27,9 @@ Verdict: send
 8. Color interactions: none named; any color counts.
 9. Biggest case: round III, 4 same-color recruits: +4 over the round, 1 per recruit.
 Verdict: send
+
+## Idea: Purists, two or fewer
+
+Source: Cory, 2026-11-11 9:14pm: "put in purists if you have two or less. If I don't know how to say it concisely, but I think you know what I mean. Give it a shot."
+1. Printed text: "Round End: if your members have 2 or fewer colors, +3 followers."
+Verdict: send
