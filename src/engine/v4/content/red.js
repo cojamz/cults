@@ -2,6 +2,7 @@
 import { MORE, richUp } from './price.js';
 import { discardOf } from '../discard.js';
 import { gainColorOf } from './color-of.js';
+import { isNewColor } from './yellow.js';
 import { defById as defOf } from './index.js';
 import { add1, old1 } from './replace1.js';
 import { add3, old3, handlers3 } from './replace3.js';
@@ -701,6 +702,30 @@ export default {
     m('proselytizer', 'Proselytizers', 3, 4,'Whenever you recruit, +1 follower.', { f: 2, ...old4, // +1 follower (Cory, 2026-10-25)
       // a recruit is a member or a follower purchase (Cory, 2026-10-21); not its own arrival
       onRecruit(ctx, owner, card, by, what) { if (by === owner && what.member?.uid !== card.uid) owner.bonus += 1; },
+    }),
+    // Cory, 2026-11-11 9:14pm Eastern: Brethren replaces Proselytizers ("Let's try +1 for now"; test +2). "A color you
+    // already have" reads as Gather does: one of your other members is that color (grey counts, as for Gather). Not its
+    // own arrival (as Proselytizers). Proselytizers' price (Claude, under Cory's go-with-your-gut).
+    m('brethren', 'Brethren', 3, 4, 'Whenever you recruit a member of a color you already have, +1 follower.', { f: 2,
+      onRecruit(ctx, owner, card, by, what) {
+        const member = what?.member;
+        if (by !== owner || !member || member.uid === card.uid || isNewColor(ctx, owner, member)) return;
+        owner.bonus += 1;
+        ctx.log(`${owner.name}'s Brethren: ${member.def.name} is a color they already have: +1 follower.`);
+      },
+      ...see(i => endsAhead(i).length * 1.5), // BOTSEE: about 1.5 matching recruits a round
+    }),
+    // Cory, 2026-11-11 9:14pm Eastern: "put in purists if you have two or less", in Mob's slot. Grey has no color; Dabblers
+    // never counts against its owner. Price Claude's fill-in: 2 red + 2 any joins in round II, since in round I nobody holds
+    // members yet (Cory, Nov 10: no round I effect may depend on members a player has).
+    m('purists', 'Purists', 2, 2, 'Round End: if your members have 2 or fewer colors, +3 followers.', {
+      onRoundEnd(ctx, owner) {
+        const k = ctx.state.quadrants.filter(q => ctx.countMembersOfColor(owner, q, { wild: false }) > 0).length;
+        if (k > 2) return;
+        owner.bonus += 3;
+        ctx.log(`${owner.name}'s Purists: members of ${k} color${k === 1 ? '' : 's'}: +3 followers.`);
+      },
+      ...see(i => endsAhead(i).length * 3 * 0.6), // BOTSEE: about 3 rounds in 5 kept to 2 colors
     }),
     // REPLACE7 (Nov 4, scale-up round 1, Members A): Proselytizers' place (paper 17 and 16, pooled +4 on the old card;
     // Red's set 16 vs 13). 4 red + 4 any, worth 2, counts as 2. A trade, so swap protection holds (Loyalists' cult, a

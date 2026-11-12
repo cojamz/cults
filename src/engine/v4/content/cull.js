@@ -46,6 +46,7 @@ export const CUT = new Set([
   'trading.oldmoney', 'trading.cashier', 'purple.sleepyheads', 'trading.heiress',
   'market.critic', 'market.windowdresser', 'market.trendsetter',
   'echo.songrequest', 'red.mob',
+  'red.proselytizer', // Cory, 2026-11-11 9:14pm: Brethren replaces Proselytizers (Purists takes Mob's slot)
 ]);
 
 // The 10-card decks (Cory, 2026-10-31: "create two versions of game, 10 card deck version and 15 card deck version";
