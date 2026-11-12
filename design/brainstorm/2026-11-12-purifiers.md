@@ -16,3 +16,9 @@ Source: Cory, 2026-11-11 11:36pm Eastern: "Maybe: when this leaves your cult" (h
 9. Biggest real case: Red, Magenta and Green at one table, round III. Purifiers leaves a cult on Demote, then again on Poach, then again on a Green Cover of Poach: three times, each time 3 players discard (the mover among them). That is up to 9 members gone in one round, about 12 to 15 followers across the table and up to 3 from any one player, plus contest swings (Most members pays 10 in round III). No single player gains 10+ in one turn from it; the swing is spread across the table, and each mover pays a member to cause it. Bot test running (200 paired deals, PURIFIERS=leave) to measure how often it moves and what it costs holders and rivals.
 
 Verdict: send
+
+## Idea: Ship the new Purifiers
+Source: Cory, 2026-11-11 11:36pm Eastern: "Maybe: when this leaves your cult" (the ask to ship his own Purifiers text; same card as above)
+Verdict: send
+
+Paired result (200 Hard-bot games, same deals, .actions-runs/purifiers-nov12): in the 73 games where Purifiers came out, members held at game end across the table 20.4 old vs 18.9 new, members leaving cults 19.5 vs 20.9, average followers 69.8 vs 68.8, winner 80.7 vs 80.1. Games without it moved 0.7 members and 0.5 followers by drift, so the card's own effect is about 1 member and 0.5 to 1 follower per player. Holders at game end won 14 of 58 (old) vs 8 of 31 (new; fewer held at the end because using it discards it). Small cults won 46% of games (bar 20%).
