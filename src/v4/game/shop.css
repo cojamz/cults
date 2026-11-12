@@ -200,6 +200,9 @@
    lit, numbered in the corner as they're put in draw order; the shop above stays in view and shrinks to make room. */
 @media (min-width:1200px) and (min-height:500px){
   .app.game.lt .lt-shop-cards[data-pile-row] .lt-shop-body{padding-bottom:214px}
+  /* the row sits on the shop's own foot, just above End turn / Done, no recruit: placed from the panel under the shop
+     (52px lower), it covered that button at 1270x700 and an Insider holder could not end the turn (benders gate, Nov 12) */
+  .app.game.lt .lt-shop-cards[data-pile-row]{position:relative}
 }
 .lt-shop-cards .lt-pile-row{position:absolute;left:4px;right:4px;bottom:50px;z-index:6;padding:8px;border-radius:12px;
   background:rgba(28,20,14,.95);box-shadow:0 0 0 1px rgba(244,184,96,.35),0 12px 28px rgba(0,0,0,.55);font-family:var(--sans)}
