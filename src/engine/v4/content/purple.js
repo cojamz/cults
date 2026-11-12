@@ -304,10 +304,10 @@ function scalpStep(ctx, p, data) {
  */
 // Cory, Nov 9: "maybe the goes last token applies to ALL of your minions?" (test version first; live since Nov 10, the
 // Purple plan: "The token: your turns are skipped until every rival is out of minions, for all your minions"): a Purple
-// space's token holds every minion you have left, as Last Call's does; members keep their own words
-const ALL_LAST = new Set(['Last Callers', 'Latecomers', 'Sleep In', 'Hold Up', 'Right Away', 'Closing Time', 'Overtime', 'On a Roll']);
+// space's token holds every minion you have left, as Last Call's does (Nov 12: every take, members too)
 function toToken(ctx, p, n, why) {
-  if (ALL_LAST.has(why)) n = Math.max(n, turnsLeft(ctx, p));
+  // Cory, Nov 12: "goes last makes ALL minions go last. thats what the token does": every take, any card
+  n = Math.max(n, turnsLeft(ctx, p));
   if (noSkip(ctx, p)) { ctx.log(`${p.name}'s Early Birds: ${p.name}'s turns can't be skipped, so ${p.name} doesn't go last.`); return 0; }
   const kept = tokenHolder(ctx.state) === p.id; // already theirs: they keep it, they don't take it (Night Watch pays on a take)
   takeToken(ctx, p, why);
@@ -607,7 +607,7 @@ export default {
     ...[['closingtime', 'Closing Time', 2, true], ['waityourturn', 'Wait Your Turn', 1, false]].map(([key, name, ring, all]) => poolSpace({
       key, copyDoesIt: true, ring, name,
       text: all ? '+3 purple. Give a rival the Goes Last token: their other minions are placed after everyone else’s.'
-        : '+2 purple in round I, +3 in round II, +4 in round III. Give a rival the Goes Last token: their next minion is placed after everyone else’s.',
+        : '+2 purple in round I, +3 in round II, +4 in round III. Give a rival the Goes Last token: their other minions are placed after everyone else’s.',
       estimate: ctx => (all ? 3 : ctx.state.round + 1) + 1,
       resolve(ctx, p) {
         ctx.gain(p, P, all ? 3 : ctx.state.round + 1, { fromAction: true });
@@ -706,18 +706,14 @@ export default {
       // raise it to +3 after play). Any taken space, yours or a rival's, for the rest of this round. Name is Claude's fill-in.
       // Cory, 2026-10-28 9:31pm Eastern: "It should just be like, +5 purple and gain a minion this round" (placing on
       // taken spaces copied too much with Greatest Hits). Extra minions stop when the round's spare spaces run out.
-      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Overtime', text: '+4 purple. +1 minion this round. Take the Goes Last token: that minion goes after everyone else’s.', // +4 (Cory, Nov 5: "give a little more purple"); the token (Cory, Nov 6: "Overtime is good. I like it", a third way to take it)
+      key: 'crowdin', copyDoesIt: true, ring: 3, name: 'Overtime', text: '+4 purple. +1 minion this round. Take the Goes Last token: your other minions are placed after everyone else’s.', // +4 (Cory, Nov 5: "give a little more purple"); the token (Cory, Nov 6: "Overtime is good. I like it", a third way to take it)
       estimate: ctx => 4 + (spareSpace(ctx) ? turnValue(ctx) : 0),
       resolve(ctx, p) {
         ctx.gain(p, P, 4, { fromAction: true });
         if (!extraMinion(ctx, p, 'Overtime')) return;
         // the extra minion waits on the Goes Last token (as Night Owls' did with NIGHTOWL=token); Early Birds keeps it off
-        if (noSkip(ctx, p)) { ctx.log(`${p.name}'s Early Birds: ${p.name}'s turns can't be skipped, so ${p.name} doesn't go last.`); return; }
-        const q = ctx.state.queue, t = turnsAhead(ctx, p).map(i => q[i]).pop();
-        const kept = tokenHolder(ctx.state) === p.id;
-        takeToken(ctx, p, 'Overtime', ' with its extra minion on it');
-        if (t) t.token = true;
-        if (t && !kept) nightWatch(ctx, p, 1);
+        // Cory, Nov 12: "goes last makes ALL minions go last": the extra minion and every other one you have left
+        toToken(ctx, p, 1, 'Overtime');
       },
     },
     {
@@ -763,13 +759,13 @@ export default {
       },
     }, 'testset'),
     poolSpace({
-      key: 'againlast', copyDoesIt: true, ring: 1, name: 'Right Away', text: '+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one. Then take the Goes Last token: your minion after that is placed after everyone else\u2019s.',
-      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Your next turn comes right after this one. Then take the Goes Last token: your minion after that is placed after everyone else\u2019s.' },
+      key: 'againlast', copyDoesIt: true, ring: 1, name: 'Right Away', text: '+2 purple in round I, +3 in round II, +4 in round III. Your next turn comes right after this one. Then take the Goes Last token: your minions after that are placed after everyone else\u2019s.',
+      byRound: { lines: ['+2 purple', '+3 purple', '+4 purple'], rest: 'Your next turn comes right after this one. Then take the Goes Last token: your minions after that are placed after everyone else\u2019s.' },
       estimate: (ctx, p) => ctx.state.round + 1 + turnsNowEstimate(ctx, p, 1),
       resolve(ctx, p) { ctx.gain(p, P, ctx.state.round + 1, { fromAction: true }); turnsNow(ctx, p, relayRunners(ctx, p) ? 2 : 1, 'Right Away'); toToken(ctx, p, 1, 'Right Away'); },
     }, 'testset'),
     poolSpace({
-      key: 'rallylast', copyDoesIt: true, ring: 2, name: 'Crunch Time', text: '+2 purple. Your next two turns come right after this one. Then take the Goes Last token: your minion after those is placed after everyone else\u2019s.',
+      key: 'rallylast', copyDoesIt: true, ring: 2, name: 'Crunch Time', text: '+2 purple. Your next two turns come right after this one. Then take the Goes Last token: your minions after those are placed after everyone else\u2019s.',
       estimate: (ctx, p) => 2 + turnsNowEstimate(ctx, p, 2),
       resolve(ctx, p) { ctx.gain(p, P, 2, { fromAction: true }); turnsNow(ctx, p, 2, 'Crunch Time'); toToken(ctx, p, 1, 'Crunch Time'); },
     }, 'testset'),

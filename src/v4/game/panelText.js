@@ -109,7 +109,7 @@ const P = {
     // the center ring can drop line 2 (round III since Oct 22): line 1 says it whole
     // Cory, 2026-10-28: +5 purple and a minion this round
     // that minion goes on the Goes Last token (Cory, Nov 6): said in line 1 (picky bot, Nov 11)
-    crowdin: { verb: '+1 minion this round, placed last', note: '+4 purple' },
+    crowdin: { verb: '+1 minion this round, then go last', note: '+4 purple' },
     // its +2 in line 1, as Promote's +3 (picky bot, Nov 11: taken, line 2 hides and "Your next two turns, now" stood alone)
     rally: { verb: 'Your next two turns, now +2 purple' },
     again: r => ({ verb: 'Your next turn, now', second: `+${r + 1} purple`, note: run(n => `+${n + 1}`, 'purple: ') }), // 2/3/4 since Nov 6 (Cory); the wheel said 1/2/3 (Cory, Nov 9)

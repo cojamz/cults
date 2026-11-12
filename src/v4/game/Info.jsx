@@ -753,7 +753,7 @@ function lostSpans(y) {
   return [span([y.followers[0] + lost, y.followers[1] + lost], 'follower'), `${span(y.members, 'member')}${lostTail(lost)}`];
 }
 const earlyWords = n => (n === 1 ? 'your next turn right after this one' : `your next ${n} turns right after this one`);
-const lateWords = n => (n === 1 ? 'your next minion goes last' : `your other ${n} minions go last`);
+const lateWords = n => (n === 1 ? 'your other minion goes last' : `your other ${n} minions go last`);
 /** The preview as words: { you: "+3 gold, +1 member", others: "rivals +1 gold" | null, choose: bool, partial }. */
 export function previewWords(pv, state) {
   const you = [
@@ -1040,7 +1040,7 @@ export function ifRecruitWords(x) {
 /** "You'd get: +3 ●, +1 member" for player pid on space (q, i), computed just after it shows. */
 // skipSelf: Hold Up when the next turn is yours: the skip pushes your minion later, said as the skip it is, not "goes
 // last" beside a "Skips: you" row (Cory, Nov 9: "this should be reworded for sure")
-const SKIP_SELF = t => (t ? t.replace(/your next minion goes last/, 'you skip your next turn') : t);
+const SKIP_SELF = t => (t ? t.replace(/your other minion goes last/, 'you skip your next turn') : t);
 /**
  * A steal the space itself doesn't print comes from the member it brings in (Swindle taking Accomplice, "On Recruit:
  * steal 3 resources"; Promote to Fan Club copying a Heist): the steal names that member, "(via Accomplice)" (picky bot,
