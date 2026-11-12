@@ -720,22 +720,38 @@ export function foldBuys(prev, next, queue, mine = [], force = false) {
   const steps = run.slice(0, end + 1);
   const tail = steps[steps.length - 1];
   if (tail.foldedFrom === prev.moves && Array.isArray(tail.foldedEffects)) return { used: end, wait: false };
-  // one buy: the coins per stack, summed; the followers per count, summed; through the rate of the biggest buy
+  // one beat per follower card bought at (Cory, Nov 12: "followers gained are getting grouped from different sources and
+  // flying to the player in large batches. i dont like it"): buys at the same card fold into one (its coins per stack,
+  // its followers summed), each card's followers fly from that card, the cards in the order first bought
   const all = steps.flatMap(st => st.effects);
-  const fols = all.filter(e => e.cause.kind === 'buy' && e.type === 'followers');
-  const main = fols.reduce((a, b) => (b.what.n > a.what.n ? b : a)).cause;
-  const total = fols.reduce((t, e) => t + (e.cause.pid === actor ? e.what.n : 0), 0);
-  const cause = { ...main, get: total, folded: buys.length };
-  const pays = new Map(), gets = new Map();
+  const tiers = [];
+  const byTier = new Map();
   for (const e of all) {
     if (e.cause.kind !== 'buy') continue;
-    const into = e.type === 'pay' ? pays : e.type === 'followers' ? gets : null;
-    if (!into) continue;
-    const key = e.type === 'pay' ? `${e.from.pid}:${e.from.r}` : `${e.to.pid}`;
-    const had = into.get(key);
-    into.set(key, had ? { ...had, what: { ...had.what, n: had.what.n + e.what.n } } : { ...e, cause, ...(e.type === 'pay' ? { to: { kind: 'rate', tier: main.tier } } : { from: { kind: 'rate', tier: main.tier } }) });
+    const tk = e.cause.tier;
+    if (!byTier.has(tk)) { byTier.set(tk, { fols: [], pays: new Map(), gets: new Map(), buys: new Set() }); tiers.push(tk); }
+    const g = byTier.get(tk);
+    g.buys.add(e.cause);
+    if (e.type === 'followers') g.fols.push(e);
   }
-  const merged = [...pays.values(), ...gets.values(), ...all.filter(e => e.cause.kind !== 'buy')].map((e, n) => ({ ...e, n }));
+  const merged0 = [];
+  for (const tk of tiers) {
+    const g = byTier.get(tk);
+    if (!g.fols.length) continue;
+    const main = g.fols[0].cause;
+    const total = g.fols.reduce((t, e) => t + (e.cause.pid === actor ? e.what.n : 0), 0);
+    const cause = { ...main, get: total, folded: g.buys.size };
+    for (const e of all) {
+      if (e.cause.kind !== 'buy' || e.cause.tier !== tk) continue;
+      const into = e.type === 'pay' ? g.pays : e.type === 'followers' ? g.gets : null;
+      if (!into) continue;
+      const key = e.type === 'pay' ? `${e.from.pid}:${e.from.r}` : `${e.to.pid}`;
+      const had = into.get(key);
+      into.set(key, had ? { ...had, what: { ...had.what, n: had.what.n + e.what.n } } : { ...e, cause, ...(e.type === 'pay' ? { to: { kind: 'rate', tier: tk } } : { from: { kind: 'rate', tier: tk } }) });
+    }
+    merged0.push(...g.pays.values(), ...g.gets.values());
+  }
+  const merged = [...merged0, ...all.filter(e => e.cause.kind !== 'buy')].map((e, n) => ({ ...e, n }));
   Object.defineProperty(tail, 'foldedEffects', { value: merged, enumerable: false, configurable: true, writable: true });
   Object.defineProperty(tail, 'foldedFrom', { value: prev.moves, enumerable: false, configurable: true, writable: true });
   return { used: end, wait: false };

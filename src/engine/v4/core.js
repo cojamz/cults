@@ -1997,7 +1997,7 @@ function spendBonus(state, p, spend) {
       const k = Math.floor(paid / x.per);
       if (!k) continue;
       const mark = fMark(state);
-      p.bonus += k;
+      asSource(bonusCause(state, p, x.name), () => { p.bonus += k; });
       fCredit(state, mark, x.name);
       log(state, `${p.name}'s ${x.name}: +${k} follower${k > 1 ? 's' : ''} for spending.`);
     }
@@ -2009,7 +2009,8 @@ function spendBonus(state, p, spend) {
   const n = Math.floor(Object.values(spend).reduce((a, b) => a + b, 0) / (state.round === 2 ? 1 : 2));
   if (!n) return;
   const extra = sumMemberFlag(state, p, 'brokerBonus'), mark = fMark(state);
-  p.bonus += n + extra;
+  asSource(bonusCause(state, p, 'Splurge'), () => { p.bonus += n; });
+  if (extra) asSource(memberFlagCause(state, p, 'brokerBonus'), () => { p.bonus += extra; });
   fCredit(state, mark, 'Splurge');
   log(state, `${p.name}'s Splurge: +${n} follower${n > 1 ? 's' : ''} for spending.${extra ? ` Brokers: +${extra}.` : ''}`);
 }
@@ -2018,6 +2019,26 @@ function spendBonus(state, p, spend) {
 // p.recruitFollowers (cleared at turn end and turn start); all of them pay once, on the turn's first member recruit. A White space's
 // followers also get Brokers' +1. New Blood's ({ newColor: true }) waits for a member of a color none of p's other
 // members have, so a recruit of a color p already has leaves it standing for the turn's next recruit.
+// A follower bonus that pays later in the turn (Gather, Allowance, Splurge, Patron on a recruit; Brokers on a White
+// space's followers) is its own source: it runs under the space taken this round that named it, or the member, so the
+// table flies it from there, on its own, after the recruit (Cory, Nov 12: "followers gained are getting grouped from
+// different sources and flying to the player in large batches. i dont like it").
+function bonusCause(state, p, name) {
+  for (const k of Object.keys(state.slots || {}).reverse()) {
+    const mine = state.slots[k] === p.id || (state.squats && (state.squats[k] || []).includes(p.id));
+    if (!mine) continue;
+    const [q, i] = k.split('-').map(Number);
+    let a = null;
+    try { a = actionAt(state, q, i); } catch { /* gone */ }
+    if (a && a.name === name) return { kind: 'space', key: k, qid: state.quadrants[q], pid: p.id };
+  }
+  return null;
+}
+function memberFlagCause(state, p, flag) {
+  for (const uid of p.members) for (const def of effectiveDefs(state.cards[uid])) if (def[flag]) return { kind: 'member', pid: p.id, uid, def: state.cards[uid].def };
+  return null;
+}
+const asSource = (cause, fn) => (cause ? underCause(cause, fn) : fn());
 function recruitFollowersBonus(state, p, member) {
   const list = p.recruitFollowers;
   if (!list?.length) return;
@@ -2040,7 +2061,8 @@ function recruitFollowersBonus(state, p, member) {
       continue;
     }
     const extra = broker ? sumMemberFlag(state, p, 'brokerBonus') : 0, mark = fMark(state);
-    p.bonus += n + extra;
+    asSource(bonusCause(state, p, name), () => { p.bonus += n; });
+    if (extra) asSource(memberFlagCause(state, p, 'brokerBonus'), () => { p.bonus += extra; });
     fCredit(state, mark, name);
     log(state, `${p.name}'s ${name}: +${n} follower${n > 1 ? 's' : ''} for recruiting a member.${extra ? ` Brokers: +${extra}.` : ''}`);
   }

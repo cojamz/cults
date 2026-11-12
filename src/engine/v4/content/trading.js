@@ -1317,8 +1317,10 @@ function actionFollowers(ctx, p, n) {
   if (!(n > 0)) return;
   let extra = 0;
   for (const c of ctx.membersOf(p)) for (const d of [c.def, c.copy ? defById(c.copy) : null]) extra += d?.brokerBonus || 0;
-  p.bonus += n + extra;
-  if (extra) ctx.log(`${p.name}'s Brokers: +${extra} follower${extra > 1 ? 's' : ''}.`);
+  p.bonus += n;
+  // Brokers is its own source: its followers fly from it, after the space's (Cory, Nov 12: "followers gained are getting
+  // grouped from different sources")
+  if (extra) ctx.asMember(p, 'Brokers', () => { p.bonus += extra; ctx.log(`${p.name}'s Brokers: +${extra} follower${extra > 1 ? 's' : ''}.`); });
 }
 
 /** The leader: most followers, and more than you. Ties go to whoever has more followers to sell. */
