@@ -150,3 +150,44 @@ Verdict: send
 Source: Cory, 2026-11-11 7:48pm: "we should do something like, whenever a player uses silver to buy followers, get a follower"
 1. Printed text: "Whenever any player buys followers with silver, +1 follower." (Cory's idea; Claude's words and name; "a player" read as any player, you included).
 Verdict: send
+
+## Pass 3: Silver's last 2 slots (8 of 10 set; no On Recruit yet)
+
+## Idea: Hustlers
+
+1. Printed text: "On Recruit: swap all your silver with a rival's." (Claude's words). Cards it touches: the fewest-silver contest, Toast "+4 silver. Each rival +2 silver. +1 silver.", Flaunt "+1 of each other color per 3 silver you hold, up to 3 each. +1 silver.".
+2. Played turn: round II, you hold 7 silver, the rival tied for fewest holds 0: swap, you hold 0 and they hold 7; the contest's 10 likely moves to you. Or a holder with 0 takes a Flaunt player's 9 for their own Flaunt.
+3. Both sides: you pick the rival; with more silver you hand it to the lowest, with less you take from the highest. Both directions are live.
+4. Who feels it: the rival swapped with, a contest swing up to 10 followers.
+5. Not refused: not Debt Collectors (taking silver only, which Cory disliked); a swap goes both ways.
+6. Judged: complementary (dumps Silver's own silver on a rival) and cross-color (anyone stuck with Toast silver). On Recruit, memorable.
+7. Public and certain: yes, both piles are on the table.
+8. Color interactions: none named; any player holds silver.
+9. Biggest case: round III, 12 against 0: a 12-silver swing and the 10-follower contest; no followers of its own.
+Verdict: send
+
+## Idea: Tax Collectors
+
+1. Printed text: "On Recruit: every player puts all their silver in the bank." (Claude's words). Cards it touches: Flaunt, Toast (above), the contest.
+2. Played turn: round III, rivals hold 6, 6 and 4 silver before their Flaunts; you recruit Tax Collectors: 16 silver leaves the table and everyone ties at 0 for the contest.
+3. Both sides: no choices on the card; the timing is the choice.
+4. Who feels it: every player holding silver, a sting to all; strongest against the Flaunt holder.
+5. Not refused: no ledger verdict; flag: a wide sting ("direct harm stays rare and small").
+6. Judged: cross-color (a 0-silver player hits everyone); jams the holding plan. On Recruit, memorable.
+7. Public and certain: yes.
+8. Color interactions: none named.
+9. Biggest case: round III, 16 silver removed, 16 resources off the table; 0 followers to you.
+Verdict: send
+
+## Idea: Switchers
+
+1. Printed text: "On Recruit: each rival with more silver than you gives you 1 follower." (Claude's words).
+2. Played turn: round II, after your Toast (each rival +2) you hold 0 and three rivals hold silver: +3 followers taken from them.
+3. Both sides: none on the card; rivals can spend silver beforehand.
+4. Who feels it: each loaded rival loses 1 follower.
+5. Not refused: Wallflowers at the Ball (round end, same count) cut today as the contest's copy; this is once, takes from rivals. Close shape, flagged.
+6. Judged: complementary (pays Silver's gifts once), weak cross-color. On Recruit.
+7. Public and certain: yes.
+8. Color interactions: none named.
+9. Biggest case: 3 followers once, a 6-follower swing against 3 rivals.
+Verdict: send
