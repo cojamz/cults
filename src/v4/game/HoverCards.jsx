@@ -620,7 +620,7 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
         {open && viewer != null && !state.over ? <div className="lt-yd-row youd"><span className="k">You’d get</span><span className="v"><YoudGet state={state} pid={viewer} q={q} i={i} now skipSelf={/The next turn is skipped/.test(a.text) && nextAfter(state, viewer) === SELF_NEXT} /></span></div> : null}
         {/* why a member changed the number, or stayed off ("Underdog: no ×2 (Hustler’s +3 lands first)"), from the dry run */}
         {/* a rival's gain says why too (picky bot, Nov 4: "rivals +1 blue in all" was a rival's cloak, unnamed) */}
-        {open && pv && whyOf(pv, state).length ? <Row k="Why"><span data-reasons><Rich text={whyLine(whyOf(pv, state))} /></span></Row> : null}
+        {open && pv && whyOf(pv, state, a, viewer).length ? <Row k="Why"><span data-reasons><Rich text={whyLine(whyOf(pv, state, a, viewer))} /></span></Row> : null}
         {/* a few by name; the whole row is said as one (it listed all ten names, the row you can already see) */}
         {pv && pv.swept && pv.swept.length ? <Row k="Sweeps away">{pv.swept.length > 3
           ? <span data-swept={pv.swept.join(' ')}>{pv.swept.length === state.shop.length ? `the whole row (${pv.swept.length})` : `${pv.swept.length} face-up members`}</span>
@@ -646,7 +646,21 @@ export function SpaceCard({ state, me, spaceKey, optionFor = () => null, onPick,
   );
 }
 // the Why row: your members, then a rival's member only when "You'd get" didn't already name it beside their gain
-const whyOf = (pv, state) => { const done = new Set(previewWords(pv, state).inlined || []); return [...(pv.reasons || []), ...(pv.theirReasons || []).filter(l => !done.has(l))]; };
+const whyOf = (pv, state, a, viewer) => {
+  const done = new Set(previewWords(pv, state).inlined || []);
+  const out = [...(pv.reasons || []), ...(pv.theirReasons || []).filter(l => !done.has(l))];
+  // when a member or cloak adds to the space, the space's own part leads ("On a Roll: 2 turns in a row, +4 purple"), so the
+  // total adds up from the lines shown (Cory, Nov 11: "+6" with only "Purple Cloak: +2" read as counting future turns)
+  const own = out.length && a && viewer != null ? ownLine(pv.sampleLog || pv.sample?.log, state.players[viewer]?.name, a.name) : null;
+  return own ? [own, ...out] : out;
+};
+/** The space's own log line from the dry run ("P1's On a Roll: 2 turns in a row, +4 purple." → "On a Roll: 2 turns in a row, +4 purple"). */
+function ownLine(log, who, name) {
+  if (!log || !who || !name) return null;
+  const head = `${who}'s ${name}: `;
+  const line = log.map(l => (typeof l === 'string' ? l : l && l.text) || '').find(l => l.startsWith(head));
+  return line ? `${name}: ${line.slice(head.length).replace(/\.$/, '')}` : null;
+}
 const SELF_NEXT = 'your own next turn (you place that minion later this round)';
 /** Whose turn comes after viewer's next one (Hold Up's "whoever's turn is next"), from the engine's queue. */
 export function nextAfter(state, viewer) {

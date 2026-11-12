@@ -27,6 +27,8 @@ export function raceOf(samples) {
 export function withRace(pv) {
   if (!pv) return pv;
   pv.race = raceOf(pv.samples || (pv.sample ? [pv.sample] : null));
+  // the first branch's log lines only (the hover's Why leads with the space's own line), not the table
+  if (pv.sample) pv.sampleLog = (pv.sample.log || []).map(l => (typeof l === 'string' ? l : l && l.text) || '');
   delete pv.sample;
   delete pv.samples;
   return pv;
