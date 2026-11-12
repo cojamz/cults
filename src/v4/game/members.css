@@ -84,7 +84,12 @@ button.mu-switch:focus-visible{outline:2px solid var(--pl-ink-2,#6e5c49);outline
 /* the switch's own hover (blind testers, 2026-10-15): the tip holds the switch where it always sat, says what it is */
 .lt-cult-seat .cs-member .mu-sw-tip{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);z-index:2;display:inline-flex;cursor:default}
 .lt-cult-seat .cs-member .mu-sw-tip > .hitbox{display:none} /* a 44px box would cover the figure above it */
-.lt-cult-seat .cs-member .mu-sw-tip::after{content:"";position:absolute;inset:-6px -8px -4px}
+/* a figure's hover and click target is its own box, never the 44px touch box every tip gets: figures sit 25px apart, so
+   that box spilled ~10px onto each neighbour, and the later figure (painted on top) took the pointer: pointing at the
+   right half of Hot Streak opened Extra Hand beside it (Cory, Nov 12: "im not on extra hand im on hot streak but its
+   showing extra hand"). A choice's member button (boardpick.css) is held to its figure the same way. */
+.cs-member > .fig > .hitbox{width:100%;height:100%}
+.lt-cult-seat .cs-member .mu-sw-tip::after{content:"";position:absolute;inset:-6px 0 -4px} /* no wider than the switch: 8px more each side covered the next figure (m15) */
 .lt-cult-seat .cs-member .mu-sw-tip .mu-switch{position:static;transform:none}
 .lt-cult-seat .cs-member .mu-sw-tip:hover .mu-track{box-shadow:0 0 0 1px rgba(25,19,16,.9),0 0 0 2px rgba(var(--lamp,255,206,140),.55)}
 .mu-sw-card .mu-sw-how{color:var(--pl-ink-2,#6e5c49)}

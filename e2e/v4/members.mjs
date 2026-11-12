@@ -27,6 +27,7 @@ import { browserPath, launchBrowser } from './lib/browser.mjs';
 //  (m13) w3b #39/#47, A30: the follower total opens a breakdown adding up to it; a seat's body and resources open its card;
 //       a rival's card says what it could buy now; one card on screen at a time.
 //  (m14) w4b #2: one move onto a seat, its body or its follower number, and no more, opens its card within 150ms.
+//  (m15) Cory, Nov 12: every point of a figure in your row opens that figure, never a neighbour (a 44px touch box spilled over).
 //  (m9) w2b #21: a rival's use still in hand is marked on their seat (P2's Raider, a lamp dot, decisions Oct 28); a seat no one can
 //       steal from this round shows the "safe this round" shield, named in its hover (P3 lies low), and says so in its card.
 // Screenshots go to $V4_SHOTS (default /tmp/patrons-shots/v4/members/).
@@ -125,6 +126,22 @@ try {
   if (JSON.stringify(marks.safe) !== JSON.stringify([false, false, true, false])) fail(`"safe this round" on seats ${JSON.stringify(marks.safe)} (want only P3's)`, 'm9');
   if (fig['gold.midas'] && fig['gold.midas'].sw !== 'on') fail(`Midas's switch in your seat: ${JSON.stringify(fig['gold.midas'])}`, 'm2');
   if (fig['echo.translator'] && fig['echo.translator'].sw !== 'off') fail(`Translator's switch in your seat: ${JSON.stringify(fig['echo.translator'])}`, 'm2'); // it may be folded into "+N"
+  // (m15) Cory, Nov 12 ("im not on extra hand im on hot streak but its showing extra hand"): every point of a figure in
+  // your row belongs to that figure; a neighbour's hover target never reaches over it (the 44px touch box did, ~10px)
+  const spill = await page.evaluate(() => {
+    const out = [];
+    for (const m of document.querySelectorAll('[data-cult="0"] .cs-member')) {
+      const r = m.querySelector('.fig').getBoundingClientRect();
+      // (its inside: a lit figure lifts 2px by design, so the outermost 3px may touch the row above)
+      for (let dx = 3; dx <= r.width - 3; dx += 2) for (let dy = 3; dy <= r.height - 3; dy += 2) {
+        const hit = document.elementFromPoint(r.left + dx, r.top + dy);
+        const at = hit && hit.closest('.cs-member');
+        if (at && at !== m) { out.push(`${m.dataset.member} at +${dx},+${dy} hits ${at.dataset.member}`); break; }
+      }
+    }
+    return out;
+  });
+  if (spill.length) fail(`a figure in your row is covered by a neighbour's hover target: ${spill.join('; ')}`, 'm15');
   const lit = await page.$$eval('.lt-cult-seat .cs-member.ready', els => els.map(e => e.closest('[data-cult]').dataset.cult));
   if (lit.some(c => c !== '0')) fail(`a rival's member is lit: seats ${lit.join(',')}`, 'm2');
 

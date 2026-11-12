@@ -50,7 +50,7 @@
 .lt-cult-seat .cs-member.pick-off{opacity:.35}
 .lt-cult-seat .cs-pick-member{position:absolute;inset:-3px;z-index:4;border:0;padding:0;border-radius:8px;background:transparent;cursor:pointer}
 .lt-cult-seat .cs-pick-member:hover{background:rgba(var(--lamp),.18);box-shadow:0 0 0 2px rgba(var(--lamp),.95)}
-.lt-cult-seat .cs-pick-member > .hitbox{position:absolute;left:50%;top:50%;width:max(44px,100%);height:max(44px,100%);transform:translate(-50%,-50%)}
+.lt-cult-seat .cs-pick-member > .hitbox{display:none} /* its own box only: a 44px one covered the next figure (members.css) */
 @keyframes pick-hop{50%{transform:translateY(-2px)}}
 
 /* spaces a choice offers (Echo, Sample, Reprise, Straggler): lit by the wheel itself; hover says what you'd get */
