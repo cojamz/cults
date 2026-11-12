@@ -69,18 +69,18 @@ Verdict: send
 6. Judged: Green's verb on Recruit, cross-color, memorable; a little random-feeling (Cory: Dumpster Divers was "random points"). Flagged.
 7. Public and certain: yes, minions are on the board.
 8. Color interactions: none named; reads any space.
-9. Biggest case: round III, the center space with the most minions copied once, about 5 to 10 resources or followers.
+9. Biggest case: round III, the center space with the most minions copied once, about 5 to 10 resources or followers, against a winner's 70 to 110.
 Verdict: send
 
 ## Idea: Originals
 
 1. Printed text: "Your members can't be copied." (Claude's words; Agents' shape, "Your actions can't be copied.").
 2. Played turn: round II, a rival recruits Mimics to use your Repeat Customers' On Recruit: they can't.
-3. Both sides: no card choice.
+3. Both sides: no card choice; the copier picks another target instead.
 4. Who feels it: the Green player with Mimics or Doppelganger "On Recruit: this member becomes a copy of another of your members." (their own only, unaffected) and any copier of your members.
 5. Not refused: Agents' shape, which Cory asked for more of ("jam people up").
 6. Judged: cross-color jam in Green's own deck; but Agents already protects actions, so two near-twins.
 7. Public and certain: yes, the rule is printed.
-8. Color interactions: none named.
+8. Color interactions: none named; any player can hold it.
 9. Biggest case: blocks one Mimics copy, worth 3 to 6 resources and a recruit; 0 followers of its own.
 Verdict: send
