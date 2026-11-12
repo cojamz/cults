@@ -42,3 +42,45 @@ Verdict: send
 8. Color interactions: names none; any copy counts.
 9. Biggest case: round III, Greatest Hits copying 3 of your actions: +6 green in one turn, 6 resources.
 Verdict: cut (Gold Diggers' shape, refused tonight)
+
+## Pass 3 (Cory 9:02pm: Mimics replaces Impersonator; Tag-Alongs, Bait no; "more ideas here")
+Green's 9: On Recruit: Doppelganger, Mimics, Stunt Double, Fan Club. On Use: Encore. Triggered: Copyist, Wallflower. Rule: Agents. Round End: Regulars. Missing: a Game End scorer, a card that stops member copies.
+
+## Idea: Fans
+
+1. Printed text: "Game End: +1 follower per green member, anyone's." (Claude's words; Patron Saints' shape, "Game End: +1 follower per silver member, anyone's.", approved tonight in Silver).
+2. Played turn: game end, 6 green members on the table (yours and rivals'): +6. A plain buy of 6 followers costs 6 resources.
+3. Both sides: no card choice; rivals buying green members feed you.
+4. Who feels it: any player choosing a green member now feeds the Fans holder.
+5. Not refused: Patron Saints approved tonight; same shape in Green.
+6. Judged: a Game End scorer, cross-color (anyone at a Green table). Simple.
+7. Public and certain: yes, all members are face up.
+8. Color interactions: none named; counts green members anywhere.
+9. Biggest case: game end with 8 green members in play: +8, against a winner's 70 to 110.
+Verdict: send
+
+## Idea: Bandwagoners
+
+1. Printed text: "On Recruit: copy the action with the most minions on its spaces." (Claude's words).
+2. Played turn: round II, 3 minions sit on Toast's spaces: recruit Bandwagoners and take Toast again (+4 silver, each rival +2), without placing a minion.
+3. Both sides: no choice unless tied; the table decides what you copy by crowding a space.
+4. Who feels it: rivals crowding a space now hand you a copy.
+5. Not refused: no ledger verdict on this shape or name.
+6. Judged: Green's verb on Recruit, cross-color, memorable; a little random-feeling (Cory: Dumpster Divers was "random points"). Flagged.
+7. Public and certain: yes, minions are on the board.
+8. Color interactions: none named; reads any space.
+9. Biggest case: round III, the center space with the most minions copied once, about 5 to 10 resources or followers.
+Verdict: send
+
+## Idea: Originals
+
+1. Printed text: "Your members can't be copied." (Claude's words; Agents' shape, "Your actions can't be copied.").
+2. Played turn: round II, a rival recruits Mimics to use your Repeat Customers' On Recruit: they can't.
+3. Both sides: no card choice.
+4. Who feels it: the Green player with Mimics or Doppelganger "On Recruit: this member becomes a copy of another of your members." (their own only, unaffected) and any copier of your members.
+5. Not refused: Agents' shape, which Cory asked for more of ("jam people up").
+6. Judged: cross-color jam in Green's own deck; but Agents already protects actions, so two near-twins.
+7. Public and certain: yes, the rule is printed.
+8. Color interactions: none named.
+9. Biggest case: blocks one Mimics copy, worth 3 to 6 resources and a recruit; 0 followers of its own.
+Verdict: send
