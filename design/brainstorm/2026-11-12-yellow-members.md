@@ -62,3 +62,9 @@ Verdict: send
 8. Color interactions: none named; it reads member colors only.
 9. Biggest case: 6 resources once plus a member worth 1 to 3 followers and a contest color.
 Verdict: send
+
+## Idea: Cosmopolitans
+
+Source: Cory, 2026-11-11 8:21pm: "Maybe like round end plus 1 follower for each color you have." and 8:31pm: "No, do mine. Definitely do mine. It's good for anybody."
+1. Printed text: "Round End: +1 follower per color among your members."
+Verdict: send
