@@ -495,8 +495,16 @@ export default {
       drift(ctx, p, uid, data) {
         if (uid == null) { ctx.log(`${p.name} keeps ${ctx.card(data.uid)?.def.name || 'Seat Filler'}.`); return; }
         const me = ctx.card(data.uid);
-        if (!p.members.includes(data.uid) || !ctx.state.shop.includes(uid) || cost(ctx.card(uid)) > cost(me) + 3) return;
+        if (!ctx.state.shop.includes(uid) || cost(ctx.card(uid)) > cost(me) + 3) return;
         const names = [me.def.name, ctx.card(uid).def.name];
+        // Test Drive (Cory, Nov 10: "Seat Filler is fine"): the card already went to the discard pile, so its free
+        // recruit still happens with nothing to put in the shop (it used to do nothing after asking, AI game Nov 12)
+        if (!p.members.includes(data.uid)) {
+          if (ctx.ownerOf(data.uid)) return;
+          ctx.log(`${p.name} uses ${names[0]}'s effect: recruits ${names[1]} for free.`);
+          ctx.recruit(p, uid, { free: true });
+          return;
+        }
         // not a swap (its text names none, so Loyalists doesn't stop it): it goes face up into the row, then the free
         // recruit takes the chosen card's place (the row ends the size it was, nothing new is dealt)
         ctx.buryMember(p, data.uid, p, { shop: true });

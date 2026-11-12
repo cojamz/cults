@@ -270,6 +270,17 @@ describe('Purists: "Round End: if your members have 2 or fewer colors, +3 follow
     expect(bonusOf(s, 0)).toBe(6 + 4 * 10); // and the four round III contests, P2 holding nothing
   });
 
+  // AI game, Nov 12: Test Drive on Seat Filler asked which member to take, then gave nothing (the card had to be held).
+  // Cory, Nov 10, reviewing Test Drive's strongest uses: "Seat Filler is fine", so the free recruit happens.
+  it('Test Drive on Seat Filler ("Round Start: you may put this in the shop and recruit a shop member costing up to 3 more, for free."): recruits the pick for free', () => {
+    const { s } = go('sf-td', { quads: QR, round: 1, turns: [0], shop: ['red.seatfiller', 'market.thrifthunters'] }, [/Test Drive/, /Seat Filler/, /Thrift Hunters/]);
+    expect(s.log).toContain("P1's Test Drive: sends Seat Filler to the discard pile and uses its effect.");
+    expect(names(s, 0)).toEqual(['Thrift Hunters']);
+    expect(has(s, /recruits Thrift Hunters for free/)).toBe(true);
+    expect(s.discard.map(u => defById(s.cards[u].def).name)).toContain('Seat Filler');
+    cleanLog(s);
+  });
+
   it('Test Drive ("Discard a shop member. Use its effect now. +1 blue.") on Purists with 2 colors: +3; with 3: nothing', () => {
     const run = mine => go('pu-td', { quads: QR, round: 1, turns: [0], shop: ['red.purists'], members: [mine] }, [/Test Drive/, /Purists/]).s;
     const a = run(['red.twins', 'market.thrifthunters']);
