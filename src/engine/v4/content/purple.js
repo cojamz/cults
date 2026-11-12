@@ -1233,7 +1233,7 @@ export default {
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
-        if (!turnsLeft(ctx, owner)) { card.used = false; ctx.log(`${owner.name}'s Last Callers: no minion left to wait.`); return; }
+        // "take the Goes Last token" with no minion left still takes it (from a rival too), as Last Call does (combo test Nov 12)
         toToken(ctx, owner, 1, 'Last Callers');
       },
       // a bot takes it with its last minion in hand, when a rival holds the token
