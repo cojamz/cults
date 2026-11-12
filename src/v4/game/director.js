@@ -22,7 +22,7 @@ import { gainsBetween } from './gains.js';
 import { seatOrder } from './seats.js';
 import { stageRect, hubRect, stageShow, stageRelease, stageClear, stageDismiss, stageBusy, subscribeStage, stageItems, stagePlace, spaceRect, bubbleRect, stageLeave, HUB_MEMBER, clearOfStory, storyAtHub, noteDealEnd, noteBeats } from './stage.js';
 import { panelText, richPanel } from './panelText.js';
-import { quadrant, defById, cardDef, spacesOf, memberCount } from '../../engine/v4/index.js';
+import { quadrant, defById, cardDef, spacesOf, memberCount, actionAt } from '../../engine/v4/index.js';
 import { seatEmoji } from '../format.js';
 import { spriteId } from '../art/index.js';
 import { motionOK, flyPath, pulse, tug, settle, flyMinionsHome, slideShop, holdStack, bump, track, landAll, expectArrival, clearArrivals, clearFlights, aim, safetyNet, arcFrames, bezier, onScreenBow, relative, motionPending, onMotionChange } from './flight.js';
@@ -32,6 +32,18 @@ const CARD_EASE = bezier(0.4, 0.1, 0.6, 1); // a recruited card's flight to its 
 // ---------- the plan ----------
 
 const causeKey = c => (c ? `${c.kind}:${c.pid ?? ''}:${c.uid ?? ''}:${c.key ?? ''}:${c.qid ?? ''}:${c.tier ?? ''}` : '');
+/** What paid a follower gain, in the card's own name: the space, the member, the member just recruited, or the follower
+ *  buy (the rate's own words). Its line on the flying "+3 followers" token (Cory, Nov 12). */
+export function causeName(state, c) {
+  try {
+    if (!c) return '';
+    if ((c.kind === 'space' || c.kind === 'plus1') && typeof c.key === 'string') { const [q, i] = c.key.split('-').map(Number); return actionAt(state, q, i).name || ''; }
+    if ((c.kind === 'member' || c.kind === 'release' || c.kind === 'recruit') && c.uid != null && state.cards[c.uid]) return cardDef(state, c.uid).name || '';
+    if (c.kind === 'member' && c.def) return defById(c.def).name || '';
+    if (c.kind === 'buy') return 'Recruit followers';
+  } catch { /* unnamed */ }
+  return '';
+}
 const TYPICAL = 450; // px between a source and its destination, when the plan is made off screen
 
 /** gains.js moves in the effect stream's words (the fallback when a state carries no stream). */
@@ -254,6 +266,16 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
     // 1–3 single pieces, 60ms apart (Steady); 4 or more one bundle carrying its count
     // (Cory, 2026-10-18: "steals: make what's being stolen clear at once") a take of 2 or more leaves as one handful
     const bundle = n >= 4 || (opt.take && n >= 2);
+    // (Cory, Nov 12: "the followers coming from followers dont look like multiple when they are", "animation is
+    // confusing") two or more followers gained fly as one token that says so, "+3 followers" over what paid them, the
+    // round end's token (Reckoning.jsx); a single follower stays the follower mark. A little slower than a coin, to read.
+    if (opt.fol && !opt.pay && n >= 2) {
+      const d = Math.round(coinFlightMs(dist(from, to)) * 1.1);
+      hand = Math.max(hand, time + d * (2 / 3));
+      at(time, { ...opt, op: 'piece', from, to, n, bundle: true, token: true, dur: d }); // (its own time: a recruit's worth hop asks for a short one)
+      at(time + d, { ...opt, op: 'land', to, by: n, bundle: true, token: true });
+      return { last: time, d };
+    }
     // a bundle of resources is a stream: every coin flies, the last one `tail` behind the first (Cory: "12 coins animate
     // as 12, any count"); its count rolls as they land. Followers keep their bundle. A stream's coins travel quicker by
     // its tail (a rush of coins, never under 0.6 of the flight), so its last coin lands when the old single bundle did
@@ -449,7 +471,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
       const landed = ends(leave + fromHub);
       if (card.what.worth > 0) {
         // its worth: follower marks hop from the new chip to the count, which ticks as they land
-        const r = pieces(landed, { kind: 'crowd', pid: card.to.pid, uid: card.what.uid }, { kind: 'count', pid: card.to.pid }, card.what.worth, { fol: true, dur: MO.worthHop });
+        const r = pieces(landed, { kind: 'crowd', pid: card.to.pid, uid: card.what.uid }, { kind: 'count', pid: card.to.pid }, card.what.worth, { fol: true, dur: MO.worthHop, why: causeName(state, { kind: 'recruit', uid: card.what.uid }) });
         next = ends(after(r));
         ends(r.last + r.d);
       } else next = landed;
@@ -463,7 +485,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
       for (const [i, p] of m.pays.entries()) { const r = pieces(s + i * MO.fan, p.from, rate, p.what.n, { pay: true, r: p.what.r, owner: p.from.pid }); paid = Math.max(paid, r.last + r.d); }
       at(paid, { op: 'pulse', place: rate, dur: MO.accept, press: true });
       let o = paid + MO.accept;
-      for (const f of m.fols) { const r = pieces(o, rate, f.to, f.what.n, { fol: true }); next = Math.max(next, after(r)); ends(r.last + r.d); o += MO.fan; }
+      for (const f of m.fols) { const r = pieces(o, rate, f.to, f.what.n, { fol: true, why: causeName(state, c) }); next = Math.max(next, after(r)); ends(r.last + r.d); o += MO.fan; }
       m.pays.length = 0; m.fols.length = 0;
       next = ends(Math.max(next, o));
     }
@@ -577,7 +599,7 @@ export function planChain(before, state, { mine = [], measure = null } = {}) {
       ends(cur + d);
       cur += nextBeatAt(d);
     }
-    phase(m.fols.map(f => (f.what.n > 0 ? { from: f.from.kind === 'bank' && pulsed ? { kind: 'space', key: pulsed } : f.from, to: f.to, n: f.what.n, opt: { fol: true } } : { from: f.from, to: f.to, n: -f.what.n, opt: { fol: true, pay: true } })));
+    phase(m.fols.map(f => (f.what.n > 0 ? { from: f.from.kind === 'bank' && pulsed ? { kind: 'space', key: pulsed } : f.from, to: f.to, n: f.what.n, opt: { fol: true, why: causeName(state, c) } } : { from: f.from, to: f.to, n: -f.what.n, opt: { fol: true, pay: true } })));
     // Each named cause gets a clear landing before the next source enters. Color fans within a cause stay together.
     // A rival's beats overlap instead: the next starts at this one's hand-off (its last piece two-thirds along, grammar
     // §5), except after a recruit or a follower buy, which lands in full before anything else moves.
@@ -1651,8 +1673,17 @@ export function playChain(root, before, state, { snap = null, minionsBefore = nu
             release(A);
           }
           if (skip || !A || !B) { land(a, B, true); return; }
-          const size = a.fol ? 18 : 16;
           const pid = a.to.kind === 'stack' || a.to.kind === 'count' ? a.to.pid : a.from.pid;
+          if (a.token) {
+            const why = (a.why || '').replace(/[<&]/g, ''), w = 150, h = why ? 46 : 32;
+            const box = r => ({ left: r.left + r.width / 2 - w / 2, top: r.top + r.height / 2 - h / 2, width: w, height: h });
+            const html = `<b class="reckon-token" style="--pc:${playerColor(pid)}"><span class="rt-n">+${a.n} followers</span>${why ? `<small class="rt-why">${why}</small>` : ''}</b>`;
+            chain.flying++;
+            const anim = aim(flyPath(html, 'piece-flight fol-token', box(rectOf(A)), box(rectOf(B)), { path: 'arc', duration: a.dur, fade: true }), B);
+            onFinish(anim, () => { chain.flying = Math.max(0, chain.flying - 1); land({ ...a, by: a.n }, B, false); });
+            return;
+          }
+          const size = a.fol ? 18 : 16;
           const html = a.fol ? folHtml(root, pid) : dotHtml(root, a.r, a.owner ?? pid);
           chain.flying++;
           // (the places were measured before the commit, or on first use: never a layout read per piece)
