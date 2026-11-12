@@ -525,3 +525,5 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - 2026-11-11 9:01pm Eastern · Green · ✅ Regulars at +1, Mimics near-copy of Impersonator (dropped) · tags: green, members
 - 2026-11-11 9:02pm Eastern · Green · ✅ Mimics (replaces Impersonator), ❌ Tag-Alongs, ❌ Bait · tags: green, members
 - 2026-11-11 9:06pm Eastern · Bandwagoners ("copy the action with the most minions") ❌ "such a fundamental misunderstanding of the game"; Originals ❌ "dumb and bad" · tags: green, members, misread-rules
+
+- 2026-11-12 (economy test thread) Economy levers pitched beside Cory's four price settings: Unclaimed +1 grows, Round III spaces +1, first player on a space gets +2 (record design/brainstorm/2026-11-12-economy-levers.md). All three played as bot settings on the same 60 deals (design/eval/economy-n12/); verdict pending: Cory asked which economy to play next at the table.
