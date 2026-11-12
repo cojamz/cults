@@ -481,11 +481,14 @@ function rivalRecruits(ctx, p) {
       && !/\bit\b|\bthese\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
 }
 
-// Mimics: every member in play (anyone's) with an On Recruit Sample could copy, Mimics itself and other Mimics left out.
+// Mimics: every member in play (anyone's) with an On Recruit, Mimics itself and other Mimics left out. An On Recruit
+// that acts on the card itself ("give this member", "this member becomes a copy") is left out; one that copies an
+// action (Fan Club, Stunt Double) is offered, as Impersonator offered it (combo tester, Nov 12: Sample's "copy" filter
+// had come along and hid two of Green's own members).
 function mimicRecruits(ctx, p, self) {
   return ctx.state.players.flatMap(o => ctx.membersOf(o).map(c => ({ c, o })))
     .filter(({ c }) => c.uid !== self && c.def.key !== 'mimics' && !c.def.artifact && !c.def.recruitNote && c.def.key !== 'impersonators' && (c.def.onRecruited || (c.def.now && (c.def.onRoundStart || c.def.onRoundStartLate)))
-      && !/\bit\b|\bthese\b|\bthis member\b|\bcop(?:y|ies)\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
+      && !/\bit\b|\bthese\b|\bthis member\b/i.test(c.def.text.replace(/^[^:]*:/, '')));
 }
 // Greatest Hits: your members with an On Recruit (or a now-and-round-start effect, as Sample reads it).
 const recruitDef = c => (c.copy ? defById(c.copy) : c.def);
@@ -873,7 +876,8 @@ const echoQ = {
     // Mimics: any member in play, yours or a rival's
     mimic(ctx, p, uid) {
       if (!ctx.ownerOf(uid)) { ctx.log(`${p.name}: that member left play.`); return; }
-      ctx.log(`${p.name}'s Mimics uses ${ctx.defOf(uid).name}'s On Recruit.`);
+      const o = ctx.ownerOf(uid), d = ctx.defOf(uid); // whose member, and "Hustlers'" not "Hustlers's" (combo tester, Nov 12)
+      ctx.log(`${p.name}'s Mimics uses ${o.name}'s ${d.name}${/s$/.test(d.name) ? "'" : "'s"} On Recruit.`);
       ctx.borrowOnRecruit(p, uid);
     },
     encoreCopy(ctx, p, uid) {
