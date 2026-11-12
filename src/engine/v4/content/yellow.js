@@ -294,7 +294,7 @@ export default {
       // Nov 5 (Cory: "Leaders tax should be renamed and should be +1 yellow per minion on the most occupied color"): every
       // player's minions on the color whose spaces hold the most; a tie pays the same count. Your own minion counts,
       // this one included when yellow is the busiest. No choice left. Name Claude's fill-in (was Leaders' Tax).
-      key: 'transmute', ring: 1, name: 'Survey', text: "+1 yellow per minion on the color whose spaces hold the most minions. +1 yellow.",
+      key: 'transmute', ring: 1, name: 'Survey', text: "+1 yellow per minion on the color with the most minions. +1 yellow.",
       estimate: (ctx, p) => 1 + busiest(ctx).n,
       resolve(ctx, p) { bandwagon(ctx, p); },
     }]),
