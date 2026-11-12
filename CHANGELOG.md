@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.746 — 2026-11-12
+
+- You'd get: the space's gain said whole, the price in full, Borrow's member goes at round end
+
 ## v0.99.745 — 2026-11-12
 
 - Several followers gained at once fly as one "+N followers" with what paid them, not one small mark
