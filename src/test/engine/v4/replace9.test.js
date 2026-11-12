@@ -354,7 +354,7 @@ describe('Hawker at Round Start: "Round Start: choose a shop member. Starting on
     let s = table(Q4, { n: 3, round: 1, res, members: [['market.hawker2']], queue: [{ t: 'round', r: 2 }] });
     expect(s.pending.prompt).toBe('Hawker: offer which shop member?');
     expect(s.pending.player).toBe(0);
-    return answer(s, s.pending.options[0].id);
+    return answer(s, (s.pending.options.find(o => /Timekeeper|Intern|Tiebreaker|Recruiter/.test(o.label)) || s.pending.options[0]).id); // a plain member: one with an On Recruit (Hostesses' gift) moves the owner's count
   };
   it('price, round I, retires the old Hawker, and no On Use', () => {
     const d = defById('market.hawker2');
