@@ -69,3 +69,10 @@
 - 4:30pm coordinator: when the robust (cloak-aware) bot is built and tested, message the balance thread cmsg_01PySa5gYMfCiexiWTLrWgo39rxGwMqkjQ5tpzWX4284vH so it can start the cloak rebalance runs with it.
 - 5:39pm Cory: "but isn't that against the whole point?" (switching tests to Hard bots). Right: the goal is a better strongest bot; tests run on Very Hard against today's Very Hard. Hard-bot runs stopped, their data kept but not reported.
 - 5:58pm Cory: "i don't think we need to test against the two habit bot". Only today's Very Hard is the control.
+
+## THE PLAN (Cory, 4:10pm Eastern; do not lose it)
+"the idea was we take those list of strategic principles and we try them (with a certain order of priority) and then if it wins or leans better, we test it against other orders of the priority."
+1. Full ranked bot on Very Hard against today's Very Hard: opts.robust = { lead, ease, together, cloak } in bots.js, top of the list first: who really leads and who to hurt (lead) > contests by ease (ease) > space and buy together (together) > cloak power (cloak) > member worth (existing). Run: design/eval/skill-2026-11-12/full-vs-today.jsonl, 16 tables both ways.
+2. If it wins or leans better: other priority orders of the same principles, each against it (or today's bot), keeping the best order. An order = the weights in robust (and the order the principles are applied); a test is one change at a time against the control.
+3. Cloak balance then goes to the balance thread cmsg_01PySa5gYMfCiexiWTLrWgo39rxGwMqkjQ5tpzWX4284vH with the best bot.
+Not the plan: tier against tier, Hard instead of Very Hard, two-habit bot as control (Cory dropped it).

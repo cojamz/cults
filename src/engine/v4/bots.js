@@ -95,12 +95,15 @@ export function chooseBotMove(state, rand = Math.random, opts = {}) {
   // opts.ease (skill test, Nov 12): this seat sorts contests by how easy they are to win (see contests)
   // opts.robust = { ease: weight 0 to 1, together: weight 0 to 1 } (skill test, Nov 12): the strongest bot with the habits
   // blended, each by its weight, so the order they matter in can be set and tested (see design/notes/skilled-play-2026-11-12.md)
+  // Full ranked version (Cory approved the order, 4:31pm): { lead: true, ease: 1, together: 1, cloak: 0.5 }, top of the list first:
+  // who really leads (lead), contests by how easy they are (ease), the space and its buy together (together), the cloak's power (cloak).
   const rb = opts.robust;
   if (opts.ease === undefined && !rb) return chooseBotMoveAt(state, rand, opts);
-  const prev = EASE, prevW = EASE_W;
+  const prev = EASE, prevW = EASE_W, prevL = LEADSPITE;
   EASE = rb ? rb.ease > 0 : opts.ease;
   EASE_W = rb ? Math.min(1, rb.ease ?? 0) : 1;
-  try { return chooseBotMoveAt(state, rand, rb ? { ...opts, together: (rb.together ?? 0) > 0 ? rb.together : false } : opts); } finally { EASE = prev; EASE_W = prevW; }
+  LEADSPITE = !!rb?.lead;
+  try { return chooseBotMoveAt(state, rand, rb ? { ...opts, together: (rb.together ?? 0) > 0 ? rb.together : false, cloak: rb.cloak || 0 } : opts); } finally { EASE = prev; EASE_W = prevW; LEADSPITE = prevL; }
 }
 function chooseBotMoveAt(state, rand, opts) {
   const pend = state.pending;
@@ -812,7 +815,17 @@ export function boundaryParts(s) {
     contests(s, ctx, p, roundLeft), ability[p.id], memberCount(s, p), sum(p.res),
   ]);
 }
-const marginOf = (vals, me, spite = SPITE) => vals[me] - spite * Math.max(...vals.filter((_, i) => i !== me));
+// LEADSPITE (robust bot, Nov 12; Cory: "spend some resources to slow the leader down", not everyone ganging up): how much the best
+// rival's total counts against the bot's own depends on where the bot stands. Level with or ahead of every rival: as before. Behind
+// the leader by a gap the bot can still close (10 or less), their total counts about twice as much (hurting them is worth it);
+// behind by more than that, a lot less (it can't catch them, so it plays for its own total).
+let LEADSPITE = false;
+const marginOf = (vals, me, spite = SPITE) => {
+  const best = Math.max(...vals.filter((_, i) => i !== me));
+  let k = spite;
+  if (LEADSPITE && vals[me] < best) { const gap = best - vals[me]; k = spite * (gap <= 10 ? 1.75 : gap <= 25 ? 1.25 : 0.6); }
+  return vals[me] - k * best;
+};
 
 // Resolve follow-up choices a hypothetical move queued (Hand-pick, Open Door ties, Kickback's gift…) by their hints.
 function settle(s, ctx, seen) {
@@ -1096,7 +1109,26 @@ export function scoreOptions(state, rand = Math.random, opts = {}) {
       }
     }
   }
+  if (opts.cloak > 0 && (pend.kind === 'buy' || pend.kind === 'place')) {
+    const top = [...out].sort((a, b) => b.v - a.v).slice(0, TOGETHER_TOP);
+    for (const r of top) if (r.o.kind === 'slot' || r.o.kind === 'card' || r.o.kind === 'tier') r.v += opts.cloak * cloakGain(state, me, r.o.id);
+  }
   return out.sort((a, b) => b.v - a.v);
+}
+
+// The cloak's power for one move (robust bot): the move played for real with the bot's cloak and without it, and what the cloak
+// added right then: followers and resources (a resource counted at 0.6 of a follower). A move that sets the cloak off scores higher.
+function cloakGain(state, me, optionId) {
+  const p = state.players[me];
+  if (p.artifact === undefined) return 0;
+  const worth = s => followers(s, s.players[me]) + 0.6 * sum(s.players[me].res);
+  try {
+    const withCloak = applyMove(state, { player: me, option: optionId });
+    const bare = copy(state);
+    bare.players[me].artifact = undefined;
+    const without = applyMove(bare, { player: me, option: optionId });
+    return worth(withCloak) - worth(without);
+  } catch { return 0; }
 }
 
 /**

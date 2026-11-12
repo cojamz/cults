@@ -48,7 +48,7 @@ export function chooseThinkerMove(state, rand = Math.random, opts = {}) {
   const { plan = null, memory = null, lessons = null } = opts;
   const nudge = o => planNudge(state, plan, memory, o) + lessonNudge(state, lessons, o);
   const tempo = opts.tempo === true ? { tempo: true } : opts.tempo !== undefined ? { tempo: false } : {};
-  const tog = opts.together ? { together: opts.together } : {};
+  const tog = { ...(opts.together ? { together: opts.together } : {}), ...(opts.cloak ? { cloak: opts.cloak } : {}) };
   const ranked = rival || scoreOptions(state, rand, opts.future !== undefined ? { ...planProfile(plan, lessons), future: opts.future, smart, ...tempo, ...tog } : { ...planProfile(plan, lessons), smart, ...tempo, ...tog }).map(r => ({ ...r, v: r.v + nudge(r.o) })).sort((a, b) => b.v - a.v);
   if (!ranked.length) return chooseNormalMove(state, rand);
   if (ranked.length === 1) return { player: me, option: ranked[0].o.id };
