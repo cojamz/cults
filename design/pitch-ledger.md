@@ -517,3 +517,4 @@ Nov 7 later: card review 2 rejected in full; do not resurface its defaults.
 - 2026-11-11 8:02pm Eastern · Matrons, Party Hosts (last Silver slot) · ❌ "no. more on recruit" · tags: silver, members
 - 2026-11-11 8:17pm Eastern · Silver last slot · ✅ Hustlers ("super simple. Pretty perfect") · ❌ Tax Collectors, Switchers, Good Samaritans · tags: silver, members
 - 2026-11-11 8:25pm Eastern · Yellow members, 3 open slots: Exchange Students, Nomads, Pioneers, Headhunters [1, 2, 4]. design/brainstorm/2026-11-12-yellow-members.md · … awaiting · tags: yellow, members
+- 2026-11-11 8:21pm Eastern · Yellow members · ✅ Exchange Students, ✅ Headhunters, ❌ Pioneers ("so weak"), Nomads maybe (per-color version floated) · tags: yellow, members
