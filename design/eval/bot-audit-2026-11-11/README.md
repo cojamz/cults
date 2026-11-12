@@ -34,3 +34,16 @@ come right after this one" was worth nothing: Crunch Time read as +2 purple. Tha
 They misread rules, not the spaces' worth: "buying already does that" on Cash In (each recruit buys one batch, so
 Cash In saves recruits), Crunch Time used as filler on a last minion (it does nothing there), "counts as N" against
 Red's each-card-counts-1. design/notes/expert-primer.md now states these plainly.
+
+## Borrow: a real bot bug, fixed (Nov 12)
+Replaying the AI-player games move by move (scripts/v4-ai-audit.mjs, design/eval/ai-audit-2026-11-12/) showed the bots
+rating **Borrow** ("Recruit the cheapest shop member, for free. Discard it at round end, before scoring. +1 red.") far
+above what the AI players did. The bots' forecast counted the borrowed member as kept: its followers, its place in
+member contests and its ability. Bots took Borrow in 93% of the rounds it was open and its takers won 20%.
+The fix drops members still on loan from the forecast. 50 tables with Red at every table, played both ways:
+
+| Setting | Borrow taken | Followers per seat | Seats won (of 400) |
+|---|---|---|---|
+| fixed vs old Hard | 5 vs 246 | +4.4 ± 1.3 | 72 vs 34 |
+
+On by default (BOTBORROW=0 turns it off). Balance numbers that involve Red's Borrow change with it.

@@ -35,8 +35,20 @@ async function playOne({ g, side, A, B }) {
     const f = o.force, pend = s.pending;
     const forced = f && pend.kind === 'place' && s.round === f.round && s.players[pl].left >= (f.minLeft || 0)
       ? pend.options.find(x => x.kind === 'slot' && actionAt(s, x.q, x.i)?.key === f.key) : null;
-    setBorrowFix?.(o.borrowFix ?? process.env.BOTBORROW === '1'); // a setting's borrowFix: Borrow's member counted as discarded at round end
-    const m = forced ? { player: pl, option: forced.id } : chooseBotMove(s, rand, { maxMs: Infinity, ...o });
+    setBorrowFix?.(o.borrowFix ?? process.env.BOTBORROW !== '0'); // a setting's borrowFix: Borrow's member counted as discarded at round end
+    // o.hoard = { res, round }: that seat keeps every `res` through round `round` (bot audit, Nov 12; Cory on Flaunt: "you
+    // should just forego the followers to get the resources"). It decides as if it held none, and pays without it.
+    const h = o.hoard, hoarding = h && !forced && s.round <= h.round && s.round >= 1;
+    let m;
+    if (forced) { m = { player: pl, option: forced.id }; picks[who[pl]].heldAtForced = (picks[who[pl]].heldAtForced || 0) + (h ? s.players[pl].res[h.res] || 0 : 0); }
+    else if (hoarding && pend.kind === 'pay') {
+      const dry = pend.options.filter(x => x.kind !== 'pay' || !(x.spend?.[h.res] > 0));
+      const pick = chooseBotMove({ ...s, pending: { ...pend, options: dry.length ? dry : pend.options } }, rand, { maxMs: Infinity, ...o });
+      m = pick;
+    } else if (hoarding) {
+      const hid = { ...s, players: s.players.map((p, i) => (i === pl ? { ...p, res: { ...p.res, [h.res]: 0 } } : p)) };
+      m = chooseBotMove(hid, rand, { maxMs: Infinity, ...o });
+    } else m = chooseBotMove(s, rand, { maxMs: Infinity, ...o });
     const slot = track.length && s.pending.kind === 'place' ? s.pending.options.find(x => x.id === m.option && x.kind === 'slot') : null;
     const key = slot ? actionAt(s, slot.q, slot.i)?.key : null;
     if (key && track.includes(key)) picks[who[pl]][`${key}${s.round}`] = (picks[who[pl]][`${key}${s.round}`] || 0) + 1;

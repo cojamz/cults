@@ -711,7 +711,7 @@ function seeUse(state, s, me, uid) {
 // kept: its followers, its place in member contests and its ability all went into the forecast, so bots took Borrow
 // in 93% of the rounds it was open and its takers won 20% (7 points under players as wide). With the fix on, the
 // forecast drops members still on loan this round (core endRound discards them before scoring).
-let BORROW_FIX = globalThis.process?.env?.BOTBORROW === '1';
+let BORROW_FIX = globalThis.process?.env?.BOTBORROW !== '0'; // on by default since Nov 12: +4.4 ± 1.3 followers a seat over 100 Hard games (design/eval/bot-audit-2026-11-11)
 export const setBorrowFix = on => { BORROW_FIX = !!on; };
 const onLoan = s => (s.borrowed || []).filter(b => b.round === s.round && s.players[b.pid]?.members.includes(b.uid));
 function dropBorrowed(s) {
