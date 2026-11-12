@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.737 — 2026-11-11
+
+- **Greatest Hits** copies only your own minions: "Choose a color other than green. Copy every action with your minion on its spaces."
+
 ## v0.99.736 — 2026-11-11
 
 - Magenta: Bodyguards steals 1 back instead of blocking; Cat Burglars (steal 3 at round end) replace Second-Story Man; Kidnappers: at round end a rival you choose gives you a member, worth 2; Double Agent swaps for a rival's member costing up to 8
