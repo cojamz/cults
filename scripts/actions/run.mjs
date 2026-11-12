@@ -21,6 +21,7 @@ export const VARIANTS = {
   // Cory, Nov 11 11:46pm: "minimalists for sure needs tweaks"
   // Line Cutters worth 1 instead of 3 (polish pass: 7 of 8 AI players called it cheap)
   'cutters1': { LINECUTTERS_F: '1' },
+  'cutters2': { LINECUTTERS_F: '2' },
   // members that can't pay back their price (design/eval/member-payback/2026-11-12-pays-for-itself.md), lifted with
   // followers to reach it (Cory: "lift a weak card with followers before cutting its price")
   'payback': { MEMBER_F: 'silver.bookies:4,market.snob:4,red.recruiter:4,gold.seed:2,market.windowshopper:3,market.thrifthunters:3,purple.timekeepers:2' },
