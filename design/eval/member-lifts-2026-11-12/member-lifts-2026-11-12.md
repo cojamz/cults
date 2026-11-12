@@ -23,3 +23,6 @@ Small cults won 47% of games with the lifts (bar 20%).
 Seats holding the card, new version minus today, same deals; about ±1 to ±1.9 by chance.
 - Line Cutters worth 2: followers -1.6, resources gained -0.9. Worth 1: -1.6, -0.9.
 - Bookies worth 4: +3.1, -4.0. Window Shopper worth 3: +3.4, -2.1. Thrift Hunters worth 3: +0.3, -2.3. Snobs worth 4: +3.4, +1.6. Timekeeper worth 2: +2.0, -0.1.
+
+## Caveat on the paired numbers (Nov 12, 8am, after Cory asked what "+3.1, -4.0" meant)
+"Same deal" seats are counted when the member was held in either version. Most seats held it in only one version (Bookies: 11 of 97 in both, 52 only in the new, 34 only today), so the resource change mostly reflects the games going differently after the first changed choice. A cleaner measure: pin the member in the same seat in both versions (deal it into that cult at the start), then compare.
