@@ -182,6 +182,8 @@ const M = {
   kingmakers: ['👑', '🌙 Give rivals up to 3 of your silver; +1 follower each'],
   paupers: ['🥣', '🌙 You hold no silver: +3 followers'],
   'loan-officers': ['🏦', '🔁 Give a rival up to 5 of your silver; take as many of their resources'],
+  splurgers: ['🤩', '♾️ You recruit a silver member: may also buy followers'],
+  'toll-collectors': ['🎫', '♾️ Anyone buys followers with silver: +1 follower'],
   'patron-saints': ['😇', '🏁 +1 follower per silver member, anyone’s'],
   'night-traders': ['🦇', '🌙 Before contests: swap up to 4 of your resources, one for one'],
   counterfeiters: ['🖨️', '🔁 Turn all of a rival’s resources into one color'],

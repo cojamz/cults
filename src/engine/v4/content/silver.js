@@ -1157,6 +1157,19 @@ const silver = {
       },
       ...see(info => ((info.owner?.res?.[S] || 0) <= 1 ? 2 : 0.5) * endsAhead(info).length),
     }),
+    // Cory, 2026-11-11 7:47pm Eastern (his idea): Barker's extra followers recruit, after a silver member only (core.js
+    // followersTwiceCard). Price is Claude's fill-in (Barker's).
+    m('splurgers', 'Splurgers', 2, 2, 'Whenever you recruit a silver member, you may also buy followers.', { followersOnColor: S }),
+    // Cory, 2026-11-11 7:48pm Eastern (his idea; 7:49pm: "any"): a follower buy with any silver in its payment.
+    // Name, words and price are Claude's fill-ins (price: Tax Collector's trigger, a follower instead of a resource).
+    m('tollcollectors', 'Toll Collectors', 2, 2, 'Whenever any player buys followers with silver, +1 follower.', {
+      onBuyFollowers(ctx, owner, card, buyer, tier, spend) {
+        if (!(spend?.[S] > 0)) return;
+        owner.bonus += 1;
+        ctx.log(`${owner.name}'s Toll Collectors: ${buyer.name} paid silver for followers, +1 follower.`);
+      },
+      ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.08),
+    }),
     // Cory, 2026-11-11 7:38pm Eastern: "On use, give a rival all of your silver. Let's say once per round, up to 5."
     // Price is Claude's fill-in (Debt Collectors' old price: once per round, 5 resources of your choice). The silver
     // is a gift (gift hooks fire); taking their resources is not a steal.

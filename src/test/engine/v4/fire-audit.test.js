@@ -152,6 +152,8 @@ const SPHERES = ['gold', 'red', 'purple', 'silver', 'yellow'];
 // Conditional cards that can go a whole bot game without their condition; each has a named test of its own.
 const ALLOW = {
   // Paupers and Loan Officers joining Silver (Nov 11) moved the seeded games: recruited in 1, holding fewer than 3 of every color at game end
+  // Splurgers and Toll Collectors joining Silver (Nov 11) moved the seeded games: recruited in 1, no gold member recruited after
+  'gold.merchant': 'Gold is parked; pays only when anyone recruits a gold member after it (cards-gold covers it)',
   'yellow.spiceroute': 'cut from the 10 deck; Game End pays only for colors held 3 or more (cards-yellow covers it)',
   // Write-Off in Estate Sale's place and Agents for everyone (Nov 11) moved the seeded games: recruited in 1, never used there
   'purple.secondwind': 'once per game and rarely used by a bot; interactions.test.js (Go-Getter) covers it',

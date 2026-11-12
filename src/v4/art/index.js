@@ -186,7 +186,7 @@ for (const [id, name, source] of [
   ['echo.copyist', 'Copyist', 'echo.roadie'], ['silver.guestofhonor', 'Guest of Honor', 'silver.polisher'],
   ['yellow.dutycollector', 'Duty Collector', 'yellow.customs'], ['yellow.jack', 'Jack-of-All-Trades', 'yellow.tastemaker'],
   ['yellow.seamstress', 'Seamstress', 'yellow.harmonist'],
-  ['silver.paupers', 'Paupers', 'silver.spoon'], ['silver.loanofficers', 'Loan Officers', 'silver.revelers'], // Nov 11: new Silver members, on retired scenes until their own are drawn
+  ['silver.paupers', 'Paupers', 'silver.spoon'], ['silver.loanofficers', 'Loan Officers', 'silver.revelers'], ['silver.splurgers', 'Splurgers', 'silver.heir'], ['silver.tollcollectors', 'Toll Collectors', 'silver.majordomo'], // Nov 11: new Silver members, on retired scenes until their own are drawn
 ]) {
   const art = PORTRAIT.get(source);
   if (art && !PORTRAIT.has(id)) PORTRAIT.set(id, { ...art, id, name });

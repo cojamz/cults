@@ -684,7 +684,7 @@ function inputFor(state, task) {
       if (task.extra && !(p.turnBuys > 0 && otherSecondBuy(state, p))) return { kind: 'buy', prompt: '', options: [] };
       const barkerOnly = !!task.barker;
       // Barker left the cult after its extra recruit was queued (a swap or steal in the same turn): nothing to recruit
-      if (barkerOnly && followersTwiceCard(state, p) === undefined) return { kind: 'buy', prompt: '', options: [] };
+      if (barkerOnly && !(task.by !== undefined ? p.members.includes(task.by) : followersTwiceCard(state, p) !== undefined)) return { kind: 'buy', prompt: '', options: [] };
       const opts = [];
       // which members and tiers can be paid for at all: an existence check, not the ranked list of every way to pay
       // (the list scores each way against the contests: most of a round III step's engine time, run for every shop card,
@@ -734,7 +734,7 @@ function inputFor(state, task) {
       if (task.lastMinute) return { kind: 'buy', prompt: `${p.name}: Last-Minute Shopper: recruit once before contests are scored, or pass`, options: opts };
       if (task.lateShop) return { kind: 'buy', prompt: `${p.name}: Late Shoppers: recruit once after the contests, or pass`, options: opts };
       if (task.cheap) return { kind: 'buy', prompt: `${p.name}: Ushers: also recruit a member costing ${task.cheap} or less, or pass`, options: opts };
-      if (barkerOnly) return { kind: 'buy', extra: true, prompt: `${p.name}: recruit followers again (${cardDef(state, followersTwiceCard(state, p)).name}), or pass`, options: opts };
+      if (barkerOnly) return { kind: 'buy', extra: true, prompt: `${p.name}: recruit followers again (${cardDef(state, task.by ?? followersTwiceCard(state, p)).name}), or pass`, options: opts };
       return { kind: 'buy', extra: !!task.extra, prompt: task.extra ? `${p.name}: recruit again (Big Spender), or pass` : `${p.name}: recruit a member or followers${more ? ` (${more + 1} recruits left)` : ''}, or pass`, options: opts };
     }
     case 'choose': {
@@ -2007,7 +2007,7 @@ function buyFollowersNow(state, p, tier, chosen) {
   log(state, `${p.name} bought ${tier.get} follower${tier.get > 1 ? 's' : ''} (${payString(spend)}).`);
   if (tier.limited) state.stock[tier.key] -= 1;
   const ctx = ctxFor(state);
-  eachMember(state, (owner, card, def) => { if (def.onBuyFollowers) def.onBuyFollowers(ctx, owner, card, p, tier); }, ['onBuyFollowers']);
+  eachMember(state, (owner, card, def) => { if (def.onBuyFollowers) def.onBuyFollowers(ctx, owner, card, p, tier, spend); }, ['onBuyFollowers']);
   // buying followers is a recruit (Cory, 2026-10-21): "whenever you recruit" members fire once per purchase
   recruited(state, p, { followers: tier.get, tier, spent: spend });
 }
@@ -2238,7 +2238,11 @@ const allowance = (state, p, flag) => allowanceCards(state, p, flag).length;
 const alwaysBuysTwice = (state, p) => p.members.some(uid => effectiveDefs(state.cards[uid]).some(d => d.buyTwice));
 // Barker (Cory Nov 4: "you can always recruit followers, even if you recruited a member using your one buy/recruit"):
 // "Each time you recruit a member, you may also recruit followers." (Nov 4 2:28pm: "it should stack with blue actions").
-const followersTwiceCard = (state, p) => p.members.find(uid => effectiveDefs(state.cards[uid]).some(d => d.followersTwice));
+const followersTwiceCard = (state, p, recruit) => p.members.find(uid => effectiveDefs(state.cards[uid]).some(d => d.followersTwice
+  || (recruit !== undefined && d.followersOnColor && uid !== recruit && recruitIsColor(state, recruit, d.followersOnColor))));
+// Splurgers (Cory, Nov 11: "Whenever you recruit a silver member, you may also buy followers."): Barker's extra
+// followers recruit, only after a member of its color (a member counting as every color counts)
+const recruitIsColor = (state, uid, q) => { const d = cardDef(state, uid); return d.quadrant === q || !!d.everyColor; };
 const otherSecondBuy = (state, p) => allowance(state, p, 'extraBuy') || alwaysBuysTwice(state, p) || p.buyTwiceNow;
 function spendAllowance(state, p, flag) {
   const card = allowanceCards(state, p, flag)[0];
@@ -2280,8 +2284,9 @@ function boughtOnce(state, p, task) {
   // (Cory's playtest, Nov 9: "why cant i use hot streak after i do my last recruit of the round? it goes right to spoils")
   if ((task.uid !== undefined || task.tier !== undefined) && !task.doorbuster && !task.lateShop && !task.lastMinute) state.queue.unshift({ t: 'buy', p: p.id, afterPurchase: true, ...workerSourceOf(task) });
   // Barker: each member recruited in a buy step brings a followers-only recruit right after it (Spree's three bring three)
-  if (task.barker) { const b = followersTwiceCard(state, p); if (b !== undefined) log(state, `${p.name} uses ${defById(state.cards[b].def).name}.`); }
-  if (task.uid !== undefined && !task.doorbuster && !task.lateShop && !task.lastMinute && followersTwiceCard(state, p) !== undefined) state.queue.unshift({ t: 'buy', p: p.id, barker: true, ...workerSourceOf(task) });
+  if (task.barker) { const b = task.by ?? followersTwiceCard(state, p); if (b !== undefined && p.members.includes(b)) log(state, `${p.name} uses ${defById(state.cards[b].def).name}.`); }
+  const twice = task.uid !== undefined && !task.doorbuster && !task.lateShop && !task.lastMinute ? followersTwiceCard(state, p, task.uid) : undefined;
+  if (twice !== undefined) state.queue.unshift({ t: 'buy', p: p.id, barker: true, by: twice, ...workerSourceOf(task) });
 }
 // ---------- Outbidders (REPLACE4 bot test: flag outbids) ----------
 // "Whenever a rival recruits a shop member, you may pay its cost plus 2 to recruit it instead. They get back what they

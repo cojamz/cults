@@ -65,3 +65,42 @@ describe('Loan Officers: "On Use, once per round: give a rival up to 5 of your s
     expect(s.cards[u].used).toBe(false);
   });
 });
+
+describe('Splurgers and Toll Collectors (Cory, Nov 11 7:47pm and 7:48pm)', async () => {
+  const { applyMove } = await import('../../../engine/v4/core.js');
+  const { quadrant } = await import('../../../engine/v4/content/index.js');
+  const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id });
+  const slot = (s, q, name) => `${s.quadrants.indexOf(q)}-${quadrant(q).actions.findIndex(a => a.name === name)}`;
+  const payAll = s => { while (s.pending && s.pending.kind !== 'buy' && s.pending.player === 0 && s.pending.kind !== 'place') s = answer(s, s.pending.options[0].id); return s; };
+  const gather = s => answer(s, `slot:${slot(s, 'red', 'Gather')}`);
+  it('Splurgers: after recruiting a silver member, the owner may also buy followers', () => {
+    let s = table(['red', 'silver'], { n: 2, round: 2, res: [{ red: 9, silver: 9 }], members: [['silver.splurgers']], shop: ['silver.kingmakers', 'red.recruiter'] });
+    s = gather(s);
+    while (s.pending && s.pending.player === 0 && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
+    s = payAll(answer(s, `card:${uidIn(s, 'silver.kingmakers', 'shop')}`));
+    expect(s.pending.prompt).toContain('recruit followers again (Splurgers)');
+    expect([...new Set(s.pending.options.map(o => o.kind))].sort()).toEqual(['pass', 'tier']);
+  });
+  it('Splurgers: a member of another color brings no extra followers buy', () => {
+    let s = table(['red', 'silver'], { n: 2, round: 2, res: [{ red: 9, silver: 9 }], members: [['silver.splurgers']], shop: ['silver.kingmakers', 'red.recruiter'] });
+    s = gather(s);
+    while (s.pending && s.pending.player === 0 && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
+    s = payAll(answer(s, `card:${uidIn(s, 'red.recruiter', 'shop')}`));
+    expect(String(s.pending?.prompt || '')).not.toContain('Splurgers');
+  });
+  it('Toll Collectors: +1 follower when any player buys followers paying silver; not without silver', () => {
+    let s = table(['red', 'silver'], { n: 2, round: 2, res: [{ red: 0, silver: 9 }, { red: 9, silver: 0 }], members: [['silver.tollcollectors']] });
+    s = gather(s);
+    while (s.pending && s.pending.player === 0 && s.pending.kind !== 'buy') s = answer(s, s.pending.options[0].id);
+    // paid with red only: nothing
+    let before = s.players[0].bonus;
+    let t = payAll(answer(s, 'tier:small'));
+    expect(t.players[0].bonus - before).toBe(1);
+    // holding only silver: the buy pays silver, +1 Toll Collectors
+    s = { ...s, players: s.players.map((p, i) => (i === 0 ? { ...p, res: { ...p.res, red: 0 } } : p)) };
+    before = s.players[0].bonus;
+    s = payAll(answer(s, 'tier:small'));
+    expect(s.players[0].bonus - before).toBe(2);
+    expect(s.log.join('\n')).toContain("P1's Toll Collectors: P1 paid silver for followers, +1 follower.");
+  });
+});
