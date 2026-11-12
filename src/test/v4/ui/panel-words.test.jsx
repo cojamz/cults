@@ -64,8 +64,8 @@ describe('panel words (w3)', () => {
     expect(ownSpace.verb).toBe('Copy an action with your minion');
     const allOwn = panelText('echo', { key: 'eternity' });
     // Greatest Hits takes Medley's text (Cory, Nov 10): every action on one color, not Green's own; in line 1 (the center
-    // drops line 2)
-    expect(allOwn.verb).toBe('Copy a whole color, not green');
+    // drops line 2); only rivals' minions since Nov 11 (Cory: "copying only rivals, minions")
+    expect(allOwn.verb).toBe('Copy a color’s rival actions, not green');
     expect(panelText('echo', { key: 'hum' }).verb).toBe('Copy an action with a rival’s minion'); // Cover, Nov 10: "copy an action with a rival's minion on it"
     // Rival and own minions are distinct, as are the previous action and your own last action.
     expect(panelText('echo', { key: 'encore' }).verb).toBe('Copy a rival member’s On Recruit'); // Sample copies an On Recruit (Oct 28); whose, in line 1 (text audit Nov 1)

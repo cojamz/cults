@@ -46,7 +46,7 @@ const S = {
     nestegg: '+3 white', modestmeans: '+2 white; +1 per rival with more members', stipend: r => `+${r + 2} white; +${r} followers if you recruit a member this turn`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid for a member this turn; +2 white`, exchange: r => `turn up to ${r} into 2 followers each; +2 white`, farewell: 'discard a member for its cost in followers; +1 white', estatesale: 'discard a member for its cost in white; +1 white', writeoff: 'give a member to a rival for its cost in white; +1 white', cashin: 'all your white into followers; +1 white',
     haggle: '+2 white, +1 per leader', buylow: '+1 follower per 3 white', pawn: r => `${r} follower · may take 2 white each instead`, sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower bought or won', boom: 'all for followers',
   },
-  echo: { hum: 'copy an action with a rival’s minion; +1 green', chant: '+1 green per minion on Green; +1 green', echo: 'copy previous; +1 green', encore: 'copy a rival member’s On Recruit; +1 green', crowd2: '+1 follower per minion on Green; +3 green', refrain: 'copy your action; +1 green', eternity: 'copy every action on one color (not green); +1 green' },
+  echo: { hum: 'copy an action with a rival’s minion; +1 green', chant: '+1 green per minion on Green; +1 green', echo: 'copy previous; +1 green', encore: 'copy a rival member’s On Recruit; +1 green', crowd2: '+1 follower per minion on Green; +3 green', refrain: 'copy your action; +1 green', eternity: 'copy every rival’s action on one color (not green); +1 green' },
 };
 
 // The shortest form, for the inner rings. Two symbols only (Cory, 2026-10-15: "just simplify visual language
@@ -60,7 +60,7 @@ const PIPS = {
   market: { clearance: 'recruit from the discard', pricecheck: 'bury for half its cost', spree: 'recruit two from the discard', wordofmouth: '+1 follower per 2 members' },
   thieves: { rob: 'steal 4 followers and 4 resources', swindle: 'steal a member, give a shop member', ransom: 'rival pays or loses a member', heist: 'recruit a rival’s member' },
   trading: { nestegg: '+3 white', modestmeans: '+2, +1 per bigger rival', stipend: r => `+${r + 2} white; +${r} if you recruit a member`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid`, exchange: r => `up to ${r} into 2 followers each`, farewell: 'discard one for followers', estatesale: 'discard one for white', writeoff: 'give one away for white', cashin: 'all white for followers', sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower', boom: 'all for followers' },
-  echo: { refrain: 'copy yours', eternity: 'copy a color’s actions' },
+  echo: { refrain: 'copy yours', eternity: 'copy a color’s rival actions' },
 };
 /** The pips-first form of a space's yield (falls back to the few words). */
 export function pipEffect(qid, action, round = 1) {

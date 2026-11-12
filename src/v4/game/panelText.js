@@ -215,7 +215,7 @@ const P = {
     // one word for it, the hover's (w3a #22: "redo" here, "copy" there)
     refrain: { verb: 'Copy an action with your minion', note: '+1 green' }, // whose minion in line 1 (picky bot, Nov 11)
     // "not green" in line 1: the center ring drops line 2 (picky bot, Nov 11)
-    eternity: { verb: 'Copy a whole color, not green', note: '+1 green' },
+    eternity: { verb: 'Copy a color’s rival actions, not green', note: '+1 green' }, // rivals only (Cory, Nov 11)
   },
 };
 
