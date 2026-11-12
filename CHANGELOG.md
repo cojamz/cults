@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.739 — 2026-11-11
+
+- New members: Brethren and Purists (Red), Last Callers (Purple), Leavetakers and Minimalists (White)
+
 ## v0.99.738 — 2026-11-11
 
 - Blue: **Swap Shoppers**, **Thrift Hunters** and **Repeat Customers** join; **Power Shoppers** pays +3; **Repossessors** sends a rival's member to the discard pile; Critic, Window Dressers and Trendsetters leave.
