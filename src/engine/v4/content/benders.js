@@ -252,7 +252,7 @@ const members = [
   }), 'pool7'),
   // Test version (Nov 8, Cory: "maybe we put an extra minion token… make it expensive enough that it goes in round
   // two… maybe it should be inherently in the round two deck… play around with the price"): a spare minion token, round II deck.
-  pool(m('protesters', 'Protesters', null, 0, 5, 'On Use, once per round: put a spare minion token on an open space. Nobody can place there this round.', {
+  pool(m('protesters', 'Protesters', null, 0, 3, /* costs 6, was 8 (Cory, Nov 12 6:29pm Eastern: "protestors should be cheaper for sure") */ 'On Use, once per round: put a spare minion token on an open space. Nobody can place there this round.', {
     round: 2,
     activate: 'round',
     onRoundStart(ctx, owner, card) { card.used = false; },
