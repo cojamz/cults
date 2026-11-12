@@ -142,3 +142,4 @@ Broader rework, his to lead (Oct 28): design/notes/rework-list-2026-10-28.md, wo
 - Red third round I space: a member-moving or swap space that works with few members and isn't too strong (Cory, Nov 10; slot open).  Also try "everyone recruits something" (Cory, Nov 10). No On Recruit dependence; Tryout is out.
 - Later: claw back resource payouts across spaces (Cory, Nov 10: "we should claw back te resource payouts significantly. but for now we will leave it").
 - Balance test knobs from the Nov 11 member sort (Cory): Thrift Hunters +3 (THRIFT_N=3), Talent Scouts (Yellow's Headhunters) up to 7, Brethren +2, Timekeeper +2, Lookouts +1. Measure on paired deals, never by win rate alone.
+- Mannequin: Cory "i dont love mannequins" (Nov 11 11:35pm). Brainstorm a rework or cut and pitch it (polish thread).
