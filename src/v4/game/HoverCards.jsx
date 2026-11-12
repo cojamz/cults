@@ -656,7 +656,9 @@ const whyOf = (pv, state, a, viewer) => {
   // when a member or cloak adds to the space, the space's own part leads ("On a Roll: 2 turns in a row, +4 purple"), so the
   // total adds up from the lines shown (Cory, Nov 11: "+6" with only "Purple Cloak: +2" read as counting future turns)
   const own = out.length && a && viewer != null ? ownLine(pv.sampleLog || pv.sample?.log, state.players[viewer]?.name, a.name) : null;
-  return own ? [own, ...out] : out;
+  // never on a pick: the dry run's line names its sample pick, not the best one You'd get names (four players, Nov 12:
+  // Late Shift's You'd get said Night Managers, its Why "recruits Last-Minute Shopper")
+  return own && !(pv.best && !pv.exact) && !/\brecruits?\b/i.test(own) ? [own, ...out] : out;
 };
 /** The space's own log line from the dry run ("P1's On a Roll: 2 turns in a row, +4 purple." → "On a Roll: 2 turns in a row, +4 purple"). */
 function ownLine(log, who, name) {

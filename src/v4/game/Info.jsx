@@ -962,20 +962,31 @@ export function youdWords(pv, state, own = null, spaceText = '') {
       let names = null;
       try { names = pv.best.joined.map(u => cardDef(state, u).name); } catch { names = null; }
       if (names) {
-        const low = r => Math.max(0, pv.you?.res?.[r]?.[0] || 0);
-        const paid = state.resources.reduce((t, r) => t + Math.max(0, -(pv.best.res[r] || 0)), 0);
-        const lowF = 0; // a recruit's followers are the member's worth: said whole beside its name, never split into sure and extra
-        const extras = [...state.resources.filter(r => (pv.best.res[r] || 0) > low(r)).map(r => `+${pv.best.res[r] - low(r)} ${r}`),
-          pv.best.followers > lowF ? `+${pv.best.followers - lowF} follower${pv.best.followers - lowF === 1 ? '' : 's'}` : null].filter(Boolean);
-        const sure0 = [...state.resources.filter(r => low(r) > 0).map(r => `+${low(r)} ${r}`), lowF > 0 ? `+${lowF} follower${lowF === 1 ? '' : 's'}` : null].filter(Boolean).join(', ');
-        const paidIn = state.resources.filter(r => (pv.best.res[r] || 0) < 0);
-        // a free recruit's resources lost are its member's own trade (Launderers), never a price: said with the gains
+        // the space's own printed gain ("+7 blue." on Spree) is sure, said first and whole: a price paid partly from it
+        // read as "+4 blue" under a "+7 blue" badge (four players, Nov 12: "+7 vs +1 vs −3 in one popup"). Its trailing
+        // +1 is the first taker's and stays on the badge.
+        const G = {};
+        for (const m of String(spaceText).matchAll(/\+(\d+) ([a-z]+)\b(\.?)/g)) {
+          const [, k, r, end] = m;
+          if (!state.resources.includes(r) || (k === '1' && end && String(spaceText).trim().endsWith(m[0]))) continue;
+          G[r] = (G[r] || 0) + Number(k);
+        }
+        const got = r => (pv.best.res[r] || 0);
+        const paid = state.resources.reduce((t, r) => t + Math.max(0, (G[r] || 0) - got(r)), 0);
+        const paidIn = state.resources.filter(r => got(r) < (G[r] || 0));
+        const extras = [...state.resources.filter(r => got(r) > (G[r] || 0)).map(r => `+${got(r) - (G[r] || 0)} ${r}`),
+          pv.best.followers > 0 ? `+${pv.best.followers} follower${pv.best.followers === 1 ? '' : 's'}` : null].filter(Boolean);
+        const sure = state.resources.filter(r => G[r] > 0).map(r => `+${G[r]} ${r}`).join(', ');
+        // a free recruit's resources lost are its member's own trade (Launderers), never a price
         const freeSpace = /\bfor free\b/i.test(spaceText) || paid <= 0;
         const lost = paid <= 0 ? null : paidIn.length === 1 ? `${paid} ${paidIn[0]}` : `${paid} resources`;
         const price = freeSpace ? 'for free' : `for ${lost}`;
-        const after = [...extras, freeSpace && lost ? `−${lost}` : null].filter(Boolean);
-        const pick = `${names.join(' and ')} ${price}${after.length ? ` (${after.join(', ')})` : ''}`;
-        return { text: sure0 || null, or: pick, orWord: 'best pick:', note: null };
+        const after = [...extras, freeSpace && lost ? `its effect −${lost}` : null].filter(Boolean);
+        // Borrow's member leaves at round end, before scoring: its followers are yours only until then (four players,
+        // Nov 12: "discarded before scoring, yet +4 followers")
+        const until = /discard it at round end/i.test(spaceText) ? ', until round end' : '';
+        const pick = `${names.join(' and ')} ${price}${after.length ? ` (${after.join(', ')}${until})` : until ? ` (${until.slice(2)})` : ''}`;
+        return { text: sure || null, or: pick, orWord: 'best pick:', note: null };
       }
     }
     // your best pick spends what the space just gave (Snap Up: +2 blue, then pay for a member): the two ends, so the
@@ -1086,7 +1097,9 @@ export function YoudGet({ state, pid, q, i, now = false, skipSelf = false }) {
   try { own = quadrant(state.quadrants[q]).resource; } catch { /* none */ }
   let spaceText = '';
   try { spaceText = spacesOf(state, state.quadrants[q])[i].text || ''; } catch { /* none */ }
-  const y0 = youdWords(pv, state, own, spaceText);
+  const y00 = youdWords(pv, state, own, spaceText);
+  // Borrow: the member and its followers go at round end, before scoring (four players, Nov 12)
+  const y0 = /discard it at round end/i.test(spaceText) && !/until round end/.test(`${y00.or || ''}`) && !y00.note ? { ...y00, note: 'the member and its followers go at round end' } : y00;
   const y1 = skipSelf ? { ...y0, text: SKIP_SELF(y0.text), or: SKIP_SELF(y0.or), likely: SKIP_SELF(y0.likely), best: SKIP_SELF(y0.best) } : y0;
   const via = viaWords(pv, state, spaceText);
   const y = via ? { ...y1, text: withVia(y1.text, via), or: withVia(y1.or, via), likely: withVia(y1.likely, via), best: withVia(y1.best, via) } : y1;
