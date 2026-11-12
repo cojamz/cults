@@ -232,7 +232,7 @@ Verdict: send
 9. Biggest case: 3 silver taken, 6 followers, 3 silver held.
 Verdict: cut (Debt Collectors' verb, two steps)
 
-## Idea: Hostesses
+## Idea: Party Hosts
 
 1. Printed text: "On Recruit: each player holding silver gives you 1 resource of their choice."
 2. Played turn: round III, 3 rivals hold silver: +3 resources of their choosing.
