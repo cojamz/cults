@@ -54,10 +54,10 @@ export const MIXES = {
   'richer r1=2': { MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1, R1_LIMIT: 2 },
   'up6 color3 space+2': { MEMBER_UP: 6, MEMBER_COLOR: 3, SPACE_GAIN: 2 },
   // Nov 12 (Cory: "run games on "once a game" and evaluate today, richer, inbetween (one less any) and one less color
-  // than "today". So four."), all with the bots' +1 fix (BOTPLUS1). Richer = members +1 color +1 any, spaces +1;
+  // than "today". So four."), with today's bots (the BOTPLUS1 fix measured no change, Nov 12). Richer = members +1 color +1 any, spaces +1;
   // in between = Richer with 1 less any; one less color = today's +1 color dropped (members 2 any over printed)
-  'n12 today': { PLUS1: 'game', BOTPLUS1: '1' },
-  'n12 richer': { PLUS1: 'game', BOTPLUS1: '1', MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1 },
-  'n12 between': { PLUS1: 'game', BOTPLUS1: '1', MEMBER_UP: 4, MEMBER_COLOR: 2, SPACE_GAIN: 1 },
-  'n12 color-1': { PLUS1: 'game', BOTPLUS1: '1', MEMBER_UP: 2, MEMBER_COLOR: 0 },
+  'n12 today': { PLUS1: 'game' },
+  'n12 richer': { PLUS1: 'game', MEMBER_UP: 5, MEMBER_COLOR: 2, SPACE_GAIN: 1 },
+  'n12 between': { PLUS1: 'game', MEMBER_UP: 4, MEMBER_COLOR: 2, SPACE_GAIN: 1 },
+  'n12 color-1': { PLUS1: 'game', MEMBER_UP: 2, MEMBER_COLOR: 0 },
 };
