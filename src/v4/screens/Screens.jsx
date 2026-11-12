@@ -45,7 +45,7 @@ function Seg({ value, options, onChange, label }) {
 const SET_TIPS = {
   Bots: 'How well the bots play. Harder bots think further ahead.',
   Speed: 'How fast bots move and moves play out. Also in the ☰ menu.',
-  Economy: 'Today uses the printed costs and gains. Richer: members cost more and spaces give more.',
+  Economy: 'Today uses the printed costs and gains. +1 any: members cost 1 more of any color. Richer: members cost more and spaces give more.',
   'Space +1': 'Each space’s “+1 of its color”: to every player who takes it, or only to its first taker, once a game.',
   Table: 'Which colors are on the wheel, one per player.',
 };
