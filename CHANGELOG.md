@@ -2,6 +2,11 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.753 — 2026-11-12
+
+- Borrow's member stays on loan when given away and returns to the shop at round end
+- Deprogrammers removed from Red's deck (Cory, Nov 12)
+
 ## v0.99.752 — 2026-11-12
 
 - Setup: new Economy option, +1 any (every member costs 1 more of any color)
