@@ -21,7 +21,8 @@ export const STRAYS = new Set(['echo.doppel', 'benders.extrahand3', 'benders.big
   'purple.nightowl', // Night Owls, retired Nov 6 (Cory: thought it was replaced)
   'benders.victors', // Victors, retired Nov 6 (Cory: "Victors is bad")
   'red.patriarch', // Patriarch, retired Nov 11 (Clan)
-  'red.movementpenalty']); // Deprogrammers, retired Nov 12 (Assimilators)
+  'red.movementpenalty', // Deprogrammers, retired Nov 12 (Assimilators)
+  'purple.gossip']); // Gossip, retired Nov 12 (Place Keepers)
 export function stray(s, def) {
   const uid = Math.max(...Object.keys(s.cards).map(Number)) + 1;
   s.cards[uid] = { uid, def };

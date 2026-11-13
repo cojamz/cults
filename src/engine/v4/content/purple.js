@@ -537,6 +537,15 @@ export default {
     ticketSteal(ctx, p, id) { const o = ctx.player(id); if (o) ctx.asMember(p, 'Ticket Takers', () => plainSteal(ctx, p, o, 2, 'Ticket Takers')); },
     // pool 10: Scalpers, one resource at a time from the taker
     // pool 13: Switch Places / Seat Swappers
+    // Place Keepers (Cory, Nov 12): rebuild this round's snake with the owner at place k
+    placeKeep(ctx, p, k) {
+      const st = ctx.state, n = st.players.length, base = st.order.slice(0, n).filter(id => id !== p.id);
+      base.splice(k, 0, p.id);
+      const turns = st.queue.filter(t => t.t === 'turn' && t.workerSource === undefined);
+      turns.forEach((t, i) => { const pass = Math.floor(i / n), at = i % n; t.p = (pass % 2 ? [...base].reverse() : base)[at]; });
+      for (let i = 0; i < turns.length && i < st.order.length; i++) st.order[i] = turns[i].p;
+      ctx.log(`${p.name}'s Place Keepers: ${p.name} takes place ${k + 1} in this round's turn order (${base.map(id => st.players[id].name).join(', ')}).`);
+    },
     switchTurn(ctx, p, id, data) {
       const o = ctx.player(id), q = ctx.state.queue, i = nextOwnTurn(ctx, p), j = nextOwnTurn(ctx, o);
       if (!o || i < 0 || j < 0) return;
@@ -1123,8 +1132,27 @@ export default {
         if (/^token/.test(String(globalThis.process?.env?.POCKETWATCH || 'token2'))) return;
         const got = ctx.gain(owner, 'purple', own ? Number(own[1]) : 2); if (got) ctx.log(`${owner.name}'s ${ctx.cloakOr(card, 'Pocket Watch')}: +${got.n} ${got.color}.`); },
     }),
-    m('gossip', 'Gossip', 2, 2, /* Cory, Nov 5 backlog price yes */ 'Whenever a player’s turn is skipped, +1 follower.', { ...old13('busybody'),
+    m('gossip', 'Gossip', 2, 2, /* Cory, Nov 5 backlog price yes */ 'Whenever a player’s turn is skipped, +1 follower.', { retired: true, /* cut, Cory Nov 12 (design/cuts.md) */ ...old13('busybody'),
       onSkip(ctx, owner) { owner.bonus += 1; ctx.log(`${owner.name}'s Gossip: +1 follower.`); },
+    }),
+    // Cory, 2026-11-12 7:09pm Eastern: "Place Keepers is good" (Gossip's open slot). Once the round's turns are queued,
+    // the owner picks their place in this round's turn order; the snake is rebuilt from it. Line Cutters still go first
+    // (Claude's fill-in: you choose among the places after them). Price is Claude's fill-in, Last Callers'. In Gossip's place in the deck list, so seeded test decks keep their order.
+    m('placekeepers', 'Place Keepers', 2, 2, "Round Start: choose your place in this round's turn order.", {
+      onRoundQueued(ctx, owner, card) {
+        const st = ctx.state, n = st.players.length, base = st.order.slice(0, n);
+        if (!base.includes(owner.id)) return;
+        const lead = base.filter(id => id !== owner.id && st.players[id].members.some(u => defById(st.cards[u].def).pickFirst)).length;
+        const snakeLen = st.queue.filter(t => t.t === 'turn' && t.workerSource === undefined).length;
+        const passes = Math.ceil(snakeLen / n);
+        const lastAt = passes % 2 ? n - 1 : 0; // the place that puts down the snake's last minion
+        const opts = [];
+        for (let k = lead; k < n; k++) opts.push({ id: `place:${k}`, kind: 'choice', value: k,
+          label: `${['1st', '2nd', '3rd', '4th'][k]}${k === 0 ? ' (first pick)' : ''}${k === lastAt ? " (places the round's last minion)" : ''}`,
+          hint: k === lastAt ? 2 : k === 0 ? 1 : 0 });
+        if (opts.length > 1) ctx.choose(owner, "Place Keepers: choose your place in this round's turn order.", opts, 'purple.placeKeep');
+      },
+      ...see(info => 2 * endsAhead(info).length), // BOTSEE: the contest's place or first pick, each round left
     }),
     // REPLACE13=busybody (lane F, Nov 4): Gossip's lifted control, A/B only; a number change on a live card is Cory's call
     ...add13(m('busybody', 'Busybody', 3, 2, 'Whenever a player’s turn is skipped, +2 followers.', {

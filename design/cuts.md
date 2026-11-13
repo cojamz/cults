@@ -14,9 +14,9 @@ How to use it:
 ## Cut
 - `red.mob` Mob · 2026-11-11 2:27pm · "yeah put clan in for mob"
 - `red.proselytizer` Proselytizers · 2026-11-11 9:14pm · "have brethren replace proselytizers"
-- `red.movementpenalty` Deprogrammers · 2026-11-12 6:16pm · "why is deprogrammers in the game? didnt we cut" (Nov 8: "I don't like it")
+- `red.movementpenalty` Deprogrammers · 2026-11-12 6:16pm · "why is deprogrammers in the game? didnt we cut" (Nov 8: "I don't like it"); Assimilators in its slot
 - `purple.sleepyheads` Sleepyheads · 2026-11-11 3:45pm · "yes to both" (it matched the Purple Cloak)
-- `purple.gossip` Gossip · 2026-11-12 6:49pm · "Gossip is still in the game as well" (Nov 9: "we can remove the skip stuff")
+- `purple.gossip` Gossip · 2026-11-12 6:49pm · "Gossip is still in the game as well" (Nov 9: "we can remove the skip stuff"); Place Keepers in its slot
 - `silver.debtcollector` Debt Collectors · 2026-11-11 2:29pm · "I don't like debt collectors"
 - `silver.ballroom` Ballroom Dancers · 2026-11-11 2:29pm · "a little too boring and strong"
 - `silver.highsociety` High Society · 2026-11-11 2:29pm · "I don't like High Society and Toastmaster"
