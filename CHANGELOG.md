@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.765 — 2026-11-13
+
+- A pick of several colors (Harvest, Exchange, Sweet Talk) goes in one step in online games too, and AI players make it in one answer; steals still go one at a time
+
 ## v0.99.764 — 2026-11-12
 
 - Every member counts as 1 member and keeps its followers; Dabblers, Revelers and Ghost keep what their card says
