@@ -12,7 +12,7 @@ const arg = (k, d) => { const a = process.argv.find(x => x.startsWith(`--${k}=`)
 
 async function playOne({ g, side, A, B }) {
   const { createGame, applyMove, followers, memberCount, allQuadrantIds } = await import('../src/engine/v4/index.js');
-  const { chooseBotMove, setBorrowFix, setPlus1Fix } = await import('../src/engine/v4/bots.js');
+  const { chooseBotMove, setBorrowFix, setPlus1Fix, setMinionFix } = await import('../src/engine/v4/bots.js');
   const { seededRandom } = await import('../src/engine/v4/rng.js');
   const { sphereVersion } = await import('../src/v4/tables.js');
   const { deckRules } = await import('./lib/deck-choice.mjs');
@@ -37,6 +37,7 @@ async function playOne({ g, side, A, B }) {
       ? pend.options.find(x => x.kind === 'slot' && actionAt(s, x.q, x.i)?.key === f.key) : null;
     setBorrowFix?.(o.borrowFix ?? process.env.BOTBORROW !== '0');
     setPlus1Fix?.(o.plus1Fix ?? process.env.BOTPLUS1 === '1');
+    setMinionFix?.(o.minionFix ?? process.env.BOTMINION !== '0'); // a setting's minionFix: a choice's extra minions count as turns
     // o.leadFix (passed through to Normal's pick): early contest leads count less // a setting's plus1Fix: a claimed space read without its +1 // a setting's borrowFix: Borrow's member counted as discarded at round end
     // o.hoard = { res, round }: that seat keeps every `res` through round `round` (bot audit, Nov 12; Cory on Flaunt: "you
     // should just forego the followers to get the resources"). It decides as if it held none, and pays without it.

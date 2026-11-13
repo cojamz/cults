@@ -329,7 +329,14 @@ function rateOnCopy(state, pend, options, { base = false } = {}) {
   const valueOf = s => {
     const after = abilityTotals(s, places);
     const extra = Object.fromEntries(after.map((v, i) => [i, v - before[i]]));
-    return marginOf(evaluate(s, buys, income, roundLeft, extra), me);
+    // a choice that gives the chooser more minions this round (Extra Hand through Test Drive) gives them more turns and
+    // buys; until Nov 12 the copy's turns were never counted, so +1 minion read as nothing (Cory: on Test Drive "I bet
+    // bots are picking terrible options"; Extra Hand was the best pick in round III and the bots passed it)
+    const more = MINION_FIX ? Math.max(0, (s.players[me].left || 0) - (state.players[me].left || 0)) : 0;
+    if (!more) return marginOf(evaluate(s, buys, income, roundLeft, extra), me);
+    const b2 = buys.slice(), i2 = income.slice();
+    b2[me] += more; i2[me] += more * INCOME[Math.max(1, state.round) - 1]; // a whole turn: not scaled down like turns already counted (a round III turn played out is worth about 10 followers)
+    return marginOf(evaluate(s, b2, i2, roundLeft, extra), me);
   };
   const rated = pool.map(o => {
     let v;
@@ -772,6 +779,8 @@ function seeUse(state, s, me, uid) {
 // in 93% of the rounds it was open and its takers won 20% (7 points under players as wide). With the fix on, the
 // forecast drops members still on loan this round (core endRound discards them before scoring).
 let LEAD_FIX = false;
+let MINION_FIX = globalThis.process?.env?.BOTMINION !== '0';
+export const setMinionFix = on => { MINION_FIX = !!on; };
 const NORMAL_LEAD = globalThis.process?.env?.BOTLEAD !== '0'; // on for Normal and Easy since Nov 12
 export const setLeadFix = on => { LEAD_FIX = !!on; };
 let PLUS1_FIX = globalThis.process?.env?.BOTPLUS1 === '1';
