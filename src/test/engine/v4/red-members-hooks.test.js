@@ -17,8 +17,8 @@ describe('new Red member hooks', () => {
       expect(defById(`red.${id}`)).toMatchObject({ s: s + COLOR_PART, w: w + EXTRA_WILD - COLOR_PART, f }); // Nov 2: 1 of the wild is paid in the member's color
     }
     const s = fixture({ members: [['red.mob', 'red.panel']] });
-    expect(memberCount(s, s.players[0])).toBe(7); // Mob 4 (worth 4, Nov 1, 2:16pm), Panel 3
-    expect(countMembersOfColor(s, s.players[0], 'red')).toBe(7);
+    expect(memberCount(s, s.players[0])).toBe(2); // Mob (worth 4) and Panel (worth 3) count 1 member each (Cory, Nov 12)
+    expect(countMembersOfColor(s, s.players[0], 'red')).toBe(2);
     expect(typeof defById('red.mob').onRoundEnd).toBe('function'); // Round End since Nov 4 (cards-red covers what it pays)
   });
 

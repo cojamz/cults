@@ -356,7 +356,7 @@ export function MemberCard({ state, uid, def: d0 = null, me = null, onFace = fal
   const copied = card && (card.copy || card.ability) ? (() => { try { return defById(card.copy || card.ability); } catch { return null; } })() : null;
   const ability = String((copied || d).text || '').replace(/^Worth \d+ followers?\.\s*/i, '').replace(/^(Free\.\s*)?No effect\.?$/i, '').trim();
   const worth = d.f != null ? d.f : 1;
-  const weight = uid != null ? memberWeight(state, uid) : Math.max(d.n || 1, d.f || 1);
+  const weight = uid != null ? memberWeight(state, uid) : (d.n ?? 1);
   const sphere = onTable(state, d) ? (() => { try { return quadrant(d.quadrant).resource; } catch { return 'colorless'; } })() : 'colorless';
   // a discount on you (the shop face shows the price, the list price struck beside it): its reason
   const paid = where === 'In the shop' && me != null && state.players[me] ? paidParts(state, state.players[me], uid, d) : null;

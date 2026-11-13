@@ -245,11 +245,11 @@ describe('Purple candidates', () => {
     const { s: two } = recruitTwice('purple.gatekeepers', one);
     expect(named(two, 'Gatekeepers')).toEqual([]);
     let s = sceneQ({ quadrants: Q, members: [['market.shopaholic'], ['purple.gatekeepers']], res: [RICH, {}],
-      shop: ['market.restocker', 'market.stylist'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
+      shop: ['benders.dabblers', 'market.stylist'], queue: [{ t: 'turn', p: 0 }, { t: 'turn', p: 1 }, { t: 'turn', p: 0 }] });
     s = take(s, 'purple.holdup');
     s = move(s, `card:${uidOf(s, 'market.stylist', 'shop')}`);
     expect(named(s, 'Gatekeepers')).toEqual([]);
-    s = move(s, `card:${uidOf(s, 'market.restocker', 'shop')}`); // counts as 2: 3 this turn
+    s = move(s, `card:${uidOf(s, 'benders.dabblers', 'shop')}`); // Dabblers counts as 2: 3 this turn
     expect(named(s, 'Gatekeepers')).toEqual(["P2's Gatekeepers: P1 recruited 3 or more members this turn.", "P2's Gatekeepers: P1 skips their next turn."]);
   });
 });

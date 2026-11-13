@@ -98,9 +98,10 @@ describe('combo tester (Nov 11 spaces and members)', () => {
     expect(s.players[0].res.green - green).toBe(2); // Busker's On Recruit, for the buyer
   });
 
-  it('Modest Means counts Buskers and Dabblers as two members each', () => {
+  it('Modest Means counts Dabblers as two members (its printed count) and Buskers as one (Cory, Nov 12)', () => {
     const { s } = go('modest-buskers', { quads: ['red', 'echo', 'yellow', 'trading'], n: 3, turns: [0, 1, 2], members: [['red.clan'], ['echo.songrequest'], ['benders.dabblers']] }, [/Modest Means/]);
-    expect(s.players[0].res.white).toBeGreaterThanOrEqual(4); // +2, +1 per rival with more members (both count 2 > 1)
+    expect(s.players[0].res.white).toBeGreaterThanOrEqual(3); // +2, +1 per rival with more members: Dabblers 2 > 1; Buskers 1 is not more
+    expect(s.log.join('\n')).toMatch(/Modest Means: 1 rival with more members/);
   });
 
   it('Late Shift as a 4th minion in round III: up to 8, so an 8 is free and a 9 is not', () => {

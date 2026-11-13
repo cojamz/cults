@@ -41,7 +41,8 @@ it('flies only the closing move\'s own followers, from their own sources, before
   // seed 14 for 7 since bots count Borrow's member as discarded at round end (Nov 12): seed 7's round I closing has no round-end line now
   // seed 13 for 9 since Late Shift took Trending's place (Nov 11): seed 9's round I now closes on a Borrow discard, as seed 5's did
   // seed 15 for 10 since Brethren and Purists (Nov 11): seed 10's round II closing has no round-end line now
-  for (const seed of [1, 13, 3, 4, 11, 6, 14, 15]) {
+  // seed 16 for 1 since every member counts 1 (Cory, Nov 12): seed 1's round II now closes on a Borrow discard, as seed 5's did
+  for (const seed of [16, 13, 3, 4, 11, 6, 14, 15]) {
     for (const { prev, next } of closings(seed)) {
       const line = newLogLines(prev, next).filter(isRoundEnd).pop();
       expect(line, `seed ${seed} round ${prev.round}`).toBeTruthy();

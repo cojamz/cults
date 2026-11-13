@@ -15,10 +15,10 @@ const cheapest = (s, max, pred = () => true) => s.pile.filter(u => price(s, u) <
 
 describe('Clan Elders (Red)', () => {
   it('Game End: +2 followers per member of your biggest color (a member counting 3 counts 3)', () => {
-    let s = sceneQ({ quadrants: ['red', 'market', 'purple', 'yellow'], members: [['red.clanelders', 'red.panel', 'market.stylist', 'market.onlooker']], queue: [{ t: 'finish' }] });
+    let s = sceneQ({ quadrants: ['red', 'market', 'purple', 'silver'], members: [['red.clanelders', 'red.panel', 'market.stylist', 'market.onlooker', 'silver.revelers']], queue: [{ t: 'finish' }] });
     expect(s.over).toBe(true);
-    // red: Clan Elders 1 + Panel 3 = 4 members; blue: 2
-    expect(s.players[0].final.parts.join(' ')).toMatch(/Clan Elders \+8/);
+    // red: Clan Elders 1 + Panel 1 = 2 (Panel, worth 3, counts 1: Cory, Nov 12); blue: 2; silver: Revelers 3
+    expect(s.players[0].final.parts.join(' ')).toMatch(/Clan Elders \+6/);
   });
 });
 
@@ -140,7 +140,7 @@ describe('Odds and Ends (Yellow, round I)', () => {
 
 describe('Hermits (White)', () => {
   it('Round End: if you have 3 or fewer members, +3 followers', () => {
-    for (const [extra, want] of [[['market.stylist', 'market.onlooker'], 3], [['market.stylist', 'red.panel'], 0]]) {
+    for (const [extra, want] of [[['market.stylist', 'market.onlooker'], 3], [['market.stylist', 'benders.dabblers'], 0]]) { // Hermits + Stylist + Dabblers (2) = 4 members
       let s = still({ quadrants: ['trading', 'red', 'market', 'yellow'], members: [['trading.hermits', ...extra]] });
       s = go(s, [{ t: 'allPlaced' }]);
       expect(s.players[0].bonus).toBe(want);

@@ -10,7 +10,7 @@ process.env.REPLACE11 = '1';
 process.env.MEMBER_UP = '2';
 const { createGame, applyMove, contestTable } = await import('../../../engine/v4/core.js');
 const { quadrant } = await import('../../../engine/v4/content/index.js');
-const { table } = await import('./cards-helpers-b.js');
+const { table, uidIn } = await import('./cards-helpers-b.js');
 const { useRetired } = await import('./helpers.js');
 useRetired(['red.turnout', 'silver.sweetnothings', 'yellow.housewarming']);
 delete process.env.REPLACE11;
@@ -312,8 +312,9 @@ describe('Blue contest settings (contestFix.market)', () => {
 });
 
 describe('Green contest settings (contestFix.green)', () => {
-  const greenRow = (fix, members) => {
+  const greenRow = (fix, members, prep = () => {}) => {
     const s = table(['red', 'echo'], { n: 2, members, rules: { contests: 'byColor', contestFix: { green: fix } } });
+    prep(s);
     return contestTable(s).find(c => c.qid === 'echo');
   };
   it("'onrecruit' counts the cards that say On Recruit", () => {
@@ -326,10 +327,12 @@ describe('Green contest settings (contestFix.green)', () => {
     const s = table(['red', 'echo'], { n: 2, res: [{ green: 1 }, { green: 3 }], rules: { contests: 'byColor', contestFix: { green: 'held' } } });
     expect(contestTable(s).find(c => c.qid === 'echo').winners).toEqual([1]);
   });
-  it("'memberscards' counts each green card once (Fan Club counts as 3 under 'members', 1 here)", () => {
-    const m = [['echo.mirror'], ['echo.understudy', 'echo.hourglass']];
-    expect(greenRow('members', m).winners).toEqual([0]);
-    const c = greenRow('memberscards', m);
+  it("'memberscards' counts each green card once (a Doppelganger copying Revelers counts as 3 under 'members', 1 here)", () => {
+    // Every member counts 1 (Cory, Nov 12), so only a printed count tells the two apart: Revelers' "Counts as 3 members."
+    const m = [['echo.doppel'], ['echo.understudy', 'echo.hourglass']];
+    const prep = s => { s.cards[uidIn(s, 'echo.doppel', 0)].copy = 'silver.revelers'; };
+    expect(greenRow('members', m, prep).winners).toEqual([0]);
+    const c = greenRow('memberscards', m, prep);
     expect(c.label).toBe('Most minions on green, plus green members');
     expect(c.winners).toEqual([1]);
   });

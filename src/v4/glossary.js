@@ -15,7 +15,7 @@ export const GLOSSARY = [
   { key: 'loose followers', word: 'Loose followers', match: /\bloose followers?\b/,
     def: 'Followers you bought or won, not the ones your members are worth (and never yourself). Only loose followers can be taken away.' },
   { key: 'member', word: 'Member', link: false, match: /\bmembers?\b/,
-    def: 'A card you recruit. It counts as 1 member, or the number its card shows beside the member mark, and is worth that many followers. Bonus followers never add members. Most cards have an ability.' },
+    def: 'A card you recruit. It counts as 1 member (unless its card says otherwise, as Dabblers does) and is worth the followers beside its member mark. Bonus followers never add members. Most cards have an ability.' },
   { key: 'worth', word: 'Worth', match: /\bworth \d+ followers?\b/i,
     def: 'How many followers a member counts for while you hold it: the same as its member count, the number beside the member mark.' },
   { key: 'full set', word: 'Full set', match: /\bfull sets?\b/,

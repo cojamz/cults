@@ -220,9 +220,8 @@ describe('Minimalists: "Game End: +2 followers per member you have costing 8 or 
     expect([0, 1, 2, 3].map(i => part(s, i))).toEqual([['Minimalists +2'], ['Minimalists +6'], [], ['Minimalists +2']]);
   });
 
-  // QUESTION (not changed): Mob is worth 4 and "counts as 4 members everywhere" (Cory, Oct 31: "member count = follower
-  // count, for members"; Heiresses' "per member you have" reads it that way). Minimalists counts each card once, so Mob
-  // pays +2, not +8. Pinned as built until Cory says which.
+  // Settled (Cory, Nov 12): every member counts as 1 member whatever it's worth, so Mob (worth 4) is one member here
+  // and everywhere; Minimalists pays +2 for it.
   it('Mob (worth 4, cost 14) counts as one member here: Minimalists + Mob = +4', () => {
     const { s } = go('mm-mob', { quads: W, queue: FIN, members: [['trading.minimalists', 'red.mob']] }, []);
     expect(part(s, 0)).toEqual(['Minimalists +4']);

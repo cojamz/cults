@@ -833,7 +833,7 @@ const silver = {
     }),
     // Cory (2026-10-14): replaces Feast Hall. Members are people or groups, and a hall is lots of people: it counts as
     // 3 members (n: 3) everywhere members are counted. Same cost for now; the fair-price screen checks it.
-    m('revelers', 'Revelers', 3, 1, 'Counts as 3 members.', { n: 3 }),
+    m('revelers', 'Revelers', 3, 1, 'Counts as 3 members.', { n: 3, ownCount: true }),
     // pays when recruited too (Claude under Cory's go-with-your-gut, from the dead-window audit): blank if recruited in round III
     m('heir', 'Heir', 4, 2, 'On Recruit: +1 silver per member you have. Round III Start: +1 silver per member you have.', {
       onRecruited(ctx, owner) { ctx.gain(owner, S, ctx.memberCount(owner)); },

@@ -495,7 +495,7 @@ const members = [
     },
   }),
   // Cory, 2026-10-28: Dabblers (Turncoat, then Groupies), 3, "give 2 members, and count as every color"
-  m('dabblers', 'Dabblers', null, 0, 2, 'Counts as 2 wild members.', { n: 2, everyColor: true, ...old9('benders.dabblers') }),
+  m('dabblers', 'Dabblers', null, 0, 2, 'Counts as 2 wild members.', { n: 2, ownCount: true, everyColor: true, ...old9('benders.dabblers') }),
   // REPLACE9 bot test (Members C, Nov 4, batch bC2: paper 17 vs Dabblers' 12, the guests' set 12 -> 14): Dabblers' place,
   // the single version. 2 any as a player sees it, worth 1, counts as 1 member of every color on the table.
   ...add9(m('dabbler', 'Dabbler', null, 0, 1, 'Counts as a member of every color.', { everyColor: true })),

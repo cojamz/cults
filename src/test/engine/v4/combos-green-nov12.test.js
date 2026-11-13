@@ -225,9 +225,9 @@ describe('Die-Hards: "Game End: if you have the most green members, +6 followers
     expect(part(s, 0)).toEqual([]);
   });
 
-  it('Fan Club (worth 3) counts as 3 green members (member count = follower count, Oct 31): beats Die-Hards and Copyist', () => {
+  it('Fan Club (worth 3) counts as 1 green member (Cory, Nov 12: every member counts 1): Die-Hards and Copyist beat it', () => {
     const { s } = go('diehards-fanclub', { quads: Q, queue: FIN, members: [['echo.diehards', 'echo.copyist'], ['echo.mirror']] }, []);
-    expect(part(s, 0)).toEqual([]);
+    expect(part(s, 0)).toEqual(['Die-Hards +6']);
   });
 
   it('Doppelganger copying Die-Hards: each card pays, +12', () => {

@@ -163,9 +163,9 @@ describe('Green table action boundaries', () => {
 });
 
 describe('Green table member boundaries', () => {
-  it('Green contests count held green resources while Agents retains its member quantity', () => {
+  it('Green contests count held green resources; Agents counts as 1 member (Cory, Nov 12)', () => {
     const s = scene({ members: [['echo.agents']], res: [{}, { green: 40 }] });
-    expect(memberCount(s, s.players[0])).toBe(2);
+    expect(memberCount(s, s.players[0])).toBe(1);
     expect(echo.scoring.score(contextFor(s), s.players[0])).toBe(0);
     expect(echo.scoring.score(contextFor(s), s.players[1])).toBe(40);
     expect(echo.scoring.label).toBe('Most green');
@@ -188,10 +188,10 @@ describe('Green table member boundaries', () => {
     expect(ids(s)).not.toContain('use:' + uidOf(s, 'echo.hourglass', 0));
     expect(R(s).gold).toBe(2);
   });
-  it('an Agents copy retains its printed two-member/follower quantity', () => {
+  it('an Agents copy keeps its printed 2 followers and counts as 1 member (Cory, Nov 12)', () => {
     const s = scene({ members: [['echo.doppel']] });
     s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'echo.agents';
-    expect(memberCount(s, s.players[0])).toBe(2);
+    expect(memberCount(s, s.players[0])).toBe(1);
     expect(followers(s, s.players[0])).toBe(3);
   });
   it('Tribute Band remains spent across a round change', () => {
@@ -203,9 +203,9 @@ describe('Green table member boundaries', () => {
     s.queue = [{ t: 'round', r: 2 }]; s = resume(s);
     expect(s.cards[uid].used).toBe(true);
   });
-  it('Chronicler counts itself and weighted green members, ignoring non-green members', () => {
+  it('Chronicler counts itself and green members (1 each), ignoring non-green members', () => {
     const s = scene({ members: [['echo.chronicler', 'echo.agents', 'red.twins']], res: [{ green: 80 }], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.parts).toContain('Chronicler +3');
+    expect(s.players[0].final.parts).toContain('Chronicler +2'); // Chronicler and Agents
   });
 });
 

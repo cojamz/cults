@@ -233,10 +233,10 @@ describe('Magenta members', () => {
     s = take(s, 'thieves.tipoff'); // Stash: +3 magenta
     s = move(s, cardOpt(s, 'thieves.grifter', 'shop'));
     while (s.pending?.kind === 'choose') s = move(s, s.pending.options[0].id);
-    // 6 members (Triplets counts as three): take 3, split freely among rivals (Cory, 2026-10-18: the "richest rival" sentence went)
+    // 4 members (Triplets counts as one: Cory, Nov 12): take 2, split freely among rivals (Cory, 2026-10-18: the "richest rival" sentence went)
     expect(R(s).magenta).toBe(3); // 6 + Stash's 3, paid 6
-    expect(R(s).gold + R(s).red).toBe(3);
-    expect(R(s, 1).gold + R(s, 2).red).toBe(3);
+    expect(R(s).gold + R(s).red).toBe(2);
+    expect(R(s, 1).gold + R(s, 2).red).toBe(4);
     expect(named(s, 'Grifter').length).toBe(1);
   });
 
@@ -355,6 +355,6 @@ describe('Magenta members', () => {
 
   it('Kingpin: game end, +1 follower per magenta member you have (itself included)', () => {
     const s = table(Q, { res: [{ magenta: 7 }], members: [['thieves.kingpin', 'thieves.crew', 'red.twins']], shop: ROW, queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.parts).toContain('Kingpin +3');
+    expect(s.players[0].final.parts).toContain('Kingpin +2'); // Kingpin and Crew, each 1 member (Cory, Nov 12)
   });
 });

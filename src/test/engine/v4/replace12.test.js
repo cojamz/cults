@@ -76,8 +76,9 @@ describe('Foundling: "Round Start: if you have the fewest members (ties count), 
   });
 
   it('a rival with fewer members: nothing (members counted as the table counts them)', () => {
-    const s = table(['red', 'market', 'trading', 'yellow'], { round: 1, members: [['red.foundling', 'red.volunteer'], ['red.loyalists']], queue: [{ t: 'round', r: 2 }] });
-    // Loyalists counts as 2, so P2 has 2 and P1 has 2: a tie, it fires; with Foster Parents (counts 2) P1 has 3
+    const s = table(['red', 'market', 'trading', 'yellow'], { round: 1, members: [['red.foundling', 'red.volunteer'], ['benders.dabblers']], queue: [{ t: 'round', r: 2 }] });
+    // Dabblers counts as 2 (its printed count), so P2 has 2 and P1 has 2: a tie, it fires; with Foster Parents P1 has 2
+    // against P2's 1 (every other member counts 1: Cory, Nov 12)
     expect(named(s, 'Foundling').length).toBe(1);
     const t = table(['red', 'market', 'trading', 'yellow'], { round: 1, members: [['red.foundling', 'red.fosterparents'], ['red.volunteer']], queue: [{ t: 'round', r: 2 }] });
     expect(t.players[0].members.length).toBe(2);

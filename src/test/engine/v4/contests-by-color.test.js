@@ -114,7 +114,7 @@ describe('By color: Red Most members of one color, Blue Most members (Cory, Nov 
     expect(r.score(ctx, s.players[0])).toBe(2); // two red cards (Mob counts 1 here)
     expect(r.score(ctx, s.players[1])).toBe(2); // Party Crasher and Dabblers: two grey cards
     expect(b.label).toBe('Most members');
-    expect(b.score(ctx, s.players[0])).toBeGreaterThan(3); // Mob counts 4 in Most members
+    expect(b.score(ctx, s.players[0])).toBe(3); // three cards; Mob, worth 4, counts 1 member (Cory, Nov 12)
   });
 });
 

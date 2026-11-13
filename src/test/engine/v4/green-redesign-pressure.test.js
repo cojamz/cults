@@ -159,11 +159,11 @@ describe('Green redesign: copy observers and anti-copy members', () => {
     expect(s.players[1].res).toMatchObject({ gold: 0, green: 1 });
     s = go(s, 'echo.refrain');
     expect(s.players[0].res).toMatchObject({ gold: 4, green: 1 });
-    expect(memberCount(s, s.players[0])).toBe(2);
+    expect(memberCount(s, s.players[0])).toBe(1); // Agents, worth 2, counts 1 member (Cory, Nov 12)
     expect(followers(s, s.players[0])).toBe(3);
   });
 
-  it('a copied Agents blocks copying and copied printed quantities remain effective', () => {
+  it('a copied Agents blocks copying and keeps the copied worth (2 followers, 1 member)', () => {
     const agents = member('Agents');
     let s = table(Q, { members: [['echo.doppel']], queue: turns(0, 1, 0) });
     s.cards[uidIn(s, 'echo.doppel', 0)].copy = agents;
@@ -172,7 +172,7 @@ describe('Green redesign: copy observers and anti-copy members', () => {
     expect(targets(ctx, s.players[1], 'any')).toEqual([]);
     s = go(s, 'echo.echo');
     expect(s.players[1].res.gold).toBe(0);
-    expect(memberCount(s, s.players[0])).toBe(2);
+    expect(memberCount(s, s.players[0])).toBe(1);
     expect(followers(s, s.players[0])).toBe(3);
   });
 
@@ -250,7 +250,7 @@ describe('Green redesign: copy observers and anti-copy members', () => {
     s = move(take(s, 'red.take'), memberOption(s, 'echo.doppel'));
     s = move(saved(s), `card:${uidIn(s, 'echo.impostor', 0)}`);
     expect(s.cards[uidIn(s, 'echo.doppel', 0)].copy).toBe('echo.agents');
-    expect(memberCount(s, s.players[0])).toBe(4);
+    expect(memberCount(s, s.players[0])).toBe(2); // two Agents copies, 1 member each (Cory, Nov 12)
     expect(followers(s, s.players[0])).toBe(5);
     expect(targets(contextFor(s), s.players[1], 'any')).toEqual([]);
   });

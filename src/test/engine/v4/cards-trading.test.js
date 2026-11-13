@@ -48,8 +48,8 @@ describe('White actions', () => {
     expect(named(s, 'Modest Means')).toContain("P1's Modest Means: 0 rivals with more members, +2 white.");
     s = take(table(Q, { n: 4, members: [[], ['red.intern'], ['red.bigfamily'], ['red.twins']] }), 'trading.modestmeans');
     expect(R(s).white).toBe(5);
-    s = take(table(Q, { n: 4, members: [['red.intern'], ['red.twins'], ['red.bigfamily'], []] }), 'trading.modestmeans');
-    expect(R(s).white).toBe(4); // 2 + 2: P2 and P3 each count as more members than P1's one card; P4 has none
+    s = take(table(Q, { n: 4, members: [['red.intern'], ['red.twins', 'red.volunteer'], ['benders.dabblers'], []] }), 'trading.modestmeans');
+    expect(R(s).white).toBe(4); // 2 + 2: P2 (2 cards) and P3 (Dabblers counts 2) have more members than P1's one; P4 has none
   });
 
   it('Splurge: a 12-cost Tycoon pays +6 followers, named; Brokers adds 2 in the same line', () => {
@@ -106,8 +106,8 @@ describe('White members', () => {
 
   it('Heiresses: once per game, +1 white per member (named)', () => {
     const s = use(table(Q, { members: [['trading.heiress', 'red.twins', 'red.bigfamily']], shop: ROW, ...buy }), 'trading.heiress');
-    expect(R(s).white).toBe(9); // Heiresses 2 (worth 2, Nov 1), Triplets 3, Big Family 4
-    expect(named(s, 'Heiresses')).toEqual(['P1 used Heiresses: +9 white.']);
+    expect(R(s).white).toBe(3); // Heiresses, Triplets, Big Family: 1 member each (Cory, Nov 12)
+    expect(named(s, 'Heiresses')).toEqual(['P1 used Heiresses: +3 white.']);
   });
 
   it('Bulk Buyer: buying 5 followers gives 6 (named); buying 1 gives 1', () => {

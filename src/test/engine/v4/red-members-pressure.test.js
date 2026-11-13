@@ -98,13 +98,13 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(['red.bigfamily', 'red.intern', 'red.drive', 'red.sponsor', 'red.crowd', 'red.reserve'].every(id => CUT.has(id))).toBe(true);
   });
 
-  it('Panel and Mob printed followers also count as members, including Mob itself in its bonus', () => {
+  it('Panel and Mob count as 1 member each and keep their printed followers (Cory, Nov 12)', () => {
     const s = table(Q, { members: [['red.panel', 'red.mob', 'red.twins', 'red.volunteer']] });
     const ctx = contextFor(s), mob = ctx.membersOf(s.players[0]).find(c => c.def.id === 'red.mob');
-    expect(memberCount(s, s.players[0])).toBe(11); // Panel 3, Mob 4 (Nov 1, 2:16pm), Triplets 3, Volunteer 1 (member count = follower count, Nov 1)
+    expect(memberCount(s, s.players[0])).toBe(4); // Panel, Mob, Triplets, Volunteer: 1 member each (Cory, Nov 12: every member counts 1)
     expect(followers(s, s.players[0])).toBe(12); // leader + printed bodies
     expect(mob.def.onGameEnd).toBeUndefined(); // Round End since Nov 4: it compares this count with each rival's
-    expect(ctx.countMembersOfColor(s.players[0], 'red')).toBe(11);
+    expect(ctx.countMembersOfColor(s.players[0], 'red')).toBe(4);
   });
 
   it('Panel save/load retains mode and exact swap targets without inherent action red', () => {
@@ -164,7 +164,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(s.pending?.kind).not.toBe('choose');
     if (target !== 'red.panel') {
       s.queue = [{ t: 'round', r: 3 }]; s = resume(s);
-      expect(s.players[0].res[target === 'red.host' ? 'red' : 'green']).toBe(target === 'red.host' ? 4 : 3); // Impostors is 2 members (Oct 30)
+      expect(s.players[0].res[target === 'red.host' ? 'red' : 'green']).toBe(target === 'red.host' ? 2 : 3); // Host's copy: 3 members (Greeters, Triplets, Impostors; 1 each, Cory Nov 12), +1 red
     }
   });
 
@@ -210,7 +210,7 @@ describe('Red members: bounded acquisition and body invariants', () => {
     expect(s.pending.prompt).toBe('Panel: Promote or Demote?');
     expect(s.queue.find(t => t.t === 'choose')?.data?.excludeUid).toBe(uidIn(s, 'echo.doppel', 0));
     expect(s.cards[uidIn(s, 'echo.doppel', 0)].copy).toBe('red.panel');
-    expect(memberCount(s, s.players[0])).toBe(6);
+    expect(memberCount(s, s.players[0])).toBe(2); // Panel and its copy, 1 member each (Cory, Nov 12)
   });
 
   it('Panel cannot swap itself after reload, while promoting another member into Doppelganger terminates normally', () => {
