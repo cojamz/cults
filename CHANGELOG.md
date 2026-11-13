@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.768 — 2026-11-13
+
+- Party Gifts and Kingmakers: click rivals to set who gets the silver, then Give hands it all out at once; swaps and several grey +1 colors in a row also go in one step
+
 ## v0.99.767 — 2026-11-13
 
 - Heist steals 3 followers and 3 resources (Cory, Nov 13); Spree's second pick lists only members you can still pay for
