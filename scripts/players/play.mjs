@@ -90,7 +90,7 @@ function callModel(seat, prompt, label) {
     const cwd = '/tmp/pa-cwd'; fs.mkdirSync(cwd, { recursive: true });
     const p = spawn('claude', args, { cwd, stdio: ['pipe', 'pipe', 'pipe'] });
     let out = '', err = '';
-    const timer = setTimeout(() => p.kill('SIGKILL'), 300_000);
+    const timer = setTimeout(() => p.kill('SIGKILL'), 75_000);
     p.stdout.on('data', d => { out += d; }); p.stderr.on('data', d => { err += d; });
     p.on('close', () => {
       clearTimeout(timer);
@@ -157,6 +157,12 @@ async function decide(seat) {
   const fresh = clean(ex('wait', DIR, String(seat), '--max', '1', '--full'));
   const legal = [...fresh.matchAll(/^\s+\[(\d+)\]/gm)].map(m => Number(m[1]));
   if (!legal.length) throw new Error(`seat ${seat}: no options in view\n${fresh}`);
+  // one legal option: nothing to decide, so no model call (a table would just do it)
+  if (legal.length === 1) {
+    ex('move', DIR, String(seat), String(legal[0]), '--why', '(only option)');
+    console.log(`r${s.round} ${NAMES[seat]}: only option`);
+    return;
+  }
   const prompt = `${memory(seat)}\nTHE TABLE NOW\n${fresh}\n\nYour legal options are the numbers in brackets above: ${legal.join(', ')}.`;
   const a = await ask(seat, prompt, `move r${s.round} m${s.moves}`, x => (!legal.includes(Number(x.option)) ? `${x.option} is not one of ${legal.join(', ')}.` : typeof x.why !== 'string' || !x.why.trim() ? 'why is missing.' : ''));
   const res = ex('move', DIR, String(seat), String(a.option), '--why', a.why);
