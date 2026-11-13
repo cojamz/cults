@@ -361,7 +361,7 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
           )}
           {meh && row && row.spoiled != null && (
             <span key={`meh${step}`} className="reckon-meh" data-spoil-cameo={row.spoiled} aria-hidden="true">
-              <span className="rm-fig"><Sprite id={['benders.spoilsports', 'spoilsport']} kind="member" sphere="colorless" size={56} /></span>
+              <span className="rm-fig"><Sprite id={['benders.spoilsports', 'spoilsport']} kind="member" sphere="colorless" size={40} /></span>
               <span className="rm-say">meh.</span>
             </span>
           )}

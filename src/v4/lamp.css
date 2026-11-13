@@ -562,12 +562,14 @@ h1,h2,h3{font-family:var(--serif)}
 /* (said, it's ink: grey on cream was too faint to read; frame review, Nov 7) */
 .lt-reckon .reckon-head .reckon-verdict.none.on{color:var(--paper-ink);font-weight:700}
 /* Spoilsport's cameo on a contest it spoiled (Cory, Nov 12: "a little cameo in the round end animation", with a mean
-   "meh"): it pops up over the card's top left corner, shakes its head once, says "meh.", and leaves with the rim */
-.lt-reckon .reckon-meh{position:absolute;left:-22px;top:-46px;display:flex;align-items:flex-start;gap:2px;pointer-events:none;z-index:2}
-.lt-reckon .reckon-meh .rm-fig{display:block;filter:drop-shadow(0 4px 6px rgba(0,0,0,.45));transform-origin:50% 100%;
+   "meh"; then "should show up within the end of round animation box"): it pops up inside the card's bottom left
+   corner, shakes its head once, says "meh.", and leaves with the rim */
+.lt-reckon .reckon-meh{position:absolute;left:14px;bottom:6px;display:flex;align-items:center;gap:4px;pointer-events:none;z-index:2}
+.lt-reckon .reckon-meh .rm-fig .sprite{width:40px!important;height:40px!important;border-radius:6px}
+.lt-reckon .reckon-meh .rm-fig{display:block;line-height:0;transform-origin:50% 100%;
   animation:mehpop calc(.22s * var(--mo-slow, 1)) cubic-bezier(.3,1.6,.5,1) both,mehshake calc(.36s * var(--mo-slow, 1)) ease-in-out calc(.2s * var(--mo-slow, 1)) 1}
-.lt-reckon .reckon-meh .rm-say{margin-top:2px;padding:3px 10px 4px;border-radius:12px 12px 12px 3px;background:var(--paper);color:var(--paper-ink);
-  font:800 16px/20px var(--sans);box-shadow:0 0 0 2px var(--paper-ink-2),0 6px 12px rgba(0,0,0,.4);
+.lt-reckon .reckon-meh .rm-say{padding:2px 9px 3px;border-radius:12px 12px 12px 3px;background:var(--paper);color:var(--paper-ink);
+  font:800 15px/19px var(--sans);box-shadow:0 0 0 2px var(--paper-ink-2),0 3px 6px rgba(0,0,0,.25);
   animation:mehsay calc(.16s * var(--mo-slow, 1)) ease-out calc(.12s * var(--mo-slow, 1)) both}
 @keyframes mehpop{from{opacity:0;transform:translateY(18px) scale(.6) rotate(-10deg)}to{opacity:1;transform:none}}
 @keyframes mehshake{25%{rotate:-7deg}50%{rotate:6deg}75%{rotate:-4deg}}
