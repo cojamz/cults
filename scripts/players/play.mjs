@@ -140,7 +140,7 @@ const FIX = /\b(should (cost|be cheaper|be pricier|give|pay|read|say)|cost(s|ing
 
 async function roundNotes(seat, r) {
   const exp = kinds[seat] === 'exp';
-  const v = clean(ex('view', DIR, String(seat)));
+  const v = clean(ex('view', DIR, String(seat), '--full'));
   const prompt = `${memory(seat)}\nTHE TABLE NOW\n${v}\n\nRound ${ROMAN[r]} just ended. Before you play on, write your round notes in 2 to 4 sentences: what you were going for, what felt good, what felt bad or pointless (name the spaces, members and moments).${exp ? '' : ' Also what you learned about how to play this game, so you play better next round.'} Observations only, never how to fix anything.\nAnswer with only: {"notes": "<text>"}`;
   const a = await ask(seat, prompt, `round notes ${ROMAN[r]}`, x => (typeof x.notes === 'string' && x.notes.length > 20 ? '' : 'notes must be a few sentences.'));
   notes[seat].rounds[r] = a.notes; saveNotes();
@@ -154,7 +154,7 @@ async function decide(seat) {
   const owed = meta.diaryOn && s.round > 1 && !meta.diary?.[seat]?.[s.round - 1] ? s.round - 1 : 0;
   if (owed) { await roundNotes(seat, owed); return decide(seat); }
   // "since you last looked" comes from a fresh view
-  const fresh = clean(ex('wait', DIR, String(seat), '--max', '1'));
+  const fresh = clean(ex('wait', DIR, String(seat), '--max', '1', '--full'));
   const legal = [...fresh.matchAll(/^\s+\[(\d+)\]/gm)].map(m => Number(m[1]));
   if (!legal.length) throw new Error(`seat ${seat}: no options in view\n${fresh}`);
   const prompt = `${memory(seat)}\nTHE TABLE NOW\n${fresh}\n\nYour legal options are the numbers in brackets above: ${legal.join(', ')}.`;
@@ -175,7 +175,7 @@ async function decide(seat) {
 
 async function debrief(seat) {
   const exp = kinds[seat] === 'exp';
-  const v = clean(ex('view', DIR, String(seat)));
+  const v = clean(ex('view', DIR, String(seat), '--full'));
   const base = `${memory(seat)}\nALL YOUR FEEL NOTES\n${notes[seat].feel.map(x => `- Round ${ROMAN[x.round]} (${x.at}): ${x.text}`).join('\n') || '(none)'}\n\nTHE TABLE AT THE END\n${v}\n\nThe game is over. Write your debrief for the designer, as a ${exp ? 'experienced' : 'first-time'} player after a game night. Plain words; name every space, member and artifact you mention.\n- result: 2 to 4 sentences on why you won or lost and the moment that decided it.\n- good: what felt good (moments, spaces, members, decisions), each with why.\n- bad: what felt bad, pointless or confusing, each with why.\n- change: what you would want the designer to look at: name the thing and say what is wrong with it as you felt it at the table. Never say how to fix it: no new numbers, prices, limits or card text.\n- again: would you play again, and what would bring you back or keep you away (1 to 2 sentences).\nAnswer with only: {"result": "...", "good": ["..."], "bad": ["..."], "change": ["..."], "again": "..."}`;
   const shape = x => (typeof x.result === 'string' && Array.isArray(x.good) && Array.isArray(x.bad) && Array.isArray(x.change) ? '' : 'the JSON needs result, good, bad, change and again.');
   let a = await ask(seat, base, 'debrief', shape);

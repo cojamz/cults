@@ -22,6 +22,7 @@ import {
   quadrant, shopSize, TIERS, roundWorkers, openSlots,
 } from '../src/engine/v4/index.js';
 import { scoringOf, plus1Open } from '../src/engine/v4/core.js';
+import { discardOf } from '../src/engine/v4/discard.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
@@ -227,7 +228,14 @@ export function tableView(s, meId, full = false) {
     const mem = p.members.map(u => memberName(s, u));
     const r = Object.entries(p.res).filter(([, v]) => v).map(([c, v]) => `${v} ${c}`).join(', ') || 'nothing';
     L.push(`- ${p.name}${p.id === meId ? ' (you)' : ''}: ${followers(s, p)} followers, ${memberCount(s, p)} members; holds ${r}; minions left this round ${p.left}${p.discount ? `; discount ${p.discount}` : ''}${p.artifact !== undefined ? `; artifact ${nm(s, p.artifact)}` : ''}`);
-    L.push(`    members: ${mem.join(', ') || 'none'}`);
+    if (!full) L.push(`    members: ${mem.join(', ') || 'none'}`);
+    else {
+      // player agents (Cory, Nov 13: "look at the table ... a full digest of all of the things and what they do"): every
+      // card in a cult with what it does, as a table would read it off the cards in front of each player
+      if (p.artifact !== undefined) L.push(`    artifact ${nm(s, p.artifact)}: ${cardDef(s, p.artifact).text}`);
+      L.push(`    members:${p.members.length ? '' : ' none'}`);
+      for (const u of p.members) { const d = cardDef(s, u); L.push(`      · ${memberName(s, u)} [worth ${d.f}${(d.n ?? 1) !== 1 ? `, counts ${d.n}` : ''}]: ${d.text}`); }
+    }
   }
   if (round > 0) {
     // contestTable lists the contests in scoring order (cloak order), not wheel order, so each rim finds its own by color
@@ -248,6 +256,10 @@ export function tableView(s, meId, full = false) {
       L.push(`${sphereName(qid)} — contest ${c.label}${c.counts ? ` (counts ${c.counts})` : ''} (${lead}${rows ? `; ${rows}` : ''}): ${spaces.join(full ? '' : ', ')}`);
     });
     L.push('', `THE SHOP (${s.shop.length} face up; ${s.pile.length} in the pile)`);
+    if (full) {
+      const disc = discardOf(s);
+      L.push(`  Discard pile (face up, newest last): ${disc.length ? disc.map(u => `${cardDef(s, u).name} (${costWords(cardDef(s, u))}): ${cardDef(s, u).text}`).join(' | ') : 'empty'}`);
+    }
     const me = s.players[meId];
     for (const u of s.shop) {
       const d = cardDef(s, u), pr = memberPrice(s, me, u);
@@ -388,7 +400,7 @@ async function main() {
       if (Date.now() - t0 > max) { console.log(`Still not your decision (waiting on ${s.players[s.pending.player].name}). Run wait again.`); return; }
       await sleep(1500);
     }
-    await locked(dir, async () => console.log(view(dir, seat, { fresh: true })));
+    await locked(dir, async () => console.log(view(dir, seat, { fresh: true, full: !!flags.full })));
     return;
   }
   if (cmd === 'move') {
