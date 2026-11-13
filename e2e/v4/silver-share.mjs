@@ -1,8 +1,9 @@
 import { browserPath, launchBrowser } from './lib/browser.mjs';
 // E2E gate: giving silver one click at a time (Party Gifts; Cory, 2026-11-01: "giving out silver when you're choosing -
 // not clear how many times you've clicked / what's remaining"). At 1270x700 the gift card by the space says
-// "0 given · 3 left", each click moves it (1 · 2, 2 · 1) and puts "+1" on that rival's face, Done says how many it
-// gives ("Done: give 2"), and at Done the rivals' silver goes up by their tallies.
+// "0 given · 3 left", each click moves it (1 · 2, 2 · 1) and puts "+1" on that rival's face, Give says how many it
+// gives ("Give 2"), and at Give the rivals' silver goes up by their tallies, all in one move (Cory, Nov 13: "they should
+// make that decision all at once").
 // Server: $V4_URL if set, else its own `npx vite` on a free port from 5420.
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
@@ -60,13 +61,14 @@ try {
   const card = '.gift-card[data-gift="share"]';
   await page.waitForSelector(card, { timeout: 90000 });
   const title = () => page.$eval(`${card} .gc-title`, e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
-  const done = () => page.$eval(`${card} .gc-rest`, e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
+  const done = () => page.$eval(`${card} .gc-rest [data-share-give]`, e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
   const tally = pid => page.$eval(`${card} .gc-share[data-pid="${pid}"] .gc-tally`, e => e.textContent).catch(() => '');
   if ((await title()) !== 'Party Gifts · 0 given · 3 left') errors.push(`opens with "${await title()}", want "Party Gifts · 0 given · 3 left"`);
-  if ((await done()) !== 'Give nothing') errors.push(`opens with "${await done()}", want "Give nothing"`);
+  const rest = () => page.$eval(`${card} .gc-rest`, e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
+  if ((await rest()) !== 'Give nothing') errors.push(`opens with "${await rest()}", want "Give nothing"`);
   await page.screenshot({ path: `${SHOTS}/0-open.png` });
   const silver = pid => sv.state.players[pid].res.silver || 0;
-  // two clicks, then Done (a third would give the last one and close the card on its own)
+  // two clicks set the split on the card, then Give sends both and Done in one move
   const want = [[1, 'Party Gifts · 1 given · 2 left', { 1: '+1' }], [2, 'Party Gifts · 2 given · 1 left', { 1: '+1', 2: '+1' }]];
   for (const [k, [pid, t, tallies]] of want.entries()) {
     await page.waitForTimeout(250); // a person's pace between clicks
@@ -76,8 +78,8 @@ try {
     for (const [p, v] of Object.entries(tallies)) if ((await tally(p)) !== v) errors.push(`after click ${k + 1}: P${Number(p) + 1} shows "${await tally(p)}", want "${v}"`);
     await page.screenshot({ path: `${SHOTS}/${k + 1}-given.png` });
   }
-  if ((await done()) !== 'Done: give 2') errors.push(`at 2 given the button reads "${await done()}", want "Done: give 2"`);
-  await page.click(`${card} .gc-rest button`);
+  if ((await done()) !== 'Give 2') errors.push(`at 2 given the button reads "${await done()}", want "Give 2"`);
+  await page.click(`${card} .gc-rest [data-share-give]`);
   await page.waitForFunction(() => !document.querySelector('.gift-card[data-gift="share"]'), null, { timeout: 8000 }).catch(() => errors.push('Done never closed the card'));
   await page.waitForTimeout(1500);
   const after = pid => page.$eval(`.lt-seat[data-pid="${pid}"] .cs-stack[data-res="silver"] b`, e => Number(e.textContent)).catch(() => NaN);
