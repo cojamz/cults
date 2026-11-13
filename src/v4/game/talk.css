@@ -23,3 +23,6 @@
 /* your own leader opens the Say card: no sign of it but the pointer (an easter egg, Cory Oct 29) */
 .cs-leader[data-say]{cursor:pointer}
 .talk-emote{flex:none;image-rendering:pixelated}
+/* a watched game's thought bubble (Talk.jsx): wider, wraps, stays until the next thought */
+.lt > .lt-seat > .seat-say.seat-think{max-width:340px;width:340px;flex-direction:column;align-items:flex-start;gap:6px;font-size:13px;font-weight:500;line-height:1.4;white-space:normal;animation:talk-in .16s ease-out}
+.seat-think .think-feel{font-style:italic;opacity:.85;border-top:1px solid currentColor;padding-top:5px;width:100%}

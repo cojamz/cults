@@ -82,7 +82,7 @@ export const AWAY_TEXT = 'This game is open in another tab.';
  * @returns {Session & { canUndo(): boolean, undo(): boolean, readonly undoCheckpoint: UndoCheckpoint|null,
  *   readonly roundHold: { moves: number }|null, continueRound(): boolean }}
  */
-export function createLocalSession({ seats, seed = Math.floor(Math.random() * 2 ** 31), botDelayMs = 450, quadrants, rules, botLevel, state: saved, undo: savedUndo, holdRoundEnds = false, hold: savedHold = null, isOwner = null }) {
+export function createLocalSession({ seats, seed = Math.floor(Math.random() * 2 ** 31), botDelayMs = 450, quadrants, rules, botLevel, state: saved, undo: savedUndo, holdRoundEnds = false, hold: savedHold = null, isOwner = null, script = null }) {
   // A new game is stamped with this build's content hash and records its moves (state.build, state.history).
   // Every seat wears an emoji, none twice: a person's pick, else a random free one (bots too), seeded by the game.
   const dressed = saved ? null : settleEmojis(seats.map(s => ({ name: s.name, kind: s.kind || 'human', ...(s.emoji ? { emoji: s.emoji } : {}) })), seededRandom((seed ^ 0x5eed) >>> 0));
@@ -162,6 +162,22 @@ export function createLocalSession({ seats, seed = Math.floor(Math.random() * 2 
     // (no hold after a buy: the payment step, with Back, is the safety net); a function reads the speed setting live
     // a "+1 of which color?" pick (Harvest's 5, Polish's 4) comes without a hold, so the whole run reaches the table at
     // once and plays as one beat (GameScreen foldPicks; Cory, Nov 7: "harvest animation is so slow")
+    // A watched game (player agents, Cory Nov 13: "recreate the game played out with their turns, and maybe little
+    // speech bubbles with their thoughts"): every seat plays its recorded move, and its reason shows as a thought
+    // bubble at its seat, held long enough to read. A recorded move the game won't take stops the replay.
+    if (script) {
+      const sm = script[state.moves];
+      if (!sm || sm.p !== p.player || !p.options.some(o => o.id === sm.o)) { if (sm) console.error('watch: recorded move does not fit', state.moves, sm); return; }
+      const speed = typeof botDelayMs === 'function' ? botDelayMs() / 650 : 1;
+      const hold = sm.quick ? 450 * speed : Math.min(12000, Math.max(1600, 900 + 38 * (sm.say || '').length + 25 * (sm.feel || '').length)) * speed;
+      if (sm.say) talk.add({ id: `w${state.moves}`, seat: p.player, text: sm.say, feel: sm.feel || '', thought: true, at: Date.now(), logAt: state.log.length });
+      timer = setTimeout(() => {
+        timer = null;
+        if (my !== turn || destroyed || roundHold) return;
+        apply({ player: sm.p, option: sm.o });
+      }, hold);
+      return;
+    }
     const colorPick = p.kind === 'choose' && p.options && p.options.length > 1 && p.options.every(o => o.kind === 'color');
     const hold = colorPick ? 0 : typeof botDelayMs === 'function' ? botDelayMs() : botDelayMs;
     // In a browser the bot thinks in a worker from the moment its turn arrives, so the hold hides the thinking and

@@ -31,6 +31,12 @@ export function useTalk(session) {
 /** The newest line from this seat, while it's fresh: a bubble beside the seat. */
 export function TalkBubble({ talk, pid }) {
   const last = findLast(talk, t => t.seat === pid);
+  // a watched game's thought (session/local.js script): the newest thought at the table stays up until the next one
+  const newest = talk.length ? talk[talk.length - 1] : null;
+  if (last?.thought) {
+    if (newest !== last) return null;
+    return <div key={last.id} className="seat-say seat-think" role="status" data-say-seat={pid}><span className="think-text">{last.text}</span>{last.feel ? <span className="think-feel">Felt: {last.feel}</span> : null}</div>;
+  }
   const [gone, setGone] = useState(null);
   const born = useRef(new Map()); // id -> when this screen first saw it (a rejoin's old lines never pop)
   const first = useRef(true);

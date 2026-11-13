@@ -24,7 +24,9 @@ if (v3) {
     )
   // ?lab=b: UI-B's component lab (screenshots of the Lamplit pieces on a real state); otherwise the game
   const lab = new URLSearchParams(location.search).get('lab')
-  if (lab === 'b') import('./v4/lab/LabB.jsx').then(({ default: Lab }) => root.render(<Lab />)).catch(offline)
+  // a watched player-agents game (lab/WatchPage.jsx): window.__WATCH__ set by its page, or ?lab=watch&game=<name>
+  if (window.__WATCH__ || lab === 'watch') import('./v4/lab/WatchPage.jsx').then(({ default: Page }) => root.render(<Page />)).catch(offline)
+  else if (lab === 'b') import('./v4/lab/LabB.jsx').then(({ default: Lab }) => root.render(<Lab />)).catch(offline)
   // ?lab=intro[&beat=N][&at=MS]: the intro's beats in isolation (building and recording them)
   else if (lab === 'intro') import('./v4/intro/IntroLab.jsx').then(({ default: Lab }) => root.render(<Lab />)).catch(offline)
   // ?lab=faces&face=<name>: one action-space face (src/v4/game/faces/) on every action, in each state, and on the live wheel
