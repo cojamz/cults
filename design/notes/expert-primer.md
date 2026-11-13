@@ -3,9 +3,9 @@
 Advice, not rules; the rulebook wins. It does not decide the game's balance.
 
 ## Where followers come from (think in these units)
-1. Contest prizes. Each color on the table has a contest scored at every round's end: the leader of that color (most held, or what its rim says) gets +4 (round I), +6 (round II), +10 (round III), split if tied, nothing for holding 0. Four colors means 20 followers per color over a game, about 80 on the table. This is the biggest pool of followers in the game, and winning a contest costs only holding the most of a color at the moment the round ends.
+1. Contest prizes. Each color on the table has a contest scored at every round's end: the leader of that color (most held, or what its rim says) gets +4 (round I), +6 (round II), +10 (round III), tied leaders each get half, rounded up. In a "most" contest you need at least 1 of what's counted; in a "fewest" contest 0 counts, so everyone at 0 ties. Four colors means 20 followers per color over a game, about 80 on the table. In recent games contests made up a quarter to a half of the winner's followers; buying followers and members made up the rest.
 2. Buying followers: 1, 5 or 10 resources for the same number of followers, one recruit each. A resource is worth a follower, but only when you have a recruit to turn it into one, and spending it can lose you a lead.
-3. Members: printed followers plus what the ability earns, minus the recruit and the resources it cost. A 4-cost member worth 2 is a loss unless its ability pays at least 2 more over the game.
+3. Members: printed followers, plus what the ability earns over the rounds left, plus what holding it does in contests (many contests count members, member colors or members of one color), against the recruit and resources it cost. Bought early, a member that pays every round can return several times its price; bought on the last turn, it is mostly its printed followers. Count both lines honestly before defaulting to buying followers.
 4. Space bonuses and member abilities that hand out followers directly.
 
 ## The core tension
@@ -34,6 +34,9 @@ Each of these is a plain reading of the rulebook; past players got it wrong and 
 - **A space's +1 of its color goes only to its first taker, once a game** (the view marks spaces whose +1 is still there). Taking a fresh space early is worth 1 more resource than a claimed one, and a copy never gets it.
 - **Copies read the whole table.** Green's copy spaces (Echo, Cover, Greatest Hits) take what is on other players' minions. Agents ("Your actions can't be copied") stops rivals copying yours, and also stops you copying your own (Reprise, Greatest Hits on a color where you have minions). It matters when you are the one with the big actions on the board.
 - **Holding versus spending silver**: Silver's contest pays the fewest silver held, so Flaunt and Buyout (which pay for silver you hold) only pay a player who has given up that contest this round.
+- **The +1 is already in the option's line.** "You'd get" on each option includes the space's first-taker +1; don't add it again.
+- **Grey members are not a color.** Guest members (grey) don't count as a color in color contests such as Most member colors: only the colors on the table count, and Dabblers adds one color you lack.
+- **Ties**: tied leaders each get half the prize, rounded up, however many tie (round III: 5 each).
 - **Counting**: "counts as N members" counts N wherever members are counted, except where a rule says each card counts 1 (Red's contest).
 
 ## Table etiquette for a playtest

@@ -60,7 +60,7 @@ const principles = fs.readFileSync(path.join(HERE, 'principles.md'), 'utf8');
 
 // Recruits are scarce (Cory, Nov 13: "it costs the recruit, like that's the whole thing. Recruits are valuable. You only
 // have so many."): a rules fact every player gets, so nobody prices a 1-follower buy as free.
-const RECRUITS = 'Recruits are scarce. Each turn you place a minion you get one recruit: one member, or one follower pack (1, 5 or 10). With 3, 4 and 5 minions that is about 12 recruits in a whole game. A 1-follower buy uses up the whole recruit, the same as a 10-follower buy or a member. So what anything really costs includes the recruit it uses.';
+const RECRUITS = 'Recruits are scarce. Each turn you place a minion you get one recruit: one member, or one follower pack (1, 5 or 10). With 3, 4 and 5 minions that is about 12 recruits in a whole game. A 1-follower buy uses up the whole recruit, the same as a 10-follower buy or a member. So what anything really costs includes the recruit it uses. For scale: in past games a 4-player winner ended with about 70 to 110 followers, and 12 recruits of buying followers alone came to about 40 to 50.';
 
 // Kinds (coordinator's review of pilot 1; Cory: "the experienced and the new don't sound remotely different"):
 //   exp   — has played many times; rules, cards, strategy primer, and the strong-player questions; plans around them
@@ -70,7 +70,7 @@ function systemPrompt(seat) {
   const name = NAMES[seat], kind = kinds[seat];
   const rivals = NAMES.filter((_, i) => i !== seat).join(', ');
   const who = {
-    exp: 'You have played Cults many times and play it well. Below are the rules, every card in this game, a strategy primer, and the questions strong players ask themselves. Plan around those questions: in your reasoning, say which of them drove the decision. You talk like a seasoned hobby gamer.',
+    exp: 'You have played Cults many times and play it well. Below are the rules, every card in this game, a strategy primer, and the questions strong players ask themselves. Use those questions to think; do not quote or list them in your reasons, just give the reasoning itself. You talk like a seasoned hobby gamer.',
     plain: 'You have played Cults many times and play it well. Below are the rules and every card in this game. You talk like a seasoned hobby gamer.',
     new: 'This is your very first game of Cults. A friend explained the rules ten minutes ago and you have the rulebook and the cards in front of you, nothing else. You have played a few board games but you are not a strategy expert: you don\'t use strategy jargon, you often aren\'t sure what is strong, and you learn as you go. When a rule, a card or the board confuses you, say so plainly. Your own notes from earlier in this game are your lessons. You still try hard to win.',
   }[kind];
@@ -90,7 +90,7 @@ function systemPrompt(seat) {
       ? 'Before you answer, think it through the way a first-time player would: what you are trying to do, what each choice seems to give you, and what you are unsure about.'
       : 'Before you answer, think the decision through: the options that matter, what each gets you in numbers, what it does to the contests and to the rival you must beat, what rivals will do before your turn comes back, and the recruits and rounds you have left.',
     `- why: 1 to 3 sentences in first person, as you would mutter over your pieces. ${kind === 'new' ? 'Plain words, as a newcomer thinking aloud.' : 'What you are going for, the options and numbers you weighed, which rival you are watching.'} Name the cards and spaces. A few words are fine for a small follow-up like a payment. Say plainly when something surprised you or you misjudged.`,
-    '- feel: empty unless something right now felt good, bad, pointless, confusing or exciting. Then one plain sentence: what, and why it felt that way. Never a fix.',
+    '- feel: empty unless something right now felt good, bad, pointless, confusing or exciting that you have not already noted (your earlier feel notes are listed above; do not repeat one). Then one plain sentence: what, and why it felt that way. Never a fix.',
     '- idea: usually empty. When your situation made you wish for a member or a wheel space that does not exist (a choice felt bad, or your plan wanted something), describe it in one sentence: its name and what it would do. Raw ideas are welcome here, and only here.',
     'Only numbers shown in the current list are legal. When the view says a question comes back several times in a row, answer every pick at once: "option": [3, 3, 5] (in order; a Done number ends it early).',
   ].join('\n');
@@ -158,6 +158,22 @@ const FIX = /\b(should (cost|be cheaper|be pricier|give|pay|read|say)|cost(s|ing
 // Once a round, before the round's first move (coordinator's review of pilot 1, items 1 and 4: players only weighed the
 // next contest, and never asked whether their line could win): a forecast, a keep-or-switch decision and the plan.
 // After rounds I and II it also carries the round notes.
+// What happened at the end of round r, from the game log (review of pilot 3, Nov 13: round notes are written at the
+// player's first decision of the next round, with no log, so they missed the scoring and mixed up which round things
+// happened in): the last lines of the round up to its scoring.
+function roundEndLog(r) {
+  const evs = fs.readFileSync(f('events.jsonl'), 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)).filter(e => e.type === 'log').map(e => e.text);
+  const end = evs.findIndex(t => t.startsWith(`Round ${ROMAN[r]} ends.`));
+  if (end < 0) return '';
+  const begin = Math.max(evs.findIndex(t => t.startsWith(`Round ${ROMAN[r]} begins`)), end - 30);
+  return `WHAT HAPPENED IN THE LAST PART OF ROUND ${ROMAN[r]} (the game log, oldest first, ending with the round's scoring)\n${evs.slice(begin, end + 1).map(t => `- ${t}`).join('\n')}\n`;
+}
+// The whole game's facts for the debrief (review of pilots 1 and 3: debriefs stated things the log contradicts, e.g.
+// "won Yellow every round", "Paupers paid every round"): where every player's followers came from, recruits, contests.
+function gameFacts() {
+  try { const t = execFileSync('node', [path.join(HERE, 'facts.mjs'), DIR], { encoding: 'utf8' }); return t.split('\n## Plans each round')[0]; } catch { return ''; }
+}
+
 async function roundNotes(seat, r, { start = false, end = false } = {}) {
   const kind = kinds[seat];
   if (end) return endNotes(seat);
@@ -167,7 +183,7 @@ async function roundNotes(seat, r, { start = false, end = false } = {}) {
   const forecast = kind === 'new'
     ? '- forecast: in your own words, how you think you are doing, who looks like they are winning and why, and roughly how many followers you might end with.\n'
     : '- forecast: your projected final followers on two lines, counted honestly with the recruits and rounds left: a member line (recruit the best members you can afford in the shop now and next round, counting their printed followers, what their abilities pay in the rounds left, and the contests they help) and a buy-followers line; then the projected finish of the player you must beat. Pick the line by these numbers, not by habit.\n';
-  const prompt = `${memory(seat)}\nTHE TABLE NOW\n${v}\n\n${looking} Before you play on, take stock.\n${ask1}${forecast}- decision: "keep" or "switch": is your plan good enough to win?\n- plan: one or two sentences: the plan you will follow from here.\n- ideas: usually an empty list; any member or wheel space that does not exist that your situation made you wish for (name and what it does), one sentence each.\nAnswer with only: {${start ? '' : '"notes": "...", '}"forecast": "...", "decision": "keep|switch", "plan": "...", "ideas": []}`;
+  const prompt = `${memory(seat)}\n${start ? '' : roundEndLog(r)}\nTHE TABLE NOW\n${v}\n\n${looking} Before you play on, take stock.\n${ask1}${forecast}- decision: "keep" or "switch": is your plan good enough to win?\n- plan: one or two sentences: the plan you will follow from here.\n- ideas: usually an empty list; any member or wheel space that does not exist that your situation made you wish for (name and what it does), one sentence each.\nAnswer with only: {${start ? '' : '"notes": "...", '}"forecast": "...", "decision": "keep|switch", "plan": "...", "ideas": []}`;
   const a = await ask(seat, prompt, start ? 'plan before round I' : `round notes ${ROMAN[r]}`, x => ((start || (typeof x.notes === 'string' && x.notes.length > 20)) && typeof x.plan === 'string' && typeof x.forecast === 'string' ? '' : 'the JSON needs forecast, decision, plan (and notes after a round).'));
   notes[seat].plan = a.plan;
   (notes[seat].plans ||= []).push({ round: r, start, forecast: a.forecast, decision: a.decision, plan: a.plan });
@@ -180,7 +196,7 @@ async function roundNotes(seat, r, { start = false, end = false } = {}) {
 }
 async function endNotes(seat) {
   const v = clean(ex('view', DIR, String(seat), '--full'));
-  const a = await ask(seat, `${memory(seat)}\nTHE TABLE AT THE END\n${v}\n\nRound III and the game just ended. Write your round notes in 2 to 4 sentences: what you were going for, what felt good, what felt bad or pointless (name the spaces, members and moments). Observations only.\nAnswer with only: {"notes": "..."}`, 'round notes III', x => (typeof x.notes === 'string' && x.notes.length > 20 ? '' : 'notes must be a few sentences.'));
+  const a = await ask(seat, `${memory(seat)}\n${roundEndLog(3)}\nTHE TABLE AT THE END\n${v}\n\nRound III and the game just ended. Write your round notes in 2 to 4 sentences: what you were going for, what felt good, what felt bad or pointless (name the spaces, members and moments). Observations only.\nAnswer with only: {"notes": "..."}`, 'round notes III', x => (typeof x.notes === 'string' && x.notes.length > 20 ? '' : 'notes must be a few sentences.'));
   notes[seat].rounds[3] = a.notes; saveNotes();
   ex('diary', DIR, String(seat), a.notes);
 }
@@ -237,7 +253,7 @@ async function debrief(seat) {
   const kind = kinds[seat];
   const v = clean(ex('view', DIR, String(seat), '--full'));
   const plans = (notes[seat].plans || []).map(x => `- ${x.start ? 'Before round I' : `After round ${ROMAN[x.round]}`}: forecast ${x.forecast} | ${x.decision} | plan: ${x.plan}`).join('\n');
-  const base = `${memory(seat)}\nYOUR PLANS THROUGH THE GAME\n${plans || '(none)'}\n\nALL YOUR FEEL NOTES\n${notes[seat].feel.map(x => `- Round ${ROMAN[x.round]} (${x.at}): ${x.text}`).join('\n') || '(none)'}\n\nTHE TABLE AT THE END\n${v}\n\nThe game is over. Write your debrief for the designer, as ${kind === 'new' ? 'a first-time player' : 'an experienced player'} after a game night. Plain words; name every space, member and artifact you mention.\n- strategy: one sentence: the line you played (what you built or chased).\n- result: 2 to 4 sentences on why you won or lost and the moment that decided it.\n- differently: what you would do differently next time, and why.\n- members: looking back, which member did you pass on that you should have recruited, or which did you recruit that was not worth it, with the numbers as you see them now.\n- good: what felt good (moments, spaces, members, decisions), each with why.\n- bad: what felt bad, pointless or confusing. For each, say whether it would still bother you if you had played a line that could have won, and why. If it only hurt because of your own plan, say so.\n- change: what you would want the designer to look at: name the thing and say what is wrong with it as you felt it at the table. Never say how to fix it: no new numbers, prices, limits or card text.\n- ideas: members or wheel spaces that do not exist that your game made you want (name and what it does, one sentence each), drawn from your strategy and situation. A replacement for a card you disliked is welcome here.\n- again: would you play again, and what would bring you back or keep you away (1 to 2 sentences).\nAnswer with only: {"strategy": "...", "result": "...", "differently": "...", "members": "...", "good": ["..."], "bad": [{"what": "...", "otherLine": "yes|no", "why": "..."}], "change": ["..."], "ideas": ["..."], "again": "..."}`;
+  const base = `${memory(seat)}\nYOUR PLANS THROUGH THE GAME\n${plans || '(none)'}\n\nALL YOUR FEEL NOTES\n${notes[seat].feel.map(x => `- Round ${ROMAN[x.round]} (${x.at}): ${x.text}`).join('\n') || '(none)'}\n\nTHE WHOLE GAME, FROM THE GAME LOG (true numbers: check every claim you make against these)\n${gameFacts()}\n\nTHE TABLE AT THE END\n${v}\n\nThe game is over. Write your debrief for the designer, as ${kind === 'new' ? 'a first-time player' : 'an experienced player'} after a game night. Plain words; name every space, member and artifact you mention.\n- strategy: one sentence: the line you played (what you built or chased).\n- result: 2 to 4 sentences on why you won or lost and the moment that decided it.\n- differently: what you would do differently next time, and why.\n- members: looking back, which member did you pass on that you should have recruited, or which did you recruit that was not worth it, with the numbers as you see them now.\n- good: what felt good (moments, spaces, members, decisions), each with why.\n- bad: what felt bad, pointless or confusing. For each, say whether it would still bother you if you had played a line that could have won, and why. If it only hurt because of your own plan, say so.\n- change: what you would want the designer to look at: name the thing and say what is wrong with it as you felt it at the table. Never say how to fix it: no new numbers, prices, limits or card text.\n- ideas: members or wheel spaces that do not exist that your game made you want (name and what it does, one sentence each), drawn from your strategy and situation. A replacement for a card you disliked is welcome here.\n- again: would you play again, and what would bring you back or keep you away (1 to 2 sentences).\nAnswer with only: {"strategy": "...", "result": "...", "differently": "...", "members": "...", "good": ["..."], "bad": [{"what": "...", "otherLine": "yes|no", "why": "..."}], "change": ["..."], "ideas": ["..."], "again": "..."}`;
   const shape = x => (typeof x.result === 'string' && typeof x.strategy === 'string' && Array.isArray(x.good) && Array.isArray(x.bad) && x.bad.every(b => b && typeof b.what === 'string') && Array.isArray(x.change) ? '' : 'the JSON needs strategy, result, differently, good, bad (objects with what, otherLine, why), change, ideas and again.');
   let a = await ask(seat, base, 'debrief', shape);
   const fixes = a.change.filter(c => FIX.test(c));
@@ -258,6 +274,9 @@ for (;;) {
   if (s.over) break;
   if ((Date.now() - T0) / 1000 > LIMIT_S) { console.log(`Time limit ${LIMIT_S}s reached; stopping (resume by running again).`); process.exit(3); }
   if (moves >= MAX_MOVES) { console.log(`Stopped after ${moves} moves (--max-moves).`); process.exit(0); }
+  // round notes for everyone right after a round's scoring, before anyone moves in the next round (review of pilot 3:
+  // notes asked at each player's own next turn missed the scoring and mixed in the next round's moves)
+  if (s.round > 1) for (let seat = 0; seat < N; seat++) if (!readJson(f('meta.json')).diary?.[seat]?.[s.round - 1]) await roundNotes(seat, s.round - 1);
   await decide(s.pending.player);
   moves++;
   if (moves % 10 === 0) console.log(`  [${moves} decisions, $${spent.toFixed(2)}, ${Math.round((Date.now() - T0) / 60000)} min]`);

@@ -236,7 +236,7 @@ export function renderOption(s, p, o, taskKind) {
 export function tableView(s, meId, full = false) {
   const L = [];
   const round = s.round;
-  L.push(round ? `ROUND ${ROMAN[round] || round}${s.over ? " — GAME OVER" : ""}   (leading a color's contest this round pays +${[4, 6, 10][Math.min(3, Math.max(1, round)) - 1]} followers, split if tied)` : "SETUP: pick artifacts");
+  L.push(round ? `ROUND ${ROMAN[round] || round}${s.over ? " — GAME OVER" : ""}   (leading a color's contest this round pays +${[4, 6, 10][Math.min(3, Math.max(1, round)) - 1]} followers; tied leaders each get half, rounded up)` : "SETUP: pick artifacts");
   if (!s.over && round > 0) {
     const rail = turnRail(s), n = id => s.players[id].name;
     L.push(`Turns this round: ${[...rail.done.map(n), rail.current != null ? `[${n(rail.current)} now]` : '', ...rail.next.map(n)].filter(Boolean).join(' › ')}`);
@@ -252,7 +252,7 @@ export function tableView(s, meId, full = false) {
       // card in a cult with what it does, as a table would read it off the cards in front of each player
       if (p.artifact !== undefined) L.push(`    artifact ${nm(s, p.artifact)}: ${cardDef(s, p.artifact).text}`);
       L.push(`    members:${p.members.length ? '' : ' none'}`);
-      for (const u of p.members) { const d = cardDef(s, u); L.push(`      · ${memberName(s, u)} [worth ${d.f}${(d.n ?? 1) !== 1 ? `, counts ${d.n}` : ''}]: ${d.text}`); }
+      for (const u of p.members) { const d = cardDef(s, u); L.push(`      · ${memberName(s, u)} [worth ${d.f}${(d.n ?? 1) !== 1 ? `, counts ${d.n}` : ''}]${s.cards[u]?.used ? (/once per game/i.test(d.text) ? ' (ALREADY USED: once per game)' : ' (ALREADY USED this round)') : ''}: ${d.text}`); }
     }
   }
   if (full && round > 0 && !s.over) {
@@ -266,7 +266,7 @@ export function tableView(s, meId, full = false) {
       engineResume(c);
       gain = s.players.map(p => followers(c, c.players[p.id]) - followers(s, p));
     } catch { gain = null; }
-    L.push('', 'STANDINGS (followers are the score; "if the round ended now" runs this round\'s end on a copy: round-end cards, contests, then the next round\'s start; it assumes nobody moves again)');
+    L.push('', 'STANDINGS (followers are the score; "if the round ended now" runs this round\'s end on a copy: round-end cards, contests, then the next round\'s start; it assumes nobody moves again, and a round-end card that asks its owner to choose, such as a contest to cancel or whom to give to, is run with a default pick its owner may not make)');
     const rows = s.players.map(p => ({ p, now: followers(s, p), g: gain ? gain[p.id] : null })).sort((a, b) => (b.now + (b.g || 0)) - (a.now + (a.g || 0)));
     for (const { p, now, g } of rows) L.push(`- ${p.name}${p.id === meId ? ' (you)' : ''}: ${now} followers${g != null ? `, ${g >= 0 ? '+' : ''}${g} if the round ended now (${now + g})` : ''}; ${memberCount(s, p)} members; ${Object.values(p.res).reduce((a, b) => a + b, 0)} resources held`);
   }
@@ -314,7 +314,9 @@ function view(dir, seat, { fresh, full = false }) {
   const me = s.players[seat];
   const evs = events(dir);
   const from = meta.seen[seat] ?? 0;
-  const mine = evs.slice(from).filter(e => (e.type === 'log' || e.type === 'say') && e.seat !== seat);
+  // your own moves' results too (review of pilot 2, Nov 13: Ava's Late Shift recruited nothing and she never saw it, only
+  // her own reason for taking it)
+  const mine = evs.slice(from).filter(e => e.type === 'log' || (e.type === 'say' && e.seat !== seat));
   const out = [];
   out.push(`You are ${me.name} (seat ${seat}). Table: ${s.quadrants.map(sphereName).join(', ')}.`);
   if (fresh) {
