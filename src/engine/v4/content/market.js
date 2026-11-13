@@ -684,8 +684,11 @@ const market = {
       if (uid == null) { ctx.log(`${p.name}'s ${data.why}: recruits nothing.`); return; }
       if (!discardOf(ctx.state).includes(uid) || !ctx.payChoices(p, uid, data.how).length) return;
       askPay(ctx, p, `${data.why}: how do you pay ${ctx.price(p, uid, data.how).total} for ${ctx.card(uid).def.name}?`, { uid, why: data.why, fromPile: true, how: data.how });
-      if (data.left > 1) discardOffer(ctx, p, { ...data, left: data.left - 1 });
+      // the next pick is offered after this one is paid for, so it lists only members still affordable (Spree offered a
+      // second member the first payment had left you unable to pay for)
+      if (data.left > 1) ctx.defer(p, `${Q}.discardNext`, { ...data, left: data.left - 1 });
     },
+    discardNext(ctx, p, _, data) { discardOffer(ctx, p, data); },
     churn(ctx, p, uid, data) {
       if (ctx.state.shop.includes(uid)) {
         const i = ctx.state.shop.indexOf(uid);
