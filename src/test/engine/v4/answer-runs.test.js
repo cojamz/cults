@@ -1,7 +1,7 @@
 // Several answers to one question in one move (Cory, Nov 13: "they should make that decision all at once"; steals stay
 // one at a time: "for stealing it should still be one at a time"). core applyRun / runnable / runLength.
 import { describe, it, expect } from 'vitest';
-import { createGame, applyMove, runnable, runLength } from '../../../engine/v4/core.js';
+import { createGame, applyMove, runnable, runLength, applyRunUntil, askKey } from '../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../engine/v4/bots.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
 import { step } from '../../../v4/session/record.js';
@@ -97,5 +97,32 @@ describe('answer runs', () => {
     expect(next.players[p.id].res[from]).toBe(p.res[from] - 1);
     expect(next.players[p.id].res[to]).toBe((p.res[to] || 0) + 1);
     expect(next.queue[0] && next.queue[0].h === 'yellow.swap' && next.pending?.player === p.id).toBeFalsy();
+  });
+  it('a run cut by another question (Out of Style picking a grey member, which asks a color) keeps the rest for after it', () => {
+    // the player-agents review (r3g1): seven such answers were dropped with no word
+    let hit = null;
+    find(s => {
+      if (h(s) !== 'market.windowShop' || s.pending.options.length < 2) return false;
+      for (const o of s.pending.options) {
+        let n; try { n = applyMove(s, { player: s.pending.player, option: o.id }); } catch { continue; }
+        if (n.pending && n.pending.player === s.pending.player && askKey(n) !== askKey(s)) { hit = { s, o }; return true; }
+      }
+      return false;
+    }, 200);
+    if (!hit) return;
+    const { s, o } = hit, p = s.pending.player;
+    const other = s.pending.options.find(x => x.id !== o.id);
+    expect(() => applyMove(s, { player: p, option: o.id, then: [other.id] })).toThrow();
+    const r = applyRunUntil(s, { player: p, option: o.id, then: [other.id] });
+    expect(r.played).toBe(1);
+    expect(r.rest).toEqual([other.id]);
+    expect(r.why).toMatch(/another question came up first/);
+    // answer the question in between; once Out of Style is back, the kept pick plays
+    let st = r.state;
+    for (let k = 0; k < 6 && st.pending && st.pending.player === p && askKey(st) !== askKey(s); k++) st = applyMove(st, { player: p, option: st.pending.options[0].id });
+    if (askKey(st) === askKey(s) && st.pending.options.some(x => x.id === other.id)) {
+      const r2 = applyRunUntil(st, { player: p, option: other.id });
+      expect(r2.played).toBe(1);
+    }
   });
 });

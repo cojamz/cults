@@ -207,6 +207,7 @@ function addIdeas(seat, round, ideas, at) {
   }
 }
 
+const refusedLast = {}; // seat -> why the game didn't play its last answer (shown in its next prompt)
 async function decide(seat) {
   const meta = readJson(f('meta.json'));
   const s = readJson(f('state.json'));
@@ -224,7 +225,10 @@ async function decide(seat) {
     console.log(`r${s.round} ${NAMES[seat]}: only option`);
     return;
   }
-  const prompt = `${memory(seat)}\nTHE TABLE NOW\n${fresh}\n\nYour legal options are the numbers in brackets above: ${legal.join(', ')}.`;
+  // an answer the game didn't play last time (a combined answer it couldn't take) says why, so the next one isn't blind
+  const notPlayed = refusedLast[seat] ? `\n\n(Your last answer was not played: ${refusedLast[seat]})` : '';
+  delete refusedLast[seat];
+  const prompt = `${memory(seat)}\nTHE TABLE NOW\n${fresh}\n\nYour legal options are the numbers in brackets above: ${legal.join(', ')}.${notPlayed}`;
   // a question asked again and again (Harvest's colors, Party Gifts' silver) takes every pick in one answer: a list of
   // numbers, played in order as one move (Cory, Nov 13: "they should make that decision all at once")
   const picks = x => (Array.isArray(x) ? x : String(x).split(',')).map(v => Number(String(v).trim()));
@@ -242,7 +246,10 @@ async function decide(seat) {
   if (a.idea) addIdeas(seat, s.round, a.idea, label);
   saveNotes();
   console.log(`r${s.round} ${NAMES[seat]} (${kinds[seat]}): ${label} | ${a.why.slice(0, 140)}${a.feel ? ` | FEEL: ${a.feel}` : ''}`);
-  if (/refused|No such option|isn't offered/.test(res)) console.log(`  !! move refused: ${res.slice(0, 200)}`);
+  if (/refused|No such option|isn't offered|Nothing (more )?was played/.test(res)) {
+    refusedLast[seat] = res.split('\n')[0].slice(0, 300);
+    console.log(`  !! move refused: ${res.slice(0, 200)}`);
+  }
 }
 
 // Debrief (coordinator's review, item 5; Cory: "some of their feedback about what feels bad, feels based on their

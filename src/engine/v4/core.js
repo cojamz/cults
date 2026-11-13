@@ -238,6 +238,36 @@ function applyRun(prev, move, opts) {
   return s;
 }
 
+/**
+ * A run that may be cut by another question partway (an AI player's all-at-once answer to Out of Style whose first pick
+ * is a grey member: "+1 of which color?" comes up before the next pick). Plays the picks while each answers the run's
+ * question and stops where another question comes up for the same player. Returns { state, played, rest, why }: rest
+ * are the picks still to play once that question is answered (the caller keeps them), why says what stopped it. Steals
+ * still go one at a time (throws), and a pick that isn't on offer throws as applyMove does.
+ */
+export function applyRunUntil(prev, move, opts = {}) {
+  const ids = [move.option, ...(Array.isArray(move.then) ? move.then : [])];
+  const ask = prev.queue[0];
+  let s = prev, played = 0;
+  const lists = [];
+  for (; played < ids.length; played++) {
+    if (played > 0 && !sameAsk(ask, s.queue[0])) {
+      const other = s.pending && s.pending.player === move.player ? s.pending.prompt : null;
+      if (opts.effects) Object.defineProperty(s, 'effects', { value: mergeRun(lists), enumerable: false, configurable: true, writable: true });
+      return { state: s, played, rest: ids.slice(played), why: other ? `another question came up first: ${other}` : 'the question is over' };
+    }
+    if (!runnable(s, move.player)) throw new Error(`Illegal move: ${JSON.stringify(move)} answers a question that takes one answer at a time`);
+    const before = STEALS;
+    s = applyOne(s, { player: move.player, option: ids[played] }, opts);
+    if (STEALS !== before) throw new Error(`Illegal move: ${JSON.stringify(move)}: steals go one at a time`);
+    if (opts.effects) lists.push(s.effects || []);
+  }
+  if (opts.effects) Object.defineProperty(s, 'effects', { value: mergeRun(lists), enumerable: false, configurable: true, writable: true });
+  return { state: s, played, rest: [], why: '' };
+}
+/** The question a run answers, as a key (its task kind and handler), so a caller holding leftover picks can tell when it's back. */
+export const askKey = state => { const t = state?.queue?.[0]; return t ? `${t.t}|${t.h || ''}|${t.p}` : ''; };
+
 /** Returns a new state. Throws on an illegal move. A move with `then` answers the same question several times (applyRun). */
 export function applyMove(prev, move, opts = {}) {
   if (Array.isArray(move?.then) && move.then.length) return applyRun(prev, move, opts);

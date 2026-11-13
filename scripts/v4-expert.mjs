@@ -21,7 +21,7 @@ import {
   createGame, applyMove, followers, memberCount, memberPrice, cardDef, contestTable, turnRail, previewSpace,
   quadrant, shopSize, TIERS, roundWorkers, openSlots,
 } from '../src/engine/v4/index.js';
-import { scoringOf, plus1Open, runLength } from '../src/engine/v4/core.js';
+import { scoringOf, plus1Open, runLength, applyRunUntil, askKey } from '../src/engine/v4/core.js';
 import { discardOf } from '../src/engine/v4/discard.js';
 import { resume as engineResume } from '../src/engine/v4/core.js';
 import { plainCopy } from '../src/engine/v4/copy.js';
@@ -377,6 +377,40 @@ function pickOption(s, meta, seat, arg) {
   return o ? { o } : { o: null, gone: true };
 }
 
+/** Play an all-at-once answer (several picks of one question) as far as it goes. Another question for the same player
+ *  partway (Out of Style's grey member asks "+1 of which color?") stops it: the picks left are kept in meta.runRest and
+ *  played as soon as the question is back (the player-agents review, r3g1: seven such answers were dropped silently). */
+function playRun(dir, s, meta, seat, ids, flags, resumed = false) {
+  let r;
+  try { r = applyRunUntil(s, { player: seat, option: ids[0], then: ids.slice(1) }); } catch (e) {
+    const err = String(e.message || e).replace(/^Illegal move: .*?(: |$)/, '');
+    if (resumed) delete meta.runRest?.[seat];
+    console.log(`Those picks can't be made${resumed ? ' (the rest of your earlier answer)' : ''}: ${err || 'not every pick is on offer'}. Nothing ${resumed ? 'more ' : ''}was played. Answer again from this list:\n${decisionView(s, s.players[seat], meta, resumed)}`);
+    writeJson(f(dir, 'meta.json'), meta);
+    return;
+  }
+  const done = ids.slice(0, r.played), next = r.state;
+  const picks = []; let st = s;
+  for (const id of done) { const o = st.pending.options.find(x => x.id === id); picks.push(renderOption(st, st.players[seat], o, st.pending.kind).split(' — ')[0]); st = applyMove(st, { player: seat, option: id }); }
+  const all = picks.join('; ');
+  writeJson(f(dir, 'state.json'), next);
+  const ev = [{ type: 'move', seat, round: s.round, n: next.moves, kind: s.pending.kind, option: done[0], then: done.slice(1), label: all, think: flags.why || flags.think || '', prompt: s.pending.prompt, picks: done.length }];
+  if (flags.say) ev.push({ type: 'say', seat, text: String(flags.say) });
+  ev.push(...newLines(s, next).map(text => ({ type: 'log', text, by: seat })));
+  addEvents(dir, ev);
+  meta.seen[seat] = events(dir).length;
+  if (r.rest.length && next.pending?.player === seat && !next.over) (meta.runRest ??= {})[seat] = { ids: r.rest, ask: askKey(s) };
+  writeJson(f(dir, 'meta.json'), meta);
+  console.log(`Done (${done.length} pick${done.length === 1 ? '' : 's'}): ${all.slice(0, 300)}\nWhat happened:\n${newLines(s, next).map(l => `  ${l}`).join('\n') || '  (nothing logged)'}`);
+  if (r.rest.length) {
+    if (meta.runRest?.[seat]) console.log(`\nYour other ${r.rest.length} pick${r.rest.length === 1 ? ' is' : 's are'} kept: ${r.why}. Answer that, and the rest of your answer is played right after.`);
+    else console.log(`\nYour other ${r.rest.length} pick${r.rest.length === 1 ? ' was' : 's were'} not played: ${r.why}.`);
+  }
+  if (next.over) console.log(`\nGAME OVER. ${next.ranking.map((id, i) => `${i + 1}. ${next.players[id].name} ${followers(next, next.players[id])}`).join(' · ')}\nNow run postgame.`);
+  else if (next.pending?.player === seat) { console.log(`\nYour turn continues.\n${tableView(next, seat).split('\n').slice(0, 2).join('\n')}\n\n${decisionView(next, next.players[seat], meta, true)}`); writeJson(f(dir, 'meta.json'), meta); }
+  else console.log(`\nYour decisions are finished for now. Run wait.`);
+}
+
 // ---------- commands ----------
 function parse(argv) {
   const pos = [], flags = {};
@@ -459,30 +493,12 @@ async function main() {
       if (parts.length > 1) {
         const nums = meta.numbers?.[seat]?.map || {};
         const ids = parts.map(x => (/^\d+$/.test(x) ? Object.keys(nums).find(k => nums[k] === Number(x)) : x));
-        const first = s.pending.options.find(x => x.id === ids[0]);
-        let next = null, err = '';
-        if (ids.some(id => id === undefined) || !first) err = `${arg}: not every number is on your list.`;
-        else { try { next = applyMove(s, { player: seat, option: ids[0], then: ids.slice(1) }); } catch (e) { err = String(e.message || e).replace(/^Illegal move: .*?(: |$)/, ''); } }
-        if (!next) {
-          console.log(`Those picks can't all be made in one go (${err || 'the question changed partway'}). Nothing was played. Answer again from this list:\n${decisionView(s, s.players[seat], meta)}`);
+        if (ids.some(id => id === undefined) || !s.pending.options.some(x => x.id === ids[0])) {
+          console.log(`Those picks can't be made: ${arg} has a number that isn't on your list${ids[0] !== undefined && !s.pending.options.some(x => x.id === ids[0]) ? ' (the first must be on the list now)' : ''}. Nothing was played. Answer again from this list:\n${decisionView(s, s.players[seat], meta)}`);
           writeJson(f(dir, 'meta.json'), meta);
           return;
         }
-        const label = ids.map((id, k) => (k === 0 ? renderOption(s, s.players[seat], first, s.pending.kind) : (/^\d+$/.test(parts[k]) ? `#${parts[k]}` : id))).join(' + ');
-        const picks = []; let st = s;
-        for (const id of ids) { const o = st.pending.options.find(x => x.id === id); picks.push(renderOption(st, st.players[seat], o, st.pending.kind).split(' — ')[0]); st = applyMove(st, { player: seat, option: id }); }
-        const all = picks.join('; ');
-        writeJson(f(dir, 'state.json'), next);
-        const ev = [{ type: 'move', seat, round: s.round, n: next.moves, kind: s.pending.kind, option: ids[0], then: ids.slice(1), label: all || label, think: flags.why || flags.think || '', prompt: s.pending.prompt, picks: ids.length }];
-        if (flags.say) ev.push({ type: 'say', seat, text: String(flags.say) });
-        ev.push(...newLines(s, next).map(text => ({ type: 'log', text, by: seat })));
-        addEvents(dir, ev);
-        meta.seen[seat] = events(dir).length;
-        writeJson(f(dir, 'meta.json'), meta);
-        console.log(`Done (${ids.length} picks): ${all.slice(0, 300)}\nWhat happened:\n${newLines(s, next).map(l => `  ${l}`).join('\n') || '  (nothing logged)'}`);
-        if (next.over) console.log(`\nGAME OVER. ${next.ranking.map((id, i) => `${i + 1}. ${next.players[id].name} ${followers(next, next.players[id])}`).join(' · ')}\nNow run postgame.`);
-        else if (next.pending?.player === seat) { console.log(`\nYour turn continues.\n${tableView(next, seat).split('\n').slice(0, 2).join('\n')}\n\n${decisionView(next, next.players[seat], meta, true)}`); writeJson(f(dir, 'meta.json'), meta); }
-        else console.log(`\nYour decisions are finished for now. Run wait.`);
+        playRun(dir, s, meta, seat, ids, flags);
         return;
       }
       const { o, gone } = pickOption(s, meta, seat, arg);
@@ -505,6 +521,18 @@ async function main() {
       writeJson(f(dir, 'meta.json'), meta);
       const mine = newLines(s, next);
       console.log(`Done: ${label.slice(0, 160)}\nWhat happened:\n${mine.map(l => `  ${l}`).join('\n') || '  (nothing logged)'}`);
+      // picks left over from an all-at-once answer that another question cut (Out of Style's grey member asking a color):
+      // its question is back, so they're played now
+      if (meta.runRest?.[seat] && !next.over) {
+        const rest = meta.runRest[seat];
+        if (askKey(next) === rest.ask && next.pending?.player === seat) {
+          delete meta.runRest[seat];
+          console.log('\nNow the rest of your earlier answer:');
+          playRun(dir, next, meta, seat, rest.ids, { why: '(the rest of my earlier answer)' }, true);
+          return;
+        }
+        if (next.pending?.player !== seat) { delete meta.runRest[seat]; writeJson(f(dir, 'meta.json'), meta); console.log(`(The rest of your earlier answer, ${rest.ids.length} pick${rest.ids.length === 1 ? '' : 's'}, wasn't played: its question ended.)`); }
+      }
       if (next.over) console.log(`\nGAME OVER. ${next.ranking.map((id, i) => `${i + 1}. ${next.players[id].name} ${followers(next, next.players[id])}`).join(' · ')}\nNow run postgame.`);
       else if (next.pending?.player === seat) { console.log(`\nYour turn continues.\n${tableView(next, seat).split('\n').slice(0, 2).join('\n')}\n\n${decisionView(next, next.players[seat], meta, true)}`); writeJson(f(dir, 'meta.json'), meta); }
       else console.log(`\nYour decisions are finished for now. Run wait.`);
