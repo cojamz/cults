@@ -4,6 +4,7 @@
 //  - coin:     a small clink as a resource lands in a pile
 //  - fanfare:  a short brass flourish for a round prize's winner
 //  - follower: a tiny voice chirping gibberish as followers join (original formant synthesis; a fresh line each time)
+//  - meh:      a mean, flat "meh" as Spoilsport spoils a contest at round end (Cory, Nov 12)
 //  - each emoji's call: the cat meows, the robot beeps, on top of the knock as that player's minion lands (Cor, Nov 4)
 // A sound never waits on anything and nothing waits on it: play() schedules on the audio clock and returns. Muted is
 // kept in this browser (☰ menu); ?sound=off in the address mutes that page.
@@ -221,9 +222,47 @@ function crowd(ctx, dest, t, r, n = 1) {
 function member(ctx, dest, t, r) {
   return follower(ctx, dest, t, r, { word: [['h', 'u'], ['m', 'a']], pitch: 0.82, rise: false });
 }
-export const VOICES = { place, coin, fanfare, follower: crowd, member };
+// Spoilsport spoils a contest at round end: a mean, flat "meh" (Cory, Nov 12: "a little sound thats like 'meh'", "like
+// a mean 'meh'"). A low nasal voice that swells in on the m, holds a sneering "eh" that sags in pitch, with a fast rough
+// flutter in its throat, and drops off; about half a second.
+function meh(ctx, dest, t, r) {
+  const f0 = 175 + r() * 15, dur = 0.5;
+  const src = ctx.createOscillator(); src.type = 'sawtooth';
+  src.frequency.setValueAtTime(f0 * 1.08, t);
+  src.frequency.linearRampToValueAtTime(f0, t + 0.09);
+  src.frequency.linearRampToValueAtTime(f0 * 0.78, t + dur);
+  // the sneer: a rough flutter in the throat, quick and uneven
+  const rough = ctx.createOscillator(); rough.type = 'square'; rough.frequency.value = 31 + r() * 4;
+  const roughAmt = ctx.createGain(); roughAmt.gain.value = f0 * 0.035;
+  rough.connect(roughAmt); roughAmt.connect(src.frequency);
+  const mouth = ctx.createGain(); mouth.gain.value = 0.0001;
+  // the m (lips closed, one low resonance) opening to a pinched, nasal "eh"
+  [[8, 1, 300, 600], [12, 0.8, 1100, 2100], [10, 0.45, 2600, 3300]].forEach(([q, a, from, to]) => {
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = q;
+    bp.frequency.setValueAtTime(from, t);
+    bp.frequency.linearRampToValueAtTime(to, t + 0.08);
+    const g = ctx.createGain(); g.gain.value = a * 3.2;
+    src.connect(bp); bp.connect(g); g.connect(mouth);
+  });
+  // a nose: a dip around 1 kHz
+  const nose = ctx.createBiquadFilter(); nose.type = 'notch'; nose.frequency.value = 1000; nose.Q.value = 2;
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 5000;
+  const even = ctx.createDynamicsCompressor();
+  even.threshold.value = -30; even.knee.value = 10; even.ratio.value = 6; even.attack.value = 0.003; even.release.value = 0.08;
+  const lift = ctx.createGain(); lift.gain.value = 2.4;
+  mouth.connect(nose); nose.connect(lp); lp.connect(even); even.connect(lift); lift.connect(dest);
+  mouth.gain.setValueAtTime(0.0001, t);
+  mouth.gain.exponentialRampToValueAtTime(0.3, t + 0.05);
+  mouth.gain.exponentialRampToValueAtTime(0.55, t + 0.1);
+  mouth.gain.setValueAtTime(0.5, t + dur * 0.7);
+  mouth.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  src.start(t); rough.start(t);
+  src.stop(t + dur + 0.05); rough.stop(t + dur + 0.05);
+  return dur;
+}
+export const VOICES = { place, coin, fanfare, follower: crowd, member, meh };
 // each voice's loudness against the others (set by ear and by peak, scripts/v4-sounds.mjs)
-export const LEVEL = { place: 0.55, coin: 0.7, fanfare: 0.75, follower: 0.32, member: 0.2 };
+export const LEVEL = { place: 0.55, coin: 0.7, fanfare: 0.75, follower: 0.32, member: 0.2, meh: 0.22 };
 
 /** Render a voice into ctx at time t (offline rendering uses this too). Returns its length in seconds. */
 export function voice(ctx, dest, name, t, seed = Math.floor(Math.random() * 1e9), n = 1) {
@@ -609,7 +648,7 @@ if (typeof addEventListener === 'function') {
 }
 
 // how close the same sound may repeat, and how many may ring at once (a dozen coins is a handful, not a din)
-const GAP = { place: 0.04, coin: 0.04, fanfare: 0.5, follower: 0.1, member: 0.12 };
+const GAP = { place: 0.04, coin: 0.04, fanfare: 0.5, follower: 0.1, member: 0.12, meh: 0.3 };
 const last = {};
 let ringing = 0;
 // Followers line up with their number (Cory, 2026-10-15). One to three fly as single pieces 60ms apart, and each one

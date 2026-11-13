@@ -24,6 +24,7 @@ const JOBS = [
   ['coins-3', [0, 1, 2].map(k => ['coin', 0.02 + k * 0.083, 20 + k]), 0.6],
   ['coins-8-at-once', [['coin', 0.02, 25, 8]], 0.7],
   ['fanfare', [['fanfare', 0.02, 1]], 1.0],
+  ['meh', [['meh', 0.02, 5]], 0.7],
   // a haul of followers at once: a crowd as big as the haul, never one clip stacked
   ['followers-1', [['follower', 0.02, 30, 1]], 0.8],
   ['followers-3', [['follower', 0.02, 31, 3]], 1.0],

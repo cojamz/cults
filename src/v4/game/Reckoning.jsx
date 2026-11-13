@@ -18,6 +18,7 @@ import { chainRunning, onChainEnd, onChainLanded } from './director.js';
 import Tick, { countMs } from './Tick.jsx';
 import { ruleWords } from '../shorts.js';
 import { play } from '../sound.js';
+import { Sprite } from '../art/Sprite.jsx';
 import { cardDef, quadrant } from '../../engine/v4/index.js';
 import { finalGrants } from './finalScore.js';
 
@@ -138,6 +139,7 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
   const [step, setStep] = useState(0); // which quadrant is paying (rows.length = finished)
   const [beat, setBeat] = useState(0); // within it: 0 counting, 1 the verdict (the prize in the air), 2 landed
   const [seen, setSeen] = useState(0); // how many seats' counts have stamped in so far
+  const [meh, setMeh] = useState(false); // Spoilsport's cameo on a spoiled contest (Cory, Nov 12)
   const [atTop, setAtTop] = useState(false); // the card sits on the far side of the wheel from the rim it scores
   // laptop: the card stands still at the wheel's centre, inside every rim, so it never covers the rim being scored and the
   // eye doesn't chase it from top to bottom (w3b #51); phones keep the top/bottom flip
@@ -202,6 +204,7 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
     const row = rows[step];
     setBeat(0);
     setSeen(0);
+    setMeh(false);
     if (onLamp) onLamp(row.kind === 'bonus' || row.kind === 'after' ? null : row.qid);
     if (typeof window !== 'undefined') window.__patronsReckon = (window.__patronsReckon || 0) + 1;
     const won = row.winners.length > 0;
@@ -217,16 +220,22 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
     let cancelled = false;
     // the next rim comes in one update with its beat and counts reset: stepping first showed the next rim's verdict
     // for a frame before its counting began (round-end smoothing, Oct 29)
-    const advance = () => { setBeat(0); setSeen(0); setStep(s => s + 1); };
+    const advance = () => { setBeat(0); setSeen(0); setMeh(false); setStep(s => s + 1); };
+    // a contest Spoilsport spoiled: as its verdict shows, Spoilsport pops up on the card with a mean "meh" (Cory, Nov 12:
+    // "if spoilsport spoils a round, he should make a little cameo in the round end animation with a little sound thats
+    // like 'meh'", "like a mean 'meh'"), and the rim holds a little longer so the cameo is seen
+    const spoiled = row.kind !== 'bonus' && row.kind !== 'after' && row.spoiled != null && !row.winners.length;
+    const sulk = () => { if (spoiled) { setMeh(true); play('meh'); } };
+    const stay = spoiled ? MO.spoilCameo : 0;
     if (reduced) {
-      setSeen(row.rows.length); setBeat(1);
+      setSeen(row.rows.length); setBeat(1); sulk();
       timers.push(setTimeout(() => { if (onPaid) onPaid(step + 1); setBeat(2); }, 200), setTimeout(advance, 400));
       return () => timers.forEach(clearTimeout);
     }
     if (!won && !row.rows.some(r => r.shown > 0)) {
       // nobody scores and nobody counts: the rim pulses once, dim, and the Reckoning moves on
       if (plaque) pulse(plaque, MO.reckonQuiet);
-      timers.push(setTimeout(() => { setBeat(1); if (onPaid) onPaid(step + 1); }, 60), setTimeout(advance, MO.reckonQuiet));
+      timers.push(setTimeout(() => { setBeat(1); sulk(); if (onPaid) onPaid(step + 1); }, 60), setTimeout(advance, Math.max(MO.reckonQuiet, 60 + stay)));
       return () => timers.forEach(clearTimeout);
     }
     // the counts stamp in seat by seat and tick up (the counting is the motion)
@@ -250,7 +259,8 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
         if (e && e.animate) track(e.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-5px)', offset: 0.4 }, { transform: 'translateY(0)' }], { duration: MO.hop, easing: 'cubic-bezier(.3,1.4,.5,1)', composite: 'add' }));
       }
       if (won) play('fanfare'); // the winner's little flourish (sound.js)
-      if (!won) { if (onPaid) onPaid(step + 1); timers.push(setTimeout(advance, Math.max(MO.hop + MO.reckonRest, read))); }
+      else sulk();
+      if (!won) { if (onPaid) onPaid(step + 1); timers.push(setTimeout(advance, Math.max(MO.hop + MO.reckonRest, read, stay))); }
     }, counted));
     if (won) timers.push(setTimeout(() => {
       // the prize lifts off the rim's engraving and arcs to the number it raises: the winner's total on their chair,
@@ -347,6 +357,12 @@ export default function Reckoning({ info, root, onDone, onLamp, onPaid, meId = n
                   </span>
                 );
               })}
+            </span>
+          )}
+          {meh && row && row.spoiled != null && (
+            <span key={`meh${step}`} className="reckon-meh" data-spoil-cameo={row.spoiled} aria-hidden="true">
+              <span className="rm-fig"><Sprite id={['benders.spoilsports', 'spoilsport']} kind="member" sphere="colorless" size={56} /></span>
+              <span className="rm-say">meh.</span>
             </span>
           )}
           <b data-reckon-head className={`reckon-verdict${shownBeat ? ' on' : ''}${row && !row.winners.length ? ' none' : ''}`}>{shownBeat ? verdict : '\u00a0'}</b>

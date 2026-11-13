@@ -176,6 +176,8 @@ const TABLE = {
   reckonVerdict: [70,  110],  // the verdict shows, then the prize leaves (the leader's hop plays on under it)
   reckonRest:  [60,    100],
   reckonQuiet: [150,   250],  // a rim nobody scores: it pulses once, dim, and the Reckoning moves on
+  // a contest Spoilsport spoiled: Spoilsport pops up on the card and says "meh" before the next rim (Cory, Nov 12)
+  spoilCameo:  [650,   600],
   // the round's end as its own beat before the first rim lights: "Round II ends" stamps in at the wheel's centre and is
   // read (wave 4 #6: the scoring began while the player looked away)
   reckonLead:  [450,   800],
@@ -238,7 +240,7 @@ const TIGHT = new Set(['pieceStagger', 'streamSpread', 'bundleTrail', 'fan', 'de
 const tightScale = () => Math.min(speedScale(), SPEEDS.steady);
 // reading time: a slower speed gives more of it, but not six times Steady's (at Relaxed a 15-word story line held the
 // table 14s and a round took minutes; 2.5x Steady's base is about 150 words a minute, Nov 7)
-const READ = new Set(['storyLine', 'storyWord', 'storyLinger']);
+const READ = new Set(['storyLine', 'storyWord', 'storyLinger', 'spoilCameo']);
 const readScale = () => Math.min(speedScale(), 2.5);
 /** A budget at the viewer's speed: Quick's own number, else the base times the speed. */
 // held the same at every speed but Quick (Cory gave the recruit card's linger in seconds)
