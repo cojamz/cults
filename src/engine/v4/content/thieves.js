@@ -444,11 +444,12 @@ const thieves = {
       // any rivals (Cory, Nov 5: "make help yourself a single rival, and then heist any rivals"): one follower a pick
       // Cory, Nov 10 3:46pm: "Steal 4 followers and 4 resources. +1 magenta." ("maybe it should be steal 4 followers and 4any
       // from rivals for the round II?"). The followers first, then the resources, each split among rivals as you choose.
-      key: 'rob', ring: 2, name: 'Heist', text: 'Steal 4 followers and 4 resources. +1 magenta.',
-      estimate: (ctx, p) => Math.min(4, heistTargets(ctx, p).reduce((a, o) => a + o.bonus, 0)) * 2 + estimateSteal(ctx, p, ctx.stealCount(p, 4)),
+      // Cory, Nov 13 12:36am Eastern: "Heist is for sure to strong. Should maybe go to 3 and 3"
+      key: 'rob', ring: 2, name: 'Heist', text: 'Steal 3 followers and 3 resources. +1 magenta.',
+      estimate: (ctx, p) => Math.min(3, heistTargets(ctx, p).reduce((a, o) => a + o.bonus, 0)) * 2 + estimateSteal(ctx, p, ctx.stealCount(p, 3)),
       // one Heist is one steal (Cory, Oct 29: "once per steal instance"): every follower pick and the resources share one id,
       // so Fence and the Magenta Cloak pay once (picky bot, Nov 11: a copied Heist paid the cloak 6 times)
-      resolve(ctx, p) { const instance = ctx.stealInstance(); heistPick(ctx, p, 4, true, instance); startSteal(ctx, p, 'Heist', ctx.stealCount(p, 4, { say: true }), { instance }); },
+      resolve(ctx, p) { const instance = ctx.stealInstance(); heistPick(ctx, p, 3, true, instance); startSteal(ctx, p, 'Heist', ctx.stealCount(p, 3, { say: true }), { instance }); },
     },
     {
       // Retired Nov 10 (Swindle took its slot); kept for old saves.

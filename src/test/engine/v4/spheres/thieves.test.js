@@ -134,16 +134,16 @@ describe('Magenta actions', () => {
   });
 
   // Cory, Nov 10 3:46pm: "Steal 4 followers and 4 resources. +1 magenta."
-  it('Heist: steal 4 followers, one pick at a time from any rivals, then 4 resources; +1 magenta', () => {
+  it('Heist: steal 3 followers, one pick at a time from any rivals, then 3 resources (Nov 13); +1 magenta', () => {
     let s = scene({ n: 3, round: 2, bonus: [0, 5, 2], res: [{}, { gold: 1 }, { red: 5 }] });
     const f0 = s.players.map(p => followers(s, p));
     s = take(s, 'thieves.rob');
     expect(ids(s)).toEqual(['player:1', 'player:2']);
-    for (let k = 0; k < 4; k++) s = move(s, 'player:1'); // Heist: one follower a pick (Nov 5)
-    expect(s.players.map(p => followers(s, p))).toEqual([f0[0] + 4, f0[1] - 4, f0[2]]);
+    for (let k = 0; k < 3; k++) s = move(s, 'player:1'); // Heist: one follower a pick (Nov 5)
+    expect(s.players.map(p => followers(s, p))).toEqual([f0[0] + 3, f0[1] - 3, f0[2]]);
     expect(ids(s)).toEqual(['take:1:gold', 'take:2:red']);
-    s = play(s, 'take:1:gold', 'take:2:red', 'take:2:red', 'take:2:red');
-    expect(R(s)).toEqual([{ ...Z, gold: 1, red: 3, magenta: 1 }, { ...Z }, { ...Z, red: 2 }]);
+    s = play(s, 'take:1:gold', 'take:2:red', 'take:2:red');
+    expect(R(s)).toEqual([{ ...Z, gold: 1, red: 2, magenta: 1 }, { ...Z }, { ...Z, red: 3 }]);
     expect(R(s)[0].magenta).toBe(1);
   });
 

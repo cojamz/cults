@@ -27,7 +27,7 @@ describe('Magenta action wording and one-stack theft', () => {
     expect(stash.second).toBeNull();
     expect(panelText('thieves', { key: 'ransom' }, 2).verb).toContain(`costing ${6 + MORE} or less`);
     expect(panelText('thieves', { key: 'rob' }, 2).verb).toBe('Steal 4 @f and 4 resources'); // Heist, Nov 10 3:46pm
-    expect(pipEffect('thieves', { key: 'rob' }, 2)).toBe('steal 4 followers and 4 resources');
+    expect(pipEffect('thieves', { key: 'rob' }, 2)).toBe('steal 3 followers and 3 resources');
     // Catch Up (Nov 10) and Swindle (Nov 10, Shake Down's slot)
     expect(panelText('thieves', { key: 'catchup' }, 1)).toMatchObject({ main: '+2 magenta', second: 'per rival with more resources' });
     expect(panelText('thieves', { key: 'swindle' }, 2)).toMatchObject({ verb: `Steal a member up to ${6 + MORE} for a shop member`, second: 'you give them one' }); // the give-back in line 1 (picky bot, Nov 11)

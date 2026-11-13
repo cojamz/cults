@@ -77,16 +77,16 @@ describe('Magenta redesign edge cases', () => {
     expect(s.players[0].bonus).toBe(0);
     expect(s.players[0].res).toMatchObject({ gold: 5, magenta: 1 });
   });
-  it('Heist offers only rivals with followers to steal, never a protected one, and takes 4', () => {
+  it('Heist offers only rivals with followers to steal, never a protected one, and takes 3 (Nov 13)', () => {
     let s = table(Q, { round: 2, n: 4, res: [{}, {}, {}, {}], bonus: [0, 5, 0, 6], shop });
     s.players[3].hideout = s.round; // Lie Low (Bodyguards stopped blocking, Nov 11)
     s = take(s, 'thieves.rob');
     expect(ids(s)).toEqual(['player:1']);
     s = restored(s);
-    for (let k = 0; k < 4; k++) s = move(s, 'player:1'); // Heist: one follower a pick (Nov 5)
+    for (let k = 0; k < 3; k++) s = move(s, 'player:1'); // Heist: one follower a pick (Nov 5)
     expect(s.pending?.kind).toBe('buy'); // no resources to steal
-    expect(s.players[0].bonus).toBe(4);
-    expect(s.players[1].bonus).toBe(1);
+    expect(s.players[0].bonus).toBe(3);
+    expect(s.players[1].bonus).toBe(2);
     expect(s.players[3].bonus).toBe(6);
     expect(s.players[0].res.magenta).toBe(1);
   });

@@ -25,6 +25,6 @@ describe('strip lines name who got what', () => {
   });
   it('followers taken say whose they were', () => {
     const st = rivalTurn({ quadrants: ['silver', 'thieves', 'market', 'red'], round: 2, bonus: [0, 0, 5] }, 'thieves.rob');
-    expect(st.lines[0]).toMatch(/^\+1 magenta \+4 followers from P3$/); // Heist steals 4 followers since Nov 10 (and 4 resources: nobody holds any here)
+    expect(st.lines[0]).toMatch(/^\+1 magenta \+3 followers from P3$/); // Heist steals 3 followers since Nov 13 (and 3 resources: nobody holds any here)
   });
 });

@@ -56,13 +56,13 @@ const lines = (s, re) => s.log.filter(l => re.test(l));
 const bonusOf = (s, i) => s.players[i].bonus;
 
 describe('Bodyguards: "Whenever a rival steals from you, steal 1 back from them."', () => {
-  it('Heist (4 followers, then 4 resources) is one steal: one steal back, not five', () => {
+  it('Heist (3 followers, then 3 resources) is one steal: one steal back, not five', () => {
     const { s } = go('bg-heist', { quads: Q, round: 2, turns: [0], members: [[], ['thieves.watchdog']], res: [{ red: 5 }, { gold: 6 }], prep: st => { st.players[1].bonus = 5; } },
-      [/Heist/, /player:1/, /player:1/, /player:1/, /player:1/, /take:1:gold/, /take:1:gold/, /take:1:gold/, /take:1:gold/]);
+      [/Heist/, /player:1/, /player:1/, /player:1/, /take:1:gold/, /take:1:gold/, /take:1:gold/]);
     expect(lines(s, /Bodyguards/)).toEqual(["P2's Bodyguards: took 1 from P1."]);
-    expect(s.players[0].res).toMatchObject({ magenta: 1, red: 4, gold: 4 }); // 1 red back (P1's biggest pile when the steal began)
-    expect(s.players[1].res).toMatchObject({ gold: 2, red: 1 });
-    expect([bonusOf(s, 0), bonusOf(s, 1)]).toEqual([4, 1]);
+    expect(s.players[0].res).toMatchObject({ magenta: 1, red: 4, gold: 3 }); // 1 red back (P1's biggest pile when the steal began)
+    expect(s.players[1].res).toMatchObject({ gold: 3, red: 1 });
+    expect([bonusOf(s, 0), bonusOf(s, 1)]).toEqual([3, 2]);
     cleanLog(s);
   });
 
@@ -112,12 +112,12 @@ describe('Bodyguards: "Whenever a rival steals from you, steal 1 back from them.
     expect(bonusOf(s, 1)).toBe(1);
   });
 
-  it('Heist (4 followers, then 4 resources) is one steal: the victim\'s Snitch ("they lose 1 follower") takes 1, not five', () => {
+  it('Heist (3 followers, then 3 resources) is one steal: the victim\'s Snitch ("they lose 1 follower") takes 1, not five', () => {
     const { s } = go('snitch-heist', { quads: Q, round: 2, turns: [0], members: [[], ['thieves.snitch']], res: [{ red: 5 }, { gold: 6 }], prep: st => { st.players[0].bonus = 9; st.players[1].bonus = 5; } },
-      [/Heist/, /player:1/, /player:1/, /player:1/, /player:1/, /take:1:gold/, /take:1:gold/, /take:1:gold/, /take:1:gold/]);
+      [/Heist/, /player:1/, /player:1/, /player:1/, /take:1:gold/, /take:1:gold/, /take:1:gold/]);
     expect(lines(s, /Snitch/)).toEqual(["P2's Snitch: P1 loses 1 follower."]);
-    expect(s.players[0].res.gold).toBe(4);
-    expect([bonusOf(s, 0), bonusOf(s, 1)]).toEqual([9 + 4 - 1, 1]);
+    expect(s.players[0].res.gold).toBe(3);
+    expect([bonusOf(s, 0), bonusOf(s, 1)]).toEqual([9 + 3 - 1, 2]);
     cleanLog(s);
   });
 

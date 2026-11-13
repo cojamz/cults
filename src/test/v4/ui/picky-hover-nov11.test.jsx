@@ -43,7 +43,7 @@ describe('the space badge (B4, B6)', () => {
 describe("You'd get (B5, W5, W18)", () => {
   it('a steal of followers says yours beside the rival’s loss', () => {
     const s = sceneQ({ quadrants: ['gold', 'red', 'thieves', 'market'], round: 2, n: 3, res: [{}, { gold: 5, red: 4 }, { blue: 3 }], bonus: [0, 6, 3] });
-    expect(words(s, 'Heist').text).toBe('+1 magenta, +4 followers; steal 4 in colors you pick');
+    expect(words(s, 'Heist').text).toBe('+1 magenta, +3 followers; steal 3 in colors you pick');
   });
 
   it('a steal the space doesn’t print names the member it brings in', () => {

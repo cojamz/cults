@@ -48,3 +48,8 @@ Verdict: send
 
 Source: Cory, 2026-11-12 7:04pm Eastern: "ghost and loyalists should always be same price"
 Verdict: send
+
+## Idea: Heist
+
+Source: Cory, 2026-11-13 12:36am Eastern: "Heist is for sure to strong. Should maybe go to 3 and 3"
+Verdict: send

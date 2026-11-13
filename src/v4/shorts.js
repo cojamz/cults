@@ -72,7 +72,7 @@ const LIVE_WORDS = {
   },
   thieves: {
     pickpocket: 'steal 1 per minion you placed this round, this one included', catchup: '+2 magenta per rival with more resources',
-    swindle: `steal a member costing up to ${6 + MORE}, give them a shop member`, rob: 'steal 4 followers and 4 resources', heist: 'recruit a rival’s member for free',
+    swindle: `steal a member costing up to ${6 + MORE}, give them a shop member`, rob: 'steal 3 followers and 3 resources', heist: 'recruit a rival’s member for free',
   },
   trading: { farewell: 'discard a member for its cost in followers', writeoff: 'give a member to a rival for its cost in white', cashin: 'turn all your white into followers' },
   echo: {
@@ -91,7 +91,7 @@ const PIPS = {
   silver: { partygifts: 'give rivals up to 3 silver, +2 followers each', largesse: 'give rivals 12 silver, +10 followers' },
   yellow: { gather: '+1 per member' },
   market: { clearance: '+5 blue; recruit from the discard pile', pricecheck: 'bury for half its cost', spree: '+7 blue; recruit 2 from the discard pile', wordofmouth: '+1 follower per 2 members' },
-  thieves: { rob: 'steal 4 followers and 4 resources', swindle: 'steal a member, give a shop member', ransom: 'rival pays or loses a member', heist: 'recruit a rival’s member for free' },
+  thieves: { rob: 'steal 3 followers and 3 resources', swindle: 'steal a member, give a shop member', ransom: 'rival pays or loses a member', heist: 'recruit a rival’s member for free' },
   trading: { nestegg: '+3 white', modestmeans: '+2, +1 per bigger rival', stipend: r => `+${r + 2} white; +${r} if you recruit a member`, splurge: r => `+1 follower per ${r === 2 ? 1 : 2} paid`, exchange: r => `up to ${r} into 2 followers each`, farewell: 'discard one for followers', estatesale: 'discard one for white', writeoff: 'give one away for white', cashin: 'all white for followers', sellhigh: 'sell 2 for 6 white', dividend: '+1 white per follower', boom: 'all for followers' },
   echo: { refrain: 'copy yours', eternity: 'copy your actions on a color' },
 };

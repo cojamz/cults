@@ -35,17 +35,17 @@ describe('#6 Help Yourself: a rival lying low is never offered', () => {
   });
 });
 
-describe('#7 Heist: 4 followers (Nov 10), one a pick from any rival (Nov 5), and the choice says so', () => {
+describe('#7 Heist: 3 followers (Nov 13), one a pick from any rival (Nov 5), and the choice says so', () => {
   it('offers each rival with loose followers; a rival with none or lying low is not offered', () => {
     let s = sceneQ({ quadrants: MAG, n: 4, round: 2, res: [{}, {}, {}, {}] });
     s.players[1].bonus = 0; s.players[2].bonus = 5; s.players[3].bonus = 5;
     s.players[3].hideout = s.round; // P4 lies low
     s = take(s, 'thieves.rob');
-    expect(s.pending.prompt).toMatch(/Heist: steal a follower from which rival\? \(4 left\)/);
+    expect(s.pending.prompt).toMatch(/Heist: steal a follower from which rival\? \(3 left\)/);
     expect(s.pending.options.map(o => o.id)).toEqual(['player:2']);
-    for (let k = 0; k < 4 && s.pending?.options?.some(o => o.id === 'player:2'); k++) s = move(s, 'player:2');
-    expect(s.players[0].bonus).toBe(4);
-    expect(s.players[2].bonus).toBe(1);
+    for (let k = 0; k < 3 && s.pending?.options?.some(o => o.id === 'player:2'); k++) s = move(s, 'player:2');
+    expect(s.players[0].bonus).toBe(3);
+    expect(s.players[2].bonus).toBe(2);
     expect(s.players[0].res.magenta).toBe(1);
   });
 });
