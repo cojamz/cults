@@ -76,3 +76,4 @@
 2. If it wins or leans better: other priority orders of the same principles, each against it (or today's bot), keeping the best order. An order = the weights in robust (and the order the principles are applied); a test is one change at a time against the control.
 3. Cloak balance then goes to the balance thread cmsg_01PySa5gYMfCiexiWTLrWgo39rxGwMqkjQ5tpzWX4284vH with the best bot.
 Not the plan: tier against tier, Hard instead of Very Hard, two-habit bot as control (Cory dropped it).
+- 7:56pm: full ranked bot vs today's Very Hard, 15 games: winner on its side 4 of 15, -16.0 ± 5.5 followers per player = clearly WORSE. Not moving to other orders. Ablations one at a time vs today: lead-only (lead-only.jsonl) and cloak-only (cloak-only.jsonl); ease alone and together alone were earlier tests.
