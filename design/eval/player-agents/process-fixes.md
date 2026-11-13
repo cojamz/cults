@@ -24,3 +24,4 @@
 - (r3g6) Window Shopper discard 2-pick refused 26 times silently (bulk-pick thread)
 - (r3g6) deck reshuffle not shown at the time
 - (r3g6) possible engine bugs: Blue Cloak pays nothing when a discard triggers reshuffle or at Round Start (13 of 18); Copyist pays on copies that copy nothing -> verify, route to coordinator
+- Silver ties partly skill (Cory agreed): players took gift spaces early and Kingmakers split 1 each; a gift on a late placement or all 3 to one rival breaks a fewest tie. Next ranked-list pass marks item 1 as partly player skill.
