@@ -8,7 +8,17 @@ import { makeTables } from './fuzz-tables-runner.js';
 // Count printed groups independently of the engine's memberCount helpers.
 // a member counts as its printed member count only, never its followers (Cory, 2026-10-29)
 const printed = def => def.n ?? 1;
-const members = (state, p, color = null) => p.members.reduce((n, uid) => {
+// Assimilators (Cory, Nov 12): "Your grey members count as members of your biggest color." Ties: each tied color.
+const assim = (state, p) => p.members.some(u => { const c = state.cards[u]; return [c.def, c.copy, c.ability].includes('red.assimilators'); });
+const members = (state, p, color = null) => {
+  const n = plain(state, p, color);
+  if (!color || !assim(state, p)) return n;
+  const big = Math.max(0, ...state.quadrants.map(q => plain(state, p, q)));
+  if (!big) return n;
+  if (color === 'guest') return 0;
+  return state.quadrants.includes(color) && n === big ? n + plain(state, p, 'guest') : n;
+};
+const plain = (state, p, color = null) => p.members.reduce((n, uid) => {
   const card = state.cards[uid], def = defById(card.def);
   // Dabblers counts as every color on the table (Cory, 2026-10-28), itself or as a copy
   // an Impersonator holding Dabblers' ability (card.ability) counts as it too, as the engine's effectiveDefs reads it
