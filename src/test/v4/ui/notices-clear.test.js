@@ -17,6 +17,7 @@ const CLEARED = {
   'className="pay-nudge"': 'lives only inside the open pay sheet',
   'className="pay-receipt"': 'lives only inside the open pay sheet',
   'className="ld-loose"': 'lives only inside the open rearrange card',
+  'className="seat-say seat-think"': 'replay page only: shown while it is the newest talk, replaced by the next move\'s thought',
 };
 
 describe('notices clear by themselves', () => {
