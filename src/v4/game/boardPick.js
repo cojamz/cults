@@ -127,6 +127,20 @@ export function giftPick(state, pend, first = null) {
       head: `Give rivals ${share.must ? '' : 'up to '}${share.max} silver`, firsts: [], seconds: players.map(o => ({ o, b: o.target.pid })), others: players.map(o => o.target.pid),
       rest: pend.options.filter(o => !players.includes(o)) };
   }
+  // Kingmakers: up to 3 of your own silver to the rivals you pick, set whole on the same card as Party Gifts' and
+  // given in one move (Cory, Nov 13: "they should make that decision all at once")
+  const king = state.queue?.[0]?.h === 'silver.kingmakers' ? state.queue[0].data || {} : null;
+  if (king && players.length) {
+    const me = state.players[pend.player];
+    const given = {};
+    for (const [name, k] of Object.entries(king.to || {})) { const o = state.players.find(x => x.name === name); if (o) given[o.id] = k; }
+    const total = Object.values(given).reduce((a, k) => a + k, 0);
+    const left = Math.max(0, Math.min(king.left ?? 3, me.res.silver || 0));
+    const color = state.resources.includes('silver') ? 'silver' : null;
+    return { ...base, kind: 'share', own: true, n: left + total, color, chosen: color, per: 1, flat: null, given, total, left,
+      head: `Give rivals up to ${left + total} of your silver`, firsts: [], seconds: players.map(o => ({ o, b: o.target.pid })), others: players.map(o => o.target.pid),
+      rest: pend.options.filter(o => !players.includes(o)) };
+  }
   // Sweet Talk's "turn any of your silver into other colors" (and any silver-into-colors turn the engine asks one coin at
   // a time): the whole turn set on one card, then one press (Cory, Nov 9: "sweet talk decisions all happen then
   // animations. not animation for each resource"): ConvertPicker.jsx
@@ -286,6 +300,16 @@ function otherPick(state, pend, title, question, base, first) {
     }
   }
   if (h === 'benders.pickColor' && opts.length >= 2 && opts.every(o => typeof o.value === 'string' && state.resources.includes(o.value))) {
+    // several "+1 of which color?" in a row for this player (a cloak's grey pick, then Dabblers' and Revelers'): one split
+    // card for all of them, sent as one move (Cory, Nov 13: "they should make that decision all at once")
+    const q = state.queue || [], one = t => !(t.data && t.data.n > 1);
+    let row = 0;
+    while (row < q.length && q[row].t === 'choose' && q[row].h === 'benders.pickColor' && q[row].p === pend.player && one(q[row])) row++;
+    if (row > 1 && one(q[0])) {
+      const whos = [...new Set(q.slice(0, row).map(t => (t.data && t.data.who) || '').filter(Boolean))];
+      return { ...base, title: whos.length === 1 ? whos[0] : 'Grey members', kind: 'color', n: null, color: null, chosen: null, pay: false, left: null, toPick: row,
+        head: `Pick ${row} colors`, sub: whos.join(', '), firsts: [], seconds: opts.map(o => ({ o, b: o.value })), others: opts.map(o => o.value), rest: [] };
+    }
     const n = (question.match(/\+(\d+)/) || [])[1] || '1';
     const who = (question.match(/^(.+?) is grey/) || [])[1];
     return { ...base, kind: 'color', n: null, color: null, chosen: null, pay: false, left: null, toPick: 0,

@@ -2347,7 +2347,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
         </Popover>
       )}
       {receipt && <PayReceipt key={receipt.key} receipt={receipt} onDone={() => setReceipt(r => (r && r.key === receipt.key ? null : r))} />}
-      {swapping && <SwapCard key={`${pend.player}|${state.round}|${state.queue?.[0]?.data?.who || ''}`} state={state} onPick={onPick} busy={busy} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />}
+      {swapping && <SwapCard key={`${pend.player}|${state.round}|${state.queue?.[0]?.data?.who || ''}`} state={state} onPick={onPick} onPickAll={onGiftAnswerAll} busy={busy} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />}
       {laundering && <LaunderCard key={`${pend.player}|${state.round}`} state={state} onPick={onPick} busy={busy} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />}
       {mine && !needHandoff && !paidAlready && ((pend.kind === 'pay' && !onlyPay) || payChoice(pend)) && <PayPicker key={pend.uid ?? pend.tier ?? 'swap'} state={state} onPick={onPick} busy={busy} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />}
       {moment && reckoned !== moment && <Reckoning key={moment.result.round + moment.after.moves} info={moment} root={rootEl} meId={mySeats.length === 1 ? mySeats[0] : null} onLamp={setReckonLamp} onPaid={n => setReckonPaid(moment, n)} onDone={() => setReckoned(moment)} />}

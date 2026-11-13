@@ -5,6 +5,8 @@ import { createGame, applyMove, runnable, runLength } from '../../../engine/v4/c
 import { chooseBotMove } from '../../../engine/v4/bots.js';
 import { seededRandom } from '../../../engine/v4/rng.js';
 import { step } from '../../../v4/session/record.js';
+import { giftPick } from '../../../v4/game/boardPick.js';
+import { swapRun } from '../../../v4/game/SwapCard.jsx';
 
 const COLORS = ['market', 'red', 'yellow', 'purple', 'echo', 'thieves', 'silver', 'trading'];
 // play bot games until the first state where `want(state)` holds
@@ -74,5 +76,26 @@ describe('answer runs', () => {
     const p = share.pending.player, rival = share.pending.options.find(o => o.kind === 'player');
     const done = () => applyMove(share, { player: p, option: rival.id, then: [rival.id] });
     expect(done).not.toThrow();
+  });
+  it('several "+1 of which color?" in a row (a cloak, Dabblers) are one split card and one move', () => {
+    const st = find(s => h(s) === 'benders.pickColor' && s.queue[1] && s.queue[1].h === 'benders.pickColor' && s.queue[1].p === s.queue[0].p && !(s.queue[0].data?.n > 1) && !(s.queue[1].data?.n > 1));
+    if (!st) return;
+    const g = giftPick(st, st.pending);
+    expect(g.kind).toBe('color');
+    expect(g.toPick).toBeGreaterThan(1);
+    const id = st.pending.options[0].id;
+    expect(() => applyMove(st, { player: st.pending.player, option: id, then: Array(g.toPick - 1).fill(id) })).not.toThrow();
+  });
+  it('Early Traders / Trade Seeds: the swap card whole mix goes as one move', () => {
+    const st = find(s => h(s) === 'yellow.swap' && s.pending.options.some(o => o.kind === 'swap'));
+    expect(st).toBeTruthy();
+    const p = st.players[st.pending.player], t = st.queue[0].data;
+    const from = st.resources.find(c => p.res[c] > 0), to = st.resources.find(c => c !== from);
+    const mix = { ...p.res, [from]: p.res[from] - 1, [to]: (p.res[to] || 0) + 1 };
+    const ids = swapRun(st, st.pending, mix, Number.isInteger(t.left) ? t.left : 3);
+    const next = applyMove(st, { player: st.pending.player, option: ids[0], then: ids.slice(1) });
+    expect(next.players[p.id].res[from]).toBe(p.res[from] - 1);
+    expect(next.players[p.id].res[to]).toBe((p.res[to] || 0) + 1);
+    expect(next.queue[0] && next.queue[0].h === 'yellow.swap' && next.pending?.player === p.id).toBeFalsy();
   });
 });

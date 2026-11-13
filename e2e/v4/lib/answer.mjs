@@ -50,7 +50,7 @@ async function answer(page, held, { prefer, last, avoid, panelFirst, skip, domFa
   // Take carries no data-option and answers with the suggested split, like the pay sheet's Pay (Nov 4)
   // (and Sweet Talk's convert card, ConvertPicker.jsx: its press with nothing set keeps the silver; and the swap card,
   // SwapCard.jsx, Night Traders and Tinker: its Done with nothing moved swaps nothing; an online game sat on it, Nov 11)
-  const take = keep(await page.$('[data-split-take]:not([disabled]), [data-spend-take]:not([disabled]), [data-convert-take]:not([disabled]), [data-swap-done]:not([disabled])'));
+  const take = keep(await page.$('[data-share-give]:not([disabled]), [data-split-take]:not([disabled]), [data-spend-take]:not([disabled]), [data-convert-take]:not([disabled]), [data-swap-done]:not([disabled])'));
   if (take) {
     const id = await take.evaluate(e => (e.hasAttribute('data-swap-done') ? 'swap:done' : (e.hasAttribute('data-split-take') ? 'split:' : e.hasAttribute('data-convert-take') ? 'convert:' : 'spend:') + (e.getAttribute('data-split-take') ?? e.getAttribute('data-spend-take') ?? e.getAttribute('data-convert-take')))).catch(() => 'take');
     try { await take.click({ timeout }); return { id, kind: 'pay' }; } catch { /* covered: fall through to the board */ }

@@ -66,7 +66,7 @@ export default function GiftCard(props) {
   if (g.kind === 'convert') return <ConvertPicker state={state} g={g} onAnswer={props.onAnswer} onAnswerAll={props.onAnswerAll} busy={props.busy} place={props.place} turnOf={props.turnOf} onBack={props.onBack} />;
   return <GiftCardBody {...props} />;
 }
-function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, turnOf = null, hover = null, onBack = null }) {
+function GiftCardBody({ state, gift: g, onFirst, onAnswer, onAnswerAll = null, busy, place = null, turnOf = null, hover = null, onBack = null }) {
   const pend = state.pending;
   const me = state.players[g.actor];
   const box = useRef(null);
@@ -93,6 +93,23 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
     // a "Take all" still running when the card goes (the game moved on) never answers a later steal
     return () => { removeEventListener('keydown', key); takeAll = null; changeRun = null; };
   }, []);
+  // Party Gifts' and Kingmakers' silver: each click on a rival sets one more for them on the card; Give sends them all as
+  // one move (Cory, Nov 13: "they should make that decision all at once")
+  const [planned, setPlanned] = useState({});
+  const plannedN = Object.values(planned).reduce((a, k) => a + k, 0);
+  const plannedIds = () => Object.entries(planned).flatMap(([pid, k]) => Array.from({ length: k }, () => (g.seconds.find(x => String(x.b) === pid) || {}).o?.id)).filter(Boolean);
+  const giveAll = () => {
+    if (busy || !plannedN) return;
+    const stop = g.rest.find(o => o.kind === 'done' || o.value === 'stop');
+    const ids = [...plannedIds(), ...(plannedN < g.left && stop ? [stop.id] : [])];
+    const sent = onAnswerAll ? onAnswerAll(ids) : 0;
+    if (sent === 'wait') { setTimeout(giveAll, 130); return; }
+    if (typeof sent === 'number' && sent > 0) { setPlanned({}); return; }
+    // no way to send it whole: the first one now, the rest as the card comes back
+    onAnswer(ids[0], null, null);
+    const first = Object.keys(planned)[0];
+    setPlanned(pl => { const n = { ...pl }; n[first] -= 1; if (!n[first]) delete n[first]; return n; });
+  };
   // the steal's "Take all": the plan's stacks show what each gives up while the button is pointed at
   const [preview, setPreview] = useState(false);
   const allKey = g.kind === 'steal' ? `${g.actor}|${g.title}|${state.round}|${pend.count ? pend.count.of : 0}` : null;
@@ -254,10 +271,11 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
       // one silver a click; the badge is what you've sent them so far (it reaches them when you're done)
       const p = state.players[b];
       const has = color ? p.res[color] || 0 : 0;
-      const k = g.given[b] || 0;
+      const k = (g.given[b] || 0) + (planned[b] || 0);
+      const add = () => { if (o && plannedN < g.left) setPlanned(pl => ({ ...pl, [b]: (pl[b] || 0) + 1 })); };
       return (
-        <button key={b} {...common} className={`${common.className} gc-face gc-share`} data-pid={b} data-given={k || undefined} style={{ '--pc': playerColor(b) }}
-          disabled={busy || !o || g.left <= 0}
+        <button key={b} {...common} onClick={add} className={`${common.className} gc-face gc-share`} data-pid={b} data-given={k || undefined} style={{ '--pc': playerColor(b) }}
+          disabled={busy || !o || plannedN >= g.left}
           aria-label={`${p.name} +1 silver${k ? `, ${k} given so far` : ''} (has ${has})`} title={`${p.name} has ${has} silver${k ? `, +${k} from you` : ''}`}>
           <Minion color={playerColor(b)} emoji={seatEmoji(state, b)} size={28} />
           <span className="gc-name">{p.name}</span>
@@ -493,8 +511,9 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
   // a steal says the card's own verb, as the wheel prints it (picky bot, Nov 4: Lie Low's sheet said "Take 1")
   const headOf = g.halfPile ? <>{g.head}</> : g.kind === 'steal' ? <>Steal <b className="num">{g.n}</b>{g.color ? <Pip color={g.color} /> : null}</>
     : g.kind === 'move' || g.kind === 'recruit' || g.kind === 'change' ? <>{g.head}</> : head;
-  const sub = g.kind === 'share' && g.flat != null ? <>One per click, from the bank. +{g.flat} followers once all {g.n} are given.</>
-    : g.kind === 'share' ? <>One per click, from the bank. +{g.per} {g.per === 1 ? 'follower' : 'followers'} per silver you give{g.total ? <>: <b className="num">+{g.total * g.per}</b> so far</> : null}.</>
+  const shareFrom = g.own ? 'from your silver' : 'from the bank';
+  const sub = g.kind === 'share' && g.flat != null ? <>One per click, {shareFrom}. +{g.flat} followers once all {g.n} are given.</>
+    : g.kind === 'share' ? <>One per click, {shareFrom}. +{g.per} {g.per === 1 ? 'follower' : 'followers'} per silver you give{g.total + plannedN ? <>: <b className="num">+{(g.total + plannedN) * g.per}</b> so far</> : null}.</>
     : g.kind === 'move' ? <>{g.from ? <>It’s on {g.from}. </> : null}{g.sub}</>
       : g.kind === 'change' ? (g.step === 'to' ? <>Pick the color it becomes.</> : into ? <>Each tap on a pile turns 1 of it <Pip color={into} />.</> : <>Pick the color they become, then tap their piles: one each tap.</>)
         : g.sub;
@@ -528,7 +547,7 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
       data-gift={g.kind} data-step={step} data-dense={dense ? '1' : undefined} data-crowd={crowd ? '1' : undefined} style={place ? { left: place.left, top: place.top } : undefined}>
       {turnOf && <TurnOf player={turnOf} />}
       <header className="gc-head">
-        {g.title && <small className="gc-title">{g.title}{g.kind === 'share' ? <> · <span className="num gc-given" data-given={g.total}>{g.total}</span> given · <span className="num pick-left" data-left={g.left}>{g.left}</span> left</> : null}{g.done ? <> · <span className="num">{g.done}</span> {g.kind === 'change' ? 'changed' : 'swapped'}</> : null}{g.kind !== 'share' && g.left != null ? <> · <span className="num pick-left" data-left={g.left}>{g.left}</span> left</> : null}</small>}
+        {g.title && <small className="gc-title">{g.title}{g.kind === 'share' ? <> · <span className="num gc-given" data-given={g.total + plannedN}>{g.total + plannedN}</span> given · <span className="num pick-left" data-left={g.left - plannedN}>{g.left - plannedN}</span> left</> : null}{g.done ? <> · <span className="num">{g.done}</span> {g.kind === 'change' ? 'changed' : 'swapped'}</> : null}{g.kind !== 'share' && g.left != null ? <> · <span className="num pick-left" data-left={g.left}>{g.left}</span> left</> : null}</small>}
         <p className="gc-what">{far ? headOf : head}</p>
         {sub && <p className="gc-sub">{sub}</p>}
       </header>
@@ -548,7 +567,7 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
             : g.kind === 'trade' ? memberGroups(g.others) : g.others.map(secondItem)}</div>
         </div>
       )}
-      {(g.rest.length > 0 || (g.plan && g.plan.length > 1)) && (
+      {(g.rest.length > 0 || (g.plan && g.plan.length > 1) || (g.kind === 'share' && plannedN > 0)) && (
         <div className="gc-rest">
           {g.plan && g.plan.length > 1 && (
             <button type="button" className="btn gc-rest-btn gc-all" data-take-all={planTotal} disabled={busy} title={`Takes ${planWords}`} aria-label={`Take ${planTotal}: ${planWords}`}
@@ -556,7 +575,10 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
               Take <b className="num">{planTotal}</b> ({planColors})
             </button>
           )}
-          {g.rest.map(o => <button key={o.id} type="button" className="btn gc-rest-btn" data-option={o.id} disabled={busy} onClick={e => onAnswer(o.id, e.currentTarget, null)}>{g.kind === 'share' && o.kind === 'done' && g.total ? <>Done: give <b className="num">{g.total}</b></> : seatNames(state, o.label)}</button>)}
+          {g.kind === 'share' && plannedN > 0 ? <>
+            <button type="button" className="btn gc-rest-btn gc-share-clear" disabled={busy} onClick={() => setPlanned({})}>Start over</button>
+            <button type="button" className="btn gc-rest-btn gc-share-give" data-share-give={plannedN} disabled={busy || (plannedN < g.left && !g.rest.some(o => o.kind === 'done' || o.value === 'stop'))} onClick={giveAll}>Give <b className="num">{plannedN}</b></button>
+          </> : g.rest.map(o => <button key={o.id} type="button" className="btn gc-rest-btn" data-option={o.id} disabled={busy} onClick={e => onAnswer(o.id, e.currentTarget, null)}>{g.kind === 'share' && o.kind === 'done' && g.total ? <>Done: give <b className="num">{g.total}</b></> : seatNames(state, o.label)}</button>)}
         </div>
       )}
     </section>

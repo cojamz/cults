@@ -31,7 +31,21 @@ export function swapStep(state, pend, mix) {
   return from && to ? has(`swap:${from}:${to}`) : has('done');
 }
 
-export default function SwapCard({ state, onPick, busy, turnOf = null }) {
+/** Every answer toward the mix in order: each one-for-one swap, then Done while swaps are left (the engine stops asking
+ *  once they're used up), for one move (Cory, Nov 13: "they should make that decision all at once"). */
+export function swapRun(state, pend, mix, cap) {
+  const res = { ...state.players[pend.player].res }, ids = [];
+  for (;;) {
+    const from = state.resources.find(c => (res[c] || 0) > (mix[c] || 0));
+    const to = state.resources.find(c => (res[c] || 0) < (mix[c] || 0));
+    if (!from || !to) break;
+    ids.push(`swap:${from}:${to}`); res[from] -= 1; res[to] = (res[to] || 0) + 1;
+  }
+  if (ids.length < cap) ids.push('done');
+  return ids;
+}
+
+export default function SwapCard({ state, onPick, onPickAll = null, busy, turnOf = null }) {
   const pend = state.pending;
   const p = state.players[pend.player];
   const colors = state.resources;
@@ -63,8 +77,12 @@ export default function SwapCard({ state, onPick, busy, turnOf = null }) {
   }, [pend, busy]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => () => { if (run && run.key === key) run = null; }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const send = m => {
-    if (busy || sending) return;
+  const send = (m, tries = 0) => {
+    if ((busy && !tries) || sending) return;
+    // the whole mix as one move; else (the table still playing: again in a moment) one swap at a time
+    const all = onPickAll ? onPickAll(swapRun(state, pend, m, cap)) : 0;
+    if (all === 'wait' && tries < 30) { setTimeout(() => send(m, tries + 1), 130); return; }
+    if (typeof all === 'number' && all > 0) { run = null; return; }
     const o = swapStep(state, pend, m);
     if (!o) return;
     run = o.id === 'done' ? null : { key, mix: { ...m }, done: pend };

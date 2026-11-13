@@ -55,3 +55,22 @@ describe('Largesse on the gift card (Cory, Nov 6: "should have to give 12. And g
     expect(container.querySelector('.gc-sub').textContent).toBe('One per click, from the bank. +10 followers once all 12 are given.');
   });
 });
+
+describe('Party Gifts set whole and given in one move (Cory, Nov 13: "they should make that decision all at once")', () => {
+  it('clicks on faces only set the split; Give sends every pick, then Done, in one answer', async () => {
+    const { fireEvent } = await import('@testing-library/react');
+    const { applyMove } = await import('../../../engine/v4/core.js');
+    const s = take(scene(), 'silver.partygifts');
+    const answered = [], sent = [];
+    const { container } = render(<GiftCard state={s} gift={giftPick(s, s.pending)} onFirst={() => {}} onAnswer={id => answered.push(id)} onAnswerAll={ids => { sent.push(ids); return ids.length; }} busy={false} />);
+    fireEvent.click(container.querySelector('.gc-share[data-pid="1"]'));
+    fireEvent.click(container.querySelector('.gc-share[data-pid="2"]'));
+    expect(answered).toEqual([]);
+    expect(container.querySelector('.gc-title').textContent).toBe('Party Gifts · 2 given · 1 left');
+    fireEvent.click(container.querySelector('[data-share-give]'));
+    expect(sent).toEqual([['player:1', 'player:2', 'done']]);
+    // the engine takes it as one move: each rival +1 silver
+    const next = applyMove(s, { player: 0, option: 'player:1', then: ['player:2', 'done'] });
+    expect([next.players[1].res.silver, next.players[2].res.silver]).toEqual([1, 1]);
+  });
+});
