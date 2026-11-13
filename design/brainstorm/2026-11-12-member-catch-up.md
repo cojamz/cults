@@ -61,3 +61,5 @@ Verdict: cut (penalizes winning contests, which Cory calls the core of each colo
 8. Color interactions: none.
 9. Biggest case: one better first pick a round; under a contest's 4/6/10.
 Verdict: cut (changes almost nothing in these games)
+
+Cory, 2026-11-12 9:30pm Eastern: "costing up to 7 would be better. 7 feels like the right cutoff. maybe we should just make it any? lets try it." Built with no cost cap.

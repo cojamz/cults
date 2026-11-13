@@ -32,8 +32,8 @@ describe('Test version (rules.testSet)', () => {
     for (const q of [Q, Q2]) {
       const a = Object.values(createGame({ seats, seed: 5, quadrants: q, rules: { deck: 10 } }).cards).length;
       const b = Object.values(createGame({ seats, seed: 5, quadrants: q, rules: { deck: 10, testSet: true } }).cards).length;
-      // Protesters, Gift Swappers and Purifiers join the grey members (Tribute Band is cut for good since Nov 11)
-      expect(b).toBe(a + 3);
+      // Protesters, Gift Swappers, Purifiers and Mutineers (Nov 12) join the grey members (Tribute Band is cut for good since Nov 11)
+      expect(b).toBe(a + 4);
     }
   });
 });

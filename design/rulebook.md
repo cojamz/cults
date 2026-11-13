@@ -36,7 +36,7 @@ Turns snake: 1-2-3-4, 4-3-2-1, 1-2-3-4, one minion each, until all are placed. F
 The **Goes Last token** comes from Purple spaces. Its holder's other minions wait until every other hand is empty, then are placed. If another player takes it, the old holder's waiting minions go back to their turns. Purple's contest, **Went last**, goes to whoever placed the round's last minion, token or not.
 
 ## The shop
-The deck has 10 members per color plus 12 grey. 6 show in round I, 7 in round II, 8 in round III; gaps refill from the pile. Pricier members join the pile in round II. Members that leave play (the old row between rounds, members discarded or sent away) go face up on the discard pile beside the deck, so everyone can see what's out. When the pile runs out, shuffle the discard pile into a new pile. A cost's colored part must be that color; the rest is any color. Grey members cost any color. Where a card says "a color none of your members have", grey counts as a color.
+The deck has 10 members per color plus 15 grey. 6 show in round I, 7 in round II, 8 in round III; gaps refill from the pile. Pricier members join the pile in round II. Members that leave play (the old row between rounds, members discarded or sent away) go face up on the discard pile beside the deck, so everyone can see what's out. When the pile runs out, shuffle the discard pile into a new pile. A cost's colored part must be that color; the rest is any color. Grey members cost any color. Where a card says "a color none of your members have", grey counts as a color.
 
 ![The shop: total price in the dark circle, its colors along the foot](rules-img/shop.jpg)
 

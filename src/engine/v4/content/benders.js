@@ -318,6 +318,24 @@ const members = [
     // bots use it from round II when rivals hold at least 2 members each on average
     botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).reduce((a, o) => a + Math.min(1, ctx.memberCount(o)), 0) >= 2,
   }), 'poolmove')] : []),
+  // Cory, 2026-11-12 9:30pm Eastern, on catching up to a member leader: Mutineers, with no cost cap to try ("7 feels
+  // like the right cutoff. maybe we should just make it any? lets try it"). A take from a rival, so Bodyguards and
+  // the other steal rules apply as for Poach. Grey, round II deck, 6 any, worth 1 (Claude's fill-ins).
+  pool(m('mutineers', 'Mutineers', null, 0, 3, 'On Use, once per game: take a member from a rival with more members than you.', {
+    round: 2,
+    activate: 'game',
+    onActivate(ctx, owner, card) {
+      const n = ctx.memberCount(owner);
+      const list = ctx.rivals(owner).filter(o => ctx.memberCount(o) > n && ctx.canSteal(owner, o, 'member'))
+        .flatMap(o => ctx.membersOf(o).map(c => [o, c]));
+      if (!list.length) { card.used = false; ctx.log(`${owner.name}'s Mutineers: no rival with more members has a member to take.`); return; }
+      ctx.choose(owner, 'Mutineers: take which member?', list.map(([o, c]) => ({
+        id: `card:${c.uid}`, label: `${o.name}'s ${c.def.name} (${cost(c)})`, kind: 'member', value: c.uid, hint: moveWorth(c),
+      })), 'benders.mutiny', { uid: card.uid });
+    },
+    // bots use it from round II on the best member a rival ahead holds, once it is worth 3 or more
+    botActivate: (ctx, owner) => ctx.state.round >= 2 && ctx.rivals(owner).some(o => ctx.memberCount(o) > ctx.memberCount(owner) && ctx.canSteal(owner, o, 'member') && ctx.membersOf(o).some(c => moveWorth(c) >= 3)),
+  }), 'poolmove'),
   ...(PURIFY_LEAVE ? [] : [pool(m('purifiers', 'Purifiers', null, 0, 3, 'On Use, once per game: discard one of your members. Each rival with more members than you discards one too.', {
     activate: 'game',
     onActivate(ctx, owner) {
@@ -650,6 +668,12 @@ export const handlers = {
     const to = leftOf(ctx, p);
     if (!data.snap[p.id].includes(uid) || !p.members.includes(uid)) return swapAsk(ctx, data);
     swapAsk(ctx, { ...data, k: data.k + 1, picks: [...data.picks, { to: to.id, from: p.id, uid }] });
+  },
+  mutiny(ctx, p, uid) {
+    const v = ctx.ownerOf(uid), c = ctx.card(uid);
+    if (!v || v === p || ctx.memberCount(v) <= ctx.memberCount(p)) return;
+    if (!ctx.steal(p, v, { uid })) return;
+    ctx.log(`${p.name}'s Mutineers: takes ${v.name}'s ${c.def.name}.`);
   },
   purgeOwn(ctx, p, uid, data) {
     if (!p.members.includes(uid)) return;
