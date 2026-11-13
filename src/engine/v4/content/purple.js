@@ -1335,7 +1335,7 @@ export default {
     // REPLACE7 (Nov 4, scale-up 3, Shift Crew's place): Lifers (paper 15, set 15 vs 10). A time token per round end sits
     // on the card (card.time) and moves with it, so a rival who takes it keeps the tokens; core's valueOf adds them.
     ...add7(m('lifers', 'Lifers', 2, 1, 'Round End: put a time token on this card. Worth 1 more follower per time token.', { f: 2, n: 2, round: 1,
-      onRoundEnd(ctx, owner, card) { card.time = (card.time || 0) + 1; ctx.log(`${owner.name}'s Lifers: a time token (worth ${2 + card.time}).`); },
+      onRoundEnd(ctx, owner, card) { card.time = (card.time || 0) + 1; ctx.log(`${owner.name}'s Lifers: a time token (worth ${1 + card.time}).`); },
       ...see(info => endsAhead(info).length),
     })),
     // Floor Crew (paper 13, set 12 vs 10; A/B +0.41): each recruit (a member or a follower purchase, Cory 2026-10-21) pays

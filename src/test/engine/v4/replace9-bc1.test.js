@@ -154,9 +154,9 @@ describe('Duty Collector: "Whenever a rival recruits a member in one of your mem
 });
 
 describe('Window Dressers (reworded): "On Recruit: discard any shop members and refill. Recruit again this turn."', () => {
-  it('same price and worth, and the old Window Dressers retired', () => {
+  it('same price, and the old Window Dressers retired', () => {
     const d = defById('market.windowdressers9'), o = defById('market.windowdresser');
-    expect([d.s, d.w, d.f]).toEqual([o.s, o.w + 1, o.f]); // the old Window Dressers is 1 cheaper since Nov 5
+    expect([d.s, d.w, d.f]).toEqual([o.s, o.w + 1, 1]); // the old Window Dressers is 1 cheaper since Nov 5; worth 1: a live member is rebased to 1, while the retired card keeps its old worth (Cory, Nov 12)
     expect(o.retired).toBe(true);
   });
   it('sends chosen shop members to the discard pile, refills once, then offers another recruit', () => {

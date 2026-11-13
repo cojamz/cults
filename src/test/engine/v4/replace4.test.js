@@ -22,10 +22,10 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 
 describe('REPLACE4: the switch', () => {
   it('prints the draft prices (as a player sees them) and retires the old cards', () => {
-    const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
+    const price = id => { const d = defById(id); return [d.s, d.w, d.f]; }; // worth: every live member rebased to 1 unless its card gives the number (Cory, Nov 12)
     expect(price('red.defectors')).toEqual([6, 4, 1]);
-    expect(price('red.tithetakers')).toEqual([4, 3, 2]);
-    expect(price('echo.openingact')).toEqual([7, 4, 2]);
+    expect(price('red.tithetakers')).toEqual([4, 3, 1]);
+    expect(price('echo.openingact')).toEqual([7, 4, 1]);
     expect(price('echo.copycats')).toEqual([3, 2, 1]);
     expect(price('market.outbidders')).toEqual([3, 2, 1]);
     expect(price('market.hawkers')).toEqual([5, 4, 1]);

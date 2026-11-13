@@ -198,7 +198,7 @@ describe('White members', () => {
     let s = scene({ members: [['trading.heiress', 'red.twins', 'gold.banker']], ...buyTurn });
     const u = uidOf(s, 'trading.heiress', 0);
     s = move(s, `use:${u}`);
-    expect(R(s).white).toBe(3); // Heiresses, Triplets, Banker: 1 member each (Cory, Nov 12)
+    expect(R(s).white).toBe(5); // Heiresses 1 (rebased, Cory Nov 12), Triplets 3, Banker 1 (member count = follower count, Nov 1)
     expect(ids(s)).not.toContain(`use:${u}`);
   });
 

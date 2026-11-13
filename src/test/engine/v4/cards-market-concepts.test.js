@@ -18,7 +18,7 @@ describe('Blue concepts', () => {
     expect(def('market.critic').text).toBe('Whenever a rival recruits a blue member, +1 follower.');
     expect(def('market.patroness').text).toBe('Whenever shop members go to the discard pile, +1 follower.') // Cory, Nov 1 2:25pm;
     expect(def('market.connoisseur').text).toBe('Whenever you recruit a blue member, +1 blue.');
-    expect(def('market.plusone').f).toBe(2);
+    expect([def('market.plusone').f, def('market.plusone').n]).toEqual([1, 1]); // printed 2, rebased to 1 (Cory, Nov 12)
   });
   it('Makeover: the whole old shop goes to the discard pile, the row refills, Patroness pays once', () => {
     let s = table(Q, { members: [[], ['market.patroness']], res: [{ blue: 9, gold: 9 }], shop: ['market.makeover', ...ROW.slice(1)] });

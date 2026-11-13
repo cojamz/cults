@@ -245,9 +245,9 @@ describe('shop discount origin', () => {
 
 
 it('glossary matches confirmed member quantity, protection and recruit rules', () => {
-  // Cory, 2026-11-12: every member counts as 1 member and keeps its followers; only a card printing a count differs
-  expect(term('member').def).toContain('counts as 1 member (unless its card says otherwise');
-  expect(term('member').def).toContain('is worth the followers beside its member mark');
+  // Cory, 2026-11-12 11:05pm: member and follower counts stay equal; members rebased to 1, a few given back
+  expect(term('member').def).toContain('counts as 1 member, or the number its card shows');
+  expect(term('member').def).toContain('is worth that many followers');
   expect(term('member').def).toContain('Bonus followers never add members');
   expect(term('colorless').def).not.toContain('one of your members');
   expect(term('steal').def).toContain('Lie Low stops steals and Poach on you until round end'); // Lie Low (Cory, Nov 1)

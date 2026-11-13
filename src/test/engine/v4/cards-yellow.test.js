@@ -218,10 +218,10 @@ describe('Yellow members', () => {
     expect(s.players[0].bonus).toBe(2);
     expect(s.log).toContain("P1's Tourist: +2 followers.");
   });
-  it('Caravan: worth 3 followers; round start +1 of each color (Cory, Nov 5: not only those you hold)', () => {
+  it('Caravan: rebased to worth 1 follower (Cory, Nov 12); round start +1 of each color (Cory, Nov 5: not only those you hold)', () => {
     const s = sc({ members: [['yellow.caravan']], res: [{ gold: 1, red: 2 }], queue: [{ t: 'round', r: 2 }] });
     expect(R(s)).toMatchObject({ gold: 2, red: 3, yellow: 1, green: 1 });
-    expect(followers(s, s.players[0])).toBeGreaterThanOrEqual(3);
+    expect(followers(s, s.players[0])).toBe(2);
   });
   it("Tastemaker: +1 follower each time you change rivals' resources, once per card however many it changes", () => {
     let s = sc({ round: 3, res: [{}, { red: 5 }], members: [['yellow.tastemaker']], shop: ['yellow.agitator'] });
@@ -423,11 +423,11 @@ describe('Yellow members', () => {
     expect(named(s, 'Chefs')).toHaveLength(1);
   });
   // Cory, 2026-10-18: Feastmaker became Chefs, a little cheaper (6+4 → 6+3) and counting as 2 members
-  it('Chefs: costs 6 yellow + 3 any, worth 2 followers, 1 member', () => {
+  it('Chefs: costs 6 yellow + 3 any, worth 2 followers, 2 members', () => {
     const s = sc({ members: [['yellow.chefs']] });
     const d = cardDef(s, uidOf(s, 'yellow.chefs', 0));
     expect([d.s, d.w, d.f]).toEqual([6 + COLOR_PART, 3 + EXTRA_WILD - COLOR_PART, 2]);
-    expect(memberCount(s, s.players[0])).toBe(1);
+    expect(memberCount(s, s.players[0])).toBe(2);
     expect(followers(s, s.players[0]) - followers(sc({}), sc({}).players[0])).toBe(2);
   });
 });

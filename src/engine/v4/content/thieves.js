@@ -987,7 +987,7 @@ const thieves = {
     // member) answers with 1 resource from that rival's biggest pile, through the shared steal (their Lie Low blocks it,
     // your Desperado adds). Price and worth 2 kept. A steal back never sets off the other side's Bodyguards (two of them
     // would trade 1 forever); any other reaction to it still runs.
-    m('watchdog', 'Bodyguards', 5, 2, 'Whenever a rival steals from you, steal 1 back from them.', { f: 2, ...old10('watchman'), ...old10('hoardbreaker'),
+    m('watchdog', 'Bodyguards', 5, 2, 'Whenever a rival steals from you, steal 1 back from them.', { f: 2, keepCount: true, /* given back: costs 10+ */ ...old10('watchman'), ...old10('hoardbreaker'),
       onSteal(ctx, owner, card, info) {
         if (guarding || info.victim !== owner || !info.thief || info.thief === owner || !(info.n > 0 || info.uid !== undefined)) return;
         // one steal, one answer: a Heist's 4 follower picks and its resources share one steal id (as Fence pays once);
@@ -1101,7 +1101,7 @@ const thieves = {
     // placement, before contests (as Talent Agents' Round End): the owner picks a rival with a member, that rival
     // picks which one. A gift, as Tithe Takers' is: not a steal or a swap (Bodyguards, Lie Low and Loyalists don't stop
     // it), an arrival for the owner, not their recruit.
-    m('kidnappers', 'Kidnappers', 5, 2, 'Round End: a rival you choose gives you one of their members.', { f: 2, ...old10('poacher'), ...old10('poacher5'),
+    m('kidnappers', 'Kidnappers', 5, 2, 'Round End: a rival you choose gives you one of their members.', { f: 2, keepCount: true, /* given back: costs 10+ */ ...old10('poacher'), ...old10('poacher5'),
       // queued, as Cat Burglars': in turn order, and only if the owner still holds it then (Cory, Nov 4)
       onAllPlaced(ctx, owner, card) { roundEndTurn(ctx, owner, card, 'thieves.kidnapNow'); },
       // BOTSEE: each round end still ahead, a rival's least wanted member, about 3 followers' worth

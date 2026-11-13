@@ -22,7 +22,7 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 describe('REPLACE12 rewords: the switch', () => {
   it('Turncoat at its pitched price, in retired Deprogrammers\' place', () => {
     const d = defById('red.turncoat');
-    expect([d.name, d.s, d.w, d.f]).toEqual(['Turncoat', 3, 2, 2]);
+    expect([d.name, d.s, d.w, d.f]).toEqual(['Turncoat', 3, 2, 1]); // worth 1: every live member rebased to 1 (Cory, Nov 12)
     expect(defById('red.movementpenalty').retired).toBe(true);
   });
 });

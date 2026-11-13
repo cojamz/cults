@@ -123,10 +123,10 @@ describe('Silver members', () => {
     expect(s.players.map(p => p.res.silver)).toEqual([3, 3, 0]);
     expect(defById('silver.debtcollector').activate).toBe('round'); // once per round (Cory, Nov 5 9:29pm)
   });
-  it('High Society: worth 2 followers, counts as 1 member (Cory, Nov 12); whenever a rival takes a Silver space, +1 follower (Nov 4)', () => {
+  it('High Society: rebased to worth 1 follower and 1 member (Cory, Nov 12); whenever a rival takes a Silver space, +1 follower (Nov 4)', () => {
     let s = sc({ n: 3, res: [{ silver: 1 }, { silver: 5 }, { silver: 1 }], members: [['silver.highsociety']], queue: [{ t: 'turn', p: 1 }, { t: 'turn', p: 2 }, { t: 'turn', p: 0 }] });
     expect(memberCount(s, s.players[0])).toBe(1);
-    expect(followers(s, s.players[0])).toBe(3); // Leader 1 + High Society 2
+    expect(followers(s, s.players[0])).toBe(2); // Leader 1 + High Society 1
     s = take(s, 'silver.toast');
     expect(s.players[0].bonus).toBe(1);
     expect(named(s, 'High Society')).toEqual(["P1's High Society: +1 follower."]);
@@ -241,12 +241,12 @@ describe('Silver members', () => {
     expect(named(s, 'Steward')).toHaveLength(1);
   });
 
-  it('Retinue: worth 3 followers, 1 member; when recruited everyone else +1 silver, named; a rival’s Guest gets 1 more', () => {
+  it('Retinue: worth 3 followers, 3 members; when recruited everyone else +1 silver, named; a rival’s Guest gets 1 more', () => {
     let s = sc({ n: 3, res: [rich], members: [[], [], ['silver.guest']], shop: ['silver.retinue'] });
     const f0 = followers(s, s.players[0]);
     s = take(s, 'gold.rush'); s = buy(s, 'silver.retinue');
     expect(followers(s, s.players[0])).toBe(f0 + 3);
-    expect(memberCount(s, s.players[0])).toBe(1);
+    expect(memberCount(s, s.players[0])).toBe(3);
     expect([S(s, 1), S(s, 2)]).toEqual([1, 2]);
     expect(named(s, 'Retinue').length).toBeGreaterThanOrEqual(1);
   });
@@ -271,14 +271,14 @@ describe('Silver members', () => {
   it('Heir: when recruited, +1 silver per member you have (itself included), named', () => {
     let s = sc({ round: 3, res: [{ silver: 9 }], members: [['red.intern', 'red.twins']], shop: ['silver.heir'], queue: [{ t: 'buy', p: 0 }] });
     s = buy(s, 'silver.heir');
-    expect(S(s)).toBe(3); // Heir 1 + Intern 1 + Triplets 1 (each member counts 1: Cory, Nov 12).
-    expect(named(s, 'Heir')).toEqual(["P1's Heir: +3 silver."]);
+    expect(S(s)).toBe(5); // Heir1 + Intern1 + Triplets 3.
+    expect(named(s, 'Heir')).toEqual(["P1's Heir: +5 silver."]);
   });
   it('Heir: at round start, only round III pays, +1 silver per member, named', () => {
     let s = sc({ members: [['silver.heir', 'red.intern', 'red.twins']], queue: [{ t: 'round', r: 2 }] });
     expect(S(s)).toBe(0);
     s = sc({ members: [['silver.heir', 'red.intern', 'red.twins']], queue: [{ t: 'round', r: 3 }] });
-    expect(S(s)).toBe(3); // Heir 1 + Intern 1 + Triplets 1.
+    expect(S(s)).toBe(5); // Heir1 + Intern1 + Triplets 3.
     expect(named(s, 'Heir')).toHaveLength(1);
   });
 
@@ -326,7 +326,7 @@ describe('Silver members', () => {
 
   it('Patron Saint: game end +1 follower per 2 silver members in play, anyone’s', () => {
     const s = sc({ members: [['silver.saint', 'silver.dowager'], ['silver.guest', 'silver.heir']], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.parts).toEqual(['Patron Saint +2']); // 4 silver members: Dowager, worth 3, counts 1 (Cory, Nov 12)
+    expect(s.players[0].final.parts).toEqual(['Patron Saint +3']); // Dowager is worth 3, so 3 members (Nov 1)
     void resume;
   });
 });

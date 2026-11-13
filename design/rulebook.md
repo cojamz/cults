@@ -5,7 +5,7 @@ Lead a cult for three rounds. Send minions to the wheel for resources, recruit m
 ![The table: seats on the left, the wheel in the middle, the shop on the right. Here each player is picking a cloak.](rules-img/table.jpg)
 
 ## What you have
-- **Followers** are your score. You start with 1. Each member is worth 1 follower, or the number beside its member mark (Ghost: 0). Each member counts as 1 member, whatever it's worth, unless its own card says otherwise (Dabblers 2, Revelers 3, Ghost 0).
+- **Followers** are your score. You start with 1. Each member is worth 1 follower, or the number beside its member mark (Ghost: 0). It also counts as that many members, wherever members are counted, unless a rule says each card counts 1.
 - **Minions** are your workers: 3 in round I, 4 in round II, 5 in round III. The spare minions are the open spaces left over once every minion still to come has one. A **+1 minion** gained during a round takes a spare; with none left it gives nothing.
 - **Resources** come in the colors in play, one resource per color. **The bank** is the supply nobody holds. A dot split into the table's colors means any resources, colors your choice.
 - **Members** are cards you recruit from the shop. Most have an ability.

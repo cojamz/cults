@@ -106,8 +106,8 @@ describe('White members', () => {
 
   it('Heiresses: once per game, +1 white per member (named)', () => {
     const s = use(table(Q, { members: [['trading.heiress', 'red.twins', 'red.bigfamily']], shop: ROW, ...buy }), 'trading.heiress');
-    expect(R(s).white).toBe(3); // Heiresses, Triplets, Big Family: 1 member each (Cory, Nov 12)
-    expect(named(s, 'Heiresses')).toEqual(['P1 used Heiresses: +3 white.']);
+    expect(R(s).white).toBe(8); // Heiresses 1 (rebased to 1, Cory Nov 12), Triplets 3, Big Family 4
+    expect(named(s, 'Heiresses')).toEqual(['P1 used Heiresses: +8 white.']);
   });
 
   it('Bulk Buyer: buying 5 followers gives 6 (named); buying 1 gives 1', () => {
@@ -139,7 +139,7 @@ describe('White members', () => {
     expect(s.pending.options.map(o => o.id)).toEqual(['player:1', 'player:2']); // any rival (Cory, Nov 1: "Raiders shouldnt have to be from the leader")
     s = move(s, 'player:1');
     expect([B(s, 0), B(s, 1), R(s, 0).white, R(s, 1).white]).toEqual([4, 1, 0, 2]);
-    expect(followers(s, s.players[0])).toBe(1 + 2 + 4);
+    expect(followers(s, s.players[0])).toBe(1 + 1 + 4); // leader, Raiders (rebased to worth 1, Cory Nov 12), the 4 stolen
     expect(named(s, 'Raiders')).toEqual(["P1's Raiders stole 4 followers from P2 and paid 2 white."]);
   });
 

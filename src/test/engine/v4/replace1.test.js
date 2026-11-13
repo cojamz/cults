@@ -24,15 +24,15 @@ const answer = (s, id) => applyMove(s, { player: s.pending.player, option: id })
 
 describe('REPLACE1: the switch', () => {
   it('prints the spec prices (as a player sees them) and retires the old cards', () => {
-    const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
-    expect(price('red.turncoats')).toEqual([3, 2, 2]);
+    const price = id => { const d = defById(id); return [d.s, d.w, d.f]; }; // worth: every live member rebased to 1 unless its card gives the number (Cory, Nov 12)
+    expect(price('red.turncoats')).toEqual([3, 2, 1]);
     expect(price('market.scavengers')).toEqual([4, 3, 1]);
     expect(price('thieves.racketeers')).toEqual([4, 3, 1]);
     expect(price('purple.nightwatch')).toEqual([3, 3, 2]);
     expect(price('yellow.barterers')).toEqual([4, 3, 1]);
-    expect(price('silver.hostesses')).toEqual([4, 3, 2]);
-    expect(price('benders.grudge')).toEqual([0, 5, 2]);
-    expect(price('trading.heirs')).toEqual([4, 4, 2]);
+    expect(price('silver.hostesses')).toEqual([4, 3, 1]);
+    expect(price('benders.grudge')).toEqual([0, 5, 1]);
+    expect(price('trading.heirs')).toEqual([4, 4, 1]);
     for (const id of ['red.volunteer', 'market.critic', 'thieves.crew', 'purple.clockmaker', 'yellow.dyer', 'silver.giftwrapper', 'benders.frontrunner', 'trading.exporter'])
       expect(defById(id).retired).toBe(true);
   });

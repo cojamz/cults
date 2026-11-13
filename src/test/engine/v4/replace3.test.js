@@ -24,15 +24,15 @@ const payAll = s => { while (s.pending?.kind === 'choose' && s.pending.options.s
 
 describe('REPLACE3: the switch', () => {
   it('prints the draft prices (as a player sees them) and retires the old cards', () => {
-    const price = id => { const d = defById(id); return [d.s, d.w, d.f]; };
+    const price = id => { const d = defById(id); return [d.s, d.w, d.f]; }; // worth: every live member rebased to 1 unless its card gives the number (Cory, Nov 12)
     expect(price('trading.evictors')).toEqual([5, 4, 1]);
     expect(price('purple.interrupters')).toEqual([4, 3, 1]);
     expect(price('thieves.kidnappers')).toEqual([6, 3, 2]); // 2 more when it went live (Claude, Nov 3: owners won 44% at 4 + 2); worth 2 (Cory, Nov 11)
-    expect(price('market.completists')).toEqual([6, 4, 2]);
+    expect(price('market.completists')).toEqual([6, 4, 1]);
     expect(price('echo.impersonators')).toEqual([4, 3, 1]);
-    expect(price('red.missionaries')).toEqual([6, 4, 2]);
+    expect(price('red.missionaries')).toEqual([6, 4, 1]);
     expect(price('silver.creditors')).toEqual([4, 3, 1]); // Creditor: 1 member, worth 1 (Nov 4)
-    expect(price('purple.pacers')).toEqual([6, 4, 2]);
+    expect(price('purple.pacers')).toEqual([6, 4, 1]);
     for (const id of ['trading.hoarder', 'purple.courier', 'thieves.kingpin', 'market.patroness', 'echo.muse', 'red.patriarch', 'silver.collector', 'purple.crew'])
       expect(defById(id).retired).toBe(true);
   });

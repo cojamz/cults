@@ -328,7 +328,7 @@ describe('Green contest settings (contestFix.green)', () => {
     expect(contestTable(s).find(c => c.qid === 'echo').winners).toEqual([1]);
   });
   it("'memberscards' counts each green card once (a Doppelganger copying Revelers counts as 3 under 'members', 1 here)", () => {
-    // Every member counts 1 (Cory, Nov 12), so only a printed count tells the two apart: Revelers' "Counts as 3 members."
+    // Every live green member is worth 1 and counts 1 (rebased, Cory Nov 12), so a copy of Revelers ("Counts as 3 members.") tells the two apart
     const m = [['echo.doppel'], ['echo.understudy', 'echo.hourglass']];
     const prep = s => { s.cards[uidIn(s, 'echo.doppel', 0)].copy = 'silver.revelers'; };
     expect(greenRow('members', m, prep).winners).toEqual([0]);

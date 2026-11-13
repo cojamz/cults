@@ -17,7 +17,7 @@ delete process.env.MEMBER_UP;
 describe('REPLACE9: Sign Painters', () => {
   it('same price as Caravan, which is retired', () => {
     const d = defById('yellow.signpainters'), o = defById('yellow.caravan');
-    expect([d.s, d.w, d.f]).toEqual([o.s, o.w, o.f]);
+    expect([d.s, d.w, d.f]).toEqual([o.s, o.w, 1]); // worth 1: a live member is rebased to 1, while the retired card keeps its old worth (Cory, Nov 12)
     expect(o.retired).toBe(true);
   });
   it("paints a rival's red member blue; once per round", () => {

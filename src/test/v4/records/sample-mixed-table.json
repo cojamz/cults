@@ -3,15 +3,15 @@
  "schema": 1,
  "build": {
   "schema": 1,
-  "content": "1egm08pkkai.5f35443307",
+  "content": "1492vigpmfh.3408303716",
   "id": "dev",
-  "version": "v0.99.763"
+  "version": "v0.99.764"
  },
  "made": {
   "schema": 1,
-  "content": "1egm08pkkai.5f35443307",
+  "content": "1492vigpmfh.3408303716",
   "id": "dev",
-  "version": "v0.99.763"
+  "version": "v0.99.764"
  },
  "seed": 20261014,
  "quadrants": [
@@ -675,14 +675,14 @@
   "over": true,
   "moves": 155,
   "followers": [
-   73,
-   52,
-   55
+   72,
+   50,
+   49
   ]
  },
  "refreshed": {
-  "from": "1btc2jutuac.5e6a542b30",
-  "kept": 81,
-  "of": 154
+  "from": "1egm08pkkai.5f35443307",
+  "kept": 155,
+  "of": 155
  }
 }

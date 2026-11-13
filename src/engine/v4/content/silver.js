@@ -869,7 +869,7 @@ const silver = {
     m('toastmaster', 'Toastmaster', 1, 1, 'Whenever you take a Silver space, +1 follower.', { ...old8('silver.toastmaster'), ...old16('silver.toastmaster'),
       afterAction(ctx, owner, card, qid) { if (qid === S) owner.bonus += 1; },
     }),
-    m('gala', 'Debutantes', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, ...old2, ...old6, // worth 2 (Cory, Nov 1)
+    m('gala', 'Debutantes', 4, 4, 'On Use, once per game: double your silver. Each rival +2 silver.', { f: 2, n: 2, keepCount: true, /* given back: costs 10+ (Claude, under Cory's Nov 12 rebase to 1) */ ...old2, ...old6, // worth 2 (Cory, Nov 1)
       activate: 'game',
       onActivate(ctx, owner) {
         ctx.gain(owner, S, owner.res[S]);
@@ -903,7 +903,7 @@ const silver = {
       ...see(i => [1, 2, 3].reduce((a, r) => a + i.rivalByRound[r], 0) * 0.08 * WW_N),
     })),
     // Silver 2.0 members (Cory, 2026-11-01). Prices are fill-ins until the balance run.
-    m('smoothtalker', 'Smooth Talkers', 5, 4, /* Cory, Nov 5 backlog price yes */ 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, ...old2, ...old14('bigspenders'), ...old14('charmers'), ...old16('silver.smoothtalker') }),
+    m('smoothtalker', 'Smooth Talkers', 5, 4, /* Cory, Nov 5 backlog price yes */ 'Your silver pays for any color.', { silverPaysColor: true, f: 2, n: 2, keepCount: true, /* given back: costs 10+ */ ...old2, ...old14('bigspenders'), ...old14('charmers'), ...old16('silver.smoothtalker') }),
     // REPLACE16 bot test (thread "Make Silver cards more communal", Nov 4; silver-communal/paper.md 3): Smooth Talkers'
     // place, same price. Everyone's silver pays a colored part (core.js tableFlag); a rival's recruit whose colored part
     // took silver pays the owner 1 follower, once per recruit. Your own recruits pay nothing extra.

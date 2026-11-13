@@ -2,7 +2,7 @@
 // Purple (extra turns): every action and every member with exact numbers, plus 200 seeded bot games on a Purple table.
 import { STRAYS, stray } from '../stray.js';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { createGame, applyMove, resume, followers, contextFor, roundOrder, turnRail, actionAt } from '../../../../engine/v4/core.js';
+import { createGame, applyMove, resume, followers, memberCount, contextFor, roundOrder, turnRail, actionAt } from '../../../../engine/v4/core.js';
 import { chooseBotMove } from '../../../../engine/v4/bots.js';
 import { seededRandom } from '../../../../engine/v4/rng.js';
 import { registerQuadrant } from '../../../../engine/v4/content/index.js';
@@ -323,9 +323,10 @@ describe('Purple members', () => {
     const s = scene({ round: 3, members: [['purple.patience']], res: [{ purple: 10 }], queue: [{ t: 'finish' }] });
     expect(s.players[0].final.parts).toContain('Timekeeper +3');
   });
-  it('Picket Line (Shift Crew\'s place, Nov 4): worth 3 followers', () => {
+  it('Picket Line (Shift Crew\'s place, Nov 4): worth 1 follower and 1 member, rebased (Cory, Nov 12; was 3)', () => {
     const s = scene({ members: [['purple.picketline']] });
-    expect(followers(s, s.players[0])).toBe(4);
+    expect(followers(s, s.players[0])).toBe(2);
+    expect(memberCount(s, s.players[0])).toBe(1);
   });
 });
 

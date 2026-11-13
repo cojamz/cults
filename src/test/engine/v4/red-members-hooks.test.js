@@ -13,11 +13,11 @@ const acquire = (s, id) => contextFor(s).recruit(s.players[0], uidIn(s, id, 'sho
 describe('new Red member hooks', () => {
   it('deals exactly thirteen ordinary Red members, with the approved printed bodies and prices', () => {
     expect(quadrant('red').members.filter(d => !CUT.has(d.id) && !d.retired)).toHaveLength(13); // Mob and Proselytizers out, Brethren and Purists in (Nov 11); Assimilators in for Deprogrammers (Nov 12)
-    for (const [id, s, w, f] of [['volunteer', 0, 0, 1], ['bodysnatchers', 2, 2, 2], ['panel', 4, 2, 3], ['mob', 7, 4, 4], ['loyalists', 1, 1, 3]]) {
+    for (const [id, s, w, f] of [['volunteer', 0, 0, 1], ['bodysnatchers', 2, 2, 1], ['panel', 4, 2, 1], ['mob', 7, 4, 1], ['loyalists', 1, 1, 1]]) {
       expect(defById(`red.${id}`)).toMatchObject({ s: s + COLOR_PART, w: w + EXTRA_WILD - COLOR_PART, f }); // Nov 2: 1 of the wild is paid in the member's color
     }
     const s = fixture({ members: [['red.mob', 'red.panel']] });
-    expect(memberCount(s, s.players[0])).toBe(2); // Mob (worth 4) and Panel (worth 3) count 1 member each (Cory, Nov 12)
+    expect(memberCount(s, s.players[0])).toBe(2); // Mob and Panel, each rebased to worth 1 and 1 member (Cory, Nov 12)
     expect(countMembersOfColor(s, s.players[0], 'red')).toBe(2);
     expect(typeof defById('red.mob').onRoundEnd).toBe('function'); // Round End since Nov 4 (cards-red covers what it pays)
   });

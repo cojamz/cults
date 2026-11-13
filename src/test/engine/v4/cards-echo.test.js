@@ -188,7 +188,7 @@ describe('Green current members', () => {
   });
   it('Roadie: round start, +1 green per Green member you have', () => {
     const start = members => { let s = table(Q, { members: [members] }); s.queue = [{ t: 'round', r: 2 }]; return R(resume(s)).green || 0; };
-    expect(start(['echo.roadie', 'echo.muse', 'echo.ensemble', 'red.twins']) - start(['echo.muse', 'echo.ensemble', 'red.twins'])).toBe(3); // Roadie, Muse, Ensemble: each counts as 1 member (Cory, Nov 12)
+    expect(start(['echo.roadie', 'echo.muse', 'echo.ensemble', 'red.twins']) - start(['echo.muse', 'echo.ensemble', 'red.twins'])).toBe(3); // Roadie, Muse, Ensemble: each worth 1, so 1 member (every member rebased to 1, Cory Nov 12)
   });
   it('Roadie: On Recruit too, +1 green per Green member, itself counted (Cory, Nov 1)', () => {
     let s = table(Q, { members: [['echo.muse']], shop: ['echo.roadie', ...ROW], res: [{ green: 4, red: 4 }], queue: turns(0) });
@@ -274,7 +274,7 @@ describe('Green current members', () => {
     s = move(s, cardOpt(s, 'thieves.crew', 1));
     expect(s.players[0].members).toHaveLength(2);
     expect(named(s, 'Stunt Double').length).toBe(1);
-    expect(s.recruits).toBe(2); // Stunt Double plus Crew, each 1 member (Cory, Nov 12).
+    expect(s.recruits).toBe(3); // Stunt Double plus Crew's printed member quantity.
   });
   // Cory, 2026-10-28: Tribute Band plays a rival's actions, you pick whose (was: your own)
   it('Tribute Band does every action a rival has a minion on, once per game', () => {
@@ -313,7 +313,7 @@ describe('Green current members', () => {
     const before = R(s).green;
     s = move(s, cardOpt(s, 'echo.connector', 0));
     expect(s.cards[uidIn(s, 'echo.doppel', 0)].copy).toBe('echo.connector');
-    expect(R(s).green - before).toBe(2); // Triplets and Tax Man: 2 non-green members, each counting 1 (Cory, Nov 12)
+    expect(R(s).green - before).toBe(4); // Triplets (3 members) and Tax Man: 4 non-green members
   });
   it('Impostors still becomes a copy without firing its copied On Recruit', () => {
     let s = table(Q, { round: 3, shop: ['echo.impostor', ...ROW], members: [[], ['echo.evergreen']], res: [{ green: 5 }], queue: turns(0, 0) });
@@ -322,30 +322,30 @@ describe('Green current members', () => {
     s = move(s, cardOpt(s, 'echo.evergreen', 1));
     expect(R(s).green).toBe(before);
   });
-  it('Impostors chooses only a rival’s members and counts as the copy’s 1 member', () => {
+  it('Impostors chooses only a rival’s members and adopts printed quantity', () => {
     let s = table(Q, { round: 3, shop: ['echo.impostor', ...ROW], members: [['echo.muse'], ['red.bigfamily']], queue: turns(0, 0) });
     s = move(take(s, 'red.take'), cardOpt(s, 'echo.impostor'));
     expect(s.pending.options.map(o => o.id)).toEqual([cardOpt(s, 'red.bigfamily', 1)]);
     s = move(s, s.pending.options[0].id);
     expect(s.cards[uidIn(s, 'echo.impostor', 0)].copy).toBe('red.bigfamily');
-    expect(memberCount(s, s.players[0])).toBe(2); // Muse 1 + the copy of Big Family 1 (worth 4, counts 1: Cory, Nov 12)
+    expect(memberCount(s, s.players[0])).toBe(5);
   });
-  it('Connector counts non-green members (each 1), on recruit and at round start', () => {
+  it('Connector counts weighted non-green members, on recruit and at round start', () => {
     let s = table(Q, { round: 3, shop: ['echo.connector', ...ROW], members: [['red.twins', 'echo.muse']], queue: turns(0, 0) });
     s = move(take(s, 'red.take'), cardOpt(s, 'echo.connector'));
-    expect(R(s).green).toBe(1); // Triplets: 1 non-green member
+    expect(R(s).green).toBe(3);
     s.queue = [{ t: 'round', r: 3 }]; s = resume(s);
-    expect(R(s).green).toBe(2);
+    expect(R(s).green).toBe(6);
   });
-  it('Agents has two followers and counts as one member; Bait loss/gain rules are explicit', () => {
+  it('Agents, rebased to 1 (Cory, Nov 12), is worth 1 follower and 1 member; Bait loss/gain rules are explicit', () => {
     const agents = quadrant('echo').members.find(d => d.key === 'agents');
-    expect([agents.f, agents.n]).toEqual([2, 1]);
+    expect([agents.f, agents.n]).toEqual([1, 1]);
     const bait = quadrant('echo').members.find(d => d.key === 'bait');
     expect(bait.text).toMatch(/they −1 follower and you \+1 follower\./);
   });
   it('Chronicler scores green members, each counting 1, ignoring held green', () => {
     const s = table(Q, { res: [{ green: 50 }], members: [['echo.chronicler', 'echo.agents', 'red.twins']], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.parts).toContain('Chronicler +2'); // Chronicler and Agents (worth 2, counts 1)
+    expect(s.players[0].final.parts).toContain('Chronicler +2'); // Chronicler and Agents, 1 each (Agents rebased to 1, Cory Nov 12)
   });
 });
 

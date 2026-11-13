@@ -36,7 +36,7 @@ describe('REPLACE9: Meddler, once per round', () => {
 describe("REPLACE9: Buyers' Club", () => {
   it('same price as Window Dressers, which is retired', () => {
     const d = defById('market.buyersclub'), o = defById('market.windowdresser');
-    expect([d.s, d.w, d.f]).toEqual([o.s, o.w + 1, o.f]); // the old Window Dressers is 1 cheaper since Nov 5
+    expect([d.s, d.w, d.f]).toEqual([o.s, o.w + 1, 1]); // the old Window Dressers is 1 cheaper since Nov 5; worth 1: a live member is rebased to 1, while the retired card keeps its old worth (Cory, Nov 12)
     expect(o.retired).toBe(true);
   });
   it('whenever you recruit: +3 blue', () => {

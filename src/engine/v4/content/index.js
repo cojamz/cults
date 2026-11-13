@@ -45,11 +45,16 @@ const addWild = def => {
 // Every member is a follower (Cory, Oct 29: "Every card should score its member count. Its a core rule! every member is a
 // follower. Not every follower is a member."): a card that counts as N members scores at least N followers.
 const asFollowers = def => { if ((def.n || 1) > (def.f || 1)) def.f = def.n; };
-// Every member counts as 1 member, whatever it's worth in followers (Cory, 2026-11-12 9:30pm Eastern, "Yeah i think so",
-// to "every member counts as 1 and keeps its followers"; this ends his Nov 1 "member count = follower count, for members").
-// Only a card whose own text gives its count keeps it (ownCount: Dabblers "Counts as 2 wild members."); Ghost's
-// "Worth 0 members" stays 0.
-const asMembers = def => { if (!def.ownCount) def.n = Math.min(def.n ?? 1, 1); };
+// Every member rebased to 1 (Cory, 2026-11-12 11:05pm Eastern: "Member and follower counts are still equal. Im just
+// saying we should rebase all members to 1. and then give some back where we obviously should."): worth 1 follower and
+// counts as 1 member, and the two stay equal. Kept: a card whose own text gives the number (Dabblers "Counts as 2 wild
+// members.", Revelers "Counts as 3 members.", Crew "Worth 2 followers.", Ghost "Worth 0 members.") and the ones given
+// back (keepCount on the card).
+const ownNumber = def => def.keepCount || def.ownCount || /^(Counts as|Worth) \d+ (wild )?(members?|followers?)\b/.test(def.text || '');
+const asMembers = def => {
+  if (ownNumber(def) || def.retired) { if ((def.f ?? 1) > (def.n ?? 1)) def.n = def.f; return; } // retired cards keep their old numbers (fixtures)
+  def.n = Math.min(def.n ?? 1, 1); def.f = Math.min(def.f ?? 1, 1);
+};
 const DEFS = {};
 const HANDLERS = {};
 /** Add a quadrant module to the registry (used by index below, and by new spheres while they're being designed). */

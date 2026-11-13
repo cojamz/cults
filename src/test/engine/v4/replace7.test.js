@@ -23,37 +23,37 @@ const passBuys = (s, p) => { while (s.pending?.player === p && s.pending.kind ==
 
 describe('REPLACE7: the switch', () => {
   it('prints the pitched prices (as a player sees them) and retires the old cards', () => {
-    const card = id => { const d = defById(id); return [d.name, d.s, d.w, d.f, d.n]; }; // every member counts 1, whatever its worth (Cory, Nov 12)
+    const card = id => { const d = defById(id); return [d.name, d.s, d.w, d.f, d.n]; }; // every live member rebased to worth 1 and 1 member (Cory, Nov 12)
     expect(card('red.seatfiller')).toEqual(['Seat Filler', 2, 2, 1, 1]);
-    expect(card('red.ushers')).toEqual(['Ushers', 2, 3, 2, 1]);
+    expect(card('red.ushers')).toEqual(['Ushers', 2, 3, 1, 1]);
     expect(card('purple.runner')).toEqual(['Runner', 4, 3, 1, 1]);
     expect(card('purple.interrupter')).toEqual(['Interrupter', 4, 3, 1, 1]);
-    expect(card('red.fosterparents')).toEqual(['Foster Parents', 3, 2, 2, 1]);
+    expect(card('red.fosterparents')).toEqual(['Foster Parents', 3, 2, 1, 1]);
     expect(card('red.godfather')).toEqual(['Godfather', 4, 3, 1, 1]);
-    expect(card('red.crimefamily')).toEqual(['Crime Family', 4, 3, 3, 1]);
+    expect(card('red.crimefamily')).toEqual(['Crime Family', 4, 3, 1, 1]);
     expect(card('purple.gobetween')).toEqual(['Go-Between', 2, 3, 1, 1]);
     expect(card('purple.nightshift')).toEqual(['Night Shift', 2, 3, 1, 1]);
-    expect(card('purple.sleepyheads')).toEqual(['Sleepyheads', 3, 3, 2, 1]);
+    expect(card('purple.sleepyheads')).toEqual(['Sleepyheads', 3, 3, 1, 1]);
     expect(card('red.drillsergeant')).toEqual(['Drill Sergeant', 4, 5, 1, 1]);
-    expect(card('red.converts')).toEqual(['Converts', 4, 5, 2, 1]);
-    expect(card('purple.snoozers')).toEqual(['Snoozers', 3, 2, 3, 1]);
+    expect(card('red.converts')).toEqual(['Converts', 4, 5, 1, 1]);
+    expect(card('purple.snoozers')).toEqual(['Snoozers', 3, 2, 1, 1]);
     expect(card('purple.sprinter')).toEqual(['Sprinter', 2, 3, 1, 1]);
-    expect(card('purple.earlyrisers')).toEqual(['Early Risers', 2, 3, 2, 1]);
-    expect(card('purple.daylaborers')).toEqual(['Day Laborers', 3, 3, 3, 1]);
-    expect(card('purple.nightmanager')).toEqual(['Night Managers', 2, 3, 2, 1]);
-    expect(card('purple.pacesetters')).toEqual(['Pace-Setters', 3, 3, 2, 1]);
-    expect(card('purple.lifers')).toEqual(['Lifers', 3, 2, 2, 1]);
-    expect(card('purple.floorcrew')).toEqual(['Floor Crew', 3, 2, 3, 1]);
-    expect(card('purple.picketline')).toEqual(['Picket Line', 3, 2, 3, 1]);
+    expect(card('purple.earlyrisers')).toEqual(['Early Risers', 2, 3, 1, 1]);
+    expect(card('purple.daylaborers')).toEqual(['Day Laborers', 3, 3, 1, 1]);
+    expect(card('purple.nightmanager')).toEqual(['Night Managers', 2, 3, 1, 1]);
+    expect(card('purple.pacesetters')).toEqual(['Pace-Setters', 3, 3, 1, 1]);
+    expect(card('purple.lifers')).toEqual(['Lifers', 3, 2, 1, 1]);
+    expect(card('purple.floorcrew')).toEqual(['Floor Crew', 3, 2, 1, 1]);
+    expect(card('purple.picketline')).toEqual(['Picket Line', 3, 2, 1, 1]);
     expect(card('purple.timekeeperlift')).toEqual(['Head Timekeeper', 2, 3, 1, 1]);
     expect(card('purple.oldtimer')).toEqual(['Old Timer', 2, 3, 1, 1]);
-    expect(card('purple.lookouts')).toEqual(['Lookouts', 3, 3, 2, 1]);
+    expect(card('purple.lookouts')).toEqual(['Lookouts', 3, 3, 1, 1]);
     expect(card('purple.errandboy')).toEqual(['Errand Boy', 2, 3, 1, 1]);
-    expect(card('purple.moonlighters')).toEqual(['Moonlighters', 7, 2, 2, 1]);
-    expect(card('purple.relayrunners')).toEqual(['Relay Runners', 2, 3, 2, 1]);
+    expect(card('purple.moonlighters')).toEqual(['Moonlighters', 7, 2, 1, 1]);
+    expect(card('purple.relayrunners')).toEqual(['Relay Runners', 2, 3, 1, 1]);
     expect(card('red.shepherd')).toEqual(['Shepherd', 4, 3, 1, 1]);
-    expect(card('red.evangelists')).toEqual(['Evangelists', 4, 5, 2, 1]);
-    expect(card('red.zealots')).toEqual(['Zealots', 4, 5, 2, 1]);
+    expect(card('red.evangelists')).toEqual(['Evangelists', 4, 5, 1, 1]);
+    expect(card('red.zealots')).toEqual(['Zealots', 4, 5, 1, 1]);
     expect(defById('purple.nightowl').retired).toBe(true);
     expect(defById('purple.timekeeperlift').onGameEnd({ countMembersOfColor: () => 3 })).toBe(6);
     for (const id of ['red.patriarch', 'purple.timekeepers', 'purple.nightwatch']) expect(defById(id).retired).toBe(true);
@@ -244,18 +244,19 @@ describe('Foster Parents: "Whenever a member joins your cult from a rival’s, +
 });
 
 describe('Godfather: "On Use, once per game: recruit a shop member costing up to the number of members you have, for free."', () => {
-  it('the pitched turn: 6 members (Dabblers counts as 2; Godfather, Panel, Deprogrammers and Intern 1 each) recruit Host (6) free, not Mob (13)', () => {
-    // every member counts 1 but Dabblers' printed 2 (Cory, Nov 12)
-    let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [['red.godfather', 'red.panel', 'red.movementpenalty', 'red.intern', 'benders.dabblers']], shop: ['red.host', 'red.mob'], queue: [{ t: 'buy', p: 0 }] });
+  it('the pitched turn: 9 members (Deprogrammers counts as 4, Dabblers 2, Godfather, Panel and Intern 1) recruit Proselytizers (9) free, not Mob (13)', () => {
+    // Intern added when every member cost 1 more (Nov 5): Proselytizers went to 9. Panel rebased to 1 (Cory, Nov 12): Dabblers
+    // makes up its 2; Deprogrammers is retired here and keeps its 4
+    let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [['red.godfather', 'red.panel', 'red.movementpenalty', 'red.intern', 'benders.dabblers']], shop: ['red.proselytizer', 'red.mob'], queue: [{ t: 'buy', p: 0 }] });
     const uid = uidIn(s, 'red.godfather', 0);
     s = move(s, `use:${uid}`);
-    expect(s.pending.prompt).toBe('Godfather: recruit which shop member (costing up to 6) for free?');
-    expect(s.pending.options.map(o => o.label)).toEqual(['Host (6)']);
-    s = answer(s, `card:${uidIn(s, 'red.host', 'shop')}`);
-    expect(owns(s, 0, 'red.host')).toBe(true);
-    expect(s.players[0].res.red).toBe(3); // nothing paid; the red is Host's own On Recruit: 7 members, +3 red
+    expect(s.pending.prompt).toBe('Godfather: recruit which shop member (costing up to 9) for free?');
+    expect(s.pending.options.map(o => o.label)).toEqual(['Proselytizers (9)']);
+    s = answer(s, `card:${uidIn(s, 'red.proselytizer', 'shop')}`);
+    expect(owns(s, 0, 'red.proselytizer')).toBe(true);
+    expect(s.players[0].res.red).toBe(0);
     expect(s.cards[uid].used).toBe(true);
-    expect(named(s, 'Godfather')).toContain("P1 uses Godfather: 6 members, so a shop member costing up to 6, for free.");
+    expect(named(s, 'Godfather')).toContain("P1 uses Godfather: 9 members, so a shop member costing up to 9, for free.");
   });
 
   it('with nothing in reach it stays unused', () => {
@@ -266,9 +267,9 @@ describe('Godfather: "On Use, once per game: recruit a shop member costing up to
   });
 });
 
-describe('Crime Family (Godfather retuned): worth 3, counts as 1 (Cory, Nov 12), "On Use, once per game: recruit a shop member costing up to the number of members you have, for free."', () => {
-  it('the pitched turn: Crime Family, Panel, Deprogrammers, Intern (1 each) and Dabblers (2) make 6, so Host (6) comes free and Mob (13) does not', () => {
-    let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [['red.crimefamily', 'red.panel', 'red.movementpenalty', 'red.intern', 'benders.dabblers']], shop: ['red.host', 'red.mob'], queue: [{ t: 'buy', p: 0 }] });
+describe('Crime Family (Godfather retuned): rebased to worth 1, counts as 1 (Cory, Nov 12), "On Use, once per game: recruit a shop member costing up to the number of members you have, for free."', () => {
+  it('the pitched turn: Crime Family (1), Panel (1) and Deprogrammers (4, retired here) make 6, so Host (6) comes free and Mob (13) does not', () => {
+    let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [['red.crimefamily', 'red.panel', 'red.movementpenalty']], shop: ['red.host', 'red.mob'], queue: [{ t: 'buy', p: 0 }] });
     const uid = uidIn(s, 'red.crimefamily', 0);
     s = move(s, `use:${uid}`);
     expect(s.pending.prompt).toBe('Crime Family: recruit which shop member (costing up to 6) for free?');
@@ -287,7 +288,7 @@ describe('Godfather and Crime Family: a bot never takes the use with nothing in 
       let s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [[id]], shop: ['red.mob'] });
       const ctx = contextFor(s), p = s.players[0];
       expect(defById(id).botActivate(ctx, p)).toBe(false);
-      s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [[id, 'red.panel', 'red.movementpenalty', 'red.intern', 'benders.dabblers']], shop: ['red.host'] }); // 6 members: Host (6) fits
+      s = table(['red', 'market', 'trading', 'yellow'], { round: 3, members: [[id, 'red.panel', 'red.movementpenalty']], shop: ['red.host'] }); // 6 members (Deprogrammers 4): Host (6) fits
       expect(defById(id).botActivate(contextFor(s), s.players[0])).toBe(true);
     }
   });
@@ -334,7 +335,7 @@ describe('scale-up round 1: Sleepyheads, Night Shift, Drill Sergeant', () => {
     s = take(s, 'purple.skip');
     expect(s.players[0].bonus).toBe(0);
   });
-  it('Night Shift: "Round End: if you hold the Goes Last token, +1 follower per purple member you have." holder: +2 (Early Birds, worth 2, counts 1: Cory, Nov 12); not holder: 0', async () => {
+  it('Night Shift: "Round End: if you hold the Goes Last token, +1 follower per purple member you have." holder: +2 (Early Birds rebased to worth 1: Cory, Nov 12); not holder: 0', async () => {
     const { contextFor } = await import('../../../engine/v4/core.js');
     const s = table(['purple', 'red', 'market', 'yellow'], { n: 2, round: 2, members: [['purple.nightshift', 'purple.earlybird'], []] });
     const d = defById('purple.nightshift'), card = { uid: uidIn(s, 'purple.nightshift', 0), def: d };
@@ -493,10 +494,10 @@ describe('Lifers and Floor Crew (Shift Crew\'s place, scale-up 3)', () => {
     defById('purple.lifers').onRoundEnd(stub(s, logs), p, s.cards[uid]);
     defById('purple.lifers').onRoundEnd(stub(s, logs), p, s.cards[uid]);
     expect(followers(s, p)).toBe(before + 2);
-    expect(logs[1]).toBe("P1's Lifers: a time token (worth 4).");
+    expect(logs[1]).toBe("P1's Lifers: a time token (worth 3)."); // printed 1 (rebased, Cory Nov 12) + 2 tokens
     // a rival who takes it takes the tokens with it
     p.members = p.members.filter(u => u !== uid); s.players[1].members.push(uid);
-    expect(followers(s, p)).toBe(before - 2); // its own 2 and the 2 tokens leave
+    expect(followers(s, p)).toBe(before - 1); // its own 1 and the 2 tokens leave (before counted no tokens)
   });
   it('Floor Crew: "Whenever you recruit, +1 purple per 2 of your minions on the board." 3 minions out: +1; a rival recruiting: nothing', () => {
     const s = table(['purple', 'red', 'market', 'yellow'], { round: 2, members: [['purple.floorcrew'], []] });

@@ -17,7 +17,7 @@ describe('Clan Elders (Red)', () => {
   it('Game End: +2 followers per member of your biggest color (a member counting 3 counts 3)', () => {
     let s = sceneQ({ quadrants: ['red', 'market', 'purple', 'silver'], members: [['red.clanelders', 'red.panel', 'market.stylist', 'market.onlooker', 'silver.revelers']], queue: [{ t: 'finish' }] });
     expect(s.over).toBe(true);
-    // red: Clan Elders 1 + Panel 1 = 2 (Panel, worth 3, counts 1: Cory, Nov 12); blue: 2; silver: Revelers 3
+    // red: Clan Elders 1 + Panel 1 = 2 (Panel rebased to worth 1: Cory, Nov 12); blue: 2; silver: Revelers 3
     expect(s.players[0].final.parts.join(' ')).toMatch(/Clan Elders \+6/);
   });
 });

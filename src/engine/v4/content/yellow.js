@@ -853,7 +853,7 @@ export default {
       onGameEnd: (ctx, owner) => 2 * ctx.state.quadrants.filter(q => { const n = ctx.countMembersOfColor(owner, q, { wild: false }); return n >= 1 && n <= 3; }).length,
     }),
     // Cory, 2026-10-31: named Book Cookers; "agree this gives multiple followers"
-    m('bookcooker', 'Book Cookers', 5, 4, 'On Use, once per game: rearrange your resources into any mix of colors.', { f: 3,
+    m('bookcooker', 'Book Cookers', 5, 4, 'On Use, once per game: rearrange your resources into any mix of colors.', { f: 3, keepCount: true, /* given back: costs 10+ */
       activate: 'game',
       onActivate(ctx, owner) { startLaunder(ctx, owner, 'Book Cookers'); },
       botActivate: (ctx, owner) => ctx.state.round === 3 && owner.left === 0,

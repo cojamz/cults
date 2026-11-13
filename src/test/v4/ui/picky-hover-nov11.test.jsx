@@ -14,7 +14,7 @@ const at = (s, name) => spaceOf(s, name).split('-').map(Number);
 const words = (s, name) => { const [q, i] = at(s, name); return youdWords(previewSpace(s, 0, q, i), s, quadrant(s.quadrants[q]).resource); };
 const card = (s, name) => { const [q, i] = at(s, name); cachedPreview(s, 0, q, i); return render(<SpaceCard state={s} me={0} spaceKey={`${q}-${i}`} />).container; };
 const youd = (s, name) => { const [q, i] = at(s, name); return renderToStaticMarkup(<YoudGet state={s} pid={0} q={q} i={i} now />).replace(/<[^>]+>/g, ''); };
-// three cults: P1 holds three red members (Triplets and Big Family count 1 each since Nov 12), P2 an Accomplice ("On Recruit: steal 3 resources") and a Mentor, P3 a Seat Filler
+// three cults: P1 holds three red members, P2 an Accomplice ("On Recruit: steal 3 resources") and a Mentor, P3 a Seat Filler
 const table = () => sceneQ({ quadrants: ['red', 'market', 'trading', 'thieves'], round: 2, n: 3,
   res: [{ red: 3, blue: 4, white: 2 }, { gold: 5, red: 4 }, { blue: 3, red: 2 }], bonus: [0, 6, 3],
   members: [['red.twins', 'red.bigfamily', 'red.intern'], ['thieves.accomplice', 'red.mentor'], ['red.seatfiller']] });
@@ -51,10 +51,8 @@ describe("You'd get (B5, W5, W18)", () => {
   });
 
   it('a card that counts as several members says so on itself', () => {
-    // every member counts 1 since Cory's Nov 12 call; a card printing its own count (Dabblers, 2) still says so
-    const s = sceneQ({ quadrants: ['red', 'market', 'trading', 'thieves'], round: 2, n: 3, members: [['benders.dabblers', 'red.intern'], [], []] });
+    const s = table();
     const u = s.players[0].members.find(x => memberWeight(s, x) > 1);
-    expect(u).toBeDefined();
     const w = memberWeight(s, u);
     const d = { res: Object.fromEntries(s.resources.map(r => [r, 0])), followers: 2, members: w, lost: 0, turns: 0, early: 0, late: 0, discount: 0, swapped: 0, joined: [u] };
     expect(changeWords(d, s)).toMatch(new RegExp(`\\(counts as ${w} members\\)`));

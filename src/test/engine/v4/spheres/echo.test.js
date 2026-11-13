@@ -163,7 +163,7 @@ describe('Green table action boundaries', () => {
 });
 
 describe('Green table member boundaries', () => {
-  it('Green contests count held green resources; Agents counts as 1 member (Cory, Nov 12)', () => {
+  it('Green contests count held green resources; Agents, rebased to 1 (Cory, Nov 12), counts as 1 member', () => {
     const s = scene({ members: [['echo.agents']], res: [{}, { green: 40 }] });
     expect(memberCount(s, s.players[0])).toBe(1);
     expect(echo.scoring.score(contextFor(s), s.players[0])).toBe(0);
@@ -188,11 +188,11 @@ describe('Green table member boundaries', () => {
     expect(ids(s)).not.toContain('use:' + uidOf(s, 'echo.hourglass', 0));
     expect(R(s).gold).toBe(2);
   });
-  it('an Agents copy keeps its printed 2 followers and counts as 1 member (Cory, Nov 12)', () => {
+  it('an Agents copy takes its worth: 1 follower and 1 member (Agents rebased to 1, Cory Nov 12)', () => {
     const s = scene({ members: [['echo.doppel']] });
     s.cards[uidOf(s, 'echo.doppel', 0)].copy = 'echo.agents';
     expect(memberCount(s, s.players[0])).toBe(1);
-    expect(followers(s, s.players[0])).toBe(3);
+    expect(followers(s, s.players[0])).toBe(2);
   });
   it('Tribute Band remains spent across a round change', () => {
     let s = scene({ members: [['echo.dejavu']], turns: [1, 0] });

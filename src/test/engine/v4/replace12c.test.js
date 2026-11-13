@@ -64,7 +64,7 @@ describe('Deprogrammers, reworded: "Whenever a member joins your cult from a riv
 
 
 describe('Snobs, every round: "Round End: +1 follower per blue member you have."', () => {
-  it('Snobs (worth 2, counts 1: Cory, Nov 12) and Regular at Round End: +2 followers', () => {
+  it('Snobs (rebased to worth 1: Cory, Nov 12) and Regular at Round End: +2 followers', () => {
     let s = table(['market', 'red', 'yellow', 'trading'], { round: 1, members: [['market.snob', 'market.regular', 'red.volunteer']] });
     s.queue = [{ t: 'endRound' }]; s = resume(s);
     expect(named(s, 'Snobs').join(' ')).toContain('2 blue members, +2 followers.');

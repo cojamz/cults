@@ -72,13 +72,13 @@ describe('choosing how to pay', () => {
 });
 
 describe('Doppelganger becomes a copy of the card', () => {
-  it('copying Triplets is worth 3 followers and counts as one member (Cory, Nov 12)', () => {
+  it('copying Triplets is worth 3 followers and counts as three members', () => {
     let s = buyPhase({ res: [{ green: 2, blue: 2 }], members: [['red.twins']], shop: ['echo.doppel'] });
     const before = followers(s, s.players[0]);
     const members = memberCount(s, s.players[0]);
     s = move(s, `card:${uidOf(s, 'echo.doppel', 'shop')}`);
     if (s.pending?.kind === 'choose') s = play(s, o => o.label === 'Triplets');
     expect(followers(s, s.players[0])).toBe(before + 3);
-    expect(memberCount(s, s.players[0])).toBe(members + 1);
+    expect(memberCount(s, s.players[0])).toBe(members + 3);
   });
 });

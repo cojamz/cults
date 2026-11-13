@@ -64,9 +64,9 @@ describe('Stand-in actions are plain gains', () => {
 });
 
 describe('Red members', () => {
-  it('Triplets is worth 3 followers, Big Family 4; each counts as 1 member (Cory, Nov 12)', () => {
+  it('Triplets is worth 3 followers and members; Big Family 4 of each', () => {
     const s = scene({ members: [['red.twins', 'red.bigfamily', 'red.intern']] });
-    expect(memberCount(s, s.players[0])).toBe(3);
+    expect(memberCount(s, s.players[0])).toBe(8);
     expect(fol(s, 0)).toBe(1 + 3 + 4 + 1);
   });
 
@@ -96,7 +96,7 @@ describe('Red members', () => {
     expect(s.players[0].bonus).toBe(0);
     s = take(s, 'red.hire');
     expect(s.players[0].bonus).toBe(1);
-    expect(fol(s, 0)).toBe(2 + 1 + 2); // Proselytizers is worth 2 (Cory, 2026-10-25)
+    expect(fol(s, 0)).toBe(2 + 1 + 1); // Proselytizers is worth 1 (rebased, Cory Nov 12; was 2 since Oct 25)
   });
 
   it('Mob: round end +2 followers per rival with fewer red members (Nov 4); nothing at game end', () => {
@@ -131,7 +131,7 @@ describe('Red members', () => {
 
   it('Host: at round start +1 red per 2 members', () => {
     const s = scene({ members: [['red.host', 'red.twins', 'red.intern', 'red.crowd', 'gold.banker']], queue: [{ t: 'round', r: 2 }] });
-    expect(R(s)[0].red).toBe(2); // 5 members, 1 each (Cory, Nov 12)
+    expect(R(s)[0].red).toBe(3);
   });
 
   it('Sponsor: members cost 2 less, and stacks with Intro Offer', () => {
@@ -214,7 +214,7 @@ describe('Red members', () => {
 
   it('Patriarch: game end +1 follower per 2 members', () => {
     const s = scene({ members: [['red.patriarch', 'red.bigfamily', 'red.intern', 'red.crowd', 'gold.banker']], queue: [{ t: 'finish' }] });
-    expect(s.players[0].final.total).toBe(2); // 5 members, Big Family counting 1 (Cory, Nov 12)
-    expect(fol(s, 0)).toBe(1 + (1 + 4 + 1 + 1 + 1) + 2);
+    expect(s.players[0].final.total).toBe(4);
+    expect(fol(s, 0)).toBe(1 + (1 + 4 + 1 + 1 + 1) + 4);
   });
 });

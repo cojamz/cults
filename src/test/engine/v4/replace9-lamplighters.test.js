@@ -20,7 +20,7 @@ const Q = ['gold', 'red', 'purple', 'echo'];
 describe('REPLACE9: Lamplighters', () => {
   it('same price as Night Watch, which is retired under the switch', () => {
     const d = defById('purple.lamplighters'), o = defById('purple.nightwatch');
-    expect([d.s, d.w, d.f]).toEqual([o.s, o.w, o.f]);
+    expect([d.s, d.w, d.f]).toEqual([o.s, o.w, 1]); // worth 1: a live member is rebased to 1, while the retired card keeps its old worth (Cory, Nov 12)
     expect(o.retired).toBe(true);
   });
   it('Last Call with minions on Red and Purple: +2 followers', () => {
