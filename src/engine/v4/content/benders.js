@@ -593,12 +593,14 @@ const members = [
   // Replacement batch 6 (Nov 3), live since Nov 4 (Claude, under Cory's "use your judgement"): HR's place. 5 any as a player sees it. Read right after the contests
   // are scored (core's afterContests): a shared contest counts as a win; rivals tied for the most wins (at least 1):
   // the owner chooses. Loose followers only, through the shared steal (Bodyguards blocks it), as Raiders takes.
-  m('sorelosers', 'Consolation Prize', null, 0, 4, 'Round End: if you win no contest, +5 followers.', { round: 3, // Sore Loser redesigned (Cory, Nov 11 3:56pm); same id and price
+  // Cory, 2026-11-12 7:04pm Eastern: "consolation prize should be, for each contest you dont win, +2 followers": a
+  // shared contest still counts as a win, as before
+  m('sorelosers', 'Consolation Prize', null, 0, 4, 'Round End: +2 followers per contest you don\u2019t win.', { round: 3, // Sore Loser redesigned (Cory, Nov 11 3:56pm); same id and price
     afterContests(ctx, owner, card, table) {
-      // a shared contest counts as a win, as Sore Loser read it
-      if (table.some(c => c.winners.includes(owner.id))) { ctx.log(`${owner.name}'s Consolation Prize: won or tied a contest, so nothing.`); return; }
-      owner.bonus += 5;
-      ctx.log(`${owner.name}'s Consolation Prize: won no contest, +5 followers.`);
+      const lost = table.filter(c => !c.winners.includes(owner.id)).length;
+      if (!lost) { ctx.log(`${owner.name}'s Consolation Prize: won or tied every contest, so nothing.`); return; }
+      owner.bonus += 2 * lost;
+      ctx.log(`${owner.name}'s Consolation Prize: didn\u2019t win ${lost} contest${lost > 1 ? 's' : ''}, +${2 * lost} followers.`);
     },
   }),
   // REPLACE6 bot test: Alchemists' place. 5 any as a player sees it. The stall is a list beside this card

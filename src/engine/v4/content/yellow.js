@@ -651,7 +651,7 @@ export default {
     // round I (paper 16 vs 10, Yellow's set 9 -> 16; blind play +0.34; trial on tables with Yellow: taken 28% vs 27%, owners
     // won 40% vs 35%). 3 yellow + 3 any as a player sees it. The recruited member's color, if you have a member of it
     // (Dabblers and Drifters count, as everywhere); automatic, on the rival's recruit.
-    m('dutycollector', 'Duty Collector', 2, 3, 'Whenever a rival recruits a member in one of your members’ colors, +1 of that color.', { f: 3, // worth 3 (Cory, Nov 12 10:31am Eastern)
+    m('dutycollector', 'Duty Collector', 2, 2, /* costs 7, was 8; stays in round III (Cory, Nov 12 7:05pm Eastern: "duty collector probably too expensive") */ 'Whenever a rival recruits a member in one of your members’ colors, +1 of that color.', { f: 3, round: 3, // worth 3 (Cory, Nov 12 10:31am Eastern)
       onAnyRecruit(ctx, owner, card, by, recruited) {
         const c = colorOf(ctx, recruited);
         if (!c || by === owner || !(ctx.countMembersOfColor(owner, ctx.defOf(recruited).quadrant) > 0)) return;
@@ -797,12 +797,16 @@ export default {
     // In the deck for Meddler's slot, 3 yellow + 1 any as a player sees it (Cory, Nov 5: "yes to night market. should be relatively cheap")
     // Cory, 2026-11-11 2:31pm Eastern: "night traders can go, should be more like early traders… swap around your
     // resources at the beginning of the round, like up to four of them": Early Traders, Night Traders' card and price
-    m('nightmarket', 'Early Traders', 2, 0, 'Round Start: swap up to 4 of your resources for other colors, one for one.', {
-      // BOTSEE: each round start still ahead, a few resources moved where the round's plan needs them
-      ...see(i => [2, 3].filter(r => r > i.round).length * 1.5),
+    // Cory, 2026-11-12 6:58pm Eastern: "early traders should give a couple yellow or something": +2 yellow first, so
+    // the swap can move it too
+    m('nightmarket', 'Early Traders', 2, 0, 'Round Start: +2 yellow. Swap up to 4 of your resources for other colors, one for one.', {
+      // BOTSEE: each round start still ahead, 2 yellow plus a few resources moved where the round's plan needs them
+      ...see(i => [2, 3].filter(r => r > i.round).length * 3.5),
       // late (combo tester, Nov 12): it swaps what the round's other Round Start income gave (Caravan earlier in the row
       // left it "nothing to swap" with 4 resources in hand)
       onRoundStartLate(ctx, owner) {
+        ctx.gain(owner, 'yellow', 2);
+        ctx.log(`${owner.name}'s Early Traders: +2 yellow.`);
         const k = Math.min(4, total(ctx, owner));
         if (!k) { ctx.log(`${owner.name}'s Early Traders: nothing to swap.`); return; }
         transmuteStep(ctx, owner, { who: 'Early Traders', left: k, done: 0 });
@@ -861,7 +865,7 @@ export default {
     // Cory, Nov 1 (in place of Puppeteers): "Make it 'On Recruit' as well"
     // REPLACE9 (Members C, Caravan batch: paper 15 vs 12; Cory's "paper filters, play ranks", Nov 4): Caravan's place,
     // same price. The member keeps the new color (as Drifters keeps its own) until painted again.
-    ...add9(m('signpainters', 'Sign Painters', 4, 4, 'On Use, once per round: a member in any cult becomes a member of a color you choose.', { f: 3,
+    ...add9(m('signpainters', 'Sign Painters', 4, 2, /* Caravan's price, 9 since Nov 12 */ 'On Use, once per round: a member in any cult becomes a member of a color you choose.', { f: 3,
       activate: 'round',
       onRoundStart(ctx, owner, card) { card.used = false; },
       onActivate(ctx, owner, card) {
@@ -875,7 +879,7 @@ export default {
       },
       botActivate: (ctx, owner) => ctx.rivals(owner).some(o => ctx.membersOf(o).length > 0),
     })),
-    m('caravan', 'Caravan', 4, 4, 'On Recruit: +1 of each color. Round Start: +1 of each color.', { f: 3, now: true, ...old9('yellow.caravan'), // every color, not only held (Cory, Nov 5 backlog yes)
+    m('caravan', 'Caravan', 4, 2, /* costs 9, was 11 (Cory, Nov 12 7:02pm Eastern: "caravan is crazy expensive esp in 2 player") */ 'On Recruit: +1 of each color. Round Start: +1 of each color.', { f: 3, now: true, ...old9('yellow.caravan'), // every color, not only held (Cory, Nov 5 backlog yes)
       onRoundStart(ctx, owner) { for (const c of colors(ctx)) ctx.gain(owner, c, 1); },
     }),
     // REPLACE9 bot test (Members C, Nov 4): Caravan's place, reworded (plural, as it counts as 3). Same price. "Each color
@@ -926,13 +930,13 @@ export default {
     }),
     // Cory, 2026-11-11 8:21pm Eastern: "On use once per game, recruiting a member costing up to 6 for free. That's pretty
     // good, actually." From the shop. Price is Claude's fill-in.
-    m('headhunters', 'Talent Scouts', 3, 2, /* Headhunters until Nov 11: Red has a Headhunter (Claude's stand-in name; Cory renames members later) */ 'On Use, once per game: recruit a member costing up to 6 for free.', {
+    m('headhunters', 'Talent Scouts', 3, 2, /* Headhunters until Nov 11: Red has a Headhunter (Claude's stand-in name; Cory renames members later) */ 'On Use, once per game: recruit a member costing up to 7 for free.', { // up to 7 (Cory, Nov 12 7:07pm Eastern: "talent scouts should maybe be up to 7")
       activate: 'game',
       onActivate(ctx, owner, card) {
-        const cap = 6 + richUp(ctx.state);
+        const cap = 7 + richUp(ctx.state);
         if (!freeAsk(ctx, owner, 'Talent Scouts', ctx.shopCards().filter(c => hwCost(c) <= cap), 'yellow.poolFree', `no shop member costs ${cap} or less`, cap)) card.used = false;
       },
-      botActivate: (ctx, owner) => ctx.shopCards().some(c => hwCost(c) >= 5 && hwCost(c) <= 6 + richUp(ctx.state)),
+      botActivate: (ctx, owner) => ctx.shopCards().some(c => hwCost(c) >= 5 && hwCost(c) <= 7 + richUp(ctx.state)),
     }),
     // Cory, 2026-11-11 8:31pm Eastern, his card: "Round end plus 1 follower for each color you have"; "do mine… It's good
     // for anybody". Grey members are no color. Name and price are Claude's fill-ins.

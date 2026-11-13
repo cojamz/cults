@@ -303,38 +303,30 @@ describe('Power Shoppers: "Whenever you recruit your second member in a turn, +3
   });
 });
 
-describe('Consolation Prize: "Round End: if you win no contest, +5 followers."', () => {
-  it('3 players, two owners: the one who won Most blue gets nothing, the other +5', () => {
+describe('Consolation Prize: "Round End: +2 followers per contest you don\u2019t win." (Cory, Nov 12)', () => {
+  const cp = s => lines(s, /Consolation Prize/);
+  it('3 players, two owners: the one who won Most blue loses 3 of the 4 contests (+6), the other all 4 (+8)', () => {
     const { s } = go('cp-3p', { quads: QB, n: 3, round: 1, queue: END, res: [{}, { blue: 3 }, {}], members: [['benders.sorelosers'], ['benders.sorelosers'], []] }, []);
-    expect(s.log).toContain("P1's Consolation Prize: won no contest, +5 followers.");
-    expect(s.log).toContain("P2's Consolation Prize: won or tied a contest, so nothing.");
-    expect([bonusOf(s, 0), bonusOf(s, 1), bonusOf(s, 2)]).toEqual([5, 4, 0]);
+    expect(cp(s)).toEqual(["P1's Consolation Prize: didn\u2019t win 4 contests, +8 followers.", "P2's Consolation Prize: didn\u2019t win 3 contests, +6 followers."]);
     cleanLog(s);
   });
 
-  it('a tied contest counts as a win (shared prize, no +5)', () => {
+  it('a tied contest counts as a win: both tie Most blue, so each loses the other 3 (+6)', () => {
     const { s } = go('cp-tie', { quads: QB, round: 1, queue: END, res: [{ blue: 3 }, { blue: 3 }], members: [['benders.sorelosers'], ['benders.sorelosers']] }, []);
-    expect(lines(s, /Consolation Prize/)).toEqual(["P1's Consolation Prize: won or tied a contest, so nothing.", "P2's Consolation Prize: won or tied a contest, so nothing."]);
-    expect([bonusOf(s, 0), bonusOf(s, 1)]).toEqual([2, 2]); // a tie splits the prize (4 → 2 each)
+    expect(cp(s)).toEqual(["P1's Consolation Prize: didn\u2019t win 3 contests, +6 followers.", "P2's Consolation Prize: didn\u2019t win 3 contests, +6 followers."]);
   });
 
-  it('4 players, nobody scores any contest (all hold 0): both owners +5', () => {
+  it('4 players, nobody scores any contest (all hold 0): nobody won them, so both owners +8', () => {
     const { s } = go('cp-none', { quads: QB, n: 4, round: 1, queue: END, members: [['benders.sorelosers'], [], [], ['benders.sorelosers']] }, []);
     expect(has(s, /No one scored/)).toBe(true);
-    expect(lines(s, /Consolation Prize/)).toEqual(["P1's Consolation Prize: won no contest, +5 followers.", "P4's Consolation Prize: won no contest, +5 followers."]);
-    expect([0, 1, 2, 3].map(i => bonusOf(s, i))).toEqual([5, 0, 0, 5]);
+    expect(cp(s)).toEqual(["P1's Consolation Prize: didn\u2019t win 4 contests, +8 followers.", "P4's Consolation Prize: didn\u2019t win 4 contests, +8 followers."]);
+    expect([0, 1, 2, 3].map(i => bonusOf(s, i))).toEqual([8, 0, 0, 8]);
   });
 
-  it('contests by color: Fewest members (White) is a win, so nothing', () => {
+  it('contests by color: Fewest members (White) is a win, so fewer lost', () => {
     const { s } = go('cp-bycolor', { quads: QB, round: 1, queue: END, rules: { contests: 'byColor' }, members: [['benders.sorelosers'], ['red.intern', 'red.twins']] }, []);
     expect(has(s, /Fewest members: P1 \+4/)).toBe(true);
-    expect(s.log).toContain("P1's Consolation Prize: won or tied a contest, so nothing.");
-    expect(bonusOf(s, 0)).toBe(4);
-  });
-
-  it('3 players, contests by color, the owner wins none (P2 most members and colors, P3 fewest with 0): +5', () => {
-    const { s } = go('cp-bycolor-lose', { quads: QB, n: 3, round: 1, queue: END, rules: { contests: 'byColor' },
-      members: [['benders.sorelosers'], ['red.intern', 'red.twins', 'yellow.headhunters'], []] }, []);
-    expect(s.log).toContain("P1's Consolation Prize: won no contest, +5 followers.");
+    expect(cp(s)).toHaveLength(1);
+    expect(cp(s)[0]).toMatch(/^P1's Consolation Prize: didn\u2019t win [1-3] contests?, \+[2-6] followers\.$/);
   });
 });

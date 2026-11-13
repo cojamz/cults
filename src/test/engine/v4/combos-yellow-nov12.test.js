@@ -189,7 +189,7 @@ describe('Exchange Students: "On Recruit: swap one of your members for a rivalâ€
   });
 });
 
-describe('Talent Scouts: "On Use, once per game: recruit a member costing up to 6 for free."', () => {
+describe('Talent Scouts: "On Use, once per game: recruit a member costing up to 7 for free."', () => {
   it('a free recruit is a recruit: Matchmaker, Proselytizers and Recruiter all pay', () => {
     const { s } = run('hh-recruit-triggers', { quads: Q, queue: BUY, shop: ['yellow.nightmarket'],
       members: [['yellow.headhunters', 'yellow.matchmaker', 'red.proselytizer', 'red.recruiter']] }, [/^use:/, /Early Traders/, WILD, WILD]);
@@ -216,27 +216,27 @@ describe('Talent Scouts: "On Use, once per game: recruit a member costing up to 
     expect((no.pending?.options || []).map(o => o.id)).not.toContain('tier:small');
   });
 
-  it('up to 6 is the printed cost: a discount does not stretch it, and the free recruit leaves the discount for a paid one', () => {
+  it('up to 7 is the printed cost (Cory, Nov 12): a discount does not stretch it, and the free recruit leaves the discount for a paid one', () => {
     const { s } = run('hh-discount', { quads: Q, queue: BUY, shop: ['trading.martyr', 'echo.encore'], discount: [3],
       members: [['yellow.headhunters']] }, [/^use:/]);
     const labels = s.pending.options.map(o => o.label);
-    expect(s.pending.prompt).toBe('Talent Scouts: recruit which member costing 6 or less, for free?');
-    expect(labels).toEqual(['Martyrs (6)']);
+    expect(s.pending.prompt).toBe('Talent Scouts: recruit which member costing 7 or less, for free?');
+    expect(labels).toEqual(['Martyrs (6)', 'Encore (7)']);
     const r = drive(s, [/Martyrs/]);
     expect(names(r.s, 0)).toEqual(['Talent Scouts', 'Martyrs']);
     expect(r.s.players[0].discount).toBe(3);
   });
 
-  it('Richer setting: every cost is 2 more, so up to 8 reaches the same members, and the words say 8', () => {
+  it('Richer setting: every cost is 2 more, so up to 9 reaches the same members, and the words say 9', () => {
     const { s } = run('hh-rich', { quads: Q, queue: BUY, rules: { econ: 'rich' }, shop: ['trading.martyr', 'echo.encore'],
       members: [['yellow.headhunters']] }, [/^use:/]);
-    expect(s.pending.prompt).toBe('Talent Scouts: recruit which member costing 8 or less, for free?');
-    expect(s.pending.options.map(o => o.label)).toEqual(['Martyrs (8)']);
+    expect(s.pending.prompt).toBe('Talent Scouts: recruit which member costing 9 or less, for free?');
+    expect(s.pending.options.map(o => o.label)).toEqual(['Martyrs (8)', 'Encore (9)']);
   });
 
-  it('no shop member costs 6 or less: it says so and stays unused', () => {
-    const { s } = run('hh-none', { quads: Q, queue: BUY, shop: ['echo.encore', 'red.panel'], members: [['yellow.headhunters']] }, [/^use:/]);
-    expect(s.log).toContain("P1's Talent Scouts: no shop member costs 6 or less.");
+  it('no shop member costs 7 or less: it says so and stays unused', () => {
+    const { s } = run('hh-none', { quads: Q, queue: BUY, shop: ['silver.patronsaints', 'red.panel'], members: [['yellow.headhunters']] }, [/^use:/]);
+    expect(s.log).toContain("P1's Talent Scouts: no shop member costs 7 or less.");
     expect(s.cards[uidOf(s, 'yellow.headhunters')].used).toBeFalsy();
   });
 
@@ -306,18 +306,20 @@ describe('Cosmopolitans: "Round End: +1 follower per color among your members."'
   });
 });
 
-describe('Early Traders: "Round Start: swap up to 4 of your resources for other colors, one for one."', () => {
+describe('Early Traders: "Round Start: +2 yellow. Swap up to 4 of your resources for other colors, one for one."', () => {
   const START = [{ t: 'round', r: 3 }];
   const toTraders = s => { while (s.pending && !/^Early Traders/.test(s.pending.prompt)) s = applyMove(s, { player: s.pending.player, option: s.pending.options[0].id }); return s; };
-  it('0 resources: nothing to swap, said once', () => {
-    const { s } = run('et-zero', { quads: Q, round: 2, queue: START, members: [['yellow.nightmarket']] }, []);
-    expect(s.log.filter(l => /Early Traders/.test(l))).toEqual(["P1's Early Traders: nothing to swap."]);
+  it('0 resources: +2 yellow, and those 2 can be swapped (Cory, Nov 12)', () => {
+    const s = toTraders(scene({ quads: Q, round: 2, queue: START, members: [['yellow.nightmarket']] }));
+    expect(s.log.filter(l => /Early Traders/.test(l))).toEqual(["P1's Early Traders: +2 yellow."]);
+    expect(s.players[0].res.yellow).toBe(2);
+    expect(s.pending?.prompt || '').toMatch(/^Early Traders/);
   });
   it('exactly 4: four swaps, then it stops asking', () => {
     let s = toTraders(scene({ quads: Q, round: 2, queue: START, res: [{ red: 4 }], members: [['yellow.nightmarket']] }));
     for (let i = 0; i < 4; i++) s = applyMove(s, { player: 0, option: 'swap:red:yellow' });
     clean(s);
-    expect(s.players[0].res).toMatchObject({ red: 0, yellow: 4 });
+    expect(s.players[0].res).toMatchObject({ red: 0, yellow: 6 }); // 2 from Early Traders, 4 swapped
     expect(String(s.pending?.prompt || '')).not.toMatch(/^Early Traders/);
     expect(s.log.filter(l => l === "P1's Early Traders: swapped 1 red for 1 yellow.")).toHaveLength(4);
   });
@@ -339,7 +341,7 @@ describe('Early Traders: "Round Start: swap up to 4 of your resources for other 
     // P1 holds nothing until Caravan's Round Start (+1 of each color); Early Traders comes first in P1's row
     let s = toTraders(scene({ quads: Q, round: 2, queue: START, members: [['yellow.nightmarket', 'yellow.caravan']] }));
     if (DUMP) dump('et-caravan', s, []);
-    expect(s.players[0].res).toMatchObject({ red: 1, green: 1, yellow: 1, white: 1 });
+    expect(s.players[0].res).toMatchObject({ red: 1, green: 1, yellow: 3, white: 1 });
     expect(s.pending?.prompt || '').toMatch(/^Early Traders/);
   });
   it('2 players, both with round start cards: each player\'s own choice', () => {
@@ -349,6 +351,6 @@ describe('Early Traders: "Round Start: swap up to 4 of your resources for other 
     s = applyMove(s, { player: 0, option: 'swap:red:yellow' });
     s = applyMove(s, { player: 0, option: 'done' });
     clean(s);
-    expect(s.players[0].res).toMatchObject({ red: 1, yellow: 1 });
+    expect(s.players[0].res).toMatchObject({ red: 1, yellow: 3 });
   });
 });

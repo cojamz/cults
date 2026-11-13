@@ -13,14 +13,14 @@ const toBuy = s => { while (s.pending && s.pending.player === 0 && s.pending.kin
 describe('Cory’s words', () => {
   it('each card prints his text', () => {
     expect(defById('yellow.nightmarket').name).toBe('Early Traders');
-    expect(defById('yellow.nightmarket').text).toBe('Round Start: swap up to 4 of your resources for other colors, one for one.');
+    expect(defById('yellow.nightmarket').text).toBe('Round Start: +2 yellow. Swap up to 4 of your resources for other colors, one for one.');
     expect(defById('yellow.matchmaker').text).toBe('Whenever you recruit a yellow member, +2 wild, +3 followers.');
     expect(defById('yellow.exchangestudents').text).toBe('On Recruit: swap one of your members for a rival’s member that costs the same.');
-    expect(defById('yellow.headhunters').text).toBe('On Use, once per game: recruit a member costing up to 6 for free.');
+    expect(defById('yellow.headhunters').text).toBe('On Use, once per game: recruit a member costing up to 7 for free.');
   });
 });
 
-describe('Early Traders: "Round Start: swap up to 4 of your resources for other colors, one for one."', () => {
+describe('Early Traders: "Round Start: +2 yellow. Swap up to 4 of your resources for other colors, one for one."', () => {
   it('asks at round start, up to 4 swaps', () => {
     let s = table(['red', 'yellow'], { n: 2, round: 1, res: [{ red: 6, yellow: 0 }], members: [['yellow.nightmarket']], queue: [{ t: 'round', r: 2 }] });
     while (s.pending && !String(s.pending.prompt).startsWith('Early Traders')) s = answer(s, s.pending.options[0].id);
@@ -47,7 +47,7 @@ describe('Exchange Students: "On Recruit: swap one of your members for a rival�
   });
 });
 
-describe('Talent Scouts (Headhunters until Nov 11): "On Use, once per game: recruit a member costing up to 6 for free."', () => {
+describe('Talent Scouts (Headhunters until Nov 11): "On Use, once per game: recruit a member costing up to 7 for free."', () => {
   it('recruits a shop member costing 6 or less for free, once', () => {
     let s = table(['red', 'yellow'], { n: 2, round: 2, res: [{ red: 0, yellow: 0 }], members: [['yellow.headhunters']], shop: ['red.loyalists', 'red.mob'], queue: [{ t: 'buy', p: 0 }] });
     const u = uidIn(s, 'yellow.headhunters', 0);

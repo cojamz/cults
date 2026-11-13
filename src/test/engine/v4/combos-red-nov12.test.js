@@ -170,7 +170,7 @@ describe('Brethren: "Whenever you recruit a member of a color you already have, 
     cleanLog(s);
   });
 
-  it('Talent Scouts ("On Use, once per game: recruit a member costing up to 6 for free.") taking a red member: +1', () => {
+  it('Talent Scouts ("On Use, once per game: recruit a member costing up to 7 for free.") taking a red member: +1', () => {
     const { s } = go('br-scouts', { quads: QR, round: 2, queue: BUY, shop: ['red.twins'], members: [['red.brethren', 'yellow.headhunters']] }, [/use:/, /Triplets/]);
     expect(s.log).toContain("P1's Talent Scouts: recruits Triplets for free.");
     expect(lines(s, /Brethren/)).toEqual(["P1's Brethren: Triplets is a color they already have: +1 follower."]);
