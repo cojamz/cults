@@ -40,6 +40,13 @@ function playRound(s, rand, onTurn) {
 }
 /** A bot move, minus Purple's turn-moving spaces (Sleep In, Hold Up, Right Away, Last Call, and Overtime's extra minion; these tests count the plain snake against Crunch Time). */
 function botMove(s, rand) {
+  // nobody recruits (Nov 13): members that add, skip or move turns (Extra Hand, Bouncers, Latecomers, Go-Getter…) changed
+  // every time the deck did, and these seeded tables broke after each deck change. Without members the turn order is the
+  // spaces' alone, whatever the deck holds.
+  if (s.pending?.kind === 'buy' || s.pending?.options?.some(x => x.kind === 'card')) {
+    const pass = s.pending.options.find(x => x.kind === 'pass');
+    if (pass) return { player: s.pending.player, option: pass.id };
+  }
   const m = chooseBotMove(s, rand);
   const o = s.pending?.options?.find(x => x.id === m.option);
   if (o?.kind === 'slot' && o.q !== undefined && ['skip', 'holdup', 'again', 'lastcall', 'crowdin'].includes(actionAt(s, o.q, o.i).key)) {
@@ -56,8 +63,8 @@ const others = (seq, who) => seq.filter(p => p !== who);
 
 describe('snake vs real sequence, 3 players, one seat taking turns out of it', () => {
   const crunch = at => {
-    // seed 23 since Mutineers and the 15-card grey deck (Nov 12); seed 21 since bots count an extra minion from a choice as a turn (Nov 12); seed 20 since the Goes Last token holds all your other minions (Nov 12); seed 19 since Banker, Brethren, Merchant, Extortionist, Mentor and Clan got cheaper (Nov 12); seed 18 since Loyalists went to 2 red + 2 any (Nov 6); seed 17 since Sleepyheads, Lookouts and Victors leaving (Nov 6); seed 16 since Night Watch left (Nov 6); seed 14 since the Nov 5 replacements (43 before): no seat's members hand out an extra turn in this round III (41 until every member cost 1 more, Nov 5; 40 until the Nov 5 deck; 39 and 31 until Promote stopped reaching cheaper, Nov 4 night; seed 29, 30 until Cheerleaders and Victors joined the grey deck, Nov 4; seed 28 until Recruiter, Tryout and Last Call changed, Nov 1; seeds 11, 12, 14, 15 to 18, after the Oct 29 prices 19 to 23, and after members counting their followers (Nov 1) 24 to 27 did)
-    const { s, rand } = toRound(3, 23);
+    // any seed works since nobody recruits (Nov 13); 11, 12, 13, 23 and 30 checked
+    const { s, rand } = toRound(3, 11);
     const base = s.order.slice(0, 3), who = base[at];
     const seq = playRound(s, rand, st => {
       if (st.pending.player !== who || st.turns.filter(p => p === who).length !== 1) return null;
@@ -82,7 +89,7 @@ describe('snake vs real sequence, 3 players, one seat taking turns out of it', (
     expect(others(seq, who)).toEqual(others(plain, who));
   });
   for (const at of [0, 1]) it(`an extra turn (Go-Getter) for seat ${L[at]} in round II goes in; nobody else moves`, () => {
-    const { s, rand } = toRound(2, 25); // seed 25 since Extra Hand went On Recruit and the Nov 10 spaces (Nov 11); seed 24 since Night Owls left (Nov 6); seed 23 since Victors left (Nov 6); seed 21 since Night Watch left (Nov 6); seed 18 since Promote stopped reaching cheaper (Nov 4 night); seed 16 handed seat B an extra turn once members counted their printed number (Oct 29)
+    const { s, rand } = toRound(2, 11); // any seed works since nobody recruits (Nov 13)
     const base = s.order.slice(0, 3), who = base[at];
     let done = false;
     const seq = playRound(s, rand, st => {
