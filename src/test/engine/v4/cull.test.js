@@ -30,7 +30,7 @@ describe('the curated member decks', () => {
   // Yellow 16 on the 15-card deck: Tourist joined (Cory, Nov 1); it replaces Go-Between only in the 10-card deck
   // Nov 5 cuts (Cory): Magenta −2 then +1 (Big Score in; Snitch back in the 10 deck), Purple −1, Blue −1, White −1, Yellow −2, Silver −3; Seat Filler in for Volunteer
   const DEALT = { echo: 15, /* Nov 11: Tribute Band, Impersonator and Buskers out; Mimics, Regulars, Die-Hards in */ red: 13, /* Mob and Proselytizers out, Brethren and Purists in (Nov 11); Assimilators in for Deprogrammers (Nov 12) */ thieves: 14, purple: 13, /* Place Keepers in for Gossip (Nov 12) */ market: 12, yellow: 15, silver: 11, trading: 11 }; // Nov 11 (Cory): Silver's 8 of 10 plus Bookies and Caterer; Guest of Honor and Patrons to White; White 11 with Leavetakers and Minimalists in, Undertaker, Barker, Old Money, Cashier and Heiresses out // purple 13: Night Watch and Night Owls out, Sleepyheads and Lookouts in (Nov 6)
-  it('Green deals 15, Blue 12, Red and Purple 13, Magenta 15, White 12, Yellow 15, other spheres 10, guests 19; no cut card is dealt', () => {
+  it('Green deals 15, Blue 12, Red and Purple 13, Magenta 15, White 12, Yellow 15, other spheres 10, guests 20; no cut card is dealt', () => {
     for (const q of SPHERES) {
       const s = createGame({ seats: seats(4), quadrants: [q, ...SPHERES.filter(x => x !== q).slice(0, 3)] });
       // artifacts are picked, never dealt (Cory, 2026-10-24): their cards don't count here
@@ -40,7 +40,7 @@ describe('the curated member decks', () => {
       const fromDeck = ARTIFACTS[q] && !CUT.has(ARTIFACTS[q]) && !defById(ARTIFACTS[q]).artifact ? 1 : 0;
       expect(dealt.filter(d => d.startsWith(`${q}.`)).length, q).toBe((DEALT[q] ?? 10) - fromDeck);
       expect(dealt.filter(d => CUT.has(d))).toEqual([]);
-      expect(dealt.filter(d => d.startsWith('benders.')).length).toBe(19); // Cory's 15 guests (Oct 28), plus Cheerleaders (Nov 4; Victors out Nov 6), plus the Test version's Protesters, Gift Swappers and Purifiers (the game since Nov 11)
+      expect(dealt.filter(d => d.startsWith('benders.')).length).toBe(20); // Cory's 15 guests (Oct 28), plus Cheerleaders (Nov 4; Victors out Nov 6), plus the Test version's Protesters, Gift Swappers and Purifiers (the game since Nov 11), plus Mutineers (Nov 12)
     }
   });
 
