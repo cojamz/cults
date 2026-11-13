@@ -22,7 +22,7 @@ New cloud threads clone `main`, so main carries a mirror of the harness (CLAUDE.
 
 ## Where things go
 - Thread status, live: `node scripts/status.mjs set --thread "<title>" --state working|waiting|blocked|done --doing … --next … --eta … [--cory "what he owes"]`. Files in /mnt/project-files/status/ (board.md, board.html; the board on the project tab renders from board.md). Elsewhere: .status/.
-- Design calls: design/decisions.md (append, date + one line + why; it wins over code and docs). Pitches and his verdicts: design/pitch-ledger.md. How the game plays and wins: design/strategy.md. Taste and visual calls: design/taste.md.
+- Member cuts: design/cuts.md, his words only, the same turn (a test fails if a cut member is dealt; a sort page saying "cut" is not a cut). Design calls: design/decisions.md (append, date + one line + why; it wins over code and docs). Pitches and his verdicts: design/pitch-ledger.md. How the game plays and wins: design/strategy.md. Taste and visual calls: design/taste.md.
 - State for a fresh thread: design/HANDOFF.md (one current state, no stacked sections), design/in-flight.md (what's running, owner, next step), design/todo.md (one ordered list). Release steps: design/releasing.md. Player changelog: CHANGELOG.md.
 - Evidence and reviews: design/eval/<topic>/. Screenshots for Cory: /mnt/project-files/<topic>/ and attach them. Plans and write-ups: design/notes/ or a file linked from chat, never pasted.
 - Considered-and-dropped balance findings: design/watch.md (append each run; 3 runs flagging the same card go to Cory).
