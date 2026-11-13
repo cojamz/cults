@@ -2628,11 +2628,11 @@ function bottomBlue(state) {
 /** BARGAIN=cost, bot test only (Cory, Nov 6: "when you bury a member get 1 of its cost. and grey should be wild"):
  *  the player whose turn it is, holding the Blue Cloak, gains 1 of each just-buried member's color; a grey member's is
  *  wild (the bot takes the table color it has least of). The last k cards of the pile are the ones just buried. */
-function bargainCost(state, k) {
+function bargainCost(state, k, actor = null) {
   // a batch (Churn, Window Dressers) reports once; pay for every member in it (Cory, Nov 6: "it should be per
   // discarded member, not per batch")
   k = Math.max(k || 0, state.bbBatch || 0); state.bbBatch = 0;
-  const p = state.current === null || state.current === undefined ? null : state.players[state.current];
+  const p = actor || (state.current === null || state.current === undefined ? null : state.players[state.current]);
   if (!p || !(k > 0)) return;
   const ctx = ctxFor(state);
   const cloak = ctx.abilitiesOf(p).find(c => c.def.bottomBlue);
@@ -2645,7 +2645,10 @@ function bargainCost(state, k) {
     if (p.bbTurn === key) return;
     p.bbTurn = key; k = 1;
   }
-  for (const uid of discardOf(state).slice(-k)) {
+  // the members just discarded, from the discard record rather than the pile: a discard that empties the deck shuffles
+  // the pile into a new deck before the cloak pays (player-agents review r3g6, Nov 13: Out of Style's 3 paid 1, Test
+  // Drive's 1 paid 0)
+  for (const uid of (state.recentDiscards || discardOf(state)).slice(-k)) {
     const c = colorOf(cardDef(state, uid)), n = Number(mode.slice(4)) || 1;
     // grey is wild (Cory, Nov 6): its holder picks the color
     if (!state.resources.includes(c)) { greyPick(ctx, p, cloak, n, uid); continue; }
@@ -2878,7 +2881,7 @@ function ctxFor(state) {
     memberBottomed: () => { bottomBlue(state); cultDiscard(state); },
     /** a member discarded from p's cult outside buryMember (Doormen): its "Whenever this member is discarded" pays p */
     memberDiscarded: (p, uid) => discardPays(state, p, uid),
-    bargainCost: k => bargainCost(state, k),
+    bargainCost: (k, actor) => bargainCost(state, k, actor),
     impressMember: (p, uid) => impressMember(state, p, uid),
     swapMembers: (actor, a, b) => swapMembers(state, actor, a, b),
     canSwapMembers: owner => !sumMemberFlag(state, owner, 'blockMemberSwaps'),

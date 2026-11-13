@@ -524,7 +524,7 @@ const trading = {
     handOffTo(ctx, p, oid, data) {
       const o = ctx.player(oid), uid = data.uid;
       if (!o || !p.members.includes(uid) || !ctx.moveMember(uid, p, o)) { ctx.gain(p, W, 1, { fromAction: true }); return; }
-      const name = ctx.card(uid).def.name, k = cost(ctx, uid);
+      const name = ctx.card(uid).def.name, k = cost(ctx, uid), was = p.res[W] || 0;
       ctx.log(`${p.name}'s ${data.name}: gives ${name} to ${o.name}.`);
       if (k * data.each) ctx.gain(p, W, k * data.each, { fromAction: true });
       if (data.f) p.bonus += data.f;
@@ -544,8 +544,11 @@ const trading = {
         return;
       }
       ctx.gain(p, W, 1, { fromAction: true });
-      if (data.fPer) { ctx.log(`${p.name}'s ${data.name}: +${k * data.fPer} follower${k * data.fPer === 1 ? '' : 's'}, +1 white.`); return; }
-      ctx.log(`${p.name}'s ${data.name}: +${k * data.each} white${data.f ? `, +${data.f} followers` : ''}, +1 white.`);
+      // the line says only what was paid: the +1 white goes to the space's first taker alone (player-agents review,
+      // pilot 1, Nov 13: "Dee's Write-Off: +7 white, +1 white" when Dee got 7)
+      const got = (p.res[W] || 0) - was, base = k * data.each, plus = got > base ? `, +${got - base} white` : '';
+      if (data.fPer) { ctx.log(`${p.name}'s ${data.name}: +${k * data.fPer} follower${k * data.fPer === 1 ? '' : 's'}${got > 0 ? `, +${got} white` : ''}.`); return; }
+      ctx.log(`${p.name}'s ${data.name}: +${Math.min(got, base)} white${data.f ? `, +${data.f} followers` : ''}${plus}.`);
     },
     // idea pipeline pool 2: give resources to rivals, one at a time, for white (Cory, Nov 7: "playing around cash in")
     giveForWhite(ctx, p, v, data) {

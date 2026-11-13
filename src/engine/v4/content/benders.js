@@ -117,7 +117,7 @@ function scoutStep(ctx, p, data) {
 function scoutDone(ctx, p, data) {
   if (data.sent.length) ctx.log(`${p.name}'s Scout: sent ${data.sent.join(', ')} to the discard pile.`);
   // pays Patroness and Bargain Bin once, as Savings, Bury and Trendsetters do (expert AI games, Nov 1)
-  toBottom(ctx, data.sent.length);
+  toBottom(ctx, data.sent.length, p);
   const sentUids = REPLACE1 && data.sent.length ? discardOf(ctx.state).slice(-data.sent.length) : [];
   ctx.refillShop();
   scavenge(ctx, p, sentUids);

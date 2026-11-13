@@ -11,6 +11,11 @@ export const discardOf = state => state.discard || [];
 /** Put members face up on the discard pile, in order (the last one ends on top). */
 export function toDiscard(state, ...uids) {
   (state.discard ||= []).push(...uids);
+  // the last few discards, kept through a reshuffle: the Blue Cloak pays by them ("Whenever you discard a member, +1 of
+  // its color"), and the deck running out can shuffle the pile away before it pays
+  const r = (state.recentDiscards ||= []);
+  r.push(...uids);
+  if (r.length > 16) r.splice(0, r.length - 16);
 }
 
 /** Shuffle the discard pile into a new deck when the deck is empty. True when the deck has a card after. */

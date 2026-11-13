@@ -197,7 +197,7 @@ function shopColors(ctx) {
 function sweepRow(ctx, actor = null) {
   const old = [...ctx.state.shop];
   for (const u of old) ctx.buryFromShop(u);
-  toBottom(ctx, old.length);
+  toBottom(ctx, old.length, actor);
   scavenge(ctx, actor, old);
 }
 /** k shop members just went to the bottom of the pile on someone's turn: Patroness pays once (Cory, Oct 21: "just one
@@ -240,9 +240,11 @@ function discardOffer(ctx, p, data) {
 }
 
 const BARGAIN = String(globalThis.process?.env?.BARGAIN || 'cost1').match(/^self(\d+)$/); // BARGAIN=self<n>: bot test of "Whenever you send members to the bottom of the pile, +n blue." (on your turn; Nov 6; off in the game)
-export function toBottom(ctx, k) {
+// actor: the leader who discarded them ("Whenever you discard a member"), so the Blue Cloak pays at Round Start too,
+// when nobody's turn has begun (player-agents review r3g6, Nov 13: Window Shopper's Round Start discards paid 0)
+export function toBottom(ctx, k, actor = null) {
   if (!(k > 0)) return;
-  if (/^(cost|turn)\d*$/.test(globalThis.process?.env?.BARGAIN || 'cost1')) ctx.bargainCost(k);
+  if (/^(cost|turn)\d*$/.test(globalThis.process?.env?.BARGAIN || 'cost1')) ctx.bargainCost(k, actor);
   for (const p of ctx.state.players) for (const u of [...p.members, ...(p.artifact !== undefined ? [p.artifact] : [])]) {
     const def = ctx.defOf(ctx.card(u)), defs = ctx.defsOf(u);
     // run as the card, so its hover's "gained this game" counts it (it read 0 for Bargain Bin: artifact audit, Nov 1);
@@ -578,7 +580,7 @@ const market = {
       for (const c of out) { ctx.state.shop.splice(ctx.state.shop.indexOf(c.uid), 1); toDiscard(ctx.state, c.uid); }
       ctx.refillShop();
       ctx.log(`${p.name}'s Clean Sweep: sends ${out.map(c => c.def.name).join(', ')} to the discard pile.`);
-      toBottom(ctx, out.length);
+      toBottom(ctx, out.length, p);
       scavenge(ctx, p, out.map(c => c.uid));
     },
     giftCardsTo(ctx, p, oid) { if (ctx.player(oid) && ctx.player(oid) !== p) giftCardsStep0(ctx, p, { to: oid, left: 2 }); },
@@ -663,12 +665,12 @@ const market = {
       // Out of Style's three sends are one batch (Patroness and the Blue Cloak pay once per batch, Cory Oct 21); Window
       // Shopper keeps paying per send, as it always has
       ctx.refillShop();
-      if (!space) toBottom(ctx, 1);
+      if (!space) toBottom(ctx, 1, p);
       // Out of Style ("Discard 3 shop members and refill"): all three come from the row as it was when the space was taken,
       // never a card that just slid in (the row refills as it goes so it is never short between picks; the end is the same)
       const row = space ? (data?.row || []).filter(u => ctx.state.shop.includes(u)) : null;
       if (data?.left > 1 && (space ? row.length : ctx.shopCards().length)) windowPick(ctx, p, data.left - 1, TRACK || space ? [...(data.sent || []), uid] : [], who, row);
-      else { if (space) toBottom(ctx, (data?.sent || []).length + 1); scavenge(ctx, p, [...(data?.sent || []), uid]); }
+      else { if (space) toBottom(ctx, (data?.sent || []).length + 1, p); scavenge(ctx, p, [...(data?.sent || []), uid]); }
     },
     // Test Drive (Nov 10): the member goes to the discard pile first, then its effect plays for p
     testDrive(ctx, p, uid) {
@@ -676,7 +678,7 @@ const market = {
       const c = ctx.card(uid), hook = driveHook(ctx.defOf(c));
       ctx.buryFromShop(uid);
       ctx.log(`${p.name}'s Test Drive: sends ${c.def.name} to the discard pile${hook ? ' and uses its effect' : ''}.`);
-      toBottom(ctx, 1);
+      toBottom(ctx, 1, p);
       if (hook) ctx.useEffectOf(p, uid, hook);
       scavenge(ctx, p, [uid]);
     },
@@ -703,7 +705,7 @@ const market = {
     wd9(ctx, p, uid, data) {
       if (uid === 'done') {
         ctx.refillShop();
-        if (data.n) toBottom(ctx, 1); // one batch, as Churn: Patroness and the Blue Cloak pay once
+        if (data.n) toBottom(ctx, 1, p); // one batch, as Churn: Patroness and the Blue Cloak pay once
         extraBuys(ctx, p, 1);
         ctx.log(`${p.name}'s Window Dressers: ${data.n} sent to the discard pile, the shop refills; recruit again this turn.`);
         return;
@@ -721,7 +723,7 @@ const market = {
       for (const c of out) { ctx.state.shop.splice(ctx.state.shop.indexOf(c.uid), 1); toDiscard(ctx.state, c.uid); }
       ctx.refillShop();
       ctx.log(`Out of Style: ${p.name} sends ${out.length} ${styleWord(color)} member${out.length === 1 ? '' : 's'} to the discard pile.`);
-      toBottom(ctx, out.length);
+      toBottom(ctx, out.length, p);
       const got = out.length ? ctx.gain(p, B, out.length, { fromAction: true }) : null;
       if (got) ctx.log(`${p.name}'s Out of Style: +${got.n} ${got.color}.`);
       scavenge(ctx, p, out.map(c => c.uid));
@@ -735,7 +737,7 @@ const market = {
       const c = ctx.card(uid);
       ctx.buryFromShop(uid);
       ctx.log(`Savings: ${p.name} sends ${c.def.name} to the discard pile.`);
-      toBottom(ctx, 1);
+      toBottom(ctx, 1, p);
       scavenge(ctx, p, [uid]);
     },
     bury(ctx, p, uid) {
@@ -743,7 +745,7 @@ const market = {
       const c = ctx.card(uid), k = buryGain(c);
       ctx.buryFromShop(uid);
       ctx.log(`Bury: ${p.name} sends ${c.def.name} to the discard pile.`);
-      toBottom(ctx, 1);
+      toBottom(ctx, 1, p);
       const got = k ? ctx.gain(p, B, k, { fromAction: true }) : null;
       if (got) ctx.log(`${p.name}'s Bury: +${got.n} ${got.color}.`);
       scavenge(ctx, p, [uid]);
@@ -824,7 +826,7 @@ const market = {
         }
         ctx.refillShop();
         if (data.n) {
-          toBottom(ctx, 1);
+          toBottom(ctx, data.n, p);
           const got = ctx.gain(p, B, data.n);
           if (got) ctx.log(`${p.name}'s Tastemakers: +${got.n} ${got.color}.`);
           scavenge(ctx, p, data.sent);
@@ -1315,7 +1317,7 @@ const market = {
         for (const c of out) { ctx.state.shop.splice(ctx.state.shop.indexOf(c.uid), 1); toDiscard(ctx.state, c.uid); }
         ctx.refillShop();
         ctx.log(`${owner.name}'s Fashion Police: sends ${out.length} ${styleWord(col)} member${out.length === 1 ? '' : 's'} to the discard pile.`);
-        toBottom(ctx, 1);
+        toBottom(ctx, out.length, owner);
         scavenge(ctx, owner, out.map(c => c.uid));
       },
     })),

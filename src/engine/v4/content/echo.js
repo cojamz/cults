@@ -425,10 +425,15 @@ function copyResolved(ctx, p, e, { later, by, asker }) {
   }
   const mult = has(ctx, p, 'wallflower') ? 2 : 1;
   const asGreen = translating(ctx, p);
+  const was = { ...p.res };
   ctx.copyPlus1(p, actionOf(e, ctx.state), e.color, mult, () => { for (const [c, n] of Object.entries(e.res)) ctx.gain(p, asGreen ? 'green' : c, n * mult, { fromAction: true }); }, asGreen ? 'green' : null);
   if (e.discount) ctx.discount(p, e.discount, `Copy of ${e.name}`);
   const notes = [mult > 1 ? `doubled by ${p.name}'s Wallflower` : '', asGreen && Object.keys(e.res).length ? `as green by ${p.name}'s Translator` : ''].filter(Boolean);
-  ctx.log(`${who} copied ${e.name}${e.p !== p.id ? ` (${ctx.player(e.p).name}'s)` : ''}: ${describe(ctx, e)}${notes.length ? `, ${notes.join(', ')}` : ''}.`);
+  // the line says what the copy paid: a copy never gets the space's first-taker +1, so copying Build Up's "+2, +1" pays
+  // 2, not the 3 its taker got (player-agents review r3g4, Nov 13: "copied Build Up: +3 green" when the copier got 2)
+  // (in the chip's order and before Wallflower doubles it, as the line always read; Translator's all-green stays as is)
+  const paid = asGreen ? e.res : Object.fromEntries(Object.keys(e.res).map(c => [c, Math.floor(Math.max(0, (p.res[c] || 0) - (was[c] || 0)) / mult)]).filter(([, n]) => n > 0));
+  ctx.log(`${who} copied ${e.name}${e.p !== p.id ? ` (${ctx.player(e.p).name}'s)` : ''}: ${describe(ctx, { ...e, res: paid })}${notes.length ? `, ${notes.join(', ')}` : ''}.`);
   heard(ctx, p, e, taker);
   if (later) later.push(...e.members);
   else if (e.members.length) freeStep(ctx, p, { left: [...e.members], who: asker || by || 'Copy' });
