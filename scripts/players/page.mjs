@@ -69,7 +69,7 @@ evs.forEach((e, i) => {
 });
 html += '</section>';
 
-const page = `<title>Player Agents Pilot</title>
+const page = `<title>Player Agents ${path.basename(DIR)}</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap">
 <style>
@@ -103,7 +103,7 @@ h4 + .card { margin-top:2px; }
 </style>
 <main>
 <header>
-<h1>Player agents: pilot game</h1>
+<h1>Player agents: ${path.basename(DIR)}</h1>
 <p class="lede">Four AI players (${modelWord}) played one real game of today's Cults: 10-card deck, By color contests, ${data.table.map(q => COLOR[q] || q).join(', ')}. Every move was picked from the game's own list of legal moves. Experienced players had the rules, the cards, the strategy primer and the skill ideas from Nov 12; new players had only the rules and the cards. ${data.final.length} players, ${evs.filter(e => e.type === 'move').length} decisions, ${mins} minutes.</p>
 <p class="lede">What the players say about cards is their own read, not checked yet.</p>
 </header>
