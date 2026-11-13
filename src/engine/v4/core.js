@@ -171,8 +171,79 @@ export function isLegal(state, move) {
   return !!(ask && ask.options.some(o => o.id === move.option));
 }
 
-/** Returns a new state. Throws on an illegal move. */
-export function applyMove(prev, move, { effects = false } = {}) {
+// ---------- several answers to one question in one move (Cory, Nov 13) ----------
+// "they have to stop to make a decision for each resource selection ... they should make that decision all at once":
+// a question asked again and again (Harvest's "+1 of which color? (3 to pick)", Exchange's turn-ins, Sweet Talk's
+// silver, Party Gifts' silver to rivals) takes its whole answer as one move, { player, option, then: [ids…] }: the
+// option first, then each id in turn, every one legal when its turn comes, all the same player's same question.
+// Steals stay one at a time (Cory, Nov 13: "for stealing it should still be one at a time"): a run whose pick
+// steals is refused. It plays exactly as the moves one by one (the same states, the same move count), so records
+// and replays keep one entry per pick (record.js step); the table gets one step with the run's effects summed.
+let STEALS = 0; // steals made (ctx.steal), so a run can refuse one
+const sameAsk = (a, b) => !!(a && b && a.t === b.t && a.p === b.p && (a.t === 'release' || (a.t === 'choose' && a.h === b.h)));
+const stealsAsk = st => (st.pending?.options || []).some(o => o.kind === 'take');
+/** Can the question p answers now take several answers at once (a run)? Not a steal, and a choice of the kind that
+ *  asks again (a counted pick, the release's colors). The engine still checks each pick of a run as it comes. */
+export function runnable(state, player = state?.pending?.player) {
+  const t = state?.queue?.[0];
+  return !!(t && state.pending && state.pending.player === player && t.p === player && !state.pending.also
+    && (t.t === 'release' || t.t === 'choose') && !stealsAsk(state));
+}
+/** How many times in a row p would be asked this same question picking the engine's suggested answer each time
+ *  (the best hint that isn't Done), up to `cap`: 1 for a question asked once, 0 when it can't take a run. */
+export function runLength(state, cap = 24) {
+  if (!runnable(state)) return 0;
+  let s = state, n = 0;
+  try {
+    while (n < cap && s.pending && sameAsk(state.queue[0], s.queue[0])) {
+      const opts = s.pending.options.filter(o => o.kind !== 'done' && o.kind !== 'pass' && o.kind !== 'back');
+      if (!opts.length) break;
+      const o = [...opts].sort((a, b) => (b.hint || 0) - (a.hint || 0))[0];
+      const before = STEALS;
+      s = applyOne(s, { player: state.pending.player, option: o.id });
+      if (STEALS !== before) return 0;
+      n += 1;
+    }
+  } catch { return Math.max(1, n); }
+  return Math.max(1, n);
+}
+// one pick's gains (a stack, a follower count, a coin paid from your stack) summed into one flight each, as foldPicks
+// on the table does for picks sent one by one; anything else is kept in order
+function mergeRun(lists) {
+  const all = lists.flat();
+  const simple = e => e.to && ((e.type === 'gain' && e.to.kind === 'stack') || (e.type === 'pay' && e.from && e.from.kind === 'stack') || (e.type === 'followers' && e.to.kind === 'count'));
+  if (!all.length || !all.every(simple)) return all.map((e, n) => ({ ...e, n }));
+  const cause = all[0].cause, gets = new Map();
+  for (const e of all) {
+    const key = `${e.type}:${e.from && e.from.kind}:${e.from && (e.from.key ?? e.from.pid)}:${e.from && e.from.r}>${e.to.kind}:${e.to.key ?? e.to.pid}:${e.to.r}`;
+    const had = gets.get(key);
+    gets.set(key, had ? { ...had, what: { ...had.what, n: had.what.n + e.what.n } } : { ...e, cause });
+  }
+  return [...gets.values()].map((e, n) => ({ ...e, n }));
+}
+function applyRun(prev, move, opts) {
+  const ids = [move.option, ...move.then];
+  let s = prev;
+  const lists = [];
+  for (let k = 0; k < ids.length; k++) {
+    const one = { player: move.player, option: ids[k] };
+    if (k > 0 && !sameAsk(prev.queue[0], s.queue[0])) throw new Error(`Illegal move: answer ${k + 1} of ${JSON.stringify(move)} has no question left to answer`);
+    if (!runnable(s, move.player)) throw new Error(`Illegal move: ${JSON.stringify(move)} answers a question that takes one answer at a time`);
+    const before = STEALS;
+    s = applyOne(s, one, opts);
+    if (STEALS !== before) throw new Error(`Illegal move: ${JSON.stringify(move)}: steals go one at a time`);
+    if (opts.effects) lists.push(s.effects || []);
+  }
+  if (opts.effects) Object.defineProperty(s, 'effects', { value: mergeRun(lists), enumerable: false, configurable: true, writable: true });
+  return s;
+}
+
+/** Returns a new state. Throws on an illegal move. A move with `then` answers the same question several times (applyRun). */
+export function applyMove(prev, move, opts = {}) {
+  if (Array.isArray(move?.then) && move.then.length) return applyRun(prev, move, opts);
+  return applyOne(prev, move, opts);
+}
+function applyOne(prev, move, { effects = false } = {}) {
   if (!isLegal(prev, move)) throw new Error(`Illegal move: ${JSON.stringify(move)}`);
   const state = stateCopy(prev); // the scored rounds and Green's snapshots shared (copy.js)
   // a choice answered at the same time (also): whoever answers first, their own task resolves
@@ -2877,6 +2948,7 @@ function ctxFor(state) {
       const fx = what.followers ? Math.min(what.followers, Math.max(0, victim.bonus)) : 0;
       if (fx) { victim.bonus -= fx; thief.bonus += fx; n += fx; }
       if (!n) return 0;
+      STEALS += 1;
       if (what.give) what.give(n, took);
       const info = { thief, victim, took, uid: what.uid, n, reaction: !!what.reaction, instance: what.instance ?? ctx.stealInstance(), ...(what.led !== undefined ? { led: !!what.led } : {}), ...(fx ? { followers: fx } : {}), ...(what.jackals ? { jackals: true } : {}) };
       for (const qid of state.quadrants) { const q = quadrant(qid); if (q.onSteal) q.onSteal(ctx, info); }

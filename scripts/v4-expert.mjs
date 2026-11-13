@@ -21,7 +21,7 @@ import {
   createGame, applyMove, followers, memberCount, memberPrice, cardDef, contestTable, turnRail, previewSpace,
   quadrant, shopSize, TIERS, roundWorkers, openSlots,
 } from '../src/engine/v4/index.js';
-import { scoringOf, plus1Open } from '../src/engine/v4/core.js';
+import { scoringOf, plus1Open, runLength } from '../src/engine/v4/core.js';
 import { discardOf } from '../src/engine/v4/discard.js';
 import { resume as engineResume } from '../src/engine/v4/core.js';
 import { plainCopy } from '../src/engine/v4/copy.js';
@@ -89,7 +89,7 @@ async function locked(dir, fn) {
 const replayState = (dir, moves) => {
   const meta = readJson(f(dir, 'meta.json'));
   let s = createGame({ seats: meta.names.map(name => ({ name, kind: 'human' })), seed: meta.seed, quadrants: meta.colors, rules: meta.rules || (meta.deck === 10 ? { deck: 10 } : {}) });
-  for (const e of moves) s = applyMove(s, { player: e.seat, option: e.option });
+  for (const e of moves) s = applyMove(s, { player: e.seat, option: e.option, ...(e.then?.length ? { then: e.then } : {}) });
   return s;
 };
 const readState = dir => {
@@ -356,7 +356,10 @@ function decisionView(s, me, meta, carry = false) {
   const t = s.pending, map = numberOptions(s, me.id, meta, carry);
   const L = [`YOUR DECISION (${t.kind}): ${t.prompt}`];
   t.options.forEach(o => L.push(`  [${map[o.id]}] ${renderOption(s, me, o, t.kind)}`));
-  L.push('', `Answer with: node scripts/v4-expert.mjs move ${DIR} ${me.id} <number> --why "..." [--say "..."]`);
+  // a question asked again and again (Harvest's colors, Party Gifts' silver): the whole answer in one move (Cory, Nov 13)
+  const run = runLength(s);
+  if (run > 1) L.push('', `This question comes back up to ${run} times in a row. Answer every pick at once: the numbers in order, comma-separated (e.g. ${[map[t.options[0].id], map[t.options[0].id], map[t.options[Math.min(1, t.options.length - 1)].id]].slice(0, Math.min(3, run)).join(',')}); a Done number ends it early.`);
+  L.push('', `Answer with: node scripts/v4-expert.mjs move ${DIR} ${me.id} <number${run > 1 ? '[,number…]' : ''}> --why "..." [--say "..."]`);
   return L.join('\n');
 }
 
@@ -449,6 +452,37 @@ async function main() {
       if (s.pending?.player !== seat) { console.log(`Not your decision now (waiting on ${s.players[s.pending.player].name}). Run wait.`); return; }
       const owed = diaryOwed(s, meta, seat);
       if (owed) { console.log(`Round ${ROMAN[owed]} is over. Before your first move of this round, write your round diary: node scripts/v4-expert.mjs diary ${dir} ${seat} "<text>" (what your brief asks for). Nothing was played.`); return; }
+      // several numbers: every pick of a question asked again and again, in one move (the engine's run)
+      const parts = String(arg ?? '').split(',').map(x => x.trim()).filter(Boolean);
+      if (parts.length > 1) {
+        const nums = meta.numbers?.[seat]?.map || {};
+        const ids = parts.map(x => (/^\d+$/.test(x) ? Object.keys(nums).find(k => nums[k] === Number(x)) : x));
+        const first = s.pending.options.find(x => x.id === ids[0]);
+        let next = null, err = '';
+        if (ids.some(id => id === undefined) || !first) err = `${arg}: not every number is on your list.`;
+        else { try { next = applyMove(s, { player: seat, option: ids[0], then: ids.slice(1) }); } catch (e) { err = String(e.message || e).replace(/^Illegal move: .*?(: |$)/, ''); } }
+        if (!next) {
+          console.log(`Those picks can't all be made in one go (${err || 'the question changed partway'}). Nothing was played. Answer again from this list:\n${decisionView(s, s.players[seat], meta)}`);
+          writeJson(f(dir, 'meta.json'), meta);
+          return;
+        }
+        const label = ids.map((id, k) => (k === 0 ? renderOption(s, s.players[seat], first, s.pending.kind) : (/^\d+$/.test(parts[k]) ? `#${parts[k]}` : id))).join(' + ');
+        const picks = []; let st = s;
+        for (const id of ids) { const o = st.pending.options.find(x => x.id === id); picks.push(renderOption(st, st.players[seat], o, st.pending.kind).split(' — ')[0]); st = applyMove(st, { player: seat, option: id }); }
+        const all = picks.join('; ');
+        writeJson(f(dir, 'state.json'), next);
+        const ev = [{ type: 'move', seat, round: s.round, n: next.moves, kind: s.pending.kind, option: ids[0], then: ids.slice(1), label: all || label, think: flags.why || flags.think || '', prompt: s.pending.prompt, picks: ids.length }];
+        if (flags.say) ev.push({ type: 'say', seat, text: String(flags.say) });
+        ev.push(...newLines(s, next).map(text => ({ type: 'log', text, by: seat })));
+        addEvents(dir, ev);
+        meta.seen[seat] = events(dir).length;
+        writeJson(f(dir, 'meta.json'), meta);
+        console.log(`Done (${ids.length} picks): ${all.slice(0, 300)}\nWhat happened:\n${newLines(s, next).map(l => `  ${l}`).join('\n') || '  (nothing logged)'}`);
+        if (next.over) console.log(`\nGAME OVER. ${next.ranking.map((id, i) => `${i + 1}. ${next.players[id].name} ${followers(next, next.players[id])}`).join(' · ')}\nNow run postgame.`);
+        else if (next.pending?.player === seat) { console.log(`\nYour turn continues.\n${tableView(next, seat).split('\n').slice(0, 2).join('\n')}\n\n${decisionView(next, next.players[seat], meta, true)}`); writeJson(f(dir, 'meta.json'), meta); }
+        else console.log(`\nYour decisions are finished for now. Run wait.`);
+        return;
+      }
       const { o, gone } = pickOption(s, meta, seat, arg);
       if (!o) {
         const why = gone ? `Option ${arg} isn't offered any more (an earlier step of your turn changed the list). Nothing was played.` : `No such option "${arg}".`;

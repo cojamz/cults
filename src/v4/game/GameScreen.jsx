@@ -6,7 +6,7 @@ import { turnRun, runTitle, runSay } from './seats.js';
 import { cloakOf } from './cloak.js';
 // What's clickable is exactly state.pending.options, and only for seats this client controls.
 import { memo, startTransition, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
-import { tierLeft, quadrant, cardDef } from '../../engine/v4/index.js';
+import { tierLeft, quadrant, cardDef, runnable } from '../../engine/v4/index.js';
 import { useAnyDot } from './Glyphs.jsx';
 import { boardWords, isRoundEnd, newLogLines, parseRoundEnd, playerColor, seatEmoji, promptFor, roman, tierCostText, scoringSnapshot, explainLine, plainLine, latestRivalMove, movesSinceYourTurn } from '../format.js';
 import { TouchTips, useIdleSpaces, Tip } from './Info.jsx';
@@ -35,7 +35,6 @@ function afterPaint(fn) {
 // why a press did nothing, for the perf rig's stuck report (scripts/v4-rig.mjs sets window.__rigWhy; players never do)
 const why = r => { if (globalThis.__rigWhy) globalThis.__rigWhy(r); };
 let userMove = false; // set while your own click is being submitted (useTable.show reads it)
-let batching = false; // a card's whole answer being sent at once (onGiftAnswerAll): the table queues it, then shows it as one step
 const NO_SLOTS = new Map();
 const NOOP = () => {};
 const ANSWER_FIRST = (() => { try { return new URLSearchParams(globalThis.location?.search || '').get('answer') !== 'now'; } catch { return true; } })();
@@ -401,7 +400,6 @@ export function useTable(session, rivalDwell = RIVAL_DWELL_MS, beforeShow = null
       if (s === shownRef.current || queue.current.includes(s)) return;
       // Authoritative transport remains current; every client presents complete sequences in order.
       queue.current.push(s);
-      if (batching) return; // the rest of a card's answer is coming in this same call: shown together (foldPicks)
       // your own move answers at once: a rival's step that has landed may still be holding its pause (the landing lights
       // your choices before the hold ends), and your click waited out the rest of it (a click that did nothing, 1.5 s+)
       const at = shownRef.current;
@@ -2018,32 +2016,37 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     }
     onPick(id, mode);
   }, [gift, options, onPick, interactionState, physicalState, session]);
-  // a split card's whole Take at once (local games): each answer goes to the engine in this one call, and the table shows
-  // them as one step (foldPicks), the coins flying together. Online answers still go one at a time (takeRun): the host
-  // takes each in turn. Returns how many went (0: nothing went, the card takes them one at a time; 'wait': the table
-  // is still playing, so the card tries the whole Take again shortly).
+  // a picker card's whole answer at once (Harvest's split, Exchange's turn-in, Sweet Talk's silver): one move with every
+  // pick (the engine's run, { option, then }), local or online, so the coins fly together as one step and nobody stops
+  // per coin (Cory, Nov 13: "they should make that decision all at once"). Returns how many picks went (0: nothing
+  // went, the card falls back to one at a time; 'wait': the table is still playing, so the card tries again shortly).
   const onGiftAnswerAll = useCallback(ids => {
-    if (session.info?.mode === 'online' || !mine || needHandoff) return 0;
+    if (!mine || needHandoff || !ids.length) return 0;
     // the table is still showing the last step (your placement's coins): 'wait', and the card sends the whole Take again
     // in a moment, rather than one color at a time (each its own flight: a quick Take after placing on Harvest)
     if (busy || busyNow.current) return 'wait';
     if (interactionState !== physicalState || session.getState() !== physicalState) { why('gift: presenting'); return 'wait'; }
+    const st = session.getState();
     const player = pend.player;
+    if (!st.pending || st.pending.player !== player || !runnable(st, player) || !st.pending.options.some(o => o.id === ids[0])) return 0;
     hover.close();
-    let n = 0;
-    batching = true;
-    try {
-      for (const id of ids) {
-        const st = session.getState();
-        if (!st.pending || st.pending.player !== player || st.pending.kind !== 'choose' || !st.pending.options.some(o => o.id === id)) break;
-        try { session.submit({ player, option: id }); } catch { break; }
-        if (session.getState() === st) break;
-        n += 1;
-      }
-    } finally { batching = false; }
+    const move = { player, option: ids[0], ...(ids.length > 1 ? { then: ids.slice(1) } : {}) };
+    if (session.info?.mode === 'online') {
+      // the host takes the whole run as one move. A refusal (the table moved on mid-send) is sent again while the same
+      // question is still up, so the card, holding its plan, never waits on an answer that went nowhere
+      const send = (tries) => session.submit(move).catch(err => {
+        why(`gift: run refused: ${err && err.message}`);
+        const now = session.getState();
+        if (tries < 3 && now.pending && now.pending.player === player && now.pending.options.some(o => o.id === ids[0])) setTimeout(() => send(tries + 1), 400);
+      });
+      send(0);
+      return ids.length;
+    }
+    try { session.submit(move).catch(err => why(`gift: run refused: ${err && err.message}`)); } catch { return 0; }
+    if (session.getState() === st) return 0;
     // (drawn in the click, as any answer: useTable.show reads userMove)
-    if (n) { userMove = 'now'; try { pumpTable(); } finally { userMove = false; } }
-    return n;
+    userMove = 'now'; try { pumpTable(); } finally { userMove = false; }
+    return ids.length;
   }, [session, mine, needHandoff, busy, interactionState, physicalState, pend, hover, pumpTable]);
   const onSeatDenied = useCallback((why, el) => {
     if (why) say(why);

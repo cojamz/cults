@@ -92,7 +92,7 @@ function systemPrompt(seat) {
     `- why: 1 to 3 sentences in first person, as you would mutter over your pieces. ${kind === 'new' ? 'Plain words, as a newcomer thinking aloud.' : 'What you are going for, the options and numbers you weighed, which rival you are watching.'} Name the cards and spaces. A few words are fine for a small follow-up like a payment. Say plainly when something surprised you or you misjudged.`,
     '- feel: empty unless something right now felt good, bad, pointless, confusing or exciting. Then one plain sentence: what, and why it felt that way. Never a fix.',
     '- idea: usually empty. When your situation made you wish for a member or a wheel space that does not exist (a choice felt bad, or your plan wanted something), describe it in one sentence: its name and what it would do. Raw ideas are welcome here, and only here.',
-    'Only numbers shown in the current list are legal.',
+    'Only numbers shown in the current list are legal. When the view says a question comes back several times in a row, answer every pick at once: "option": [3, 3, 5] (in order; a Done number ends it early).',
   ].join('\n');
 }
 
@@ -209,8 +209,12 @@ async function decide(seat) {
     return;
   }
   const prompt = `${memory(seat)}\nTHE TABLE NOW\n${fresh}\n\nYour legal options are the numbers in brackets above: ${legal.join(', ')}.`;
-  const a = await ask(seat, prompt, `move r${s.round} m${s.moves}`, x => (!legal.includes(Number(x.option)) ? `${x.option} is not one of ${legal.join(', ')}.` : typeof x.why !== 'string' || !x.why.trim() ? 'why is missing.' : ''));
-  const res = ex('move', DIR, String(seat), String(a.option), '--why', a.why);
+  // a question asked again and again (Harvest's colors, Party Gifts' silver) takes every pick in one answer: a list of
+  // numbers, played in order as one move (Cory, Nov 13: "they should make that decision all at once")
+  const picks = x => (Array.isArray(x) ? x : String(x).split(',')).map(v => Number(String(v).trim()));
+  const runOk = /comes back up to \d+ times/.test(fresh);
+  const a = await ask(seat, prompt, `move r${s.round} m${s.moves}`, x => { const ps = picks(x.option); return (!ps.length || (ps.length > 1 && !runOk) || !legal.includes(ps[0]) ? `${x.option} is not one of ${legal.join(', ')}${runOk ? ' (or a list of them for this repeated question)' : ''}.` : typeof x.why !== 'string' || !x.why.trim() ? 'why is missing.' : ''); });
+  const res = ex('move', DIR, String(seat), picks(a.option).join(','), '--why', a.why);
   const evs = fs.readFileSync(f('events.jsonl'), 'utf8').trim().split('\n').map(l => JSON.parse(l));
   const mv = [...evs].reverse().find(e => e.type === 'move' && e.seat === seat);
   const label = mv?.label || `option ${a.option}`;

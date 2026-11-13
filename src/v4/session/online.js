@@ -757,7 +757,7 @@ function createOnlineSession({ transport, base, code, playerId, getRoom, getView
       const problem = moveProblem(state, move, mySeats());
       if (problem) return Promise.reject(new Error(problem));
     } else if (!state) return Promise.reject(new Error('The game has not started.'));
-    const sig = `${move.player}|${move.option}|${version}`;
+    const sig = `${move.player}|${move.option}${move.then ? `+${move.then.join('+')}` : ''}|${version}`;
     const send = (rec, mid) => transport.push(`${base}/moves`, { ...rec, at: transport.serverTime() })
       .catch(err => {
         const w = waiting.get(mid);
@@ -906,7 +906,7 @@ function startHost({ transport, base, getRoom, botDelayMs }) {
     if (!rec || !rec.move || !cur) return drop(key);
     if (rec.mid && recent.includes(rec.mid)) return drop(key); // already applied (duplicate delivery)
     const seat = getRoom()?.seats?.[`s${rec.seat}`];
-    const move = { player: rec.move.player, option: rec.move.option };
+    const move = { player: rec.move.player, option: rec.move.option, ...(Array.isArray(rec.move.then) && rec.move.then.length ? { then: rec.move.then.map(String) } : {}) };
     let reason = null;
     if (!seat || seat.kind !== 'human' || seat.id !== rec.by) reason = "That seat isn't yours.";
     else if (move.player !== rec.seat) reason = 'Move is for a different seat.';

@@ -34,7 +34,8 @@ export function moveProblem(state, move, mySeats) {
 
 /** Fills in `player` from the pending decision when the caller left it out. */
 export function normalizeMove(state, move) {
-  return { player: move?.player ?? state?.pending?.player, option: move?.option };
+  const then = Array.isArray(move?.then) && move.then.length && move.then.every(id => typeof id === 'string') ? { then: [...move.then] } : {};
+  return { player: move?.player ?? state?.pending?.player, option: move?.option, ...then };
 }
 
 /**
@@ -174,7 +175,7 @@ export function createLocalSession({ seats, seed = Math.floor(Math.random() * 2 
       timer = setTimeout(() => {
         timer = null;
         if (my !== turn || destroyed || roundHold) return;
-        apply({ player: sm.p, option: sm.o });
+        apply({ player: sm.p, option: sm.o, ...(Array.isArray(sm.then) && sm.then.length ? { then: sm.then } : {}) });
       }, hold);
       return;
     }

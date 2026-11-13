@@ -90,7 +90,8 @@ export function newGame(opts) {
 export function step(state, move) {
   // effects: what moved and why, for the table's chain of animations (engine/v4/effects.js; never saved)
   const next = applyMove(state, move, { effects: true });
-  if (Array.isArray(next.history)) next.history.push([move.player, move.option]);
+  // a run (several answers to one question, core applyRun) keeps one entry per pick, so replays play it pick by pick
+  if (Array.isArray(next.history)) for (const id of [move.option, ...(Array.isArray(move.then) ? move.then : [])]) next.history.push([move.player, id]);
   return next;
 }
 
