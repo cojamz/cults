@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.760 — 2026-11-12
+
+- Early Traders gives +2 yellow at Round Start; Caravan costs 9; Consolation Prize: +2 followers per contest you don't win; Duty Collector costs 7; Talent Scouts recruits up to 7 (Cory, Nov 12)
+
 ## v0.99.759 — 2026-11-12
 
 - Survey reads plainer
