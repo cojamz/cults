@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.766 — 2026-11-13
+
+- Picking a color of the table (Greatest Hits, Hustler) shows the colors' rims, on the card and lit on the wheel, instead of resource coins
+
 ## v0.99.765 — 2026-11-13
 
 - A pick of several colors (Harvest, Exchange, Sweet Talk) goes in one step in online games too, and AI players make it in one answer; steals still go one at a time
