@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.757 — 2026-11-12
+
+- Followers gained from different places fly one after another, each from its own place: Gather's followers from the Gather space after the recruit (no longer riding on the recruited member), Brokers' from Brokers, and a rival's buys at the 1, 5 and 10 follower cards from each card
+
 ## v0.99.756 — 2026-11-12
 
 - Protesters costs 6 (was 8); Splurgers costs 6 (was 7) (Cory, Nov 12)
