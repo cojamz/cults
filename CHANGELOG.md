@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.762 — 2026-11-12
+
+- Round end: Spoilsport's "meh" now shows inside the round-end card.
+
 ## v0.99.761 — 2026-11-12
 
 - Purple: Place Keepers (choose your place in this round's turn order) replaces Gossip
