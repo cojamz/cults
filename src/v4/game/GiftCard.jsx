@@ -22,7 +22,7 @@ import { TurnOf } from './parts.jsx';
 import { breakable } from './hyphen.js';
 import './giftcard.css';
 
-const LABELS = { share: [null, 'To'], color: [null, null], give: ['Color', 'To'], gift: [null, 'To'], colors: ['Give', 'Get'], amount: ['Get', 'How many'], trade: ['Member', 'For'], steal: [null, null], recruit: [null, null], move: [null, null], change: [null, null], handover: ['Give', 'To'], contest: [null, null] };
+const LABELS = { share: [null, 'To'], color: [null, null], give: ['Color', 'To'], gift: [null, 'To'], colors: ['Give', 'Get'], amount: ['Get', 'How many'], trade: ['Member', 'For'], steal: [null, null], recruit: [null, null], move: [null, null], change: [null, null], handover: ['Give', 'To'], contest: [null, null], rim: [null, null] };
 // a swap with this many members on the card sets them closer (round III: twelve of yours and twenty of theirs), so
 // every row shows whole, never cut off at the card's foot (live panel round 1)
 const DENSE = 14;
@@ -42,6 +42,18 @@ const sphereOf = (state, d) => { if (!onTable(state, d)) return 'colorless'; try
  * onFirst(a | null, el): lift a first (null puts it down); onAnswer(id, el, b): the engine's option. place: where
  * GameScreen puts the card beside the space ({ left, top, up }), as for any plain question.
  */
+/** A color of the table, drawn as a piece of its rim on the wheel (the band, its color, its name on it), never a resource
+ *  coin (Cory, Nov 13: "selecting a color shouldnt use resources, is should use the rims of the colors"). */
+export function RimSwatch({ qid, name }) {
+  const res = (() => { try { return quadrant(qid).resource; } catch { return qid; } })();
+  return (
+    <svg className="gc-rim" data-rim-res={res} viewBox="0 0 64 26" width="84" height="34" aria-hidden="true">
+      <path d="M1 22 Q32 -10 63 22 L57 25 Q32 6 7 25 Z" style={{ fill: `color-mix(in srgb, var(--${qid}) 72%, #1a120c)` }} />
+      <path d="M1 22 Q32 -10 63 22" fill="none" stroke="rgba(255,255,255,.35)" strokeWidth=".8" />
+      {name ? <text x="32" y="11.5" textAnchor="middle" className="gc-rim-name">{String(name).toUpperCase()}</text> : null}
+    </svg>
+  );
+}
 export default function GiftCard(props) {
   const { state, gift: g } = props;
   // the space being resolved waits on the hub as a card (ActionStage.jsx), drawn above the board: while this sheet (or the split or spend card) is
@@ -58,7 +70,7 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
   const pend = state.pending;
   const me = state.players[g.actor];
   const box = useRef(null);
-  const step = g.kind === 'gift' || g.kind === 'share' || g.kind === 'color' || g.kind === 'steal' || g.kind === 'recruit' || g.kind === 'move' || g.kind === 'change' || g.chosen != null ? 2 : 1;
+  const step = g.kind === 'gift' || g.kind === 'share' || g.kind === 'color' || g.kind === 'rim' || g.kind === 'steal' || g.kind === 'recruit' || g.kind === 'move' || g.kind === 'change' || g.chosen != null ? 2 : 1;
   // Escape closes the card (live panel round 1: it didn't close Kickback's): a lifted first is put down; else the
   // placement is taken back (Undo, while it's offered); else a choice you may decline (Stay put, Recruit nothing) is
   // declined. A hover open over it closes first, on its own Escape.
@@ -273,10 +285,20 @@ function GiftCardBody({ state, gift: g, onFirst, onAnswer, busy, place = null, t
       const t = g.tiles.find(x => x.b === b);
       const names = t.lead.map(pid => (pid === g.actor ? 'you' : state.players[pid].name));
       return (
-        <button key={b} {...common} className={`${common.className} gc-dot gc-contest`} data-res={b} aria-label={`${t.name}: ${names.length ? `${names.join(' and ')} lead${names.length === 1 && names[0] !== 'you' ? 's' : ''}` : 'nobody leads'}`} title={t.o.label}>
-          <ResourceGlyph r={b} size={24} decorative />
+        <button key={b} {...common} className={`${common.className} gc-dot gc-contest`} data-res={b} data-rim-pick={t.qid} aria-label={`${t.name}: ${names.length ? `${names.join(' and ')} lead${names.length === 1 && names[0] !== 'you' ? 's' : ''}` : 'nobody leads'}`} title={t.o.label}>
+          {t.qid ? <RimSwatch qid={t.qid} /> : <ResourceGlyph r={b} size={24} decorative />}
           <span className="gc-word">{t.name}</span>
           <span className="gc-lead">{t.lead.length ? t.lead.map(pid => <Minion key={pid} color={playerColor(pid)} emoji={seatEmoji(state, pid)} size={16} />) : <i>nobody</i>}</span>
+        </button>
+      );
+    }
+    if (g.kind === 'rim') {
+      // a color of the table: its rim, its name, and what picking it brings (Greatest Hits: the actions it copies)
+      const t = g.tiles.find(x => x.b === b);
+      return (
+        <button key={b} {...common} className={`${common.className} gc-dot gc-rimpick`} data-rim-pick={b} aria-label={`${t.name}${t.extra ? `: ${t.extra}` : ''}`} title={t.o.label}>
+          <RimSwatch qid={b} name={t.name} />
+          {t.extra ? <span className="gc-word gc-rim-extra">{t.extra}</span> : null}
         </button>
       );
     }

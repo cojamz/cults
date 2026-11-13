@@ -2048,6 +2048,9 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
     userMove = 'now'; try { pumpTable(); } finally { userMove = false; }
     return ids.length;
   }, [session, mine, needHandoff, busy, interactionState, physicalState, pend, hover, pumpTable]);
+  // a pick of a color of the table (Greatest Hits): its rims on the wheel answer it, as the card's rims do (Cory, Nov 13)
+  const rimPick = useMemo(() => (gift && gift.kind === 'rim' && !needHandoff ? new Map(gift.seconds.map(x => [x.b, x.o.id])) : null), [gift, needHandoff]);
+  const onRimPick = useCallback((id, el) => onGiftAnswer(id, el, null), [onGiftAnswer]);
   const onSeatDenied = useCallback((why, el) => {
     if (why) say(why);
     if (el && el.animate && motionOK()) el.animate([{ translate: '0 0' }, { translate: '-3px 0' }, { translate: '3px 0' }, { translate: '0 0' }], { duration: 220, easing: 'ease-out' });
@@ -2267,7 +2270,7 @@ export default function GameScreen({ session, onPlayAgain, onHome, leaveText, pa
         <>
           {/* (data-step: after you've placed, the wheel steps back so only your buys are bright; final panel S#27) */}
           <section className="lt-wheel" data-region="wheel" data-step={buyingNow ? 'buy' : undefined}>
-            <LitWheel state={tState} interactionState={hold ? tState : interactionState} hover={hover} legal={needHandoff ? NO_SLOTS : pickSpaces || legalSlots} idle={pickSpaces ? null : idleSlots} pickNotes={pickNotes} onPick={onPick} onDenied={onDenied} confirmPlace={!wide} flash={flash} lastMove={lastMove} recentMoves={recentMoves} spacePeek={spacePeek} onSpacePeek={setSpacePeek} meId={mySeats.length === 1 ? mySeats[0] : null} facing={facingRef.current} onFacing={onFacing} />
+            <LitWheel state={tState} interactionState={hold ? tState : interactionState} hover={hover} legal={needHandoff ? NO_SLOTS : pickSpaces || legalSlots} rimPick={rimPick} onRimPick={onRimPick} idle={pickSpaces ? null : idleSlots} pickNotes={pickNotes} onPick={onPick} onDenied={onDenied} confirmPlace={!wide} flash={flash} lastMove={lastMove} recentMoves={recentMoves} spacePeek={spacePeek} onSpacePeek={setSpacePeek} meId={mySeats.length === 1 ? mySeats[0] : null} facing={facingRef.current} onFacing={onFacing} />
             {showChoice && !stealClosed && (!picker || (gift && !shopRecruit && !wheelMove)) && !payChoice(pend) && pend.kind !== 'setup' && (gift
               ? <GiftCard state={state} gift={giftShown} onFirst={onGiftFirst} onAnswer={gift.board === 'seats' ? onSeatPick : onGiftAnswer} onAnswerAll={gift.board === 'seats' ? null : onGiftAnswerAll} onBack={canUndo ? undo : null} busy={busy} place={plainAt} hover={hover} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />
               : <ChoicePrompt state={state} onPick={onPick} busy={busy} place={plainAt} turnOf={humansHere && handedIn === pend.player ? state.players[pend.player] : null} />)}

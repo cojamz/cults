@@ -102,6 +102,12 @@ export function giftPick(state, pend, first = null) {
   const base = { title, actor: pend.player, done: null, sameCost: false };
   const other = otherPick(state, pend, title, question, base, first);
   if (other) return other;
+  // a pick of a color of the table, not of a resource (Greatest Hits' "Choose a color other than green", Hustler,
+  // Fortune Teller): the colors' rims, on the card and on the wheel, never resource coins (Cory, Nov 13: "selecting a
+  // color shouldnt use resources, is should use the rims of the colors", "like for greatest hits"). The same test the
+  // engine uses to read a pick as colors of the table (core withTargets).
+  const rim = rimPick(state, pend, question, base);
+  if (rim) return rim;
   // a gift of a fixed color to a rival: every answer is a player ("Kickback: give 1 gold to…")
   const gift = question.match(/^give (\d+) (\w+) to\b/i);
   const players = pend.options.filter(o => o.target && Number.isInteger(o.target.pid) && o.target.res == null && o.target.pid !== pend.player);
@@ -227,6 +233,33 @@ export function giftPick(state, pend, first = null) {
  * - Heist Crew's "steal half of which pile?": the half-pile steal card (kind 'steal', halfPile)
  * Null when it isn't one of these.
  */
+/** The table's colors offered by a pick, as rims: [{ o, qid }], or null when the pick isn't one of colors of the table. */
+export function rimOptions(state, pend) {
+  // a color of the table is named as the color ("Gold", "Yellow (Harvest, Polish)"); a resource as itself ("+1 gold",
+  // "gold (3)"). Red, Gold, Yellow and Purple share their ids with their resources, so the name tells them apart.
+  const named = o => { try { const n = quadrant(o.value).name; return o.label === n || String(o.label).startsWith(`${n} (`); } catch { return false; } };
+  const colors = (pend?.options || []).filter(o => o.kind === 'color');
+  const quads = colors.filter(o => typeof o.value === 'string' && state.quadrants.includes(o.value) && (!state.resources.includes(o.value) || named(o)));
+  if (quads.length < 1 || quads.length !== colors.length || !quads.some(named)) return null;
+  return quads.map(o => ({ o, qid: o.value }));
+}
+function rimPick(state, pend, question, base) {
+  const rims = rimOptions(state, pend);
+  if (!rims) return null;
+  const tiles = rims.map(({ o, qid }) => {
+    let name = qid;
+    try { name = quadrant(qid).name; } catch { /* a color no longer registered: its id */ }
+    // what the color brings, from the option's own words: "Yellow (Harvest, Polish)" reads "Harvest, Polish"
+    const extra = (String(o.label || '').match(/\(([^)]*)\)\s*$/) || [])[1] || '';
+    return { o, b: qid, qid, name, extra };
+  });
+  const [q1, ...more] = question.split('?');
+  const ask = q1.replace(/\.\s.*$/, '');
+  const head = `${ask[0].toUpperCase()}${ask.slice(1)}${more.length ? '?' : ''}`;
+  const sub = more.length ? more.join('?').trim() : q1.includes('. ') ? q1.slice(q1.indexOf('. ') + 2).trim() : '';
+  return { ...base, kind: 'rim', n: null, color: null, chosen: null, head, sub, tiles,
+    firsts: [], seconds: tiles.map(t => ({ o: t.o, b: t.b })), others: tiles.map(t => t.b), rest: pend.options.filter(o => !rims.some(r => r.o === o)) };
+}
 function otherPick(state, pend, title, question, base, first) {
   const opts = pend.options;
   const h = state.queue?.[0]?.h;
@@ -267,7 +300,7 @@ function otherPick(state, pend, title, question, base, first) {
       const paren = (String(o.label).match(/\(([^)]*)\)$/) || [])[1] || '';
       const names = /nobody/i.test(paren) ? [] : paren.replace(/\s+leads?$/, '').split(' & ');
       const lead = names.map(nm => (state.players.find(p => p.name === nm) || {}).id).filter(Number.isInteger);
-      tiles.push({ o, b: res, lead, name: String(o.label).replace(/\s*\([^)]*\)$/, '') });
+      tiles.push({ o, b: res, qid: o.value, lead, name: String(o.label).replace(/\s*\([^)]*\)$/, '') });
     }
     return { ...base, kind: 'contest', n: null, color: null, chosen: null, head: 'Pick a contest nobody wins this round', sub: 'Its leaders get nothing for it.',
       firsts: [], seconds: tiles, others: tiles.map(t => t.b), tiles, rest: [] };

@@ -453,8 +453,10 @@ function rememberScale(s) {
   try { localStorage.setItem(SCALE_KEY, JSON.stringify(scaleMemo)); } catch { /* no storage */ }
 }
 
-function Wheel({ state, interactionState = state, legal, idle = null, pickNotes = null, onPick, onDenied, onTouched, confirmPlace = false, flash, late = false, caption = null, lastMove = null, recentMoves = [], spacePeek = null, onSpacePeek, meId = null, facing, onFacing, hover = null, lampQid = null, look: lookProp = null }) {
+function Wheel({ state, interactionState = state, legal, rimPick = null, onRimPick = null, idle = null, pickNotes = null, onPick, onDenied, onTouched, confirmPlace = false, flash, late = false, caption = null, lastMove = null, recentMoves = [], spacePeek = null, onSpacePeek, meId = null, facing, onFacing, hover = null, lampQid = null, look: lookProp = null }) {
   const look = useMemo(() => lookProp || spacesLook(), [lookProp]);
+  const rimPickFn = useRef(onRimPick); // the rims are drawn once per change of what they show (rimMemo): the latest answer
+  rimPickFn.current = onRimPick;
   mark('render');
   const panels = look === 'panels';
   // a face from ./faces/ (null for the built-in looks, and for a moment while its chunk loads)
@@ -1092,7 +1094,9 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
     // steel band; every other color is its own deep tone
     const res = quadrant(qid).resource;
     const deep = res === 'white' ? `color-mix(in srgb, ${col} 86%, #1a120c)` : res === 'silver' ? `color-mix(in srgb, ${col} 72%, #1a120c)` : `color-mix(in srgb, ${col} 72%, #1a120c)`;
-    paper.push(<path key={`rim${q}`} className={`rim${lampQid === qid ? ' lit' : lampQid ? ' wait' : ''}`} data-rim-res={res} d={arc(a0, a1, RIM.r0, RIM.r1)} fill={panels ? deep : col} fillOpacity={panels ? 1 : 0.88} />);
+    // a pick of a color of the table (Greatest Hits): the colors on offer stand out, the others step back
+    const pickMark = rimPick ? (rimPick.has(qid) ? ' pick' : ' unpick') : '';
+    paper.push(<path key={`rim${q}`} className={`rim${lampQid === qid ? ' lit' : lampQid ? ' wait' : ''}${pickMark}`} data-rim-res={res} d={arc(a0, a1, RIM.r0, RIM.r1)} fill={panels ? deep : col} fillOpacity={panels ? 1 : 0.88} />);
     if (panels) paper.push(<path key={`rimfoot${q}`} className="rim-foot" d={arc(a0 + 0.3, a1 - 0.3, RIM.r0, RIM.r0 + 0.8)} fill={`color-mix(in srgb, ${col} 80%, #fff)`} opacity=".35" />);
   });
   // a face's own print in the paper (Face.Cell, optional): one per space, tiling its quadrant's ring, turning with it
@@ -1283,6 +1287,21 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
       const label = st ? st.label : quadrant(qid).scoring.label;
       const tieLine = lab.tieText ? ` ${lab.tieText[0].toUpperCase()}${lab.tieText.slice(1)}.` : '';
       const ruleLine = quadrant(qid).rule ? ` ${quadrant(qid).rule}` : '';
+      // the color is on offer in a pick (Greatest Hits: "Choose a color other than green"): a click on its rim answers it
+      // (Cory, Nov 13: "it should use the rims of the colors"); the standings stay on hover
+      const pickId = rimPick && onRimPick ? rimPick.get(qid) : null;
+      if (pickId) {
+        rimHits.push(
+          <path key={`rh${q}`} className="rim-hit pick" d={arc(a0 + 1, a1 - 1, RIM_HIT.r0, RIM_HIT.r1)} data-rim={qid} data-rim-pick={qid} data-option={pickId}
+            role="button" tabIndex={0} aria-label={`Choose ${quadrant(qid).name}`}
+            onPointerEnter={e => { if (hover && realHover(e) && !turningAt(stage.current)) hover.onPlaqueHover(qid, rimAnchor(qid) || e.currentTarget); }}
+            onPointerLeave={e => { if (hover && e.pointerType === 'mouse') hover.onPlaqueHover(qid, null); }}
+            onClick={e => { e.stopPropagation(); if (moved.current) return; if (hover) hover.onPlaqueHover(qid, null); rimPickFn.current(pickId, e.currentTarget); }}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); rimPickFn.current(pickId, e.currentTarget); } }}>
+          </path>,
+        );
+        return;
+      }
       rimHits.push(
         <path key={`rh${q}`} className="rim-hit" d={arc(a0 + 1, a1 - 1, RIM_HIT.r0, RIM_HIT.r1)} data-rim={qid}
           role="button" tabIndex={0} aria-haspopup="dialog"
@@ -1299,7 +1318,7 @@ function Wheel({ state, interactionState = state, legal, idle = null, pickNotes 
   // the rims (their words, marks and leaders, and their hover targets) are drawn again only when something they show
   // changes: their elements are the same objects otherwise, and React passes over them (wheel pass, Nov 4: drawing them
   // was the board's biggest cost on a move that changed no contest)
-  const rimSig = [rot.toFixed(2), Math.min(rimsUp, 99), paying, lampQid || '', scale, fontsIn, look, meId ?? '', state.quadrants.join(','), hover ? 1 : 0,
+  const rimSig = [rot.toFixed(2), Math.min(rimsUp, 99), paying, lampQid || '', scale, fontsIn, look, meId ?? '', state.quadrants.join(','), hover ? 1 : 0, rimPick ? [...rimPick].join(';') : '',
     ...state.quadrants.map(qid => { const st = stdById[qid]; return st ? `${st.rule}/${st.label}/${st.tiebreak ? `${st.tiebreak.unit}:${st.tiebreak.text}` : ''}/${st.leaders.map(id => `${id}:${state.players[id].name}:${seatEmoji(state, id)}`).join(',')}` : '-'; })].join('|');
   const rimMemo = useRef(null);
   if (!rimMemo.current || rimMemo.current.sig !== rimSig || rimMemo.current.hover !== hover) rimMemo.current = { sig: rimSig, hover, ...drawRims() };
@@ -1558,7 +1577,7 @@ const sameSet = (a, b) => {
   return true;
 };
 const moveSig = ms => (ms || []).map(m => `${m.key}:${m.pid}:${m.mine ? 1 : 0}:${m.action}`).join('|');
-const BY_CONTENT = { legal: sameMap, pickNotes: sameMap, flash: sameSet, idle: sameSet, recentMoves: (a, b) => a === b || moveSig(a) === moveSig(b) };
+const BY_CONTENT = { legal: sameMap, rimPick: sameMap, pickNotes: sameMap, flash: sameSet, idle: sameSet, recentMoves: (a, b) => a === b || moveSig(a) === moveSig(b) };
 // lastMove is the table's; the wheel draws nothing from it
 const IGNORED = new Set(['lastMove']);
 export function sameWheelProps(a, b) {

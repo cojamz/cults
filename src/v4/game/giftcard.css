@@ -183,3 +183,11 @@
 .gift-card .gc-contest .gc-word{font:600 15px/18px var(--sans)}
 .gift-card .gc-contest .gc-lead{display:flex;gap:2px;min-height:16px;align-items:center}
 .gift-card .gc-contest .gc-lead i{font:italic 12px/14px var(--sans);opacity:.7}
+
+/* a color of the table picked as its rim (Cory, Nov 13: "it should use the rims of the colors"): GiftCard RimSwatch */
+.gift-card .gc-rim { display: block; overflow: visible; }
+.gift-card .gc-rim-name { font-family: var(--sans); font-weight: 800; font-size: 7px; letter-spacing: .08em; fill: #fff3dc; dominant-baseline: middle; }
+.gift-card .gc-rim[data-rim-res="white"] .gc-rim-name { fill: #2a1d12; }
+.gift-card .gc-rimpick { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 6px; height: auto; width: auto; }
+.gift-card .gc-rim-extra { font-size: 11px; max-width: 120px; text-align: center; line-height: 1.15; white-space: normal; }
+.gift-card[data-gift="rim"] .gc-row{grid-template-columns:auto}
