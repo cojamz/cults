@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.758 — 2026-11-12
+
+- Round end: when a Spoilsport spoils a contest, Spoilsport pops up on the card and says a mean "meh".
+
 ## v0.99.757 — 2026-11-12
 
 - Followers gained from different places fly one after another, each from its own place: Gather's followers from the Gather space after the recruit (no longer riding on the recruited member), Brokers' from Brokers, and a rival's buys at the 1, 5 and 10 follower cards from each card
