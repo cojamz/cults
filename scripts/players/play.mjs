@@ -74,8 +74,8 @@ function systemPrompt(seat) {
     '',
     '# HOW TO ANSWER',
     'Each message shows the table as you see it and a numbered list of your legal options. Answer with only a JSON object, no other text:',
-    '{"think": "<your working>", "option": <one number from the list>, "why": "<your reasoning>", "feel": "<a feel note, or empty>"}',
-    '- think: work it out before you choose: the options that matter, what each gets you in numbers, what it does to the contests and to the rival you must beat, what rivals will do before your turn returns. As long as the decision needs; a few words for an obvious step. Only you see this.',
+    '{"option": <one number from the list>, "why": "<your reasoning>", "feel": "<a feel note, or empty>"}',
+    'Before you answer, think the decision through: the options that matter, what each gets you in numbers, what it does to the contests and to the rival you must beat, and what rivals will do before your turn comes back.',
     '- why: 1 to 3 sentences in first person, as you would mutter over your pieces: what you are going for, the options and numbers you weighed, which rival you are watching. Name the cards and spaces. A few words are fine for a small follow-up like a payment. Say plainly when something surprised you or you misjudged.',
     '- feel: empty unless something right now felt good, bad, pointless, confusing or exciting. Then one plain sentence: what, and why it felt that way. Never a fix.',
     'Only numbers shown in the current list are legal.',
@@ -86,7 +86,7 @@ function systemPrompt(seat) {
 let spent = 0;
 function callModel(seat, prompt, label) {
   return new Promise((resolve) => {
-    const args = ['-p', '--setting-sources', '', '--strict-mcp-config', '--model', MODEL, '--system-prompt', systemPrompt(seat), '--tools', '', '--no-session-persistence', '--output-format', 'json'];
+    const args = ['-p', '--setting-sources', '', '--strict-mcp-config', '--model', MODEL, '--effort', String(flags.effort || 'medium'), '--system-prompt', systemPrompt(seat), '--tools', '', '--no-session-persistence', '--output-format', 'json'];
     const cwd = '/tmp/pa-cwd'; fs.mkdirSync(cwd, { recursive: true });
     const p = spawn('claude', args, { cwd, stdio: ['pipe', 'pipe', 'pipe'] });
     let out = '', err = '';
@@ -110,7 +110,8 @@ function parseJson(text) {
 }
 async function ask(seat, prompt, label, ok) {
   let p = prompt;
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 6; i++) {
+    if (i) await new Promise(r => setTimeout(r, 3000 * i));
     const a = parseJson(await callModel(seat, p, label));
     const bad = !a ? 'Your answer was not a single JSON object.' : ok(a);
     if (!bad) return a;
