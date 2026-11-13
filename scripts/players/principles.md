@@ -1,16 +1,15 @@
-These are things strong players weigh against each other in the moment. None is a rule; every one is sometimes wrong.
+Questions strong players ask themselves. None is a rule: each answer depends on this table and on how many rounds and recruits are left. Check them against the turns you actually have.
 
-- Know who is really winning. Count where every player will finish: their followers now, plus what their members, the contests they lead and their resources will still turn into. The player with the most followers on the track may not be the one to beat.
-- Judge a move by how it changes your finish against the player you must beat. A gain for you and a loss for them count the same.
-- Play the reply out first: what rivals do next, what is gone before your turn comes back, whether they can take it straight back.
-- Have a big payoff in mind: know where most of your followers will come from, and steer toward it. Once you hold good members and feel safe you'll keep them, commit.
-- Spend a little to slow the leader when it's cheap for you, but don't throw your own game away just to gang up on them.
-- Take the space or member a rival needs when it is easy for you and also helps you. Don't spend 10 resources denying a rival something that doesn't add to your own plan, and don't bother denying a player who is losing.
-- Sort the contests each round: easy to win, a stretch, not worth it. Fight the easy ones, cut your losses on the stretches, unless you can come from nowhere late and surprise people.
-- Consider the space and the buy together. Look at the shop (and anything a rival could take from it) before you pick a space, so the resources you gain line up with what you mean to buy.
-- Know the turn to stop recruiting members and start buying followers.
-- A member should earn back more than it costs over the turns left: its printed followers, what its ability pays, how many members it counts as, and what it does with the members and spaces you already have. When the payoff is hard to count but could be big, don't ignore it just because it is expensive.
-- Collect the colors your target members cost, a round ahead.
-- In general, end a round with few resources unless you are holding them to win a contest.
-- Weigh what your cloak does: its power and starting resource pay off in its color, so it is worth leaning that way when it helps.
-- Members move between cults in this game: before you take or give one, ask whether it can be taken straight back.
+- Who is really winning? Count where every player will finish: followers now, plus what their members, the contests they lead and their resources will still turn into (the STANDINGS line helps). Play to win, not to place: if someone is ahead of you, what can you do about it?
+- How does this move change my finish against the player I must beat? A gain for me and a loss for them count the same.
+- What happens before my turn comes back? What will rivals take, and can they take straight back what I take?
+- Where will most of my followers come from by game end? Is my current line actually on track to beat the leader, or do I need to switch?
+- Is it cheap for me to slow the leader right now? Spending a little to slow them is often right; throwing my own game away to gang up on them is not.
+- Does a rival need this space or member, is it easy for me to take, and does it also help me? Denying a losing player is rarely worth it.
+- Which contests this round are easy, which are a stretch, and which aren't worth it? A stretch can still be right if I can come from nowhere late.
+- Am I choosing the space and the buy together? What I mean to buy should decide which resources I gain.
+- With the rounds and recruits left, does a member here beat buying followers? Count its printed followers, what its ability pays in the rounds left, how many members it counts as, what it does with my other members and spaces, and that it uses this turn's recruit. Early, a member that pays every round can be worth far more than its price; late, the same member may not be. When the payoff is hard to count but could be big, don't skip it just because it is expensive.
+- Am I collecting the colors my next members cost, a round ahead?
+- Will I end this round holding resources I can't use? Holding is right when it wins a contest or sets up a big buy next round.
+- What does my cloak reward, and is leaning into it worth it here?
+- If I take or give a member, can it be taken straight back?

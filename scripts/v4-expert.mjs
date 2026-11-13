@@ -23,6 +23,8 @@ import {
 } from '../src/engine/v4/index.js';
 import { scoringOf, plus1Open } from '../src/engine/v4/core.js';
 import { discardOf } from '../src/engine/v4/discard.js';
+import { resume as engineResume } from '../src/engine/v4/core.js';
+import { plainCopy } from '../src/engine/v4/copy.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
@@ -187,7 +189,10 @@ export function renderOption(s, p, o, taskKind) {
     const a = quadrant(s.quadrants[o.q]).actions[o.i];
     const joined = s.slots[`${o.q}-${o.i}`] !== undefined ? ' (taken: you would join it)' : '';
     const y = youdWords(s, p.id, o.q, o.i);
-    return `${sphereName(s.quadrants[o.q])} · ${a.name}${joined}${y ? ` → you'd get: ${y}` : ''}`;
+    // an extra turn with no minion left to use it does nothing (player agents' pilot: Right Away and Crunch Time offered
+    // on a last minion "made the list feel padded"); the move stays legal, the note says what it does
+    const idle = s.pending?.kind === 'place' && p.left <= 1 && /next (two )?turns? come|turn right after/i.test(actionText(a)) ? ' (your last minion this round: its extra turn does nothing)' : '';
+    return `${sphereName(s.quadrants[o.q])} · ${a.name}${joined}${y ? ` → you'd get: ${y}` : ''}${idle}`;
   }
   if (o.kind === 'card') {
     const uid = o.uid ?? o.target?.uid ?? o.value;
@@ -201,7 +206,20 @@ export function renderOption(s, p, o, taskKind) {
     const t = TIERS.find(x => x.key === o.tier);
     return `Buy followers: ${t ? `${t.label}, pay ${t.cost} get +${t.get}` : o.label}`;
   }
-  if (o.kind === 'pay') return `Pay ${o.label}${o.default ? ' (suggested)' : ''}${o.breaks?.length ? ` — spending this gives up your contest lead in ${o.breaks.join(', ')}` : ''}${o.cuts?.length ? ` — lowers a game-end bonus` : ''}`;
+  if (o.kind === 'pay') {
+    // the warning counts what lands right after the payment (a cloak's refund, an On Recruit): the lead is checked on a
+    // copy of the game after this payment (player agents, coordinator's review of pilot 1: "the warning ignored the
+    // White Cloak refund that lands right after")
+    let breaks = o.breaks || [];
+    if (breaks.length && s.pending) {
+      try {
+        const after = applyMove(plainCopy(s), { player: p.id, option: o.id });
+        const led = new Set(contestTable(after).filter(c => c.winners.includes(p.id)).map(c => sphereName(c.qid).toLowerCase()));
+        breaks = breaks.filter(b => !led.has(String(b).toLowerCase()));
+      } catch { /* keep the engine's warning */ }
+    }
+    return `Pay ${o.label}${o.default ? ' (suggested)' : ''}${breaks.length ? ` — after this payment (and anything it triggers) you no longer lead ${breaks.join(', ')}` : ''}${o.cuts?.length ? ` — lowers a game-end bonus` : ''}`;
+  }
   if (o.id?.startsWith('use:')) { const uid = Number(o.id.slice(4)); return `Use ${memberName(s, uid)} — ${cardDef(s, uid).text}`; }
   if (o.kind === 'color' && taskKind === 'setup') return `${o.label}'s artifact: ${nm(s, s.artifacts[o.value])} — ${cardDef(s, s.artifacts[o.value]).text}`;
   if (o.kind === 'pass') return taskKind === 'buy' || !o.label || /^pass$/i.test(o.label) ? 'Pass (recruit nothing)' : `Pass (${o.label.toLowerCase()})`; // a card's own decline label, e.g. "Give nothing"
@@ -236,6 +254,26 @@ export function tableView(s, meId, full = false) {
       L.push(`    members:${p.members.length ? '' : ' none'}`);
       for (const u of p.members) { const d = cardDef(s, u); L.push(`      · ${memberName(s, u)} [worth ${d.f}${(d.n ?? 1) !== 1 ? `, counts ${d.n}` : ''}]: ${d.text}`); }
     }
+  }
+  if (full && round > 0 && !s.over) {
+    // player agents (coordinator's review of pilot 1, Nov 13): the standings a strong player keeps in their head: each
+    // cult's followers, and what it would gain if the round ended right now (round-end cards, contests, then the next
+    // round's start), run on a copy of the game with the engine's own round end. No more moves are assumed.
+    let gain = null;
+    try {
+      const c = plainCopy({ ...s, log: [], pending: null, notes: [], over: false });
+      c.queue = [{ t: 'endRound' }];
+      engineResume(c);
+      gain = s.players.map(p => followers(c, c.players[p.id]) - followers(s, p));
+    } catch { gain = null; }
+    L.push('', 'STANDINGS (followers are the score; "if the round ended now" runs this round\'s end on a copy: round-end cards, contests, then the next round\'s start; it assumes nobody moves again)');
+    const rows = s.players.map(p => ({ p, now: followers(s, p), g: gain ? gain[p.id] : null })).sort((a, b) => (b.now + (b.g || 0)) - (a.now + (a.g || 0)));
+    for (const { p, now, g } of rows) L.push(`- ${p.name}${p.id === meId ? ' (you)' : ''}: ${now} followers${g != null ? `, ${g >= 0 ? '+' : ''}${g} if the round ended now (${now + g})` : ''}; ${memberCount(s, p)} members; ${Object.values(p.res).reduce((a, b) => a + b, 0)} resources held`);
+  }
+  if (full && round === 0 && s.shop?.length) {
+    // the shop is dealt before the cloak pick; a table sees it (player agents' pilot: "picking a cloak before seeing the shop felt like a blind guess")
+    L.push('', `THE SHOP (${s.shop.length} face up; ${s.pile.length} in the pile)`);
+    for (const u of s.shop) { const d = cardDef(s, u); L.push(`- ${d.name} [${costWords(d)}; worth ${d.f}${(d.n ?? 1) !== 1 ? `, counts ${d.n}` : ''}] — ${d.text}`); }
   }
   if (round > 0) {
     // contestTable lists the contests in scoring order (cloak order), not wheel order, so each rim finds its own by color

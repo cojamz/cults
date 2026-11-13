@@ -21,7 +21,7 @@ const mins = Math.round((Date.parse(calls.at(-1).t) - Date.parse(calls[0].t)) / 
 const ROMAN = ['Setup', 'Round I', 'Round II', 'Round III'];
 const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const names = meta.names;
-const kindWord = i => (players.kinds[i] === 'exp' ? 'experienced' : 'new');
+const kindWord = i => ({ exp: 'experienced', new: 'new', plain: 'experienced, no notes' }[players.kinds[i]] || players.kinds[i]);
 const COLOR = { yellow: 'Yellow', thieves: 'Magenta', trading: 'White', purple: 'Purple', red: 'Red', silver: 'Silver', market: 'Market', echo: 'Green' };
 const debrief = n => { try { return JSON.parse(rd(`debrief-${n}.json`)); } catch { return null; } };
 const modelWord = /opus/i.test(players.model) ? 'Opus 5.5' : /sonnet/i.test(players.model) ? 'Sonnet' : players.model;
@@ -46,9 +46,12 @@ const debriefs = order.map(id => {
   if (!d) return '';
   const list = (h, xs) => (xs?.length ? `<h4>${h}</h4><ul>${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '');
   const rounds = evs.filter(e => e.type === 'diary' && e.seat === id).map(e => `<p class="note"><b>After ${ROMAN[e.round]}:</b> ${esc(e.text)}</p>`).join('');
+  const bad = (d.bad || []).map(b => (typeof b === 'string' ? b : `${b.what} (would it still bother me on a line that could win? ${b.otherLine}${b.why ? `: ${b.why}` : ''})`));
+  const plans = evs.filter(e => e.type === 'plan' && e.seat === id).map(e => `<p class="note"><b>${e.start ? 'Before round I' : `After ${ROMAN[e.round]}`} (${esc(e.decision)}):</b> ${esc(e.plan)}<br><span class="small">Forecast: ${esc(e.forecast)}</span></p>`).join('');
+  const para = (h, x) => (x ? `<h4>${h}</h4><p>${esc(x)}</p>` : '');
   return `<details class="debrief" ${id === order[0] ? 'open' : ''}><summary><b>${esc(n)}</b> <span class="tag ${players.kinds[id]}">${kindWord(id)}</span> · ${data.final[id].followers} followers</summary>
-  <p>${esc(d.result)}</p>${list('Felt good', d.good)}${list('Felt bad or pointless', d.bad)}${list('Wants looked at', d.change)}${d.again ? `<h4>Play again?</h4><p>${esc(d.again)}</p>` : ''}
-  <h4>Round notes</h4>${rounds}</details>`;
+  ${para('Their plan', d.strategy)}<p>${esc(d.result)}</p>${para('Would do differently', d.differently)}${para('Members, looking back', d.members)}${list('Felt good', d.good)}${list('Felt bad or pointless', bad)}${list('Wants looked at', d.change)}${list('Card ideas', d.ideas)}${para('Play again?', d.again)}
+  <h4>Plans and forecasts</h4>${plans}<h4>Round notes</h4>${rounds}</details>`;
 }).join('\n');
 
 // the play, round by round
@@ -63,6 +66,10 @@ evs.forEach((e, i) => {
     html += `<div class="move ${only ? 'quiet' : ''}"><div class="who">${esc(names[e.seat])} <span class="tag ${players.kinds[e.seat]}">${kindWord(e.seat)}</span></div><div class="did">${esc(e.label)}</div>${only ? '' : `<div class="why">${esc(e.think)}</div>`}${feel ? `<div class="feel">${esc(feel)}</div>` : ''}</div>`;
   } else if (e.type === 'log' && /round|contest|scor|wins|tie/i.test(e.text) && round !== -1) {
     html += `<div class="log">${esc(e.text)}</div>`;
+  } else if (e.type === 'plan') {
+    html += `<div class="diary"><b>${esc(names[e.seat])}'s plan ${e.start ? 'before round I' : `after ${ROMAN[e.round]}`} (${esc(e.decision)}):</b> ${esc(e.plan)}<br><span class="small">Forecast: ${esc(e.forecast)}</span></div>`;
+  } else if (e.type === 'idea') {
+    html += `<div class="idea"><b>${esc(names[e.seat])}'s card idea:</b> ${esc(e.text)}</div>`;
   } else if (e.type === 'diary') {
     html += `<div class="diary"><b>${esc(names[e.seat])}'s notes after ${ROMAN[e.round]}:</b> ${esc(e.text)}</div>`;
   }
@@ -87,7 +94,8 @@ p { margin:6px 0; } ul { margin:4px 0; padding-left:20px; } li { margin:4px 0; }
 .tbl { overflow-x:auto; } table { border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums; }
 th,td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); font-size:14px; } th { color:var(--muted); font-weight:600; font-size:12px; } .num { text-align:right; }
 .tag { font-size:11px; font-weight:600; padding:1px 6px; border-radius:8px; border:1px solid currentColor; white-space:nowrap; }
-.tag.exp { color:var(--exp); } .tag.new { color:var(--new); }
+.tag.exp, .tag.plain { color:var(--exp); } .tag.new { color:var(--new); }
+.idea { border-left:3px solid var(--feel); padding:6px 10px; margin:8px 0; font-size:14px; }
 details { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:10px 12px; }
 details + details { margin-top:8px; } summary { cursor:pointer; }
 .round { position:sticky; top:env(safe-area-inset-top,0px); background:var(--bg); padding:8px 0; border-bottom:2px solid var(--fg); margin-top:18px; z-index:1; }
@@ -104,7 +112,7 @@ h4 + .card { margin-top:2px; }
 <main>
 <header>
 <h1>Player agents: ${path.basename(DIR)}</h1>
-<p class="lede">Four AI players (${modelWord}) played one real game of today's Cults: 10-card deck, By color contests, ${data.table.map(q => COLOR[q] || q).join(', ')}. Every move was picked from the game's own list of legal moves. Experienced players had the rules, the cards, the strategy primer and the skill ideas from Nov 12; new players had only the rules and the cards. ${data.final.length} players, ${evs.filter(e => e.type === 'move').length} decisions, ${mins} minutes.</p>
+<p class="lede">Four AI players (${modelWord}) played one real game of today's Cults: 10-card deck, By color contests, ${data.table.map(q => COLOR[q] || q).join(', ')}. Every move was picked from the game's own list of legal moves. ${players.kinds.includes('exp') ? 'Experienced players had the rules, the cards, the strategy primer and the questions strong players ask. ' : ''}${players.kinds.includes('plain') ? 'Players marked "no notes" play as experienced but had only the rules and the cards. ' : ''}${players.kinds.includes('new') ? 'New players play as first-timers with only the rules and the cards. ' : ''}Each player wrote a plan and a forecast every round, and card ideas when their game made them want one. ${data.final.length} players, ${evs.filter(e => e.type === 'move').length} decisions, ${mins} minutes.</p>
 <p class="lede">What the players say about cards is their own read, not checked yet.</p>
 </header>
 <section><h2>How it ended</h2><div class="tbl"><table><tr><th>#</th><th>Player</th><th class="num">Followers</th><th class="num">Members</th><th class="num">Followers bought</th><th class="num">From contests</th></tr>${finals}</table></div></section>
