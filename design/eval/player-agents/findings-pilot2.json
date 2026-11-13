@@ -1,0 +1,447 @@
+[
+ {
+  "subject": "Buying followers",
+  "kind": "rule",
+  "claim": "With nothing worth holding, a player's turn ends in a lone 1-follower buy or a pass, which feels like a wasted turn.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Cal",
+   "Dee",
+   "Ben"
+  ],
+  "evidence": "Every buy size pays 1 follower per resource, so a 1-follower buy only uses a recruit that a pass would also lose; 26 follower buys and 12 passes were made in 48 recruits.",
+  "strength": 2
+ },
+ {
+  "subject": "Cat Burglars",
+  "kind": "member",
+  "claim": "Two before-scoring steals of 3 decide Most resources, and no one can answer them.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Cal",
+   "Ben"
+  ],
+  "evidence": "In round III the three rivals emptied their piles and Dee won Magenta 10 to 0, 0, 0; in round II Ben held 12, lost 3 to Cat Burglars and still won 9 to 8.",
+  "strength": 4
+ },
+ {
+  "subject": "Heist",
+  "kind": "space",
+  "claim": "Heist plus the Green copy spaces piles four steals onto the leader in one round, with no defense once the copy spaces are gone.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Dee"
+  ],
+  "evidence": "Heist was taken or copied 7 times (5 copies), moving 28 followers; all four in round III hit Ben for 16 followers.",
+  "strength": 5
+ },
+ {
+  "subject": "Heist",
+  "kind": "space",
+  "claim": "Copying a rival's Heist or your own with Echo, Cover or Reprise is a clever, readable catch-up move.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava",
+   "Cal",
+   "Dee"
+  ],
+  "evidence": "Ava's Reprise on her own Heist took 4 from the leader Cal; every one of the 5 Heist copies hit whoever was leading at the time.",
+  "strength": 4
+ },
+ {
+  "subject": "Consolation Prize",
+  "kind": "whole game",
+  "claim": "A player with a single member, bought on her last recruit, came within 1 follower of winning.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [
+   "Ben",
+   "Cal",
+   "Dee",
+   "Ava"
+  ],
+  "evidence": "Ava scored 66 from 31 bought, 14 contests, 8 net from Heists, 5 from Crowd and 7 from Consolation Prize; this fits Cory's bar that cults of 5 or fewer members should win at least 20% of games.",
+  "strength": 3
+ },
+ {
+  "subject": "Dabblers",
+  "kind": "member",
+  "claim": "Whoever holds Dabblers at a round end wins the Red and Yellow contests, so the game becomes a fight over one card.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Dee"
+  ],
+  "evidence": "Dabblers changed hands 5 times; its holder won Red every round and won or tied Yellow every round, and in round III it moved 15 contest followers on the last placement.",
+  "strength": 5
+ },
+ {
+  "subject": "Mutineers",
+  "kind": "member",
+  "claim": "Mutineers' 'more members than you' reads differently from each side of the table and silently swings two contests.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Dee"
+  ],
+  "evidence": "The counts were on Dee's screen; her own Demote of Kidnappers (counts 2) into Matchmaker (counts 1) dropped Ben from 7 to 6 counted members and made Mutineers legal.",
+  "strength": 4
+ },
+ {
+  "subject": "Mutineers",
+  "kind": "member",
+  "claim": "Holding a once-per-game member steal until the last placement makes a clean, readable finisher.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "Ben's Mutineers on Dabblers flipped Red (+10) and half of Yellow (+5) and won the game 67 to 66, though both experienced players misjudged when it was live.",
+  "strength": 4
+ },
+ {
+  "subject": "Turn order",
+  "kind": "rule",
+  "claim": "The last placement of a round decides it, which makes everything earlier feel provisional.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Dee",
+   "Ben"
+  ],
+  "evidence": "Round II was decided by Ben's last-placement Demote and round III by his last-placement Mutineers and 10-follower buy.",
+  "strength": 4
+ },
+ {
+  "subject": "Borrow",
+  "kind": "space",
+  "claim": "Borrow's +1 follower and +1 member look like gains but leave before scoring.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Ben",
+   "Cal"
+  ],
+  "evidence": "Ben flagged this twice and still counted Borrow's +1 on the game's last decision; Harvest would have scored the same 67.",
+  "strength": 2
+ },
+ {
+  "subject": "Late Shift",
+  "kind": "space",
+  "claim": "A free recruit from Late Shift can fail with no visible reason.",
+  "verdict": 3,
+  "tone": "complaint",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Ava placed her 3rd minion, not her 4th, so Late Shift reached cost 6 and Mentor cost 8; the game log stated it, but she was never shown that line.",
+  "strength": 4
+ },
+ {
+  "subject": "Late Shift",
+  "kind": "space",
+  "claim": "Late Shift and Initiation hand out pricey members for free, which feels great and keeps paying.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal",
+   "Ben"
+  ],
+  "evidence": "Cal's free Purists paid 9 followers plus its printed 1 for one placement; Ben's Initiation brought in the 10-cost Kidnappers.",
+  "strength": 3
+ },
+ {
+  "subject": "Most resources",
+  "kind": "contest",
+  "claim": "Holding resources for Magenta against spending them on followers is a real decision every turn.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava",
+   "Ben",
+   "Cal",
+   "Dee"
+  ],
+  "evidence": "Ben passed three recruits in round II and won Magenta 9 to 8; one 1-follower buy would have tied it and halved the +6.",
+  "strength": 4
+ },
+ {
+  "subject": "Most resources",
+  "kind": "contest",
+  "claim": "Holding for Magenta and spending on followers pull so hard against each other that the plan undoes itself.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Cal spent his pile to zero on most turns and won no contest after round I.",
+  "strength": 2
+ },
+ {
+  "subject": "Turn order",
+  "kind": "rule",
+  "claim": "Snake order gives two turns in a row, which makes planned two-step combos feel earned.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Cal",
+   "Dee",
+   "Ben"
+  ],
+  "evidence": "Dee's Promote and Demote back to back in round III, Cal's spend-then-Catch-Up in round II, Ben's Offering then Greatest Hits copy.",
+  "strength": 3
+ },
+ {
+  "subject": "Seat Filler",
+  "kind": "member",
+  "claim": "Seat Filler's round-start upgrade pays off a round I purchase in later rounds.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben"
+  ],
+  "evidence": "A 5-cost Seat Filler brought in Cat Burglars (8) and Cosmopolitans (7) free, saving two recruits.",
+  "strength": 3
+ },
+ {
+  "subject": "Catch Up",
+  "kind": "space",
+  "claim": "Catch Up turns an empty hand into the best payout on the board.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "It paid 5, 6 and 4 magenta to the emptiest hand in rounds I, II and III.",
+  "strength": 2
+ },
+ {
+  "subject": "Makeover",
+  "kind": "space",
+  "claim": "Makeover's rearrange does nothing for a player who is cashing out.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "Both were turning resources into follower buys, or held Alchemists, so the colors did not matter.",
+  "strength": 1
+ },
+ {
+  "subject": "Buying followers",
+  "kind": "rule",
+  "claim": "Round III became repeated 5-follower buys, which felt flat and samey.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Ava",
+   "Cal"
+  ],
+  "evidence": "Cal made 11 follower buys and Ava 7; Ben and Dee, who had members to use, did not report it.",
+  "strength": 2
+ },
+ {
+  "subject": "Magenta Cloak",
+  "kind": "cloak",
+  "claim": "The Magenta Cloak points a first-time player at the contest every steal on the board attacks.",
+  "verdict": 2,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "The cloak paid about 10 magenta over 5 steals, but Cal spent to zero on most turns and never held the most resources at a round end.",
+  "strength": 2
+ },
+ {
+  "subject": "Offering",
+  "kind": "space",
+  "claim": "Offering and a copy of it in a row wipe out a rival's resources with nothing to answer.",
+  "verdict": 1,
+  "tone": "complaint",
+  "players": [
+   "Cal"
+  ],
+  "evidence": "Ben's Offering plus his Greatest Hits copy took 8 resources from Cal in two placements.",
+  "strength": 2
+ },
+ {
+  "subject": "Promote",
+  "kind": "space",
+  "claim": "Promote and Demote fighting over one engine card, answerable on the round's last placement, is a tense back-and-forth.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben",
+   "Dee"
+  ],
+  "evidence": "Dee's Promote took Ben's Cat Burglars and Ben's last-placement Demote took Dabblers, winning him Red +6 in round II.",
+  "strength": 3
+ },
+ {
+  "subject": "Swindle",
+  "kind": "space",
+  "claim": "Choosing which shop member to hand the victim makes Swindle and Demote a two-part decision.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ben",
+   "Dee"
+  ],
+  "evidence": "Dee handed Ben Mutineers as a 'dud' in round II, and it won him the game in round III.",
+  "strength": 2
+ },
+ {
+  "subject": "Consolation Prize",
+  "kind": "member",
+  "claim": "Consolation Prize turns from a dismissed card into the best last buy for a player losing contests.",
+  "verdict": 1,
+  "tone": "praise",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "It paid +6 for 3 lost contests plus its printed 1, against +5 from a 5-follower buy.",
+  "strength": 2
+ },
+ {
+  "subject": "Heist",
+  "kind": "space",
+  "claim": "Heist promises 4 resources even when rivals hold fewer, so part of it fizzles.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [
+   "Ava"
+  ],
+  "evidence": "Ava's Reprise Heist found only 3 resources among all rivals.",
+  "strength": 1
+ },
+ {
+  "subject": "Matchmaker",
+  "kind": "rule",
+  "claim": "Members that trigger on 'recruit' fire when a member is taken with Mutineers, which can decide the game.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "When Mutineers took Dabblers, Matchmaker (+3 followers, +2 resources) and the Yellow Cloak (+2 yellow) fired; without them Ben ends about 59 and Ava wins. The rulebook's 'by your own doing' reads either way; Cory's call.",
+  "strength": 5
+ },
+ {
+  "subject": "Turn order",
+  "kind": "rule",
+  "claim": "Fewest-followers-first plus snake order gives the round III last placement to the leader, and the round II last placement to whoever goes first.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Ben had the last placement in round II (first via Line Cutters, 4 minions) and in round III (most followers, 4th seat, 5 minions), and both decided the round.",
+  "strength": 4
+ },
+ {
+  "subject": "Kidnappers",
+  "kind": "member",
+  "claim": "Kidnappers' 'a rival you choose gives you one of their members' reads as if you choose the member, but the giver does.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Ben planned to take Dabblers with it and Dee spent her last placement removing it; that removal made Ben's Mutineers legal.",
+  "strength": 4
+ },
+ {
+  "subject": "Green Cloak",
+  "kind": "cloak",
+  "claim": "The Green Cloak pays before the copied action resolves, which can shrink what the copy gives.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Dee's cloak +2 lifted her above every rival, so her copied Catch Up paid 0 and left her 1 short of Copyist.",
+  "strength": 2
+ },
+ {
+  "subject": "Most member colors",
+  "kind": "contest",
+  "claim": "Grey counts as a color for the Yellow Cloak and New Blood but not for Yellow's contest, and Dabblers adds exactly one color; neither is printed.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Ben and Dee counted grey as a contest color 4 times; Ben's Protesters pick at [212] cost him about 5 followers (Yellow +5 instead of +10).",
+  "strength": 3
+ },
+ {
+  "subject": "Most members of one color",
+  "kind": "contest",
+  "claim": "Red's contest prints 'each card counts 1', but Dabblers counts 2 there.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Cal counted 3 in round I with Purists plus Dabblers, and Ben 4 in round III; the experienced briefing repeated the printed version.",
+  "strength": 2
+ },
+ {
+  "subject": "Most resources",
+  "kind": "contest",
+  "claim": "In round III Magenta went to the only player who did not spend, because the threat of before-scoring steals emptied every other pile.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Dee won 10 to 0, 0, 0 and her second Cat Burglars steal found nothing.",
+  "strength": 3
+ },
+ {
+  "subject": "Heist",
+  "kind": "space",
+  "claim": "One middle-ring space was the most-used action of the game through the copy spaces.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Heist was taken or copied 7 times and moved 28 followers; every copy hit the current leader.",
+  "strength": 4
+ },
+ {
+  "subject": "Copyist",
+  "kind": "member",
+  "claim": "Copyist rarely fires because Green's copy spaces are used on big steals rather than to feed it.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Copyist paid 6 followers all game across two owners (3 copies), though it was the center of Dee's opening.",
+  "strength": 2
+ },
+ {
+  "subject": "Recruiting members",
+  "kind": "whole game",
+  "claim": "Pricey members arrive free far more than they are bought.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Only 10 members were bought by paying; 7 more came free from Late Shift, Initiation, Seat Filler and Borrow, besides members moved by Swindle, Promote, Demote, Poach and Mutineers.",
+  "strength": 2
+ },
+ {
+  "subject": "Buying followers",
+  "kind": "whole game",
+  "claim": "Buying followers and contests make up most of the score, and neither extreme decided the result.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Buys made 96 of 244 followers (39%) and contests 80 (33%); Cal bought the most (35) and finished third, Dee the least (4) and finished last.",
+  "strength": 2
+ },
+ {
+  "subject": "Buying followers",
+  "kind": "rule",
+  "claim": "Passing recruits while holding resources throws followers away, since every resource buys 1 follower.",
+  "verdict": 1,
+  "tone": "observation",
+  "players": [],
+  "evidence": "Dee passed 5 recruits and ended the game holding 10 resources; they won Magenta, but rivals were already empty.",
+  "strength": 2
+ }
+]

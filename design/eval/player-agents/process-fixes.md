@@ -1,0 +1,26 @@
+# Process fixes from review (verified)
+- [verified] view line 239 "split if tied" -> "tied leaders each get half, rounded up"; primer line 6 "nothing for holding 0" wrong for fewest contests (0 counts).
+- round notes: asked at first decision of next round, no event log of round scoring -> give round-end log (scoring lines) in round notes prompt.
+- rivals' once-per-round members: show used mark for all cults (verify).
+- repeated identical questions (Largesse 12 prompts): bulk-pick thread lands `then` (pull).
+- debrief: give follower sources + contest results per round (facts) so debrief claims match ledger.
+# Remaining after round 3 (from r3g1 review)
+- batch answer silently discarded when a grey pick inserts a "+1 of which color?" question (Out of Style, r3g1 [199], 8 calls) -> bulk-pick thread
+- standings projection gives Went last to the latest placer though rivals have minions left -> mark undecided / show minions left
+- Demote listed ~197 swap lines; Reprise offered with own Agents making it do nothing (mark as does nothing)
+- (r3g2) projection overweights momentary contest leads early in round -> label as "only if nobody moves again", show followers now first; maybe drop contest part until late
+- (r3g2) pay warning ignores On Recruit steal (Accomplice); suggested payments ignore silver contest
+- Rule questions for Cory: Dabblers color count vs Melting Pot 4 colors; Swindle triggers recruit effects + Snitch twice; Matchmaker/Yellow Cloak on Mutineers take; Gather vs Purists grey; Downsizers self-discard; round-end order unstated
+- (r3g3) round notes only last 30 lines -> give the whole round's own moves summary (player's own moves this round) too
+- (r3g3) Out of Style repeated question ignored 2-at-once answers (bulk-pick thread)
+- (r3g3) option lists 70-250 swap pairs, 100+ payment lines; suggested payment spends kept color
+- Experienced-no-notes: tactically fine, misread rules the primer covers (first-taker +1, last-space-of-round) -> primer earns its keep on rules
+- (r3g5) Red contest text "each card counts 1" but game counts Dabblers 2 -> verify, rule question/bug
+- (r3g5) first-taker +1 not marked as gone in the space text (view) -> verify view marking
+- (r3g4) game-end bonuses missing from facts "Abilities paid" (Die-Hards +6) and from round III notes log -> include game-end log lines
+- (r3g4) space blocked by Protesters shows [OPEN]
+- (r3g4) projection ignores unplaced minions & game-end bonuses
+- (r3g4) Reprise log 6 green vs holdings +5 -> possible engine/log mismatch; report
+- (r3g6) Window Shopper discard 2-pick refused 26 times silently (bulk-pick thread)
+- (r3g6) deck reshuffle not shown at the time
+- (r3g6) possible engine bugs: Blue Cloak pays nothing when a discard triggers reshuffle or at Round Start (13 of 18); Copyist pays on copies that copy nothing -> verify, route to coordinator

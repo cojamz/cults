@@ -1,0 +1,210 @@
+<title>Player Agents Ranked List</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* one reading column: how the games went, then the ranked list, then keep, rule questions, player ideas, how the players did */
+:root { --bg:#f6f5f2; --fg:#1d1c1a; --muted:#6a655c; --line:#dedad2; --card:#ffffff; --text:#efece5; --accent:#8a3b2f; --keep:#2f6a45; --q:#2f5d8a;
+  --body:'Inter',system-ui,sans-serif; --head:'Space Grotesk','Inter',system-ui,sans-serif; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#161513; --fg:#ece9e3; --muted:#a39d93; --line:#34312c; --card:#201f1c; --text:#2a2824; --accent:#e39a8b; --keep:#8fd0a5; --q:#8db8e3; color-scheme:dark } }
+:root[data-theme="dark"] { --bg:#161513; --fg:#ece9e3; --muted:#a39d93; --line:#34312c; --card:#201f1c; --text:#2a2824; --accent:#e39a8b; --keep:#8fd0a5; --q:#8db8e3; color-scheme:dark }
+body { background:var(--bg); color:var(--fg); font:15px/1.55 var(--body); padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); padding-block:20px 48px; }
+main { max-width:740px; margin:0 auto; display:flex; flex-direction:column; gap:28px; }
+h1,h2,h3 { font-family:var(--head); text-wrap:balance; margin:0; }
+h1 { font-size:27px; } h2 { font-size:20px; margin-bottom:6px; } h3 { font-size:16.5px; }
+p { margin:6px 0; } ul,ol { margin:6px 0; padding-left:22px; } li { margin:5px 0; }
+.lede { color:var(--muted); }
+.tbl { overflow-x:auto; } table { border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums; }
+th,td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); font-size:13.5px; vertical-align:top; } th { color:var(--muted); font-weight:600; font-size:12px; }
+.item { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; min-width:0; }
+.item h3 { display:flex; gap:10px; align-items:baseline; }
+.rank { font-family:var(--head); color:var(--accent); font-size:15px; min-width:1.6em; }
+.keep .rank { color:var(--keep); } .q .rank { color:var(--q); }
+.card { background:var(--text); border-radius:6px; padding:6px 10px; font-size:13.5px; }
+.card b { font-weight:600; }
+.lbl { font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:600; }
+.row { display:flex; flex-direction:column; gap:2px; }
+.list { display:flex; flex-direction:column; gap:12px; }
+.tag { font-size:11px; font-weight:600; padding:1px 7px; border-radius:8px; border:1px solid currentColor; color:var(--muted); white-space:nowrap; }
+.small { font-size:13px; color:var(--muted); }
+</style>
+<main>
+<header>
+<h1>Player agents: what nine games say</h1>
+<p class="lede">AI players (Opus 5.5) played nine games of today's Cults: six with 4 players, two with 3, one with 2. Every game was then checked decision by decision against the game log: where each player's followers really came from, which contests they won, and whether what they said about a card was true. Only findings that hold up from that whole-game view are ranked here. Complaints that came from a player's own losing plan, or from misreading a card, were dropped.</p>
+<p class="lede">The first game used the member values from before Nov 12. The other eight use today's (every member worth 1 follower, a few costly ones 2 or 3). You said 2 and 3 players aren't balanced yet, so findings seen only there are marked and ranked lower.</p>
+</header>
+
+<section>
+<h2>The nine games</h2>
+<div class="tbl"><table>
+<tr><th>Colors</th><th>Players</th><th>Winner</th><th>Winner's members</th><th>Scores</th></tr>
+<tr><td>Yellow, Magenta, White, Purple</td><td>4 (2 new)</td><td>Ben, new</td><td>4</td><td>92, 77, 70, 69</td></tr>
+<tr><td>Red, Magenta, Yellow, Green</td><td>4 (2 new)</td><td>Ben</td><td>8</td><td>67, 66, 57, 54</td></tr>
+<tr><td>Purple, Silver, Blue, White</td><td>4</td><td>Gus</td><td>4</td><td>100, 88, 86, 76</td></tr>
+<tr><td>Red, Purple, Blue, Green</td><td>4 (2 new)</td><td>Ben, new</td><td>4</td><td>82, 74, 70, 53</td></tr>
+<tr><td>Silver, Yellow, Magenta, White</td><td>4</td><td>Cal</td><td>2</td><td>91, 87, 86, 83</td></tr>
+<tr><td>Red, Silver, Blue, Magenta</td><td>4 (1 without strategy notes)</td><td>Cal</td><td>14</td><td>91, 69, 69, 43</td></tr>
+<tr><td>Purple, Yellow, Green</td><td>3 (1 new)</td><td>Cal</td><td>7</td><td>98, 93, 64</td></tr>
+<tr><td>White, Red, Yellow</td><td>3 (1 new)</td><td>Ben</td><td>2</td><td>87, 86, 61</td></tr>
+<tr><td>Blue, Green</td><td>2</td><td>Ava</td><td>6</td><td>67, 48</td></tr>
+</table></div>
+<p class="small">5 of 9 winners held 5 or fewer members. No player who ended with 0 members won (best: second, twice).</p>
+</section>
+
+<section>
+<h2>Ranked: what to change</h2>
+<p class="lede">Most important first. "Kind of change" says what the fix has to do, not the new card.</p>
+<div class="list">
+
+<div class="item"><h3><span class="rank">1</span>Fewest silver never separates anyone</h3>
+<div class="card"><b>Silver contest:</b> Fewest silver: the silver you hold when the round ends (0 counts; tied leaders each get half, rounded up).<br><b>Flaunt:</b> +1 of each other color per 3 silver you hold, up to 3 each. +1 silver.<br><b>Buyout:</b> Recruit a rival's member, paying them its cost in silver. +1 silver.</div>
+<div class="row"><span class="lbl">At the table</span><p>Silver pays for follower buys like any color, so every player spends down to 0 before the round ends and the contest is an all-way tie. In one 4-player game it paid every player 2, 3 and 5, 40 followers that changed no one's place. Silver given away by Toast, Party Gifts and Largesse was spent by the receiver before scoring every time (41 silver in one game, 33 in another). Players spent about half of all their decisions reasoning about this contest and still couldn't win it. Flaunt and Buyout were never taken, because both leave you holding silver.</p></div>
+<div class="row"><span class="lbl">Seen in</span><p>All 3 four-player games with Silver.</p></div>
+<div class="row"><span class="lbl">Kind of change</span><p>A silver goal where giving or holding silver can actually put one player ahead, and a reason to take Silver's middle ring at that table.</p></div>
+</div>
+
+<div class="item"><h3><span class="rank">2</span>Round III's last placements decide the contests, and nobody can answer</h3>
+<div class="card"><b>Promote:</b> +3 red. Swap any member for one costing up to 3 more, from another cult or the shop.<br><b>Demote:</b> +3 red. Swap any member for one costing up to 3 less, from another cult or the shop.<br><b>Mutineers</b> (6 any): On Use, once per game: take a member from a rival with more members than you.<br><b>Kidnappers</b> (6 magenta + 4 any, counts as 2 members): Round End: a rival you choose gives you one of their members.</div>
+<div class="row"><span class="lbl">At the table</span><p>The member contests (Most members, Most members of one color, Most member colors, Fewest members) were settled by swaps and takes on the last few placements of round III. In one game the leader after round II (ahead by 18) lost about 30 followers to five late plays (Mutineers, Repossessors, Demote putting the Ghost in her cult, Con Men, Protesters) and could answer one. In another, four swaps into one player's cult moved about 25 contest followers. Because the player with the fewest followers goes first and turns snake, the leader often gets round III's last placement, which is where these hit hardest.</p></div>
+<div class="row"><span class="lbl">Seen in</span><p>4 four-player games, plus both 3-player games. The most common complaint from experienced players.</p></div>
+<div class="row"><span class="lbl">Kind of change</span><p>Keep the swaps (players loved them, see the keep list) but give the target a chance to reply, or keep the last placement of round III from being a free hit. Spoilsport (next) is the sharpest case.</p></div>
+</div>
+
+<div class="item"><h3><span class="rank">3</span>Spoilsport decides games after the last move</h3>
+<div class="card"><b>Spoilsport</b> (8 any, worth 1): Round End: choose a contest; nobody wins it this round.</div>
+<div class="row"><span class="lbl">At the table</span><p>Every time it was bought it decided something. It took 16 followers off two rivals over two round ends and decided a 4-player game. In a 3-player game, cancelling a 3-3 Yellow tie took 5 from the player who then lost by 1. In another game its holder, out of the race on 53, chose which leader lost 10. Its holder praised it as the tensest decision in the game; everyone else said there was nothing they could do about it.</p></div>
+<div class="row"><span class="lbl">Seen in</span><p>4 games (2 with 4 players).</p></div>
+<div class="row"><span class="lbl">Kind of change</span><p>Its target should be known, or answerable, before the round's last placements; or it should cost its holder something when used.</p></div>
+</div>
+
+<div class="item"><h3><span class="rank">4</span>Dabblers decides member contests, and its text disagrees with the contests</h3>
+<div class="card"><b>Dabblers</b> (5 any, worth 2, counts as 2 members): Counts as 2 wild members.<br><b>Red contest:</b> Most members of one color: your biggest group of members of one color when the round ends, grey members included (each card counts 1).<br><b>Melting Pot:</b> For each color among your members: +1 follower and +1 of that color (grey: 1 of any color).</div>
+<div class="row"><span class="lbl">At the table</span><p>Whoever held Dabblers at a round end won or tied Red, and often Blue or Yellow. In one game it changed hands 5 times and its holder won Red every round; in a 3-player game it came free off Late Shift and won about 12 followers. Players also couldn't tell how it counts: the game counts it as 2 in Red even though Red prints "each card counts 1", as one missing color in Yellow's contest, and as every color for Melting Pot (paying 4 colors where the contest counted 2).</p></div>
+<div class="row"><span class="lbl">Seen in</span><p>7 games (5 with 4 players).</p></div>
+<div class="row"><span class="lbl">Kind of change</span><p>One reading of "wild", printed where it's counted; and a price that matches what it does to contests.</p></div>
+</div>
+
+<div class="item"><h3><span class="rank">5</span>Late members don't earn their recruit, so the recruit becomes a chore</h3>
+<div class="card"><b>Buying followers:</b> 1, 5 or 10 resources of any colors for that many followers, one per recruit.</div>
+<div class="row"><span class="lbl">At the table</span><p>After a space that gives resources, the recruit is usually a 5-follower buy, or a 1-follower buy for 1 to 4 leftovers. In one game 39 of 52 recruits were follower buys and all four players called it a chore (26 notes). Round III's shop was mostly ignored: in one game 1 of 8 round III members was bought and 19 of 20 round III recruits were follower buys, because a member bought then is worth about its 1 printed follower. Your point holds that the recruit is the real cost (a 1-follower buy throws most of one away), and members still won games: winners held 2 to 14 members, and free members from Late Shift, Borrow and Initiation paid as well as bought ones. The complaint is about how the turn feels once members stop paying back, mostly in round III.</p></div>
+<div class="row"><span class="lbl">Seen in</span><p>All 9 games.</p></div>
+<div class="row"><span class="lbl">Kind of change</span><p>A reason to buy a member in round III (something it pays right away or at game end), or a use for 1 to 4 leftover resources that isn't the same 1-follower buy.</p></div>
+</div>
+
+<div class="item"><h3><span class="rank">6</span>Anchorites pays too much for too little</h3>
+<div class="card"><b>Anchorites</b> (3 white + 3 any, worth 1): Round End: if you have 5 or fewer members, +5 followers.</div>
+<div class="row"><span class="lbl">At the table</span><p>Most players stay at 5 or fewer members anyway, so the condition costs nothing. It paid 15 followers for 6 resources in two separate 4-player games, the best bought card in both, and 10 in a 3-player game. Taking it away rarely worked: one Swindle took it and Mutineers took it back the same round.</p></div>
+<div class="row"><span class="lbl">Seen in</span><p>3 games, 2 with 4 players.</p></div>
+<div class="row"><span class="lbl">Kind of change</span><p>Pricier, or a condition that a small cult has to give something up for.</p></div>
+</div>
+
+<div class="item"><h3><span class="rank">7</span>White Cloak pays about double any other cloak</h3>
+<div class="card"><b>White Cloak:</b> Whenever you buy followers, +2 white.</div>
+<div class="row"><span class="lbl">At the table</span><p>It paid 24, 24, 20 and 22 white in the four games it was taken. The next-best cloak in those games paid 10 to 14; the Silver Cloak paid least and was picked last. Its owner won two of the four (one of them a 3-player game) and came third in the other two. The Magenta Cloak (Whenever you steal, +2 magenta) once paid 42 at a table with a lot of stealing, and its owner won that game, but it happened only once.</p></div>
+<div class="row"><span class="lbl">Seen in</span><p>4 games (3 with 4 players).</p></div>
+<div class="row"><span class="lbl">Kind of change</span><p>Bring the cloaks closer: a smaller White Cloak or more from the weakest ones.</p></div>
+</div>
+
+<div class="item"><h3><span class="rank">8</span>Kidnappers reads one way and plays another</h3>
+<div class="card"><b>Kidnappers</b> (6 magenta + 4 any, worth 2, counts as 2 members): Round End: a rival you choose gives you one of their members.</div>
+<div class="row"><span class="lbl">At the table</span><p>Players in two games planned around picking the member; the rival picks, so they always hand over a used-up card. In one game it cost 10 and returned about 3 followers. In another, because it counts as 2 members, whoever held it at round end won Most members, and it changed hands four times; every player called that fight the most memorable part of the game.</p></div>
+<div class="row"><span class="lbl">Seen in</span><p>3 four-player games.</p></div>
+<div class="row"><span class="lbl">Kind of change</span><p>Words that say who chooses, at a glance. Its strength depends almost entirely on whether a Most members contest is on the table.</p></div>
+</div>
+
+<div class="item"><h3><span class="rank">9</span>Copies of copies pay again and again</h3>
+<div class="card"><b>Copyist</b> (2 green + 3 any, worth 1): Whenever you copy an action, +2 followers.<br><b>Green Cloak:</b> Whenever you copy an action or a member, +2 of its color.<br><b>Crunch Time:</b> +2 purple. Your next two turns come right after this one.</div>
+<div class="row"><span class="lbl">At the table</span><p>Each step of a copy of a copy pays Copyist and the Green Cloak again, even a copy that copies nothing. Copyist paid 18 and 16 followers for 5 resources in the 3- and 2-player games. Crunch Time from first seat, copied by Reprise, Echo, Stunt Double and Greatest Hits, gave one player 4 and then 5 turns in a row (39 to 83 followers in round III) while the others watched.</p></div>
+<div class="row"><span class="lbl">Seen in</span><p>3 games, mostly 2 and 3 players <span class="tag">2–3 players</span></p></div>
+<div class="row"><span class="lbl">Kind of change</span><p>Decide whether a copy of a copy counts as a copy, and whether a copy that does nothing pays.</p></div>
+</div>
+
+<div class="item"><h3><span class="rank">10</span>Most resources in round III goes to whoever doesn't need to spend</h3>
+<div class="card"><b>Magenta contest:</b> Most resources: all the resources you hold when the round ends, every color together.</div>
+<div class="row"><span class="lbl">At the table</span><p>In rounds I and II holding against spending was a real decision that players praised (won by 1 resource, or by a tie on the last placement). In round III resources are worth nothing after the game, so everyone spends and the one player with a surplus or the last mover takes +10 holding 3 to 14 against 0.</p></div>
+<div class="row"><span class="lbl">Seen in</span><p>3 four-player games.</p></div>
+<div class="row"><span class="lbl">Kind of change</span><p>A reason to hold resources into the end of round III.</p></div>
+</div>
+
+<div class="item"><h3><span class="rank">11</span>Line Cutters takes away the catch-up</h3>
+<div class="card"><b>Line Cutters</b> (4 any, worth 1): You go first every round.</div>
+<div class="row"><span class="lbl">At the table</span><p>The player in last place should go first from round II; with Line Cutters in play they didn't, in two 4-player games. For the player who is already behind it does nothing, since they go first anyway.</p></div>
+<div class="row"><span class="lbl">Seen in</span><p>4 games (2 with 4 players).</p></div>
+<div class="row"><span class="lbl">Kind of change</span><p>Smaller: it only matters when its holder is ahead, which is when going first hurts the catch-up most.</p></div>
+</div>
+
+<div class="item"><h3><span class="rank">12</span>Heist and Green's copies all hit the leader</h3>
+<div class="card"><b>Heist:</b> Steal 3 followers and 3 resources. +1 magenta.</div>
+<div class="row"><span class="lbl">At the table</span><p>Taken or copied 7 times in one game, moving 28 followers; all four in round III hit the leader for 16. Players also praised it as the clearest way for a trailing player to hit the leader.</p></div>
+<div class="row"><span class="lbl">Seen in</span><p>2 four-player games (one strongly).</p></div>
+<div class="row"><span class="lbl">Kind of change</span><p>Watch it; only one game showed the pile-on.</p></div>
+</div>
+
+</div>
+</section>
+
+<section>
+<h2>What feels good: keep</h2>
+<div class="list">
+<div class="item keep"><h3><span class="rank">1</span>Swapping members in and out of rival cults</h3>
+<div class="card"><b>Promote</b> and <b>Demote</b> (texts above). <b>Swindle:</b> Steal a rival's member costing up to 7; give them a shop member of your choice in its place. +1 magenta.</div>
+<p>Called the most exciting part of the wheel in 4 games. Choosing which shop member to hand back made it a two-part decision; one "dud" handed back won its receiver the game. The problem in item 2 is when these happen, not that they exist.</p></div>
+<div class="item keep"><h3><span class="rank">2</span>Members as a hot potato around Fewest members</h3>
+<div class="card"><b>Guest of Honor</b> (2 white + 3 any): On Use, once per round: give a rival one of your members. +4 followers.<br><b>Write-Off:</b> Give a member to a rival for its cost in white. +1 white.</div>
+<p>All four players praised it in two games: five members changed hands in one game, each one to break a rival's contest count.</p></div>
+<div class="item keep"><h3><span class="rank">3</span>Free members that grow with the round</h3>
+<div class="card"><b>Late Shift:</b> Recruit a shop member costing up to 2 per minion you've placed this round, this one included, for free. +1 red.</div>
+<p>Praised in 4 games: the order you place minions in becomes a puzzle, and a last-minion Late Shift brought in members worth 20 resources by price.</p></div>
+<div class="item keep"><h3><span class="rank">4</span>A member for the player losing contests</h3>
+<div class="card"><b>Consolation Prize</b> (7 any): Round End: +2 followers per contest you don't win.</div>
+<p>Paid 8 to 10 followers for 7 in 4 games and kept trailing players in it. One player with only this member came within 1 follower of winning.</p></div>
+<div class="item keep"><h3><span class="rank">5</span>Using a shop member without buying it</h3>
+<div class="card"><b>Test Drive:</b> Discard a shop member. Use its effect now. +1 blue.</div>
+<p>The best single placement for three different players in one game, and praised in 4. One caution: from a round I space it can fire Purifiers against every rival.</p></div>
+<div class="item keep"><h3><span class="rank">6</span>Two turns in a row from the snake</h3>
+<p>Players in 3 games planned two placements as one move (spend then catch up, give then copy), and said it felt earned.</p></div>
+<div class="item keep"><h3><span class="rank">7</span>The face-up discard pile as a second shop</h3>
+<div class="card"><b>Out of Style:</b> Discard 3 shop members and refill. +1 of each discarded member's color. +1 blue. <b>Blue Cloak:</b> Whenever you discard a member, +1 of its color.</div>
+<p>4 of 13 members in one game came from the discard pile, two of them deciding contests. Out of Style with the Blue Cloak was a strong, readable opener.</p></div>
+</div>
+</section>
+
+<section>
+<h2>Rules the cards don't settle (your call)</h2>
+<p class="lede">Each of these confused players at least once, and the game picks one reading that the printed text doesn't say.</p>
+<div class="list">
+<div class="item q"><h3><span class="rank">1</span>Dabblers in Red's contest</h3><p>Red prints "each card counts 1"; the game counts Dabblers as 2. Seen in 3 games; one player skipped Dabblers because of the printed words.</p></div>
+<div class="item q"><h3><span class="rank">2</span>Is grey a color?</h3><p>Not in Yellow's contest (Most member colors) or for <b>Purists</b> (Round End: if your members have 2 or fewer colors, +3 followers). Yes for <b>Gather</b> (+3 red. If you recruit a member this turn of a color you already have: +4 followers), the <b>Yellow Cloak</b> (Whenever you recruit a member of a color none of your members have, +2 yellow) and Melting Pot. Players counted grey as a color for Yellow's contest 4 times in one game.</p></div>
+<div class="item q"><h3><span class="rank">3</span>Is taking a member "recruiting" it?</h3><p>The game says yes: Swindle, Promote, Demote, Poach, Mutineers and Body Snatchers fire <b>Shoplifter</b> (Whenever you recruit, steal 1 resource), the Yellow Cloak, <b>Matchmaker</b> (Whenever you recruit a yellow member, +2 wild, +3 followers) and the <b>Red Cloak</b> (Whenever you recruit a member, +1 red). Swindle also counts as stealing for <b>Snitch</b> (Whenever a rival steals from you, they lose 1 follower), twice. In one game Matchmaker and the Yellow Cloak firing on a Mutineers take were the winner's margin.</p></div>
+<div class="item q"><h3><span class="rank">4</span>In what order do round-end abilities happen?</h3><p>The rules say only "Round-end abilities happen." In one game <b>Kingmakers</b> (Round End: give rivals up to 3 of your silver, split as you choose. +1 follower per silver given) fired before Spoilsport and switched off a rival's <b>Paupers</b>, which decided the round III end.</p></div>
+<div class="item q"><h3><span class="rank">5</span>Can Downsizers discard itself?</h3><p><b>Downsizers</b>: On Use, once per round: discard one of your members. +4 white. The game says no; <b>Old Guard</b> says "another of your members", so a table reading both would say yes for Downsizers.</p></div>
+<div class="item q"><h3><span class="rank">6</span>Does a used-up member still sell for its full cost?</h3><p>Write-Off and <b>Farewell</b> (Discard a member for its cost in followers. +1 white) pay full cost for a member whose once-per-game ability is spent: a used Double Agent sold for 10.</p></div>
+</div>
+</section>
+
+<section>
+<h2>The players' own card ideas</h2>
+<p class="lede">99 ideas came out of the games (during play and in the debriefs). These are the players' raw ideas, not checked against our card rules yet. The ones below answer a problem ranked above; the rest answered a player's own plan or repeat a card that exists.</p>
+<div class="tbl"><table>
+<tr><th>Idea</th><th>What it does</th><th>Answers</th></tr>
+<tr><td>Interloper</td><td>Purple member: after a rival takes 3 or more turns in a row, you place one right after.</td><td>Long runs of turns (9)</td></tr>
+<tr><td>Hush Money</td><td>Give a rival silver; they can't take a silver space this round.</td><td>Silver gifts never stick (1)</td></tr>
+<tr><td>Witness / Appeal</td><td>One contest of your choice can't be cancelled this round / restore a cancelled contest.</td><td>Spoilsport (3)</td></tr>
+<tr><td>Grudge Holders</td><td>When one of your members is swapped away, take a rival member of equal or lower cost.</td><td>Late swaps on the leader (2); close to Loyalists</td></tr>
+<tr><td>Audit</td><td>Make a rival pay to keep a contest lead.</td><td>A small cult can only touch member contests by swapping (2)</td></tr>
+<tr><td>Collection Plate</td><td>Space: every rival holding more resources than you gives you 1.</td><td>One player holding the only pile in round III (10)</td></tr>
+<tr><td>Big Household</td><td>+1 follower per member you have beyond the fewest anyone holds.</td><td>Fewest members going uncontested <span class="tag">3 players</span></td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>How the players did</h2>
+<ul>
+<li><b>What they read right:</b> recruits are the real limit; a space that turns resources into followers saves recruits; the face-up discard pile is a second shop; the last open token space, not the first, wins Went last.</li>
+<li><b>What they got wrong:</b> forgetting a rival's cloak (one 10-follower swing decided a game), trusting the "if the round ended now" line early in a round, and the rule questions above.</li>
+<li><b>New against experienced:</b> first-time players won 2 of the 5 games they sat in. The experienced player given no strategy notes played as well turn by turn but misread two rules the notes cover, which cost about 15 followers, and finished tied second.</li>
+<li><b>After the fixes between game 3 and game 4:</b> wrong claims per 4-player game fell from 22–28 to 16–21, and repeated feel notes by about a quarter. Still to fix: the round-end preview, very long option lists (up to 250 swap choices), and two-at-once answers that some questions refuse (sent to the thread working on picking several things at once).</li>
+</ul>
+<p class="small">Every game's full review and move-by-move record are kept with the project files.</p>
+</section>
+</main>
