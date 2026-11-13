@@ -2,6 +2,10 @@
 
 Player-facing releases, newest first. What's live is main's play/build.json: a section newer than that version is on the branch, not yet published. Agent process: [design/releasing.md](design/releasing.md). Verified retrospective source/deployment timeline: [design/release-history.md](design/release-history.md).
 
+## v0.99.764 — 2026-11-12
+
+- Every member counts as 1 member and keeps its followers; Dabblers, Revelers and Ghost keep what their card says
+
 ## v0.99.763 — 2026-11-12
 
 - New grey member Mutineers: On Use, once per game: take a member from a rival with more members than you (Cory, Nov 12)
